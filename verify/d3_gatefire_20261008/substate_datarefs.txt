@@ -1,0 +1,20 @@
+// 0x00657448  DATA in .data
+//   type undefined4 len 4  value 00000000h
+//   1 reference(s) total
+//   WRITES: (none)
+//   reads (1):
+//     0x004270bd in FUN_00426e10  [READ]  MOV EDX,dword ptr [0x00657448]
+//   other: (none)
+
+// 0x00897fe0  DATA in .data
+//   type undefined4 len 4  value 00000000h
+//   6 reference(s) total
+//   WRITES (1):
+//     0x004430a4 in FUN_004430a0  [WRITE]  MOV [0x00897fe0],EAX
+//   reads (1):
+//     0x004430b0 in FUN_004430b0  [READ]  MOV EAX,[0x00897fe0]
+//   other (4):
+//     0x00448253 in FUN_00448220  [DATA]  PUSH 0x897fe0
+//     0x004483ab in FUN_00448220  [DATA]  PUSH 0x897fe0
+//     0x004486a4 in FUN_00448220  [DATA]  PUSH 0x897fe0
+//     0x00448706 in FUN_00448700  [DATA]  PUSH 0x897fe0

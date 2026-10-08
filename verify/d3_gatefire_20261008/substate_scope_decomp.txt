@@ -1,0 +1,58 @@
+// FUN_004430a0 @ 0x004430a0  size=10  (MASHED.exe)
+// undefined FUN_004430a0(void)
+// callers: FUN_004102f0@0x004102f0, FUN_00445aa0@0x00445aa0
+// strings: (none)
+
+/* [C1 2026-06-01] `void FUN_004430a0(undefined4 param_1)` — setter. Writes `DAT_00897fe0 =
+   param_1`, */
+
+void FUN_004430a0(undefined4 param_1)
+
+{
+  DAT_00897fe0 = param_1;
+  return;
+}
+
+
+
+// FUN_004053d0 @ 0x004053d0  size=45  (MASHED.exe)
+// undefined FUN_004053d0(void)
+// callers: FUN_00426e10@0x00426e10
+// strings: (none)
+
+/* [C2 2026-05-17] 3-global setter with one-arg `param_1` test: */
+
+void FUN_004053d0(int param_1,undefined4 param_2)
+
+{
+  if (param_1 != 0) {
+    DAT_00639d74 = 0;
+    DAT_00639d70 = param_1;
+    DAT_00639d78 = param_2;
+    return;
+  }
+  DAT_00639d70 = 0;
+  DAT_00639d78 = 0;
+  return;
+}
+
+
+
+// FUN_00405400 @ 0x00405400  size=23  (MASHED.exe)
+// undefined FUN_00405400(void)
+// callers: FUN_0040cfd0@0x0040cfd0
+// strings: (none)
+
+/* [C2 2026-06-03] `void FUN_00405400(void)`. Body 0x00405400..0x00405416. Pure store, no reads, no
+   callees. - Sets three adjacent globals… */
+
+void FUN_00405400(void)
+
+{
+  DAT_00639d74 = 0;
+  DAT_00639d78 = 0;
+  DAT_00639d70 = 0;
+  return;
+}
+
+

@@ -845,6 +845,26 @@ int g_wireFire[4]    = {0,0,0,0};
 // would collide with a real "predicate returned 0".
 int g_b2Ret[4] = {-1,-1,-1,-1};
 int g_b2Los[4] = {-1,-1,-1,-1};
+// [W-SHAPE port side 2026-10-08] ctrl[4]/ctrl[5] as they stood at ControlStep ENTRY,
+// the port's analogue of the original aistep's c4_in / c5_in columns. RESULT_WIRE2.md
+// s5 left W-SHAPE unverified because no PORT capture recorded the entry value; o_t3
+// carries it on the original side (RESULT_FIRESHAPE.md s4).
+// Needed because the dump reads blk+4/blk+5 at END of frame, i.e. the OUTPUT. Without
+// the entry value a firing row showing c4=0 cannot distinguish "the branch left ctrl[4]
+// alone and it was already 0" -- what the branch comment below claims -- from "something
+// zeroed it". Written unconditionally at the top of ControlStep, before any ctrl store.
+// -1 = ControlStep did not run for this car before the dump (both are u8 otherwise).
+//
+// *** MEASURED DEAD, 2026-10-08 (RESULT_WSHAPE.md). KEPT, like the *_abs family. ***
+// Both columns are 0 on 42,654 of 42,654 port rows AND on 5,318 of 5,318 original
+// o_t3 rows: ctrl is zeroed before every ControlStep call on BOTH sides, so the entry
+// pose carries no information and cannot test the ctrl[4] claim. The probe itself is
+// sound -- it disagrees with the OUTPUT on 99.2% of port rows, which is what proves it
+// samples before the write. Do not re-derive this: the quantity is degenerate, not the
+// instrument. If D-11073 ever lands a real sub-state machine, the zeroing may stop
+// holding in some state, and these become live again.
+int g_c4In[4] = {-1,-1,-1,-1};
+int g_c5In[4] = {-1,-1,-1,-1};
 }
 #endif
 
@@ -862,6 +882,11 @@ int g_b2Los[4] = {-1,-1,-1,-1};
 // ===========================================================================
 void ControlStep(std::uintptr_t spline, int v, std::uint8_t* ctrl)
 {
+#ifdef MASHED_STANDALONE
+    // [W-SHAPE port side 2026-10-08] snapshot the entry pose BEFORE any ctrl store on
+    // any path through this function. Diagnostic-only: reads ctrl, writes nothing back.
+    if (v >= 0 && v < 4 && ctrl) { g_c4In[v] = ctrl[4]; g_c5In[v] = ctrl[5]; }
+#endif
     const int gameMode = s_host.game_sub_mode();                     // FUN_0040e350 -> [+0x24]
     const float rate0 = s_host.veh_f32(v, 0xb0c);                     // FUN_0046d6a0 -> [+0x20]
     const float speed = s_host.veh_f32(v, 0x9e4);                     // FUN_0046d6d0 -> [+0x1c]

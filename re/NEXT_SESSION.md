@@ -1,5 +1,71 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-08 (tasks W-SHAPE / B / C): **W-SHAPE is CLOSED NEGATIVE. D-11073 is CHEAPER than its row says. The slot seed is now DEFAULT-ON.**
+>
+> Read [`RESULT_WSHAPE.md`](../verify/d3_gatefire_20261008/RESULT_WSHAPE.md) →
+> [`SCOPE_SUBSTATE2.md`](../verify/d3_gatefire_20261008/SCOPE_SUBSTATE2.md) →
+> [`RESULT_H2.md`](../verify/d3_gatefire_20261008/RESULT_H2.md).
+>
+> **1. `W-SHAPE` port side: closed NEGATIVE.** Added `c4_in`/`c5_in` to the stepdump, ran it, and
+> `WS-LIVE` **FAILS**: entry pose is 0 on **42,654/42,654** port rows and — checked for the first
+> time — **5,318/5,318** original `o_t3` rows. Both sides zero `ctrl` before every call, so the
+> quantity is degenerate. The **probe is sound** (it disagrees with the output on 99.2% of rows,
+> which is what proves it samples pre-write). The `ctrl[4]` claim stands on the **static**
+> transcription only. Columns kept and marked DEAD. This **corrects `RESULT_FIRESHAPE.md` §4**.
+>
+> **2. D-11073 scoping (task B), and it LOWERS the cost.** Both open reads answered:
+> `FUN_004430a0(0)` — the clear — comes from **`FUN_00445aa0`** (2 sites); `FUN_004102f0` passes
+> **1**, it *sets* the flag. And `FUN_004053d0`/`FUN_00405400` **load nothing** — both are pure
+> setters; the handle is `DAT_00657448`, which has **no writer anywhere in the image**.
+> **The row's inference is wrong:** phase 3's hold does **not** need the camera-path module. The
+> exit test is `FUN_00405460()==0 && FUN_004430b0()==0`, so the **flag alone blocks it**, and
+> `FUN_004102f0` sets the flag itself under `DAT_005f29b8 == 100000` — a write that is already
+> **inside `FUN_004111c0`** at `0x004100d3`. Hold ≈ one seed write + the 172 B coordinator;
+> the camera module governs the *motion*, not the hold. **Owed `re-classify` correction to the
+> D-11073 row** (not hand-edited). Check `FUN_00445aa0`'s cadence first — it could clear the flag
+> immediately, and that is unread.
+>
+> **3. `H2` DECIDED and SPLIT (task C).** `MASHED_SLOTSTATE_SEED` is **DEFAULT-ON**, five gates
+> PASS: the value `0x005f2728` is what the image itself carries at file offset `0x1f2770`;
+> it moves exactly **3 of 84** columns (its own witnesses); (b)/(e) digit-identical;
+> `MASHED_NO_SLOTSTATE_SEED` restores the old default **byte-identically**.
+> **`MASHED_SLOT_PLAYER` stays OFF** — it is a partial bridge at a knowingly-unfaithful site that
+> exists only to enable branch 2, which is itself OFF, and the metrics never cover car 0.
+>
+> **CARRY THIS:** the knob-off reference has **moved**. `86b7b2bb` (80 col) and `7ced2aa3`
+> (84 col) are **pre-seed**. The current default control is **`H2_def.step.csv`, `c741a4c5`**.
+> Diffing a new default capture against the old ones shows `ss_base`/`ss_v`/`ss_raw` differing
+> **by design** — do not read that as a regression. Byte-hash controls are dead anyway; use
+> `det_prefix.py --common-cols` (the schema is now 84 columns).
+
+> ## START HERE 2026-10-08 (task A): **The later-anchored window is the WRONG instrument — the two sides' firings are at DISJOINT offsets. Scored call-wise instead: branch 2's output pose AGREES 82/82.**
+>
+> Read [`RESULT_FIRESHAPE.md`](../verify/d3_gatefire_20261008/RESULT_FIRESHAPE.md). Scoping +
+> re-scoring of committed captures only — no run, no build, nothing default-ON, no C-level.
+>
+> **Task (A) was declined on measurement, not skipped.** Moving the window later does make it see
+> the port's firings, but it moves it off the original's: original fires at call offsets
+> **149-219**, port at **558-660**. No single offset window holds both. And a late window has **no
+> reference** — at `skip=558` only **2 of the original's 12 observations** are full-length and
+> live (7 short, 3 frozen), and those 2 disagree on every statistic.
+>
+> **What replaced it.** `re/tools/ai_fire_shape.py` (new) scores the calls where the branch
+> actually fires, each side in its own regime, with a control arm. Original **64/64** and port
+> **18/18** firing calls both give `(c0,c1,c4,c5) = (0,0,0,255)` — **82/82**, against control arms
+> steering across 13-75 distinct values. First behavioural agreement measured for branch 2.
+>
+> **W-SHAPE partially closed.** `o_t3` carries `c4_in`/`c5_in` after all: entry is `(0,0)` on all
+> 64 original firing calls, so the capture **cannot** separate "branch zeroes `c4`" from "`c4` was
+> already 0". Port side still open — it needs that column pair in the stepdump.
+>
+> **Still open, same root (`D-11073`):** branch 2's **timing** (the 423-call offset *is* the `i0`
+> anchor split) and its **car distribution** (original 31/4/29, port 18 on one car). The pose
+> agrees; when and to whom does not.
+>
+> `ai_ctrl_window.py` gained `--skip K` plus a short-window refusal and a `degenerate` flag.
+> **skip=0 output is byte-identical to the previous `HEAD`** (diffed over four captures); the
+> committed (b)/(e) criteria are untouched. Nothing was re-baselined.
+
 > ## START HERE 2026-10-08 (commits `c41cd645`..`67515c93`): **GATEFIRE ran end to end. Branch 2 is PORTED, WIRED and FIRES. The lane is now blocked on ONE ROOT - the race sub-state machine, opened as D-11073.**
 >
 > Read [`RESULT_GF1.md`](../verify/d3_gatefire_20261008/RESULT_GF1.md) -> [`RESULT_WIRE2.md`](../verify/d3_gatefire_20261008/RESULT_WIRE2.md) -> [`RESULT_NOELIM.md`](../verify/d3_gatefire_20261008/RESULT_NOELIM.md) -> [`RESULT_CALLWISE2.md`](../verify/d3_gatefire_20261008/RESULT_CALLWISE2.md). Scope: [`SCOPE_SUBSTATE.md`](../verify/d3_gatefire_20261008/SCOPE_SUBSTATE.md).

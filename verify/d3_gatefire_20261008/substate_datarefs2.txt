@@ -1,0 +1,33 @@
+// 0x005f29b8  DATA in .data
+//   type undefined4 len 4  value 000000FFh
+//   14 reference(s) total
+//   WRITES (8):
+//     0x0040ff03 in FUN_004111c0  [WRITE]  MOV dword ptr [0x005f29b8],0xff
+//     0x004100d3 in FUN_004111c0  [WRITE]  MOV dword ptr [0x005f29b8],0x186a0
+//     0x00410291 in FUN_004111c0  [WRITE]  MOV dword ptr [0x005f29b8],0x2ee0
+//     0x0041036a in FUN_004102f0  [WRITE]  MOV dword ptr [0x005f29b8],EDI
+//     0x00410391 in FUN_004102f0  [WRITE]  MOV dword ptr [0x005f29b8],0x2ee0
+//     0x004103f0 in FUN_004103a0  [WRITE]  MOV dword ptr [0x005f29b8],ESI
+//     0x004104c0 in FUN_004103a0  [WRITE]  MOV dword ptr [0x005f29b8],0x0
+//     0x00410910 in FUN_00410860  [WRITE]  MOV dword ptr [0x005f29b8],ESI
+//   reads (6):
+//     0x0040e4a0 in FUN_0040e4a0  [READ]  MOV EAX,[0x005f29b8]
+//     0x0041026d in FUN_004111c0  [READ]  CMP dword ptr [0x005f29b8],0x186a0
+//     0x004102f0 in FUN_004102f0  [READ]  CMP dword ptr [0x005f29b8],0x186a0
+//     0x0041034f in FUN_004102f0  [READ]  MOV EDI,dword ptr [0x005f29b8]
+//     0x004103cf in FUN_004103a0  [READ]  MOV ESI,dword ptr [0x005f29b8]
+//     0x004108fd in FUN_00410860  [READ]  MOV ESI,dword ptr [0x005f29b8]
+//   other: (none)
+
+// 0x00639d70  DATA in .data
+//   type undefined4 len 4  value 00000000h
+//   6 reference(s) total
+//   WRITES (3):
+//     0x004053e4 in FUN_004053d0  [WRITE]  MOV [0x00639d70],EAX
+//     0x004053f0 in FUN_004053d0  [WRITE]  MOV dword ptr [0x00639d70],ECX
+//     0x00405411 in FUN_00405400  [WRITE]  MOV [0x00639d70],EAX
+//   reads (3):
+//     0x00405439 in FUN_00405430  [READ]  MOV EAX,[0x00639d70]
+//     0x00405460 in FUN_00405460  [READ]  MOV EAX,[0x00639d70]
+//     0x004054a7 in FUN_00405460  [READ]  MOV ECX,dword ptr [0x00639d70]
+//   other: (none)

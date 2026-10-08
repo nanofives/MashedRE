@@ -377,13 +377,27 @@ bool Ai_BridgeLoad(int course, const char* trackPizPath) {
     // load the original's .data, so its image-pad owns the RVA zero-filled and
     // CarSlotStateSet (AiStandalone.cpp:1404-1409) early-returns on base == 0. Writing
     // the constant back reproduces a static initializer the binary itself carries -- it
-    // is not a bridge and no C-level follows. Default-OFF while leg C is being measured;
-    // predicted behaviourally INERT because the standalone's only consumer of the
-    // concept, Ai::Host::veh_type, is the synthesized constant at :93 rather than a read
-    // of this table. PREREG: verify/d3_racepos_20261006/PREREG_LEGC_LEGA.md section 3a.
+    // is not a bridge and no C-level follows. Predicted, and then measured, behaviourally
+    // INERT because the standalone's only consumer of the concept, Ai::Host::veh_type, is
+    // the synthesized constant at :93 rather than a read of this table.
+    // PREREG: verify/d3_racepos_20261006/PREREG_LEGC_LEGA.md section 3a.
+    //
+    // [H2 2026-10-08] NOW DEFAULT-ON. verify/d3_gatefire_20261008/{PREREG_H2,RESULT_H2}.md.
+    // H2-FAITHFUL: 0x005f2728 is the dword the image itself carries at file offset
+    // 0x1f2770 (.data offset 0x008770 < RawSize 0x04d000, so genuinely file-backed) --
+    // identical in MASHED.exe and MASHED.exe.unpatched. H2-SCOPE: over 19,418 keys the
+    // seed moves exactly 3 of 80 stepdump columns (ss_base/ss_v/ss_raw, its own
+    // witnesses) and nothing else. This is a data-initialisation correction, NOT a
+    // behavioural improvement -- it is inert on (b), (e) and 77/80 columns. It is worth
+    // taking because the value is a precondition later ports will READ, and leaving the
+    // port on 0 where the original reads 0x005f2728 is a latent wrong answer.
+    // MASHED_NO_SLOTSTATE_SEED restores the old zero-filled behaviour exactly (H2-OPTOUT),
+    // following the house convention for default-ON features (MASHED_NO_FOG etc.).
+    // MASHED_SLOTSTATE_SEED is retained as a no-op so existing drivers keep working.
     {
-        static const bool s_slotStateSeed = (std::getenv("MASHED_SLOTSTATE_SEED") != nullptr);
-        if (s_slotStateSeed) Ai::I32(0x005f2770u) = 0x005f2728;
+        static const bool s_noSlotStateSeed =
+            (std::getenv("MASHED_NO_SLOTSTATE_SEED") != nullptr);
+        if (!s_noSlotStateSeed) Ai::I32(0x005f2770u) = 0x005f2728;
     }
     // [GATEFIRE 2026-10-08] The slot-STATE cells themselves. Seeding the pointer
     // above only makes the table addressable; nothing fills it for the PLAYER.
@@ -4078,6 +4092,8 @@ extern "C" int g_wireReached[4]; extern "C" int g_wireRet[4];
 extern "C" int g_wireFire[4];
 // [GF1-CALLWISE] per-call branch-2 outcome, -1 = not evaluated.
 extern "C" int g_b2Ret[4]; extern "C" int g_b2Los[4];
+// [W-SHAPE port side] ctrl[4]/ctrl[5] at ControlStep entry, -1 = step did not run.
+extern "C" int g_c4In[4]; extern "C" int g_c5In[4];
 
 void TrackRenderer::U9186GateDump() {
     static const char* s_path = std::getenv("MASHED_U9186_GATES");
@@ -4524,7 +4540,14 @@ void TrackRenderer::AiStepDump() {
                          // "not evaluated on this call", matching how o_t3 encodes a
                          // branch the control flow never reached -- 0 would collide with
                          // a real "the predicate returned 0".
-                         ",b2_ret,b2_los\n");
+                         ",b2_ret,b2_los"
+                         // [W-SHAPE port side 2026-10-08] ctrl[4]/ctrl[5] at ControlStep
+                         // ENTRY, matching the original aistep schema's c4_in/c5_in.
+                         // Everything else in this row is read at END of frame, i.e. the
+                         // OUTPUT pose; these two are the only entry-side columns.
+                         // APPENDED, so every column above keeps its position.
+                         // -1 = ControlStep did not run for this car before the dump.
+                         ",c4_in,c5_in\n");
     }
     for (int v = 1; v <= 3; ++v) {
         if (!g_aib.alive[v]) continue;
@@ -4550,8 +4573,8 @@ void TrackRenderer::AiStepDump() {
                          "%.9g,%.9g,%.9g,%.9g,%d,"
                          // leg E2: rmetric, arclaps, rtick.
                          "%.9g,%d,%lu,"
-                         // [GF1-CALLWISE] b2_ret, b2_los
-                         "%d,%d\n",
+                         // [GF1-CALLWISE] b2_ret, b2_los; [W-SHAPE] c4_in, c5_in
+                         "%d,%d,%d,%d\n",
                      frame, seq++, v, static_cast<unsigned long>(blk),
                      Ai::U8(blk + 0), Ai::U8(blk + 1), Ai::U8(blk + 3),
                      Ai::U8(blk + 4), Ai::U8(blk + 5),
@@ -4640,7 +4663,10 @@ void TrackRenderer::AiStepDump() {
                      // site in ControlStep earlier in THIS frame (Ai_Standalone_Tick at
                      // :3511 runs before AiStepDump at :3512). -1 when the wired block
                      // did not evaluate -- knob off, or the mode-6 gate not taken.
-                     g_b2Ret[v], g_b2Los[v]);
+                     g_b2Ret[v], g_b2Los[v],
+                     // [W-SHAPE] the entry pose, snapshotted at the top of ControlStep
+                     // in that same tick, before any ctrl store on any path.
+                     g_c4In[v], g_c5In[v]);
     }
     std::fflush(lf);
     ++frame;

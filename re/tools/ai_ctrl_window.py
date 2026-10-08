@@ -9,7 +9,13 @@ start, D3_AI_TICK_WIRING section 4.3).
 Per car prints: steer = c1 - c0 distinct count and median, |steer| median, accel c4
 distinct set + fraction 255, brake c5 distinct set + fraction 255.
 
-Usage: py -3.12 re/tools/ai_ctrl_window.py <csv> [<csv> ...] [--n 220] [--json] [--check]
+Usage: py -3.12 re/tools/ai_ctrl_window.py <csv> [<csv> ...] [--n 220] [--skip 0]
+                                           [--json] [--check]
+
+--skip K moves the window to [i0+K, i0+K+N). The committed (b) TOLERANCE below was
+established at K=0 and does NOT transfer: at K=558 only 2 of the original's 12
+observations are full-length and live (RESULT_FIRESHAPE.md). Short windows are refused
+and frozen cars are flagged `degenerate` rather than scored into a band.
 
 --check applies the D3 AI criterion (b) tolerance written into ROADMAP.md section D3
 (2026-09-26, before any post-port capture): each car must fall inside the envelope of the
@@ -17,7 +23,7 @@ ORIGINAL's 12 observations (4 runs x cars 1..3) in verify/d3_ai_20260914 + d3_ai
 """
 import csv, json, statistics, sys
 
-def window_stats(path, n):
+def window_stats(path, n, skip=0):
     rows = list(csv.DictReader(open(path, newline="")))
     out = {}
     for v in sorted({int(r["v"]) for r in rows}):
@@ -26,7 +32,13 @@ def window_stats(path, n):
         if i0 is None:
             out[v] = {"calls": 0}
             continue
-        w = r[i0:i0 + n]
+        w = r[i0 + skip:i0 + skip + n]
+        if len(w) < n:
+            # Car stopped being stepped before the window closes. Scoring a short
+            # window silently compares unequal spans -- refuse instead (2026-10-08:
+            # at skip=558 only 2 of the original's 12 observations are full-length).
+            out[v] = {"calls": len(w), "short": True, "want": n}
+            continue
         st = [int(x["c1"]) - int(x["c0"]) for x in w]
         a = [int(x["c4"]) for x in w]
         b = [int(x["c5"]) for x in w]
@@ -43,6 +55,11 @@ def window_stats(path, n):
             "accel_set": sorted(set(a)), "accel255": round(sum(x == 255 for x in a) / len(a), 3),
             "brake_set": sorted(set(b)), "brake255": round(sum(x == 255 for x in b) / len(b), 3),
         }
+        # A car that is no longer being driven holds every channel constant for the
+        # whole window. Such a row must never feed a tolerance envelope -- it widens
+        # the band with a frozen pose. Flag it; callers skip it (RESULT_FIRESHAPE.md).
+        out[v]["degenerate"] = (len(set(c0)) == 1 and len(set(c1)) == 1
+                                and len(set(a)) == 1 and len(set(b)) == 1)
     return out
 
 # ROADMAP.md section D3 AI (b) tolerance. Envelope = min/max over the original's
@@ -65,18 +82,32 @@ def main(argv):
     n = 220
     if "--n" in argv:
         n = int(argv[argv.index("--n") + 1])
-    paths = [a for i, a in enumerate(argv) if not a.startswith("--") and (i == 0 or argv[i-1] != "--n")]
-    res = {p: window_stats(p, n) for p in paths}
+    skip = 0
+    if "--skip" in argv:
+        skip = int(argv[argv.index("--skip") + 1])
+    valued = {"--n", "--skip"}
+    paths = [a for i, a in enumerate(argv)
+             if not a.startswith("--") and (i == 0 or argv[i-1] not in valued)]
+    res = {p: window_stats(p, n, skip) for p in paths}
     if "--json" in argv:
         print(json.dumps(res, indent=1)); return
+    if skip:
+        print("# window [i0+%d, i0+%d) -- NOT the committed (b) window; the TOLERANCE"
+              " envelope below was established at skip=0 only." % (skip, skip + n))
     for p, cars in res.items():
         print(p)
         for v, s in cars.items():
+            if s.get("short"):
+                print("  v%d  SHORT: %d of %d calls -- not scored" % (v, s["calls"], s["want"]))
+                continue
             if not s["calls"]:
                 print("  v%d  no call with c4 != 0" % v); continue
             print("  v%d start=%d n=%d steerD=%d steerMed=%s |steer|Med=%s accel=%s a255=%.3f brake=%s b255=%.3f" % (
                 v, s["start_frame"], s["calls"], s["steer_distinct"], s["steer_median"],
                 s["abs_steer_median"], s["accel_set"], s["accel255"], s["brake_set"], s["brake255"]))
+            if s.get("degenerate"):
+                print("      DEGENERATE: every channel constant across the window"
+                      " -- car is not being driven; do not feed an envelope.")
             if "--check" in argv:
                 f = check(s)
                 print("      (b) %s%s" % ("PASS" if not f else "FAIL: ", "; ".join(f)))

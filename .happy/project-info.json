@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-10-09T06:20:00Z",
+  "updatedAt": "2026-10-08T17:05:00Z",
   "sections": [
     {
       "heading": "Phase",
@@ -23,7 +23,7 @@
       ]
     },
     {
-      "heading": "U-9186 / GATEFIRE 2026-10-08 — branch 2 ported, wired and FIRING; lane blocked on one root",
+      "heading": "U-9186 / GATEFIRE 2026-10-08 — branch 2 pose AGREES 82/82; slot seed now DEFAULT-ON; D-11073 cheaper than its row says",
       "fields": [
         {
           "label": "Branch 2",
@@ -32,7 +32,7 @@
         },
         {
           "label": "THE ROOT",
-          "value": "D-11073 race sub-state machine. aib_game_sub_mode() returns a hardcoded 6, upstream of THREE measured symptoms: bias374's ramp, the inert mode-5 branch, and GF1-CALLWISE's anchor split.",
+          "value": "D-11073 race sub-state machine. aib_game_sub_mode() returns a hardcoded 6, upstream of THREE measured symptoms: bias374's ramp, the inert mode-5 branch, and GF1-CALLWISE's anchor split. Scope LOWERED 2026-10-08 — see the D-11073 scope field.",
           "kind": "text"
         },
         {
@@ -42,13 +42,14 @@
         },
         {
           "label": "Phase 3 identified",
-          "value": "Camera-path keyframe fly-in over per-frame-re-initialised cars, chain 3->4->6. Porting the state function ALONE yields no hold — the camera-path module 0x004053d0..0x00405540 is required.",
+          "value": "Camera-path keyframe fly-in over per-frame-re-initialised cars, chain 3->4->6. CORRECTED 2026-10-08 (SCOPE_SUBSTATE2.md): the HOLD does not need that module — FUN_004102f0 sets the exit flag itself and the flag alone blocks the AND. The module governs the motion, not the hold.",
           "kind": "text"
         },
         {
           "label": "Caveats to carry",
           "value": [
-            "W-NOREG passes BLIND: firings at frames 643-660, scored window 1-220, 0 of 18 inside",
+            "W-NOREG passed BLIND; a LATER window does not fix it — the two sides' firings are at DISJOINT offsets (orig 149-219, port 558-660)",
+            "Knob-off byte hashes are dead: schema is 84 cols and the seed is default-ON",
             "hooks.csv exe_file is NOT ground truth — .rsp membership is",
             "MASHED_GF1 probe MUTATES TimerAt/RankAt; off for any (b)/(e) scoring",
             ".data is ~90% BSS — check offset < SizeOfRawData per address"
@@ -57,12 +58,37 @@
         },
         {
           "label": "Default build",
-          "value": "bit-identical across TEN builds (86b7b2bb). Nothing default-ON. No C-level taken.",
+          "value": "One knob taken default-ON 2026-10-08: MASHED_SLOTSTATE_SEED (inert, 3 of 84 columns, byte-identical opt-out). Everything else still OFF. Current default control = H2_def.step.csv / c741a4c5. No C-level taken.",
+          "kind": "text"
+        },
+        {
+          "label": "Branch 2 POSE AGREES 82/82",
+          "value": "RESULT_FIRESHAPE.md 2026-10-08: scored call-wise instead of by window. Original 64/64 and port 18/18 firing calls both give (c0,c1,c4,c5)=(0,0,0,255), vs control arms steering across 13-75 distinct values. First behavioural agreement for branch 2. Timing and car distribution still disagree — both downstream of D-11073.",
           "kind": "text"
         },
         {
           "label": "Next",
-          "value": "D-11073 (highest value here) -> a later-anchored window so the criteria can see branch 2 -> H2 default-ON question",
+          "value": "Check FUN_00445aa0's cadence (could clear the flag immediately) -> re-classify the D-11073 row -> decide MASHED_SLOT_PLAYER together with MASHED_WIRE_B2 in a leg that measures car 0.",
+          "kind": "text"
+        },
+        {
+          "label": "W-SHAPE",
+          "value": "CLOSED NEGATIVE. Entry pose is 0 on 42,654/42,654 port rows AND 5,318/5,318 original rows — both sides zero ctrl before every call, so the quantity is dead. Probe is sound (disagrees with output on 99.2% of rows). The ctrl[4] claim stands on static transcription only.",
+          "kind": "text"
+        },
+        {
+          "label": "D-11073 scope",
+          "value": "LOWER than the row says. Hold does NOT need the camera-path module: the exit test is an AND, the flag alone blocks it, and FUN_004102f0 sets the flag itself under DAT_005f29b8==100000 — a write already inside FUN_004111c0 at 0x004100d3. Clear comes from FUN_00445aa0. DAT_00657448 has NO writer in the image. Owed re-classify correction.",
+          "kind": "text"
+        },
+        {
+          "label": "H2 DECIDED",
+          "value": "SPLIT. MASHED_SLOTSTATE_SEED is DEFAULT-ON (5 gates PASS; 3 of 84 columns move; opt-out byte-identical). MASHED_SLOT_PLAYER stays OFF — partial bridge at an unfaithful site, enables a default-OFF feature, and the metrics never cover car 0.",
+          "kind": "text"
+        },
+        {
+          "label": "Default control MOVED",
+          "value": "86b7b2bb (80 col) and 7ced2aa3 (84 col) are PRE-SEED. Current default = H2_def.step.csv, c741a4c5. ss_base/ss_v/ss_raw differ by design — not a regression. Use det_prefix.py --common-cols.",
           "kind": "text"
         }
       ]
