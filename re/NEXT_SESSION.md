@@ -1,5 +1,27 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-08 (D-11073 leg 0): **Leg 1 CANNOT start as scoped. A faithful `FUN_004103a0` on the port's current inputs holds phase 5 FOREVER.**
+>
+> Read [`RESULT_LEG0.md`](../verify/d3_gatefire_20261008/RESULT_LEG0.md) (prereg `PREREG_LEG0.md`, 9/9 gates PASS).
+> - **The phase-5 exit timer `DAT_0063d588` reads 0.0 in the standalone, and so does its step
+>   `_DAT_007f100c`.** The original advances it 0.0166667/frame: `FUN_0041d930` tail at
+>   `0x0041da76`, step stored by `FUN_0040fc00` at `0x0040fc57`. The exe has neither write, and
+>   `HudSlideBillboardTick` cannot be wired as-is because it makes raw calls outside the mapped text.
+> - **Phase 5 = exactly 112 frames.** The timer runs through phases 3, 5 and 6 and is zeroed only on
+>   the phase-4 frame.
+> - **Track id `0x1e` confirmed live, and entry 0 initial = row 0 of `0x005f8d50`** (to 0.002).
+>
+> Leg 1 scope additions (RESULT_LEG0 §4):
+> 1. the timer step + tail;
+> 2. the `DAT_005f29b8 = 12000` seed (standalone reads 0);
+> 3. alive routed through `s_host.car_alive` (`0x008815a4` reads 0/0/0/0 in the exe vs 1/1/1/1 original);
+> 4. six asi-only callees need exe homes.
+>
+> **Leg 2 caution:** phase-3 length does NOT reproduce (651 / 652 / 730 frames; the target drifts per
+> run). Gate on the release rule, not a length. `DAT_00644158` reads 0 in the exe, so route
+> `FUN_00442600` through `aib_track_index()`.
+> **Owed on the next original capture:** `DAT_0067ea64` and `0x00882194/98 + v*0xd04`.
+
 > ## START HERE 2026-10-08 (D-11073 scoped): **Port brief written: [`re/BRIEF_D11073.md`](BRIEF_D11073.md). The pre-race machine is THREE phases, not one.**
 >
 > 3 (camera hold, ~652 frames) -> 4 (1 frame) -> 5 (held-car countdown, ~110 frames, released at
