@@ -22,7 +22,7 @@ Raw: `GF0_CENSUS.txt`, `GF0_CTL.txt`, `GF0_RUN.txt`, `GF0{off,on}_{1,2,3}.gates.
 |---|---|---|
 | `GF0-REFDIST` | **PASS** | ON arm: non-zero on **6,784 / 10,578 / 9,632 of 13,498** for cars 1/2/3, 2,973 / 10,441 / 6,160 distinct. Car 0 is `0`, correctly gated out |
 | `GF0-IDX364` | **measured — DISAGREES** | port `0` on **53,992/53,992**; original `-1` on **512/512** |
-| `GF0-BIAS374` | **measured — DISAGREES, and WIDER than recorded** | port `{4: 39336, 2: 4804, 3: 4804, 0: 2644, 1: 2404}`; original `0` on 512/512. **The witness recorded `{0,1,2,3}`; `4` is new and is the majority value at 72.9%** |
+| `GF0-BIAS374` | **measured — see the CORRECTION below** | port `{4: 39336, 2: 4804, 3: 4804, 0: 2644, 1: 2404}`; original `0` on 512/512 |
 | `GF0-TIMER` | **dead — but see §3, this is NOT a blocker** | `0` on all 4 cars, all rows, both arms |
 | `GF0-PROG1` | **0 — branch 1 blocked** | `0` on all 4 cars, all 13,498 rows per car, both arms |
 | `GF0-CTL` | **PASS** | `GF0step.csv` hashes to **`86b7b2bb`**, identical to `E2off_1` / `H1step` / `H3step`; `det_prefix` identical over all 19,418 keys. The `*_abs` family stays **DEAD** on both arms |
@@ -61,6 +61,15 @@ pre-registration does not start. No producer was built, and no global was seeded
 all: the original, reading `-1`, **skips that call on every one of 512 calls**; the port, reading
 `0`, would take it. A branch-2 port measured in this state would be measuring a path the original
 never executes.
+
+> **CORRECTION 2026-10-08, see [`RESULT_BIAS374.md`](RESULT_BIAS374.md).** The paragraph below
+> calls the `bias374` gap "new information" that "widens" rather than narrows. **That inference was
+> wrong.** `0x0089a374` is a monotone **time ramp** (port: `0→1→2→3→4` at frames 0/661/1262/2463/3664,
+> each transition once). The witness's 55 s capture ended ~360 frames before band `4` begins, so `4`
+> is the same ramp seen for longer, not new divergence. And the original's `0` comes from a
+> **220-frame slice** (frames 794-1013 of a 1,014-frame capture) set against the port's 13,498
+> frames. On the only overlapping window the gap is **one band**, not five, and nothing is known
+> about the original past frame 1013. The measured values below stand; the reading of them does not.
 
 `bias374` feeds the limit-table index (`bias374 + iVar1*5`, `AiLeaderTimer.cpp:98`). The original's
 only index is **10**. With the port's `bias374 = 4` and `iVar1 = 2` (`flt360` is `2.5` on 100% of
