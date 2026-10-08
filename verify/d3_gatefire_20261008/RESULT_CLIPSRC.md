@@ -6,6 +6,13 @@ clone. No build, nothing run. `original/` untouched. No C-level.
 
 Raw: `clipsrc_refs.txt`.
 
+> **CORRECTED 2026-10-08 by [`RESULT_IMGCHECK.md`](RESULT_IMGCHECK.md).** The conclusion below
+> stands, but the reason is sharper. All three globals sit in `.data`'s **uninitialised tail**
+> (`.data` is VSize `0x32a704` vs RawSize `0x4d000`), so they have **no file bytes** and are zero
+> at load **on the original too**. The original's fly-in exists because
+> `FUN_004053d0`/`FUN_00405400` **write them at runtime**. The port therefore cannot transcribe
+> its way to a hold — it needs those writers.
+
 ## 0. Verdict first
 
 > **The camera clip is owned by a tight module at `0x004053d0..0x00405540`.** Both handles are

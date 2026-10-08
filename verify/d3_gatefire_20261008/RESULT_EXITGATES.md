@@ -6,6 +6,9 @@ clone. No build, nothing run. `original/` untouched. No C-level.
 
 Raw: `exitgates_decomp.txt`.
 
+> **CORRECTED 2026-10-08 by [`RESULT_IMGCHECK.md`](RESULT_IMGCHECK.md).** `DAT_005f29b8` is
+> **file-backed, value `0xff`**, not unobtainable. See that file §0(1).
+
 ## 0. Verdict first
 
 > Phase 3 is not a bare timer. It is an **intro/animation playback** that, **every frame**,

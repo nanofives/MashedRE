@@ -6,6 +6,11 @@ No build, nothing run. `original/` untouched. No C-level.
 
 Raw: `phase3_decomp.txt`.
 
+> **CORRECTED 2026-10-08 by [`RESULT_IMGCHECK.md`](RESULT_IMGCHECK.md).** This result (and
+> `RESULT_EXITGATES.md`) described `DAT_005f29b8` as dead standalone in a way that implied it had
+> no obtainable value. **It is FILE-BACKED at fileoff `0x1f29b8` with value `0x000000ff` (255)** —
+> matching `FUN_004111c0` case 1's `= 0xff` — so it is **transcribable**, the `0x005f2770` class.
+
 ## 0. Verdict first
 
 > **`FUN_004102f0` is the pre-race countdown / race-start coordinator**, and it closes
