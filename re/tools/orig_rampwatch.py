@@ -60,6 +60,18 @@ A_SUBMODE = 0x0067e9fc   # FUN_0042f6a0 GetRaceSubMode
 A_SUBSTATE = 0x0063ba8c  # render sub-state (3=driving, 5/6/7=standings)
 A_ORDER = 0x0089a870     # finish-order quartet, stride 4 (all -1 at round init)
 
+# [GATEFIRE GF1 2026-10-08] FUN_0040e470 CarSlotStateGet, the value branch 2 tests.
+#   return *(int*)(*(int**)0x005f2770 + param_1*4 + 0x34)
+# (re/analysis/race_results/0040e470.md; 14 bytes, no branches, no calls.)
+# WHY THIS IS HERE. FUN_004148b0:104 is `if (E470(i) == 1) last = i`, and the PORT
+# reads {v0: 0, v1/v2/v3: 2} — never 1 — so `last` stays -1 and branch 2 dies at
+# site 105 (verify/d3_gatefire_20261008/RESULT_GF1.md section 3). Whether the
+# ORIGINAL also reads 2 here has never been measured: the 2026-10-03 witness logged
+# idx364 (which made the :94 call site unreachable) and never instrumented :104.
+# This is a POINTER-CHASE, not a flat read — the table base is behind 0x005f2770.
+A_SLOTPTR = 0x005f2770   # PTR_PTR, deref then +0x34 + v*4
+SLOT_OFF = 0x34
+
 kTickScale = 1.0 / 3000.0   # _DAT_005cc948, Ai/AiStandalone.cpp:611
 
 PROCESS_VM_READ = 0x0010
@@ -158,7 +170,8 @@ def main():
 
     cols = ["t", "clk_0ff4", "tick_0ff8", "tickscale", "bias374", "last370",
             "framedt", "mode368", "flt360", "idx364", "diff_67ea7c", "submode",
-            "substate", "ord0", "ord1", "ord2", "ord3"]
+            "substate", "ord0", "ord1", "ord2", "ord3",
+            "slotptr", "e470_0", "e470_1", "e470_2", "e470_3"]
     rows = []
     try:
         while proc.poll() is None:
@@ -184,6 +197,14 @@ def main():
             }
             for s in range(4):
                 r["ord%d" % s] = f32(h, A_ORDER + s * 4)
+            # FUN_0040e470: deref the table pointer, then +0x34 + v*4. A null or
+            # unreadable base records None (empty cell) rather than 0, so "table not
+            # there" can never be mistaken for "table says 0".
+            base = i32(h, A_SLOTPTR)
+            r["slotptr"] = base
+            for s in range(4):
+                r["e470_%d" % s] = (i32(h, base + SLOT_OFF + s * 4)
+                                    if base else None)
             rows.append(r)
             time.sleep(1.0 / hz)
     finally:
@@ -212,6 +233,19 @@ def main():
         print("  tickscale  range %.3f .. %.3f  (seconds; bands at 2/12/22/42/60-62)"
               % (min(ticks) * kTickScale, max(ticks) * kTickScale))
     print("  bias374 distinct values: %s" % sorted(set(seen)))
+    from collections import Counter as _C
+    print("")
+    print("=== FUN_0040e470 per car (branch 2 needs == 1 at FUN_004148b0:104) ===")
+    print("  slotptr non-null on %d/%d samples"
+          % (sum(1 for r in rows if r.get("slotptr")), len(rows)))
+    for s in range(4):
+        c = _C(r.get("e470_%d" % s) for r in rows)
+        print("  v%d: %s" % (s, c.most_common(5)))
+    allv = sorted({r.get("e470_%d" % s) for r in rows for s in range(4)
+                   if r.get("e470_%d" % s) is not None})
+    print("  values present: %s" % allv)
+    print("  ANY car ever reading exactly 1? %s" % (1 in allv))
+    print("  (the PORT reads {v0: 0, v1/v2/v3: 2} and never 1 -- RESULT_GF1.md s3)")
     prev = None
     for r in rows:
         if r["bias374"] != prev:
