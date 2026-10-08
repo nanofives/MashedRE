@@ -1,0 +1,17 @@
+##### W-TOOK (round + NO_ELIM)
+d0119dcdd7db90449114eea5bb68adeef5cfc05881d0371e5da12475eeca174f *verify/d3_gatefire_20261008/NE_off.step.csv
+3421acedb5721099f3032bfdcb05627a7a016027f5108e0025d0f19226004b35 *verify/d3_gatefire_20261008/NE_on.step.csv
+
+##### (b) bands
+--- NE_base ---
+      (b) PASS
+      (b) FAIL: c0_distinct=39 not in [13,37]; c1_distinct=75 not in [17,70]; steer_distinct=113 not in [29,96]; c1_median=5.5 not in [0,0]; abs_steer_median=44.5 not in [0,23]
+      (b) PASS
+--- NE_off ---
+      (b) PASS
+      (b) FAIL: c0_distinct=39 not in [13,37]; c1_distinct=75 not in [17,70]; steer_distinct=113 not in [29,96]; c1_median=5.5 not in [0,0]; abs_steer_median=44.5 not in [0,23]
+      (b) PASS
+--- NE_on ---
+      (b) PASS
+      (b) FAIL: c0_distinct=39 not in [13,37]; c1_distinct=75 not in [17,70]; steer_distinct=113 not in [29,96]; c1_median=5.5 not in [0,0]; abs_steer_median=44.5 not in [0,23]
+      (b) PASS
