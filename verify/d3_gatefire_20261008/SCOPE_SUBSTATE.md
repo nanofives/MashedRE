@@ -86,7 +86,14 @@ multi-session effort and should be scoped against ROADMAP D3/D4 rather than sque
 **Would NOT by itself fix:** branch 2's firing count. The condition also needs `Prog(v) == 0` and
 `6.5 < Prog(0)` to co-occur (`RESULT_WIRE2.md` §5). Necessary, not sufficient.
 
-**[UNCERTAIN]:** whether phase 3 is a countdown, a rolling start, or something else. The capture
+> **CLOSED 2026-10-08 by [`RESULT_PHASE3.md`](RESULT_PHASE3.md).** Phase 3 **is** a countdown:
+> `FUN_004102f0` (172 B) decrements `DAT_005f29b8` per frame and hands off when two gates clear.
+> The chain is **3 → 4 → 6**, not 3 → 6, and the capture's lone substate-4 sample is that
+> transient. Consequence for §3: sizing **(a) is no longer a fabrication** — modelling a countdown
+> as a timer is faithful in kind — but it still needs the real chain, a live `DAT_005f29b8`
+> (measured **0** standalone, `RESULT_A360.md`) and the two exit gates.
+
+**[UNCERTAIN, now closed — see above]:** whether phase 3 is a countdown, a rolling start, or something else. The capture
 shows only that the AI does not accelerate during it. Reading `FUN_004111c0`'s case-3 helper
 (`FUN_004102f0`) would settle it and is cheap.
 
