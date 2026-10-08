@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-10-08T23:40:00Z",
+  "updatedAt": "2026-10-09T06:20:00Z",
   "sections": [
     {
       "heading": "Phase",
@@ -23,45 +23,47 @@
       ]
     },
     {
-      "heading": "U-9186 / GATEFIRE 2026-10-08 — leg 0 run, idx364 fixed, lane down to one open question",
+      "heading": "U-9186 / GATEFIRE 2026-10-08 — branch 2 ported, wired and FIRING; lane blocked on one root",
       "fields": [
         {
-          "label": "Lane status",
-          "value": "Branch 1 (36 calls) DEFERRED, input-blocked. Branch 2 (64 calls) blocked on ONE remaining item: bias374.",
+          "label": "Branch 2",
+          "value": "PORTED (shared TU), WIRED (MASHED_WIRE_B2) and FIRES — 18x on v2 with cars alive, LOS passing on all. All 4 PREREG_WIRE gates PASS.",
           "kind": "text"
         },
         {
-          "label": "idx364",
-          "value": "RESOLVED + FIXED. FUN_00414060 step 6 ported (PARTIAL, default-OFF MASHED_A364_RESET). All 5 gates PASS, INERT by design.",
+          "label": "THE ROOT",
+          "value": "D-11073 race sub-state machine. aib_game_sub_mode() returns a hardcoded 6, upstream of THREE measured symptoms: bias374's ramp, the inert mode-5 branch, and GF1-CALLWISE's anchor split.",
           "kind": "text"
         },
         {
-          "label": "Measured blockers",
+          "label": "GF1-CALLWISE",
+          "value": "RAN: 0 vs 64. Both windows are the first 220 mode-6 calls, but the original reaches mode 6 after 683 calls of phase 3 and the port is in mode 6 from frame 0.",
+          "kind": "text"
+        },
+        {
+          "label": "Phase 3 identified",
+          "value": "Camera-path keyframe fly-in over per-frame-re-initialised cars, chain 3->4->6. Porting the state function ALONE yields no hold — the camera-path module 0x004053d0..0x00405540 is required.",
+          "kind": "text"
+        },
+        {
+          "label": "Caveats to carry",
           "value": [
-            "GF0-PROG1: 0x008a96e8 = 0 on 100% of rows (coverage-checked against the live neighbour 4 bytes up)",
-            "Porting FUN_00414060 WHOLE would regress 0x0089a360 from 2.5 to 0 - every input of steps 1-5 reads 0",
-            "bias374: port {0,1,2,3,4} vs original 0; '4' is NEW since the 2026-10-03 witness, 72.9% of rows"
+            "W-NOREG passes BLIND: firings at frames 643-660, scored window 1-220, 0 of 18 inside",
+            "hooks.csv exe_file is NOT ground truth — .rsp membership is",
+            "MASHED_GF1 probe MUTATES TimerAt/RankAt; off for any (b)/(e) scoring",
+            ".data is ~90% BSS — check offset < SizeOfRawData per address"
           ],
           "kind": "list"
         },
         {
           "label": "Default build",
-          "value": "bit-identical across SIX builds (86b7b2bb): E2off_1 / H1step / H3step / GF0step / A360step / A364step",
+          "value": "bit-identical across TEN builds (86b7b2bb). Nothing default-ON. No C-level taken.",
           "kind": "text"
         },
         {
           "label": "Next",
-          "value": "bias374 (FUN_004177b0, exe copy C2-demoted) -> then branch 2 is measurable",
+          "value": "D-11073 (highest value here) -> a later-anchored window so the criteria can see branch 2 -> H2 default-ON question",
           "kind": "text"
-        },
-        {
-          "label": "re-classify owed",
-          "value": [
-            "hooks.csv 00414060 -> C2 'partial (step 6)'",
-            "hooks.csv 004148b0 exe_file is STALE",
-            "U-9186 instruction superseded by U-9187"
-          ],
-          "kind": "list"
         }
       ]
     },

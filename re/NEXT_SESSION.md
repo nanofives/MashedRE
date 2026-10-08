@@ -1,5 +1,59 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-08 (commits `c41cd645`..`67515c93`): **GATEFIRE ran end to end. Branch 2 is PORTED, WIRED and FIRES. The lane is now blocked on ONE ROOT - the race sub-state machine, opened as D-11073.**
+>
+> Read [`RESULT_GF1.md`](../verify/d3_gatefire_20261008/RESULT_GF1.md) -> [`RESULT_WIRE2.md`](../verify/d3_gatefire_20261008/RESULT_WIRE2.md) -> [`RESULT_NOELIM.md`](../verify/d3_gatefire_20261008/RESULT_NOELIM.md) -> [`RESULT_CALLWISE2.md`](../verify/d3_gatefire_20261008/RESULT_CALLWISE2.md). Scope: [`SCOPE_SUBSTATE.md`](../verify/d3_gatefire_20261008/SCOPE_SUBSTATE.md).
+>
+> **What landed.** Branch 2 (`FUN_004148b0 && FUN_00416060`) has a standalone body as a SHARED TU
+> (rva-lint NEW=0, allowlist unchanged); `FUN_00414060` step 6 is a partial port fixing `idx364`;
+> `MASHED_SLOT_PLAYER` bridges the player slot-state cell; the `FUN_00418560` mode-5 branch is
+> ported. **All default-OFF. The default build is bit-identical across TEN builds (`86b7b2bb`).**
+>
+> **Branch 2 FIRES** - 18x on v2 under `MASHED_NO_ELIM`, LOS passing on all. All four
+> `PREREG_WIRE` gates PASS. **But `W-NOREG` passes BLIND**: the firings are at frames 643-660 and
+> the scored window is 1-220, so **0 of 18 are inside**. Do not report it as "the wiring does not
+> regress (b)/(e)".
+>
+> **`GF1-CALLWISE` RAN: 0 vs 64.** Both windows are each side's first 220 mode-6 calls, but the
+> original reaches mode 6 after 683 calls of phase 3 and the port is in mode 6 from frame 0.
+>
+> ### THE ONE ROOT - D-11073
+>
+> `aib_game_sub_mode() { return 6; }` (TrackRenderer.cpp:100) is upstream of **three** measured
+> symptoms: the `bias374` ramp, the inert mode-5 branch, and the CALLWISE anchor split. Phase 3 is
+> a **camera-path keyframe fly-in** over per-frame-re-initialised cars, chain **3 -> 4 -> 6**.
+>
+> **Do NOT cost it as a state-function port.** The clip handles `DAT_00639d70`/`d78` and the exit
+> flag `DAT_00897fe0` are in `.data`'s **uninitialised tail** - zero at load on BOTH sides - so
+> porting `FUN_004102f0` alone exits 3->4 on frame 1 and produces **no hold**. It needs the
+> camera-path module at **0x004053d0..0x00405540** that writes them.
+>
+> ### Standing cautions earned here
+>
+> - **`.data` is ~90% BSS** (VSize `0x32a704` vs RawSize `0x4d000`). "Is this address initialised
+>   in the image?" is a **per-address** question: `offset_in_section < SizeOfRawData`. A flat
+>   `VA - 0x400000` read is valid only inside the file-backed part. `DAT_005f29b8` IS file-backed
+>   (`0xff`); the three phase-3 globals are not.
+> - **`hooks.csv`'s `exe_file` is not ground truth** - `.rsp` membership is. Two rows named TUs
+>   holding only thunks or comments; I corrected one and walked into the other myself.
+> - **The `MASHED_GF1` probe MUTATES state** (`TimerAt`/`RankAt`). It must be OFF for any (b)/(e)
+>   scoring.
+> - **Arm every prerequisite knob.** Branch 2 needs `SLOTSTATE_SEED` + `SLOT_PLAYER` +
+>   `A364_RESET` + `REFDIST`; an under-specified arm produced a false "the wiring is inert".
+>
+> ### Next, in order
+>
+> 1. **D-11073** is the highest-value item in this area. Open reads if taken: who calls
+>    `FUN_004430a0(0)` to clear the exit flag, and what `FUN_004053d0`/`FUN_00405400` load the
+>    clip from.
+> 2. A **later-anchored window** so (b)/(e)-style statistics can see branch 2 at all. Scorer
+>    change, needs registering.
+> 3. Independent: **H2** (`MASHED_SLOTSTATE_SEED` default-ON, now joined by `MASHED_SLOT_PLAYER`,
+>    both measured inert), **U-9191** item (b), **U-9195**, the `0x00409b0e` jumptable.
+>
+> **Do NOT ship the `MASHED_RACEMETRIC_ARC` ON arm.** Blocks below are previous headlines.
+
+
 > ## START HERE 2026-10-08 (commits `c41cd645` → `170245be`): **GATEFIRE leg 0 RAN and the lane narrowed to ONE open question — `bias374`. Branch 1 is DEFERRED (input-blocked). `idx364` is FIXED via a PARTIAL port of `FUN_00414060` step 6, default-OFF behind `MASHED_A364_RESET`. Default build bit-identical across SIX builds.**
 >
 > Read [`RESULT_GF0.md`](../verify/d3_gatefire_20261008/RESULT_GF0.md) →
