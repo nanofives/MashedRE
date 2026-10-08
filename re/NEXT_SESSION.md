@@ -1,5 +1,14 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-08 (D-11073 re-scoped after leg 0): **Leg 1 split into 1a (exe substrate, inert) and 1b (phases 4+5). Start with 1a.**
+>
+> Brief: [`re/BRIEF_D11073.md`](BRIEF_D11073.md) §2. Leg 0 (`RESULT_LEG0.md`) showed a faithful phase-5 port
+> never exits today, because the timer `DAT_0063d588` and its step `_DAT_007f100c` read 0.0 in the standalone.
+> 1a supplies the timer step, the `FUN_0041d930` tail (partial), exe homes for six asi-only callees and two owed
+> original columns, with the default build byte-identical. 1b then ports `FUN_0040dbd0`/`FUN_004103a0` with
+> the 12000 seed and alive routing as a named deviation. Phase 3 (leg 2) gates on the release rule, not a length
+> (651/652/730 frames). The kickoff prompt for 1a is in the brief's §4.
+
 > ## START HERE 2026-10-08 (D-11073 leg 0): **Leg 1 CANNOT start as scoped. A faithful `FUN_004103a0` on the port's current inputs holds phase 5 FOREVER.**
 >
 > Read [`RESULT_LEG0.md`](../verify/d3_gatefire_20261008/RESULT_LEG0.md) (prereg `PREREG_LEG0.md`, 9/9 gates PASS).
