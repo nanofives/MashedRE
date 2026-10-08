@@ -1,5 +1,13 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-08 (D-11073 scoped): **Port brief written: [`re/BRIEF_D11073.md`](BRIEF_D11073.md). The pre-race machine is THREE phases, not one.**
+>
+> 3 (camera hold, ~652 frames) -> 4 (1 frame) -> 5 (held-car countdown, ~110 frames, released at
+> `DAT_0063d588 >= 1.86f`). `bias374` and the mode-5 branch need **phase 5**, not phase 3, so the
+> brief orders the work as leg 0 (measure, no code), then leg 1 (phases 4+5), then leg 2 (phase 3).
+> The camera-path clip code is NOT needed: `FUN_00405540` early-outs on `DAT_00639d78 == 0`.
+> The kickoff prompt for leg 0 is in the brief's §4.
+
 > ## START HERE 2026-10-08 (task 4 / H4): **`MASHED_SLOT_PLAYER` is DEFAULT-ON, measured inert on ALL FOUR cars. `MASHED_WIRE_B2` stays OFF.**
 >
 > Read [`RESULT_H4.md`](../verify/d3_gatefire_20261008/RESULT_H4.md) (prereg `PREREG_H4.md`).
