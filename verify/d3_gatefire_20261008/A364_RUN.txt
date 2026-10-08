@@ -1,0 +1,17 @@
+=== A364off  step=False a364reset= ===
+    pid=34616
+    exit=0  self_exited=True
+    rows = 53993
+=== A364on  step=False a364reset=1 ===
+    pid=36472
+    exit=0  self_exited=True
+    rows = 53993
+=== A364on_r2  step=False a364reset=1 ===
+    pid=32488
+    exit=0  self_exited=True
+    rows = 53993
+=== A364step  step=True a364reset= ===
+    pid=31836
+    exit=0  self_exited=True
+    rows = 19419
+A364 DONE

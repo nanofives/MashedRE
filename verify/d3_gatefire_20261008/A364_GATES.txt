@@ -1,0 +1,24 @@
+##### A364-KNOBOFF: default build unchanged?
+86b7b2bbc88f808cd0f853c744a9a51a7b0bbd11162117bd955cba5043981457 *verify/d3_gatefire_20261008/A364step.csv
+86b7b2bbc88f808cd0f853c744a9a51a7b0bbd11162117bd955cba5043981457 *verify/d3_u9186_20261008/H3step.csv
+
+##### A364-DET
+0dd432834860e14eed647e29f51151804c7476cfd76a2daed92f7ad5796ce7f2 *verify/d3_gatefire_20261008/A364on.gates.csv
+0dd432834860e14eed647e29f51151804c7476cfd76a2daed92f7ad5796ce7f2 *verify/d3_gatefire_20261008/A364on_r2.gates.csv
+
+##### A364-WROTE / A364-CTL  (both of step 6's stores)
+  arm OFF  rows=53992
+    idx364  '0'x53992   (1 distinct)
+    a870    '0'x53992   (1 distinct)
+    a874    '0'x53992   (1 distinct)
+    a878    '0'x53992   (1 distinct)
+    a87c    '0'x53992   (1 distinct)
+  arm ON  rows=53992
+    idx364  '-1'x53992   (1 distinct)
+    a870    '-1'x53992   (1 distinct)
+    a874    '-1'x53992   (1 distinct)
+    a878    '-1'x53992   (1 distinct)
+    a87c    '-1'x53992   (1 distinct)
+
+##### A364-INERT: which columns differ between arms?
+  differing columns: ['idx364', 'a870', 'a874', 'a878', 'a87c']

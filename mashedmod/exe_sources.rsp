@@ -162,6 +162,7 @@
 "Vehicle\VehicleState.cpp"
 "Vehicle\VehicleRecordPtr.cpp"
 "Race\SpectatorDistances.cpp"
+"Race\AiDifficultyReset.cpp"
 "Vehicle\ShapeOwnerHandlePool.cpp"
 "Vehicle\VehicleSeed.cpp"
 "Vehicle\SubStripUV.cpp"

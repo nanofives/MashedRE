@@ -30,6 +30,12 @@
 #include "../Ai/AiState.h"          // WS-AI-BRIDGE: ctrl-block / slot-table / spline addrs
 #include "../Ai/AiData.h"           // WS-AI-BRIDGE: .AI loader (AiData_LoadInto)
 
+// [GATEFIRE idx364 2026-10-08] FUN_00414060's step-6 tail, default-OFF behind
+// MASHED_A364_RESET. Body: Race/AiDifficultyReset.cpp. Declared extern "C" with
+// a flat name because the call site below sits inside
+// namespace mashed_re::D3d9Render and cannot re-open mashed_re::Race.
+extern "C" void __cdecl RaceAiDifficultyResetTail();
+
 namespace mashed_re {
 namespace D3d9Render {
 
@@ -395,6 +401,13 @@ bool Ai_BridgeLoad(int course, const char* trackPizPath) {
     // traced ([UNCERTAIN] U-D3-DIFF360: next, reference_to 0x0089a360 WRITE sites).
     Ai::Ai_ResetRace();
     Ai::F32(0x0089a360u) = 2.5f;
+    // [GATEFIRE idx364 2026-10-08] FUN_00414060 step 6, default-OFF behind
+    // MASHED_A364_RESET (Race/AiDifficultyReset.cpp). This is the SAME function
+    // whose step 5 produces the 2.5 seeded on the line above — the port now owns
+    // its input-free tail (the 0x0089a364 = -1 sentinel) while steps 1-5 stay
+    // blocked on unproduced globals (RESULT_A360.md). Placed here because the
+    // original's caller FUN_004111c0 runs it at race reset, which is this path.
+    RaceAiDifficultyResetTail();
     Ai::Ai_SetHost(&h);
     return true;
 }
@@ -4110,7 +4123,12 @@ void TrackRenderer::U9186GateDump() {
                          // U-D3-DIFF360 open; if pred_360 != 2.5 then porting
                          // FUN_00414060 whole REGRESSES that global, and the real
                          // blocker is 0x0067ea7c's write-site (U-1305), not this body.
-                         "m42f6a0,g30790,idx413fa0,tie67ea7c,a37c,a384i,pred_360\n");
+                         "m42f6a0,g30790,idx413fa0,tie67ea7c,a37c,a384i,pred_360,"
+                         // [GATEFIRE idx364] the SECOND of step 6's two stores.
+                         // The sentinel lands in idx364 above; this is the
+                         // -1.0f quartet at 0x0089a870..87c. Gate A364-WROTE
+                         // must witness BOTH stores or it verifies half a port.
+                         "a870,a874,a878,a87c\n");
     }
     const std::uint32_t p = Ai::U32(0x005f2770u);
     // [GATEFIRE idx364] Predict FUN_00414060's output without porting it. Scalar,
@@ -4190,8 +4208,9 @@ void TrackRenderer::U9186GateDump() {
                          "%d,%d,%.9g,"
                          "%d,%d,%d,%.9g,%d,"
                          "%d,%.9g,"
-                         // [GATEFIRE idx364] FUN_00414060 prediction
-                         "%d,%d,%d,%d,%.9g,%d,%.9g\n",
+                         // [GATEFIRE idx364] FUN_00414060 prediction + step-6 quartet
+                         "%d,%d,%d,%d,%.9g,%d,%.9g,"
+                         "%.9g,%.9g,%.9g,%.9g\n",
                      gframe, v,
                      static_cast<unsigned long>(p),
                      slot_state,
@@ -4242,7 +4261,12 @@ void TrackRenderer::U9186GateDump() {
                      // --- [GATEFIRE idx364] FUN_00414060 prediction, inputs first ---
                      m42f6a0, g30790, idx413fa0, tie67ea7c,
                      static_cast<double>(a37c), a384i,
-                     static_cast<double>(pred360));
+                     static_cast<double>(pred360),
+                     // step 6's -1.0f quartet, stride 4 (plate: 0x0089a870..87c)
+                     static_cast<double>(Ai::F32(0x0089a870u)),
+                     static_cast<double>(Ai::F32(0x0089a874u)),
+                     static_cast<double>(Ai::F32(0x0089a878u)),
+                     static_cast<double>(Ai::F32(0x0089a87cu)));
     }
     std::fflush(gf);
     ++gframe;
