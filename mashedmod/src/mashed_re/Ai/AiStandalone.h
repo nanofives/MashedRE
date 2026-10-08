@@ -85,6 +85,12 @@ bool Ai_ComputeTarget(int v, float ownX, float ownZ, float* outTx, float* outTz)
 void Ai_AdvanceClock(int units);
 // FUN_00413fe0 per-vehicle AI-state reset + race-clock zeroing. Call at race start.
 void Ai_ResetRace();
+
+// [GATEFIRE 2026-10-08] FUN_0040e480 CarSlotStateSet, exported so the race-setup
+// bridge in D3d9Render/TrackRenderer.cpp can fill the slot-STATE cells. The body
+// (AiStandalone.cpp) early-returns when 0x005f2770 holds no pointer, so calling it
+// without MASHED_SLOTSTATE_SEED is a no-op rather than a wild write.
+void Ai_SetCarSlotState(int v, int state);
 // FUN_00414030(v): force vehicle v's next lookahead to take the true nearest point.
 void Ai_ResetVehicleIndex(int v);
 

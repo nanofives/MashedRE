@@ -1798,6 +1798,15 @@ void Ai_AdvanceClock(int units)
 // for v = 0..3 (stride 0x74 from 0x0089a4f0): +0x4ec/+0x4f0/+0x4f4, +0x4c4/+0x4c8/+0x4cc/
 // +0x4d0, +0x508, +0x51c/+0x520/+0x524/+0x528 = 0; DAT_008032d4[v*5] = 1000. Plus the race
 // clock zeroing at 0x0040ff17..0x0040ff23 (DAT_007f101c/0ff4/0ff8 = 0).
+// [GATEFIRE 2026-10-08] exported wrapper for the anonymous-namespace CarSlotStateSet
+// (FUN_0040e480). Placement rationale and the bridge label live at the call site,
+// D3d9Render/TrackRenderer.cpp; this is only the accessor.
+void Ai_SetCarSlotState(int v, int state)
+{
+    if (v < 0 || v > 3) return;
+    CarSlotStateSet(v, state);
+}
+
 void Ai_ResetRace()
 {
     Ai_ResetVehicleStates();                       // FUN_00413fe0 (defined above)

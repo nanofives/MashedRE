@@ -385,6 +385,42 @@ bool Ai_BridgeLoad(int course, const char* trackPizPath) {
         static const bool s_slotStateSeed = (std::getenv("MASHED_SLOTSTATE_SEED") != nullptr);
         if (s_slotStateSeed) Ai::I32(0x005f2770u) = 0x005f2728;
     }
+    // [GATEFIRE 2026-10-08] The slot-STATE cells themselves. Seeding the pointer
+    // above only makes the table addressable; nothing fills it for the PLAYER.
+    //
+    // THIS IS A BRIDGE, EXPLICITLY, AND NOT A PORT OF CONTROL FLOW. The original's
+    // writer is FUN_0042b960 (single-player) / FUN_0042b9e0 (multi-player), and BOTH
+    // live inside FUN_0043dfd0 — a MENU MESSAGE HANDLER, sole caller FUN_00492d30,
+    // dispatching on codes like 0xff1d0000. The standalone never runs that menu, so
+    // there is no faithful site for these stores; they are placed here because this
+    // block is already the port's stand-in for that frontend initialisation (it
+    // writes the slot-INDEX table at :371 and seeds the pointer just above).
+    // Evidence + the placement argument: verify/d3_gatefire_20261008/
+    // RESULT_SLOTPLACE.md; the writer itself: RESULT_SLOTWRITER.md.
+    //
+    // WHICH VARIANT, settled by measurement not choice: o_e470.csv read the ORIGINAL
+    // at {v0: 1, v1/v2/v3: 2} on 581/672 samples, which is FUN_0042b960's
+    // (0,1)/(1,0)/(2,0)/(3,0) followed by FUN_00418860's alive-AI -> 2
+    // (AiStandalone.cpp:1759-1761, already ported). The multi-player path would have
+    // put 1 on two or more slots. So the single-player body is the right model.
+    //
+    // WHY IT MATTERS: FUN_004148b0:104 is `if (E470(i) == 1) last = i`, and without
+    // the player's 1 NO car ever matches, so `last` stays -1 and branch 2 dies at
+    // exit site 105 on every row (RESULT_GF1.md s3, RESULT_E470.md).
+    //
+    // NOT reproduced here, and deliberately: FUN_0042b960 also sets DAT_007f1a0c = 1
+    // and writes the index table as [playerBlockIdx, -1, -1, -1] where :371 above
+    // writes identity for all four. Both are pre-existing divergences with their own
+    // rows; widening this knob to cover them would mix two changes in one gate.
+    {
+        static const bool s_slotPlayer = (std::getenv("MASHED_SLOT_PLAYER") != nullptr);
+        if (s_slotPlayer) {
+            Ai::Ai_SetCarSlotState(0, 1);   // FUN_0040e480(0,1) — the human slot
+            Ai::Ai_SetCarSlotState(1, 0);   // FUN_0040e480(1,0)
+            Ai::Ai_SetCarSlotState(2, 0);   // FUN_0040e480(2,0)
+            Ai::Ai_SetCarSlotState(3, 0);   // FUN_0040e480(3,0)
+        }
+    }
     // per-vehicle behaviour record -> race line (type 0, index 0).
     for (int v = 0; v < 4; ++v) {
         Ai::I32(Ai::kAiLineType    + static_cast<std::uintptr_t>(v) * Ai::kAiStateDwords * 4u) = 0;
