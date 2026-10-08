@@ -1,0 +1,33 @@
+##### W-TOOK (no round mode)
+8abfd6d198ed12bd352c733f35d51217e66c9c0bd9d5b197ac11bc662bc209c1 *verify/d3_gatefire_20261008/NR_off.step.csv
+ddf9267272b2130012e69a2aac03ccfa6bd04274136405d680d8b790cb362a79 *verify/d3_gatefire_20261008/NR_on.step.csv
+
+##### W-DET
+ddf9267272b2130012e69a2aac03ccfa6bd04274136405d680d8b790cb362a79 *verify/d3_gatefire_20261008/NR_on.step.csv
+ddf9267272b2130012e69a2aac03ccfa6bd04274136405d680d8b790cb362a79 *verify/d3_gatefire_20261008/NR_on_r2.step.csv
+
+##### W-NOREG-E / -B  (OFF arm vs ON arm)
+--- NR_off (e) ---
+  v3 start=0 n=220 flag=[0] regime0=1 k_own=220 launch=2055.6 ft_median_m0=2279.1 (n=39) ft_median=3375.0 (n=215) wmax=3932.3
+      v1 (e) FAIL: ft_median_m0=1496.0 not in [2500.6,2602.6] (ref 2551.6, -41.4%)
+      v2 (e) FAIL: launch=1890.4 not in [2011.5,2093.6] (ref 2052.5, -7.9%); ft_median_m0=1996.5 not in [2011.5,2093.6] (ref 2052.5, -2.7%)
+      v3 (e) PASS
+--- NR_off (b) ---
+  v1 start=0 n=220 steerD=92 steerMed=0.0 |steer|Med=13.0 accel=[0, 255] a255=0.973 brake=[0, 255] b255=0.027
+      (b) FAIL: c0_distinct=11 not in [13,37]; c1_distinct=82 not in [17,70]
+  v2 start=0 n=220 steerD=138 steerMed=86.0 |steer|Med=107.5 accel=[0, 255] a255=0.959 brake=[0, 255] b255=0.095
+      (b) FAIL: c0_distinct=49 not in [13,37]; c1_distinct=91 not in [17,70]; steer_distinct=138 not in [29,96]; c1_median=86.0 not in [0,0]; abs_steer_median=107.5 not in [0,23]
+  v3 start=0 n=220 steerD=119 steerMed=73.5 |steer|Med=73.5 accel=[0, 255] a255=0.977 brake=[0, 255] b255=0.023
+      (b) FAIL: c0_distinct=10 not in [13,37]; c1_distinct=110 not in [17,70]; steer_distinct=119 not in [29,96]; c1_median=73.5 not in [0,0]; abs_steer_median=73.5 not in [0,23]
+--- NR_on (e) ---
+  v3 start=0 n=220 flag=[0] regime0=1 k_own=220 launch=2055.6 ft_median_m0=2279.1 (n=39) ft_median=3375.0 (n=215) wmax=3932.3
+      v1 (e) FAIL: ft_median_m0=1496.0 not in [2500.6,2602.6] (ref 2551.6, -41.4%)
+      v2 (e) FAIL: launch=1890.4 not in [2011.5,2093.6] (ref 2052.5, -7.9%); ft_median_m0=1996.5 not in [2011.5,2093.6] (ref 2052.5, -2.7%)
+      v3 (e) PASS
+--- NR_on (b) ---
+  v1 start=0 n=220 steerD=92 steerMed=0.0 |steer|Med=13.0 accel=[0, 255] a255=0.973 brake=[0, 255] b255=0.027
+      (b) FAIL: c0_distinct=11 not in [13,37]; c1_distinct=82 not in [17,70]
+  v2 start=0 n=220 steerD=138 steerMed=86.0 |steer|Med=107.5 accel=[0, 255] a255=0.959 brake=[0, 255] b255=0.095
+      (b) FAIL: c0_distinct=49 not in [13,37]; c1_distinct=91 not in [17,70]; steer_distinct=138 not in [29,96]; c1_median=86.0 not in [0,0]; abs_steer_median=107.5 not in [0,23]
+  v3 start=0 n=220 steerD=119 steerMed=73.5 |steer|Med=73.5 accel=[0, 255] a255=0.977 brake=[0, 255] b255=0.023
+      (b) FAIL: c0_distinct=10 not in [13,37]; c1_distinct=110 not in [17,70]; steer_distinct=119 not in [29,96]; c1_median=73.5 not in [0,0]; abs_steer_median=73.5 not in [0,23]

@@ -9,6 +9,17 @@ Raw: `o_alive.csv`, 734 samples at 10 Hz, `o_t1`'s scenario (`--hold 60`), `slot
 
 ## 0. Verdict first
 
+> **CORRECTED 2026-10-08 by [`RESULT_WIRE2.md`](RESULT_WIRE2.md) §1. This leg's conclusion is
+> WRONG.** The port was running an **elimination round I had configured** (`MASHED_ROUND=1` in
+> every run); `race_[v].alive` is cleared only by `race_cam_.EliminationCheck` and only when
+> `round_mode_` is set. With the knob unset, all three AI cars are stepped on **100%** of frames.
+> So the elimination is **faithful behaviour for the mode selected**, not "the port's visit set is
+> not faithful". A second defect in the comparison: `aib_alive` reads a **port-local snapshot
+> field** while `FUN_0046c7b0` reads the vehicle record at **+0x004** — this leg compared the two
+> as though they were one quantity. The ORIGINAL-side measurements below stand; the inference
+> drawn from them does not.
+
+
 > **Restricted to the racing phase, the original keeps all four cars alive and the port does not.**
 > `FUN_0046c7b0` reads `1` on **100%** of substate-6 samples for v0/v1/v2 and 77.2% for v3. The
 > port runs `ControlStep` for v1 on **10.4%** of frames and v2 on **22.9%**.
