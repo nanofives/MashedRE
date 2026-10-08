@@ -1,0 +1,16 @@
+##### M5-KNOBOFF
+86b7b2bbc88f808cd0f853c744a9a51a7b0bbd11162117bd955cba5043981457 *verify/d3_gatefire_20261008/M5step.csv
+86b7b2bbc88f808cd0f853c744a9a51a7b0bbd11162117bd955cba5043981457 *verify/d3_u9186_20261008/H3step.csv
+
+##### M5-DET
+949e309bd7f9970218244a7c6a095f6a5e9c6b38d6f5e782c6713aa92480cbc9 *verify/d3_gatefire_20261008/M5on.gates.csv
+949e309bd7f9970218244a7c6a095f6a5e9c6b38d6f5e782c6713aa92480cbc9 *verify/d3_gatefire_20261008/M5on_r2.gates.csv
+
+##### M5-RAMP: did the monotone ramp stop?
+  OFF: frames=13498  bias374 distinct=[0, 1, 2, 3, 4]  reversals=0  final=4
+      histogram Counter({4: 9834, 2: 1201, 3: 1201, 0: 661, 1: 601})
+  ON: frames=13498  bias374 distinct=[0, 1, 2, 3, 4]  reversals=0  final=4
+      histogram Counter({4: 9834, 2: 1201, 3: 1201, 0: 661, 1: 601})
+
+##### M5-INERT: which columns differ between arms?
+  differing: (none)

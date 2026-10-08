@@ -1597,11 +1597,71 @@ void AiPreTickRubberBand()
     }
 }
 
+// FUN_00413fe0 PROPER — the per-vehicle AI-state reset ONLY, with no clock zeroing.
+// [GATEFIRE 2026-10-08] Split out of Ai_ResetRace so FUN_00418560's mode-5 branch can
+// call exactly what the original calls there. The distinction is load-bearing:
+// 0x0041859e calls FUN_00413fe0 and 0x00418598 zeroes ONLY 0x007f0ff8 — it does NOT
+// touch 0x007f0ff4. Calling the bundled Ai_ResetRace from the mode-5 path would also
+// zero 0x007f0ff4 every countdown frame and break the FUN_00416250 steer timer, which
+// measures `el = DAT_007f0ff4 - start` against 200.
+// Defined here (inside this TU's anonymous namespace) rather than forward-declared:
+// Ai_ResetRace below is at namespace-Ai scope, so a declaration here would have
+// created a SECOND function and an ambiguous call.
+void Ai_ResetVehicleStates()
+{
+    I32(0x0089a36cu) = 0;
+    for (int v = 0; v < 4; ++v) {
+        const std::uintptr_t b = 0x0089a4f0u + static_cast<std::uintptr_t>(v) * 0x74u;
+        I32(b - 4) = 0; I32(b) = 0; I32(b + 4) = 0;
+        I32(b - 0x2c) = 0; I32(b - 0x28) = 0; I32(b - 0x24) = 0; I32(b - 0x20) = 0;
+        I32(b + 0x18) = 0; I32(b + 0x2c) = 0; I32(b + 0x30) = 0; I32(b + 0x34) = 0; I32(b + 0x38) = 0;
+        I32(0x008032d4u + static_cast<std::uintptr_t>(v) * 0x14u) = 1000;
+    }
+}
+
 void VehicleStep(int v)
 {
     int slot = I32(kSlotTableBase + static_cast<std::uintptr_t>(v) * kSlotTableStride);
     std::uint8_t* ctrl = reinterpret_cast<std::uint8_t*>(kCtrlBlockBase + static_cast<std::uintptr_t>(slot) * kCtrlBlockStride);
     ctrl[0] = ctrl[1] = ctrl[4] = ctrl[5] = ctrl[6] = ctrl[7] = 0;
+
+    // ---- FUN_00418560 Branch A: mode 5 (0x0041858e..0x004185e4) ----------------
+    // [GATEFIRE 2026-10-08] This branch was MISSING from the port: VehicleStep went
+    // straight from the ctrl zeroing to BankSwitch. Its absence is why 0x007f0ff8
+    // never re-zeroes standalone, which is the measured cause of the bias374
+    // divergence (verify/d3_gatefire_20261008/RESULT_RAMP.md): the ORIGINAL re-zeroes
+    // it about every 8 s so its tickscale never reaches the 11 s band-1 threshold,
+    // while the port ramps monotonically with ZERO reversals in 13,498 frames and
+    // parks in band 4. The band ladder itself is NOT at fault — both sides fire band 1
+    // at the same ~11.0 s threshold.
+    //
+    // Plate: re/analysis/ai_update/0x00418560.md lines 28-34. Reference body with the
+    // same shape: Ai/AiController.cpp:177-193 (.asi).
+    //
+    // DEVIATION, REGISTERED: FUN_0040e4a0 (ElapsedTimeGet) reads 0x005f29b8, which is
+    // image .data the standalone never loads, so `elapsed` reads 0 here and the
+    // countdown compare is always true while mode 5 holds. That makes the accel hold
+    // permanent for the duration of mode 5 rather than releasing part-way. It does NOT
+    // affect the 0x007f0ff8 zeroing this leg exists for, and mode 5 is transient.
+    // Default-OFF behind MASHED_MODE5_RESET.
+    {
+        static const bool s_mode5 = (std::getenv("MASHED_MODE5_RESET") != nullptr);
+        if (s_mode5) {
+            const int subMode = s_host.game_sub_mode();          // FUN_0040e350 @0x0041858e
+            if (subMode == 5) {                                  // 0x00418593
+                I32(kFrame0ff8) = 0;                             // 0x00418598
+                Ai_ResetVehicleStates();                         // FUN_00413fe0 @0x0041859e
+                const int elapsed = I32(0x005f29b8u);            // FUN_0040e4a0 @0x004185a3
+                const int cd = I32(a74(kAiMode5Countdown, v));   // 0x004185ab
+                if (cd < 0) {                                    // 0x004185cb..0x004185e4
+                    if (elapsed < (0x4a - cd) * 100) ctrl[4] = 0xff;
+                } else {                                         // 0x004185b5..0x004185ca
+                    if (elapsed < (cd + 0x40) * 100) ctrl[4] = 0xff;
+                }
+                return;                                          // mode 5 skips the whole step
+            }
+        }
+    }
 
     BankSwitch(v);                            // FUN_00417180
     std::uintptr_t spline = SelectSpline(v);
@@ -1740,14 +1800,9 @@ void Ai_AdvanceClock(int units)
 // clock zeroing at 0x0040ff17..0x0040ff23 (DAT_007f101c/0ff4/0ff8 = 0).
 void Ai_ResetRace()
 {
-    I32(0x0089a36cu) = 0;
-    for (int v = 0; v < 4; ++v) {
-        const std::uintptr_t b = 0x0089a4f0u + static_cast<std::uintptr_t>(v) * 0x74u;
-        I32(b - 4) = 0; I32(b) = 0; I32(b + 4) = 0;
-        I32(b - 0x2c) = 0; I32(b - 0x28) = 0; I32(b - 0x24) = 0; I32(b - 0x20) = 0;
-        I32(b + 0x18) = 0; I32(b + 0x2c) = 0; I32(b + 0x30) = 0; I32(b + 0x34) = 0; I32(b + 0x38) = 0;
-        I32(0x008032d4u + static_cast<std::uintptr_t>(v) * 0x14u) = 1000;
-    }
+    Ai_ResetVehicleStates();                       // FUN_00413fe0 (defined above)
+    // the race-clock zeroing at 0x0040ff17..0x0040ff23 — a DIFFERENT site from
+    // FUN_00413fe0, folded in here because Ai_ResetRace models race setup.
     I32(0x007f0ff4u) = 0; I32(kFrame0ff8) = 0;
     // [D3 2026-09-27] DIAGNOSTIC knob, default OFF, no effect on the shipping path.
     // FUN_004177b0's band-0 roll (0x00417c43..0x00417c7a: prob 20 for difficulty row 2,
