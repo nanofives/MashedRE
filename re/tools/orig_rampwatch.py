@@ -72,6 +72,18 @@ A_ORDER = 0x0089a870     # finish-order quartet, stride 4 (all -1 at round init)
 A_SLOTPTR = 0x005f2770   # PTR_PTR, deref then +0x34 + v*4
 SLOT_OFF = 0x34
 
+# [SCOPE_CALLWISE 2026-10-08] FUN_0046c7b0 car_alive, the gate on the port's
+# ControlStep visit set. Ai_Standalone_Tick does `if (s_host.car_alive(v) == 1)
+# VehicleStep(v)`, and the port's per-car call counts came out wildly uneven --
+# v1 1,446 / v2 3,177 / v3 13,858 of 13,858 frames (RESULT_CALLWISE.md s1). This
+# polls the ORIGINAL's same field so the two can be compared as a fraction of race.
+#   FUN_0046c7b0(v): *(int*)(0x008815a4 + v*0xd04) == 1
+# STRIDE: the decompiler renders this `(&DAT_008815a4)[v*0x341]` -- DWORD-indexed.
+# The byte stride is 0xd04 (memory offset-grep-misses-dword-index). Using 0x341
+# bytes here would read a different field entirely.
+A_ALIVE = 0x008815a4
+ALIVE_STRIDE = 0xd04
+
 kTickScale = 1.0 / 3000.0   # _DAT_005cc948, Ai/AiStandalone.cpp:611
 
 PROCESS_VM_READ = 0x0010
@@ -171,7 +183,8 @@ def main():
     cols = ["t", "clk_0ff4", "tick_0ff8", "tickscale", "bias374", "last370",
             "framedt", "mode368", "flt360", "idx364", "diff_67ea7c", "submode",
             "substate", "ord0", "ord1", "ord2", "ord3",
-            "slotptr", "e470_0", "e470_1", "e470_2", "e470_3"]
+            "slotptr", "e470_0", "e470_1", "e470_2", "e470_3",
+            "alive_0", "alive_1", "alive_2", "alive_3"]
     rows = []
     try:
         while proc.poll() is None:
@@ -205,6 +218,8 @@ def main():
             for s in range(4):
                 r["e470_%d" % s] = (i32(h, base + SLOT_OFF + s * 4)
                                     if base else None)
+            for s in range(4):
+                r["alive_%d" % s] = i32(h, A_ALIVE + s * ALIVE_STRIDE)
             rows.append(r)
             time.sleep(1.0 / hz)
     finally:
@@ -245,6 +260,15 @@ def main():
                    if r.get("e470_%d" % s) is not None})
     print("  values present: %s" % allv)
     print("  ANY car ever reading exactly 1? %s" % (1 in allv))
+    print("")
+    print("=== FUN_0046c7b0 car_alive per car (== 1 means VehicleStep runs) ===")
+    for s in range(4):
+        vals = [r.get("alive_%d" % s) for r in rows if r.get("alive_%d" % s) is not None]
+        ones = sum(1 for x in vals if x == 1)
+        print("  v%d: ==1 on %d/%d samples (%.1f%%)   values %s"
+              % (s, ones, len(vals), 100.0 * ones / max(len(vals), 1),
+                 _C(vals).most_common(4)))
+    print("  PORT for comparison: v1 1446/13858 (10.4%), v2 3177 (22.9%), v3 13858 (100%)")
     print("  (the PORT reads {v0: 0, v1/v2/v3: 2} and never 1 -- RESULT_GF1.md s3)")
     prev = None
     for r in rows:
