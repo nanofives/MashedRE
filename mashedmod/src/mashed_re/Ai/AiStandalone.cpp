@@ -815,6 +815,29 @@ void AiFireDecision(int v, std::uint8_t* ctrl, int curvInt)
     }
 }
 
+// [PREREG_WIRE 2026-10-08] FUN_004148b0's standalone arm (Ai/AiLeaderTimer.cpp, a
+// shared TU). Declared extern "C" with a flat name because that body lives in its own
+// TU's anonymous namespace. Default-OFF at the call site via MASHED_WIRE_B2.
+#ifdef MASHED_STANDALONE
+extern "C" int __cdecl AiLeaderTimerProbe2(std::uintptr_t spline, int* p2,
+                                           int* outXZ, int vehIdx);
+// [PREREG_WIRE W-TOOK diagnosis 2026-10-08] W-TOOK failed with the full prerequisite
+// stack, so the question is WHERE the wired path stops. These count the wired call
+// site specifically -- NOT the gates probe, which is a different call site with a
+// different cadence and which mutates TimerAt/RankAt as it goes (RESULT_SP.md s3).
+// Per car: reached = the branch was evaluated; ret = LeaderTimer returned non-zero;
+// fire = the LOS conjunct also passed, i.e. ctrl was written and the step returned.
+// extern "C" with flat names on purpose: the consumer (TrackRenderer.cpp) sits
+// inside namespace mashed_re::D3d9Render, where a `namespace mashed_re { namespace
+// Ai {` block would declare mashed_re::D3d9Render::mashed_re::Ai -- the trap that
+// file's own H3 comment already records.
+extern "C" {
+int g_wireReached[4] = {0,0,0,0};
+int g_wireRet[4]     = {0,0,0,0};
+int g_wireFire[4]    = {0,0,0,0};
+}
+#endif
+
 // ===========================================================================
 // FUN_00416250 — primary per-vehicle control step [D3 2026-09-26: re-ported against
 // the listing 0x00416250..0x00416a2e, pool0; D3_AI_PORT_2026-09-26.md section 2].
@@ -843,7 +866,57 @@ void ControlStep(std::uintptr_t spline, int v, std::uint8_t* ctrl)
 
     int mode = 0;                     // targeting chain FUN_00414570.. STUBBED (all return 0)
     if (gameMode == 6 && s_host.ai_target_enable() == 0) {            // 0x0041649b / 0x004164a8
-        // mode == 0: FUN_004148b0 / FUN_00415020 are stubbed (return 0).
+        // ---- FUN_00416250's branch 2, WIRED (default-OFF: MASHED_WIRE_B2) ----
+        // Verbatim from ctrlstep_decomp.txt:115-122 (decomp_pc.py 0x00416250,
+        // read-only pool clone). PREREG: verify/d3_gatefire_20261008/PREREG_WIRE.md.
+        //
+        //   if (local_48 == 0) {                                  // mode == 0
+        //     iVar5 = FUN_004148b0(param_1,&local_24,&local_2c,param_2);
+        //     if ((iVar5 != 0) && (FUN_00416060(&local_1c,&local_2c) != 0)) {
+        //       param_3[5] = 0xff;  *param_3 = 0;  param_3[1] = 0;  return;
+        //     }
+        //
+        // THREE THINGS THIS DELIBERATELY DOES *NOT* DO, each a way the arm could be
+        // got wrong while still matching RESULT_STEP2.md:108's logged (c4,c5)=(0,255):
+        //   * ctrl[4] is NOT written. It keeps its entry value (VehicleStep zeroes it),
+        //     which is why c4 logs as 0 -- the branch never touches it.
+        //   * it RETURNS, before the mode commit at 0x00416590 and before the
+        //     steer-history stores at 0x004165cc / 0x0041670c, so those globals keep
+        //     their previous values on a firing frame.
+        //   * the LOS endpoints are (own XZ, the XZ FUN_004148b0 just wrote) --
+        //     decomp locals (&local_1c, &local_2c); local_1c is the same own-position
+        //     pair FUN_00443440 takes at :49.
+        //
+        // Branch 2 cannot fire without MASHED_SLOTSTATE_SEED + MASHED_SLOT_PLAYER
+        // (RESULT_E470.md): without the player's slot-state 1, FUN_004148b0:104 never
+        // resolves `last` and the body returns 0 at exit site 105.
+#ifdef MASHED_STANDALONE
+        {
+            static const bool s_wireB2 = (std::getenv("MASHED_WIRE_B2") != nullptr);
+            if (s_wireB2) {
+                int candXZ[2] = {0, 0};
+                int tgtXZ[2]  = {0, 0};          // &local_24, the param the body ignores
+                if (v >= 0 && v < 4) ++g_wireReached[v];
+                const int ltr = AiLeaderTimerProbe2(spline, tgtXZ, candXZ, v);
+                if (ltr != 0 && v >= 0 && v < 4) ++g_wireRet[v];
+                if (ltr != 0) {
+                    float cx, cz;
+                    std::memcpy(&cx, &candXZ[0], 4);
+                    std::memcpy(&cz, &candXZ[1], 4);
+                    if (s_host.los_clear(ownX, ownZ, cx, cz) != 0) {
+                        if (v >= 0 && v < 4) ++g_wireFire[v];
+                        ctrl[5] = 0xff;          // param_3[5] = 0xff
+                        ctrl[0] = 0;             // *param_3   = 0
+                        ctrl[1] = 0;             // param_3[1] = 0
+                        return;                  // 0x004164f1-class early return
+                    }
+                }
+            }
+        }
+#endif  // MASHED_STANDALONE -- the .asi reaches FUN_004148b0 through its hook instead
+        // mode == 0: FUN_00415020 remains stubbed (returns 0), so the `local_48 = 5`
+        // path below the branch stays unreachable. FUN_004148b0 is no longer stubbed
+        // when the knob is on.
         if (s_host.held_powerup(v) == 0) {                            // 0x0041651f -> 0x00416565
             I32(a74(0x0089a51cu, v)) = 0;
             I32(a74(0x0089a520u, v)) = 0;

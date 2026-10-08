@@ -298,4 +298,15 @@ extern "C" int __cdecl AiLeaderTimerProbe(int* outXZ, int vehIdx) {
 }
 // The exit site of the call AiLeaderTimerProbe just made.
 extern "C" int __cdecl AiLeaderTimerExitSite(void) { return g_ltExit; }
+
+// [PREREG_WIRE 2026-10-08] The FULL original signature, for the WIRED call site in
+// ControlStep. FUN_004148b0(param_1 = spline, &local_24, &local_2c = outXZ, param_2 =
+// vehicle) -- ctrlstep_decomp.txt:116. p1/p2 are unread by the body (this file's
+// header records that), but they are passed anyway so the call site reads as the
+// original's does rather than quietly dropping two arguments.
+extern "C" int __cdecl AiLeaderTimerProbe2(std::uintptr_t spline, int* p2,
+                                           int* outXZ, int vehIdx) {
+    g_ltExit = 0;
+    return LeaderTimer(static_cast<int>(spline), p2, outXZ, vehIdx);
+}
 #endif

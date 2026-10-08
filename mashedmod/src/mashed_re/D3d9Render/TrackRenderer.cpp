@@ -4072,6 +4072,10 @@ extern "C" void __cdecl RaceComputeDistancesTick();
 extern "C" int __cdecl AiLeaderTimerProbe(int* outXZ, int vehIdx);
 // [GATEFIRE GF1b] which early return the call above actually took.
 extern "C" int __cdecl AiLeaderTimerExitSite(void);
+// [PREREG_WIRE W-TOOK diagnosis] per-car counters on the WIRED call site in
+// ControlStep (Ai/AiStandalone.cpp), distinct from the gates probe above.
+extern "C" int g_wireReached[4]; extern "C" int g_wireRet[4];
+extern "C" int g_wireFire[4];
 
 void TrackRenderer::U9186GateDump() {
     static const char* s_path = std::getenv("MASHED_U9186_GATES");
@@ -4154,6 +4158,8 @@ void TrackRenderer::U9186GateDump() {
                          // count must not be read as "the port is wrong" when the
                          // scenario may simply not reach the path.
                          "lt_ran,lt_ret,lt_los,lt_fire,lt_x,lt_z,lt_exit,"
+                         // [PREREG_WIRE] the WIRED site, cumulative per car
+                         "w_reach,w_ret,w_fire,"
                          // [GATEFIRE idx364 2026-10-08] PREDICTION of what a ported
                          // FUN_00414060 would compute, measured WITHOUT porting it —
                          // the H3-WROTE lesson applied before the code is written
@@ -4286,6 +4292,7 @@ void TrackRenderer::U9186GateDump() {
                          "%d,%.9g,"
                          // [GATEFIRE GF1] branch 2 + exit site
                          "%d,%d,%d,%d,%.9g,%.9g,%d,"
+                         "%d,%d,%d,"
                          // [GATEFIRE idx364] FUN_00414060 prediction + step-6 quartet
                          "%d,%d,%d,%d,%.9g,%d,%.9g,"
                          "%.9g,%.9g,%.9g,%.9g\n",
@@ -4339,6 +4346,7 @@ void TrackRenderer::U9186GateDump() {
                      // --- [GATEFIRE GF1] branch 2: FUN_004148b0 && FUN_00416060 ---
                      lt_ran, lt_ret, lt_los, lt_fire,
                      static_cast<double>(lt_x), static_cast<double>(lt_z), lt_exit,
+                     g_wireReached[v], g_wireRet[v], g_wireFire[v],
                      // --- [GATEFIRE idx364] FUN_00414060 prediction, inputs first ---
                      m42f6a0, g30790, idx413fa0, tie67ea7c,
                      static_cast<double>(a37c), a384i,
