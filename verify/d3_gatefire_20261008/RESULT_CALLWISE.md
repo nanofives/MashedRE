@@ -36,6 +36,17 @@ It also sharpens the open question from `RESULT_WIRE.md` §6 item 2: **cars 1 an
 
 ## 2. Why env alignment cannot produce `GF1-CALLWISE`
 
+> **CORRECTED 2026-10-08 by [`SCOPE_CALLWISE.md`](SCOPE_CALLWISE.md).** This section's conclusion —
+> that the differing race *construction* blocks `GF1-CALLWISE` and makes it "a harness task" — is
+> **WRONG**. The comparison window is **call-indexed and self-anchoring**
+> (`ai_ctrl_window.py:25`: car `v`'s calls `[i0, i0+220)`, `i0` = first call with `c4 != 0`), which
+> is how criterion (b) already scores both sides; `PREREG_STEP2.md:10` records "median call index
+> 109.5 on both sides". The original's per-call reference is **already committed**
+> (`o_t3.msd.aistep.csv`, 64 firings = 31/4/29). What is actually missing is **two per-call columns
+> on the port side plus a scorer** — one build and one run. The axis table below is still accurate
+> as a description of the two drivers; only the conclusion drawn from it was wrong.
+
+
 The scenario axes, checked rather than assumed:
 
 | axis | `o_t1` (original) | port | aligned? |
