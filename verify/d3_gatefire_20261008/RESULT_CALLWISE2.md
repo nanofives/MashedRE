@@ -34,6 +34,16 @@ just *before* the original's window opens at 683.
 
 ## 2. Why the anchors differ — measured, and it is the root
 
+> **REFINED 2026-10-08 by [`SCOPE_SUBSTATE.md`](SCOPE_SUBSTATE.md) §1.** Calling phase 3 "a start
+> countdown" and the windows "different phases" was imprecise. Measured: the original runs calls
+> **0-682 in sub-state 3** (`c4 = 0` throughout) and **683-902 in sub-state 6**, so the `c4 != 0`
+> anchor lands **exactly on the 3→6 transition** and the scored window *is* its racing phase.
+> **Both windows are therefore each side's first 220 calls of mode-6 racing** — a tighter
+> comparison than this section claims. What differs is that the original reaches mode 6 after 683
+> calls of phase 3 while the port is in mode 6 from frame 0; whether those two starts are the same
+> *physical* race moment is **[UNCERTAIN]**. The 0-vs-64 figure and the root cause below stand.
+
+
 `i0` = first call with `c4 != 0`. Over each side's first 683 calls for v1:
 
 | | `c4` | `substate` |
