@@ -1,0 +1,13 @@
+=== H4_post  knobs=[] ===
+    pid=756
+    exit=0  self_exited=True
+    H4_post.step.csv  lines=19419  sha8=c741a4c5
+    H4_post.gates.csv  lines=53993  sha8=642af0ac
+    H4_post.ptrace.log  lines=26996  sha8=05984e30
+=== H4_optout  knobs=[MASHED_NO_SLOT_PLAYER] ===
+    pid=2532
+    exit=0  self_exited=True
+    H4_optout.step.csv  lines=19419  sha8=c741a4c5
+    H4_optout.gates.csv  lines=53993  sha8=c8f14d5b
+    H4_optout.ptrace.log  lines=26996  sha8=05984e30
+H4 DONE

@@ -1,0 +1,31 @@
+=== H4_A  knobs=[] ===
+    pid=4768
+    exit=0  self_exited=True
+    H4_A.step.csv  lines=19419  sha8=c741a4c5
+    H4_A.gates.csv  lines=53993  sha8=c8f14d5b
+    H4_A.ptrace.log  lines=26996  sha8=05984e30
+=== H4_A2  knobs=[] ===
+    pid=1284
+    exit=0  self_exited=True
+    H4_A2.step.csv  lines=19419  sha8=c741a4c5
+    H4_A2.gates.csv  lines=53993  sha8=c8f14d5b
+    H4_A2.ptrace.log  lines=26996  sha8=05984e30
+=== H4_B  knobs=[MASHED_SLOT_PLAYER] ===
+    pid=2888
+    exit=0  self_exited=True
+    H4_B.step.csv  lines=19419  sha8=c741a4c5
+    H4_B.gates.csv  lines=53993  sha8=642af0ac
+    H4_B.ptrace.log  lines=26996  sha8=05984e30
+=== H4_C  knobs=[MASHED_SLOT_PLAYER,MASHED_A364_RESET,MASHED_REFDIST,MASHED_RACEPCT_BRIDGE,MASHED_NO_ELIM,MASHED_WIRE_B2] ===
+    pid=30860
+    exit=0  self_exited=True
+    H4_C.step.csv  lines=42655  sha8=de0d8983
+    H4_C.gates.csv  lines=56873  sha8=4f7b7b74
+    H4_C.ptrace.log  lines=28436  sha8=e418c03b
+=== H4_D  knobs=[MASHED_A364_RESET,MASHED_REFDIST,MASHED_RACEPCT_BRIDGE,MASHED_NO_ELIM,MASHED_WIRE_B2] ===
+    pid=37428
+    exit=0  self_exited=True
+    H4_D.step.csv  lines=42655  sha8=1b202f3c
+    H4_D.gates.csv  lines=56873  sha8=5d5bbdc9
+    H4_D.ptrace.log  lines=28436  sha8=e418c03b
+H4 DONE

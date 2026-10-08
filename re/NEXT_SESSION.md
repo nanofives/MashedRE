@@ -1,5 +1,19 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-08 (task 4 / H4): **`MASHED_SLOT_PLAYER` is DEFAULT-ON, measured inert on ALL FOUR cars. `MASHED_WIRE_B2` stays OFF.**
+>
+> Read [`RESULT_H4.md`](../verify/d3_gatefire_20261008/RESULT_H4.md) (prereg `PREREG_H4.md`).
+> Car 0 is measured for the first time (`MASHED_PLAYERTRACE`). With and without the stores,
+> car 0's trace and the stepdump are **byte-identical**, and post-flip default = B,
+> opt-out = A, on all three hashes. Branch 2 firing (18x, car 2) moves cars 1-3 on 38,481
+> rows but leaves car 0 **byte-identical**, while car 0 is moving. `WIRE_B2` stays OFF on its
+> prerequisites (`A364_RESET`, `REFDIST`, `RACEPCT_BRIDGE` undecided; `NO_ELIM` is a harness
+> override).
+>
+> **CARRY:** default gates-dump control is now **`642af0ac`** (step `c741a4c5` and ptrace
+> `05984e30` unchanged). `MASHED_SLOT_PLAYER` is a no-op, so use `MASHED_NO_SLOT_PLAYER` for the old
+> behaviour. Branch 2 now needs `A364_RESET + REFDIST + RACEPCT_BRIDGE + NO_ELIM + WIRE_B2`.
+
 > ## START HERE 2026-10-08 (tasks 1-3): **The exit flag HOLDS for 652 frames and ends on a DISTANCE test, not input, not the clip module. Clip handles are ZERO live. D-11073 row corrected.**
 >
 > Read [`RESULT_CADENCE.md`](../verify/d3_gatefire_20261008/RESULT_CADENCE.md) (prereg `PREREG_CADENCE.md`).

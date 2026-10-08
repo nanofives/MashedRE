@@ -426,8 +426,19 @@ bool Ai_BridgeLoad(int course, const char* trackPizPath) {
     // and writes the index table as [playerBlockIdx, -1, -1, -1] where :371 above
     // writes identity for all four. Both are pre-existing divergences with their own
     // rows; widening this knob to cover them would mix two changes in one gate.
+    //
+    // [H4 2026-10-08] NOW DEFAULT-ON. verify/d3_gatefire_20261008/{PREREG_H4,RESULT_H4}.md.
+    // H4-C0-INERT: player_trace.log (car 0) and the stepdump (cars 1..3) are
+    // byte-identical with and without these stores over 14,400 deterministic frames;
+    // only the gates dump's slot_state for v0 moves (0 -> 1). The values reproduce the
+    // original's measured {v0:1, v1-3:2} (RESULT_E470.md, 581/672). Still a bridge at an
+    // unfaithful site, as stated above; taken because it is inert today and is the cell
+    // FUN_004148b0:104 reads. MASHED_NO_SLOT_PLAYER restores the old default exactly;
+    // MASHED_SLOT_PLAYER is retained as a no-op so existing drivers keep working.
+    // MASHED_WIRE_B2 stays OFF: its other prerequisites (A364_RESET, REFDIST,
+    // RACEPCT_BRIDGE, and the harness override NO_ELIM) are all default-OFF.
     {
-        static const bool s_slotPlayer = (std::getenv("MASHED_SLOT_PLAYER") != nullptr);
+        static const bool s_slotPlayer = (std::getenv("MASHED_NO_SLOT_PLAYER") == nullptr);
         if (s_slotPlayer) {
             Ai::Ai_SetCarSlotState(0, 1);   // FUN_0040e480(0,1) — the human slot
             Ai::Ai_SetCarSlotState(1, 0);   // FUN_0040e480(1,0)
