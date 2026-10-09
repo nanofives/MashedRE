@@ -10,7 +10,7 @@
 > - **(b) depends on RNG ring phase:** the body's 4 draws alone move (b) 5 -> 10 failing items. Fix how (b) is scored before trusting any (b) delta from the knob.
 > - bias374 reversals 2 / 1 (first non-zero, symptom (a)), cause not isolated. U-9198 (original cd 3,3,3,3 = 1/64), U-9199 (path1 coverage).
 >
-> **Decision owed (user):** (A) keep the seed, knob OFF; (B) under the knob gate the seed off so the chain is the one writer every round; (C) (B) + flip the knob default. Then D-11073 leg 2 (phase 3, gate on the release rule, `FUN_00442600` via `aib_track_index()`).
+> **DECIDED 2026-10-09: (A)** keep the start-boost seed, knob stays OFF (not (B) chain-only, not (C) default flip). Next: D-11073 leg 2 (phase 3, gate on the release rule, `FUN_00442600` via `aib_track_index()`).
 
 > ## START HERE 2026-10-09 (D-11073 leg 1b DONE): **sub-states 4 + 5 ported behind `MASHED_SUBSTATE` (default OFF), byte-identical default. Next: port `FUN_00414180` (the cd producer), then leg 2.**
 >
