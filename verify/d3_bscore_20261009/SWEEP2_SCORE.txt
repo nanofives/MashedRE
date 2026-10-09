@@ -1,0 +1,12 @@
+labels: 0A 1B 2A 3A 4B 5A 6A 7A 8A 9A 10A 11A 12A 13A 14A 15A 16A 17A 18A 19A 20A 21A 22A 23A 24A 25A 26C 27B 28A 29A 30A 31A 32A 33A 34A 35A 36B 37A 38A 39A 40A 41A 42A 43A 44A 45A 46A 47B 48B 49A 50A 51A 52A 53A 54C 55B 56B 57C 58B 59B 60B 61A 62A 63A
+n0=   0 mismatches 0 []
+n0= 926 mismatches 16 [26, 27, 28, 29, 37, 39, 46, 48, 54, 55, 56, 57]
+n0=2642 mismatches 23 [14, 18, 19, 20, 21, 22, 26, 27, 28, 29, 32, 36]
+C phases: [26, 54, 57] | C2 HOLDS
+C3 (identical windows): HOLDS
+  K26 car 1 (b-regime C) FAIL: c0_distinct=15 not in [27,27]; c1_distinct=69 not in [95,95]; steer_distinct=83 not in [121,121]; c1_median=0.0 not in [27.5,27.5]; abs_steer_median=7.0 not in [36.5,36.5]
+  K26 car 2 (b-regime C) FAIL: c0_distinct=39 not in [27,27]; c1_distinct=75 not in [95,95]; steer_distinct=113 not in [121,121]; c1_median=5.5 not in [27.5,27.5]; abs_steer_median=44.5 not in [36.5,36.5]
+  K26 car 3 (b-regime C) FAIL: c0_distinct=30 not in [27,27]; c1_distinct=48 not in [95,95]; steer_distinct=77 not in [121,121]; c1_median=0.0 not in [27.5,27.5]; abs_steer_median=11.5 not in [36.5,36.5]
+regime A: 50 phases, 1 distinct window sets
+regime B: 11 phases, 1 distinct window sets
+regime C: 3 phases, 1 distinct window sets
