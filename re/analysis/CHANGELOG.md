@@ -26,6 +26,10 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-09  00498bc0 VideoGetRenderWidth  C4->C4  install refused on patched runtime by the boot-patch guard (fix_camera_res); re/diag/KNOWN_ISSUES.md FULL-AUTOHOOK-BOOT-AV
+2026-10-09  00498bd0 VideoGetRenderHeight  C4->C4  install refused on patched runtime by the boot-patch guard (fix_camera_res); re/diag/KNOWN_ISSUES.md FULL-AUTOHOOK-BOOT-AV
+2026-10-09  00496400 ConfigLogDebug  C4->C4  install refused on patched runtime by the boot-patch guard (disable_log); re/diag/KNOWN_ISSUES.md FULL-AUTOHOOK-BOOT-AV
+2026-10-09  004a4541 FsopenSafe  C4->C4  install refused on patched runtime by the boot-patch guard (fix_fopen); re/diag/KNOWN_ISSUES.md FULL-AUTOHOOK-BOOT-AV
 2026-10-09  0041d910 Clear63d584Pair  C3->C3  file repoint, D-11073 leg 1a (verify/d3_gatefire_20261008/RESULT_LEG1A.md)
 2026-10-09  0041da90 DeltaTimeOutGet  C3->C3  file repoint, D-11073 leg 1a (verify/d3_gatefire_20261008/RESULT_LEG1A.md)
 2026-10-09  0041ae20 Copy41ae20  C3->C3  file repoint, D-11073 leg 1a (verify/d3_gatefire_20261008/RESULT_LEG1A.md)

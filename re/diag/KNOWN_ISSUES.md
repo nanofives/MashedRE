@@ -161,8 +161,12 @@ The single place that records every recurring execution failure: its **signature
   boots 1/1, yet the height hook alone crashes. Other installed hooks change the path.
 - **Why it passed C4 in June:** [UNCERTAIN] the globals' value then. They track the display, so a
   monitor/topology change is consistent but unmeasured.
-- **Workaround:** `MASHED_HOOK_SKIP=0x00498bc0,0x00498bd0` for full-set runs, or
-  `MASHED_HOOK_ONLY=<rva>` per hook. Fix pending a decision (verify/d3_gatefire_20261008/RESULT_LEG1A.md §3.1).
+- **FIXED 2026-10-09:** `Core/HookSystem.cpp` refuses any hook whose 5-byte JMP overlaps a byte where
+  `MASHED.exe` differs from `MASHED.exe.unpatched` (table `kBootPatched`, 17 clusters). Refused today:
+  `0x00498bc0`, `0x00498bd0` (fix_camera_res), `0x00496400` (disable_log), `0x004a4541` (fix_fopen, was
+  already refused as an E9). Verified: full set installs 1260, boots, and full-set `run_verify_hook` passes
+  again (`bounded_table_signclamp_46d7f0`, `update_41b520`). `MASHED_HOOK_ALLOW_BOOTPATCH=1` disables the
+  guard. If the boot-patch set changes, re-diff and update the table.
 
 ## MASHED-BOOT-AV — original AVs ~4 s into boot
 - **Signature:** new `%LOCALAPPDATA%\CrashDumps\MASHED.exe.*.dmp`; Frida attach fails

@@ -10,9 +10,9 @@
 > - Original: `DAT_0067ea64` = 0 everywhere, so phase 4 calls **`FUN_0041b520`**. `0x00882194+v*0xd04` = 0,250,250,250
 >   (last phase 5) / 0,1100,1100,1100 (first phase 6); `+0x2198` 0 -> 0,1,1,1. Records `0x0063c8d0+k*0x74` have
 >   `+0x64` = k in the original; the standalone's BSS reads 0, so read it before porting (RESULT_LEG1A §4).
-> - **Harness blocker found (not this leg):** the FULL auto-hook set AVs `MASHED.exe` at boot (`0x004c7785`, read
->   `0x1c`), with the 8 leg-1a hooks skipped too. Every full-set `run_verify_hook` and `--hooks all` run fails at
->   attach (`VirtualAllocEx` 0x5). Use `MASHED_HOOK_ONLY=<rva>` per hook; bisect with `MASHED_HOOK_LO/HI` separately.
+> - **Harness blocker FIXED same night:** the full auto-hook boot AV was the VideoGetRender{Width,Height}
+>   hooks undoing `fix_camera_res` (live 1680x1050). `HookSystem.cpp` now refuses hooks over boot-patch bytes;
+>   full-set `run_verify_hook` works again. Leg-1b facts added to `re/BRIEF_D11073.md` before the 1b section.
 
 > ## START HERE 2026-10-08 (D-11073 re-scoped after leg 0): **Leg 1 split into 1a (exe substrate, inert) and 1b (phases 4+5). Start with 1a.**
 >

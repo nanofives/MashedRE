@@ -62,6 +62,43 @@ static void LoudLog(const char* line) {
     CloseHandle(h);
 }
 
+// Boot-patch guard (2026-10-09, re/diag/KNOWN_ISSUES.md FULL-AUTOHOOK-BOOT-AV).
+// original\MASHED.exe carries ten on-disk boot patches (CLAUDE.md "Runtime state").
+// A hook whose 5-byte JMP overlaps a patched byte would silently UNDO that patch:
+// VideoGetRender{Width,Height} at the fix_camera_res sites restored
+// `mov eax,[0x00616028]` (1680x1050 live) over `mov eax,640`, and the full .asi set
+// AV'd at boot (0x004c7785). These ranges are every byte where MASHED.exe differs
+// from MASHED.exe.unpatched (17 clusters, 112 bytes, diffed 2026-10-09; incl. the two
+// code caves). If the patch set changes, re-diff and update this table.
+// MASHED_HOOK_ALLOW_BOOTPATCH=1 disables the guard (deliberate experiments only).
+struct PatchedRange { std::uintptr_t va; std::uint32_t len; const char* patch; };
+static const PatchedRange kBootPatched[] = {
+    {0x0040283f,  5, "skip_movies"},
+    {0x004951aa,  1, "skip_controller_dialog"},
+    {0x004951ac,  3, "skip_controller_dialog"},
+    {0x004951f0,  5, "skip_selector"},
+    {0x00495870,  5, "fix_joypad"},
+    {0x004963e7,  1, "disable_log"},
+    {0x00496400,  1, "disable_log"},
+    {0x00496490,  6, "disable_log"},
+    {0x00498bc0,  4, "fix_camera_res"},
+    {0x00498bd0,  4, "fix_camera_res"},
+    {0x00498dbc,  2, "show_windowed"},
+    {0x004996d3,  1, "no_focus_pause"},
+    {0x004a4541,  5, "fix_fopen"},
+    {0x00508bd5, 31, "fix_joypad cave"},
+    {0x00508bf5,  7, "fix_joypad cave"},
+    {0x0050f6c4, 28, "fix_fopen cave"},
+    {0x005bc750,  3, "skip_audio_com"},
+};
+
+static const PatchedRange* BootPatchOverlap(std::uintptr_t rva) {
+    for (const PatchedRange& r : kBootPatched) {
+        if (rva < r.va + r.len && r.va < rva + 5) return &r;
+    }
+    return nullptr;
+}
+
 bool Install(std::size_t index) {
     auto& reg = Registry();
     if (index >= reg.size()) return false;
@@ -69,6 +106,22 @@ bool Install(std::size_t index) {
     if (h.installed) return true;
     auto* target      = reinterpret_cast<std::uint8_t*>(h.target_rva);
     auto* replacement = reinterpret_cast<std::uint8_t*>(h.replacement);
+    static const bool allowBootPatch = [] {
+        const char* v = std::getenv("MASHED_HOOK_ALLOW_BOOTPATCH");
+        return v && v[0] && v[0] != '0';
+    }();
+    if (!allowBootPatch) {
+        if (const PatchedRange* p = BootPatchOverlap(h.target_rva)) {
+            char buf[256];
+            wsprintfA(buf,
+                      "[HookSystem] BOOT-PATCH REFUSED at 0x%08X: JMP would overwrite the "
+                      "'%s' patch at 0x%08X; NOT installing '%s'\r\n",
+                      static_cast<unsigned>(h.target_rva), p->patch,
+                      static_cast<unsigned>(p->va), h.name ? h.name : "?");
+            LoudLog(buf);
+            return false;
+        }
+    }
     // Dual-install guard: if the target already starts with an E9 JMP, another
     // hook owns this RVA (two registry entries at one RVA, e.g. a port hook +
     // an A/B driver). Saving that E9 as "original prologue" would corrupt
