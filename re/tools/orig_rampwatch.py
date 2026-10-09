@@ -115,12 +115,24 @@ CAM_N, CAM_STRIDE = 7, 0xd8   # entries 1..6 sampled too (PREREG_CADENCE.md adde
 A_TRK = 0x00644158
 A_G898C = 0x0089898c
 A_T588, A_N584 = 0x0063d588, 0x0063d584
+# [D-11073 LEG 1a 2026-10-09] PREREG_LEG1A.md G-ORIG. Owed by RESULT_LEG0.md section 4 item 5.
+#   DAT_0067ea64 FUN_0042f500's return: picks FUN_0040dbd0's helper (0 -> FUN_0041b520 on
+#   the case-10 arm). _DAT_007f100c the per-frame step (0x0040fc57).
+#   0x00882194/0x00882198 + v*0xd04: what FUN_004103a0's exit arm copies (FUN_0046c750/730).
+#   Records 0x0063c8d0 + k*0x74 (k=0..3): FUN_0041b520 -> FUN_0041ae20 reads +0x64 (index),
+#   writes +0x50/+0x54/+0x58 (row of 0x005f3304, +0x50 doubled) and +0x70 = 0.
+A_EA64, A_STEP100C = 0x0067ea64, 0x007f100c
+A_C2194, A_C2198 = 0x00882194, 0x00882198
+A_REC8D0, REC_STRIDE = 0x0063c8d0, 0x74
 CAM_COLS = (["flag_fe0", "tgt_fe4", "tgt_fe8", "tgt_fec", "ffc", "f800",
              "d70", "d74", "d78", "h657448", "n994",
              "e0_type", "e0_x", "e0_z", "e0_a8", "cd_29b8", "rule_0fd0", "ba88", "f1a50"]
             + ["in%d" % k for k in range(IN_N)]
             + ["e%d_%s" % (k, f) for k in range(1, CAM_N) for f in ("type", "a8", "x", "z")]
-            + ["trk_644158", "g_898c", "t_d588", "n_d584", "e0_y"])
+            + ["trk_644158", "g_898c", "t_d588", "n_d584", "e0_y"]
+            + ["team_ea64", "dt_100c"]
+            + ["c2194_%d" % v for v in range(4)] + ["c2198_%d" % v for v in range(4)]
+            + ["r%d_%s" % (k, f) for k in range(4) for f in ("i64", "f50", "f54", "f58", "i70")])
 
 PROCESS_VM_READ = 0x0010
 PROCESS_QUERY_INFORMATION = 0x0400
@@ -284,6 +296,17 @@ def main():
                 r.update({"trk_644158": i32(h, A_TRK), "g_898c": i32(h, A_G898C),
                           "t_d588": f32(h, A_T588), "n_d584": i32(h, A_N584),
                           "e0_y": f32(h, A_CAM0 + 0x40)})
+                r.update({"team_ea64": i32(h, A_EA64), "dt_100c": f32(h, A_STEP100C)})
+                for v in range(4):
+                    r["c2194_%d" % v] = i32(h, A_C2194 + v * ALIVE_STRIDE)
+                    r["c2198_%d" % v] = i32(h, A_C2198 + v * ALIVE_STRIDE)
+                for k in range(4):
+                    rb = A_REC8D0 + k * REC_STRIDE
+                    r["r%d_i64" % k] = i32(h, rb + 0x64)
+                    r["r%d_f50" % k] = f32(h, rb + 0x50)
+                    r["r%d_f54" % k] = f32(h, rb + 0x54)
+                    r["r%d_f58" % k] = f32(h, rb + 0x58)
+                    r["r%d_i70" % k] = i32(h, rb + 0x70)
             rows.append(r)
             time.sleep(1.0 / hz)
     finally:

@@ -22,6 +22,7 @@
 #include "../LibRw/RwRaceSubmit.h"  // E2'b step 3: in-loop librw submit (MASHED_RENDER_LIBRW)
 #include "DrawStreamDump.h"         // parity harness: MASHED_DBG_DRAWSTREAM3D race-3D summary
 #include "../Ai/AiStandalone.h"     // WS-C: racing-line target Ai_ComputeTarget is the DEFAULT
+#include "../Race/SubStateCallees.h"  // D-11073 leg 1a: FUN_0041d930 tail partial (MASHED_SUBSTATE)
                                     // (MASHED_GATE_RIBBON_AI reverts it to the ribbon scaffold).
                                     // [D3 2026-09-26] the ported TICK Ai_Standalone_Tick runs every
                                     // race frame and its ctrl bytes drive the opponents.
@@ -3536,6 +3537,13 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         Ai::Ai_Standalone_Tick();
         AiStepDump();
         U9186GateDump();   // [U-9186 G1] default-OFF measurement probe
+        // [D-11073 leg 1a] FUN_0041d930's tail (0x0041da5f..0x0041da76): DAT_0063d584 += 1,
+        // DAT_0063d588 += _DAT_007f100c. The original runs it once per frame from FUN_0040fc00
+        // (call at 0x0040fd11), after the step store (0x0040fc57, Ai_AdvanceClock above) and
+        // after the AI tick, and FUN_004111c0 runs FUN_0040fc00 after the sub-state handler.
+        // The port has no handler yet (leg 1b). Default OFF; nothing in the exe reads either
+        // global in leg 1a (PREREG_LEG1A.md section 2).
+        if (SubState_Enabled()) HudSlideBillboardTimerTail();
         const bool phys = Vehicle::VehiclePhysics_Enabled();
         yaww::Flags(faithful_nav, phys);   // A-REACH witnesses the branch, not prose
         // [U-9141 2026-09-29] MASHED_MEASURE_NOOPP=1 — MEASUREMENT HARNESS ONLY. Skips the

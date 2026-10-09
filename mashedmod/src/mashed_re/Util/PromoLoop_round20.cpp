@@ -7,7 +7,7 @@
 // Included in this file (subsystem per hooks.csv noted per function):
 //   0x00495270  HWNDGet              — render; out = game window handle
 //   0x00484c70  WorldObjectsBaseGet  — ai; *out = count, returns array base
-//   0x0041da90  DeltaTimeOutGet      — ai; null-guarded *out = DAT_0063d588
+//   [MOVED 2026-10-09, D-11073 leg 1a] DeltaTimeOutGet (FUN_0041da90) -> Race/SubStateCallees.cpp
 //
 // All bodies byte-verified in original\MASHED.exe.unpatched 2026-06-12.
 // Diffed via the round-19 outbuf_only handler (round-20 fold_ret/seed_global
@@ -78,35 +78,3 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl WorldObjectsBaseGet(std::
 
 RH_ScopedInstall(WorldObjectsBaseGet, 0x00484c70);
 
-// ---------------------------------------------------------------------------
-// DeltaTimeOutGet  --  0x0041da90   (subsystem: ai)
-//
-// Original: FUN_0041da90 (16 bytes, 0x0041da90..0x0041da9f)
-// Bytes: 8B 44 24 04 / 85 C0 / 74 08 / 8B 0D 88 D5 63 00 / 89 08 / C3
-//   (mov eax,[esp+4]; test eax,eax; jz +8; mov ecx,[0x0063d588];
-//    mov [eax],ecx; ret)
-// Signature: void FUN_0041da90(undefined4* param_1)
-//
-// Null-guarded: if param_1 != NULL, copies DAT_0063d588 to *param_1.
-//
-// Constants (cited from function body at 0x0041da90):
-//   0x0063d588 — accumulating time value (compared to a lap-complete threshold
-//                by caller FUN_004103a0)
-//
-// Caller: FUN_004103a0 TimeTrial::LapFinishProcessor (util, C2). Leaf.
-//
-// Uncertainties (non-blocking):
-//   U-3585: whether DAT_0063d588 is real-time / frame-count / elapsed
-//           (data-semantic). The diff seeds it (seed_global) so the copy is
-//           deterministic regardless.
-// ---------------------------------------------------------------------------
-
-// 0x0041da90
-extern "C" __declspec(dllexport) void __cdecl DeltaTimeOutGet(std::uint32_t* param_1) {
-    // null guard + 0x0063d588 cited at 0x0041da90 body.
-    if (param_1 != nullptr) {
-        *param_1 = *reinterpret_cast<const std::uint32_t*>(0x0063d588u);
-    }
-}
-
-RH_ScopedInstall(DeltaTimeOutGet, 0x0041da90);

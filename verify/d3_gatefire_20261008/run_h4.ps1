@@ -17,7 +17,7 @@ $LANE = @('MASHED_REFDIST','MASHED_SLOTSTATE_SEED','MASHED_SLOT_PLAYER',
           'MASHED_A364_RESET','MASHED_RACEPCT_BRIDGE','MASHED_NO_ELIM',
           'MASHED_WIRE_B2','MASHED_U9186_GATES','MASHED_AI_STEPDUMP',
           'MASHED_NO_SLOTSTATE_SEED','MASHED_NO_SLOT_PLAYER','MASHED_GF1',
-          'MASHED_PLAYERTRACE')
+          'MASHED_PLAYERTRACE','MASHED_SUBSTATE')
 
 $B2 = @('MASHED_A364_RESET','MASHED_REFDIST','MASHED_RACEPCT_BRIDGE','MASHED_NO_ELIM','MASHED_WIRE_B2')
 $runs = @(
@@ -28,11 +28,14 @@ $runs = @(
   @{ name = 'H4_D';  knobs = $B2 },
   # post-flip (18:56 build, SLOT_PLAYER default-ON): must equal B and A respectively
   @{ name = 'H4_post';   knobs = @() },
-  @{ name = 'H4_optout'; knobs = @('MASHED_NO_SLOT_PLAYER') }
+  @{ name = 'H4_optout'; knobs = @('MASHED_NO_SLOT_PLAYER') },
+  # D-11073 leg 1a (PREREG_LEG1A.md G-INERT): L1A_A = H4_A recipe on the new build (G-CTRL); L1A_SUB = + MASHED_SUBSTATE (G-INERT); both must equal H4_A
+  @{ name = 'L1A_A';     knobs = @() },
+  @{ name = 'L1A_SUB';   knobs = @('MASHED_SUBSTATE') }
 )
 $sel = @($args)   # capture: inside a Where-Object block $args is the block's own
 if ($sel.Count -gt 0) { $runs = $runs | Where-Object { $sel -contains $_.name } }
-else { $runs = $runs | Where-Object { $_.name -notlike 'H4_post*' -and $_.name -ne 'H4_optout' } }
+else { $runs = $runs | Where-Object { $_.name -notlike 'H4_post*' -and $_.name -ne 'H4_optout' -and $_.name -notlike 'L1A_*' } }
 
 foreach ($r in $runs) {
   $log = Join-Path $root 'mashed_re.log'

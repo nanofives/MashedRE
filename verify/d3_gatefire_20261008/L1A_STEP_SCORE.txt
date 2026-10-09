@@ -1,0 +1,8 @@
+SUB samples 1546 live (n_d584>0) 1288 first live n 1
+  (a) dt_100c == 0x3c888888 after first live: 1287/1287
+  (b) t_d588 == float32 sum(n): exact 1288, torn(n-1) 0, other 0  -> exact share 1.0000
+  (c) median d(t)/d(n) = 0.016666412353515625 over 1258 pairs (|diff| = 2.88e-07)
+  last sample n=1306 t=21.76650619506836
+G-STEP: PASS
+OFF samples 1543 non-zero rows 0 distinct clk_0ff4 values 1263
+G-STEP-CTL: PASS

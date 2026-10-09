@@ -48,6 +48,7 @@
 //   re/analysis/ai_path_following/0x00418860.md
 
 #include "../Core/HookSystem.h"
+#include "../Race/SubStateCallees.h"
 
 #include <cstdint>
 
@@ -271,10 +272,11 @@ extern "C" __declspec(dllexport) void __cdecl HudSlideBillboardTick(void)
     col[2] = col[2] * cscale;
     s_F004c13e0(*reinterpret_cast<std::int32_t*>(k_0063d580), col, 1);
 
-    *reinterpret_cast<std::int32_t*>(k_0063d584) =
-        *reinterpret_cast<std::int32_t*>(k_0063d584) + 1;
-    *reinterpret_cast<float*>(k_0063d588) =
-        *reinterpret_cast<float*>(k_0063d588) + *reinterpret_cast<float*>(k_007f100c);
+    // 0x0041da5f..0x0041da76: DAT_0063d584 += 1; DAT_0063d588 += _DAT_007f100c.
+    // [D-11073 leg 1a, 2026-10-09] split out as the named PARTIAL HudSlideBillboardTimerTail
+    // (Race/SubStateCallees.cpp) so the exe can run the tail without this body's raw RW calls
+    // (0x004c1480 / 0x004c13e0 lie outside the exe's mapped text). One copy of the tail.
+    HudSlideBillboardTimerTail();
 }
 
 RH_ScopedInstall(HudSlideBillboardTick, 0x0041d930);

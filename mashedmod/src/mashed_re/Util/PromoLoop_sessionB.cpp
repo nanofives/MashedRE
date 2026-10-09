@@ -715,19 +715,8 @@ extern "C" __declspec(dllexport) void __fastcall Copy41b770(char* self) {
 }
 RH_ScopedInstall(Copy41b770, 0x0041b770);
 
-// 0x0041ae20  render thiscall — byte-verified: i=this[0x64]; rec=&tbl_0x5f3304[i*3];
-//   this[0x50]=rec[0]; this[0x54]=rec[1]; this[0x58]=rec[2]; this[0x70]=0;
-//   this[0x50] = (float)this[0x50] + (float)this[0x50]  (FLD;FADD ST0,ST0;FSTP — exact 2x)
-extern "C" __declspec(dllexport) void __fastcall Copy41ae20(char* self) {
-    std::uint32_t i = *reinterpret_cast<std::uint32_t*>(self + 0x64);
-    const std::uint32_t* rec = reinterpret_cast<const std::uint32_t*>(0x005f3304u + i * 12u);
-    std::uint32_t* dst = reinterpret_cast<std::uint32_t*>(self + 0x50);
-    dst[0] = rec[0]; dst[1] = rec[1]; dst[2] = rec[2];
-    *reinterpret_cast<std::uint32_t*>(self + 0x70) = 0;
-    float* f = reinterpret_cast<float*>(self + 0x50);
-    *f = *f + *f;
-}
-RH_ScopedInstall(Copy41ae20, 0x0041ae20);
+// [MOVED 2026-10-09, D-11073 leg 1a] Copy41ae20 (FUN_0041ae20) and Update41b520
+// (FUN_0041b520) -> Race/SubStateCallees.cpp (built into both targets).
 
 // ===== round 104 =====
 
@@ -3645,25 +3634,6 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Accum4215c0(void
     }
 }
 RH_ScopedInstall(Accum4215c0, 0x004215c0);
-
-// 0x0041b520  FUN_0041b520 (gameplay, NEAR-LEAF: per-record update loop over 4 records)
-// void f(void): for (ecx=0x63c8d0; ecx<0x63caa0; ecx+=0x74) FUN_0041ae20(ecx). Callee 0x41ae20
-// (__fastcall, C3, preserves ecx) copies table[0x5f3304+rec[0x64]*0xc] vec3 -> rec[0x50..0x58],
-// doubles rec[0x50] (float), zeros rec[0x70]. Verbatim naked port; `call rel32`->`mov eax,abs;call eax`.
-extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Update41b520(void)
-{
-    __asm {
-        mov  ecx, 063C8D0h
-    L_UPD_LOOP:
-        mov  eax, 041AE20h
-        call eax
-        add  ecx, 0x74
-        cmp  ecx, 063CAA0h
-        jl   L_UPD_LOOP
-        ret
-    }
-}
-RH_ScopedInstall(Update41b520, 0x0041b520);
 
 // 0x00462760  FUN_00462760 (gameplay, NEAR-LEAF: predicate over a 4-entry pointer array)
 // int f(void): for each p in array 0x69045c[0..3]: if (p==0 || GetD70(p)==0 || GetD70(p)==2 ||

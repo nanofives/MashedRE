@@ -1,5 +1,19 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-09 (D-11073 leg 1a DONE): **exe substrate in, default build byte-identical. Next: leg 1b (`FUN_0040dbd0` + `FUN_004103a0`).**
+>
+> Read [`RESULT_LEG1A.md`](../verify/d3_gatefire_20261008/RESULT_LEG1A.md) (prereg `PREREG_LEG1A.md`, all gates PASS).
+> - `MASHED_SUBSTATE` (default OFF): step store `0x0040fc57` in `Ai_AdvanceClock` + `FUN_0041d930` tail partial
+>   `HudSlideBillboardTimerTail`. `DAT_0063d588` bit-exact float32 running sum on 1288/1288 samples. Controls
+>   `c741a4c5` / `642af0ac` / `05984e30` unchanged with the knob OFF **and** ON.
+> - Seven callees moved to `Race/SubStateCallees.cpp` (E+A), one body per RVA, path1 GREEN + path2 E9 on all.
+> - Original: `DAT_0067ea64` = 0 everywhere, so phase 4 calls **`FUN_0041b520`**. `0x00882194+v*0xd04` = 0,250,250,250
+>   (last phase 5) / 0,1100,1100,1100 (first phase 6); `+0x2198` 0 -> 0,1,1,1. Records `0x0063c8d0+k*0x74` have
+>   `+0x64` = k in the original; the standalone's BSS reads 0, so read it before porting (RESULT_LEG1A §4).
+> - **Harness blocker found (not this leg):** the FULL auto-hook set AVs `MASHED.exe` at boot (`0x004c7785`, read
+>   `0x1c`), with the 8 leg-1a hooks skipped too. Every full-set `run_verify_hook` and `--hooks all` run fails at
+>   attach (`VirtualAllocEx` 0x5). Use `MASHED_HOOK_ONLY=<rva>` per hook; bisect with `MASHED_HOOK_LO/HI` separately.
+
 > ## START HERE 2026-10-08 (D-11073 re-scoped after leg 0): **Leg 1 split into 1a (exe substrate, inert) and 1b (phases 4+5). Start with 1a.**
 >
 > Brief: [`re/BRIEF_D11073.md`](BRIEF_D11073.md) §2. Leg 0 (`RESULT_LEG0.md`) showed a faithful phase-5 port

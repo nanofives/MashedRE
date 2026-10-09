@@ -1,0 +1,165 @@
+=== run_diff table_882194_get
+hook: table_882194_get  rva=0x0046c750  export=EntityVelocityCounterGet
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 2820
+  [agent] LUT ready  base=0x29aa8b8  offset=0x134  root=0xce30048  delta=0  attempts=0
+  [agent] .asi loaded  base=0x5c900000  EntityVelocityCounterGet@0x5c9221e0
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\log\diff_table_882194_get.csv
+  total cases: 10
+  mismatches:  0
+
+INCONCLUSIVE-DEGENERATE: 0 mismatches, but every observed value
+on both sides is trivial (zero/empty/all-zero fingerprint). The
+diff had no discriminating power. Re-run at a state where the
+inputs are populated (scenario-attach), or — only if all-zero
+output is genuinely this function's behavior on every test
+vector — pass --allow-degenerate or set degenerate_ok=True in
+hooks_registry.py.
+rc=5
+=== run_diff table_882198_get
+hook: table_882198_get  rva=0x0046c730  export=EntityDamageStateGet
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 15592
+  [agent] LUT ready  base=0x147a8b8  offset=0x134  root=0xce30048  delta=0  attempts=0
+  [agent] .asi loaded  base=0x5f070000  EntityDamageStateGet@0x5f0921c0
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\log\diff_table_882198_get.csv
+  total cases: 10
+  mismatches:  0
+
+INCONCLUSIVE-DEGENERATE: 0 mismatches, but every observed value
+on both sides is trivial (zero/empty/all-zero fingerprint). The
+diff had no discriminating power. Re-run at a state where the
+inputs are populated (scenario-attach), or — only if all-zero
+output is genuinely this function's behavior on every test
+vector — pass --allow-degenerate or set degenerate_ok=True in
+hooks_registry.py.
+rc=5
+=== early_window copy_41ae20
+hook: copy_41ae20  (early-window pure-leaf diff — no menu boot required)
+  b0=0x8b reim=0x5f0c2150 cases=6 mismatches=0
+  evidence: C:\Users\maria\Desktop\Proyectos\Mashed\log\diff_copy_41ae20.csv
+VERDICT: GREEN
+rc=0
+=== early_window update_41b520
+hook: update_41b520  (early-window pure-leaf diff — no menu boot required)
+  b0=0xb9 reim=0x5efd2230 cases=2 mismatches=0
+  evidence: C:\Users\maria\Desktop\Proyectos\Mashed\log\diff_update_41b520.csv
+VERDICT: GREEN
+rc=0
+=== early_window vehicle_physics_state_reset_obs
+hook: vehicle_physics_state_reset_obs  (early-window pure-leaf diff — no menu boot required)
+  b0=0x8b reim=0x5efd2290 cases=7 mismatches=0
+  evidence: C:\Users\maria\Desktop\Proyectos\Mashed\log\diff_vehicle_physics_state_reset_obs.csv
+VERDICT: GREEN
+rc=0
+=== early_window table_882194_get
+hook: table_882194_get  (early-window pure-leaf diff — no menu boot required)
+  b0=0x8b reim=0x5c9821e0 cases=10 mismatches=0
+  evidence: C:\Users\maria\Desktop\Proyectos\Mashed\log\diff_table_882194_get.csv
+VERDICT: GREEN
+rc=0
+=== early_window table_882198_get
+hook: table_882198_get  (early-window pure-leaf diff — no menu boot required)
+  b0=0x8b reim=0x5c9821c0 cases=10 mismatches=0
+  evidence: C:\Users\maria\Desktop\Proyectos\Mashed\log\diff_table_882198_get.csv
+VERDICT: GREEN
+rc=0
+=== run_diff vehicle_physics_state_reset_obs (early_window's scattered handler ignores args/len/fill: its GREEN above is VOID)
+hook: vehicle_physics_state_reset_obs  rva=0x0046baa0  export=VehiclePhysicsStateReset
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 25276
+  [agent] LUT ready  base=0x2d7a8b8  offset=0x134  root=0xce30048  delta=0  attempts=0
+  [agent] .asi loaded  base=0x5f070000  VehiclePhysicsStateReset@0x5f092290
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\log\diff_vehicle_physics_state_reset_obs.csv
+  total cases: 7
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.
+rc=0
+=== run_diff delta_time_out_get (scenario race)
+hook: delta_time_out_get  rva=0x0041da90  export=DeltaTimeOutGet
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 32724
+scenario='race': driving to a live race before running vectors
+  [nav] booting to menu...
+  [nav] timeout: d3 depth=2 phase=3
+  [nav] timeout: d3 depth=2 phase=3
+  [nav] in race? phase=0 (YES)
+  [agent] LUT ready  base=0x2c9a8b8  offset=0x134  root=0xce30048  delta=0  attempts=0
+  [agent] .asi loaded  base=0x5f070000  DeltaTimeOutGet@0x5f0921b0
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\log\diff_delta_time_out_get.csv
+  total cases: 10
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.
+rc=0
+=== run_diff hud_slide_billboard_tick (scenario race)
+hook: hud_slide_billboard_tick  rva=0x0041d930  export=HudSlideBillboardTick
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 38168
+scenario='race': driving to a live race before running vectors
+  [nav] booting to menu...
+  [nav] timeout: d3 depth=2 phase=3
+  [nav] timeout: d3 depth=2 phase=3
+  [nav] in race? phase=0 (YES)
+  [agent] LUT ready  base=0x2c7a8b8  offset=0x134  root=0xce30048  delta=0  attempts=0
+  [agent] .asi loaded  base=0x5e590000  HudSlideBillboardTick@0x5e5bac80
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\log\diff_hud_slide_billboard_tick.csv
+  total cases: 10
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.
+rc=0
+=== run_diff entity_velocity_counter_get (scenario race)
+hook: entity_velocity_counter_get  rva=0x0046c750  export=EntityVelocityCounterGet
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 37316
+scenario='race': driving to a live race before running vectors
+  [nav] booting to menu...
+  [nav] timeout: d3 depth=2 phase=3
+  [nav] timeout: d3 depth=2 phase=3
+  [nav] in race? phase=0 (YES)
+  [agent] LUT ready  base=0x2d9a8b8  offset=0x134  root=0xce30048  delta=0  attempts=0
+  [agent] .asi loaded  base=0x5ef80000  EntityVelocityCounterGet@0x5efa21e0
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\log\diff_entity_velocity_counter_get.csv
+  total cases: 10
+  mismatches:  0
+
+INCONCLUSIVE-DEGENERATE: 0 mismatches, but every observed value
+on both sides is trivial (zero/empty/all-zero fingerprint). The
+diff had no discriminating power. Re-run at a state where the
+inputs are populated (scenario-attach), or — only if all-zero
+output is genuinely this function's behavior on every test
+vector — pass --allow-degenerate or set degenerate_ok=True in
+hooks_registry.py.
+rc=5
+=== run_diff entity_damage_state_get (scenario race)
+hook: entity_damage_state_get  rva=0x0046c730  export=EntityDamageStateGet
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 21740
+scenario='race': driving to a live race before running vectors
+  [nav] booting to menu...
+  [nav] timeout: d3 depth=2 phase=3
+  [nav] timeout: d3 depth=2 phase=3
+  [nav] in race? phase=0 (YES)
+  [agent] LUT ready  base=0x2b4a8b8  offset=0x134  root=0xce30048  delta=0  attempts=0
+  [agent] .asi loaded  base=0x5ee00000  EntityDamageStateGet@0x5ee221c0
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\log\diff_entity_damage_state_get.csv
+  total cases: 10
+  mismatches:  0
+
+INCONCLUSIVE-DEGENERATE: 0 mismatches, but every observed value
+on both sides is trivial (zero/empty/all-zero fingerprint). The
+diff had no discriminating power. Re-run at a state where the
+inputs are populated (scenario-attach), or — only if all-zero
+output is genuinely this function's behavior on every test
+vector — pass --allow-degenerate or set degenerate_ok=True in
+hooks_registry.py.
+rc=5

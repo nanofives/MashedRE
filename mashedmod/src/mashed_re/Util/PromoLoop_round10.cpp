@@ -5,8 +5,8 @@
 //   (preserved in original\MASHED.exe.unpatched)
 //
 // Included in this file (subsystem per hooks.csv noted per function):
-//   0x0046c750  EntityVelocityCounterGet — ai; bounds-checked 0xd04-stride getter
-//   0x0046c730  EntityDamageStateGet     — ai; sibling field (+4) getter
+//   [MOVED 2026-10-09, D-11073 leg 1a] EntityVelocityCounterGet (FUN_0046c750) and
+//   EntityDamageStateGet (FUN_0046c730) -> Race/SubStateCallees.cpp
 //   0x0040b410  RaceScoreTimerGet        — util; unbounded indexed getter
 //   0x0040e360  RaceModeSet              — util; 9B setter on the LIVE
 //                                          race-phase global (vectors restricted)
@@ -24,75 +24,6 @@
 #include "../Core/HookSystem.h"
 
 #include <cstdint>
-
-// ---------------------------------------------------------------------------
-// EntityVelocityCounterGet  --  0x0046c750   (subsystem: ai)
-//
-// Original: FUN_0046c750 (25 bytes, 0x0046c750..0x0046c768)
-// Bytes: 8B 44 24 04 / 83 F8 10 / 7C 03 / 33 C0 / C3 /
-//        69 C0 04 0D 00 00 / 8B 80 94 21 88 00 / C3
-//   (mov eax,[esp+4]; cmp eax,0x10; jl read; xor eax,eax; ret;
-//    read: imul eax,eax,0xd04; mov eax,[eax+0x00882194]; ret)
-//   NOTE: jl = SIGNED compare — int param; negative indices take the read path
-//   in the original (vectors stay non-negative).
-// Signature: undefined4 FUN_0046c750(int param_1)
-//
-// Constants (cited from function body at 0x0046c750):
-//   0x00882194 — velocity/exposure counter base (entity field; range 0-3000)
-//   0xd04      — per-entity struct stride (3332 bytes)
-//   0x10       — exclusive bound (valid indices 0..15 via signed jl)
-//
-// Caller: FUN_004103a0 TimeTrial::LapFinishProcessor (C2).
-//
-// Uncertainties (non-blocking):
-//   U-3586: full layout of the stride-0xd04 entity block (data-semantic).
-// ---------------------------------------------------------------------------
-
-// 0x0046c750
-extern "C" __declspec(dllexport) std::uint32_t __cdecl EntityVelocityCounterGet(int param_1) {
-    // signed bound (jl vs 0x10) cited at 0x0046c750 body.
-    if (param_1 >= 0x10) {
-        return 0u;
-    }
-    // 0x00882194 base + 0xd04 stride cited at 0x0046c750 body.
-    return *reinterpret_cast<const std::uint32_t*>(
-        0x00882194u + static_cast<std::uint32_t>(param_1) * 0xd04u);
-}
-
-RH_ScopedInstall(EntityVelocityCounterGet, 0x0046c750);
-
-// ---------------------------------------------------------------------------
-// EntityDamageStateGet  --  0x0046c730   (subsystem: ai)
-//
-// Original: FUN_0046c730 (25 bytes, 0x0046c730..0x0046c748)
-// Bytes: identical shape to 0x0046c750 with base 0x00882198
-//   (8B 44 24 04 / 83 F8 10 / 7C 03 / 33 C0 / C3 /
-//    69 C0 04 0D 00 00 / 8B 80 98 21 88 00 / C3)
-// Signature: undefined4 FUN_0046c730(int param_1)
-//
-// Constants (cited from function body at 0x0046c730):
-//   0x00882198 — damage-state field base (= 0x00882194 + 4; values 0/1/2)
-//   0xd04      — per-entity struct stride
-//   0x10       — exclusive bound (signed jl)
-//
-// Callers: FUN_004103a0 (C2), FUN_004642f0 (C2).
-//
-// Uncertainties (non-blocking):
-//   U-3586: shared entity-block layout (data-semantic).
-// ---------------------------------------------------------------------------
-
-// 0x0046c730
-extern "C" __declspec(dllexport) std::uint32_t __cdecl EntityDamageStateGet(int param_1) {
-    // signed bound (jl vs 0x10) cited at 0x0046c730 body.
-    if (param_1 >= 0x10) {
-        return 0u;
-    }
-    // 0x00882198 base + 0xd04 stride cited at 0x0046c730 body.
-    return *reinterpret_cast<const std::uint32_t*>(
-        0x00882198u + static_cast<std::uint32_t>(param_1) * 0xd04u);
-}
-
-RH_ScopedInstall(EntityDamageStateGet, 0x0046c730);
 
 // ---------------------------------------------------------------------------
 // RaceScoreTimerGet  --  0x0040b410   (subsystem: util)

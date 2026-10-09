@@ -1,0 +1,391 @@
+=== run_verify_hook clear_63d584_pair
+hook: clear_63d584_pair  rva=0x0041d910  export=Clear63d584Pair
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 6512
+attach failed: unexpected error allocating memory in target process (VirtualAllocEx returned 0x00000005)
+rc=4
+=== run_verify_hook delta_time_out_get
+hook: delta_time_out_get  rva=0x0041da90  export=DeltaTimeOutGet
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 30068
+attach failed: unexpected error allocating memory in target process (VirtualAllocEx returned 0x00000005)
+rc=4
+=== run_verify_hook copy_41ae20
+hook: copy_41ae20  rva=0x0041ae20  export=@Copy41ae20@4
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 32984
+attach failed: unexpected error allocating memory in target process (VirtualAllocEx returned 0x00000005)
+rc=4
+=== run_verify_hook update_41b520
+hook: update_41b520  rva=0x0041b520  export=Update41b520
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 25212
+attach failed: unexpected error allocating memory in target process (VirtualAllocEx returned 0x00000005)
+rc=4
+=== run_verify_hook vehicle_physics_state_reset_obs
+hook: vehicle_physics_state_reset_obs  rva=0x0046baa0  export=VehiclePhysicsStateReset
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 38144
+attach failed: unexpected error allocating memory in target process (VirtualAllocEx returned 0x00000005)
+rc=4
+=== run_verify_hook table_882194_get
+hook: table_882194_get  rva=0x0046c750  export=EntityVelocityCounterGet
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 29232
+attach failed: unexpected error allocating memory in target process (VirtualAllocEx returned 0x00000005)
+rc=4
+=== run_verify_hook table_882198_get
+hook: table_882198_get  rva=0x0046c730  export=EntityDamageStateGet
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 13160
+attach failed: unexpected error allocating memory in target process (VirtualAllocEx returned 0x00000005)
+rc=4
+=== run_verify_hook hud_slide_billboard_tick
+hook: hud_slide_billboard_tick  rva=0x0041d930  export=HudSlideBillboardTick
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 444
+attach failed: unexpected error allocating memory in target process (VirtualAllocEx returned 0x00000005)
+rc=4
+##### RE-RUN 2026-10-09 with MASHED_HOOK_ONLY=<rva>: the full auto-hook install AVs at boot (0x004c7785, read 0x1c) with the 8 leg-1a RVAs SKIPPED too (pre-existing; see RESULT_LEG1A.md). Control: bounded_table_signclamp_46d7f0 failed identically.
+=== run_verify_hook clear_63d584_pair  (MASHED_HOOK_ONLY=0x0041d910)
+hook: clear_63d584_pair  rva=0x0041d910  export=Clear63d584Pair
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 3712
+  [agent] pre_snapshot
+  [agent] asi_loaded
+  [agent] post_snapshot
+  [agent] results
+
+=== verify_hook_install report (clear_63d584_pair) ===
+
+target address: 0x0041d910  export: Clear63d584Pair
+PRE  bytes:     e9 7b 48 7e 5e 00 00 00
+asi base:       0x5ebe0000
+reimpl addr:    0x5ec02190
+POST bytes:     e9 7b 48 7e 5e 00 00 00
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x5e7e487b  expected 0x5e7e487b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  3 / 3
+
+per-input results:
+  [OK] input={'args': []}  got=(void)  err=
+  [OK] input={'args': []}  got=(void)  err=
+  [OK] input={'args': []}  got=(void)  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 3x as expected
+  + all 3 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_clear_63d584_pair.txt
+rc=0
+=== run_verify_hook delta_time_out_get  (MASHED_HOOK_ONLY=0x0041da90)
+hook: delta_time_out_get  rva=0x0041da90  export=DeltaTimeOutGet
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 25544
+  [agent] pre_snapshot
+  [agent] asi_loaded
+  [agent] post_snapshot
+  [agent] results
+
+=== verify_hook_install report (delta_time_out_get) ===
+
+target address: 0x0041da90  export: DeltaTimeOutGet
+PRE  bytes:     e9 1b 47 7e 5e c0 74 08
+asi base:       0x5ebe0000
+reimpl addr:    0x5ec021b0
+POST bytes:     e9 1b 47 7e 5e c0 74 08
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x5e7e471b  expected 0x5e7e471b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  0 / 3
+
+per-input results:
+  [FAIL] input=0  got=None  err=expected a pointer
+  [FAIL] input=1  got=None  err=expected a pointer
+  [FAIL] input=2  got=None  err=expected a pointer
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+FAIL:
+  - reimpl interceptor fired 0 times, expected 3
+  - call 0 (input=0) failed: expected a pointer
+  - call 1 (input=1) failed: expected a pointer
+  - call 2 (input=2) failed: expected a pointer
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_delta_time_out_get.txt
+rc=1
+=== run_verify_hook copy_41ae20  (MASHED_HOOK_ONLY=0x0041ae20)
+hook: copy_41ae20  rva=0x0041ae20  export=@Copy41ae20@4
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 31200
+  [agent] pre_snapshot
+  [agent] asi_loaded
+  [agent] post_snapshot
+  [agent] results
+
+=== verify_hook_install report (copy_41ae20) ===
+
+target address: 0x0041ae20  export: @Copy41ae20@4
+PRE  bytes:     e9 2b 73 7e 5e 14 52 57
+asi base:       0x5ebe0000
+reimpl addr:    0x5ec02150
+POST bytes:     e9 2b 73 7e 5e 14 52 57
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x5e7e732b  expected 0x5e7e732b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  0 / 2
+
+per-input results:
+  [FAIL] input=1065353216  got=None  err=expected a pointer
+  [FAIL] input=1073741824  got=None  err=expected a pointer
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+FAIL:
+  - reimpl interceptor fired 0 times, expected 2
+  - call 0 (input=1065353216) failed: expected a pointer
+  - call 1 (input=1073741824) failed: expected a pointer
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_copy_41ae20.txt
+rc=1
+=== run_verify_hook update_41b520  (MASHED_HOOK_ONLY=0x0041b520)
+hook: update_41b520  rva=0x0041b520  export=Update41b520
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 26072
+  [agent] pre_snapshot
+  [agent] asi_loaded
+  [agent] post_snapshot
+  [agent] results
+
+=== verify_hook_install report (update_41b520) ===
+
+target address: 0x0041b520  export: Update41b520
+PRE  bytes:     e9 0b 6d 7e 5e e8 f6 f8
+asi base:       0x5ebe0000
+reimpl addr:    0x5ec02230
+POST bytes:     e9 0b 6d 7e 5e e8 f6 f8
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x5e7e6d0b  expected 0x5e7e6d0b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  2 / 2
+
+per-input results:
+  [OK] input=0  got=(void)  err=
+  [OK] input=1  got=(void)  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 2x as expected
+  + all 2 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_update_41b520.txt
+rc=0
+=== run_verify_hook vehicle_physics_state_reset_obs  (MASHED_HOOK_ONLY=0x0046baa0)
+hook: vehicle_physics_state_reset_obs  rva=0x0046baa0  export=VehiclePhysicsStateReset
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 31180
+  [agent] pre_snapshot
+  [agent] asi_loaded
+  [agent] post_snapshot
+  [agent] results
+
+=== verify_hook_install report (vehicle_physics_state_reset_obs) ===
+
+target address: 0x0046baa0  export: VehiclePhysicsStateReset
+PRE  bytes:     e9 eb 67 79 5e f8 10 72
+asi base:       0x5ebe0000
+reimpl addr:    0x5ec02290
+POST bytes:     e9 eb 67 79 5e f8 10 72
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x5e7967eb  expected 0x5e7967eb  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  0 / 2
+
+per-input results:
+  [FAIL] input={'args': [0]}  got=None  err=expected an unsigned integer
+  [FAIL] input={'args': [16]}  got=None  err=expected an unsigned integer
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+FAIL:
+  - reimpl interceptor fired 0 times, expected 2
+  - call 0 (input={'args': [0]}) failed: expected an unsigned integer
+  - call 1 (input={'args': [16]}) failed: expected an unsigned integer
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_vehicle_physics_state_reset_obs.txt
+rc=1
+=== run_verify_hook table_882194_get  (MASHED_HOOK_ONLY=0x0046c750)
+hook: table_882194_get  rva=0x0046c750  export=EntityVelocityCounterGet
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 38404
+  [agent] pre_snapshot
+  [agent] asi_loaded
+  [agent] post_snapshot
+  [agent] results
+
+=== verify_hook_install report (table_882194_get) ===
+
+target address: 0x0046c750  export: EntityVelocityCounterGet
+PRE  bytes:     e9 8b 5a 79 5e f8 10 7c
+asi base:       0x5ebe0000
+reimpl addr:    0x5ec021e0
+POST bytes:     e9 8b 5a 79 5e f8 10 7c
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x5e795a8b  expected 0x5e795a8b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  3 / 3
+
+per-input results:
+  [OK] input=0  got=0  err=
+  [OK] input=15  got=0  err=
+  [OK] input=16  got=0  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 3x as expected
+  + all 3 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_table_882194_get.txt
+rc=0
+=== run_verify_hook table_882198_get  (MASHED_HOOK_ONLY=0x0046c730)
+hook: table_882198_get  rva=0x0046c730  export=EntityDamageStateGet
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 8020
+  [agent] pre_snapshot
+  [agent] asi_loaded
+  [agent] post_snapshot
+  [agent] results
+
+=== verify_hook_install report (table_882198_get) ===
+
+target address: 0x0046c730  export: EntityDamageStateGet
+PRE  bytes:     e9 8b 5a 79 5e f8 10 7c
+asi base:       0x5ebe0000
+reimpl addr:    0x5ec021c0
+POST bytes:     e9 8b 5a 79 5e f8 10 7c
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x5e795a8b  expected 0x5e795a8b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  3 / 3
+
+per-input results:
+  [OK] input=0  got=0  err=
+  [OK] input=15  got=0  err=
+  [OK] input=16  got=0  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 3x as expected
+  + all 3 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_table_882198_get.txt
+rc=0
+=== run_verify_hook hud_slide_billboard_tick  (MASHED_HOOK_ONLY=0x0041d930)
+hook: hud_slide_billboard_tick  rva=0x0041d930  export=HudSlideBillboardTick
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 32168
+  [agent] pre_snapshot
+  [agent] asi_loaded
+  [agent] post_snapshot
+  [agent] results
+
+=== verify_hook_install report (hud_slide_billboard_tick) ===
+
+target address: 0x0041d930  export: HudSlideBillboardTick
+PRE  bytes:     e9 4b d3 7e 5e 88 d5 63
+asi base:       0x5ebe0000
+reimpl addr:    0x5ec0ac80
+POST bytes:     e9 4b d3 7e 5e 88 d5 63
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x5e7ed34b  expected 0x5e7ed34b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  3 / 3
+
+per-input results:
+  [FAIL] input=3735928559  got=None  err=access violation accessing 0x10
+  [FAIL] input=42  got=None  err=access violation accessing 0x10
+  [FAIL] input=1  got=None  err=access violation accessing 0x10
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 3x as expected
+FAIL:
+  - call 0 (input=3735928559) failed: access violation accessing 0x10
+  - call 1 (input=42) failed: access violation accessing 0x10
+  - call 2 (input=1) failed: access violation accessing 0x10
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_hud_slide_billboard_tick.txt
+rc=1
+=== run_verify_hook vehicle_physics_state_reset  (MASHED_HOOK_ONLY=0x0046baa0; int-vector key, the _obs key's dict tests are not supported by this harness)
+hook: vehicle_physics_state_reset  rva=0x0046baa0  export=VehiclePhysicsStateReset
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 28624
+  [agent] pre_snapshot
+  [agent] asi_loaded
+  [agent] post_snapshot
+  [agent] results
+
+=== verify_hook_install report (vehicle_physics_state_reset) ===
+
+target address: 0x0046baa0  export: VehiclePhysicsStateReset
+PRE  bytes:     e9 eb 67 4f 5d f8 10 72
+asi base:       0x5d940000
+reimpl addr:    0x5d962290
+POST bytes:     e9 eb 67 4f 5d f8 10 72
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x5d4f67eb  expected 0x5d4f67eb  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  4 / 4
+
+per-input results:
+  [OK] input=0  got=1  err=
+  [OK] input=15  got=1  err=
+  [OK] input=16  got=0  err=
+  [OK] input=255  got=0  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 4x as expected
+  + all 4 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_vehicle_physics_state_reset.txt
+rc=0

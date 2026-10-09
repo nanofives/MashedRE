@@ -17303,14 +17303,16 @@ HOOKS = {
 
     # ---- promote-round round 38 (bounds-checked 0xd04-stride table getters) --
     'table_882194_get': {
-        'rva': 0x0046c750, 'export': 'Table882194Get', 'signature': {'ret': 'uint32', 'args': ['int32']},
+        'rva': 0x0046c750, 'export': 'EntityVelocityCounterGet',  # [D-11073 leg 1a] Table882194Get (round38, dead copy) deleted 2026-10-09; repointed to the installed body, now Race/SubStateCallees.cpp
+        'signature': {'ret': 'uint32', 'args': ['int32']},
         'arg_type': 'int_scalar', 'lut_root_delta': 0,
         'seed_table': {'base': 0x00882194, 'stride': 0x0d04, 'span': 0x10},
         'path1_tests': [0, 1, 2, 3, 4, 8, 0xf, 0x10, 0x11, 5],
         'path2_tests': [0, 0xf, 0x10],
     },
     'table_882198_get': {
-        'rva': 0x0046c730, 'export': 'Table882198Get', 'signature': {'ret': 'uint32', 'args': ['int32']},
+        'rva': 0x0046c730, 'export': 'EntityDamageStateGet',  # [D-11073 leg 1a] Table882198Get (round38, dead copy) deleted 2026-10-09; repointed to the installed body, now Race/SubStateCallees.cpp
+        'signature': {'ret': 'uint32', 'args': ['int32']},
         'arg_type': 'int_scalar', 'lut_root_delta': 0,
         'seed_table': {'base': 0x00882198, 'stride': 0x0d04, 'span': 0x10},
         'path1_tests': [0, 1, 2, 3, 4, 8, 0xf, 0x10, 0x11, 5],
@@ -18964,6 +18966,26 @@ HOOKS = {
         'lut_root_delta': 0,
         'path1_tests':    [0, 1, 5, 10, 15, 16, 17, 255, 0xffffffff],
         'path2_tests':    [0, 15, 16, 255],
+    },
+    # [D-11073 leg 1a, 2026-10-09] The key above compares the RETURN only (1/0), so its GREEN
+    # never saw the stores. This key observes them: per slot v the window
+    # [0x008815a0 + v*0xd04, +0xd04) holds every store FUN_0046baa0 makes for v (lowest
+    # 0x008815a0 at 0x0046bab8, highest 0x00882190, loop-1's last puVar2[1]). Windows are
+    # pre-filled 0xAA (so a zero store is visible), saved and restored around each side.
+    # Slot 16 and 0xffffffff take the unsigned guard at 0x0046baa4 (return 0, no store).
+    # Body: Race/SubStateCallees.cpp. PREREG_LEG1A.md section 4.
+    'vehicle_physics_state_reset_obs': {
+        'rva':            0x0046baa0,
+        'export':         'VehiclePhysicsStateReset',
+        'signature':      {'ret': 'uint32', 'args': ['uint32']},
+        'arg_type':       'scalars_to_scattered_globals',
+        'observe':        [{'addr': hex(0x008815a0 + v * 0xd04), 'len': 0xd04, 'fill': 0xAA}
+                           for v in (0, 1, 2, 3, 15)],
+        'fold_ret':       True,
+        'lut_root_delta': 0,
+        'path1_tests':    [{'args': [0]}, {'args': [1]}, {'args': [2]}, {'args': [3]},
+                           {'args': [15]}, {'args': [16]}, {'args': [0xffffffff]}],
+        'path2_tests':    [{'args': [0]}, {'args': [16]}],
     },
 
     # ---- promote-round wf_b0f68acd (2026-06-26) ---------------------------------

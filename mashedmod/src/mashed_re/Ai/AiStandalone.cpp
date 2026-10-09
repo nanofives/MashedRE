@@ -90,6 +90,7 @@
 // ===========================================================================
 #include "AiState.h"
 #include "AiStandalone.h"
+#include "../Race/SubStateCallees.h"   // [D-11073 leg 1a] SubState_StoreStep
 
 #include <cstdint>
 #include <cmath>
@@ -1903,6 +1904,11 @@ void Ai_AdvanceClock(int units)
     I32(kOverrideStep) = units;          // DAT_007f1008
     I32(0x007f0ff4u) += units;           // 0x0040fe5e
     I32(kFrame0ff8)  += units;
+    // [D-11073 leg 1a] _DAT_007f100c = (float)units * _DAT_005cc948, stored at 0x0040fc57,
+    // i.e. just BEFORE the 0x0040fc63 store above in the original. No-op unless
+    // MASHED_SUBSTATE (default OFF). Its only consumer in the exe is the FUN_0041d930 tail
+    // partial (TrackRenderer.cpp), behind the same knob.
+    SubState_StoreStep(units);
 }
 
 // FUN_00413fe0 — per-vehicle AI-state reset (decomp pool0 2026-09-26): DAT_0089a36c = 0;
