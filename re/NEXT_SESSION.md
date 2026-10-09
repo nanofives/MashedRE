@@ -1,5 +1,17 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-09 (FUN_00414180 DONE, C3): **the AI start-boost chain is fully ported behind `MASHED_SUBSTATE` (default OFF), byte-identical default. Next: USER DECISION on seed vs chain, then leg 2.**
+>
+> Read [`RESULT_414180.md`](../verify/d3_gatefire_20261008/RESULT_414180.md) §0 and §3 (prereg `PREREG_414180.md`, every gate PASS).
+> - `SubStateRollCountdown414180` at `0x00414180`: round 1 cd = 3,1,4,2 and G-EXIT 0/0, 1100/1, 1400/1, 1200/1, exactly as
+>   pre-registered; rounds 2-4 = 1000+100*cd, cd matching the verbatim ring. The decomp/plates were wrong (`FUN_004a2c48` is
+>   `_ftol2`; ST0 return and the fd0 {4,8,9} -> 9.9f arm were dropped). `MASHED_SUBSTATE_CD` is now only an override.
+> - **Round 1: the start-boost seed masks the chain** (P414 == P414_CD3 until step frame 1986). Rounds 2+ boost only from the chain.
+> - **(b) depends on RNG ring phase:** the body's 4 draws alone move (b) 5 -> 10 failing items. Fix how (b) is scored before trusting any (b) delta from the knob.
+> - bias374 reversals 2 / 1 (first non-zero, symptom (a)), cause not isolated. U-9198 (original cd 3,3,3,3 = 1/64), U-9199 (path1 coverage).
+>
+> **Decision owed (user):** (A) keep the seed, knob OFF; (B) under the knob gate the seed off so the chain is the one writer every round; (C) (B) + flip the knob default. Then D-11073 leg 2 (phase 3, gate on the release rule, `FUN_00442600` via `aib_track_index()`).
+
 > ## START HERE 2026-10-09 (D-11073 leg 1b DONE): **sub-states 4 + 5 ported behind `MASHED_SUBSTATE` (default OFF), byte-identical default. Next: port `FUN_00414180` (the cd producer), then leg 2.**
 >
 > Read [`RESULT_LEG1B.md`](../verify/d3_gatefire_20261008/RESULT_LEG1B.md) §0 and §6 (prereg `PREREG_LEG1B.md`, all pass gates PASS).

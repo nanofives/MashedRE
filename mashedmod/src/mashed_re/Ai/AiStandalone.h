@@ -107,4 +107,9 @@ struct StepLocals { float look_x, look_z, curv, err, own_x, own_z;
                     int mode, march_n, march_idx0, look_best, look_idx, look_blk; bool valid; };
 const StepLocals& Ai_LastStepLocals(int v);
 
+// FUN_00472650(lo, hi) on the verbatim FUN_00534870 ring (opened lazily), and the number of
+// ring draws taken so far this process. Used by FUN_00414180 (Race/SubStateMachine.cpp).
+float         Ai_RandRange(float lo, float hi);
+std::uint32_t Ai_RandDrawCount();
+
 } // namespace Ai

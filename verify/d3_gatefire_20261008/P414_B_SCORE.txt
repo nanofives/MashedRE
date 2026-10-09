@@ -1,0 +1,21 @@
+P414.step.csv
+  v1 start=0 n=220 steerD=84 steerMed=0.0 |steer|Med=34.0 accel=[0, 102, 255] a255=0.268 brake=[0, 255] b255=0.109
+      (b) FAIL: abs_steer_median=34.0 not in [0,23]
+  v2 start=0 n=220 steerD=116 steerMed=0.0 |steer|Med=55.5 accel=[102, 255] a255=0.268 brake=[0] b255=0.000
+      (b) FAIL: c0_distinct=43 not in [13,37]; c1_distinct=74 not in [17,70]; steer_distinct=116 not in [29,96]; abs_steer_median=55.5 not in [0,23]; brake_distinct=1 not in [2,2]
+  v3 start=0 n=220 steerD=107 steerMed=0.0 |steer|Med=20.5 accel=[102, 255] a255=0.268 brake=[0] b255=0.000
+      (b) FAIL: c1_distinct=74 not in [17,70]; steer_distinct=107 not in [29,96]; brake_distinct=1 not in [2,2]
+P414_CD3.step.csv
+  v1 start=0 n=220 steerD=84 steerMed=0.0 |steer|Med=34.0 accel=[0, 102, 255] a255=0.268 brake=[0, 255] b255=0.109
+      (b) FAIL: abs_steer_median=34.0 not in [0,23]
+  v2 start=0 n=220 steerD=116 steerMed=0.0 |steer|Med=55.5 accel=[102, 255] a255=0.268 brake=[0] b255=0.000
+      (b) FAIL: c0_distinct=43 not in [13,37]; c1_distinct=74 not in [17,70]; steer_distinct=116 not in [29,96]; abs_steer_median=55.5 not in [0,23]; brake_distinct=1 not in [2,2]
+  v3 start=0 n=220 steerD=107 steerMed=0.0 |steer|Med=20.5 accel=[102, 255] a255=0.268 brake=[0] b255=0.000
+      (b) FAIL: c1_distinct=74 not in [17,70]; steer_distinct=107 not in [29,96]; brake_distinct=1 not in [2,2]
+L1B_M5CD.step.csv
+  v1 start=0 n=220 steerD=83 steerMed=0.0 |steer|Med=7.0 accel=[0, 255] a255=0.914 brake=[0, 255] b255=0.086
+      (b) PASS
+  v2 start=0 n=220 steerD=103 steerMed=0.0 |steer|Med=36.5 accel=[0, 255] a255=0.914 brake=[0, 255] b255=0.086
+      (b) FAIL: c0_distinct=44 not in [13,37]; steer_distinct=103 not in [29,96]; abs_steer_median=36.5 not in [0,23]
+  v3 start=0 n=220 steerD=93 steerMed=9.0 |steer|Med=21.5 accel=[0, 255] a255=0.973 brake=[0, 255] b255=0.027
+      (b) FAIL: c1_distinct=71 not in [17,70]; c1_median=9.0 not in [0,0]

@@ -39,11 +39,15 @@ $runs = @(
   # PREREG_LEG1B.md section 5 knob arms (K=V entries set V; bare K sets 1)
   @{ name = 'L1B_SUB';   knobs = @('MASHED_SUBSTATE', 'MASHED_L1B_INPUTS=@OUT@\L1B_SUB.inputs.csv') },
   @{ name = 'L1B_M5';    knobs = @('MASHED_SUBSTATE', 'MASHED_MODE5_RESET', 'MASHED_L1B_INPUTS=@OUT@\L1B_M5.inputs.csv') },
-  @{ name = 'L1B_M5CD';  knobs = @('MASHED_SUBSTATE', 'MASHED_MODE5_RESET', 'MASHED_SUBSTATE_CD=3', 'MASHED_L1B_INPUTS=@OUT@\L1B_M5CD.inputs.csv') }
+  @{ name = 'L1B_M5CD';  knobs = @('MASHED_SUBSTATE', 'MASHED_MODE5_RESET', 'MASHED_SUBSTATE_CD=3', 'MASHED_L1B_INPUTS=@OUT@\L1B_M5CD.inputs.csv') },
+  # FUN_00414180 port (PREREG_414180.md): CTRL = G-CTRL (knob OFF); P414 = G-EXIT arm; P414_CD3 = isolation arm (report only)
+  @{ name = 'P414_CTRL'; knobs = @() },
+  @{ name = 'P414';      knobs = @('MASHED_SUBSTATE', 'MASHED_MODE5_RESET', 'MASHED_L1B_INPUTS=@OUT@\P414.inputs.csv') },
+  @{ name = 'P414_CD3';  knobs = @('MASHED_SUBSTATE', 'MASHED_MODE5_RESET', 'MASHED_SUBSTATE_CD=3', 'MASHED_L1B_INPUTS=@OUT@\P414_CD3.inputs.csv') }
 )
 $sel = @($args)   # capture: inside a Where-Object block $args is the block's own
 if ($sel.Count -gt 0) { $runs = $runs | Where-Object { $sel -contains $_.name } }
-else { $runs = $runs | Where-Object { $_.name -notlike 'H4_post*' -and $_.name -ne 'H4_optout' -and $_.name -notlike 'L1A_*' -and $_.name -notlike 'L1B_*' } }
+else { $runs = $runs | Where-Object { $_.name -notlike 'H4_post*' -and $_.name -ne 'H4_optout' -and $_.name -notlike 'L1A_*' -and $_.name -notlike 'L1B_*' -and $_.name -notlike 'P414*' } }
 
 foreach ($r in $runs) {
   $log = Join-Path $root 'mashed_re.log'

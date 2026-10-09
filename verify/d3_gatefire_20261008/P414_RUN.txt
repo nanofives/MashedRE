@@ -1,0 +1,19 @@
+=== P414_CTRL  knobs=[] ===
+    pid=9692
+    exit=0  self_exited=True
+    P414_CTRL.step.csv  lines=19419  sha8=c741a4c5
+    P414_CTRL.gates.csv  lines=53993  sha8=642af0ac
+    P414_CTRL.ptrace.log  lines=26996  sha8=05984e30
+=== P414  knobs=[MASHED_SUBSTATE,MASHED_MODE5_RESET,MASHED_L1B_INPUTS=@OUT@\P414.inputs.csv] ===
+    pid=36828
+    exit=0  self_exited=True
+    P414.step.csv  lines=19477  sha8=4a2a90d4
+    P414.gates.csv  lines=55769  sha8=628180dc
+    P414.ptrace.log  lines=27884  sha8=d817a5fc
+=== P414_CD3  knobs=[MASHED_SUBSTATE,MASHED_MODE5_RESET,MASHED_SUBSTATE_CD=3,MASHED_L1B_INPUTS=@OUT@\P414_CD3.inputs.csv] ===
+    pid=7196
+    exit=0  self_exited=True
+    P414_CD3.step.csv  lines=18588  sha8=8261da4e
+    P414_CD3.gates.csv  lines=56225  sha8=5711fe08
+    P414_CD3.ptrace.log  lines=28112  sha8=bcacd89f
+H4 DONE

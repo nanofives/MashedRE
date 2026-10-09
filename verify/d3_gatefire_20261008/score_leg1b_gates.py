@@ -17,10 +17,11 @@ Report-only: bias374 histogram / reversals from <arm>.gates.csv vs L1B_CTRL; D2 
 differing ptrace line vs L1B_CTRL (both start at the first post-GO physics frame).
 """
 import csv
+import sys
 import re
 from collections import Counter
 
-ARMS = ["L1B_SUB", "L1B_M5", "L1B_M5CD"]
+ARMS = sys.argv[1:] or ["L1B_SUB", "L1B_M5", "L1B_M5CD"]   # P414 arms: pass names
 
 
 def segments(rows):

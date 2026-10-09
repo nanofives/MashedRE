@@ -37,6 +37,9 @@
 #include "SubStateMachine.h"
 #include "SubStateCallees.h"
 #include "../Core/HookSystem.h"
+#ifdef MASHED_STANDALONE
+#include "../Ai/AiStandalone.h"                                  // Ai_RandRange (FUN_00414180)
+#endif
 
 #include <cstdint>
 #include <cstdio>
@@ -282,3 +285,88 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl SubStateHeldCoun
     }
 }
 RH_ScopedInstall(SubStateHeldCountdown5, 0x004103a0);
+
+// ===========================================================================
+// 0x00414180  SubStateRollCountdown414180  (FUN_00414180, 154 B; caller: the state-2
+// tail, one CALL at 0x00410259). Pre-registration: verify/d3_gatefire_20261008/PREREG_414180.md.
+// From the bytes (capstone, original/MASHED.exe.unpatched 2026-10-09). The decomp and the C2
+// plate drop the ST0 return of FUN_00472650 and the DAT_007f0fd0 arm; FUN_004a2c48 is _ftol2.
+//
+//   DAT_0089a368 = 0; DAT_0089a370 = 0;                         0x00414185 / 0x0041418f
+//   for (rec = 0x0089a4c0; rec < 0x0089a690; rec += 0x74) {     0x00414199 / 0x0041420a..13
+//     idx = _ftol2(DAT_0089a360);                               0x004141a0..0x004141a6
+//     st0 = FUN_00472650((float)row[idx].lo, (float)row[idx].hi);  0x004141ad..0x004141d5
+//     if (DAT_007f0fd0 == 4 || == 9 || == 8) st0 = 9.9f;        0x004141da..0x004141f3
+//     rec[+0x38] = _ftol2(st0);  rec[+0] = 0x005f2eb4[idx];     0x004141f9..0x00414208
+//   }
+//
+// _ftol2 truncates toward zero; static_cast<long> does too. NAMED DEVIATION: the original
+// truncates the 80-bit ST0, the port a float32, so a draw within 2^-24 of an integer could
+// differ (none of the predicted draws is within 1e-3).
+// exe arm: the image-pad has no .data at 0x005f2d80 / 0x005f2eb4, so rows 0..10 are embedded
+// (read from the image 2026-10-09; row 11 on is other data). An idx outside 0..10 is logged and
+// the record left unwritten (the original would read the neighbouring data). The RNG is the port's
+// verbatim FUN_00534870 ring through Ai::Ai_RandRange (the FUN_00472650 law).
+// ===========================================================================
+#ifdef MASHED_STANDALONE
+namespace {
+const std::int32_t kCdRows[11][2] = {                          // 0x005f2d80, stride 8
+    {0, 3}, {1, 4}, {1, 5}, {2, 6}, {3, 7}, {4, 8}, {5, 9}, {6, 10}, {7, 10}, {8, 10}, {9, 10} };
+const std::int32_t kRec0Val[11] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };   // 0x005f2eb4, stride 4
+}
+#endif
+
+// 0x00414180
+extern "C" __declspec(dllexport) void __cdecl SubStateRollCountdown414180(void)
+{
+#ifdef MASHED_STANDALONE
+    const std::int32_t pre368 = G32(0x0089a368u), pre370 = G32(0x0089a370u);
+    const std::uint32_t draws0 = ::Ai::Ai_RandDrawCount();
+    int cdLog[4] = { -999, -999, -999, -999 };
+#endif
+    G32(0x0089a368u) = 0;                                       // 0x00414185
+    G32(0x0089a370u) = 0;                                       // 0x0041418f
+    int v = 0;
+    for (std::uintptr_t rec = 0x0089a4c0u; rec < 0x0089a690u; rec += 0x74u, ++v) {   // 0x00414199
+        const float d360 = *reinterpret_cast<const float*>(0x0089a360u);
+        const long idx = static_cast<long>(d360);               // 0x004141a6 _ftol2
+#ifdef MASHED_STANDALONE
+        if (idx < 0 || idx > 10) {
+            ExeOnce("FUN_00414180 idx outside the embedded 0x005f2d80 rows 0..10");
+            continue;
+        }
+        float st0 = ::Ai::Ai_RandRange(static_cast<float>(kCdRows[idx][0]),
+                                                static_cast<float>(kCdRows[idx][1]));   // 0x004141d5
+        const std::int32_t rec0 = kRec0Val[idx];
+#else
+        const std::int32_t lo = G32(0x005f2d80u + static_cast<std::uintptr_t>(idx) * 8u);   // 0x004141b4
+        const std::int32_t hi = G32(0x005f2d84u + static_cast<std::uintptr_t>(idx) * 8u);   // 0x004141ad
+        float st0 = reinterpret_cast<float(__cdecl*)(float, float)>(0x00472650u)(
+            static_cast<float>(lo), static_cast<float>(hi));    // 0x004141d5 (float10 in ST0)
+        const std::int32_t rec0 = G32(0x005f2eb4u + static_cast<std::uintptr_t>(idx) * 4u); // 0x004141fe
+#endif
+        const std::int32_t fd0 = G32(0x007f0fd0u);              // 0x004141da
+        if (fd0 == 4 || fd0 == 9 || fd0 == 8)                   // 0x004141e2..0x004141ef
+#ifdef MASHED_STANDALONE
+            st0 = 9.9f;                                         // 0x004141f3 [0x005cd08c] = 0x411e6666
+#else
+            st0 = *reinterpret_cast<const float*>(0x005cd08cu); // 0x004141f3
+#endif
+        G32(rec + 0x38u) = static_cast<std::int32_t>(static_cast<long>(st0));   // 0x004141f9 / 0x00414205
+        G32(rec)         = rec0;                                // 0x00414208
+#ifdef MASHED_STANDALONE
+        cdLog[v] = G32(rec + 0x38u);
+#endif
+    }
+#ifdef MASHED_STANDALONE
+    if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
+        std::fprintf(lf, "[substate] FUN_00414180 draws_before=%u pre368=%d pre370=0x%08x idx=%ld "
+                         "cd=%d,%d,%d,%d rec0=%d fd0=%d\n",
+                     draws0, pre368, static_cast<unsigned>(pre370),
+                     static_cast<long>(*reinterpret_cast<const float*>(0x0089a360u)),
+                     cdLog[0], cdLog[1], cdLog[2], cdLog[3], G32(0x0089a4c0u), G32(0x007f0fd0u));
+        std::fclose(lf);
+    }
+#endif
+}
+RH_ScopedInstall(SubStateRollCountdown414180, 0x00414180);

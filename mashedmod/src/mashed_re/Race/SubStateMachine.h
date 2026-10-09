@@ -4,6 +4,7 @@
 extern "C" __declspec(dllexport) void __cdecl SubStateEnter4(void);          // 0x0040dbd0
 extern "C" void __cdecl SubStateHeldCountdown5_C(int units);                 // 0x004103a0 body
 extern "C" __declspec(dllexport) void __cdecl SubStateHeldCountdown5(void);  // 0x004103a0 (EAX)
+extern "C" __declspec(dllexport) void __cdecl SubStateRollCountdown414180(void); // 0x00414180
 
 #ifdef MASHED_STANDALONE
 // Exe-side bindings for the callees the exe cannot reach at their RVA. Set by TrackRenderer.

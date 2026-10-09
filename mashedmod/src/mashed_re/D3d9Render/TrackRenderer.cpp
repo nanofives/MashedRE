@@ -3244,7 +3244,8 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         const int units = static_cast<int>(in.dt * 3000.0f + 0.5f);
         int& ba8c = *reinterpret_cast<int*>(0x0063ba8cu);
         if (ba8c == 0) {                                   // FUN_004111c0 state-2 tail
-            SubState_SeedCd();                             // MASHED_SUBSTATE_CD (measurement)
+            SubStateRollCountdown414180();                 // 0x00410259 FUN_00414180 (cd roll)
+            SubState_SeedCd();                             // MASHED_SUBSTATE_CD override (measurement, unset by default)
             *reinterpret_cast<int*>(0x005f29b8u) = 12000;  // the else arm after 0x00414180's call
             ba8c = 4;
             return;

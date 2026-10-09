@@ -19072,6 +19072,32 @@ HOOKS = {
         'path2_tests':    [],
     },
 
+    # 0x00414180 SubStateRollCountdown414180 (PREREG_414180.md G-PATH). The ring the body draws
+    # from (FUN_00534870) lives on the heap and state_machine_observe cannot restore it, so every
+    # vector makes cd RNG-INDEPENDENT: idx 10 (row (9,10): trunc(9 + u) = 9 for every draw) or
+    # DAT_007f0fd0 in {4,8,9} (9.9f -> 9). rec[+0] = 0x005f2eb4[idx] = idx differs per vector.
+    # Named coverage gap: the random arm of cd is not vectored here (G-DRAW / G-EXIT cover it).
+    'sub_state_roll_countdown_obs': {
+        'rva':            0x00414180,
+        'export':         'SubStateRollCountdown414180',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'state_machine_observe',
+        'input_globals':  ([{'addr': a, 'type': 'u32'} for a in (0x0089a360, 0x007f0fd0, 0x0089a368, 0x0089a370)]
+                           + [{'addr': 0x0089a4c0 + v * 0x74 + o, 'type': 'u32'} for v in range(4) for o in (0x00, 0x38)]),
+        'output_globals': ([{'addr': a, 'type': 'u32'} for a in (0x0089a368, 0x0089a370)]
+                           + [{'addr': 0x0089a4c0 + v * 0x74 + o, 'type': 'u32'} for v in range(4) for o in (0x00, 0x38)]),
+        'lut_root_delta': 0,
+        # [360 (f32 bits), fd0, 368, 370, (rec+0, rec+0x38) x4 sentinels]
+        'path1_tests': [
+            [0x41280000, 0, 0xAAAAAAAA, 0xAAAAAAAA] + [0xBBBBBBBB] * 8,   # 10.5 -> idx 10, fd0 0
+            [0x00000000, 4, 0xAAAAAAAA, 0xAAAAAAAA] + [0xBBBBBBBB] * 8,   # 0.0  -> idx 0,  fd0 4
+            [0x40400000, 8, 0xAAAAAAAA, 0xAAAAAAAA] + [0xBBBBBBBB] * 8,   # 3.0  -> idx 3,  fd0 8
+            [0x40fccccd, 9, 0xAAAAAAAA, 0xAAAAAAAA] + [0xBBBBBBBB] * 8,   # 7.9  -> idx 7,  fd0 9
+            [0x40a00000, 9, 0x11111111, 0x22222222] + [0xBBBBBBBB] * 8,   # 5.0  -> idx 5,  fd0 9
+        ],
+        'path2_tests':    [[]],
+    },
+
     'vehicle_physics_state_reset_obs': {
         'rva':            0x0046baa0,
         'export':         'VehiclePhysicsStateReset',

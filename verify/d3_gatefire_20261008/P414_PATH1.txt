@@ -1,0 +1,11 @@
+hook: sub_state_roll_countdown_obs  rva=0x00414180  export=SubStateRollCountdown414180
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 25384
+  [agent] LUT ready  base=0x2c7ae60  offset=0x134  root=0xce30048  delta=0  attempts=0
+  [agent] .asi loaded  base=0x5d7c0000  SubStateRollCountdown414180@0x5d7e2990
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\log\diff_sub_state_roll_countdown_obs.csv
+  total cases: 5
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.

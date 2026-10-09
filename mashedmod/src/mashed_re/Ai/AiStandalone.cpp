@@ -658,9 +658,11 @@ std::uint32_t s_rw_ring[31];
 std::uint32_t* s_rw_p   = nullptr;
 std::uint32_t* s_rw_q   = nullptr;
 std::uint32_t* s_rw_end = nullptr;
+std::uint32_t  s_rw_draws = 0;   // draw counter for the FUN_00414180 witness (no value change)
 
 std::uint32_t RwRandomNext()                                    // FUN_00534870
 {
+    ++s_rw_draws;
     *s_rw_p += *s_rw_q;                                         // 0x00534876..0x00534884
     std::uint32_t u = *s_rw_p;                                  // 0x00534889
     ++s_rw_p;                                                   // 0x0053488e
@@ -1811,6 +1813,10 @@ void VehicleStep(int v)
 }
 
 } // namespace
+
+// FUN_00472650 law (AiRand) for other exe TUs: Race/SubStateMachine.cpp's FUN_00414180.
+float         Ai_RandRange(float lo, float hi) { return AiRand(lo, hi); }
+std::uint32_t Ai_RandDrawCount() { return s_rw_draws; }
 
 void Ai_SetHost(const Host* host)
 {
