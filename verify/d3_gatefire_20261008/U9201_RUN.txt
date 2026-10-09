@@ -1,0 +1,19 @@
+=== L2_CTRL  knobs=[] ===
+    pid=29016
+    exit=0  self_exited=True
+    L2_CTRL.step.csv  lines=19419  sha8=c741a4c5
+    L2_CTRL.gates.csv  lines=53993  sha8=642af0ac
+    L2_CTRL.ptrace.log  lines=26996  sha8=05984e30
+=== L2_R1  knobs=[MASHED_SUBSTATE,MASHED_MODE5_RESET,MASHED_LEG2_TRACE=@OUT@\L2_R1.trace.csv,MASHED_L1B_INPUTS=@OUT@\L2_R1.inputs.csv,MASHED_CAM_TICKS_REPLAY=@OUT@\u9201_replay_r1.txt] ===
+    pid=42284
+    exit=0  self_exited=True
+    L2_R1.step.csv  lines=24864  sha8=601472f1
+    L2_R1.gates.csv  lines=51629  sha8=81d7a8b2
+    L2_R1.ptrace.log  lines=25814  sha8=3bb8acde
+=== L2_R2  knobs=[MASHED_SUBSTATE,MASHED_MODE5_RESET,MASHED_LEG2_TRACE=@OUT@\L2_R2.trace.csv,MASHED_L1B_INPUTS=@OUT@\L2_R2.inputs.csv,MASHED_CAM_TICKS_REPLAY=@OUT@\u9201_replay_r2.txt] ===
+    pid=36340
+    exit=0  self_exited=True
+    L2_R2.step.csv  lines=18497  sha8=c0703f84
+    L2_R2.gates.csv  lines=53713  sha8=dfdc88b2
+    L2_R2.ptrace.log  lines=26856  sha8=dd77d664
+H4 DONE

@@ -75,6 +75,14 @@ public:
     const float* target() const { return tgt_out_; }
     float required_zoom() const { return required_zoom_; }   // cam[0x268]
     float view_window() const { return view_window_; }       // cam[0x16]
+    // [U-9201] diagnostic only: the fields citing DAT_00897fe0 +0x964..+0x9a0, in that order
+    // (smooth_pos, spring_pos, smooth_tgt, spring_tgt [12 floats], blend, zoom) and +0x4c target.
+    void DebugState(float out14[14], int* pa, int* pb, float tgt3[3]) const {
+        for (int i = 0; i < 3; ++i) { out14[i] = smooth_pos_[i]; out14[3 + i] = spring_pos_[i];
+                                      out14[6 + i] = smooth_tgt_[i]; out14[9 + i] = spring_tgt_[i];
+                                      tgt3[i] = tgt_out_[i]; }
+        out14[12] = pair_blend_; out14[13] = required_zoom_; *pa = pair_a_; *pb = pair_b_;
+    }
     bool  has_led() const { return led_loaded_; }
     int   node_count() const { return node_count_; }
 

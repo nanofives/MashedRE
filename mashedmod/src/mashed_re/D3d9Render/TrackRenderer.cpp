@@ -5520,24 +5520,44 @@ void TrackRenderer::SubStateCameraChain(bool reset) {
     if (*reinterpret_cast<int*>(0x00897ffcu) == 0) {               // cam[7] gate
         Race::RaceCamCar cc[kRaceCars] = {};
         FillRaceCamCars(cc);
-        cam_ticks_ += (1.0 / 60.0) * 3000000.0;                    // DAT_007f1030 rate, as UpdateRace
+        // [U-9201] diagnostic replay (MASHED_CAM_TICKS_REPLAY=<file>, lines "f ticks"): phase-3 calls read
+        // the original run's DAT_007f1030 (QPC/3 MHz, FUN_00493390 0x00493459) at game frame
+        // f = max(p3f - 1, 0). Off by default; the gate arms and the default build never load it.
+        static std::vector<double> s_replay = [] {
+            std::vector<double> v; const char* e = std::getenv("MASHED_CAM_TICKS_REPLAY");
+            if (e && e[0]) if (std::FILE* rf = std::fopen(e, "r")) {
+                int f; double t;
+                while (std::fscanf(rf, "%d %lf", &f, &t) == 2) { if (f >= 0) { if ((int)v.size() <= f) v.resize(f + 1, -1.0); v[f] = t; } }
+                std::fclose(rf);
+            }
+            return v; }();
+        const int rf = sub_p3_frames_ > 0 ? sub_p3_frames_ - 1 : 0;
+        if (!s_replay.empty() && *reinterpret_cast<int*>(0x0063ba8cu) == 3 && rf < (int)s_replay.size() && s_replay[rf] >= 0.0)
+            cam_ticks_ = s_replay[rf];
+        else
+            cam_ticks_ += (1.0 / 60.0) * 3000000.0;                // DAT_007f1030 rate, as UpdateRace
         race_cam_.Update(cc, course_id_, 1.f / 60.f, static_cast<std::uint32_t>(cam_ticks_), 0.f, reset);
         const float* p = race_cam_.pos();                          // +0x40..+0x48
         std::memcpy(reinterpret_cast<void*>(0x00897fe4u), p, 12);  // 0x004481c9 copy -> +4..+0xc
     }
     static std::FILE* s_tf = [] { const char* e = std::getenv("MASHED_LEG2_TRACE");
                                   std::FILE* f = (e && e[0]) ? std::fopen(e, "w") : nullptr;
-                                  if (f) std::fprintf(f, "p3f,ba8c,reset,u1008,flag,tx,ty,tz,e0x,e0y,e0z,e0vx,e0vz,e0a8,dist_raw\n");
+                                  if (f) std::fprintf(f, "p3f,ba8c,reset,u1008,flag,tx,ty,tz,e0x,e0y,e0z,e0vx,e0vz,e0a8,dist_raw,cam_ticks,s964,s968,s96c,s970,s974,s978,s97c,s980,s984,s988,s98c,s990,c99c,c9a0,c994,c998,ctx,cty,ctz\n");
                                   return f; }();
     if (s_tf) {
         const float* c = reinterpret_cast<const float*>(0x00897fe0u);
         const float* e0 = reinterpret_cast<const float*>(0x008964c0u);
         const float dx = e0[0x3c / 4] - c[1], dz = e0[0x44 / 4] - c[3];
-        std::fprintf(s_tf, "%d,%d,%d,%d,%d,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%d,%.9g\n", sub_p3_frames_,
+        std::fprintf(s_tf, "%d,%d,%d,%d,%d,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%d,%.9g,", sub_p3_frames_,
                      *reinterpret_cast<int*>(0x0063ba8cu), reset ? 1 : 0, *reinterpret_cast<int*>(0x007f1008u),
                      *reinterpret_cast<int*>(0x00897fe0u), c[1], c[2], c[3], e0[0x3c / 4], e0[0x40 / 4],
                      e0[0x44 / 4], e0[0x8c / 4], e0[0x94 / 4], *reinterpret_cast<const int*>(&e0[0xa8 / 4]),
                      std::sqrt(dx * dx + dz * dz));
+        float st[14], tg[3]; int pa = -9, pb = -9;
+        race_cam_.DebugState(st, &pa, &pb, tg);
+        std::fprintf(s_tf, "%.0f", cam_ticks_);
+        for (int i = 0; i < 14; ++i) std::fprintf(s_tf, ",%.9g", st[i]);
+        std::fprintf(s_tf, ",%d,%d,%.9g,%.9g,%.9g\n", pa, pb, tg[0], tg[1], tg[2]);
         std::fflush(s_tf);
     }
 }

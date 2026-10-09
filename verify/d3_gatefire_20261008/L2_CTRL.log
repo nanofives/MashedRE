@@ -1,7 +1,7 @@
 
 === B17 region map [winmain-entry] 0x00400000..0x009FFFFF ===
-  0x00400000 +0x007EE000  COMMIT  IMAGE   protect=0x008
-  --- totals: free=0KB commit=8120KB reserve=0KB ---
+  0x00400000 +0x007F0000  COMMIT  IMAGE   protect=0x008
+  --- totals: free=0KB commit=8128KB reserve=0KB ---
   B17-GRAN [winmain-entry] 0x00420000 COMMIT   .text getters (0x0042b8b0/c0, credits 0x0042d5a0)
   B17-GRAN [winmain-entry] 0x00470000 COMMIT   .text Im2D draws (0x00472c60/2f40, 0x004730b0)
   B17-GRAN [winmain-entry] 0x005C0000 COMMIT   .rdata scale consts (1/640 @5cd5a8, 1/480 @5cc560)
@@ -11,7 +11,7 @@
   B17-GRAN [winmain-entry] 0x007F0000 COMMIT   .bss big buffer (0x007f0f60) + input (0x007f1044)
   B17-GRAN [winmain-entry] 0x00890000 COMMIT   .bss menu-entry array + vtx buffer (0x00898a20/ac0)
 B17-TLS: reserved 0/0 needed granules at TLS time (seen-free; the rest were already occupied by kernel-early NLS)
-B17-PAD: image-pad arena [0x001EE700 .. 0x00BEE6FF] (exe owns the MASHED RVA range)
+B17-PAD: image-pad arena [0x001F0700 .. 0x00BF06FF] (exe owns the MASHED RVA range)
 Frontend.piz loaded OK
   path:    original/TOASTART/Common/Frontend.piz
   size:    1257472 bytes
@@ -45,8 +45,8 @@ TXD decode (Milestone B3):
   7   carbase                256   256    8 PAL8     9 yes    
 
 === B17 region map [pre-initd3d9] 0x00400000..0x009FFFFF ===
-  0x00400000 +0x007EE000  COMMIT  IMAGE   protect=0x008
-  --- totals: free=0KB commit=8120KB reserve=0KB ---
+  0x00400000 +0x007F0000  COMMIT  IMAGE   protect=0x008
+  --- totals: free=0KB commit=8128KB reserve=0KB ---
   B17-GRAN [pre-initd3d9] 0x00420000 COMMIT   .text getters (0x0042b8b0/c0, credits 0x0042d5a0)
   B17-GRAN [pre-initd3d9] 0x00470000 COMMIT   .text Im2D draws (0x00472c60/2f40, 0x004730b0)
   B17-GRAN [pre-initd3d9] 0x005C0000 COMMIT   .rdata scale consts (1/640 @5cd5a8, 1/480 @5cc560)
@@ -59,8 +59,8 @@ InitD3D9: adapter mode 2560x1440 fmt=22 refresh=165
 InitD3D9: CreateDevice(HAL/HW,depthA,vsdef) -> OK hr=0x00000000 OK
 
 === B17 region map [post-initd3d9] 0x00400000..0x009FFFFF ===
-  0x00400000 +0x007EE000  COMMIT  IMAGE   protect=0x008
-  --- totals: free=0KB commit=8120KB reserve=0KB ---
+  0x00400000 +0x007F0000  COMMIT  IMAGE   protect=0x008
+  --- totals: free=0KB commit=8128KB reserve=0KB ---
   B17-GRAN [post-initd3d9] 0x00420000 COMMIT   .text getters (0x0042b8b0/c0, credits 0x0042d5a0)
   B17-GRAN [post-initd3d9] 0x00470000 COMMIT   .text Im2D draws (0x00472c60/2f40, 0x004730b0)
   B17-GRAN [post-initd3d9] 0x005C0000 COMMIT   .rdata scale consts (1/640 @5cd5a8, 1/480 @5cc560)
@@ -78,7 +78,7 @@ Milestone B7: wedge status = INACTIVE (VirtualAlloc failed)
 
 Milestone B10: frontend boot chain start
   [1] DataZeroFill (page-granular): zeroed 226212, skipped 0 bytes
-  [2-pre] 0x00630000 state=0x00001000 protect=0x00000004
+  [2-pre] 0x00630000 state=0x00001000 protect=0x00000008
   [2] BootDefaultParamsInit OK
   [3] DefaultParam_SetField00/04/08 OK; readback 0x007f0f00=0x3F333333 04=0x3F333333 08=0x3F333333 (expect 0x3f333333)
   [4] RaceStateArrayZero OK; readback 0x0067ea10=0x00000000 0x0067ea14=0x00000000 (expect 0)

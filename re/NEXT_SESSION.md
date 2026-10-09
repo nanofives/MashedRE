@@ -1,5 +1,13 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-09 (U-9201 RESOLVED, partial): **the phase-3 length is the system QPC clock; with a run's clock replayed the port reproduces it (693/690, 742/740) and G-CURVE passes within 1 %.**
+>
+> Read [`RESULT_U9201.md`](../verify/d3_gatefire_20261008/RESULT_U9201.md) §0, §3. The camera sway input `DAT_007f1030` is
+> QueryPerformanceCounter at 3 MHz (`FUN_00493390` 0x00493459), so the original's phase-3 length varies per run by design.
+> Residuals filed: **U-9202** (every port car +0.040 higher on the grid, x +0.008 x index: the steady camera offset to 4
+> decimals; D2 watch item) and **U-9203** (camera transient over the first ~60 frames). Diagnostic knob:
+> `MASHED_CAM_TICKS_REPLAY`. Decision (A) stands; the knob-default question still waits on how (b) is scored.
+
 > ## START HERE 2026-10-09 (D-11073 leg 2 DONE): **phase 3 ported behind `MASHED_SUBSTATE` (default OFF), byte-identical default. 4 bodies C3. Next: U-9201 (the camera target) or the (b) scoring question.**
 >
 > Read [`RESULT_LEG2.md`](../verify/d3_gatefire_20261008/RESULT_LEG2.md) §0, §2, §5 (prereg `PREREG_LEG2.md`).
