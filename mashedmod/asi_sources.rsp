@@ -176,6 +176,7 @@
 "Race\ScoringHooks.cpp"
 "Race\CameraClusterHooks.cpp"
 "Race\SubStateCallees.cpp"
+"Race\SubStateMachine.cpp"
 "Vehicle\PhysicsChainHooks.cpp"
 "Vehicle\LaunchRevCharge.cpp"
 "Frontend\SkeletonAndScatter_t6.cpp"

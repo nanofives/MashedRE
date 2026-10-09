@@ -170,7 +170,7 @@ def float_bits(f):
 # OBSERVE-ONLY: worst case is an explicit degenerate_ok per hook, never a
 # silent false GREEN.
 SEEDED_ARG_TYPES = {
-    'cache_roundtrip', 'cache_setter_observe',
+    'cache_roundtrip', 'cache_setter_observe', 'eax_state_machine_observe',
     'arena_block_free_predicate', 'audio_list_insert', 'audio_list_min_select',
     'audio_list_remove', 'audio_pool_free', 'audio_sub_struct_zero',
     'contact_history', 'count_header_list_ring', 'cursor_back',

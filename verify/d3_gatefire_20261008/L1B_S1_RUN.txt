@@ -1,0 +1,7 @@
+=== L1B_S1  knobs=[] ===
+    pid=29484
+    exit=0  self_exited=True
+    L1B_S1.step.csv  lines=19419  sha8=c741a4c5
+    L1B_S1.gates.csv  lines=53993  sha8=642af0ac
+    L1B_S1.ptrace.log  lines=26996  sha8=05984e30
+H4 DONE

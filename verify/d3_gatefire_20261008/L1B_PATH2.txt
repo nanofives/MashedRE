@@ -1,0 +1,71 @@
+=== run_verify_hook sub_state_enter4_obs (full auto-hook set)
+hook: sub_state_enter4_obs  rva=0x0040dbd0  export=SubStateEnter4
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 12052
+  [agent] pre_snapshot
+  [agent] asi_loaded
+  [agent] post_snapshot
+  [agent] results
+
+=== verify_hook_install report (sub_state_enter4_obs) ===
+
+target address: 0x0040dbd0  export: SubStateEnter4
+PRE  bytes:     e9 7b 4b 01 5e e8 c6 1a
+asi base:       0x5e400000
+reimpl addr:    0x5e422750
+POST bytes:     e9 7b 4b 01 5e e8 c6 1a
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x5e014b7b  expected 0x5e014b7b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  1 / 1
+
+per-input results:
+  [OK] input=[]  got=(void)  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 1x as expected
+  + all 1 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_sub_state_enter4_obs.txt
+rc=0
+=== run_verify_hook sub_state_held_countdown5_obs (full auto-hook set)
+hook: sub_state_held_countdown5_obs  rva=0x004103a0  export=SubStateHeldCountdown5
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 21356
+  [agent] pre_snapshot
+  [agent] asi_loaded
+  [agent] post_snapshot
+  [agent] results
+
+=== verify_hook_install report (sub_state_held_countdown5_obs) ===
+
+target address: 0x004103a0  export: SubStateHeldCountdown5
+PRE  bytes:     e9 1b 24 01 5e d8 c7 44
+asi base:       0x5e400000
+reimpl addr:    0x5e4227c0
+POST bytes:     e9 1b 24 01 5e d8 c7 44
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x5e01241b  expected 0x5e01241b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  0 / 0
+
+per-input results:
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 0x as expected
+  + all 0 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_sub_state_held_countdown5_obs.txt
+rc=0

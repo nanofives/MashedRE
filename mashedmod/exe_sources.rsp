@@ -164,6 +164,7 @@
 "Race\SpectatorDistances.cpp"
 "Race\AiDifficultyReset.cpp"
 "Race\SubStateCallees.cpp"
+"Race\SubStateMachine.cpp"
 "Ai\AiLeaderTimer.cpp"
 "Vehicle\ShapeOwnerHandlePool.cpp"
 "Vehicle\VehicleSeed.cpp"

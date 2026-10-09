@@ -17,7 +17,8 @@ $LANE = @('MASHED_REFDIST','MASHED_SLOTSTATE_SEED','MASHED_SLOT_PLAYER',
           'MASHED_A364_RESET','MASHED_RACEPCT_BRIDGE','MASHED_NO_ELIM',
           'MASHED_WIRE_B2','MASHED_U9186_GATES','MASHED_AI_STEPDUMP',
           'MASHED_NO_SLOTSTATE_SEED','MASHED_NO_SLOT_PLAYER','MASHED_GF1',
-          'MASHED_PLAYERTRACE','MASHED_SUBSTATE')
+          'MASHED_PLAYERTRACE','MASHED_SUBSTATE','MASHED_MODE5_RESET','MASHED_SUBSTATE_CD',
+          'MASHED_L1B_INPUTS')
 
 $B2 = @('MASHED_A364_RESET','MASHED_REFDIST','MASHED_RACEPCT_BRIDGE','MASHED_NO_ELIM','MASHED_WIRE_B2')
 $runs = @(
@@ -31,11 +32,18 @@ $runs = @(
   @{ name = 'H4_optout'; knobs = @('MASHED_NO_SLOT_PLAYER') },
   # D-11073 leg 1a (PREREG_LEG1A.md G-INERT): L1A_A = H4_A recipe on the new build (G-CTRL); L1A_SUB = + MASHED_SUBSTATE (G-INERT); both must equal H4_A
   @{ name = 'L1A_A';     knobs = @() },
-  @{ name = 'L1A_SUB';   knobs = @('MASHED_SUBSTATE') }
+  @{ name = 'L1A_SUB';   knobs = @('MASHED_SUBSTATE') },
+  # D-11073 leg 1b (PREREG_LEG1B.md): G-CTRL after each step, knob OFF; must equal L1A_A
+  @{ name = 'L1B_S1';    knobs = @() },
+  @{ name = 'L1B_CTRL';  knobs = @() },
+  # PREREG_LEG1B.md section 5 knob arms (K=V entries set V; bare K sets 1)
+  @{ name = 'L1B_SUB';   knobs = @('MASHED_SUBSTATE', 'MASHED_L1B_INPUTS=@OUT@\L1B_SUB.inputs.csv') },
+  @{ name = 'L1B_M5';    knobs = @('MASHED_SUBSTATE', 'MASHED_MODE5_RESET', 'MASHED_L1B_INPUTS=@OUT@\L1B_M5.inputs.csv') },
+  @{ name = 'L1B_M5CD';  knobs = @('MASHED_SUBSTATE', 'MASHED_MODE5_RESET', 'MASHED_SUBSTATE_CD=3', 'MASHED_L1B_INPUTS=@OUT@\L1B_M5CD.inputs.csv') }
 )
 $sel = @($args)   # capture: inside a Where-Object block $args is the block's own
 if ($sel.Count -gt 0) { $runs = $runs | Where-Object { $sel -contains $_.name } }
-else { $runs = $runs | Where-Object { $_.name -notlike 'H4_post*' -and $_.name -ne 'H4_optout' -and $_.name -notlike 'L1A_*' } }
+else { $runs = $runs | Where-Object { $_.name -notlike 'H4_post*' -and $_.name -ne 'H4_optout' -and $_.name -notlike 'L1A_*' -and $_.name -notlike 'L1B_*' } }
 
 foreach ($r in $runs) {
   $log = Join-Path $root 'mashed_re.log'
@@ -58,7 +66,10 @@ foreach ($r in $runs) {
   foreach ($f in @($step, $gates)) { if (Test-Path $f) { Remove-Item $f -Force } }
   $env:MASHED_AI_STEPDUMP = $step
   $env:MASHED_U9186_GATES = $gates
-  foreach ($k in $r.knobs) { Set-Item "Env:\$k" '1' }
+  foreach ($k in $r.knobs) {
+    if ($k -like '*=*') { $kv = $k.Split('=', 2); Set-Item "Env:\$($kv[0])" ($kv[1].Replace('@OUT@', $out)) }
+    else { Set-Item "Env:\$k" '1' }
+  }
 
   Write-Host "=== $($r.name)  knobs=[$($r.knobs -join ',')] ==="
   $p = Start-Process -FilePath $exe -WorkingDirectory $root -PassThru

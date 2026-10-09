@@ -23,6 +23,7 @@
 #include "DrawStreamDump.h"         // parity harness: MASHED_DBG_DRAWSTREAM3D race-3D summary
 #include "../Ai/AiStandalone.h"     // WS-C: racing-line target Ai_ComputeTarget is the DEFAULT
 #include "../Race/SubStateCallees.h"  // D-11073 leg 1a: FUN_0041d930 tail partial (MASHED_SUBSTATE)
+#include "../Race/SubStateMachine.h"  // D-11073 leg 1b: FUN_0040dbd0 / FUN_004103a0 (MASHED_SUBSTATE)
                                     // (MASHED_GATE_RIBBON_AI reverts it to the ribbon scaffold).
                                     // [D3 2026-09-26] the ported TICK Ai_Standalone_Tick runs every
                                     // race frame and its ctrl bytes drive the opponents.
@@ -98,7 +99,16 @@ static bool NoElim() {
 }
 int aib_alive(int v)       { return (v >= 0 && v <= 3) ? g_aib.alive[v] : 0; }
 int aib_veh_type(int v)    { return v == 0 ? 0 : 2; }   // 0 = player(human); else AI
-int aib_game_sub_mode()    { return 6; }                // race (FUN_0040e350)
+// [D-11073 leg 1b] Under default-OFF MASHED_SUBSTATE the port keeps a real DAT_0063ba8c
+// (written by the sub-state block in Update and by SubStateEnter4 / SubStateHeldCountdown5,
+// Race/SubStateMachine.cpp); FUN_0040e350 returns the race sub-state. Knob OFF: 6, as before.
+int aib_game_sub_mode() {                                // race (FUN_0040e350)
+    if (SubState_Enabled()) {
+        const int s = *reinterpret_cast<const int*>(0x0063ba8cu);
+        if (s != 0) return s;
+    }
+    return 6;
+}
 int aib_round_type()       { return 3; }                // AI-enabled round (FUN_0042f6a0)
 int aib_game_mode_fd0()    { return 0; }
 int aib_track_index()      { return g_aib.course; }
@@ -3183,6 +3193,76 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
                 col_mat_.size() == col_tris_.size() / 3 ? col_mat_.data() : nullptr);
             s_pinit_pre = true;
         }
+    }
+
+    // [D-11073 leg 1b step 2] MASHED_L1B_INPUTS (default OFF): measurement-only per-frame
+    // dump of the sub-state handlers' inputs. Writes nothing the game reads.
+    {
+        const int al[4] = { aib_alive(0), aib_alive(1), aib_alive(2), aib_alive(3) };
+        float ps[4][3] = { { car_pos_[0], car_pos_[1], car_pos_[2] } };
+        for (int i = 0; i < 3 && i < static_cast<int>(ai_cars_.size()); ++i)
+            for (int c = 0; c < 3; ++c) ps[i + 1][c] = ai_cars_[static_cast<std::size_t>(i)].pos[c];
+        SubState_InputsDump(countdown_, al, ps);
+    }
+
+    // [D-11073 leg 1b, PREREG_LEG1B.md section 3] RACE SUB-STATES 4 AND 5, default-OFF
+    // MASHED_SUBSTATE. Replaces the countdown stand-in below (countdown_ -= dt,
+    // LaunchRev_PreRaceTick / _Release) with FUN_004111c0's own phases, in its order:
+    //   frame E      state-2 tail: DAT_005f29b8 = 12000, DAT_0063ba8c = 4 (no FUN_0040fc00)
+    //   frame E+1    case 4: DAT_007f0fc8 = 0; FUN_0040dbd0; FUN_0040fc00 partials
+    //   E+2..E+113   case 5: FUN_004103a0 (AI tick, per-car FUN_0046baa0 + FUN_0046d7f0,
+    //                exit on the 112th call); FUN_0040fc00 partials
+    // FUN_0040fc00 partials = Ai_AdvanceClock (incl. the 0x0040fc57 step store) + the
+    // FUN_0041d930 tail. Cars are held exactly as the stand-in holds them, and the frame
+    // returns before any physics. countdown_ is zeroed on the exit frame so every
+    // countdown_ consumer sees GO at E+114. Knob OFF: this block is skipped entirely.
+    if (SubState_Enabled() && countdown_ > 0.f) {
+        car_speed_ = 0.f; car_vel_[0] = car_vel_[1] = car_vel_[2] = 0.f;
+        for (auto& a : ai_cars_) a.cur_speed = 0.f;
+        static TrackRenderer* s_subTr = nullptr;
+        static float          s_subAccel = 0.f;
+        s_subTr = this;
+        s_subAccel = in.accel;
+        static bool s_hostSet = false;
+        if (!s_hostSet) {
+            SubStateHost h{};
+            h.car_alive = [](int v) { return aib_alive(v); };
+            h.ai_tick = [] {
+                TrackRenderer* t = s_subTr;
+                if (!t || !(g_aib.loaded && (Ai::I32(Ai::kSplineRaceCnt) > 3))) return;
+                g_aiTrack = t;
+                t->AiBridgeSnapshot();
+                Ai::Ai_Standalone_Tick();
+            };
+            h.player_accel_byte = [] {
+                const float a = s_subAccel > 0.f ? s_subAccel : 0.f;   // LaunchRev_PreRaceTick's cook
+                return static_cast<unsigned char>(a * 255.f);
+            };
+            SubState_SetHost(h);
+            s_hostSet = true;
+        }
+        const int units = static_cast<int>(in.dt * 3000.0f + 0.5f);
+        int& ba8c = *reinterpret_cast<int*>(0x0063ba8cu);
+        if (ba8c == 0) {                                   // FUN_004111c0 state-2 tail
+            SubState_SeedCd();                             // MASHED_SUBSTATE_CD (measurement)
+            *reinterpret_cast<int*>(0x005f29b8u) = 12000;  // the else arm after 0x00414180's call
+            ba8c = 4;
+            return;
+        }
+        if (ba8c == 4) {
+            *reinterpret_cast<int*>(0x007f0fc8u) = 0;      // 0x0041129b
+            SubStateEnter4();                              // 0x004112a5
+        } else if (ba8c == 5) {
+            SubStateHeldCountdown5_C(units);               // 0x004112bb (units in EAX)
+        }
+        if (g_aib.loaded && (Ai::I32(Ai::kSplineRaceCnt) > 3))
+            Ai::Ai_AdvanceClock(units);                    // FUN_0040fc00 0x0040fc57 / 0x0040fc63
+        HudSlideBillboardTimerTail();                      // FUN_0040fc00 -> 0x0040fd11
+        if (ba8c == 6) {
+            countdown_ = 0.f;
+            Audio::SfxPlay("go", 0.9f);                    // real "GO!" SFX, as the stand-in
+        }
+        return;
     }
 
     // Countdown freeze (3-2-1-GO): cars are held still until it elapses.

@@ -4367,6 +4367,72 @@ function runDiff() {
         return;
     }
 
+    // ── eax_state_machine_observe ───────────────────────────────────────────
+    // [D-11073 leg 1b, 2026-10-09] state_machine_observe for a target whose one
+    // argument arrives in EAX (FUN_004103a0: `mov eax,esi; call` at 0x004112b9).
+    // Per test t = [eax, in_0, in_1, ...]: for EACH side separately, snapshot every
+    // input+output global, write the inputs, call a `mov eax,imm32; jmp target`
+    // trampoline, read the outputs as a packed hex fingerprint, restore everything.
+    // Self-driven (builds its own per-side trampolines, like eax_implicit_*).
+    // MECHANISM: per-side `mov eax,imm32; jmp target` trampoline; seeds
+    // CONFIG.input_globals from t[1..], EAX from t[0]; observable = CONFIG.output_globals
+    // packed hex (u32 each); every input/output global is restored after each side.
+    // CONFIG: `input_globals`, `output_globals`, `crash_equal_ok`. Applies to any
+    // EAX-arg fn whose observable is global-to-global mutation.
+    if (CONFIG.arg_type === 'eax_state_machine_observe') {
+        const inputs  = CONFIG.input_globals  || [];
+        const outputs = CONFIG.output_globals || [];
+        const rd = function (p, type) {
+            switch (type || 'u32') {
+                case 'u8': return p.readU8(); case 'u16': return p.readU16();
+                case 's32': return p.readS32(); default: return p.readU32();
+            }
+        };
+        const wr = function (p, v, type) {
+            switch (type || 'u32') {
+                case 'u8': p.writeU8(v & 0xff); break; case 'u16': p.writeU16(v & 0xffff); break;
+                case 's32': p.writeS32(v | 0); break; default: p.writeU32(v >>> 0);
+            }
+        };
+        function buildTramp(targetAddr) {
+            const code = Memory.alloc(Process.pageSize);
+            Memory.patchCode(code, 10, function (cw) {
+                const w = new X86Writer(cw, { pc: code });
+                w.putBytes([0xB8, 0x00, 0x00, 0x00, 0x00]);
+                w.putJmpAddress(targetAddr);
+                w.flush();
+            });
+            return code;
+        }
+        const tO = buildTramp(TARGET_ADDR), tR = buildTramp(reimplAddr);
+        const FO = new NativeFunction(tO, 'void', [], 'mscdecl');
+        const FR = new NativeFunction(tR, 'void', [], 'mscdecl');
+        const all = inputs.concat(outputs);
+        function side(F, tramp, t) {
+            const saved = all.map(g => rd(ptr(g.addr), g.type));
+            inputs.forEach((g, i) => wr(ptr(g.addr), (t[i + 1] !== undefined ? t[i + 1] : 0), g.type));
+            tramp.add(1).writeU32(t[0] >>> 0);
+            let out = null, err = null;
+            try {
+                F();
+                out = '0x' + outputs.map(g => ('00000000' + (rd(ptr(g.addr), g.type) >>> 0).toString(16)).slice(-8)).join('');
+            } catch (e) { err = e.message; }
+            all.forEach((g, i) => wr(ptr(g.addr), saved[i], g.type));
+            return [out, err];
+        }
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const t = CONFIG.tests[i];
+            const [oV, oE] = side(FO, tO, t);
+            const [rV, rE] = side(FR, tR, t);
+            const crashEqual = CONFIG.crash_equal_ok && oE !== null && rE !== null && oE === rE;
+            results.push({ idx: i, input: t, original: oV, reimpl: rV,
+                           match: crashEqual || (oV !== null && rV !== null && oV === rV),
+                           err_original: oE, err_reimpl: rE });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
     // ── thiscall_field_get ───────────────────────────────────────────────────
     // SYNTHETIC field-getter harness for the shape
     //     <ret> fn(this)  ->  return *(this + field_off);

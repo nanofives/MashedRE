@@ -134,6 +134,26 @@ CAM_COLS = (["flag_fe0", "tgt_fe4", "tgt_fe8", "tgt_fec", "ffc", "f800",
             + ["c2194_%d" % v for v in range(4)] + ["c2198_%d" % v for v in range(4)]
             + ["r%d_%s" % (k, f) for k in range(4) for f in ("i64", "f50", "f54", "f58", "i70")])
 
+# [D-11073 LEG 1b 2026-10-09, opt-in --leg1b] PREREG_LEG1B.md section 2. Inputs of
+# FUN_004103a0 / FUN_0040dbd0 not polled before, and the phase-5 reference for G-HOLD / G-EXIT:
+#   DAT_007f1018 / DAT_007f1014 (0x004103db / 0x004103f6), DAT_0063ba78 (0x004103fb),
+#   DAT_0063d7e4 and its +0x40 slot (FUN_0041ea80 / FUN_0041e960, called by FUN_00426c90),
+#   DAT_008991bc (FUN_00429860), DAT_0067ed6c (FUN_00430820),
+#   the AI mode-5 countdown 0x0089a4f8 + v*0x74 (FUN_00418560 0x004185ab),
+#   the accel byte FUN_0046d7f0 reads: 0x007f103c + [0x007f1a14 + v*16]*0x4c (0x0046d801..0x0046d80a),
+#   0x007f0a04/08 + v*12 (FUN_004103a0's exit-arm copies, 0x004104a7 / 0x004104b2),
+#   record world position +0x958/+0x95c/+0x960 (0x00881ef8.. + v*0xd04).
+A_F1018, A_F1014, A_BA78 = 0x007f1018, 0x007f1014, 0x0063ba78
+A_D7E4, A_91BC, A_ED6C = 0x0063d7e4, 0x008991bc, 0x0067ed6c
+A_CD4F8, AI_STRIDE = 0x0089a4f8, 0x74
+A_CTRLIDX, A_ACC = 0x007f1a14, 0x007f103c
+A_0A04 = 0x007f0a04
+A_POS = 0x00881ef8
+L1B_COLS = (["f1018", "f1014", "ba78", "d7e4", "d7e4_40", "g91bc", "ged6c"]
+            + ["cd4f8_%d" % v for v in range(4)] + ["acc_%d" % v for v in range(4)]
+            + ["a0a04_%d" % v for v in range(4)] + ["a0a08_%d" % v for v in range(4)]
+            + ["%s_%d" % (c, v) for v in range(4) for c in ("px", "py", "pz")])
+
 PROCESS_VM_READ = 0x0010
 PROCESS_QUERY_INFORMATION = 0x0400
 
@@ -194,6 +214,9 @@ def main():
     cam = "--cam" in argv
     if cam:
         argv.remove("--cam")
+    leg1b = "--leg1b" in argv
+    if leg1b:
+        argv.remove("--leg1b")
     out = Path(argv[0]); argv = argv[1:]
     if argv and argv[0] == "--":
         argv = argv[1:]
@@ -238,6 +261,8 @@ def main():
             "alive_0", "alive_1", "alive_2", "alive_3"]
     if cam:
         cols += CAM_COLS
+    if leg1b:
+        cols += L1B_COLS
     rows = []
     try:
         while proc.poll() is None:
@@ -307,6 +332,21 @@ def main():
                     r["r%d_f54" % k] = f32(h, rb + 0x54)
                     r["r%d_f58" % k] = f32(h, rb + 0x58)
                     r["r%d_i70" % k] = i32(h, rb + 0x70)
+            if leg1b:
+                d7 = i32(h, A_D7E4)
+                r.update({"f1018": i32(h, A_F1018), "f1014": i32(h, A_F1014),
+                          "ba78": i32(h, A_BA78), "d7e4": d7,
+                          "d7e4_40": (i32(h, d7 + 0x40) if d7 else None),
+                          "g91bc": i32(h, A_91BC), "ged6c": i32(h, A_ED6C)})
+                for v in range(4):
+                    r["cd4f8_%d" % v] = i32(h, A_CD4F8 + v * AI_STRIDE)
+                    ci = i32(h, A_CTRLIDX + v * 16)
+                    b = read(h, A_ACC + ci * 0x4c, 1) if ci is not None and 0 <= ci < 16 else None
+                    r["acc_%d" % v] = None if b is None else b[0]
+                    r["a0a04_%d" % v] = i32(h, A_0A04 + v * 12)
+                    r["a0a08_%d" % v] = i32(h, A_0A04 + 4 + v * 12)
+                    for c, off in (("px", 0), ("py", 4), ("pz", 8)):
+                        r["%s_%d" % (c, v)] = f32(h, A_POS + off + v * ALIVE_STRIDE)
             rows.append(r)
             time.sleep(1.0 / hz)
     finally:

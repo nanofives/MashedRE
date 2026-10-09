@@ -1,0 +1,65 @@
+[decomp_pc] slot=Mashed_pool0 modes=decomp+callees n=4
+// FUN_0041ea80 @ 0x0041ea80  size=9  (MASHED.exe)
+// undefined FUN_0041ea80(void)
+// callees: (none)
+
+undefined4 FUN_0041ea80(void)
+
+{
+  return *(undefined4 *)(DAT_0063d7e4 + 0x40);
+}
+
+
+
+// FUN_0041e960 @ 0x0041e960  size=9  (MASHED.exe)
+// undefined FUN_0041e960(void)
+// callees: (none)
+
+void FUN_0041e960(void)
+
+{
+                    /* WARNING: Could not recover jumptable at 0x0041e966. Too many branches */
+                    /* WARNING: Treating indirect jump as call */
+  (**(code **)(DAT_0063d7e4 + 0x40))();
+  return;
+}
+
+
+
+// FUN_00430820 @ 0x00430820  size=6  (MASHED.exe)
+// undefined FUN_00430820(void)
+// callees: (none)
+
+/* [C1 2026-06-01] No parameters. Reads and returns the 4-byte global `DAT_0067ed6c` as
+   `undefined4`. */
+
+undefined4 FUN_00430820(void)
+
+{
+  return DAT_0067ed6c;
+}
+
+
+
+// FUN_00426c90 @ 0x00426c90  size=23  (MASHED.exe)
+// undefined FUN_00426c90(void)
+// callees: FUN_0041e960@0x0041e960, FUN_0041ea80@0x0041ea80
+
+/* [C2 2026-06-02] Guarded dispatch: calls `FUN_0041ea80()`; if its return is non-zero, calls
+   `FUN_0041e960()` and returns; otherwise… */
+
+void FUN_00426c90(void)
+
+{
+  int iVar1;
+  
+  iVar1 = FUN_0041ea80();
+  if (iVar1 != 0) {
+    FUN_0041e960();
+    return;
+  }
+  return;
+}
+
+
+

@@ -127,3 +127,21 @@ are settled by the read plus §3's decision, before any code.
 | `0x0089a4f8 + 0x74v` (mode-5 cd) | `AiStandalone.cpp:1767` reader; **no exe writer** | cd reads 0 in the port (prediction above) |
 | `countdown_` | `TrackRenderer.cpp:3189-3205` (the stand-in), `:4995` (seed 3.0), `:5379` race clock, `:5631`, `:5659`, `:5707`, `:5714` (elimination/round gates `countdown_ <= 0`) | §3 must keep `countdown_ > 0` exactly while the sub-state is < 6 |
 | `g_launchAccelByte` / `LaunchRev_*` | `TrackRenderer.cpp:3200/3203` only | the stand-in has one call site |
+
+## Addendum A (2026-10-09, after steps 3-4, BEFORE any registered knob-ON arm)
+
+- **G-PHASE5 bit value corrected:** the float32 sum of 112 steps of `0x3c888888` is `0x3feeeee2`
+  (1.8666651), computed with numpy before any run. Section 5 wrote `0x3feeeeef` by mistake; the gate
+  value is `0x3feeeee2`. Nothing else in the gate changes.
+- **One unregistered smoke run happened before this addendum** (`sa_l1b_smoke.csv`, 400 frames,
+  SUBSTATE + MODE5_RESET + SUBSTATE_CD=3, `sa_substate_poll.py`): it was a liveness check of the new
+  block, and it is reported as such in RESULT, never as gate evidence. The registered arms below run
+  on the same build with the full recipe.
+- **G-PATH as run:** `sub_state_enter4_obs` run_diff GREEN 5/5, 5 distinct fingerprints;
+  `sub_state_held_countdown5_obs` first run RED 2/5 on the `FUN_00422b50` counters only (that callee
+  draws `FUN_00472650` when `FUN_0040e470(car) != 1`, and the PRNG is not restored between sides);
+  exit vectors changed to slot words 1, re-run GREEN 5/5, 5 distinct fingerprints. The RNG arm of
+  `FUN_00422b50` is not vectored. path2: `0x0040dbd0` E9 + call-through PASS; `0x004103a0` E9 PASS,
+  call-through not run (EAX argument; the verify template has no EAX arg_type).
+- New arg_type `eax_state_machine_observe` in `diff_template.js` (+ `SEEDED_ARG_TYPES` in
+  `run_diff.py`); `ARG_TYPES.md` regenerated.

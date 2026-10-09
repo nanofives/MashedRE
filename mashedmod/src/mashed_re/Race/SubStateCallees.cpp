@@ -36,11 +36,31 @@
 
 #include "SubStateCallees.h"
 #include "../Core/HookSystem.h"
+#include "../Vehicle/VehicleRecordBase.h"
 
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+
+// [D-11073 leg 1b step 1, PREREG_LEG1B.md section 1] CAR-RECORD ROUTING.
+// The three record bodies below (0x0046baa0, 0x0046c750, 0x0046c730) address the original's
+// record array 0x008815a0 (16 x 0xd04) by absolute. Under /DMASHED_STANDALONE that address is
+// blank image pad: the port's records are Vehicle::g_vehicleArrayBase (VehicleRecordBase.h).
+// SSC_REC(abs, off) is the dword at (abs - 0x008815a0) past the record base, plus `off` bytes
+// (off = slot*0xd04). The asi arm keeps the absolute, so its arithmetic is unchanged.
+namespace {
+inline char* SscRecBase() {
+#ifdef MASHED_STANDALONE
+    return reinterpret_cast<char*>(mashed_re::Vehicle::g_vehicleArrayBase);
+#else
+    return reinterpret_cast<char*>(mashed_re::Vehicle::kVehRecordArray);
+#endif
+}
+} // namespace
+#define SSC_REC(abs, off) \
+    (*reinterpret_cast<std::uint32_t*>(SscRecBase() + ((abs) - 0x008815a0u) + \
+                                       static_cast<unsigned>(off)))
 
 // ===========================================================================
 // MASHED_SUBSTATE knob + the two timer partials
@@ -184,9 +204,9 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl EntityVelocityCounterGet(
     if (param_1 >= 0x10) {
         return 0u;
     }
-    // 0x00882194 base + 0xd04 stride cited at 0x0046c75c / 0x0046c762.
-    return *reinterpret_cast<const std::uint32_t*>(
-        0x00882194u + static_cast<std::uint32_t>(param_1) * 0xd04u);
+    if (!SscRecBase()) return 0u;   // exe only: record array not allocated (named guard)
+    // 0x00882194 base + 0xd04 stride cited at 0x0046c75c / 0x0046c762. Record + 0xbf4.
+    return SSC_REC(0x00882194u, static_cast<std::uint32_t>(param_1) * 0xd04u);
 }
 RH_ScopedInstall(EntityVelocityCounterGet, 0x0046c750);
 
@@ -201,9 +221,9 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl EntityDamageStateGet(int 
     if (param_1 >= 0x10) {
         return 0u;
     }
-    // 0x00882198 base + 0xd04 stride cited at 0x0046c73c / 0x0046c742.
-    return *reinterpret_cast<const std::uint32_t*>(
-        0x00882198u + static_cast<std::uint32_t>(param_1) * 0xd04u);
+    if (!SscRecBase()) return 0u;   // exe only: record array not allocated (named guard)
+    // 0x00882198 base + 0xd04 stride cited at 0x0046c73c / 0x0046c742. Record + 0xbf8.
+    return SSC_REC(0x00882198u, static_cast<std::uint32_t>(param_1) * 0xd04u);
 }
 RH_ScopedInstall(EntityDamageStateGet, 0x0046c730);
 
@@ -271,86 +291,86 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl VehiclePhysicsStateReset(
     if (param_1 > 0xfu) {
         return 0u;
     }
+    if (!SscRecBase()) return 0u;   // exe only: record array not allocated (named guard)
 
     // Per-vehicle byte stride in the physics SOA. [0x0046bab0]
     int iVar1 = static_cast<int>(param_1) * 0xd04;
 
     // Self-reference: write slot index to entity table.                  [0x0046bab8]
     // (&DAT_008815a0)[param_1 * 0x341] is undefined4* array -> byte off = param_1*0xd04 = iVar1
-    *reinterpret_cast<std::uint32_t*>(0x008815a0u + static_cast<unsigned>(iVar1)) = param_1;
+    SSC_REC(0x008815a0u, iVar1) = param_1;
 
     // Zero velocity XYZ.                                                  [0x0046babb]
-    *reinterpret_cast<std::uint32_t*>(0x00881740u + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x00881744u + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x00881748u + static_cast<unsigned>(iVar1)) = 0u;
+    SSC_REC(0x00881740u, iVar1) = 0u;
+    SSC_REC(0x00881744u, iVar1) = 0u;
+    SSC_REC(0x00881748u, iVar1) = 0u;
 
     // Zero angular rate fields.                                           [0x0046bac8]
-    *reinterpret_cast<std::uint32_t*>(0x00881734u + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x008817a0u + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x008817a8u + static_cast<unsigned>(iVar1)) = 0u;
+    SSC_REC(0x00881734u, iVar1) = 0u;
+    SSC_REC(0x008817a0u, iVar1) = 0u;
+    SSC_REC(0x008817a8u, iVar1) = 0u;
 
     // Zero force accumulators XYZ and torque.                            [0x0046bad7]
-    *reinterpret_cast<std::uint32_t*>(0x00881804u + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x00881808u + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x0088180cu + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x008817f8u + static_cast<unsigned>(iVar1)) = 0u;
+    SSC_REC(0x00881804u, iVar1) = 0u;
+    SSC_REC(0x00881808u, iVar1) = 0u;
+    SSC_REC(0x0088180cu, iVar1) = 0u;
+    SSC_REC(0x008817f8u, iVar1) = 0u;
 
     // Zero contact normals and contact state fields.                     [0x0046bae7]
-    *reinterpret_cast<std::uint32_t*>(0x00881864u + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x0088186cu + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x008818c8u + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x008818ccu + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x008818d0u + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x008818bcu + static_cast<unsigned>(iVar1)) = 0u;
+    SSC_REC(0x00881864u, iVar1) = 0u;
+    SSC_REC(0x0088186cu, iVar1) = 0u;
+    SSC_REC(0x008818c8u, iVar1) = 0u;
+    SSC_REC(0x008818ccu, iVar1) = 0u;
+    SSC_REC(0x008818d0u, iVar1) = 0u;
+    SSC_REC(0x008818bcu, iVar1) = 0u;
 
     // Zero suspension state.                                             [0x0046baff]
-    *reinterpret_cast<std::uint32_t*>(0x00881928u + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x00881930u + static_cast<unsigned>(iVar1)) = 0u;
+    SSC_REC(0x00881928u, iVar1) = 0u;
+    SSC_REC(0x00881930u, iVar1) = 0u;
 
     // Set angular rate scale, contact normal Z, suspension scale, inertia/mass to 1.0f. [0x0046bb07]
-    *reinterpret_cast<std::uint32_t*>(0x008817a4u + static_cast<unsigned>(iVar1)) = 0x3f800000u;
-    *reinterpret_cast<std::uint32_t*>(0x00881868u + static_cast<unsigned>(iVar1)) = 0x3f800000u;
-    *reinterpret_cast<std::uint32_t*>(0x0088192cu + static_cast<unsigned>(iVar1)) = 0x3f800000u;
-    *reinterpret_cast<std::uint32_t*>(0x008819f0u + static_cast<unsigned>(iVar1)) = 0x3f800000u;
+    SSC_REC(0x008817a4u, iVar1) = 0x3f800000u;
+    SSC_REC(0x00881868u, iVar1) = 0x3f800000u;
+    SSC_REC(0x0088192cu, iVar1) = 0x3f800000u;
+    SSC_REC(0x008819f0u, iVar1) = 0x3f800000u;
 
     // Set 4 fields to integer 1.                                         [0x0046bb23]
-    *reinterpret_cast<std::uint32_t*>(0x00881738u + static_cast<unsigned>(iVar1)) = 1u;
-    *reinterpret_cast<std::uint32_t*>(0x008817fcu + static_cast<unsigned>(iVar1)) = 1u;
-    *reinterpret_cast<std::uint32_t*>(0x008818c0u + static_cast<unsigned>(iVar1)) = 1u;
-    *reinterpret_cast<std::uint32_t*>(0x00881984u + static_cast<unsigned>(iVar1)) = 1u;
+    SSC_REC(0x00881738u, iVar1) = 1u;
+    SSC_REC(0x008817fcu, iVar1) = 1u;
+    SSC_REC(0x008818c0u, iVar1) = 1u;
+    SSC_REC(0x00881984u, iVar1) = 1u;
 
     // Zero additional physics fields.                                    [0x0046bb37]
-    *reinterpret_cast<std::uint32_t*>(0x0088198cu + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x00881990u + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x00881994u + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x00881980u + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x008819ecu + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x008819f4u + static_cast<unsigned>(iVar1)) = 0u;
+    SSC_REC(0x0088198cu, iVar1) = 0u;
+    SSC_REC(0x00881990u, iVar1) = 0u;
+    SSC_REC(0x00881994u, iVar1) = 0u;
+    SSC_REC(0x00881980u, iVar1) = 0u;
+    SSC_REC(0x008819ecu, iVar1) = 0u;
+    SSC_REC(0x008819f4u, iVar1) = 0u;
 
     // Write 4.0f to per-slot field (0x341 stride = 0xd04 byte offset).  [0x0046bb57]
-    *reinterpret_cast<std::uint32_t*>(0x00881f80u + static_cast<unsigned>(iVar1)) = 0x40800000u;
+    SSC_REC(0x00881f80u, iVar1) = 0x40800000u;
 
     // Zero more physics fields (iVar1 stride).                          [0x0046bb5f]
-    *reinterpret_cast<std::uint32_t*>(0x008820bcu + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x008820b8u + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x008820b4u + static_cast<unsigned>(iVar1)) = 0u;
+    SSC_REC(0x008820bcu, iVar1) = 0u;
+    SSC_REC(0x008820b8u, iVar1) = 0u;
+    SSC_REC(0x008820b4u, iVar1) = 0u;
 
     // Zero per-slot fields at 0x341 stride.                             [0x0046bb71]
-    *reinterpret_cast<std::uint32_t*>(0x00882090u + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x00882094u + static_cast<unsigned>(iVar1)) = 0u;
+    SSC_REC(0x00882090u, iVar1) = 0u;
+    SSC_REC(0x00882094u, iVar1) = 0u;
 
     // Write -1.0f to per-slot field.                                     [0x0046bb82]
-    *reinterpret_cast<std::uint32_t*>(0x00882098u + static_cast<unsigned>(iVar1)) = 0xbf800000u;
+    SSC_REC(0x00882098u, iVar1) = 0xbf800000u;
 
     // Zero per-slot field.                                               [0x0046bb8b]
-    *reinterpret_cast<std::uint32_t*>(0x0088209cu + static_cast<unsigned>(iVar1)) = 0u;
+    SSC_REC(0x0088209cu, iVar1) = 0u;
 
     // Loop 1: 16 iterations, packed 3-dword entries starting at         [0x0046bb89]
     // (&DAT_008820d0)[param_1 * 0x341] = 0x008820d0 + iVar1.
     // Each entry: [element[-1]=0, element[0]=-1.0f, element[+1]=0], advance by 3.
     {
-        std::uint32_t* puVar2 = reinterpret_cast<std::uint32_t*>(
-            0x008820d0u + static_cast<unsigned>(iVar1));
+        std::uint32_t* puVar2 = &SSC_REC(0x008820d0u, iVar1);
         int iVar3 = 0x10;
         do {
             puVar2[-1] = 0u;
@@ -362,57 +382,56 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl VehiclePhysicsStateReset(
     }
 
     // Zero additional fields (iVar1 stride).                            [0x0046bbba]
-    *reinterpret_cast<std::uint32_t*>(0x0088218cu + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x00881f64u + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x00881f60u + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x00881f5cu + static_cast<unsigned>(iVar1)) = 0u;
+    SSC_REC(0x0088218cu, iVar1) = 0u;
+    SSC_REC(0x00881f64u, iVar1) = 0u;
+    SSC_REC(0x00881f60u, iVar1) = 0u;
+    SSC_REC(0x00881f5cu, iVar1) = 0u;
 
     // Zero per-slot fields (0x341 stride).                              [0x0046bbcc]
-    *reinterpret_cast<std::uint32_t*>(0x00881f58u + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x00881f54u + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x00881f50u + static_cast<unsigned>(iVar1)) = 0u;
+    SSC_REC(0x00881f58u, iVar1) = 0u;
+    SSC_REC(0x00881f54u, iVar1) = 0u;
+    SSC_REC(0x00881f50u, iVar1) = 0u;
 
     // Zero physics fields (iVar1 stride).                               [0x0046bbde]
-    *reinterpret_cast<std::uint32_t*>(0x00882088u + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x00882084u + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x00882080u + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x0088207cu + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x00882078u + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x00882074u + static_cast<unsigned>(iVar1)) = 0u;
+    SSC_REC(0x00882088u, iVar1) = 0u;
+    SSC_REC(0x00882084u, iVar1) = 0u;
+    SSC_REC(0x00882080u, iVar1) = 0u;
+    SSC_REC(0x0088207cu, iVar1) = 0u;
+    SSC_REC(0x00882078u, iVar1) = 0u;
+    SSC_REC(0x00882074u, iVar1) = 0u;
 
     // Zero per-slot fields (0x341 stride).                              [0x0046bbfa]
-    *reinterpret_cast<std::uint32_t*>(0x00881f88u + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x00881f84u + static_cast<unsigned>(iVar1)) = 0u;
+    SSC_REC(0x00881f88u, iVar1) = 0u;
+    SSC_REC(0x00881f84u, iVar1) = 0u;
 
     // Zero physics fields (iVar1 stride).                               [0x0046bc0c]
-    *reinterpret_cast<std::uint32_t*>(0x008820a8u + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x008820a4u + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x008820a0u + static_cast<unsigned>(iVar1)) = 0u;
+    SSC_REC(0x008820a8u, iVar1) = 0u;
+    SSC_REC(0x008820a4u, iVar1) = 0u;
+    SSC_REC(0x008820a0u, iVar1) = 0u;
 
     // Zero per-slot fields (0x341 stride).                              [0x0046bc1e]
-    *reinterpret_cast<std::uint32_t*>(0x00881f8cu + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x00881f90u + static_cast<unsigned>(iVar1)) = 0u;
+    SSC_REC(0x00881f8cu, iVar1) = 0u;
+    SSC_REC(0x00881f90u, iVar1) = 0u;
 
     // Zero physics field (iVar1 stride).                                [0x0046bc30]
-    *reinterpret_cast<std::uint32_t*>(0x00881f94u + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x00882070u + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x00881a30u + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x00881a34u + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x008820c4u + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x008820c8u + static_cast<unsigned>(iVar1)) = 0u;
+    SSC_REC(0x00881f94u, iVar1) = 0u;
+    SSC_REC(0x00882070u, iVar1) = 0u;
+    SSC_REC(0x00881a30u, iVar1) = 0u;
+    SSC_REC(0x00881a34u, iVar1) = 0u;
+    SSC_REC(0x008820c4u, iVar1) = 0u;
+    SSC_REC(0x008820c8u, iVar1) = 0u;
 
     // Zero per-slot field (0x341 stride).                               [0x0046bc52]
-    *reinterpret_cast<std::uint32_t*>(0x0088208cu + static_cast<unsigned>(iVar1)) = 0u;
+    SSC_REC(0x0088208cu, iVar1) = 0u;
 
     // Zero physics fields (iVar1 stride).                               [0x0046bc5a]
-    *reinterpret_cast<std::uint32_t*>(0x008820acu + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x008820b0u + static_cast<unsigned>(iVar1)) = 0u;
+    SSC_REC(0x008820acu, iVar1) = 0u;
+    SSC_REC(0x008820b0u, iVar1) = 0u;
 
     // Loop 2: 18 iterations, stride 0x40 (64 bytes = 0x10 uint32_t elements). [0x0046bc96]
     // Writes 0xffffffff to &DAT_00881a4c + iVar1, then +0x40, +0x80, ...
     {
-        std::uint32_t* puVar2 = reinterpret_cast<std::uint32_t*>(
-            0x00881a4cu + static_cast<unsigned>(iVar1));
+        std::uint32_t* puVar2 = &SSC_REC(0x00881a4cu, iVar1);
         int iVar3 = 0x12;
         do {
             *puVar2  = 0xffffffffu;
@@ -422,23 +441,97 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl VehiclePhysicsStateReset(
     }
 
     // Zero per-slot entity table fields (0x341 stride).                 [0x0046bcb5]
-    *reinterpret_cast<std::uint32_t*>(0x008815b4u + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x008815b8u + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x008815bcu + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x008815d4u + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x008815d0u + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x008815ccu + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x008815c8u + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x008815c4u + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x008815c0u + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x008815ecu + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x008815e8u + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x008815e4u + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x008815e0u + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x008815dcu + static_cast<unsigned>(iVar1)) = 0u;
-    *reinterpret_cast<std::uint32_t*>(0x008815d8u + static_cast<unsigned>(iVar1)) = 0u;
+    SSC_REC(0x008815b4u, iVar1) = 0u;
+    SSC_REC(0x008815b8u, iVar1) = 0u;
+    SSC_REC(0x008815bcu, iVar1) = 0u;
+    SSC_REC(0x008815d4u, iVar1) = 0u;
+    SSC_REC(0x008815d0u, iVar1) = 0u;
+    SSC_REC(0x008815ccu, iVar1) = 0u;
+    SSC_REC(0x008815c8u, iVar1) = 0u;
+    SSC_REC(0x008815c4u, iVar1) = 0u;
+    SSC_REC(0x008815c0u, iVar1) = 0u;
+    SSC_REC(0x008815ecu, iVar1) = 0u;
+    SSC_REC(0x008815e8u, iVar1) = 0u;
+    SSC_REC(0x008815e4u, iVar1) = 0u;
+    SSC_REC(0x008815e0u, iVar1) = 0u;
+    SSC_REC(0x008815dcu, iVar1) = 0u;
+    SSC_REC(0x008815d8u, iVar1) = 0u;
 
     return 1u; // success [0x0046bcd9]
 }
 
 RH_ScopedInstall(VehiclePhysicsStateReset, 0x0046baa0);
+
+// ===========================================================================
+// [D-11073 leg 1b step 2] SubState_InputsDump -- MEASUREMENT ONLY (see the header).
+// ===========================================================================
+void SubState_InputsDump(float countdown, const int alive[4], const float pos[4][3])
+{
+#ifdef MASHED_STANDALONE
+    static const char* s_path = std::getenv("MASHED_L1B_INPUTS");
+    if (!s_path) return;
+    static std::FILE* s_f = nullptr;
+    static int s_frame = 0;
+    if (!s_f) {
+        s_f = std::fopen(s_path, "w");
+        if (!s_f) { s_path = nullptr; return; }
+        std::fprintf(s_f, "frame,countdown,ba8c,e9fc,ea64,fd0,f1018,ff4,f1014,cd29b8,ba78,d7e4,"
+                          "d584,d588,step100c");
+        for (int k = 0; k < 4; ++k) std::fprintf(s_f, ",r%d_i64,r%d_f50", k, k);
+        for (int v = 0; v < 4; ++v)
+            std::fprintf(s_f, ",alive%d,e470_%d,bf4g%d,bf4r%d,bf8g%d,bf8r%d,cd%d,acc%d,px%d,py%d,pz%d,"
+                              "tx%d,ty%d,tz%d", v, v, v, v, v, v, v, v, v, v, v, v, v, v);
+        std::fprintf(s_f, "\n");
+        if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
+            std::fprintf(lf, "[l1b-inputs] MASHED_L1B_INPUTS=%s armed\n", s_path);
+            std::fclose(lf);
+        }
+    }
+    auto I = [](std::uintptr_t a) { return *reinterpret_cast<const std::int32_t*>(a); };
+    auto F = [](std::uintptr_t a) { return *reinterpret_cast<const float*>(a); };
+    std::fprintf(s_f, "%d,%.9g,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%.9g,%.9g", s_frame++, countdown,
+                 I(0x0063ba8cu), I(0x0067e9fcu), I(0x0067ea64u), I(0x007f0fd0u), I(0x007f1018u),
+                 I(0x007f0ff4u), I(0x007f1014u), I(0x005f29b8u), I(0x0063ba78u), I(0x0063d7e4u),
+                 I(0x0063d584u), F(0x0063d588u), F(0x007f100cu));
+    for (int k = 0; k < 4; ++k)
+        std::fprintf(s_f, ",%d,%.9g", I(0x0063c8d0u + k * 0x74u + 0x64u),
+                     F(0x0063c8d0u + k * 0x74u + 0x50u));
+    const std::uintptr_t slotp = static_cast<std::uintptr_t>(I(0x005f2770u));
+    for (int v = 0; v < 4; ++v) {
+        const char* rec = mashed_re::Vehicle::VehRecord(static_cast<std::uint32_t>(v));
+        const int slot = I(0x007f1a14u + v * 0x10u);
+        const unsigned acc = (slot >= 0 && slot < 16)
+            ? *reinterpret_cast<const unsigned char*>(0x007f103cu + slot * 0x4cu) : 999u;
+        std::fprintf(s_f, ",%d,%d,%d,%d,%d,%d,%d,%u,%.9g,%.9g,%.9g", alive[v],
+                     slotp ? I(slotp + 0x34u + v * 4u) : -999,
+                     static_cast<int>(EntityVelocityCounterGet(v)),
+                     rec ? *reinterpret_cast<const std::int32_t*>(rec + 0xbf4) : -999,
+                     static_cast<int>(EntityDamageStateGet(v)),
+                     rec ? *reinterpret_cast<const std::int32_t*>(rec + 0xbf8) : -999,
+                     I(0x0089a4f8u + v * 0x74u), acc,
+                     rec ? *reinterpret_cast<const float*>(rec + 0x958) : 0.f,
+                     rec ? *reinterpret_cast<const float*>(rec + 0x95c) : 0.f,
+                     rec ? *reinterpret_cast<const float*>(rec + 0x960) : 0.f);
+        std::fprintf(s_f, ",%.9g,%.9g,%.9g", pos[v][0], pos[v][1], pos[v][2]);
+    }
+    std::fprintf(s_f, "\n");
+    std::fflush(s_f);
+#else
+    (void)countdown; (void)alive; (void)pos;
+#endif
+}
+
+void SubState_SeedCd()
+{
+    if (!SubState_Enabled()) return;
+    static const char* s_cd = std::getenv("MASHED_SUBSTATE_CD");
+    if (!s_cd || !s_cd[0]) return;
+    const int n = std::atoi(s_cd);
+    for (int v = 0; v < 4; ++v)
+        *reinterpret_cast<std::int32_t*>(0x0089a4f8u + static_cast<std::uintptr_t>(v) * 0x74u) = n;
+    if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
+        std::fprintf(lf, "[substate] MASHED_SUBSTATE_CD=%d seeded 0x0089a4f8+v*0x74 (v=0..3); "
+                         "FUN_00414180 stand-in, measurement only\n", n);
+        std::fclose(lf);
+    }
+}

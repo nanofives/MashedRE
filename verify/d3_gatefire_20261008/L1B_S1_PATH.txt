@@ -1,0 +1,140 @@
+=== early_window table_882194_get
+hook: table_882194_get  (early-window pure-leaf diff — no menu boot required)
+  b0=0x8b reim=0x5daa2360 cases=10 mismatches=0
+  evidence: C:\Users\maria\Desktop\Proyectos\Mashed\log\diff_table_882194_get.csv
+VERDICT: GREEN
+rc=0
+=== early_window table_882198_get
+hook: table_882198_get  (early-window pure-leaf diff — no menu boot required)
+  b0=0x8b reim=0x5daa2340 cases=10 mismatches=0
+  evidence: C:\Users\maria\Desktop\Proyectos\Mashed\log\diff_table_882198_get.csv
+VERDICT: GREEN
+rc=0
+=== run_diff vehicle_physics_state_reset_obs
+hook: vehicle_physics_state_reset_obs  rva=0x0046baa0  export=VehiclePhysicsStateReset
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 6384
+  [agent] LUT ready  base=0x2deaa70  offset=0x134  root=0xd880048  delta=0  attempts=1
+  [agent] .asi loaded  base=0x5da10000  VehiclePhysicsStateReset@0x5da32410
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\log\diff_vehicle_physics_state_reset_obs.csv
+  total cases: 7
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.
+rc=0
+=== run_verify_hook vehicle_physics_state_reset (full auto-hook set)
+hook: vehicle_physics_state_reset  rva=0x0046baa0  export=VehiclePhysicsStateReset
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 10932
+  [agent] pre_snapshot
+  [agent] asi_loaded
+  [agent] post_snapshot
+  [agent] results
+
+=== verify_hook_install report (vehicle_physics_state_reset) ===
+
+target address: 0x0046baa0  export: VehiclePhysicsStateReset
+PRE  bytes:     e9 6b 69 96 5e f8 10 72
+asi base:       0x5edb0000
+reimpl addr:    0x5edd2410
+POST bytes:     e9 6b 69 96 5e f8 10 72
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x5e96696b  expected 0x5e96696b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  4 / 4
+
+per-input results:
+  [OK] input=0  got=1  err=
+  [OK] input=15  got=1  err=
+  [OK] input=16  got=0  err=
+  [OK] input=255  got=0  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 4x as expected
+  + all 4 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_vehicle_physics_state_reset.txt
+rc=0
+=== run_verify_hook table_882194_get (full auto-hook set)
+hook: table_882194_get  rva=0x0046c750  export=EntityVelocityCounterGet
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 1504
+  [agent] pre_snapshot
+  [agent] asi_loaded
+  [agent] post_snapshot
+  [agent] results
+
+=== verify_hook_install report (table_882194_get) ===
+
+target address: 0x0046c750  export: EntityVelocityCounterGet
+PRE  bytes:     e9 0b 5c 96 5e f8 10 7c
+asi base:       0x5edb0000
+reimpl addr:    0x5edd2360
+POST bytes:     e9 0b 5c 96 5e f8 10 7c
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x5e965c0b  expected 0x5e965c0b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  3 / 3
+
+per-input results:
+  [OK] input=0  got=0  err=
+  [OK] input=15  got=0  err=
+  [OK] input=16  got=0  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 3x as expected
+  + all 3 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_table_882194_get.txt
+rc=0
+=== run_verify_hook table_882198_get (full auto-hook set)
+hook: table_882198_get  rva=0x0046c730  export=EntityDamageStateGet
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 28336
+  [agent] pre_snapshot
+  [agent] asi_loaded
+  [agent] post_snapshot
+  [agent] results
+
+=== verify_hook_install report (table_882198_get) ===
+
+target address: 0x0046c730  export: EntityDamageStateGet
+PRE  bytes:     e9 0b 5c 7b 5d f8 10 7c
+asi base:       0x5dc00000
+reimpl addr:    0x5dc22340
+POST bytes:     e9 0b 5c 7b 5d f8 10 7c
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x5d7b5c0b  expected 0x5d7b5c0b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  3 / 3
+
+per-input results:
+  [OK] input=0  got=0  err=
+  [OK] input=15  got=0  err=
+  [OK] input=16  got=0  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 3x as expected
+  + all 3 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_table_882198_get.txt
+rc=0

@@ -25,3 +25,15 @@ extern "C" __declspec(dllexport) void          __cdecl    Update41b520(void);   
 extern "C" __declspec(dllexport) std::uint32_t __cdecl    VehiclePhysicsStateReset(std::uint32_t param_1); // 0x0046baa0
 extern "C" __declspec(dllexport) std::uint32_t __cdecl    EntityVelocityCounterGet(int param_1);    // 0x0046c750
 extern "C" __declspec(dllexport) std::uint32_t __cdecl    EntityDamageStateGet(int param_1);        // 0x0046c730
+
+// [D-11073 leg 1b step 2, PREREG_LEG1B.md section 2] MEASUREMENT ONLY, default OFF.
+// MASHED_L1B_INPUTS=<csv path>: one row per frame of every input FUN_0040dbd0 / FUN_004103a0
+// read, plus the 0xbf4/0xbf8 record fields through both the getters and the record base, and
+// per-car record position (+0x958/+0x95c/+0x960) and TrackRenderer position (`pos`). Writes nothing the game reads. Exe only
+// (no-op in the asi). `alive` is the port's s_host.car_alive vector (g_aib.alive).
+void SubState_InputsDump(float countdown, const int alive[4], const float pos[4][3]);
+
+// [D-11073 leg 1b, PREREG_LEG1B.md section 3] MEASUREMENT-ONLY knob MASHED_SUBSTATE_CD=<n>:
+// writes 0x0089a4f8 + v*0x74 = n (v = 0..3) where FUN_00414180 (unported) would have written
+// it. No-op unless both MASHED_SUBSTATE and MASHED_SUBSTATE_CD are set. Not a port.
+void SubState_SeedCd();

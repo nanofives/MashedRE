@@ -18974,6 +18974,104 @@ HOOKS = {
     # pre-filled 0xAA (so a zero store is visible), saved and restored around each side.
     # Slot 16 and 0xffffffff take the unsigned guard at 0x0046baa4 (return 0, no store).
     # Body: Race/SubStateCallees.cpp. PREREG_LEG1A.md section 4.
+    # ---- D-11073 leg 1b (2026-10-09): race sub-state phases 4 and 5 -----------------
+    # Race/SubStateMachine.cpp. PREREG: verify/d3_gatefire_20261008/PREREG_LEG1B.md section 4.
+    # 0x0040dbd0 SubStateEnter4: void(void). Inputs pick the arm (e9fc / ea64 / fd0) and the
+    # per-record row index (+0x64); outputs are DAT_0063ba8c, the d584/d588 pair FUN_0041d910
+    # zeroes, and the four records' +0x50/+0x54/+0x58/+0x70 FUN_0041ae20 writes (pre-filled
+    # 0xAAAAAAAA so a no-op reimpl mismatches). e9fc == 2 and (ea64 != 0, fd0 != 2) are NOT
+    # vectored (they call FUN_0041e080 / FUN_0045b350, unsurveyed, at the menu).
+    'sub_state_enter4_obs': {
+        'rva':            0x0040dbd0,
+        'export':         'SubStateEnter4',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'state_machine_observe',
+        'input_globals':  ([{'addr': a, 'type': 'u32'} for a in
+                            (0x0067e9fc, 0x0067ea64, 0x007f0fd0)]
+                           + [{'addr': 0x0063c8d0 + k * 0x74 + 0x64, 'type': 'u32'} for k in range(4)]
+                           + [{'addr': a, 'type': 'u32'} for a in (0x0063d584, 0x0063d588, 0x0063ba8c)]
+                           + [{'addr': 0x0063c8d0 + k * 0x74 + o, 'type': 'u32'}
+                              for k in range(4) for o in (0x50, 0x70)]),
+        'output_globals': ([{'addr': a, 'type': 'u32'} for a in (0x0063ba8c, 0x0063d584, 0x0063d588)]
+                           + [{'addr': 0x0063c8d0 + k * 0x74 + o, 'type': 'u32'}
+                              for k in range(4) for o in (0x50, 0x54, 0x58, 0x70)]),
+        'lut_root_delta': 0,
+        # [e9fc, ea64, fd0, i64_0..3, d584, d588, ba8c, (f50,f70) x4 sentinels]
+        'path1_tests': [
+            [0,  0, 0, 0, 1, 2, 3, 7, 0x40000000, 4] + [0xAAAAAAAA] * 8,
+            [10, 0, 0, 3, 2, 1, 0, 9, 0x3f800000, 4] + [0xAAAAAAAA] * 8,
+            [6,  0, 0, 1, 1, 1, 1, 1, 0x3fc00000, 0] + [0xAAAAAAAA] * 8,
+            [10, 1, 2, 2, 3, 0, 1, 5, 0x3f000000, 4] + [0xAAAAAAAA] * 8,
+            [0,  0, 2, 0, 0, 0, 0, 0, 0,          4] + [0xAAAAAAAA] * 8,
+        ],
+        'path2_tests':    [[]],
+    },
+
+    # 0x004103a0 SubStateHeldCountdown5: units in EAX (0x004112b9). eax_state_machine_observe
+    # (new 2026-10-09): t = [eax, inputs...]. The slot table is seeded through a scratch base:
+    # 0x005f2770 -> 0x007f0a4c, whose [0] -> 0x005f2770 (readable, for FUN_00426c90's **deref)
+    # and +0x34..+0x40 (0x007f0a80..0x007f0a8c) = the four per-car slot words. DAT_0063d7e4 ->
+    # 0x007f0aa0 with [+0x40] (0x007f0ae0) = 0, so FUN_0041ea80 returns 0 on both sides (the
+    # original's measured phase-5 value). DAT_00801ca0 = 0 makes FUN_00418860 return at
+    # 0x00418867. e9fc = 0 (the ==2 arms are not vectored). Outputs: DAT_0063ba8c,
+    # DAT_005f29b8, DAT_007f1014, 0x007f0a04..0x007f0a30, and per car +0xbf4, +0xbf8, +0x1a0,
+    # +0x9e0 (FUN_0046baa0 writes 0 / 4.0f over sentinels) and FUN_00422b50's counter
+    # 0x008995bc + v*0x138. EXIT vectors use slot words 1: FUN_00422b50 (called by FUN_0046d780)
+    # subtracts ftol(FUN_00472650(0, 300.0f)) when FUN_0040e470(car) != 1 (it reads the same
+    # slot words), and the PRNG state is not restored between the two sides, so that arm
+    # cannot diff (first run 2026-10-09: 2/5 RED on exactly those counters). NOT vectored.
+    'sub_state_held_countdown5_obs': {
+        'rva':            0x004103a0,
+        'export':         'SubStateHeldCountdown5',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'eax_state_machine_observe',
+        'input_globals':  ([{'addr': a, 'type': 'u32'} for a in
+                            (0x005f2770, 0x007f0a4c, 0x0063ba78, 0x0063d7e4, 0x007f0ae0, 0x00801ca0,
+                             0x0067e9fc, 0x005f29b8, 0x007f1018, 0x007f0ff4, 0x0063d588, 0x0063ba8c)]
+                           + [{'addr': 0x007f0a80 + 4 * v, 'type': 'u32'} for v in range(4)]
+                           + [{'addr': 0x008815a4 + v * 0xd04, 'type': 'u32'} for v in range(4)]
+                           + [{'addr': 0x007f1a14 + v * 0x10, 'type': 'u32'} for v in range(4)]
+                           + [{'addr': 0x007f103c + v * 0x4c, 'type': 'u8'} for v in range(4)]
+                           + [{'addr': 0x00882194 + v * 0xd04, 'type': 'u32'} for v in range(4)]
+                           + [{'addr': 0x00882198 + v * 0xd04, 'type': 'u32'} for v in range(4)]
+                           + [{'addr': 0x00881740 + v * 0xd04, 'type': 'u32'} for v in range(4)]
+                           + [{'addr': 0x00881f80 + v * 0xd04, 'type': 'u32'} for v in range(4)]
+                           + [{'addr': 0x008995bc + v * 0x138, 'type': 'u32'} for v in range(4)]
+                           + [{'addr': 0x007f0a04 + 4 * k, 'type': 'u32'} for k in range(12)]),
+        'output_globals': ([{'addr': a, 'type': 'u32'} for a in (0x0063ba8c, 0x005f29b8, 0x007f1014)]
+                           + [{'addr': 0x007f0a04 + 4 * k, 'type': 'u32'} for k in range(12)]
+                           + [{'addr': b + v * 0xd04, 'type': 'u32'}
+                              for v in range(4) for b in (0x00882194, 0x00882198, 0x00881740, 0x00881f80)]
+                           + [{'addr': 0x008995bc + v * 0x138, 'type': 'u32'} for v in range(4)]),
+        'lut_root_delta': 0,
+        # t = [eax, tbl, tbl0, ba78, d7e4, d7e4_40, splines, e9fc, 29b8, 1018, 0ff4, d588, ba8c,
+        #      slot0..3, alive0..3, ctrlidx0..3, acc0..3, bf4 x4, bf8 x4, v1a0 x4, v9e0 x4,
+        #      score x4, a04..a30 x12]
+        'path1_tests': [
+            # stay (d588 1.0 < 1.86): reset + charge only; mixed accel, one dead car
+            [50, 0x007f0a4c, 0x005f2770, 0, 0x007f0aa0, 0, 0, 0, 12000, 0, 5000, 0x3f800000, 5,
+             1, 2, 2, 2,  1, 1, 0, 1,  0, 1, 2, 3,  0, 255, 255, 161,
+             0, 250, 2990, 40,  0, 0, 0, 0] + [0xAAAAAAAA] * 8 + [0] * 4 + [0x55555555] * 12,
+            # exit at exactly 1.86f (0x3fee147b >= 1.86): release arms 2 / 1 / none
+            [50, 0x007f0a4c, 0x005f2770, 0, 0x007f0aa0, 0, 0, 0, 6500, 900000, 5000, 0x3fee147b, 5,
+             1, 1, 1, 1,  1, 1, 1, 1,  0, 1, 2, 3,  0, 255, 0, 200,
+             0, 2500, 250, 0,  0, 0, 0, 0] + [0xAAAAAAAA] * 8 + [7, 7, 7, 7] + [0x55555555] * 12,
+            # just below (0x3fee147a): no exit; 1018 > 0ff4 -> 1014 = 0
+            [50, 0x007f0a4c, 0x005f2770, 0, 0x007f0aa0, 0, 0, 0, 6550, 900000, 5000, 0x3fee147a, 5,
+             1, 0, 2, 2,  1, 1, 1, 1,  0, 1, 2, 3,  0, 255, 255, 255,
+             0, 1000, 1001, 2999,  0, 0, 0, 0] + [0xAAAAAAAA] * 8 + [0] * 4 + [0x55555555] * 12,
+            # exit, units 100 (two frames' worth), every car alive and pressed
+            [100, 0x007f0a4c, 0x005f2770, 0, 0x007f0aa0, 0, 0, 0, 300, 0, 1, 0x40000000, 5,
+             1, 1, 1, 1,  1, 1, 1, 1,  0, 1, 2, 3,  255, 255, 255, 255,
+             300, 300, 1100, 3000,  0, 0, 0, 0] + [0xAAAAAAAA] * 8 + [1, 2, 3, 4] + [0x55555555] * 12,
+            # exit with all slot words 0: loops skip every car; only globals move
+            [50, 0x007f0a4c, 0x005f2770, 0, 0x007f0aa0, 0, 0, 0, 50, 0, 0, 0x40400000, 5,
+             0, 0, 0, 0,  1, 1, 1, 1,  0, 1, 2, 3,  255, 255, 255, 255,
+             600, 600, 600, 600,  0, 0, 0, 0] + [0xAAAAAAAA] * 8 + [0] * 4 + [0x55555555] * 12,
+        ],
+        'path2_tests':    [],
+    },
+
     'vehicle_physics_state_reset_obs': {
         'rva':            0x0046baa0,
         'export':         'VehiclePhysicsStateReset',
