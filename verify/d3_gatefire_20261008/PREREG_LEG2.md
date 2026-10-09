@@ -79,6 +79,38 @@ state-2 tail is. Its `FUN_0040e590` call is transcribed only as the clock store 
 
 ## 4. Release-frame prediction (appended after the measurement step; EMPTY at this commit)
 
+**Appended 2026-10-09, BEFORE the gate arm `L2` ran.** Inputs: `L2_MEAS` (release held 800 frames),
+`L2_MEAS.trace.csv`. G-CTRL already PASSES on this build (`L2_CTRL`: `c741a4c5` / `642af0ac` / `05984e30`).
+Measured inputs the model takes:
+- the port camera target starts at (0.030, 3.304, 4.838) and is at (0.453, 3.046, 4.526) by p3f 800
+  (original: (-0.149, 3.542, 4.455) at f60 -> (-0.077, 2.986, 5.243) at release);
+- the first two chain calls run with `DAT_007f1008` = 0 (dt = 0: the tail frame does not advance the
+  clock, a leg-1b choice), then 50; the first call reads cam +4 = (0,0,0).
+
+`leg2_model.py port L2_MEAS.trace.csv`:
+- **G-FRAME prediction: the flag clears on chain call p3f 763 -> the log reads "phase 3 released after
+  764 frames"** (gate: ±2). The original's 652 is NOT expected: the target differs.
+- **G-CURVE prediction (raw distance to the unshifted target, both sides):**
+
+| f | predicted port | original | ratio | 10 % gate |
+|---|---|---|---|---|
+| 60 | 27.413 | 27.875 | 0.983 | pass |
+| 120 | 22.768 | 23.261 | 0.979 | pass |
+| 180 | 17.282 | 17.823 | 0.970 | pass |
+| 240 | 11.536 | 12.079 | 0.955 | pass |
+| 300 | 7.360 | 7.625 | 0.965 | pass |
+| 360 | 4.564 | 4.643 | 0.983 | pass |
+| 420 | 2.942 | 2.816 | 1.045 | pass |
+| 480 | 2.050 | 1.784 | **1.149** | **FAIL** |
+| 540 | 1.445 | 1.079 | **1.340** | **FAIL** |
+
+**G-CURVE is predicted to FAIL at 2 of 9 points.** The cause is predicted to be the camera target
+(RaceCamera's pre-race framing vs the original's), not the entry dynamics, which G-TRANSCRIBE checks
+separately. The gate is not loosened. Static: S1, S2 confirmed by `L2_MEAS.log`; S3 confirmed
+(`draws_before=314` = 310 open discards + 4, `fc0=0`); S4 FAILS as worded (round-2 cd at 323 not 320:
+round 1's own AI-tick draw count changes with the longer pre-race; S4 was report-only).
+
+
 Measurement: knob arm with `MASHED_P3_MEASURE=800` (the release check ignored for 800 phase-3 frames;
 entries do not feed the camera except through the flag, which stays 1 until release in both runs),
 logging the port's `cam+4..+0xc` per phase-3 frame. That trace goes through `leg2_model.py port` ->

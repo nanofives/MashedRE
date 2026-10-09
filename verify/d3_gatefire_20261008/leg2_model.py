@@ -10,9 +10,10 @@ import numpy as np
 f = np.float32
 DT = f(f(50) * f(0.00033333332976326346))          # fild [0x7f1008] * [0x5cc948]
 
-def step(e, tgt, flag, inputs_zero=True):
+def step(e, tgt, flag, inputs_zero=True, dt=None):
     """One FUN_00445aa0 call. e: dict px,py,pz,vx,vy,vz,a4,a8. tgt: (x,y,z) = cam +4/+8/+0xc.
     Returns (flag_after, dist_used)."""
+    DT_ = DT if dt is None else dt
     px, py, pz = e['px'], e['py'], e['pz']
     if flag:                                                    # 0x00445ad3
         tx, tz = f(tgt[0]), f(tgt[2])
@@ -25,11 +26,11 @@ def step(e, tgt, flag, inputs_zero=True):
     else:
         raise NotImplementedError("flag == 0 arm (FUN_00441c80 car midpoint) not modelled")
     h = f(py - e['a4'])                                         # 0x00445b5c
-    if h < f(0.05): e['vy'] = f(f(DT * f(3.0)) + e['vy'])
-    if h > f(0.05): e['vy'] = f(e['vy'] - f(DT * f(3.0)))
-    one_m = f(f(1.0) - DT)
+    if h < f(0.05): e['vy'] = f(f(DT_ * f(3.0)) + e['vy'])
+    if h > f(0.05): e['vy'] = f(e['vy'] - f(DT_ * f(3.0)))
+    one_m = f(f(1.0) - DT_)
     k = one_m
-    if h < f(1.0) and h > f(-1.0): k = f(f(1.0) - f(DT + DT))
+    if h < f(1.0) and h > f(-1.0): k = f(f(1.0) - f(DT_ + DT_))
     e['vy'] = f(k * e['vy'])
     dx, dz = f(px - tx), f(pz - tz)
     dist = f(np.sqrt(f(dx * dx + dz * dz)))                     # 0x004c3bf0 (after 0x004c3c60)
@@ -48,15 +49,15 @@ def step(e, tgt, flag, inputs_zero=True):
         f9 = f(0.0)
         if f(0.0) <= f6:
             f9 = f6 if not (f(5.0) < f6) else f(5.0)
-        s = f(f(f(f9 * DT) * g) * f(0.2))
+        s = f(f(f(f9 * DT_) * g) * f(0.2))
         e['vx'] = f(e['vx'] - f(nx * s)); e['vz'] = f(e['vz'] - f(nz * s))
     else:
         raise NotImplementedError("+0xa8 != 0 arm (LAB_00445d74) not reached with flag set")
     k2 = one_m
-    if pdist < f(10.0) and e['a8'] == 0: k2 = f(f(1.0) - f(DT + DT))
+    if pdist < f(10.0) and e['a8'] == 0: k2 = f(f(1.0) - f(DT_ + DT_))
     e['vx'] = f(k2 * e['vx']); e['vz'] = f(k2 * e['vz'])
-    e['px'] = f(e['px'] + f(e['vx'] * DT)); e['py'] = f(e['py'] + f(e['vy'] * DT))
-    e['pz'] = f(e['pz'] + f(e['vz'] * DT))                      # 0x004c51a0 (combine 2)
+    e['px'] = f(e['px'] + f(e['vx'] * DT_)); e['py'] = f(e['py'] + f(e['vy'] * DT_))
+    e['pz'] = f(e['pz'] + f(e['vz'] * DT_))                      # 0x004c51a0 (combine 2)
     return flag, dist, released
 
 def run(targets, first_double=True):
@@ -73,7 +74,32 @@ def run(targets, first_double=True):
         if flag == 0: return out, i
     return out, None
 
+def run_port(trace_csv):
+    """Port trace (MASHED_LEG2_TRACE): one row per chain call, logged AFTER the call's camera
+    update + copy. The entry step in call r reads cam +4..+0xc as left by call r-1 (row r-1's
+    tx,ty,tz); the first call reads (0,0,0) (nothing copied before phase 3 in the port).
+    dt per call = that row's u1008 x (1/3000). Rows with ba8c != 3 are ignored for the prediction."""
+    rows = [r for r in csv.DictReader(open(trace_csv))]
+    e = dict(px=f(1.5), py=f(9.7), pz=f(34.5), vx=f(0), vy=f(0), vz=f(0), a4=f(12.0), a8=0)
+    flag, prev, out = 1, (0.0, 0.0, 0.0), []
+    for r in rows:
+        if r['ba8c'] != '3': break
+        dt = f(f(int(r['u1008'])) * f(0.00033333332976326346))
+        flag, dist, rel = step(e, prev, flag, dt=dt)
+        out.append((int(r['p3f']), float(e['px']), float(e['pz']), float(dist), flag))
+        prev = (float(r['tx']), float(r['ty']), float(r['tz']))
+        if flag == 0: return out, int(r['p3f'])
+    return out, None
+
 if __name__ == '__main__':
+    if sys.argv[1] == 'port':
+        out, rel = run_port(sys.argv[2])
+        print('port trace', sys.argv[2], 'model clears the flag on p3f', rel,
+              '-> predicted log "released after %s frames"' % (None if rel is None else rel + 1))
+        for k in (60, 120, 180, 240, 300, 360, 420, 480, 540, 600):
+            m = [o for o in out if o[0] == k]
+            if m: print('  p3f%4d model (%.4f, %.4f) d=%.4f' % (k, m[0][1], m[0][2], m[0][3]))
+        sys.exit(0)
     if sys.argv[1] == 'orig':
         rows = [r for r in csv.DictReader(open('o_cadence_nopress.csv')) if r['substate'] == '3']
         # one row per frame expected; t step 1/60 -> frame index from t
