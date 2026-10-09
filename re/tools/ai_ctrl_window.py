@@ -21,6 +21,12 @@ and frozen cars are flagged `degenerate` rather than scored into a band.
 (2026-09-26, before any post-port capture): each car must fall inside the envelope of the
 ORIGINAL's 12 observations (4 runs x cars 1..3) in verify/d3_ai_20260914 + d3_ai_20260926.
 """
+# --check-regime <envelopes.json> (AMENDMENT 2026-10-09, user decision (iii); ROADMAP.md §D3,
+# verify/d3_bscore_20261009/PREREG_BREGIME.md): the window takes two outcomes per car, set by the
+# one-shot difficulty roll DAT_0089a368. The regime is the first non-zero flag value in the car's
+# window (none -> A, 1 -> B, 2 -> C), and each car is checked against THAT regime's envelope
+# (re/tools/b_envelopes.py).
+# --check (the 2026-09-26 pooled TOLERANCE) is kept unchanged as the legacy rule.
 import csv, json, statistics, sys
 
 def window_stats(path, n, skip=0):
@@ -71,6 +77,24 @@ TOLERANCE = {
     "brake_distinct": (2, 2), "brake_median": (0, 0),
 }
 
+def window_regime(path, n, skip=0):
+    """Regime per car from the FIRST non-zero flag_a368 value in the window: none -> 'A', 1 -> 'B',
+    2 -> 'C' (corrected 2026-10-09: the roll at 0x00417c43 has three outcomes; an original run with the
+    flag at 2 (verify/d3_bscore_20261009/o_breg_r2) differs from regime A). None if no column."""
+    rows = list(csv.DictReader(open(path, newline="")))
+    if not rows or "flag_a368" not in rows[0]:
+        return {}
+    out = {}
+    for v in sorted({int(r["v"]) for r in rows}):
+        r = [x for x in rows if int(x["v"]) == v]
+        i0 = next((i for i, x in enumerate(r) if int(x["c4"]) != 0), None)
+        if i0 is None:
+            continue
+        w = r[i0 + skip:i0 + skip + n]
+        first = next((x["flag_a368"] for x in w if x["flag_a368"] not in ("0", "")), None)
+        out[v] = {None: "A", "1": "B", "2": "C"}.get(first, "?")
+    return out
+
 def check(s):
     fails = []
     for k, (lo, hi) in TOLERANCE.items():
@@ -85,7 +109,7 @@ def main(argv):
     skip = 0
     if "--skip" in argv:
         skip = int(argv[argv.index("--skip") + 1])
-    valued = {"--n", "--skip"}
+    valued = {"--n", "--skip", "--check-regime"}
     paths = [a for i, a in enumerate(argv)
              if not a.startswith("--") and (i == 0 or argv[i-1] not in valued)]
     res = {p: window_stats(p, n, skip) for p in paths}
@@ -111,6 +135,17 @@ def main(argv):
             if "--check" in argv:
                 f = check(s)
                 print("      (b) %s%s" % ("PASS" if not f else "FAIL: ", "; ".join(f)))
+            if "--check-regime" in argv:
+                env = json.load(open(argv[argv.index("--check-regime") + 1]))
+                reg = window_regime(p, n, skip).get(v)
+                if reg is None:
+                    print("      (b-regime) NO flag_a368 column -- cannot label; not scored")
+                elif reg not in env["envelopes"]:
+                    print("      (b-regime) regime %s has no envelope -- not scored" % reg)
+                else:
+                    f = [("%s=%s not in [%s,%s]" % (k, s[k], lo, hi))
+                         for k, (lo, hi) in env["envelopes"][reg].items() if not (lo <= s[k] <= hi)]
+                    print("      (b-regime %s) %s%s" % (reg, "PASS" if not f else "FAIL: ", "; ".join(f)))
 
 if __name__ == "__main__":
     main(sys.argv[1:])

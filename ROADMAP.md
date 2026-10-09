@@ -14,7 +14,7 @@ are carried forward below and remain the unit of work; what changes is the **gat
 > started.
 >
 > *Superseded — **State 2026-09-26:** D0 ✓, D1 ✓ (default flip, residue R1-R3 open), D2 ✓,
-> **D3 active** (AI: ported tick drives the opponents, (b) 2 of 3 cars in tolerance; powerups
+> **D3 active** (AI: ported tick drives the opponents, (b) regime A 2 of 3 cars (B/C references owed, 2026-10-09); powerups
 > (a)(b) met, (c) met on decisions; modes GREEN on 3/11 rules), D4-D5 not started.*
 
 ---
@@ -2187,7 +2187,7 @@ implementations.
   and median, per car). (c) Opponents are driven by the ported ctrl bytes, not the
   `TrackRenderer.cpp:2831-2960` scaffold motion model. (d) `MASHED_AI_TICK` is deleted.
 
-  **(b) AMENDMENT 2026-10-09 (user decision (iii)), the 2026-09-26 text below is kept as written.** The window takes exactly two outcomes per car, set by the one-shot difficulty roll `DAT_0089a368` (`verify/d3_bscore_20261009/RESULT_BSCORE.md`: 12 ring phases, 2 outcomes per car; the original shows the same split). So (b) is now scored per REGIME: a run is regime B if `DAT_0089a368 == 1` anywhere in the window, else A; each regime has its own envelope (min..max over the original runs labelled with that regime, cars pooled); the port is scored in both regimes (ring phase chosen with `MASHED_RING_SKIP`) and reported as "A: n/3, B: m/3". Rule and labelling: `verify/d3_bscore_20261009/PREREG_BREGIME.md`.
+  **(b) AMENDMENT 2026-10-09 (user decision (iii)), the 2026-09-26 text below is kept as written.** The window takes exactly two outcomes per car, set by the one-shot difficulty roll `DAT_0089a368` (`verify/d3_bscore_20261009/RESULT_BSCORE.md`: 12 ring phases, 2 outcomes per car; the original shows the same split). So (b) is now scored per REGIME: a run is regime B if `DAT_0089a368 == 1` anywhere in the window, else A; each regime has its own envelope (min..max over the original runs labelled with that regime, cars pooled); the port is scored in both regimes (ring phase chosen with `MASHED_RING_SKIP`) and reported as "A: n/3, B: m/3". Rule and labelling: `verify/d3_bscore_20261009/PREREG_BREGIME.md`. **Correction + result 2026-10-09 (`verify/d3_bscore_20261009/RESULT_BREGIME.md`):** the roll has THREE outcomes, so the regime is the first non-zero flag value in the window (none -> A, 1 -> B, 2 -> C). Envelopes from 7 labelled original runs (`re/tools/b_envelopes.json`): A from 6 identical runs, C from 1; no labelled B yet. **Port: A 2/3 (car 2 fails); B and C not scored** (no labelled B reference; no port phase in C). Checker: `ai_ctrl_window.py --check-regime re/tools/b_envelopes.json`.
 
   **(b) tolerance, written 2026-09-26 BEFORE any post-port capture.** Window, per car
   v = 1..3: the 220 AI-step calls starting at the car's first call with accel `c4 != 0`

@@ -1,0 +1,8 @@
+== K00
+      (b-regime A) PASS
+      (b-regime A) FAIL: c0_distinct=39 not in [13,35]; c1_distinct=75 not in [21,70]; steer_distinct=113 not in [33,96]; c1_median=5.5 not in [0.0,0.0]; abs_steer_median=44.5 not in [7.0,23.0]
+      (b-regime A) PASS
+== K01
+      (b-regime) regime B has no envelope -- not scored
+      (b-regime) regime B has no envelope -- not scored
+      (b-regime) regime B has no envelope -- not scored

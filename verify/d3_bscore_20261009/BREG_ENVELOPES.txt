@@ -1,0 +1,2 @@
+A {'c0_distinct': [13, 35], 'c1_distinct': [21, 70], 'steer_distinct': [33, 96], 'c0_median': [0.0, 0.0], 'c1_median': [0.0, 0.0], 'abs_steer_median': [7.0, 23.0], 'accel_distinct': [2, 3], 'accel_median': [255.0, 255.0], 'brake_distinct': [2, 2], 'brake_median': [0.0, 0.0]}
+C {'c0_distinct': [27, 27], 'c1_distinct': [95, 95], 'steer_distinct': [121, 121], 'c0_median': [0.0, 0.0], 'c1_median': [27.5, 27.5], 'abs_steer_median': [36.5, 36.5], 'accel_distinct': [2, 2], 'accel_median': [255.0, 255.0], 'brake_distinct': [2, 2], 'brake_median': [0.0, 0.0]}

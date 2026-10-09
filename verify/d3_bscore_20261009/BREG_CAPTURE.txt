@@ -1,0 +1,8 @@
+run 1 label=A  (window samples 1886, mode368 {'0': 1886}, first ==1 at game frame None)
+run 2 label=A  (window samples 2629, mode368 {'0': 58, '2': 2571}, first ==1 at game frame None)
+run 3 label=A  (window samples 2071, mode368 {'0': 2071}, first ==1 at game frame None)
+run 4 label=A  (window samples 2699, mode368 {'0': 2699}, first ==1 at game frame None)
+run 5 label=A  (window samples 2658, mode368 {'0': 2658}, first ==1 at game frame None)
+run 6 label=NO-GO  (NO-GO)
+run 7 label=A  (window samples 2730, mode368 {'0': 2730}, first ==1 at game frame None)
+run 8 label=A  (window samples 2777, mode368 {'0': 2777}, first ==1 at game frame None)

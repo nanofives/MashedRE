@@ -1,5 +1,12 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-09 ((b) is now regime-conditioned, user decision (iii)): **port regime A 2/3 (car 2 fails); B and C not scored yet.**
+>
+> Read [`RESULT_BREGIME.md`](../verify/d3_bscore_20261009/RESULT_BREGIME.md). The difficulty roll `DAT_0089a368` has THREE outcomes
+> (flag 0 / 1 / 2 = regimes A / B / C). 7 labelled original runs: 6 A (all identical), 1 C, 0 B. Checker:
+> `py -3.12 re/tools/ai_ctrl_window.py <step.csv> --check-regime re/tools/b_envelopes.json`. Owed: a labelled original B run
+> (extend `capture_breg.sh` past 8), a port ring phase in C (extend the `MASHED_RING_SKIP` sweep), and car 2's regime-A failure.
+
 > ## START HERE 2026-10-09 ((b) scoring MEASURED, decision PENDING): **(b)'s RNG sensitivity is exactly the one-shot difficulty roll `DAT_0089a368`.**
 >
 > Read [`RESULT_BSCORE.md`](../verify/d3_bscore_20261009/RESULT_BSCORE.md). Over 12 ring phases (`MASHED_RING_SKIP`, default build) every car

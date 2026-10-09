@@ -1,0 +1,9 @@
+run 1 label A         -> SET A
+run 2 label A(368=2)  -> NEITHER
+   car 1 new (27, 95, 121, 0.0, 27.5, 36.5, 2, 255.0, 2, 0.0)
+         A  (13, 21, 33, 0.0, 0.0, 7.0, 3, 255.0, 2, 0.0)
+run 3 label A         -> SET A
+run 4 label A         -> SET A
+run 5 label A         -> SET A
+run 7 label A         -> SET A
+run 8 label A         -> SET A

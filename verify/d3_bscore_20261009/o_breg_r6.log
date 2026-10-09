@@ -1,0 +1,35 @@
+  [keep-awake] display-sleep suppressed + wake nudge sent
+=== scenario_launch  pid=39852  track=0 mode=10 cars=4 ===
+  attaching ASAP...
+  error: could not attach
+[hygiene] MASHED.exe PIDs already running (NOT touched): none
+[launch] C:\Users\maria\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\python.exe C:\Users\maria\Desktop\Proyectos\Mashed\re\frida\scenario_launch.py --track 0 --mode 10 --cars 4 --car 0 --poke-ctrl-slots --statediff-out verify/d3_bscore_20261009/o_breg_r6.msd --statediff-car 1 --statediff-aistep --hold 60
+[adopt] polling pid 39852 (READ-ONLY; this tool never kills MASHED)
+[hygiene] scenario_launch exited rc=3; MASHED pid 39852 was NOT killed by this tool
+[out] verify\d3_bscore_20261009\o_breg_r6.poll.csv  rows=53
+
+=== ORIGINAL-side ramp ===
+  clk_0ff4   range 0 .. 0
+  tick_0ff8  range 0 .. 0
+  tickscale  range 0.000 .. 0.000  (seconds; bands at 2/12/22/42/60-62)
+  bias374 distinct values: [0]
+
+=== FUN_0040e470 per car (branch 2 needs == 1 at FUN_004148b0:104) ===
+  slotptr non-null on 53/53 samples
+  v0: [(0, 53)]
+  v1: [(0, 53)]
+  v2: [(0, 53)]
+  v3: [(0, 53)]
+  values present: [0]
+  ANY car ever reading exactly 1? False
+
+=== FUN_0046c7b0 car_alive per car (== 1 means VehicleStep runs) ===
+  v0: ==1 on 0/53 samples (0.0%)   values [(0, 53)]
+  v1: ==1 on 0/53 samples (0.0%)   values [(0, 53)]
+  v2: ==1 on 0/53 samples (0.0%)   values [(0, 53)]
+  v3: ==1 on 0/53 samples (0.0%)   values [(0, 53)]
+  PORT for comparison: v1 1446/13858 (10.4%), v2 3177 (22.9%), v3 13858 (100%)
+  (the PORT reads {v0: 0, v1/v2/v3: 2} and never 1 -- RESULT_GF1.md s3)
+    t=   0.97s  clk=0        tick=0        tickscale=0.0      -> bias374=0
+
+  LIVENESS: clk advanced = False  (a flat clock makes every row above VOID)
