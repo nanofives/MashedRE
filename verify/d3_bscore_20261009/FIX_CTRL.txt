@@ -1,0 +1,7 @@
+=== L2_CTRL  knobs=[] ===
+    pid=33876
+    exit=0  self_exited=True
+    L2_CTRL.step.csv  lines=19419  sha8=c741a4c5
+    L2_CTRL.gates.csv  lines=53993  sha8=642af0ac
+    L2_CTRL.ptrace.log  lines=26996  sha8=05984e30
+H4 DONE

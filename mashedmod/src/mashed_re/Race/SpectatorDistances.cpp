@@ -164,24 +164,29 @@ void ComputeDistances() {
         pa -= kLapSpan;
     }
 
-    std::uint32_t sa = 0u, sb = 0u, ta = 0u, tb = 0u;
+    std::uint32_t sa = 0u, sb = 0u, ta = 0u, tb = 0u;   // FUN_0046cbb0 out1 (state), out2
     VehicleCarStateRead(static_cast<std::uint32_t>(a), &sa, &ta);   // FUN_0046cbb0
     VehicleCarStateRead(static_cast<std::uint32_t>(b), &sb, &tb);
 
-    int ref = a, other = b;
-    std::uint32_t sref = sa, sother = sb;
-    if (pb < pa) {                 // the rearmost of the two becomes the reference
-        ref = b; other = a;
-        sref = sb; sother = sa;
+    // [U-9205 fix, 2026-10-09; verify/d3_bscore_20261009/PREREG_REFDIST_FIX.md] The reference is the
+    // pair's LEADING car (higher race_pct) unless its state is non-zero. This replaced
+    // `if (pb < pa) ref = b` ("the rearmost"), which inverted every distance. From the bytes:
+    //   0x00442b3a fld pa; fcomp pb; test ah,0x41; jne 0x00442b6a      (jump when pa <= pb)
+    //   pa > pb : sa == 0 -> ref a (0x00442b88); else sb == 0 -> ref b (0x00442b60); else exit 0x00442c6e
+    //   pa <= pb: sb == 0 -> ref b (0x00442b72); else sa == 0 -> ref a (0x00442b88); else exit 0x00442c6e
+    // The exits skip the index stores at 0x00442b91 / 0x00442b97.
+    int ref, other;
+    if (pa > pb) {
+        if (sa == 0u)      { ref = a; other = b; }
+        else if (sb == 0u) { ref = b; other = a; }
+        else return;
+    } else {
+        if (sb == 0u)      { ref = b; other = a; }
+        else if (sa == 0u) { ref = a; other = b; }
+        else return;
     }
-
-    // The original stores both indices before the guard chain, so the port does
-    // too. Both land in blank-mapped space standalone (inert), but omitting them
-    // would not be faithful.
-    *reinterpret_cast<std::int32_t*>(0x008989a8u) = ref;
-    *reinterpret_cast<std::int32_t*>(0x008989c8u) = other;
-
-    if (!((sother == 0u) || (sref == 0u))) return;
+    *reinterpret_cast<std::int32_t*>(0x008989a8u) = ref;      // 0x00442b91
+    *reinterpret_cast<std::int32_t*>(0x008989c8u) = other;    // 0x00442b97
     if (!IsCarSlotActive(ref)) return;                              // FUN_0040e370
     if (VehicleSlotGetter(static_cast<std::uint32_t>(ref)) != 1u) return;  // FUN_0046c7b0
 

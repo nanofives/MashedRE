@@ -1,0 +1,6 @@
+pre-fix  first race frame distances v0..v3 (1, [2.739, 1.829, 1.553, 0.0]) | first exit-114 frame per car {1: None, 2: 643, 3: None}
+FIXED    first race frame distances v0..v3 (1, [0.0, 1.55, 1.823, 2.739]) | first exit-114 frame per car {1: 117, 2: 119, 3: 192}
+original o1: 0 / 1.553 / 1.833 / 2.750 at GO; first firings 149 / 216 / 180
+      (b-regime A) PASS
+      (b-regime A) FAIL: abs_steer_median=0.0 not in [7.0,23.0]
+      (b-regime A) PASS
