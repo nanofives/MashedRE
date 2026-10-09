@@ -129,6 +129,26 @@ carries the promotion leg below.
 `run_diff` GREEN plus `run_verify_hook`; under `MASHED_SUBSTATE` alone, `DAT_0063d588` advances
 0.0166667 per frame (it has no 1b handler yet, so nothing consumes it).
 
+**Facts found after leg 1a (2026-10-09), read before writing 1b:**
+- **Car records live at `g_vehicleArrayBase` in the exe, NOT `0x008815a0`.** `LaunchRevCharge.cpp:75-83`
+  routes through `LrcVehBase()` under `MASHED_STANDALONE`. The moved bodies `FUN_0046baa0`,
+  `FUN_0046c750`, `FUN_0046c730` (`Race/SubStateCallees.cpp`) use the absolute original addresses, so
+  called from the exe they would read/write the unused original pad, not the port's cars. They need the
+  same routing before 1b calls them (and `0x00882194` = record + `0xbf4`, `0x00882198` = + `0xbf8`).
+  This is also why leg 0 read 0 at `0x00882194/98` in the standalone.
+- **`0x00882194/98` writers are `FUN_0046d7f0` and `FUN_0046d780`, whose only caller is `FUN_004103a0`**
+  (Ghidra XrefRange + DecompPC callers). Both are already in the exe (`LaunchRevCharge.cpp`), driven
+  today by TrackRenderer's stand-in `countdown_ = 3.0f` (`TrackRenderer.cpp:4995`, `LaunchRev_PreRaceTick`
+  / `_Release` at `:3200`/`:3203`), car 0 only. The original's phase 5 is 112 frames (1.8667 s). 1b
+  replaces that stand-in; say what happens to it under the knob.
+- **The records at `0x0063c8d0` are a HUD panel set.** Their `+0x64` index is written only by
+  `FUN_0041b450` (`0x0041b4b6`; loads `panel.txd`, sprites `panel0..3`; caller `FUN_00402750`), which is
+  not ported, so the exe reads 0 there and a faithful `FUN_0041b520` copies row 0 into all four records.
+  Exe readers of the range: `HUD/HudDispatch.cpp` `HudSlotLoopB630` (`+0x6c`, E+A; raw call to
+  `0x0041b340`). Count its exe callers before 1b calls `FUN_0041b520`.
+- **Original-side harness:** the FULL auto-hook set AVs at boot (`re/diag/KNOWN_ISSUES.md`
+  FULL-AUTOHOOK-BOOT-AV). Use `MASHED_HOOK_ONLY=<rva>` for path2.
+
 ### Leg 1b: phases 4 + 5 (unblocks symptoms (a), (b))
 
 - A real `DAT_0063ba8c` in the port behind **default-OFF `MASHED_SUBSTATE`**:

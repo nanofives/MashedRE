@@ -145,6 +145,25 @@ The single place that records every recurring execution failure: its **signature
   ONLY verify image files are dirty.
 - **Fallback:** `git checkout -- verify/`.
 
+## FULL-AUTOHOOK-BOOT-AV — the full .asi hook set AVs MASHED.exe at boot (found 2026-10-09)
+- **Signature:** `run_verify_hook.py` (any hook) fails `attach failed: ... VirtualAllocEx returned
+  0x00000005`; a plain auto-hook boot exits `0xC0000005` at ~4 s; WER event fault offset `0x000c7785`
+  (read of `0x1c`; ret chain `0x004ccefa 0x004ccb4e 0x004d801d 0x004c7853 0x0042d535 0x004923ad`).
+  `MASHED_RE_NO_AUTO_HOOK=1` boots fine.
+- **Root cause (bisected by registry index, LO/HI, 15 boots):** index 217 `VideoGetRenderWidth`
+  (`0x00498bc0`, `Boot/VideoConfig.cpp`) crashes ALONE 3/3, and so does its sibling
+  `VideoGetRenderHeight` (`0x00498bd0`) alone. Both are the **`fix_camera_res` boot-patch sites**: on
+  disk they are `mov eax,640 / mov eax,480` (coupled to the d3d9 shim's 640x480 backbuffer). The hooks
+  restore the UNPATCHED body `mov eax,[0x00616028]` / `[0x0061602c]`, and those globals read
+  **1680 x 1050** at runtime on this machine (hooks off, own-PID read), i.e. they follow the display
+  configuration. Width/height then disagree with the backbuffer and RenderWare AVs.
+- **Not a single-hook defect:** full set minus `0x00498bc0` boots 2/2, full set minus both getters
+  boots 1/1, yet the height hook alone crashes. Other installed hooks change the path.
+- **Why it passed C4 in June:** [UNCERTAIN] the globals' value then. They track the display, so a
+  monitor/topology change is consistent but unmeasured.
+- **Workaround:** `MASHED_HOOK_SKIP=0x00498bc0,0x00498bd0` for full-set runs, or
+  `MASHED_HOOK_ONLY=<rva>` per hook. Fix pending a decision (verify/d3_gatefire_20261008/RESULT_LEG1A.md §3.1).
+
 ## MASHED-BOOT-AV — original AVs ~4 s into boot
 - **Signature:** new `%LOCALAPPDATA%\CrashDumps\MASHED.exe.*.dmp`; Frida attach fails
   `VirtualAllocEx 0x5`.
