@@ -683,6 +683,11 @@ void RwRandomOpen()                                             // FUN_00534990
     for (int i = 1; i < 31; ++i) s_rw_ring[i] = s_rw_ring[i - 1] * 0x41c64e6du + 0x3039u;
     s_rw_p = s_rw_ring + 3; s_rw_q = s_rw_ring; s_rw_end = s_rw_ring + 31;
     for (int i = 0; i < 0x136; ++i) RwRandomNext();
+    // [(b) scoring, 2026-10-09] DIAGNOSTIC: MASHED_RING_SKIP=K discards K more draws, moving every
+    // later consumer to another ring phase without changing any code path. The original's call
+    // index is uncontrolled (other callers, frame timing), so its (b) envelope spans phases; this
+    // samples the port's. Unset / 0 = byte-identical default.
+    if (const char* e = std::getenv("MASHED_RING_SKIP")) for (int i = 0, k = std::atoi(e); i < k; ++i) RwRandomNext();
 }
 
 // FUN_00472650(lo, hi) = (hi - lo) * (u & 0x7fffffff) * _DAT_005cd314 + lo, with

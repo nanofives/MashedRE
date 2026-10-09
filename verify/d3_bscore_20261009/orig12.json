@@ -1,0 +1,329 @@
+{
+ "verify/d3_ai_20260914/orig_step_slots.msd.aistep.csv": {
+  "1": {
+   "c0_distinct": 13,
+   "c0_median": 0.0,
+   "c1_distinct": 21,
+   "c1_median": 0.0,
+   "accel_distinct": 3,
+   "accel_median": 255.0,
+   "brake_distinct": 2,
+   "brake_median": 0.0,
+   "start_frame": 871,
+   "calls": 220,
+   "steer_distinct": 33,
+   "steer_median": 0.0,
+   "abs_steer_median": 7.0,
+   "accel_set": [
+    0,
+    64,
+    255
+   ],
+   "accel255": 0.636,
+   "brake_set": [
+    0,
+    255
+   ],
+   "brake255": 0.214,
+   "degenerate": false
+  },
+  "2": {
+   "c0_distinct": 35,
+   "c0_median": 0.0,
+   "c1_distinct": 50,
+   "c1_median": 0.0,
+   "accel_distinct": 2,
+   "accel_median": 255.0,
+   "brake_distinct": 2,
+   "brake_median": 0.0,
+   "start_frame": 871,
+   "calls": 220,
+   "steer_distinct": 85,
+   "steer_median": 0.0,
+   "abs_steer_median": 11.0,
+   "accel_set": [
+    0,
+    255
+   ],
+   "accel255": 0.918,
+   "brake_set": [
+    0,
+    255
+   ],
+   "brake255": 0.186,
+   "degenerate": false
+  },
+  "3": {
+   "c0_distinct": 27,
+   "c0_median": 0.0,
+   "c1_distinct": 70,
+   "c1_median": 0.0,
+   "accel_distinct": 2,
+   "accel_median": 255.0,
+   "brake_distinct": 2,
+   "brake_median": 0.0,
+   "start_frame": 871,
+   "calls": 220,
+   "steer_distinct": 96,
+   "steer_median": 0.0,
+   "abs_steer_median": 23.0,
+   "accel_set": [
+    0,
+    255
+   ],
+   "accel255": 0.709,
+   "brake_set": [
+    0,
+    255
+   ],
+   "brake255": 0.3,
+   "degenerate": false
+  }
+ },
+ "verify/d3_ai_20260926/o_spread1.msd.aistep.csv": {
+  "1": {
+   "c0_distinct": 13,
+   "c0_median": 0.0,
+   "c1_distinct": 21,
+   "c1_median": 0.0,
+   "accel_distinct": 3,
+   "accel_median": 255.0,
+   "brake_distinct": 2,
+   "brake_median": 0.0,
+   "start_frame": 837,
+   "calls": 220,
+   "steer_distinct": 33,
+   "steer_median": 0.0,
+   "abs_steer_median": 7.0,
+   "accel_set": [
+    0,
+    64,
+    255
+   ],
+   "accel255": 0.636,
+   "brake_set": [
+    0,
+    255
+   ],
+   "brake255": 0.214,
+   "degenerate": false
+  },
+  "2": {
+   "c0_distinct": 35,
+   "c0_median": 0.0,
+   "c1_distinct": 50,
+   "c1_median": 0.0,
+   "accel_distinct": 2,
+   "accel_median": 255.0,
+   "brake_distinct": 2,
+   "brake_median": 0.0,
+   "start_frame": 837,
+   "calls": 220,
+   "steer_distinct": 85,
+   "steer_median": 0.0,
+   "abs_steer_median": 11.0,
+   "accel_set": [
+    0,
+    255
+   ],
+   "accel255": 0.918,
+   "brake_set": [
+    0,
+    255
+   ],
+   "brake255": 0.186,
+   "degenerate": false
+  },
+  "3": {
+   "c0_distinct": 27,
+   "c0_median": 0.0,
+   "c1_distinct": 70,
+   "c1_median": 0.0,
+   "accel_distinct": 2,
+   "accel_median": 255.0,
+   "brake_distinct": 2,
+   "brake_median": 0.0,
+   "start_frame": 837,
+   "calls": 220,
+   "steer_distinct": 96,
+   "steer_median": 0.0,
+   "abs_steer_median": 23.0,
+   "accel_set": [
+    0,
+    255
+   ],
+   "accel255": 0.709,
+   "brake_set": [
+    0,
+    255
+   ],
+   "brake255": 0.3,
+   "degenerate": false
+  }
+ },
+ "verify/d3_ai_20260926/o_spread2.msd.aistep.csv": {
+  "1": {
+   "c0_distinct": 13,
+   "c0_median": 0.0,
+   "c1_distinct": 21,
+   "c1_median": 0.0,
+   "accel_distinct": 3,
+   "accel_median": 255.0,
+   "brake_distinct": 2,
+   "brake_median": 0.0,
+   "start_frame": 902,
+   "calls": 220,
+   "steer_distinct": 33,
+   "steer_median": 0.0,
+   "abs_steer_median": 7.0,
+   "accel_set": [
+    0,
+    64,
+    255
+   ],
+   "accel255": 0.636,
+   "brake_set": [
+    0,
+    255
+   ],
+   "brake255": 0.214,
+   "degenerate": false
+  },
+  "2": {
+   "c0_distinct": 35,
+   "c0_median": 0.0,
+   "c1_distinct": 50,
+   "c1_median": 0.0,
+   "accel_distinct": 2,
+   "accel_median": 255.0,
+   "brake_distinct": 2,
+   "brake_median": 0.0,
+   "start_frame": 902,
+   "calls": 220,
+   "steer_distinct": 85,
+   "steer_median": 0.0,
+   "abs_steer_median": 11.0,
+   "accel_set": [
+    0,
+    255
+   ],
+   "accel255": 0.918,
+   "brake_set": [
+    0,
+    255
+   ],
+   "brake255": 0.186,
+   "degenerate": false
+  },
+  "3": {
+   "c0_distinct": 27,
+   "c0_median": 0.0,
+   "c1_distinct": 70,
+   "c1_median": 0.0,
+   "accel_distinct": 2,
+   "accel_median": 255.0,
+   "brake_distinct": 2,
+   "brake_median": 0.0,
+   "start_frame": 902,
+   "calls": 220,
+   "steer_distinct": 96,
+   "steer_median": 0.0,
+   "abs_steer_median": 23.0,
+   "accel_set": [
+    0,
+    255
+   ],
+   "accel255": 0.709,
+   "brake_set": [
+    0,
+    255
+   ],
+   "brake255": 0.3,
+   "degenerate": false
+  }
+ },
+ "verify/d3_ai_20260926/o_spread3.msd.aistep.csv": {
+  "1": {
+   "c0_distinct": 13,
+   "c0_median": 0.0,
+   "c1_distinct": 17,
+   "c1_median": 0.0,
+   "accel_distinct": 4,
+   "accel_median": 25.0,
+   "brake_distinct": 2,
+   "brake_median": 0.0,
+   "start_frame": 797,
+   "calls": 220,
+   "steer_distinct": 29,
+   "steer_median": 0.0,
+   "abs_steer_median": 0.0,
+   "accel_set": [
+    0,
+    25,
+    102,
+    255
+   ],
+   "accel255": 0.277,
+   "brake_set": [
+    0,
+    255
+   ],
+   "brake255": 0.25,
+   "degenerate": false
+  },
+  "2": {
+   "c0_distinct": 37,
+   "c0_median": 0.0,
+   "c1_distinct": 46,
+   "c1_median": 0.0,
+   "accel_distinct": 3,
+   "accel_median": 102.0,
+   "brake_distinct": 2,
+   "brake_median": 0.0,
+   "start_frame": 797,
+   "calls": 220,
+   "steer_distinct": 84,
+   "steer_median": 0.0,
+   "abs_steer_median": 16.0,
+   "accel_set": [
+    0,
+    102,
+    255
+   ],
+   "accel255": 0.277,
+   "brake_set": [
+    0,
+    255
+   ],
+   "brake255": 0.109,
+   "degenerate": false
+  },
+  "3": {
+   "c0_distinct": 34,
+   "c0_median": 0.0,
+   "c1_distinct": 39,
+   "c1_median": 0.0,
+   "accel_distinct": 3,
+   "accel_median": 102.0,
+   "brake_distinct": 2,
+   "brake_median": 0.0,
+   "start_frame": 797,
+   "calls": 220,
+   "steer_distinct": 73,
+   "steer_median": 0.0,
+   "abs_steer_median": 8.0,
+   "accel_set": [
+    0,
+    102,
+    255
+   ],
+   "accel255": 0.209,
+   "brake_set": [
+    0,
+    255
+   ],
+   "brake255": 0.268,
+   "degenerate": false
+  }
+ }
+}
