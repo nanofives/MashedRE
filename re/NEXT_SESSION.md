@@ -1,5 +1,13 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-09 (FUN_00442a60 bridge FIXED): **the reference is the pair's LEADING car; the bridge took the rearmost.**
+>
+> Read [`RESULT_REFDIST_FIX.md`](../verify/d3_bscore_20261009/RESULT_REFDIST_FIX.md). With the fix (behind `MASHED_REFDIST`, default OFF) start
+> distances match the original (0 / 1.550 / 1.823 / 2.739 vs 0 / 1.553 / 1.833 / 2.750) and branch 2 first fires 117 / 119 / 192 (orig
+> 149 / 216 / 180; was 643). Under the full B2 set + fix, (b) regime A: car 2 fails 1 item (was 5). Default build unchanged. U-9205 was
+> mis-stated (the player input already matched) and is resolved. Open: making the B2 set default (user decision); car 2's
+> |steer| median 0 under B2.
+
 > ## START HERE 2026-10-09 ((b) is now regime-conditioned, user decision (iii)): **port regime A 2/3 (car 2 fails); B and C not scored yet.**
 >
 > Read [`RESULT_BREGIME.md`](../verify/d3_bscore_20261009/RESULT_BREGIME.md). The difficulty roll `DAT_0089a368` has THREE outcomes
