@@ -1,13 +1,42 @@
 {
   "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-10-08T17:05:00Z",
+  "updatedAt": "2026-10-09T08:30:00Z",
   "sections": [
+    {
+      "heading": "D-11073 leg 1b (2026-10-09)",
+      "fields": [
+        {
+          "label": "Boost writer FOUND",
+          "kind": "text",
+          "value": "FUN_00414180 (cd=3) -> Branch A presses frames 107..112 -> FUN_0046d7f0 charge 300 -> FUN_0046d780 arms 1300/1 = the measured seed exactly. FUN_00414180 is the one unported link."
+        },
+        {
+          "label": "Knob arms",
+          "kind": "list",
+          "value": [
+            "MASHED_SUBSTATE needs MASHED_MODE5_RESET (alone: over-rev bog rounds 2+)",
+            "MASHED_SUBSTATE_CD=3 is measurement-only",
+            "Symptom (b) non-inert; (a) bias374 sawtooth NOT reproduced"
+          ]
+        },
+        {
+          "label": "D2 REOPEN CANDIDATE",
+          "kind": "text",
+          "value": "Knob ON: player post-GO speed -1.2% at f=31 (FUN_0046baa0 re-init zeroes a 2.7e-8 basis residue). Report only."
+        },
+        {
+          "label": "Result",
+          "kind": "text",
+          "value": "verify/d3_gatefire_20261008/RESULT_LEG1B.md"
+        }
+      ]
+    },
     {
       "heading": "Phase",
       "fields": [
         {
           "label": "Roadmap",
-          "value": "D0 ✓, D1 ✓, D2 REOPENED 2026-09-29, D3 active (WAITING)",
+          "value": "D0 ✓, D1 ✓ (residue open), D2 PARKED 2026-10-02, D3 active",
           "kind": "text"
         },
         {
@@ -25,6 +54,11 @@
     {
       "heading": "U-9186 / GATEFIRE 2026-10-08 — branch 2 pose AGREES 82/82; slot seed now DEFAULT-ON; D-11073 cheaper than its row says",
       "fields": [
+        {
+          "label": "Boot AV FIXED (2026-10-09)",
+          "kind": "text",
+          "value": "Full auto-hook AV = VideoGetRender{Width,Height} hooks undoing fix_camera_res (live 1680x1050). HookSystem now refuses hooks over boot-patch bytes (4 refused); full-set verify works again."
+        },
         {
           "label": "Branch 2",
           "value": "PORTED (shared TU), WIRED (MASHED_WIRE_B2) and FIRES — 18x on v2 with cars alive, LOS passing on all. All 4 PREREG_WIRE gates PASS.",
@@ -68,7 +102,7 @@
         },
         {
           "label": "Next",
-          "value": "Check FUN_00445aa0's cadence (could clear the flag immediately) -> re-classify the D-11073 row -> decide MASHED_SLOT_PLAYER together with MASHED_WIRE_B2 in a leg that measures car 0.",
+          "value": "Port FUN_00414180 (cd producer, 154 B) behind MASHED_SUBSTATE; predict its RNG output first. Then D-11073 leg 2 (phase 3). Kickoff in re/NEXT_SESSION.md.",
           "kind": "text"
         },
         {
@@ -78,7 +112,7 @@
         },
         {
           "label": "D-11073 scope",
-          "value": "LOWER than the row says. Hold does NOT need the camera-path module: the exit test is an AND, the flag alone blocks it, and FUN_004102f0 sets the flag itself under DAT_005f29b8==100000 — a write already inside FUN_004111c0 at 0x004100d3. Clear comes from FUN_00445aa0. DAT_00657448 has NO writer in the image. Owed re-classify correction.",
+          "value": "Leg 0, 1a DONE. Leg 1b DONE 2026-10-09: FUN_0040dbd0 + FUN_004103a0 ported (C3) behind MASHED_SUBSTATE (default OFF). 1x state 4 + 112x state 5 every round, exit read 0x3feeeee2, cars held bit-exact; default byte-identical. Leg 2 (phase 3) open.",
           "kind": "text"
         },
         {

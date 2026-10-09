@@ -26,6 +26,8 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-09  0040dbd0 SubStateEnter4  C2->C3  run_diff sub_state_enter4_obs GREEN 5/5 + path2 PASS; verify/d3_gatefire_20261008/RESULT_LEG1B.md
+2026-10-09  004103a0 SubStateHeldCountdown5  C2->C3  renamed from TimeTrial::LapFinishProcessor; run_diff sub_state_held_countdown5_obs GREEN 5/5, path2 E9; U-9197; verify/d3_gatefire_20261008/RESULT_LEG1B.md
 2026-10-09  00498bc0 VideoGetRenderWidth  C4->C4  install refused on patched runtime by the boot-patch guard (fix_camera_res); re/diag/KNOWN_ISSUES.md FULL-AUTOHOOK-BOOT-AV
 2026-10-09  00498bd0 VideoGetRenderHeight  C4->C4  install refused on patched runtime by the boot-patch guard (fix_camera_res); re/diag/KNOWN_ISSUES.md FULL-AUTOHOOK-BOOT-AV
 2026-10-09  00496400 ConfigLogDebug  C4->C4  install refused on patched runtime by the boot-patch guard (disable_log); re/diag/KNOWN_ISSUES.md FULL-AUTOHOOK-BOOT-AV

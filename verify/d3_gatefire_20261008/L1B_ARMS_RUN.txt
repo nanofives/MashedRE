@@ -1,0 +1,25 @@
+=== L1B_CTRL  knobs=[] ===
+    pid=7556
+    exit=0  self_exited=True
+    L1B_CTRL.step.csv  lines=19419  sha8=c741a4c5
+    L1B_CTRL.gates.csv  lines=53993  sha8=642af0ac
+    L1B_CTRL.ptrace.log  lines=26996  sha8=05984e30
+=== L1B_SUB  knobs=[MASHED_SUBSTATE,MASHED_L1B_INPUTS=@OUT@\L1B_SUB.inputs.csv] ===
+    pid=6540
+    exit=0  self_exited=True
+    L1B_SUB.step.csv  lines=20207  sha8=25782023
+    L1B_SUB.gates.csv  lines=55769  sha8=7da3e302
+    L1B_SUB.ptrace.log  lines=27884  sha8=e6d0baf3
+=== L1B_M5  knobs=[MASHED_SUBSTATE,MASHED_MODE5_RESET,MASHED_L1B_INPUTS=@OUT@\L1B_M5.inputs.csv] ===
+    pid=18336
+    exit=0  self_exited=True
+    L1B_M5.step.csv  lines=18745  sha8=65e3e4a6
+    L1B_M5.gates.csv  lines=56225  sha8=6b6dba7f
+    L1B_M5.ptrace.log  lines=28112  sha8=8c34ef07
+=== L1B_M5CD  knobs=[MASHED_SUBSTATE,MASHED_MODE5_RESET,MASHED_SUBSTATE_CD=3,MASHED_L1B_INPUTS=@OUT@\L1B_M5CD.inputs.csv] ===
+    pid=1216
+    exit=0  self_exited=True
+    L1B_M5CD.step.csv  lines=19642  sha8=5a096a6b
+    L1B_M5CD.gates.csv  lines=56681  sha8=479f00ac
+    L1B_M5CD.ptrace.log  lines=28340  sha8=269d91dd
+H4 DONE

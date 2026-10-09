@@ -1,0 +1,16 @@
+== L1B_CTRL
+      (b) PASS
+      (b) FAIL: c0_distinct=39 not in [13,37]; c1_distinct=75 not in [17,70]; steer_distinct=113 not in [29,96]; c1_median=5.5 not in [0,0]; abs_steer_median=44.5 not in [0,23]
+      (b) PASS
+== L1B_SUB
+      (b) PASS
+      (b) FAIL: c0_distinct=44 not in [13,37]; steer_distinct=103 not in [29,96]; abs_steer_median=36.5 not in [0,23]
+      (b) FAIL: c1_distinct=71 not in [17,70]; c1_median=9.0 not in [0,0]
+== L1B_M5
+      (b) PASS
+      (b) FAIL: c0_distinct=44 not in [13,37]; steer_distinct=103 not in [29,96]; abs_steer_median=36.5 not in [0,23]
+      (b) FAIL: c1_distinct=71 not in [17,70]; c1_median=9.0 not in [0,0]
+== L1B_M5CD
+      (b) PASS
+      (b) FAIL: c0_distinct=44 not in [13,37]; steer_distinct=103 not in [29,96]; abs_steer_median=36.5 not in [0,23]
+      (b) FAIL: c1_distinct=71 not in [17,70]; c1_median=9.0 not in [0,0]

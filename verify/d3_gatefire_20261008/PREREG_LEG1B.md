@@ -145,3 +145,15 @@ are settled by the read plus §3's decision, before any code.
   call-through not run (EAX argument; the verify template has no EAX arg_type).
 - New arg_type `eax_state_machine_observe` in `diff_template.js` (+ `SEEDED_ARG_TYPES` in
   `run_diff.py`); `ARG_TYPES.md` regenerated.
+
+## Addendum B (2026-10-09, BEFORE any completed knob-ON arm)
+
+The first launch of the knob arms (`L1B_SUB` only, own PID 27796) was STOPPED before it finished and
+none of its output is used: `StartRound()` (`TrackRenderer.cpp`, the `countdown_ = 3.0f` re-arm,
+called per round at the "re-grid for the next round" site) left `DAT_0063ba8c` at 6, so rounds 2+
+would have skipped their hold. Fix: under the knob `StartRound()` writes `DAT_0063ba8c = 0`, so each
+round's first countdown frame performs the state-2 tail again. Original rationale: the next round goes
+case 8 (`FUN_00414220`) -> 2 -> tail; `DAT_005f29b8` is 0 after `0x004104c0`, so the tail takes the
+`!= 100000` arm: state 4 with 12000, no phase 3. `MASHED_SUBSTATE_CD` re-seeds per round, where
+`FUN_00414180` runs per round. Added gate detail: **G-PHASE5 is scored on EVERY round's pre-race**
+(each must show 1 x state 4 then 112 x state 5); G-CTRL is re-run on the rebuilt exe.

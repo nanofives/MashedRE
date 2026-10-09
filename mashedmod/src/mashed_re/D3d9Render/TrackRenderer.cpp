@@ -5073,6 +5073,12 @@ void TrackRenderer::StartRound() {
         a.lane = (static_cast<float>(i) - 1.0f) * 3.0f;   // -3, 0, +3
     }
     countdown_ = 3.0f;   // 3-2-1 freeze before GO
+    // [D-11073 leg 1b, PREREG_LEG1B.md addendum B] Under MASHED_SUBSTATE every round re-enters
+    // the sub-state machine. The original's next round goes case 8 (FUN_00414220) -> 2 -> the
+    // state-2 tail, and because FUN_004103a0 zeroed DAT_005f29b8 at 0x004104c0 it takes the
+    // else arm: DAT_0063ba8c = 4, DAT_005f29b8 = 12000 (no phase 3). The countdown block's
+    // ba8c == 0 entry performs exactly that tail. Knob OFF: nothing here runs.
+    if (SubState_Enabled()) *reinterpret_cast<int*>(0x0063ba8cu) = 0;
     Audio::SfxPlay("threetwoone", 0.9f);   // real countdown SFX (permdict)
     race_cam_.Reset();   // force_reset path on the first camera tick
     // clear any in-flight power-up effects from the previous round

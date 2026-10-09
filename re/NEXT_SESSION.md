@@ -1,5 +1,34 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-09 (D-11073 leg 1b DONE): **sub-states 4 + 5 ported behind `MASHED_SUBSTATE` (default OFF), byte-identical default. Next: port `FUN_00414180` (the cd producer), then leg 2.**
+>
+> Read [`RESULT_LEG1B.md`](../verify/d3_gatefire_20261008/RESULT_LEG1B.md) §0 and §6 (prereg `PREREG_LEG1B.md`, all pass gates PASS).
+> - `Race/SubStateMachine.cpp`: `0x0040dbd0` `SubStateEnter4` and `0x004103a0` `SubStateHeldCountdown5`
+>   (EAX shim), both C3. Knob ON: 1 x state 4, 112 x state 5, exit read `0x3feeeee2`, 12000 seed -50 per frame,
+>   cars held bit-exactly, every round (`StartRound` resets `DAT_0063ba8c`).
+> - **The AI start-boost writer is located:** `FUN_00414180` writes cd (= 3 on the original) at
+>   `0x0089a4f8+v*0x74`, then Branch A presses accel on frames 107..112, then `FUN_0046d7f0` charges 300, then
+>   `FUN_0046d780` arms 1300/1, which is the measured seed exactly. Shown with `MASHED_SUBSTATE_CD=3`
+>   (measurement only).
+> - Use `MASHED_SUBSTATE` **with** `MASHED_MODE5_RESET`. Alone, it gives the over-rev bog in rounds 2+.
+> - D2 REOPEN CANDIDATE (report only): player post-GO speed -1.2% at f=31 under the knob (RESULT §5).
+>
+> **Kickoff for the next session (paste):**
+> Mashed RE, D3, D-11073 follow-up: port `FUN_00414180` (154 B, C2, `0x00414180..0x0041421a`) at its RVA
+> behind `MASHED_SUBSTATE`, called from the state-2 tail emulation in `TrackRenderer.cpp` (replacing
+> `MASHED_SUBSTATE_CD`). Read RESULT_LEG1B.md §0, §3, §6 and PREREG_LEG1B.md §2.5 first. Predict before
+> porting:
+> (1) the port's `ftol(DAT_0089a360)` idx and the `0x005f2d80` row it selects;
+> (2) what the port's `FUN_00472650` stand-in draws for 4 cars, so cd is predicted per car;
+> (3) the blast radius of its `DAT_0089a368 = 0` / `DAT_0089a370 = 0` stores (the AI one-shot 20 % roll at
+>     `0x00417c43`) on (b);
+> (4) the `0x0089a4c0+v*0x74` store (`= 0x005f2eb4[idx]`): census its readers.
+> Gates: knob OFF byte-identical (`c741a4c5` / `642af0ac` / `05984e30`, run_h4.ps1 `L1B_CTRL`); knob +
+> `MASHED_MODE5_RESET`: G-EXIT per car = `1000 + 100*cd` (cd >= 0: Branch A presses on the last `2*cd` phase-5 frames,
+> charge `100*cd`, so cd 1..4 gives 1100..1400; cd = 3 gives 1300), predicted per car before running; run_diff + run_verify_hook. Then decide whether the start-boost seed yields to the real
+> chain (user decision; the seed is one-shot per race, the chain re-arms per round). If `FUN_00414180`
+> blocks, go to D-11073 leg 2 (phase 3, gate on the release rule).
+
 > ## START HERE 2026-10-09 (D-11073 leg 1a DONE): **exe substrate in, default build byte-identical. Next: leg 1b (`FUN_0040dbd0` + `FUN_004103a0`).**
 >
 > Read [`RESULT_LEG1A.md`](../verify/d3_gatefire_20261008/RESULT_LEG1A.md) (prereg `PREREG_LEG1A.md`, all gates PASS).

@@ -2333,6 +2333,39 @@ criteria are all met since 2026-09-26 (`D3_MODES_2026-09-26.md`).
   is DONE (2026-09-28d, `s2` decision CLEAN and contact CLEAN); **U-D3-DRIVE is now the only
   remaining gate**. D3-R1 (car 1) then carries forward like the D1 residue.
 
+#### D3 closure state 2026-10-09 (D-11073 leg 1b): **race sub-states 4 and 5 ported behind default-OFF `MASHED_SUBSTATE`; the AI start-boost writer is located. D3 is NOT CLOSED.**
+
+Record: `verify/d3_gatefire_20261008/RESULT_LEG1B.md` (prereg `PREREG_LEG1B.md`, committed in
+stages before each step ran). **The default build is byte-identical** (step `c741a4c5`, gates
+`642af0ac`, ptrace `05984e30`). **No band moved and no default flipped.**
+
+- `FUN_0040dbd0` (state 4) and `FUN_004103a0` (state 5, units in EAX) are ported in
+  `Race/SubStateMachine.cpp` (E+A), C2 -> C3. `004103a0` was renamed from
+  `TimeTrial::LapFinishProcessor` (an overclaim). Knob ON: every round shows 1 frame of state 4 and
+  112 of state 5, the exit read is `0x3feeeee2`, the 12000 seed runs -50 per frame, and cars are held
+  bit-exactly (9/9 rounds over 3 arms).
+- **U-D3-BOOST-ARM writer located:** `FUN_00414180` (cd = 3) -> Branch A (accel on frames 107..112)
+  -> `FUN_0046d7f0` (charge 300) -> `FUN_0046d780` (`+0xbf4` 1300, `+0xbf8` 1). That is exactly the
+  measured seed. With cd supplied (`MASHED_SUBSTATE_CD=3`, measurement only) the exit arm writes
+  1300/1 on all 3 AI cars, both rounds. **`FUN_00414180` is the one unported link.**
+- Symptom (b), the mode-5 branch, is non-inert under the knob. Symptom (a), the `bias374` sawtooth,
+  is **not** reproduced (0 reversals). `MASHED_SUBSTATE` without `MASHED_MODE5_RESET` produces the
+  over-rev bog in rounds 2+, so it is not a usable arm on its own.
+- **D2 REOPEN CANDIDATE (report only):** under the knob the player's post-GO speed reads -1.2% at
+  f=31, after the per-frame `FUN_0046baa0` re-init zeroes a `2.7e-8` basis residue (the original's
+  is exactly 0). See RESULT §5.
+
+Gate table re-stated (unchanged by this leg):
+
+| third | criteria | state |
+|---|---|---|
+| AI (WS-C) | (a) met, (b) **NOT met** (5 failing bands, car<->car ON; AI over-speed ~+24-28 %), (c) met, (d) met, (e) met 3/3 (launch 1426.4 / 2053.0 / 2055.2) | (b) is the sole D3 blocker |
+| Powerups (WS-D) | (a) (b) (c) met, all 9 types | met |
+| Modes (WS-G) | (a)-(d) met | met |
+
+Next: port `FUN_00414180` behind the knob (predict its RNG output first), then D-11073 leg 2
+(phase 3), then the knob's default decision (user).
+
 #### D3 closure state 2026-10-03 (second session) — **the confound is ZERO, and the surviving over-speed is a COMMAND defect with all 149 of its calls accounted for. D3 is NOT CLOSED.**
 
 Session record: `verify/d3_elim_20261003/RESULT_STEP1.md` and `RESULT_STEP2.md`.
