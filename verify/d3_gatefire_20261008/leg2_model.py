@@ -101,12 +101,15 @@ if __name__ == '__main__':
             if m: print('  p3f%4d model (%.4f, %.4f) d=%.4f' % (k, m[0][1], m[0][2], m[0][3]))
         sys.exit(0)
     if sys.argv[1] == 'orig':
-        rows = [r for r in csv.DictReader(open('o_cadence_nopress.csv')) if r['substate'] == '3']
+        src = sys.argv[2] if len(sys.argv) > 2 else 'o_cadence_nopress.csv'
+        rows = [r for r in csv.DictReader(open(src)) if r['substate'] == '3']
         # one row per frame expected; t step 1/60 -> frame index from t
-        t0 = float(rows[1]['t'])
+        # frame index from the race clock (clk_0ff4 advances 50 per GAME frame), not from wall-clock t:
+        # a run below 60 fps makes t*60 overcount frames (o_u9201_r1/r2).
+        c0 = int(rows[1]['clk_0ff4'])
         tg = {}
         for r in rows[1:]:
-            fr = round((float(r['t']) - t0) * 60)
+            fr = (int(r['clk_0ff4']) - c0) // 50
             tg[fr] = (float(r['tgt_fe4']), float(r['tgt_fe8']), float(r['tgt_fec']))
         F = max(tg) + 1
         seq, last = [], None
@@ -114,7 +117,7 @@ if __name__ == '__main__':
             last = tg.get(i, last); seq.append(last)
         out, rel = run(seq)
         print('orig samples', len(rows), 'frames', F, 'model release frame', rel)
-        obs = {round((float(r['t']) - t0) * 60): (float(r['e0_x']), float(r['e0_z'])) for r in rows[1:]}
+        obs = {(int(r['clk_0ff4']) - c0) // 50: (float(r['e0_x']), float(r['e0_z'])) for r in rows[1:]}
         for k in (60, 120, 180, 240, 300, 360, 420, 480, 540, 600):
             if k < len(out) and k in obs:
                 m = out[k]; o = obs[k]
