@@ -1,0 +1,12 @@
+K=0 pid=1300 exit=0 lines=2319 sha8=861b58f8
+K=1 pid=12996 exit=0 lines=3011 sha8=e4e4e864
+K=2 pid=41684 exit=0 lines=1932 sha8=21cd3890
+K=3 pid=33140 exit=0 lines=2319 sha8=861b58f8
+K=4 pid=42604 exit=0 lines=3011 sha8=e62ba6b3
+K=5 pid=42872 exit=0 lines=1932 sha8=21cd3890
+K=6 pid=40676 exit=0 lines=2319 sha8=af47ab98
+K=7 pid=38984 exit=0 lines=2121 sha8=61f722f8
+K=8 pid=42672 exit=0 lines=2319 sha8=861b58f8
+K=9 pid=30712 exit=0 lines=2319 sha8=861b58f8
+K=10 pid=39828 exit=0 lines=1932 sha8=21cd3890
+K=11 pid=29224 exit=0 lines=2319 sha8=861b58f8
