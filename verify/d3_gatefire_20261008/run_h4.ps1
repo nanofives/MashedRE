@@ -18,7 +18,7 @@ $LANE = @('MASHED_REFDIST','MASHED_SLOTSTATE_SEED','MASHED_SLOT_PLAYER',
           'MASHED_WIRE_B2','MASHED_U9186_GATES','MASHED_AI_STEPDUMP',
           'MASHED_NO_SLOTSTATE_SEED','MASHED_NO_SLOT_PLAYER','MASHED_GF1',
           'MASHED_PLAYERTRACE','MASHED_SUBSTATE','MASHED_MODE5_RESET','MASHED_SUBSTATE_CD',
-          'MASHED_L1B_INPUTS')
+          'MASHED_L1B_INPUTS','MASHED_P3_MEASURE','MASHED_LEG2_TRACE')
 
 $B2 = @('MASHED_A364_RESET','MASHED_REFDIST','MASHED_RACEPCT_BRIDGE','MASHED_NO_ELIM','MASHED_WIRE_B2')
 $runs = @(
@@ -43,11 +43,15 @@ $runs = @(
   # FUN_00414180 port (PREREG_414180.md): CTRL = G-CTRL (knob OFF); P414 = G-EXIT arm; P414_CD3 = isolation arm (report only)
   @{ name = 'P414_CTRL'; knobs = @() },
   @{ name = 'P414';      knobs = @('MASHED_SUBSTATE', 'MASHED_MODE5_RESET', 'MASHED_L1B_INPUTS=@OUT@\P414.inputs.csv') },
-  @{ name = 'P414_CD3';  knobs = @('MASHED_SUBSTATE', 'MASHED_MODE5_RESET', 'MASHED_SUBSTATE_CD=3', 'MASHED_L1B_INPUTS=@OUT@\P414_CD3.inputs.csv') }
+  @{ name = 'P414_CD3';  knobs = @('MASHED_SUBSTATE', 'MASHED_MODE5_RESET', 'MASHED_SUBSTATE_CD=3', 'MASHED_L1B_INPUTS=@OUT@\P414_CD3.inputs.csv') },
+  # D-11073 leg 2 (PREREG_LEG2.md): CTRL = G-CTRL; MEAS = release held 800 phase-3 frames (target measurement); L2 = gate arm
+  @{ name = 'L2_CTRL'; knobs = @() },
+  @{ name = 'L2_MEAS'; knobs = @('MASHED_SUBSTATE', 'MASHED_MODE5_RESET', 'MASHED_P3_MEASURE=800', 'MASHED_LEG2_TRACE=@OUT@\L2_MEAS.trace.csv', 'MASHED_L1B_INPUTS=@OUT@\L2_MEAS.inputs.csv') },
+  @{ name = 'L2';      knobs = @('MASHED_SUBSTATE', 'MASHED_MODE5_RESET', 'MASHED_LEG2_TRACE=@OUT@\L2.trace.csv', 'MASHED_L1B_INPUTS=@OUT@\L2.inputs.csv') }
 )
 $sel = @($args)   # capture: inside a Where-Object block $args is the block's own
 if ($sel.Count -gt 0) { $runs = $runs | Where-Object { $sel -contains $_.name } }
-else { $runs = $runs | Where-Object { $_.name -notlike 'H4_post*' -and $_.name -ne 'H4_optout' -and $_.name -notlike 'L1A_*' -and $_.name -notlike 'L1B_*' -and $_.name -notlike 'P414*' } }
+else { $runs = $runs | Where-Object { $_.name -notlike 'H4_post*' -and $_.name -ne 'H4_optout' -and $_.name -notlike 'L1A_*' -and $_.name -notlike 'L1B_*' -and $_.name -notlike 'P414*' -and $_.name -notlike 'L2*' } }
 
 foreach ($r in $runs) {
   $log = Join-Path $root 'mashed_re.log'

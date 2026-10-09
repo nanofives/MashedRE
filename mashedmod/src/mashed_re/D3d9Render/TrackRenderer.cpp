@@ -24,6 +24,9 @@
 #include "../Ai/AiStandalone.h"     // WS-C: racing-line target Ai_ComputeTarget is the DEFAULT
 #include "../Race/SubStateCallees.h"  // D-11073 leg 1a: FUN_0041d930 tail partial (MASHED_SUBSTATE)
 #include "../Race/SubStateMachine.h"  // D-11073 leg 1b: FUN_0040dbd0 / FUN_004103a0 (MASHED_SUBSTATE)
+#include "../Race/CameraEntries.h"    // D-11073 leg 2: phase-3 camera entries (MASHED_SUBSTATE)
+extern "C" void __cdecl VehicleSeedWritePair(std::uint32_t, std::uint32_t);   // 0x00448700
+extern "C" void __cdecl UtilZeroTable8964c0();                                // 0x004425d0
                                     // (MASHED_GATE_RIBBON_AI reverts it to the ribbon scaffold).
                                     // [D3 2026-09-26] the ported TICK Ai_Standalone_Tick runs every
                                     // race frame and its ctrl bytes drive the opponents.
@@ -473,6 +476,13 @@ bool Ai_BridgeLoad(int course, const char* trackPizPath) {
     // traced ([UNCERTAIN] U-D3-DIFF360: next, reference_to 0x0089a360 WRITE sites).
     Ai::Ai_ResetRace();
     Ai::F32(0x0089a360u) = 2.5f;
+    // [D-11073 leg 2] MASHED_SUBSTATE only: race setup's FUN_004425d0 (called from 0x0040ff31,
+    // zeroes the camera-entry table and the FUN_00442600 guard) and the state-1 spawn's
+    // DAT_005f29b8 = 100000 (0x004100d3), which sends round 1's state-2 tail into phase 3.
+    if (SubState_Enabled()) {
+        UtilZeroTable8964c0();
+        *reinterpret_cast<int*>(0x005f29b8u) = 100000;
+    }
     // [GATEFIRE idx364 2026-10-08] FUN_00414060 step 6, default-OFF behind
     // MASHED_A364_RESET (Race/AiDifficultyReset.cpp). This is the SAME function
     // whose step 5 produces the 2.5 seeded on the line above — the port now owns
@@ -3243,19 +3253,56 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         }
         const int units = static_cast<int>(in.dt * 3000.0f + 0.5f);
         int& ba8c = *reinterpret_cast<int*>(0x0063ba8cu);
+        int& s29b8 = *reinterpret_cast<int*>(0x005f29b8u);
         if (ba8c == 0) {                                   // FUN_004111c0 state-2 tail
             SubStateRollCountdown414180();                 // 0x00410259 FUN_00414180 (cd roll)
             SubState_SeedCd();                             // MASHED_SUBSTATE_CD override (measurement, unset by default)
-            *reinterpret_cast<int*>(0x005f29b8u) = 12000;  // the else arm after 0x00414180's call
-            ba8c = 4;
+            // [D-11073 leg 2] 0x0041026d: phase 3 only while the state-1 seed 100000 is intact
+            // (round 1; seeded in Ai_BridgeLoad). Rounds 2+ see 0 (0x004104c0) -> state 4.
+            if (s29b8 == 100000) {
+                ba8c = 3;                                  // 0x00410279
+                sub_p3_frames_ = 0;
+            } else {
+                s29b8 = 12000;                             // the else arm after 0x00414180's call
+                ba8c = 4;
+            }
             return;
         }
-        if (ba8c == 4) {
+        if (ba8c == 3) {                                   // case 3: FUN_004102f0 (EMULATED, units in EBX)
+            if (s29b8 == 100000) {                         // 0x004102f8 entry block, first frame only
+                VehicleSeedWritePair(0, 0);                // 0x00448700: 100 x FUN_004464c0, +0x1c/+0x20 = 0
+                *reinterpret_cast<int*>(0x00897fe0u) = 1;  // FUN_004430a0(1) @0x00410307 (the hold flag)
+                *reinterpret_cast<int*>(0x007f0ff8u) = 0;  // FUN_0040e590 PARTIAL: 0x0040e5a2 clock store only
+                SubStateCameraChain(true);                 // FUN_0040d470(1) -> FUN_00446520(cam, 1)
+            }
+            {                                              // 0x00410320..0x00410343 hold alive cars
+                const std::uintptr_t tbl = static_cast<std::uintptr_t>(*reinterpret_cast<int*>(0x005f2770u));
+                for (int v = 0, off = 0x34; off < 0x44; off += 4, ++v)
+                    if (tbl && *reinterpret_cast<int*>(tbl + static_cast<std::uintptr_t>(off)) != 0 && aib_alive(v) == 1)
+                        VehiclePhysicsStateReset(v);       // FUN_0046baa0
+            }
+            s29b8 = s29b8 - static_cast<int>(static_cast<unsigned>(units * 0x44c) / 0x3cu);   // 0x00410345..
+            ++sub_p3_frames_;
+            static const int s_measure = [] { const char* e = std::getenv("MASHED_P3_MEASURE");
+                                              return (e && e[0]) ? std::atoi(e) : 0; }();
+            const bool held_by_measure = (s_measure > 0 && sub_p3_frames_ < s_measure);
+            // 0x0041035b: FUN_00405460() == 0 (no clip module in the exe: DAT_00639d70/78 are 0) &&
+            // FUN_004430b0() == 0 (the flag, cleared by FUN_00445aa0 site (a) or (b)).
+            if (!held_by_measure && *reinterpret_cast<int*>(0x00897fe0u) == 0) {
+                ba8c = 4;                                  // 0x00410367
+                s29b8 = 12000;                             // 0x00410371
+                if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
+                    std::fprintf(lf, "[leg2] phase 3 released after %d frames -> DAT_0063ba8c=4\n", sub_p3_frames_);
+                    std::fclose(lf);
+                }
+            }
+        } else if (ba8c == 4) {
             *reinterpret_cast<int*>(0x007f0fc8u) = 0;      // 0x0041129b
             SubStateEnter4();                              // 0x004112a5
         } else if (ba8c == 5) {
             SubStateHeldCountdown5_C(units);               // 0x004112bb (units in EAX)
         }
+        if (ba8c >= 3 && ba8c <= 5) SubStateCameraChain(false);   // FUN_0040fc00 -> FUN_0040d470(0) (L81-85)
         if (g_aib.loaded && (Ai::I32(Ai::kSplineRaceCnt) > 3))
             Ai::Ai_AdvanceClock(units);                    // FUN_0040fc00 0x0040fc57 / 0x0040fc63
         HudSlideBillboardTimerTail();                      // FUN_0040fc00 -> 0x0040fd11
@@ -5443,6 +5490,88 @@ void TrackRenderer::NextRoundOrEnd() {
     StartRound();   // re-grid for the next round
 }
 
+// [D-11073 leg 2] FUN_0040d470 -> FUN_00448220 -> FUN_00446520(&DAT_00897fe0, reset) on a
+// sub-mode != 6 frame (states 3, 4, 5 under MASHED_SUBSTATE): FUN_00442600 (0x0044655c, guarded),
+// FUN_004464c0 (0x004468f9; the entries read cam +4..+0xc from the PREVIOUS update), the camera
+// main block when cam[7] == 0 (RaceCamera::Update, the same block the sub-mode-6 path runs), then
+// the copy cam+0x40..+0x48 -> cam+4..+0xc (0x004481c9; RaceCamera keeps +0x40 as pos_out_).
+// Named gaps: cam[7] != 0 runs FUN_004427c0 in the original (not ported; cam[7] is 0 here, set by
+// FUN_00448700(0,0)); FUN_00442a20 (main block, flag != 0) is not in RaceCamera; cam +0x10..+0x18
+// (FUN_00445aa0 orientation only) is not written.
+void TrackRenderer::SubStateCameraChain(bool reset) {
+    static bool s_hostSet = false;
+    if (!s_hostSet) {
+        static TrackRenderer* s_tr = nullptr;
+        s_tr = this;
+        CamEntryHost h{};
+        h.track_id = [] { return aib_track_index(); };
+        h.most_separated = [](int* a, int* b) {
+            Race::RaceCamCar cc[kRaceCars] = {};
+            if (s_tr) s_tr->FillRaceCamCars(cc);
+            Race::RaceCamera::MostSeparatedPair(cc, a, b);
+            if (*a < 0) *a = 0;
+            if (*b < 0) *b = 0;
+        };
+        CamEntry_SetHost(h);
+        s_hostSet = true;
+    }
+    CamEntriesInit442600();                                        // 0x0044655c
+    CameraEntryDispatchAll(0x00897fe0u);                           // 0x004468f9
+    if (*reinterpret_cast<int*>(0x00897ffcu) == 0) {               // cam[7] gate
+        Race::RaceCamCar cc[kRaceCars] = {};
+        FillRaceCamCars(cc);
+        cam_ticks_ += (1.0 / 60.0) * 3000000.0;                    // DAT_007f1030 rate, as UpdateRace
+        race_cam_.Update(cc, course_id_, 1.f / 60.f, static_cast<std::uint32_t>(cam_ticks_), 0.f, reset);
+        const float* p = race_cam_.pos();                          // +0x40..+0x48
+        std::memcpy(reinterpret_cast<void*>(0x00897fe4u), p, 12);  // 0x004481c9 copy -> +4..+0xc
+    }
+    static std::FILE* s_tf = [] { const char* e = std::getenv("MASHED_LEG2_TRACE");
+                                  std::FILE* f = (e && e[0]) ? std::fopen(e, "w") : nullptr;
+                                  if (f) std::fprintf(f, "p3f,ba8c,reset,u1008,flag,tx,ty,tz,e0x,e0y,e0z,e0vx,e0vz,e0a8,dist_raw\n");
+                                  return f; }();
+    if (s_tf) {
+        const float* c = reinterpret_cast<const float*>(0x00897fe0u);
+        const float* e0 = reinterpret_cast<const float*>(0x008964c0u);
+        const float dx = e0[0x3c / 4] - c[1], dz = e0[0x44 / 4] - c[3];
+        std::fprintf(s_tf, "%d,%d,%d,%d,%d,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%d,%.9g\n", sub_p3_frames_,
+                     *reinterpret_cast<int*>(0x0063ba8cu), reset ? 1 : 0, *reinterpret_cast<int*>(0x007f1008u),
+                     *reinterpret_cast<int*>(0x00897fe0u), c[1], c[2], c[3], e0[0x3c / 4], e0[0x40 / 4],
+                     e0[0x44 / 4], e0[0x8c / 4], e0[0x94 / 4], *reinterpret_cast<const int*>(&e0[0xa8 / 4]),
+                     std::sqrt(dx * dx + dz * dz));
+        std::fflush(s_tf);
+    }
+}
+
+// [D-11073 leg 2] The RaceCamCar adapter UpdateRace has always used, factored out so the
+// MASHED_SUBSTATE pre-race camera chain feeds RaceCamera the same quantities. No behaviour change.
+void TrackRenderer::FillRaceCamCars(Race::RaceCamCar* cc) {
+    if (gates_.empty()) return;
+    const int n = static_cast<int>(gates_.size());
+    const float* P2[kRaceCars] = {car_pos_, nullptr, nullptr, nullptr};
+    for (int i = 0; i < 3 && i < static_cast<int>(ai_cars_.size()); ++i)
+        P2[i + 1] = ai_cars_[static_cast<std::size_t>(i)].pos;
+    for (int i = 0; i < kRaceCars; ++i) {
+        Race::RaceCamCar& c = cc[i];
+        c.active = (P2[i] != nullptr);
+        c.alive = race_[i].alive && c.active;
+        if (!c.active) continue;
+        for (int k = 0; k < 3; ++k) c.pos[k] = P2[i][k];
+        if (i == 0) {
+            for (int k = 0; k < 3; ++k) c.vel[k] = car_vel_[k];
+        } else {
+            const AiCar& a = ai_cars_[static_cast<std::size_t>(i - 1)];
+            c.vel[0] = std::cos(a.yaw) * a.cur_speed;
+            c.vel[2] = std::sin(a.yaw) * a.cur_speed;
+        }
+        // dead_flag/dead_ms: the scaffold has no dying state (cars vanish on
+        // elimination); the original's explosion window is not modeled yet.
+        const float prog_in_lap =
+            std::fmod(race_[i].progress, static_cast<float>(n));
+        c.path_prog = prog_in_lap;                       // 0x00408a50 equiv
+        c.race_pct = prog_in_lap / static_cast<float>(n) * 100.f;  // 0x00408ad0
+    }
+}
+
 void TrackRenderer::UpdateRace(float dt) {
     if (gates_.empty()) return;
     const int n = static_cast<int>(gates_.size());
@@ -5634,29 +5763,7 @@ void TrackRenderer::UpdateRace(float dt) {
     // scaffold). Adapters: standalone race state -> RaceCamCar quantities
     // the original reads through getters (see Race/RaceCamera.h).
     Race::RaceCamCar cc[kRaceCars] = {};
-    const float* P2[kRaceCars] = {car_pos_, nullptr, nullptr, nullptr};
-    for (int i = 0; i < 3 && i < static_cast<int>(ai_cars_.size()); ++i)
-        P2[i + 1] = ai_cars_[static_cast<std::size_t>(i)].pos;
-    for (int i = 0; i < kRaceCars; ++i) {
-        Race::RaceCamCar& c = cc[i];
-        c.active = (P2[i] != nullptr);
-        c.alive = race_[i].alive && c.active;
-        if (!c.active) continue;
-        for (int k = 0; k < 3; ++k) c.pos[k] = P2[i][k];
-        if (i == 0) {
-            for (int k = 0; k < 3; ++k) c.vel[k] = car_vel_[k];
-        } else {
-            const AiCar& a = ai_cars_[static_cast<std::size_t>(i - 1)];
-            c.vel[0] = std::cos(a.yaw) * a.cur_speed;
-            c.vel[2] = std::sin(a.yaw) * a.cur_speed;
-        }
-        // dead_flag/dead_ms: the scaffold has no dying state (cars vanish on
-        // elimination); the original's explosion window is not modeled yet.
-        const float prog_in_lap =
-            std::fmod(race_[i].progress, static_cast<float>(n));
-        c.path_prog = prog_in_lap;                       // 0x00408a50 equiv
-        c.race_pct = prog_in_lap / static_cast<float>(n) * 100.f;  // 0x00408ad0
-    }
+    FillRaceCamCars(cc);
     cam_ticks_ += static_cast<double>(dt) * 3000000.0;   // DAT_007f1030 rate
     race_cam_.Update(cc, course_id_, 1.f / 60.f /*DAT_007f100c live*/,
                      static_cast<std::uint32_t>(cam_ticks_),
@@ -5680,7 +5787,7 @@ void TrackRenderer::UpdateRace(float dt) {
         // loop; the standalone's copy of that flag is team_play_.
         rulep_.teams = team_play_;
         for (int i = 0; i < kRaceCars; ++i) {
-            rc.active[i] = (P2[i] != nullptr);
+            rc.active[i] = cc[i].active;            // == (P2[i] != nullptr), set by FillRaceCamCars
             rc.alive[i]  = race_[i].alive && rc.active[i];
             rc.score[i]  = scores_[i];
             // DAT_0089a880[i] = lapCounter + lapFrac% * 0.01 (FUN_004177b0).

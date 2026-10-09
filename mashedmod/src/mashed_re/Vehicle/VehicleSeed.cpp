@@ -14,6 +14,7 @@
 // Ref: re/analysis/skeleton_prep_render/00448700.md
 // Binary anchor: MASHED.exe size=2,846,720 sha256=BDCAE093...EFD3C0E
 #include "../Core/HookSystem.h"
+#include "../Race/CameraEntries.h"
 #include <cstdint>
 
 namespace {
@@ -23,7 +24,13 @@ constexpr std::uintptr_t kOut2_898000        = 0x00898000u;
 
 // 0x004464c0  FUN_004464c0  CameraEntry::DispatchAll.
 // Indirect slot so the CALL below clobbers no register beyond the ABI's scratch set.
+#ifdef MASHED_STANDALONE
+// Exe: the RVA is outside the mapped text, so bind the port (Util/CameraEntryDispatch.cpp, both
+// targets since D-11073 leg 2). The .asi keeps the raw RVA so a live hook there is honoured.
+void* const s_call_004464c0 = reinterpret_cast<void*>(&CameraEntryDispatchAll);
+#else
 void* const s_call_004464c0 = reinterpret_cast<void*>(0x004464c0u);
+#endif
 } // namespace
 
 // ─────────────────────────────────────────────────────────────────────────────

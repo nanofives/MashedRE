@@ -165,6 +165,8 @@
 "Race\AiDifficultyReset.cpp"
 "Race\SubStateCallees.cpp"
 "Race\SubStateMachine.cpp"
+"Race\CameraEntries.cpp"
+"Util\CameraEntryDispatch.cpp"
 "Ai\AiLeaderTimer.cpp"
 "Vehicle\ShapeOwnerHandlePool.cpp"
 "Vehicle\VehicleSeed.cpp"

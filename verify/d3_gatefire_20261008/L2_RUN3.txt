@@ -1,0 +1,13 @@
+=== L2_CTRL  knobs=[] ===
+    pid=41824
+    exit=0  self_exited=True
+    L2_CTRL.step.csv  lines=19419  sha8=c741a4c5
+    L2_CTRL.gates.csv  lines=53993  sha8=642af0ac
+    L2_CTRL.ptrace.log  lines=26996  sha8=05984e30
+=== L2  knobs=[MASHED_SUBSTATE,MASHED_MODE5_RESET,MASHED_LEG2_TRACE=@OUT@\L2.trace.csv,MASHED_L1B_INPUTS=@OUT@\L2.inputs.csv] ===
+    pid=40816
+    exit=0  self_exited=True
+    L2.step.csv  lines=18475  sha8=964d3986
+    L2.gates.csv  lines=53625  sha8=c66e4810
+    L2.ptrace.log  lines=26812  sha8=30542947
+H4 DONE

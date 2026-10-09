@@ -18,10 +18,16 @@
 // Epilogue: POP EDI; POP ESI; POP EBX; RET  (0x00446518..0x0044651b).
 //
 // Callers (C2): FUN_00446520 (util), FUN_00448700 (vehicle).
+// [D-11073 leg 2, 2026-10-09] Now in BOTH targets. Exe arm: type 0 -> CamEntryType0Step445aa0
+// (Race/CameraEntries.cpp); types 1/2 (FUN_00441d40 / FUN_00442440) are NOT called in the exe:
+// visual only, neither writes the camera struct (BRIEF_D11073 §1), and neither has an exe body.
+// The type field is RE-READ before each test, as the bytes do ([ESI+4] at 0x004464d7, 0x004464e8,
+// 0x004464f8); the earlier copy cached it.
 // Callees (C2, original): FUN_00445aa0/FUN_00441d40/FUN_00442440.
 //   Called as __cdecl pair (entry, param_1); caller cleans 8 bytes via ADD ESP,8.
 
 #include "../Core/HookSystem.h"
+#include "../Race/CameraEntries.h"
 
 #include <cstdint>
 
@@ -44,33 +50,39 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl CameraEntryDispatchAll(st
 
     do {
         // 0x004464d7  MOV EAX,[ESI+0x4]  (read type field)
-        std::uint32_t type = *reinterpret_cast<std::uint32_t*>(esi + 0x4u);
-
         // 0x004464da  TEST EAX,EAX
         // 0x004464dc  JNZ  0x004464e8
-        if (type == 0u) {
+        if (*reinterpret_cast<std::uint32_t*>(esi + 0x4u) == 0u) {
             // 0x004464de  PUSH EDI ; PUSH ESI
             // 0x004464e0  CALL 0x00445aa0
             // 0x004464e5  ADD ESP,0x8
+#ifdef MASHED_STANDALONE
+            CamEntryType0Step445aa0(esi, reinterpret_cast<std::int32_t*>(param_1));
+#else
             reinterpret_cast<tEntryFn>(0x00445aa0u)(esi, param_1);
+#endif
         }
 
         // 0x004464e8  CMP [ESI+0x4],0x1
         // 0x004464ec  JNZ  0x004464f8
-        if (type == 1u) {
+        if (*reinterpret_cast<std::uint32_t*>(esi + 0x4u) == 1u) {
             // 0x004464ee  PUSH EDI ; PUSH ESI
             // 0x004464f0  CALL 0x00441d40
             // 0x004464f5  ADD ESP,0x8
+#ifndef MASHED_STANDALONE
             reinterpret_cast<tEntryFn>(0x00441d40u)(esi, param_1);
+#endif
         }
 
         // 0x004464f8  CMP [ESI+0x4],0x2
         // 0x004464fc  JNZ  0x00446508
-        if (type == 2u) {
+        if (*reinterpret_cast<std::uint32_t*>(esi + 0x4u) == 2u) {
             // 0x004464fe  PUSH EDI ; PUSH ESI
             // 0x00446500  CALL 0x00442440
             // 0x00446505  ADD ESP,0x8
+#ifndef MASHED_STANDALONE
             reinterpret_cast<tEntryFn>(0x00442440u)(esi, param_1);
+#endif
         }
 
         // 0x00446508  MOV EAX,[0x00898994]  (re-read count each iteration)

@@ -51,3 +51,6 @@ RwpSolverBroadphase3
 RwpSolverCore14
 RwpSolverCore15
 RwpSolverCore17
+# D-11073 leg 2 (2026-10-09): verbatim x87 transcription of FUN_00445aa0 et al. (fpatan/fsin inline);
+# bit-identity measured by run_diff in the same session, not assumed.
+CameraEntries

@@ -1,5 +1,19 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-09 (D-11073 leg 2 DONE): **phase 3 ported behind `MASHED_SUBSTATE` (default OFF), byte-identical default. 4 bodies C3. Next: U-9201 (the camera target) or the (b) scoring question.**
+>
+> Read [`RESULT_LEG2.md`](../verify/d3_gatefire_20261008/RESULT_LEG2.md) §0, §2, §5 (prereg `PREREG_LEG2.md`).
+> - `Race/CameraEntries.cpp` (both targets, x87): `0x00441b30`, `0x00441c80`, `0x00442600`, `0x00445aa0`, all run_diff GREEN
+>   5/5. Written from the bytes: the decomp misread a double (57.2958) as -2.0; ST-resident values must be `double`.
+> - Knob ON: phase 3 released by site (a) after **764** frames = the pre-registered model prediction; then 4, 5x112, 6.
+>   The original's 652 is not reproduced: the entry dynamics are exact, the camera TARGET differs (U-9201). G-CURVE
+>   fails at f480/f540 exactly as pre-registered.
+> - Decision (A) stands: seed kept, knob OFF. (b) moves with the RNG ring phase (L2: 5 items, P414: 10).
+>
+> **Kickoff options for the next session:** (1) U-9201: capture the original camera struct from state 0 through phase 3,
+> port `FUN_00442a20`, run the camera chain from state 0, re-score G-CURVE; or (2) decide how criterion (b) is scored
+> given its ring-phase sensitivity, before any knob-default decision.
+
 > ## START HERE 2026-10-09 (FUN_00414180 DONE, C3): **the AI start-boost chain is fully ported behind `MASHED_SUBSTATE` (default OFF), byte-identical default. Next: USER DECISION on seed vs chain, then leg 2.**
 >
 > Read [`RESULT_414180.md`](../verify/d3_gatefire_20261008/RESULT_414180.md) §0 and §3 (prereg `PREREG_414180.md`, every gate PASS).

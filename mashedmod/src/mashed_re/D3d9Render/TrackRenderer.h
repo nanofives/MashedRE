@@ -386,6 +386,11 @@ public:
     }
     // round step (also advances player bookkeeping outside round mode)
     void  UpdateRace(float dt);
+    // [D-11073 leg 2] RaceCamCar adapter shared by UpdateRace and the MASHED_SUBSTATE pre-race
+    // camera chain (FUN_0040d470 -> FUN_00446520: entry init, entry dispatch, camera update, copy).
+    void  FillRaceCamCars(Race::RaceCamCar* cc);
+    void  SubStateCameraChain(bool reset);
+    int   sub_p3_frames_ = 0;   // phase-3 frames this round (leg-2 trace / measurement knob)
     int   round_winner() const { return round_winner_; }
     int   round_alive() const { return round_alive_; }
     // Dev/verification: end the match now, winner = current points leader.

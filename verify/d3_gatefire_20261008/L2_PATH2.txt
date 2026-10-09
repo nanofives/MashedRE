@@ -1,0 +1,40 @@
+=== cam_entry_build_obs
+opcode:         0xe9  expected 0xe9  -> OK
+interceptor entries (reimpl):  0 / 0
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 0x as expected
+  + all 0 calls returned without exception
+FAIL:
+=== cam_car_midpoint_obs
+opcode:         0xe9  expected 0xe9  -> OK
+interceptor entries (reimpl):  0 / 0
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 0x as expected
+  + all 0 calls returned without exception
+FAIL:
+=== cam_entries_init_obs
+opcode:         0xe9  expected 0xe9  -> OK
+interceptor entries (reimpl):  0 / 0
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 0x as expected
+  + all 0 calls returned without exception
+FAIL:
+=== cam_type0_step_obs
+opcode:         0xe9  expected 0xe9  -> OK
+interceptor entries (reimpl):  0 / 0
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 0x as expected
+  + all 0 calls returned without exception
+FAIL:

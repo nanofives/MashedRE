@@ -26,6 +26,11 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-09  00441b30 CamEntryBuild441b30  C2->C3  run_diff cam_entry_build_obs GREEN 5/5 + path2 E9; plate corrected (_ftol2 truncates); verify/d3_gatefire_20261008/RESULT_LEG2.md
+2026-10-09  00441c80 CamCarMidpoint441c80  C2->C3  run_diff cam_car_midpoint_obs GREEN 5/5 (4 distinct) + path2 E9; RESULT_LEG2.md
+2026-10-09  00442600 CamEntriesInit442600  C2->C3  run_diff cam_entries_init_obs GREEN 5/5 (5 tracks) + path2 E9; U-9200; RESULT_LEG2.md
+2026-10-09  00445aa0 CamEntryType0Step445aa0  C2->C3  from the bytes (decomp misread the 57.2958 double); run_diff cam_type0_step_obs GREEN 5/5 + path2 E9; exe release at 764 frames = model prediction; U-9200, U-9201; plate corrected; RESULT_LEG2.md
+2026-10-09  004464c0 CameraEntry::DispatchAll  C3->C3  now in both targets (exe: type 0 -> port, types 1/2 skipped, named); type field re-read per test as the bytes do; RESULT_LEG2.md
 2026-10-09  00414180 SubStateRollCountdown414180  C2->C3  plate rewritten from the bytes (decomp dropped the ST0 return + fd0 arm); run_diff sub_state_roll_countdown_obs GREEN 5/5 + path2 PASS; G-DRAW/G-EXIT 4/4; U-6010/U-8939 resolved, U-9198/U-9199 filed; verify/d3_gatefire_20261008/RESULT_414180.md
 2026-10-09  0040dbd0 SubStateEnter4  C2->C3  run_diff sub_state_enter4_obs GREEN 5/5 + path2 PASS; verify/d3_gatefire_20261008/RESULT_LEG1B.md
 2026-10-09  004103a0 SubStateHeldCountdown5  C2->C3  renamed from TimeTrial::LapFinishProcessor; run_diff sub_state_held_countdown5_obs GREEN 5/5, path2 E9; U-9197; verify/d3_gatefire_20261008/RESULT_LEG1B.md

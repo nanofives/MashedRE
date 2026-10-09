@@ -1,0 +1,16 @@
+=== cam_entry_build_obs
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.
+=== cam_car_midpoint_obs
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.
+=== cam_entries_init_obs
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.
+=== cam_type0_step_obs
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.

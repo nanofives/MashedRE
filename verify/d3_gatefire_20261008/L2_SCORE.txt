@@ -1,0 +1,7 @@
+G-STATIC      PASS  FUN_00442600 track=30 count=7 types=0,1,1,1,2,2,3 e0=(1.5,9.7,34.5) a4=12 ac/b0/b4=5/180/-15 draws_before=314 fc0=0
+G-RULE        PASS  clear at p3f 763, site-(a) d = 0.018554; min earlier d = 0.021413 (762 rows)
+G-FRAME       PASS  released after ['764'] (predicted 764 +-2)
+G-TRANSCRIBE  PASS  max |model - port| over 764 rows = 3.34e-06 (model clear p3f 763)
+G-CURVE       FAIL  f60:0.983 f120:0.979 f180:0.970 f240:0.955 f300:0.965 f360:0.983 f420:1.045 f480:1.149 f540:1.340
+G-AFTER       PASS  release lines 1, rounds 2, exits ['0x3feeeee2', '0x3feeeee2'] (phase-5 detail: score_leg1b_gates.py L2)
+ALL FAIL (see rows)

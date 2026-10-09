@@ -1,0 +1,13 @@
+L1B_CTRL bias374: frames 13498 hist {0: 661, 1: 601, 2: 1201, 3: 1201, 4: 9834} reversals 0
+
+==================== L2
+  log: [substate] armed=1  exit lines=2 [(('112', '0x3feeeee2'), 2)]  cd-seed lines=0  UNEXPECTED=0  [l1b-inputs]=1
+  seg 0 rows 0..878 states {'0': 1, '3': 764, '4': 1, '5': 112}  G-PHASE5 True  G-SEED True (s5 [12000]..[6450])  G-HOLD True
+     first state-6 row f=878 d584=113 d588=1.88333178 bf4=['0', '1100', '1400', '1200'] bf8=['0', '1', '1', '1'] acc(last pre)=['0', '255', '255', '255']
+  seg 1 rows 2347..2461 states {'0': 1, '4': 1, '5': 112}  G-PHASE5 True  G-SEED True (s5 [12000]..[6450])  G-HOLD True
+     first state-6 row f=2461 d584=113 d588=1.88333178 bf4=['0', '1400', '1300', '1400'] bf8=['0', '1', '1', '1'] acc(last pre)=['0', '255', '255', '255']
+  SEGMENTS 2: G-PHASE5 2/2  G-SEED 2/2  G-HOLD 2/2  exit reads 0x3feeeee2: 2/2
+  bias374 (post-GO rows only): frames 13406 hist {0: 1261, 1: 1202, 2: 1468, 3: 1201, 4: 8274} reversals 1   [CTRL reversals 0]
+  D2 WATCH ptrace: 13406 lines (CTRL 13498); first differing f-line index 0
+     CTRL: f=1 dt=0.01666666753590107 pos=(0.50091844797134399,0.47481968998908997,-2.0024709701538086) yaw=-1.576027512550354 sp=0.6380385160446167 vel=(0,0,0) gate=1 lap=0 prog=0 b14=0 b1c=0 v9e4=0.63803851604
+     ARM : f=1 dt=0.01666666753590107 pos=(0.50091844797134399,0.47481968998908997,-2.0024709701538086) yaw=-1.576027512550354 sp=0.63803869485855103 vel=(0,0,0) gate=1 lap=0 prog=0 b14=0 b1c=0 v9e4=0.6380386948
