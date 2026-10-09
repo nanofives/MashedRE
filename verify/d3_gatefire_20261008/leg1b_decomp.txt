@@ -1,0 +1,539 @@
+[decomp_pc] slot=Mashed_pool0 modes=decomp+callees n=6
+// FUN_0040dbd0 @ 0x0040dbd0  size=123  (MASHED.exe)
+// undefined FUN_0040dbd0(void)
+// callees: FUN_0041b520@0x0041b520, FUN_0041d910@0x0041d910, FUN_0041e080@0x0041e080, FUN_0042f500@0x0042f500, FUN_0042f6a0@0x0042f6a0, FUN_0045b350@0x0045b350
+
+/* [C1 2026-06-01] `void FUN_0040dbd0(void)` — performs a race-state transition into mode 5,
+   selecting the teardown helper… */
+
+void FUN_0040dbd0(void)
+
+{
+  undefined4 uVar1;
+  int iVar2;
+  
+  FUN_0041d910();
+  uVar1 = FUN_0042f6a0();
+  switch(uVar1) {
+  case 2:
+    FUN_0041e080();
+    DAT_0063ba8c = 5;
+    return;
+  default:
+    iVar2 = FUN_0042f500();
+    if (iVar2 != 0) {
+      FUN_0045b350();
+      DAT_0063ba8c = 5;
+      return;
+    }
+    break;
+  case 6:
+  case 10:
+    iVar2 = FUN_0042f500();
+    if ((iVar2 != 0) && (DAT_007f0fd0 != 2)) {
+      FUN_0045b350();
+      DAT_0063ba8c = 5;
+      return;
+    }
+  }
+  FUN_0041b520();
+  DAT_0063ba8c = 5;
+  return;
+}
+
+
+
+// FUN_004103a0 @ 0x004103a0  size=360  (MASHED.exe)
+// undefined FUN_004103a0(void)
+// callees: FUN_0040e560@0x0040e560, FUN_00411ae0@0x00411ae0, FUN_00411d60@0x00411d60, FUN_00418860@0x00418860, FUN_0041da90@0x0041da90, FUN_00426c90@0x00426c90, FUN_00429840@0x00429840, FUN_00429860@0x00429860, FUN_0042f6a0@0x0042f6a0, FUN_00430820@0x00430820, FUN_0046baa0@0x0046baa0, FUN_0046c730@0x0046c730, FUN_0046c750@0x0046c750, FUN_0046c7b0@0x0046c7b0, FUN_0046d780@0x0046d780, FUN_0046d7f0@0x0046d7f0
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C1 2026-06-01] Lap-finish / race-completion monitor. `in_EAX` carries the per-frame delta. */
+
+void FUN_004103a0(void)
+
+{
+  int in_EAX;
+  int iVar1;
+  int iVar2;
+  undefined4 uVar3;
+  undefined4 *puVar4;
+  int iVar5;
+  float local_4;
+  
+  local_4 = 0.0;
+  iVar1 = FUN_00429860();
+  if (iVar1 != 0) {
+    iVar1 = FUN_00430820();
+    if (iVar1 == 0) {
+      iVar1 = FUN_0042f6a0();
+      if (iVar1 == 2) {
+        FUN_0040e560();
+      }
+    }
+  }
+  DAT_005f29b8 = DAT_005f29b8 - in_EAX;
+  DAT_007f1014 = (uint)(DAT_007f1018 < DAT_007f0ff4);
+  FUN_00426c90(**(undefined4 **)(PTR_PTR_005f2770 + DAT_0063ba78 * 4));
+  FUN_00418860();
+  iVar1 = 0;
+  iVar5 = 0x34;
+  do {
+    if (*(int *)(PTR_PTR_005f2770 + iVar5) != 0) {
+      iVar2 = FUN_0046c7b0(iVar1);
+      if (iVar2 == 1) {
+        FUN_0046baa0(iVar1);
+        FUN_0046d7f0(iVar1);
+      }
+    }
+    iVar5 = iVar5 + 4;
+    iVar1 = iVar1 + 1;
+  } while (iVar5 < 0x44);
+  FUN_0041da90(&local_4);
+  if (_DAT_005ccdf4 <= local_4) {
+    iVar1 = 0;
+    puVar4 = &DAT_007f0a08;
+    iVar5 = 0x34;
+    do {
+      if (*(int *)(PTR_PTR_005f2770 + iVar5) != 0) {
+        iVar2 = FUN_0046c7b0(iVar1);
+        if (iVar2 == 1) {
+          FUN_0046d780(iVar1);
+          uVar3 = FUN_0046c750(iVar1);
+          puVar4[-1] = uVar3;
+          uVar3 = FUN_0046c730(iVar1);
+          *puVar4 = uVar3;
+        }
+      }
+      iVar5 = iVar5 + 4;
+      iVar1 = iVar1 + 1;
+      puVar4 = puVar4 + 3;
+    } while (iVar5 < 0x44);
+    DAT_005f29b8 = 0;
+    iVar1 = FUN_0042f6a0();
+    if (iVar1 == 2) {
+      FUN_00429840(1);
+      FUN_00411d60();
+    }
+    DAT_0063ba8c = 6;
+  }
+  iVar1 = FUN_0042f6a0();
+  if (iVar1 == 2) {
+    FUN_00411ae0(0,0);
+  }
+  return;
+}
+
+
+
+// FUN_0046d7f0 @ 0x0046d7f0  size=144  (MASHED.exe)
+// undefined FUN_0046d7f0(void)
+// callees: (none)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C2 2026-06-02] Two args `(int param_1 entity index, int param_2 delta)`. Body
+   `0x0046d7f0..0x0046d87f` (143 bytes). Returns 1/0. */
+
+undefined4 FUN_0046d7f0(int param_1,int param_2)
+
+{
+  int *piVar1;
+  int iVar2;
+  
+  if (0xf < param_1) {
+    return 0;
+  }
+  if (_DAT_005cea3c < (float)*(byte *)(&DAT_007f103c + (&DAT_007f1a14)[param_1 * 4] * 0x13)) {
+    *(int *)(&DAT_00882194 + param_1 * 0xd04) =
+         *(int *)(&DAT_00882194 + param_1 * 0xd04) + param_2 * 2;
+  }
+  iVar2 = *(int *)(&DAT_00882194 + param_1 * 0xd04);
+  piVar1 = (int *)(&DAT_00882194 + param_1 * 0xd04);
+  *piVar1 = iVar2 - param_2;
+  if (3000 < iVar2 - param_2) {
+    *piVar1 = 3000;
+  }
+  if (*piVar1 < 0) {
+    *piVar1 = 0;
+  }
+  return 1;
+}
+
+
+
+// FUN_0046d780 @ 0x0046d780  size=109  (MASHED.exe)
+// undefined FUN_0046d780(void)
+// callees: FUN_00422b50@0x00422b50
+
+/* [C2 2026-06-02] One arg `param_1` (entity index). Body `0x0046d780..0x0046d7ec` (108 bytes).
+   Returns 1/0. */
+
+undefined4 FUN_0046d780(int param_1)
+
+{
+  int iVar1;
+  int iVar2;
+  
+  if (0xf < param_1) {
+    return 0;
+  }
+  iVar2 = param_1 * 0xd04;
+  iVar1 = *(int *)(&DAT_00882194 + iVar2);
+  if (1000 < iVar1) {
+    *(undefined4 *)(&DAT_00882198 + iVar2) = 2;
+    FUN_00422b50(param_1,1000 - iVar1);
+    return 1;
+  }
+  if (0 < iVar1) {
+    *(undefined4 *)(&DAT_00882198 + iVar2) = 1;
+    *(int *)(&DAT_00882194 + iVar2) = iVar1 + 1000;
+    FUN_00422b50(param_1,iVar1 + 1000);
+  }
+  return 1;
+}
+
+
+
+// FUN_0046c7b0 @ 0x0046c7b0  size=26  (MASHED.exe)
+// undefined FUN_0046c7b0(void)
+// callees: (none)
+
+/* [C2 2026-05-12] Bounds-checked vehicle slot getter. Returns the DWORD at `DAT_008815a4 + param_1
+   * 0x341` (vehicle… */
+
+undefined4 FUN_0046c7b0(uint param_1)
+
+{
+  if (0xf < param_1) {
+    return 0xffffffff;
+  }
+  return (&DAT_008815a4)[param_1 * 0x341];
+}
+
+
+
+// FUN_004111c0 @ 0x004111c0  size=1498  (MASHED.exe)
+// undefined FUN_004111c0(void)
+// callees: FID_conflict:_wprintf@0x004a2cbd, FUN_00401570@0x00401570, FUN_004046a0@0x004046a0, FUN_004073b0@0x004073b0, FUN_00407a60@0x00407a60, FUN_0040b180@0x0040b180, FUN_0040bd80@0x0040bd80, FUN_0040d470@0x0040d470, FUN_0040dbd0@0x0040dbd0, FUN_0040ddb0@0x0040ddb0, FUN_0040e340@0x0040e340, FUN_0040e460@0x0040e460, FUN_0040e480@0x0040e480, FUN_0040e590@0x0040e590, FUN_0040fc00@0x0040fc00, FUN_004102f0@0x004102f0, FUN_004103a0@0x004103a0, FUN_00410860@0x00410860, FUN_00411170@0x00411170, FUN_00414060@0x00414060, FUN_00414180@0x00414180, FUN_00414220@0x00414220, FUN_00419760@0x00419760, FUN_0041b4d0@0x0041b4d0, FUN_0041b510@0x0041b510, FUN_0041bf20@0x0041bf20, FUN_0041c010@0x0041c010, FUN_0041cb80@0x0041cb80, FUN_0041cbc0@0x0041cbc0, FUN_0041d730@0x0041d730, FUN_0041d820@0x0041d820, FUN_0041e130@0x0041e130, FUN_0041eda0@0x0041eda0, FUN_0041f000@0x0041f000, FUN_00420d40@0x00420d40, FUN_00422120@0x00422120, FUN_00422b10@0x00422b10, FUN_00425b10@0x00425b10, FUN_00426630@0x00426630, FUN_004266f0@0x004266f0, FUN_00426ba0@0x00426ba0, FUN_00426c00@0x00426c00, FUN_00426c10@0x00426c10, FUN_00426c30@0x00426c30, FUN_00426c70@0x00426c70, FUN_004292c0@0x004292c0, FUN_004292d0@0x004292d0, FUN_0042aab0@0x0042aab0, FUN_0042f500@0x0042f500, FUN_0042f6a0@0x0042f6a0, FUN_004425d0@0x004425d0, FUN_00458bf0@0x00458bf0, FUN_00459560@0x00459560, FUN_0045b350@0x0045b350, FUN_0045b9d0@0x0045b9d0, FUN_0045ba00@0x0045ba00, FUN_0045be90@0x0045be90, FUN_0045bed0@0x0045bed0, FUN_0046b1c0@0x0046b1c0, FUN_0046b540@0x0046b540, FUN_0046c5c0@0x0046c5c0, FUN_00471ac0@0x00471ac0, FUN_00471cf0@0x00471cf0, FUN_00475a60@0x00475a60, +11 more
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C1 2026-06-01] Top-level race state-machine tick. Dispatcher on `DAT_0063ba8c` (states 1..0xb).
+   This is the parent… */
+
+void FUN_004111c0(void)
+
+{
+  int iVar1;
+  int *piVar2;
+  int *extraout_ECX;
+  char cVar3;
+  undefined4 uVar4;
+  undefined4 extraout_EDX;
+  int iVar5;
+  bool bVar6;
+  undefined4 local_18;
+  undefined *puStack_14;
+  undefined4 uStack_10;
+  
+  DAT_007f101c = DAT_007f101c + 1;
+  iVar1 = FUN_00426ba0();
+  if (iVar1 == 0) {
+    return;
+  }
+  iVar1 = FUN_0055dec0();
+  if (iVar1 == 5) {
+    uStack_10 = 0x4111f5;
+    FUN_004292d0();
+    uStack_10 = 0;
+    puStack_14 = &DAT_0066d728;
+    local_18 = 0x411201;
+    FUN_004292c0();
+    FUN_00426630();
+  }
+  else if (iVar1 == 6) {
+    uStack_10 = 0x411221;
+    FUN_004292d0();
+    uStack_10 = 0;
+    puStack_14 = &DAT_0066d728;
+    local_18 = 0x41122d;
+    FUN_004292c0();
+    FUN_004266f0();
+  }
+  switch(DAT_0063ba8c) {
+  case 1:
+    DAT_007f0fc8 = 0;
+    iVar1 = FUN_0042f6a0();
+    if (iVar1 == 0xb) {
+      FUN_0040e480(0,2);
+      FUN_0040e480(1,2);
+      FUN_0040e480(2,2);
+      FUN_0040e480(3,0);
+    }
+    DAT_0063ba80 = 0;
+    FUN_00426c10(**(undefined4 **)(PTR_PTR_005f2770 + DAT_0063ba78 * 4));
+    DAT_005f29b8 = 0xff;
+    FUN_00422b10();
+    DAT_007f101c = 0;
+    DAT_007f0ff4 = 0;
+    DAT_007f0ff8 = 0;
+    FID_conflict__wprintf("start of race\n");
+    FUN_004425d0();
+    FUN_00425b10();
+    FUN_00459560();
+    DAT_008a94d0 = 0;
+    iVar1 = 0;
+    iVar5 = 0x34;
+    do {
+      if (*(int *)(PTR_PTR_005f2770 + iVar5) == 0) {
+        FUN_0041eda0(iVar1,0);
+        FUN_0046c5c0(iVar1);
+        FUN_0045ba00(iVar1,4);
+      }
+      else {
+        FUN_0041f000(iVar1,&local_18);
+        FUN_0046b1c0(iVar1,&local_18);
+        FUN_0046b540(iVar1);
+        FUN_0041eda0(iVar1,1);
+        FUN_0045ba00(iVar1,1);
+        DAT_008a94d0 = DAT_008a94d0 + 1;
+      }
+      iVar5 = iVar5 + 4;
+      iVar1 = iVar1 + 1;
+    } while (iVar5 < 0x44);
+    FUN_0040b180();
+    FUN_0040bd80();
+    FUN_0045b350();
+    FUN_00414060();
+    FUN_00484c90();
+    FUN_0045b350(1);
+    FUN_00477b40();
+    FUN_00475a60();
+    FUN_0045be90();
+    thunk_FUN_00475ef0();
+    FUN_00477730();
+    thunk_FUN_004194f0();
+    FUN_00420d40();
+    thunk_FUN_00422120();
+    uVar4 = FUN_0042f6a0();
+    switch(uVar4) {
+    case 2:
+      FUN_0041e130(1);
+      goto LAB_004100c4;
+    case 3:
+    case 4:
+    case 5:
+      switch(DAT_007f0fd0) {
+      case 5:
+        break;
+      default:
+        iVar1 = FUN_0042f500();
+        if (iVar1 == 0) {
+          FUN_0041b4d0();
+          FUN_0041cb80();
+        }
+        else {
+          FUN_0041bf20();
+          FUN_0041d730();
+        }
+        break;
+      case 7:
+        FUN_00419760(0,1);
+        uVar4 = FUN_00426c00();
+        FUN_00401570(uVar4);
+        break;
+      case 10:
+        FUN_004046a0();
+      case 4:
+      case 8:
+      case 9:
+        uVar4 = FUN_00426c00();
+        FUN_00401570(uVar4);
+      }
+    default:
+      iVar1 = FUN_0042f500();
+      bVar6 = iVar1 == 0;
+LAB_004100ac:
+      if (!bVar6) {
+        FUN_0041bf20();
+        FUN_0041d730();
+        goto LAB_004100c4;
+      }
+      break;
+    case 6:
+    case 10:
+      iVar1 = FUN_0042f500();
+      if (iVar1 != 0) {
+        bVar6 = DAT_007f0fd0 == 2;
+        goto LAB_004100ac;
+      }
+    }
+    FUN_0041b4d0();
+    FUN_0041cb80();
+LAB_004100c4:
+    FUN_00458bf0();
+    FUN_00407a60();
+    FUN_00471cf0();
+    DAT_005f29b8 = 100000;
+    DAT_0063ba8c = 2;
+    return;
+  case 2:
+    DAT_007f0fc8 = 0;
+    FUN_00480100();
+    FUN_00471ac0();
+    FUN_0042aab0();
+    if ((DAT_007f0fd0 == 2) &&
+       ((DAT_007f0fd8 = DAT_007f0fd8 + 1, DAT_007f0fd8 < 0 ||
+        (iVar1 = FUN_0040e340(), iVar1 <= DAT_007f0fd8)))) {
+      DAT_007f0fd8 = 0;
+    }
+    break;
+  case 3:
+    DAT_007f0fc8 = 0;
+    uStack_10 = 0x41128d;
+    FUN_004102f0();
+    uStack_10 = 0x411292;
+    FUN_0040fc00();
+    return;
+  case 4:
+    DAT_007f0fc8 = 0;
+    uStack_10 = 0x4112aa;
+    FUN_0040dbd0();
+    FUN_0040fc00();
+    return;
+  case 5:
+    FUN_004103a0();
+    FUN_0040fc00();
+    return;
+  case 6:
+    uStack_10 = 0x4112d2;
+    FUN_00411170();
+    FUN_0040fc00();
+    return;
+  case 7:
+    FUN_00410860();
+    FUN_0040fc00();
+    return;
+  case 8:
+    FUN_00414220();
+    FUN_00426c70();
+    FUN_0045bed0();
+    DAT_0063ba8c = 2;
+    return;
+  case 9:
+    FUN_0040ddb0();
+    DAT_0063ba8c = 10;
+    return;
+  case 10:
+    thunk_FUN_004117b0();
+    FUN_0040fc00();
+    return;
+  case 0xb:
+    FUN_0040fc00();
+    _DAT_0063b91c = _DAT_0063b91c + _DAT_007f100c;
+    if (_DAT_005cc574 <= _DAT_0063b91c) {
+      piVar2 = &DAT_007f1a14;
+      uVar4 = 0;
+      do {
+        if (*piVar2 != -1) {
+          iVar1 = *piVar2 * 0x4c;
+          cVar3 = (char)uVar4;
+          if ((((&DAT_007f1042)[iVar1] != cVar3) && ((&DAT_007f1502)[iVar1] == cVar3)) ||
+             (((&DAT_007f1041)[iVar1] != cVar3 && ((&DAT_007f1501)[iVar1] == cVar3)))) {
+            DAT_0063ba8c = 9;
+            FUN_0040e460();
+            piVar2 = extraout_ECX;
+            uVar4 = extraout_EDX;
+            DAT_0063b90c = extraout_EDX;
+          }
+        }
+        piVar2 = piVar2 + 4;
+      } while ((int)piVar2 < 0x7f1a54);
+    }
+    return;
+  default:
+    return;
+  }
+  FUN_0040e590();
+  DAT_007f1014 = (uint)(DAT_007f1018 < DAT_007f0ff4);
+  FUN_00426c30();
+  FUN_0040bd80();
+  FUN_0045b9d0();
+  thunk_FUN_00475ef0();
+  FUN_00477730();
+  thunk_FUN_004194f0();
+  FUN_00420d40();
+  FUN_00422120();
+  FUN_00477b40();
+  uVar4 = FUN_0042f6a0();
+  switch(uVar4) {
+  case 2:
+    goto switchD_004101d9_caseD_2;
+  case 3:
+  case 4:
+  case 5:
+    switch(DAT_007f0fd0) {
+    case 4:
+    case 5:
+    case 8:
+    case 9:
+      break;
+    default:
+      iVar1 = FUN_0042f500();
+      if (iVar1 == 0) {
+        FUN_0041b510();
+        FUN_0041cbc0();
+      }
+      else {
+        FUN_0041c010();
+        FUN_0041d820();
+      }
+      break;
+    case 7:
+      FUN_00419760();
+      break;
+    case 10:
+      FUN_004046a0();
+    }
+    break;
+  case 6:
+  case 10:
+    iVar1 = FUN_0042f500();
+    if (iVar1 != 0) {
+      bVar6 = DAT_007f0fd0 == 2;
+      goto LAB_00410241;
+    }
+    goto LAB_0041024f;
+  }
+  iVar1 = FUN_0042f500();
+  bVar6 = iVar1 == 0;
+LAB_00410241:
+  if (bVar6) {
+LAB_0041024f:
+    FUN_0041b510();
+    FUN_0041cbc0();
+  }
+  else {
+    FUN_0041c010();
+    FUN_0041d820();
+  }
+switchD_004101d9_caseD_2:
+  FUN_00414180();
+  FUN_004904d0();
+  FUN_0048f260();
+  FUN_004073b0();
+  if (DAT_005f29b8 == 100000) {
+    DAT_0063ba8c = 3;
+  }
+  else {
+    DAT_0063ba8c = 4;
+    DAT_005f29b8 = 12000;
+    FUN_0040d470();
+  }
+  if (DAT_007f0fd0 == 6) {
+    DAT_0063ba8c = 4;
+  }
+  return;
+}
+
+
+
