@@ -154,6 +154,20 @@ L1B_COLS = (["f1018", "f1014", "ba78", "d7e4", "d7e4_40", "g91bc", "ged6c"]
             + ["a0a04_%d" % v for v in range(4)] + ["a0a08_%d" % v for v in range(4)]
             + ["%s_%d" % (c, v) for v in range(4) for c in ("px", "py", "pz")])
 
+# [U-9201 2026-10-09, opt-in --u9201] RESULT_LEG2.md section 2 / U-9201. The race-camera struct
+# DAT_00897fe0 (FUN_00446520's param_1) and the time inputs its main block reads, so the port's
+# RaceCamera (which cites these offsets) can be compared field by field from the first phase-3 frame:
+#   +0x40..+0x48 pos, +0x4c..+0x54 look target, +0x58 view window, +0x1c (cam[7]), +0x24 (DAT_00803344),
+#   +0x964..+0x9a0 [0x259..0x268] smoothing / spring state, pair ids, blend, zoom;
+#   DAT_007f1030 (int, FUN_0040fc00 L172: _ftol2 of _DAT_007f1010; main block L1039 reads it / 60000),
+#   _DAT_007f1010 (float accumulator), DAT_007f1000 (its gate, L170), _DAT_007f100c (step),
+#   DAT_007f0fc8 (jitter amplitude), DAT_00803344.
+A_CAMS = 0x00897fe0
+A_T1030, A_T1010, A_T1000, A_FC8, A_3344 = 0x007f1030, 0x007f1010, 0x007f1000, 0x007f0fc8, 0x00803344
+U9201_F = [("cpx", 0x40), ("cpy", 0x44), ("cpz", 0x48), ("ctx", 0x4c), ("cty", 0x50), ("ctz", 0x54),
+           ("cvw", 0x58), ("c24", 0x24)] +           [("s%03x" % o, o) for o in range(0x964, 0x994, 4)] + [("c99c", 0x99c), ("c9a0", 0x9a0)]
+U9201_COLS = ([n for n, _ in U9201_F] + ["c1c", "c994", "c998", "t1030", "t1010", "t1000", "step100c", "fc8", "g3344"])
+
 PROCESS_VM_READ = 0x0010
 PROCESS_QUERY_INFORMATION = 0x0400
 
@@ -215,6 +229,9 @@ def main():
     if cam:
         argv.remove("--cam")
     leg1b = "--leg1b" in argv
+    u9201 = "--u9201" in argv
+    if u9201:
+        argv.remove("--u9201")
     if leg1b:
         argv.remove("--leg1b")
     out = Path(argv[0]); argv = argv[1:]
@@ -263,6 +280,8 @@ def main():
         cols += CAM_COLS
     if leg1b:
         cols += L1B_COLS
+    if u9201:
+        cols += U9201_COLS
     rows = []
     try:
         while proc.poll() is None:
@@ -347,6 +366,14 @@ def main():
                     r["a0a08_%d" % v] = i32(h, A_0A04 + 4 + v * 12)
                     for c, off in (("px", 0), ("py", 4), ("pz", 8)):
                         r["%s_%d" % (c, v)] = f32(h, A_POS + off + v * ALIVE_STRIDE)
+            if u9201:
+                for n, o in U9201_F:
+                    r[n] = f32(h, A_CAMS + o)
+                r.update({"c1c": i32(h, A_CAMS + 0x1c), "c994": i32(h, A_CAMS + 0x994),
+                          "c998": i32(h, A_CAMS + 0x998), "t1030": i32(h, A_T1030),
+                          "t1010": f32(h, A_T1010), "t1000": i32(h, A_T1000),
+                          "step100c": f32(h, A_STEP100C), "fc8": f32(h, A_FC8),
+                          "g3344": f32(h, A_3344)})
             rows.append(r)
             time.sleep(1.0 / hz)
     finally:
