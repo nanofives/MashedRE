@@ -1,0 +1,19 @@
+K00 regime {'A'}  branch-2 reached in window {1: 0, 2: 0, 3: 0}  fired {1: 0, 2: 0, 3: 0}
+   car 1 (b-regime A) PASS
+   car 2 (b-regime A) FAIL c0_distinct,c1_distinct,steer_distinct,c1_median,abs_steer_median
+   car 3 (b-regime A) PASS
+K01 regime {'B'}  branch-2 reached in window {1: 0, 2: 0, 3: 0}  fired {1: 0, 2: 0, 3: 0}
+K26 regime {'C'}  branch-2 reached in window {1: 0, 2: 0, 3: 0}  fired {1: 0, 2: 0, 3: 0}
+   car 1 (b-regime C) FAIL c0_distinct,c1_distinct,steer_distinct,c1_median,abs_steer_median
+   car 2 (b-regime C) FAIL c0_distinct,c1_distinct,steer_distinct,c1_median,abs_steer_median
+   car 3 (b-regime C) FAIL c0_distinct,c1_distinct,steer_distinct,c1_median,abs_steer_median
+W1 labels {0: {'A'}, 1: {'B'}, 26: {'C'}} HOLDS
+C windows == A windows under B2: True
+B2 K00 windows == default-build K00 windows: True
+K00 gates rows 4072 frames 0..1017 | lt_ran!=0 rows 0 (first frame None) | lt_ret values {'0': 4072} | lt_fire values {'0': 4072}
+K26 gates rows 4072 frames 0..1017 | lt_ran!=0 rows 0 (first frame None) | lt_ret values {'0': 4072} | lt_fire values {'0': 4072}
+control NR_on (no round mode, $B2 set): rows 57592 | lt_ran rows 0 first frame None | lt_fire rows 0 first frame None
+control NR_on car-1 window starts at frame 0, so 220 calls end near frame 219
+original o_t3 car 1: ret148b0 non-zero calls 31, first at call 149 (relative to window start), inside the 220-call window 31
+original o_t3 car 2: ret148b0 non-zero calls 4, first at call 216 (relative to window start), inside the 220-call window 4
+original o_t3 car 3: ret148b0 non-zero calls 29, first at call 180 (relative to window start), inside the 220-call window 29
