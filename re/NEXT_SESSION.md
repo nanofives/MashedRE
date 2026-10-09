@@ -1,5 +1,12 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-09 ((b) scoring MEASURED, decision PENDING): **(b)'s RNG sensitivity is exactly the one-shot difficulty roll `DAT_0089a368`.**
+>
+> Read [`RESULT_BSCORE.md`](../verify/d3_bscore_20261009/RESULT_BSCORE.md). Over 12 ring phases (`MASHED_RING_SKIP`, default build) every car
+> takes 2 outcomes, fully set by the roll: regime A (10/12) passes 2/3 cars, regime B (2/12) passes 0/3. The original has the same
+> 2-regime structure (3 of 4 runs identical; `o_spread3` = regime B by its accel ~102). **User decision owed:** (i) keep, (ii) sweep
+> pass-fraction, (iii) regime-conditioned envelope (recommended), (iv) (iii) + per car.
+
 > ## START HERE 2026-10-09 (U-9201 RESOLVED, partial): **the phase-3 length is the system QPC clock; with a run's clock replayed the port reproduces it (693/690, 742/740) and G-CURVE passes within 1 %.**
 >
 > Read [`RESULT_U9201.md`](../verify/d3_gatefire_20261008/RESULT_U9201.md) §0, §3. The camera sway input `DAT_007f1030` is
