@@ -1,0 +1,6 @@
+G-M1-REG frames=121 exact=121 (grid frames 0)
+G-M1-PASS frames=121 exact=121 callbacks=0 callbacks_without_both_bits(grid only)=0
+G-M1-CB frames_with_callbacks=0 sequence_exact=0 original_callbacks=0
+slot bytes the registrar never wrote (port left sentinel, rows=121): +0x22(1662) +0x23(1662)
+registrar mismatched bytes:
+pass mismatched bytes:

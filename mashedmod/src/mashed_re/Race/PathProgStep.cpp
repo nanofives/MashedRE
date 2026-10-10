@@ -134,7 +134,11 @@ unsigned int PcBits() {
 
 struct PcScope {
     unsigned int old = 0;
-    PcScope() { _controlfp_s(&old, PcBits(), _MCW_PC); }
+    // _controlfp_s returns the control word AFTER the change in its first argument, so the old
+    // value must be read first (mask 0). Before 2026-10-10 this read `old` from the setting call
+    // and the destructor re-applied PC_24, leaving the game thread at PC_24 for the rest of the
+    // run (verify/d3_mode7_20261010/cw_check.txt).
+    PcScope() { _controlfp_s(&old, 0, 0); unsigned int t; _controlfp_s(&t, PcBits(), _MCW_PC); }
     ~PcScope() { unsigned int t; _controlfp_s(&t, old & _MCW_PC, _MCW_PC); }
 };
 

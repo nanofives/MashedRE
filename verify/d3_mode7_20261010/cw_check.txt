@@ -1,0 +1,15 @@
+cw_ctrl: pid=41400 exit=0
+   [cw] frame=0 pc=0x10000 (_PC_24=0x20000 _PC_53=0x10000)
+   [cw] frame=600 pc=0x10000 (_PC_24=0x20000 _PC_53=0x10000)
+   [cw] frame=1200 pc=0x10000 (_PC_24=0x20000 _PC_53=0x10000)
+   [cw] frame=1800 pc=0x10000 (_PC_24=0x20000 _PC_53=0x10000)
+cw_reg: pid=34028 exit=0
+   [cw] frame=0 pc=0x10000 (_PC_24=0x20000 _PC_53=0x10000)
+   [cw] frame=600 pc=0x20000 (_PC_24=0x20000 _PC_53=0x10000)
+   [cw] frame=1200 pc=0x20000 (_PC_24=0x20000 _PC_53=0x10000)
+   [cw] frame=1800 pc=0x20000 (_PC_24=0x20000 _PC_53=0x10000)
+cw_pp: pid=10880 exit=0
+   [cw] frame=0 pc=0x20000 (_PC_24=0x20000 _PC_53=0x10000)
+   [cw] frame=600 pc=0x20000 (_PC_24=0x20000 _PC_53=0x10000)
+   [cw] frame=1200 pc=0x20000 (_PC_24=0x20000 _PC_53=0x10000)
+   [cw] frame=1800 pc=0x20000 (_PC_24=0x20000 _PC_53=0x10000)

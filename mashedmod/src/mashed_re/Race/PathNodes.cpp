@@ -353,7 +353,8 @@ void PathNodes_Build(const Track::World& ai, const char* lap, std::size_t lapLen
     // after D3D9 device creation). MEASURED 2026-10-09 (G-P1): at PC_24 the block is byte-
     // identical on Training and Arctic; at 53 bits 11 node dwords and 10 angles were 1 ULP off.
     unsigned int oldcw = 0;
-    _controlfp_s(&oldcw, _PC_24, _MCW_PC);
+    _controlfp_s(&oldcw, 0, 0);          // read first: the setting call returns the NEW word (cw_check.txt)
+    { unsigned int t; _controlfp_s(&t, _PC_24, _MCW_PC); }
     const int count = static_cast<int>(ai.materials.size());       // world+0x14 (numMaterials)
     CI(0x16240) = count;                                            // FUN_00478660 0x004786xx
     for (int i = 0; i < count; ++i)

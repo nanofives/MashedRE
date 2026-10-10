@@ -86,3 +86,11 @@ Mode 7 (`FUN_00414c30`, car 1) remains the later leg.
 `o_tg1.msd.tgt.csv` (original, 5,490 calls), `o_tg1.msd.aistep.csv`, `p3_replay_pc{24,53}.txt`,
 `run_p3_replay.ps1`, `score_p3.py`, `model_14a70.py`, `COLLATERAL_P3*.txt`, `piv_*.csv`,
 `../d3_gatefire_20261008/P3_{CTRL,PP,LIVE}.*` (`P3_LIVE.tgt3.csv` = per-call trace).
+
+## 7. Correction 2026-10-10 (x87 precision scope)
+
+The `PcScope` in `Ai/AiTargetClosest.cpp` (and P1's `PathNodes.cpp`, P2's `PathProgStep.cpp`) never restored
+PC_53, so `P3_PP` and `P3_LIVE` ran the whole game thread at PC_24 after track load
+(`verify/d3_mode7_20261010/RESULT_M1.md` §3). Re-run on the fixed build: `P3F_LIVE` is byte-identical to
+`P3_LIVE`, and `P3F_PP` first differs from `P3_PP` at frame 1134 with identical (b) windows. Every number in
+§0..§4 stands.

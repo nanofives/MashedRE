@@ -1,0 +1,19 @@
+=== M1F_ON  knobs=[MASHED_REGISTRY] ===
+    pid=2680
+    exit=0  self_exited=True
+    M1F_ON.step.csv  lines=19912  sha8=ae67b13a
+    M1F_ON.gates.csv  lines=55433  sha8=c8317ce2
+    M1F_ON.ptrace.log  lines=27716  sha8=31db9384
+=== P3F_PP  knobs=[MASHED_PATHPROG] ===
+    pid=45844
+    exit=0  self_exited=True
+    P3F_PP.step.csv  lines=17458  sha8=4e250237
+    P3F_PP.gates.csv  lines=55433  sha8=22cceec1
+    P3F_PP.ptrace.log  lines=27716  sha8=dc72ab09
+=== P3F_LIVE  knobs=[MASHED_PATHPROG,MASHED_TGT3,MASHED_TGT3_TRACE=@OUT@\P3F_LIVE.tgt3.csv] ===
+    pid=36180
+    exit=0  self_exited=True
+    P3F_LIVE.step.csv  lines=18919  sha8=fc8c2faf
+    P3F_LIVE.gates.csv  lines=56153  sha8=1fdfe687
+    P3F_LIVE.ptrace.log  lines=28076  sha8=bfd2c387
+H4 DONE

@@ -18,7 +18,7 @@ $LANE = @('MASHED_REFDIST','MASHED_SLOTSTATE_SEED','MASHED_SLOT_PLAYER',
           'MASHED_WIRE_B2','MASHED_U9186_GATES','MASHED_AI_STEPDUMP',
           'MASHED_NO_SLOTSTATE_SEED','MASHED_NO_SLOT_PLAYER','MASHED_GF1',
           'MASHED_PLAYERTRACE','MASHED_SUBSTATE','MASHED_MODE5_RESET','MASHED_SUBSTATE_CD',
-          'MASHED_L1B_INPUTS','MASHED_P3_MEASURE','MASHED_LEG2_TRACE','MASHED_CAM_TICKS_REPLAY','MASHED_NO_WIRE_B2','MASHED_NO_RACEPCT_BRIDGE','MASHED_NO_A364_RESET','MASHED_NO_REFDIST','MASHED_PATHPROG','MASHED_PATHPROG_TRACE','MASHED_PATHPROG_PC','MASHED_TGT3','MASHED_TGT3_TRACE','MASHED_TGT3_PC')
+          'MASHED_L1B_INPUTS','MASHED_P3_MEASURE','MASHED_LEG2_TRACE','MASHED_CAM_TICKS_REPLAY','MASHED_NO_WIRE_B2','MASHED_NO_RACEPCT_BRIDGE','MASHED_NO_A364_RESET','MASHED_NO_REFDIST','MASHED_PATHPROG','MASHED_PATHPROG_TRACE','MASHED_PATHPROG_PC','MASHED_TGT3','MASHED_TGT3_TRACE','MASHED_TGT3_PC','MASHED_REGISTRY','MASHED_REGISTRY_PC')
 
 $B2 = @('MASHED_A364_RESET','MASHED_REFDIST','MASHED_RACEPCT_BRIDGE','MASHED_NO_ELIM','MASHED_WIRE_B2')
 $runs = @(
@@ -63,11 +63,18 @@ $runs = @(
   # D-11072 P3 (verify/d3_modes37_20261009/PREREG_P3.md): CTRL = G-P3-OFF (knob OFF); LIVE = PATHPROG + TGT3 (G-P3-COUNT)
   @{ name = 'P3_CTRL'; knobs = @() },
   @{ name = 'P3_PP';   knobs = @('MASHED_PATHPROG') },   # TGT3 off: must equal P2_LIVE step 4f675870
-  @{ name = 'P3_LIVE'; knobs = @('MASHED_PATHPROG', 'MASHED_TGT3', 'MASHED_TGT3_TRACE=@OUT@\P3_LIVE.tgt3.csv') }
+  @{ name = 'P3_LIVE'; knobs = @('MASHED_PATHPROG', 'MASHED_TGT3', 'MASHED_TGT3_TRACE=@OUT@\P3_LIVE.tgt3.csv') },
+  # mode 7 M1 (verify/d3_mode7_20261010/PREREG_MODE7.md): G-M1-OFF (knob OFF) and G-M1-INERT (knob ON, no registrant): both must equal ae67b13a/c8317ce2/31db9384
+  @{ name = 'M1_CTRL'; knobs = @() },
+  @{ name = 'M1_ON';   knobs = @('MASHED_REGISTRY') },
+  # PcScope restore fix (verify/d3_mode7_20261010/cw_check*.txt): the M1_ON / P3_PP / P3_LIVE arms above ran the game thread at PC_24 after the first scoped call. F = rerun on the fixed build.
+  @{ name = 'M1F_ON';   knobs = @('MASHED_REGISTRY') },
+  @{ name = 'P3F_PP';   knobs = @('MASHED_PATHPROG') },
+  @{ name = 'P3F_LIVE'; knobs = @('MASHED_PATHPROG', 'MASHED_TGT3', 'MASHED_TGT3_TRACE=@OUT@\P3F_LIVE.tgt3.csv') }
 )
 $sel = @($args)   # capture: inside a Where-Object block $args is the block's own
 if ($sel.Count -gt 0) { $runs = $runs | Where-Object { $sel -contains $_.name } }
-else { $runs = $runs | Where-Object { $_.name -notlike 'H4_post*' -and $_.name -ne 'H4_optout' -and $_.name -notlike 'L1A_*' -and $_.name -notlike 'L1B_*' -and $_.name -notlike 'P414*' -and $_.name -notlike 'L2*' -and $_.name -notlike 'F_*' -and $_.name -notlike 'P1_*' -and $_.name -notlike 'P2_*' -and $_.name -notlike 'P3_*' } }
+else { $runs = $runs | Where-Object { $_.name -notlike 'H4_post*' -and $_.name -ne 'H4_optout' -and $_.name -notlike 'L1A_*' -and $_.name -notlike 'L1B_*' -and $_.name -notlike 'P414*' -and $_.name -notlike 'L2*' -and $_.name -notlike 'F_*' -and $_.name -notlike 'P1_*' -and $_.name -notlike 'P2_*' -and $_.name -notlike 'P3_*' -and $_.name -notlike 'M1_*' -and $_.name -notlike 'M1F_*' -and $_.name -notlike 'P3F_*' } }
 
 foreach ($r in $runs) {
   $log = Join-Path $root 'mashed_re.log'

@@ -26,6 +26,7 @@
 #include "../Race/PathNodes.h"    // D-11072 P1: course block (MASHED_PATHPROG)
 #include "../Race/PathProgStep.h" // D-11072 P2: per-frame FUN_00408610 (MASHED_PATHPROG)
 #include "../Ai/AiTargetClosest.h" // D-11072 P3: FUN_00414a70 (MASHED_TGT3)
+#include "../Race/WorldRegistry.h"  // mode 7 M1: world-object registry (MASHED_REGISTRY)
 #include "../Race/SubStateMachine.h"  // D-11073 leg 1b: FUN_0040dbd0 / FUN_004103a0 (MASHED_SUBSTATE)
 #include "../Race/CameraEntries.h"    // D-11073 leg 2: phase-3 camera entries (MASHED_SUBSTATE)
 extern "C" void __cdecl VehicleSeedWritePair(std::uint32_t, std::uint32_t);   // 0x00448700
@@ -495,6 +496,8 @@ bool Ai_BridgeLoad(int course, const char* trackPizPath) {
     RaceAiDifficultyResetTail();
     // [D-11072 P2] FUN_00407a60, which the original's FUN_004111c0 runs at race reset (MASHED_PATHPROG).
     Race::PathProg_RaceInit();
+    // [mode 7 M1] FUN_00484c90, which FUN_004111c0 runs at race reset (MASHED_REGISTRY).
+    Race::Registry_RaceInit();
     Ai::Ai_SetHost(&h);
     return true;
 }
@@ -2195,6 +2198,7 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                     Race::PathNodes_Build(aw, reinterpret_cast<const char*>(lb), ll);
                     Race::PathProg_MaybeReplay();     // [D-11072 P2] G-P2-REPLAY (env-gated)
                     Ai::TargetClosest_MaybeReplay();  // [D-11072 P3] G-P3-REPLAY (env-gated)
+                    Race::Registry_MaybeReplay();     // [mode 7 M1] G-M1-REG / G-M1-PASS (env-gated)
                 }
                 gates_.assign(aw.materials.size(), Gate{});
                 std::vector<int> counts(aw.materials.size(), 0);
@@ -5744,6 +5748,11 @@ void TrackRenderer::UpdateRace(float dt) {
     // [D-11072 P2] FUN_0040da50's FUN_00408610 loop (per-car path progress 0x008a96e8 and
     // race_pct 0x008a96ec), before the AI tick like the bridge below. Default-OFF MASHED_PATHPROG.
     Race::PathProg_FrameTick();
+
+    // [mode 7 M1] FUN_0040fc00's FUN_00485070 (0x0040fd07): pair pass + publish. No registrant
+    // exists yet, so with MASHED_REGISTRY it publishes cc = 0 every frame. Position relative to the
+    // AI tick is an M4 question (PREREG_MODE7.md section 3).
+    Race::Registry_FrameTick();
 
     // [D-11072 bridge write] Mirror the monotone arcpct into the original per-car
     // race_pct slot 0x008a96ec + v*0x30c, behind a default-OFF knob. UpdateRace runs

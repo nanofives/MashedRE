@@ -71,7 +71,11 @@ def gen(spec):
         labels = set(); body = []
         for i in insns:
             if i.address in patch:
-                body.append((i.address, patch[i.address], f"// PATCH (was {i.mnemonic} {i.op_str})"))
+                rep = patch[i.address]
+                reps = rep if isinstance(rep, list) else [rep]   # a list = several instructions
+                for k, r in enumerate(reps):
+                    body.append((i.address if k == 0 else None, r,
+                                 f"// PATCH (was {i.mnemonic} {i.op_str})" if k == 0 else "// PATCH (cont.)"))
                 continue
             if re.search(r"(movs|stos|lods|scas|cmps)[bwd]$", i.mnemonic):
                 body.append((i.address, i.mnemonic, ""))     # MSVC: implicit operands only
@@ -82,9 +86,10 @@ def gen(spec):
         out.append(f'extern "C" __declspec(naked) void {f["name"]}() {{')
         out.append("    __asm {")
         for a, t, c in body:
-            if a in labels:
+            if a is not None and a in labels:
                 out.append(f"    L_{a:x}:")
-            out.append(f"        {t:<48} // {a:08x} {c}".rstrip())
+            tag = f"{a:08x}" if a is not None else "        "
+            out.append(f"        {t:<48} // {tag} {c}".rstrip())
         out.append("    }")
         out.append("}")
         out.append("")

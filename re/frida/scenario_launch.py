@@ -1819,6 +1819,76 @@ function tgProbeArm(limit){
   } catch(e){ return 'ERR ' + e; }
 }
 function tgProbeDrain(){ const r = TG.rows; TG.rows = []; return r; }
+
+// --- REGISTRY probe (mode 7 leg M1, 2026-10-10) --------------------------------
+// FUN_004847d0 entry (grid build, <= 1/frame): c8 0x006e70c8, FUN_00467210(0)+0x20..+0x28 (called
+// through NativeFunction, read-only callee chain FUN_0042b930/FUN_0042f510), DAT_00897ff0..f8.
+// FUN_00485070 entry + leave on every K-th call: cc/c8/d4, slots [0,cc) raw, grid block
+// 0x006cfcb8..0x006dccb4 when c8; at leave d8/cc/d4 and slots [0,d8). Read-only.
+const RG = { armed:false, rows:[], n:0, K:30, limit:400, err:null, lastGrid:null, gridCalls:0, inPass:false, cbs:[], cbTotal:0 };
+function rgProbeArm(k){
+  if (RG.armed) return 'already armed';
+  try {
+    RG.K = k || 30;
+    if (RG.K < 0) RG.limit = 4000;
+    const f467210 = new NativeFunction(ga(0x00467210), 'pointer', ['int'], 'mscdecl');
+    Interceptor.attach(ga(0x004847d0), { onEnter(){
+      try {
+        RG.gridCalls++;
+        const m = f467210(0);
+        const c = ga(0x00897ff0);
+        RG.lastGrid = [ga(0x007f0ff4).readS32(), ga(0x006e70c8).readS32(),
+                       m.add(0x20).readU32(), m.add(0x24).readU32(), m.add(0x28).readU32(),
+                       c.readU32(), c.add(4).readU32(), c.add(8).readU32()];
+      } catch(e){ if (!RG.err) RG.err = 'rgGrid ' + e; }
+    }});
+    // Callback witnesses: the O(N^2) pass FUN_00484f70 sets NO pair bits, so a firing is only visible
+    // at the callback itself. Entry hooks on the callback targets seen in the slots (rare calls).
+    [0x00458920, 0x00486630, 0x0047cd50].forEach(function(t){
+      Interceptor.attach(ga(t), { onEnter(args){
+        try {
+          if (!RG.inPass) return;
+          RG.cbTotal++;
+          const a = (args[0].toUInt32() - 0x006dccb8) / 0x8c, b = (args[1].toUInt32() - 0x006dccb8) / 0x8c;
+          RG.cbs.push(t.toString(16) + ':' + a + ':' + b);
+        } catch(e){ if (!RG.err) RG.err = 'rgCb ' + e; }
+      }});
+    });
+    Interceptor.attach(ga(0x00485070), {
+      onEnter(){
+        this.row = null;
+        RG.inPass = true; RG.cbs = [];
+        try {
+          RG.n++;
+          if (RG.rows.length >= RG.limit || (RG.K > 0 && (RG.n % RG.K) !== 0)) return;
+          const cc = ga(0x006e70cc).readS32(), c8 = ga(0x006e70c8).readS32(), d4 = ga(0x006e70d4).readS32();
+          const n = Math.max(0, Math.min(cc, 300));
+          this.row = [RG.n, ga(0x007f0ff4).readS32(), cc, c8, d4,
+                      RG.lastGrid ? RG.lastGrid.join(';') : '',
+                      n ? hexOf(ga(0x006dccb8), n * 0x8c) : '',
+                      c8 ? hexOf(ga(0x006cfcb8), 0xcffc) : ''];
+        } catch(e){ if (!RG.err) RG.err = 'rgEnter ' + e; }
+      },
+      onLeave(){
+        RG.inPass = false;
+        try {
+          if (!this.row) return;
+          const d8 = ga(0x006e70d8).readS32();
+          const n = Math.max(0, Math.min(d8, 300));
+          this.row.push(d8, ga(0x006e70cc).readS32(), ga(0x006e70d4).readS32(),
+                        n ? hexOf(ga(0x006dccb8), n * 0x8c) : '');
+          // K < 0: dump every frame, keep the frames whose slots changed in the pass (pair bits set)
+          // plus every |K|-th frame as a control.
+          this.row.push(RG.cbs.join('|'));
+          if (RG.K < 0 && RG.cbs.length === 0 && (RG.n % (-RG.K)) !== 0) return;
+          RG.rows.push(this.row);
+        } catch(e){ if (!RG.err) RG.err = 'rgLeave ' + e; }
+      }});
+    RG.armed = true;
+    return 'reg-probe armed (0x4847d0 entry, 0x485070 entry+leave every ' + RG.K + ')';
+  } catch(e){ return 'ERR ' + e; }
+}
+function rgProbeDrain(){ const r = RG.rows; RG.rows = []; return r; }
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
@@ -2569,6 +2639,9 @@ rpc.exports = {
   tgProbeArm: function(l){ return tgProbeArm(l); },
   tgProbeDrain: function(){ return tgProbeDrain(); },
   tgProbeStats: function(){ return JSON.stringify({armed:TG.armed, calls:TG.n, err:TG.err}); },
+  rgProbeArm: function(k){ return rgProbeArm(k); },
+  rgProbeDrain: function(){ return rgProbeDrain(); },
+  rgProbeStats: function(){ return JSON.stringify({armed:RG.armed, calls:RG.n, gridCalls:RG.gridCalls, callbacks:RG.cbTotal, err:RG.err}); },
   wobjProbeDrain: function(){ return wobjProbeDrain(); },
   wobjProbeStats: function(){ return JSON.stringify({armed:WO.armed, calls:WO.n, err:WO.err}); },
   leaderProbeStats: function(){ return JSON.stringify({armed:LP.armed, calls:LP.n,
@@ -3148,6 +3221,9 @@ def main():
     ap.add_argument("--pathprog-probe", type=int, default=0,
                     help="[D-11072 P2] N: entry hook on FUN_00408610, first N calls: inputs + the car's "
                          "0x30c block at entry. Writes <out>.pathprog.csv. Requires --statediff-out.")
+    ap.add_argument("--reg-probe", type=int, default=0,
+                    help="[mode 7 M1] K: world-object registry dumps around FUN_00485070 every K-th "
+                         "frame + grid-build inputs. Writes <out>.reg.tsv. Requires --statediff-out.")
     ap.add_argument("--tgt-probe", type=int, default=0,
                     help="[D-11072 P3] N: entry+leave hook on FUN_00414a70, first N calls: every input "
                          "+ return + cand. Writes <out>.tgt.csv. Requires --statediff-out.")
@@ -3329,6 +3405,8 @@ def main():
                 print("  [statediff]", E.path_prog_probe_arm(args.pathprog_probe))
             if args.tgt_probe:
                 print("  [statediff]", E.tg_probe_arm(args.tgt_probe))
+            if args.reg_probe:
+                print("  [statediff]", E.rg_probe_arm(args.reg_probe))
             if args.statediff_puhook:
                 print("  [statediff]", E.pu_arm(args.pu_plan, args.pu_subj, args.pu_warm,
                                                  args.pu_box))
@@ -3854,6 +3932,17 @@ def main():
                             for r in _pp: f.write(",".join(str(x) for x in r) + chr(10))
                         print(f"  [statediff] pathprog-probe {len(_pp)} rows -> {_pf}")
                     except Exception as _e: print("  [statediff] pathprog drain failed:", _e)
+                if args.reg_probe:
+                    try: print("  [statediff] reg-probe agent:", E.rg_probe_stats())
+                    except Exception as _e: print("  [statediff] reg stats failed:", _e)
+                    try:
+                        _rg = E.rg_probe_drain()
+                        _rf = outp.with_suffix(outp.suffix + ".reg.tsv")
+                        with open(_rf, "w", newline="") as f:
+                            f.write(chr(9).join(["n","frame","cc","c8","d4","grid_in","slots_in","grid","d8","cc_out","d4_out","slots_out","callbacks"]) + chr(10))
+                            for r in _rg: f.write(chr(9).join(str(x) for x in r) + chr(10))
+                        print(f"  [statediff] reg-probe {len(_rg)} rows -> {_rf}")
+                    except Exception as _e: print("  [statediff] reg drain failed:", _e)
                 if args.tgt_probe:
                     try: print("  [statediff] tgt-probe agent:", E.tg_probe_stats())
                     except Exception as _e: print("  [statediff] tgt stats failed:", _e)

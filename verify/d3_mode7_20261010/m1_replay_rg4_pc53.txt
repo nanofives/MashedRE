@@ -1,0 +1,46 @@
+CB frame=43750 target=00458920 a=4 b=2 type_a=00000007 type_b=0000ff02
+CB frame=49050 target=00458920 a=8 b=1 type_a=00000007 type_b=0000ff01
+CB frame=52650 target=00486630 a=9 b=2 type_a=00000011 type_b=0000ff02
+CB frame=52650 target=00486630 a=9 b=2 type_a=00000011 type_b=0000ff02
+CB frame=52650 target=00486630 a=9 b=2 type_a=00000011 type_b=0000ff02
+CB frame=52650 target=00486630 a=9 b=2 type_a=00000011 type_b=0000ff02
+CB frame=52650 target=00486630 a=9 b=2 type_a=00000011 type_b=0000ff02
+CB frame=52650 target=00486630 a=9 b=2 type_a=00000011 type_b=0000ff02
+CB frame=52650 target=00486630 a=9 b=2 type_a=00000011 type_b=0000ff02
+CB frame=52650 target=00486630 a=9 b=2 type_a=00000011 type_b=0000ff02
+CB frame=52650 target=00486630 a=9 b=2 type_a=00000011 type_b=0000ff02
+CB frame=52650 target=00486630 a=9 b=2 type_a=00000011 type_b=0000ff02
+CB frame=52650 target=00486630 a=9 b=2 type_a=00000011 type_b=0000ff02
+CB frame=52650 target=00486630 a=9 b=2 type_a=00000011 type_b=0000ff02
+CB frame=52650 target=00486630 a=9 b=2 type_a=00000011 type_b=0000ff02
+CB frame=52650 target=00486630 a=9 b=2 type_a=00000011 type_b=0000ff02
+CB frame=52650 target=00486630 a=9 b=2 type_a=00000011 type_b=0000ff02
+CB frame=52650 target=00486630 a=9 b=2 type_a=00000011 type_b=0000ff02
+CB frame=52650 target=00486630 a=9 b=2 type_a=00000011 type_b=0000ff02
+CB frame=52650 target=00486630 a=9 b=2 type_a=00000011 type_b=0000ff02
+CB frame=52650 target=00486630 a=9 b=2 type_a=00000011 type_b=0000ff02
+CB frame=52650 target=00486630 a=9 b=2 type_a=00000011 type_b=0000ff02
+CB frame=52650 target=00486630 a=9 b=2 type_a=00000011 type_b=0000ff02
+CB frame=52650 target=00486630 a=9 b=2 type_a=00000011 type_b=0000ff02
+CB frame=52650 target=00486630 a=9 b=2 type_a=00000011 type_b=0000ff02
+CB frame=52650 target=00486630 a=9 b=2 type_a=00000011 type_b=0000ff02
+CB frame=52650 target=00486630 a=9 b=2 type_a=00000011 type_b=0000ff02
+CB frame=52650 target=00486630 a=9 b=2 type_a=00000011 type_b=0000ff02
+CB frame=52650 target=00486630 a=9 b=2 type_a=00000011 type_b=0000ff02
+CB frame=52650 target=00486630 a=9 b=2 type_a=00000011 type_b=0000ff02
+CB frame=52650 target=00486630 a=9 b=2 type_a=00000011 type_b=0000ff02
+CB frame=52650 target=00486630 a=9 b=2 type_a=00000011 type_b=0000ff02
+CB frame=52650 target=00486630 a=9 b=2 type_a=00000011 type_b=0000ff02
+CB frame=52650 target=00486630 a=9 b=2 type_a=00000011 type_b=0000ff02
+CB frame=52650 target=00486630 a=9 b=2 type_a=00000011 type_b=0000ff02
+CB frame=52650 target=00486630 a=9 b=2 type_a=00000011 type_b=0000ff02
+CB frame=52650 target=00486630 a=9 b=2 type_a=00000011 type_b=0000ff02
+CB frame=52650 target=00486630 a=9 b=2 type_a=00000011 type_b=0000ff02
+CB frame=52650 target=00486630 a=9 b=2 type_a=00000011 type_b=0000ff02
+CB frame=52650 target=00486630 a=9 b=2 type_a=00000011 type_b=0000ff02
+G-M1-REG frames=3041 exact=3041 (grid frames 0)
+G-M1-PASS frames=3041 exact=3041 callbacks=3003 callbacks_without_both_bits(grid only)=0
+G-M1-CB frames_with_callbacks=3003 sequence_exact=3003 original_callbacks=3003
+slot bytes the registrar never wrote (port left sentinel, rows=3041): +0x22(48054) +0x23(48054)
+registrar mismatched bytes:
+pass mismatched bytes:
