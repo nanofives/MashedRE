@@ -1,0 +1,300 @@
+[decomp_pc] slot=Mashed_pool0 modes=decomp n=10
+// FUN_00426080 @ 0x00426080  size=6  (MASHED.exe)
+// undefined FUN_00426080(void)
+
+/* [C1 2026-06-01] Pure getter thunk: returns the 4-byte value at global 0x00656ed8. */
+
+undefined4 FUN_00426080(void)
+
+{
+  return DAT_00656ed8;
+}
+
+
+
+// FUN_00426cb0 @ 0x00426cb0  size=13  (MASHED.exe)
+// undefined FUN_00426cb0(void)
+
+/* [C1 2026-06-01] Pure index-to-pointer slot helper: maps slot index to a pointer into a
+   0x4c-byte-stride table rooted at… */
+
+undefined * FUN_00426cb0(int param_1)
+
+{
+  return &DAT_00663664 + param_1 * 0x4c;
+}
+
+
+
+// FUN_00426cc0 @ 0x00426cc0  size=13  (MASHED.exe)
+// undefined FUN_00426cc0(void)
+
+/* [C2 2026-05-18] Body (0x00426cc0..0x00426ccc, 12 bytes): */
+
+undefined * FUN_00426cc0(int param_1)
+
+{
+  return &DAT_00663658 + param_1 * 0x4c;
+}
+
+
+
+// FUN_00426d00 @ 0x00426d00  size=22  (MASHED.exe)
+// undefined FUN_00426d00(void)
+
+/* [C1 2026-05-20] 2D-slot-pointer leaf: `return &DAT_00663670 + param_2 * 0xc + param_1 * 0x4c;`
+   — returns pointer to… */
+
+undefined * FUN_00426d00(int param_1,int param_2)
+
+{
+  return &DAT_00663670 + param_2 * 0xc + param_1 * 0x4c;
+}
+
+
+
+// FUN_00426090 @ 0x00426090  size=6  (MASHED.exe)
+// undefined FUN_00426090(void)
+
+/* [C1 2026-06-01] Pure getter thunk: returns pointer to global at 0x0066ce58. */
+
+undefined * FUN_00426090(void)
+
+{
+  return &DAT_0066ce58;
+}
+
+
+
+// FUN_00407be0 @ 0x00407be0  size=225  (MASHED.exe)
+// undefined FUN_00407be0(void)
+
+/* [C2 2026-06-03] `int FUN_00407be0(int param_1, int param_2)` — **predecessor** of value
+   `param_1` within the group beginning at slot… */
+
+int FUN_00407be0(int param_1,int param_2)
+
+{
+  int iVar1;
+  int iVar2;
+  int iVar3;
+  int iVar4;
+  int *piVar5;
+  
+  iVar2 = FUN_00426090();
+  iVar4 = param_2 * 4;
+  if (*(int *)(iVar4 + iVar2) == -10) {
+    return param_1;
+  }
+  piVar5 = (int *)(iVar2 + 8 + param_2 * 4);
+  iVar3 = param_2;
+  do {
+    iVar1 = *(int *)(iVar4 + iVar2);
+    if (iVar1 == -1) {
+      return 0;
+    }
+    iVar4 = *(int *)(iVar4 + 4 + iVar2);
+    if (iVar4 == 0x100) {
+      if (param_1 == iVar1) {
+        if (iVar3 != param_2) {
+LAB_00407c82:
+          return param_1 + -1;
+        }
+        for (iVar4 = *(int *)(iVar2 + iVar3 * 4); iVar4 != -1; iVar4 = *(int *)(iVar2 + 4 + iVar4))
+        {
+          if (iVar4 == -10) {
+            return -10;
+          }
+          iVar4 = iVar3 * 4;
+          iVar3 = iVar3 + 1;
+        }
+LAB_00407c6f:
+        return *(int *)(iVar2 + -4 + iVar3 * 4);
+      }
+      if (param_1 == *piVar5) {
+        return *(int *)(iVar2 + iVar3 * 4);
+      }
+      iVar3 = iVar3 + 2;
+      piVar5 = piVar5 + 2;
+    }
+    else {
+      if ((iVar1 < param_1) && (param_1 <= iVar4)) goto LAB_00407c82;
+      if (param_1 == iVar1) {
+        if (iVar3 != param_2) {
+          return *(int *)(iVar2 + -8 + iVar3 * 4);
+        }
+        iVar4 = *(int *)(iVar2 + iVar3 * 4);
+        if (iVar4 != -1) {
+          do {
+            if (iVar4 == -10) {
+              return -10;
+            }
+            iVar4 = *(int *)(iVar2 + 4 + iVar3 * 4);
+            iVar3 = iVar3 + 1;
+          } while (iVar4 != -1);
+          return *(int *)(iVar2 + -4 + iVar3 * 4);
+        }
+        goto LAB_00407c6f;
+      }
+      iVar3 = iVar3 + 1;
+      piVar5 = piVar5 + 1;
+    }
+    iVar4 = iVar3 * 4;
+    if (*(int *)(iVar4 + iVar2) == -10) {
+      return param_1;
+    }
+  } while( true );
+}
+
+
+
+// FUN_00407cd0 @ 0x00407cd0  size=157  (MASHED.exe)
+// undefined FUN_00407cd0(void)
+
+/* [C2 2026-06-03] `int FUN_00407cd0(int param_1, int param_2)` — **successor** of value `param_1`
+   within the group beginning at slot… */
+
+int FUN_00407cd0(int param_1,int param_2)
+
+{
+  int *piVar1;
+  int iVar2;
+  int iVar3;
+  int iVar4;
+  int *piVar5;
+  
+  iVar3 = FUN_00426090();
+  iVar4 = param_2 * 4;
+  piVar1 = (int *)(iVar4 + iVar3);
+  if (*piVar1 == -10) {
+    return param_1;
+  }
+  piVar5 = (int *)(iVar3 + 8 + param_2 * 4);
+  do {
+    iVar2 = *(int *)(iVar4 + iVar3);
+    if (iVar2 == -1) {
+      return 0;
+    }
+    iVar4 = *(int *)(iVar4 + 4 + iVar3);
+    if (iVar4 == 0x100) {
+      if (param_1 == iVar2) {
+        return *(int *)(iVar3 + 8 + param_2 * 4);
+      }
+      if (param_1 == *piVar5) {
+LAB_00407d4e:
+        return param_1 + 1;
+      }
+      param_2 = param_2 + 2;
+      piVar5 = piVar5 + 2;
+    }
+    else {
+      if ((iVar2 <= param_1) && (param_1 < iVar4)) goto LAB_00407d4e;
+      if (param_1 == iVar4) {
+        iVar4 = *(int *)(iVar3 + 8 + param_2 * 4);
+        if (iVar4 == -10) {
+          return param_1;
+        }
+        if (iVar4 == -1) {
+          return *piVar1;
+        }
+        return *(int *)(iVar3 + 0xc + param_2 * 4);
+      }
+      param_2 = param_2 + 1;
+      piVar5 = piVar5 + 1;
+    }
+    iVar4 = param_2 * 4;
+    if (*(int *)(iVar4 + iVar3) == -10) {
+      return param_1;
+    }
+  } while( true );
+}
+
+
+
+// FUN_00407d70 @ 0x00407d70  size=60  (MASHED.exe)
+// undefined FUN_00407d70(void)
+
+/* [C2 2026-06-03] `int FUN_00407d70(int param_1)` — **count of distinct values** in the group
+   starting at slot `param_1` of the shared… */
+
+int FUN_00407d70(int param_1)
+
+{
+  int iVar1;
+  int *piVar2;
+  int iVar3;
+  
+  iVar1 = FUN_00426090();
+  piVar2 = (int *)(iVar1 + param_1 * 4);
+  iVar1 = piVar2[1];
+  iVar3 = 0;
+  while ((iVar1 != -10 && (iVar1 = piVar2[1], iVar1 != -1))) {
+    if (iVar1 == 0x100) {
+      iVar3 = iVar3 + 1;
+      piVar2 = piVar2 + 2;
+    }
+    else {
+      iVar3 = iVar3 + (iVar1 - *piVar2);
+      piVar2 = piVar2 + 1;
+    }
+    iVar1 = piVar2[1];
+  }
+  return iVar3 + 1;
+}
+
+
+
+// FUN_00407db0 @ 0x00407db0  size=111  (MASHED.exe)
+// undefined FUN_00407db0(void)
+
+/* [C2 2026-06-03] `int FUN_00407db0(int param_1, int param_2)` — maps value `param_2` to its
+   **group-local cumulative offset** within the… */
+
+int FUN_00407db0(int param_1,int param_2)
+
+{
+  int iVar1;
+  int iVar2;
+  int iVar3;
+  int iVar4;
+  int *piVar5;
+  int iVar6;
+  
+  iVar3 = FUN_00426090();
+  piVar5 = (int *)(iVar3 + param_1 * 4);
+  iVar1 = piVar5[1];
+  iVar6 = 0;
+  iVar4 = param_2;
+  while ((iVar1 != -10 && (iVar1 = piVar5[1], iVar1 != -1))) {
+    if (iVar1 == 0x100) {
+      iVar6 = iVar6 + 1;
+      piVar5 = piVar5 + 2;
+    }
+    else {
+      iVar2 = *piVar5;
+      if (((iVar2 <= param_2) && (param_2 <= iVar1)) && (*(int *)(iVar3 + 4) < iVar2)) {
+        iVar4 = iVar4 + (iVar6 - iVar2);
+      }
+      iVar6 = iVar6 + (iVar1 - iVar2);
+      piVar5 = piVar5 + 1;
+    }
+    iVar1 = piVar5[1];
+  }
+  return iVar4;
+}
+
+
+
+// FUN_00426c00 @ 0x00426c00  size=6  (MASHED.exe)
+// undefined FUN_00426c00(void)
+
+/* [C1 2026-05-23] No parameters. */
+
+undefined4 FUN_00426c00(void)
+
+{
+  return DAT_00644158;
+}
+
+
+

@@ -1,0 +1,43 @@
+�� delegate  Accenture  [OK]  repo=Mashed  cost=$2.532  denials=0  model=claude-opus-5
+
+## 1. Who fills each table
+
+The single documented writer is the track loader `FUN_00426e10` (`re/analysis/track_loader/0x00426e10.md`), which at line 67 calls **`FUN_00478660(&DAT_00657498, DAT_00656ed8)`** — `param_1` = course-object base `0x00657498`, `param_2` = the AI binary blob (`re/analysis/bucket_ai_00452eb0_004c3df0/00478660.md:16`).
+
+`FUN_00478660` (`00478660.md:20-43`):
+- reads `*(int*)(param_2+0x14)` = AI polygon count and stores it to `*(int*)(param_1+0x16240)`; logs `"Number of AI polygons is %d"`. **`0x00657498+0x16240 = 0x0066d6d8`** — i.e. this is the write to the count returned by `FUN_00426bb0` (arithmetic from the two cited offsets).
+- loops output record pointer `puVar5` starting at `param_1+0xc1d8`, **stride `0x13` dwords = 76 = 0x4c**. **`0x00657498+0xc1d8 = 0x00663670`** — the base `FUN_00426d00` indexes. Per polygon it builds colour key `{idx&0xff, idx>>8, 0, 0xff}`, calls `FUN_004b5030(param_2,&key,auStack_60,2)` (colour-key polygon read, `track_loader_d3/004b5030.md:40`), copies 4 verts via `FUN_004b4550(puVar5-3, auStack_174, 4)`, then writes three vertex slots `puVar5[0..2]/[3..5]/[6..8]`. `FUN_004783f0(param_1)` finalizes (heading angles).
+
+So: **the node table file is the AI gate BSP** (`AI*.BSP`, material RED byte = gate index — `formats/track_world_bsp.md:123-131`, `formats/track_anim_data.md:210`), read by colour key, loader RVA `0x00478660`, called from `0x00426e10`.
+
+- `DAT_0066ce58` (`FUN_00426090`, `bucket_0041dc30/0x00426090.md:14`): **UNKNOWN writer.** Sources only say it is "a static .bss buffer populated only during track load" (`re/frida/hooks_registry.py:2493`) and that at Quick-Battle it reads `[0,29,-1]` with group count 30 (`CHANGELOG_pre20260615.md:3240,3242`). No RVA in the sources writes it.
+- `DAT_0066d6e4` (`FUN_00426cf0`): reset to six `0xFFFFFFFF` by **`FUN_00426cd0`** (`track_loader_d2/00426cd0.md:26`), which `FUN_00426e10` calls (`0x00426e10.md:55`). It is filled with AI-gate indices by the **`LAPDATA.LUA` `Lap_Line` handler** (`lap_progress_subsystem_2026-06-16.md:30-34`; Lua C-names registered at `0x00440db1`/`0x00440ded`); LAPDATA is run at `0x00426e10.md:66` (`FUN_0047a0f0("LAPDATA.LUA", &DAT_00657498)`). Exact writer RVA inside the handler: **UNKNOWN**.
+- `DAT_00656ed8` (`FUN_00426080`): **UNKNOWN writer.** Sources show only its *use* as `FUN_00478660`'s blob argument. Plates call it "global int/handle, semantic [UNCERTAIN]".
+
+## 2. One 0x4c node record
+
+From the three getters plus `race_camera.md:195-197`, record base = **`0x00663658`**, stride `0x4c`:
+
+| off | content | citation |
+|---|---|---|
+| `+0x00` | vec3 node **direction** (unit race direction) | `race_camera.md:196`, `ai_update_d6/0x00426cc0.md:14` |
+| `+0x0c` | base used by `FUN_00426cb0` (`&DAT_00663664 + i*0x4c`); first of the 4 verts copied by `FUN_004b4550(puVar5-3,…,4)` | `frontend_c1_to_c2_s4/FUN_00426cb0.md:14`; `00478660.md:32` |
+| `+0x18 + j*0xc` | **corners j** via `FUN_00426d00` (`&DAT_00663670 + j*0xc + i*0x4c`) | `FUN_00426d00.md:13`; `race_camera.md:196-197` |
+| `+0x48..0x4b` | **UNKNOWN** (stride remainder) | — |
+
+[UNCERTAIN] `race_camera.md` places corners j=0..3 at `+0x18..+0x3c`, while `FUN_00478660`'s 4-vert copy starts at `puVar5-3 = +0x0c` and its three sign-selected slots land at `+0x18/+0x24/+0x30`; the two descriptions differ by one 0xc slot. No source resolves this. Live probe only confirms "dir = unit race direction, c0/c3 = lateral corner positions" (`race_camera.md:212-213`). No "position" field is named; the camera port uses corners/dir only.
+
+## 3. Standalone gate ring
+
+`mashedmod/src/mashed_re/D3d9Render/TrackRenderer.cpp:2166-2255`: it scans the track `.piz` for the **COURSE.LUA-declared gate BSP** (`gate_bsp_`, else the `AI*.BSP` name heuristic, `:2174-2177`), parses it with `Track::World::Parse` (`:2182`), sizes `gates_` from `aw.materials.size()` (`:2183`), takes **gate index = material RED byte** (`:2197`), averages the quad verts into `center` (`:2202-2216`) and derives `c0/c3` + `dir` (quad normal oriented toward the next gate) at `:2218-2250`; the ribbon is then handed to `RaceCamera` as `cam_nodes_` (`:2257-2269`). Arc tables `gate_seglen_/gate_cumlen_/total_len_` are built from gate centers at `:5596-5613`; `arcseg/arcprog` advance at `:5694-5707`.
+
+**Training gate count = 30** (`re/analysis/D2_REOPEN_2026-09-29.md:1298`: `training.piz … gates=30`; Arctic 94, `PHYS_SMOKE_2026-06-17.md:27`). Original-side live probe also measured 30 nodes on Training (`race_camera.md:213`).
+
+**Same source file, different records.** Both come from `AI*.BSP` material colour, but the port builds centers/c0/c3/normal from the parsed world (`:2183-2250`), whereas the original builds 0x4c records by colour-key polygon reads with sign-selected vertex slots (`00478660.md:22-43`). The port never executes original code (`Compat/StandaloneRvaThunks.h:7`, cited in `RACE_POSITION_RECON_SCOPE_2026-10-06.md:66-68`), so `0x00663670` is not populated in the standalone.
+
+## 4. Per-triangle node id in `RpMaterial+4`
+
+- The node/polygon id is encoded as the **material colour key `{idx&0xff, idx>>8, 0, 0xff}`** used to fetch each polygon (`00478660.md:24-26,59`), matching the AI.BSP finding "the material's RED byte is the gate index … Arctic rgba=(0,0,0,255),(1,0,0,255),…" (`track_world_bsp.md:126-128`).
+- Separately, `FUN_0045c110` keys collision surface behaviour on **the RwRGBA at `RpMaterial+4`** (`D3_CONTACT_PORT_2026-09-28.md:60,168-171`); the port's `col_mat_` carries a material **index**, `TriSource` reports `matKey = 0`, so that gate is a measured-allow stand-in (`:168-171`, open item `:971-973`).
+- **Does the port load the world at `DAT_00656ed8`?** No. Nothing in `mashedmod/` populates or reads that world; the only reference is the dev-ASI leaf hook `Frontend/GlobalGetters_s4.cpp:160-165` (`GlobalDat00656ed8Get`, reads the original process's global). What that handle points to is **UNKNOWN** in the sources beyond "AI binary blob" as `FUN_00478660`'s `param_2`.
+(raw JSON: C:\Users\maria\AppData\Local\Temp\fleet-delegate-2986048635cd40bca082522deb12fb64.json)

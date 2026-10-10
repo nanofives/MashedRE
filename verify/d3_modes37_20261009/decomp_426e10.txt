@@ -1,0 +1,147 @@
+[decomp_pc] slot=Mashed_pool0 modes=decomp+callers n=3
+// FUN_00426e10 @ 0x00426e10  size=723  (MASHED.exe)
+// undefined FUN_00426e10(void)
+// callers: FUN_0040d020@0x0040d020
+
+/* WARNING: Function: __security_check_cookie replaced with injection: security_check_cookie */
+/* [C1 2026-05-08] Takes one undefined4 param_1 (track index integer). */
+
+void FUN_00426e10(undefined4 param_1)
+
+{
+  char cVar1;
+  undefined4 uVar2;
+  undefined4 uVar3;
+  char *pcVar4;
+  int iVar5;
+  char *pcVar6;
+  undefined4 *puVar7;
+  uint unaff_retaddr;
+  undefined1 local_110;
+  undefined4 local_10f;
+  uint local_c;
+  
+  local_c = DAT_00616038 ^ unaff_retaddr;
+  local_110 = 0;
+  puVar7 = &local_10f;
+  for (iVar5 = 0x3f; iVar5 != 0; iVar5 = iVar5 + -1) {
+    *puVar7 = 0;
+    puVar7 = puVar7 + 1;
+  }
+  *(undefined2 *)puVar7 = 0;
+  *(undefined1 *)((int)puVar7 + 2) = 0;
+  uVar2 = FUN_0041e980(param_1);
+  (**(code **)(DAT_007d3ff8 + 0xcc))(&local_110,"toastart/tracks/");
+  (**(code **)(DAT_007d3ff8 + 0xd4))(&local_110,uVar2);
+  (**(code **)(DAT_007d3ff8 + 0xd4))(&local_110,&DAT_005cd280);
+  puVar7 = (undefined4 *)(DAT_007d3ff8 + 0xcc);
+  uVar3 = FUN_0042a8d0(&local_110);
+  (*(code *)*puVar7)(&DAT_008991e0,uVar3);
+  FUN_00426cd0();
+  FUN_0041e870(param_1);
+  iVar5 = FUN_0041ea90();
+  if (iVar5 != 0) {
+    FUN_0041e970(&DAT_00646e58);
+  }
+  FUN_004987b0("Opening piz file [%s]\n",&DAT_008991e0);
+  FUN_00495280(&DAT_008991e0);
+  pcVar4 = (char *)FUN_004260e0(0,uVar2,"COURSE.LUA",0x5cc4de);
+  pcVar6 = (char *)&DAT_008991e0;
+  do {
+    cVar1 = *pcVar4;
+    pcVar4 = pcVar4 + 1;
+    *pcVar6 = cVar1;
+    pcVar6 = pcVar6 + 1;
+  } while (cVar1 != '\0');
+  FUN_0042a530(&local_110,"COURSE.LUA");
+  FUN_0047a020("COURSE.LUA",&DAT_00644378,&DAT_00644158);
+  FUN_00479330(&DAT_00646e58,&DAT_00644378,&DAT_00644158);
+  FUN_0042a530(&local_110,"LAPDATA.LUA");
+  FUN_0047a0f0("LAPDATA.LUA",&DAT_00657498);
+  FUN_00478660(&DAT_00657498,DAT_00656ed8);
+  FUN_00480340();
+  FUN_004715a0();
+  FUN_00412050();
+  FUN_004952f0();
+  FUN_00409680();
+  iVar5 = FUN_00409710();
+  if (iVar5 == 0) {
+    FUN_004987b0("clearing all line exceptions\n");
+    FUN_00409680();
+  }
+  else {
+    FUN_004987b0("Loaded existing line exceptions\n");
+  }
+  FUN_00423630();
+  iVar5 = FUN_004235b0();
+  if (iVar5 == 0) {
+    pcVar4 = "No AI Data loaded\n";
+  }
+  else {
+    pcVar4 = "Loaded AI data\n";
+  }
+  FUN_004987b0(pcVar4);
+  FUN_00425ab0();
+  FUN_004262f0();
+  FUN_00462950(param_1);
+  FUN_0047c0b0();
+  if (DAT_00657430 != 0) {
+    FUN_0047c0f0(DAT_00657430);
+  }
+  if (DAT_00657450 != DAT_00657454) {
+    uVar2 = FUN_004671a0(0,DAT_00657454);
+    FUN_004c1b10(uVar2);
+    iVar5 = FUN_004671a0(0);
+    *(float *)(iVar5 + 0x88) = DAT_00657450;
+    FUN_004671a0(0);
+    uVar2 = FUN_0042f510(DAT_00657454);
+    FUN_004c1b10(uVar2);
+    iVar5 = FUN_0042f510();
+    *(float *)(iVar5 + 0x88) = DAT_00657450;
+    FUN_0042f510();
+    FUN_004924c0(DAT_0065744c,DAT_0065744d,DAT_0065744e);
+  }
+  iVar5 = FUN_0041e9d0();
+  if (iVar5 != 0) {
+    FUN_0041e8b0(&DAT_00646e58);
+  }
+  FUN_00491780();
+  DAT_0066d704 = 1;
+  uVar2 = FUN_004671a0(0);
+  FUN_004053d0(DAT_00657448,uVar2);
+  return;
+}
+
+
+
+// FUN_00426bc0 @ 0x00426bc0  size=6  (MASHED.exe)
+// undefined FUN_00426bc0(void)
+// callers: FUN_00409290@0x00409290
+
+/* [C1 2026-06-01] Pure getter thunk: returns 4-byte value at global 0x0066d6e0. */
+
+undefined4 FUN_00426bc0(void)
+
+{
+  return DAT_0066d6e0;
+}
+
+
+
+// FUN_00426bd0 @ 0x00426bd0  size=35  (MASHED.exe)
+// undefined FUN_00426bd0(void)
+// callers: FUN_00409290@0x00409290
+
+/* [C1 2026-06-01] Reads a packed 4-byte record from a global table: two 16-bit values at 0x0066d658
+   and 0x0066d65a (low… */
+
+void FUN_00426bd0(int param_1,undefined2 *param_2,undefined2 *param_3)
+
+{
+  *param_2 = *(undefined2 *)(&DAT_0066d658 + param_1 * 4);
+  *param_3 = *(undefined2 *)(&DAT_0066d65a + param_1 * 4);
+  return;
+}
+
+
+
