@@ -1,5 +1,17 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-10 (mode 7 M4 DONE: D-11074's four legs are ported): **next = user decision / U-9219.**
+>
+> Read [`RESULT_M4.md`](../verify/d3_mode7_m4_20261010/RESULT_M4.md). `FUN_00414c30` + `FUN_00414490` run verbatim behind
+> `MASHED_MODE7` (on top of the M3 set), replay 10,777/10,777 at PC_24/PC_53. The original's AI reads the previous frame's
+> complete publish (`cc` 0 at every call) and the exe reproduces it. Knob ON: car 1 mode 7 on pool 0 from frame 97 (25 vs 49),
+> but cars 2/3 also (52/43 vs 0) because the refdist bridge gives them refdist 0 (U-9219); (b) 0/3 under the knob.
+>
+> **Options for the next session:** (1) U-9219: capture the original's per-car refdist per frame and fix the bridge (or port
+> `FUN_00442a60` faithfully), then re-score mode 7 and (b) with the full knob stack; (2) the car-2 opening-pickup miss (0.065)
+> from RESULT_M3; (3) decide whether any of `MASHED_REGISTRY / PICKUPS_ORIG / REG_CARS / REG_CALLBACKS / MODE7` goes default-ON
+> (user decision; the M3b respawn seed is already default). Kill only your own MASHED PIDs; build via PowerShell.
+
 > ## START HERE 2026-10-10 (mode 7 M3 DONE, + M3b): **next = M4, the mode-7 consumer `FUN_00414c30` + `FUN_00414490`.**
 >
 > Read [`RESULT_M3.md`](../verify/d3_mode7_m3_20261010/RESULT_M3.md) (prereg `PREREG_M3.md` incl. §5 addendum). With
