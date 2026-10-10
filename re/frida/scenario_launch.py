@@ -2006,6 +2006,79 @@ function cbProbeArm(){
 }
 function cbProbeDrain(){ const r = CB.rows; CB.rows = []; return r; }
 
+// --- MODE-7 consumer probe (mode 7 leg M4, 2026-10-10) ---------------------------
+// Entry + leave on FUN_00414c30(spline, &look, &cand, v) (first N calls, then every 50th). Entry: frame,
+// v, registry cc 0x006e70cc / d8 0x006e70d8, DAT_0063ba8c, held word 0x0088fc88+v*0xb4, refdist
+// 0x008989b0[v], the FUN_0046d4a0 matrix (0x00881ec8 + v*0xd04 + [0x00881f48+v*0xd04]*0x40, 64 B), the
+// FUN_0046d510 matrix (0x00881ec8 + v*0xd04, 64 B), look and cand (8 B each), slots [0, d8) +0x00..+0x1f,
+// per type-0x0A slot with data: *(data+4) and *(*(data+4)+0x10), the 4 cars' record +0x958 (48 B).
+// Leave: EAX, cand. Nested while live: FUN_00414300 entry (v, look, its target, r bits) + leave (EAX, cand),
+// FUN_00414490 leave (EAX), FUN_0041f030 / FUN_0048a630 entry counts. Read-only.
+const C3 = { armed:false, rows:[], n:0, N:20000, err:null, live:false, sub:[], c41f030:0, c48a630:0 };
+function c3Hex(p, n){ return hexOf(p, n); }
+function c30ProbeArm(n){
+  if (C3.armed) return 'already armed';
+  try {
+    C3.N = n || 20000;
+    Interceptor.attach(ga(0x00414300), {
+      onEnter(args){ this.on = C3.live; if (!this.on) return;
+        try { this.cand = args[5];
+              this.s = '300:' + args[0].toInt32() + ':' + c3Hex(args[1], 8) + ':' + c3Hex(args[2], 8) + ':' +
+                       c3Hex(args[3], 8) + ':' + (args[4].toUInt32() >>> 0).toString(16);
+        } catch(e){ if (!C3.err) C3.err = 'c3_300 ' + e; } },
+      onLeave(ret){ if (!this.on) return;
+        try { C3.sub.push(this.s + ':' + ret.toInt32() + ':' + c3Hex(this.cand, 8)); } catch(e){ if (!C3.err) C3.err = 'c3_300L ' + e; } }});
+    Interceptor.attach(ga(0x00414490), { onEnter(){ this.on = C3.live; },
+      onLeave(ret){ if (this.on) C3.sub.push('490:' + ret.toInt32()); }});
+    Interceptor.attach(ga(0x0041f030), { onEnter(){ if (C3.live) C3.c41f030++; }});
+    Interceptor.attach(ga(0x0048a630), { onEnter(){ if (C3.live) C3.c48a630++; }});
+    Interceptor.attach(ga(0x00414c30), {
+      onEnter(args){
+        this.row = null;
+        try {
+          C3.n++;
+          if (C3.n > C3.N && (C3.n % 50) !== 0) return;
+          const v = args[3].toInt32();
+          const d8 = ga(0x006e70d8).readS32();
+          const n = Math.max(0, Math.min(d8, 300));
+          const rec = 0x00881ec8 + v * 0xd04;
+          const slot = ga(0x00881f48 + v * 0xd04).readU32();
+          const parts = [], objs = [];
+          for (let k = 0; k < n; k++) {
+            const s = ga(0x006dccb8 + k * 0x8c);
+            parts.push(c3Hex(s, 0x20));
+            if (s.add(0x10).readU32() === 0x0a) {
+              const dp = s.add(0x14).readPointer();
+              if (!dp.isNull()) {
+                const o = dp.add(4).readPointer();
+                objs.push(k + ':' + o.toString() + ':' + (o.isNull() ? '' : o.add(0x10).readU32().toString(16)));
+              }
+            }
+          }
+          const slots = parts.join(';');
+          const cars = [0,1,2,3].map(function(c){ return c3Hex(ga(0x008815a0 + c * 0xd04 + 0x958), 12); }).join(';');
+          this.cand = args[2];
+          this.row = [C3.n, ga(0x007f0ff4).readS32(), v, ga(0x006e70cc).readS32(), d8, ga(0x0063ba8c).readS32(),
+                      ga(0x0088fc88 + v * 0xb4).readU32().toString(16), ga(0x008989b0 + v * 4).readU32().toString(16),
+                      c3Hex(ga(rec + slot * 0x40), 0x40), c3Hex(ga(rec), 0x40), c3Hex(args[1], 8), c3Hex(args[2], 8),
+                      slots, objs.join('|'), cars];
+          C3.live = true; C3.sub = []; C3.c41f030 = 0; C3.c48a630 = 0;
+        } catch(e){ if (!C3.err) C3.err = 'c3 ' + e; }
+      },
+      onLeave(ret){
+        try {
+          if (!this.row) return;
+          C3.live = false;
+          this.row.push(ret.toInt32(), c3Hex(this.cand, 8), C3.sub.join('|'), C3.c41f030 + ':' + C3.c48a630);
+          C3.rows.push(this.row);
+        } catch(e){ if (!C3.err) C3.err = 'c3L ' + e; }
+      }});
+    C3.armed = true;
+    return 'c30-probe armed (0x414c30 entry+leave, nested 0x414300 / 0x414490 / 0x41f030 / 0x48a630)';
+  } catch(e){ return 'ERR ' + e; }
+}
+function c30ProbeDrain(){ const r = C3.rows; C3.rows = []; return r; }
+
 // --- PICKUP-POOL probe (mode 7 leg M2a, 2026-10-10) ------------------------------
 // Entry + leave of FUN_00459000 (pickup tick, 1/frame): the first N calls, then every 30th.
 // count 0x0068b9a8, pool 0x0068b198 x 0x7d0, each entry's frame (*(obj+4)) +0x10..+0x4f,
@@ -2808,6 +2881,9 @@ rpc.exports = {
   tgProbeStats: function(){ return JSON.stringify({armed:TG.armed, calls:TG.n, err:TG.err}); },
   rgProbeArm: function(k){ return rgProbeArm(k); },
   cbProbeArm: function(){ return cbProbeArm(); },
+  c30ProbeArm: function(n){ return c30ProbeArm(n); },
+  c30ProbeDrain: function(){ return c30ProbeDrain(); },
+  c30ProbeStats: function(){ return JSON.stringify({armed:C3.armed, calls:C3.n, err:C3.err}); },
   cbProbeDrain: function(){ return cbProbeDrain(); },
   cbProbeStats: function(){ return JSON.stringify({armed:CB.armed, n920:CB.n920, n630:CB.n630, c010_outside:CB.c010out, err:CB.err}); },
   pkProbeArm: function(n){ return pkProbeArm(n); },
@@ -3400,6 +3476,9 @@ def main():
     ap.add_argument("--reg-probe", type=int, default=0,
                     help="[mode 7 M1] K: world-object registry dumps around FUN_00485070 every K-th "
                          "frame + grid-build inputs. Writes <out>.reg.tsv. Requires --statediff-out.")
+    ap.add_argument("--c30-probe", type=int, default=0,
+                    help="[mode 7 M4] N: FUN_00414c30 entry+leave, first N calls then every 50th, with registry, matrices "
+                         "and nested FUN_00414300 calls. Writes <out>.c30.tsv. Requires --statediff-out.")
     ap.add_argument("--cb-probe", action="store_true",
                     help="[mode 7 M3] registry callbacks FUN_00458920 / FUN_00486630 entry+leave, callee "
                          "witnesses, pickup-pool state transitions. Writes <out>.cb.tsv. Requires --statediff-out.")
@@ -3588,6 +3667,8 @@ def main():
                 print("  [statediff]", E.rg_probe_arm(args.reg_probe))
             if args.cb_probe:
                 print("  [statediff]", E.cb_probe_arm())
+            if args.c30_probe:
+                print("  [statediff]", E.c30_probe_arm(args.c30_probe))
             if args.pool_probe:
                 print("  [statediff]", E.pk_probe_arm(args.pool_probe))
             if args.statediff_puhook:
@@ -4137,6 +4218,17 @@ def main():
                             for r in _rg: f.write(chr(9).join(str(x) for x in r) + chr(10))
                         print(f"  [statediff] reg-probe {len(_rg)} rows -> {_rf}")
                     except Exception as _e: print("  [statediff] reg drain failed:", _e)
+                if args.c30_probe:
+                    try: print("  [statediff] c30-probe agent:", E.c30_probe_stats())
+                    except Exception as _e: print("  [statediff] c30 stats failed:", _e)
+                    try:
+                        _c3 = E.c30_probe_drain()
+                        _c3f = outp.with_suffix(outp.suffix + ".c30.tsv")
+                        with open(_c3f, "w", newline="") as f:
+                            f.write(chr(9).join(["n","frame","v","cc","d8","ba8c","held","refdist","mat","mat0","look","cand_in","slots","objs0a","cars958","ret","cand_out","sub","c41f030_c48a630"]) + chr(10))
+                            for r in _c3: f.write(chr(9).join(str(x) for x in r) + chr(10))
+                        print(f"  [statediff] c30-probe {len(_c3)} rows -> {_c3f}")
+                    except Exception as _e: print("  [statediff] c30 drain failed:", _e)
                 if args.cb_probe:
                     try: print("  [statediff] cb-probe agent:", E.cb_probe_stats())
                     except Exception as _e: print("  [statediff] cb stats failed:", _e)
