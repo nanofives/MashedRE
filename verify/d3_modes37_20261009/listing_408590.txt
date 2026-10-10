@@ -1,0 +1,39 @@
+408590 push esi
+408591 mov esi, dword ptr [esp + 8]
+408595 mov eax, dword ptr [esi + 0x20]
+408598 push edi
+408599 push eax
+40859a call 0x426cc0
+40859f fld dword ptr [eax + 4]
+4085a2 mov edi, dword ptr [esp + 0x14]
+4085a6 mov ecx, dword ptr [esi + 0x20]
+4085a9 fmul dword ptr [edi + 0x24]
+4085ac push ecx
+4085ad fstp dword ptr [esp + 0x14]
+4085b1 call 0x426cc0
+4085b6 fld dword ptr [edi + 0x20]
+4085b9 mov edx, dword ptr [esi + 0x20]
+4085bc fmul dword ptr [eax]
+4085be push edx
+4085bf fadd dword ptr [esp + 0x18]
+4085c3 fstp dword ptr [esp + 0x18]
+4085c7 call 0x426cc0
+4085cc fld dword ptr [eax + 8]
+4085cf fmul dword ptr [edi + 0x28]
+4085d2 add esp, 0xc
+4085d5 fadd dword ptr [esp + 0xc]
+4085d9 fst dword ptr [esi + 0xac]
+4085df fcomp dword ptr [0x5d757c]
+4085e5 fnstsw ax
+4085e7 test ah, 5
+4085ea jp 0x4085fc
+4085ec mov eax, dword ptr [esi + 0xa8]
+4085f2 inc eax
+4085f3 pop edi
+4085f4 mov dword ptr [esi + 0xa8], eax
+4085fa pop esi
+4085fb ret 
+4085fc pop edi
+4085fd mov dword ptr [esi + 0xa8], 0
+408607 pop esi
+408608 ret 

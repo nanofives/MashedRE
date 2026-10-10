@@ -1,0 +1,21 @@
+// Mashed RE — D-11072 leg P2: the original's per-frame path progress (FUN_00408610).
+// See PathProgStep.cpp. PREREG: verify/d3_modes37_20261009/PREREG_P2.md.
+#pragma once
+
+namespace mashed_re {
+namespace Race {
+
+// FUN_00407a60: zero the four 0x30c-byte per-car blocks at 0x008a9620 and set +0x28 = -1.
+// The original runs it from FUN_004111c0 at race reset. No-op unless PathProg_Enabled().
+void PathProg_RaceInit();
+
+// FUN_0040da50's FUN_00408610 loop, once per frame, before the AI tick. No-op unless enabled.
+void PathProg_FrameTick();
+
+// G-P2-REPLAY: MASHED_PATHPROG_REPLAY=<pathprog.csv> replays the original's recorded calls
+// through the port step and writes a report to MASHED_PATHPROG_REPLAY_OUT. Called once after
+// the course block is built.
+void PathProg_MaybeReplay();
+
+}  // namespace Race
+}  // namespace mashed_re

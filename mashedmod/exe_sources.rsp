@@ -167,6 +167,7 @@
 "Race\SubStateMachine.cpp"
 "Race\CameraEntries.cpp"
 "Race\PathNodes.cpp"
+"Race\PathProgStep.cpp"
 "Math\RwLutTables.cpp"
 "Util\CameraEntryDispatch.cpp"
 "Ai\AiLeaderTimer.cpp"

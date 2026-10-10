@@ -1,0 +1,43 @@
+{
+  "funcs": [
+    {"name": "PP_408610", "start": "0x00408610", "size": 1073},
+    {"name": "PP_407e20", "start": "0x00407e20", "size": 1895},
+    {"name": "PP_408590", "start": "0x00408590", "size": 121},
+    {"name": "PP_407b00", "start": "0x00407b00", "size": 99},
+    {"name": "PP_407b70", "start": "0x00407b70", "size": 98},
+    {"name": "PP_407be0", "start": "0x00407be0", "size": 225},
+    {"name": "PP_407cd0", "start": "0x00407cd0", "size": 157},
+    {"name": "PP_407d70", "start": "0x00407d70", "size": 60},
+    {"name": "PP_407db0", "start": "0x00407db0", "size": 111},
+    {"name": "PP_426cb0", "start": "0x00426cb0", "size": 13},
+    {"name": "PP_426cc0", "start": "0x00426cc0", "size": 13},
+    {"name": "PP_426d00", "start": "0x00426d00", "size": 22},
+    {"name": "PP_426bb0", "start": "0x00426bb0", "size": 6},
+    {"name": "PP_426090", "start": "0x00426090", "size": 6},
+    {"name": "PP_426cf0", "start": "0x00426cf0", "size": 6},
+    {"name": "PP_4c39b0", "start": "0x004c39b0", "size": 271},
+    {"name": "PP_4c3b90", "start": "0x004c3b90", "size": 87},
+    {"name": "PP_547450", "start": "0x00547450", "size": 1951}
+  ],
+  "calls": {
+    "0x00407b00": "PP_407b00", "0x00407b70": "PP_407b70", "0x00407be0": "PP_407be0",
+    "0x00407cd0": "PP_407cd0", "0x00407d70": "PP_407d70", "0x00407db0": "PP_407db0",
+    "0x00407e20": "PP_407e20", "0x00408590": "PP_408590", "0x00426090": "PP_426090",
+    "0x00426bb0": "PP_426bb0", "0x00426cb0": "PP_426cb0", "0x00426cc0": "PP_426cc0",
+    "0x00426cf0": "PP_426cf0", "0x00426d00": "PP_426d00", "0x004c39b0": "PP_4c39b0",
+    "0x004c3b90": "PP_4c3b90",
+    "0x0046cbb0": "PP_StateGet", "0x004a2c48": "PP_Ftol2", "0x004a2cbd": "PP_Nop",
+    "0x004d7ff0": "PP_ErrPass", "0x004d8480": "PP_Nop", "0x00538c80": "PP_SphereQuery"
+  },
+  "consts": {
+    "0x005cc320": "g_pp_c_5cc320", "0x005cc568": "g_pp_c_5cc568", "0x005cc94c": "g_pp_c_5cc94c",
+    "0x005cca40": "g_pp_c_5cca40", "0x005cca54": "g_pp_c_5cca54", "0x005cca58": "g_pp_c_5cca58",
+    "0x005d757c": "g_pp_c_5d757c"
+  },
+  "patch": {
+    "0x004c39b7": "lea edx, g_pp_lutptrs",
+    "0x004c39be": "mov esi, 0",
+    "0x004c3ba0": "lea ecx, g_pp_lutptrs",
+    "0x004c3ba6": "mov edx, 0"
+  }
+}

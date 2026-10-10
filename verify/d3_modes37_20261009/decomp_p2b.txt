@@ -1,0 +1,244 @@
+[decomp_pc] slot=Mashed_pool0 modes=decomp+callers n=3
+// FUN_00407a20 @ 0x00407a20  size=17  (MASHED.exe)
+// undefined FUN_00407a20(void)
+// callers: FUN_004177b0@0x004177b0, FUN_00471ac0@0x00471ac0, FUN_00471ec0@0x00471ec0
+
+/* [C2 2026-06-03] `undefined4 FUN_00407a20(int param_1)` — row-base getter over the per-AI table
+   at `0x008a9648`. */
+
+undefined4 FUN_00407a20(int param_1)
+
+{
+  return (&DAT_008a9648)[param_1 * 0xc3];
+}
+
+
+
+// FUN_00407a60 @ 0x00407a60  size=40  (MASHED.exe)
+// undefined FUN_00407a60(void)
+// callers: FUN_004111c0@0x004111c0
+
+/* [C1 2026-06-01] `void FUN_00407a60(void)` — zero-initializes a record table and sets a sentinel
+   per record. */
+
+void FUN_00407a60(void)
+
+{
+  int iVar1;
+  undefined4 *puVar2;
+  undefined4 *puVar3;
+  
+  puVar2 = &DAT_008a9648;
+  do {
+    puVar3 = puVar2 + -10;
+    for (iVar1 = 0xc3; iVar1 != 0; iVar1 = iVar1 + -1) {
+      *puVar3 = 0;
+      puVar3 = puVar3 + 1;
+    }
+    *puVar2 = 0xffffffff;
+    puVar2 = puVar2 + 0xc3;
+  } while ((int)puVar2 < 0x8aa278);
+  return;
+}
+
+
+
+// FUN_00547450 @ 0x00547450  size=1951  (MASHED.exe)
+// undefined FUN_00547450(void)
+// callers: FUN_00539ec0@0x00539ec0, FUN_0053bdf0@0x0053bdf0, FUN_0053cd80@0x0053cd80
+
+/* [C1 2026-05-12] `param_1` — sphere: `[center_x, center_y, center_z, radius]` (4 floats;
+   `param_1[3]` = radius or… */
+
+undefined4
+FUN_00547450(float *param_1,float *param_2,float *param_3,float *param_4,float *param_5,
+            float *param_6)
+
+{
+  float fVar1;
+  float fVar2;
+  float fVar3;
+  float fVar4;
+  float fVar5;
+  float fVar6;
+  float fVar7;
+  float fVar8;
+  float fVar9;
+  float fVar10;
+  float fVar11;
+  float fVar12;
+  float fVar13;
+  float fVar14;
+  float fVar15;
+  float fVar16;
+  float fVar17;
+  float fVar18;
+  float fVar19;
+  float fVar20;
+  float fVar21;
+  float fVar22;
+  int iVar23;
+  ushort uVar24;
+  float10 fVar25;
+  
+  fVar13 = *param_2 - *param_1;
+  fVar14 = param_2[1] - param_1[1];
+  fVar15 = param_2[2] - param_1[2];
+  fVar16 = *param_3 - *param_1;
+  fVar17 = param_3[1] - param_1[1];
+  fVar18 = param_3[2] - param_1[2];
+  fVar19 = *param_4 - *param_1;
+  fVar20 = param_4[1] - param_1[1];
+  fVar21 = param_4[2] - param_1[2];
+  iVar23 = ((int)fVar19 >> 0x1f) + ((int)fVar16 >> 0x1f) + ((int)fVar13 >> 0x1f);
+  if (iVar23 == 0) {
+    if (-1 < (int)((uint)(fVar19 - param_1[3]) | (uint)(fVar16 - param_1[3]) |
+                  (uint)(fVar13 - param_1[3]))) {
+      return 0;
+    }
+  }
+  else if ((iVar23 == -3) &&
+          ((int)((uint)(param_1[3] + fVar19) & (uint)(param_1[3] + fVar16) &
+                (uint)(param_1[3] + fVar13)) < 0)) {
+    return 0;
+  }
+  iVar23 = ((int)fVar20 >> 0x1f) + ((int)fVar17 >> 0x1f) + ((int)fVar14 >> 0x1f);
+  if (iVar23 == 0) {
+    if (-1 < (int)((uint)(fVar20 - param_1[3]) | (uint)(fVar17 - param_1[3]) |
+                  (uint)(fVar14 - param_1[3]))) {
+      return 0;
+    }
+  }
+  else if ((iVar23 == -3) &&
+          ((int)((uint)(param_1[3] + fVar20) & (uint)(param_1[3] + fVar17) &
+                (uint)(param_1[3] + fVar14)) < 0)) {
+    return 0;
+  }
+  iVar23 = ((int)fVar21 >> 0x1f) + ((int)fVar18 >> 0x1f) + ((int)fVar15 >> 0x1f);
+  if (iVar23 == 0) {
+    if (-1 < (int)((uint)(fVar21 - param_1[3]) | (uint)(fVar18 - param_1[3]) |
+                  (uint)(fVar15 - param_1[3]))) {
+      return 0;
+    }
+  }
+  else if ((iVar23 == -3) &&
+          ((int)((uint)(param_1[3] + fVar21) & (uint)(param_1[3] + fVar18) &
+                (uint)(param_1[3] + fVar15)) < 0)) {
+    return 0;
+  }
+  fVar1 = *param_3;
+  fVar2 = *param_2;
+  fVar3 = param_3[1];
+  fVar4 = param_2[1];
+  fVar5 = param_3[2];
+  fVar6 = param_2[2];
+  fVar7 = *param_4;
+  fVar8 = *param_2;
+  fVar9 = param_4[1];
+  fVar10 = param_2[1];
+  fVar11 = param_4[2];
+  fVar12 = param_2[2];
+  fVar22 = (fVar11 - fVar12) * (fVar3 - fVar4) - (fVar9 - fVar10) * (fVar5 - fVar6);
+  *param_5 = fVar22;
+  fVar5 = (fVar7 - fVar8) * (fVar5 - fVar6) - (fVar11 - fVar12) * (fVar1 - fVar2);
+  param_5[1] = fVar5;
+  fVar1 = (fVar9 - fVar10) * (fVar1 - fVar2) - (fVar7 - fVar8) * (fVar3 - fVar4);
+  param_5[2] = fVar1;
+  fVar1 = fVar1 * fVar1 + fVar22 * fVar22 + fVar5 * fVar5;
+  if (fVar1 < DAT_005d757c != (fVar1 == DAT_005d757c)) {
+    return 0;
+  }
+  fVar25 = (float10)FUN_004c3b90(fVar1);
+  fVar1 = *param_5;
+  *param_5 = (float)(fVar25 * (float10)fVar1);
+  fVar2 = param_5[1];
+  param_5[1] = (float)((float10)fVar2 * fVar25);
+  fVar3 = param_5[2];
+  param_5[2] = (float)((float10)fVar3 * fVar25);
+  fVar1 = (float)((float10)fVar3 * fVar25 * (float10)fVar15 +
+                 fVar25 * (float10)fVar1 * (float10)fVar13 +
+                 (float10)fVar2 * fVar25 * (float10)fVar14);
+  if (fVar1 < -param_1[3]) {
+    return 0;
+  }
+  if (param_1[3] < fVar1) {
+    return 0;
+  }
+  *param_6 = -fVar1;
+  fVar1 = param_1[3] * param_1[3];
+  fVar2 = fVar15 * fVar15 + fVar13 * fVar13 + fVar14 * fVar14;
+  if (fVar2 < fVar1 != (fVar2 == fVar1)) {
+    return 1;
+  }
+  fVar3 = fVar18 * fVar18 + fVar16 * fVar16 + fVar17 * fVar17;
+  if (fVar3 < fVar1 != (fVar3 == fVar1)) {
+    return 1;
+  }
+  fVar4 = fVar21 * fVar21 + fVar19 * fVar19 + fVar20 * fVar20;
+  if (fVar4 < fVar1 != (fVar4 == fVar1)) {
+    return 1;
+  }
+  if (fVar3 <= fVar2) {
+    if (fVar3 <= fVar4) {
+      if ((fVar3 < fVar18 * fVar15 + fVar16 * fVar13 + fVar17 * fVar14) &&
+         (fVar3 < fVar21 * fVar18 + fVar19 * fVar16 + fVar20 * fVar17)) {
+        return 0;
+      }
+      goto LAB_00547958;
+    }
+LAB_005478b7:
+    if (fVar21 * fVar15 + fVar19 * fVar13 + fVar20 * fVar14 <= fVar4) goto LAB_00547958;
+    fVar2 = fVar21 * fVar18 + fVar19 * fVar16 + fVar20 * fVar17;
+    uVar24 = (ushort)(fVar2 < fVar4) << 8 | (ushort)(fVar2 == fVar4) << 0xe;
+  }
+  else {
+    if (fVar4 < fVar2) goto LAB_005478b7;
+    if (fVar18 * fVar15 + fVar16 * fVar13 + fVar17 * fVar14 <= fVar2) goto LAB_00547958;
+    fVar3 = fVar21 * fVar15 + fVar19 * fVar13 + fVar20 * fVar14;
+    uVar24 = (ushort)(fVar3 < fVar2) << 8 | (ushort)(fVar3 == fVar2) << 0xe;
+  }
+  if (uVar24 == 0) {
+    return 0;
+  }
+LAB_00547958:
+  fVar2 = fVar16 - fVar13;
+  fVar4 = fVar17 - fVar14;
+  fVar5 = fVar18 - fVar15;
+  fVar3 = (fVar5 * fVar15 + fVar2 * fVar13 + fVar14 * fVar4) /
+          (fVar5 * fVar5 + fVar2 * fVar2 + fVar4 * fVar4);
+  fVar6 = fVar13 - fVar2 * fVar3;
+  fVar2 = fVar14 - fVar4 * fVar3;
+  fVar3 = fVar15 - fVar5 * fVar3;
+  fVar4 = fVar3 * fVar3 + fVar6 * fVar6 + fVar2 * fVar2;
+  if ((fVar1 < fVar4) && (fVar4 < fVar3 * fVar21 + fVar6 * fVar19 + fVar2 * fVar20)) {
+    return 0;
+  }
+  fVar2 = fVar19 - fVar16;
+  fVar4 = fVar20 - fVar17;
+  fVar5 = fVar21 - fVar18;
+  fVar3 = (fVar5 * fVar18 + fVar2 * fVar16 + fVar17 * fVar4) /
+          (fVar5 * fVar5 + fVar2 * fVar2 + fVar4 * fVar4);
+  fVar6 = fVar16 - fVar2 * fVar3;
+  fVar2 = fVar17 - fVar4 * fVar3;
+  fVar3 = fVar18 - fVar5 * fVar3;
+  fVar4 = fVar3 * fVar3 + fVar6 * fVar6 + fVar2 * fVar2;
+  if ((fVar1 < fVar4) && (fVar4 < fVar3 * fVar15 + fVar6 * fVar13 + fVar2 * fVar14)) {
+    return 0;
+  }
+  fVar13 = fVar13 - fVar19;
+  fVar14 = fVar14 - fVar20;
+  fVar15 = fVar15 - fVar21;
+  fVar2 = (fVar15 * fVar21 + fVar13 * fVar19 + fVar20 * fVar14) /
+          (fVar15 * fVar15 + fVar13 * fVar13 + fVar14 * fVar14);
+  fVar19 = fVar19 - fVar13 * fVar2;
+  fVar20 = fVar20 - fVar14 * fVar2;
+  fVar21 = fVar21 - fVar15 * fVar2;
+  fVar13 = fVar21 * fVar21 + fVar19 * fVar19 + fVar20 * fVar20;
+  if ((fVar1 < fVar13) && (fVar13 < fVar21 * fVar18 + fVar19 * fVar16 + fVar20 * fVar17)) {
+    return 0;
+  }
+  return 1;
+}
+
+
+

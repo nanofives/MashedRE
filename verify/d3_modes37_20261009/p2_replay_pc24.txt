@@ -1,0 +1,1 @@
+G-P2-REPLAY pairs=11996 exact=11996 mismatched=0 pc=24

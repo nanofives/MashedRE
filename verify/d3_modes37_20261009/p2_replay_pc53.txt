@@ -1,0 +1,32 @@
+MISMATCH row 1 v=1 first_off=+0x0cc port=42c62f47 orig=42c62f46
+MISMATCH row 2 v=2 first_off=+0x0e4 port=3f336b4f orig=3f336b4e
+MISMATCH row 5 v=1 first_off=+0x0cc port=42c62f47 orig=42c62f46
+MISMATCH row 6 v=2 first_off=+0x0e4 port=3f336b4f orig=3f336b4e
+MISMATCH row 9 v=1 first_off=+0x0cc port=42c62f47 orig=42c62f46
+MISMATCH row 10 v=2 first_off=+0x0e4 port=3f336b4f orig=3f336b4e
+MISMATCH row 13 v=1 first_off=+0x0cc port=42c62f47 orig=42c62f46
+MISMATCH row 14 v=2 first_off=+0x0e4 port=3f336b4f orig=3f336b4e
+MISMATCH row 17 v=1 first_off=+0x0cc port=42c62f47 orig=42c62f46
+MISMATCH row 18 v=2 first_off=+0x0e4 port=3f336b4f orig=3f336b4e
+MISMATCH row 21 v=1 first_off=+0x0cc port=42c62f47 orig=42c62f46
+MISMATCH row 22 v=2 first_off=+0x0e4 port=3f336b4f orig=3f336b4e
+MISMATCH row 25 v=1 first_off=+0x0cc port=42c62f47 orig=42c62f46
+MISMATCH row 26 v=2 first_off=+0x0e4 port=3f336b4f orig=3f336b4e
+MISMATCH row 29 v=1 first_off=+0x0cc port=42c62f47 orig=42c62f46
+MISMATCH row 30 v=2 first_off=+0x0e4 port=3f336b4f orig=3f336b4e
+MISMATCH row 33 v=1 first_off=+0x0cc port=42c62f47 orig=42c62f46
+MISMATCH row 34 v=2 first_off=+0x0e4 port=3f336b4f orig=3f336b4e
+MISMATCH row 37 v=1 first_off=+0x0cc port=42c62f47 orig=42c62f46
+MISMATCH row 38 v=2 first_off=+0x0e4 port=3f336b4f orig=3f336b4e
+G-P2-REPLAY pairs=11996 exact=3460 mismatched=8536 pc=53
+  off +0x000: any=4 first=4
+  off +0x0ac: any=2752 first=2751
+  off +0x0bc: any=1939 first=204
+  off +0x0c0: any=1919 first=10
+  off +0x0c4: any=21 first=14
+  off +0x0c8: any=142 first=87
+  off +0x0cc: any=1193 first=1018
+  off +0x0e0: any=4085 first=1537
+  off +0x0e4: any=4928 first=2843
+  off +0x0e8: any=2065 first=39
+  off +0x0ec: any=3854 first=29

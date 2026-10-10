@@ -1,0 +1,578 @@
+407e20 sub esp, 0x34
+407e23 push ebx
+407e24 push ebp
+407e25 mov ebp, dword ptr [esp + 0x44]
+407e29 push esi
+407e2a push edi
+407e2b push ebp
+407e2c call 0x426cb0
+407e31 push ebp
+407e32 mov edi, eax
+407e34 call 0x426cc0
+407e39 mov esi, dword ptr [esp + 0x5c]
+407e3d fld dword ptr [esi]
+407e3f add esp, 8
+407e42 fsub dword ptr [edi]
+407e44 fstp dword ptr [esp + 0x2c]
+407e48 fld dword ptr [esi + 4]
+407e4b fsub dword ptr [edi + 4]
+407e4e fstp dword ptr [esp + 0x30]
+407e52 fld dword ptr [esi + 8]
+407e55 fsub dword ptr [edi + 8]
+407e58 fstp dword ptr [esp + 0x34]
+407e5c fld dword ptr [eax + 8]
+407e5f fmul dword ptr [esp + 0x34]
+407e63 fld dword ptr [eax + 4]
+407e66 fmul dword ptr [esp + 0x30]
+407e6a faddp st(1)
+407e6c fld dword ptr [esp + 0x2c]
+407e70 fmul dword ptr [eax]
+407e72 faddp st(1)
+407e74 fst dword ptr [esp + 0x54]
+407e78 fcomp dword ptr [0x5d757c]
+407e7e fnstsw ax
+407e80 test ah, 0x41
+407e83 jp 0x407f66
+407e89 test ebp, ebp
+407e8b jne 0x407ec9
+407e8d mov eax, dword ptr [esp + 0x50]
+407e91 test eax, eax
+407e93 jne 0x407ec9
+407e95 push ebp
+407e96 push ebp
+407e97 call 0x407be0
+407e9c add esp, 8
+407e9f cmp eax, -0xa
+407ea2 jne 0x407ec9
+407ea4 mov ebx, dword ptr [esp + 0x58]
+407ea8 fld dword ptr [0x5d757c]
+407eae xor eax, eax
+407eb0 mov dword ptr [esp + 0x1c], ebp
+407eb4 mov dword ptr [ebx + 0x20], eax
+407eb7 mov dword ptr [ebx + 0x24], eax
+407eba mov dword ptr [ebx + 0x18], eax
+407ebd mov dword ptr [ebx + 0x1c], eax
+407ec0 mov dword ptr [esp + 0x18], eax
+407ec4 jmp 0x408528
+407ec9 mov edi, ebp
+407ecb xor ebp, ebp
+407ecd mov dword ptr [esp + 0x4c], ebp
+407ed1 mov eax, dword ptr [esp + 0x50]
+407ed5 push eax
+407ed6 push edi
+407ed7 call 0x407be0
+407edc fld dword ptr [esp + 0x5c]
+407ee0 mov edi, eax
+407ee2 fchs 
+407ee4 push edi
+407ee5 fstp dword ptr [esp + 0x24]
+407ee9 call 0x426cb0
+407eee push edi
+407eef mov ebx, eax
+407ef1 call 0x426cc0
+407ef6 fld dword ptr [esi]
+407ef8 fsub dword ptr [ebx]
+407efa add esp, 0x10
+407efd fstp dword ptr [esp + 0x2c]
+407f01 fld dword ptr [esi + 4]
+407f04 fsub dword ptr [ebx + 4]
+407f07 fstp dword ptr [esp + 0x30]
+407f0b fld dword ptr [esi + 8]
+407f0e fsub dword ptr [ebx + 8]
+407f11 fstp dword ptr [esp + 0x34]
+407f15 fld dword ptr [eax + 8]
+407f18 fmul dword ptr [esp + 0x34]
+407f1c fld dword ptr [eax + 4]
+407f1f fmul dword ptr [esp + 0x30]
+407f23 faddp st(1)
+407f25 fld dword ptr [esp + 0x2c]
+407f29 fmul dword ptr [eax]
+407f2b faddp st(1)
+407f2d fst dword ptr [esp + 0x54]
+407f31 fcomp dword ptr [0x5d757c]
+407f37 fnstsw ax
+407f39 test ah, 1
+407f3c jne 0x407f43
+407f3e mov ebp, 1
+407f43 mov eax, dword ptr [esp + 0x4c]
+407f47 inc eax
+407f48 cmp eax, 0xa
+407f4b mov dword ptr [esp + 0x4c], eax
+407f4f jg 0x407f59
+407f51 test ebp, ebp
+407f53 je 0x407ed1
+407f59 fld dword ptr [esp + 0x18]
+407f5d mov dword ptr [esp + 0x10], edi
+407f61 jmp 0x40805d
+407f66 mov ebx, dword ptr [esp + 0x50]
+407f6a xor eax, eax
+407f6c push ebx
+407f6d push ebp
+407f6e mov dword ptr [esp + 0x30], eax
+407f72 mov dword ptr [esp + 0x54], eax
+407f76 call 0x407be0
+407f7b mov edi, eax
+407f7d add esp, 8
+407f80 cmp edi, -0xa
+407f83 mov dword ptr [esp + 0x10], edi
+407f87 jne 0x407f8d
+407f89 mov edi, ebp
+407f8b jmp 0x407fa9
+407f8d mov eax, dword ptr [esp + 0x28]
+407f91 test eax, eax
+407f93 jne 0x408057
+407f99 mov ebx, dword ptr [esp + 0x50]
+407f9d push ebx
+407f9e push edi
+407f9f call 0x407cd0
+407fa4 add esp, 8
+407fa7 mov edi, eax
+407fa9 push ebx
+407faa push edi
+407fab mov dword ptr [esp + 0x18], edi
+407faf call 0x407cd0
+407fb4 mov ebp, eax
+407fb6 add esp, 8
+407fb9 cmp ebp, 0x200
+407fbf jl 0x407fce
+407fc1 push 0x5cca44
+407fc6 call 0x4a2cbd
+407fcb add esp, 4
+407fce push ebp
+407fcf call 0x426cb0
+407fd4 push ebp
+407fd5 mov ebx, eax
+407fd7 call 0x426cc0
+407fdc fld dword ptr [esi]
+407fde fsub dword ptr [ebx]
+407fe0 add esp, 8
+407fe3 fstp dword ptr [esp + 0x2c]
+407fe7 fld dword ptr [esi + 4]
+407fea fsub dword ptr [ebx + 4]
+407fed fstp dword ptr [esp + 0x30]
+407ff1 fld dword ptr [esi + 8]
+407ff4 fsub dword ptr [ebx + 8]
+407ff7 fstp dword ptr [esp + 0x34]
+407ffb fld dword ptr [eax + 8]
+407ffe fmul dword ptr [esp + 0x34]
+408002 fld dword ptr [eax + 4]
+408005 fmul dword ptr [esp + 0x30]
+408009 faddp st(1)
+40800b fld dword ptr [esp + 0x2c]
+40800f fmul dword ptr [eax]
+408011 faddp st(1)
+408013 fst dword ptr [esp + 0x18]
+408017 fcomp dword ptr [0x5d757c]
+40801d fnstsw ax
+40801f test ah, 0x41
+408022 jp 0x40802e
+408024 mov dword ptr [esp + 0x28], 1
+40802c jmp 0x408038
+40802e fld dword ptr [esp + 0x18]
+408032 fchs 
+408034 fstp dword ptr [esp + 0x54]
+408038 mov eax, dword ptr [esp + 0x4c]
+40803c inc eax
+40803d cmp eax, 0xa
+408040 mov dword ptr [esp + 0x4c], eax
+408044 jle 0x407f8d
+40804a mov dword ptr [esp + 0x28], 1
+408052 jmp 0x407f8d
+408057 fld dword ptr [esp + 0x18]
+40805b fchs 
+40805d fld dword ptr [esp + 0x54]
+408061 mov dword ptr [esp + 0x4c], edi
+408065 fcomp dword ptr [0x5d757c]
+40806b fnstsw ax
+40806d test ah, 5
+408070 jp 0x40807c
+408072 fld dword ptr [esp + 0x54]
+408076 fchs 
+408078 fstp dword ptr [esp + 0x54]
+40807c fcom dword ptr [0x5d757c]
+408082 fnstsw ax
+408084 test ah, 5
+408087 jp 0x40808b
+408089 fchs 
+40808b fadd dword ptr [esp + 0x54]
+40808f mov ebx, dword ptr [esp + 0x50]
+408093 push ebx
+408094 fdivr dword ptr [esp + 0x58]
+408098 fiadd dword ptr [esp + 0x14]
+40809c fstp dword ptr [esp + 0x20]
+4080a0 call 0x407d70
+4080a5 mov dword ptr [esp + 0x58], eax
+4080a9 fild dword ptr [esp + 0x58]
+4080ad add esp, 4
+4080b0 fcomp dword ptr [esp + 0x1c]
+4080b4 fnstsw ax
+4080b6 test ah, 0x41
+4080b9 jp 0x4080d4
+4080bb push ebx
+4080bc call 0x407d70
+4080c1 mov dword ptr [esp + 0x58], eax
+4080c5 fild dword ptr [esp + 0x58]
+4080c9 add esp, 4
+4080cc fsubr dword ptr [esp + 0x1c]
+4080d0 fstp dword ptr [esp + 0x1c]
+4080d4 push ebx
+4080d5 push edi
+4080d6 mov dword ptr [esp + 0x1c], 0
+4080de mov dword ptr [esp + 0x20], 1
+4080e6 call 0x407cd0
+4080eb mov ecx, dword ptr [esp + 0x58]
+4080ef mov ebp, eax
+4080f1 push ecx
+4080f2 push ebp
+4080f3 call 0x407cd0
+4080f8 push edi
+4080f9 mov dword ptr [esp + 0x34], eax
+4080fd call 0x426cb0
+408102 mov edx, dword ptr [eax]
+408104 mov eax, dword ptr [eax + 8]
+408107 push ebp
+408108 mov dword ptr [esp + 0x6c], edx
+40810c mov dword ptr [esp + 0x28], eax
+408110 call 0x426cb0
+408115 mov ecx, dword ptr [eax]
+408117 mov edx, dword ptr [eax + 8]
+40811a mov dword ptr [esp + 0x40], ecx
+40811e fld dword ptr [esp + 0x40]
+408122 mov dword ptr [esp + 0x3c], edx
+408126 fsub dword ptr [esp + 0x6c]
+40812a lea eax, [esp + 0x44]
+40812e push eax
+40812f lea ecx, [esp + 0x54]
+408133 fstp dword ptr [esp + 0x50]
+408137 push ecx
+408138 fld dword ptr [esp + 0x44]
+40813c mov dword ptr [esp + 0x50], 0
+408144 fsub dword ptr [esp + 0x30]
+408148 fchs 
+40814a fstp dword ptr [esp + 0x4c]
+40814e call 0x4c39b0
+408153 fstp st(0)
+408155 mov ebx, dword ptr [esp + 0x78]
+408159 fld dword ptr [esi]
+40815b push ebp
+40815c fsub dword ptr [esp + 0x78]
+408160 fstp dword ptr [esp + 0x50]
+408164 fld dword ptr [esi + 8]
+408167 fsub dword ptr [esp + 0x34]
+40816b fstp dword ptr [esp + 0x58]
+40816f fld dword ptr [esp + 0x64]
+408173 fmul dword ptr [esp + 0x58]
+408177 fld dword ptr [esp + 0x5c]
+40817b fmul dword ptr [esp + 0x50]
+40817f faddp st(1)
+408181 fstp dword ptr [ebx + 0x20]
+408184 call 0x426cb0
+408189 mov edx, dword ptr [esp + 0x44]
+40818d push edx
+40818e call 0x426cb0
+408193 fld dword ptr [esp + 0x50]
+408197 mov ecx, dword ptr [eax]
+408199 mov edx, dword ptr [eax + 8]
+40819c mov dword ptr [esp + 0x7c], ecx
+4081a0 fsub dword ptr [esp + 0x7c]
+4081a4 mov dword ptr [esp + 0x38], edx
+4081a8 lea eax, [esp + 0x54]
+4081ac push eax
+4081ad fstp dword ptr [esp + 0x60]
+4081b1 lea ecx, [esp + 0x64]
+4081b5 fld dword ptr [esp + 0x50]
+4081b9 push ecx
+4081ba fsub dword ptr [esp + 0x40]
+4081be mov dword ptr [esp + 0x60], 0
+4081c6 fchs 
+4081c8 fstp dword ptr [esp + 0x5c]
+4081cc call 0x4c39b0
+4081d1 fstp st(0)
+4081d3 fld dword ptr [esi]
+4081d5 fsub dword ptr [esp + 0x84]
+4081dc fstp dword ptr [esp + 0x5c]
+4081e0 fld dword ptr [esi + 8]
+4081e3 push 2
+4081e5 fsub dword ptr [esp + 0x44]
+4081e9 push edi
+4081ea fstp dword ptr [esp + 0x6c]
+4081ee fld dword ptr [esp + 0x78]
+4081f2 fmul dword ptr [esp + 0x6c]
+4081f6 fld dword ptr [esp + 0x70]
+4081fa fmul dword ptr [esp + 0x64]
+4081fe faddp st(1)
+408200 fstp dword ptr [ebx + 0x24]
+408203 call 0x426d00
+408208 mov edx, dword ptr [eax]
+40820a mov eax, dword ptr [eax + 8]
+40820d push 2
+40820f push ebp
+408210 mov dword ptr [esp + 0x94], edx
+408217 mov dword ptr [esp + 0x50], eax
+40821b call 0x426d00
+408220 fld dword ptr [eax + 8]
+408223 fld dword ptr [eax]
+408225 add esp, 0x40
+408228 fsub dword ptr [esp + 0x54]
+40822c lea ecx, [esp + 0x2c]
+408230 push ecx
+408231 lea edx, [esp + 0x3c]
+408235 fstp dword ptr [esp + 0x38]
+408239 push edx
+40823a mov dword ptr [esp + 0x38], 0
+408242 fsub dword ptr [esp + 0x18]
+408246 fchs 
+408248 fstp dword ptr [esp + 0x34]
+40824c call 0x4c39b0
+408251 fstp st(0)
+408253 add esp, 8
+408256 fld dword ptr [esi]
+408258 fsub dword ptr [esp + 0x54]
+40825c fstp dword ptr [esp + 0x2c]
+408260 fld dword ptr [esi + 8]
+408263 fsub dword ptr [esp + 0x10]
+408267 fstp dword ptr [esp + 0x34]
+40826b fld dword ptr [esp + 0x40]
+40826f fmul dword ptr [esp + 0x34]
+408273 fld dword ptr [esp + 0x38]
+408277 fmul dword ptr [esp + 0x2c]
+40827b faddp st(1)
+40827d fcom dword ptr [esp + 0x5c]
+408281 fst dword ptr [ebx + 0x18]
+408284 fnstsw ax
+408286 test ah, 5
+408289 jp 0x40829d
+40828b fsub dword ptr [esp + 0x5c]
+40828f mov dword ptr [esp + 0x18], 2
+408297 fstp dword ptr [esp + 0x14]
+40829b jmp 0x40829f
+40829d fstp st(0)
+40829f push 0
+4082a1 push edi
+4082a2 call 0x426d00
+4082a7 mov ecx, dword ptr [eax]
+4082a9 mov edx, dword ptr [eax + 8]
+4082ac push 0
+4082ae push ebp
+4082af mov dword ptr [esp + 0x64], ecx
+4082b3 mov dword ptr [esp + 0x20], edx
+4082b7 call 0x426d00
+4082bc fld dword ptr [eax + 8]
+4082bf fld dword ptr [eax]
+4082c1 lea eax, [esp + 0x3c]
+4082c5 fsub dword ptr [esp + 0x64]
+4082c9 push eax
+4082ca lea ecx, [esp + 0x4c]
+4082ce push ecx
+4082cf fstp dword ptr [esp + 0x4c]
+4082d3 fsub dword ptr [esp + 0x28]
+4082d7 fchs 
+4082d9 fstp dword ptr [esp + 0x44]
+4082dd call 0x4c39b0
+4082e2 fstp st(0)
+4082e4 add esp, 0x18
+4082e7 fld dword ptr [esp + 0x54]
+4082eb fsub dword ptr [esi]
+4082ed fstp dword ptr [esp + 0x2c]
+4082f1 fld dword ptr [esp + 0x10]
+4082f5 fsub dword ptr [esi + 8]
+4082f8 fstp dword ptr [esp + 0x34]
+4082fc fld dword ptr [esp + 0x40]
+408300 fmul dword ptr [esp + 0x34]
+408304 fld dword ptr [esp + 0x38]
+408308 fmul dword ptr [esp + 0x2c]
+40830c faddp st(1)
+40830e fcom dword ptr [esp + 0x5c]
+408312 fst dword ptr [ebx + 0x1c]
+408315 fnstsw ax
+408317 test ah, 5
+40831a jp 0x40832e
+40831c fsub dword ptr [esp + 0x5c]
+408320 mov dword ptr [esp + 0x18], 3
+408328 fstp dword ptr [esp + 0x14]
+40832c jmp 0x408330
+40832e fstp st(0)
+408330 push edi
+408331 call 0x426cc0
+408336 mov edx, dword ptr [eax]
+408338 mov ecx, dword ptr [eax + 4]
+40833b mov dword ptr [esp + 0x28], edx
+40833f mov edx, dword ptr [eax + 8]
+408342 push 0
+408344 push edi
+408345 mov dword ptr [esp + 0x34], ecx
+408349 mov dword ptr [esp + 0x2c], edx
+40834d call 0x426d00
+408352 mov ecx, dword ptr [eax]
+408354 mov edx, dword ptr [eax + 4]
+408357 mov eax, dword ptr [eax + 8]
+40835a push 3
+40835c push edi
+40835d mov dword ptr [esp + 0x68], ecx
+408361 mov dword ptr [esp + 0x6c], edx
+408365 mov dword ptr [esp + 0x24], eax
+408369 call 0x426d00
+40836e fld dword ptr [eax + 4]
+408371 fld dword ptr [eax + 8]
+408374 add esp, 0x14
+408377 fld dword ptr [eax]
+408379 fsub dword ptr [esp + 0x54]
+40837d fstp dword ptr [esp + 0x2c]
+408381 fxch st(1)
+408383 fsub dword ptr [esp + 0x58]
+408387 fstp dword ptr [esp + 0x30]
+40838b fsub dword ptr [esp + 0x10]
+40838f fld dword ptr [esp + 0x28]
+408393 fmul st(1)
+408395 fld dword ptr [esp + 0x20]
+408399 fmul dword ptr [esp + 0x30]
+40839d fsubp st(1)
+40839f fstp dword ptr [esp + 0x38]
+4083a3 fld dword ptr [esp + 0x20]
+4083a7 fmul dword ptr [esp + 0x2c]
+4083ab fld dword ptr [esp + 0x24]
+4083af fmul st(2)
+4083b1 fsubp st(1)
+4083b3 fstp dword ptr [esp + 0x3c]
+4083b7 fstp st(0)
+4083b9 fld dword ptr [esp + 0x24]
+4083bd fmul dword ptr [esp + 0x30]
+4083c1 fld dword ptr [esp + 0x28]
+4083c5 fmul dword ptr [esp + 0x2c]
+4083c9 fsubp st(1)
+4083cb fstp dword ptr [esp + 0x40]
+4083cf fld dword ptr [esi]
+4083d1 fsub dword ptr [esp + 0x54]
+4083d5 fstp dword ptr [esp + 0x2c]
+4083d9 fld dword ptr [esi + 4]
+4083dc fsub dword ptr [esp + 0x58]
+4083e0 fstp dword ptr [esp + 0x30]
+4083e4 fld dword ptr [esi + 8]
+4083e7 fsub dword ptr [esp + 0x10]
+4083eb fstp dword ptr [esp + 0x34]
+4083ef fld dword ptr [esp + 0x3c]
+4083f3 fmul dword ptr [esp + 0x30]
+4083f7 fld dword ptr [esp + 0x40]
+4083fb fmul dword ptr [esp + 0x34]
+4083ff faddp st(1)
+408401 fld dword ptr [esp + 0x38]
+408405 fmul dword ptr [esp + 0x2c]
+408409 faddp st(1)
+40840b fcom dword ptr [0x5cca40]
+408411 fnstsw ax
+408413 test ah, 5
+408416 jp 0x408431
+408418 fcom dword ptr [esp + 0x14]
+40841c fnstsw ax
+40841e test ah, 5
+408421 jp 0x408431
+408423 fstp dword ptr [esp + 0x14]
+408427 mov dword ptr [esp + 0x18], 5
+40842f jmp 0x408433
+408431 fstp st(0)
+408433 push 2
+408435 push edi
+408436 call 0x426d00
+40843b mov ecx, dword ptr [eax]
+40843d mov edx, dword ptr [eax + 4]
+408440 mov eax, dword ptr [eax + 8]
+408443 push 1
+408445 push edi
+408446 mov dword ptr [esp + 0x64], ecx
+40844a mov dword ptr [esp + 0x68], edx
+40844e mov dword ptr [esp + 0x20], eax
+408452 call 0x426d00
+408457 fld dword ptr [eax + 4]
+40845a fld dword ptr [eax + 8]
+40845d mov ebp, dword ptr [esp + 0x5c]
+408461 fld dword ptr [eax]
+408463 add esp, 0x10
+408466 fsub dword ptr [esp + 0x54]
+40846a fstp dword ptr [esp + 0x2c]
+40846e fxch st(1)
+408470 fsub dword ptr [esp + 0x58]
+408474 fstp dword ptr [esp + 0x30]
+408478 fsub dword ptr [esp + 0x10]
+40847c fld dword ptr [esp + 0x28]
+408480 fmul st(1)
+408482 fld dword ptr [esp + 0x20]
+408486 fmul dword ptr [esp + 0x30]
+40848a fsubp st(1)
+40848c fstp dword ptr [esp + 0x38]
+408490 fld dword ptr [esp + 0x20]
+408494 fmul dword ptr [esp + 0x2c]
+408498 fld dword ptr [esp + 0x24]
+40849c fmul st(2)
+40849e fsubp st(1)
+4084a0 fstp dword ptr [esp + 0x3c]
+4084a4 fstp st(0)
+4084a6 fld dword ptr [esp + 0x24]
+4084aa fmul dword ptr [esp + 0x30]
+4084ae fld dword ptr [esp + 0x28]
+4084b2 fmul dword ptr [esp + 0x2c]
+4084b6 fsubp st(1)
+4084b8 fstp dword ptr [esp + 0x40]
+4084bc fld dword ptr [esi]
+4084be fsub dword ptr [esp + 0x54]
+4084c2 fstp dword ptr [esp + 0x2c]
+4084c6 fld dword ptr [esi + 4]
+4084c9 fsub dword ptr [esp + 0x58]
+4084cd fstp dword ptr [esp + 0x30]
+4084d1 fld dword ptr [esi + 8]
+4084d4 fsub dword ptr [esp + 0x10]
+4084d8 fstp dword ptr [esp + 0x34]
+4084dc fld dword ptr [esp + 0x3c]
+4084e0 fmul dword ptr [esp + 0x30]
+4084e4 fld dword ptr [esp + 0x40]
+4084e8 fmul dword ptr [esp + 0x34]
+4084ec faddp st(1)
+4084ee fld dword ptr [esp + 0x38]
+4084f2 fmul dword ptr [esp + 0x2c]
+4084f6 faddp st(1)
+4084f8 fst dword ptr [esp + 0x58]
+4084fc fcomp dword ptr [0x5d757c]
+408502 fld dword ptr [esp + 0x14]
+408506 fnstsw ax
+408508 test ah, 5
+40850b jp 0x408528
+40850d fld dword ptr [esp + 0x58]
+408511 fcomp st(1)
+408513 fnstsw ax
+408515 test ah, 5
+408518 jp 0x408528
+40851a fstp st(0)
+40851c mov dword ptr [esp + 0x18], 4
+408524 fld dword ptr [esp + 0x58]
+408528 mov ecx, dword ptr [esp + 0x18]
+40852c fstp dword ptr [ebx + 0x14]
+40852f mov edx, dword ptr [esp + 0x1c]
+408533 mov esi, dword ptr [esp + 0x50]
+408537 push esi
+408538 mov dword ptr [ebx], ebp
+40853a mov dword ptr [ebx + 0xc], ecx
+40853d mov dword ptr [ebx + 4], edx
+408540 call 0x407d70
+408545 push eax
+408546 push ebp
+408547 push esi
+408548 mov dword ptr [esp + 0x68], eax
+40854c call 0x407db0
+408551 fld dword ptr [ebx + 4]
+408554 fld st(0)
+408556 add esp, 0x10
+408559 mov dword ptr [esp + 0x10], eax
+40855d call 0x4a2c48
+408562 mov dword ptr [esp + 0x4c], eax
+408566 fild dword ptr [esp + 0x4c]
+40856a pop edi
+40856b pop esi
+40856c pop ebp
+40856d fsubr st(1)
+40856f fiadd dword ptr [esp + 4]
+408573 fidiv dword ptr [esp + 0x4c]
+408577 fmul dword ptr [0x5cc568]
+40857d fstp dword ptr [ebx + 8]
+408580 pop ebx
+408581 fstp st(0)
+408583 add esp, 0x34
+408586 ret 

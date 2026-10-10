@@ -1741,6 +1741,37 @@ function wobjProbeArm(limit){
   } catch(e){ return 'ERR ' + e; }
 }
 function wobjProbeDrain(){ const r = {calls:WO.calls, ents:WO.ents, ins:WO.ins}; WO.calls = []; WO.ents = []; WO.ins = []; return r; }
+// --- PATH-PROGRESS probe (D-11072 P2, 2026-10-10) ---------------------------
+// ONE ENTRY HOOK on FUN_00408610(rec, world, v) (call 0x0040db2c, ~4 calls/frame).
+// Records every input the step reads (rec matrix 0x40 bytes: at +0x20, pos +0x30;
+// FUN_0046cbb0 state words 0x00881f90/94 + v*0xd04; race clock _DAT_007f1010)
+// and the car's whole block 0x008a9620 + v*0x30c AT ENTRY (= the previous call's output).
+// Read-only. The replay gate G-P2-REPLAY feeds call k's inputs to the port and expects
+// the next same-car entry block.
+const PP = { armed:false, rows:[], n:0, limit:8000, err:null };
+function hexOf(p, n){ const u = new Uint8Array(p.readByteArray(n)); let s = '';
+  for (let i = 0; i < u.length; i++) s += (u[i] < 16 ? '0' : '') + u[i].toString(16); return s; }
+function pathProgProbeArm(limit){
+  if (PP.armed) return 'already armed';
+  try {
+    PP.limit = limit || 8000;
+    Interceptor.attach(ga(0x00408610), { onEnter(args){
+      try {
+        if (PP.rows.length >= PP.limit) return;
+        PP.n++;
+        const v = args[2].toInt32();
+        PP.rows.push([PP.n, ga(0x007f0ff4).readS32(), v,
+                      ga(0x00881f90).add(v*0xd04).readS32(), ga(0x00881f94).add(v*0xd04).readS32(),
+                      ga(0x007f1010).readU32(), hexOf(args[0], 0x40),
+                      hexOf(ga(0x008a9620).add(v*0x30c), 0x30c)]);
+      } catch(e){ if (!PP.err) PP.err = 'ppEnter ' + e; }
+    }});
+    PP.armed = true;
+    return 'pathprog-probe armed (entry-only 0x408610)';
+  } catch(e){ return 'ERR ' + e; }
+}
+function pathProgProbeDrain(){ const r = PP.rows; PP.rows = []; return r; }
+// ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
 
@@ -2484,6 +2515,9 @@ rpc.exports = {
   leaderProbeArm: function(l){ return leaderProbeArm(l); },
   leaderProbeDrain: function(){ return leaderProbeDrain(); },
   wobjProbeArm: function(l){ return wobjProbeArm(l); },
+  pathProgProbeArm: function(l){ return pathProgProbeArm(l); },
+  pathProgProbeDrain: function(){ return pathProgProbeDrain(); },
+  pathProgProbeStats: function(){ return JSON.stringify({armed:PP.armed, calls:PP.n, err:PP.err}); },
   wobjProbeDrain: function(){ return wobjProbeDrain(); },
   wobjProbeStats: function(){ return JSON.stringify({armed:WO.armed, calls:WO.n, err:WO.err}); },
   leaderProbeStats: function(){ return JSON.stringify({armed:LP.armed, calls:LP.n,
@@ -3060,6 +3094,9 @@ def main():
     ap.add_argument("--dump-range", action="append", default=[],
                     help="[D-11072 P1] ADDR:LEN:OUT (hex, hex, path). One-shot raw dump right "
                          "after phase 3. Repeatable.")
+    ap.add_argument("--pathprog-probe", type=int, default=0,
+                    help="[D-11072 P2] N: entry hook on FUN_00408610, first N calls: inputs + the car's "
+                         "0x30c block at entry. Writes <out>.pathprog.csv. Requires --statediff-out.")
     ap.add_argument("--wobj-probe", action="store_true",
                     help="[D3 modes 3/7 2026-10-09] ONE ENTRY HOOK on FUN_00414c30: logs each "
                          "call (frame, v, registry count 0x006e70d8) and dumps the world-object "
@@ -3234,6 +3271,8 @@ def main():
                 print("  [statediff]", E.leader_probe_arm(args.leader_probe_limit))
             if args.wobj_probe:
                 print("  [statediff]", E.wobj_probe_arm(300000))
+            if args.pathprog_probe:
+                print("  [statediff]", E.path_prog_probe_arm(args.pathprog_probe))
             if args.statediff_puhook:
                 print("  [statediff]", E.pu_arm(args.pu_plan, args.pu_subj, args.pu_warm,
                                                  args.pu_box))
@@ -3748,6 +3787,17 @@ def main():
                             print(f"  [statediff] alive-probe EVENT seq={_e2[0]} frame={_e2[1]} "
                                   f"tick={_e2[2]} clk={_e2[3]} {_e2[4]} -> {_e2[5]} "
                                   f"(enter {_e2[6]}, ret {_e2[7]}, vstep {_e2[8:12]})")
+                if args.pathprog_probe:
+                    try: print("  [statediff] pathprog-probe agent:", E.path_prog_probe_stats())
+                    except Exception as _e: print("  [statediff] pathprog stats failed:", _e)
+                    try:
+                        _pp = E.path_prog_probe_drain()
+                        _pf = outp.with_suffix(outp.suffix + ".pathprog.csv")
+                        with open(_pf, "w", newline="") as f:
+                            f.write("n,frame,v,st0,st1,clock_bits,rec40_hex,block_hex" + chr(10))
+                            for r in _pp: f.write(",".join(str(x) for x in r) + chr(10))
+                        print(f"  [statediff] pathprog-probe {len(_pp)} rows -> {_pf}")
+                    except Exception as _e: print("  [statediff] pathprog drain failed:", _e)
                 if args.wobj_probe:
                     try: print("  [statediff] wobj-probe agent:", E.wobj_probe_stats())
                     except Exception as _e: print("  [statediff] wobj-probe stats failed:", _e)

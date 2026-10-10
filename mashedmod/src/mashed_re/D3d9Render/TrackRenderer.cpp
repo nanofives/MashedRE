@@ -24,6 +24,7 @@
 #include "../Ai/AiStandalone.h"     // WS-C: racing-line target Ai_ComputeTarget is the DEFAULT
 #include "../Race/SubStateCallees.h"  // D-11073 leg 1a: FUN_0041d930 tail partial (MASHED_SUBSTATE)
 #include "../Race/PathNodes.h"    // D-11072 P1: course block (MASHED_PATHPROG)
+#include "../Race/PathProgStep.h" // D-11072 P2: per-frame FUN_00408610 (MASHED_PATHPROG)
 #include "../Race/SubStateMachine.h"  // D-11073 leg 1b: FUN_0040dbd0 / FUN_004103a0 (MASHED_SUBSTATE)
 #include "../Race/CameraEntries.h"    // D-11073 leg 2: phase-3 camera entries (MASHED_SUBSTATE)
 extern "C" void __cdecl VehicleSeedWritePair(std::uint32_t, std::uint32_t);   // 0x00448700
@@ -491,6 +492,8 @@ bool Ai_BridgeLoad(int course, const char* trackPizPath) {
     // blocked on unproduced globals (RESULT_A360.md). Placed here because the
     // original's caller FUN_004111c0 runs it at race reset, which is this path.
     RaceAiDifficultyResetTail();
+    // [D-11072 P2] FUN_00407a60, which the original's FUN_004111c0 runs at race reset (MASHED_PATHPROG).
+    Race::PathProg_RaceInit();
     Ai::Ai_SetHost(&h);
     return true;
 }
@@ -2189,6 +2192,7 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                     for (std::uint32_t j = 0; j < piz.count(); ++j)
                         if (_strnicmp(piz.entry(j).name, "LAPDATA", 7) == 0) { lb = piz.blob(j, &ll); break; }
                     Race::PathNodes_Build(aw, reinterpret_cast<const char*>(lb), ll);
+                    Race::PathProg_MaybeReplay();     // [D-11072 P2] G-P2-REPLAY (env-gated)
                 }
                 gates_.assign(aw.materials.size(), Gate{});
                 std::vector<int> counts(aw.materials.size(), 0);
@@ -5729,6 +5733,10 @@ void TrackRenderer::UpdateRace(float dt) {
     // below relies on. PREREG: verify/d3_u9186_20261008/PREREG_H3.md
     RaceComputeDistancesTick();
 
+    // [D-11072 P2] FUN_0040da50's FUN_00408610 loop (per-car path progress 0x008a96e8 and
+    // race_pct 0x008a96ec), before the AI tick like the bridge below. Default-OFF MASHED_PATHPROG.
+    Race::PathProg_FrameTick();
+
     // [D-11072 bridge write] Mirror the monotone arcpct into the original per-car
     // race_pct slot 0x008a96ec + v*0x30c, behind a default-OFF knob. UpdateRace runs
     // before Ai_Standalone_Tick (:3462), so AiPreTickRubberBand's live read at
@@ -5739,7 +5747,8 @@ void TrackRenderer::UpdateRace(float dt) {
     {
         static const bool s_racepctBridge =
             (std::getenv("MASHED_NO_RACEPCT_BRIDGE") == nullptr);   // DEFAULT-ON 2026-10-09 (verify/d3_b2flip_20261009); MASHED_RACEPCT_BRIDGE is now a no-op
-        if (s_racepctBridge && total_len_ > 1e-3f) {
+        // With MASHED_PATHPROG the faithful producer FUN_00408610 owns 0x008a96ec; the bridge stands down.
+        if (s_racepctBridge && !Race::PathProg_Enabled() && total_len_ > 1e-3f) {
             for (int v = 0; v < kRaceCars; ++v) {
                 const float ap =
                     std::fmod(race_[v].arcprog, total_len_) / total_len_ * 100.f;

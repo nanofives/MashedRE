@@ -29,6 +29,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <vector>
 #include <float.h>   // _controlfp_s (x87 precision control, see PathNodes_Build)
 
 extern "C" void  __cdecl RwMatrixInvert(void* out, void* in);           // 0x004c4eb0
@@ -328,7 +329,14 @@ void BuildTables() {
     }
 }
 
+std::vector<float>    s_triVerts;   // 9 per triangle
+std::vector<unsigned> s_triNode;
+
 }  // namespace
+
+int          PathNodes_TriCount()     { return static_cast<int>(s_triNode.size()); }
+const float* PathNodes_Tri(int t)     { return s_triVerts.data() + static_cast<std::size_t>(t) * 9u; }
+unsigned     PathNodes_TriNode(int t) { return s_triNode[static_cast<std::size_t>(t)]; }
 
 bool PathProg_Enabled() {
     static const bool s_on = (std::getenv("MASHED_PATHPROG") != nullptr);
@@ -351,6 +359,21 @@ void PathNodes_Build(const Track::World& ai, const char* lap, std::size_t lapLen
     for (int i = 0; i < count; ++i)
         BuildNode(ai, i, &CF(0xc1c0 + static_cast<std::size_t>(i) * 0x4cu));
     BuildTables();                                                  // FUN_004783f0
+
+    s_triVerts.clear(); s_triNode.clear();                          // leg P2 sphere query input
+    for (const Track::Sector& s : ai.sectors) {
+        const std::size_t nt = s.tris.size() / 4;
+        for (std::size_t ti = 0; ti < nt; ++ti) {
+            const std::uint16_t mat = s.tris[ti * 4 + 0];
+            if (mat >= ai.materials.size()) continue;
+            for (int k = 0; k < 3; ++k) {
+                const std::uint16_t vi = s.tris[ti * 4 + 1 + k];
+                for (int a = 0; a < 3; ++a) s_triVerts.push_back(s.verts[vi * 3u + a]);
+            }
+            s_triNode.push_back(static_cast<unsigned>(ai.materials[mat].rgba[0]) |
+                                (static_cast<unsigned>(ai.materials[mat].rgba[1]) << 8));
+        }
+    }
     { unsigned int tmp; _controlfp_s(&tmp, oldcw & _MCW_PC, _MCW_PC); }
 
     if (const char* path = std::getenv("MASHED_PATHPROG_DUMP")) {

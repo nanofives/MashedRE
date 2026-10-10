@@ -19,5 +19,12 @@ bool PathProg_Enabled();
 // MASHED_PATHPROG_DUMP=<path> writes the 0x16278-byte block after the build (gate G-P1).
 void PathNodes_Build(const Track::World& ai, const char* lap, std::size_t lapLen);
 
+// The AI BSP triangles kept for leg P2's sphere query, in stream order (sector order = the
+// original's left-first BSP walk): 9 floats each (v0,v1,v2) and the node id (material colour
+// red | green << 8, the ushort FUN_00407a90 reads at RpMaterial+4).
+int           PathNodes_TriCount();
+const float*  PathNodes_Tri(int t);
+unsigned      PathNodes_TriNode(int t);
+
 }  // namespace Race
 }  // namespace mashed_re
