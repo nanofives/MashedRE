@@ -1,5 +1,16 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-09 (D-11072 faithful route, USER DECISION; leg P1 DONE): **next = leg P2, the per-frame `FUN_00408610`.**
+>
+> Read [`FINDINGS.md`](../verify/d3_modes37_20261009/FINDINGS.md), [`PREREG_PATHPROG.md`](../verify/d3_modes37_20261009/PREREG_PATHPROG.md),
+> [`RESULT_P1.md`](../verify/d3_modes37_20261009/RESULT_P1.md). Mode 3 comes from `FUN_00414a70` (car 2's carrier: 35 mode-3 + 10 brake
+> calls), mode 7 from `FUN_00414c30`'s pickup path (car 1 only). `FUN_00414a70` reads per-car path progress `0x008a96e8`, written only by
+> `FUN_00408610`. P1 (`MASHED_PATHPROG`, default OFF) now writes the original's course block byte-identical (Training + Arctic).
+> P2 to do: `FUN_00408610` + `FUN_00407e20` + walkers + `FUN_00407a90` + the sphere(0.6)-vs-AI-BSP query (node id = material colour)
+> + per-car block init; pre-register first. Gate: `0x008a96e8` grid values 30.00/29.73/29.45/29.18 at frame 0, wrap at the line.
+> Then P3 = `FUN_00414a70` + `FUN_00414300` + the `+0xbc` speed write. Owed via `re-classify`: D-11072 row, U-items for the exe
+> exact-sqrt fallback (global, user decision, touches D2), track-load PC_24, the `RwMatrixInvert` exe fix.
+
 > ## START HERE 2026-10-09 (B2 settings DEFAULT-ON): **new G-CTRL hashes: step `ae67b13a`, gates `c8317ce2`, ptrace `31db9384`.**
 >
 > Read [`RESULT_B2FLIP.md`](../verify/d3_b2flip_20261009/RESULT_B2FLIP.md). `MASHED_A364_RESET` / `REFDIST` / `RACEPCT_BRIDGE` / `WIRE_B2` are now
