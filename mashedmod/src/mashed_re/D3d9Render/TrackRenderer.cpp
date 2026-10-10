@@ -25,6 +25,7 @@
 #include "../Race/SubStateCallees.h"  // D-11073 leg 1a: FUN_0041d930 tail partial (MASHED_SUBSTATE)
 #include "../Race/PathNodes.h"    // D-11072 P1: course block (MASHED_PATHPROG)
 #include "../Race/PathProgStep.h" // D-11072 P2: per-frame FUN_00408610 (MASHED_PATHPROG)
+#include "../Ai/AiTargetClosest.h" // D-11072 P3: FUN_00414a70 (MASHED_TGT3)
 #include "../Race/SubStateMachine.h"  // D-11073 leg 1b: FUN_0040dbd0 / FUN_004103a0 (MASHED_SUBSTATE)
 #include "../Race/CameraEntries.h"    // D-11073 leg 2: phase-3 camera entries (MASHED_SUBSTATE)
 extern "C" void __cdecl VehicleSeedWritePair(std::uint32_t, std::uint32_t);   // 0x00448700
@@ -2193,6 +2194,7 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                         if (_strnicmp(piz.entry(j).name, "LAPDATA", 7) == 0) { lb = piz.blob(j, &ll); break; }
                     Race::PathNodes_Build(aw, reinterpret_cast<const char*>(lb), ll);
                     Race::PathProg_MaybeReplay();     // [D-11072 P2] G-P2-REPLAY (env-gated)
+                    Ai::TargetClosest_MaybeReplay();  // [D-11072 P3] G-P3-REPLAY (env-gated)
                 }
                 gates_.assign(aw.materials.size(), Gate{});
                 std::vector<int> counts(aw.materials.size(), 0);
@@ -4253,6 +4255,7 @@ extern "C" int g_wireReached[4]; extern "C" int g_wireRet[4];
 extern "C" int g_wireFire[4];
 // [GF1-CALLWISE] per-call branch-2 outcome, -1 = not evaluated.
 extern "C" int g_b2Ret[4]; extern "C" int g_b2Los[4];
+extern "C" int g_tg3Ret[4]; extern "C" int g_tg3Los[4];   // [D-11072 P3] Ai/AiTargetClosest.cpp
 // [W-SHAPE port side] ctrl[4]/ctrl[5] at ControlStep entry, -1 = step did not run.
 extern "C" int g_c4In[4]; extern "C" int g_c5In[4];
 
@@ -4708,7 +4711,8 @@ void TrackRenderer::AiStepDump() {
                          // OUTPUT pose; these two are the only entry-side columns.
                          // APPENDED, so every column above keeps its position.
                          // -1 = ControlStep did not run for this car before the dump.
-                         ",c4_in,c5_in\n");
+                         ",c4_in,c5_in%s\n",
+                     Ai::TargetClosest_Enabled() ? ",ret14a70,tg3_los" : "");   // [D-11072 P3]
     }
     for (int v = 1; v <= 3; ++v) {
         if (!g_aib.alive[v]) continue;
@@ -4735,7 +4739,7 @@ void TrackRenderer::AiStepDump() {
                          // leg E2: rmetric, arclaps, rtick.
                          "%.9g,%d,%lu,"
                          // [GF1-CALLWISE] b2_ret, b2_los; [W-SHAPE] c4_in, c5_in
-                         "%d,%d,%d,%d\n",
+                         "%d,%d,%d,%d",
                      frame, seq++, v, static_cast<unsigned long>(blk),
                      Ai::U8(blk + 0), Ai::U8(blk + 1), Ai::U8(blk + 3),
                      Ai::U8(blk + 4), Ai::U8(blk + 5),
@@ -4828,6 +4832,10 @@ void TrackRenderer::AiStepDump() {
                      // [W-SHAPE] the entry pose, snapshotted at the top of ControlStep
                      // in that same tick, before any ctrl store on any path.
                      g_c4In[v], g_c5In[v]);
+        // [D-11072 P3] per-call FUN_00414a70 outcome, appended ONLY with MASHED_TGT3 so the
+        // knob-OFF dump stays byte-identical (G-P3-OFF). -1 = not evaluated.
+        if (Ai::TargetClosest_Enabled()) std::fprintf(lf, ",%d,%d", g_tg3Ret[v], g_tg3Los[v]);
+        std::fputc('\n', lf);
     }
     std::fflush(lf);
     ++frame;

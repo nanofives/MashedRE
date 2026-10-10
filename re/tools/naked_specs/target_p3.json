@@ -1,0 +1,28 @@
+{
+  "funcs": [
+    {"name": "TG_414a70", "start": "0x00414a70", "size": 447},
+    {"name": "TG_414300", "start": "0x00414300", "size": 398},
+    {"name": "TG_408a50", "start": "0x00408a50", "size": 17},
+    {"name": "TG_426bb0", "start": "0x00426bb0", "size": 6},
+    {"name": "TG_40e370", "start": "0x0040e370", "size": 34},
+    {"name": "TG_40e470", "start": "0x0040e470", "size": 15},
+    {"name": "TG_4c3ac0", "start": "0x004c3ac0", "size": 112},
+    {"name": "TG_4c3b30", "start": "0x004c3b30", "size": 84}
+  ],
+  "calls": {
+    "0x00414300": "TG_414300", "0x00408a50": "TG_408a50", "0x00426bb0": "TG_426bb0",
+    "0x0040e370": "TG_40e370", "0x0040e470": "TG_40e470", "0x004c3ac0": "TG_4c3ac0",
+    "0x004c3b30": "TG_4c3b30",
+    "0x0046d4a0": "TG_VehPtr", "0x0046d6d0": "TG_Speed", "0x0046d510": "TG_Fwd"
+  },
+  "consts": {
+    "0x005cc320": "g_tg_c_5cc320", "0x005cc348": "g_tg_c_5cc348", "0x005cc558": "g_tg_c_5cc558",
+    "0x005cd0ac": "g_tg_c_5cd0ac", "0x005d757c": "g_tg_c_5d757c"
+  },
+  "patch": {
+    "0x004c3af2": "lea eax, g_tg_lutptrs",
+    "0x004c3af7": "mov ecx, 0",
+    "0x004c3b40": "lea ecx, g_tg_lutptrs",
+    "0x004c3b46": "mov edx, 0"
+  }
+}

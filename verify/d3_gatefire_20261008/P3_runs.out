@@ -1,0 +1,19 @@
+=== P3_CTRL  knobs=[] ===
+    pid=39388
+    exit=0  self_exited=True
+    P3_CTRL.step.csv  lines=19912  sha8=ae67b13a
+    P3_CTRL.gates.csv  lines=55433  sha8=c8317ce2
+    P3_CTRL.ptrace.log  lines=27716  sha8=31db9384
+=== P3_PP  knobs=[MASHED_PATHPROG] ===
+    pid=14392
+    exit=0  self_exited=True
+    P3_PP.step.csv  lines=17458  sha8=4f675870
+    P3_PP.gates.csv  lines=55433  sha8=90e76845
+    P3_PP.ptrace.log  lines=27716  sha8=4701b993
+=== P3_LIVE  knobs=[MASHED_PATHPROG,MASHED_TGT3,MASHED_TGT3_TRACE=@OUT@\P3_LIVE.tgt3.csv] ===
+    pid=20672
+    exit=0  self_exited=True
+    P3_LIVE.step.csv  lines=18919  sha8=fc8c2faf
+    P3_LIVE.gates.csv  lines=56153  sha8=1fdfe687
+    P3_LIVE.ptrace.log  lines=28076  sha8=bfd2c387
+H4 DONE

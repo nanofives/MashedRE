@@ -91,6 +91,10 @@
 #include "AiState.h"
 #include "AiStandalone.h"
 #include "../Race/SubStateCallees.h"   // [D-11073 leg 1a] SubState_StoreStep
+#ifdef MASHED_STANDALONE
+#include "AiTargetClosest.h"            // [D-11072 P3] FUN_00414a70 (MASHED_TGT3)
+extern "C" int g_tg3Ret[4]; extern "C" int g_tg3Los[4];
+#endif
 
 #include <cstdint>
 #include <cmath>
@@ -905,9 +909,36 @@ void ControlStep(std::uintptr_t spline, int v, std::uint8_t* ctrl)
 
     float look[2] = { ownX, ownZ };
     SplineLookahead(spline, ownX, ownZ, v, look);                     // FUN_004161e0 -> FUN_00443dc0(...,1,0)
-    const float tx = look[0], tz = look[1];
+    float tx = look[0], tz = look[1];
 
     int mode = 0;                     // targeting chain FUN_00414570.. STUBBED (all return 0)
+#ifdef MASHED_STANDALONE
+    // ---- [D-11072 P3] FUN_00414a70 arm, call 0x00416394..0x0041640f (default-OFF MASHED_TGT3) ----
+    // FUN_00414570 and FUN_00415880 stay stubbed: the original returns 0 from them on 6696 of
+    // 6696 calls (o_wobj2), so FUN_00414a70 is reached every call there too.
+    //   iVar5 = FUN_00414a70(param_1,&local_24,&local_2c,param_2);
+    //   if (iVar5 == 1) { if (FUN_00416060(&local_1c,&local_2c) != 0) { look = cand; mode = 3; }
+    //                     else -> LAB_004163b7 (FUN_00414c30 / FUN_004150e0, both stubbed: 0) }
+    //   else if (iVar5 == 2) { param_3[4] = 0; param_3[5] = 0xff; return; }
+    // The return is before the mode commit at 0x00416590 and the steer-history stores.
+    // PREREG: verify/d3_modes37_20261009/PREREG_P3.md.
+    if (v >= 0 && v < 4) { g_tg3Ret[v] = -1; g_tg3Los[v] = -1; }
+    if (TargetClosest_Enabled() && v >= 0 && v < 4) {
+        float cand[2] = { 0.0f, 0.0f };
+        const float lk[2] = { tx, tz };
+        const int r = TargetClosest(v, lk, cand);
+        g_tg3Ret[v] = r;
+        if (r == 1) {
+            const int los = s_host.los_clear(ownX, ownZ, cand[0], cand[1]);
+            g_tg3Los[v] = los;
+            if (los != 0) { tx = cand[0]; tz = cand[1]; mode = 3; }       // 0x004163ab LOS, 0x004163e6..0x004163f6
+        } else if (r == 2) {
+            ctrl[4] = 0;                                                  // 0x00416405
+            ctrl[5] = 0xff;                                               // 0x00416409
+            return;                                                       // 0x0041640d
+        }
+    }
+#endif
     if (gameMode == 6 && s_host.ai_target_enable() == 0) {            // 0x0041649b / 0x004164a8
         // ---- FUN_00416250's branch 2, WIRED (default-OFF: MASHED_WIRE_B2) ----
         // Verbatim from ctrlstep_decomp.txt:115-122 (decomp_pc.py 0x00416250,
@@ -936,7 +967,8 @@ void ControlStep(std::uintptr_t spline, int v, std::uint8_t* ctrl)
 #ifdef MASHED_STANDALONE
         {
             static const bool s_wireB2 = (std::getenv("MASHED_NO_WIRE_B2") == nullptr);   // DEFAULT-ON 2026-10-09 (verify/d3_b2flip_20261009); MASHED_WIRE_B2 is now a no-op
-            if (s_wireB2) {
+            // `if (local_48 == 0)`: mode was always 0 before D-11072 P3; with MASHED_TGT3 it can be 3.
+            if (s_wireB2 && mode == 0) {
                 int candXZ[2] = {0, 0};
                 int tgtXZ[2]  = {0, 0};          // &local_24, the param the body ignores
                 if (v >= 0 && v < 4) { ++g_wireReached[v]; g_b2Ret[v] = -1; g_b2Los[v] = -1; }

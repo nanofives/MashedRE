@@ -168,6 +168,7 @@
 "Race\CameraEntries.cpp"
 "Race\PathNodes.cpp"
 "Race\PathProgStep.cpp"
+"Ai\AiTargetClosest.cpp"
 "Math\RwLutTables.cpp"
 "Util\CameraEntryDispatch.cpp"
 "Ai\AiLeaderTimer.cpp"

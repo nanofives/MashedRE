@@ -1771,6 +1771,54 @@ function pathProgProbeArm(limit){
   } catch(e){ return 'ERR ' + e; }
 }
 function pathProgProbeDrain(){ const r = PP.rows; PP.rows = []; return r; }
+
+// --- TARGETING probe (D-11072 P3, 2026-10-10) ---------------------------------
+// Entry + leave hook on FUN_00414a70(spline, &look, &cand, v) (call 0x0041634a region,
+// <= 3 calls/frame). Records every input the body and FUN_00414300 read, as raw u32 bits:
+// look[0..1]; DAT_0066d6d8; per car i: the FUN_0046d4a0 matrix +0x30/+0x38
+// (0x00881ec8 + i*0xd04 + t*0x40, t = 0x00881f48[i]), speed 0x00881f84, progress 0x008a96e8,
+// slot state *(0x005f2770)+0x34; the own car's +0x928 matrix `at` row (0x00881ee8..f0, what
+// FUN_0046d510 transforms (0,0,1) by); cand at entry. At leave: EAX and cand. Read-only.
+const TG = { armed:false, rows:[], n:0, limit:20000, err:null };
+function tgBits(p){ return p.readU32(); }
+function tgProbeArm(limit){
+  if (TG.armed) return 'already armed';
+  try {
+    TG.limit = limit || 20000;
+    Interceptor.attach(ga(0x00414a70), {
+      onEnter(args){
+        this.row = null;
+        try {
+          if (TG.rows.length >= TG.limit) return;
+          const v = args[3].toInt32();
+          const look = args[1], cand = args[2];
+          const row = [++TG.n, ga(0x007f0ff4).readS32(), v, ga(0x0066d6d8).readS32(),
+                       tgBits(look), tgBits(look.add(4))];
+          const st = ga(0x005f2770).readPointer();
+          for (let i = 0; i < 4; i++) {
+            const t = ga(0x00881f48).add(i*0xd04).readU32();
+            const m = ga(0x00881ec8).add(i*0xd04 + t*0x40);
+            row.push(tgBits(m.add(0x30)), tgBits(m.add(0x38)),
+                     tgBits(ga(0x00881f84).add(i*0xd04)), tgBits(ga(0x008a96e8).add(i*0x30c)),
+                     st.isNull() ? -999 : st.add(0x34 + i*4).readS32());
+          }
+          const at = ga(0x00881ec8).add(v*0xd04 + 0x20);
+          row.push(tgBits(at), tgBits(at.add(4)), tgBits(at.add(8)), tgBits(cand), tgBits(cand.add(4)));
+          this.row = row; this.cand = cand;
+        } catch(e){ if (!TG.err) TG.err = 'tgEnter ' + e; }
+      },
+      onLeave(ret){
+        try {
+          if (!this.row) return;
+          this.row.push(ret.toInt32(), tgBits(this.cand), tgBits(this.cand.add(4)));
+          TG.rows.push(this.row);
+        } catch(e){ if (!TG.err) TG.err = 'tgLeave ' + e; }
+      }});
+    TG.armed = true;
+    return 'tgt-probe armed (entry+leave 0x414a70)';
+  } catch(e){ return 'ERR ' + e; }
+}
+function tgProbeDrain(){ const r = TG.rows; TG.rows = []; return r; }
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
@@ -2518,6 +2566,9 @@ rpc.exports = {
   pathProgProbeArm: function(l){ return pathProgProbeArm(l); },
   pathProgProbeDrain: function(){ return pathProgProbeDrain(); },
   pathProgProbeStats: function(){ return JSON.stringify({armed:PP.armed, calls:PP.n, err:PP.err}); },
+  tgProbeArm: function(l){ return tgProbeArm(l); },
+  tgProbeDrain: function(){ return tgProbeDrain(); },
+  tgProbeStats: function(){ return JSON.stringify({armed:TG.armed, calls:TG.n, err:TG.err}); },
   wobjProbeDrain: function(){ return wobjProbeDrain(); },
   wobjProbeStats: function(){ return JSON.stringify({armed:WO.armed, calls:WO.n, err:WO.err}); },
   leaderProbeStats: function(){ return JSON.stringify({armed:LP.armed, calls:LP.n,
@@ -3097,6 +3148,9 @@ def main():
     ap.add_argument("--pathprog-probe", type=int, default=0,
                     help="[D-11072 P2] N: entry hook on FUN_00408610, first N calls: inputs + the car's "
                          "0x30c block at entry. Writes <out>.pathprog.csv. Requires --statediff-out.")
+    ap.add_argument("--tgt-probe", type=int, default=0,
+                    help="[D-11072 P3] N: entry+leave hook on FUN_00414a70, first N calls: every input "
+                         "+ return + cand. Writes <out>.tgt.csv. Requires --statediff-out.")
     ap.add_argument("--wobj-probe", action="store_true",
                     help="[D3 modes 3/7 2026-10-09] ONE ENTRY HOOK on FUN_00414c30: logs each "
                          "call (frame, v, registry count 0x006e70d8) and dumps the world-object "
@@ -3273,6 +3327,8 @@ def main():
                 print("  [statediff]", E.wobj_probe_arm(300000))
             if args.pathprog_probe:
                 print("  [statediff]", E.path_prog_probe_arm(args.pathprog_probe))
+            if args.tgt_probe:
+                print("  [statediff]", E.tg_probe_arm(args.tgt_probe))
             if args.statediff_puhook:
                 print("  [statediff]", E.pu_arm(args.pu_plan, args.pu_subj, args.pu_warm,
                                                  args.pu_box))
@@ -3798,6 +3854,17 @@ def main():
                             for r in _pp: f.write(",".join(str(x) for x in r) + chr(10))
                         print(f"  [statediff] pathprog-probe {len(_pp)} rows -> {_pf}")
                     except Exception as _e: print("  [statediff] pathprog drain failed:", _e)
+                if args.tgt_probe:
+                    try: print("  [statediff] tgt-probe agent:", E.tg_probe_stats())
+                    except Exception as _e: print("  [statediff] tgt stats failed:", _e)
+                    try:
+                        _tg = E.tg_probe_drain()
+                        _tf = outp.with_suffix(outp.suffix + ".tgt.csv")
+                        with open(_tf, "w", newline="") as f:
+                            f.write("n,frame,v,d6d8,look_x,look_z,x0,z0,sp0,pr0,st0,x1,z1,sp1,pr1,st1,x2,z2,sp2,pr2,st2,x3,z3,sp3,pr3,st3,at_x,at_y,at_z,cin_x,cin_z,ret,cout_x,cout_z" + chr(10))
+                            for r in _tg: f.write(",".join(str(x) for x in r) + chr(10))
+                        print(f"  [statediff] tgt-probe {len(_tg)} rows -> {_tf}")
+                    except Exception as _e: print("  [statediff] tgt drain failed:", _e)
                 if args.wobj_probe:
                     try: print("  [statediff] wobj-probe agent:", E.wobj_probe_stats())
                     except Exception as _e: print("  [statediff] wobj-probe stats failed:", _e)

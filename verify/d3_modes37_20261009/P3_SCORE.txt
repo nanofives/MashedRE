@@ -1,0 +1,11 @@
+# G-P3-COUNT  window = first 220 calls from the first c4 != 0
+car | orig ==1 / ==2 | port ==1 (LOS) / ==2 | not-evaluated | verdict ==1, ==2
+1 | 16 / 0 | 38 (38) / 30 | 0 | FAIL, FAIL   (port start frame 0, orig 882)
+2 | 35 / 10 | 27 (27) / 16 | 0 | PASS, FAIL   (port start frame 0, orig 882)
+3 | 12 / 26 | 30 (30) / 82 | 0 | FAIL, FAIL   (port start frame 0, orig 882)
+G-P3-COUNT FAIL
+# G-P3-SPEEDTAIL (ret with +0x9e4 vs ret with |+0x9b0|) and G-P3-INPUTS
+v1: calls 4186  flips whole 0  flips first 220 calls 0  prog [0.0000, 29.9941]  d6d8 {'30': 4186}  speed max 4477.2 (>0 on 4185)  median|sp - |vel||=0.6377 max 1123
+v2: calls 1711  flips whole 4  flips first 220 calls 0  prog [0.0000, 29.9988]  d6d8 {'30': 1711}  speed max 4476.9 (>0 on 1710)  median|sp - |vel||=0.1953 max 1196
+v3: calls 13021  flips whole 2  flips first 220 calls 1  prog [0.0000, 29.9978]  d6d8 {'30': 13021}  speed max 4477.2 (>0 on 13020)  median|sp - |vel||=0.6028 max 996
+own `at` row != record +0x9d4: 40596 of 40632 TG_Fwd calls
