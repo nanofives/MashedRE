@@ -1,0 +1,29 @@
+// 0x0063dc44: ERROR no function at or containing 0x0063dc44
+//   block: .data rw-
+//   at: undefined bytes (never disassembled)
+//   bytes: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+//   xrefs (1):
+//     DATA 0x0041f058 in FUN_0041f030
+
+// 0x0063dc70: ERROR no function at or containing 0x0063dc70
+//   block: .data rw-
+//   at: undefined bytes (never disassembled)
+//   bytes: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+//   xrefs (1):
+//     DATA 0x0042047c in FUN_00420420
+
+// 0x0063dc38: ERROR no function at or containing 0x0063dc38
+//   block: .data rw-
+//   at: undefined bytes (never disassembled)
+//   bytes: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+//   xrefs (3):
+//     DATA 0x0041f048 in FUN_0041f030
+//     DATA 0x0041f13c in FUN_0041f120
+//     DATA 0x004208ca in FUN_00420870
+
+// 0x0063da2c: ERROR no function at or containing 0x0063da2c
+//   block: .data rw-
+//   at: undefined bytes (never disassembled)
+//   bytes: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+//   xrefs (1):
+//     DATA 0x004208b3 in FUN_00420870

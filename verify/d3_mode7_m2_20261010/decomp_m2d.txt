@@ -1,0 +1,40 @@
+// FUN_00420290 @ 0x00420290  size=168  (MASHED.exe)
+// undefined FUN_00420290(void)
+// callees: FUN_0041f120@0x0041f120, FUN_00426de0@0x00426de0, FUN_00426df0@0x00426df0
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C2 2026-06-03] `void FUN_00420290(float param_1, float param_2)`. Body 0x00420290..0x00420337.
+   `param_1` is reinterpreted as the slot… */
+
+void FUN_00420290(float param_1,float param_2)
+
+{
+  float10 fVar1;
+  float fVar2;
+  int iVar3;
+  int iVar4;
+  float10 fVar5;
+  float10 fVar6;
+  
+  iVar3 = (int)param_1;
+  iVar4 = (int)param_1 * 0x2ac;
+  fVar5 = (float10)FUN_00426de0();
+  param_1 = (float)fVar5;
+  fVar6 = (float10)FUN_00426df0();
+  fVar1 = (float10)param_1;
+  fVar5 = (float10)param_1;
+  param_1 = 0.0;
+  *(float *)(&DAT_0063dc54 + iVar4) = (float)((fVar6 - fVar1) * (float10)param_2 + fVar5);
+  FUN_0041f120(iVar3,0,&param_1);
+  fVar2 = _DAT_005cc568;
+  if ((_DAT_005cc568 < param_1 == (_DAT_005cc568 == param_1)) &&
+     (fVar2 = param_1, param_1 < DAT_005d757c)) {
+    fVar2 = DAT_005d757c;
+  }
+  fVar2 = _DAT_005cc320 - fVar2 * _DAT_005cc328;
+  *(uint *)(&DAT_0063dc74 + iVar4) = *(uint *)(&DAT_0063dc74 + iVar4) | 2;
+  *(float *)(&DAT_0063dc54 + iVar4) = fVar2 * *(float *)(&DAT_0063dc54 + iVar4);
+  return;
+}
+
+

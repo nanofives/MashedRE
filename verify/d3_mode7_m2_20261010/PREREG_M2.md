@@ -61,3 +61,27 @@ Car registrant `FUN_0041f710` (EAX = `0x0063d9e0 + v*0x2ac`): `{+0x258, +0x25c, 
 `+0x258..+0x260` = `0x0063dc38..` written in `FUN_00420870` from `FUN_004c0ed0(car frame)+0x30..+0x38` (LTM translation);
 radius `+0x264` writer unknown (0.533 on every o_rg4 frame). Measure first: the original's car entries vs record
 `+0x958` (memory `msd-world-position-is-the-0x928-matrix-row`) on matching frames; then pre-register the bridge.
+
+## 5. ADDENDUM 2026-10-10: M2b registered (measurements done before code)
+
+Measured on `o_cm1` (original, Training, `--reg-probe 10`, 400 frames x 4 cars, reads at the same `FUN_00485070` call):
+- **Registered car position = car record `+0x958..+0x960`, bitwise, 1,600 / 1,600.** Mechanism from the bytes:
+  `FUN_0040da50` passes the body matrix (`FUN_0046d4a0`, `0x0040dac2`) to `FUN_00420870` (`0x0040dad0`), which
+  replaces the part-19 frame with it (`FUN_004c1480(frame, matrix, 0)`, `0x004208ae`) and copies its LTM translation
+  to `rec+0x258` (`0x004208ba..0x004208d5`). So the exe's live `VehRecord(v) + 0x958` is the faithful source.
+- Gate: the same per-car predicate as `FUN_00408610` (`0x0040daa0..0x0040dab1`); the exe mirrors
+  `PathProg_FrameTick`'s gate (U-9210 caveat applies).
+- Slots: cars take slots 0..3 in car order on every frame (they register first, `0x0040fc75`).
+- Radius `rec+0x264` = `0x3f088c2d` (0.53338) on all 4 cars on every frame of o_rg1..4 + o_cm1 (18,000+). It is the
+  car's culling sphere (`FUN_004c1b40` = frustum sphere test, reads `rec+0x258..+0x264`, `0x00420081`); its writer
+  is NOT found (no literal in the image, no direct store in `0x0041e000..0x00421000`). The exe uses the measured bits
+  as a labelled constant [UNCERTAIN, new U-item]; other car models/tracks may differ.
+
+Port: `FUN_0041f710` verbatim naked (EAX = a fake 0x2ac record per car holding `+0x258..+0x264` and `+0x290 = v`),
+knob `MASHED_REG_CARS` (default OFF, needs `MASHED_REGISTRY`), called per frame after `PathProg_FrameTick`'s point and
+before the pickup tick.
+Gates: **G-M2b-LIVE** exe registry per frame: 4 car entries (when 4 cars pass the gate) in slots 0..3, type `0xff00+v`,
+radius `0x3f088c2d`, no callback, position bitwise = `VehRecord(v)+0x958` at publish, 100% of frames.
+**G-M2b-OFF / INERT** knob OFF and ON (`REGISTRY + PICKUPS_ORIG + REG_CARS`): `ae67b13a / c8317ce2 / 31db9384`.
+Prediction: PASS. Callbacks are still record-only, and no callback pair involves a car entry with a callback (cars
+have none; pickups/0x11 do, so pairs WILL now be recorded when a car overlaps a pickup, without effect).

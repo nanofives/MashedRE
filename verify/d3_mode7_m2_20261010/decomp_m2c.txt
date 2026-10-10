@@ -1,0 +1,197 @@
+// FUN_00420420 @ 0x00420420  size=1099  (MASHED.exe)
+// undefined FUN_00420420(void)
+// callees: FUN_0041f330@0x0041f330, FUN_0041f360@0x0041f360, FUN_0041fe10@0x0041fe10, FUN_00420290@0x00420290, FUN_004224d0@0x004224d0, FUN_004260a0@0x004260a0, FUN_004260b0@0x004260b0, FUN_0042a5d0@0x0042a5d0, FUN_0042a6b0@0x0042a6b0, FUN_004b3fc0@0x004b3fc0, FUN_004b5190@0x004b5190, FUN_004b52c0@0x004b52c0, FUN_004b6520@0x004b6520, FUN_004c15c0@0x004c15c0, FUN_004c5c00@0x004c5c00, FUN_004c5c80@0x004c5c80, FUN_0053d090@0x0053d090, FUN_0053d400@0x0053d400, FUN_0053fb70@0x0053fb70, FUN_0053fbb0@0x0053fbb0, FUN_0053fd30@0x0053fd30, FUN_00543b90@0x00543b90, FUN_00543d70@0x00543d70, FUN_00543e10@0x00543e10, FUN_005449f0@0x005449f0, FUN_00544a70@0x00544a70, FUN_00544ad0@0x00544ad0, __security_check_cookie@0x004a2be9
+// callers: FUN_0040d110@0x0040d110
+
+/* WARNING: Function: __security_check_cookie replaced with injection: security_check_cookie */
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C2 2026-06-02] Per-player vehicle + checkpoint/special-object init. For player `param_1`,
+   zero-clears the 0x2ac-byte block at… */
+
+void FUN_00420420(int param_1)
+
+{
+  int iVar1;
+  int iVar2;
+  undefined4 uVar3;
+  undefined4 uVar4;
+  int iVar5;
+  int iVar6;
+  int iVar7;
+  undefined *puVar8;
+  bool bVar9;
+  uint unaff_retaddr;
+  int iStack_25c;
+  undefined4 uStack_258;
+  undefined4 uStack_254;
+  undefined4 uStack_250;
+  undefined4 uStack_24c;
+  undefined4 uStack_248;
+  undefined1 local_244 [64];
+  int aiStack_204 [128];
+  uint local_4;
+  
+  local_4 = DAT_00616038 ^ unaff_retaddr;
+  iVar7 = param_1 * 0x2ac;
+  puVar8 = &DAT_0063d9e0 + iVar7;
+  FUN_004b6520(puVar8,0x2ac);
+  iVar1 = FUN_0041f330();
+  iVar2 = DAT_0063d7e8;
+  bVar9 = DAT_0063d7e8 == 0;
+  *(int *)(&DAT_0063dc48 + iVar7) = iVar1;
+  *(int *)(&DAT_0063dc70 + iVar7) = param_1;
+  *(undefined4 *)(&DAT_0063dc78 + iVar7) = 0;
+  if (bVar9) {
+    (**(code **)(DAT_007d3ff8 + 0xcc))(local_244,iVar1 + 0x20);
+    (**(code **)(DAT_007d3ff8 + 0xd4))(local_244,&DAT_005cd2a4);
+    iVar2 = FUN_0042a6b0(*(int *)(&DAT_0063dc48 + iVar7) + 0x20,0,0);
+    DAT_0063d7e8 = iVar2;
+  }
+  FUN_004c5c80(iVar2);
+  (**(code **)(DAT_007d3ff8 + 0xcc))(local_244,*(int *)(&DAT_0063dc48 + iVar7) + 0x10);
+  (**(code **)(DAT_007d3ff8 + 0xd4))(local_244,&DAT_005cd29c);
+  uVar3 = FUN_0042a5d0(*(int *)(&DAT_0063dc48 + iVar7) + 0x10,0,0);
+  *(undefined4 *)(&DAT_0063dc4c + iVar7) = uVar3;
+  uVar3 = FUN_004b3fc0(uVar3,aiStack_204);
+  *(undefined4 *)(&DAT_0063dc50 + iVar7) = uVar3;
+  FUN_004c15c0((&DAT_0063d840)[param_1]);
+  *(undefined4 *)(&DAT_0063dc5c + iVar7) = (&DAT_0063d840)[param_1];
+  *(uint *)(&DAT_0063dc74 + iVar7) = *(uint *)(&DAT_0063dc74 + iVar7) | 4;
+  FUN_00420290(param_1,0x3f800000);
+  iVar2 = DAT_007d3ff8;
+  *(undefined4 *)(&DAT_0063dc60 + iVar7) = 0;
+  iVar2 = (**(code **)(iVar2 + 0xf4))(*(int *)(&DAT_0063dc48 + iVar7) + 0x30);
+  if (iVar2 != 0) {
+    uVar3 = FUN_004c5c00(DAT_0063d7e8,*(int *)(&DAT_0063dc48 + iVar7) + 0x30);
+    *(undefined4 *)(&DAT_0063dc58 + iVar7) = uVar3;
+  }
+  iStack_25c = 0;
+  if (0 < *(int *)(&DAT_0063dc50 + iVar7)) {
+    do {
+      iVar2 = aiStack_204[iStack_25c];
+      iVar1 = *(int *)(iVar2 + 0x18);
+      uVar3 = *(undefined4 *)(iVar2 + 0x48);
+      uVar4 = FUN_00543b90(iVar1,0x5cc4de,1,2);
+      uVar4 = FUN_00543d70(iVar1,uVar4);
+      FUN_00543e10(uVar4,0,puVar8);
+      FUN_00543e10(uVar4,1,uVar3);
+      iVar5 = FUN_004b5190(iVar2,0,0);
+      *(int *)(puVar8 + iVar5 * 4) = iVar2;
+      iVar6 = FUN_0041f360(iVar5);
+      if (iVar6 != 0) {
+        FUN_0053fb70(iVar2);
+        iVar6 = 0;
+        if (0 < *(int *)(iVar1 + 0x24)) {
+          do {
+            uStack_248 = *(undefined4 *)(*(int *)(iVar1 + 0x20) + iVar6 * 4);
+            FUN_0053fbb0(uStack_248,2);
+            FUN_0053fd30(uStack_248,*(undefined4 *)(&DAT_0063dc58 + iVar7),
+                         *(undefined4 *)(&DAT_0063dc5c + iVar7),0,
+                         *(undefined4 *)(&DAT_0063dc54 + iVar7));
+            iVar6 = iVar6 + 1;
+          } while (iVar6 < *(int *)(iVar1 + 0x24));
+        }
+      }
+      if ((0x3a < iVar5) && (iVar5 < 0x3f)) {
+        FUN_004b52c0(iVar1,0x20,0);
+        FUN_004b52c0(iVar1,0x40,1);
+        *(undefined4 *)(**(int **)(iVar1 + 0x20) + 4) = 0xff000000;
+      }
+      if (((iVar5 == 0x11) || (iVar5 == 0x15)) || (iVar5 == 0x18)) {
+        FUN_004b52c0(iVar1,0x20,0);
+        FUN_004b52c0(iVar1,0x40,1);
+        *(undefined4 *)(**(int **)(iVar1 + 0x20) + 4) = 0xffffffff;
+      }
+      if (iVar5 == 0x12) {
+        FUN_005449f0(iVar1,1);
+        FUN_00544a70(iVar1,0,0,1,0x3f800000);
+        FUN_00544ad0(iVar2,0);
+      }
+      else if ((0x3a < iVar5) && ((iVar5 < 0x3f || (iVar5 == 0x40)))) {
+        FUN_0053d090(*(undefined4 *)(iVar2 + 0x18));
+        FUN_0053d400(*(undefined4 *)(iVar2 + 0x18),0);
+      }
+      iStack_25c = iStack_25c + 1;
+    } while (iStack_25c < *(int *)(&DAT_0063dc50 + iVar7));
+  }
+  FUN_0041fe10();
+  uStack_258 = FUN_004c5c00(DAT_0063d7e8,*(int *)(&DAT_0063dc48 + iVar7) + 0x40);
+  uStack_254 = FUN_004c5c00(DAT_0063d7e8,*(int *)(&DAT_0063dc48 + iVar7) + 0x50);
+  uStack_250 = FUN_004c5c00(DAT_0063d7e8,*(int *)(&DAT_0063dc48 + iVar7) + 0x60);
+  uStack_24c = FUN_004c5c00(DAT_0063d7e8,*(int *)(&DAT_0063dc48 + iVar7) + 0x70);
+  iVar2 = DAT_0063e490;
+  if (DAT_00636acc == 0) {
+    *(int *)(&DAT_0063dc80 + iVar7) = DAT_0063e490;
+    *(undefined4 *)(&DAT_0063dc84 + iVar7) = *(undefined4 *)(iVar2 + 4);
+    uStack_258 = DAT_0063d854;
+    *(undefined4 *)(&DAT_0063dc88 + iVar7) = DAT_0063d854;
+    uStack_254 = uStack_258;
+    uStack_250 = uStack_258;
+    uStack_24c = uStack_258;
+    FUN_004224d0(param_1,&uStack_258,iVar2);
+  }
+  DAT_0063d850 = FUN_004260b0();
+  _DAT_0063d7ec = FUN_004260a0();
+  DAT_0063e498 = DAT_0063e498 + 1;
+  *(undefined4 *)(&DAT_0063d830 + param_1 * 4) = 1;
+  FUN_004c5c80(0);
+  return;
+}
+
+
+
+// FUN_0041f120 @ 0x0041f120  size=150  (MASHED.exe)
+// undefined FUN_0041f120(void)
+// callees: FUN_004c3ac0@0x004c3ac0
+// callers: FUN_00420290@0x00420290, FUN_00446520@0x00446520
+
+/* [C1 2026-06-01] Computes the vector from a reference point (`&DAT_0063dc38` triple) to player
+   `param_1`'s vehicle… */
+
+undefined4 FUN_0041f120(int param_1,float *param_2,float *param_3)
+
+{
+  int iVar1;
+  float10 fVar2;
+  float local_c;
+  float local_8;
+  float local_4;
+  
+  param_1 = param_1 * 0x2ac;
+  if (*(int *)(&DAT_0063dc7c + param_1) != 0) {
+    iVar1 = *(int *)(*(int *)(&DAT_0063dc7c + param_1) + 4);
+    local_c = *(float *)(&DAT_0063dc38 + param_1) - *(float *)(iVar1 + 0x40);
+    local_8 = *(float *)(&DAT_0063dc3c + param_1) - *(float *)(iVar1 + 0x44);
+    local_4 = *(float *)(&DAT_0063dc40 + param_1) - *(float *)(iVar1 + 0x48);
+    if (param_3 != (float *)0x0) {
+      *param_3 = local_4 * local_4 + local_c * local_c + local_8 * local_8;
+    }
+    if (param_2 != (float *)0x0) {
+      fVar2 = (float10)FUN_004c3ac0(&local_c);
+      *param_2 = (float)fVar2;
+    }
+    return 1;
+  }
+  return 0;
+}
+
+
+
+// FUN_004c0ed0 @ 0x004c0ed0  size=31  (MASHED.exe)
+// undefined FUN_004c0ed0(void)
+// callees: FUN_004d8350@0x004d8350
+// callers: FUN_00405ab0@0x00405ab0, FUN_00406160@0x00406160, FUN_00406410@0x00406410, FUN_004064c0@0x004064c0, FUN_00406ce0@0x00406ce0, FUN_0041f060@0x0041f060, FUN_0041f1e0@0x0041f1e0, FUN_0041f220@0x0041f220, FUN_0041f290@0x0041f290, FUN_0041f590@0x0041f590, FUN_0041faf0@0x0041faf0, FUN_00420870@0x00420870, FUN_004222f0@0x004222f0, FUN_0044ba30@0x0044ba30, FUN_0044bbc0@0x0044bbc0, FUN_0044bfa0@0x0044bfa0, FUN_004541e0@0x004541e0, FUN_00454350@0x00454350, FUN_00455150@0x00455150, FUN_00455b50@0x00455b50, FUN_004568d0@0x004568d0, FUN_00458080@0x00458080, FUN_0045a590@0x0045a590, FUN_0045a950@0x0045a950, FUN_0045b390@0x0045b390, FUN_0047bf70@0x0047bf70, FUN_0047c160@0x0047c160, FUN_00481a30@0x00481a30, FUN_00487280@0x00487280, FUN_0048a4e0@0x0048a4e0, FUN_00496ec0@0x00496ec0, FUN_004b42c0@0x004b42c0, FUN_004ca160@0x004ca160, FUN_004e6680@0x004e6680, FUN_00533ec0@0x00533ec0, FUN_0053c5d0@0x0053c5d0, FUN_0053ccc0@0x0053ccc0, FUN_00541b50@0x00541b50, FUN_005422c0@0x005422c0, FUN_00552e40@0x00552e40, FUN_00557a60@0x00557a60, RpAtomicGetWorldBoundingSphere@0x004e6100
+
+/* [C1 2026-05-13] `RwCameraGetFrame` — returns the frame embedded in the camera object at
+   `param_1+0x50`. */
+
+int FUN_004c0ed0(int param_1)
+
+{
+  if ((*(byte *)(*(int *)(param_1 + 0xa0) + 3) & 1) != 0) {
+    FUN_004d8350(*(int *)(param_1 + 0xa0));
+  }
+  return param_1 + 0x50;
+}
+
+

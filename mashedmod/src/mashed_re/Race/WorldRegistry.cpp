@@ -218,7 +218,7 @@ void Registry_MaybeReplay() {
             c.push_back(all.substr(q, t - q)); q = t + 1;
         }
         if (!c.empty() && !c.back().empty() && c.back().back() == '\r') c.back().pop_back();
-        if (c.size() == 12 || c.size() == 13) rows.push_back(c);
+        if (c.size() >= 12 && c.size() <= 14) rows.push_back(c);   // 14 = + carmat (M2b)
         p = e + 1;
     }
     // columns: 0 n, 1 frame, 2 cc, 3 c8, 4 d4, 5 grid_in, 6 slots_in, 7 grid, 8 d8, 9 cc_out, 10 d4_out, 11 slots_out
@@ -298,7 +298,7 @@ void Registry_MaybeReplay() {
                                                  *reinterpret_cast<const std::uint32_t*>(sb + 0x10));
         }
         // callback sequence vs the original's witnesses (column 12: "target:a:b|...", hex target)
-        if (c.size() == 13) {
+        if (c.size() >= 13) {
             std::string seq;
             for (const CbRec& r : s_cbLog) {
                 char t[64]; std::snprintf(t, sizeof t, "%x:%d:%d", r.target, r.a, r.b);

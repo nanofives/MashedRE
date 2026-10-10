@@ -1,0 +1,128 @@
+// FUN_004c1b40 @ 0x004c1b40  size=104  (MASHED.exe)
+// undefined FUN_004c1b40(void)
+// callers: FUN_00420050@0x00420050, FUN_004216b0@0x004216b0, FUN_00425e40@0x00425e40, FUN_00477a10@0x00477a10, FUN_0047c160@0x0047c160, FUN_00481a30@0x00481a30, FUN_0048a130@0x0048a130, FUN_004910c0@0x004910c0, FUN_00491f00@0x00491f00, FUN_004e5680@0x004e5680
+
+undefined4 FUN_004c1b40(int param_1,float *param_2)
+
+{
+  float fVar1;
+  float *pfVar2;
+  int iVar3;
+  undefined4 uVar4;
+  
+  uVar4 = 2;
+  pfVar2 = (float *)(param_1 + 0x94);
+  iVar3 = 6;
+  do {
+    iVar3 = iVar3 + -1;
+    fVar1 = (pfVar2[2] * param_2[2] + *pfVar2 * *param_2 + pfVar2[1] * param_2[1]) - pfVar2[3];
+    if (param_2[3] < fVar1) {
+      return 0;
+    }
+    if (-param_2[3] < fVar1) {
+      uVar4 = 1;
+    }
+    pfVar2 = pfVar2 + 5;
+  } while (iVar3 != 0);
+  return uVar4;
+}
+
+
+
+// FUN_00420050 @ 0x00420050  size=474  (MASHED.exe)
+// NOTE: 0x00420079 is not a function entry; showing containing function
+// undefined FUN_00420050(void)
+// callers: FUN_00410b30@0x00410b30
+
+/* [C2 2026-05-17] Per-player full render dispatcher. Indexed into the per-player struct array at
+   `DAT_0063dc38` (stride… */
+
+void FUN_00420050(int param_1,undefined4 param_2)
+
+{
+  uint uVar1;
+  int iVar2;
+  undefined4 uVar3;
+  int iVar4;
+  float fStack_20;
+  float fStack_1c;
+  float fStack_18;
+  float fStack_14;
+  float fStack_10;
+  float fStack_c;
+  float fStack_8;
+  float fStack_4;
+  
+  iVar4 = param_1 * 0x2ac;
+  if (((&DAT_0063dc74)[iVar4] & 8) == 0) {
+    return;
+  }
+  iVar2 = FUN_004c1b40(param_2,&DAT_0063dc38 + iVar4);
+  if (iVar2 == 0) {
+    return;
+  }
+  *(undefined4 *)(&DAT_0063dc7c + iVar4) = param_2;
+  FUN_004c19f0(param_2);
+  uVar3 = FUN_00426060(param_2);
+  FUN_004e4350(uVar3);
+  if ((DAT_00636acc == 0) && (iVar2 = FUN_004260c0(), iVar2 != 0)) {
+    FUN_0041f8f0();
+  }
+  FUN_0041faf0(param_2);
+  FUN_0041fcc0(param_2);
+  uVar3 = FUN_00426060(param_2);
+  FUN_004e4320(uVar3);
+  FUN_004c1a00(param_2);
+  if (DAT_0063d850 != 0) {
+    fStack_20 = *(float *)(DAT_0063d850 + 0x18);
+    fStack_10 = fStack_20 * *(float *)(&DAT_0063dc64 + iVar4);
+    fStack_1c = *(float *)(DAT_0063d850 + 0x1c);
+    fStack_18 = *(float *)(DAT_0063d850 + 0x20);
+    fStack_14 = *(float *)(DAT_0063d850 + 0x24);
+    fStack_c = fStack_1c * *(float *)(&DAT_0063dc64 + iVar4);
+    fStack_8 = fStack_18 * *(float *)(&DAT_0063dc64 + iVar4);
+    fStack_4 = fStack_14 * *(float *)(&DAT_0063dc64 + iVar4);
+    FUN_004e4900(DAT_0063d850,&fStack_10);
+  }
+  FUN_004e6680(*(undefined4 *)(&DAT_0063dc4c + iVar4));
+  uVar1 = *(uint *)(&DAT_0063dc74 + iVar4);
+  if ((uVar1 & 0x400) != 0) goto LAB_004201d7;
+  if (((uVar1 & 0x10) == 0) && ((uVar1 & 0x1000) == 0)) {
+    if (*(int *)(&DAT_0063dc78 + iVar4) == 0) {
+      iVar2 = *(int *)(&DAT_0063da18 + iVar4);
+    }
+    else {
+      if (*(int *)(&DAT_0063dc78 + iVar4) != 1) goto LAB_004201a3;
+      iVar2 = *(int *)(&DAT_0063da9c + iVar4);
+    }
+    if (iVar2 != 0) {
+      (**(code **)(iVar2 + 0x48))(iVar2);
+    }
+  }
+LAB_004201a3:
+  if (((*(uint *)(&DAT_0063dc74 + iVar4) & 0x20) == 0) &&
+     ((*(uint *)(&DAT_0063dc74 + iVar4) & 0x2000) == 0)) {
+    if (*(int *)(&DAT_0063dc78 + iVar4) == 0) {
+      iVar4 = *(int *)(&DAT_0063da1c + iVar4);
+    }
+    else {
+      if (*(int *)(&DAT_0063dc78 + iVar4) != 1) goto LAB_004201d7;
+      iVar4 = *(int *)(&DAT_0063daa0 + iVar4);
+    }
+    if (iVar4 != 0) {
+      (**(code **)(iVar4 + 0x48))(iVar4);
+    }
+  }
+LAB_004201d7:
+  if (DAT_0063d850 != 0) {
+    FUN_004e4900(DAT_0063d850,&fStack_20);
+  }
+  if ((DAT_00636acc == 0) && (iVar4 = FUN_004260c0(), iVar4 != 0)) {
+    (**(code **)(DAT_007d3ff8 + 0x20))(8,0);
+    FUN_004228f0(param_1,param_2);
+    (**(code **)(DAT_007d3ff8 + 0x20))(8,1);
+  }
+  return;
+}
+
+

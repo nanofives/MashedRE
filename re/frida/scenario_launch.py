@@ -1880,6 +1880,8 @@ function rgProbeArm(k){
           // K < 0: dump every frame, keep the frames whose slots changed in the pass (pair bits set)
           // plus every |K|-th frame as a control.
           this.row.push(RG.cbs.join('|'));
+          // [M2b] each car record's +0x928..+0x967 (body matrix rows + position), read at leave (same frame)
+          this.row.push([0,1,2,3].map(function(v){ return hexOf(ga(0x008815a0 + v*0xd04 + 0x928), 0x40); }).join(';'));
           if (RG.K < 0 && RG.cbs.length === 0 && (RG.n % (-RG.K)) !== 0) return;
           RG.rows.push(this.row);
         } catch(e){ if (!RG.err) RG.err = 'rgLeave ' + e; }
@@ -4009,7 +4011,7 @@ def main():
                         _rg = E.rg_probe_drain()
                         _rf = outp.with_suffix(outp.suffix + ".reg.tsv")
                         with open(_rf, "w", newline="") as f:
-                            f.write(chr(9).join(["n","frame","cc","c8","d4","grid_in","slots_in","grid","d8","cc_out","d4_out","slots_out","callbacks"]) + chr(10))
+                            f.write(chr(9).join(["n","frame","cc","c8","d4","grid_in","slots_in","grid","d8","cc_out","d4_out","slots_out","callbacks","carmat"]) + chr(10))
                             for r in _rg: f.write(chr(9).join(str(x) for x in r) + chr(10))
                         print(f"  [statediff] reg-probe {len(_rg)} rows -> {_rf}")
                     except Exception as _e: print("  [statediff] reg drain failed:", _e)
