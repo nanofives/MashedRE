@@ -1,0 +1,6 @@
+{
+  "funcs": [ {"name": "CR_41f710", "start": "0x0041f710", "size": 88} ],
+  "calls": { "0x00484cf0": "RG_484cf0" },
+  "consts": {},
+  "patch": {}
+}

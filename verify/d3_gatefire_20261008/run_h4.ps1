@@ -18,7 +18,7 @@ $LANE = @('MASHED_REFDIST','MASHED_SLOTSTATE_SEED','MASHED_SLOT_PLAYER',
           'MASHED_WIRE_B2','MASHED_U9186_GATES','MASHED_AI_STEPDUMP',
           'MASHED_NO_SLOTSTATE_SEED','MASHED_NO_SLOT_PLAYER','MASHED_GF1',
           'MASHED_PLAYERTRACE','MASHED_SUBSTATE','MASHED_MODE5_RESET','MASHED_SUBSTATE_CD',
-          'MASHED_L1B_INPUTS','MASHED_P3_MEASURE','MASHED_LEG2_TRACE','MASHED_CAM_TICKS_REPLAY','MASHED_NO_WIRE_B2','MASHED_NO_RACEPCT_BRIDGE','MASHED_NO_A364_RESET','MASHED_NO_REFDIST','MASHED_PATHPROG','MASHED_PATHPROG_TRACE','MASHED_PATHPROG_PC','MASHED_TGT3','MASHED_TGT3_TRACE','MASHED_TGT3_PC','MASHED_REGISTRY','MASHED_REGISTRY_PC','MASHED_PICKUPS_ORIG','MASHED_PICKUPS_PC','MASHED_REGISTRY_TRACE')
+          'MASHED_L1B_INPUTS','MASHED_P3_MEASURE','MASHED_LEG2_TRACE','MASHED_CAM_TICKS_REPLAY','MASHED_NO_WIRE_B2','MASHED_NO_RACEPCT_BRIDGE','MASHED_NO_A364_RESET','MASHED_NO_REFDIST','MASHED_PATHPROG','MASHED_PATHPROG_TRACE','MASHED_PATHPROG_PC','MASHED_TGT3','MASHED_TGT3_TRACE','MASHED_TGT3_PC','MASHED_REGISTRY','MASHED_REGISTRY_PC','MASHED_PICKUPS_ORIG','MASHED_PICKUPS_PC','MASHED_REGISTRY_TRACE','MASHED_REG_CARS')
 
 $B2 = @('MASHED_A364_RESET','MASHED_REFDIST','MASHED_RACEPCT_BRIDGE','MASHED_NO_ELIM','MASHED_WIRE_B2')
 $runs = @(
@@ -73,11 +73,14 @@ $runs = @(
   @{ name = 'P3F_LIVE'; knobs = @('MASHED_PATHPROG', 'MASHED_TGT3', 'MASHED_TGT3_TRACE=@OUT@\P3F_LIVE.tgt3.csv') },
   # mode 7 M2a (verify/d3_mode7_m2_20261010/PREREG_M2.md): G-M2a-INERT + G-M2a-LIVE (registry trace) -- must equal ae67b13a/c8317ce2/31db9384
   @{ name = 'M2A_CTRL'; knobs = @() },
-  @{ name = 'M2A_ON'; knobs = @('MASHED_REGISTRY', 'MASHED_PICKUPS_ORIG', 'MASHED_REGISTRY_TRACE=@OUT@\M2A_ON.registry.csv') }
+  @{ name = 'M2A_ON'; knobs = @('MASHED_REGISTRY', 'MASHED_PICKUPS_ORIG', 'MASHED_REGISTRY_TRACE=@OUT@\M2A_ON.registry.csv') },
+  # mode 7 M2b (PREREG_M2.md section 5): G-M2b-OFF + G-M2b-INERT/LIVE
+  @{ name = 'M2B_CTRL'; knobs = @() },
+  @{ name = 'M2B_ON';   knobs = @('MASHED_REGISTRY', 'MASHED_PICKUPS_ORIG', 'MASHED_REG_CARS', 'MASHED_REGISTRY_TRACE=@OUT@\M2B_ON.registry.csv') }
 )
 $sel = @($args)   # capture: inside a Where-Object block $args is the block's own
 if ($sel.Count -gt 0) { $runs = $runs | Where-Object { $sel -contains $_.name } }
-else { $runs = $runs | Where-Object { $_.name -notlike 'H4_post*' -and $_.name -ne 'H4_optout' -and $_.name -notlike 'L1A_*' -and $_.name -notlike 'L1B_*' -and $_.name -notlike 'P414*' -and $_.name -notlike 'L2*' -and $_.name -notlike 'F_*' -and $_.name -notlike 'P1_*' -and $_.name -notlike 'P2_*' -and $_.name -notlike 'P3_*' -and $_.name -notlike 'M1_*' -and $_.name -notlike 'M1F_*' -and $_.name -notlike 'P3F_*' -and $_.name -notlike 'M2A_*' } }
+else { $runs = $runs | Where-Object { $_.name -notlike 'H4_post*' -and $_.name -ne 'H4_optout' -and $_.name -notlike 'L1A_*' -and $_.name -notlike 'L1B_*' -and $_.name -notlike 'P414*' -and $_.name -notlike 'L2*' -and $_.name -notlike 'F_*' -and $_.name -notlike 'P1_*' -and $_.name -notlike 'P2_*' -and $_.name -notlike 'P3_*' -and $_.name -notlike 'M1_*' -and $_.name -notlike 'M1F_*' -and $_.name -notlike 'P3F_*' -and $_.name -notlike 'M2A_*' -and $_.name -notlike 'M2B_*' } }
 
 foreach ($r in $runs) {
   $log = Join-Path $root 'mashed_re.log'

@@ -20,6 +20,7 @@
 // The .rdata constants are exe-safe copies.
 #include "WorldRegistry.h"
 #include "../Math/RwLutTables.h"
+#include "../Vehicle/VehicleRecordBase.h"   // G-M2b-LIVE trace column
 
 #include <float.h>
 #include <algorithm>
@@ -170,7 +171,7 @@ void Registry_FrameTick() {
             s_init = true;
             if (const char* t = std::getenv("MASHED_REGISTRY_TRACE")) {
                 s_tr = std::fopen(t, "w");
-                if (s_tr) std::fprintf(s_tr, "frame,slot,type,radius,x,y,z,data,cb\n");
+                if (s_tr) std::fprintf(s_tr, "frame,slot,type,radius,x,y,z,data,cb,car_pos_eq\n");
             }
         }
         if (s_tr) {
@@ -178,10 +179,16 @@ void Registry_FrameTick() {
             for (int k = 0; k < cc && k < 300; ++k) {
                 const std::uintptr_t sl = kSlots + k * kStride;
                 const float* fp = reinterpret_cast<const float*>(sl);
-                std::fprintf(s_tr, "%d,%d,%08x,%.9g,%.9g,%.9g,%.9g,%08x,%08x\n", s_fr, k,
+                const std::uint32_t ty = *reinterpret_cast<const std::uint32_t*>(sl + 0x10);
+                int eq = -1;   // car entries: position bitwise == VehRecord(v)+0x958 at publish (G-M2b-LIVE)
+                if (ty >= 0xff00u && ty < 0xff04u) {
+                    const char* r = Vehicle::VehRecord(ty - 0xff00u);
+                    eq = r ? (std::memcmp(reinterpret_cast<const void*>(sl), r + 0x958, 12) == 0) : -2;
+                }
+                std::fprintf(s_tr, "%d,%d,%08x,%.9g,%.9g,%.9g,%.9g,%08x,%08x,%d\n", s_fr, k,
                              *reinterpret_cast<const std::uint32_t*>(sl + 0x10), fp[3], fp[0], fp[1], fp[2],
                              *reinterpret_cast<const std::uint32_t*>(sl + 0x14),
-                             *reinterpret_cast<const std::uint32_t*>(sl + 0x1c));
+                             *reinterpret_cast<const std::uint32_t*>(sl + 0x1c), eq);
             }
             if ((s_fr & 63) == 0) std::fflush(s_tr);
             ++s_fr;

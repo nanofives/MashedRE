@@ -1,0 +1,13 @@
+=== M2B_CTRL  knobs=[] ===
+    pid=33468
+    exit=0  self_exited=True
+    M2B_CTRL.step.csv  lines=19912  sha8=ae67b13a
+    M2B_CTRL.gates.csv  lines=55433  sha8=c8317ce2
+    M2B_CTRL.ptrace.log  lines=27716  sha8=31db9384
+=== M2B_ON  knobs=[MASHED_REGISTRY,MASHED_PICKUPS_ORIG,MASHED_REG_CARS,MASHED_REGISTRY_TRACE=@OUT@\M2B_ON.registry.csv] ===
+    pid=37336
+    exit=0  self_exited=True
+    M2B_ON.step.csv  lines=19912  sha8=ae67b13a
+    M2B_ON.gates.csv  lines=55433  sha8=c8317ce2
+    M2B_ON.ptrace.log  lines=27716  sha8=31db9384
+H4 DONE

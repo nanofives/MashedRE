@@ -28,6 +28,7 @@
 #include "../Ai/AiTargetClosest.h" // D-11072 P3: FUN_00414a70 (MASHED_TGT3)
 #include "../Race/WorldRegistry.h"  // mode 7 M1: world-object registry (MASHED_REGISTRY)
 #include "../Gameplay/PickupTick.h"  // mode 7 M2a: pickup tick FUN_00459000 (MASHED_PICKUPS_ORIG)
+#include "../Race/CarRegistrant.h"  // mode 7 M2b: car registrant FUN_0041f710 (MASHED_REG_CARS)
 #include "../Race/SubStateMachine.h"  // D-11073 leg 1b: FUN_0040dbd0 / FUN_004103a0 (MASHED_SUBSTATE)
 #include "../Race/CameraEntries.h"    // D-11073 leg 2: phase-3 camera entries (MASHED_SUBSTATE)
 extern "C" void __cdecl VehicleSeedWritePair(std::uint32_t, std::uint32_t);   // 0x00448700
@@ -5755,6 +5756,8 @@ void TrackRenderer::UpdateRace(float dt) {
     // exists yet, so with MASHED_REGISTRY it publishes cc = 0 every frame. Position relative to the
     // AI tick is an M4 question (PREREG_MODE7.md section 3).
     // [mode 7 M2a] FUN_0045bba0's FUN_00459000 (0x0040fcd0) registers the live pickups first.
+    // [mode 7 M2b] the cars register first, from FUN_0040da50 (0x0040dad0), as in FUN_0040fc00's order.
+    Race::CarsReg_FrameTick();
     Gameplay::Pickups_FrameTick();
     Race::Registry_FrameTick();
 
