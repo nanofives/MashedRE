@@ -1,5 +1,14 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-10 (D-11072 P2 DONE): **next = leg P3, `FUN_00414a70` + `FUN_00414300` on the now-live progress.**
+>
+> Read [`RESULT_P2.md`](../verify/d3_modes37_20261009/RESULT_P2.md). `FUN_00408610` + 17 callees are verbatim naked
+> (`re/tools/gen_naked_asm.py`) behind `MASHED_PATHPROG`; replay of 11,996 original calls is byte-identical at x87 PC_24
+> (29% at PC_53): **the original's race loop runs at PC_24** (D2 lead, user decision). Knob ON changes the AI windows
+> (step `4f675870`) via the faithful race_pct; not scored. P3: port `FUN_00414a70` (+ `FUN_00414300`, the `+0xbc` speed write
+> `0x004710c3..c8`) with the same generator where possible, pre-register, score vs the original window counts (car 2: 35
+> mode-3 / 10 brake), then (b) per regime + collateral. Open: per-round `FUN_00407a60`, player grid 0.0009 past the line.
+
 > ## START HERE 2026-10-09 (D-11072 faithful route, USER DECISION; leg P1 DONE): **next = leg P2, the per-frame `FUN_00408610`.**
 >
 > Read [`FINDINGS.md`](../verify/d3_modes37_20261009/FINDINGS.md), [`PREREG_PATHPROG.md`](../verify/d3_modes37_20261009/PREREG_PATHPROG.md),
