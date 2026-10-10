@@ -54,3 +54,5 @@ RwpSolverCore17
 # D-11073 leg 2 (2026-10-09): verbatim x87 transcription of FUN_00445aa0 et al. (fpatan/fsin inline);
 # bit-identity measured by run_diff in the same session, not assumed.
 CameraEntries
+# D-11072 P1 (2026-10-09): FUN_00478660/FUN_004783f0 course-block build; x87 double rule; gate = byte compare
+PathNodes

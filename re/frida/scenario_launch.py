@@ -2366,6 +2366,8 @@ function puMisDrain(){ const r = PU_MIS.rows; PU_MIS.rows = []; return r; }
 
 rpc.exports = {
   ready: function(){ return modBase() ? 1 : 0; },
+  dumpRange: function(addr, len){ return ptr(addr).readByteArray(len); },
+  rwLutRoot: function(delta){ const g = ga(0x007d3ff8).readU32(), o = ga(0x007d3ffc).readU32(); return ptr(g + o + delta).readU32(); },
   sdArm: function(car, withAi){ return sdArm(car, withAi); },
   // [D3 2026-09-14] OUTPUT-SLOT TABLE repair. CONTRIVED state (C3-grade), same
   // class as pokeLap/pokeCollect: it writes what the ORIGINAL's own allocator
@@ -3053,6 +3055,11 @@ def main():
                          "writes nothing, so it cannot perturb the arm it measures. "
                          "Pre-registration verify/d3_leader_20261003/PREREG_WITNESS.md. "
                          "Writes <out>.leaderprobe.csv. Requires --statediff-out.")
+    ap.add_argument("--dump-rwlut", default="",
+                    help="[D-11072 P1] PREFIX: dump the RW sqrt / inv-sqrt LUTs to PREFIX.{sqrt,invsqrt}.bin")
+    ap.add_argument("--dump-range", action="append", default=[],
+                    help="[D-11072 P1] ADDR:LEN:OUT (hex, hex, path). One-shot raw dump right "
+                         "after phase 3. Repeatable.")
     ap.add_argument("--wobj-probe", action="store_true",
                     help="[D3 modes 3/7 2026-10-09] ONE ENTRY HOOK on FUN_00414c30: logs each "
                          "call (frame, v, registry count 0x006e70d8) and dumps the world-object "
@@ -3310,6 +3317,21 @@ def main():
         # BEFORE the AI has done meaningful work, so this is the only correct moment.
         if args.poke_ctrl_slots:
             print("  [ctrl-slots]", E.poke_ctrl_slots())
+        if args.dump_rwlut:
+            # [D-11072 P1] the RW fast-sqrt LUTs (sqrt delta 0, inv-sqrt delta 4), 0x1000 dwords each
+            time.sleep(1.0)
+            for _d, _nm in ((0, "sqrt"), (4, "invsqrt")):
+                _root = E.rw_lut_root(_d)
+                with open(f"{args.dump_rwlut}.{_nm}.bin", "wb") as f: f.write(bytes(E.dump_range(_root, 0x4000)))
+                print(f"  [dump-rwlut] {_nm} root=0x{_root:08x} -> {args.dump_rwlut}.{_nm}.bin")
+        if args.dump_range:
+            # [D-11072 P1] one-shot raw memory dump after phase 3 (course block G-P1-CAPTURE)
+            time.sleep(1.0)
+            for spec in args.dump_range:
+                _a, _n, _o = spec.split(":", 2)
+                _bytes = E.dump_range(int(_a, 16), int(_n, 16))
+                with open(_o, "wb") as f: f.write(bytes(_bytes))
+                print(f"  [dump-range] 0x{int(_a,16):08x}+0x{int(_n,16):x} -> {_o}")
         if args.assert_course_load:
             import json
             # Give the phase-2 load chain a moment to finish writing the post-load flags.

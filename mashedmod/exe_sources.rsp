@@ -166,6 +166,8 @@
 "Race\SubStateCallees.cpp"
 "Race\SubStateMachine.cpp"
 "Race\CameraEntries.cpp"
+"Race\PathNodes.cpp"
+"Math\RwLutTables.cpp"
 "Util\CameraEntryDispatch.cpp"
 "Ai\AiLeaderTimer.cpp"
 "Vehicle\ShapeOwnerHandlePool.cpp"

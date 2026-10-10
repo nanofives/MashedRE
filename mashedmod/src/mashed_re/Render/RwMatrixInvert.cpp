@@ -62,7 +62,14 @@ RwMatrixInvert(void* /*out*/, void* /*in*/)
         fstp   dword ptr [esp + 8]
         mov    edx, dword ptr [esp + 8]
         fstp   st(0)
+#ifdef MASHED_STANDALONE
+        fld1                                    // +1.0 reciprocal numerator. The standalone's .rdata is
+                                                // blank-mapped (0x005cc320 reads 0, which zeroed the whole
+                                                // inverse, found by D-11072 P1 2026-10-09); fld1 loads the
+                                                // identical value 1.0 the float constant 0x3f800000 gives.
+#else
         fld    dword ptr ds:[0x005cc320]        // +1.0 reciprocal numerator
+#endif
         test   edx, edx
         je     L_skipdiv
         fdiv   dword ptr [esp + 8]              // 1.0 / determinant

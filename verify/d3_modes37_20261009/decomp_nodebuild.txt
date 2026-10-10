@@ -1,0 +1,305 @@
+[decomp_pc] slot=Mashed_pool0 modes=decomp+callees n=8
+// FUN_004b5030 @ 0x004b5030  size=71  (MASHED.exe)
+// undefined FUN_004b5030(void)
+// callees: RpWorldForAllWorldSectors@0x004e5c70
+
+/* [C1 2026-05-07] AI binary blob chunk query. Sets up a local search-key struct and dispatches via
+   FUN_004e5c70. */
+
+undefined4 FUN_004b5030(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+
+{
+  undefined4 local_14;
+  undefined4 local_10;
+  undefined4 local_c;
+  undefined1 *local_8;
+  undefined4 local_4;
+  
+  local_8 = (undefined1 *)&local_14;
+  local_c = param_3;
+  local_10 = param_2;
+  local_14 = 0;
+  local_4 = param_4;
+  RpWorldForAllWorldSectors(param_1,FUN_004b4eb0,&local_10);
+  return local_14;
+}
+
+
+
+// FUN_004b4550 @ 0x004b4550  size=247  (MASHED.exe)
+// undefined FUN_004b4550(void)
+// callees: (none)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C1 2026-06-01] `void FUN_004b4550(float *param_1 /*out vec3*/, float *param_2 /*array*/, int
+   param_3 /*count*/)` —… */
+
+void FUN_004b4550(float *param_1,float *param_2,int param_3)
+
+{
+  float fVar1;
+  float *pfVar2;
+  int iVar3;
+  int iVar4;
+  
+  *param_1 = *param_2;
+  param_1[1] = param_2[1];
+  param_1[2] = param_2[2];
+  iVar3 = 1;
+  if (3 < param_3 + -1) {
+    iVar4 = 4;
+    pfVar2 = param_2 + 5;
+    do {
+      iVar4 = iVar4 + 4;
+      iVar3 = iVar3 + 4;
+      *param_1 = pfVar2[-2] + *param_1;
+      param_1[1] = pfVar2[-1] + param_1[1];
+      param_1[2] = param_1[2] + *pfVar2;
+      *param_1 = pfVar2[1] + *param_1;
+      param_1[1] = pfVar2[2] + param_1[1];
+      param_1[2] = pfVar2[3] + param_1[2];
+      *param_1 = pfVar2[4] + *param_1;
+      param_1[1] = pfVar2[5] + param_1[1];
+      param_1[2] = pfVar2[6] + param_1[2];
+      *param_1 = pfVar2[7] + *param_1;
+      param_1[1] = pfVar2[8] + param_1[1];
+      param_1[2] = pfVar2[9] + param_1[2];
+      pfVar2 = pfVar2 + 0xc;
+    } while (iVar4 < param_3);
+  }
+  if (iVar3 < param_3) {
+    iVar4 = param_3 - iVar3;
+    pfVar2 = param_2 + iVar3 * 3 + 2;
+    do {
+      iVar4 = iVar4 + -1;
+      *param_1 = pfVar2[-2] + *param_1;
+      param_1[1] = pfVar2[-1] + param_1[1];
+      param_1[2] = param_1[2] + *pfVar2;
+      pfVar2 = pfVar2 + 3;
+    } while (iVar4 != 0);
+  }
+  fVar1 = _DAT_005cc320 / (float)param_3;
+  *param_1 = fVar1 * *param_1;
+  param_1[1] = fVar1 * param_1[1];
+  param_1[2] = fVar1 * param_1[2];
+  return;
+}
+
+
+
+// FUN_004b46b0 @ 0x004b46b0  size=54  (MASHED.exe)
+// undefined FUN_004b46b0(void)
+// callees: (none)
+
+/* [C1 2026-05-07] 3-vector equality check. Simple comparison. */
+
+undefined4 FUN_004b46b0(float *param_1,float *param_2)
+
+{
+  if (((*param_1 == *param_2) && (param_1[1] == param_2[1])) && (param_1[2] == param_2[2])) {
+    return 1;
+  }
+  return 0;
+}
+
+
+
+// FUN_004785e0 @ 0x004785e0  size=121  (MASHED.exe)
+// undefined FUN_004785e0(void)
+// callees: FUN_004c39b0@0x004c39b0
+
+/* [C1 2026-06-01] `void __thiscall FUN_004785e0(float *param_1, int param_2)` — `this` arrives in
+   EAX as `float *in_EAX`… */
+
+void __thiscall FUN_004785e0(float *param_1,int param_2)
+
+{
+  float fVar1;
+  float fVar2;
+  float fVar3;
+  float fVar4;
+  float fVar5;
+  float fVar6;
+  float fVar7;
+  float fVar8;
+  float fVar9;
+  float fVar10;
+  float fVar11;
+  float fVar12;
+  float *in_EAX;
+  
+  fVar1 = in_EAX[3];
+  fVar2 = *in_EAX;
+  fVar3 = in_EAX[4];
+  fVar4 = in_EAX[1];
+  fVar5 = in_EAX[5];
+  fVar6 = in_EAX[2];
+  fVar7 = in_EAX[6];
+  fVar8 = *in_EAX;
+  fVar9 = in_EAX[7];
+  fVar10 = in_EAX[1];
+  fVar11 = in_EAX[8];
+  fVar12 = in_EAX[2];
+  *param_1 = (fVar11 - fVar12) * (fVar3 - fVar4) - (fVar9 - fVar10) * (fVar5 - fVar6);
+  param_1[1] = (fVar7 - fVar8) * (fVar5 - fVar6) - (fVar11 - fVar12) * (fVar1 - fVar2);
+  param_1[2] = (fVar9 - fVar10) * (fVar1 - fVar2) - (fVar7 - fVar8) * (fVar3 - fVar4);
+  if (param_2 != 0) {
+    FUN_004c39b0(param_1,param_1);
+  }
+  return;
+}
+
+
+
+// FUN_004783f0 @ 0x004783f0  size=482  (MASHED.exe)
+// undefined FUN_004783f0(void)
+// callees: FUN_00409300@0x00409300, FUN_00409330@0x00409330, FUN_004a3384@0x004a3384, FUN_004c39b0@0x004c39b0, FUN_004c3b30@0x004c3b30
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C2 2026-06-02] One arg `param_1` (AI-polygon group data base pointer). No return. Body
+   `0x004783f0..0x004785da` (490 bytes). Computes… */
+
+void FUN_004783f0(int param_1)
+
+{
+  bool bVar1;
+  int iVar2;
+  int iVar3;
+  int iVar4;
+  float10 fVar5;
+  int local_24;
+  int local_20;
+  float local_14;
+  float local_10;
+  undefined4 local_c;
+  
+  local_24 = 0;
+  if (0 < *(int *)(param_1 + 0x16244)) {
+    local_20 = 0;
+    do {
+      bVar1 = true;
+      iVar2 = FUN_00409300();
+      do {
+        iVar3 = FUN_00409330(iVar2,local_24);
+        iVar4 = FUN_00409300(local_24);
+        if (iVar3 == iVar4) {
+          bVar1 = false;
+        }
+        iVar4 = iVar2 * 0x4c + param_1;
+        fVar5 = (float10)FUN_004c3b30();
+        *(float *)(param_1 + (local_20 + iVar2) * 4) = (float)fVar5;
+        local_14 = *(float *)(iVar4 + 0xc1c0);
+        local_10 = *(float *)(iVar4 + 0xc1c8);
+        local_c = 0;
+        FUN_004c39b0(&local_14,&local_14);
+        fVar5 = (float10)FUN_004a3384();
+        fVar5 = fVar5 * (float10)_DAT_005cc98c;
+        if (local_14 * DAT_005d757c - local_10 < DAT_005d757c) {
+          fVar5 = -fVar5;
+        }
+        if (fVar5 < (float10)DAT_005d757c != (fVar5 == (float10)DAT_005d757c)) {
+          do {
+            fVar5 = fVar5 + (float10)_DAT_005ccac4;
+          } while (fVar5 < (float10)DAT_005d757c != (fVar5 == (float10)DAT_005d757c));
+        }
+        *(float *)(param_1 + (local_20 + 0x1800 + iVar2) * 4) = (float)fVar5;
+        iVar2 = iVar3;
+      } while (bVar1);
+      local_24 = local_24 + 1;
+      local_20 = local_20 + 0x200;
+    } while (local_24 < *(int *)(param_1 + 0x16244));
+  }
+  return;
+}
+
+
+
+// FUN_004c3d90 @ 0x004c3d90  size=43  (MASHED.exe)
+// undefined FUN_004c3d90(void)
+// callees: (none)
+
+/* [C1 2026-05-06] Calls one indirect function: address is *(DAT_007d3ffc + 0xc + DAT_007d3ff8) at
+   0x004c3d97. */
+
+undefined4 FUN_004c3d90(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+
+{
+  (**(code **)(DAT_007d3ffc + 0xc + DAT_007d3ff8))(param_1,param_2,param_3,param_4);
+  return param_1;
+}
+
+
+
+// FUN_004c45f0 @ 0x004c45f0  size=12  (MASHED.exe)
+// undefined FUN_004c45f0(void)
+// callees: (none)
+
+/* [C1 2026-05-12] Args (param_1=struct ptr). */
+
+void FUN_004c45f0(int param_1)
+
+{
+  *(uint *)(param_1 + 0xc) = *(uint *)(param_1 + 0xc) & 0xfffdfffc;
+  return;
+}
+
+
+
+// FUN_004c4dc0 @ 0x004c4dc0  size=225  (MASHED.exe)
+// undefined FUN_004c4dc0(void)
+// callees: FUN_004c4eb0@0x004c4eb0
+
+/* [C1 2026-06-01] `float * FUN_004c4dc0(float *param_1 /*out*/, float *param_2 /*in*/)` —
+   RwMatrixInvert with two fast… */
+
+float * FUN_004c4dc0(float *param_1,float *param_2)
+
+{
+  float fVar1;
+  float fVar2;
+  float fVar3;
+  float fVar4;
+  float fVar5;
+  float fVar6;
+  int iVar7;
+  float *pfVar8;
+  
+  if ((*(uint *)(DAT_007d4028 + 4 + DAT_007d3ff8) & (uint)param_2[3] & 0x20000) != 0) {
+    pfVar8 = param_1;
+    for (iVar7 = 0x10; iVar7 != 0; iVar7 = iVar7 + -1) {
+      *pfVar8 = *param_2;
+      param_2 = param_2 + 1;
+      pfVar8 = pfVar8 + 1;
+    }
+    return param_1;
+  }
+  if ((SUB41(param_2[3],0) & 3) == 3) {
+    *param_1 = *param_2;
+    param_1[1] = param_2[4];
+    param_1[2] = param_2[8];
+    param_1[4] = param_2[1];
+    param_1[5] = param_2[5];
+    param_1[6] = param_2[9];
+    param_1[8] = param_2[2];
+    param_1[9] = param_2[6];
+    param_1[10] = param_2[10];
+    param_1[0xc] = -(param_2[2] * param_2[0xe] + param_2[0xc] * *param_2 + param_2[0xd] * param_2[1]
+                    );
+    param_1[0xd] = -(param_2[0xe] * param_2[6] +
+                    param_2[0xd] * param_2[5] + param_2[0xc] * param_2[4]);
+    fVar1 = param_2[8];
+    fVar2 = param_2[0xc];
+    fVar3 = param_2[0xd];
+    fVar4 = param_2[9];
+    fVar5 = param_2[10];
+    fVar6 = param_2[0xe];
+    param_1[3] = 4.2039e-45;
+    param_1[0xe] = -(fVar5 * fVar6 + fVar3 * fVar4 + fVar1 * fVar2);
+    return param_1;
+  }
+  FUN_004c4eb0(param_1,param_2);
+  return param_1;
+}
+
+
+

@@ -23,6 +23,7 @@
 #include "DrawStreamDump.h"         // parity harness: MASHED_DBG_DRAWSTREAM3D race-3D summary
 #include "../Ai/AiStandalone.h"     // WS-C: racing-line target Ai_ComputeTarget is the DEFAULT
 #include "../Race/SubStateCallees.h"  // D-11073 leg 1a: FUN_0041d930 tail partial (MASHED_SUBSTATE)
+#include "../Race/PathNodes.h"    // D-11072 P1: course block (MASHED_PATHPROG)
 #include "../Race/SubStateMachine.h"  // D-11073 leg 1b: FUN_0040dbd0 / FUN_004103a0 (MASHED_SUBSTATE)
 #include "../Race/CameraEntries.h"    // D-11073 leg 2: phase-3 camera entries (MASHED_SUBSTATE)
 extern "C" void __cdecl VehicleSeedWritePair(std::uint32_t, std::uint32_t);   // 0x00448700
@@ -2180,6 +2181,15 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
             const std::uint8_t* ab = piz.blob(i, &al);
             Track::World aw;
             if (ab && aw.Parse(ab, al)) {
+                // [D-11072 P1] the original's course block (node records, route, tables)
+                // from this same AI BSP + LAPDATA.LUA; default-OFF MASHED_PATHPROG.
+                // PREREG verify/d3_modes37_20261009/PREREG_PATHPROG.md.
+                if (Race::PathProg_Enabled()) {
+                    const std::uint8_t* lb = nullptr; std::uint32_t ll = 0;
+                    for (std::uint32_t j = 0; j < piz.count(); ++j)
+                        if (_strnicmp(piz.entry(j).name, "LAPDATA", 7) == 0) { lb = piz.blob(j, &ll); break; }
+                    Race::PathNodes_Build(aw, reinterpret_cast<const char*>(lb), ll);
+                }
                 gates_.assign(aw.materials.size(), Gate{});
                 std::vector<int> counts(aw.materials.size(), 0);
                 // per-gate unique vertex indices in stream order — the

@@ -1,0 +1,176 @@
+[decomp_pc] slot=Mashed_pool0 modes=decomp n=4
+// FUN_004b4eb0 @ 0x004b4eb0  size=384  (MASHED.exe)
+// undefined FUN_004b4eb0(void)
+
+int FUN_004b4eb0(int param_1,undefined4 *param_2)
+
+{
+  ushort *puVar1;
+  int *piVar2;
+  int iVar3;
+  int *piVar4;
+  int iVar5;
+  int iVar6;
+  int iVar7;
+  int iVar8;
+  undefined4 *puVar9;
+  
+  piVar2 = (int *)*param_2;
+  iVar3 = param_2[3];
+  piVar4 = (int *)param_2[2];
+  iVar5 = param_2[1];
+  iVar6 = *piVar4;
+  iVar7 = FUN_004e55d0(param_1);
+  iVar8 = 0;
+  if (*(short *)(param_1 + 0x84) != 0) {
+    puVar9 = (undefined4 *)(iVar5 + iVar6 * 0x30);
+    do {
+      puVar1 = (ushort *)(*(int *)(param_1 + 4) + iVar8 * 8);
+      if (*(int *)(*(int *)(*(int *)(iVar7 + 0x10) +
+                           ((uint)*(ushort *)(*(int *)(param_1 + 4) + 6 + iVar8 * 8) +
+                           (uint)*(ushort *)(param_1 + 0x80)) * 4) + 4) == *piVar2) {
+        if (iVar5 != 0) {
+          *puVar9 = *(undefined4 *)(*(int *)(param_1 + 8) + (uint)*puVar1 * 0xc);
+          puVar9[1] = *(undefined4 *)(*(int *)(param_1 + 8) + 4 + (uint)*puVar1 * 0xc);
+          puVar9[2] = *(undefined4 *)(*(int *)(param_1 + 8) + 8 + (uint)*puVar1 * 0xc);
+          puVar9[3] = *(undefined4 *)(*(int *)(param_1 + 8) + (uint)puVar1[1] * 0xc);
+          puVar9[4] = *(undefined4 *)(*(int *)(param_1 + 8) + 4 + (uint)puVar1[1] * 0xc);
+          puVar9[5] = *(undefined4 *)(*(int *)(param_1 + 8) + 8 + (uint)puVar1[1] * 0xc);
+          puVar9[6] = *(undefined4 *)(*(int *)(param_1 + 8) + (uint)puVar1[2] * 0xc);
+          puVar9[7] = *(undefined4 *)(*(int *)(param_1 + 8) + 4 + (uint)puVar1[2] * 0xc);
+          puVar9[8] = *(undefined4 *)(*(int *)(param_1 + 8) + 8 + (uint)puVar1[2] * 0xc);
+          puVar9[9] = param_1;
+          puVar9[10] = *(undefined4 *)puVar1;
+          puVar9[0xb] = *(undefined4 *)(puVar1 + 2);
+          puVar9 = puVar9 + 0xc;
+        }
+        iVar6 = *piVar4;
+        *piVar4 = iVar6 + 1;
+        if (iVar6 + 1 == iVar3) {
+          return 0;
+        }
+      }
+      iVar8 = iVar8 + 1;
+    } while (iVar8 < (int)(uint)*(ushort *)(param_1 + 0x84));
+  }
+  return param_1;
+}
+
+
+
+// RpWorldForAllWorldSectors @ 0x004e5c70  size=89  (MASHED.exe)
+// undefined RpWorldForAllWorldSectors(void)
+
+/* [C1 2026-05-18] Three-arg `(int param_1, code *param_2 /* callback */, undefined4 param_3 /*
+   user-data */)` returning... */
+
+int RpWorldForAllWorldSectors(int param_1,code *param_2,undefined4 param_3)
+
+{
+  int *piVar1;
+  int iVar2;
+  int *piVar3;
+  int iVar4;
+  int aiStack_100 [64];
+  
+  iVar4 = 0;
+  piVar1 = *(int **)(param_1 + 0x1c);
+  do {
+    if (*piVar1 < 0) {
+      iVar2 = (*param_2)(piVar1,param_3);
+      if (iVar2 == 0) {
+        return param_1;
+      }
+      piVar3 = (int *)aiStack_100[iVar4];
+      iVar4 = iVar4 + -1;
+    }
+    else {
+      piVar3 = (int *)piVar1[2];
+      iVar4 = iVar4 + 1;
+      aiStack_100[iVar4] = piVar1[3];
+    }
+    piVar1 = piVar3;
+  } while (-1 < iVar4);
+  return param_1;
+}
+
+
+
+// FUN_00409300 @ 0x00409300  size=48  (MASHED.exe)
+// undefined FUN_00409300(void)
+
+/* [C2 2026-06-03] `int FUN_00409300(int param_1)` — returns the **first int of the `param_1`-th
+   group** in the shared range-table (base… */
+
+int FUN_00409300(int param_1)
+
+{
+  int *piVar1;
+  int iVar2;
+  int *piVar3;
+  
+  piVar3 = (int *)FUN_00426090();
+  if (0 < param_1) {
+    do {
+      iVar2 = *piVar3;
+      while ((iVar2 != -1 && (iVar2 != -10))) {
+        piVar1 = piVar3 + 1;
+        piVar3 = piVar3 + 1;
+        iVar2 = *piVar1;
+      }
+      piVar3 = piVar3 + 1;
+      param_1 = param_1 + -1;
+    } while (param_1 != 0);
+  }
+  return *piVar3;
+}
+
+
+
+// FUN_00409330 @ 0x00409330  size=120  (MASHED.exe)
+// undefined FUN_00409330(void)
+
+/* [C2 2026-06-03] `int FUN_00409330(int param_1, int param_2)` — **successor** of value `param_1`
+   within group number `param_2` of the… */
+
+int FUN_00409330(int param_1,int param_2)
+
+{
+  int iVar1;
+  int *piVar2;
+  int *piVar3;
+  
+  piVar2 = (int *)FUN_00426090();
+  if (0 < param_2) {
+    do {
+      iVar1 = *piVar2;
+      while ((iVar1 != -1 && (iVar1 != -10))) {
+        piVar3 = piVar2 + 1;
+        piVar2 = piVar2 + 1;
+        iVar1 = *piVar3;
+      }
+      piVar2 = piVar2 + 1;
+      param_2 = param_2 + -1;
+    } while (param_2 != 0);
+  }
+  iVar1 = *piVar2;
+  piVar3 = piVar2;
+  do {
+    if ((iVar1 == -1) || (iVar1 == -10)) {
+      return *piVar2;
+    }
+    if (piVar3[1] == 0x100) {
+      if (param_1 == iVar1) {
+        return piVar3[2];
+      }
+    }
+    else if ((iVar1 <= param_1) && (param_1 < piVar3[1])) {
+      return param_1 + 1;
+    }
+    iVar1 = piVar3[1];
+    piVar3 = piVar3 + 1;
+  } while( true );
+}
+
+
+

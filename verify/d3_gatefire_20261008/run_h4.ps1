@@ -54,11 +54,13 @@ $runs = @(
   # B2 default flip (verify/d3_b2flip_20261009/PREREG_B2FLIP.md): new default x2, and the opt-out arm (must equal the old default)
   @{ name = 'F_NEW';    knobs = @() },
   @{ name = 'F_NEW2';   knobs = @() },
-  @{ name = 'F_OPTOUT'; knobs = @('MASHED_NO_WIRE_B2', 'MASHED_NO_RACEPCT_BRIDGE', 'MASHED_NO_A364_RESET', 'MASHED_NO_REFDIST') }
+  @{ name = 'F_OPTOUT'; knobs = @('MASHED_NO_WIRE_B2', 'MASHED_NO_RACEPCT_BRIDGE', 'MASHED_NO_A364_RESET', 'MASHED_NO_REFDIST') },
+  # D-11072 P1 (verify/d3_modes37_20261009/PREREG_PATHPROG.md G-P1-OFF): knob OFF, must equal F_NEW (ae67b13a / c8317ce2 / 31db9384)
+  @{ name = 'P1_CTRL'; knobs = @() }
 )
 $sel = @($args)   # capture: inside a Where-Object block $args is the block's own
 if ($sel.Count -gt 0) { $runs = $runs | Where-Object { $sel -contains $_.name } }
-else { $runs = $runs | Where-Object { $_.name -notlike 'H4_post*' -and $_.name -ne 'H4_optout' -and $_.name -notlike 'L1A_*' -and $_.name -notlike 'L1B_*' -and $_.name -notlike 'P414*' -and $_.name -notlike 'L2*' -and $_.name -notlike 'F_*' } }
+else { $runs = $runs | Where-Object { $_.name -notlike 'H4_post*' -and $_.name -ne 'H4_optout' -and $_.name -notlike 'L1A_*' -and $_.name -notlike 'L1B_*' -and $_.name -notlike 'P414*' -and $_.name -notlike 'L2*' -and $_.name -notlike 'F_*' -and $_.name -notlike 'P1_*' } }
 
 foreach ($r in $runs) {
   $log = Join-Path $root 'mashed_re.log'
