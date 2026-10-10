@@ -1,5 +1,15 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-10 (D-11072 P3 body DONE, score FAILS on window alignment): **next = re-score P3 with the countdown on.**
+>
+> Read [`RESULT_P3.md`](../verify/d3_modes37_20261009/RESULT_P3.md). `FUN_00414a70` + `FUN_00414300` are verbatim naked
+> (`Ai/AiTargetClosest.cpp`, spec `target_p3.json`) behind `MASHED_TGT3` (needs `MASHED_PATHPROG`); wired in `ControlStep`
+> (mode 3 on 1 + LOS, brake return on 2; branch 2 now gated on `mode == 0` as in the original). G-P3-REPLAY 5,490/5,490 exact
+> at PC_24 (new `scenario_launch.py --tgt-probe`, capture `o_tg1`). G-CTRL unchanged. **G-P3-COUNT FAIL** (port 38/30, 27/16,
+> 30/82 vs 16/0, 35/10, 12/26): the port's window starts on the grid at frame 0, the original's at 882 (U-9214). (b) regime A 0/3,
+> as with PATHPROG alone. Next: re-score with `MASHED_SUBSTATE` + `MASHED_MODE5_RESET` + PATHPROG + TGT3 (pre-register first).
+> Open: U-9212 dispatcher speed tail `0x004710c8` (unported, D2 REOPEN CANDIDATE, report), U-9213 `FUN_0046d510` store, mode 7.
+
 > ## START HERE 2026-10-10 (D-11072 P2 DONE): **next = leg P3, `FUN_00414a70` + `FUN_00414300` on the now-live progress.**
 >
 > Read [`RESULT_P2.md`](../verify/d3_modes37_20261009/RESULT_P2.md). `FUN_00408610` + 17 callees are verbatim naked
