@@ -1,5 +1,22 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-10 (mode 7 M1 DONE, USER DECISION full broker M1..M4): **next = leg M2, the registrants.**
+>
+> Read [`RESULT_M1.md`](../verify/d3_mode7_20261010/RESULT_M1.md) and [`PREREG_MODE7.md`](../verify/d3_mode7_20261010/PREREG_MODE7.md).
+> The original's world-object registry is a per-frame collision broker; pickups are collected through it (`FUN_00458920`).
+> M1: registrar / publish / pair passes verbatim behind `MASHED_REGISTRY`, replay byte-exact on 3,162 frames, callbacks
+> 3,003/3,003 (2 real pickup collections), inert. Grid path unexercised on Training (U-9215).
+> **Also fixed:** every x87 `PcScope` (P1..M1) left the game thread at PC_24 (U-9216, resolved; P2/P3 numbers re-measured, unchanged).
+>
+> **Kickoff for M2 (paste):** Mashed RE, D3, D-11074 leg M2: the registry's registrants on the exe. Read RESULT_M1.md §1, §5 and
+> `decomp_registry.txt` (`FUN_00459000`) first. Pre-register before code: (1) port the logic half of `FUN_00459000` (state 1/2
+> timers, respawn, type re-roll `FUN_00458d00`/`FUN_00458dd0`, registration type 7 r 0.5 cb `0x00458920`) against a pickup pool at
+> the original layout `0x0068b198` x 25 x 0x50 (`PickupPoolSpawn.cpp` keeps its own copy today); sprite calls `FUN_004769xx` no-op;
+> (2) decide the source of the pickup position `*(obj+4)+0x40` (RW frame translation; no exe equivalent) with evidence;
+> (3) port the car registrant `FUN_0041f710` (type `0xff00+v`, r 0.533). Gate: per-frame registry contents vs `o_rg4.msd.reg.tsv`
+> (counts per type, radii, callbacks; positions on matching frames), knob-OFF G-CTRL `ae67b13a / c8317ce2 / 31db9384`. Callbacks stay
+> record-only until M3. Kill only your own MASHED PIDs; build via PowerShell.
+
 > ## START HERE 2026-10-10 (D-11072 P3 body DONE, score FAILS on window alignment): **next = re-score P3 with the countdown on.**
 >
 > Read [`RESULT_P3.md`](../verify/d3_modes37_20261009/RESULT_P3.md). `FUN_00414a70` + `FUN_00414300` are verbatim naked
