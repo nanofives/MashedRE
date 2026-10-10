@@ -1,5 +1,20 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-10 (mode 7 M2 DONE, M1+M2a+M2b): **next = M3, callbacks live (the pickup collection takes over).**
+>
+> Read [`RESULT_M2B.md`](../verify/d3_mode7_m2_20261010/RESULT_M2B.md), [`RESULT_M2A.md`](../verify/d3_mode7_m2_20261010/RESULT_M2A.md),
+> [`RESULT_M1.md`](../verify/d3_mode7_20261010/RESULT_M1.md). With `MASHED_REGISTRY + MASHED_PICKUPS_ORIG + MASHED_REG_CARS` the exe's
+> registry holds the original's 4 car entries (positions bitwise) and 5 pickups (bitwise) every frame; callbacks are recorded,
+> not run. All inert (G-CTRL unchanged). Open: U-9215 (grid), U-9217 (spring arm), U-9218 (car radius writer).
+>
+> **Kickoff for M3 (paste):** Mashed RE, D3, D-11074 leg M3: dispatch the registry callbacks. Read `decomp_registry.txt`
+> (`FUN_00458920`) and `Powerup/PowerupSystem.cpp` (the `Activate` host path, the not-ported `FUN_0045c010` / `FUN_0045c330`)
+> first. Pre-register before code: which of `FUN_00458920`'s callees port verbatim (`FUN_00405890`, `FUN_00407580`, `FUN_0045c330`,
+> `FUN_00458570`, `FUN_004588c0`, `FUN_0045c010`, `FUN_00465ca0`) and which bind to the exe's PowerupSystem; how `PickupField`'s
+> own collection stands down under the knob; gates = collection events (frame, car, pickup type) and respawn timing vs an original
+> capture (`--reg-probe` callback witnesses already log them), plus G-CTRL knob OFF. Expect knob ON to change the race (powerups now
+> collected the original's way): score (b) and collateral as report.
+
 > ## START HERE 2026-10-10 (mode 7 M2a DONE): **next = M2b, the car registrant `FUN_0041f710`.**
 >
 > Read [`RESULT_M2A.md`](../verify/d3_mode7_m2_20261010/RESULT_M2A.md) and [`PREREG_M2.md`](../verify/d3_mode7_m2_20261010/PREREG_M2.md) §4.
