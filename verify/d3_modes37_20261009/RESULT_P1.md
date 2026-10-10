@@ -43,7 +43,7 @@ Pre-registration: `PREREG_PATHPROG.md` (`ba552428`, before code). Knob `MASHED_P
    are exact. The CRT `acos` (`0x004a3384`) keeps the caller's PC: its helper `0x004a70a5` does
    `and edx,0x300 / or edx,0x7f / fldcw`. This conflicts with the project rule "ST-resident values
    are `double`" for *this* caller. Whether the race loop also runs at PC_24 is not measured here
-   ([UNCERTAIN], needs a CW read on the original during a race).
+   ([UNCERTAIN U-9207], needs a CW read on the original during a race).
 3. **`Render/RwMatrixInvert.cpp` (0x004c4eb0) returned all zeros in the exe.** It loads its +1.0
    numerator from `ds:[0x005cc320]`, which reads 0 in the standalone's blank-mapped `.rdata`. Exe
    arm now uses `fld1` (the same value). PathNodes is its only exe caller, so nothing else changed

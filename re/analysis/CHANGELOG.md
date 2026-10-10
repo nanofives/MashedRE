@@ -26,6 +26,10 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-10  00408610  FUN_00408610  C2->C2 (no promotion)  D-11072 P2: verbatim naked exe body + 17 callees (Race/PathProgStep.cpp, re/tools/gen_naked_asm.py); G-P2-REPLAY 11996/11996 byte-identical at PC_24 (verify/d3_modes37_20261009/RESULT_P2.md, 057bfe4b); C3 refused (exe-only, no RH_ScopedInstall path1/path2). Same note on 00407e20 / 00407be0 / 00407cd0 / 00547450; dual copies recorded on 00407b00 / 00407b70 / 00407d70 / 00407db0 / 00408590.
+2026-10-10  -  U-9206..U-9211  filed  exe RW sqrt = exact fallback not the LUT (U-9206); original runs x87 PC_24, refuted as D2 driver (U-9207, verify/d2_pc24_20261010/RESULT.md); per-round FUN_00407a60 + player grid offset (U-9208); within-sector triangle order (U-9209); FUN_0046c770 gate not bound (U-9210); D2 control driving-median vs attempt 20 (U-9211).
+2026-10-09  00478660  FUN_00478660  C2->C2 (no promotion)  D-11072 P1: exe body in Race/PathNodes.cpp; G-P1 course block byte-identical on Training+Arctic (verify/d3_modes37_20261009/RESULT_P1.md, 621af8fa); C3 refused (exe-only). Same note on 004783f0 / 004785e0 / 0047a0f0 / 0047a720 / 0047a790 (C2) and 0047a750 / 0047a7d0 / 0047a7f0 / 0047a810 (C1, need plates).
+2026-10-09  004c4eb0  RwMatrixInvert_CofactorPath  C3->C3  exe arm fix: +1.0 numerator read from blank-mapped .rdata 0x005cc320 (0 in the exe) zeroed every exe inverse; MASHED_STANDALONE arm uses fld1.
 2026-10-09  00441b30 CamEntryBuild441b30  C2->C3  run_diff cam_entry_build_obs GREEN 5/5 + path2 E9; plate corrected (_ftol2 truncates); verify/d3_gatefire_20261008/RESULT_LEG2.md
 2026-10-09  00441c80 CamCarMidpoint441c80  C2->C3  run_diff cam_car_midpoint_obs GREEN 5/5 (4 distinct) + path2 E9; RESULT_LEG2.md
 2026-10-09  00442600 CamEntriesInit442600  C2->C3  run_diff cam_entries_init_obs GREEN 5/5 (5 tracks) + path2 E9; U-9200; RESULT_LEG2.md

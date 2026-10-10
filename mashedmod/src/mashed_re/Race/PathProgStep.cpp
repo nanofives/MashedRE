@@ -85,7 +85,7 @@ void PP_547450();   // generated below (sphere vs triangle)
 // The original visits sectors left-first (= stream order) and, inside a sector, triangles in
 // its collision-tree order; FUN_00407a90 keeps the LAST hit. The node id of every triangle of
 // one gate is the same, so the order only matters when two different gates touch the r=0.6
-// sphere in one frame [UNCERTAIN: within-sector tree order not reproduced; G-P2-REPLAY measures it].
+// sphere in one frame [UNCERTAIN U-9209] (within-sector tree order not reproduced; harmless on o_pp1).
 void* __cdecl PP_SphereQuery(void* world, float* sphere, void* /*cb*/, std::int32_t* data) {
     const std::int32_t v = data[0];
     typedef int (__cdecl* tri_fn)(float*, const float*, const float*, const float*, float*, float*);
@@ -165,7 +165,7 @@ void PathProg_FrameTick() {                              // FUN_0040da50's FUN_0
     PcScope pc;
     for (int v = 0; v < 4; ++v) {
         if (IsCarSlotActive(v) == 0) continue;               // *(PTR_005f2770 + 0x34 + v*4)
-        // [UNCERTAIN] FUN_0040da50 also accepts FUN_0046c770(v) == 1; no exe binding yet.
+        // [UNCERTAIN U-9210] FUN_0040da50 also accepts FUN_0046c770(v) == 1; no exe binding yet.
         if (VehicleSlotGetter(static_cast<std::uint32_t>(v)) != 1u) continue;
         std::uint32_t rec = 0;
         PtrCompute881ec8(&rec, static_cast<std::uint32_t>(v));

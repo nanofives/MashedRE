@@ -30,15 +30,15 @@ stream-order triangle walk agrees with the original's collision-tree order on th
    per-frame function, and it reproduces only at 24-bit precision (100% vs 29%). The project rule
    "ST-resident values are `double`" (memory `st-resident-values-must-be-double`) gives 53-bit results;
    the D2 physics x87 TUs follow that rule and the exe runs them at PC_53. Whether that costs any D2
-   bit-identity is not measured here. It is the strongest lead so far on the physics residue and is a
-   user decision to pursue (it touches D2).
+   bit-identity is not measured here. **Tested the same day and REFUTED as the D2 driver**
+   (`verify/d2_pc24_20261010/RESULT.md`: driving-median 1826.74 at PC_24 vs control 1825.74; U-9207).
 2. **Knob ON changes the AI windows** (step `4f675870`, gates `90e76845`, ptrace `4701b993`): the
    faithful race_pct `0x008a96ec` replaces the bridge's value for the AI's existing readers. Not scored
    yet; that belongs with P3.
 3. **Two live differences, not in the step:** the player's grid position sits 0.0009 nodes past the
    line (original 0.00002 behind it), so its lap counter starts at 0 instead of -1. And the port runs
    `FUN_00407a60` only at race load, while the original's `FUN_004111c0` also runs per round
-   [UNCERTAIN: per-round call not confirmed]; car 2's lap counter reaches 17 across rounds. Neither
+   [UNCERTAIN U-9208]; car 2's lap counter reaches 17 across rounds. Neither
    touches `0x008a96e8`, the value P3 needs.
 
 ## 2. Method

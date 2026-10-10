@@ -31,7 +31,7 @@ was restored and the default build re-verified at `ae67b13a / c8317ce2 / 31db938
   rule. Under the original's own precision model it reads the same as today.
 - The control's driving-median (1825.74, n=866, `a8_medframe.py` defaults) is not the 1879.59 (n=1335)
   in attempt 20's table. The slips match the parked values (0.1943 / 0.2524). The difference in the
-  driving-median population is [UNCERTAIN]: likely the scorer window (`--max-lines`) or D3-era commits
+  driving-median population is [UNCERTAIN U-9211]: likely the scorer window (`--max-lines`) or D3-era commits
   since 2026-10-02. It is the same on every arm here, so it does not affect this verdict.
 - The PC_24 finding still holds for the code that was measured: `FUN_00408610` (race loop) and the
   track-load path. It is a rule for verbatim transcriptions, not a D2 fix.
