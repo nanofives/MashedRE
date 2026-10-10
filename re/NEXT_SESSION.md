@@ -1,5 +1,20 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-10 (mode 7 M2a DONE): **next = M2b, the car registrant `FUN_0041f710`.**
+>
+> Read [`RESULT_M2A.md`](../verify/d3_mode7_m2_20261010/RESULT_M2A.md) and [`PREREG_M2.md`](../verify/d3_mode7_m2_20261010/PREREG_M2.md) §4.
+> The pickup tick `FUN_00459000` runs verbatim on the original-layout pool behind `MASHED_PICKUPS_ORIG` (+ `MASHED_REGISTRY`):
+> replay 1,890/1,890 exact, and the exe registers the 5 Training pickups bit-identical to the original. Inert. U-9217: the
+> spring re-seed arithmetic is unexercised (no bump in 240 s).
+>
+> **Kickoff for M2b (paste):** Mashed RE, D3, D-11074 leg M2b: the car registrant. `FUN_0041f710` (EAX = `0x0063d9e0 + v*0x2ac`)
+> registers `{+0x258, +0x25c, +0x260, +0x264, +0x290 + 0xff00, 0, 0, 0}`; `+0x258..+0x260` come from `FUN_004c0ed0(car frame)+0x30`
+> in `FUN_00420870` (called per car from `FUN_0040da50`). Measure before code: extend `--reg-probe` to read, at `FUN_00485070`
+> entry, each car record's `+0x958..+0x960` (`0x008815a0 + v*0xd04`) beside the 4 car entries; decide whether the exe's record
+> position reproduces the registered one (bitwise or not); census the writer of `+0x264` (0.533 on every frame). Pre-register the
+> bridge or port, gate on per-frame car entries vs the original, knob-OFF G-CTRL `ae67b13a / c8317ce2 / 31db9384`. Callbacks stay
+> record-only until M3.
+
 > ## START HERE 2026-10-10 (mode 7 M1 DONE, USER DECISION full broker M1..M4): **next = leg M2, the registrants.**
 >
 > Read [`RESULT_M1.md`](../verify/d3_mode7_20261010/RESULT_M1.md) and [`PREREG_MODE7.md`](../verify/d3_mode7_20261010/PREREG_MODE7.md).
