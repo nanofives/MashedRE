@@ -1686,6 +1686,62 @@ function leaderProbeArm(limit){
   } catch(e){ return 'ERR ' + e; }
 }
 function leaderProbeDrain(){ const r = LP.rows; LP.rows = []; return r; }
+// --- WORLD-OBJECT REGISTRY probe (D3 modes 3/7, 2026-10-09) ----------------
+// Question: which entries of the world-object registry does FUN_00414c30 scan in
+// the ORIGINAL's (b) window? FUN_00484c70 (body 0x00484c70) returns base
+// 0x006dccb8 and count DAT_006e70d8; stride 0x8c; descriptor = 8 dwords copied by
+// the registrar FUN_00484cf0 (0x00484cf0..0x00484ddc). FUN_00414c30 reads
+// [+0..+8] pos, [+0xc] radius, [+0x10] type bits, [+0x14] data ptr.
+// ONE ENTRY HOOK on 0x00414c30 (called only when FUN_00414a70 did not decide,
+// <= ~180/s at 3 AI cars). Reads only. Registry dumped once per game frame.
+const WO_FN = 0x00414c30, WO_BASE = 0x006dccb8, WO_CNT = 0x006e70d8;
+const WO = { armed:false, calls:[], ents:[], ins:[], err:null, n:0, lastFrame:-1, limit:300000 };
+function wobjProbeArm(limit){
+  if (WO.armed) return 'already armed';
+  try {
+    WO.limit = limit || 300000;
+    Interceptor.attach(ga(WO_FN), { onEnter(args){
+      try {
+        WO.n++;
+        const fr = ga(0x007f0ff4).readS32();
+        const v = args[3].toInt32();
+        const cnt = ga(WO_CNT).readS32();
+        if (WO.calls.length < WO.limit) WO.calls.push([WO.n, fr, v, cnt]);
+        if (fr !== WO.lastFrame && WO.ents.length < WO.limit) {
+          WO.lastFrame = fr;
+          const n = Math.max(0, Math.min(cnt, 300));
+          for (let i = 0; i < n; i++) {
+            const e = ga(WO_BASE).add(i*0x8c);
+            WO.ents.push([fr, i, e.readFloat(), e.add(4).readFloat(), e.add(8).readFloat(),
+                          e.add(0xc).readFloat(), e.add(0x10).readU32(), e.add(0x14).readU32(),
+                          e.add(0x18).readU32(), e.add(0x1c).readU32()]);
+          }
+        }
+      } catch(e){ if (!WO.err) WO.err = 'woEnter ' + e; }
+    }});
+    // Second entry hook: FUN_00414a70's inputs (0x00414a70 body; leaves FUN_00408a50
+    // 0x008a96e8+v*0x30c, FUN_0046d6d0 rec+0xbc, FUN_0040e370/e470 *(0x005f2770)+0x34+v*4,
+    // FUN_00426bb0 DAT_0066d6d8) plus FUN_00414490's DAT_0063ba8c / DAT_0088fc88[v*0x2d].
+    Interceptor.attach(ga(0x00414a70), { onEnter(args){
+      try {
+        if (WO.ins.length >= WO.limit) return;
+        const v = args[3].toInt32();
+        const row = [ga(0x007f0ff4).readS32(), v, ga(0x0066d6d8).readS32(),
+                     ga(0x0063ba8c).readS32(), ga(0x0088fc88).add(v*0xb4).readS32()];
+        const st = ga(0x005f2770).readPointer();
+        for (let i = 0; i < 4; i++) row.push(ga(0x008a96e8).add(i*0x30c).readFloat());
+        for (let i = 0; i < 4; i++) row.push(st.isNull() ? -999 : st.add(0x34 + i*4).readS32());
+        for (let i = 0; i < 4; i++) row.push(ga(0x00881f84).add(i*0xd04).readFloat());
+        for (let i = 0; i < 4; i++) row.push(ga(0x008989b0).add(i*4).readFloat());
+        WO.ins.push(row);
+      } catch(e){ if (!WO.err) WO.err = 'woIns ' + e; }
+    }});
+    WO.armed = true;
+    return 'wobj-probe armed (entry-only 0x' + WO_FN.toString(16) + ')';
+  } catch(e){ return 'ERR ' + e; }
+}
+function wobjProbeDrain(){ const r = {calls:WO.calls, ents:WO.ents, ins:WO.ins}; WO.calls = []; WO.ents = []; WO.ins = []; return r; }
+// ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
 
 // --- POWERUP DISPATCHER capture (D3 WS-D, 2026-09-26) ----------------------
@@ -2425,6 +2481,9 @@ rpc.exports = {
   aliveProbeDrain: function(){ return aliveProbeDrain(); },
   leaderProbeArm: function(l){ return leaderProbeArm(l); },
   leaderProbeDrain: function(){ return leaderProbeDrain(); },
+  wobjProbeArm: function(l){ return wobjProbeArm(l); },
+  wobjProbeDrain: function(){ return wobjProbeDrain(); },
+  wobjProbeStats: function(){ return JSON.stringify({armed:WO.armed, calls:WO.n, err:WO.err}); },
   leaderProbeStats: function(){ return JSON.stringify({armed:LP.armed, calls:LP.n,
                                                        pending:LP.rows.length,
                                                        ka:LP.ka, err:LP.err}); },
@@ -2994,6 +3053,11 @@ def main():
                          "writes nothing, so it cannot perturb the arm it measures. "
                          "Pre-registration verify/d3_leader_20261003/PREREG_WITNESS.md. "
                          "Writes <out>.leaderprobe.csv. Requires --statediff-out.")
+    ap.add_argument("--wobj-probe", action="store_true",
+                    help="[D3 modes 3/7 2026-10-09] ONE ENTRY HOOK on FUN_00414c30: logs each "
+                         "call (frame, v, registry count 0x006e70d8) and dumps the world-object "
+                         "registry 0x006dccb8 once per frame. Read-only. Writes "
+                         "<out>.wobj_calls.csv and <out>.wobj_ents.csv. Requires --statediff-out.")
     ap.add_argument("--leader-probe-limit", type=int, default=20000,
                     help="hard row limit for --leader-probe; a run that hits it is VOID.")
     ap.add_argument("--mag-probe-limit", type=int, default=20000,
@@ -3161,6 +3225,8 @@ def main():
                 print("  [statediff]", E.alive_probe_arm())
             if args.leader_probe:
                 print("  [statediff]", E.leader_probe_arm(args.leader_probe_limit))
+            if args.wobj_probe:
+                print("  [statediff]", E.wobj_probe_arm(300000))
             if args.statediff_puhook:
                 print("  [statediff]", E.pu_arm(args.pu_plan, args.pu_subj, args.pu_warm,
                                                  args.pu_box))
@@ -3660,6 +3726,32 @@ def main():
                             print(f"  [statediff] alive-probe EVENT seq={_e2[0]} frame={_e2[1]} "
                                   f"tick={_e2[2]} clk={_e2[3]} {_e2[4]} -> {_e2[5]} "
                                   f"(enter {_e2[6]}, ret {_e2[7]}, vstep {_e2[8:12]})")
+                if args.wobj_probe:
+                    try: print("  [statediff] wobj-probe agent:", E.wobj_probe_stats())
+                    except Exception as _e: print("  [statediff] wobj-probe stats failed:", _e)
+                    try:
+                        _wo = E.wobj_probe_drain()
+                        _wc = outp.with_suffix(outp.suffix + ".wobj_calls.csv")
+                        with open(_wc, "w", newline="") as f:
+                            f.write("n,frame,v,count" + chr(10))
+                            for r in _wo["calls"]: f.write(",".join(str(x) for x in r) + chr(10))
+                        _we = outp.with_suffix(outp.suffix + ".wobj_ents.csv")
+                        with open(_we, "w", newline="") as f:
+                            f.write("frame,i,x,y,z,radius,type,data,d6,d7" + chr(10))
+                            for r in _wo["ents"]:
+                                f.write(",".join(repr(x) if isinstance(x, float) else
+                                                 (hex(x) if i >= 6 else str(x))
+                                                 for i, x in enumerate(r)) + chr(10))
+                        _wi = outp.with_suffix(outp.suffix + ".wobj_ins.csv")
+                        with open(_wi, "w", newline="") as f:
+                            f.write("frame,v,d6d8,ba8c,fc88,prog0,prog1,prog2,prog3,st0,st1,st2,st3,"
+                                    "bc0,bc1,bc2,bc3,rd0,rd1,rd2,rd3" + chr(10))
+                            for r in _wo["ins"]:
+                                f.write(",".join(repr(x) if isinstance(x, float) else str(x)
+                                                 for x in r) + chr(10))
+                        print(f"  [statediff] wobj-probe {len(_wo['calls'])} calls, "
+                              f"{len(_wo['ents'])} entry rows -> {_wc}, {_we}")
+                    except Exception as _e: print("  [statediff] wobj-probe drain failed:", _e)
                 if args.leader_probe:
                     import json
                     _lp = None

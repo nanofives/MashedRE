@@ -1,0 +1,183 @@
+[decomp_pc] slot=Mashed_pool0 modes=decomp n=10
+// FUN_0046d6d0 @ 0x0046d6d0  size=36  (MASHED.exe)
+// undefined FUN_0046d6d0(void)
+
+/* [C2 2026-06-02] Two args `(undefined4 *param_1 out, uint param_2 vehicle index)`. Body
+   `0x0046d6d0..0x0046d6f3` (35 bytes). Returns 1/0. */
+
+undefined4 FUN_0046d6d0(undefined4 *param_1,uint param_2)
+
+{
+  if (0xf < param_2) {
+    return 0;
+  }
+  *param_1 = (&DAT_00881f84)[param_2 * 0x341];
+  return 1;
+}
+
+
+
+// FUN_0046d510 @ 0x0046d510  size=84  (MASHED.exe)
+// undefined FUN_0046d510(void)
+
+/* [C2 2026-06-02] Two args `(undefined4 *param_1 out_vec3, uint param_2 vehicle index)`. Body
+   `0x0046d510..0x0046d563` (83 bytes)… */
+
+undefined4 FUN_0046d510(undefined4 *param_1,uint param_2)
+
+{
+  if (0xf < param_2) {
+    return 0;
+  }
+  FUN_004c3df0(&DAT_00881f74 + param_2 * 0x341,&DAT_00614708,1,&DAT_00881ec8 + param_2 * 0x341);
+  *param_1 = (&DAT_00881f74)[param_2 * 0x341];
+  param_1[1] = (&DAT_00881f78)[param_2 * 0x341];
+  param_1[2] = (&DAT_00881f7c)[param_2 * 0x341];
+  return 1;
+}
+
+
+
+// FUN_0040e370 @ 0x0040e370  size=34  (MASHED.exe)
+// undefined FUN_0040e370(void)
+
+/* [C2 2026-05-18] Body (0x0040e370..0x0040e391): */
+
+bool FUN_0040e370(int param_1)
+
+{
+  if (3 < param_1) {
+    return false;
+  }
+  return *(int *)(PTR_PTR_005f2770 + param_1 * 4 + 0x34) != 0;
+}
+
+
+
+// FUN_00426bb0 @ 0x00426bb0  size=6  (MASHED.exe)
+// undefined FUN_00426bb0(void)
+
+/* [C1 2026-06-01] Getter: `return DAT_0066d6d8;` — returns the (camera-path count) int global. */
+
+undefined4 FUN_00426bb0(void)
+
+{
+  return DAT_0066d6d8;
+}
+
+
+
+// FUN_0040e470 @ 0x0040e470  size=15  (MASHED.exe)
+// undefined FUN_0040e470(void)
+
+/* [C1 2026-05-15] Signature: `undefined4 FUN_0040e470(int param_1)` — param_1 = car index
+   (0–3). */
+
+undefined4 FUN_0040e470(int param_1)
+
+{
+  return *(undefined4 *)(PTR_PTR_005f2770 + param_1 * 4 + 0x34);
+}
+
+
+
+// FUN_0040e350 @ 0x0040e350  size=6  (MASHED.exe)
+// undefined FUN_0040e350(void)
+
+/* [C2 2026-05-18] Body (0x0040e350..0x0040e355): */
+
+undefined4 FUN_0040e350(void)
+
+{
+  return DAT_0063ba8c;
+}
+
+
+
+// FUN_004c3b30 @ 0x004c3b30  size=84  (MASHED.exe)
+// undefined FUN_004c3b30(void)
+
+/* [C1 2026-05-08] If param_1 == 0.0, returns 0.0 immediately (zero guard). */
+
+float10 FUN_004c3b30(float param_1)
+
+{
+  if (param_1 != 0.0) {
+    param_1 = (float)(*(int *)(*(int *)(DAT_007d3ffc + DAT_007d3ff8) +
+                              ((int)param_1 + 0x800U >> 0xc & 0xfff) * 4) +
+                     ((int)param_1 + 0x800U >> 1 & 0x3fc00000));
+  }
+  return (float10)param_1;
+}
+
+
+
+// FUN_004c39b0 @ 0x004c39b0  size=271  (MASHED.exe)
+// undefined FUN_004c39b0(void)
+
+/* [C1 2026-05-13] `RwV3dNormalize(dst, src)` — normalizes a 3D vector in-place (or to a separate
+   output). */
+
+float10 FUN_004c39b0(float *param_1,float *param_2)
+
+{
+  float *pfVar1;
+  float fVar2;
+  undefined4 local_8;
+  undefined4 local_4;
+  
+  pfVar1 = param_2;
+  param_2 = (float *)(param_2[2] * param_2[2] + param_2[1] * param_2[1] + *param_2 * *param_2);
+  fVar2 = 0.0;
+  if (param_2 != (float *)0x0) {
+    fVar2 = (float)(*(int *)(*(int *)(DAT_007d3ffc + DAT_007d3ff8) +
+                            ((int)param_2 + 0x800U >> 0xc & 0xfff) * 4) +
+                   ((int)param_2 + 0x800U >> 1 & 0x3fc00000));
+    param_2 = (float *)(*(int *)(*(int *)(DAT_007d3ffc + 4 + DAT_007d3ff8) +
+                                ((int)param_2 + 0x800U >> 0xc & 0xfff) * 4) +
+                       (~((int)param_2 + 0x800U) >> 1 & 0x3fc00000));
+  }
+  *param_1 = (float)param_2 * *pfVar1;
+  param_1[1] = pfVar1[1] * (float)param_2;
+  param_1[2] = pfVar1[2] * (float)param_2;
+  if (fVar2 < DAT_005d757c != (fVar2 == DAT_005d757c)) {
+    local_8 = 1;
+    local_4 = FUN_004d7ff0(0x19);
+    FUN_004d8480(&local_8);
+  }
+  return (float10)fVar2;
+}
+
+
+
+// FUN_00408a50 @ 0x00408a50  size=17  (MASHED.exe)
+// undefined FUN_00408a50(void)
+
+/* [C2 2026-05-18] Body (0x00408a50..0x00408a60): */
+
+float10 FUN_00408a50(int param_1)
+
+{
+  return (float10)*(float *)(&DAT_008a96e8 + param_1 * 0x30c);
+}
+
+
+
+// FUN_0046d4a0 @ 0x0046d4a0  size=46  (MASHED.exe)
+// undefined FUN_0046d4a0(void)
+
+/* [C2 2026-06-02] Two args `(undefined4 *param_1 out, uint param_2 vehicle index)`. Body
+   `0x0046d4a0..0x0046d4cd` (45 bytes). Returns 1… */
+
+undefined4 FUN_0046d4a0(undefined4 *param_1,uint param_2)
+
+{
+  if (0xf < param_2) {
+    return 0;
+  }
+  *param_1 = &DAT_00881ec8 + (&DAT_00881f48)[param_2 * 0x341] * 0x10 + param_2 * 0x341;
+  return 1;
+}
+
+
+

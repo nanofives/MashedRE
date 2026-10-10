@@ -1,0 +1,308 @@
+[decomp_pc] slot=Mashed_pool0 modes=decomp n=4
+// FUN_00414a70 @ 0x00414a70  size=447  (MASHED.exe)
+// undefined FUN_00414a70(void)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C2 2026-06-02] Closest-in-race targeting with inactive-close fallback. Body
+   `0x00414a70..0x00414c2e` (0x1be = 446 bytes). */
+
+undefined4 FUN_00414a70(undefined4 param_1,undefined4 param_2,undefined4 param_3,int param_4)
+
+{
+  float fVar1;
+  int iVar2;
+  int iVar3;
+  int iVar4;
+  float10 fVar5;
+  int local_3c;
+  float local_38;
+  float local_34;
+  float local_30;
+  float local_2c;
+  float local_28;
+  float local_24;
+  float local_20;
+  float local_1c;
+  float local_18 [3];
+  undefined1 local_c [4];
+  undefined4 local_8;
+  
+  FUN_0046d4a0(&local_3c,param_4);
+  local_20 = *(float *)(local_3c + 0x30);
+  local_1c = *(float *)(local_3c + 0x38);
+  FUN_0046d6d0(&local_30,param_4);
+  FUN_0046d510(local_c,param_4);
+  local_8 = 0;
+  fVar5 = (float10)FUN_00408a50(param_4);
+  local_2c = (float)fVar5;
+  iVar3 = -1;
+  local_34 = 2.0;
+  iVar4 = 0;
+  do {
+    if (iVar4 != param_4) {
+      iVar2 = FUN_0040e370(iVar4);
+      if (iVar2 != 0) {
+        fVar5 = (float10)FUN_00408a50(iVar4);
+        local_38 = (float)fVar5;
+        fVar1 = (float)(fVar5 - (float10)local_2c);
+        if (fVar5 - (float10)local_2c <= (float10)DAT_005d757c) {
+          iVar2 = FUN_00426bb0();
+          local_24 = (float)(5 - iVar2);
+          if ((float)(int)local_24 <= fVar1) goto LAB_00414b3b;
+        }
+        if (fVar1 < local_34) {
+          iVar3 = iVar4;
+          local_34 = fVar1;
+        }
+      }
+    }
+LAB_00414b3b:
+    iVar4 = iVar4 + 1;
+    if (3 < iVar4) {
+      if (iVar3 != -1) {
+        FUN_0046d4a0(&local_3c,iVar3);
+        local_2c = *(float *)(local_3c + 0x30);
+        local_28 = *(float *)(local_3c + 0x38);
+        local_18[0] = local_2c - local_20;
+        local_18[1] = 0.0;
+        local_18[2] = local_28 - local_1c;
+        fVar5 = (float10)FUN_004c3ac0(local_18);
+        local_24 = (float)fVar5;
+        FUN_0046d6d0(&local_38,iVar3);
+        if ((_DAT_005cd0ac < local_30 - local_38) || (local_30 < _DAT_005cd0ac)) {
+          iVar4 = FUN_00414300(param_4,&local_20,param_2,&local_2c,0x3f800000,param_3);
+          if (iVar4 != 0) {
+            return 1;
+          }
+        }
+        iVar3 = FUN_0040e470(iVar3);
+        if ((iVar3 != 1) && (local_24 < _DAT_005cc348)) {
+          return 2;
+        }
+      }
+      return 0;
+    }
+  } while( true );
+}
+
+
+
+// FUN_00414c30 @ 0x00414c30  size=698  (MASHED.exe)
+// undefined FUN_00414c30(void)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C2 2026-06-02] World-object obstacle / trigger / bomb targeting. Body `0x00414c30..0x00414ef0`
+   (0x2c0 = 704 bytes). */
+
+undefined4 FUN_00414c30(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+
+{
+  float fVar1;
+  int iVar2;
+  float *pfVar3;
+  float *pfVar4;
+  float *pfVar5;
+  float10 fVar6;
+  float local_68;
+  int local_64;
+  int local_60;
+  int local_5c;
+  float local_58;
+  float local_54;
+  undefined4 local_50;
+  undefined4 local_4c;
+  float local_48;
+  float local_44;
+  float local_40;
+  float local_3c;
+  float local_38;
+  float local_34;
+  undefined1 local_30 [16];
+  float local_20 [5];
+  float local_c;
+  
+  FUN_0046d4a0(&local_64,param_4);
+  local_48 = *(float *)(local_64 + 0x30);
+  local_44 = *(float *)(local_64 + 0x34);
+  local_40 = *(float *)(local_64 + 0x38);
+  iVar2 = FUN_00484c70(&local_5c);
+  local_60 = 0;
+  if (0 < local_5c) {
+    pfVar3 = (float *)(iVar2 + 0xc);
+    do {
+      fVar1 = pfVar3[1];
+      if ((int)fVar1 < 0xff00) {
+        if (fVar1 == 2.94273e-44) {
+          fVar1 = pfVar3[2];
+          FUN_0041f030(param_4,local_30);
+          pfVar4 = (float *)((int)fVar1 + 0x68);
+          pfVar5 = local_20;
+          for (iVar2 = 6; iVar2 != 0; iVar2 = iVar2 + -1) {
+            *pfVar5 = *pfVar4;
+            pfVar4 = pfVar4 + 1;
+            pfVar5 = pfVar5 + 1;
+          }
+          fVar1 = (local_20[2] - local_c) * _DAT_005cd0b4;
+          local_20[2] = local_20[2] + fVar1;
+          local_c = local_c - fVar1;
+          iVar2 = FUN_0048a630(local_20,local_30);
+          if (iVar2 == 1) {
+            local_50 = *(undefined4 *)(local_64 + 0x30);
+            local_4c = *(undefined4 *)(local_64 + 0x38);
+            local_58 = pfVar3[-3];
+            local_54 = pfVar3[-1];
+            iVar2 = FUN_00414300(param_4,&local_50,param_2,&local_58,
+                                 *pfVar3 * _DAT_005ccac8 + _DAT_005cc32c,param_3);
+joined_r0x00414ed8:
+            if (iVar2 != 0) {
+              return 1;
+            }
+          }
+        }
+        else if ((((fVar1 != 1.4013e-44) || (pfVar3[2] == 0.0)) ||
+                 (iVar2 = *(int *)((int)pfVar3[2] + 4), iVar2 == 0)) ||
+                (_DAT_005ccac0 <= *(float *)(iVar2 + 0x10))) {
+          local_68 = *pfVar3;
+          if (fVar1 == 1.82169e-44) {
+            local_68 = local_68 + local_68;
+          }
+          local_3c = local_48 - pfVar3[-3];
+          local_38 = local_44 - pfVar3[-2];
+          local_34 = local_40 - pfVar3[-1];
+          fVar6 = (float10)FUN_004c3ac0(&local_3c);
+          if ((local_38 < local_68) && (fVar6 < (float10)_DAT_005cc9f4)) {
+            local_50 = *(undefined4 *)(local_64 + 0x30);
+            local_4c = *(undefined4 *)(local_64 + 0x38);
+            local_58 = pfVar3[-3];
+            local_54 = pfVar3[-1];
+            if (pfVar3[1] != 9.80909e-45) {
+              iVar2 = FUN_00414300(param_4,&local_50,param_2,&local_58,local_68 + _DAT_005cc32c,
+                                   param_3);
+              goto joined_r0x00414ed8;
+            }
+            fVar6 = (float10)FUN_00442cc0(param_4);
+            if (((fVar6 == (float10)DAT_005d757c) &&
+                (iVar2 = FUN_00414490(param_4,&local_50,param_2,&local_58,local_68 + _DAT_005cc32c,
+                                      param_3), iVar2 != 0)) &&
+               ((fVar1 = *(float *)(local_64 + 0x34) - pfVar3[-2], _DAT_005cd0b0 < fVar1 &&
+                (fVar1 < _DAT_005cc950)))) {
+              return 2;
+            }
+          }
+        }
+      }
+      local_60 = local_60 + 1;
+      pfVar3 = pfVar3 + 0x23;
+    } while (local_60 < local_5c);
+  }
+  return 0;
+}
+
+
+
+// FUN_00414300 @ 0x00414300  size=398  (MASHED.exe)
+// undefined FUN_00414300(void)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C2 2026-06-02] Perpendicular-foot pursuit-lead steering calculator. Body
+   `0x00414300..0x0041448d` (0x18d = 397 bytes). */
+
+undefined4
+FUN_00414300(undefined4 param_1,float *param_2,float *param_3,float *param_4,float param_5,
+            float *param_6)
+
+{
+  float fVar1;
+  float fVar2;
+  float10 fVar3;
+  float fVar4;
+  float10 fVar5;
+  float local_c [3];
+  
+  if (*param_2 - *param_3 == DAT_005d757c) {
+    fVar1 = *param_2;
+    fVar2 = param_4[1];
+  }
+  else {
+    fVar4 = (param_2[1] - param_3[1]) / (*param_2 - *param_3);
+    if (fVar4 == DAT_005d757c) {
+      fVar1 = *param_4;
+      fVar2 = param_2[1];
+    }
+    else {
+      fVar2 = param_2[1] - fVar4 * *param_2;
+      fVar1 = ((param_4[1] - -(_DAT_005cc320 / fVar4) * *param_4) - fVar2) /
+              (fVar4 - -(_DAT_005cc320 / fVar4));
+      fVar2 = fVar4 * fVar1 + fVar2;
+    }
+  }
+  fVar1 = *param_4 - fVar1;
+  fVar2 = param_4[1] - fVar2;
+  fVar4 = fVar1 * fVar1 + fVar2 * fVar2;
+  if (fVar4 < param_5 * param_5) {
+    FUN_0046d510(local_c,param_1);
+    local_c[1] = 0.0;
+    if (DAT_005d757c < local_c[2] * (param_4[1] - param_2[1]) + local_c[0] * (*param_4 - *param_2))
+    {
+      if (_DAT_005cc558 < fVar4) {
+        fVar5 = (float10)FUN_004c3b30(fVar4);
+        fVar3 = (float10)_DAT_005cc320;
+        *param_6 = (float)((float10)*param_4 - (float10)fVar1 * (fVar3 / fVar5) * (float10)param_5);
+        param_6[1] = (float)((float10)param_4[1] -
+                            (fVar3 / fVar5) * (float10)fVar2 * (float10)param_5);
+        return 1;
+      }
+      *param_6 = *param_4 - fVar1 * param_5;
+      param_6[1] = param_4[1] - fVar2 * param_5;
+      return 1;
+    }
+  }
+  return 0;
+}
+
+
+
+// FUN_00414490 @ 0x00414490  size=214  (MASHED.exe)
+// undefined FUN_00414490(void)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C2 2026-06-02] Mode-gated velocity-alignment targeting (bomb/deathmatch exclusion). Body
+   `0x00414490..0x00414565` (0xd5 = 213 bytes). */
+
+undefined4
+FUN_00414490(int param_1,float *param_2,undefined4 param_3,float *param_4,undefined4 param_5,
+            float *param_6)
+
+{
+  int iVar1;
+  float local_18;
+  float local_14;
+  float local_10;
+  float local_c;
+  float local_8;
+  float local_4;
+  
+  iVar1 = FUN_0040e350();
+  if (iVar1 != 0xb) {
+    iVar1 = FUN_0040e350();
+    if ((iVar1 != 10) && ((&DAT_0088fc88)[param_1 * 0x2d] == 0)) {
+      FUN_0046d510(&local_c,param_1);
+      local_18 = *param_4 - *param_2;
+      local_8 = 0.0;
+      local_14 = 0.0;
+      local_10 = param_4[1] - param_2[1];
+      FUN_004c39b0(&local_c,&local_c);
+      FUN_004c39b0(&local_18,&local_18);
+      if (_DAT_005cd090 < local_4 * local_10 + local_14 * local_8 + local_c * local_18) {
+        *param_6 = *param_4;
+        param_6[1] = param_4[1];
+        return 1;
+      }
+      return 0;
+    }
+  }
+  return 0;
+}
+
+
+
