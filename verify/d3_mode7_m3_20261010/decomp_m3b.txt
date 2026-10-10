@@ -1,0 +1,449 @@
+// FUN_0045bff0 @ 0x0045bff0  size=26  (MASHED.exe)
+// undefined FUN_0045bff0(void)
+// callees: (none)
+
+/* [C2 2026-06-03] `bool FUN_0045bff0(int param_1)` — body 0x0045bff0..0x0045c009. Single read:
+   `return (&DAT_0088fc88)[param_1 * 0x2d] ==… */
+
+bool FUN_0045bff0(int param_1)
+
+{
+  return (&DAT_0088fc88)[param_1 * 0x2d] == 0;
+}
+
+
+
+// FUN_0045bfa0 @ 0x0045bfa0  size=35  (MASHED.exe)
+// undefined FUN_0045bfa0(void)
+// callees: FUN_0045baa0@0x0045baa0
+
+/* [C2 2026-06-02] `void FUN_0045bfa0(int param_1)` — `param_1` is the player powerup slot; the
+   requested type id is in `ESI` on entry… */
+
+void FUN_0045bfa0(int param_1)
+
+{
+  int iVar1;
+  undefined4 uVar2;
+  
+  iVar1 = FUN_0045baa0();
+  *(int *)(param_1 + 0xa8) = iVar1;
+  uVar2 = (**(code **)(iVar1 + 4))(param_1);
+  *(undefined4 *)(param_1 + 0xac) = uVar2;
+  return;
+}
+
+
+
+// FUN_00458630 @ 0x00458630  size=274  (MASHED.exe)
+// undefined FUN_00458630(void)
+// callees: FUN_004c5c00@0x004c5c00
+
+/* [C2 2026-05-28] explicit parameter: `param_1` (undefined4) - used as a powerup type ID integer.
+    */
+
+undefined4 FUN_00458630(undefined4 param_1)
+
+{
+  undefined4 uVar1;
+  
+  switch(param_1) {
+  case 2:
+    uVar1 = FUN_004c5c00(DAT_0068b9ac,"flamethrower");
+    return uVar1;
+  default:
+    return 0;
+  case 6:
+  case 0xc:
+  case 0xd:
+    uVar1 = FUN_004c5c00(DAT_0068b9ac,&DAT_005ce594);
+    return uVar1;
+  case 7:
+    uVar1 = FUN_004c5c00(DAT_0068b9ac,"mortar");
+    return uVar1;
+  case 9:
+    uVar1 = FUN_004c5c00(DAT_0068b9ac,"machinegun");
+    return uVar1;
+  case 10:
+    uVar1 = FUN_004c5c00(DAT_0068b9ac,"depthcharge");
+    return uVar1;
+  case 0xb:
+    uVar1 = FUN_004c5c00(DAT_0068b9ac,"missile");
+    return uVar1;
+  case 0x10:
+    uVar1 = FUN_004c5c00(DAT_0068b9ac,"flamethrower");
+    return uVar1;
+  case 0x11:
+    uVar1 = FUN_004c5c00(DAT_0068b9ac,"shotgun");
+    return uVar1;
+  case 0x12:
+    uVar1 = FUN_004c5c00(DAT_0068b9ac,"flare");
+    return uVar1;
+  case 0x13:
+    uVar1 = FUN_004c5c00(DAT_0068b9ac,&PTR_DAT_005ce4fc);
+    return uVar1;
+  case 0x15:
+    uVar1 = FUN_004c5c00(DAT_0068b9ac,"chaos");
+    return uVar1;
+  case 0x16:
+    uVar1 = FUN_004c5c00(DAT_0068b9ac,"airstrike");
+    return uVar1;
+  }
+}
+
+
+
+// FUN_00490020 @ 0x00490020  size=864  (MASHED.exe)
+// undefined FUN_00490020(void)
+// callees: FUN_0040bb50@0x0040bb50, FUN_0041f290@0x0041f290, FUN_0042fab0@0x0042fab0, FUN_00472650@0x00472650, FUN_00472690@0x00472690, FUN_004e8090@0x004e8090
+
+/* [C1 2026-05-14] Particle spawn function for the clump-pool ring buffer at `DAT_0086a4ac` (stride
+   0x14). */
+
+void FUN_00490020(float *param_1,undefined4 *param_2,int param_3,int param_4,int param_5,
+                 float param_6,float *param_7)
+
+{
+  int iVar1;
+  int *piVar2;
+  undefined4 uVar3;
+  int iVar4;
+  int iVar5;
+  float fVar6;
+  float10 fVar7;
+  undefined1 local_40;
+  undefined1 local_3f;
+  undefined1 local_3e;
+  undefined1 local_3d;
+  undefined1 local_3c;
+  undefined1 local_3b;
+  undefined1 local_3a;
+  undefined1 local_39;
+  undefined1 local_38;
+  undefined1 local_37;
+  undefined1 local_36;
+  undefined1 local_35;
+  undefined1 local_34;
+  undefined1 local_33;
+  undefined1 local_32;
+  undefined1 local_31;
+  undefined1 local_30;
+  undefined1 local_2f;
+  undefined1 local_2e;
+  undefined1 local_2d;
+  undefined1 local_2c;
+  undefined1 local_2b;
+  undefined1 local_2a;
+  undefined1 local_29;
+  undefined4 local_28;
+  float local_24;
+  float local_20;
+  float local_1c;
+  undefined1 *local_18 [4];
+  undefined1 *local_8;
+  undefined1 *local_4;
+  
+  local_38 = 0x3c;
+  local_32 = 0x3c;
+  local_18[0] = &local_40;
+  local_18[2] = &local_38;
+  local_8 = &local_30;
+  local_3d = 0xff;
+  local_3b = 0x54;
+  local_39 = 0xff;
+  local_35 = 0xff;
+  local_31 = 0xff;
+  local_2f = 0x54;
+  local_2d = 0xff;
+  local_29 = 0xff;
+  local_28 = 0xffffffff;
+  local_18[1] = &local_3c;
+  local_18[3] = &local_34;
+  iVar1 = param_3 * 4;
+  iVar4 = (&DAT_007f1a1c)[iVar1];
+  local_4 = &local_2c;
+  local_40 = 0x78;
+  local_3f = 0x19;
+  local_3e = 0x1e;
+  local_3c = 4;
+  local_3a = 0xa4;
+  local_37 = 0x7c;
+  local_36 = 0x4c;
+  local_34 = 0xe4;
+  local_33 = 0xc4;
+  local_30 = 0xd4;
+  local_2e = 0x9c;
+  local_2c = 0;
+  local_2b = 0;
+  local_2a = 0;
+  if (param_4 == 1) {
+    uVar3 = 0x33;
+  }
+  else {
+    if (param_4 != 2) {
+      local_24 = *param_1;
+      fVar6 = param_1[1];
+      local_1c = param_1[2];
+      param_3 = *param_2;
+      goto LAB_00490157;
+    }
+    uVar3 = 0x34;
+  }
+  iVar5 = FUN_0041f290(param_3,uVar3);
+  local_24 = *(float *)(iVar5 + 0x30);
+  fVar6 = *(float *)(iVar5 + 0x34);
+  local_1c = *(float *)(iVar5 + 0x38);
+  param_3 = *(int *)local_18[iVar4];
+LAB_00490157:
+  iVar4 = 0;
+  piVar2 = &DAT_0086a4a0;
+  while (*piVar2 != 0) {
+    piVar2 = piVar2 + 0x14;
+    iVar4 = iVar4 + 1;
+    if (0x86adff < (int)piVar2) {
+      return;
+    }
+  }
+  fVar7 = (float10)FUN_00472650(0xba83126f,0x3a83126f);
+  local_24 = (float)(fVar7 + (float10)local_24);
+  fVar7 = (float10)FUN_00472650(0xba83126f,0x3a83126f);
+  iVar5 = iVar4 * 0x50;
+  local_1c = (float)(fVar7 + (float10)local_1c);
+  (&DAT_0086a4b0)[iVar4 * 0x14] = local_24;
+  (&DAT_0086a4b4)[iVar4 * 0x14] = fVar6;
+  (&DAT_0086a4b8)[iVar4 * 0x14] = local_1c;
+  (&DAT_0086a4dc)[iVar4 * 0x14] = 0;
+  uVar3 = FUN_00472690(0x14,0x23);
+  (&DAT_0086a4d8)[iVar4 * 0x14] = uVar3;
+  fVar7 = (float10)FUN_00472650(0,0x3f800000);
+  *(float *)(&DAT_0086a4e0 + iVar5) = (float)fVar7;
+  fVar7 = (float10)FUN_00472650(0,0x3f800000);
+  *(float *)(iVar5 + 0x86a4e4) = (float)fVar7;
+  fVar7 = (float10)FUN_00472650(0,0x3f800000);
+  *(float *)(iVar5 + 0x86a4e8) = (float)fVar7;
+  fVar7 = (float10)FUN_00472650(0xbcf5c28f,0x3cf5c28f);
+  (&DAT_0086a4bc)[iVar4 * 0x14] = (float)fVar7;
+  fVar7 = (float10)FUN_00472650(0xbcf5c28f,0x3cf5c28f);
+  (&DAT_0086a4c4)[iVar4 * 0x14] = (float)fVar7;
+  fVar7 = (float10)FUN_00472650(0x3c23d70a,0x3d23d70a);
+  *(float *)(iVar5 + 0x86a4c0) = (float)fVar7;
+  if (param_7 != (float *)0x0) {
+    (&DAT_0086a4bc)[iVar4 * 0x14] = (float)(&DAT_0086a4bc)[iVar4 * 0x14] + *param_7;
+    *(float *)(iVar5 + 0x86a4c0) = (float)((float10)param_7[1] + fVar7);
+    (&DAT_0086a4c4)[iVar4 * 0x14] = param_7[2] + (float)(&DAT_0086a4c4)[iVar4 * 0x14];
+  }
+  (&DAT_0086a4ec)[iVar4 * 0x14] = 0;
+  (&DAT_0086a4d4)[iVar4 * 0x14] = 0;
+  fVar7 = (float10)FUN_00472650(0x3dcccccd,0x3f19999a);
+  local_24 = (float)(fVar7 * (float10)param_6);
+  fVar7 = (float10)FUN_00472650(0x3dcccccd,0x3f19999a);
+  local_20 = (float)(fVar7 * (float10)param_6);
+  fVar7 = (float10)FUN_00472650(0x3dcccccd,0x3f19999a);
+  *(float *)(&DAT_0086a4c8 + iVar5) = local_24;
+  local_1c = (float)(fVar7 * (float10)param_6);
+  *(float *)(iVar5 + 0x86a4cc) = local_20;
+  *(float *)(iVar5 + 0x86a4d0) = local_1c;
+  (&DAT_0086a4a0)[iVar4 * 0x14] = 1;
+  if (param_5 == 0) {
+    if ((param_4 == 1) && (iVar5 = FUN_00472690(0,3), iVar5 == 3)) {
+      uVar3 = FUN_0042fab0((&DAT_007f1a1c)[iVar1]);
+    }
+    else {
+      uVar3 = FUN_0040bb50("tritex");
+    }
+    FUN_004e8090((&DAT_0086a4ac)[iVar4 * 0x14],uVar3);
+    *(int *)((&DAT_0086a4ac)[iVar4 * 0x14] + 4) = param_3;
+    return;
+  }
+  FUN_004e8090((&DAT_0086a4ac)[iVar4 * 0x14],param_5);
+  *(undefined4 *)((&DAT_0086a4ac)[iVar4 * 0x14] + 4) = local_28;
+  return;
+}
+
+
+
+// FUN_0046d4a0 @ 0x0046d4a0  size=46  (MASHED.exe)
+// undefined FUN_0046d4a0(void)
+// callees: (none)
+
+/* [C2 2026-06-02] Two args `(undefined4 *param_1 out, uint param_2 vehicle index)`. Body
+   `0x0046d4a0..0x0046d4cd` (45 bytes). Returns 1… */
+
+undefined4 FUN_0046d4a0(undefined4 *param_1,uint param_2)
+
+{
+  if (0xf < param_2) {
+    return 0;
+  }
+  *param_1 = &DAT_00881ec8 + (&DAT_00881f48)[param_2 * 0x341] * 0x10 + param_2 * 0x341;
+  return 1;
+}
+
+
+
+// FUN_00492d10 @ 0x00492d10  size=6  (MASHED.exe)
+// undefined FUN_00492d10(void)
+// callees: (none)
+
+/* [C1 2026-06-01] `undefined4 FUN_00492d10(void)` — pure getter. Returns `DAT_00771968` (the head
+   word of a small cluster… */
+
+undefined4 FUN_00492d10(void)
+
+{
+  return DAT_00771968;
+}
+
+
+
+// FUN_0045e0f0 @ 0x0045e0f0  size=112  (MASHED.exe)
+// undefined FUN_0045e0f0(void)
+// callees: FUN_005a6dc0@0x005a6dc0
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C2 2026-06-01] `void FUN_0045e0f0(int param_1, float param_2)`. Body 0x0045e0f0..0x0045e15f. The
+   canonical per-channel volume setter… */
+
+void FUN_0045e0f0(int param_1,float param_2)
+
+{
+  if (DAT_005d757c <= param_2) {
+    if (_DAT_005cc320 < param_2) {
+      param_2 = 1.0;
+    }
+  }
+  else {
+    param_2 = 0.0;
+  }
+  *(float *)((&DAT_0068f640)[param_1 * 2] + 0x40) = param_2;
+  if (*(int *)((&DAT_0068f640)[param_1 * 2] + 0x30) != 0) {
+    FUN_005a6dc0(*(int *)((&DAT_0068f640)[param_1 * 2] + 0x30),5,1,param_2);
+  }
+  (&DAT_0068f644)[param_1 * 2] = param_2;
+  return;
+}
+
+
+
+// FUN_0046d6d0 @ 0x0046d6d0  size=36  (MASHED.exe)
+// undefined FUN_0046d6d0(void)
+// callees: (none)
+
+/* [C2 2026-06-02] Two args `(undefined4 *param_1 out, uint param_2 vehicle index)`. Body
+   `0x0046d6d0..0x0046d6f3` (35 bytes). Returns 1/0. */
+
+undefined4 FUN_0046d6d0(undefined4 *param_1,uint param_2)
+
+{
+  if (0xf < param_2) {
+    return 0;
+  }
+  *param_1 = (&DAT_00881f84)[param_2 * 0x341];
+  return 1;
+}
+
+
+
+// FUN_0046d740 @ 0x0046d740  size=54  (MASHED.exe)
+// undefined FUN_0046d740(void)
+// callees: (none)
+
+/* [C2 2026-06-03] Params: `param_1` (`undefined4*` → vec3 in), `param_2` (uint vehicle). -
+   Bounds: `if (0xf < param_2) return 0;`… */
+
+undefined4 FUN_0046d740(undefined4 *param_1,uint param_2)
+
+{
+  int iVar1;
+  
+  if (0xf < param_2) {
+    return 0;
+  }
+  iVar1 = param_2 * 0xd04;
+  *(undefined4 *)(&DAT_008816e4 + iVar1) = *param_1;
+  *(undefined4 *)(&DAT_008816e8 + iVar1) = param_1[1];
+  *(undefined4 *)(&DAT_008816ec + iVar1) = param_1[2];
+  return 1;
+}
+
+
+
+// FUN_00421630 @ 0x00421630  size=95  (MASHED.exe)
+// undefined FUN_00421630(void)
+// callees: FUN_0041f220@0x0041f220, FUN_004215e0@0x004215e0, FUN_004c3d90@0x004c3d90, FUN_004c4dc0@0x004c4dc0
+
+/* [C2 2026-06-03] `void FUN_00421630(undefined4 param_1, undefined4 param_2, undefined4 param_3)`.
+   Body 0x00421630..0x0042168e… */
+
+void FUN_00421630(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+
+{
+  undefined1 local_8c [12];
+  undefined1 local_80 [64];
+  undefined1 local_40 [64];
+  
+  FUN_0041f220(param_1,local_80);
+  FUN_004c4dc0(local_40,local_80);
+  FUN_004c3d90(local_8c,param_3,1,local_40);
+  FUN_004215e0(param_1,param_2,local_8c);
+  return;
+}
+
+
+
+// FUN_00472650 @ 0x00472650  size=51  (MASHED.exe)
+// undefined FUN_00472650(void)
+// callees: FUN_00534870@0x00534870
+
+/* WARNING: Removing unreachable block (ram,0x00472667) */
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C1 2026-06-01] `float10 __thiscall FUN_00472650(undefined4 param_1, float param_2, float
+   param_3)` — */
+
+float10 __thiscall FUN_00472650(undefined4 param_1,float param_2,float param_3)
+
+{
+  uint uVar1;
+  
+  uVar1 = FUN_00534870(param_1);
+  return ((float10)param_3 - (float10)param_2) *
+         (float10)(uVar1 & 0x7fffffff) * (float10)_DAT_005cd314 + (float10)param_2;
+}
+
+
+
+// FUN_00472690 @ 0x00472690  size=32  (MASHED.exe)
+// undefined FUN_00472690(void)
+// callees: FUN_00534870@0x00534870
+
+/* [C1 2026-06-01] `int FUN_00472690(int param_1, int param_2)` — uniform random integer in the
+   inclusive */
+
+int FUN_00472690(int param_1,int param_2)
+
+{
+  uint uVar1;
+  
+  uVar1 = FUN_00534870();
+  return (uVar1 & 0x7fffffff) % ((param_2 - param_1) + 1U) + param_1;
+}
+
+
+
+// FUN_004c3ac0 @ 0x004c3ac0  size=112  (MASHED.exe)
+// undefined FUN_004c3ac0(void)
+// callees: (none)
+
+float10 FUN_004c3ac0(float *param_1)
+
+{
+  param_1 = (float *)(param_1[2] * param_1[2] + param_1[1] * param_1[1] + *param_1 * *param_1);
+  if (param_1 != (float *)0x0) {
+    param_1 = (float *)(*(int *)(*(int *)(DAT_007d3ffc + DAT_007d3ff8) +
+                                ((int)param_1 + 0x800U >> 0xc & 0xfff) * 4) +
+                       ((int)param_1 + 0x800U >> 1 & 0x3fc00000));
+  }
+  return (float10)(float)param_1;
+}
+
+

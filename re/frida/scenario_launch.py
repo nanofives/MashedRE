@@ -1892,6 +1892,120 @@ function rgProbeArm(k){
 }
 function rgProbeDrain(){ const r = RG.rows; RG.rows = []; return r; }
 
+// --- CALLBACK probe (mode 7 leg M3, 2026-10-10) ---------------------------------
+// Entry + leave on the registry callbacks FUN_00458920 (pickup; rare) and FUN_00486630 (type 0x11;
+// ~12/s). While a FUN_00458920 call is live, entry witnesses on its callees FUN_0045c010 (v, type),
+// FUN_004588c0 (+ free slots of the particle pool 0x0086a4a0 x 30 x 0x50, FUN_00490020's search),
+// FUN_00465ca0 (sfx id), FUN_00458570 (EAX = car). FUN_00459000 leave: pool state transitions
+// (+0x20) with the frames and the summed timer step _DAT_007f100c since the entry's last transition.
+// Ring cursor = ([S+4] - [S]) / 4, ([S+8] - [S]) / 4 with S = [0x007d3ff8] + [0x007dc578] (0x00534870).
+// Read-only.
+const CB = { armed:false, rows:[], err:null, n920:0, n630:0, inPk:false, wit:[], c010out:0,
+             lastSt:null, since:[], dtsum:[] };
+function cbRing(){
+  const S = ga(0x007d3ff8).readPointer().add(ga(0x007dc578).readU32());
+  const base = S.readPointer();
+  return (S.add(4).readPointer().sub(base).toInt32() / 4) + ';' + (S.add(8).readPointer().sub(base).toInt32() / 4);
+}
+function cbFreeParticles(){ let n = 0; for (let i = 0; i < 30; i++) if (ga(0x0086a4a0 + i*0x50).readU32() === 0) n++; return n; }
+function cbSlotIdx(p){ return (p.toUInt32() - 0x006dccb8) / 0x8c; }
+function cbProbeArm(){
+  if (CB.armed) return 'already armed';
+  try {
+    [0x0045c010, 0x004588c0, 0x00465ca0, 0x00458570].forEach(function(t){
+      Interceptor.attach(ga(t), { onEnter(args){
+        try {
+          if (!CB.inPk) { if (t === 0x0045c010) CB.c010out++; return; }
+          if (t === 0x0045c010) CB.wit.push('c010:' + args[0].toInt32() + ':' + args[1].toInt32());
+          else if (t === 0x004588c0) CB.wit.push('88c0:free=' + cbFreeParticles());
+          else if (t === 0x00465ca0) CB.wit.push('5ca0:' + args[0].toInt32());
+          else CB.wit.push('8570:' + this.context.eax.toInt32());
+        } catch(e){ if (!CB.err) CB.err = 'cbWit ' + e; }
+      }});
+    });
+    Interceptor.attach(ga(0x00458920), {
+      onEnter(args){
+        this.row = null;
+        try {
+          CB.n920++;
+          const a = args[0], b = args[1];
+          const tb = b.add(0x10).readU32();
+          const v = (tb >= 0xff00 && tb <= 0xff07) ? tb - 0xff00 : -1;
+          const slot = v >= 0 ? ga(0x0088fbe0 + v*0xb4) : null;
+          const data = a.add(0x14).readPointer();
+          this.data = data; this.slot = slot;
+          CB.inPk = true; CB.wit = [];
+          this.row = ['PK', CB.n920, ga(0x007f0ff4).readS32(), cbSlotIdx(a), cbSlotIdx(b),
+                      a.add(0x10).readU32().toString(16), tb.toString(16),
+                      ga(0x007f0fd0).readS32(), ga(0x0063ba8c).readS32(),
+                      slot ? slot.add(0xa8).readU32().toString(16) : '', slot ? slot.add(0xac).readU32().toString(16) : '',
+                      ga(0x0063a5d0).readS32(), ga(0x0063a5d4).readS32(), ga(0x00639dc4).readS32(),
+                      cbFreeParticles(), cbRing(), (data.toUInt32() - 0x0068b198) / 0x50,
+                      data.isNull() ? '' : hexOf(data, 0x50), hexOf(a, 0x20), hexOf(b, 0x20)];
+        } catch(e){ if (!CB.err) CB.err = 'cb920 ' + e; }
+      },
+      onLeave(){
+        CB.inPk = false;
+        try {
+          if (!this.row) return;
+          const slot = this.slot;
+          this.row.push(this.data.isNull() ? '' : hexOf(this.data, 0x50), cbRing(),
+                        slot ? slot.add(0xa8).readU32().toString(16) : '', slot ? slot.add(0xac).readU32().toString(16) : '',
+                        CB.wit.join('|'));
+          CB.rows.push(this.row);
+        } catch(e){ if (!CB.err) CB.err = 'cb920L ' + e; }
+      }});
+    Interceptor.attach(ga(0x00486630), {
+      onEnter(args){
+        this.row = null;
+        try {
+          CB.n630++;
+          const a = args[0], b = args[1];
+          const tb = b.add(0x10).readU32();
+          const v = (tb >= 0xff00 && tb <= 0xff07) ? tb - 0xff00 : -1;
+          const data = a.add(0x14).readPointer();
+          const rec = v >= 0 ? ga(0x008815a0 + v*0xd04) : null;
+          this.rec = rec;
+          this.row = ['S11', CB.n630, ga(0x007f0ff4).readS32(), cbSlotIdx(a), cbSlotIdx(b), tb.toString(16),
+                      data.isNull() ? '' : data.add(0x24).readU32().toString(16),
+                      data.isNull() ? '' : data.add(0x78).readU32().toString(16),
+                      rec ? hexOf(rec.add(0x144), 12) : '', rec ? rec.add(0x9e4).readU32().toString(16) : '',
+                      ga(0x007f101c).readU32().toString(16), cbRing(), hexOf(a, 0x20)];
+        } catch(e){ if (!CB.err) CB.err = 'cb630 ' + e; }
+      },
+      onLeave(){
+        try {
+          if (!this.row) return;
+          this.row.push(this.rec ? hexOf(this.rec.add(0x144), 12) : '', cbRing());
+          CB.rows.push(this.row);
+        } catch(e){ if (!CB.err) CB.err = 'cb630L ' + e; }
+      }});
+    Interceptor.attach(ga(0x00459000), { onLeave(){
+      try {
+        const cnt = Math.max(0, Math.min(ga(0x0068b9a8).readS32(), 25));
+        const dt = ga(0x007f100c).readFloat();
+        const st = [];
+        for (let i = 0; i < cnt; i++) {
+          st.push(ga(0x0068b198 + i*0x50 + 0x20).readS32());
+          if (CB.since[i] === undefined) { CB.since[i] = 0; CB.dtsum[i] = 0; }
+          CB.since[i]++; CB.dtsum[i] += dt;
+        }
+        if (CB.lastSt) for (let i = 0; i < st.length; i++) if (st[i] !== CB.lastSt[i]) {
+          const e = ga(0x0068b198 + i*0x50);
+          CB.rows.push(['ST', 0, ga(0x007f0ff4).readS32(), i, CB.lastSt[i], st[i],
+                        e.add(0x18).readU32().toString(16), e.add(0x1c).readU32().toString(16),
+                        e.add(0x24).readS32(), CB.since[i], CB.dtsum[i].toFixed(6)]);
+          CB.since[i] = 0; CB.dtsum[i] = 0;
+        }
+        CB.lastSt = st;
+      } catch(e){ if (!CB.err) CB.err = 'cbSt ' + e; }
+    }});
+    CB.armed = true;
+    return 'cb-probe armed (0x458920 / 0x486630 entry+leave, witnesses, 0x459000 leave)';
+  } catch(e){ return 'ERR ' + e; }
+}
+function cbProbeDrain(){ const r = CB.rows; CB.rows = []; return r; }
+
 // --- PICKUP-POOL probe (mode 7 leg M2a, 2026-10-10) ------------------------------
 // Entry + leave of FUN_00459000 (pickup tick, 1/frame): the first N calls, then every 30th.
 // count 0x0068b9a8, pool 0x0068b198 x 0x7d0, each entry's frame (*(obj+4)) +0x10..+0x4f,
@@ -2693,6 +2807,9 @@ rpc.exports = {
   tgProbeDrain: function(){ return tgProbeDrain(); },
   tgProbeStats: function(){ return JSON.stringify({armed:TG.armed, calls:TG.n, err:TG.err}); },
   rgProbeArm: function(k){ return rgProbeArm(k); },
+  cbProbeArm: function(){ return cbProbeArm(); },
+  cbProbeDrain: function(){ return cbProbeDrain(); },
+  cbProbeStats: function(){ return JSON.stringify({armed:CB.armed, n920:CB.n920, n630:CB.n630, c010_outside:CB.c010out, err:CB.err}); },
   pkProbeArm: function(n){ return pkProbeArm(n); },
   pkProbeDrain: function(){ return pkProbeDrain(); },
   pkProbeStats: function(){ return JSON.stringify({armed:PK.armed, calls:PK.n, err:PK.err}); },
@@ -3283,6 +3400,9 @@ def main():
     ap.add_argument("--reg-probe", type=int, default=0,
                     help="[mode 7 M1] K: world-object registry dumps around FUN_00485070 every K-th "
                          "frame + grid-build inputs. Writes <out>.reg.tsv. Requires --statediff-out.")
+    ap.add_argument("--cb-probe", action="store_true",
+                    help="[mode 7 M3] registry callbacks FUN_00458920 / FUN_00486630 entry+leave, callee "
+                         "witnesses, pickup-pool state transitions. Writes <out>.cb.tsv. Requires --statediff-out.")
     ap.add_argument("--tgt-probe", type=int, default=0,
                     help="[D-11072 P3] N: entry+leave hook on FUN_00414a70, first N calls: every input "
                          "+ return + cand. Writes <out>.tgt.csv. Requires --statediff-out.")
@@ -3466,6 +3586,8 @@ def main():
                 print("  [statediff]", E.tg_probe_arm(args.tgt_probe))
             if args.reg_probe:
                 print("  [statediff]", E.rg_probe_arm(args.reg_probe))
+            if args.cb_probe:
+                print("  [statediff]", E.cb_probe_arm())
             if args.pool_probe:
                 print("  [statediff]", E.pk_probe_arm(args.pool_probe))
             if args.statediff_puhook:
@@ -4015,6 +4137,19 @@ def main():
                             for r in _rg: f.write(chr(9).join(str(x) for x in r) + chr(10))
                         print(f"  [statediff] reg-probe {len(_rg)} rows -> {_rf}")
                     except Exception as _e: print("  [statediff] reg drain failed:", _e)
+                if args.cb_probe:
+                    try: print("  [statediff] cb-probe agent:", E.cb_probe_stats())
+                    except Exception as _e: print("  [statediff] cb stats failed:", _e)
+                    try:
+                        _cb = E.cb_probe_drain()
+                        _cf = outp.with_suffix(outp.suffix + ".cb.tsv")
+                        with open(_cf, "w", newline="") as f:
+                            f.write("# PK: kind n frame a b type_a type_b fd0 ba8c slot_a8 slot_ac a5d0 a5d4 9dc4 free ring pool_idx entry_in slot_a slot_b entry_out ring_out slot_a8_out slot_ac_out witnesses" + chr(10))
+                            f.write("# S11: kind n frame a b type_b d24 d78 rec144_in rec9e4 f101c ring slot_a rec144_out ring_out" + chr(10))
+                            f.write("# ST: kind 0 frame idx old new t18 t1c type frames_since dtsum_since" + chr(10))
+                            for r in _cb: f.write(chr(9).join(str(x) for x in r) + chr(10))
+                        print(f"  [statediff] cb-probe {len(_cb)} rows -> {_cf}")
+                    except Exception as _e: print("  [statediff] cb drain failed:", _e)
                 if args.tgt_probe:
                     try: print("  [statediff] tgt-probe agent:", E.tg_probe_stats())
                     except Exception as _e: print("  [statediff] tgt stats failed:", _e)
