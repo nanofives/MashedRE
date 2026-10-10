@@ -1,0 +1,74 @@
+{
+  "funcs": [
+    {
+      "name": "PK_459000",
+      "start": "0x00459000",
+      "size": 655
+    },
+    {
+      "name": "PK_458a40",
+      "start": "0x00458a40",
+      "size": 207
+    },
+    {
+      "name": "PK_4584e0",
+      "start": "0x004584e0",
+      "size": 138
+    },
+    {
+      "name": "PK_4576b0",
+      "start": "0x004576b0",
+      "size": 56
+    },
+    {
+      "name": "PK_4c3ac0",
+      "start": "0x004c3ac0",
+      "size": 112
+    },
+    {
+      "name": "PK_4c39b0",
+      "start": "0x004c39b0",
+      "size": 271
+    }
+  ],
+  "calls": {
+    "0x00458a40": "PK_458a40",
+    "0x004584e0": "PK_4584e0",
+    "0x004576b0": "PK_4576b0",
+    "0x004c3ac0": "PK_4c3ac0",
+    "0x004c39b0": "PK_4c39b0",
+    "0x004c1340": "PK_FrameTranslate",
+    "0x004c1520": "PK_FrameRotate",
+    "0x00458d00": "PK_TypeReroll",
+    "0x00458dd0": "PK_Nop",
+    "0x004769a0": "PK_Nop",
+    "0x004769d0": "PK_Nop",
+    "0x004769f0": "PK_Nop",
+    "0x00476a30": "PK_Nop",
+    "0x00476d00": "PK_Nop",
+    "0x00476df0": "PK_Nop",
+    "0x00484cf0": "RG_484cf0",
+    "0x004d7ff0": "PK_ErrPass",
+    "0x004d8480": "PK_Nop"
+  },
+  "consts": {
+    "0x005cc990": "g_pk_c_5cc990",
+    "0x005cc9a0": "g_pk_c_5cc9a0",
+    "0x005cc9dc": "g_pk_c_5cc9dc",
+    "0x005cd0c8": "g_pk_c_5cd0c8",
+    "0x005cd7a8": "g_pk_c_5cd7a8",
+    "0x005ce2f4": "g_pk_c_5ce2f4",
+    "0x005ce540": "g_pk_c_5ce540",
+    "0x005ce544": "g_pk_c_5ce544",
+    "0x005ce548": "g_pk_c_5ce548",
+    "0x005ce54c": "g_pk_c_5ce54c",
+    "0x005d757c": "g_pk_c_5d757c",
+    "0x007f100c": "g_pk_dt"
+  },
+  "patch": {
+    "0x004c39b7": "lea edx, g_pk_lutptrs",
+    "0x004c39be": "mov esi, 0",
+    "0x004c3af2": "lea eax, g_pk_lutptrs",
+    "0x004c3af7": "mov ecx, 0"
+  }
+}

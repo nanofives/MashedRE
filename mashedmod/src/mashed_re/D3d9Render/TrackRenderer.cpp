@@ -27,6 +27,7 @@
 #include "../Race/PathProgStep.h" // D-11072 P2: per-frame FUN_00408610 (MASHED_PATHPROG)
 #include "../Ai/AiTargetClosest.h" // D-11072 P3: FUN_00414a70 (MASHED_TGT3)
 #include "../Race/WorldRegistry.h"  // mode 7 M1: world-object registry (MASHED_REGISTRY)
+#include "../Gameplay/PickupTick.h"  // mode 7 M2a: pickup tick FUN_00459000 (MASHED_PICKUPS_ORIG)
 #include "../Race/SubStateMachine.h"  // D-11073 leg 1b: FUN_0040dbd0 / FUN_004103a0 (MASHED_SUBSTATE)
 #include "../Race/CameraEntries.h"    // D-11073 leg 2: phase-3 camera entries (MASHED_SUBSTATE)
 extern "C" void __cdecl VehicleSeedWritePair(std::uint32_t, std::uint32_t);   // 0x00448700
@@ -2199,6 +2200,7 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                     Race::PathProg_MaybeReplay();     // [D-11072 P2] G-P2-REPLAY (env-gated)
                     Ai::TargetClosest_MaybeReplay();  // [D-11072 P3] G-P3-REPLAY (env-gated)
                     Race::Registry_MaybeReplay();     // [mode 7 M1] G-M1-REG / G-M1-PASS (env-gated)
+                    Gameplay::Pickups_MaybeReplay();  // [mode 7 M2a] G-M2a-REPLAY (env-gated)
                 }
                 gates_.assign(aw.materials.size(), Gate{});
                 std::vector<int> counts(aw.materials.size(), 0);
@@ -5752,6 +5754,8 @@ void TrackRenderer::UpdateRace(float dt) {
     // [mode 7 M1] FUN_0040fc00's FUN_00485070 (0x0040fd07): pair pass + publish. No registrant
     // exists yet, so with MASHED_REGISTRY it publishes cc = 0 every frame. Position relative to the
     // AI tick is an M4 question (PREREG_MODE7.md section 3).
+    // [mode 7 M2a] FUN_0045bba0's FUN_00459000 (0x0040fcd0) registers the live pickups first.
+    Gameplay::Pickups_FrameTick();
     Race::Registry_FrameTick();
 
     // [D-11072 bridge write] Mirror the monotone arcpct into the original per-car

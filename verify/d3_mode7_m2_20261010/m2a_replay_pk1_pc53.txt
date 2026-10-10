@@ -1,0 +1,2 @@
+G-M2a-REPLAY calls=1890 exact=1890 pool_bad=0 frame_bad=0 reg_bad=0 cc_bad=0 reroll_calls=0 translate_other=0 pc=53
+pool mismatched entry offsets:

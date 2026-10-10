@@ -1889,6 +1889,57 @@ function rgProbeArm(k){
   } catch(e){ return 'ERR ' + e; }
 }
 function rgProbeDrain(){ const r = RG.rows; RG.rows = []; return r; }
+
+// --- PICKUP-POOL probe (mode 7 leg M2a, 2026-10-10) ------------------------------
+// Entry + leave of FUN_00459000 (pickup tick, 1/frame): the first N calls, then every 30th.
+// count 0x0068b9a8, pool 0x0068b198 x 0x7d0, each entry's frame (*(obj+4)) +0x10..+0x4f,
+// _DAT_007f100c, bitmaps 0x0068a300 (8 B) / 0x0068a254 (0x40 B), registry cc; at leave the same plus
+// the slots registered during the call. Read-only.
+const PK = { armed:false, rows:[], n:0, N:1500, err:null };
+function pkFrames(cnt){
+  const out = [];
+  for (let i = 0; i < 25; i++) {
+    const obj = ga(0x0068b198).add(i*0x50).readPointer();
+    if (i >= cnt || obj.isNull()) { out.push('-'); continue; }
+    const fr = obj.add(4).readPointer();
+    out.push(fr.isNull() ? '0' : hexOf(fr.add(0x10), 0x40));
+  }
+  return out.join(';');
+}
+function pkProbeArm(n){
+  if (PK.armed) return 'already armed';
+  try {
+    PK.N = n || 1500;
+    Interceptor.attach(ga(0x00459000), {
+      onEnter(){
+        this.row = null;
+        try {
+          PK.n++;
+          if (PK.n > PK.N && (PK.n % 30) !== 0) return;
+          if (PK.rows.length >= PK.N + 2000) return;
+          const cnt = ga(0x0068b9a8).readS32();
+          this.cc = ga(0x006e70cc).readS32();
+          this.cnt = cnt;
+          this.row = [PK.n, ga(0x007f0ff4).readS32(), cnt, ga(0x007f100c).readU32(),
+                      hexOf(ga(0x0068a300), 8), hexOf(ga(0x0068a254), 0x40), this.cc,
+                      hexOf(ga(0x0068b198), 0x7d0), pkFrames(Math.max(0, Math.min(cnt, 25)))];
+        } catch(e){ if (!PK.err) PK.err = 'pkEnter ' + e; }
+      },
+      onLeave(){
+        try {
+          if (!this.row) return;
+          const cnt = ga(0x0068b9a8).readS32(), cc = ga(0x006e70cc).readS32();
+          const k = Math.max(0, Math.min(cc, 300)) - Math.max(0, Math.min(this.cc, 300));
+          this.row.push(cnt, cc, hexOf(ga(0x0068b198), 0x7d0), pkFrames(Math.max(0, Math.min(cnt, 25))),
+                        k > 0 ? hexOf(ga(0x006dccb8).add(this.cc*0x8c), k*0x8c) : '');
+          PK.rows.push(this.row);
+        } catch(e){ if (!PK.err) PK.err = 'pkLeave ' + e; }
+      }});
+    PK.armed = true;
+    return 'pool-probe armed (0x459000 entry+leave, first ' + PK.N + ' then every 30th)';
+  } catch(e){ return 'ERR ' + e; }
+}
+function pkProbeDrain(){ const r = PK.rows; PK.rows = []; return r; }
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
@@ -2640,6 +2691,9 @@ rpc.exports = {
   tgProbeDrain: function(){ return tgProbeDrain(); },
   tgProbeStats: function(){ return JSON.stringify({armed:TG.armed, calls:TG.n, err:TG.err}); },
   rgProbeArm: function(k){ return rgProbeArm(k); },
+  pkProbeArm: function(n){ return pkProbeArm(n); },
+  pkProbeDrain: function(){ return pkProbeDrain(); },
+  pkProbeStats: function(){ return JSON.stringify({armed:PK.armed, calls:PK.n, err:PK.err}); },
   rgProbeDrain: function(){ return rgProbeDrain(); },
   rgProbeStats: function(){ return JSON.stringify({armed:RG.armed, calls:RG.n, gridCalls:RG.gridCalls, callbacks:RG.cbTotal, err:RG.err}); },
   wobjProbeDrain: function(){ return wobjProbeDrain(); },
@@ -3221,6 +3275,9 @@ def main():
     ap.add_argument("--pathprog-probe", type=int, default=0,
                     help="[D-11072 P2] N: entry hook on FUN_00408610, first N calls: inputs + the car's "
                          "0x30c block at entry. Writes <out>.pathprog.csv. Requires --statediff-out.")
+    ap.add_argument("--pool-probe", type=int, default=0,
+                    help="[mode 7 M2a] N: pickup tick FUN_00459000 entry+leave dumps, first N calls then "
+                         "every 30th. Writes <out>.pool.tsv. Requires --statediff-out.")
     ap.add_argument("--reg-probe", type=int, default=0,
                     help="[mode 7 M1] K: world-object registry dumps around FUN_00485070 every K-th "
                          "frame + grid-build inputs. Writes <out>.reg.tsv. Requires --statediff-out.")
@@ -3407,6 +3464,8 @@ def main():
                 print("  [statediff]", E.tg_probe_arm(args.tgt_probe))
             if args.reg_probe:
                 print("  [statediff]", E.rg_probe_arm(args.reg_probe))
+            if args.pool_probe:
+                print("  [statediff]", E.pk_probe_arm(args.pool_probe))
             if args.statediff_puhook:
                 print("  [statediff]", E.pu_arm(args.pu_plan, args.pu_subj, args.pu_warm,
                                                  args.pu_box))
@@ -3932,6 +3991,17 @@ def main():
                             for r in _pp: f.write(",".join(str(x) for x in r) + chr(10))
                         print(f"  [statediff] pathprog-probe {len(_pp)} rows -> {_pf}")
                     except Exception as _e: print("  [statediff] pathprog drain failed:", _e)
+                if args.pool_probe:
+                    try: print("  [statediff] pool-probe agent:", E.pk_probe_stats())
+                    except Exception as _e: print("  [statediff] pool stats failed:", _e)
+                    try:
+                        _pk = E.pk_probe_drain()
+                        _pf2 = outp.with_suffix(outp.suffix + ".pool.tsv")
+                        with open(_pf2, "w", newline="") as f:
+                            f.write(chr(9).join(["n","frame","cnt","dt","bm300","bm254","cc","pool_in","frames_in","cnt_out","cc_out","pool_out","frames_out","slots_new"]) + chr(10))
+                            for r in _pk: f.write(chr(9).join(str(x) for x in r) + chr(10))
+                        print(f"  [statediff] pool-probe {len(_pk)} rows -> {_pf2}")
+                    except Exception as _e: print("  [statediff] pool drain failed:", _e)
                 if args.reg_probe:
                     try: print("  [statediff] reg-probe agent:", E.rg_probe_stats())
                     except Exception as _e: print("  [statediff] reg stats failed:", _e)

@@ -163,6 +163,30 @@ void Registry_RaceInit() {
 void Registry_FrameTick() {
     if (!Registry_Enabled()) return;
     EnsureLut();
+    // G-M2a-LIVE trace: MASHED_REGISTRY_TRACE=<csv>, one row per slot [0, cc) at publish time.
+    {
+        static std::FILE* s_tr = nullptr; static bool s_init = false; static int s_fr = 0;
+        if (!s_init) {
+            s_init = true;
+            if (const char* t = std::getenv("MASHED_REGISTRY_TRACE")) {
+                s_tr = std::fopen(t, "w");
+                if (s_tr) std::fprintf(s_tr, "frame,slot,type,radius,x,y,z,data,cb\n");
+            }
+        }
+        if (s_tr) {
+            const int cc = I32(kCC);
+            for (int k = 0; k < cc && k < 300; ++k) {
+                const std::uintptr_t sl = kSlots + k * kStride;
+                const float* fp = reinterpret_cast<const float*>(sl);
+                std::fprintf(s_tr, "%d,%d,%08x,%.9g,%.9g,%.9g,%.9g,%08x,%08x\n", s_fr, k,
+                             *reinterpret_cast<const std::uint32_t*>(sl + 0x10), fp[3], fp[0], fp[1], fp[2],
+                             *reinterpret_cast<const std::uint32_t*>(sl + 0x14),
+                             *reinterpret_cast<const std::uint32_t*>(sl + 0x1c));
+            }
+            if ((s_fr & 63) == 0) std::fflush(s_tr);
+            ++s_fr;
+        }
+    }
     PcScope pc;
     reinterpret_cast<void_fn>(&RG_485070)();
 }

@@ -1,0 +1,13 @@
+=== M2A_CTRL  knobs=[] ===
+    pid=41176
+    exit=0  self_exited=True
+    M2A_CTRL.step.csv  lines=19912  sha8=ae67b13a
+    M2A_CTRL.gates.csv  lines=55433  sha8=c8317ce2
+    M2A_CTRL.ptrace.log  lines=27716  sha8=31db9384
+=== M2A_ON  knobs=[MASHED_REGISTRY,MASHED_PICKUPS_ORIG,MASHED_REGISTRY_TRACE=@OUT@\M2A_ON.registry.csv] ===
+    pid=32112
+    exit=0  self_exited=True
+    M2A_ON.step.csv  lines=19912  sha8=ae67b13a
+    M2A_ON.gates.csv  lines=55433  sha8=c8317ce2
+    M2A_ON.ptrace.log  lines=27716  sha8=31db9384
+H4 DONE

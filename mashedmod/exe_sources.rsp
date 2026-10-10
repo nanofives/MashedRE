@@ -170,6 +170,7 @@
 "Race\PathProgStep.cpp"
 "Ai\AiTargetClosest.cpp"
 "Race\WorldRegistry.cpp"
+"Gameplay\PickupTick.cpp"
 "Math\RwLutTables.cpp"
 "Util\CameraEntryDispatch.cpp"
 "Ai\AiLeaderTimer.cpp"

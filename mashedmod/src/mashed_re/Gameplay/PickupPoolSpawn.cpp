@@ -118,6 +118,7 @@
 #ifdef MASHED_STANDALONE
 // The ported rank source, resolved BY NAME (no MASHED address survives).
 extern "C" std::uint32_t __cdecl RaceEndFlagIfEndMode();
+#include "PickupTick.h"   // [mode 7 M2a] MASHED_PICKUPS_ORIG: original-layout pool
 namespace {
 // OWN — private pool storage. Sizes match the MASHED globals exactly.
 alignas(4) unsigned char s_pool[mashed_re::Gameplay::kPickupPoolMax *
@@ -139,6 +140,9 @@ namespace Gameplay {
 
 unsigned char* PickupPool_Base() {
 #ifdef MASHED_STANDALONE
+    // [mode 7 M2a] under MASHED_PICKUPS_ORIG the pool lives at the original address, inside
+    // g_b17_low_arena_pad (exe_main.cpp:247), so FUN_00459000 can run verbatim on it.
+    if (PickupsOrig_Enabled()) return reinterpret_cast<unsigned char*>(0x0068b198u);
     return s_pool;
 #else
     return reinterpret_cast<unsigned char*>(0x0068b198u);   // 0x00458e75
@@ -147,6 +151,7 @@ unsigned char* PickupPool_Base() {
 
 std::int32_t* PickupPool_CountPtr() {
 #ifdef MASHED_STANDALONE
+    if (PickupsOrig_Enabled()) return reinterpret_cast<std::int32_t*>(0x0068b9a8u);
     return &s_poolCount;
 #else
     return reinterpret_cast<std::int32_t*>(0x0068b9a8u);    // 0x00458e06
@@ -256,6 +261,10 @@ PickupPoolSpawn(const float* pos, std::int32_t type) {
     *reinterpret_cast<std::uint32_t*>(entry + 0x18) = 0x42f00000u;  // 0x00458ef8 (120.0f)
     *reinterpret_cast<std::int32_t*>(entry + 0x1c)  = 0;            // 0x00458eff
 
+#ifdef MASHED_STANDALONE
+    // [mode 7 M2a] bind the slot's fake RW object and reset its frame (FUN_004c15c0, 0x00458ebd).
+    PickupsOrig_OnSpawn(entry);
+#endif
     *count = n + 1;                                            // 0x00458eea/0x00458f07
     return n;                                                  // 0x00458f0f
 }
