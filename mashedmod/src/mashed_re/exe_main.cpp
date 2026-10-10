@@ -135,6 +135,7 @@
 //   - Initialise RenderWare (RwEngineInit and friends).
 //   - Draw anything inside the cleared region.
 
+#include <float.h>   // _controlfp_s (D2 precision probe)
 #include <windows.h>
 #include <d3d9.h>
 #define DIRECTINPUT_VERSION 0x0800
@@ -943,6 +944,23 @@ extern bool g_nav_demo; // defined below; gates the background-park behavior.
 // (re/analysis/window_msgpump/00499690.md, reimpl Boot/Window.cpp at 0x00499690)
 // but operating on local state. Returns true when the application should exit.
 bool PumpOnce() {
+    // [D2 precision probe 2026-10-10] The original runs its race loop at x87 PC_24 (D-11072 P2:
+    // FUN_00408610 replays 11996/11996 only at PC_24). MASHED_LOG_CW logs this thread's live
+    // precision-control bits; MASHED_X87_PC24 (default OFF) forces PC_24 here every frame.
+    {
+        static const bool s_pc24 = std::getenv("MASHED_X87_PC24") != nullptr;
+        static const bool s_logcw = std::getenv("MASHED_LOG_CW") != nullptr;
+        static unsigned s_pf = 0;
+        if (s_pc24) { unsigned int t = 0; _controlfp_s(&t, _PC_24, _MCW_PC); }
+        if (s_logcw && (s_pf % 600u) == 0u && s_pf <= 6000u) {
+            if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
+                std::fprintf(lf, "[cw] frame=%u pc=0x%05x (_PC_24=0x%05x _PC_53=0x%05x)\n", s_pf,
+                             _controlfp(0, 0) & _MCW_PC, _PC_24, _PC_53);
+                std::fclose(lf);
+            }
+        }
+        ++s_pf;
+    }
     if (PeekMessageA(&g_msg, nullptr, 0, 0, PM_REMOVE) != 0) {
         if (g_msg.message == WM_QUIT) {
             return true;

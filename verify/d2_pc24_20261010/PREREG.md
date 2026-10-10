@@ -25,3 +25,11 @@ second run of B to confirm)
   to the user. No default flip in this session.
 - Otherwise: report the deltas, and size the SSE-`double` follow-up (count of deliberate `double`
   intermediates in the physics TUs) as the remaining part of the lead.
+
+## Addendum (registered before running, same day): arm C/D, the SSE-`double` slice
+A and B were byte-identical over all 1607 common rows, so the x87 slice is inert on this arm. The
+remaining part of the lead is the 25 SSE2 physics TUs with 208 `double` mentions. Temporary experiment
+build only: those 25 TUs added to `x87_tus.txt`, so their `double` ops run on x87 and round at the
+live precision. C = that build at PC_53 (default CW), D = that build + `MASHED_X87_PC24`. Decision rule
+unchanged (all three metrics in bounds on D -> D2 REOPEN CANDIDATE, reported, no flip). `x87_tus.txt`
+is restored afterwards and the default build re-verified on `ae67b13a / c8317ce2 / 31db9384`.

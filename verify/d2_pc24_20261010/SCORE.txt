@@ -1,0 +1,28 @@
+== A
+  ORIG slip 1500-2000                n= 314  median speed   1790.00  median frame   1606 (median d    720)
+  PORT slip 1500-2000                n= 253  median speed   1780.10  median frame    606 (median d    605)
+  ORIG slip 2000-2600                n= 540  median speed   2231.30  median frame   1795 (median d    909)
+  PORT slip 2000-2600                n= 331  median speed   2215.82  median frame    719 (median d    718)
+  ORIG driving-median (horiz>=500)   n=1154  median speed   1937.89  median frame   1710 (median d    824)
+  PORT driving-median (horiz>=500)   n= 866  median speed   1825.74  median frame    638 (median d    637)
+
+  R_orig=886  R_port=1
+== B
+  ORIG slip 1500-2000                n= 314  median speed   1790.00  median frame   1606 (median d    720)
+  PORT slip 1500-2000                n= 253  median speed   1780.10  median frame    606 (median d    605)
+  ORIG slip 2000-2600                n= 540  median speed   2231.30  median frame   1795 (median d    909)
+  PORT slip 2000-2600                n= 331  median speed   2215.82  median frame    719 (median d    718)
+  ORIG driving-median (horiz>=500)   n=1154  median speed   1937.89  median frame   1710 (median d    824)
+  PORT driving-median (horiz>=500)   n= 866  median speed   1825.74  median frame    638 (median d    637)
+
+  R_orig=886  R_port=1
+== C
+=== PORT verify/d2_pc24_20261010/C/motion_diag.log (spike/reseed-excluded 0 rows): n=939  axis-minus-forward offset median +0.0446 rad ===
+  1500-2000: n=351  slip vs fwd 0.1961  slip vs AXIS 0.1514  av.y +1.125
+  2000-2600: n=588  slip vs fwd 0.2541  slip vs AXIS 0.2095  av.y +1.465
+  PORT driving-median (horiz>=500)   n= 877  median speed   1857.01  median frame    633 (median d    632)
+== D
+=== PORT verify/d2_pc24_20261010/D/motion_diag.log (spike/reseed-excluded 0 rows): n=925  axis-minus-forward offset median +0.0446 rad ===
+  1500-2000: n=362  slip vs fwd 0.1965  slip vs AXIS 0.1519  av.y +1.136
+  2000-2600: n=563  slip vs fwd 0.2536  slip vs AXIS 0.2090  av.y +1.461
+  PORT driving-median (horiz>=500)   n= 866  median speed   1826.74  median frame    638 (median d    637)

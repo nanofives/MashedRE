@@ -1,0 +1,3 @@
+spawned PID 6320 at HEAD 0c784928; waiting 90s
+exe exited on its own rc 0
+moved -> verify\d2_pc24_20261010\D\motion_diag.log lines 1627
