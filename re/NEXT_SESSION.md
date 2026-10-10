@@ -1,5 +1,24 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-10 (mode 7 M3 DONE, + M3b): **next = M4, the mode-7 consumer `FUN_00414c30` + `FUN_00414490`.**
+>
+> Read [`RESULT_M3.md`](../verify/d3_mode7_m3_20261010/RESULT_M3.md) (prereg `PREREG_M3.md` incl. §5 addendum). With
+> `MASHED_REGISTRY + MASHED_PICKUPS_ORIG + MASHED_REG_CARS + MASHED_REG_CALLBACKS` the exe collects pickups through the verbatim
+> `FUN_00458920` (replay 6/6 live + 3,888/3,888 synthetic, every arm); PickupField only draws. M3b: Training respawn is 5.0,
+> written by the Lua glue's `FUN_00458fa0` (now called from `InitReal`; C3 body moved to the shared `PickupPoolSpawn.cpp`).
+> Knob ON: 10 collects + 12 bumps, respawns 300 ticks, (b) unchanged (2/3), nothing diverges before step frame 1400.
+> Corrections: the bump arm is taken when the car ALREADY holds a powerup (slot `+0xa8 != 0`); the exe's car 2 misses the
+> opening pickup by 0.065 (1.0983 vs 1.0334). Open: U-9215, U-9217 (original bump still owed), U-9218.
+>
+> **Kickoff for M4 (paste):** Mashed RE, D3, D-11074 leg M4: the mode-7 consumer. Read `RESULT_M3.md` §5 (findings 4 and 6)
+> and `../d3_modes37_20261009/FINDINGS.md` (car 1: 49 mode-7 calls) first. Measure before code: (1) the order of
+> `FUN_00485070` (`0x0040fd07`) vs the AI tick inside `FUN_0040fc00`, since `FUN_00414c30` reads the published count `d8`
+> while slots `[0, cc)` are being rewritten; (2) what `FUN_00414490` reads at `0x004144b3` (slot `+0xa8`, `0x0088fc88 + v*0xb4`):
+> the exe keeps it in `PowerupSystem` and three AI sites read the raw address (`AiControlStep.cpp:208`,
+> `AiStandalone.cpp:1207/1327`, all 0 today); decide bind vs mirror with evidence. Pre-register, port verbatim naked
+> (PC_24, fixed PcScope), gate on an original-side replay, then score car 1's mode-7 calls vs the original, (b) per regime,
+> collateral with the D2 watch list. Kill only your own MASHED PIDs; build via PowerShell.
+
 > ## START HERE 2026-10-10 (mode 7 M2 DONE, M1+M2a+M2b): **next = M3, callbacks live (the pickup collection takes over).**
 >
 > Read [`RESULT_M2B.md`](../verify/d3_mode7_m2_20261010/RESULT_M2B.md), [`RESULT_M2A.md`](../verify/d3_mode7_m2_20261010/RESULT_M2A.md),
