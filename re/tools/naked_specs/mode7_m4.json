@@ -1,0 +1,69 @@
+{
+  "funcs": [
+    {
+      "name": "TG_414c30",
+      "start": "0x00414c30",
+      "size": 705
+    },
+    {
+      "name": "TG_414490",
+      "start": "0x00414490",
+      "size": 214
+    },
+    {
+      "name": "TG_484c70",
+      "start": "0x00484c70",
+      "size": 18
+    },
+    {
+      "name": "TG_442cc0",
+      "start": "0x00442cc0",
+      "size": 23
+    },
+    {
+      "name": "TG_4c39b0",
+      "start": "0x004c39b0",
+      "size": 271
+    }
+  ],
+  "calls": {
+    "0x0046d4a0": "TG_VehPtr",
+    "0x00484c70": "TG_484c70",
+    "0x0041f030": "TG_Stub41f030",
+    "0x0048a630": "TG_Stub48a630",
+    "0x00414300": "TG_414300_m4",
+    "0x004c3ac0": "TG_4c3ac0",
+    "0x00442cc0": "TG_442cc0",
+    "0x00414490": "TG_414490_w",
+    "0x0040e350": "TG_SubMode",
+    "0x0046d510": "TG_Fwd",
+    "0x004c39b0": "TG_4c39b0",
+    "0x004d7ff0": "TG_ErrPass",
+    "0x004d8480": "TG_Nop"
+  },
+  "consts": {
+    "0x005cc32c": "g_m7_c_5cc32c",
+    "0x005cc950": "g_m7_c_5cc950",
+    "0x005cc9f4": "g_m7_c_5cc9f4",
+    "0x005ccac0": "g_m7_c_5ccac0",
+    "0x005ccac8": "g_m7_c_5ccac8",
+    "0x005cd090": "g_m7_c_5cd090",
+    "0x005cd0b0": "g_m7_c_5cd0b0",
+    "0x005cd0b4": "g_m7_c_5cd0b4",
+    "0x005d757c": "g_tg_c_5d757c"
+  },
+  "patch": {
+    "0x004144b3": [
+      "push eax",
+      "push ecx",
+      "push eax",
+      "call TG_HeldWord",
+      "add esp, 4",
+      "mov edx, eax",
+      "pop ecx",
+      "pop eax"
+    ],
+    "0x004c39b7": "lea edx, g_tg_lutptrs",
+    "0x004c39be": "mov esi, 0"
+  }
+}

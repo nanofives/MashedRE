@@ -2211,6 +2211,7 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                     Race::PathNodes_Build(aw, reinterpret_cast<const char*>(lb), ll);
                     Race::PathProg_MaybeReplay();     // [D-11072 P2] G-P2-REPLAY (env-gated)
                     Ai::TargetClosest_MaybeReplay();  // [D-11072 P3] G-P3-REPLAY (env-gated)
+                    Ai::ModeSeven_MaybeReplay();      // [mode 7 M4] G-M4-REPLAY (env-gated)
                     Race::Registry_MaybeReplay();     // [mode 7 M1] G-M1-REG / G-M1-PASS (env-gated)
                     Gameplay::Pickups_MaybeReplay();  // [mode 7 M2a] G-M2a-REPLAY (env-gated)
                     Gameplay::PickupCb_MaybeReplay(); // [mode 7 M3] G-M3-REPLAY (env-gated)
@@ -3688,6 +3689,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             h.slot_empty = pkcb_slot_empty; h.grant = pkcb_grant; h.sub_mode = pkcb_sub_mode;
             h.held_code = aib_held_powerup;
             Gameplay::Pickups_SetCbHost(h);
+            Ai::ModeSeven_SetHost(aib_game_sub_mode, aib_held_powerup);   // [mode 7 M4] FUN_0040e350 + held word
         }
         // [D3 2026-09-26] The PORTED tick spine FUN_00418860 (Ai_Standalone_Tick) runs
         // every race frame and its ctrl bytes DRIVE the opponents through the ported

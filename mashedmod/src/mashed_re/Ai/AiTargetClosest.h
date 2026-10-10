@@ -16,4 +16,12 @@ int TargetClosest(int v, const float look[2], float cand[2]);
 // the naked body; report to MASHED_TGT3_REPLAY_OUT. Called once after the course block is built.
 void TargetClosest_MaybeReplay();
 
+// [mode 7 M4] FUN_00414c30 (+ FUN_00414490). MASHED_MODE7 (default OFF) AND the M3 set (PickupCallbacks_Enabled).
+// Returns 0 / 1 (mode 3) / 2 (mode 7); cand = the target xz. Hosts: FUN_0040e350 and the held-powerup word.
+bool ModeSeven_Enabled();
+void ModeSeven_SetHost(int (*sub_mode)(), int (*held)(int));
+int  ModeSeven(unsigned int spline, int v, const float look[2], float cand[2]);
+// G-M4-REPLAY: MASHED_C30_REPLAY=<a.c30.tsv>[;...], report to MASHED_C30_REPLAY_OUT.
+void ModeSeven_MaybeReplay();
+
 }  // namespace Ai

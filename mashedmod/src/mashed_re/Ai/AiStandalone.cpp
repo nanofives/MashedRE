@@ -938,6 +938,24 @@ void ControlStep(std::uintptr_t spline, int v, std::uint8_t* ctrl)
             return;                                                       // 0x0041640d
         }
     }
+    // ---- [mode 7 M4] LAB_004163b7: FUN_00414c30, call 0x004163c3 (default-OFF MASHED_MODE7) ----
+    // Reached when FUN_00414a70 returned 0 (always without MASHED_TGT3) or returned 1 with LOS failing,
+    // i.e. exactly when mode is still 0 here (its return 2 left above).
+    //   iVar5 = FUN_00414c30(param_1,&local_24,&local_2c,param_2);
+    //   1 + FUN_00416060 -> look = cand, mode 3 (LAB_004163e6);  2 + FUN_00416060 -> look = cand, mode 7
+    //   (goto LAB_00416462, skipping FUN_004150e0, which is stubbed 0 here anyway).
+    // PREREG: verify/d3_mode7_m4_20261010/PREREG_M4.md.
+    if (mode == 0 && ModeSeven_Enabled() && v >= 0 && v < 4) {
+        float cand[2] = { 0.0f, 0.0f };
+        const float lk[2] = { tx, tz };
+        const int r7 = ModeSeven(static_cast<unsigned int>(spline), v, lk, cand);
+        if (r7 == 1 || r7 == 2) {
+            if (s_host.los_clear(ownX, ownZ, cand[0], cand[1]) != 0) {    // FUN_00416060 0x004163da / 0x00416423
+                tx = cand[0]; tz = cand[1];
+                mode = (r7 == 1) ? 3 : 7;                                 // LAB_004163e6 / mov ebx,7 0x0041643f
+            }
+        }
+    }
 #endif
     if (gameMode == 6 && s_host.ai_target_enable() == 0) {            // 0x0041649b / 0x004164a8
         // ---- FUN_00416250's branch 2, WIRED (default-OFF: MASHED_WIRE_B2) ----

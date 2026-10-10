@@ -1,0 +1,19 @@
+=== M4_CTRL  knobs=[] ===
+    pid=19448
+    exit=0  self_exited=True
+    M4_CTRL.step.csv  lines=19912  sha8=ae67b13a
+    M4_CTRL.gates.csv  lines=55433  sha8=c8317ce2
+    M4_CTRL.ptrace.log  lines=27716  sha8=31db9384
+=== M4_M3B  knobs=[MASHED_REGISTRY,MASHED_PICKUPS_ORIG,MASHED_REG_CARS,MASHED_REG_CALLBACKS] ===
+    pid=18052
+    exit=0  self_exited=True
+    M4_M3B.step.csv  lines=18727  sha8=b0cc1af6
+    M4_M3B.gates.csv  lines=56873  sha8=eaf2b78e
+    M4_M3B.ptrace.log  lines=28436  sha8=8cd7507f
+=== M4_ON  knobs=[MASHED_REGISTRY,MASHED_PICKUPS_ORIG,MASHED_REG_CARS,MASHED_REG_CALLBACKS,MASHED_MODE7,MASHED_MODE7_TRACE=@OUT@\M4_ON.c30.tsv,MASHED_PKCB_TRACE=@OUT@\M4_ON.cb.tsv] ===
+    pid=19100
+    exit=0  self_exited=True
+    M4_ON.step.csv  lines=17190  sha8=d57dd28d
+    M4_ON.gates.csv  lines=54713  sha8=b18f69f2
+    M4_ON.ptrace.log  lines=27356  sha8=803b179c
+H4 DONE

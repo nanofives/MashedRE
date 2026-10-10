@@ -1,0 +1,2 @@
+G-M4-REPLAY calls=10777 exact=10777 ret_bad=0 cand_bad=0 sub_bad=0 300_arg_bad=0 stubs=0 pc=24 in=C:\Users\maria\Desktop\Proyectos\Mashed\verify\d3_mode7_m4_20261010\o_c30a.msd.c30.tsv;C:\Users\maria\Desktop\Proyectos\Mashed\verify\d3_mode7_m4_20261010\o_c30b.msd.c30.tsv
+returns: v1_r0=1851 v1_r2=98 v2_r0=1891 v3_r0=4507 v3_r1=2430
