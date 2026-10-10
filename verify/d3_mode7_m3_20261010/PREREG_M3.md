@@ -118,3 +118,33 @@ the bump arm's transcription, an exe bump exercises only the port's spring path.
 
 `FUN_00486630` and its registrant, `FUN_0047cd50`, the burst's ring draws, M4 (`FUN_00414c30` + `FUN_00414490`; note
 `FUN_00414490` reads slot `+0xa8` at `0x004144b3`, which the exe keeps in `PowerupSystem`, not at `0x0088fc88`).
+
+## 5. ADDENDUM M3b (2026-10-10, after the M3 runs, before any M3b code): the respawn seed `FUN_00458fa0`
+
+**Measured with the M3 build** (`M3_ON`, `../d3_gatefire_20261008/M3_ON.cb.tsv`): both exe respawns took **7,200 ticks**;
+every exe pool entry holds `+0x18 = 0x42f00000` (120.0), the verbatim `0x00458ef8` store in `PickupPoolSpawn.cpp:261`.
+The original's 5 Training entries hold `0x40a00000` (5.0) from the first captured tick (`o_pk1` row 0) and respawn after
+300. **G-M3-LIVE (iv) as registered FAILS** (7,200, not 300). The transcription is consistent with its own input (7,200 =
+decrements of `0x3c888888` from 120.0); the input differs.
+
+**The writer.** `FUN_00458fa0(idx, value)` (`0x00458fa0..0x00458fc5`): `0 <= idx < 0x19` -> `[0x0068b1b0 + idx*0x50] = value`
+(`0x00458fb7`), return 1; else return 0. Callers (rel32 scan of `.text`): `0x00458fe8` (inside `FUN_00458fd0`, which has no
+direct caller) and `0x0047b268`, the Lua glue at `0x0047b250`: `idx = FUN_00458e00(&DAT_006bf1bc, DAT_006132fc);
+FUN_00458fa0(idx, DAT_00613300)`. `DAT_006132fc` / `DAT_00613300` are set by the glue functions `0x0047b200` (`_ftol2` of a
+Lua number, `0x0047b215`) and `0x0047b230` (`fstp dword` of a Lua number, `0x0047b242`).
+
+**Port.** `PickupPoolSetRespawn` at `0x00458fa0` in the shared TU `Gameplay/PickupPoolSpawn.cpp` (exe + asi),
+`RH_ScopedInstall`. Called from `PickupField::InitReal` (the exe's stand-in for the `0x0047b250` glue) right after
+`PickupPoolSpawn`, unconditionally (an index of -1 takes the guard), with the spawn's parsed respawn (`Spawn::respawn`,
+POWERUPS_GOLD.LUA) as float bits. **Not behind a knob:** `+0x18` is read only by `FUN_00459000`'s state-2 arm (`t = +0x18` on
+respawn, `decomp_registry.txt` line 87), which no entry reaches without a collection, and nothing in the exe reads the private
+pool's `+0x18` (`PickupField` copies position and type only, `PickupField.cpp:210-218`).
+
+| gate | pass rule | prediction |
+|---|---|---|
+| G-M3b-SEED | exe trace, first tick under `MASHED_PICKUPS_ORIG`: `+0x18 = 0x40a00000` on all 5 entries (= `o_pk1` row 0) | PASS |
+| G-M3b-PATH1 | `run_diff.py pickup_pool_set_respawn` GREEN: accept idx 0 / 3 / 24, reject -1 / 25 / `0x80000000`, return folded | PASS |
+| G-M3b-PATH2 | `run_verify_hook.py pickup_pool_set_respawn` GREEN | PASS |
+| G-M3-OFF (re-run) | `M3B_CTRL` and `M3B_M2B`: `ae67b13a / c8317ce2 / 31db9384` | PASS |
+| G-M3-LIVE (re-run) | `M3B_ON`, relations (i)-(v), (iv) = 300 ticks | PASS |
+| events, (b), collateral | report | first collection unchanged (car 1, pool 0, type 19, tick 144); pool 0 back at tick 445 (144 + 1 + 300); more collections than `M3_ON`'s 4 [count not predicted] |
