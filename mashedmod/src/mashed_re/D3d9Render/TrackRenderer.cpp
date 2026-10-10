@@ -5728,7 +5728,7 @@ void TrackRenderer::UpdateRace(float dt) {
     // PREREG: verify/d3_racepos_20261006/PREREG_BRIDGE.md section 3a.
     {
         static const bool s_racepctBridge =
-            (std::getenv("MASHED_RACEPCT_BRIDGE") != nullptr);
+            (std::getenv("MASHED_NO_RACEPCT_BRIDGE") == nullptr);   // DEFAULT-ON 2026-10-09 (verify/d3_b2flip_20261009); MASHED_RACEPCT_BRIDGE is now a no-op
         if (s_racepctBridge && total_len_ > 1e-3f) {
             for (int v = 0; v < kRaceCars; ++v) {
                 const float ap =

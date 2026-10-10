@@ -1,0 +1,17 @@
+ptrace (player physics) fields listed: 42; past the floor: 33; never past it: 9
+  prog           first f=154    medA 4.9497304    medB 2.8095746    med|d| 2.14015579
+  pos[2]         first f=1307   medA -24.6229343  medB -10.6454449  med|d| 13.9774895
+  gate           first f=1307   medA 4            medB 2            med|d| 2
+  pos[0]         first f=1307   medA 1.74109316   medB 1.37991297   med|d| 0.600090772
+  pos[1]         first f=1307   medA 0.0375000015 medB 0.204726726  med|d| 0.167226724
+  sp             first f=1308   medA 0            medB 0.426523656  med|d| 0.426523656
+  v9e4           first f=1308   medA 0            medB 0.426523656  med|d| 0.426523656
+  yaw            first f=3839   medA -1.51917851  medB -0.734505177 med|d| 0.628619909
+  r0at[0]        first f=3839   medA 0.0515884236 medB 0.741154373  med|d| 0.549417421
+  bodyfwd[0]     first f=3839   medA 0.0515948981 medB 0.742162466  med|d| 0.535980731
+  n9c8[2]        first f=3839   medA 0.0208784062 medB 0.0852670297 med|d| 0.325699188
+  r0up[2]        first f=3839   medA 0.0208784062 medB 0.0852670297 med|d| 0.325699188
+  bodyfwd[2]     first f=3839   medA -0.963976681 medB -0.670220017 med|d| 0.3082937
+  r0at[2]        first f=3839   medA -0.90996033  medB -0.669309616 med|d| 0.294658005
+  r0at[1]        first f=3839   medA 0.0159075614 medB 0.0521057397 med|d| 0.285973415
+D2 watch-list name hits: [('c9ec', '7996'), ('gnd', 'none')]

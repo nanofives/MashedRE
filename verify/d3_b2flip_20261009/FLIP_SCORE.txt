@@ -1,0 +1,29 @@
+G3 F_NEW window == B2K00 (fixed, NO_ELIM) window: True
+G4 labels: {'F_NEW': ['A'], 'FK01': ['B'], 'FK26': ['C']} (predicted A / B / C)
+== F_NEW.step.csv
+      (b-regime A) PASS
+      (b-regime A) FAIL: abs_steer_median=0.0 not in [7.0,23.0]
+      (b-regime A) PASS
+== FK01.step.csv
+      (b-regime) regime B has no envelope -- not scored
+      (b-regime) regime B has no envelope -- not scored
+      (b-regime) regime B has no envelope -- not scored
+== FK26.step.csv
+      (b-regime C) FAIL: c0_distinct=15 not in [27,27]; c1_distinct=69 not in [95,95]; steer_distinct=83 not in [121,121]; c1_median=0.0 not in [27.5,27.5]; abs_steer_median=7.0 not in [36.5,36.5]
+      (b-regime C) FAIL: c0_distinct=39 not in [27,27]; c1_distinct=75 not in [95,95]; steer_distinct=113 not in [121,121]; c1_median=5.5 not in [27.5,27.5]; abs_steer_median=44.5 not in [36.5,36.5]
+      (b-regime C) FAIL: c0_distinct=30 not in [27,27]; c1_distinct=48 not in [95,95]; steer_distinct=77 not in [121,121]; c1_median=0.0 not in [27.5,27.5]; abs_steer_median=11.5 not in [36.5,36.5]
+== R1 (e) F_NEW vs old default
+../d3_gatefire_20261008/F_NEW.step.csv
+  v1 start=0 n=220 flag=[0] regime0=1 k_own=220 launch=1426.4 ft_median_m0=2550.6 (n=100) ft_median=2787.1 (n=197) wmax=3871.7
+  v2 start=0 n=220 flag=[0] regime0=1 k_own=220 launch=2053.0 ft_median_m0=2053.0 (n=23) ft_median=3072.0 (n=127) wmax=4000.9
+  v3 start=0 n=220 flag=[0] regime0=1 k_own=220 launch=2055.2 ft_median_m0=2278.2 (n=39) ft_median=3512.9 (n=192) wmax=3867.8
+      v1 (e) PASS
+      v2 (e) PASS
+      v3 (e) PASS
+../d3_gatefire_20261008/L2_CTRL.step.csv
+  v1 start=0 n=220 flag=[0] regime0=1 k_own=220 launch=1426.4 ft_median_m0=2550.6 (n=100) ft_median=2846.8 (n=203) wmax=3948.1
+  v2 start=0 n=220 flag=[0] regime0=1 k_own=220 launch=2053.0 ft_median_m0=2053.0 (n=23) ft_median=2980.4 (n=184) wmax=4180.2
+  v3 start=0 n=220 flag=[0] regime0=1 k_own=220 launch=2055.2 ft_median_m0=2278.2 (n=39) ft_median=3253.6 (n=211) wmax=3856.3
+      v1 (e) PASS
+      v2 (e) PASS
+      v3 (e) PASS

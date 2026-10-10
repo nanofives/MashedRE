@@ -1,0 +1,19 @@
+=== F_NEW  knobs=[] ===
+    pid=43732
+    exit=0  self_exited=True
+    F_NEW.step.csv  lines=19912  sha8=ae67b13a
+    F_NEW.gates.csv  lines=55433  sha8=c8317ce2
+    F_NEW.ptrace.log  lines=27716  sha8=31db9384
+=== F_NEW2  knobs=[] ===
+    pid=30528
+    exit=0  self_exited=True
+    F_NEW2.step.csv  lines=19912  sha8=ae67b13a
+    F_NEW2.gates.csv  lines=55433  sha8=c8317ce2
+    F_NEW2.ptrace.log  lines=27716  sha8=31db9384
+=== F_OPTOUT  knobs=[MASHED_NO_WIRE_B2,MASHED_NO_RACEPCT_BRIDGE,MASHED_NO_A364_RESET,MASHED_NO_REFDIST] ===
+    pid=43064
+    exit=0  self_exited=True
+    F_OPTOUT.step.csv  lines=19419  sha8=c741a4c5
+    F_OPTOUT.gates.csv  lines=53993  sha8=642af0ac
+    F_OPTOUT.ptrace.log  lines=26996  sha8=05984e30
+H4 DONE

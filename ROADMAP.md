@@ -14,7 +14,7 @@ are carried forward below and remain the unit of work; what changes is the **gat
 > started.
 >
 > *Superseded — **State 2026-09-26:** D0 ✓, D1 ✓ (default flip, residue R1-R3 open), D2 ✓,
-> **D3 active** (AI: ported tick drives the opponents, (b) regime A 2 of 3 cars (B/C references owed, 2026-10-09); powerups
+> **D3 active** (AI: ported tick drives the opponents, B2 settings default-ON 2026-10-09; (b) regime A 2 of 3 cars, car 2 1 item (B/C references owed); powerups
 > (a)(b) met, (c) met on decisions; modes GREEN on 3/11 rules), D4-D5 not started.*
 
 ---

@@ -86,7 +86,7 @@ void AiDifficultyResetTail() {
 // extern "C" with a flat name: the caller lives in mashed_re::D3d9Render and
 // cannot re-open mashed_re::Race from there.
 void AiDifficultyResetTickImpl() {
-    static const bool s_on = (std::getenv("MASHED_A364_RESET") != nullptr);
+    static const bool s_on = (std::getenv("MASHED_NO_A364_RESET") == nullptr);   // DEFAULT-ON 2026-10-09 (verify/d3_b2flip_20261009); MASHED_A364_RESET is now a no-op
     if (!s_on) return;
     AiDifficultyResetTail();
 }

@@ -1,5 +1,12 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-09 (B2 settings DEFAULT-ON): **new G-CTRL hashes: step `ae67b13a`, gates `c8317ce2`, ptrace `31db9384`.**
+>
+> Read [`RESULT_B2FLIP.md`](../verify/d3_b2flip_20261009/RESULT_B2FLIP.md). `MASHED_A364_RESET` / `REFDIST` / `RACEPCT_BRIDGE` / `WIRE_B2` are now
+> default-ON (opt-outs `MASHED_NO_*`; all four together = the old default `c741a4c5` / `642af0ac` / `05984e30`). `MASHED_NO_ELIM` NOT flipped.
+> (e) PASS 3/3 unchanged; (b) regime A 2/3 with car 2 failing 1 item (|steer| median 0; was 5). Player physics identical until the
+> old default's round-1 end; no D2 reopen candidate. Open: car 2's |steer| median 0; a labelled original regime-B run.
+
 > ## START HERE 2026-10-09 (FUN_00442a60 bridge FIXED): **the reference is the pair's LEADING car; the bridge took the rearmost.**
 >
 > Read [`RESULT_REFDIST_FIX.md`](../verify/d3_bscore_20261009/RESULT_REFDIST_FIX.md). With the fix (behind `MASHED_REFDIST`, default OFF) start

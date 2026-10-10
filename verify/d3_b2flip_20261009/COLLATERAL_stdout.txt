@@ -1,0 +1,39 @@
+# arm A: csv:piv_L2_CTRL.csv(13498 frames)  kv:../d3_gatefire_20261008/L2_CTRL.ptrace.log(20247 frames)
+# arm B: csv:piv_F_NEW.csv(13858 frames)  kv:../d3_gatefire_20261008/F_NEW.ptrace.log(20787 frames)
+# noise floor: 500 fields, from 20248 A-pair frames and 20788 B-pair frames
+# aligned frames 20248 [0..26996]   paired fields 500   A-only 0   B-only 0
+
+=== DIVERGENT FIELDS, ranked by first frame past the noise floor (278 of 500 paired) ===
+field                  scope       first      n |      med A      med B    med|A-B|      floor
+----------------------------------------------------------------------------------------------
+g.v3.w_reach           outside          0  13498 |          0       6750        6750          0
+g.v2.w_reach           outside          0  13498 |          0       5196        5196          0
+g.v1.w_reach           outside          0  13498 |          0        857         857          0
+g.v0.racepct_ec        outside          0  13498 |          0      7.193       7.193          0
+g.v0.a870              outside          0  13498 |          0         -1           1          0
+g.v0.a874              outside          0  13498 |          0         -1           1          0
+g.v0.a878              outside          0  13498 |          0         -1           1          0
+g.v0.a87c              outside          0  13498 |          0         -1           1          0
+g.v0.idx364            outside          0  13498 |          0         -1           1          0
+g.v1.a870              outside          0  13498 |          0         -1           1          0
+g.v1.a874              outside          0  13498 |          0         -1           1          0
+g.v1.a878              outside          0  13498 |          0         -1           1          0
+g.v1.a87c              outside          0  13498 |          0         -1           1          0
+g.v1.idx364            outside          0  13498 |          0         -1           1          0
+g.v2.a870              outside          0  13498 |          0         -1           1          0
+g.v2.a874              outside          0  13498 |          0         -1           1          0
+g.v2.a878              outside          0  13498 |          0         -1           1          0
+g.v2.a87c              outside          0  13498 |          0         -1           1          0
+g.v2.idx364            outside          0  13498 |          0         -1           1          0
+g.v3.a870              outside          0  13498 |          0         -1           1          0
+g.v3.a874              outside          0  13498 |          0         -1           1          0
+g.v3.a878              outside          0  13498 |          0         -1           1          0
+g.v3.a87c              outside          0  13498 |          0         -1           1          0
+g.v3.idx364            outside          0  13498 |          0         -1           1          0
+s.v1.b2_ret            outside          0    505 |         -1          0           1          0
+  ... 253 more (raise --top)
+
+=== WITHIN THE NOISE FLOOR on every aligned frame: 222 fields ===
+  alive  b14  b1c  dt  f  frame  g.v0.a37c  g.v0.a384i  g.v0.bias374  g.v0.flt360  g.v0.framedt  g.v0.g30790  g.v0.idx413fa0  g.v0.lt_exit  g.v0.lt_fire  g.v0.lt_los  g.v0.lt_ran  g.v0.lt_ret  g.v0.lt_x  g.v0.lt_z  g.v0.m42f6a0  g.v0.mode368  g.v0.p5f2770  g.v0.pred_360 ...
+
+csv -> COLLATERAL.txt

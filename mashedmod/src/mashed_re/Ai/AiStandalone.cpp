@@ -935,7 +935,7 @@ void ControlStep(std::uintptr_t spline, int v, std::uint8_t* ctrl)
         // resolves `last` and the body returns 0 at exit site 105.
 #ifdef MASHED_STANDALONE
         {
-            static const bool s_wireB2 = (std::getenv("MASHED_WIRE_B2") != nullptr);
+            static const bool s_wireB2 = (std::getenv("MASHED_NO_WIRE_B2") == nullptr);   // DEFAULT-ON 2026-10-09 (verify/d3_b2flip_20261009); MASHED_WIRE_B2 is now a no-op
             if (s_wireB2) {
                 int candXZ[2] = {0, 0};
                 int tgtXZ[2]  = {0, 0};          // &local_24, the param the body ignores
