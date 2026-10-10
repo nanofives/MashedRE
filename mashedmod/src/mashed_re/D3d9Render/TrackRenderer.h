@@ -323,6 +323,8 @@ public:
     // Demo/testing: arm a specific power-up TYPE CODE on slot 0 (replacing any
     // held one) and hold fire for ~0.5 s.
     void FirePowerupKind(int code);
+    // [mode 7 M3] FUN_00458920's grant FUN_0045c010(v, type): the ported FUN_0045bfa0 (Activate) for car v.
+    void PickupGrant(int v, int type);
     bool boost_active()  const { return boost_timer_  > 0.f; }
     bool shield_active() const { return shield_timer_ > 0.f; }
 

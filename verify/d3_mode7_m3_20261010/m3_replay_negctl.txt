@@ -1,0 +1,5 @@
+MISMATCH n=37 frame=-1 arm=collect port=[88c0|c010:0:19|5ca0:28] orig=[88c0|c010:90:19|5ca0:28]
+MISMATCH n=38 frame=-1 arm=bump port=[8570:0] orig=[8570:0]
+G-M3-REPLAY rows=3888 exact=3886 entry_bad=1 calls_bad=1 live_grants_during_replay=0 pc=24 in=C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\c5e87e95-0b1a-4cc2-88c4-1dd34515f302\scratchpad\synth_corrupt.cb.tsv
+arms: bump=60 collect=60 no-op=3522 vanish=246
+entry mismatched offsets: +0x48(1)

@@ -1,6 +1,7 @@
 // PickupField impl — see PickupField.h.
 #include "PickupField.h"
 #include "../Gameplay/PickupPoolSpawn.h"   // the real 0x00458e00 body
+#include "../Gameplay/PickupTick.h"        // [mode 7 M3] stand-down under MASHED_REG_CALLBACKS
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -197,6 +198,13 @@ void PickupField::InitReal(const std::vector<Spawn>& spawns, float worldRadius) 
     for (const Spawn& s : spawns) {
         const std::int32_t before = *pool_count;
         const std::int32_t idx    = PickupPoolSpawn(s.pos, s.type);
+        // [mode 7 M3b] the Lua glue 0x0047b250's second call: FUN_00458fa0(idx, respawn) (0x0047b268),
+        // made whatever the spawn returned (an index of -1 takes its guard).
+        {
+            std::uint32_t rbits;
+            std::memcpy(&rbits, &s.respawn, 4);
+            TtlSet68b1b0(idx, rbits);
+        }
         if (idx < 0) {
             const char* reject = (before >= kPickupPoolMax) ? "cap"
                                : (s.type == 0x15)           ? "blank"
@@ -217,6 +225,7 @@ void PickupField::InitReal(const std::vector<Spawn>& spawns, float worldRadius) 
         o.cooldown = 0.f;
         o.gameType = PickupPool_EntryType(idx);
         o.col = ColForType(o.gameType);
+        o.poolIdx = idx;
         if (lf) {
             std::uint32_t b[3];
             std::memcpy(b, o.pos, sizeof(b));
@@ -245,6 +254,14 @@ void PickupField::Reset() {
 bool PickupField::Update(float dt, const float carPos[3]) {
     if (dt <= 0.f || dt > 0.25f) dt = 0.016f;
     phase_ += dt;
+    // [mode 7 M3] MASHED_REG_CALLBACKS: collection happens in the registry callback FUN_00458920
+    // (Gameplay/PickupTick.cpp) on the original-layout pool; this field only draws, each orb showing
+    // its pool entry's state (+0x20 == 1 live). PREREG verify/d3_mode7_m3_20261010/PREREG_M3.md section 2.
+    if (mashed_re::Gameplay::PickupCallbacks_Enabled()) {
+        for (Orb& o : orbs_)
+            if (o.poolIdx >= 0) o.active = mashed_re::Gameplay::PickupsOrig_EntryState(o.poolIdx) == 1;
+        return false;
+    }
     bool got = false;
     const float pickR = worldR_ * 0.04f;       // collection radius
     const float pickR2 = pickR * pickR;
@@ -274,6 +291,7 @@ bool PickupField::Update(float dt, const float carPos[3]) {
 
 bool PickupField::CollectAt(const float carPos[3], int* type) {
     if (!carPos) return false;
+    if (mashed_re::Gameplay::PickupCallbacks_Enabled()) return false;   // [mode 7 M3] see Update
     const float pickR = worldR_ * 0.04f;       // same collection radius as Update
     const float pickR2 = pickR * pickR;
     for (size_t i = 0; i < orbs_.size(); ++i) {

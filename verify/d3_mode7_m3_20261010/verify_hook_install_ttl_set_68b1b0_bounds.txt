@@ -1,0 +1,25 @@
+=== verify_hook_install report (ttl_set_68b1b0_bounds) ===
+
+target address: 0x00458fa0  export: TtlSet68b1b0
+PRE  bytes:     e9 eb f0 82 6b c0 7c 1b
+asi base:       0x6bc00000
+reimpl addr:    0x6bc88090
+POST bytes:     e9 eb f0 82 6b c0 7c 1b
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x6b82f0eb  expected 0x6b82f0eb  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  2 / 2
+
+per-input results:
+  [OK] input={'seed': [{'addr': '0x0068b1b0', 'val': 1592594432}, {'addr': '0x0068b2a0', 'val': 1592594433}, {'addr': '0x0068b930', 'val': 1592594434}, {'addr': '0x0068b1ac', 'val': 1592594435}, {'addr': '0x0068b1b4', 'val': 1592594436}, {'addr': '0x0068b160', 'val': 1592594437}, {'addr': '0x0068b9c8', 'val': 1592594438}], 'args': [3, 1123024896]}  got=0x000000015eed100042f000005eed10025eed10035eed10045eed10055eed1006  err=
+  [OK] input={'seed': [{'addr': '0x0068b1b0', 'val': 1592594432}, {'addr': '0x0068b2a0', 'val': 1592594433}, {'addr': '0x0068b930', 'val': 1592594434}, {'addr': '0x0068b1ac', 'val': 1592594435}, {'addr': '0x0068b1b4', 'val': 1592594436}, {'addr': '0x0068b160', 'val': 1592594437}, {'addr': '0x0068b9c8', 'val': 1592594438}], 'args': [25, 1092616192]}  got=0x000000005eed10005eed10015eed10025eed10035eed10045eed10055eed1006  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 2x as expected
+  + all 2 calls returned without exception
+FAIL:
+  (none)

@@ -22316,3 +22316,46 @@ HOOKS['pickup_pool_spawn'] = {
         {'seed': _pu_seed(25),                     'args': [_PU_IN, 9]},
     ],
 }
+
+
+# 0x00458fa0  TtlSet68b1b0, bounds + return set   (mode 7 M3b, 2026-10-10)
+# Second vector set for the export of 'ttl_set_68b1b0' (indexed_table_set, accept path at one index),
+# after the body moved to Gameplay/PickupPoolSpawn.cpp: adds the reject paths and the return value.
+#
+# `int FUN_00458fa0(int idx, uint32 value)`: 0 <= idx < 0x19 -> [0x0068b1b0 + idx*0x50] = value
+# (0x00458fb7), return 1; else return 0 (signed `test` / `jl` 0x00458fa6, `cmp 0x19` / `jge` 0x00458fab).
+# Observable = the written +0x18 slots + the RETURN (fold_ret). No callee, no RenderWare: menu attach.
+# Observed: entries 0 / 3 / 24 +0x18, entry 0 +0x14 / +0x1c (a wrong offset lands there), and the two
+# addresses an unguarded port would write for idx -1 (0x0068b160) and idx 25 (0x0068b9c8).
+# NON-DEGENERACY: 3 accept vectors write 3 different slots with 3 different values; 3 reject vectors
+# (-1, 25, 0x80000000) must leave every sentinel and return 0. PREREG verify/d3_mode7_m3_20261010/
+# PREREG_M3.md section 5.
+_PR_OBS = [_pu_pool_entry(0, 0x18), _pu_pool_entry(3, 0x18), _pu_pool_entry(24, 0x18),
+           _pu_pool_entry(0, 0x14), _pu_pool_entry(0, 0x1c), '0x0068b160', '0x0068b9c8']
+
+
+def _pr_seed():
+    return [{'addr': a, 'val': 0x5eed1000 + n} for n, a in enumerate(_PR_OBS)]
+
+
+HOOKS['ttl_set_68b1b0_bounds'] = {
+    'rva':            0x00458fa0,
+    'export':         'TtlSet68b1b0',
+    'signature':      {'ret': 'uint32', 'args': ['uint32', 'uint32']},
+    'arg_type':       'cache_setter_observe',
+    'fold_ret':       True,
+    'lut_root_delta': 0,
+    'obs_globals':    _PR_OBS,
+    'path1_tests': [
+        {'seed': _pr_seed(), 'args': [0,          0x40a00000]},   # 5.0 -> entry 0
+        {'seed': _pr_seed(), 'args': [3,          0x42f00000]},   # 120.0 -> entry 3
+        {'seed': _pr_seed(), 'args': [24,         0x3f800000]},   # last index
+        {'seed': _pr_seed(), 'args': [0xffffffff, 0x41200000]},   # -1: reject
+        {'seed': _pr_seed(), 'args': [25,         0x41200000]},   # 25: reject
+        {'seed': _pr_seed(), 'args': [0x80000000, 0x41200000]},   # INT_MIN: reject (signed test)
+    ],
+    'path2_tests': [
+        {'seed': _pr_seed(), 'args': [3,          0x42f00000]},
+        {'seed': _pr_seed(), 'args': [25,         0x41200000]},
+    ],
+}

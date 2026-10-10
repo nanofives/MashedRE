@@ -85,7 +85,8 @@ public:
 
 private:
     struct Orb { float pos[3]; bool active; float respawn; float cooldown;
-                 int gameType; std::uint32_t col; };
+                 int gameType; std::uint32_t col;
+                 int poolIdx = -1; };   // [mode 7 M3] PickupPoolSpawn index (InitReal), -1 = fallback orb
     struct PV  { float x, y, z; D3DCOLOR c; float u, v; };
 
     std::vector<Orb>   orbs_;

@@ -11,7 +11,8 @@
 // C++ here, with the original's cdecl contract:
 //   RG_CbDispatch  the four indirect callback calls (0x00484edb / 0x00484ee9 / 0x0048500e /
 //                  0x0048501c) are patched to store the target in g_rg_cbTarget and call this.
-//                  LEG M1: RECORD ONLY, no callback runs (leg M3 dispatches).
+//                  LEG M1: record only. LEG M3 (MASHED_REG_CALLBACKS): target 0x00458920 runs
+//                  Gameplay::Pickups_Callback (verify/d3_mode7_m3_20261010/PREREG_M3.md).
 //   RG_CamFrame    FUN_00467210(0) (camera frame +0x10): replay buffer; live: zero matrix
 //                  [UNCERTAIN] (the grid path needs DAT_006e70c8 != 0, measured 0 on 121/121
 //                  original frames, o_rg1; leg M2 decides the live source if it ever runs)
@@ -21,6 +22,7 @@
 #include "WorldRegistry.h"
 #include "../Math/RwLutTables.h"
 #include "../Vehicle/VehicleRecordBase.h"   // G-M2b-LIVE trace column
+#include "../Gameplay/PickupTick.h"          // [M3] FUN_00458920 dispatch
 
 #include <float.h>
 #include <algorithm>
@@ -60,6 +62,7 @@ std::uint32_t s_ctrBuf[3] = {};
 struct CbRec { std::uint32_t target; int a, b; };
 std::vector<CbRec> s_cbLog;
 long s_cbLive = 0;
+long s_cbUnported = 0;     // [M3] callback targets the exe does not run
 
 }  // namespace
 
@@ -68,8 +71,14 @@ extern "C" {
 void __cdecl RG_CbDispatch(void* a, void* b) {
     const int ia = static_cast<int>((reinterpret_cast<std::uintptr_t>(a) - kSlots) / kStride);
     const int ib = static_cast<int>((reinterpret_cast<std::uintptr_t>(b) - kSlots) / kStride);
-    if (s_replay) s_cbLog.push_back({g_rg_cbTarget, ia, ib});
-    else ++s_cbLive;                   // LEG M1: record only. Leg M3 dispatches here.
+    if (s_replay) { s_cbLog.push_back({g_rg_cbTarget, ia, ib}); return; }   // G-M1 replay: record only
+    ++s_cbLive;
+    // [mode 7 M3] MASHED_REG_CALLBACKS: run the pickup callback FUN_00458920 (Gameplay/PickupTick.cpp).
+    // The exe registers only cars (no callback) and pickups, so no other target is expected; one is counted,
+    // not run (FUN_00486630 / FUN_0047cd50 are not ported, PREREG_M3.md section 0.2).
+    if (!mashed_re::Gameplay::PickupCallbacks_Enabled()) return;
+    if (g_rg_cbTarget == 0x00458920u) mashed_re::Gameplay::Pickups_Callback(a, b);
+    else ++s_cbUnported;
 }
 
 void* __cdecl RG_CamFrame(int) {
@@ -147,6 +156,8 @@ bool FromHex(const std::string& h, std::uint8_t* out, std::size_t n) {
 }
 
 }  // namespace
+
+long Registry_UnportedCallbacks() { return s_cbUnported; }
 
 bool Registry_Enabled() {
     static const bool s_on = [] {

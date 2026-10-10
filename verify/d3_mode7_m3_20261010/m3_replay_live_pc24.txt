@@ -1,0 +1,3 @@
+G-M3-REPLAY rows=6 exact=6 entry_bad=0 calls_bad=0 live_grants_during_replay=0 pc=24 in=C:\Users\maria\Desktop\Proyectos\Mashed\verify\d3_mode7_m3_20261010\o_cb1.msd.cb.tsv;C:\Users\maria\Desktop\Proyectos\Mashed\verify\d3_mode7_m3_20261010\o_cb2.msd.cb.tsv;C:\Users\maria\Desktop\Proyectos\Mashed\verify\d3_mode7_m3_20261010\o_cb3.msd.cb.tsv
+arms: collect=6
+entry mismatched offsets:

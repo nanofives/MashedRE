@@ -38,3 +38,6 @@ std::int32_t   PickupPool_EntryType(std::int32_t index);  // +0x24
 // 0x00458e00
 extern "C" __declspec(dllexport) std::int32_t __cdecl
 PickupPoolSpawn(const float* pos, std::int32_t type);
+
+// 0x00458fa0: pool[idx].+0x18 = val (the respawn time) when 0 <= idx < 25; returns 1, else 0.
+extern "C" __declspec(dllexport) std::uint32_t __cdecl TtlSet68b1b0(std::int32_t idx, std::uint32_t val);

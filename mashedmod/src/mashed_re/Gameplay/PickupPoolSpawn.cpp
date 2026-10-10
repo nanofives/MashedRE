@@ -270,3 +270,22 @@ PickupPoolSpawn(const float* pos, std::int32_t type) {
 }
 
 RH_ScopedInstall(PickupPoolSpawn, 0x00458e00);
+
+// 0x00458fa0  FUN_00458fa0(idx, value): the pickup's respawn time (+0x18). Bounded indexed setter.
+//   MOV EAX,[ESP+4] ; TEST/JL ; CMP 0x19/JGE (0<=idx<0x19) ; MOV ECX,[ESP+8] ;
+//   LEA EAX,[EAX+EAX*4] ; SHL EAX,4 (idx*0x50) ; MOV [EAX+0x68b1b0],ECX ; MOV EAX,1 ; (else XOR EAX,EAX)
+// [mode 7 M3b, 2026-10-10] Moved here from Util/PromoLoop_round71.cpp (asi-only; promote-round 71, C3) so
+// ONE body serves both targets: the exe needs it with the pool's storage split (PickupPool_Base(); the asi
+// still writes 0x0068b1b0 + idx*0x50). The original's Lua glue 0x0047b250 calls it right after
+// FUN_00458e00 with the script's respawn (0x0047b268), overwriting the 120.0 stored at 0x00458ef8.
+// PREREG verify/d3_mode7_m3_20261010/PREREG_M3.md section 5.
+extern "C" __declspec(dllexport) std::uint32_t __cdecl TtlSet68b1b0(std::int32_t idx, std::uint32_t val) {
+    using namespace mashed_re::Gameplay;
+    if (idx >= 0 && idx < 0x19) {                                                       // TEST/JL ; CMP 0x19/JGE
+        *reinterpret_cast<std::uint32_t*>(PickupPool_Base() + static_cast<std::uint32_t>(idx) * kPickupEntryStride
+                                          + 0x18) = val;                                // [EAX+0x68b1b0]
+        return 1;                                                                       // MOV EAX,1
+    }
+    return 0;                                                                           // XOR EAX,EAX
+}
+RH_ScopedInstall(TtlSet68b1b0, 0x00458fa0);

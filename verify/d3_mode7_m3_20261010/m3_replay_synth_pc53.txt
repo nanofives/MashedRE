@@ -1,0 +1,3 @@
+G-M3-REPLAY rows=3888 exact=3888 entry_bad=0 calls_bad=0 live_grants_during_replay=0 pc=53 in=C:\Users\maria\Desktop\Proyectos\Mashed\verify\d3_mode7_m3_20261010\synth_unicorn.cb.tsv
+arms: bump=60 collect=60 no-op=3522 vanish=246
+entry mismatched offsets:

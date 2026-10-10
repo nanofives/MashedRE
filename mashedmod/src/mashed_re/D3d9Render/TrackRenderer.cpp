@@ -90,6 +90,7 @@ AiBridgeState g_aib = {};
 // block). The aib_* host fns are context-free, so the GroundHeight raycast they need
 // for the spline lookahead's wall-march reaches the instance through this pointer.
 const TrackRenderer* g_aiTrack = nullptr;
+TrackRenderer*       g_pkcbTrack = nullptr;   // [mode 7 M3] the grant host mutates pw_ (set with g_aiTrack, UpdateCar)
 
 void aib_own_xz(int v, float* x, float* z) {
     if (v < 0 || v > 3) { *x = *z = 0.f; return; }
@@ -118,6 +119,7 @@ int aib_game_sub_mode() {                                // race (FUN_0040e350)
     }
     return 6;
 }
+int pkcb_sub_mode()        { return aib_game_sub_mode(); }   // [mode 7 M3] the same FUN_0040e350 host
 int aib_round_type()       { return 3; }                // AI-enabled round (FUN_0042f6a0)
 int aib_game_mode_fd0()    { return 0; }
 int aib_track_index()      { return g_aib.course; }
@@ -340,6 +342,15 @@ int aib_held_powerup(int v) {
     const int c = g_aiTrack->pw_.ActiveCode(v);
     return c < 0 ? 0 : c;
 }
+// [mode 7 M3] hosts for FUN_00458920's bound callees (Gameplay/PickupTick.cpp; PREREG_M3.md section 1).
+// FUN_0045bff0: [0x0088fc88 + v*0xb4] == 0 -> the slot holds no active entry; Activate / Deactivate set and
+// clear activeCode (+0xa8) and armed (+0xac) together (PowerupSystem.cpp:108-134).
+int  pkcb_slot_empty(int v) {
+    if (!g_aiTrack || v < 0 || v >= Powerup::PowerupSystem::kSlots) return 1;
+    return g_aiTrack->pw_.Armed(v) ? 0 : 1;
+}
+void pkcb_grant(int v, int type) { if (g_pkcbTrack) g_pkcbTrack->PickupGrant(v, type); }   // FUN_0045c010
+int  pkcb_sub_mode();                                                                  // FUN_0040e350
 // LOS clearance for the lookahead wall-march (FUN_00443dc0 Phase 8): march the
 // straight segment (ax,az)->(bx,bz) and report blocked (0) if any intermediate
 // sample leaves the drivable surface. Backs Ai::Host::los_clear with the track
@@ -2202,6 +2213,7 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                     Ai::TargetClosest_MaybeReplay();  // [D-11072 P3] G-P3-REPLAY (env-gated)
                     Race::Registry_MaybeReplay();     // [mode 7 M1] G-M1-REG / G-M1-PASS (env-gated)
                     Gameplay::Pickups_MaybeReplay();  // [mode 7 M2a] G-M2a-REPLAY (env-gated)
+                    Gameplay::PickupCb_MaybeReplay(); // [mode 7 M3] G-M3-REPLAY (env-gated)
                 }
                 gates_.assign(aw.materials.size(), Gate{});
                 std::vector<int> counts(aw.materials.size(), 0);
@@ -3670,6 +3682,13 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
     const bool faithful_nav = g_aib.loaded && (Ai::I32(Ai::kSplineRaceCnt) > 3);
     if (faithful_nav) {
         g_aiTrack = this;   // bind the AI host (held_powerup reads pw_ through it)
+        {   // [mode 7 M3] FUN_00458920's bound callees (only used under MASHED_REG_CALLBACKS)
+            g_pkcbTrack = this;
+            Gameplay::PickupCbHost h{};
+            h.slot_empty = pkcb_slot_empty; h.grant = pkcb_grant; h.sub_mode = pkcb_sub_mode;
+            h.held_code = aib_held_powerup;
+            Gameplay::Pickups_SetCbHost(h);
+        }
         // [D3 2026-09-26] The PORTED tick spine FUN_00418860 (Ai_Standalone_Tick) runs
         // every race frame and its ctrl bytes DRIVE the opponents through the ported
         // physics chain, exactly as the player's bytes drive the player. The
@@ -3912,7 +3931,8 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
     steer_vis_ += (steer_target - steer_vis_) * k;
 
     // power-up pickups: collect orbs the player drives through (respawn loop).
-    pickups_.Update(in.dt, car_pos_);
+    if (pickups_.Update(in.dt, car_pos_))
+        Gameplay::PickupCb_NoteFieldCollect(0, pickups_.held_type());   // [mode 7 M3] trace only
     // power-up DISPATCH, every frame (FUN_0045bba0; G-D1).
     TickPowerupDispatch(in.dt);
     // power-up EFFECTS: advance boost/shield timers, missiles, mines.
@@ -4940,6 +4960,7 @@ void TrackRenderer::TickPowerupDispatch(float dt) {
         if (!cars[s].alive || pw_.Armed(s)) continue;
         int code = -1;
         if (pickups_.CollectAt(cars[s].pos, &code)) {
+            Gameplay::PickupCb_NoteFieldCollect(s, code);   // [mode 7 M3] trace only
             if (code < 0) code = Powerup::kMissile;
             pw_.Activate(s, code);
         }
@@ -4987,6 +5008,15 @@ void TrackRenderer::TickPowerupDispatch(float dt) {
     // race" (past the countdown -- UpdateCar returns early while it runs) is
     // mapped to 6. Values 1..11 are written at 0x0040d3e7..0x004111a6.
     pw_.Tick(dt, cars, 6);
+}
+
+// [mode 7 M3] FUN_0045c010(v, type) -> FUN_0045bfa0 = PowerupSystem::Activate, with the backend and host
+// cars ready as on every other Activate path (FirePowerupKind). Called from inside the registry pass.
+void TrackRenderer::PickupGrant(int v, int type) {
+    if (v < 0 || v >= Powerup::PowerupSystem::kSlots) return;
+    EnsurePowerupBackend();
+    SyncHostCar();
+    pw_.Activate(v, type);
 }
 
 bool TrackRenderer::FireHeldPowerup() {

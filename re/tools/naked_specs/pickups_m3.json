@@ -1,0 +1,29 @@
+{
+  "funcs": [
+    { "name": "PK_458920", "start": "0x00458920", "size": 276 },
+    { "name": "PK_458570", "start": "0x00458570", "size": 185 },
+    { "name": "PK_45c330", "start": "0x0045c330", "size": 19 },
+    { "name": "PK_46d4a0", "start": "0x0046d4a0", "size": 46 },
+    { "name": "PK_405890", "start": "0x00405890", "size": 26 },
+    { "name": "PK_407580", "start": "0x00407580", "size": 17 }
+  ],
+  "calls": {
+    "0x00405890": "PK_405890",
+    "0x00407580": "PK_407580",
+    "0x0040e350": "PK_SubMode",
+    "0x0045c330": "PK_45c330",
+    "0x0045bff0": "PK_SlotEmpty",
+    "0x00458570": "PK_458570_w",
+    "0x0046d4a0": "PK_46d4a0",
+    "0x004c3ac0": "PK_4c3ac0",
+    "0x004c39b0": "PK_4c39b0",
+    "0x004588c0": "PK_Burst",
+    "0x0045c010": "PK_Grant",
+    "0x00465ca0": "PK_Sfx"
+  },
+  "consts": {
+    "0x005ce548": "g_pk_c_5ce548",
+    "0x005ce54c": "g_pk_c_5ce54c"
+  },
+  "patch": {}
+}

@@ -22,5 +22,8 @@ int Registry_Register(const std::uint32_t desc[8]);
 // G-M1-REG / G-M1-PASS: MASHED_REGISTRY_REPLAY=<o_*.msd.reg.tsv>, report to MASHED_REGISTRY_REPLAY_OUT.
 void Registry_MaybeReplay();
 
+// [M3] live callbacks whose target the exe does not run (expected 0: only cars and pickups register).
+long Registry_UnportedCallbacks();
+
 }  // namespace Race
 }  // namespace mashed_re

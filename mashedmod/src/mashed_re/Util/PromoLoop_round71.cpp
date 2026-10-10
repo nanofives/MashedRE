@@ -17,15 +17,7 @@
 
 #include <cstdint>
 
-// 0x00458fa0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl TtlSet68b1b0(std::int32_t idx, std::uint32_t val) {
-    if (idx >= 0 && idx < 0x19) {                                                       // TEST/JL ; CMP 0x19/JGE
-        *reinterpret_cast<std::uint32_t*>(0x0068b1b0u + static_cast<std::uint32_t>(idx) * 0x50u) = val;  // SHL 4 (idx*0x50)
-        return 1;                                                                       // MOV EAX,1
-    }
-    return 0;                                                                           // XOR EAX,EAX
-}
-RH_ScopedInstall(TtlSet68b1b0, 0x00458fa0);
+// (moved) TtlSet68b1b0 / FUN_00458fa0 now lives in Gameplay/PickupPoolSpawn.cpp (shared exe + asi TU), mode 7 M3b 2026-10-10.
 
 // 0x00459540
 extern "C" __declspec(dllexport) void __cdecl PoolJReset68ba00(std::uint32_t idx) {
