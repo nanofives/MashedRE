@@ -629,3 +629,9 @@ HERE — /promote-round keeps appending new round-log entries below this line.
 - Survey of the remaining game-zone rows: DFF loads (0x0042a5d0 / 0x004c3bf0 RW stream IO) in 0x004548e0, 0x00456760, 0x00459290, 0x0041def0, 0x0048ae00, 0x0041a060, 0x004775b0, 0x00401000;
   rasters / cameras (0x004c77c0, 0x004c1c10) in 0x004034a0, 0x0041eaa0, 0x00467110; live-object drivers 0x0041ecc0, 0x00454350, 0x004074a0, 0x0041fe10.
 - Dry counter: 0.
+
+### Stand-in lane round 7 (2026-10-11)
+- Attempted 2, GREEN 2: 0x004218b0 PhysBodyCreateAttach (reg_args EAX), 0x004218d0 PhysWorldBodyBuild. Round 2's deferral reason for 0x004218b0 was wrong:
+  *(0x007dc8d8) is a plugin offset into the target object, not a global registry.
+- Harness addition: block diffs in the standin_object_call observation.
+- Dry counter: 0.

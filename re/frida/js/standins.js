@@ -511,6 +511,17 @@
           });
           return new Uint8Array(obj.readByteArray(size));
         };
+        // per-block seed snapshot (taken after seed()), diffed after each arm like the object
+        const blockSeed = function () { return cur.map(function (b) { return new Uint8Array(b[0].readByteArray(b[1])); }); };
+        const dwordDiff = function (before, base, n) {
+          const after = new Uint8Array(base.readByteArray(n)), out = [];
+          for (let o = 0; o + 4 <= n; o += 4) {
+            const a = before[o] | (before[o + 1] << 8) | (before[o + 2] << 16) | (before[o + 3] << 24);
+            const c = after[o] | (after[o + 1] << 8) | (after[o + 2] << 16) | (after[o + 3] << 24);
+            if (a !== c) out.push('+' + hex(o) + '=' + S.norm(c >>> 0));
+          }
+          return out;
+        };
         // deref: true -> the window starts at *(addr), read when the test starts (RwGlobals lives on the heap at run
         // time: *(0x007d3ff8) is not the static block 0x007d3ec8, which keeps stale pointers)
         const globs = (cfg.observe_globals || []).map(function (g) {
@@ -520,6 +531,7 @@
         fns.forEach(function (sf) {
           const side = sf[0], fn = sf[1];
           const before = seed();
+          const bBefore = blockSeed();
           const args = (t.args || []).map(function (v, i) {
             const p = val(v);
             return (cfg.signature.args[i] === 'pointer') ? p : p.toUInt32();
@@ -555,7 +567,11 @@
           }
           const r = (cfg.signature && cfg.signature.ret === 'void') ? '' :
                     'ret=' + (ret === null ? 'null' : S.norm(typeof ret === 'number' ? ret : ptr(ret).toUInt32())) + ' ';
-          row[side] = { obs: r + 'obj=[' + changed.join(',') + ']' + rmem +
+          const bobs = cur.map(function (b, i) {
+            const d = dwordDiff(bBefore[i], b[0], b[1]);
+            return d.length ? ' B' + i + '=[' + d.join(',') + ']' : '';
+          }).join('');
+          row[side] = { obs: r + 'obj=[' + changed.join(',') + ']' + bobs + rmem +
                                (gobs.length ? ' globals=[' + gobs.join(' ') + ']' : '') + ' log=[' + log + ']', err: err };
         });
         out.push(row);

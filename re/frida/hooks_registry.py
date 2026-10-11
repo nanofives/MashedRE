@@ -22563,3 +22563,37 @@ HOOKS['obj_7030a8_create'] = dict(HOOKS['obj_7030ac_create'], rva=0x004881d0, ex
     path1_tests=[{'args': [0], 'globals': [['0x007030b0', 0]]}, {'args': ['OBJ'], 'globals': [['0x007030b0', 0]]},
                  {'args': ['OBJ']}, {'args': [0]}],
     path2_tests=[{'args': ['OBJ'], 'globals': [['0x007030b0', 0]]}])
+
+
+# ---- stand-in promotion round 7 (2026-10-11) -- Physics/PromoLoop_standins_r7.cpp ----
+# 0x004218b0 PhysBodyCreateAttach(EAX = src, target): body = RWP37BodyCreate(src) (src+0x50 refcount +1, body's
+# sub-record <- src+0x4c), [body+8] &= ~0xc, RWP37WorldSlotAssign(target, body) stores body at target + *(0x007dc8d8)
+# and links body to target+4 (+0x10). src = B0 (fields +0x4c / +0x50), target = OBJ (0x2000 bytes, zeroed, +4 = B1).
+# The block diffs (B0=[...]) carry the refcount; the OBJ diff carries the slot store; the arena carries the body.
+def _pba(ref, val, tgt4='B1'):
+    return {'blocks': [0x100, 0x40], 'args': ['B0', 'OBJ'],
+            'fields': [['B0', 0x4c, val], ['B0', 0x50, ref], [4, tgt4]]}
+HOOKS['phys_body_create_attach'] = {
+    'rva': 0x004218b0, 'export': 'PhysBodyCreateAttach',
+    'signature': {'ret': 'pointer', 'args': ['pointer', 'pointer']}, 'reg_args': {'eax': 0},
+    'arg_type': 'standin_object_call', 'heap_standin': {'exhaust': 'null'}, 'freeze_main': True,
+    'object_size': 0x2000, 'observe_globals': _RWG_OBS, 'observe_ret_len': 0x34, 'lut_root_delta': 0,
+    'path1_tests': [_pba(0, 0x11111111), _pba(5, 0x22222222), _pba(1, 0x33333333, tgt4=0)],
+    'path2_tests': [_pba(5, 0x22222222)],
+}
+
+# 0x004218d0 PhysWorldBodyBuild(a1, a2, a3, a4, a5): RWP37WorldCreate, four setters on the world's primitive /
+# world (a2 -> 0x0055c540, a5 friction, a4 restitution, a3 mass), PhysBodyCreateAttach(EAX = world, a1), world release.
+# a1 = OBJ (0x2000 bytes, +4 = B0); a2..a5 float bits.
+def _pwb(a2, a3, a4, a5):
+    return {'blocks': [0x40], 'args': ['OBJ', a2, a3, a4, a5], 'fields': [[4, 'B0']]}
+HOOKS['phys_world_body_build'] = {
+    'rva': 0x004218d0, 'export': 'PhysWorldBodyBuild',
+    'signature': {'ret': 'pointer', 'args': ['pointer', 'uint32', 'uint32', 'uint32', 'uint32']},
+    'arg_type': 'standin_object_call', 'heap_standin': {'exhaust': 'null'}, 'freeze_main': True,
+    'object_size': 0x2000, 'observe_globals': _RWG_OBS, 'observe_ret_len': 0x34, 'lut_root_delta': 0,
+    'path1_tests': [_pwb(0x3f800000, 0x40a00000, 0x3e4ccccd, 0x3f19999a),
+                    _pwb(0x00000000, 0x3f800000, 0x00000000, 0x3f800000),
+                    _pwb(0x41200000, 0x44fa0000, 0x3f000000, 0x3dcccccd)],
+    'path2_tests': [_pwb(0x3f800000, 0x40a00000, 0x3e4ccccd, 0x3f19999a)],
+}

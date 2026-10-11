@@ -13,7 +13,7 @@ tex); finally plugin +0xac = 1. Returns *(0x007dc57c).
 0x004881d0(tex): create a frame; when the guard 0x007030b0 is non-zero return it (the frame is not used or released);
 otherwise do the same build with count 0x200 into 0x007030a8, set the guard to 1 and return 0x004880a0(tex).
 
-- Callers: 0x004881d0 calls 0x004880a0; 0x004881d0's caller is outside this note (hooks.csv C2 caller per the census).
+- Callers: 0x004881d0 (C3, this round) calls 0x004880a0; 0x004881d0 is called by 0x00402750 AppInitialiseOnBootup (C2).
   Callees: 0x004c0b30, 0x00534b60, 0x004e7e30, 0x004e8090 (C2).
 - Fixture: round-3 fixture with a 0x200000 arena, plus the live globals 0x007030ac (and 0x007030a8..0x007030b0 for
   0x004881d0) sentinel-seeded, observed and restored per arm; texture argument = the fixture object.
