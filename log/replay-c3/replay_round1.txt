@@ -1,0 +1,25 @@
+vec3_magnitude 0x004c3ac0: body 36 insns, 1 jcc, 0 direct callees, closure 1 fns; port _Vec3Magnitude @0x30010d00
+vec3_magnitude: GREEN  calls=1500 distinct=692 cw=['0x007f'] jcc-sides 2/2 (100.0%) failures={'fidelity': 0, 'equivalence': 0, 'side_effects': 0, 'stack': 0, 'undeclared_reads': 0, 'misses': 0, 'errors': 0, 'import_stops': 0, 'transcendental': 0} red_calls=0 -> C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\replay-c3\log\diff\004c3ac0_vec3_magnitude.replay.csv
+
+fast_sqrt 0x004c3b30: body 22 insns, 1 jcc, 0 direct callees, closure 1 fns; port _FastSqrt @0x30010610
+fast_sqrt: GREEN  calls=2400 distinct=494 cw=['0x007f'] jcc-sides 2/2 (100.0%) failures={'fidelity': 0, 'equivalence': 0, 'side_effects': 0, 'stack': 0, 'undeclared_reads': 0, 'misses': 0, 'errors': 0, 'import_stops': 0, 'transcendental': 0} red_calls=0 -> C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\replay-c3\log\diff\004c3b30_fast_sqrt.replay.csv
+
+fast_inv_sqrt 0x004c3b90: body 23 insns, 1 jcc, 0 direct callees, closure 1 fns; port _FastInvSqrt @0x30010560
+fast_inv_sqrt: HELD  calls=2400 distinct=295 cw=['0x007f'] jcc-sides 1/2 (50.0%) failures={'fidelity': 0, 'equivalence': 0, 'side_effects': 0, 'stack': 0, 'undeclared_reads': 0, 'misses': 0, 'errors': 0, 'import_stops': 0, 'transcendental': 0} red_calls=0 -> C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\replay-c3\log\diff\004c3b90_fast_inv_sqrt.replay.csv
+  uncovered jcc sides: ['0x004c3b9e:taken']
+
+vec2_length 0x004c3bf0: body 31 insns, 1 jcc, 0 direct callees, closure 1 fns; port _Vec2Length @0x30010790
+vec2_length: HELD  calls=958 distinct=1 cw=['0x007f'] jcc-sides 1/2 (50.0%) failures={'fidelity': 0, 'equivalence': 0, 'side_effects': 0, 'stack': 0, 'undeclared_reads': 0, 'misses': 0, 'errors': 0, 'import_stops': 0, 'transcendental': 0} red_calls=0 -> C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\replay-c3\log\diff\004c3bf0_vec2_length.replay.csv
+  uncovered jcc sides: ['0x004c3c11:taken']
+
+vec2_normalize 0x004c3c60: body 75 insns, 3 jcc, 2 direct callees, closure 3 fns; port _Vec2Normalize @0x30010870
+vec2_normalize: HELD  calls=1200 distinct=34 cw=['0x007f'] jcc-sides 3/6 (50.0%) failures={'fidelity': 0, 'equivalence': 0, 'side_effects': 0, 'stack': 0, 'undeclared_reads': 0, 'misses': 0, 'errors': 0, 'import_stops': 0, 'transcendental': 0} red_calls=0 -> C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\replay-c3\log\diff\004c3c60_vec2_normalize.replay.csv
+  uncovered jcc sides: ['0x004c3c91:taken', '0x004c3cd2:taken', '0x004c3d30:not-taken']
+
+rwv3d_normalize 0x004c39b0: body 83 insns, 3 jcc, 2 direct callees, closure 3 fns; port _RwV3dNormalize @0x30010a60
+rwv3d_normalize: HELD  calls=1200 distinct=419 cw=['0x007f'] jcc-sides 3/6 (50.0%) failures={'fidelity': 0, 'equivalence': 0, 'side_effects': 0, 'stack': 0, 'undeclared_reads': 0, 'misses': 0, 'errors': 0, 'import_stops': 0, 'transcendental': 0} red_calls=0 -> C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\replay-c3\log\diff\004c39b0_rwv3d_normalize.replay.csv
+  uncovered jcc sides: ['0x004c39ec:taken', '0x004c3a2d:taken', '0x004c3a95:not-taken']
+
+rwp_mat2quat_y 0x00546c50: body 31 insns, 0 jcc, 1 direct callees, closure 2 fns; port ?FUN_00546c50_impl@Collision@mashed_re@@YAXPAM0@Z @0x30010070
+rwp_mat2quat_y: RED  calls=1200 distinct=910 cw=['0x007f'] jcc-sides 0/0 (100.0%) failures={'fidelity': 0, 'equivalence': 243, 'side_effects': 243, 'stack': 0, 'undeclared_reads': 0, 'misses': 0, 'errors': 0, 'import_stops': 0, 'transcendental': 0} red_calls=243 -> C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\replay-c3\log\diff\00546c50_rwp_mat2quat_y.replay.csv
+

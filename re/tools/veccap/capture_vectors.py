@@ -23,10 +23,10 @@ from pathlib import Path
 import frida
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from veccap_registry import FUNCS, synth_inputs, n_in, n_out, n_a, has_scalar  # noqa: E402
+from veccap_registry import mashed_root, live_funcs, synth_inputs, n_in, n_out, n_a, has_scalar  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[3]
-MASHED_EXE = ROOT / 'original' / 'MASHED.exe'
+MASHED_EXE = mashed_root() / 'original' / 'MASHED.exe'
 OUT_DIR = Path(__file__).resolve().parent / 'out'
 
 MENU_WAIT_S = 22
@@ -156,7 +156,7 @@ def main():
               f"lut_root=0x{regions['lut_root']:08x} inv=0x{regions['lut_inv_root']:08x}")
 
         funcs_out = {}
-        for name, cfg in FUNCS.items():
+        for name, cfg in live_funcs().items():
             rva = f"0x{cfg['rva']:08x}"
             ni, no = n_in(cfg), n_out(cfg)
             na, sflag = n_a(cfg), has_scalar(cfg)

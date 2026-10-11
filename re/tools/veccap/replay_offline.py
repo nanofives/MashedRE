@@ -14,10 +14,10 @@ import pefile
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[2]
 sys.path.insert(0, str(HERE))
-from veccap_registry import FUNCS, STATIC_READS, KIND_IDS, is_degenerate, n_a, has_scalar  # noqa: E402
+from veccap_registry import mashed_root, FUNCS, STATIC_READS, KIND_IDS, is_degenerate, n_a, has_scalar  # noqa: E402
 
 VCVARS = r'C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars32.bat'
-MASHED_EXE = ROOT / 'original' / 'MASHED.exe'
+MASHED_EXE = mashed_root() / 'original' / 'MASHED.exe'
 IMAGE_BASE = 0x00400000
 
 

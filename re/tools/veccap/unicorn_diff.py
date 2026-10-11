@@ -26,9 +26,9 @@ from unicorn.x86_const import UC_X86_REG_ESP
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[2]
 sys.path.insert(0, str(HERE))
-from veccap_registry import FUNCS, STATIC_READS, is_degenerate, n_a, has_scalar  # noqa: E402
+from veccap_registry import mashed_root, FUNCS, STATIC_READS, is_degenerate, n_a, has_scalar  # noqa: E402
 
-MASHED_EXE = ROOT / 'original' / 'MASHED.exe'
+MASHED_EXE = mashed_root() / 'original' / 'MASHED.exe'
 IMAGE_BASE = 0x00400000
 
 SCRATCH   = 0x0F000000

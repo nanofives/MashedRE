@@ -1,0 +1,15 @@
+spawned MASHED pid=30024 (killing ONLY this pid at exit)
+fast_inv_sqrt      [title+menu+load] seen=4345    recorded=1200  (337/s)
+vec2_length        [title+menu+load] seen=0       recorded=0     (0/s)
+vec2_normalize     [title+menu+load] seen=0       recorded=0     (0/s)
+rwv3d_normalize    [title+menu+load] seen=144     recorded=144   (11/s)
+in race (phase=0); settling 12.0s
+fast_inv_sqrt      [race] seen=105287  recorded=1200  (13133/s)
+fast_inv_sqrt      total recorded=2400 -> re\replay\veccap\004c3b90_fast_inv_sqrt.json
+vec2_length        [race] seen=958     recorded=958   (120/s)
+vec2_length        total recorded=958 -> re\replay\veccap\004c3bf0_vec2_length.json
+vec2_normalize     [race] seen=16286   recorded=1200  (2030/s)
+vec2_normalize     total recorded=1200 -> re\replay\veccap\004c3c60_vec2_normalize.json
+rwv3d_normalize    [race] seen=40715   recorded=1200  (5072/s)
+rwv3d_normalize    total recorded=1344 -> re\replay\veccap\004c39b0_rwv3d_normalize.json
+killed own pid 30024

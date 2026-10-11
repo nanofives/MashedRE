@@ -1,0 +1,16 @@
+spawned MASHED pid=29064 (killing ONLY this pid at exit)
+in race (phase=0); settling 12.0s
+rwp_perp_vector    [menu->load->race] seen=0       recorded=0     (0/s)  (no bundle written)
+rwp_aabb_merge     [menu->load->race] seen=0       recorded=0     (0/s)  (no bundle written)
+rwp_aabb_span      [menu->load->race] seen=0       recorded=0     (0/s)  (no bundle written)
+rwp_aabb_xform     [menu->load->race] seen=0       recorded=0     (0/s)  (no bundle written)
+rwp_mat2quat_x     [menu->load->race] seen=0       recorded=0     (0/s)  (no bundle written)
+rwp_mat2quat_z     [menu->load->race] seen=0       recorded=0     (0/s)  (no bundle written)
+vec3_magnitude     [race] seen=57056   recorded=600   (7122/s) -> re\replay\veccap\004c3ac0_vec3_magnitude.json
+fast_sqrt          [race] seen=20143   recorded=600   (2515/s) -> re\replay\veccap\004c3b30_fast_sqrt.json
+fast_inv_sqrt      [race] seen=93886   recorded=600   (11723/s) -> re\replay\veccap\004c3b90_fast_inv_sqrt.json
+vec2_length        [race] seen=958     recorded=136   (120/s) -> re\replay\veccap\004c3bf0_vec2_length.json
+vec2_normalize     [race] seen=16286   recorded=600   (2033/s) -> re\replay\veccap\004c3c60_vec2_normalize.json
+rwv3d_normalize    [race] seen=40715   recorded=600   (5080/s) -> re\replay\veccap\004c39b0_rwv3d_normalize.json
+rwp_mat2quat_y     [race] seen=1916    recorded=273   (239/s) -> re\replay\veccap\00546c50_rwp_mat2quat_y.json
+killed own pid 29064

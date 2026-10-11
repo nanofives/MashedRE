@@ -1,0 +1,8 @@
+fast_inv_sqrt: HELD  calls=2400 distinct=371 cw=['0x007f'] jcc-sides 1/2 (50.0%) failures={'fidelity': 0, 'equivalence': 0, 'side_effects': 0, 'stack': 0, 'undeclared_reads': 0, 'misses': 0, 'errors': 0, 'import_stops': 0, 'transcendental': 0} red_calls=0 -> C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\replay-c3\log\diff\004c3b90_fast_inv_sqrt.replay.csv
+  uncovered jcc sides: ['0x004c3b9e:taken']
+vec2_length: HELD  calls=958 distinct=1 cw=['0x007f'] jcc-sides 1/2 (50.0%) failures={'fidelity': 0, 'equivalence': 0, 'side_effects': 0, 'stack': 0, 'undeclared_reads': 0, 'misses': 0, 'errors': 0, 'import_stops': 0, 'transcendental': 0} red_calls=0 -> C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\replay-c3\log\diff\004c3bf0_vec2_length.replay.csv
+  uncovered jcc sides: ['0x004c3c11:taken']
+vec2_normalize: HELD  calls=1200 distinct=34 cw=['0x007f'] jcc-sides 3/6 (50.0%) failures={'fidelity': 0, 'equivalence': 0, 'side_effects': 0, 'stack': 0, 'undeclared_reads': 0, 'misses': 0, 'errors': 0, 'import_stops': 0, 'transcendental': 0} red_calls=0 -> C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\replay-c3\log\diff\004c3c60_vec2_normalize.replay.csv
+  uncovered jcc sides: ['0x004c3c91:taken', '0x004c3cd2:taken', '0x004c3d30:not-taken']
+rwv3d_normalize: HELD  calls=1344 distinct=536 cw=['0x007f'] jcc-sides 3/6 (50.0%) failures={'fidelity': 0, 'equivalence': 0, 'side_effects': 0, 'stack': 0, 'undeclared_reads': 0, 'misses': 0, 'errors': 0, 'import_stops': 0, 'transcendental': 0} red_calls=0 -> C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\replay-c3\log\diff\004c39b0_rwv3d_normalize.replay.csv
+  uncovered jcc sides: ['0x004c39ec:taken', '0x004c3a2d:taken', '0x004c3a95:not-taken']

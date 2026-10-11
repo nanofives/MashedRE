@@ -1,0 +1,24 @@
+spawned MASHED pid=4016 (killing ONLY this pid at exit)
+vec3_magnitude     [menu] seen=300     recorded=300   (60/s)
+fast_sqrt          [menu] seen=4485    recorded=1200  (894/s)
+fast_inv_sqrt      [menu] seen=1200    recorded=1200  (239/s)
+vec2_length        [menu] seen=0       recorded=0     (0/s)
+vec2_normalize     [menu] seen=0       recorded=0     (0/s)
+rwv3d_normalize    [menu] seen=0       recorded=0     (0/s)
+rwp_mat2quat_y     [menu] seen=0       recorded=0     (0/s)
+in race (phase=0); settling 12.0s
+vec3_magnitude     [race] seen=100468  recorded=1200  (12530/s)
+vec3_magnitude     total recorded=1500 -> re\replay\veccap\004c3ac0_vec3_magnitude.json
+fast_sqrt          [race] seen=20337   recorded=1200  (2537/s)
+fast_sqrt          total recorded=2400 -> re\replay\veccap\004c3b30_fast_sqrt.json
+fast_inv_sqrt      [race] seen=93690   recorded=1200  (11688/s)
+fast_inv_sqrt      total recorded=2400 -> re\replay\veccap\004c3b90_fast_inv_sqrt.json
+vec2_length        [race] seen=958     recorded=958   (119/s)
+vec2_length        total recorded=958 -> re\replay\veccap\004c3bf0_vec2_length.json
+vec2_normalize     [race] seen=16252   recorded=1200  (2025/s)
+vec2_normalize     total recorded=1200 -> re\replay\veccap\004c3c60_vec2_normalize.json
+rwv3d_normalize    [race] seen=40715   recorded=1200  (5072/s)
+rwv3d_normalize    total recorded=1200 -> re\replay\veccap\004c39b0_rwv3d_normalize.json
+rwp_mat2quat_y     [race] seen=1920    recorded=1200  (239/s)
+rwp_mat2quat_y     total recorded=1200 -> re\replay\veccap\00546c50_rwp_mat2quat_y.json
+killed own pid 4016

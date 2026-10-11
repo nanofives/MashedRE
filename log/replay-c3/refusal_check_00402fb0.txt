@@ -1,0 +1,3 @@
+0x00402fb0: body 38 insns, 0 jcc, closure 31 fns, unresolved indirect 1
+  fsin at 0x00402fbb (in 0x00402fb0)
+REFUSED (transcendental reachable)

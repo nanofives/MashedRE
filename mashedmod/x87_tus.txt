@@ -56,3 +56,7 @@ RwpSolverCore17
 CameraEntries
 # D-11072 P1 (2026-10-09): FUN_00478660/FUN_004783f0 course-block build; x87 double rule; gate = byte compare
 PathNodes
+# U-9220 (2026-10-11, user ruling): 0x00546c50 alone, split from RwpSolverMath2 so the other 6 K2
+# bodies stay SSE2. Measured: replay_c3.py on 1200 real race calls at CW 0x007f, SSE2 RED 243/1200,
+# x87 GREEN 1200/1200 (log/diff/00546c50_rwp_mat2quat_y.replay.csv).
+RwpSolverMath2QuatY
