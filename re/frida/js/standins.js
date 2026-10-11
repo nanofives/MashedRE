@@ -554,9 +554,12 @@
           globs.forEach(function (g, i) { g[0].writeByteArray(saved[i]); });
           let rmem = '';
           if (cfg.observe_ret_len && ret !== null && !ptr(ret).isNull()) {
-            const rp = ptr(ret), w = [];
-            for (let o = 0; o + 4 <= cfg.observe_ret_len; o += 4) w.push(S.norm(rp.add(o).readU32()));
-            rmem = ' retmem=[' + w.join(',') + ']';
+            // A wrong returned pointer must read RED, not abort the fixture (negctl ret mutant, 2026-10-11).
+            try {
+              const rp = ptr(ret), w = [];
+              for (let o = 0; o + 4 <= cfg.observe_ret_len; o += 4) w.push(S.norm(rp.add(o).readU32()));
+              rmem = ' retmem=[' + w.join(',') + ']';
+            } catch (e) { rmem = ' retmem=AV'; }
           }
           const after = new Uint8Array(obj.readByteArray(size));
           const changed = [];

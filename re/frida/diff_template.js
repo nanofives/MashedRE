@@ -6316,7 +6316,9 @@ function runDiff() {
             ? (CONFIG.pre_fill_byte & 0xff) : null;
         function curIdx() { return idxCall ? (idxCall() | 0) : 0; }
         function windows() {
-            const ws = observe.map(function(w) { return { a: ptr(w.addr), len: w.len | 0, fill: w.fill }; });
+            // len defaults to 4 (one dword). Nine C3 entries list `{addr}` alone; with `w.len | 0` they observed ZERO
+            // bytes, the fingerprint was a constant, and a port doing nothing read GREEN (negctl null, 2026-10-11).
+            const ws = observe.map(function(w) { return { a: ptr(w.addr), len: (w.len === undefined || w.len === null) ? 4 : (w.len | 0), fill: w.fill }; });
             const idx = curIdx();
             idxArrays.forEach(function(ar) {
                 ws.push({ a: ptr(ar.base).add(idx * (ar.stride | 0)), len: ar.elem_len | 0 });

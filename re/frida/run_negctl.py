@@ -329,7 +329,8 @@ def warm_worker(slot, jobs, sink, lock):
         if not slot.alive():
             slot.respawn()
         results, err, stats = slot.run(name, mode)
-        if err and err.startswith('EXC') and ('session is gone' in err or 'connection is closed' in err):
+        if err and (('session is gone' in err or 'connection is closed' in err) and err.startswith('EXC')
+                    or 'thread already suspended' in err):
             slot.respawn()          # died before/at script creation (a previous job's late crash): retry once
             results, err, stats = slot.run(name, mode)
         if mode in ('field_none', 'field_first', 'field_last') and slot.alive():

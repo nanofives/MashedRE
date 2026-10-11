@@ -173,6 +173,7 @@ bool IsField() { return g_ncCls == kFieldFirst || g_ncCls == kFieldLast || g_ncC
 HANDLE   s_game[64];                 // opened once per Arm, so Pre only pays SuspendThread
 int      s_nGame = 0;
 unsigned s_lastFrozen = 0;
+bool     s_frozenNow = false;              // a faulting port unwinds past NegCtlPost: Arm/Restore thaw then
 typedef LONG(NTAPI* NtQit_t)(HANDLE, int, PVOID, ULONG, PULONG);
 
 void OpenGameThreads() {
@@ -211,10 +212,13 @@ void FreezeGameThreads() {
             ++n;
         }
     s_lastFrozen = n;
+    s_frozenNow = true;
 }
 
 void ThawGameThreads() {
+    if (!s_frozenNow) return;
     for (int i = 0; i < s_nGame; ++i) ResumeThread(s_game[i]);
+    s_frozenNow = false;
 }
 
 }  // namespace
@@ -324,6 +328,7 @@ extern "C" __declspec(dllexport) void* __cdecl NegCtl_Arm(void* target, int cls,
     char env[8] = {0};
     if (!GetEnvironmentVariableA("MASHED_NEGCTL", env, sizeof env) || strcmp(env, "1") != 0) return nullptr;
     if (cls < kNull || cls > kFieldNone || !target) return nullptr;
+    ThawGameThreads();
     if (s_pending && s_lastFlip && *s_lastFlip == s_lastNew) *s_lastFlip = s_lastOld;
     s_pending = false;
     g_ncTarget = target;
@@ -344,6 +349,7 @@ extern "C" __declspec(dllexport) void* __cdecl NegCtl_Arm(void* target, int cls,
 // every field job so a warm process never carries a corrupted byte into the next hook's real/baseline run.
 extern "C" __declspec(dllexport) int __cdecl NegCtl_Restore() {
     int undone = 0;
+    ThawGameThreads();
     if (s_pending && s_lastFlip && *s_lastFlip == s_lastNew) { *s_lastFlip = s_lastOld; undone = 1; }
     s_pending = false;
     g_ncCls = 0;

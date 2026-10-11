@@ -1,0 +1,239 @@
+rva	hook	name	arg_type	confidence	real	baseline	stored_evidence	blind_value	blind_heap_import	census_heap_import	independent_evidence	field_flip
+0x0046d780	launch_rev_release_46d780	LaunchRevRelease	cache_setter_observe	C3	GREEN	GREEN	nontrivial	ret			path2	calls=8 flips=5 changed=0 flip=0x00882e9c noise=241 frozen=2
+0x0046d7f0	bounded_table_signclamp_46d7f0	LaunchRevChargeTick	cache_setter_observe	C3	GREEN	GREEN	nontrivial	ret			path2	calls=8 flips=7 changed=2 flip=0x00882194 noise=244 frozen=2
+0x004d5570	d3d9_set_sampler	D3d9State_SetSampler	cache_setter_observe	C3	ERROR	SKIP	nontrivial					
+0x004d6b90	d3d9_set_stage0_filter	D3d9State_SetStage0Filter	cache_setter_observe	C3	GREEN	GREEN	nontrivial	ret				calls=4 flips=3 changed=0 flip=0x007d4f88 noise=244 frozen=2
+0x004d8470	rw_error_module_dtor_count	RwErrorModuleDtor	cache_setter_observe	C3	GREEN	GREEN	missing	ret			path2	calls=6 flips=6 changed=1 flip=0x007d6c60 noise=162 frozen=1
+0x0046be10	write_46be10	FUN_0046be10	deref_struct_set	C3	GREEN	GREEN	nontrivial	ret				calls=1 flips=1 changed=8 flip=0x00882ea8 noise=0 frozen=1
+0x005c6b60	delta_5c6b60	Delta5c6b60	deref_struct_set	C3	GREEN	GREEN	nontrivial	ret				calls=5 flips=5 changed=12 flip=0x03c0e558 noise=0 frozen=1
+0x00428610	viewport_scaled_rect_draw	ViewportScaledRectDraw	draw_quad_observe	C4	GREEN	GREEN	nontrivial	field_first			path2,shadow	calls=12 flips=12 changed=50 flip=0x007d709c noise=38 frozen=1
+0x00472c60	chrome_base_draw	ChromeBaseDraw	draw_quad_observe	C3	RED	RED	nontrivial					calls=10 flips=10 changed=37 flip=0x007d70d1 noise=186 frozen=1
+0x00472f40	text_gradient_v0v1_override	TextGradientV0V1Override	draw_quad_observe	C3	GREEN	GREEN	nontrivial	field_first				calls=10 flips=10 changed=36 flip=0x007d709c noise=38 frozen=1
+0x00473540	gradient_quad_horiz_alpha	GradientQuadHorizAlpha	draw_quad_observe	C3	GREEN	GREEN	nontrivial	field_first				calls=10 flips=10 changed=36 flip=0x007d709c noise=38 frozen=1
+0x004736c0	border_quad_four_alpha	BorderQuadFourAlpha	draw_quad_observe	C3	RED	RED	nontrivial					calls=10 flips=10 changed=37 flip=0x007d70cd noise=171 frozen=1
+0x00473870	text_sprite_uv_explicit	TextSpriteUVExplicit	draw_quad_observe	C3	RED	GREEN	nontrivial					calls=10 flips=10 changed=20 flip=0x00898a2e noise=264805 frozen=2
+0x0046dc00	entity_field_set	EntityFieldSet	entity_field_set	C3	GREEN	GREEN	nontrivial	ret			C4-scenario,path2	calls=10 flips=10 changed=4 flip=0x00883cb4 noise=308832 frozen=2
+0x00458fa0	ttl_set_68b1b0	TtlSet68b1b0	indexed_table_set	C3	GREEN	GREEN	nontrivial	ret			path2	calls=10 flips=9 changed=4 flip=0x0068b340 noise=0 frozen=1
+0x0040b7b0	player_hotkey_table_get	PlayerHotkeyTableGet	int_pair	C3	DEGENERATE	DEGENERATE	trivial	null				calls=18 flips=0 changed=0 flip=0x00000000 noise=301822 frozen=2
+0x0042bde0	hud_rect_emitter	HudRectEmitter5	int_pair	C3	DEGENERATE	DEGENERATE	trivial	null,field_first,field_last				calls=10 flips=10 changed=11 flip=0x007d70cd noise=162 frozen=1
+0x00493f80	intro_video_dim_getter	IntroVideoDimGetter	int_pair	C4	DEGENERATE	DEGENERATE	trivial	null			C4-scenario,path2	calls=0 flips=0 changed=0 flip=0x00000000 noise=244 frozen=2
+0x00495830	joypad_strcpy	JoypadStrcpy	int_pair	C3	DEGENERATE	DEGENERATE	trivial	null				calls=10 flips=0 changed=0 flip=0x00000000 noise=241 frozen=2
+0x00496400	config_log_debug	ConfigLogDebug	int_pair	C4	DEGENERATE	DEGENERATE	trivial	null	import_extra	imp_other	path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=265 frozen=2
+0x004a4541	fsopen_safe	FsopenSafe	int_pair	C4	DEGENERATE	DEGENERATE	trivial	null,ret	import_extra	imp_other	path2	calls=0 flips=0 changed=0 flip=0x00000000 noise=241 frozen=0
+0x004c2e10	rw_engine_get_sub_system_info	RwEngineGetSubSystemInfo	int_pair	C3	GREEN	GREEN	nontrivial	field_first,field_last				calls=10 flips=10 changed=1 flip=0x008a9550 noise=301822 frozen=2
+0x004cc770	rw_stream_write_bytes	FUN_004cc770	int_pair	C4	GREEN	GREEN	nontrivial		heap_extra	rw_alloc	path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=244 frozen=2
+0x00550980	vfs_stream_read	VfsStreamRead	int_pair	C3	DEGENERATE	DEGENERATE	trivial	null,ret				calls=0 flips=0 changed=0 flip=0x00000000 noise=162 frozen=1
+0x005a9e40	audio_output_node_cb_dispatch	FUN_005a9e40	int_pair	C3	GREEN	GREEN	trivial	ret				calls=10 flips=0 changed=0 flip=0x00000000 noise=301822 frozen=2
+0x005bc400	audio_dsound_qi_chain	AudioDSoundQIChain	int_pair	C3	DEGENERATE	DEGENERATE	trivial	ret				calls=10 flips=0 changed=0 flip=0x00000000 noise=241 frozen=0
+0x004026d0	boot_queue_flush	FUN_004026d0	int_scalar	C3	DEGENERATE	DEGENERATE	trivial	null			C4-scenario	calls=10 flips=0 changed=0 flip=0x00000000 noise=263086 frozen=2
+0x00404320	per_mode_render_machine	PerModeRenderMachine	int_scalar	C3	DEGENERATE	DEGENERATE	trivial	null			C4-scenario,path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=244 frozen=2
+0x00407a20	get_ai_lap_counter	Table8a9648Get	int_scalar	C4	DEGENERATE	DEGENERATE	missing				race	calls=8 flips=0 changed=0 flip=0x00000000 noise=263086 frozen=2
+0x00407b00	range_table_find_group	FUN_00407b00	int_scalar	C3	DEGENERATE	DEGENERATE	trivial	null			replay,shadow,race	calls=12 flips=0 changed=0 flip=0x00000000 noise=301822 frozen=2
+0x00408a50	per_car_race_progress_get	FUN_00408a50	int_scalar	C3	DEGENERATE	DEGENERATE	trivial	null			replay	calls=10 flips=0 changed=0 flip=0x00000000 noise=263086 frozen=2
+0x00408a70	frontend_c2_round_i	FrontendC2RoundI	int_scalar	C3	DEGENERATE	DEGENERATE	trivial	null	import_extra	imp_other	race	calls=10 flips=0 changed=0 flip=0x00000000 noise=301822 frozen=2
+0x0040b460	menu_menus_bd	MenuMenusBD	int_scalar	C3	DEGENERATE	DEGENERATE	trivial	null				calls=0 flips=0 changed=0 flip=0x00000000 noise=241 frozen=2
+0x0040b6b0	mode_score_get_by_slot	ModeScoreGetBySlot	int_scalar	C3	DEGENERATE	DEGENERATE	trivial	null				calls=11 flips=0 changed=0 flip=0x00000000 noise=241 frozen=2
+0x0040b6c0	frontend_array_get	FrontendArrayGet	int_scalar	C4	DEGENERATE	DEGENERATE	trivial	null			C4-scenario,path2	calls=12 flips=0 changed=0 flip=0x00000000 noise=241 frozen=2
+0x0040b6d0	util_array_get_8a94e0	FUN_0040b6d0	int_scalar	C4	DEGENERATE	DEGENERATE	missing					calls=10 flips=0 changed=0 flip=0x00000000 noise=241 frozen=2
+0x0040bb70	sprite_lookup_table_a	SpriteLookupTableA	int_scalar	C4	DEGENERATE	DEGENERATE	trivial	ret			C4-scenario,path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=263086 frozen=2
+0x0040bb90	sprite_lookup_table_b	SpriteLookupTableB	int_scalar	C4	DEGENERATE	DEGENERATE	trivial	ret			C4-scenario,path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=244 frozen=2
+0x0040e470	car_slot_state_get	CarSlotStateGet	int_scalar	C3	DEGENERATE	DEGENERATE	trivial	null			path2,replay	calls=10 flips=0 changed=0 flip=0x00000000 noise=244 frozen=2
+0x00417730	vehicle_race_angle_get	VehicleRaceAngleGet	int_scalar	C3	DEGENERATE	DEGENERATE	trivial	null			race	calls=7 flips=0 changed=0 flip=0x00000000 noise=301822 frozen=2
+0x0041ded0	hud_mode_guard_dispatch	HudModeGuardDispatch	int_scalar	C3	DEGENERATE	DEGENERATE	trivial	null				calls=10 flips=0 changed=0 flip=0x00000000 noise=244 frozen=2
+0x0041e130	timer_track_setter	TimerStateSet	int_scalar	C3	DEGENERATE	DEGENERATE	trivial	null				calls=10 flips=0 changed=0 flip=0x00000000 noise=263086 frozen=2
+0x00422fd0	frontend_race_results_dispatch	FrontendRaceResultsDispatch	int_scalar	C3	DEGENERATE	DEGENERATE	trivial	null			race	calls=10 flips=0 changed=0 flip=0x00000000 noise=241 frozen=2
+0x00423b40	player_score_acc_a	PlayerScoreAccA	int_scalar	C3	DEGENERATE	DEGENERATE	trivial	null			path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=241 frozen=2
+0x00423b60	player_score_acc_b	PlayerScoreAccB	int_scalar	C3	DEGENERATE	DEGENERATE	trivial	null			path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=301822 frozen=2
+0x00423b80	player_score_acc_c	PlayerScoreAccC	int_scalar	C3	DEGENERATE	DEGENERATE	trivial	null			race	calls=10 flips=0 changed=0 flip=0x00000000 noise=263086 frozen=2
+0x00423ba0	player_score_acc_d	PlayerScoreAccD	int_scalar	C3	DEGENERATE	DEGENERATE	trivial	null			path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=244 frozen=2
+0x00423bc0	player_score_team_acc_c	PlayerScoreTeamAccC	int_scalar	C3	DEGENERATE	DEGENERATE	trivial	null			path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=263086 frozen=2
+0x00423c40	player_score_team_acc_base	PlayerScoreTeamAccBase	int_scalar	C3	DEGENERATE	DEGENERATE	trivial	null			path2,race	calls=10 flips=0 changed=0 flip=0x00000000 noise=241 frozen=2
+0x00423cc0	player_score_team_acc_gated_b	PlayerScoreTeamAccGatedB	int_scalar	C4	DEGENERATE	DEGENERATE	trivial	null			path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=241 frozen=2
+0x00423d50	player_score_team_acc_base_b	PlayerScoreTeamAccBaseB	int_scalar	C4	DEGENERATE	DEGENERATE	trivial	null			path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=301822 frozen=2
+0x00423dd0	player_score_team_acc_gated_c	PlayerScoreTeamAccGatedC	int_scalar	C4	DEGENERATE	DEGENERATE	trivial	null			path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=301822 frozen=2
+0x00423e60	player_score_team_acc_cum_b	PlayerScoreTeamAccCumB	int_scalar	C4	DEGENERATE	DEGENERATE	trivial	null			path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=244 frozen=2
+0x00423ee0	player_block2_field00_get	PlayerBlock2Field00Get	int_scalar	C4	DEGENERATE	DEGENERATE	trivial	null			path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=241 frozen=2
+0x00423f60	player_block2_field04_get	PlayerBlock2Field04Get	int_scalar	C4	DEGENERATE	DEGENERATE	trivial	null			path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=301822 frozen=2
+0x00423ff0	player_block2_field50_get	PlayerBlock2Field50Get	int_scalar	C4	DEGENERATE	DEGENERATE	trivial	null			path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=244 frozen=2
+0x00424070	player_block2_field08_get	PlayerBlock2Field08Get	int_scalar	C4	DEGENERATE	DEGENERATE	trivial	null			path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=263086 frozen=2
+0x00424100	team_block_zero_get	TeamBlockZeroGet	int_scalar	C4	DEGENERATE	DEGENERATE	trivial	null			path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=301822 frozen=2
+0x004241c0	team_block_one_get	FUN_004241c0	int_scalar	C4	DEGENERATE	DEGENERATE	trivial	null			path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=241 frozen=2
+0x00426670	world_render_dispatch_begin	WorldRenderDispatch_Begin	int_scalar	C3	DEGENERATE	DEGENERATE	trivial	null			path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=244 frozen=2
+0x004266b0	world_render_dispatch_end	WorldRenderDispatch_End	int_scalar	C3	DEGENERATE	DEGENERATE	trivial	null			path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=241 frozen=2
+0x00429a70	lap_frac_get_by_slot	LapFracGetBySlot	int_scalar	C3	DEGENERATE	DEGENERATE	trivial	null				calls=10 flips=0 changed=0 flip=0x00000000 noise=244 frozen=2
+0x00429a80	lap_laps_get_by_slot	LapLapsGetBySlot	int_scalar	C3	DEGENERATE	DEGENERATE	trivial	null				calls=10 flips=0 changed=0 flip=0x00000000 noise=241 frozen=2
+0x00429a90	lap_secs_get_by_slot	LapSecsGetBySlot	int_scalar	C3	DEGENERATE	DEGENERATE	trivial	null				calls=10 flips=0 changed=0 flip=0x00000000 noise=301822 frozen=2
+0x0042aae0	menu_im2d_quad	MenuIm2DQuad	int_scalar	C4	DEGENERATE	DEGENERATE	trivial	null			C4-scenario,path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=244 frozen=2
+0x0042ebe0	frontend_player_slot_check	FrontendPlayerSlotCheck	int_scalar	C4	DEGENERATE	DEGENERATE	trivial	null			C4-scenario,path2	calls=12 flips=0 changed=0 flip=0x00000000 noise=244 frozen=2
+0x0042ee00	sprite_slot_gate	SpriteSlotGate	int_scalar	C3	DEGENERATE	DEGENERATE	trivial	null			C4-scenario,path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=241 frozen=2
+0x0042ee40	frontend_mode_dispatch	FrontendModeDispatch	int_scalar	C3	DEGENERATE	DEGENERATE	trivial	null				calls=14 flips=0 changed=0 flip=0x00000000 noise=263086 frozen=2
+0x00430830	split_screen_track_assignment	SplitScreenTrackAssignment	int_scalar	C3	DEGENERATE	DEGENERATE	trivial	null			path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=301822 frozen=2
+0x00432080	race_end_check_finish	FUN_00432080	int_scalar	C3	DEGENERATE	DEGENERATE	trivial	null			C4-scenario,race	calls=10 flips=0 changed=0 flip=0x00000000 noise=244 frozen=2
+0x00442c80	mode_gated_player_check	ModeGatedPlayerCheck	int_scalar	C4	DEGENERATE	DEGENERATE	trivial	null			C4-scenario,path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=244 frozen=2
+0x00467300	vehicle_collision_win_trigger	VehicleCollisionWinTrigger	int_scalar	C3	DEGENERATE	DEGENERATE	trivial	null				calls=10 flips=0 changed=0 flip=0x00000000 noise=263086 frozen=2
+0x004963e0	config_log_error	ConfigLogError	int_scalar	C4	DEGENERATE	DEGENERATE	trivial	null	import_extra	imp_other	path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=241 frozen=2
+0x004996f0	window_show	WindowShow	int_scalar	C3	DEGENERATE	DEGENERATE	trivial	null	import_extra	imp_other		
+0x00499740	set_control_text_from_resource_i3	SetControlTextFromResource_i3	int_scalar	C4	DEGENERATE	DEGENERATE	trivial	null	import_extra	imp_other	path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=301822 frozen=2
+0x0049fa40	particle_const_zero_ret_0049fa40	FUN_0049fa40	int_scalar	C3	DEGENERATE	DEGENERATE	trivial	null				calls=10 flips=0 changed=0 flip=0x00000000 noise=301822 frozen=2
+0x004a31b1	crt_exit_process_j5	CrtExitProcess_j5	int_scalar	C3	DEGENERATE	DEGENERATE	trivial	null	import_extra	imp_other		calls=0 flips=0 changed=0 flip=0x00000000 noise=241 frozen=2
+0x004a3258	crt_exit_core	CrtExitCore	int_scalar	C3	DEGENERATE	DEGENERATE	trivial	null	import_extra	imp_other		calls=0 flips=0 changed=0 flip=0x00000000 noise=301822 frozen=2
+0x004a332b	crt_exit_no_return_j5	CrtExitNoReturn_j5	int_scalar	C3	DEGENERATE	DEGENERATE	trivial	null	import_extra	imp_other		calls=0 flips=0 changed=0 flip=0x00000000 noise=263086 frozen=2
+0x004a334d	crt_exit_normal_j5	CrtExitNormal_j5	int_scalar	C3	DEGENERATE	DEGENERATE	trivial	null	import_extra	imp_other		calls=0 flips=0 changed=0 flip=0x00000000 noise=244 frozen=2
+0x004c19f0	rw_vtable_slot07_call	RwVtableSlot07Call	int_scalar	C3	DEGENERATE	DEGENERATE	trivial					calls=10 flips=0 changed=0 flip=0x00000000 noise=241 frozen=2
+0x004c1a00	intro_splash_vtable_slot6	IntroSplashVtableSlot6	int_scalar	C3	DEGENERATE	DEGENERATE	trivial	ret				calls=10 flips=0 changed=0 flip=0x00000000 noise=263086 frozen=2
+0x004c1bb0	intro_splash_render_state	IntroSplashRenderState	int_scalar	C3	DEGENERATE	DEGENERATE	trivial	null,ret				calls=0 flips=0 changed=0 flip=0x00000000 noise=301822 frozen=2
+0x004c2f30	rw_engine_set_video_mode	RwEngineSetVideoMode	int_scalar	C3	DEGENERATE	DEGENERATE	trivial	null				calls=10 flips=0 changed=0 flip=0x00000000 noise=241 frozen=2
+0x00550b00	vfs_file_exists	VfsFileExists	int_scalar	C4	DEGENERATE	DEGENERATE	trivial	null			path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=241 frozen=2
+0x00550bc0	vfs_stream_get_type	VfsStreamGetType	int_scalar	C4	DEGENERATE	DEGENERATE	trivial	null,ret			path2	calls=0 flips=0 changed=0 flip=0x00000000 noise=301822 frozen=2
+0x005aa8a0	audio_list_search	FUN_005aa8a0	int_scalar	C3	GREEN	GREEN	trivial	ret				calls=16 flips=0 changed=0 flip=0x00000000 noise=263086 frozen=2
+0x005abcb0	audio_wave_node_free	AudioWaveNodeFree	int_scalar	C3	DEGENERATE	DEGENERATE	trivial		heap_extra	rw_free		calls=10 flips=0 changed=0 flip=0x00000000 noise=244 frozen=2
+0x005abf80	audio_wave_vtable_slot_1c_dispatch	AudioWaveVtableSlot1cDispatch	int_scalar	C3	DEGENERATE	DEGENERATE	trivial					calls=10 flips=0 changed=0 flip=0x00000000 noise=241 frozen=2
+0x005ac740	audio_sub_struct_buf_cleanup	AudioSubStructBufCleanup	int_scalar	C3	DEGENERATE	DEGENERATE	trivial		heap_extra	rw_free		calls=10 flips=0 changed=0 flip=0x00000000 noise=263086 frozen=2
+0x005ac900	audio_context_lookup	AudioContextLookup	int_scalar	C3	DEGENERATE	DEGENERATE	trivial	ret				calls=10 flips=0 changed=0 flip=0x00000000 noise=241 frozen=2
+0x005ae650	audio_pool_construct	AudioPoolConstruct	int_scalar	C3	DEGENERATE	DEGENERATE	trivial	null,ret	heap_extra	rw_alloc,rw_free		calls=0 flips=0 changed=0 flip=0x00000000 noise=241 frozen=2
+0x005ae780	audio_pool_destroy	AudioPoolDestroy	int_scalar	C3	DEGENERATE	DEGENERATE	trivial		heap_extra	rw_free		calls=10 flips=0 changed=0 flip=0x00000000 noise=301822 frozen=2
+0x005ae800	audio_pool_block_alloc	AudioPoolBlockAlloc	int_scalar	C3	DEGENERATE	DEGENERATE	trivial	null,ret	heap_extra	rw_alloc		calls=0 flips=0 changed=0 flip=0x00000000 noise=244 frozen=2
+0x005baf90	audio_dsound_release	AudioDSoundRelease	int_scalar	C3	DEGENERATE	DEGENERATE	trivial	ret				calls=10 flips=0 changed=0 flip=0x00000000 noise=301822 frozen=2
+0x00493480	fps_discretise	FpsDiscretise	near_leaf_seed_multi_obs	C3	GREEN	GREEN	nontrivial	field_first,field_last	import_extra	imp_other	C4-scenario,path2	calls=4 flips=4 changed=9 flip=0x00771984 noise=0 frozen=1
+0x00403160	sub_00403160_submode0b_viewport	Sub00403160_SubMode0BViewport	none	C4	DEGENERATE	DEGENERATE	trivial				C4-scenario,path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=186 frozen=1
+0x00404e50	save_load	SaveLoad	none	C4	DEGENERATE	DEGENERATE	trivial	null	heap_extra	rw_alloc,rw_free	path2	calls=2 flips=0 changed=0 flip=0x00000000 noise=269 frozen=2
+0x00404f50	save_write	SaveWrite	none	C4	DEGENERATE	DEGENERATE	trivial	null	heap_extra	rw_alloc,rw_free	path2	calls=2 flips=0 changed=0 flip=0x00000000 noise=167 frozen=1
+0x004099a0	autosave_trigger	Save::AutosaveTrigger	none	C4	DEGENERATE	DEGENERATE	trivial	null	import_extra	imp_other	path2	calls=5 flips=0 changed=0 flip=0x00000000 noise=262 frozen=2
+0x0040d020	track_loadbyindex_40d020	FUN_0040d020	none	C3	ERROR	SKIP	missing			imp_other,rw_alloc,rw_free	C4-scenario,path2,race	
+0x0040dd60	guard_concluded_and_p1_won	Race::GuardConcludedAndP1Won	none	C4	DEGENERATE	DEGENERATE	trivial	null			path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=186 frozen=1
+0x0040de00	thunk_replay_save	thunk_FUN_004117b0	none	C4	DEGENERATE	DEGENERATE	trivial	null	import_extra	imp_other	path2,replay	calls=10 flips=0 changed=0 flip=0x00000000 noise=263077 frozen=2
+0x0040dfc0	hud_ingame_dispatch	HudIngameDispatch	none	C3	DEGENERATE	DEGENERATE	trivial	null				calls=10 flips=0 changed=0 flip=0x00000000 noise=304 frozen=2
+0x00411170	time_trial_record_playback	TimeTrialRecordPlayback	none	C3	DEGENERATE	DEGENERATE	trivial	null,field_first,field_last	heap_extra,import_extra	imp_other,rw_alloc		calls=10 flips=10 changed=1 flip=0x007739f8 noise=241 frozen=2
+0x004114e0	replay_cleanup	ReplayCleanup	none	C3	DEGENERATE	DEGENERATE	trivial	null	heap_extra	rw_free	replay	calls=10 flips=0 changed=0 flip=0x00000000 noise=269 frozen=2
+0x00411580	replay_get_best_time	ReplayGetBestTime	none	C3	DEGENERATE	DEGENERATE	trivial	null			replay	calls=10 flips=0 changed=0 flip=0x00000000 noise=167 frozen=1
+0x004115c0	replay_get_current_time	ReplayGetCurrentTime	none	C3	DEGENERATE	DEGENERATE	trivial	null,field_first			replay	calls=10 flips=1 changed=0 flip=0x03e11090 noise=186 frozen=1
+0x00411600	replay_record_frame	ReplayRecordFrame	none	C3	DEGENERATE	DEGENERATE	trivial	null	heap_extra,import_extra	imp_other,rw_alloc	replay	calls=10 flips=0 changed=0 flip=0x00000000 noise=235 frozen=2
+0x00411750	replay_start_lap	ReplayStartLap	none	C3	DEGENERATE	DEGENERATE	trivial	null			replay	calls=10 flips=0 changed=0 flip=0x00000000 noise=167 frozen=1
+0x004117b0	replay_save	ReplaySave	none	C3	DEGENERATE	DEGENERATE	trivial	null	import_extra	imp_other	replay	calls=10 flips=0 changed=0 flip=0x00000000 noise=269 frozen=2
+0x0041a3e0	hud_dispatch_mode10	HudDispatchMode10	none	C3	ERROR	SKIP	trivial					
+0x0041b630	hud_slot_loop_b630	HudSlotLoopB630	none	C3	DEGENERATE	DEGENERATE	trivial	null				calls=10 flips=0 changed=0 flip=0x00000000 noise=167 frozen=1
+0x0041c0c0	hud_dispatch_slot2	HudDispatchSlot2	none	C3	ERROR	SKIP	trivial					
+0x0041c300	hud_dispatch_mode5	HudDispatchMode5	none	C3	ERROR	SKIP	trivial					
+0x0041ccc0	hud_slot_loop_ccc0	HudSlotLoopCcc0	none	C3	DEGENERATE	DEGENERATE	trivial	null				calls=10 flips=0 changed=0 flip=0x00000000 noise=186 frozen=1
+0x0041db80	sub_0041db80_hud_threshold_dispatch	Sub0041db80_HudThresholdDispatch	none	C4	DEGENERATE	DEGENERATE	trivial				C4-scenario,path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=241 frozen=2
+0x00423b00	frontend_input_dispatch	FUN_00423b00	none	C3	DEGENERATE	DEGENERATE	missing				shadow	calls=10 flips=0 changed=0 flip=0x00000000 noise=269 frozen=2
+0x00425ef0	active_slot_count	ActiveSlotCount	none	C3	DEGENERATE	DEGENERATE	trivial	null				calls=10 flips=0 changed=0 flip=0x00000000 noise=164 frozen=2
+0x00426c10	timer_dispatch_10	TimerDispatch10	none	C4	DEGENERATE	DEGENERATE	trivial				C4-scenario,path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=266 frozen=2
+0x00426c30	timer_dispatch_30	TimerDispatch30	none	C4	DEGENERATE	DEGENERATE	trivial				C4-scenario,path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=263086 frozen=2
+0x00426c70	timer_dispatch_70	TimerDispatch70	none	C4	DEGENERATE	DEGENERATE	trivial				C4-scenario,path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=244 frozen=2
+0x00426dc0	frontend_raycast_forward	FrontendRaycastForward	none	C3	DEGENERATE	DEGENERATE	trivial					calls=10 flips=0 changed=0 flip=0x00000000 noise=186 frozen=1
+0x00426e00	track_loader_float_get	TrackLoaderFloatGet	none	C3	DEGENERATE	DEGENERATE	trivial	null				calls=10 flips=0 changed=0 flip=0x00000000 noise=263086 frozen=2
+0x00427840	font_text_utf16_widen_copy	FontText_UTF16WidenCopy	none	C4	DEGENERATE	DEGENERATE	trivial				C4-scenario,path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=304 frozen=2
+0x00427ad0	menu_menus_bb	MenuMenusBB	none	C3	DEGENERATE	DEGENERATE	trivial		heap_extra	rw_alloc		calls=10 flips=0 changed=0 flip=0x00000000 noise=186 frozen=1
+0x004282a0	menu_menus_ba	MenuMenusBA	none	C3	DEGENERATE	DEGENERATE	trivial					calls=10 flips=0 changed=0 flip=0x00000000 noise=167 frozen=1
+0x004295a0	hud_dual_label_render	HudDualLabelRender	none	C4	DEGENERATE	DEGENERATE	trivial				C4-scenario,path2	calls=5 flips=0 changed=0 flip=0x00000000 noise=186 frozen=1
+0x004298c0	menu_quad_global_zero	Clear67d99c_x4	none	C3	DEGENERATE	DEGENERATE	trivial	null				calls=10 flips=0 changed=0 flip=0x00000000 noise=228 frozen=2
+0x00429a30	menu_menus_be	MenuMenusBE	none	C3	DEGENERATE	DEGENERATE	trivial	null				calls=10 flips=0 changed=0 flip=0x00000000 noise=269 frozen=2
+0x00429aa0	game_state_slots_fill	GameStateSlotsFill	none	C4	DEGENERATE	DEGENERATE	trivial	null			C4-scenario,path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=304 frozen=2
+0x0042ae10	menu_readiness_check_a	MenuReadinessCheckA	none	C4	DEGENERATE	DEGENERATE	trivial	null			path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=167 frozen=1
+0x0042aeb0	menu_readiness_check_b	MenuReadinessCheckB	none	C3	DEGENERATE	DEGENERATE	trivial	null,field_last				calls=10 flips=0 changed=0 flip=0x00000000 noise=186 frozen=1
+0x0042af50	menu_readiness_check	MenuReadinessCheckC	none	C3	DEGENERATE	DEGENERATE	trivial	null				calls=10 flips=0 changed=0 flip=0x00000000 noise=269 frozen=2
+0x0042af50	menu_readiness_check_c	MenuReadinessCheckC	none	C3	DEGENERATE	DEGENERATE	trivial	null				calls=10 flips=0 changed=0 flip=0x00000000 noise=191 frozen=2
+0x0042aff0	menu_button_detect_a	FUN_0042aff0	none	C4	DEGENERATE	DEGENERATE	trivial	null			C4-scenario,path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=167 frozen=1
+0x0042b180	menu_button_detect_b	FUN_0042b180	none	C4	DEGENERATE	DEGENERATE	trivial	null			C4-scenario,path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=186 frozen=1
+0x0042b310	menu_button_detect_c	FUN_0042b310	none	C4	DEGENERATE	DEGENERATE	trivial	null			C4-scenario,path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=304 frozen=2
+0x0042b540	menu_button_detect_d	FUN_0042b540	none	C3	DEGENERATE	DEGENERATE	trivial	null				calls=10 flips=0 changed=0 flip=0x00000000 noise=269 frozen=2
+0x0042b770	menu_button_detect_e	FUN_0042b770	none	C4	DEGENERATE	DEGENERATE	trivial	null			C4-scenario,path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=167 frozen=1
+0x0042b960	car_slot_init_1p	FUN_0042b960	none	C3	DEGENERATE	DEGENERATE	trivial	null,field_first,field_last				calls=10 flips=10 changed=1 flip=0x007f1a14 noise=198 frozen=2
+0x0042bde0	hud_rect_emitter5	HudRectEmitter5	none	C3	RED	DEGENERATE	trivial					calls=10 flips=0 changed=0 flip=0x00000000 noise=269 frozen=2
+0x0042e3a0	menu_chrome_shell_a	MenuChromeShellA	none	C4	DEGENERATE	DEGENERATE	trivial	null,field_first,field_last			C4-scenario,path2	calls=10 flips=10 changed=2 flip=0x007d709d noise=186 frozen=1
+0x0042e5b0	menu_chrome_shell_b	FUN_0042e5b0	none	C3	DEGENERATE	DEGENERATE	trivial	null,field_first,field_last			C4-scenario	calls=10 flips=1 changed=0 flip=0x007d70ce noise=304 frozen=2
+0x0042f0c0	menu_sprite_dispatch_a	MenuSpriteDispatchA	none	C3	DEGENERATE	DEGENERATE	trivial	null				calls=10 flips=0 changed=0 flip=0x00000000 noise=167 frozen=1
+0x0042f6b0	menu_mode_sync	MenuModeSync	none	C3	DEGENERATE	DEGENERATE	trivial	null				calls=10 flips=0 changed=0 flip=0x00000000 noise=167 frozen=1
+0x0042f8d0	menu_menus_bc	MenuMenusBC	none	C3	DEGENERATE	DEGENERATE	trivial					
+0x0042fb70	menu_sprite_dispatch_b	MenuSpriteDispatchB	none	C3	DEGENERATE	DEGENERATE	trivial	null				calls=10 flips=0 changed=0 flip=0x00000000 noise=186 frozen=1
+0x0042fe50	race_end_alt_flag_if_end_mode	RaceEndAltFlagIfEndMode	none	C4	DEGENERATE	DEGENERATE	trivial	null			C4-scenario,path2,race	calls=10 flips=0 changed=0 flip=0x00000000 noise=269 frozen=2
+0x0042fe90	menu_sprite_dispatch_c	MenuSpriteDispatchC	none	C3	DEGENERATE	DEGENERATE	trivial	null				calls=10 flips=0 changed=0 flip=0x00000000 noise=234 frozen=2
+0x00430290	championship_complete	Championship::Complete	none	C4	DEGENERATE	DEGENERATE	trivial	null	import_extra	imp_other	path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=266 frozen=2
+0x00430b90	progress_bar_set_a	FUN_00430b90	none	C4	DEGENERATE	DEGENERATE	trivial	null			path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=262507 frozen=2
+0x0043c000	timer_slot_tick_dispatcher	TimerSlotTickDispatcher	none	C4	DEGENERATE	DEGENERATE	trivial	null	heap_extra	rw_alloc,rw_free	C4-scenario,path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=241 frozen=2
+0x0045b350	rw_init_null_stub	RwInitNullStub	none	C3	DEGENERATE	DEGENERATE	trivial	null,field_first				calls=10 flips=1 changed=0 flip=0x03e11090 noise=186 frozen=1
+0x00475a60	pending_op_queue_flush	PendingOpQueueFlush	none	C4	DEGENERATE	DEGENERATE	trivial	null			C4-scenario,path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=167 frozen=1
+0x00492270	subsystem_init	SubsystemInit	none	C4	DEGENERATE	DEGENERATE	trivial	null	heap_extra,import_extra	imp_other,rw_alloc,rw_free	C4-scenario	calls=10 flips=0 changed=0 flip=0x00000000 noise=269 frozen=2
+0x00493540	launch_lang_gate	thunk_LaunchLangGate	none	C3	DEGENERATE	DEGENERATE	trivial	ret	import_extra	imp_other		calls=10 flips=0 changed=0 flip=0x00000000 noise=269 frozen=2
+0x00495530	create_dinput_object	CreateDInputObject	none	C3	DEGENERATE	DEGENERATE	trivial	ret	import_extra	imp_other		calls=10 flips=0 changed=0 flip=0x00000000 noise=269 frozen=2
+0x004955b0	create_dinput_object_bool	DInputInitPredicate	none	C3	DEGENERATE	DEGENERATE	trivial	ret	import_extra	imp_other		calls=10 flips=0 changed=0 flip=0x00000000 noise=167 frozen=1
+0x00498950	config_load	ConfigLoad	none	C4	GREEN	GREEN	nontrivial	field_first,field_last	import_extra	imp_other	path2	calls=10 flips=10 changed=1 flip=0x007739f8 noise=167 frozen=1
+0x004989b0	config_save	ConfigSave	none	C4	GREEN	GREEN	nontrivial	field_first,field_last	import_extra	imp_other	path2	calls=10 flips=10 changed=1 flip=0x007739f8 noise=283 frozen=2
+0x00498d20	read_mode_from_combo_j5	ReadModeFromCombo_j5	none	C4	DEGENERATE	DEGENERATE	trivial	null	import_extra	imp_other	path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=230 frozen=2
+0x00498d60	populate_mode_combo_s2	PopulateModeCombo	none	C4	DEGENERATE	DEGENERATE	trivial	null	import_extra	imp_other	path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=186 frozen=1
+0x00498f60	video_dialog_init_i3	VideoDialogInit_i3	none	C4	DEGENERATE	DEGENERATE	trivial	null	import_extra	imp_other	path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=241 frozen=2
+0x00499170	subsystem_selection_changed_i3	SubsystemSelectionChanged_i3	none	C4	DEGENERATE	DEGENERATE	trivial	null	import_extra	imp_other	path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=264 frozen=2
+0x004991f0	video_settings_dlg_proc_s2	VideoSettingsDlgProc	none	C4	DEGENERATE	DEGENERATE	trivial	null	import_extra	imp_other	path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=262505 frozen=2
+0x00499690	window_msg_pump	WindowMsgPump	none	C3	DEGENERATE	DEGENERATE	trivial	null	import_extra	imp_other		calls=10 flips=0 changed=0 flip=0x00000000 noise=244 frozen=2
+0x004a78b0	crt_pre_init_loop	CrtPreInitLoop	none	C3	RED	GREEN	nontrivial				path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=301 frozen=2
+0x004abc53	crt_set_envp	__setenvp	none	C3	ERROR	SKIP	missing			crt_alloc,crt_free,imp_other		
+0x004b3b70	file_read_wrapper_i3	FileReadWrapper_i3	none	C4	DEGENERATE	DEGENERATE	trivial	null	heap_extra,import_extra	imp_other,rw_alloc,rw_free	path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=273 frozen=2
+0x004b3bb0	file_write_wrapper_i3	FileWriteWrapper_i3	none	C4	DEGENERATE	DEGENERATE	trivial	null	heap_extra,import_extra	imp_other,rw_alloc,rw_free	path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=269 frozen=2
+0x004c2e40	rw_engine_get_current_sub_system	RwEngineGetCurrentSubSystem	none	C3	DEGENERATE	DEGENERATE	trivial	null				calls=10 flips=0 changed=0 flip=0x00000000 noise=263043 frozen=2
+0x004c5820	rw_tex_dictionary_get_current	FUN_004c5820	none	C4	DEGENERATE	DEGENERATE	trivial	null			C4-scenario	calls=10 flips=0 changed=0 flip=0x00000000 noise=186 frozen=1
+0x004cbe80	rw_stream_write_s2	RwStreamWrite	none	C4	DEGENERATE	DEGENERATE	trivial	null	heap_extra	rw_alloc	path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=167 frozen=1
+0x004cc6e0	rw_stream_write_chunked	FUN_004cc6e0	none	C4	DEGENERATE	DEGENERATE	trivial	null,ret	heap_extra	rw_alloc	C4-scenario,path2	calls=0 flips=0 changed=0 flip=0x00000000 noise=269 frozen=2
+0x004cd140	rw_render_command_buffer_reset	RwRenderCommandBufferReset	none	C3	DEGENERATE	DEGENERATE	trivial	null				calls=10 flips=0 changed=0 flip=0x00000000 noise=239 frozen=2
+0x00552c10	font_sys_init_render_state	FontSys_InitRenderState	none	C3	GREEN	GREEN	nontrivial	field_first,field_last	heap_extra	rw_alloc		calls=10 flips=10 changed=1 flip=0x00912a84 noise=194 frozen=1
+0x005aa0c0	audio_tree_walk_predicate_search	AudioTreeWalkPredicateSearch	none	C3	DEGENERATE	DEGENERATE	trivial	null,ret				calls=0 flips=0 changed=0 flip=0x00000000 noise=186 frozen=2
+0x005ab380	audio_rws_chunk_header_read	AudioRwsChunkHeaderRead	none	C3	DEGENERATE	DEGENERATE	trivial	null,ret				calls=0 flips=0 changed=0 flip=0x00000000 noise=167 frozen=1
+0x005ab410	audio_rws_chunk_type_seek	AudioRwsChunkTypeSeek	none	C3	DEGENERATE	DEGENERATE	trivial	null,ret				calls=0 flips=0 changed=0 flip=0x00000000 noise=172 frozen=2
+0x005addd0	audio_list_insert_head	AudioListInsertHead	none	C3	DEGENERATE	DEGENERATE	trivial	null	heap_extra	rw_alloc		calls=0 flips=0 changed=0 flip=0x00000000 noise=167 frozen=0
+0x005ae030	audio_sub_struct_cleanup	AudioSubStructCleanup	none	C3	GREEN	GREEN	nontrivial		heap_extra	rw_free		calls=10 flips=0 changed=0 flip=0x00000000 noise=167 frozen=1
+0x005ae050	audio_sub_struct_b_free	AudioSubStructBFree	none	C3	GREEN	GREEN	nontrivial		heap_extra	rw_free		calls=10 flips=0 changed=0 flip=0x00000000 noise=247 frozen=2
+0x005ae080	audio_sub_struct_a_free	AudioSubStructAFree	none	C3	GREEN	GREEN	nontrivial		heap_extra	rw_free		calls=10 flips=0 changed=0 flip=0x00000000 noise=169 frozen=2
+0x005ae920	audio_pool_free	AudioPoolFree	none	C3	DEGENERATE	DEGENERATE	trivial	null	heap_extra	rw_free		calls=0 flips=0 changed=0 flip=0x00000000 noise=185 frozen=2
+0x00472820	vec3_is_valid_non_tiny	FUN_00472820	ptr_arg_int_get	C3	GREEN	GREEN	nontrivial	field_first				calls=10 flips=1 changed=0 flip=0x0d470304 noise=736 frozen=2
+0x004dfa10	rgb_pack_encoder_4dfa10	FUN_004dfa10	ptr_arg_int_get	C3	GREEN	GREEN	nontrivial	field_first				calls=10 flips=1 changed=0 flip=0x0d480c6c noise=736 frozen=2
+0x004dfa40	bgra_reorder_4dfa40	FUN_004dfa40	ptr_arg_int_get	C3	GREEN	GREEN	nontrivial	field_first				calls=10 flips=1 changed=0 flip=0x0d056d34 noise=286395 frozen=2
+0x004dfa70	pix_read_u32	FUN_004dfa70	ptr_arg_int_get	C3	GREEN	GREEN	nontrivial	field_first				calls=10 flips=1 changed=0 flip=0x048296ac noise=38 frozen=1
+0x00551180	rtfs_handler_cancel	RtFSHandlerCancel	ptr_arg_int_get	C3	GREEN	GREEN	nontrivial	field_first,field_last				calls=5 flips=5 changed=4 flip=0x0d7729c0 noise=66 frozen=1
+0x005514e0	rtfshandler_is_eof	RtFSHandler_IsEOF	ptr_arg_int_get	C3	GREEN	GREEN	nontrivial	field_first,field_last				calls=4 flips=1 changed=0 flip=0x08943504 noise=38 frozen=1
+0x00426ba0	hud_draw_enabled	HudDrawEnabled	read_global	C3	ERROR	SKIP	missing					
+0x00429870	lap_time_a_less_than_b	LapTimeALessThanB	read_global	C3	GREEN	GREEN	trivial	null				calls=10 flips=0 changed=0 flip=0x00000000 noise=244 frozen=2
+0x0042f6a0	hud_sub_mode_get	GetRaceSubMode	read_global	C3	ERROR	SKIP	nontrivial				path2,race	
+0x00498bc0	video_get_render_width	VideoGetRenderWidth	read_global	C4	RED	GREEN	nontrivial				C4-scenario,path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=301155 frozen=2
+0x00498bd0	video_get_render_height	VideoGetRenderHeight	read_global	C4	RED	GREEN	nontrivial				C4-scenario,path2	calls=10 flips=0 changed=0 flip=0x00000000 noise=241 frozen=2
+0x00405400	clear_639d70_x3	Clear639d70x3	scalars_to_scattered_globals	C3	GREEN	GREEN	trivial	null				calls=3 flips=0 changed=0 flip=0x00000000 noise=173 frozen=2
+0x0040d440	course_loadcurrent_40d440	FUN_0040d440	scalars_to_scattered_globals	C3	RED	RED	missing			imp_other	C4-scenario,path2,race	calls=3 flips=0 changed=0 flip=0x00000000 noise=47 frozen=1
+0x004298c0	clear_67d99c_x4	Clear67d99c_x4	scalars_to_scattered_globals	C3	GREEN	GREEN	trivial	null				calls=3 flips=0 changed=0 flip=0x00000000 noise=176 frozen=2
+0x0045c860	clear_88f0a0_x4	Clear88f0a0x4	scalars_to_scattered_globals	C3	GREEN	GREEN	trivial	null				calls=3 flips=0 changed=0 flip=0x00000000 noise=228 frozen=2
+0x004842b0	clear_4842b0	Clear4842b0	scalars_to_scattered_globals	C3	GREEN	GREEN	trivial	null				calls=5 flips=0 changed=0 flip=0x00000000 noise=163 frozen=2
+0x00495120	timer_qpf_store	TimerQpfStore	scalars_to_scattered_globals	C3	GREEN	GREEN	nontrivial		import_extra	imp_other	C4-scenario	calls=10 flips=0 changed=0 flip=0x00000000 noise=302 frozen=2
+0x00496d60	pipeline_fragment_4eb3c0_create	PipelineFragment4eb3c0Create	standin_object_call	C3	GREEN	GREEN	missing	field_first,field_last		rw_alloc,rw_free	path2	calls=5 flips=3 changed=1 flip=0x00618744 noise=202 frozen=2
+0x00496db0	pipeline_fragment_4eb9d0_create	PipelineFragment4eb9d0Create	standin_object_call	C3	GREEN	GREEN	missing	field_first,field_last		rw_alloc,rw_free	path2	calls=5 flips=3 changed=1 flip=0x006187a4 noise=365 frozen=2
+0x0049f180	com_ref_release14	FUN_0049f180	struct_call_observe	C3	GREEN	GREEN	nontrivial		import_extra	imp_other		calls=5 flips=5 changed=1 flip=0x0b40a72c noise=303010 frozen=2
+0x0049f2b0	com_ref_release10	FUN_0049f2b0	struct_call_observe	C3	GREEN	GREEN	nontrivial		import_extra	imp_other		calls=5 flips=5 changed=1 flip=0x0f8f0950 noise=303877 frozen=2
+0x004b4140	render_elem_array_copy_all	FUN_004b4140	struct_call_observe	C3	GREEN	GREEN	nontrivial	null				calls=5 flips=0 changed=0 flip=0x00000000 noise=38 frozen=1
+0x00413bb0	sprite_63bd50_reset	Fwd4768c0_63bd50	stub_dispatch_observe	C3	GREEN	GREEN	nontrivial		heap_extra	rw_free	path2	calls=3 flips=0 changed=0 flip=0x00000000 noise=241 frozen=2
+0x00487140	pool_703068_reset	Fwd4768c0_703068	stub_dispatch_observe	C3	GREEN	GREEN	nontrivial		heap_extra	rw_free	path2	calls=3 flips=0 changed=0 flip=0x00000000 noise=266162 frozen=2
+0x004c2d90	rw_engine_register_plugin	RwEngineRegisterPlugin	stub_dispatch_observe	C3	GREEN	GREEN	nontrivial		heap_extra	rw_alloc,rw_free	C4-scenario,path2	calls=6 flips=0 changed=0 flip=0x00000000 noise=241 frozen=2
+0x004d8060	rw_plugin_list_dispatch3	RwPluginListDestructDispatch	stub_dispatch_observe	C3	GREEN	GREEN	nontrivial	ret,field_last			path2	calls=5 flips=0 changed=0 flip=0x00000000 noise=733 frozen=2
+0x004d8090	rw_plugin_list_dispatch	RwPluginListCopyDispatch	stub_dispatch_observe	C3	GREEN	GREEN	nontrivial	ret,field_last			path2	calls=5 flips=0 changed=0 flip=0x00000000 noise=162 frozen=1
+0x004d8550	rw_pipe_module_dtor	RwPipeModuleDtor	stub_dispatch_observe	C3	GREEN	GREEN	nontrivial		heap_extra	rw_free	path2,replay	calls=6 flips=0 changed=0 flip=0x00000000 noise=301822 frozen=2
+0x004f0d80	d3d9_decl_element_forall	CountedStride0cForAll	stub_dispatch_observe	C3	GREEN	GREEN	nontrivial	ret,field_first			path2	calls=6 flips=1 changed=0 flip=0x0d654348 noise=266226 frozen=2
+0x0041e9b0	track_node_field_cmp10	TrackNodeFieldCmp10	track_record_deref	C3	GREEN	GREEN	trivial	null				calls=10 flips=0 changed=0 flip=0x00000000 noise=286395 frozen=2
+0x00403d30	render_00403d30	Render_00403d30	void	C3	DEGENERATE	DEGENERATE	trivial	null,field_first,field_last			shadow	calls=10 flips=2 changed=0 flip=0x007d70da noise=301822 frozen=2
+0x00403ed0	render_00403ed0	Render_00403ed0	void	C3	DEGENERATE	DEGENERATE	trivial	null			shadow	calls=10 flips=0 changed=0 flip=0x00000000 noise=162 frozen=1
+0x0040df60	conditional_render_sub_pass	ConditionalRenderSubPass	void	C3	DEGENERATE	DEGENERATE	trivial	null				calls=10 flips=0 changed=0 flip=0x00000000 noise=348645 frozen=2
+0x0046cbe0	vehicle_car_state_set	VehicleCarStateSet	void	C3	DEGENERATE	DEGENERATE	trivial	null				calls=10 flips=0 changed=0 flip=0x00000000 noise=241 frozen=2
+0x004921d0	display_init	DisplayInit	void	C4	DEGENERATE	DEGENERATE	trivial	null,field_first,field_last	heap_extra,import_extra	imp_other,rw_alloc,rw_free	C4-scenario	calls=10 flips=10 changed=24 flip=0x0067f18c noise=244 frozen=2
+0x004955b0	dinput_init_predicate	DInputInitPredicate	void	C3	DEGENERATE	DEGENERATE	trivial	ret	import_extra	imp_other		calls=10 flips=0 changed=0 flip=0x00000000 noise=265 frozen=2
+0x004a31f3	crt_pre_init	CrtPreInit	void	C3	DEGENERATE	DEGENERATE	trivial	null,field_first,field_last				calls=10 flips=10 changed=8 flip=0x00616038 noise=301822 frozen=2
+0x00401ee0	entity_table_select_update	EntityTableSelectUpdate	void_setter_observe	C3	RED	RED	nontrivial					calls=4 flips=0 changed=0 flip=0x00000000 noise=256 frozen=2
+0x004769a0	particle_emitter_set_position	ParticleEmitter_SetPosition	void_setter_observe	C3	DEGENERATE	DEGENERATE	trivial					calls=10 flips=10 changed=4 flip=0x00692528 noise=279 frozen=2
+0x004769f0	particle_emitter_set_colour	ParticleEmitter_SetColour	void_setter_observe	C3	GREEN	GREEN	nontrivial	null				calls=10 flips=0 changed=0 flip=0x00000000 noise=256 frozen=2
+0x00476a40	particle_emitter_set_rgba	ParticleEmitter_SetRGBA	void_setter_observe	C3	DEGENERATE	DEGENERATE	trivial					calls=10 flips=10 changed=4 flip=0x00692598 noise=256 frozen=2
+0x004d7200	RenderState_SetOpcode34	FUN_004d7200	void_setter_observe	C3	RED	RED	nontrivial					calls=12 flips=0 changed=0 flip=0x00000000 noise=216 frozen=2
+0x004d7250	RenderState_SetOpcode35	FUN_004d7250	void_setter_observe	C3	RED	RED	nontrivial					calls=14 flips=0 changed=0 flip=0x00000000 noise=224 frozen=2
+0x004d72a0	RenderState_SetOpcode36	FUN_004d72a0	void_setter_observe	C3	RED	RED	nontrivial					calls=14 flips=0 changed=0 flip=0x00000000 noise=241 frozen=2
+0x004d72f0	RenderState_SetOpcode37	FUN_004d72f0	void_setter_observe	C3	RED	RED	nontrivial					calls=14 flips=0 changed=0 flip=0x00000000 noise=234 frozen=2
+0x004d7340	RenderState_SetOpcode38	FUN_004d7340	void_setter_observe	C3	RED	RED	nontrivial					calls=14 flips=0 changed=0 flip=0x00000000 noise=259 frozen=2
+0x00409900	loading_state2_enter	LoadingState2Enter	void_write_observe	C4	GREEN	GREEN	nontrivial		import_extra	imp_other	C4-scenario,path2	calls=10 flips=10 changed=4 flip=0x008a9584 noise=266188 frozen=2
+0x00411d60	replay_check_timer	ReplayCheckTimer	void_write_observe	C3	GREEN	GREEN	nontrivial	null			path2,replay	calls=10 flips=0 changed=0 flip=0x00000000 noise=241 frozen=2
+0x00422120	timer_init_loop	TimerInitLoop	void_write_observe	C3	GREEN	GREEN	nontrivial	null				calls=10 flips=0 changed=0 flip=0x00000000 noise=348645 frozen=2
+0x0042f7b0	frontend_cursor_update	FrontendCursorUpdate	void_write_observe	C3	GREEN	GREEN	missing	null			path2,race	calls=10 flips=0 changed=0 flip=0x00000000 noise=160 frozen=2
+0x00486610	particle_burst_4	FUN_00486610	void_write_observe	C3	GREEN	GREEN	nontrivial	field_last				calls=10 flips=5 changed=73 flip=0x006fe780 noise=241 frozen=2
+0x00492770	main_loop_init	MainLoopInit	void_write_observe	C4	GREEN	GREEN	trivial	ret,field_first	heap_extra,import_extra	imp_other,rw_alloc	C4-scenario,path2	calls=10 flips=10 changed=5 flip=0x007e9dc0 noise=241 frozen=2
+0x00552d70	viewport_stack_pop	ViewportStackPop	void_write_observe	C3	GREEN	GREEN	nontrivial	null				calls=10 flips=0 changed=0 flip=0x00000000 noise=301822 frozen=2
