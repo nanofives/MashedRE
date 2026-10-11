@@ -40,5 +40,5 @@ NULL), returning the block. U-4391 (resolved 2026-09-11) established that 0x004b
 
 ## Naming
 
-The globals 0x00691600..0x00691614 and the record fields have no semantic names; this is filed as U-9652 (naming only,
+The globals 0x00691600..0x00691614 and the record fields have no semantic names; this is filed as U-9654 (naming only,
 Blocks: nothing). The function names are mechanical.
