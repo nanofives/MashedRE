@@ -1,0 +1,139 @@
+rva	subsystem	conf	name	in_callers	in_coderef	cluster_tables	ext_callers	ext_coderef	ext_tables	out_callees	out_callee_bands	game_callees	imports	fits	game_callees2	data_refs	data_shared_with_first_party	fits2
+0049c5d0	particle	C2	FUN_0049c5d0	1	1	0x5d0dc0								yes		0x5d0afc 0x5d0bbc	[('0x5d0bbc', ['0x4944c0', '0x494c80'])]	NO
+0049c620	particle	C2	FUN_0049c620	2	2								GetCurrentThreadId GetQueueStatus PeekMessageA PostThreadMessageA Sleep	yes				yes
+0049c690	particle	C3	FUN_0049c690	1	1									yes				yes
+0049c6a0	particle	C2	FUN_0049c6a0	0	0		0x5ca3f9 0x5ca404 0x5ca412	0x5ca3f9 0x5ca404 0x5ca412					DeleteCriticalSection	NO				yes
+0049c6b0	particle	C2	FUN_0049c6b0	1	1								EnterCriticalSection	yes				yes
+0049c6d0	particle	C2	FUN_0049c6d0	0	0		0x5ca340 0x5ca360 0x5ca368 0x5ca380 0x5ca430 0x5ca450 0x5ca470 0x5ca478 0x5ca490 0x5ca498 0x5ca4a0 0x5ca4a8 0x5ca4c0 0x5ca4c8 0x5ca4e0 0x5ca500 0x5ca560 0x5ca600 0x5ca620	0x5ca340 0x5ca360 0x5ca368 0x5ca380 0x5ca430 0x5ca450 0x5ca470 0x5ca478 0x5ca490 0x5ca498 0x5ca4a0 0x5ca4a8 0x5ca4c0 0x5ca4c8 0x5ca4e0 0x5ca500 0x5ca560 0x5ca600 0x5ca620					LeaveCriticalSection	NO				yes
+0049c6e0	particle	C2	FUN_0049c6e0	0	0	0x5d0d84			(6094128, [4799488, 4799584, 4803264, 4803360])					NO		0x5d0cbc		yes
+0049c750	particle	C2	FUN_0049c750	0	0	0x5d0dc0 0x5d0eb0			(6093288, [4799488, 4799584]) (6094192, [4803264, 4803360])					NO				yes
+0049c770	particle	C2	FUN_0049c770	0	0	0x5d0dc0 0x5d0eb0			(6093288, [4799488, 4799584]) (6094192, [4803264, 4803360])					NO				yes
+0049c800	particle	C3	FUN_0049c800	2	2									yes				yes
+0049c810	particle	C2	FUN_0049c810	0	0	0x5d0dc0 0x5d0eb0			(6093288, [4799488, 4799584]) (6094192, [4803264, 4803360])				ResetEvent	NO				yes
+0049c840	particle	C2	FUN_0049c840	1	1	0x5d0dc0							SetEvent	yes				yes
+0049c900	particle	C2	FUN_0049c900	0	0	0x5d0dc0 0x5d0eb0			(6093288, [4799488, 4799584]) (6094192, [4803264, 4803360])				EnterCriticalSection LeaveCriticalSection	NO				yes
+0049c930	particle	C2	FUN_0049c930	0	0	0x5d0dc0 0x5d0eb0			(6093288, [4799488, 4799584]) (6094192, [4803264, 4803360])				EnterCriticalSection LeaveCriticalSection	NO				yes
+0049c990	particle	C2	FUN_0049c990	1	1	0x5d0dc0 0x5d0eb0			(6093288, [4799488, 4799584]) (6094192, [4803264, 4803360])				EnterCriticalSection LeaveCriticalSection	NO				yes
+0049ca00	particle	C2	FUN_0049ca00	1	1								EnterCriticalSection LeaveCriticalSection	yes				yes
+0049ca60	particle	C2	FUN_0049ca60	2	2								EnterCriticalSection LeaveCriticalSection	yes				yes
+0049cb00	particle	C2	FUN_0049cb00	2	2								timeKillEvent	yes				yes
+0049cb20	particle	C2	FUN_0049cb20	0	0	0x5d0dc0 0x5d0eb0			(6093288, [4799488, 4799584]) (6094192, [4803264, 4803360])				EnterCriticalSection LeaveCriticalSection SetEvent timeBeginPeriod	NO				yes
+0049cbd0	particle	C2	FUN_0049cbd0	1	1	0x5d0dc0 0x5d0eb0			(6093288, [4799488, 4799584]) (6094192, [4803264, 4803360])				EnterCriticalSection LeaveCriticalSection timeEndPeriod	NO				yes
+0049cc40	particle	C2	FUN_0049cc40	4	4								EnterCriticalSection LeaveCriticalSection	yes				yes
+0049cc80	particle	C2	FUN_0049cc80	1	1									yes		0x5d0cc4 0x5d0ce8 0x5d0d00 0x5d0d48		yes
+0049ccd0	particle	C2	FUN_0049ccd0	0	0	0x5d0d00							EnterCriticalSection LeaveCriticalSection	yes				yes
+0049cd70	particle	C2	FUN_0049cd70	0	0	0x5d0d00							EnterCriticalSection LeaveCriticalSection	yes				yes
+0049ce10	particle	C2	FUN_0049ce10	0	0	0x5d0d00							EnterCriticalSection LeaveCriticalSection	yes				yes
+0049ceb0	particle	C2	FUN_0049ceb0	0	0	0x5d0d48								yes				yes
+0049cf00	particle	C2	FUN_0049cf00	0	0	0x5d0d00							CoTaskMemAlloc	yes		0x5d0cbc		yes
+0049cfb0	util	C2	FUN_0049cfb0	1	1	0x5d0eb0			(6093288, [4799488, 4799584]) (6094192, [4803264, 4803360])				timeGetTime	NO				yes
+0049d080	util	C2	FUN_0049d080	0	0	0x5d0eb0			(6093288, [4799488, 4799584]) (6094192, [4803264, 4803360])				timeGetTime	NO				yes
+0049d0a0	particle	C2	FUN_0049d0a0	1	1									yes				yes
+0049d1d0	particle	C2	FUN_0049d1d0	2	2								Sleep	yes				yes
+0049d200	particle	C2	FUN_0049d200	0	0	0x5d0eb0			(6093288, [4799488, 4799584]) (6094192, [4803264, 4803360])					NO				yes
+0049d240	util	C2	FUN_0049d240	0	0	0x5d0eb0			(6093288, [4799488, 4799584]) (6094192, [4803264, 4803360])				timeGetTime	NO				yes
+0049d270	util	C2	FUN_0049d270	0	0	0x5d0eb0			(6093288, [4799488, 4799584]) (6094192, [4803264, 4803360])	0x4a4170	util	0x4a4170	timeGetTime	NO		0x5d0adc 0x989680	[('0x989680', ['0x4a43d2', '0x5bd6f0', '0x5bdad0', '0x5bfb20'])]	NO
+0049d920	particle	C2	FUN_0049d920	0	0				(6098568, [4799488, 4799584, 4803264, 4803360])				EnterCriticalSection LeaveCriticalSection	NO				yes
+0049d960	particle	C2	FUN_0049d960	0	0				(6098568, [4799488, 4799584, 4803264, 4803360])				EnterCriticalSection LeaveCriticalSection	NO				yes
+0049d9a0	particle	C2	FUN_0049d9a0	0	0				(6098568, [4799488, 4799584, 4803264, 4803360])				EnterCriticalSection LeaveCriticalSection MulDiv timeGetTime	NO				yes
+0049da20	particle	C2	FUN_0049da20	0	0				(6098568, [4799488, 4799584, 4803264, 4803360])	0x4a4170	util	0x4a4170	EnterCriticalSection LeaveCriticalSection	NO				yes
+0049da90	particle	C3	FUN_0049da90	1	1									yes				yes
+0049db00	particle	C2	FUN_0049db00	1	1					0x4a4170	util	0x4a4170	EnterCriticalSection LeaveCriticalSection	NO		0x5d0adc 0x5d0bfc		yes
+0049dcb0	particle	C2	FUN_0049dcb0	0	0				(6094128, [4799488, 4799584, 4803264, 4803360])					NO		0x5d0b5c	[('0x5d0b5c', ['0x5beba0'])]	NO
+0049dd60	video	C2	FUN_0049dd60	1	1								InitializeCriticalSection SetEvent	yes		0x5cf9d0 0x5d0d84 0x5d0dc0	[('0x5cf9d0', ['0x493c00', '0x493c60', '0x494ac0', '0x494b20'])]	NO
+0049de60	particle	C2	FUN_0049de60	1	1	0x5d0d00 0x5d0d84	0x493fd0	0x493fd0	(6094128, [4799488, 4799584, 4803264, 4803360])					NO				yes
+0049de70	particle	C2	FUN_0049de70	1	1	0x5d0d00 0x5d0d84	0x493fd0	0x493fd0	(6094128, [4799488, 4799584, 4803264, 4803360])					NO				yes
+0049de80	particle	C2	FUN_0049de80	1	1	0x5d0d00 0x5d0d84	0x493fd0	0x493fd0	(6094128, [4799488, 4799584, 4803264, 4803360])					NO				yes
+0049de90	particle	C2	FUN_0049de90	2	2								DeleteCriticalSection	yes		0x5cf9d0 0x5d0d84 0x5d0dc0	[('0x5cf9d0', ['0x493c00', '0x493c60', '0x494ac0', '0x494b20'])]	NO
+0049df70	particle	C2	FUN_0049df70	0	0	0x5d0dc0 0x5d0eb0			(6093288, [4799488, 4799584]) (6094192, [4803264, 4803360])	0x4a3c1c	third-party-library[msvc-crt-main]		EnterCriticalSection LeaveCriticalSection ResetEvent SetEvent WaitForMultipleObjects	NO				yes
+0049e140	particle	C2	FUN_0049e140	0	0	0x5d0d84			(6094128, [4799488, 4799584, 4803264, 4803360])					NO				yes
+0049e190	particle	C2	FUN_0049e190	0	0	0x5d0dc0 0x5d0eb0			(6093288, [4799488, 4799584]) (6094192, [4803264, 4803360])				EnterCriticalSection LeaveCriticalSection ResetEvent SetEvent	NO				yes
+0049e4b0	particle	C2	FUN_0049e4b0	0	0	0x5d0dc0 0x5d0eb0			(6093288, [4799488, 4799584]) (6094192, [4803264, 4803360])	0x4a3c1c	third-party-library[msvc-crt-main]		EnterCriticalSection LeaveCriticalSection	NO		0x5d0cbc		yes
+0049e580	particle	C2	FUN_0049e580	0	0	0x5d0dc0 0x5d0eb0			(6093288, [4799488, 4799584]) (6094192, [4803264, 4803360])				SetEvent	NO				yes
+0049e5c0	particle	C2	FUN_0049e5c0	0	0	0x5d0dc0 0x5d0eb0			(6093288, [4799488, 4799584]) (6094192, [4803264, 4803360])				ResetEvent	NO				yes
+0049e600	particle	C2	FUN_0049e600	0	0	0x5d0dc0 0x5d0eb0			(6093288, [4799488, 4799584]) (6094192, [4803264, 4803360])					NO				yes
+0049e640	particle	C2	FUN_0049e640	0	0	0x5d0dc0 0x5d0eb0			(6093288, [4799488, 4799584]) (6094192, [4803264, 4803360])					NO				yes
+0049e6c0	particle	C2	FUN_0049e6c0	0	0	0x5d0dc0 0x5d0eb0			(6093288, [4799488, 4799584]) (6094192, [4803264, 4803360])	0x4a4170	util	0x4a4170	EnterCriticalSection LeaveCriticalSection SetEvent	NO				yes
+0049ea70	particle	C2	FUN_0049ea70	0	0	0x5d0dc0 0x5d0eb0			(6093288, [4799488, 4799584]) (6094192, [4803264, 4803360])				EnterCriticalSection LeaveCriticalSection	NO				yes
+0049eab0	particle	C2	FUN_0049eab0	0	0	0x5d0d48				0x4a3bda	third-party-library[msvc-crt-main]			yes				yes
+0049ead0	particle	C2	thunk_FUN_0049fac0	1	1								EnterCriticalSection LeaveCriticalSection	yes				yes
+0049ebc0	particle	C2	FUN_0049ebc0	1	1		0x493c60 0x494b20	0x493c60 0x494b20						NO		0x5cf9d0 0x5cfd30 0x5d0e74 0x5d0e88 0x5d0eb0	[('0x5cf9d0', ['0x493c00', '0x493c60', '0x494ac0', '0x494b20']), ('0x5cfd30', ['0x493c00', '0x493c60', '0x494ac0', '0x494b20']), ('0x5d0e74', ['0x493c00', '0x493c60', '0x494ac0', '0x494b20']), ('0x5d0e88', ['0x493c00', '0x493c60', '0x494ac0', '0x494b20'])]	NO
+0049ebf0	particle	C2	FUN_0049ebf0	0	0	0x5d0dc0				0x4a3bda	third-party-library[msvc-crt-main]			yes				yes
+0049ec10	util	C2	FUN_0049ec10	0	0		0x493c00 0x494ac0	0x493c00 0x494ac0						NO		0x5cf9d0 0x5cfd30 0x5d0e74 0x5d0e88 0x5d0eb0	[('0x5cf9d0', ['0x493c00', '0x493c60', '0x494ac0', '0x494b20']), ('0x5cfd30', ['0x493c00', '0x493c60', '0x494ac0', '0x494b20']), ('0x5d0e74', ['0x493c00', '0x493c60', '0x494ac0', '0x494b20']), ('0x5d0e88', ['0x493c00', '0x493c60', '0x494ac0', '0x494b20'])]	NO
+0049ec80	particle	C2	FUN_0049ec80	0	0	0x5d0eb0				0x4a3bda	third-party-library[msvc-crt-main]			yes				yes
+0049eca0	particle	C2	FUN_0049eca0	1	1								CoCreateInstance	yes		0x5d0b2c 0x5d0c2c		yes
+0049ecc0	particle	C2	FUN_0049ecc0	1	1								EnterCriticalSection LeaveCriticalSection	yes		0x5d0b0c 0x5d0b5c 0x5d0b6c 0x5d1134	[('0x5d0b5c', ['0x5beba0']), ('0x5d0b6c', ['0x5beba0']), ('0x5d1134', ['0x5beba0'])]	NO
+0049eeb0	particle	C2	FUN_0049eeb0	0	0		0x5ca540 0x5ca5c0 0x5ca640	0x5ca540 0x5ca5c0 0x5ca640						NO				yes
+0049ef10	particle	C2	FUN_0049ef10	0	0	0x5d0d84			(6094128, [4799488, 4799584, 4803264, 4803360])					NO				yes
+0049ef60	particle	C2	FUN_0049ef60	1	1	0x5d0d84				0x4a3bda 0x4a3c1c	third-party-library[msvc-crt-main]		EnterCriticalSection LeaveCriticalSection	yes		0x5d0acc	[('0x5d0acc', ['0x5bef20'])]	NO
+0049f030	particle	C2	FUN_0049f030	5	5									yes				yes
+0049f090	particle	C2	thunk_FUN_004a28b0	0	0		0x5ca5a0	0x5ca5a0		0x4a28b0	third-party-library[msvc-crt-main]			NO				yes
+0049f0a0	particle	C2	FUN_0049f0a0	1	1					0x4a28b0	third-party-library[msvc-crt-main]		InterlockedIncrement	yes		0x5d0b9c 0x5d0f74 0x5d1124	[('0x5d0b9c', ['0x5be940']), ('0x5d1124', ['0x5bf6d0'])]	NO
+0049f180	particle	C3	FUN_0049f180	0	0	0x5d0f74							InterlockedDecrement	yes				yes
+0049f1b0	particle	C2	FUN_0049f1b0	0	0	0x5d0f74				0x4a2730	third-party-library[msvc-crt-main]			yes				yes
+0049f1e0	particle	C2	FUN_0049f1e0	1	1									yes				yes
+0049f210	particle	C2	FUN_0049f210	1	1								InterlockedIncrement	yes		0x5d0b8c 0x5d0f94 0x5d1124	[('0x5d1124', ['0x5bf6d0'])]	NO
+0049f2b0	particle	C3	FUN_0049f2b0	0	0	0x5d0f94							InterlockedDecrement	yes				yes
+0049f2e0	particle	C2	FUN_0049f2e0	0	0	0x5d0f94								yes				yes
+0049f300	particle	C2	FUN_0049f300	1	1		0x5ca520	0x5ca520		0x4a2ae0 0x4a3bda	third-party-library[msvc-crt-main]			NO		0x5d0adc 0x5d0bac	[('0x5d0bac', ['0x5be720', '0x5bf230', '0x5bf470'])]	NO
+0049f420	particle	C2	FUN_0049f420	2	2									yes				yes
+0049f4d0	particle	C2	FUN_0049f4d0	1	1					0x4a2980 0x4a2b30	third-party-library[msvc-crt-main]			yes				yes
+0049f5b0	particle	C2	FUN_0049f5b0	1	1					0x4a2940	third-party-library[msvc-crt-main]			yes				yes
+0049f690	particle	C2	FUN_0049f690	1	1					0x4a2b50	third-party-library[msvc-crt-main]		EnterCriticalSection LeaveCriticalSection	yes				yes
+0049f830	particle	C2	FUN_0049f830	1	1					0x4a2920 0x4a2a30	third-party-library[msvc-crt-main]		EnterCriticalSection LeaveCriticalSection	yes				yes
+0049f950	particle	C2	FUN_0049f950	0	0	0x5d0d00								yes				yes
+0049fa40	particle	C3	FUN_0049fa40	2	2	0x5d0dc0 0x5d0eb0			(6094192, [4803264, 4803360]) (6094192, [4803264, 4803360])				EnterCriticalSection LeaveCriticalSection	NO				yes
+0049fac0	particle	C2	FUN_0049fac0	1	1								EnterCriticalSection LeaveCriticalSection	yes		0x5d0b1c	[('0x5d0b1c', ['0x5be540', '0x5bf4d0', '0x5bf8f0', '0x5bfd10'])]	NO
+0049fc80	particle	C2	FUN_0049fc80	1	1									yes				yes
+0049fcc0	particle	C2	FUN_0049fcc0	1	1									yes		0x5d0b3c	[('0x5d0b3c', ['0x5bdff0', '0x5be080', '0x5bff40'])]	NO
+0049fe10	particle	C2	FUN_0049fe10	0	0	0x5d0cc4								yes		0x5d0b1c	[('0x5d0b1c', ['0x5be540', '0x5bf4d0', '0x5bf8f0', '0x5bfd10'])]	NO
+0049ff30	particle	C2	FUN_0049ff30	1	1								EnterCriticalSection LeaveCriticalSection	yes				yes
+0049ff60	particle	C2	FUN_0049ff60	1	1								EnterCriticalSection LeaveCriticalSection	yes				yes
+0049ffe0	particle	C2	FUN_0049ffe0	1	1									yes				yes
+004a01b0	third-party-library[msvc-crt-main]	C2	FUN_004a01b0	1	1		0x5ca3a0 0x5ca3d0	0x5ca3a0 0x5ca3d0		0x4a3bda	third-party-library[msvc-crt-main]			NO				yes
+004a0220	third-party-library[msvc-crt-main]	C2	FUN_004a0220	1	1								EnterCriticalSection LeaveCriticalSection	yes				yes
+004a02d0	third-party-library[msvc-crt-main]	C2	FUN_004a02d0	1	1								EnterCriticalSection LeaveCriticalSection	yes				yes
+004a0380	third-party-library[msvc-crt-main]	C2	FUN_004a0380	1	1								CoCreateInstance CoFreeUnusedLibraries CoInitialize CoUninitialize EnterCriticalSection LeaveCriticalSection	yes		0x5d0aec 0x5d0c5c		yes
+004a0550	third-party-library[msvc-crt-main]	C2	FUN_004a0550	0	0	0x5d0f74				0x4a3bda	third-party-library[msvc-crt-main]			yes				yes
+004a0570	third-party-library[msvc-crt-main]	C2	FUN_004a0570	0	0	0x5d0f74				0x4a27b0 0x4a27f0	third-party-library[msvc-crt-main]			yes				yes
+004a0680	third-party-library[msvc-crt-main]	C2	FUN_004a0680	0	0	0x5d0f74								yes				yes
+004a06c0	third-party-library[msvc-crt-main]	C2	FUN_004a06c0	0	0	0x5d0f94				0x4a2ae0 0x4a2af0 0x4a3bda	third-party-library[msvc-crt-main]		CoTaskMemAlloc EnterCriticalSection LeaveCriticalSection	yes				yes
+004a0ab0	third-party-library[msvc-crt-main]	C2	FUN_004a0ab0	2	2					0x4a2710 0x4a2860 0x4a3c1c	third-party-library[msvc-crt-main]			yes		0x5d0f74		yes
+004a0c10	third-party-library[msvc-crt-main]	C2	FUN_004a0c10	2	2					0x4a3c1c	third-party-library[msvc-crt-main]			yes		0x5d0f94		yes
+004a0d10	third-party-library[msvc-crt-main]	C2	FUN_004a0d10	1	1					0x4a2af0 0x4a3c1c	third-party-library[msvc-crt-main]			yes				yes
+004a0e90	third-party-library[msvc-crt-main]	C2	FUN_004a0e90	1	1									yes				yes
+004a0ef0	third-party-library[msvc-crt-main]	C2	FUN_004a0ef0	1	1					0x4a3c1c	third-party-library[msvc-crt-main]			yes				yes
+004a0fe0	third-party-library[msvc-crt-main]	C2	FUN_004a0fe0	1	1								InterlockedIncrement	yes		0x773988		yes
+004a1000	third-party-library[msvc-crt-main]	C2	FUN_004a1000	4	4								FreeLibrary InterlockedDecrement	yes		0x773984 0x773988		yes
+004a1030	third-party-library[msvc-crt-main]	C2	FUN_004a1030	1	1								LoadLibraryA	yes		0x5d0fb4 0x773984		yes
+004a1050	third-party-library[msvc-crt-main]	C2	FUN_004a1050	8	8									yes				yes
+004a1080	third-party-library[msvc-crt-main]	C2	FUN_004a1080	3	3									yes				yes
+004a10b0	third-party-library[msvc-crt-main]	C2	FUN_004a10b0	3	3									yes		0x5d1124	[('0x5d1124', ['0x5bf6d0'])]	NO
+004a1100	third-party-library[msvc-crt-main]	C2	FUN_004a1100	0	0	0x5d0dc0 0x5d0eb0 0x5d1010 0x5d10bc			(6093288, [4799488, 4799584]) (6094192, [4803264, 4803360])				InterlockedDecrement InterlockedIncrement	NO				yes
+004a1160	third-party-library[msvc-crt-main]	C2	FUN_004a1160	1	1								CreateEventA	yes				yes
+004a1180	third-party-library[msvc-crt-main]	C2	FUN_004a1180	1	1		0x5ca3a8 0x5ca3b3 0x5ca3d8 0x5ca3e3 0x5ca3ee	0x5ca3a8 0x5ca3b3 0x5ca3d8 0x5ca3e3 0x5ca3ee					CloseHandle	NO				yes
+004a1190	third-party-library[msvc-crt-main]	C2	FUN_004a1190	1	1									yes				yes
+004a11c0	third-party-library[msvc-crt-main]	C2	FUN_004a11c0	2	2									yes				yes
+004a1200	third-party-library[msvc-crt-main]	C2	FUN_004a1200	1	1									yes				yes
+004a1240	third-party-library[msvc-crt-main]	C2	FUN_004a1240	2	2									yes				yes
+004a1260	third-party-library[msvc-crt-main]	C2	FUN_004a1260	1	1					0x4a4220 0x4a4da0 0x4a4e40	render third-party-library[msvc-crt-main] util	0x4a4220 0x4a4da0		NO				yes
+004a1570	third-party-library[msvc-crt-main]	C2	FUN_004a1570	1	1								DispatchMessageA GetCurrentThread GetCurrentThreadId GetQueueStatus GetThreadPriority GetTickCount MsgWaitForMultipleObjects PeekMessageA PostThreadMessageA RegisterWindowMessageA SetThreadPriority WaitForMultipleObjects	yes		0x5d0fc4 0x77398c		yes
+004a1780	third-party-library[msvc-crt-main]	C2	FUN_004a1780	1	1								timeSetEvent	yes				yes
+004a1790	util	C3	FUN_004a1790	1	1		0x494c80 0x5ca2f0 0x5ca2f8 0x5ca320 0x5ca680	0x494c80 0x5ca2f0 0x5ca2f8 0x5ca320 0x5ca680						NO				yes
+004a17a0	third-party-library[msvc-crt-main]	C2	FUN_004a17a0	1	1									yes				yes
+004a17c0	third-party-library[msvc-crt-main]	C2	FUN_004a17c0	1	1								GetLastError GetProcAddress	yes		0x5d0afc 0x5d0bbc 0x5d0bdc 0x5d0fd0 0x5d0fe8 0x5d0ff4 0x5d1144	[('0x5d0bbc', ['0x4944c0', '0x494c80']), ('0x5d1144', ['0x5bbdb0'])]	NO
+004a1a60	third-party-library[msvc-crt-main]	C2	FUN_004a1a60	1	1									yes		0x5d0bbc	[('0x5d0bbc', ['0x4944c0', '0x494c80'])]	NO
+004a1ac0	third-party-library[msvc-crt-main]	C2	FUN_004a1ac0	2	2									yes		0x5d0afc		yes
+004a1dc0	third-party-library[msvc-crt-main]	C2	FUN_004a1dc0	1	1									yes		0x5d1008	[('0x5d1008', ['0x51c220', '0x51dca0', '0x5270e0'])]	NO
+004a21a0	third-party-library[msvc-crt-main]	C2	FUN_004a21a0	1	1								EnterCriticalSection LeaveCriticalSection	yes				yes
+004a2250	third-party-library[msvc-crt-main]	C2	FUN_004a2250	0	0	0x5d10d0							EnterCriticalSection LeaveCriticalSection	yes		0x5d0bec		yes
+004a2310	third-party-library[msvc-crt-main]	C2	FUN_004a2310	2	2								EnterCriticalSection LeaveCriticalSection	yes				yes
+004a2340	third-party-library[msvc-crt-main]	C2	FUN_004a2340	1	1								EnterCriticalSection LeaveCriticalSection	yes				yes
+004a23e0	third-party-library[msvc-crt-main]	C2	FUN_004a23e0	1	1		0x4a26b0	0x4a26b0						NO				yes
+004a2440	third-party-library[msvc-crt-main]	C2	FUN_004a2440	1	1									yes				yes
+004a2460	third-party-library[msvc-crt-main]	C2	FUN_004a2460	0	0	0x5d1068 0x5d10d0								yes				yes
+004a2500	third-party-library[msvc-crt-main]	C2	FUN_004a2500	1	1									yes				yes
+004a2530	third-party-library[msvc-crt-main]	C2	FUN_004a2530	1	1									yes		0x5d1010 0x5d1020 0x5d1068		yes
+004a25f0	third-party-library[msvc-crt-main]	C2	FUN_004a25f0	0	0	0x5d1010				0x4a3bda	third-party-library[msvc-crt-main]			yes				yes
+004a2620	third-party-library[msvc-crt-main]	C2	FUN_004a2620	1	1								InitializeCriticalSection	yes		0x5d1020 0x5d10bc 0x5d10d0		yes
+004a2680	third-party-library[msvc-crt-main]	C2	FUN_004a2680	0	0	0x5d10bc				0x4a26b0 0x4a3bda	third-party-library[msvc-crt-main]			yes				yes

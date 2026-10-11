@@ -86,7 +86,13 @@ def load_hooks():
 #   MSVC CRT rt     0x005c0000..0x005c3fff  (CRT runtime: __ftol/__setjmp3/wcs*/SEH/__ctrandisp2;
 #                                            flagged round 156, added 2026-06-15 per library-skip.
 #                                            NARROWED 2026-07-27 from 0x005c8000 — see U-9023.)
+#   DirectShow BaseClasses 0x0049c5d0..0x0049ffff (user ruling 2026-10-11 = library-skip;
+#                                            byte evidence + per-row check in
+#                                            re/analysis/directshow_baseclasses_band_2026-10-11.md.
+#                                            The ruled range runs to 0x004a2680; its upper part
+#                                            is already inside the CRT band below.)
 LIBRARY_BANDS = (
+    (0x0049c5d0, 0x0049ffff),
     (0x004a0000, 0x004b3fff),
     (0x004ec000, 0x004fc9e0),
     (0x0057c5b0, 0x005a5820),
