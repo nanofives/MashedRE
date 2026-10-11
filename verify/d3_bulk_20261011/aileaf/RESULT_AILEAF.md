@@ -336,3 +336,77 @@ None for the port:
 
 The 19-event count in AL_ON is a property of the exe's round-2 collision. If the knob is ever stacked, that count
 moves with the car-car contact and the round flow, not with this group.
+
+# Phase 2e (2026-10-11): getting the original into round 2, and the round-restart grid
+
+Verdict: **the original restarts each round at the surviving car's progress node. The exe restarts every round
+on the start-line grid.**
+- That is why only the exe produces a rammed, parked player on the low-curvature start straight in round 2.
+- The original's round-2+ launches happen wherever round 1 ended.
+
+## 1. The recipe (`scenario_launch.py --continue-rounds --continue-rounds-states 7`)
+
+**Why the old captures stopped.** `--statediff-out` disables the control-4 press pulses
+(`if not args.statediff_out: E.press(4, 250)`), so the original waited on the round-1 standings forever. That is
+the "freeze" in memory o-rg4.
+
+**The fix.** The new option pulses control 4 only while `0x0063ba8c` is in the given set, and logs every sub-state
+transition with the `0x007f0ff4` tick and the statediff frame.
+
+**Sub-states in this mode (measured).** The memory note no-driving-hud maps 3 = driving and 5/6/7 = standings;
+that mapping does not hold here.
+
+| sub-state | meaning |
+|---|---|
+| 3 | intro hold |
+| 5 | countdown |
+| 6 | driving |
+| 7 | round over (standings) |
+| 11 | match over |
+
+**Result.** `o_rounds7`, 120 s: 8 rounds, 6 → 7 → 5 → 6 …, then 11 at frame 3,954.
+- FUN_00414570 returned 1 on 0 of 11,376 calls (undriven player).
+- `o_rounds_log` (no presses) confirms the stall: 7 from frame 1,108 to the end.
+
+## 2. Round-restart grid (`round_census.py`)
+
+| side | round 2 grid | later rounds |
+|---|---|---|
+| original | progress 6.00, (6.0, -23.5) | 11.03, 15.71, 21.99, 25.99, 2.73 (around the lap) |
+| exe | progress 1.50, (0.50, -2.00) = the round-1 start line (ptrace f ≈ 1900) | start line every round |
+
+**The original's chain** (cited):
+1. `FUN_00410860`, called from FUN_004111c0 at round end:
+   - takes the last slot with `0x0046c7b0` == 1 (alive) as the survivor (loop 0x00410890..0x004108b3);
+   - reads its progress via `FUN_00408a50` (`0x008a96e8 + v*0x30c`);
+   - stores `__ftol` of it into `DAT_0063ba80` (0x004108c5).
+2. At the next round start, `FUN_0040e590` calls `FUN_00409290(&DAT_0063ba80)`. That snaps the node into the
+   ordered ranges from `FUN_00426bc0` / `FUN_00426bd0`; past the last range it wraps to the first.
+3. It then calls `FUN_00408b00(DAT_0063ba80, slot value, mode, &pos, &yaw)`, whose anchor is
+   `FUN_00426cb0(node)` = `0x00663664 + node*0x4c`.
+
+**Data check:** the survivor's progress at the last sample before each round end, against the next grid:
+
+| round end | survivor (car, progress) | next grid |
+|---|---|---|
+| 1 | car 3, 6.03 | 6.00 |
+| 4 | car 1, 22.82 | 21.99 |
+| 5 | car 2, 26.31 | 25.99 |
+| 6 | car 3, 3.71 | 2.73..3.00 |
+
+Rounds 2 and 3 had several cars alive at the last sample.
+
+**The exe:** `TrackRenderer::StartRound()` (`D3d9Render/TrackRenderer.cpp:5148`) anchors the grid formula at
+`gates_[0]` on every round.
+
+## 3. Consequence and next work
+
+- **For G-AILEAF:** none for the port. The 19 return-1 calls are produced by the exe's start-line restart plus
+  the rammed parked player.
+- **For the modes third (round flow):** a port gap with a concrete producer chain. The ported progress
+  (`MASHED_PATHPROG`) gives FUN_00410860 its input. Porting FUN_00410860's `DAT_0063ba80` write, FUN_00409290,
+  and an anchor-node input to StartRound would put the exe's later-round grids where the original's are.
+  - [UNCERTAIN] what FUN_00426bc0 / FUN_00426bd0 read (the range table). Its decomp is owed before porting.
+  - FUN_00409290 and FUN_00410860 are C2 in hooks.csv. FUN_00410860 is .asi-only.
+- **Tracker row owed** (via re-classify): the exe StartRound start-line anchor vs the original's
+  `DAT_0063ba80` restart node.

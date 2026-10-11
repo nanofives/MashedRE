@@ -24,7 +24,12 @@
 > 2b. Launch difference (Phase 2d): NOT launch physics. AI launch curves match within 1 unit. The exe's 19 events are
 >     car 3 ramming the parked player at the exe's ROUND-2 launch (ptrace sim step 4139, 624 -> 2548). The original
 >     recipe never reaches round 2 (freeze ~frame 1500). Owed: a dense undriven original push capture (`o_al_dense`,
->     3 boot failures under 4 concurrent instances), and a recipe past the original's round-1 standings (modes third).
+>     3 boot failures under 4 concurrent instances).
+> 2c. Round 2 on the original (Phase 2e): `--continue-rounds --continue-rounds-states 7` gets 8 rounds. The original
+>     restarts each round at the SURVIVOR's progress node (FUN_00410860 -> DAT_0063ba80 0x004108c5 -> FUN_00409290 ->
+>     FUN_00408b00); the exe's StartRound (TrackRenderer.cpp:5148) restarts at gates_[0] every round. That is a port gap
+>     in the modes third, with a concrete producer chain (needs MASHED_PATHPROG progress). Owed: a FUN_00426bc0/bd0 decomp,
+>     a tracker row via re-classify, then a fix brief.
 > 3. Back to the PLAN.md ranking. Every other D3 group is producer-blocked. The non-D3 lane is not decided.
 >
 > Not started: U-9219, the car-2 pickup miss, default flips.

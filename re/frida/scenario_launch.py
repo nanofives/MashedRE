@@ -3230,6 +3230,7 @@ rpc.exports = {
   },
   launch: function(){ try { ga(PHASE).writeU8(2); return 1; } catch(e){ return 'ERR '+e; } },
   press: function(c, ms){ pressCtrl = c; pressUntil = Date.now() + ms; return 1; },
+  subState: function(){ try { return [ga(0x0063ba8c).readS32(), ga(0x007f0ff4).readS32(), SD.frames]; } catch(e){ return [-99, -1, -1]; } },
   boost: function(v){ try { ga(CARREC).add(0x9b4).writeFloat(v); return 1; } catch(e){ return 'ERR '+e; } },
   carinfo: function(){
     try { const r = ga(CARREC);
@@ -3666,6 +3667,10 @@ def main():
     ap.add_argument("--pursuit-look", type=int, default=2, help="pursuit lookahead in spline nodes (default 2)")
     ap.add_argument("--pursuit-wait-go", action="store_true", help="pursuit: no accel until sub-state 0x0063ba8c == 6")
     ap.add_argument("--pursuit-boost", action="store_true", help="pursuit + wait-go: press accel in sub-state 5 while 0x005f29b8 < 6700 (Branch A, cd = 3)")
+    ap.add_argument("--continue-rounds-states", default="",
+                    help="comma list of 0x0063ba8c values on which --continue-rounds pulses control 4 (empty = log only)")
+    ap.add_argument("--continue-rounds", action="store_true",
+                    help="[G-AILEAF 2d] pulse control 4 only while sub-state 0x0063ba8c is in --continue-rounds-states, so a --statediff-out capture continues into round 2+; logs every sub-state transition.")
     ap.add_argument("--aileaf-probe", type=int, default=0,
                     help="[D3 bulk G-AILEAF] K: FUN_00414570 entry+leave, every return-1 call + every Kth call, "
                          "full input rows in the MASHED_AILEAF_LIVEROWS format. Writes <out>.aileaf.tsv "
@@ -4043,6 +4048,8 @@ def main():
                 ts, sv = kv.split(":"); sched.append((float(ts), float(sv)))
             sched.sort()
         sched_t0 = None; sched_i = 0; sched_log = []
+        _last_ss = None; _ss_log = []
+        _press_states = {int(x) for x in args.continue_rounds_states.split(',') if x.strip()} if args.continue_rounds else set()
         while time.time() < t:
             if psutil and not psutil.pid_exists(pid):
                 print("\n  game exited."); exited_early = True; break
@@ -4072,6 +4079,19 @@ def main():
                 steer_on = True
                 try: print(f"\n  [spike] +{time.time()-t0:.1f}s drive: accel + steer ->", E.drive(1, 1))
                 except Exception: pass
+            if args.continue_rounds:
+                # [G-AILEAF 2d] reach round 2+ under --statediff-out: pulse control 4 ONLY on the standings
+                # sub-states 5/6/7 (0x0063ba8c; memory no-driving-hud-race-ui-is-standings), never while driving,
+                # and log every sub-state transition with the 0x007f0ff4 tick and the statediff frame.
+                try:
+                    ss, tick, sdf = E.sub_state()
+                    if ss != _last_ss:
+                        print("  [rounds] " + f"+{time.time()-t0:.1f}s sub-state {_last_ss} -> {ss}  tick={tick} sdframe={sdf}")
+                        _ss_log.append((round(time.time()-t0, 1), _last_ss, ss, tick, sdf)); _last_ss = ss
+                    if ss in _press_states:
+                        E.press(4, 250)
+                except Exception as ex:
+                    print(f"  [rounds] failed: {ex}")
             if not args.statediff_out:      # press pulses are wall-clock-timed nondeterministic input
                 try: E.press(4, 250)        # pulse: 250ms held, ~0.35s gap -> edges for round-end prompts
                 except Exception: pass
