@@ -3230,7 +3230,7 @@ rpc.exports = {
   },
   launch: function(){ try { ga(PHASE).writeU8(2); return 1; } catch(e){ return 'ERR '+e; } },
   press: function(c, ms){ pressCtrl = c; pressUntil = Date.now() + ms; return 1; },
-  subState: function(){ try { return [ga(0x0063ba8c).readS32(), ga(0x007f0ff4).readS32(), SD.frames]; } catch(e){ return [-99, -1, -1]; } },
+  subState: function(){ try { return [ga(0x0063ba8c).readS32(), ga(0x007f0ff4).readS32(), SD.frames, ga(0x0063ba80).readS32()]; } catch(e){ return [-99, -1, -1, -1]; } },
   boost: function(v){ try { ga(CARREC).add(0x9b4).writeFloat(v); return 1; } catch(e){ return 'ERR '+e; } },
   carinfo: function(){
     try { const r = ga(CARREC);
@@ -4084,10 +4084,10 @@ def main():
                 # sub-states 5/6/7 (0x0063ba8c; memory no-driving-hud-race-ui-is-standings), never while driving,
                 # and log every sub-state transition with the 0x007f0ff4 tick and the statediff frame.
                 try:
-                    ss, tick, sdf = E.sub_state()
+                    ss, tick, sdf, rnode = E.sub_state()
                     if ss != _last_ss:
-                        print("  [rounds] " + f"+{time.time()-t0:.1f}s sub-state {_last_ss} -> {ss}  tick={tick} sdframe={sdf}")
-                        _ss_log.append((round(time.time()-t0, 1), _last_ss, ss, tick, sdf)); _last_ss = ss
+                        print("  [rounds] " + f"+{time.time()-t0:.1f}s sub-state {_last_ss} -> {ss}  tick={tick} sdframe={sdf} node_63ba80={rnode}")
+                        _ss_log.append((round(time.time()-t0, 1), _last_ss, ss, tick, sdf, rnode)); _last_ss = ss
                     if ss in _press_states:
                         E.press(4, 250)
                 except Exception as ex:

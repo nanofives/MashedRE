@@ -28,8 +28,11 @@
 > 2c. Round 2 on the original (Phase 2e): `--continue-rounds --continue-rounds-states 7` gets 8 rounds. The original
 >     restarts each round at the SURVIVOR's progress node (FUN_00410860 -> DAT_0063ba80 0x004108c5 -> FUN_00409290 ->
 >     FUN_00408b00); the exe's StartRound (TrackRenderer.cpp:5148) restarts at gates_[0] every round. That is a port gap
->     in the modes third, with a concrete producer chain (needs MASHED_PATHPROG progress). Owed: a FUN_00426bc0/bd0 decomp,
->     a tracker row via re-classify, then a fix brief.
+>     in the modes third, with a concrete producer chain (needs MASHED_PATHPROG progress).
+>     FIX BRIEF written: [`roundgrid/FIX_BRIEF.md`](../verify/d3_bulk_20261011/roundgrid/FIX_BRIEF.md). FUN_00426bc0/bd0 are the
+>     LAPDATA Safe_Start_Lines table, which the exe already builds under PATHPROG. Original nodes per round: 0,7,11,14,21,24,28,1
+>     (`o_rounds7b`). Next: Stage A (survivor node write + FUN_00409290 verbatim + StartRound anchor) behind MASHED_ROUND_GRID,
+>     G-RG-SNAP / G-RG-NODE / G-RG-GRID first. Tracker row still owed.
 > 3. Back to the PLAN.md ranking. Every other D3 group is producer-blocked. The non-D3 lane is not decided.
 >
 > Not started: U-9219, the car-2 pickup miss, default flips.
