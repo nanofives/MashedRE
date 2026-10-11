@@ -34,7 +34,9 @@
 >     (`o_rounds7b`). Next: Stage A (survivor node write + FUN_00409290 verbatim + StartRound anchor) behind MASHED_ROUND_GRID,
 >     G-RG-SNAP / G-RG-NODE / G-RG-GRID first. Tracker row still owed.
 >     STAGE A DONE (knob OFF): `roundgrid/RESULT_STAGE_A.md`. SNAP 18504/18504, GRID 5 nodes worst 0.0048, NODE 3/3,
->     G-CTRL unchanged. Next: knob-ON per `roundgrid/PREREG_STAGE_A.md` (arms RG_PP / RG_ON / RG_ON2), then Stage B (slot order).
+>     G-CTRL unchanged. KNOB-ON DONE (`roundgrid/RESULT_KNOB_ON.md`): TRACE / DET / LOCAL pass. Round 2 starts at node 21
+>     (not the start line); the exe snap repeats the original's 13 -> 14. (b) moved 0/3 -> 1/3 from the round-1 grid shift
+>     alone (<= 0.0236): sensitivity, not a fix. Next: Stage B (slot order), the tracker row, and the user's call on the flip.
 > 3. Back to the PLAN.md ranking. Every other D3 group is producer-blocked. The non-D3 lane is not decided.
 >
 > Not started: U-9219, the car-2 pickup miss, default flips.
