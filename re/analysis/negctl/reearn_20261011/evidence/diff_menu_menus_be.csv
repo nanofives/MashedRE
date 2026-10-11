@@ -1,0 +1,6 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,[],1588383378,0x5eacce92,1588383378,0x5eacce92,True,,
+1,[],637847988,0x2604c9b4,637847988,0x2604c9b4,True,,
+2,[],317666348,0x12ef342c,317666348,0x12ef342c,True,,
+3,[],835455767,0x31cc0b17,835455767,0x31cc0b17,True,,
+4,[],2939197017,0xaf309659,2939197017,0xaf309659,True,,

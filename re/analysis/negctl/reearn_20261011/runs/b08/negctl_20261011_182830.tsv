@@ -1,0 +1,11 @@
+hook	rva	arg_type	lane	mode	verdict	mismatches	total	stats	err
+menu_chrome_shell_b	0x0042e5b0	scalars_to_scattered_globals	warm	baseline	GREEN	0	6		
+menu_chrome_shell_b	0x0042e5b0	scalars_to_scattered_globals	warm	baseline	GREEN	0	6		
+menu_chrome_shell_b	0x0042e5b0	scalars_to_scattered_globals	warm	baseline	GREEN	0	6		
+menu_chrome_shell_b	0x0042e5b0	scalars_to_scattered_globals	warm	real	RED	6	6		
+menu_chrome_shell_b	0x0042e5b0	scalars_to_scattered_globals	warm	real	RED	6	6		
+menu_menus_bb	0x00427ad0	scalars_to_scattered_globals	warm	baseline	GREEN	0	5		
+menu_menus_bb	0x00427ad0	scalars_to_scattered_globals	warm	baseline	GREEN	0	5		
+menu_menus_bb	0x00427ad0	scalars_to_scattered_globals	warm	baseline	GREEN	0	5		
+menu_menus_bb	0x00427ad0	scalars_to_scattered_globals	warm	real	GREEN	0	5		
+menu_menus_bb	0x00427ad0	scalars_to_scattered_globals	warm	real	GREEN	0	5		

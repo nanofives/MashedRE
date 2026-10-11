@@ -1,0 +1,8 @@
+hook	rva	arg_type	lane	mode	verdict	mismatches	total	stats	err
+frontend_raycast_forward	0x00426dc0	scalars_to_scattered_globals	warm	baseline	SKIP	0	0		real run errored
+frontend_raycast_forward	0x00426dc0	scalars_to_scattered_globals	warm	field_first	SKIP	0	0		real run errored
+frontend_raycast_forward	0x00426dc0	scalars_to_scattered_globals	warm	field_last	SKIP	0	0		real run errored
+frontend_raycast_forward	0x00426dc0	scalars_to_scattered_globals	warm	field_none	SKIP	0	0		real run errored
+frontend_raycast_forward	0x00426dc0	scalars_to_scattered_globals	warm	null	SKIP	0	0		real run errored
+frontend_raycast_forward	0x00426dc0	scalars_to_scattered_globals	warm	real	ERROR	0	0		EXC 'NoneType' object has no attribute 'create_script' (process died)
+frontend_raycast_forward	0x00426dc0	scalars_to_scattered_globals	warm	ret	SKIP	0	0		real run errored
