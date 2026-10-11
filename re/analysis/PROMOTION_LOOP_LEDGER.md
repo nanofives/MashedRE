@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 258
-- total_green: 443
+- rounds_run: 259
+- total_green: 448
 - dry_counter: 0
 - L-INST LANE OPENED (round 257, 2026-10-11, branch promo/l-inst): installer-caller clause
   candidates (re/CONFIDENCE.md). See "### L-INST" under Lane queues for queue, rules and
@@ -315,10 +315,15 @@ Rules for this lane (on top of /promote-round):
   library-skip, every L-INST particle C3 here must be reverted before merge.
 
 Queue (tier 1, first-party, pre-screen 2026-10-11 + own disassembly):
-- ready, no harness change: 0049e190, 0049e580 (r2 took 0049c900, 0049ea70, 0049e140,
-  0049ef10, 0049f950)
-- needs per-stub arity/abi/ret (wishlist G2): 0049c5d0, 0049cd70, 0049ce10, 0049e5c0,
-  0049e600, 0049e640, 0049eab0, 004943d0, 0049c840, 0049ccd0, 0049e6c0
+- r2 took 0049c900, 0049ea70, 0049e140, 0049ef10, 0049f950. Left: 0049e190, 0049e580
+  (deferred to B: their Set/ResetEvent arms are only distinguishable by an event the
+  harness can observe; with handle 0 a port that swaps or drops the call still diffs GREEN)
+- G2 rows (G2 landed eb66a5ef; r3 took 0049c5d0, 0049cd70, 0049ce10, 0049e600, 0049e640).
+  Left, each with a second blocker: 0049c840 (stack-local &out args + events), 0049ccd0
+  (G4), 0049e6c0 (4 direct callees + events + gating returns), 0049e5c0 (its only
+  branch-dependent effect is ResetEvent on a synthetic handle: unobservable -> B),
+  0049eab0 / 004943d0 (scalar deleting dtors: flag&1 calls CRT free 0x004a3bda, which
+  cannot be stubbed globally -> free-stub wishlist)
 - needs arg_layout interior offset (wishlist G4): 0049de60, 0049de70, 0049de80, 0049ccd0
 - needs timeGetTime stub (wishlist T): 0049d080, 0049d240, 0049d270
 - blocked: 0049cb20 (timeBeginPeriod process-wide, never released), 0049cf00
@@ -337,8 +342,27 @@ Round rows:
   pointers out of observed windows), path2 5/5 PASS. Harness fix (a5e0e9fd): verify
   template's stub_at recorders honour stub_abi (a __stdcall 5-arg callee had AV'd path2).
   dry_counter 0.
+- r259 L-INST-3 (2026-10-11): L5 extension G2 (per-stub nargs/abi/ret/name, eb66a5ef),
+  validated on 2 existing entries (byte-identical fingerprints) before use. Attempted 5,
+  GREEN 5 (0049c5d0, 0049cd70, 0049ce10, 0049e600, 0049e640), path2 5/5 PASS.
+  rva-lint finding: every L-INST body had been anchored to the wrong RVA (closest in-range
+  RVA comment was a mid-body annotation); fixed with '// 0x<rva>' above each definition
+  (669b7b8c). dry_counter 0.
+- **LANE END (2026-10-11): tier 1 exhausted.** 15 C3 of 37 first-party tier-1 rows. The 22
+  left all need a harness extension, and none of those extensions reaches the 10-row bar,
+  even counting tier 2 (B events 5, G4 interior pointer 4, T timeGetTime 3, free-stub 2),
+  or they are blocked outright (0049cb20 timeBeginPeriod, 0049cf00 CoTaskMemAlloc
+  out-pointer, 0049dcb0 QI out-param, 0049df70 / 0049e4b0 operator new into this,
+  00494820 live D3D9, 004af31a SetUnhandledExceptionFilter, 005c2a0e no body in note).
+  Tier 2 (99 unreached rows: 63 third-party-library, 16 audio, 11 particle, 9 render) not
+  started; it is the parent's call. Library question on the particle cluster still open.
 
 ## Done (promoted to C3, with round + evidence)
+
+- **Round 259 L-INST-3 (2026-10-11) — five on the G2 per-stub spec.** `0x0049c5d0`
+  ComQiTwoConstsV24, `0x0049cd70` ComLockedFf30V84V64, `0x0049ce10` ComLockedV88ThenFf60,
+  `0x0049e600` ComState14V7cSetB0, `0x0049e640` ComReleaseAcGate78.
+  `Particle/PromoLoop_linst3.cpp`, all GREEN non-degenerate, path2 PASS.
 
 - **Round 258 L-INST-2 (2026-10-11) — five table-slot methods, installer-caller clause.**
   `0x0049c900` ComCs94Field6cNonZero, `0x0049ea70` ComCb00ThenClear4Fields, `0x0049e140`
@@ -557,7 +581,8 @@ Round rows:
 
 ## Harness-extension wishlist (lane L5: implement when one entry unlocks ≥10 rows)
 
-- **G2 `stub_dispatch_observe`: per-stub nargs / abi / return (L-INST, 2026-10-11) — 11 rows.**
+- ~~**G2 `stub_dispatch_observe`: per-stub nargs / abi / return (L-INST, 2026-10-11) — 11 rows.**~~
+  **DONE round 259 (eb66a5ef), 5 promoted on it; the other 6 have a second blocker (see L-INST).**
   `stub_nargs`/`stub_abi`/`stub_ret` are global to every recorder, so a body that calls a
   0-arg `__thiscall` slot AND a 1-arg direct callee cannot be diffed (over-declaring reads
   stack garbage or unbalances a callee-cleans stack). Additive shape: `stub_at` entries as
@@ -568,6 +593,11 @@ Round rows:
   0049de80 (adjustor thunks reading `[p-8]`), 0049ccd0 (reads `this-0xc`).
 - **T `timeGetTime` stub by export (L-INST) — 3 rows:** 0049d080, 0049d240, 0049d270
   (orig and reimpl read the clock at different instants).
+- **B harness-created Win32 event, observed by its signaled state (L-INST) — 5 rows:**
+  0049e5c0, 0049e190, 0049e580, 0049c840, 0049cb20; would also strengthen 0049c810
+  (its unconditional ResetEvent's argument is currently unobserved).
+- **free-stub without a global Interceptor on CRT free 0x004a3bda (L-INST) — 2 rows:**
+  0049eab0, 004943d0 (scalar deleting dtors; the flag&1 arm frees `this`).
 
 - **`ptr_to` cannot express a pointer to buf+OFFSET, which blocks intrusive CIRCULAR lists.**
   Found r255 screening `0x004c59c0`: its list sentinel is the INTERIOR address `param_1+8`,

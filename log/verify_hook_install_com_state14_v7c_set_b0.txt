@@ -1,0 +1,25 @@
+=== verify_hook_install report (com_state14_v7c_set_b0) ===
+
+target address: 0x0049e600  export: ComState14V7cSetB0
+PRE  bytes:     56 8b f1 c7 46 60 00 00
+asi base:       0x60e10000
+reimpl addr:    0x60e3e080
+POST bytes:     e9 7b fa 99 60 60 00 00
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x6099fa7b  expected 0x6099fa7b  -> OK
+bytes changed:  True
+
+interceptor entries (reimpl):  2 / 2
+
+per-input results:
+  [OK] input={'seed': [{'buf': 0, 'off': 0, 'ptr_to': 1}, {'buf': 1, 'off': 124, 'stub': {'name': 'v7c', 'nargs': 1, 'abi': 'thiscall'}}, {'buf': 0, 'off': 20, 'type': 'u32', 'value': 2}, {'buf': 0, 'off': 96, 'type': 'u32', 'value': 305397760}, {'buf': 0, 'off': 176, 'type': 'u32', 'value': 305463295}, {'buf': 0, 'off': 152, 'type': 'u32', 'value': 4294967295}], 'scalars': [13107, 1], 'stub_rets': {'v7c': 0}}  got=0  err=
+  [OK] input={'seed': [{'buf': 0, 'off': 0, 'ptr_to': 1}, {'buf': 1, 'off': 124, 'stub': {'name': 'v7c', 'nargs': 1, 'abi': 'thiscall'}}, {'buf': 0, 'off': 20, 'type': 'u32', 'value': 0}, {'buf': 0, 'off': 96, 'type': 'u32', 'value': 2711683072}, {'buf': 0, 'off': 176, 'type': 'u32', 'value': 2711748607}, {'buf': 0, 'off': 152, 'type': 'u32', 'value': 4294967295}], 'scalars': [4369, 7], 'stub_rets': {'v7c': 0}}  got=0  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + first 8 bytes mutated by patcher
+  + reimpl interceptor fired 2x as expected
+  + all 2 calls returned without exception
+FAIL:
+  (none)
