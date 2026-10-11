@@ -1,0 +1,30 @@
+hook	rva	arg_type	lane	mode	verdict	mismatches	total	stats	err
+frontend_c2_round_i	0x00408a70	scalars_to_scattered_globals	warm	baseline	GREEN	0	8		
+frontend_c2_round_i	0x00408a70	scalars_to_scattered_globals	warm	field_first	RED	7	8	calls=8 flips=7 changed=21 flip=0x007739f8 noise=190 frozen=2	
+frontend_c2_round_i	0x00408a70	scalars_to_scattered_globals	warm	field_last	RED	7	8	calls=8 flips=7 changed=21 flip=0x008a9a03 noise=196 frozen=2	
+frontend_c2_round_i	0x00408a70	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	8	calls=8 flips=0 changed=21 flip=0x00000000 noise=163 frozen=2	
+frontend_c2_round_i	0x00408a70	scalars_to_scattered_globals	warm	import_extra	BLIND	0	8	calls=8 flips=0 changed=0 flip=0x00000000 noise=196 frozen=2	
+frontend_c2_round_i	0x00408a70	scalars_to_scattered_globals	warm	null	RED	7	8	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+frontend_c2_round_i	0x00408a70	scalars_to_scattered_globals	warm	real	GREEN	0	8		
+frontend_c2_round_i	0x00408a70	scalars_to_scattered_globals	warm	ret	RED	8	8	calls=8 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+per_mode_render_machine	0x00404320	scalars_to_scattered_globals	warm	baseline	RED	7	8		
+per_mode_render_machine	0x00404320	scalars_to_scattered_globals	warm	field_first	NA	7	8	calls=8 flips=0 changed=0 flip=0x00000000 noise=189 frozen=1	
+per_mode_render_machine	0x00404320	scalars_to_scattered_globals	warm	field_last	ERROR	0	0		EXC 'NoneType' object has no attribute 'create_script' (process died)
+per_mode_render_machine	0x00404320	scalars_to_scattered_globals	warm	field_none	CTRL-RED	7	8	calls=8 flips=0 changed=0 flip=0x00000000 noise=157 frozen=2	
+per_mode_render_machine	0x00404320	scalars_to_scattered_globals	warm	null	RED	7	8	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+per_mode_render_machine	0x00404320	scalars_to_scattered_globals	warm	real	RED	7	8		
+per_mode_render_machine	0x00404320	scalars_to_scattered_globals	warm	ret	SKIP	0	0		void signature
+render_00403d30	0x00403d30	scalars_to_scattered_globals	warm	baseline	GREEN	0	3		
+render_00403d30	0x00403d30	scalars_to_scattered_globals	warm	field_first	NA	0	3	calls=3 flips=0 changed=0 flip=0x00000000 noise=200 frozen=2	
+render_00403d30	0x00403d30	scalars_to_scattered_globals	warm	field_last	NA	0	3	calls=3 flips=0 changed=0 flip=0x00000000 noise=208 frozen=2	
+render_00403d30	0x00403d30	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	3	calls=3 flips=0 changed=0 flip=0x00000000 noise=197 frozen=2	
+render_00403d30	0x00403d30	scalars_to_scattered_globals	warm	null	RED	3	3	calls=0 flips=0 changed=0 flip=0x00000000 noise=196 frozen=2	
+render_00403d30	0x00403d30	scalars_to_scattered_globals	warm	real	GREEN	0	3		
+render_00403d30	0x00403d30	scalars_to_scattered_globals	warm	ret	SKIP	0	0		void signature
+render_00403ed0	0x00403ed0	scalars_to_scattered_globals	warm	baseline	RED	3	3		
+render_00403ed0	0x00403ed0	scalars_to_scattered_globals	warm	field_first	NA	3	3	calls=3 flips=0 changed=0 flip=0x00000000 noise=189 frozen=1	
+render_00403ed0	0x00403ed0	scalars_to_scattered_globals	warm	field_last	NA	3	3	calls=3 flips=0 changed=0 flip=0x00000000 noise=172 frozen=1	
+render_00403ed0	0x00403ed0	scalars_to_scattered_globals	warm	field_none	CTRL-RED	3	3	calls=3 flips=0 changed=0 flip=0x00000000 noise=190 frozen=1	
+render_00403ed0	0x00403ed0	scalars_to_scattered_globals	warm	null	ERROR	0	0		Error: freeze: first thread never stopped inside the safe-point modules (process died)
+render_00403ed0	0x00403ed0	scalars_to_scattered_globals	warm	real	RED	3	3		
+render_00403ed0	0x00403ed0	scalars_to_scattered_globals	warm	ret	SKIP	0	0		void signature
