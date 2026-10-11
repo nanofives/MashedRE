@@ -14,8 +14,8 @@ Writes nothing unless -o is given (the gate-candidate list).
    "indirect - NOT reachable" set (1,126 on that commit). For each one this reports
    (a) whether the mutator itself gains an installer row, and
    (b) the class of every indirect site in its call tree, since (a) does not touch the blocker: the blocker is the
-       mutator's CALLEE side. Classes: iat (call/jmp [abs] into the import address table), switch
-       (jmp [reg*4 + abs]), ptr_known (call/jmp [abs] whose slot the TSV maps to a function: a ptr_call row at that
+       mutator's CALLEE side. Classes: iat (call/jmp [abs] into the import address table), idx_table
+       (jmp [reg*4 + abs] that write_surface.switch_table() rejects), ptr_known (call/jmp [abs] whose slot the TSV maps to a function: a ptr_call row at that
        site), ptr_abs (other call/jmp [abs]), reg_disp (call [reg + disp]: vtable / struct field), reg (call reg).
 
     py -3.12 re/tools/pointer_callers_report.py re/analysis/pointer_callers_2026-10-11.tsv [-o gate_candidates.tsv]
@@ -28,6 +28,63 @@ sys.path.insert(0, str(ROOT / "scripts"))
 import pointer_callers as pc  # noqa: E402
 
 IAT = (0x005cc000, 0x005cc000 + 0x2e8)          # PE data directory 12 of the anchored image
+CLAUSE_KINDS = ("vtable", "fn_table")
+
+
+def callee_half(im, hooks, t, imports):
+    """(verdict, basis) for the C2->C3 callee half of `t`, from its own bytes (capstone over Ghidra's ranges).
+
+    satisfied      a direct callee (call rel32, or jmp rel32 out of the body) qualifies under caller_screen.py's
+                   rule (C2+, or a hooks.csv name not FUN_/LAB_/thunk_/sub_; CONFIDENCE.md L26), or the function
+                   calls an import (IAT slot or a thunk `jmp [IAT]`: a named library API)
+    leaf           no callee at all: L24, needs the A/B on a non-trivial input domain
+    indirect-only  no direct callee, at least one call/jmp through a register or memory that is not a switch:
+                   L27, needs the A/B to exercise the dispatch itself
+    blocked        direct callees exist and none qualifies
+    """
+    import capstone
+    from capstone import x86 as cx
+    md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_32)
+    md.detail = True
+    md.skipdata = True
+    own = [(lo, hi) for lo, hi, e in im.ranges if e == t]
+    inside = lambda v: any(lo <= v < hi for lo, hi in own)
+    direct, imps, indirect = set(), set(), 0
+    for lo, hi in own:
+        for i in md.disasm(im.img[lo - im.base:hi - im.base], lo):
+            if i.id == 0 or i.mnemonic not in ("call", "jmp"):
+                continue
+            op = i.operands[0]
+            if op.type == cx.X86_OP_IMM:
+                if i.mnemonic == "call" or not inside(op.imm):
+                    if op.imm != t:
+                        direct.add(op.imm)
+            elif op.type == cx.X86_OP_MEM and op.mem.base == 0 and op.mem.index == 0 \
+                    and IAT[0] <= op.mem.disp < IAT[1]:
+                imps.add(imports.get(op.mem.disp, f"IAT 0x{op.mem.disp:08x}"))
+            elif op.type == cx.X86_OP_MEM and op.mem.scale == 4 and op.mem.base == 0 \
+                    and inside(im.dword(op.mem.disp) or 0):
+                continue                                    # switch: case label inside this body
+            else:
+                indirect += 1
+    for c in sorted(direct):                                # a thunk `jmp [IAT]` is the import itself
+        o = c - im.base
+        if im.img[o:o + 2] == b"\xff\x25":
+            slot = int.from_bytes(im.img[o + 2:o + 6], "little")
+            if IAT[0] <= slot < IAT[1]:
+                imps.add(imports.get(slot, f"IAT 0x{slot:08x}"))
+    good = [c for c in sorted(direct) if pc.qualifies(hooks, c)]
+    if good:
+        c = good[0]
+        return "satisfied", f"callee 0x{c:08x} {hooks[c]['name']} {hooks[c]['conf']}" + (
+            f" (+{len(good) - 1})" if len(good) > 1 else "")
+    if imps:
+        return "satisfied", "import " + ",".join(sorted(imps))
+    if not direct and not indirect:
+        return "leaf", "no callee (L24: A/B on a non-trivial domain)"
+    if not direct:
+        return "indirect-only", f"{indirect} indirect site(s) (L27: A/B must exercise the dispatch)"
+    return "blocked", "anonymous callees " + ";".join(f"0x{c:08x}" for c in sorted(direct))
 
 
 def main():
@@ -39,7 +96,9 @@ def main():
     rows = list(csv.DictReader(io.open(a.tsv, encoding="utf-8"), delimiter="\t"))
     inst = collections.defaultdict(set)
     for r in rows:
-        if r["kind"] in pc.INSTALLER_KINDS:
+        # the installer clause (re/CONFIDENCE.md, 2026-10-11): vtable / function-table rows whose boundary test is
+        # 'resolved'; code kinds are already in Ghidra's caller set, so they add nothing to the caller half
+        if r["kind"] in CLAUSE_KINDS and r.get("boundary", "resolved") == "resolved":
             inst[int(r["target_rva"], 16)].add(int(r["installer_fn"], 16))
 
     # ---- 1. anti-island, caller half ----------------------------------------------------------------------
@@ -67,12 +126,30 @@ def main():
               and int(r["installer_fn"], 16) in q}
         kinds.update(ks)
     print("  by installer kind:", dict(kinds.most_common()))
+    # worst case for the unmeasured adjacent-vtable risk: only slot 0 of a table counts
+    slot0 = {int(r["target_rva"], 16) for r in rows if r["kind"] in CLAUSE_KINDS
+             and " slot 0 " in f" {r['detail']}" and pc.qualifies(hooks, int(r["installer_fn"], 16))}
+    print(f"  of which survive a slot-0-only cut (worst case for hidden vtable starts): "
+          f"{sum(1 for t, _ in gain if t in slot0)}")
+
+    # ---- callee half for the gains --------------------------------------------------------------------------
+    import pefile
+    im = pc.Image()
+    pe = pefile.PE(str(pc._main_repo() / "original" / "MASHED.exe.unpatched"))
+    imports = {i.address: (i.name or b"ord").decode() for e in pe.DIRECTORY_ENTRY_IMPORT for i in e.imports}
+    split = {t: callee_half(im, hooks, t, imports) for t, _ in gain}
+    v = collections.Counter(s[0] for s in split.values())
+    both = sum(1 for s in split.values() if s[0] != "blocked")
+    print(f"  callee half over the {len(gain)}: {dict(v.most_common())}")
+    print(f"  SPLIT: both halves satisfied {both} | caller satisfied, callee blocking {len(gain) - both}")
     if a.out:
         with io.open(a.out, "w", encoding="utf-8", newline="") as f:
-            f.write("target_rva\ttarget_name\tqualifying_installers\n")
+            f.write("target_rva\ttarget_name\tqualifying_installers\tsplit\tcallee_half\tcallee_basis\n")
             for t, q in gain:
+                verdict, basis = split[t]
                 f.write(f"0x{t:08x}\t{hooks[t]['name']}\t" + ";".join(
-                    f"0x{x:08x} {hooks[x]['name']} {hooks[x]['conf']}" for x in q) + "\n")
+                    f"0x{x:08x} {hooks[x]['name']} {hooks[x]['conf']}" for x in q)
+                    + f"\t{'callee_blocking' if verdict == 'blocked' else 'both_satisfied'}\t{verdict}\t{basis}\n")
         print(f"  wrote {a.out}")
 
     # ---- 2. mutators ----------------------------------------------------------------------------------------
@@ -83,7 +160,11 @@ def main():
     muts = [int(l.split("\t")[0], 16) for l in io.open(ROOT / "re/analysis/plans/mutators.txt", encoding="utf-8")
             if l.startswith("0x")]
     ptr_sites = {int(r["installer_site_rva"], 16) for r in rows if r["kind"] == "ptr_call"}
-    blocked, gained, cls_mut, all_cls = [], 0, collections.Counter(), collections.Counter()
+    inst_any = collections.defaultdict(set)
+    for r in rows:
+        if r["kind"] in pc.INSTALLER_KINDS:
+            inst_any[int(r["target_rva"], 16)].add(int(r["installer_fn"], 16))
+    blocked, gained, gained_any, cls_mut, all_cls = [], 0, 0, collections.Counter(), collections.Counter()
     only = collections.Counter()
     for m in muts:
         try:
@@ -94,13 +175,14 @@ def main():
             continue
         blocked.append(m)
         gained += bool({f for f in inst.get(m, ()) if f != m})
+        gained_any += bool({f for f in inst_any.get(m, ()) if f != m})
         cs = set()
         for fn, d, at, op in ind:
             mabs = re.fullmatch(r"dword ptr \[(0x[0-9a-f]+)\]", op)
             if mabs and IAT[0] <= int(mabs.group(1), 16) < IAT[1]:
                 c = "iat"
             elif re.fullmatch(r"dword ptr \[e[a-z]{2}\*4 \+ 0x[0-9a-f]+\]", op):
-                c = "switch"
+                c = "idx_table"     # [reg*4 + tbl] that write_surface.switch_table() did NOT accept as a switch
             elif mabs:
                 c = "ptr_known" if at in ptr_sites else "ptr_abs"
             elif "[" in op:
@@ -113,17 +195,15 @@ def main():
         only[frozenset(cs)] += 1
     n = len(blocked)
     print(f"\nMUTATORS: {len(muts)} in mutators.txt; indirect at depth 3: {n}")
-    print(f"  (a) blocked mutators that gain an installer row themselves: {gained}")
+    print(f"  (a) blocked mutators that gain an installer row themselves: {gained_any} (any kind), "
+          f"{gained} (installer-clause kinds)")
     print(f"  (b) indirect sites by class: {dict(all_cls.most_common())}")
     print(f"      blocked mutators with >=1 site of class: {dict(cls_mut.most_common())}")
-    easy = {"iat", "switch", "ptr_known"}
-    print(f"      blocked ONLY by iat/switch/ptr_known sites: {sum(v for k, v in only.items() if k <= easy)}")
-    print(f"      blocked ONLY by iat/switch: {sum(v for k, v in only.items() if k <= {'iat', 'switch'})}")
-    # switch = intra-function jump table, ptr_known = target set mapped by the TSV; both are statically followable.
+    # ptr_known = target set mapped by the TSV, statically followable once no store_mem replaces the global.
     # iat is not: an import writes through its arguments, so it stays a blocker for a sound snapshot set.
-    print(f"      blocked ONLY by switch/ptr_known (followable now): "
-          f"{sum(v for k, v in only.items() if k <= {'switch', 'ptr_known'})}"
-          f"  of which need ptr_known: {sum(v for k, v in only.items() if k <= {'switch', 'ptr_known'} and 'ptr_known' in k)}")
+    print(f"      blocked ONLY by ptr_known (followable with this TSV): "
+          f"{sum(v for k, v in only.items() if k == {'ptr_known'})}")
+    print(f"      blocked ONLY by iat/ptr_known: {sum(v for k, v in only.items() if k <= {'iat', 'ptr_known'})}")
     return 0
 
 

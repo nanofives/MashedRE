@@ -313,16 +313,57 @@ def all_rows(im, hooks):
     return rows, skipped
 
 
+TABLE_START = re.compile(r"slot (\d+) \S+ of 0x([0-9a-f]{8})")
+
+
+def boundaries(im, rows):
+    """{(target, site, ref): verdict} for every row: 'n/a' for code kinds, 'resolved' or 'suspect@0x<p>' for tables.
+
+    Mashed has no RTTI, so the end of one vtable and the start of the next are visible only through code that
+    references the start. A table start that NO code references (an abstract base built __declspec(novtable), a vptr
+    store the optimiser removed) is invisible, and the walk-back in references() runs straight across it, crediting
+    the earlier table's installers with the later table's slots. The test: a derived vtable repeats the inherited
+    prefix of its base, so a hidden start shows up as a repeat. Position p in (start, ref] is a suspected boundary
+    when its first two dwords are non-NULL, DISTINCT, and equal the first two dwords of any table start in `rows`
+    (this table's own included). Distinct, because a shared empty virtual fills consecutive slots inside one vtable:
+    on 2026-10-11 the pair (0x0045b350, 0x0045b350) RwInitNullStub x2 at slot 18 of 0x005cf9e8 / 0x005cfd70 /
+    0x005d0eb0 / 0x005d0dc0 matched a referenced table that starts with the same two stubs, and flagged 168 rows. A 'suspect' row must not be used as a caller (re/CONFIDENCE.md installer clause). 'resolved'
+    means this test found no hidden start; a hidden table whose prefix matches no referenced table is not
+    detectable here.
+    """
+    starts = set()
+    for t, site, kind, fn, det, ref in rows:
+        m = TABLE_START.search(det)
+        if m:
+            starts.add(int(m.group(2), 16))
+    prefixes = {(im.dword(s), im.dword(s + 4)) for s in starts}
+    out = {}
+    for t, site, kind, fn, det, ref in rows:
+        m = TABLE_START.search(det)
+        if not m:
+            out[(t, site, ref)] = "n/a"
+            continue
+        start, verdict = int(m.group(2), 16), "resolved"
+        for p in range(start + 4, ref + 1, 4):
+            pair = (im.dword(p), im.dword(p + 4))
+            if pair[0] and pair[1] and pair[0] != pair[1] and pair in prefixes:
+                verdict = f"suspect@0x{p:08x}"
+                break
+        out[(t, site, ref)] = verdict
+    return out
+
+
 def write_tsv(rows, hooks, im, path):
     lvl = lambda a: hooks.get(a, {}).get("conf", "-") if a is not None else "-"
     nm = lambda a: (hooks.get(a, {}).get("name") or im.names.get(a, "?")) if a is not None else "-"
     hx = lambda a: f"0x{a:08x}" if a is not None else "-"
     with io.open(path, "w", encoding="utf-8", newline="") as f:
         f.write("target_rva\tinstaller_site_rva\tkind\ttarget_level\ttarget_name\tinstaller_fn\tinstaller_level"
-                "\tinstaller_name\tref_va\tdetail\n")
+                "\tinstaller_name\tref_va\tdetail\tboundary\n")
+        bd = boundaries(im, rows)
         for t, site, kind, fn, det, ref in rows:
             f.write(f"{hx(t)}\t{hx(site)}\t{kind}\t{lvl(t)}\t{nm(t)}\t{hx(fn)}\t{lvl(fn)}\t{nm(fn)}\t{hx(ref)}"
-                    f"\t{det}\n")
+                    f"\t{det}\t{bd[(t, site, ref)]}\n")
 
 
 FLOW = re.compile(r"CALL|JUMP|FALL_THROUGH|FLOW|TERMINATOR")

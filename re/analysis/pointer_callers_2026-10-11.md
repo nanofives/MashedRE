@@ -125,3 +125,37 @@ at run time, so the target set needs that check before a snapshot set relies on 
 - Feed the 142 candidates to `caller_screen.py`'s callee half, after the rubric ruling on installers.
 - Teach `write_surface.py` that `jmp [reg*4 + tbl]` is a switch (25 mutators), and to resolve `[abs]` sites from this
   TSV once the store_mem check above is in (7 more).
+
+## Follow-up, 2026-10-11 (user rulings applied)
+
+**Rubric.** An installer clause was added to `re/CONFIDENCE.md` after the L27 indirect-dispatch block. It is
+C2→C3 only, the A/B evidence is still required, and it accepts `vtable` / `fn_table` rows whose boundary verdict is
+`resolved`.
+
+**Boundary test.** `pointer_callers.boundaries()` writes a new `boundary` column in the TSV:
+- The first pass flagged 171 vtable rows. 168 of them were one artefact: two consecutive `RwInitNullStub`
+  `0x0045b350` slots (a shared empty virtual) at slot 18 of `0x005cf9e8` / `0x005cfd70` / `0x005d0eb0` /
+  `0x005d0dc0`, matching a referenced table that starts with the same two stubs. The remaining 3 sat behind a NULL
+  slot of `0x005de68c`.
+- With the pair required to be non-NULL and distinct, the test flags 0 rows.
+- A hidden table with a novel prefix stays undetectable. The worst-case slot-0-only reading keeps 18 of the 142.
+
+**write_surface.py.** `switch_table()` stops counting `jmp [reg*4 + tbl]` as indirect dispatch when the table's first
+entry lands back in the same body. Two more changes go with it: a switch no longer ends the body, and decoding stops
+at the table when it lies inside the body.
+- Depth 3: **1,125 → 1,100** blocked mutators. Exactly 25 left the set and none entered it.
+- Self-test: unchanged at 6/8 windows.
+- 34 `[reg*4 + tbl]` sites remain indirect. Their tables do not point back into the body.
+- 7 mutators are now blocked only by global function pointers that this TSV maps.
+
+**Callee half for the 142.** Every one is satisfied, so none is blocking:
+
+| Basis | Count | Requirement |
+|---|---:|---|
+| C2 callee | 87 | none beyond the A/B |
+| Import | 18 | none beyond the A/B |
+| C3 callee | 11 | none beyond the A/B |
+| Leaf | 17 | L24: the A/B must cover a non-trivial domain |
+| Indirect-only | 9 | L27: the A/B must exercise the dispatch |
+
+The `split`, `callee_half` and `callee_basis` columns are in `pointer_callers_gate_candidates_2026-10-11.tsv`.
