@@ -224,3 +224,47 @@ A driven original run whose player passes an AI car on a straight above speed 25
 - Or a driven capture on another track with a longer straight.
 - If the original then returns 1 where the gates pass, the exe's 19 commits are faithful behaviour,
   and the knob question becomes a user decision on stacking.
+
+# Phase 2c (2026-10-11): racing-line pursuit + start-boost press: the original takes the arm
+
+Verdict: **the original's FUN_00414570 returns 1 in the exe's situation.**
+- Situation: player ahead of an AI car, both above 2500, on a straight.
+- Result: 105 returns of 1 on all three AI cars (v1 ×30, v2 ×33, v3 ×42), frames 926..967 just after GO.
+- Gate values: curvature 1.5..5.6 (< 20), angle 0..1.5 deg (< 30).
+- The capture validates 4,646/4,646 through the original bytes.
+- So the exe's 19 mode-1 commits (car 3, curvature 5.6..6.8, angle 1.6..2.6 deg) are the original's behaviour
+  in kind. G-AILEAF's port is faithful on both arms, and PREREG_AILEAF's inertness prediction was wrong
+  (Phase 2).
+- The counts differ (original 105 on 3 cars, exe 19 on car 3) because the two sides' launch dynamics differ.
+  That is upstream of this group (start boost / player launch), not in it.
+
+## Driving the original's player (`re/frida/scenario_launch.py`)
+
+**`--statediff-pursuit S [--pursuit-look N] [--pursuit-wait-go] [--pursuit-boost]`**
+- Requires `--statediff-drive` and `--aileaf-probe` (the spline pointer).
+- Closed-loop steer through the cook injector, aimed at racing-line node nearest + N. Steer sign S = -1 tracks:
+  max |heading error| 0.48 rad. S = +1 diverges: 2.88 rad.
+- `--pursuit-wait-go` holds accel at 0 until sub-state 0x0063ba8c == 6.
+- `--pursuit-boost` adds Branch A's press for the player (FUN_00418560 0x004185b5..0x004185ca with cd = 3:
+  accel on during sub-state 5 while 0x005f29b8 < 6700).
+
+## Runs (all `--aileaf-probe`, D3 argv)
+
+| run | player input | 0x00414570 ret = 1 | first pass of the player (AI v: player speed / AI speed) |
+|---|---|---|---|
+| `o_pu_p1` | pursuit S = +1 | 0 / 4,355 | diverges (not scored) |
+| `o_pu_pm1` | pursuit S = -1 | 0 / 4,719 | player stalls at progress 2.8 |
+| `o_pu_all` | pursuit S = -1, every call | 0 / 4,680 | v1 78 / 1731, v2 255 / 2290, v3 399 / 2678 |
+| `o_pu_go` | + wait-go | 0 / 4,342 | v1 394 / 1796, v2 832 / 2070, v3 1017 / 2776 |
+| `o_pu_boost` | + wait-go + boost press | **105 / 4,646** | the player leads the pack off the line; rows `check_pu_boost.txt` 4646/4646 |
+
+**Across all runs:** the races freeze at about frame 1,500 (the o_rg4 "round ends early" recipe). Every
+observation is in the first lap.
+
+## Decision state
+
+- The registered decision stands: the knob is not accepted under PREREG_AILEAF.
+- The evidence for re-proposing it is now complete:
+  - replay-exact (6000/6000 synthetic, 368/368 exe live, 4,646 original live);
+  - the original takes the same arm in the same kind of situation.
+- Whether MASHED_AILEAF becomes available for stacking, or default-ON, is a user decision.

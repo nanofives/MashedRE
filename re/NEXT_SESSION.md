@@ -16,10 +16,11 @@
 > - Trackers recorded with no promotion; U-9652 / U-9653 filed.
 >
 > **Options**
-> 1. DONE (Phase 2b): `scenario_launch.py --aileaf-probe` + `--statediff-drive`. The original reaches the speed/distance
->    gates (6 rows) but only inside a corner (curvature 81..96 vs gate 20), so ret 0. Still owed: a driven original run
->    with a straight-line pass above 2500 (a steer schedule that holds the racing line).
-> 2. User decision: is faithful-to-inputs + replay-exact enough to keep MASHED_AILEAF available for stacking?
+> 1. DONE (Phase 2b + 2c): with `--statediff-pursuit -1 --pursuit-wait-go --pursuit-boost`, the ORIGINAL returns 1
+>    on 105 calls (all 3 AI cars, frames 926..967, straight). Validated 4646/4646 through the original bytes. The exe's
+>    19 commits are the original's behaviour in kind (RESULT_AILEAF.md Phase 2c). The counts differ because launch
+>    dynamics are upstream.
+> 2. User decision (evidence now complete): make MASHED_AILEAF available for stacking, or default-ON?
 > 3. Back to the PLAN.md ranking. Every other D3 group is producer-blocked. The non-D3 lane is not decided.
 >
 > Not started: U-9219, the car-2 pickup miss, default flips.
