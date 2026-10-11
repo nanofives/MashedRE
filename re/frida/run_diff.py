@@ -470,7 +470,8 @@ def build_config(hook, asi_path=None):
     return config
 
 
-STANDIN_KEYS = ('heap_standin', 'import_standin', 'freeze_main', 'object_size', 'object_alloc')
+STANDIN_KEYS = ('heap_standin', 'import_standin', 'freeze_main', 'object_size', 'object_alloc',
+                'observe_ret_len', 'observe_globals')
 STANDINS_JS = ROOT / 're' / 'frida' / 'js' / 'standins.js'
 
 

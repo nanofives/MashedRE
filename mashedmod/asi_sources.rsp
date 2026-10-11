@@ -424,3 +424,4 @@
 "Gameplay\PickupPoolSpawn.cpp"
 "Render\ArcticTrackNodeSlot0.cpp"
 "Render\Vtbl5cf9e8ScalarDeletingDtor.cpp"
+"Render\PromoLoop_standins_r1.cpp"

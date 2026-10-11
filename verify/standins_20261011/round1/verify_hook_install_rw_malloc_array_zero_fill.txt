@@ -1,0 +1,25 @@
+=== verify_hook_install report (rw_malloc_array_zero_fill) ===
+
+target address: 0x00474db0  export: RwMallocArrayZeroFill
+PRE  bytes:     a1 f8 3f 7d 00 56 8b 74
+asi base:       0x5fd80000
+reimpl addr:    0x5fe08670
+POST bytes:     e9 bb 38 99 5f 56 8b 74
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x5f9938bb  expected 0x5f9938bb  -> OK
+bytes changed:  True
+
+interceptor entries (reimpl):  2 / 2  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [7, 3]}  got=ret=A+0x0 obj=[] retmem=[0x0,0x0,0x0,0x0,0x0,0xa5a5a500,0xa5a5a5a5,0xa5a5a5a5,0xa5a5a5a5,0xa5a5a5a5,0xa5a5a5a5,0xa5a5a5a5,0xa5a5a5a5,0xa5a5a5a5,0xa5a5a5a5,0xa5a5a5a5] log=[alloc:rwmalloc:0x15:A+0x0 arena=0x20/0xb9699684]  err=
+  [OK] input={'args': [3, 64]}  got=ret=A+0x0 obj=[] retmem=[0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0] log=[alloc:rwmalloc:0xc0:A+0x0 arena=0xc0/0x75a104c5]  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + first 8 bytes mutated by patcher
+  + reimpl interceptor fired 2x as expected
+  + all 2 calls returned without exception
+FAIL:
+  (none)

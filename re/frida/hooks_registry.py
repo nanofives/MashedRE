@@ -22407,3 +22407,51 @@ HOOKS['renderer_scalar_dtor'] = {
         {'blocks': [0x20], 'fields': _DT_H + [[0x3c, 'B0']], 'args': ['OBJ', 0]},
     ],
 }
+
+
+# ---- stand-in promotion round 1 (plan item #3 step 2, 2026-10-11) -- Render/PromoLoop_standins_r1.cpp ----
+# All three allocate through *(0x007d3ff8)+0x108 (rwmalloc); the heap stand-in carves both arms' blocks from one
+# arena reset per arm, so returned pointers read A+<off> and the block contents are compared (retmem / arena digest).
+#
+# 0x00474db0 RwMallocArrayZeroFill(count, stride): rwmalloc(count*stride, 0) then ZeroFillWrapper(p, n) 0x004b6520.
+# [7,3] asks 21 bytes: the arena carves 32, so retmem shows exactly where the zero fill stops (fill byte 0xcd after).
+# The failMask vector makes rwmalloc return NULL with n = 0, so ZeroFillWrapper(NULL, 0) runs and NULL is returned.
+HOOKS['rw_malloc_array_zero_fill'] = {
+    'rva': 0x00474db0, 'export': 'RwMallocArrayZeroFill',
+    'signature': {'ret': 'pointer', 'args': ['uint32', 'uint32']},
+    'arg_type': 'standin_object_call', 'heap_standin': True, 'observe_ret_len': 0x40, 'lut_root_delta': 0,
+    'path1_tests': [
+        {'args': [1, 4]}, {'args': [3, 0x40]}, {'args': [0x10, 0x10]}, {'args': [0, 8]}, {'args': [7, 3]},
+        {'args': [0, 0], 'failMask': 1},
+    ],
+    'path2_tests': [{'args': [7, 3]}, {'args': [3, 0x40]}],
+}
+
+# 0x004759b0 Arrays691600Alloc(n): [0x00691600] = n, then four RwMallocArrayZeroFill blocks (n,0x40) (n,4) (n,4)
+# (n,4) into 0x00691608 / 0x00691604 / 0x00691610 / 0x00691614; returns the fourth. Live globals: observe_globals
+# seeds sentinels, observes and restores them around each arm; freeze_main holds the game's first thread meanwhile.
+HOOKS['arrays_691600_alloc'] = {
+    'rva': 0x004759b0, 'export': 'Arrays691600Alloc',
+    'signature': {'ret': 'pointer', 'args': ['uint32']},
+    'arg_type': 'standin_object_call', 'heap_standin': True, 'freeze_main': True,
+    'observe_globals': [{'addr': '0x00691600', 'len': 0x18}], 'lut_root_delta': 0,
+    'path1_tests': [{'args': [1]}, {'args': [5]}, {'args': [0x10]}, {'args': [0]}, {'args': [0x40]}],
+    'path2_tests': [{'args': [5]}, {'args': [0x10]}],
+}
+
+# 0x00484170 Rec18Create(a1, a2, a3): r = rwmalloc(0x18, 0); NULL -> 0; r[0..1] = a3[0..1], r[2] = a2[0],
+# r[3] = 1.0f / a1.f[+0x80] (fdivr 0x005cc320 = 1.0f), r[4] = r[5] = 0. a1 = OBJ, a2 = B0, a3 = B1.
+def _r18(fbits, **kw):
+    t = {'blocks': [8, 8],
+         'fields': [[0x80, fbits], ['B0', 0, 0x11111111], ['B1', 0, 0x22222222], ['B1', 4, 0x33333333]],
+         'args': ['OBJ', 'B0', 'B1']}
+    t.update(kw)
+    return t
+HOOKS['rec18_create'] = {
+    'rva': 0x00484170, 'export': 'Rec18Create',
+    'signature': {'ret': 'pointer', 'args': ['pointer', 'pointer', 'pointer']},
+    'arg_type': 'standin_object_call', 'heap_standin': True, 'observe_ret_len': 0x18, 'lut_root_delta': 0,
+    'path1_tests': [_r18(0x40000000), _r18(0x3f000000), _r18(0x40400000), _r18(0xc0e00000), _r18(0x3a83126f),
+                    _r18(0x40400000, failMask=1)],
+    'path2_tests': [_r18(0x40400000), _r18(0x40400000, failMask=1)],
+}

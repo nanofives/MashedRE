@@ -155,10 +155,12 @@
       return prev;
     }
 
+    let armFail = {};
     function carve(size, byte, tag) {
       const k = allocCalls++;
-      const failMask = (hcfg.failMask || 0) >>> 0;
-      if ((k < 32 && ((failMask >>> k) & 1)) || (hcfg.failSize !== undefined && size === (hcfg.failSize >>> 0))) {
+      const failMask = ((armFail.failMask !== undefined ? armFail.failMask : hcfg.failMask) || 0) >>> 0;
+      const failSize = armFail.failSize !== undefined ? armFail.failSize : hcfg.failSize;
+      if ((k < 32 && ((failMask >>> k) & 1)) || (failSize !== undefined && size === (failSize >>> 0))) {
         log.push(['alloc', tag, size, 'FAIL']);
         return ptr(0);
       }
@@ -297,13 +299,17 @@
     Interceptor.flush();
     return {
       norm: norm,
-      arm: function () {
+      // fail: optional per-arm {failMask, failSize} overriding the install-time schedule
+      arm: function (fail) {
+        armFail = fail || {};
         log = [];
         cursor = 0;
         allocCalls = 0;
         sizes.clear();
         for (let i = 0; i < impCalls.length; i++) impCalls[i] = 0;
-        if (arena) arena.writeByteArray(new Array(arenaSize).fill(0));
+        // 0xa5, not 0: carved blocks are filled with `fill` (0xcd) only over the requested size, so the slack past a
+        // block reads 0xa5 and a body that writes past its block (a zero fill one dword too long) changes the digest.
+        if (arena) arena.writeByteArray(new Array(arenaSize).fill(0xa5));
         armed.writeU32(1);
       },
       // Returns this arm's observation: every log entry (pointers normalized) + the arena digest.
@@ -409,8 +415,15 @@
   //   t.args    [value, ...]          call arguments, same value syntax ('OBJ' first for a thiscall `this`)
   // Observation per arm: ret=<normalized> (unless void), obj=<dwords that differ from the seed, normalized>, and the
   // stand-in log (allocs, frees with entry tag, imports with arguments, arena digest).
+  //   t.fields entries may also be [target, off, value] with target 'OBJ' | 'B<i>' (stores into a block)
+  //   t.failMask / t.failSize         per-test allocation failure schedule (overrides heap_standin's)
   // cfg keys: object_size (0x100), object_alloc ('crt'|'frida'), heap_standin, import_standin, freeze_main,
-  //           signature.ret.  fns: [[side, NativeFunction], ...].  Returns per-test arrays of {side: obs, err}.
+  //           signature.ret, observe_ret_len (dump that many bytes at the returned pointer when non-NULL),
+  //           observe_globals [{addr, len}]: saved before each arm, filled with per-dword sentinels 0x5eed0000+i
+  //           (or t.globals [[addr, value]] stores), observed after the arm (normalized dwords) and RESTORED right
+  //           after it -- a live game global holds a fixture or arena pointer only for the length of one arm (use
+  //           freeze_main when the game's first thread reads it).
+  //           fns: [[side, NativeFunction], ...].  Returns per-test arrays of {side: obs, err}.
   function objectCall(fns, cfg, asi) {
     const size = cfg.object_size || 0x100;
     const gameMalloc = new NativeFunction(ptr('0x004a45fb'), 'pointer', ['uint32'], 'mscdecl');
@@ -442,9 +455,13 @@
         const seed = function () {
           obj.writeByteArray(new Array(size).fill(t.fill === undefined ? 0 : t.fill));
           cur.forEach(function (b) { b[0].writeByteArray(new Array(b[1]).fill(0xbb)); });
-          (t.fields || []).forEach(function (f) { obj.add(f[0]).writePointer(val(f[1])); });
+          (t.fields || []).forEach(function (f) {
+            if (f.length === 3) val(f[0]).add(f[1]).writePointer(val(f[2]));
+            else obj.add(f[0]).writePointer(val(f[1]));
+          });
           return new Uint8Array(obj.readByteArray(size));
         };
+        const globs = (cfg.observe_globals || []).map(function (g) { return [ptr(g.addr), g.len || 4]; });
         const row = {};
         fns.forEach(function (sf) {
           const side = sf[0], fn = sf[1];
@@ -454,9 +471,26 @@
             return (cfg.signature.args[i] === 'pointer') ? p : p.toUInt32();
           });
           let ret = null, err = null;
-          S.arm();
+          const saved = globs.map(function (g) { return g[1] ? g[0].readByteArray(g[1]) : null; });
+          globs.forEach(function (g) {
+            for (let o = 0; o + 4 <= g[1]; o += 4) g[0].add(o).writeU32((0x5eed0000 + o / 4) >>> 0);
+          });
+          (t.globals || []).forEach(function (gv) { ptr(gv[0]).writePointer(val(gv[1])); });
+          S.arm({ failMask: t.failMask, failSize: t.failSize });
           try { ret = fn.apply(null, args); } catch (e) { err = e.message; }
           const log = S.disarm();
+          const gobs = globs.map(function (g) {
+            const w = [];
+            for (let o = 0; o + 4 <= g[1]; o += 4) w.push(S.norm(g[0].add(o).readU32()));
+            return hex(g[0].toUInt32()) + ':' + w.join(',');
+          });
+          globs.forEach(function (g, i) { g[0].writeByteArray(saved[i]); });
+          let rmem = '';
+          if (cfg.observe_ret_len && ret !== null && !ptr(ret).isNull()) {
+            const rp = ptr(ret), w = [];
+            for (let o = 0; o + 4 <= cfg.observe_ret_len; o += 4) w.push(S.norm(rp.add(o).readU32()));
+            rmem = ' retmem=[' + w.join(',') + ']';
+          }
           const after = new Uint8Array(obj.readByteArray(size));
           const changed = [];
           for (let o = 0; o + 4 <= size; o += 4) {
@@ -466,7 +500,8 @@
           }
           const r = (cfg.signature && cfg.signature.ret === 'void') ? '' :
                     'ret=' + (ret === null ? 'null' : S.norm(typeof ret === 'number' ? ret : ptr(ret).toUInt32())) + ' ';
-          row[side] = { obs: r + 'obj=[' + changed.join(',') + '] log=[' + log + ']', err: err };
+          row[side] = { obs: r + 'obj=[' + changed.join(',') + ']' + rmem +
+                               (gobs.length ? ' globals=[' + gobs.join(' ') + ']' : '') + ' log=[' + log + ']', err: err };
         });
         out.push(row);
       });

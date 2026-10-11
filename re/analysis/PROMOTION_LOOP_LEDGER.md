@@ -591,3 +591,12 @@ The per-round narration (`## Round log`, `## STRATEGIC CHECKPOINT 2026-06-13`,
 2026-07-01. Live round state (counters, lanes, done, deferred, wishlist) stays
 HERE — /promote-round keeps appending new round-log entries below this line.
 
+### Stand-in lane round 1 (2026-10-11, plan #3 step 2, branch harness/standins)
+- Lane: heap/import stand-ins (re/frida/js/standins.js); candidates from re/coverage/standin_census_d1.tsv (59 reached game-zone rows).
+- Pre-round: 0x004943d0 Vtbl5cf9e8ScalarDeletingDtor C3 (first target, controls RED 3/3).
+- Attempted 3, GREEN 3: 0x00474db0 RwMallocArrayZeroFill, 0x004759b0 Arrays691600Alloc, 0x00484170 Rec18Create (path1 + self-baseline + path2).
+- Deferred: 0x004522d0 (RW free tail thunk; callers inside the RenderWare bands 0x005336d0/0x0053d060/0x0053d200/0x0053d400/0x00549b20/0x005515a0 -> library-vs-first-party question for Mariano);
+  0x00496940 (RwRasterCreate 0x004c77c0 -> platform vtable +0x58, D3D device), 0x00494460 (TEARDOWN: video glue 0x00494320 + raster destroy 0x004c7650),
+  0x004935a0 / 0x004935d0 (image-library BMP loader 0x0052cb00 / d3dx 0x00514330 + RW global setter 0x004c5c80), 0x00491780 (0x00491590 fills two blocks through the RNG 0x00472650 and writes 0x00869cc0..0x0086a494).
+- Harness additions this round: observe_globals, per-test failMask/failSize, observe_ret_len, block-targeted fields, arena slack byte 0xa5.
+- Dry counter: 0.
