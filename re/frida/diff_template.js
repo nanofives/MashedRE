@@ -6330,8 +6330,26 @@ function runDiff() {
             if (x !== null && typeof x === 'object' && x.scratch !== undefined) return scratch.add(x.scratch | 0);
             return ptr(x);
         }
+        // `recorder` {args, abi ('stdcall'|'mscdecl'), off, max_calls} (negctl re-earn 2026-10-11): a harness callback
+        // that appends each call's args to scratch+off ([count, a0..a{n-1}, a0.., ...], up to max_calls) and returns 0.
+        // A seed value {recorder: true} resolves to its address, e.g. a fake device vtable slot, so the arguments a
+        // function passes to an indirect callee become observable (observe {scratch: off}).
+        const recCfg = CONFIG.recorder || null;
+        let recorder = null;
+        if (recCfg && scratch) {
+            const nA = recCfg.args | 0, rOff = recCfg.off | 0, maxC = (recCfg.max_calls | 0) || 8;
+            const types = []; for (let k = 0; k < nA; k++) types.push('uint32');
+            recorder = new NativeCallback(function () {
+                const base = scratch.add(rOff), c = base.readU32();
+                if (c < maxC) for (let k = 0; k < nA; k++) base.add(4 + (c * nA + k) * 4).writeU32(arguments[k] >>> 0);
+                base.writeU32(c + 1);
+                return 0;
+            }, 'int', types, recCfg.abi || 'stdcall');
+            globalThis.__negctlRecorderKeep = recorder;
+        }
         function resolveVal(x) {
             if (x !== null && typeof x === 'object' && x.scratch !== undefined) return scratch.add(x.scratch | 0).toUInt32();
+            if (x !== null && typeof x === 'object' && x.recorder) return recorder.toUInt32();
             return x;
         }
         function fillScratch() {

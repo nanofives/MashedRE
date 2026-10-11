@@ -1,0 +1,8 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,"[{""scratch"":1132}]",2964168571,0xb0ad9f7b,2964168571,0xb0ad9f7b,True,,
+1,"[{""scratch"":1900}]",1972014331,0x758a8cfb,1972014331,0x758a8cfb,True,,
+2,"[{""scratch"":1228}]",1745576487,0x680b6227,1745576487,0x680b6227,True,,
+3,"[{""scratch"":1324}]",3660341454,0xda2c60ce,3660341454,0xda2c60ce,True,,
+4,"[{""scratch"":1420}]",272619038,0x103fd61e,272619038,0x103fd61e,True,,
+5,"[{""scratch"":1516}]",3909285428,0xe902f634,3909285428,0xe902f634,True,,
+6,"[{""scratch"":1612}]",27085039,0x019d48ef,27085039,0x019d48ef,True,,

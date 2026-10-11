@@ -1,0 +1,11 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,"[{""scratch"":0},1,{""scratch"":144},{""scratch"":148}]",1845674451,0x6e02c1d3,1845674451,0x6e02c1d3,True,,
+1,"[{""scratch"":0},2061,{""scratch"":144},{""scratch"":148}]",1354852465,0x50c16871,1354852465,0x50c16871,True,,
+2,"[{""scratch"":0},2062,{""scratch"":144},{""scratch"":148}]",707165097,0x2a267ba9,707165097,0x2a267ba9,True,,
+3,"[{""scratch"":0},2063,{""scratch"":144},{""scratch"":148}]",784807133,0x2ec734dd,784807133,0x2ec734dd,True,,
+4,"[{""scratch"":0},2064,{""scratch"":144},{""scratch"":148}]",2803065563,0xa71362db,2803065563,0xa71362db,True,,
+5,"[{""scratch"":0},2457,{""scratch"":144},{""scratch"":148}]",2184282241,0x82318081,2184282241,0x82318081,True,,
+6,"[{""scratch"":0},2061,0,{""scratch"":148}]",2998378297,0xb2b79f39,2998378297,0xb2b79f39,True,,
+7,"[{""scratch"":0},2061,{""scratch"":144},0]",2089863684,0x7c90ca04,2089863684,0x7c90ca04,True,,
+8,"[{""scratch"":0},2064,{""scratch"":144},{""scratch"":148}]",2803065563,0xa71362db,2803065563,0xa71362db,True,,
+9,"[{""scratch"":0},2061,{""scratch"":144},{""scratch"":148}]",3804527289,0xe2c47ab9,3804527289,0xe2c47ab9,True,,

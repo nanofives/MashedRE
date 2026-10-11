@@ -1,0 +1,108 @@
+hook	rva	arg_type	lane	mode	verdict	mismatches	total	stats	err
+bgra_reorder_4dfa40	0x004dfa40	scalars_to_scattered_globals	warm	baseline	GREEN	0	10		
+bgra_reorder_4dfa40	0x004dfa40	scalars_to_scattered_globals	warm	field_first	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=235 frozen=2	
+bgra_reorder_4dfa40	0x004dfa40	scalars_to_scattered_globals	warm	field_last	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=245 frozen=2	
+bgra_reorder_4dfa40	0x004dfa40	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=206 frozen=2	
+bgra_reorder_4dfa40	0x004dfa40	scalars_to_scattered_globals	warm	null	RED	9	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+bgra_reorder_4dfa40	0x004dfa40	scalars_to_scattered_globals	warm	real	GREEN	0	10		
+bgra_reorder_4dfa40	0x004dfa40	scalars_to_scattered_globals	warm	ret	RED	10	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+d3d9_set_stage0_filter	0x004d6b90	scalars_to_scattered_globals	warm	baseline	GREEN	0	6		
+d3d9_set_stage0_filter	0x004d6b90	scalars_to_scattered_globals	warm	field_first	RED	5	6	calls=6 flips=5 changed=12 flip=0x007d4f74 noise=209 frozen=2	
+d3d9_set_stage0_filter	0x004d6b90	scalars_to_scattered_globals	warm	field_last	RED	5	6	calls=6 flips=5 changed=12 flip=0x007d6b3f noise=211 frozen=2	
+d3d9_set_stage0_filter	0x004d6b90	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	6	calls=6 flips=0 changed=12 flip=0x00000000 noise=209 frozen=2	
+d3d9_set_stage0_filter	0x004d6b90	scalars_to_scattered_globals	warm	null	RED	6	6	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+d3d9_set_stage0_filter	0x004d6b90	scalars_to_scattered_globals	warm	real	GREEN	0	6		
+d3d9_set_stage0_filter	0x004d6b90	scalars_to_scattered_globals	warm	ret	RED	6	6	calls=6 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+intro_splash_render_state	0x004c1bb0	scalars_to_scattered_globals	warm	baseline	GREEN	0	7		
+intro_splash_render_state	0x004c1bb0	scalars_to_scattered_globals	warm	field_first	RED	5	7	calls=7 flips=5 changed=4 flip=0x0edd56a0 noise=247 frozen=2	
+intro_splash_render_state	0x004c1bb0	scalars_to_scattered_globals	warm	field_last	RED	5	7	calls=7 flips=5 changed=4 flip=0x0e1b5913 noise=247 frozen=2	
+intro_splash_render_state	0x004c1bb0	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	7	calls=7 flips=0 changed=4 flip=0x00000000 noise=247 frozen=2	
+intro_splash_render_state	0x004c1bb0	scalars_to_scattered_globals	warm	null	RED	6	7	calls=0 flips=0 changed=0 flip=0x00000000 noise=245 frozen=2	
+intro_splash_render_state	0x004c1bb0	scalars_to_scattered_globals	warm	real	GREEN	0	7		
+intro_splash_render_state	0x004c1bb0	scalars_to_scattered_globals	warm	ret	RED	7	7	calls=7 flips=0 changed=0 flip=0x00000000 noise=245 frozen=2	
+intro_splash_vtable_slot6	0x004c1a00	scalars_to_scattered_globals	warm	baseline	GREEN	0	5		
+intro_splash_vtable_slot6	0x004c1a00	scalars_to_scattered_globals	warm	field_first	RED	1	5	calls=5 flips=1 changed=4 flip=0x008a95a0 noise=223 frozen=2	
+intro_splash_vtable_slot6	0x004c1a00	scalars_to_scattered_globals	warm	field_last	RED	1	5	calls=5 flips=1 changed=4 flip=0x008a95a3 noise=224 frozen=2	
+intro_splash_vtable_slot6	0x004c1a00	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	5	calls=5 flips=0 changed=4 flip=0x00000000 noise=221 frozen=2	
+intro_splash_vtable_slot6	0x004c1a00	scalars_to_scattered_globals	warm	null	RED	4	5	calls=0 flips=0 changed=0 flip=0x00000000 noise=211 frozen=2	
+intro_splash_vtable_slot6	0x004c1a00	scalars_to_scattered_globals	warm	real	GREEN	0	5		
+intro_splash_vtable_slot6	0x004c1a00	scalars_to_scattered_globals	warm	ret	RED	5	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=211 frozen=2	
+pix_read_u32	0x004dfa70	scalars_to_scattered_globals	warm	baseline	GREEN	0	10		
+pix_read_u32	0x004dfa70	scalars_to_scattered_globals	warm	field_first	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=247 frozen=2	
+pix_read_u32	0x004dfa70	scalars_to_scattered_globals	warm	field_last	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=250 frozen=2	
+pix_read_u32	0x004dfa70	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=247 frozen=2	
+pix_read_u32	0x004dfa70	scalars_to_scattered_globals	warm	null	RED	9	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=247 frozen=2	
+pix_read_u32	0x004dfa70	scalars_to_scattered_globals	warm	real	GREEN	0	10		
+pix_read_u32	0x004dfa70	scalars_to_scattered_globals	warm	ret	RED	10	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=247 frozen=2	
+rgb_pack_encoder_4dfa10	0x004dfa10	scalars_to_scattered_globals	warm	baseline	GREEN	0	10		
+rgb_pack_encoder_4dfa10	0x004dfa10	scalars_to_scattered_globals	warm	field_first	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=224 frozen=2	
+rgb_pack_encoder_4dfa10	0x004dfa10	scalars_to_scattered_globals	warm	field_last	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=225 frozen=2	
+rgb_pack_encoder_4dfa10	0x004dfa10	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=224 frozen=2	
+rgb_pack_encoder_4dfa10	0x004dfa10	scalars_to_scattered_globals	warm	null	RED	10	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=224 frozen=2	
+rgb_pack_encoder_4dfa10	0x004dfa10	scalars_to_scattered_globals	warm	real	GREEN	0	10		
+rgb_pack_encoder_4dfa10	0x004dfa10	scalars_to_scattered_globals	warm	ret	RED	10	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=224 frozen=2	
+rw_engine_get_current_sub_system	0x004c2e40	scalars_to_scattered_globals	warm	baseline	GREEN	0	5		
+rw_engine_get_current_sub_system	0x004c2e40	scalars_to_scattered_globals	warm	field_first	NA	0	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=254 frozen=2	
+rw_engine_get_current_sub_system	0x004c2e40	scalars_to_scattered_globals	warm	field_last	NA	0	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=254 frozen=2	
+rw_engine_get_current_sub_system	0x004c2e40	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=252 frozen=2	
+rw_engine_get_current_sub_system	0x004c2e40	scalars_to_scattered_globals	warm	null	RED	4	5	calls=0 flips=0 changed=0 flip=0x00000000 noise=250 frozen=2	
+rw_engine_get_current_sub_system	0x004c2e40	scalars_to_scattered_globals	warm	real	GREEN	0	5		
+rw_engine_get_current_sub_system	0x004c2e40	scalars_to_scattered_globals	warm	ret	RED	5	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=250 frozen=2	
+rw_engine_get_sub_system_info	0x004c2e10	scalars_to_scattered_globals	warm	baseline	GREEN	0	4		
+rw_engine_get_sub_system_info	0x004c2e10	scalars_to_scattered_globals	warm	field_first	RED	4	4	calls=4 flips=4 changed=27 flip=0x0edeea00 noise=225 frozen=2	
+rw_engine_get_sub_system_info	0x004c2e10	scalars_to_scattered_globals	warm	field_last	RED	4	4	calls=4 flips=4 changed=27 flip=0x0edb17a2 noise=226 frozen=2	
+rw_engine_get_sub_system_info	0x004c2e10	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	4	calls=4 flips=0 changed=27 flip=0x00000000 noise=225 frozen=2	
+rw_engine_get_sub_system_info	0x004c2e10	scalars_to_scattered_globals	warm	null	RED	4	4	calls=0 flips=0 changed=0 flip=0x00000000 noise=225 frozen=2	
+rw_engine_get_sub_system_info	0x004c2e10	scalars_to_scattered_globals	warm	real	GREEN	0	4		
+rw_engine_get_sub_system_info	0x004c2e10	scalars_to_scattered_globals	warm	ret	RED	4	4	calls=4 flips=0 changed=0 flip=0x00000000 noise=225 frozen=2	
+rw_engine_set_video_mode	0x004c2f30	scalars_to_scattered_globals	warm	baseline	GREEN	0	6		
+rw_engine_set_video_mode	0x004c2f30	scalars_to_scattered_globals	warm	field_first	RED	3	6	calls=6 flips=3 changed=0 flip=0x006181b4 noise=255 frozen=2	
+rw_engine_set_video_mode	0x004c2f30	scalars_to_scattered_globals	warm	field_last	RED	3	6	calls=6 flips=3 changed=0 flip=0x00911f9b noise=255 frozen=2	
+rw_engine_set_video_mode	0x004c2f30	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	6	calls=6 flips=0 changed=0 flip=0x00000000 noise=255 frozen=2	
+rw_engine_set_video_mode	0x004c2f30	scalars_to_scattered_globals	warm	null	RED	3	6	calls=0 flips=0 changed=0 flip=0x00000000 noise=254 frozen=2	
+rw_engine_set_video_mode	0x004c2f30	scalars_to_scattered_globals	warm	real	GREEN	0	6		
+rw_engine_set_video_mode	0x004c2f30	scalars_to_scattered_globals	warm	ret	RED	6	6	calls=6 flips=0 changed=0 flip=0x00000000 noise=254 frozen=2	
+rw_error_module_dtor_count	0x004d8470	scalars_to_scattered_globals	warm	baseline	GREEN	0	6		
+rw_error_module_dtor_count	0x004d8470	scalars_to_scattered_globals	warm	field_first	RED	6	6	calls=6 flips=6 changed=1 flip=0x007d6c60 noise=230 frozen=2	
+rw_error_module_dtor_count	0x004d8470	scalars_to_scattered_globals	warm	field_last	RED	6	6	calls=6 flips=6 changed=1 flip=0x007d6c60 noise=256 frozen=2	
+rw_error_module_dtor_count	0x004d8470	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	6	calls=6 flips=0 changed=1 flip=0x00000000 noise=230 frozen=2	
+rw_error_module_dtor_count	0x004d8470	scalars_to_scattered_globals	warm	null	RED	6	6	calls=0 flips=0 changed=0 flip=0x00000000 noise=226 frozen=2	
+rw_error_module_dtor_count	0x004d8470	scalars_to_scattered_globals	warm	real	GREEN	0	6		
+rw_error_module_dtor_count	0x004d8470	scalars_to_scattered_globals	warm	ret	RED	6	6	calls=6 flips=0 changed=0 flip=0x00000000 noise=226 frozen=2	
+rw_plugin_list_dispatch	0x004d8090	scalars_to_scattered_globals	warm	baseline	GREEN	0	6		
+rw_plugin_list_dispatch	0x004d8090	scalars_to_scattered_globals	warm	field_first	RED	4	6	calls=6 flips=4 changed=0 flip=0x006146b8 noise=270356 frozen=2	
+rw_plugin_list_dispatch	0x004d8090	scalars_to_scattered_globals	warm	field_last	RED	4	6	calls=6 flips=4 changed=0 flip=0x006146bf noise=272070 frozen=2	
+rw_plugin_list_dispatch	0x004d8090	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	6	calls=6 flips=0 changed=0 flip=0x00000000 noise=565 frozen=2	
+rw_plugin_list_dispatch	0x004d8090	scalars_to_scattered_globals	warm	null	RED	6	6	calls=0 flips=0 changed=0 flip=0x00000000 noise=255 frozen=2	
+rw_plugin_list_dispatch	0x004d8090	scalars_to_scattered_globals	warm	real	GREEN	0	6		
+rw_plugin_list_dispatch	0x004d8090	scalars_to_scattered_globals	warm	ret	RED	6	6	calls=6 flips=0 changed=0 flip=0x00000000 noise=255 frozen=2	
+rw_plugin_list_dispatch3	0x004d8060	scalars_to_scattered_globals	warm	baseline	GREEN	0	6		
+rw_plugin_list_dispatch3	0x004d8060	scalars_to_scattered_globals	warm	field_first	RED	4	6	calls=6 flips=4 changed=0 flip=0x006146b8 noise=257 frozen=2	
+rw_plugin_list_dispatch3	0x004d8060	scalars_to_scattered_globals	warm	field_last	RED	4	6	calls=6 flips=4 changed=0 flip=0x006146bf noise=261 frozen=2	
+rw_plugin_list_dispatch3	0x004d8060	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	6	calls=6 flips=0 changed=0 flip=0x00000000 noise=256 frozen=2	
+rw_plugin_list_dispatch3	0x004d8060	scalars_to_scattered_globals	warm	null	RED	6	6	calls=0 flips=0 changed=0 flip=0x00000000 noise=256 frozen=2	
+rw_plugin_list_dispatch3	0x004d8060	scalars_to_scattered_globals	warm	real	GREEN	0	6		
+rw_plugin_list_dispatch3	0x004d8060	scalars_to_scattered_globals	warm	ret	RED	6	6	calls=6 flips=0 changed=0 flip=0x00000000 noise=256 frozen=2	
+rw_render_command_buffer_reset	0x004cd140	scalars_to_scattered_globals	warm	baseline	GREEN	0	5		
+rw_render_command_buffer_reset	0x004cd140	scalars_to_scattered_globals	warm	field_first	NA	0	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=279356 frozen=2	
+rw_render_command_buffer_reset	0x004cd140	scalars_to_scattered_globals	warm	field_last	NA	0	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=281935 frozen=2	
+rw_render_command_buffer_reset	0x004cd140	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=277568 frozen=2	
+rw_render_command_buffer_reset	0x004cd140	scalars_to_scattered_globals	warm	null	RED	3	5	calls=0 flips=0 changed=0 flip=0x00000000 noise=272070 frozen=2	
+rw_render_command_buffer_reset	0x004cd140	scalars_to_scattered_globals	warm	real	GREEN	0	5		
+rw_render_command_buffer_reset	0x004cd140	scalars_to_scattered_globals	warm	ret	RED	5	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=272070 frozen=2	
+rw_engine_register_plugin	0x004c2d90	stub_dispatch_observe	warm	baseline	GREEN	0	6		
+rw_engine_register_plugin	0x004c2d90	stub_dispatch_observe	warm	field_first	NA	0	6	calls=6 flips=0 changed=0 flip=0x00000000 noise=276 frozen=2	
+rw_engine_register_plugin	0x004c2d90	stub_dispatch_observe	warm	field_last	NA	0	6	calls=6 flips=0 changed=0 flip=0x00000000 noise=596 frozen=2	
+rw_engine_register_plugin	0x004c2d90	stub_dispatch_observe	warm	field_none	CTRL-GREEN	0	6	calls=6 flips=0 changed=0 flip=0x00000000 noise=276 frozen=2	
+rw_engine_register_plugin	0x004c2d90	stub_dispatch_observe	warm	heap_extra	BLIND	0	6	calls=6 flips=0 changed=0 flip=0x00000000 noise=596 frozen=2	
+rw_engine_register_plugin	0x004c2d90	stub_dispatch_observe	warm	null	RED	6	6	calls=0 flips=0 changed=0 flip=0x00000000 noise=261 frozen=2	
+rw_engine_register_plugin	0x004c2d90	stub_dispatch_observe	warm	real	GREEN	0	6		
+rw_engine_register_plugin	0x004c2d90	stub_dispatch_observe	warm	ret	RED	6	6	calls=6 flips=0 changed=0 flip=0x00000000 noise=261 frozen=2	
+rw_pipe_module_dtor	0x004d8550	stub_dispatch_observe	warm	baseline	GREEN	0	6		
+rw_pipe_module_dtor	0x004d8550	stub_dispatch_observe	warm	field_first	NA	0	6	calls=6 flips=0 changed=0 flip=0x00000000 noise=284115 frozen=2	
+rw_pipe_module_dtor	0x004d8550	stub_dispatch_observe	warm	field_last	NA	0	6	calls=6 flips=0 changed=0 flip=0x00000000 noise=284813 frozen=2	
+rw_pipe_module_dtor	0x004d8550	stub_dispatch_observe	warm	field_none	CTRL-GREEN	0	6	calls=6 flips=0 changed=0 flip=0x00000000 noise=283610 frozen=2	
+rw_pipe_module_dtor	0x004d8550	stub_dispatch_observe	warm	heap_extra	BLIND	0	6	calls=6 flips=0 changed=0 flip=0x00000000 noise=284813 frozen=2	
+rw_pipe_module_dtor	0x004d8550	stub_dispatch_observe	warm	null	RED	6	6	calls=0 flips=0 changed=0 flip=0x00000000 noise=281935 frozen=2	
+rw_pipe_module_dtor	0x004d8550	stub_dispatch_observe	warm	real	GREEN	0	6		
+rw_pipe_module_dtor	0x004d8550	stub_dispatch_observe	warm	ret	RED	6	6	calls=6 flips=0 changed=0 flip=0x00000000 noise=281935 frozen=2	

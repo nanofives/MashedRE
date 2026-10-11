@@ -1,0 +1,3 @@
+rva	hook	action	old	new	evidence	negctl	why
+0x004d6b90	d3d9_set_stage0_filter	keep	C3	C3	re/analysis/negctl/reearn_20261011/evidence/diff_d3d9_set_stage0_filter.csv	re/analysis/negctl/reearn_20261011/runs/g3_devicecalls/negctl_20261011_184807.tsv [d3d9_set_stage0_filter] real=GREEN baseline=GREEN null=RED ret=RED field_first=RED field_last=RED	
+0x004d5570	d3d9_set_sampler	keep	C3	C3	re/analysis/negctl/reearn_20261011/evidence/diff_d3d9_set_sampler.csv	re/analysis/negctl/reearn_20261011/runs/g3_devicecalls/negctl_20261011_184807.tsv [d3d9_set_sampler] real=GREEN baseline=GREEN null=RED ret=SKIP field_first=RED field_last=RED	

@@ -1,0 +1,15 @@
+hook	rva	arg_type	lane	mode	verdict	mismatches	total	stats	err
+d3d9_set_sampler	0x004d5570	scalars_to_scattered_globals	warm	baseline	GREEN	0	5		
+d3d9_set_sampler	0x004d5570	scalars_to_scattered_globals	warm	field_first	RED	4	5	calls=5 flips=4 changed=3 flip=0x007d503c noise=226 frozen=2	
+d3d9_set_sampler	0x004d5570	scalars_to_scattered_globals	warm	field_last	RED	4	5	calls=5 flips=4 changed=3 flip=0x007d503f noise=231 frozen=2	
+d3d9_set_sampler	0x004d5570	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	5	calls=5 flips=0 changed=3 flip=0x00000000 noise=219 frozen=2	
+d3d9_set_sampler	0x004d5570	scalars_to_scattered_globals	warm	null	RED	4	5	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+d3d9_set_sampler	0x004d5570	scalars_to_scattered_globals	warm	real	GREEN	0	5		
+d3d9_set_sampler	0x004d5570	scalars_to_scattered_globals	warm	ret	SKIP	0	0		void signature
+d3d9_set_stage0_filter	0x004d6b90	scalars_to_scattered_globals	warm	baseline	GREEN	0	6		
+d3d9_set_stage0_filter	0x004d6b90	scalars_to_scattered_globals	warm	field_first	RED	5	6	calls=6 flips=5 changed=12 flip=0x007d4f74 noise=196 frozen=2	
+d3d9_set_stage0_filter	0x004d6b90	scalars_to_scattered_globals	warm	field_last	RED	5	6	calls=6 flips=5 changed=12 flip=0x007d6b3f noise=197 frozen=2	
+d3d9_set_stage0_filter	0x004d6b90	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	6	calls=6 flips=0 changed=12 flip=0x00000000 noise=161 frozen=2	
+d3d9_set_stage0_filter	0x004d6b90	scalars_to_scattered_globals	warm	null	RED	6	6	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+d3d9_set_stage0_filter	0x004d6b90	scalars_to_scattered_globals	warm	real	GREEN	0	6		
+d3d9_set_stage0_filter	0x004d6b90	scalars_to_scattered_globals	warm	ret	RED	6	6	calls=6 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
