@@ -297,8 +297,10 @@ with `re/coverage/reach.tsv`: 43 reached; 6 msvc-crt (library-skip); 37 first-pa
 - The same ruling relabelled all 138 hooks.csv rows in the range to
   `third-party-library[directshow-baseclasses]` after a per-row byte check: 0 left as they
   were. See `re/analysis/directshow_baseclasses_band_2026-10-11.md`. That note also lists 7
-  prior-session C3s kept pending review, and 21 rows past the ruled end that fit the band
-  too. `scripts/promote_frontier.py` LIBRARY_BANDS gains `0x0049c5d0..0x0049ffff`.
+  prior-session C3s, which stay at C3 (second ruling). The second ruling also extended the
+  band to `0x004a2b5f`, moving the 21 rows `0x004a26b0..0x004a2b50` after the same byte
+  check (159 rows in total). `scripts/promote_frontier.py` LIBRARY_BANDS gains
+  `0x0049c5d0..0x004a2b5f`.
 - Remaining first-party tier-1 rows after the ruling, all re-checked:
   - `0x004af31a` and `0x005c2a0e` are inside existing CRT bands, so library-skip.
   - `0x0049d080`, `0x0049d240`, `0x0049d270` (util) are in the DirectShow band.

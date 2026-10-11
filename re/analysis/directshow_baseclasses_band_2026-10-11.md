@@ -1,5 +1,7 @@
 # DirectShow BaseClasses band, 0x0049c5d0..0x004a2680 (2026-10-11)
 
+**Second ruling, same day:** the band extends to `0x004a2b5f`, adding the 21 rows `0x004a26b0..0x004a2b50` (see the last section). The 7 prior-session C3s stay at C3.
+
 **Ruling (Mariano, 2026-10-11, relayed by the parent session):** the code range
 `0x0049c5d0..0x004a2680` is statically linked DirectShow BaseClasses. It is library-skip,
 following the round-184 libpng/zlib precedent. Its rows move to the subsystem
@@ -73,7 +75,7 @@ FidDB classification of `0x004a0000..0x004b4000`. By the test above they belong 
 cluster. Example: `0x004a1100` sits in slot 1 of the cluster's vtables and is reached
 from them.
 
-### Prior-session C3 rows in the range (confidence NOT changed)
+### Prior-session C3 rows in the range (confidence NOT changed; ruled: stay C3)
 
 These follow the round-184 precedent: a prior session's in-band C3s are flagged for user
 review, not reverted. Their subsystem moves and their confidence stays.
@@ -86,9 +88,9 @@ review, not reverted. Their subsystem moves and their confidence stays.
 - `0x0049fa40`
 - `0x004a1790` ComReleaseThunk (util)
 
-**Decision owed:** keep them as C3 library rows, or revert them to C2.
+**Decided (second ruling):** they stay at C3 as library rows.
 
-## The band continues past the ruled end (NOT moved)
+## The band continues past the ruled end (MOVED by the second ruling)
 
 `0x004a26b0`..`0x004a2b50` (21 rows, all labelled `third-party-library[msvc-crt-main]`)
 have no code caller outside `0x0049c5d0..0x004a2b5f` other than the SEH funclets
@@ -98,7 +100,7 @@ which is called from `0x00401000`, `0x00401630` and others. The same applies to
 `__security_check_cookie` at `0x004a2be9`.
 
 This places the BaseClasses / CRT boundary at `0x004a2b60`, not `0x004a2680`. Those 21 rows
-are outside the ruled range, so they were left as they are, pending a ruling.
+were first left as they were, pending a ruling. The second ruling moved them. The re-run check (`re/tools/dshow_band_check.py`, now defaulting to `HI = 0x004a2b5f`; the TSV covers all 159 rows) finds that none calls first-party code. The only shared data is the 16 zero bytes at `0x005d1144` (`0x004a2940`, `0x004a2980`; also read at `0x005bbdb0`). Their imports are `DeleteCriticalSection` (`0x004a26b0`), `CoTaskMemAlloc` (`0x004a2a30`) and `CoTaskMemFree` (`0x004a2aa0`, `0x004a2b30`). All 21 moved and none was left as it was.
 
 The lower edge is clean. The bytes immediately before `0x0049c5d0` are a data table, and
 the nearest function below it is `0x0049b300` (DirectInput8Create).

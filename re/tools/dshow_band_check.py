@@ -4,7 +4,8 @@ Writes a TSV to argv[1]."""
 import bisect, csv, re, struct, sys
 import capstone, pefile
 
-LO, HI = 0x0049c5d0, 0x004a2680
+# Band widened 2026-10-11 (second ruling) from 0x004a2680 to 0x004a2b5f; argv[2] overrides HI.
+LO, HI = 0x0049c5d0, (int(sys.argv[2], 16) if len(sys.argv) > 2 else 0x004a2b5f)
 import os
 pe = pefile.PE(next(x for x in ('original/MASHED.exe.unpatched', '../../original/MASHED.exe.unpatched') if os.path.exists(x)))
 base = pe.OPTIONAL_HEADER.ImageBase
