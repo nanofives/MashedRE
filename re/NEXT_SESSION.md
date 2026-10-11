@@ -1,23 +1,27 @@
 # Next session kickoff
 
-> ## START HERE 2026-10-11 (D3 bulk Phase 1: G-AILEAF ported, knob OFF; G-EVQ dropped): **next = Phase 2 for G-AILEAF.**
+> ## START HERE 2026-10-11 (D3 bulk G-AILEAF Phase 2 DONE: port faithful, knob NOT accepted): **next = user decision.**
 >
-> **Read first**
-> - [`aileaf/RESULT_AILEAF.md`](../verify/d3_bulk_20261011/aileaf/RESULT_AILEAF.md)
-> - [`aileaf/PREREG_AILEAF.md`](../verify/d3_bulk_20261011/aileaf/PREREG_AILEAF.md), registered before any knob-ON run
+> Read [`aileaf/RESULT_AILEAF.md`](../verify/d3_bulk_20261011/aileaf/RESULT_AILEAF.md) (Phase 2 section).
 >
-> **State**
-> - FUN_00414570 / FUN_00415880 / FUN_0046d570 run verbatim behind `MASHED_AILEAF`, which also needs `MASHED_PATHPROG`.
-> - Replay vs the original's bytes: 6000/6000 at PC_24 + PC_53 and 6000/6000 at PC_64. The negative control caught 3/3.
-> - G-CTRL with the knob OFF: `ae67b13a / c8317ce2 / 31db9384`.
-> - G-EVQ is refuted (PLAN.md §0): writer and drainer share no event type, and the drained events come from D2-ported physics, which never pushes. 0x004a2c48 is `__ftol`, not an RNG.
+> **What happened with the knob ON**
+> - FUN_00414570 returned 1 on 19 / 17,466 calls: car 3, step frames 2021..2039, committed as mode 1.
+>   So G-AILEAF-INERT FAILED as registered.
+> - AL_ON = AL_ON2 = AL_ON53 (`7018f1b0 / 8e5cdccb / 5589b6f8`), against AL_PP `4e250237 / 22cceec1 / dc72ab09`.
+> - The exe's own inputs through the original bytes (G-AILEAF-LIVE): 368/368 exact, including the 19.
+>   The arm fires because the exe's player drives above 2500 next to car 3. The original captures behind
+>   "0 of 6,696" have a near-parked player.
+> - The blank AI factor (U-9653) is not the cause (AL_SEED).
+> - (b) unchanged (0/3 on both PATHPROG arms). Collateral: car 3 from frame 2021, car 2 from 3231, car 1 none, D2 watch clean.
+> - Trackers recorded with no promotion; U-9652 / U-9653 filed.
 >
-> **Kickoff for Phase 2 (paste):** Mashed RE, D3 bulk Phase 2, G-AILEAF. Follow `PREREG_AILEAF.md`:
-> - Run arms `AL_PP`, `AL_ON`, and a new `AL_ON2` (same knobs) via `run_h4.ps1`, plus `AL_ON` at `MASHED_AILEAF_PC=53`.
-> - Score G-AILEAF-INERT (hashes AL_ON == AL_PP, ret1 = 0 in the trace, calls > 0).
-> - Report only: (b) per regime, and collateral `--mode paired` with the floor AL_ON vs AL_ON2.
-> - Then write RESULT and run re-classify (exe-only, no promotion). Also record the HeadingAtan2.cpp blank-.rdata finding.
-> - Kill only your own MASHED PIDs. Build via PowerShell.
+> **Options**
+> 1. Capture the original with a DRIVEN player plus an entry probe on 0x00414570 (same columns as `MASHED_AILEAF_LIVEROWS`),
+>    to see whether the original reaches the return-1 arm in a scenario like the exe's.
+> 2. User decision: is faithful-to-inputs + replay-exact enough to keep MASHED_AILEAF available for stacking?
+> 3. Back to the PLAN.md ranking. Every other D3 group is producer-blocked. The non-D3 lane is not decided.
+>
+> Not started: U-9219, the car-2 pickup miss, default flips.
 
 > ## START HERE 2026-10-11 (D3 bulk Phase 0 DONE, plan only): **next = Phase 1 (APPROVED 2026-10-11): P0 + G-EVQ + G-AILEAF per [`PLAN.md`](../verify/d3_bulk_20261011/PLAN.md) §4.**
 >

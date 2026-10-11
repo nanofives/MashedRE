@@ -108,6 +108,14 @@ long s_dbg = 0;
 
 inline const char* Rec(std::uint32_t idx) { return mashed_re::Vehicle::VehRecord(idx); }
 
+std::string Hex(const void* p, std::size_t n) {
+    static const char* d = "0123456789abcdef";
+    std::string s(n * 2, '0');
+    const unsigned char* b = static_cast<const unsigned char*>(p);
+    for (std::size_t i = 0; i < n; ++i) { s[2 * i] = d[b[i] >> 4]; s[2 * i + 1] = d[b[i] & 15]; }
+    return s;
+}
+
 }  // namespace
 
 extern "C" {
@@ -302,6 +310,22 @@ void TraceRow(int leaf, int v, int ret, const float* cand) {
     const std::uintptr_t blk = 0x0089a4c0u + static_cast<std::uintptr_t>(v) * 0x74u;
     std::fprintf(f, "%ld\t%d\t%s\t%d\t%d\t%.9g\t%.9g\t%d\t%d\t%d\n", ++n, I32v(0x007f0ff4u), leaf ? "15880" : "14570", v, ret,
                  cand[0], cand[1], I32v(blk + 0x48), I32v(blk + 0x1c), I32v(blk + 0x20));
+    if (leaf == 0 && ret == 1) {
+        // Diagnostic: every input of FUN_00414570's acceptance test, as the body read it.
+        const std::uint32_t tab = static_cast<std::uint32_t>(I32v(0x005f2770u));
+        std::fprintf(f, "#in14570 v=%d nodes=%d fd0=%d f4c0=%d", v, I32v(0x0066d6d8u), I32v(0x007f0fd0u), I32v(blk));
+        for (int c = 0; c < 4; ++c) {
+            const char* r = Rec(static_cast<std::uint32_t>(c));
+            std::uint32_t mp = 0; PtrCompute881ec8(&mp, static_cast<std::uint32_t>(c));
+            const float* m = reinterpret_cast<const float*>(static_cast<std::uintptr_t>(mp));
+            std::uint32_t sa = 0, sb = 0; VehicleCarStateRead(static_cast<std::uint32_t>(c), &sa, &sb);
+            std::fprintf(f, " | c%d alive=%u slot=%d st=%u prog=%.6g speed=%.6g x=%.6g z=%.6g", c, VehicleSlotGetter(static_cast<std::uint32_t>(c)),
+                         tab ? *reinterpret_cast<const std::int32_t*>(static_cast<std::uintptr_t>(tab) + 0x34u + c * 4u) : -99, sa,
+                         *reinterpret_cast<const float*>(0x008a96e8u + c * 0x30cu), r ? *reinterpret_cast<const float*>(r + 0x9e4) : -1.0f,
+                         m ? m[12] : 0.0f, m ? m[14] : 0.0f);
+        }
+        std::fprintf(f, "\n");
+    }
     if ((n & 63) == 0) std::fflush(f);
 }
 
@@ -321,8 +345,50 @@ bool AiLeaf_Enabled() {
 int AiLeaf_414570(unsigned int spline, int v, const float look[2], float cand[2]) {
     if (v < 0 || v > 3 || !Rec(0)) return 0;
     EnsureLut();
+    // DIAGNOSTIC BRIDGE (Phase 2 experiment, default OFF): MASHED_AILEAF_SEED4C0=<n> writes n into the AI factor
+    // 0x0089a4c0 + v*0x74 before the call. The exe has no writer for it (original writers 0x00414208 FUN_00414180,
+    // 0x00417ca0 FUN_004177b0); the original holds 2 on all four cars (verify/d3_bulk_20261011/peek_orig.json,
+    // 63/63 phase-3 samples). Measurement only: it is not a port.
+    static const char* s_seed = std::getenv("MASHED_AILEAF_SEED4C0");
+    if (s_seed) I32v(0x0089a4c0u + static_cast<std::uintptr_t>(v) * 0x74u) = std::atoi(s_seed);
+    // G-AILEAF-LIVE (diagnostic, default OFF): MASHED_AILEAF_LIVEROWS=<tsv> writes this call's full input set and the
+    // body's outputs in the G-AILEAF-REPLAY row format (every return-1 call + every 50th call), so
+    // re/tools/aileaf_unicorn.py --check can run the SAME inputs through the original bytes.
+    static std::FILE* s_live = [] { const char* p = std::getenv("MASHED_AILEAF_LIVEROWS"); return p ? std::fopen(p, "w") : nullptr; }();
+    CarIn liveCars[4]; std::uint32_t liveGlob[6]; unsigned char liveAi[0x74]; float liveCandIn[2] = { cand[0], cand[1] };
+    unsigned short liveCw = 0;
+    const std::uintptr_t liveBlk = 0x0089a4c0u + static_cast<std::uintptr_t>(v) * 0x74u;
+    if (s_live) {
+        std::memset(liveCars, 0, sizeof liveCars);
+        const std::uint32_t tab = static_cast<std::uint32_t>(I32v(0x005f2770u));
+        for (int c = 0; c < 4; ++c) {
+            CarIn& L = liveCars[c];
+            std::uint32_t mp = 0; PtrCompute881ec8(&mp, static_cast<std::uint32_t>(c));
+            const float* m = reinterpret_cast<const float*>(static_cast<std::uintptr_t>(mp));
+            L.x = m ? m[12] : 0.0f; L.z = m ? m[14] : 0.0f;
+            AL_Speed(&L.speed, static_cast<std::uint32_t>(c)); AL_Fwd(L.at, static_cast<std::uint32_t>(c));
+            L.alive = AL_Alive(static_cast<std::uint32_t>(c)); AL_State(static_cast<std::uint32_t>(c), &L.stA, &L.stB);
+            L.slot = tab ? *reinterpret_cast<const std::int32_t*>(static_cast<std::uintptr_t>(tab) + 0x34u + c * 4u) : 0;
+            std::memcpy(&L.prog, reinterpret_cast<const void*>(0x008a96e8u + c * 0x30cu), 4);
+            std::memcpy(L.vec, reinterpret_cast<const void*>(0x008a96dcu + c * 0x30cu), 12);
+            AL_FloatAsInt(&L.fai, static_cast<std::uint32_t>(c));
+        }
+        liveGlob[0] = I32v(0x007f0fd0u); liveGlob[1] = I32v(0x0066d6d8u); liveGlob[2] = I32v(0x007f1008u);
+        liveGlob[3] = I32v(0x0089a360u); liveGlob[4] = I32v(0x0089a368u); liveGlob[5] = I32v(0x0089a374u);
+        std::memcpy(liveAi, reinterpret_cast<const void*>(liveBlk), 0x74);
+    }
     int ret;
-    { PcScope pc; ret = reinterpret_cast<leaf_fn>(&AL_414570)(spline, look, cand, v); }
+    { PcScope pc; if (s_live) { __asm { fnstcw liveCw } } ret = reinterpret_cast<leaf_fn>(&AL_414570)(spline, look, cand, v); }
+    if (s_live) {
+        static long nLive = 0; ++nLive;
+        if (ret == 1 || (nLive % 50) == 0) {
+            std::fprintf(s_live, "570\t%ld\t%d\t%x\t%s\t%s\t%s\t%s\t%s\t%s\t\t%d\t%s\t%s\t00000000\n", nLive, v, liveCw,
+                         Hex(reinterpret_cast<const void*>(static_cast<std::uintptr_t>(spline)), 0x204).c_str(), Hex(look, 8).c_str(),
+                         Hex(liveCandIn, 8).c_str(), Hex(liveCars, sizeof liveCars).c_str(), Hex(liveGlob, 24).c_str(),
+                         Hex(liveAi, 0x74).c_str(), ret, Hex(cand, 8).c_str(), Hex(reinterpret_cast<const void*>(liveBlk), 0x74).c_str());
+            std::fflush(s_live);
+        }
+    }
     ++s_calls[0]; if (ret) ++s_ret1[0];
     TraceRow(0, v, ret, cand);
     return ret;
@@ -367,13 +433,6 @@ bool FromHex(const std::string& h, void* out, std::size_t n) {
         o[i] = static_cast<unsigned char>(b);
     }
     return true;
-}
-std::string Hex(const void* p, std::size_t n) {
-    static const char* d = "0123456789abcdef";
-    std::string s(n * 2, '0');
-    const unsigned char* b = static_cast<const unsigned char*>(p);
-    for (std::size_t i = 0; i < n; ++i) { s[2 * i] = d[b[i] >> 4]; s[2 * i + 1] = d[b[i] & 15]; }
-    return s;
 }
 std::vector<std::string> Split(const std::string& s, char d) {
     std::vector<std::string> o; std::size_t p = 0;
