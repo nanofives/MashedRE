@@ -1,0 +1,25 @@
+=== verify_hook_install report (com_inner50_vcall70) ===
+
+target address: 0x0049c770  export: ComInner50Vcall70
+PRE  bytes:     56 8b f1 8b 4e 50 85 c9
+asi base:       0x6a360000
+reimpl addr:    0x6a38dc20
+POST bytes:     e9 ab 14 ef 69 50 85 c9
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x69ef14ab  expected 0x69ef14ab  -> OK
+bytes changed:  True
+
+interceptor entries (reimpl):  2 / 2
+
+per-input results:
+  [OK] input={'seed': [{'buf': 0, 'off': 0, 'ptr_to': 1}, {'buf': 1, 'off': 112, 'stub': True}, {'buf': 0, 'off': 80, 'ptr_to': 2}, {'buf': 2, 'off': 32, 'type': 'u32', 'value': 4294967295}, {'buf': 2, 'off': 56, 'type': 'u32', 'value': 2711683072}, {'buf': 2, 'off': 60, 'type': 'u32', 'value': 2711683073}, {'buf': 2, 'off': 64, 'type': 'u32', 'value': 2711683074}, {'buf': 2, 'off': 68, 'type': 'u32', 'value': 2711683075}, {'buf': 2, 'off': 72, 'type': 'u32', 'value': 2711683076}], 'stub_ret': 286331153}  got=0  err=
+  [OK] input={'seed': [{'buf': 0, 'off': 0, 'ptr_to': 1}, {'buf': 1, 'off': 112, 'stub': True}, {'buf': 2, 'off': 32, 'type': 'u32', 'value': 4294967295}, {'buf': 2, 'off': 56, 'type': 'u32', 'value': 1592590336}, {'buf': 2, 'off': 60, 'type': 'u32', 'value': 1592590337}, {'buf': 2, 'off': 64, 'type': 'u32', 'value': 1592590338}, {'buf': 2, 'off': 68, 'type': 'u32', 'value': 1592590339}, {'buf': 2, 'off': 72, 'type': 'u32', 'value': 1592590340}], 'stub_ret': 2147483647}  got=0  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + first 8 bytes mutated by patcher
+  + reimpl interceptor fired 2x as expected
+  + all 2 calls returned without exception
+FAIL:
+  (none)
