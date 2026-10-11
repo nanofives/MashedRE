@@ -772,11 +772,16 @@ function callFn(fn, input, buf) {
     // Use for void(uint32) setters that write param_1 directly to a global.
     // Strategy: call fn(value), read back target_global. Both orig and reimpl must
     // have written `value` to target_global.
-    // MECHANISM: Calls fn(input>>>0) [void return], then reads `CONFIG.target_global` as uint32
-    // observable; no buffer allocation, no save/restore. CONFIG: `target_global` only. Broader
+    // MECHANISM: Pre-writes ~input to `CONFIG.target_global` (per-side sentinel), calls fn(input>>>0) [void
+    // return], then reads `CONFIG.target_global` as uint32 observable; no buffer; the global is saved/restored
+    // around the whole test block. CONFIG: `target_global` only. Broader
     // than name: any void(uint32) that writes its param to one absolute global - not limited to
     // simple direct-assign setters.
+    // PER-SIDE SENTINEL (2026-10-11, negctl): ~input is pre-written before EACH arm. Without it the reimpl arm
+    // read the value the ORIGINAL arm had just written, so a port that writes nothing read GREEN (run_negctl.py
+    // null mutant: BLIND on 37 of 40 C3/C4 rows). The block-level save/restore of target_global still applies.
     if (CONFIG.arg_type === 'void_setter_observe') {
+        ptr(CONFIG.target_global).writeU32((~(input >>> 0)) >>> 0);
         fn(input >>> 0);
         return ptr(CONFIG.target_global).readU32();
     }
@@ -912,17 +917,27 @@ function callFn(fn, input, buf) {
     // entity_field_set — fn(int param_1, uint32 param_2): void write to global array.
     // input: [param_1, param_2].  Calls fn, then reads back the written address as uint32.
     // Address: CONFIG.target_global + param_1 * CONFIG.entity_byte_stride.
-    // MECHANISM: Calls fn(input[0]|0, input[1]>>>0) [void], reads `CONFIG.target_global + input[0]
-    // * CONFIG.entity_byte_stride` as uint32 observable; no buffer, no save/restore (assumes
-    // idempotent slot write). CONFIG: `target_global`, `entity_byte_stride`. Broader: any
+    // MECHANISM: Pre-writes ~input[1] to the slot `CONFIG.target_global + input[0] *
+    // CONFIG.entity_byte_stride` (per-side sentinel, DEC-6), calls fn(input[0]|0, input[1]>>>0) [void],
+    // reads the slot as uint32 observable, restores the slot's prior value; no buffer. CONFIG: `target_global`, `entity_byte_stride`. Broader: any
     // fn(int_index, uint32_value) that writes into a strided global array - both the base and
     // stride are fully configurable.
+    // PER-SIDE SENTINEL (DEC-6, built 2026-10-11 by the negctl work): ~p2 is pre-written to the slot before
+    // EACH arm and the slot is restored after the read. Without it the reimpl arm read the ORIGINAL arm's write,
+    // so a port that writes nothing read GREEN (run_negctl.py null mutant: BLIND on 8 of 8 C3 rows). DEC-6's
+    // acceptance: a known-wrong (non-writing) port must RED.
     if (CONFIG.arg_type === 'entity_field_set') {
         const p1 = input[0] | 0;
         const p2 = input[1] >>> 0;
-        fn(p1, p2);
         const addr = ptr(CONFIG.target_global).add(p1 * CONFIG.entity_byte_stride);
-        return addr.readU32();
+        const saved = addr.readU32();
+        addr.writeU32((~p2) >>> 0);
+        try {
+            fn(p1, p2);
+            return addr.readU32();
+        } finally {
+            addr.writeU32(saved);
+        }
     }
     // entity_field_add — fn(int idx, int delta): non-idempotent incrementer.
     // input: [idx, delta].  Address: CONFIG.target_global + idx*CONFIG.entity_byte_stride.
@@ -6336,7 +6351,10 @@ function runDiff() {
         for (let i = 0; i < CONFIG.tests.length; i++) {
             const t = CONFIG.tests[i];
             const args = (t && t.args) ? t.args : (Array.isArray(t) ? t : [t]);
-            const a = args.map(function(v) { return v >>> 0; });
+            // Trim to the declared arity: the zero-arg entries carry a placeholder test `0`, which current Frida
+            // rejects with "bad argument count" on BOTH arms (10 C3 rows read RED/RED, negctl 2026-10-11). A cdecl
+            // caller cleans its own stack, so the placeholder never reached the target anyway.
+            const a = args.slice(0, CONFIG.signature.args.length).map(function(v) { return v >>> 0; });
             const prepArgs = (t && t.prep_args) ? t.prep_args.map(function(v) { return v >>> 0; }) : null;
             let origV = null, reimV = null, errO = null, errR = null;
             const saved = saveW();

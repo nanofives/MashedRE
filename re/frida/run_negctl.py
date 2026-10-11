@@ -28,7 +28,9 @@ SKIP (ret on a void signature; heap_extra in the early-window lane), ERROR.
 Lanes:
   warm   arg_types handled by diff_template.js: a pool of booted MASHED instances
          (MASHED_RE_NO_AUTO_HOOK=1, MASHED_NEGCTL=1), many jobs per process, a dead
-         instance is respawned. Hooks with scenario='race' are skipped (listed).
+         instance is respawned. Hooks with scenario='race' are skipped (listed) unless
+         --race, which runs ONLY those, on slots driven into a live race
+         (run_diff.drive_to_race) after every (re)spawn.
   early  arg_types that only early_window_leaf_diff.py handles: one suspended spawn per
          job via that script (--negctl / --self-baseline), MASHED_EW_ASI = this build.
 
@@ -99,6 +101,12 @@ def early_only_argtypes():
     return {a for a in ew if f"'{a}'" not in dt}
 
 
+def early_handled_argtypes():
+    src = EW_SCRIPT.read_text(encoding='utf-8')
+    m = re.search(r'PURE_LEAF_ARGTYPES\s*=\s*\{(.*?)\n\}', src, re.S)
+    return set(re.findall(r"^\s*'([a-z0-9_]+)'", m.group(1), re.M)) if m else set()
+
+
 def inventory():
     conf = load_rows()
     by_at = defaultdict(list)
@@ -164,9 +172,31 @@ def mode_to_negctl(mode, hook):
 
 # ---------------------------------------------------------------- warm lane
 
+def bounded(fn, timeout):
+    """Run fn on a daemon thread; True if it returned within timeout. Frida's create_script/load/unload block
+    while the agent thread sits in a native call (diff_template runs runDiff synchronously inside load() once the
+    LUT is up), so a hung port must never be waited on from the worker thread: the slot is killed instead."""
+    box = {'exc': None}
+
+    def run():
+        try:
+            fn()
+        except Exception as e:
+            box['exc'] = e
+    t = threading.Thread(target=run, daemon=True)
+    t.start()
+    t.join(timeout)
+    if t.is_alive():
+        return False
+    if box['exc'] is not None:
+        raise box['exc']
+    return True
+
+
 class Slot:
-    def __init__(self, idx):
-        self.idx, self.proc, self.session = idx, None, None
+    def __init__(self, idx, race=False):
+        self.idx, self.proc, self.session, self.race = idx, None, None, race
+        self.stuck = False
         self.spawn()
 
     def spawn(self):
@@ -181,18 +211,33 @@ class Slot:
             print(f'  [slot {self.idx}] attach failed: {e}')
             self.session = None
         print(f'  [slot {self.idx}] pid={self.proc.pid}')
+        if self.race and self.session is not None:
+            time.sleep(8.0)
+            try:
+                ok = run_diff.drive_to_race(self.session)
+            except Exception as e:
+                ok = False
+                print(f'  [slot {self.idx}] drive_to_race raised {e}')
+            if not ok:
+                print(f'  [slot {self.idx}] FAILED to reach a race; this slot will ERROR its jobs')
+                try:
+                    self.session.detach()
+                except Exception:
+                    pass
+                self.session = None
 
     def alive(self):
         return self.proc.poll() is None and self.session is not None and not getattr(self.session, 'is_detached', False)
 
     def kill(self):
+        # TerminateProcess first (this slot's own PID only): detaching from a stuck agent can block.
         try:
-            if self.session is not None:
-                self.session.detach()
+            self.proc.kill(); self.proc.wait(timeout=3)
         except Exception:
             pass
         try:
-            self.proc.kill(); self.proc.wait(timeout=3)
+            if self.session is not None:
+                bounded(self.session.detach, 3.0)
         except Exception:
             pass
 
@@ -209,7 +254,9 @@ class Slot:
         try:
             sc = self.session.create_script(src)
             sc.on('message', lambda m, d: got.append(m.get('payload')))
-            sc.load(); time.sleep(0.2); sc.unload()
+            if bounded(sc.load, 10.0):
+                time.sleep(0.2)
+                bounded(sc.unload, 5.0)
         except Exception:
             pass
         return got[0] if got else None
@@ -235,19 +282,31 @@ class Slot:
             elif k == 'negctl':
                 stats['s'] = p.get('stats')
 
+        box = {}
+
+        def create():
+            box['sc'] = self.session.create_script(run_diff.agent_source(AGENT_JS, config))
         try:
-            sc = self.session.create_script(run_diff.agent_source(AGENT_JS, config))
+            if not bounded(create, 20.0):
+                return [], 'TIMEOUT', None
+            sc = box['sc']
             sc.on('message', on_message)
-            sc.load()
+            t0 = time.time()
+            if not bounded(sc.load, HOOK_TIMEOUT_S):
+                return results, (None if results else 'TIMEOUT'), stats['s']
         except Exception as e:
             return [], f'EXC {e}', None
-        done.wait(timeout=HOOK_TIMEOUT_S)
+        done.wait(timeout=max(0.0, HOOK_TIMEOUT_S - (time.time() - t0)))
+        if not done.is_set():
+            return [], 'TIMEOUT', None          # never unload a script whose agent thread is stuck
         if results and 'negctl' in config:
             t = time.time() + STATS_GRACE_S
             while time.time() < t:
                 time.sleep(0.05)
         try:
-            sc.unload()
+            if not bounded(sc.unload, 5.0):
+                err['msg'] = err['msg'] or None
+                self.stuck = True
         except Exception:
             pass
         if not results and err['msg'] is None:
@@ -278,8 +337,9 @@ def warm_worker(slot, jobs, sink, lock):
         if err and not slot.alive():
             err = f'{err} (process died)'
             slot.respawn()
-        elif err == 'TIMEOUT' or (err or '').startswith('EXC'):
+        elif err == 'TIMEOUT' or (err or '').startswith('EXC') or slot.stuck:
             slot.respawn()          # a hung call / wedged agent poisons the process for the next job
+            slot.stuck = False
         if mode == 'real' and err:
             dead_hooks.add(name)
         verdict, mism, total = classify(mode, results, err, stats, hook)
@@ -390,12 +450,19 @@ def main(argv):
     ap.add_argument('--early-workers', type=int, default=3)
     ap.add_argument('--seed', type=int, default=20261011)
     ap.add_argument('--out', default=str(ROOT / 'log' / 'negctl'))
+    ap.add_argument('--all-heap-import', action='store_true',
+                    help='run heap_extra/import_extra on every hook, not only census-exposed ones')
+    ap.add_argument('--force-early', action='store_true',
+                    help='send selected hooks whose arg_type the early-window harness ALSO handles to the early lane '
+                         '(pure leaves whose observed globals the running game rewrites: baseline RED in the warm lane)')
+    ap.add_argument('--race', action='store_true', help="run ONLY the scenario='race' hooks, on race-driven slots")
     ap.add_argument('--resume', action='append', default=[],
                     help='TSV(s) or run logs whose finished (hook, mode) jobs are skipped; repeatable')
     a = ap.parse_args(argv[1:])
 
     ranked, conf = inventory()
     early_only = early_only_argtypes()
+    ew_handled = early_handled_argtypes()
     if a.inventory:
         print(f"{'rank':>4} {'arg_type':34s} {'C3+C4':>6} {'C4':>4} {'risk':>4} {'lane':6s} note")
         for i, (at, ks) in enumerate(ranked, 1):
@@ -409,6 +476,16 @@ def main(argv):
     want_hooks = set(x for x in a.hooks.split(',') if x)
     classes = [c for c in a.classes.split(',') if c]
     rnd = random.Random(a.seed)
+    census = census_exposure()
+
+    def exposed(k, m):
+        # A wrong heap / import call is only a defect a port can have when the function makes one: run those
+        # two classes only where re/coverage/standin_census_d2.tsv lists a heap / import call within depth 2.
+        if m not in ('heap_extra', 'import_extra') or a.all_heap_import:
+            return True
+        hit = census.get(HOOKS[k]['rva'], [])
+        want = ('crt_alloc', 'crt_free', 'rw_alloc', 'rw_free', 'imp_heap') if m == 'heap_extra'             else ('imp_heap', 'imp_file', 'imp_other')
+        return any(c in hit for c in want)
     by_at = dict(ranked)
     warm_jobs, early_jobs, skipped_race = [], [], []
     for at in sel:
@@ -418,10 +495,13 @@ def main(argv):
         if a.per_handler and len(ks) > a.per_handler:
             ks = sorted(rnd.sample(ks, a.per_handler))
         for k in ks:
-            if HOOKS[k].get('scenario') == 'race':
-                skipped_race.append(k); continue
-            jobs = [(k, m) for m in ['real', 'baseline'] + classes]
-            (early_jobs if at in early_only else warm_jobs).extend(jobs)
+            is_race = HOOKS[k].get('scenario') == 'race'
+            if is_race != a.race:
+                if is_race:
+                    skipped_race.append(k)
+                continue
+            jobs = [(k, m) for m in ['real', 'baseline'] + classes if exposed(k, m)]
+            (early_jobs if at in early_only or (a.force_early and at in ew_handled) else warm_jobs).extend(jobs)
 
     out = Path(a.out); out.mkdir(parents=True, exist_ok=True)
     global LIVE_TSV
@@ -452,7 +532,7 @@ def main(argv):
         for i in range(n):
             if i:
                 time.sleep(3.0)
-            slots.append(Slot(i))
+            slots.append(Slot(i, race=a.race))
         time.sleep(6.0)
         try:
             with ThreadPoolExecutor(max_workers=n) as ex:
