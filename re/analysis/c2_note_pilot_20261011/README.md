@@ -87,3 +87,11 @@ Witness 1 is the Ghidra decompilation of all 25 rows (`decomp_witness.json`, `de
   2. Capture a decomp witness for the same rows and require `c2_note_check.py` to report zero callee misses and lint clean.
   3. Hand the TSV to `re-classify` for C1→C2.
 - **Batch B (optional, decision 2): the 794 library rows**, same pipeline. One headless decomp witness covers all of them in one pool session.
+
+## Follow-up (2026-10-11, rulings applied)
+
+All three decisions were ruled. The generated-plate clause is in `re/CONFIDENCE.md`, and R3 is corrected in
+the hand plate. The 27 first-party functions were created in the master `Mashed.gpr`
+(`CreateMissedFunctions.java apply`, 27 CREATED, backup `Mashed.rep.bak-20261011-pre-c2gen-createfn`,
+pool synced 16/16). Batches A (27) and B (794) were run with `re/tools/c2_batch.py`, and their evidence is in
+`re/analysis/c2gen/_evidence/`.
