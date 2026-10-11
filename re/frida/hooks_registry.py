@@ -22540,3 +22540,26 @@ HOOKS['geom_3vert_1tri_create'] = {
 
 # 0x004022a0 Geom4Vert2TriCreate: as 0x00401fe0 with 4 vertices / 2 triangles (0,1,3) (3,1,2). Same fixture.
 HOOKS['geom_4vert_2tri_create'] = dict(HOOKS['geom_3vert_1tri_create'], rva=0x004022a0, export='Geom4Vert2TriCreate')
+
+
+# ---- stand-in promotion round 6 (2026-10-11) -- Sky/PromoLoop_standins_r6.cpp ----
+# 0x004880a0 Obj7030acCreate(tex): frame 0x004c0b30, object 0x00534b60(0x2000, 0x10000087, 0) stored in the live
+# global 0x007030ac (sentinel seeded, observed, restored per arm), plugin-block stores at *(obj + *(0x007dc57c)),
+# 0x004e7e30(obj, frame), bounding sphere (0,0,0,10.0f), optional texture mark + 0x004e8090. tex = 0 or the fixture OBJ.
+HOOKS['obj_7030ac_create'] = {
+    'rva': 0x004880a0, 'export': 'Obj7030acCreate', 'signature': {'ret': 'uint32', 'args': ['pointer']},
+    'arg_type': 'standin_object_call', 'heap_standin': {'arenaSize': 0x200000, 'exhaust': 'null'}, 'freeze_main': True,
+    'object_size': 0x100,
+    'observe_globals': _RWG_OBS + [{'addr': '0x007030ac', 'len': 4}], 'lut_root_delta': 0,
+    'path1_tests': [{'args': [0]}, {'args': ['OBJ']}, {'args': ['OBJ'], 'fields': [[0x50, 0x77777777], [0x54, 3]]}],
+    'path2_tests': [{'args': ['OBJ']}],
+}
+
+# 0x004881d0 Obj7030a8Create(tex): guard 0x007030b0; when 0 builds into 0x007030a8 (count 0x200), sets the guard, then
+# calls 0x004880a0(tex). 0x007030a8..0x007030b0 are observed as one window (sentinels seed the guard NONZERO, which
+# takes the early return; t.globals stores 0 into the guard for the build vectors).
+HOOKS['obj_7030a8_create'] = dict(HOOKS['obj_7030ac_create'], rva=0x004881d0, export='Obj7030a8Create',
+    observe_globals=_RWG_OBS + [{'addr': '0x007030a8', 'len': 0xc}],
+    path1_tests=[{'args': [0], 'globals': [['0x007030b0', 0]]}, {'args': ['OBJ'], 'globals': [['0x007030b0', 0]]},
+                 {'args': ['OBJ']}, {'args': [0]}],
+    path2_tests=[{'args': ['OBJ'], 'globals': [['0x007030b0', 0]]}])
