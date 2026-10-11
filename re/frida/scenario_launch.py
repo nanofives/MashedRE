@@ -2079,6 +2079,54 @@ function c30ProbeArm(n){
 }
 function c30ProbeDrain(){ const r = C3.rows; C3.rows = []; return r; }
 
+// --- FIRST-HIT coverage probe (D3 bulk Phase 0, 2026-10-11) ----------------------
+// Entry-only hooks on a list of function entries. Each hook counts calls per session phase
+// (DAT_00771968: 1 menu, 2 load+spawn, 3 race), each phase count capped at FH.cap, and
+// DETACHES ITSELF once the phase-3 count reaches the cap, so a hot function costs at most
+// a few calls in the race. Phase-3 first hit records SD.frames and tick 0x007f0ff4; the cap
+// hit records the tick again (crude rate). Read-only. Attach errors are recorded per RVA.
+const FH = { armed:false, cap:16, ent:[], err:null };
+function fhProbeArm(listJson, cap){
+  if (FH.armed) return 'already armed';
+  try {
+    FH.cap = cap || 16;
+    const list = JSON.parse(listJson);
+    const ph = ga(PHASE), tk = ga(0x007f0ff4);
+    let ok = 0, bad = 0;
+    {
+      for (let i = 0; i < list.length; i++) {
+        const e = { rva:list[i], c:[0,0,0,0], f3:-1, t3:-1, tcap:-1, det:0, err:'', l:null };
+        FH.ent.push(e);
+        try {
+          e.l = Interceptor.attach(ga(list[i]), function(){
+            try {
+              let p = ph.readU8(); if (p > 3) p = 0;
+              if (e.c[p] >= FH.cap) return;
+              e.c[p]++;
+              if (p === 3) {
+                if (e.c[3] === 1) { e.f3 = SD.frames; e.t3 = tk.readS32(); }
+                if (e.c[3] === FH.cap && !e.det) {
+                  e.tcap = tk.readS32(); e.det = 1;
+                  setTimeout(function(){ try { e.l.detach(); e.det = 2; } catch(x){ e.err = 'det ' + x; } }, 0);
+                }
+              }
+            } catch(x){ if (!FH.err) FH.err = 'fh ' + x; }
+          });
+          ok++;
+        } catch(x){ e.err = ('' + x).replace(/[\t\r\n]/g, ' '); bad++; }
+      }
+    }
+    FH.armed = true;
+    return 'firsthit-probe armed: ' + ok + ' hooks, ' + bad + ' attach errors, cap ' + FH.cap;
+  } catch(e){ return 'ERR ' + e; }
+}
+function fhProbeDrain(){
+  return FH.ent.map(function(e){
+    return ['0x' + (e.rva >>> 0).toString(16).padStart(8, '0'), e.err ? 'ERR' : 'ok',
+            e.c[1], e.c[2], e.c[3], e.c[0], e.f3, e.t3, e.tcap, e.det, e.err];
+  });
+}
+
 // --- PICKUP-POOL probe (mode 7 leg M2a, 2026-10-10) ------------------------------
 // Entry + leave of FUN_00459000 (pickup tick, 1/frame): the first N calls, then every 30th.
 // count 0x0068b9a8, pool 0x0068b198 x 0x7d0, each entry's frame (*(obj+4)) +0x10..+0x4f,
@@ -2881,6 +2929,9 @@ rpc.exports = {
   tgProbeStats: function(){ return JSON.stringify({armed:TG.armed, calls:TG.n, err:TG.err}); },
   rgProbeArm: function(k){ return rgProbeArm(k); },
   cbProbeArm: function(){ return cbProbeArm(); },
+  fhProbeArm: function(l, c){ return fhProbeArm(l, c); },
+  fhProbeDrain: function(){ return fhProbeDrain(); },
+  fhProbeStats: function(){ return JSON.stringify({armed:FH.armed, n:FH.ent.length, err:FH.err}); },
   c30ProbeArm: function(n){ return c30ProbeArm(n); },
   c30ProbeDrain: function(){ return c30ProbeDrain(); },
   c30ProbeStats: function(){ return JSON.stringify({armed:C3.armed, calls:C3.n, err:C3.err}); },
@@ -3476,6 +3527,12 @@ def main():
     ap.add_argument("--reg-probe", type=int, default=0,
                     help="[mode 7 M1] K: world-object registry dumps around FUN_00485070 every K-th "
                          "frame + grid-build inputs. Writes <out>.reg.tsv. Requires --statediff-out.")
+    ap.add_argument("--firsthit-probe", default="",
+                    help="[D3 bulk Phase 0] file of function-entry RVAs (one per line, # comments): entry-only "
+                         "hooks counting calls per session phase, capped, self-detaching after the phase-3 cap. "
+                         "Writes <out>.firsthit.tsv. Requires --statediff-out.")
+    ap.add_argument("--firsthit-cap", type=int, default=16,
+                    help="per-phase call cap for --firsthit-probe (default 16).")
     ap.add_argument("--c30-probe", type=int, default=0,
                     help="[mode 7 M4] N: FUN_00414c30 entry+leave, first N calls then every 50th, with registry, matrices "
                          "and nested FUN_00414300 calls. Writes <out>.c30.tsv. Requires --statediff-out.")
@@ -3667,6 +3724,12 @@ def main():
                 print("  [statediff]", E.rg_probe_arm(args.reg_probe))
             if args.cb_probe:
                 print("  [statediff]", E.cb_probe_arm())
+            if args.firsthit_probe:
+                _fh = []
+                for _ln in open(args.firsthit_probe, encoding="utf-8"):
+                    _ln = _ln.split("#", 1)[0].strip()
+                    if _ln: _fh.append(int(_ln, 16))
+                print("  [statediff]", E.fh_probe_arm(__import__("json").dumps(_fh), args.firsthit_cap))
             if args.c30_probe:
                 print("  [statediff]", E.c30_probe_arm(args.c30_probe))
             if args.pool_probe:
@@ -4218,6 +4281,17 @@ def main():
                             for r in _rg: f.write(chr(9).join(str(x) for x in r) + chr(10))
                         print(f"  [statediff] reg-probe {len(_rg)} rows -> {_rf}")
                     except Exception as _e: print("  [statediff] reg drain failed:", _e)
+                if args.firsthit_probe:
+                    try: print("  [statediff] firsthit-probe agent:", E.fh_probe_stats())
+                    except Exception as _e: print("  [statediff] firsthit stats failed:", _e)
+                    try:
+                        _fr = E.fh_probe_drain()
+                        _ff = outp.with_suffix(outp.suffix + ".firsthit.tsv")
+                        with open(_ff, "w", newline="") as f:
+                            f.write(chr(9).join(["rva","attach","p1","p2","p3","p_other","f3_sdframe","t3_tick","tcap_tick","detached","err"]) + chr(10))
+                            for r in _fr: f.write(chr(9).join(str(x) for x in r) + chr(10))
+                        print(f"  [statediff] firsthit-probe {len(_fr)} rows -> {_ff}")
+                    except Exception as _e: print("  [statediff] firsthit drain failed:", _e)
                 if args.c30_probe:
                     try: print("  [statediff] c30-probe agent:", E.c30_probe_stats())
                     except Exception as _e: print("  [statediff] c30 stats failed:", _e)

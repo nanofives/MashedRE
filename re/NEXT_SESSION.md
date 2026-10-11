@@ -1,5 +1,26 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-11 (D3 bulk Phase 0 DONE, plan only): **next = Phase 1 (APPROVED 2026-10-11): P0 + G-EVQ + G-AILEAF per [`PLAN.md`](../verify/d3_bulk_20261011/PLAN.md) §4.**
+>
+> **Census**
+> - New first-hit census: `scenario_launch.py --firsthit-probe` (entry-only, capped, self-detaching), 2 batches.
+> - Controls pass: 3 zero, 3 live.
+> - 359 C2 rows execute in the Training race, 0 C1 rows. 288 of the 359 have no body.
+>
+> **Integration facts (PLAN §2.1)**
+> - Car records live at `g_vehicleArrayBase`, not 0x008815a0. Absolute reads need the `PtrCompute881ec8` rebind.
+> - The original race loop 0x004111c0 / 0x0040fc00 has no exe body, so each group needs a new call site in the hand-written step.
+> - The live peek shows 132 of 170 group inputs are written in the original and 0 in the exe.
+>
+> **Ranked for Phase 1**
+> - (1) G-EVQ: 0x004252c0 + 0x00422ba0 event queue. It produces its own ring. It needs producer P0 (`0x007f1030`, cited 0x0040fe24) first. Touches (b) through `0x0089a4fc` and RNG draws.
+> - (2) G-AILEAF: 0x00414570 / 0x00415880 / 0x0046d570. Predicted inert. C3 path.
+> - Everything else is producer-blocked, D2 watch (0x00470c70), or outside D3.
+>
+> **Open**
+> - Non-D3 render/particle/audio lane: not decided, out of scope.
+> - Worker account2 OAuth expired 2026-10-11 (delegate.ps1 down).
+
 > ## START HERE 2026-10-10 (mode 7 M4 DONE: D-11074's four legs are ported): **next = user decision / U-9219.**
 >
 > Read [`RESULT_M4.md`](../verify/d3_mode7_m4_20261010/RESULT_M4.md). `FUN_00414c30` + `FUN_00414490` run verbatim behind

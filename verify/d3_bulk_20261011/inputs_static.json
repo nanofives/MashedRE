@@ -1,0 +1,5839 @@
+{
+ "0x00414570": {
+  "name": "FUN_00414570",
+  "size": 821,
+  "sig": "undefined FUN_00414570(void)",
+  "callers": [
+   "FUN_00416250@0x00416250",
+   "FUN_00416a30@0x00416a30",
+   "FUN_00417da0@0x00417da0"
+  ],
+  "globals": [
+   {
+    "name": "DAT_005cd09c",
+    "addr": "0x005cd09c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/HeadingAtan2.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005ccac4",
+    "addr": "0x005ccac4",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/HeadingAtan2.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005ccd6c",
+    "addr": "0x005ccd6c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Frontend/MenuLeaves_af4.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005d757c",
+    "addr": "0x005d757c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/HeadingAtan2.cpp",
+     "Audio/AudioVecLength.cpp",
+     "Collision/RwpSolverMath2.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cc9fc",
+    "addr": "0x005cc9fc",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cd098",
+    "addr": "0x005cd098",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cc9b8",
+    "addr": "0x005cc9b8",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_007f0fd0",
+    "addr": "0x007f0fd0",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Frontend/BatchAA_s4.cpp",
+     "Gameplay/PickupTick.cpp",
+     "HUD/HudDispatch.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cc56c",
+    "addr": "0x005cc56c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cc33c",
+    "addr": "0x005cc33c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cd094",
+    "addr": "0x005cd094",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cc72c",
+    "addr": "0x005cc72c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Frontend/MenuSpriteDispatch.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cc320",
+    "addr": "0x005cc320",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Collision/RwpSolverLeaves1.cpp",
+     "Collision/RwpSolverMath2.cpp",
+     "Collision/RwpVtableKV1.cpp"
+    ]
+   },
+   {
+    "name": "DAT_0089a4c0",
+    "addr": "0x0089a4c0",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/AiStandalone.cpp",
+     "Race/SubStateMachine.cpp"
+    ]
+   }
+  ],
+  "callees": [
+   [
+    "FUN_00408a50",
+    "0x00408a50"
+   ],
+   [
+    "FUN_0040e470",
+    "0x0040e470"
+   ],
+   [
+    "FUN_00426bb0",
+    "0x00426bb0"
+   ],
+   [
+    "FUN_00443440",
+    "0x00443440"
+   ],
+   [
+    "FUN_0046c7b0",
+    "0x0046c7b0"
+   ],
+   [
+    "FUN_0046cbb0",
+    "0x0046cbb0"
+   ],
+   [
+    "FUN_0046d4a0",
+    "0x0046d4a0"
+   ],
+   [
+    "FUN_0046d510",
+    "0x0046d510"
+   ],
+   [
+    "FUN_0046d6d0",
+    "0x0046d6d0"
+   ],
+   [
+    "FUN_004a3384",
+    "0x004a3384"
+   ],
+   [
+    "FUN_004c39b0",
+    "0x004c39b0"
+   ],
+   [
+    "FUN_004c3ac0",
+    "0x004c3ac0"
+   ]
+  ]
+ },
+ "0x00443440": {
+  "name": "FUN_00443440",
+  "size": 2225,
+  "sig": "undefined FUN_00443440(void)",
+  "callers": [
+   "FUN_00414570@0x00414570",
+   "FUN_00416250@0x00416250",
+   "FUN_00416a30@0x00416a30",
+   "FUN_00417da0@0x00417da0"
+  ],
+  "globals": [
+   {
+    "name": "DAT_007f1a58",
+    "addr": "0x007f1a58",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Frontend/MenuNav.cpp",
+     "Frontend/SlotZeroers_s1.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cc35c",
+    "addr": "0x005cc35c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/AiLeaderTimer.cpp",
+     "Frontend/BatchAA_s1.cpp",
+     "Frontend/MenuNearLeaves_s6.cpp"
+    ]
+   },
+   {
+    "name": "DAT_007f1a5c",
+    "addr": "0x007f1a5c",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Frontend/SlotZeroers_s1.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005ce034",
+    "addr": "0x005ce034",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cc328",
+    "addr": "0x005cc328",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "HUD/ScenarioWriters_sa2s2.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cc320",
+    "addr": "0x005cc320",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Collision/RwpSolverLeaves1.cpp",
+     "Collision/RwpSolverMath2.cpp",
+     "Collision/RwpVtableKV1.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cc32c",
+    "addr": "0x005cc32c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Collision/RwpSolverIntegrate6.cpp",
+     "Collision/RwpSolverLeaves1.cpp",
+     "Collision/RwpSolverMath2.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005d757c",
+    "addr": "0x005d757c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/HeadingAtan2.cpp",
+     "Audio/AudioVecLength.cpp",
+     "Collision/RwpSolverMath2.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cc56c",
+    "addr": "0x005cc56c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cd050",
+    "addr": "0x005cd050",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cc33c",
+    "addr": "0x005cc33c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cc574",
+    "addr": "0x005cc574",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Frontend/BatchAA_s1.cpp",
+     "Frontend/MenuNearLeaves_s6.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005ccac4",
+    "addr": "0x005ccac4",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/HeadingAtan2.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cd09c",
+    "addr": "0x005cd09c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/HeadingAtan2.cpp"
+    ]
+   }
+  ],
+  "callees": [
+   [
+    "FUN_004233e0",
+    "0x004233e0"
+   ],
+   [
+    "FUN_00443300",
+    "0x00443300"
+   ],
+   [
+    "FUN_004671a0",
+    "0x004671a0"
+   ],
+   [
+    "FUN_004b55a0",
+    "0x004b55a0"
+   ]
+  ]
+ },
+ "0x00415220": {
+  "name": "FUN_00415220",
+  "size": 1547,
+  "sig": "undefined FUN_00415220(void)",
+  "callers": [
+   "FUN_00416250@0x00416250",
+   "FUN_00416a30@0x00416a30",
+   "FUN_00417da0@0x00417da0"
+  ],
+  "globals": [
+   {
+    "name": "DAT_007f1008",
+    "addr": "0x007f1008",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/AiLeaderTimer.cpp",
+     "Ai/AiStandalone.cpp",
+     "D3d9Render/TrackRenderer.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cc730",
+    "addr": "0x005cc730",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Frontend/MenuLeaves_af4.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cc32c",
+    "addr": "0x005cc32c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Collision/RwpSolverIntegrate6.cpp",
+     "Collision/RwpSolverLeaves1.cpp",
+     "Collision/RwpSolverMath2.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cd0b0",
+    "addr": "0x005cd0b0",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cc950",
+    "addr": "0x005cc950",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cc9c8",
+    "addr": "0x005cc9c8",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cd0b8",
+    "addr": "0x005cd0b8",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cc9b0",
+    "addr": "0x005cc9b0",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cd0c0",
+    "addr": "0x005cd0c0",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cc9e0",
+    "addr": "0x005cc9e0",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cc55c",
+    "addr": "0x005cc55c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cd0bc",
+    "addr": "0x005cd0bc",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cc320",
+    "addr": "0x005cc320",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Collision/RwpSolverLeaves1.cpp",
+     "Collision/RwpSolverMath2.cpp",
+     "Collision/RwpVtableKV1.cpp"
+    ]
+   },
+   {
+    "name": "DAT_007f103c",
+    "addr": "0x007f103c",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Race/SubStateCallees.cpp",
+     "Race/SubStateMachine.cpp",
+     "Vehicle/LaunchRevCharge.cpp"
+    ]
+   },
+   {
+    "name": "DAT_007f1a14",
+    "addr": "0x007f1a14",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Frontend/BatchAA_s3.cpp",
+     "Frontend/FrontendState.cpp",
+     "Frontend/MenuButtonDetect.cpp"
+    ]
+   },
+   {
+    "name": "DAT_0088fc88",
+    "addr": "0x0088fc88",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/AiStandalone.cpp"
+    ]
+   },
+   {
+    "name": "DAT_0089a51c",
+    "addr": "0x0089a51c",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/AiStandalone.cpp"
+    ]
+   },
+   {
+    "name": "DAT_0089a520",
+    "addr": "0x0089a520",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/AiStandalone.cpp"
+    ]
+   },
+   {
+    "name": "DAT_0089a524",
+    "addr": "0x0089a524",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/AiStandalone.cpp"
+    ]
+   },
+   {
+    "name": "DAT_0089a528",
+    "addr": "0x0089a528",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/AiStandalone.cpp"
+    ]
+   }
+  ],
+  "callees": [
+   [
+    "FUN_00408af0",
+    "0x00408af0"
+   ],
+   [
+    "FUN_00415190",
+    "0x00415190"
+   ],
+   [
+    "FUN_00415200",
+    "0x00415200"
+   ],
+   [
+    "FUN_00442cc0",
+    "0x00442cc0"
+   ],
+   [
+    "FUN_00455b40",
+    "0x00455b40"
+   ],
+   [
+    "FUN_0045a0f0",
+    "0x0045a0f0"
+   ],
+   [
+    "FUN_0046d4a0",
+    "0x0046d4a0"
+   ],
+   [
+    "FUN_0046d6d0",
+    "0x0046d6d0"
+   ],
+   [
+    "FUN_00472650",
+    "0x00472650"
+   ],
+   [
+    "FUN_004a2c48",
+    "0x004a2c48"
+   ],
+   [
+    "FUN_004c39b0",
+    "0x004c39b0"
+   ],
+   [
+    "FUN_004c3ac0",
+    "0x004c3ac0"
+   ]
+  ]
+ },
+ "0x00415880": {
+  "name": "FUN_00415880",
+  "size": 1137,
+  "sig": "undefined FUN_00415880(void)",
+  "callers": [
+   "FUN_00416250@0x00416250",
+   "FUN_00416a30@0x00416a30",
+   "FUN_00417da0@0x00417da0"
+  ],
+  "globals": [
+   {
+    "name": "DAT_007f1008",
+    "addr": "0x007f1008",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/AiLeaderTimer.cpp",
+     "Ai/AiStandalone.cpp",
+     "D3d9Render/TrackRenderer.cpp"
+    ]
+   },
+   {
+    "name": "DAT_0089a368",
+    "addr": "0x0089a368",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-writes",
+    "files": [
+     "Ai/AiLeaderTimer.cpp",
+     "Ai/AiStandalone.cpp",
+     "D3d9Render/TrackRenderer.cpp"
+    ]
+   },
+   {
+    "name": "DAT_0089a374",
+    "addr": "0x0089a374",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-writes",
+    "files": [
+     "Ai/AiLeaderTimer.cpp",
+     "Ai/AiStandalone.cpp",
+     "D3d9Render/TrackRenderer.cpp"
+    ]
+   },
+   {
+    "name": "DAT_007f0fd0",
+    "addr": "0x007f0fd0",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Frontend/BatchAA_s4.cpp",
+     "Gameplay/PickupTick.cpp",
+     "HUD/HudDispatch.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005d757c",
+    "addr": "0x005d757c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/HeadingAtan2.cpp",
+     "Audio/AudioVecLength.cpp",
+     "Collision/RwpSolverMath2.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cc950",
+    "addr": "0x005cc950",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cc9c0",
+    "addr": "0x005cc9c0",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Util/FloatSliderStep.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cd0ac",
+    "addr": "0x005cd0ac",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005ccd04",
+    "addr": "0x005ccd04",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cc318",
+    "addr": "0x005cc318",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Collision/RwpSolverCore4.cpp",
+     "Collision/RwpSolverLeaves1.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cc31c",
+    "addr": "0x005cc31c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cc32c",
+    "addr": "0x005cc32c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Collision/RwpSolverIntegrate6.cpp",
+     "Collision/RwpSolverLeaves1.cpp",
+     "Collision/RwpSolverMath2.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005f2fc0",
+    "addr": "0x005f2fc0",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_0089a4dc",
+    "addr": "0x0089a4dc",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_0089a4e0",
+    "addr": "0x0089a4e0",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_0089a508",
+    "addr": "0x0089a508",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   }
+  ],
+  "callees": [
+   [
+    "FUN_00408a50",
+    "0x00408a50"
+   ],
+   [
+    "FUN_00408af0",
+    "0x00408af0"
+   ],
+   [
+    "FUN_0040e470",
+    "0x0040e470"
+   ],
+   [
+    "FUN_00426bb0",
+    "0x00426bb0"
+   ],
+   [
+    "FUN_0046c7b0",
+    "0x0046c7b0"
+   ],
+   [
+    "FUN_0046cbb0",
+    "0x0046cbb0"
+   ],
+   [
+    "FUN_0046cc10",
+    "0x0046cc10"
+   ],
+   [
+    "FUN_0046d4a0",
+    "0x0046d4a0"
+   ],
+   [
+    "FUN_0046d510",
+    "0x0046d510"
+   ],
+   [
+    "FUN_0046d6d0",
+    "0x0046d6d0"
+   ],
+   [
+    "FUN_004a2c48",
+    "0x004a2c48"
+   ],
+   [
+    "FUN_004c39b0",
+    "0x004c39b0"
+   ],
+   [
+    "FUN_004c3ac0",
+    "0x004c3ac0"
+   ]
+  ]
+ },
+ "0x0046d570": {
+  "name": "FUN_0046d570",
+  "size": 228,
+  "sig": "undefined FUN_0046d570(void)",
+  "callers": [
+   "FUN_0040ca00@0x0040ca00",
+   "FUN_00414f00@0x00414f00",
+   "FUN_00417640@0x00417640"
+  ],
+  "globals": [
+   {
+    "name": "DAT_005d757c",
+    "addr": "0x005d757c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/HeadingAtan2.cpp",
+     "Audio/AudioVecLength.cpp",
+     "Collision/RwpSolverMath2.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cc33c",
+    "addr": "0x005cc33c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005ccae0",
+    "addr": "0x005ccae0",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/HeadingAtan2.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cc320",
+    "addr": "0x005cc320",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Collision/RwpSolverLeaves1.cpp",
+     "Collision/RwpSolverMath2.cpp",
+     "Collision/RwpVtableKV1.cpp"
+    ]
+   },
+   {
+    "name": "DAT_00881f50",
+    "addr": "0x00881f50",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Race/SubStateCallees.cpp",
+     "Vehicle/MiscDamping.cpp"
+    ]
+   },
+   {
+    "name": "DAT_00881f54",
+    "addr": "0x00881f54",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Race/SubStateCallees.cpp",
+     "Vehicle/MiscDamping.cpp"
+    ]
+   },
+   {
+    "name": "DAT_00881f58",
+    "addr": "0x00881f58",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Race/SubStateCallees.cpp",
+     "Vehicle/MiscDamping.cpp"
+    ]
+   },
+   {
+    "name": "DAT_00881f74",
+    "addr": "0x00881f74",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/VehicleVelocityWorldGet.cpp"
+    ]
+   },
+   {
+    "name": "DAT_00881f78",
+    "addr": "0x00881f78",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/VehicleVelocityWorldGet.cpp"
+    ]
+   },
+   {
+    "name": "DAT_00881f7c",
+    "addr": "0x00881f7c",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/VehicleVelocityWorldGet.cpp"
+    ]
+   }
+  ],
+  "callees": [
+   [
+    "FUN_004a3384",
+    "0x004a3384"
+   ],
+   [
+    "FUN_004c39b0",
+    "0x004c39b0"
+   ]
+  ]
+ },
+ "0x00472650": {
+  "name": "FUN_00472650",
+  "size": 51,
+  "sig": "undefined FUN_00472650(void)",
+  "callers": [
+   "FUN_00405ab0@0x00405ab0",
+   "FUN_00405f60@0x00405f60",
+   "FUN_00406410@0x00406410",
+   "FUN_004064c0@0x004064c0",
+   "FUN_0040be50@0x0040be50",
+   "FUN_0040c690@0x0040c690",
+   "FUN_0040ca00@0x0040ca00",
+   "FUN_00414180@0x00414180",
+   "FUN_00415220@0x00415220",
+   "FUN_00417180@0x00417180",
+   "FUN_004177b0@0x004177b0",
+   "FUN_00421160@0x00421160",
+   "FUN_004212b0@0x004212b0",
+   "FUN_00422b50@0x00422b50",
+   "FUN_004368e0@0x004368e0",
+   "FUN_0043af10@0x0043af10",
+   "FUN_00442600@0x00442600",
+   "FUN_00442e00@0x00442e00",
+   "FUN_00446520@0x00446520",
+   "FUN_00448220@0x00448220",
+   "FUN_00456140@0x00456140",
+   "FUN_00456f70@0x00456f70",
+   "FUN_00457100@0x00457100",
+   "FUN_0045a420@0x0045a420",
+   "FUN_0045a590@0x0045a590",
+   "FUN_0045a950@0x0045a950",
+   "FUN_0045ae80@0x0045ae80",
+   "FUN_0045e460@0x0045e460",
+   "FUN_0045e990@0x0045e990",
+   "FUN_0045efe0@0x0045efe0",
+   "FUN_0045f5f0@0x0045f5f0",
+   "FUN_0045ff50@0x0045ff50",
+   "FUN_00460350@0x00460350",
+   "FUN_00460df0@0x00460df0",
+   "FUN_00461650@0x00461650",
+   "FUN_00463150@0x00463150",
+   "FUN_00463640@0x00463640",
+   "FUN_00463c80@0x00463c80",
+   "FUN_00463f40@0x00463f40",
+   "FUN_004642f0@0x004642f0",
+   "FUN_00464670@0x00464670",
+   "FUN_00464e10@0x00464e10",
+   "FUN_004661f0@0x004661f0",
+   "FUN_0046ddb0@0x0046ddb0",
+   "FUN_00486370@0x00486370",
+   "FUN_00486460@0x00486460",
+   "FUN_004864f0@0x004864f0",
+   "FUN_00486630@0x00486630",
+   "FUN_00486830@0x00486830",
+   "FUN_0048a060@0x0048a060",
+   "FUN_0048a4e0@0x0048a4e0",
+   "FUN_0048a850@0x0048a850",
+   "FUN_0048aa50@0x0048aa50",
+   "FUN_0048aff0@0x0048aff0",
+   "FUN_0048b230@0x0048b230",
+   "FUN_0048b960@0x0048b960",
+   "FUN_0048cf90@0x0048cf90",
+   "FUN_0048ebf0@0x0048ebf0",
+   "FUN_0048f290@0x0048f290",
+   "FUN_0048f420@0x0048f420",
+   "FUN_0048f780@0x0048f780",
+   "FUN_0048f8a0@0x0048f8a0",
+   "FUN_0048fb10@0x0048fb10",
+   "FUN_00490020@0x00490020",
+   "+4 more"
+  ],
+  "globals": [
+   {
+    "name": "DAT_005cd314",
+    "addr": "0x005cd314",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   }
+  ],
+  "callees": [
+   [
+    "FUN_00534870",
+    "0x00534870"
+   ]
+  ]
+ },
+ "0x00422ba0": {
+  "name": "FUN_00422ba0",
+  "size": 1071,
+  "sig": "undefined FUN_00422ba0(void)",
+  "callers": [
+   "FUN_00425a40@0x00425a40"
+  ],
+  "globals": [
+   {
+    "name": "DAT_007e9de0",
+    "addr": "0x007e9de0",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_007f1030",
+    "addr": "0x007f1030",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Frontend/SmallLeaves_n2.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cd0ec",
+    "addr": "0x005cd0ec",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Util/FloatSliderStep.cpp"
+    ]
+   },
+   {
+    "name": "DAT_007f0ff8",
+    "addr": "0x007f0ff8",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-writes",
+    "files": [
+     "Ai/AiStandalone.cpp",
+     "D3d9Render/TrackRenderer.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cc568",
+    "addr": "0x005cc568",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Frontend/MenuLeaves_af4.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cd098",
+    "addr": "0x005cd098",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_007e9de4",
+    "addr": "0x007e9de4",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_007ea1e4",
+    "addr": "0x007ea1e4",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_007ea5e4",
+    "addr": "0x007ea5e4",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_007ea9e4",
+    "addr": "0x007ea9e4",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_007ea9e8",
+    "addr": "0x007ea9e8",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_007ea9ec",
+    "addr": "0x007ea9ec",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_007ec9e4",
+    "addr": "0x007ec9e4",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_007ec9e8",
+    "addr": "0x007ec9e8",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_007ec9f4",
+    "addr": "0x007ec9f4",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_007ec9f8",
+    "addr": "0x007ec9f8",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_007ec9fc",
+    "addr": "0x007ec9fc",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_007eca08",
+    "addr": "0x007eca08",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_007eca0c",
+    "addr": "0x007eca0c",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_007eca10",
+    "addr": "0x007eca10",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_007eca14",
+    "addr": "0x007eca14",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_007eca18",
+    "addr": "0x007eca18",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_007eca1c",
+    "addr": "0x007eca1c",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_008995b0",
+    "addr": "0x008995b0",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Vehicle/SmallLeaves_q4.cpp"
+    ]
+   },
+   {
+    "name": "DAT_008995cc",
+    "addr": "0x008995cc",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_008995dc",
+    "addr": "0x008995dc",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_008995ec",
+    "addr": "0x008995ec",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_008995f0",
+    "addr": "0x008995f0",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_008995f4",
+    "addr": "0x008995f4",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   }
+  ],
+  "callees": [
+   [
+    "FUN_0040e470",
+    "0x0040e470"
+   ],
+   [
+    "FUN_00417370",
+    "0x00417370"
+   ],
+   [
+    "FUN_004219f0",
+    "0x004219f0"
+   ],
+   [
+    "FUN_0044e0a0",
+    "0x0044e0a0"
+   ],
+   [
+    "FUN_0046cbb0",
+    "0x0046cbb0"
+   ],
+   [
+    "FUN_0046cbe0",
+    "0x0046cbe0"
+   ],
+   [
+    "FUN_0047cea0",
+    "0x0047cea0"
+   ],
+   [
+    "FUN_00480720",
+    "0x00480720"
+   ],
+   [
+    "FUN_00480d60",
+    "0x00480d60"
+   ],
+   [
+    "FUN_004922e0",
+    "0x004922e0"
+   ],
+   [
+    "FUN_004c3ac0",
+    "0x004c3ac0"
+   ]
+  ]
+ },
+ "0x00417370": {
+  "name": "FUN_00417370",
+  "size": 44,
+  "sig": "undefined FUN_00417370(void)",
+  "callers": [
+   "FUN_00422ba0@0x00422ba0"
+  ],
+  "globals": [
+   {
+    "name": "DAT_0089a4fc",
+    "addr": "0x0089a4fc",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   }
+  ],
+  "callees": [
+   [
+    "FUN_004a2c48",
+    "0x004a2c48"
+   ]
+  ]
+ },
+ "0x004219f0": {
+  "name": "FUN_004219f0",
+  "size": 155,
+  "sig": "undefined FUN_004219f0(void)",
+  "callers": [
+   "FUN_00422ba0@0x00422ba0"
+  ],
+  "globals": [
+   {
+    "name": "DAT_0063fb90",
+    "addr": "0x0063fb90",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Util/TimerInit.cpp",
+     "Util/TimerSubarrayInit.cpp"
+    ]
+   }
+  ],
+  "callees": [
+   [
+    "FUN_004219a0",
+    "0x004219a0"
+   ],
+   [
+    "FUN_00487020",
+    "0x00487020"
+   ],
+   [
+    "FUN_004b4510",
+    "0x004b4510"
+   ]
+  ]
+ },
+ "0x004219a0": {
+  "name": "FUN_004219a0",
+  "size": 20,
+  "sig": "undefined FUN_004219a0(void)",
+  "callers": [
+   "FUN_004219f0@0x004219f0",
+   "FUN_00422160@0x00422160"
+  ],
+  "globals": [],
+  "callees": [
+   [
+    "FUN_00421980",
+    "0x00421980"
+   ]
+  ]
+ },
+ "0x00421980": {
+  "name": "FUN_00421980",
+  "size": 26,
+  "sig": "undefined FUN_00421980(void)",
+  "callers": [
+   "FUN_004219a0@0x004219a0",
+   "FUN_00421c10@0x00421c10",
+   "FUN_00421c80@0x00421c80"
+  ],
+  "globals": [
+   {
+    "name": "DAT_006ce274",
+    "addr": "0x006ce274",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Vehicle/VehicleCouplingBridge.cpp"
+    ]
+   }
+  ],
+  "callees": [
+   [
+    "FUN_00559ee0",
+    "0x00559ee0"
+   ],
+   [
+    "FUN_0055dec0",
+    "0x0055dec0"
+   ]
+  ]
+ },
+ "0x0047cea0": {
+  "name": "FUN_0047cea0",
+  "size": 127,
+  "sig": "undefined FUN_0047cea0(void)",
+  "callers": [
+   "FUN_00422ba0@0x00422ba0"
+  ],
+  "globals": [
+   {
+    "name": "DAT_006c71d8",
+    "addr": "0x006c71d8",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Render/SlotObjectAccessors.cpp"
+    ]
+   }
+  ],
+  "callees": [
+   [
+    "FUN_0055ac00",
+    "0x0055ac00"
+   ],
+   [
+    "FUN_0055ac50",
+    "0x0055ac50"
+   ],
+   [
+    "FUN_0055ad30",
+    "0x0055ad30"
+   ],
+   [
+    "FUN_0055b650",
+    "0x0055b650"
+   ],
+   [
+    "FUN_0057c210",
+    "0x0057c210"
+   ]
+  ]
+ },
+ "0x004252c0": {
+  "name": "FUN_004252c0",
+  "size": 1889,
+  "sig": "undefined FUN_004252c0(void)",
+  "callers": [
+   "FUN_00425a40@0x00425a40"
+  ],
+  "globals": [
+   {
+    "name": "DAT_005d757c",
+    "addr": "0x005d757c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/HeadingAtan2.cpp",
+     "Audio/AudioVecLength.cpp",
+     "Collision/RwpSolverMath2.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005ccac4",
+    "addr": "0x005ccac4",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/HeadingAtan2.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cd0e0",
+    "addr": "0x005cd0e0",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cd40c",
+    "addr": "0x005cd40c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_007f0ff8",
+    "addr": "0x007f0ff8",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-writes",
+    "files": [
+     "Ai/AiStandalone.cpp",
+     "D3d9Render/TrackRenderer.cpp"
+    ]
+   },
+   {
+    "name": "DAT_007e9de0",
+    "addr": "0x007e9de0",
+    "block": ".data",
+    "writable": true,
+    "dir": "WR",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_007f1030",
+    "addr": "0x007f1030",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Frontend/SmallLeaves_n2.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cc33c",
+    "addr": "0x005cc33c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cd094",
+    "addr": "0x005cd094",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cd09c",
+    "addr": "0x005cd09c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/HeadingAtan2.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005ccad0",
+    "addr": "0x005ccad0",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/HeadingAtan2.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cc728",
+    "addr": "0x005cc728",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Frontend/SmallLeaves_n2.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cc320",
+    "addr": "0x005cc320",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Collision/RwpSolverLeaves1.cpp",
+     "Collision/RwpSolverMath2.cpp",
+     "Collision/RwpVtableKV1.cpp"
+    ]
+   },
+   {
+    "name": "DAT_007e9de4",
+    "addr": "0x007e9de4",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_007ea1e4",
+    "addr": "0x007ea1e4",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_007ea5e4",
+    "addr": "0x007ea5e4",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_007ea9e4",
+    "addr": "0x007ea9e4",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_007f1038",
+    "addr": "0x007f1038",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_007f103c",
+    "addr": "0x007f103c",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Race/SubStateCallees.cpp",
+     "Race/SubStateMachine.cpp",
+     "Vehicle/LaunchRevCharge.cpp"
+    ]
+   },
+   {
+    "name": "DAT_007f1a14",
+    "addr": "0x007f1a14",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Frontend/BatchAA_s3.cpp",
+     "Frontend/FrontendState.cpp",
+     "Frontend/MenuButtonDetect.cpp"
+    ]
+   },
+   {
+    "name": "DAT_00899560",
+    "addr": "0x00899560",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Vehicle/SmallLeaves_q4.cpp"
+    ]
+   },
+   {
+    "name": "DAT_00899564",
+    "addr": "0x00899564",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Vehicle/SmallLeaves_q4.cpp"
+    ]
+   },
+   {
+    "name": "DAT_008995c4",
+    "addr": "0x008995c4",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_008995ec",
+    "addr": "0x008995ec",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   }
+  ],
+  "callees": [
+   [
+    "FUN_00407a40",
+    "0x00407a40"
+   ],
+   [
+    "FUN_0040e350",
+    "0x0040e350"
+   ],
+   [
+    "FUN_0040e370",
+    "0x0040e370"
+   ],
+   [
+    "FUN_0040e470",
+    "0x0040e470"
+   ],
+   [
+    "FUN_00415860",
+    "0x00415860"
+   ],
+   [
+    "FUN_004233e0",
+    "0x004233e0"
+   ],
+   [
+    "FUN_00426cc0",
+    "0x00426cc0"
+   ],
+   [
+    "FUN_0046c7b0",
+    "0x0046c7b0"
+   ],
+   [
+    "FUN_0046cbb0",
+    "0x0046cbb0"
+   ],
+   [
+    "FUN_0046cc10",
+    "0x0046cc10"
+   ],
+   [
+    "FUN_0046d510",
+    "0x0046d510"
+   ],
+   [
+    "FUN_004a3384",
+    "0x004a3384"
+   ]
+  ]
+ },
+ "0x00424eb0": {
+  "name": "FUN_00424eb0",
+  "size": 1039,
+  "sig": "undefined FUN_00424eb0(void)",
+  "callers": [
+   "FUN_00425a40@0x00425a40"
+  ],
+  "globals": [
+   {
+    "name": "DAT_007f0fd0",
+    "addr": "0x007f0fd0",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Frontend/BatchAA_s4.cpp",
+     "Gameplay/PickupTick.cpp",
+     "HUD/HudDispatch.cpp"
+    ]
+   },
+   {
+    "name": "DAT_00803324",
+    "addr": "0x00803324",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   }
+  ],
+  "callees": [
+   [
+    "FUN_00408a50",
+    "0x00408a50"
+   ],
+   [
+    "FUN_00408b00",
+    "0x00408b00"
+   ],
+   [
+    "FUN_00409290",
+    "0x00409290"
+   ],
+   [
+    "FUN_0040b290",
+    "0x0040b290"
+   ],
+   [
+    "FUN_0040dc90",
+    "0x0040dc90"
+   ],
+   [
+    "FUN_0040e340",
+    "0x0040e340"
+   ],
+   [
+    "FUN_0040e350",
+    "0x0040e350"
+   ],
+   [
+    "FUN_0040e370",
+    "0x0040e370"
+   ],
+   [
+    "FUN_0040eee0",
+    "0x0040eee0"
+   ],
+   [
+    "FUN_00421690",
+    "0x00421690"
+   ],
+   [
+    "FUN_00422fd0",
+    "0x00422fd0"
+   ],
+   [
+    "FUN_00443080",
+    "0x00443080"
+   ],
+   [
+    "FUN_0045ba00",
+    "0x0045ba00"
+   ],
+   [
+    "FUN_0046baa0",
+    "0x0046baa0"
+   ],
+   [
+    "FUN_0046c570",
+    "0x0046c570"
+   ],
+   [
+    "FUN_0046c7b0",
+    "0x0046c7b0"
+   ],
+   [
+    "FUN_0046c7d0",
+    "0x0046c7d0"
+   ],
+   [
+    "FUN_0046cbb0",
+    "0x0046cbb0"
+   ],
+   [
+    "FUN_0046cbe0",
+    "0x0046cbe0"
+   ],
+   [
+    "FUN_004704c0",
+    "0x004704c0"
+   ],
+   [
+    "FUN_00486f90",
+    "0x00486f90"
+   ],
+   [
+    "FUN_004a2c48",
+    "0x004a2c48"
+   ]
+  ]
+ },
+ "0x00408b00": {
+  "name": "FUN_00408b00",
+  "size": 1883,
+  "sig": "undefined FUN_00408b00(void)",
+  "callers": [
+   "FUN_0040e590@0x0040e590",
+   "FUN_00423670@0x00423670",
+   "FUN_00424eb0@0x00424eb0",
+   "FUN_00448220@0x00448220"
+  ],
+  "globals": [
+   {
+    "name": "DAT_007f0fec",
+    "addr": "0x007f0fec",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_0063a5e0",
+    "addr": "0x0063a5e0",
+    "block": ".data",
+    "writable": true,
+    "dir": "WR",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_0063a5e4",
+    "addr": "0x0063a5e4",
+    "block": ".data",
+    "writable": true,
+    "dir": "WR",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_007f0fd0",
+    "addr": "0x007f0fd0",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Frontend/BatchAA_s4.cpp",
+     "Gameplay/PickupTick.cpp",
+     "HUD/HudDispatch.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cc98c",
+    "addr": "0x005cc98c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005d757c",
+    "addr": "0x005d757c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/HeadingAtan2.cpp",
+     "Audio/AudioVecLength.cpp",
+     "Collision/RwpSolverMath2.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005ccac4",
+    "addr": "0x005ccac4",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/HeadingAtan2.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005ccac0",
+    "addr": "0x005ccac0",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Frontend/MenuNav.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005ccabc",
+    "addr": "0x005ccabc",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005ccab8",
+    "addr": "0x005ccab8",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005ccab4",
+    "addr": "0x005ccab4",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cc9bc",
+    "addr": "0x005cc9bc",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cc9c8",
+    "addr": "0x005cc9c8",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cc318",
+    "addr": "0x005cc318",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Collision/RwpSolverCore4.cpp",
+     "Collision/RwpSolverLeaves1.cpp"
+    ]
+   }
+  ],
+  "callees": [
+   [
+    "FUN_00426cb0",
+    "0x00426cb0"
+   ],
+   [
+    "FUN_00426cc0",
+    "0x00426cc0"
+   ],
+   [
+    "FUN_00426d00",
+    "0x00426d00"
+   ],
+   [
+    "FUN_004726b0",
+    "0x004726b0"
+   ],
+   [
+    "FUN_004987b0",
+    "0x004987b0"
+   ],
+   [
+    "FUN_004a3384",
+    "0x004a3384"
+   ],
+   [
+    "FUN_004c39b0",
+    "0x004c39b0"
+   ],
+   [
+    "FUN_004c3c60",
+    "0x004c3c60"
+   ]
+  ]
+ },
+ "0x00409290": {
+  "name": "FUN_00409290",
+  "size": 110,
+  "sig": "undefined FUN_00409290(void)",
+  "callers": [
+   "FUN_0040e590@0x0040e590",
+   "FUN_00424eb0@0x00424eb0"
+  ],
+  "globals": [],
+  "callees": [
+   [
+    "FUN_00426bc0",
+    "0x00426bc0"
+   ],
+   [
+    "FUN_00426bd0",
+    "0x00426bd0"
+   ]
+  ]
+ },
+ "0x0046c7d0": {
+  "name": "FUN_0046c7d0",
+  "size": 852,
+  "sig": "undefined FUN_0046c7d0(void)",
+  "callers": [
+   "FUN_00424eb0@0x00424eb0"
+  ],
+  "globals": [
+   {
+    "name": "DAT_005d757c",
+    "addr": "0x005d757c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/HeadingAtan2.cpp",
+     "Audio/AudioVecLength.cpp",
+     "Collision/RwpSolverMath2.cpp"
+    ]
+   },
+   {
+    "name": "DAT_006146f4",
+    "addr": "0x006146f4",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_006146f0",
+    "addr": "0x006146f0",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_006146f8",
+    "addr": "0x006146f8",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cc33c",
+    "addr": "0x005cc33c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005ccae0",
+    "addr": "0x005ccae0",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/HeadingAtan2.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005ccad8",
+    "addr": "0x005ccad8",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005ccad0",
+    "addr": "0x005ccad0",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/HeadingAtan2.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005ccac4",
+    "addr": "0x005ccac4",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/HeadingAtan2.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cc72c",
+    "addr": "0x005cc72c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Frontend/MenuSpriteDispatch.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cea58",
+    "addr": "0x005cea58",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cc574",
+    "addr": "0x005cc574",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Frontend/BatchAA_s1.cpp",
+     "Frontend/MenuNearLeaves_s6.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cc94c",
+    "addr": "0x005cc94c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cd694",
+    "addr": "0x005cd694",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00613134",
+    "addr": "0x00613134",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cc35c",
+    "addr": "0x005cc35c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/AiLeaderTimer.cpp",
+     "Frontend/BatchAA_s1.cpp",
+     "Frontend/MenuNearLeaves_s6.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005ccacc",
+    "addr": "0x005ccacc",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cd984",
+    "addr": "0x005cd984",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cc728",
+    "addr": "0x005cc728",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Frontend/SmallLeaves_n2.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cc320",
+    "addr": "0x005cc320",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Collision/RwpSolverLeaves1.cpp",
+     "Collision/RwpSolverMath2.cpp",
+     "Collision/RwpVtableKV1.cpp"
+    ]
+   },
+   {
+    "name": "DAT_006146fc",
+    "addr": "0x006146fc",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Race/CameraEntries.cpp",
+     "Vehicle/VehicleCouplingBridge.cpp"
+    ]
+   },
+   {
+    "name": "DAT_007f1038",
+    "addr": "0x007f1038",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_007f19b8",
+    "addr": "0x007f19b8",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_007f1a14",
+    "addr": "0x007f1a14",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Frontend/BatchAA_s3.cpp",
+     "Frontend/FrontendState.cpp",
+     "Frontend/MenuButtonDetect.cpp"
+    ]
+   },
+   {
+    "name": "DAT_008815b0",
+    "addr": "0x008815b0",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Frontend/SmallLeaves_n2.cpp",
+     "Vehicle/VehicleState.cpp"
+    ]
+   },
+   {
+    "name": "DAT_00881ec8",
+    "addr": "0x00881ec8",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/VehicleVelocityWorldGet.cpp",
+     "D3d9Render/TrackRenderer.cpp"
+    ]
+   },
+   {
+    "name": "DAT_00881f48",
+    "addr": "0x00881f48",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "D3d9Render/TrackRenderer.cpp"
+    ]
+   },
+   {
+    "name": "DAT_00881f74",
+    "addr": "0x00881f74",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/VehicleVelocityWorldGet.cpp"
+    ]
+   },
+   {
+    "name": "DAT_00881f78",
+    "addr": "0x00881f78",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/VehicleVelocityWorldGet.cpp"
+    ]
+   },
+   {
+    "name": "DAT_00881f7c",
+    "addr": "0x00881f7c",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/VehicleVelocityWorldGet.cpp"
+    ]
+   },
+   {
+    "name": "DAT_00881f84",
+    "addr": "0x00881f84",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Race/SubStateCallees.cpp"
+    ]
+   },
+   {
+    "name": "DAT_00881f90",
+    "addr": "0x00881f90",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "D3d9Render/TrackRenderer.cpp",
+     "Race/SubStateCallees.cpp",
+     "Vehicle/SmallLeaves_o5.cpp"
+    ]
+   }
+  ],
+  "callees": [
+   [
+    "FUN_00408a50",
+    "0x00408a50"
+   ],
+   [
+    "FUN_004093b0",
+    "0x004093b0"
+   ],
+   [
+    "FUN_0040e350",
+    "0x0040e350"
+   ],
+   [
+    "FUN_004a2c48",
+    "0x004a2c48"
+   ],
+   [
+    "FUN_004a3384",
+    "0x004a3384"
+   ],
+   [
+    "FUN_004c39b0",
+    "0x004c39b0"
+   ],
+   [
+    "FUN_004c4d20",
+    "0x004c4d20"
+   ]
+  ]
+ },
+ "0x004093b0": {
+  "name": "FUN_004093b0",
+  "size": 496,
+  "sig": "undefined FUN_004093b0(void)",
+  "callers": [
+   "FUN_0046c7d0@0x0046c7d0"
+  ],
+  "globals": [
+   {
+    "name": "DAT_005d757c",
+    "addr": "0x005d757c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/HeadingAtan2.cpp",
+     "Audio/AudioVecLength.cpp",
+     "Collision/RwpSolverMath2.cpp"
+    ]
+   },
+   {
+    "name": "DAT_006146f4",
+    "addr": "0x006146f4",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_006146f0",
+    "addr": "0x006146f0",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_006146f8",
+    "addr": "0x006146f8",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cc33c",
+    "addr": "0x005cc33c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005ccae0",
+    "addr": "0x005ccae0",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/HeadingAtan2.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005ccad8",
+    "addr": "0x005ccad8",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005ccad0",
+    "addr": "0x005ccad0",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/HeadingAtan2.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005ccac4",
+    "addr": "0x005ccac4",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/HeadingAtan2.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005ccacc",
+    "addr": "0x005ccacc",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005ccac8",
+    "addr": "0x005ccac8",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cc320",
+    "addr": "0x005cc320",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Collision/RwpSolverLeaves1.cpp",
+     "Collision/RwpSolverMath2.cpp",
+     "Collision/RwpVtableKV1.cpp"
+    ]
+   }
+  ],
+  "callees": [
+   [
+    "FUN_00409330",
+    "0x00409330"
+   ],
+   [
+    "FUN_00426cc0",
+    "0x00426cc0"
+   ],
+   [
+    "FUN_004a3384",
+    "0x004a3384"
+   ],
+   [
+    "FUN_004c39b0",
+    "0x004c39b0"
+   ]
+  ]
+ },
+ "0x004704c0": {
+  "name": "FUN_004704c0",
+  "size": 420,
+  "sig": "undefined FUN_004704c0(void)",
+  "callers": [
+   "FUN_0040e590@0x0040e590",
+   "FUN_00423670@0x00423670",
+   "FUN_00424eb0@0x00424eb0"
+  ],
+  "globals": [
+   {
+    "name": "DAT_006146fc",
+    "addr": "0x006146fc",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Race/CameraEntries.cpp",
+     "Vehicle/VehicleCouplingBridge.cpp"
+    ]
+   },
+   {
+    "name": "DAT_008815a0",
+    "addr": "0x008815a0",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/AiStandalone.cpp",
+     "Race/SubStateCallees.cpp",
+     "Util/UtilLeaves_ab6.cpp"
+    ]
+   },
+   {
+    "name": "DAT_0088178c",
+    "addr": "0x0088178c",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00881a4c",
+    "addr": "0x00881a4c",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Race/SubStateCallees.cpp"
+    ]
+   },
+   {
+    "name": "DAT_00881ec8",
+    "addr": "0x00881ec8",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/VehicleVelocityWorldGet.cpp",
+     "D3d9Render/TrackRenderer.cpp"
+    ]
+   },
+   {
+    "name": "DAT_00881ecc",
+    "addr": "0x00881ecc",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00881ed0",
+    "addr": "0x00881ed0",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00881ed4",
+    "addr": "0x00881ed4",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00881ed8",
+    "addr": "0x00881ed8",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00881edc",
+    "addr": "0x00881edc",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00881ee0",
+    "addr": "0x00881ee0",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00881ee8",
+    "addr": "0x00881ee8",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00881eec",
+    "addr": "0x00881eec",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00881ef0",
+    "addr": "0x00881ef0",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00881ef8",
+    "addr": "0x00881ef8",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00881efc",
+    "addr": "0x00881efc",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00881f00",
+    "addr": "0x00881f00",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00881f08",
+    "addr": "0x00881f08",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00881f0c",
+    "addr": "0x00881f0c",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00881f10",
+    "addr": "0x00881f10",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00881f14",
+    "addr": "0x00881f14",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00881f18",
+    "addr": "0x00881f18",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00881f1c",
+    "addr": "0x00881f1c",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00881f20",
+    "addr": "0x00881f20",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00881f28",
+    "addr": "0x00881f28",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00881f2c",
+    "addr": "0x00881f2c",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00881f30",
+    "addr": "0x00881f30",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00881f38",
+    "addr": "0x00881f38",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00881f3c",
+    "addr": "0x00881f3c",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00881f40",
+    "addr": "0x00881f40",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00881f48",
+    "addr": "0x00881f48",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "D3d9Render/TrackRenderer.cpp"
+    ]
+   },
+   {
+    "name": "DAT_00881f4c",
+    "addr": "0x00881f4c",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00881f90",
+    "addr": "0x00881f90",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "D3d9Render/TrackRenderer.cpp",
+     "Race/SubStateCallees.cpp",
+     "Vehicle/SmallLeaves_o5.cpp"
+    ]
+   },
+   {
+    "name": "DAT_00881f94",
+    "addr": "0x00881f94",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Race/SubStateCallees.cpp",
+     "Vehicle/SmallLeaves_o5.cpp",
+     "Vehicle/VehicleState.cpp"
+    ]
+   },
+   {
+    "name": "DAT_00882070",
+    "addr": "0x00882070",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Race/SubStateCallees.cpp"
+    ]
+   }
+  ],
+  "callees": [
+   [
+    "FUN_0041eda0",
+    "0x0041eda0"
+   ],
+   [
+    "FUN_0046baa0",
+    "0x0046baa0"
+   ],
+   [
+    "FUN_0046d400",
+    "0x0046d400"
+   ],
+   [
+    "FUN_0046f6c0",
+    "0x0046f6c0"
+   ],
+   [
+    "FUN_0047ea60",
+    "0x0047ea60"
+   ],
+   [
+    "FUN_004c4d20",
+    "0x004c4d20"
+   ],
+   [
+    "FUN_004c51a0",
+    "0x004c51a0"
+   ]
+  ]
+ },
+ "0x0047ea60": {
+  "name": "FUN_0047ea60",
+  "size": 204,
+  "sig": "undefined FUN_0047ea60(void)",
+  "callers": [
+   "FUN_004704c0@0x004704c0"
+  ],
+  "globals": [
+   {
+    "name": "DAT_005cc33c",
+    "addr": "0x005cc33c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_006c9a78",
+    "addr": "0x006c9a78",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Vehicle/VehicleCouplingBridge.cpp"
+    ]
+   },
+   {
+    "name": "DAT_008816d8",
+    "addr": "0x008816d8",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Vehicle/VehicleCouplingBridge.cpp"
+    ]
+   },
+   {
+    "name": "DAT_008816dc",
+    "addr": "0x008816dc",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_008816e0",
+    "addr": "0x008816e0",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   }
+  ],
+  "callees": [
+   [
+    "FUN_004c0e50",
+    "0x004c0e50"
+   ],
+   [
+    "FUN_004c3df0",
+    "0x004c3df0"
+   ],
+   [
+    "FUN_004c51a0",
+    "0x004c51a0"
+   ],
+   [
+    "FUN_0055ac00",
+    "0x0055ac00"
+   ],
+   [
+    "FUN_0055dff0",
+    "0x0055dff0"
+   ],
+   [
+    "FUN_0057c210",
+    "0x0057c210"
+   ]
+  ]
+ },
+ "0x0046d400": {
+  "name": "FUN_0046d400",
+  "size": 153,
+  "sig": "undefined FUN_0046d400(void)",
+  "callers": [
+   "FUN_00412f30@0x00412f30",
+   "FUN_00448220@0x00448220",
+   "FUN_004704c0@0x004704c0"
+  ],
+  "globals": [
+   {
+    "name": "DAT_005cc31c",
+    "addr": "0x005cc31c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cd0a0",
+    "addr": "0x005cd0a0",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/AiLeaderTimer.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005d757c",
+    "addr": "0x005d757c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/HeadingAtan2.cpp",
+     "Audio/AudioVecLength.cpp",
+     "Collision/RwpSolverMath2.cpp"
+    ]
+   },
+   {
+    "name": "FUN_0046d3a0",
+    "addr": "0x0046d3a0",
+    "block": ".text",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   }
+  ],
+  "callees": [
+   [
+    "FUN_00538c80",
+    "0x00538c80"
+   ]
+  ]
+ },
+ "0x00420870": {
+  "name": "FUN_00420870",
+  "size": 970,
+  "sig": "undefined FUN_00420870(void)",
+  "callers": [
+   "FUN_0040da50@0x0040da50"
+  ],
+  "globals": [
+   {
+    "name": "DAT_0063d850",
+    "addr": "0x0063d850",
+    "block": ".data",
+    "writable": true,
+    "dir": "WR",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_0063d7ec",
+    "addr": "0x0063d7ec",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cd2ac",
+    "addr": "0x005cd2ac",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cc9e0",
+    "addr": "0x005cc9e0",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cc320",
+    "addr": "0x005cc320",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Collision/RwpSolverLeaves1.cpp",
+     "Collision/RwpSolverMath2.cpp",
+     "Collision/RwpVtableKV1.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005d757c",
+    "addr": "0x005d757c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/HeadingAtan2.cpp",
+     "Audio/AudioVecLength.cpp",
+     "Collision/RwpSolverMath2.cpp"
+    ]
+   },
+   {
+    "name": "DAT_0063d840",
+    "addr": "0x0063d840",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_0063d8e0",
+    "addr": "0x0063d8e0",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_0063d910",
+    "addr": "0x0063d910",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_0063d914",
+    "addr": "0x0063d914",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_0063d918",
+    "addr": "0x0063d918",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_0063d9e0",
+    "addr": "0x0063d9e0",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Util/EventTable.cpp"
+    ]
+   },
+   {
+    "name": "DAT_0063da2c",
+    "addr": "0x0063da2c",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_0063dc38",
+    "addr": "0x0063dc38",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_0063dc3c",
+    "addr": "0x0063dc3c",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_0063dc40",
+    "addr": "0x0063dc40",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_0063dc4c",
+    "addr": "0x0063dc4c",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_0063dc5c",
+    "addr": "0x0063dc5c",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_0063dc60",
+    "addr": "0x0063dc60",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_0063dc74",
+    "addr": "0x0063dc74",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Util/EventTable.cpp",
+     "Util/TimerInit.cpp",
+     "Util/TimerSlot.cpp"
+    ]
+   },
+   {
+    "name": "DAT_0063dc78",
+    "addr": "0x0063dc78",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   }
+  ],
+  "callees": [
+   [
+    "FUN_0041f3d0",
+    "0x0041f3d0"
+   ],
+   [
+    "FUN_0041f4f0",
+    "0x0041f4f0"
+   ],
+   [
+    "FUN_0041f590",
+    "0x0041f590"
+   ],
+   [
+    "FUN_0041f710",
+    "0x0041f710"
+   ],
+   [
+    "FUN_0041f770",
+    "0x0041f770"
+   ],
+   [
+    "FUN_0041f880",
+    "0x0041f880"
+   ],
+   [
+    "FUN_00420340",
+    "0x00420340"
+   ],
+   [
+    "FUN_004260a0",
+    "0x004260a0"
+   ],
+   [
+    "FUN_004260b0",
+    "0x004260b0"
+   ],
+   [
+    "FUN_0046cb30",
+    "0x0046cb30"
+   ],
+   [
+    "FUN_004b5240",
+    "0x004b5240"
+   ],
+   [
+    "FUN_004c0ed0",
+    "0x004c0ed0"
+   ],
+   [
+    "FUN_004c1480",
+    "0x004c1480"
+   ],
+   [
+    "FUN_004c1520",
+    "0x004c1520"
+   ]
+  ]
+ },
+ "0x0041f3d0": {
+  "name": "FUN_0041f3d0",
+  "size": 281,
+  "sig": "undefined FUN_0041f3d0(void)",
+  "callers": [
+   "FUN_00420870@0x00420870"
+  ],
+  "globals": [
+   {
+    "name": "DAT_005cc94c",
+    "addr": "0x005cc94c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cc948",
+    "addr": "0x005cc948",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005ccac4",
+    "addr": "0x005ccac4",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/HeadingAtan2.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cd270",
+    "addr": "0x005cd270",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_006146f0",
+    "addr": "0x006146f0",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_006146fc",
+    "addr": "0x006146fc",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Race/CameraEntries.cpp",
+     "Vehicle/VehicleCouplingBridge.cpp"
+    ]
+   }
+  ],
+  "callees": [
+   [
+    "FUN_0046bd60",
+    "0x0046bd60"
+   ],
+   [
+    "FUN_0046bda0",
+    "0x0046bda0"
+   ],
+   [
+    "FUN_004c1340",
+    "0x004c1340"
+   ],
+   [
+    "FUN_004c1520",
+    "0x004c1520"
+   ]
+  ]
+ },
+ "0x0041f4f0": {
+  "name": "FUN_0041f4f0",
+  "size": 158,
+  "sig": "undefined FUN_0041f4f0(void)",
+  "callers": [
+   "FUN_00420870@0x00420870"
+  ],
+  "globals": [
+   {
+    "name": "DAT_005cd038",
+    "addr": "0x005cd038",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cd274",
+    "addr": "0x005cd274",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_006146f0",
+    "addr": "0x006146f0",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00614708",
+    "addr": "0x00614708",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/VehicleVelocityWorldGet.cpp",
+     "Vehicle/VehicleCouplingBridge.cpp"
+    ]
+   }
+  ],
+  "callees": [
+   [
+    "FUN_0046bce0",
+    "0x0046bce0"
+   ],
+   [
+    "FUN_0046bd20",
+    "0x0046bd20"
+   ],
+   [
+    "FUN_004c1340",
+    "0x004c1340"
+   ],
+   [
+    "FUN_004c1520",
+    "0x004c1520"
+   ]
+  ]
+ },
+ "0x0041f590": {
+  "name": "FUN_0041f590",
+  "size": 384,
+  "sig": "undefined FUN_0041f590(void)",
+  "callers": [
+   "FUN_00420870@0x00420870"
+  ],
+  "globals": [
+   {
+    "name": "DAT_007f101c",
+    "addr": "0x007f101c",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Boot/FrameDispatch.cpp",
+     "Race/CameraEntries.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cd058",
+    "addr": "0x005cd058",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cd278",
+    "addr": "0x005cd278",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cc320",
+    "addr": "0x005cc320",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Collision/RwpSolverLeaves1.cpp",
+     "Collision/RwpSolverMath2.cpp",
+     "Collision/RwpVtableKV1.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cd050",
+    "addr": "0x005cd050",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005d757c",
+    "addr": "0x005d757c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/HeadingAtan2.cpp",
+     "Audio/AudioVecLength.cpp",
+     "Collision/RwpSolverMath2.cpp"
+    ]
+   }
+  ],
+  "callees": [
+   [
+    "FUN_00426dc0",
+    "0x00426dc0"
+   ],
+   [
+    "FUN_004c0ed0",
+    "0x004c0ed0"
+   ]
+  ]
+ },
+ "0x0041f770": {
+  "name": "FUN_0041f770",
+  "size": 257,
+  "sig": "undefined FUN_0041f770(void)",
+  "callers": [
+   "FUN_00420870@0x00420870"
+  ],
+  "globals": [
+   {
+    "name": "DAT_005cc9a0",
+    "addr": "0x005cc9a0",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Vehicle/VehicleCouplingBridge.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cc320",
+    "addr": "0x005cc320",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Collision/RwpSolverLeaves1.cpp",
+     "Collision/RwpSolverMath2.cpp",
+     "Collision/RwpVtableKV1.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cc33c",
+    "addr": "0x005cc33c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cc32c",
+    "addr": "0x005cc32c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Collision/RwpSolverIntegrate6.cpp",
+     "Collision/RwpSolverLeaves1.cpp",
+     "Collision/RwpSolverMath2.cpp"
+    ]
+   },
+   {
+    "name": "DAT_0063e4a4",
+    "addr": "0x0063e4a4",
+    "block": ".data",
+    "writable": true,
+    "dir": "WR",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cc72c",
+    "addr": "0x005cc72c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Frontend/MenuSpriteDispatch.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cc9b0",
+    "addr": "0x005cc9b0",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cd058",
+    "addr": "0x005cd058",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_006146f0",
+    "addr": "0x006146f0",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_006146fc",
+    "addr": "0x006146fc",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Race/CameraEntries.cpp",
+     "Vehicle/VehicleCouplingBridge.cpp"
+    ]
+   }
+  ],
+  "callees": [
+   [
+    "FUN_00422470",
+    "0x00422470"
+   ],
+   [
+    "FUN_0046bda0",
+    "0x0046bda0"
+   ],
+   [
+    "FUN_004c1520",
+    "0x004c1520"
+   ],
+   [
+    "FUN_00544bf0",
+    "0x00544bf0"
+   ]
+  ]
+ },
+ "0x0041f880": {
+  "name": "FUN_0041f880",
+  "size": 112,
+  "sig": "undefined FUN_0041f880(void)",
+  "callers": [
+   "FUN_00420870@0x00420870"
+  ],
+  "globals": [
+   {
+    "name": "DAT_00636acc",
+    "addr": "0x00636acc",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   }
+  ],
+  "callees": [
+   [
+    "FUN_00422aa0",
+    "0x00422aa0"
+   ]
+  ]
+ },
+ "0x00420340": {
+  "name": "FUN_00420340",
+  "size": 217,
+  "sig": "undefined FUN_00420340(void)",
+  "callers": [
+   "FUN_00420870@0x00420870"
+  ],
+  "globals": [],
+  "callees": [
+   [
+    "FUN_0041f360",
+    "0x0041f360"
+   ],
+   [
+    "FUN_00420290",
+    "0x00420290"
+   ],
+   [
+    "FUN_00540080",
+    "0x00540080"
+   ],
+   [
+    "FUN_00540100",
+    "0x00540100"
+   ],
+   [
+    "FUN_00540160",
+    "0x00540160"
+   ]
+  ]
+ },
+ "0x00420290": {
+  "name": "FUN_00420290",
+  "size": 168,
+  "sig": "undefined FUN_00420290(void)",
+  "callers": [
+   "FUN_00420340@0x00420340",
+   "FUN_00420420@0x00420420"
+  ],
+  "globals": [
+   {
+    "name": "DAT_005cc568",
+    "addr": "0x005cc568",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Frontend/MenuLeaves_af4.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005d757c",
+    "addr": "0x005d757c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/HeadingAtan2.cpp",
+     "Audio/AudioVecLength.cpp",
+     "Collision/RwpSolverMath2.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cc328",
+    "addr": "0x005cc328",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "HUD/ScenarioWriters_sa2s2.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cc320",
+    "addr": "0x005cc320",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Collision/RwpSolverLeaves1.cpp",
+     "Collision/RwpSolverMath2.cpp",
+     "Collision/RwpVtableKV1.cpp"
+    ]
+   },
+   {
+    "name": "DAT_0063dc54",
+    "addr": "0x0063dc54",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_0063dc74",
+    "addr": "0x0063dc74",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Util/EventTable.cpp",
+     "Util/TimerInit.cpp",
+     "Util/TimerSlot.cpp"
+    ]
+   }
+  ],
+  "callees": [
+   [
+    "FUN_0041f120",
+    "0x0041f120"
+   ],
+   [
+    "FUN_00426de0",
+    "0x00426de0"
+   ],
+   [
+    "FUN_00426df0",
+    "0x00426df0"
+   ]
+  ]
+ },
+ "0x0041f120": {
+  "name": "FUN_0041f120",
+  "size": 150,
+  "sig": "undefined FUN_0041f120(void)",
+  "callers": [
+   "FUN_00420290@0x00420290",
+   "FUN_00446520@0x00446520"
+  ],
+  "globals": [
+   {
+    "name": "DAT_0063dc38",
+    "addr": "0x0063dc38",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_0063dc3c",
+    "addr": "0x0063dc3c",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_0063dc40",
+    "addr": "0x0063dc40",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_0063dc7c",
+    "addr": "0x0063dc7c",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   }
+  ],
+  "callees": [
+   [
+    "FUN_004c3ac0",
+    "0x004c3ac0"
+   ]
+  ]
+ },
+ "0x0046cb30": {
+  "name": "FUN_0046cb30",
+  "size": 126,
+  "sig": "undefined FUN_0046cb30(void)",
+  "callers": [
+   "FUN_0040ca00@0x0040ca00",
+   "FUN_00420870@0x00420870",
+   "FUN_004212b0@0x004212b0",
+   "FUN_00421d20@0x00421d20",
+   "FUN_00446520@0x00446520",
+   "FUN_0045a950@0x0045a950",
+   "FUN_0047def0@0x0047def0",
+   "FUN_0047eb30@0x0047eb30"
+  ],
+  "globals": [
+   {
+    "name": "DAT_005cd8fc",
+    "addr": "0x005cd8fc",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_008815b4",
+    "addr": "0x008815b4",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Race/SubStateCallees.cpp"
+    ]
+   },
+   {
+    "name": "DAT_00881f50",
+    "addr": "0x00881f50",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Race/SubStateCallees.cpp",
+     "Vehicle/MiscDamping.cpp"
+    ]
+   },
+   {
+    "name": "DAT_00881f54",
+    "addr": "0x00881f54",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Race/SubStateCallees.cpp",
+     "Vehicle/MiscDamping.cpp"
+    ]
+   },
+   {
+    "name": "DAT_00881f58",
+    "addr": "0x00881f58",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Race/SubStateCallees.cpp",
+     "Vehicle/MiscDamping.cpp"
+    ]
+   }
+  ],
+  "callees": [
+   [
+    "FUN_0047f1e0",
+    "0x0047f1e0"
+   ]
+  ]
+ },
+ "0x0040d8f0": {
+  "name": "FUN_0040d8f0",
+  "size": 337,
+  "sig": "undefined FUN_0040d8f0(void)",
+  "callers": [
+   "FUN_0040da50@0x0040da50"
+  ],
+  "globals": [
+   {
+    "name": "DAT_00636ae0",
+    "addr": "0x00636ae0",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005ccd70",
+    "addr": "0x005ccd70",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_007f101c",
+    "addr": "0x007f101c",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Boot/FrameDispatch.cpp",
+     "Race/CameraEntries.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cc9a0",
+    "addr": "0x005cc9a0",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Vehicle/VehicleCouplingBridge.cpp"
+    ]
+   },
+   {
+    "name": "DAT_0063b968",
+    "addr": "0x0063b968",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_0063b96c",
+    "addr": "0x0063b96c",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_0063b970",
+    "addr": "0x0063b970",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_0063b974",
+    "addr": "0x0063b974",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   }
+  ],
+  "callees": [
+   [
+    "FUN_0041f260",
+    "0x0041f260"
+   ],
+   [
+    "FUN_0041f290",
+    "0x0041f290"
+   ],
+   [
+    "FUN_00426c00",
+    "0x00426c00"
+   ],
+   [
+    "FUN_0046cc10",
+    "0x0046cc10"
+   ],
+   [
+    "FUN_0046d2e0",
+    "0x0046d2e0"
+   ],
+   [
+    "FUN_0046d6a0",
+    "0x0046d6a0"
+   ],
+   [
+    "FUN_00477b60",
+    "0x00477b60"
+   ],
+   [
+    "FUN_00477be0",
+    "0x00477be0"
+   ],
+   [
+    "FUN_00477e00",
+    "0x00477e00"
+   ]
+  ]
+ },
+ "0x0041f290": {
+  "name": "FUN_0041f290",
+  "size": 36,
+  "sig": "undefined FUN_0041f290(void)",
+  "callers": [
+   "FUN_004039f0@0x004039f0",
+   "FUN_00404650@0x00404650",
+   "FUN_0040ca00@0x0040ca00",
+   "FUN_0040d8f0@0x0040d8f0",
+   "FUN_004212b0@0x004212b0",
+   "FUN_00421d20@0x00421d20",
+   "FUN_0048f8a0@0x0048f8a0",
+   "FUN_0048fb10@0x0048fb10",
+   "FUN_00490020@0x00490020"
+  ],
+  "globals": [
+   {
+    "name": "DAT_0063d9e0",
+    "addr": "0x0063d9e0",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Util/EventTable.cpp"
+    ]
+   }
+  ],
+  "callees": [
+   [
+    "FUN_004c0ed0",
+    "0x004c0ed0"
+   ]
+  ]
+ },
+ "0x00422470": {
+  "name": "FUN_00422470",
+  "size": 94,
+  "sig": "undefined FUN_00422470(void)",
+  "callers": [
+   "FUN_0041f770@0x0041f770"
+  ],
+  "globals": [
+   {
+    "name": "DAT_005cc94c",
+    "addr": "0x005cc94c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "",
+    "exe": "no-exe-ref",
+    "files": []
+   }
+  ],
+  "callees": [
+   [
+    "FUN_004223f0",
+    "0x004223f0"
+   ],
+   [
+    "FUN_00422440",
+    "0x00422440"
+   ],
+   [
+    "FUN_004a2c48",
+    "0x004a2c48"
+   ],
+   [
+    "FUN_004a3090",
+    "0x004a3090"
+   ]
+  ]
+ },
+ "0x0041f060": {
+  "name": "FUN_0041f060",
+  "size": 46,
+  "sig": "undefined FUN_0041f060(void)",
+  "callers": [
+   "FUN_0045bba0@0x0045bba0"
+  ],
+  "globals": [
+   {
+    "name": "DAT_0063da38",
+    "addr": "0x0063da38",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   }
+  ],
+  "callees": [
+   [
+    "FUN_004c0ed0",
+    "0x004c0ed0"
+   ]
+  ]
+ },
+ "0x0045a190": {
+  "name": "FUN_0045a190",
+  "size": 515,
+  "sig": "undefined FUN_0045a190(void)",
+  "callers": [
+   "FUN_0045bba0@0x0045bba0"
+  ],
+  "globals": [
+   {
+    "name": "DAT_005cc56c",
+    "addr": "0x005cc56c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cc9a0",
+    "addr": "0x005cc9a0",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Vehicle/VehicleCouplingBridge.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005ccac0",
+    "addr": "0x005ccac0",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Frontend/MenuNav.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cc99c",
+    "addr": "0x005cc99c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_0068b9b8",
+    "addr": "0x0068b9b8",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_0068b9f8",
+    "addr": "0x0068b9f8",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_0068bb58",
+    "addr": "0x0068bb58",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "FUN_00459400",
+    "addr": "0x00459400",
+    "block": ".text",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   }
+  ],
+  "callees": [
+   [
+    "FUN_00459480",
+    "0x00459480"
+   ],
+   [
+    "FUN_004671d0",
+    "0x004671d0"
+   ],
+   [
+    "FUN_004769a0",
+    "0x004769a0"
+   ],
+   [
+    "FUN_004769d0",
+    "0x004769d0"
+   ],
+   [
+    "FUN_004769f0",
+    "0x004769f0"
+   ],
+   [
+    "FUN_00476d00",
+    "0x00476d00"
+   ],
+   [
+    "FUN_00476df0",
+    "0x00476df0"
+   ],
+   [
+    "FUN_004b5580",
+    "0x004b5580"
+   ],
+   [
+    "RpClumpForAllAtomics",
+    "0x004e66d0"
+   ]
+  ]
+ },
+ "0x0045ba10": {
+  "name": "FUN_0045ba10",
+  "size": 140,
+  "sig": "undefined FUN_0045ba10(void)",
+  "callers": [
+   "FUN_0045bae0@0x0045bae0",
+   "FUN_0045be90@0x0045be90",
+   "FUN_0045bed0@0x0045bed0",
+   "FUN_0045bf30@0x0045bf30"
+  ],
+  "globals": [],
+  "callees": [
+   [
+    "FUN_004b6520",
+    "0x004b6520"
+   ]
+  ]
+ },
+ "0x0045c010": {
+  "name": "FUN_0045c010",
+  "size": 25,
+  "sig": "undefined FUN_0045c010(void)",
+  "callers": [
+   "FUN_00458920@0x00458920",
+   "FUN_0045bba0@0x0045bba0"
+  ],
+  "globals": [],
+  "callees": [
+   [
+    "FUN_0045bfa0",
+    "0x0045bfa0"
+   ]
+  ]
+ },
+ "0x0045bfa0": {
+  "name": "FUN_0045bfa0",
+  "size": 35,
+  "sig": "undefined FUN_0045bfa0(void)",
+  "callers": [
+   "FUN_0045c010@0x0045c010"
+  ],
+  "globals": [],
+  "callees": [
+   [
+    "FUN_0045baa0",
+    "0x0045baa0"
+   ]
+  ]
+ },
+ "0x00476880": {
+  "name": "FUN_00476880",
+  "size": 31,
+  "sig": "undefined FUN_00476880(void)",
+  "callers": [
+   "FUN_00419a00@0x00419a00",
+   "FUN_00421d20@0x00421d20",
+   "FUN_00454350@0x00454350",
+   "FUN_00455910@0x00455910",
+   "FUN_00458080@0x00458080",
+   "FUN_0045bba0@0x0045bba0"
+  ],
+  "globals": [],
+  "callees": [
+   [
+    "FUN_00476710",
+    "0x00476710"
+   ]
+  ]
+ },
+ "0x00476710": {
+  "name": "FUN_00476710",
+  "size": 153,
+  "sig": "undefined FUN_00476710(void)",
+  "callers": [
+   "FUN_00476880@0x00476880"
+  ],
+  "globals": [
+   {
+    "name": "DAT_0069183c",
+    "addr": "0x0069183c",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   }
+  ],
+  "callees": [
+   [
+    "FUN_004764f0",
+    "0x004764f0"
+   ]
+  ]
+ },
+ "0x00426c90": {
+  "name": "FUN_00426c90",
+  "size": 23,
+  "sig": "undefined FUN_00426c90(void)",
+  "callers": [
+   "FUN_004103a0@0x004103a0"
+  ],
+  "globals": [],
+  "callees": [
+   [
+    "FUN_0041e960",
+    "0x0041e960"
+   ],
+   [
+    "FUN_0041ea80",
+    "0x0041ea80"
+   ]
+  ]
+ },
+ "0x00443dc0": {
+  "name": "FUN_00443dc0",
+  "size": 3464,
+  "sig": "undefined FUN_00443dc0(void)",
+  "callers": [
+   "FUN_004161e0@0x004161e0",
+   "FUN_00444b60@0x00444b60"
+  ],
+  "globals": [
+   {
+    "name": "DAT_007f1a58",
+    "addr": "0x007f1a58",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Frontend/MenuNav.cpp",
+     "Frontend/SlotZeroers_s1.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cc35c",
+    "addr": "0x005cc35c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/AiLeaderTimer.cpp",
+     "Frontend/BatchAA_s1.cpp",
+     "Frontend/MenuNearLeaves_s6.cpp"
+    ]
+   },
+   {
+    "name": "DAT_007f1a5c",
+    "addr": "0x007f1a5c",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Frontend/SlotZeroers_s1.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005ce034",
+    "addr": "0x005ce034",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cd050",
+    "addr": "0x005cd050",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cc33c",
+    "addr": "0x005cc33c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cc574",
+    "addr": "0x005cc574",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Frontend/BatchAA_s1.cpp",
+     "Frontend/MenuNearLeaves_s6.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cc9a0",
+    "addr": "0x005cc9a0",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Vehicle/VehicleCouplingBridge.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cc320",
+    "addr": "0x005cc320",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Collision/RwpSolverLeaves1.cpp",
+     "Collision/RwpSolverMath2.cpp",
+     "Collision/RwpVtableKV1.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005d757c",
+    "addr": "0x005d757c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/HeadingAtan2.cpp",
+     "Audio/AudioVecLength.cpp",
+     "Collision/RwpSolverMath2.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cc564",
+    "addr": "0x005cc564",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Frontend/SlotZeroers_s1.cpp",
+     "HUD/ScenarioLeaves_sa2.cpp"
+    ]
+   },
+   {
+    "name": "DAT_007f1a9c",
+    "addr": "0x007f1a9c",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/AiStandalone.cpp",
+     "D3d9Render/TrackRenderer.cpp"
+    ]
+   },
+   {
+    "name": "DAT_007f9a9c",
+    "addr": "0x007f9a9c",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/AiStandalone.cpp"
+    ]
+   },
+   {
+    "name": "DAT_008032d4",
+    "addr": "0x008032d4",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/AiStandalone.cpp"
+    ]
+   }
+  ],
+  "callees": [
+   [
+    "FUN_00416230",
+    "0x00416230"
+   ],
+   [
+    "FUN_00443300",
+    "0x00443300"
+   ],
+   [
+    "FUN_004671a0",
+    "0x004671a0"
+   ],
+   [
+    "FUN_004a2c48",
+    "0x004a2c48"
+   ],
+   [
+    "FUN_004b55a0",
+    "0x004b55a0"
+   ],
+   [
+    "FUN_004c3bf0",
+    "0x004c3bf0"
+   ],
+   [
+    "FUN_004c3c60",
+    "0x004c3c60"
+   ]
+  ]
+ },
+ "0x0040e4b0": {
+  "name": "FUN_0040e4b0",
+  "size": 73,
+  "sig": "undefined FUN_0040e4b0(void)",
+  "callers": [
+   "FUN_00414220@0x00414220",
+   "FUN_00448220@0x00448220",
+   "FUN_0045d250@0x0045d250"
+  ],
+  "globals": [
+   {
+    "name": "PTR_PTR_005f2770",
+    "addr": "0x005f2770",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-writes",
+    "files": [
+     "Ai/AiLeaderTimer.cpp",
+     "Ai/AiStandalone.cpp",
+     "Ai/AiTargetClosest.cpp"
+    ]
+   }
+  ],
+  "callees": [
+   [
+    "FUN_0046c7b0",
+    "0x0046c7b0"
+   ]
+  ]
+ },
+ "0x00448220": {
+  "name": "FUN_00448220",
+  "size": 2184,
+  "sig": "undefined FUN_00448220(void)",
+  "callers": [
+   "FUN_0040d470@0x0040d470"
+  ],
+  "globals": [
+   {
+    "name": "DAT_007f1a50",
+    "addr": "0x007f1a50",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Frontend/MenuLeaves_af5.cpp"
+    ]
+   },
+   {
+    "name": "DAT_00898064",
+    "addr": "0x00898064",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_0089804c",
+    "addr": "0x0089804c",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00898050",
+    "addr": "0x00898050",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cc8f0",
+    "addr": "0x005cc8f0",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cc32c",
+    "addr": "0x005cc32c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Collision/RwpSolverIntegrate6.cpp",
+     "Collision/RwpSolverLeaves1.cpp",
+     "Collision/RwpSolverMath2.cpp"
+    ]
+   },
+   {
+    "name": "DAT_00898988",
+    "addr": "0x00898988",
+    "block": ".data",
+    "writable": true,
+    "dir": "WR",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00898990",
+    "addr": "0x00898990",
+    "block": ".data",
+    "writable": true,
+    "dir": "WR",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00896498",
+    "addr": "0x00896498",
+    "block": ".data",
+    "writable": true,
+    "dir": "WR",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cc320",
+    "addr": "0x005cc320",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Collision/RwpSolverLeaves1.cpp",
+     "Collision/RwpSolverMath2.cpp",
+     "Collision/RwpVtableKV1.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cc9f4",
+    "addr": "0x005cc9f4",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Frontend/MenuSpriteDispatch.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cc950",
+    "addr": "0x005cc950",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005ce1ec",
+    "addr": "0x005ce1ec",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005ce1e8",
+    "addr": "0x005ce1e8",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00616038",
+    "addr": "0x00616038",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cd954",
+    "addr": "0x005cd954",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cd958",
+    "addr": "0x005cd958",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cd950",
+    "addr": "0x005cd950",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cd95a",
+    "addr": "0x005cd95a",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cd94c",
+    "addr": "0x005cd94c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cd93c",
+    "addr": "0x005cd93c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cd944",
+    "addr": "0x005cd944",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cd948",
+    "addr": "0x005cd948",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cd92c",
+    "addr": "0x005cd92c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cd94e",
+    "addr": "0x005cd94e",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cd938",
+    "addr": "0x005cd938",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cd936",
+    "addr": "0x005cd936",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cd940",
+    "addr": "0x005cd940",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cd942",
+    "addr": "0x005cd942",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_0067e9fc",
+    "addr": "0x0067e9fc",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "D3d9Render/TrackRenderer.cpp",
+     "Frontend/FrontendDispatch.cpp",
+     "Frontend/FrontendMode.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cd930",
+    "addr": "0x005cd930",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cd934",
+    "addr": "0x005cd934",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00899100",
+    "addr": "0x00899100",
+    "block": ".data",
+    "writable": true,
+    "dir": "WR",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00899101",
+    "addr": "0x00899101",
+    "block": ".data",
+    "writable": true,
+    "dir": "WR",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00899102",
+    "addr": "0x00899102",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cc55c",
+    "addr": "0x005cc55c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_005cd928",
+    "addr": "0x005cd928",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00803324",
+    "addr": "0x00803324",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00897fe0",
+    "addr": "0x00897fe0",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-writes",
+    "files": [
+     "D3d9Render/TrackRenderer.cpp",
+     "Race/CameraEntries.cpp",
+     "Vehicle/VehicleSeed.cpp"
+    ]
+   },
+   {
+    "name": "DAT_00899104",
+    "addr": "0x00899104",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00899105",
+    "addr": "0x00899105",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00899106",
+    "addr": "0x00899106",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00899107",
+    "addr": "0x00899107",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00899108",
+    "addr": "0x00899108",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   }
+  ],
+  "callees": [
+   [
+    "FUN_00408a50",
+    "0x00408a50"
+   ],
+   [
+    "FUN_00408b00",
+    "0x00408b00"
+   ],
+   [
+    "FUN_00409330",
+    "0x00409330"
+   ],
+   [
+    "FUN_0040e350",
+    "0x0040e350"
+   ],
+   [
+    "FUN_0040e370",
+    "0x0040e370"
+   ],
+   [
+    "FUN_0040e4a0",
+    "0x0040e4a0"
+   ],
+   [
+    "FUN_0040e4b0",
+    "0x0040e4b0"
+   ],
+   [
+    "FUN_0041ef60",
+    "0x0041ef60"
+   ],
+   [
+    "FUN_00429a70",
+    "0x00429a70"
+   ],
+   [
+    "FUN_00429a80",
+    "0x00429a80"
+   ],
+   [
+    "FUN_00429a90",
+    "0x00429a90"
+   ],
+   [
+    "FUN_00430b30",
+    "0x00430b30"
+   ],
+   [
+    "FUN_00441990",
+    "0x00441990"
+   ],
+   [
+    "FUN_00442e00",
+    "0x00442e00"
+   ],
+   [
+    "FUN_00446520",
+    "0x00446520"
+   ],
+   [
+    "FUN_0046b4f0",
+    "0x0046b4f0"
+   ],
+   [
+    "FUN_0046c7b0",
+    "0x0046c7b0"
+   ],
+   [
+    "FUN_0046cbb0",
+    "0x0046cbb0"
+   ],
+   [
+    "FUN_0046cc10",
+    "0x0046cc10"
+   ],
+   [
+    "FUN_0046d400",
+    "0x0046d400"
+   ],
+   [
+    "FUN_0046d4a0",
+    "0x0046d4a0"
+   ],
+   [
+    "FUN_0046d510",
+    "0x0046d510"
+   ],
+   [
+    "FUN_00472650",
+    "0x00472650"
+   ],
+   [
+    "FUN_004a2b60",
+    "0x004a2b60"
+   ],
+   [
+    "FUN_004a2c48",
+    "0x004a2c48"
+   ],
+   [
+    "FUN_004c1c10",
+    "0x004c1c10"
+   ],
+   [
+    "FUN_004c3ac0",
+    "0x004c3ac0"
+   ],
+   [
+    "__security_check_cookie",
+    "0x004a2be9"
+   ]
+  ]
+ },
+ "0x00425a40": {
+  "name": "FUN_00425a40",
+  "size": 104,
+  "sig": "undefined FUN_00425a40(void)",
+  "callers": [
+   "FUN_0040fc00@0x0040fc00"
+  ],
+  "globals": [
+   {
+    "name": "DAT_007f1a50",
+    "addr": "0x007f1a50",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Frontend/MenuLeaves_af5.cpp"
+    ]
+   },
+   {
+    "name": "DAT_007f1a54",
+    "addr": "0x007f1a54",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Frontend/MenuButtonDetect.cpp",
+     "Frontend/MenuNav.cpp",
+     "Frontend/SlotZeroers_s1.cpp"
+    ]
+   },
+   {
+    "name": "DAT_007f1a74",
+    "addr": "0x007f1a74",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_007f1a70",
+    "addr": "0x007f1a70",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_007f1a78",
+    "addr": "0x007f1a78",
+    "block": ".data",
+    "writable": true,
+    "dir": "WR",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_00803324",
+    "addr": "0x00803324",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   }
+  ],
+  "callees": [
+   [
+    "FUN_00418860",
+    "0x00418860"
+   ],
+   [
+    "FUN_00422ba0",
+    "0x00422ba0"
+   ],
+   [
+    "FUN_00423b00",
+    "0x00423b00"
+   ],
+   [
+    "FUN_00424eb0",
+    "0x00424eb0"
+   ],
+   [
+    "FUN_004252c0",
+    "0x004252c0"
+   ],
+   [
+    "FUN_00470c70",
+    "0x00470c70"
+   ]
+  ]
+ },
+ "0x0040da50": {
+  "name": "FUN_0040da50",
+  "size": 265,
+  "sig": "undefined FUN_0040da50(void)",
+  "callers": [
+   "FUN_0040fc00@0x0040fc00"
+  ],
+  "globals": [
+   {
+    "name": "PTR_PTR_005f2770",
+    "addr": "0x005f2770",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-writes",
+    "files": [
+     "Ai/AiLeaderTimer.cpp",
+     "Ai/AiStandalone.cpp",
+     "Ai/AiTargetClosest.cpp"
+    ]
+   },
+   {
+    "name": "DAT_0063bc44",
+    "addr": "0x0063bc44",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_007f103c",
+    "addr": "0x007f103c",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Race/SubStateCallees.cpp",
+     "Race/SubStateMachine.cpp",
+     "Vehicle/LaunchRevCharge.cpp"
+    ]
+   },
+   {
+    "name": "DAT_007f1a14",
+    "addr": "0x007f1a14",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Frontend/BatchAA_s3.cpp",
+     "Frontend/FrontendState.cpp",
+     "Frontend/MenuButtonDetect.cpp"
+    ]
+   }
+  ],
+  "callees": [
+   [
+    "FUN_00408610",
+    "0x00408610"
+   ],
+   [
+    "FUN_0040d8f0",
+    "0x0040d8f0"
+   ],
+   [
+    "FUN_0041eeb0",
+    "0x0041eeb0"
+   ],
+   [
+    "FUN_00420870",
+    "0x00420870"
+   ],
+   [
+    "FUN_00426080",
+    "0x00426080"
+   ],
+   [
+    "FUN_00426c00",
+    "0x00426c00"
+   ],
+   [
+    "FUN_0045b350",
+    "0x0045b350"
+   ],
+   [
+    "FUN_0046c770",
+    "0x0046c770"
+   ],
+   [
+    "FUN_0046c7b0",
+    "0x0046c7b0"
+   ],
+   [
+    "FUN_0046d4a0",
+    "0x0046d4a0"
+   ]
+  ]
+ },
+ "0x00422160": {
+  "name": "FUN_00422160",
+  "size": 289,
+  "sig": "undefined FUN_00422160(void)",
+  "callers": [
+   "FUN_00422290@0x00422290"
+  ],
+  "globals": [
+   {
+    "name": "DAT_006403b0",
+    "addr": "0x006403b0",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Util/TimerInit.cpp",
+     "Util/TimerSubarrayInit.cpp"
+    ]
+   }
+  ],
+  "callees": [
+   [
+    "FUN_00420da0",
+    "0x00420da0"
+   ],
+   [
+    "FUN_00420dc0",
+    "0x00420dc0"
+   ],
+   [
+    "FUN_004219a0",
+    "0x004219a0"
+   ],
+   [
+    "FUN_00421d20",
+    "0x00421d20"
+   ],
+   [
+    "FUN_00465c10",
+    "0x00465c10"
+   ],
+   [
+    "FUN_004c1340",
+    "0x004c1340"
+   ]
+  ]
+ },
+ "0x00421d20": {
+  "name": "FUN_00421d20",
+  "size": 936,
+  "sig": "undefined FUN_00421d20(void)",
+  "callers": [
+   "FUN_00422160@0x00422160"
+  ],
+  "globals": [
+   {
+    "name": "DAT_005ccac0",
+    "addr": "0x005ccac0",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Frontend/MenuNav.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cc564",
+    "addr": "0x005cc564",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Frontend/SlotZeroers_s1.cpp",
+     "HUD/ScenarioLeaves_sa2.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005d757c",
+    "addr": "0x005d757c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Ai/HeadingAtan2.cpp",
+     "Audio/AudioVecLength.cpp",
+     "Collision/RwpSolverMath2.cpp"
+    ]
+   },
+   {
+    "name": "DAT_005cd30c",
+    "addr": "0x005cd30c",
+    "block": ".rdata",
+    "writable": false,
+    "dir": "R",
+    "exe": "no-exe-ref",
+    "files": []
+   },
+   {
+    "name": "DAT_006146fc",
+    "addr": "0x006146fc",
+    "block": ".data",
+    "writable": true,
+    "dir": "R",
+    "exe": "exe-mention-only",
+    "files": [
+     "Race/CameraEntries.cpp",
+     "Vehicle/VehicleCouplingBridge.cpp"
+    ]
+   }
+  ],
+  "callees": [
+   [
+    "FUN_0041f1c0",
+    "0x0041f1c0"
+   ],
+   [
+    "FUN_0041f260",
+    "0x0041f260"
+   ],
+   [
+    "FUN_0041f290",
+    "0x0041f290"
+   ],
+   [
+    "FUN_00421750",
+    "0x00421750"
+   ],
+   [
+    "FUN_00421800",
+    "0x00421800"
+   ],
+   [
+    "FUN_00421960",
+    "0x00421960"
+   ],
+   [
+    "FUN_0046cb30",
+    "0x0046cb30"
+   ],
+   [
+    "FUN_00476880",
+    "0x00476880"
+   ],
+   [
+    "FUN_00486460",
+    "0x00486460"
+   ],
+   [
+    "FUN_004b4510",
+    "0x004b4510"
+   ],
+   [
+    "FUN_004c1340",
+    "0x004c1340"
+   ],
+   [
+    "FUN_004c1480",
+    "0x004c1480"
+   ],
+   [
+    "FUN_004c39b0",
+    "0x004c39b0"
+   ],
+   [
+    "FUN_0055ae70",
+    "0x0055ae70"
+   ]
+  ]
+ }
+}

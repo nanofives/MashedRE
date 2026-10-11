@@ -1,0 +1,171 @@
+{
+  "program": "MASHED.exe",
+  "functions": [
+    {
+      "requested": "0x007f1030",
+      "kind": "data",
+      "block": ".data",
+      "initialized": true,
+      "data_type": "undefined4",
+      "data_length": 4,
+      "value_repr": "00000000h",
+      "ref_total": 42,
+      "writes": [
+        "0x0040fe24 in FUN_0040fc00  [WRITE]  MOV [0x007f1030],EAX",
+        "0x00493459 in FUN_00493390  [WRITE]  MOV dword ptr [0x007f1030],EDX",
+        "0x00495115 in FUN_00495110  [WRITE]  MOV [0x007f1030],EAX"
+      ],
+      "reads": [
+        "0x0040b39a in FUN_0040b290  [READ]  MOV EAX,[0x007f1030]",
+        "0x0040c5d9 in FUN_0040c5b0  [READ]  MOV ECX,dword ptr [0x007f1030]",
+        "0x0040fdeb in FUN_0040fc00  [READ]  MOV ECX,dword ptr [0x007f1030]",
+        "0x0040fe0f in FUN_0040fc00  [READ]  FILD dword ptr [0x007f1030]",
+        "0x00422be7 in FUN_00422ba0  [READ]  MOV EDX,dword ptr [0x007f1030]",
+        "0x0042559b in FUN_004252c0  [READ]  MOV ECX,dword ptr [0x007f1030]",
+        "0x0042570b in FUN_004252c0  [READ]  MOV EAX,[0x007f1030]",
+        "0x00425824 in FUN_004252c0  [READ]  MOV EAX,[0x007f1030]",
+        "0x004258ae in FUN_004252c0  [READ]  MOV EDX,dword ptr [0x007f1030]",
+        "0x0042596f in FUN_004252c0  [READ]  MOV EDX,dword ptr [0x007f1030]",
+        "0x004259c5 in FUN_004252c0  [READ]  MOV EAX,[0x007f1030]",
+        "0x00447c33 in FUN_00446520  [READ]  MOV EAX,[0x007f1030]",
+        "0x0044bb54 in FUN_0044ba30  [READ]  MOV ECX,dword ptr [0x007f1030]",
+        "0x0044c40e in FUN_0044c380  [READ]  MOV EAX,[0x007f1030]",
+        "0x0045cc9c in FUN_0045cc80  [READ]  MOV EAX,[0x007f1030]",
+        "0x004648c7 in FUN_004648b0  [READ]  MOV EAX,[0x007f1030]",
+        "0x004675e8 in FUN_00467350  [READ]  MOV EAX,[0x007f1030]",
+        "0x00469194 in FUN_00468d80  [READ]  MOV ECX,dword ptr [0x007f1030]",
+        "0x0046930e in FUN_00468d80  [READ]  MOV EDX,dword ptr [0x007f1030]",
+        "0x00469cc2 in FUN_00469aa0  [READ]  MOV EDX,dword ptr [0x007f1030]",
+        "0x0046aece in FUN_00469df0  [READ]  MOV EDX,dword ptr [0x007f1030]",
+        "0x0046b083 in FUN_00469df0  [READ]  MOV EDX,dword ptr [0x007f1030]",
+        "0x0046c5cc in FUN_0046c5c0  [READ]  MOV ECX,dword ptr [0x007f1030]",
+        "0x0046ce7a in FUN_0046cc40  [READ]  MOV EDX,dword ptr [0x007f1030]",
+        "0x0046d078 in FUN_0046cc40  [READ]  MOV ECX,dword ptr [0x007f1030]",
+        "0x0046d1ab in FUN_0046cc40  [READ]  MOV EDX,dword ptr [0x007f1030]",
+        "0x0046dc7b in FUN_0046dc20  [READ]  MOV EAX,[0x007f1030]",
+        "0x004712ad in FUN_00470c70  [READ]  MOV ECX,dword ptr [0x007f1030]",
+        "0x0047d870 in FUN_0047d640  [READ]  MOV EAX,[0x007f1030]",
+        "0x0047d9f3 in FUN_0047d640  [READ]  MOV EDX,dword ptr [0x007f1030]",
+        "0x0047db2c in FUN_0047d640  [READ]  MOV EDX,dword ptr [0x007f1030]",
+        "0x0047dc66 in FUN_0047d640  [READ]  MOV ECX,dword ptr [0x007f1030]",
+        "0x0047e004 in FUN_0047def0  [READ]  MOV EAX,[0x007f1030]",
+        "0x0047e0f7 in FUN_0047def0  [READ]  MOV EAX,[0x007f1030]",
+        "0x0047e268 in FUN_0047def0  [READ]  MOV ECX,dword ptr [0x007f1030]",
+        "0x0047e3c2 in FUN_0047def0  [READ]  MOV EAX,[0x007f1030]",
+        "0x0047e5eb in FUN_0047def0  [READ]  MOV EDX,dword ptr [0x007f1030]",
+        "0x0047e7ac in FUN_0047def0  [READ]  MOV EDX,dword ptr [0x007f1030]",
+        "0x0049339d in FUN_00493390  [READ]  MOV EDI,dword ptr [0x007f1030]"
+      ],
+      "other_refs": [],
+      "decomp": null
+    },
+    {
+      "requested": "0x007f1038",
+      "kind": "data",
+      "block": ".data",
+      "initialized": true,
+      "data_type": "undefined4",
+      "data_length": 4,
+      "value_repr": "00000000h",
+      "ref_total": 21,
+      "writes": [
+        "0x00403122 in FUN_004030d0  [WRITE]  STOSD.REP ES:EDI"
+      ],
+      "reads": [
+        "0x00411b07 in FUN_00411ae0  [READ]  MOVZX ECX,byte ptr [0x007f1038]"
+      ],
+      "other_refs": [
+        "0x0040311d in FUN_004030d0  [DATA]  MOV EDI,0x7f1038",
+        "0x0041523e in FUN_00415220  [DATA]  ADD EDI,0x7f1038",
+        "0x00418575 in FUN_00418560  [DATA]  ADD EDI,0x7f1038",
+        "0x00418583 in FUN_00418560  [DATA]  MOV byte ptr [EDI],BL",
+        "0x00418808 in FUN_00418560  [DATA]  MOV byte ptr [EDI],DL",
+        "0x00418819 in FUN_00418560  [DATA]  MOVZX EAX,byte ptr [EDI]",
+        "0x0042531e in FUN_004252c0  [DATA]  ADD EDI,0x7f1038",
+        "0x00425383 in FUN_004252c0  [DATA]  MOV AL,byte ptr [EDI]",
+        "0x0046c802 in FUN_0046c7d0  [DATA]  ADD ESI,0x7f1038",
+        "0x00470a04 in FUN_004709a0  [DATA]  ADD EAX,0x7f1038",
+        "0x00470fbd in FUN_00470c70  [DATA]  ADD EDI,0x7f1038",
+        "0x00480b95 in FUN_00480b70  [DATA]  ADD EBP,0x7f1038",
+        "0x0049653b in FUN_00496530  [DATA]  LEA ESI,[EBP + 0x7f1038]",
+        "0x00496552 in FUN_00496530  [DATA]  MOVSD.REP ES:EDI,ESI",
+        "0x00496568 in FUN_00496530  [DATA]  STOSD.REP ES:EDI",
+        "0x0049664f in FUN_00496530  [DATA]  MOV byte ptr [EBP + 0x7f1038],AL",
+        "0x004966d6 in FUN_00496530  [DATA]  MOVZX ECX,byte ptr [EBP + 0x7f1038]",
+        "0x00496720 in FUN_00496530  [DATA]  MOVZX EAX,byte ptr [EBP + 0x7f1038]",
+        "0x0049672d in FUN_00496530  [DATA]  MOV byte ptr [EBP + 0x7f1038],CL"
+      ],
+      "decomp": null
+    },
+    {
+      "requested": "0x007f103c",
+      "kind": "data",
+      "block": ".data",
+      "initialized": true,
+      "data_type": "undefined4",
+      "data_length": 4,
+      "value_repr": "00000000h",
+      "ref_total": 13,
+      "writes": [
+        "0x00403122 in FUN_004030d0  [WRITE]  STOSD.REP ES:EDI"
+      ],
+      "reads": [],
+      "other_refs": [
+        "0x0041857d in FUN_00418560  [DATA]  MOV byte ptr [EDI + 0x4],BL",
+        "0x004185c3 in FUN_00418560  [DATA]  MOV byte ptr [EDI + 0x4],0xff",
+        "0x004185dd in FUN_00418560  [DATA]  MOV byte ptr [EDI + 0x4],0xff",
+        "0x00418813 in FUN_00418560  [DATA]  MOV byte ptr [EDI + 0x4],CL",
+        "0x00418820 in FUN_00418560  [DATA]  MOVZX EDX,byte ptr [EDI + 0x4]",
+        "0x004637f5 in FUN_00463640  [DATA]  CMP byte ptr [EAX + 0x7f103c],0x0",
+        "0x00463972 in FUN_00463640  [DATA]  MOV CL,byte ptr [EDX + 0x7f103c]",
+        "0x0046d80a in FUN_0046d7f0  [DATA]  MOVZX EAX,byte ptr [EDX + 0x7f103c]",
+        "0x00480c8f in FUN_00480b70  [DATA]  MOV AL,byte ptr [EBP + 0x4]",
+        "0x00496552 in FUN_00496530  [DATA]  MOVSD.REP ES:EDI,ESI",
+        "0x00496568 in FUN_00496530  [DATA]  STOSD.REP ES:EDI",
+        "0x004965ef in FUN_00496530  [DATA]  MOV byte ptr [EBP + 0x7f103c],AL"
+      ],
+      "decomp": null
+    },
+    {
+      "requested": "0x0089a4fc",
+      "kind": "data",
+      "block": ".data",
+      "initialized": true,
+      "data_type": null,
+      "data_length": 0,
+      "value_repr": null,
+      "ref_total": 5,
+      "writes": [],
+      "reads": [],
+      "other_refs": [
+        "0x00417395 in FUN_00417370  [DATA]  MOV dword ptr [EDX + 0x89a4fc],ECX",
+        "0x004173d2 in FUN_004173b0  [DATA]  MOV dword ptr [EDX + 0x89a4fc],ECX",
+        "0x004187d5 in FUN_00418560  [DATA]  MOV EAX,dword ptr [ESI + 0x89a4fc]",
+        "0x004187e8 in FUN_00418560  [DATA]  MOV dword ptr [ESI + 0x89a4fc],EAX",
+        "0x004187f0 in FUN_00418560  [DATA]  MOV dword ptr [ESI + 0x89a4fc],EBX"
+      ],
+      "decomp": null
+    },
+    {
+      "requested": "0x0089a4c0",
+      "kind": "data",
+      "block": ".data",
+      "initialized": true,
+      "data_type": "undefined4",
+      "data_length": 4,
+      "value_repr": "00000000h",
+      "ref_total": 5,
+      "writes": [
+        "0x00414208 in FUN_00414180  [WRITE]  MOV dword ptr [ESI],EDX",
+        "0x00417ca0 in FUN_004177b0  [WRITE]  MOV dword ptr [EAX],EBX"
+      ],
+      "reads": [],
+      "other_refs": [
+        "0x00414199 in FUN_00414180  [DATA]  MOV ESI,0x89a4c0",
+        "0x004147d2 in FUN_00414570  [DATA]  FILD dword ptr [EDI + 0x89a4c0]",
+        "0x00417c94 in FUN_004177b0  [DATA]  MOV EAX,0x89a4c0"
+      ],
+      "decomp": null
+    }
+  ]
+}
