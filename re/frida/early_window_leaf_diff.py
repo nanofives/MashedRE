@@ -272,7 +272,7 @@ rpc.exports.diff = function(cfg) {
   // negctl: wrap the real port in the dev .asi's mutation forwarder (Harness/NegCtl.cpp), see run_negctl.py.
   let negctlStats = null;
   if (cfg.negctl && !cfg.self_baseline) {
-    const CLS = { null: 1, ret_int: 2, ret_float: 3, field_first: 4, field_last: 5, heap_extra: 6, import_extra: 7 };
+    const CLS = { null: 1, ret_int: 2, ret_float: 3, field_first: 4, field_last: 5, heap_extra: 6, import_extra: 7, field_none: 8 };
     const armP = GPA(hm, Memory.allocAnsiString('NegCtl_Arm'));
     const statsP = GPA(hm, Memory.allocAnsiString('NegCtl_Stats'));
     if (armP.isNull() || statsP.isNull() || !CLS[cfg.negctl]) return { error: 'negctl: kit missing or bad class ' + cfg.negctl };

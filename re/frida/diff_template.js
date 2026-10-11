@@ -1583,7 +1583,7 @@ function runDiff() {
     // sent just before 'results'. Never combined with self_baseline.
     if (CONFIG.negctl && !CONFIG.self_baseline) {
         const NEGCTL_CLS = { null: 1, ret_int: 2, ret_float: 3, field_first: 4, field_last: 5,
-                             heap_extra: 6, import_extra: 7 };
+                             heap_extra: 6, import_extra: 7, field_none: 8 };
         const armAddr = module.findExportByName('NegCtl_Arm');
         const statsAddr = module.findExportByName('NegCtl_Stats');
         if (armAddr === null || statsAddr === null || !NEGCTL_CLS[CONFIG.negctl]) {

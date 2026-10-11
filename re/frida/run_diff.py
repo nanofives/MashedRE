@@ -470,7 +470,8 @@ def build_config(hook, asi_path=None):
     return config
 
 
-NEGCTL_CLASSES = ('null', 'ret_int', 'ret_float', 'field_first', 'field_last', 'heap_extra', 'import_extra')
+NEGCTL_CLASSES = ('null', 'ret_int', 'ret_float', 'field_first', 'field_last', 'heap_extra', 'import_extra',
+                  'field_none')
 
 STANDIN_KEYS = ('heap_standin', 'import_standin', 'freeze_main', 'object_size', 'object_alloc',
                 'observe_ret_len', 'observe_globals', 'reg_args', 'callee_pops')

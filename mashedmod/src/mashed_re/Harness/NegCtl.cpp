@@ -19,6 +19,9 @@
 //   6 heap_extra  one extra game-CRT _malloc(0x20) (0x004a45fb, leaked), then forward.
 //   7 import_extra one extra kernel32!GetTickCount call through this module's IAT,
 //                 then forward.
+//   8 field_none  CONTROL for 4/5: the same freeze + snapshot + diff, no flip. If it reads RED the
+//                 vector is sensitive to the freeze latency (the game rewrote a seeded global
+//                 meanwhile) and 4/5's verdicts for that hook mean nothing.
 //
 // "Changed" (4/5) = bytes that differ before/after the forwarded call in
 //   (a) a <=0x400-byte window at every stack arg 0..7 and every entry register
@@ -28,6 +31,9 @@
 //   (b) MASHED.exe's writable sections (.data, _rwdseg), ascending, minus a noise
 //       mask: every byte seen changing while NegCtl_Arm samples them 20x over
 //       ~400 ms with nothing called (the running game's per-frame writes).
+// For the span snapshot .. diff the game's own threads (Win32 start address inside MASHED.exe) are
+// suspended, so the running game cannot write a byte between the two looks (the 400 ms noise mask alone
+// missed timer-like globals such as 0x007d70cc..0x007d70d8, first run 2026-10-11).
 // The flip is undone at the next NegCtl_Arm if the byte still holds the flipped
 // value, so one warm process can run many jobs. If the port changed nothing in
 // (a)+(b), the field classes forward unchanged and NegCtl_Stats reports flips=0
@@ -42,6 +48,7 @@
 
 #include <windows.h>
 #include <intrin.h>
+#include <tlhelp32.h>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
@@ -59,7 +66,8 @@ float    g_ncThreeQuarters = 0.75f;
 
 namespace {
 
-enum { kNull = 1, kRetInt = 2, kRetFloat = 3, kFieldFirst = 4, kFieldLast = 5, kHeapExtra = 6, kImportExtra = 7 };
+enum { kNull = 1, kRetInt = 2, kRetFloat = 3, kFieldFirst = 4, kFieldLast = 5, kHeapExtra = 6, kImportExtra = 7,
+       kFieldNone = 8 };
 
 const unsigned kArgWindow = 0x400;
 const int      kMaxWins   = 14;          // 8 stack args + 6 registers
@@ -156,7 +164,58 @@ void AddWindow(uintptr_t p) {
     ++s_nWin;
 }
 
-bool IsField() { return g_ncCls == kFieldFirst || g_ncCls == kFieldLast; }
+bool IsField() { return g_ncCls == kFieldFirst || g_ncCls == kFieldLast || g_ncCls == kFieldNone; }
+
+// Freeze the game's own threads (Win32 start address inside MASHED.exe) for the span Pre-snapshot ..
+// Post-diff, so a byte the running game writes in that window is never taken for the port's write.
+// Frida's and the drivers' threads keep running. A frozen thread holding a lock the port needs makes
+// the call hang: the runner then times out to ERROR, never to a verdict.
+HANDLE   s_game[64];                 // opened once per Arm, so Pre only pays SuspendThread
+int      s_nGame = 0;
+unsigned s_lastFrozen = 0;
+typedef LONG(NTAPI* NtQit_t)(HANDLE, int, PVOID, ULONG, PULONG);
+
+void OpenGameThreads() {
+    for (int i = 0; i < s_nGame; ++i) CloseHandle(s_game[i]);
+    s_nGame = 0;
+    static NtQit_t qit = reinterpret_cast<NtQit_t>(
+        GetProcAddress(GetModuleHandleW(L"ntdll.dll"), "NtQueryInformationThread"));
+    if (!qit) return;
+    HANDLE snap = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0);
+    if (snap == INVALID_HANDLE_VALUE) return;
+    THREADENTRY32 te;
+    te.dwSize = sizeof te;
+    const DWORD pid = GetCurrentProcessId(), self = GetCurrentThreadId();
+    for (BOOL ok = Thread32First(snap, &te); ok && s_nGame < 64; ok = Thread32Next(snap, &te)) {
+        if (te.th32OwnerProcessID != pid || te.th32ThreadID == self) continue;
+        HANDLE h = OpenThread(THREAD_SUSPEND_RESUME | THREAD_QUERY_INFORMATION | THREAD_GET_CONTEXT, FALSE,
+                              te.th32ThreadID);
+        if (!h) continue;
+        uintptr_t start = 0;
+        if (qit(h, 9 /* ThreadQuerySetWin32StartAddress */, &start, sizeof start, nullptr) < 0 || !InImage(start)) {
+            CloseHandle(h);
+            continue;
+        }
+        s_game[s_nGame++] = h;
+    }
+    CloseHandle(snap);
+}
+
+void FreezeGameThreads() {
+    unsigned n = 0;
+    for (int i = 0; i < s_nGame; ++i)
+        if (SuspendThread(s_game[i]) != static_cast<DWORD>(-1)) {
+            CONTEXT c;
+            c.ContextFlags = CONTEXT_CONTROL;
+            GetThreadContext(s_game[i], &c);    // SuspendThread is asynchronous; this waits for it to land
+            ++n;
+        }
+    s_lastFrozen = n;
+}
+
+void ThawGameThreads() {
+    for (int i = 0; i < s_nGame; ++i) ResumeThread(s_game[i]);
+}
 
 }  // namespace
 
@@ -170,6 +229,7 @@ extern "C" void __cdecl NegCtlPre(const uint32_t* regs) {
         volatile DWORD t = GetTickCount();
         (void)t;
     } else if (IsField()) {
+        FreezeGameThreads();
         s_nWin = 0;
         const uint32_t* args = reinterpret_cast<const uint32_t*>(regs[4]);
         for (int i = 0; i < 8; ++i) {
@@ -206,8 +266,9 @@ extern "C" void __cdecl NegCtlPost() {
         off += s_glob[i].len;
     }
     s_lastChanged = changed;
+    ThawGameThreads();
     uint8_t* hit = (g_ncCls == kFieldFirst) ? first : last;
-    if (!hit) return;
+    if (!hit || g_ncCls == kFieldNone) return;     // field_none: the freeze/snapshot control, never flips
     s_lastOld = *hit;
     s_lastNew = static_cast<uint8_t>(s_lastOld ^ 0x5A);
     *hit = s_lastNew;
@@ -262,7 +323,7 @@ extern "C" __declspec(naked) void NegCtl_Entry() {
 extern "C" __declspec(dllexport) void* __cdecl NegCtl_Arm(void* target, int cls, unsigned stdcallBytes, int floatRet) {
     char env[8] = {0};
     if (!GetEnvironmentVariableA("MASHED_NEGCTL", env, sizeof env) || strcmp(env, "1") != 0) return nullptr;
-    if (cls < kNull || cls > kImportExtra || !target) return nullptr;
+    if (cls < kNull || cls > kFieldNone || !target) return nullptr;
     if (s_pending && s_lastFlip && *s_lastFlip == s_lastNew) *s_lastFlip = s_lastOld;
     s_pending = false;
     g_ncTarget = target;
@@ -271,9 +332,10 @@ extern "C" __declspec(dllexport) void* __cdecl NegCtl_Arm(void* target, int cls,
     g_ncFloatRet = floatRet;
     s_calls = s_flips = s_lastChanged = 0;
     s_lastFlip = nullptr;
-    if (cls == kFieldFirst || cls == kFieldLast) {
+    if (cls == kFieldFirst || cls == kFieldLast || cls == kFieldNone) {
         FindGlobalRegions();
         Calibrate();
+        OpenGameThreads();
     }
     return reinterpret_cast<void*>(&NegCtl_Entry);
 }
@@ -293,8 +355,8 @@ extern "C" __declspec(dllexport) const char* __cdecl NegCtl_Stats() {
     size_t noise = 0;
     if (s_noise)
         for (size_t i = 0; i < s_globTotal; ++i) noise += s_noise[i];
-    _snprintf_s(s_stats, sizeof s_stats, _TRUNCATE, "calls=%u flips=%u changed=%u flip=0x%08x noise=%u",
+    _snprintf_s(s_stats, sizeof s_stats, _TRUNCATE, "calls=%u flips=%u changed=%u flip=0x%08x noise=%u frozen=%u",
                 s_calls, s_flips, s_lastChanged, static_cast<unsigned>(reinterpret_cast<uintptr_t>(s_lastFlip)),
-                static_cast<unsigned>(noise));
+                static_cast<unsigned>(noise), s_lastFrozen);
     return s_stats;
 }

@@ -23,6 +23,35 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(ROOT / 're' / 'frida'))
 from hooks_registry import HOOKS        # noqa: E402
+import run_diff                         # noqa: E402
+
+
+def _main_checkout():
+    d = ROOT
+    for _ in range(4):
+        if (d / 'original' / 'MASHED.exe').exists():
+            return d
+        d = d.parent
+    return ROOT
+
+
+EVIDENCE_ROOT = _main_checkout()   # stored evidence CSVs live in the main checkout's log/
+
+
+def stored_evidence(hook_name, hrow):
+    """'trivial' | 'nontrivial' | 'missing' for the row's stored path1 CSV (frida_diff column, else
+    log/diff_<hook>.csv). 'trivial' = every observation on both sides carries no information (run_diff's
+    non-degeneracy rule), i.e. a null port would have produced the same CSV."""
+    ev = (hrow.get('frida_diff') or '').strip()
+    p = EVIDENCE_ROOT / ev if ev.startswith('log/') and ev.endswith('.csv') else EVIDENCE_ROOT / 'log' / f'diff_{hook_name}.csv'
+    if not p.exists():
+        return 'missing'
+    with p.open(encoding='utf-8', errors='replace') as fh:
+        vals = list(csv.DictReader(fh))
+    if not vals or 'original' not in vals[0]:
+        return 'missing'
+    return 'trivial' if all(run_diff.is_trivial(v.get('original')) and run_diff.is_trivial(v.get('reimpl'))
+                            for v in vals) else 'nontrivial'
 
 MUTANTS = ('null', 'ret', 'field_first', 'field_last', 'heap_extra', 'import_extra')
 VALUE_MUTANTS = ('null', 'ret', 'field_first', 'field_last')
@@ -108,8 +137,18 @@ def main(argv):
         cen = census.get(rva, {})
         heap_exp = [c for c in CENSUS_HEAP if (cen.get(c) or '').strip()]
         imp_exp = [c for c in CENSUS_IMPORT if (cen.get(c) or '').strip()]
+        stored = stored_evidence(h, hrow)
+        # A mutant verdict only says something about the row when the real run discriminated, or when it was
+        # degenerate AND the row's own stored evidence is degenerate too (then the row cannot see a null port).
+        # real DEGENERATE with non-trivial stored evidence = this lane lacked the state: inconclusive here.
+        interpretable = real == 'GREEN' or (real == 'DEGENERATE' and stored == 'trivial' and not hook.get('degenerate_ok'))
+        field_ctrl_red = modes.get('field_none', {}).get('verdict') == 'CTRL-RED'
         blind = []
         for m in MUTANTS:
+            if not interpretable:
+                break
+            if m in ('field_first', 'field_last') and field_ctrl_red:
+                continue
             r = modes.get(m)
             if not r or not r['verdict'].startswith('BLIND'):
                 continue
@@ -118,10 +157,10 @@ def main(argv):
             if m == 'import_extra' and not imp_exp:
                 continue
             blind.append(m)
-        if blind or real in ('DEGENERATE', 'RED', 'ERROR') or base in ('RED', 'ERROR', 'DEGENERATE'):
+        if blind or real in ('RED', 'ERROR') or base == 'RED' or (real == 'DEGENERATE' and stored != 'nontrivial'):
             at_risk.append({
                 'rva': f'0x{rva:08x}', 'hook': h, 'arg_type': at, 'confidence': conf,
-                'real': real or '', 'baseline': base or '',
+                'real': real or '', 'baseline': base or '', 'stored_evidence': stored,
                 'blind_value': ','.join(m for m in blind if m in VALUE_MUTANTS),
                 'blind_heap_import': ','.join(m for m in blind if m not in VALUE_MUTANTS),
                 'census_heap_import': ','.join(sorted(set(heap_exp + imp_exp))),
@@ -130,23 +169,23 @@ def main(argv):
                 'name': hrow.get('name', ''),
             })
 
-    lines = ['| handler | C3/C4 rows run | of which C4 | real GREEN | baseline GREEN | null | ret | field_first | field_last | heap_extra | import_extra |',
-             '|---|---|---|---|---|---|---|---|---|---|---|']
+    lines = ['| handler | C3/C4 rows run | of which C4 | real GREEN | baseline GREEN | null | ret | field_none (ctrl) | field_first | field_last | heap_extra | import_extra |',
+             '|---|---|---|---|---|---|---|---|---|---|---|---|']
 
     def cell(c):
         if not c:
             return '-'
-        order = ['RED', 'BLIND', 'BLIND-DEGENERATE', 'NA', 'SKIP', 'ERROR', 'GREEN', 'DEGENERATE']
+        order = ['RED', 'BLIND', 'BLIND-DEGENERATE', 'NA', 'SKIP', 'ERROR', 'GREEN', 'DEGENERATE', 'CTRL-GREEN', 'CTRL-RED']
         return ' '.join(f'{k}:{c[k]}' for k in order if c.get(k)) or '-'
     for at, P in sorted(per_at.items(), key=lambda kv: -len(kv[1]['rows'])):
         md = P['modes']
         lines.append(f"| `{at}` | {len(P['rows'])} | {len(P['c4'])} | {md['real'].get('GREEN', 0)}/{sum(md['real'].values())} "
                      f"| {md['baseline'].get('GREEN', 0)}/{sum(md['baseline'].values())} | "
-                     + ' | '.join(cell(md[m]) for m in MUTANTS) + ' |')
+                     + ' | '.join(cell(md[m]) for m in ('null', 'ret', 'field_none') + MUTANTS[2:]) + ' |')
     table = '\n'.join(lines)
     print(table)
     print(f'\nat-risk rows: {len(at_risk)}')
-    cols = ['rva', 'hook', 'name', 'arg_type', 'confidence', 'real', 'baseline', 'blind_value',
+    cols = ['rva', 'hook', 'name', 'arg_type', 'confidence', 'real', 'baseline', 'stored_evidence', 'blind_value',
             'blind_heap_import', 'census_heap_import', 'independent_evidence', 'field_flip']
     if rows_out:
         with open(rows_out, 'w', encoding='utf-8', newline='') as fh:

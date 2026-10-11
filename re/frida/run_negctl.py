@@ -13,7 +13,11 @@ breaks it in exactly one way. For every registry entry backing a C3/C4 row this 
   ret        EAX ^= 1  (ret_int)  or  ST0 = ST0*2 + 0.75  (ret_float); skipped for void
   field_first / field_last
              XOR 0x5A into the first / last byte the port changed (arg windows, then
-             MASHED.exe .data minus the game's own per-frame writes)
+             MASHED.exe .data minus the game's own per-frame writes; the game's threads are
+             frozen for the snapshot .. diff span)
+  field_none the CONTROL for the two above: same freeze + snapshot + diff, no flip. RED here
+             means the vector is sensitive to the freeze latency (the game rewrote a seeded
+             global meanwhile) and that hook's field verdicts are reported NA
   heap_extra one extra game-CRT _malloc(0x20)  (booted lane only)
   import_extra one extra kernel32!GetTickCount through the .asi IAT
 
@@ -53,7 +57,7 @@ AGENT_JS = run_diff.AGENT_JS
 ASI_PATH = run_diff.ASI_PATH
 MASHED_EXE = run_diff.MASHED_EXE
 EW_SCRIPT = ROOT / 're' / 'frida' / 'early_window_leaf_diff.py'
-CLASSES = ('null', 'ret', 'field_first', 'field_last', 'heap_extra', 'import_extra')
+CLASSES = ('null', 'ret', 'field_none', 'field_first', 'field_last', 'heap_extra', 'import_extra')
 HOOK_TIMEOUT_S = 60.0
 STATS_GRACE_S = 0.7
 
@@ -130,7 +134,11 @@ def classify(mode, results, err, stats, hook):
     total = len(results)
     mism = sum(1 for r in results if not r.get('match'))
     if mism:
-        return ('RED' if mode not in ('real', 'baseline') else 'RED'), mism, total
+        if mode == 'field_none':
+            return 'CTRL-RED', mism, total
+        if mode in ('field_first', 'field_last') and re.search(r'flips=0\b', stats or ''):
+            return 'NA', mism, total        # nothing flipped: a RED here is the freeze latency, not detection
+        return 'RED', mism, total
     all_trivial = all(run_diff.is_trivial(r.get('original')) and run_diff.is_trivial(r.get('reimpl'))
                       for r in results)
     degenerate = all_trivial and not (hook.get('arg_type') in run_diff.SEEDED_ARG_TYPES or hook.get('degenerate_ok'))
@@ -140,6 +148,8 @@ def classify(mode, results, err, stats, hook):
         m = re.search(r'flips=(\d+)', stats or '')
         if m and int(m.group(1)) == 0:
             return 'NA', 0, total
+    if mode == 'field_none':
+        return 'CTRL-GREEN', 0, total
     return ('BLIND-DEGENERATE' if degenerate else 'BLIND'), 0, total
 
 
@@ -260,13 +270,16 @@ def warm_worker(slot, jobs, sink, lock):
         if not slot.alive():
             slot.respawn()
         results, err, stats = slot.run(name, mode)
-        if mode in ('field_first', 'field_last') and slot.alive():
+        if err and err.startswith('EXC') and ('session is gone' in err or 'connection is closed' in err):
+            slot.respawn()          # died before/at script creation (a previous job's late crash): retry once
+            results, err, stats = slot.run(name, mode)
+        if mode in ('field_none', 'field_first', 'field_last') and slot.alive():
             slot.restore()
         if err and not slot.alive():
             err = f'{err} (process died)'
             slot.respawn()
-        elif err == 'TIMEOUT':
-            slot.respawn()          # a hung call can poison the process for the next job
+        elif err == 'TIMEOUT' or (err or '').startswith('EXC'):
+            slot.respawn()          # a hung call / wedged agent poisons the process for the next job
         if mode == 'real' and err:
             dead_hooks.add(name)
         verdict, mism, total = classify(mode, results, err, stats, hook)
@@ -321,11 +334,48 @@ def early_job(name, mode, out_dir):
 
 # ---------------------------------------------------------------- driver
 
+LIVE_TSV = None
+LIVE_COLS = ['hook', 'rva', 'arg_type', 'lane', 'mode', 'verdict', 'mismatches', 'total', 'stats', 'err']
+_live_lock = threading.Lock()
+
+
+def live_append(r):
+    """Append each finished job to the live TSV so a killed run loses nothing (--resume reads it)."""
+    if LIVE_TSV is None:
+        return
+    with _live_lock:
+        new = not LIVE_TSV.exists()
+        with LIVE_TSV.open('a', encoding='utf-8', newline='') as fh:
+            w = csv.DictWriter(fh, fieldnames=LIVE_COLS, delimiter='\t')
+            if new:
+                w.writeheader()
+            w.writerow(r)
+
+
 def row(name, lane, mode, verdict, mism, total, err, stats):
     h = HOOKS[name]
-    return {'hook': name, 'rva': f"0x{h['rva']:08x}", 'arg_type': h.get('arg_type'), 'lane': lane,
-            'mode': mode, 'verdict': verdict, 'mismatches': mism, 'total': total,
-            'stats': stats or '', 'err': (err or '').replace('\t', ' ').replace('\n', ' ')}
+    r = {'hook': name, 'rva': f"0x{h['rva']:08x}", 'arg_type': h.get('arg_type'), 'lane': lane,
+         'mode': mode, 'verdict': verdict, 'mismatches': mism, 'total': total,
+         'stats': stats or '', 'err': (err or '').replace('\t', ' ').replace('\n', ' ')}
+    live_append(r)
+    return r
+
+
+def load_done(paths):
+    """(hook, mode) pairs already finished with a usable verdict; ERROR rows (and the SKIPs they caused) re-run."""
+    done = set()
+    for p in paths:
+        text = Path(p).read_text(encoding='utf-8', errors='replace')
+        if p.endswith('.tsv'):
+            for r in csv.DictReader(text.splitlines(), delimiter='\t'):
+                if r['verdict'] != 'ERROR' and r['err'] != 'real run errored':
+                    done.add((r['hook'], r['mode']))
+        else:
+            for ln in text.splitlines():
+                m = re.match(r'\s+\[(?:slot \d+|early)\] (\S+)\s+(\S+)\s+(\S+)', ln)
+                if m and m.group(1) in HOOKS and m.group(3) != 'ERROR' and 'real run errored' not in ln:
+                    done.add((m.group(1), m.group(2)))
+    return done
 
 
 def main(argv):
@@ -340,6 +390,8 @@ def main(argv):
     ap.add_argument('--early-workers', type=int, default=3)
     ap.add_argument('--seed', type=int, default=20261011)
     ap.add_argument('--out', default=str(ROOT / 'log' / 'negctl'))
+    ap.add_argument('--resume', action='append', default=[],
+                    help='TSV(s) or run logs whose finished (hook, mode) jobs are skipped; repeatable')
     a = ap.parse_args(argv[1:])
 
     ranked, conf = inventory()
@@ -372,6 +424,14 @@ def main(argv):
             (early_jobs if at in early_only else warm_jobs).extend(jobs)
 
     out = Path(a.out); out.mkdir(parents=True, exist_ok=True)
+    global LIVE_TSV
+    LIVE_TSV = out / f"negctl_live_{time.strftime('%Y%m%d_%H%M%S')}.tsv"
+    done = load_done(a.resume)
+    if done:
+        before = len(warm_jobs) + len(early_jobs)
+        warm_jobs = [j for j in warm_jobs if j not in done]
+        early_jobs = [j for j in early_jobs if j not in done]
+        print(f'--resume: skipping {before - len(warm_jobs) - len(early_jobs)} finished jobs')
     print(f'handlers: {sel}')
     print(f'warm jobs {len(warm_jobs)}, early jobs {len(early_jobs)}, race-scenario hooks skipped {len(skipped_race)}')
     if not ASI_PATH.exists():
