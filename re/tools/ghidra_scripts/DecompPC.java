@@ -178,16 +178,16 @@ public class DecompPC extends GhidraScript {
             // wraps the script in is discarded on exit and nothing is persisted --
             // not even to the clone. Use it to READ an undefined region; use
             // CreateMissedFunctions.java (and the master) when you want it to stick.
+            // Disassemble FIRST: createFunction on undisassembled bytes "succeeds" with a 1-byte
+            // body (size 1 at 0x00449710, 0x0044ca40, 0x004714f0, 0x004496a0 on 2026-10-11). The
+            // decompiler follows flow regardless, so the C text was right but size/callees/xrefs
+            // that read the body were not.
             try {
+                disassemble(a);
                 fn = createFunction(a, null);
                 if (fn != null) w.println("      \"created_transiently\": true,");
             } catch (Exception e) {
                 w.println("      \"create_failed\": \"" + esc("" + e) + "\",");
-            }
-            if (fn == null) {
-                // A create can fail because the bytes are not disassembled yet.
-                try { disassemble(a); fn = createFunction(a, null); } catch (Exception e) { }
-                if (fn != null) w.println("      \"created_transiently\": true,");
             }
         }
         if (fn == null) {

@@ -1,0 +1,364 @@
+{
+ "program": "MASHED.exe",
+ "functions": [
+  {
+   "requested": "0x0047b500",
+   "created_transiently": true,
+   "exact_entry": false,
+   "name": "FUN_0047b500",
+   "entry": "0x0047b500",
+   "size": 171,
+   "signature": "undefined FUN_0047b500(void)",
+   "callees": [
+    "FUN_004a2c48@0x004a2c48",
+    "FUN_004b6fc0@0x004b6fc0",
+    "FUN_004b7090@0x004b7090",
+    "FUN_004b7140@0x004b7140"
+   ],
+   "decomp": "\r\nundefined4 FUN_0047b500(undefined4 param_1)\r\n\r\n{\r\n  int iVar1;\r\n  int iVar2;\r\n  undefined4 uVar3;\r\n  int iVar4;\r\n  \r\n  iVar1 = FUN_004b6fc0();\r\n  FUN_004b7090(param_1,iVar1 + -2);\r\n  iVar2 = FUN_004a2c48();\r\n  FUN_004b7090(param_1,iVar1 + -1);\r\n  uVar3 = FUN_004a2c48();\r\n  FUN_004b7090(param_1,iVar1);\r\n  iVar4 = FUN_004a2c48();\r\n  iVar1 = (&DAT_00871108)[iVar2 * 0x944];\r\n  (&DAT_0086ee28)[iVar2 * 0x944 + iVar1 * 0x117 + 0xc] = uVar3;\r\n  (&DAT_0086ee28)[iVar2 * 0x944 + iVar1 * 0x117 + 0xd] = 1 - iVar4;\r\n  (&DAT_0086ee28)[iVar2 * 0x944 + iVar1 * 0x117 + 0x116] = 0;\r\n  (&DAT_00871108)[iVar2 * 0x944] = (&DAT_00871108)[iVar2 * 0x944] + 1;\r\n  FUN_004b7140(param_1,(double)(iVar1 + iVar2 * 8));\r\n  return 1;\r\n}\r\n\r\n"
+  },
+  {
+   "requested": "0x0047b250",
+   "created_transiently": true,
+   "exact_entry": false,
+   "name": "FUN_0047b250",
+   "entry": "0x0047b250",
+   "size": 35,
+   "signature": "undefined FUN_0047b250(void)",
+   "callees": [
+    "FUN_00458e00@0x00458e00",
+    "FUN_00458fa0@0x00458fa0"
+   ],
+   "decomp": "\r\nundefined4 FUN_0047b250(void)\r\n\r\n{\r\n  undefined4 uVar1;\r\n  \r\n  uVar1 = FUN_00458e00(&DAT_006bf1bc,DAT_006132fc);\r\n  FUN_00458fa0(uVar1,DAT_00613300);\r\n  return 0;\r\n}\r\n\r\n"
+  },
+  {
+   "requested": "0x00449710",
+   "created_transiently": true,
+   "exact_entry": false,
+   "name": "FUN_00449710",
+   "entry": "0x00449710",
+   "size": 108,
+   "signature": "undefined FUN_00449710(void)",
+   "callees": [
+    "FUN_0047ce40@0x0047ce40",
+    "FUN_0047cea0@0x0047cea0",
+    "FUN_0047d150@0x0047d150"
+   ],
+   "decomp": "\r\n/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */\r\n\r\nvoid FUN_00449710(void)\r\n\r\n{\r\n  undefined4 uVar1;\r\n  int iVar2;\r\n  undefined4 uStack_c;\r\n  undefined4 uStack_8;\r\n  undefined4 uStack_4;\r\n  \r\n  uStack_c = 0x43480000;\r\n  uStack_8 = 0x43c80000;\r\n  uStack_4 = 0x43480000;\r\n  iVar2 = 3;\r\n  do {\r\n    uVar1 = FUN_0047ce40(6000);\r\n    FUN_0047cea0(uVar1,&uStack_c);\r\n    iVar2 = iVar2 + -1;\r\n  } while (iVar2 != 0);\r\n  if (_DAT_005f96c8 != 0) {\r\n    iVar2 = FUN_0047d150(uVar1);\r\n    func_0x00465da0(8,iVar2 + 0x30);\r\n    _DAT_005f96c8 = 0;\r\n  }\r\n  return;\r\n}\r\n\r\n"
+  },
+  {
+   "requested": "0x0047ad40",
+   "created_transiently": true,
+   "exact_entry": false,
+   "name": "FUN_0047ad40",
+   "entry": "0x0047ad40",
+   "size": 150,
+   "signature": "undefined FUN_0047ad40(void)",
+   "callees": [
+    "FUN_004a2c48@0x004a2c48",
+    "FUN_004b6fc0@0x004b6fc0",
+    "FUN_004b7090@0x004b7090"
+   ],
+   "decomp": "\r\nundefined4 FUN_0047ad40(undefined4 param_1)\r\n\r\n{\r\n  int iVar1;\r\n  undefined1 uVar2;\r\n  char cVar3;\r\n  int iVar4;\r\n  int iVar5;\r\n  int iVar6;\r\n  \r\n  iVar4 = FUN_004b6fc0(param_1);\r\n  iVar5 = *(int *)(DAT_006bf1cc + 0xd0);\r\n  iVar6 = (iVar5 * 3 + 0x1e) * 4;\r\n  *(undefined4 *)(iVar6 + DAT_006bf1cc) = 0;\r\n  iVar5 = iVar5 * 0xc;\r\n  FUN_004b7090(param_1,iVar4 + -1);\r\n  uVar2 = FUN_004a2c48();\r\n  *(undefined1 *)(iVar5 + 0x70 + DAT_006bf1cc) = uVar2;\r\n  FUN_004b7090(param_1,iVar4);\r\n  uVar2 = FUN_004a2c48();\r\n  iVar1 = DAT_006bf1cc;\r\n  *(undefined1 *)(iVar5 + 0x71 + DAT_006bf1cc) = uVar2;\r\n  *(int *)(iVar1 + 0xd0) = *(int *)(iVar1 + 0xd0) + 1;\r\n  if (iVar4 == 3) {\r\n    FUN_004b7090(param_1,1);\r\n    cVar3 = FUN_004a2c48();\r\n    *(int *)(iVar6 + DAT_006bf1cc) = (int)cVar3;\r\n  }\r\n  return 0;\r\n}\r\n\r\n"
+  },
+  {
+   "requested": "0x0047a9b0",
+   "created_transiently": true,
+   "exact_entry": false,
+   "name": "FUN_0047a9b0",
+   "entry": "0x0047a9b0",
+   "size": 112,
+   "signature": "undefined FUN_0047a9b0(void)",
+   "callees": [
+    "FUN_004a2c48@0x004a2c48",
+    "FUN_004b6fc0@0x004b6fc0",
+    "FUN_004b7090@0x004b7090"
+   ],
+   "decomp": "\r\nundefined4 FUN_0047a9b0(undefined4 param_1)\r\n\r\n{\r\n  int iVar1;\r\n  undefined1 uVar2;\r\n  undefined2 uVar3;\r\n  int iVar4;\r\n  \r\n  iVar4 = FUN_004b6fc0(param_1);\r\n  iVar1 = *(int *)(DAT_006bf1cc + 0x6c);\r\n  FUN_004b7090(param_1,iVar4 + -2);\r\n  uVar2 = FUN_004a2c48();\r\n  *(undefined1 *)(DAT_006bf1cc + 0x2c + iVar1 * 4) = uVar2;\r\n  FUN_004b7090(param_1,iVar4 + -1);\r\n  uVar2 = FUN_004a2c48();\r\n  *(undefined1 *)(DAT_006bf1cc + 0x2d + iVar1 * 4) = uVar2;\r\n  FUN_004b7090(param_1,iVar4);\r\n  uVar3 = FUN_004a2c48();\r\n  iVar4 = DAT_006bf1cc;\r\n  *(undefined2 *)(DAT_006bf1cc + 0x2e + iVar1 * 4) = uVar3;\r\n  *(int *)(iVar4 + 0x6c) = *(int *)(iVar4 + 0x6c) + 1;\r\n  return 0;\r\n}\r\n\r\n"
+  },
+  {
+   "requested": "0x0044ca40",
+   "created_transiently": true,
+   "exact_entry": false,
+   "name": "FUN_0044ca40",
+   "entry": "0x0044ca40",
+   "size": 36,
+   "signature": "undefined FUN_0044ca40(void)",
+   "callees": [
+    "FUN_00476860@0x00476860"
+   ],
+   "decomp": "\r\nvoid FUN_0044ca40(int param_1)\r\n\r\n{\r\n  FUN_00476860(*(int *)(*(int *)(param_1 + 0x10138) + 4) + 0x40,&DAT_006146fc,0x43b40000);\r\n  return;\r\n}\r\n\r\n"
+  },
+  {
+   "requested": "0x00491900",
+   "created_transiently": true,
+   "exact_entry": false,
+   "name": "FUN_00491900",
+   "entry": "0x00491900",
+   "size": 164,
+   "signature": "undefined FUN_00491900(void)",
+   "callees": [
+    "FUN_00490e50@0x00490e50",
+    "FUN_00490fb0@0x00490fb0",
+    "FUN_004b6fc0@0x004b6fc0",
+    "FUN_004b7090@0x004b7090"
+   ],
+   "decomp": "\r\n/* [C1 2026-05-07] RainSetPosition_Handler \u2014 script cmd; reads 6 float args (xmin..zmax); calls\r\n   setter 0x00490fb0. */\r\n\r\nundefined4 FUN_00491900(undefined4 param_1)\r\n\r\n{\r\n  int iVar1;\r\n  float10 fVar2;\r\n  float10 fVar3;\r\n  float10 fVar4;\r\n  float10 fVar5;\r\n  float10 fVar6;\r\n  float10 fVar7;\r\n  \r\n  iVar1 = FUN_004b6fc0(param_1);\r\n  fVar2 = (float10)FUN_004b7090(param_1,iVar1 + -5);\r\n  fVar3 = (float10)FUN_004b7090(param_1,iVar1 + -4);\r\n  fVar4 = (float10)FUN_004b7090(param_1,iVar1 + -3);\r\n  fVar5 = (float10)FUN_004b7090(param_1,iVar1 + -2);\r\n  fVar6 = (float10)FUN_004b7090(param_1,iVar1 + -1);\r\n  fVar7 = (float10)FUN_004b7090(param_1,iVar1);\r\n  if (iVar1 != 6) {\r\n    FUN_00490e50(\"Usage : RainSetPosition(xmin, xmax, ymin, ymax, zmin, zmax)\\n\",0xffffffff);\r\n  }\r\n  FUN_00490fb0((float)fVar2,(float)fVar3,(float)fVar4,(float)fVar5,(float)fVar6,(float)fVar7);\r\n  return 0;\r\n}\r\n\r\n"
+  },
+  {
+   "requested": "0x004714f0",
+   "created_transiently": true,
+   "exact_entry": false,
+   "name": "FUN_004714f0",
+   "entry": "0x004714f0",
+   "size": 60,
+   "signature": "undefined FUN_004714f0(void)",
+   "callees": [],
+   "decomp": "\r\n/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */\r\n\r\nvoid FUN_004714f0(char *param_1,undefined4 param_2)\r\n\r\n{\r\n  char cVar1;\r\n  int iVar2;\r\n  int iVar3;\r\n  \r\n  iVar3 = _DAT_00691484;\r\n  iVar2 = _DAT_00691484 * 0x84 - (int)param_1;\r\n  do {\r\n    cVar1 = *param_1;\r\n    param_1[(int)(&DAT_00690a30 + iVar2)] = cVar1;\r\n    param_1 = param_1 + 1;\r\n  } while (cVar1 != '\\0');\r\n  (&DAT_00690ab0)[iVar3 * 0x21] = param_2;\r\n  _DAT_00691484 = _DAT_00691484 + 1;\r\n  return;\r\n}\r\n\r\n"
+  },
+  {
+   "requested": "0x00491a70",
+   "created_transiently": true,
+   "exact_entry": false,
+   "name": "FUN_00491a70",
+   "entry": "0x00491a70",
+   "size": 164,
+   "signature": "undefined FUN_00491a70(void)",
+   "callees": [
+    "FUN_00490e50@0x00490e50",
+    "FUN_00491030@0x00491030",
+    "FUN_004b6fc0@0x004b6fc0",
+    "FUN_004b7090@0x004b7090"
+   ],
+   "decomp": "\r\n/* [C1 2026-05-07] RainSetDirection_Handler \u2014 script cmd; reads 6 float args (xmin..zmax); calls\r\n   ~setter 0x00491030. */\r\n\r\nundefined4 FUN_00491a70(undefined4 param_1)\r\n\r\n{\r\n  int iVar1;\r\n  float10 fVar2;\r\n  float10 fVar3;\r\n  float10 fVar4;\r\n  float10 fVar5;\r\n  float10 fVar6;\r\n  float10 fVar7;\r\n  \r\n  iVar1 = FUN_004b6fc0(param_1);\r\n  fVar2 = (float10)FUN_004b7090(param_1,iVar1 + -5);\r\n  fVar3 = (float10)FUN_004b7090(param_1,iVar1 + -4);\r\n  fVar4 = (float10)FUN_004b7090(param_1,iVar1 + -3);\r\n  fVar5 = (float10)FUN_004b7090(param_1,iVar1 + -2);\r\n  fVar6 = (float10)FUN_004b7090(param_1,iVar1 + -1);\r\n  fVar7 = (float10)FUN_004b7090(param_1,iVar1);\r\n  if (iVar1 != 6) {\r\n    FUN_00490e50(\"Usage : RainSetDirection(xmin, xmax, ymin, ymax, zmin, zmax)\\n\",0xffffffff);\r\n  }\r\n  FUN_00491030((float)fVar2,(float)fVar3,(float)fVar4,(float)fVar5,(float)fVar6,(float)fVar7);\r\n  return 0;\r\n}\r\n\r\n"
+  },
+  {
+   "requested": "0x00491860",
+   "created_transiently": true,
+   "exact_entry": false,
+   "name": "FUN_00491860",
+   "entry": "0x00491860",
+   "size": 155,
+   "signature": "undefined FUN_00491860(void)",
+   "callees": [
+    "FUN_00490e50@0x00490e50",
+    "FUN_00490f80@0x00490f80",
+    "FUN_004a2c48@0x004a2c48",
+    "FUN_004b6fc0@0x004b6fc0",
+    "FUN_004b7090@0x004b7090"
+   ],
+   "decomp": "\r\n/* [C1 2026-05-07] RainSetTailColour_Handler \u2014 script cmd; reads 4 float args (RGBA); calls setter\r\n   0x00490f80. */\r\n\r\nundefined4 FUN_00491860(undefined4 param_1)\r\n\r\n{\r\n  int iVar1;\r\n  undefined4 uVar2;\r\n  undefined4 uVar3;\r\n  undefined4 uVar4;\r\n  undefined4 uVar5;\r\n  \r\n  iVar1 = FUN_004b6fc0(param_1);\r\n  FUN_004b7090(param_1,iVar1 + -3);\r\n  uVar2 = FUN_004a2c48();\r\n  FUN_004b7090(param_1,iVar1 + -2);\r\n  uVar3 = FUN_004a2c48();\r\n  FUN_004b7090(param_1,iVar1 + -1);\r\n  uVar4 = FUN_004a2c48();\r\n  FUN_004b7090(param_1,iVar1);\r\n  uVar5 = FUN_004a2c48();\r\n  if (iVar1 != 4) {\r\n    FUN_00490e50(\"Usage : RainSetTailColour(red,green,blue,alpha)\\n\",0xffffffff);\r\n  }\r\n  if (DAT_00771534 == 0) {\r\n    FUN_00490e50(\"Line Rain has not been enabled\\n\",0xffffffff);\r\n  }\r\n  FUN_00490f80(uVar2,uVar3,uVar4,uVar5);\r\n  return 0;\r\n}\r\n\r\n"
+  },
+  {
+   "requested": "0x004496a0",
+   "created_transiently": true,
+   "exact_entry": false,
+   "name": "FUN_004496a0",
+   "entry": "0x004496a0",
+   "size": 111,
+   "signature": "undefined FUN_004496a0(void)",
+   "callees": [
+    "FUN_0047ce40@0x0047ce40",
+    "FUN_0047cea0@0x0047cea0",
+    "FUN_0047d150@0x0047d150"
+   ],
+   "decomp": "\r\n/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */\r\n\r\nvoid FUN_004496a0(void)\r\n\r\n{\r\n  undefined4 uVar1;\r\n  int iVar2;\r\n  undefined4 uStack_c;\r\n  undefined4 uStack_8;\r\n  undefined4 uStack_4;\r\n  \r\n  uStack_c = 0x43480000;\r\n  uStack_8 = 0x43c80000;\r\n  uStack_4 = 0x43480000;\r\n  iVar2 = 0;\r\n  do {\r\n    uVar1 = FUN_0047ce40(iVar2 + 5000);\r\n    FUN_0047cea0(uVar1,&uStack_c);\r\n    iVar2 = iVar2 + 1;\r\n  } while (iVar2 < 3);\r\n  if (_DAT_005f96c0 != 0) {\r\n    iVar2 = FUN_0047d150(uVar1);\r\n    func_0x00465da0(8,iVar2 + 0x30);\r\n    _DAT_005f96c0 = 0;\r\n  }\r\n  return;\r\n}\r\n\r\n"
+  },
+  {
+   "requested": "0x004917c0",
+   "created_transiently": true,
+   "exact_entry": false,
+   "name": "FUN_004917c0",
+   "entry": "0x004917c0",
+   "size": 155,
+   "signature": "undefined FUN_004917c0(void)",
+   "callees": [
+    "FUN_00490e50@0x00490e50",
+    "FUN_00490f50@0x00490f50",
+    "FUN_004a2c48@0x004a2c48",
+    "FUN_004b6fc0@0x004b6fc0",
+    "FUN_004b7090@0x004b7090"
+   ],
+   "decomp": "\r\n/* [C1 2026-05-07] RainSetHeadColour_Handler \u2014 script cmd; reads 4 float args (RGBA); calls setter\r\n   0x00490f50. */\r\n\r\nundefined4 FUN_004917c0(undefined4 param_1)\r\n\r\n{\r\n  int iVar1;\r\n  undefined4 uVar2;\r\n  undefined4 uVar3;\r\n  undefined4 uVar4;\r\n  undefined4 uVar5;\r\n  \r\n  iVar1 = FUN_004b6fc0(param_1);\r\n  FUN_004b7090(param_1,iVar1 + -3);\r\n  uVar2 = FUN_004a2c48();\r\n  FUN_004b7090(param_1,iVar1 + -2);\r\n  uVar3 = FUN_004a2c48();\r\n  FUN_004b7090(param_1,iVar1 + -1);\r\n  uVar4 = FUN_004a2c48();\r\n  FUN_004b7090(param_1,iVar1);\r\n  uVar5 = FUN_004a2c48();\r\n  if (iVar1 != 4) {\r\n    FUN_00490e50(\"Usage : RainSetHeadColour(red,green,blue,alpha)\\n\",0xffffffff);\r\n  }\r\n  if (DAT_00771534 == 0) {\r\n    FUN_00490e50(\"Line Rain has not been enabled\\n\",0xffffffff);\r\n  }\r\n  FUN_00490f50(uVar2,uVar3,uVar4,uVar5);\r\n  return 0;\r\n}\r\n\r\n"
+  },
+  {
+   "requested": "0x0047a750",
+   "created_transiently": true,
+   "exact_entry": false,
+   "name": "FUN_0047a750",
+   "entry": "0x0047a750",
+   "size": 64,
+   "signature": "undefined FUN_0047a750(void)",
+   "callees": [
+    "FUN_004a2c48@0x004a2c48",
+    "FUN_004b6fc0@0x004b6fc0",
+    "FUN_004b7090@0x004b7090"
+   ],
+   "decomp": "\r\nundefined4 FUN_0047a750(undefined4 param_1)\r\n\r\n{\r\n  int iVar1;\r\n  undefined4 uVar2;\r\n  \r\n  iVar1 = FUN_004b6fc0(param_1);\r\n  FUN_004b7090(param_1,iVar1);\r\n  uVar2 = FUN_004a2c48();\r\n  FUN_004b7090(param_1,iVar1 + -1);\r\n  iVar1 = FUN_004a2c48();\r\n  *(undefined4 *)(DAT_006bf1d8 + 0x1624c + iVar1 * 4) = uVar2;\r\n  return 0;\r\n}\r\n\r\n"
+  },
+  {
+   "requested": "0x00491a10",
+   "created_transiently": true,
+   "exact_entry": false,
+   "name": "FUN_00491a10",
+   "entry": "0x00491a10",
+   "size": 88,
+   "signature": "undefined FUN_00491a10(void)",
+   "callees": [
+    "FUN_00490e50@0x00490e50",
+    "FUN_00491010@0x00491010",
+    "FUN_004b6fc0@0x004b6fc0",
+    "FUN_004b7090@0x004b7090"
+   ],
+   "decomp": "\r\n/* [C1 2026-05-07] RainSetCameraScale_Handler \u2014 script cmd; reads 2 float args (yScale, atScale);\r\n   calls setter 0x00491010. */\r\n\r\nundefined4 FUN_00491a10(undefined4 param_1)\r\n\r\n{\r\n  int iVar1;\r\n  float10 fVar2;\r\n  float10 fVar3;\r\n  \r\n  iVar1 = FUN_004b6fc0(param_1);\r\n  fVar2 = (float10)FUN_004b7090(param_1,iVar1 + -1);\r\n  fVar3 = (float10)FUN_004b7090(param_1,iVar1);\r\n  if (iVar1 != 2) {\r\n    FUN_00490e50(\"Usage : RainSetCameraScale(yScale, atScale)\\n\",0xffffffff);\r\n  }\r\n  FUN_00491010((float)fVar2,(float)fVar3);\r\n  return 0;\r\n}\r\n\r\n"
+  },
+  {
+   "requested": "0x0053ccc0",
+   "exact_entry": true,
+   "name": "FUN_0053ccc0",
+   "entry": "0x0053ccc0",
+   "size": 189,
+   "signature": "undefined FUN_0053ccc0(void)",
+   "callees": [
+    "FUN_004c0ed0@0x004c0ed0",
+    "FUN_004c3b30@0x004c3b30",
+    "FUN_004c3d90@0x004c3d90",
+    "FUN_004c4dc0@0x004c4dc0",
+    "FUN_0053bdf0@0x0053bdf0",
+    "FUN_0053cd80@0x0053cd80"
+   ],
+   "decomp": "\r\n/* [C1 2026-05-20] Sphere-vs-atomic-with-morph (mirror of FUN_0053c5d0 for sphere case). */\r\n\r\nvoid FUN_0053ccc0(int param_1,int param_2,undefined4 param_3,undefined4 param_4,undefined4 param_5)\r\n\r\n{\r\n  int iVar1;\r\n  undefined4 uVar2;\r\n  float10 fVar3;\r\n  undefined1 local_50 [12];\r\n  float local_44;\r\n  undefined1 local_40 [32];\r\n  float local_20;\r\n  float local_1c;\r\n  float local_18;\r\n  \r\n  iVar1 = *(int *)(param_1 + 0x18);\r\n  uVar2 = FUN_004c0ed0(*(undefined4 *)(param_1 + 4));\r\n  FUN_004c4dc0(local_40,uVar2);\r\n  FUN_004c3d90(local_50,param_2,1,local_40);\r\n  fVar3 = (float10)FUN_004c3b30(local_18 * local_18 + local_20 * local_20 + local_1c * local_1c);\r\n  local_44 = (float)(fVar3 * (float10)*(float *)(param_2 + 0xc));\r\n  if (1 < *(int *)(iVar1 + 0x18)) {\r\n    FUN_0053cd80(iVar1,param_1 + 0x4c,local_50,param_3,param_4,param_5);\r\n    return;\r\n  }\r\n  FUN_0053bdf0(iVar1,local_50,param_3,param_4,param_5);\r\n  return;\r\n}\r\n\r\n"
+  },
+  {
+   "requested": "0x0057f940",
+   "exact_entry": true,
+   "name": "FUN_0057f940",
+   "entry": "0x0057f940",
+   "size": 34,
+   "signature": "undefined FUN_0057f940(void)",
+   "callees": [
+    "FUN_0057c5b0@0x0057c5b0",
+    "FUN_0058f6a0@0x0058f6a0"
+   ],
+   "decomp": "\r\nvoid FUN_0057f940(undefined4 param_1)\r\n\r\n{\r\n  FUN_0057c5b0(DAT_00914588,s_qhull_internal_error__qh_infinit_00625be0);\r\n  FUN_0058f6a0(5,param_1,0);\r\n  return;\r\n}\r\n\r\n"
+  },
+  {
+   "requested": "0x00559ba0",
+   "exact_entry": true,
+   "name": "FUN_00559ba0",
+   "entry": "0x00559ba0",
+   "size": 19,
+   "signature": "undefined FUN_00559ba0(void)",
+   "callees": [
+    "FUN_00564190@0x00564190"
+   ],
+   "decomp": "\r\n/* [C1 2026-05-19] Calls `FUN_00564190(param_1)` (cited 0x00559ba3). */\r\n\r\nundefined4 FUN_00559ba0(undefined4 param_1)\r\n\r\n{\r\n  FUN_00564190(param_1);\r\n  return 1;\r\n}\r\n\r\n"
+  },
+  {
+   "requested": "0x005ca500",
+   "exact_entry": true,
+   "name": "Unwind@005ca500",
+   "entry": "0x005ca500",
+   "size": 8,
+   "signature": "undefined Unwind@005ca500(void)",
+   "callees": [
+    "FUN_0049c6d0@0x0049c6d0"
+   ],
+   "decomp": "\r\n/* [C2 2026-06-02] MSVC SEH unwind funclet: loads an object pointer into ECX, then tail-jumps (`JMP\r\n   0x0049c6d0`) to the cleanup/destructor\u2026 */\r\n\r\nvoid Unwind_005ca500(void)\r\n\r\n{\r\n  FUN_0049c6d0();\r\n  return;\r\n}\r\n\r\n"
+  },
+  {
+   "requested": "0x0050570a",
+   "exact_entry": true,
+   "name": "FUN_0050570a",
+   "entry": "0x0050570a",
+   "size": 1368,
+   "signature": "undefined FUN_0050570a(void)",
+   "callees": [],
+   "decomp": "\r\n/* [C1 2026-05-14] D3DX9 vertex skinning 12-param; single-bone + multi-bone paths; bone stride 0x40\r\n    */\r\n\r\nvoid FUN_0050570a(int param_1,int param_2,float *param_3,undefined8 *param_4,int param_5,int param_6\r\n                 ,int *param_7,int *param_8,uint param_9,int param_10,float *param_11,int param_12)\r\n\r\n{\r\n  int *piVar1;\r\n  float fVar2;\r\n  float fVar3;\r\n  float fVar4;\r\n  undefined8 *puVar5;\r\n  undefined1 auVar6 [16];\r\n  int iVar7;\r\n  undefined1 (*pauVar8) [16];\r\n  int *piVar9;\r\n  float *pfVar10;\r\n  uint uVar11;\r\n  uint uVar12;\r\n  undefined4 *puVar13;\r\n  float *pfVar14;\r\n  undefined4 *puVar15;\r\n  float fVar16;\r\n  float fVar17;\r\n  float fVar18;\r\n  float fVar19;\r\n  float fVar20;\r\n  float fVar21;\r\n  float fVar22;\r\n  float fVar23;\r\n  float fVar24;\r\n  undefined1 auVar25 [16];\r\n  undefined1 auVar26 [16];\r\n  undefined1 auVar27 [16];\r\n  float fVar28;\r\n  float fVar29;\r\n  float fVar30;\r\n  float fVar31;\r\n  float fVar32;\r\n  float fVar33;\r\n  float *local_4b0;\r\n  undefined4 *local_4ac;\r\n  undefined4 *local_4a8;\r\n  int local_4a4;\r\n  float local_470;\r\n  float fStack_46c;\r\n  float fStack_468;\r\n  float local_420 [263];\r\n  \r\n  local_4a8 = (undefined4 *)((int)param_3 + param_10);\r\n  local_4ac = (undefined4 *)((int)param_4 + param_10);\r\n  uVar12 = param_6 - param_10;\r\n  if (param_2 == 0) {\r\n    param_2 = param_1;\r\n  }\r\n  if (param_9 == 1) {\r\n    if (param_5 != 0) {\r\n      local_4b0 = (float *)(param_4 + 1);\r\n      local_4a4 = param_5;\r\n      do {\r\n        fVar2 = *param_3;\r\n        fVar29 = 0.0;\r\n        fVar31 = 0.0;\r\n        fVar33 = 0.0;\r\n        fVar3 = param_3[1];\r\n        fVar4 = param_3[2];\r\n        pfVar10 = (float *)*param_7;\r\n        fVar19 = *pfVar10;\r\n        fVar30 = pfVar10[1];\r\n        fVar32 = pfVar10[2];\r\n        fVar16 = *param_11;\r\n        fVar18 = fVar29;\r\n        fVar21 = fVar31;\r\n        fVar23 = fVar33;\r\n        while (-1 < (int)fVar16) {\r\n          iVar7 = (int)*param_11 >> 1;\r\n          fVar16 = *param_11 - (float)(iVar7 * 2);\r\n          iVar7 = iVar7 * 0x40;\r\n          pfVar10 = (float *)(param_1 + iVar7);\r\n          auVar26._0_4_ = pfVar10[8] * fVar4 + pfVar10[0xc];\r\n          auVar26._4_4_ = pfVar10[9] * fVar4 + pfVar10[0xd];\r\n          auVar26._8_4_ = pfVar10[10] * fVar4 + pfVar10[0xe];\r\n          auVar26._12_4_ = pfVar10[0xb] * fVar4 + pfVar10[0xf];\r\n          fVar17 = *pfVar10 * fVar2 + pfVar10[4] * fVar3 + auVar26._0_4_;\r\n          fVar20 = pfVar10[1] * fVar2 + pfVar10[5] * fVar3 + auVar26._4_4_;\r\n          fVar22 = pfVar10[2] * fVar2 + pfVar10[6] * fVar3 + auVar26._8_4_;\r\n          fVar24 = pfVar10[3] * fVar2 + pfVar10[7] * fVar3 + auVar26._12_4_;\r\n          auVar6._4_4_ = fVar20;\r\n          auVar6._0_4_ = fVar17;\r\n          auVar6._8_4_ = fVar22;\r\n          auVar6._12_4_ = fVar24;\r\n          auVar27 = rcpps(auVar26,auVar6);\r\n          fVar28 = auVar27._12_4_;\r\n          fVar24 = (fVar28 + fVar28) - fVar28 * fVar24 * fVar28;\r\n          fVar29 = fVar29 + fVar17 * fVar16 * fVar24;\r\n          fVar31 = fVar31 + fVar20 * fVar16 * fVar24;\r\n          fVar33 = fVar33 + fVar22 * fVar16 * fVar24;\r\n          pfVar10 = (float *)(iVar7 + param_2);\r\n          param_11 = param_11 + 1;\r\n          fVar18 = fVar18 + (fVar19 * *pfVar10 + fVar30 * pfVar10[4] + fVar32 * pfVar10[8]) * fVar16\r\n          ;\r\n          fVar21 = fVar21 + (fVar19 * pfVar10[1] + fVar30 * pfVar10[5] + fVar32 * pfVar10[9]) *\r\n                            fVar16;\r\n          fVar23 = fVar23 + (fVar19 * pfVar10[2] + fVar30 * pfVar10[6] + fVar32 * pfVar10[10]) *\r\n                            fVar16;\r\n          fVar16 = *param_11;\r\n        }\r\n        if (param_12 == 0) {\r\n          *param_4 = CONCAT44(fVar31,fVar29);\r\n          *local_4b0 = fVar33;\r\n          puVar5 = (undefined8 *)*param_8;\r\n          *puVar5 = CONCAT44(fVar21,fVar18);\r\n          *(float *)(puVar5 + 1) = fVar23;\r\n          puVar13 = local_4a8;\r\n          puVar15 = local_4ac;\r\n          for (uVar11 = uVar12 >> 2; uVar11 != 0; uVar11 = uVar11 - 1) {\r\n            *puVar15 = *puVar13;\r\n            puVar13 = puVar13 + 1;\r\n            puVar15 = puVar15 + 1;\r\n          }\r\n          for (uVar11 = uVar12 & 3; uVar11 != 0; uVar11 = uVar11 - 1) {\r\n            *(undefined1 *)puVar15 = *(undefined1 *)puVar13;\r\n            puVar13 = (undefined4 *)((int)puVar13 + 1);\r\n            puVar15 = (undefined4 *)((int)puVar15 + 1);\r\n          }\r\n        }\r\n        else {\r\n          puVar13 = local_4a8;\r\n          puVar15 = local_4ac;\r\n          for (uVar11 = uVar12 >> 2; uVar11 != 0; uVar11 = uVar11 - 1) {\r\n            *puVar15 = *puVar13;\r\n            puVar13 = puVar13 + 1;\r\n            puVar15 = puVar15 + 1;\r\n          }\r\n          for (uVar11 = uVar12 & 3; uVar11 != 0; uVar11 = uVar11 - 1) {\r\n            *(undefined1 *)puVar15 = *(undefined1 *)puVar13;\r\n            puVar13 = (undefined4 *)((int)puVar13 + 1);\r\n            puVar15 = (undefined4 *)((int)puVar15 + 1);\r\n          }\r\n          *param_4 = CONCAT44(fVar31,fVar29);\r\n          *local_4b0 = fVar33;\r\n          puVar5 = (undefined8 *)*param_8;\r\n          *puVar5 = CONCAT44(fVar21,fVar18);\r\n          *(float *)(puVar5 + 1) = fVar23;\r\n        }\r\n        *param_8 = *param_8 + param_6;\r\n        local_4ac = (undefined4 *)((int)local_4ac + param_6);\r\n        local_4a8 = (undefined4 *)((int)local_4a8 + param_6);\r\n        param_4 = (undefined8 *)((int)param_4 + param_6);\r\n        local_4b0 = (float *)((int)local_4b0 + param_6);\r\n        param_3 = (float *)((int)param_3 + param_6);\r\n        *param_7 = *param_7 + param_6;\r\n        param_11 = param_11 + 1;\r\n        local_4a4 = local_4a4 + -1;\r\n      } while (local_4a4 != 0);\r\n    }\r\n  }\r\n  else if (param_5 != 0) {\r\n    local_4b0 = (float *)(param_4 + 1);\r\n    local_470 = 0.0;\r\n    fStack_46c = 0.0;\r\n    fStack_468 = 0.0;\r\n    local_4a4 = param_5;\r\n    do {\r\n      fVar2 = *param_3;\r\n      fVar3 = param_3[1];\r\n      fVar4 = param_3[2];\r\n      if (param_9 != 0) {\r\n        local_420[0] = 0.0;\r\n        local_420[1] = 0.0;\r\n        local_420[2] = 0.0;\r\n        local_420[3] = 0.0;\r\n        pfVar10 = local_420;\r\n        pfVar14 = local_420 + 4;\r\n        for (uVar11 = param_9 * 0x10 - 0xd >> 2; uVar11 != 0; uVar11 = uVar11 - 1) {\r\n          *pfVar14 = *pfVar10;\r\n          pfVar10 = pfVar10 + 1;\r\n          pfVar14 = pfVar14 + 1;\r\n        }\r\n      }\r\n      fVar19 = *param_11;\r\n      fVar30 = local_470;\r\n      fVar32 = fStack_46c;\r\n      fVar16 = fStack_468;\r\n      while (-1 < (int)fVar19) {\r\n        iVar7 = (int)*param_11 >> 1;\r\n        fVar19 = *param_11 - (float)(iVar7 * 2);\r\n        iVar7 = iVar7 * 0x40;\r\n        pfVar10 = (float *)(param_1 + iVar7);\r\n        auVar25._0_4_ = pfVar10[8] * fVar4 + pfVar10[0xc];\r\n        auVar25._4_4_ = pfVar10[9] * fVar4 + pfVar10[0xd];\r\n        auVar25._8_4_ = pfVar10[10] * fVar4 + pfVar10[0xe];\r\n        auVar25._12_4_ = pfVar10[0xb] * fVar4 + pfVar10[0xf];\r\n        fVar29 = *pfVar10 * fVar2 + pfVar10[4] * fVar3 + auVar25._0_4_;\r\n        fVar31 = pfVar10[1] * fVar2 + pfVar10[5] * fVar3 + auVar25._4_4_;\r\n        fVar33 = pfVar10[2] * fVar2 + pfVar10[6] * fVar3 + auVar25._8_4_;\r\n        fVar18 = pfVar10[3] * fVar2 + pfVar10[7] * fVar3 + auVar25._12_4_;\r\n        auVar27._4_4_ = fVar31;\r\n        auVar27._0_4_ = fVar29;\r\n        auVar27._8_4_ = fVar33;\r\n        auVar27._12_4_ = fVar18;\r\n        auVar27 = rcpps(auVar25,auVar27);\r\n        fVar21 = auVar27._12_4_;\r\n        fVar18 = (fVar21 + fVar21) - fVar21 * fVar18 * fVar21;\r\n        pauVar8 = (undefined1 (*) [16])(iVar7 + param_2);\r\n        uVar11 = 0;\r\n        fVar30 = fVar30 + fVar29 * fVar19 * fVar18;\r\n        fVar32 = fVar32 + fVar31 * fVar19 * fVar18;\r\n        fVar16 = fVar16 + fVar33 * fVar19 * fVar18;\r\n        if (param_9 != 0) {\r\n          fVar29 = *(float *)pauVar8[2];\r\n          fVar31 = *(float *)(pauVar8[2] + 4);\r\n          fVar33 = *(float *)(pauVar8[2] + 8);\r\n          fVar18 = *(float *)(pauVar8[2] + 0xc);\r\n          auVar27 = *pauVar8;\r\n          fVar21 = *(float *)pauVar8[1];\r\n          fVar23 = *(float *)(pauVar8[1] + 4);\r\n          fVar17 = *(float *)(pauVar8[1] + 8);\r\n          fVar20 = *(float *)(pauVar8[1] + 0xc);\r\n          pfVar10 = local_420;\r\n          do {\r\n            pfVar14 = (float *)param_7[uVar11];\r\n            fVar22 = pfVar14[2];\r\n            fVar24 = pfVar14[1];\r\n            fVar28 = *pfVar14;\r\n            *pfVar10 = *pfVar10 +\r\n                       (fVar28 * auVar27._0_4_ + fVar24 * fVar21 + fVar22 * fVar29) * fVar19;\r\n            pfVar10[1] = pfVar10[1] +\r\n                         (fVar28 * auVar27._4_4_ + fVar24 * fVar23 + fVar22 * fVar31) * fVar19;\r\n            pfVar10[2] = pfVar10[2] +\r\n                         (fVar28 * auVar27._8_4_ + fVar24 * fVar17 + fVar22 * fVar33) * fVar19;\r\n            pfVar10[3] = pfVar10[3] +\r\n                         (fVar28 * auVar27._12_4_ + fVar24 * fVar20 + fVar22 * fVar18) * fVar19;\r\n            uVar11 = uVar11 + 1;\r\n            pfVar10 = pfVar10 + 4;\r\n          } while (uVar11 < param_9);\r\n        }\r\n        param_11 = param_11 + 1;\r\n        fVar19 = *param_11;\r\n      }\r\n      if (param_12 == 0) {\r\n        *param_4 = CONCAT44(fVar32,fVar30);\r\n        *local_4b0 = fVar16;\r\n        if (param_9 != 0) {\r\n          pauVar8 = (undefined1 (*) [16])local_420;\r\n          piVar9 = param_8;\r\n          uVar11 = param_9;\r\n          do {\r\n            puVar5 = (undefined8 *)*piVar9;\r\n            auVar27 = *pauVar8;\r\n            *puVar5 = auVar27._0_8_;\r\n            *(int *)(puVar5 + 1) = auVar27._8_4_;\r\n            *piVar9 = *piVar9 + param_6;\r\n            piVar1 = (int *)((int)piVar9 + ((int)param_7 - (int)param_8));\r\n            *piVar1 = *piVar1 + param_6;\r\n            pauVar8 = pauVar8 + 1;\r\n            piVar9 = piVar9 + 1;\r\n            uVar11 = uVar11 - 1;\r\n          } while (uVar11 != 0);\r\n        }\r\n        puVar13 = local_4a8;\r\n        puVar15 = local_4ac;\r\n        for (uVar11 = uVar12 >> 2; uVar11 != 0; uVar11 = uVar11 - 1) {\r\n          *puVar15 = *puVar13;\r\n          puVar13 = puVar13 + 1;\r\n          puVar15 = puVar15 + 1;\r\n        }\r\n        for (uVar11 = uVar12 & 3; uVar11 != 0; uVar11 = uVar11 - 1) {\r\n          *(undefined1 *)puVar15 = *(undefined1 *)puVar13;\r\n          puVar13 = (undefined4 *)((int)puVar13 + 1);\r\n          puVar15 = (undefined4 *)((int)puVar15 + 1);\r\n        }\r\n      }\r\n      else {\r\n        puVar13 = local_4a8;\r\n        puVar15 = local_4ac;\r\n        for (uVar11 = uVar12 >> 2; uVar11 != 0; uVar11 = uVar11 - 1) {\r\n          *puVar15 = *puVar13;\r\n          puVar13 = puVar13 + 1;\r\n          puVar15 = puVar15 + 1;\r\n        }\r\n        for (uVar11 = uVar12 & 3; uVar11 != 0; uVar11 = uVar11 - 1) {\r\n          *(undefined1 *)puVar15 = *(undefined1 *)puVar13;\r\n          puVar13 = (undefined4 *)((int)puVar13 + 1);\r\n          puVar15 = (undefined4 *)((int)puVar15 + 1);\r\n        }\r\n        *param_4 = CONCAT44(fVar32,fVar30);\r\n        *local_4b0 = fVar16;\r\n        if (param_9 != 0) {\r\n          pauVar8 = (undefined1 (*) [16])local_420;\r\n          piVar9 = param_8;\r\n          uVar11 = param_9;\r\n          do {\r\n            puVar5 = (undefined8 *)*piVar9;\r\n            auVar27 = *pauVar8;\r\n            *puVar5 = auVar27._0_8_;\r\n            *(int *)(puVar5 + 1) = auVar27._8_4_;\r\n            *piVar9 = *piVar9 + param_6;\r\n            piVar1 = (int *)(((int)param_7 - (int)param_8) + (int)piVar9);\r\n            *piVar1 = *piVar1 + param_6;\r\n            pauVar8 = pauVar8 + 1;\r\n            piVar9 = piVar9 + 1;\r\n            uVar11 = uVar11 - 1;\r\n          } while (uVar11 != 0);\r\n        }\r\n      }\r\n      local_4ac = (undefined4 *)((int)local_4ac + param_6);\r\n      local_4a8 = (undefined4 *)((int)local_4a8 + param_6);\r\n      param_4 = (undefined8 *)((int)param_4 + param_6);\r\n      local_4b0 = (float *)((int)local_4b0 + param_6);\r\n      param_11 = param_11 + 1;\r\n      param_3 = (float *)((int)param_3 + param_6);\r\n      local_4a4 = local_4a4 + -1;\r\n    } while (local_4a4 != 0);\r\n  }\r\n  return;\r\n}\r\n\r\n"
+  },
+  {
+   "requested": "0x005ca2d0",
+   "exact_entry": true,
+   "name": "__aullshr",
+   "entry": "0x005ca2d0",
+   "size": 31,
+   "signature": "undefined __aullshr(void)",
+   "callees": [],
+   "decomp": "\r\n/* [C2 2026-06-02] MSVC C runtime helper `__aullshr` \u2014 64-bit unsigned right shift of the value in\r\n   `EDX:EAX` by `CL`. Ghidra reports\u2026 */\r\n\r\nulonglong __fastcall __aullshr(byte param_1,uint param_2)\r\n\r\n{\r\n  uint in_EAX;\r\n  \r\n  if (0x3f < param_1) {\r\n    return 0;\r\n  }\r\n  if (param_1 < 0x20) {\r\n    return CONCAT44(param_2 >> (param_1 & 0x1f),\r\n                    in_EAX >> (param_1 & 0x1f) | param_2 << 0x20 - (param_1 & 0x1f));\r\n  }\r\n  return (ulonglong)(param_2 >> (param_1 & 0x1f));\r\n}\r\n\r\n"
+  },
+  {
+   "requested": "0x005be450",
+   "exact_entry": true,
+   "name": "FUN_005be450",
+   "entry": "0x005be450",
+   "size": 116,
+   "signature": "undefined FUN_005be450(void)",
+   "callees": [
+    "CloseHandle@0xEXTERNAL:00000018",
+    "FUN_005bcbb0@0x005bcbb0",
+    "FUN_005bcc70@0x005bcc70",
+    "FUN_005bec10@0x005bec10",
+    "ReleaseSemaphore@0xEXTERNAL:0000001b",
+    "WaitForSingleObject@0xEXTERNAL:0000001a"
+   ],
+   "decomp": "\r\n/* [C2 2026-06-02] Destructor for the RwaDSSource filter built by FUN_005be260. `param_1` = object.\r\n   Tears down the worker thread and\u2026 */\r\n\r\nvoid FUN_005be450(int param_1)\r\n\r\n{\r\n  if (*(int *)(param_1 + 4) == 1) {\r\n    *(undefined4 *)(param_1 + 0x374) = 0;\r\n    ReleaseSemaphore(*(HANDLE *)(param_1 + 0x36c),1,(LPLONG)0x0);\r\n    WaitForSingleObject(*(HANDLE *)(param_1 + 0x370),0xffffffff);\r\n    CloseHandle(*(HANDLE *)(param_1 + 0x36c));\r\n    CloseHandle(*(HANDLE *)(param_1 + 0x370));\r\n    FUN_005bcc70(param_1 + 0x340);\r\n    FUN_005bcbb0(param_1 + 0x2ec);\r\n  }\r\n  FUN_005bec10(param_1);\r\n  return;\r\n}\r\n\r\n"
+  },
+  {
+   "requested": "0x0045cc80",
+   "exact_entry": true,
+   "name": "FUN_0045cc80",
+   "entry": "0x0045cc80",
+   "size": 169,
+   "signature": "undefined FUN_0045cc80(void)",
+   "callees": [
+    "FUN_0040e350@0x0040e350",
+    "FUN_0045cb20@0x0045cb20"
+   ],
+   "decomp": "\r\n/* [C2 2026-06-01] No parameters. Body 0x0045cc80..0x0045cd28. Walks a 256-entry circular event\r\n   buffer backwards. Calls `FUN_0040e350()`\u2026 */\r\n\r\nvoid FUN_0045cc80(void)\r\n\r\n{\r\n  int iVar1;\r\n  int iVar2;\r\n  bool bVar3;\r\n  int iVar4;\r\n  int iVar5;\r\n  int local_8;\r\n  \r\n  FUN_0040e350();\r\n  iVar4 = DAT_007f1030;\r\n  iVar5 = DAT_007e9de0 + -1;\r\n  if (iVar5 < 0) {\r\n    iVar5 = 0xff;\r\n  }\r\n  local_8 = 0x100;\r\n  bVar3 = false;\r\n  do {\r\n    if (bVar3) {\r\n      return;\r\n    }\r\n    if ((&DAT_007ea1e4)[iVar5] == iVar4) {\r\n      iVar1 = (&DAT_007ea5e4)[iVar5];\r\n      iVar2 = (&DAT_007ea9e4)[iVar5 * 8];\r\n      if (((&DAT_007e9de4)[iVar5] == 0x3ff03) || ((&DAT_007e9de4)[iVar5] == 0x3ff04)) {\r\n        FUN_0045cb20(0x13,iVar1 + -0xff00,iVar2 + -0xff00);\r\n        FUN_0045cb20(0x13,iVar2 + -0xff00,iVar1 + -0xff00);\r\n      }\r\n    }\r\n    else {\r\n      bVar3 = true;\r\n    }\r\n    iVar5 = iVar5 + -1;\r\n    if (iVar5 < 0) {\r\n      iVar5 = 0xff;\r\n    }\r\n    local_8 = local_8 + -1;\r\n  } while (0 < local_8);\r\n  return;\r\n}\r\n\r\n"
+  },
+  {
+   "requested": "0x005b3e60",
+   "exact_entry": true,
+   "name": "FUN_005b3e60",
+   "entry": "0x005b3e60",
+   "size": 500,
+   "signature": "undefined FUN_005b3e60(void)",
+   "callees": [
+    "FUN_005b4060@0x005b4060",
+    "FUN_005b4150@0x005b4150"
+   ],
+   "decomp": "\r\n/* [C2 2026-06-01] Channel-count converter (mono\u2194stereo) PCM transform. Format descriptors\r\n   [[U-6910]]. This is one of the converter-node\u2026 */\r\n\r\nundefined4 FUN_005b3e60(int param_1,int param_2,int param_3,int param_4,int param_5,int *param_6)\r\n\r\n{\r\n  byte *pbVar1;\r\n  char *pcVar2;\r\n  int iVar3;\r\n  byte bVar4;\r\n  int iVar5;\r\n  undefined4 uVar6;\r\n  uint uVar7;\r\n  uint uVar8;\r\n  undefined4 *puVar9;\r\n  undefined4 *puVar10;\r\n  int local_4;\r\n  \r\n  if (param_6 == (int *)0x0) {\r\n    param_6 = &local_4;\r\n  }\r\n  iVar5 = FUN_005b4150(param_1,param_3,param_4);\r\n  puVar10 = (undefined4 *)(param_2 + param_3);\r\n  *param_6 = iVar5;\r\n  uVar8 = *(int *)(param_1 + 8) - param_3;\r\n  uVar6 = FUN_005b4060(param_1,param_4);\r\n  bVar4 = *(byte *)(param_1 + 0xc);\r\n  uVar7 = uVar8 / (bVar4 >> 3);\r\n  if ((param_5 != 0) && (puVar9 = (undefined4 *)(param_5 + *param_6), puVar9 != (undefined4 *)0x0))\r\n  {\r\n    if ((*(char *)(param_1 + 0xd) == '\\x01') && (*(char *)(param_4 + 0xd) == '\\x02')) {\r\n      if (bVar4 == 8) {\r\n        uVar8 = 0;\r\n        if (uVar7 != 0) {\r\n          do {\r\n            *(undefined1 *)puVar9 = *(undefined1 *)(uVar8 + (int)puVar10);\r\n            *(undefined1 *)((int)puVar9 + 1) = *(undefined1 *)(uVar8 + (int)puVar10);\r\n            puVar9 = (undefined4 *)((int)puVar9 + 2);\r\n            uVar8 = uVar8 + 1;\r\n          } while (uVar8 < uVar7);\r\n          return uVar6;\r\n        }\r\n      }\r\n      else {\r\n        uVar8 = 0;\r\n        if (uVar7 != 0) {\r\n          do {\r\n            *(undefined2 *)puVar9 = *(undefined2 *)((int)puVar10 + uVar8 * 2);\r\n            *(undefined2 *)((int)puVar9 + 2) = *(undefined2 *)((int)puVar10 + uVar8 * 2);\r\n            puVar9 = puVar9 + 1;\r\n            uVar8 = uVar8 + 1;\r\n          } while (uVar8 < uVar7);\r\n          return uVar6;\r\n        }\r\n      }\r\n    }\r\n    else if ((*(char *)(param_1 + 0xd) == '\\x02') && (*(char *)(param_4 + 0xd) == '\\x01')) {\r\n      if (bVar4 == 8) {\r\n        if ((*(byte *)(param_1 + 0x18) & 1) == 0) {\r\n          uVar8 = 0;\r\n          if (uVar7 != 0) {\r\n            do {\r\n              pcVar2 = (char *)(uVar8 + (int)puVar10);\r\n              iVar5 = uVar8 + 1;\r\n              uVar8 = uVar8 + 2;\r\n              *(char *)puVar9 =\r\n                   (char)((int)(short)((short)*pcVar2 + (short)*(char *)(iVar5 + (int)puVar10)) / 2)\r\n              ;\r\n              puVar9 = (undefined4 *)((int)puVar9 + 1);\r\n            } while (uVar8 < uVar7);\r\n            return uVar6;\r\n          }\r\n        }\r\n        else {\r\n          uVar8 = 0;\r\n          if (uVar7 != 0) {\r\n            do {\r\n              pbVar1 = (byte *)(uVar8 + (int)puVar10);\r\n              iVar5 = uVar8 + 1;\r\n              uVar8 = uVar8 + 2;\r\n              *(char *)puVar9 = (char)((uint)*pbVar1 + (uint)*(byte *)(iVar5 + (int)puVar10) >> 1);\r\n              puVar9 = (undefined4 *)((int)puVar9 + 1);\r\n            } while (uVar8 < uVar7);\r\n            return uVar6;\r\n          }\r\n        }\r\n      }\r\n      else if ((*(byte *)(param_1 + 0x18) & 1) == 0) {\r\n        uVar8 = 0;\r\n        if (uVar7 != 0) {\r\n          do {\r\n            iVar5 = uVar8 * 2;\r\n            iVar3 = uVar8 * 2;\r\n            uVar8 = uVar8 + 2;\r\n            *(short *)puVar9 =\r\n                 (short)(((int)*(short *)((int)puVar10 + iVar5) +\r\n                         (int)*(short *)((int)puVar10 + iVar3 + 2)) / 2);\r\n            puVar9 = (undefined4 *)((int)puVar9 + 2);\r\n          } while (uVar8 < uVar7);\r\n          return uVar6;\r\n        }\r\n      }\r\n      else {\r\n        uVar8 = 0;\r\n        if (uVar7 != 0) {\r\n          do {\r\n            iVar5 = uVar8 * 2;\r\n            iVar3 = uVar8 * 2;\r\n            uVar8 = uVar8 + 2;\r\n            *(short *)puVar9 =\r\n                 (short)((uint)*(ushort *)((int)puVar10 + iVar5) +\r\n                         (uint)*(ushort *)((int)puVar10 + iVar3 + 2) >> 1);\r\n            puVar9 = (undefined4 *)((int)puVar9 + 2);\r\n          } while (uVar8 < uVar7);\r\n          return uVar6;\r\n        }\r\n      }\r\n    }\r\n    else {\r\n      for (uVar7 = uVar8 >> 2; uVar7 != 0; uVar7 = uVar7 - 1) {\r\n        *puVar9 = *puVar10;\r\n        puVar10 = puVar10 + 1;\r\n        puVar9 = puVar9 + 1;\r\n      }\r\n      for (uVar8 = uVar8 & 3; uVar8 != 0; uVar8 = uVar8 - 1) {\r\n        *(undefined1 *)puVar9 = *(undefined1 *)puVar10;\r\n        puVar10 = (undefined4 *)((int)puVar10 + 1);\r\n        puVar9 = (undefined4 *)((int)puVar9 + 1);\r\n      }\r\n    }\r\n  }\r\n  return uVar6;\r\n}\r\n\r\n"
+  },
+  {
+   "requested": "0x0048e180",
+   "exact_entry": true,
+   "name": "FUN_0048e180",
+   "entry": "0x0048e180",
+   "size": 434,
+   "signature": "undefined FUN_0048e180(void)",
+   "callees": [
+    "FUN_004769a0@0x004769a0",
+    "FUN_004769d0@0x004769d0",
+    "FUN_004769f0@0x004769f0",
+    "FUN_00476a30@0x00476a30",
+    "FUN_00476d00@0x00476d00",
+    "FUN_0048d0f0@0x0048d0f0",
+    "FUN_004a2c48@0x004a2c48"
+   ],
+   "decomp": "\r\n/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */\r\n/* [C1 2026-05-24] Signature (observed): `void FUN_0048e180(int param_1)` \u2014 one int arg (particle\r\n   record array base pointer).\r\n   // re/analysis/particle_promote_ac6/0x0048e180.md */\r\n\r\nvoid FUN_0048e180(int param_1)\r\n\r\n{\r\n  byte *pbVar1;\r\n  float *pfVar2;\r\n  byte bVar3;\r\n  undefined1 uVar4;\r\n  int iVar5;\r\n  uint uVar6;\r\n  undefined4 local_10;\r\n  float local_c;\r\n  float local_8;\r\n  float local_4;\r\n  \r\n  uVar6 = 0;\r\nLAB_0048e190:\r\n  local_8 = 0.04;\r\n  local_4 = 0.04;\r\n  do {\r\n    while( true ) {\r\n      if (0xff < (int)uVar6) {\r\n        return;\r\n      }\r\n      if ((&DAT_00722310)[(int)uVar6 >> 5] != 0) break;\r\n      uVar6 = (((int)uVar6 >> 5) + 1) * 0x20;\r\n    }\r\n    iVar5 = (int)uVar6 >> 3;\r\n    bVar3 = *(byte *)((int)&DAT_00722310 + iVar5);\r\n    if (bVar3 != 0) {\r\n      switch(uVar6 & 7) {\r\n      case 0:\r\n        uVar6 = uVar6 + 1;\r\n        if ((bVar3 & 1) != 0) goto LAB_0048e215;\r\n        break;\r\n      case 1:\r\n        break;\r\n      case 2:\r\n        goto switchD_0048e1dd_caseD_2;\r\n      case 3:\r\n        goto switchD_0048e1dd_caseD_3;\r\n      case 4:\r\n        goto switchD_0048e1dd_caseD_4;\r\n      case 5:\r\n        goto switchD_0048e1dd_caseD_5;\r\n      case 6:\r\n        goto switchD_0048e1dd_caseD_6;\r\n      case 7:\r\n        goto switchD_0048e1dd_caseD_7;\r\n      default:\r\n        goto switchD_0048e1dd_default;\r\n      }\r\n      uVar6 = uVar6 + 1;\r\n      if ((bVar3 & 2) != 0) break;\r\nswitchD_0048e1dd_caseD_2:\r\n      uVar6 = uVar6 + 1;\r\n      if ((bVar3 & 4) != 0) break;\r\nswitchD_0048e1dd_caseD_3:\r\n      uVar6 = uVar6 + 1;\r\n      if ((bVar3 & 8) != 0) break;\r\nswitchD_0048e1dd_caseD_4:\r\n      uVar6 = uVar6 + 1;\r\n      if ((bVar3 & 0x10) != 0) break;\r\nswitchD_0048e1dd_caseD_5:\r\n      uVar6 = uVar6 + 1;\r\n      if ((bVar3 & 0x20) != 0) break;\r\nswitchD_0048e1dd_caseD_6:\r\n      uVar6 = uVar6 + 1;\r\n      if ((bVar3 & 0x40) != 0) break;\r\nswitchD_0048e1dd_caseD_7:\r\n      uVar6 = uVar6 + 1;\r\n      if ((char)bVar3 < '\\0') break;\r\n    }\r\nswitchD_0048e1dd_default:\r\n    uVar6 = iVar5 * 8 + 8;\r\n  } while( true );\r\nLAB_0048e215:\r\n  if ((int)uVar6 < 0) {\r\n    return;\r\n  }\r\n  pfVar2 = (float *)(uVar6 * 0x40 + -0x40 + param_1);\r\n  iVar5 = FUN_0048d0f0();\r\n  if (iVar5 == 0) {\r\n    pbVar1 = (byte *)((int)&DAT_00722310 + ((int)(uVar6 - 1) >> 3));\r\n    *pbVar1 = *pbVar1 & ~('\\x01' << ((byte)(uVar6 - 1) & 7));\r\n  }\r\n  else {\r\n    local_c = (float)(uint)DAT_007221a0;\r\n    local_10 = pfVar2[8];\r\n    uVar4 = FUN_004a2c48();\r\n    local_10 = (float)CONCAT13(uVar4,(undefined3)local_10);\r\n    *pfVar2 = pfVar2[3] + *pfVar2;\r\n    pfVar2[1] = pfVar2[4] + pfVar2[1];\r\n    pfVar2[2] = pfVar2[5] + pfVar2[2];\r\n    local_8 = (pfVar2[0xc] + _DAT_005cc320) * _DAT_005cc55c * local_8;\r\n    local_4 = (pfVar2[0xc] + _DAT_005cc320) * _DAT_005cc55c * local_4;\r\n    pfVar2[3] = pfVar2[0xd] * pfVar2[3];\r\n    pfVar2[4] = pfVar2[0xd] * pfVar2[4];\r\n    pfVar2[5] = pfVar2[5] * pfVar2[0xd];\r\n    FUN_004769d0(&local_8);\r\n    FUN_004769a0(pfVar2);\r\n    FUN_004769f0(&local_10);\r\n    local_c = _DAT_007221a8 * pfVar2[10] + pfVar2[9];\r\n    pfVar2[9] = local_c;\r\n    FUN_00476a30(local_c);\r\n    FUN_00476d00(&DAT_007225f0);\r\n  }\r\n  goto LAB_0048e190;\r\n}\r\n\r\n"
+  },
+  {
+   "requested": "0x005b8be0",
+   "exact_entry": true,
+   "name": "FUN_005b8be0",
+   "entry": "0x005b8be0",
+   "size": 90,
+   "signature": "undefined FUN_005b8be0(void)",
+   "callees": [
+    "FUN_005aaa00@0x005aaa00",
+    "FUN_005b9460@0x005b9460"
+   ],
+   "decomp": "\r\n/* [C2 2026-06-02] If `*(byte*)(param_1+0x28) & 2` (flag bit 0x2 set), perform a doubly-linked-list\r\n   unlink using the pair of pointers at\u2026 */\r\n\r\nvoid FUN_005b8be0(int param_1,undefined4 param_2,undefined4 param_3)\r\n\r\n{\r\n  if ((*(byte *)(param_1 + 0x28) & 2) != 0) {\r\n    **(undefined4 **)(param_1 + 0x124) = *(undefined4 *)(param_1 + 0x120);\r\n    *(undefined4 *)(*(int *)(param_1 + 0x120) + 4) = *(undefined4 *)(param_1 + 0x124);\r\n  }\r\n  FUN_005b9460(param_1,0);\r\n  if ((*(byte *)(*(int *)(param_1 + 0x94) + 0x50) & 8) != 0) {\r\n    FUN_005aaa00(*(undefined4 *)(param_1 + 0x11c),param_2,param_3);\r\n  }\r\n  return;\r\n}\r\n\r\n"
+  }
+ ]
+}
