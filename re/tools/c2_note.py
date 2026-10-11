@@ -387,7 +387,7 @@ def stack_label(ins, op, st):
 
 
 # ---------------------------------------------------------------- the plate
-def note(ctx, va, subsystem=None, date=None):
+def note(ctx, va, subsystem=None, date=None, uid=None):
     f = ctx.fx.get(va)
     if f is None:
         return None
@@ -931,6 +931,8 @@ def note(ctx, va, subsystem=None, date=None):
         unc.append(f"- esp depth disagrees between incoming paths at {addr_list(conflict, 8)}.")
     if any(lo < va for lo, _ in ranges):
         unc.append("- a body range lies below the entry address.")
+    if unc and uid:
+        L.append(f"[UNCERTAIN {uid}] Every item below is filed under {uid} in `UNCERTAINTIES.md`.")
     L += unc or ["None found by the generator."]
     L.append("")
     L.append("## Stubs encountered")
@@ -987,6 +989,7 @@ def main():
     ap.add_argument("--flat", action="store_true", help="write <out-dir>/<rva>.md (no subsystem folder)")
     ap.add_argument("--tsv", help="rva, name, subsystem, note, callers, callees (for re-classify)")
     ap.add_argument("--date")
+    ap.add_argument("--uids", help="TSV rva<TAB>U-NNNN: the U-id each plate's Uncertainties are filed under")
     a = ap.parse_args()
     ctx = Ctx()
     vas = [int(x, 16) for x in a.addrs]
@@ -994,10 +997,16 @@ def main():
         vas += [int(l.split()[0], 16) for l in open(a.file, encoding="utf-8") if l.strip() and not l.startswith("#")]
     if a.c1:
         vas += sorted(v for v, r in ctx.hooks.items() if r["confidence"] == "C1")
+    uids = {}
+    if a.uids:
+        for l in open(a.uids, encoding="utf-8"):
+            if l.strip():
+                r_, u_ = l.split("\t")[:2]
+                uids[int(r_, 16)] = u_.strip()
     out = ["rva\tname\tsubsystem\tnote\tcallers\tcallees"]
     written = skipped = 0
     for va in vas:
-        res = note(ctx, va, date=a.date)
+        res = note(ctx, va, date=a.date, uid=uids.get(va))
         if res is None:
             print(f"{hexa(va)}: not a Ghidra function entry; skipped", file=sys.stderr)
             skipped += 1
