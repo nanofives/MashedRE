@@ -5006,6 +5006,11 @@ function runDiff() {
             return a;
         }
 
+        // freeze_main (negctl re-earn 2026-10-11): the running game rewrites VBUF between an arm's call and its
+        // fingerprint (5/11 CTRL-RED, real AND baseline RED). Suspend the first thread at a MASHED.exe safe point
+        // for the whole A/B run, release after the restore.
+        if (CONFIG.freeze_main) __freeze.thread();
+        try {
         for (let i = 0; i < CONFIG.tests.length; i++) {
             const t = CONFIG.tests[i];
             const args = packArgs(t);
@@ -5034,6 +5039,7 @@ function runDiff() {
         for (let k = 0; k < VLEN; k++) {
             try { VBUF.add(k).writeU8(savedBuf[k]); } catch (_) {}
         }
+        } finally { if (CONFIG.freeze_main) __freeze.flush(); }
         send({ type: 'results', data: results });
         return;
     }
@@ -6372,6 +6378,10 @@ function runDiff() {
                 const b = new Uint8Array(w.len); b.fill(fb); w.a.writeByteArray(b.buffer);
             });
         }
+        // freeze_main (negctl re-earn 2026-10-11): suspend the game's first thread at a MASHED.exe safe point for the
+        // whole run, for fixtures whose seeded globals the running game also reads or writes.
+        if (CONFIG.freeze_main) __freeze.thread();
+        try {
         for (let i = 0; i < CONFIG.tests.length; i++) {
             const t = CONFIG.tests[i];
             const args = (t && t.args) ? t.args : (Array.isArray(t) ? t : [t]);
@@ -6408,6 +6418,7 @@ function runDiff() {
                            match: (errO === null && errR === null && origV === reimV),
                            err_original: errO, err_reimpl: errR });
         }
+        } finally { if (CONFIG.freeze_main) __freeze.flush(); }
         send({ type: 'results', data: results });
         return;
     }

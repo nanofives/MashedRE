@@ -1,0 +1,6 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,"[100,255]",1932706692,0x7332c384,1932706692,0x7332c384,True,system error,system error
+1,"[13,128]",2593919264,0x9a9c1120,2593919264,0x9a9c1120,True,system error,system error
+2,"[0,0]",3260808564,0xc25bfd74,3260808564,0xc25bfd74,True,system error,system error
+3,"[240,64]",3419375244,0xcbcf868c,3419375244,0xcbcf868c,True,system error,system error
+4,"[-20,200]",295442084,0x119c16a4,295442084,0x119c16a4,True,system error,system error
