@@ -134,7 +134,7 @@ FUNCS = {
     },
     'rwp_mat2quat_y': {
         'rva': 0x00546C50, 'export': 'FUN_00546c50', 'kind': 'v_out_in', 'n_in': 11, 'n_out': 4,
-        'sources': ['Collision/RwpSolverMath2.cpp'], 'live_capture': False, 'degenerate_stubs': False,
+        'sources': ['Collision/RwpSolverMath2QuatY.cpp'], 'live_capture': False, 'degenerate_stubs': False,
         'record': True, 'rw_lut': True,
     },
     'rwp_mat2quat_z': {

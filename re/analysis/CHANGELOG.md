@@ -26,6 +26,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-11  00546c50  FUN_00546c50  C3->C3 (kept; U-9220 resolved)  user ruling: body split to Collision/RwpSolverMath2QuatY.cpp, /arch:IA32 via x87_tus.txt, in both .rsp lists (one body). Replay clause GREEN 1200 real race calls / 910 distinct at CW 0x007f, 0 jcc (coverage vacuous); --wrong-port control RED 1200/1200; shadow A/B CLEAN 48/48 A/B-IS-REAL (log/diff/00546c50_rwp_mat2quat_y.replay.csv, log/shadow_ab/shadow_ab_20261011_quaty_1x_00546c50.log)
 2026-10-11  00546c50  FUN_00546c50  C3->C3 (held; RED finding, decision owed U-9220)  Replay clause (re/CONFIDENCE.md, tools/replay-as-c3 a67a69f1): replay_c3 RED 243/1200 real race calls at live CW 0x007f; 1200/1200 at forced PC_53; GREEN 1200/1200 with RwpSolverMath2 /arch:IA32 (experiment). Contradicts the 48/48 shadow A/B; level left for Mariano (log/diff/00546c50_rwp_mat2quat_y.replay.csv)
 2026-10-11  004c3ac0  Vec3Magnitude  C4->C4 (re-verified)  Replay clause GREEN: 1500 real menu+race calls / 692 distinct, CW 0x007f, three-way + write set + stack equal, jcc sides 2/2 (log/diff/004c3ac0_vec3_magnitude.replay.csv)
 2026-10-11  004c3b30  FastSqrt  C4->C4 (re-verified)  Replay clause GREEN: 2400 real menu+race calls / 494 distinct, CW 0x007f, three-way + write set + stack equal, jcc sides 2/2 (log/diff/004c3b30_fast_sqrt.replay.csv)

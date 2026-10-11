@@ -27,7 +27,7 @@ The lane now carries C3 evidence under the **Replay clause** in `re/CONFIDENCE.m
 Results 2026-10-11 (`log/replay-c3/`): Vec3Magnitude and FastSqrt GREEN; FastInvSqrt,
 RwV3dNormalize, Vec2Normalize and Vec2Length equal on every call but HELD on coverage
 (the zero/degenerate early-outs never run live). **FUN_00546c50 RED 243/1200 at the live
-PC_24** and 1200/1200 equal at PC_53. Compiled `/arch:IA32` it is GREEN 1200/1200. The
+PC_24** and 1200/1200 equal at PC_53. Compiled `/arch:IA32` it is GREEN 1200/1200. Fixed by splitting it into `Collision/RwpSolverMath2QuatY.cpp` (in `x87_tus.txt`): GREEN 1200/1200 (U-9220 resolved). The
 B5e leaves (`0x00565ef0`, `0x00565fa0`, `0x00566830`, `0x00566200`) and the X/Z Shoemake
 branches never ran in this scenario, from the title through 20 s of race.
 
