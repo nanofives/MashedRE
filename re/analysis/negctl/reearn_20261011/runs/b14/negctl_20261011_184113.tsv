@@ -1,0 +1,64 @@
+hook	rva	arg_type	lane	mode	verdict	mismatches	total	stats	err
+audio_pool_block_alloc	0x005ae800	scalars_to_scattered_globals	warm	baseline	GREEN	0	5		
+audio_pool_block_alloc	0x005ae800	scalars_to_scattered_globals	warm	field_first	RED	5	5	calls=5 flips=5 changed=1 flip=0x0e2031f8 noise=172 frozen=2	
+audio_pool_block_alloc	0x005ae800	scalars_to_scattered_globals	warm	field_last	RED	4	5	calls=5 flips=5 changed=1 flip=0x0e20abd0 noise=175 frozen=2	
+audio_pool_block_alloc	0x005ae800	scalars_to_scattered_globals	warm	field_none	CTRL-RED	2	5	calls=5 flips=0 changed=1 flip=0x00000000 noise=172 frozen=2	
+audio_pool_block_alloc	0x005ae800	scalars_to_scattered_globals	warm	heap_extra	RED	2	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=175 frozen=2	
+audio_pool_block_alloc	0x005ae800	scalars_to_scattered_globals	warm	null	RED	5	5	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+audio_pool_block_alloc	0x005ae800	scalars_to_scattered_globals	warm	real	RED	2	5		
+audio_pool_block_alloc	0x005ae800	scalars_to_scattered_globals	warm	ret	RED	5	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+audio_pool_construct	0x005ae650	scalars_to_scattered_globals	warm	baseline	GREEN	0	3		
+audio_pool_construct	0x005ae650	scalars_to_scattered_globals	warm	field_first	RED	3	3	calls=3 flips=3 changed=42 flip=0x0dc483d8 noise=327670 frozen=2	
+audio_pool_construct	0x005ae650	scalars_to_scattered_globals	warm	field_last	RED	3	3	calls=3 flips=3 changed=42 flip=0x007dda85 noise=327670 frozen=2	
+audio_pool_construct	0x005ae650	scalars_to_scattered_globals	warm	field_none	CTRL-RED	3	3	calls=3 flips=0 changed=42 flip=0x00000000 noise=327525 frozen=2	
+audio_pool_construct	0x005ae650	scalars_to_scattered_globals	warm	heap_extra	RED	3	3	calls=3 flips=0 changed=0 flip=0x00000000 noise=327670 frozen=2	
+audio_pool_construct	0x005ae650	scalars_to_scattered_globals	warm	null	RED	3	3	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+audio_pool_construct	0x005ae650	scalars_to_scattered_globals	warm	real	RED	3	3		
+audio_pool_construct	0x005ae650	scalars_to_scattered_globals	warm	ret	RED	3	3	calls=3 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+audio_pool_destroy	0x005ae780	scalars_to_scattered_globals	warm	baseline	GREEN	0	7		
+audio_pool_destroy	0x005ae780	scalars_to_scattered_globals	warm	field_first	RED	6	7	calls=7 flips=6 changed=6 flip=0x0ed96238 noise=176 frozen=2	
+audio_pool_destroy	0x005ae780	scalars_to_scattered_globals	warm	field_last	RED	6	7	calls=7 flips=6 changed=6 flip=0x008a95a3 noise=187 frozen=2	
+audio_pool_destroy	0x005ae780	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	7	calls=7 flips=0 changed=6 flip=0x00000000 noise=176 frozen=2	
+audio_pool_destroy	0x005ae780	scalars_to_scattered_globals	warm	heap_extra	BLIND	0	7	calls=7 flips=0 changed=0 flip=0x00000000 noise=187 frozen=2	
+audio_pool_destroy	0x005ae780	scalars_to_scattered_globals	warm	null	RED	7	7	calls=0 flips=0 changed=0 flip=0x00000000 noise=175 frozen=2	
+audio_pool_destroy	0x005ae780	scalars_to_scattered_globals	warm	real	GREEN	0	7		
+audio_pool_destroy	0x005ae780	scalars_to_scattered_globals	warm	ret	SKIP	0	0		void signature
+audio_pool_free	0x005ae920	scalars_to_scattered_globals	warm	baseline	GREEN	0	5		
+audio_pool_free	0x005ae920	scalars_to_scattered_globals	warm	field_first	RED	5	5	calls=5 flips=4 changed=1 flip=0x04859a80 noise=327673 frozen=2	
+audio_pool_free	0x005ae920	scalars_to_scattered_globals	warm	field_last	RED	5	5	calls=5 flips=4 changed=1 flip=0x04888060 noise=327674 frozen=2	
+audio_pool_free	0x005ae920	scalars_to_scattered_globals	warm	field_none	CTRL-RED	2	5	calls=5 flips=0 changed=1 flip=0x00000000 noise=327671 frozen=2	
+audio_pool_free	0x005ae920	scalars_to_scattered_globals	warm	heap_extra	RED	2	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=327674 frozen=2	
+audio_pool_free	0x005ae920	scalars_to_scattered_globals	warm	null	RED	5	5	calls=0 flips=0 changed=0 flip=0x00000000 noise=327670 frozen=2	
+audio_pool_free	0x005ae920	scalars_to_scattered_globals	warm	real	RED	2	5		
+audio_pool_free	0x005ae920	scalars_to_scattered_globals	warm	ret	SKIP	0	0		void signature
+audio_sub_struct_a_free	0x005ae080	scalars_to_scattered_globals	warm	baseline	GREEN	0	7		
+audio_sub_struct_a_free	0x005ae080	scalars_to_scattered_globals	warm	field_first	RED	5	7	calls=7 flips=5 changed=2 flip=0x0d905958 noise=210 frozen=2	
+audio_sub_struct_a_free	0x005ae080	scalars_to_scattered_globals	warm	field_last	RED	5	7	calls=7 flips=5 changed=2 flip=0x0ed743f0 noise=210 frozen=2	
+audio_sub_struct_a_free	0x005ae080	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	7	calls=7 flips=0 changed=2 flip=0x00000000 noise=209 frozen=2	
+audio_sub_struct_a_free	0x005ae080	scalars_to_scattered_globals	warm	heap_extra	BLIND	0	7	calls=7 flips=0 changed=0 flip=0x00000000 noise=210 frozen=2	
+audio_sub_struct_a_free	0x005ae080	scalars_to_scattered_globals	warm	null	RED	7	7	calls=0 flips=0 changed=0 flip=0x00000000 noise=187 frozen=2	
+audio_sub_struct_a_free	0x005ae080	scalars_to_scattered_globals	warm	real	GREEN	0	7		
+audio_sub_struct_a_free	0x005ae080	scalars_to_scattered_globals	warm	ret	RED	7	7	calls=7 flips=0 changed=0 flip=0x00000000 noise=187 frozen=2	
+audio_sub_struct_b_free	0x005ae050	scalars_to_scattered_globals	warm	baseline	GREEN	0	6		
+audio_sub_struct_b_free	0x005ae050	scalars_to_scattered_globals	warm	field_first	RED	4	6	calls=6 flips=4 changed=5 flip=0x0dd4d358 noise=327677 frozen=2	
+audio_sub_struct_b_free	0x005ae050	scalars_to_scattered_globals	warm	field_last	RED	4	6	calls=6 flips=4 changed=5 flip=0x008a95a3 noise=327677 frozen=2	
+audio_sub_struct_b_free	0x005ae050	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	6	calls=6 flips=0 changed=5 flip=0x00000000 noise=327676 frozen=2	
+audio_sub_struct_b_free	0x005ae050	scalars_to_scattered_globals	warm	heap_extra	BLIND	0	6	calls=6 flips=0 changed=0 flip=0x00000000 noise=327677 frozen=2	
+audio_sub_struct_b_free	0x005ae050	scalars_to_scattered_globals	warm	null	RED	6	6	calls=0 flips=0 changed=0 flip=0x00000000 noise=327674 frozen=2	
+audio_sub_struct_b_free	0x005ae050	scalars_to_scattered_globals	warm	real	GREEN	0	6		
+audio_sub_struct_b_free	0x005ae050	scalars_to_scattered_globals	warm	ret	RED	6	6	calls=6 flips=0 changed=0 flip=0x00000000 noise=327674 frozen=2	
+audio_sub_struct_cleanup	0x005ae030	scalars_to_scattered_globals	warm	baseline	GREEN	0	6		
+audio_sub_struct_cleanup	0x005ae030	scalars_to_scattered_globals	warm	field_first	RED	5	6	calls=6 flips=5 changed=0 flip=0x0e213430 noise=221 frozen=2	
+audio_sub_struct_cleanup	0x005ae030	scalars_to_scattered_globals	warm	field_last	RED	5	6	calls=6 flips=5 changed=0 flip=0x0f0e9ff8 noise=221 frozen=2	
+audio_sub_struct_cleanup	0x005ae030	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	6	calls=6 flips=0 changed=0 flip=0x00000000 noise=219 frozen=2	
+audio_sub_struct_cleanup	0x005ae030	scalars_to_scattered_globals	warm	heap_extra	BLIND	0	6	calls=6 flips=0 changed=0 flip=0x00000000 noise=221 frozen=2	
+audio_sub_struct_cleanup	0x005ae030	scalars_to_scattered_globals	warm	null	RED	6	6	calls=0 flips=0 changed=0 flip=0x00000000 noise=210 frozen=2	
+audio_sub_struct_cleanup	0x005ae030	scalars_to_scattered_globals	warm	real	GREEN	0	6		
+audio_sub_struct_cleanup	0x005ae030	scalars_to_scattered_globals	warm	ret	RED	6	6	calls=6 flips=0 changed=0 flip=0x00000000 noise=210 frozen=2	
+delta_5c6b60	0x005c6b60	scalars_to_scattered_globals	warm	baseline	GREEN	0	8		
+delta_5c6b60	0x005c6b60	scalars_to_scattered_globals	warm	field_first	RED	8	8	calls=8 flips=8 changed=12 flip=0x048badc0 noise=327693 frozen=2	
+delta_5c6b60	0x005c6b60	scalars_to_scattered_globals	warm	field_last	RED	8	8	calls=8 flips=8 changed=12 flip=0x048a61f3 noise=327709 frozen=2	
+delta_5c6b60	0x005c6b60	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	8	calls=8 flips=0 changed=12 flip=0x00000000 noise=327693 frozen=2	
+delta_5c6b60	0x005c6b60	scalars_to_scattered_globals	warm	null	RED	8	8	calls=0 flips=0 changed=0 flip=0x00000000 noise=327677 frozen=2	
+delta_5c6b60	0x005c6b60	scalars_to_scattered_globals	warm	real	GREEN	0	8		
+delta_5c6b60	0x005c6b60	scalars_to_scattered_globals	warm	ret	RED	8	8	calls=8 flips=0 changed=0 flip=0x00000000 noise=327677 frozen=2	
