@@ -1,0 +1,12 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,"[{""scratch"":0}]",1393785817,0x53137bd9,1393785817,0x53137bd9,True,,
+1,"[{""scratch"":0}]",1656143109,0x62b6bd05,1656143109,0x62b6bd05,True,,
+2,"[{""scratch"":0}]",2430090696,0x90d83dc8,2430090696,0x90d83dc8,True,,
+3,"[{""scratch"":0}]",3887078072,0xe7b01ab8,3887078072,0xe7b01ab8,True,,
+4,"[{""scratch"":0}]",1842126056,0x6dcc9ce8,1842126056,0x6dcc9ce8,True,,
+5,"[{""scratch"":0}]",2758506650,0xa46b789a,2758506650,0xa46b789a,True,,
+6,"[{""scratch"":0}]",3235641604,0xc0dbf904,3235641604,0xc0dbf904,True,,
+7,"[{""scratch"":0}]",641132372,0x2636e754,641132372,0x2636e754,True,,
+8,"[{""scratch"":0}]",3850234308,0xe57de9c4,3850234308,0xe57de9c4,True,,
+9,"[{""scratch"":0}]",630891118,0x259aa26e,630891118,0x259aa26e,True,,
+10,"[{""scratch"":0}]",1576659496,0x5df9ea28,1576659496,0x5df9ea28,True,,

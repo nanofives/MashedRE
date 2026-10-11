@@ -1,0 +1,120 @@
+hook	rva	arg_type	lane	mode	verdict	mismatches	total	stats	err
+entity_field_set	0x0046dc00	entity_field_set	warm	baseline	GREEN	0	10		
+entity_field_set	0x0046dc00	entity_field_set	warm	field_first	RED	10	10	calls=10 flips=10 changed=4 flip=0x00883cb4 noise=264 frozen=2	
+entity_field_set	0x0046dc00	entity_field_set	warm	field_last	RED	10	10	calls=10 flips=10 changed=4 flip=0x00883cb7 noise=264 frozen=2	
+entity_field_set	0x0046dc00	entity_field_set	warm	field_none	CTRL-GREEN	0	10	calls=10 flips=0 changed=4 flip=0x00000000 noise=263 frozen=2	
+entity_field_set	0x0046dc00	entity_field_set	warm	null	RED	10	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=259 frozen=2	
+entity_field_set	0x0046dc00	entity_field_set	warm	real	GREEN	0	10		
+entity_field_set	0x0046dc00	entity_field_set	warm	ret	SKIP	0	0		void signature
+bounded_table_signclamp_46d7f0	0x0046d7f0	scalars_to_scattered_globals	warm	baseline	GREEN	0	10		
+bounded_table_signclamp_46d7f0	0x0046d7f0	scalars_to_scattered_globals	warm	field_first	RED	9	10	calls=10 flips=9 changed=2 flip=0x00882194 noise=231 frozen=2	
+bounded_table_signclamp_46d7f0	0x0046d7f0	scalars_to_scattered_globals	warm	field_last	RED	9	10	calls=10 flips=9 changed=2 flip=0x00882195 noise=231 frozen=2	
+bounded_table_signclamp_46d7f0	0x0046d7f0	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	10	calls=10 flips=0 changed=2 flip=0x00000000 noise=161 frozen=2	
+bounded_table_signclamp_46d7f0	0x0046d7f0	scalars_to_scattered_globals	warm	null	RED	9	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+bounded_table_signclamp_46d7f0	0x0046d7f0	scalars_to_scattered_globals	warm	real	GREEN	0	10		
+bounded_table_signclamp_46d7f0	0x0046d7f0	scalars_to_scattered_globals	warm	ret	RED	10	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+fps_discretise	0x00493480	scalars_to_scattered_globals	warm	baseline	GREEN	0	8		
+fps_discretise	0x00493480	scalars_to_scattered_globals	warm	field_first	RED	8	8	calls=8 flips=8 changed=15 flip=0x007719d4 noise=224 frozen=2	
+fps_discretise	0x00493480	scalars_to_scattered_globals	warm	field_last	RED	8	8	calls=8 flips=8 changed=15 flip=0x007f1013 noise=225 frozen=2	
+fps_discretise	0x00493480	scalars_to_scattered_globals	warm	field_none	CTRL-RED	1	8	calls=8 flips=0 changed=15 flip=0x00000000 noise=163 frozen=2	
+fps_discretise	0x00493480	scalars_to_scattered_globals	warm	import_extra	RED	1	8	calls=8 flips=0 changed=0 flip=0x00000000 noise=225 frozen=2	
+fps_discretise	0x00493480	scalars_to_scattered_globals	warm	null	RED	8	8	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+fps_discretise	0x00493480	scalars_to_scattered_globals	warm	real	RED	1	8		
+fps_discretise	0x00493480	scalars_to_scattered_globals	warm	ret	RED	8	8	calls=8 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+gradient_quad_horiz_alpha	0x00473540	scalars_to_scattered_globals	warm	baseline	GREEN	0	7		
+gradient_quad_horiz_alpha	0x00473540	scalars_to_scattered_globals	warm	field_first	RED	7	7	calls=7 flips=7 changed=34 flip=0x00898a28 noise=232 frozen=2	
+gradient_quad_horiz_alpha	0x00473540	scalars_to_scattered_globals	warm	field_last	RED	7	7	calls=7 flips=7 changed=34 flip=0x00898a87 noise=235 frozen=2	
+gradient_quad_horiz_alpha	0x00473540	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	7	calls=7 flips=0 changed=34 flip=0x00000000 noise=231 frozen=2	
+gradient_quad_horiz_alpha	0x00473540	scalars_to_scattered_globals	warm	null	RED	7	7	calls=0 flips=0 changed=0 flip=0x00000000 noise=231 frozen=2	
+gradient_quad_horiz_alpha	0x00473540	scalars_to_scattered_globals	warm	real	GREEN	0	7		
+gradient_quad_horiz_alpha	0x00473540	scalars_to_scattered_globals	warm	ret	SKIP	0	0		void signature
+launch_rev_release_46d780	0x0046d780	scalars_to_scattered_globals	warm	baseline	GREEN	0	8		
+launch_rev_release_46d780	0x0046d780	scalars_to_scattered_globals	warm	field_first	RED	5	8	calls=8 flips=5 changed=5 flip=0x008848a0 noise=251 frozen=2	
+launch_rev_release_46d780	0x0046d780	scalars_to_scattered_globals	warm	field_last	RED	5	8	calls=8 flips=5 changed=5 flip=0x00899965 noise=258 frozen=2	
+launch_rev_release_46d780	0x0046d780	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	8	calls=8 flips=0 changed=5 flip=0x00000000 noise=229 frozen=2	
+launch_rev_release_46d780	0x0046d780	scalars_to_scattered_globals	warm	null	RED	7	8	calls=0 flips=0 changed=0 flip=0x00000000 noise=225 frozen=2	
+launch_rev_release_46d780	0x0046d780	scalars_to_scattered_globals	warm	real	GREEN	0	8		
+launch_rev_release_46d780	0x0046d780	scalars_to_scattered_globals	warm	ret	RED	8	8	calls=8 flips=0 changed=0 flip=0x00000000 noise=225 frozen=2	
+particle_burst_4	0x00486610	scalars_to_scattered_globals	warm	baseline	GREEN	0	6		
+particle_burst_4	0x00486610	scalars_to_scattered_globals	warm	field_first	RED	4	6	calls=6 flips=4 changed=261 flip=0x006fe780 noise=236 frozen=2	
+particle_burst_4	0x00486610	scalars_to_scattered_globals	warm	field_last	RED	4	6	calls=6 flips=4 changed=261 flip=0x00703038 noise=237 frozen=2	
+particle_burst_4	0x00486610	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	6	calls=6 flips=0 changed=261 flip=0x00000000 noise=235 frozen=2	
+particle_burst_4	0x00486610	scalars_to_scattered_globals	warm	null	RED	4	6	calls=0 flips=0 changed=0 flip=0x00000000 noise=235 frozen=2	
+particle_burst_4	0x00486610	scalars_to_scattered_globals	warm	real	GREEN	0	6		
+particle_burst_4	0x00486610	scalars_to_scattered_globals	warm	ret	SKIP	0	0		void signature
+particle_emitter_set_position	0x004769a0	scalars_to_scattered_globals	warm	baseline	GREEN	0	4		
+particle_emitter_set_position	0x004769a0	scalars_to_scattered_globals	warm	field_first	RED	4	4	calls=4 flips=4 changed=12 flip=0x00692528 noise=260 frozen=2	
+particle_emitter_set_position	0x004769a0	scalars_to_scattered_globals	warm	field_last	RED	4	4	calls=4 flips=4 changed=12 flip=0x00692533 noise=264 frozen=2	
+particle_emitter_set_position	0x004769a0	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	4	calls=4 flips=0 changed=12 flip=0x00000000 noise=260 frozen=2	
+particle_emitter_set_position	0x004769a0	scalars_to_scattered_globals	warm	null	RED	4	4	calls=0 flips=0 changed=0 flip=0x00000000 noise=258 frozen=2	
+particle_emitter_set_position	0x004769a0	scalars_to_scattered_globals	warm	real	GREEN	0	4		
+particle_emitter_set_position	0x004769a0	scalars_to_scattered_globals	warm	ret	SKIP	0	0		void signature
+particle_emitter_set_rgba	0x00476a40	scalars_to_scattered_globals	warm	baseline	GREEN	0	4		
+particle_emitter_set_rgba	0x00476a40	scalars_to_scattered_globals	warm	field_first	RED	4	4	calls=4 flips=4 changed=16 flip=0x00692598 noise=258 frozen=2	
+particle_emitter_set_rgba	0x00476a40	scalars_to_scattered_globals	warm	field_last	RED	4	4	calls=4 flips=4 changed=16 flip=0x006925a7 noise=258 frozen=2	
+particle_emitter_set_rgba	0x00476a40	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	4	calls=4 flips=0 changed=16 flip=0x00000000 noise=238 frozen=2	
+particle_emitter_set_rgba	0x00476a40	scalars_to_scattered_globals	warm	null	RED	4	4	calls=0 flips=0 changed=0 flip=0x00000000 noise=237 frozen=2	
+particle_emitter_set_rgba	0x00476a40	scalars_to_scattered_globals	warm	real	GREEN	0	4		
+particle_emitter_set_rgba	0x00476a40	scalars_to_scattered_globals	warm	ret	SKIP	0	0		void signature
+text_gradient_v0v1_override	0x00472f40	scalars_to_scattered_globals	warm	baseline	GREEN	0	7		
+text_gradient_v0v1_override	0x00472f40	scalars_to_scattered_globals	warm	field_first	RED	7	7	calls=7 flips=7 changed=46 flip=0x00898a20 noise=265 frozen=2	
+text_gradient_v0v1_override	0x00472f40	scalars_to_scattered_globals	warm	field_last	RED	7	7	calls=7 flips=7 changed=46 flip=0x00898a83 noise=266 frozen=2	
+text_gradient_v0v1_override	0x00472f40	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	7	calls=7 flips=0 changed=46 flip=0x00000000 noise=265 frozen=2	
+text_gradient_v0v1_override	0x00472f40	scalars_to_scattered_globals	warm	null	RED	7	7	calls=0 flips=0 changed=0 flip=0x00000000 noise=264 frozen=2	
+text_gradient_v0v1_override	0x00472f40	scalars_to_scattered_globals	warm	real	GREEN	0	7		
+text_gradient_v0v1_override	0x00472f40	scalars_to_scattered_globals	warm	ret	SKIP	0	0		void signature
+timer_qpf_store	0x00495120	scalars_to_scattered_globals	warm	baseline	GREEN	0	10		
+timer_qpf_store	0x00495120	scalars_to_scattered_globals	warm	field_first	RED	10	10	calls=10 flips=10 changed=8 flip=0x00771e70 noise=258 frozen=2	
+timer_qpf_store	0x00495120	scalars_to_scattered_globals	warm	field_last	RED	10	10	calls=10 flips=10 changed=8 flip=0x00771e77 noise=259 frozen=2	
+timer_qpf_store	0x00495120	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	10	calls=10 flips=0 changed=8 flip=0x00000000 noise=258 frozen=2	
+timer_qpf_store	0x00495120	scalars_to_scattered_globals	warm	import_extra	BLIND	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=259 frozen=2	
+timer_qpf_store	0x00495120	scalars_to_scattered_globals	warm	null	RED	10	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=258 frozen=2	
+timer_qpf_store	0x00495120	scalars_to_scattered_globals	warm	real	GREEN	0	10		
+timer_qpf_store	0x00495120	scalars_to_scattered_globals	warm	ret	RED	10	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=258 frozen=2	
+vec3_is_valid_non_tiny	0x00472820	scalars_to_scattered_globals	warm	baseline	GREEN	0	11		
+vec3_is_valid_non_tiny	0x00472820	scalars_to_scattered_globals	warm	field_first	NA	0	11	calls=11 flips=0 changed=0 flip=0x00000000 noise=288 frozen=2	
+vec3_is_valid_non_tiny	0x00472820	scalars_to_scattered_globals	warm	field_last	NA	0	11	calls=11 flips=0 changed=0 flip=0x00000000 noise=288 frozen=2	
+vec3_is_valid_non_tiny	0x00472820	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	11	calls=11 flips=0 changed=0 flip=0x00000000 noise=267 frozen=2	
+vec3_is_valid_non_tiny	0x00472820	scalars_to_scattered_globals	warm	null	RED	5	11	calls=0 flips=0 changed=0 flip=0x00000000 noise=266 frozen=2	
+vec3_is_valid_non_tiny	0x00472820	scalars_to_scattered_globals	warm	real	GREEN	0	11		
+vec3_is_valid_non_tiny	0x00472820	scalars_to_scattered_globals	warm	ret	RED	11	11	calls=11 flips=0 changed=0 flip=0x00000000 noise=266 frozen=2	
+create_dinput_object	0x00495530	stub_dispatch_observe	warm	baseline	SKIP	0	0		real run errored
+create_dinput_object	0x00495530	stub_dispatch_observe	warm	field_first	SKIP	0	0		real run errored
+create_dinput_object	0x00495530	stub_dispatch_observe	warm	field_last	SKIP	0	0		real run errored
+create_dinput_object	0x00495530	stub_dispatch_observe	warm	field_none	SKIP	0	0		real run errored
+create_dinput_object	0x00495530	stub_dispatch_observe	warm	import_extra	SKIP	0	0		real run errored
+create_dinput_object	0x00495530	stub_dispatch_observe	warm	null	SKIP	0	0		real run errored
+create_dinput_object	0x00495530	stub_dispatch_observe	warm	real	ERROR	0	0		stub_at did NOT install at [object Object] — refusing to run, the REAL callee would execute
+create_dinput_object	0x00495530	stub_dispatch_observe	warm	ret	SKIP	0	0		real run errored
+create_dinput_object_bool	0x004955b0	stub_dispatch_observe	warm	baseline	SKIP	0	0		real run errored
+create_dinput_object_bool	0x004955b0	stub_dispatch_observe	warm	field_first	SKIP	0	0		real run errored
+create_dinput_object_bool	0x004955b0	stub_dispatch_observe	warm	field_last	SKIP	0	0		real run errored
+create_dinput_object_bool	0x004955b0	stub_dispatch_observe	warm	field_none	SKIP	0	0		real run errored
+create_dinput_object_bool	0x004955b0	stub_dispatch_observe	warm	import_extra	SKIP	0	0		real run errored
+create_dinput_object_bool	0x004955b0	stub_dispatch_observe	warm	null	SKIP	0	0		real run errored
+create_dinput_object_bool	0x004955b0	stub_dispatch_observe	warm	real	ERROR	0	0		stub_at did NOT install at [object Object] — refusing to run, the REAL callee would execute
+create_dinput_object_bool	0x004955b0	stub_dispatch_observe	warm	ret	SKIP	0	0		real run errored
+dinput_init_predicate	0x004955b0	stub_dispatch_observe	warm	baseline	SKIP	0	0		real run errored
+dinput_init_predicate	0x004955b0	stub_dispatch_observe	warm	field_first	SKIP	0	0		real run errored
+dinput_init_predicate	0x004955b0	stub_dispatch_observe	warm	field_last	SKIP	0	0		real run errored
+dinput_init_predicate	0x004955b0	stub_dispatch_observe	warm	field_none	SKIP	0	0		real run errored
+dinput_init_predicate	0x004955b0	stub_dispatch_observe	warm	import_extra	SKIP	0	0		real run errored
+dinput_init_predicate	0x004955b0	stub_dispatch_observe	warm	null	SKIP	0	0		real run errored
+dinput_init_predicate	0x004955b0	stub_dispatch_observe	warm	real	ERROR	0	0		stub_at did NOT install at [object Object] — refusing to run, the REAL callee would execute
+dinput_init_predicate	0x004955b0	stub_dispatch_observe	warm	ret	SKIP	0	0		real run errored
+launch_lang_gate	0x00493540	stub_dispatch_observe	warm	baseline	GREEN	0	3		
+launch_lang_gate	0x00493540	stub_dispatch_observe	warm	field_first	NA	0	3	calls=3 flips=0 changed=0 flip=0x00000000 noise=264 frozen=2	
+launch_lang_gate	0x00493540	stub_dispatch_observe	warm	field_last	NA	0	3	calls=3 flips=0 changed=0 flip=0x00000000 noise=264 frozen=2	
+launch_lang_gate	0x00493540	stub_dispatch_observe	warm	field_none	CTRL-GREEN	0	3	calls=3 flips=0 changed=0 flip=0x00000000 noise=264 frozen=2	
+launch_lang_gate	0x00493540	stub_dispatch_observe	warm	import_extra	BLIND	0	3	calls=3 flips=0 changed=0 flip=0x00000000 noise=264 frozen=2	
+launch_lang_gate	0x00493540	stub_dispatch_observe	warm	null	RED	3	3	calls=0 flips=0 changed=0 flip=0x00000000 noise=264 frozen=2	
+launch_lang_gate	0x00493540	stub_dispatch_observe	warm	real	GREEN	0	3		
+launch_lang_gate	0x00493540	stub_dispatch_observe	warm	ret	RED	3	3	calls=3 flips=0 changed=0 flip=0x00000000 noise=264 frozen=2	
+pool_703068_reset	0x00487140	stub_dispatch_observe	warm	baseline	GREEN	0	3		
+pool_703068_reset	0x00487140	stub_dispatch_observe	warm	field_first	NA	0	3	calls=3 flips=0 changed=0 flip=0x00000000 noise=291 frozen=2	
+pool_703068_reset	0x00487140	stub_dispatch_observe	warm	field_last	NA	0	3	calls=3 flips=0 changed=0 flip=0x00000000 noise=291 frozen=2	
+pool_703068_reset	0x00487140	stub_dispatch_observe	warm	field_none	CTRL-GREEN	0	3	calls=3 flips=0 changed=0 flip=0x00000000 noise=288 frozen=2	
+pool_703068_reset	0x00487140	stub_dispatch_observe	warm	heap_extra	BLIND	0	3	calls=3 flips=0 changed=0 flip=0x00000000 noise=291 frozen=2	
+pool_703068_reset	0x00487140	stub_dispatch_observe	warm	null	RED	3	3	calls=0 flips=0 changed=0 flip=0x00000000 noise=288 frozen=2	
+pool_703068_reset	0x00487140	stub_dispatch_observe	warm	real	GREEN	0	3		
+pool_703068_reset	0x00487140	stub_dispatch_observe	warm	ret	RED	3	3	calls=3 flips=0 changed=0 flip=0x00000000 noise=288 frozen=2	

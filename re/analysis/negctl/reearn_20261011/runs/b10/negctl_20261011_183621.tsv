@@ -1,0 +1,17 @@
+hook	rva	arg_type	lane	mode	verdict	mismatches	total	stats	err
+create_dinput_object_bool	0x004955b0	stub_dispatch_observe	warm	baseline	GREEN	0	7		
+create_dinput_object_bool	0x004955b0	stub_dispatch_observe	warm	field_first	NA	7	7	calls=7 flips=0 changed=0 flip=0x00000000 noise=163 frozen=2	
+create_dinput_object_bool	0x004955b0	stub_dispatch_observe	warm	field_last	NA	7	7	calls=7 flips=0 changed=0 flip=0x00000000 noise=163 frozen=2	
+create_dinput_object_bool	0x004955b0	stub_dispatch_observe	warm	field_none	CTRL-RED	7	7	calls=7 flips=0 changed=0 flip=0x00000000 noise=163 frozen=2	
+create_dinput_object_bool	0x004955b0	stub_dispatch_observe	warm	import_extra	RED	7	7	calls=7 flips=0 changed=0 flip=0x00000000 noise=163 frozen=2	
+create_dinput_object_bool	0x004955b0	stub_dispatch_observe	warm	null	RED	7	7	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+create_dinput_object_bool	0x004955b0	stub_dispatch_observe	warm	real	RED	7	7		
+create_dinput_object_bool	0x004955b0	stub_dispatch_observe	warm	ret	RED	7	7	calls=7 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+dinput_init_predicate	0x004955b0	stub_dispatch_observe	warm	baseline	GREEN	0	7		
+dinput_init_predicate	0x004955b0	stub_dispatch_observe	warm	field_first	NA	3	7	calls=7 flips=0 changed=0 flip=0x00000000 noise=186 frozen=2	
+dinput_init_predicate	0x004955b0	stub_dispatch_observe	warm	field_last	NA	3	7	calls=7 flips=0 changed=0 flip=0x00000000 noise=186 frozen=2	
+dinput_init_predicate	0x004955b0	stub_dispatch_observe	warm	field_none	CTRL-RED	3	7	calls=7 flips=0 changed=0 flip=0x00000000 noise=156 frozen=2	
+dinput_init_predicate	0x004955b0	stub_dispatch_observe	warm	import_extra	RED	3	7	calls=7 flips=0 changed=0 flip=0x00000000 noise=186 frozen=2	
+dinput_init_predicate	0x004955b0	stub_dispatch_observe	warm	null	RED	7	7	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+dinput_init_predicate	0x004955b0	stub_dispatch_observe	warm	real	RED	3	7		
+dinput_init_predicate	0x004955b0	stub_dispatch_observe	warm	ret	RED	7	7	calls=7 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
