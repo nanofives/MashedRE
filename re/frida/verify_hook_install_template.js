@@ -527,9 +527,16 @@ function runVerification() {
 
     let module;
     try {
-        Module.load(ASI_PATH);
-        module = Process.findModuleByName('mashed_re_dev.asi');
-        if (module === null) {
+        // Prefer the module Module.load returns (same as run_diff.py's agent).
+        // From a worktree, MASHED.exe's ASI loader has already autoloaded the
+        // MAIN checkout's original\mashed_re_dev.asi; findModuleByName then
+        // returns THAT copy, which lacks any export added on the worktree's
+        // branch ("export not found"). In the main checkout both resolve to the
+        // same module, so the main-side behaviour is unchanged.
+        const loaded = Module.load(ASI_PATH);
+        module = (loaded && loaded.findExportByName) ? loaded
+               : Process.findModuleByName('mashed_re_dev.asi');
+        if (module === null || module === undefined) {
             send({ type: 'error', msg: 'findModuleByName returned null after Module.load' });
             return;
         }
@@ -585,7 +592,8 @@ function runVerification() {
         onEnter: function () { reimplEntries++; }
     });
 
-    const Patched = new NativeFunction(TARGET_ADDR, CONFIG.signature.ret, CONFIG.signature.args, 'mscdecl');
+    const Patched = new NativeFunction(TARGET_ADDR, CONFIG.signature.ret, CONFIG.signature.args,
+                                       CONFIG.orig_calling_convention || 'mscdecl');
     const buf = (['vec3_ptr'].includes(CONFIG.arg_type)) ? Memory.alloc(12)  /* out3_idx retired */
               : (['int_with_out_ptr', 'idx_out2', 'int_ptr2_out'].includes(CONFIG.arg_type)) ? Memory.alloc(8)
               : (CONFIG.arg_type === 'time_diff_decompose') ? Memory.alloc(16)
