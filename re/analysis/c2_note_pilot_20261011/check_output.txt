@@ -1,0 +1,47 @@
+0x004496a0 FUN_004496a0: clean
+0x00449710 FUN_00449710: clean
+0x0044ca40 FUN_0044ca40: clean
+0x0045cc80 FUN_0045cc80: 3 missing
+    hex constant 0x3ff04
+    hand token 0x20
+    hand token 0x3ff04
+0x004714f0 FUN_004714f0: 1 missing
+    hex constant 0x21
+0x0047a750 FUN_0047a750: clean
+0x0047a9b0 FUN_0047a9b0: clean
+0x0047ad40 FUN_0047ad40: clean
+0x0047b250 FUN_0047b250: clean
+0x0047b500 FUN_0047b500: 6 missing
+    symbol address 0x0086ee28
+    symbol address 0x00871108
+    hex constant 0xd
+    hex constant 0x116
+    hex constant 0x117
+    hex constant 0x944
+0x0048e180 FUN_0048e180: 5 missing
+    hex constant 0xd
+    hex constant 0xff
+    hand token 0xd
+    hand token 0xff
+    hand token 0x48df60
+0x004917c0 FUN_004917c0: clean
+0x00491860 FUN_00491860: clean
+0x00491900 FUN_00491900: clean
+0x00491a10 FUN_00491a10: clean
+0x00491a70 FUN_00491a70: clean
+0x0050570a FUN_0050570a: 3 missing
+    hex constant 0xb
+    hex constant 0xe
+    hex constant 0xf
+0x0053ccc0 FUN_0053ccc0: clean
+0x00559ba0 FUN_00559ba0: clean
+0x0057f940 FUN_0057f940: clean
+0x005b3e60 FUN_005b3e60: clean
+0x005b8be0 FUN_005b8be0: 2 missing
+    hand token 0x5b8bf2
+    hand token 0x5b8c0a
+0x005be450 FUN_005be450: clean
+0x005ca2d0 __aullshr: 1 missing
+    hex constant 0x3f
+0x005ca500 Unwind@005ca500: clean
+lint: clean on 25 plates; 21 witness items missing in total
