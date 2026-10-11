@@ -1,0 +1,25 @@
+=== verify_hook_install report (com_cs94_field6c_nonzero) ===
+
+target address: 0x0049c900  export: ComCs94Field6cNonZero
+PRE  bytes:     56 57 8b f1 8d be 94 00
+asi base:       0x61060000
+reimpl addr:    0x6108de00
+POST bytes:     e9 fb 14 bf 60 be 94 00
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x60bf14fb  expected 0x60bf14fb  -> OK
+bytes changed:  True
+
+interceptor entries (reimpl):  2 / 2
+
+per-input results:
+  [OK] input={'seed': [{'buf': 0, 'off': 152, 'type': 'u32', 'value': 4294967295}, {'buf': 0, 'off': 108, 'type': 'u32', 'value': 0}]}  got=0  err=
+  [OK] input={'seed': [{'buf': 0, 'off': 152, 'type': 'u32', 'value': 4294967295}, {'buf': 0, 'off': 108, 'type': 'u32', 'value': 7}]}  got=1  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + first 8 bytes mutated by patcher
+  + reimpl interceptor fired 2x as expected
+  + all 2 calls returned without exception
+FAIL:
+  (none)

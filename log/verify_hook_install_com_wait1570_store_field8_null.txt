@@ -1,0 +1,24 @@
+=== verify_hook_install report (com_wait1570_store_field8_null) ===
+
+target address: 0x0049e140  export: _ComWait1570StoreField8@12
+PRE  bytes:     57 8b 7c 24 10 85 ff 75
+asi base:       0x61290000
+reimpl addr:    0x612bdef0
+POST bytes:     e9 ab fd e1 60 85 ff 75
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x60e1fdab  expected 0x60e1fdab  -> OK
+bytes changed:  True
+
+interceptor entries (reimpl):  1 / 1
+
+per-input results:
+  [OK] input={'seed': [{'buf': 0, 'off': 80, 'type': 'u32', 'value': 4369}, {'buf': 0, 'off': 8, 'type': 'u32', 'value': 2863267841}, {'buf': 1, 'off': 0, 'type': 'u32', 'value': 3452816845}], 'scalars': [4294967295, 0], 'stub_ret': 258}  got=2147500035  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + first 8 bytes mutated by patcher
+  + reimpl interceptor fired 1x as expected
+  + all 1 calls returned without exception
+FAIL:
+  (none)

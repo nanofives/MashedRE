@@ -1,0 +1,7 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,"{""seed"":[{""buf"":0,""off"":152,""type"":""u32"",""value"":4294967295},{""buf"":0,""off"":108,""type"":""u32"",""value"":0}]}",r=0|calls[0]=|bufs=b0+108:00000000,,r=0|calls[0]=|bufs=b0+108:00000000,,True,,
+1,"{""seed"":[{""buf"":0,""off"":152,""type"":""u32"",""value"":4294967295},{""buf"":0,""off"":108,""type"":""u32"",""value"":1}]}",r=1|calls[0]=|bufs=b0+108:01000000,,r=1|calls[0]=|bufs=b0+108:01000000,,True,,
+2,"{""seed"":[{""buf"":0,""off"":152,""type"":""u32"",""value"":4294967295},{""buf"":0,""off"":108,""type"":""u32"",""value"":7}]}",r=1|calls[0]=|bufs=b0+108:07000000,,r=1|calls[0]=|bufs=b0+108:07000000,,True,,
+3,"{""seed"":[{""buf"":0,""off"":152,""type"":""u32"",""value"":4294967295},{""buf"":0,""off"":108,""type"":""u32"",""value"":2147483648}]}",r=1|calls[0]=|bufs=b0+108:00000080,,r=1|calls[0]=|bufs=b0+108:00000080,,True,,
+4,"{""seed"":[{""buf"":0,""off"":152,""type"":""u32"",""value"":4294967295},{""buf"":0,""off"":108,""type"":""u32"",""value"":4294967295}]}",r=1|calls[0]=|bufs=b0+108:ffffffff,,r=1|calls[0]=|bufs=b0+108:ffffffff,,True,,
+5,"{""seed"":[{""buf"":0,""off"":152,""type"":""u32"",""value"":4294967295},{""buf"":0,""off"":108,""type"":""u32"",""value"":0}]}",r=0|calls[0]=|bufs=b0+108:00000000,,r=0|calls[0]=|bufs=b0+108:00000000,,True,,

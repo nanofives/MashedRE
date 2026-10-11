@@ -1,0 +1,24 @@
+=== verify_hook_install report (com_cb00_then_clear4_fields) ===
+
+target address: 0x0049ea70  export: ComCb00ThenClear4Fields
+PRE  bytes:     56 57 8b f1 e8 87 e0 ff
+asi base:       0x60f40000
+reimpl addr:    0x60f6ddb0
+POST bytes:     e9 3b f3 ac 60 87 e0 ff
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x60acf33b  expected 0x60acf33b  -> OK
+bytes changed:  True
+
+interceptor entries (reimpl):  1 / 1
+
+per-input results:
+  [OK] input={'seed': [{'buf': 0, 'off': 152, 'type': 'u32', 'value': 4294967295}, {'buf': 0, 'off': 108, 'type': 'u32', 'value': 2711683180}, {'buf': 0, 'off': 112, 'type': 'u32', 'value': 2711683184}, {'buf': 0, 'off': 116, 'type': 'u32', 'value': 2711683188}, {'buf': 0, 'off': 120, 'type': 'u32', 'value': 2711683192}, {'buf': 0, 'off': 180, 'type': 'u32', 'value': 2711683252}, {'buf': 0, 'off': 184, 'type': 'u32', 'value': 2711683256}, {'buf': 0, 'off': 188, 'type': 'u32', 'value': 2711683260}]}  got=0  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + first 8 bytes mutated by patcher
+  + reimpl interceptor fired 1x as expected
+  + all 1 calls returned without exception
+FAIL:
+  (none)

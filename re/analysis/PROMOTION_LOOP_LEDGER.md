@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 257
-- total_green: 438
+- rounds_run: 258
+- total_green: 443
 - dry_counter: 0
 - L-INST LANE OPENED (round 257, 2026-10-11, branch promo/l-inst): installer-caller clause
   candidates (re/CONFIDENCE.md). See "### L-INST" under Lane queues for queue, rules and
@@ -315,8 +315,8 @@ Rules for this lane (on top of /promote-round):
   library-skip, every L-INST particle C3 here must be reverted before merge.
 
 Queue (tier 1, first-party, pre-screen 2026-10-11 + own disassembly):
-- ready, no harness change: 0049c900, 0049ea70, 0049e140, 0049ef10, 0049f950, 0049e190,
-  0049e580
+- ready, no harness change: 0049e190, 0049e580 (r2 took 0049c900, 0049ea70, 0049e140,
+  0049ef10, 0049f950)
 - needs per-stub arity/abi/ret (wishlist G2): 0049c5d0, 0049cd70, 0049ce10, 0049e5c0,
   0049e600, 0049e640, 0049eab0, 004943d0, 0049c840, 0049ccd0, 0049e6c0
 - needs arg_layout interior offset (wishlist G4): 0049de60, 0049de70, 0049de80, 0049ccd0
@@ -332,8 +332,18 @@ Round rows:
   a per-side pointer (fixed in registry, re-run GREEN). Harness fix (13416eef):
   run_verify_hook honours orig_calling_convention and the worktree's own .asi.
   dry_counter 0.
+- r258 L-INST-2 (2026-10-11): attempted 5, GREEN 5 (0049c900, 0049ea70, 0049e140,
+  0049ef10, 0049f950) over 10 registry entries (_obj / _null splits keep per-side heap
+  pointers out of observed windows), path2 5/5 PASS. Harness fix (a5e0e9fd): verify
+  template's stub_at recorders honour stub_abi (a __stdcall 5-arg callee had AV'd path2).
+  dry_counter 0.
 
 ## Done (promoted to C3, with round + evidence)
+
+- **Round 258 L-INST-2 (2026-10-11) — five table-slot methods, installer-caller clause.**
+  `0x0049c900` ComCs94Field6cNonZero, `0x0049ea70` ComCb00ThenClear4Fields, `0x0049e140`
+  ComWait1570StoreField8, `0x0049ef10` ComCopyName30Ref34, `0x0049f950`
+  ComInfo1cRefCopyName8. `Particle/PromoLoop_linst2.cpp`, all GREEN non-degenerate, path2 PASS.
 
 - **Round 257 L-INST-1 (2026-10-11) — five vtable-slot methods, installer-caller clause.**
   `0x0049c750` ComInner50Vcall28, `0x0049c770` ComInner50Vcall70, `0x0049c810`
