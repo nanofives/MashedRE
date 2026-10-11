@@ -1,0 +1,8 @@
+hook	rva	arg_type	lane	mode	verdict	mismatches	total	stats	err
+menu_chrome_shell_a	0x0042e3a0	scalars_to_scattered_globals	warm	baseline	GREEN	0	4		
+menu_chrome_shell_a	0x0042e3a0	scalars_to_scattered_globals	warm	field_first	RED	4	4	calls=4 flips=4 changed=82 flip=0x0067ebc0 noise=155 frozen=2	
+menu_chrome_shell_a	0x0042e3a0	scalars_to_scattered_globals	warm	field_last	RED	4	4	calls=4 flips=4 changed=82 flip=0x00898a87 noise=162 frozen=2	
+menu_chrome_shell_a	0x0042e3a0	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	4	calls=4 flips=0 changed=82 flip=0x00000000 noise=155 frozen=2	
+menu_chrome_shell_a	0x0042e3a0	scalars_to_scattered_globals	warm	null	RED	4	4	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+menu_chrome_shell_a	0x0042e3a0	scalars_to_scattered_globals	warm	real	GREEN	0	4		
+menu_chrome_shell_a	0x0042e3a0	scalars_to_scattered_globals	warm	ret	SKIP	0	0		void signature

@@ -1,0 +1,9 @@
+hook	rva	arg_type	lane	mode	verdict	mismatches	total	stats	err
+loading_state2_enter	0x00409900	scalars_to_scattered_globals	warm	baseline	GREEN	0	3		
+loading_state2_enter	0x00409900	scalars_to_scattered_globals	warm	field_first	RED	3	3	calls=3 flips=3 changed=13 flip=0x007739f8 noise=228 frozen=2	
+loading_state2_enter	0x00409900	scalars_to_scattered_globals	warm	field_last	RED	3	3	calls=3 flips=3 changed=13 flip=0x008a95b3 noise=235 frozen=2	
+loading_state2_enter	0x00409900	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	3	calls=3 flips=0 changed=13 flip=0x00000000 noise=171 frozen=2	
+loading_state2_enter	0x00409900	scalars_to_scattered_globals	warm	import_extra	BLIND	0	3	calls=3 flips=0 changed=0 flip=0x00000000 noise=235 frozen=2	
+loading_state2_enter	0x00409900	scalars_to_scattered_globals	warm	null	RED	3	3	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+loading_state2_enter	0x00409900	scalars_to_scattered_globals	warm	real	GREEN	0	3		
+loading_state2_enter	0x00409900	scalars_to_scattered_globals	warm	ret	SKIP	0	0		void signature
