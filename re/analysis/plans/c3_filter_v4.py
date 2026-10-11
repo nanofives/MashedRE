@@ -63,6 +63,10 @@ import sys
 from pathlib import Path
 
 ROOT = Path(r"C:\Users\maria\Desktop\Proyectos\Mashed")
+# Tree this script lives in (== ROOT on the main checkout). The coverage census
+# scoreboard is read from here so a worktree branch ranks with its own
+# re/coverage/reach.tsv; every other input stays on ROOT.
+HERE = Path(__file__).resolve().parents[3]
 HOOKS = ROOT / "hooks.csv"
 UNCERT = ROOT / "UNCERTAINTIES.md"
 DIFF_TEMPLATE = ROOT / "re" / "frida" / "diff_template.js"
@@ -537,6 +541,12 @@ def main() -> int:
         default="c3_batch_k",
         help="output filename prefix (writes <prefix>_passed.tsv etc.)",
     )
+    ap.add_argument(
+        "--reached-only",
+        action="store_true",
+        help="drop candidates the coverage census never saw run (R=0 in "
+             "re/coverage/reach.tsv)",
+    )
     args = ap.parse_args()
     target_subs = {s.strip() for s in args.subsystems.split(",") if s.strip()}
 
@@ -553,6 +563,15 @@ def main() -> int:
     )
     print(f"  U-IDs with Blocks>=C3: {blocks_c3_count}")
     print(f"  supported arg_types:   {len(supported)}")
+    # Reach-weighted priority, R*((3-U)+(3-V)) from scripts/scoreboard.py
+    # (SimGolf's scoreboard): R = census phases the ORIGINAL hit the row in
+    # (re/frida/coverage_census.py -> re/coverage/reach.tsv). Ranking only;
+    # it never admits or rejects a row unless --reached-only is passed.
+    sys.path.insert(0, str(HERE / "scripts"))
+    import scoreboard  # noqa: E402
+    prio = scoreboard.priorities(HERE)
+    have_reach = any(r["reach"] != "?" for r in prio.values())
+    print(f"  reach.tsv loaded:      {have_reach}")
     print()
 
     candidates: list[dict] = []
@@ -582,12 +601,20 @@ def main() -> int:
         "signature_unsupported": 0,
         "live_state_side_effect": 0,
         "arg_type_unsupported": 0,
+        "unreached": 0,
     }
     passed: list[dict] = []
     rejected: list[tuple[dict, str]] = []
 
     for c in candidates:
         rva = c["rva"]
+        sb = prio.get(rva, {})
+        c["reach"] = sb.get("reach", "?")
+        c["reach_priority"] = sb.get("priority", 0)
+        if args.reached_only and have_reach and c["reach"] == 0:
+            elim["unreached"] += 1
+            rejected.append((c, "unreached (coverage census R=0)"))
+            continue
         body = read_note(ROOT / c["file"])
         if not body:
             elim["no_note"] += 1
@@ -645,7 +672,11 @@ def main() -> int:
     for k, v in elim.items():
         print(f"  {k:30s} {v:3d}")
     print()
+    # Highest reach-weighted priority first; ties keep RVA order.
+    passed.sort(key=lambda c: (-c["reach_priority"], c["rva"]))
     print(f"=== Passed all filters: {len(passed)} ===")
+    if have_reach:
+        print(f"  reached (R>0): {sum(1 for c in passed if c['reach'] not in ('?', 0))}")
     by_sub = {}
     for c in passed:
         by_sub[c["subsystem"]] = by_sub.get(c["subsystem"], 0) + 1
@@ -656,13 +687,15 @@ def main() -> int:
     out_passed = out_dir / f"{args.out_prefix}_passed.tsv"
     out_rejected = out_dir / f"{args.out_prefix}_rejected.tsv"
     with open(out_passed, "w", encoding="utf-8") as f:
-        f.write("rva\tname\tsubsystem\targ_type\tnote\tcallees\n")
+        f.write("rva\tname\tsubsystem\targ_type\tnote\tcallees"
+                "\treach\treach_priority\n")
         for c in passed:
             f.write(
                 "\t".join([
                     c["rva"], c["name"], c["subsystem"],
                     c.get("arg_type", ""), c["file"],
                     ",".join(c.get("callees", [])),
+                    str(c["reach"]), str(c["reach_priority"]),
                 ]) + "\n"
             )
     with open(out_rejected, "w", encoding="utf-8") as f:

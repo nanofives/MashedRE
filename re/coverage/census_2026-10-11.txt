@@ -1,0 +1,34 @@
+census: 5901 hooks.csv rows -> 5888 distinct entry VAs; exe=C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe
+  [run1] spawned MASHED.exe pid=22224 (suspended)
+  [run1] armed 5888 sites; resuming
+  [run1] menu at +4.3s; settling 20.0s
+  [run1] setup: track=0 mode=10 cars=4
+  [run1] re-armed 1640 sites + DAT_00771968=2
+  [run1] race running at +26.1s; re-armed 1984; holding 45.0s
+  [run1] stats {'armed': 4613, 'clobbered': 0, 'writeErr': 0, 'hits': [1640, 1984, 1275]}
+run 1: menu=1640  race_load=1984  race_run=1275
+  [run2] spawned MASHED.exe pid=6448 (suspended)
+  [run2] armed 5888 sites; resuming
+  [run2] menu at +3.9s; settling 20.0s
+  [run2] setup: track=0 mode=10 cars=4
+  [run2] re-armed 1640 sites + DAT_00771968=2
+  [run2] race running at +25.7s; re-armed 1871; holding 45.0s
+  [run2] stats {'armed': 4614, 'clobbered': 0, 'writeErr': 0, 'hits': [1640, 1871, 1274]}
+run 2: menu=1640  race_load=1871  race_run=1274
+  [run3] spawned MASHED.exe pid=12888 (suspended)
+  [run3] armed 5888 sites; resuming
+  [run3] menu at +3.8s; settling 20.0s
+  [run3] setup: track=0 mode=10 cars=4
+  [run3] re-armed 1640 sites + DAT_00771968=2
+  [run3] race running at +25.6s; re-armed 1917; holding 45.0s
+  [run3] stats {'armed': 4615, 'clobbered': 0, 'writeErr': 0, 'hits': [1640, 1917, 1273]}
+run 3: menu=1640  race_load=1917  race_run=1273
+
+run agreement (|union - intersection| / |union|):
+  menu       union= 1640  intersection= 1640  disagree=0.00%
+  race       union= 2302  intersection= 2301  disagree=0.04%
+  race_load  union= 1984  intersection= 1871  disagree=5.70%
+  race_run   union= 1278  intersection= 1271  disagree=0.55%
+  worst scenario disagreement 0.04% -> PASS (<= 1%)
+
+reached (majority of 3 runs): 3134/5888 entry VAs  -> C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\coverage-census\re\coverage\reach.tsv
