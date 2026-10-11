@@ -207,6 +207,7 @@
 "Gameplay\GameplayLeaves_ad3.cpp"
 "Particle\ParticleLeaves_ad4.cpp"
 "Particle\ParticleLeaves_ad5.cpp"
+"Particle\PromoLoop_linst1.cpp"
 "Frontend\MenuLeaves_af5.cpp"
 "Input\MemsetInline_ag1.cpp"
 "Vehicle\ReplayRewind_ag.cpp"

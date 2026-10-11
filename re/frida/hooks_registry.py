@@ -22359,3 +22359,223 @@ HOOKS['ttl_set_68b1b0_bounds'] = {
         {'seed': _pr_seed(), 'args': [25,         0x41200000]},
     ],
 }
+
+
+# ───────────────────────────────────────────────────────────────────────────
+# promote-round lane L-INST (installer-caller clause, re/CONFIDENCE.md), 2026-10-11.
+# Source: mashedmod/src/mashed_re/Particle/PromoLoop_linst*.cpp (ASI-only).
+# Every target is reached only through a vtable slot, so ECX = this is a
+# synthetic scratch object: b0 = this, b1 = its vtable, b2 = an inner object.
+# The dispatch under test is the fake-vtable slot holding the recorder (L27-style
+# dispatch exercise: observe_calls records what the slot received).
+# ───────────────────────────────────────────────────────────────────────────
+
+# Inner object for FUN_004a2310 (C2, runs for real on b2): it brackets its
+# writes with Enter/LeaveCriticalSection(b2+0x1c). A RTL_CRITICAL_SECTION with
+# LockCount (+4) = -1 and every other field 0 is an unowned section, so the
+# uncontended fast path runs and returns. +0x38..+0x48 get sentinels so the
+# callee's writes (+0x38..+0x44 = 0, +0x48 = 1) are visible in observe_bufs.
+def _linst_inner(sent):
+    return ([{'buf': 2, 'off': 0x20, 'type': 'u32', 'value': 0xffffffff}] +
+            [{'buf': 2, 'off': 0x38 + 4 * k, 'type': 'u32', 'value': sent + k}
+             for k in range(5)])
+
+
+def _linst_c750_seed(slot, with_inner, sent):
+    s = [{'buf': 0, 'off': 0, 'ptr_to': 1}, {'buf': 1, 'off': slot, 'stub': True}]
+    if with_inner:
+        s.append({'buf': 0, 'off': 0x50, 'ptr_to': 2})
+    return s + _linst_inner(sent)
+
+
+# 0x0049c750 ComInner50Vcall28: if (this+0x50) FUN_004a2310(ECX=this+0x50);
+# this->vtbl[+0x28](this, 1); return 0.
+# NON-DEGENERACY: inner present vs NULL flips whether b2+0x38..+0x48 is rewritten
+# (callee ran with ECX = this+0x50) or keeps its sentinels; the recorder must see
+# "b0+0,0x1" (thiscall this + the pushed 1) on every vector; per-test stub_ret
+# checks the return is the constant 0 and not the slot's passthrough.
+HOOKS['com_inner50_vcall28'] = {
+    'rva':        0x0049c750,
+    'export':     'ComInner50Vcall28',
+    'signature':  {'ret': 'int32', 'args': ['pointer']},
+    'arg_type':   'stub_dispatch_observe',
+    'orig_calling_convention':   'fastcall',
+    'reimpl_calling_convention': 'fastcall',
+    'lut_root_delta': 0,
+    'num_bufs':   3,
+    'buf_size':   0x80,
+    'arg_layout': [{'buf': 0}],
+    'stub_nargs': 2,
+    'stub_abi':   'thiscall',
+    'observe_ret':   True,
+    'observe_calls': True,
+    'observe_bufs':  [{'buf': 2, 'off': 0x38, 'len': 0x14}],
+    'path1_tests': [
+        {'seed': _linst_c750_seed(0x28, True,  0xa1a10000), 'stub_ret': 0x11111111},
+        {'seed': _linst_c750_seed(0x28, False, 0xa1a10000), 'stub_ret': 0x11111111},
+        {'seed': _linst_c750_seed(0x28, True,  0x5eed0000), 'stub_ret': 0},
+        {'seed': _linst_c750_seed(0x28, False, 0x5eed0000), 'stub_ret': 0x7fffffff},
+        {'seed': _linst_c750_seed(0x28, True,  0x00000001), 'stub_ret': 0x22222222},
+        {'seed': _linst_c750_seed(0x28, False, 0xfffffff0), 'stub_ret': 1},
+    ],
+    'path2_tests': [
+        {'seed': _linst_c750_seed(0x28, True,  0xa1a10000), 'stub_ret': 0x11111111},
+        {'seed': _linst_c750_seed(0x28, False, 0x5eed0000), 'stub_ret': 0x7fffffff},
+    ],
+}
+
+# 0x0049c770 ComInner50Vcall70: same as 0x0049c750 with slot +0x70, no pushed arg.
+HOOKS['com_inner50_vcall70'] = dict(HOOKS['com_inner50_vcall28'], **{
+    'rva':        0x0049c770,
+    'export':     'ComInner50Vcall70',
+    'stub_nargs': 1,
+    'path1_tests': [
+        {'seed': _linst_c750_seed(0x70, True,  0xa1a10000), 'stub_ret': 0x11111111},
+        {'seed': _linst_c750_seed(0x70, False, 0xa1a10000), 'stub_ret': 0x11111111},
+        {'seed': _linst_c750_seed(0x70, True,  0x5eed0000), 'stub_ret': 0},
+        {'seed': _linst_c750_seed(0x70, False, 0x5eed0000), 'stub_ret': 0x7fffffff},
+        {'seed': _linst_c750_seed(0x70, True,  0x00000001), 'stub_ret': 0x22222222},
+        {'seed': _linst_c750_seed(0x70, False, 0xfffffff0), 'stub_ret': 1},
+    ],
+    'path2_tests': [
+        {'seed': _linst_c750_seed(0x70, True,  0xa1a10000), 'stub_ret': 0x11111111},
+        {'seed': _linst_c750_seed(0x70, False, 0x5eed0000), 'stub_ret': 0x7fffffff},
+    ],
+})
+
+
+# 0x0049c810 ComSlot68DispatchReset: v = this+0x68; if v: obj = this+0x18,
+# obj->vtbl[+0x18](obj, v) (__stdcall), this+0x68 = 0 (0x0049c800);
+# ResetEvent(this+0x54); return v == 0.
+# b0 = this, b2 = obj, b1 = obj's vtable. this+0x54 stays 0: ResetEvent(NULL)
+# fails with ERROR_INVALID_HANDLE and touches nothing, on both sides.
+# NON-DEGENERACY: v = 0 returns 1 with no dispatch and +0x68 untouched; v != 0
+# returns 0, the recorder must see "b2+0,<v>", and +0x68 must read 0 afterwards.
+def _linst_c810_seed(v):
+    return [{'buf': 0, 'off': 0x68, 'type': 'u32', 'value': v},
+            {'buf': 0, 'off': 0x18, 'ptr_to': 2},
+            {'buf': 2, 'off': 0, 'ptr_to': 1},
+            {'buf': 1, 'off': 0x18, 'stub': True}]
+
+
+HOOKS['com_slot68_dispatch_reset'] = {
+    'rva':        0x0049c810,
+    'export':     'ComSlot68DispatchReset',
+    'signature':  {'ret': 'int32', 'args': ['pointer']},
+    'arg_type':   'stub_dispatch_observe',
+    'orig_calling_convention':   'fastcall',
+    'reimpl_calling_convention': 'fastcall',
+    'lut_root_delta': 0,
+    'num_bufs':   3,
+    'buf_size':   0x80,
+    'arg_layout': [{'buf': 0}],
+    'stub_nargs': 2,
+    'stub_abi':   'stdcall',
+    'observe_ret':   True,
+    'observe_calls': True,
+    'observe_bufs':  [{'buf': 0, 'off': 0x68, 'len': 4}],
+    'path1_tests': [
+        {'seed': _linst_c810_seed(0),          'stub_ret': 0x11111111},
+        {'seed': _linst_c810_seed(5),          'stub_ret': 0x11111111},
+        {'seed': _linst_c810_seed(0xdeadbeef), 'stub_ret': 0},
+        {'seed': _linst_c810_seed(1),          'stub_ret': 0x7fffffff},
+        {'seed': _linst_c810_seed(0x80000000), 'stub_ret': 1},
+        {'seed': _linst_c810_seed(0),          'stub_ret': 0x22222222},
+    ],
+    'path2_tests': [
+        {'seed': _linst_c810_seed(0),          'stub_ret': 0x11111111},
+        {'seed': _linst_c810_seed(0xdeadbeef), 'stub_ret': 0},
+    ],
+}
+
+
+# 0x0049ceb0 ComInnerD8Vcall8cThen9fc80: inner = this+0xd8;
+# r = inner->vtbl[+0x8c]() (ECX = inner); r < 0 -> return r; else tail-call
+# FUN_0049fc80(ECX = this) (C2, runs for real) and return its EAX.
+# b0 = this, b2 = inner, b1 = inner's vtable. this+0x9c = 0, so FUN_0049fc80
+# takes its first exit (0x0049fc8b je -> xor eax,eax) and returns 0. Its
+# this+0x9c != 0 arm needs per-stub arity (stdcall vs thiscall recorders) and is
+# not exercised here.
+# NON-DEGENERACY: per-test stub_ret across the sign boundary: negative values
+# must pass straight out, non-negative values must be replaced by FUN_0049fc80's
+# 0. observe_calls shows the slot was called with ECX = b2+0 (inner, not this).
+def _linst_ceb0_seed():
+    return [{'buf': 0, 'off': 0xd8, 'ptr_to': 2},
+            {'buf': 2, 'off': 0, 'ptr_to': 1},
+            {'buf': 1, 'off': 0x8c, 'stub': True}]
+
+
+HOOKS['com_innerd8_vcall8c_then_9fc80'] = {
+    'rva':        0x0049ceb0,
+    'export':     'ComInnerD8Vcall8cThen9fc80',
+    'signature':  {'ret': 'int32', 'args': ['pointer']},
+    'arg_type':   'stub_dispatch_observe',
+    'orig_calling_convention':   'fastcall',
+    'reimpl_calling_convention': 'fastcall',
+    'lut_root_delta': 0,
+    'num_bufs':   3,
+    'buf_size':   0x100,
+    'arg_layout': [{'buf': 0}],
+    'stub_nargs': 1,
+    'stub_abi':   'thiscall',
+    'observe_ret':   True,
+    'observe_calls': True,
+    'path1_tests': [
+        {'seed': _linst_ceb0_seed(), 'stub_ret': -1},
+        {'seed': _linst_ceb0_seed(), 'stub_ret': 0},
+        {'seed': _linst_ceb0_seed(), 'stub_ret': 1},
+        {'seed': _linst_ceb0_seed(), 'stub_ret': -0x7fffbffb},   # 0x80004005
+        {'seed': _linst_ceb0_seed(), 'stub_ret': 0x7fffffff},
+        {'seed': _linst_ceb0_seed(), 'stub_ret': -0x80000000},
+    ],
+    'path2_tests': [
+        {'seed': _linst_ceb0_seed(), 'stub_ret': -1},
+        {'seed': _linst_ceb0_seed(), 'stub_ret': 1},
+    ],
+}
+
+
+# 0x0049f2e0 ComObj8Vcall10StoreC (__stdcall, ret 4): p+4 = 0;
+# r = (p+8)->vtbl[+0x10]() (ECX = obj); p+0xc = r; return 0.
+# b0 = p, b2 = obj, b1 = obj's vtable. L27 row: the dispatch at 0x0049f2f1 is
+# the recorder.
+# NON-DEGENERACY: +4 and +0xc carry sentinels, so the zeroing of +4 and the store
+# of the per-test stub_ret into +0xc are each visible. The return stays 0.
+def _linst_f2e0_seed(sent):
+    return [{'buf': 0, 'off': 8, 'ptr_to': 2},
+            {'buf': 2, 'off': 0, 'ptr_to': 1},
+            {'buf': 1, 'off': 0x10, 'stub': True},
+            {'buf': 0, 'off': 4, 'type': 'u32', 'value': sent},
+            {'buf': 0, 'off': 0xc, 'type': 'u32', 'value': sent ^ 0xffffffff}]
+
+
+HOOKS['com_obj8_vcall10_store_c'] = {
+    'rva':        0x0049f2e0,
+    'export':     '_ComObj8Vcall10StoreC@4',
+    'signature':  {'ret': 'int32', 'args': ['pointer']},
+    'arg_type':   'stub_dispatch_observe',
+    'orig_calling_convention':   'stdcall',
+    'reimpl_calling_convention': 'stdcall',
+    'lut_root_delta': 0,
+    'num_bufs':   3,
+    'buf_size':   0x40,
+    'arg_layout': [{'buf': 0}],
+    'stub_nargs': 1,
+    'stub_abi':   'thiscall',
+    'observe_ret':   True,
+    'observe_calls': True,
+    # +8 holds the per-side pointer to b2, so +4 and +0xc are observed separately.
+    'observe_bufs':  [{'buf': 0, 'off': 4, 'len': 4}, {'buf': 0, 'off': 0xc, 'len': 4}],
+    'path1_tests': [
+        {'seed': _linst_f2e0_seed(0xa1a1a1a1), 'stub_ret': 0x11111111},
+        {'seed': _linst_f2e0_seed(0x5eed5eed), 'stub_ret': 0},
+        {'seed': _linst_f2e0_seed(0x00000001), 'stub_ret': -1},
+        {'seed': _linst_f2e0_seed(0xfffffff0), 'stub_ret': 0x7fffffff},
+        {'seed': _linst_f2e0_seed(0x12345678), 'stub_ret': 0x22222222},
+        {'seed': _linst_f2e0_seed(0x00000000), 'stub_ret': -0x80000000},
+    ],
+    'path2_tests': [
+        {'seed': _linst_f2e0_seed(0xa1a1a1a1), 'stub_ret': 0x11111111},
+        {'seed': _linst_f2e0_seed(0x00000001), 'stub_ret': -1},
+    ],
+}
