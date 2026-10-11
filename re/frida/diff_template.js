@@ -6294,7 +6294,7 @@ function runDiff() {
     // (`CONFIG.idx_arrays`:{base,stride,elem_len}) under a live index cursor
     // (`CONFIG.idx_call_str`); fingerprints with FNV-1a; optionally pre-fills windows, runs a prep
     // call, or folds the return value. CONFIG: `observe`, `idx_arrays`, `idx_call_str`,
-    // `fold_ret`, `prep_call_str`, `pre_fill_byte`.
+    // `fold_ret`, `prep_call_str`, `pre_fill_byte`; per-test `seed` [{addr,val,size}] (negctl re-earn 2026-10-11).
     if (CONFIG.arg_type === 'scalars_to_scattered_globals') {
         const observe   = CONFIG.observe || [];
         const idxArrays = CONFIG.idx_arrays || [];
@@ -6314,11 +6314,29 @@ function runDiff() {
         // without this the writer finds no free slot and is a constant no-op.
         const preFillByte = (CONFIG.pre_fill_byte !== undefined && CONFIG.pre_fill_byte !== null)
             ? (CONFIG.pre_fill_byte & 0xff) : null;
+        // `scratch_size` (negctl re-earn 2026-10-11): one harness buffer, re-filled with `scratch_fill` (default 0)
+        // before each arm. An address or seed value written {scratch: off} resolves to scratch+off, so a fixture
+        // can point a game global at a record it controls. Observe windows may name {scratch: off} too.
+        const scratchSize = CONFIG.scratch_size | 0;
+        const scratch = scratchSize > 0 ? Memory.alloc(scratchSize) : null;
+        const scratchFill = (CONFIG.scratch_fill | 0) & 0xff;
+        function resolveAddr(x) {
+            if (x !== null && typeof x === 'object' && x.scratch !== undefined) return scratch.add(x.scratch | 0);
+            return ptr(x);
+        }
+        function resolveVal(x) {
+            if (x !== null && typeof x === 'object' && x.scratch !== undefined) return scratch.add(x.scratch | 0).toUInt32();
+            return x;
+        }
+        function fillScratch() {
+            if (!scratch) return;
+            const z = new Uint8Array(scratchSize); z.fill(scratchFill); scratch.writeByteArray(z.buffer);
+        }
         function curIdx() { return idxCall ? (idxCall() | 0) : 0; }
         function windows() {
             // len defaults to 4 (one dword). Nine C3 entries list `{addr}` alone; with `w.len | 0` they observed ZERO
             // bytes, the fingerprint was a constant, and a port doing nothing read GREEN (negctl null, 2026-10-11).
-            const ws = observe.map(function(w) { return { a: ptr(w.addr), len: (w.len === undefined || w.len === null) ? 4 : (w.len | 0), fill: w.fill }; });
+            const ws = observe.map(function(w) { return { a: resolveAddr(w.addr), len: (w.len === undefined || w.len === null) ? 4 : (w.len | 0), fill: w.fill }; });
             const idx = curIdx();
             idxArrays.forEach(function(ar) {
                 ws.push({ a: ptr(ar.base).add(idx * (ar.stride | 0)), len: ar.elem_len | 0 });
@@ -6336,7 +6354,11 @@ function runDiff() {
                 for (let j = 0; j < ba.length; j++) { fp = Math.imul(fp ^ ba[j], 0x01000193); }
             });
             if (foldRet && ret !== null && ret !== undefined) {
-                const r = ret >>> 0;
+                // float/double returns fold their f32 bit pattern (`ret>>>0` truncated them to an int).
+                let r;
+                if (CONFIG.signature.ret === 'float' || CONFIG.signature.ret === 'double') {
+                    const fb = new DataView(new ArrayBuffer(4)); fb.setFloat32(0, ret, true); r = fb.getUint32(0, true);
+                } else { r = ret >>> 0; }
                 for (let b = 0; b < 4; b++) fp = Math.imul(fp ^ ((r >>> (b * 8)) & 0xff), 0x01000193);
             }
             return fp >>> 0;
@@ -6356,14 +6378,32 @@ function runDiff() {
             // Trim to the declared arity: the zero-arg entries carry a placeholder test `0`, which current Frida
             // rejects with "bad argument count" on BOTH arms (10 C3 rows read RED/RED, negctl 2026-10-11). A cdecl
             // caller cleans its own stack, so the placeholder never reached the target anyway.
-            const a = args.slice(0, CONFIG.signature.args.length).map(function(v) { return v >>> 0; });
+            const a = args.slice(0, CONFIG.signature.args.length).map(function(v, ai) {
+                const r = resolveVal(v) >>> 0;
+                return CONFIG.signature.args[ai] === 'pointer' ? ptr(r) : r;
+            });
             const prepArgs = (t && t.prep_args) ? t.prep_args.map(function(v) { return v >>> 0; }) : null;
+            // Per-test `seed`: [{addr, val, size=4}] written before EACH arm (after the fill), saved and restored
+            // with the observe windows. Re-earn fixtures (negctl 2026-10-11) use it to drive a zero-arg or scalar
+            // body past its early-outs, so its return / writes are non-trivial on at least one side.
+            fillScratch();
+            const seeds = (t && t.seed) ? t.seed.map(function(g) { return { a: resolveAddr(g.addr), v: resolveVal(g.val), n: (g.size | 0) || 4 }; }) : [];
+            const seedSaved = seeds.map(function(g) { return g.a.readByteArray(g.n); });
+            function applySeeds() {
+                seeds.forEach(function(g) {
+                    if (g.n === 1) g.a.writeU8(g.v & 0xff);
+                    else if (g.n === 2) g.a.writeU16(g.v & 0xffff);
+                    else g.a.writeU32(g.v >>> 0);
+                });
+            }
+            function restoreSeeds() { seeds.forEach(function(g, ix) { g.a.writeByteArray(seedSaved[ix]); }); }
             let origV = null, reimV = null, errO = null, errR = null;
             const saved = saveW();
-            try { if (hasFill) fillW(preFillByte); if (prepFn && prepArgs) prepFn.apply(null, prepArgs); const r = Orig.apply(null, a); origV = snapFp(r); } catch (e) { errO = e.message; }
-            restoreW(saved);
-            try { if (hasFill) fillW(preFillByte); if (prepFn && prepArgs) prepFn.apply(null, prepArgs); const r = Reimpl.apply(null, a); reimV = snapFp(r); } catch (e) { errR = e.message; }
-            restoreW(saved);
+            try { if (hasFill) fillW(preFillByte); applySeeds(); if (prepFn && prepArgs) prepFn.apply(null, prepArgs); const r = Orig.apply(null, a); origV = snapFp(r); } catch (e) { errO = e.message; }
+            restoreW(saved); restoreSeeds();
+            fillScratch();
+            try { if (hasFill) fillW(preFillByte); applySeeds(); if (prepFn && prepArgs) prepFn.apply(null, prepArgs); const r = Reimpl.apply(null, a); reimV = snapFp(r); } catch (e) { errR = e.message; }
+            restoreW(saved); restoreSeeds();
             results.push({ idx: i, input: JSON.stringify(args), original: origV, reimpl: reimV,
                            match: (errO === null && errR === null && origV === reimV),
                            err_original: errO, err_reimpl: errR });

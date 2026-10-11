@@ -17058,7 +17058,7 @@ HOOKS = {
     # ---- promote-round round 79 (frontier-tool validation batch: 3 display-independent leaves) --
     # surfaced by scripts/promote_frontier.py + scripts/promote_classify.py; diffed via early_window_leaf_diff.py
     'get_771e78': {'rva': 0x00495520, 'export': 'Get771e78', 'signature': {'ret': 'uint32', 'args': []}, 'arg_type': 'read_global', 'target_global': 0x00771e78, 'lut_root_delta': 0, 'path1_tests': [0, 0xDEADBEEF, 0xCAFEF00D, 0x12345678, 0xFFFFFFFF, 0x80000000, 1, 0x55555555, 0xAAAAAAAA, 0], 'path2_tests': [0, 0xDEADBEEF, 0x12345678]},
-    'clear_4842b0': {'rva': 0x004842b0, 'export': 'Clear4842b0', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'scalars_to_scattered_globals', 'observe': [{'addr': 0x006cfc88}, {'addr': 0x006cf068}, {'addr': 0x006cf06c}, {'addr': 0x006cfc8c}], 'lut_root_delta': 0, 'path1_tests': [0, 0, 0, 0, 0], 'path2_tests': [0, 0]},
+    'clear_4842b0': {'rva': 0x004842b0, 'export': 'Clear4842b0', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'scalars_to_scattered_globals', 'observe': [{'addr': 0x006cfc88}, {'addr': 0x006cf068}, {'addr': 0x006cf06c}, {'addr': 0x006cfc8c}], 'lut_root_delta': 0, 'pre_fill_byte': 0xFF, 'path1_tests': [0, 0, 0, 0, 0], 'path2_tests': [0, 0]},
 
     # ---- C2->C3: FUN_00433240 RaceArmReset (frontend) ---------------------------
     # void __cdecl(uint32). One-shot gate on 0x0067eca4: when open it latches the
@@ -17126,7 +17126,7 @@ HOOKS = {
 
     # ---- promote-round round 70 (bit-extract getter + 4-global clearer + 2 record-eq predicates) --
     'bit_extract_63dc74': {'rva': 0x0041efe0, 'export': 'BitExtract63dc74', 'signature': {'ret': 'uint32', 'args': ['int32']}, 'arg_type': 'int_scalar', 'seed_table': {'base': 0x0063dc74, 'stride': 0x2ac, 'span': 16}, 'lut_root_delta': 0, 'path1_tests': [0, 1, 8, 15, 3, 10, 9, 7, 12, 5], 'path2_tests': [0, 8, 15]},
-    'clear_67d99c_x4': {'rva': 0x004298c0, 'export': 'Clear67d99c_x4', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'scalars_to_scattered_globals', 'observe': [{'addr': 0x0067d99c}, {'addr': 0x0067d994}, {'addr': 0x0067d98c}, {'addr': 0x008991bc}], 'lut_root_delta': 0, 'path1_tests': [0, 0, 0], 'path2_tests': [0, 0]},
+    'clear_67d99c_x4': {'rva': 0x004298c0, 'export': 'Clear67d99c_x4', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'scalars_to_scattered_globals', 'observe': [{'addr': 0x0067d99c}, {'addr': 0x0067d994}, {'addr': 0x0067d98c}, {'addr': 0x008991bc}], 'lut_root_delta': 0, 'pre_fill_byte': 0xFF, 'path1_tests': [0, 0, 0], 'path2_tests': [0, 0]},
     'rec_eq_231': {'rva': 0x00432230, 'export': 'RecEq231', 'signature': {'ret': 'uint32', 'args': []}, 'arg_type': 'gated_record_eq2', 'target_global': 0x0067ed3c, 'stride': 0x40, 'off0': 0, 'off1': 4, 'gate': 0x0067e9f8, 'lut_root_delta': 0, 'path1_tests': [[0, 0x13, 1], [0, 0x13, 2], [1, 0x99, 1], [2, 0x13, 1], [3, 0x13, 0], [0, 0, 1], [4, 0x13, 1], [5, 0x14, 1], [0, 0x13, 1], [1, 0x13, 1]], 'path2_tests': [[0, 0x13, 1], [0, 0x13, 2], [1, 0x99, 1]]},
     'rec_eq_232': {'rva': 0x00432260, 'export': 'RecEq232', 'signature': {'ret': 'uint32', 'args': []}, 'arg_type': 'gated_record_eq2', 'target_global': 0x0067ed3c, 'stride': 0x40, 'off0': 0, 'off1': 4, 'gate': 0x0067e9f8, 'lut_root_delta': 0, 'path1_tests': [[0, 0x13, 2], [0, 0x13, 1], [1, 0x99, 2], [2, 0x13, 2], [3, 0x13, 0], [0, 0, 2], [4, 0x13, 2], [5, 0x14, 2], [0, 0x13, 2], [1, 0x13, 2]], 'path2_tests': [[0, 0x13, 2], [0, 0x13, 1], [1, 0x99, 2]]},
 
@@ -17192,7 +17192,7 @@ HOOKS = {
     'table_6c9438_get': {'rva': 0x0047ce00, 'export': 'Table6c9438Get', 'signature': {'ret': 'uint32', 'args': ['int32']}, 'arg_type': 'int_scalar', 'seed_table': {'base': 0x006c9438, 'stride': 4, 'span': 16}, 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 5, 10, 0xC8, 0xFFFFFFFF, 3, 7, 15], 'path2_tests': [0, 0xC8, 0xFFFFFFFF]},
     'table_6c9758_get': {'rva': 0x0047ce80, 'export': 'Table6c9758Get', 'signature': {'ret': 'uint32', 'args': ['int32']}, 'arg_type': 'int_scalar', 'seed_table': {'base': 0x006c9758, 'stride': 4, 'span': 16}, 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 5, 10, 0xC8, 0xFFFFFFFF, 3, 7, 15], 'path2_tests': [0, 0xC8, 0xFFFFFFFF]},
     'table_6c71d8_get': {'rva': 0x0047d130, 'export': 'Table6c71d8Get', 'signature': {'ret': 'uint32', 'args': ['int32']}, 'arg_type': 'int_scalar', 'seed_table': {'base': 0x006c71d8, 'stride': 4, 'span': 16}, 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 5, 10, 0xC8, 0xFFFFFFFF, 3, 7, 15], 'path2_tests': [0, 0xC8, 0xFFFFFFFF]},
-    'clear_88f0a0_x4': {'rva': 0x0045c860, 'export': 'Clear88f0a0x4', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'scalars_to_scattered_globals', 'observe': [{'addr': 0x0088f0a0}, {'addr': 0x0088f0a4}, {'addr': 0x0088f0a8}, {'addr': 0x0088f0ac}], 'lut_root_delta': 0, 'path1_tests': [0, 0, 0], 'path2_tests': [0, 0]},
+    'clear_88f0a0_x4': {'rva': 0x0045c860, 'export': 'Clear88f0a0x4', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'scalars_to_scattered_globals', 'observe': [{'addr': 0x0088f0a0}, {'addr': 0x0088f0a4}, {'addr': 0x0088f0a8}, {'addr': 0x0088f0ac}], 'lut_root_delta': 0, 'pre_fill_byte': 0xFF, 'path1_tests': [0, 0, 0], 'path2_tests': [0, 0]},
 
     # ---- promote-round round 54 (stride-0x58 getter + 4 per-vehicle table getters) --
     'table_68ba04_get': {'rva': 0x0045a0d0, 'export': 'Table68ba04Get', 'signature': {'ret': 'uint32', 'args': ['int32']}, 'arg_type': 'int_scalar', 'seed_table': {'base': 0x0068ba04, 'stride': 0x58, 'span': 4}, 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 3, 4, 0xFFFFFFFF, 2, 3, 1, 0], 'path2_tests': [0, 3, 4]},
@@ -17201,7 +17201,7 @@ HOOKS = {
     'veh_tbl_881f84_get1': {'rva': 0x0046d6d0, 'export': 'VehTbl881f84Get1', 'signature': {'ret': 'uint32', 'args': ['uint32', 'uint32']}, 'arg_type': 'ptr_out_table_get', 'target_global': 0x00881f84, 'stride': 0xd04, 'span': 1, 'bound': 0x10, 'lut_root_delta': 0, 'path1_tests': [0, 1, 5, 15, 16, 3, 10, 1, 15, 0], 'path2_tests': [0, 7, 16]},
 
     # ---- promote-round round 53 (scattered-global clearer + 4 strided table clearers) --
-    'clear_639d70_x3': {'rva': 0x00405400, 'export': 'Clear639d70x3', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'scalars_to_scattered_globals', 'observe': [{'addr': 0x00639d70}, {'addr': 0x00639d74}, {'addr': 0x00639d78}], 'lut_root_delta': 0, 'path1_tests': [0, 0, 0], 'path2_tests': [0, 0]},
+    'clear_639d70_x3': {'rva': 0x00405400, 'export': 'Clear639d70x3', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'scalars_to_scattered_globals', 'observe': [{'addr': 0x00639d70}, {'addr': 0x00639d74}, {'addr': 0x00639d78}], 'lut_root_delta': 0, 'pre_fill_byte': 0xFF, 'path1_tests': [0, 0, 0], 'path2_tests': [0, 0]},
     'strided_clear_76a100': {'rva': 0x0048f680, 'export': 'StridedClear76a100', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'range_init', 'target_global': 0x0076a100, 'len': 0x3800, 'lut_root_delta': 0, 'path1_tests': [0, 0], 'path2_tests': [0]},
     'strided_clear_766a00': {'rva': 0x0048f6b0, 'export': 'StridedClear766a00', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'range_init', 'target_global': 0x00766a00, 'len': 0x500, 'lut_root_delta': 0, 'path1_tests': [0, 0], 'path2_tests': [0]},
     'strided_clear_770718': {'rva': 0x0048f6e0, 'export': 'StridedClear770718', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'range_init', 'target_global': 0x00770718, 'len': 0xe10, 'lut_root_delta': 0, 'path1_tests': [0, 0], 'path2_tests': [0]},
@@ -22597,3 +22597,26 @@ HOOKS['phys_world_body_build'] = {
                     _pwb(0x41200000, 0x44fa0000, 0x3f000000, 0x3dcccccd)],
     'path2_tests': [_pwb(0x3f800000, 0x40a00000, 0x3e4ccccd, 0x3f19999a)],
 }
+
+# ── negctl re-earn fixtures (2026-10-11) ─────────────────────────────────────────────────────────────────────
+# Each re/frida/negctl_fixtures/<batch>.py defines FIXES = {hook_key: {cfg_key: value}}, applied over the entries
+# above. A value of None deletes that key; {'__replace__': True, ...} replaces the whole entry (or adds a new one).
+# One file per batch so parallel re-earn workers never edit this file at the same time. Every fixture here is a
+# NON-DEGENERATE re-earn vector for a row the negative-control kit found blind (re/analysis/negctl/NEGCTL_20261011.md).
+def _apply_negctl_fixtures():
+    import importlib.util, pathlib
+    for f in sorted((pathlib.Path(__file__).resolve().parent / 'negctl_fixtures').glob('*.py')):
+        spec = importlib.util.spec_from_file_location('negctl_fixtures_' + f.stem, f)
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        for k, fix in getattr(mod, 'FIXES', {}).items():
+            fix = dict(fix)
+            if fix.pop('__replace__', False) or k not in HOOKS:
+                HOOKS[k] = fix
+                continue
+            for ck, cv in fix.items():
+                if cv is None:
+                    HOOKS[k].pop(ck, None)
+                else:
+                    HOOKS[k][ck] = cv
+_apply_negctl_fixtures()

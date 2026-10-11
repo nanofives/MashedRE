@@ -402,7 +402,9 @@ def build_config(hook, asi_path=None):
                # thiscall_nested_field_get (2026-06-25): nested struct-ptr getter.
                'outer_off', 'inner_off', 'struct_size', 'inner_size',
                # cache_setter_observe (2026-06-25): scattered output-global list.
-               'obs_globals'):
+               'obs_globals',
+               # scalars_to_scattered_globals scratch buffer (negctl re-earn 2026-10-11).
+               'scratch_size', 'scratch_fill'):
         if _k in hook:
             config[_k] = hook[_k]
     # void_write_observe scenario-attach extension (c3-batch-sa2 s2, 2026-06-16):
