@@ -27,6 +27,7 @@
 #include "../Race/PathProgStep.h" // D-11072 P2: per-frame FUN_00408610 (MASHED_PATHPROG)
 #include "../Ai/AiTargetClosest.h" // D-11072 P3: FUN_00414a70 (MASHED_TGT3)
 #include "../Ai/AiLeafTargets.h"   // D3 bulk G-AILEAF: FUN_00414570 / FUN_00415880 (MASHED_AILEAF)
+#include "../Race/RoundGrid.h"      // round-restart grid Stage A (MASHED_ROUND_GRID)
 #include "../Race/WorldRegistry.h"  // mode 7 M1: world-object registry (MASHED_REGISTRY)
 #include "../Gameplay/PickupTick.h"  // mode 7 M2a: pickup tick FUN_00459000 (MASHED_PICKUPS_ORIG)
 #include "../Race/CarRegistrant.h"  // mode 7 M2b: car registrant FUN_0041f710 (MASHED_REG_CARS)
@@ -2214,6 +2215,7 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                     Ai::TargetClosest_MaybeReplay();  // [D-11072 P3] G-P3-REPLAY (env-gated)
                     Ai::ModeSeven_MaybeReplay();      // [mode 7 M4] G-M4-REPLAY (env-gated)
                     Ai::AiLeaf_MaybeReplay();         // [D3 bulk G-AILEAF] G-AILEAF-REPLAY (env-gated)
+                    Race::RoundGrid_MaybeReplay();    // [round grid Stage A] G-RG-SNAP (env-gated)
                     Race::Registry_MaybeReplay();     // [mode 7 M1] G-M1-REG / G-M1-PASS (env-gated)
                     Gameplay::Pickups_MaybeReplay();  // [mode 7 M2a] G-M2a-REPLAY (env-gated)
                     Gameplay::PickupCb_MaybeReplay(); // [mode 7 M3] G-M3-REPLAY (env-gated)
@@ -5150,17 +5152,60 @@ void TrackRenderer::StartRound() {
     float dir[2] = {g1[0] - g0[0], g1[2] - g0[2]};
     const float dl = std::sqrt(dir[0]*dir[0] + dir[1]*dir[1]);
     dir[0] /= dl; dir[1] /= dl;
-    const float lat[2] = {-dir[1], dir[0]};
+    float lat[2] = {-dir[1], dir[0]};
+    // ---- [round grid Stage A] G-RG-GRID dump (MASHED_ROUND_GRID_CHECK=<out>, once): the formation below at
+    // the original's measured restart nodes (o_rounds7b: 0, 7, 11, 14, 21, 24, 28, 1) from the course block,
+    // next to this gate-based formation. Measurement only.
+    {
+        static bool s_checked = false;
+        const char* cp = std::getenv("MASHED_ROUND_GRID_CHECK");
+        if (cp && !s_checked) {
+            s_checked = true;
+            if (std::FILE* cf = std::fopen(cp, "w")) {
+                static const float kLm[4] = { 0.48f, -1.12f, 1.12f, -0.48f };
+                static const float kDm[4] = { 0.00f,  1.10f, 2.20f,  3.30f };
+                std::fprintf(cf, "gate g0=(%.6g,%.6g,%.6g) lat=(%.6g,%.6g) dir=(%.6g,%.6g)", g0[0], g0[1], g0[2],
+                             lat[0], lat[1], dir[0], dir[1]);
+                for (int s2 = 0; s2 < 4; ++s2)
+                    std::fprintf(cf, " s%d=(%.4f,%.4f)", s2, g0[0] + lat[0] * kLm[s2] - dir[0] * kDm[s2],
+                                 g0[2] + lat[1] * kLm[s2] - dir[1] * kDm[s2]);
+                std::fprintf(cf, "\n");
+                const int nNodes = *reinterpret_cast<const std::int32_t*>(0x0066d6d8u);   // node count (P1)
+                for (int nd = 0; nd < nNodes && nd < 0x200; ++nd) {
+                    float A[3], L2[2], D2[2];
+                    if (!Race::RoundGrid_AnchorAt(nd, A, L2, D2)) { std::fprintf(cf, "node %d unavailable\n", nd); continue; }
+                    std::fprintf(cf, "node %d A=(%.6g,%.6g,%.6g) lat=(%.6g,%.6g) dir=(%.6g,%.6g)", nd, A[0], A[1], A[2],
+                                 L2[0], L2[1], D2[0], D2[1]);
+                    for (int s2 = 0; s2 < 4; ++s2)
+                        std::fprintf(cf, " s%d=(%.4f,%.4f)", s2, A[0] + L2[0] * kLm[s2] - D2[0] * kDm[s2],
+                                     A[2] + L2[1] * kLm[s2] - D2[1] * kDm[s2]);
+                    std::fprintf(cf, "\n");
+                }
+                std::fclose(cf);
+            }
+        }
+    }
+    // ---- [round grid Stage A] anchor at the restart node (default-OFF MASHED_ROUND_GRID + MASHED_PATHPROG):
+    // FUN_0040e590 -> FUN_00409290(&DAT_0063ba80) -> FUN_00408b00 anchor = node centre / dir / corner axis
+    // (FIX_BRIEF.md section 4 A2/A3). Same formation table; only A, lat, dir change.
+    float gA[3] = { g0[0], g0[1], g0[2] };
+    {
+        float A[3], L2[2], D2[2]; int nd = -1;
+        if (Race::RoundGrid_Anchor(A, L2, D2, &nd)) {
+            gA[0] = A[0]; gA[1] = A[1]; gA[2] = A[2];
+            lat[0] = L2[0]; lat[1] = L2[1]; dir[0] = D2[0]; dir[1] = D2[1];
+        }
+    }
     // slot == spawn order: player=0, ai0=1, ai1=2, ai2=3
     static const float kLatMul[4] = { 0.48f, -1.12f, 1.12f, -0.48f };
     static const float kDirMul[4] = { 0.00f,  1.10f, 2.20f,  3.30f };
     auto place = [&](float* pos, float* yaw, int slot) {
-        const float x = g0[0] + lat[0] * kLatMul[slot] - dir[0] * kDirMul[slot];
-        const float z = g0[2] + lat[1] * kLatMul[slot] - dir[1] * kDirMul[slot];
+        const float x = gA[0] + lat[0] * kLatMul[slot] - dir[0] * kDirMul[slot];
+        const float z = gA[2] + lat[1] * kLatMul[slot] - dir[1] * kDirMul[slot];
         bool ok = false;
         const float y = GroundHeight(x, z, &ok);
         pos[0] = x; pos[2] = z;
-        pos[1] = (ok ? y : g0[1]) + car_ground_off_;
+        pos[1] = (ok ? y : gA[1]) + car_ground_off_;
         *yaw = std::atan2(dir[1], dir[0]);
     };
     place(car_pos_, &car_yaw_, 0);
@@ -5219,6 +5264,7 @@ bool RuleEngineEnabled() {
 void TrackRenderer::StartMatch() {
     match_winner_ = -1;
     round_no_ = 1;
+    Race::RoundGrid_RaceInit();   // [round grid Stage A] 0x0040fef0 DAT_0063ba80 = 0 (MASHED_ROUND_GRID)
     rule_engine_on_ = RuleEngineEnabled();
     for (int i = 0; i < kRaceCars; ++i) {
         // score_delta_ (DAT_008a9520) stays 0 here. FUN_0040b180 writes
@@ -5987,6 +6033,13 @@ void TrackRenderer::UpdateRace(float dt) {
                 for (int i = 0; i < kRaceCars; ++i)
                     if (race_[i].alive) { round_winner_ = i; break; }
                 if (round_winner_ < 0) round_winner_ = 0;  // all dead: equalized
+                // [round grid Stage A] FUN_00410860 0x004108c5: DAT_0063ba80 = __ftol(progress[last alive])
+                // (default-OFF MASHED_ROUND_GRID + MASHED_PATHPROG; FIX_BRIEF.md section 4 A1)
+                {
+                    bool al[4] = { false, false, false, false };
+                    for (int i = 0; i < kRaceCars && i < 4; ++i) al[i] = race_[i].alive;
+                    Race::RoundGrid_RoundEnd(al, round_winner_);
+                }
             }
         }
         return;

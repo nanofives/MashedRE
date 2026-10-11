@@ -33,6 +33,8 @@
 >     LAPDATA Safe_Start_Lines table, which the exe already builds under PATHPROG. Original nodes per round: 0,7,11,14,21,24,28,1
 >     (`o_rounds7b`). Next: Stage A (survivor node write + FUN_00409290 verbatim + StartRound anchor) behind MASHED_ROUND_GRID,
 >     G-RG-SNAP / G-RG-NODE / G-RG-GRID first. Tracker row still owed.
+>     STAGE A DONE (knob OFF): `roundgrid/RESULT_STAGE_A.md`. SNAP 18504/18504, GRID 5 nodes worst 0.0048, NODE 3/3,
+>     G-CTRL unchanged. Next: knob-ON per `roundgrid/PREREG_STAGE_A.md` (arms RG_PP / RG_ON / RG_ON2), then Stage B (slot order).
 > 3. Back to the PLAN.md ranking. Every other D3 group is producer-blocked. The non-D3 lane is not decided.
 >
 > Not started: U-9219, the car-2 pickup miss, default flips.

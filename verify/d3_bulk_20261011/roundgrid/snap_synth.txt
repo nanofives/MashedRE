@@ -1,0 +1,1 @@
+G-RG-SNAP rows=18504 exact=18504 bad=0 parse_bad=0
