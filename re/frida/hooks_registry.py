@@ -22579,3 +22579,281 @@ HOOKS['com_obj8_vcall10_store_c'] = {
         {'seed': _linst_f2e0_seed(0x00000001), 'stub_ret': -1},
     ],
 }
+
+
+# ── L-INST round 2 (2026-10-11), Particle/PromoLoop_linst2.cpp ─────────────
+
+# Unowned critical section seeded inside the synthetic object (CS at `cs_off`,
+# LockCount at +4 = -1, everything else 0). See _linst_inner above.
+def _linst_cs(buf, cs_off):
+    return [{'buf': buf, 'off': cs_off + 4, 'type': 'u32', 'value': 0xffffffff}]
+
+
+# 0x0049c900 ComCs94Field6cNonZero: Enter/Leave CS this+0x94 around
+# r = (this+0x6c != 0); return r.
+# NON-DEGENERACY: +0x6c in {0, 1, 7, 0x80000000, 0xffffffff, 0} -> 0/1 both seen;
+# the CS really runs (a zeroed one would block, a wrong offset would read
+# LockCount 0 and block too).
+def _linst_c900_seed(v):
+    return _linst_cs(0, 0x94) + [{'buf': 0, 'off': 0x6c, 'type': 'u32', 'value': v}]
+
+
+HOOKS['com_cs94_field6c_nonzero'] = {
+    'rva':        0x0049c900,
+    'export':     'ComCs94Field6cNonZero',
+    'signature':  {'ret': 'int32', 'args': ['pointer']},
+    'arg_type':   'stub_dispatch_observe',
+    'orig_calling_convention':   'fastcall',
+    'reimpl_calling_convention': 'fastcall',
+    'lut_root_delta': 0,
+    'num_bufs':   1,
+    'buf_size':   0x100,
+    'arg_layout': [{'buf': 0}],
+    'observe_ret':   True,
+    'observe_calls': True,
+    'observe_bufs':  [{'buf': 0, 'off': 0x6c, 'len': 4}],
+    'path1_tests': [{'seed': _linst_c900_seed(v)} for v in
+                    (0, 1, 7, 0x80000000, 0xffffffff, 0)],
+    'path2_tests': [{'seed': _linst_c900_seed(v)} for v in (0, 7)],
+}
+
+
+# 0x0049ea70 ComCb00ThenClear4Fields: FUN_0049cb00(ECX=this) (C2, runs for real;
+# this+0xc0 = 0 so it takes its no-op arm 0x0049cb0b), then under CS this+0x94
+# zero +0x70, +0x74, +0xb8, +0xbc; return 0.
+# NON-DEGENERACY: per-test sentinels over +0x6c..+0x7b and +0xb4..+0xc3: the four
+# targets must read 0, the neighbours (+0x6c, +0x78, +0xb4, +0xc0) must keep
+# their sentinel (+0xc0 is fixed 0, cb00's input).
+def _linst_ea70_seed(s):
+    seed = _linst_cs(0, 0x94)
+    for off in (0x6c, 0x70, 0x74, 0x78, 0xb4, 0xb8, 0xbc):
+        seed.append({'buf': 0, 'off': off, 'type': 'u32', 'value': (s + off) & 0xffffffff})
+    return seed
+
+
+HOOKS['com_cb00_then_clear4_fields'] = {
+    'rva':        0x0049ea70,
+    'export':     'ComCb00ThenClear4Fields',
+    'signature':  {'ret': 'int32', 'args': ['pointer']},
+    'arg_type':   'stub_dispatch_observe',
+    'orig_calling_convention':   'fastcall',
+    'reimpl_calling_convention': 'fastcall',
+    'lut_root_delta': 0,
+    'num_bufs':   1,
+    'buf_size':   0x100,
+    'arg_layout': [{'buf': 0}],
+    'observe_ret':   True,
+    'observe_calls': True,
+    'observe_bufs':  [{'buf': 0, 'off': 0x6c, 'len': 0x10},
+                      {'buf': 0, 'off': 0xb4, 'len': 0x10}],
+    'path1_tests': [{'seed': _linst_ea70_seed(s)} for s in
+                    (0xa1a10000, 0x5eed0000, 0x00000001, 0xfffff000, 0x12345678)],
+    'path2_tests': [{'seed': _linst_ea70_seed(s)} for s in (0xa1a10000,)],
+}
+
+
+# 0x0049e140 ComWait1570StoreField8 (__stdcall p1, p2, p3; ret 0xc):
+# p3 NULL -> 0x80004003; r = FUN_004a1570([p1+0x50], p2, 0, 0, 0) (__stdcall, 5,
+# replaced by the recorder via stub_at: its only call site is 0x0049e166);
+# *p3 = [p1+8]; return r == 0x102 ? 0x00040237 : 0.
+# NON-DEGENERACY: recorder returns 0x102 / 0x101 / 0 / -1 / 0x103 split the
+# return; the recorder must see "[p1+0x50],p2,0,0,0"; *p3 must read [p1+8].
+def _linst_e140_seed(a50, f8):
+    return [{'buf': 0, 'off': 0x50, 'type': 'u32', 'value': a50},
+            {'buf': 0, 'off': 8,    'type': 'u32', 'value': f8},
+            {'buf': 1, 'off': 0,    'type': 'u32', 'value': 0xcdcdcdcd}]
+
+
+HOOKS['com_wait1570_store_field8'] = {
+    'rva':        0x0049e140,
+    'export':     '_ComWait1570StoreField8@12',
+    'signature':  {'ret': 'uint32', 'args': ['pointer', 'uint32', 'pointer']},
+    'arg_type':   'stub_dispatch_observe',
+    'orig_calling_convention':   'stdcall',
+    'reimpl_calling_convention': 'stdcall',
+    'lut_root_delta': 0,
+    'num_bufs':   2,
+    'buf_size':   0x60,
+    'arg_layout': [{'buf': 0}, {'i32': True}, {'buf': 1}],
+    'stub_at':    [0x004a1570],
+    'stub_nargs': 5,
+    'stub_abi':   'stdcall',
+    'observe_ret':   True,
+    'observe_calls': True,
+    'observe_bufs':  [{'buf': 1, 'off': 0, 'len': 4}],
+    'path1_tests': [
+        {'seed': _linst_e140_seed(0x1111, 0xaaaa0001), 'scalars': [0xffffffff], 'stub_ret': 0x102},
+        {'seed': _linst_e140_seed(0x2222, 0xaaaa0002), 'scalars': [0],          'stub_ret': 0},
+        {'seed': _linst_e140_seed(0x3333, 0xaaaa0003), 'scalars': [1000],       'stub_ret': 0x101},
+        {'seed': _linst_e140_seed(0,      0x00000000), 'scalars': [5],          'stub_ret': -1},
+        {'seed': _linst_e140_seed(0x4444, 0x7fffffff), 'scalars': [0x102],      'stub_ret': 0x103},
+        {'seed': _linst_e140_seed(0x5555, 0x80000000), 'scalars': [7],          'stub_ret': 0x102},
+    ],
+    'path2_tests': [
+        {'seed': _linst_e140_seed(0x1111, 0xaaaa0001), 'scalars': [0xffffffff], 'stub_ret': 0x102},
+        {'seed': _linst_e140_seed(0x2222, 0xaaaa0002), 'scalars': [0],          'stub_ret': 0},
+    ],
+}
+
+# p3 == NULL guard (0x0049e145): return 0x80004003, recorder never reached.
+HOOKS['com_wait1570_store_field8_null'] = dict(HOOKS['com_wait1570_store_field8'], **{
+    'signature':  {'ret': 'uint32', 'args': ['pointer', 'uint32', 'uint32']},
+    'arg_layout': [{'buf': 0}, {'i32': True}, {'i32': True}],
+    'observe_bufs': [],
+    'path1_tests': [
+        {'seed': _linst_e140_seed(0x1111, 0xaaaa0001), 'scalars': [0xffffffff, 0], 'stub_ret': 0x102},
+        {'seed': _linst_e140_seed(0x2222, 0xaaaa0002), 'scalars': [0, 0],          'stub_ret': 0},
+        {'seed': _linst_e140_seed(0,      0),          'scalars': [9, 0],          'stub_ret': -1},
+    ],
+    'path2_tests': [
+        {'seed': _linst_e140_seed(0x1111, 0xaaaa0001), 'scalars': [0xffffffff, 0], 'stub_ret': 0x102},
+    ],
+})
+
+
+# Shared helpers for the two string-copy rows (FUN_004a11c0 runs for real: a
+# bounded 16-bit copy, dst/src/n, stdcall).
+def _linst_wstr(buf, units):
+    """Write `units` (list of u16) + a 0 terminator into buf at offset 0."""
+    u = list(units) + [0]
+    if len(u) % 2:
+        u.append(0)
+    return [{'buf': buf, 'off': 2 * i, 'type': 'u32', 'value': u[i] | (u[i + 1] << 16)}
+            for i in range(0, len(u), 2)]
+
+
+def _linst_fill(buf, off, n, val):
+    return [{'buf': buf, 'off': off + 4 * i, 'type': 'u32', 'value': val} for i in range(n)]
+
+
+_LINST_STRS = {
+    'ab':    [0x41, 0x42],
+    'one':   [0x5a],
+    'empty': [],
+    # 0x88 non-zero units: longer than n-1 = 0x7f, so the copy truncates at
+    # unit 0x7f (byte 0xfe) and writes the terminator there.
+    'long':  [0x61 + (i % 26) for i in range(0x88)],
+}
+
+
+# 0x0049ef10 ComCopyName30Ref34 (__stdcall p1, p2; ret 8). b0 = p1, b1 = p2
+# (sentinel-filled), b2 = source string, b3 = obj whose vtable is b3 itself.
+# Entry A: obj NULL, so [p2+0x100] = 0 is observable (no per-side pointer).
+# NON-DEGENERACY: src NULL -> only the first u16 of p2 becomes 0; src = 'ab' /
+# 'one' / '' / truncating 'long' -> copied units + terminator over sentinels,
+# 'long' writes its terminator at byte 0xfe and leaves 0xfc's unit copied.
+def _linst_ef10_seed(src, obj):
+    s = _linst_fill(1, 0, 0x104 // 4, 0xcccccccc)
+    if src is not None:
+        s += [{'buf': 0, 'off': 0x30, 'ptr_to': 2}] + _linst_wstr(2, _LINST_STRS[src])
+    if obj:
+        s += [{'buf': 0, 'off': 0x34, 'ptr_to': 3},
+              {'buf': 3, 'off': 0, 'ptr_to': 3},
+              {'buf': 3, 'off': 4, 'stub': True}]
+    return s
+
+
+HOOKS['com_copy_name30_ref34'] = {
+    'rva':        0x0049ef10,
+    'export':     '_ComCopyName30Ref34@8',
+    'signature':  {'ret': 'uint32', 'args': ['pointer', 'pointer']},
+    'arg_type':   'stub_dispatch_observe',
+    'orig_calling_convention':   'stdcall',
+    'reimpl_calling_convention': 'stdcall',
+    'lut_root_delta': 0,
+    'num_bufs':   4,
+    'buf_size':   0x120,
+    'arg_layout': [{'buf': 0}, {'buf': 1}],
+    'stub_nargs': 1,
+    'stub_abi':   'stdcall',
+    'observe_ret':   True,
+    'observe_calls': True,
+    'observe_bufs':  [{'buf': 1, 'off': 0, 'len': 0x10},
+                      {'buf': 1, 'off': 0xf8, 'len': 0x0c}],
+    'path1_tests': [{'seed': _linst_ef10_seed(src, False), 'stub_ret': 2}
+                    for src in (None, 'ab', 'one', 'empty', 'long')],
+    'path2_tests': [{'seed': _linst_ef10_seed(src, False), 'stub_ret': 2}
+                    for src in ('ab', None)],
+}
+
+# Entry B: obj non-NULL. [p2+0x100] then holds each side's own b3 address, so it
+# is NOT observed; the recorder must see the AddRef slot called with "b3+0".
+HOOKS['com_copy_name30_ref34_obj'] = dict(HOOKS['com_copy_name30_ref34'], **{
+    'observe_bufs': [{'buf': 1, 'off': 0, 'len': 0x10},
+                     {'buf': 1, 'off': 0xf8, 'len': 0x08}],
+    'path1_tests': [{'seed': _linst_ef10_seed(src, True), 'stub_ret': r}
+                    for src, r in ((None, 1), ('ab', 2), ('long', 0x7fffffff))],
+    'path2_tests': [{'seed': _linst_ef10_seed('ab', True), 'stub_ret': 2}],
+})
+
+# p2 == NULL guard (0x0049ef15): return 0x80004003, nothing called.
+HOOKS['com_copy_name30_ref34_null'] = dict(HOOKS['com_copy_name30_ref34'], **{
+    'signature':  {'ret': 'uint32', 'args': ['pointer', 'uint32']},
+    'arg_layout': [{'buf': 0}, {'i32': True}],
+    'observe_bufs': [],
+    'path1_tests': [{'seed': _linst_ef10_seed(src, obj), 'scalars': [0], 'stub_ret': 2}
+                    for src, obj in ((None, False), ('ab', True), ('long', False))],
+    'path2_tests': [{'seed': _linst_ef10_seed('ab', True), 'scalars': [0], 'stub_ret': 2}],
+})
+
+
+# 0x0049f950 ComInfo1cRefCopyName8 (__stdcall p1, p2; ret 8). b0 = p1, b1 = p2
+# (sentinel-filled), b2 = source string, b3 = e, with the slot object at e+0xc
+# whose vtable is b3 itself (b3+0xc -> b3, b3+4 = recorder).
+# Entry A: e NULL, so [p2] = 0 is observable.
+# NON-DEGENERACY: [p2+4] = per-test [p1+0x10]; string cases as for 0x0049ef10
+# but at p2+8 (truncating 'long' terminates at byte 8+0xfe = 0x106).
+def _linst_f950_seed(src, e, f10):
+    s = _linst_fill(1, 0, 0x110 // 4, 0xcccccccc)
+    s.append({'buf': 0, 'off': 0x10, 'type': 'u32', 'value': f10})
+    if src is not None:
+        s += [{'buf': 0, 'off': 8, 'ptr_to': 2}] + _linst_wstr(2, _LINST_STRS[src])
+    if e:
+        s += [{'buf': 0, 'off': 0x1c, 'ptr_to': 3},
+              {'buf': 3, 'off': 0xc, 'ptr_to': 3},
+              {'buf': 3, 'off': 4, 'stub': True}]
+    return s
+
+
+HOOKS['com_info1c_ref_copy_name8'] = {
+    'rva':        0x0049f950,
+    'export':     '_ComInfo1cRefCopyName8@8',
+    'signature':  {'ret': 'uint32', 'args': ['pointer', 'pointer']},
+    'arg_type':   'stub_dispatch_observe',
+    'orig_calling_convention':   'stdcall',
+    'reimpl_calling_convention': 'stdcall',
+    'lut_root_delta': 0,
+    'num_bufs':   4,
+    'buf_size':   0x120,
+    'arg_layout': [{'buf': 0}, {'buf': 1}],
+    'stub_nargs': 1,
+    'stub_abi':   'stdcall',
+    'observe_ret':   True,
+    'observe_calls': True,
+    'observe_bufs':  [{'buf': 1, 'off': 0, 'len': 0x18},
+                      {'buf': 1, 'off': 0x100, 'len': 0x0c}],
+    'path1_tests': [{'seed': _linst_f950_seed(src, False, f10), 'stub_ret': 2}
+                    for src, f10 in ((None, 0x11111111), ('ab', 0), ('one', 0xffffffff),
+                                     ('empty', 7), ('long', 0x80000000))],
+    'path2_tests': [{'seed': _linst_f950_seed('ab', False, 0x11111111), 'stub_ret': 2}],
+}
+
+# Entry B: e non-NULL. [p2] = e+0xc is a per-side address -> observe from p2+4.
+HOOKS['com_info1c_ref_copy_name8_obj'] = dict(HOOKS['com_info1c_ref_copy_name8'], **{
+    'observe_bufs': [{'buf': 1, 'off': 4, 'len': 0x14},
+                     {'buf': 1, 'off': 0x100, 'len': 0x0c}],
+    'path1_tests': [{'seed': _linst_f950_seed(src, True, f10), 'stub_ret': r}
+                    for src, f10, r in ((None, 5, 1), ('ab', 0x22222222, 2),
+                                        ('long', 0, 0x7fffffff))],
+    'path2_tests': [{'seed': _linst_f950_seed('ab', True, 5), 'stub_ret': 2}],
+})
+
+# p2 == NULL guard (0x0049f955).
+HOOKS['com_info1c_ref_copy_name8_null'] = dict(HOOKS['com_info1c_ref_copy_name8'], **{
+    'signature':  {'ret': 'uint32', 'args': ['pointer', 'uint32']},
+    'arg_layout': [{'buf': 0}, {'i32': True}],
+    'observe_bufs': [],
+    'path1_tests': [{'seed': _linst_f950_seed(src, e, 3), 'scalars': [0], 'stub_ret': 2}
+                    for src, e in ((None, False), ('ab', True), ('long', False))],
+    'path2_tests': [{'seed': _linst_f950_seed('ab', True, 3), 'scalars': [0], 'stub_ret': 2}],
+})
