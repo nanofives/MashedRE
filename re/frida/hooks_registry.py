@@ -22608,7 +22608,12 @@ def _apply_negctl_fixtures():
     for f in sorted((pathlib.Path(__file__).resolve().parent / 'negctl_fixtures').glob('*.py')):
         spec = importlib.util.spec_from_file_location('negctl_fixtures_' + f.stem, f)
         mod = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(mod)
+        try:
+            spec.loader.exec_module(mod)
+        except Exception as e:      # one broken batch file must not take the whole registry down
+            import sys
+            print(f'[hooks_registry] negctl fixture {f.name} skipped: {type(e).__name__}: {e}', file=sys.stderr)
+            continue
         for k, fix in getattr(mod, 'FIXES', {}).items():
             fix = dict(fix)
             if fix.pop('__replace__', False) or k not in HOOKS:
