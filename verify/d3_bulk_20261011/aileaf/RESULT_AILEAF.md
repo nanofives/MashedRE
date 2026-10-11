@@ -109,3 +109,76 @@ py -3.12 re/tools/aileaf_unicorn.py <scratch>/synth_corrupt.tsv --corrupt 3
 pwsh -File verify/d3_bulk_20261011/aileaf/run_replay.ps1 -In <tsv> -Tag <tag>
 pwsh -File verify/d3_gatefire_20261008/run_h4.ps1 AL_CTRL
 ```
+
+# Phase 2 (2026-10-11): knob ON, per PREREG_AILEAF.md
+
+Verdict: **G-AILEAF-INERT FAILS as registered; the port is faithful to its inputs.**
+- FUN_00414570 returns 1 on 19 of 17,466 calls in AL_ON: car 3, step frames 2021..2039, all committed as mode 1.
+- G-AILEAF-LIVE re-ran the exe's exact inputs through the original bytes: 368/368 exact, including the
+  same 19 returns of 1 with identical `cand`.
+- So the failed prediction was the PREREG's evidence base, not the transcription.
+- Decision (as registered): the knob path is NOT accepted. `MASHED_AILEAF` stays default OFF and is not
+  stacked into other arms. No default change.
+
+## Arms (`verify/d3_gatefire_20261008/run_h4.ps1`)
+
+| arm | step | gates | ptrace | trace: ret1 14570 / 15880 |
+|---|---|---|---|---|
+| AL_CTRL (knob OFF) | ae67b13a | c8317ce2 | 31db9384 | n/a |
+| AL_PP (PATHPROG base) | 4e250237 | 22cceec1 | dc72ab09 | n/a |
+| AL_ON | 7018f1b0 | 8e5cdccb | 5589b6f8 | 19 / 0 (of 17,466 calls each) |
+| AL_ON2 (repeat) | 7018f1b0 | 8e5cdccb | 5589b6f8 | 19 / 0 |
+| AL_ON53 (`MASHED_AILEAF_PC=53`) | 7018f1b0 | 8e5cdccb | 5589b6f8 | 19 / 0 → G-AILEAF-PC passes |
+| AL_SEED (diagnostic: AI factor 0x0089a4c0 = 2) | 439d8f20 | eae86863 | 2bf268fe | 19 / 0 → H-4C0 not sufficient |
+| AL_LIVE (AL_ON + input capture) | = AL_ON | = AL_ON | = AL_ON | 19 / 0 |
+
+**Mode-2 accepts:** none (0x00415880 returned 0 on every call).
+
+## Why the prediction failed
+
+The inputs at the 19 calls (`AL_ON.aileaf.tsv` `#in14570` lines):
+- **Target:** car 3's only eligible target is car 0, the player. It is the only car with slot-state 1, from the
+  exe's default-ON player slot seed.
+- **Gates passed:**
+  - car 0 is ahead by 0.25 progress (nodes = 30);
+  - both speeds are above 2500 (2825 and 3218);
+  - the gap is 1.07 units;
+  - the angle gate passes.
+- **Why the original never showed this:** the "0 of 6,696" evidence (PREREG_P3.md:44) comes from
+  `scenario_launch` captures where the player mostly sits still (`vel=[0,0,0]` in the launch logs). There the
+  target-speed gate cannot pass.
+- **Conclusion:** the PREREG compared the knob against a scenario that never reaches this arm.
+
+**H-4C0 (the blank AI factor) is not the cause.** Seeding the original's value (2) moved `cand`
+(1.26 → 1.36) but not the decision.
+
+## G-AILEAF-LIVE (`re/tools/aileaf_unicorn.py x --check <liverows.tsv>`)
+
+- **Input:** `AL_LIVE.liverows.tsv`, every return-1 call plus every 50th call, as full input rows. The rows hold
+  the exe's spline bytes, the 4 cars' rebound inputs, the globals, the AI block, and the hardware CW at the call.
+- **Result:** 368/368 exact. (exe_ret, orig_ret) = (0,0) 349, (1,1) 19.
+- **Negative control:** 3 flipped expectations (1 ret, 2 cand LSBs) are caught 3/3.
+
+## Report-only
+
+**(b) per regime:** AL_PP and AL_ON are identical (0/3 regime A, same items and values). The 19 calls fall after
+the 220-step window. The PATHPROG base arm alone is 0/3, against the default build's 2/3; that is a PATHPROG
+effect, not this knob.
+
+**Collateral** (`collateral.py --mode paired`, A = AL_PP, B = AL_ON, floor-B = AL_ON2, so the floor is 0;
+`collateral_AL_PP_vs_AL_ON.csv`):
+- car 3 diverges from step frame 2021 (ai_mode, then c1 at 2024, then its physics state from 2025);
+- car 2 from 3231, through interaction;
+- car 1 never.
+- **D2 watch list:** `rec_4a4` is not divergent on any car. No D2 REOPEN CANDIDATE.
+
+## What would move this group
+
+- **An original capture with a moving player near an AI car.**
+  - Concretely: `scenario_launch` with the player driven, plus an entry/leave probe on 0x00414570 with the same
+    input columns as `MASHED_AILEAF_LIVEROWS`.
+  - It would show whether the original reaches the return-1 arm in a scenario like the exe's.
+  - This is the real equivalence test. G-CTRL scenarios differ between the two sides (the exe's player is
+    driven; the original's is not).
+- **A user decision** on whether faithful-to-inputs + replay-exact is enough to keep the knob available for
+  stacking.

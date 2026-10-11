@@ -20,7 +20,8 @@ Globals written at their original VAs: 0x007f0fd0, 0x0066d6d8, 0x007f1008, 0x008
   0x008a96dc + c*0x30c, *(0x005f2770) -> a fake slot-state table (entry c at +0x34 + c*4).
 Each row starts with fninit + fldcw <row cw> (0x007f = PC_24 as the race loop, 0x027f = PC_53).
 
-Usage: py -3.12 re/tools/aileaf_unicorn.py <out.tsv> [--corrupt N] [--cw HEX]   (--corrupt flips N rows' expected ret: the
+Usage: py -3.12 re/tools/aileaf_unicorn.py <out.tsv> [--corrupt N] [--cw HEX]
+       py -3.12 re/tools/aileaf_unicorn.py x --check <liverows.tsv>   (G-AILEAF-LIVE)   (--corrupt flips N rows' expected ret: the
 negative control for the exe replay)
 """
 import ctypes, math, random, struct, sys
@@ -316,6 +317,34 @@ def main():
                      g.hex(), ai_in.hex(), d570_in.hex(), struct.unpack("<i", struct.pack("<I", ret))[0],
                      cand_out.hex(), ai_out.hex(), d_out.hex()])
         return ret, cand_out, ai_in != ai_out
+
+    if "--check" in sys.argv:
+        # G-AILEAF-LIVE: rows captured in the exe (MASHED_AILEAF_LIVEROWS) -> the same inputs through the original
+        # bytes; compare ret / cand / AI block with what the exe's naked body produced.
+        path = sys.argv[sys.argv.index("--check") + 1]
+        n = ok = rbad = cbad = abad = 0
+        byret = {}
+        for ln in open(path):
+            k = ln.rstrip("\n").split("\t")
+            if len(k) < 15 or k[0] != "570":
+                continue
+            v = int(k[2]); cw = int(k[3], 16)
+            cb = bytes.fromhex(k[7]); cars = []
+            for c in range(4):
+                f = struct.unpack_from("<ffffffIiiiffffii", cb, c * 64)
+                cars.append(car(f[0], f[1], f[2], f[3:6], f[6], f[7], f[8], f[9], f[10], f[11:14], f[14]))
+            glob = struct.unpack("<iiifii", bytes.fromhex(k[8]))
+            look = struct.unpack("<ff", bytes.fromhex(k[5])); cin = struct.unpack("<ff", bytes.fromhex(k[6]))
+            ret, cand_out, _ = run("570", v, cw, cars, glob, bytes.fromhex(k[9]), look, cin, spl=bytes.fromhex(k[4]))
+            ret = struct.unpack("<i", struct.pack("<I", ret))[0]
+            n += 1
+            rr = ret == int(k[11]); cc = cand_out.hex() == k[12]; aa = rows[-1][13] == k[13]
+            rbad += not rr; cbad += not cc; abad += not aa; ok += rr and cc and aa
+            byret[(int(k[11]), ret)] = byret.get((int(k[11]), ret), 0) + 1
+            if not (rr and cc and aa) and n - ok <= 10:
+                print(f"  MISMATCH n={k[1]} v={v} cw={cw:x} exe ret={k[11]} orig ret={ret} exe cand={k[12]} orig cand={cand_out.hex()}")
+        print(f"G-AILEAF-LIVE rows={n} exact={ok} ret_bad={rbad} cand_bad={cbad} ai_bad={abad} (exe_ret, orig_ret) counts={byret}")
+        return
 
     arms = {}
 
