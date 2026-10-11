@@ -16,8 +16,9 @@
 > - Trackers recorded with no promotion; U-9652 / U-9653 filed.
 >
 > **Options**
-> 1. Capture the original with a DRIVEN player plus an entry probe on 0x00414570 (same columns as `MASHED_AILEAF_LIVEROWS`),
->    to see whether the original reaches the return-1 arm in a scenario like the exe's.
+> 1. DONE (Phase 2b): `scenario_launch.py --aileaf-probe` + `--statediff-drive`. The original reaches the speed/distance
+>    gates (6 rows) but only inside a corner (curvature 81..96 vs gate 20), so ret 0. Still owed: a driven original run
+>    with a straight-line pass above 2500 (a steer schedule that holds the racing line).
 > 2. User decision: is faithful-to-inputs + replay-exact enough to keep MASHED_AILEAF available for stacking?
 > 3. Back to the PLAN.md ranking. Every other D3 group is producer-blocked. The non-D3 lane is not decided.
 >

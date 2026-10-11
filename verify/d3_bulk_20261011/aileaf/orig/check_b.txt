@@ -1,0 +1,1 @@
+G-AILEAF-LIVE rows=287 exact=287 ret_bad=0 cand_bad=0 ai_bad=0 (exe_ret, orig_ret) counts={(0, 0): 287}

@@ -322,6 +322,19 @@ def main():
         # G-AILEAF-LIVE: rows captured in the exe (MASHED_AILEAF_LIVEROWS) -> the same inputs through the original
         # bytes; compare ret / cand / AI block with what the exe's naked body produced.
         path = sys.argv[sys.argv.index("--check") + 1]
+        gates = {}
+        if "--gates" in sys.argv:
+            # diagnostic: ST0 at FUN_00414570's curvature compare 0x004145d8 (folded curvature vs 20.0) and at
+            # 0x00414878 (acos result, radians; the gate is *57.2958 < 30.0 at 0x00414878..0x00414888).
+            def g80(u):
+                top = (u.reg_read(UC_X86_REG_FPSW) >> 11) & 7
+                m, e = u.reg_read(UC_X86_REG_FP0 + top)
+                sign = -1.0 if e & 0x8000 else 1.0
+                return 0.0 if m == 0 else sign * m * 2.0 ** ((e & 0x7fff) - 16383 - 63)
+            def gh(u, addr, size, _):
+                gates["curv" if addr == 0x004145d8 else "acos_deg"] = g80(u) * (57.29578 if addr == 0x00414878 else 1.0)
+            for a in (0x004145d8, 0x00414878):
+                uc.hook_add(UC_HOOK_CODE, gh, begin=a, end=a)
         n = ok = rbad = cbad = abad = 0
         byret = {}
         for ln in open(path):
@@ -335,7 +348,10 @@ def main():
                 cars.append(car(f[0], f[1], f[2], f[3:6], f[6], f[7], f[8], f[9], f[10], f[11:14], f[14]))
             glob = struct.unpack("<iiifii", bytes.fromhex(k[8]))
             look = struct.unpack("<ff", bytes.fromhex(k[5])); cin = struct.unpack("<ff", bytes.fromhex(k[6]))
+            gates.clear()
             ret, cand_out, _ = run("570", v, cw, cars, glob, bytes.fromhex(k[9]), look, cin, spl=bytes.fromhex(k[4]))
+            if "--gates" in sys.argv:
+                print(f"  gates n={k[1]} v={v} ret={struct.unpack('<i', struct.pack('<I', ret))[0]} curv={gates.get('curv')} (gate < 20) acos_deg={gates.get('acos_deg')} (gate < 30)")
             ret = struct.unpack("<i", struct.pack("<I", ret))[0]
             n += 1
             rr = ret == int(k[11]); cc = cand_out.hex() == k[12]; aa = rows[-1][13] == k[13]

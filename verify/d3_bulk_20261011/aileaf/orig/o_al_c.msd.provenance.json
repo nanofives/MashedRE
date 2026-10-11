@@ -1,0 +1,85 @@
+{
+  "msd": "o_al_c.msd",
+  "captured_utc": "2026-10-11T17:44:33Z",
+  "argv": [
+    "re/frida/scenario_launch.py",
+    "--track",
+    "0",
+    "--mode",
+    "10",
+    "--cars",
+    "4",
+    "--car",
+    "0",
+    "--poke-ctrl-slots",
+    "--statediff-car",
+    "1",
+    "--aileaf-probe",
+    "20",
+    "--hold",
+    "60",
+    "--statediff-drive",
+    "--statediff-steer-schedule",
+    "0:0,1:0.5,6:-0.5,11:1,16:-1",
+    "--statediff-out",
+    "verify/d3_bulk_20261011/aileaf/orig/o_al_c.msd"
+  ],
+  "cwd": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed",
+  "git_head": "d53182e138bcba979bf6947f61154cf0ac1cd455",
+  "host": "MARIANO-PC",
+  "statediff": {
+    "car": 1,
+    "base_va": "0x8822a4",
+    "rec_size": "0xd04",
+    "drive": true,
+    "drive_late": false,
+    "steer": 0,
+    "aictrl": false,
+    "aistep": false,
+    "steer_schedule": "0:0,1:0.5,6:-0.5,11:1,16:-1",
+    "steer_schedule_applied": [
+      [
+        0.0,
+        0.0
+      ],
+      [
+        1.0,
+        0.5
+      ],
+      [
+        6.02,
+        -0.5
+      ],
+      [
+        11.04,
+        1.0
+      ],
+      [
+        16.05,
+        -1.0
+      ]
+    ],
+    "steer_schedule_t0_offset_s": 13.13,
+    "noop_cook": false,
+    "hooks": ""
+  },
+  "capture": {
+    "frames": 3626,
+    "distinct_payloads": 2850,
+    "nonzero_frames": 3626
+  },
+  "descriptor_writes": {
+    "block_base": "0x007f1038",
+    "accel_byte": 4,
+    "steer_bytes": [
+      0,
+      1
+    ],
+    "legacy_steer_bytes": [
+      2,
+      3,
+      14,
+      15
+    ]
+  }
+}

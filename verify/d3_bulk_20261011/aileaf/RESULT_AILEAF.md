@@ -182,3 +182,45 @@ effect, not this knob.
     driven; the original's is not).
 - **A user decision** on whether faithful-to-inputs + replay-exact is enough to keep the knob available for
   stacking.
+
+# Phase 2b (2026-10-11): original capture with a driven player + probe on 0x00414570
+
+Verdict: **the original reaches the speed and distance gates when its player drives, and is then rejected
+by the curvature gate.** Its encounters happen inside a corner (curvature 81..96 against the < 20 gate).
+The exe's 19 return-1 calls are encounters on a straight (curvature 5.6..6.8, angle 1.6..2.6 deg).
+Same bytes, different track position.
+- No capture here contains a straight-line encounter on the original side, so equivalence on that exact
+  situation is still unobserved. Every row captured matches the original bytes.
+- Decision unchanged: the knob stays OFF, not accepted.
+
+## Captures (`orig/`, D3 argv + `--aileaf-probe 20`, 60 s)
+
+Every capture row validated through the original bytes with `aileaf_unicorn.py --check`
+(`check_{a,b,c}.txt`, 820/820 exact in total).
+
+| capture | player | calls | ret = 1 | rows | --check | rows passing speed + distance | target speed max |
+|---|---|---|---|---|---|---|---|
+| `o_al_a` | not driven (the old evidence base) | 5,448 | 0 | 272 | 272/272 | 0 | 1,238 |
+| `o_al_b` | `--statediff-drive` (full accel, steer 0) | 5,740 | 0 | 287 | 287/287 | **6** | 3,898 |
+| `o_al_c` | drive + steer ramp `0:0,1:0.5,6:-0.5,11:1,16:-1` | 5,238 | 0 | 261 | 261/261 | 0 (player stalled) | 229 |
+| exe `AL_LIVE` (for comparison) | exe default | 17,466 | 19 | 368 | 368/368 | 19 | 3,453 |
+
+**Gate census:** `gate_census.py`.
+
+**Per-row gate values:** `aileaf_unicorn.py --check --gates` reads ST0 at 0x004145d8 (the curvature compare)
+and at 0x00414878 (the acos result).
+- The 6 `o_al_b` gate-passing rows (`orig/o_al_b_gatepass6.tsv`) have curvature 81.5 / 91.2 / 94.1 / 95.5 /
+  96.2 / 96.3, so they exit at 0x004145eb.
+- The exe rows have curvature 5.6..6.8 and angle 1.6..2.6 deg, so they return 1.
+
+**AI factor:** in the driven run the factor `0x0089a4c0` is already 0 on the original side, in all 6 rows
+(it was 2 in the earlier undriven peek). Forcing 0 or as-is gives the same result: 6/6 ret 0. U-9653 stays
+open but does not decide these calls.
+
+## What would close it
+
+A driven original run whose player passes an AI car on a straight above speed 2500.
+- `--statediff-drive` with a steer schedule that holds the racing line, which the C ramp did not.
+- Or a driven capture on another track with a longer straight.
+- If the original then returns 1 where the gates pass, the exe's 19 commits are faithful behaviour,
+  and the knob question becomes a user decision on stacking.

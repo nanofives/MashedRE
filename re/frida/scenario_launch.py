@@ -2079,6 +2079,84 @@ function c30ProbeArm(n){
 }
 function c30ProbeDrain(){ const r = C3.rows; C3.rows = []; return r; }
 
+// --- G-AILEAF probe (D3 bulk, 2026-10-11) ----------------------------------------
+// Entry + leave on FUN_00414570(spline, &look, &cand, v). Every input the body reads, as the rows of
+// MASHED_AILEAF_LIVEROWS (mashedmod Ai/AiLeafTargets.cpp), so re/tools/aileaf_unicorn.py --check runs
+// them through the original bytes. Inputs read directly (no native calls; the getters are pure loads):
+//   FUN_0046d4a0 matrix 0x00881ec8 + c*0xd04 + [0x00881f48 + c*0xd04]*0x40 (+0x30 x, +0x38 z)
+//   FUN_0046d6d0 [0x00881f84 + c*0xd04]; FUN_0046d510 the `at` row of the +0x928 matrix (0x00881ec8 + c*0xd04 +0x20)
+//   FUN_0046c7b0 [0x008815a4 + c*0xd04]; FUN_0046cbb0 [0x00881f90 / 0x00881f94 + c*0xd04]
+//   FUN_0046cc10 trunc([0x00881f80 + c*0xd04]); FUN_0040e470 [[0x005f2770] + 0x34 + c*4]
+//   progress 0x008a96e8 + c*0x30c, vec 0x008a96dc + c*0x30c; globals 7f0fd0 66d6d8 7f1008 89a360 89a368 89a374;
+//   the AI block 0x0089a4c0 + v*0x74; the spline object (0x204 B at arg 0).
+// Rows: every return-1 call + every Kth call. CW column = 7f [UNCERTAIN: not read in the hook; the race loop
+// runs PC_24, memory track-load-runs-at-pc24]. Read-only.
+const ALF = { armed:false, rows:[], n:0, k:20, cap:20000, ret1:0, err:null };
+function alCars(){
+  const b = new ArrayBuffer(256), dv = new DataView(b);
+  const tab = ga(0x005f2770).readPointer();
+  for (let c = 0; c < 4; c++) {
+    const o = c * 64, r = 0x00881ec8 + c * 0xd04;
+    const mp = ga(r + ga(0x00881f48 + c * 0xd04).readU32() * 0x40);
+    dv.setUint32(o + 0, mp.add(0x30).readU32(), true);
+    dv.setUint32(o + 4, mp.add(0x38).readU32(), true);
+    dv.setUint32(o + 8, ga(0x00881f84 + c * 0xd04).readU32(), true);
+    for (let k = 0; k < 3; k++) dv.setUint32(o + 12 + 4 * k, ga(r + 0x20 + 4 * k).readU32(), true);
+    dv.setUint32(o + 24, ga(0x008815a4 + c * 0xd04).readU32(), true);
+    dv.setUint32(o + 28, ga(0x00881f90 + c * 0xd04).readU32(), true);
+    dv.setUint32(o + 32, ga(0x00881f94 + c * 0xd04).readU32(), true);
+    dv.setUint32(o + 36, tab.isNull() ? 0 : tab.add(0x34 + c * 4).readU32(), true);
+    dv.setUint32(o + 40, ga(0x008a96e8 + c * 0x30c).readU32(), true);
+    for (let k = 0; k < 3; k++) dv.setUint32(o + 44 + 4 * k, ga(0x008a96dc + c * 0x30c + 4 * k).readU32(), true);
+    dv.setInt32(o + 56, Math.trunc(ga(0x00881f80 + c * 0xd04).readFloat()), true);
+    dv.setUint32(o + 60, 0, true);
+  }
+  const u = new Uint8Array(b); let s = '';
+  for (let i = 0; i < u.length; i++) s += (u[i] < 16 ? '0' : '') + u[i].toString(16);
+  return s;
+}
+function alGlob(){
+  const b = new ArrayBuffer(24), dv = new DataView(b);
+  [0x007f0fd0, 0x0066d6d8, 0x007f1008, 0x0089a360, 0x0089a368, 0x0089a374].forEach(function(a, i){ dv.setUint32(i * 4, ga(a).readU32(), true); });
+  const u = new Uint8Array(b); let s = '';
+  for (let i = 0; i < u.length; i++) s += (u[i] < 16 ? '0' : '') + u[i].toString(16);
+  return s;
+}
+function alProbeArm(k, cap){
+  if (ALF.armed) return 'already armed';
+  try {
+    ALF.k = k || 20; ALF.cap = cap || 20000;
+    Interceptor.attach(ga(0x00414570), {
+      onEnter(args){
+        this.row = null;
+        try {
+          ALF.n++;
+          if (ALF.rows.length >= ALF.cap) return;
+          const v = args[3].toInt32();
+          if (v < 0 || v > 3) return;
+          const blk = ga(0x0089a4c0 + v * 0x74);
+          this.cand = args[2]; this.blk = blk; this.v = v;
+          this.row = ['570', ALF.n, v, '7f', hexOf(args[0], 0x204), hexOf(args[1], 8), hexOf(args[2], 8),
+                      alCars(), alGlob(), hexOf(blk, 0x74), '', SD.frames];
+        } catch(e){ if (!ALF.err) ALF.err = 'al ' + e; this.row = null; }
+      },
+      onLeave(ret){
+        try {
+          if (!this.row) return;
+          const r = ret.toInt32();
+          if (r === 1) ALF.ret1++;
+          if (r !== 1 && (ALF.n % ALF.k) !== 0) return;
+          const fr = this.row.pop();
+          this.row.push(r, hexOf(this.cand, 8), hexOf(this.blk, 0x74), '00000000', fr);
+          ALF.rows.push(this.row);
+        } catch(e){ if (!ALF.err) ALF.err = 'alL ' + e; }
+      }});
+    ALF.armed = true;
+    return 'aileaf-probe armed (0x414570 entry+leave; every ret=1 + every ' + ALF.k + 'th call)';
+  } catch(e){ return 'ERR ' + e; }
+}
+function alProbeDrain(){ const r = ALF.rows; ALF.rows = []; return r; }
+
 // --- FIRST-HIT coverage probe (D3 bulk Phase 0, 2026-10-11) ----------------------
 // Entry-only hooks on a list of function entries. Each hook counts calls per session phase
 // (DAT_00771968: 1 menu, 2 load+spawn, 3 race), each phase count capped at FH.cap, and
@@ -2932,6 +3010,9 @@ rpc.exports = {
   fhProbeArm: function(l, c){ return fhProbeArm(l, c); },
   fhProbeDrain: function(){ return fhProbeDrain(); },
   fhProbeStats: function(){ return JSON.stringify({armed:FH.armed, n:FH.ent.length, err:FH.err}); },
+  alProbeArm: function(k, c){ return alProbeArm(k, c); },
+  alProbeDrain: function(){ return alProbeDrain(); },
+  alProbeStats: function(){ return JSON.stringify({armed:ALF.armed, calls:ALF.n, ret1:ALF.ret1, rows:ALF.rows.length, err:ALF.err}); },
   c30ProbeArm: function(n){ return c30ProbeArm(n); },
   c30ProbeDrain: function(){ return c30ProbeDrain(); },
   c30ProbeStats: function(){ return JSON.stringify({armed:C3.armed, calls:C3.n, err:C3.err}); },
@@ -3533,6 +3614,10 @@ def main():
                          "Writes <out>.firsthit.tsv. Requires --statediff-out.")
     ap.add_argument("--firsthit-cap", type=int, default=16,
                     help="per-phase call cap for --firsthit-probe (default 16).")
+    ap.add_argument("--aileaf-probe", type=int, default=0,
+                    help="[D3 bulk G-AILEAF] K: FUN_00414570 entry+leave, every return-1 call + every Kth call, "
+                         "full input rows in the MASHED_AILEAF_LIVEROWS format. Writes <out>.aileaf.tsv "
+                         "(check with re/tools/aileaf_unicorn.py x --check). Requires --statediff-out.")
     ap.add_argument("--c30-probe", type=int, default=0,
                     help="[mode 7 M4] N: FUN_00414c30 entry+leave, first N calls then every 50th, with registry, matrices "
                          "and nested FUN_00414300 calls. Writes <out>.c30.tsv. Requires --statediff-out.")
@@ -3730,6 +3815,8 @@ def main():
                     _ln = _ln.split("#", 1)[0].strip()
                     if _ln: _fh.append(int(_ln, 16))
                 print("  [statediff]", E.fh_probe_arm(__import__("json").dumps(_fh), args.firsthit_cap))
+            if args.aileaf_probe:
+                print("  [statediff]", E.al_probe_arm(args.aileaf_probe, 20000))
             if args.c30_probe:
                 print("  [statediff]", E.c30_probe_arm(args.c30_probe))
             if args.pool_probe:
@@ -4292,6 +4379,17 @@ def main():
                             for r in _fr: f.write(chr(9).join(str(x) for x in r) + chr(10))
                         print(f"  [statediff] firsthit-probe {len(_fr)} rows -> {_ff}")
                     except Exception as _e: print("  [statediff] firsthit drain failed:", _e)
+                if args.aileaf_probe:
+                    try: print("  [statediff] aileaf-probe agent:", E.al_probe_stats())
+                    except Exception as _e: print("  [statediff] aileaf stats failed:", _e)
+                    try:
+                        _al = E.al_probe_drain()
+                        _alf = outp.with_suffix(outp.suffix + ".aileaf.tsv")
+                        with open(_alf, "w", newline="") as f:
+                            f.write("# kind n v cw spline look cand_in cars globals ai_in d570_in ret cand_out ai_out d570_out sdframe" + chr(10))
+                            for r in _al: f.write(chr(9).join(str(x) for x in r) + chr(10))
+                        print(f"  [statediff] aileaf-probe {len(_al)} rows -> {_alf}")
+                    except Exception as _e: print("  [statediff] aileaf drain failed:", _e)
                 if args.c30_probe:
                     try: print("  [statediff] c30-probe agent:", E.c30_probe_stats())
                     except Exception as _e: print("  [statediff] c30 stats failed:", _e)
