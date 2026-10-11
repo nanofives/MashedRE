@@ -22361,7 +22361,7 @@ HOOKS['ttl_set_68b1b0_bounds'] = {
 }
 
 
-# 0x004943d0  RendererScalarDtor  (plan item #3: heap/import stand-ins, 2026-10-11)
+# 0x004943d0  Vtbl5cf9e8ScalarDeletingDtor  (plan item #3: heap/import stand-ins, 2026-10-11)
 # __thiscall(this, flags) -> this: calls the destructor body 0x00493c60, then frees `this` through 0x004a3bda
 # (`jmp 0x004a460d`, _free) when flags bit 0 is set (0x004943d8). The body's chain (0x00493c60 -> 0x0049ebc0 ->
 # 0x0049de90 -> 0x0049cbd0 / 0x0049c990 / 0x004a1180 / 0x004a01b0 -> 0x004a1000) calls Enter/Leave/Delete-
@@ -22386,7 +22386,7 @@ _DT_IMPORTS = {
 _DT_H = [[0x54, 0x1111], [0x58, 0x2222], [0x5c, 0x3333]]
 HOOKS['renderer_scalar_dtor'] = {
     'rva':                0x004943d0,
-    'export':             '@RendererScalarDtor@12',
+    'export':             '@Vtbl5cf9e8ScalarDeletingDtor@12',
     'signature':          {'ret': 'pointer', 'args': ['pointer', 'uint32']},
     'calling_convention': 'thiscall',
     'arg_type':           'standin_object_call',

@@ -609,9 +609,14 @@ function runVerification() {
         }
     });
 
-    let reimplEntries = 0;
+    // Count only entries from THIS thread (the one making the test calls). With the hook live, the game's own
+    // threads may call the target during the window: 0x004943d0 (a destructor) was entered once by the game between
+    // two test calls (2026-10-11), and the old all-thread count turned that into "fired 3 times, expected 2".
+    // Other-thread entries are reported separately: they show the installed port running in the game's own flow.
+    let reimplEntries = 0, otherThreadEntries = 0;
+    const abTid = Process.getCurrentThreadId();
     Interceptor.attach(reimplAddr, {
-        onEnter: function () { reimplEntries++; }
+        onEnter: function () { if (this.threadId === abTid) reimplEntries++; else otherThreadEntries++; }
     });
 
     const Patched = new NativeFunction(TARGET_ADDR, CONFIG.signature.ret, CONFIG.signature.args,
@@ -645,6 +650,7 @@ function runVerification() {
     send({ type: 'results',
            reimpl_calls_observed: afterCount - beforeCount,
            reimpl_calls_expected: CONFIG.tests.length,
+           reimpl_calls_other_threads: otherThreadEntries,
            cases: results });
 }
 

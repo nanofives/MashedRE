@@ -1,6 +1,6 @@
 # Heap/import stand-ins, first target 0x004943d0 (2026-10-11)
 
-Harness: re/frida/js/standins.js. Registry entry: `renderer_scalar_dtor`. Port: mashedmod/src/mashed_re/Render/RendererScalarDtor.cpp.
+Harness: re/frida/js/standins.js. Registry entry: `renderer_scalar_dtor`. Port: mashedmod/src/mashed_re/Render/Vtbl5cf9e8ScalarDeletingDtor.cpp.
 
 | file | run | verdict |
 |---|---|---|

@@ -218,7 +218,8 @@ def write_report(name, config, out_path):
         fail_flags.append('post_snapshot missing')
     if res:
         lines.append('')
-        lines.append(f"interceptor entries (reimpl):  {res['reimpl_calls_observed']} / {res['reimpl_calls_expected']}")
+        lines.append(f"interceptor entries (reimpl):  {res['reimpl_calls_observed']} / {res['reimpl_calls_expected']}"
+                     f"  (other threads: {res.get('reimpl_calls_other_threads', 0)})")
         if res['reimpl_calls_observed'] == res['reimpl_calls_expected']:
             pass_flags.append(f"reimpl interceptor fired {res['reimpl_calls_observed']}x as expected")
         else:

@@ -1,6 +1,6 @@
 === verify_hook_install report (renderer_scalar_dtor) ===
 
-target address: 0x004943d0  export: @RendererScalarDtor@12
+target address: 0x004943d0  export: @Vtbl5cf9e8ScalarDeletingDtor@12
 PRE  bytes:     56 8b f1 e8 88 f8 ff ff
 asi base:       0x5fd50000
 reimpl addr:    0x5fdd8500
@@ -9,7 +9,7 @@ opcode:         0xe9  expected 0xe9  -> OK
 rel32:          0x5f94412b  expected 0x5f94412b  -> OK
 bytes changed:  True
 
-interceptor entries (reimpl):  2 / 2
+interceptor entries (reimpl):  2 / 2  (other threads: 0)
 
 per-input results:
   [OK] input={'blocks': [32], 'fields': [[84, 4369], [88, 8738], [92, 13107], [60, 'B0']], 'args': ['OBJ', 1]}  got=ret=OBJ+0x0 obj=[+0x0=0x5d0dc0,+0xc=0x5d0d84,+0x10=0x5cf9d0,+0xe0=0x5d0e88,+0xe4=0x5d0e74] log=[imp:EnterCriticalSection:OBJ+0x94 imp:LeaveCriticalSection:OBJ+0x94 imp:EnterCriticalSection:OBJ+0x94 imp:LeaveCriticalSection:OBJ+0x94 imp:DeleteCriticalSection:OBJ+0xc4 imp:DeleteCriticalSection:OBJ+0x94 imp:DeleteCriticalSection:OBJ+0x7c imp:CloseHandle:0x3333 imp:CloseHandle:0x2222 imp:CloseHandle:0x1111 free:_free:B0+0x0 imp:InterlockedDecrement:0x773988 free:_free:OBJ+0x0 arena=0x0/0x50c5d1f]  err=

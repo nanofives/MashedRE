@@ -1,4 +1,4 @@
-// Mashed RE: scalar deleting destructor at 0x004943d0 (plan item #3, heap/import stand-ins, 2026-10-11).
+// Mashed RE: Vtbl5cf9e8ScalarDeletingDtor, the MSVC scalar deleting destructor in slot 3 (+0xc) of vtable 0x005cf9e8, at 0x004943d0 (plan item #3, heap/import stand-ins, 2026-10-11).
 //
 // Anchored to MASHED.exe SHA-256:
 //   BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E
@@ -53,7 +53,7 @@ const int s_negctl = NegCtl();
 }  // namespace
 
 // 0x004943d0
-extern "C" __declspec(dllexport) void* __fastcall RendererScalarDtor(void* self, void* /*edx*/, std::uint32_t flags) {
+extern "C" __declspec(dllexport) void* __fastcall Vtbl5cf9e8ScalarDeletingDtor(void* self, void* /*edx*/, std::uint32_t flags) {
     const int neg = s_negctl;
     reinterpret_cast<DtorBodyFn>(0x00493c60u)(self, nullptr);  // 0x004943d3
     if (neg == 3) {
@@ -71,4 +71,4 @@ extern "C" __declspec(dllexport) void* __fastcall RendererScalarDtor(void* self,
     }
     return self;                                                // 0x004943e8
 }
-RH_ScopedInstall(RendererScalarDtor, 0x004943d0);
+RH_ScopedInstall(Vtbl5cf9e8ScalarDeletingDtor, 0x004943d0);
