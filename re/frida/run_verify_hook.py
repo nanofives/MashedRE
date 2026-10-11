@@ -86,7 +86,12 @@ def main():
         'lut_root_delta': hook.get('lut_root_delta', 0),
         # Forwarded so path2 can neutralise the same callees the A/B path does.
         # Present in the registry entry is NOT enough — it has to be DELIVERED.
-        'stub_at':        [f"0x{a:08x}" for a in hook.get('stub_at', [])],
+        # G2: dict entries {addr, nargs, abi, ret, name} pass through, addr as hex.
+        'stub_at':        [dict(a, addr=(a['addr'] if isinstance(a['addr'], str)
+                                         else f"0x{a['addr']:08x}"))
+                           if isinstance(a, dict) else
+                           (a if isinstance(a, str) else f"0x{a:08x}")
+                           for a in hook.get('stub_at', [])],
         'stub_nargs':     hook.get('stub_nargs', 3),
         'stub_ret':       hook.get('stub_ret', 0),
         # Buffer-argument delivery (round 252). Same rule as the stub_at comment
