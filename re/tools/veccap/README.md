@@ -1,5 +1,37 @@
 # veccap — captured-vector offline verification (2026-07-16)
 
+## Replay-as-C3 lane (2026-10-11) — `record_race.py` + `replay_c3.py`
+
+The lane now carries C3 evidence under the **Replay clause** in `re/CONFIDENCE.md`
+(C2→C3 only, never C4).
+
+- `record_race.py` boots its own MASHED (hooks OFF, PID-tracked kill), drives the
+  nav_agent.js Quick-Battle Arctic recipe and records **real calls**: input buffers, the
+  out buffer before and after the call (read at return), ST0 (`fst` at return), the
+  x87 control word and MXCSR, and the live pointers (aliasing replays exactly). Reservoir
+  sampling over each window. `--menu-window` adds a menu window, and `--preload
+  ... --preload-until-race` records cold functions from the title through track load.
+  Bundles go to `re/replay/veccap/<rva>_<name>.json` (committed).
+- `replay_c3.py <name>` maps `original/MASHED.exe` and a **port image** (the registry
+  TUs linked `/FIXED` at 0x30000000 with the `.asi`'s per-TU flags, `port_image.cpp`)
+  into ONE Unicorn address space and runs both bodies on each call's recorded memory,
+  under the recorded CW. Three-way per call (live == emulated original == port), write
+  set, stack cleanup, undeclared reads, per-jcc coverage of the original body. Verdict
+  CSV `log/diff/<rva>_<name>.replay.csv`. ShadowAB-wrapped RVAs are tested through their
+  `_impl` body.
+- **FSIN/FCOS gap: closed by refusal.** Any body whose static closure or execution
+  reaches an x87 transcendental is `REFUSED`. `replay_c3.py 0x<rva>` screens an RVA.
+- Controls: `--synth` (registry inputs, no live leg, never GREEN), `--wrong-port <export>`
+  (mutation), `--force-cw` and `--x87-extra` (experiments, never evidence).
+
+Results 2026-10-11 (`log/replay-c3/`): Vec3Magnitude and FastSqrt GREEN; FastInvSqrt,
+RwV3dNormalize, Vec2Normalize and Vec2Length equal on every call but HELD on coverage
+(the zero/degenerate early-outs never run live). **FUN_00546c50 RED 243/1200 at the live
+PC_24** and 1200/1200 equal at PC_53. Compiled `/arch:IA32` it is GREEN 1200/1200. The
+B5e leaves (`0x00565ef0`, `0x00565fa0`, `0x00566830`, `0x00566200`) and the X/Z Shoemake
+branches never ran in this scenario, from the title through 20 s of race.
+
+
 Additions to the promotion pipeline so that C3/C4-style verification can iterate
 **without booting the game for every check**. Live Frida diffs (`diff-original`)
 remain the final promotion gate; these tools attack the iteration cost before it.
@@ -118,7 +150,8 @@ zone is now validated — the 3 K2 mat→quat Shoemake branches (float10 x87 cha
 truth. Unicorn inits x87 to its default control word and it matched the game's
 for these chains (no FLDCW needed). **Still open** before trusting the emulator
 as a general promotion oracle: **FSIN/FCOS-class transcendentals** (not yet
-exercised — no registry entry uses them).
+exercised — no registry entry uses them). **CLOSED 2026-10-11 by refusal** in
+`replay_c3.py` (see the top section).
 
 ## Pilot 3 — scripted TTD record + offline query
 

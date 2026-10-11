@@ -23,6 +23,8 @@
 # 'sources' are TUs under mashedmod/src/mashed_re/ linked UNCHANGED into the
 # offline replayer (hook framework stubbed by replay_offline.cpp).
 import struct
+import subprocess
+from pathlib import Path
 
 # static .rdata constants the functions read; packed from original/MASHED.exe
 # ON DISK (file offsets via pefile), so no live capture is needed for them.
@@ -38,26 +40,32 @@ FUNCS = {
     'vec3_magnitude': {
         'rva': 0x004C3AC0, 'export': 'Vec3Magnitude', 'kind': 'f_ptrN', 'n_in': 3,
         'sources': ['Math/Vec3.cpp'], 'live_capture': True, 'degenerate_stubs': False,
+        'record': True, 'rw_lut': True,
     },
     'fast_sqrt': {
         'rva': 0x004C3B30, 'export': 'FastSqrt', 'kind': 'f_f',
         'sources': ['Math/RwSqrt.cpp'], 'live_capture': True, 'degenerate_stubs': False,
+        'record': True, 'rw_lut': True,
     },
     'fast_inv_sqrt': {
         'rva': 0x004C3B90, 'export': 'FastInvSqrt', 'kind': 'f_f',
         'sources': ['Math/RwSqrt.cpp'], 'live_capture': True, 'degenerate_stubs': False,
+        'record': True, 'rw_lut': True,
     },
     'vec2_length': {
         'rva': 0x004C3BF0, 'export': 'Vec2Length', 'kind': 'f_ptrN', 'n_in': 2,
         'sources': ['Math/RwV2d.cpp'], 'live_capture': True, 'degenerate_stubs': False,
+        'record': True, 'rw_lut': True,
     },
     'vec2_normalize': {
         'rva': 0x004C3C60, 'export': 'Vec2Normalize', 'kind': 'f_out_in', 'n_in': 2, 'n_out': 2,
         'sources': ['Math/RwV2d.cpp'], 'live_capture': True, 'degenerate_stubs': True,
+        'record': True, 'rw_lut': True,
     },
     'rwv3d_normalize': {
         'rva': 0x004C39B0, 'export': 'RwV3dNormalize', 'kind': 'f_out_in', 'n_in': 3, 'n_out': 3,
         'sources': ['Math/RwV3dNormalize.cpp'], 'live_capture': True, 'degenerate_stubs': True,
+        'record': True, 'rw_lut': True,
     },
     # --- B5e solver-island pure leaves (source copied from r7/b5e-solver-island;
     #     C2 there / C1 on main — veccap = per-leaf bit-identity evidence toward C3,
@@ -68,6 +76,7 @@ FUNCS = {
         # the other two. Physics-only path -> synthetic vectors (menu never calls it).
         'rva': 0x00566830, 'export': 'FUN_00566830', 'kind': 'v_out_in', 'n_in': 3, 'n_out': 3,
         'sources': ['Collision/RwpSolverLeaves1.cpp'], 'live_capture': False, 'degenerate_stubs': False,
+        'record': True,
     },
     'rwp_aabb_merge': {
         # 0x00565ef0 — per-axis min/max merge of two 8-float AABBs (min +0..+2,
@@ -77,6 +86,7 @@ FUNCS = {
         'rva': 0x00565EF0, 'export': 'FUN_00565ef0', 'kind': 'v_out_2in',
         'n_a': 7, 'n_in': 14, 'n_out': 7, 'scalar': False,
         'sources': ['Collision/RwpSolverLeaves1.cpp'], 'live_capture': False, 'degenerate_stubs': False,
+        'record': True,
     },
     'rwp_aabb_span': {
         # 0x00565fa0 — AABB spanning two points (param_2/param_3) inflated by the
@@ -85,6 +95,17 @@ FUNCS = {
         'rva': 0x00565FA0, 'export': 'FUN_00565fa0', 'kind': 'v_out_2in',
         'n_a': 3, 'n_in': 7, 'n_out': 7, 'scalar': True,
         'sources': ['Collision/RwpSolverLeaves1.cpp'], 'live_capture': False, 'degenerate_stubs': False,
+        'record': True,
+    },
+    # --- NEGATIVE CONTROL for the replay-as-C3 lane (2026-10-11). FINDING VECCAP-2 (below):
+    #     the port is not x87-faithful (offline replay FAIL 490/513 on 2026-07-24). It is
+    #     recorded and replayed by record_race.py / replay_c3.py and MUST come out RED.
+    #     'negctl' keeps it OUT of capture_vectors.py / unicorn_diff.py / replay_offline.py. ---
+    'rwp_aabb_xform': {
+        'rva': 0x00566200, 'export': 'FUN_00566200', 'kind': 'v_out_2in',
+        'n_a': 7, 'n_in': 22, 'n_out': 7, 'scalar': False, 'synth_domain': 'bounded',
+        'sources': ['Collision/RwpSolverLeaves1.cpp'], 'live_capture': False, 'degenerate_stubs': False,
+        'record': True, 'negctl': True,
     },
     # FUN_00566200 (0x00566200, v_out_2in n_a=7 n_in=22 n_out=7) was TRIED 2026-07-24 and
     # is NOT onboarded — FINDING VECCAP-2: its port is not x87-faithful. Unicorn PASS
@@ -109,16 +130,42 @@ FUNCS = {
     'rwp_mat2quat_x': {
         'rva': 0x00546BF0, 'export': 'FUN_00546bf0', 'kind': 'v_out_in', 'n_in': 11, 'n_out': 4,
         'sources': ['Collision/RwpSolverMath2.cpp'], 'live_capture': False, 'degenerate_stubs': False,
+        'record': True, 'rw_lut': True,
     },
     'rwp_mat2quat_y': {
         'rva': 0x00546C50, 'export': 'FUN_00546c50', 'kind': 'v_out_in', 'n_in': 11, 'n_out': 4,
         'sources': ['Collision/RwpSolverMath2.cpp'], 'live_capture': False, 'degenerate_stubs': False,
+        'record': True, 'rw_lut': True,
     },
     'rwp_mat2quat_z': {
         'rva': 0x00546CB0, 'export': 'FUN_00546cb0', 'kind': 'v_out_in', 'n_in': 11, 'n_out': 4,
         'sources': ['Collision/RwpSolverMath2.cpp'], 'live_capture': False, 'degenerate_stubs': False,
+        'record': True, 'rw_lut': True,
     },
 }
+
+def mashed_root():
+    """The checkout that holds original/MASHED.exe. A worktree has no game install
+    (never junction it in: WORKTREE-SYMLINK-WIPE), so fall back to MASHED_ROOT, then
+    to the main checkout that owns this worktree's git common dir."""
+    here = Path(__file__).resolve().parents[3]
+    if (here / 'original' / 'MASHED.exe').exists():
+        return here
+    env = __import__('os').environ.get('MASHED_ROOT')
+    if env and (Path(env) / 'original' / 'MASHED.exe').exists():
+        return Path(env)
+    common = subprocess.run(['git', 'rev-parse', '--git-common-dir'], cwd=str(here),
+                            capture_output=True, text=True).stdout.strip()
+    main = (here / common).resolve().parent
+    if (main / 'original' / 'MASHED.exe').exists():
+        return main
+    raise FileNotFoundError('original/MASHED.exe not found (set MASHED_ROOT)')
+
+
+def live_funcs():
+    """FUNCS minus negative controls (the classic capture/replay/unicorn tools)."""
+    return {k: v for k, v in FUNCS.items() if not v.get('negctl')}
+
 
 # v_out_2in split accessors: n_a = buffer-1 floats, n_b = buffer-2 floats,
 # has_scalar consumes the last packed input float as a by-value cdecl arg.

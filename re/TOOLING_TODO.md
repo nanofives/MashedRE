@@ -136,6 +136,10 @@ missing capture half for TT-10 on hot functions, and pairs with the `drcov` idea
 
 ## TT-3 — Emulator-differential promotion for mutator/teardown rows
 
+**(a) SETTLED 2026-10-11:** `re/CONFIDENCE.md` Replay clause (C2→C3 only) with
+`re/tools/veccap/record_race.py` + `replay_c3.py` (README top section). (b) memory-snapshot
+mode for mutator/teardown rows is still open: the lane covers pure leaves with pointer args.
+
 `re/tools/veccap/` + `unicorn_diff.py` already give x87-bit-exact results (RW fast-sqrt 6/6,
 K1 9/9, K2 12/12), but policy keeps those leaves at C1/C2, so a **working bit-exact
 instrument currently produces zero promotions**.
