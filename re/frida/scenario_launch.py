@@ -135,10 +135,52 @@ const PWORLD    = 0x006ce274;    // physics world ptr (its guard global)
 // [UNCERTAIN] which of the 0x14/0x18 floats is consumed as steer vs throttle
 // downstream — not needed here, since A4 reads the raw bytes [0]/[1], not the floats.
 const COOK_RVA = 0x00496530;
+// --- RACING-LINE PURSUIT (D3 bulk G-AILEAF Phase 2c, 2026-10-11) ----------------
+// Closed-loop steer for the PLAYER (car 0) through the cook injector: every injector call, find the
+// spline node nearest the car on the AI racing-line object FUN_00414570 receives as arg 0 (captured
+// by --aileaf-probe, ALF.spline; points (x,z) at +i*8, count at +0x200), aim at node +gLook, and set
+// gSteer = clamp(gPursuit * k * heading_error) (k = 1.5 per rad), gAccel = 1 when |error| < 0.7 rad
+// else 0. Position = the FUN_0046d4a0 matrix (+0x30, +0x38), heading = the +0x928 matrix `at` row
+// (+0x20, +0x28). gPursuit = +1 / -1 picks the steer-byte sign (not documented; measured per run).
+// Contrived input (like --statediff-drive); it only exists to put the original's player on the line.
+let gPursuit = 0, gLook = 2, gWaitGo = 0, gBoost = 0;
+const PU2 = { n:0, noSpline:0, lastErr:0, maxAbsErr:0, accelOff:0, heldForGo:0, boostPress:0 };
+function pursuitStep(){
+  try {
+    PU2.n++;
+    const sp = (typeof ALF !== 'undefined') ? ALF.spline : null;
+    if (!sp) { PU2.noSpline++; return; }
+    const n = sp.add(0x200).readS32();
+    if (n <= 0 || n > 64) return;
+    const mp = ga(0x00881ec8 + ga(0x00881f48).readU32() * 0x40);
+    const x = mp.add(0x30).readFloat(), z = mp.add(0x38).readFloat();
+    const ax = ga(0x00881ec8 + 0x20).readFloat(), az = ga(0x00881ec8 + 0x28).readFloat();
+    let bi = 0, bd = 1e30;
+    for (let i = 0; i < n; i++) {
+      const dx = sp.add(i * 8).readFloat() - x, dz = sp.add(i * 8 + 4).readFloat() - z;
+      const d = dx * dx + dz * dz; if (d < bd) { bd = d; bi = i; }
+    }
+    const j = (bi + gLook) % n;
+    const tx = sp.add(j * 8).readFloat() - x, tz = sp.add(j * 8 + 4).readFloat() - z;
+    const err = Math.atan2(ax * tz - az * tx, ax * tx + az * tz);
+    PU2.lastErr = err; if (Math.abs(err) > PU2.maxAbsErr) PU2.maxAbsErr = Math.abs(err);
+    let st = gPursuit * 1.5 * err; if (st > 1) st = 1; if (st < -1) st = -1;
+    gSteer = st;
+    gAccel = Math.abs(err) < 0.7 ? 1 : 0; if (!gAccel) PU2.accelOff++;
+    // --pursuit-wait-go: no accel until the race sub-state 0x0063ba8c is 6 (driving), i.e. no input held
+    // through the countdown (sub-states 3..5).
+    if (gWaitGo && ga(0x0063ba8c).readS32() !== 6) { gAccel = 0; PU2.heldForGo++;
+      // --pursuit-boost: Branch A's press for the player (FUN_00418560 0x004185b5..0x004185ca with cd = 3):
+      // accel on during sub-state 5 while ElapsedTimeGet (0x005f29b8) < (3 + 0x40) * 100.
+      if (gBoost && ga(0x0063ba8c).readS32() === 5 && ga(0x005f29b8).readS32() < 6700) { gAccel = 1; PU2.boostPress++; }
+    }
+  } catch(e){}
+}
 const BLK0 = 0x007f1038;
 let gAccel = 0, gSteer = 0, cookArmed = false;
 function armCook(){ if (cookArmed) return 'already on'; cookArmed = true;
   try { Interceptor.attach(ga(COOK_RVA), { onLeave(){ const b = ga(BLK0); if (!b) return;
+    if (gPursuit) pursuitStep();
     b.add(4).writeU8(gAccel ? 0xff : 0);
     // steer, per the RVA-cited map (A4 reads these two). MAGNITUDE-aware since
     // 2026-09-13 (A8 ramp capture): A4 consumes the byte as a scalar
@@ -2091,7 +2133,7 @@ function c30ProbeDrain(){ const r = C3.rows; C3.rows = []; return r; }
 //   the AI block 0x0089a4c0 + v*0x74; the spline object (0x204 B at arg 0).
 // Rows: every return-1 call + every Kth call. CW column = 7f [UNCERTAIN: not read in the hook; the race loop
 // runs PC_24, memory track-load-runs-at-pc24]. Read-only.
-const ALF = { armed:false, rows:[], n:0, k:20, cap:20000, ret1:0, err:null };
+const ALF = { armed:false, rows:[], n:0, k:20, cap:20000, ret1:0, err:null, spline:null };
 function alCars(){
   const b = new ArrayBuffer(256), dv = new DataView(b);
   const tab = ga(0x005f2770).readPointer();
@@ -2135,6 +2177,7 @@ function alProbeArm(k, cap){
           const v = args[3].toInt32();
           if (v < 0 || v > 3) return;
           const blk = ga(0x0089a4c0 + v * 0x74);
+          if (!ALF.spline) ALF.spline = args[0];
           this.cand = args[2]; this.blk = blk; this.v = v;
           this.row = ['570', ALF.n, v, '7f', hexOf(args[0], 0x204), hexOf(args[1], 8), hexOf(args[2], 8),
                       alCars(), alGlob(), hexOf(blk, 0x74), '', SD.frames];
@@ -3072,6 +3115,8 @@ rpc.exports = {
   armCook: function(){ return armCook(); },
   armCookNoop: function(){ return armCookNoop(); },
   drive: function(accel, steer){ gAccel = accel; gSteer = steer; return 1; },
+  pursuitSet: function(sign, look, waitGo, boost){ gPursuit = sign; gLook = look; gWaitGo = waitGo ? 1 : 0; gBoost = boost ? 1 : 0; return 'pursuit sign=' + sign + ' look=' + look + ' waitGo=' + gWaitGo + ' boost=' + gBoost; },
+  pursuitStats: function(){ return JSON.stringify(PU2); },
   telStart: function(){ return telStart(); },
   telemetry: function(){ return JSON.stringify({
     cols: ['t_ms','phase','px','py','pz','vx','vy','vz','speed','yawRate',
@@ -3614,6 +3659,13 @@ def main():
                          "Writes <out>.firsthit.tsv. Requires --statediff-out.")
     ap.add_argument("--firsthit-cap", type=int, default=16,
                     help="per-phase call cap for --firsthit-probe (default 16).")
+    ap.add_argument("--statediff-pursuit", type=int, default=0, choices=[-1, 0, 1],
+                    help="[G-AILEAF 2c] closed-loop racing-line steer for the player via the cook injector "
+                         "(sign of the steer byte mapping, +1/-1). Requires --statediff-drive and --aileaf-probe "
+                         "(the probe supplies the spline pointer).")
+    ap.add_argument("--pursuit-look", type=int, default=2, help="pursuit lookahead in spline nodes (default 2)")
+    ap.add_argument("--pursuit-wait-go", action="store_true", help="pursuit: no accel until sub-state 0x0063ba8c == 6")
+    ap.add_argument("--pursuit-boost", action="store_true", help="pursuit + wait-go: press accel in sub-state 5 while 0x005f29b8 < 6700 (Branch A, cd = 3)")
     ap.add_argument("--aileaf-probe", type=int, default=0,
                     help="[D3 bulk G-AILEAF] K: FUN_00414570 entry+leave, every return-1 call + every Kth call, "
                          "full input rows in the MASHED_AILEAF_LIVEROWS format. Writes <out>.aileaf.tsv "
@@ -3836,6 +3888,8 @@ def main():
                 print("  [statediff]", E.arm_cook())
                 print(f"  [statediff] drive: full accel, steer={args.statediff_steer:+d} ->",
                       E.drive(1, args.statediff_steer))
+                if args.statediff_pursuit:
+                    print("  [statediff]", E.pursuit_set(args.statediff_pursuit, args.pursuit_look, 1 if args.pursuit_wait_go else 0, 1 if args.pursuit_boost else 0))
             elif args.statediff_drive_late:
                 print("  [statediff] drive-late: cook NOT armed yet "
                       "(deferred until phase 3 to keep track load uninstrumented)")
@@ -4380,6 +4434,8 @@ def main():
                         print(f"  [statediff] firsthit-probe {len(_fr)} rows -> {_ff}")
                     except Exception as _e: print("  [statediff] firsthit drain failed:", _e)
                 if args.aileaf_probe:
+                    try: print("  [statediff] pursuit:", E.pursuit_stats())
+                    except Exception as _e: print("  [statediff] pursuit stats failed:", _e)
                     try: print("  [statediff] aileaf-probe agent:", E.al_probe_stats())
                     except Exception as _e: print("  [statediff] aileaf stats failed:", _e)
                     try:

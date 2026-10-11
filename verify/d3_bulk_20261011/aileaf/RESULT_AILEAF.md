@@ -224,3 +224,115 @@ A driven original run whose player passes an AI car on a straight above speed 25
 - Or a driven capture on another track with a longer straight.
 - If the original then returns 1 where the gates pass, the exe's 19 commits are faithful behaviour,
   and the knob question becomes a user decision on stacking.
+
+# Phase 2c (2026-10-11): racing-line pursuit + start-boost press: the original takes the arm
+
+Verdict: **the original's FUN_00414570 returns 1 in the exe's situation.**
+- Situation: player ahead of an AI car, both above 2500, on a straight.
+- Result: 105 returns of 1 on all three AI cars (v1 ×30, v2 ×33, v3 ×42), frames 926..967 just after GO.
+- Gate values: curvature 1.5..5.6 (< 20), angle 0..1.5 deg (< 30).
+- The capture validates 4,646/4,646 through the original bytes.
+- So the exe's 19 mode-1 commits (car 3, curvature 5.6..6.8, angle 1.6..2.6 deg) are the original's behaviour
+  in kind. G-AILEAF's port is faithful on both arms, and PREREG_AILEAF's inertness prediction was wrong
+  (Phase 2).
+- The counts differ (original 105 on 3 cars, exe 19 on car 3) because the two sides' launch dynamics differ.
+  That is upstream of this group (start boost / player launch), not in it.
+
+## Driving the original's player (`re/frida/scenario_launch.py`)
+
+**`--statediff-pursuit S [--pursuit-look N] [--pursuit-wait-go] [--pursuit-boost]`**
+- Requires `--statediff-drive` and `--aileaf-probe` (the spline pointer).
+- Closed-loop steer through the cook injector, aimed at racing-line node nearest + N. Steer sign S = -1 tracks:
+  max |heading error| 0.48 rad. S = +1 diverges: 2.88 rad.
+- `--pursuit-wait-go` holds accel at 0 until sub-state 0x0063ba8c == 6.
+- `--pursuit-boost` adds Branch A's press for the player (FUN_00418560 0x004185b5..0x004185ca with cd = 3:
+  accel on during sub-state 5 while 0x005f29b8 < 6700).
+
+## Runs (all `--aileaf-probe`, D3 argv)
+
+| run | player input | 0x00414570 ret = 1 | first pass of the player (AI v: player speed / AI speed) |
+|---|---|---|---|
+| `o_pu_p1` | pursuit S = +1 | 0 / 4,355 | diverges (not scored) |
+| `o_pu_pm1` | pursuit S = -1 | 0 / 4,719 | player stalls at progress 2.8 |
+| `o_pu_all` | pursuit S = -1, every call | 0 / 4,680 | v1 78 / 1731, v2 255 / 2290, v3 399 / 2678 |
+| `o_pu_go` | + wait-go | 0 / 4,342 | v1 394 / 1796, v2 832 / 2070, v3 1017 / 2776 |
+| `o_pu_boost` | + wait-go + boost press | **105 / 4,646** | the player leads the pack off the line; rows `check_pu_boost.txt` 4646/4646 |
+
+**Across all runs:** the races freeze at about frame 1,500 (the o_rg4 "round ends early" recipe). Every
+observation is in the first lap.
+
+## Decision state
+
+- The registered decision stands: the knob is not accepted under PREREG_AILEAF.
+- The evidence for re-proposing it is now complete:
+  - replay-exact (6000/6000 synthetic, 368/368 exe live, 4,646 original live);
+  - the original takes the same arm in the same kind of situation.
+- Whether MASHED_AILEAF becomes available for stacking, or default-ON, is a user decision.
+
+# Phase 2d (2026-10-11): the "launch difference" upstream of G-AILEAF
+
+Verdict: **it is not launch physics.**
+- The AI cars' launch curves match the original to within one unit.
+- The exe's 19 return-1 calls are a round-2 grid collision. AI car 3 rams the parked, undriven player at the
+  round-2 launch. The original recipe never reaches round 2.
+- The upstream difference is round flow: the exe restarts round 2; the original freezes after round 1.
+- The collision push may also differ; that is not settled (§3).
+
+## 1. AI launch (`launch_curves.py`)
+
+Speed (+0x9e4) at k frames after the first AI speed > 50. The first rows are the original (`orig/o_pu_all`, every
+call); `AL_CTRL` is the exe (knob OFF, step.csv).
+
+| car | side | k=0 | 5 | 10 | 20 | 40 | 60 |
+|---|---|---|---|---|---|---|---|
+| 1 | original | 180 | 1164 | 1426 | 1763 | 2347 | 2789 |
+| 1 | exe | 181 | 1165 | 1426 | 1764 | 2346 | 2787 |
+| 3 | original | 280 | 1769 | 2055 | 2331 | 2776 | 3090 |
+| 3 | exe | 281 | 1770 | 2055 | 2330 | 2775 | 3089 |
+| 2 | original | 280 | 1570 | 1816 | 2112 | 2317 | 2728 |
+| 2 | exe | 281 | 1769 | 2053 | 2325 | 2769 | 3085 |
+
+Car 2 varies between original runs (`o_pu_boost`: 1266 at k=5), so the car-2 row is run-to-run variation, not a
+port difference. Past k ≈ 90 the curves part as the cars reach the first corner.
+
+## 2. Where the exe's 19 events come from (`verify/d3_gatefire_20261008/AL_CTRL.ptrace.log`, the player per sim step at 1/60 s)
+
+**Round 1:** the undriven player sits at the grid (0.50, -2.00) until sim step 25, is pushed to 1,650 by step 30,
+drifts to progress 2.78 and stops.
+
+**Round 2:**
+- At about sim step 1,900 the exe resets the player to the grid.
+- At sim step 4,139 (AI-step frame ≈ 2021, 0x007f0ff4 = 101100) its speed jumps from 624 to 2,548 in one step at
+  progress 1.77. That is car 3 hitting it from behind: car 3 is at 3,218, 1.07 behind, at the 19 calls.
+- So the exe's "player ahead at > 2500" is the rammed player. It is not a driven player.
+
+**The original's undriven recipe:**
+- Cars and the clock freeze after about frame 1,500 (memory o-rg4-recipe-round-ends-early), so it never shows a
+  round-2 launch.
+- In round 1 the undriven player is pushed to at least 1,361 (`orig/o_al_a`, frame 920, every-20th-call sample,
+  so a lower bound) and stays under 2,500, so the gate cannot pass.
+
+## 3. Not settled
+
+**A dense original round-1 push capture** (`--aileaf-probe 1`, undriven) was attempted 3 times. All three games
+(PIDs 35552, 35368, 30556) exited before the menu.
+- Four other sessions' MASHED instances were running at the time, and three crash dumps exist for other PIDs.
+- I did not re-run the compat setup or the patches, because they are shared with those sessions.
+- So the push magnitude at the grid (exe 1,650 against original ≥ 1,361) is only bounded from one side.
+- Reopen when the machine is quiet: the same command line, `o_al_dense`.
+
+**Round flow:**
+- Whether the original would begin round 2, and launch its AI into a parked player as the exe does, needs a
+  recipe that gets the original past the round-1 standings.
+- `scenario_launch`'s control-4 pulses do not get there (memory: race-hud-burst gotchas; standings sub-state 7
+  needs about 28 s).
+- This is a modes-third (round end / restart) question, not an AI-leaf one.
+
+## 4. Consequence for G-AILEAF
+
+None for the port:
+- It returns what the original's bytes return, on both sides' inputs (368 + 820 + 4,646 rows).
+- The original takes the return-1 arm in the matching situation (Phase 2c).
+
+The 19-event count in AL_ON is a property of the exe's round-2 collision. If the knob is ever stacked, that count
+moves with the car-car contact and the round flow, not with this group.
