@@ -6389,8 +6389,10 @@ function runDiff() {
             // rejects with "bad argument count" on BOTH arms (10 C3 rows read RED/RED, negctl 2026-10-11). A cdecl
             // caller cleans its own stack, so the placeholder never reached the target anyway.
             const a = args.slice(0, CONFIG.signature.args.length).map(function(v, ai) {
+                const ty = CONFIG.signature.args[ai];
+                if (ty === 'float' || ty === 'double') return v;      // floats pass as JS numbers (>>>0 truncated them)
                 const r = resolveVal(v) >>> 0;
-                return CONFIG.signature.args[ai] === 'pointer' ? ptr(r) : r;
+                return ty === 'pointer' ? ptr(r) : r;
             });
             const prepArgs = (t && t.prep_args) ? t.prep_args.map(function(v) { return v >>> 0; }) : null;
             // Per-test `seed`: [{addr, val, size=4}] written before EACH arm (after the fill), saved and restored

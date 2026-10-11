@@ -1,0 +1,5 @@
+hook	rva	arg_type	lane	mode	verdict	mismatches	total	stats	err
+viewport_scaled_rect_draw	0x00428610	scalars_to_scattered_globals	warm	real	GREEN	0	12		
+viewport_scaled_rect_draw	0x00428610	scalars_to_scattered_globals	warm	baseline	GREEN	0	12		
+viewport_scaled_rect_draw	0x00428610	scalars_to_scattered_globals	warm	baseline	GREEN	0	12		
+viewport_scaled_rect_draw	0x00428610	scalars_to_scattered_globals	warm	real	GREEN	0	12		
