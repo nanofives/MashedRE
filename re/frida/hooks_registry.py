@@ -22523,3 +22523,20 @@ for _name, _rva, _exp in (('pipeline_fragment_4eb3c0_create', 0x00496d60, 'Pipel
                         {'args': [], 'failMask': 0x10}],
         'path2_tests': [{'args': []}],
     }
+
+
+# ---- stand-in promotion round 5 (2026-10-11) -- Render/PromoLoop_standins_r5.cpp ----
+# 0x00401fe0 Geom3Vert1TriCreate: material 0x004e7fa0, RpGeometry 0x004e8c70(3, 1, 0x4b), three vertices with optional
+# normal / prelit / uv, triangle + material + bounding sphere + unlock, material release. Round-3 fixture. failMask 2 / 4
+# fail the second / third allocation (inside the geometry create), so the NULL-geometry exit runs on some vector; the
+# first allocation (the material) is never failed: both bodies write [mat+4] without a NULL check (0x00402054).
+HOOKS['geom_3vert_1tri_create'] = {
+    'rva': 0x00401fe0, 'export': 'Geom3Vert1TriCreate', 'signature': {'ret': 'pointer', 'args': []},
+    'arg_type': 'standin_object_call', 'heap_standin': {'exhaust': 'null'}, 'freeze_main': True,
+    'observe_globals': _RWG_OBS, 'observe_ret_len': 0x60, 'lut_root_delta': 0,
+    'path1_tests': [{'args': []}, {'args': []}, {'args': [], 'failMask': 2}, {'args': [], 'failMask': 4}],
+    'path2_tests': [{'args': []}],
+}
+
+# 0x004022a0 Geom4Vert2TriCreate: as 0x00401fe0 with 4 vertices / 2 triangles (0,1,3) (3,1,2). Same fixture.
+HOOKS['geom_4vert_2tri_create'] = dict(HOOKS['geom_3vert_1tri_create'], rva=0x004022a0, export='Geom4Vert2TriCreate')

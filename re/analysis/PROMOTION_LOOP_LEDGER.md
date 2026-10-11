@@ -617,3 +617,9 @@ HERE — /promote-round keeps appending new round-log entries below this line.
 - Attempted 2, GREEN 2: 0x00496d60 PipelineFragment4eb3c0Create, 0x00496db0 PipelineFragment4eb9d0Create (scheduled failures cover the NULL and destroy exits).
 - Deferred: 0x0042d420, 0x004670a0 (RwRasterCreate 0x004c77c0 twice: D3D device rasters).
 - Dry counter: 0.
+
+### Stand-in lane round 5 (2026-10-11)
+- Attempted 2, GREEN 2: 0x00401fe0 Geom3Vert1TriCreate, 0x004022a0 Geom4Vert2TriCreate (triangle-order mutation RED 2/4).
+- Deferred: 0x0041ecc0 (drives live objects from table 0x0063d9e0 via a jump table), 0x004218d0 (reaches 0x004218b0's live physics-registry write),
+  0x0041cb10 (.dff file load through 0x0042a5d0; file IO beyond the census's one-level import check).
+- Dry counter: 0.

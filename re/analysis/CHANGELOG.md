@@ -26,6 +26,8 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-11  00401fe0  Geom3Vert1TriCreate  C2->C3  stand-in round 5 (plan #3): standin_object_call path1 GREEN 4/4, self-baseline GREEN 4/4, path2 PASS 1/1; mutation control RED 2/4; re/analysis/standins_2026-10-11/round5.md
+2026-10-11  004022a0  Geom4Vert2TriCreate  C2->C3  stand-in round 5 (plan #3): standin_object_call path1 GREEN 4/4, self-baseline GREEN 4/4, path2 PASS 1/1; mutation control RED 2/4; re/analysis/standins_2026-10-11/round5.md
 2026-10-11  00496d60  PipelineFragment4eb3c0Create  C2->C3  stand-in round 4 (plan #3): standin_object_call path1 GREEN 5/5 (failure arms included), self-baseline GREEN 5/5, path2 PASS 1/1; re/analysis/standins_2026-10-11/round4.md
 2026-10-11  00496db0  PipelineFragment4eb9d0Create  C2->C3  stand-in round 4 (plan #3): standin_object_call path1 GREEN 5/5 (failure arms included), self-baseline GREEN 5/5, path2 PASS 1/1; re/analysis/standins_2026-10-11/round4.md
 2026-10-11  00402240  ClumpGeom401fe0Create  C2->C3  stand-in round 3 (plan #3): standin_object_call path1 GREEN 3/3, self-baseline GREEN 3/3, path2 PASS 1/1; re/analysis/standins_2026-10-11/round3.md
