@@ -26,6 +26,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-11  0047bcc0  TriEdgePairsBuild  C2->C3  stand-in round 2 (plan #3): standin_object_call path1 GREEN 7/7 with reg_args EAX, self-baseline GREEN 7/7, path2 PASS 2/2; re/analysis/standins_2026-10-11/round2.md
 2026-10-11  00474db0  RwMallocArrayZeroFill  C2->C3  stand-in round 1 (plan #3): standin_object_call path1 GREEN rw_malloc_array_zero_fill 6/6, self-baseline GREEN, path2 PASS 2/2; re/analysis/standins_2026-10-11/round1.md; U-9652 naming
 2026-10-11  004759b0  Arrays691600Alloc  C2->C3  stand-in round 1 (plan #3): standin_object_call path1 GREEN arrays_691600_alloc 5/5 (observe_globals + freeze_main), self-baseline GREEN, path2 PASS 2/2; re/analysis/standins_2026-10-11/round1.md; U-9652 naming
 2026-10-11  00484170  Rec18Create  C2->C3  stand-in round 1 (plan #3): standin_object_call path1 GREEN rec18_create 6/6 incl. scheduled rwmalloc failure, self-baseline GREEN, path2 PASS 2/2; re/analysis/standins_2026-10-11/round1.md; U-9652 naming

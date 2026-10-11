@@ -22455,3 +22455,32 @@ HOOKS['rec18_create'] = {
                     _r18(0x40400000, failMask=1)],
     'path2_tests': [_r18(0x40400000), _r18(0x40400000, failMask=1)],
 }
+
+
+# ---- stand-in promotion round 2 (2026-10-11) -- Track/PromoLoop_standins_r2.cpp ----
+# 0x0047bcc0 TriEdgePairsBuild: EAX = n, cdecl (out, tris). rwmalloc(72n) temp, three edge records per triangle,
+# pairs matching records (0x0047bc90 inlined), rwmalloc(cnt*0x18) output (out[0], out[1] = cnt), copies the paired
+# records, rwfree(temp). reg_args routes logical arg 0 to EAX on both arms. OBJ = out, B0 = the triangle records
+# (u16 v0/v1/v2 at +0/+2/+4, stride 8). Observable: out (OBJ dwords), alloc sizes, the rwfree of the temp block,
+# and the arena digest (temp block after pairing + output records).
+def _tris(tl):
+    f = []
+    for i, (a, b, c) in enumerate(tl):
+        f += [['B0', 8 * i, a | (b << 16)], ['B0', 8 * i + 4, c | (0xbeef << 16)]]
+    return {'blocks': [max(8, 8 * len(tl))], 'fields': f, 'args': [len(tl), 'OBJ', 'B0']}
+HOOKS['tri_edge_pairs_build'] = {
+    'rva': 0x0047bcc0, 'export': 'TriEdgePairsBuild',
+    'signature': {'ret': 'void', 'args': ['uint32', 'pointer', 'pointer']},
+    'reg_args': {'eax': 0},
+    'arg_type': 'standin_object_call', 'heap_standin': True, 'object_size': 0x10, 'lut_root_delta': 0,
+    'path1_tests': [
+        _tris([(0, 1, 2)]),
+        _tris([(0, 1, 2), (2, 1, 3)]),
+        _tris([(0, 1, 2), (0, 2, 3), (0, 3, 4), (0, 4, 1)]),
+        _tris([(5, 5, 6), (5, 6, 5)]),
+        _tris([(0, 1, 2), (0, 1, 2), (0, 1, 2)]),
+        _tris([]),
+        _tris([(0, 1, 2), (1, 2, 3), (2, 3, 4), (3, 4, 5), (4, 5, 6)]),
+    ],
+    'path2_tests': [_tris([(0, 1, 2), (2, 1, 3)]), _tris([(0, 1, 2), (0, 2, 3), (0, 3, 4), (0, 4, 1)])],
+}

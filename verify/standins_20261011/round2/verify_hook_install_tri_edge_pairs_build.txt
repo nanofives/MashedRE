@@ -1,0 +1,25 @@
+=== verify_hook_install report (tri_edge_pairs_build) ===
+
+target address: 0x0047bcc0  export: TriEdgePairsBuild
+PRE  bytes:     83 ec 10 53 55 56 8b d8
+asi base:       0x5fd80000
+reimpl addr:    0x5fe08870
+POST bytes:     e9 ab cb 98 5f 56 8b d8
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x5f98cbab  expected 0x5f98cbab  -> OK
+bytes changed:  True
+
+interceptor entries (reimpl):  2 / 2  (other threads: 0)
+
+per-input results:
+  [OK] input={'blocks': [16], 'fields': [['B0', 0, 65536], ['B0', 4, 3203334146], ['B0', 8, 65538], ['B0', 12, 3203334147]], 'args': [2, 'OBJ', 'B0']}  got=obj=[+0x0=A+0x90,+0x4=0x1] log=[alloc:rwmalloc:0x90:A+0x0 alloc:rwmalloc:0x18:A+0x90 free:rwfree:A+0x0 arena=0xb0/0x7efe7d46]  err=
+  [OK] input={'blocks': [32], 'fields': [['B0', 0, 65536], ['B0', 4, 3203334146], ['B0', 8, 131072], ['B0', 12, 3203334147], ['B0', 16, 196608], ['B0', 20, 3203334148], ['B0', 24, 262144], ['B0', 28, 3203334145]], 'args': [4, 'OBJ', 'B0']}  got=obj=[+0x0=A+0x120,+0x4=0x4] log=[alloc:rwmalloc:0x120:A+0x0 alloc:rwmalloc:0x60:A+0x120 free:rwfree:A+0x0 arena=0x180/0xd2adad3c]  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + first 8 bytes mutated by patcher
+  + reimpl interceptor fired 2x as expected
+  + all 2 calls returned without exception
+FAIL:
+  (none)

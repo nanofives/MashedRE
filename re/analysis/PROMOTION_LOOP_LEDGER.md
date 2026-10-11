@@ -600,3 +600,10 @@ HERE — /promote-round keeps appending new round-log entries below this line.
   0x004935a0 / 0x004935d0 (image-library BMP loader 0x0052cb00 / d3dx 0x00514330 + RW global setter 0x004c5c80), 0x00491780 (0x00491590 fills two blocks through the RNG 0x00472650 and writes 0x00869cc0..0x0086a494).
 - Harness additions this round: observe_globals, per-test failMask/failSize, observe_ret_len, block-targeted fields, arena slack byte 0xa5.
 - Dry counter: 0.
+
+### Stand-in lane round 2 (2026-10-11)
+- Attempted 1, GREEN 1: 0x0047bcc0 TriEdgePairsBuild (EAX-delivered count; harness addition reg_args).
+- Deferred: 0x004218b0 (EAX arg + RWP37WorldSlotAssign 0x0057c220 writes the live physics registry *(0x007dc8d8)+slot), 0x004770c0 (links into the live world via 0x004e7e30),
+  0x00454170 (ESI this + RW frame/world destroy calls), 0x00489940 / 0x004892c0 (reach 0x004770c0), 0x004826d0 / 0x00482140 / 0x0047f4c0 / 0x0047fc40 / 0x0047ff70 / 0x0047fad0 (RW-physics object calls).
+- Census of the remaining 53 game-zone rows: every one calls RenderWare object code (RpGeometry / RpAtomic / RwFrame / RpClump / RW-physics) directly or through 0x004770c0.
+- Dry counter: 0.

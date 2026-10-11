@@ -418,14 +418,58 @@
   //   t.fields entries may also be [target, off, value] with target 'OBJ' | 'B<i>' (stores into a block)
   //   t.failMask / t.failSize         per-test allocation failure schedule (overrides heap_standin's)
   // cfg keys: object_size (0x100), object_alloc ('crt'|'frida'), heap_standin, import_standin, freeze_main,
+  //           reg_args {reg: argIndex} + callee_pops (register-delivered arguments, see regThunk),
   //           signature.ret, observe_ret_len (dump that many bytes at the returned pointer when non-NULL),
   //           observe_globals [{addr, len}]: saved before each arm, filled with per-dword sentinels 0x5eed0000+i
   //           (or t.globals [[addr, value]] stores), observed after the arm (normalized dwords) and RESTORED right
   //           after it -- a live game global holds a fixture or arena pointer only for the length of one arm (use
   //           freeze_main when the game's first thread reads it).
   //           fns: [[side, NativeFunction], ...].  Returns per-test arrays of {side: obs, err}.
+  // Register-argument thunk (cfg.reg_args = {eax: 0, esi: 2, ...}: register <- logical argument index). The thunk is
+  // cdecl over ALL logical arguments: it saves ebx/esi/edi/ebp, loads each named register from its argument, pushes
+  // the remaining arguments right to left, calls `target`, drops them (unless cfg.callee_pops), restores and returns.
+  // Both arms go through a thunk built the same way, so register delivery is identical on both sides.
+  //   push ebx/esi/edi/ebp          53 56 57 55            (+0x10)
+  //   mov r32, [esp+0x14+4*i]       8b <modrm> 24 <d8>
+  //   push dword [esp+d]            ff 74 24 <d8>          d = 0x14 + 4*j + 4*k for argument j as the k-th push
+  //   call target                   e8 <rel32>
+  //   add esp, 4*k                  83 c4 <k*4>
+  //   pop ebp/edi/esi/ebx; ret      5d 5f 5e 5b c3
+  const REGCODE = { eax: 0x44, ecx: 0x4c, edx: 0x54, ebx: 0x5c, ebp: 0x6c, esi: 0x74, edi: 0x7c };
+  function regThunk(target, cfg) {
+    const nargs = cfg.signature.args.length;
+    const regs = cfg.reg_args || {};
+    const inReg = {};
+    Object.keys(regs).forEach(function (r) {
+      if (!(r in REGCODE)) throw new Error('standins: reg_args register ' + r + ' not supported');
+      inReg[regs[r]] = r;
+    });
+    const stackIdx = [];
+    for (let i = 0; i < nargs; i++) if (!(i in inReg)) stackIdx.push(i);
+    const code = keepAlloc(Process.pageSize);
+    let b = [0x53, 0x56, 0x57, 0x55];
+    Object.keys(regs).forEach(function (r) { b = b.concat([0x8b, REGCODE[r], 0x24, 0x14 + 4 * regs[r]]); });
+    for (let k = 0; k < stackIdx.length; k++) {
+      const j = stackIdx[stackIdx.length - 1 - k];
+      const d = 0x14 + 4 * j + 4 * k;
+      if (d > 0x7f) throw new Error('standins: reg thunk displacement too large');
+      b = b.concat([0xff, 0x74, 0x24, d]);
+    }
+    const callAt = b.length;
+    b = b.concat([0xe8, 0, 0, 0, 0]);
+    const drop = cfg.callee_pops ? 0 : 4 * stackIdx.length;
+    if (drop) b = b.concat([0x83, 0xc4, drop]);
+    b = b.concat([0x5d, 0x5f, 0x5e, 0x5b, 0xc3]);
+    const rel = u32(ptr(target).sub(code.add(callAt + 5)).toUInt32());
+    for (let i = 0; i < 4; i++) b[callAt + 1 + i] = rel[i];
+    Memory.patchCode(code, b.length, function (c) { c.writeByteArray(b); });
+    return new NativeFunction(code, cfg.signature.ret, cfg.signature.args, 'mscdecl');
+  }
+
   function objectCall(fns, cfg, asi) {
     const size = cfg.object_size || 0x100;
+    // reg_args: route each arm through a register thunk (NativeFunction is a NativePointer: ptr(fn) is its target)
+    if (cfg.reg_args) fns = fns.map(function (sf) { return [sf[0], regThunk(ptr(sf[1]), cfg)]; });
     const gameMalloc = new NativeFunction(ptr('0x004a45fb'), 'pointer', ['uint32'], 'mscdecl');
     const galloc = function (n) {
       const p = cfg.object_alloc === 'frida' ? keepAlloc(n) : gameMalloc(n);
