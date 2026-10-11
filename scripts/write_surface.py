@@ -70,6 +70,30 @@ def load():
     return pe.OPTIONAL_HEADER.ImageBase, pe.get_memory_mapped_image()
 
 
+SWITCH = re.compile(r"^dword ptr \[e[a-z]{2}\*4 \+ (0x[0-9a-f]+)\]$")
+
+
+def switch_table(op, va, limit, base, data):
+    """Table address when `jmp <op>` is a SWITCH, else None.
+
+    `jmp dword ptr [reg*4 + tbl]` is how MSVC compiles a C switch. It is a branch to a case label inside the same
+    body, not a dispatch: nothing outside the function runs, so it must not be counted as indirect dispatch. Before
+    2026-10-11 it was, and 25 of the 1,125 mutators that survey_ab_reach.py --depth 3 called "indirect - NOT
+    reachable" had no other blocker (re/analysis/pointer_callers_2026-10-11.md). The form alone is not enough: a
+    `jmp [reg*4 + tbl]` whose table holds OTHER functions' entries is real dispatch. So this requires the table's
+    first entry to land in [va, limit), the same window body_len scans.
+    """
+    m = SWITCH.match(op)
+    if not m:
+        return None
+    tbl = int(m.group(1), 16)
+    o = tbl - base
+    if not 0 <= o <= len(data) - 4:
+        return None
+    first = int.from_bytes(data[o:o + 4], "little")
+    return tbl if va <= first < limit else None
+
+
 def body_len(va, base, data, starts, maxlen=0x600):
     """Bound the body: next known function start, else padding after a ret.
 
@@ -80,8 +104,10 @@ def body_len(va, base, data, starts, maxlen=0x600):
     j = bisect.bisect_right(starts, va)
     limit = min(starts[j], va + maxlen) if j < len(starts) else va + maxlen
     md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_32)
-    end, seen_ret = va, False
+    end, seen_ret, cap = va, False, limit
     for i in md.disasm(data[va - base:va - base + (limit - va)], va):
+        if i.address >= cap:
+            break                    # reached a switch's jump table: data, not code
         if i.mnemonic in ("nop", "int3"):
             if seen_ret:
                 break
@@ -94,6 +120,12 @@ def body_len(va, base, data, starts, maxlen=0x600):
         # without this the scan ran through the padding into 0x004522e0 and
         # attributed that function's stores to this one. Fifth mis-bounded body
         # scan of the session; they all fail the same way, silently.
+        elif i.mnemonic == "jmp" and switch_table(i.op_str, va, limit, base, data):
+            # a switch branches inside the body, so it ends nothing; MSVC places the table after the case code,
+            # and decoding past it reads the table as instructions
+            tbl = switch_table(i.op_str, va, limit, base, data)
+            if tbl > i.address:
+                cap = min(cap, tbl)
         elif i.mnemonic == "jmp" and not i.op_str.startswith("0x"):
             seen_ret = True          # indirect tail jump: definitely the end
         elif i.mnemonic == "jmp" and i.op_str.startswith("0x"):
@@ -140,7 +172,8 @@ def scan(va, base, data, starts):
             else:
                 indirect.append((i.address, op))
         elif i.mnemonic == "jmp" and not op.startswith("0x"):
-            indirect.append((i.address, op))
+            if not switch_table(op, va, va + n, base, data):
+                indirect.append((i.address, op))
         # --- record stores
         m = STORE.search(op)
         if m and i.mnemonic in ("mov", "and", "or", "xor", "add", "sub"):
