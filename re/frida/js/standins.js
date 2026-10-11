@@ -321,6 +321,12 @@
           }).join(':');
         });
         if (arena && hcfg.observeArena !== false) parts.push('arena=' + hex(cursor) + '/' + hex(fnv(arena, Math.max(cursor, 1))));
+        // observeArena: 'full' -- every carved dword, normalized (diagnosis: which object field differs)
+        if (arena && hcfg.observeArena === 'full') {
+          const w = [];
+          for (let o = 0; o + 4 <= cursor; o += 4) w.push(norm(arena.add(o).readU32()));
+          parts.push('arenafull=' + w.join(','));
+        }
         return parts.join(' ');
       },
       forwarded: function () {
@@ -420,9 +426,9 @@
   // cfg keys: object_size (0x100), object_alloc ('crt'|'frida'), heap_standin, import_standin, freeze_main,
   //           reg_args {reg: argIndex} + callee_pops (register-delivered arguments, see regThunk),
   //           signature.ret, observe_ret_len (dump that many bytes at the returned pointer when non-NULL),
-  //           observe_globals [{addr, len}]: saved before each arm, filled with per-dword sentinels 0x5eed0000+i
+  //           observe_globals [{addr, len, seed, deref, off}]: saved before each arm, filled with per-dword sentinels 0x5eed0000+i
   //           (or t.globals [[addr, value]] stores), observed after the arm (normalized dwords) and RESTORED right
-  //           after it -- a live game global holds a fixture or arena pointer only for the length of one arm (use
+  //           after it (seed: false skips the sentinel fill, for live engine blocks such as RwGlobals) -- a live game global holds a fixture or arena pointer only for the length of one arm (use
   //           freeze_main when the game's first thread reads it).
   //           fns: [[side, NativeFunction], ...].  Returns per-test arrays of {side: obs, err}.
   // Register-argument thunk (cfg.reg_args = {eax: 0, esi: 2, ...}: register <- logical argument index). The thunk is
@@ -505,7 +511,11 @@
           });
           return new Uint8Array(obj.readByteArray(size));
         };
-        const globs = (cfg.observe_globals || []).map(function (g) { return [ptr(g.addr), g.len || 4]; });
+        // deref: true -> the window starts at *(addr), read when the test starts (RwGlobals lives on the heap at run
+        // time: *(0x007d3ff8) is not the static block 0x007d3ec8, which keeps stale pointers)
+        const globs = (cfg.observe_globals || []).map(function (g) {
+          return [(g.deref ? ptr(g.addr).readPointer() : ptr(g.addr)).add(g.off || 0), g.len || 4, g.seed !== false];
+        });
         const row = {};
         fns.forEach(function (sf) {
           const side = sf[0], fn = sf[1];
@@ -517,6 +527,7 @@
           let ret = null, err = null;
           const saved = globs.map(function (g) { return g[1] ? g[0].readByteArray(g[1]) : null; });
           globs.forEach(function (g) {
+            if (!g[2]) return;                       // seed: false -- observe + restore only (live engine state)
             for (let o = 0; o + 4 <= g[1]; o += 4) g[0].add(o).writeU32((0x5eed0000 + o / 4) >>> 0);
           });
           (t.globals || []).forEach(function (gv) { ptr(gv[0]).writePointer(val(gv[1])); });

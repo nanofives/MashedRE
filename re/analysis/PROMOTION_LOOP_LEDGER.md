@@ -607,3 +607,8 @@ HERE — /promote-round keeps appending new round-log entries below this line.
   0x00454170 (ESI this + RW frame/world destroy calls), 0x00489940 / 0x004892c0 (reach 0x004770c0), 0x004826d0 / 0x00482140 / 0x0047f4c0 / 0x0047fc40 / 0x0047ff70 / 0x0047fad0 (RW-physics object calls).
 - Census of the remaining 53 game-zone rows: every one calls RenderWare object code (RpGeometry / RpAtomic / RwFrame / RpClump / RW-physics) directly or through 0x004770c0.
 - Dry counter: 0.
+
+### Stand-in lane round 3 (2026-10-11)
+- Attempted 2, GREEN 2: 0x00402240 ClumpGeom401fe0Create, 0x00402590 ClumpGeom4022a0Create (first RW-object rows: live RwGlobals + engine +0x52c restored per arm, freeze_main).
+- Harness additions: observe_globals seed:false / deref / off, heap observeArena:'full' (diagnosis).
+- Dry counter: 0.

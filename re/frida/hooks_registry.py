@@ -22484,3 +22484,26 @@ HOOKS['tri_edge_pairs_build'] = {
     ],
     'path2_tests': [_tris([(0, 1, 2), (2, 1, 3)]), _tris([(0, 1, 2), (0, 2, 3), (0, 3, 4), (0, 4, 1)])],
 }
+
+
+# ---- stand-in promotion round 3 (2026-10-11) -- Render/PromoLoop_standins_r3.cpp ----
+# 0x00402240 / 0x00402590: RenderWare clump assembly (geometry builder 0x00401fe0 / 0x004022a0, clump 0x004e6d80,
+# two frames 0x004c0b30, atomic 0x004e67b0, link 0x004e7e30 / 0x004e68a0 / 0x004e6f80, reparent 0x004c1040,
+# geometry release 0x004e8ea0). Every allocation goes through the RwGlobals slots, so the whole object graph is carved
+# from the arena (arena digest). The live RwGlobals block *(0x007d3ff8)..+0x12c is observed and RESTORED around each arm
+# without seeding (engine-global state the frame code can touch, e.g. the dirty-frame list), with the game's first
+# thread frozen. Repeated calls in one test vector are not needed: each arm starts from the same arena and globals.
+# The engine-instance dword at *(0x007d3ff8)+0x52c is a counter the geometry path reads into a new object (arena dword
+# 0x00010001 -> 0x00020001 between arms when it was not restored); located by bisecting the restored window length
+# (0x52c RED, 0x530 GREEN, 2026-10-11). Restoring it keeps both arms on the same counter value.
+_RWG_OBS = [{'addr': '0x007d3ff8', 'deref': True, 'len': 0x12c, 'seed': False},
+            {'addr': '0x007d3ff8', 'deref': True, 'off': 0x52c, 'len': 4, 'seed': False}]
+for _name, _rva, _exp in (('clump_geom_401fe0_create', 0x00402240, 'ClumpGeom401fe0Create'),
+                          ('clump_geom_4022a0_create', 0x00402590, 'ClumpGeom4022a0Create')):
+    HOOKS[_name] = {
+        'rva': _rva, 'export': _exp, 'signature': {'ret': 'pointer', 'args': []},
+        'arg_type': 'standin_object_call', 'heap_standin': True, 'freeze_main': True,
+        'observe_globals': _RWG_OBS, 'observe_ret_len': 0x40, 'lut_root_delta': 0,
+        'path1_tests': [{'args': []}, {'args': []}, {'args': []}],
+        'path2_tests': [{'args': []}],
+    }

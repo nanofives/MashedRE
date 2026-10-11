@@ -426,3 +426,4 @@
 "Render\Vtbl5cf9e8ScalarDeletingDtor.cpp"
 "Render\PromoLoop_standins_r1.cpp"
 "Track\PromoLoop_standins_r2.cpp"
+"Render\PromoLoop_standins_r3.cpp"
