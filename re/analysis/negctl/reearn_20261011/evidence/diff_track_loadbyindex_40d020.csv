@@ -1,0 +1,6 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,"{""scalars"":[0],""seed"":[{""buf"":0,""off"":0,""ptr_to"":1},{""buf"":1,""off"":0,""type"":""u32"",""value"":3}]}",calls[1]=0x3,,calls[1]=0x3,,True,,
+1,"{""scalars"":[1],""seed"":[{""buf"":0,""off"":4,""ptr_to"":1},{""buf"":1,""off"":0,""type"":""u32"",""value"":7}]}",calls[1]=0x7,,calls[1]=0x7,,True,,
+2,"{""scalars"":[2],""seed"":[{""buf"":0,""off"":8,""ptr_to"":1},{""buf"":1,""off"":0,""type"":""u32"",""value"":18}]}",calls[1]=0x12,,calls[1]=0x12,,True,,
+3,"{""scalars"":[5],""seed"":[{""buf"":0,""off"":20,""ptr_to"":1},{""buf"":1,""off"":0,""type"":""u32"",""value"":57005}]}",calls[1]=0xdead,,calls[1]=0xdead,,True,,
+4,"{""scalars"":[3],""seed"":[{""buf"":0,""off"":12,""ptr_to"":1},{""buf"":1,""off"":0,""type"":""u32"",""value"":0}]}",calls[1]=0x0,,calls[1]=0x0,,True,,
