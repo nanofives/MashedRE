@@ -423,3 +423,4 @@
 "Render\PromoLoop_round256.cpp"
 "Gameplay\PickupPoolSpawn.cpp"
 "Render\ArcticTrackNodeSlot0.cpp"
+"Render\RendererScalarDtor.cpp"

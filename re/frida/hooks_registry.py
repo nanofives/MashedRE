@@ -22359,3 +22359,51 @@ HOOKS['ttl_set_68b1b0_bounds'] = {
         {'seed': _pr_seed(), 'args': [25,         0x41200000]},
     ],
 }
+
+
+# 0x004943d0  RendererScalarDtor  (plan item #3: heap/import stand-ins, 2026-10-11)
+# __thiscall(this, flags) -> this: calls the destructor body 0x00493c60, then frees `this` through 0x004a3bda
+# (`jmp 0x004a460d`, _free) when flags bit 0 is set (0x004943d8). The body's chain (0x00493c60 -> 0x0049ebc0 ->
+# 0x0049de90 -> 0x0049cbd0 / 0x0049c990 / 0x004a1180 / 0x004a01b0 -> 0x004a1000) calls Enter/Leave/Delete-
+# CriticalSection on this+0x7c / +0x94 / +0xc4, CloseHandle on [this+0x54/0x58/0x5c] when nonzero (0x004a1180),
+# timeEndPeriod(1) only when [this+0x64] == 1 (0x0049cc03; not exercised, the same branch calls vtable +0x44),
+# _free([this+0x3c]) (0x004a01d9), InterlockedDecrement(0x00773988) and FreeLibrary([0x00773984]) on a 0 result
+# (0x004a1000; the stand-in returns 1, so the real module refcount 0x00773988 and handle 0x00773984 are never touched).
+# COM pointers [this+0x50], [this+0x6c], [this+0x78], [this+0x18] stay 0 (each is a virtual call when nonzero).
+# The fixture object comes from the game heap (_malloc, disarmed) and is reused by both arms; B0 is a game-heap block.
+# Observable: return (OBJ+0x0), the vtable stores, and the stand-in log (frees with tag + import calls with args).
+# NON-DEGENERACY: flags 0 vs 1 changes the free log; handles 0 vs nonzero changes the CloseHandle calls; +0x3c
+# B0 / NULL / interior pointer changes the _free argument.
+_DT_IMPORTS = {
+    'KERNEL32.dll!EnterCriticalSection':  {'ret': 0},
+    'KERNEL32.dll!LeaveCriticalSection':  {'ret': 0},
+    'KERNEL32.dll!DeleteCriticalSection': {'ret': 0},
+    'KERNEL32.dll!CloseHandle':           {'ret': 1},
+    'KERNEL32.dll!InterlockedDecrement':  {'ret': 1},
+    'KERNEL32.dll!FreeLibrary':           {'ret': 1},
+    'WINMM.dll!timeEndPeriod':            {'ret': 0},
+}
+_DT_H = [[0x54, 0x1111], [0x58, 0x2222], [0x5c, 0x3333]]
+HOOKS['renderer_scalar_dtor'] = {
+    'rva':                0x004943d0,
+    'export':             '@RendererScalarDtor@12',
+    'signature':          {'ret': 'pointer', 'args': ['pointer', 'uint32']},
+    'calling_convention': 'thiscall',
+    'arg_type':           'standin_object_call',
+    'object_size':        0x100,
+    'heap_standin':       True,
+    'import_standin':     _DT_IMPORTS,
+    'lut_root_delta':     0,
+    'path1_tests': [
+        {'blocks': [0x20], 'fields': _DT_H + [[0x3c, 'B0']],              'args': ['OBJ', 1]},
+        {'blocks': [0x20], 'fields': _DT_H + [[0x3c, 'B0']],              'args': ['OBJ', 0]},
+        {'blocks': [],     'fields': [[0x3c, 0]],                          'args': ['OBJ', 1]},
+        {'blocks': [0x40], 'fields': [[0x58, 0x7777], [0x64, 2], [0x3c, 'B0']], 'args': ['OBJ', 3]},
+        {'blocks': [0x20], 'fields': _DT_H + [[0x3c, 'B0+0x8']],          'args': ['OBJ', 0xfffffffe]},
+        {'blocks': [0x20], 'fill': 0x00, 'fields': [[0x5c, 0x9999], [0x3c, 'B0']], 'args': ['OBJ', 0x80000001]},
+    ],
+    'path2_tests': [
+        {'blocks': [0x20], 'fields': _DT_H + [[0x3c, 'B0']], 'args': ['OBJ', 1]},
+        {'blocks': [0x20], 'fields': _DT_H + [[0x3c, 'B0']], 'args': ['OBJ', 0]},
+    ],
+}

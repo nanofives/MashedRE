@@ -21,6 +21,7 @@ ROOT = Path(__file__).resolve().parent.parent.parent
 
 sys.path.insert(0, str(ROOT / 're' / 'frida'))
 from hooks_registry import HOOKS
+from run_diff import STANDIN_KEYS, agent_source
 
 
 def _find_original(script_root: Path) -> Path:
@@ -123,6 +124,11 @@ def main():
         'obs_globals':    hook.get('obs_globals', []),
         'tests':          hook['path2_tests'],
     }
+    # Heap / import stand-ins (plan item #3): the SAME keys run_diff.build_config forwards, so path2 runs the
+    # fixture path1 ran. Whitelist trap again -- an unforwarded key is dropped silently.
+    for _k in STANDIN_KEYS:
+        if _k in hook:
+            config[_k] = hook[_k]
 
     LOG_DIR.mkdir(parents=True, exist_ok=True)
     report_txt = LOG_DIR / f'verify_hook_install_{name}.txt'
@@ -154,7 +160,7 @@ def main():
         except Exception: pass
         return 4
 
-    script_text = AGENT_JS.read_text(encoding='utf-8').replace('$CONFIG$', json.dumps(config))
+    script_text = agent_source(AGENT_JS, config)
     script = session.create_script(script_text)
     script.on('message', on_message)
     script.load()

@@ -461,7 +461,23 @@ def build_config(hook, asi_path=None):
     for _k in ('vtbl_ptr_offset', 'table_entries'):
         if _k in hook:
             config[_k] = hook[_k]
+    # Heap / import stand-ins (plan item #3, 2026-10-11; re/frida/js/standins.js). Read by the generic
+    # Orig/Reimpl wrapper in runDiff and by arg_type standin_object_call. Same whitelist rule as above:
+    # run_verify_hook.py forwards the same keys, so path1 and path2 run the same fixture.
+    for _k in STANDIN_KEYS:
+        if _k in hook:
+            config[_k] = hook[_k]
     return config
+
+
+STANDIN_KEYS = ('heap_standin', 'import_standin', 'freeze_main', 'object_size', 'object_alloc')
+STANDINS_JS = ROOT / 're' / 'frida' / 'js' / 'standins.js'
+
+
+def agent_source(agent_js, config):
+    """Agent text: the shared stand-in library, then the template with CONFIG substituted."""
+    return (STANDINS_JS.read_text(encoding='utf-8') + '\n'
+            + agent_js.read_text(encoding='utf-8').replace('$CONFIG$', json.dumps(config)))
 
 
 def main():
@@ -474,9 +490,14 @@ def main():
 
     hook = HOOKS[name]
     config = build_config(hook)
+    # --self-baseline: bind the reimpl arm to the ORIGINAL (zero-hook control). A fixture that cannot pass
+    # original-vs-original is a broken verifier. Writes its own CSV so it never overwrites the real diff.
+    self_baseline = '--self-baseline' in sys.argv[2:]
+    if self_baseline:
+        config['self_baseline'] = True
 
     LOG_DIR.mkdir(parents=True, exist_ok=True)
-    csv_out = LOG_DIR / f'diff_{name}.csv'
+    csv_out = LOG_DIR / (f'diff_{name}_selfbaseline.csv' if self_baseline else f'diff_{name}.csv')
 
     if not MASHED_EXE.exists():
         sys.exit(f"MASHED.exe not found at {MASHED_EXE}")
@@ -552,7 +573,7 @@ def main():
             except Exception: pass
             return 6
 
-    script_text = AGENT_JS.read_text(encoding='utf-8').replace('$CONFIG$', json.dumps(config))
+    script_text = agent_source(AGENT_JS, config)
     script = session.create_script(script_text)
     script.on('message', on_message)
     script.load()

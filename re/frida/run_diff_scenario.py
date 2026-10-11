@@ -70,7 +70,7 @@ ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(ROOT / 're' / 'frida'))
 
 from hooks_registry import HOOKS
-from run_diff import build_config, value_bits, _find_original
+from run_diff import build_config, value_bits, _find_original, agent_source
 # Reuse statenav's Nav class + the in-process press driver agent verbatim.
 import statenav
 
@@ -293,7 +293,7 @@ def main():
         else:
             print("  [diff]", p)
 
-    script_text = AGENT_JS.read_text(encoding="utf-8").replace("$CONFIG$", json.dumps(config))
+    script_text = agent_source(AGENT_JS, config)
     diff_scr = sess.create_script(script_text)
     diff_scr.on("message", on_msg)
     diff_scr.load()

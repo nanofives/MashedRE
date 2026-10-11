@@ -112,7 +112,7 @@ from mashed_lock import MashedLock
 import statenav
 import run_diff_scenario as RDS
 from run_diff_scenario import drive_to_results, ROOT, ORIG, MASHED_EXE, ASI_PATH, LOG_DIR
-from run_diff import build_config, value_bits
+from run_diff import build_config, value_bits, agent_source
 from hooks_registry import HOOKS
 
 AGENT_JS = Path(__file__).resolve().parent / "diff_template.js"
@@ -149,7 +149,7 @@ def run_one_hook(sess, nav, name, shotdir, tests_override=None):
         elif k == "error":
             errors.append(p.get("msg")); done["v"] = True
 
-    text = AGENT_JS.read_text(encoding="utf-8").replace("$CONFIG$", json.dumps(config))
+    text = agent_source(AGENT_JS, config)
     scr = sess.create_script(text)
     scr.on("message", on_msg)
     scr.load()

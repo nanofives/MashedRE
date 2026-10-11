@@ -104,8 +104,7 @@ def run_hook_on_session(session, name):
     the agent's repeated Module.load of the .asi is OS-idempotent (refcount)."""
     hook = HOOKS[name]
     config = run_diff.build_config(hook)
-    script_text = AGENT_JS.read_text(encoding='utf-8').replace(
-        '$CONFIG$', __import__('json').dumps(config))
+    script_text = run_diff.agent_source(AGENT_JS, config)
 
     results = []
     err = {'msg': None}

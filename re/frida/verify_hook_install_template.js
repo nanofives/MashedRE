@@ -623,7 +623,18 @@ function runVerification() {
               : null;
     const results = [];
     const beforeCount = reimplEntries;
-    for (let i = 0; i < CONFIG.tests.length; i++) {
+    // standin_object_call (plan item #3): the fixture + heap/import stand-ins of re/frida/js/standins.js, the same
+    // objectCall path1 runs, with the PATCHED entry as the only arm.
+    if (CONFIG.arg_type === 'standin_object_call') {
+        try {
+            const res = __standins.objectCall([['P', Patched]], CONFIG, module);
+            res.rows.forEach(function (r, i) { results.push({ idx: i, input: CONFIG.tests[i], got: r.P.obs, err: r.P.err }); });
+            send({ type: 'log', msg: 'standins forwarded (other threads): ' + JSON.stringify(res.forwarded) });
+        } catch (e) {
+            send({ type: 'error', msg: 'standin_object_call: ' + e.message });
+        }
+    }
+    for (let i = 0; i < CONFIG.tests.length && CONFIG.arg_type !== 'standin_object_call'; i++) {
         const t = CONFIG.tests[i];
         let got, err = null;
         try { got = callFn(Patched, t, buf); } catch (e) { got = null; err = e.message; }

@@ -1576,8 +1576,71 @@ function runDiff() {
     const callConv      = CONFIG.calling_convention || 'mscdecl';
     const origCallConv  = CONFIG.orig_calling_convention  || callConv;
     const reimplCallConv = CONFIG.reimpl_calling_convention || callConv;
-    const Orig   = new NativeFunction(TARGET_ADDR, CONFIG.signature.ret, CONFIG.signature.args, origCallConv);
-    const Reimpl = new NativeFunction(reimplAddr,  CONFIG.signature.ret, CONFIG.signature.args, reimplCallConv);
+    let Orig   = new NativeFunction(TARGET_ADDR, CONFIG.signature.ret, CONFIG.signature.args, origCallConv);
+    let Reimpl = new NativeFunction(reimplAddr,  CONFIG.signature.ret, CONFIG.signature.args, reimplCallConv);
+    // self_baseline (run_diff.py --self-baseline): the "reimpl" arm calls the ORIGINAL too. A handler or fixture
+    // that cannot pass original-vs-original is a broken verifier, not a RED (memory verifier-needs-passing-baseline).
+    if (CONFIG.self_baseline) {
+        Reimpl = new NativeFunction(TARGET_ADDR, CONFIG.signature.ret, CONFIG.signature.args, origCallConv);
+        send({ type: 'log', msg: 'self_baseline: reimpl arm bound to the original ' + TARGET_ADDR });
+    }
+
+    // standin_object_call — heap/import stand-in fixture (re/frida/js/standins.js, objectCall).
+    // MECHANISM: one fixture object from the GAME heap (_malloc 0x004a45fb while disarmed) re-seeded before each arm
+    // from t.fields ([off, value] with value = number | 'OBJ[+off]' | 'B<i>[+off]', t.blocks = extra game-heap
+    // blocks), fn(...t.args) called with the heap stand-in (CRT _malloc/__nh_malloc/_calloc/_free + RwGlobals
+    // +0x108..+0x11c carved from one arena reset per arm, frees RECORDED with their entry tag) and the import
+    // stand-in (IAT slots of MASHED.exe and the .asi -> fixture result, call + args recorded) armed for the A/B
+    // thread only. Observable = normalized return + object dwords changed vs the seed + the stand-in log. CONFIG:
+    // object_size, object_alloc ('crt'|'frida'), heap_standin, import_standin, freeze_main. A port that frees
+    // through the wrong allocator, skips a free or adds/drops an import call reads RED on the log alone.
+    if (CONFIG.arg_type === 'standin_object_call') {
+        let res;
+        try {
+            res = __standins.objectCall([['O', Orig], ['R', Reimpl]], CONFIG, module);
+        } catch (e) {
+            send({ type: 'error', msg: 'standin_object_call: ' + e.message + '\n' + (e.stack || '') });
+            return;
+        }
+        send({ type: 'log', msg: 'standins forwarded (other threads): ' + JSON.stringify(res.forwarded) });
+        send({ type: 'results', data: res.rows.map(function (r, i) {
+            return { idx: i, input: CONFIG.tests[i], original: r.O.obs, reimpl: r.R.obs,
+                     match: r.O.err === null && r.R.err === null && r.O.obs === r.R.obs,
+                     err_original: r.O.err, err_reimpl: r.R.err };
+        }) });
+        return;
+    }
+
+    // Generic stand-in wrapper: any OTHER handler that calls Orig/Reimpl as functions gets the heap/import stand-ins
+    // armed around each call when the registry entry names heap_standin / import_standin. The k-th Orig call's log is
+    // paired with the k-th Reimpl call's and appended as result rows 'S<k>' (a count mismatch is its own RED row).
+    // Handlers that call TARGET_ADDR / reimplAddr through their own asm trampolines bypass the wrapper: the arena is
+    // then never reset between arms, so they read RED, never a false GREEN. Use standin_object_call for those.
+    if (CONFIG.heap_standin || CONFIG.import_standin) {
+        const SI = __standins.install({ heap: CONFIG.heap_standin, imports: CONFIG.import_standin, asi: module });
+        const logs = { O: [], R: [] };
+        const wrap = function (fn, side) {
+            return function () {
+                SI.arm();
+                try { return fn.apply(null, arguments); } finally { logs[side].push(SI.disarm()); }
+            };
+        };
+        Orig = wrap(Orig, 'O');
+        Reimpl = wrap(Reimpl, 'R');
+        const realSend = send;
+        globalThis.send = function (msg, data) {
+            if (msg && msg.type === 'results' && Array.isArray(msg.data)) {
+                SI.uninstall();
+                const n = Math.max(logs.O.length, logs.R.length);
+                for (let k = 0; k < n; k++) {
+                    const o = k < logs.O.length ? logs.O[k] : null, r = k < logs.R.length ? logs.R[k] : null;
+                    msg.data.push({ idx: 'S' + k, input: 'standin log, call ' + k, original: o, reimpl: r,
+                                    match: o !== null && r !== null && o === r, err_original: null, err_reimpl: null });
+                }
+            }
+            return realSend(msg, data);
+        };
+    }
 
     const buf = (['vec3_ptr', 'out3_idx', 'vec2_ptr'].includes(CONFIG.arg_type)) ? Memory.alloc(12)
               : (['int_with_out_ptr', 'idx_out2', 'int_ptr2_out', 'cache_roundtrip', 'cache_setter_observe', 'st0_ret_global', 'out1_idx'].includes(CONFIG.arg_type)) ? Memory.alloc(8)
