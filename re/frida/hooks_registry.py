@@ -22507,3 +22507,19 @@ for _name, _rva, _exp in (('clump_geom_401fe0_create', 0x00402240, 'ClumpGeom401
         'path1_tests': [{'args': []}, {'args': []}, {'args': []}],
         'path2_tests': [{'args': []}],
     }
+
+
+# ---- stand-in promotion round 4 (2026-10-11) -- Render/PromoLoop_standins_r4.cpp ----
+# 0x00496d60 / 0x00496db0: RW pipeline create 0x004d4170, lock 0x004d4dd0, add fragment (node 0x004eb3c0 / 0x004eb9d0)
+# 0x004d4f90, unlock 0x004d4380, destroy 0x004d41e0 on failure. Same fixture as round 3 (_RWG_OBS, freeze_main).
+# The failMask vectors fail the first / third rwmalloc so the destroy arm and the early NULL return run.
+for _name, _rva, _exp in (('pipeline_fragment_4eb3c0_create', 0x00496d60, 'PipelineFragment4eb3c0Create'),
+                          ('pipeline_fragment_4eb9d0_create', 0x00496db0, 'PipelineFragment4eb9d0Create')):
+    HOOKS[_name] = {
+        'rva': _rva, 'export': _exp, 'signature': {'ret': 'pointer', 'args': []},
+        'arg_type': 'standin_object_call', 'heap_standin': {'exhaust': 'null'}, 'freeze_main': True,
+        'observe_globals': _RWG_OBS, 'observe_ret_len': 0x40, 'lut_root_delta': 0,
+        'path1_tests': [{'args': []}, {'args': []}, {'args': [], 'failMask': 1}, {'args': [], 'failMask': 4},
+                        {'args': [], 'failMask': 0x10}],
+        'path2_tests': [{'args': []}],
+    }

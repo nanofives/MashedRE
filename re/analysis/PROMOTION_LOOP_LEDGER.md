@@ -612,3 +612,8 @@ HERE — /promote-round keeps appending new round-log entries below this line.
 - Attempted 2, GREEN 2: 0x00402240 ClumpGeom401fe0Create, 0x00402590 ClumpGeom4022a0Create (first RW-object rows: live RwGlobals + engine +0x52c restored per arm, freeze_main).
 - Harness additions: observe_globals seed:false / deref / off, heap observeArena:'full' (diagnosis).
 - Dry counter: 0.
+
+### Stand-in lane round 4 (2026-10-11)
+- Attempted 2, GREEN 2: 0x00496d60 PipelineFragment4eb3c0Create, 0x00496db0 PipelineFragment4eb9d0Create (scheduled failures cover the NULL and destroy exits).
+- Deferred: 0x0042d420, 0x004670a0 (RwRasterCreate 0x004c77c0 twice: D3D device rasters).
+- Dry counter: 0.
