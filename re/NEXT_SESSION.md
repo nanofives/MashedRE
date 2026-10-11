@@ -38,8 +38,9 @@
 >     (not the start line); the exe snap repeats the original's 13 -> 14. (b) moved 0/3 -> 1/3 from the round-1 grid shift
 >     alone (<= 0.0236): sensitivity, not a fix.
 >     STAGE B PORTED (knob OFF, `roundgrid/stageb/RESULT_STAGE_B_PORT.md`): slot order from the round's score deltas,
->     1296/1296 vs the original bytes, oracle vs live original 7/7. Next: knob-ON per `stageb/PREREG_STAGE_B.md` (RG_B / RG_B2),
->     then the tracker row and the user's call on the flip.
+>     1296/1296 vs the original bytes, oracle vs live original 7/7. KNOB-ON DONE (`stageb/RESULT_STAGE_B_KNOB_ON.md`):
+>     TRACE / DET / LOCAL pass; identical to Stage A through the round-2 restart, first difference 48 steps into round 2.
+>     Next: the tracker row (re-classify) and the user's call on default-ON for MASHED_ROUND_GRID (+ _ORDER).
 > 3. Back to the PLAN.md ranking. Every other D3 group is producer-blocked. The non-D3 lane is not decided.
 >
 > Not started: U-9219, the car-2 pickup miss, default flips.

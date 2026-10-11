@@ -1,0 +1,12 @@
+race-init node=0
+round-start node=0 ok=1 A=(0.020925,1.175,-1.99996) lat=(1.00002,0.0019225) dir=(0.0019226,-1.00007)
+round-order codes=-1000,-1000,-1000,-1000 slots=4,5,6,7
+round-end alive=0001 survivor(orig rule)=3 exe_winner=3 prog=21.3067 node=21 codes=-2,1,-1,2
+round-start node=21 ok=1 A=(8,0.591667,26) lat=(0,-0.9999) dir=(-0.999538,0)
+round-order codes=-2,1,-1,2 slots=0,2,1,3
+round-end alive=0001 survivor(orig rule)=3 exe_winner=3 prog=10.3615 node=10 codes=-2,-1,1,2
+round-start node=10 ok=1 A=(12.973,0.758333,-10.0292) lat=(-0.999599,0.0299621) dir=(0.0299471,0.999099)
+round-order codes=-2,-1,1,2 slots=0,1,2,3
+round-end alive=0010 survivor(orig rule)=2 exe_winner=2 prog=10.4661 node=10 codes=-1,-2,2,1
+round-start node=10 ok=1 A=(12.973,0.758333,-10.0292) lat=(-0.999599,0.0299621) dir=(0.0299471,0.999099)
+round-order codes=-1,-2,2,1 slots=1,0,3,2
