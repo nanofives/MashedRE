@@ -473,6 +473,20 @@ function callFn(fn, input, buf) {
                                         'int', stubTypes, CONFIG.stub_abi || undefined);
         if (!verifyKeep) verifyKeep = [];
         verifyKeep.push(stub, bufs);
+        // Per-stub spec (G2), mirrors diff_template.js: seed {stub: {nargs, abi,
+        // ret, name}} gets its own recorder with its own arity/ABI/return.
+        const stubFor = function (spec) {
+            if (spec === true) return stub;
+            const n = (spec.nargs === undefined) ? NA : (spec.nargs | 0);
+            const r = (spec.name && input && input.stub_rets &&
+                       input.stub_rets[spec.name] !== undefined)
+                ? (input.stub_rets[spec.name] | 0)
+                : (spec.ret !== undefined ? (spec.ret | 0) : stubRet);
+            const cb = new NativeCallback(function () { return r; }, 'int',
+                new Array(n).fill('uint32'), spec.abi || CONFIG.stub_abi || undefined);
+            verifyKeep.push(cb);
+            return cb;
+        };
         const wrv = function (p, off, type, value) {
             const a = p.add(off);
             switch (type) {
@@ -484,7 +498,7 @@ function callFn(fn, input, buf) {
             }
         };
         ((input && input.seed) || []).forEach(function (s) {
-            if (s.stub) bufs[s.buf].add(s.off).writePointer(stub);
+            if (s.stub) bufs[s.buf].add(s.off).writePointer(stubFor(s.stub));
             else if (s.ptr_to !== undefined) bufs[s.buf].add(s.off).writePointer(bufs[s.ptr_to]);
             else wrv(bufs[s.buf], s.off, s.type, s.value);
         });
@@ -527,9 +541,16 @@ function runVerification() {
 
     let module;
     try {
-        Module.load(ASI_PATH);
-        module = Process.findModuleByName('mashed_re_dev.asi');
-        if (module === null) {
+        // Prefer the module Module.load returns (same as run_diff.py's agent).
+        // From a worktree, MASHED.exe's ASI loader has already autoloaded the
+        // MAIN checkout's original\mashed_re_dev.asi; findModuleByName then
+        // returns THAT copy, which lacks any export added on the worktree's
+        // branch ("export not found"). In the main checkout both resolve to the
+        // same module, so the main-side behaviour is unchanged.
+        const loaded = Module.load(ASI_PATH);
+        module = (loaded && loaded.findExportByName) ? loaded
+               : Process.findModuleByName('mashed_re_dev.asi');
+        if (module === null || module === undefined) {
             send({ type: 'error', msg: 'findModuleByName returned null after Module.load' });
             return;
         }
@@ -570,10 +591,18 @@ function runVerification() {
     // never exercise these rows at all. Same install guard as reg_this_call_observe.
     (CONFIG.stub_at || []).forEach(function (a) {
         try {
-            const p = ptr(a);
+            // G2: an entry may be {addr, nargs, abi, ret, name} (see diff_template.js).
+            const se = (a && typeof a === 'object') ? a : null;
+            const p = ptr(se ? se.addr : a);
             Interceptor.replace(p, new NativeCallback(function () {
+                if (se && se.ret !== undefined) return se.ret | 0;
                 return CONFIG.stub_ret | 0;
-            }, 'int', new Array(CONFIG.stub_nargs || 3).fill('pointer'), 'mscdecl'));
+            // stub_abi (L-INST round 2): a __stdcall callee (0x004a1570, 5 args)
+            // replaced by an mscdecl recorder left 20 bytes on the stack and the
+            // caller AV'd at 0x0 on return. run_diff's handler already honours it.
+            }, 'int', new Array((se && se.nargs !== undefined) ? (se.nargs | 0)
+                                  : (CONFIG.stub_nargs || 3)).fill('pointer'),
+               (se && se.abi) || CONFIG.stub_abi || 'mscdecl'));
             send({ type: 'log', msg: 'stubbed callee ' + p });
         } catch (e) {
             send({ type: 'error', msg: 'stub_at ' + a + ' failed: ' + e.message });
@@ -585,7 +614,8 @@ function runVerification() {
         onEnter: function () { reimplEntries++; }
     });
 
-    const Patched = new NativeFunction(TARGET_ADDR, CONFIG.signature.ret, CONFIG.signature.args, 'mscdecl');
+    const Patched = new NativeFunction(TARGET_ADDR, CONFIG.signature.ret, CONFIG.signature.args,
+                                       CONFIG.orig_calling_convention || 'mscdecl');
     const buf = (['vec3_ptr'].includes(CONFIG.arg_type)) ? Memory.alloc(12)  /* out3_idx retired */
               : (['int_with_out_ptr', 'idx_out2', 'int_ptr2_out'].includes(CONFIG.arg_type)) ? Memory.alloc(8)
               : (CONFIG.arg_type === 'time_diff_decompose') ? Memory.alloc(16)

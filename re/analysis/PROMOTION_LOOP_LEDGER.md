@@ -286,6 +286,41 @@ do not pre-list here. Done/deferred rows accumulate below.
 184 residuals in re/analysis/DEGENERATE_GREEN_AUDIT_2026-06-12.md /
 DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 
+### L-INST — installer-caller candidates (2026-10-11, branch promo/l-inst) — CLOSED, 0 net C3
+Source: `re/analysis/pointer_callers_gate_candidates_2026-10-11.tsv` (142 rows) crossed
+with `re/coverage/reach.tsv`: 43 reached; 6 msvc-crt (library-skip); 37 first-party by tag.
+
+- Rounds r257-r259 promoted 15 rows of the 30-row "particle" cluster (0x0049c5d0..
+  0x004a2680), all path1 GREEN + path2 PASS. **All 15 were reverted (978e860b)** when the
+  user ruled the cluster to be statically linked DirectShow BaseClasses, library-skip
+  (2026-10-11). The rounds' counters are not added above. They left no C3s.
+- The same ruling relabelled all 138 hooks.csv rows in the range to
+  `third-party-library[directshow-baseclasses]` after a per-row byte check: 0 left as they
+  were. See `re/analysis/directshow_baseclasses_band_2026-10-11.md`. That note also lists 7
+  prior-session C3s, which stay at C3 (second ruling). The second ruling also extended the
+  band to `0x004a2b5f`, moving the 21 rows `0x004a26b0..0x004a2b50` after the same byte
+  check (159 rows in total). `scripts/promote_frontier.py` LIBRARY_BANDS gains
+  `0x0049c5d0..0x004a2b5f`.
+- Remaining first-party tier-1 rows after the ruling, all re-checked:
+  - `0x004af31a` and `0x005c2a0e` are inside existing CRT bands, so library-skip.
+  - `0x0049d080`, `0x0049d240`, `0x0049d270` (util) are in the DirectShow band.
+  - `0x004943d0` (render) is the game's derived renderer's scalar deleting dtor. Its
+    flag&1 arm frees `this` through CRT free `0x004a3bda`, which cannot be stubbed
+    globally. Wishlist: allocate the synthetic object from the game's CRT heap, so the
+    real free is legal.
+  - `0x00494820` (render) drives the live D3D9 device (CreateTexture / LockRect on
+    `DAT_00771a0c`), so it is blocked.
+  - Result: **tier 1 exhausted, 0 C3.** Tier 2 not started (it needs the parent's go-ahead).
+- Harness work that stands on its own and is kept:
+  - 13416eef: path2 calls the patched site with `orig_calling_convention` and loads the
+    worktree's own `.asi`.
+  - a5e0e9fd: path2 `stub_at` recorders honour `stub_abi`.
+  - eb66a5ef: `stub_dispatch_observe` per-stub {nargs, abi, ret, name} + `stub_rets`.
+    Implemented under L5. Its first users were the reverted library rows.
+- Lesson for future lanes: check a cluster's HRESULT/IID constants and imports for a
+  linked SDK library BEFORE porting. 0x00040237 / 0x8004022b / 56A868xx IIDs would have
+  flagged this one in minutes.
+
 ## Done (promoted to C3, with round + evidence)
 
 - **Round 256 (2026-09-12) — five forwarders.** `0x00487140`, `0x00413bb0` (sibling
@@ -493,6 +528,13 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
   reference_to), resolve/downgrade U-5102, then classify-only (no re-diff)
 
 ## Harness-extension wishlist (lane L5: implement when one entry unlocks ≥10 rows)
+
+- ~~**G2 `stub_dispatch_observe` per-stub nargs / abi / ret / name.**~~ **DONE eb66a5ef
+  (2026-10-11, L-INST).** Its first users were later reverted as library-skip; the
+  extension itself is generic and validated (2 existing entries byte-identical).
+- **CRT-heap synthetic object (L-INST) — 1 first-party row (0x004943d0) + library rows.**
+  Allocate `this` through the game's own CRT malloc, so a scalar deleting dtor's real
+  free is legal and its flag&1 arm can be exercised without stubbing CRT free.
 
 - **`ptr_to` cannot express a pointer to buf+OFFSET, which blocks intrusive CIRCULAR lists.**
   Found r255 screening `0x004c59c0`: its list sentinel is the INTERIOR address `param_1+8`,

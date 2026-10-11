@@ -449,7 +449,12 @@ def build_config(hook, asi_path=None):
     # registry, hex strings on the wire — ptr() takes either, but the string form
     # matches observe_callee_str and reads correctly in a dumped manifest.
     if 'stub_at' in hook:
-        config['stub_at'] = [a if isinstance(a, str) else f"0x{a:08x}"
+        # G2 (L-INST 2026-10-11): an entry may be a dict {addr, nargs, abi,
+        # ret, name}; its addr is normalised the same way, the rest passes through.
+        config['stub_at'] = [dict(a, addr=(a['addr'] if isinstance(a['addr'], str)
+                                           else f"0x{a['addr']:08x}"))
+                             if isinstance(a, dict) else
+                             (a if isinstance(a, str) else f"0x{a:08x}")
                              for a in hook['stub_at']]
     # vtable_table_dispatch (orch-iter15): table-of-8-byte-entries dispatch,
     # entry = *(holder + vtbl_ptr_offset) + idx*8.

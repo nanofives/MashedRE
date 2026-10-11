@@ -3479,19 +3479,45 @@ function runDiff() {
             }
             return '0x' + (v >>> 0).toString(16);
         };
-        const mkStub = function () {
+        // PER-STUB SPEC (G2, L-INST 2026-10-11, SWEEP-CRITICAL, additive). A
+        // recorder may carry its own {nargs, abi, ret, name}. Needed when one
+        // body reaches recorders of different arity or ABI (a 0-arg __thiscall
+        // slot AND a 1-arg __stdcall direct callee): with the global
+        // stub_nargs/stub_abi one of them reads stack garbage or leaves the
+        // stack unbalanced. Where it appears:
+        //   stub_at[]  entry  "0x..."  (unchanged)  |  {addr, nargs, abi, ret, name}
+        //   seed       {buf, off, stub: true}  (unchanged)  |  {buf, off, stub: {...}}
+        //   test       stub_rets: {name: value}   per-test return for a NAMED stub
+        // Return precedence: test.stub_rets[name] > spec.ret > per-test stub_ret.
+        // A named recorder logs "name:args", so the call sequence also says
+        // WHICH recorder fired. Absent a spec, everything is as before.
+        let curTest = null;
+        const mkStub = function (spec) {
+            const sp = (spec && typeof spec === 'object') ? spec : {};
+            const n = (sp.nargs === undefined) ? NA : (sp.nargs | 0);
             const types = [];
-            for (let k = 0; k < NA; k++) types.push('uint32');
+            for (let k = 0; k < n; k++) types.push('uint32');
             return new NativeCallback(function () {
                 const got = [];
                 for (let k = 0; k < arguments.length; k++)
                     got.push(normPtr(arguments[k]));
-                calls.push(got.join(','));
+                calls.push((sp.name ? sp.name + ':' : '') + got.join(','));
+                if (sp.name && curTest && curTest.stub_rets &&
+                    curTest.stub_rets[sp.name] !== undefined)
+                    return curTest.stub_rets[sp.name] | 0;
+                if (sp.ret !== undefined) return sp.ret | 0;
                 return curRet;
-            }, 'int', types, CONFIG.stub_abi || undefined);
+            }, 'int', types, sp.abi || CONFIG.stub_abi || undefined);
         };
         const stub = mkStub();
         keep.push(stub);
+        const specStubs = {};
+        const stubFor = function (spec) {
+            if (spec === true) return stub;
+            const key = JSON.stringify(spec);
+            if (!specStubs[key]) { specStubs[key] = mkStub(spec); keep.push(specStubs[key]); }
+            return specStubs[key];
+        };
 
         // ── stub_at: plant the recorder at a FIXED DIRECT-CALL address ───────
         // The three iter19 rows all dispatched through data the caller supplies
@@ -3514,10 +3540,11 @@ function runDiff() {
         // merely looks quiet.
         const stubAt = CONFIG.stub_at || [];
         for (let k = 0; k < stubAt.length; k++) {
-            const sa = ptr(stubAt[k]);
+            const se = stubAt[k];
+            const sa = ptr((se && typeof se === 'object') ? se.addr : se);
             const pre = [];
             for (let b = 0; b < 5; b++) pre.push(sa.add(b).readU8());
-            const cb = mkStub();
+            const cb = (se && typeof se === 'object') ? mkStub(se) : mkStub();
             keep.push(cb);
             Interceptor.replace(sa, cb);
             Interceptor.flush();
@@ -3546,7 +3573,7 @@ function runDiff() {
             for (let k = 0; k < NB; k++)
                 for (let b = 0; b < BS; b++) bufs[k].add(b).writeU8(0);
             (seed || []).forEach(function (s) {
-                if (s.stub) bufs[s.buf].add(s.off).writePointer(stub);
+                if (s.stub) bufs[s.buf].add(s.off).writePointer(stubFor(s.stub));
                 else if (s.ptr_to !== undefined)
                     bufs[s.buf].add(s.off).writePointer(bufs[s.ptr_to]);
                 else wr(bufs[s.buf], s.off, s.type, s.value);
@@ -3615,6 +3642,7 @@ function runDiff() {
             curRet = (t.stub_ret !== undefined) ? (t.stub_ret | 0)
                                                 : ((CONFIG.stub_ret | 0) || 0);
             let fO = null, fR = null, errO = null, errR = null;
+            curTest = t;
             sideBufs = bufsO; applySeed(bufsO, t.seed); calls = [];
             try { fO = fpOf(Orig.apply(null, buildArgs(bufsO, scalars)), false); }
             catch (e) { errO = e.message; fO = fpOf(null, true); }

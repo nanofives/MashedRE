@@ -86,7 +86,12 @@ def main():
         'lut_root_delta': hook.get('lut_root_delta', 0),
         # Forwarded so path2 can neutralise the same callees the A/B path does.
         # Present in the registry entry is NOT enough — it has to be DELIVERED.
-        'stub_at':        [f"0x{a:08x}" for a in hook.get('stub_at', [])],
+        # G2: dict entries {addr, nargs, abi, ret, name} pass through, addr as hex.
+        'stub_at':        [dict(a, addr=(a['addr'] if isinstance(a['addr'], str)
+                                         else f"0x{a['addr']:08x}"))
+                           if isinstance(a, dict) else
+                           (a if isinstance(a, str) else f"0x{a:08x}")
+                           for a in hook.get('stub_at', [])],
         'stub_nargs':     hook.get('stub_nargs', 3),
         'stub_ret':       hook.get('stub_ret', 0),
         # Buffer-argument delivery (round 252). Same rule as the stub_at comment
@@ -101,6 +106,13 @@ def main():
         'num_bufs':       hook.get('num_bufs', 0),
         'buf_size':       hook.get('buf_size', 0),
         'stub_abi':       hook.get('stub_abi', None),
+        # The patched site is the ORIGINAL's entry, so path2 must call it with the
+        # original's convention. The template hard-coded 'mscdecl', so a __fastcall
+        # target got ECX = whatever Frida left there and AV'd on the first this->
+        # read (L-INST round 1, 0x0049c750: 'access violation accessing 0x50')
+        # while path1, which honours this key, read GREEN. Same whitelist trap.
+        'orig_calling_convention': hook.get('orig_calling_convention',
+                                            hook.get('calling_convention', 'mscdecl')),
         # Same whitelist trap as arg_layout/stub_at above (2026-10-01): run_diff.py
         # already forwards `fold_ret`, this builder did not, so a path1 fingerprint
         # that folded the return would silently stop folding it in path2 and the two
