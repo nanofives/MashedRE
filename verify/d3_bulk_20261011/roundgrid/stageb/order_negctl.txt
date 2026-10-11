@@ -1,0 +1,4 @@
+MISMATCH codes=-1,-1,0,-2 got=3,1,2,0 exp=2,1,2,0
+MISMATCH codes=0,-1,-1,-1 got=0,3,2,1 exp=1,3,2,1
+MISMATCH codes=2,2,-1,0 got=2,3,1,0 exp=3,3,1,0
+G-RG-ORDER rows=1296 exact=1293 bad=3

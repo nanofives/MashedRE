@@ -5208,7 +5208,14 @@ void TrackRenderer::StartRound() {
         pos[1] = (ok ? y : gA[1]) + car_ground_off_;
         *yaw = std::atan2(dir[1], dir[0]);
     };
-    place(car_pos_, &car_yaw_, 0);
+    // [round grid Stage B] per-car formation slot (default-OFF MASHED_ROUND_GRID_ORDER): FUN_0040e590's slot value
+    // & 3; otherwise slot == spawn order as before.
+    int kSlot[4] = { 0, 1, 2, 3 };
+    {
+        int sv[4];
+        if (Race::RoundGrid_SlotOrder(sv)) for (int i = 0; i < 4; ++i) kSlot[i] = sv[i] & 3;
+    }
+    place(car_pos_, &car_yaw_, kSlot[0]);
     car_vel_[0] = car_vel_[1] = car_vel_[2] = 0.f;
     car_speed_ = 0.f;
     // [U-9145 2026-09-29] MASHED_MEASURE_SOLO: StartRound RE-CREATES the opponents, so
@@ -5220,7 +5227,7 @@ void TrackRenderer::StartRound() {
     ai_cars_.assign(static_cast<std::size_t>(nAi), AiCar{});
     for (int i = 0; i < nAi; ++i) {
         AiCar& a = ai_cars_[static_cast<std::size_t>(i)];
-        place(a.pos, &a.yaw, i + 1);   // ai i -> slot i+1
+        place(a.pos, &a.yaw, kSlot[(i + 1) & 3]);   // ai i -> slot i+1 (Stage B: kSlot)
         a.target = 1;
         // staggered top speeds (all faster than the auto-driven player) +
         // distinct racing lanes so they spread out and overtake
@@ -6038,7 +6045,9 @@ void TrackRenderer::UpdateRace(float dt) {
                 {
                     bool al[4] = { false, false, false, false };
                     for (int i = 0; i < kRaceCars && i < 4; ++i) al[i] = race_[i].alive;
-                    Race::RoundGrid_RoundEnd(al, round_winner_);
+                    int cd[4] = { 0, 0, 0, 0 };
+                    for (int i = 0; i < kRaceCars && i < 4; ++i) cd[i] = score_delta_[i];   // DAT_008a9520
+                    Race::RoundGrid_RoundEnd(al, round_winner_, cd);
                 }
             }
         }

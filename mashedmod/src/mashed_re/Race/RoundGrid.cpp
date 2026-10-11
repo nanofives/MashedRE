@@ -56,16 +56,20 @@ void RoundGrid_RaceInit() {
     if (std::FILE* f = Trace()) { std::fprintf(f, "race-init node=0\n"); std::fflush(f); }
 }
 
-void RoundGrid_RoundEnd(const bool alive[4], int exeWinner) {
+namespace { int s_codes[4] = { -1000, -1000, -1000, -1000 }; }   // FUN_0040b180 seed 0xfffffc18
+
+void RoundGrid_RoundEnd(const bool alive[4], int exeWinner, const int codes[4]) {
     if (!RoundGrid_Enabled()) return;
+    for (int i = 0; i < 4; ++i) s_codes[i] = codes[i];
     // FUN_00410860 0x00410890..0x004108b3: the LAST slot i in 0..3 that is active and whose FUN_0046c7b0 == 1.
     int surv = 0;                                                      // ebx starts 0 (0x00410880)
     for (int i = 0; i < 4; ++i) if (alive[i]) surv = i;
     const float prog = *FP(0x008a96e8u + static_cast<std::uintptr_t>(surv) * 0x30cu);   // FUN_00408a50
     I32(kNode) = static_cast<std::int32_t>(prog);                      // __ftol (truncate) -> 0x004108c5
     if (std::FILE* f = Trace()) {
-        std::fprintf(f, "round-end alive=%d%d%d%d survivor(orig rule)=%d exe_winner=%d prog=%.6g node=%d\n",
-                     alive[0], alive[1], alive[2], alive[3], surv, exeWinner, prog, I32(kNode));
+        std::fprintf(f, "round-end alive=%d%d%d%d survivor(orig rule)=%d exe_winner=%d prog=%.6g node=%d codes=%d,%d,%d,%d\n",
+                     alive[0], alive[1], alive[2], alive[3], surv, exeWinner, prog, I32(kNode),
+                     codes[0], codes[1], codes[2], codes[3]);
         std::fflush(f);
     }
 }
@@ -105,8 +109,83 @@ bool RoundGrid_Anchor(float A[3], float lat[2], float dir[2], int* node) {
     return ok;
 }
 
+bool RoundGrid_OrderEnabled() {
+    static const bool s_on = [] {
+        const char* s = std::getenv("MASHED_ROUND_GRID_ORDER");
+        return s && s[0] && s[0] != '0';
+    }();
+    return s_on && RoundGrid_Enabled();
+}
+
+// FUN_0040e590, DAT_008a94d0 == 4 path (decomp verify/d3_bulk_20261011/roundgrid/stageb/FUN_0040e590_decomp.txt):
+//   C  switch case 4: code 2 -> 3, 1 -> 2, -1 -> 1, -2 -> 0, else 1000 (unassigned); local_44 = 1 iff none assigned
+//   D  mode-4 fill: each car whose code is not 2/1/-1/-2 takes the first value 0..3 no car holds now
+//   E  mode-4 de-dup: while >= 2 hold 0, the first -> 1; then 1 -> 2; then 2 -> 3; if >= 2 hold 3, the first -> 0, repeat
+//   placement (rule 0): value = local_44 ? active index + 4 : local_2c[i]
+// Mirror checked 1296/1296 against the original bytes (re/tools/slotorder_unicorn.py).
+void RoundGrid_AssignMode4(const int c[4], int out[4]) {
+    int s[4];
+    bool any = false;
+    for (int i = 0; i < 4; ++i) {
+        s[i] = c[i] == 2 ? 3 : c[i] == 1 ? 2 : c[i] == -1 ? 1 : c[i] == -2 ? 0 : 1000;
+        if (s[i] != 1000) any = true;
+    }
+    auto inS = [&](int v) { for (int k = 0; k < 4; ++k) if (s[k] == v) return true; return false; };
+    auto cnt = [&](int v) { int n = 0; for (int k = 0; k < 4; ++k) if (s[k] == v) ++n; return n; };
+    auto first = [&](int v) { for (int k = 0; k < 4; ++k) if (s[k] == v) return k; return -1; };
+    for (int i = 0; i < 4; ++i) {
+        if (c[i] == 2 || c[i] == 1 || c[i] == -1 || c[i] == -2) continue;
+        for (int v = 0; v < 4; ++v) if (!inS(v)) { s[i] = v; break; }
+    }
+    for (;;) {
+        for (int a = 0; a < 3; ++a) while (cnt(a) >= 2) s[first(a)] = a + 1;
+        if (cnt(3) < 2) break;
+        s[first(3)] = 0;
+    }
+    for (int i = 0; i < 4; ++i) out[i] = any ? s[i] : i + 4;
+}
+
+bool RoundGrid_SlotOrder(int out[4]) {
+    if (!RoundGrid_OrderEnabled()) return false;
+    RoundGrid_AssignMode4(s_codes, out);
+    if (std::FILE* f = Trace()) {
+        std::fprintf(f, "round-order codes=%d,%d,%d,%d slots=%d,%d,%d,%d\n", s_codes[0], s_codes[1], s_codes[2], s_codes[3],
+                     out[0], out[1], out[2], out[3]);
+        std::fflush(f);
+    }
+    for (int i = 0; i < 4; ++i) s_codes[i] = -1000;                 // FUN_0040b250 (0x0040b266) before placement
+    return true;
+}
+
+// ---- G-RG-ORDER replay: MASHED_ROUND_GRID_ORDER_REPLAY=<slotorder tsv> (c0..c3 s0..s3), report to
+// MASHED_ROUND_GRID_ORDER_REPLAY_OUT. ----
+namespace {
+void OrderReplay() {
+    const char* in = std::getenv("MASHED_ROUND_GRID_ORDER_REPLAY");
+    const char* op = std::getenv("MASHED_ROUND_GRID_ORDER_REPLAY_OUT");
+    if (!in || !op) return;
+    std::FILE* f = std::fopen(in, "r"); std::FILE* o = std::fopen(op, "w");
+    if (!f || !o) { if (f) std::fclose(f); if (o) std::fclose(o); return; }
+    long rows = 0, exact = 0, bad = 0;
+    char line[256];
+    while (std::fgets(line, sizeof line, f)) {
+        if (line[0] == '#') continue;
+        int c[4], e[4], g[4];
+        if (std::sscanf(line, "%d %d %d %d %d %d %d %d", &c[0], &c[1], &c[2], &c[3], &e[0], &e[1], &e[2], &e[3]) != 8) continue;
+        RoundGrid_AssignMode4(c, g);
+        ++rows;
+        if (g[0] == e[0] && g[1] == e[1] && g[2] == e[2] && g[3] == e[3]) ++exact;
+        else if (++bad <= 20) std::fprintf(o, "MISMATCH codes=%d,%d,%d,%d got=%d,%d,%d,%d exp=%d,%d,%d,%d\n", c[0], c[1], c[2], c[3],
+                                          g[0], g[1], g[2], g[3], e[0], e[1], e[2], e[3]);
+    }
+    std::fprintf(o, "G-RG-ORDER rows=%ld exact=%ld bad=%ld\n", rows, exact, bad);
+    std::fclose(f); std::fclose(o);
+}
+}  // namespace
+
 // ---- G-RG-SNAP replay. Row: n  node_in  count  table(34 x u16 lo, u16 hi as 136 B hex)  node_out ----
 void RoundGrid_MaybeReplay() {
+    OrderReplay();
     const char* in = std::getenv("MASHED_ROUND_GRID_REPLAY");
     if (!in) return;
     const char* op = std::getenv("MASHED_ROUND_GRID_REPLAY_OUT");

@@ -2200,6 +2200,37 @@ function alProbeArm(k, cap){
 }
 function alProbeDrain(){ const r = ALF.rows; ALF.rows = []; return r; }
 
+// --- round grid Stage B probe (2026-10-11) -------------------------------------------
+// Entry + leave on FUN_00408b00(node, slotval, mode, float* pos, float* yaw): one row per call with the caller's
+// return address, the args, DAT_008a9520[0..3] (FUN_0040b410 rank codes), DAT_008a94d0, DAT_0067ea64 (FUN_0042f500),
+// DAT_007f0fd0, DAT_008a94b0, and on leave *pos (3 floats) and *yaw. Low rate (4 calls per round start). Read-only.
+const GRP = { armed:false, rows:[], err:null };
+function gridProbeArm(){
+  if (GRP.armed) return 'already armed';
+  try {
+    Interceptor.attach(ga(0x00408b00), {
+      onEnter(args){
+        try {
+          this.pos = args[3]; this.yaw = args[4];
+          const rk = [0,1,2,3].map(function(i){ return ga(0x008a9520 + i * 4).readS32(); }).join(',');
+          this.row = [SD.frames, this.returnAddress.sub(modBase()).add(IMG).toString(), args[0].toInt32(), args[1].toInt32(),
+                      args[2].toInt32(), rk, ga(0x008a94d0).readS32(), ga(0x0067ea64).readS32(), ga(0x007f0fd0).readS32(),
+                      ga(0x008a94b0).readS32()];
+        } catch(e){ if (!GRP.err) GRP.err = 'gr ' + e; this.row = null; }
+      },
+      onLeave(){
+        try {
+          if (!this.row) return;
+          this.row.push(this.pos.readFloat(), this.pos.add(4).readFloat(), this.pos.add(8).readFloat(), this.yaw.readFloat());
+          GRP.rows.push(this.row);
+        } catch(e){ if (!GRP.err) GRP.err = 'grL ' + e; }
+      }});
+    GRP.armed = true;
+    return 'grid-probe armed (0x408b00 entry+leave)';
+  } catch(e){ return 'ERR ' + e; }
+}
+function gridProbeDrain(){ const r = GRP.rows; GRP.rows = []; return r; }
+
 // --- FIRST-HIT coverage probe (D3 bulk Phase 0, 2026-10-11) ----------------------
 // Entry-only hooks on a list of function entries. Each hook counts calls per session phase
 // (DAT_00771968: 1 menu, 2 load+spawn, 3 race), each phase count capped at FH.cap, and
@@ -3054,6 +3085,9 @@ rpc.exports = {
   fhProbeDrain: function(){ return fhProbeDrain(); },
   fhProbeStats: function(){ return JSON.stringify({armed:FH.armed, n:FH.ent.length, err:FH.err}); },
   alProbeArm: function(k, c){ return alProbeArm(k, c); },
+  gridProbeArm: function(){ return gridProbeArm(); },
+  gridProbeDrain: function(){ return gridProbeDrain(); },
+  gridProbeStats: function(){ return JSON.stringify({armed:GRP.armed, rows:GRP.rows.length, err:GRP.err}); },
   alProbeDrain: function(){ return alProbeDrain(); },
   alProbeStats: function(){ return JSON.stringify({armed:ALF.armed, calls:ALF.n, ret1:ALF.ret1, rows:ALF.rows.length, err:ALF.err}); },
   c30ProbeArm: function(n){ return c30ProbeArm(n); },
@@ -3667,6 +3701,8 @@ def main():
     ap.add_argument("--pursuit-look", type=int, default=2, help="pursuit lookahead in spline nodes (default 2)")
     ap.add_argument("--pursuit-wait-go", action="store_true", help="pursuit: no accel until sub-state 0x0063ba8c == 6")
     ap.add_argument("--pursuit-boost", action="store_true", help="pursuit + wait-go: press accel in sub-state 5 while 0x005f29b8 < 6700 (Branch A, cd = 3)")
+    ap.add_argument("--grid-probe", action="store_true",
+                    help="[round grid Stage B] FUN_00408b00 entry+leave rows (caller, node, slot value, mode, rank codes, pos, yaw). Writes <out>.grid.tsv. Requires --statediff-out.")
     ap.add_argument("--continue-rounds-states", default="",
                     help="comma list of 0x0063ba8c values on which --continue-rounds pulses control 4 (empty = log only)")
     ap.add_argument("--continue-rounds", action="store_true",
@@ -3874,6 +3910,8 @@ def main():
                 print("  [statediff]", E.fh_probe_arm(__import__("json").dumps(_fh), args.firsthit_cap))
             if args.aileaf_probe:
                 print("  [statediff]", E.al_probe_arm(args.aileaf_probe, 20000))
+            if args.grid_probe:
+                print("  [statediff]", E.grid_probe_arm())
             if args.c30_probe:
                 print("  [statediff]", E.c30_probe_arm(args.c30_probe))
             if args.pool_probe:
@@ -4453,6 +4491,16 @@ def main():
                             for r in _fr: f.write(chr(9).join(str(x) for x in r) + chr(10))
                         print(f"  [statediff] firsthit-probe {len(_fr)} rows -> {_ff}")
                     except Exception as _e: print("  [statediff] firsthit drain failed:", _e)
+                if args.grid_probe:
+                    try:
+                        print("  [statediff] grid-probe agent:", E.grid_probe_stats())
+                        _gr = E.grid_probe_drain()
+                        _grf = outp.with_suffix(outp.suffix + ".grid.tsv")
+                        with open(_grf, "w", newline="") as f:
+                            f.write(chr(9).join(["sdframe","caller","node","slotval","mode","rank8a9520","d94d0","ea64","fd0","round94b0","x","y","z","yaw"]) + chr(10))
+                            for r in _gr: f.write(chr(9).join(str(x) for x in r) + chr(10))
+                        print(f"  [statediff] grid-probe {len(_gr)} rows -> {_grf}")
+                    except Exception as _e: print("  [statediff] grid drain failed:", _e)
                 if args.aileaf_probe:
                     try: print("  [statediff] pursuit:", E.pursuit_stats())
                     except Exception as _e: print("  [statediff] pursuit stats failed:", _e)

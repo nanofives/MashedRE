@@ -36,7 +36,10 @@
 >     STAGE A DONE (knob OFF): `roundgrid/RESULT_STAGE_A.md`. SNAP 18504/18504, GRID 5 nodes worst 0.0048, NODE 3/3,
 >     G-CTRL unchanged. KNOB-ON DONE (`roundgrid/RESULT_KNOB_ON.md`): TRACE / DET / LOCAL pass. Round 2 starts at node 21
 >     (not the start line); the exe snap repeats the original's 13 -> 14. (b) moved 0/3 -> 1/3 from the round-1 grid shift
->     alone (<= 0.0236): sensitivity, not a fix. Next: Stage B (slot order), the tracker row, and the user's call on the flip.
+>     alone (<= 0.0236): sensitivity, not a fix.
+>     STAGE B PORTED (knob OFF, `roundgrid/stageb/RESULT_STAGE_B_PORT.md`): slot order from the round's score deltas,
+>     1296/1296 vs the original bytes, oracle vs live original 7/7. Next: knob-ON per `stageb/PREREG_STAGE_B.md` (RG_B / RG_B2),
+>     then the tracker row and the user's call on the flip.
 > 3. Back to the PLAN.md ranking. Every other D3 group is producer-blocked. The non-D3 lane is not decided.
 >
 > Not started: U-9219, the car-2 pickup miss, default flips.
