@@ -71,6 +71,14 @@ def main():
     if name not in HOOKS:
         sys.exit(f"unknown hook {name!r}; registered: {', '.join(HOOKS.keys())}")
 
+    # path1-only run modes. path2 checks the inline JMP and the entry count, never the port's values, so a
+    # mutation forwarder or an original-vs-original arm has nothing to act on here. Refuse instead of
+    # silently dropping the key (the whitelist trap this file documents below).
+    for _flag in ('--negctl', '--self-baseline'):
+        if _flag in sys.argv[2:]:
+            sys.exit(f"{_flag} is a path1 (run_diff.py) mode; path2 verifies installation only. "
+                     f"Use run_negctl.py / run_diff.py {_flag}.")
+
     hook = HOOKS[name]
     config = {
         'asi_path':       str(ASI_PATH).replace('\\', '\\\\'),

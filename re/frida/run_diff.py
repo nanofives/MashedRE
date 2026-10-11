@@ -470,6 +470,8 @@ def build_config(hook, asi_path=None):
     return config
 
 
+NEGCTL_CLASSES = ('null', 'ret_int', 'ret_float', 'field_first', 'field_last', 'heap_extra', 'import_extra')
+
 STANDIN_KEYS = ('heap_standin', 'import_standin', 'freeze_main', 'object_size', 'object_alloc',
                 'observe_ret_len', 'observe_globals', 'reg_args', 'callee_pops')
 STANDINS_JS = ROOT / 're' / 'frida' / 'js' / 'standins.js'
@@ -497,8 +499,22 @@ def main():
     if self_baseline:
         config['self_baseline'] = True
 
+    # --negctl <class>: run the reimpl arm through the dev .asi's mutation forwarder (Harness/NegCtl.cpp) so the
+    # handler is shown able to read RED. Classes: null ret_int ret_float field_first field_last heap_extra
+    # import_extra. Driven by run_negctl.py; a negctl CSV is NEVER promotion evidence and never overwrites one.
+    negctl = None
+    if '--negctl' in sys.argv[2:]:
+        _i = sys.argv.index('--negctl')
+        negctl = sys.argv[_i + 1] if _i + 1 < len(sys.argv) else None
+        if negctl not in NEGCTL_CLASSES:
+            sys.exit(f"--negctl needs one of {', '.join(NEGCTL_CLASSES)}")
+        if self_baseline:
+            sys.exit("--negctl and --self-baseline are mutually exclusive")
+        config['negctl'] = negctl
+
     LOG_DIR.mkdir(parents=True, exist_ok=True)
-    csv_out = LOG_DIR / (f'diff_{name}_selfbaseline.csv' if self_baseline else f'diff_{name}.csv')
+    csv_out = LOG_DIR / (f'diff_{name}_selfbaseline.csv' if self_baseline
+                         else f'diff_{name}_negctl_{negctl}.csv' if negctl else f'diff_{name}.csv')
 
     if not MASHED_EXE.exists():
         sys.exit(f"MASHED.exe not found at {MASHED_EXE}")
@@ -540,6 +556,8 @@ def main():
         shutil.copy2(str(_canonical_cfg), str(MASHED_EXE.parent / 'videocfg.bin'))
 
     env = {**os.environ, 'MASHED_RE_NO_AUTO_HOOK': '1'}
+    if negctl:
+        env['MASHED_NEGCTL'] = '1'      # NegCtl_Arm refuses without it
     # Detach from the parent's console + give each instance its own process
     # group. Without this, a Ctrl-C / Ctrl-Break in the terminal (or the parent
     # being signaled) broadcasts a console signal to EVERY MASHED spawned in

@@ -118,6 +118,7 @@
 "Compat\PizWin32Bypass.cpp"
 "Compat\StreamHandlerDispatchGuard.cpp"
 "Harness\HarnessStubs.cpp"
+"Harness\NegCtl.cpp"
 "Frontend\Leaves.cpp"
 "Frontend\MenuMenusMixed.cpp"
 "Util\UtilLeaves.cpp"

@@ -53,8 +53,20 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 sys.path.insert(0, os.path.join(ROOT, "re", "frida"))
 import hooks_registry as HR
 
-EXE = os.path.join(ROOT, "original", "MASHED.exe")
-ASI = os.path.join(ROOT, "original", "mashed_re_dev.asi")
+def _find_original_dir(root):
+    # A worktree (.worktrees/<name>/) has no original/; walk up to the main checkout's (same rule as run_diff.py).
+    d = root
+    for _ in range(4):
+        if os.path.isfile(os.path.join(d, "original", "MASHED.exe")):
+            return os.path.join(d, "original")
+        d = os.path.dirname(d)
+    return os.path.join(root, "original")
+
+ORIG_DIR = _find_original_dir(ROOT)
+EXE = os.path.join(ORIG_DIR, "MASHED.exe")
+# MASHED_EW_ASI overrides the deployed .asi (run_negctl.py points it at a worktree build).
+ASI = os.environ.get("MASHED_EW_ASI") or os.path.join(ORIG_DIR, "mashed_re_dev.asi")
+LAST_NEGCTL_STATS = {}
 LOG = os.path.join(ROOT, "log")
 
 PURE_LEAF_ARGTYPES = {
@@ -251,8 +263,25 @@ rpc.exports.diff = function(cfg) {
   const GPA = new NativeFunction(Module.getGlobalExportByName('GetProcAddress'),'pointer', ['pointer','pointer']);
   const hm = LL(Memory.allocUtf16String(cfg.asi));
   if (hm.isNull()) return { error: 'LoadLibraryW failed' };
-  const reim = GPA(hm, Memory.allocAnsiString(cfg.export));
+  let reim = GPA(hm, Memory.allocAnsiString(cfg.export));
   if (reim.isNull()) return { error: 'GetProcAddress failed for ' + cfg.export };
+  // self_baseline: the reimpl arm calls the ORIGINAL. Valid only where the handler calls REIMPL with the
+  // original's ABI (the stack-call handlers); a register-ABI handler's cdecl REIMPL call then reads garbage
+  // and the baseline comes out RED, which run_negctl.py reports as "baseline not applicable".
+  if (cfg.self_baseline) reim = ptr(cfg.rva);
+  // negctl: wrap the real port in the dev .asi's mutation forwarder (Harness/NegCtl.cpp), see run_negctl.py.
+  let negctlStats = null;
+  if (cfg.negctl && !cfg.self_baseline) {
+    const CLS = { null: 1, ret_int: 2, ret_float: 3, field_first: 4, field_last: 5, heap_extra: 6, import_extra: 7 };
+    const armP = GPA(hm, Memory.allocAnsiString('NegCtl_Arm'));
+    const statsP = GPA(hm, Memory.allocAnsiString('NegCtl_Stats'));
+    if (armP.isNull() || statsP.isNull() || !CLS[cfg.negctl]) return { error: 'negctl: kit missing or bad class ' + cfg.negctl };
+    const isF = (cfg.ret === 'float' || cfg.ret === 'double') ? 1 : 0;
+    const mut = new NativeFunction(armP, 'pointer', ['pointer', 'int', 'uint', 'int'], 'mscdecl')(reim, CLS[cfg.negctl], 0, isF);
+    if (mut.isNull()) return { error: 'negctl: NegCtl_Arm refused (MASHED_NEGCTL!=1?)' };
+    negctlStats = new NativeFunction(statsP, 'pointer', [], 'mscdecl');
+    reim = mut;
+  }
   const b0 = ptr(cfg.rva).readU8();
   if (b0 === 0xE9) return { error: 'ORIGINAL PATCHED (b0=0xE9) — NO_AUTO_HOOK failed; aborting' };
   const nargs = (cfg.at === 'int2_scalar') ? ['uint32','uint32']
@@ -3073,12 +3102,13 @@ rpc.exports.diff = function(cfg) {
     res.push({ i: i, t: '' + t, o: (o === null ? null : '' + o), r: (r === null ? null : '' + r),
                match: (eo === null && er === null && o !== null && o === r), eo: eo, er: er });
   }
-  return { b0: '0x' + b0.toString(16), reim: reim.toString(), results: res };
+  return { b0: '0x' + b0.toString(16), reim: reim.toString(), results: res,
+           negctl: negctlStats ? negctlStats().readCString() : null };
 };
 """
 
 
-def run(name):
+def run(name, negctl=None, self_baseline=False):
     h = HR.HOOKS[name]
     at = h['arg_type']
     if at not in PURE_LEAF_ARGTYPES:
@@ -3154,7 +3184,7 @@ def run(name):
            'glob_a': h.get('glob_a'), 'glob_b': h.get('glob_b'),
            'out_size': h.get('out_size'), 'out_argpos': h.get('out_argpos'),
            'argkinds': h.get('argkinds'), 'fold_ret': h.get('fold_ret'),
-           'asi': ASI}
+           'asi': ASI, 'negctl': negctl, 'self_baseline': self_baseline}
     # SUSPENDED-SPAWN MODE (2026-06-14): frida.spawn leaves the process suspended at
     # the entry point. We force-call the leaf on Frida's own thread via rpc and NEVER
     # resume — so MASHED's main thread never runs its CRT/RenderWare/d3d9 boot path.
@@ -3167,8 +3197,10 @@ def run(name):
     pid = None
     session = None
     try:
-        pid = device.spawn([EXE], cwd=os.path.join(ROOT, 'original'),
-                           env={**os.environ, 'MASHED_RE_NO_AUTO_HOOK': '1'})
+        _env = {**os.environ, 'MASHED_RE_NO_AUTO_HOOK': '1'}
+        if negctl:
+            _env['MASHED_NEGCTL'] = '1'
+        pid = device.spawn([EXE], cwd=ORIG_DIR, env=_env)
         session = device.attach(pid)
     except Exception as e:
         print(f"  spawn/attach failed: {e}")
@@ -3194,7 +3226,11 @@ def run(name):
     print(f"  b0={out['b0']} reim={out['reim']} cases={len(rs)} mismatches={len(mism)}")
     # write evidence CSV (early-window lane)
     os.makedirs(LOG, exist_ok=True)
-    csv = os.path.join(LOG, f"diff_{name}.csv")
+    LAST_NEGCTL_STATS[name] = out.get('negctl')
+    if out.get('negctl'):
+        print(f"  NEGCTL_STATS: {out['negctl']}")
+    suffix = '_selfbaseline' if self_baseline else (f'_negctl_{negctl}' if negctl else '')
+    csv = os.path.join(LOG, f"diff_{name}{suffix}.csv")
     with open(csv, 'w') as f:
         f.write("idx,input,original,reimpl,match\n")
         for x in rs:
@@ -3210,7 +3246,8 @@ if __name__ == '__main__':
         print("usage: early_window_leaf_diff.py <hook_name>  (PURE LEAVES ONLY)")
         sys.exit(2)
     n = sys.argv[1]
+    _neg = sys.argv[sys.argv.index('--negctl') + 1] if '--negctl' in sys.argv[2:] else None
     print(f"hook: {n}  (early-window pure-leaf diff — no menu boot required)")
-    ok = run(n)
+    ok = run(n, negctl=_neg, self_baseline='--self-baseline' in sys.argv[2:])
     print("VERDICT:", "GREEN" if ok else ("RED" if ok is False else "ERROR/REFUSED"))
     sys.exit(0 if ok else 1)

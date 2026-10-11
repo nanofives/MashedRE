@@ -198,6 +198,13 @@ function pollLutThenRun(triesLeft) {
                delta:    CONFIG.lut_root_delta,
                attempts: 150 - triesLeft });
         runDiff();
+        if (globalThis.__negctlStatsFn) {
+            const sendNegctl = function () {
+                send({ type: 'negctl', cls: CONFIG.negctl, stats: globalThis.__negctlStatsFn().readCString() });
+            };
+            sendNegctl();
+            setTimeout(sendNegctl, 300);
+        }
         return;
     }
     if (triesLeft <= 0) {
@@ -1563,10 +1570,42 @@ function runDiff() {
         send({ type: 'error', msg: 'Module.load failed: ' + e.message });
         return;
     }
-    const reimplAddr = module.findExportByName(CONFIG.export);
+    let reimplAddr = module.findExportByName(CONFIG.export);
     if (reimplAddr === null) {
         send({ type: 'error', msg: CONFIG.export + ' export not found in .asi' });
         return;
+    }
+    // negctl (re/frida/run_negctl.py): swap the reimpl arm for the dev .asi's mutation forwarder
+    // (mashedmod/src/mashed_re/Harness/NegCtl.cpp), which wraps the REAL port and corrupts it in one way
+    // (null body / wrong return / one wrong written byte / extra heap or import call). Swapped HERE, before any
+    // handler runs, so the register trampolines that call reimplAddr directly get the mutant too. A handler that
+    // stays GREEN under a mutant is BLIND to that defect class. The forwarder's stats ride a 'negctl' message
+    // sent just before 'results'. Never combined with self_baseline.
+    if (CONFIG.negctl && !CONFIG.self_baseline) {
+        const NEGCTL_CLS = { null: 1, ret_int: 2, ret_float: 3, field_first: 4, field_last: 5,
+                             heap_extra: 6, import_extra: 7 };
+        const armAddr = module.findExportByName('NegCtl_Arm');
+        const statsAddr = module.findExportByName('NegCtl_Stats');
+        if (armAddr === null || statsAddr === null || !NEGCTL_CLS[CONFIG.negctl]) {
+            send({ type: 'error', msg: 'negctl: NegCtl_Arm/NegCtl_Stats missing from the .asi or unknown class ' + CONFIG.negctl });
+            return;
+        }
+        const rcc = CONFIG.reimpl_calling_convention || CONFIG.calling_convention || 'mscdecl';
+        let stdBytes = 0;
+        if (rcc === 'stdcall') CONFIG.signature.args.forEach(function (a) {
+            stdBytes += (a === 'double' || a === 'int64' || a === 'uint64') ? 8 : 4; });
+        const isFloat = (CONFIG.signature.ret === 'float' || CONFIG.signature.ret === 'double') ? 1 : 0;
+        const arm = new NativeFunction(armAddr, 'pointer', ['pointer', 'int', 'uint', 'int'], 'mscdecl');
+        const mut = arm(reimplAddr, NEGCTL_CLS[CONFIG.negctl], stdBytes, isFloat);
+        if (mut.isNull()) {
+            send({ type: 'error', msg: 'negctl: NegCtl_Arm refused (MASHED_NEGCTL!=1 in the game env?)' });
+            return;
+        }
+        // 'send' is read-only under 'use strict', so the stats go out from pollLutThenRun after runDiff returns
+        // (and once more 300 ms later for handlers that finish asynchronously); the runner keeps the last one.
+        globalThis.__negctlStatsFn = new NativeFunction(statsAddr, 'pointer', [], 'mscdecl');
+        send({ type: 'log', msg: 'negctl: ' + CONFIG.negctl + ' forwarder ' + mut + ' wraps ' + reimplAddr });
+        reimplAddr = mut;
     }
     send({ type: 'asi_loaded',
            base:         '0x' + module.base.toString(16),
@@ -1582,6 +1621,9 @@ function runDiff() {
     // that cannot pass original-vs-original is a broken verifier, not a RED (memory verifier-needs-passing-baseline).
     if (CONFIG.self_baseline) {
         Reimpl = new NativeFunction(TARGET_ADDR, CONFIG.signature.ret, CONFIG.signature.args, origCallConv);
+        // The register-trampoline handlers (buildTramp(reimplAddr) etc.) never touch Reimpl: rebind the raw address
+        // too, or their "baseline" still runs the port (gap found 2026-10-11 by the negctl work).
+        reimplAddr = TARGET_ADDR;
         send({ type: 'log', msg: 'self_baseline: reimpl arm bound to the original ' + TARGET_ADDR });
     }
 
