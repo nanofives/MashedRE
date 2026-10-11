@@ -59,6 +59,7 @@ typedef std::uint32_t(__stdcall* ComSlot1Fn)(void* obj);
 // 0x00494b20, 0x0049dda4, 0x0049deae, 0x0049ebc0, 0x0049ec32), boundary resolved.
 // ─────────────────────────────────────────────────────────────────────────────
 #pragma comment(linker, "/export:ComCs94Field6cNonZero=@ComCs94Field6cNonZero@4")
+// 0x0049c900
 extern "C" __declspec(dllexport) int __fastcall ComCs94Field6cNonZero(std::uint8_t* self) {
     CRITICAL_SECTION* cs = reinterpret_cast<CRITICAL_SECTION*>(self + 0x94);  // 0x0049c904
     EnterCriticalSection(cs);                                                // 0x0049c90b
@@ -83,6 +84,7 @@ RH_ScopedInstall(ComCs94Field6cNonZero, 0x0049c900);
 // 0x005d0dc0 / 0x005d0eb0 (same eight store_vptr sites), boundary resolved.
 // ─────────────────────────────────────────────────────────────────────────────
 #pragma comment(linker, "/export:ComCb00ThenClear4Fields=@ComCb00ThenClear4Fields@4")
+// 0x0049ea70
 extern "C" __declspec(dllexport) int __fastcall ComCb00ThenClear4Fields(std::uint8_t* self) {
     s_fn0049cb00(self);                                                      // 0x0049ea74
     CRITICAL_SECTION* cs = reinterpret_cast<CRITICAL_SECTION*>(self + 0x94);  // 0x0049ea79
@@ -113,6 +115,7 @@ RH_ScopedInstall(ComCb00ThenClear4Fields, 0x0049ea70);
 // (sites 0x00493c22, 0x00493c66, 0x00494ae2, 0x00494b26, 0x0049ebc6, 0x0049ec38)
 // and of table 0x005d0d84 (sites 0x0049ddaa, 0x0049deb4), boundary resolved.
 // ─────────────────────────────────────────────────────────────────────────────
+// 0x0049e140
 extern "C" __declspec(dllexport) std::uint32_t __stdcall ComWait1570StoreField8(
         std::uint8_t* p1, std::uint32_t p2, std::uint32_t* p3) {
     if (p3 == nullptr)                                                      // 0x0049e145
@@ -140,6 +143,7 @@ RH_ScopedInstall(ComWait1570StoreField8, 0x0049e140);
 // (sites 0x00493c22, 0x00493c66, 0x00494ae2, 0x00494b26, 0x0049ebc6, 0x0049ec38)
 // and of table 0x005d0d84 (sites 0x0049ddaa, 0x0049deb4), boundary resolved.
 // ─────────────────────────────────────────────────────────────────────────────
+// 0x0049ef10
 extern "C" __declspec(dllexport) std::uint32_t __stdcall ComCopyName30Ref34(
         std::uint8_t* p1, std::uint8_t* p2) {
     if (p2 == nullptr)                                                      // 0x0049ef15
@@ -174,6 +178,7 @@ RH_ScopedInstall(ComCopyName30Ref34, 0x0049ef10);
 // Installer row (fn_table, store_mem): slot 8 (+0x20) of table 0x005d0d00, site
 // 0x0049ccad in FUN_0049cc80 (C2), boundary resolved.
 // ─────────────────────────────────────────────────────────────────────────────
+// 0x0049f950
 extern "C" __declspec(dllexport) std::uint32_t __stdcall ComInfo1cRefCopyName8(
         std::uint8_t* p1, std::uint8_t* p2) {
     if (p2 == nullptr)                                                      // 0x0049f955

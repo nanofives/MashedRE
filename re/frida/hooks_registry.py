@@ -22857,3 +22857,237 @@ HOOKS['com_info1c_ref_copy_name8_null'] = dict(HOOKS['com_info1c_ref_copy_name8'
                     for src, e in ((None, False), ('ab', True), ('long', False))],
     'path2_tests': [{'seed': _linst_f950_seed('ab', True, 3), 'scalars': [0], 'stub_ret': 2}],
 })
+
+
+# ── L-INST round 3 (2026-10-11), Particle/PromoLoop_linst3.cpp ─────────────
+# First users of the G2 per-stub spec ({nargs, abi, ret, name} on seed stubs
+# and stub_at entries, per-test stub_rets by name). A named recorder logs
+# "name:args", so each fingerprint also says WHICH recorder fired, in order.
+
+def _stub(name, nargs, abi):
+    return {'name': name, 'nargs': nargs, 'abi': abi}
+
+
+# 0x0049c5d0 ComQiTwoConstsV24 (__stdcall p1, p2, p3; ret 0xc).
+# b0 = p1 (vtable b1, recorder 'v24' at +0x24: __thiscall, ECX + 2 pushed);
+# b2 = the 16 bytes p2 points at; p3 a scalar. 0x0049ecc0 (only reached by the
+# tail jmp at 0x0049c600) is the recorder 'qi' (__stdcall, 3).
+# NON-DEGENERACY: p2 = either constant -> 'v24' fires and its return passes out;
+# p2 = constant with one byte flipped (first / last), or zeros -> 'qi' fires with
+# (b0+0, b2+0, p3) and its return passes out. Distinct returns per recorder.
+_LINST_K_BBC = bytes.fromhex('b268a856d40ace11b03a0020af0ba770')
+_LINST_K_AFC = bytes.fromhex('8038b736c8c2cf118b4600805f6cef60')
+
+
+def _linst_c5d0_seed(key):
+    s = [{'buf': 0, 'off': 0, 'ptr_to': 1},
+         {'buf': 1, 'off': 0x24, 'stub': _stub('v24', 3, 'thiscall')}]
+    for i in range(4):
+        s.append({'buf': 2, 'off': 4 * i, 'type': 'u32',
+                  'value': int.from_bytes(key[4 * i:4 * i + 4], 'little')})
+    return s
+
+
+def _flip(key, i):
+    b = bytearray(key); b[i] ^= 0x01; return bytes(b)
+
+
+HOOKS['com_qi_two_consts_v24'] = {
+    'rva':        0x0049c5d0,
+    'export':     '_ComQiTwoConstsV24@12',
+    'signature':  {'ret': 'int32', 'args': ['pointer', 'pointer', 'uint32']},
+    'arg_type':   'stub_dispatch_observe',
+    'orig_calling_convention':   'stdcall',
+    'reimpl_calling_convention': 'stdcall',
+    'lut_root_delta': 0,
+    'num_bufs':   3,
+    'buf_size':   0x40,
+    'arg_layout': [{'buf': 0}, {'buf': 2}, {'i32': True}],
+    'stub_at':    [{'addr': 0x0049ecc0, 'name': 'qi', 'nargs': 3, 'abi': 'stdcall'}],
+    'observe_ret':   True,
+    'observe_calls': True,
+    'path1_tests': [
+        {'seed': _linst_c5d0_seed(_LINST_K_BBC), 'scalars': [0x1000], 'stub_rets': {'v24': 0x11, 'qi': 0x22}},
+        {'seed': _linst_c5d0_seed(_LINST_K_AFC), 'scalars': [0x2000], 'stub_rets': {'v24': 0x33, 'qi': 0x44}},
+        {'seed': _linst_c5d0_seed(_flip(_LINST_K_BBC, 0)),  'scalars': [0x3000], 'stub_rets': {'v24': 0x55, 'qi': -0x7fffbffe}},
+        {'seed': _linst_c5d0_seed(_flip(_LINST_K_AFC, 15)), 'scalars': [0x4000], 'stub_rets': {'v24': 0x66, 'qi': 0}},
+        {'seed': _linst_c5d0_seed(bytes(16)),               'scalars': [0],      'stub_rets': {'v24': 0x77, 'qi': 0x88}},
+        {'seed': _linst_c5d0_seed(_LINST_K_AFC), 'scalars': [0xffffffff], 'stub_rets': {'v24': -1, 'qi': 1}},
+    ],
+    'path2_tests': [
+        {'seed': _linst_c5d0_seed(_LINST_K_BBC), 'scalars': [0x1000], 'stub_rets': {'v24': 0x11, 'qi': 0x22}},
+        {'seed': _linst_c5d0_seed(bytes(16)),    'scalars': [0],      'stub_rets': {'v24': 0x77, 'qi': 0x88}},
+    ],
+}
+
+
+# 0x0049cd70 / 0x0049ce10 share a layout: b0 = p1, [p1+0xcc] = b2 (inner), b2's
+# vtable = b1, two unowned critical sections at b2+0x7c and b2+0x94.
+# Both sections are observed after the call (24 bytes each): an unpaired Enter
+# leaves LockCount / OwningThread / RecursionCount changed, so the fingerprint
+# also proves every Enter was matched by a Leave.
+def _linst_cc_seed(slots):
+    s = [{'buf': 0, 'off': 0xcc, 'ptr_to': 2}, {'buf': 2, 'off': 0, 'ptr_to': 1}]
+    s += _linst_cs(2, 0x7c) + _linst_cs(2, 0x94)
+    for off, spec in slots:
+        s.append({'buf': 1, 'off': off, 'stub': spec})
+    return s
+
+
+_LINST_CC_OBS = [{'buf': 2, 'off': 0x7c, 'len': 0x18}, {'buf': 2, 'off': 0x94, 'len': 0x18}]
+
+# 0x0049cd70 ComLockedFf30V84V64 (__stdcall p1; ret 4): FUN_0049ff30(p1) is the
+# recorder 'ff30' (__stdcall 1; sole call site 0x0049cdc5), slots +0x84 'v84'
+# and +0x64 'v64' (__thiscall, ECX only). Return = v64's.
+# NON-DEGENERACY: call order must read ff30:b0+0 ; v84:b2+0 ; v64:b2+0 every
+# vector; per-test v64 returns pass out, v84/ff30 returns must not.
+_LINST_CD70_SLOTS = [(0x84, _stub('v84', 1, 'thiscall')), (0x64, _stub('v64', 1, 'thiscall'))]
+
+HOOKS['com_locked_ff30_v84_v64'] = {
+    'rva':        0x0049cd70,
+    'export':     '_ComLockedFf30V84V64@4',
+    'signature':  {'ret': 'int32', 'args': ['pointer']},
+    'arg_type':   'stub_dispatch_observe',
+    'orig_calling_convention':   'stdcall',
+    'reimpl_calling_convention': 'stdcall',
+    'lut_root_delta': 0,
+    'num_bufs':   3,
+    'buf_size':   0x100,
+    'arg_layout': [{'buf': 0}],
+    'stub_at':    [{'addr': 0x0049ff30, 'name': 'ff30', 'nargs': 1, 'abi': 'stdcall'}],
+    'observe_ret':   True,
+    'observe_calls': True,
+    'observe_bufs':  _LINST_CC_OBS,
+    'path1_tests': [{'seed': _linst_cc_seed(_LINST_CD70_SLOTS),
+                     'stub_rets': {'v64': r64, 'v84': r84, 'ff30': rff}}
+                    for r64, r84, rff in ((0, 0x11, 0x22), (-1, 0, 0), (0x1234, -5, 7),
+                                          (-0x7fffbffb, 1, 1), (0x7fffffff, 9, -9))],
+    'path2_tests': [{'seed': _linst_cc_seed(_LINST_CD70_SLOTS),
+                     'stub_rets': {'v64': 0x1234, 'v84': 0, 'ff30': 0}}],
+}
+
+# 0x0049ce10 ComLockedV88ThenFf60 (__stdcall p1; ret 4): r = slot +0x88 'v88'
+# (__thiscall, ECX only); r >= 0 -> r = FUN_0049ff60(p1), recorder 'ff60'
+# (__stdcall 1; sole call site 0x0049ce79).
+# NON-DEGENERACY: v88 < 0 -> its value passes out and ff60 is NOT called; v88 >= 0
+# -> ff60 is called with b0+0 and ITS value passes out.
+_LINST_CE10_SLOTS = [(0x88, _stub('v88', 1, 'thiscall'))]
+
+HOOKS['com_locked_v88_then_ff60'] = dict(HOOKS['com_locked_ff30_v84_v64'], **{
+    'rva':        0x0049ce10,
+    'export':     '_ComLockedV88ThenFf60@4',
+    'stub_at':    [{'addr': 0x0049ff60, 'name': 'ff60', 'nargs': 1, 'abi': 'stdcall'}],
+    'path1_tests': [{'seed': _linst_cc_seed(_LINST_CE10_SLOTS),
+                     'stub_rets': {'v88': r88, 'ff60': rff}}
+                    for r88, rff in ((-1, 0x11), (0, 0x22), (1, -3), (-0x7fffbffb, 5),
+                                     (0x7fffffff, 0), (-0x80000000, 7))],
+    'path2_tests': [{'seed': _linst_cc_seed(_LINST_CE10_SLOTS),
+                     'stub_rets': {'v88': 0, 'ff60': 0x22}}],
+})
+
+
+# 0x0049e600 ComState14V7cSetB0 (__thiscall this + 1 unread stack dword; ret 4),
+# driven as __fastcall(this, EDX junk, arg) on both sides (same contract).
+# FUN_0049c690 and FUN_0049cc40 run for real (cc40 needs the unowned CS at +0x94
+# and writes +0xb0). Slot +0x7c is the recorder 'v7c' (__thiscall, ECX only).
+# NON-DEGENERACY: +0x14 != 2 -> +0xb0 = 1, no v7c; +0x14 == 2 and v7c >= 0 ->
+# +0xb0 = 0; v7c < 0 -> its value passes out and +0xb0 keeps its sentinel.
+# +0x60 always reads 0 over a sentinel.
+def _linst_e600_seed(s14, sent):
+    return ([{'buf': 0, 'off': 0, 'ptr_to': 1},
+             {'buf': 1, 'off': 0x7c, 'stub': _stub('v7c', 1, 'thiscall')},
+             {'buf': 0, 'off': 0x14, 'type': 'u32', 'value': s14},
+             {'buf': 0, 'off': 0x60, 'type': 'u32', 'value': sent},
+             {'buf': 0, 'off': 0xb0, 'type': 'u32', 'value': sent ^ 0xffff}]
+            + _linst_cs(0, 0x94))
+
+
+HOOKS['com_state14_v7c_set_b0'] = {
+    'rva':        0x0049e600,
+    'export':     'ComState14V7cSetB0',
+    'signature':  {'ret': 'int32', 'args': ['pointer', 'uint32', 'uint32']},
+    'arg_type':   'stub_dispatch_observe',
+    'orig_calling_convention':   'fastcall',
+    'reimpl_calling_convention': 'fastcall',
+    'lut_root_delta': 0,
+    'num_bufs':   2,
+    'buf_size':   0x100,
+    'arg_layout': [{'buf': 0}, {'i32': True}, {'i32': True}],
+    'observe_ret':   True,
+    'observe_calls': True,
+    'observe_bufs':  [{'buf': 0, 'off': 0x60, 'len': 4}, {'buf': 0, 'off': 0xb0, 'len': 4},
+                      {'buf': 0, 'off': 0x94, 'len': 0x18}],
+    'path1_tests': [
+        {'seed': _linst_e600_seed(0, 0xa1a10000), 'scalars': [0x1111, 7], 'stub_rets': {'v7c': 0}},
+        {'seed': _linst_e600_seed(1, 0x5eed0000), 'scalars': [0x2222, 0], 'stub_rets': {'v7c': 0}},
+        {'seed': _linst_e600_seed(2, 0x12340000), 'scalars': [0x3333, 1], 'stub_rets': {'v7c': 0}},
+        {'seed': _linst_e600_seed(2, 0x43210000), 'scalars': [0x4444, 2], 'stub_rets': {'v7c': 5}},
+        {'seed': _linst_e600_seed(2, 0x77770000), 'scalars': [0x5555, 3], 'stub_rets': {'v7c': -1}},
+        {'seed': _linst_e600_seed(2, 0x99990000), 'scalars': [0x6666, 4], 'stub_rets': {'v7c': -0x7fffbffb}},
+        {'seed': _linst_e600_seed(3, 0x88880000), 'scalars': [0x7777, 5], 'stub_rets': {'v7c': -1}},
+    ],
+    'path2_tests': [
+        {'seed': _linst_e600_seed(2, 0x12340000), 'scalars': [0x3333, 1], 'stub_rets': {'v7c': 0}},
+        {'seed': _linst_e600_seed(0, 0xa1a10000), 'scalars': [0x1111, 7], 'stub_rets': {'v7c': 0}},
+    ],
+}
+
+
+# 0x0049e640 ComReleaseAcGate78 (__fastcall this). b0 = this (vtable b1: 'v64',
+# 'v70', 'v80' __thiscall ECX only), b2 = object at +0xac (vtable b3, 'rel' at +8,
+# __stdcall 1), b4 = the +0x78 object (+0x18 dword, +0x25 byte). FUN_0049cc40 runs
+# for real (unowned CS at +0x94, writes +0xb0).
+# NON-DEGENERACY: covers all four exits: [a+0x18]==0 -> 1 (with and without the
+# +0xac object; +0xac must read 0 after 'rel'); +0x14!=0 && byte+0x25==0 ->
+# 0x80040224 with no calls; otherwise cc40 (+0xb0 = 0), v64, v70, +0x60 = 0, and
+# v80 only when +0x14 == 2.
+def _linst_e640_seed(obj, a18, s14, b25, sent):
+    s = [{'buf': 0, 'off': 0, 'ptr_to': 1},
+         {'buf': 1, 'off': 0x64, 'stub': _stub('v64', 1, 'thiscall')},
+         {'buf': 1, 'off': 0x70, 'stub': _stub('v70', 1, 'thiscall')},
+         {'buf': 1, 'off': 0x80, 'stub': _stub('v80', 1, 'thiscall')},
+         {'buf': 0, 'off': 0x78, 'ptr_to': 4},
+         {'buf': 4, 'off': 0x18, 'type': 'u32', 'value': a18},
+         {'buf': 4, 'off': 0x25, 'type': 'u8', 'value': b25},
+         {'buf': 0, 'off': 0x14, 'type': 'u32', 'value': s14},
+         {'buf': 0, 'off': 0x60, 'type': 'u32', 'value': sent},
+         {'buf': 0, 'off': 0xb0, 'type': 'u32', 'value': sent ^ 0xffff}] + _linst_cs(0, 0x94)
+    if obj:
+        s += [{'buf': 0, 'off': 0xac, 'ptr_to': 2}, {'buf': 2, 'off': 0, 'ptr_to': 3},
+              {'buf': 3, 'off': 8, 'stub': _stub('rel', 1, 'stdcall')}]
+    else:
+        s.append({'buf': 0, 'off': 0xac, 'type': 'u32', 'value': 0})
+    return s
+
+
+HOOKS['com_release_ac_gate78'] = {
+    'rva':        0x0049e640,
+    'export':     'ComReleaseAcGate78',
+    'signature':  {'ret': 'int32', 'args': ['pointer']},
+    'arg_type':   'stub_dispatch_observe',
+    'orig_calling_convention':   'fastcall',
+    'reimpl_calling_convention': 'fastcall',
+    'lut_root_delta': 0,
+    'num_bufs':   5,
+    'buf_size':   0x100,
+    'arg_layout': [{'buf': 0}],
+    'observe_ret':   True,
+    'observe_calls': True,
+    # +0xac is observed only through 'rel' and the obj-NULL vectors' 0; when the
+    # object is present it holds a per-side pointer until cleared -> after the
+    # call it reads 0 on both sides, so it is safe to observe.
+    'observe_bufs':  [{'buf': 0, 'off': 0x60, 'len': 4}, {'buf': 0, 'off': 0xac, 'len': 8}],
+    'path1_tests': [
+        {'seed': _linst_e640_seed(False, 0, 0, 0, 0xa1a10000), 'stub_ret': 0x11},
+        {'seed': _linst_e640_seed(True,  0, 1, 0, 0x5eed0000), 'stub_ret': 0x22},
+        {'seed': _linst_e640_seed(False, 1, 1, 0, 0x12340000), 'stub_ret': 0x33},
+        {'seed': _linst_e640_seed(True,  1, 0, 0, 0x43210000), 'stub_ret': 0x44},
+        {'seed': _linst_e640_seed(False, 1, 2, 1, 0x77770000), 'stub_ret': 0x55},
+        {'seed': _linst_e640_seed(True,  5, 1, 7, 0x99990000), 'stub_ret': 0x66},
+        {'seed': _linst_e640_seed(False, 1, 2, 0, 0x88880000), 'stub_ret': 0x77},
+    ],
+    'path2_tests': [
+        {'seed': _linst_e640_seed(True,  1, 0, 0, 0x43210000), 'stub_ret': 0x44},
+        {'seed': _linst_e640_seed(False, 0, 0, 0, 0xa1a10000), 'stub_ret': 0x11},
+    ],
+}

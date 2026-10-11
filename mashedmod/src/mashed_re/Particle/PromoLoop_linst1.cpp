@@ -60,6 +60,7 @@ extern "C" void __cdecl Zero49c800(void);
 // 0x00494b20, 0x0049dda4, 0x0049deae, 0x0049ebc0, 0x0049ec32), boundary resolved.
 // ─────────────────────────────────────────────────────────────────────────────
 #pragma comment(linker, "/export:ComInner50Vcall28=@ComInner50Vcall28@4")
+// 0x0049c750
 extern "C" __declspec(dllexport) int __fastcall ComInner50Vcall28(std::uint8_t* self) {
     void* inner = *reinterpret_cast<void**>(self + 0x50);           // 0x0049c753
     if (inner != nullptr)                                           // 0x0049c756
@@ -82,6 +83,7 @@ RH_ScopedInstall(ComInner50Vcall28, 0x0049c750);
 // 0x005d0dc0 / 0x005d0eb0 (same eight installer sites), boundary resolved.
 // ─────────────────────────────────────────────────────────────────────────────
 #pragma comment(linker, "/export:ComInner50Vcall70=@ComInner50Vcall70@4")
+// 0x0049c770
 extern "C" __declspec(dllexport) int __fastcall ComInner50Vcall70(std::uint8_t* self) {
     void* inner = *reinterpret_cast<void**>(self + 0x50);           // 0x0049c773
     if (inner != nullptr)                                           // 0x0049c776
@@ -114,6 +116,7 @@ RH_ScopedInstall(ComInner50Vcall70, 0x0049c770);
 // 0x005d0dc0 / 0x005d0eb0 (same eight installer sites), boundary resolved.
 // ─────────────────────────────────────────────────────────────────────────────
 #pragma comment(linker, "/export:ComSlot68DispatchReset=@ComSlot68DispatchReset@4")
+// 0x0049c810
 extern "C" __declspec(dllexport) int __fastcall ComSlot68DispatchReset(std::uint8_t* self) {
     const std::uint32_t v = *reinterpret_cast<std::uint32_t*>(self + 0x68);   // 0x0049c814
     if (v != 0) {                                                             // 0x0049c817
@@ -150,6 +153,7 @@ const Fn0049fc80 s_fn0049fc80 = reinterpret_cast<Fn0049fc80>(0x0049fc80);
 }  // namespace
 
 #pragma comment(linker, "/export:ComInnerD8Vcall8cThen9fc80=@ComInnerD8Vcall8cThen9fc80@4")
+// 0x0049ceb0
 extern "C" __declspec(dllexport) int __fastcall ComInnerD8Vcall8cThen9fc80(std::uint8_t* self) {
     void* inner = *reinterpret_cast<void**>(self + 0xd8);            // 0x0049ceb3
     void** vtbl = *reinterpret_cast<void***>(inner);                 // 0x0049ceb9
@@ -176,6 +180,7 @@ RH_ScopedInstall(ComInnerD8Vcall8cThen9fc80, 0x0049ceb0);
 // Installer rows: slot 5 (+0x14) of table 0x005d0f94, installer sites 0x0049f210
 // (FUN_0049f210) and 0x004a0c1d (FUN_004a0c10), store_vptr, boundary resolved.
 // ─────────────────────────────────────────────────────────────────────────────
+// 0x0049f2e0
 extern "C" __declspec(dllexport) int __stdcall ComObj8Vcall10StoreC(std::uint8_t* p) {
     void* obj = *reinterpret_cast<void**>(p + 8);                    // 0x0049f2e5
     *reinterpret_cast<std::uint32_t*>(p + 4) = 0;                    // 0x0049f2e8

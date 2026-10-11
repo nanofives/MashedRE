@@ -209,6 +209,7 @@
 "Particle\ParticleLeaves_ad5.cpp"
 "Particle\PromoLoop_linst1.cpp"
 "Particle\PromoLoop_linst2.cpp"
+"Particle\PromoLoop_linst3.cpp"
 "Frontend\MenuLeaves_af5.cpp"
 "Input\MemsetInline_ag1.cpp"
 "Vehicle\ReplayRewind_ag.cpp"
