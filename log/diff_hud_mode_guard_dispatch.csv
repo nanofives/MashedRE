@@ -1,11 +1,7 @@
 idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
-0,0,,,,,True,,
-1,1,,,,,True,,
-2,0,,,,,True,,
-3,1,,,,,True,,
-4,0,,,,,True,,
-5,0,,,,,True,,
-6,1,,,,,True,,
-7,0,,,,,True,,
-8,1,,,,,True,,
-9,0,,,,,True,,
+0,[0],463819185,0x1ba551b1,463819185,0x1ba551b1,True,,
+1,[0],2667116792,0x9ef8f8f8,,,False,,illegal instruction
+2,[0],1962032691,0x74f23e33,,,False,,illegal instruction
+3,[1],2268341038,0x8734232e,,,False,,illegal instruction
+4,[1],2667116792,0x9ef8f8f8,,,False,,illegal instruction
+5,[1],1232917603,0x497cd463,,,False,,illegal instruction
