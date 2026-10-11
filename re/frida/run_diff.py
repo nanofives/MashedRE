@@ -50,6 +50,53 @@ errors_received  = []
 done_flag        = {'done': False}
 
 
+GAMESAVE_REF = MASHED_EXE.parent / 'gamesave.bin.refbak_20260830'
+
+# 2026-10-11: original/gamesave.bin was found ALL ZEROS (151,456 bytes, mtime
+# 2026-10-11 15:30:45; the pristine reference is gamesave.bin.refbak_20260830,
+# magic 0xDEADBEEF). With a zero save the Quick Battle track-select screen
+# (menu depth 5, "Challenge Select") ignores confirm, so drive_to_race never
+# left the menu. The game re-opens gamesave.bin read-only ~180x during the
+# menu walk via CreateFileA("C:gamesave.bin"). Pin those reads to the pristine
+# reference and send any write to a per-pid temp file, so a race diff neither
+# depends on nor mutates the shared save. Must load before menu depth 2 (the
+# first read), i.e. right after attach.
+_GAMESAVE_PIN_JS = r"""
+const REF = %s, SCR = %s;
+for (const nm of ['CreateFileA', 'CreateFileW']) {
+  const W = nm.endsWith('W');
+  const f = Process.getModuleByName('kernel32.dll').findExportByName(nm);
+  Interceptor.attach(f, { onEnter(a) {
+    const p = W ? a[0].readUtf16String() : a[0].readAnsiString();
+    if (!p || !p.toLowerCase().endsWith('gamesave.bin')) return;
+    const t = (a[1].toUInt32() === 0x80000000) ? REF : SCR;   // GENERIC_READ only
+    this.buf = W ? Memory.allocUtf16String(t) : Memory.allocAnsiString(t);
+    a[0] = this.buf;
+  } });
+}
+"""
+
+
+def pin_gamesave(session, pid):
+    if not GAMESAVE_REF.exists():
+        print(f"  [save] WARNING: {GAMESAVE_REF.name} missing; using live gamesave.bin")
+        return None
+    import tempfile
+    scratch = Path(tempfile.gettempdir()) / f'run_diff_gamesave_{pid}.bin'
+    js = _GAMESAVE_PIN_JS % (json.dumps(str(GAMESAVE_REF)), json.dumps(str(scratch)))
+    scr = session.create_script(js)
+    scr.on('message', lambda m, d: None)
+    scr.load()
+    live = MASHED_EXE.parent / 'gamesave.bin'
+    try:
+        drift = live.read_bytes() != GAMESAVE_REF.read_bytes()
+    except OSError:
+        drift = True
+    print(f"  [save] reads pinned to {GAMESAVE_REF.name}"
+          f"{' (live gamesave.bin DIFFERS from it)' if drift else ''}; writes -> {scratch}")
+    return scr
+
+
 def drive_to_race(session):
     """scenario:'race' support (2026-06-12, re/analysis/scenario_attach_lane.md):
     load the shared nav agent and drive the freshly spawned ORIGINAL into a
@@ -587,6 +634,7 @@ def main():
 
     if hook.get('scenario') == 'race':
         print("scenario='race': driving to a live race before running vectors")
+        _save_pin = pin_gamesave(session, proc.pid)   # keep a reference alive
         if not drive_to_race(session):
             print("FAILED to reach race state — aborting (no vectors run).")
             try: session.detach()

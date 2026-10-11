@@ -212,6 +212,9 @@ class Slot:
             self.session = None
         print(f'  [slot {self.idx}] pid={self.proc.pid}')
         if self.race and self.session is not None:
+            # Pin gamesave.bin reads to the reference copy (the shared one can be zeroed; on it track select never
+            # starts a race) and send writes to a per-run temp file. Same as run_diff's race branch.
+            self._save_pin = run_diff.pin_gamesave(self.session, self.proc.pid)
             time.sleep(8.0)
             try:
                 ok = run_diff.drive_to_race(self.session)
