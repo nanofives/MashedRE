@@ -149,6 +149,32 @@
 'use strict';
 
 const CONFIG = $CONFIG$;
+
+// ── gamesave.bin write guard (2026-10-11) ───────────────────────────────────
+// original\gamesave.bin was zeroed twice on 2026-10-11 (15:30:45, 18:00:57) by
+// harness runs of save_write. At the warm menu the 0x24fa0-byte save buffer at
+// 0x00803358 is all zero (boot never loads the save into it), and the original
+// SaveWrite 0x00404f50 (or the port, which writes the same buffer through the
+// same file layer) writes it to "C:gamesave.bin" in the game's cwd = original\.
+// Repro: verify/gamesave_zero_20261011/REPRO.md. Any open of *gamesave.bin with
+// GENERIC_WRITE is sent to a per-pid file in %TEMP%; reads are untouched, so a
+// harness can read the shared save but never mutate it.
+(function guardGamesaveWrites() {
+  const k32 = Process.getModuleByName('kernel32.dll');
+  const tmp = Memory.alloc(1040);
+  new NativeFunction(k32.findExportByName('GetTempPathW'), 'uint32', ['uint32', 'pointer'])(520, tmp);
+  const dst = tmp.readUtf16String() + 'harness_gamesave_' + Process.id + '.bin';
+  for (const nm of ['CreateFileA', 'CreateFileW']) {
+    const W = nm.endsWith('W');
+    Interceptor.attach(k32.findExportByName(nm), { onEnter(a) {
+      if ((a[1].toUInt32() & 0x40000000) === 0) return;          // GENERIC_WRITE only
+      const p = W ? a[0].readUtf16String() : a[0].readAnsiString();
+      if (!p || !p.toLowerCase().endsWith('gamesave.bin')) return;
+      this.buf = W ? Memory.allocUtf16String(dst) : Memory.allocAnsiString(dst);
+      a[0] = this.buf;
+    } });
+  }
+})();
 const ASI_PATH        = CONFIG.asi_path;
 const ASI_MODULE_NAME = CONFIG.asi_module_name || 'mashed_re_dev.asi';
 const TARGET_ADDR     = ptr(CONFIG.target_rva);
