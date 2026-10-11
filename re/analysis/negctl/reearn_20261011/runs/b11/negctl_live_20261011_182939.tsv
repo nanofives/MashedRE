@@ -1,0 +1,33 @@
+hook	rva	arg_type	lane	mode	verdict	mismatches	total	stats	err
+window_show	0x004996f0	standin_object_call	warm	real	GREEN	0	5		
+window_show	0x004996f0	standin_object_call	warm	baseline	GREEN	0	5		
+window_msg_pump	0x00499690	standin_object_call	warm	real	GREEN	0	6		
+window_msg_pump	0x00499690	standin_object_call	warm	baseline	GREEN	0	6		
+window_show	0x004996f0	standin_object_call	warm	null	RED	5	5	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+window_show	0x004996f0	standin_object_call	warm	ret	SKIP	0	0		void signature
+window_show	0x004996f0	standin_object_call	warm	field_none	CTRL-GREEN	0	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=168 frozen=2	
+window_msg_pump	0x00499690	standin_object_call	warm	null	RED	6	6	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+window_msg_pump	0x00499690	standin_object_call	warm	ret	RED	6	6	calls=6 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+window_show	0x004996f0	standin_object_call	warm	field_first	NA	0	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=186 frozen=2	
+window_show	0x004996f0	standin_object_call	warm	field_last	NA	0	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=187 frozen=2	
+window_msg_pump	0x00499690	standin_object_call	warm	field_none	CTRL-GREEN	0	6	calls=6 flips=0 changed=0 flip=0x00000000 noise=161 frozen=2	
+window_show	0x004996f0	standin_object_call	warm	import_extra	BLIND	0	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=187 frozen=2	
+com_ref_release14	0x0049f180	struct_call_observe	warm	real	GREEN	0	9		
+com_ref_release14	0x0049f180	struct_call_observe	warm	baseline	GREEN	0	9		
+com_ref_release14	0x0049f180	struct_call_observe	warm	null	RED	9	9	calls=0 flips=0 changed=0 flip=0x00000000 noise=187 frozen=2	
+com_ref_release14	0x0049f180	struct_call_observe	warm	ret	RED	9	9	calls=9 flips=0 changed=0 flip=0x00000000 noise=187 frozen=2	
+window_msg_pump	0x00499690	standin_object_call	warm	field_first	NA	0	6	calls=6 flips=0 changed=0 flip=0x00000000 noise=167 frozen=2	
+com_ref_release14	0x0049f180	struct_call_observe	warm	field_none	CTRL-GREEN	0	9	calls=9 flips=0 changed=1 flip=0x00000000 noise=212 frozen=2	
+window_msg_pump	0x00499690	standin_object_call	warm	field_last	NA	0	6	calls=6 flips=0 changed=0 flip=0x00000000 noise=167 frozen=2	
+com_ref_release14	0x0049f180	struct_call_observe	warm	field_first	RED	7	9	calls=9 flips=9 changed=1 flip=0x0edc7b64 noise=264 frozen=2	
+window_msg_pump	0x00499690	standin_object_call	warm	import_extra	BLIND	0	6	calls=6 flips=0 changed=0 flip=0x00000000 noise=167 frozen=2	
+com_ref_release10	0x0049f2b0	struct_call_observe	warm	real	GREEN	0	9		
+com_ref_release10	0x0049f2b0	struct_call_observe	warm	baseline	GREEN	0	9		
+com_ref_release14	0x0049f180	struct_call_observe	warm	field_last	RED	8	9	calls=9 flips=9 changed=1 flip=0x0df9d5dc noise=267 frozen=2	
+com_ref_release10	0x0049f2b0	struct_call_observe	warm	null	RED	9	9	calls=0 flips=0 changed=0 flip=0x00000000 noise=167 frozen=2	
+com_ref_release14	0x0049f180	struct_call_observe	warm	import_extra	BLIND	0	9	calls=9 flips=0 changed=0 flip=0x00000000 noise=267 frozen=2	
+com_ref_release10	0x0049f2b0	struct_call_observe	warm	ret	RED	9	9	calls=9 flips=0 changed=0 flip=0x00000000 noise=167 frozen=2	
+com_ref_release10	0x0049f2b0	struct_call_observe	warm	field_none	CTRL-GREEN	0	9	calls=9 flips=0 changed=1 flip=0x00000000 noise=171 frozen=2	
+com_ref_release10	0x0049f2b0	struct_call_observe	warm	field_first	RED	7	9	calls=9 flips=9 changed=1 flip=0x0e1af7a8 noise=172 frozen=2	
+com_ref_release10	0x0049f2b0	struct_call_observe	warm	field_last	RED	9	9	calls=9 flips=9 changed=1 flip=0x0e1ce2b8 noise=173 frozen=2	
+com_ref_release10	0x0049f2b0	struct_call_observe	warm	import_extra	BLIND	0	9	calls=9 flips=0 changed=0 flip=0x00000000 noise=173 frozen=2	

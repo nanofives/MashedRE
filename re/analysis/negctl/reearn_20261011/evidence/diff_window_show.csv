@@ -1,0 +1,6 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,"{""args"": [1], ""globals"": [[8295812, 74565]]}",obj=[] globals=[0x7e9584:0x12345] log=[imp:ShowWindow:0x12345:0x1 imp:UpdateWindow:0x12345],,obj=[] globals=[0x7e9584:0x12345] log=[imp:ShowWindow:0x12345:0x1 imp:UpdateWindow:0x12345],,True,,
+1,"{""args"": [5], ""globals"": [[8295812, 74565]]}",obj=[] globals=[0x7e9584:0x12345] log=[imp:ShowWindow:0x12345:0x5 imp:UpdateWindow:0x12345],,obj=[] globals=[0x7e9584:0x12345] log=[imp:ShowWindow:0x12345:0x5 imp:UpdateWindow:0x12345],,True,,
+2,"{""args"": [0], ""globals"": [[8295812, 74565]]}",obj=[] globals=[0x7e9584:0x12345] log=[imp:ShowWindow:0x12345:0x0 imp:UpdateWindow:0x12345],,obj=[] globals=[0x7e9584:0x12345] log=[imp:ShowWindow:0x12345:0x0 imp:UpdateWindow:0x12345],,True,,
+3,"{""args"": [9], ""globals"": [[8295812, 74565]]}",obj=[] globals=[0x7e9584:0x12345] log=[imp:ShowWindow:0x12345:0x9 imp:UpdateWindow:0x12345],,obj=[] globals=[0x7e9584:0x12345] log=[imp:ShowWindow:0x12345:0x9 imp:UpdateWindow:0x12345],,True,,
+4,"{""args"": [3], ""globals"": [[8295812, 350880]]}",obj=[] globals=[0x7e9584:0x55aa0] log=[imp:ShowWindow:0x55aa0:0x3 imp:UpdateWindow:0x55aa0],,obj=[] globals=[0x7e9584:0x55aa0] log=[imp:ShowWindow:0x55aa0:0x3 imp:UpdateWindow:0x55aa0],,True,,
