@@ -170,6 +170,7 @@
 "Race\PathNodes.cpp"
 "Race\PathProgStep.cpp"
 "Ai\AiTargetClosest.cpp"
+"Ai\AiLeafTargets.cpp"
 "Race\WorldRegistry.cpp"
 "Gameplay\PickupTick.cpp"
 "Race\CarRegistrant.cpp"

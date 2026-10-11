@@ -1,0 +1,1 @@
+G-AILEAF-REPLAY rows=6000 exact=6000 ret_bad=0 cand_bad=0 ai_bad=0 d570_bad=0 parse_bad=0 rows_570=2400 rows_880=3000 rows_d570=600 ret1_570=121 ret1_880=103 ret1_d570=568 dbg_calls=0

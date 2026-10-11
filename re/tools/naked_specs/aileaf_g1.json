@@ -1,0 +1,46 @@
+{
+  "funcs": [
+    {"name": "AL_414570", "start": "0x00414570", "size": 821},
+    {"name": "AL_415880", "start": "0x00415880", "size": 1137},
+    {"name": "AL_46d570", "start": "0x0046d570", "size": 228},
+    {"name": "AL_443440", "start": "0x00443440", "size": 2254},
+    {"name": "AL_443300", "start": "0x00443300", "size": 307},
+    {"name": "AL_4233e0", "start": "0x004233e0", "size": 157},
+    {"name": "AL_408af0", "start": "0x00408af0", "size": 16},
+    {"name": "AL_408a50", "start": "0x00408a50", "size": 17},
+    {"name": "AL_426bb0", "start": "0x00426bb0", "size": 6},
+    {"name": "AL_40e470", "start": "0x0040e470", "size": 15},
+    {"name": "AL_4c39b0", "start": "0x004c39b0", "size": 271},
+    {"name": "AL_4c3ac0", "start": "0x004c3ac0", "size": 112}
+  ],
+  "calls": {
+    "0x00443440": "AL_443440", "0x00443300": "AL_443300", "0x004233e0": "AL_4233e0",
+    "0x00408af0": "AL_408af0", "0x00408a50": "AL_408a50", "0x00426bb0": "AL_426bb0",
+    "0x0040e470": "AL_40e470", "0x004c39b0": "AL_4c39b0", "0x004c3ac0": "AL_4c3ac0",
+    "0x0046d4a0": "AL_VehPtr", "0x0046d6d0": "AL_Speed", "0x0046d510": "AL_Fwd",
+    "0x0046c7b0": "AL_Alive", "0x0046cbb0": "AL_State", "0x0046cc10": "AL_FloatAsInt",
+    "0x004a3384": "AL_Acos", "0x004a2c48": "AL_Ftol",
+    "0x004671a0": "AL_DbgRaster", "0x004b55a0": "AL_DbgDraw",
+    "0x004d7ff0": "AL_ErrPass", "0x004d8480": "AL_Nop"
+  },
+  "consts": {
+    "0x005cc318": "g_al_c_5cc318", "0x005cc31c": "g_al_c_5cc31c", "0x005cc320": "g_al_c_5cc320",
+    "0x005cc328": "g_al_c_5cc328", "0x005cc32c": "g_al_c_5cc32c", "0x005cc33c": "g_al_c_5cc33c",
+    "0x005cc358": "g_al_c_5cc358", "0x005cc35c": "g_al_c_5cc35c", "0x005cc56c": "g_al_c_5cc56c",
+    "0x005cc574": "g_al_c_5cc574", "0x005cc72c": "g_al_c_5cc72c", "0x005cc950": "g_al_c_5cc950",
+    "0x005cc9b8": "g_al_c_5cc9b8", "0x005cc9c0": "g_al_c_5cc9c0", "0x005cc9fc": "g_al_c_5cc9fc",
+    "0x005ccac4": "g_al_c_5ccac4", "0x005ccad0": "g_al_c_5ccad0", "0x005ccae0": "g_al_c_5ccae0",
+    "0x005ccd04": "g_al_c_5ccd04", "0x005ccd6c": "g_al_c_5ccd6c", "0x005cd050": "g_al_c_5cd050",
+    "0x005cd094": "g_al_c_5cd094", "0x005cd098": "g_al_c_5cd098", "0x005cd09c": "g_al_c_5cd09c",
+    "0x005cd0ac": "g_al_c_5cd0ac", "0x005cd324": "g_al_c_5cd324", "0x005ce034": "g_al_c_5ce034",
+    "0x005d757c": "g_al_c_5d757c"
+  },
+  "patch": {
+    "0x004158c4": "mov eax, dword ptr [eax*4 + g_al_tab_5f2fc0]",
+    "0x0046d588": ["imul esi, esi, 0xd04", "add esi, dword ptr [g_al_recdelta]"],
+    "0x004c39b7": "lea edx, g_al_lutptrs",
+    "0x004c39be": "mov esi, 0",
+    "0x004c3af2": "lea eax, g_al_lutptrs",
+    "0x004c3af7": "mov ecx, 0"
+  }
+}

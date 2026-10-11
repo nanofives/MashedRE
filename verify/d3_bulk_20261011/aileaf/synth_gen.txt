@@ -1,0 +1,12 @@
+wrote 6000 rows -> verify/d3_bulk_20261011/aileaf/synth.tsv; debug-draw calls 0; corrupt 0
+  570 ret=0: 2279
+  570 ret=1: 121
+  880 ret=0 latched_in=0 ai_changed=0: 1182
+  880 ret=0 latched_in=0 ai_changed=1: 680
+  880 ret=0 latched_in=1 ai_changed=0: 400
+  880 ret=0 latched_in=1 ai_changed=1: 635
+  880 ret=1 latched_in=0 ai_changed=1: 33
+  880 ret=1 latched_in=1 ai_changed=0: 2
+  880 ret=1 latched_in=1 ai_changed=1: 68
+  d570 ret=0: 32
+  d570 ret=1: 568

@@ -93,6 +93,7 @@
 #include "../Race/SubStateCallees.h"   // [D-11073 leg 1a] SubState_StoreStep
 #ifdef MASHED_STANDALONE
 #include "AiTargetClosest.h"            // [D-11072 P3] FUN_00414a70 (MASHED_TGT3)
+#include "AiLeafTargets.h"              // [D3 bulk G-AILEAF] FUN_00414570 / FUN_00415880 (MASHED_AILEAF)
 extern "C" int g_tg3Ret[4]; extern "C" int g_tg3Los[4];
 #endif
 
@@ -922,8 +923,28 @@ void ControlStep(std::uintptr_t spline, int v, std::uint8_t* ctrl)
     //   else if (iVar5 == 2) { param_3[4] = 0; param_3[5] = 0xff; return; }
     // The return is before the mode commit at 0x00416590 and the steer-history stores.
     // PREREG: verify/d3_modes37_20261009/PREREG_P3.md.
+    // ---- [D3 bulk G-AILEAF] FUN_00414570 call 0x004162f7, FUN_00415880 call 0x0041633f (default-OFF MASHED_AILEAF) ----
+    // Original (listing 0x004162e5..0x00416383):
+    //   if (FUN_00414570(spline,&look,&cand,v) != 0 && FUN_00416060(&own,&cand) != 0) { look = cand; mode = 1; } // -> 0x0041645e
+    //   else if (FUN_00415880(spline,&look,&cand,v) != 0 && FUN_00416060(&own,&cand) != 0 && FUN_00415d00(v) == 0)
+    //                                                                          { look = cand; mode = 2; }       // -> 0x0041645e
+    // Both accepts jump to the mode commit 0x0041645e, past FUN_00414a70 / FUN_00414c30 / FUN_004150e0, hence the
+    // `mode == 0` guard added to the TGT3 arm below. The exe has no FUN_00415d00 body (AiTargeting.cpp is .asi-only),
+    // so a mode-2 accept is COUNTED and not committed. Prediction (PLAN.md §0, §3): both return 0 on Training.
+    if (Ai::AiLeaf_Enabled() && v >= 0 && v < 4) {
+        const float lk[2] = { tx, tz };
+        float cand[2] = { 0.0f, 0.0f };                                   // local_2c/local_28 (one local, both calls)
+        if (Ai::AiLeaf_414570(static_cast<unsigned int>(spline), v, lk, cand) != 0 &&
+            s_host.los_clear(ownX, ownZ, cand[0], cand[1]) != 0) {     // FUN_00416060 0x0041630d
+            tx = cand[0]; tz = cand[1]; mode = 1;                         // 0x00416319..0x00416329
+            Ai::AiLeaf_CountAccept(0, 1);
+        } else if (Ai::AiLeaf_415880(static_cast<unsigned int>(spline), v, lk, cand) != 0 &&
+                   s_host.los_clear(ownX, ownZ, cand[0], cand[1]) != 0) {   // FUN_00416060 0x00416355
+            Ai::AiLeaf_CountAccept(1, 0);                                 // FUN_00415d00 0x00416362 not in the exe
+        }
+    }
     if (v >= 0 && v < 4) { g_tg3Ret[v] = -1; g_tg3Los[v] = -1; }
-    if (TargetClosest_Enabled() && v >= 0 && v < 4) {
+    if (mode == 0 && TargetClosest_Enabled() && v >= 0 && v < 4) {
         float cand[2] = { 0.0f, 0.0f };
         const float lk[2] = { tx, tz };
         const int r = TargetClosest(v, lk, cand);

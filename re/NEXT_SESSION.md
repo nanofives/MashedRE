@@ -1,5 +1,24 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-11 (D3 bulk Phase 1: G-AILEAF ported, knob OFF; G-EVQ dropped): **next = Phase 2 for G-AILEAF.**
+>
+> **Read first**
+> - [`aileaf/RESULT_AILEAF.md`](../verify/d3_bulk_20261011/aileaf/RESULT_AILEAF.md)
+> - [`aileaf/PREREG_AILEAF.md`](../verify/d3_bulk_20261011/aileaf/PREREG_AILEAF.md), registered before any knob-ON run
+>
+> **State**
+> - FUN_00414570 / FUN_00415880 / FUN_0046d570 run verbatim behind `MASHED_AILEAF`, which also needs `MASHED_PATHPROG`.
+> - Replay vs the original's bytes: 6000/6000 at PC_24 + PC_53 and 6000/6000 at PC_64. The negative control caught 3/3.
+> - G-CTRL with the knob OFF: `ae67b13a / c8317ce2 / 31db9384`.
+> - G-EVQ is refuted (PLAN.md §0): writer and drainer share no event type, and the drained events come from D2-ported physics, which never pushes. 0x004a2c48 is `__ftol`, not an RNG.
+>
+> **Kickoff for Phase 2 (paste):** Mashed RE, D3 bulk Phase 2, G-AILEAF. Follow `PREREG_AILEAF.md`:
+> - Run arms `AL_PP`, `AL_ON`, and a new `AL_ON2` (same knobs) via `run_h4.ps1`, plus `AL_ON` at `MASHED_AILEAF_PC=53`.
+> - Score G-AILEAF-INERT (hashes AL_ON == AL_PP, ret1 = 0 in the trace, calls > 0).
+> - Report only: (b) per regime, and collateral `--mode paired` with the floor AL_ON vs AL_ON2.
+> - Then write RESULT and run re-classify (exe-only, no promotion). Also record the HeadingAtan2.cpp blank-.rdata finding.
+> - Kill only your own MASHED PIDs. Build via PowerShell.
+
 > ## START HERE 2026-10-11 (D3 bulk Phase 0 DONE, plan only): **next = Phase 1 (APPROVED 2026-10-11): P0 + G-EVQ + G-AILEAF per [`PLAN.md`](../verify/d3_bulk_20261011/PLAN.md) §4.**
 >
 > **Census**

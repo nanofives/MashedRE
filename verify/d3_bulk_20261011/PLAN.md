@@ -3,6 +3,36 @@
 User decision 2026-10-11: port in bulk, switch on in small call-chain groups. This file is the Phase 0
 deliverable. No port code was written. Phase 1 starts only after the user's OK.
 
+## 0. AMENDMENT 2026-10-11 (Phase 1 measure-first step): G-EVQ premise REFUTED, G-AILEAF risk withdrawn
+
+Found before any code was written:
+
+1. **0x004a2c48 is `__ftol`, not an RNG.**
+   - Its bytes at 0x004a2c51..0x004a2c63 are `fld st0; fst; fistp qword; fild qword; mov eax`.
+   - Its call at 0x0040fe1f sits after an x87 `faddp`, and the result is stored to 0x007f1030 at 0x0040fe24.
+   - So 0x00417370 converts a float to an int and does not draw the RNG. The "RNG draw" and
+     "ring phase" statements in §3 are wrong.
+   - G-AILEAF's RNG risk (0x00415880 -> 0x004a2c48) is withdrawn.
+2. **0x004252c0 and 0x00422ba0 are not a producer/consumer pair.**
+   - 0x004252c0 pushes event types 0x3ff01, 0x3ff02, 0x3ff03, 0x3ff04 and 5 (its decomp).
+   - 0x00422ba0 dispatches only types 10, 9, 8, 6, 4 and 3.
+   - No type overlaps.
+3. **The ring head 0x007e9de0 has 44 write instructions in 14 functions** (`drefs_evq2.json`).
+   Writers: 0x0040b290, 0x004252c0, 0x0044ba30, 0x0044c380, 0x00467350, 0x00468d80, 0x00469aa0,
+   0x00469df0, 0x0046cc40, 0x0046dc20, 0x00470c70, 0x0047d640, 0x0047def0.
+   - The drained types 3/4/6/8 therefore come from physics and contact code, which is the D2 watch
+     list: substep loop 0x00470c70, the terrain contact solver 0x00468d80, the car-car impulse
+     0x00469df0.
+   - The exe ports of that code do not push events. The live peek reads the exe ring head as 0 at
+     every sample.
+4. **Pure readers of the ring head** (no writes): 0x0040c5b0, 0x00422ba0, 0x0045cc80, 0x004648b0.
+
+**Consequence:** G-EVQ as ranked in §3 would port a drainer with no events to drain, plus a writer
+whose events nobody in the group reads. Its yield is not 60-70%.
+- The real producer of the drained events is the event push inside D2-ported physics. That is a
+  **D2 REOPEN CANDIDATE** (substep loop / contact collector) and a user decision.
+- G-AILEAF is unaffected and stays approved. Phase 1 done 2026-10-11: `aileaf/RESULT_AILEAF.md`.
+
 ## 1. Verdict
 
 The D3 bulk lane is thin. 359 C2 rows execute in the Training race, but only 2 D3 groups clear the
