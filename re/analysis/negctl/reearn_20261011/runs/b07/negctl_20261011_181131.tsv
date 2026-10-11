@@ -1,0 +1,8 @@
+hook	rva	arg_type	lane	mode	verdict	mismatches	total	stats	err
+hud_mode_guard_dispatch	0x0041ded0	scalars_to_scattered_globals	warm	baseline	GREEN	0	6		
+hud_mode_guard_dispatch	0x0041ded0	scalars_to_scattered_globals	warm	field_first	NA	5	6	calls=6 flips=0 changed=0 flip=0x00000000 noise=172 frozen=1	
+hud_mode_guard_dispatch	0x0041ded0	scalars_to_scattered_globals	warm	field_last	NA	5	6	calls=6 flips=0 changed=0 flip=0x00000000 noise=176 frozen=1	
+hud_mode_guard_dispatch	0x0041ded0	scalars_to_scattered_globals	warm	field_none	CTRL-RED	5	6	calls=6 flips=0 changed=0 flip=0x00000000 noise=245 frozen=2	
+hud_mode_guard_dispatch	0x0041ded0	scalars_to_scattered_globals	warm	null	RED	5	6	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+hud_mode_guard_dispatch	0x0041ded0	scalars_to_scattered_globals	warm	real	RED	5	6		
+hud_mode_guard_dispatch	0x0041ded0	scalars_to_scattered_globals	warm	ret	SKIP	0	0		void signature

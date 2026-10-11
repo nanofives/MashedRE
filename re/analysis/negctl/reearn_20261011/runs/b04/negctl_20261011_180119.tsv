@@ -1,0 +1,50 @@
+hook	rva	arg_type	lane	mode	verdict	mismatches	total	stats	err
+config_load	0x00498950	scalars_to_scattered_globals	warm	baseline	GREEN	0	4		
+config_load	0x00498950	scalars_to_scattered_globals	warm	field_first	RED	4	4	calls=4 flips=4 changed=526 flip=0x007731e8 noise=176 frozen=2	
+config_load	0x00498950	scalars_to_scattered_globals	warm	field_last	RED	4	4	calls=4 flips=4 changed=526 flip=0x007739f8 noise=194 frozen=2	
+config_load	0x00498950	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	4	calls=4 flips=0 changed=526 flip=0x00000000 noise=169 frozen=2	
+config_load	0x00498950	scalars_to_scattered_globals	warm	import_extra	BLIND	0	4	calls=4 flips=0 changed=0 flip=0x00000000 noise=194 frozen=2	
+config_load	0x00498950	scalars_to_scattered_globals	warm	null	RED	4	4	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+config_load	0x00498950	scalars_to_scattered_globals	warm	real	GREEN	0	4		
+config_load	0x00498950	scalars_to_scattered_globals	warm	ret	RED	4	4	calls=4 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+config_save	0x004989b0	scalars_to_scattered_globals	warm	baseline	GREEN	0	4		
+config_save	0x004989b0	scalars_to_scattered_globals	warm	field_first	RED	4	4	calls=4 flips=4 changed=14 flip=0x007731e8 noise=218 frozen=2	
+config_save	0x004989b0	scalars_to_scattered_globals	warm	field_last	RED	4	4	calls=4 flips=4 changed=14 flip=0x007739f8 noise=283 frozen=2	
+config_save	0x004989b0	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	4	calls=4 flips=0 changed=14 flip=0x00000000 noise=161 frozen=2	
+config_save	0x004989b0	scalars_to_scattered_globals	warm	import_extra	BLIND	0	4	calls=4 flips=0 changed=0 flip=0x00000000 noise=283 frozen=2	
+config_save	0x004989b0	scalars_to_scattered_globals	warm	null	RED	4	4	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+config_save	0x004989b0	scalars_to_scattered_globals	warm	real	GREEN	0	4		
+config_save	0x004989b0	scalars_to_scattered_globals	warm	ret	RED	4	4	calls=4 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+file_read_wrapper_i3	0x004b3b70	scalars_to_scattered_globals	warm	baseline	GREEN	0	5		
+file_read_wrapper_i3	0x004b3b70	scalars_to_scattered_globals	warm	field_first	RED	3	5	calls=5 flips=3 changed=0 flip=0x0f91cb68 noise=201 frozen=2	
+file_read_wrapper_i3	0x004b3b70	scalars_to_scattered_globals	warm	field_last	RED	3	5	calls=5 flips=3 changed=0 flip=0x0f8ffed7 noise=228 frozen=2	
+file_read_wrapper_i3	0x004b3b70	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=198 frozen=2	
+file_read_wrapper_i3	0x004b3b70	scalars_to_scattered_globals	warm	heap_extra	BLIND	0	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=228 frozen=2	
+file_read_wrapper_i3	0x004b3b70	scalars_to_scattered_globals	warm	import_extra	BLIND	0	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=228 frozen=2	
+file_read_wrapper_i3	0x004b3b70	scalars_to_scattered_globals	warm	null	RED	3	5	calls=0 flips=0 changed=0 flip=0x00000000 noise=194 frozen=2	
+file_read_wrapper_i3	0x004b3b70	scalars_to_scattered_globals	warm	real	GREEN	0	5		
+file_read_wrapper_i3	0x004b3b70	scalars_to_scattered_globals	warm	ret	RED	5	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=194 frozen=2	
+intro_video_dim_getter	0x00493f80	scalars_to_scattered_globals	warm	baseline	GREEN	0	5		
+intro_video_dim_getter	0x00493f80	scalars_to_scattered_globals	warm	field_first	RED	4	5	calls=5 flips=4 changed=0 flip=0x0dc91e88 noise=305 frozen=2	
+intro_video_dim_getter	0x00493f80	scalars_to_scattered_globals	warm	field_last	RED	4	5	calls=5 flips=4 changed=0 flip=0x0dc91c5f noise=306 frozen=2	
+intro_video_dim_getter	0x00493f80	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=304 frozen=2	
+intro_video_dim_getter	0x00493f80	scalars_to_scattered_globals	warm	null	RED	4	5	calls=0 flips=0 changed=0 flip=0x00000000 noise=283 frozen=2	
+intro_video_dim_getter	0x00493f80	scalars_to_scattered_globals	warm	real	GREEN	0	5		
+intro_video_dim_getter	0x00493f80	scalars_to_scattered_globals	warm	ret	SKIP	0	0		void signature
+main_loop_init	0x00492770	scalars_to_scattered_globals	warm	baseline	RED	4	4		
+main_loop_init	0x00492770	scalars_to_scattered_globals	warm	field_first	RED	4	4	calls=4 flips=4 changed=28 flip=0x00771968 noise=238 frozen=2	
+main_loop_init	0x00492770	scalars_to_scattered_globals	warm	field_last	RED	4	4	calls=4 flips=4 changed=28 flip=0x00828303 noise=289 frozen=2	
+main_loop_init	0x00492770	scalars_to_scattered_globals	warm	field_none	CTRL-RED	4	4	calls=4 flips=0 changed=28 flip=0x00000000 noise=232 frozen=2	
+main_loop_init	0x00492770	scalars_to_scattered_globals	warm	heap_extra	RED	4	4	calls=4 flips=0 changed=0 flip=0x00000000 noise=289 frozen=2	
+main_loop_init	0x00492770	scalars_to_scattered_globals	warm	import_extra	RED	4	4	calls=4 flips=0 changed=0 flip=0x00000000 noise=289 frozen=2	
+main_loop_init	0x00492770	scalars_to_scattered_globals	warm	null	RED	4	4	calls=0 flips=0 changed=0 flip=0x00000000 noise=228 frozen=2	
+main_loop_init	0x00492770	scalars_to_scattered_globals	warm	real	RED	4	4		
+main_loop_init	0x00492770	scalars_to_scattered_globals	warm	ret	RED	4	4	calls=4 flips=0 changed=0 flip=0x00000000 noise=228 frozen=2	
+video_settings_dlg_proc_s2	0x004991f0	scalars_to_scattered_globals	warm	baseline	GREEN	0	13		
+video_settings_dlg_proc_s2	0x004991f0	scalars_to_scattered_globals	warm	field_first	RED	8	13	calls=13 flips=6 changed=0 flip=0x00773200 noise=321 frozen=2	
+video_settings_dlg_proc_s2	0x004991f0	scalars_to_scattered_globals	warm	field_last	RED	8	13	calls=13 flips=6 changed=0 flip=0x00773203 noise=322 frozen=2	
+video_settings_dlg_proc_s2	0x004991f0	scalars_to_scattered_globals	warm	field_none	CTRL-RED	2	13	calls=13 flips=0 changed=0 flip=0x00000000 noise=318 frozen=2	
+video_settings_dlg_proc_s2	0x004991f0	scalars_to_scattered_globals	warm	import_extra	RED	2	13	calls=13 flips=0 changed=0 flip=0x00000000 noise=322 frozen=2	
+video_settings_dlg_proc_s2	0x004991f0	scalars_to_scattered_globals	warm	null	RED	10	13	calls=0 flips=0 changed=0 flip=0x00000000 noise=306 frozen=2	
+video_settings_dlg_proc_s2	0x004991f0	scalars_to_scattered_globals	warm	real	RED	2	13		
+video_settings_dlg_proc_s2	0x004991f0	scalars_to_scattered_globals	warm	ret	RED	13	13	calls=13 flips=0 changed=0 flip=0x00000000 noise=306 frozen=2	
