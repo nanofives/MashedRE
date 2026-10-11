@@ -24,7 +24,19 @@
 > 2b. Launch difference (Phase 2d): NOT launch physics. AI launch curves match within 1 unit. The exe's 19 events are
 >     car 3 ramming the parked player at the exe's ROUND-2 launch (ptrace sim step 4139, 624 -> 2548). The original
 >     recipe never reaches round 2 (freeze ~frame 1500). Owed: a dense undriven original push capture (`o_al_dense`,
->     3 boot failures under 4 concurrent instances), and a recipe past the original's round-1 standings (modes third).
+>     3 boot failures under 4 concurrent instances).
+> 2c. Round 2 on the original (Phase 2e): `--continue-rounds --continue-rounds-states 7` gets 8 rounds. The original
+>     restarts each round at the SURVIVOR's progress node (FUN_00410860 -> DAT_0063ba80 0x004108c5 -> FUN_00409290 ->
+>     FUN_00408b00); the exe's StartRound (TrackRenderer.cpp:5148) restarts at gates_[0] every round. That is a port gap
+>     in the modes third, with a concrete producer chain (needs MASHED_PATHPROG progress).
+>     FIX BRIEF written: [`roundgrid/FIX_BRIEF.md`](../verify/d3_bulk_20261011/roundgrid/FIX_BRIEF.md). FUN_00426bc0/bd0 are the
+>     LAPDATA Safe_Start_Lines table, which the exe already builds under PATHPROG. Original nodes per round: 0,7,11,14,21,24,28,1
+>     (`o_rounds7b`). Next: Stage A (survivor node write + FUN_00409290 verbatim + StartRound anchor) behind MASHED_ROUND_GRID,
+>     G-RG-SNAP / G-RG-NODE / G-RG-GRID first. Tracker row still owed.
+>     STAGE A DONE (knob OFF): `roundgrid/RESULT_STAGE_A.md`. SNAP 18504/18504, GRID 5 nodes worst 0.0048, NODE 3/3,
+>     G-CTRL unchanged. KNOB-ON DONE (`roundgrid/RESULT_KNOB_ON.md`): TRACE / DET / LOCAL pass. Round 2 starts at node 21
+>     (not the start line); the exe snap repeats the original's 13 -> 14. (b) moved 0/3 -> 1/3 from the round-1 grid shift
+>     alone (<= 0.0236): sensitivity, not a fix. Next: Stage B (slot order), the tracker row, and the user's call on the flip.
 > 3. Back to the PLAN.md ranking. Every other D3 group is producer-blocked. The non-D3 lane is not decided.
 >
 > Not started: U-9219, the car-2 pickup miss, default flips.
