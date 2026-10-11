@@ -635,3 +635,7 @@ HERE — /promote-round keeps appending new round-log entries below this line.
   *(0x007dc8d8) is a plugin offset into the target object, not a global registry.
 - Harness addition: block diffs in the standin_object_call observation.
 - Dry counter: 0.
+
+### Stand-in lane rulings (2026-10-11)
+- 0x004522d0: library (RW glue), library-skip per Mariano's ruling; stays deferred.
+- Library relabel of the census's out-of-zone rows: 83 relabelled (79 renderware, 4 libpng), 25 left as they are (re/analysis/library_relabel_2026-10-11.md).
