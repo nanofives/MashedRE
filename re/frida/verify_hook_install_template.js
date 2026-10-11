@@ -580,7 +580,11 @@ function runVerification() {
             const p = ptr(a);
             Interceptor.replace(p, new NativeCallback(function () {
                 return CONFIG.stub_ret | 0;
-            }, 'int', new Array(CONFIG.stub_nargs || 3).fill('pointer'), 'mscdecl'));
+            // stub_abi (L-INST round 2): a __stdcall callee (0x004a1570, 5 args)
+            // replaced by an mscdecl recorder left 20 bytes on the stack and the
+            // caller AV'd at 0x0 on return. run_diff's handler already honours it.
+            }, 'int', new Array(CONFIG.stub_nargs || 3).fill('pointer'),
+               CONFIG.stub_abi || 'mscdecl'));
             send({ type: 'log', msg: 'stubbed callee ' + p });
         } catch (e) {
             send({ type: 'error', msg: 'stub_at ' + a + ' failed: ' + e.message });
