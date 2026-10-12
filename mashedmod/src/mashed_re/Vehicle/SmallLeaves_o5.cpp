@@ -17,18 +17,17 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // Global addresses (all in .bss):
 //
-//   Spinout-state arrays (stride 0x341 DWORDs = 0xD04 bytes per vehicle slot):
-//     0x00881f90  DAT_00881f90  — spinout state (uint8; 0=alive, 2=slide, 0xff=expired)
-//     0x00881f94  DAT_00881f94  — secondary state/timer (uint32, stride 0xD04 bytes)
+//   Per-vehicle record, stride 0xD04 bytes (= 0x341 DWORDs), 0x0046cbf0 imul eax,eax,0xd04:
+//     0x00881f90  DAT_00881f90  — DWORD stored at 0x0046cbfa
+//     0x00881f94  DAT_00881f94  — DWORD stored at 0x0046cc00
 //
 //   Race-transition parameter buffer:
 //     0x0067ed78  — start of 832-byte (0x340) transition entry block
 // ─────────────────────────────────────────────────────────────────────────────
 
-static constexpr std::uintptr_t kSpinoutStateBase   = 0x00881f90u;  // DAT_00881f90
-static constexpr std::uintptr_t kSecondaryStateBase  = 0x00881f94u; // DAT_00881f94
-static constexpr std::uint32_t  kDWordStride         = 0x341u;       // per-vehicle DWord stride
-static constexpr std::uint32_t  kByteStride          = 0xD04u;       // per-vehicle byte stride
+static constexpr std::uintptr_t kCarStateBase       = 0x00881f90u;  // 0x0046cbfa
+static constexpr std::uintptr_t kCarStateBase2      = 0x00881f94u;  // 0x0046cc00
+static constexpr std::uint32_t  kByteStride         = 0xD04u;       // 0x0046cbf0
 
 static constexpr std::uintptr_t kRaceTransBufBase   = 0x0067ed78u;  // start of transition buf
 static constexpr std::uint32_t  kRaceTransBufSize   = 0x340u;       // 832 bytes
@@ -37,27 +36,28 @@ static constexpr std::uint32_t  kRaceTransBufSize   = 0x340u;       // 832 bytes
 // 0x0046cbe0  VehicleCarStateSet
 // Setter companion to FUN_0046cbb0 (VehicleCarStateRead, C2).
 //
-// Ghidra decomp (43 bytes):
-//   if (param_1 > 0xf) return 0;
-//   (&DAT_00881f90)[param_1 * 0x341]              = (uint8)param_2;
-//   *(uint32*)(DAT_00881f94 + param_1 * 0xd04)   = param_3;
-//   return 1;
-//
-// param_1 = vehicle/player index (0–15); OOB guard > 0xf.
-// param_2 = spinout state (0=alive, 2=slide, 0xff=expired per callers).
-// param_3 = secondary state value (timer or secondary flag; U-1856 in getter).
-// Caller: FUN_00424eb0 (C2) — game-mode cleanup loop.
-// Pure leaf (callees=[]).  Leaf-function callee exemption applies.
+// Disasm 0x0046cbe0..0x0046cc0b (cdecl, 3 stack args, 43 bytes):
+//   0x0046cbe0  mov eax,[esp+4]           ; idx
+//   0x0046cbe4  cmp eax,0x10 ; jb         ; UNSIGNED: idx >= 0x10 -> 0x0046cbe9 xor eax,eax ; ret
+//   0x0046cbec  mov ecx,[esp+8]           ; a
+//   0x0046cbf0  imul eax,eax,0xd04
+//   0x0046cbf6  mov edx,[esp+0xc]         ; b
+//   0x0046cbfa  mov [eax+0x881f90],ecx    ; DWORD store
+//   0x0046cc00  mov [eax+0x881f94],edx    ; DWORD store
+//   0x0046cc06  mov eax,1 ; ret
+// Caller: FUN_00424eb0.  Pure leaf (no calls).
+// This is the single implementation: the duplicate in Vehicle/Physics.cpp
+// (VehicleSpinoutStateSet, which registered first and so was the copy actually
+// installed in the .asi) was removed 2026-10-12 (reearn/fstate).
 // ─────────────────────────────────────────────────────────────────────────────
-extern "C" __declspec(dllexport) int __cdecl VehicleCarStateSet(int vehicleIdx, std::uint32_t spinoutState, std::uint32_t secondaryVal) {
-    if (vehicleIdx > 0xf) return 0;
-    // Spinout-state: byte write at base + vehicleIdx * DWordStride * 4.
-    reinterpret_cast<std::uint8_t*>(kSpinoutStateBase)[vehicleIdx * kDWordStride] = static_cast<std::uint8_t>(spinoutState);
-    // Secondary state: uint32 write at kSecondaryStateBase + vehicleIdx * kByteStride.
-    *reinterpret_cast<std::uint32_t*>(kSecondaryStateBase + static_cast<std::uintptr_t>(vehicleIdx) * kByteStride) = secondaryVal;
-    return 1;
+// 0x0046cbe0
+extern "C" __declspec(dllexport) std::uint32_t __cdecl VehicleCarStateSet(std::uint32_t vehicleIdx, std::uint32_t a, std::uint32_t b) {
+    if (vehicleIdx >= 0x10u) return 0;                                                  // 0x0046cbe4 cmp/jb (unsigned)
+    *reinterpret_cast<std::uint32_t*>(kCarStateBase  + vehicleIdx * kByteStride) = a;   // 0x0046cbfa
+    *reinterpret_cast<std::uint32_t*>(kCarStateBase2 + vehicleIdx * kByteStride) = b;   // 0x0046cc00
+    return 1;                                                                           // 0x0046cc06
 }
-RH_ScopedInstall(VehicleCarStateSet, 0x0046cbe0);  // re-enabled 2026-05-24 phase-a2 GREEN (guard early-out matches; documented in registry)
+RH_ScopedInstall(VehicleCarStateSet, 0x0046cbe0);  // re-ported 2026-10-12 reearn/fstate (dword store, unsigned guard)
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x0042d3a0  RaceTransitionBufZero
