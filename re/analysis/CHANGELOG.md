@@ -26,6 +26,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-12  -  U-9673 nav harness  RESOLVED  R2-2 crash was raw MASHED-address access in the bare test exe (first break b83b01e0, second 2528c8b3); test-only .bss arena fix, 75 OK / 0 FAIL, 30/30 runs, reachability 12/33. re/analysis/negctl/followup_20261012/u9673_RESULT.md
 2026-10-12  00423ee0  PlayerBlock2Field00Get  C3->C4 (user-accepted forced input)  Input field 0 in every natural run; distinct values written on the live Race Results screen; GREEN, stride-4 control RED 2/2. NOT EARNED on natural data alone. re/analysis/negctl/reearn_20261011/c4_a1_r_RESULT.md
 2026-10-12  00423f60  PlayerBlock2Field04Get  C3->C4 (user-accepted forced input)  Input field 0 in every natural run; distinct values written on the live Race Results screen; GREEN, stride-4 control RED 2/2. NOT EARNED on natural data alone. re/analysis/negctl/reearn_20261011/c4_a1_r_RESULT.md
 2026-10-12  00424070  PlayerBlock2Field08Get  C3->C4 (natural data)  Team Play Race Results stat pages (mode 6), hook live, GREEN x4 vs the byte model and the original; stride-4 control RED 2/2. re/analysis/negctl/reearn_20261011/c4_a1_r_RESULT.md
