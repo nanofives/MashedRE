@@ -194,8 +194,9 @@ def bounded(fn, timeout):
 
 
 class Slot:
-    def __init__(self, idx, race=False):
+    def __init__(self, idx, race=False, hooks=()):
         self.idx, self.proc, self.session, self.race = idx, None, None, race
+        self.hooks = list(hooks)    # hook entries this slot runs; their race_sentinel gates the spawn (bworld)
         self.stuck = False
         self.spawn()
 
@@ -218,6 +219,9 @@ class Slot:
             time.sleep(8.0)
             try:
                 ok = run_diff.drive_to_race(self.session)
+                # race_sentinel (bworld 2026-10-12): also wait for every sentinel this slot's hooks name.
+                for h in self.hooks:
+                    ok = ok and run_diff.wait_race_sentinel(self.session, h)
             except Exception as e:
                 ok = False
                 print(f'  [slot {self.idx}] drive_to_race raised {e}')
@@ -538,7 +542,7 @@ def main(argv):
         for i in range(n):
             if i:
                 time.sleep(3.0)
-            slots.append(Slot(i, race=a.race))
+            slots.append(Slot(i, race=a.race, hooks=[HOOKS[k] for k in dict.fromkeys(j[0] for j in shards[i])]))
         time.sleep(6.0)
         try:
             with ThreadPoolExecutor(max_workers=n) as ex:

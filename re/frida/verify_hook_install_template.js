@@ -217,6 +217,12 @@ function callFn(fn, input, buf) {
             if (x !== null && typeof x === 'object' && x.dialog !== undefined) return dlgHwnd(x.dialog).toUInt32();
             if (x !== null && typeof x === 'object' && x.scratch !== undefined) return scratch.add(x.scratch | 0).toUInt32();
             if (x !== null && typeof x === 'object' && x.recorder) return recorder.toUInt32();
+            // {f32_at, add} (bworld 2026-10-12): mirror of diff_template's live-anchored float seed.
+            if (x !== null && typeof x === 'object' && x.f32_at !== undefined) {
+                const fb = new DataView(new ArrayBuffer(4));
+                fb.setFloat32(0, Math.fround(ptr(x.f32_at).readFloat() + (x.add || 0)), true);
+                return fb.getUint32(0, true);
+            }
             return x;
         };
         const obs = (CONFIG.observe || []).map(function (w) { return { a: rA(w.addr), len: (w.len === undefined || w.len === null) ? 4 : (w.len | 0) }; });

@@ -154,6 +154,30 @@ def drive_to_race(session):
     return in_race
 
 
+def wait_race_sentinel(session, hook, timeout=30.0):
+    """race_sentinel (bworld 2026-10-12): `phase != 3` only says the menu was left; the track may still be loading.
+    A hook whose body reads a race-only object names that object's global here ({addr} or an int); vectors run only
+    once the dword is non-zero, so a load still in progress reads as a refused run (exit 6), never as an AV on both
+    arms. 0x00426dc0 names DAT_00656ee8 (0x00646e58 + 0x10090, read at 0x00479104). No key: no wait."""
+    sent = hook.get('race_sentinel')
+    if sent is None:
+        return True
+    addr = sent['addr'] if isinstance(sent, dict) else sent
+    rd = session.create_script("rpc.exports = { rd: function (a) { return ptr(a).readU32() >>> 0; } };")
+    rd.load()
+    end = time.time() + timeout
+    while time.time() < end:
+        v = rd.exports_sync.rd(f"0x{addr:08x}")
+        if v:
+            print(f"  [race] sentinel 0x{addr:08x} = 0x{v:08x}: running vectors")
+            rd.unload()
+            return True
+        time.sleep(0.25)
+    print(f"  [race] sentinel 0x{addr:08x} still 0 after {timeout:.0f}s")
+    rd.unload()
+    return False
+
+
 def on_message(message, data):
     if message['type'] == 'error':
         print('AGENT ERROR:', message.get('description'), message.get('stack'))
@@ -457,7 +481,9 @@ def build_config(hook, asi_path=None):
                # named per-callee recorders + call-sequence fingerprint (followup/a2-stubat 2026-10-12).
                'call_log',
                # x87 control word loaded around each arm (drawstream 2026-10-12).
-               'x87_cw'):
+               'x87_cw',
+               # raw observe windows + return in the fingerprint string (bworld 2026-10-12).
+               'observe_raw'):
         if _k in hook:
             config[_k] = hook[_k]
     # void_write_observe scenario-attach extension (c3-batch-sa2 s2, 2026-06-16):
@@ -689,7 +715,7 @@ def main():
     if hook.get('scenario') == 'race':
         print("scenario='race': driving to a live race before running vectors")
         _save_pin = pin_gamesave(session, proc.pid)   # keep a reference alive
-        if not drive_to_race(session):
+        if not drive_to_race(session) or not wait_race_sentinel(session, hook):
             print("FAILED to reach race state — aborting (no vectors run).")
             try: session.detach()
             except Exception: pass

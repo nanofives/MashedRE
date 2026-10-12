@@ -1,0 +1,8 @@
+hook	rva	arg_type	lane	mode	verdict	mismatches	total	stats	err
+launch_lang_gate	0x00493540	scalars_to_scattered_globals	warm	real	GREEN	0	14		
+launch_lang_gate	0x00493540	scalars_to_scattered_globals	warm	baseline	GREEN	0	14		
+launch_lang_gate	0x00493540	scalars_to_scattered_globals	warm	null	RED	14	14	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+launch_lang_gate	0x00493540	scalars_to_scattered_globals	warm	ret	RED	14	14	calls=14 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+launch_lang_gate	0x00493540	scalars_to_scattered_globals	warm	field_first	NA	0	14	calls=14 flips=0 changed=0 flip=0x00000000 noise=266749 frozen=2	
+launch_lang_gate	0x00493540	scalars_to_scattered_globals	warm	field_last	NA	0	14	calls=14 flips=0 changed=0 flip=0x00000000 noise=266991 frozen=2	
+launch_lang_gate	0x00493540	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	14	calls=14 flips=0 changed=0 flip=0x00000000 noise=267013 frozen=2	

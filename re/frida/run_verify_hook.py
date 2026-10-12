@@ -21,7 +21,7 @@ ROOT = Path(__file__).resolve().parent.parent.parent
 
 sys.path.insert(0, str(ROOT / 're' / 'frida'))
 from hooks_registry import HOOKS
-from run_diff import STANDIN_KEYS, agent_source
+from run_diff import STANDIN_KEYS, agent_source, pin_gamesave, drive_to_race, wait_race_sentinel
 
 
 def _find_original(script_root: Path) -> Path:
@@ -181,6 +181,19 @@ def main():
         try: proc.kill()
         except Exception: pass
         return 4
+
+    # scenario 'race' + race_sentinel (bworld 2026-10-12): the same drive as run_diff.py, so a hook whose vectors need
+    # a loaded track (0x00426dc0 reads DAT_00656ee8) is verified in a race, not AV'd at the menu. Exit 6 = no race.
+    if hook.get('scenario') == 'race':
+        print("scenario='race': driving to a live race before running vectors")
+        _save_pin = pin_gamesave(session, proc.pid)
+        if not drive_to_race(session) or not wait_race_sentinel(session, hook):
+            print("FAILED to reach race state — aborting (no vectors run).")
+            try: session.detach()
+            except Exception: pass
+            try: proc.kill()
+            except Exception: pass
+            return 6
 
     # boot_settle_s (2026-10-12): wait this long after attach before loading the agent. Frontend renderers
     # (0x0042fe90 & co) need the menu sprite dictionaries, which load after LUT-ready; without the wait every

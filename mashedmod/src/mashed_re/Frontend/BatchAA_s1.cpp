@@ -44,8 +44,9 @@ typedef void (__cdecl *PFN_ChromeBaseDraw)(float x, float y, float w, float h, s
 static const PFN_ChromeBaseDraw g_ChromeBaseDraw =
     reinterpret_cast<PFN_ChromeBaseDraw>(0x00472c60u);
 
-// 0x00479100  FUN_00479100  (C2) — raycast + vertex-color sample on collision mesh
-typedef void (__cdecl *PFN_FUN_00479100)(void* self, std::uint32_t p1, std::uint32_t p2, std::uint32_t p3);
+// 0x00479100  FUN_00479100  (C2) — raycast + vertex-color sample on collision mesh; returns 0/1 in EAX
+// (0x00479150 xor eax,eax / 0x004792ec, 0x00479304, 0x0047931a mov eax,1).
+typedef std::uint32_t (__cdecl *PFN_FUN_00479100)(void* self, std::uint32_t p1, std::uint32_t p2, std::uint32_t p3);
 static const PFN_FUN_00479100 g_FUN_00479100 =
     reinterpret_cast<PFN_FUN_00479100>(0x00479100u);
 
@@ -266,16 +267,19 @@ RH_ScopedInstall(HudRectEmitter5, 0x0042bde0);
 // ---------------------------------------------------------------------------
 // 0x00426dc0  FUN_00426dc0
 // void FUN_00426dc0(undefined4 param_1, undefined4 param_2, undefined4 param_3)
-// 3-arg forwarder: prepends &DAT_00646e58 and calls FUN_00479100.
+// 3-arg forwarder: prepends &DAT_00646e58 and calls FUN_00479100. Listing 0x00426dc0..0x00426ddc:
+// push [esp+0xc]; push [esp+8]; push [esp+4]; push 0x646e58; call 0x479100; add esp,0x10; ret -- EAX is
+// FUN_00479100's return, which the sole caller tests (0x0041f630 test eax,eax). bworld 2026-10-12: the export
+// returned void and EAX survived only by codegen; it now returns the callee's value.
 // DAT_00646e58 (0x00646e58): global struct/object; passed by address as arg 0.
 // Decomp (verbatim): FUN_00479100(&DAT_00646e58, param_1, param_2, param_3); return;
 // Source: re/analysis/frontend_c1_to_c2_s5/FUN_00426dc0.md
 // ---------------------------------------------------------------------------
 // 0x00426dc0
 extern "C" __declspec(dllexport)
-void __cdecl FrontendRaycastForward(std::uint32_t param_1, std::uint32_t param_2, std::uint32_t param_3) {
-    // 0x00426dc0: FUN_00479100(&DAT_00646e58, param_1, param_2, param_3)
+std::uint32_t __cdecl FrontendRaycastForward(std::uint32_t param_1, std::uint32_t param_2, std::uint32_t param_3) {
+    // 0x00426dc0: return FUN_00479100(&DAT_00646e58, param_1, param_2, param_3)
     void* self = reinterpret_cast<void*>(0x00646e58u);  // &DAT_00646e58 @ 0x00646e58
-    g_FUN_00479100(self, param_1, param_2, param_3);
+    return g_FUN_00479100(self, param_1, param_2, param_3);
 }
 RH_ScopedInstall(FrontendRaycastForward, 0x00426dc0);
