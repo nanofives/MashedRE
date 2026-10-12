@@ -1,0 +1,7 @@
+idx,call,original,reimpl,match
+5,0,"len(s+0x0@a""ABCDEFGH"")","len(s+0x0@a""ABCDEFGH"")",True
+6,0,"len(s+0x0@a""ABCDEFGH"")","len(s+0x0@a""ABCDEFGH"")",True
+7,0,"len(s+0x0@a""ABCDEFGH"")","len(s+0x0@a""ABCDEFGH"")",True
+8,0,"len(s+0x0@a""ABCDEFGH"")","len(s+0x0@a""ABCDEFGH"")",True
+9,0,"len(s+0x0@a""ABC"")","len(s+0x0@a""ABC"")",True
+10,0,"len(s+0x0@a""\u00fe"")","len(s+0x0@a""\u00fe"")",True
