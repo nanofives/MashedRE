@@ -178,14 +178,17 @@ function callFn(fn, input, buf) {
         if (clCfg.length && !globalThis.__p2CallLog) {
             const fns = {}, counts = {};
             clCfg.forEach(function (ce) {
+                // ret_type 'float' (drawstream 2026-10-12): return in ST0, as diff_template does.
+                const fRet = ce.ret_type === 'float';
                 fns[ce.name] = new NativeCallback(function () {
                     const k = counts[ce.name] | 0; counts[ce.name] = k + 1;
                     const t = globalThis.__p2CallLogTest;
                     const sr = (t && t.stub_rets) ? t.stub_rets[ce.name] : undefined;
-                    if (Array.isArray(sr)) return sr[Math.min(k, sr.length - 1)] | 0;
-                    if (sr !== undefined) return sr | 0;
-                    return ce.ret | 0;
-                }, 'int', new Array(ce.nargs | 0).fill('uint32'), ce.abi || 'mscdecl');
+                    let rv = fRet ? +(ce.ret || 0) : ce.ret;
+                    if (Array.isArray(sr)) rv = sr[Math.min(k, sr.length - 1)];
+                    else if (sr !== undefined) rv = sr;
+                    return fRet ? +rv : (rv | 0);
+                }, fRet ? 'float' : 'int', new Array(ce.nargs | 0).fill('uint32'), ce.abi || 'mscdecl');
                 verifyKeep.push(fns[ce.name]);
             });
             const at = clCfg.filter(function (ce) { return ce.at !== undefined && ce.at !== null; });

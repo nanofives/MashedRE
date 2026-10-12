@@ -455,7 +455,9 @@ def build_config(hook, asi_path=None):
                # real dialog window tree + EAX-delivered arg (reearn/settings 2026-10-12).
                'dialog', 'eax_arg',
                # named per-callee recorders + call-sequence fingerprint (followup/a2-stubat 2026-10-12).
-               'call_log'):
+               'call_log',
+               # x87 control word loaded around each arm (drawstream 2026-10-12).
+               'x87_cw'):
         if _k in hook:
             config[_k] = hook[_k]
     # void_write_observe scenario-attach extension (c3-batch-sa2 s2, 2026-06-16):
@@ -537,6 +539,46 @@ def agent_source(agent_js, config):
             + agent_js.read_text(encoding='utf-8').replace('$CONFIG$', json.dumps(config)))
 
 
+def _split_call_log(v):
+    """A call_log arm value is '<fnv hex> <call;call;..>' (diff_template.js snapFp); return the calls."""
+    if not isinstance(v, str) or ' ' not in v:
+        return None
+    body = v.split(' ', 1)[1]
+    return body.split(';') if body else []
+
+
+def _write_drawstream(csv_out, results):
+    """Draw-stream view of a call_log run (drawstream 2026-10-12): one row per recorded call per vector, both arms
+    side by side, so a RED names the first call that differs instead of two opaque fingerprints. Written next to the
+    diff CSV as drawstream_<rest of its name>; prints the first divergent call of every mismatching vector."""
+    out = csv_out.with_name('drawstream_' + (csv_out.name[len('diff_'):] if csv_out.name.startswith('diff_')
+                                             else csv_out.name))
+    firsts = []
+    with out.open('w', newline='', encoding='utf-8') as fh:
+        w = csv.writer(fh)
+        w.writerow(['idx', 'call', 'original', 'reimpl', 'match'])
+        for r in results:
+            o, m = _split_call_log(r.get('original')), _split_call_log(r.get('reimpl'))
+            if o is None and m is None:
+                w.writerow([r['idx'], '', r.get('err_original') or '', r.get('err_reimpl') or '', False])
+                continue
+            o, m = o or [], m or []
+            first = None
+            for k in range(max(len(o), len(m))):
+                a = o[k] if k < len(o) else ''
+                b = m[k] if k < len(m) else ''
+                w.writerow([r['idx'], k, a, b, a == b])
+                if a != b and first is None:
+                    first = (k, a, b)
+            if first is not None:
+                firsts.append((r['idx'], len(o), len(m)) + first)
+    print(f"  draw stream written to {out}")
+    for idx, no, nm, k, a, b in firsts:
+        print(f"  idx={idx}  calls orig={no} reimpl={nm}  first divergence at call {k}:")
+        print(f"      orig:   {a or '(none)'}")
+        print(f"      reimpl: {b or '(none)'}")
+
+
 def main():
     if len(sys.argv) < 2:
         sys.exit(f"usage: {sys.argv[0]} <hook_name> [--allow-degenerate]\n"
@@ -566,9 +608,17 @@ def main():
             sys.exit("--negctl and --self-baseline are mutually exclusive")
         config['negctl'] = negctl
 
+    # --x87-cw=0xNNNN (drawstream 2026-10-12): run both arms at that x87 control word (diff_template.js `x87_cw`),
+    # e.g. 0x7f, the PC_24 word the game's thread runs at. Overrides a fixture's own x87_cw; the CSV gets _cw<hex>.
+    cw_tag = ''
+    for _a in sys.argv[2:]:
+        if _a.startswith('--x87-cw='):
+            config['x87_cw'] = int(_a.split('=', 1)[1], 0) & 0xffff
+            cw_tag = f"_cw{config['x87_cw']:x}"
+
     LOG_DIR.mkdir(parents=True, exist_ok=True)
-    csv_out = LOG_DIR / (f'diff_{name}_selfbaseline.csv' if self_baseline
-                         else f'diff_{name}_negctl_{negctl}.csv' if negctl else f'diff_{name}.csv')
+    csv_out = LOG_DIR / (f'diff_{name}_selfbaseline{cw_tag}.csv' if self_baseline
+                         else f'diff_{name}_negctl_{negctl}{cw_tag}.csv' if negctl else f'diff_{name}{cw_tag}.csv')
 
     if not MASHED_EXE.exists():
         sys.exit(f"MASHED.exe not found at {MASHED_EXE}")
@@ -701,6 +751,8 @@ def main():
                 mismatches += 1
 
     print(f"\nResults written to {csv_out}")
+    if hook.get('call_log'):
+        _write_drawstream(csv_out, results_received)
     print(f"  total cases: {len(results_received)}")
     print(f"  mismatches:  {mismatches}")
     if mismatches == 0:

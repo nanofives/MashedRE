@@ -60,3 +60,9 @@ PathNodes
 # bodies stay SSE2. Measured: replay_c3.py on 1200 real race calls at CW 0x007f, SSE2 RED 243/1200,
 # x87 GREEN 1200/1200 (log/diff/00546c50_rwp_mat2quat_y.replay.csv).
 RwpSolverMath2QuatY
+# drawstream (2026-10-12): 0x00430b90 re-ported from the listing, ST-resident values as double.
+# Measured by run_diff at the harness CW and at 0x007f (--x87-cw=0x7f); see
+# re/analysis/negctl/session_20261012b/drawstream_RESULT.md.
+ProgressBarSetA
+# drawstream (2026-10-12): 0x00427ad0 rect chain (fmul xs; fmul viewport; fstp), same measurement.
+MenuMenusBB
