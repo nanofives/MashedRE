@@ -1,0 +1,8 @@
+hook	rva	arg_type	lane	mode	verdict	mismatches	total	stats	err
+controller_config_load_j5	0x004971b0	scalars_to_scattered_globals	warm	baseline	GREEN	0	14		
+controller_config_load_j5	0x004971b0	scalars_to_scattered_globals	warm	field_first	BLIND	0	14	calls=14 flips=11 changed=512 flip=0x007739f8 noise=183 frozen=2	
+controller_config_load_j5	0x004971b0	scalars_to_scattered_globals	warm	field_last	RED	9	14	calls=14 flips=11 changed=512 flip=0x007e9bbf noise=183 frozen=2	
+controller_config_load_j5	0x004971b0	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	14	calls=14 flips=0 changed=512 flip=0x00000000 noise=190 frozen=2	
+controller_config_load_j5	0x004971b0	scalars_to_scattered_globals	warm	null	RED	11	14	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+controller_config_load_j5	0x004971b0	scalars_to_scattered_globals	warm	real	GREEN	0	14		
+controller_config_load_j5	0x004971b0	scalars_to_scattered_globals	warm	ret	RED	14	14	calls=14 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
