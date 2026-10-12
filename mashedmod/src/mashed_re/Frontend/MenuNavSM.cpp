@@ -21,6 +21,7 @@
 // existing TextRenderer/MashedFont path instead.
 
 #include "MenuNavSM.h"
+#include "MenuNav.h"            // MenuEntryWalk: the shared 0x0042ac90 body
 #include "../Race/GameFlow.h"   // Campaign_CurrentCup (challenge-cup row count)
 
 #include <cstring>
@@ -38,7 +39,7 @@ namespace {
 // terminator = 0xff070000 (-0xf90000). The selectable list items are the
 // 0xff040000 entries; 0xff000000 is the back-target string id; 0xff080000 is
 // the prompt/screen-kind id; 0xff140000 / 0xff050000 carry each item's ACTION
-// CODE (the value the select handler dispatches on, see ItemActionCode + Nav_Select).
+// CODE (the value the select handler dispatches on, see MenuEntryWalk + Nav_Select).
 //
 // Source: PTR_DAT_005f7638[0..33] pointer array @0x005f7638 (read_only
 // Mashed_pool13, anchor BDCAE093... untouched, program_close issued). Each kTN[]
@@ -406,6 +407,23 @@ int CountItems(const std::uint32_t* table) {
     return n;
 }
 
+// DAT_0067edb4 (slot +0x3c), the item count FUN_0042aa00 and the FUN_00432800
+// tail read. FUN_0043d2a0's build loop increments it only when the item's
+// string id, read through FUN_0042ad90 into a 16-bit local, is not -1 (decomp
+// `if (sVar2 == -1) ... else local_4 = local_4 + 1`, written to
+// *(0x0067edb4 + local_1c) on push). So it differs from CountItems on the
+// screens whose single item carries id 0xffffffff (4,5,6,7,12,14,15,16,20,22,23,
+// 25): there it is 0. Checked against the live slot records of all 33 pushed
+// screens (re/analysis/u9667_menu_tables/dump_push.json word +0x3c): 33/33.
+int NavCountItems(const std::uint32_t* table, int item_count) {
+    int n = 0;
+    for (int row = 0; row < item_count; ++row) {
+        const std::int16_t id = static_cast<std::int16_t>(KvLookup(table, kTagItem, row));
+        if (id != -1) ++n;
+    }
+    return n;
+}
+
 // FUN_0042ac50 (0x0042ac50) - vertical-centering base for the item list. The
 // build loop writes each item's Y as base + spacing*row, where `base` is this
 // function's return. Verbatim transcription of the decomp (pool13, anchor
@@ -422,39 +440,10 @@ int Q_ListBaseY(int item_count, int spacing) {
     return 0xf0 - static_cast<int>((cnt - 1) >> 1) * spacing;
 }
 
-// FUN_0042ac90 (0x0042ac90) - read the ACTION CODE of the item at list index
-// `item_index`. The original walks the table past `item_index` occurrences of
-// the item tag (0xff040000), then scans within that item's group for the action
-// key (0xff050000 or 0xff140000), returning the following u32; or 0xffffffff
-// ("no action") if the group ends (0xff060000) first. This is the value the
-// select handler dispatches on (see ActionToScreen). Returns 0xffffffff if the
-// item or table is absent.
-std::uint32_t ItemActionCode(const std::uint32_t* table, int item_index) {
-    if (table == nullptr || item_index < 0) return 0xffffffffu;
-    int idx = 0;       // word cursor
-    int item = -1;     // current item ordinal (-1 before first 0xff040000)
-    bool in_target = false;
-    for (;;) {
-        const std::uint32_t k = table[idx];
-        if (k == kTermVal) return 0xffffffffu;        // ran off the end
-        if (k == kTagItem) {                          // 0xff040000 -> next item
-            ++item;
-            in_target = (item == item_index);
-            idx += 2;                                 // skip (tag, string-id)
-            continue;
-        }
-        if (in_target) {
-            if (k == kGrpEnd) return 0xffffffffu;     // group closed, no action key
-            if (k == kTagAct1 || k == kTagAct2) {     // 0xff050000 / 0xff140000
-                return table[idx + 1];                // the dispatch action code
-            }
-            idx += 2;                                 // other keyed pair
-            continue;
-        }
-        // Outside the target group: walk word-by-word (markers may be bare).
-        ++idx;
-    }
-}
+// FUN_0042ac90 (0x0042ac90): the item ACTION CODE read is MenuEntryWalk
+// (Frontend/MenuNav.h), the same body the .asi export MenuEntryGet runs. The
+// standalone-only ItemActionCode that used to sit here was deleted for U-9667:
+// at cursor -1 it returned 0xffffffff where the bytes return item 0's code.
 
 // FUN_00497450 (0x00497450) - player-active predicate. param<4 && DAT_007e96fc[
 // param*0x80] != 0. Fresh menu: all inactive. Used by the screen-0x1c grey-out.
@@ -939,6 +928,7 @@ void Nav_Init() {
     s.slide_src  = s.desc_table;
     s.cursor     = 0;
     s.item_count = CountItems(s.desc_table);
+    s.nav_count  = NavCountItems(s.desc_table, s.item_count);
     PlaceCursor(s);
     BuildRecords(s);
     // #12b: append the footer prompt strip for the ROOT too (Nav() only did this
@@ -968,6 +958,7 @@ void Nav(int screen_id, int dir) {
         s.slide_src  = s.desc_table;                    // DAT_0067ed38
         s.cursor     = 0;                               // DAT_0067ed80 = 0
         s.item_count = CountItems(s.desc_table);        // DAT_0067edb4
+        s.nav_count  = NavCountItems(s.desc_table, s.item_count);
         PlaceCursor(s);                                 // FUN_00432800 tail
         // FUN_00432b30 mode-0 head (0x00432b70): rel = the kind of the screen
         // being LEFT, looked up at the PRE-commit depth slot; depth==0 skips
@@ -1003,6 +994,7 @@ void Nav(int screen_id, int dir) {
         LogoOverlayFadeSet(0xff, -1);
         NavSlot& s = g_stack[g_nav_depth];
         s.item_count = CountItems(s.desc_table);
+        s.nav_count  = NavCountItems(s.desc_table, s.item_count);
         PlaceCursor(s);
         BuildRecords(s);
         // FUN_00432b30 mode-2 head zeroes key (0x00432b45) -> the key-1 bounds
@@ -1043,6 +1035,7 @@ void Nav_DevGoto(int screen_id) {
     s.slide_src  = s.desc_table;
     s.cursor     = 0;
     s.item_count = CountItems(s.desc_table);
+    s.nav_count  = NavCountItems(s.desc_table, s.item_count);
     PlaceCursor(s);
     BuildRecords(s);
     PromptStripAppend(KvLookup(s.desc_table, kTagPrompt, 0), screen_id, 0);
@@ -1052,42 +1045,81 @@ void Nav_DevGoto(int screen_id) {
 
 int  Nav_DevScreen() { return g_stack[g_nav_depth].screen_id; }
 
+// DAT_0067f17c analogue: the challenge row on screens 6/7 (see Nav_ChallengeRow).
+// Ghidra xrefs (Mashed_pool, 2026-10-12): its only writers are FUN_004322c0
+// (0x00432304/0x00432311/0x004323a9), FUN_004323c0 (0x004323d7/0x004323e1/
+// 0x0043243d) and the three mode-select resets in FUN_0043dfd0 (0x0043f1c0,
+// 0x0043f4b7, 0x0043fadf; see ApplyActionGameMode). Nothing else moves it, so it
+// persists across pushes, pops and the continue-cup push of screen 7.
+static int g_challenge_row = 0;
+
+// FUN_0043dfd0 flag block scan (harvest L201-L242): from the 0xff090000 entry to
+// 0xff0a0000, 0xff0b0000 sets the UP flag (bVar3) and 0xff0c0000 the DOWN flag
+// (bVar4). The UP/DOWN arms (harvest L1345-L1355) run only under their flag.
+static bool TableHasNavFlag(const std::uint32_t* t, std::uint32_t flag) {
+    if (t == nullptr) return false;
+    int i = 0;
+    while (t[i] != 0xff090000u) {
+        if (t[i] == kTermVal) return false;
+        ++i;
+    }
+    for (++i; t[i] != 0xff0a0000u && t[i] != kTermVal; ++i) {
+        if (t[i] == flag) return true;
+    }
+    return false;
+}
+
+// FUN_0042aa00 (0x0042aa00), verbatim: step the slot cursor by `delta` over
+// nav_count (DAT_0067ed74 + slot*0x40, the +0x3c count), wrapping, until an
+// avail[] entry == 1 is found; -1 when the count is 0 or no entry is available
+// after count+1 steps.
+static void CursorStep(NavSlot& s, int delta) {
+    if (s.nav_count == 0) { s.cursor = -1; return; }
+    bool found = false;
+    int n = 0;
+    for (;;) {
+        const int c = s.cursor + delta;
+        s.cursor = c;
+        if (c == s.nav_count) s.cursor = 0;
+        else if (c < 0)       s.cursor = s.nav_count - 1;
+        if (s.cursor < kMaxItems && s.avail[s.cursor] == 1) found = true;
+        ++n;
+        if (s.nav_count < n) break;
+        if (found) return;
+    }
+    s.cursor = -1;
+}
+
 void Nav_MoveCursor(int delta) {
     NavSlot& s = g_stack[g_nav_depth];
-    // [Bug #2 / 2026-09-06] Challenge Select (screens 6/7) selects a CUP TRACK
-    // ROW, not a descriptor menu-item. The harvested tables kT6/kT7 each hold
-    // exactly ONE 0xff040000 item (action 0xff260000), so CountItems -> item_count
-    // == 1 and the generic item_count-bounded scan below could never leave row 0
-    // (Angel Peak) -- the reported "auto-selects Angel Peak, can't move" bug. The
-    // screen instead draws cup.trackCount rows and reads Nav_Cursor() as the
-    // selected track index, so traverse those rows here.
+    // UP arm (harvest L1345-1352): FUN_0042aa00(-1), then on screen kind 6/7
+    // FUN_004323c0 (row back). DOWN arm (L1353-1355): FUN_004322c0, which is
+    // FUN_0042aa00(1) followed by the row-forward loop on kind 6/7. Each arm is
+    // gated on its table flag. Not ported: the hold-repeat of FUN_0042aff0 /
+    // FUN_0042b180 (edge-only here) and the DAT_00898ab0 == 0 condition.
+    const bool up = delta < 0;
+    if (!TableHasNavFlag(s.desc_table, up ? 0xff0b0000u : 0xff0c0000u)) return;
+    CursorStep(s, up ? -1 : 1);
+    // On 6/7 nav_count is 0 (the single kT6/kT7 item has id 0xffffffff), so the
+    // slot cursor is now -1, as in the original (dump_input_r*.json, 3/3 runs).
     //
-    // The original moves a SEPARATE challenge-row index (DAT_0067f17c) via
-    // FUN_004323c0 (MenuCursorBack) / its forward twin, not the menu-item cursor
-    // of FUN_00432800. Per the bug directive the cursor is allowed to REST on
-    // every cup row (locked included) and the LAUNCH is gated on unlock in the
-    // exe_main challenge-launch path. [UNCERTAIN] FUN_00430830's row-availability
-    // scan in the original may SKIP fully-locked rows rather than rest on them;
-    // this is not runtime-verifiable here (headless), so the directive's
-    // rest-on-locked + gated-launch behaviour is implemented -- confirm on desktop.
+    // The ROW is DAT_0067f17c. The original's FUN_004323c0 / FUN_004322c0 clamp
+    // it to 0..0xc and skip rows FUN_00430830 reports unavailable. The standalone
+    // keeps the [Bug #2 / 2026-09-06] user directive instead: the row wraps over
+    // cup.trackCount and may rest on a locked row; the LAUNCH is gated on unlock
+    // in exe_main. That divergence is unchanged by U-9667; only the variable
+    // moved off the slot cursor.
     if (s.screen_id == 6 || s.screen_id == 7) {
         const int rows = mashed_re::Race::Campaign_CurrentCup().trackCount;
         if (rows <= 0) return;
-        int c = (s.cursor < 0) ? 0 : s.cursor;
+        int c = (g_challenge_row < 0) ? 0 : g_challenge_row;
         if (c >= rows) c = rows - 1;
-        c = (c + (delta >= 0 ? 1 : -1) + rows) % rows;   // wrap; rest on every row
-        s.cursor = c;
-        return;
+        c = (c + (up ? -1 : 1) + rows) % rows;
+        g_challenge_row = c;
     }
-    if (s.item_count <= 0) return;
-    int c = (s.cursor < 0) ? 0 : s.cursor;
-    // Step over the avail[] mask (wrap). Mirrors the forward scan in FUN_00432800.
-    for (int n = 0; n < s.item_count; ++n) {
-        c = (c + (delta >= 0 ? 1 : -1) + s.item_count) % s.item_count;
-        if (s.avail[c] == 1) break;
-    }
-    s.cursor = c;
 }
+
+int Nav_ChallengeRow() { return g_challenge_row; }
 
 // FUN_0043dfd0 menu-action -> game-mode side effects (WS-G2; Mashed_pool6,
 // 2026-06-16). Selecting a Single-/Multi-Player MODE item writes the selection
@@ -1104,6 +1136,16 @@ void Nav_MoveCursor(int delta) {
 // is what makes the standalone's game mode (and hence the Race/RaceModes rule
 // derived at launch) track the chosen frontend mode instead of a hard-coded id.
 void ApplyActionGameMode(std::uint32_t action) {
+    // DAT_0067f17c = 0 on these five mode items (harvest L272 for 0xff3d/0xff40
+    // via LAB_0043f468, L940 for 0xff4d, L825 for 0xff2c/0xff2e via
+    // LAB_0043f198): the challenge row restarts at 0 when a mode is picked.
+    switch (action) {
+        case 0xff3d0000u: case 0xff4d0000u: case 0xff400000u:
+        case 0xff2c0000u: case 0xff2e0000u:
+            g_challenge_row = 0;
+            break;
+        default: break;
+    }
     switch (action) {
         case 0xff3d0000u: g_game_state.game_mode = 3;  g_game_state.flag_ea64 = 0; break;
         case 0xff4d0000u: g_game_state.game_mode = 10; g_game_state.flag_ea64 = 1; break;
@@ -1285,17 +1327,49 @@ bool Nav_ConfigEditWrap(int screen_id, int sel, int dir) {
     return false;
 }
 
+std::uint32_t Nav_SelectAction() {
+    const NavSlot& s = g_stack[g_nav_depth];
+    if (s.desc_table == nullptr) return 0xffffffffu;   // port guard: no table, no walk
+    return MenuEntryWalk(s.desc_table, s.cursor);      // 0x0043e4ca call 0x0042ac90
+}
+
+ChallengeArm Nav_ChallengeArm(int game_mode) {
+    // FUN_0043dfd0 0xff260000 arm after its unlock test
+    // `(&DAT_007f0a40)[FUN_004309b0() + DAT_0067f17c*0xc] == 0` (harvest L406-409;
+    // the caller owns that test). switch (DAT_0067e9fc) L418-L792, then L794-L813:
+    //   case 10: FUN_0040e170(row); FUN_0043d2a0(0x18,0)            -> push 24
+    //   then FUN_00430760() (1 for modes 2,3,4,5,10):
+    //     == 0              : FUN_0040e170(row); FUN_0043d2a0(0x12,0) -> push 18
+    //     != 0 and mode!=10 : FUN_0040e170(row); LAB_0043f371         -> launch
+    // Not ported here: the per-mode writes of DAT_0067ea64/ecdc/ea74/ea70/ea78,
+    // DAT_007f0fd0 and the DAT_007f1a14.. slot table in L418-L792; the caller's
+    // launch derives its own race config.
+    if (game_mode == 10) {
+        Nav(0x18, kNavPush);
+        return kChallengePushed;
+    }
+    const bool f430760 = game_mode == 2 || game_mode == 3 || game_mode == 4 ||
+                         game_mode == 5;               // FUN_00430760 (10 handled above)
+    if (!f430760) {
+        Nav(0x12, kNavPush);
+        return kChallengePushed;
+    }
+    return kChallengeLaunch;
+}
+
 bool Nav_Select() {
     const NavSlot& s = g_stack[g_nav_depth];
-    if (s.cursor < 0 || s.cursor >= s.item_count) return false;
-    if (s.cursor < kMaxItems && s.avail[s.cursor] != 1) return false; // disabled
+    // No cursor test: the original's select path (0x0043e3a0..0x0043e4ca, and
+    // FUN_0043dfd0 from its entry, harvest L55-L248) reads no slot cursor before
+    // it calls 0x0042ac90, so cursor -1 reaches the walk (U-9667).
+    if (s.desc_table == nullptr) return false;
 
     // FUN_0043dfd0 select path raises the arc-wash fade (0x0043f9d7,
     // PUSH 0xff -> FUN_00472640) before dispatching the action.
     LogoOverlayFadeSet(0xff, -1);
     // Reversed map (FUN_0043dfd0): read the highlighted item's action code from
     // the descriptor table (FUN_0042ac90), then dispatch it (ActionToScreen).
-    const std::uint32_t action = ItemActionCode(s.desc_table, s.cursor);
+    const std::uint32_t action = Nav_SelectAction();
     // [D-11057] continue-cup action (0xff240000) has a dedicated dispatcher: it
     // may advance (push screen 7) itself or arm a confirmation modal for the
     // caller (Nav_TakePendingCupModal). Handled before the generic routing.
@@ -1358,7 +1432,7 @@ bool              Nav_AnimTick() { return Anim_Tick(); }
 // logic harness re/analysis/standalone_menu_sm/harvest/navsm_test.cpp for the
 // 34-screen reachability pass; not part of the runtime API).
 const std::uint32_t* NavTest_TableForScreen(int s) { return TableForScreen(s); }
-std::uint32_t NavTest_ItemActionCode(const std::uint32_t* t, int i) { return ItemActionCode(t, i); }
+std::uint32_t NavTest_MenuEntryWalk(const std::uint32_t* t, int i) { return MenuEntryWalk(t, i); }
 int NavTest_ActionToScreen(std::uint32_t a, int kind) { return ActionToScreen(a, kind); }
 // WS-G2: exercise the menu-action -> game-mode side effect in isolation. Applies
 // it to the live game-state, then returns the resulting game_mode.

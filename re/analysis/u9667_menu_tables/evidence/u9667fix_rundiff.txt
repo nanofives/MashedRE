@@ -1,0 +1,12 @@
+hook: menu_entry_get  rva=0x0042ac90  export=MenuEntryGet
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\u9667-fix\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 38680
+  [agent] LUT ready  base=0x2b8bf70  offset=0x134  root=0xce30048  delta=0  attempts=0
+  [agent] .asi loaded  base=0x69140000  MenuEntryGet@0x69152400
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\u9667-fix\log\diff_menu_entry_get.csv
+  total cases: 16
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.
+rc=0

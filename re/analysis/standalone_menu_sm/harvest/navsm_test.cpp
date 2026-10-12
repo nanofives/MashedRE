@@ -14,16 +14,25 @@ using namespace mashed_re::Frontend;
 extern "C" void __cdecl LogoOverlayFadeSet(int, int) {}
 extern "C" unsigned int __cdecl ModeCodeLookup() { return 0xffffffffu; }
 
+// Link stubs (U-9667): MenuNav.cpp (the shared 0x0042ac90 body) registers hooks
+// through HookSystem, and Nav_MoveCursor reads the challenge cup row count.
+// Neither is under test here. One 8-track cup, matching the fresh-save default.
+#include "../../../../mashedmod/src/mashed_re/Race/GameFlow.h"
+namespace HookSystem { void Register(std::uintptr_t, void*, const char*) {} }
+namespace mashed_re { namespace Race {
+const Cup& Campaign_CurrentCup() { static Cup c = { 8, {} }; return c; }
+} }
+
 // Test-support accessors (public wrappers over the MenuNavSM internals).
 namespace mashed_re { namespace Frontend {
 const std::uint32_t* NavTest_TableForScreen(int screen_id);
-std::uint32_t        NavTest_ItemActionCode(const std::uint32_t* table, int item_index);
+std::uint32_t        NavTest_MenuEntryWalk(const std::uint32_t* table, int cursor);  // 0x0042ac90 (U-9667)
 int                  NavTest_ActionToScreen(std::uint32_t action, int slot_kind);
 int                  NavTest_KvLookup(const std::uint32_t* table, std::uint32_t tag, int n);
 int                  NavTest_ApplyActionGameMode(std::uint32_t action);  // WS-G2
 } }
 #define TableForScreen  NavTest_TableForScreen
-#define ItemActionCode  NavTest_ItemActionCode
+#define MenuEntryWalk   NavTest_MenuEntryWalk
 #define ActionToScreen  NavTest_ActionToScreen
 #define KvLookup        NavTest_KvLookup
 
@@ -249,7 +258,7 @@ int main() {
 
     // ----------------------------------------------------------------------
     // R2-close — 34-screen reachability pass. BFS over the reversed push map
-    // (ItemActionCode + ActionToScreen) from the two real entry roots:
+    // (MenuEntryWalk + ActionToScreen) from the two real entry roots:
     // screen 0 (in-race pause root, FUN_0043df00 reload) and screen 1 (the
     // boot "Game Type Select", entered from the title-confirm flow — runtime-
     // confirmed by the 2026-06-10 parity walk). slot_kind variants 0..3 are
@@ -270,15 +279,16 @@ int main() {
         while (qh < qt) {
             const int s = queue[qh++];
             const std::uint32_t* tbl = TableForScreen(s);
-            // count items by tag (0xff040000)
+            // count items by tag (0xff040000). MenuEntryWalk is the original's
+            // walk and runs off the table past the last item, so it is only
+            // called for rows that exist (U-9667).
             int items = 0;
             for (int r = 0; r < 16; ++r) {
-                if (ItemActionCode(tbl, r) == 0xffffffffu &&
-                    KvLookup(tbl, 0xff040000u, r) == -1 && r >= 1) break;
+                if (KvLookup(tbl, 0xff040000u, r) == -1 && r >= 1) break;
                 ++items;
             }
             for (int r = 0; r < items; ++r) {
-                const std::uint32_t a = ItemActionCode(tbl, r);
+                const std::uint32_t a = MenuEntryWalk(tbl, r);
                 if (a == 0xffffffffu) continue;
                 for (int kind = 0; kind < 4; ++kind) {
                     const int t = ActionToScreen(a, kind);
