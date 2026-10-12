@@ -113,46 +113,51 @@ static constexpr std::uintptr_t kStrTableBase = 0x0066d828u;
 // FUN_004277a0 are both side-effect-free except for filling local_404, so we reimplement their
 // logic inline and keep the (correct, __cdecl-stack) FUN_005554d0 call.
 
+// RE-PORTED FROM THE BYTES 2026-10-12 (negctl re-earn). The C body stored the FUN_005554d0
+// ST0 result in a float before the fdiv/fmul, so it rounded where the original does not:
+// the original keeps the width in ST0 through fdiv [0x0067d830] @0x004282f1 and
+// fmul [0x005cd618] @0x00428309 and returns it in ST0 (Ghidra: float10). With
+// DAT_0067d830 = 800.0, (id 40, size 8.0) came back 0x4235b37c on the original and 0x4235b37d
+// on the port. Like MenuMenusBC below, the body is now the instruction sequence, so the
+// question of which precision C would round at does not arise.
+//
+// Calls go through memory cells (a naked body cannot emit the original E8 rel32):
+// FUN_00427780 returns the string pointer in EAX, FUN_004277a0 reads EAX and writes the
+// transcoded string to EBX (register ABI, see the 2026-06-07 note above), FUN_005554d0 is
+// cdecl and returns ST0. The /GS cookie (0x004282a6..0x004282b3, 0x004282f7/0x00428301,
+// jmp 0x004a2be9 @0x00428315) is not ported: the slot at [esp+0x400] is kept so every
+// displacement is the original's, and the tail jmp becomes ret.
+void* g_menuBa_Lookup  = reinterpret_cast<void*>(0x00427780u);
+void* g_menuBa_Remap   = reinterpret_cast<void*>(0x004277a0u);
+void* g_menuBa_Measure = reinterpret_cast<void*>(0x005554d0u);
+
 // 0x004282a0
-extern "C" __declspec(dllexport) float __cdecl MenuMenusBA(
-    std::uint32_t param_1, float param_2)
+extern "C" __declspec(dllexport) __declspec(naked) float __cdecl MenuMenusBA(
+    std::uint32_t /*param_1*/, float /*param_2*/)
 {
-    // local_404: 0x400-byte stack buffer that holds the transcoded string for FUN_005554d0.
-    std::uint8_t local_404[kMenuBa_StrBufSize];
-
-    // inline FUN_00427780(param_1): src = *(u32*)(0x66d828 + param_1*4) + 0x66d828
-    const std::uint16_t* src = reinterpret_cast<const std::uint16_t*>(
-        *reinterpret_cast<std::uint32_t*>(kStrTableBase + param_1 * 4u) + kStrTableBase);
-
-    // inline FUN_004277a0(): src is a u16 length-prefixed string; transcode into local_404,
-    // remapping the control codes 8/9/10/0xb/0xc/0xd/0xe (Ghidra 0x004277a0 body).
-    short slen = static_cast<short>(src[0]);
-    short* dst = reinterpret_cast<short*>(local_404);
-    for (short i = 0; i < slen; ++i) {
-        short c = static_cast<short>(src[1 + i]);
-        switch (c) {
-            case 8:    c = 0x81; break;
-            case 9:    c = 0x7f; break;
-            case 10:   c = 0x81; break;
-            case 0x0b: c = 0x8d; break;
-            case 0x0c: c = 0x80; break;
-            case 0x0d: c = 0x87; break;
-            case 0x0e: c = 0x8f; break;
-        }
-        dst[i] = c;
+    __asm {
+        sub  esp, 0x404                         // 0x004282a0  0x400 buffer + cookie slot
+        push ebx                                // 0x004282b2
+        mov  eax, dword ptr [esp + 0x40c]       // 0x004282ba  param_1
+        push eax                                // 0x004282c1
+        call dword ptr [g_menuBa_Lookup]        // 0x004282c2  FUN_00427780 -> EAX
+        lea  ebx, [esp + 8]                     // 0x004282c7  EBX = buffer
+        call dword ptr [g_menuBa_Remap]         // 0x004282cb  FUN_004277a0(EAX, EBX)
+        fld  dword ptr [esp + 0x414]            // 0x004282d0  param_2
+        fmul dword ptr ds:[0x005cd5fc]          // 0x004282d7  * 0.0708
+        mov  edx, dword ptr ds:[0x0067d838]     // 0x004282dd  font
+        lea  ecx, [esp + 8]                     // 0x004282e3  buffer
+        fstp dword ptr [esp]                    // 0x004282e7  reuse the param_1 slot as arg3
+        push ecx                                // 0x004282ea  arg2
+        push edx                                // 0x004282eb  arg1
+        call dword ptr [g_menuBa_Measure]       // 0x004282ec  FUN_005554d0 -> ST0
+        fdiv dword ptr ds:[0x0067d830]          // 0x004282f1  ST0 / viewport width
+        add  esp, 0xc                           // 0x004282fe
+        pop  ebx                                // 0x00428308
+        fmul dword ptr ds:[0x005cd618]          // 0x00428309  * 640.0, left in ST0
+        add  esp, 0x404                         // 0x0042830f
+        ret                                     // 0x00428315  (jmp 0x004a2be9 cookie check)
     }
-    dst[slen] = 0;   // matches original's unaff_EBX[(short)len] = 0
-
-    // FUN_005554d0(font_ctx, local_404, param_2 * size_scale) — __cdecl stack args (0x004282ec)
-    void* font_ctx   = *reinterpret_cast<void**>(kMenuBa_FontCtx);
-    float size_scale = *reinterpret_cast<float*>(kMenuBa_SizeScale);
-    float raw_width  = s_FUN_005554d0(font_ctx, local_404, param_2 * size_scale);
-
-    // (raw_width / viewport_w) * logical_scale  (0x004282f1..0x00428309)
-    double viewport_w    = static_cast<double>(*reinterpret_cast<float*>(kMenuBa_ViewportW));
-    double logical_scale = static_cast<double>(*reinterpret_cast<float*>(kMenuBa_LogicalScale));
-    double result = (static_cast<double>(raw_width) / viewport_w) * logical_scale;
-    return static_cast<float>(result);
 }
 
 RH_ScopedInstall(MenuMenusBA, 0x004282a0);  // re-enabled 2026-05-24 c3-frontend-a
@@ -473,16 +478,16 @@ RH_ScopedInstall(MenuMenusBC, 0x0042f8d0);
 //   param_1: caller-provided int[4] output — receives sorted slot indices
 //
 // Algorithm:
-//   1. Init: read 4 scores from DAT_008a94f0 (stride +0x10 per slot);
-//      mark slot -1 if DAT_007f1a14[slot] (stride +0x10) < 0.
+//   1. Init: copy 4 keys from DAT_008a94f0 (DWORD stride, 0x008a94f0 + 4*i);
+//      key = -1 if the dword at 0x007f1a14 + 0x10*i < 0.
 //      Fill param_1[slot] = slot  (identity).
-//   2. Bubble sort descending by score[param_1[i]] vs score[param_1[i+1]]
-//      for 3 passes (n-1 iterations each).
-//   3. Game mode 4 or 7: override param_1[slot] = FUN_00417740(slot)
+//   2. Bubble sort descending (signed), keys and param_1 swapped in parallel,
+//      inner bound 3, 2, 1.
+//   3. Game mode 4 or 7: override param_1[slot] = FUN_00417740(slot), then re-read the mode
 //   4. Game mode 9: if DAT_007f0fcc != 0 → [0,1]; else [1,0]
 //
 // Globals:
-//   DAT_008a94f0  per-slot scores  (+0x10 stride, 4 elements)  (0x0040b470)
+//   DAT_008a94f0  per-slot keys    (+4 stride, 4 elements)     (0x0040b470)
 //   DAT_007f1a14  slot activity flags (+0x10 stride)            (0x0040b477)
 //   DAT_007f0fd0  game mode selector                            (0x0040b4e2)
 //   DAT_007f0fcc  mode-9 variant flag                           (0x0040b52b)
@@ -496,53 +501,51 @@ static constexpr std::uintptr_t kMenuBd_FlagBase     = 0x007f1a14u;  // 0x0040b4
 static constexpr std::uintptr_t kMenuBd_GameMode     = 0x007f0fd0u;  // 0x0040b4e2
 static constexpr std::uintptr_t kMenuBd_Mode9Flag    = 0x007f0fccu;  // 0x0040b52b
 
+// RE-PORTED FROM THE BYTES 2026-10-12 (negctl re-earn). The keys are DWORD-strided:
+// mov edx,[eax*4+0x8a94f0] @0x0040b470 reads 0x008a94f0 + 4*i. The old body read
+// score_base[i*4] (stride 0x10), so it sorted on the wrong keys. Only the sign words are
+// 0x10-strided (ecx = 0x7f1a14, add ecx,0x10 @0x0040b48b, cmp ecx,0x7f1a54 @0x0040b48f).
+// The sort sorts the key copy and the output in parallel (0x0040b4bc..0x0040b4d3) with a
+// shrinking inner bound (edi = 3, 2, 1: mov edi,3 @0x0040b49a, dec edi @0x0040b4db), and
+// DAT_007f0fd0 is RE-READ after the 4/7 override loop (mov eax,[0x7f0fd0] @0x0040b503)
+// before the == 9 test @0x0040b508, so the old early return was not the bytes either.
+
 // 0x0040b460
 extern "C" __declspec(dllexport) void __cdecl MenuMenusBD(std::int32_t* param_1)
 {
-    static const int kSlots = 4;
-    static const int kStride = 4;  // 0x10 bytes / sizeof(int32) = 4 ints
-
-    int scores[kSlots];
-    const std::int32_t* score_base = reinterpret_cast<const std::int32_t*>(kMenuBd_ScoreBase);
-    const std::int32_t* flag_base  = reinterpret_cast<const std::int32_t*>(kMenuBd_FlagBase);
-
-    // Step 1: init output array (identity) and read scores (0x0040b46a..0x0040b48a)
-    for (int i = 0; i < kSlots; i++) {
-        // mark slot -1 if activity flag < 0 (0x0040b477)
-        if (flag_base[i * kStride] < 0) {
-            scores[i] = -1;
-        } else {
-            scores[i] = score_base[i * kStride];  // DAT_008a94f0[i*0x10]
-        }
-        param_1[i] = i;  // identity fill (0x0040b483)
+    std::int32_t keys[4];                                          // [esp+4..0x13] @0x0040b477
+    for (int i = 0; i < 4; i++) {
+        keys[i] = reinterpret_cast<const std::int32_t*>(kMenuBd_ScoreBase)[i];          // @0x0040b470
+        if (*reinterpret_cast<const std::int32_t*>(kMenuBd_FlagBase + 0x10u * i) < 0)  // cmp/jge @0x0040b47b
+            keys[i] = -1;                                                              // @0x0040b480
+        param_1[i] = i;                                                                // @0x0040b488
     }
 
-    // Step 2: bubble sort descending by score (0x0040b48e..0x0040b4d8)
-    // 3 outer passes × 3 inner comparisons (n-1 each pass)
-    for (int pass = 0; pass < kSlots - 1; pass++) {
-        for (int j = 0; j < kSlots - 1; j++) {
-            int a = param_1[j];
-            int b = param_1[j + 1];
-            if (scores[a] < scores[b]) {
-                // swap  (cited at 0x0040b4c0..0x0040b4d0)
-                param_1[j]     = b;
-                param_1[j + 1] = a;
+    for (int n = 3; n > 0; n--) {                                  // @0x0040b49a / 0x0040b4db
+        for (int j = 0; j < n; j++) {                              // @0x0040b4a0 / 0x0040b4d6
+            const std::int32_t lo = keys[j];                       // edx @0x0040b4b4
+            const std::int32_t hi = keys[j + 1];                   // eax @0x0040b4b0
+            if (lo < hi) {                                         // cmp edx,eax; jge @0x0040b4b8 (signed)
+                keys[j] = hi;                                      // @0x0040b4bc
+                keys[j + 1] = lo;                                  // @0x0040b4cb
+                const std::int32_t o = param_1[j + 1];             // ebp @0x0040b4c3
+                param_1[j + 1] = param_1[j];                       // @0x0040b4d3
+                param_1[j] = o;                                    // @0x0040b4d1
             }
         }
     }
 
-    // Step 3: game mode override (0x0040b4dc..0x0040b534)
-    int game_mode = *reinterpret_cast<const int*>(kMenuBd_GameMode);
+    // Step 3: game mode override (0x0040b4e0..0x0040b538)
+    int game_mode = *reinterpret_cast<const int*>(kMenuBd_GameMode);   // @0x0040b4e0
 
-    if (game_mode == 4 || game_mode == 7) {
-        // Override: param_1[slot] = FUN_00417740(slot) (0x0040b4e2..0x0040b51c)
-        for (int i = 0; i < kSlots; i++) {
-            param_1[i] = s_FUN_00417740(i);
+    if (game_mode == 4 || game_mode == 7) {                        // @0x0040b4e5 / 0x0040b4ea
+        for (int i = 0; i < 4; i++) {
+            param_1[i] = s_FUN_00417740(i);                        // @0x0040b4f2 / 0x0040b4fa
         }
-        return;
+        game_mode = *reinterpret_cast<const int*>(kMenuBd_GameMode);   // re-read @0x0040b503
     }
 
-    if (game_mode == 9) {
+    if (game_mode == 9) {                                          // @0x0040b508
         // 2-player layout (0x0040b51e..0x0040b534)
         int mode9_flag = *reinterpret_cast<const int*>(kMenuBd_Mode9Flag);
         if (mode9_flag != 0) {
