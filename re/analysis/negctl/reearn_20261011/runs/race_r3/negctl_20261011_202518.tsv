@@ -1,0 +1,359 @@
+hook	rva	arg_type	lane	mode	verdict	mismatches	total	stats	err
+pickup_pool_spawn	0x00458e00	cache_setter_observe	warm	baseline	GREEN	0	6		
+pickup_pool_spawn	0x00458e00	cache_setter_observe	warm	field_first	RED	3	6	calls=6 flips=3 changed=0 flip=0x0068b201 noise=5474 frozen=2	
+pickup_pool_spawn	0x00458e00	cache_setter_observe	warm	field_last	RED	3	6	calls=6 flips=3 changed=0 flip=0x0068b9a8 noise=6464 frozen=2	
+pickup_pool_spawn	0x00458e00	cache_setter_observe	warm	field_none	CTRL-GREEN	0	6	calls=6 flips=0 changed=0 flip=0x00000000 noise=4326 frozen=2	
+pickup_pool_spawn	0x00458e00	cache_setter_observe	warm	null	RED	6	6	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+pickup_pool_spawn	0x00458e00	cache_setter_observe	warm	real	GREEN	0	6		
+pickup_pool_spawn	0x00458e00	cache_setter_observe	warm	ret	RED	6	6	calls=6 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+vehicle_vec3_at_6e4_set	0x0046d740	cache_setter_observe	warm	baseline	GREEN	0	4		
+vehicle_vec3_at_6e4_set	0x0046d740	cache_setter_observe	warm	field_first	RED	3	4	calls=4 flips=3 changed=0 flip=0x008830ec noise=5400 frozen=2	
+vehicle_vec3_at_6e4_set	0x0046d740	cache_setter_observe	warm	field_last	RED	3	4	calls=4 flips=3 changed=0 flip=0x008830f7 noise=6045 frozen=2	
+vehicle_vec3_at_6e4_set	0x0046d740	cache_setter_observe	warm	field_none	CTRL-GREEN	0	4	calls=4 flips=0 changed=0 flip=0x00000000 noise=3817 frozen=2	
+vehicle_vec3_at_6e4_set	0x0046d740	cache_setter_observe	warm	null	RED	3	4	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+vehicle_vec3_at_6e4_set	0x0046d740	cache_setter_observe	warm	real	GREEN	0	4		
+vehicle_vec3_at_6e4_set	0x0046d740	cache_setter_observe	warm	ret	BLIND	0	4	calls=4 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+vehicle_velocity_world_get	0x0046d510	cache_setter_observe	warm	baseline	RED	1	4		
+vehicle_velocity_world_get	0x0046d510	cache_setter_observe	warm	field_first	RED	3	4	calls=4 flips=3 changed=0 flip=0x0088e2b2 noise=6390 frozen=2	
+vehicle_velocity_world_get	0x0046d510	cache_setter_observe	warm	field_last	RED	3	4	calls=4 flips=3 changed=0 flip=0x0088e2bb noise=6748 frozen=2	
+vehicle_velocity_world_get	0x0046d510	cache_setter_observe	warm	field_none	CTRL-GREEN	0	4	calls=4 flips=0 changed=0 flip=0x00000000 noise=5829 frozen=2	
+vehicle_velocity_world_get	0x0046d510	cache_setter_observe	warm	null	RED	3	4	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+vehicle_velocity_world_get	0x0046d510	cache_setter_observe	warm	real	GREEN	0	4		
+vehicle_velocity_world_get	0x0046d510	cache_setter_observe	warm	ret	BLIND	0	4	calls=4 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+ai_vehicle_field_ptr_get	0x00408af0	int_scalar	warm	baseline	GREEN	0	10		
+ai_vehicle_field_ptr_get	0x00408af0	int_scalar	warm	field_first	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=2001 frozen=2	
+ai_vehicle_field_ptr_get	0x00408af0	int_scalar	warm	field_last	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=2201 frozen=2	
+ai_vehicle_field_ptr_get	0x00408af0	int_scalar	warm	field_none	CTRL-GREEN	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=1703 frozen=2	
+ai_vehicle_field_ptr_get	0x00408af0	int_scalar	warm	null	RED	10	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+ai_vehicle_field_ptr_get	0x00408af0	int_scalar	warm	real	GREEN	0	10		
+ai_vehicle_field_ptr_get	0x00408af0	int_scalar	warm	ret	RED	10	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+ai_vehicle_float4_get	0x00442cc0	int_scalar	warm	baseline	GREEN	0	10		
+ai_vehicle_float4_get	0x00442cc0	int_scalar	warm	field_first	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=8326 frozen=2	
+ai_vehicle_float4_get	0x00442cc0	int_scalar	warm	field_last	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=8736 frozen=2	
+ai_vehicle_float4_get	0x00442cc0	int_scalar	warm	field_none	CTRL-GREEN	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=7374 frozen=2	
+ai_vehicle_float4_get	0x00442cc0	int_scalar	warm	null	RED	6	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=6464 frozen=2	
+ai_vehicle_float4_get	0x00442cc0	int_scalar	warm	real	GREEN	0	10		
+ai_vehicle_float4_get	0x00442cc0	int_scalar	warm	ret	RED	10	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=6464 frozen=2	
+camera_entry_dispatch_all	0x004464c0	int_scalar	warm	baseline	GREEN	0	8		
+camera_entry_dispatch_all	0x004464c0	int_scalar	warm	field_first	BLIND	0	8	calls=8 flips=8 changed=101 flip=0x008964fc noise=7910 frozen=2	
+camera_entry_dispatch_all	0x004464c0	int_scalar	warm	field_last	BLIND	0	8	calls=8 flips=8 changed=70 flip=0x00896960 noise=8870 frozen=2	
+camera_entry_dispatch_all	0x004464c0	int_scalar	warm	field_none	CTRL-GREEN	0	8	calls=8 flips=0 changed=79 flip=0x00000000 noise=7304 frozen=2	
+camera_entry_dispatch_all	0x004464c0	int_scalar	warm	null	RED	8	8	calls=0 flips=0 changed=0 flip=0x00000000 noise=6045 frozen=2	
+camera_entry_dispatch_all	0x004464c0	int_scalar	warm	real	GREEN	0	8		
+camera_entry_dispatch_all	0x004464c0	int_scalar	warm	ret	RED	8	8	calls=8 flips=0 changed=0 flip=0x00000000 noise=6045 frozen=2	
+camera_slot_field_ptr_get	0x00442410	int_scalar	warm	baseline	GREEN	0	10		
+camera_slot_field_ptr_get	0x00442410	int_scalar	warm	field_first	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=8133 frozen=2	
+camera_slot_field_ptr_get	0x00442410	int_scalar	warm	field_last	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=8617 frozen=2	
+camera_slot_field_ptr_get	0x00442410	int_scalar	warm	field_none	CTRL-GREEN	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=7765 frozen=2	
+camera_slot_field_ptr_get	0x00442410	int_scalar	warm	null	RED	10	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=6748 frozen=2	
+camera_slot_field_ptr_get	0x00442410	int_scalar	warm	real	GREEN	0	10		
+camera_slot_field_ptr_get	0x00442410	int_scalar	warm	ret	RED	10	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=6748 frozen=2	
+camera_slot_float_get	0x00442420	int_scalar	warm	baseline	GREEN	0	10		
+camera_slot_float_get	0x00442420	int_scalar	warm	field_first	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=21445 frozen=2	
+camera_slot_float_get	0x00442420	int_scalar	warm	field_last	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=22070 frozen=2	
+camera_slot_float_get	0x00442420	int_scalar	warm	field_none	CTRL-GREEN	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=19133 frozen=2	
+camera_slot_float_get	0x00442420	int_scalar	warm	null	RED	10	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=2201 frozen=2	
+camera_slot_float_get	0x00442420	int_scalar	warm	real	GREEN	0	10		
+camera_slot_float_get	0x00442420	int_scalar	warm	ret	RED	10	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=2201 frozen=2	
+car_get_lap_progress	0x0041efc0	int_scalar	warm	baseline	GREEN	0	10		
+car_get_lap_progress	0x0041efc0	int_scalar	warm	field_first	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=9547 frozen=2	
+car_get_lap_progress	0x0041efc0	int_scalar	warm	field_last	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=9862 frozen=2	
+car_get_lap_progress	0x0041efc0	int_scalar	warm	field_none	CTRL-GREEN	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=9188 frozen=2	
+car_get_lap_progress	0x0041efc0	int_scalar	warm	null	RED	10	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=8736 frozen=2	
+car_get_lap_progress	0x0041efc0	int_scalar	warm	real	GREEN	0	10		
+car_get_lap_progress	0x0041efc0	int_scalar	warm	ret	RED	10	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=8736 frozen=2	
+car_snapshot_dword_get	0x00423b20	int_scalar	warm	baseline	GREEN	0	10		
+car_snapshot_dword_get	0x00423b20	int_scalar	warm	field_first	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=9902 frozen=2	
+car_snapshot_dword_get	0x00423b20	int_scalar	warm	field_last	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=10167 frozen=2	
+car_snapshot_dword_get	0x00423b20	int_scalar	warm	field_none	CTRL-GREEN	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=9205 frozen=2	
+car_snapshot_dword_get	0x00423b20	int_scalar	warm	null	RED	8	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=8870 frozen=2	
+car_snapshot_dword_get	0x00423b20	int_scalar	warm	real	GREEN	0	10		
+car_snapshot_dword_get	0x00423b20	int_scalar	warm	ret	RED	10	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=8870 frozen=2	
+entity_damage_state_get	0x0046c730	int_scalar	warm	baseline	DEGENERATE	0	10		
+entity_damage_state_get	0x0046c730	int_scalar	warm	field_first	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=10871 frozen=2	
+entity_damage_state_get	0x0046c730	int_scalar	warm	field_last	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=11593 frozen=2	
+entity_damage_state_get	0x0046c730	int_scalar	warm	field_none	CTRL-GREEN	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=9759 frozen=2	
+entity_damage_state_get	0x0046c730	int_scalar	warm	null	BLIND-DEGENERATE	0	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=8617 frozen=2	
+entity_damage_state_get	0x0046c730	int_scalar	warm	real	DEGENERATE	0	10		
+entity_damage_state_get	0x0046c730	int_scalar	warm	ret	RED	10	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=8617 frozen=2	
+entity_velocity_counter_get	0x0046c750	int_scalar	warm	baseline	DEGENERATE	0	10		
+entity_velocity_counter_get	0x0046c750	int_scalar	warm	field_first	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=23301 frozen=2	
+entity_velocity_counter_get	0x0046c750	int_scalar	warm	field_last	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=24194 frozen=2	
+entity_velocity_counter_get	0x0046c750	int_scalar	warm	field_none	CTRL-GREEN	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=22357 frozen=2	
+entity_velocity_counter_get	0x0046c750	int_scalar	warm	null	BLIND-DEGENERATE	0	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=22070 frozen=2	
+entity_velocity_counter_get	0x0046c750	int_scalar	warm	real	DEGENERATE	0	10		
+entity_velocity_counter_get	0x0046c750	int_scalar	warm	ret	RED	10	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=22070 frozen=2	
+follow_target_field10	0x00467210	int_scalar	warm	baseline	GREEN	0	10		
+follow_target_field10	0x00467210	int_scalar	warm	field_first	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=10747 frozen=2	
+follow_target_field10	0x00467210	int_scalar	warm	field_last	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=10759 frozen=2	
+follow_target_field10	0x00467210	int_scalar	warm	field_none	CTRL-GREEN	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=10412 frozen=2	
+follow_target_field10	0x00467210	int_scalar	warm	null	RED	10	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=9862 frozen=2	
+follow_target_field10	0x00467210	int_scalar	warm	real	GREEN	0	10		
+follow_target_field10	0x00467210	int_scalar	warm	ret	RED	10	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=9862 frozen=2	
+follow_target_field40	0x004671d0	int_scalar	warm	baseline	GREEN	0	10		
+follow_target_field40	0x004671d0	int_scalar	warm	field_first	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=11017 frozen=2	
+follow_target_field40	0x004671d0	int_scalar	warm	field_last	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=11151 frozen=2	
+follow_target_field40	0x004671d0	int_scalar	warm	field_none	CTRL-GREEN	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=10772 frozen=2	
+follow_target_field40	0x004671d0	int_scalar	warm	null	RED	10	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=10167 frozen=2	
+follow_target_field40	0x004671d0	int_scalar	warm	real	GREEN	0	10		
+follow_target_field40	0x004671d0	int_scalar	warm	ret	RED	10	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=10167 frozen=2	
+is_car_slot_active	0x0040e370	int_scalar	warm	baseline	GREEN	0	10		
+is_car_slot_active	0x0040e370	int_scalar	warm	field_first	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=12403 frozen=2	
+is_car_slot_active	0x0040e370	int_scalar	warm	field_last	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=12543 frozen=2	
+is_car_slot_active	0x0040e370	int_scalar	warm	field_none	CTRL-GREEN	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=11960 frozen=2	
+is_car_slot_active	0x0040e370	int_scalar	warm	null	RED	7	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=11593 frozen=2	
+is_car_slot_active	0x0040e370	int_scalar	warm	real	GREEN	0	10		
+is_car_slot_active	0x0040e370	int_scalar	warm	ret	RED	10	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=11593 frozen=2	
+joint_ptr_6ce81c_get	0x004840d0	int_scalar	warm	baseline	DEGENERATE	0	10		
+joint_ptr_6ce81c_get	0x004840d0	int_scalar	warm	field_first	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=25682 frozen=2	
+joint_ptr_6ce81c_get	0x004840d0	int_scalar	warm	field_last	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=26563 frozen=2	
+joint_ptr_6ce81c_get	0x004840d0	int_scalar	warm	field_none	CTRL-GREEN	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=24984 frozen=2	
+joint_ptr_6ce81c_get	0x004840d0	int_scalar	warm	null	BLIND-DEGENERATE	0	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=24194 frozen=2	
+joint_ptr_6ce81c_get	0x004840d0	int_scalar	warm	real	DEGENERATE	0	10		
+joint_ptr_6ce81c_get	0x004840d0	int_scalar	warm	ret	RED	10	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=24194 frozen=2	
+powerup_table_6885e0_get	0x00455b40	int_scalar	warm	baseline	GREEN	0	10		
+powerup_table_6885e0_get	0x00455b40	int_scalar	warm	field_first	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=11639 frozen=2	
+powerup_table_6885e0_get	0x00455b40	int_scalar	warm	field_last	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=11807 frozen=2	
+powerup_table_6885e0_get	0x00455b40	int_scalar	warm	field_none	CTRL-GREEN	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=11150 frozen=2	
+powerup_table_6885e0_get	0x00455b40	int_scalar	warm	null	RED	1	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=10759 frozen=2	
+powerup_table_6885e0_get	0x00455b40	int_scalar	warm	real	GREEN	0	10		
+powerup_table_6885e0_get	0x00455b40	int_scalar	warm	ret	RED	10	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=10759 frozen=2	
+race_score_timer_get	0x0040b410	int_scalar	warm	baseline	GREEN	0	10		
+race_score_timer_get	0x0040b410	int_scalar	warm	field_first	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=11568 frozen=2	
+race_score_timer_get	0x0040b410	int_scalar	warm	field_last	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=11720 frozen=2	
+race_score_timer_get	0x0040b410	int_scalar	warm	field_none	CTRL-GREEN	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=11470 frozen=2	
+race_score_timer_get	0x0040b410	int_scalar	warm	null	RED	10	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=11151 frozen=2	
+race_score_timer_get	0x0040b410	int_scalar	warm	real	GREEN	0	10		
+race_score_timer_get	0x0040b410	int_scalar	warm	ret	RED	10	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=11151 frozen=2	
+slot_active_thunk	0x00496900	int_scalar	warm	baseline	GREEN	0	10		
+slot_active_thunk	0x00496900	int_scalar	warm	field_first	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=13173 frozen=2	
+slot_active_thunk	0x00496900	int_scalar	warm	field_last	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=13247 frozen=2	
+slot_active_thunk	0x00496900	int_scalar	warm	field_none	CTRL-GREEN	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=12949 frozen=2	
+slot_active_thunk	0x00496900	int_scalar	warm	null	RED	6	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=12543 frozen=2	
+slot_active_thunk	0x00496900	int_scalar	warm	real	GREEN	0	10		
+slot_active_thunk	0x00496900	int_scalar	warm	ret	RED	10	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=12543 frozen=2	
+slot_object_field8	0x0047d150	int_scalar	warm	baseline	RED	1	10		
+slot_object_field8	0x0047d150	int_scalar	warm	field_first	NA	1	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=1679 frozen=2	
+slot_object_field8	0x0047d150	int_scalar	warm	field_last	NA	1	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=1728 frozen=2	
+slot_object_field8	0x0047d150	int_scalar	warm	field_none	CTRL-RED	1	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=26752 frozen=2	
+slot_object_field8	0x0047d150	int_scalar	warm	null	RED	9	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=26563 frozen=2	
+slot_object_field8	0x0047d150	int_scalar	warm	real	RED	1	10		
+slot_object_field8	0x0047d150	int_scalar	warm	ret	RED	10	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=26563 frozen=2	
+subsystem_a_record_key	0x00407580	int_scalar	warm	baseline	GREEN	0	10		
+subsystem_a_record_key	0x00407580	int_scalar	warm	field_first	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=12416 frozen=2	
+subsystem_a_record_key	0x00407580	int_scalar	warm	field_last	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=12550 frozen=2	
+subsystem_a_record_key	0x00407580	int_scalar	warm	field_none	CTRL-GREEN	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=12070 frozen=2	
+subsystem_a_record_key	0x00407580	int_scalar	warm	null	RED	3	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=11807 frozen=2	
+subsystem_a_record_key	0x00407580	int_scalar	warm	real	GREEN	0	10		
+subsystem_a_record_key	0x00407580	int_scalar	warm	ret	RED	10	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=11807 frozen=2	
+table_773030_get	0x00496930	int_scalar	warm	baseline	DEGENERATE	0	10		
+table_773030_get	0x00496930	int_scalar	warm	field_first	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=12101 frozen=2	
+table_773030_get	0x00496930	int_scalar	warm	field_last	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=12492 frozen=2	
+table_773030_get	0x00496930	int_scalar	warm	field_none	CTRL-GREEN	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=12084 frozen=2	
+table_773030_get	0x00496930	int_scalar	warm	null	BLIND-DEGENERATE	0	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=11720 frozen=2	
+table_773030_get	0x00496930	int_scalar	warm	real	DEGENERATE	0	10		
+table_773030_get	0x00496930	int_scalar	warm	ret	RED	10	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=11720 frozen=2	
+tex_stage_cache_get	0x004d6e60	int_scalar	warm	baseline	GREEN	0	10		
+tex_stage_cache_get	0x004d6e60	int_scalar	warm	field_first	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=13830 frozen=2	
+tex_stage_cache_get	0x004d6e60	int_scalar	warm	field_last	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=14027 frozen=2	
+tex_stage_cache_get	0x004d6e60	int_scalar	warm	field_none	CTRL-GREEN	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=13607 frozen=2	
+tex_stage_cache_get	0x004d6e60	int_scalar	warm	null	RED	2	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=13247 frozen=2	
+tex_stage_cache_get	0x004d6e60	int_scalar	warm	real	GREEN	0	10		
+tex_stage_cache_get	0x004d6e60	int_scalar	warm	ret	RED	10	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=13247 frozen=2	
+timer_table_772ffc_get	0x00496920	int_scalar	warm	baseline	GREEN	0	10		
+timer_table_772ffc_get	0x00496920	int_scalar	warm	field_first	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=1851 frozen=2	
+timer_table_772ffc_get	0x00496920	int_scalar	warm	field_last	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=2146 frozen=2	
+timer_table_772ffc_get	0x00496920	int_scalar	warm	field_none	CTRL-GREEN	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=1773 frozen=2	
+timer_table_772ffc_get	0x00496920	int_scalar	warm	null	RED	1	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+timer_table_772ffc_get	0x00496920	int_scalar	warm	real	GREEN	0	10		
+timer_table_772ffc_get	0x00496920	int_scalar	warm	ret	RED	10	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+timer_table_773030_get	0x00496930	int_scalar	warm	baseline	DEGENERATE	0	10		
+timer_table_773030_get	0x00496930	int_scalar	warm	field_first	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=12895 frozen=2	
+timer_table_773030_get	0x00496930	int_scalar	warm	field_last	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=12986 frozen=2	
+timer_table_773030_get	0x00496930	int_scalar	warm	field_none	CTRL-GREEN	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=12878 frozen=2	
+timer_table_773030_get	0x00496930	int_scalar	warm	null	BLIND-DEGENERATE	0	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=12550 frozen=2	
+timer_table_773030_get	0x00496930	int_scalar	warm	real	DEGENERATE	0	10		
+timer_table_773030_get	0x00496930	int_scalar	warm	ret	RED	10	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=12550 frozen=2	
+vehicle_table_4c_ptr_get	0x00426cc0	int_scalar	warm	baseline	GREEN	0	10		
+vehicle_table_4c_ptr_get	0x00426cc0	int_scalar	warm	field_first	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=12868 frozen=2	
+vehicle_table_4c_ptr_get	0x00426cc0	int_scalar	warm	field_last	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=12923 frozen=2	
+vehicle_table_4c_ptr_get	0x00426cc0	int_scalar	warm	field_none	CTRL-GREEN	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=12761 frozen=2	
+vehicle_table_4c_ptr_get	0x00426cc0	int_scalar	warm	null	RED	10	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=12492 frozen=2	
+vehicle_table_4c_ptr_get	0x00426cc0	int_scalar	warm	real	GREEN	0	10		
+vehicle_table_4c_ptr_get	0x00426cc0	int_scalar	warm	ret	RED	10	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=12492 frozen=2	
+get_render_sub_mode	0x0040e350	none	warm	baseline	GREEN	0	10		
+get_render_sub_mode	0x0040e350	none	warm	field_first	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=14553 frozen=2	
+get_render_sub_mode	0x0040e350	none	warm	field_last	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=14562 frozen=2	
+get_render_sub_mode	0x0040e350	none	warm	field_none	CTRL-GREEN	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=14242 frozen=2	
+get_render_sub_mode	0x0040e350	none	warm	null	RED	10	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=14027 frozen=2	
+get_render_sub_mode	0x0040e350	none	warm	real	GREEN	0	10		
+get_render_sub_mode	0x0040e350	none	warm	ret	RED	10	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=14027 frozen=2	
+hud_overlay_float_get	0x00429300	none	warm	baseline	GREEN	0	10		
+hud_overlay_float_get	0x00429300	none	warm	field_first	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=2227 frozen=2	
+hud_overlay_float_get	0x00429300	none	warm	field_last	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=10425 frozen=2	
+hud_overlay_float_get	0x00429300	none	warm	field_none	CTRL-GREEN	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=2170 frozen=2	
+hud_overlay_float_get	0x00429300	none	warm	null	RED	10	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=2146 frozen=2	
+hud_overlay_float_get	0x00429300	none	warm	real	GREEN	0	10		
+hud_overlay_float_get	0x00429300	none	warm	ret	RED	10	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=2146 frozen=2	
+race_float_898980_get	0x00442df0	none	warm	baseline	GREEN	0	10		
+race_float_898980_get	0x00442df0	none	warm	field_first	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=13016 frozen=2	
+race_float_898980_get	0x00442df0	none	warm	field_last	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=13200 frozen=2	
+race_float_898980_get	0x00442df0	none	warm	field_none	CTRL-GREEN	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=12995 frozen=2	
+race_float_898980_get	0x00442df0	none	warm	null	RED	10	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=12986 frozen=2	
+race_float_898980_get	0x00442df0	none	warm	real	GREEN	0	10		
+race_float_898980_get	0x00442df0	none	warm	ret	RED	10	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=12986 frozen=2	
+track_desc_field40_get	0x0041ea80	none	warm	baseline	DEGENERATE	0	10		
+track_desc_field40_get	0x0041ea80	none	warm	field_first	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=13298 frozen=2	
+track_desc_field40_get	0x0041ea80	none	warm	field_last	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=13305 frozen=2	
+track_desc_field40_get	0x0041ea80	none	warm	field_none	CTRL-GREEN	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=13111 frozen=2	
+track_desc_field40_get	0x0041ea80	none	warm	null	BLIND-DEGENERATE	0	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=12923 frozen=2	
+track_desc_field40_get	0x0041ea80	none	warm	real	DEGENERATE	0	10		
+track_desc_field40_get	0x0041ea80	none	warm	ret	RED	10	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=12923 frozen=2	
+physics_body_set_friction	0x0055c4f0	ptr_seed_observe	warm	baseline	GREEN	0	5		
+physics_body_set_friction	0x0055c4f0	ptr_seed_observe	warm	field_first	RED	3	5	calls=5 flips=3 changed=0 flip=0x0e547260 noise=14722 frozen=2	
+physics_body_set_friction	0x0055c4f0	ptr_seed_observe	warm	field_last	RED	3	5	calls=5 flips=3 changed=0 flip=0x0eac6b1b noise=14851 frozen=2	
+physics_body_set_friction	0x0055c4f0	ptr_seed_observe	warm	field_none	CTRL-GREEN	0	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=14697 frozen=2	
+physics_body_set_friction	0x0055c4f0	ptr_seed_observe	warm	null	RED	4	5	calls=0 flips=0 changed=0 flip=0x00000000 noise=14562 frozen=2	
+physics_body_set_friction	0x0055c4f0	ptr_seed_observe	warm	real	GREEN	0	5		
+physics_body_set_friction	0x0055c4f0	ptr_seed_observe	warm	ret	SKIP	0	0		void signature
+physics_body_set_linear_velocity	0x0055c810	ptr_seed_observe	warm	baseline	GREEN	0	4		
+physics_body_set_linear_velocity	0x0055c810	ptr_seed_observe	warm	field_first	RED	4	4	calls=4 flips=4 changed=31 flip=0x116a8caa noise=19376 frozen=2	
+physics_body_set_linear_velocity	0x0055c810	ptr_seed_observe	warm	field_last	RED	4	4	calls=4 flips=4 changed=31 flip=0x1008f4a6 noise=20262 frozen=2	
+physics_body_set_linear_velocity	0x0055c810	ptr_seed_observe	warm	field_none	CTRL-GREEN	0	4	calls=4 flips=0 changed=31 flip=0x00000000 noise=17826 frozen=2	
+physics_body_set_linear_velocity	0x0055c810	ptr_seed_observe	warm	null	RED	4	4	calls=0 flips=0 changed=0 flip=0x00000000 noise=10425 frozen=2	
+physics_body_set_linear_velocity	0x0055c810	ptr_seed_observe	warm	real	GREEN	0	4		
+physics_body_set_linear_velocity	0x0055c810	ptr_seed_observe	warm	ret	BLIND	0	4	calls=4 flips=0 changed=0 flip=0x00000000 noise=10425 frozen=2	
+replay_get_time_at_idx	0x00411530	ptr_seed_observe	warm	baseline	GREEN	0	4		
+replay_get_time_at_idx	0x00411530	ptr_seed_observe	warm	field_first	RED	4	4	calls=4 flips=4 changed=12 flip=0x103a4de0 noise=13622 frozen=2	
+replay_get_time_at_idx	0x00411530	ptr_seed_observe	warm	field_last	RED	4	4	calls=4 flips=4 changed=12 flip=0x047b2bcb noise=13631 frozen=2	
+replay_get_time_at_idx	0x00411530	ptr_seed_observe	warm	field_none	CTRL-GREEN	0	4	calls=4 flips=0 changed=12 flip=0x00000000 noise=13367 frozen=2	
+replay_get_time_at_idx	0x00411530	ptr_seed_observe	warm	null	RED	4	4	calls=0 flips=0 changed=0 flip=0x00000000 noise=13200 frozen=2	
+replay_get_time_at_idx	0x00411530	ptr_seed_observe	warm	real	GREEN	0	4		
+replay_get_time_at_idx	0x00411530	ptr_seed_observe	warm	ret	SKIP	0	0		void signature
+replay_time_format	0x00411350	ptr_seed_observe	warm	baseline	GREEN	0	6		
+replay_time_format	0x00411350	ptr_seed_observe	warm	field_first	RED	6	6	calls=6 flips=6 changed=16 flip=0x10482ea8 noise=13501 frozen=2	
+replay_time_format	0x00411350	ptr_seed_observe	warm	field_last	RED	6	6	calls=6 flips=6 changed=24 flip=0x0fdab863 noise=13607 frozen=2	
+replay_time_format	0x00411350	ptr_seed_observe	warm	field_none	CTRL-GREEN	0	6	calls=6 flips=0 changed=16 flip=0x00000000 noise=13490 frozen=2	
+replay_time_format	0x00411350	ptr_seed_observe	warm	null	RED	6	6	calls=0 flips=0 changed=0 flip=0x00000000 noise=13305 frozen=2	
+replay_time_format	0x00411350	ptr_seed_observe	warm	real	GREEN	0	6		
+replay_time_format	0x00411350	ptr_seed_observe	warm	ret	SKIP	0	0		void signature
+ring_header_init	0x005b1160	ptr_seed_observe	warm	baseline	GREEN	0	6		
+ring_header_init	0x005b1160	ptr_seed_observe	warm	field_first	RED	6	6	calls=6 flips=6 changed=8 flip=0x0eacd250 noise=15111 frozen=2	
+ring_header_init	0x005b1160	ptr_seed_observe	warm	field_last	RED	6	6	calls=6 flips=6 changed=8 flip=0x0fe808f7 noise=15190 frozen=2	
+ring_header_init	0x005b1160	ptr_seed_observe	warm	field_none	CTRL-GREEN	0	6	calls=6 flips=0 changed=8 flip=0x00000000 noise=14995 frozen=2	
+ring_header_init	0x005b1160	ptr_seed_observe	warm	null	RED	6	6	calls=0 flips=0 changed=0 flip=0x00000000 noise=14851 frozen=2	
+ring_header_init	0x005b1160	ptr_seed_observe	warm	real	GREEN	0	6		
+ring_header_init	0x005b1160	ptr_seed_observe	warm	ret	SKIP	0	0		void signature
+plugin_data_dword_a	0x004f8660	struct_call_observe	warm	baseline	GREEN	0	5		
+plugin_data_dword_a	0x004f8660	struct_call_observe	warm	field_first	NA	0	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=21637 frozen=2	
+plugin_data_dword_a	0x004f8660	struct_call_observe	warm	field_last	NA	0	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=22277 frozen=2	
+plugin_data_dword_a	0x004f8660	struct_call_observe	warm	field_none	CTRL-GREEN	0	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=20915 frozen=2	
+plugin_data_dword_a	0x004f8660	struct_call_observe	warm	null	RED	5	5	calls=0 flips=0 changed=0 flip=0x00000000 noise=20262 frozen=2	
+plugin_data_dword_a	0x004f8660	struct_call_observe	warm	real	GREEN	0	5		
+plugin_data_dword_a	0x004f8660	struct_call_observe	warm	ret	RED	5	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=20262 frozen=2	
+plugin_data_dword_b	0x004f8690	struct_call_observe	warm	baseline	GREEN	0	5		
+plugin_data_dword_b	0x004f8690	struct_call_observe	warm	field_first	NA	0	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=13880 frozen=2	
+plugin_data_dword_b	0x004f8690	struct_call_observe	warm	field_last	NA	0	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=14196 frozen=2	
+plugin_data_dword_b	0x004f8690	struct_call_observe	warm	field_none	CTRL-GREEN	0	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=13739 frozen=2	
+plugin_data_dword_b	0x004f8690	struct_call_observe	warm	null	RED	5	5	calls=0 flips=0 changed=0 flip=0x00000000 noise=13631 frozen=2	
+plugin_data_dword_b	0x004f8690	struct_call_observe	warm	real	GREEN	0	5		
+plugin_data_dword_b	0x004f8690	struct_call_observe	warm	ret	RED	5	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=13631 frozen=2	
+raster_plugin_byte_get	0x004cfee0	struct_call_observe	warm	baseline	GREEN	0	6		
+raster_plugin_byte_get	0x004cfee0	struct_call_observe	warm	field_first	NA	0	6	calls=6 flips=0 changed=0 flip=0x00000000 noise=14089 frozen=2	
+raster_plugin_byte_get	0x004cfee0	struct_call_observe	warm	field_last	NA	0	6	calls=6 flips=0 changed=0 flip=0x00000000 noise=14102 frozen=2	
+raster_plugin_byte_get	0x004cfee0	struct_call_observe	warm	field_none	CTRL-GREEN	0	6	calls=6 flips=0 changed=0 flip=0x00000000 noise=13839 frozen=2	
+raster_plugin_byte_get	0x004cfee0	struct_call_observe	warm	null	RED	5	6	calls=0 flips=0 changed=0 flip=0x00000000 noise=13607 frozen=2	
+raster_plugin_byte_get	0x004cfee0	struct_call_observe	warm	real	GREEN	0	6		
+raster_plugin_byte_get	0x004cfee0	struct_call_observe	warm	ret	RED	6	6	calls=6 flips=0 changed=0 flip=0x00000000 noise=13607 frozen=2	
+audio_chain_walk	0x005af200	stub_dispatch_observe	warm	baseline	GREEN	0	3		
+audio_chain_walk	0x005af200	stub_dispatch_observe	warm	field_first	RED	2	3	calls=3 flips=2 changed=0 flip=0x0fe84a88 noise=15543 frozen=2	
+audio_chain_walk	0x005af200	stub_dispatch_observe	warm	field_last	NA	0	3	calls=3 flips=0 changed=0 flip=0x00000000 noise=15804 frozen=2	
+audio_chain_walk	0x005af200	stub_dispatch_observe	warm	field_none	CTRL-GREEN	0	3	calls=3 flips=0 changed=0 flip=0x00000000 noise=15391 frozen=2	
+audio_chain_walk	0x005af200	stub_dispatch_observe	warm	null	RED	3	3	calls=0 flips=0 changed=0 flip=0x00000000 noise=15190 frozen=2	
+audio_chain_walk	0x005af200	stub_dispatch_observe	warm	real	GREEN	0	3		
+audio_chain_walk	0x005af200	stub_dispatch_observe	warm	ret	SKIP	0	0		void signature
+replay_get_size	0x00482900	stub_dispatch_observe	warm	baseline	GREEN	0	10		
+replay_get_size	0x00482900	stub_dispatch_observe	warm	field_first	ERROR	0	0		EXC timeout was reached
+replay_get_size	0x00482900	stub_dispatch_observe	warm	field_last	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=1754 frozen=2	
+replay_get_size	0x00482900	stub_dispatch_observe	warm	field_none	CTRL-GREEN	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=23023 frozen=2	
+replay_get_size	0x00482900	stub_dispatch_observe	warm	import_extra	BLIND	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=1754 frozen=2	
+replay_get_size	0x00482900	stub_dispatch_observe	warm	null	RED	10	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=22277 frozen=2	
+replay_get_size	0x00482900	stub_dispatch_observe	warm	real	GREEN	0	10		
+replay_get_size	0x00482900	stub_dispatch_observe	warm	ret	RED	10	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=22277 frozen=2	
+rw_com_release_thunk	0x004cbb50	stub_dispatch_observe	warm	baseline	GREEN	0	4		
+rw_com_release_thunk	0x004cbb50	stub_dispatch_observe	warm	field_first	BLIND	0	4	calls=4 flips=3 changed=15 flip=0x103dbb7c noise=1936 frozen=2	
+rw_com_release_thunk	0x004cbb50	stub_dispatch_observe	warm	field_last	BLIND	0	4	calls=4 flips=2 changed=13 flip=0x0ffc1d87 noise=2014 frozen=2	
+rw_com_release_thunk	0x004cbb50	stub_dispatch_observe	warm	field_none	ERROR	0	0		EXC timeout was reached
+rw_com_release_thunk	0x004cbb50	stub_dispatch_observe	warm	null	RED	4	4	calls=0 flips=0 changed=0 flip=0x00000000 noise=14196 frozen=2	
+rw_com_release_thunk	0x004cbb50	stub_dispatch_observe	warm	real	GREEN	0	4		
+rw_com_release_thunk	0x004cbb50	stub_dispatch_observe	warm	ret	RED	4	4	calls=4 flips=0 changed=0 flip=0x00000000 noise=14196 frozen=2	
+rws_stream_read	0x00550950	stub_dispatch_observe	warm	baseline	GREEN	0	5		
+rws_stream_read	0x00550950	stub_dispatch_observe	warm	field_first	NA	0	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=14388 frozen=2	
+rws_stream_read	0x00550950	stub_dispatch_observe	warm	field_last	ERROR	0	0		EXC timeout was reached
+rws_stream_read	0x00550950	stub_dispatch_observe	warm	field_none	CTRL-GREEN	0	5	calls=5 flips=0 changed=1 flip=0x00000000 noise=14244 frozen=2	
+rws_stream_read	0x00550950	stub_dispatch_observe	warm	null	RED	5	5	calls=0 flips=0 changed=0 flip=0x00000000 noise=14102 frozen=2	
+rws_stream_read	0x00550950	stub_dispatch_observe	warm	real	GREEN	0	5		
+rws_stream_read	0x00550950	stub_dispatch_observe	warm	ret	RED	5	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=14102 frozen=2	
+ai_filename_build	0x00423480	void_write_observe	warm	baseline	GREEN	0	10		
+ai_filename_build	0x00423480	void_write_observe	warm	field_first	RED	10	10	calls=10 flips=10 changed=4 flip=0x00644110 noise=15915 frozen=2	
+ai_filename_build	0x00423480	void_write_observe	warm	field_last	RED	10	10	calls=10 flips=10 changed=4 flip=0x00644113 noise=16035 frozen=2	
+ai_filename_build	0x00423480	void_write_observe	warm	field_none	CTRL-GREEN	0	10	calls=10 flips=0 changed=4 flip=0x00000000 noise=15841 frozen=2	
+ai_filename_build	0x00423480	void_write_observe	warm	null	RED	10	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=15804 frozen=2	
+ai_filename_build	0x00423480	void_write_observe	warm	real	GREEN	0	10		
+ai_filename_build	0x00423480	void_write_observe	warm	ret	BLIND	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=15804 frozen=2	
+hud_const_table_init_sweep	0x0041c010	void_write_observe	warm	baseline	GREEN	0	10		
+hud_const_table_init_sweep	0x0041c010	void_write_observe	warm	field_first	RED	10	10	calls=10 flips=10 changed=4 flip=0x005f334c noise=2212 frozen=2	
+hud_const_table_init_sweep	0x0041c010	void_write_observe	warm	field_last	RED	10	10	calls=10 flips=10 changed=4 flip=0x005f334f noise=2269 frozen=2	
+hud_const_table_init_sweep	0x0041c010	void_write_observe	warm	field_none	CTRL-GREEN	0	10	calls=10 flips=0 changed=4 flip=0x00000000 noise=1926 frozen=2	
+hud_const_table_init_sweep	0x0041c010	void_write_observe	warm	null	RED	10	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=1754 frozen=2	
+hud_const_table_init_sweep	0x0041c010	void_write_observe	warm	real	GREEN	0	10		
+hud_const_table_init_sweep	0x0041c010	void_write_observe	warm	ret	SKIP	0	0		void signature
+hud_slide_billboard_tick	0x0041d930	void_write_observe	warm	baseline	GREEN	0	10		
+hud_slide_billboard_tick	0x0041d930	void_write_observe	warm	field_first	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=2222 frozen=2	
+hud_slide_billboard_tick	0x0041d930	void_write_observe	warm	field_last	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=2252 frozen=2	
+hud_slide_billboard_tick	0x0041d930	void_write_observe	warm	field_none	CTRL-GREEN	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=2105 frozen=2	
+hud_slide_billboard_tick	0x0041d930	void_write_observe	warm	null	RED	10	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=2014 frozen=2	
+hud_slide_billboard_tick	0x0041d930	void_write_observe	warm	real	GREEN	0	10		
+hud_slide_billboard_tick	0x0041d930	void_write_observe	warm	ret	SKIP	0	0		void signature
+sa2_ai_last_place_frustration	0x00415020	void_write_observe	warm	baseline	GREEN	0	10		
+sa2_ai_last_place_frustration	0x00415020	void_write_observe	warm	field_first	RED	10	10	calls=10 flips=10 changed=4 flip=0x0089a4e8 noise=1793 frozen=2	
+sa2_ai_last_place_frustration	0x00415020	void_write_observe	warm	field_last	RED	10	10	calls=10 flips=10 changed=4 flip=0x0089a4eb noise=1839 frozen=2	
+sa2_ai_last_place_frustration	0x00415020	void_write_observe	warm	field_none	CTRL-GREEN	0	10	calls=10 flips=0 changed=4 flip=0x00000000 noise=1662 frozen=2	
+sa2_ai_last_place_frustration	0x00415020	void_write_observe	warm	null	RED	10	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+sa2_ai_last_place_frustration	0x00415020	void_write_observe	warm	real	GREEN	0	10		
+sa2_ai_last_place_frustration	0x00415020	void_write_observe	warm	ret	BLIND	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+sa2_car_event_trigger	0x004922e0	void_write_observe	warm	baseline	GREEN	0	10		
+sa2_car_event_trigger	0x004922e0	void_write_observe	warm	field_first	NA	1	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=16165 frozen=2	
+sa2_car_event_trigger	0x004922e0	void_write_observe	warm	field_last	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=16459 frozen=2	
+sa2_car_event_trigger	0x004922e0	void_write_observe	warm	field_none	CTRL-RED	1	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=16154 frozen=2	
+sa2_car_event_trigger	0x004922e0	void_write_observe	warm	null	BLIND	0	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=16035 frozen=2	
+sa2_car_event_trigger	0x004922e0	void_write_observe	warm	real	GREEN	0	10		
+sa2_car_event_trigger	0x004922e0	void_write_observe	warm	ret	SKIP	0	0		void signature
+sa2_cup_spin_speed_and_color	0x00401340	void_write_observe	warm	baseline	GREEN	0	10		
+sa2_cup_spin_speed_and_color	0x00401340	void_write_observe	warm	field_first	RED	10	10	calls=10 flips=10 changed=4 flip=0x00636574 noise=2308 frozen=2	
+sa2_cup_spin_speed_and_color	0x00401340	void_write_observe	warm	field_last	RED	10	10	calls=10 flips=10 changed=4 flip=0x00636577 noise=12288 frozen=2	
+sa2_cup_spin_speed_and_color	0x00401340	void_write_observe	warm	field_none	CTRL-GREEN	0	10	calls=10 flips=0 changed=4 flip=0x00000000 noise=2283 frozen=2	
+sa2_cup_spin_speed_and_color	0x00401340	void_write_observe	warm	null	RED	10	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=2269 frozen=2	
+sa2_cup_spin_speed_and_color	0x00401340	void_write_observe	warm	real	GREEN	0	10		
+sa2_cup_spin_speed_and_color	0x00401340	void_write_observe	warm	ret	SKIP	0	0		void signature
+sa2_particle_3rd_emitter_submit	0x00487d00	void_write_observe	warm	baseline	GREEN	0	10		
+sa2_particle_3rd_emitter_submit	0x00487d00	void_write_observe	warm	field_first	BLIND	0	10	calls=10 flips=10 changed=2 flip=0x006924f4 noise=6656 frozen=2	
+sa2_particle_3rd_emitter_submit	0x00487d00	void_write_observe	warm	field_last	BLIND	0	10	calls=10 flips=10 changed=2 flip=0x00703074 noise=10734 frozen=2	
+sa2_particle_3rd_emitter_submit	0x00487d00	void_write_observe	warm	field_none	CTRL-GREEN	0	10	calls=10 flips=0 changed=2 flip=0x00000000 noise=2305 frozen=2	
+sa2_particle_3rd_emitter_submit	0x00487d00	void_write_observe	warm	null	RED	10	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=2252 frozen=2	
+sa2_particle_3rd_emitter_submit	0x00487d00	void_write_observe	warm	real	GREEN	0	10		
+sa2_particle_3rd_emitter_submit	0x00487d00	void_write_observe	warm	ret	SKIP	0	0		void signature
+sa2_race_finalize_once	0x004331a0	void_write_observe	warm	baseline	GREEN	0	10		
+sa2_race_finalize_once	0x004331a0	void_write_observe	warm	field_first	RED	10	10	calls=10 flips=10 changed=9 flip=0x0067ebb0 noise=1942 frozen=2	
+sa2_race_finalize_once	0x004331a0	void_write_observe	warm	field_last	BLIND	0	10	calls=10 flips=10 changed=9 flip=0x0089a228 noise=2005 frozen=2	
+sa2_race_finalize_once	0x004331a0	void_write_observe	warm	field_none	CTRL-GREEN	0	10	calls=10 flips=0 changed=9 flip=0x00000000 noise=1929 frozen=2	
+sa2_race_finalize_once	0x004331a0	void_write_observe	warm	null	RED	10	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=1839 frozen=2	
+sa2_race_finalize_once	0x004331a0	void_write_observe	warm	real	GREEN	0	10		
+sa2_race_finalize_once	0x004331a0	void_write_observe	warm	ret	SKIP	0	0		void signature
+sa2_vehicle_damage_accum	0x00422b50	void_write_observe	warm	baseline	GREEN	0	10		
+sa2_vehicle_damage_accum	0x00422b50	void_write_observe	warm	field_first	RED	10	10	calls=10 flips=10 changed=2 flip=0x008995bc noise=16652 frozen=2	
+sa2_vehicle_damage_accum	0x00422b50	void_write_observe	warm	field_last	RED	10	10	calls=10 flips=10 changed=2 flip=0x008995bd noise=16680 frozen=2	
+sa2_vehicle_damage_accum	0x00422b50	void_write_observe	warm	field_none	CTRL-GREEN	0	10	calls=10 flips=0 changed=2 flip=0x00000000 noise=16628 frozen=2	
+sa2_vehicle_damage_accum	0x00422b50	void_write_observe	warm	null	RED	10	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=16459 frozen=2	
+sa2_vehicle_damage_accum	0x00422b50	void_write_observe	warm	real	GREEN	0	10		
+sa2_vehicle_damage_accum	0x00422b50	void_write_observe	warm	ret	SKIP	0	0		void signature
