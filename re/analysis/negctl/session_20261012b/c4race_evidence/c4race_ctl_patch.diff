@@ -1,0 +1,35 @@
+diff --git a/mashedmod/src/mashed_re/Track/CourseLoadDispatch.cpp b/mashedmod/src/mashed_re/Track/CourseLoadDispatch.cpp
+index 4734bba5..de3e77e3 100644
+--- a/mashedmod/src/mashed_re/Track/CourseLoadDispatch.cpp
++++ b/mashedmod/src/mashed_re/Track/CourseLoadDispatch.cpp
+@@ -75,7 +75,7 @@ RH_ScopedInstall(Track_LoadByIndex_40d020, 0x0040d020);
+ // 0x0040d440  Course::LoadCurrent — apply the selected course value via
+ // FUN_0040d270(PTR_PTR_005f2770, DAT_0063ba7c), then commit selected->loaded.
+ extern "C" __declspec(dllexport) void __cdecl Course_LoadCurrent_40d440(void) {
+-    call_0040d270(g_005f2770(), g_0063ba7c());  // cited 0x0040d440
++    call_0040d270(g_005f2770(), g_0063ba78());  // C4RACE CONTROL: injected defect, arg 2 from 0x0063ba78
+     g_0063ba78() = g_0063ba7c();                // DAT_0063ba78 = DAT_0063ba7c
+ }
+ RH_ScopedInstall(Course_LoadCurrent_40d440, 0x0040d440);
+diff --git a/mashedmod/src/mashed_re/Util/CameraEntryDispatch.cpp b/mashedmod/src/mashed_re/Util/CameraEntryDispatch.cpp
+index c66d4b61..9c77c016 100644
+--- a/mashedmod/src/mashed_re/Util/CameraEntryDispatch.cpp
++++ b/mashedmod/src/mashed_re/Util/CameraEntryDispatch.cpp
+@@ -60,7 +60,8 @@ extern "C" __declspec(dllexport) __declspec(naked) std::uint32_t __cdecl CameraE
+         jle  L_END                          // 0x004464ca
+         push esi                            // 0x004464cc
+         push edi                            // 0x004464cd
+-        mov  edi, dword ptr [esp+10h]       // 0x004464ce  param_1
++        push ebp                            // C4RACE CONTROL: old 16-byte frame
++        mov  edi, dword ptr [esp+14h]       // C4RACE CONTROL
+         mov  esi, 8964C0h                   // 0x004464d2  entry array base
+     L_LOOP:
+         mov  eax, dword ptr [esi+4]         // 0x004464d7  type
+@@ -90,6 +91,7 @@ extern "C" __declspec(dllexport) __declspec(naked) std::uint32_t __cdecl CameraE
+         add  esi, 0D8h                      // 0x0044650e  stride 0xd8
+         cmp  ebx, eax                       // 0x00446514
+         jl   L_LOOP                         // 0x00446516
++        pop  ebp                            // C4RACE CONTROL
+         pop  edi                            // 0x00446518
+         pop  esi                            // 0x00446519
+     L_END:

@@ -9,6 +9,12 @@
 #   --row 41db80  Sub0041db80_HudThresholdDispatch. Only call site 0x0040e0ee (jmp) in the same
 #                 dispatcher, reached in DAT_0063ba8c in {5,6} for every mode except 0xb
 #                 (0x0040e0e5). Scenario: statenav Quick Battle navigation, then the race start.
+#   --row 40d440  Course::LoadCurrent (c4race 2026-10-12). Once per course load, from 0x00492a67.
+#   --row 4464c0  CameraEntry::DispatchAll. ~60/s in a race plus the 100-call FUN_00448700 loop.
+#                 No Interceptor on the game thread (native counter stub + JS-thread poll).
+#   --row 41c2d0  FUN_0041c2d0, feasibility counters only (rule 5/10 needed, see c4race_RESULT.md).
+#   --route attract|qb|cup selects the scenario for these rows. The attract route installs no input
+#   hook (row 403160 also runs without it now; it never sent input).
 #
 # Arms (one fresh MASHED per run, own PID only), as c4_detect_e_scenario.py:
 #   off   deployed .asi, MASHED_HOOK_ONLY=__none__            -> stock body, instrumented at its entry
@@ -150,10 +156,94 @@ function attach4295a0(entry){
       if (ST.ev.length<200 && (ST.calls<=5 || ST.calls%500===0)) ST.ev.push({n:ST.calls, y:c.y, k:k, raw:c.c, s:c.s}); }});
 }
 
+// ---- row 40d440 (Course::LoadCurrent) ------------------------------------------------
+// Bytes 0x0040d440..0x0040d461: FUN_0040d270([0x005f2770], [0x0063ba7c]); [0x0063ba78] = [0x0063ba7c].
+// Per call: selected/loaded/obj at entry, every FUN_0040d270 call made while the body runs (args),
+// [0x0063ba78] after the body, and the body's return address (the game caller).
+function attach40d440(entry){
+  Interceptor.attach(abs(0x0040d270),{ onEnter(){ ST.tx++; const sp=this.context.esp;
+      const a1=sp.add(4).readU32(), a2=sp.add(8).readS32(); if (IN) IN.f.push([a1,a2]); else ST.outside=(ST.outside||0)+1; }});
+  Interceptor.attach(entry,{ onEnter(){ ST.enter++;
+      IN={f:[], sel:s32(0x0063ba7c), pre:s32(0x0063ba78), obj:u32(0x005f2770), ret:(this.context.esp.readU32()-DELTA)>>>0, s:snap()}; },
+    onLeave(){ const c=IN; IN=null; ST.calls++; if(!c) return; const post=s32(0x0063ba78);
+      const fs=c.f.map(function(x){ return 'F('+(x[0]===c.obj?'OBJ':x[0].toString(16))+','+(x[1]===c.sel?'SEL':('!'+x[1]))+')'; }).join(' ');
+      const k='sel='+c.sel+' pre78='+c.pre+' ret='+c.ret.toString(16)+' '+fs+' post78='+(post===c.sel?'SEL':('!'+post));
+      addKey(k); if (ST.ev.length<50) ST.ev.push({n:ST.calls, k:k, obj:c.obj.toString(16), s:c.s}); }});
+}
+
+// ---- row 4464c0 (CameraEntry::DispatchAll) -------------------------------------------
+// No Interceptor on the game thread: the old defect (a2-camera_RESULT.md) is a 4-byte frame shift
+// that changes which uninitialised stack dword the callees copy into the entry's RwMatrix pad slots
+// (+0x68/+0x78/+0x88), and an Interceptor frame writes below ESP, i.e. exactly into that garbage.
+// Call count: a native stub at the entry (the E9 target on the port arm, 0x004464c0 itself on the
+// original arms) that only reads [esp] and increments globals, then runs the relocated first
+// instruction (mov eax,[0x00898994]) and jumps back. Observable: a JS-thread poll of the entry
+// array (count 0x00898994, type +4, pads classified).
+let CNT=null, STK=null, MODS=[], STUB=null;   // keep Memory.alloc results referenced (GC frees them)
+function installCounter(tgt){
+  const ins=Instruction.parse(tgt); const b=tgt.readByteArray(ins.size); const by=new Uint8Array(b);
+  // original: A1 94 89 89 00 (5 bytes). The naked port assembles with a ds: prefix: 3E A1 ... (6 bytes).
+  const pre=(ins.size===6 && by[0]===0x3e) ? 1 : 0;
+  if (!(ins.size===5+pre && by[pre]===0xa1 && tgt.add(1+pre).readU32()===((0x00898994+DELTA)>>>0)))
+    return {ok:false, why:'unexpected first instruction '+ins.toString()+' size '+ins.size};
+  CNT=Memory.alloc(64); for (let i=0;i<16;i++) CNT.add(i*4).writeU32(0);
+  const stub=Memory.alloc(Process.pageSize); STUB=stub;
+  Memory.patchCode(stub, 64, function(code){ const w=new X86Writer(code, {pc:stub});
+    w.putBytes([0x8b,0x04,0x24]);                       // mov eax,[esp]
+    w.putBytes([0xa3]); w.putBytes(u32b(CNT.add(4)));   // mov [CNT+4],eax   (last return address)
+    w.putBytes([0x3d]); w.putBytes(u32b(abs(0x00448710)));  // cmp eax,0x00448710 (FUN_00448700 loop)
+    w.putBytes([0x75,0x06]);                            // jne +6
+    w.putBytes([0xff,0x05]); w.putBytes(u32b(CNT.add(8)));  // inc [CNT+8]  (seed-loop calls)
+    w.putBytes([0xff,0x05]); w.putBytes(u32b(CNT));     // inc [CNT]    (all calls)
+    w.putBytes(Array.from(by));                         // relocated mov eax,[0x00898994]
+    w.putJmpAddress(tgt.add(ins.size)); w.flush(); });
+  Memory.patchCode(tgt, 5, function(code){ const w=new X86Writer(code, {pc:tgt}); w.putJmpAddress(stub); w.flush(); });
+  return {ok:true, stub:stub.toString()};
+}
+function u32b(p){ const v=p.toUInt32(); return [v&0xff,(v>>>8)&0xff,(v>>>16)&0xff,(v>>>24)&0xff]; }
+function padClass(v){
+  if ((v>>>0) < 0x10000) return 'I'+v;
+  const p=ptr(v>>>0);
+  if (STK && p.compare(STK.base)>=0 && p.compare(STK.base.add(STK.size))<0) return 'S-'+STK.base.add(STK.size).sub(p).toUInt32().toString(16);
+  const W0=abs(0x008964c0), W1=abs(0x00898998);
+  if (p.compare(W0)>=0 && p.compare(W1)<0){ const o=p.sub(W0).toUInt32(); return 'E'+Math.floor(o/0xd8)+'+'+(o%0xd8).toString(16); }
+  for (const m of MODS) if (p.compare(m.base)>=0 && p.compare(m.base.add(m.size))<0) return m.name+'+'+p.sub(m.base).toUInt32().toString(16);
+  const e=(v>>>23)&0xff; if (e>=0x60 && e<=0x9f) return 'F';
+  return 'X';
+}
+let POLL=null;
+function startPoll(){
+  MODS=Process.enumerateModules().map(function(m){ return {name:m.name, base:m.base, size:m.size}; });
+  try { const th=Process.enumerateThreads()[0]; const r=Process.findRangeByAddress(th.context.esp); if (r) STK={base:r.base, size:r.size, tid:th.id}; } catch(e){}
+  ST.raw={};
+  POLL=setInterval(function(){
+    let n; try { n=s32(0x00898994); } catch(e){ return; }
+    const c=CNT ? CNT.readU32() : 0; ST.calls=c; ST.seedCalls=CNT?CNT.add(8).readU32():0; ST.lastRet=CNT?((CNT.add(4).readU32()-DELTA)>>>0).toString(16):null;
+    if (c===0 || n<=0) { ST.idle=(ST.idle||0)+1; return; }
+    const m=Math.min(n,44); const parts=[];
+    for (let i=0;i<m;i++){ const e=abs(0x008964c0+i*0xd8); const t=e.add(4).readU32();
+      const pv=[e.add(0x68).readU32(), e.add(0x78).readU32(), e.add(0x88).readU32()];
+      parts.push(t+':'+pv.map(padClass).join(','));
+      for (let j=0;j<3;j++){ const rk='e'+i+'+'+['68','78','88'][j]; const a=ST.raw[rk]||(ST.raw[rk]=[]); const h=pv[j].toString(16); if (a.length<6 && a.indexOf(h)<0) a.push(h); } }
+    addKey('n='+n+' '+parts.join(' '));
+    ST.polls=(ST.polls||0)+1;
+  }, 50);
+}
+
+// ---- row 41c2d0 (feasibility only: is the body reached on a stock-save route?) ----------
+function attach41c2d0(entry){
+  Interceptor.attach(abs(0x0041a3e0),{ onEnter(){ ST.m10=(ST.m10||0)+1; if (u32(0x0063c628)!==0) ST.m10f=(ST.m10f||0)+1; }});
+  Interceptor.attach(abs(0x0041c300),{ onEnter(){ ST.m5=(ST.m5||0)+1; if (u32(0x0063cdbc)!==0) ST.m5f=(ST.m5f||0)+1; }});
+  Interceptor.attach(entry,{ onEnter(){ ST.enter++; ST.calls++; if (ST.ev.length<20) ST.ev.push({n:ST.calls, s:snap()}); }});
+  // key = game mode 0x0067e9fc / rule 0x007f0fd0 / state 0x0063ba8c / flags 0x0063c628,0x0063cdbc
+  ST.rules={}; setInterval(function(){ try{ const k=s32(0x0067e9fc)+'/'+s32(0x007f0fd0)+'/'+s32(0x0063ba8c)+'/f'+u32(0x0063c628)+','+u32(0x0063cdbc);
+    ST.rules[k]=(ST.rules[k]||0)+1; }catch(e){} }, 250);
+}
+
 rpc.exports={
-  init:function(row){ ROW=row; const m=Process.findModuleByName('MASHED.exe')||Process.enumerateModules()[0];
+  init:function(row, nav){ ROW=row; const m=Process.findModuleByName('MASHED.exe')||Process.enumerateModules()[0];
     DELTA=m.base.toUInt32()-IMG;
-    Interceptor.attach(abs(0x00497310),{ onEnter(a){const sp=this.context.esp;this.p=sp.add(4).readS32();this.c=sp.add(8).readS32();},
+    if (nav) Interceptor.attach(abs(0x00497310),{ onEnter(a){const sp=this.context.esp;this.p=sp.add(4).readS32();this.c=sp.add(8).readS32();},
       onLeave(ret){ if (this.p===0 && this.c===navCtrl && Date.now()<navUntil) ret.replace(ptr(0xff)); }});
     return DELTA; },
   arm:function(mode, rva){
@@ -162,8 +252,13 @@ rpc.exports={
     else { if (b!==0xe9) return {ok:false, why:'no E9', jmp:b}; tgt=a.add(5).add(a.add(1).readS32()); }
     const mm=Process.findModuleByAddress(tgt);
     ST.entry=tgt.toString()+(mm?(' '+mm.name+'+0x'+tgt.sub(mm.base).toUInt32().toString(16)):'');
-    if (ROW==='403160') { inner403160(); attach403160(tgt); } else if (ROW==='4295a0') attach4295a0(tgt); else attach41db80(tgt);
-    return {ok:true, entry:ST.entry, jmp:b, dword:a.readU32().toString(16)}; },
+    const dword=a.readU32().toString(16); let extra=null;
+    if (ROW==='403160') { inner403160(); attach403160(tgt); } else if (ROW==='4295a0') attach4295a0(tgt);
+    else if (ROW==='40d440') attach40d440(tgt);
+    else if (ROW==='4464c0') { extra=installCounter(tgt); if (!extra.ok) return {ok:false, why:extra.why}; startPoll(); }
+    else if (ROW==='41c2d0') attach41c2d0(tgt);
+    else attach41db80(tgt);
+    return {ok:true, entry:ST.entry, jmp:b, dword:dword, counter:extra}; },
   loadctl:function(path){ const m=Module.load(path); const f=m.findExportByName('InjectHooks');
     if (!f) return {ok:false, why:'no InjectHooks'}; new NativeFunction(f,'void',[])();
     return {ok:true, base:m.base.toString(), name:m.name, path:m.path}; },
@@ -200,8 +295,15 @@ def sha256(p):
 def main():
     av = sys.argv
     def opt(f, d): return av[av.index(f) + 1] if f in av else d
-    row = opt("--row", "403160"); assert row in ("403160", "41db80", "4295a0")
-    rva = {"403160": 0x00403160, "41db80": 0x0041db80, "4295a0": 0x004295a0}[row]
+    row = opt("--row", "403160"); assert row in ("403160", "41db80", "4295a0", "40d440", "4464c0", "41c2d0")
+    rva = {"403160": 0x00403160, "41db80": 0x0041db80, "4295a0": 0x004295a0,
+           "40d440": 0x0040d440, "4464c0": 0x004464c0, "41c2d0": 0x0041c2d0}[row]
+    # --route for the c4race rows: 'attract' = boot and touch nothing (the title idle timer starts the
+    # attract demo race, as row 403160), 'qb' = the statenav Quick Battle route of row 41db80, with
+    # optional --track-presses c,c,... sent on the track-select screen before the start.
+    route = opt("--route", {"403160": "attract", "41db80": "qb", "4295a0": "cup"}.get(row, "attract"))
+    assert route in ("attract", "qb", "cup")
+    track_presses = [int(x) for x in opt("--track-presses", "").split(",") if x.strip()]
     # 4295a0 runs from an install COPY (--root <copy>\original) whose gamesave.bin opens the
     # Silver-cup launch gates; never original\.
     exe, cwd = EXE, ORIG
@@ -226,7 +328,8 @@ def main():
     else:
         assert ctl_asi and Path(ctl_asi).exists(), "--ctl-asi required"
         env["MASHED_RE_NO_AUTO_HOOK"] = "1"; env["MASHED_HOOK_ONLY"] = hk
-    rec = {"row": row, "rva": hk, "arm": arm, "tag": tag, "exe": str(exe), "exe_sha256": sha256(exe),
+    rec = {"row": row, "rva": hk, "arm": arm, "tag": tag, "route": route, "track_presses": track_presses,
+           "exe": str(exe), "exe_sha256": sha256(exe),
            "deployed_asi_sha256": sha256(ORIG / "mashed_re_dev.asi"),
            "loaded_dir_asi_sha256": sha256(Path(cwd) / "mashed_re_dev.asi") if (Path(cwd) / "mashed_re_dev.asi").exists() else None,
            "save_sha256": sha256(Path(cwd) / "gamesave.bin"),
@@ -251,7 +354,7 @@ def main():
             print("  agent err:", m.get("description"), flush=True); rec["log"].append("agent err: " + str(m.get("description")))
     scr = sess.create_script(AGENT); scr.on("message", on_msg); scr.load()
     X = scr.exports_sync
-    X.init(row)
+    X.init(row, route != "attract")   # the attract route installs no input hook at all
     dev.resume(pid)
     nav = Nav(scr, pid)
     verdict = "INCOMPLETE"
@@ -270,13 +373,15 @@ def main():
         rec["arm_result"] = r; log(f"  arm: {r}")
         if not r or not r.get("ok"):
             verdict = "ARM-FAILED"; raise SystemExit
-        if row == "41db80":
+        if route == "qb":
             # statenav.py Quick Battle sequence (as c4_detect_e_scenario.py)
             nav.confirm_to_depth(2); log(f"  after GTS: depth={nav.depth()} sel={X.sel()}")
             nav.advance_past_load_modal(3); log(f"  single player: depth={nav.depth()} sel={X.sel()}")
             nav.press(12); log(f"  mode sel: sel={X.sel()}")
             nav.confirm_to_depth(4, tries=4); log(f"  colour-select: depth={nav.depth()} sel={X.sel()}")
             nav.confirm_to_depth(5, tries=4); log(f"  track-select: depth={nav.depth()} sel={X.sel()}")
+            for c in track_presses:
+                nav.press(c); time.sleep(0.4); log(f"  track press {c}: sel={X.sel()} state={X.state()}")
             nav.press(4); time.sleep(1.5)
             for k in range(5):
                 if nav.phase() != 3: break
@@ -300,17 +405,20 @@ def main():
         # Wait for the body's first game call, then observe `secs` more seconds (race rows pulse
         # control 4 at 1 Hz only while 0x00771968 == 3, the scenario_launch in-race recipe).
         t0 = time.time(); first = None; tp = 0; tl = 0; lastn = 0; t_last_change = time.time()
-        limit = 150 if row in ("403160", "4295a0") else 120
+        limit = 150 if route in ("attract", "cup") else 120
+        quiet = 15 if row != "40d440" else 1e9   # 40d440 runs once per course load: observe `secs` regardless
         while nav.alive():
-            s = X.state(); now = time.time()
-            if row == "41db80" and s.get("sph") == 3 and now - tp > 1.0: X.press(4, 200); tp = now
+            try: s = X.state()
+            except frida.InvalidOperationError: log("   script destroyed (process gone)"); break
+            now = time.time()
+            if route == "qb" and s.get("sph") == 3 and now - tp > 1.0: X.press(4, 200); tp = now
             if s["calls"] != lastn: lastn = s["calls"]; t_last_change = now
             if first is None and s["calls"] > 0:
                 first = now; rec["first_call_state"] = s; log(f"  >>> first game call: {s}")
             if now - tl > 5: tl = now; rec["samples"].append(s); log(f"   t+{int(now-t0)}s {s}")
             if first is None and now - t0 > limit: break
             if first is not None and now - first > secs: break
-            if first is not None and now - t_last_change > 15: log("   no new calls for 15 s"); break
+            if first is not None and now - t_last_change > quiet: log(f"   no new calls for {quiet} s"); break
             time.sleep(0.25)
         if first is None:
             verdict = "NOT-REACHED"; raise SystemExit

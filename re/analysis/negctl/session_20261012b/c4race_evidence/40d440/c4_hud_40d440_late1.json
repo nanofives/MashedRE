@@ -1,0 +1,223 @@
+{
+ "row": "40d440",
+ "rva": "0x0040d440",
+ "arm": "late",
+ "tag": "40d440_late1",
+ "route": "qb",
+ "track_presses": [],
+ "exe": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\c4race\\original\\MASHED.exe",
+ "exe_sha256": "B9977DAB70607720CF58BC7832937C203B1E0B33FF5896DA586BAF56AA79FE87",
+ "deployed_asi_sha256": "9B3BD4730F49D039F331C732B6BDA4E3980C007F79A0D006C92CDDBF82C99F7F",
+ "loaded_dir_asi_sha256": "9B3BD4730F49D039F331C732B6BDA4E3980C007F79A0D006C92CDDBF82C99F7F",
+ "save_sha256": "BD18788182B2343E5203EB983FDDD8BD947A5F3385E9FCAA46A152A9EC002A70",
+ "ctl_asi": "C:\\Users\\maria\\AppData\\Local\\Temp\\claude\\C--Users-maria-Desktop-Proyectos-Mashed\\1193cb97-beb1-46c5-bc45-c2e131660bb1\\scratchpad\\c4race_fix.asi",
+ "ctl_asi_sha256": "4EA89BB02759985FC8E0DE2D118B81D9AC2721BD0EFF9708013F9F46E8E92427",
+ "env": {
+  "MASHED_HOOK_ONLY": "0x0040d440",
+  "MASHED_RE_NO_AUTO_HOOK": "1"
+ },
+ "log": [
+  "  spawned pid=18536 row=40d440 arm=late",
+  "  title: depth=1 phase=3",
+  "  witness before attach: {'b0': 161, 'dword': '63ba7ca1', 'tgt': None, 'mod': None}",
+  "  ctl load: {'ok': True, 'base': '0x67cf0000', 'name': 'c4race_fix.asi', 'path': 'C:\\\\Users\\\\maria\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-maria-Desktop-Proyectos-Mashed\\\\1193cb97-beb1-46c5-bc45-c2e131660bb1\\\\scratchpad\\\\c4race_fix.asi'}",
+  "  witness after load, before attach: {'b0': 233, 'dword': '96331be9', 'tgt': '0x67d70760', 'mod': {'name': 'c4race_fix.asi', 'path': 'C:\\\\Users\\\\maria\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-maria-Desktop-Proyectos-Mashed\\\\1193cb97-beb1-46c5-bc45-c2e131660bb1\\\\scratchpad\\\\c4race_fix.asi', 'base': '0x67cf0000', 'off': '0x80760'}}",
+  "  arm: {'ok': True, 'entry': '0x67d70760 c4race_fix.asi+0x80760', 'jmp': 233, 'dword': '96331be9', 'counter': None}",
+  "  after GTS: depth=2 sel=0",
+  "  single player: depth=3 sel=0",
+  "  mode sel: sel=1",
+  "  colour-select: depth=4 sel=0",
+  "  track-select: depth=5 sel=0",
+  "  start-attempt 0: depth=6 phase=0",
+  "   t+0s {'mode': 10, 'st': 0, 'rule': 0, 'sph': 2, 'ph': 0, 'd': 6, 'cnt': 0, 't8': 0.8999993801116943, 'f184': 11, 'f17c': 0, 'ai': 0, 'fcc': 0, 'y': 0, 'enter': 1, 'tx': 1, 'calls': 0, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 0}",
+  "  >>> first game call: {'mode': 10, 'st': 3, 'rule': 0, 'sph': 3, 'ph': 0, 'd': 6, 'cnt': 0.0833333283662796, 't8': 0.8999993801116943, 'f184': 11, 'f17c': 0, 'ai': 0, 'fcc': 0, 'y': 0, 'enter': 1, 'tx': 1, 'calls': 1, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 1}",
+  "   t+5s {'mode': 10, 'st': 6, 'rule': 0, 'sph': 3, 'ph': 0, 'd': 6, 'cnt': 4.166665077209473, 't8': 0.8999993801116943, 'f184': 11, 'f17c': 0, 'ai': 0, 'fcc': 0, 'y': 0, 'enter': 1, 'tx': 1, 'calls': 1, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 1}",
+  "   t+10s {'mode': 10, 'st': 6, 'rule': 0, 'sph': 3, 'ph': 0, 'd': 6, 'cnt': 9.200031280517578, 't8': 0.8999993801116943, 'f184': 11, 'f17c': 0, 'ai': 0, 'fcc': 0, 'y': 0, 'enter': 1, 'tx': 1, 'calls': 1, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 1}"
+ ],
+ "crash": [],
+ "samples": [
+  {
+   "mode": 10,
+   "st": 0,
+   "rule": 0,
+   "sph": 2,
+   "ph": 0,
+   "d": 6,
+   "cnt": 0,
+   "t8": 0.8999993801116943,
+   "f184": 11,
+   "f17c": 0,
+   "ai": 0,
+   "fcc": 0,
+   "y": 0,
+   "enter": 1,
+   "tx": 1,
+   "calls": 0,
+   "mmOrig": 0,
+   "mmOld": 0,
+   "nkeys": 0
+  },
+  {
+   "mode": 10,
+   "st": 6,
+   "rule": 0,
+   "sph": 3,
+   "ph": 0,
+   "d": 6,
+   "cnt": 4.166665077209473,
+   "t8": 0.8999993801116943,
+   "f184": 11,
+   "f17c": 0,
+   "ai": 0,
+   "fcc": 0,
+   "y": 0,
+   "enter": 1,
+   "tx": 1,
+   "calls": 1,
+   "mmOrig": 0,
+   "mmOld": 0,
+   "nkeys": 1
+  },
+  {
+   "mode": 10,
+   "st": 6,
+   "rule": 0,
+   "sph": 3,
+   "ph": 0,
+   "d": 6,
+   "cnt": 9.200031280517578,
+   "t8": 0.8999993801116943,
+   "f184": 11,
+   "f17c": 0,
+   "ai": 0,
+   "fcc": 0,
+   "y": 0,
+   "enter": 1,
+   "tx": 1,
+   "calls": 1,
+   "mmOrig": 0,
+   "mmOld": 0,
+   "nkeys": 1
+  }
+ ],
+ "pid": 18536,
+ "pre_witness": {
+  "b0": 233,
+  "dword": "96331be9",
+  "tgt": "0x67d70760",
+  "mod": {
+   "name": "c4race_fix.asi",
+   "path": "C:\\Users\\maria\\AppData\\Local\\Temp\\claude\\C--Users-maria-Desktop-Proyectos-Mashed\\1193cb97-beb1-46c5-bc45-c2e131660bb1\\scratchpad\\c4race_fix.asi",
+   "base": "0x67cf0000",
+   "off": "0x80760"
+  }
+ },
+ "loadctl": {
+  "ok": true,
+  "base": "0x67cf0000",
+  "name": "c4race_fix.asi",
+  "path": "C:\\Users\\maria\\AppData\\Local\\Temp\\claude\\C--Users-maria-Desktop-Proyectos-Mashed\\1193cb97-beb1-46c5-bc45-c2e131660bb1\\scratchpad\\c4race_fix.asi"
+ },
+ "arm_result": {
+  "ok": true,
+  "entry": "0x67d70760 c4race_fix.asi+0x80760",
+  "jmp": 233,
+  "dword": "96331be9",
+  "counter": null
+ },
+ "first_call_state": {
+  "mode": 10,
+  "st": 3,
+  "rule": 0,
+  "sph": 3,
+  "ph": 0,
+  "d": 6,
+  "cnt": 0.0833333283662796,
+  "t8": 0.8999993801116943,
+  "f184": 11,
+  "f17c": 0,
+  "ai": 0,
+  "fcc": 0,
+  "y": 0,
+  "enter": 1,
+  "tx": 1,
+  "calls": 1,
+  "mmOrig": 0,
+  "mmOld": 0,
+  "nkeys": 1
+ },
+ "final": {
+  "mode": 10,
+  "st": 6,
+  "rule": 0,
+  "sph": 3,
+  "ph": 0,
+  "d": 6,
+  "cnt": 9.950019836425781,
+  "t8": 0.8999993801116943,
+  "f184": 11,
+  "f17c": 0,
+  "ai": 0,
+  "fcc": 0,
+  "y": 0,
+  "enter": 1,
+  "tx": 1,
+  "calls": 1,
+  "mmOrig": 0,
+  "mmOld": 0,
+  "nkeys": 1
+ },
+ "modinfo_final": {
+  "b0": 233,
+  "dword": "96331be9",
+  "tgt": "0x67d70760",
+  "mod": {
+   "name": "c4race_fix.asi",
+   "path": "C:\\Users\\maria\\AppData\\Local\\Temp\\claude\\C--Users-maria-Desktop-Proyectos-Mashed\\1193cb97-beb1-46c5-bc45-c2e131660bb1\\scratchpad\\c4race_fix.asi",
+   "base": "0x67cf0000",
+   "off": "0x80760"
+  }
+ },
+ "dump": {
+  "enter": 1,
+  "tx": 1,
+  "calls": 1,
+  "entry": "0x67d70760 c4race_fix.asi+0x80760",
+  "jmp": 233,
+  "keys": {
+   "sel=0 pre78=0 ret=492a6c F(OBJ,SEL) post78=SEL": {
+    "n": 1
+   }
+  },
+  "ev": [
+   {
+    "n": 1,
+    "k": "sel=0 pre78=0 ret=492a6c F(OBJ,SEL) post78=SEL",
+    "obj": "5f2728",
+    "s": {
+     "mode": 10,
+     "st": 0,
+     "rule": 0,
+     "sph": 2,
+     "ph": 0,
+     "d": 6,
+     "cnt": 0,
+     "t8": 0.8999993801116943,
+     "f184": 11,
+     "f17c": 0,
+     "ai": 0,
+     "fcc": 0,
+     "y": 0
+    }
+   }
+  ],
+  "mmOrig": 0,
+  "mmOld": 0,
+  "nodiff": 0,
+  "cchg": 0,
+  "buckets": {}
+ },
+ "alive_at_end": true,
+ "exit_code": 3735928559,
+ "verdict": "DONE"
+}
