@@ -261,8 +261,11 @@ std::uint32_t __cdecl FontSys_InitRenderState()
     // 0x00552d04: DAT_00912c0c = 0 (active camera = null)
     *g_ActiveCamera = nullptr;
 
-    // 0x00552d0b: DAT_00912bf8 = 0
+    // 0x00552cdc: DAT_00912bf8 = EAX (0 after the rep stosd at 0x00552cd4)
     *g_AspBf8 = 0.0f;
+    // 0x00552ce1: DAT_00912bfc = EAX (0). Missing from the port until the 2026-10-12 re-earn
+    // (negctl bootio): the old body never wrote this dword.
+    *reinterpret_cast<std::uint32_t*>(0x00912bfcu) = 0u;
 
     // Aspect ratio defaults (from note end section; 0x00912c00 and 0x00912c04 = 1.0f)
     *g_AspC00 = 1.0f;

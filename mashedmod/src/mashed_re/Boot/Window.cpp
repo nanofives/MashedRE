@@ -102,46 +102,38 @@ RH_ScopedInstall(WindowShow, 0x004996f0);  // re-enabled 2026-05-24 c3-boot-b
 // ---------------------------------------------------------------------------
 // 0x00499690  WindowMsgPump  — bool(void)
 // ---------------------------------------------------------------------------
-// Single-iteration Win32 message pump:
-//   if (PeekMessageA(&DAT_007e95a0, NULL, 0, 0, PM_REMOVE) != 0) {
-//       if (DAT_007e95a4 == WM_QUIT) return (DAT_00773918 != 0);
-//       TranslateMessage(&DAT_007e95a0);
-//       DispatchMessageA(&DAT_007e95a0);
-//   } else if (DAT_0077391c == 0) {
-//       WaitMessage();
+// Single-iteration Win32 message pump (disasm 0x00499690..0x004996e8):
+//   if (PeekMessageA(&DAT_007e95a0, NULL, 0, 0, PM_REMOVE) != 0) {   // 0x00499690..0x004996a5
+//       if (DAT_007e95a4 == WM_QUIT) return 1;                       // 0x004996a7..0x004996b5
+//       TranslateMessage(&DAT_007e95a0);                             // 0x004996b6
+//       DispatchMessageA(&DAT_007e95a0);                             // 0x004996c1
 //   }
-//   return (DAT_00773918 != 0);
+//   if (DAT_0077391c == 0) WaitMessage();                            // 0x004996cc..0x004996d5
+//   return (DAT_00773918 != 0);                                      // 0x004996db..0x004996e5
 //
-// 88 bytes in original. Caller (FUN_00492290 outer loop) iterates this until
-// the function returns true (quit flag set).
+// Re-ported from the bytes 2026-10-12 (negctl re-earn, bootio). The old port returned the quit
+// flag on WM_QUIT (the original returns the constant 1, `mov eax,1` at 0x004996b0) and skipped
+// the WaitMessage gate after a dispatch (the original falls through to 0x004996cc). The
+// no_focus_pause boot patch (0x004996d3 JNZ->JMP) makes the patched reference skip WaitMessage
+// at any active-flag value; the fixture keeps the active flag 1, where both agree.
 //
-// Frida verification strategy (path1):
-//   arg_type='none'; called from the Frida agent thread which owns no Win32
-//   message queue, so PeekMessageA returns 0. DAT_0077391c==1 at quiescent
-//   main menu (window is active), so WaitMessage is skipped. Both sides then
-//   return DAT_00773918 != 0 — at the menu, the quit flag is 0, so both
-//   return 0. 10 calls give 10x bit-identical 0.
-//
+// 0x00499690
 extern "C" __declspec(dllexport) int __cdecl WindowMsgPump() {
     MSG* msg = reinterpret_cast<MSG*>(kMsgBufAddr);
     if (PeekMessageA(msg, nullptr, 0, 0, kPmRemove) != 0) {
-        // Read MSG.message field directly via the global address — matches the
-        // original's DAT_007e95a4 read pattern.
-        unsigned int msg_id = *reinterpret_cast<unsigned int*>(kMsgMessageAddr);
+        const unsigned int msg_id = *reinterpret_cast<const unsigned int*>(kMsgMessageAddr);
         if (msg_id == kMsgQuit) {
-            unsigned int quit = *reinterpret_cast<unsigned int*>(kQuitFlagAddr);
-            return quit != 0;
+            return 1;                                       // 0x004996b0
         }
         TranslateMessage(msg);
         DispatchMessageA(msg);
-    } else {
-        unsigned int active = *reinterpret_cast<unsigned int*>(kActiveFlagAddr);
-        if (active == 0) {
-            WaitMessage();
-        }
     }
-    unsigned int quit = *reinterpret_cast<unsigned int*>(kQuitFlagAddr);
-    return quit != 0;
+    const unsigned int active = *reinterpret_cast<const unsigned int*>(kActiveFlagAddr);
+    if (active == 0) {
+        WaitMessage();                                      // 0x004996d5
+    }
+    const unsigned int quit = *reinterpret_cast<const unsigned int*>(kQuitFlagAddr);
+    return quit != 0;                                       // 0x004996e5 setne al
 }
 
 RH_ScopedInstall(WindowMsgPump, 0x00499690);  // re-enabled 2026-05-24 c3-boot-b

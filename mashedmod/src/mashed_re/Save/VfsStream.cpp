@@ -68,8 +68,10 @@ extern "C" __declspec(dllexport) int __cdecl VfsStreamRead(
     int   count,
     void* ctx)
 {
-    // 0x0055098B: total_bytes = element_size * count
-    const int total_bytes = element_size * count;
+    // 0x0055098B: total_bytes = element_size * count (imul, low 32 bits; formed unsigned so the
+    // wrap is defined)
+    const int total_bytes = static_cast<int>(
+        static_cast<std::uint32_t>(element_size) * static_cast<std::uint32_t>(count));
 
     // 0x00550990: base = *(ctx+0x38)
     // 0x00550998: fn_slot = base + 0x28 + 0x0C  (single pointer read, not vtable double-deref)
@@ -86,9 +88,12 @@ extern "C" __declspec(dllexport) int __cdecl VfsStreamRead(
     // 0x0055099C/9B/93: call fn(ctx, buf, total_bytes)
     const int bytes_read = read_fn(ctx, buf, total_bytes);
 
-    // 0x005509A5: return bytes_read / element_size
-    if (element_size == 0) return 0;
-    return bytes_read / element_size;
+    // 0x005509A3..0x005509A5: xor edx,edx; div esi = UNSIGNED 32-bit divide by element_size.
+    // Re-ported 2026-10-12 (negctl re-earn, bootio): the old body divided signed and returned 0
+    // for element_size 0. The original has no zero guard; `div esi` raises #DE there, and so does
+    // this divide.
+    return static_cast<int>(static_cast<std::uint32_t>(bytes_read) /
+                            static_cast<std::uint32_t>(element_size));
 }
 
 RH_ScopedInstall(VfsStreamRead, 0x00550980);  // re-enabled 2026-05-24 c3-safe
