@@ -1,0 +1,22 @@
+hook	rva	arg_type	lane	mode	verdict	mismatches	total	stats	err
+display_init	0x004921d0	scalars_to_scattered_globals	warm	baseline	GREEN	0	6		
+display_init	0x004921d0	scalars_to_scattered_globals	warm	field_first	RED	6	6	calls=6 flips=6 changed=10 flip=0x0067ea54 noise=154 frozen=2	
+display_init	0x004921d0	scalars_to_scattered_globals	warm	field_last	RED	6	6	calls=6 flips=6 changed=10 flip=0x00771963 noise=188 frozen=2	
+display_init	0x004921d0	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	6	calls=6 flips=0 changed=10 flip=0x00000000 noise=196 frozen=2	
+display_init	0x004921d0	scalars_to_scattered_globals	warm	null	RED	6	6	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+display_init	0x004921d0	scalars_to_scattered_globals	warm	real	GREEN	0	6		
+display_init	0x004921d0	scalars_to_scattered_globals	warm	ret	SKIP	0	0		void signature
+file_write_wrapper_i3	0x004b3bb0	scalars_to_scattered_globals	warm	baseline	GREEN	0	7		
+file_write_wrapper_i3	0x004b3bb0	scalars_to_scattered_globals	warm	field_first	NA	0	7	calls=7 flips=0 changed=0 flip=0x00000000 noise=238 frozen=2	
+file_write_wrapper_i3	0x004b3bb0	scalars_to_scattered_globals	warm	field_last	NA	0	7	calls=7 flips=0 changed=0 flip=0x00000000 noise=240 frozen=2	
+file_write_wrapper_i3	0x004b3bb0	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	7	calls=7 flips=0 changed=0 flip=0x00000000 noise=271 frozen=2	
+file_write_wrapper_i3	0x004b3bb0	scalars_to_scattered_globals	warm	null	RED	7	7	calls=0 flips=0 changed=0 flip=0x00000000 noise=196 frozen=2	
+file_write_wrapper_i3	0x004b3bb0	scalars_to_scattered_globals	warm	real	GREEN	0	7		
+file_write_wrapper_i3	0x004b3bb0	scalars_to_scattered_globals	warm	ret	RED	7	7	calls=7 flips=0 changed=0 flip=0x00000000 noise=196 frozen=2	
+viewport_scaled_rect_draw	0x00428610	scalars_to_scattered_globals	warm	baseline	GREEN	0	12		
+viewport_scaled_rect_draw	0x00428610	scalars_to_scattered_globals	warm	field_first	NA	0	12	calls=12 flips=0 changed=0 flip=0x00000000 noise=271 frozen=2	
+viewport_scaled_rect_draw	0x00428610	scalars_to_scattered_globals	warm	field_last	NA	0	12	calls=12 flips=0 changed=0 flip=0x00000000 noise=275 frozen=2	
+viewport_scaled_rect_draw	0x00428610	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	12	calls=12 flips=0 changed=0 flip=0x00000000 noise=275 frozen=2	
+viewport_scaled_rect_draw	0x00428610	scalars_to_scattered_globals	warm	null	RED	12	12	calls=0 flips=0 changed=0 flip=0x00000000 noise=271 frozen=2	
+viewport_scaled_rect_draw	0x00428610	scalars_to_scattered_globals	warm	real	GREEN	0	12		
+viewport_scaled_rect_draw	0x00428610	scalars_to_scattered_globals	warm	ret	SKIP	0	0		void signature
