@@ -1,0 +1,8 @@
+hook	rva	arg_type	lane	mode	verdict	mismatches	total	stats	err
+sa2_car_event_trigger	0x004922e0	scalars_to_scattered_globals	warm	baseline	GREEN	0	6		
+sa2_car_event_trigger	0x004922e0	scalars_to_scattered_globals	warm	field_first	RED	3	6	calls=6 flips=3 changed=0 flip=0x007f1058 noise=1703 frozen=2	
+sa2_car_event_trigger	0x004922e0	scalars_to_scattered_globals	warm	field_last	RED	3	6	calls=6 flips=3 changed=0 flip=0x007f106f noise=1813 frozen=2	
+sa2_car_event_trigger	0x004922e0	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	6	calls=6 flips=0 changed=0 flip=0x00000000 noise=1614 frozen=2	
+sa2_car_event_trigger	0x004922e0	scalars_to_scattered_globals	warm	null	RED	3	6	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+sa2_car_event_trigger	0x004922e0	scalars_to_scattered_globals	warm	real	GREEN	0	6		
+sa2_car_event_trigger	0x004922e0	scalars_to_scattered_globals	warm	ret	SKIP	0	0		void signature

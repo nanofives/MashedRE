@@ -1,0 +1,25 @@
+=== verify_hook_install report (sa2_car_event_trigger) ===
+
+target address: 0x004922e0  export: CarEventTrigger
+PRE  bytes:     e9 5b af 04 72 56 e8 85
+asi base:       0x724b0000
+reimpl addr:    0x724dd240
+POST bytes:     e9 5b af 04 72 56 e8 85
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x7204af5b  expected 0x7204af5b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  2 / 2  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [0, 286331153, 572662306, 858993459], 'seed': [{'addr': 6236016, 'val': {'scratch': 0}}, {'addr': {'scratch': 52}, 'val': 1}, {'addr': 6535820, 'val': 6}, {'addr': 8329748, 'val': 1}, {'addr': 8327336, 'val': 1}, {'addr': 8327332, 'val': 2779096485}, {'addr': 8327344, 'val': 2779096485}, {'addr': 8327348, 'val': 2779096485}, {'addr': 8327352, 'val': 2779096485}]}  got=a6dade44  err=
+  [OK] input={'args': [2, 3, 10, 128], 'seed': [{'addr': 6236016, 'val': {'scratch': 0}}, {'addr': {'scratch': 60}, 'val': 1}, {'addr': 6535820, 'val': 6}, {'addr': 8329780, 'val': 3}, {'addr': 8327488, 'val': 128}, {'addr': 8327484, 'val': 2779096485}, {'addr': 8327496, 'val': 2779096485}, {'addr': 8327500, 'val': 2779096485}, {'addr': 8327504, 'val': 2779096485}]}  got=b5ca6d6c  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 2x as expected
+  + all 2 calls returned without exception
+FAIL:
+  (none)
