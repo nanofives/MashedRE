@@ -183,6 +183,15 @@ function callFn(fn, input, buf) {
                 fns[ce.name] = new NativeCallback(function () {
                     const k = counts[ce.name] | 0; counts[ce.name] = k + 1;
                     const t = globalThis.__p2CallLogTest;
+                    // outs / stub_outs (bnormalise 2026-10-12): write the out-parameters as diff_template does, so the
+                    // body sees the same values it reads back on path1.
+                    const so = (t && t.stub_outs) ? t.stub_outs[ce.name] : undefined;
+                    const ov = Object.assign({}, ce.outs || {}, so || {}), av = arguments;
+                    Object.keys(ov).forEach(function (qs) {
+                        let v = ov[qs];
+                        if (Array.isArray(v)) v = v[Math.min(k, v.length - 1)];
+                        try { ptr(av[qs | 0] >>> 0).writeU32(v >>> 0); } catch (e) {}
+                    });
                     const sr = (t && t.stub_rets) ? t.stub_rets[ce.name] : undefined;
                     let rv = fRet ? +(ce.ret || 0) : ce.ret;
                     if (Array.isArray(sr)) rv = sr[Math.min(k, sr.length - 1)];

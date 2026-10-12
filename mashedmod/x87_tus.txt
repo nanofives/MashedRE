@@ -66,3 +66,7 @@ RwpSolverMath2QuatY
 ProgressBarSetA
 # drawstream (2026-10-12): 0x00427ad0 rect chain (fmul xs; fmul viewport; fstp), same measurement.
 MenuMenusBB
+# bnormalise (2026-10-12): 0x00428610 re-ported from the listing; the coordMode-2 chain keeps fVar4*p2 in ST
+# (0x004286ad..0x004286c1). Measured by run_diff at the harness CW and at 0x007f; see
+# re/analysis/negctl/session_20261012b/bnormalise_RESULT.md.
+ViewportScaledRectDraw
