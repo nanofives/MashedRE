@@ -1,5 +1,5 @@
 # Compare c4_hud_scenario.py runs for one row against setup-matched original references.
-# Usage: py -3.12 re/frida/c4_hud_compare.py --dir <run dir> --row 403160|41db80|4295a0|40d440|4464c0 [--csv OUT]
+# Usage: py -3.12 re/frida/c4_hud_compare.py --dir <run dir> --row 403160|41db80|4295a0|40d440|4464c0|41c2d0 [--csv OUT] [--pool]
 #
 # 403160: per-call key = ret | ordered callee events | post cam+0x68/+0x6c (PRE = equal to the
 #         pre-call value). A run matches when its set of keys (the one 'first:' call excluded,
@@ -12,6 +12,13 @@
 #         differs from the byte model 0x0041dab0..0x0041db79) is 0.
 # 40d440: per-call key = selected/loaded at entry | caller | FUN_0040d270 calls made inside the body
 #         (OBJ = [0x005f2770], SEL = [0x0063ba7c]) | [0x0063ba78] after. Same key-set rule as 403160.
+# 41c2d0: per-call key = block (EAX) | member slots whose +0x48 function was called, in order |
+#         return == the last member call's return | rule / state at entry. Same key-set rule.
+# --pool (c4save 2026-10-12): the reference for a non-original arm is the POOLED original (the
+#         union of both original runs' keys), and a key counts as missing only when BOTH
+#         originals produced it. An original run is compared against the other original run.
+# The hook-live check takes the export offset from the loaded .asi itself (pefile, by export
+# name) when the run JSON names it, else the fixed c4race offsets.
 # 4464c0: polled key (no per-call hook, see the scenario header) = entry count + per entry type and
 #         the class of its three RwMatrix pad dwords. A run matches when its dominant key equals the
 #         reference's and every key holding >= 2% of its polls also occurs in the reference.
@@ -22,7 +29,17 @@ av = sys.argv
 def opt(f, d): return av[av.index(f) + 1] if f in av else d
 D = Path(opt("--dir", "log/c4_hud/final")); row = opt("--row", "403160")
 EXPORT_OFF = {"403160": "0x141a0", "41db80": "0x142a0", "4295a0": "0x18800",
-              "40d440": "0x80760", "4464c0": "0x3d050"}[row]   # the last two: c4race_fix/ctl.asi exports
+              "40d440": "0x80760", "4464c0": "0x3d050", "41c2d0": None}[row]   # c4race_fix/ctl.asi exports
+EXPORT_NAME = {"40d440": "Course_LoadCurrent_40d440", "41c2d0": "FUN_0041c2d0", "4464c0": "CameraEntryDispatchAll"}.get(row)
+POOL = "--pool" in av
+
+def export_off(asi):
+    if not asi or not EXPORT_NAME or not Path(asi).exists(): return EXPORT_OFF
+    import pefile
+    pe = pefile.PE(asi, fast_load=False)
+    for e in pe.DIRECTORY_ENTRY_EXPORT.symbols:
+        if e.name and e.name.decode() == EXPORT_NAME: return hex(e.address)
+    return None
 REF = {"off": "off1", "on": "off1", "stock": "stock1", "late": "stock1", "ctl": "stock1"}
 
 def load(tag):
@@ -45,10 +62,19 @@ rows = []
 tags = sorted(p.stem.split(f"c4_hud_{row}_", 1)[1] for p in D.glob(f"c4_hud_{row}_*.json"))
 for t in tags:
     r = load(t); arm = r["arm"]; ref = load(REF[arm] if t != REF[arm] else ("off2" if arm == "off" else "stock2"))
+    if POOL and arm in ("stock", "off"):
+        ref = load(("off2" if t == "off1" else "off1") if arm == "off" else ("stock2" if t == "stock1" else "stock1"))
+        pool = [ref] if ref else []
+    elif POOL:
+        o = "off" if arm == "on" else "stock"; pool = [x for x in (load(o + "1"), load(o + "2")) if x]
+        ref = pool[0] if pool else None
+    else:
+        pool = [ref] if ref else []
     w = r.get("pre_witness", {})
     mname = str((w.get("mod") or {}).get("name", ""))
-    live = (w.get("b0") == 0xE9 and (mname.startswith("mashed_re_dev") or mname.startswith("c4race_"))
-            and (w.get("mod") or {}).get("off") == EXPORT_OFF)
+    xoff = export_off(r.get("ctl_asi")) if arm in ("late", "ctl") else EXPORT_OFF
+    live = (w.get("b0") == 0xE9 and (mname.startswith("mashed_re_dev") or mname.startswith("c4race_") or mname.startswith("c4save_"))
+            and (w.get("mod") or {}).get("off") == xoff)
     d = r.get("dump", {})
     res = {"tag": t, "arm": arm, "verdict": r.get("verdict"), "ref": None, "calls": d.get("calls"),
            "b0": w.get("b0"), "hook_live": live, "jmp_module": (w.get("mod") or {}).get("name", ""), "entry": d.get("entry"), "crash": len(r.get("crash", [])),
@@ -59,7 +85,7 @@ for t in tags:
            "alive_at_end": r.get("alive_at_end"), "mode": (r.get("first_call_state") or {}).get("mode"),
            "rule": (r.get("first_call_state") or {}).get("rule")}
     if ref is not None:
-        res["ref"] = ref["tag"]
+        res["ref"] = "+".join(x["tag"] for x in pool)
         if row == "4464c0":
             a, b = keyset(r), keyset(ref); na = sum(a.values()) or 1
             da = max(a, key=a.get) if a else None; db = max(b, key=b.get) if b else None
@@ -69,11 +95,13 @@ for t in tags:
             res["dominant_eq_ref"] = (da == db); res["major_not_in_ref"] = ";".join(k for k in major if k not in b)
             res["dominant"] = da
             res["match"] = bool(a) and da == db and not res["major_not_in_ref"]
-        elif row in ("403160", "4295a0", "40d440"):
-            a, b = keyset(r), keyset(ref)
+        elif row in ("403160", "4295a0", "40d440", "41c2d0"):
+            a = keyset(r); ks = [keyset(x) for x in pool]
+            b = {k: sum(s.get(k, 0) for s in ks) for s in ks for k in s}       # union (pooled)
+            need = [k for k in b if all(k in s for s in ks)]                      # in every reference run
             res["keys"] = len(a); res["ref_keys"] = len(b)
             res["foreign_calls"] = sum(n for k, n in a.items() if k not in b)
-            res["missing_keys"] = sum(1 for k in b if k not in a)
+            res["missing_keys"] = sum(1 for k in need if k not in a)
             res["match"] = bool(a) and res["foreign_calls"] == 0 and res["missing_keys"] == 0
         else:
             a, b = bmap(r), bmap(ref)
@@ -82,6 +110,7 @@ for t in tags:
             res["mmOrig"] = d.get("mmOrig"); res["mmOld"] = d.get("mmOld")
             res["match"] = bool(a) and not diff and d.get("mmOrig") == 0 and set(a) == set(b)
         res["result"] = "GREEN" if (res["match"] and not res["crash"] and r.get("verdict") == "DONE") else "RED"
+        if row == "41c2d0": res["m10"] = d.get("m10"); res["m10f"] = d.get("m10f"); res["m5"] = d.get("m5"); res["rets"] = json.dumps(d.get("rets"))
         if row in ("40d440", "4464c0"): res["seed_calls"] = d.get("seedCalls"); res["tx"] = d.get("tx"); res["outside"] = d.get("outside")
     rows.append(res)
 

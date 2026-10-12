@@ -1,0 +1,373 @@
+{
+ "row": "pmr",
+ "rva": "0x00404320",
+ "arm": "stock",
+ "tag": "pmr_stock1",
+ "route": "cup",
+ "exe": "C:\\Users\\maria\\AppData\\Local\\Temp\\claude\\C--Users-maria-Desktop-Proyectos-Mashed\\0c5f29e5-34dc-4c04-adbe-ee9187a7dbda\\scratchpad\\gameroot2\\original\\MASHED.exe",
+ "exe_sha256": "B9977DAB70607720CF58BC7832937C203B1E0B33FF5896DA586BAF56AA79FE87",
+ "save_sha256": "80CCB2D449F0E5B75E57E2B74AD7A3C9F886FC87F4EB6C74185016402CBE2032",
+ "reset_save": "C:/Users/maria/AppData/Local/Temp/claude/C--Users-maria-Desktop-Proyectos-Mashed/0c5f29e5-34dc-4c04-adbe-ee9187a7dbda/scratchpad/gamesave_edited.bin",
+ "asi": null,
+ "asi_sha256": null,
+ "env": {
+  "MASHED_HOOK_ONLY": "__none__",
+  "MASHED_RE_NO_AUTO_HOOK": "1"
+ },
+ "log": [
+  "  spawned pid=27596 row=pmr arm=stock",
+  "  arm: {'ok': True, 'w': {'bytes': 'a1 d0 0f 7f 00 83 ec 10', 'b0': 161}, 'entry': '0x404320'}",
+  "  title: {'depth': 1, 'phase': 3, 'gate': 22, 'sph': 1, 'ui': 0, 'fd0': 0, 'mode': 0, 'f184': 0, 'f17c': 0, 'calls': 0, 'pq': 0}",
+  "  d3: depth=3 sel=0",
+  "  cup: {'depth': 5, 'phase': 3, 'gate': 6, 'sph': 1, 'ui': 0, 'fd0': 0, 'mode': 4, 'f184': 2, 'f17c': 0, 'calls': 0, 'pq': 0}",
+  "  event: {'depth': 5, 'phase': 3, 'gate': 6, 'sph': 1, 'ui': 0, 'fd0': 0, 'mode': 4, 'f184': 2, 'f17c': 2, 'calls': 0, 'pq': 0}",
+  "  launched: {'depth': 5, 'phase': 0, 'gate': 6, 'sph': 2, 'ui': 0, 'fd0': 10, 'mode': 4, 'f184': 2, 'f17c': 2, 'calls': 0, 'pq': 0}",
+  "   t+0s {'depth': 5, 'phase': 0, 'gate': 6, 'sph': 2, 'ui': 0, 'fd0': 10, 'mode': 4, 'f184': 2, 'f17c': 2, 'calls': 0, 'pq': 0}",
+  "  >>> first rule-10 game call: {'depth': 5, 'phase': 0, 'gate': 6, 'sph': 3, 'ui': 3, 'fd0': 10, 'mode': 4, 'f184': 2, 'f17c': 2, 'calls': 3, 'pq': 0}",
+  "   t+10s {'depth': 5, 'phase': 0, 'gate': 6, 'sph': 3, 'ui': 3, 'fd0': 10, 'mode': 4, 'f184': 2, 'f17c': 2, 'calls': 195, 'pq': 47}",
+  "   t+20s {'depth': 5, 'phase': 0, 'gate': 6, 'sph': 3, 'ui': 3, 'fd0': 10, 'mode': 4, 'f184': 2, 'f17c': 2, 'calls': 562, 'pq': 141}",
+  "   t+30s {'depth': 5, 'phase': 0, 'gate': 6, 'sph': 3, 'ui': 6, 'fd0': 10, 'mode': 4, 'f184': 2, 'f17c': 2, 'calls': 882, 'pq': 236}",
+  "   t+40s {'depth': 5, 'phase': 0, 'gate': 6, 'sph': 3, 'ui': 6, 'fd0': 10, 'mode': 4, 'f184': 2, 'f17c': 2, 'calls': 1155, 'pq': 283}",
+  "   t+50s {'depth': 5, 'phase': 0, 'gate': 6, 'sph': 3, 'ui': 6, 'fd0': 10, 'mode': 4, 'f184': 2, 'f17c': 2, 'calls': 1436, 'pq': 358}",
+  "   t+60s {'depth': 5, 'phase': 0, 'gate': 6, 'sph': 3, 'ui': 6, 'fd0': 10, 'mode': 4, 'f184': 2, 'f17c': 2, 'calls': 1672, 'pq': 425}",
+  "   t+70s {'depth': 5, 'phase': 0, 'gate': 6, 'sph': 3, 'ui': 11, 'fd0': 10, 'mode': 4, 'f184': 2, 'f17c': 2, 'calls': 1870, 'pq': 458}"
+ ],
+ "crash": [],
+ "pid": 27596,
+ "arm_result": {
+  "ok": true,
+  "w": {
+   "bytes": "a1 d0 0f 7f 00 83 ec 10",
+   "b0": 161
+  },
+  "entry": "0x404320"
+ },
+ "launched": {
+  "depth": 5,
+  "phase": 0,
+  "gate": 6,
+  "sph": 2,
+  "ui": 0,
+  "fd0": 10,
+  "mode": 4,
+  "f184": 2,
+  "f17c": 2,
+  "calls": 0,
+  "pq": 0
+ },
+ "first_rule10_call": {
+  "depth": 5,
+  "phase": 0,
+  "gate": 6,
+  "sph": 3,
+  "ui": 3,
+  "fd0": 10,
+  "mode": 4,
+  "f184": 2,
+  "f17c": 2,
+  "calls": 3,
+  "pq": 0
+ },
+ "windows": [
+  {
+   "qcalls": 47,
+   "edge": 0,
+   "nkeys": 1,
+   "rs": "0x4d7480",
+   "pre": {
+    "depth": 5,
+    "phase": 0,
+    "gate": 6,
+    "sph": 3,
+    "ui": 3,
+    "fd0": 10,
+    "mode": 4,
+    "f184": 2,
+    "f17c": 2,
+    "calls": 3,
+    "pq": 0
+   },
+   "t": 2.5
+  },
+  {
+   "qcalls": 94,
+   "edge": 0,
+   "nkeys": 1,
+   "rs": "0x4d7480",
+   "pre": {
+    "depth": 5,
+    "phase": 0,
+    "gate": 6,
+    "sph": 3,
+    "ui": 3,
+    "fd0": 10,
+    "mode": 4,
+    "f184": 2,
+    "f17c": 2,
+    "calls": 195,
+    "pq": 47
+   },
+   "t": 8.5
+  },
+  {
+   "qcalls": 141,
+   "edge": 0,
+   "nkeys": 1,
+   "rs": "0x4d7480",
+   "pre": {
+    "depth": 5,
+    "phase": 0,
+    "gate": 6,
+    "sph": 3,
+    "ui": 3,
+    "fd0": 10,
+    "mode": 4,
+    "f184": 2,
+    "f17c": 2,
+    "calls": 387,
+    "pq": 94
+   },
+   "t": 14.6
+  },
+  {
+   "qcalls": 188,
+   "edge": 0,
+   "nkeys": 3,
+   "rs": "0x4d7480",
+   "pre": {
+    "depth": 5,
+    "phase": 0,
+    "gate": 6,
+    "sph": 3,
+    "ui": 3,
+    "fd0": 10,
+    "mode": 4,
+    "f184": 2,
+    "f17c": 2,
+    "calls": 578,
+    "pq": 141
+   },
+   "t": 20.6
+  },
+  {
+   "qcalls": 236,
+   "edge": 0,
+   "nkeys": 4,
+   "rs": "0x4d7480",
+   "pre": {
+    "depth": 5,
+    "phase": 0,
+    "gate": 6,
+    "sph": 3,
+    "ui": 6,
+    "fd0": 10,
+    "mode": 4,
+    "f184": 2,
+    "f17c": 2,
+    "calls": 770,
+    "pq": 188
+   },
+   "t": 26.6
+  },
+  {
+   "qcalls": 283,
+   "edge": 0,
+   "nkeys": 4,
+   "rs": "0x4d7480",
+   "pre": {
+    "depth": 5,
+    "phase": 0,
+    "gate": 6,
+    "sph": 3,
+    "ui": 6,
+    "fd0": 10,
+    "mode": 4,
+    "f184": 2,
+    "f17c": 2,
+    "calls": 963,
+    "pq": 236
+   },
+   "t": 32.7
+  },
+  {
+   "qcalls": 324,
+   "edge": 0,
+   "nkeys": 4,
+   "rs": "0x4d7480",
+   "pre": {
+    "depth": 5,
+    "phase": 0,
+    "gate": 6,
+    "sph": 3,
+    "ui": 6,
+    "fd0": 10,
+    "mode": 4,
+    "f184": 2,
+    "f17c": 2,
+    "calls": 1155,
+    "pq": 283
+   },
+   "t": 38.7
+  },
+  {
+   "qcalls": 358,
+   "edge": 0,
+   "nkeys": 4,
+   "rs": "0x4d7480",
+   "pre": {
+    "depth": 5,
+    "phase": 0,
+    "gate": 6,
+    "sph": 3,
+    "ui": 6,
+    "fd0": 10,
+    "mode": 4,
+    "f184": 2,
+    "f17c": 2,
+    "calls": 1305,
+    "pq": 324
+   },
+   "t": 44.7
+  },
+  {
+   "qcalls": 391,
+   "edge": 0,
+   "nkeys": 4,
+   "rs": "0x4d7480",
+   "pre": {
+    "depth": 5,
+    "phase": 0,
+    "gate": 6,
+    "sph": 3,
+    "ui": 6,
+    "fd0": 10,
+    "mode": 4,
+    "f184": 2,
+    "f17c": 2,
+    "calls": 1449,
+    "pq": 358
+   },
+   "t": 50.7
+  },
+  {
+   "qcalls": 425,
+   "edge": 0,
+   "nkeys": 4,
+   "rs": "0x4d7480",
+   "pre": {
+    "depth": 5,
+    "phase": 0,
+    "gate": 6,
+    "sph": 3,
+    "ui": 6,
+    "fd0": 10,
+    "mode": 4,
+    "f184": 2,
+    "f17c": 2,
+    "calls": 1591,
+    "pq": 391
+   },
+   "t": 56.8
+  },
+  {
+   "qcalls": 458,
+   "edge": 0,
+   "nkeys": 4,
+   "rs": "0x4d7480",
+   "pre": {
+    "depth": 5,
+    "phase": 0,
+    "gate": 6,
+    "sph": 3,
+    "ui": 6,
+    "fd0": 10,
+    "mode": 4,
+    "f184": 2,
+    "f17c": 2,
+    "calls": 1732,
+    "pq": 425
+   },
+   "t": 62.8
+  },
+  {
+   "qcalls": 492,
+   "edge": 0,
+   "nkeys": 5,
+   "rs": "0x4d7480",
+   "pre": {
+    "depth": 5,
+    "phase": 0,
+    "gate": 6,
+    "sph": 3,
+    "ui": 11,
+    "fd0": 10,
+    "mode": 4,
+    "f184": 2,
+    "f17c": 2,
+    "calls": 1870,
+    "pq": 458
+   },
+   "t": 68.8
+  }
+ ],
+ "state_end": {
+  "depth": 5,
+  "phase": 0,
+  "gate": 6,
+  "sph": 3,
+  "ui": 11,
+  "fd0": 10,
+  "mode": 4,
+  "f184": 2,
+  "f17c": 2,
+  "calls": 1910,
+  "pq": 492
+ },
+ "dump": {
+  "st": {
+   "row": "pmr",
+   "rva": 4211488,
+   "entry": "0x404320",
+   "calls": 1910,
+   "byGate": {},
+   "byRet": {},
+   "witness": {
+    "bytes": "a1 d0 0f 7f 00 83 ec 10",
+    "b0": 161
+   },
+   "crashes": 0
+  },
+  "log": [],
+  "nlog": 0,
+  "bc": {
+   "keys": {},
+   "qcalls": 0,
+   "qquads": 0,
+   "outside": 0,
+   "edge": 0
+  },
+  "pmr": {
+   "hist": {
+    "fd0=10,sub=3,sph=3": 591,
+    "fd0=10,sub=4,sph=3": 1,
+    "fd0=10,sub=5,sph=3": 112,
+    "fd0=10,sub=6,sph=3": 1069,
+    "fd0=10,sub=11,sph=3": 137
+   },
+   "keys": {
+    "fd0=10,sub=3|end(C) vw(C,3f4ccccd/3f4ccccd) begin(C)=C rs(6,0) rs(8,0) sub=3 sub=3 sub=3 r10 rs(6,1) rs(8,1) end(C) vw(C,PRE) begin(C)=C": 153,
+    "fd0=10,sub=4|end(C) vw(C,3f4ccccd/3f4ccccd) begin(C)=C rs(6,0) rs(8,0) sub=4 sub=4 r10 rs(6,1) rs(8,1) end(C) vw(C,PRE) begin(C)=C": 1,
+    "fd0=10,sub=5|end(C) vw(C,3f4ccccd/3f4ccccd) begin(C)=C rs(6,0) rs(8,0) sub=5 r10 rs(6,1) rs(8,1) end(C) vw(C,PRE) begin(C)=C": 34,
+    "fd0=10,sub=6|end(C) vw(C,3f4ccccd/3f4ccccd) begin(C)=C rs(6,0) rs(8,0) sub=6 sub=6 sub=6 sub=6 rs(6,1) rs(8,1) end(C) vw(C,PRE) begin(C)=C": 270,
+    "fd0=10,sub=11|end(C) vw(C,3f4ccccd/3f4ccccd) begin(C)=C rs(6,0) rs(8,0) sub=11 sub=11 sub=11 sub=11 rs(6,1) rs(8,1) end(C) vw(C,PRE) begin(C)=C": 34
+   },
+   "qcalls": 492,
+   "edge": 0,
+   "nwin": 12,
+   "rs": "0x4d7480"
+  }
+ },
+ "alive_at_end": true,
+ "exit_code": 3735928559,
+ "verdict": "DONE"
+}

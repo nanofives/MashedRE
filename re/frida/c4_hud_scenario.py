@@ -12,9 +12,11 @@
 #   --row 40d440  Course::LoadCurrent (c4race 2026-10-12). Once per course load, from 0x00492a67.
 #   --row 4464c0  CameraEntry::DispatchAll. ~60/s in a race plus the 100-call FUN_00448700 loop.
 #                 No Interceptor on the game thread (native counter stub + JS-thread poll).
-#   --row 41c2d0  FUN_0041c2d0, feasibility counters only (rule 5/10 needed, see c4race_RESULT.md).
+#   --row 41c2d0  FUN_0041c2d0. Rule 5/10 only (c4race_RESULT.md); per call the member dispatch
+#                 order and the return (c4save 2026-10-12), plus the feasibility counters.
 #   --route attract|qb|cup selects the scenario for these rows. The attract route installs no input
-#   hook (row 403160 also runs without it now; it never sent input).
+#   hook (row 403160 also runs without it now; it never sent input). The cup route needs
+#   --root <install copy>\original (never original\) and takes --reset-save <edited gamesave.bin>.
 #
 # Arms (one fresh MASHED per run, own PID only), as c4_detect_e_scenario.py:
 #   off   deployed .asi, MASHED_HOOK_ONLY=__none__            -> stock body, instrumented at its entry
@@ -230,11 +232,37 @@ function startPoll(){
   }, 50);
 }
 
-// ---- row 41c2d0 (feasibility only: is the body reached on a stock-save route?) ----------
+// ---- row 41c2d0 ------------------------------------------------------------------------
+// Bytes 0x0041c2d0..0x0041c2f2: block in EAX; call [m+0x48](m) for m = block[3],[1],[0],[2]
+// (0x0041c2d3..0x0041c2eb), EAX = the last call's EAX. Per call (c4save 2026-10-12): the block
+// (EAX at entry), the return address, the ordered member slots whose +0x48 function was called
+// (the four members' +0x48 swapped to a recorder for the call only, as row 41db80), and the
+// return vs the last member call's return. Plus the feasibility counters and the
+// (mode/rule/state/flags) histogram of c4race.
+let REC41=null; const SAV41=[]; let blk41=[];
 function attach41c2d0(entry){
   Interceptor.attach(abs(0x0041a3e0),{ onEnter(){ ST.m10=(ST.m10||0)+1; if (u32(0x0063c628)!==0) ST.m10f=(ST.m10f||0)+1; }});
   Interceptor.attach(abs(0x0041c300),{ onEnter(){ ST.m5=(ST.m5||0)+1; if (u32(0x0063cdbc)!==0) ST.m5f=(ST.m5f||0)+1; }});
-  Interceptor.attach(entry,{ onEnter(){ ST.enter++; ST.calls++; if (ST.ev.length<20) ST.ev.push({n:ST.calls, s:snap()}); }});
+  REC41 = new NativeCallback(function(obj){
+    let fn=null; for (let i=0;i<SAV41.length;i++) if (SAV41[i].o.equals(obj)) { fn=SAV41[i].f; break; }
+    let sl=[]; for (let i=0;i<4;i++) if (blk41[i] && blk41[i].equals(obj)) sl.push(i);
+    if (IN) IN.d.push(sl.length===1?sl[0]:('?'+sl.join('/')));
+    if (!fn) return ptr(0);
+    const r=new NativeFunction(fn,'pointer',['pointer'],'mscdecl')(obj); if (IN) IN.last=r.toUInt32(); return r;
+  }, 'pointer', ['pointer'], 'mscdecl');
+  Interceptor.attach(entry,{ onEnter(){ ST.enter++;
+      const b=this.context.eax; blk41=[]; SAV41.length=0;
+      for (let i=0;i<4;i++){ const o=b.add(i*4).readPointer(); blk41.push(o);
+        if (o.isNull()) continue; let dup=false; for (const s of SAV41) if (s.o.equals(o)) dup=true; if (dup) continue;
+        const slot=o.add(0x48); SAV41.push({o:o, f:slot.readPointer(), slot:slot}); slot.writePointer(REC41); }
+      IN={d:[], last:null, blk:((b.toUInt32()-DELTA)>>>0).toString(16), ret:(this.returnAddress.toUInt32()-DELTA)>>>0, s:snap()}; },
+    onLeave(r){ for (const s of SAV41) s.slot.writePointer(s.f); SAV41.length=0;
+      const c=IN; IN=null; ST.calls++; if(!c) return;
+      const rv=r.toUInt32();
+      const k='blk='+c.blk+' order='+c.d.join(',')+' ret='+(c.last!==null && rv===c.last ? 'LAST' : rv.toString(16))+' rule='+c.s.rule+' st='+c.s.st;
+      addKey(k);
+      ST.rets=ST.rets||{}; const ra=c.ret.toString(16); ST.rets[ra]=(ST.rets[ra]||0)+1;
+      if (ST.ev.length<40 && (ST.calls<=5 || ST.calls%200===0)) ST.ev.push({n:ST.calls, k:k, ret:ra, s:c.s}); }});
   // key = game mode 0x0067e9fc / rule 0x007f0fd0 / state 0x0063ba8c / flags 0x0063c628,0x0063cdbc
   ST.rules={}; setInterval(function(){ try{ const k=s32(0x0067e9fc)+'/'+s32(0x007f0fd0)+'/'+s32(0x0063ba8c)+'/f'+u32(0x0063c628)+','+u32(0x0063cdbc);
     ST.rules[k]=(ST.rules[k]||0)+1; }catch(e){} }, 250);
@@ -304,18 +332,26 @@ def main():
     route = opt("--route", {"403160": "attract", "41db80": "qb", "4295a0": "cup"}.get(row, "attract"))
     assert route in ("attract", "qb", "cup")
     track_presses = [int(x) for x in opt("--track-presses", "").split(",") if x.strip()]
-    # 4295a0 runs from an install COPY (--root <copy>\original) whose gamesave.bin opens the
-    # Silver-cup launch gates; never original\.
+    # The cup route (row 4295a0's, and since c4save 2026-10-12 any row) runs from an install COPY
+    # (--root <copy>\original) whose gamesave.bin opens the Silver-cup launch gates; never original\.
+    # --reset-save FILE copies FILE over the copy's gamesave.bin before the spawn, so every run
+    # starts from the same edited save (the game may write the save during a run).
     exe, cwd = EXE, ORIG
-    if row == "4295a0":
+    reset_save = opt("--reset-save", None)
+    if route == "cup":
         root = Path(opt("--root", "")); assert (root / "MASHED.exe").exists(), "--root <copy>/original required"
         assert root.resolve() != ORIG.resolve() and "proyectos\\mashed\\original" not in str(root.resolve()).lower(), "refuse: real install"
         exe, cwd = root / "MASHED.exe", root
+        if reset_save:
+            import shutil; shutil.copyfile(reset_save, root / "gamesave.bin")
+    else:
+        assert not reset_save, "--reset-save only with the cup route (install copy)"
     arm = opt("--arm", "off"); assert arm in ("off", "on", "stock", "late", "ctl")
     ctl_asi = opt("--ctl-asi", str(ORIG / "mashed_re_dev.asi") if arm == "late" else None)
     out = Path(opt("--out", str(ROOT / "log" / "c4_hud"))); out.mkdir(parents=True, exist_ok=True)
     tag = opt("--tag", f"{row}_{arm}")
     secs = int(opt("--secs", "60"))
+    pulse = "--pulse" in av   # cup route: the qb in-race recipe (control 4, 200 ms, 1 Hz while 0x00771968 == 3)
 
     env = dict(os.environ)
     hk = f"0x{rva:08x}"
@@ -328,7 +364,7 @@ def main():
     else:
         assert ctl_asi and Path(ctl_asi).exists(), "--ctl-asi required"
         env["MASHED_RE_NO_AUTO_HOOK"] = "1"; env["MASHED_HOOK_ONLY"] = hk
-    rec = {"row": row, "rva": hk, "arm": arm, "tag": tag, "route": route, "track_presses": track_presses,
+    rec = {"row": row, "rva": hk, "arm": arm, "tag": tag, "route": route, "track_presses": track_presses, "pulse": pulse, "reset_save": reset_save,
            "exe": str(exe), "exe_sha256": sha256(exe),
            "deployed_asi_sha256": sha256(ORIG / "mashed_re_dev.asi"),
            "loaded_dir_asi_sha256": sha256(Path(cwd) / "mashed_re_dev.asi") if (Path(cwd) / "mashed_re_dev.asi").exists() else None,
@@ -387,7 +423,7 @@ def main():
                 if nav.phase() != 3: break
                 nav.press(4); time.sleep(1.5)
                 log(f"  start-attempt {k}: depth={nav.depth()} phase={nav.phase()}")
-        if row == "4295a0":
+        if route == "cup":
             # Challenge flow: depth-3 cursor 0 (mode 3), colour select, challenge select (screen
             # type 6). Control 10 there moves the cup selector 0x0067f184 1 -> 2 (mode 4,
             # 0x00440415/FUN_0042f6b0), two downs move 0x0067f17c 0 -> 2 (FUN_004322c0), confirm.
@@ -411,7 +447,7 @@ def main():
             try: s = X.state()
             except frida.InvalidOperationError: log("   script destroyed (process gone)"); break
             now = time.time()
-            if route == "qb" and s.get("sph") == 3 and now - tp > 1.0: X.press(4, 200); tp = now
+            if (route == "qb" or pulse) and s.get("sph") == 3 and now - tp > 1.0: X.press(4, 200); tp = now
             if s["calls"] != lastn: lastn = s["calls"]; t_last_change = now
             if first is None and s["calls"] > 0:
                 first = now; rec["first_call_state"] = s; log(f"  >>> first game call: {s}")
