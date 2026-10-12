@@ -1,0 +1,13 @@
+diff --git a/mashedmod/src/mashed_re/Util/UtilMid.cpp b/mashedmod/src/mashed_re/Util/UtilMid.cpp
+index 0c930cef..173dc369 100644
+--- a/mashedmod/src/mashed_re/Util/UtilMid.cpp
++++ b/mashedmod/src/mashed_re/Util/UtilMid.cpp
+@@ -764,7 +764,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl TimerSlotTickDispatcher()
+         auto* counter = reinterpret_cast<volatile std::uint8_t*>(sl.state + 4u);
+         if (state == 1u) {
+             eax = X87TimerElapsedFtol();
+-            *counter = static_cast<std::uint8_t>(eax);
++            *reinterpret_cast<volatile std::uint32_t*>(counter) = eax;  /* C4-CONTROL: dword counter store */
+             if (sl.action != 0)
+                 as_fn<Fn_void_void_t>(sl.action)();
+         } else if (state == 2u) {
