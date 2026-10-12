@@ -1,0 +1,27 @@
+# provenance 2026-10-12: main build 2a9a19a1 deployed (asi sha256 a8cdd7165cbf6e55...), MASHED_HOOK_ONLY=0x005ae920, MASHED_VERIFY_ASI=original/mashed_re_dev.asi
+=== verify_hook_install report (audio_pool_free) ===
+
+target address: 0x005ae920  export: AudioPoolFree
+PRE  bytes:     e9 4b 1b f3 69 0c 56 57
+asi base:       0x6a4d0000
+reimpl addr:    0x6a4e0470
+POST bytes:     e9 4b 1b f3 69 0c 56 57
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x69f31b4b  expected 0x69f31b4b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  1 / 1  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [{'scratch': 544}, {'scratch': 633}], 'seed': [{'addr': 8208376, 'val': {'scratch': 0}, 'size': 4}, {'addr': {'scratch': 268}, 'val': 4233696, 'size': 4}, {'addr': {'scratch': 264}, 'val': 4206400, 'size': 4}, {'addr': 6515416, 'val': {'scratch': 1536}, 'size': 4}, {'addr': {'scratch': 544}, 'val': 16, 'size': 4}, {'addr': {'scratch': 548}, 'val': 3, 'size': 4}, {'addr': {'scratch': 552}, 'val': 1, 'size': 4}, {'addr': {'scratch': 556}, 'val': 4, 'size': 4}, {'addr': {'scratch': 560}, 'val': {'scratch': 608}, 'size': 4}, {'addr': {'scratch': 564}, 'val': {'scratch': 608}, 'size': 4}, {'addr': {'scratch': 568}, 'val': 0, 'size': 4}, {'addr': {'scratch': 608}, 'val': {'scratch': 560}, 'size': 4}, {'addr': {'scratch': 612}, 'val': {'scratch': 560}, 'size': 4}, {'addr': {'scratch': 616}, 'val': 224, 'size': 1}]}  got=a2483dd  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 1x as expected
+  + all 1 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_audio_pool_free.txt

@@ -1,0 +1,27 @@
+# provenance 2026-10-12: main build 2a9a19a1 deployed (asi sha256 a8cdd7165cbf6e55...), MASHED_HOOK_ONLY=0x005ae650, MASHED_VERIFY_ASI=original/mashed_re_dev.asi
+=== verify_hook_install report (audio_pool_construct) ===
+
+target address: 0x005ae650  export: AudioPoolConstruct
+PRE  bytes:     e9 9b 1c f3 69 7c 24 1c
+asi base:       0x6a4d0000
+reimpl addr:    0x6a4e02f0
+POST bytes:     e9 9b 1c f3 69 7c 24 1c
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x69f31c9b  expected 0x69f31c9b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  1 / 1  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [16, 20, 4, 0, {'scratch': 544}, 0], 'seed': [{'addr': 8208376, 'val': {'scratch': 0}, 'size': 4}, {'addr': {'scratch': 268}, 'val': 4233696, 'size': 4}, {'addr': {'scratch': 264}, 'val': 4206400, 'size': 4}, {'addr': 6515416, 'val': {'scratch': 1536}, 'size': 4}, {'addr': 8247936, 'val': {'scratch': 896}, 'size': 4}, {'addr': 8247940, 'val': {'scratch': 912}, 'size': 4}, {'addr': {'scratch': 900}, 'val': 195948557, 'size': 4}, {'addr': 8247984, 'val': 0, 'size': 4}]}  got=daadf68,337a182  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 1x as expected
+  + all 1 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_audio_pool_construct.txt
