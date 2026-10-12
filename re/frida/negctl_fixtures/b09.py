@@ -134,12 +134,18 @@ def _mb(e7e8, e7ec, sel, ea84, ea78, ea80):
                          {'addr': 0x0067ea80, 'val': ea80}])
 
 
-def _mc(e810, e814, heads, dims, types, feat):
+def _mc(e810, e814, heads, dims, types, feat, scr=0):
+    # 0x0042fe90 re-read from the bytes 2026-10-12: dim flag = dword 0x0067ed44 + scr*0x40 + i*4 (shl 4 @0x0042ff1b,
+    # [edx*4] @0x0042ff20); descriptor = dword 0x0067ed38 (mode 1) / 0x0067ed78 (else) + scr*0x40; player field =
+    # DWORD 0x007f105c + type*0x4c (imul 0x4c @0x00430010, mov edi,dword @0x00430013); 4 entries 0x00898b1c..0x00898bec.
     s = [{'addr': 0x0067e810, 'val': e810}, {'addr': 0x0067e814, 'val': e814}]
     s += [{'addr': 0x00898b1c + i * 0x34, 'val': h} for i, h in enumerate(heads)]
-    s += [{'addr': 0x0067ed44 + i * 4, 'val': d} for i, d in enumerate(dims)]
+    s += [{'addr': 0x0067ed44 + scr * 0x40 + i * 4, 'val': d} for i, d in enumerate(dims)]
     s += [{'addr': 0x00898aa0 + i * 4, 'val': t} for i, t in enumerate(types)]
-    s += [{'addr': 0x007f105c + t * 0x13, 'val': feat[i], 'size': 1} for i, t in enumerate(types)]
+    s += [{'addr': 0x007f105c + t * 0x4c, 'val': feat[i]} for i, t in enumerate(types)]
+    if scr:
+        s += [{'addr': 0x0067e9f8, 'val': scr}, {'addr': 0x0067ed38 + scr * 0x40, 'val': {'scratch': 0x100}},
+              {'addr': 0x0067ed78 + scr * 0x40, 'val': {'scratch': 0x100}}]
     return _menu_common(s)
 
 
@@ -157,8 +163,16 @@ FIXES['menu_sprite_dispatch_c'] = _e(
     path1_tests=[_mc(0, 0x80, [0, 0, 0, 0], [1, 0, 1, 0], [0, 1, 2, 3], [1, 0, 1, 0]),
                  _mc(2, 0x80, [0, 0, 0, 0], [1, 1, 1, 1], [0, 1, 2, 3], [1, 1, 1, 1]),
                  _mc(0, 0x10, [0, 0, 0, 0], [1, 1, 1, 1], [0, 1, 2, 3], [1, 1, 1, 1]),
-                 _mc(1, 0x40, [0, 0xc3, 0, 0xc3], [1, 1, 0, 0], [4, 5, 6, 7], [0, 1, 1, 0])],
-    path2_tests=[_mc(0, 0x80, [0, 0, 0, 0], [1, 0, 1, 0], [0, 1, 2, 3], [1, 0, 1, 0])], **_MENU)
+                 _mc(1, 0x40, [0, 0xc3, 0, 0xc3], [1, 1, 0, 0], [4, 5, 6, 7], [0, 1, 1, 0]),
+                 # last drawn field has only a high byte set (an int8 read sees 0); alpha 0x1a0 -> colour byte 0xa0
+                 _mc(0, 0x1a0, [0, 0, 0, 0], [0, 1, 0, 0], [3, 2, 1, 0], [0, 0, 0, 0x100]),
+                 # mode 3 skips the alpha guard; head 0x1c3 is not the 0xc3 sentinel as a dword
+                 _mc(3, -5, [0x1c3, 0, 0, 0], [1, 0, 1, 1], [7, 0, 5, 2], [0x01000000, 0, 7, 0]),
+                 # screen 1: descriptor 0x0067edb8 / dim flags 0x0067ed84.. (stride 0x40, not 0x10)
+                 _mc(0, 0xc0, [0, 0, 0, 0], [0, 1, 0, 1], [1, 3, 5, 7], [1, 0, 0x10000, 0], scr=1),
+                 _mc(1, 0x70, [0, 0, 0, 0], [1, 0, 0, 1], [6, 4, 2, 0], [0, 0x200, 1, 0x80000000], scr=1)],
+    path2_tests=[_mc(0, 0x80, [0, 0, 0, 0], [1, 0, 1, 0], [0, 1, 2, 3], [1, 0, 1, 0])],
+    boot_settle_s=8.0, **_MENU)   # run_diff/run_verify_hook: menu sprite dictionaries load after LUT-ready
 
 
 # ── 0x00430830 SplitScreenTrackAssignment(p) ──────────────────────────────────────────────────────────────────────────

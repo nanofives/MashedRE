@@ -8,7 +8,7 @@
 // Included in this file:
 //   0x0042f0c0  MenuSpriteDispatchA  — options 3-row list renderer (Difficulty/Steering/Camera)
 //   0x0042fb70  MenuSpriteDispatchB  — mini 3-row settings (Track/Player Count/Music)
-//   0x0042fe90  MenuSpriteDispatchC  — per-vehicle Y/N feature list renderer (14 entries)
+//   0x0042fe90  MenuSpriteDispatchC  — 4-entry Arrow/glyph renderer (glyph 0x59/0x5a per player field)
 //   0x0042e3a0  MenuChromeShellA     — menu chrome: top/bottom bands, scroll, tick marks
 //   0x0042e5b0  MenuChromeShellB     — frontend BG + animated logo renderer
 //
@@ -21,6 +21,7 @@
 
 #include "../Core/HookSystem.h"
 #include <cstdint>
+#include <cstring>
 
 // ---------------------------------------------------------------------------
 // Callee declarations — all C2+ in hooks.csv
@@ -348,98 +349,157 @@ RH_ScopedInstall(MenuSpriteDispatchB, 0x0042fb70);  // re-enabled 2026-05-24 c3-
 // ---------------------------------------------------------------------------
 // MenuSpriteDispatchC  --  0x0042fe90
 //
-// Original: FUN_0042fe90 (650 bytes, 0x0042fe90..0x00430116)
-// Signature: void FUN_0042fe90(void)
+// Original: FUN_0042fe90 (0x0042fe90..0x00430116), void(void), cdecl; saves
+// ebx/ebp/esi/edi, clobbers eax/ecx/edx. Only caller: 0x0043bfd3 in
+// FUN_0043bf30, which reloads EAX from DAT_0067e818 straight after the call.
 //
-// Per-vehicle-type Y/N feature list renderer (14 entries).
-// Guard: only renders if DAT_0067e810 != 2 &&
-//        (DAT_0067e810 != 0 || _DAT_0067e814 > 0x5f).
+// Re-ported from the bytes 2026-10-12 (capstone on MASHED.exe.unpatched).
+// Ghidra's (&DAT_007f105c)[idx*0x13] and DAT_0067ed44[screen*0x10+i] are
+// DWORD-indexed: the bytes are imul eax,eax,0x4c @0x00430010 +
+// mov edi,dword [eax+0x7f105c] @0x00430013, and shl edx,4 @0x0042ff1b +
+// mov esi,dword [edx*4+0x67ed44] @0x0042ff20 (byte offsets idx*0x4c and
+// screen*0x40 + i*4). The old port read an int8 at idx*0x13 and a dword at
+// screen*0x10 + i*4, walked 14 entries, inverted the 0x59/0x5a pick, drew no
+// Arrow quads and passed (0,&dummy)/(0,0) to FUN_0042ac00/FUN_0042ac50.
 //
 // ref: re/analysis/promote_c2_frontend_menus/0x0042fe90.md
 // ---------------------------------------------------------------------------
 
-// Globals (cited at 0x0042fe90 body):
-static constexpr std::uintptr_t kDispC_ModeFlag    = 0x0067e810u; // mode flag (guard)
-static constexpr std::uintptr_t kDispC_Alpha        = 0x0067e814u; // alpha (guard threshold 0x60)
-static constexpr std::uintptr_t kDispC_ScreenIdx    = 0x0067e9f8u; // screen index
-static constexpr std::uintptr_t kDispC_DimTable     = 0x0067ed44u; // dim flag table (screen×0x10+row)
-static constexpr std::uintptr_t kDispC_FeatureBase  = 0x00898b1cu; // feature entry array base
-static constexpr std::uintptr_t kDispC_TypeIndexArr = 0x00898aa0u; // feature type index array
-static constexpr std::uintptr_t kDispC_VehFeatTable = 0x007f105cu; // vehicle feature presence table (stride 0x13)
-// Layout constants (cited at 0x0042fe90 body):
-static constexpr int kDispC_EntryCount   = 14;    // 14 vehicle feature entries
-static constexpr int kDispC_EntryStride  = 0xd;   // entry stride in dwords = 52 bytes → 13 dwords
-static constexpr int kDispC_SkipSentinel = 0xc3;  // entry disabled/hidden sentinel
-static constexpr int kDispC_VehStride    = 0x13;  // vehicle feature table stride
-// Scale constants (cited at body):
-static constexpr std::uintptr_t kDispC_ScaleX       = 0x005cd8a0u;
-static constexpr std::uintptr_t kDispC_ScaleY       = 0x005cc9f4u;
-static constexpr float           kDispC_TextX        = 351.0f;     // 0x43af0000
+// Globals (each cited at its read):
+static constexpr std::uintptr_t kDispC_Mode        = 0x0067e810u;  // dword @0x0042fe90
+static constexpr std::uintptr_t kDispC_Alpha       = 0x0067e814u;  // dword @0x0042fea9, byte @0x0042fefd/0x004300a1
+static constexpr std::uintptr_t kDispC_Screen      = 0x0067e9f8u;  // dword @0x0042feb6/0x0042ff15/0x00430104
+static constexpr std::uintptr_t kDispC_DescMode1   = 0x0067ed38u;  // + screen*0x40, dword @0x0043010c (mode == 1)
+static constexpr std::uintptr_t kDispC_DescOther   = 0x0067ed78u;  // + screen*0x40, dword @0x0042febf (mode != 1)
+static constexpr std::uintptr_t kDispC_DimTable    = 0x0067ed44u;  // + screen*0x40 + i*4, dword @0x0042ff20
+static constexpr std::uintptr_t kDispC_EntryFirst  = 0x00898b1cu;  // mov eax,0x898b1c @0x0042ff08
+static constexpr std::uintptr_t kDispC_EntryEnd    = 0x00898becu;  // cmp eax,0x898bec @0x004300c0 (4 entries)
+static constexpr std::uintptr_t kDispC_EntryStride = 0x34u;        // add eax,0x34 @0x004300b6
+static constexpr std::uint32_t  kDispC_SkipHead    = 0xc3u;        // cmp dword [eax],0xc3 @0x0042ff38
+static constexpr std::uintptr_t kDispC_TypeIdx     = 0x00898aa0u;  // + i*4, dword @0x00430005
+static constexpr std::uintptr_t kDispC_PlayerField = 0x007f105cu;  // + type*0x4c, dword @0x00430013
+static constexpr std::uintptr_t kDispC_PlayerStride = 0x4cu;       // imul eax,eax,0x4c @0x00430010
+static constexpr std::uintptr_t kDispC_ArrowName   = 0x005cd828u;  // "Arrow", push @0x0042fff2/0x0043008e
+
+static inline float DispC_F(std::uint32_t bits) { float f; std::memcpy(&f, &bits, 4); return f; }
+
+// Float constants, written as the exact bits at their .rdata address / immediate.
+static const float kDispC_ArrowXk  = DispC_F(0x3f040000u);  // 0.515625   fmul [0x005cd8a4] @0x0042ff63
+static const float kDispC_YBias    = DispC_F(0x41000000u);  // 8.0        fsub [0x005cc9f4] @0x0042ff81
+static const float kDispC_YScale   = DispC_F(0x3b088889u);  // 1/480      fmul [0x005cc560] @0x0042ff89
+static const float kDispC_WScale   = DispC_F(0x3ccccccdu);  // 0.025      fmul [0x005cc9a4] @0x0042ffa3
+static const float kDispC_HScale   = DispC_F(0x3d088889u);  // 1/30       fmul [0x005cc324] @0x0042ffe0
+static const float kDispC_RowStep  = DispC_F(0x41f00000u);  // 30.0       fadd [0x005cc72c] @0x004300b9
+static const float kDispC_TextX    = DispC_F(0x43af0000u);  // 350.0      push imm @0x00430029
+static const float kDispC_TextSc   = DispC_F(0x3f333333u);  // 0.7        push imm @0x00430022/0x0043003c
+static const float kDispC_Uv       = DispC_F(0x3f7ff972u);  // 0.9999      push imm @0x0042ffd6
+static const float kDispC_One      = DispC_F(0x3f800000u);  // 1.0        push imm @0x0042ffc9
+
+// Call helper (not a port): FUN_0042ac50 takes the count in EAX and the spacing in ECX, returns EAX
+// (mov ebx,eax @0x0042ac51; imul ebx,ecx @0x0042ac6b). No C convention fits.
+static int DispC_MenuBaseY(int count, int spacing)
+{
+    int r;
+    __asm {
+        mov  eax, count
+        mov  ecx, spacing
+        mov  edx, 0x0042ac50
+        call edx
+        mov  r, eax
+    }
+    return r;
+}
+
+// Call helper (not a port) for the sequence at 0x00430039..0x0043004a: push 0.7f; push id; call 0x004282a0; add esp,8;
+// call 0x004a2c48 (ST0 -> EAX). The ST0 result goes to the truncation helper
+// unrounded, so the pair is called back to back here too.
+static int DispC_MeasureTrunc(int id)
+{
+    int r;
+    __asm {
+        push 0x3f333333
+        push id
+        mov  eax, 0x004282a0
+        call eax
+        add  esp, 8
+        mov  eax, 0x004a2c48
+        call eax
+        mov  r, eax
+    }
+    return r;
+}
 
 // 0x0042fe90
 extern "C" __declspec(dllexport) void __cdecl MenuSpriteDispatchC(void)
 {
-    // Guard: skip if mode==2, or mode==0 && alpha <= 0x5f. Cited at 0x0042fe90 entry.
-    std::uint32_t mode  = *reinterpret_cast<std::uint32_t*>(kDispC_ModeFlag);
-    std::uint32_t alpha = *reinterpret_cast<std::uint32_t*>(kDispC_Alpha);
-    if (mode == 2u) return;
-    if (mode == 0u && alpha <= 0x5fu) return;
+    // Guard and descriptor pick.
+    const std::int32_t mode = *reinterpret_cast<const std::int32_t*>(kDispC_Mode);
+    if (mode == 2) return;                                                     // je @0x0042fe9b
+    std::uintptr_t desc_table = kDispC_DescOther;                              // @0x0042feb6
+    if (mode == 0) {
+        if (*reinterpret_cast<const std::int32_t*>(kDispC_Alpha) < 0x60)      // cmp/jl @0x0042fea9 (signed)
+            return;
+    } else if (mode == 1) {
+        desc_table = kDispC_DescMode1;                                         // @0x004300fb..0x0043010c
+    }
+    const std::uint32_t screen = *reinterpret_cast<const std::uint32_t*>(kDispC_Screen);
+    const std::uint32_t desc =
+        *reinterpret_cast<const std::uint32_t*>(desc_table + (screen << 6));  // shl 6 @0x0042febc/0x00430109
 
-    // Begin render state. Cited at body entry.
-    vtable_render_state(6, 0);
-    vtable_render_state(8, 0);
+    // Row origin: FUN_0042ac00(EDX = desc) @0x0042fec9, FUN_0042ac50(EAX = count, ECX = 0x1e) @0x0042fece.
+    const int count = s_MenuGroupCount(0, reinterpret_cast<int*>(desc));
+    float y = static_cast<float>(DispC_MenuBaseY(count, 0x1e));                // fild/fstp @0x0042fee2/0x0042feea
 
-    // Row Y init. Cited at 0x0042fe90 body.
-    int dummy = 0;
-    s_MenuGroupCount(0, &dummy);
-    float base_y = s_MenuBaseY(0, 0);
+    vtable_render_state(6, 0);                                                 // @0x0042feee
+    vtable_render_state(8, 0);                                                 // @0x0042fefa
 
-    float scale_x = *reinterpret_cast<float*>(kDispC_ScaleX);
-    float scale_y = *reinterpret_cast<float*>(kDispC_ScaleY);
-    float scale_h = *reinterpret_cast<float*>(0x005cc9a4u);  // per-row step
-
-    int screen_idx = *reinterpret_cast<int*>(kDispC_ScreenIdx);
-
-    // Iterate 14 feature entries. Stride is 0xd dwords = 52 bytes. Cited at body.
-    for (int i = 0; i < kDispC_EntryCount; ++i) {
-        // Entry pointer: kDispC_FeatureBase + i * (kDispC_EntryStride * 4)
-        const std::uintptr_t entry_base = kDispC_FeatureBase
-            + static_cast<std::uintptr_t>(i) * static_cast<std::uintptr_t>(kDispC_EntryStride) * 4u;
-        int entry_head = *reinterpret_cast<const int*>(entry_base);
-
-        // Skip if entry[0] == 0xc3 (disabled). Cited at body.
-        if (static_cast<unsigned char>(entry_head) == static_cast<unsigned char>(kDispC_SkipSentinel))
+    std::uint8_t alpha8 = *reinterpret_cast<const std::uint8_t*>(kDispC_Alpha);  // mov cl,[0x67e814] @0x0042fefd
+    int i = 0;
+    for (std::uintptr_t entry = kDispC_EntryFirst; entry < kDispC_EntryEnd;
+         entry += kDispC_EntryStride, ++i, y = y + kDispC_RowStep) {          // @0x004300b2..0x004300d1
+        const std::uint32_t scr = *reinterpret_cast<const std::uint32_t*>(kDispC_Screen);
+        const std::int32_t dim = *reinterpret_cast<const std::int32_t*>(
+            kDispC_DimTable + ((scr << 4) + static_cast<std::uint32_t>(i)) * 4u);  // @0x0042ff15..0x0042ff20
+        std::uint8_t a = alpha8;                                               // @0x0042ff29
+        if (dim == 0) a = static_cast<std::uint8_t>(alpha8 >> 2);             // shr dl,2 @0x0042ff31
+        if (*reinterpret_cast<const std::uint32_t*>(entry) == kDispC_SkipHead) // @0x0042ff38
             continue;
+        const std::uint32_t color = static_cast<std::uint32_t>(a) << 24;      // bytes 0x10..0x12 = 0 @0x0042ff44
 
-        // Alpha: from DAT_0067e814; dim to bVar8>>2 if dim-table entry==0.
-        // Cited at 0x0042fe90 body.
-        std::uint32_t row_alpha = alpha;
-        int dim_flag = *reinterpret_cast<int*>(
-            kDispC_DimTable + static_cast<std::uintptr_t>(screen_idx) * 0x10u
-            + static_cast<std::uintptr_t>(i) * 4u);
-        if (dim_flag == 0) {
-            row_alpha = row_alpha >> 2u;
-        }
+        // Left Arrow quad.
+        const int w1 = static_cast<std::int16_t>(s_ScreenWidthGet());          // @0x0042ff53 movsx
+        const float ax = static_cast<float>(static_cast<double>(w1) * kDispC_ArrowXk);
+        const int h1 = static_cast<std::int16_t>(s_ScreenHeightGet());         // @0x0042ff6d
+        const float by = static_cast<float>(
+            static_cast<double>(h1) * (static_cast<double>(y) - kDispC_YBias) * kDispC_YScale);  // @0x0042ff79..0x0042ff8f
+        const int w2 = static_cast<std::int16_t>(s_ScreenWidthGet());          // @0x0042ff93
+        const float cw = static_cast<float>(static_cast<double>(w2) * kDispC_WScale);
+        const int h2 = static_cast<std::int16_t>(s_ScreenHeightGet());         // @0x0042ffad
+        const float dh = static_cast<float>(static_cast<double>(h2) * kDispC_HScale);
+        s_TextSpriteScaled(s_SpriteLookupC(reinterpret_cast<void*>(kDispC_ArrowName)),  // @0x0042fff7/0x00430000
+                           ax, by, cw, dh, color, kDispC_Uv, 0.0f, 0.0f, kDispC_One, 0, 0);
 
-        // Feature present: lookup vehicle feature table.
-        // cVar9 = (DAT_007f105c[DAT_00898aa0[i] * 0x13] != 0) + 'Y'.
-        // 'Y'=89 present, 'Z'=90 absent. Cited at 0x0042fe90 body.
-        int type_idx = *reinterpret_cast<const int*>(
-            kDispC_TypeIndexArr + static_cast<std::uintptr_t>(i) * 4u);
-        int feat_present = *reinterpret_cast<const std::int8_t*>(
-            kDispC_VehFeatTable
-            + static_cast<std::uintptr_t>(type_idx) * static_cast<std::uintptr_t>(kDispC_VehStride));
-        int sprite_id = (feat_present != 0 ? 89 : 90);  // 'Y' or 'Z'
+        // Glyph 0x59 + (player field != 0).
+        const std::int32_t type = *reinterpret_cast<const std::int32_t*>(
+            kDispC_TypeIdx + static_cast<std::uintptr_t>(i) * 4u);
+        const std::uint32_t field = *reinterpret_cast<const std::uint32_t*>(
+            kDispC_PlayerField + static_cast<std::uintptr_t>(type) * kDispC_PlayerStride);
+        const int id = (field != 0 ? 1 : 0) + 0x59;                            // setne/add 0x59 @0x0043001f/0x0043002e
+        s_SpriteDraw(id, kDispC_TextX, y, color, kDispC_TextSc, 0);            // @0x00430034
 
-        // Draw sprite. Text X: 351.0f (0x43af0000). Cited at body.
-        float x = kDispC_TextX * scale_x;
-        float y = base_y + scale_h * static_cast<float>(i);
-        s_SpriteDraw(sprite_id, x, y, (row_alpha << 24u) | 0x00ffffffu, 0.7f, 0);
+        // Right Arrow quad at x = (W * (width + 0x166)) / 640.
+        const int width = DispC_MeasureTrunc(id);                              // @0x00430042/0x0043004a
+        const int w3 = static_cast<std::int16_t>(s_ScreenWidthGet());          // @0x00430051
+        const int prod = static_cast<int>(static_cast<std::uint32_t>(w3) *
+                                          static_cast<std::uint32_t>(width + 0x166));  // @0x00430059/0x0043005f
+        const int rx = prod / 640;                                             // 0x66666667, sar 8 @0x00430062..0x00430077
+        s_TextSpriteUVExplicit(s_SpriteLookupC(reinterpret_cast<void*>(kDispC_ArrowName)),  // @0x00430093/0x0043009c
+                               static_cast<float>(rx), by, cw, dh, color, 1);
+        alpha8 = *reinterpret_cast<const std::uint8_t*>(kDispC_Alpha);         // @0x004300a1
     }
 
-    // End render state. Cited at body exit.
-    vtable_render_state(6, 1);
-    vtable_render_state(8, 1);
+    vtable_render_state(6, 1);                                                 // @0x004300e0
+    vtable_render_state(8, 1);                                                 // @0x004300ed
 }
 
 RH_ScopedInstall(MenuSpriteDispatchC, 0x0042fe90);  // re-enabled 2026-05-24 c3-frontend-b

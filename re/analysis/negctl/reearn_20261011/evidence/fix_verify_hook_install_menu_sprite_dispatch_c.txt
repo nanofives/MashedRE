@@ -1,0 +1,25 @@
+# provenance 2026-10-12: worktree build (asi sha256 5c237b56...) copied over original/mashed_re_dev.asi for this run, MASHED_HOOK_ONLY=0x0042fe90, MASHED_VERIFY_ASI=original/mashed_re_dev.asi; shared asi restored after (sha256 d939967f... confirmed). HOOK_ONLY because an auto-hooked boot with the full hook set AVs at ~9 s (call [eax+0x1c] @0x00494ff1, slot = 1) on both the shared and this build.
+=== verify_hook_install report (menu_sprite_dispatch_c) ===
+
+target address: 0x0042fe90  export: MenuSpriteDispatchC
+PRE  bytes:     e9 7b b9 03 6e 83 ec 24
+asi base:       0x6e450000
+reimpl addr:    0x6e46b810
+POST bytes:     e9 7b b9 03 6e 83 ec 24
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x6e03b97b  expected 0x6e03b97b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  1 / 1  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [], 'seed': [{'addr': 6805564, 'val': {'scratch': 0}}, {'addr': 6810104, 'val': 0}, {'addr': 6810936, 'val': {'scratch': 256}}, {'addr': 6811000, 'val': {'scratch': 256}}, {'addr': {'scratch': 256}, 'val': 1}, {'addr': {'scratch': 260}, 'val': 4278583296}, {'addr': {'scratch': 264}, 'val': 2}, {'addr': {'scratch': 268}, 'val': 4278583296}, {'addr': {'scratch': 272}, 'val': 3}, {'addr': {'scratch': 276}, 'val': 4278648832}, {'addr': 6809616, 'val': 0}, {'addr': 6809620, 'val': 128}, {'addr': 9014044, 'val': 0}, {'addr': 9014096, 'val': 0}, {'addr': 9014148, 'val': 0}, {'addr': 9014200, 'val': 0}, {'addr': 6810948, 'val': 1}, {'addr': 6810952, 'val': 0}, {'addr': 6810956, 'val': 1}, {'addr': 6810960, 'val': 0}, {'addr': 9013920, 'val': 0}, {'addr': 9013924, 'val': 1}, {'addr': 9013928, 'val': 2}, {'addr': 9013932, 'val': 3}, {'addr': 8327260, 'val': 1}, {'addr': 8327336, 'val': 0}, {'addr': 8327412, 'val': 1}, {'addr': 8327488, 'val': 0}]}  got=f108dd60  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 1x as expected
+  + all 1 calls returned without exception
+FAIL:
+  (none)

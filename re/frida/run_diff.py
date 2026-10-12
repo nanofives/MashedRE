@@ -643,6 +643,13 @@ def main():
             except Exception: pass
             return 6
 
+    # boot_settle_s (2026-10-12): wait this long after attach before loading the agent. Frontend renderers
+    # (0x0042fe90 & co) need the menu sprite dictionaries, which load after LUT-ready; without the wait every
+    # drawing vector AVs at 0x8 on BOTH arms. run_negctl's warm lane already waits 6 s after spawn.
+    if hook.get('boot_settle_s'):
+        print(f"  boot_settle_s={hook['boot_settle_s']}: waiting before loading the agent")
+        time.sleep(float(hook['boot_settle_s']))
+
     script_text = agent_source(AGENT_JS, config)
     script = session.create_script(script_text)
     script.on('message', on_message)
