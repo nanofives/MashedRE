@@ -1,0 +1,10 @@
+arm,ref,result,tag,alive_at_end,b0,bucket_diffs,buckets,calls,crash,crash_at,crash_enter,crash_inbody,enter,entry,exit_code,hook_live,jmp_module,match,mmOld,mmOrig,mode,ref_buckets,rule,verdict
+ctl,41db80_stock1,RED,ctl1,True,233,a<0.34;b<0.82;c<1.3;d<1.86;e<4,6,1025,0,,,,1025,0x6f4c42a0 mashed_re_dev_ctl41d.asi+0x142a0,0xdeadbeef,True,mashed_re_dev_ctl41d.asi,False,0,720,10,6,0,DONE
+ctl,41db80_stock1,RED,ctl2,True,233,a<0.34;b<0.82;c<1.3;d<1.86;e<4,6,1233,0,,,,1233,0x707d42a0 mashed_re_dev_ctl41d.asi+0x142a0,0xdeadbeef,True,mashed_re_dev_ctl41d.asi,False,0,960,10,6,0,DONE
+late,41db80_stock1,GREEN,late1,True,233,,6,1280,0,,,,1280,0x70f042a0 mashed_re_dev.asi+0x142a0,0xdeadbeef,True,mashed_re_dev.asi,True,806,0,10,6,0,DONE
+off,41db80_off2,GREEN,off1,True,184,,6,1224,0,,,,1224,0x41db80 MASHED.exe+0x1db80,0xdeadbeef,False,,True,948,0,10,6,0,DONE
+off,41db80_off1,GREEN,off2,True,184,,6,1252,0,,,,1252,0x41db80 MASHED.exe+0x1db80,0xdeadbeef,False,,True,720,0,10,6,0,DONE
+on,41db80_off1,GREEN,on1,True,233,,6,1088,0,,,,1088,0x70f042a0 mashed_re_dev.asi+0x142a0,0xdeadbeef,True,mashed_re_dev.asi,True,952,0,10,6,0,DONE
+on,41db80_off1,GREEN,on2,True,233,,6,1214,0,,,,1214,0x70f042a0 mashed_re_dev.asi+0x142a0,0xdeadbeef,True,mashed_re_dev.asi,True,950,0,10,6,0,DONE
+stock,41db80_stock2,GREEN,stock1,True,184,,6,1290,0,,,,1290,0x41db80 MASHED.exe+0x1db80,0xdeadbeef,False,,True,950,0,10,6,0,DONE
+stock,41db80_stock1,GREEN,stock2,True,184,,6,1186,0,,,,1186,0x41db80 MASHED.exe+0x1db80,0xdeadbeef,False,,True,960,0,10,6,0,DONE

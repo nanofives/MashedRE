@@ -1,0 +1,189 @@
+	Using video mode 1 : 640x480
+At 10 bytes per pixel (16bit Z + 2*32bit FB) there is 4194304 - 3686400 = 1122304 bytes of video memory free
+Replay buffer will be 150076 bytes in size
+RtFSManagerRegister successful
+numpermwaves 43
+numpermvirtualvoices 139
+Waiting for boot status
+Waiting for boot status
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for ti   wait timeout:  (depth=2 phase=3)
+   wait timeout:  (depth=2 phase=3)
+  d3: {'d': 3, 'ph': 3, 'type': 2, 'sel': 0, 'f184': 0, 'mode': 0, 'f17c': 0, 'rule': 0, 'st': 0, 'ai': 0, 'fcc': 0, 'sph': 1, 'y': 0, 'fe4': 0, 'C': {'410510': 0, '4295a0': 0, '429e10': 0}}
+  d4: {'d': 4, 'ph': 3, 'type': 4, 'sel': 0, 'f184': 1, 'mode': 3, 'f17c': 0, 'rule': 0, 'st': 0, 'ai': 0, 'fcc': 0, 'sph': 1, 'y': 0, 'fe4': 0, 'C': {'410510': 0, '4295a0': 0, '429e10': 0}}
+  d5: {'d': 5, 'ph': 3, 'type': 6, 'sel': 0, 'f184': 1, 'mode': 3, 'f17c': 0, 'rule': 0, 'st': 0, 'ai': 0, 'fcc': 0, 'sph': 1, 'y': 0, 'fe4': 0, 'C': {'410510': 0, '4295a0': 0, '429e10': 0}}
+  d5 key 10: {'d': 5, 'ph': 3, 'type': 6, 'sel': 0, 'f184': 2, 'mode': 4, 'f17c': 0, 'rule': 0, 'st': 0, 'ai': 0, 'fcc': 0, 'sph': 1, 'y': 0, 'fe4': 0, 'C': {'410510': 0, '4295a0': 0, '429e10': 0}}
+  d5 down: {'d': 5, 'ph': 3, 'type': 6, 'sel': -1, 'f184': 2, 'mode': 4, 'f17c': 1, 'rule': 0, 'st': 0, 'ai': 0, 'fcc': 0, 'sph': 1, 'y': 0, 'fe4': 0, 'C': {'410510': 0, '4295a0': 0, '429e10': 0}}
+  d5 down: {'d': 5, 'ph': 3, 'type': 6, 'sel': -1, 'f184': 2, 'mode': 4, 'f17c': 2, 'rule': 0, 'st': 0, 'ai': 0, 'fcc': 0, 'sph': 1, 'y': 0, 'fe4': 0, 'C': {'410510': 0, '4295a0': 0, '429e10': 0}}
+  after confirm: {'d': 5, 'ph': 0, 'type': 6, 'sel': -1, 'f184': 2, 'mode': 4, 'f17c': 2, 'rule': 10, 'st': 0, 'ai': 0, 'fcc': 0, 'sph': 2, 'y': 0, 'fe4': 0, 'C': {'410510': 0, '4295a0': 0, '429e10': 0}}
+   0 {'d': 5, 'ph': 0, 'type': 6, 'sel': -1, 'f184': 2, 'mode': 4, 'f17c': 2, 'rule': 10, 'st': 0, 'ai': 0, 'fcc': 0, 'sph': 2, 'y': 0, 'fe4': 0, 'C': {'410510': 0, '4295a0': 0, '429e10': 0}}
+   5 {'d': 5, 'ph': 0, 'type': 6, 'sel': -1, 'f184': 2, 'mode': 4, 'f17c': 2, 'rule': 10, 'st': 3, 'ai': 0, 'fcc': 0, 'sph': 3, 'y': 0, 'fe4': 17.799999237060547, 'C': {'410510': 0, '4295a0': 0, '429e10': 257}}
+   10 {'d': 5, 'ph': 0, 'type': 6, 'sel': -1, 'f184': 2, 'mode': 4, 'f17c': 2, 'rule': 10, 'st': 3, 'ai': 0, 'fcc': 0, 'sph': 3, 'y': 0, 'fe4': 17.799999237060547, 'C': {'410510': 0, '4295a0': 0, '429e10': 549}}
+   15 {'d': 5, 'ph': 0, 'type': 6, 'sel': -1, 'f184': 2, 'mode': 4, 'f17c': 2, 'rule': 10, 'st': 6, 'ai': 0, 'fcc': 0, 'sph': 3, 'y': 0, 'fe4': 15.433368682861328, 'C': {'410510': 0, '4295a0': 0, '429e10': 846}}
+   20 {'d': 5, 'ph': 0, 'type': 6, 'sel': -1, 'f184': 2, 'mode': 4, 'f17c': 2, 'rule': 10, 'st': 6, 'ai': 0, 'fcc': 0, 'sph': 3, 'y': 0, 'fe4': 10.43344497680664, 'C': {'410510': 0, '4295a0': 0, '429e10': 1146}}
+   25 {'d': 5, 'ph': 0, 'type': 6, 'sel': -1, 'f184': 2, 'mode': 4, 'f17c': 2, 'rule': 10, 'st': 6, 'ai': 0, 'fcc': 0, 'sph': 3, 'y': 0, 'fe4': 5.500115394592285, 'C': {'410510': 0, '4295a0': 0, '429e10': 1442}}
+   30 {'d': 5, 'ph': 0, 'type': 6, 'sel': -1, 'f184': 2, 'mode': 4, 'f17c': 2, 'rule': 10, 'st': 6, 'ai': 0, 'fcc': 0, 'sph': 3, 'y': 0, 'fe4': 0.6334319114685059, 'C': {'410510': 0, '4295a0': 0, '429e10': 1734}}
+   35 {'d': 5, 'ph': 0, 'type': 6, 'sel': -1, 'f184': 2, 'mode': 4, 'f17c': 2, 'rule': 10, 'st': 11, 'ai': 1, 'fcc': 0, 'sph': 3, 'y': 320, 'fe4': -0.016567707061767578, 'C': {'410510': 1, '4295a0': 249, '429e10': 2022}}
+   40 {'d': 5, 'ph': 0, 'type': 6, 'sel': -1, 'f184': 2, 'mode': 4, 'f17c': 2, 'rule': 10, 'st': 11, 'ai': 1, 'fcc': 0, 'sph': 3, 'y': -321.6666259765625, 'fe4': -0.016567707061767578, 'C': {'410510': 1, '4295a0': 517, '429e10': 2290}}
+   45 {'d': 5, 'ph': 0, 'type': 6, 'sel': -1, 'f184': 2, 'mode': 4, 'f17c': 2, 'rule': 10, 'st': 11, 'ai': 1, 'fcc': 0, 'sph': 3, 'y': -321.6666259765625, 'fe4': -0.016567707061767578, 'C': {'410510': 1, '4295a0': 750, '429e10': 2523}}
+   50 {'d': 5, 'ph': 0, 'type': 6, 'sel': -1, 'f184': 2, 'mode': 4, 'f17c': 2, 'rule': 10, 'st': 11, 'ai': 1, 'fcc': 0, 'sph': 3, 'y': -321.6666259765625, 'fe4': -0.016567707061767578, 'C': {'410510': 1, '4295a0': 991, '429e10': 2764}}
+   55 {'d': 5, 'ph': 0, 'type': 6, 'sel': -1, 'f184': 2, 'mode': 4, 'f17c': 2, 'rule': 10, 'st': 11, 'ai': 1, 'fcc': 0, 'sph': 3, 'y': -321.6666259765625, 'fe4': -0.016567707061767578, 'C': {'410510': 1, '4295a0': 1227, '429e10': 3000}}
+   60 {'d': 5, 'ph': 0, 'type': 6, 'sel': -1, 'f184': 2, 'mode': 4, 'f17c': 2, 'rule': 10, 'st': 11, 'ai': 1, 'fcc': 0, 'sph': 3, 'y': -321.6666259765625, 'fe4': -0.016567707061767578, 'C': {'410510': 1, '4295a0': 1460, '429e10': 3233}}
+   65 {'d': 5, 'ph': 0, 'type': 6, 'sel': -1, 'f184': 2, 'mode': 4, 'f17c': 2, 'rule': 10, 'st': 11, 'ai': 1, 'fcc': 0, 'sph': 3, 'y': -321.6666259765625, 'fe4': -0.016567707061767578, 'C': {'410510': 1, '4295a0': 1699, '429e10': 3472}}
+   70 {'d': 5, 'ph': 0, 'type': 6, 'sel': -1, 'f184': 2, 'mode': 4, 'f17c': 2, 'rule': 10, 'st': 11, 'ai': 1, 'fcc': 0, 'sph': 3, 'y': -321.6666259765625, 'fe4': -0.016567707061767578, 'C': {'410510': 1, '4295a0': 1934, '429e10': 3707}}
+   75 {'d': 5, 'ph': 0, 'type': 6, 'sel': -1, 'f184': 2, 'mode': 4, 'f17c': 2, 'rule': 10, 'st': 11, 'ai': 1, 'fcc': 0, 'sph': 3, 'y': -321.6666259765625, 'fe4': -0.016567707061767578, 'C': {'410510': 1, '4295a0': 2165, '429e10': 3938}}
+   81 {'d': 5, 'ph': 0, 'type': 6, 'sel': -1, 'f184': 2, 'mode': 4, 'f17c': 2, 'rule': 10, 'st': 11, 'ai': 1, 'fcc': 0, 'sph': 3, 'y': -321.6666259765625, 'fe4': -0.016567707061767578, 'C': {'410510': 1, '4295a0': 2405, '429e10': 4178}}
+   86 {'d': 5, 'ph': 0, 'type': 6, 'sel': -1, 'f184': 2, 'mode': 4, 'f17c': 2, 'rule': 10, 'st': 11, 'ai': 1, 'fcc': 0, 'sph': 3, 'y': -321.6666259765625, 'fe4': -0.016567707061767578, 'C': {'410510': 1, '4295a0': 2644, '429e10': 4417}}
+   91 {'d': 5, 'ph': 0, 'type': 6, 'sel': -1, 'f184': 2, 'mode': 4, 'f17c': 2, 'rule': 10, 'st': 11, 'ai': 1, 'fcc': 0, 'sph': 3, 'y': -321.6666259765625, 'fe4': -0.016567707061767578, 'C': {'410510': 1, '4295a0': 2882, '429e10': 4655}}
+   96 {'d': 5, 'ph': 0, 'type': 6, 'sel': -1, 'f184': 2, 'mode': 4, 'f17c': 2, 'rule': 10, 'st': 11, 'ai': 1, 'fcc': 0, 'sph': 3, 'y': -321.6666259765625, 'fe4': -0.016567707061767578, 'C': {'410510': 1, '4295a0': 3118, '429e10': 4891}}
+   101 {'d': 5, 'ph': 0, 'type': 6, 'sel': -1, 'f184': 2, 'mode': 4, 'f17c': 2, 'rule': 10, 'st': 11, 'ai': 1, 'fcc': 0, 'sph': 3, 'y': -321.6666259765625, 'fe4': -0.016567707061767578, 'C': {'410510': 1, '4295a0': 3360, '429e10': 5133}}
+   106 {'d': 5, 'ph': 0, 'type': 6, 'sel': -1, 'f184': 2, 'mode': 4, 'f17c': 2, 'rule': 10, 'st': 11, 'ai': 1, 'fcc': 0, 'sph': 3, 'y': -321.6666259765625, 'fe4': -0.016567707061767578, 'C': {'410510': 1, '4295a0': 3602, '429e10': 5375}}
+   111 {'d': 5, 'ph': 0, 'type': 6, 'sel': -1, 'f184': 2, 'mode': 4, 'f17c': 2, 'rule': 10, 'st': 11, 'ai': 1, 'fcc': 0, 'sph': 3, 'y': -321.6666259765625, 'fe4': -0.016567707061767578, 'C': {'410510': 1, '4295a0': 3845, '429e10': 5618}}
+   116 {'d': 5, 'ph': 0, 'type': 6, 'sel': -1, 'f184': 2, 'mode': 4, 'f17c': 2, 'rule': 10, 'st': 11, 'ai': 1, 'fcc': 0, 'sph': 3, 'y': -321.6666259765625, 'fe4': -0.016567707061767578, 'C': {'410510': 1, '4295a0': 4090, '429e10': 5863}}
+   121 {'d': 5, 'ph': 0, 'type': 6, 'sel': -1, 'f184': 2, 'mode': 4, 'f17c': 2, 'rule': 10, 'st': 11, 'ai': 1, 'fcc': 0, 'sph': 3, 'y': -321.6666259765625, 'fe4': -0.016567707061767578, 'C': {'410510': 1, '4295a0': 4332, '429e10': 6105}}
+   126 {'d': 5, 'ph': 0, 'type': 6, 'sel': -1, 'f184': 2, 'mode': 4, 'f17c': 2, 'rule': 10, 'st': 11, 'ai': 1, 'fcc': 0, 'sph': 3, 'y': -321.6666259765625, 'fe4': -0.016567707061767578, 'C': {'410510': 1, '4295a0': 4576, '429e10': 6349}}
+   131 {'d': 5, 'ph': 0, 'type': 6, 'sel': -1, 'f184': 2, 'mode': 4, 'f17c': 2, 'rule': 10, 'st': 11, 'ai': 1, 'fcc': 0, 'sph': 3, 'y': -321.6666259765625, 'fe4': -0.016567707061767578, 'C': {'410510': 1, '4295a0': 4816, '429e10': 6589}}
+   136 {'d': 5, 'ph': 0, 'type': 6, 'sel': -1, 'f184': 2, 'mode': 4, 'f17c': 2, 'rule': 10, 'st': 11, 'ai': 1, 'fcc': 0, 'sph': 3, 'y': -321.6666259765625, 'fe4': -0.016567707061767578, 'C': {'410510': 1, '4295a0': 5050, '429e10': 6823}}
+   141 {'d': 5, 'ph': 0, 'type': 6, 'sel': -1, 'f184': 2, 'mode': 4, 'f17c': 2, 'rule': 10, 'st': 11, 'ai': 1, 'fcc': 0, 'sph': 3, 'y': -321.6666259765625, 'fe4': -0.016567707061767578, 'C': {'410510': 1, '4295a0': 5286, '429e10': 7059}}
+   146 {'d': 5, 'ph': 0, 'type': 6, 'sel': -1, 'f184': 2, 'mode': 4, 'f17c': 2, 'rule': 10, 'st': 11, 'ai': 1, 'fcc': 0, 'sph': 3, 'y': -321.6666259765625, 'fe4': -0.016567707061767578, 'C': {'410510': 1, '4295a0': 5520, '429e10': 7293}}
+first {'410510': {'d': 5, 'ph': 0, 'type': 6, 'sel': -1, 'f184': 2, 'mode': 4, 'f17c': 2, 'rule': 10, 'st': 6, 'ai': 0, 'fcc': 0, 'sph': 3, 'y': 0, 'fe4': -0.016567707061767578}, '429e10': {'d': 5, 'ph': 0, 'type': 6, 'sel': -1, 'f184': 2, 'mode': 4, 'f17c': 2, 'rule': 10, 'st': 3, 'ai': 0, 'fcc': 0, 'sph': 3, 'y': 0, 'fe4': 17.799999237060547}, '4295a0': {'d': 5, 'ph': 0, 'type': 6, 'sel': -1, 'f184': 2, 'mode': 4, 'f17c': 2, 'rule': 10, 'st': 11, 'ai': 1, 'fcc': 0, 'sph': 3, 'y': 688.3333129882812, 'fe4': -0.016567707061767578}} 
+piz ['TOASTART\\COMMON\\FONT36.PIZ', 'TOASTART\\COMMON\\SFX.PIZ', 'TOASTART\\COMMON\\POWERUPS\\POWERUPS.PIZ', 'TOASTART\\COMMON\\PANEL\\PANEL.PIZ', 'TOASTART\\COMMON\\PERM.PIZ', 'TOASTART\\TRACKS\\NEUSTEIN.PIZ', 'TOASTART\\COMMON\\LED.PIZ', 'TOASTART\\COMMON\\AI.PIZ', 'TOASTART\\COMMON\\PERM.PIZ', 'TOASTART\\VEHICLES\\CRUSADER.PIZ', 'TOASTART\\VEHICLES\\DIRT.PIZ']

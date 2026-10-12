@@ -1,0 +1,10 @@
+arm,ref,result,tag,alive_at_end,b0,calls,crash,crash_at,crash_enter,crash_inbody,enter,entry,exit_code,foreign_calls,hook_live,jmp_module,keys,match,missing_keys,mode,ref_keys,rule,verdict
+ctl,403160_stock1,RED,ctl1,False,233,,1,UNMAPPED read @ 0x3f1ffc9d,1,True,,,0xc0000005,0,True,mashed_re_dev_ctl403.asi,0,False,1,,1,,NOT-REACHED
+ctl,403160_stock1,RED,ctl2,False,233,,1,UNMAPPED read @ 0x3f1ffc9d,1,True,,,0xc0000005,0,True,mashed_re_dev_ctl403.asi,0,False,1,,1,,NOT-REACHED
+late,403160_stock1,GREEN,late1,True,233,1626,0,,,,1626,0x70ac41a0 mashed_re_dev.asi+0x141a0,0xdeadbeef,0,True,mashed_re_dev.asi,1,True,0,11,1,6,DONE
+off,403160_off2,GREEN,off1,True,131,1769,0,,,,1769,0x403160 MASHED.exe+0x3160,0xdeadbeef,0,False,,1,True,0,11,1,6,DONE
+off,403160_off1,GREEN,off2,True,131,1768,0,,,,1768,0x403160 MASHED.exe+0x3160,0xdeadbeef,0,False,,1,True,0,11,1,6,DONE
+on,403160_off1,GREEN,on1,True,233,1812,0,,,,1812,0x6f6441a0 mashed_re_dev.asi+0x141a0,0xdeadbeef,0,True,mashed_re_dev.asi,1,True,0,11,1,6,DONE
+on,403160_off1,GREEN,on2,True,233,1705,0,,,,1705,0x6f6441a0 mashed_re_dev.asi+0x141a0,0xdeadbeef,0,True,mashed_re_dev.asi,1,True,0,11,1,6,DONE
+stock,403160_stock2,GREEN,stock1,True,131,1770,0,,,,1770,0x403160 MASHED.exe+0x3160,0xdeadbeef,0,False,,1,True,0,11,1,6,DONE
+stock,403160_stock1,GREEN,stock2,True,131,1814,0,,,,1814,0x403160 MASHED.exe+0x3160,0xdeadbeef,0,False,,1,True,0,11,1,6,DONE

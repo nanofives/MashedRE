@@ -1,0 +1,174 @@
+  spawned pid=34116 row=4295a0 arm=stock
+  title: depth=1 phase=3
+  witness before attach: {'b0': 131, 'dword': '3208ec83', 'tgt': None, 'mod': None}
+  arm: {'ok': True, 'entry': '0x4295a0 MASHED.exe+0x295a0', 'jmp': 131, 'dword': '3208ec83'}
+	Using video mode 1 : 640x480
+At 10 bytes per pixel (16bit Z + 2*32bit FB) there is 4194304 - 3686400 = 1122304 bytes of video memory free
+Replay buffer will be 150076 bytes in size
+RtFSManagerRegister successful
+numpermwaves 43
+numpermvirtualvoices 139
+Waiting for boot status
+Waiting for boot status
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for ti   wait timeout:  (depth=2 phase=3)
+   wait timeout:  (depth=2 phase=3)
+   wait timeout:  (depth=2 phase=3)
+  d3: depth=3 sel=0
+  cup: {'mode': 4, 'st': 0, 'rule': 0, 'sph': 1, 'ph': 3, 'd': 5, 'cnt': 0, 't8': 0.8999993801116943, 'f184': 2, 'f17c': 0, 'ai': 0, 'fcc': 0, 'y': 0, 'enter': 0, 'tx': 3606, 'calls': 0, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 0}
+  event: {'mode': 4, 'st': 0, 'rule': 0, 'sph': 1, 'ph': 3, 'd': 5, 'cnt': 0, 't8': 0.8999993801116943, 'f184': 2, 'f17c': 2, 'ai': 0, 'fcc': 0, 'y': 0, 'enter': 0, 'tx': 4131, 'calls': 0, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 0}
+  launched: {'mode': 4, 'st': 0, 'rule': 10, 'sph': 2, 'ph': 0, 'd': 5, 'cnt': 0, 't8': 0.8999993801116943, 'f184': 2, 'f17c': 2, 'ai': 0, 'fcc': 0, 'y': 0, 'enter': 0, 'tx': 4242, 'calls': 0, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 0}
+   t+0s {'mode': 4, 'st': 0, 'rule': 10, 'sph': 2, 'ph': 0, 'd': 5, 'cnt': 0, 't8': 0.8999993801116943, 'f184': 2, 'f17c': 2, 'ai': 0, 'fcc': 0, 'y': 0, 'enter': 0, 'tx': 4242, 'calls': 0, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 0}
+   t+5s {'mode': 4, 'st': 3, 'rule': 10, 'sph': 3, 'ph': 0, 'd': 5, 'cnt': 3.3999969959259033, 't8': 0.8999993801116943, 'f184': 2, 'f17c': 2, 'ai': 0, 'fcc': 0, 'y': 0, 'enter': 0, 'tx': 4364, 'calls': 0, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 0}
+   t+10s {'mode': 4, 'st': 3, 'rule': 10, 'sph': 3, 'ph': 0, 'd': 5, 'cnt': 7.083370685577393, 't8': 0.8999993801116943, 'f184': 2, 'f17c': 2, 'ai': 0, 'fcc': 0, 'y': 0, 'enter': 0, 'tx': 4364, 'calls': 0, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 0}
+   t+15s {'mode': 4, 'st': 5, 'rule': 10, 'sph': 3, 'ph': 0, 'd': 5, 'cnt': 1.7333319187164307, 't8': 0.8999993801116943, 'f184': 2, 'f17c': 2, 'ai': 0, 'fcc': 0, 'y': 0, 'enter': 0, 'tx': 4364, 'calls': 0, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 0}
+   t+20s {'mode': 4, 'st': 6, 'rule': 10, 'sph': 3, 'ph': 0, 'd': 5, 'cnt': 6.750032901763916, 't8': 0.8999993801116943, 'f184': 2, 'f17c': 2, 'ai': 0, 'fcc': 0, 'y': 0, 'enter': 0, 'tx': 4364, 'calls': 0, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 0}
+   t+25s {'mode': 4, 'st': 6, 'rule': 10, 'sph': 3, 'ph': 0, 'd': 5, 'cnt': 11.66666030883789, 't8': 0.8999993801116943, 'f184': 2, 'f17c': 2, 'ai': 0, 'fcc': 0, 'y': 0, 'enter': 0, 'tx': 4364, 'calls': 0, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 0}
+   t+30s {'mode': 4, 'st': 6, 'rule': 10, 'sph': 3, 'ph': 0, 'd': 5, 'cnt': 16.416587829589844, 't8': 0.8999993801116943, 'f184': 2, 'f17c': 2, 'ai': 0, 'fcc': 0, 'y': 0, 'enter': 0, 'tx': 4364, 'calls': 0, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 0}
+  >>> first game call: {'mode': 4, 'st': 11, 'rule': 10, 'sph': 3, 'ph': 0, 'd': 5, 'cnt': 19.833202362060547, 't8': 0.8999993801116943, 'f184': 2, 'f17c': 2, 'ai': 1, 'fcc': 0, 'y': 594.9998168945312, 'enter': 9, 'tx': 4400, 'calls': 9, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 1}
+   t+35s {'mode': 4, 'st': 11, 'rule': 10, 'sph': 3, 'ph': 0, 'd': 5, 'cnt': 21.066516876220703, 't8': 0.8999993801116943, 'f184': 2, 'f17c': 2, 'ai': 1, 'fcc': 0, 'y': 320, 'enter': 83, 'tx': 4696, 'calls': 83, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 1}
+   t+40s {'mode': 4, 'st': 11, 'rule': 10, 'sph': 3, 'ph': 0, 'd': 5, 'cnt': 25.666446685791016, 't8': 0.8999993801116943, 'f184': 2, 'f17c': 2, 'ai': 1, 'fcc': 0, 'y': 16.666683197021484, 'enter': 359, 'tx': 5800, 'calls': 359, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 1}
+   t+45s {'mode': 4, 'st': 11, 'rule': 10, 'sph': 3, 'ph': 0, 'd': 5, 'cnt': 29.583053588867188, 't8': 0.8999993801116943, 'f184': 2, 'f17c': 2, 'ai': 1, 'fcc': 0, 'y': -321.6666259765625, 'enter': 594, 'tx': 6740, 'calls': 594, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 1}
+   t+51s {'mode': 4, 'st': 11, 'rule': 10, 'sph': 3, 'ph': 0, 'd': 5, 'cnt': 33.399662017822266, 't8': 0.8999993801116943, 'f184': 2, 'f17c': 2, 'ai': 1, 'fcc': 0, 'y': -321.6666259765625, 'enter': 823, 'tx': 7656, 'calls': 823, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 1}
+   t+56s {'mode': 4, 'st': 11, 'rule': 10, 'sph': 3, 'ph': 0, 'd': 5, 'cnt': 37.3829345703125, 't8': 0.8999993801116943, 'f184': 2, 'f17c': 2, 'ai': 1, 'fcc': 0, 'y': -321.6666259765625, 'enter': 1062, 'tx': 8612, 'calls': 1062, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 1}
+   t+61s {'mode': 4, 'st': 11, 'rule': 10, 'sph': 3, 'ph': 0, 'd': 5, 'cnt': 41.23287582397461, 't8': 0.8999993801116943, 'f184': 2, 'f17c': 2, 'ai': 1, 'fcc': 0, 'y': -321.6666259765625, 'enter': 1293, 'tx': 9536, 'calls': 1293, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 1}
+  verdict=DONE calls=1460 keys=1 mmOrig=0 mmOld=0 crash=0 alive_at_end=True -> log\c4_hud\final\c4_hud_4295a0_stock1.json

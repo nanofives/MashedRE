@@ -1,0 +1,14 @@
+diff --git a/mashedmod/src/mashed_re/Util/UtilMid.cpp b/mashedmod/src/mashed_re/Util/UtilMid.cpp
+index 0c930cef..111e3586 100644
+--- a/mashedmod/src/mashed_re/Util/UtilMid.cpp
++++ b/mashedmod/src/mashed_re/Util/UtilMid.cpp
+@@ -536,7 +536,8 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl HudDualLabelRender() {
+ 
+     // 0x004295d9 / 0x004295de: y + [0x005cc31c], rounded to float by the fstp
+     const float y1 = fn_y() + *reinterpret_cast<const float*>(kDat_005cc31c);
+-    fn_render(0xffu, y1, 0x427c0000u /*63.0f*/, 0xff000000u, 0x3f800000u /*1.0f*/, 2u);  // 0x004295ed
++    typedef std::uint32_t (__cdecl* Fn_Render2_t)(std::uint32_t, float);   // C4 CONTROL: old 2-arg first call
++    as_fn<Fn_Render2_t>(kFn_00427e00_RVA)(0xffu, y1);
+ 
+     const float y2 = fn_y();                                                              // 0x00429606
+     return fn_render(0xffu, y2, 0x42700000u /*60.0f*/, 0xff0000ffu, 0x3f800000u /*1.0f*/, 2u);  // 0x00429614
