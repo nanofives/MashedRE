@@ -11,8 +11,8 @@
 >   Race Results, ~2,860 calls, controls RED on every call), 0x004464c0 CameraEntry::DispatchAll (attract demo, native
 >   counter stub, control RED 2/2; covers the .asi copy only). New harness: `re/frida/c4_front_scenario.py` +
 >   `c4_front_compare.py`; `c4_hud_scenario.py` rows 4464c0 / 40d440 / 41c2d0.
-> - **0x004026d0**: C4 evidence complete (GREEN 2/2, control RED 2/2), held at C3 for a user ruling on 5 passthrough
->   STUBS rows S-0171..S-0175 (0x00403160 went C4 with S-0560 open on the same day).
+> - **0x004026d0**: C4 (GREEN 2/2, control RED 2/2). The user cleared passthrough STUBS S-0171..S-0175, and U-0170
+>   is resolved (6d575bb9).
 > - **Forced input decided by the user 2026-10-12, all four now C4**: 0x004026d0 C4 (6d575bb9, S-0171..S-0175
 >   cleared, U-0170 resolved). 0x00404320 PerModeRenderMachine, 0x0040d440 and 0x0041c2d0 C4 on the approved
 >   save-copy Silver event 2 route (group H install-copy save, 26 launch-gate dwords, rule 10), c4save_RESULT.md,
