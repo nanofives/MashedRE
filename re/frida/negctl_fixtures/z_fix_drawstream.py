@@ -85,11 +85,12 @@ FIXES['menu_menus_bb'] = dict(_COMMON, **{
 
 
 # ── 0x00430b90 ProgressBarSetA() ────────────────────────────────────────────────────────────────────────────────────
-_PB_STREAM_A, _PB_STREAM_B = 0x100, 0x200
+_PB_STREAM_A, _PB_STREAM_B = 0x100, 0x400        # each stream has room for 0x7e tokens
 _TOK, _END = 0xff060000, 0xff070000
 
 
 def _stream(off, n):
+    assert (2 * n + 1) * 4 <= 0x300, n
     words = []
     for k in range(n):
         words += [0x1000 + k, _TOK]          # filler dwords between tokens are skipped (0x0042ac20..0x0042ac34)
@@ -113,7 +114,7 @@ def _pb(mode, alpha, idx=0, count=4, w=640, h=480, fills=(0.5, 0.25, 0.005), sel
     s += _stream(_PB_STREAM_A, count if mode == 1 else count + 1)
     s += _stream(_PB_STREAM_B, count if mode != 1 else count + 2)
     return {'args': [], 'seed': s,
-            'stub_rets': {'lookup': [0x5A000001 + k for k in range(40)], 'tsize': tsize}}
+            'stub_rets': {'lookup': [0x5A000001 + k for k in range(100)], 'tsize': tsize}}
 
 
 _PB_TESTS = [
@@ -125,12 +126,15 @@ _PB_TESTS = [
     _pb(1, -127, count=4, w=0x7fff, h=-2, fills=(0x7fc00000, 0.0100000007, 1e30), sel=7, tsize=-3.75),
     _pb(0, 0x60, count=3, w=320, h=240, fills=(0.333, 0.667, 0.999), sel=2),
     _pb(5, 0x7f, idx=1, count=5, w=1024, h=768, fills=(0.123, 0.456, 0.789), sel=2, tsize=3e9),
+    # 40 rows from base 0xf0 - 19*0x1e - 15 = -345 (0x0042ac50, even count): |(y - 8) * 0x7fff| passes 2^24 on the
+    # outer rows, so the 0x00430ca9..0x00430ccb chain rounds its intermediate at PC_24 and not at PC_53.
+    _pb(1, 0x90, count=40, w=640, h=0x7fff, fills=(0.75, 0.5, 0.25), sel=0, tsize=99.5),
 ]
 
 FIXES['progress_bar_set_a'] = dict(_COMMON, **{
     '__replace__': True, 'rva': 0x00430b90, 'export': 'ProgressBarSetA',
     'signature': {'ret': 'void', 'args': []},
-    'scratch_size': 0x300,
+    'scratch_size': 0x700,
     'call_log': [{'name': 'rs', 'nargs': 2},
                  {'name': 'quad', 'at': '0x00472c60', 'nargs': 5, 'fargs': [0, 1, 2, 3]},
                  {'name': 'lookup', 'at': '0x0040bb50', 'nargs': 1, 'deref': {0: 'a'}},

@@ -6353,7 +6353,12 @@ function runDiff() {
         const scratch = scratchSize > 0 ? Memory.alloc(scratchSize) : null;
         const scratchFill = (CONFIG.scratch_fill | 0) & 0xff;
         function resolveAddr(x) {
-            if (x !== null && typeof x === 'object' && x.scratch !== undefined) return scratch.add(x.scratch | 0);
+            if (x !== null && typeof x === 'object' && x.scratch !== undefined) {
+                // drawstream 2026-10-12: a seed past the scratch wrote into Frida's heap and hung the run; refuse it.
+                if (!scratch || (x.scratch | 0) < 0 || (x.scratch | 0) + 4 > scratchSize)
+                    throw new Error('scratch offset 0x' + (x.scratch | 0).toString(16) + ' outside scratch_size 0x' + scratchSize.toString(16));
+                return scratch.add(x.scratch | 0);
+            }
             return ptr(x);
         }
         // `recorder` {args, abi ('stdcall'|'mscdecl'), off, max_calls} (negctl re-earn 2026-10-11): a harness callback
