@@ -13,12 +13,12 @@
 //   0x00442c80  ModeGatedPlayerCheck       (62b, returns 0/1)
 //   0x004950b0  QpcTimeScaledTo3Mhz        (80b, QPC*3e6/freq)
 //   0x004b302f  StricmpThunk               (104b, library __stricmp passthrough)
-//   0x00429aa0  GameStateSlotsFill         (134b, predicate-gated slot fill)
+//   0x00429aa0  GameStateSlotsFill         (134b, predicate-gated slot fill; re-ported 2026-10-12)
 //   0x0041d730  PlayerSlotConfigInit       (225b, config-pair slot init loop)
 //   0x00492d30  GameTickStateMachine7      (265b, 7-case state-machine dispatch)
-//   0x004295a0  HudDualLabelRender         (~124b, two HUD label calls)
+//   0x004295a0  HudDualLabelRender         (125b, two HUD label calls; re-ported 2026-10-12)
 //   0x00442440  TransformMatrixUpdate      (~390b, 4x4 matrix copy + accumulate)
-//   0x0043c000  TimerSlotTickDispatcher    (1450b, 19-slot timer tick)
+//   0x0043c000  TimerSlotTickDispatcher    (1450b, 18-slot timer tick; re-ported 2026-10-12)
 //   0x00475a60  PendingOpQueueFlush        (74b, queue drain)
 //   0x00410860  ScoreThresholdStateCheck   (591b, score/timeout state-machine)
 //   0x00412cf0  LabelTrailRecordAppend     (312b, lerp+color trail record)
@@ -157,72 +157,129 @@ extern "C" __declspec(dllexport) int __cdecl StricmpThunk(const char* s1, const 
 // table walk. Deferred — not blocking.
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 0x00429aa0  GameStateSlotsFill
+// x87 helpers shared by GameStateSlotsFill (0x00429aa0) and
+// TimerSlotTickDispatcher (0x0043c000).
 //
-// 134-byte predicate-gated slot fill. Reads FUN_00430820 predicate; on
-// non-zero takes path A (table at 0x00614720 stride 0xc), on zero takes
-// path B (three int arrays 0x007f0db4 / 0x007f0de8 / 0x007f0e1c).
-// Both paths call FUN_00430790() three times to get the index and write
-// into DAT_0067d990 / 0067d998 / 0067d9a0.
-//
-// Callees:
-//   0x00430820 FUN_00430820 (C1 predicate)
-//   0x00430790 FUN_00430790 (C1 index source)
-//   0x004a2c48 FUN_004a2c48 (C1 frame counter)
-// Analysis: re/analysis/timer_d2_cont1/0x00429aa0.md
+// Both originals load ST0 and then `call 0x004a2c48` (FUN_004a2c48 converts ST0
+// and returns the low dword in EAX; it consumes ST0). C cannot hand a value to
+// that routine in ST0, so these wrappers issue the same x87 sequence and call
+// the original routine. The arithmetic runs on the x87 under the caller's live
+// control word, as in the original.
 // ─────────────────────────────────────────────────────────────────────────────
 namespace {
-constexpr std::uintptr_t kFn_00430820 = 0x00430820;  // predicate
-constexpr std::uintptr_t kFn_00430790 = 0x00430790;  // index source
-constexpr std::uintptr_t kFn_004a2c48 = 0x004a2c48;  // frame counter
+// fld dword [a]; call 0x004a2c48
+std::uint32_t X87FtolLoad(std::uintptr_t a) {
+    std::uint32_t r;
+    __asm {
+        mov  ecx, a
+        fld  dword ptr [ecx]
+        mov  eax, 0x004a2c48
+        call eax
+        mov  r, eax
+    }
+    return r;
+}
+// fld dword [src]; fstp dword [dst]   (x87 float copy, not a dword move)
+void X87FloatCopy(std::uintptr_t dst, std::uintptr_t src) {
+    __asm {
+        mov  ecx, src
+        mov  edx, dst
+        fld  dword ptr [ecx]
+        fstp dword ptr [edx]
+    }
+}
+// 0x0043c137: fld [0x005cc320]; fsub [0x0067e840]; fmul [0x005cd04c]; call 0x004a2c48
+std::uint32_t X87TimerElapsedFtol() {
+    std::uint32_t r;
+    __asm {
+        mov  ecx, 0x005cc320
+        fld  dword ptr [ecx]
+        mov  ecx, 0x0067e840
+        fsub dword ptr [ecx]
+        mov  ecx, 0x005cd04c
+        fmul dword ptr [ecx]
+        mov  eax, 0x004a2c48
+        call eax
+        mov  r, eax
+    }
+    return r;
+}
+// 0x0043c15f: fld [0x0067e840]; fmul [0x005cd04c]; call 0x004a2c48
+std::uint32_t X87TimerScaledFtol() {
+    std::uint32_t r;
+    __asm {
+        mov  ecx, 0x0067e840
+        fld  dword ptr [ecx]
+        mov  ecx, 0x005cd04c
+        fmul dword ptr [ecx]
+        mov  eax, 0x004a2c48
+        call eax
+        mov  r, eax
+    }
+    return r;
+}
+} // namespace
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 0x00429aa0  GameStateSlotsFill
+//
+// Re-ported from the bytes 2026-10-12. idx = FUN_00430790() (= DAT_0067f17c,
+// 0x00430790) is fetched before every store; the predicate is FUN_00430820()
+// (= DAT_0067ed6c, 0x00430820).
+//
+// Path A (predicate != 0):
+//   0x00429ab1 fld [idx*0xc+0x00614718]; call 0x004a2c48; mov [0x0067d990],eax
+//   0x00429aca fld [idx*0xc+0x0061471c]; call 0x004a2c48; mov [0x0067d998],eax
+//   0x00429ae3 fld [idx*0xc+0x00614720]; fstp [0x0067d9a0]
+// Path B (predicate == 0):
+//   0x00429af6 mov eax,[idx*4+0x007f0db4]; mov [0x0067d990],eax
+//   0x00429b07 mov ecx,[idx*4+0x007f0de8]; mov [0x0067d998],ecx
+//   0x00429b19 fld [idx*4+0x007f0e1c]; fstp [0x0067d9a0]
+// EAX at both `ret`s (0x00429af0 / 0x00429b26) is the third idx.
+//
+// Old port (pre 2026-10-12): called 0x004a2c48 as a no-arg cdecl without
+// loading ST0 (so path A stored the conversion of a stale ST0), and copied the
+// two float stores as dwords.
+// ─────────────────────────────────────────────────────────────────────────────
+namespace {
+constexpr std::uintptr_t kFn_00430820 = 0x00430820;  // predicate (= DAT_0067ed6c)
+constexpr std::uintptr_t kFn_00430790 = 0x00430790;  // index     (= DAT_0067f17c)
 
 constexpr std::uintptr_t kDat_0067d990 = 0x0067d990;
 constexpr std::uintptr_t kDat_0067d998 = 0x0067d998;
 constexpr std::uintptr_t kDat_0067d9a0 = 0x0067d9a0;
 
-constexpr std::uintptr_t kDat_00614720 = 0x00614720;  // path-A table, stride 0xc
+constexpr std::uintptr_t kDat_00614718 = 0x00614718;  // path-A table, stride 0xc
 constexpr std::uintptr_t kDat_007f0db4 = 0x007f0db4;  // path-B array slot 0
 constexpr std::uintptr_t kDat_007f0de8 = 0x007f0de8;  // path-B array slot 1
 constexpr std::uintptr_t kDat_007f0e1c = 0x007f0e1c;  // path-B array slot 2
 } // namespace
 
-extern "C" __declspec(dllexport) void __cdecl GameStateSlotsFill() {
+extern "C" __declspec(dllexport) std::int32_t __cdecl GameStateSlotsFill() {
     auto fn_predicate = as_fn<Fn_i_v_t>(kFn_00430820);
     auto fn_index     = as_fn<Fn_i_v_t>(kFn_00430790);
-    auto fn_counter   = as_fn<Fn_i_v_t>(kFn_004a2c48);
+    std::int32_t idx;
 
-    if (fn_predicate() != 0) {
-        // Path A — three calls into FUN_004a2c48 keyed by FUN_00430790
-        int iVar1;
-        iVar1 = fn_index();
-        (void)iVar1;
+    if (fn_predicate() != 0) {                                     // 0x00429aa5
+        idx = fn_index();                                          // 0x00429aa9
         *reinterpret_cast<std::uint32_t*>(kDat_0067d990) =
-            static_cast<std::uint32_t>(fn_counter());
-
-        iVar1 = fn_index();
-        (void)iVar1;
+            X87FtolLoad(kDat_00614718 + static_cast<std::uintptr_t>(idx) * 0xcu);
+        idx = fn_index();                                          // 0x00429ac2
         *reinterpret_cast<std::uint32_t*>(kDat_0067d998) =
-            static_cast<std::uint32_t>(fn_counter());
-
-        iVar1 = fn_index();
-        *reinterpret_cast<std::uint32_t*>(kDat_0067d9a0) =
-            *reinterpret_cast<const std::uint32_t*>(
-                kDat_00614720 + static_cast<std::uintptr_t>(iVar1) * 0xcu);
+            X87FtolLoad(kDat_00614718 + 4u + static_cast<std::uintptr_t>(idx) * 0xcu);
+        idx = fn_index();                                          // 0x00429adb
+        X87FloatCopy(kDat_0067d9a0, kDat_00614718 + 8u + static_cast<std::uintptr_t>(idx) * 0xcu);
     } else {
-        // Path B — three lookups from three int arrays indexed by FUN_00430790
-        int iVar1;
-        iVar1 = fn_index();
+        idx = fn_index();                                          // 0x00429af1
         *reinterpret_cast<std::uint32_t*>(kDat_0067d990) =
-            reinterpret_cast<const std::uint32_t*>(kDat_007f0db4)[iVar1];
-
-        iVar1 = fn_index();
+            reinterpret_cast<const std::uint32_t*>(kDat_007f0db4)[idx];
+        idx = fn_index();                                          // 0x00429b02
         *reinterpret_cast<std::uint32_t*>(kDat_0067d998) =
-            reinterpret_cast<const std::uint32_t*>(kDat_007f0de8)[iVar1];
-
-        iVar1 = fn_index();
-        *reinterpret_cast<std::uint32_t*>(kDat_0067d9a0) =
-            reinterpret_cast<const std::uint32_t*>(kDat_007f0e1c)[iVar1];
+            reinterpret_cast<const std::uint32_t*>(kDat_007f0de8)[idx];
+        idx = fn_index();                                          // 0x00429b14
+        X87FloatCopy(kDat_0067d9a0, kDat_007f0e1c + static_cast<std::uintptr_t>(idx) * 4u);
     }
+    return idx;
 }
 
 RH_ScopedInstall(GameStateSlotsFill, 0x00429aa0);  // re-enabled 2026-05-24 batch-util
@@ -447,55 +504,42 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl GameTickStateMachine7() {
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x004295a0  HudDualLabelRender
 //
-// ~124-byte HUD label renderer: two FUN_0040dc80 calls returning floats,
-// each followed by a FUN_00427e00 call.
+// Re-ported from the bytes 2026-10-12 (0x004295a0..0x0042961c).
+// FUN_0040dc80 takes NO arguments: its whole body is `fld [0x0063b910]; ret`
+// (0x0040dc80). The pushes around each call are the FUN_00427e00 argument
+// frame, built before the FUN_0040dc80 call and completed after it:
+//   0x004295a3..0x004295d4  local dwords: [esp] = 0xff000000, [esp+4] = 0xff0000ff
+//   0x004295a5/c4/c9/ca     push 2; push 1.0f; push 0xff000000; push 63.0f (0x427c0000)
+//   0x004295d9 call 0x0040dc80; fadd [0x005cc31c]; push; fstp [esp]; push 0xff
+//   0x004295ed call 0x00427e00(0xff, y+[0x005cc31c], 63.0f, 0xff000000, 1.0f, 2)
+//   0x004295f9..0x00429601  push 2; push 1.0f; push 0xff0000ff; push 60.0f (0x42700000)
+//   0x00429606 call 0x0040dc80; push; fstp [esp]; push 0xff
+//   0x00429614 call 0x00427e00(0xff, y, 60.0f, 0xff0000ff, 1.0f, 2); add esp,0x20
+// EAX at ret (0x0042961c) is the second FUN_00427e00's EAX.
 //
-// Call 1: FUN_0040dc80(63.0f, black, 1.0f, 2, black, red) returns float y;
-//         FUN_00427e00(0xff, y + *(float*)0x005cc31c)
-// Call 2: FUN_0040dc80(60.0f, red, 1.0f, 2)              returns float y;
-//         FUN_00427e00(0xff, y)
-//
-// FUN_0040dc80 takes 6 args in the first call but only 4 are observed in the
-// second (variadic? overload?) — we pass all 6 with the trailing args being
-// "don't care" in call 2 (matches the decomp's literal call shape).
-//
-// Callees:
-//   0x0040dc80 FUN_0040dc80 (C1)
-//   0x00427e00 FUN_00427e00 (C1)
-// Analysis: re/analysis/util_c0_promote/0x004295a0.md
+// Old port (pre 2026-10-12): passed six args to FUN_0040dc80 and only two to
+// FUN_00427e00, so its args 3-6 were stack garbage.
 // ─────────────────────────────────────────────────────────────────────────────
 namespace {
 constexpr std::uintptr_t kFn_0040dc80_RVA = 0x0040dc80;
 constexpr std::uintptr_t kFn_00427e00_RVA = 0x00427e00;
 constexpr std::uintptr_t kDat_005cc31c    = 0x005cc31c;
 
-typedef float (__cdecl* Fn_HudLabelLookup6_t)(
-    std::uint32_t, std::uint32_t, std::uint32_t,
-    std::uint32_t, std::uint32_t, std::uint32_t);
-typedef void  (__cdecl* Fn_HudLabelRender_t)(std::uint32_t, float);
+typedef float         (__cdecl* Fn_HudLabelY_t)();   // ST0 return
+typedef std::uint32_t (__cdecl* Fn_HudLabelRender_t)(
+    std::uint32_t, float, std::uint32_t, std::uint32_t, std::uint32_t, std::uint32_t);
 } // namespace
 
-extern "C" __declspec(dllexport) void __cdecl HudDualLabelRender() {
-    auto fn_lookup = as_fn<Fn_HudLabelLookup6_t>(kFn_0040dc80_RVA);
+extern "C" __declspec(dllexport) std::uint32_t __cdecl HudDualLabelRender() {
+    auto fn_y      = as_fn<Fn_HudLabelY_t>(kFn_0040dc80_RVA);
     auto fn_render = as_fn<Fn_HudLabelRender_t>(kFn_00427e00_RVA);
 
-    // Call 1: x=63.0f, color=black, scale=1.0f, mode=2, color2=black, color3=red
-    float y1 = fn_lookup(
-        0x427c0000u,  // 63.0f
-        0xff000000u,  // black ARGB
-        0x3f800000u,  // 1.0f scale
-        2u,           // mode/type
-        0xff000000u,  // color2 black
-        0xff0000ffu); // color3 red
-    fn_render(0xffu, y1 + *reinterpret_cast<const float*>(kDat_005cc31c));
+    // 0x004295d9 / 0x004295de: y + [0x005cc31c], rounded to float by the fstp
+    const float y1 = fn_y() + *reinterpret_cast<const float*>(kDat_005cc31c);
+    fn_render(0xffu, y1, 0x427c0000u /*63.0f*/, 0xff000000u, 0x3f800000u /*1.0f*/, 2u);  // 0x004295ed
 
-    // Call 2: x=60.0f, color=red, scale=1.0f, mode=2 (other args garbage in decomp)
-    float y2 = fn_lookup(
-        0x42700000u,  // 60.0f
-        0xff0000ffu,  // red ARGB
-        0x3f800000u,  // 1.0f scale
-        2u, 0u, 0u);  // trailing args observed undefined in decomp
-    fn_render(0xffu, y2);
+    const float y2 = fn_y();                                                              // 0x00429606
+    return fn_render(0xffu, y2, 0x42700000u /*60.0f*/, 0xff0000ffu, 0x3f800000u /*1.0f*/, 2u);  // 0x00429614
 }
 
 RH_ScopedInstall(HudDualLabelRender, 0x004295a0);  // re-enabled 2026-05-24 batch-util
@@ -637,133 +681,101 @@ extern "C" __declspec(dllexport) void __cdecl TransformMatrixUpdate(int param_1)
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x0043c000  TimerSlotTickDispatcher
 //
-// 1450-byte 19-slot timer tick. Walks every slot in [0x0067e7a8, 0x0067e840)
-// stride 0x8. For each slot: state==1 → record frame counter into counter +
-// fire action callback (if assigned); state==2 → record counter only;
-// else → clear counter to 0.
+// Re-ported from the bytes 2026-10-12 (0x0043c000..0x0043c5aa).
+// x = float [0x0067e840]; [0x005d757c] = 0.0f, [0x005cc320] = 1.0f,
+// [0x005cd04c] = 255.0f (.rdata).
 //
-// Slot layout (19 slots, stride 8 bytes):
-//   Slot 0  state=0x0067e7a8 counter=0x0067e7ac  action=FUN_004332a0  (S-1640)
-//   Slot 1  state=0x0067e7b0 counter=0x0067e7b4  (byte counter, no action)
-//   Slot 2  state=0x0067e7b8 counter=0x0067e7bc  (no action)
-//   Slot 3  state=0x0067e7c0 counter=0x0067e7c4  (no action)
-//   Slot 4  state=0x0067e7c8 counter=0x0067e7cc  action=FUN_0042c960  (S-1642)
-//   Slot 5  state=0x0067e7d0 counter=0x0067e7d4  (no action)
-//   Slot 6  state=0x0067e7d8 counter=0x0067e7dc  action=FUN_0042f7b0  (S-1641)
-//   Slot 7  state=0x0067e7e0 counter=0x0067e7e4  action=FUN_0042fa00  (S-1643)
-//   Slot 8..18 (no action)
+// Reset (0x0043c000..0x0043c12c): fcomp [0x005d757c]; test ah,0x44; jp skip
+// (falls through only when C3 alone is set: x == [0x005d757c], ordered). Then
+// for 19 STATE dwords, in this order, `cmp [s],1; je; mov dword [s],0`:
+//   7d8 7b0 7f0 7d0 7a8 7c0 7c8 7f8 838 828 830 820 7e0 7e8 808 810 818 7b8 800
+// (all 0x0067e___). The slot pass below runs in BOTH cases.
 //
-// Guard at top: if (_DAT_0067e840 == DAT_005d757c) reset all slots — for
-// each slot where state != 1, clear counter to 0.
+// Slot pass (18 slots; 0x0067e800 is reset but never ticked), state dword s,
+// counter BYTE s+4:
+//   s == 1: byte [s+4] = ftol((1.0 - x) * 255.0)   then call action (if any)
+//   s == 2: byte [s+4] = ftol(x * 255.0)
+//   else  : byte [s+4] = 0
+// except slot 0x0067e7d8, whose else-branch stores byte 0 to 0x0067e7d8 itself
+// (0x0043c1c6 mov byte [0x67e7d8],bl), leaving its counter alone.
+// Each state is read after the previous slot's action has run.
 //
-// Callees:
-//   0x004332a0 FUN_004332a0 (NOT in csv → drift via raw RVA)
-//   0x0042f7b0 FUN_0042f7b0 (C3)
-//   0x0042c960 FUN_0042c960 (C1)
-//   0x0042fa00 FUN_0042fa00 (C1)
-//   0x004a2c48 FUN_004a2c48 (C1, frame counter — record source)
+// EAX at ret: the last slot's (0x0067e7b8) ftol result, or its state dword on
+// the else path (0x0043c55c mov eax,[0x67e7b8]; 0x0043c5a3 stores bl only).
 //
-// Analysis: re/analysis/game_mode_cont1/notes.md (1450B; only summary).
-// NOTE: 1450B exceeds practical from-summary reimpl. We use the documented
-// slot structure verbatim. Tested against quiescent main menu where all slot
-// states are 0 (no actions fire) — both original and reimpl must clear every
-// counter to 0 → trivially bit-identical.
+// Old port (pre 2026-10-12): dword counters on 13 slots, ftol with an unloaded
+// ST0, reset mode cleared counters instead of states and skipped the pass, the
+// 0x0067e7d8 else-quirk was missing and the slot order/addresses were a
+// stride-8 walk that ticked 0x0067e800.
 // ─────────────────────────────────────────────────────────────────────────────
 namespace {
-constexpr std::uintptr_t kFn_004332a0_RVA = 0x004332a0;  // slot-0 action
-constexpr std::uintptr_t kFn_0042c960_RVA = 0x0042c960;  // slot-4 action
-constexpr std::uintptr_t kFn_0042f7b0_RVA = 0x0042f7b0;  // slot-6 action
-constexpr std::uintptr_t kFn_0042fa00_RVA = 0x0042fa00;  // slot-7 action
-constexpr std::uintptr_t kFn_004a2c48_RVA = 0x004a2c48;  // frame-counter getter
+constexpr std::uintptr_t kFn_004a2c48_RVA = 0x004a2c48;  // also used by 0x00410860 / 0x00412cf0 below
+constexpr std::uintptr_t kTimerX       = 0x0067e840;
+constexpr std::uintptr_t kTimerZero    = 0x005d757c;
 
-constexpr std::uintptr_t kSlotBase    = 0x0067e7a8;  // slot 0 state
-constexpr std::uintptr_t kSlotGuard   = 0x0067e840;  // guard global
-constexpr std::uintptr_t kDat_005d757c = 0x005d757c; // expected guard value
-constexpr int            kSlotCount   = 19;
-constexpr std::uint32_t  kSlotStride  = 8;
-
-struct SlotAction {
-    int            slot_idx;
-    std::uintptr_t rva;       // 0 means no action
-    bool           byte_counter;
+struct TimerSlot {
+    std::uintptr_t state;
+    std::uintptr_t else_byte;   // byte cleared on the else path
+    std::uintptr_t action;      // 0 = none
 };
-constexpr SlotAction kSlotActions[kSlotCount] = {
-    {0,  kFn_004332a0_RVA, false},
-    {1,  0,                true},   // byte counter
-    {2,  0,                false},
-    {3,  0,                false},
-    {4,  kFn_0042c960_RVA, false},
-    {5,  0,                false},
-    {6,  kFn_0042f7b0_RVA, false},
-    {7,  kFn_0042fa00_RVA, false},
-    {8,  0,                false},
-    {9,  0,                true},
-    {10, 0,                true},
-    {11, 0,                false},
-    {12, 0,                false},
-    {13, 0,                false},
-    {14, 0,                false},
-    {15, 0,                true},
-    {16, 0,                false},
-    {17, 0,                true},
-    {18, 0,                true},
+// Order and addresses: 0x0043c133 .. 0x0043c5a3.
+constexpr TimerSlot kTimerSlots[18] = {
+    {0x0067e7a8, 0x0067e7ac, 0x004332a0},   // 0x0043c133 / 0x0043c153
+    {0x0067e7d8, 0x0067e7d8, 0x0042f7b0},   // 0x0043c17d / 0x0043c1a2; else 0x0043c1c6
+    {0x0067e7b0, 0x0067e7b4, 0},            // 0x0043c1cc
+    {0x0067e7f0, 0x0067e7f4, 0},            // 0x0043c206
+    {0x0067e7d0, 0x0067e7d4, 0},            // 0x0043c240
+    {0x0067e7c0, 0x0067e7c4, 0},            // 0x0043c27a
+    {0x0067e7c8, 0x0067e7cc, 0x0042c960},   // 0x0043c2b4 / 0x0043c2d9
+    {0x0067e7f8, 0x0067e7fc, 0},            // 0x0043c303
+    {0x0067e838, 0x0067e83c, 0},            // 0x0043c33d
+    {0x0067e828, 0x0067e82c, 0},            // 0x0043c377
+    {0x0067e830, 0x0067e834, 0},            // 0x0043c3b1
+    {0x0067e820, 0x0067e824, 0},            // 0x0043c3eb
+    {0x0067e7e0, 0x0067e7e4, 0x0042fa00},   // 0x0043c425 / 0x0043c44a
+    {0x0067e7e8, 0x0067e7ec, 0},            // 0x0043c474
+    {0x0067e808, 0x0067e80c, 0},            // 0x0043c4ae
+    {0x0067e810, 0x0067e814, 0},            // 0x0043c4e8
+    {0x0067e818, 0x0067e81c, 0},            // 0x0043c522
+    {0x0067e7b8, 0x0067e7bc, 0},            // 0x0043c55c
+};
+// Reset order: 0x0043c020 .. 0x0043c126.
+constexpr std::uintptr_t kTimerResetStates[19] = {
+    0x0067e7d8, 0x0067e7b0, 0x0067e7f0, 0x0067e7d0, 0x0067e7a8, 0x0067e7c0, 0x0067e7c8,
+    0x0067e7f8, 0x0067e838, 0x0067e828, 0x0067e830, 0x0067e820, 0x0067e7e0, 0x0067e7e8,
+    0x0067e808, 0x0067e810, 0x0067e818, 0x0067e7b8, 0x0067e800,
 };
 } // namespace
 
-extern "C" __declspec(dllexport) void __cdecl TimerSlotTickDispatcher() {
-    auto fn_counter   = as_fn<Fn_i_v_t>(kFn_004a2c48_RVA);
-
-    const std::uint32_t guard      = *reinterpret_cast<const std::uint32_t*>(kSlotGuard);
-    const std::uint32_t guard_exp  = *reinterpret_cast<const std::uint32_t*>(kDat_005d757c);
-    const bool reset_mode = (guard == guard_exp);
-
-    for (int i = 0; i < kSlotCount; ++i) {
-        const SlotAction& sa = kSlotActions[i];
-        const std::uintptr_t state_addr   = kSlotBase + static_cast<std::uintptr_t>(sa.slot_idx) * kSlotStride;
-        const std::uintptr_t counter_addr = state_addr + 4u;
-        const std::uint32_t state         = *reinterpret_cast<const std::uint32_t*>(state_addr);
-
-        if (reset_mode) {
-            // Guard fires: state != 1 → clear counter
-            if (state != 1u) {
-                if (sa.byte_counter) {
-                    *reinterpret_cast<std::uint8_t*>(counter_addr) = 0u;
-                } else {
-                    *reinterpret_cast<std::uint32_t*>(counter_addr) = 0u;
-                }
-            }
-            continue;
-        }
-
-        if (state == 1u) {
-            // record frame counter + fire action
-            const std::uint32_t v = static_cast<std::uint32_t>(fn_counter());
-            if (sa.byte_counter) {
-                *reinterpret_cast<std::uint8_t*>(counter_addr) = static_cast<std::uint8_t>(v & 0xffu);
-            } else {
-                *reinterpret_cast<std::uint32_t*>(counter_addr) = v;
-            }
-            if (sa.rva != 0) {
-                auto fn = as_fn<Fn_void_void_t>(sa.rva);
-                fn();
-            }
-        } else if (state == 2u) {
-            // record only, no action
-            const std::uint32_t v = static_cast<std::uint32_t>(fn_counter());
-            if (sa.byte_counter) {
-                *reinterpret_cast<std::uint8_t*>(counter_addr) = static_cast<std::uint8_t>(v & 0xffu);
-            } else {
-                *reinterpret_cast<std::uint32_t*>(counter_addr) = v;
-            }
-        } else {
-            // clear counter
-            if (sa.byte_counter) {
-                *reinterpret_cast<std::uint8_t*>(counter_addr) = 0u;
-            } else {
-                *reinterpret_cast<std::uint32_t*>(counter_addr) = 0u;
-            }
+extern "C" __declspec(dllexport) std::uint32_t __cdecl TimerSlotTickDispatcher() {
+    // 0x0043c000: fld [0x0067e840]; fcomp [0x005d757c]; test ah,0x44; jp 0x0043c12e
+    if (*reinterpret_cast<volatile const float*>(kTimerX) ==
+        *reinterpret_cast<const float*>(kTimerZero)) {
+        for (std::uintptr_t st : kTimerResetStates) {
+            auto* p = reinterpret_cast<volatile std::uint32_t*>(st);
+            if (*p != 1u)
+                *p = 0u;
         }
     }
+
+    std::uint32_t eax = 0;
+    for (const TimerSlot& sl : kTimerSlots) {
+        const std::uint32_t state = *reinterpret_cast<volatile const std::uint32_t*>(sl.state);
+        auto* counter = reinterpret_cast<volatile std::uint8_t*>(sl.state + 4u);
+        if (state == 1u) {
+            eax = X87TimerElapsedFtol();
+            *counter = static_cast<std::uint8_t>(eax);
+            if (sl.action != 0)
+                as_fn<Fn_void_void_t>(sl.action)();
+        } else if (state == 2u) {
+            eax = X87TimerScaledFtol();
+            *counter = static_cast<std::uint8_t>(eax);
+        } else {
+            eax = state;
+            *reinterpret_cast<volatile std::uint8_t*>(sl.else_byte) = 0u;
+        }
+    }
+    return eax;
 }
 
 RH_ScopedInstall(TimerSlotTickDispatcher, 0x0043c000);  // re-enabled 2026-05-24 batch-util

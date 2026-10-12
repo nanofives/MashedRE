@@ -20,31 +20,28 @@ Soft cap (15) hit; remaining 28 deferred to D-4840..D-4867.
 ## Functions covered (cap_count=15)
 
 ### 0x0043c000 — FUN_0043c000 (1450B)
-Timer tick dispatcher. Called every frame from 0x0043dfd0.  
-Guard at top: `if (_DAT_0067e840 == DAT_005d757c)` resets all 19 timer slots — if slot != 1, clears it to 0.
+Called every frame from 0x0043dfd0. Re-read from the bytes 2026-10-12 (reearn/hud); the earlier
+slot table and dispatch summary here were wrong and led the old port astray.
 
-**Timer slot layout** (19 slots in 0x0067e7a8–0x0067e838):  
-- Slot 0: state=DAT_0067e7a8, counter=DAT_0067e7ac; action=FUN_004332a0 (S-1640)  
-- Slot 1: state=DAT_0067e7b0, counter=DAT_0067e7b4 (byte); no action  
-- Slot 2: state=DAT_0067e7b8, counter=DAT_0067e7bc; no action  
-- Slot 3: state=DAT_0067e7c0, counter=DAT_0067e7c4; no action  
-- Slot 4: state=DAT_0067e7c8, counter=DAT_0067e7cc; action=FUN_0042c960 (S-1642)  
-- Slot 5: state=DAT_0067e7d0, counter=DAT_0067e7d4; no action  
-- Slot 6: state=DAT_0067e7d8, counter=DAT_0067e7dc; action=FUN_0042f7b0 (S-1641)  
-- Slot 7: state=DAT_0067e7e0, counter=DAT_0067e7e4; action=FUN_0042fa00 (S-1643)  
-- Slot 8: state=DAT_0067e7e8, counter=DAT_0067e7ec; no action  
-- Slot 9: state=DAT_0067e7f0, counter=DAT_0067e7f4 (byte); no action  
-- Slot 10: state=DAT_0067e7f8, counter=DAT_0067e7fc (byte); no action  
-- Slot 11: state=DAT_0067e800, counter=DAT_0067e804; no action  
-- Slot 12: state=DAT_0067e808, counter=DAT_0067e80c; no action  
-- Slot 13: state=DAT_0067e810, counter=DAT_0067e814; no action  
-- Slot 14: state=DAT_0067e818, counter=DAT_0067e81c; no action  
-- Slot 15: state=DAT_0067e820, counter=DAT_0067e824 (byte); no action  
-- Slot 16: state=DAT_0067e828, counter=DAT_0067e82c; no action  
-- Slot 17: state=DAT_0067e830, counter=DAT_0067e834 (byte); no action  
-- Slot 18: state=DAT_0067e838, counter=DAT_0067e83c (byte); no action  
+x = float [0x0067e840]. .rdata: [0x005d757c] = 0x00000000 (0.0f), [0x005cc320] = 1.0f,
+[0x005cd04c] = 255.0f.
 
-Per-slot dispatch: state==1 → record `FUN_004a2c48()` (frame counter) into counter slot + call action; state==2 → record counter only; else → clear counter to 0.  
+**Reset** (0x0043c000..0x0043c12c): `fcomp [0x005d757c]; test ah,0x44; jp skip`, so it runs only
+when x == 0.0 (ordered). For 19 STATE dwords, in this order, `if (state != 1) state = 0` (dword):
+7d8 7b0 7f0 7d0 7a8 7c0 7c8 7f8 838 828 830 820 7e0 7e8 808 810 818 7b8 800 (all 0x0067e___).
+The slot pass below runs after the reset too (0x0043c12c jmp 0x0043c133).
+
+**Slot pass** (0x0043c133..0x0043c5a3), 18 slots in this order, state dword s, counter BYTE s+4:
+7a8 (action 0x004332a0), 7d8 (action 0x0042f7b0), 7b0, 7f0, 7d0, 7c0, 7c8 (action 0x0042c960), 7f8,
+838, 828, 830, 820, 7e0 (action 0x0042fa00), 7e8, 808, 810, 818, 7b8.
+- s == 1: `fld [0x005cc320]; fsub [0x0067e840]; fmul [0x005cd04c]; call 0x004a2c48`; store AL to
+  the counter byte; then call the action if the slot has one.
+- s == 2: `fld [0x0067e840]; fmul [0x005cd04c]; call 0x004a2c48`; store AL.
+- else: store BL (0) to the counter byte, except slot 7d8 whose else-branch stores BL to
+  0x0067e7d8 itself (0x0043c1c6) and leaves 0x0067e7dc alone.
+- 0x0067e800 is reset but never ticked. Every counter store is a byte (`mov [..],al/bl`).
+- EAX at ret: the last slot's (0x0067e7b8) conversion result, or its state dword on the else path.
+
 U-1647: What game event does each timer slot correspond to? Only slots 0, 4, 6, 7 have action callbacks — semantics unknown.  
 U-1648: DAT_0067e840 vs DAT_005d757c gate — what race/game state value does 005d757c represent?
 
