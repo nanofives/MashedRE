@@ -6353,7 +6353,12 @@ function runDiff() {
         const scratch = scratchSize > 0 ? Memory.alloc(scratchSize) : null;
         const scratchFill = (CONFIG.scratch_fill | 0) & 0xff;
         function resolveAddr(x) {
-            if (x !== null && typeof x === 'object' && x.scratch !== undefined) return scratch.add(x.scratch | 0);
+            if (x !== null && typeof x === 'object' && x.scratch !== undefined) {
+                // drawstream 2026-10-12: a seed past the scratch wrote into Frida's heap and hung the run; refuse it.
+                if (!scratch || (x.scratch | 0) < 0 || (x.scratch | 0) + 4 > scratchSize)
+                    throw new Error('scratch offset 0x' + (x.scratch | 0).toString(16) + ' outside scratch_size 0x' + scratchSize.toString(16));
+                return scratch.add(x.scratch | 0);
+            }
             return ptr(x);
         }
         // `recorder` {args, abi ('stdcall'|'mscdecl'), off, max_calls} (negctl re-earn 2026-10-11): a harness callback
@@ -6432,6 +6437,17 @@ function runDiff() {
         //   regs       ['eax', ...]: also log the register at entry (0x00404320 passes the entry pointer to
         //              0x00403fa0 in EAX, 0x004045f1).
         //   ret        default return; a test's stub_rets {name: v | [v_call0, v_call1, ..]} overrides it per call.
+        // DRAW-STREAM forms (drawstream 2026-10-12), for draw callees whose args are floats, strings and pointers to
+        // caller-local vertex / rect data (0x00427ad0 -> 0x005555b0, 0x00430b90 -> 0x00472c60 / 0x004739f0):
+        //   deref      also {argIdx: 'w' | 'a' | 'f<n>'}: a NUL-terminated UTF-16 ('w') or byte ('a') string, at most
+        //              256 units, logged w"..." / a"..." (the caller's buffer address differs per arm, the text does
+        //              not), or n float32s read at the pointer, logged by value.
+        //   fargs      [argIdx, ..]: log that arg as its float32 value, not hex. JS prints the shortest string that
+        //              round-trips the f32, so two bit patterns never print alike; -0 prints -0, a NaN nan:<bits>.
+        //   ret_type   'float': return `ret` / stub_rets as an x87 ST0 float (0x004282a0, which 0x00430b90 feeds to
+        //              the ftol at 0x00431222). Default 'int' (EAX).
+        // run_diff.py splits each arm's log on ';' and writes log/drawstream_<key>.csv, one row per call per vector,
+        // and prints the first divergent call of every RED vector.
         const callLogCfg = CONFIG.call_log || [];
         const callLogFns = {};
         let callLog = [], callLogCounts = {}, callLogTest = null;
@@ -6444,16 +6460,51 @@ function runDiff() {
             }
             return '0x' + u.toString(16);
         }
+        const clDv = new DataView(new ArrayBuffer(4));
+        function clF32(u) {
+            clDv.setUint32(0, u >>> 0, true);
+            const f = clDv.getFloat32(0, true);
+            if (f !== f) return 'nan:' + (u >>> 0).toString(16);
+            if (f === 0 && 1 / f < 0) return '-0';
+            return String(f);
+        }
+        // Separator and bracket characters are escaped so the run_diff split on ';' stays one entry per call.
+        function clChr(c) {
+            if (c >= 0x20 && c < 0x7f && c !== 0x22 && c !== 0x5c && c !== 0x3b && c !== 0x2c && c !== 0x28 && c !== 0x29)
+                return String.fromCharCode(c);
+            return '\\u' + ('000' + c.toString(16)).slice(-4);
+        }
+        function clStr(p, wide) {
+            let s = '';
+            for (let z = 0; z < 256; z++) {
+                const c = wide ? p.add(2 * z).readU16() : p.add(z).readU8();
+                if (c === 0) return (wide ? 'w"' : 'a"') + s + '"';
+                s += clChr(c);
+            }
+            return (wide ? 'w"' : 'a"') + s + '"+';     // no NUL within 256 units
+        }
         callLogCfg.forEach(function (ce) {
             const nA = ce.nargs | 0, ty = [];
             for (let q = 0; q < nA; q++) ty.push('uint32');
-            const deref = ce.deref || {}, regs = ce.regs || [];
+            const deref = ce.deref || {}, regs = ce.regs || [], fargs = ce.fargs || [];
+            const fRet = ce.ret_type === 'float';
             const cb = new NativeCallback(function () {
                 const parts = [];
                 for (let q = 0; q < nA; q++) {
-                    const u = arguments[q] >>> 0, n = deref[q] | 0;
-                    let s = clNorm(u);
-                    if (n > 0) {
+                    const u = arguments[q] >>> 0, dm = deref[q];
+                    let s = (fargs.indexOf(q) >= 0) ? clF32(u) : clNorm(u);
+                    if (typeof dm === 'string') {
+                        if (s.charAt(0) !== 's') s = '';
+                        try {
+                            if (dm === 'w' || dm === 'a') s += '@' + clStr(ptr(u), dm === 'w');
+                            else if (dm.charAt(0) === 'f') {
+                                const w = [], n = parseInt(dm.slice(1), 10) | 0;
+                                for (let z = 0; z < n; z++) w.push(clF32(ptr(u).add(4 * z).readU32()));
+                                s += '@' + w.join('/');
+                            } else throw new Error('call_log deref mode ' + dm);
+                        } catch (e) { if (e.message.indexOf('deref mode') >= 0) throw e; s += '@AV'; }
+                    } else if ((dm | 0) > 0) {
+                        const n = dm | 0;
                         if (s.charAt(0) !== 's') s = '';
                         try {
                             const w = [];
@@ -6469,12 +6520,12 @@ function runDiff() {
                 callLog.push(line + ')');
                 const k = callLogCounts[ce.name] | 0;
                 callLogCounts[ce.name] = k + 1;
-                let rv = ce.ret | 0;
+                let rv = fRet ? +(ce.ret || 0) : (ce.ret | 0);
                 const sr = (callLogTest && callLogTest.stub_rets) ? callLogTest.stub_rets[ce.name] : undefined;
-                if (Array.isArray(sr)) rv = sr[Math.min(k, sr.length - 1)] | 0;
-                else if (sr !== undefined) rv = sr | 0;
-                return rv;
-            }, 'int', ty, ce.abi || 'mscdecl');
+                if (Array.isArray(sr)) rv = sr[Math.min(k, sr.length - 1)];
+                else if (sr !== undefined) rv = sr;
+                return fRet ? +rv : (rv | 0);
+            }, fRet ? 'float' : 'int', ty, ce.abi || 'mscdecl');
             globalThis.__callLogKeep.push(cb);
             callLogFns[ce.name] = cb;
         });
@@ -6607,7 +6658,34 @@ function runDiff() {
             OrigS = new NativeFunction(globalThis.__eaxTrampKeep[0], CONFIG.signature.ret, CONFIG.signature.args, origCallConv);
             ReimplS = new NativeFunction(globalThis.__eaxTrampKeep[1], CONFIG.signature.ret, CONFIG.signature.args, reimplCallConv);
         }
+        // `x87_cw` (drawstream 2026-10-12): load this x87 control word on the A/B thread around EACH arm, restore the
+        // thread's own after it. An x87-chained original (0x00427ad0 fmul chain, 0x00430b90 fsub/fmulp/fmul) rounds at
+        // the CW's precision, and Frida's JS thread is not at the game's (memory measure-ports-at-the-live-cw: the race
+        // thread runs 0x007f, PC_24). The CW in force is always logged, so every CSV says which one it measured.
+        const cwCode = Memory.alloc(Process.pageSize);
+        Memory.patchCode(cwCode, 16, function (cw) {
+            const w = new X86Writer(cw, { pc: cwCode });
+            w.putBytes([0x50, 0xD9, 0x3C, 0x24, 0x58, 0x0F, 0xB7, 0xC0, 0xC3]);   // push eax; fnstcw [esp]; pop eax; movzx eax,ax; ret
+            w.putBytes([0xD9, 0x6C, 0x24, 0x04, 0xC3]);                           // +9: fldcw [esp+4]; ret
+            w.flush();
+        });
+        globalThis.__cwKeep = cwCode;
+        const cwGet = new NativeFunction(cwCode, 'uint32', [], 'mscdecl');
+        const cwSet = new NativeFunction(cwCode.add(9), 'void', ['uint32'], 'mscdecl');
+        const cwWant = (CONFIG.x87_cw === undefined || CONFIG.x87_cw === null) ? null : (CONFIG.x87_cw & 0xffff);
+        send({ type: 'log', msg: 'x87 CW: thread 0x' + (cwGet() & 0xffff).toString(16) +
+               (cwWant === null ? ' (arms run at it)' : ', arms run at 0x' + cwWant.toString(16)) });
+        function armCall(fn, a) {
+            if (cwWant === null) return fn.apply(null, a);
+            const old = cwGet();
+            cwSet(cwWant);
+            try { return fn.apply(null, a); } finally { cwSet(old); }
+        }
         function resolveVal(x) {
+            // {scratch: off, minus: base} (drawstream 2026-10-12): scratch+off-base, for base-relative offset tables
+            // (0x00427780 returns [0x66d828 + id*4] + 0x66d828, so a seeded entry must be relative to 0x66d828).
+            if (x !== null && typeof x === 'object' && x.scratch !== undefined && x.minus !== undefined)
+                return (scratch.add(x.scratch | 0).toUInt32() - (x.minus >>> 0)) >>> 0;
             if (x !== null && typeof x === 'object' && x.scratch !== undefined) return scratch.add(x.scratch | 0).toUInt32();
             if (x !== null && typeof x === 'object' && x.recorder) return recorder.toUInt32();
             if (x !== null && typeof x === 'object' && x.dialog !== undefined) return dlgHwnd(x.dialog).toUInt32();
@@ -6713,11 +6791,11 @@ function runDiff() {
             function restoreSeeds() { seeds.forEach(function(g, ix) { g.a.writeByteArray(seedSaved[ix]); }); }
             let origV = null, reimV = null, errO = null, errR = null;
             const saved = saveW();
-            try { if (hasFill) fillW(preFillByte); applySeeds(); if (dlgCfg) dlgCreate(); const a = mkArgs(); if (prepFn && prepArgs) prepFn.apply(null, prepArgs); const r = OrigS.apply(null, a); origV = snapFp(r); } catch (e) { errO = e.message; }
+            try { if (hasFill) fillW(preFillByte); applySeeds(); if (dlgCfg) dlgCreate(); const a = mkArgs(); if (prepFn && prepArgs) prepFn.apply(null, prepArgs); const r = armCall(OrigS, a); origV = snapFp(r); } catch (e) { errO = e.message; }
             if (dlgCfg) dlgDestroy();
             restoreW(saved); restoreSeeds();
             fillScratch();
-            try { if (hasFill) fillW(preFillByte); applySeeds(); if (dlgCfg) dlgCreate(); const a = mkArgs(); if (prepFn && prepArgs) prepFn.apply(null, prepArgs); const r = ReimplS.apply(null, a); reimV = snapFp(r); } catch (e) { errR = e.message; }
+            try { if (hasFill) fillW(preFillByte); applySeeds(); if (dlgCfg) dlgCreate(); const a = mkArgs(); if (prepFn && prepArgs) prepFn.apply(null, prepArgs); const r = armCall(ReimplS, a); reimV = snapFp(r); } catch (e) { errR = e.message; }
             if (dlgCfg) dlgDestroy();
             restoreW(saved); restoreSeeds();
             results.push({ idx: i, input: JSON.stringify(args), original: origV, reimpl: reimV,
