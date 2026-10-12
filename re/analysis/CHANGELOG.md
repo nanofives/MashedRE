@@ -26,6 +26,8 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-12  00430290  Championship::Complete  C3->C4  Canonical Challenge-race scenario with the fixed port live; ONE forced input (P1-won flag 0x007f0fcc=1, read only in the guard, the value the game writes on a P1 win). Port GREEN 2/2 + 1/1, old-defect control RED 2/2, 0 crashes. re/analysis/negctl/reearn_20261011/c4_a1_s_RESULT.md
+2026-10-12  -  settings dialogs (5 rows)  U-9674 filed, C3 kept  C4 not earnable: skip_selector / skip_controller_dialog keep the dialogs from opening in the reference. re/analysis/negctl/reearn_20261011/c4_a1_s_RESULT.md
 2026-10-12  -  standalone menu  U-9672 item (2) RESOLVED  Original challenge-row movers ported (shared RowMoveFwd / RowMoveBack); 33/33 samples match the original; row-wrap directive removed (user decision). re/analysis/u9667_menu_tables/ROW_MOVERS_RESULT.md
 2026-10-12  00430910  MenuOptionSlotGet  C3 kept, new evidence  Sel-11 arm-B fix now measured: z_fix_row_movers.py run_diff GREEN 16/16, witness RED 2/16 on exactly the fixed case, path2 PASS.
 2026-10-12  004322c0  FUN_004322c0  C2 kept  Body RowMoveFwd exists (standalone only); no install, no hook-side diff.
