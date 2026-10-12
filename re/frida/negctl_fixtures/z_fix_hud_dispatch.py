@@ -13,8 +13,9 @@ Harness (scalars_to_scattered_globals, freeze_main):
     and the object set.
   * scratch+0x200 + k*0x50: fake objects; only [obj+0x48] is read (0x0041c2d7 call [eax+0x48], 0x0041bc61 the same),
     seeded to the recorder.
-  * 0x0041c2d0 and 0x0041bc50 run for real (their original bytes, C2, not installed); the fixture drives them past
-    every guard.
+  * Inside run_diff (hooks bypassed) the original arm runs the original bytes of 0x0041c2d0 and 0x0041bc50; the
+    reimpl arm reaches their ports (both C3 and installed since 2026-10-12, U-9671 / U-9675). The fixture drives them
+    past every guard.
 """
 
 _SC = {'arg_type': 'scalars_to_scattered_globals', 'freeze_main': True, 'target_global': None,

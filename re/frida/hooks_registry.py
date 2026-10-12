@@ -7676,9 +7676,9 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # 0x0041bc50 â€” REFUSED (analysis note dispatch table is reordered and
-    # incomplete vs binary: actual first pair is (0x1c,0xbc) not (0x10,0xb0);
-    # also missing pair (0x94,0x134); requires full re-decode of 603-byte body).
+    # 0x0041bc50: no entry here. Re-ported from the bytes 2026-10-12 (U-9675,
+    # HUD/HudDispatch.cpp); its test vectors live in the negctl fixture
+    # re/frida/negctl_fixtures/z_fix_u9675.py, key hud_rec29_dispatch (C3).
 
     # 0x00427780  FontText_StringTableLookup
     # const u8* __cdecl(int idx): packed-string-table lookup.
