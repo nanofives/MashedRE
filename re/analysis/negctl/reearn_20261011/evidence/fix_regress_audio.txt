@@ -1,0 +1,31 @@
+audio_sub_struct_two_call_init ::   total cases: 10   mismatches:  0 GREEN: every test value produced bit-identical output. 
+audio_output_node_cb_dispatch ::   total cases: 6   mismatches:  0 GREEN: every test value produced bit-identical output. 
+audio_wave_node_free ::   total cases: 7   mismatches:  0 GREEN: every test value produced bit-identical output. 
+audio_sub_struct_buf_cleanup ::   total cases: 5   mismatches:  0 GREEN: every test value produced bit-identical output. 
+audio_sub_struct_dual_init ::   total cases: 10   mismatches:  0 GREEN: every test value produced bit-identical output. 
+audio_fmt_desc_copy ::   total cases: 10   mismatches:  0 GREEN: every test value produced bit-identical output. 
+audio_fmt_size_calc ::   total cases: 10   mismatches:  0 GREEN: every test value produced bit-identical output. 
+audio_fmt_table_search ::   total cases: 10   mismatches:  0 GREEN: every test value produced bit-identical output. 
+audio_fmt_global_scan ::   total cases: 10   mismatches:  0 GREEN: every test value produced bit-identical output. 
+audio_sub_struct_link_both ::   total cases: 10   mismatches:  0 GREEN: every test value produced bit-identical output. 
+audio_list_insert_head ::   total cases: 4   mismatches:  0 GREEN: every test value produced bit-identical output. 
+audio_list_remove_by_value ::   total cases: 10   mismatches:  0 GREEN: every test value produced bit-identical output. 
+audio_list_drain ::   total cases: 10   mismatches:  0 GREEN: every test value produced bit-identical output. 
+audio_list_drain2 ::   total cases: 10   mismatches:  8 RED: at least one mismatch. 
+audio_fmt_key_compare ::   total cases: 15   mismatches:  0 GREEN: every test value produced bit-identical output. 
+audio_sub_struct_link_buffer ::   total cases: 10   mismatches:  0 GREEN: every test value produced bit-identical output. 
+audio_sub_struct_link_device ::   total cases: 10   mismatches:  0 GREEN: every test value produced bit-identical output. 
+audio_sub_struct_cleanup ::   total cases: 6   mismatches:  0 GREEN: every test value produced bit-identical output. 
+audio_sub_struct_b_free ::   total cases: 6   mismatches:  0 GREEN: every test value produced bit-identical output. 
+audio_sub_struct_a_free ::   total cases: 7   mismatches:  0 GREEN: every test value produced bit-identical output. 
+audio_sub_struct_zero_init ::   total cases: 10   mismatches:  0 GREEN: every test value produced bit-identical output. 
+audio_wave_fmt_copy ::   total cases: 10   mismatches:  0 GREEN: every test value produced bit-identical output. 
+audio_pool_destroy ::   total cases: 7   mismatches:  0 GREEN: every test value produced bit-identical output. 
+audio_field_endian_pack ::   total cases: 10   mismatches:  0 GREEN: every test value produced bit-identical output. 
+audio_semaphore_create ::   total cases: 10   mismatches:  0 GREEN: every test value produced bit-identical output. 
+audio_thread_desc_init ::   total cases: 10   mismatches:  0 GREEN: every test value produced bit-identical output. 
+audio_buf_field_set ::   total cases: 10   mismatches:  0 GREEN: every test value produced bit-identical output. 
+audio_dsound_secondary_init ::   total cases: 10   mismatches:  0 GREEN: every test value produced bit-identical output. 
+audio_sub_struct_three_write ::   total cases: 10   mismatches:  0 GREEN: every test value produced bit-identical output. 
+audio_rws_sub_zero_init ::   total cases: 10   mismatches:  0 GREEN: every test value produced bit-identical output. 
+DONE

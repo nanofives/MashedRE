@@ -1,0 +1,20 @@
+--- boot 1
+hook: audio_context_lookup  rva=0x005ac900  export=AudioContextLookup
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\reearn-audio\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 35168
+  [agent] LUT ready  base=0x2ceaab0  offset=0x134  root=0xce30048  delta=0  attempts=0
+  [agent] .asi loaded  base=0x5f190000  AudioContextLookup@0x5f19fd00
+Traceback (most recent call last):
+    sys.exit(main())
+    script.load()
+frida.TransportError: the connection is closed
+--- boot 2
+hook: audio_context_lookup  rva=0x005ac900  export=AudioContextLookup
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\reearn-audio\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 28656
+  [agent] LUT ready  base=0x2bdaab0  offset=0x134  root=0xce30048  delta=0  attempts=0
+  [agent] .asi loaded  base=0x5de10000  AudioContextLookup@0x5de1fd00
+Traceback (most recent call last):
+    sys.exit(main())
+    script.load()
+frida.TransportError: the connection is closed
