@@ -171,7 +171,8 @@ Under the old fixtures both defects were invisible: BB's rect only reached a stu
 | commit | content | keep/drop |
 |---|---|---|
 | `197985e7` | call_log draw-stream extension, `x87_cw`, drawstream CSV, path2 mirror of `ret_type`, ProgressBarSetA.cpp and MenuMenusBB.cpp x87 TUs, old bodies removed, fixture | keep |
-| (next) | scratch bound check, 40-row CW vector + stream layout, ARG_TYPES.md regen, evidence, this note | keep |
+| `6410e555` | scratch bound check, 40-row CW vector + stream layout, ARG_TYPES.md regen, evidence, this note | keep |
+| (this) | commit hash filled in this table | keep |
 
 ## Path2 (orchestrator)
 
