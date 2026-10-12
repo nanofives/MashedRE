@@ -1,0 +1,9 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,"[{""scratch"":256},{""scratch"":1280}]",2670052260,0x9f25c3a4,,,False,,access violation accessing 0x424448b
+1,"[{""scratch"":256},{""scratch"":1280}]",1177135338,0x4629a8ea,,,False,,access violation accessing 0x424448b
+2,"[{""scratch"":256},{""scratch"":1280}]",2273449236,0x87821514,,,False,,access violation accessing 0x424448b
+3,"[{""scratch"":256},{""scratch"":1280}]",3525265556,0xd21f4894,,,False,,access violation accessing 0x424448b
+4,"[{""scratch"":256},{""scratch"":1280}]",1286815277,0x4cb33e2d,,,False,,access violation accessing 0xc24448b
+5,"[{""scratch"":256},{""scratch"":1280}]",2503776291,0x953c9823,,,False,,illegal instruction
+6,"[{""scratch"":256},{""scratch"":1280}]",3664109708,0xda65e08c,,,False,,access violation accessing 0x424448b
+7,"[{""scratch"":256},{""scratch"":1280}]",3162571194,0xbc8101ba,,,False,,access violation accessing 0x424448b
