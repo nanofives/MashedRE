@@ -26,6 +26,10 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-12  0042aff0  MenuButtonDetectA  C3->C4  Natural Quick Battle -> Race Results scenario, ~2,540 calls/run, 0 mismatches x4, old-stride control RED 37/37 x2. re/analysis/negctl/reearn_20261011/c4_a1_m_RESULT.md
+2026-10-12  0042b180  MenuButtonDetectB  C3->C4  Same scenario, 0 mismatches x4, old-stride control RED 36/36 and 37/37. re/analysis/negctl/reearn_20261011/c4_a1_m_RESULT.md
+2026-10-12  0042b310  MenuButtonDetectC  C3->C4  Same scenario, 0 mismatches x4, old-stride control RED 3/3 x2; screen types 0x13/0x1e not reached (C3 fixture covers them). re/analysis/negctl/reearn_20261011/c4_a1_m_RESULT.md
+2026-10-12  00429aa0  GameStateSlotsFill  C4 not earned (C3 kept)  0 game calls in 12 probe runs; call sites need mode 2 (locked), ff24/ff27, or screen 21. re/analysis/negctl/reearn_20261011/c4_a1_m_RESULT.md
 2026-10-12  00430290  Championship::Complete  C3->C4  Canonical Challenge-race scenario with the fixed port live; ONE forced input (P1-won flag 0x007f0fcc=1, read only in the guard, the value the game writes on a P1 win). Port GREEN 2/2 + 1/1, old-defect control RED 2/2, 0 crashes. re/analysis/negctl/reearn_20261011/c4_a1_s_RESULT.md
 2026-10-12  -  settings dialogs (5 rows)  U-9674 filed, C3 kept  C4 not earnable: skip_selector / skip_controller_dialog keep the dialogs from opening in the reference. re/analysis/negctl/reearn_20261011/c4_a1_s_RESULT.md
 2026-10-12  -  standalone menu  U-9672 item (2) RESOLVED  Original challenge-row movers ported (shared RowMoveFwd / RowMoveBack); 33/33 samples match the original; row-wrap directive removed (user decision). re/analysis/u9667_menu_tables/ROW_MOVERS_RESULT.md
