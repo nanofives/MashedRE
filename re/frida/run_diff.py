@@ -453,7 +453,9 @@ def build_config(hook, asi_path=None):
                # scalars_to_scattered_globals scratch buffer (negctl re-earn 2026-10-11).
                'scratch_size', 'scratch_fill', 'recorder',
                # real dialog window tree + EAX-delivered arg (reearn/settings 2026-10-12).
-               'dialog', 'eax_arg'):
+               'dialog', 'eax_arg',
+               # named per-callee recorders + call-sequence fingerprint (followup/a2-stubat 2026-10-12).
+               'call_log'):
         if _k in hook:
             config[_k] = hook[_k]
     # void_write_observe scenario-attach extension (c3-batch-sa2 s2, 2026-06-16):

@@ -6418,6 +6418,83 @@ function runDiff() {
                 return;
             }
         }
+        // `call_log` [{name, nargs, abi?, ret?, at?, deref?, regs?}] (followup/a2-stubat 2026-10-12): NAMED recorders,
+        // each with its own arity / ABI / return, that append "name(a0,a1|eax=..)" to a per-arm call log which is
+        // folded into the fingerprint and returned with it. The shared `recorder` above has one arity and does not say
+        // which callee fired, so a body that reaches RwCamera* leaves of 1 and 3 args (0x004026d0) or several sibling
+        // renderers (0x00404320) could not be told apart. An entry with `at` is Interceptor.replace'd at that address
+        // (same install guard as stub_at) AFTER freeze_main has stopped the game's first thread, and reverted BEFORE
+        // it resumes, so the game never runs a recorder (those callees run every frame on that thread). A seed value
+        // {call_log: name} resolves to the recorder's address (e.g. a fake RwGlobals +0x20 slot).
+        //   args       a value inside the scratch is written s+0xOFF, anything else as hex.
+        //   deref      {argIdx: nDwords}: log '@v0/v1..' read at that pointer INSTEAD of the raw address when it is
+        //              outside the scratch (a pointer to a caller local differs per arm; 0x004026d0 passes &local_4).
+        //   regs       ['eax', ...]: also log the register at entry (0x00404320 passes the entry pointer to
+        //              0x00403fa0 in EAX, 0x004045f1).
+        //   ret        default return; a test's stub_rets {name: v | [v_call0, v_call1, ..]} overrides it per call.
+        const callLogCfg = CONFIG.call_log || [];
+        const callLogFns = {};
+        let callLog = [], callLogCounts = {}, callLogTest = null;
+        globalThis.__callLogKeep = [];
+        function clNorm(v) {
+            const u = v >>> 0;
+            if (scratch) {
+                const d = ptr(u).sub(scratch).toUInt32() >>> 0;
+                if (ptr(u).compare(scratch) >= 0 && d < scratchSize) return 's+0x' + d.toString(16);
+            }
+            return '0x' + u.toString(16);
+        }
+        callLogCfg.forEach(function (ce) {
+            const nA = ce.nargs | 0, ty = [];
+            for (let q = 0; q < nA; q++) ty.push('uint32');
+            const deref = ce.deref || {}, regs = ce.regs || [];
+            const cb = new NativeCallback(function () {
+                const parts = [];
+                for (let q = 0; q < nA; q++) {
+                    const u = arguments[q] >>> 0, n = deref[q] | 0;
+                    let s = clNorm(u);
+                    if (n > 0) {
+                        if (s.charAt(0) !== 's') s = '';
+                        try {
+                            const w = [];
+                            for (let z = 0; z < n; z++) w.push((ptr(u).add(4 * z).readU32() >>> 0).toString(16));
+                            s += '@' + w.join('/');
+                        } catch (e) { s += '@AV'; }
+                    }
+                    parts.push(s);
+                }
+                let line = ce.name + '(' + parts.join(',');
+                const ctx = this.context;
+                regs.forEach(function (r) { line += '|' + r + '=' + clNorm(ctx[r].toUInt32()); });
+                callLog.push(line + ')');
+                const k = callLogCounts[ce.name] | 0;
+                callLogCounts[ce.name] = k + 1;
+                let rv = ce.ret | 0;
+                const sr = (callLogTest && callLogTest.stub_rets) ? callLogTest.stub_rets[ce.name] : undefined;
+                if (Array.isArray(sr)) rv = sr[Math.min(k, sr.length - 1)] | 0;
+                else if (sr !== undefined) rv = sr | 0;
+                return rv;
+            }, 'int', ty, ce.abi || 'mscdecl');
+            globalThis.__callLogKeep.push(cb);
+            callLogFns[ce.name] = cb;
+        });
+        const callLogAt = callLogCfg.filter(function (ce) { return ce.at !== undefined && ce.at !== null; });
+        function callLogInstall() {
+            for (let k = 0; k < callLogAt.length; k++) {
+                const sa = ptr(callLogAt[k].at);
+                const pre = new Uint8Array(sa.readByteArray(5));
+                Interceptor.replace(sa, callLogFns[callLogAt[k].name]);
+                Interceptor.flush();
+                const post = new Uint8Array(sa.readByteArray(5));
+                let patched = false;
+                for (let b = 0; b < 5; b++) if (post[b] !== pre[b]) { patched = true; break; }
+                if (!patched) throw new Error('call_log did NOT install at ' + sa + ' -- refusing to run, the REAL callee would execute');
+            }
+        }
+        function callLogRevert() {
+            callLogAt.forEach(function (ce) { try { Interceptor.revert(ptr(ce.at)); } catch (e) {} });
+            Interceptor.flush();
+        }
         // `dialog` {controls: [{id, cls, style, text?, check?, items?: [[text, data]], sel?}]} (reearn/settings
         // 2026-10-12): the dialog handlers 0x00498d60/0x00498f60/0x00499170/0x004991f0/0x00499740 act only through
         // USER32 calls on control HWNDs, which a NULL or fake HWND turns into no-ops (every ABI defect in the cluster
@@ -6534,9 +6611,14 @@ function runDiff() {
             if (x !== null && typeof x === 'object' && x.scratch !== undefined) return scratch.add(x.scratch | 0).toUInt32();
             if (x !== null && typeof x === 'object' && x.recorder) return recorder.toUInt32();
             if (x !== null && typeof x === 'object' && x.dialog !== undefined) return dlgHwnd(x.dialog).toUInt32();
+            if (x !== null && typeof x === 'object' && x.call_log !== undefined) {
+                if (!callLogFns[x.call_log]) throw new Error('no call_log entry ' + x.call_log);
+                return callLogFns[x.call_log].toUInt32();
+            }
             return x;
         }
         function fillScratch() {
+            callLog = []; callLogCounts = {};
             if (!scratch) return;
             const z = new Uint8Array(scratchSize); z.fill(scratchFill); scratch.writeByteArray(z.buffer);
         }
@@ -6574,6 +6656,12 @@ function runDiff() {
                 send({ type: 'log', msg: 'dialog readback: ' + rb });
                 for (let j = 0; j < rb.length; j++) fp = Math.imul(fp ^ (rb.charCodeAt(j) & 0xffff), 0x01000193);
             }
+            if (callLogCfg.length) {
+                // The call log is both folded and returned, so the CSV carries the sequence each arm made.
+                const cl = callLog.join(';');
+                for (let j = 0; j < cl.length; j++) fp = Math.imul(fp ^ (cl.charCodeAt(j) & 0xffff), 0x01000193);
+                return (fp >>> 0).toString(16) + ' ' + cl;
+            }
             return fp >>> 0;
         }
         function saveW() { return windows().map(function(w) { return w.a.readByteArray(w.len); }); }
@@ -6589,9 +6677,14 @@ function runDiff() {
         // whole run, for fixtures whose seeded globals the running game also reads or writes.
         if (CONFIG.freeze_main) __freeze.thread();
         try {
+        if (callLogAt.length) {
+            if (!CONFIG.freeze_main) throw new Error('call_log `at` entries require freeze_main (the game would run the recorders)');
+            callLogInstall();
+        }
         for (let i = 0; i < CONFIG.tests.length; i++) {
             const t = CONFIG.tests[i];
             if (dlgCfg) dlgCur = (t && t.dialog) ? t.dialog : dlgCfg;
+            callLogTest = (t && typeof t === 'object' && !Array.isArray(t)) ? t : null;
             const args = (t && t.args) ? t.args : (Array.isArray(t) ? t : [t]);
             // Trim to the declared arity: the zero-arg entries carry a placeholder test `0`, which current Frida
             // rejects with "bad argument count" on BOTH arms (10 C3 rows read RED/RED, negctl 2026-10-11). A cdecl
@@ -6631,7 +6724,10 @@ function runDiff() {
                            match: (errO === null && errR === null && origV === reimV),
                            err_original: errO, err_reimpl: errR });
         }
-        } finally { if (CONFIG.freeze_main) __freeze.flush(); }
+        } catch (e) {
+            send({ type: 'error', msg: 'scalars_to_scattered_globals: ' + e.message });
+            return;
+        } finally { if (callLogAt.length) callLogRevert(); if (CONFIG.freeze_main) __freeze.flush(); }
         send({ type: 'results', data: results });
         return;
     }

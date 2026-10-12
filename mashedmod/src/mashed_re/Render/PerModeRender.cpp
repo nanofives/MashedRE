@@ -67,11 +67,7 @@ using FUN_00403c60_t = void (__cdecl*)();
 static FUN_00403c60_t const s_FUN_00403c60 =
     reinterpret_cast<FUN_00403c60_t>(0x00403c60u);
 
-// 0x00403fa0  mode-10 loop body; param = entry index.
-// Signature: void FUN_00403fa0(int idx)
-using FUN_00403fa0_t = void (__cdecl*)(int);
-static FUN_00403fa0_t const s_FUN_00403fa0 =
-    reinterpret_cast<FUN_00403fa0_t>(0x00403fa0u);
+// 0x00403fa0  mode-10 loop body: index on the stack AND entry pointer in EAX -> Call_00403fa0 below.
 
 // 0x004041c0  FUN_004041c0 — sub-state-6 renderer for all modes (C2).
 using FUN_004041c0_t = void (__cdecl*)();
@@ -148,82 +144,54 @@ static void SetRWState(int state_id, int value) {
     fn(state_id, value);
 }
 
-// Execute the shared prologue for modes 5/8/9:
-//   1. Save camera view-window (offsets 0x68/0x6c)
-//   2. EndUpdate
-//   3. SetViewWindow(0.8, 0.8)
-//   4. BeginUpdate → returns 0 on failure (early return)
-//   5. SetRWState(6, 0); SetRWState(8, 0)
-// Returns camera ptr, or 0 on BeginUpdate failure.
-static int ModePrologue(float* pSavedVW) {
-    const int iVar4 = GetCameraPtr();
+// 0x00403fa0 takes TWO inputs: the entry index on the stack and the entry POINTER in EAX.
+//   0x004045f0 push edi ; 0x004045f1 mov eax, esi ; 0x004045f3 call 0x403fa0 ; 0x004045f8 add esp, 4
+// The callee reads and writes the entry's +0x10 float through EAX (0x00403fa3 fld [eax+0x10],
+// 0x00403fc1 fstp [eax+0x10]) and reads the index from the stack (0x00403fb9 mov ebp,[esp+0x24]).
+// The decomp shows FUN_00403fa0(iVar4) only. [followup/a2-stubat 2026-10-12] The previous port called it
+// through a plain cdecl pointer, so EAX held whatever the compiler left there.
+static __declspec(naked) void __cdecl Call_00403fa0(const void* /*entry*/, int /*idx*/) {
+    __asm {
+        mov  eax, dword ptr [esp + 4]    // entry pointer -> EAX (0x004045f1)
+        push dword ptr [esp + 8]         // idx (0x004045f0 push edi)
+        mov  ecx, 0x00403fa0
+        call ecx                         // 0x004045f3
+        add  esp, 4                      // 0x004045f8
+        ret
+    }
+}
 
-    // Save current view-window x/y from camera struct offsets 0x68/0x6c
-    const std::uintptr_t cam_base = static_cast<std::uintptr_t>(
-        static_cast<std::uint32_t>(iVar4));
+// Arm prologue shared by modes 9/8/5/10, in byte order (mode 9: 0x00404335..0x00404376):
+//   camera = *(*(0x007d3ff8))            0x00404335 / 0x0040433a
+//   FUN_004c19f0(camera)                 0x0040433c call 0x4c19f0      (EndUpdate BEFORE the save)
+//   saved = camera+0x68, camera+0x6c     0x00404342 / 0x0040434d
+//   FUN_004c1c80(camera, {0.8f, 0.8f})   0x00404356..0x00404366 (0x3f4ccccd x2)
+//   return FUN_004c1a00(camera) != 0     0x0040436c / 0x00404374 test eax,eax ; je 0x404642 (plain return)
+// [followup/a2-stubat 2026-10-12] The previous port read +0x68/+0x6c before the EndUpdate call and returned the
+// camera pointer as its success flag, so a zero camera read as a BeginUpdate failure.
+static bool ArmPrologue(int camera, float* pSavedVW) {
+    s_RwCameraEndUpdate(camera);
+    const std::uintptr_t cam_base = static_cast<std::uintptr_t>(static_cast<std::uint32_t>(camera));
     pSavedVW[0] = *reinterpret_cast<const float*>(cam_base + kCamViewWindowX_off);
     pSavedVW[1] = *reinterpret_cast<const float*>(cam_base + kCamViewWindowY_off);
-
-    // EndUpdate
-    s_RwCameraEndUpdate(iVar4);
-
-    // SetViewWindow(0.8, 0.8)  [0x3f4ccccd = 0.8f]
     float vw[2] = { 0.8f, 0.8f };
-    s_RwCameraSetViewWindow(iVar4, vw);
-
-    // BeginUpdate — early return 0 on failure
-    if (s_RwCameraBeginUpdate(iVar4) == 0) {
-        return 0;
-    }
-
-    // Set RW render states
-    SetRWState(kRS6, 0);
-    SetRWState(kRS8, 0);
-
-    return iVar4;
+    s_RwCameraSetViewWindow(camera, vw);
+    return s_RwCameraBeginUpdate(camera) != 0;
 }
 
-// Execute the shared epilogue for modes 5/8/9 (LAB_004043be):
-//   1. Restore RS#6 = 1, RS#8 = 1
-//   2. EndUpdate
-//   3. Restore view-window from saved values
-//   4. BeginUpdate (resume normal rendering)
-static void ModeEpilogue(int iVar4, float* pSavedVW) {
+// Arm tail (LAB_004043be 0x004043be..0x004043e9; mode 10 inlines the same at 0x0040460e..0x00404639).
+static void ArmTail(int camera, float* pSavedVW) {
     SetRWState(kRS6, 1);
     SetRWState(kRS8, 1);
-    s_RwCameraEndUpdate(iVar4);
-    s_RwCameraSetViewWindow(iVar4, pSavedVW);
-    s_RwCameraBeginUpdate(iVar4);
+    s_RwCameraEndUpdate(camera);
+    s_RwCameraSetViewWindow(camera, pSavedVW);
+    s_RwCameraBeginUpdate(camera);
 }
 
-// Dispatch sub-state for modes 5/8/9 (3-query chain).
-// Returns true if a sub-state match was found and rendered.
-static bool DispatchSubStateModes589(int mode) {
-    float saved_vw[2];
-    const int iVar4 = ModePrologue(saved_vw);
-    if (iVar4 == 0) return true;  // BeginUpdate failed — prologue already done; skip
-
-    // Sub-state query chain: check 3/4/5 first, then 6
-    const int iVar1 = s_GetRenderSubMode();
-    if (iVar1 == 5 || iVar1 == 4 || iVar1 == 3) {
-        if (mode == 9)       { s_Render_00403d30(); }
-        else if (mode == 8)  { s_Render_00403db0(); }
-        else /* mode == 5 */ { s_Render_00403ed0(); }
-        ModeEpilogue(iVar4, saved_vw);
-        return true;
-    }
-
-    // Re-query for sub-state 6
-    const int iVar1b = s_GetRenderSubMode();
-    if (iVar1b == 6) {
-        s_FUN_004041c0();
-        ModeEpilogue(iVar4, saved_vw);
-        return true;
-    }
-
-    // No matching sub-state — still restore
-    ModeEpilogue(iVar4, saved_vw);
-    return false;
+// Sub-state chain, evaluated with short-circuit and one call per test, as the bytes do
+// (mode 9: 0x00404397 call; cmp 5; je / 0x004043a1 call; cmp 4; je / 0x004043ab call; cmp 3).
+static bool SubStateIs5Or4Or3() {
+    return s_GetRenderSubMode() == 5 || s_GetRenderSubMode() == 4 || s_GetRenderSubMode() == 3;
 }
 
 
@@ -237,69 +205,60 @@ static bool DispatchSubStateModes589(int mode) {
 //
 // ref: re/analysis/promote_c2_render_lowrva/00404320.md
 // Caller: FUN_00492e90 per-frame render dispatch.
+//
+// Per-arm sub-state dispatch (bytes):
+//   mode 9  : 5/4/3 -> 0x00403d30 (0x004043b9); else 0x00404482: ==6 -> 0x004041c0; then tail
+//   mode 8  : 5/4/3 -> 0x00403db0 (0x0040449a); else 0x00404482 (same ==6 check); then tail
+//   mode 5  : 5/4/3 -> 0x00403ed0 (0x00404533); else 0x0040452d jne 0x4043be: tail, NO sub-state-6 query
+//   mode 10 : 5/4/3 -> 0x00403c60 (0x00404609); else ==6 (0x004045c9) -> loop; then inlined tail
+// [followup/a2-stubat 2026-10-12] The previous port ran the ==6 query and 0x004041c0 in mode 5 too.
 
 // 0x00404320
 extern "C" __declspec(dllexport) void __cdecl PerModeRenderMachine() {
     const std::uint32_t mode =
         *reinterpret_cast<const std::uint32_t*>(kGameMode_007f0fd0);
 
-    if (mode == 9u) {
-        DispatchSubStateModes589(9);
-        return;
+    if (mode != 9u && mode != 8u && mode != 5u && mode != 10u) {
+        return;                                    // 0x00404540 jne 0x404642
     }
-    if (mode == 8u) {
-        DispatchSubStateModes589(8);
-        return;
-    }
-    if (mode == 5u) {
-        DispatchSubStateModes589(5);
-        return;
-    }
-    if (mode == 10u) {
-        // Mode 10: prologue + per-entry loop + inlined epilogue
-        float saved_vw[2];
-        const int iVar4 = ModePrologue(saved_vw);
-        if (iVar4 == 0) return;
 
-        // Sub-state dispatch for mode 10
-        const int sub = s_GetRenderSubMode();
-        if (sub == 5 || sub == 4 || sub == 3) {
-            s_FUN_00403c60();
-        } else {
-            // Re-query for sub-state 6
-            const int sub2 = s_GetRenderSubMode();
-            if (sub2 == 6) {
-                // Per-entry loop over DAT_00636b88..0x636c00 (6 entries × 20 bytes)
-                // entry[4] at offset 0x10 (float); gate: DAT_005d757c < entry[4]
-                const float sentinel =
-                    *reinterpret_cast<const float*>(kMode10Sentinel_005d757c);
-                const std::uint8_t* entry =
-                    reinterpret_cast<const std::uint8_t*>(kMode10Table_00636b88);
-                const std::uint8_t* entry_end =
-                    reinterpret_cast<const std::uint8_t*>(kMode10TableEnd);
-                int entry_idx = 0;
-                while (entry < entry_end) {
-                    const float entry_float =
-                        *reinterpret_cast<const float*>(entry + kMode10EntryFloat_off);
-                    if (sentinel < entry_float) {
-                        s_FUN_00403fa0(entry_idx);
-                    }
-                    entry += kMode10EntryStride;
-                    ++entry_idx;
+    // 0x00404335 mov eax,[0x7d3ff8] ; 0x0040433a mov esi,[eax]   (mode 10: ebx, 0x00404546 / 0x0040454c)
+    const int camera = GetCameraPtr();
+    float saved_vw[2];
+    if (!ArmPrologue(camera, saved_vw)) {
+        return;                                    // je 0x404642 / 0x00404588 je 0x404641
+    }
+    // 0x0040437c..0x00404391 (pushes of edi = 0) / 0x00404447..0x0040445e
+    SetRWState(kRS6, 0);
+    SetRWState(kRS8, 0);
+
+    if (SubStateIs5Or4Or3()) {
+        if (mode == 9u)       s_Render_00403d30();  // 0x004043b9
+        else if (mode == 8u)  s_Render_00403db0();  // 0x0040449a
+        else if (mode == 5u)  s_Render_00403ed0();  // 0x00404533
+        else                  s_FUN_00403c60();     // 0x00404609
+    } else if (mode == 9u || mode == 8u) {
+        if (s_GetRenderSubMode() == 6) {            // 0x00404482 call 0x40e350 ; cmp 6
+            s_FUN_004041c0();                       // 0x00404490
+        }
+    } else if (mode == 10u) {
+        if (s_GetRenderSubMode() == 6) {            // 0x004045c9 call 0x40e350 ; cmp 6
+            // 0x004045d3 mov esi,0x636b88 ; edi = 0 from 0x0040432a, incremented per entry (0x004045fe)
+            int entry_idx = 0;
+            for (std::uintptr_t entry = kMode10Table_00636b88; entry < kMode10TableEnd;
+                 entry += kMode10EntryStride, ++entry_idx) {        // 0x004045fb add esi,0x14 ; cmp/jl
+                // 0x004045e0 fld [esi+0x10] ; 0x004045e3 fcomp [0x5d757c] ; test ah,0x41 ; jne skip
+                // -> call only when entry[+0x10] > *(float*)0x5d757c (false when unordered)
+                if (*reinterpret_cast<const float*>(entry + kMode10EntryFloat_off) >
+                    *reinterpret_cast<const float*>(kMode10Sentinel_005d757c)) {
+                    Call_00403fa0(reinterpret_cast<const void*>(entry), entry_idx);
                 }
             }
         }
-
-        // Mode-10 has inlined epilogue (not the shared LAB_004043be)
-        SetRWState(kRS6, 1);
-        SetRWState(kRS8, 1);
-        s_RwCameraEndUpdate(iVar4);
-        s_RwCameraSetViewWindow(iVar4, saved_vw);
-        s_RwCameraBeginUpdate(iVar4);
-        return;
     }
+    // mode 5 with a sub-state other than 5/4/3 falls straight here (0x0040452d jne 0x4043be).
 
-    // No matching mode — void return (e.g. main menu, mode 0)
+    ArmTail(camera, saved_vw);                      // 0x004043be.. / 0x0040460e..
 }
 
 RH_ScopedInstall(PerModeRenderMachine, 0x00404320);  // re-enabled 2026-05-24 phase-a2-strict GREEN int_scalar (no-op modes)

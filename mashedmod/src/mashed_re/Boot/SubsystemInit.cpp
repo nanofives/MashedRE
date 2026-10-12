@@ -198,17 +198,24 @@ static std::uint32_t* const g_DAT_0067d974 =
 // ---------------------------------------------------------------------------
 
 // 0x00492270
+// [followup/a2-stubat 2026-10-12] The two callees are reached through their ORIGINAL addresses, as the bytes do
+// (0x0049227f call 0x4921d0, 0x00492284 call 0x428590). The previous body called this TU's own DisplayInit /
+// ViewportInit directly, so the installed hook ran the ViewportInit port body, whose RH_ScopedInstall is
+// MASS-DISABLED (unverified), in place of the original 0x00428590, and no stub at either address could see the
+// calls. Through the address, an installed DisplayInit hook is still reached via its JMP.
+using SubsystemInitCallee_t = void (__cdecl*)();
 extern "C" __declspec(dllexport) std::int32_t __cdecl SubsystemInit() {
-    // 0x00492270: iVar1 = FUN_00493710(0) — RW init gate; literal 0 at 0x00492270.
+    // 0x00492270 push 0; 0x00492272 call 0x493710; 0x00492277 add esp,4
     const std::int32_t iVar1 = s_FUN_00493710(0);
-    // 0x00492278: if iVar1 == 0 → return 0 (gate-failure path).
+    // 0x0049227a test eax,eax; 0x0049227c jne; 0x0049227e ret (EAX = 0 here)
     if (iVar1 == 0) {
         return 0;
     }
-    // Else: call FUN_004921d0 (DisplayInit), then FUN_00428590 (ViewportInit).
-    DisplayInit();
-    ViewportInit();
-    // 0x0049228c: return 1.
+    // 0x0049227f call 0x4921d0
+    reinterpret_cast<SubsystemInitCallee_t>(0x004921d0u)();
+    // 0x00492284 call 0x428590
+    reinterpret_cast<SubsystemInitCallee_t>(0x00428590u)();
+    // 0x00492289 mov eax, 1
     return 1;
 }
 
