@@ -1,0 +1,92 @@
+# Group S dialog reachability, static evidence (2026-10-12). Image: original/MASHED.exe.unpatched (anchor) unless noted.
+
+## Direct call sites (re/tools/callsites.py, capstone-confirmed)
+target 0x00498d60  section .text  confirmed call sites 2  byte-pattern hits rejected by the disassembler 0
+  0x00499137  e824fcffff
+  0x004991cf  e88cfbffff
+target 0x00498f60  section .text  confirmed call sites 1  byte-pattern hits rejected by the disassembler 0
+  0x004993a6  e8b5fbffff
+target 0x00499170  section .text  confirmed call sites 1  byte-pattern hits rejected by the disassembler 0
+  0x00499279  e8f2feffff
+target 0x004991f0  section .text  confirmed call sites 0  byte-pattern hits rejected by the disassembler 0
+target 0x00499740  section .text  confirmed call sites 33  byte-pattern hits rejected by the disassembler 0
+  0x004974c5  e876220000
+  0x004974e9  e852220000
+  0x00497507  e834220000
+  0x00497523  e818220000
+  0x00497541  e8fa210000
+  0x0049755f  e8dc210000
+  0x0049757b  e8c0210000
+  0x00497599  e8a2210000
+  0x004975b7  e884210000
+  0x004975d0  e86b210000
+  0x00497cdb  e8601a0000
+  0x00497d0d  e82e1a0000
+  0x00497d29  e8121a0000
+  0x00497d47  e8f4190000
+  0x00497d65  e8d6190000
+  0x00497d81  e8ba190000
+  0x00497d9f  e89c190000
+  0x00497dbd  e87e190000
+  0x00497dd9  e862190000
+  0x00497df7  e844190000
+  0x00497e15  e826190000
+  0x00497e31  e80a190000
+  0x00497e4f  e8ec180000
+  0x00497e6d  e8ce180000
+  0x00497e89  e8b2180000
+  0x00498f73  e8c8070000
+  0x00498f94  e8a7070000
+  0x00498faf  e88c070000
+  0x00498fcb  e870070000
+  0x00498fe9  e852070000
+  0x00499007  e834070000
+  0x00499023  e818070000
+  0x00499041  e8fa060000
+target 0x00499400  section .text  confirmed call sites 1  byte-pattern hits rejected by the disassembler 0
+  0x004951f6  e805420000
+target 0x00498510  section .text  confirmed call sites 1  byte-pattern hits rejected by the disassembler 0
+  0x004951b0  e85b330000
+target 0x004982a0  section .text  confirmed call sites 4  byte-pattern hits rejected by the disassembler 0
+  0x00498419  e882feffff
+  0x0049844d  e84efeffff
+  0x00498471  e82afeffff
+  0x00498483  e818feffff
+target 0x004974b0  section .text  confirmed call sites 1  byte-pattern hits rejected by the disassembler 0
+  0x004984e6  e8c5efffff
+target 0x00497b60  section .text  confirmed call sites 1  byte-pattern hits rejected by the disassembler 0
+  0x004981f1  e86af9ffff
+target 0x00430290  section .text  confirmed call sites 0  byte-pattern hits rejected by the disassembler 0
+
+## Absolute-dword references (pointer installs), re/tools/dword_refs.py
+### 0x004991f0
+  0x499530 .text 0x49952f push 0x4991f0
+### 0x00498360
+  0x49877b .text 0x49877a push 0x498360
+### 0x00497fd0
+  0x498305 .text 0x498304 push 0x497fd0
+### 0x00498d60
+### 0x00498f60
+### 0x00499170
+### 0x00499740
+### 0x00430290
+### 0x006147bc
+  0x493970 .text 0x49396f sbb eax, 0x6147bc
+  0x493990 .text 0x49398f cmp eax, 0x6147bc
+  0x4951f1 .text 0x4951f0 mov eax, dword ptr [0x6147bc]
+### 0x006147c0
+  0x4939b0 .text 0x4939af sbb eax, 0x6147c0
+  0x4939d0 .text 0x4939cf cmp eax, 0x6147c0
+  0x4951ab .text 0x4951aa mov eax, dword ptr [0x6147c0]
+
+## Gate bytes, patched original/MASHED.exe vs MASHED.exe.unpatched
+0x4951aa patched 33c090909050e85b330000  unpatched a1c047610050e85b330000
+0x4951f0 patched 33c090909050e805420000  unpatched a1bc47610050e805420000
+
+## Flag initial values (.data raw) and command-line switches
+0x6147bc = 1
+0x6147c0 = 1
+0x5cf8cc b'-vs0'
+0x5cf8c4 b'-vs1'
+0x5cf8bc b'-cs0'
+0x5cf8b4 b'-cs1'

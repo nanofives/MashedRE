@@ -1,0 +1,8 @@
+REF explore_off1 arm=off calls=1 save_after=BD18788182B2343E
+    {'ra': '4112d2', 'forced': False, 'mode': 3, 'idx': 0, 'concl': 1, 'won_pre': 0, 'grid': [], 'f2c': 0, 'ev': 0, 'pri': 0, 'posts': [], 'saves': 0}
+      nat_off2 arm=off   verdict=CALLED calls=1 crash=0 alive_at_end=True save_after=same -> GREEN
+      posts [] saves 0
+       nat_on1 arm=on    verdict=CALLED calls=1 crash=0 alive_at_end=True save_after=same -> GREEN
+      posts [] saves 0
+      nat_wit1 arm=ctl   verdict=CALLED calls=1 crash=0 alive_at_end=True save_after=same -> GREEN
+      posts [] saves 0

@@ -1,0 +1,16 @@
+REF fw_off1 arm=off calls=1 save_after=BD18788182B2343E
+    {'ra': '4112d2', 'forced': True, 'mode': 3, 'idx': 0, 'concl': 1, 'won_pre': 0, 'grid': [('0x7f0a40', 0, 1), ('0x7f0a44', 1, 2), ('0x7f0a48', 0, 1), ('0x7f0a70', 0, 1), ('0x7f0a74', 0, 1), ('0x7f0a9c', 0, 1)], 'f2c': 0, 'ev': 0, 'pri': 64, 'posts': [0], 'saves': 1}
+       fw_off2 arm=off   verdict=CALLED calls=1 crash=0 alive_at_end=True save_after=same -> GREEN
+      posts [0] saves 1
+        fw_on1 arm=on    verdict=CALLED calls=1 crash=0 alive_at_end=True save_after=same -> GREEN
+      posts [] saves 1
+        fw_on2 arm=on    verdict=CALLED calls=1 crash=0 alive_at_end=True save_after=same -> GREEN
+      posts [] saves 1
+  fw_ctlclean1 arm=ctl   verdict=CALLED calls=1 crash=0 alive_at_end=True save_after=same -> GREEN
+      posts [] saves 1
+       fw_wit1 arm=ctl   verdict=CALLED calls=1 crash=0 alive_at_end=True save_after=same -> RED
+      posts [] saves 1
+       call0.grid: [('0x7f0a40', 0, 1), ('0x7f0a44', 1, 2), ('0x7f0a48', 0, 1), ('0x7f0a58', 0, 1), ('0x7f0a5c', 0, 1), ('0x7f0a64', 0, 1), ('0x7f0a74', 0, 1)] vs [('0x7f0a40', 0, 1), ('0x7f0a44', 1, 2), ('0x7f0a48', 0, 1), ('0x7f0a70', 0, 1), ('0x7f0a74', 0, 1), ('0x7f0a9c', 0, 1)]
+       fw_wit2 arm=ctl   verdict=CALLED calls=1 crash=0 alive_at_end=True save_after=same -> RED
+      posts [] saves 1
+       call0.grid: [('0x7f0a40', 0, 1), ('0x7f0a44', 1, 2), ('0x7f0a48', 0, 1), ('0x7f0a58', 0, 1), ('0x7f0a5c', 0, 1), ('0x7f0a64', 0, 1), ('0x7f0a74', 0, 1)] vs [('0x7f0a40', 0, 1), ('0x7f0a44', 1, 2), ('0x7f0a48', 0, 1), ('0x7f0a70', 0, 1), ('0x7f0a74', 0, 1), ('0x7f0a9c', 0, 1)]
