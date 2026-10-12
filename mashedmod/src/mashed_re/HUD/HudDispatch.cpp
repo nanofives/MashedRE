@@ -435,3 +435,111 @@ extern "C" __declspec(dllexport) void __cdecl HudSlotUpdateCc50() {
 }
 
 RH_ScopedInstall(HudSlotUpdateCc50, 0x0041cc50);  // C3 2026-09-03 (Finding 20; caller 0x0040fc00 C2, callees C2+)
+
+// ---------------------------------------------------------------------------
+// Four leaves of HudIngameDispatch (0x0040dfc0), ported from the bytes of
+// original\MASHED.exe.unpatched on 2026-10-12. Before this they had no body:
+// HudIngameDispatch called the original RVAs and nothing was installed there.
+//
+// Two of the callees take their object in EAX (register convention):
+//   0x0041c2d0 (C2): 0x0041c2d1 mov esi,eax; then for members [3],[1],[0],[2]
+//                    of the EAX block: push member; call [member+0x48];
+//                    0x0041c2ee add esp,0x10 (caller-cleaned cdecl calls).
+//                    [member+0x48] is a function-pointer FIELD of the member,
+//                    not a vtable slot: 0x0041c2d3 mov eax,[esi+0xc] /
+//                    0x0041c2d7 call [eax+0x48] dereferences once.
+//   0x0041bc50 (C2): 0x0041bc51 mov esi,eax; 29 pairs: flag dword at
+//                    rec+X (X in 0x10..0x94), object at rec+X+0xa0, and
+//                    push obj; call [obj+0x48] when the flag is non-zero.
+// Neither is ported (C2), so both are called at their original RVA with EAX
+// loaded by inline asm, as HudSlotLoopB630 does for 0x0041b340.
+//
+// Return value: each original leaves EAX defined at RET, so the ports return
+// the same EAX (the flag read on the skip path, else the callee's EAX). No
+// caller reads it except for 0x00426ba0 (0x00402a8d / 0x0040d279 / 0x0040dfc5
+// / 0x00410cf6 / 0x004111cc), and no caller reads ECX/EDX after any of the
+// four calls (call-site disasm, 2026-10-12).
+// ---------------------------------------------------------------------------
+
+// 0x0041a3e0  HudDispatchMode10   (20 bytes)
+//   0x0041a3e0 mov eax,[0x0063c628]
+//   0x0041a3e5 test eax,eax / 0x0041a3e7 je 0x0041a3f3 (ret, EAX = 0)
+//   0x0041a3e9 mov eax,0x0063c610      ; EAX = 4-member block
+//   0x0041a3ee jmp 0x0041c2d0          ; tail call, returns its EAX
+// Reached from 0x0040dfc0 at 0x0040e043 (jmp, state 7) and 0x0040e0bd (call,
+// states 5/6), both when DAT_007f0fd0 == 10.
+// 0x0041a3e0
+extern "C" __declspec(dllexport) std::uint32_t __cdecl HudDispatchMode10() {
+    std::uint32_t r = *reinterpret_cast<const std::uint32_t*>(0x0063c628u);   // 0x0041a3e0
+    if (r != 0) {                                                              // 0x0041a3e7
+        __asm {
+            mov  eax, 0x0063c610        // 0x0041a3e9
+            mov  ecx, 0x0041c2d0
+            call ecx                    // 0x0041a3ee (tail jmp in the original)
+            mov  r, eax
+        }
+    }
+    return r;
+}
+
+RH_ScopedInstall(HudDispatchMode10, 0x0041a3e0);  // 2026-10-12 ported from bytes (work/hud-dispatch)
+
+// 0x0041c0c0  HudDispatchSlot2   (29 bytes)
+//   0x0041c0c0 push esi
+//   0x0041c0c1 mov esi,0x0063cab8
+//   0x0041c0c6 mov eax,esi ; 0x0041c0c8 call 0x0041bc50   ; EAX = record
+//   0x0041c0cd add esi,0x16c
+//   0x0041c0d3 cmp esi,0x0063cd90 ; 0x0041c0d9 jl 0x0041c0c6 (signed)
+//   0x0041c0db pop esi ; ret        ; EAX = last 0x0041bc50 EAX
+// 0x0063cab8 + 2*0x16c == 0x0063cd90: two records, no per-record guard.
+// Reached from 0x0040dfc0 at 0x0040e0d4 (states 5/6, FUN_0042f500() != 0 and,
+// on the sub-mode 6/10 arm only, DAT_007f0fd0 != 2).
+// 0x0041c0c0
+extern "C" __declspec(dllexport) std::uint32_t __cdecl HudDispatchSlot2() {
+    std::uint8_t* rec = reinterpret_cast<std::uint8_t*>(0x0063cab8u);         // 0x0041c0c1
+    std::uint32_t r;
+    do {
+        __asm {
+            mov  eax, rec               // 0x0041c0c6
+            mov  ecx, 0x0041bc50
+            call ecx                    // 0x0041c0c8
+            mov  r, eax
+        }
+        rec += 0x16c;                                                          // 0x0041c0cd
+    } while (reinterpret_cast<std::int32_t>(rec) < static_cast<std::int32_t>(0x0063cd90u));  // 0x0041c0d3 / jl
+    return r;
+}
+
+RH_ScopedInstall(HudDispatchSlot2, 0x0041c0c0);  // 2026-10-12 ported from bytes (work/hud-dispatch)
+
+// 0x0041c300  HudDispatchMode5   (20 bytes) -- same shape as 0x0041a3e0
+//   0x0041c300 mov eax,[0x0063cdbc]
+//   0x0041c305 test eax,eax / 0x0041c307 je 0x0041c313 (ret, EAX = 0)
+//   0x0041c309 mov eax,0x0063cda4      ; EAX = 4-member block
+//   0x0041c30e jmp 0x0041c2d0
+// Reached from 0x0040dfc0 at 0x0040e028 (jmp, state 7) and 0x0040e09e (call,
+// states 5/6), both when DAT_007f0fd0 == 5.
+// 0x0041c300
+extern "C" __declspec(dllexport) std::uint32_t __cdecl HudDispatchMode5() {
+    std::uint32_t r = *reinterpret_cast<const std::uint32_t*>(0x0063cdbcu);   // 0x0041c300
+    if (r != 0) {                                                              // 0x0041c307
+        __asm {
+            mov  eax, 0x0063cda4        // 0x0041c309
+            mov  ecx, 0x0041c2d0
+            call ecx                    // 0x0041c30e (tail jmp in the original)
+            mov  r, eax
+        }
+    }
+    return r;
+}
+
+RH_ScopedInstall(HudDispatchMode5, 0x0041c300);  // 2026-10-12 ported from bytes (work/hud-dispatch)
+
+// 0x00426ba0  HudDrawEnabled   (6 bytes)
+//   0x00426ba0 mov eax,[0x0066d704] ; 0x00426ba5 ret
+// 0x00426ba0
+extern "C" __declspec(dllexport) std::uint32_t __cdecl HudDrawEnabled() {
+    return *reinterpret_cast<const std::uint32_t*>(0x0066d704u);              // 0x00426ba0
+}
+
+RH_ScopedInstall(HudDrawEnabled, 0x00426ba0);  // 2026-10-12 ported from bytes (work/hud-dispatch)

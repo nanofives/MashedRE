@@ -1,0 +1,29 @@
+hook	rva	arg_type	lane	mode	verdict	mismatches	total	stats	err
+hud_dispatch_mode10	0x0041a3e0	scalars_to_scattered_globals	warm	baseline	GREEN	0	8		
+hud_dispatch_mode10	0x0041a3e0	scalars_to_scattered_globals	warm	field_first	NA	0	8	calls=8 flips=0 changed=0 flip=0x00000000 noise=158 frozen=2	
+hud_dispatch_mode10	0x0041a3e0	scalars_to_scattered_globals	warm	field_last	NA	0	8	calls=8 flips=0 changed=0 flip=0x00000000 noise=159 frozen=2	
+hud_dispatch_mode10	0x0041a3e0	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	8	calls=8 flips=0 changed=0 flip=0x00000000 noise=160 frozen=2	
+hud_dispatch_mode10	0x0041a3e0	scalars_to_scattered_globals	warm	null	RED	6	8	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+hud_dispatch_mode10	0x0041a3e0	scalars_to_scattered_globals	warm	real	GREEN	0	8		
+hud_dispatch_mode10	0x0041a3e0	scalars_to_scattered_globals	warm	ret	RED	8	8	calls=8 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+hud_dispatch_mode5	0x0041c300	scalars_to_scattered_globals	warm	baseline	GREEN	0	8		
+hud_dispatch_mode5	0x0041c300	scalars_to_scattered_globals	warm	field_first	NA	0	8	calls=8 flips=0 changed=0 flip=0x00000000 noise=162 frozen=2	
+hud_dispatch_mode5	0x0041c300	scalars_to_scattered_globals	warm	field_last	NA	0	8	calls=8 flips=0 changed=0 flip=0x00000000 noise=165 frozen=2	
+hud_dispatch_mode5	0x0041c300	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	8	calls=8 flips=0 changed=0 flip=0x00000000 noise=165 frozen=2	
+hud_dispatch_mode5	0x0041c300	scalars_to_scattered_globals	warm	null	RED	6	8	calls=0 flips=0 changed=0 flip=0x00000000 noise=160 frozen=2	
+hud_dispatch_mode5	0x0041c300	scalars_to_scattered_globals	warm	real	GREEN	0	8		
+hud_dispatch_mode5	0x0041c300	scalars_to_scattered_globals	warm	ret	RED	8	8	calls=8 flips=0 changed=0 flip=0x00000000 noise=160 frozen=2	
+hud_dispatch_slot2	0x0041c0c0	scalars_to_scattered_globals	warm	baseline	GREEN	0	9		
+hud_dispatch_slot2	0x0041c0c0	scalars_to_scattered_globals	warm	field_first	NA	0	9	calls=9 flips=0 changed=0 flip=0x00000000 noise=170 frozen=2	
+hud_dispatch_slot2	0x0041c0c0	scalars_to_scattered_globals	warm	field_last	NA	0	9	calls=9 flips=0 changed=0 flip=0x00000000 noise=174 frozen=2	
+hud_dispatch_slot2	0x0041c0c0	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	9	calls=9 flips=0 changed=0 flip=0x00000000 noise=194 frozen=2	
+hud_dispatch_slot2	0x0041c0c0	scalars_to_scattered_globals	warm	null	RED	8	9	calls=0 flips=0 changed=0 flip=0x00000000 noise=165 frozen=2	
+hud_dispatch_slot2	0x0041c0c0	scalars_to_scattered_globals	warm	real	GREEN	0	9		
+hud_dispatch_slot2	0x0041c0c0	scalars_to_scattered_globals	warm	ret	RED	9	9	calls=9 flips=0 changed=0 flip=0x00000000 noise=165 frozen=2	
+hud_draw_enabled	0x00426ba0	scalars_to_scattered_globals	warm	baseline	GREEN	0	10		
+hud_draw_enabled	0x00426ba0	scalars_to_scattered_globals	warm	field_first	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=194 frozen=2	
+hud_draw_enabled	0x00426ba0	scalars_to_scattered_globals	warm	field_last	NA	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=195 frozen=2	
+hud_draw_enabled	0x00426ba0	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=196 frozen=2	
+hud_draw_enabled	0x00426ba0	scalars_to_scattered_globals	warm	null	RED	9	10	calls=0 flips=0 changed=0 flip=0x00000000 noise=194 frozen=2	
+hud_draw_enabled	0x00426ba0	scalars_to_scattered_globals	warm	real	GREEN	0	10		
+hud_draw_enabled	0x00426ba0	scalars_to_scattered_globals	warm	ret	RED	10	10	calls=10 flips=0 changed=0 flip=0x00000000 noise=194 frozen=2	
