@@ -26,6 +26,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-12  005509b4  (original crash signature)  U-9677 mitigation DECIDED  User: re-run rule only. A concurrent track-load collision (AV MASHED.exe+0x1509b4 @0x38) is re-run, never a finding; rule added to CLAUDE.md.
 2026-10-12  005509b4  original AV at race start  U-9677 RESOLVED (explained)  track-piz sharing race (CreateFileA share 0 at 0x004b6738, unguarded seek at 0x0047b917), not the Vehicle setting; 5/5 with a concurrent reader, 0/15 without; standalone avoids it; harness re-run rule. re/analysis/negctl/followup_20261012/crash1509b4_RESULT.md
 2026-10-12  0041c2d0  FUN_0041c2d0  C2->C3  U-9671 re-port from the bytes (function-pointer field, caller-clean); old port witness RED 10/10 x2; path2 PASS. re/analysis/negctl/followup_20261012/u9671_RESULT.md
 2026-10-12  00498d20  ReadModeFromCombo_j5  C2->C3 (fixture-only, C4 not earnable: U-9674)  hDlg in EAX with decoy stack slot; GREEN 12/12; witness hDlg-from-stack RED 11/12; path2 PASS. re/analysis/negctl/followup_20261012/a2-dialog_RESULT.md

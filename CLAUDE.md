@@ -242,6 +242,7 @@ Rules (mandatory — a violation killed another session's TTD race capture mid-r
 - **Track the PIDs you spawn; kill ONLY those.** Never blanket-kill by name — no `Stop-Process -Name MASHED`, no `taskkill /im MASHED.exe`, no "kill all MASHED before my run". That terminates other sessions' games (forced-kill shows as guest exit `0xFFFFFFFF`).
 - **Never auto-attach to "first MASHED by name".** Target an explicit PID (the one you spawned). Tools that record/attach must take an explicit PID and refuse to guess when several MASHED are running.
 - **Remove worktrees ONLY via `py -3.12 scripts/diag.py wt-remove <path>` (or `--all-stale`).** NEVER `git worktree remove --force` in any form — skill worktrees junction `original/`, and `--force` follows the junction and wipes the real game install (incidents 2026-06-27 and 2026-07-01; `re/diag/KNOWN_ISSUES.md` WORKTREE-SYMLINK-WIPE).
+- **Concurrent track loads crash the original (U-9677): re-run, don't report.** All worktrees share one `original/` install, and the original opens the track `.piz` exclusively (`FUN_004b6710`, dwShareMode 0 at `0x004b6738`). Two sessions loading the same track at once make one original-side run AV at `MASHED.exe+0x1509b4` (read @ `0x38`). That signature is a collision: re-run the run, never treat it as a finding. User decision 2026-10-12: re-run rule only (no private install copies, no cross-session lock).
 - See the **multi-session** skill for capture-window coordination. Detail: memory `feedback_multisession_mashed_kill_by_pid`.
 
 ### Confidence promotion (NO overclaiming)

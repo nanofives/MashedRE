@@ -26,8 +26,7 @@
 > **Open**
 > - USER: pin the nav reachable set `{0,1,2,3,4,6,8,15,19,30,31,32}` as a harness assertion? (child advises no: it is
 >   the port's set, not the original's).
-> - USER: concurrent-session mitigation for U-9677 (re-run rule only, private install copy per session, or a
->   cross-session track lock).
+> - DECIDED (user): U-9677 mitigation is the re-run rule only; written into CLAUDE.md MASHED process hygiene.
 > - U-9675: the disabled 0x0041bc50 port has the same vtable misreading as U-9671 plus flag-order / 28-vs-29-pair
 >   errors. Re-port before any install.
 > - U-9676 (low): which callee instruction writes the camera entry's RwMatrix pad slots.
