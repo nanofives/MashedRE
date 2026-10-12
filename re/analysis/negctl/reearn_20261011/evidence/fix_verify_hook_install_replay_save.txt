@@ -1,0 +1,27 @@
+# provenance 2026-10-12: main build 606a8bbd deployed (asi sha256 b72345de8f1e13a7...), MASHED_HOOK_ONLY=0x004117b0, MASHED_VERIFY_ASI=original/mashed_re_dev.asi
+=== verify_hook_install report (replay_save) ===
+
+target address: 0x004117b0  export: ReplaySave
+PRE  bytes:     e9 1b d9 1d 68 60 61 00
+asi base:       0x685e0000
+reimpl addr:    0x685ef0d0
+POST bytes:     e9 1b d9 1d 68 60 61 00
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x681dd91b  expected 0x681dd91b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  1 / 1  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [], 'seed': [{'addr': 6236616, 'val': 0}, {'addr': 6535952, 'val': {'scratch': 0}}, {'addr': 6810988, 'val': 0}, {'addr': 9082024, 'val': {'scratch': 512}}, {'addr': 9082284, 'val': 0}, {'addr': 6570328, 'val': 7}, {'addr': {'scratch': 0}, 'val': 286331153}, {'addr': {'scratch': 8}, 'val': 572662306}, {'addr': {'scratch': 256}, 'val': 858993459}, {'addr': {'scratch': 408}, 'val': 1145324612}]}  got=19ee2644  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 1x as expected
+  + all 1 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_replay_save.txt

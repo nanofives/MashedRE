@@ -1,0 +1,27 @@
+# provenance 2026-10-12: main build 606a8bbd deployed (asi sha256 b72345de8f1e13a7...), MASHED_HOOK_ONLY=0x00432080, MASHED_VERIFY_ASI=original/mashed_re_dev.asi
+=== verify_hook_install report (race_end_check_finish) ===
+
+target address: 0x00432080  export: RaceEndCheckFinish
+PRE  bytes:     e9 eb db 1c 68 53 33 db
+asi base:       0x685e0000
+reimpl addr:    0x685ffc70
+POST bytes:     e9 eb db 1c 68 53 33 db
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x681cdbeb  expected 0x681cdbeb  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  1 / 1  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [7], 'seed': [{'addr': 6810788, 'val': 0}, {'addr': 8329740, 'val': 4096}, {'addr': 6236016, 'val': {'scratch': 0}}, {'addr': 8327233, 'val': 1, 'size': 1}, {'addr': 8328449, 'val': 0, 'size': 1}, {'addr': 8327309, 'val': 0, 'size': 1}, {'addr': 8328525, 'val': 0, 'size': 1}, {'addr': 8327385, 'val': 0, 'size': 1}, {'addr': 8328601, 'val': 0, 'size': 1}, {'addr': 8327461, 'val': 0, 'size': 1}, {'addr': 8328677, 'val': 0, 'size': 1}, {'addr': 8327537, 'val': 0, 'size': 1}, {'addr': 8328753, 'val': 0, 'size': 1}, {'addr': 8327613, 'val': 0, 'size': 1}, {'addr': 8328829, 'val': 0, 'size': 1}, {'addr': 8327689, 'val': 0, 'size': 1}, {'addr': 8328905, 'val': 0, 'size': 1}, {'addr': 8327765, 'val': 0, 'size': 1}, {'addr': 8328981, 'val': 0, 'size': 1}, {'addr': 8329748, 'val': 4294967295}, {'addr': 8329764, 'val': 4294967295}, {'addr': 8329780, 'val': 4294967295}, {'addr': 8329796, 'val': 4294967295}, {'addr': {'scratch': 52}, 'val': 0}, {'addr': {'scratch': 56}, 'val': 0}, {'addr': {'scratch': 60}, 'val': 0}, {'addr': {'scratch': 64}, 'val': 0}]}  got=1,6d9f9951  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 1x as expected
+  + all 1 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_race_end_check_finish.txt

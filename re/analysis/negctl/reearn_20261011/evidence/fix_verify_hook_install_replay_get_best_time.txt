@@ -1,0 +1,27 @@
+# provenance 2026-10-12: main build 606a8bbd deployed (asi sha256 b72345de8f1e13a7...), MASHED_HOOK_ONLY=0x00411580, MASHED_VERIFY_ASI=original/mashed_re_dev.asi; path2 template passes pointer-typed args as pointers
+=== verify_hook_install report (replay_get_best_time) ===
+
+target address: 0x00411580  export: ReplayGetBestTime
+PRE  bytes:     e9 bb d9 29 5d 85 c0 74
+asi base:       0x5d6a0000
+reimpl addr:    0x5d6aef40
+POST bytes:     e9 bb d9 29 5d 85 c0 74
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x5d29d9bb  expected 0x5d29d9bb  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  1 / 1  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [0, {'scratch': 1024}, {'scratch': 1040}, {'scratch': 1056}], 'seed': [{'addr': 6535952, 'val': {'scratch': 0}}, {'addr': {'scratch': 380}, 'val': 3000}]}  got=1,8201b198  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 1x as expected
+  + all 1 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_replay_get_best_time.txt
