@@ -1,0 +1,7 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,[0],463819185,0x1ba551b1,463819185,0x1ba551b1,True,,
+1,[0],2490254483,0x946e4493,,,False,,illegal instruction
+2,[0],1087854408,0x40d75748,,,False,,illegal instruction
+3,[1],550275522,0x20cc89c2,,,False,,illegal instruction
+4,[1],2490254483,0x946e4493,,,False,,illegal instruction
+5,[1],2072044521,0x7b80e3e9,,,False,,illegal instruction
