@@ -26,6 +26,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-12  005ade90  AudioListDrain  C3 kept, U-9661 RESOLVED  Row repointed from the dead AudioListDrain2 (AudioDSound.cpp, install commented out, now deleted with its registry entry) to the installed AudioListDrain (AudioRws.cpp). Old evidence: setup crash on both arms / empty lists only. z_fix_u9661.py builds the pool at 0x009146c0 and real lists: run_diff GREEN 11/11, self-baseline GREEN, negctl mutants RED 10/11, path2 PASS.
 2026-10-12  0042ac90  MenuEntryGet  C3 kept, U-9660 RESOLVED  Both arms AV'd because the per-slot table pointer [slot*0x40+0x67ed38] is 0 at the main menu; z_fix_u9660.py seeds it. run_diff GREEN 16/16, self-baseline GREEN, negctl mutants RED. Install re-enabled (MASS-DISABLE was a harness limit); path2 PASS hook-only and full auto-hook.
 2026-10-12  0042ac90  MenuEntryGet  U-9667 filed  The standalone runs ItemActionCode (MenuNavSM.cpp:432) for this RVA, which differs from the bytes in three ways and is unmeasured.
 2026-10-12  004a4541  FsopenSafe  C2 (decided)  User decision: keep the fix_fopen boot patch, so the hook cannot install and C2 is the accepted level. U-9662 DECIDED; revisit only if the patch is retired.

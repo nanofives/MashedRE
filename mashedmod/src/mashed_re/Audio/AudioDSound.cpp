@@ -349,52 +349,8 @@ extern "C" __declspec(dllexport) void* __cdecl AudioSubStructTwoCallInit(
 
 RH_ScopedInstall(AudioSubStructTwoCallInit, 0x005a9e10);  // re-enabled 2026-05-24 c3-audio-a
 
-// ---------------------------------------------------------------------------
-// 0x005ade90  FUN_005ade90  (0x32 bytes)
-// AudioListDrain2 — circular doubly-linked list drainer.
-//
-// Decompilation (0x005ade90–0x005adec1):
-//   piVar1 = (int *)param_1[1];       // 0x005ade93: sentinel->next
-//   while (piVar1 != param_1) {       // 0x005ade9e: sentinel-check
-//     *(int *)(*piVar1 + 4) = piVar1[1]; // 0x005adea4: node->prev->next = node->next
-//     *(int *)piVar1[1]     = *piVar1;   // 0x005adeaa: node->next->prev = node->prev
-//     FUN_005ae920(&DAT_009146c0, piVar1); // 0x005adeb0: return to free pool
-//     piVar1 = (int *)param_1[1];     // 0x005adeb9: reload sentinel->next
-//   }
-//
-// Node layout: node[0] = prev ptr, node[1] = next ptr.
-// Audio free pool at DAT_009146c0 (0x009146c0).
-// [U-0990]: Pool node type and block size not confirmed; pool identity
-//            is confirmed from multiple callers.
-// ---------------------------------------------------------------------------
-extern "C" __declspec(dllexport) void __cdecl AudioListDrain2(int* param_1)
-{
-    // 0x005ade93: piVar1 = (int *)param_1[1]  — sentinel->next
-    int* piVar1 = reinterpret_cast<int*>(param_1[1]);
-
-    // 0x005ade9e: while sentinel not reached
-    while (piVar1 != param_1) {
-        // 0x005adea4: *(int *)(*piVar1 + 4) = piVar1[1]
-        //   *piVar1 = prev_ptr; (*piVar1 + 4) = &prev_node->next; set to node->next
-        *reinterpret_cast<int*>(piVar1[0] + 4) = piVar1[1];
-
-        // 0x005adeaa: *(int *)piVar1[1] = *piVar1
-        //   piVar1[1] = next_ptr; *(next_ptr) = node->prev  (next_node->prev = node->prev)
-        *reinterpret_cast<int*>(piVar1[1]) = piVar1[0];
-
-        // 0x005adeb0: FUN_005ae920(&DAT_009146c0, piVar1) — return node to pool
-        typedef void (__cdecl *PoolFreeFn)(void*, void*);
-        static const std::uintptr_t kPoolAddr = 0x009146c0u;
-        auto pool_free = reinterpret_cast<PoolFreeFn>(0x005ae920u);
-        pool_free(reinterpret_cast<void*>(kPoolAddr), piVar1);
-
-        // 0x005adeb9: reload sentinel->next
-        piVar1 = reinterpret_cast<int*>(param_1[1]);
-    }
-}
-
-// RH_ScopedInstall(AudioListDrain2, 0x005ade90);  // first-wins; superseded
-// (// frida-sweep first-wins (TimerInit.cpp/AudioRws.cpp registered first): 0x005ade90)
+// 0x005ade90: the dead second copy AudioListDrain2 was removed 2026-10-12 (U-9661). The installed body is
+// AudioListDrain in Audio/AudioRws.cpp; evidence fix_diff_audio_list_drain.csv (z_fix_u9661.py).
 
 // ---------------------------------------------------------------------------
 // 0x005a9e40  FUN_005a9e40  (0x20 bytes, 0x005a9e40–0x005a9e5f)

@@ -1,0 +1,27 @@
+# provenance 2026-10-12: main build 96ed827f+dropdup deployed (asi sha256 637ac8fbaf1d9c39...), MASHED_HOOK_ONLY=0x005ade90, MASHED_VERIFY_ASI=original/mashed_re_dev.asi
+=== verify_hook_install report (audio_list_drain) ===
+
+target address: 0x005ade90  export: AudioListDrain
+PRE  bytes:     e9 bb 20 ba 6a 8b 46 04
+asi base:       0x6b140000
+reimpl addr:    0x6b14ff50
+POST bytes:     e9 bb 20 ba 6a 8b 46 04
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x6aba20bb  expected 0x6aba20bb  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  1 / 1  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [{'scratch': 384}], 'seed': [{'addr': 8208376, 'val': {'scratch': 0}, 'size': 4}, {'addr': {'scratch': 268}, 'val': 4233696, 'size': 4}, {'addr': {'scratch': 264}, 'val': 4206400, 'size': 4}, {'addr': 6515416, 'val': 0, 'size': 4}, {'addr': 9520832, 'val': 16, 'size': 4}, {'addr': 9520836, 'val': 8, 'size': 4}, {'addr': 9520840, 'val': 1, 'size': 4}, {'addr': 9520844, 'val': 4, 'size': 4}, {'addr': 9520848, 'val': {'scratch': 512}, 'size': 4}, {'addr': 9520852, 'val': {'scratch': 512}, 'size': 4}, {'addr': 9520856, 'val': 0, 'size': 4}, {'addr': {'scratch': 512}, 'val': 9520848, 'size': 4}, {'addr': {'scratch': 516}, 'val': 9520848, 'size': 4}, {'addr': {'scratch': 520}, 'val': 224, 'size': 1}, {'addr': {'scratch': 384}, 'val': {'scratch': 553}, 'size': 4}, {'addr': {'scratch': 388}, 'val': {'scratch': 521}, 'size': 4}, {'addr': {'scratch': 521}, 'val': {'scratch': 384}, 'size': 4}, {'addr': {'scratch': 525}, 'val': {'scratch': 537}, 'size': 4}, {'addr': {'scratch': 537}, 'val': {'scratch': 521}, 'size': 4}, {'addr': {'scratch': 541}, 'val': {'scratch': 553}, 'size': 4}, {'addr': {'scratch': 553}, 'val': {'scratch': 537}, 'size': 4}, {'addr': {'scratch': 557}, 'val': {'scratch': 384}, 'size': 4}]}  got=9c164f18  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 1x as expected
+  + all 1 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_audio_list_drain.txt

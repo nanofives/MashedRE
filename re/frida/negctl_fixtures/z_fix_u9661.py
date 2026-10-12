@@ -95,4 +95,4 @@ _FIX = {'arg_type': 'scalars_to_scattered_globals', 'scratch_size': 0x800, 'scra
         'path1_tests': _VECS, 'path2_tests': [_VECS[2]]}
 
 FIXES['audio_list_drain'] = dict(_FIX)
-FIXES['audio_list_drain2'] = dict(_FIX)
+# audio_list_drain2 (the dead AudioListDrain2 copy) was removed with its registry entry 2026-10-12.

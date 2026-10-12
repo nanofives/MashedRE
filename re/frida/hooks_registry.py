@@ -5904,21 +5904,6 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
-    # 0x005ade90  AudioListDrain2
-    # void fn(sentinel_ptr): drain all nodes from list, return each to pool.
-    # Second implementation (C3 target for c3-batch-f-s9); same RVA as AudioListDrain.
-    # audio_list_drain: build sentinel + N nodes via FUN_005addd0 (insert_rva); drain;
-    # verify sentinel self-loops (1=empty, 0=not drained).
-    'audio_list_drain2': {
-        'rva':          0x005ade90,
-        'export':       'AudioListDrain2',
-        'signature':    {'ret': 'void', 'args': ['pointer']},
-        'arg_type':     'audio_list_drain',
-        'insert_rva':   0x005addd0,
-        'lut_root_delta': 0,
-        'path1_tests':  [0, 1, 2, 3, 5, 1, 3, 2, 0, 1],
-        'path2_tests':  [0, 1, 2],
-    },
     # Repurposed for the early_window lane (was 'music_vol_set' booted-lane, never
     # promoted -> still C2). struct_list_float_set: struct+0x38=vol; walk circular
     # list at struct+0xc setting node+0x14|=0x40; secondary+0x30=vol bits. Handler
