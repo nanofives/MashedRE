@@ -1,10 +1,10 @@
 # Next session kickoff
 
-> ## START HERE 2026-10-12 night (A1 real-C4 pass DONE): **next = the A2 rows, U-9671, U-9673.**
+> ## START HERE 2026-10-12 night (A1 real-C4 pass DONE: 13 of 19 at C4, 6 stay C3): **next = the A2 rows, U-9671, U-9673.**
 >
 > The 19 triage A1 rows got real canonical C4 scenarios (game-driven calls into the live port, a RED old-defect
 > control, original arms run twice for noise; memory install-observe-may-never-execute-the-body):
-> - 13 back to C4: Championship::Complete (forced P1-won flag), MenuButtonDetectA/B/C, TimerSlotTickDispatcher
+> - 11 back to C4: Championship::Complete (forced P1-won flag), MenuButtonDetectA/B/C, TimerSlotTickDispatcher
 >   (substituted control), FrontendPlayerSlotCheck (save edit), 0x00403160 / 0x0041db80 / 0x004295a0 (save edit),
 >   PlayerBlock2Field08Get / Field50Get (natural Team Play Race Results).
 > - 2 to C4 with a user-accepted LIVE forced input: PlayerBlock2Field00Get / Field04Get (fields 0 in every natural run).
