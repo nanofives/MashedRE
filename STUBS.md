@@ -204,10 +204,10 @@ boundaries alongside the master plan §1 snapshot.)*
 | S-0169 | 0x00402240 | 0x004025f0 FUN_004025f0 | boot | passthrough | 2026-05-02 | FUN_00402240; called 4x per iteration; result stored to puVar4[0x10..0x13]; depth-3 |
 | S-0170 | 0x00402590 | 0x004025f0 FUN_004025f0 | boot | passthrough | 2026-05-02 | FUN_00402590; called 6x per iteration; result stored to puVar4[0x14..0x19]; depth-3 |
 | S-0171 | 0x004671a0 | 0x004026d0 FUN_004026d0 | boot | passthrough | 2026-05-02 | FUN_004671a0; called with 1-3 args per iter: (0,&0xff000000,3)/(0)/(0,0,1); depth-3 |
-| S-0172 | 0x004c1bb0 | 0x004026d0 FUN_004026d0 | boot | passthrough | 2026-05-02 | FUN_004c1bb0; called with result of FUN_004671a0(0,&local,3); depth-3 |
+| S-0172 | 0x004c1bb0 | 0x004026d0 FUN_004026d0 | boot | passthrough | 2026-05-02 | FUN_004c1bb0(cam, &local_4, 3): args 2/3 are the pushes left by `add esp,4` at 0x004026fe (corrected 2026-10-12, a2-stubat); depth-3 |
 | S-0173 | 0x004c1a00 | 0x004026d0 FUN_004026d0 | boot | passthrough | 2026-05-02 | FUN_004c1a00; called with result of FUN_004671a0(0); return checked nonzero; depth-3 |
 | S-0174 | 0x004c19f0 | 0x004026d0 FUN_004026d0 | boot | passthrough | 2026-05-02 | FUN_004c19f0; called conditionally when FUN_004c1a00 returns nonzero; depth-3 |
-| S-0175 | 0x004c1be0 | 0x004026d0 FUN_004026d0 | boot | passthrough | 2026-05-02 | FUN_004c1be0; called with result of FUN_004671a0(0,0,1); depth-3 |
+| S-0175 | 0x004c1be0 | 0x004026d0 FUN_004026d0 | boot | passthrough | 2026-05-02 | FUN_004c1be0(cam, 0, 1): args 2/3 left by `add esp,4` at 0x00402736 (corrected 2026-10-12, a2-stubat); depth-3 |
 | S-0176 | 0x004034a0 | 0x00403640 FUN_00403640 | boot | passthrough | 2026-05-02 | FUN_004034a0; called with param_1; result stored to DAT_0x636b78; depth-3 |
 | S-0177 | 0x004c7650 | 0x00403660 FUN_00403660 | boot | passthrough | 2026-05-02 | FUN_004c7650; called with DAT_0x636b78 if nonzero; depth-3 |
 | S-0178 | 0x004c5c00 | 0x0040bb30 FUN_0040bb30 | boot | passthrough | 2026-05-02 | FUN_004c5c00; called with (global, param_1) from two forwarders (0x63b8f8 and 0x63b8fc); depth-3 |

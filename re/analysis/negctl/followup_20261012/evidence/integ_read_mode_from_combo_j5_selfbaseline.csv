@@ -1,0 +1,13 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,"[0,{""dialog"":0}]",1605447581,0x5fb12f9d,1605447581,0x5fb12f9d,True,,
+1,"[0,{""dialog"":0}]",325117431,0x1360e5f7,325117431,0x1360e5f7,True,,
+2,"[0,{""dialog"":0}]",2048212798,0x7a153f3e,2048212798,0x7a153f3e,True,,
+3,"[0,{""dialog"":0}]",537177842,0x2004aef2,537177842,0x2004aef2,True,,
+4,"[0,{""dialog"":0}]",1757804728,0x68c5f8b8,1757804728,0x68c5f8b8,True,,
+5,"[{""dialog"":0},{""dialog"":0}]",2872173110,0xab31e236,2872173110,0xab31e236,True,,
+6,"[0,{""dialog"":0}]",2386027563,0x8e37e42b,2386027563,0x8e37e42b,True,,
+7,"[0,{""dialog"":0}]",2918141058,0xadef4c82,2918141058,0xadef4c82,True,,
+8,"[{""dialog"":1001},{""dialog"":0}]",1298915654,0x4d6be146,1298915654,0x4d6be146,True,,
+9,"[{""dialog"":0},{""dialog"":1001}]",2430483821,0x90de3d6d,2430483821,0x90de3d6d,True,,
+10,"[{""dialog"":0},0]",2430483821,0x90de3d6d,2430483821,0x90de3d6d,True,,
+11,"[{""dialog"":0},{""dialog"":1000}]",2109703434,0x7dbf850a,2109703434,0x7dbf850a,True,,

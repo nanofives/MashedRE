@@ -1,0 +1,7 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,[],"eac8568d finish(0xabc000,0x3)",,"eac8568d finish(0xabc000,0x3)",,True,,
+1,[],"64c79d60 finish(0xabc100,0x0)",,"64c79d60 finish(0xabc100,0x0)",,True,,
+2,[],"fc3ab860 finish(0x0,0x1)",,"fc3ab860 finish(0x0,0x1)",,True,,
+3,[],"d81cc745 finish(0x12345678,0xffffffff)",,"d81cc745 finish(0x12345678,0xffffffff)",,True,,
+4,[],"4a65af63 finish(0xabc200,0x7fffffff)",,"4a65af63 finish(0xabc200,0x7fffffff)",,True,,
+5,[],"4967f05f finish(0xabc300,0xc)",,"4967f05f finish(0xabc300,0xc)",,True,,

@@ -26,6 +26,15 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-12  0041c2d0  FUN_0041c2d0  C2->C3  U-9671 re-port from the bytes (function-pointer field, caller-clean); old port witness RED 10/10 x2; path2 PASS. re/analysis/negctl/followup_20261012/u9671_RESULT.md
+2026-10-12  00498d20  ReadModeFromCombo_j5  C2->C3 (fixture-only, C4 not earnable: U-9674)  hDlg in EAX with decoy stack slot; GREEN 12/12; witness hDlg-from-stack RED 11/12; path2 PASS. re/analysis/negctl/followup_20261012/a2-dialog_RESULT.md
+2026-10-12  0042f8d0  MenuMenusBC  C2->C3  alpha in AL with decoy stack slot; GREEN 9/9; witnesses AL-ignored RED 8/9, alpha-from-stack RED 9/9; path2 PASS. re/analysis/negctl/followup_20261012/a2-dialog_RESULT.md
+2026-10-12  00492270  SubsystemInit  C2->C3  port fixed (called own Display/ViewportInit bodies, not 0x004921d0/0x00428590); GREEN 8/8; witness RED 6/8; path2 PASS. re/analysis/negctl/followup_20261012/a2-stubat_RESULT.md
+2026-10-12  004026d0  FUN_004026d0  C2->C3  port fixed (0x004c1bb0/0x004c1be0 get 3 args); GREEN 9/9; witness RED 6/9; path2 PASS. re/analysis/negctl/followup_20261012/a2-stubat_RESULT.md
+2026-10-12  00404320  PerModeRenderMachine  C2->C3  port fixed (mode 5 sub-state 6, EAX entry ptr into 0x00403fa0); GREEN 35/35; witness RED 4/35; path2 PASS. re/analysis/negctl/followup_20261012/a2-stubat_RESULT.md
+2026-10-12  0040d440  FUN_0040d440  C2->C3  port unchanged; GREEN 6/6; injected-defect witness RED 5/6; path2 PASS. re/analysis/negctl/followup_20261012/a2-stubat_RESULT.md
+2026-10-12  004464c0  CameraEntry::DispatchAll  C2->C3  [UNCERTAIN] callee attribution closed: 16- vs 12-byte frame; naked verbatim; GREEN 8/8; witness RED 6/8; path2 PASS; U-9676 filed. re/analysis/negctl/followup_20261012/a2-camera_RESULT.md
+2026-10-12  -  U-9671 RESOLVED; U-9675 filed (0x0041bc50 port has the same misreading); U-9674 gains 0x00498d20; STUBS S-0172/S-0175 corrected to 3-arg calls.
 2026-10-12  -  U-9673 nav harness  RESOLVED  R2-2 crash was raw MASHED-address access in the bare test exe (first break b83b01e0, second 2528c8b3); test-only .bss arena fix, 75 OK / 0 FAIL, 30/30 runs, reachability 12/33. re/analysis/negctl/followup_20261012/u9673_RESULT.md
 2026-10-12  00423ee0  PlayerBlock2Field00Get  C3->C4 (user-accepted forced input)  Input field 0 in every natural run; distinct values written on the live Race Results screen; GREEN, stride-4 control RED 2/2. NOT EARNED on natural data alone. re/analysis/negctl/reearn_20261011/c4_a1_r_RESULT.md
 2026-10-12  00423f60  PlayerBlock2Field04Get  C3->C4 (user-accepted forced input)  Input field 0 in every natural run; distinct values written on the live Race Results screen; GREEN, stride-4 control RED 2/2. NOT EARNED on natural data alone. re/analysis/negctl/reearn_20261011/c4_a1_r_RESULT.md

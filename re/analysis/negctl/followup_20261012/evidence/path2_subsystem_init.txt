@@ -1,0 +1,25 @@
+=== verify_hook_install report (subsystem_init) ===
+
+target address: 0x00492270  export: SubsystemInit
+PRE  bytes:     e9 1b 5a 17 6c 00 00 83
+asi base:       0x6c5f0000
+reimpl addr:    0x6c607c90
+POST bytes:     e9 1b 5a 17 6c 00 00 83
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x6c175a1b  expected 0x6c175a1b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  2 / 2  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [], 'seed': [], 'stub_rets': {'rwinit': 0}}  got=0,811c9dc5  err=
+  [OK] input={'args': [], 'seed': [], 'stub_rets': {'rwinit': 1}}  got=1,811c9dc5  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 2x as expected
+  + all 2 calls returned without exception
+FAIL:
+  (none)

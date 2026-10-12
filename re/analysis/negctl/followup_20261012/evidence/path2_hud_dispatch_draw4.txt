@@ -1,0 +1,24 @@
+=== verify_hook_install report (hud_dispatch_draw4) ===
+
+target address: 0x0041c2d0  export: FUN_0041c2d0
+PRE  bytes:     e9 fb 70 1e 6c 0c 50 ff
+asi base:       0x6c5f0000
+reimpl addr:    0x6c6033d0
+POST bytes:     e9 fb 70 1e 6c 0c 50 ff
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x6c1e70fb  expected 0x6c1e70fb  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  1 / 1  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [{'scratch': 256}], 'seed': [{'addr': {'scratch': 256}, 'val': {'scratch': 512}}, {'addr': {'scratch': 260}, 'val': {'scratch': 592}}, {'addr': {'scratch': 264}, 'val': {'scratch': 672}}, {'addr': {'scratch': 268}, 'val': {'scratch': 752}}, {'addr': {'scratch': 320}, 'val': {'scratch': 2112}}, {'addr': {'scratch': 324}, 'val': {'scratch': 2192}}, {'addr': {'scratch': 328}, 'val': {'scratch': 2272}}, {'addr': {'scratch': 332}, 'val': {'scratch': 2352}}, {'addr': {'scratch': 584}, 'val': {'recorder': True}}, {'addr': {'scratch': 664}, 'val': {'recorder': True}}, {'addr': {'scratch': 744}, 'val': {'recorder': True}}, {'addr': {'scratch': 824}, 'val': {'recorder': True}}, {'addr': {'scratch': 2184}, 'val': {'recorder': True}}, {'addr': {'scratch': 2264}, 'val': {'recorder': True}}, {'addr': {'scratch': 2344}, 'val': {'recorder': True}}, {'addr': {'scratch': 2424}, 'val': {'recorder': True}}]}  got=0,8e55ac55  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 1x as expected
+  + all 1 calls returned without exception
+FAIL:
+  (none)

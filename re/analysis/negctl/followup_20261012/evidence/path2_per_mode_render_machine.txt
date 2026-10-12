@@ -1,0 +1,25 @@
+=== verify_hook_install report (per_mode_render_machine) ===
+
+target address: 0x00404320  export: PerModeRenderMachine
+PRE  bytes:     e9 eb cc 20 6c 83 ec 10
+asi base:       0x6c5f0000
+reimpl addr:    0x6c611010
+POST bytes:     e9 eb cc 20 6c 83 ec 10
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x6c20cceb  expected 0x6c20cceb  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  2 / 2  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [], 'seed': [{'addr': 8208376, 'val': {'scratch': 0}}, {'addr': {'scratch': 0}, 'val': {'scratch': 256}}, {'addr': {'scratch': 32}, 'val': {'call_log': 'rs'}}, {'addr': {'scratch': 360}, 'val': 1056964608}, {'addr': {'scratch': 364}, 'val': 1061158912}, {'addr': 8327120, 'val': 9}, {'addr': 6535820, 'val': 3}, {'addr': 6515608, 'val': 1065353216}, {'addr': 6515628, 'val': 0}, {'addr': 6515648, 'val': 3212836864}, {'addr': 6515668, 'val': 2143289344}, {'addr': 6515688, 'val': 1}, {'addr': 6515708, 'val': 1073741824}], 'stub_rets': {'begin': 1}}  got=460f3735  err=
+  [OK] input={'args': [], 'seed': [{'addr': 8208376, 'val': {'scratch': 0}}, {'addr': {'scratch': 0}, 'val': {'scratch': 256}}, {'addr': {'scratch': 32}, 'val': {'call_log': 'rs'}}, {'addr': {'scratch': 360}, 'val': 1056964608}, {'addr': {'scratch': 364}, 'val': 1061158912}, {'addr': 8327120, 'val': 10}, {'addr': 6535820, 'val': 6}, {'addr': 6515608, 'val': 1065353216}, {'addr': 6515628, 'val': 0}, {'addr': 6515648, 'val': 3212836864}, {'addr': 6515668, 'val': 2143289344}, {'addr': 6515688, 'val': 1}, {'addr': 6515708, 'val': 1073741824}], 'stub_rets': {'begin': 1}}  got=460f3735  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 2x as expected
+  + all 2 calls returned without exception
+FAIL:
+  (none)

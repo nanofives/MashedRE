@@ -1,0 +1,24 @@
+=== verify_hook_install report (read_mode_from_combo_j5) ===
+
+target address: 0x00498d20  export: ReadModeFromCombo_j5
+PRE  bytes:     e9 9b e5 16 6c 00 00 50
+asi base:       0x6c5f0000
+reimpl addr:    0x6c6072c0
+POST bytes:     e9 9b e5 16 6c 00 00 50
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x6c16e59b  expected 0x6c16e59b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  1 / 1  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [0, {'dialog': 0}], 'seed': [], 'dialog': {'controls': [{'id': 1000, 'cls': 'COMBOBOX', 'style': 2097155, 'items': [['d0', 273], ['d1', 546], ['d2', 819]], 'sel': 1}, {'id': 1001, 'cls': 'COMBOBOX', 'style': 2097155, 'items': [['m0', 7], ['m1', 9]], 'sel': 1}]}}  got=9,7ccbae8c  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 1x as expected
+  + all 1 calls returned without exception
+FAIL:
+  (none)

@@ -1,0 +1,25 @@
+=== verify_hook_install report (camera_entry_dispatch_all) ===
+
+target address: 0x004464c0  export: CameraEntryDispatchAll
+PRE  bytes:     e9 8b 6b 1e 6c 53 33 db
+asi base:       0x6c5f0000
+reimpl addr:    0x6c62d050
+POST bytes:     e9 8b 6b 1e 6c 53 33 db
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x6c1e6b8b  expected 0x6c1e6b8b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  2 / 2  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [9011168], 'prep_args': [9011168]}  got=0,b5bd6ba5  err=
+  [OK] input={'args': [9011168], 'prep_args': [9011168]}  got=0,b5bd6ba5  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 2x as expected
+  + all 2 calls returned without exception
+FAIL:
+  (none)

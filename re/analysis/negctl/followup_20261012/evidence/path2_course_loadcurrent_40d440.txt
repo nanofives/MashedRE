@@ -1,0 +1,25 @@
+=== verify_hook_install report (course_loadcurrent_40d440) ===
+
+target address: 0x0040d440  export: Course_LoadCurrent_40d440
+PRE  bytes:     e9 1b 33 26 6c 8b 0d 70
+asi base:       0x6c5f0000
+reimpl addr:    0x6c670760
+POST bytes:     e9 1b 33 26 6c 8b 0d 70
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x6c26331b  expected 0x6c26331b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  2 / 2  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [], 'seed': [{'addr': 6236016, 'val': 11255808}, {'addr': 6535804, 'val': 3}, {'addr': 6535800, 'val': 1515870810}]}  got=bc4a7a86  err=
+  [OK] input={'args': [], 'seed': [{'addr': 6236016, 'val': 11256064}, {'addr': 6535804, 'val': 0}, {'addr': 6535800, 'val': 7}]}  got=df4b0219  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 2x as expected
+  + all 2 calls returned without exception
+FAIL:
+  (none)

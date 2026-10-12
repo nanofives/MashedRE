@@ -1,0 +1,24 @@
+=== verify_hook_install report (menu_menus_bc) ===
+
+target address: 0x0042f8d0  export: MenuMenusBC
+PRE  bytes:     e9 db 65 1d 6c 8b 6c 24
+asi base:       0x6c5f0000
+reimpl addr:    0x6c605eb0
+POST bytes:     e9 db 65 1d 6c 8b 6c 24
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x6c1d65db  expected 0x6c1d65db  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  1 / 1  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [100, 50, 200, 30, 51, 255], 'seed': []}  got=dd501575  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 1x as expected
+  + all 1 calls returned without exception
+FAIL:
+  (none)
