@@ -5,6 +5,7 @@
 // deeper-screen content WITHOUT needing the full D3D9 app. NOT shipped.
 #include "../../../../mashedmod/src/mashed_re/Frontend/MenuNavSM.h"
 #include <cstdio>
+#include <cstdint>
 
 using namespace mashed_re::Frontend;
 
@@ -48,7 +49,39 @@ static void dump(const char* label) {
     }
 }
 
+// U-9673: the ported code reads and writes MASHED.exe data addresses directly.
+// R2-2 hits two: Q_ActivePlayerCount reads 0x007f1a14.. (FUN_00430b60, since
+// b83b01e0, via the screen-18 push), and Nav_GameStateLoadSave mirrors the
+// restored span to the live 0x007f0a40 (since 2528c8b3). FrontendState.cpp and
+// MenuScoreSort.cpp touch 0x0067xxxx / 0x007f1axx too. Inside MASHED.exe those addresses are the
+// game's own .data/.bss, and mashed_re.exe maps 0x00500000..0x009fffff itself
+// (B17_TlsReserve TLS callback + the kMashedDataBase/kMashedDataSize granule
+// walk in exe_main.cpp). A plain test exe mapped nothing there, so the first
+// such access faulted.
+//
+// Copying the exe's VirtualAlloc approach was not reliable here: a read-only
+// MEM_MAPPED view (allocation base 0x00720000) already covers 0x007f0000 at TLS
+// time in most runs (16 of 20 measured 2026-10-12), and it cannot be reclaimed.
+// Instead the test's OWN IMAGE covers the range: linked at /BASE:0x10000
+// /DYNAMICBASE:NO (build_navsm_test.bat), this zero-initialised arena sits in
+// .bss from below 0x00500000 to above 0x009fffff. The image is mapped before
+// any loader view, so the addresses are always ours, writable and zero, as in
+// the exe (zeroed granule, not the original's initialised .data: memory
+// zeroed-granule-vs-minus-one-sentinel). Nothing else in the test lives there.
+static unsigned char g_mashed_arena[0x00A00000];   // 10 MB
+
+static bool MashedDataRangeOwned() {
+    const std::uintptr_t lo = reinterpret_cast<std::uintptr_t>(&g_mashed_arena[0]);
+    const std::uintptr_t hi = lo + sizeof(g_mashed_arena);
+    const bool ok = lo <= 0x00500000u && hi >= 0x00a00000u;
+    std::printf("MASHED data range 0x00500000..0x009fffff inside test-image arena "
+                "0x%08x..0x%08x: %s\n", static_cast<unsigned>(lo),
+                static_cast<unsigned>(hi - 1), ok ? "OK" : "FAIL");
+    return ok;
+}
+
 int main() {
+    const bool span_mapped = MashedDataRangeOwned();
     Nav_Init();
     dump("root (screen 0)");
 
@@ -225,7 +258,11 @@ int main() {
     // 0x24A40 span (1:1 image of live 0x007f0a40..0x007f0f60).
     // ----------------------------------------------------------------------
     std::printf("\n=== R2-2: save-driven game state (FUN_00404e80) ===\n");
-    {
+    if (!span_mapped) {
+        // Without the live span the restore would write unowned memory. Report
+        // it and keep going so the later sections still run.
+        std::printf("  R2-2 SKIPPED: live span 0x007f0a40 not mapped : FAIL\n");
+    } else {
         static unsigned char img[0x24FA0] = {0};
         auto put32 = [&](unsigned off, unsigned v) {
             img[off] = (unsigned char)(v); img[off+1] = (unsigned char)(v>>8);
@@ -233,9 +270,16 @@ int main() {
         };
         constexpr unsigned kSpan = 0x24A40;     // file image of DAT_007f0a40
         // Blank image (magic 0) must be REFUSED and keep fresh defaults.
+        // Live span (FUN_00404e80's REP MOVSD target, 0x00404e91). Seed a
+        // sentinel so the blank-refused case proves the live range is NOT
+        // touched, and the loaded case proves it IS overwritten from the file.
+        volatile std::uint32_t* live = reinterpret_cast<volatile std::uint32_t*>(0x007f0a40u);
+        live[0x010 / 4] = 0xA5A5A5A5u;
         Nav_GameStateReset();
         const bool blank_refused = !Nav_GameStateLoadSave(img, sizeof(img));
         std::printf("  blank save refused: %s\n", blank_refused ? "OK" : "FAIL");
+        std::printf("  blank save leaves live 0x007f0a50 untouched (0x%08x): %s\n",
+                    (unsigned)live[0x010 / 4], live[0x010 / 4] == 0xA5A5A5A5u ? "OK" : "FAIL");
         // Written save: magic + savedata gate + profile gate + set-0 unlocks.
         put32(0x0000, 0xDEADBEEFu);             // magic (0x00404F37)
         put32(kSpan + 0x4ec, 1);                // DAT_007f0f2c savedata gate
@@ -244,6 +288,13 @@ int main() {
         put32(kSpan + 0x018, 1);                // DAT_007f0a58 set-0 car unlock
         const bool loaded = Nav_GameStateLoadSave(img, sizeof(img));
         std::printf("  written save loaded: %s\n", loaded ? "OK" : "FAIL");
+        // 2528c8b3: the restore mirrors the span to the live addresses.
+        const bool mirrored = live[0x010 / 4] == 2u && live[0x018 / 4] == 1u &&
+                              live[0x094 / 4] == 1u && live[0x4ec / 4] == 1u;
+        std::printf("  live span mirrored (a50=%u a58=%u ad4=%u f2c=%u): %s\n",
+                    (unsigned)live[0x010 / 4], (unsigned)live[0x018 / 4],
+                    (unsigned)live[0x094 / 4], (unsigned)live[0x4ec / 4],
+                    mirrored ? "OK" : "FAIL");
         // screen 1 item 3 was greyed fresh; with savedata it must enable.
         Nav_Init(); Nav(1, kNavPush);
         std::printf("  screen1 item3 enabled w/ savedata: %s\n",
@@ -309,6 +360,9 @@ int main() {
         }
         std::printf("  reachable from roots {0,1}: %d/%d (null tables: %d)\n",
                     n_reach, kN - n_null, n_null);
+        std::printf("  reachable set:");
+        for (int s = 0; s < kN; ++s) if (visited[s]) std::printf(" %d", s);
+        std::printf("\n");
         if (n_unreach) std::printf("  UNREACHABLE via push map: %s\n", unreach);
         // Build pass: every non-null table constructs records cleanly.
         int built = 0;
