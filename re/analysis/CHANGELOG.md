@@ -26,6 +26,8 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-12  00423ee0  PlayerBlock2Field00Get  C3->C4 (user-accepted forced input)  Input field 0 in every natural run; distinct values written on the live Race Results screen; GREEN, stride-4 control RED 2/2. NOT EARNED on natural data alone. re/analysis/negctl/reearn_20261011/c4_a1_r_RESULT.md
+2026-10-12  00423f60  PlayerBlock2Field04Get  C3->C4 (user-accepted forced input)  Input field 0 in every natural run; distinct values written on the live Race Results screen; GREEN, stride-4 control RED 2/2. NOT EARNED on natural data alone. re/analysis/negctl/reearn_20261011/c4_a1_r_RESULT.md
 2026-10-12  00424070  PlayerBlock2Field08Get  C3->C4 (natural data)  Team Play Race Results stat pages (mode 6), hook live, GREEN x4 vs the byte model and the original; stride-4 control RED 2/2. re/analysis/negctl/reearn_20261011/c4_a1_r_RESULT.md
 2026-10-12  00423ff0  PlayerBlock2Field50Get  C3->C4 (natural data)  Team Play Race Results stat pages (mode 6), hook live, GREEN x4 vs the byte model and the original; stride-4 control RED 2/2. re/analysis/negctl/reearn_20261011/c4_a1_r_RESULT.md
 2026-10-12  00403160  Sub00403160_SubMode0BViewport  C3->C4  Attract demo (no input), ~1,700 game calls/run, per-call key identical to the original; old double-deref control crashes on the first call (2/2). re/analysis/negctl/reearn_20261011/c4_a1_h_RESULT.md
