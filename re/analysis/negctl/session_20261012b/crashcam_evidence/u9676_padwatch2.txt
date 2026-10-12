@@ -1,0 +1,99 @@
+  pid=31376
+  booting to menu...
+  in race (phase=0); settling 3.5s
+  setup: {
+  "delta": 0,
+  "base": "0x400000",
+  "ctrl_addr": "0x897fe0",
+  "cam": "0x2a7e8b4",
+  "frame": "0x483c698",
+  "modelling_addr": "0x483c6a8",
+  "ltm_addr": "0x483c6e8",
+  "record0_matrix": "0x89650c",
+  "mat_modelling": {
+    "right": [
+      -0.8939294815063477,
+      0.4403233230113983,
+      -0.08369839191436768
+    ],
+    "up": [
+      0.4482076168060303,
+      0.8782045841217041,
+      -0.16693280637264252
+    ],
+    "at": [
+      -8.195638656616211e-08,
+      -0.18674039840698242,
+      -0.9824092984199524
+    ],
+    "pos": [
+      1.3273248672485352,
+      3.7764809131622314,
+      22.601747512817383
+    ]
+  },
+  "mat_ltm": {
+    "right": [
+      -0.8939294815063477,
+      0.4403233230113983,
+      -0.08369839191436768
+    ],
+    "up": [
+      0.4482076168060303,
+      0.8782045841217041,
+      -0.16693280637264252
+    ],
+    "at": [
+      -8.195638656616211e-08,
+      -0.18674039840698242,
+      -0.9824092984199524
+    ],
+    "pos": [
+      1.3273248672485352,
+      3.7764809131622314,
+      22.601747512817383
+    ]
+  }
+}
+  entries: {'count': 7, 'types': [0, 1, 1, 1, 2, 2, 3]}
+  === PASS e4+0x68: armed DR0 on 50 threads at 0x896888 ===
+  e4+0x68: cur_val=0x0 distinct_writers=2
+    PC=0x442469|442440 count=181 val=0x0 bt=['0x897fe0', '0x896820', '0x881ec8', '0x446505', '0x896820', '0x897fe0', '0x4468fe', '0x897fe0', '0x88408c', '0x88e648', '0x88e5ec']
+    PC=0x4c4cf1|442440 count=181 val=0x0 bt=['0x8968ac', '0x89686c', '0x89686c']
+  === PASS e4+0x78: armed DR0 on 50 threads at 0x896898 ===
+  e4+0x78: cur_val=0x0 distinct_writers=2
+    PC=0x442469|442440 count=181 val=0x10d83f60 bt=['0x897fe0', '0x896820', '0x881ec8', '0x446505', '0x896820', '0x897fe0', '0x4468fe', '0x897fe0', '0x88408c', '0x88e648', '0x88e5ec']
+    PC=0x4c4cf1|442440 count=181 val=0x0 bt=['0x8968ac', '0x89686c', '0x89686c']
+  === PASS e4+0x88: armed DR0 on 50 threads at 0x8968a8 ===
+  e4+0x88: cur_val=0x0 distinct_writers=2
+    PC=0x44246b|442440 count=181 val=0x0 bt=['0x897fe0', '0x896820', '0x881ec8', '0x446505', '0x896820', '0x897fe0', '0x4468fe', '0x897fe0', '0x88408c', '0x88e648', '0x88e5ec']
+    PC=0x4c4cf3|442440 count=181 val=0x0 bt=['0x8968ac', '0x89686c', '0x89686c']
+  === PASS e5+0x68: armed DR0 on 50 threads at 0x896960 ===
+  e5+0x68: cur_val=0x0 distinct_writers=2
+    PC=0x442469|442440 count=34 val=0x0 bt=['0x897fe0', '0x8968f8', '0x881ec8', '0x446505', '0x8968f8', '0x897fe0', '0x4468fe', '0x897fe0', '0x88408c', '0x88e648', '0x88e5ec']
+    PC=0x4c4cf1|442440 count=34 val=0x0 bt=['0x896984', '0x896944', '0x896944']
+  === PASS e5+0x78: armed DR0 on 50 threads at 0x896970 ===
+  e5+0x78: cur_val=0x0 distinct_writers=0
+  === PASS e5+0x88: armed DR0 on 50 threads at 0x896980 ===
+  e5+0x88: cur_val=0x0 distinct_writers=0
+  === PASS e2+0x68: armed DR0 on 50 threads at 0x8966d8 ===
+  e2+0x68: cur_val=0x3 distinct_writers=0
+  === PASS e2+0x78: armed DR0 on 50 threads at 0x8966e8 ===
+  e2+0x78: cur_val=0x3 distinct_writers=0
+  === PASS e2+0x88: armed DR0 on 50 threads at 0x8966f8 ===
+  e2+0x88: cur_val=0x0 distinct_writers=0
+  === PASS e3+0x68: armed DR0 on 50 threads at 0x8967b0 ===
+  e3+0x68: cur_val=0x3 distinct_writers=0
+  === PASS e3+0x78: armed DR0 on 50 threads at 0x8967c0 ===
+  e3+0x78: cur_val=0x3 distinct_writers=0
+  === PASS e3+0x88: armed DR0 on 50 threads at 0x8967d0 ===
+  e3+0x88: cur_val=0x0 distinct_writers=0
+  === PASS e6+0x68: armed DR0 on 50 threads at 0x896a38 ===
+  e6+0x68: cur_val=0x0 distinct_writers=0
+  === PASS e6+0x78: armed DR0 on 50 threads at 0x896a48 ===
+  e6+0x78: cur_val=0x0 distinct_writers=0
+  === PASS e6+0x88: armed DR0 on 50 threads at 0x896a58 ===
+  e6+0x88: cur_val=0x0 distinct_writers=0
+  === PASS control e0+0x68: armed DR0 on 50 threads at 0x896528 ===
+  control e0+0x68: cur_val=0x3 distinct_writers=0
+  wrote C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\crashcam\re\analysis\negctl\session_20261012b\crashcam_evidence\u9676_padwatch2.json
