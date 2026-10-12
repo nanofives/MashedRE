@@ -1,0 +1,22 @@
+hook: hud_rec29_dispatch  rva=0x0041bc50  export=FUN_0041bc50
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\u9675\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 13004
+  [agent] LUT ready  base=0x2bdae10  offset=0x134  root=0x4940640  delta=0  attempts=12
+  [agent] .asi loaded  base=0x67cf0000  FUN_0041bc50@0x67d041a0
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\u9675\log\diff_hud_rec29_dispatch.csv
+  total cases: 11
+  mismatches:  11
+
+RED: at least one mismatch.
+  idx=0  input=[{"scratch":1024},{"scratch":512}]  orig=2339242516  reimpl=None
+  idx=1  input=[{"scratch":1024},{"scratch":512}]  orig=3562612069  reimpl=532500626
+  idx=2  input=[{"scratch":512},{"scratch":1024}]  orig=4146614462  reimpl=None
+  idx=3  input=[{"scratch":1024},{"scratch":512}]  orig=2558725379  reimpl=None
+  idx=4  input=[{"scratch":512},{"scratch":1024}]  orig=4088710623  reimpl=None
+  idx=5  input=[{"scratch":1024},{"scratch":512}]  orig=3574882526  reimpl=None
+  idx=6  input=[{"scratch":512},{"scratch":1024}]  orig=1745479249  reimpl=None
+  idx=7  input=[{"scratch":1024},{"scratch":512}]  orig=2339242516  reimpl=None
+  idx=8  input=[{"scratch":512},{"scratch":1024}]  orig=1466247821  reimpl=None
+  idx=9  input=[6540324,6539960]  orig=1402897330  reimpl=None
+  idx=10  input=[6539960,6540324]  orig=1690473327  reimpl=None

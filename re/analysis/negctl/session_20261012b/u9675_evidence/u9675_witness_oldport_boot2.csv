@@ -1,0 +1,12 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,"[{""scratch"":1024},{""scratch"":512}]",2339242516,0x8b6e0214,,,False,,access violation accessing 0x48
+1,"[{""scratch"":1024},{""scratch"":512}]",3562612069,0xd4592565,532500626,0x1fbd5092,False,,
+2,"[{""scratch"":512},{""scratch"":1024}]",4146614462,0xf72850be,,,False,,access violation accessing 0x48
+3,"[{""scratch"":1024},{""scratch"":512}]",2558725379,0x98830d03,,,False,,access violation accessing 0x48
+4,"[{""scratch"":512},{""scratch"":1024}]",4088710623,0xf3b4c5df,,,False,,access violation accessing 0x48
+5,"[{""scratch"":1024},{""scratch"":512}]",3574882526,0xd51460de,,,False,,access violation accessing 0x48
+6,"[{""scratch"":512},{""scratch"":1024}]",1745479249,0x6809e651,,,False,,access violation accessing 0x48
+7,"[{""scratch"":1024},{""scratch"":512}]",2339242516,0x8b6e0214,,,False,,access violation accessing 0x48
+8,"[{""scratch"":512},{""scratch"":1024}]",1466247821,0x57652a8d,,,False,,access violation accessing 0x48
+9,"[6540324,6539960]",1402897330,0x539e83b2,,,False,,access violation accessing 0x48
+10,"[6539960,6540324]",1690473327,0x64c2936f,,,False,,access violation accessing 0x48

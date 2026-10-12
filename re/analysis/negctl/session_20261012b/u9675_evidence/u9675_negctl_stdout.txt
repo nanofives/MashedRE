@@ -1,0 +1,21 @@
+handlers: ['scalars_to_scattered_globals']
+warm jobs 7, early jobs 0, race-scenario hooks skipped 0
+  [slot 0] pid=28904
+  [slot 0] hud_rec29_dispatch                         real         GREEN 0/11  
+  [slot 0] hud_rec29_dispatch                         baseline     GREEN 0/11  
+  [slot 0] hud_rec29_dispatch                         null         RED 10/11 calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0 
+  [slot 0] hud_rec29_dispatch                         ret          RED 11/11 calls=11 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0 
+  [slot 0] hud_rec29_dispatch                         field_first  NA 0/11 calls=11 flips=0 changed=0 flip=0x00000000 noise=274 frozen=2 
+  [slot 0] hud_rec29_dispatch                         field_last   NA 0/11 calls=11 flips=0 changed=0 flip=0x00000000 noise=279 frozen=2 
+  [slot 0] hud_rec29_dispatch                         field_none   CTRL-GREEN 0/11 calls=11 flips=0 changed=0 flip=0x00000000 noise=285 frozen=2 
+
+7 jobs in 20s -> re\analysis\negctl\session_20261012b\u9675_evidence\u9675_negctl.tsv\negctl_20261012_184235.tsv
+
+scalars_to_scattered_globals
+  real          GREEN=1
+  baseline      GREEN=1
+  null          RED=1
+  ret           RED=1
+  field_none    CTRL-GREEN=1
+  field_first   NA=1
+  field_last    NA=1

@@ -9,7 +9,7 @@
 //   0x0041db80  Sub0041db80_HudThresholdDispatch   leaf (vtable+0x48 only)
 //   0x005554d0  FontText_StringWidthAccumulator    pure leaf
 //   0x00403160  Sub00403160_SubMode0BViewport      MULTI (C2+ callees)
-//   0x0041bc50  Sub0041bc50_HudRender29Dispatcher  EAX-thiscall 29-slot vtable dispatcher
+//   0x0041bc50  FUN_0041bc50                       EAX-in record; 29 flag-gated [o+0x48](o) field calls
 //   0x00427780  FontText_StringTableLookup         pure leaf (packed string lookup)
 //   0x00427840  FontText_UTF16WidenCopy            __fastcall EAX=src, ECX=dst
 //   0x004c57a0  FontCtxMatrix_AllocInit            implicit-EAX-return; vtable+0x118 alloc
@@ -280,294 +280,110 @@ RH_ScopedInstall(Sub00403160_SubMode0BViewport, 0x00403160);  // re-enabled 2026
 
 
 // ===========================================================================
-// 0x0041bc50  REFUSED (post-diff verification)
+// 0x0041bc50  FUN_0041bc50   (603 bytes, 0x0041bc50..0x0041beaa)
 //
-// Initial diff at quiescent main menu showed orig AV at 0x1c (first guard
-// load) while reimpl AV at 0x10 — i.e., dispatch order in the analysis
-// note (0x10, 0x14, 0x18, 0x1c, 0x20...) does NOT match the binary.
-// Raw bytes at 0x0041bc50 reveal the actual order is:
-//   [0x1c, 0xbc], [0x18, 0xb8], [0x10, 0xb0], [0x14, 0xb4], [0x20, 0xc0],
-//   [0x80, 0x120], [0x84, 0x124], ..., [0x94, 0x134]   <-- not in note
-//   [0x68, 0x108], ...
-// The note's table is both reordered and INCOMPLETE (missing 0x94/0x134).
-// Faithful reimpl requires full re-decoding of all 603 bytes — out of
-// scope for this batch session. Deferring to a follow-up.
+// Re-ported from the bytes of original\MASHED.exe.unpatched on 2026-10-12
+// (U-9675). The record pointer arrives in EAX:
+//   0x0041bc50 push esi
+//   0x0041bc51 mov  esi,eax                ; esi = rec
+// then 29 pairs, each of this shape (first pair shown):
+//   0x0041bc53 mov  eax,[esi+0x1c]         ; flag dword at rec+X
+//   0x0041bc56 test eax,eax
+//   0x0041bc58 je   0x0041bc67             ; skip when the dword is 0
+//   0x0041bc5a mov  eax,[esi+0xbc]         ; o = [rec+X+0xa0]
+//   0x0041bc60 push eax
+//   0x0041bc61 call [eax+0x48]             ; o->[+0x48](o)
+//   0x0041bc64 add  esp,4                  ; caller cleans the one arg
+// and the last pair loads o into ESI instead of EAX:
+//   0x0041be9c mov  esi,[esi+0xd8] / 0x0041bea2 push esi /
+//   0x0041bea3 call [esi+0x48] / 0x0041bea6 add esp,4
+//   0x0041bea9 pop  esi
+//   0x0041beaa ret                         ; EAX = last pair's EAX
+// [o+0x48] is a function-pointer FIELD of the object, called with one
+// dereference. It is not a vtable slot: there is no `mov reg,[o]` before the
+// call. The flag is re-read after every call (each pair loads it fresh).
+// EAX at RET is the 0x38 flag when it is 0 (0x0041be98 je), else the
+// 0x0041bea3 call's EAX. ESI preserved. No other register is written.
 //
-// Refusal logged in PROMOTION_QUEUE.md note for this session.
+// The 29 flag offsets in byte order (object at X+0xa0 in every pair):
+//   0x1c 0x18 0x10 0x14 0x20, 0x80 0x84 0x88 0x8c 0x90 0x94,
+//   0x68 0x6c 0x70 0x74 0x78 0x7c, 0x3c 0x40 0x44 0x48 0x4c 0x50,
+//   0x24 0x28 0x2c 0x30 0x34 0x38.
+// 0x54..0x64 are not read.
+//
+// The previous port here (MASS-DISABLED 2026-05-24, never installed) did not
+// match the bytes (U-9675): it read a vtable (`mov eax,[edi]; call
+// [eax+0x48]`), never popped the pushed argument, walked the flags in
+// ascending order from 0x10, and had 28 pairs (0x94 missing).
+//
+// Caller: 0x0041c0c0 HudDispatchSlot2 (0x0041c0c8 call, EAX = record
+// 0x0063cab8 / 0x0063cc24). The port is a naked EAX shim around a cdecl body,
+// the same shape as FUN_0041c2d0 in HudDispatch.cpp (U-9671). ECX/EDX at
+// return are not part of the contract: 0x0041c0c0 reads neither after
+// 0x0041c0c8 (0x0041c0cd add esi,0x16c; 0x0041c0d3 cmp; 0x0041c0db pop esi;
+// ret), per HudDispatch.cpp's 0x0041c0c0 block.
 // ===========================================================================
 
-#if 0
-// ===========================================================================
-// 0x0041bc50  Sub0041bc50_HudRender29Dispatcher  (DISABLED — see refusal note)
-//
-// Original: FUN_0041bc50 (603 bytes, 0x0041bc50..0x0041beaa).
-// __thiscall via EAX (object ptr in EAX). 29 guarded vtable+0x48 dispatches.
-// Each pair: read int32 at EAX+guard_off; if !=0, dispatch vtable[0x48] on
-// object pointer at EAX+render_off (render_off = guard_off + 0xA0).
-//
-// guard offsets: 0x10,0x14,0x18,0x1c,0x20,0x24,0x28,0x2c,0x30,0x34,0x38,0x3c,
-//                0x40,0x44,0x48,0x4c,0x50,0x68,0x6c,0x70,0x74,0x78,0x7c,0x80,
-//                0x84,0x88,0x8c,0x90 (28 pairs documented).
-// Note: 0x0041bc50.md table lists 29 pairs but 28 (0x10..0x50 = 17 + 0x68..0x90 = 11 = 28
-// after removing 0x54..0x64 gap). Note also has explicit 28 in table; the 29th
-// in the prose is a count-off-by-one — we implement 28 pairs verbatim from
-// the table.
-// Verification: crash_equal_ok=True (EAX=0 -> identical null-deref).
-// Caller: sub_0041c0c0 (C2). Callee: vtable indirection only -> leaf-like.
-//
-// We implement via __declspec(naked) + inline asm to preserve EAX-this
-// calling convention exactly. Pattern adapted from FUN_0041c2d0 in
-// HudDispatch.cpp. ESI is callee-saved and is used as the working "this"
-// because the orig prologue establishes ESI=EAX (see analysis note).
-// ===========================================================================
+typedef std::uint32_t (__cdecl *HudObjFieldFn)(void* obj);
+
+static const std::uint8_t s_bc50FlagOffsets[29] = {
+    0x1c,   // 0x0041bc53 (object 0xbc,  call 0x0041bc61)
+    0x18,   // 0x0041bc67 (object 0xb8,  call 0x0041bc75)
+    0x10,   // 0x0041bc7b (object 0xb0,  call 0x0041bc89)
+    0x14,   // 0x0041bc8f (object 0xb4,  call 0x0041bc9d)
+    0x20,   // 0x0041bca3 (object 0xc0,  call 0x0041bcb1)
+    0x80,   // 0x0041bcb7 (object 0x120, call 0x0041bcc8)
+    0x84,   // 0x0041bcce (object 0x124, call 0x0041bcdf)
+    0x88,   // 0x0041bce5 (object 0x128, call 0x0041bcf6)
+    0x8c,   // 0x0041bcfc (object 0x12c, call 0x0041bd0d)
+    0x90,   // 0x0041bd13 (object 0x130, call 0x0041bd24)
+    0x94,   // 0x0041bd2a (object 0x134, call 0x0041bd3b)
+    0x68,   // 0x0041bd41 (object 0x108, call 0x0041bd4f)
+    0x6c,   // 0x0041bd55 (object 0x10c, call 0x0041bd63)
+    0x70,   // 0x0041bd69 (object 0x110, call 0x0041bd77)
+    0x74,   // 0x0041bd7d (object 0x114, call 0x0041bd8b)
+    0x78,   // 0x0041bd91 (object 0x118, call 0x0041bd9f)
+    0x7c,   // 0x0041bda5 (object 0x11c, call 0x0041bdb3)
+    0x3c,   // 0x0041bdb9 (object 0xdc,  call 0x0041bdc7)
+    0x40,   // 0x0041bdcd (object 0xe0,  call 0x0041bddb)
+    0x44,   // 0x0041bde1 (object 0xe4,  call 0x0041bdef)
+    0x48,   // 0x0041bdf5 (object 0xe8,  call 0x0041be03)
+    0x4c,   // 0x0041be09 (object 0xec,  call 0x0041be17)
+    0x50,   // 0x0041be1d (object 0xf0,  call 0x0041be2b)
+    0x24,   // 0x0041be31 (object 0xc4,  call 0x0041be3f)
+    0x28,   // 0x0041be45 (object 0xc8,  call 0x0041be53)
+    0x2c,   // 0x0041be59 (object 0xcc,  call 0x0041be67)
+    0x30,   // 0x0041be6d (object 0xd0,  call 0x0041be7b)
+    0x34,   // 0x0041be81 (object 0xd4,  call 0x0041be8f)
+    0x38,   // 0x0041be95 (object 0xd8,  call 0x0041bea3)
+};
+
+static std::uint32_t __cdecl HudRec29DispatchBody(std::uint8_t* rec) {
+    std::uint32_t r = 0;
+    for (int i = 0; i < 29; ++i) {
+        const std::uint32_t x = s_bc50FlagOffsets[i];
+        r = *reinterpret_cast<volatile const std::uint32_t*>(rec + x);          // mov eax,[esi+X]
+        if (r != 0) {                                                            // test eax,eax / je
+            void* o = *reinterpret_cast<void* const*>(rec + x + 0xa0);           // mov eax,[esi+X+0xa0]
+            r = (*reinterpret_cast<HudObjFieldFn*>(static_cast<std::uint8_t*>(o) + 0x48))(o);  // push; call [eax+0x48]
+        }
+    }
+    return r;
+}
 
 // 0x0041bc50
 extern "C" __declspec(dllexport) __declspec(naked)
-void __cdecl Sub0041bc50_HudRender29Dispatcher()
+std::uint32_t __cdecl FUN_0041bc50()
 {
     __asm {
-        push esi
-        push edi
-        mov  esi, eax                   // this = EAX (object base)
-
-        // Macro-equivalent block for each (guard_off, render_off=guard_off+0xA0).
-        // guard at [esi+G]; if != 0: edi = [esi+G+0xA0]; eax = [edi]; push edi; call [eax+0x48]
-        // 28 dispatches follow.
-
-        // pair 1: G=0x10  R=0xB0
-        cmp  dword ptr [esi+0x10], 0
-        je   skip01
-        mov  edi, dword ptr [esi+0xb0]
-        mov  eax, dword ptr [edi]
-        push edi
-        call dword ptr [eax+0x48]
-skip01:
-        // pair 2: G=0x14  R=0xB4
-        cmp  dword ptr [esi+0x14], 0
-        je   skip02
-        mov  edi, dword ptr [esi+0xb4]
-        mov  eax, dword ptr [edi]
-        push edi
-        call dword ptr [eax+0x48]
-skip02:
-        // pair 3: G=0x18  R=0xB8
-        cmp  dword ptr [esi+0x18], 0
-        je   skip03
-        mov  edi, dword ptr [esi+0xb8]
-        mov  eax, dword ptr [edi]
-        push edi
-        call dword ptr [eax+0x48]
-skip03:
-        // pair 4: G=0x1C  R=0xBC
-        cmp  dword ptr [esi+0x1c], 0
-        je   skip04
-        mov  edi, dword ptr [esi+0xbc]
-        mov  eax, dword ptr [edi]
-        push edi
-        call dword ptr [eax+0x48]
-skip04:
-        // pair 5: G=0x20  R=0xC0
-        cmp  dword ptr [esi+0x20], 0
-        je   skip05
-        mov  edi, dword ptr [esi+0xc0]
-        mov  eax, dword ptr [edi]
-        push edi
-        call dword ptr [eax+0x48]
-skip05:
-        // pair 6: G=0x24  R=0xC4
-        cmp  dword ptr [esi+0x24], 0
-        je   skip06
-        mov  edi, dword ptr [esi+0xc4]
-        mov  eax, dword ptr [edi]
-        push edi
-        call dword ptr [eax+0x48]
-skip06:
-        // pair 7: G=0x28  R=0xC8
-        cmp  dword ptr [esi+0x28], 0
-        je   skip07
-        mov  edi, dword ptr [esi+0xc8]
-        mov  eax, dword ptr [edi]
-        push edi
-        call dword ptr [eax+0x48]
-skip07:
-        // pair 8: G=0x2C  R=0xCC
-        cmp  dword ptr [esi+0x2c], 0
-        je   skip08
-        mov  edi, dword ptr [esi+0xcc]
-        mov  eax, dword ptr [edi]
-        push edi
-        call dword ptr [eax+0x48]
-skip08:
-        // pair 9: G=0x30  R=0xD0
-        cmp  dword ptr [esi+0x30], 0
-        je   skip09
-        mov  edi, dword ptr [esi+0xd0]
-        mov  eax, dword ptr [edi]
-        push edi
-        call dword ptr [eax+0x48]
-skip09:
-        // pair 10: G=0x34  R=0xD4
-        cmp  dword ptr [esi+0x34], 0
-        je   skip10
-        mov  edi, dword ptr [esi+0xd4]
-        mov  eax, dword ptr [edi]
-        push edi
-        call dword ptr [eax+0x48]
-skip10:
-        // pair 11: G=0x38  R=0xD8
-        cmp  dword ptr [esi+0x38], 0
-        je   skip11
-        mov  edi, dword ptr [esi+0xd8]
-        mov  eax, dword ptr [edi]
-        push edi
-        call dword ptr [eax+0x48]
-skip11:
-        // pair 12: G=0x3C  R=0xDC
-        cmp  dword ptr [esi+0x3c], 0
-        je   skip12
-        mov  edi, dword ptr [esi+0xdc]
-        mov  eax, dword ptr [edi]
-        push edi
-        call dword ptr [eax+0x48]
-skip12:
-        // pair 13: G=0x40  R=0xE0
-        cmp  dword ptr [esi+0x40], 0
-        je   skip13
-        mov  edi, dword ptr [esi+0xe0]
-        mov  eax, dword ptr [edi]
-        push edi
-        call dword ptr [eax+0x48]
-skip13:
-        // pair 14: G=0x44  R=0xE4
-        cmp  dword ptr [esi+0x44], 0
-        je   skip14
-        mov  edi, dword ptr [esi+0xe4]
-        mov  eax, dword ptr [edi]
-        push edi
-        call dword ptr [eax+0x48]
-skip14:
-        // pair 15: G=0x48  R=0xE8
-        cmp  dword ptr [esi+0x48], 0
-        je   skip15
-        mov  edi, dword ptr [esi+0xe8]
-        mov  eax, dword ptr [edi]
-        push edi
-        call dword ptr [eax+0x48]
-skip15:
-        // pair 16: G=0x4C  R=0xEC
-        cmp  dword ptr [esi+0x4c], 0
-        je   skip16
-        mov  edi, dword ptr [esi+0xec]
-        mov  eax, dword ptr [edi]
-        push edi
-        call dword ptr [eax+0x48]
-skip16:
-        // pair 17: G=0x50  R=0xF0
-        cmp  dword ptr [esi+0x50], 0
-        je   skip17
-        mov  edi, dword ptr [esi+0xf0]
-        mov  eax, dword ptr [edi]
-        push edi
-        call dword ptr [eax+0x48]
-skip17:
-        // Gap 0x54..0x64 absent (per analysis note).
-
-        // pair 18: G=0x68  R=0x108
-        cmp  dword ptr [esi+0x68], 0
-        je   skip18
-        mov  edi, dword ptr [esi+0x108]
-        mov  eax, dword ptr [edi]
-        push edi
-        call dword ptr [eax+0x48]
-skip18:
-        // pair 19: G=0x6C  R=0x10C
-        cmp  dword ptr [esi+0x6c], 0
-        je   skip19
-        mov  edi, dword ptr [esi+0x10c]
-        mov  eax, dword ptr [edi]
-        push edi
-        call dword ptr [eax+0x48]
-skip19:
-        // pair 20: G=0x70  R=0x110
-        cmp  dword ptr [esi+0x70], 0
-        je   skip20
-        mov  edi, dword ptr [esi+0x110]
-        mov  eax, dword ptr [edi]
-        push edi
-        call dword ptr [eax+0x48]
-skip20:
-        // pair 21: G=0x74  R=0x114
-        cmp  dword ptr [esi+0x74], 0
-        je   skip21
-        mov  edi, dword ptr [esi+0x114]
-        mov  eax, dword ptr [edi]
-        push edi
-        call dword ptr [eax+0x48]
-skip21:
-        // pair 22: G=0x78  R=0x118
-        cmp  dword ptr [esi+0x78], 0
-        je   skip22
-        mov  edi, dword ptr [esi+0x118]
-        mov  eax, dword ptr [edi]
-        push edi
-        call dword ptr [eax+0x48]
-skip22:
-        // pair 23: G=0x7C  R=0x11C
-        cmp  dword ptr [esi+0x7c], 0
-        je   skip23
-        mov  edi, dword ptr [esi+0x11c]
-        mov  eax, dword ptr [edi]
-        push edi
-        call dword ptr [eax+0x48]
-skip23:
-        // pair 24: G=0x80  R=0x120
-        cmp  dword ptr [esi+0x80], 0
-        je   skip24
-        mov  edi, dword ptr [esi+0x120]
-        mov  eax, dword ptr [edi]
-        push edi
-        call dword ptr [eax+0x48]
-skip24:
-        // pair 25: G=0x84  R=0x124
-        cmp  dword ptr [esi+0x84], 0
-        je   skip25
-        mov  edi, dword ptr [esi+0x124]
-        mov  eax, dword ptr [edi]
-        push edi
-        call dword ptr [eax+0x48]
-skip25:
-        // pair 26: G=0x88  R=0x128
-        cmp  dword ptr [esi+0x88], 0
-        je   skip26
-        mov  edi, dword ptr [esi+0x128]
-        mov  eax, dword ptr [edi]
-        push edi
-        call dword ptr [eax+0x48]
-skip26:
-        // pair 27: G=0x8C  R=0x12C
-        cmp  dword ptr [esi+0x8c], 0
-        je   skip27
-        mov  edi, dword ptr [esi+0x12c]
-        mov  eax, dword ptr [edi]
-        push edi
-        call dword ptr [eax+0x48]
-skip27:
-        // pair 28: G=0x90  R=0x130
-        cmp  dword ptr [esi+0x90], 0
-        je   skip28
-        mov  edi, dword ptr [esi+0x130]
-        mov  eax, dword ptr [edi]
-        push edi
-        call dword ptr [eax+0x48]
-skip28:
-        pop  edi
-        pop  esi
-        ret
+        push eax                        // rec (arrives in EAX, 0x0041bc51)
+        call HudRec29DispatchBody
+        add  esp, 4
+        ret                             // EAX = last pair's EAX
     }
 }
 
-// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(Sub0041bc50_HudRender29Dispatcher, 0x0041bc50);
-#endif
+RH_ScopedInstall(FUN_0041bc50, 0x0041bc50);  // 2026-10-12 re-ported from bytes (U-9675)
 
 
 // ===========================================================================
