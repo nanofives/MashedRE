@@ -1,5 +1,22 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-12 late (triage follow-ups DONE): **next = the user calls in U-9672, then the A1 C4 rows.**
+>
+> - Triage of the 50 rows below their old level: `re/analysis/negctl/reearn_20261011/TRIAGE_2026-10-12.md` (verified).
+> - Policy calls settled: config-log C4 grandfathered (U-9655/9656, 503186dd); 5 structurally-blind rows accepted
+>   (4 at C3, CrtPreInitLoop at C2; 4d72c503); FsopenSafe C2 by design (U-9662).
+> - MenuButtonDetectE back to C4 on a REAL canonical scenario (natural Race Results, 5d382e9c). Lesson: the old
+>   boot-to-menu install-observe never ran its body (memory install-observe-may-never-execute-the-body). The 19
+>   triage A1 rows (C4->C3) each need the same treatment: caller's screen, game-driven call count, RED control.
+> - 4 HUD dispatch rows ported and C3 (22bd72fb). U-9671: the existing FUN_0041c2d0 port would crash if installed.
+> - U-9667 RESOLVED (5a058f2d): one MenuEntryWalk body for .asi + standalone, cursor -1 path ported.
+>
+> **Open**
+> - U-9672 user calls: standalone screen 4 pushes 7 (original 6, under a 2026-06-15 "(user)" comment); challenge row
+>   moves onto locked tracks (2026-09-06 directive). Plus unported popup / writes / key repeat.
+> - U-9673: nav harness crashes at R2-2 (pre-existing 2528c8b3), reachability pass not running.
+> - 7 A2 rows fixable with the existing harness; 11 B rows need new harness (draw-stream capture covers 2).
+
 > ## START HERE 2026-10-12 (negctl re-earn port fixes DONE, follow-ups closed): **next = the open items below.**
 >
 > 47 rows demoted by the negctl re-check were re-ported from the bytes and re-earned C2->C3 (8 parallel clusters:
