@@ -186,7 +186,7 @@ observation, before any hooked body ran, recorded and not attributed.
 
 - **Original AV with Vehicle = 1 in a Multi Player Team Play setup** (explore5, stock arm, nothing loaded): a blind
   cursor landed on screen 18 row 4 and set `0x0067ea94` 0 -> 1. The stock original then AV'd at race start,
-  `MASHED.exe+0x1509b4` (read @ `0x38`). Single observation, not re-run.
+  `MASHED.exe+0x1509b4` (read @ `0x38`). Single observation, not re-run. **Corrected 2026-10-12:** not caused by the Vehicle setting (Vehicle=1 0/8 crashes); it is a track-piz sharing race with a concurrent MASHED, U-9677, re/analysis/negctl/followup_20261012/crash1509b4_RESULT.md.
 - **A human-only Multi Player match needs a car to drive away.** Only the profiles that pick a colour get car slots
   (`0x007f1a14` slot 3 = -1), and the round-over test is separation-based. A future multi-player harness should
   hold accelerate (control 0) on one profile, not pulse control 4.
