@@ -1,0 +1,27 @@
+# provenance 2026-10-12: main build e923e607 deployed (asi sha256 0779182638dbb1da...), MASHED_HOOK_ONLY=0x0042f0c0, MASHED_VERIFY_ASI=original/mashed_re_dev.asi
+=== verify_hook_install report (menu_sprite_dispatch_a) ===
+
+target address: 0x0042f0c0  export: MenuSpriteDispatchA
+PRE  bytes:     e9 3b c3 37 69 60 61 00
+asi base:       0x69790000
+reimpl addr:    0x697ab400
+POST bytes:     e9 3b c3 37 69 60 61 00
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x6937c33b  expected 0x6937c33b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  1 / 1  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [], 'seed': [{'addr': 6805564, 'val': {'scratch': 0}}, {'addr': 6810104, 'val': 0}, {'addr': 6810936, 'val': {'scratch': 256}}, {'addr': 6811000, 'val': {'scratch': 256}}, {'addr': {'scratch': 256}, 'val': 1}, {'addr': {'scratch': 260}, 'val': 4278583296}, {'addr': {'scratch': 264}, 'val': 2}, {'addr': {'scratch': 268}, 'val': 4278583296}, {'addr': {'scratch': 272}, 'val': 3}, {'addr': {'scratch': 276}, 'val': 4278648832}, {'addr': 6809520, 'val': 0}, {'addr': 6809524, 'val': 128}, {'addr': 6809668, 'val': 0}, {'addr': 6810252, 'val': 2}, {'addr': 6256324, 'val': 1}, {'addr': 6256328, 'val': 0}, {'addr': 6810104, 'val': 0}, {'addr': 6810944, 'val': 1}, {'addr': 6810880, 'val': 9}, {'addr': 6811008, 'val': 9}]}  got=d7490dcd  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 1x as expected
+  + all 1 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_menu_sprite_dispatch_a.txt

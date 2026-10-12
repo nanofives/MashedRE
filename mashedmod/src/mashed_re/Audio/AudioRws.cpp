@@ -491,82 +491,82 @@ static int** const g_SecondaryPool = reinterpret_cast<int**>(0x007ddab0u);
 
 // ---------------------------------------------------------------------------
 // 0x005ae800  FUN_005ae800 — bitmap pool block allocator
+// uint __cdecl FUN_005ae800(int *h, int flags)
 //
-// Scans the circular block list rooted at param_1[4] for a free bit in each
-// block's bitmap (param_1[2] bytes at block+8).  If a free bit is found it is
-// set and the aligned address for that slot is computed and returned.  If no
-// free bit exists in any existing block a new block is allocated via RawAlloc
-// (0x005aea00), its bitmap zeroed, bit-0 set, the block inserted into the
-// circular list, and the first slot address returned.
+// Re-ported from the bytes 2026-10-12 (negctl re-earn), disasm 0x005ae800..0x005ae912.
+// Header h: [0] elem, [1] cap, [2] nbytes (bitmap bytes), [3] align, [4]/[5] block-list
+// sentinel. Block: [0] next, [1] prev, bitmap bytes at +8.
 //
-// Address formula (from Ghidra 0x005ae800..0x005ae8ff):
-//   slot_index = byte_idx * 8 + bit_pos
-//   base       = (block + param_1[2] + param_1[3] + 7) & ~(param_1[3] - 1)
-//   return     = base + slot_index * param_1[0]
+// Per block the scan carries a COUNTDOWN seeded from h[1] (0x005ae828/0x005ae82f, kept
+// in the param slot [esp+0x18]):
+//   byte == 0xff            -> countdown -= 8, next byte        (0x005ae839, 0x005ae90d)
+//   countdown == 0          -> next byte (not next block)       (0x005ae848 test/jbe = ==0)
+//   bit set                 -> bit++, countdown--, up to 8 bits (0x005ae85b..0x005ae864)
+//   bit clear (0x80 >> bit) -> set it, addr = ((blk + align + nbytes + 7) & ~(align-1))
+//                              + (byte*8 + bit) * elem          (0x005ae868..0x005ae888)
+//                              addr == 0 keeps scanning bytes   (0x005ae88c)
+// The countdown is unsigned and only tested for zero, so a 0xff byte taken at
+// countdown < 8 wraps it and later bytes are scanned again (faithful).
+// No slot: RawAlloc(cap*elem + align + nbytes + 8, flags) (0x005ae8ac..0x005ae8c2); NULL
+// -> 0 (0x005ae8d0). Bitmap zeroed (rep stos, 0x005ae8da/0x005ae8e1), block HEAD-inserted:
+// new[1] = sentinel, new[0] = old head, old_head[1] = new, sentinel[0] = new
+// (0x005ae8e3..0x005ae8f3); bitmap byte 0 = 0x80 (0x005ae8f5); returns the slot-0 address
+// (new + align + nbytes + 7) & ~(align-1) (0x005ae8f9..0x005ae905).
+// The old port scanned all 8 bits of every byte regardless of h[1] and tail-inserted.
 // ---------------------------------------------------------------------------
 // 0x005ae800
 extern "C" __declspec(dllexport) unsigned int __cdecl AudioPoolBlockAlloc(int* param_1, int param_2)
 {
-    const int  elem_size   = param_1[0];   // offset 0x00: element size in bytes
-    const int  bitmap_len  = param_1[2];   // offset 0x08: bitmap byte count
-    const int  align       = param_1[3];   // offset 0x0c: alignment requirement
-    int*       sentinel    = param_1 + 4;  // offset 0x10: circular list sentinel
+    std::uint32_t* const h = reinterpret_cast<std::uint32_t*>(param_1);
+    std::uint32_t* const sentinel = h + 4;                       // 0x005ae811
+    const std::uint32_t nbytes = h[2];                           // 0x005ae80e
 
-    // Scan existing blocks.
-    int* block = reinterpret_cast<int*>(sentinel[0]);  // head = *(sentinel)
-    while (block != sentinel) {
-        // Bitmap bytes start at block+8 (i.e., block[2]).
-        uint8_t* bitmap = reinterpret_cast<uint8_t*>(block + 2);
-        for (int byte_idx = 0; byte_idx < bitmap_len; ++byte_idx) {
-            uint8_t b = bitmap[byte_idx];
-            if (b == 0xffu) continue;  // byte full
-            // Find first clear bit (MSB-first: 0x80 >> i).
-            for (int bit_pos = 0; bit_pos < 8; ++bit_pos) {
-                uint8_t mask = static_cast<uint8_t>(0x80u >> bit_pos);
-                if ((b & mask) == 0u) {
-                    bitmap[byte_idx] = static_cast<uint8_t>(b | mask);
-                    const int slot_idx = byte_idx * 8 + bit_pos;
-                    // Base address: (block + bitmap_len + align + 7) & ~(align-1)
-                    const uintptr_t raw_base =
-                        reinterpret_cast<uintptr_t>(block) +
-                        static_cast<uintptr_t>(bitmap_len) +
-                        static_cast<uintptr_t>(align) + 7u;
-                    const uintptr_t base = raw_base & ~static_cast<uintptr_t>(align - 1);
-                    return static_cast<unsigned int>(base + static_cast<uintptr_t>(slot_idx * elem_size));
+    std::uint32_t* blk = reinterpret_cast<std::uint32_t*>(h[4]);  // 0x005ae80b
+    while (blk != sentinel) {                                    // 0x005ae818 / 0x005ae8a0
+        std::uint32_t countdown = h[1];                          // 0x005ae828
+        std::uint8_t* const bitmap = reinterpret_cast<std::uint8_t*>(blk) + 8;
+        for (std::uint32_t byte_idx = 0; byte_idx < nbytes; ++byte_idx) {   // 0x005ae82d / 0x005ae893
+            std::uint8_t bits = bitmap[byte_idx];                // 0x005ae835
+            if (bits == 0xffu) {                                 // 0x005ae839
+                countdown -= 8u;                                 // 0x005ae90d
+                continue;
+            }
+            for (std::uint32_t bit = 0; bit < 8u; ++bit) {       // 0x005ae842 / 0x005ae85d
+                if (countdown == 0u) break;                      // 0x005ae848
+                const std::uint8_t mask = static_cast<std::uint8_t>(0x80u >> bit);   // 0x005ae851
+                if ((bits & mask) == 0u) {                       // 0x005ae853
+                    bits = static_cast<std::uint8_t>(bits | mask);                   // 0x005ae868
+                    bitmap[byte_idx] = bits;                     // 0x005ae86d
+                    const std::uint32_t idx = bit + byte_idx * 8u;                   // 0x005ae86a
+                    const std::uint32_t align = h[3];            // 0x005ae875
+                    const std::uint32_t addr =
+                        ((reinterpret_cast<std::uint32_t>(blk) + align + nbytes + 7u) & ~(align - 1u))
+                        + idx * h[0];                            // 0x005ae871..0x005ae888
+                    if (addr != 0u) return addr;                 // 0x005ae88c
+                    break;                                       // addr 0 -> next byte (0x005ae88e)
                 }
+                --countdown;                                     // 0x005ae85c
             }
         }
-        block = reinterpret_cast<int*>(block[0]);  // next in circular list
+        blk = reinterpret_cast<std::uint32_t*>(blk[0]);          // 0x005ae89b
     }
 
-    // No free slot — allocate a new block.
-    const int block_size = elem_size * param_1[1] + align + 8 + bitmap_len;
-    // param_1[1] = capacity (elements per block), at offset 0x04.
-    // Full formula: param_1[1]*param_1[0] + param_1[3] + 8 + param_1[2]
-    int* new_block = static_cast<int*>(RawAlloc(block_size, param_2));
-    if (!new_block) return 0u;
+    // 0x005ae8ac: no free slot, allocate a new block.
+    const std::uint32_t size = h[1] * h[0] + h[3] + nbytes + 8u;  // 0x005ae8ac..0x005ae8bd
+    std::uint32_t* const nb = static_cast<std::uint32_t*>(RawAlloc(static_cast<int>(size), param_2));  // 0x005ae8c2
+    if (nb == nullptr) return 0u;                                // 0x005ae8d0
 
-    // Zero bitmap at new_block+8 (new_block[2..]).
-    uint8_t* new_bitmap = reinterpret_cast<uint8_t*>(new_block + 2);
-    for (int i = 0; i < bitmap_len; ++i) new_bitmap[i] = 0u;
+    std::uint8_t* const nbm = reinterpret_cast<std::uint8_t*>(nb) + 8;
+    for (std::uint32_t i = 0; i < nbytes; ++i) nbm[i] = 0u;     // 0x005ae8da / 0x005ae8e1
 
-    // Mark bit-0 used (MSB of first bitmap byte = 0x80).
-    new_bitmap[0] = 0x80u;
+    nb[1] = reinterpret_cast<std::uint32_t>(sentinel);           // 0x005ae8e5
+    nb[0] = sentinel[0];                                         // 0x005ae8e3 / 0x005ae8e8
+    reinterpret_cast<std::uint32_t*>(sentinel[0])[1] = reinterpret_cast<std::uint32_t>(nb);   // 0x005ae8ea / 0x005ae8f0
+    sentinel[0] = reinterpret_cast<std::uint32_t>(nb);           // 0x005ae8f3
+    nbm[0] = 0x80u;                                              // 0x005ae8f5
 
-    // Insert into circular list before sentinel (tail-insert).
-    int* prev = reinterpret_cast<int*>(sentinel[1]);  // *(sentinel+4) = tail
-    new_block[0] = reinterpret_cast<int>(sentinel);   // new->next = sentinel
-    new_block[1] = reinterpret_cast<int>(prev);       // new->prev = tail
-    prev[0]      = reinterpret_cast<int>(new_block);  // tail->next = new
-    sentinel[1]  = reinterpret_cast<int>(new_block);  // sentinel->prev = new
-
-    // Return slot 0 address.
-    const uintptr_t raw_base =
-        reinterpret_cast<uintptr_t>(new_block) +
-        static_cast<uintptr_t>(bitmap_len) +
-        static_cast<uintptr_t>(align) + 7u;
-    const uintptr_t base = raw_base & ~static_cast<uintptr_t>(align - 1);
-    return static_cast<unsigned int>(base);
+    const std::uint32_t align = h[3];                            // 0x005ae8f9
+    return (reinterpret_cast<std::uint32_t>(nb) + align + nbytes + 7u) & ~(align - 1u);   // 0x005ae8fc..0x005ae905
 }
 
 RH_ScopedInstall(AudioPoolBlockAlloc, 0x005ae800);  // re-enabled 2026-05-24 c3-audio-b
@@ -721,93 +721,67 @@ extern "C" __declspec(dllexport) unsigned int* __cdecl AudioWaveFmtCopy(
 
 RH_ScopedInstall(AudioWaveFmtCopy, 0x005ae0c0);  // re-enabled 2026-05-24 c3-audio-b
 
-// 0x005ae920  FUN_005ae920  (~0xd3 bytes)
-// void FUN_005ae920(uint *param_1, uint param_2)
-//   param_1 = pool header pointer
-//   param_2 = address of item being freed (as uint)
-// Walks block list to find the block containing param_2, clears the bitmap bit,
-// optionally releases empty blocks to heap when pool-compaction flag is set.
+// 0x005ae920  FUN_005ae920  (0xd3 bytes, 0x005ae920..0x005ae9f2)
+// void __cdecl FUN_005ae920(uint *h, uint item)
 //
-// Ghidra address of key steps:
-//   0x005ae920: function prologue / stack frame setup
-//   0x005ae930: block list traversal start (param_1[4] block head)
-//   0x005ae95c: range check: block_start <= param_2 < block_start + N*elem_sz
-//   0x005ae96c: compute item index = (param_2 - block_start) / elem_sz
-//   0x005ae97a: clear bit: block[8 + (idx>>3)], mask = 0x80 >> (idx & 7) (MSB-first)
-//   0x005ae9a0: compaction flag check (param_1[6] bit 1)
-//   0x005ae9b0: count remaining set bits; re-link or FUN_004522d0(block)
+// Re-ported from the bytes 2026-10-12 (negctl re-earn).
+//   0x005ae93d  base = blk + nbytes + 8   (h[2] at 0x005ae92b)
+//   0x005ae941  item <  base            -> next block (unsigned, jb)
+//   0x005ae945  item <= base + cap*elem -> found      (unsigned, jbe: end INCLUSIVE)
+//   0x005ae95d  idx = (item - base) / elem (unsigned div)
+//   0x005ae966..0x005ae98b  bitmap[idx >> 3] &= ~(0x80 >> (idx & 7))
+//   0x005ae98f..0x005ae99b  unlink blk
+//   0x005ae99e  head = sentinel[0] (after the unlink)
+//   0x005ae9a0  list empty            -> relink (no compaction test)
+//   0x005ae9a4  (byte h[6] & 2) == 0  -> relink
+//   0x005ae9aa..0x005ae9bd  sum of the bitmap BYTE VALUES (not a popcount); nbytes 0 skips
+//   0x005ae9c1  sum != 0 -> relink, else 0x005ae9c4 RwFree(blk) via 0x004522d0
+//   relink (0x005ae9d1 / 0x005ae9e2): blk[0] = head, blk[1] = sentinel,
+//          sentinel[0][1] = blk, sentinel[0] = blk
+// The old port used an exclusive end and tested compaction even when the block was the
+// list's only member.
 extern "C" __declspec(dllexport) void __cdecl AudioPoolFree(
         uint32_t* param_1, uint32_t param_2)
 {
-    // pool header fields
-    const uint32_t elem_size   = param_1[0];
-    const uint32_t elems_per_blk = param_1[1];
-    const uint32_t bitmap_bytes  = param_1[2];  // bytes in bitmap per block
-    const uint32_t* sentinel     = param_1 + 4; // sentinel for circular list
+    uint32_t* const sentinel = param_1 + 4;                       // 0x005ae92e
+    const uint32_t nbytes = param_1[2];                           // 0x005ae92b
 
-    // vtable dealloc trampoline at 0x004522d0 — used when releasing empty blocks
     typedef void (__cdecl *FreeFn)(void*);
-    const auto rawFree = reinterpret_cast<FreeFn>(0x004522d0u);
+    const auto rawFree = reinterpret_cast<FreeFn>(0x004522d0u);   // 0x005ae9c4
 
-    // Walk block list
-    uint32_t* block = reinterpret_cast<uint32_t*>(param_1[4]);
-    while (block != sentinel) {
-        // block_start: block pointer + 2 words (next/prev) + bitmap_bytes,
-        // aligned to elem_size.  From Ghidra: block_start = block + uVar2 + 8.
-        const uint32_t block_addr   = reinterpret_cast<uint32_t>(block);
-        // uVar2 in the original is param_1[2] (bitmap byte count).
-        const uint32_t block_start  = block_addr + 8u + bitmap_bytes;
-        const uint32_t range_end    = block_start + elems_per_blk * elem_size;
+    uint32_t* blk = reinterpret_cast<uint32_t*>(param_1[4]);      // 0x005ae928
+    for (;;) {
+        if (blk == sentinel) return;                              // 0x005ae931 / 0x005ae954
+        const uint32_t base = nbytes + reinterpret_cast<uint32_t>(blk) + 8u;   // 0x005ae93d
+        if (param_2 >= base && param_2 <= param_1[1] * param_1[0] + base)       // 0x005ae941 / 0x005ae94e
+            break;
+        blk = reinterpret_cast<uint32_t*>(blk[0]);                // 0x005ae952
+    }
 
-        if (param_2 >= block_start && param_2 < range_end) {
-            // Found the block.
-            const uint32_t item_index = (param_2 - block_start) / elem_size;
+    const uint32_t base = nbytes + reinterpret_cast<uint32_t>(blk) + 8u;
+    const uint32_t idx = (param_2 - base) / param_1[0];           // 0x005ae95d..0x005ae961
+    uint8_t* const bitmap = reinterpret_cast<uint8_t*>(blk) + 8;
+    bitmap[idx >> 3] = static_cast<uint8_t>(
+        bitmap[idx >> 3] & static_cast<uint8_t>(~(0x80u >> (idx & 7u))));       // 0x005ae966..0x005ae98b
 
-            // Clear allocation bit: MSB-first bitmap at block+8.
-            uint8_t* bitmap = reinterpret_cast<uint8_t*>(block_addr + 8u);
-            bitmap[item_index >> 3] &= ~(0x80u >> (item_index & 7u));
+    reinterpret_cast<uint32_t*>(blk[1])[0] = blk[0];              // 0x005ae98f..0x005ae994
+    reinterpret_cast<uint32_t*>(blk[0])[1] = blk[1];              // 0x005ae996..0x005ae99b
 
-            // Unlink block from current list position.
-            uint32_t* prev = reinterpret_cast<uint32_t*>(block[1]);
-            uint32_t* next = reinterpret_cast<uint32_t*>(block[0]);
-            prev[0] = reinterpret_cast<uint32_t>(next);
-            next[1] = reinterpret_cast<uint32_t>(prev);
-
-            if (param_1[6] & 2u) {
-                // Compaction flag set: count remaining set bits.
-                uint32_t bits_set = 0;
-                for (uint32_t b = 0; b < bitmap_bytes; ++b) {
-                    uint8_t byte = bitmap[b];
-                    while (byte) {
-                        bits_set += (byte & 1u);
-                        byte >>= 1;
-                    }
-                }
-                if (bits_set > 0) {
-                    // Still allocated items — re-link at free-list head.
-                    uint32_t* head_next = reinterpret_cast<uint32_t*>(param_1[4]);
-                    block[0] = reinterpret_cast<uint32_t>(head_next);
-                    block[1] = reinterpret_cast<uint32_t>(sentinel);
-                    head_next[1] = reinterpret_cast<uint32_t>(block);
-                    param_1[4] = reinterpret_cast<uint32_t>(block);
-                } else {
-                    // Block fully empty — release to heap.
-                    rawFree(block);
-                }
-            } else {
-                // No compaction — re-link block at free-list head unconditionally.
-                uint32_t* head_next = reinterpret_cast<uint32_t*>(param_1[4]);
-                block[0] = reinterpret_cast<uint32_t>(head_next);
-                block[1] = reinterpret_cast<uint32_t>(sentinel);
-                head_next[1] = reinterpret_cast<uint32_t>(block);
-                param_1[4] = reinterpret_cast<uint32_t>(block);
-            }
+    const uint32_t head = sentinel[0];                            // 0x005ae99e
+    if (head != reinterpret_cast<uint32_t>(sentinel) &&           // 0x005ae9a0
+        (*reinterpret_cast<const uint8_t*>(param_1 + 6) & 2u) != 0u) {   // 0x005ae9a4
+        uint32_t sum = 0;                                         // 0x005ae9aa
+        for (uint32_t i = 0; i < nbytes; ++i) sum += bitmap[i];   // 0x005ae9b2..0x005ae9bd
+        if (sum == 0u) {                                          // 0x005ae9bf
+            rawFree(blk);                                         // 0x005ae9c4
             return;
         }
-
-        block = reinterpret_cast<uint32_t*>(block[0]);
     }
-    // Item not found in any block — no-op (matches original behavior).
+
+    blk[0] = head;                                                // 0x005ae9d1 / 0x005ae9e2
+    blk[1] = reinterpret_cast<uint32_t>(sentinel);                // 0x005ae9d3 / 0x005ae9e4
+    reinterpret_cast<uint32_t*>(sentinel[0])[1] = reinterpret_cast<uint32_t>(blk);   // 0x005ae9d6 / 0x005ae9e7
+    sentinel[0] = reinterpret_cast<uint32_t>(blk);                // 0x005ae9db / 0x005ae9ec
 }
 
 RH_ScopedInstall(AudioPoolFree, 0x005ae920);  // re-enabled 2026-05-24 c3-audio-b
@@ -1047,20 +1021,20 @@ RH_ScopedInstall(AudioSubStructBufCleanup, 0x005ac740);  // re-enabled 2026-05-2
 // 0x005ac900  AudioContextLookup
 // undefined4 FUN_005ac900(undefined4 param_1)
 //
-// Shallow dispatcher: sets up a two-slot stack frame (local_8 = input,
-// local_4 = output), then calls FUN_005aa0c0 with inline callback LAB_005ac930.
-// The callback writes the result into local_4 as a side-effect.
-// Returns local_4.
-//
-// U-1730: LAB_005ac930 at 0x005ac930 is an inline callback beyond this
-//   function's body end (0x005ac92f); its identity and body are not analyzed.
-//   This wrapper is faithful to the decompilation; callback behavior is
-//   delegated to the original code region at 0x005ac930.
+// Re-ported from the bytes 2026-10-12 (negctl re-earn). Disasm 0x005ac900..0x005ac92f:
+//   0x005ac900  sub esp,8                    ; ctx[2] at [esp], [esp+4]
+//   0x005ac917  mov [esp+0x14],eax           ; ctx[0] = param_1
+//   0x005ac91b  mov [esp+0x18],0             ; ctx[1] = 0
+//   0x005ac923  call 0x005aa0c0              ; (0, 0, 0x005ac930, &ctx[0], 1), cdecl
+//   0x005ac928  mov eax,[esp+0x18]           ; return ctx[1]
+// The two dwords are ADJACENT: predicate 0x005ac930 reads ctx[0] ([ebp], 0x005ac946)
+// and on a match writes ctx[1] ([ebp+4] = entry-0x40, 0x005ac96a). The old port kept
+// them as two unrelated locals, so the compiler placed ctx[0] in the arg slot, the
+// predicate's ctx[1] store landed in the caller's frame, and the port returned 0.
 //
 // Callees:
 //   FUN_005aa0c0  0x005aa0c0  recursive tree-walk predicate search
-//     args: (0, 0, &LAB_005ac930, &local_8, 1)
-//     local_4 written by callback region at LAB_005ac930.
+//   LAB_005ac930  0x005ac930  predicate (U-1730), passed by address, never called here
 // ─────────────────────────────────────────────────────────────────────────────
 extern "C" __declspec(dllexport) std::uint32_t __cdecl AudioContextLookup(std::uint32_t param_1)
 {
@@ -1070,117 +1044,115 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl AudioContextLookup(std::u
 
     const auto treeWalk = reinterpret_cast<TreeWalkFn>(kTreeWalk);
 
-    std::uint32_t local_8 = param_1;   // input arg passed by address to callback
-    std::uint32_t local_4 = 0u;        // output written by LAB_005ac930 callback
+    std::uint32_t ctx[2];
+    ctx[0] = param_1;   // 0x005ac917
+    ctx[1] = 0u;        // 0x005ac91b
 
-    treeWalk(0u, 0u, reinterpret_cast<void *>(kCallback), &local_8, 1);
+    treeWalk(0u, 0u, reinterpret_cast<void *>(kCallback), ctx, 1);   // 0x005ac923
 
-    return local_4;
+    return ctx[1];      // 0x005ac928
 }
 
 RH_ScopedInstall(AudioContextLookup, 0x005ac900);  // re-enabled 2026-05-24 c3-audio-a
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 0x005ae650  AudioPoolConstruct   [STRUCT GAP: pool hdr DAT_007ddab0 role unclear]
-// uint *FUN_005ae650(int param_1, uint param_2, uint param_3, int param_4,
-//                    uint *param_5, undefined4 param_6)
+// 0x005ae650  AudioPoolConstruct
+// uint *FUN_005ae650(int elem, uint count, uint align, int prealloc, uint *hdr, int flags)
 //
-//   param_1: element size (bytes per element)
-//   param_2: element count (bits in bitmap)
-//   param_3: alignment (forced >= 1)
-//   param_4: pre-allocate N blocks (0 = lazy)
-//   param_5: existing pool header or NULL -> allocate new from DAT_007ddab0 or FUN_005aea00
-//   param_6: alloc flags (e.g. 0x30806)
-//
-// Pool header layout (9 fields x 4B = 0x24 bytes):
-//   [0]: aligned_size  = (elem_size + align - 1) & ~(align - 1)
-//   [1]: bit_count     = param_2
-//   [2]: bitmap_bytes  = (bit_count + 7) >> 3
-//   [3]: alignment
-//   [4]: block list head (circular) <- initially points to itself
-//   [5]: block list tail            <- initially = &[4]
-//   [6]: ownership flag (2 = heap, 3 = external)
-//   [7]: global list next (DAT_007dda80 circular)
-//   [8]: global list prev
-//
-// Block layout:
-//   Each block: 2 + bitmap_words uint32s header + aligned_size*bit_count data bytes.
-//   block[0]: next ptr (circular)
-//   block[1]: prev ptr
-//   block[2..2+bitmap_words-1]: bitmap (0=free, 1=used)
-//
-// Global pool list: all pools linked into circular list at DAT_007dda80 (0x007dda80).
-// DAT_007ddab0 (0x007ddab0): secondary pool-header pool. U-1736: purpose relative
-//   to DAT_007dda80 unclear. Used when param_5 is NULL and pool is non-NULL. [STRUCT GAP]
-//
-// Callees:
-//   0x005aea00  raw pool-header allocator (vtable trampoline)
+// Re-ported from the bytes 2026-10-12 (negctl re-earn), disasm 0x005ae650..0x005ae773.
+//   0x005ae654  align == 0 -> 1
+//   0x005ae661  hdr != NULL -> hdr[6] = 3 (0x005ae6a2)
+//               hdr == NULL -> DAT_007ddab0 != 0 ? FUN_005ae800(DAT_007ddab0, 0x30800)
+//                                                (0x005ae669..0x005ae678)
+//                                              : FUN_005aea00(0x24, flags) (0x005ae67f..0x005ae686)
+//               NULL -> return 0 (0x005ae694); else hdr[6] = 2 (0x005ae699)
+//   0x005ae6a9..0x005ae6d8  hdr[0] = (elem + align - 1) & ~(align - 1), hdr[1] = count,
+//               hdr[2] = (count + 7) >> 3, hdr[3] = align, hdr[4] = hdr[5] = &hdr[4]
+//   0x005ae6db  prealloc counted down as an unsigned dword until 0 (dec/jne 0x005ae736):
+//     size = hdr[0]*count + nbytes + align + 8 (0x005ae6dd..0x005ae6e2)
+//     blk = FUN_005aea00(size, flags) (0x005ae6f4); NULL -> FUN_005ae780(hdr), return 0
+//       (0x005ae764)
+//     blk[1] = 0, blk[0] = 0 (0x005ae702/0x005ae709), then HEAD insert: blk[1] = &hdr[4],
+//     blk[0] = hdr[4], hdr[4][1] = blk, hdr[4] = blk (0x005ae70f..0x005ae722);
+//     bitmap zeroed, nbytes bytes at blk+8 (0x005ae729/0x005ae730)
+//   0x005ae73d..0x005ae75b  global pool list, DAT_007dda80 is a POINTER variable (head):
+//     hdr[8] = 0x007dda80, hdr[7] = DAT_007dda80, DAT_007dda80[1] = &hdr[7] (re-read of the
+//     global at 0x005ae750), DAT_007dda80 = &hdr[7]
+//   returns hdr (0x005ae760)
+// The old port always used FUN_005aea00 for the header, skipped the prealloc loop, and
+// treated 0x007dda80 as a list node (tail insert through 0x007dda84).
 // ─────────────────────────────────────────────────────────────────────────────
 extern "C" __declspec(dllexport) std::uint32_t * __cdecl AudioPoolConstruct(
         int param_1, std::uint32_t param_2, std::uint32_t param_3,
         int param_4, std::uint32_t *param_5, std::uint32_t param_6)
 {
-    typedef std::uint32_t * (__cdecl *RawAllocFn)(int, std::uint32_t);
+    typedef std::uint32_t * (__cdecl *RawAllocFn)(std::uint32_t, std::uint32_t);
+    typedef std::uint32_t   (__cdecl *BlockAllocFn)(std::uint32_t *, std::uint32_t);
+    typedef void            (__cdecl *DestroyFn)(std::uint32_t *);
     static constexpr std::uintptr_t kRawAlloc    = 0x005aea00u;
+    static constexpr std::uintptr_t kBlockAlloc  = 0x005ae800u;
+    static constexpr std::uintptr_t kDestroy     = 0x005ae780u;
     static constexpr std::uintptr_t kGlobalList  = 0x007dda80u;
-    static constexpr std::uintptr_t kHdrPool     = 0x007ddab0u;    // U-1736 [STRUCT GAP]
+    static constexpr std::uintptr_t kHdrPool     = 0x007ddab0u;    // U-1736
 
-    const auto rawAlloc = reinterpret_cast<RawAllocFn>(kRawAlloc);
+    const auto rawAlloc   = reinterpret_cast<RawAllocFn>(kRawAlloc);
+    const auto blockAlloc = reinterpret_cast<BlockAllocFn>(kBlockAlloc);
+    const auto destroy    = reinterpret_cast<DestroyFn>(kDestroy);
 
-    // Normalise alignment: force >= 1
-    if (param_3 == 0u) param_3 = 1u;
+    std::uint32_t align = param_3;
+    if (align == 0u) align = 1u;                                   // 0x005ae658 / 0x005ae65c
 
-    // Compute aligned element size
-    const std::uint32_t aligned_size = (static_cast<std::uint32_t>(param_1) + param_3 - 1u) & ~(param_3 - 1u);
-    const std::uint32_t bit_count    = param_2;
-    const std::uint32_t bitmap_bytes = (bit_count + 7u) >> 3;
-
-    // Acquire or allocate pool header (9 dwords = 0x24 bytes)
-    std::uint32_t *hdr = param_5;
-    if (!hdr) {
-        // Try secondary pool at DAT_007ddab0 first; if null, use raw allocator
-        auto *hdrPool = *reinterpret_cast<std::uint32_t **>(kHdrPool);
-        if (hdrPool) {
-            // Return a slot from the pool-header pool (pool_return reverse: use pool_alloc)
-            // Mechanical: pool at kHdrPool supplies fixed-size header slots.
-            // [STRUCT GAP] exact alloc protocol from hdrPool not fully mapped.
-            hdr = rawAlloc(0x24, static_cast<std::uint32_t>(param_6));
-        } else {
-            hdr = rawAlloc(0x24, static_cast<std::uint32_t>(param_6));
-        }
-        if (!hdr) return nullptr;
-        // Ownership flag = 2 (heap-allocated header)
-        hdr[6] = 2u;
+    std::uint32_t *hdr = param_5;                                  // 0x005ae661
+    if (hdr == nullptr) {
+        std::uint32_t *const hdrPool = *reinterpret_cast<std::uint32_t **>(kHdrPool);   // 0x005ae669
+        if (hdrPool != nullptr)
+            hdr = reinterpret_cast<std::uint32_t *>(blockAlloc(hdrPool, 0x30800u));     // 0x005ae678
+        else
+            hdr = rawAlloc(0x24u, param_6);                        // 0x005ae686
+        if (hdr == nullptr) return nullptr;                        // 0x005ae690
+        hdr[6] = 2u;                                               // 0x005ae699
     } else {
-        // Ownership flag = 3 (externally supplied header)
-        hdr[6] = 3u;
+        hdr[6] = 3u;                                               // 0x005ae6a2
     }
 
-    // Initialise pool header fields
-    hdr[0] = aligned_size;
-    hdr[1] = bit_count;
-    hdr[2] = bitmap_bytes;
-    hdr[3] = param_3;
+    const std::uint32_t elem   = (static_cast<std::uint32_t>(param_1) + align - 1u) & ~(align - 1u);   // 0x005ae6ad..0x005ae6ba
+    const std::uint32_t nbytes = (param_2 + 7u) >> 3;             // 0x005ae6c0 / 0x005ae6c6
+    std::uint32_t *const sentinel = hdr + 4;                       // 0x005ae6c3
 
-    // Block list: circular, initially empty (points to self at hdr[4])
-    hdr[4] = reinterpret_cast<std::uint32_t>(hdr + 4);
-    hdr[5] = reinterpret_cast<std::uint32_t>(hdr + 4);
+    hdr[0] = elem;                                                 // 0x005ae6cb
+    hdr[1] = param_2;                                              // 0x005ae6cd
+    hdr[3] = align;                                                // 0x005ae6d0
+    hdr[2] = nbytes;                                               // 0x005ae6d3
+    sentinel[0] = reinterpret_cast<std::uint32_t>(sentinel);       // 0x005ae6d6
+    hdr[5] = reinterpret_cast<std::uint32_t>(sentinel);            // 0x005ae6d8
 
-    // Link into global pool list at DAT_007dda80 (circular doubly-linked)
-    auto *globalHead = reinterpret_cast<std::uint32_t *>(kGlobalList);
-    std::uint32_t *globalPrev = reinterpret_cast<std::uint32_t *>(globalHead[1]);
+    std::uint32_t remaining = static_cast<std::uint32_t>(param_4);
+    if (remaining != 0u) {                                         // 0x005ae6c9 / 0x005ae6db
+        const std::uint32_t size = elem * param_2 + nbytes + align + 8u;   // 0x005ae6dd..0x005ae6e2
+        do {
+            std::uint32_t *const blk = rawAlloc(size, param_6);    // 0x005ae6f4
+            if (blk == nullptr) {                                  // 0x005ae700
+                destroy(hdr);                                      // 0x005ae765
+                return nullptr;                                    // 0x005ae76d
+            }
+            blk[1] = 0u;                                           // 0x005ae702
+            blk[0] = 0u;                                           // 0x005ae709
+            blk[1] = reinterpret_cast<std::uint32_t>(sentinel);    // 0x005ae711
+            blk[0] = sentinel[0];                                  // 0x005ae70f / 0x005ae714
+            reinterpret_cast<std::uint32_t *>(sentinel[0])[1] = reinterpret_cast<std::uint32_t>(blk);   // 0x005ae716 / 0x005ae71d
+            sentinel[0] = reinterpret_cast<std::uint32_t>(blk);    // 0x005ae722
+            std::uint8_t *const bm = reinterpret_cast<std::uint8_t *>(blk) + 8;
+            for (std::uint32_t i = 0; i < nbytes; ++i) bm[i] = 0u; // 0x005ae729 / 0x005ae730
+        } while (--remaining != 0u);                               // 0x005ae736 / 0x005ae73b
+    }
 
-    hdr[7] = reinterpret_cast<std::uint32_t>(globalHead);
-    hdr[8] = reinterpret_cast<std::uint32_t>(globalPrev);
-    globalHead[1] = reinterpret_cast<std::uint32_t>(hdr + 7);
-    globalPrev[0] = reinterpret_cast<std::uint32_t>(hdr + 7);
+    std::uint32_t *volatile *const gHead = reinterpret_cast<std::uint32_t *volatile *>(kGlobalList);
+    hdr[8] = static_cast<std::uint32_t>(kGlobalList);              // 0x005ae746
+    hdr[7] = reinterpret_cast<std::uint32_t>(*gHead);              // 0x005ae73d / 0x005ae74e
+    (*gHead)[1] = reinterpret_cast<std::uint32_t>(hdr + 7);        // 0x005ae750 / 0x005ae758
+    *gHead = hdr + 7;                                              // 0x005ae75b
 
-    // Pre-allocate blocks if param_4 > 0
-    // [STRUCT GAP] block allocation protocol deferred — not fully mapped.
-    // param_4 pre-alloc count noted but block-alloc callee not identified here.
-    (void)param_4;
-
-    return hdr;
+    return hdr;                                                    // 0x005ae760
 }
 
 RH_ScopedInstall(AudioPoolConstruct, 0x005ae650);  // re-enabled 2026-05-24 c3-audio-b

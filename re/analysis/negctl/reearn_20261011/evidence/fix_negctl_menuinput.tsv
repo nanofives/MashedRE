@@ -1,0 +1,43 @@
+hook	rva	arg_type	lane	mode	verdict	mismatches	total	stats	err
+car_slot_init_1p	0x0042b960	scalars_to_scattered_globals	warm	baseline	GREEN	0	6		
+car_slot_init_1p	0x0042b960	scalars_to_scattered_globals	warm	field_first	RED	6	6	calls=6 flips=6 changed=20 flip=0x007f1a0c noise=231 frozen=2	
+car_slot_init_1p	0x0042b960	scalars_to_scattered_globals	warm	field_last	RED	6	6	calls=6 flips=6 changed=20 flip=0x007f1a47 noise=235 frozen=2	
+car_slot_init_1p	0x0042b960	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	6	calls=6 flips=0 changed=20 flip=0x00000000 noise=253 frozen=2	
+car_slot_init_1p	0x0042b960	scalars_to_scattered_globals	warm	null	RED	6	6	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+car_slot_init_1p	0x0042b960	scalars_to_scattered_globals	warm	real	GREEN	0	6		
+car_slot_init_1p	0x0042b960	scalars_to_scattered_globals	warm	ret	SKIP	0	0		void signature
+menu_button_detect_a	0x0042aff0	scalars_to_scattered_globals	warm	baseline	GREEN	0	13		
+menu_button_detect_a	0x0042aff0	scalars_to_scattered_globals	warm	field_first	RED	9	13	calls=13 flips=9 changed=3 flip=0x0067f1b0 noise=255 frozen=2	
+menu_button_detect_a	0x0042aff0	scalars_to_scattered_globals	warm	field_last	RED	9	13	calls=13 flips=9 changed=3 flip=0x0067f1b2 noise=256 frozen=2	
+menu_button_detect_a	0x0042aff0	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	13	calls=13 flips=0 changed=3 flip=0x00000000 noise=268 frozen=2	
+menu_button_detect_a	0x0042aff0	scalars_to_scattered_globals	warm	null	RED	11	13	calls=0 flips=0 changed=0 flip=0x00000000 noise=253 frozen=2	
+menu_button_detect_a	0x0042aff0	scalars_to_scattered_globals	warm	real	GREEN	0	13		
+menu_button_detect_a	0x0042aff0	scalars_to_scattered_globals	warm	ret	RED	13	13	calls=13 flips=0 changed=0 flip=0x00000000 noise=253 frozen=2	
+menu_button_detect_b	0x0042b180	scalars_to_scattered_globals	warm	baseline	GREEN	0	13		
+menu_button_detect_b	0x0042b180	scalars_to_scattered_globals	warm	field_first	RED	9	13	calls=13 flips=9 changed=3 flip=0x0067f1b4 noise=269 frozen=2	
+menu_button_detect_b	0x0042b180	scalars_to_scattered_globals	warm	field_last	RED	9	13	calls=13 flips=9 changed=3 flip=0x0067f1b6 noise=269 frozen=2	
+menu_button_detect_b	0x0042b180	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	13	calls=13 flips=0 changed=3 flip=0x00000000 noise=269 frozen=2	
+menu_button_detect_b	0x0042b180	scalars_to_scattered_globals	warm	null	RED	11	13	calls=0 flips=0 changed=0 flip=0x00000000 noise=268 frozen=2	
+menu_button_detect_b	0x0042b180	scalars_to_scattered_globals	warm	real	GREEN	0	13		
+menu_button_detect_b	0x0042b180	scalars_to_scattered_globals	warm	ret	RED	13	13	calls=13 flips=0 changed=0 flip=0x00000000 noise=268 frozen=2	
+menu_button_detect_c	0x0042b310	scalars_to_scattered_globals	warm	baseline	GREEN	0	14		
+menu_button_detect_c	0x0042b310	scalars_to_scattered_globals	warm	field_first	RED	2	14	calls=14 flips=2 changed=0 flip=0x0067f1b8 noise=305 frozen=2	
+menu_button_detect_c	0x0042b310	scalars_to_scattered_globals	warm	field_last	RED	2	14	calls=14 flips=2 changed=0 flip=0x0067f1b9 noise=307 frozen=2	
+menu_button_detect_c	0x0042b310	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	14	calls=14 flips=0 changed=0 flip=0x00000000 noise=307 frozen=2	
+menu_button_detect_c	0x0042b310	scalars_to_scattered_globals	warm	null	RED	11	14	calls=0 flips=0 changed=0 flip=0x00000000 noise=269 frozen=2	
+menu_button_detect_c	0x0042b310	scalars_to_scattered_globals	warm	real	GREEN	0	14		
+menu_button_detect_c	0x0042b310	scalars_to_scattered_globals	warm	ret	RED	14	14	calls=14 flips=0 changed=0 flip=0x00000000 noise=269 frozen=2	
+menu_button_detect_d	0x0042b540	scalars_to_scattered_globals	warm	baseline	GREEN	0	17		
+menu_button_detect_d	0x0042b540	scalars_to_scattered_globals	warm	field_first	RED	3	17	calls=17 flips=3 changed=0 flip=0x0067f1bc noise=312 frozen=2	
+menu_button_detect_d	0x0042b540	scalars_to_scattered_globals	warm	field_last	RED	3	17	calls=17 flips=3 changed=0 flip=0x0067f1bd noise=312 frozen=2	
+menu_button_detect_d	0x0042b540	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	17	calls=17 flips=0 changed=0 flip=0x00000000 noise=312 frozen=2	
+menu_button_detect_d	0x0042b540	scalars_to_scattered_globals	warm	null	RED	13	17	calls=0 flips=0 changed=0 flip=0x00000000 noise=307 frozen=2	
+menu_button_detect_d	0x0042b540	scalars_to_scattered_globals	warm	real	GREEN	0	17		
+menu_button_detect_d	0x0042b540	scalars_to_scattered_globals	warm	ret	RED	17	17	calls=17 flips=0 changed=0 flip=0x00000000 noise=307 frozen=2	
+menu_button_detect_e	0x0042b770	scalars_to_scattered_globals	warm	baseline	GREEN	0	13		
+menu_button_detect_e	0x0042b770	scalars_to_scattered_globals	warm	field_first	NA	0	13	calls=13 flips=0 changed=0 flip=0x00000000 noise=164 frozen=2	
+menu_button_detect_e	0x0042b770	scalars_to_scattered_globals	warm	field_last	NA	0	13	calls=13 flips=0 changed=0 flip=0x00000000 noise=171 frozen=2	
+menu_button_detect_e	0x0042b770	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	13	calls=13 flips=0 changed=0 flip=0x00000000 noise=231 frozen=2	
+menu_button_detect_e	0x0042b770	scalars_to_scattered_globals	warm	null	RED	7	13	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+menu_button_detect_e	0x0042b770	scalars_to_scattered_globals	warm	real	GREEN	0	13		
+menu_button_detect_e	0x0042b770	scalars_to_scattered_globals	warm	ret	RED	13	13	calls=13 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	

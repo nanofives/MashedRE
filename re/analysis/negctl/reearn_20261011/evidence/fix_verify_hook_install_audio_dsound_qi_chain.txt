@@ -1,0 +1,27 @@
+# provenance 2026-10-12: main build 2a9a19a1 deployed (asi sha256 a8cdd7165cbf6e55...), MASHED_HOOK_ONLY=0x005bc400, MASHED_VERIFY_ASI=original/mashed_re_dev.asi
+=== verify_hook_install report (audio_dsound_qi_chain) ===
+
+target address: 0x005bc400  export: AudioDSoundQIChain
+PRE  bytes:     e9 fb 48 f2 69 8b 74 24
+asi base:       0x6a4d0000
+reimpl addr:    0x6a4e0d00
+POST bytes:     e9 fb 48 f2 69 8b 74 24
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x69f248fb  expected 0x69f248fb  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  1 / 1  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [{'scratch': 256}, {'scratch': 1280}], 'seed': [{'addr': {'scratch': 0}, 'val': 6024608, 'size': 4}, {'addr': {'scratch': 8}, 'val': 5260464, 'size': 4}, {'addr': {'scratch': 64}, 'val': 6024608, 'size': 4}, {'addr': {'scratch': 72}, 'val': 5260464, 'size': 4}, {'addr': {'scratch': 256}, 'val': {'scratch': 0}, 'size': 4}, {'addr': {'scratch': 260}, 'val': 16, 'size': 4}, {'addr': {'scratch': 552}, 'val': {'scratch': 768}, 'size': 4}, {'addr': {'scratch': 768}, 'val': {'scratch': 64}, 'size': 4}, {'addr': {'scratch': 772}, 'val': 32, 'size': 4}, {'addr': {'scratch': 1064}, 'val': 324508639, 'size': 4}]}  got=1,8c980c8d  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 1x as expected
+  + all 1 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_audio_dsound_qi_chain.txt

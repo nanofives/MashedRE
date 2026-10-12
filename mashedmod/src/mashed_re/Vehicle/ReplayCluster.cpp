@@ -62,6 +62,7 @@ constexpr std::uint32_t  kStride_4c    = 0x4cu;
 constexpr std::uintptr_t kABase        = 0x007f1041u;
 constexpr std::uintptr_t kBBase        = 0x007f1501u;
 constexpr std::uintptr_t kCase2Sent    = 0x7f1a54u;
+constexpr std::uintptr_t kSlotStride_10 = 0x10u;  // 0x004321ad add esi,0x10
 
 // Case 0x1000: 8 absolute row addresses (sourced verbatim from decomp)
 static const std::uintptr_t kC1000_A[8] = {
@@ -137,11 +138,12 @@ extern "C" __declspec(dllexport) int __cdecl RaceEndCheckFinish(int param_1) {
             }
         }
     } else if (mode == 2u) {
-        // Case 2: per-car mode, 4 cars
-        // piVar2 walks DAT_007f1a14..0x7f1a53 in 4-byte steps (4 cars × stride)
+        // Case 2: 4 slots. 0x00432170 esi = 0x007f1a14; 0x004321ad add esi,0x10;
+        // 0x004321b1 cmp esi,0x7f1a54; jl. Re-port 2026-10-12: the previous body stepped
+        // 4 bytes (16 iterations, FUN_0040e470(0..15), ids read from 0x007f1a18/1c/20).
         int iVar3 = 0;
         std::uintptr_t piVar2 = kDat_007f1a14;
-        while (piVar2 < kCase2Sent) {
+        while (static_cast<std::int32_t>(piVar2) < static_cast<std::int32_t>(kCase2Sent)) {
             if (as_fn<Fn_int_int_t>(kFn_FUN_0040e470)(iVar3) == 1) {  // S-0493
                 const int car_idx = static_cast<int>(rd32(piVar2));
                 if (car_idx != -1) {
@@ -151,15 +153,15 @@ extern "C" __declspec(dllexport) int __cdecl RaceEndCheckFinish(int param_1) {
                     }
                 }
             }
-            piVar2 += 4u;
-            ++iVar3;
+            piVar2 += kSlotStride_10;                               // 0x004321ad
+            ++iVar3;                                                 // 0x004321b0
         }
     } else if (mode == 0x1000u) {
-        // Case 0x1000: 8 hard-coded (A, B) absolute pairs
+        // Case 0x1000: 8 hard-coded (A, B) absolute pairs, all evaluated
+        // (0x004320b5..0x00432164: no early exit, each hit re-stores 1).
         for (int i = 0; i < 8; ++i) {
             if (rd8(kC1000_A[i]) != 0u && rd8(kC1000_B[i]) == 0u) {
                 rw32(kDat_0067eca4) = 1u;
-                break;
             }
         }
     } else {

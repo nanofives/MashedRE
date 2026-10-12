@@ -114,7 +114,11 @@ function callFn(fn, input, buf) {
         const seeds = (input.seed || []).map(function (g) { return { a: rA(g.addr), v: rV(g.val), n: (g.size | 0) || 4 }; });
         const obsSaved = obs.map(function (w) { return w.a.readByteArray(w.len); });
         const seedSaved = seeds.map(function (g) { return g.a.readByteArray(g.n); });
-        const args = input.args.slice(0, CONFIG.signature.args.length).map(function (v) { return rV(v) >>> 0; });
+        // Pointer-typed signature args need a NativePointer: a bare number failed "expected a pointer" before entry
+        // (replay_get_best_time / _current_time path2, 2026-10-12).
+        const args = input.args.slice(0, CONFIG.signature.args.length).map(function (v, ix) {
+            return CONFIG.signature.args[ix] === 'pointer' ? rA(v) : (rV(v) >>> 0);
+        });
         let fp = 0x811c9dc5 | 0, ret;
         try {
             seeds.forEach(function (g) {

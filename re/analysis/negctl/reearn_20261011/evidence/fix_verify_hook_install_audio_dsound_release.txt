@@ -1,0 +1,27 @@
+# provenance 2026-10-12: main build 2a9a19a1 deployed (asi sha256 a8cdd7165cbf6e55...), MASHED_HOOK_ONLY=0x005baf90, MASHED_VERIFY_ASI=original/mashed_re_dev.asi
+=== verify_hook_install report (audio_dsound_release) ===
+
+target address: 0x005baf90  export: AudioDSoundRelease
+PRE  bytes:     e9 cb 5d f2 69 54 24 04
+asi base:       0x6a4d0000
+reimpl addr:    0x6a4e0d60
+POST bytes:     e9 cb 5d f2 69 54 24 04
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x69f25dcb  expected 0x69f25dcb  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  1 / 1  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [{'scratch': 512}], 'seed': [{'addr': {'scratch': 32}, 'val': 6031520, 'size': 4}, {'addr': {'scratch': 256}, 'val': {'scratch': 0}, 'size': 4}, {'addr': {'scratch': 272}, 'val': 5, 'size': 4}, {'addr': {'scratch': 636}, 'val': {'scratch': 256}, 'size': 4}]}  got=4,f576a297  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 1x as expected
+  + all 1 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_audio_dsound_release.txt

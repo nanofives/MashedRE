@@ -44,100 +44,77 @@ extern "C" __declspec(dllexport) void __cdecl AudioBufFieldSet(int param_1, int 
 
 RH_ScopedInstall(AudioBufFieldSet, 0x005baf60);  // re-enabled 2026-05-24 phase-a1 buf_field_set GREEN
 
-// 0x005baf90  FUN_005baf90  (~0x18 bytes, 0x005baf90–0x005bafa8)
+// 0x005baf90  FUN_005baf90  (0x4c bytes, 0x005baf90..0x005bafdb, jump table 0x005bafdc)
 // int __cdecl AudioDSoundRelease(int param_1)
 //
-// Calls vtable slot 8 (offset 0x20) on the IDirectSound8* stored at param_1+0x7c.
-// Discards the vtable call's return value. Always returns 1.
-// [UNCERTAIN U-0361]: vtable+0x20 = IDirectSound8::GetSpeakerConfig (slot 8);
-//   return value discarded; call may be for side-effects only. See ## Open uncertainties.
-//
-// ASM key (0x005baf90..0x005bafa8):
-//   005baf90: MOV EAX,[ESP+4]          ; param_1
-//   005baf94: MOV ECX,[EAX+0x7c]       ; IDirectSound8*
-//   005baf97: PUSH ECX                 ; this-pointer
-//   005baf98: MOV EAX,[ECX]            ; vtable
-//   005baf9a: CALL DWORD PTR [EAX+0x20]; vtable[8](this)
-//   005bafa0: (return discarded)
-//   005bafa5: MOV EAX,1
-//   005bafa8: RET
+// Re-ported from the bytes 2026-10-12 (negctl re-earn). The name is historical: the body
+// calls slot 8 of the object at param_1+0x7c with an OUT pointer and maps the result.
+//   0x005baf90  eax = param_1
+//   0x005baf94  edx = &[esp+4]            ; the caller's arg slot, still holding param_1
+//   0x005baf98  push edx                  ; arg 2: out pointer
+//   0x005baf99  eax = [param_1+0x7c]      ; COM object
+//   0x005baf9c  push eax                  ; arg 1: this
+//   0x005baf9f  call [[eax]+0x20]         ; slot 8, TWO stack args, callee cleans (stdcall);
+//                                         ; return value discarded
+//   0x005bafa2  eax = [esp+4]             ; the out dword (param_1 if the method left it)
+//   0x005bafa6  and eax,0xff ; dec eax ; cmp eax,6 ; ja 0x005bafd6 (unsigned)
+//   0x005bafb1  jmp [eax*4+0x005bafdc]: byte 1 -> 3 (0x005bafbe), 2 -> 2 (0x005bafb8),
+//               3 -> 1, 4 -> 1 (0x005bafd6), 5 -> 4 (0x005bafc4), 6 -> 5 (0x005bafca),
+//               7 -> 6 (0x005bafd0); any other byte (0 or 8..255) -> 1 (0x005bafd6)
+// [UNCERTAIN U-0361]: slot 8 identity. The old port called it with one argument
+// (unbalanced against a callee-cleans 2-arg method) and always returned 1.
 extern "C" __declspec(dllexport) int __cdecl AudioDSoundRelease(int param_1) {
-    int* ds8_ptr = *reinterpret_cast<int**>(param_1 + 0x7c);
-    typedef int (__stdcall *VtableFn)(int*);
-    auto vtable = *reinterpret_cast<VtableFn**>(ds8_ptr);
-    vtable[8](ds8_ptr);  // vtable slot 8 = offset 0x20
-    return 1;
+    typedef int (__stdcall *Slot8Fn)(void*, std::uint32_t*);
+    std::uint32_t out = static_cast<std::uint32_t>(param_1);                 // 0x005baf94
+    void* const obj = *reinterpret_cast<void**>(param_1 + 0x7c);             // 0x005baf99
+    Slot8Fn const fn = (*reinterpret_cast<Slot8Fn**>(obj))[8];               // 0x005baf9d / 0x005baf9f
+    fn(obj, &out);                                                           // 0x005baf9f
+    switch ((out & 0xffu) - 1u) {                                            // 0x005bafa6..0x005bafb1
+        case 0: return 3;   // 0x005bafbe
+        case 1: return 2;   // 0x005bafb8
+        case 4: return 4;   // 0x005bafc4
+        case 5: return 5;   // 0x005bafca
+        case 6: return 6;   // 0x005bafd0
+        default: return 1;  // 0x005bafd6 (table entries 2, 3 and the ja path)
+    }
 }
 
 RH_ScopedInstall(AudioDSoundRelease, 0x005baf90);  // re-enabled 2026-05-24 c3-audio-b
 
-// 0x005bc400  FUN_005bc400  (~0x4e bytes, 0x005bc400–0x005bc44d)
-// int __cdecl AudioDSoundQIChain(int *param_1, int *param_2)
+// 0x005bc400  FUN_005bc400  (0x4e bytes, 0x005bc400..0x005bc44d)
+// int __cdecl AudioDSoundQIChain(IUnknown *param_1, void **param_2)
 //
-// Performs a two-step COM QueryInterface chain:
-//   1. QI(param_1, IID@0x005d09dc) -> param_2[0]
-//   2. QI(param_2[0], IID@0x005d09bc) -> param_2[1]
-// Returns 1 if both succeed; 0 on any failure (with Release cleanup on step-2 fail).
-// [UNCERTAIN U-0360]: IID at DAT_005d09dc unidentified. See ## Open uncertainties.
-//
-// ASM key (0x005bc400..0x005bc44d):
-//   005bc400: MOV [param_2+0], 0         ; clear param_2[0]
-//   005bc407: MOV [param_2+4], 0         ; clear param_2[1]
-//   005bc40e: QI call: (*param_1->vtable[0])(param_1, &DAT_005d09dc, param_2)
-//   005bc420: TEST iVar1 sign (HRESULT check: >= 0 = success)
-//   005bc422: JL  fail0                  ; first QI failed -> return 0
-//   005bc424: QI call: (*(int*)param_2[0]->vtable[0])((int*)param_2[0], &DAT_005d09bc, param_2+1)
-//   005bc435: TEST iVar1 sign
-//   005bc437: JGE success                ; second QI succeeded -> return 1
-//   005bc439: Release(param_2[0])        ; vtable+0x8 on param_2[0]
-//   005bc446: return 0
-//   005bc44a: success: return 1
-static const GUID s_IID_005d09dc = *reinterpret_cast<const GUID*>(0x005d09dc);
-static const GUID s_IID_005d09bc = *reinterpret_cast<const GUID*>(0x005d09bc);
-
+// Re-ported from the bytes 2026-10-12 (negctl re-earn). param_1 IS the COM object:
+//   0x005bc400  eax = param_1 ; 0x005bc405 esi = param_2 ; 0x005bc410 edi = param_2 + 4
+//   0x005bc413  param_2[0] = 0 ; 0x005bc41a param_2[1] = 0
+//   0x005bc420  ecx = [eax] ; 0x005bc422 call [ecx]   ; QI(param_1, 0x005d09dc, &param_2[0])
+//   0x005bc426  hr < 0 -> return 0 (0x005bc449)
+//   0x005bc428  eax = param_2[0] ; 0x005bc433 call [[eax]] ; QI(param_2[0], 0x005d09bc, &param_2[1])
+//   0x005bc437  hr >= 0 -> return 1 (0x005bc43a)
+//   0x005bc441  esi = param_2[0] (re-read) ; 0x005bc446 call [[esi]+8] ; Release, result dropped
+//   0x005bc44a  return 0
+// [UNCERTAIN U-0360]: IID at 0x005d09dc unidentified. The old port treated param_1 as
+// IUnknown** and dereferenced it once more.
 extern "C" __declspec(dllexport) int __cdecl AudioDSoundQIChain(int* param_1, int* param_2) {
-    // param_1 is a pointer-to-COM-object-pointer (IUnknown**).
-    // *param_1 is the actual COM object (IUnknown*).
-    // The vtable is at *(*param_1).
-    //
-    // ASM pattern for QI call:
-    //   MOV EAX, [param_1]            ; eax = *param_1 = object ptr
-    //   MOV ECX, [EAX]               ; ecx = vtable
-    //   PUSH param_2                  ; ppv out
-    //   PUSH &IID                     ; riid
-    //   PUSH EAX                      ; this = object ptr
-    //   CALL DWORD PTR [ECX+0]        ; vtable[0] = QueryInterface
     typedef int (__stdcall *QIFn)(void*, const void*, void**);
     typedef int (__stdcall *ReleaseFn)(void*);
 
-    // Use volatile to prevent compiler from combining these into a vector store
-    // and changing the crash address when testing with null pointers.
-    *reinterpret_cast<volatile int*>(&param_2[0]) = 0;
-    *reinterpret_cast<volatile int*>(&param_2[1]) = 0;
+    void* const obj = param_1;                                               // 0x005bc400
+    param_2[0] = 0;                                                          // 0x005bc413
+    param_2[1] = 0;                                                          // 0x005bc41a
 
-    // First QI: *param_1 -> IID@005d09dc -> param_2[0]
-    void* obj0 = reinterpret_cast<void*>(*param_1);
-    auto* vtable0 = *reinterpret_cast<QIFn**>(obj0);
-    int hr = vtable0[0](obj0, reinterpret_cast<const void*>(0x005d09dc),
-                        reinterpret_cast<void**>(&param_2[0]));
-    if (hr < 0) {
-        return 0;
-    }
+    int hr = (*reinterpret_cast<QIFn**>(obj))[0](
+        obj, reinterpret_cast<const void*>(0x005d09dc), reinterpret_cast<void**>(&param_2[0]));   // 0x005bc422
+    if (hr < 0) return 0;                                                    // 0x005bc426
 
-    // Second QI: param_2[0] -> IID@005d09bc -> param_2[1]
-    void* obj1 = reinterpret_cast<void*>(param_2[0]);
-    auto* vtable1 = *reinterpret_cast<QIFn**>(obj1);
-    hr = vtable1[0](obj1, reinterpret_cast<const void*>(0x005d09bc),
-                    reinterpret_cast<void**>(&param_2[1]));
-    if (hr >= 0) {
-        return 1;
-    }
+    void* const obj0 = reinterpret_cast<void*>(param_2[0]);                  // 0x005bc428
+    hr = (*reinterpret_cast<QIFn**>(obj0))[0](
+        obj0, reinterpret_cast<const void*>(0x005d09bc), reinterpret_cast<void**>(&param_2[1]));  // 0x005bc433
+    if (hr >= 0) return 1;                                                   // 0x005bc437
 
-    // Release param_2[0] on second QI failure: vtable+0x8 = slot 2 = Release
-    void* obj1r = reinterpret_cast<void*>(param_2[0]);
-    auto* vtable_rel = *reinterpret_cast<ReleaseFn**>(obj1r);
-    vtable_rel[2](obj1r);
-    return 0;
+    void* const objr = reinterpret_cast<void*>(param_2[0]);                  // 0x005bc441
+    (*reinterpret_cast<ReleaseFn**>(objr))[2](objr);                         // 0x005bc446
+    return 0;                                                                // 0x005bc44a
 }
 
 RH_ScopedInstall(AudioDSoundQIChain, 0x005bc400);  // re-enabled 2026-05-24 c3-audio-b
