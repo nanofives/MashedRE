@@ -38,25 +38,28 @@ static constexpr std::uintptr_t kTeamFieldBase     = 0x007f1a18; // team result 
 static constexpr std::uintptr_t kTeamTableBase     = 0x0067e938; // car-team lookup
 static constexpr std::uintptr_t kTeamClearEnd      = 0x7f1a58;   // exclusive upper bound
 
-// Button-detection globals.
-static constexpr std::uintptr_t kDispatchSel       = 0x007f1a0c; // 0x1000 = path A
-static constexpr std::uintptr_t kActiveByteBase2   = 0x007f1046; // active byte col +2 (path A base)
-static constexpr std::uintptr_t kActiveByteBase3   = 0x007f1047; // active byte col +3
-static constexpr std::uintptr_t kProcessedBase4    = 0x007f1506; // processed byte col +4
-static constexpr std::uintptr_t kProcessedBase5    = 0x007f1507; // processed byte col +5
-static constexpr int            kStride            = 0x4c;       // per-player record stride
-static constexpr std::uintptr_t kPathARow8Sentinel2= 0x7f125a;   // path A row-8 sentinel (col+2)
-static constexpr std::uintptr_t kPathARow8Sentinel3= 0x7f125b;   // path A row-8 sentinel (col+3)
-static constexpr std::uintptr_t kPathAUpperBound4  = 0x7f1765;   // path A processed upper (col+4)
-static constexpr std::uintptr_t kPathAUpperBound5  = 0x7f1766;   // path A processed upper (col+5)
-static constexpr std::uintptr_t kScreenTypeBase    = 0x0067ed3c; // screen-type field base
-static constexpr std::uintptr_t kSlotStride        = 0x40;       // slot stride for screen-type
-static constexpr std::uintptr_t kTimerA            = 0x0067f1b0; // hold-timer A (float)
-static constexpr std::uintptr_t kTimerB            = 0x0067f1b4; // hold-timer B (float)
-static constexpr std::uintptr_t kFrameDelta        = 0x007f1004; // per-frame delta float
-static constexpr std::uintptr_t kHoldThreshold     = 0x005ccac0; // hold threshold float
-static constexpr std::uintptr_t kPlayerSlotLoop    = 0x007f1a14; // player slot array start (path B)
-static constexpr std::uintptr_t kPlayerSlotLoopEnd = 0x7f1a54;   // exclusive end of 8 * 4 bytes
+// Button-detection globals (0x0042aff0 / 0x0042b180 bodies).
+// Pad k (k = 0..7) owns a 0x4c-byte record; its held byte is at
+// 0x007f1040 + col + k*0x4c and its previous-frame byte 0x4c0 bytes later.
+static constexpr std::uintptr_t kDispatchSel       = 0x007f1a0c; // 0x1000 = all-8-pads path
+static constexpr std::uintptr_t kHeldBaseA         = 0x007f1046; // 0x0042b000 / 0x0042b14f
+static constexpr std::uintptr_t kHeldBaseB         = 0x007f1047; // 0x0042b190 / 0x0042b2df
+static constexpr std::uintptr_t kPrevBaseA         = 0x007f1506; // 0x0042b10d / 0x0042b159
+static constexpr std::uintptr_t kPrevBaseB         = 0x007f1507; // 0x0042b29d / 0x0042b2e9
+static constexpr std::uintptr_t kHeldToPrev        = 0x4c0;      // 0x0042b112 `[eax - 0x4c0]`
+static constexpr int            kStride            = 0x4c;       // 0x0042b08a imul / 0x0042b121 add
+static constexpr int            kPadCount          = 8;          // 0x0042b124 bound 0x7f1766 = 0x7f1506 + 8*0x4c
+static constexpr std::uintptr_t kScreenTypeBase    = 0x0067ed3c; // 0x0042b0b6
+static constexpr std::uintptr_t kSlotStride        = 0x40;       // 0x0042b0b3 `shl ecx, 6`
+static constexpr std::uintptr_t kTimerA            = 0x0067f1b0; // 0x0042b0cc (float)
+static constexpr std::uintptr_t kTimerB            = 0x0067f1b4; // 0x0042b25c (float)
+static constexpr std::uint32_t  kTimerRearmBits    = 0x3e4ccccdu;// 0x0042b0e5 (0.2f)
+static constexpr std::uintptr_t kFrameDelta        = 0x007f1004; // 0x0042b0c6 (float)
+static constexpr std::uintptr_t kHoldThreshold     = 0x005ccac0; // 0x0042b0d8 (float)
+// Player-slot records: id dword at 0x007f1a14 + i*0x10, i = 0..3.
+static constexpr std::uintptr_t kPlayerSlotLoop    = 0x007f1a14; // 0x0042b070
+static constexpr std::uintptr_t kPlayerSlotRecStride = 0x10;     // 0x0042b09c `add esi, 0x10`
+static constexpr std::uintptr_t kPlayerSlotLoopEnd = 0x007f1a54; // 0x0042b0a0 (exclusive, 4 records)
 
 // Callee 0x0040e470: returns DWORD at PTR_PTR_005f2770 + param*4 + 0x34.
 // We call the original during C3 verification; for the standalone build the
@@ -278,204 +281,118 @@ extern "C" __declspec(dllexport) void __cdecl MenuTeamSelectTick() {
 
 // ---------------------------------------------------------------------------
 // 0x0042aff0  MenuButtonDetectA
-// Detects a "button pressed" event on byte-column +2 (0x7f1046) with hold-
-// repeat for screens 6-7, using timer _DAT_0067f1b0.
-// Calls FUN_0040e470(iVar5) to check AI status; skip if == 2.
-// Returns 1 if change detected, 0 otherwise.
+// 0x0042b180  MenuButtonDetectB
+// The two bodies are the same instruction stream with three operands changed:
+// held column (0x007f1046 / 0x007f1047), previous-frame column (0x007f1506 /
+// 0x007f1507) and hold timer (0x0067f1b0 / 0x0067f1b4). Re-ported from the
+// bytes 2026-10-12 (negctl re-earn). The earlier port had three defects:
+//   1. pad 7's held byte (0x007f125a / 0x007f125b) was not counted as held,
+//      so "only pad 7 held" cleared the timer that the original keeps
+//      (0x0042b062 jne 0x0042b0ad skips the clear at 0x0042b0f7);
+//   2. both player-slot walks stepped 4 bytes over 8 records instead of
+//      0x10 bytes over 4 records (0x0042b09c / 0x0042b163 `add esi, 0x10`);
+//   3. the hold compare ran on the float-rounded timer, not on the x87 sum.
+//
+// Phase 1 (0x0042aff0..0x0042b0a8): held = any eligible pad's held byte != 0.
+//   0x1000 path: pads 0..6 OR into EDI, pad 7 jumps straight to phase 2.
+//   Otherwise: slot record i (0..3) is eligible when its id != -1 and
+//   FUN_0040e470(i) != 2; the pad is the id (0x0042b08a imul 0x4c).
+// Phase 2 (0x0042b0a9..0x0042b0f7): not held -> timer = 0 (0x0042b0f7), go to
+//   phase 3. Held -> screen type *(0x0067ed3c + DAT_0067e9f8*0x40) in [6,7]
+//   (signed, 0x0042b0bc jl / 0x0042b0c1 jg): timer += frame delta; when the
+//   sum > *(0x005ccac0), timer = 0.2f and return 1. Otherwise phase 3 with the
+//   timer as written.
+// Phase 3 (0x0042b101..0x0042b173): return 1 on the first eligible pad with
+//   held != 0 && previous == 0, else 0.
 // ---------------------------------------------------------------------------
+
+// 0x0042b0c6..0x0042b0e3 (A) / 0x0042b256..0x0042b273 (B):
+//   fld [0x7f1004]; fadd [timer]; fst [timer]; fcomp [0x5ccac0];
+//   fnstsw ax; test ah, 0x41; jne <not greater>
+// The compare reads the unrounded ST0 sum at the live control word, so this is
+// transcribed in x87 rather than as a float expression in an SSE2 TU.
+static bool MenuHoldTimerStepExceeds(float* timer) {
+    const float* delta = reinterpret_cast<const float*>(kFrameDelta);
+    const float* thr   = reinterpret_cast<const float*>(kHoldThreshold);
+    std::uint16_t sw;
+    __asm {
+        mov    eax, delta
+        fld    dword ptr [eax]
+        mov    eax, timer
+        fadd   dword ptr [eax]
+        fst    dword ptr [eax]
+        mov    eax, thr
+        fcomp  dword ptr [eax]
+        fnstsw ax
+        mov    sw, ax
+    }
+    return (sw & 0x4100u) == 0;  // C0 (below) and C3 (equal) both clear
+}
+
+static inline const std::int32_t* PlayerSlotRec(int i) {
+    return reinterpret_cast<const std::int32_t*>(kPlayerSlotLoop + i * kPlayerSlotRecStride);
+}
+
+static inline char PadByte(std::uintptr_t base, std::int32_t pad) {
+    return *reinterpret_cast<const char*>(base + static_cast<std::uintptr_t>(pad * kStride));
+}
+
+static std::uint32_t MenuButtonDetectHoldRepeat(std::uintptr_t heldBase, std::uintptr_t prevBase,
+                                                std::uintptr_t timerAddr) {
+    bool held = false;  // EDI
+    float* timer = reinterpret_cast<float*>(timerAddr);
+
+    if (*reinterpret_cast<const std::int32_t*>(kDispatchSel) == 0x1000) {
+        for (int k = 0; k < 7; ++k) {                       // 0x0042b000..0x0042b05d
+            if (PadByte(heldBase, k) != '\0') held = true;
+        }
+        if (PadByte(heldBase, 7) != '\0') held = true;      // 0x0042b062 jne 0x0042b0ad
+    } else {
+        for (int i = 0; reinterpret_cast<std::uintptr_t>(PlayerSlotRec(i)) < kPlayerSlotLoopEnd; ++i) {
+            const std::int32_t id = *PlayerSlotRec(i);      // 0x0042b075
+            if (id == -1) continue;
+            if (CallSlotState(i) == 2) continue;            // 0x0042b07b
+            if (PadByte(heldBase, id) != '\0') held = true; // 0x0042b08d
+        }
+    }
+
+    if (!held) {
+        *reinterpret_cast<std::uint32_t*>(timerAddr) = 0u; // 0x0042b0f7
+    } else {
+        const std::int32_t slot   = *reinterpret_cast<const std::int32_t*>(kSlotIndex);
+        const std::int32_t screen = *reinterpret_cast<const std::int32_t*>(
+            kScreenTypeBase + static_cast<std::uintptr_t>(slot) * kSlotStride);
+        if (screen >= 6 && screen <= 7 && MenuHoldTimerStepExceeds(timer)) {
+            *reinterpret_cast<std::uint32_t*>(timerAddr) = kTimerRearmBits;  // 0x0042b0e5
+            return 1u;
+        }
+    }
+
+    if (*reinterpret_cast<const std::int32_t*>(kDispatchSel) == 0x1000) {
+        for (int k = 0; k < kPadCount; ++k) {               // 0x0042b10d..0x0042b129
+            if (PadByte(heldBase, k) != '\0' && PadByte(prevBase, k) == '\0') return 1u;
+        }
+        return 0u;                                          // 0x0042b12c
+    }
+    for (int i = 0; reinterpret_cast<std::uintptr_t>(PlayerSlotRec(i)) < kPlayerSlotLoopEnd; ++i) {
+        const std::int32_t id = *PlayerSlotRec(i);          // 0x0042b137
+        if (id == -1) continue;
+        if (CallSlotState(i) == 2) continue;                // 0x0042b13d
+        if (PadByte(heldBase, id) != '\0' && PadByte(prevBase, id) == '\0') return 1u;  // 0x0042b14f / 0x0042b159
+    }
+    return 0u;                                              // 0x0042b170
+}
+
 // 0x0042aff0
 extern "C" __declspec(dllexport) std::uint32_t __cdecl MenuButtonDetectA() {
-    bool bVar1 = false;
-
-    if (*reinterpret_cast<std::int32_t*>(kDispatchSel) == 0x1000) {
-        // Path A: check 7 fixed rows at stride 0x4c from 0x7f1046
-        for (int n = 0; n < 7; n++) {
-            if (*reinterpret_cast<char*>(kActiveByteBase2 + n * kStride) != '\0') {
-                bVar1 = true;
-                break;
-            }
-        }
-        // Row-8 sentinel check: if non-zero, jump to hold-repeat check
-        if (*reinterpret_cast<char*>(kPathARow8Sentinel2) == '\0') {
-            goto hold_repeat;
-        }
-    } else {
-        // Path B: iterate player-slot array
-        auto* piVar4 = reinterpret_cast<std::int32_t*>(kPlayerSlotLoop);
-        int iVar5 = 0;
-        while (reinterpret_cast<std::uintptr_t>(piVar4) < kPlayerSlotLoopEnd) {
-            const std::int32_t carSlot = *piVar4;
-            if (carSlot != -1 && CallSlotState(iVar5) != 2) {
-                if (*reinterpret_cast<char*>(kActiveByteBase2 + carSlot * kStride) != '\0') {
-                    bVar1 = true;
-                }
-            }
-            piVar4 = reinterpret_cast<std::int32_t*>(reinterpret_cast<std::uintptr_t>(piVar4) + 4);
-            iVar5++;
-        }
-        goto hold_repeat;
-    }
-
-hold_repeat:
-    {
-        const std::int32_t slot   = *reinterpret_cast<std::int32_t*>(kSlotIndex);
-        const std::int32_t screen = *reinterpret_cast<std::int32_t*>(kScreenTypeBase + slot * kSlotStride);
-        if (bVar1 && screen > 5 && screen < 8) {
-            float& timer = *reinterpret_cast<float*>(kTimerA);
-            timer += *reinterpret_cast<float*>(kFrameDelta);
-            if (timer > *reinterpret_cast<float*>(kHoldThreshold)) {
-                timer = 0.2f;
-                return 1u;
-            }
-        } else if (!bVar1) {
-            *reinterpret_cast<float*>(kTimerA) = 0.0f;
-        }
-    }
-
-    // Phase 3: check processed byte at column +4
-    if (*reinterpret_cast<std::int32_t*>(kDispatchSel) == 0x1000) {
-        // Path A
-        auto* pcVar2 = reinterpret_cast<char*>(kProcessedBase4);
-        while (true) {
-            // Skip if active byte (col+2 = pcVar2 - 0x4c0) is zero OR processed byte is non-zero
-            if (*reinterpret_cast<char*>(reinterpret_cast<std::uintptr_t>(pcVar2) - 0x4c0) == '\0' ||
-                *pcVar2 != '\0') {
-                pcVar2 = reinterpret_cast<char*>(reinterpret_cast<std::uintptr_t>(pcVar2) + kStride);
-                if (reinterpret_cast<std::uintptr_t>(pcVar2) > kPathAUpperBound4) {
-                    return 0u;
-                }
-            } else {
-                break;
-            }
-        }
-    } else {
-        // Path B
-        auto* piVar4 = reinterpret_cast<std::int32_t*>(kPlayerSlotLoop);
-        int iVar5 = 0;
-        while (reinterpret_cast<std::uintptr_t>(piVar4) < kPlayerSlotLoopEnd) {
-            const std::int32_t carSlot = *piVar4;
-            if (carSlot == -1 || CallSlotState(iVar5) == 2) {
-                piVar4 = reinterpret_cast<std::int32_t*>(reinterpret_cast<std::uintptr_t>(piVar4) + 4);
-                iVar5++;
-                continue;
-            }
-            if (*reinterpret_cast<char*>(kActiveByteBase2 + carSlot * kStride) == '\0' ||
-                *reinterpret_cast<char*>(kProcessedBase4 + carSlot * kStride) != '\0') {
-                piVar4 = reinterpret_cast<std::int32_t*>(reinterpret_cast<std::uintptr_t>(piVar4) + 4);
-                iVar5++;
-                continue;
-            }
-            // Found a valid unprocessed input
-            break;
-            piVar4 = reinterpret_cast<std::int32_t*>(reinterpret_cast<std::uintptr_t>(piVar4) + 4);
-            iVar5++;
-        }
-        if (reinterpret_cast<std::uintptr_t>(piVar4) >= kPlayerSlotLoopEnd) {
-            return 0u;
-        }
-    }
-
-    return 1u;
+    return MenuButtonDetectHoldRepeat(kHeldBaseA, kPrevBaseA, kTimerA);
 }
 
-RH_ScopedInstall(MenuButtonDetectA, 0x0042aff0);  // re-enabled 2026-05-24 (pre-regression C4 leaf)
+RH_ScopedInstall(MenuButtonDetectA, 0x0042aff0);  // re-ported 2026-10-12 (negctl re-earn)
 
-// ---------------------------------------------------------------------------
-// 0x0042b180  MenuButtonDetectB
-// Sister of MenuButtonDetectA. Checks byte-column +3 (0x7f1047) and processed
-// col +5 (0x7f1507), with timer _DAT_0067f1b4.
-// Structurally identical to MenuButtonDetectA — see 0x0042aff0.md.
-// ---------------------------------------------------------------------------
 // 0x0042b180
 extern "C" __declspec(dllexport) std::uint32_t __cdecl MenuButtonDetectB() {
-    bool bVar1 = false;
-
-    if (*reinterpret_cast<std::int32_t*>(kDispatchSel) == 0x1000) {
-        // Path A: check 7 fixed rows at stride 0x4c from 0x7f1047
-        for (int n = 0; n < 7; n++) {
-            if (*reinterpret_cast<char*>(kActiveByteBase3 + n * kStride) != '\0') {
-                bVar1 = true;
-                break;
-            }
-        }
-        if (*reinterpret_cast<char*>(kPathARow8Sentinel3) == '\0') {
-            goto hold_repeat_b;
-        }
-    } else {
-        // Path B: iterate player-slot array
-        auto* piVar4 = reinterpret_cast<std::int32_t*>(kPlayerSlotLoop);
-        int iVar5 = 0;
-        while (reinterpret_cast<std::uintptr_t>(piVar4) < kPlayerSlotLoopEnd) {
-            const std::int32_t carSlot = *piVar4;
-            if (carSlot != -1 && CallSlotState(iVar5) != 2) {
-                if (*reinterpret_cast<char*>(kActiveByteBase3 + carSlot * kStride) != '\0') {
-                    bVar1 = true;
-                }
-            }
-            piVar4 = reinterpret_cast<std::int32_t*>(reinterpret_cast<std::uintptr_t>(piVar4) + 4);
-            iVar5++;
-        }
-        goto hold_repeat_b;
-    }
-
-hold_repeat_b:
-    {
-        const std::int32_t slot   = *reinterpret_cast<std::int32_t*>(kSlotIndex);
-        const std::int32_t screen = *reinterpret_cast<std::int32_t*>(kScreenTypeBase + slot * kSlotStride);
-        if (bVar1 && screen > 5 && screen < 8) {
-            float& timer = *reinterpret_cast<float*>(kTimerB);
-            timer += *reinterpret_cast<float*>(kFrameDelta);
-            if (timer > *reinterpret_cast<float*>(kHoldThreshold)) {
-                timer = 0.2f;
-                return 1u;
-            }
-        } else if (!bVar1) {
-            *reinterpret_cast<float*>(kTimerB) = 0.0f;
-        }
-    }
-
-    // Phase 3: check processed byte at column +5
-    if (*reinterpret_cast<std::int32_t*>(kDispatchSel) == 0x1000) {
-        // Path A
-        auto* pcVar2 = reinterpret_cast<char*>(kProcessedBase5);
-        while (true) {
-            if (*reinterpret_cast<char*>(reinterpret_cast<std::uintptr_t>(pcVar2) - 0x4c0) == '\0' ||
-                *pcVar2 != '\0') {
-                pcVar2 = reinterpret_cast<char*>(reinterpret_cast<std::uintptr_t>(pcVar2) + kStride);
-                if (reinterpret_cast<std::uintptr_t>(pcVar2) > kPathAUpperBound5) {
-                    return 0u;
-                }
-            } else {
-                break;
-            }
-        }
-    } else {
-        // Path B
-        auto* piVar4 = reinterpret_cast<std::int32_t*>(kPlayerSlotLoop);
-        int iVar5 = 0;
-        while (reinterpret_cast<std::uintptr_t>(piVar4) < kPlayerSlotLoopEnd) {
-            const std::int32_t carSlot = *piVar4;
-            if (carSlot == -1 || CallSlotState(iVar5) == 2) {
-                piVar4 = reinterpret_cast<std::int32_t*>(reinterpret_cast<std::uintptr_t>(piVar4) + 4);
-                iVar5++;
-                continue;
-            }
-            if (*reinterpret_cast<char*>(kActiveByteBase3 + carSlot * kStride) == '\0' ||
-                *reinterpret_cast<char*>(kProcessedBase5 + carSlot * kStride) != '\0') {
-                piVar4 = reinterpret_cast<std::int32_t*>(reinterpret_cast<std::uintptr_t>(piVar4) + 4);
-                iVar5++;
-                continue;
-            }
-            break;
-            piVar4 = reinterpret_cast<std::int32_t*>(reinterpret_cast<std::uintptr_t>(piVar4) + 4);
-            iVar5++;
-        }
-        if (reinterpret_cast<std::uintptr_t>(piVar4) >= kPlayerSlotLoopEnd) {
-            return 0u;
-        }
-    }
-
-    return 1u;
+    return MenuButtonDetectHoldRepeat(kHeldBaseB, kPrevBaseB, kTimerB);
 }
 
-RH_ScopedInstall(MenuButtonDetectB, 0x0042b180);  // re-enabled 2026-05-24 (pre-regression C4 leaf)
+RH_ScopedInstall(MenuButtonDetectB, 0x0042b180);  // re-ported 2026-10-12 (negctl re-earn)
