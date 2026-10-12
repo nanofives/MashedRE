@@ -1,0 +1,29 @@
+# provenance 2026-10-12: shared asi (sha256 fc99297a400db2c2...), MASHED_HOOK_ONLY=0x00423ff0, MASHED_VERIFY_ASI=C:\Users\maria\Desktop\Proyectos\Mashed\original\mashed_re_dev.asi
+=== verify_hook_install report (player_block2_field50_get) ===
+
+target address: 0x00423ff0  export: PlayerBlock2Field50Get
+PRE  bytes:     e9 db a1 ff 6b 85 c0 8b
+asi base:       0x6c400000
+reimpl addr:    0x6c41e1d0
+POST bytes:     e9 db a1 ff 6b 85 c0 8b
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x6bffa1db  expected 0x6bffa1db  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  3 / 3  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [0], 'seed': [{'addr': 6810212, 'val': 0}, {'addr': 6810108, 'val': 0}, {'addr': 8329752, 'val': 0}, {'addr': 8329748, 'val': 0}, {'addr': 9019248, 'val': 17}, {'addr': 8329768, 'val': 0}, {'addr': 8329764, 'val': 0}, {'addr': 9019560, 'val': 544}, {'addr': 8329784, 'val': 1}, {'addr': 8329780, 'val': 0}, {'addr': 9019872, 'val': 13056}, {'addr': 8329800, 'val': 1}, {'addr': 8329796, 'val': 0}, {'addr': 9020184, 'val': 278528}]}  got=11,811c9dc5  err=
+  [OK] input={'args': [0], 'seed': [{'addr': 6810212, 'val': 1}, {'addr': 6810108, 'val': 0}, {'addr': 8329752, 'val': 0}, {'addr': 8329748, 'val': 0}, {'addr': 9019248, 'val': 17}, {'addr': 8329768, 'val': 0}, {'addr': 8329764, 'val': 0}, {'addr': 9019560, 'val': 544}, {'addr': 8329784, 'val': 1}, {'addr': 8329780, 'val': 0}, {'addr': 9019872, 'val': 13056}, {'addr': 8329800, 'val': 1}, {'addr': 8329796, 'val': 0}, {'addr': 9020184, 'val': 278528}]}  got=231,811c9dc5  err=
+  [OK] input={'args': [0], 'seed': [{'addr': 6810212, 'val': 1}, {'addr': 6810108, 'val': 0}, {'addr': 8329752, 'val': 5}, {'addr': 8329748, 'val': 0}, {'addr': 9019248, 'val': 17}, {'addr': 8329768, 'val': 5}, {'addr': 8329764, 'val': 0}, {'addr': 9019560, 'val': 544}, {'addr': 8329784, 'val': 5}, {'addr': 8329780, 'val': 0}, {'addr': 9019872, 'val': 13056}, {'addr': 8329800, 'val': 5}, {'addr': 8329796, 'val': 0}, {'addr': 9020184, 'val': 278528}]}  got=47531,811c9dc5  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 3x as expected
+  + all 3 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_player_block2_field50_get.txt

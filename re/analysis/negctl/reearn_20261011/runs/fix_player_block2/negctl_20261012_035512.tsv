@@ -1,0 +1,29 @@
+hook	rva	arg_type	lane	mode	verdict	mismatches	total	stats	err
+player_block2_field00_get	0x00423ee0	scalars_to_scattered_globals	warm	baseline	GREEN	0	14		
+player_block2_field00_get	0x00423ee0	scalars_to_scattered_globals	warm	field_first	NA	0	14	calls=14 flips=0 changed=0 flip=0x00000000 noise=161 frozen=2	
+player_block2_field00_get	0x00423ee0	scalars_to_scattered_globals	warm	field_last	NA	0	14	calls=14 flips=0 changed=0 flip=0x00000000 noise=203 frozen=2	
+player_block2_field00_get	0x00423ee0	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	14	calls=14 flips=0 changed=0 flip=0x00000000 noise=203 frozen=2	
+player_block2_field00_get	0x00423ee0	scalars_to_scattered_globals	warm	null	RED	14	14	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+player_block2_field00_get	0x00423ee0	scalars_to_scattered_globals	warm	real	GREEN	0	14		
+player_block2_field00_get	0x00423ee0	scalars_to_scattered_globals	warm	ret	RED	14	14	calls=14 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+player_block2_field04_get	0x00423f60	scalars_to_scattered_globals	warm	baseline	GREEN	0	17		
+player_block2_field04_get	0x00423f60	scalars_to_scattered_globals	warm	field_first	NA	0	17	calls=17 flips=0 changed=0 flip=0x00000000 noise=163 frozen=2	
+player_block2_field04_get	0x00423f60	scalars_to_scattered_globals	warm	field_last	NA	0	17	calls=17 flips=0 changed=0 flip=0x00000000 noise=176 frozen=2	
+player_block2_field04_get	0x00423f60	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	17	calls=17 flips=0 changed=0 flip=0x00000000 noise=224 frozen=2	
+player_block2_field04_get	0x00423f60	scalars_to_scattered_globals	warm	null	RED	15	17	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+player_block2_field04_get	0x00423f60	scalars_to_scattered_globals	warm	real	GREEN	0	17		
+player_block2_field04_get	0x00423f60	scalars_to_scattered_globals	warm	ret	RED	17	17	calls=17 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+player_block2_field08_get	0x00424070	scalars_to_scattered_globals	warm	baseline	GREEN	0	17		
+player_block2_field08_get	0x00424070	scalars_to_scattered_globals	warm	field_first	NA	0	17	calls=17 flips=0 changed=0 flip=0x00000000 noise=158 frozen=2	
+player_block2_field08_get	0x00424070	scalars_to_scattered_globals	warm	field_last	NA	0	17	calls=17 flips=0 changed=0 flip=0x00000000 noise=169 frozen=2	
+player_block2_field08_get	0x00424070	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	17	calls=17 flips=0 changed=0 flip=0x00000000 noise=169 frozen=2	
+player_block2_field08_get	0x00424070	scalars_to_scattered_globals	warm	null	RED	15	17	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+player_block2_field08_get	0x00424070	scalars_to_scattered_globals	warm	real	GREEN	0	17		
+player_block2_field08_get	0x00424070	scalars_to_scattered_globals	warm	ret	RED	17	17	calls=17 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+player_block2_field50_get	0x00423ff0	scalars_to_scattered_globals	warm	baseline	GREEN	0	14		
+player_block2_field50_get	0x00423ff0	scalars_to_scattered_globals	warm	field_first	NA	0	14	calls=14 flips=0 changed=0 flip=0x00000000 noise=169 frozen=2	
+player_block2_field50_get	0x00423ff0	scalars_to_scattered_globals	warm	field_last	NA	0	14	calls=14 flips=0 changed=0 flip=0x00000000 noise=177 frozen=2	
+player_block2_field50_get	0x00423ff0	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	14	calls=14 flips=0 changed=0 flip=0x00000000 noise=179 frozen=2	
+player_block2_field50_get	0x00423ff0	scalars_to_scattered_globals	warm	null	RED	14	14	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+player_block2_field50_get	0x00423ff0	scalars_to_scattered_globals	warm	real	GREEN	0	14		
+player_block2_field50_get	0x00423ff0	scalars_to_scattered_globals	warm	ret	RED	14	14	calls=14 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	

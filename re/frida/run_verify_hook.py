@@ -42,7 +42,8 @@ MASHED_EXE = _find_original(ROOT)
 # MASHED_VERIFY_ASI: Module.load this file instead. From a worktree the dinput8 shim auto-loads the SHARED
 # original\mashed_re_dev.asi, a different file from <worktree>/mashedmod/build/..., so the loader maps a second
 # copy and rel32 points at the first (0x004922e0, 2026-10-11). Point this at the deployed copy to verify it.
-ASI_PATH   = Path(os.environ['MASHED_VERIFY_ASI']) if os.environ.get('MASHED_VERIFY_ASI') \
+# A relative value resolves against the repo root (a bare 'original/...' made Module.load fail silently, 2026-10-12).
+ASI_PATH   = (ROOT / os.environ['MASHED_VERIFY_ASI']).resolve() if os.environ.get('MASHED_VERIFY_ASI') \
              else ROOT / 'mashedmod' / 'build' / 'mashed_re_dev.asi'
 AGENT_JS   = ROOT / 're' / 'frida' / 'verify_hook_install_template.js'
 LOG_DIR    = ROOT / 'log'

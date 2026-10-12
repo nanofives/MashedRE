@@ -47,11 +47,38 @@ static const unsigned k_Block2Root   = 0x00899f20u;
 static const unsigned k_Block2Stride = 0x4eu;          // dwords per player
 
 // Team-ID array rooted at DAT_007f1a18.
-// stride: 4 bytes per slot.  [cited from 0x00423f1a]
+// stride: 0x10 bytes per slot.  Bytes: shl eax,4 @0x00423eef + mov edx,[eax+0x7f1a18]
+// @0x00423ef2; the unrolled compares read 0x007f1a18/28/38/48 (@0x00423f06/18/2b/3e).
+// (Re-port 2026-10-12: the old port used 4, which the negctl re-earn caught RED.)
 static const unsigned k_TeamIdRoot   = 0x007f1a18u;
-static const unsigned k_TeamIdStride = 4u;             // bytes per player
+static const unsigned k_TeamIdStride = 0x10u;        // bytes per player
 
 static const int k_PlayerCount = 4;
+
+// Shared body of the four getters past their gates (0x00423eed..0x00423f5e and the
+// three byte-identical copies). Slot k contributes when team[k] == team[param_1] and
+// k != param_1, in order k = 0,1,2,3 (the bytes test the team first, then the index).
+static std::int32_t TeamAggregate(int param_1, unsigned field_dword_offset)
+{
+    const std::int32_t* const block = reinterpret_cast<const std::int32_t*>(k_Block2Root);
+    const std::int32_t myTeam = *reinterpret_cast<const std::int32_t*>(
+        k_TeamIdRoot + static_cast<unsigned>(param_1) * k_TeamIdStride);
+    std::int32_t sum = block[k_Block2Stride * static_cast<unsigned>(param_1) + field_dword_offset];
+    for (int k = 0; k < k_PlayerCount; ++k) {
+        const std::int32_t kTeam = *reinterpret_cast<const std::int32_t*>(
+            k_TeamIdRoot + static_cast<unsigned>(k) * k_TeamIdStride);
+        if (kTeam == myTeam && k != param_1) {
+            sum += block[k_Block2Stride * static_cast<unsigned>(k) + field_dword_offset];
+        }
+    }
+    return sum;
+}
+
+static std::int32_t Block2Field(int param_1, unsigned field_dword_offset)
+{
+    return reinterpret_cast<const std::int32_t*>(k_Block2Root)
+        [k_Block2Stride * static_cast<unsigned>(param_1) + field_dword_offset];
+}
 
 // ---------------------------------------------------------------------------
 // PlayerBlock2Field00Get  --  0x00423ee0
@@ -64,16 +91,16 @@ static const int k_PlayerCount = 4;
 //
 // Algorithm (cited from 0x00423ee0 body):
 //   1. Call GetDat0067ea64(); if 0 → return (&DAT_00899f20)[param_1*0x4e]. [0x00423ef8/04]
-//   2. Load iVar1 = team-ID of param_1 from (&DAT_007f1a18)[param_1*4]. [0x00423f1a]
+//   2. Load iVar1 = team-ID of param_1 from *(0x007f1a18 + param_1*0x10). [0x00423eef/f2]
 //   3. Seed iVar2 = (&DAT_00899f20)[param_1*0x4e]. [0x00423f28 area]
-//   4. For k in {0,1,2,3}: if k==param_1 skip; else if team-ID[k]==iVar1:
-//        iVar2 += (&DAT_00899f20)[k*0x4e]. [0x00423f28/32/3c/46]
+//   4. For k in {0,1,2,3}: if team-ID[k]==iVar1 and k!=param_1:
+//        iVar2 += (&DAT_00899f20)[k*0x4e]. [0x00423f06/18/2b/3e]
 //   5. Return iVar2.
 //
 // Constants cited:
 //   0x00899f20 — block-2 array root                        [0x00423f04]
 //   0x4e       — dword stride per slot                     [0x00423f04]
-//   0x007f1a18 — team-ID array root                        [0x00423f1a]
+//   0x007f1a18 — team-ID array root, 0x10-byte stride     [0x00423ef2]
 //
 // ref: re/analysis/frontend_c1_to_c2_s3/FUN_00423ee0.md
 // ---------------------------------------------------------------------------
@@ -82,35 +109,11 @@ static const int k_PlayerCount = 4;
 extern "C" __declspec(dllexport) std::int32_t __cdecl PlayerBlock2Field00Get(
     int param_1)
 {
-    // Field +0x00: dword offset 0 from block-2 root. [0x00423f04]
-    const unsigned field_dword_offset = 0u;
-
-    // Step 1: team-mode gate.
+    // Team-mode gate (GetDat0067ea64 == 0 -> own field only).
     if (GetDat0067ea64() == 0) {
-        // No teams — return this player's field directly.
-        return *reinterpret_cast<std::int32_t*>(
-            k_Block2Root + (k_Block2Stride * static_cast<unsigned>(param_1) + field_dword_offset) * 4u);
+        return Block2Field(param_1, 0u);
     }
-
-    // Step 2: read caller's team-ID.
-    std::int32_t myTeam = *reinterpret_cast<std::int32_t*>(
-        k_TeamIdRoot + static_cast<unsigned>(param_1) * k_TeamIdStride);
-
-    // Step 3: seed with own value.
-    std::int32_t iVar2 = *reinterpret_cast<std::int32_t*>(
-        k_Block2Root + (k_Block2Stride * static_cast<unsigned>(param_1) + field_dword_offset) * 4u);
-
-    // Step 4: accumulate matching team-mates.
-    for (int k = 0; k < k_PlayerCount; ++k) {
-        if (k == param_1) continue;
-        std::int32_t kTeam = *reinterpret_cast<std::int32_t*>(
-            k_TeamIdRoot + static_cast<unsigned>(k) * k_TeamIdStride);
-        if (kTeam == myTeam) {
-            iVar2 += *reinterpret_cast<std::int32_t*>(
-                k_Block2Root + (k_Block2Stride * static_cast<unsigned>(k) + field_dword_offset) * 4u);
-        }
-    }
-    return iVar2;
+    return TeamAggregate(param_1, 0u);
 }
 
 RH_ScopedInstall(PlayerBlock2Field00Get, 0x00423ee0);
@@ -140,39 +143,16 @@ RH_ScopedInstall(PlayerBlock2Field00Get, 0x00423ee0);
 extern "C" __declspec(dllexport) std::int32_t __cdecl PlayerBlock2Field04Get(
     int param_1)
 {
-    // Step 1: RaceSubMode==4 gate. [0x00423f6c]
+    // RaceSubMode == 4 gate. [0x00423f60..0x00423f6c]
     if (s_GetRaceSubMode() == 4) {
         return 0;
     }
 
-    // Field +0x04: dword offset 1 from block-2 root. [0x00423f85]
-    const unsigned field_dword_offset = 1u;
-
-    // Step 2: team-mode gate.
+    // Team-mode gate (GetDat0067ea64 == 0 -> own field only).
     if (GetDat0067ea64() == 0) {
-        return *reinterpret_cast<std::int32_t*>(
-            k_Block2Root + (k_Block2Stride * static_cast<unsigned>(param_1) + field_dword_offset) * 4u);
+        return Block2Field(param_1, 1u);
     }
-
-    // Step 3: team-ID of caller.
-    std::int32_t myTeam = *reinterpret_cast<std::int32_t*>(
-        k_TeamIdRoot + static_cast<unsigned>(param_1) * k_TeamIdStride);
-
-    // Seed with own value.
-    std::int32_t iVar2 = *reinterpret_cast<std::int32_t*>(
-        k_Block2Root + (k_Block2Stride * static_cast<unsigned>(param_1) + field_dword_offset) * 4u);
-
-    // Accumulate matching team-mates.
-    for (int k = 0; k < k_PlayerCount; ++k) {
-        if (k == param_1) continue;
-        std::int32_t kTeam = *reinterpret_cast<std::int32_t*>(
-            k_TeamIdRoot + static_cast<unsigned>(k) * k_TeamIdStride);
-        if (kTeam == myTeam) {
-            iVar2 += *reinterpret_cast<std::int32_t*>(
-                k_Block2Root + (k_Block2Stride * static_cast<unsigned>(k) + field_dword_offset) * 4u);
-        }
-    }
-    return iVar2;
+    return TeamAggregate(param_1, 1u);
 }
 
 RH_ScopedInstall(PlayerBlock2Field04Get, 0x00423f60);
@@ -201,34 +181,11 @@ RH_ScopedInstall(PlayerBlock2Field04Get, 0x00423f60);
 extern "C" __declspec(dllexport) std::int32_t __cdecl PlayerBlock2Field50Get(
     int param_1)
 {
-    // Field +0x50: dword offset 0x14 (= 0x50/4 = 20) from block-2 root. [0x00424002]
-    const unsigned field_dword_offset = 0x14u;
-
-    // Step 1: team-mode gate.
+    // Team-mode gate (GetDat0067ea64 == 0 -> own field only).
     if (GetDat0067ea64() == 0) {
-        return *reinterpret_cast<std::int32_t*>(
-            k_Block2Root + (k_Block2Stride * static_cast<unsigned>(param_1) + field_dword_offset) * 4u);
+        return Block2Field(param_1, 0x14u);
     }
-
-    // Step 2: team-ID of caller.
-    std::int32_t myTeam = *reinterpret_cast<std::int32_t*>(
-        k_TeamIdRoot + static_cast<unsigned>(param_1) * k_TeamIdStride);
-
-    // Seed with own value.
-    std::int32_t iVar2 = *reinterpret_cast<std::int32_t*>(
-        k_Block2Root + (k_Block2Stride * static_cast<unsigned>(param_1) + field_dword_offset) * 4u);
-
-    // Accumulate matching team-mates.
-    for (int k = 0; k < k_PlayerCount; ++k) {
-        if (k == param_1) continue;
-        std::int32_t kTeam = *reinterpret_cast<std::int32_t*>(
-            k_TeamIdRoot + static_cast<unsigned>(k) * k_TeamIdStride);
-        if (kTeam == myTeam) {
-            iVar2 += *reinterpret_cast<std::int32_t*>(
-                k_Block2Root + (k_Block2Stride * static_cast<unsigned>(k) + field_dword_offset) * 4u);
-        }
-    }
-    return iVar2;
+    return TeamAggregate(param_1, 0x14u);
 }
 
 RH_ScopedInstall(PlayerBlock2Field50Get, 0x00423ff0);
@@ -259,39 +216,16 @@ RH_ScopedInstall(PlayerBlock2Field50Get, 0x00423ff0);
 extern "C" __declspec(dllexport) std::int32_t __cdecl PlayerBlock2Field08Get(
     int param_1)
 {
-    // Step 1: RaceSubMode==4 gate (same pattern as PlayerBlock2Field04Get).
+    // RaceSubMode == 4 gate. [0x00424070..0x0042407c]
     if (s_GetRaceSubMode() == 4) {
         return 0;
     }
 
-    // Field +0x08: dword offset 2 from block-2 root. [DAT_00899f28 = 0x00899f20+8]
-    const unsigned field_dword_offset = 2u;
-
-    // Step 2: team-mode gate.
+    // Team-mode gate (GetDat0067ea64 == 0 -> own field only).
     if (GetDat0067ea64() == 0) {
-        return *reinterpret_cast<std::int32_t*>(
-            k_Block2Root + (k_Block2Stride * static_cast<unsigned>(param_1) + field_dword_offset) * 4u);
+        return Block2Field(param_1, 2u);
     }
-
-    // Step 3: team-ID of caller.
-    std::int32_t myTeam = *reinterpret_cast<std::int32_t*>(
-        k_TeamIdRoot + static_cast<unsigned>(param_1) * k_TeamIdStride);
-
-    // Seed with own value.
-    std::int32_t iVar2 = *reinterpret_cast<std::int32_t*>(
-        k_Block2Root + (k_Block2Stride * static_cast<unsigned>(param_1) + field_dword_offset) * 4u);
-
-    // Accumulate matching team-mates.
-    for (int k = 0; k < k_PlayerCount; ++k) {
-        if (k == param_1) continue;
-        std::int32_t kTeam = *reinterpret_cast<std::int32_t*>(
-            k_TeamIdRoot + static_cast<unsigned>(k) * k_TeamIdStride);
-        if (kTeam == myTeam) {
-            iVar2 += *reinterpret_cast<std::int32_t*>(
-                k_Block2Root + (k_Block2Stride * static_cast<unsigned>(k) + field_dword_offset) * 4u);
-        }
-    }
-    return iVar2;
+    return TeamAggregate(param_1, 2u);
 }
 
 RH_ScopedInstall(PlayerBlock2Field08Get, 0x00424070);
