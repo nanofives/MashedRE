@@ -39,7 +39,7 @@ static constexpr std::uintptr_t kPathARow7Processed5 = 0x007f171d; // 0x7f1509 +
 // Path A upper bound for B-side scan (col +5)
 static constexpr std::uintptr_t kPathBUpperBound     = 0x7f1a54;   // end of 8-slot player array
 
-// Car-slot index array (4 slots of 4 bytes each, stride 4)
+// Car-slot records: id dword at 0x007f1a14 + i*0x10, i = 0..3 (0x0042b3bf `add esi, 0x10`)
 static constexpr std::uintptr_t kPlayerSlotArray = 0x007f1a14;
 // Player slot array end (exclusive)
 static constexpr std::uintptr_t kPlayerSlotEnd   = 0x7f1a54;
@@ -142,115 +142,110 @@ RH_ScopedInstall(MenuButtonDetectE, 0x0042b770);  // re-enabled 2026-05-24 batch
 
 // ---------------------------------------------------------------------------
 // 0x0042b310  MenuButtonDetectC
+// 0x0042b540  MenuButtonDetectD
+// The two bodies are the same instruction stream with three operands changed:
+// held column (0x007f1044 / 0x007f1045), previous-frame column (0x007f1504 /
+// 0x007f1505) and the cleared dword (0x0067f1b8 / 0x0067f1bc). Re-ported from
+// the bytes 2026-10-12 (negctl re-earn). The earlier port had two defects:
+//   1. screen type 0x13 returned 1 only for sub 2; the original returns 1 for
+//      sub 0, 1 and 2 (0x0042b3f9 je / 0x0042b3fe je -> 0x0042b3e7, and
+//      0x0042b400 cmp 2 -> 0x0042b405);
+//   2. both player-slot walks stepped 4 bytes over 8 records instead of
+//      0x10 bytes over 4 records (0x0042b3bf / 0x0042b521 `add esi, 0x10`).
 //
-// Full button-detector for byte col +0: active (0x7f1044) AND !processed (0x7f1504).
-// Phase 1: detect if any active input (bVar1). If none, zero _DAT_0067f1b8 -> phase 3.
-// Screen-type branch (if bVar1):
-//   screen == 0x13: cursor==2 -> return 1; else -> phase 3.
-//   screen == 0x1e: return 1 immediately.
-//   else: -> phase 3.
-// Phase 3: detect active AND !processed -> uVar3.
-// Returns 0 or 1.
-// ref: re/analysis/frontend_promote_menus_a/0x0042b310.md
+// Phase 1 (0x0042b310..0x0042b3c9): held = any eligible pad's held byte != 0.
+//   0x1000 path: pads 0..6 OR into EBX, pad 7 jumps straight to phase 2.
+//   Otherwise: slot record i (0..3) is eligible when its id != -1 and
+//   FUN_0040e470(i) != 2; the pad is the id (0x0042b3ad imul 0x4c).
+// Phase 2 (0x0042b3cb..0x0042b40f): not held -> dword = 0 (0x0042b40f), go to
+//   phase 3. Held -> t = *(0x0067ed3c + DAT_0067e9f8*0x40):
+//   t == 0x13: sub = *(0x0067ed40 + DAT_0067e9f8*0x40); sub 0/1/2 -> return 1,
+//              any other sub -> phase 3;
+//   t == 0x1e: return 1;  any other t -> phase 3.
+// Phase 3 (0x0042b419..0x0042b533): return 1 if any eligible pad has
+//   held != 0 && previous == 0, else 0. The slot walk does not stop early.
 // ---------------------------------------------------------------------------
+
+static constexpr std::uintptr_t kSlotRecStride = 0x10;  // 0x0042b3bf `add esi, 0x10`
+
+static inline const std::int32_t* SlotRec(int i) {
+    return reinterpret_cast<const std::int32_t*>(kPlayerSlotArray + i * kSlotRecStride);
+}
+
+static inline char PadAt(std::uintptr_t base, std::int32_t pad) {
+    return *reinterpret_cast<const char*>(base + static_cast<std::uintptr_t>(pad * kStride));
+}
+
+static std::uint32_t MenuButtonDetectScreenGate(std::uintptr_t heldBase, std::uintptr_t prevBase,
+                                                std::uintptr_t clearAddr) {
+    bool held = false;  // EBX
+
+    if (*reinterpret_cast<const std::int32_t*>(kDispatchSel) == 0x1000) {
+        for (int k = 0; k < 7; ++k) {                       // 0x0042b324..0x0042b381
+            if (PadAt(heldBase, k) != '\0') held = true;
+        }
+        if (PadAt(heldBase, 7) != '\0') held = true;        // 0x0042b386 jne 0x0042b3cf
+    } else {
+        for (int i = 0; reinterpret_cast<std::uintptr_t>(SlotRec(i)) < kPlayerSlotEnd; ++i) {
+            const std::int32_t id = *SlotRec(i);            // 0x0042b398
+            if (id == -1) continue;
+            if (CallSlotState(i) == 2) continue;            // 0x0042b39e
+            if (PadAt(heldBase, id) != '\0') held = true;   // 0x0042b3b0
+        }
+    }
+
+    if (!held) {
+        *reinterpret_cast<std::uint32_t*>(clearAddr) = 0u; // 0x0042b40f
+    } else {
+        const std::uintptr_t off = static_cast<std::uintptr_t>(
+            *reinterpret_cast<const std::int32_t*>(kSlotIndex)) << 6;   // 0x0042b3d4 `shl eax, 6`
+        const std::int32_t t = *reinterpret_cast<const std::int32_t*>(kScreenTypeBase + off);
+        if (t == kScreenId13) {
+            const std::int32_t sub = *reinterpret_cast<const std::int32_t*>(kCursorBase + off);  // 0x0042b3f1
+            if (sub == 0 || sub == 1 || sub == 2) return 1u;            // 0x0042b3f9 / 0x0042b3fe / 0x0042b400
+        } else if (t == kScreenId1e) {
+            return 1u;                                                  // 0x0042b3e2
+        }
+    }
+
+    std::uint32_t edge = 0;  // EBP
+    if (*reinterpret_cast<const std::int32_t*>(kDispatchSel) == 0x1000) {
+        for (int k = 0; k < 8; ++k) {                       // 0x0042b429..0x0042b4da
+            if (PadAt(heldBase, k) != '\0' && PadAt(prevBase, k) == '\0') edge = 1;
+        }
+        return edge;
+    }
+    for (int i = 0; reinterpret_cast<std::uintptr_t>(SlotRec(i)) < kPlayerSlotEnd; ++i) {
+        const std::int32_t id = *SlotRec(i);                // 0x0042b4f0
+        if (id == -1) continue;
+        if (CallSlotState(i) == 2) continue;                // 0x0042b4f6
+        if (PadAt(heldBase, id) != '\0' && PadAt(prevBase, id) == '\0') edge = 1;  // 0x0042b508 / 0x0042b512
+    }
+    return edge;                                            // 0x0042b52f
+}
 
 // 0x0042b310
 extern "C" __declspec(dllexport) std::uint32_t __cdecl MenuButtonDetectC() {
-    const std::int32_t sel = *reinterpret_cast<std::int32_t*>(kDispatchSel);
-
-    // Phase 1 — detect active input at col +0
-    bool bVar1 = false;
-    if (sel == 0x1000) {
-        // Path A: fixed stride
-        for (int n = 0; n < 7; n++) {
-            if (*reinterpret_cast<const char*>(kActiveBase0 + n * kStride) != '\0') {
-                bVar1 = true;
-            }
-        }
-        // Slot 7 sentinel (0x7f1044 + 7*0x4c = 0x7f1258)
-        if (*reinterpret_cast<const char*>(0x7f1258) != '\0') {
-            bVar1 = true;
-        }
-    } else {
-        // Path B: car-slot index array
-        const std::int32_t* piVar4 = reinterpret_cast<std::int32_t*>(kPlayerSlotArray);
-        for (int iVar5 = 0; iVar5 < 8; iVar5++, piVar4++) {
-            if (reinterpret_cast<std::uintptr_t>(piVar4) >= kPlayerSlotEnd) break;
-            const std::int32_t slotIdx = *piVar4;
-            if (slotIdx == -1) continue;
-            if (CallSlotState(iVar5) == 2) continue; // U-3445
-            if (*reinterpret_cast<const char*>(kActiveBase0 + slotIdx * kStride) != '\0') {
-                bVar1 = true;
-            }
-        }
-    }
-
-    if (!bVar1) {
-        // Phase 2: no active input — zero the flag and go to phase 3
-        *reinterpret_cast<std::int32_t*>(kNoInputFlag) = 0;
-        // fall through to phase 3 (uVar3 will remain 0)
-    } else {
-        // Screen-type branch
-        const std::int32_t slot   = *reinterpret_cast<std::int32_t*>(kSlotIndex);
-        const std::int32_t screen = *reinterpret_cast<std::int32_t*>(kScreenTypeBase + slot * 0x40);
-        const std::int32_t cursor = *reinterpret_cast<std::int32_t*>(kCursorBase + slot * 0x40);
-
-        if (screen == kScreenId13) {
-            if (cursor == 2) return 1;
-            // cursor == 0 or 1: fall through to phase 3
-        } else if (screen == kScreenId1e) {
-            return 1;
-        }
-        // else: fall through to phase 3
-    }
-
-    // Phase 3 — detect active AND !processed at col +0
-    std::uint32_t uVar3 = 0;
-    if (sel == 0x1000) {
-        // Path A
-        for (int n = 0; n < 8; n++) {
-            if (*reinterpret_cast<const char*>(kActiveBase0 + n * kStride) != '\0' &&
-                *reinterpret_cast<const char*>(kProcessedBase0 + n * kStride) == '\0') {
-                uVar3 = 1;
-            }
-        }
-    } else {
-        // Path B
-        const std::int32_t* piVar4 = reinterpret_cast<std::int32_t*>(kPlayerSlotArray);
-        for (int iVar5 = 0; iVar5 < 8; iVar5++, piVar4++) {
-            if (reinterpret_cast<std::uintptr_t>(piVar4) >= kPlayerSlotEnd) break;
-            const std::int32_t slotIdx = *piVar4;
-            if (slotIdx == -1) continue;
-            if (CallSlotState(iVar5) == 2) continue;
-            if (*reinterpret_cast<const char*>(kActiveBase0 + slotIdx * kStride) != '\0' &&
-                *reinterpret_cast<const char*>(kProcessedBase0 + slotIdx * kStride) == '\0') {
-                uVar3 = 1;
-            }
-        }
-    }
-
-    return uVar3;
+    return MenuButtonDetectScreenGate(kActiveBase0, kProcessedBase0, kNoInputFlag);
 }
 
-RH_ScopedInstall(MenuButtonDetectC, 0x0042b310);  // re-enabled 2026-05-24 batch-frontend
+RH_ScopedInstall(MenuButtonDetectC, 0x0042b310);  // re-ported 2026-10-12 (negctl re-earn)
 
 // ---------------------------------------------------------------------------
 // 0x0042b960  CarSlotInit1P
 //
-// Initializes the single-player car slot:
-//   1. DAT_007f1a14 = 0.
-//   2. Scans stride-0x4c table pair (0x7f1042/0x7f1502) to find first valid entry
-//      where table A[i] != 0 AND table B[i] == 0; writes index to DAT_007f1a14.
-//   3. DAT_007f1a24 = DAT_007f1a34 = DAT_007f1a44 = 0xffffffff.
-//   4. DAT_007f1a0c = 1.
-//   5. FUN_0040e480(0,1), FUN_0040e480(1,0), FUN_0040e480(2,0), FUN_0040e480(3,0).
-// Returns void.
-// ref: re/analysis/frontend_promote_menus_a/0x0042b960.md
+// Re-ported from the bytes 2026-10-12 (negctl re-earn). ECX counts pads
+// 0..7 over the pair 0x007f1042 / 0x007f1502 (stride 0x4c, bound 0x007f1762
+// at 0x0042b983) and stops at the first pad with held != 0 && previous == 0.
+// When none matches the loop runs out with ECX = 8. Either way ECX is stored
+// once, after the loop (0x0042b991). The earlier port stored 0 on a miss.
+// Then 0x007f1a24/34/44 = -1 (0x0042b98a `or eax, -1`), 0x007f1a0c = 1
+// (0x0042b9a6), and FUN_0040e480 (0,1), (1,0), (2,0), (3,0) (0x0042b9b0..cb).
 // ---------------------------------------------------------------------------
 
-static constexpr std::uintptr_t kTableA_base = 0x007f1042; // active: char table A
-static constexpr std::uintptr_t kTableB_base = 0x007f1502; // processed: char table B
-static constexpr std::uintptr_t kScanBound   = 0x7f1762;   // exclusive upper bound for scan
+static constexpr std::uintptr_t kTableA_base = 0x007f1042; // 0x0042b970 `[eax - 0x4c0]`
+static constexpr std::uintptr_t kTableB_base = 0x007f1502; // 0x0042b962
+static constexpr std::uintptr_t kScanBound   = 0x7f1762;   // 0x0042b983 (exclusive)
 
 static constexpr std::uintptr_t kSlot1       = 0x007f1a14;
 static constexpr std::uintptr_t kSlot2       = 0x007f1a24;
@@ -260,43 +255,27 @@ static constexpr std::uintptr_t kModeSel     = 0x007f1a0c;
 
 // 0x0042b960
 extern "C" __declspec(dllexport) void __cdecl CarSlotInit1P() {
-    // Step 1
-    *reinterpret_cast<std::int32_t*>(kSlot1) = 0;
-
-    // Step 2: scan table B (stride 0x4c) looking for entry where A[i] != 0 && B[i] == 0
-    const char* pcVar1 = reinterpret_cast<const char*>(kTableB_base);
-    // Offset from table B to table A = 0x7f1042 - 0x7f1502 = -0x4c0
-    // (i.e., tableA_base = pcVar1 - 0x4c0 at each iteration)
-    std::int32_t foundIdx = 0;
-    std::int32_t idx = 0;
-    do {
-        const char* tableA_entry = pcVar1 - 0x4c0;
-        if (*tableA_entry != '\0' && *pcVar1 == '\0') {
-            // Found: write current index
-            *reinterpret_cast<std::int32_t*>(kSlot1) = idx;
-            break;
+    std::int32_t idx = 0;                                   // 0x0042b960 `xor ecx, ecx`
+    for (std::uintptr_t prev = kTableB_base; prev < kScanBound; prev += kStride, ++idx) {
+        if (*reinterpret_cast<const char*>(prev - (kTableB_base - kTableA_base)) != '\0' &&
+            *reinterpret_cast<const char*>(prev) == '\0') {
+            break;                                          // 0x0042b97d je 0x0042b98a
         }
-        pcVar1 = pcVar1 + kStride;
-        idx += 1;
-        (void)foundIdx;
-    } while (reinterpret_cast<std::uintptr_t>(pcVar1) < kScanBound);
+    }
 
-    // Step 3
-    *reinterpret_cast<std::uint32_t*>(kSlot2) = 0xffffffffu;
-    *reinterpret_cast<std::uint32_t*>(kSlot3) = 0xffffffffu;
-    *reinterpret_cast<std::uint32_t*>(kSlot4) = 0xffffffffu;
+    *reinterpret_cast<std::int32_t*>(kSlot1)  = idx;        // 0x0042b991
+    *reinterpret_cast<std::uint32_t*>(kSlot2) = 0xffffffffu;// 0x0042b997
+    *reinterpret_cast<std::uint32_t*>(kSlot3) = 0xffffffffu;// 0x0042b99c
+    *reinterpret_cast<std::uint32_t*>(kSlot4) = 0xffffffffu;// 0x0042b9a1
+    *reinterpret_cast<std::int32_t*>(kModeSel) = 1;         // 0x0042b9a6
 
-    // Step 4
-    *reinterpret_cast<std::int32_t*>(kModeSel) = 1;
-
-    // Step 5
-    CallSlotWrite(0, 1);
-    CallSlotWrite(1, 0);
-    CallSlotWrite(2, 0);
-    CallSlotWrite(3, 0);
+    CallSlotWrite(0, 1);                                    // 0x0042b9b0
+    CallSlotWrite(1, 0);                                    // 0x0042b9b9
+    CallSlotWrite(2, 0);                                    // 0x0042b9c2
+    CallSlotWrite(3, 0);                                    // 0x0042b9cb
 }
 
-RH_ScopedInstall(CarSlotInit1P, 0x0042b960);  // re-enabled 2026-05-24 c3-frontend-a
+RH_ScopedInstall(CarSlotInit1P, 0x0042b960);  // re-ported 2026-10-12 (negctl re-earn)
 
 // ---------------------------------------------------------------------------
 // 0x0042b9e0  CarSlotAssign
@@ -457,104 +436,24 @@ RH_ScopedInstall(CarSlotAssign, 0x0042b9e0);  // re-enabled 2026-05-24 c3-fronte
 
 // ---------------------------------------------------------------------------
 // 0x0042b540  MenuButtonDetectD
-//
-// Structural sibling of MenuButtonDetectC (0x0042b310). Differences only:
-//   - Active byte col: +1 (0x7f1045 vs 0x7f1044)
-//   - Processed byte col: +1 (0x7f1505 vs 0x7f1504)
-//   - No-input flag: _DAT_0067f1bc (vs _DAT_0067f1b8)
-// All phases and path A/B logic identical to MenuButtonDetectC.
-// ref: re/analysis/frontend_promote_menus_a/0x0042b540.md
+// Same instruction stream as 0x0042b310 (see MenuButtonDetectScreenGate) with
+// held 0x007f1045 (0x0042b554), previous 0x007f1505 (0x0042b662) and cleared
+// dword 0x0067f1bc (0x0042b63f). Re-ported 2026-10-12 (negctl re-earn): the
+// earlier port fell through to the edge detect for type 0x13 sub 0/1
+// (0x0042b629 / 0x0042b62e je 0x0042b617 return 1) and walked the slot
+// records at 4-byte stride (0x0042b5ef / 0x0042b751 `add esi, 0x10`).
 // ---------------------------------------------------------------------------
 
-// Additional constants for col+1 (all others reuse the constants declared above)
-static constexpr std::uintptr_t kActiveBase1    = 0x007f1045; // active byte col +1 base
-static constexpr std::uintptr_t kProcessedBase1 = 0x007f1505; // processed byte col +1 base
-// Slot 7 sentinel for col+1: 0x7f1045 + 7*0x4c = 0x7f1259
-static constexpr std::uintptr_t kPathARow7Active1    = 0x007f1259;
-// Slot 7 sentinel processed col+1: 0x7f1505 + 7*0x4c = 0x7f17c5
-static constexpr std::uintptr_t kPathARow7Proc1      = 0x007f17c5;
-// No-input flag for col+1 (vs kNoInputFlag = 0x0067f1b8 for col+0)
-static constexpr std::uintptr_t kNoInputFlag1   = 0x0067f1bc;
+static constexpr std::uintptr_t kActiveBase1    = 0x007f1045; // 0x0042b554
+static constexpr std::uintptr_t kProcessedBase1 = 0x007f1505; // 0x0042b662
+static constexpr std::uintptr_t kNoInputFlag1   = 0x0067f1bc; // 0x0042b63f
 
 // 0x0042b540
 extern "C" __declspec(dllexport) std::uint32_t __cdecl MenuButtonDetectD() {
-    const std::int32_t sel = *reinterpret_cast<std::int32_t*>(kDispatchSel);
-
-    // Phase 1 -- detect active input at col +1
-    bool bVar1 = false;
-    if (sel == 0x1000) {
-        // Path A: fixed stride (7 entries)
-        for (int n = 0; n < 7; n++) {
-            if (*reinterpret_cast<const char*>(kActiveBase1 + n * kStride) != '\0') {
-                bVar1 = true;
-            }
-        }
-        // Slot 7 sentinel: 0x7f1045 + 7*0x4c = 0x7f1259
-        if (*reinterpret_cast<const char*>(kPathARow7Active1) != '\0') {
-            bVar1 = true;
-        }
-    } else {
-        // Path B: car-slot index array
-        const std::int32_t* piVar4 = reinterpret_cast<std::int32_t*>(kPlayerSlotArray);
-        for (int iVar5 = 0; iVar5 < 8; iVar5++, piVar4++) {
-            if (reinterpret_cast<std::uintptr_t>(piVar4) >= kPlayerSlotEnd) break;
-            const std::int32_t slotIdx = *piVar4;
-            if (slotIdx == -1) continue;
-            if (CallSlotState(iVar5) == 2) continue; // U-3445
-            if (*reinterpret_cast<const char*>(kActiveBase1 + slotIdx * kStride) != '\0') {
-                bVar1 = true;
-            }
-        }
-    }
-
-    if (!bVar1) {
-        // Phase 2: no active input -- zero the col+1 flag
-        *reinterpret_cast<std::int32_t*>(kNoInputFlag1) = 0;
-        // fall through to phase 3 (uVar3 stays 0)
-    } else {
-        // Screen-type branch (identical to MenuButtonDetectC)
-        const std::int32_t slot   = *reinterpret_cast<std::int32_t*>(kSlotIndex);
-        const std::int32_t screen = *reinterpret_cast<std::int32_t*>(kScreenTypeBase + slot * 0x40);
-        const std::int32_t cursor = *reinterpret_cast<std::int32_t*>(kCursorBase + slot * 0x40);
-
-        if (screen == kScreenId13) {
-            if (cursor == 2) return 1;
-            // cursor 0/1: fall through to phase 3
-        } else if (screen == kScreenId1e) {
-            return 1;
-        }
-        // else: fall through to phase 3
-    }
-
-    // Phase 3 -- detect active AND !processed at col +1
-    std::uint32_t uVar3 = 0;
-    if (sel == 0x1000) {
-        // Path A: 8 entries (note: uses 8 like MenuButtonDetectC phase 3)
-        for (int n = 0; n < 8; n++) {
-            if (*reinterpret_cast<const char*>(kActiveBase1 + n * kStride) != '\0' &&
-                *reinterpret_cast<const char*>(kProcessedBase1 + n * kStride) == '\0') {
-                uVar3 = 1;
-            }
-        }
-    } else {
-        // Path B
-        const std::int32_t* piVar4 = reinterpret_cast<std::int32_t*>(kPlayerSlotArray);
-        for (int iVar5 = 0; iVar5 < 8; iVar5++, piVar4++) {
-            if (reinterpret_cast<std::uintptr_t>(piVar4) >= kPlayerSlotEnd) break;
-            const std::int32_t slotIdx = *piVar4;
-            if (slotIdx == -1) continue;
-            if (CallSlotState(iVar5) == 2) continue;
-            if (*reinterpret_cast<const char*>(kActiveBase1 + slotIdx * kStride) != '\0' &&
-                *reinterpret_cast<const char*>(kProcessedBase1 + slotIdx * kStride) == '\0') {
-                uVar3 = 1;
-            }
-        }
-    }
-
-    return uVar3;
+    return MenuButtonDetectScreenGate(kActiveBase1, kProcessedBase1, kNoInputFlag1);
 }
 
-RH_ScopedInstall(MenuButtonDetectD, 0x0042b540);  // re-enabled 2026-05-24 c3-frontend-a
+RH_ScopedInstall(MenuButtonDetectD, 0x0042b540);  // re-ported 2026-10-12 (negctl re-earn)
 
 // ---------------------------------------------------------------------------
 // 0x0042b8b0  ScreenWidthGet
