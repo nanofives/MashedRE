@@ -6373,6 +6373,35 @@ function runDiff() {
             }, 'int', types, recCfg.abi || 'stdcall');
             globalThis.__negctlRecorderKeep = recorder;
         }
+        // `stub_at` [addr | {addr, nargs, abi, ret}] (reearn/replay 2026-10-12): Interceptor.replace a callee reached
+        // by a HARDCODED direct CALL with the `recorder` above (or, without one, a bare callback returning `ret`).
+        // Made for 0x004987b0: it ends in OutputDebugStringA, whose 0x40010006 debug-print exception Frida surfaces
+        // as 'system error' on BOTH arms, and its IAT slot 0x005cc1b0 sits in read-only .rdata so a seed cannot
+        // redirect it. Same install guard as stub_dispatch_observe: refuse to run if the entry bytes did not change.
+        const stubAtS = CONFIG.stub_at || [];
+        globalThis.__scatStubKeep = [];
+        for (let k = 0; k < stubAtS.length; k++) {
+            const se = stubAtS[k];
+            const sa = ptr((se && typeof se === 'object') ? se.addr : se);
+            let cb = recorder;
+            if (!cb) {
+                const nA = (se && se.nargs) | 0, rv = (se && se.ret) | 0, ty = [];
+                for (let q = 0; q < nA; q++) ty.push('uint32');
+                cb = new NativeCallback(function () { return rv; }, 'int', ty, (se && se.abi) || 'mscdecl');
+            }
+            globalThis.__scatStubKeep.push(cb);
+            const pre = sa.readByteArray(5);
+            Interceptor.replace(sa, cb);
+            Interceptor.flush();
+            const post = new Uint8Array(sa.readByteArray(5)), preU = new Uint8Array(pre);
+            let patched = false;
+            for (let b = 0; b < 5; b++) if (post[b] !== preU[b]) { patched = true; break; }
+            if (!patched) {
+                send({ type: 'error', msg: 'stub_at did NOT install at ' + sa + ' (scalars_to_scattered_globals) — ' +
+                       'refusing to run, the REAL callee would execute' });
+                return;
+            }
+        }
         function resolveVal(x) {
             if (x !== null && typeof x === 'object' && x.scratch !== undefined) return scratch.add(x.scratch | 0).toUInt32();
             if (x !== null && typeof x === 'object' && x.recorder) return recorder.toUInt32();
