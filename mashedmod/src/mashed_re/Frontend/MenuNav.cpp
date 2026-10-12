@@ -8,6 +8,7 @@
 //     Signature: undefined4 FUN_0040e470(int param_1)
 //     Returns *(PTR_PTR_005f2770 + param_1*4 + 0x34) — raw DWORD (1=player, 2=AI)
 #include "../Core/HookSystem.h"
+#include "MenuNav.h"
 
 #include <windows.h>
 #include <cstdint>
@@ -73,50 +74,71 @@ static inline std::uint32_t CallSlotState(int idx) {
 
 // ---------------------------------------------------------------------------
 // 0x0042ac90  MenuEntryGet
-// Traverses the active slot's entry array, skipping (cursor+1) inner groups,
-// then does a final scan stopping at 0xFF05/14/060000 sentinels.
-// Returns *(iVar1 + 4 + iVar3*4) unless the sentinel is 0xFF060000 (-1).
+// ONE body for both builds (U-9667, 2026-10-12). MenuEntryWalk below is the
+// table walk; the .asi export reads the three globals and calls it, and the
+// standalone's select path (MenuNavSM.cpp Nav_Select / Nav_SelectAction) calls
+// it with the nav slot's table and cursor. The standalone used to run its own
+// ItemActionCode instead, which returned -1 at cursor -1 where the bytes return
+// item 0's action code (re/analysis/u9667_menu_tables/RESULT.md); it is gone.
+//
+// Bytes (MASHED.exe.unpatched):
+//   0x0042aca5 xor eax,eax / 0x0042aca7 cmp ecx,-1 / je 0x0042acd2   cursor -1 skips the item walk
+//   0x0042acac inc ecx                                              cursor+1 passes
+//   0x0042acb0 cmp [edx+eax*4],0xff040000 / je 0x0042accd           word at eax already T4?
+//   0x0042acc0 mov esi,[edx+eax*4+4] / inc eax / cmp esi,0xff040000 / jne 0x0042acc0
+//   0x0042accd inc eax / 0x0042acce dec ecx / jne 0x0042acb0        loop while ecx != 0
+//   0x0042acd2 mov ecx,[edx+eax*4] / cmp ecx,0xff050000 / je 0x0042acfd
+//   0x0042ace0 cmp ecx,0xff140000 / je / 0x0042ace8 cmp ecx,0xff060000 / je 0x0042acfd
+//   0x0042acf0 mov ecx,[edx+eax*4+4] / inc eax / cmp ecx,0xff050000 / jne 0x0042ace0
+//   0x0042acfd cmp [edx+eax*4],0xff060000 / jne 0x0042ad0a / or eax,-1 / ret
+//   0x0042ad0a mov eax,[edx+eax*4+4] / ret
+// The pass counter is the bytes' `dec ecx / jne` (stop at 0). The earlier .asi
+// body stopped at `> 0`; the two agree for every cursor >= -1, and a cursor
+// <= -2 walks off the table in the original either way.
 // Pure read-only, no side-effects.
 // ---------------------------------------------------------------------------
+namespace mashed_re {
+namespace Frontend {
+
+// Table walk of 0x0042ac90 (anchored on the export below; one body, two callers).
+std::uint32_t MenuEntryWalk(const std::uint32_t* table, std::int32_t cursor) {
+    std::int32_t i = 0;                                    // EAX, 0x0042aca5
+    if (cursor != -1) {                                    // 0x0042aca7
+        std::uint32_t passes = static_cast<std::uint32_t>(cursor) + 1u;  // 0x0042acac
+        do {
+            if (table[i] != kSentInnerTerm) {              // 0x0042acb0
+                std::uint32_t w;
+                do {
+                    w = table[i + 1];                      // 0x0042acc0
+                    ++i;
+                } while (w != kSentInnerTerm);
+            }
+            ++i;                                           // 0x0042accd past the 0xff040000
+        } while (--passes != 0u);                          // 0x0042acce
+    }
+
+    // Final scan: stop on 0xff050000 / 0xff140000 / 0xff060000 (0x0042acd2..0x0042acf0).
+    std::uint32_t w = table[i];
+    while (w != kSentFinalA && w != kSentFinalB && w != kSentFinalC) {
+        w = table[i + 1];
+        ++i;
+    }
+
+    if (table[i] == kSentFinalC) return 0xffffffffu;       // 0x0042acfd
+    return table[i + 1];                                   // 0x0042ad0a
+}
+
+} // namespace Frontend
+} // namespace mashed_re
+
 // 0x0042ac90
 extern "C" __declspec(dllexport) std::uint32_t __cdecl MenuEntryGet() {
-    const std::int32_t slot  = *reinterpret_cast<std::int32_t*>(kSlotIndex);
-    const auto iVar1 = *reinterpret_cast<std::int32_t*>(kPtrTableBase + static_cast<std::int32_t>(slot) * 0x40);
-    std::int32_t iVar3 = 0;
-
-    const std::int32_t cursor = *reinterpret_cast<std::int32_t*>(kCursorTableBase + static_cast<std::int32_t>(slot) * 0x40);
-
-    // Phase: skip (cursor+1) inner groups if cursor != -1
-    if (cursor != -1) {
-        std::int32_t iVar4 = cursor + 1;
-        do {
-            // Inner for-loop: advance iVar3 until 0xFF040000 entry
-            std::int32_t iVar2 = *reinterpret_cast<std::int32_t*>(iVar1 + iVar3 * 4);
-            while (static_cast<std::uint32_t>(iVar2) != kSentInnerTerm) {
-                // Body: update iVar2 = iVar3*4, then advance iVar3, then read next
-                iVar2 = iVar3 * 4;
-                iVar3 += 1;
-                iVar2 = *reinterpret_cast<std::int32_t*>(iVar1 + 4 + iVar2);
-            }
-            iVar3 += 1; // advance past 0xFF040000 entry
-            iVar4 -= 1;
-        } while (iVar4 > 0);
-    }
-
-    // Final scan: advance until we hit a stopping sentinel
-    std::int32_t iVar4 = *reinterpret_cast<std::int32_t*>(iVar1 + iVar3 * 4);
-    while (static_cast<std::uint32_t>(iVar4) != kSentFinalA &&
-           static_cast<std::uint32_t>(iVar4) != kSentFinalB &&
-           static_cast<std::uint32_t>(iVar4) != kSentFinalC) {
-        iVar4 = iVar3 * 4;
-        iVar3 += 1;
-        iVar4 = *reinterpret_cast<std::int32_t*>(iVar1 + 4 + iVar4);
-    }
-
-    if (static_cast<std::uint32_t>(*reinterpret_cast<std::int32_t*>(iVar1 + iVar3 * 4)) == kSentFinalC) {
-        return 0xffffffffu;
-    }
-    return *reinterpret_cast<std::uint32_t*>(iVar1 + 4 + iVar3 * 4);
+    const std::int32_t slot = *reinterpret_cast<std::int32_t*>(kSlotIndex);              // 0x0042ac90
+    const auto* table = *reinterpret_cast<const std::uint32_t* const*>(
+        kPtrTableBase + static_cast<std::uintptr_t>(slot) * 0x40);                       // 0x0042ac99
+    const std::int32_t cursor = *reinterpret_cast<std::int32_t*>(
+        kCursorTableBase + static_cast<std::uintptr_t>(slot) * 0x40);                    // 0x0042ac9f
+    return mashed_re::Frontend::MenuEntryWalk(table, cursor);
 }
 
 RH_ScopedInstall(MenuEntryGet, 0x0042ac90);

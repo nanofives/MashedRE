@@ -48,7 +48,9 @@ struct NavSlot {
     std::int32_t      screen_id;          // DAT_0067ed7c
     const std::uint32_t* desc_table;      // DAT_0067ed78 (&harvested table for screen_id)
     std::int32_t      cursor;             // DAT_0067ed80 (highlighted item; -1 = none)
-    std::int32_t      item_count;         // DAT_0067edb4 (visible item count)
+    std::int32_t      item_count;         // # of 0xff040000 items (records / layout)
+    std::int32_t      nav_count;          // DAT_0067edb4: items whose string id is not -1
+                                          // (FUN_0043d2a0 count, the bound FUN_0042aa00 reads)
     std::int32_t      avail[kMaxItems];   // DAT_0067ed84.. (1 = enabled)
     const std::uint32_t* slide_src;       // DAT_0067ed38 (slide-out source table)
     std::int32_t      saved_cursor;       // DAT_0067ed74
@@ -158,14 +160,32 @@ int  Nav_DevScreen();
 // the current top). Repopulates g_records from the active screen's descriptor table.
 void Nav(int screen_id, int dir);
 
-// Move the highlight cursor on the current screen by +1 (down) or -1 (up),
-// wrapping over the avail[] mask. Standalone feeder into the per-screen selection
-// cursor (DAT_0067ed80 analogue), driven by UpdateMenuSelection().
+// UP (delta < 0) / DOWN (delta > 0) on the current screen. Port of FUN_0043dfd0's
+// UP/DOWN arms: they run only when the screen's flag block carries 0xff0b0000 /
+// 0xff0c0000, step the slot cursor with FUN_0042aa00 (-1 when nav_count is 0 or
+// no item is available), and on screens 6/7 also move the challenge row
+// (Nav_ChallengeRow). Driven by UpdateMenuSelection().
 void Nav_MoveCursor(int delta);
 
-// Activate the currently-highlighted item: push its child screen (if mapped).
-// Returns true if a push happened.
+// Activate the currently-highlighted item: read its action code with the shared
+// 0x0042ac90 walk (MenuEntryWalk, cursor -1 included) and dispatch it. Returns
+// true if a push happened.
 bool Nav_Select();
+
+// The action code the select path would dispatch for the top slot right now:
+// MenuEntryWalk(top table, top cursor), the call at 0x0043e4ca.
+std::uint32_t Nav_SelectAction();
+
+// Challenge row on screens 6/7, the DAT_0067f17c analogue. Separate from the
+// slot cursor (which the original leaves at -1 there). Reset to 0 by the
+// mode-select actions that write DAT_0067f17c = 0 in FUN_0043dfd0.
+int Nav_ChallengeRow();
+
+// FUN_0043dfd0 action 0xff260000 arm, the part after its unlock test (harvest
+// L402-L815): game mode 10 pushes screen 0x18, modes 2..5 launch the race
+// (LAB_0043f371; the caller launches), any other mode pushes screen 0x12.
+enum ChallengeArm : int { kChallengeLaunch = 0, kChallengePushed = 1 };
+ChallengeArm Nav_ChallengeArm(int game_mode);
 
 // Pop one level. Returns true if a pop happened (false at root).
 bool Nav_Back();

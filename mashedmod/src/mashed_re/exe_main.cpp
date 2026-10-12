@@ -1418,6 +1418,63 @@ bool RunParityWalk(int phase) {
 // (sid/cursor/all field values) in mashed_re.log. Captures land in
 // verify/cfgedit_*.bmp. Returns true when finished (caller quits).
 bool g_cfgedit_demo = false;
+// MASHED_NAV_KEYS (U-9667 verification): a comma list of menu keys tapped one
+// per MASHED_NAV_KEYS_GAP frames (default 30) once the menu is up (phase 3),
+// e.g. MASHED_GOTO=1,2,4,6 MASHED_NAV_KEYS=d,u,e. Keys: u d l r e (enter)
+// b (escape). Logs one NAV_KEYS line per frame from the first tap to the
+// end of the script (depth, screen, slot cursor, challenge row, game mode,
+// GameFlow mode) to the CWD-relative log, then quits. Feeds the same
+// in-process edge injection as MASHED_NAV_DEMO, so it also bypasses the
+// focus gate: do not type into the game window while it runs.
+bool g_nav_keys = false;
+static char g_nav_keys_list[128] = {};
+static int  g_nav_keys_gap = 30;
+
+bool RunNavKeysStep() {
+    using namespace mashed_re::Frontend;
+    static int frame = -1, idx = 0, wait = 0;
+    static int nkeys = -1;
+    static char keys[64];
+    if (nkeys < 0) {
+        nkeys = 0;
+        for (const char* c = g_nav_keys_list; *c && nkeys < 64; ++c)
+            if (*c != ',' && *c != ' ') keys[nkeys++] = *c;
+    }
+    if (frame < 0) {
+        if (g_frontend_phase != 3 || g_modal_step != 0) return false;
+        frame = 0;
+        wait = g_nav_keys_gap;           // settle before the first tap
+    }
+    const char* tap = "-";
+    if (wait > 0) {
+        --wait;
+    } else if (idx < nkeys) {
+        const char k = keys[idx++];
+        unsigned char dik = 0;
+        switch (k) {
+            case 'u': dik = DIK_UP; break;     case 'd': dik = DIK_DOWN; break;
+            case 'l': dik = DIK_LEFT; break;   case 'r': dik = DIK_RIGHT; break;
+            case 'e': dik = DIK_RETURN; break; case 'b': dik = DIK_ESCAPE; break;
+            default: break;
+        }
+        if (dik) NavDemoTap(dik);
+        static char t[2]; t[0] = k; t[1] = 0; tap = t;
+        wait = g_nav_keys_gap;
+    } else {
+        return true;                     // script done, last gap elapsed
+    }
+    std::FILE* lf = std::fopen(kLogPath, "a");
+    if (lf) {
+        std::fprintf(lf, "NAV_KEYS f=%d tap=%s depth=%d screen=%d cur=%d row=%d gm=%d flow=%d fph=%d\n",
+                     frame, tap, Nav_Depth(), Nav_ScreenId(), Nav_Cursor(),
+                     Nav_ChallengeRow(), Nav_GameState().game_mode,
+                     static_cast<int>(mashed_re::Race::GameFlow_Mode()),
+                     g_frontend_phase);
+        std::fclose(lf);
+    }
+    ++frame;
+    return false;
+}
 bool RunConfigEditDemo(int /*phase*/) {
     using namespace mashed_re::Frontend;
     static int step = 0, cool = 0;
@@ -1852,6 +1909,100 @@ void ModalGo(int step) {
     }
 }
 
+// Race launch shared by the two menu launch points (U-9667, 2026-10-12):
+// FUN_0043dfd0 action 0xff260000 on Challenge Select (screens 6/7) for game
+// modes 2..5 (LAB_0043f371, FUN_0043d2a0(0,2) + DAT_0067e914=1), and action
+// 0xff420000 on screens 18/24 (harvest L954-1035, the same reload + e914=1).
+// Was inline in the screen-6/7 confirm; moved out unchanged so screens 18/24
+// reach it too. Track = Campaign_SelectedTrack(), set by the caller.
+static void MenuLaunchRace(int launchMode) {
+    char piz[160];
+    RaceTrackPizPath(mashed_re::Race::Campaign_SelectedTrack(), piz, sizeof(piz));
+    if (g_track.Load(g_device, piz, kLogPath)) {
+        mashed_re::Race::RaceConfig cfg;
+        cfg.trackId  = mashed_re::Race::Campaign_SelectedTrack();
+        cfg.gameMode = launchMode;
+        // [#5 2026-09-07] 0x0067ea98 is the port's player-0 COLOUR cursor
+        // (moved by CarSelectCycleColour -> FUN_00431b80), NOT the car
+        // index — the old comment conflated the two. Drive cfg.cars[0].colour
+        // from it so the RACE livery + voice bank show the picked colour
+        // (RaceSession reads m_cfg.cars[].colour at spawn,
+        // RaceSession.cpp:123/175). Cursor is 0..6 (0 = grey/no-selection
+        // -> colour 0; 1..6 -> colour 0..5).
+        // [2026-09-09 Ghidra, Mashed_pool14] In the ORIGINAL the committed
+        // colour is the per-profile CHOICE field 0x0067eaf0 + 12*profile:
+        // FUN_004332a0 (0x004332a0) moves it IN PLACE on L/R (clamped 0..6)
+        // while DAT_007f1a0c == 0x1000, and FUN_004335f0 (0x004335f0) reads
+        // it for the icon tint. There is no ea98 -> eaf0 copy in the
+        // original; the port's ea98 cursor is a port-side construct, so
+        // the confirm block below synthesises eaf0 from it. [SCOPED]
+        const std::int32_t colcur =
+            *reinterpret_cast<const std::int32_t*>(0x0067ea98u);
+        cfg.cars[0].colour = (colcur >= 1 && colcur <= 6) ? colcur - 1 : 0;
+        char cc[8] = {};
+        if (GetEnvironmentVariableA("MASHED_CAR_COLOUR", cc, sizeof(cc)) > 0)
+            cfg.cars[0].colour = std::atoi(cc);
+        // Car index is a SEPARATE selection (not yet an interactive screen);
+        // default car 0 (Advantage), MASHED_CAR_SEL overrides for dev.
+        int carSel = 0;
+        char cs[8] = {};
+        if (GetEnvironmentVariableA("MASHED_CAR_SEL", cs, sizeof(cs)) > 0)
+            carSel = std::atoi(cs);
+        if (carSel < 0) carSel = 0;
+        cfg.cars[0].carIndex = carSel;
+        // [WS-G1] Real per-mode race rule (replaces the old
+        // MASHED_RACE_MODE/MASHED_LAPS env scaffold). Derive the
+        // original's race rule (DAT_007f0fd0, 0..10) from the real game
+        // mode + track via the cup event-type table, then collapse it
+        // onto the standalone's two objectives via the proximity-
+        // elimination split proven in FUN_00410d10 (elimination runs
+        // for every rule except {5,7}). The default (mode 3, track 0)
+        // -> event 0x9 -> rule 0 -> elimination (unchanged demo default).
+        // RE map: re/analysis/game_mode_rules_REmap_20260616.md.
+        cfg.raceRule = mashed_re::Race::RaceModes::RaceRule(cfg.gameMode,
+                                                            cfg.trackId);
+        // [D-11053] MP/quick-race rule dispatch (race-launch action
+        // 0xff420000, FUN_0043dfd0; byte-verified 0x0043f792..0x0043f7cf:
+        // MOV EAX,[0x0067ea88]; length 0 -> rule 0 @0x0043f7a7, 1 ->
+        // rule 1 @0x0043f7b8, 2 -> rule 2 @0x0043f7c5 + team flag
+        // DAT_0067ea64=1 @0x0043f7ca — teams are a standalone residual).
+        // Applies to the MP family (modes 6..9); mode 10 (quick race)
+        // leaves rule 0 (its 0xff420000 branch writes no rule). Game
+        // length = nav ea88 (DAT_0067ea88), MASHED_GAME_LENGTH overrides;
+        // MASHED_MP_RULES=0 reverts to the championship-path rule.
+        {
+            static const bool s_mprules = [] {
+                const char* e = std::getenv("MASHED_MP_RULES");
+                return !(e && e[0] == '0');
+            }();
+            if (s_mprules && cfg.gameMode >= 6 && cfg.gameMode <= 9) {
+                int glen = mashed_re::Frontend::Nav_GameState().ea88;
+                char gl[8] = {};
+                if (GetEnvironmentVariableA("MASHED_GAME_LENGTH", gl,
+                                            sizeof(gl)) > 0)
+                    glen = std::atoi(gl);
+                cfg.raceRule =
+                    mashed_re::Race::RaceModes::RaceRuleFromGameLength(glen);
+            }
+        }
+        cfg.raceMode = mashed_re::Race::RaceModes::RaceModeForObjective(
+                           cfg.raceRule);
+        // Dev overrides (verification only), applied after the real
+        // derivation: MASHED_RACE_MODE forces elim/laps, MASHED_LAPS the
+        // lap target.
+        char rm[8] = {};
+        if (GetEnvironmentVariableA("MASHED_RACE_MODE", rm, sizeof(rm)) > 0)
+            cfg.raceMode = (rm[0] == 'l' || rm[0] == 'L' || rm[0] == '1') ? 1 : 0;
+        char lp[8] = {};
+        if (GetEnvironmentVariableA("MASHED_LAPS", lp, sizeof(lp)) > 0) {
+            int nl = std::atoi(lp); if (nl > 0) cfg.laps = nl;
+        }
+        // Hand the engine + device to GameFlow so RaceSession::Begin can
+        // spawn the cars + start the match (activates the real sim).
+        mashed_re::Race::GameFlow_RequestRace(cfg, &g_track, g_device);
+    }
+}
+
 bool UpdateMenuSelection() {
     using namespace mashed_re::Frontend;
     if (!g_kbd) return false;
@@ -1859,7 +2010,7 @@ bool UpdateMenuSelection() {
     // reads GLOBAL key state even when our window isn't focused — meaning keys
     // pressed in another app were driving the menu. Gate all input on window
     // focus (g_active, set by WM_ACTIVATE); the nav-demo driver bypasses this.
-    if (!g_active && !g_nav_demo && !g_race_demo && !g_cfgedit_demo) return false;
+    if (!g_active && !g_nav_demo && !g_race_demo && !g_cfgedit_demo && !g_nav_keys) return false;
     const bool up_now    = (g_keys[DIK_UP]        & 0x80) != 0;
     const bool up_prev   = (g_keys_prev[DIK_UP]   & 0x80) != 0;
     const bool down_now  = (g_keys[DIK_DOWN]      & 0x80) != 0;
@@ -2088,7 +2239,15 @@ bool UpdateMenuSelection() {
             // InRace; Esc returns to the menu.
             // Selected track = the challenge-select cursor row (the cup tracks
             // are the rows). MASHED_TRACK_SEL overrides for dev/verification.
-            int trackSel = cur;
+            // U-9667: the row is DAT_0067f17c's analogue (Nav_ChallengeRow), NOT
+            // the slot cursor; on screens 6/7 the slot cursor is -1 after any
+            // UP/DOWN, exactly as in the original (FUN_0042aa00, count 0).
+            int trackSel = Nav_ChallengeRow();
+            {
+                const int rows = mashed_re::Race::Campaign_CurrentCup().trackCount;
+                if (trackSel >= rows) trackSel = rows - 1;
+                if (trackSel < 0) trackSel = 0;
+            }
             char ts[8] = {};
             const bool trackOverride =
                 GetEnvironmentVariableA("MASHED_TRACK_SEL", ts, sizeof(ts)) > 0;
@@ -2157,91 +2316,35 @@ bool UpdateMenuSelection() {
                     return false;                // locked cup row: no launch
                 }
             }
-            char piz[160];
-            RaceTrackPizPath(mashed_re::Race::Campaign_SelectedTrack(), piz, sizeof(piz));
-            if (g_track.Load(g_device, piz, kLogPath)) {
-                mashed_re::Race::RaceConfig cfg;
-                cfg.trackId  = mashed_re::Race::Campaign_SelectedTrack();
-                cfg.gameMode = launchMode;
-                // [#5 2026-09-07] 0x0067ea98 is the port's player-0 COLOUR cursor
-                // (moved by CarSelectCycleColour -> FUN_00431b80), NOT the car
-                // index — the old comment conflated the two. Drive cfg.cars[0].colour
-                // from it so the RACE livery + voice bank show the picked colour
-                // (RaceSession reads m_cfg.cars[].colour at spawn,
-                // RaceSession.cpp:123/175). Cursor is 0..6 (0 = grey/no-selection
-                // -> colour 0; 1..6 -> colour 0..5).
-                // [2026-09-09 Ghidra, Mashed_pool14] In the ORIGINAL the committed
-                // colour is the per-profile CHOICE field 0x0067eaf0 + 12*profile:
-                // FUN_004332a0 (0x004332a0) moves it IN PLACE on L/R (clamped 0..6)
-                // while DAT_007f1a0c == 0x1000, and FUN_004335f0 (0x004335f0) reads
-                // it for the icon tint. There is no ea98 -> eaf0 copy in the
-                // original; the port's ea98 cursor is a port-side construct, so
-                // the confirm block below synthesises eaf0 from it. [SCOPED]
-                const std::int32_t colcur =
-                    *reinterpret_cast<const std::int32_t*>(0x0067ea98u);
-                cfg.cars[0].colour = (colcur >= 1 && colcur <= 6) ? colcur - 1 : 0;
-                char cc[8] = {};
-                if (GetEnvironmentVariableA("MASHED_CAR_COLOUR", cc, sizeof(cc)) > 0)
-                    cfg.cars[0].colour = std::atoi(cc);
-                // Car index is a SEPARATE selection (not yet an interactive screen);
-                // default car 0 (Advantage), MASHED_CAR_SEL overrides for dev.
-                int carSel = 0;
-                char cs[8] = {};
-                if (GetEnvironmentVariableA("MASHED_CAR_SEL", cs, sizeof(cs)) > 0)
-                    carSel = std::atoi(cs);
-                if (carSel < 0) carSel = 0;
-                cfg.cars[0].carIndex = carSel;
-                // [WS-G1] Real per-mode race rule (replaces the old
-                // MASHED_RACE_MODE/MASHED_LAPS env scaffold). Derive the
-                // original's race rule (DAT_007f0fd0, 0..10) from the real game
-                // mode + track via the cup event-type table, then collapse it
-                // onto the standalone's two objectives via the proximity-
-                // elimination split proven in FUN_00410d10 (elimination runs
-                // for every rule except {5,7}). The default (mode 3, track 0)
-                // -> event 0x9 -> rule 0 -> elimination (unchanged demo default).
-                // RE map: re/analysis/game_mode_rules_REmap_20260616.md.
-                cfg.raceRule = mashed_re::Race::RaceModes::RaceRule(cfg.gameMode,
-                                                                    cfg.trackId);
-                // [D-11053] MP/quick-race rule dispatch (race-launch action
-                // 0xff420000, FUN_0043dfd0; byte-verified 0x0043f792..0x0043f7cf:
-                // MOV EAX,[0x0067ea88]; length 0 -> rule 0 @0x0043f7a7, 1 ->
-                // rule 1 @0x0043f7b8, 2 -> rule 2 @0x0043f7c5 + team flag
-                // DAT_0067ea64=1 @0x0043f7ca — teams are a standalone residual).
-                // Applies to the MP family (modes 6..9); mode 10 (quick race)
-                // leaves rule 0 (its 0xff420000 branch writes no rule). Game
-                // length = nav ea88 (DAT_0067ea88), MASHED_GAME_LENGTH overrides;
-                // MASHED_MP_RULES=0 reverts to the championship-path rule.
-                {
-                    static const bool s_mprules = [] {
-                        const char* e = std::getenv("MASHED_MP_RULES");
-                        return !(e && e[0] == '0');
-                    }();
-                    if (s_mprules && cfg.gameMode >= 6 && cfg.gameMode <= 9) {
-                        int glen = mashed_re::Frontend::Nav_GameState().ea88;
-                        char gl[8] = {};
-                        if (GetEnvironmentVariableA("MASHED_GAME_LENGTH", gl,
-                                                    sizeof(gl)) > 0)
-                            glen = std::atoi(gl);
-                        cfg.raceRule =
-                            mashed_re::Race::RaceModes::RaceRuleFromGameLength(glen);
-                    }
-                }
-                cfg.raceMode = mashed_re::Race::RaceModes::RaceModeForObjective(
-                                   cfg.raceRule);
-                // Dev overrides (verification only), applied after the real
-                // derivation: MASHED_RACE_MODE forces elim/laps, MASHED_LAPS the
-                // lap target.
-                char rm[8] = {};
-                if (GetEnvironmentVariableA("MASHED_RACE_MODE", rm, sizeof(rm)) > 0)
-                    cfg.raceMode = (rm[0] == 'l' || rm[0] == 'L' || rm[0] == '1') ? 1 : 0;
-                char lp[8] = {};
-                if (GetEnvironmentVariableA("MASHED_LAPS", lp, sizeof(lp)) > 0) {
-                    int nl = std::atoi(lp); if (nl > 0) cfg.laps = nl;
-                }
-                // Hand the engine + device to GameFlow so RaceSession::Begin can
-                // spawn the cars + start the match (activates the real sim).
-                mashed_re::Race::GameFlow_RequestRace(cfg, &g_track, g_device);
+            // U-9667: the original's select calls 0x0042ac90 with the slot
+            // cursor, -1 included (no cursor test before 0x0043e4ca). On kT6/kT7
+            // it returns 0xff260000 at -1 and at 0, and the 0xff260000 arm of
+            // FUN_0043dfd0 branches on the game mode AFTER the unlock test above
+            // (harvest L402-L815): mode 10 pushes screen 0x18, modes 2..5 launch
+            // (LAB_0043f371), any other mode pushes screen 0x12. A forced
+            // MASHED_GAME_MODE keeps the direct launch (dev/verification).
+            if (!modeForced && Nav_SelectAction() == 0xff260000u &&
+                Nav_ChallengeArm(launchMode) == kChallengePushed)
+                return false;
+            MenuLaunchRace(launchMode);
+        } else if ((sid == 18 || sid == 24) && Nav_SelectAction() == 0xff420000u) {
+            // U-9667: action 0xff420000 (item 0 of kT18/kT24) is the race launch
+            // the 0xff260000 arm hands over to (screen 0x18 for mode 10, 0x12
+            // for the rest). Harvest L954-1035: mode 10 first counts the three
+            // opponent fields DAT_0067ea98/ea9c/eaa0 and opens modal 0x24f when
+            // all are 0 (no launch); every mode then does FUN_0043d2a0(0,2) +
+            // DAT_0067e914=1, the launch. The modal itself is not ported: a zero
+            // count refuses the launch silently. The per-slot AI assignment in
+            // that arm is not ported either; MenuLaunchRace builds its own config.
+            int launchMode = Nav_GameState().game_mode;
+            if (launchMode == 0) launchMode = 3;
+            const MenuGameState& gs = Nav_GameState();
+            const int opponents = (gs.ea98 != 0) + (gs.ea9c != 0) + (gs.eaa0 != 0);
+            if (launchMode == 10 && opponents == 0) {
+                mashed_re::Audio::SfxPlay("menu navigation", 0.5f);
+                return false;                    // modal 0x24f in the original
             }
+            MenuLaunchRace(launchMode);
         } else {
             Nav_Select();                  // push child screen
             // [D-11057] the continue-cup action (0xff240000, e.g. the cup-
@@ -5751,7 +5854,7 @@ bool RenderFrame() {
             // campaign/race state is RE'd; this is the scaffold-driven structure.
             using namespace mashed_re::Race;
             const Cup& cup = Campaign_CurrentCup();
-            int sel = Nav_Cursor();
+            int sel = Nav_ChallengeRow();        // DAT_0067f17c analogue (U-9667)
             if (sel < 0) sel = 0;
             if (sel >= cup.trackCount) sel = cup.trackCount - 1;
             Campaign_SetSelectedTrack(sel);
@@ -8134,6 +8237,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     g_parity   = (GetEnvironmentVariableA("MASHED_PARITY",   nullptr, 0) != 0);
     g_race_demo= (GetEnvironmentVariableA("MASHED_RACE_DEMO", nullptr, 0) != 0);
     g_cfgedit_demo = (GetEnvironmentVariableA("MASHED_CFGEDIT_DEMO", nullptr, 0) != 0);
+    g_nav_keys = (GetEnvironmentVariableA("MASHED_NAV_KEYS", g_nav_keys_list,
+                                          sizeof(g_nav_keys_list)) > 0);
+    {
+        char gb[16] = {};
+        if (GetEnvironmentVariableA("MASHED_NAV_KEYS_GAP", gb, sizeof(gb)) > 0) {
+            const int g = std::atoi(gb);
+            if (g > 0) g_nav_keys_gap = g;
+        }
+    }
 
     // B17: snapshot the low-address arena before ANYTHING runs (no piz heap,
     // no window, no d3d9). This is the pristine layout we get to reserve from.
@@ -8871,6 +8983,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         if (g_cfgedit_demo) {
             if (RunConfigEditDemo(nav_demo_phase)) { PostQuitMessage(0); }
             ++nav_demo_phase;
+        }
+        if (g_nav_keys) {
+            if (RunNavKeysStep()) { PostQuitMessage(0); }
         }
         UpdateWindowTitle();
         // B13: PgUp/PgDn cycle through uploaded atlas slots; Home -> 0.

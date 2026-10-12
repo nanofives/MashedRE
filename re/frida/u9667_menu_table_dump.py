@@ -36,6 +36,7 @@ DUMP_AGENT = r'''
 const IMG=0x00400000; let DELTA=0;
 const RVA_DEPTH=0x0067e9f8, RVA_SLOT=0x0067ed38, RVA_PHASE=0x0067eca4, RVA_PTRS=0x005f7638;
 const RVA_NAV=0x0043d2a0;
+// mode = DAT_0067e9fc (game mode), row = DAT_0067f17c (challenge row); added for U-9667 fix traces.
 const T7=0xff070000;
 let nav=null;
 function abs(r){return ptr(r+DELTA);}
@@ -75,7 +76,8 @@ rpc.exports={
       if(tp!==0){ tab=readTable(ptr(tp)); }
       slots.push({slot:s, rec:rec, table_ptr:tp, cursor:cur, table:tab});
     }
-    return {depth:depth, phase:abs(RVA_PHASE).readS32(), slots:slots};
+    return {depth:depth, phase:abs(RVA_PHASE).readS32(), mode:abs(0x0067e9fc).readS32(),
+            row:abs(0x0067f17c).readS32(), slots:slots};
   }
 };
 '''
@@ -188,7 +190,8 @@ def lane_input(out, route, tag, max_items=12):
     def snap(t):
         d, s = top()
         rec["dumps"].append({"tag": t, "screen": None, **d})
-        rec["events"].append(f"{t}: depth={d['depth']} phase={d['phase']} ptr={hex(s['table_ptr'])} cursor={s['cursor']}")
+        rec["events"].append(f"{t}: depth={d['depth']} phase={d['phase']} ptr={hex(s['table_ptr'])} cursor={s['cursor']}"
+                             f" mode={d.get('mode')} row={d.get('row')}")
         print(rec["events"][-1], flush=True)
         return s["cursor"]
 
