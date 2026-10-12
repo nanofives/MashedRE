@@ -29,7 +29,11 @@ import frida
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(ROOT / 're' / 'frida'))
-ORIG = ROOT / "original"; EXE = ORIG / "MASHED.exe"
+# [row-movers 2026-10-12] MASHED_ROOT points the spawn at a COPY of the install (same
+# convention as scenario_launch.py / orig_nav_hold.py), so the original can boot against an
+# edited gamesave.bin without writing into original/.
+GAME_ROOT = Path(os.environ.get("MASHED_ROOT", ROOT))
+ORIG = GAME_ROOT / "original"; EXE = ORIG / "MASHED.exe"
 
 DUMP_AGENT = r'''
 'use strict';
@@ -57,6 +61,18 @@ rpc.exports={
     const m=Process.findModuleByName('MASHED.exe')||Process.enumerateModules()[0];
     DELTA=m.base.toUInt32()-IMG;
     nav=new NativeFunction(abs(RVA_NAV),'void',['int','int']);
+    // [row-movers] report a native exception before the process dies (no Interceptor).
+    Process.setExceptionHandler(function(d){
+      const c=d.context; let mem=null;
+      try{ mem={op:d.memory.operation, addr:d.memory.address.toString()}; }catch(e){}
+      send({exc:d.type, addr:d.address.toString(), mem:mem,
+            eax:c.eax.toString(), ebx:c.ebx.toString(), ecx:c.ecx.toString(), edx:c.edx.toString(),
+            esi:c.esi.toString(), edi:c.edi.toString(), ebp:c.ebp.toString(), esp:c.esp.toString(),
+            row:abs(0x0067f17c).readS32(),
+            bt:(d.type==='access-violation')
+               ? Thread.backtrace(d.context, Backtracer.FUZZY).map(function(p){return p.toString();}) : null});
+      return false;
+    });
     return DELTA;
   },
   phase:function(){ return abs(RVA_PHASE).readS32(); },
@@ -77,7 +93,11 @@ rpc.exports={
       slots.push({slot:s, rec:rec, table_ptr:tp, cursor:cur, table:tab});
     }
     return {depth:depth, phase:abs(RVA_PHASE).readS32(), mode:abs(0x0067e9fc).readS32(),
-            row:abs(0x0067f17c).readS32(), slots:slots};
+            row:abs(0x0067f17c).readS32(), sel:abs(0x0067f184).readS32(),
+            ea68:abs(0x0067ea68).readS32(), f1a4:abs(0x0067f1a4).readS32(),
+            tbl:(function(){ const t=[]; for(let i=0;i<13*12;i++) t.push(abs(0x007f0a40+i*4).readS32()); return t; })(),
+            tbl_pre:(function(){ const t=[]; for(let i=-12;i<0;i++) t.push(abs(0x007f0a40+i*4).readS32()); return t; })(),
+            slots:slots};
   }
 };
 '''
@@ -171,7 +191,7 @@ rpc.exports={
 '''
 
 
-def lane_input(out, route, tag, max_items=12):
+def lane_input(out, route, tag, max_items=12, last_keys=None):
     """route: cursor value to select at each level ('m1' = -1). Every level: sweep the cursor
     down until it repeats, then up from the top item, dumping after every press."""
     import statenav
@@ -179,7 +199,11 @@ def lane_input(out, route, tag, max_items=12):
     rec = {"lane": "input", "route": route, "events": [], "dumps": []}
     dev, pid, sess = spawn()
     S = load(sess, statenav.AGENT); S.exports_sync.init()
-    D = load(sess, DUMP_AGENT).exports_sync; D.init()
+    excs = []
+    _ds = sess.create_script(DUMP_AGENT)
+    _ds.on("message", lambda m, d: excs.append(m.get("payload", m)))
+    _ds.load(); D = _ds.exports_sync; D.init()
+    rec["exceptions"] = excs
     M = load(sess, MEG_AGENT).exports_sync; M.init()
     dev.resume(pid)
     nav = Nav(S, pid)
@@ -191,7 +215,8 @@ def lane_input(out, route, tag, max_items=12):
         d, s = top()
         rec["dumps"].append({"tag": t, "screen": None, **d})
         rec["events"].append(f"{t}: depth={d['depth']} phase={d['phase']} ptr={hex(s['table_ptr'])} cursor={s['cursor']}"
-                             f" mode={d.get('mode')} row={d.get('row')}")
+                             f" mode={d.get('mode')} row={d.get('row')} sel={d.get('sel')} ea68={d.get('ea68')}"
+                             f" f1a4={d.get('f1a4')}")
         print(rec["events"][-1], flush=True)
         return s["cursor"]
 
@@ -213,6 +238,23 @@ def lane_input(out, route, tag, max_items=12):
                 rec["events"].append("process gone"); break
             d, s = top(); dep = d["depth"]
             lt = f"L{lvl}-d{dep}"
+            if last_keys and lvl == len(route) - 1:
+                # [row-movers] explicit key list at the last level instead of the sweep:
+                # d = 12 (down), u = 11 (up), e = 4 (confirm); snap after every press.
+                # r = 10, l = 9: FUN_0042b540 (RIGHT arm) reads flag byte 0x007f1045 and
+                # FUN_0042b180 (DOWN) 0x007f1047 (0x0042b554 / 0x0042b190), so RIGHT is
+                # two controls below DOWN. The trace's sel column confirms it (1 -> 2).
+                snap(f"{lt}/c")
+                rec["tbl_at_last_level"] = top()[0].get("tbl")
+                rec["tbl_pre_at_last_level"] = top()[0].get("tbl_pre")
+                for k, key in enumerate(last_keys):
+                    code = {"d": 12, "u": 11, "e": 4, "r": 10, "l": 9}[key]
+                    ncalls = len(M.calls())
+                    nav.press(code); time.sleep(1.5 if key == "e" else 0.3)
+                    snap(f"{lt}/k{k+1}{key}")
+                    if key == "e":
+                        rec["events"].append(f"{lt} confirm: 0x0042ac90 calls={M.calls()[ncalls:]}")
+                break
             vals = [snap(f"{lt}/c")]
             for k in range(max_items):
                 nav.press(12); time.sleep(0.3)
@@ -248,6 +290,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--lane", choices=["push", "input"], required=True)
     ap.add_argument("--out", required=True)
+    ap.add_argument("--last-keys", default=None,
+                    help="input lane: comma list of d/u/l/r/e pressed at the LAST route level instead of the sweep")
     ap.add_argument("--route", default="0,0,0,0,0",
                     help="input lane: cursor to select per level, comma list, m1 = -1")
     a = ap.parse_args()
@@ -255,7 +299,8 @@ def main():
     if a.lane == "push":
         lane_push(a.out)
     else:
-        lane_input(a.out, a.route.split(","), a.route)
+        lane_input(a.out, a.route.split(","), a.route,
+                   last_keys=a.last_keys.split(",") if a.last_keys else None)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,418 @@
+
+=== B17 region map [winmain-entry] 0x00400000..0x009FFFFF ===
+  0x00400000 +0x00810000  COMMIT  IMAGE   protect=0x008
+  --- totals: free=0KB commit=8256KB reserve=0KB ---
+  B17-GRAN [winmain-entry] 0x00420000 COMMIT   .text getters (0x0042b8b0/c0, credits 0x0042d5a0)
+  B17-GRAN [winmain-entry] 0x00470000 COMMIT   .text Im2D draws (0x00472c60/2f40, 0x004730b0)
+  B17-GRAN [winmain-entry] 0x005C0000 COMMIT   .rdata scale consts (1/640 @5cd5a8, 1/480 @5cc560)
+  B17-GRAN [winmain-entry] 0x00630000 COMMIT   .data boot params (0x00636ae8) + timer (0x0063d558)
+  B17-GRAN [winmain-entry] 0x00670000 COMMIT   .data race-state array (0x0067ea10)
+  B17-GRAN [winmain-entry] 0x007D0000 COMMIT   .data RW device slot (*(0x007d3ff8)) — B15 bridge
+  B17-GRAN [winmain-entry] 0x007F0000 COMMIT   .bss big buffer (0x007f0f60) + input (0x007f1044)
+  B17-GRAN [winmain-entry] 0x00890000 COMMIT   .bss menu-entry array + vtx buffer (0x00898a20/ac0)
+B17-TLS: reserved 0/0 needed granules at TLS time (seen-free; the rest were already occupied by kernel-early NLS)
+B17-PAD: image-pad arena [0x002107C0 .. 0x00C107BF] (exe owns the MASHED RVA range)
+Frontend.piz loaded OK
+  path:    original/TOASTART/Common/Frontend.piz
+  size:    1257472 bytes
+  version: 3
+  entries: 2
+  mode:    raw
+
+  name                                                             offset     length         id
+  ------------------------------------------------------------ ---------- ---------- ----------
+  TEXTURES.TXD                                                 0x00001000 0x000FBCE8 0x00001AC2
+  MAIN.BSP                                                     0x000FD000 0x00035BF8 0x00000AE1
+
+TEXTURES.TXD extracted to extracted/TEXTURES.TXD (1031400 bytes)
+RWS chunk tree:
+[0] 0x00000023 (?) size=0x000FBCDC version=0x1803FFFF @ 0x00000000
+
+  total chunks: 1 (containers: 0)
+
+TXD decode (Milestone B3):
+  OK: 8 textures, deviceId=1
+
+  #   name                     w     h  bpp fmt   mips palette
+  --- -------------------- ----- ----- ---- ----- ---- -------
+  0   skydomegs               32    32    8 PAL8     6 yes    
+  1   Shad_groundgs          128   128    8 PAL8     8 yes    
+  2   Shad_car               256   256   32 ARGB     9 -      
+  3   Shad_bild              256   256   32 ARGB     9 -      
+  4   rendergs                64    32   32 ARGB     7 -      
+  5   main                   256   256    8 PAL8     9 yes    
+  6   Gravel                 128   128   32 ARGB     8 -      
+  7   carbase                256   256    8 PAL8     9 yes    
+
+=== B17 region map [pre-initd3d9] 0x00400000..0x009FFFFF ===
+  0x00400000 +0x00810000  COMMIT  IMAGE   protect=0x008
+  --- totals: free=0KB commit=8256KB reserve=0KB ---
+  B17-GRAN [pre-initd3d9] 0x00420000 COMMIT   .text getters (0x0042b8b0/c0, credits 0x0042d5a0)
+  B17-GRAN [pre-initd3d9] 0x00470000 COMMIT   .text Im2D draws (0x00472c60/2f40, 0x004730b0)
+  B17-GRAN [pre-initd3d9] 0x005C0000 COMMIT   .rdata scale consts (1/640 @5cd5a8, 1/480 @5cc560)
+  B17-GRAN [pre-initd3d9] 0x00630000 COMMIT   .data boot params (0x00636ae8) + timer (0x0063d558)
+  B17-GRAN [pre-initd3d9] 0x00670000 COMMIT   .data race-state array (0x0067ea10)
+  B17-GRAN [pre-initd3d9] 0x007D0000 COMMIT   .data RW device slot (*(0x007d3ff8)) — B15 bridge
+  B17-GRAN [pre-initd3d9] 0x007F0000 COMMIT   .bss big buffer (0x007f0f60) + input (0x007f1044)
+  B17-GRAN [pre-initd3d9] 0x00890000 COMMIT   .bss menu-entry array + vtx buffer (0x00898a20/ac0)
+InitD3D9: adapter mode 1680x1050 fmt=22 refresh=60
+InitD3D9: CreateDevice(HAL/HW,depthA,vsdef) -> OK hr=0x00000000 OK
+
+=== B17 region map [post-initd3d9] 0x00400000..0x009FFFFF ===
+  0x00400000 +0x00810000  COMMIT  IMAGE   protect=0x008
+  --- totals: free=0KB commit=8256KB reserve=0KB ---
+  B17-GRAN [post-initd3d9] 0x00420000 COMMIT   .text getters (0x0042b8b0/c0, credits 0x0042d5a0)
+  B17-GRAN [post-initd3d9] 0x00470000 COMMIT   .text Im2D draws (0x00472c60/2f40, 0x004730b0)
+  B17-GRAN [post-initd3d9] 0x005C0000 COMMIT   .rdata scale consts (1/640 @5cd5a8, 1/480 @5cc560)
+  B17-GRAN [post-initd3d9] 0x00630000 COMMIT   .data boot params (0x00636ae8) + timer (0x0063d558)
+  B17-GRAN [post-initd3d9] 0x00670000 COMMIT   .data race-state array (0x0067ea10)
+  B17-GRAN [post-initd3d9] 0x007D0000 COMMIT   .data RW device slot (*(0x007d3ff8)) — B15 bridge
+  B17-GRAN [post-initd3d9] 0x007F0000 COMMIT   .bss big buffer (0x007f0f60) + input (0x007f1044)
+  B17-GRAN [post-initd3d9] 0x00890000 COMMIT   .bss menu-entry array + vtx buffer (0x00898a20/ac0)
+
+Milestone B7: granule walk over 0x00500000..0x009FFFFF — 0 granules covered, 80 blocked (first blocked at 0x
+Milestone B7: first blocked granule = 0x00500000
+Milestone B7: g_mashed_data_mapped = false
+
+Milestone B7: wedge status = INACTIVE (VirtualAlloc failed)
+
+Milestone B10: frontend boot chain start
+  [1] DataZeroFill (page-granular): zeroed 226212, skipped 0 bytes
+  [2-pre] 0x00630000 state=0x00001000 protect=0x00000008
+  [2] BootDefaultParamsInit OK
+  [3] DefaultParam_SetField00/04/08 OK; readback 0x007f0f00=0x3F333333 04=0x3F333333 08=0x3F333333 (expect 0x3f333333)
+  [4] RaceStateArrayZero OK; readback 0x0067ea10=0x00000000 0x0067ea14=0x00000000 (expect 0)
+  [5] MenuEntryArrayInit OK; readback 0x00898ac0=0x00000000 (expect 0)
+  [6] TimerSlotClear OK; readback 0x0063d558=0x00000000 (expect 0)
+  [7] MainLoopInit AV'd (expected: tunnels into MASHED code section via FUN_00495110 etc.)
+Milestone B10: frontend boot chain complete
+
+Milestone B11: DirectInput8 + keyboard device acquired (cooperative = background+nonexclusive)
+
+Milestone B14: MASHED input-globals wedge probe = OK (wrote 0xA5 to 0x007f1044, readback=0xA5)
+
+Milestone B5: uploading 8 textures for atlas
+  slot 0: 'skydomegs' 32x32 PAL8 mips=6 OK
+  slot 1: 'Shad_groundgs' 128x128 PAL8 mips=8 OK
+  slot 2: 'Shad_car' 256x256 ARGB mips=9 OK
+  slot 3: 'Shad_bild' 256x256 ARGB mips=9 OK
+  slot 4: 'rendergs' 64x32 ARGB mips=7 OK
+  slot 5: 'main' 256x256 PAL8 mips=9 OK
+  slot 6: 'Gravel' 128x128 ARGB mips=8 OK
+  slot 7: 'carbase' 256x256 PAL8 mips=9 OK
+  Milestone B5: 8/8 textures uploaded into atlas
+
+Milestone B15: RW Im2D->D3D9 bridge install = OK (fake RW device at *(0x007d3ff8); HudIm2DQuad routes to D3D9)
+
+Milestone B16: standalone RVA thunks — map_text=1 map_scale=1 scale_ok=1 thunks=6/6 (b8b0=1 b8c0=1 d5a0=1 f40=1 30b0=1 2c60=1)
+Milestone B16: MenuChromeShellA ready = YES (real MASHED menu chrome via the B15 bridge)
+
+B19a: original/TOASTART/Common/Perm.piz :: BACKGROUND.PNG decode+upload OK (340x240) -> slot 8 handle 2
+
+B19a: original/TOASTART/Common/Font36.piz :: MASHEDNEWLOGO.PNG decode+upload OK (256x128) -> slot 9 handle 3
+
+B19b: message table original/TOASTART/Common/Font36.piz/ENGLISH.DAT loaded (33626 bytes)
+B19b: menu item id=33 "Single Player" 195x39 -> slot 10 handle 4
+B19b: menu item id=34 "Multi Player" 175x39 -> slot 11 handle 5
+B19b: menu item id=35 "Championship" 214x39 -> slot 12 handle 6
+B19b: menu item id=36 "Time Trial" 148x39 -> slot 13 handle 7
+B19b: menu item id=39 "Options" 120x39 -> slot 14 handle 8
+B19b: 5 menu items ready
+
+R2-5: badges.txd 'Button' 16x32 upload OK (dict has 23 textures)
+R2-5: badges.txd 'Arrow' 16x16 upload OK
+F38: badges.txd 'lock' 16x16 fmt=PAL4 upload OK (ok)
+F38: badges.txd 'check' 16x16 fmt=PAL4 upload OK (ok)
+F38: badges.txd 'dot' 16x16 fmt=PAL4 upload OK (ok)
+F2 track previews: 24/24 loaded; veh 8/8
+powerup icons: dict=11 loaded=11 ready=1
+standings assets: iface=6/6 epp=5/5 panel=2/2 ready=1
+F38: interface.txd 'MultiPlayer' 64x64 upload OK
+
+#25 color-select: INTERFACE.TXD cars 10/10, vs OK, star OK (dict has 30 textures)
+
+#10 input icons: PC.TXD decode OK, 2/2 (kbd+joypad)
+
+loadicon: 256x128 decode+upload OK
+
+B19a: original/TOASTART/Common/Font36.piz :: BIGE.BMP decode+upload OK (32x32) -> slot 57 handle 48
+F1 frontend.mpg: RUNNING (512x512)
+R2-2 gamesave load: LOADED (DEADBEEF save) (original/gamesave.bin)
+
+B19 faithful font (FGDC20): load OK (height=33.0)
+
+MenuStringTable (id->glyph-string): load OK size=33626 ids=677
+  self-check id 0x21 len=13 "Single Player"
+  self-check id 0x22 len=12 "Multi Player"
+  self-check id 0x23 len=12 "Championship"
+  self-check id 0x24 len=10 "Time Trial"
+  self-check id 0x27 len=7 "Options"
+
+B17-SUMMARY reached-main-loop chrome=YES thunks=6/6
+NAV_KEYS f=0 tap=- depth=1 screen=2 cur=0 row=0 gm=0 sel=0 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=1 tap=- depth=1 screen=2 cur=0 row=0 gm=0 sel=0 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=2 tap=- depth=1 screen=2 cur=0 row=0 gm=0 sel=0 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=3 tap=- depth=1 screen=2 cur=0 row=0 gm=0 sel=0 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=4 tap=- depth=1 screen=2 cur=0 row=0 gm=0 sel=0 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=5 tap=- depth=1 screen=2 cur=0 row=0 gm=0 sel=0 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=6 tap=- depth=1 screen=2 cur=0 row=0 gm=0 sel=0 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=7 tap=- depth=1 screen=2 cur=0 row=0 gm=0 sel=0 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=8 tap=- depth=1 screen=2 cur=0 row=0 gm=0 sel=0 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=9 tap=- depth=1 screen=2 cur=0 row=0 gm=0 sel=0 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=10 tap=- depth=1 screen=2 cur=0 row=0 gm=0 sel=0 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=11 tap=- depth=1 screen=2 cur=0 row=0 gm=0 sel=0 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=12 tap=- depth=1 screen=2 cur=0 row=0 gm=0 sel=0 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=13 tap=- depth=1 screen=2 cur=0 row=0 gm=0 sel=0 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=14 tap=- depth=1 screen=2 cur=0 row=0 gm=0 sel=0 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=15 tap=- depth=1 screen=2 cur=0 row=0 gm=0 sel=0 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=16 tap=- depth=1 screen=2 cur=0 row=0 gm=0 sel=0 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=17 tap=- depth=1 screen=2 cur=0 row=0 gm=0 sel=0 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=18 tap=- depth=1 screen=2 cur=0 row=0 gm=0 sel=0 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=19 tap=- depth=1 screen=2 cur=0 row=0 gm=0 sel=0 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=20 tap=- depth=1 screen=2 cur=0 row=0 gm=0 sel=0 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=21 tap=- depth=1 screen=2 cur=0 row=0 gm=0 sel=0 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=22 tap=- depth=1 screen=2 cur=0 row=0 gm=0 sel=0 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=23 tap=- depth=1 screen=2 cur=0 row=0 gm=0 sel=0 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=24 tap=- depth=1 screen=2 cur=0 row=0 gm=0 sel=0 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=25 tap=- depth=1 screen=2 cur=0 row=0 gm=0 sel=0 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=26 tap=- depth=1 screen=2 cur=0 row=0 gm=0 sel=0 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=27 tap=- depth=1 screen=2 cur=0 row=0 gm=0 sel=0 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=28 tap=- depth=1 screen=2 cur=0 row=0 gm=0 sel=0 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=29 tap=- depth=1 screen=2 cur=0 row=0 gm=0 sel=0 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=30 tap=e depth=1 screen=2 cur=0 row=0 gm=0 sel=0 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=31 tap=- depth=2 screen=4 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=32 tap=- depth=2 screen=4 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=33 tap=- depth=2 screen=4 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=34 tap=- depth=2 screen=4 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=35 tap=- depth=2 screen=4 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=36 tap=- depth=2 screen=4 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=37 tap=- depth=2 screen=4 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=38 tap=- depth=2 screen=4 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=39 tap=- depth=2 screen=4 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=40 tap=- depth=2 screen=4 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=41 tap=- depth=2 screen=4 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=42 tap=- depth=2 screen=4 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=43 tap=- depth=2 screen=4 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=44 tap=- depth=2 screen=4 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=45 tap=- depth=2 screen=4 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=46 tap=- depth=2 screen=4 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=47 tap=- depth=2 screen=4 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=48 tap=- depth=2 screen=4 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=49 tap=- depth=2 screen=4 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=50 tap=- depth=2 screen=4 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=51 tap=- depth=2 screen=4 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=52 tap=- depth=2 screen=4 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=53 tap=- depth=2 screen=4 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=54 tap=- depth=2 screen=4 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=55 tap=- depth=2 screen=4 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=56 tap=- depth=2 screen=4 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=57 tap=- depth=2 screen=4 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=58 tap=- depth=2 screen=4 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=59 tap=- depth=2 screen=4 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=60 tap=- depth=2 screen=4 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=61 tap=e depth=2 screen=4 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=62 tap=- depth=3 screen=6 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=63 tap=- depth=3 screen=6 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=64 tap=- depth=3 screen=6 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=65 tap=- depth=3 screen=6 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=66 tap=- depth=3 screen=6 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=67 tap=- depth=3 screen=6 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=68 tap=- depth=3 screen=6 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=69 tap=- depth=3 screen=6 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=70 tap=- depth=3 screen=6 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=71 tap=- depth=3 screen=6 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=72 tap=- depth=3 screen=6 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=73 tap=- depth=3 screen=6 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=74 tap=- depth=3 screen=6 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=75 tap=- depth=3 screen=6 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=76 tap=- depth=3 screen=6 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=77 tap=- depth=3 screen=6 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=78 tap=- depth=3 screen=6 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=79 tap=- depth=3 screen=6 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=80 tap=- depth=3 screen=6 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=81 tap=- depth=3 screen=6 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=82 tap=- depth=3 screen=6 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=83 tap=- depth=3 screen=6 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=84 tap=- depth=3 screen=6 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=85 tap=- depth=3 screen=6 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=86 tap=- depth=3 screen=6 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=87 tap=- depth=3 screen=6 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=88 tap=- depth=3 screen=6 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=89 tap=- depth=3 screen=6 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=90 tap=- depth=3 screen=6 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=91 tap=- depth=3 screen=6 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=92 tap=d depth=3 screen=6 cur=0 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=93 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=94 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=95 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=96 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=97 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=98 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=99 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=100 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=101 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=102 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=103 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=104 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=105 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=106 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=107 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=108 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=109 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=110 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=111 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=112 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=113 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=114 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=115 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=116 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=117 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=118 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=119 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=120 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=121 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=122 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=123 tap=u depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=124 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=125 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=126 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=127 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=128 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=129 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=130 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=131 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=132 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=133 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=134 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=135 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=136 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=137 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=138 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=139 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=140 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=141 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=142 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=143 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=144 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=145 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=146 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=147 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=148 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=149 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=150 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=151 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=152 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=153 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+NAV_KEYS f=154 tap=e depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=0 fph=3
+  WS-E lights: ambient=0xFF334D4D (RGB 51,77,77) sun=0xFF99B3B3 dir=(0.577,-0.577,-0.577)
+D3D9 world.tris mat[0]=955 tex=1
+D3D9 world.tris mat[1]=162 tex=1
+D3D9 world.tris mat[2]=523 tex=1
+D3D9 world.tris mat[3]=1660 tex=1
+D3D9 world.tris mat[4]=1914 tex=1
+D3D9 world.tris mat[5]=8197 tex=1
+D3D9 world.tris mat[6]=22 tex=0
+D3D9 world.tris mat[7]=596 tex=1
+D3D9 world.tris mat[8]=541 tex=1
+D3D9 world.tris mat[9]=48 tex=1
+D3D9 world.tris mat[10]=1131 tex=1
+D3D9 world.tris mat[11]=196 tex=1
+D3D9 world.tris mat[12]=535 tex=1
+PU-SRC dff=1 bytes=16018 markers=23 err=-
+D-S3-6 bake: dff=sky.dff lt=no batch=0 baked_v0=0x00FFFFFF
+D-S3-6 bake: dff=WhiteTyre.dff lt=YES batch=0 baked_v0=0xFF638484
+D-S3-6 bake: dff=RedTyre.dff lt=YES batch=0 baked_v0=0xFF638484
+D-S3-6 bake: dff=Crate02.dff lt=YES batch=0 baked_v0=0xFF668888
+D-S3-6 bake: dff=sea.dff lt=YES batch=0 baked_v0=0xFF3E5B59
+  SEA-TILE course_id=0 clump=2 dff=sea.dff instances=25 grid=5x5 origin=-150 step=60 y=-4.1
+  SEA-TILE[00] pos=(-150.000000, -4.100000, -150.000000)
+  SEA-TILE[01] pos=(-150.000000, -4.100000, -90.000000)
+  SEA-TILE[02] pos=(-150.000000, -4.100000, -30.000000)
+  SEA-TILE[03] pos=(-150.000000, -4.100000, 30.000000)
+  SEA-TILE[04] pos=(-150.000000, -4.100000, 90.000000)
+  SEA-TILE[05] pos=(-90.000000, -4.100000, -150.000000)
+  SEA-TILE[06] pos=(-90.000000, -4.100000, -90.000000)
+  SEA-TILE[07] pos=(-90.000000, -4.100000, -30.000000)
+  SEA-TILE[08] pos=(-90.000000, -4.100000, 30.000000)
+  SEA-TILE[09] pos=(-90.000000, -4.100000, 90.000000)
+  SEA-TILE[10] pos=(-30.000000, -4.100000, -150.000000)
+  SEA-TILE[11] pos=(-30.000000, -4.100000, -90.000000)
+  SEA-TILE[12] pos=(-30.000000, -4.100000, -30.000000)
+  SEA-TILE[13] pos=(-30.000000, -4.100000, 30.000000)
+  SEA-TILE[14] pos=(-30.000000, -4.100000, 90.000000)
+  SEA-TILE[15] pos=(30.000000, -4.100000, -150.000000)
+  SEA-TILE[16] pos=(30.000000, -4.100000, -90.000000)
+  SEA-TILE[17] pos=(30.000000, -4.100000, -30.000000)
+  SEA-TILE[18] pos=(30.000000, -4.100000, 30.000000)
+  SEA-TILE[19] pos=(30.000000, -4.100000, 90.000000)
+  SEA-TILE[20] pos=(90.000000, -4.100000, -150.000000)
+  SEA-TILE[21] pos=(90.000000, -4.100000, -90.000000)
+  SEA-TILE[22] pos=(90.000000, -4.100000, -30.000000)
+  SEA-TILE[23] pos=(90.000000, -4.100000, 30.000000)
+  SEA-TILE[24] pos=(90.000000, -4.100000, 90.000000)
+D-S3-6 bake: dff=Freighter.dff lt=YES batch=0 baked_v0=0xFF467373
+D-S3-6 bake: dff=FishingBoat.dff lt=YES batch=0 baked_v0=0xFF467373
+D-S3-6 bake: dff=CamMan.dff lt=YES batch=0 baked_v0=0xFFFFFFFF
+D-S3-6 bake: dff=windows.dff lt=YES batch=0 baked_v0=0xFFD1FFFF
+D-S3-6 bake: dff=Mist.dff lt=YES batch=0 baked_v0=0xFFFFFFFF
+  F3 UV-anim: 2 .UVA rate(s); scrolling materials world=0 props=1 sky=1
+  F2 copters: 6 flying, 3 models from original/TOASTART/Common\Perm.piz (1 gameplay/rule-5)
+R4 track load OK: original/TOASTART/TRACKS/Arctic.piz — tris=16480 verts=16229 sectors=12 mats=13 textured=12 radius=80.46 props=9 (instances=49) gates=94
+  CAM-DIAG bbox=[32.3,14.2,57.2 .. -62.3,-5.3,-73.0] bbox_center=(-15.0,4.4,-7.9) bbox_R=80.5 | gate_center=(-4.6,0.4,-4.0) gate_R=55.4
+NAV_KEYS f=155 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=1 fph=3
+NAV_KEYS f=156 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=1 fph=3
+NAV_KEYS f=157 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=1 fph=3
+NAV_KEYS f=158 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=1 fph=3
+NAV_KEYS f=159 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=1 fph=3
+NAV_KEYS f=160 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=1 fph=3
+NAV_KEYS f=161 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=1 fph=3
+NAV_KEYS f=162 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=1 fph=3
+NAV_KEYS f=163 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=1 fph=3
+NAV_KEYS f=164 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=1 fph=3
+NAV_KEYS f=165 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=1 fph=3
+NAV_KEYS f=166 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=1 fph=3
+NAV_KEYS f=167 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=1 fph=3
+NAV_KEYS f=168 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=1 fph=3
+NAV_KEYS f=169 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=1 fph=3
+NAV_KEYS f=170 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=1 fph=3
+NAV_KEYS f=171 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=1 fph=3
+NAV_KEYS f=172 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=1 fph=3
+NAV_KEYS f=173 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=1 fph=3
+NAV_KEYS f=174 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=1 fph=3
+NAV_KEYS f=175 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=1 fph=3
+NAV_KEYS f=176 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=1 fph=3
+NAV_KEYS f=177 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=1 fph=3
+NAV_KEYS f=178 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=1 fph=3
+NAV_KEYS f=179 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=1 fph=3
+NAV_KEYS f=180 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=1 fph=3
+NAV_KEYS f=181 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=1 fph=3
+NAV_KEYS f=182 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=1 fph=3
+NAV_KEYS f=183 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=1 fph=3
+NAV_KEYS f=184 tap=- depth=3 screen=6 cur=-1 row=0 gm=3 sel=1 ea68=0 f1a4=0 flow=1 fph=3
+MATCH-SEED rule=0 participants=4 teams=0 seed=6 engine=1
+MATCH-SEED rule=0 participants=4 teams=0 seed=6 engine=1
+R4 pickups: 23 real powerup spawns (POWERUPS_GOLD.DFF)
+PUPLACE i=0 atomic=22 type=9 respawn=5.000000 pos=-25.60526657,0.27000001,44.64980698 bits=c1ccd796,3e8a3d71,42329967
+PUDROP atomic=21 type=21 reason=blank
+PUDROP atomic=20 type=21 reason=blank
+PUDROP atomic=19 type=21 reason=blank
+PUDROP atomic=18 type=21 reason=blank
+PUPLACE i=1 atomic=17 type=17 respawn=5.000000 pos=27.07328987,0.27000001,43.91036987 bits=41d89619,3e8a3d71,422fa438
+PUPLACE i=2 atomic=16 type=16 respawn=5.000000 pos=15.70812416,0.27000001,11.88360977 bits=417b547a,3e8a3d71,413e2344
+PUDROP atomic=15 type=21 reason=blank
+PUDROP atomic=14 type=21 reason=blank
+PUDROP atomic=13 type=21 reason=blank
+PUDROP atomic=12 type=21 reason=blank
+PUPLACE i=3 atomic=11 type=16 respawn=5.000000 pos=-34.16261292,0.27000001,-40.56283188 bits=c208a684,3e8a3d71,c2224057
+PUPLACE i=4 atomic=10 type=9 respawn=5.000000 pos=-35.79999924,0.27000001,-11.30000019 bits=c20f3333,3e8a3d71,c134cccd
+PUDROP atomic=9 type=21 reason=blank
+PUDROP atomic=8 type=21 reason=blank
+PUDROP atomic=7 type=21 reason=blank
+PUDROP atomic=6 type=21 reason=blank
+PUPLACE i=5 atomic=5 type=19 respawn=5.000000 pos=-23.88722420,0.27000001,-0.29183963 bits=c1bf1909,3e8a3d71,be956c01
+PUPLACE i=6 atomic=4 type=7 respawn=5.000000 pos=15.66347313,0.27000001,-38.28743744 bits=417a9d96,3e8a3d71,c2192656
+PUDROP atomic=3 type=21 reason=blank
+PUDROP atomic=2 type=21 reason=blank
+PUDROP atomic=1 type=21 reason=blank
+PUDROP atomic=0 type=21 reason=blank
+PUINIT placed=7 of 23 spawns worldR=55.413528

@@ -11,6 +11,7 @@
 // EAX register arg is not supported by the Frida NativeFunction harness
 // (which uses 'mscdecl' calling convention only). Filed as [UNCERTAIN U-3594].
 #include "../Core/HookSystem.h"
+#include "RowMovers.h"
 #include <cstdint>
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -89,67 +90,54 @@ RH_ScopedInstall(MenuModeSync, 0x0042f6b0);  // re-enabled 2026-05-24 c3-fronten
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00430910  MenuOptionSlotGet
 //
-// Ghidra decomp (frontend_c0_promote/0x00430910.md):
-//   iVar1 = DAT_0067e9fc - 3;              // initial value (default return)
-//   switch (DAT_0067e9fc) {                 // 0x00430924
-//     case 3: case 4: case 5:
-//       if (DAT_0067f184 in {0,3,4,6,7,8,9,10,11}) return 0;
-//       break;
-//     case 6: case 7: case 8: case 9:
-//       if (DAT_0067f184 in {0,1,2,4,5,6,7}) return 0;
-//       break;
-//     default:
-//       return iVar1;   // DAT_0067e9fc - 3
-//   }
-//   // table read (after exclusions)
-//   return (&DAT_007f0a40)[DAT_0067f184 + DAT_0067f17c * 0xc];  // 0x004309a0
-//
-// Globals:
-//   0x00430913  DAT_0067e9fc  game mode
-//   0x004309a0  DAT_007f0a40  2D option-slot table base; row stride 0xc
-//   DAT_0067f17c  row index (track/selection index)
-//   DAT_0067f184  column index (option index)
+// Re-transcribed from the bytes 2026-10-12 (row-movers; capstone over
+// 0x00430910..0x00430999, MASHED.exe.unpatched):
+//   0x00430910  eax = [0x67e9fc] (mode); add eax,-3; cmp eax,6; ja 0x00430999
+//               -> return eax, i.e. mode - 3 (non-zero for every mode outside
+//               3..9, e.g. -1 for mode 2, 7 for mode 10).
+//   0x0043091d  byte table 0x004309a4 = {0,0,0,1,1,1,1}; jump table 0x0043099c
+//               = {0x0043092b, 0x0043095a}: modes 3/4/5 -> A, modes 6..9 -> B.
+//   A 0x0043092b: sel = [0x67f184]; sel in {0,3,4,6,7,8,9,10,11} -> 0
+//               (0x00430930..0x00430955, then 0x0043097f je for 10 and
+//               0x00430981 cmp 0xb for 11).
+//   B 0x0043095a: sel in {0,1,2,5,6,7,4,11} -> 0 (0x0043095f..0x0043097c,
+//               then the shared 0x0043097f je for 4 and 0x00430981 for 11).
+//   0x00430986  return dword [0x7f0a40 + (row*0xc + sel)*4], row = [0x67f17c]
+//               (lea ecx,[ecx+ecx*2]; lea edx,[eax+ecx*4]; [edx*4+0x7f0a40]).
+// The previous port (from the Ghidra decomp) omitted sel 11 from set B, so in
+// modes 6..9 with sel 11 it read the table where the original returns 0.
 // [UNCERTAIN U-3598] Exclusion set semantics not confirmed.
 // [UNCERTAIN U-3599] Table element type / per-cell semantics unknown.
 // ─────────────────────────────────────────────────────────────────────────────
-extern "C" __declspec(dllexport) int __cdecl MenuOptionSlotGet() {
-    // 0x00430913
-    const std::int32_t gameMode   = *reinterpret_cast<const std::int32_t*>(0x0067e9fc);
-    const std::int32_t optionIdx  = *reinterpret_cast<const std::int32_t*>(0x0067f184);
-    const std::int32_t rowIdx     = *reinterpret_cast<const std::int32_t*>(0x0067f17c);
-
-    // iVar1 initialised to DAT_0067e9fc - 3 (default path)
-    int iVar1 = gameMode - 3;
-
-    switch (gameMode) {  // 0x00430924
-        case 3:
-        case 4:
-        case 5:
-            // Exclusion set for cases 3-5: {0,3,4,6,7,8,9,10,11}
-            if (optionIdx == 0  || optionIdx == 3  || optionIdx == 4  ||
-                optionIdx == 6  || optionIdx == 7  || optionIdx == 8  ||
-                optionIdx == 9  || optionIdx == 10 || optionIdx == 11) {
-                return 0;
-            }
+int mashed_re::Frontend::MenuOptionSlotGetFor(std::int32_t gameMode,
+                                              std::int32_t optionIdx,
+                                              std::int32_t rowIdx) {
+    const std::int32_t iVar1 = gameMode - 3;   // 0x00430915
+    switch (gameMode) {
+        case 3: case 4: case 5:                // case A 0x0043092b
+            if (optionIdx == 0 || optionIdx == 3  || optionIdx == 4  ||
+                optionIdx == 6 || optionIdx == 7  || optionIdx == 8  ||
+                optionIdx == 9 || optionIdx == 10 || optionIdx == 11)
+                return 0;                      // 0x00430934
             break;
-        case 6:
-        case 7:
-        case 8:
-        case 9:
-            // Exclusion set for cases 6-9: {0,1,2,4,5,6,7}
+        case 6: case 7: case 8: case 9:        // case B 0x0043095a
             if (optionIdx == 0 || optionIdx == 1 || optionIdx == 2 ||
                 optionIdx == 4 || optionIdx == 5 || optionIdx == 6 ||
-                optionIdx == 7) {
-                return 0;
-            }
+                optionIdx == 7 || optionIdx == 11)
+                return 0;                      // 0x00430934
             break;
         default:
-            return iVar1;  // DAT_0067e9fc - 3
+            return iVar1;                      // 0x0043091b ja 0x00430999
     }
+    // 0x00430986..0x00430992
+    return reinterpret_cast<const std::int32_t*>(0x007f0a40)[optionIdx + rowIdx * 0xc];
+}
 
-    // Table read (after exclusions): 0x004309a0
-    // DAT_007f0a40 is a 2D table; row stride = 0xc DWORDs (but byte-indexed: DAT_0067f184 + DAT_0067f17c * 0xc)
-    iVar1 = reinterpret_cast<const std::int32_t*>(0x007f0a40)[optionIdx + rowIdx * 0xc];
-    return iVar1;
+// 0x00430910 — hook binding: the image's DAT_0067e9fc / DAT_0067f184 / DAT_0067f17c.
+extern "C" __declspec(dllexport) int __cdecl MenuOptionSlotGet() {
+    return mashed_re::Frontend::MenuOptionSlotGetFor(
+        *reinterpret_cast<const std::int32_t*>(0x0067e9fc),
+        *reinterpret_cast<const std::int32_t*>(0x0067f184),
+        *reinterpret_cast<const std::int32_t*>(0x0067f17c));
 }
 RH_ScopedInstall(MenuOptionSlotGet, 0x00430910);  // re-enabled 2026-05-24 c3-frontend-b

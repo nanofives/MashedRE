@@ -10,6 +10,7 @@
 //   0x00429a30  LapTimeStoreToPlayerArrays      — blocked: callee 0x00430790 is C1 with open U-3470
 
 #include "../Core/HookSystem.h"
+#include "RowMovers.h"
 
 #include <cstdint>
 
@@ -38,9 +39,10 @@
 // every mode except 7/8, so any p != 0 read the wrong dword.
 // ---------------------------------------------------------------------------
 
-// 0x00430830
-extern "C" __declspec(dllexport) std::uint32_t __cdecl SplitScreenTrackAssignment(int param_1) {
-    const std::uint32_t mode = *reinterpret_cast<const std::uint32_t*>(0x0067e9fcu);
+// 0x00430830 — the body, with the mode global as a parameter (RowMovers.h) so
+// the standalone's challenge-row movers run the same code on their own mode.
+std::uint32_t mashed_re::Frontend::SplitScreenTrackAssignmentFor(std::int32_t mode_s, int param_1) {
+    const std::uint32_t mode = static_cast<std::uint32_t>(mode_s);
     std::uintptr_t col;
     switch (mode) {
     case 2:  col = 0x007f0a44u; break;   // 0x00430852
@@ -56,6 +58,12 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl SplitScreenTrackAssignmen
     }
     const std::uint32_t off = static_cast<std::uint32_t>(param_1) * 0x30u;   // lea+shl 4, mod 2^32
     return *reinterpret_cast<const std::uint32_t*>(static_cast<std::uint32_t>(col + off));
+}
+
+// 0x00430830 — hook binding: the image's mode global DAT_0067e9fc.
+extern "C" __declspec(dllexport) std::uint32_t __cdecl SplitScreenTrackAssignment(int param_1) {
+    return mashed_re::Frontend::SplitScreenTrackAssignmentFor(
+        *reinterpret_cast<const std::int32_t*>(0x0067e9fcu), param_1);
 }
 
 RH_ScopedInstall(SplitScreenTrackAssignment, 0x00430830);  // re-ported 2026-10-12 reearn/fstate (stride 0x30 for every mode)

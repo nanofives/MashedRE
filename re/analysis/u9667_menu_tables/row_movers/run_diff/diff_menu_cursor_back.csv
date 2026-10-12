@@ -1,0 +1,11 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,"{""row"": 2, ""col"": 1, ""flag"": 0, ""mp_flag"": 0}",1,0x00000001,1,0x00000001,True,,
+1,"{""row"": 3, ""col"": 1, ""flag"": 0, ""mp_flag"": 0}",65537,0x00010001,65537,0x00010001,True,,
+2,"{""row"": 3, ""col"": 3, ""flag"": 0, ""mp_flag"": 0}",1,0x00000001,1,0x00000001,True,,
+3,"{""row"": 5, ""col"": 5, ""flag"": 0, ""mp_flag"": 0}",3,0x00000003,3,0x00000003,True,,
+4,"{""row"": 2, ""col"": 2, ""flag"": 0, ""mp_flag"": 0}",1,0x00000001,1,0x00000001,True,,
+5,"{""row"": 2, ""col"": 3, ""flag"": 0, ""mp_flag"": 1}",3,0x00000003,3,0x00000003,True,,
+6,"{""row"": 4, ""col"": 3, ""flag"": 0, ""mp_flag"": 1}",131075,0x00020003,131075,0x00020003,True,,
+7,"{""row"": 3, ""col"": 5, ""flag"": 0, ""mp_flag"": 1}",3,0x00000003,3,0x00000003,True,,
+8,"{""row"": 1, ""col"": 1, ""flag"": 0, ""mp_flag"": 0}",4294901761,0xffff0001,4294901761,0xffff0001,True,,
+9,"{""row"": 1, ""col"": 3, ""flag"": 0, ""mp_flag"": 1}",4294901763,0xffff0003,4294901763,0xffff0003,True,,
