@@ -1,0 +1,8 @@
+hook	rva	arg_type	lane	mode	verdict	mismatches	total	stats	err
+car_snapshot_dword_get	0x00423b20	scalars_to_scattered_globals	warm	baseline	GREEN	0	5		
+car_snapshot_dword_get	0x00423b20	scalars_to_scattered_globals	warm	field_first	NA	0	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=2118 frozen=2	
+car_snapshot_dword_get	0x00423b20	scalars_to_scattered_globals	warm	field_last	NA	0	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=2155 frozen=2	
+car_snapshot_dword_get	0x00423b20	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=1730 frozen=2	
+car_snapshot_dword_get	0x00423b20	scalars_to_scattered_globals	warm	null	RED	5	5	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+car_snapshot_dword_get	0x00423b20	scalars_to_scattered_globals	warm	real	GREEN	0	5		
+car_snapshot_dword_get	0x00423b20	scalars_to_scattered_globals	warm	ret	RED	5	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
