@@ -14,104 +14,55 @@
 // FrontendPlayerSlotCheck  --  0x0042ebe0
 //
 // Original: FUN_0042ebe0 (388 bytes, 0x0042ebe0..0x0042ed64)
-// Signature: bool FUN_0042ebe0(int param_1)
-//   param_1: dispatch key in {10 (0xa), 11 (0xb), 12 (0xc)}
-//   Returns: (&DAT_007f0a44)[param_1 * 0xc] != 0 && !bVar1
+// Signature: uint32 FUN_0042ebe0(int p)   (cdecl; eax = 0 or 1, full dword)
+// Re-ported from the bytes 2026-10-12 (reearn/fstate).
 //
-// Iterates player-slot array at DAT_007f0a48, stride 0x1e0 (= 0x78 * 4) bytes,
-// until piVar2 >= 0x7f0c28. Per param_1 dispatches:
-//   10 (0xa): simple check piVar2[-1] (offset -4); full 9-field check at
-//             offsets 0x2c, 0x44, 0x5c, 0x74, 0x8c, 0xa4, 0xbc, 0xd4, 0xec (stride 0x18)
-//   11 (0xb): simple piVar2[0] (offset 0); full 9 fields piVar2[0xc,0x18,...,0x6c] stride 0xc
-//   12 (0xc): simple piVar2[3] (offset +12); full 9 fields piVar2[0xf,0x1b,...,0x6f] stride 0xc
-//
-// ref: re/analysis/promote_c2_frontend_menus/0x0042ebe0.md
+// Disasm:
+//   0x0042ebe4 xor ecx,ecx            ; ecx = "a zero cell was found" (bVar1)
+//   0x0042ebe6 mov eax,0x7f0a48       ; loop base
+//   loop body 0x0042ebf0..0x0042ed51, step 0x0042ed53 add eax,0x1e0,
+//   test 0x0042ed58 cmp eax,0x7f0c28 ; jl (signed).  0x7f0a48 + 0x1e0 ==
+//   0x7f0c28, so the body runs exactly once with eax = 0x7f0a48.
+//   Body, by p (all unequal p fall through to the loop step):
+//     p == 10: [eax-4]    0x0042ebf5, then [eax+0x2c],0x5c,0x8c,0xbc,0xec,0x11c,
+//              0x14c,0x17c,0x1ac  0x0042ec18..0x0042ec7a  -> column 0x7f0a44 rows 0..9
+//     p == 11: [eax]      0x0042ebff, then [eax+0x30],0x60,0x90,0xc0,0xf0,0x120,
+//              0x150,0x180,0x1b0  0x0042ec8a..0x0042ecd4  -> column 0x7f0a48 rows 0..9
+//     p == 12: [eax+0xc]  0x0042ec08, then [eax+0x3c],0x6c,0x9c,0xcc,0xfc,0x12c,
+//              0x15c,0x18c,0x1bc  0x0042ece1..0x0042ed49  -> column 0x7f0a54 rows 0..9
+//     (row stride 0x30). Any cell == 0 -> 0x0042ece8 mov ecx,1 and leave the loop.
+//   Tail 0x0042eced: edx = [p*0x30 + 0x7f0a44] (lea+shl 4, 0x0042ecf3);
+//     eax = 0 ; if edx != 0: al = (ecx == 0)  (0x0042ecf9..0x0042ed02).
 // ---------------------------------------------------------------------------
 
 // 0x0042ebe0
-extern "C" __declspec(dllexport) bool __cdecl FrontendPlayerSlotCheck(int param_1) {
-    bool bVar1 = false;
-    std::int32_t* piVar2 = reinterpret_cast<std::int32_t*>(0x007f0a48u);
-
-    while (reinterpret_cast<std::uintptr_t>(piVar2) < 0x007f0c28u) {
-        if (param_1 == 10) {
-            // simple check: offset -4 from piVar2
-            if (piVar2[-1] == 0) {
-                bVar1 = true;
-                break;
-            }
-            // full check: 9 fields at stride 0x18 dwords (0xc ints) starting at offset 0x2c bytes
-            // offsets in bytes from piVar2: 0x2c, 0x44, 0x5c, 0x74, 0x8c, 0xa4, 0xbc, 0xd4, 0xec
-            // in int32 units (stride 0x18 bytes = 6 ints per step, first at +0x2c/4=0xb)
-            {
-                bool allNonZero = true;
-                for (int k = 0; k < 9; k++) {
-                    int byteOff = 0x2c + k * 0x18;
-                    std::int32_t* pField = reinterpret_cast<std::int32_t*>(
-                        reinterpret_cast<std::uintptr_t>(piVar2) + byteOff);
-                    if (*pField == 0) {
-                        allNonZero = false;
-                        break;
-                    }
-                }
-                if (allNonZero) {
-                    // last field non-zero check (same last field, already verified non-zero)
-                    // logic: if all non-zero => do not set bVar1 (slot is full)
-                }
-            }
-        } else if (param_1 == 11) {
-            // simple check: offset 0 from piVar2
-            if (piVar2[0] == 0) {
-                bVar1 = true;
-                break;
-            }
-            // full check: 9 fields at stride 0xc bytes = 3 ints, starting at piVar2[0xc/4=3]
-            // positions: piVar2[3], piVar2[6], piVar2[9], ..., piVar2[27] (0x6c/4=27)
-            {
-                bool allNonZero = true;
-                for (int k = 0; k < 9; k++) {
-                    if (piVar2[3 + k * 3] == 0) {
-                        allNonZero = false;
-                        break;
-                    }
-                }
-                if (allNonZero) {
-                    // if last field non-zero: do not set bVar1
-                }
-            }
-        } else if (param_1 == 12) {
-            // simple check: offset +12 bytes = piVar2[3]
-            if (piVar2[3] == 0) {
-                bVar1 = true;
-                break;
-            }
-            // full check: 9 fields: piVar2[0xf/4..] but 0xf is not int-aligned in dwords.
-            // Per analysis: piVar2[0xf,0x1b,...,0x6f] (byte offsets 0x3c, 0x6c, ... stride 0xc)
-            // Actually: piVar2[0xf] means byte offset 0xf*4=0x3c from base, but in int index
-            // it is piVar2 + 0xf; stride in int index = 0xc/4 = 3
-            {
-                bool allNonZero = true;
-                for (int k = 0; k < 9; k++) {
-                    if (piVar2[0xf + k * 3] == 0) {
-                        allNonZero = false;
-                        break;
-                    }
-                }
-                if (allNonZero) {
-                    // if last field non-zero: do not set bVar1
-                }
+extern "C" __declspec(dllexport) std::uint32_t __cdecl FrontendPlayerSlotCheck(int param_1) {
+    std::uint32_t found = 0;                                                       // 0x0042ebe4
+    for (std::uint32_t base = 0x007f0a48u;                                         // 0x0042ebe6
+         static_cast<std::int32_t>(base) < 0x007f0c28;                           // 0x0042ed58 jl
+         base += 0x1e0u) {                                                         // 0x0042ed53
+        std::uintptr_t col;
+        if (param_1 == 10)      col = base - 4u;                                   // 0x0042ebf5
+        else if (param_1 == 11) col = base;                                        // 0x0042ebff
+        else if (param_1 == 12) col = base + 0xcu;                                 // 0x0042ec08
+        else continue;                                                             // 0x0042ec06 -> 0x0042ed53
+        for (std::uint32_t row = 0; row < 10u; ++row) {
+            if (*reinterpret_cast<const std::uint32_t*>(col + row * 0x30u) == 0) {
+                found = 1;                                                         // 0x0042ece8
+                goto tail;
             }
         }
-        // advance by 0x1e0 bytes = 0x78 ints
-        piVar2 += 0x78;
     }
-
-    std::int32_t enableFlag = *reinterpret_cast<std::int32_t*>(
-        0x007f0a44u + static_cast<std::uint32_t>(param_1) * 0xcu);
-    return (enableFlag != 0) && !bVar1;
+tail:
+    {
+        const std::uint32_t flag = *reinterpret_cast<const std::uint32_t*>(
+            static_cast<std::uint32_t>(0x007f0a44u + static_cast<std::uint32_t>(param_1) * 0x30u));   // 0x0042ecf3
+        if (flag == 0) return 0u;                                                  // 0x0042ecfe
+        return found == 0 ? 1u : 0u;                                               // 0x0042ed02 sete
+    }
 }
 
-RH_ScopedInstall(FrontendPlayerSlotCheck, 0x0042ebe0);  // re-enabled 2026-05-24 (pre-regression C4 leaf)
+RH_ScopedInstall(FrontendPlayerSlotCheck, 0x0042ebe0);  // re-ported 2026-10-12 reearn/fstate
 
 // ---------------------------------------------------------------------------
 // FrontendCursorUpdate  --  0x0042f7b0
