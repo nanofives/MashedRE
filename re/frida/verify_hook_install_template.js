@@ -252,6 +252,12 @@ function callFn(fn, input, buf) {
                 }
                 callFnS = globalThis.__p2EaxTramp;
             }
+            if (CONFIG.reg_args) {
+                // register-only args (bregargs 2026-10-12): same standins.js regThunk as diff_template, through the
+                // installed JMP at TARGET_ADDR
+                if (!globalThis.__p2RegThunk) globalThis.__p2RegThunk = __standins.regThunk(TARGET_ADDR, CONFIG);
+                callFnS = globalThis.__p2RegThunk;
+            }
             ret = callFnS.apply(null, args);
             obs.forEach(function (w) {
                 const ba = new Uint8Array(w.a.readByteArray(w.len));
