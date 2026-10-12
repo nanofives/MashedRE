@@ -1,0 +1,192 @@
+  spawned pid=3716 arm=ctl
+  booting...
+  title: depth=1 type=22 sel=0 phase=3 mode=0 tg=0 sph=1
+  ctl load: {'ok': True, 'base': '0x708e0000', 'name': 'ctl_stride4.asi', 'path': 'C:\\Users\\maria\\AppData\\Local\\Temp\\claude\\C--Users-maria-Desktop-Proyectos-Mashed\\e8a9e9b0-fc51-429a-962e-2ebe75970988\\scratchpad\\ctl_stride4.asi'}
+  armg: {'ok': True, 'g': {'f00': {'b0': 233, 'tgt': '0x708fe410', 'mod': 'ctl_stride4.asi+0x1e410', 'path': 'C:\\Users\\maria\\AppData\\Local\\Temp\\claude\\C--Users-maria-Desktop-Proyectos-Mashed\\e8a9e9b0-fc51-429a-962e-2ebe75970988\\scratchpad\\ctl_stride4.asi'}, 'f04': {'b0': 233, 'tgt': '0x708fe440', 'mod': 'ctl_stride4.asi+0x1e440', 'path': 'C:\\Users\\maria\\AppData\\Local\\Temp\\claude\\C--Users-maria-Desktop-Proyectos-Mashed\\e8a9e9b0-fc51-429a-962e-2ebe75970988\\scratchpad\\ctl_stride4.asi'}, 'f50': {'b0': 233, 'tgt': '0x708fe4c0', 'mod': 'ctl_stride4.asi+0x1e4c0', 'path': 'C:\\Users\\maria\\AppData\\Local\\Temp\\claude\\C--Users-maria-Desktop-Proyectos-Mashed\\e8a9e9b0-fc51-429a-962e-2ebe75970988\\scratchpad\\ctl_stride4.asi'}, 'f08': {'b0': 233, 'tgt': '0x708fe480', 'mod': 'ctl_stride4.asi+0x1e480', 'path': 'C:\\Users\\maria\\AppData\\Local\\Temp\\claude\\C--Users-maria-Desktop-Proyectos-Mashed\\e8a9e9b0-fc51-429a-962e-2ebe75970988\\scratchpad\\ctl_stride4.asi'}}}
+  GTS: depth=2 type=1 sel=0 phase=3 mode=0 tg=0 sph=1
+	Using video mode 1 : 640x480
+At 10 bytes per pixel (16bit Z + 2*32bit FB) there is 4194304 - 3686400 = 1122304 bytes of video memory free
+Replay buffer will be 150076 bytes in size
+RtFSManagerRegister successful
+numpermwaves 43
+numpermvirtualvoices 139
+Waiting for boot status
+Waiting for boot status
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for ti  GTS down 0: depth=2 type=1 sel=0 phase=3 mode=0 tg=0 sph=1
+  GTS modal-confirm 0: depth=2 type=1 sel=0 phase=3 mode=0 tg=0 sph=1
+  GTS down 1: depth=2 type=1 sel=0 phase=3 mode=0 tg=0 sph=1
+  GTS modal-confirm 1: depth=2 type=1 sel=0 phase=3 mode=0 tg=0 sph=1
+  GTS down 2: depth=2 type=1 sel=1 phase=3 mode=0 tg=0 sph=1
+  MP screen: depth=3 type=3 sel=0 phase=3 mode=0 tg=0 sph=1
+  MP down (Team Play): depth=3 type=3 sel=1 phase=3 mode=0 tg=0 sph=1
+  after Team Play confirm: depth=4 type=4 sel=0 phase=3 mode=6 tg=1 sph=1
+  colour choices 0x0067eaf0+12p: [1, 2, 3, 0]
+  colour confirm: depth=5 type=16 sel=0 phase=3 mode=6 tg=1 sph=1
+  team picks 0x0067e938+12p: [1, 2, 1, 0]
+  [shot] C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\c4a1-r\log\c4_pb2\c4_pb2_shots_ctl1\after_teamplay.png
+  confirm 0: depth=6 type=15 sel=0 phase=3 mode=6 tg=1 sph=1
+  [shot] C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\c4a1-r\log\c4_pb2\c4_pb2_shots_ctl1\nav_0_d6_t15.png
+  confirm 1: depth=7 type=6 sel=0 phase=3 mode=6 tg=1 sph=1
+  [shot] C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\c4a1-r\log\c4_pb2\c4_pb2_shots_ctl1\nav_1_d7_t6.png
+  confirm 2: depth=8 type=18 sel=0 phase=3 mode=6 tg=1 sph=1
+  [shot] C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\c4a1-r\log\c4_pb2\c4_pb2_shots_ctl1\nav_2_d8_t18.png
+  confirm 3: depth=8 type=18 sel=0 phase=0 mode=6 tg=1 sph=2
+  [CRASH] {'kind': 'crash', 'pc': '0x4e66db', 'module': 'MASHED.exe+0xe66db', 'addr': 'read @ 0x8'}
+  [shot] C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\c4a1-r\log\c4_pb2\c4_pb2_shots_ctl1\race_enter.png
+  verdict=INCOMPLETE -> C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\c4a1-r\log\c4_pb2\c4_pb2_ctl1.json
+Traceback (most recent call last):
+  File "C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\c4a1-r\re\frida\c4_pb2_scenario.py", line 449, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\c4a1-r\re\frida\c4_pb2_scenario.py", line 371, in main
+    s = X.state()
+        ^^^^^^^^^
+  File "C:\Users\maria\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\frida\core.py", line 188, in method
+    return script._rpc_request(request, data, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\maria\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\frida\core.py", line 94, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\maria\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\frida\core.py", line 499, in _rpc_request
+    raise result.error
+frida.InvalidOperationError: script has been destroyed

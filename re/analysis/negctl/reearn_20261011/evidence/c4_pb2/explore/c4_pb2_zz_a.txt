@@ -1,0 +1,249 @@
+  spawned pid=27328 arm=stock
+  booting...
+  title: depth=1 type=22 sel=0 phase=3 mode=0 tg=0 sph=1
+  armg: {'ok': True, 'g': {'f00': {'b0': 232}, 'f04': {'b0': 232}, 'f50': {'b0': 232}, 'f08': {'b0': 232}}}
+  GTS: depth=2 type=1 sel=0 phase=3 mode=0 tg=0 sph=1
+	Using video mode 1 : 640x480
+At 10 bytes per pixel (16bit Z + 2*32bit FB) there is 4194304 - 3686400 = 1122304 bytes of video memory free
+Replay buffer will be 150076 bytes in size
+RtFSManagerRegister successful
+numpermwaves 43
+numpermvirtualvoices 139
+Waiting for boot status
+Waiting for boot status
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for ti  GTS down 0: depth=2 type=1 sel=0 phase=3 mode=0 tg=0 sph=1
+  GTS modal-confirm 0: depth=2 type=1 sel=0 phase=3 mode=0 tg=0 sph=1
+  GTS down 1: depth=2 type=1 sel=0 phase=3 mode=0 tg=0 sph=1
+  GTS modal-confirm 1: depth=2 type=1 sel=0 phase=3 mode=0 tg=0 sph=1
+  GTS down 2: depth=2 type=1 sel=1 phase=3 mode=0 tg=0 sph=1
+  MP screen: depth=3 type=3 sel=0 phase=3 mode=0 tg=0 sph=1
+  MP down (Team Play): depth=3 type=3 sel=1 phase=3 mode=0 tg=0 sph=1
+  after Team Play confirm: depth=4 type=4 sel=0 phase=3 mode=6 tg=1 sph=1
+  colour choices 0x0067eaf0+12p: [1, 2, 3, 0]
+  colour confirm: depth=5 type=16 sel=0 phase=3 mode=6 tg=1 sph=1
+  team picks 0x0067e938+12p: [1, 2, 1, 0]
+  [shot] C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\c4a1-r\log\c4_pb2\c4_pb2_shots_zz_a\after_teamplay.png
+  confirm 0: depth=6 type=15 sel=0 phase=3 mode=6 tg=1 sph=1
+  [shot] C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\c4a1-r\log\c4_pb2\c4_pb2_shots_zz_a\nav_0_d6_t15.png
+  confirm 1: depth=7 type=6 sel=0 phase=3 mode=6 tg=1 sph=1
+  [shot] C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\c4a1-r\log\c4_pb2\c4_pb2_shots_zz_a\nav_1_d7_t6.png
+  confirm 2: depth=8 type=18 sel=0 phase=3 mode=6 tg=1 sph=1
+  [shot] C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\c4a1-r\log\c4_pb2\c4_pb2_shots_zz_a\nav_2_d8_t18.png
+  confirm 3: depth=8 type=18 sel=0 phase=0 mode=6 tg=1 sph=2
+  [shot] C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\c4a1-r\log\c4_pb2\c4_pb2_shots_zz_a\race_enter.png
+   wait t+0s pulses=1 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 3, 'fc': 0, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+10s pulses=11 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 28350, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+20s pulses=21 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 57350, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+30s pulses=31 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 86450, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+40s pulses=41 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 113800, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+50s pulses=51 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 137550, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+60s pulses=61 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 161800, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+71s pulses=71 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 185800, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+81s pulses=81 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 210250, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+91s pulses=91 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 234700, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+101s pulses=101 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 259050, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+111s pulses=111 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 283500, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+121s pulses=121 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 307900, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+131s pulses=131 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 332250, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+141s pulses=141 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 356500, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+151s pulses=150 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 378950, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+161s pulses=160 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 403150, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+171s pulses=170 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 427500, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+181s pulses=180 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 452000, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+191s pulses=190 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 476350, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+202s pulses=200 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 497900, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+212s pulses=210 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 521100, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+222s pulses=220 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 545250, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+232s pulses=230 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 569150, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+242s pulses=240 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 593000, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+252s pulses=250 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 617350, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+262s pulses=260 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 641550, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+273s pulses=270 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 665850, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+283s pulses=280 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 690000, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+293s pulses=290 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 714050, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+303s pulses=300 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 738150, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+313s pulses=310 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 762550, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+323s pulses=320 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 787000, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+333s pulses=330 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 811550, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+343s pulses=340 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 835900, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+353s pulses=350 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 860200, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+363s pulses=360 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 884550, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+374s pulses=370 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 908800, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+384s pulses=380 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 932950, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+394s pulses=390 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 957150, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+404s pulses=400 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 981450, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+414s pulses=410 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 1005500, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+424s pulses=420 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 1029900, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+434s pulses=430 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 1054400, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+444s pulses=440 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 1077800, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+454s pulses=450 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 1101900, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+464s pulses=460 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 1124500, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+474s pulses=470 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 1146700, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+484s pulses=479 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 1168950, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+495s pulses=489 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 1192850, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+505s pulses=499 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 1216700, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+515s pulses=509 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 1240900, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+525s pulses=519 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 1265350, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+535s pulses=529 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 1289400, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+545s pulses=539 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 1313700, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+555s pulses=549 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 1337850, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+565s pulses=559 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 1361850, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+575s pulses=569 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 1385650, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+   wait t+586s pulses=579 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 1409600, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}
+  verdict=INCOMPLETE -> C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\c4a1-r\log\c4_pb2\c4_pb2_zz_a.json
+Traceback (most recent call last):
+  File "C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\c4a1-r\re\frida\c4_pb2_scenario.py", line 428, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\c4a1-r\re\frida\c4_pb2_scenario.py", line 361, in main
+    s = X.state()
+        ^^^^^^^^^
+  File "C:\Users\maria\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\frida\core.py", line 188, in method
+    return script._rpc_request(request, data, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\maria\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\frida\core.py", line 94, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\maria\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\frida\core.py", line 499, in _rpc_request
+    raise result.error
+frida.InvalidOperationError: script has been destroyed
