@@ -460,8 +460,10 @@ RH_ScopedInstall(HudSlotUpdateCc50, 0x0041cc50);  // C3 2026-09-03 (Finding 20; 
 //   0x0041bc50 (C2): 0x0041bc51 mov esi,eax; 29 pairs: flag dword at
 //                    rec+X (X in 0x10..0x94), object at rec+X+0xa0, and
 //                    push obj; call [obj+0x48] when the flag is non-zero.
-// Neither is ported (C2), so both are called at their original RVA with EAX
-// loaded by inline asm, as HudSlotLoopB630 does for 0x0041b340.
+// 0x0041c2d0 is ported above (U-9671, 2026-10-12): the two mode routers call
+// the port FUN_0041c2d0 directly with EAX loaded by inline asm. 0x0041bc50 is
+// not ported (C2), so 0x0041c0c0 calls it at its original RVA, as
+// HudSlotLoopB630 does for 0x0041b340.
 //
 // Return value: each original leaves EAX defined at RET, so the ports return
 // the same EAX (the flag read on the skip path, else the callee's EAX). No
@@ -483,8 +485,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl HudDispatchMode10() {
     if (r != 0) {                                                              // 0x0041a3e7
         __asm {
             mov  eax, 0x0063c610        // 0x0041a3e9
-            mov  ecx, 0x0041c2d0
-            call ecx                    // 0x0041a3ee (tail jmp in the original)
+            call FUN_0041c2d0           // 0x0041a3ee (tail jmp to 0x0041c2d0 in the original; the port)
             mov  r, eax
         }
     }
@@ -534,8 +535,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl HudDispatchMode5() {
     if (r != 0) {                                                              // 0x0041c307
         __asm {
             mov  eax, 0x0063cda4        // 0x0041c309
-            mov  ecx, 0x0041c2d0
-            call ecx                    // 0x0041c30e (tail jmp in the original)
+            call FUN_0041c2d0           // 0x0041c30e (tail jmp to 0x0041c2d0 in the original; the port)
             mov  r, eax
         }
     }
