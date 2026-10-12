@@ -12,8 +12,9 @@
 > - U-9667 RESOLVED (5a058f2d): one MenuEntryWalk body for .asi + standalone, cursor -1 path ported.
 >
 > **Open**
-> - U-9672 user calls: standalone screen 4 pushes 7 (original 6, under a 2026-06-15 "(user)" comment); challenge row
->   moves onto locked tracks (2026-09-06 directive). Plus unported popup / writes / key repeat.
+> - U-9672 user calls DONE: screen 4 now pushes 6 (38a9e0f3); the challenge row runs the original movers
+>   FUN_004322c0 / FUN_004323c0, directive removed (c2914196, 7ff381c1). Residuals in U-9672: 8 cup tracks vs rows
+>   0..12, refusal sound / _DAT_0067e840, Team Play heading, popup, key repeat, the screen-4 arm side writes.
 > - U-9673: nav harness crashes at R2-2 (pre-existing 2528c8b3), reachability pass not running.
 > - 7 A2 rows fixable with the existing harness; 11 B rows need new harness (draw-stream capture covers 2).
 
