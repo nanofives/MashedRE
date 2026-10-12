@@ -1675,7 +1675,9 @@ function runDiff() {
     // +0x108..+0x11c carved from one arena reset per arm, frees RECORDED with their entry tag) and the import
     // stand-in (IAT slots of MASHED.exe and the .asi -> fixture result, call + args recorded) armed for the A/B
     // thread only. Observable = normalized return + object dwords changed vs the seed + the stand-in log. CONFIG:
-    // object_size, object_alloc ('crt'|'frida'), heap_standin, import_standin, freeze_main. A port that frees
+    // object_size, object_alloc ('crt'|'frida'), heap_standin, import_standin (spec deref {argIdx:'a'|'w'} logs a string arg;
+    // per-test t.import_ret overrides an import's return: an import thunk `jmp [IAT]` callee is stood in by its IAT
+    // dword, bregargs 2026-10-12), freeze_main. A port that frees
     // through the wrong allocator, skips a free or adds/drops an import call reads RED on the log alone.
     if (CONFIG.arg_type === 'standin_object_call') {
         let res;
@@ -6327,6 +6329,8 @@ function runDiff() {
     // (`CONFIG.idx_call_str`); fingerprints with FNV-1a; optionally pre-fills windows, runs a prep
     // call, or folds the return value. CONFIG: `observe`, `idx_arrays`, `idx_call_str`,
     // `fold_ret`, `prep_call_str`, `pre_fill_byte`; per-test `seed` [{addr,val,size}] (negctl re-earn 2026-10-11).
+    // `reg_args` {reg: argIdx} delivers args in registers through standins.js regThunk (bregargs 2026-10-12: warm-lane
+    // register args, e.g. 0x00427840 EAX=src ECX=dst with the dst buffer a {scratch} window read back).
     if (CONFIG.arg_type === 'scalars_to_scattered_globals') {
         const observe   = CONFIG.observe || [];
         const idxArrays = CONFIG.idx_arrays || [];
@@ -6383,6 +6387,14 @@ function runDiff() {
         // Made for 0x004987b0: it ends in OutputDebugStringA, whose 0x40010006 debug-print exception Frida surfaces
         // as 'system error' on BOTH arms, and its IAT slot 0x005cc1b0 sits in read-only .rdata so a seed cannot
         // redirect it. Same install guard as stub_dispatch_observe: refuse to run if the entry bytes did not change.
+        // A `jmp [IAT]` import thunk (0x0049b300 jmp [0x5cc014]) cannot be replaced here: Frida follows the jmp and plants
+        // on the DLL export, so the thunk bytes never change and the guard refuses. Stand it in by its IAT dword instead
+        // (arg_type standin_object_call + import_standin, per-test import_ret; bregargs 2026-10-12, 0x00495530).
+        function iatHint(sa) {
+            try { const b = new Uint8Array(sa.readByteArray(2)); if (b[0] === 0xff && b[1] === 0x25)
+                return ' (a jmp [IAT] thunk: use standin_object_call + import_standin)'; } catch (e) {}
+            return '';
+        }
         const stubAtS = CONFIG.stub_at || [];
         globalThis.__scatStubKeep = [];
         for (let k = 0; k < stubAtS.length; k++) {
@@ -6419,7 +6431,7 @@ function runDiff() {
             for (let b = 0; b < 5; b++) if (post[b] !== preU[b]) { patched = true; break; }
             if (!patched) {
                 send({ type: 'error', msg: 'stub_at did NOT install at ' + sa + ' (scalars_to_scattered_globals) — ' +
-                       'refusing to run, the REAL callee would execute' });
+                       'refusing to run, the REAL callee would execute' + iatHint(sa) });
                 return;
             }
         }
@@ -6539,7 +6551,7 @@ function runDiff() {
                 const post = new Uint8Array(sa.readByteArray(5));
                 let patched = false;
                 for (let b = 0; b < 5; b++) if (post[b] !== pre[b]) { patched = true; break; }
-                if (!patched) throw new Error('call_log did NOT install at ' + sa + ' -- refusing to run, the REAL callee would execute');
+                if (!patched) throw new Error('call_log did NOT install at ' + sa + ' -- refusing to run, the REAL callee would execute' + iatHint(sa));
             }
         }
         function callLogRevert() {
@@ -6657,6 +6669,18 @@ function runDiff() {
             globalThis.__eaxTrampKeep = [mkEaxTramp(TARGET_ADDR), mkEaxTramp(reimplAddr)];
             OrigS = new NativeFunction(globalThis.__eaxTrampKeep[0], CONFIG.signature.ret, CONFIG.signature.args, origCallConv);
             ReimplS = new NativeFunction(globalThis.__eaxTrampKeep[1], CONFIG.signature.ret, CONFIG.signature.args, reimplCallConv);
+        }
+        // `reg_args` {reg: argIdx, ..} (bregargs 2026-10-12): the target takes those args in registers ONLY, e.g.
+        // 0x00427840 {eax: 0, ecx: 1} (src in EAX, dst in ECX, 0x00427842 / 0x0042784a). This is eax_ecx_insert's
+        // register delivery brought to the warm lane, where *(0x007d3ff8) is live (in the early window it is 0 and
+        // [eax+0xf4] faults on both arms). Both arms go through standins.js regThunk: it loads each named register
+        // from its arg, pushes the rest right to left, calls the target, drops them (callee_pops: the callee does).
+        // Unlike eax_arg, a register arg is NOT also left on the stack. The args resolve like any other ({scratch:
+        // off} included), so the target's output buffers are scratch windows the fingerprint reads back.
+        if (CONFIG.reg_args) {
+            if (CONFIG.eax_arg !== undefined && CONFIG.eax_arg !== null) throw new Error('reg_args and eax_arg are exclusive');
+            OrigS = __standins.regThunk(TARGET_ADDR, CONFIG);
+            ReimplS = __standins.regThunk(reimplAddr, CONFIG);
         }
         // `x87_cw` (drawstream 2026-10-12): load this x87 control word on the A/B thread around EACH arm, restore the
         // thread's own after it. An x87-chained original (0x00427ad0 fmul chain, 0x00430b90 fsub/fmulp/fmul) rounds at

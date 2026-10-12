@@ -43,7 +43,9 @@
 //   call k), failSize (a request of exactly this size fails), exhaust ('throw'|'null'), observeArena (true).
 // imports: { 'KERNEL32.dll!CloseHandle': {ret: 1}, 'WINMM.dll!timeEndPeriod': {ret: 0, args: 1}, ... }
 //   spec: args (stack args; known APIs in ARGS), abi ('stdcall'), ret (number or array by call number),
-//         record ('all' | N leading args | [indices] | false), forward (call the real API, still recorded).
+//         record ('all' | N leading args | [indices] | false), forward (call the real API, still recorded),
+//         deref ({argIdx: 'a' | 'w'}: log the string at that arg instead of its address).
+//   S.arm({impRet: {api: v | [..]}}) overrides `ret` for that arm (objectCall: per-test t.import_ret).
 // regions: optional function returning [[name, base(NativePointer), size], ...]; obs values inside a region are
 //   written as name+off (the arena is always 'A'), so pointer identity is compared, not raw addresses.
 (function () {
@@ -121,6 +123,21 @@
   }
 
   function hex(v) { return '0x' + (v >>> 0).toString(16); }
+
+  // NUL-terminated byte ('a') or UTF-16 ('w') string, at most 256 units, as a"..." / w"...". Bytes outside 0x20..0x7e
+  // and the log's own separators are escaped \xNN, so two different strings never print alike.
+  function impStr(p, wide) {
+    let s = '';
+    try {
+      for (let z = 0; z < 256; z++) {
+        const c = wide ? p.add(2 * z).readU16() : p.add(z).readU8();
+        if (c === 0) return (wide ? 'w"' : 'a"') + s + '"';
+        s += (c >= 0x20 && c < 0x7f && c !== 0x22 && c !== 0x5c && c !== 0x3a && c !== 0x2c && c !== 0x20)
+          ? String.fromCharCode(c) : '\\x' + ('000' + c.toString(16)).slice(wide ? -4 : -2);
+      }
+      return (wide ? 'w"' : 'a"') + s + '"+';
+    } catch (e) { return (wide ? 'w' : 'a') + '@AV'; }
+  }
 
   function install(opts) {
     opts = opts || {};
@@ -256,19 +273,28 @@
           found++;
           const argt = Array(nargs).fill('uint32');
           let orig = null;
+          const deref = spec.deref || {};
           const cb = new NativeCallback(function () {
             const a = Array.prototype.slice.call(arguments);
             const n = impCalls[idx]++;
-            let vals;
-            if (which === false) vals = [];
-            else if (which === 'all') vals = a;
-            else if (typeof which === 'number') vals = a.slice(0, which);
-            else vals = which.map(function (i) { return a[i]; });
-            log.push(['imp', api].concat(vals.map(function (v) { return ptr(v >>> 0); })));
+            let ix;
+            if (which === false) ix = [];
+            else if (which === 'all') ix = a.map(function (v, i) { return i; });
+            else if (typeof which === 'number') ix = a.slice(0, which).map(function (v, i) { return i; });
+            else ix = which;
+            // deref {argIdx: 'a' | 'w'} (bregargs 2026-10-12): log the string at that arg, not its address. A buffer on
+            // the caller's stack has a different address on each arm (0x004987b0 formats into one and passes it to
+            // OutputDebugStringA), its text does not.
+            log.push(['imp', api].concat(ix.map(function (i) {
+              return deref[i] ? impStr(ptr(a[i] >>> 0), deref[i] === 'w') : ptr(a[i] >>> 0);
+            })));
+            // armFail.impRet {api: v | [v_call0, ..]} (bregargs 2026-10-12): this arm's return, from the test, over
+            // the install-time `ret` (0x00495530 branches on the DirectInput8Create HRESULT's sign).
+            const rs = (armFail.impRet && armFail.impRet[api] !== undefined) ? armFail.impRet[api] : spec.ret;
             let r;
             if (spec.forward) r = orig.apply(null, a);
-            else if (Array.isArray(spec.ret)) r = spec.ret[Math.min(n, spec.ret.length - 1)];
-            else r = spec.ret === undefined ? 0 : spec.ret;
+            else if (Array.isArray(rs)) r = rs[Math.min(n, rs.length - 1)];
+            else r = rs === undefined ? 0 : rs;
             return (r >>> 0);
           }, 'uint32', argt, abi);
           const prev = patchSlot(slot, cb, mb[0] + ':' + api);
@@ -423,6 +449,7 @@
   // stand-in log (allocs, frees with entry tag, imports with arguments, arena digest).
   //   t.fields entries may also be [target, off, value] with target 'OBJ' | 'B<i>' (stores into a block)
   //   t.failMask / t.failSize         per-test allocation failure schedule (overrides heap_standin's)
+  //   t.import_ret {api: v | [..]}    per-test import return (overrides the import_standin spec's `ret`)
   // cfg keys: object_size (0x100), object_alloc ('crt'|'frida'), heap_standin, import_standin, freeze_main,
   //           reg_args {reg: argIndex} + callee_pops (register-delivered arguments, see regThunk),
   //           signature.ret, observe_ret_len (dump that many bytes at the returned pointer when non-NULL),
@@ -543,7 +570,7 @@
             for (let o = 0; o + 4 <= g[1]; o += 4) g[0].add(o).writeU32((0x5eed0000 + o / 4) >>> 0);
           });
           (t.globals || []).forEach(function (gv) { ptr(gv[0]).writePointer(val(gv[1])); });
-          S.arm({ failMask: t.failMask, failSize: t.failSize });
+          S.arm({ failMask: t.failMask, failSize: t.failSize, impRet: t.import_ret });
           try { ret = fn.apply(null, args); } catch (e) { err = e.message; }
           const log = S.disarm();
           const gobs = globs.map(function (g) {
@@ -586,6 +613,6 @@
     return { rows: out, forwarded: S.forwarded() };
   }
 
-  globalThis.__standins = { install: install, objectCall: objectCall, ARGS: ARGS };
+  globalThis.__standins = { install: install, objectCall: objectCall, ARGS: ARGS, regThunk: regThunk };
   globalThis.__freeze = freeze;
 })();

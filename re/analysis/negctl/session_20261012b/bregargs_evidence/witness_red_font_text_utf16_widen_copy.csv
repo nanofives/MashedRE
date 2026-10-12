@@ -1,0 +1,12 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,"[{""scratch"":0},{""scratch"":256}]",8281d07 ,,,,False,,access violation accessing 0x0
+1,"[{""scratch"":0},{""scratch"":256}]",437d161f ,,,,False,,access violation accessing 0x0
+2,"[{""scratch"":0},{""scratch"":256}]",419e79a5 ,,,,False,,access violation accessing 0x0
+3,"[{""scratch"":0},{""scratch"":256}]",f67a1aed ,,,,False,,access violation accessing 0x0
+4,"[{""scratch"":0},{""scratch"":256}]",29264415 ,0x01be8a1f,,,False,,access violation accessing 0x0
+5,"[{""scratch"":0},{""scratch"":256}]","c085e50b len(s+0x0@a""ABCDEFGH"")",,f0941aa5 len(@AV),,False,,
+6,"[{""scratch"":0},{""scratch"":256}]","c195eca5 len(s+0x0@a""ABCDEFGH"")",,fc9b9de3 len(@AV),,False,,
+7,"[{""scratch"":0},{""scratch"":256}]","3cce2319 len(s+0x0@a""ABCDEFGH"")",,4fc8148f len(@AV),,False,,
+8,"[{""scratch"":0},{""scratch"":256}]","d01eca25 len(s+0x0@a""ABCDEFGH"")",,a0fc1763 len(@AV),,False,,
+9,"[{""scratch"":0},{""scratch"":256}]","e6cf6bf1 len(s+0x0@a""ABC"")",,d68db3a7 len(@AV),,False,,
+10,"[{""scratch"":0},{""scratch"":256}]","97a8b255 len(s+0x0@a""\u00fe"")",,55a41921 len(@AV),,False,,

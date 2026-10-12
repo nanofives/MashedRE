@@ -1,0 +1,12 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,"[{""scratch"":0},{""scratch"":256}]",8281d07 ,,8281d07 ,,True,,
+1,"[{""scratch"":0},{""scratch"":256}]",437d161f ,,437d161f ,,True,,
+2,"[{""scratch"":0},{""scratch"":256}]",419e79a5 ,,419e79a5 ,,True,,
+3,"[{""scratch"":0},{""scratch"":256}]",f67a1aed ,,f67a1aed ,,True,,
+4,"[{""scratch"":0},{""scratch"":256}]",29264415 ,0x01be8a1f,29264415 ,0x01be8a1f,True,,
+5,"[{""scratch"":0},{""scratch"":256}]","8bdfdb5d len(s+0x0@a""ABCDEFGH"")",,"8bdfdb5d len(s+0x0@a""ABCDEFGH"")",,True,,
+6,"[{""scratch"":0},{""scratch"":256}]","87ea449f len(s+0x0@a""ABCDEFGH"")",,"87ea449f len(s+0x0@a""ABCDEFGH"")",,True,,
+7,"[{""scratch"":0},{""scratch"":256}]","79c15683 len(s+0x0@a""ABCDEFGH"")",,"79c15683 len(s+0x0@a""ABCDEFGH"")",,True,,
+8,"[{""scratch"":0},{""scratch"":256}]","9673221f len(s+0x0@a""ABCDEFGH"")",,"9673221f len(s+0x0@a""ABCDEFGH"")",,True,,
+9,"[{""scratch"":0},{""scratch"":256}]","2a78cf7 len(s+0x0@a""ABC"")",,"2a78cf7 len(s+0x0@a""ABC"")",,True,,
+10,"[{""scratch"":0},{""scratch"":256}]","62a72a83 len(s+0x0@a""\u00fe"")",,"62a72a83 len(s+0x0@a""\u00fe"")",,True,,
