@@ -1,13 +1,13 @@
-# provenance 2026-10-12: main build 84977566 deployed (asi sha256 394637fd8a4164f8...), MASHED_HOOK_ONLY=0x00430830, MASHED_VERIFY_ASI=original/mashed_re_dev.asi
+# provenance 2026-10-12: main build c2914196 deployed (asi sha256 c5594d6b933b2400...), MASHED_HOOK_ONLY=0x00430830, MASHED_VERIFY_ASI=original/mashed_re_dev.asi
 === verify_hook_install report (split_screen_track_assignment) ===
 
 target address: 0x00430830  export: SplitScreenTrackAssignment
-PRE  bytes:     e9 eb 3d 8d 6a 83 c0 fe
-asi base:       0x6acf0000
-reimpl addr:    0x6ad04620
-POST bytes:     e9 eb 3d 8d 6a 83 c0 fe
+PRE  bytes:     e9 fb 3e d3 70 83 c0 fe
+asi base:       0x71150000
+reimpl addr:    0x71164730
+POST bytes:     e9 fb 3e d3 70 83 c0 fe
 opcode:         0xe9  expected 0xe9  -> OK
-rel32:          0x6a8d3deb  expected 0x6a8d3deb  -> OK
+rel32:          0x70d33efb  expected 0x70d33efb  -> OK
 bytes changed:  False
 
 interceptor entries (reimpl):  1 / 1  (other threads: 0)

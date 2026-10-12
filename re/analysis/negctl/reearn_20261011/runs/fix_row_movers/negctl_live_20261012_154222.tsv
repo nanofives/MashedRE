@@ -1,0 +1,8 @@
+hook	rva	arg_type	lane	mode	verdict	mismatches	total	stats	err
+menu_option_slot_get	0x00430910	scalars_to_scattered_globals	warm	real	GREEN	0	16		
+menu_option_slot_get	0x00430910	scalars_to_scattered_globals	warm	baseline	GREEN	0	16		
+menu_option_slot_get	0x00430910	scalars_to_scattered_globals	warm	null	RED	8	16	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+menu_option_slot_get	0x00430910	scalars_to_scattered_globals	warm	ret	RED	16	16	calls=16 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+menu_option_slot_get	0x00430910	scalars_to_scattered_globals	warm	field_first	NA	0	16	calls=16 flips=0 changed=0 flip=0x00000000 noise=160 frozen=2	
+menu_option_slot_get	0x00430910	scalars_to_scattered_globals	warm	field_last	NA	0	16	calls=16 flips=0 changed=0 flip=0x00000000 noise=182 frozen=2	
+menu_option_slot_get	0x00430910	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	16	calls=16 flips=0 changed=0 flip=0x00000000 noise=182 frozen=2	

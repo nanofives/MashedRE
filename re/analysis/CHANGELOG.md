@@ -26,6 +26,9 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-12  -  standalone menu  U-9672 item (2) RESOLVED  Original challenge-row movers ported (shared RowMoveFwd / RowMoveBack); 33/33 samples match the original; row-wrap directive removed (user decision). re/analysis/u9667_menu_tables/ROW_MOVERS_RESULT.md
+2026-10-12  00430910  MenuOptionSlotGet  C3 kept, new evidence  Sel-11 arm-B fix now measured: z_fix_row_movers.py run_diff GREEN 16/16, witness RED 2/16 on exactly the fixed case, path2 PASS.
+2026-10-12  004322c0  FUN_004322c0  C2 kept  Body RowMoveFwd exists (standalone only); no install, no hook-side diff.
 2026-10-12  -  standalone menu  U-9672 item (2) DECIDED  User reverses the 2026-09-06 row-wrap directive: the challenge row must match the original movers FUN_004322c0 / FUN_004323c0 (port in progress, work/row-movers).
 2026-10-12  -  standalone menu  U-9672 item (1) resolved  Screen 4 confirm (0xff1d0000) now pushes 6 in modes 2/3/4/5/10 as the bytes do (0x0043e557..0x0043e584, FUN_00430760); the 2026-06-15 ecdc/ed6c reading pushed 7. User decision. Traces: mode 3 and mode 10 land on screen 6, cursor -1 and launch / screen 24 as the original.
 2026-10-12  0042ac90  MenuEntryGet  U-9667 RESOLVED  One shared MenuEntryWalk body (.asi + standalone), ItemActionCode deleted; standalone cursor -1 path ported (screens 6/7 go to -1, confirm branches on game mode). run_diff GREEN 16/16, path2 + full auto-hook PASS. re/analysis/u9667_menu_tables/FIX_RESULT.md

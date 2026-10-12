@@ -1,0 +1,29 @@
+# provenance 2026-10-12: main build c2914196 deployed (asi sha256 c5594d6b933b2400...), MASHED_HOOK_ONLY=0x004323c0, MASHED_VERIFY_ASI=original/mashed_re_dev.asi
+=== verify_hook_install report (menu_cursor_back) ===
+
+target address: 0x004323c0  export: MenuCursorBack
+PRE  bytes:     e9 fb 04 d3 70 67 00 55
+asi base:       0x71150000
+reimpl addr:    0x711628c0
+POST bytes:     e9 fb 04 d3 70 67 00 55
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x70d304fb  expected 0x70d304fb  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  3 / 3  (other threads: 0)
+
+per-input results:
+  [OK] input={'row': 2, 'col': 1, 'flag': 0, 'mp_flag': 0}  got=1  err=
+  [OK] input={'row': 3, 'col': 3, 'flag': 0, 'mp_flag': 0}  got=1  err=
+  [OK] input={'row': 2, 'col': 3, 'flag': 0, 'mp_flag': 1}  got=1  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 3x as expected
+  + all 3 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_menu_cursor_back.txt

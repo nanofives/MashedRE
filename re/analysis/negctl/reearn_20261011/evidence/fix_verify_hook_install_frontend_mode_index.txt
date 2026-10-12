@@ -1,0 +1,29 @@
+# provenance 2026-10-12: main build c2914196 deployed (asi sha256 c5594d6b933b2400...), MASHED_HOOK_ONLY=0x004309b0, MASHED_VERIFY_ASI=original/mashed_re_dev.asi
+=== verify_hook_install report (frontend_mode_index) ===
+
+target address: 0x004309b0  export: FrontendModeIndex
+PRE  bytes:     e9 4b 29 1b 71 83 c0 fe
+asi base:       0x715d0000
+reimpl addr:    0x715e3300
+POST bytes:     e9 4b 29 1b 71 83 c0 fe
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x711b294b  expected 0x711b294b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  3 / 3  (other threads: 0)
+
+per-input results:
+  [OK] input=0  got=-2  err=
+  [OK] input=1  got=-2  err=
+  [OK] input=2  got=-2  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 3x as expected
+  + all 3 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_frontend_mode_index.txt
