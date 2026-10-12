@@ -47,6 +47,9 @@ FIXES['menu_menus_ba'] = {
     'path1_tests': [_ba(1, 24.0), _ba(5, 12.0), _ba(20, 40.0), _ba(40, 8.0, 800.0), _ba(100, 1.0), _ba(3, 16.0, 320.0),
                     _ba(7, 13.0, 800.0), _ba(40, 8.0, 1024.0), _ba(12, 9.5, 600.0), _ba(2, 30.0, 333.0),
                     _ba(64, 11.0, 1280.0), _ba(9, 7.25, 720.0)],
+    # Without a settle the agent attaches before the string table at 0x0066d828 is filled: every id transcodes to an
+    # empty string, FUN_005554d0 returns 0.0 and all twelve folds are the same constant (degenerate; seen 2026-10-12).
+    'boot_settle_s': 8.0,
 }
 
 # ── 0x0042f0c0 / 0x0042fb70 MenuSpriteDispatchA/B ────────────────────────────────────────────────────────────────────
