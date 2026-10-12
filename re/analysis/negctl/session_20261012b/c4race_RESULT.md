@@ -265,9 +265,12 @@ save (Silver event 2) or equivalent. Pending user decision." No STUBS / DEFERRED
 
 - One stock-arm 40d440 probe on the attract route (`probe/c4_hud_40d440_probe_attract.json`) AV'd inside FUN_0040d270
   at `MASHED.exe+0xe66db` (read @ 0x8, a NULL list argument to 0x004e66d0). Two other sessions' MASHED processes were
-  running at the time. The re-run with the same command was clean. It is not the documented U-9677 address
-  (`+0x1509b4`). It is treated as a concurrent-load collision by the same rule (re-run, not a finding). It was not
-  investigated further and no other run of this session crashed.
+  running at the time. The re-run with the same command was clean. **Explained by the sibling CRASH-E66DB child
+  (branch `work/crashcam`, its RESULT note documents it):** it is a cross-session **vehicle**-piz collision.
+  FUN_0040d440 -> FUN_0040d110 mounts the vehicle-group piz (e.g. `VEHICLES\Advantag.piz`, opened exclusively for
+  ~0.56 s during load). When another process holds it, the 0x0042a5d0 DFF loader returns 0, and FUN_004b3fc0 calls
+  RpClumpForAllAtomics(NULL) -> 0x004e66db. Holding the track piz instead gives the U-9677 `+0x1509b4` signature.
+  Same rule: re-run, not a finding. No other run of this session crashed.
 - Two 4464c0 arms (first `ctl1`, `late1`) were ARM-FAILED because the counter did not accept the port's `3E A1`
   encoding. They were fixed and re-run, and the committed JSONs are the re-runs.
 - Side effect of the harness change: the attract route no longer installs the 0x00497310 input hook, and that also
