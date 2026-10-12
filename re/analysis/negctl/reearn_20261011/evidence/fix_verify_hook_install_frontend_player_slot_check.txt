@@ -1,0 +1,27 @@
+# provenance 2026-10-12: main build 84977566 deployed (asi sha256 394637fd8a4164f8...), MASHED_HOOK_ONLY=0x0042ebe0, MASHED_VERIFY_ASI=original/mashed_re_dev.asi
+=== verify_hook_install report (frontend_player_slot_check) ===
+
+target address: 0x0042ebe0  export: FrontendPlayerSlotCheck
+PRE  bytes:     e9 8b 6b 8d 6a c9 b8 48
+asi base:       0x6acf0000
+reimpl addr:    0x6ad05770
+POST bytes:     e9 8b 6b 8d 6a c9 b8 48
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x6a8d6b8b  expected 0x6a8d6b8b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  1 / 1  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [10], 'seed': [{'addr': 8325696, 'val': 1}, {'addr': 8325700, 'val': 1}, {'addr': 8325704, 'val': 1}, {'addr': 8325708, 'val': 1}, {'addr': 8325712, 'val': 1}, {'addr': 8325716, 'val': 1}, {'addr': 8325720, 'val': 1}, {'addr': 8325724, 'val': 1}, {'addr': 8325728, 'val': 1}, {'addr': 8325732, 'val': 1}, {'addr': 8325736, 'val': 1}, {'addr': 8325740, 'val': 1}, {'addr': 8325744, 'val': 1}, {'addr': 8325748, 'val': 1}, {'addr': 8325752, 'val': 1}, {'addr': 8325756, 'val': 1}, {'addr': 8325760, 'val': 1}, {'addr': 8325764, 'val': 1}, {'addr': 8325768, 'val': 1}, {'addr': 8325772, 'val': 1}, {'addr': 8325776, 'val': 1}, {'addr': 8325780, 'val': 1}, {'addr': 8325784, 'val': 1}, {'addr': 8325788, 'val': 1}, {'addr': 8325792, 'val': 1}, {'addr': 8325796, 'val': 1}, {'addr': 8325800, 'val': 1}, {'addr': 8325804, 'val': 1}, {'addr': 8325808, 'val': 1}, {'addr': 8325812, 'val': 1}, {'addr': 8325816, 'val': 1}, {'addr': 8325820, 'val': 1}, {'addr': 8325824, 'val': 1}, {'addr': 8325828, 'val': 1}, {'addr': 8325832, 'val': 1}, {'addr': 8325836, 'val': 1}, {'addr': 8325840, 'val': 1}, {'addr': 8325844, 'val': 1}, {'addr': 8325848, 'val': 1}, {'addr': 8325852, 'val': 1}, {'addr': 8325856, 'val': 1}, {'addr': 8325860, 'val': 1}, {'addr': 8325864, 'val': 1}, {'addr': 8325868, 'val': 1}, {'addr': 8325872, 'val': 1}, {'addr': 8325876, 'val': 1}, {'addr': 8325880, 'val': 1}, {'addr': 8325884, 'val': 1}, {'addr': 8325888, 'val': 1}, {'addr': 8325892, 'val': 1}, {'addr': 8325896, 'val': 1}, {'addr': 8325900, 'val': 1}, {'addr': 8325904, 'val': 1}, {'addr': 8325908, 'val': 1}, {'addr': 8325912, 'val': 1}, {'addr': 8325916, 'val': 1}, {'addr': 8325920, 'val': 1}, {'addr': 8325924, 'val': 1}, {'addr': 8325928, 'val': 1}, {'addr': 8325932, 'val': 1}, {'addr': 8325936, 'val': 1}, {'addr': 8325940, 'val': 1}, {'addr': 8325944, 'val': 1}, {'addr': 8325948, 'val': 1}, {'addr': 8325952, 'val': 1}, {'addr': 8325956, 'val': 1}, {'addr': 8325960, 'val': 1}, {'addr': 8325964, 'val': 1}, {'addr': 8325968, 'val': 1}, {'addr': 8325972, 'val': 1}, {'addr': 8325976, 'val': 1}, {'addr': 8325980, 'val': 1}, {'addr': 8325984, 'val': 1}, {'addr': 8325988, 'val': 1}, {'addr': 8325992, 'val': 1}, {'addr': 8325996, 'val': 1}, {'addr': 8326000, 'val': 1}, {'addr': 8326004, 'val': 1}, {'addr': 8326008, 'val': 1}, {'addr': 8326012, 'val': 1}, {'addr': 8326016, 'val': 1}, {'addr': 8326020, 'val': 1}, {'addr': 8326024, 'val': 1}, {'addr': 8326028, 'val': 1}, {'addr': 8326032, 'val': 1}, {'addr': 8326036, 'val': 1}, {'addr': 8326040, 'val': 1}, {'addr': 8326044, 'val': 1}, {'addr': 8326048, 'val': 1}, {'addr': 8326052, 'val': 1}, {'addr': 8326056, 'val': 1}, {'addr': 8326060, 'val': 1}, {'addr': 8326064, 'val': 1}, {'addr': 8326068, 'val': 1}, {'addr': 8326072, 'val': 1}, {'addr': 8326076, 'val': 1}, {'addr': 8326080, 'val': 1}, {'addr': 8326084, 'val': 1}, {'addr': 8326088, 'val': 1}, {'addr': 8326092, 'val': 1}, {'addr': 8326096, 'val': 1}, {'addr': 8326100, 'val': 1}, {'addr': 8326104, 'val': 1}, {'addr': 8326108, 'val': 1}, {'addr': 8326112, 'val': 1}, {'addr': 8326116, 'val': 1}, {'addr': 8326120, 'val': 1}, {'addr': 8326124, 'val': 1}, {'addr': 8326128, 'val': 1}, {'addr': 8326132, 'val': 1}, {'addr': 8326136, 'val': 1}, {'addr': 8326140, 'val': 1}, {'addr': 8326144, 'val': 1}, {'addr': 8326148, 'val': 1}, {'addr': 8326152, 'val': 1}, {'addr': 8326156, 'val': 1}, {'addr': 8326160, 'val': 1}, {'addr': 8326164, 'val': 1}, {'addr': 8326168, 'val': 1}, {'addr': 8326172, 'val': 1}, {'addr': 8326176, 'val': 1}, {'addr': 8326180, 'val': 1}, {'addr': 8326184, 'val': 1}, {'addr': 8326188, 'val': 1}, {'addr': 8326192, 'val': 1}, {'addr': 8326196, 'val': 1}, {'addr': 8326200, 'val': 1}, {'addr': 8326204, 'val': 1}, {'addr': 8326208, 'val': 1}, {'addr': 8326212, 'val': 1}, {'addr': 8326216, 'val': 1}, {'addr': 8326220, 'val': 1}, {'addr': 8326224, 'val': 1}, {'addr': 8326228, 'val': 1}, {'addr': 8326232, 'val': 1}, {'addr': 8326236, 'val': 1}, {'addr': 8326240, 'val': 1}, {'addr': 8326244, 'val': 1}, {'addr': 8326248, 'val': 1}, {'addr': 8326252, 'val': 1}, {'addr': 8326256, 'val': 1}, {'addr': 8326260, 'val': 1}, {'addr': 8326264, 'val': 1}, {'addr': 8326268, 'val': 1}, {'addr': 8326272, 'val': 1}, {'addr': 8326276, 'val': 1}, {'addr': 8326280, 'val': 1}, {'addr': 8326284, 'val': 1}]}  got=1,811c9dc5  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 1x as expected
+  + all 1 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_frontend_player_slot_check.txt

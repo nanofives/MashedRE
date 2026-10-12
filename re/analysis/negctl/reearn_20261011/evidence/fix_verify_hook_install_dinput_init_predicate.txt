@@ -1,0 +1,28 @@
+# provenance 2026-10-12: main build 84977566 deployed (asi sha256 394637fd8a4164f8...), MASHED_HOOK_ONLY=0x004955b0, MASHED_VERIFY_ASI=original/mashed_re_dev.asi
+=== verify_hook_install report (dinput_init_predicate) ===
+
+target address: 0x004955b0  export: DInputInitPredicate
+PRE  bytes:     e9 eb 0f 1b 69 f7 d8 1b
+asi base:       0x69630000
+reimpl addr:    0x696465a0
+POST bytes:     e9 eb 0f 1b 69 f7 d8 1b
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x691b0feb  expected 0x691b0feb  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  2 / 2  (other threads: 0)
+
+per-input results:
+  [OK] input={'scalars': [], 'stub_rets': {'cdi': 0}}  got=0  err=
+  [OK] input={'scalars': [], 'stub_rets': {'cdi': 1}}  got=0  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 2x as expected
+  + all 2 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_dinput_init_predicate.txt

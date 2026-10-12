@@ -1,0 +1,27 @@
+# provenance 2026-10-12: main build 84977566 deployed (asi sha256 394637fd8a4164f8...), MASHED_HOOK_ONLY=0x00499690, MASHED_VERIFY_ASI=original/mashed_re_dev.asi
+=== verify_hook_install report (window_msg_pump) ===
+
+target address: 0x00499690  export: WindowMsgPump
+PRE  bytes:     e9 8b ce e6 69 00 6a 00
+asi base:       0x6a2f0000
+reimpl addr:    0x6a306520
+POST bytes:     e9 8b ce e6 69 00 6a 00
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x69e6ce8b  expected 0x69e6ce8b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  1 / 1  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [], 'globals': [[8295844, 0], [7813404, 1], [7813400, 0]]}  got=ret=0x0 obj=[] globals=[0x7e95a0:0x0,0x0 0x773918:0x0,0x1] log=[imp:PeekMessageA:0x7e95a0:0x0:0x0:0x0:0x1 imp:TranslateMessage:0x7e95a0 imp:DispatchMessageA:0x7e95a0]  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 1x as expected
+  + all 1 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_window_msg_pump.txt

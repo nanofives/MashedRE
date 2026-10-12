@@ -1,0 +1,27 @@
+# provenance 2026-10-12: main build 84977566 deployed (asi sha256 394637fd8a4164f8...), MASHED_HOOK_ONLY=0x0046be10, MASHED_VERIFY_ASI=original/mashed_re_dev.asi
+=== verify_hook_install report (write_46be10) ===
+
+target address: 0x0046be10  export: Write46be10
+PRE  bytes:     e9 ab 0f 24 69 f8 10 72
+asi base:       0x69670000
+reimpl addr:    0x696acdc0
+POST bytes:     e9 ab 0f 24 69 f8 10 72
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x69240fab  expected 0x69240fab  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  1 / 1  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [{'scratch': 0}, 1, 3, 7], 'seed': [{'addr': {'scratch': 0}, 'val': 3735928559}]}  got=1,8a40bd8c  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 1x as expected
+  + all 1 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_write_46be10.txt

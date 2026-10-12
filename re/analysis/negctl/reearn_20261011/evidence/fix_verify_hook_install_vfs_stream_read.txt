@@ -1,0 +1,27 @@
+# provenance 2026-10-12: main build 84977566 deployed (asi sha256 394637fd8a4164f8...), MASHED_HOOK_ONLY=0x00550980, MASHED_VERIFY_ASI=original/mashed_re_dev.asi
+=== verify_hook_install report (vfs_stream_read) ===
+
+target address: 0x00550980  export: VfsStreamRead
+PRE  bytes:     e9 4b 5d 40 6a 8b d6 8b
+asi base:       0x6a940000
+reimpl addr:    0x6a9566d0
+POST bytes:     e9 4b 5d 40 6a 8b d6 8b
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x6a405d4b  expected 0x6a405d4b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  1 / 1  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [{'scratch': 512}, 4, 2, {'scratch': 0}], 'seed': [{'addr': {'scratch': 0}, 'val': 3}, {'addr': {'scratch': 12}, 'val': 0}, {'addr': {'scratch': 16}, 'val': 32}, {'addr': {'scratch': 20}, 'val': {'scratch': 256}}, {'addr': {'scratch': 56}, 'val': {'scratch': 64}}, {'addr': {'scratch': 116}, 'val': 5029168}, {'addr': {'scratch': 256}, 'val': 2695938256}, {'addr': {'scratch': 260}, 'val': 2712847316}, {'addr': {'scratch': 264}, 'val': 2729756376}, {'addr': {'scratch': 268}, 'val': 2746665436}, {'addr': {'scratch': 272}, 'val': 2763574496}, {'addr': {'scratch': 276}, 'val': 2780483556}, {'addr': {'scratch': 280}, 'val': 2797392616}, {'addr': {'scratch': 284}, 'val': 2814301676}]}  got=2,b16d4421  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 1x as expected
+  + all 1 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_vfs_stream_read.txt

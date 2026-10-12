@@ -1,0 +1,28 @@
+# provenance 2026-10-12: main build 84977566 deployed (asi sha256 394637fd8a4164f8...), MASHED_HOOK_ONLY=0x00493480, MASHED_VERIFY_ASI=original/mashed_re_dev.asi
+=== verify_hook_install report (fps_discretise) ===
+
+target address: 0x00493480  export: FpsDiscretise
+PRE  bytes:     e9 6b 66 87 6a a1 00 10
+asi base:       0x6acf0000
+reimpl addr:    0x6ad09af0
+POST bytes:     e9 6b 66 87 6a a1 00 10
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x6a87666b  expected 0x6a87666b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  2 / 2  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [], 'seed': [{'addr': 8327168, 'val': 46}, {'addr': 7805396, 'val': 0}]}  got=1,ed856fab  err=
+  [OK] input={'args': [], 'seed': [{'addr': 8327168, 'val': 47}, {'addr': 7805396, 'val': 0}]}  got=1,914f27bb  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 2x as expected
+  + all 2 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_fps_discretise.txt

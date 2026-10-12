@@ -1,0 +1,27 @@
+# provenance 2026-10-12: main build 84977566 deployed (asi sha256 394637fd8a4164f8...), MASHED_HOOK_ONLY=0x00552c10, MASHED_VERIFY_ASI=original/mashed_re_dev.asi
+=== verify_hook_install report (font_sys_init_render_state) ===
+
+target address: 0x00552c10  export: FontSys_InitRenderState
+PRE  bytes:     e9 5b 12 40 6a 35 04 2b
+asi base:       0x6a940000
+reimpl addr:    0x6a953e70
+POST bytes:     e9 5b 12 40 6a 35 04 2b
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x6a40125b  expected 0x6a40125b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  1 / 1  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [], 'seed': [{'addr': 8208376, 'val': {'scratch': 0}}, {'addr': {'scratch': 280}, 'val': 4206400}, {'addr': 8208424, 'val': 64}, {'addr': 6515416, 'val': {'scratch': 512}}]}  got=1,236dc482  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 1x as expected
+  + all 1 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_font_sys_init_render_state.txt
