@@ -58,71 +58,73 @@
 //   0x0041db80: b8 5c d5 63 00     MOV EAX, 0x0063d55c   ; pass obj-array base
 //   0x0041db85: e9 26 ff ff ff     JMP 0x0041dab0        ; shared body
 //
-// The shared body lives at 0x0041dab0; the thunk just passes the base ptr
-// to the obj-ptr array (here 0x0063d55c) via EAX, and the body reads
-// counter/objs as ESI-relative (ESI = EAX inside the body).
+// Body 0x0041dab0 (ESI = EAX = 0x0063d55c), re-ported from the bytes 2026-10-12.
+// Every compare is `fld [esi+0x2c]; fcomp [thr]; fnstsw ax; test ah,5; jp/jnp`.
+// test ah,5 has odd parity only when C0 alone is set, i.e. c < thr (ordered);
+// an unordered compare sets C0 and C2 and takes the jp. So "jp skips" <=> !(c < thr),
+// which the C `<` on floats reproduces (false for NaN).
+// The counter [esi+0x2c] (= 0x0063d588) and every object slot are re-read at
+// each use: the dispatched functions can write them.
 //
-// Counter is a FLOAT at [ESI+0x2c] (= *(float*)0x0063d588). Thresholds in
-// .rdata are also floats. Comparisons use FLD/FCOMP/FNSTSW/TEST AH; we
-// reproduce that behavior with C `<` on float (which compiles to UCOMISS
-// in MSVC32; functionally equivalent for non-NaN inputs which is the
-// quiescent-state expectation).
+//   0x0041dab3..0x0041dac1  c < [0x005cc35c]: call obj[+0x00], obj[+0x14]
+//   0x0041dad3..0x0041dae1  c < [0x005cd238]: return (jnp 0x0041db78)
+//   0x0041dae7..0x0041daf5  c < [0x005cd234]: call obj[+0x04]; goto tail
+//   0x0041db03..0x0041db11  c < [0x005cd230]: call obj[+0x04], obj[+0x08]; goto tail
+//   0x0041db26..0x0041db34  c < [0x005ccdf4]: call obj[+0x04], obj[+0x08], obj[+0x0c]
+//   tail 0x0041db4e..0x0041db5c  fcomp [0x005ccdf4]; test ah,1; jne return
+//                                (C0 set: c < thr OR unordered)
+//   0x0041db5e..0x0041db6c  c < [0x005cc35c]: call obj[+0x10]
 //
-// Each dispatch: load obj from [base+slot]; call *(obj+0x48)(obj).
-// Direct field call (NOT vtable indirection): the fn ptr lives at
-// obj+0x48 itself. When obj=0, original AVs at 0x48 loading the fn ptr.
+// Each call is `push obj; call [obj+0x48]` with the caller cleaning the stack
+// (add esp at 0x0041dad0/0x0041dafe/0x0041db21/0x0041db4b/0x0041db75). The
+// function pointer lives at obj+0x48 itself (no vtable hop).
+//
+// Old port (pre 2026-10-12): ran the second block when c < [0x005cd238]
+// (inverted; the bytes run it when !(c < [0x005cd238])) and cached the counter once.
 extern "C" __declspec(dllexport)
 void __cdecl Sub0041db80_HudThresholdDispatch()
 {
-    // ESI base in the body = 0x0063d55c (from the thunk's MOV EAX,imm).
-    const std::uintptr_t base = 0x0063d55cu;
+    const std::uintptr_t base = 0x0063d55cu;   // 0x0041db80 mov eax,0x63d55c
+    auto c = [base]() -> float {
+        return *reinterpret_cast<volatile const float*>(base + 0x2cu);
+    };
+    auto thr = [](std::uintptr_t a) -> float {
+        return *reinterpret_cast<volatile const float*>(a);
+    };
 
-    // Counter is FLOAT at base+0x2c (= 0x0063d588).
-    const float counter = *reinterpret_cast<const float*>(base + 0x2cu);
-
-    // Float thresholds in .rdata.
-    const float thr_upper     = *reinterpret_cast<const float*>(0x005cc35cu);
-    const float thr_lower_mid = *reinterpret_cast<const float*>(0x005ccdf4u);
-    const float thr_mid3      = *reinterpret_cast<const float*>(0x005cd230u);
-    const float thr_mid2      = *reinterpret_cast<const float*>(0x005cd234u);
-    const float thr_mid1      = *reinterpret_cast<const float*>(0x005cd238u);
-
-    // Dispatch helper: load obj from [base+slot]; call *(obj+0x48)(obj).
-    // Direct fn ptr at obj+0x48 (no vtable interposition).
-    typedef void (__cdecl* DispatchFn)(std::int32_t);
-    auto dispatch_at = [](std::uintptr_t obj_ptr_addr) {
-        std::int32_t obj = *reinterpret_cast<const std::int32_t*>(obj_ptr_addr);
-        DispatchFn fn = *reinterpret_cast<DispatchFn*>(
+    typedef void (__cdecl* DispatchFn)(std::uint32_t);
+    auto dispatch_at = [base](std::uintptr_t off) {
+        const std::uint32_t obj = *reinterpret_cast<volatile const std::uint32_t*>(base + off);
+        const DispatchFn fn = *reinterpret_cast<const DispatchFn*>(
             static_cast<std::uintptr_t>(obj) + 0x48u);
         fn(obj);
     };
 
-    // Block A: if (counter < thr_upper) -> dispatch obj1 + obj6
-    if (counter < thr_upper) {
-        dispatch_at(base + 0x00u);   // obj1 (= *0x0063d55c)
-        dispatch_at(base + 0x14u);   // obj6 (= *0x0063d570)
+    // 0x0041dab3: fcomp [0x005cc35c]; jp 0x0041dad3
+    if (c() < thr(0x005cc35cu)) {
+        dispatch_at(0x00u);   // 0x0041dac3
+        dispatch_at(0x14u);   // 0x0041dac9
     }
-
-    // Block B: if (counter < thr_mid1) ...
-    if (counter < thr_mid1) {
-        if (counter < thr_mid2) {
-            // counter < thr_mid2: dispatch obj2 only
-            dispatch_at(base + 0x04u);   // obj2
-        } else if (counter < thr_mid3) {
-            // counter in [thr_mid2, thr_mid3): dispatch obj2 + obj3
-            dispatch_at(base + 0x04u);   // obj2
-            dispatch_at(base + 0x08u);   // obj3
-        } else if (counter < thr_lower_mid) {
-            // counter in [thr_mid3, thr_lower_mid): dispatch obj2 + obj3 + obj4
-            dispatch_at(base + 0x04u);   // obj2
-            dispatch_at(base + 0x08u);   // obj3
-            dispatch_at(base + 0x0cu);   // obj4
-        }
-        // (counter >= thr_lower_mid && counter < thr_mid1): tail-check below
-        if ((counter >= thr_lower_mid) && (counter < thr_upper)) {
-            dispatch_at(base + 0x10u);   // obj5
-        }
+    // 0x0041dad3: fcomp [0x005cd238]; jnp 0x0041db78 (return)
+    if (c() < thr(0x005cd238u))
+        return;
+    // 0x0041dae7: fcomp [0x005cd234]; jp 0x0041db03
+    if (c() < thr(0x005cd234u)) {
+        dispatch_at(0x04u);   // 0x0041daf7
+    } else if (c() < thr(0x005cd230u)) {   // 0x0041db03; jp 0x0041db26
+        dispatch_at(0x04u);   // 0x0041db13
+        dispatch_at(0x08u);   // 0x0041db1a
+    } else if (c() < thr(0x005ccdf4u)) {   // 0x0041db26; jp 0x0041db4e
+        dispatch_at(0x04u);   // 0x0041db36
+        dispatch_at(0x08u);   // 0x0041db3d
+        dispatch_at(0x0cu);   // 0x0041db44
     }
+    // 0x0041db4e: fcomp [0x005ccdf4]; test ah,1; jne return (C0: c < thr or unordered)
+    if (!(c() >= thr(0x005ccdf4u)))
+        return;
+    // 0x0041db5e: fcomp [0x005cc35c]; jp return
+    if (c() < thr(0x005cc35cu))
+        dispatch_at(0x10u);   // 0x0041db6e
 }
 
 RH_ScopedInstall(Sub0041db80_HudThresholdDispatch, 0x0041db80);  // re-enabled 2026-05-24 batch-mixed
@@ -217,7 +219,9 @@ float __cdecl FontText_StringWidthAccumulator(const void* font_ctx,
 // ===========================================================================
 
 // 0x00403160
-extern "C" __declspec(dllexport) void __cdecl Sub00403160_SubMode0BViewport() {
+// Returns the EAX of the final FUN_004c1a00 call (0x0040322d): the epilogue
+// (0x00403232 cookie xor, jmp 0x004a2be9) does not touch EAX.
+extern "C" __declspec(dllexport) int __cdecl Sub00403160_SubMode0BViewport() {
     typedef int   (__cdecl* GetCamFn)(int);
     typedef void  (__cdecl* CamLockFn)(int);
     typedef void  (__cdecl* SetViewportFn)(int cam, void* viewport2f);
@@ -239,13 +243,18 @@ extern "C" __declspec(dllexport) void __cdecl Sub00403160_SubMode0BViewport() {
 
     int begin_result = reinterpret_cast<CamBeginFn>(0x004c1a00)(cam);
     if (begin_result != 0) {
-        // Render-state vtable on DAT_007d3ff8, slot +0x20.
-        std::int32_t rs_obj    = *reinterpret_cast<const std::int32_t*>(0x007d3ff8u);
-        std::int32_t rs_vtable = *reinterpret_cast<const std::int32_t*>(static_cast<std::uintptr_t>(rs_obj));
-        RenderStateSetFn rs_set = *reinterpret_cast<RenderStateSetFn*>(static_cast<std::uintptr_t>(rs_vtable) + 0x20u);
+        // 0x004031b6: mov eax,[0x007d3ff8]; call [eax+0x20]. ONE dereference: the
+        // function pointer is the dword at (*0x007d3ff8)+0x20, re-read before each
+        // call (0x004031c2 / 0x004031ff / 0x0040320c reload the global).
+        // Old port (pre 2026-10-12) read *(*(*0x007d3ff8)+0x20), one hop too many.
+        auto rs_set = [](int state_id, int value) {
+            const std::uintptr_t rs_obj = *reinterpret_cast<volatile const std::uint32_t*>(0x007d3ff8u);
+            reinterpret_cast<RenderStateSetFn>(
+                *reinterpret_cast<const std::uint32_t*>(rs_obj + 0x20u))(state_id, value);
+        };
 
-        rs_set(6, 0);
-        rs_set(8, 0);
+        rs_set(6, 0);   // 0x004031bb push 0; push 6
+        rs_set(8, 0);   // 0x004031c8 push 0; push 8
         reinterpret_cast<HudDrawBodyFn>(0x00402fb0)();
 
         // Conditional call: DAT_00771964 != 0
@@ -263,8 +272,8 @@ extern "C" __declspec(dllexport) void __cdecl Sub00403160_SubMode0BViewport() {
 
     // Restore camera viewport from saved values.
     std::uint32_t restore_vp[2] = { saved_w, saved_h };
-    reinterpret_cast<SetViewportFn>(0x004c1c80)(cam, restore_vp);
-    reinterpret_cast<CamBeginFn>(0x004c1a00)(cam);
+    reinterpret_cast<SetViewportFn>(0x004c1c80)(cam, restore_vp);   // 0x00403227
+    return reinterpret_cast<CamBeginFn>(0x004c1a00)(cam);           // 0x0040322d
 }
 
 RH_ScopedInstall(Sub00403160_SubMode0BViewport, 0x00403160);  // re-enabled 2026-05-24 batch-mixed

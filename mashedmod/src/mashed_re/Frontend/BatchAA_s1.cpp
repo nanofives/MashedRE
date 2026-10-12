@@ -29,10 +29,8 @@
 // Forward declarations of callees (by RVA; originals are still live)
 // ---------------------------------------------------------------------------
 
-// 0x0041de80  FUN_0041de80  (C2) — HUD mode dispatcher; ESI=this; vtable[0x48] dispatches
-typedef void (__cdecl *PFN_HudModeDispatch)(std::uint32_t param_1);
-static const PFN_HudModeDispatch g_FUN_0041de80 =
-    reinterpret_cast<PFN_HudModeDispatch>(0x0041de80u);
+// 0x0041de80  FUN_0041de80 — record in ESI, one stack arg; called from inline asm
+//             in HudModeGuardDispatch (C cannot load ESI).
 
 // 0x004c4d20  RwMatrix_SetRotAxisAngle  (C2) — normalizes axis; sin/cos(deg*pi/180);
 //             calls FUN_004c4a50 (Rodrigues rotation); preconcat mode 1.
@@ -123,11 +121,26 @@ static std::int32_t* const g_HudEnableFlag =
     reinterpret_cast<std::int32_t*>(0x0063d5e8u);
 
 // 0x0041ded0
+// Bytes (re-ported 2026-10-12):
+//   0x0041ded0 mov eax,[0x0063d5e8]; test eax,eax; je ret
+//   0x0041ded9 mov eax,[esp+4]; push esi; push eax
+//   0x0041dedf mov esi,0x0063d5a0          <- FUN_0041de80 reads its record via ESI
+//   0x0041dee4 call 0x0041de80; add esp,4; pop esi; ret
+// FUN_0041de80 takes the record in ESI and param_1 on the stack
+// (0x0041dea8 mov eax,[esp+0x18] after five pushes). The old port called it as
+// a plain cdecl and never loaded ESI.
 extern "C" __declspec(dllexport)
 void __cdecl HudModeGuardDispatch(std::uint32_t param_1) {
-    // 0x0041ded0: if (DAT_0063d5e8 != 0) call FUN_0041de80(param_1)
-    if (*g_HudEnableFlag != 0) {    // DAT_0063d5e8 @ 0x0063d5e8
-        g_FUN_0041de80(param_1);    // FUN_0041de80 @ 0x0041de80
+    if (*g_HudEnableFlag != 0) {    // DAT_0063d5e8 @ 0x0041ded0
+        __asm {
+            push esi
+            push param_1
+            mov  esi, 0x0063d5a0
+            mov  eax, 0x0041de80
+            call eax
+            add  esp, 4
+            pop  esi
+        }
     }
 }
 RH_ScopedInstall(HudModeGuardDispatch, 0x0041ded0);
