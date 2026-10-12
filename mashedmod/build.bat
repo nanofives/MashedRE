@@ -246,9 +246,17 @@ if errorlevel 1 (echo [ERROR] dll build failed & exit /b 1)
 REM Deploy the dev .asi to original\ where the dinput8 loader actually reads it. Without
 REM this the loader keeps loading a STALE .asi and rebuilt fixes silently do not apply
 REM (footgun hit 2026-06-07: a crasher fix looked broken until the .asi was deployed).
-copy /Y "%OUT%\mashed_re_dev.asi" "%ROOT%..\original\mashed_re_dev.asi" >nul
-if errorlevel 1 (echo [ERROR] .asi deploy to original\ failed & exit /b 1)
-echo deployed mashed_re_dev.asi -^> original\
+REM MASHED_NO_DEPLOY=1 skips it: a worktree's original\ is a junction to the SHARED install,
+REM so parallel worktree builds would overwrite each other's (and other sessions') .asi.
+REM run_diff / run_negctl Module.load %OUT%\mashed_re_dev.asi with auto-hook off, so path1
+REM and negctl do not need the deploy; path2 does (run it after a deployed build).
+if defined MASHED_NO_DEPLOY (
+  echo [skip] MASHED_NO_DEPLOY set: mashed_re_dev.asi NOT deployed to original\
+) else (
+  copy /Y "%OUT%\mashed_re_dev.asi" "%ROOT%..\original\mashed_re_dev.asi" >nul
+  if errorlevel 1 (echo [ERROR] .asi deploy to original\ failed & exit /b 1)
+  echo deployed mashed_re_dev.asi -^> original\
+)
 
 REM Keep the standalone's output dir free of the dev d3d9/dinput8 PROXY shims. When a
 REM proxy d3d9.dll/dinput8.dll sits next to mashed_re.exe, Windows binds it instead of
