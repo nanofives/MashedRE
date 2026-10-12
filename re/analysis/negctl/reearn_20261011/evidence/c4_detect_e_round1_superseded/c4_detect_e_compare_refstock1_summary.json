@@ -1,0 +1,168 @@
+[
+ {
+  "arm": "stock1",
+  "verdict_run": "DONE",
+  "presses": 9,
+  "press_diffs": 0,
+  "eCalls": 599,
+  "eRet1": 3,
+  "mmOrig": 0,
+  "mmOld": 2,
+  "diffModels": 2,
+  "b0_before_attach": "0xa1",
+  "entry": "0x42b770",
+  "c510by": {
+   "42c9c4": 3,
+   "42d020": 1
+  },
+  "crash": 0,
+  "alive_at_end": true,
+  "reached": 5,
+  "result": "REF"
+ },
+ {
+  "arm": "stock2",
+  "verdict_run": "DONE",
+  "presses": 9,
+  "press_diffs": 1,
+  "eCalls": 687,
+  "eRet1": 3,
+  "mmOrig": 0,
+  "mmOld": 2,
+  "diffModels": 2,
+  "b0_before_attach": "0xa1",
+  "entry": "0x42b770",
+  "c510by": {
+   "42c9c4": 3,
+   "42d020": 2
+  },
+  "crash": 0,
+  "alive_at_end": true,
+  "reached": 5,
+  "result": "RED"
+ },
+ {
+  "arm": "late1",
+  "verdict_run": "DONE",
+  "presses": 9,
+  "press_diffs": 1,
+  "eCalls": 623,
+  "eRet1": 3,
+  "mmOrig": 0,
+  "mmOld": 2,
+  "diffModels": 2,
+  "b0_before_attach": "0xe9",
+  "entry": "0x684f2df0 mashed_re_dev.asi+0x12df0",
+  "c510by": {
+   "42c9c4": 3,
+   "42d020": 2
+  },
+  "crash": 0,
+  "alive_at_end": true,
+  "reached": 5,
+  "result": "RED"
+ },
+ {
+  "arm": "late2",
+  "verdict_run": "DONE",
+  "presses": 9,
+  "press_diffs": 2,
+  "eCalls": 649,
+  "eRet1": 3,
+  "mmOrig": 0,
+  "mmOld": 2,
+  "diffModels": 2,
+  "b0_before_attach": "0xe9",
+  "entry": "0x67b62df0 mashed_re_dev.asi+0x12df0",
+  "c510by": {
+   "42c9c4": 3,
+   "42d020": 1
+  },
+  "crash": 0,
+  "alive_at_end": true,
+  "reached": 5,
+  "result": "RED"
+ },
+ {
+  "arm": "ctl1",
+  "verdict_run": "DONE",
+  "presses": 9,
+  "press_diffs": 3,
+  "eCalls": 735,
+  "eRet1": 5,
+  "mmOrig": 2,
+  "mmOld": 0,
+  "diffModels": 2,
+  "b0_before_attach": "0xe9",
+  "entry": "0x691c2df0 mashed_re_dev.asi+0x12df0",
+  "c510by": {
+   "42c9c4": 5
+  },
+  "crash": 0,
+  "alive_at_end": true,
+  "reached": 5,
+  "result": "RED"
+ },
+ {
+  "arm": "ctl2",
+  "verdict_run": "DONE",
+  "presses": 9,
+  "press_diffs": 3,
+  "eCalls": 510,
+  "eRet1": 5,
+  "mmOrig": 2,
+  "mmOld": 0,
+  "diffModels": 2,
+  "b0_before_attach": "0xe9",
+  "entry": "0x677e2df0 mashed_re_dev.asi+0x12df0",
+  "c510by": {
+   "42c9c4": 5
+  },
+  "crash": 0,
+  "alive_at_end": true,
+  "reached": 5,
+  "result": "RED"
+ },
+ {
+  "arm": "off1",
+  "verdict_run": "DONE",
+  "presses": 9,
+  "press_diffs": 1,
+  "eCalls": 746,
+  "eRet1": 3,
+  "mmOrig": 0,
+  "mmOld": 2,
+  "diffModels": 2,
+  "b0_before_attach": "0xa1",
+  "entry": "0x42b770",
+  "c510by": {
+   "42c9c4": 3,
+   "42d020": 2
+  },
+  "crash": 0,
+  "alive_at_end": true,
+  "reached": 5,
+  "result": "RED"
+ },
+ {
+  "arm": "on1",
+  "verdict_run": "DONE",
+  "presses": 9,
+  "press_diffs": 1,
+  "eCalls": 727,
+  "eRet1": 3,
+  "mmOrig": 0,
+  "mmOld": 2,
+  "diffModels": 2,
+  "b0_before_attach": "0xe9",
+  "entry": "0x6b022df0 mashed_re_dev.asi+0x12df0",
+  "c510by": {
+   "42c9c4": 3,
+   "42d020": 2
+  },
+  "crash": 0,
+  "alive_at_end": true,
+  "reached": 5,
+  "result": "RED"
+ }
+]

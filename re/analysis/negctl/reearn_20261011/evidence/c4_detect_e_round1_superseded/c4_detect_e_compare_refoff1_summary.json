@@ -1,0 +1,126 @@
+[
+ {
+  "arm": "off1",
+  "verdict_run": "DONE",
+  "presses": 9,
+  "press_diffs": 0,
+  "eCalls": 746,
+  "eRet1": 3,
+  "mmOrig": 0,
+  "mmOld": 2,
+  "diffModels": 2,
+  "b0_before_attach": "0xa1",
+  "entry": "0x42b770",
+  "c510by": {
+   "42c9c4": 3,
+   "42d020": 2
+  },
+  "crash": 0,
+  "alive_at_end": true,
+  "reached": 5,
+  "result": "REF"
+ },
+ {
+  "arm": "off2",
+  "verdict_run": "DONE",
+  "presses": 9,
+  "press_diffs": 0,
+  "eCalls": 704,
+  "eRet1": 3,
+  "mmOrig": 0,
+  "mmOld": 2,
+  "diffModels": 2,
+  "b0_before_attach": "0xa1",
+  "entry": "0x42b770",
+  "c510by": {
+   "42c9c4": 3,
+   "42d020": 2
+  },
+  "crash": 0,
+  "alive_at_end": true,
+  "reached": 5,
+  "result": "GREEN"
+ },
+ {
+  "arm": "on1",
+  "verdict_run": "DONE",
+  "presses": 9,
+  "press_diffs": 0,
+  "eCalls": 727,
+  "eRet1": 3,
+  "mmOrig": 0,
+  "mmOld": 2,
+  "diffModels": 2,
+  "b0_before_attach": "0xe9",
+  "entry": "0x6b022df0 mashed_re_dev.asi+0x12df0",
+  "c510by": {
+   "42c9c4": 3,
+   "42d020": 2
+  },
+  "crash": 0,
+  "alive_at_end": true,
+  "reached": 5,
+  "result": "GREEN"
+ },
+ {
+  "arm": "on2",
+  "verdict_run": "DONE",
+  "presses": 9,
+  "press_diffs": 0,
+  "eCalls": 700,
+  "eRet1": 3,
+  "mmOrig": 0,
+  "mmOld": 2,
+  "diffModels": 2,
+  "b0_before_attach": "0xe9",
+  "entry": "0x6af92df0 mashed_re_dev.asi+0x12df0",
+  "c510by": {
+   "42c9c4": 3,
+   "42d020": 2
+  },
+  "crash": 0,
+  "alive_at_end": true,
+  "reached": 5,
+  "result": "GREEN"
+ },
+ {
+  "arm": "ctl1",
+  "verdict_run": "DONE",
+  "presses": 9,
+  "press_diffs": 4,
+  "eCalls": 735,
+  "eRet1": 5,
+  "mmOrig": 2,
+  "mmOld": 0,
+  "diffModels": 2,
+  "b0_before_attach": "0xe9",
+  "entry": "0x691c2df0 mashed_re_dev.asi+0x12df0",
+  "c510by": {
+   "42c9c4": 5
+  },
+  "crash": 0,
+  "alive_at_end": true,
+  "reached": 5,
+  "result": "RED"
+ },
+ {
+  "arm": "ctl2",
+  "verdict_run": "DONE",
+  "presses": 9,
+  "press_diffs": 4,
+  "eCalls": 510,
+  "eRet1": 5,
+  "mmOrig": 2,
+  "mmOld": 0,
+  "diffModels": 2,
+  "b0_before_attach": "0xe9",
+  "entry": "0x677e2df0 mashed_re_dev.asi+0x12df0",
+  "c510by": {
+   "42c9c4": 5
+  },
+  "crash": 0,
+  "alive_at_end": true,
+  "reached": 5,
+  "result": "RED"
+ }
+]

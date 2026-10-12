@@ -1,0 +1,158 @@
+== DEPLOYED original/mashed_re_dev.asi (fixed port, used by on/late arms)
+   sha256 5DAE5269523970FB38F83EE5F3CEF489C11314A38B12E3565C64EA9BC7539DA3
+   export MenuButtonDetectE rva 0x12df0
+   0x12df0  push ebx
+   0x12df1  push esi
+   0x12df2  xor esi, esi
+   0x12df4  cmp dword ptr [0x7f1a0c], 0x1000
+   0x12dfe  lea ebx, [esi + 1]
+   0x12e01  jne 0x12ea4
+   0x12e07  cmp byte ptr [0x7f1049], 0
+   0x12e0e  je 0x12e1a
+   0x12e10  cmp byte ptr [0x7f1509], 0
+   0x12e17  cmove esi, ebx
+   0x12e1a  cmp byte ptr [0x7f1095], 0
+   0x12e21  je 0x12e2d
+   0x12e23  cmp byte ptr [0x7f1555], 0
+   0x12e2a  cmove esi, ebx
+   0x12e2d  cmp byte ptr [0x7f10e1], 0
+   0x12e34  je 0x12e40
+   0x12e36  cmp byte ptr [0x7f15a1], 0
+   0x12e3d  cmove esi, ebx
+   0x12e40  cmp byte ptr [0x7f112d], 0
+   0x12e47  je 0x12e53
+   0x12e49  cmp byte ptr [0x7f15ed], 0
+   0x12e50  cmove esi, ebx
+   0x12e53  cmp byte ptr [0x7f1179], 0
+   0x12e5a  je 0x12e66
+   0x12e5c  cmp byte ptr [0x7f1639], 0
+   0x12e63  cmove esi, ebx
+   0x12e66  cmp byte ptr [0x7f11c5], 0
+   0x12e6d  je 0x12e79
+   0x12e6f  cmp byte ptr [0x7f1685], 0
+   0x12e76  cmove esi, ebx
+   0x12e79  cmp byte ptr [0x7f1211], 0
+   0x12e80  je 0x12e8c
+   0x12e82  cmp byte ptr [0x7f16d1], 0
+   0x12e89  cmove esi, ebx
+   0x12e8c  cmp byte ptr [0x7f125d], 0
+   0x12e93  je 0x12ef3
+   0x12e95  cmp byte ptr [0x7f171d], 0
+   0x12e9c  cmove esi, ebx
+   0x12e9f  mov eax, esi
+   0x12ea1  pop esi
+   0x12ea2  pop ebx
+   0x12ea3  ret 
+   0x12ea4  push ebp
+   0x12ea5  push edi
+   0x12ea6  xor edi, edi
+   0x12ea8  mov eax, 0x7f1a14
+   0x12ead  mov ecx, 0x40e470
+   0x12eb2  mov ebp, dword ptr [eax]
+   0x12eb4  cmp ebp, -1
+   0x12eb7  je 0x12edf
+   0x12eb9  push edi
+   0x12eba  call ecx
+   0x12ebc  add esp, 4
+   0x12ebf  mov ecx, 0x40e470
+   0x12ec4  cmp eax, 2
+   0x12ec7  je 0x12edf
+   0x12ec9  imul eax, ebp, 0x4c
+   0x12ecc  cmp byte ptr [eax + 0x7f1049], 0
+   0x12ed3  je 0x12edf
+   0x12ed5  cmp byte ptr [eax + 0x7f1509], 0
+   0x12edc  cmove esi, ebx
+   0x12edf  inc edi
+   0x12ee0  mov eax, edi
+   0x12ee2  shl eax, 4
+   0x12ee5  add eax, 0x7f1a14
+   0x12eea  cmp eax, 0x7f1a54
+   0x12eef  jb 0x12eb2
+   0x12ef1  pop edi
+   0x12ef2  pop ebp
+   0x12ef3  mov eax, esi
+   0x12ef5  pop esi
+   0x12ef6  pop ebx
+   0x12ef7  ret 
+
+== CONTROL ctl/mashed_re_dev.asi (pre-dc98c93a 4-byte stride, built MASHED_NO_DEPLOY=1, never deployed)
+   sha256 8AD6363E6ECA079D57B89D5FDCEFC5DFE965DC8664DE75B7EAAE5C203B25448F
+   export MenuButtonDetectE rva 0x12df0
+   0x12df0  push ecx
+   0x12df1  push ebp
+   0x12df2  push esi
+   0x12df3  xor esi, esi
+   0x12df5  cmp dword ptr [0x7f1a0c], 0x1000
+   0x12dff  lea ebp, [esi + 1]
+   0x12e02  jne 0x12ea6
+   0x12e08  cmp byte ptr [0x7f1049], 0
+   0x12e0f  je 0x12e1b
+   0x12e11  cmp byte ptr [0x7f1509], 0
+   0x12e18  cmove esi, ebp
+   0x12e1b  cmp byte ptr [0x7f1095], 0
+   0x12e22  je 0x12e2e
+   0x12e24  cmp byte ptr [0x7f1555], 0
+   0x12e2b  cmove esi, ebp
+   0x12e2e  cmp byte ptr [0x7f10e1], 0
+   0x12e35  je 0x12e41
+   0x12e37  cmp byte ptr [0x7f15a1], 0
+   0x12e3e  cmove esi, ebp
+   0x12e41  cmp byte ptr [0x7f112d], 0
+   0x12e48  je 0x12e54
+   0x12e4a  cmp byte ptr [0x7f15ed], 0
+   0x12e51  cmove esi, ebp
+   0x12e54  cmp byte ptr [0x7f1179], 0
+   0x12e5b  je 0x12e67
+   0x12e5d  cmp byte ptr [0x7f1639], 0
+   0x12e64  cmove esi, ebp
+   0x12e67  cmp byte ptr [0x7f11c5], 0
+   0x12e6e  je 0x12e7a
+   0x12e70  cmp byte ptr [0x7f1685], 0
+   0x12e77  cmove esi, ebp
+   0x12e7a  cmp byte ptr [0x7f1211], 0
+   0x12e81  je 0x12e8d
+   0x12e83  cmp byte ptr [0x7f16d1], 0
+   0x12e8a  cmove esi, ebp
+   0x12e8d  cmp byte ptr [0x7f125d], 0
+   0x12e94  je 0x12efa
+   0x12e96  cmp byte ptr [0x7f171d], 0
+   0x12e9d  cmove esi, ebp
+   0x12ea0  mov eax, esi
+   0x12ea2  pop esi
+   0x12ea3  pop ebp
+   0x12ea4  pop ecx
+   0x12ea5  ret 
+   0x12ea6  push ebx
+   0x12ea7  push edi
+   0x12ea8  mov edi, 0x7f1a14
+   0x12ead  xor ebx, ebx
+   0x12eaf  mov ecx, 0x40e470
+   0x12eb4  cmp edi, 0x7f1a54
+   0x12eba  jae 0x12ef8
+   0x12ebc  mov eax, dword ptr [edi]
+   0x12ebe  mov dword ptr [esp + 0x10], eax
+   0x12ec2  cmp eax, -1
+   0x12ec5  je 0x12eef
+   0x12ec7  push ebx
+   0x12ec8  call ecx
+   0x12eca  add esp, 4
+   0x12ecd  mov ecx, 0x40e470
+   0x12ed2  cmp eax, 2
+   0x12ed5  je 0x12eef
+   0x12ed7  imul eax, dword ptr [esp + 0x10], 0x4c
+   0x12edc  cmp byte ptr [eax + 0x7f1049], 0
+   0x12ee3  je 0x12eef
+   0x12ee5  cmp byte ptr [eax + 0x7f1509], 0
+   0x12eec  cmove esi, ebp
+   0x12eef  inc ebx
+   0x12ef0  add edi, 4
+   0x12ef3  cmp ebx, 8
+   0x12ef6  jl 0x12eb4
+   0x12ef8  pop edi
+   0x12ef9  pop ebx
+   0x12efa  mov eax, esi
+   0x12efc  pop esi
+   0x12efd  pop ebp
+   0x12efe  pop ecx
+   0x12eff  ret 
+

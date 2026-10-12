@@ -1,0 +1,17 @@
+# Control build for c4_detect_e: applied to mashedmod/src/mashed_re/Frontend/MenuButtonDetect.cpp at 3acbc094,
+# built with MASHED_NO_DEPLOY=1 (mashedmod\build.bat), the .asi copied out, then the source restored with
+# `git checkout`. It restores the pre-dc98c93a slot walk alone (4-byte stride, 8 iterations, index 0..7).
+-    for (int i = 0; reinterpret_cast<std::uintptr_t>(SlotRec(i)) < kPlayerSlotEnd; ++i) {
+-        const std::int32_t id = *SlotRec(i);                // 0x0042b846
+-        if (id == -1) continue;
+-        if (CallSlotState(i) == 2) continue;                // 0x0042b84c
+-        if (PadAt(kActiveBase5, id) != '\0' && PadAt(kProcessedBase5, id) == '\0') edge = 1;  // 0x0042b85e / 0x0042b868
+-    }
++    const std::int32_t* piVar3 = reinterpret_cast<const std::int32_t*>(kPlayerSlotArray);
++    for (int iVar4 = 0; iVar4 < 8; iVar4++, piVar3++) {
++        if (reinterpret_cast<std::uintptr_t>(piVar3) >= kPlayerSlotEnd) break;
++        const std::int32_t id = *piVar3;
++        if (id == -1) continue;
++        if (CallSlotState(iVar4) == 2) continue;
++        if (PadAt(kActiveBase5, id) != '\0' && PadAt(kProcessedBase5, id) == '\0') edge = 1;
++    }
