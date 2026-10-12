@@ -1,11 +1,16 @@
 # Next session kickoff
 
-> ## START HERE 2026-10-12 (negctl re-earn port fixes DONE): **next = user decision on FsopenSafe, then the open items below.**
+> ## START HERE 2026-10-12 (negctl re-earn port fixes DONE, follow-ups closed): **next = the open items below.**
 >
 > 47 rows demoted by the negctl re-check were re-ported from the bytes and re-earned C2->C3 (8 parallel clusters:
 > replay, menuinput, audio, menudraw, hud, fstate, bootio, settings, plus PlayerBlock2Field*Get). Each has run_diff +
 > self-baseline GREEN, negctl mutants RED, a witness restoring the old defect alone going RED, and path2 PASS.
 > Per-cluster write-ups: `re/analysis/negctl/reearn_20261011/fix_<cluster>_RESULT.md`. Last commit 2e6704cf.
+>
+> **Follow-ups closed the same day:** branches deleted; U-9662 DECIDED (keep fix_fopen, FsopenSafe C2 by design,
+> 999000af); U-9660 RESOLVED (MenuEntryGet fixture, install re-enabled, 63b70364); U-9661 RESOLVED (row repointed to
+> the live AudioListDrain, dead AudioListDrain2 removed, fc8a5a41); U-9663 RESOLVED (ControllerConfigLoad_j5 back to
+> C3, fd426588). New: U-9667 (the standalone runs ItemActionCode for 0x0042ac90; it differs from the bytes).
 >
 > **Open**
 > - DECISION: 0x004a4541 FsopenSafe is fixed but stays C2. The HookSystem guard refuses to install over the
