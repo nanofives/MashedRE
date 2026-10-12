@@ -107,12 +107,12 @@ def early_handled_argtypes():
     return set(re.findall(r"^\s*'([a-z0-9_]+)'", m.group(1), re.M)) if m else set()
 
 
-def inventory():
+def inventory(admit=()):
     conf = load_rows()
     by_at = defaultdict(list)
     for k, h in HOOKS.items():
         c = conf.get(h['rva'])
-        if c and c[0] in ('C3', 'C4'):
+        if c and (c[0] in ('C3', 'C4') or k in admit):
             by_at[h.get('arg_type')].append(k)
     ranked = sorted(by_at.items(), key=lambda kv: -(len(kv[1]) * RISK.get(kv[0], (1, ''))[0]))
     return ranked, conf
@@ -460,11 +460,13 @@ def main(argv):
                     help='send selected hooks whose arg_type the early-window harness ALSO handles to the early lane '
                          '(pure leaves whose observed globals the running game rewrites: baseline RED in the warm lane)')
     ap.add_argument('--race', action='store_true', help="run ONLY the scenario='race' hooks, on race-driven slots")
+    ap.add_argument('--any-conf', action='store_true',
+                    help='with --hooks: also select those hooks when their row is below C3 (re-earning a demoted row)')
     ap.add_argument('--resume', action='append', default=[],
                     help='TSV(s) or run logs whose finished (hook, mode) jobs are skipped; repeatable')
     a = ap.parse_args(argv[1:])
 
-    ranked, conf = inventory()
+    ranked, conf = inventory(set(x for x in a.hooks.split(',') if x) if a.any_conf else ())
     early_only = early_only_argtypes()
     ew_handled = early_handled_argtypes()
     if a.inventory:

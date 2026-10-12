@@ -98,6 +98,39 @@ function callFn(fn, input, buf) {
     if (!_hasLayout && input && typeof input === 'object' && Array.isArray(input.scalars)) {
         return fn.apply(null, input.scalars);
     }
+    if (CONFIG.arg_type === 'scalars_to_scattered_globals' && input && typeof input === 'object'
+        && !Array.isArray(input) && Array.isArray(input.args)) {
+        // negctl race fixtures (2026-10-11) express path2 vectors as {args, seed}, with {scratch: off} addresses and
+        // values. path2 fell through to fn(input) and died "bad argument count" before entry (0x004922e0,
+        // 2026-10-11). Mirrors diff_template's seed / scratch semantics with the PATCHED entry as the only arm:
+        // save observe + seed bytes, apply seeds, call, fingerprint the observe windows (FNV-1a), restore.
+        const sz = CONFIG.scratch_size | 0;
+        const scratch = sz > 0 ? Memory.alloc(sz) : null;
+        verifyKeep.push(scratch);
+        if (scratch) { const z = new Uint8Array(sz); z.fill((CONFIG.scratch_fill | 0) & 0xff); scratch.writeByteArray(z.buffer); }
+        const rA = function (x) { return (x !== null && typeof x === 'object' && x.scratch !== undefined) ? scratch.add(x.scratch | 0) : ptr(x); };
+        const rV = function (x) { return (x !== null && typeof x === 'object' && x.scratch !== undefined) ? scratch.add(x.scratch | 0).toUInt32() : x; };
+        const obs = (CONFIG.observe || []).map(function (w) { return { a: rA(w.addr), len: (w.len === undefined || w.len === null) ? 4 : (w.len | 0) }; });
+        const seeds = (input.seed || []).map(function (g) { return { a: rA(g.addr), v: rV(g.val), n: (g.size | 0) || 4 }; });
+        const obsSaved = obs.map(function (w) { return w.a.readByteArray(w.len); });
+        const seedSaved = seeds.map(function (g) { return g.a.readByteArray(g.n); });
+        const args = input.args.slice(0, CONFIG.signature.args.length).map(function (v) { return rV(v) >>> 0; });
+        let fp = 0x811c9dc5 | 0, ret;
+        try {
+            seeds.forEach(function (g) {
+                if (g.n === 1) g.a.writeU8(g.v & 0xff); else if (g.n === 2) g.a.writeU16(g.v & 0xffff); else g.a.writeU32(g.v >>> 0);
+            });
+            ret = fn.apply(null, args);
+            obs.forEach(function (w) {
+                const ba = new Uint8Array(w.a.readByteArray(w.len));
+                for (let j = 0; j < ba.length; j++) fp = Math.imul(fp ^ ba[j], 0x01000193);
+            });
+        } finally {
+            obs.forEach(function (w, ix) { w.a.writeByteArray(obsSaved[ix]); });
+            seeds.forEach(function (g, ix) { g.a.writeByteArray(seedSaved[ix]); });
+        }
+        return (CONFIG.signature.ret === 'void' ? '' : ((ret >>> 0).toString(16) + ',')) + (fp >>> 0).toString(16);
+    }
     if (CONFIG.arg_type === 'none') {
         // Zero-arg invocation; `input` is a dummy iteration marker.
         return fn();

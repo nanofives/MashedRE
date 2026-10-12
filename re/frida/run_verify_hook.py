@@ -39,7 +39,11 @@ def _find_original(script_root: Path) -> Path:
 
 
 MASHED_EXE = _find_original(ROOT)
-ASI_PATH   = ROOT / 'mashedmod' / 'build' / 'mashed_re_dev.asi'
+# MASHED_VERIFY_ASI: Module.load this file instead. From a worktree the dinput8 shim auto-loads the SHARED
+# original\mashed_re_dev.asi, a different file from <worktree>/mashedmod/build/..., so the loader maps a second
+# copy and rel32 points at the first (0x004922e0, 2026-10-11). Point this at the deployed copy to verify it.
+ASI_PATH   = Path(os.environ['MASHED_VERIFY_ASI']) if os.environ.get('MASHED_VERIFY_ASI') \
+             else ROOT / 'mashedmod' / 'build' / 'mashed_re_dev.asi'
 AGENT_JS   = ROOT / 're' / 'frida' / 'verify_hook_install_template.js'
 LOG_DIR    = ROOT / 'log'
 
@@ -130,6 +134,11 @@ def main():
         # than per-test.
         'fold_ret':       hook.get('fold_ret', False),
         'obs_globals':    hook.get('obs_globals', []),
+        # scalars_to_scattered_globals {args, seed} vectors (negctl race fixtures, 2026-10-11): the scratch buffer
+        # and observe windows the seeds point into. Same whitelist trap.
+        'observe':        hook.get('observe') or [],
+        'scratch_size':   hook.get('scratch_size', 0),
+        'scratch_fill':   hook.get('scratch_fill', 0),
         'tests':          hook['path2_tests'],
     }
     # Heap / import stand-ins (plan item #3): the SAME keys run_diff.build_config forwards, so path2 runs the
