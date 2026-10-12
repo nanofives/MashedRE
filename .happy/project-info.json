@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE: greenfield source port",
-  "updatedAt": "2026-10-12T22:23:17Z",
+  "updatedAt": "2026-10-12T23:16:48Z",
   "sections": [
     {
       "heading": "Session 2026-10-12b (done)",
@@ -19,7 +19,9 @@
           "value": [
             "0x00492270 SubsystemInit",
             "0x0042f8d0 MenuMenusBC",
-            "0x004464c0 CameraEntry::DispatchAll (.asi copy)"
+            "0x004464c0 CameraEntry::DispatchAll (.asi copy)",
+            "0x004026d0 (stubs cleared, user decision)",
+            "0x00404320 / 0x0040d440 / 0x0041c2d0 (approved save-copy route)"
           ]
         },
         {
@@ -49,8 +51,7 @@
           "label": "Pending user decisions",
           "kind": "list",
           "value": [
-            "Install-copy save edit (Silver event 2) for C4 of 0x00404320 / 0x0040d440 / 0x0041c2d0",
-            "0x004026d0 C4: clear passthrough STUBS S-0171..S-0175?"
+            "Gold event / challenge 6,10 routes for remaining 0x00404320 and 0x0041c300 coverage (not requested)"
           ]
         },
         {

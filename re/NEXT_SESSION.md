@@ -13,9 +13,11 @@
 >   `c4_front_compare.py`; `c4_hud_scenario.py` rows 4464c0 / 40d440 / 41c2d0.
 > - **0x004026d0**: C4 evidence complete (GREEN 2/2, control RED 2/2), held at C3 for a user ruling on 5 passthrough
 >   STUBS rows S-0171..S-0175 (0x00403160 went C4 with S-0560 open on the same day).
-> - **Stay C3, blocked on one forced input**: 0x00404320 PerModeRenderMachine, 0x0040d440, 0x0041c2d0. On every
->   stock-save route the ported path never runs (rule 0x007f0fd0 = 0; course 0 selected and loaded; rules 5/10 only in
->   Silver/Gold cups). Unblocker for all three: group H's install-copy save (26 launch-gate dwords) + Silver event 2.
+> - **Forced input decided by the user 2026-10-12, all four now C4**: 0x004026d0 C4 (6d575bb9, S-0171..S-0175
+>   cleared, U-0170 resolved). 0x00404320 PerModeRenderMachine, 0x0040d440 and 0x0041c2d0 C4 on the approved
+>   save-copy Silver event 2 route (group H install-copy save, 26 launch-gate dwords, rule 10), c4save_RESULT.md,
+>   a56f9f55. Remaining coverage: the rules 5/8/9 arms of 0x00404320 and the 0x0041c300 caller need further forced
+>   inputs (open, not approved).
 > - **Crash MASHED.exe+0xe66db**: same collision class as U-9677, different file. A VEHICLES piz held by another
 >   process makes the DFF load (0x0042a5d0) return 0 into RpClumpForAllAtomics (0x004e66d0). 2/2 with a held vehicle
 >   piz, 2/2 0x1509b4 with a held track piz, 0/3 solo. CLAUDE.md re-run bullet now names both signatures.
@@ -26,8 +28,8 @@
 >   defects (SSE2 rounding in BB; 8 listing mismatches in ProgressBarSetA); both now x87 TUs in `x87_tus.txt`.
 >
 > **Open**
-> - DECISION: allow the install-copy save edit + Silver event 2 route for the 3 blocked C4 rows?
-> - DECISION: clear S-0171..S-0175 and promote 0x004026d0 to C4?
+> - DECIDED (user 2026-10-12): install-copy save edit + Silver event 2 route allowed. 0x00404320 / 0x0040d440 / 0x0041c2d0 C4 (a56f9f55). Rules 5/8/9 of 0x00404320 and the 0x0041c300 caller still need further forced inputs (open, not approved).
+> - DECIDED (user 2026-10-12): S-0171..S-0175 cleared, 0x004026d0 C4 (6d575bb9), U-0170 resolved.
 > - 9 of the 11 triage B rows left (TRIAGE_2026-10-12.md B list; heavyweights 0x00427840, 0x004b3bb0, 0x00426dc0,
 >   0x004921d0, 0x00428610), each needs its own instrument.
 > - Side finding, not acted on: hooks.csv classes 0x004b3fc0 as CRT, but it calls RpClumpForAllAtomics with a game callback.
