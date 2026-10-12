@@ -6732,6 +6732,14 @@ function runDiff() {
             // (0x00427780 returns [0x66d828 + id*4] + 0x66d828, so a seeded entry must be relative to 0x66d828).
             if (x !== null && typeof x === 'object' && x.scratch !== undefined && x.minus !== undefined)
                 return (scratch.add(x.scratch | 0).toUInt32() - (x.minus >>> 0)) >>> 0;
+            // {f32_at: addr, add: f} (bworld 2026-10-12): the f32 bits of fround(*(float*)addr + add), read when the
+            // seed is applied. Anchors a vector to LIVE game state (a car's world position, read under freeze_main) so
+            // a ray aimed at it hits the loaded track whatever track the race lane landed on. Same value on both arms.
+            if (x !== null && typeof x === 'object' && x.f32_at !== undefined) {
+                const fb = new DataView(new ArrayBuffer(4));
+                fb.setFloat32(0, Math.fround(ptr(x.f32_at).readFloat() + (x.add || 0)), true);
+                return fb.getUint32(0, true);
+            }
             if (x !== null && typeof x === 'object' && x.scratch !== undefined) return scratch.add(x.scratch | 0).toUInt32();
             if (x !== null && typeof x === 'object' && x.recorder) return recorder.toUInt32();
             if (x !== null && typeof x === 'object' && x.dialog !== undefined) return dlgHwnd(x.dialog).toUInt32();
@@ -6779,6 +6787,17 @@ function runDiff() {
                 const rb = dlgReadback();
                 send({ type: 'log', msg: 'dialog readback: ' + rb });
                 for (let j = 0; j < rb.length; j++) fp = Math.imul(fp ^ (rb.charCodeAt(j) & 0xffff), 0x01000193);
+            }
+            if (CONFIG.observe_raw && !callLogCfg.length) {
+                // observe_raw (bworld 2026-10-12): also return each observe window as hex and the folded return, so the
+                // CSV says WHICH outcome each vector produced (miss / hit with 0 / hit with a value), not only a hash.
+                const raw = windows().map(function(w) {
+                    const ba = new Uint8Array(w.a.readByteArray(w.len)); let s = '';
+                    for (let j = 0; j < ba.length; j++) s += ('0' + ba[j].toString(16)).slice(-2);
+                    return s;
+                });
+                if (foldRet) raw.push('r=' + ((ret === null || ret === undefined) ? 'null' : (ret >>> 0).toString(16)));
+                return (fp >>> 0).toString(16) + ' ' + raw.join(';');
             }
             if (callLogCfg.length) {
                 // The call log is both folded and returned, so the CSV carries the sequence each arm made.

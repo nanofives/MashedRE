@@ -1,0 +1,8 @@
+hook	rva	arg_type	lane	mode	verdict	mismatches	total	stats	err
+frontend_raycast_forward	0x00426dc0	scalars_to_scattered_globals	warm	real	GREEN	0	42		
+frontend_raycast_forward	0x00426dc0	scalars_to_scattered_globals	warm	baseline	GREEN	0	42		
+frontend_raycast_forward	0x00426dc0	scalars_to_scattered_globals	warm	null	RED	39	42	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+frontend_raycast_forward	0x00426dc0	scalars_to_scattered_globals	warm	ret	RED	42	42	calls=42 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+frontend_raycast_forward	0x00426dc0	scalars_to_scattered_globals	warm	field_first	RED	38	42	calls=42 flips=38 changed=0 flip=0x10057258 noise=1613 frozen=2	
+frontend_raycast_forward	0x00426dc0	scalars_to_scattered_globals	warm	field_last	RED	38	42	calls=42 flips=38 changed=0 flip=0x0e520cc3 noise=1707 frozen=2	
+frontend_raycast_forward	0x00426dc0	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	42	calls=42 flips=0 changed=0 flip=0x00000000 noise=1751 frozen=2	
