@@ -1,0 +1,11 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,"[{""scratch"":256}]",3427887817,0xcc516ac9,,,False,,access violation accessing 0x48
+1,"[{""scratch"":256}]",1970844428,0x7578b30c,,,False,,access violation accessing 0x48
+2,"[{""scratch"":256}]",3460733673,0xce469ae9,,,False,,access violation accessing 0x48
+3,"[{""scratch"":320}]",3729255881,0xde47edc9,,,False,,access violation accessing 0x48
+4,"[{""scratch"":384}]",2073096309,0x7b90f075,,,False,,access violation accessing 0x48
+5,"[{""scratch"":320}]",1399524617,0x536b0d09,,,False,,access violation accessing 0x48
+6,"[{""scratch"":384}]",4115926345,0xf5540d49,,,False,,access violation accessing 0x48
+7,[6538768],2592231137,0x9a824ee1,,,False,,access violation accessing 0x48
+8,[6540708],3574482328,0xd50e4598,,,False,,access violation accessing 0x48
+9,"[{""scratch"":256}]",3474126825,0xcf12f7e9,,,False,,access violation accessing 0x48

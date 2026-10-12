@@ -308,60 +308,69 @@ extern "C" __declspec(dllexport) void __cdecl HudSlotLoopCcc0() {
 RH_ScopedInstall(HudSlotLoopCcc0, 0x0041ccc0);  // re-enabled 2026-05-24 c3-safe
 
 // ---------------------------------------------------------------------------
-// FUN_0041c2d0  --  0x0041c2d0
+// FUN_0041c2d0  --  0x0041c2d0   (35 bytes, 0x0041c2d0..0x0041c2f2)
 //
-// Original: FUN_0041c2d0 (34 bytes, 0x0041c2d0–0x0041c2f2)
-// EAX-thiscall vtable dispatcher. Object pointer arrives in EAX (register
-// convention, not stack). Dispatches vtable[0x48] (18th slot = Draw/Render)
-// unconditionally on four member objects at EAX+0xc, EAX+4, EAX+0, EAX+8.
-// Dispatch order: EAX[3]→EAX[1]→EAX[0]→EAX[2] (offsets 12,4,0,8).
-// No guards. Shared by two game modes: mode-10 (sub_0041a3e0) and mode-5
-// (sub_0041c300), both called only when their respective enable guards are
-// non-zero (DAT_0063c628, DAT_0063cdbc).
-// Verification: crash_equal_ok=True — calling without valid EAX (EAX=0)
-// causes identical null-deref crash on both original and reimpl.
-// ref: re/analysis/promote_c2_hud_ingame/0x0041c2d0.md
+// Re-ported from the bytes of original\MASHED.exe.unpatched on 2026-10-12
+// (U-9671). The block pointer arrives in EAX:
+//   0x0041c2d0 push esi
+//   0x0041c2d1 mov  esi,eax                ; esi = block
+//   0x0041c2d3 mov  eax,[esi+0xc]          ; m = block[3]
+//   0x0041c2d6 push eax
+//   0x0041c2d7 call [eax+0x48]             ; m->[+0x48](m)
+//   0x0041c2da mov  eax,[esi+4]            ; m = block[1]
+//   0x0041c2dd push eax
+//   0x0041c2de call [eax+0x48]
+//   0x0041c2e1 mov  eax,[esi]              ; m = block[0]
+//   0x0041c2e3 push eax
+//   0x0041c2e4 call [eax+0x48]
+//   0x0041c2e7 mov  esi,[esi+8]            ; m = block[2]
+//   0x0041c2ea push esi
+//   0x0041c2eb call [esi+0x48]
+//   0x0041c2ee add  esp,0x10               ; caller cleans all four args
+//   0x0041c2f1 pop  esi
+//   0x0041c2f2 ret                         ; EAX = the last call's EAX
+// [m+0x48] is a function-pointer FIELD of the member, called with one
+// dereference. It is not a vtable slot: there is no `mov reg,[m]` before the
+// call. Ghidra's decomp agrees: (**(code **)(in_EAX[3] + 0x48))(in_EAX[3]).
+// No guards. Callers: 0x0041a3e0 (tail jmp at 0x0041a3ee, EAX = 0x0063c610)
+// and 0x0041c300 (tail jmp at 0x0041c30e, EAX = 0x0063cda4).
+//
+// The port is a naked EAX shim around a cdecl body. The shim preserves every
+// register the original preserves (ESI, and EBX/EDI/EBP, which the body saves
+// as MSVC callee-saved) and returns the last member call's EAX, as the
+// original does. ECX/EDX at return are not part of the contract: no caller
+// reads them (0x0041a3e0 / 0x0041c300 tail-jump, so the reader would be
+// 0x0040dfc0 after 0x0040e028 / 0x0040e043 / 0x0040e09e / 0x0040e0bd, and it
+// does not, per re/analysis/negctl/reearn_20261011/fix_hud_dispatch_RESULT.md).
 // ---------------------------------------------------------------------------
 
+typedef std::uint32_t (__cdecl *HudMemberFn)(void* member);
+
+static std::uint32_t __cdecl HudDispatchDraw4Body(void* const* block) {
+    void* m;
+    m = block[3];                                                              // 0x0041c2d3
+    (*reinterpret_cast<HudMemberFn*>(static_cast<std::uint8_t*>(m) + 0x48))(m);   // 0x0041c2d7
+    m = block[1];                                                              // 0x0041c2da
+    (*reinterpret_cast<HudMemberFn*>(static_cast<std::uint8_t*>(m) + 0x48))(m);   // 0x0041c2de
+    m = block[0];                                                              // 0x0041c2e1
+    (*reinterpret_cast<HudMemberFn*>(static_cast<std::uint8_t*>(m) + 0x48))(m);   // 0x0041c2e4
+    m = block[2];                                                              // 0x0041c2e7
+    return (*reinterpret_cast<HudMemberFn*>(static_cast<std::uint8_t*>(m) + 0x48))(m);  // 0x0041c2eb
+}
+
 // 0x0041c2d0
-// EAX-thiscall: object ptr passed in EAX, not on stack.
-// We implement via __declspec(naked) + inline asm to preserve the calling
-// convention exactly: EAX is the object base; vtable[0x48] on EAX[3/1/0/2].
 extern "C" __declspec(dllexport) __declspec(naked)
-void __cdecl FUN_0041c2d0()
+std::uint32_t __cdecl FUN_0041c2d0()
 {
     __asm {
-        // EAX = object ptr (passed by caller in EAX convention)
-        // Dispatch order: EAX[3]=*(EAX+0xc), EAX[1]=*(EAX+4), EAX[0]=*(EAX), EAX[2]=*(EAX+8)
-        // Each: load member ptr, call vtable[0x48](member_ptr)
-        // 0x0041c2d0: *(*(EAX+0xc) + 0x48)(*(EAX+0xc))
-        mov ecx, dword ptr [eax + 0x0c]  // EAX[3]
-        mov edx, dword ptr [ecx]         // vtable ptr of member[3]
-        push ecx                         // arg: member ptr
-        call dword ptr [edx + 0x48]      // vtable[0x48]
-        // 0x0041c2da: *(*(EAX+4) + 0x48)(*(EAX+4))
-        mov ecx, dword ptr [eax + 0x04]  // EAX[1]
-        mov edx, dword ptr [ecx]
-        push ecx
-        call dword ptr [edx + 0x48]
-        // 0x0041c2e2: *(*EAX + 0x48)(*EAX)
-        mov ecx, dword ptr [eax]         // EAX[0]
-        mov edx, dword ptr [ecx]
-        push ecx
-        call dword ptr [edx + 0x48]
-        // 0x0041c2ea: *(*(EAX+8) + 0x48)(*(EAX+8))
-        mov ecx, dword ptr [eax + 0x08]  // EAX[2]
-        mov edx, dword ptr [ecx]
-        push ecx
-        call dword ptr [edx + 0x48]
-        ret
+        push eax                        // block (arrives in EAX, 0x0041c2d1)
+        call HudDispatchDraw4Body
+        add  esp, 4
+        ret                             // EAX = last member call's EAX
     }
 }
 
-// MASS-DISABLED 2026-05-24 needs-canonical-hud-state: RH_ScopedInstall(FUN_0041c2d0, 0x0041c2d0);
-// Phase A2 audit 2026-05-24: synthetic diff produces AV/AV crash both sides
-// (banned per phase-A1 rule). Function (hud_dispatch_draw4 in registry)
-// derefs HUD state globals not present at diff-attach time.
+RH_ScopedInstall(FUN_0041c2d0, 0x0041c2d0);  // 2026-10-12 re-ported from bytes (U-9671)
 
 // ---------------------------------------------------------------------------
 // 0x0041cc50  HudSlotUpdateCc50   (100 bytes)
@@ -451,8 +460,10 @@ RH_ScopedInstall(HudSlotUpdateCc50, 0x0041cc50);  // C3 2026-09-03 (Finding 20; 
 //   0x0041bc50 (C2): 0x0041bc51 mov esi,eax; 29 pairs: flag dword at
 //                    rec+X (X in 0x10..0x94), object at rec+X+0xa0, and
 //                    push obj; call [obj+0x48] when the flag is non-zero.
-// Neither is ported (C2), so both are called at their original RVA with EAX
-// loaded by inline asm, as HudSlotLoopB630 does for 0x0041b340.
+// 0x0041c2d0 is ported above (U-9671, 2026-10-12): the two mode routers call
+// the port FUN_0041c2d0 directly with EAX loaded by inline asm. 0x0041bc50 is
+// not ported (C2), so 0x0041c0c0 calls it at its original RVA, as
+// HudSlotLoopB630 does for 0x0041b340.
 //
 // Return value: each original leaves EAX defined at RET, so the ports return
 // the same EAX (the flag read on the skip path, else the callee's EAX). No
@@ -474,8 +485,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl HudDispatchMode10() {
     if (r != 0) {                                                              // 0x0041a3e7
         __asm {
             mov  eax, 0x0063c610        // 0x0041a3e9
-            mov  ecx, 0x0041c2d0
-            call ecx                    // 0x0041a3ee (tail jmp in the original)
+            call FUN_0041c2d0           // 0x0041a3ee (tail jmp to 0x0041c2d0 in the original; the port)
             mov  r, eax
         }
     }
@@ -525,8 +535,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl HudDispatchMode5() {
     if (r != 0) {                                                              // 0x0041c307
         __asm {
             mov  eax, 0x0063cda4        // 0x0041c309
-            mov  ecx, 0x0041c2d0
-            call ecx                    // 0x0041c30e (tail jmp in the original)
+            call FUN_0041c2d0           // 0x0041c30e (tail jmp to 0x0041c2d0 in the original; the port)
             mov  r, eax
         }
     }
