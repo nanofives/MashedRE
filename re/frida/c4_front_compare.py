@@ -3,6 +3,9 @@
 #     harness; begin()'s return is a pointer that differs per boot, so it is reduced to NZ/0).
 #   bc: per call key (4 stack floats, AL, screen gate, return address) -> the five 0x00472c60 arg
 #     tuples. A call is FOREIGN when its (key, output) pair never occurs in the reference.
+#   pmr (cup route, c4save 2026-10-12): per call key (rule, sub-state) -> the body's ordered top-level
+#     callee log (capture windows only). Same pooled-original rule as bc: matched / MISMATCH (key
+#     known, log never seen with it) / unmatched (key never seen by the originals).
 # Usage: py -3.12 re/frida/c4_front_compare.py <evidence dir>   -> c4_front_compare.csv + _summary.json
 import csv, json, re, sys
 from pathlib import Path
@@ -25,7 +28,7 @@ def load(d, tag):
 def main():
     d = Path(sys.argv[1])
     rows = []
-    for row in ("subinit", "bqf", "bc"):
+    for row in ("subinit", "bqf", "bc", "pmr"):
         ref = load(d, f"{row}_stock1")
         if not ref: continue
         for tag in (f"{row}_stock2", f"{row}_port1", f"{row}_port2", f"{row}_ctl1", f"{row}_ctl2"):
@@ -36,7 +39,29 @@ def main():
                     "first_bytes": w.get("bytes"), "target": (w.get("module") or "") + (("+" + w["off"]) if w.get("off") else ""),
                     "export": ",".join(w.get("exports") or []), "game_calls": r["dump"]["st"]["calls"],
                     "crash": len(r.get("crash", [])), "asi_sha256": (r.get("asi_sha256") or "")[:16]}
-            if row in ("subinit", "bqf"):
+            if row == "pmr" and not ref["dump"]["pmr"].get("keys"):
+                continue
+            if row == "pmr":
+                refs = [ref] if tag.endswith("stock2") else [x for x in (ref, load(d, f"{row}_stock2")) if x]
+                refout = {}
+                for rr in refs:
+                    for kk in rr["dump"]["pmr"]["keys"]:
+                        key, seq = kk.split("|", 1); refout.setdefault(key, set()).add(seq)
+                k = r["dump"]["pmr"]["keys"]; calls = sum(k.values()); per = {}
+                mism = unm = 0; ex = None
+                for kk, n in k.items():
+                    key, seq = kk.split("|", 1); pk = per.setdefault(key, [0, 0, 0])
+                    if key not in refout: unm += n; pk[2] += n
+                    elif seq not in refout[key]: mism += n; pk[1] += n; ex = ex or (key, seq)
+                    else: pk[0] += n
+                base.update({"ref": "+".join(x["tag"] for x in refs), "compared": calls - unm, "observed": calls,
+                             "mismatch": mism, "unmatched": unm,
+                             "first_mismatch": (f"key={ex[0]} log={ex[1][:200]}" if ex else ""),
+                             "per_substate": json.dumps({kk: {"matched": v[0], "mismatch": v[1], "unmatched": v[2]} for kk, v in sorted(per.items())}),
+                             "hist": json.dumps(r["dump"]["pmr"]["hist"]), "window": json.dumps({"nwin": len(r.get("windows") or []), "edge": r["dump"]["pmr"].get("edge")}),
+                             "result": ("RED" if mism else ("GREEN" if unm == 0 else "GREEN-PARTIAL"))
+                                       if calls > 0 and r["verdict"] == "DONE" and not r.get("crash") else ("RED-CRASH" if r.get("crash") else "VOID")})
+            elif row in ("subinit", "bqf"):
                 a, b = norm_log(ref["dump"]["log"]), norm_log(r["dump"]["log"])
                 diff = [i for i in range(max(len(a), len(b))) if (a[i] if i < len(a) else None) != (b[i] if i < len(b) else None)]
                 first = diff[0] if diff else None
@@ -68,7 +93,7 @@ def main():
                                        if calls > 0 and r["verdict"] == "DONE" else "VOID"})
             rows.append(base)
     cols = ["row", "run", "ref", "result", "verdict_run", "game_calls", "compared", "observed", "mismatch", "unmatched",
-            "first_mismatch", "first_bytes", "target", "export", "crash", "asi_sha256", "window"]
+            "first_mismatch", "first_bytes", "target", "export", "crash", "asi_sha256", "window", "per_substate", "hist"]
     with open(d / "c4_front_compare.csv", "w", newline="", encoding="utf-8") as f:
         wr = csv.DictWriter(f, fieldnames=cols, extrasaction="ignore"); wr.writeheader(); wr.writerows(rows)
     (d / "c4_front_compare_summary.json").write_text(json.dumps(rows, indent=1), encoding="utf-8")

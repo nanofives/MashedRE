@@ -1,0 +1,44 @@
+# Install copies used by c4save (never original\). Forced input approved by the user 2026-10-12.
+copy roots: <scratchpad>/gameroot/original (rows 40d440, 41c2d0) and <scratchpad>/gameroot2/original (row pmr), robocopy of original/ 2026-10-12 19:49 / 19:56, 482 MB each
+b9977dab70607720cf58bc7832937c203b1e0b33ff5896da586baf56aa79fe87 *<gameroot>/MASHED.exe
+b9977dab70607720cf58bc7832937c203b1e0b33ff5896da586baf56aa79fe87 *<gameroot2>/MASHED.exe
+b9977dab70607720cf58bc7832937c203b1e0b33ff5896da586baf56aa79fe87 *original/MASHED.exe
+2ddccc49db8f1bc9b1163eb66fb103e3f57b911a6820b2baac73dfe1d952e1b2 *<gameroot>/mashed_re_dev.asi
+2ddccc49db8f1bc9b1163eb66fb103e3f57b911a6820b2baac73dfe1d952e1b2 *<gameroot2>/mashed_re_dev.asi
+2ddccc49db8f1bc9b1163eb66fb103e3f57b911a6820b2baac73dfe1d952e1b2 *original/mashed_re_dev.asi
+479019513e752bf68b6c4cb77fa2cc36d69fdcfb5be2c56fb87b295d0c88c7be *<gameroot>/d3d9.dll
+479019513e752bf68b6c4cb77fa2cc36d69fdcfb5be2c56fb87b295d0c88c7be *<gameroot2>/d3d9.dll
+479019513e752bf68b6c4cb77fa2cc36d69fdcfb5be2c56fb87b295d0c88c7be *original/d3d9.dll
+5f850f2909837bab9cebb3ade430a8c583f5b69c7b1e8fb4e1fc9609cff05dea *<gameroot>/dinput8.dll
+5f850f2909837bab9cebb3ade430a8c583f5b69c7b1e8fb4e1fc9609cff05dea *<gameroot2>/dinput8.dll
+5f850f2909837bab9cebb3ade430a8c583f5b69c7b1e8fb4e1fc9609cff05dea *original/dinput8.dll
+80ccb2d449f0e5b75e57e2b74ad7a3c9f886fc87f4eb6c74185016402cbe2032 *edited gamesave.bin (restored over each copy's save before every run, --reset-save)
+bd18788182b2343e5203eb983fddd8bd947a5f3385e9fcaa46a152a9ec002a70 *original/gamesave.bin (never written)
+## edit: span 0x24A40, 13 rows x 0x30, dword +0x08 and +0x14 set 0 -> 1 on every row (26 dwords). Byte diff vs original/gamesave.bin:
+  file+0x24a48 orig=0 copy=1 (octal)
+  file+0x24a54 orig=0 copy=1 (octal)
+  file+0x24a78 orig=0 copy=1 (octal)
+  file+0x24a84 orig=0 copy=1 (octal)
+  file+0x24aa8 orig=0 copy=1 (octal)
+  file+0x24ab4 orig=0 copy=1 (octal)
+  file+0x24ad8 orig=0 copy=1 (octal)
+  file+0x24ae4 orig=0 copy=1 (octal)
+  file+0x24b08 orig=0 copy=1 (octal)
+  file+0x24b14 orig=0 copy=1 (octal)
+  file+0x24b38 orig=0 copy=1 (octal)
+  file+0x24b44 orig=0 copy=1 (octal)
+  file+0x24b68 orig=0 copy=1 (octal)
+  file+0x24b74 orig=0 copy=1 (octal)
+  file+0x24b98 orig=0 copy=1 (octal)
+  file+0x24ba4 orig=0 copy=1 (octal)
+  file+0x24bc8 orig=0 copy=1 (octal)
+  file+0x24bd4 orig=0 copy=1 (octal)
+  file+0x24bf8 orig=0 copy=1 (octal)
+  file+0x24c04 orig=0 copy=1 (octal)
+  file+0x24c28 orig=0 copy=1 (octal)
+  file+0x24c34 orig=0 copy=1 (octal)
+  file+0x24c58 orig=0 copy=1 (octal)
+  file+0x24c64 orig=0 copy=1 (octal)
+  file+0x24c88 orig=0 copy=1 (octal)
+  file+0x24c94 orig=0 copy=1 (octal)
+## every run JSON records save_sha256 = 80CCB2D4... (the edited save) at spawn

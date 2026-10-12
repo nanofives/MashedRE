@@ -1,0 +1,396 @@
+{
+ "row": "pmr",
+ "rva": "0x00404320",
+ "arm": "port",
+ "tag": "pmr_port1",
+ "route": "cup",
+ "exe": "C:\\Users\\maria\\AppData\\Local\\Temp\\claude\\C--Users-maria-Desktop-Proyectos-Mashed\\0c5f29e5-34dc-4c04-adbe-ee9187a7dbda\\scratchpad\\gameroot2\\original\\MASHED.exe",
+ "exe_sha256": "B9977DAB70607720CF58BC7832937C203B1E0B33FF5896DA586BAF56AA79FE87",
+ "save_sha256": "80CCB2D449F0E5B75E57E2B74AD7A3C9F886FC87F4EB6C74185016402CBE2032",
+ "reset_save": "C:/Users/maria/AppData/Local/Temp/claude/C--Users-maria-Desktop-Proyectos-Mashed/0c5f29e5-34dc-4c04-adbe-ee9187a7dbda/scratchpad/gamesave_edited.bin",
+ "asi": "C:\\Users\\maria\\AppData\\Local\\Temp\\claude\\C--Users-maria-Desktop-Proyectos-Mashed\\0c5f29e5-34dc-4c04-adbe-ee9187a7dbda\\scratchpad\\c4save_fix.asi",
+ "asi_sha256": "AB541BA7040E2DC4BE6AF093E3EF1B031A54C36FC498CA22D8B2E395A3312A65",
+ "env": {
+  "MASHED_HOOK_ONLY": "0x00404320",
+  "MASHED_RE_NO_AUTO_HOOK": "1"
+ },
+ "log": [
+  "  spawned pid=13432 row=pmr arm=port",
+  "  asi load (suspended): {'ok': True, 'base': '0x69060000', 'name': 'c4save_fix.asi', 'path': 'C:\\\\Users\\\\maria\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-maria-Desktop-Proyectos-Mashed\\\\0c5f29e5-34dc-4c04-adbe-ee9187a7dbda\\\\scratchpad\\\\c4save_fix.asi'}",
+  "  arm: {'ok': True, 'w': {'bytes': 'e9 ab cc c7 68 83 ec 10', 'b0': 233, 'rel32': 1757924523, 'target': '0x69080fd0', 'module': 'c4save_fix.asi', 'path': 'C:\\\\Users\\\\maria\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-maria-Desktop-Proyectos-Mashed\\\\0c5f29e5-34dc-4c04-adbe-ee9187a7dbda\\\\scratchpad\\\\c4save_fix.asi', 'off': '0x20fd0', 'exports': ['PerModeRenderMachine']}, 'entry': '0x69080fd0'}",
+  "  title: {'depth': 1, 'phase': 3, 'gate': 22, 'sph': 1, 'ui': 0, 'fd0': 0, 'mode': 0, 'f184': 0, 'f17c': 0, 'calls': 0, 'pq': 0}",
+  "  d3: depth=3 sel=0",
+  "  cup: {'depth': 5, 'phase': 3, 'gate': 6, 'sph': 1, 'ui': 0, 'fd0': 0, 'mode': 4, 'f184': 2, 'f17c': 0, 'calls': 0, 'pq': 0}",
+  "  event: {'depth': 5, 'phase': 3, 'gate': 6, 'sph': 1, 'ui': 0, 'fd0': 0, 'mode': 4, 'f184': 2, 'f17c': 2, 'calls': 0, 'pq': 0}",
+  "  launched: {'depth': 5, 'phase': 0, 'gate': 6, 'sph': 2, 'ui': 0, 'fd0': 10, 'mode': 4, 'f184': 2, 'f17c': 2, 'calls': 0, 'pq': 0}",
+  "   t+0s {'depth': 5, 'phase': 0, 'gate': 6, 'sph': 2, 'ui': 0, 'fd0': 10, 'mode': 4, 'f184': 2, 'f17c': 2, 'calls': 0, 'pq': 0}",
+  "  >>> first rule-10 game call: {'depth': 5, 'phase': 0, 'gate': 6, 'sph': 3, 'ui': 3, 'fd0': 10, 'mode': 4, 'f184': 2, 'f17c': 2, 'calls': 4, 'pq': 0}",
+  "   t+10s {'depth': 5, 'phase': 0, 'gate': 6, 'sph': 3, 'ui': 3, 'fd0': 10, 'mode': 4, 'f184': 2, 'f17c': 2, 'calls': 196, 'pq': 47}",
+  "   t+20s {'depth': 5, 'phase': 0, 'gate': 6, 'sph': 3, 'ui': 3, 'fd0': 10, 'mode': 4, 'f184': 2, 'f17c': 2, 'calls': 566, 'pq': 143}",
+  "   t+30s {'depth': 5, 'phase': 0, 'gate': 6, 'sph': 3, 'ui': 6, 'fd0': 10, 'mode': 4, 'f184': 2, 'f17c': 2, 'calls': 887, 'pq': 239}",
+  "   t+40s {'depth': 5, 'phase': 0, 'gate': 6, 'sph': 3, 'ui': 6, 'fd0': 10, 'mode': 4, 'f184': 2, 'f17c': 2, 'calls': 1160, 'pq': 286}",
+  "   t+50s {'depth': 5, 'phase': 0, 'gate': 6, 'sph': 3, 'ui': 6, 'fd0': 10, 'mode': 4, 'f184': 2, 'f17c': 2, 'calls': 1445, 'pq': 362}",
+  "   t+60s {'depth': 5, 'phase': 0, 'gate': 6, 'sph': 3, 'ui': 6, 'fd0': 10, 'mode': 4, 'f184': 2, 'f17c': 2, 'calls': 1684, 'pq': 430}",
+  "   t+70s {'depth': 5, 'phase': 0, 'gate': 6, 'sph': 3, 'ui': 11, 'fd0': 10, 'mode': 4, 'f184': 2, 'f17c': 2, 'calls': 1879, 'pq': 464}"
+ ],
+ "crash": [],
+ "pid": 13432,
+ "load": {
+  "ok": true,
+  "base": "0x69060000",
+  "name": "c4save_fix.asi",
+  "path": "C:\\Users\\maria\\AppData\\Local\\Temp\\claude\\C--Users-maria-Desktop-Proyectos-Mashed\\0c5f29e5-34dc-4c04-adbe-ee9187a7dbda\\scratchpad\\c4save_fix.asi"
+ },
+ "arm_result": {
+  "ok": true,
+  "w": {
+   "bytes": "e9 ab cc c7 68 83 ec 10",
+   "b0": 233,
+   "rel32": 1757924523,
+   "target": "0x69080fd0",
+   "module": "c4save_fix.asi",
+   "path": "C:\\Users\\maria\\AppData\\Local\\Temp\\claude\\C--Users-maria-Desktop-Proyectos-Mashed\\0c5f29e5-34dc-4c04-adbe-ee9187a7dbda\\scratchpad\\c4save_fix.asi",
+   "off": "0x20fd0",
+   "exports": [
+    "PerModeRenderMachine"
+   ]
+  },
+  "entry": "0x69080fd0"
+ },
+ "launched": {
+  "depth": 5,
+  "phase": 0,
+  "gate": 6,
+  "sph": 2,
+  "ui": 0,
+  "fd0": 10,
+  "mode": 4,
+  "f184": 2,
+  "f17c": 2,
+  "calls": 0,
+  "pq": 0
+ },
+ "first_rule10_call": {
+  "depth": 5,
+  "phase": 0,
+  "gate": 6,
+  "sph": 3,
+  "ui": 3,
+  "fd0": 10,
+  "mode": 4,
+  "f184": 2,
+  "f17c": 2,
+  "calls": 4,
+  "pq": 0
+ },
+ "windows": [
+  {
+   "qcalls": 47,
+   "edge": 0,
+   "nkeys": 1,
+   "rs": "0x4d7480",
+   "pre": {
+    "depth": 5,
+    "phase": 0,
+    "gate": 6,
+    "sph": 3,
+    "ui": 3,
+    "fd0": 10,
+    "mode": 4,
+    "f184": 2,
+    "f17c": 2,
+    "calls": 4,
+    "pq": 0
+   },
+   "t": 2.5
+  },
+  {
+   "qcalls": 95,
+   "edge": 0,
+   "nkeys": 1,
+   "rs": "0x4d7480",
+   "pre": {
+    "depth": 5,
+    "phase": 0,
+    "gate": 6,
+    "sph": 3,
+    "ui": 3,
+    "fd0": 10,
+    "mode": 4,
+    "f184": 2,
+    "f17c": 2,
+    "calls": 196,
+    "pq": 47
+   },
+   "t": 8.5
+  },
+  {
+   "qcalls": 143,
+   "edge": 0,
+   "nkeys": 1,
+   "rs": "0x4d7480",
+   "pre": {
+    "depth": 5,
+    "phase": 0,
+    "gate": 6,
+    "sph": 3,
+    "ui": 3,
+    "fd0": 10,
+    "mode": 4,
+    "f184": 2,
+    "f17c": 2,
+    "calls": 389,
+    "pq": 95
+   },
+   "t": 14.6
+  },
+  {
+   "qcalls": 191,
+   "edge": 0,
+   "nkeys": 3,
+   "rs": "0x4d7480",
+   "pre": {
+    "depth": 5,
+    "phase": 0,
+    "gate": 6,
+    "sph": 3,
+    "ui": 3,
+    "fd0": 10,
+    "mode": 4,
+    "f184": 2,
+    "f17c": 2,
+    "calls": 582,
+    "pq": 143
+   },
+   "t": 20.6
+  },
+  {
+   "qcalls": 239,
+   "edge": 0,
+   "nkeys": 4,
+   "rs": "0x4d7480",
+   "pre": {
+    "depth": 5,
+    "phase": 0,
+    "gate": 6,
+    "sph": 3,
+    "ui": 6,
+    "fd0": 10,
+    "mode": 4,
+    "f184": 2,
+    "f17c": 2,
+    "calls": 775,
+    "pq": 191
+   },
+   "t": 26.6
+  },
+  {
+   "qcalls": 286,
+   "edge": 0,
+   "nkeys": 4,
+   "rs": "0x4d7480",
+   "pre": {
+    "depth": 5,
+    "phase": 0,
+    "gate": 6,
+    "sph": 3,
+    "ui": 6,
+    "fd0": 10,
+    "mode": 4,
+    "f184": 2,
+    "f17c": 2,
+    "calls": 968,
+    "pq": 239
+   },
+   "t": 32.6
+  },
+  {
+   "qcalls": 327,
+   "edge": 0,
+   "nkeys": 4,
+   "rs": "0x4d7480",
+   "pre": {
+    "depth": 5,
+    "phase": 0,
+    "gate": 6,
+    "sph": 3,
+    "ui": 6,
+    "fd0": 10,
+    "mode": 4,
+    "f184": 2,
+    "f17c": 2,
+    "calls": 1160,
+    "pq": 286
+   },
+   "t": 38.7
+  },
+  {
+   "qcalls": 362,
+   "edge": 0,
+   "nkeys": 4,
+   "rs": "0x4d7480",
+   "pre": {
+    "depth": 5,
+    "phase": 0,
+    "gate": 6,
+    "sph": 3,
+    "ui": 6,
+    "fd0": 10,
+    "mode": 4,
+    "f184": 2,
+    "f17c": 2,
+    "calls": 1310,
+    "pq": 327
+   },
+   "t": 44.7
+  },
+  {
+   "qcalls": 397,
+   "edge": 0,
+   "nkeys": 4,
+   "rs": "0x4d7480",
+   "pre": {
+    "depth": 5,
+    "phase": 0,
+    "gate": 6,
+    "sph": 3,
+    "ui": 6,
+    "fd0": 10,
+    "mode": 4,
+    "f184": 2,
+    "f17c": 2,
+    "calls": 1458,
+    "pq": 362
+   },
+   "t": 50.7
+  },
+  {
+   "qcalls": 430,
+   "edge": 0,
+   "nkeys": 4,
+   "rs": "0x4d7480",
+   "pre": {
+    "depth": 5,
+    "phase": 0,
+    "gate": 6,
+    "sph": 3,
+    "ui": 6,
+    "fd0": 10,
+    "mode": 4,
+    "f184": 2,
+    "f17c": 2,
+    "calls": 1604,
+    "pq": 397
+   },
+   "t": 56.7
+  },
+  {
+   "qcalls": 464,
+   "edge": 0,
+   "nkeys": 5,
+   "rs": "0x4d7480",
+   "pre": {
+    "depth": 5,
+    "phase": 0,
+    "gate": 6,
+    "sph": 3,
+    "ui": 6,
+    "fd0": 10,
+    "mode": 4,
+    "f184": 2,
+    "f17c": 2,
+    "calls": 1740,
+    "pq": 430
+   },
+   "t": 62.8
+  },
+  {
+   "qcalls": 499,
+   "edge": 0,
+   "nkeys": 5,
+   "rs": "0x4d7480",
+   "pre": {
+    "depth": 5,
+    "phase": 0,
+    "gate": 6,
+    "sph": 3,
+    "ui": 11,
+    "fd0": 10,
+    "mode": 4,
+    "f184": 2,
+    "f17c": 2,
+    "calls": 1879,
+    "pq": 464
+   },
+   "t": 68.8
+  }
+ ],
+ "state_end": {
+  "depth": 5,
+  "phase": 0,
+  "gate": 6,
+  "sph": 3,
+  "ui": 11,
+  "fd0": 10,
+  "mode": 4,
+  "f184": 2,
+  "f17c": 2,
+  "calls": 1920,
+  "pq": 499
+ },
+ "dump": {
+  "st": {
+   "row": "pmr",
+   "rva": 4211488,
+   "entry": "0x69080fd0",
+   "calls": 1920,
+   "byGate": {},
+   "byRet": {},
+   "witness": {
+    "bytes": "e9 ab cc c7 68 83 ec 10",
+    "b0": 233,
+    "rel32": 1757924523,
+    "target": "0x69080fd0",
+    "module": "c4save_fix.asi",
+    "path": "C:\\Users\\maria\\AppData\\Local\\Temp\\claude\\C--Users-maria-Desktop-Proyectos-Mashed\\0c5f29e5-34dc-4c04-adbe-ee9187a7dbda\\scratchpad\\c4save_fix.asi",
+    "off": "0x20fd0",
+    "exports": [
+     "PerModeRenderMachine"
+    ]
+   },
+   "crashes": 0
+  },
+  "log": [],
+  "nlog": 0,
+  "bc": {
+   "keys": {},
+   "qcalls": 0,
+   "qquads": 0,
+   "outside": 0,
+   "edge": 0
+  },
+  "pmr": {
+   "hist": {
+    "fd0=10,sub=3,sph=3": 588,
+    "fd0=10,sub=4,sph=3": 1,
+    "fd0=10,sub=5,sph=3": 112,
+    "fd0=10,sub=6,sph=3": 1069,
+    "fd0=10,sub=11,sph=3": 150
+   },
+   "keys": {
+    "fd0=10,sub=3|end(C) vw(C,3f4ccccd/3f4ccccd) begin(C)=C rs(6,0) rs(8,0) sub=3 sub=3 sub=3 r10 rs(6,1) rs(8,1) end(C) vw(C,PRE) begin(C)=C": 149,
+    "fd0=10,sub=4|end(C) vw(C,3f4ccccd/3f4ccccd) begin(C)=C rs(6,0) rs(8,0) sub=4 sub=4 r10 rs(6,1) rs(8,1) end(C) vw(C,PRE) begin(C)=C": 1,
+    "fd0=10,sub=5|end(C) vw(C,3f4ccccd/3f4ccccd) begin(C)=C rs(6,0) rs(8,0) sub=5 r10 rs(6,1) rs(8,1) end(C) vw(C,PRE) begin(C)=C": 41,
+    "fd0=10,sub=6|end(C) vw(C,3f4ccccd/3f4ccccd) begin(C)=C rs(6,0) rs(8,0) sub=6 sub=6 sub=6 sub=6 rs(6,1) rs(8,1) end(C) vw(C,PRE) begin(C)=C": 269,
+    "fd0=10,sub=11|end(C) vw(C,3f4ccccd/3f4ccccd) begin(C)=C rs(6,0) rs(8,0) sub=11 sub=11 sub=11 sub=11 rs(6,1) rs(8,1) end(C) vw(C,PRE) begin(C)=C": 39
+   },
+   "qcalls": 499,
+   "edge": 0,
+   "nwin": 12,
+   "rs": "0x4d7480"
+  }
+ },
+ "alive_at_end": true,
+ "exit_code": 3735928559,
+ "verdict": "DONE"
+}

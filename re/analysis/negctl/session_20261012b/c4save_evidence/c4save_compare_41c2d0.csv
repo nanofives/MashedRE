@@ -1,0 +1,7 @@
+arm,ref,result,tag,alive_at_end,b0,calls,crash,crash_at,crash_enter,crash_inbody,enter,entry,exit_code,foreign_calls,hook_live,jmp_module,keys,m10,m10f,m5,match,missing_keys,mode,ref_keys,rets,rule,verdict
+ctl,41c2d0_stock1+41c2d0_stock2,RED,ctl1,False,233,,1,c4save_ctl.asi+0x133f6 read @ 0x1050049,1,True,,,0xc0000005,0,True,c4save_ctl.asi,0,,,,False,2,,2,null,,NOT-REACHED
+ctl,41c2d0_stock1+41c2d0_stock2,RED,ctl2,False,233,,1,c4save_ctl.asi+0x133f6 read @ 0x1050049,1,True,,,0xc0000005,0,True,c4save_ctl.asi,0,,,,False,2,,2,null,,NOT-REACHED
+late,41c2d0_stock1+41c2d0_stock2,GREEN,late1,True,233,1114,0,,,,1114,0x69073420 c4save_fix.asi+0x13420,0xdeadbeef,0,True,c4save_fix.asi,2,1114,1114,,True,0,4,2,"{""2d1061f"": 1114}",10,DONE
+late,41c2d0_stock1+41c2d0_stock2,GREEN,late2,True,233,1109,0,,,,1109,0x69073420 c4save_fix.asi+0x13420,0xdeadbeef,0,True,c4save_fix.asi,2,1109,1109,,True,0,4,2,"{""162061f"": 1109}",10,DONE
+stock,41c2d0_stock2,GREEN,stock1,True,86,1095,0,,,,1095,0x41c2d0 MASHED.exe+0x1c2d0,0xdeadbeef,0,False,,2,1095,1095,,True,0,4,2,"{""306061f"": 1095}",10,DONE
+stock,41c2d0_stock1,GREEN,stock2,True,86,1104,0,,,,1104,0x41c2d0 MASHED.exe+0x1c2d0,0xdeadbeef,0,False,,2,1104,1104,,True,0,4,2,"{""2d1061f"": 1104}",10,DONE
