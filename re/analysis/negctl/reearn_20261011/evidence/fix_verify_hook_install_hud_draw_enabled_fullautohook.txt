@@ -1,0 +1,27 @@
+# provenance 2026-10-12: FULL auto-hook boot (no MASHED_HOOK_ONLY), main build 1bf4dab0 deployed
+=== verify_hook_install report (hud_draw_enabled) ===
+
+target address: 0x00426ba0  export: HudDrawEnabled
+PRE  bytes:     e9 8b c8 7e 68 c3 90 90
+asi base:       0x68c00000
+reimpl addr:    0x68c13430
+POST bytes:     e9 8b c8 7e 68 c3 90 90
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x687ec88b  expected 0x687ec88b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  1 / 1  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [], 'seed': [{'addr': 6739716, 'val': 1}]}  got=1,fb69b604  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 1x as expected
+  + all 1 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_hud_draw_enabled.txt

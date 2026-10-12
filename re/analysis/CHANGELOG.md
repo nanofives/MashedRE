@@ -26,6 +26,11 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-12  0041a3e0  HudDispatchMode10  C2->C3 (new port)  Ported from the bytes (no body existed). run_diff GREEN 8/8, self-baseline GREEN, negctl null/ret RED, mutation RED 6/8, path2 PASS, full auto-hook boot PASS. re/analysis/negctl/reearn_20261011/fix_hud_dispatch_RESULT.md
+2026-10-12  0041c0c0  HudDispatchSlot2  C2->C3 (new port)  Ported from the bytes (no body existed). run_diff GREEN 9/9, self-baseline GREEN, negctl null/ret RED, mutation RED 7/9, path2 PASS, full auto-hook boot PASS. re/analysis/negctl/reearn_20261011/fix_hud_dispatch_RESULT.md
+2026-10-12  0041c300  HudDispatchMode5  C2->C3 (new port)  Ported from the bytes (no body existed). run_diff GREEN 8/8, self-baseline GREEN, negctl null/ret RED, mutation RED 4/8, path2 PASS, full auto-hook boot PASS. re/analysis/negctl/reearn_20261011/fix_hud_dispatch_RESULT.md
+2026-10-12  00426ba0  HudDrawEnabled  C2->C3 (new port)  Ported from the bytes (no body existed). run_diff GREEN 10/10, self-baseline GREEN, negctl null/ret RED, mutation RED 9/10, path2 PASS, full auto-hook boot PASS. re/analysis/negctl/reearn_20261011/fix_hud_dispatch_RESULT.md
+2026-10-12  0041c2d0  FUN_0041c2d0  U-9671 filed (C2 kept)  Existing port mismatches the bytes (vtable vs direct [m+0x48], no arg cleanup, EAX reuse); must not be installed as written.
 2026-10-12  0042b770  MenuButtonDetectE  C3->C4  Canonical scenario with the fixed port live: natural Race Results (the only screen whose code calls E), per-pad action-7 presses; port = original 9/9 in 4/4 runs, old-stride control RED 2/9, hook proven live (0xE9 + 496..689 game calls/run). The previous C4 never executed the body. re/analysis/negctl/reearn_20261011/c4_menu_button_detect_e_RESULT.md
 2026-10-12  004963e0  ConfigLogError  C4 grandfathered (user decision)  disable_log removes the body from the reference; C4 kept by decision, not re-earned. U-9655 DECIDED.
 2026-10-12  00496400  ConfigLogDebug  C4 grandfathered (user decision)  disable_log writes ret at the entry; C4 kept by decision, not re-earned. U-9656 DECIDED.
