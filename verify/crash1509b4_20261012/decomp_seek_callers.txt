@@ -1,0 +1,166 @@
+[decomp_pc] slot=Mashed_pool0 modes=decomp n=3
+// FUN_005ab1c0 @ 0x005ab1c0  size=56  (MASHED.exe)
+// undefined FUN_005ab1c0(void)
+
+/* [C2 2026-06-01] `void FUN_005ab1c0(int *param_1, uint param_2, int param_3, int param_4)` */
+
+void FUN_005ab1c0(int *param_1,uint param_2,int param_3,int param_4)
+
+{
+  param_1[0x11] = param_3;
+  param_1[4] = param_2;
+  param_1[0x12] = param_4;
+  param_1[0x10] = 3;
+  FUN_005509b0(*(undefined4 *)(*param_1 + 0xc),param_2 & 0xfffff800,0);
+  return;
+}
+
+
+
+// FUN_005ab710 @ 0x005ab710  size=617  (MASHED.exe)
+// undefined FUN_005ab710(void)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C2 2026-06-01] `void FUN_005ab710(undefined4 param_1, int param_2, int param_3, int param_4, int
+   param_5)` */
+
+void FUN_005ab710(undefined4 param_1,int param_2,int param_3,int param_4,int param_5)
+
+{
+  int iVar1;
+  uint uVar2;
+  uint uVar3;
+  int *piVar4;
+  uint uVar5;
+  
+  piVar4 = (int *)(param_5 + 4);
+  if (param_4 != 1) {
+    if (param_4 == 2) {
+      *(int *)(param_5 + 0x28) = param_2;
+    }
+    else if (param_4 == 5) goto LAB_005ab736;
+    if (*(int *)(param_5 + 0xc) != 5) {
+      (**(code **)(param_5 + 0x38))(param_1,param_2,param_3,param_4,*(undefined4 *)(param_5 + 0x3c))
+      ;
+      return;
+    }
+    *(undefined4 *)(param_5 + 0xc) = 3;
+  }
+LAB_005ab736:
+  WaitForSingleObject(DAT_007dd618,0xffffffff);
+  do {
+    if (piVar4[2] == 4) {
+      piVar4[2] = 3;
+      if ((param_3 != 4) && (param_2 == piVar4[0xb])) {
+        if ((undefined *)piVar4[0xc] == &DAT_007dce08) {
+          _DAT_007dd60c = param_1;
+          DAT_007dd610 = piVar4[10];
+          DAT_007dd608 = piVar4;
+          DAT_007dd614 = param_2;
+        }
+        else {
+          piVar4[6] = piVar4[6] + param_2;
+          piVar4[3] = piVar4[3] + param_2;
+          piVar4[5] = piVar4[5] - param_2;
+        }
+        goto LAB_005ab7d2;
+      }
+    }
+    else {
+LAB_005ab7d2:
+      uVar3 = piVar4[3];
+      uVar5 = uVar3 & 0xfffff800;
+      if ((DAT_007dd608 == piVar4) && (DAT_007dd610 == uVar5)) {
+        iVar1 = FUN_005ab980(piVar4);
+        uVar3 = uVar3 + iVar1;
+        piVar4[3] = piVar4[3] + iVar1;
+        uVar5 = uVar3 & 0xfffff800;
+        param_3 = 2;
+      }
+      if (piVar4[5] != 0) {
+        if ((((piVar4[6] & 3U) == 0) && (uVar3 == uVar5)) && (0x7ff < (uint)piVar4[5])) {
+          uVar3 = piVar4[5] & 0xfffff800;
+          piVar4[0xc] = piVar4[6];
+          if (piVar4 == DAT_007dd608) {
+            DAT_007dd608 = (int *)0x0;
+            _DAT_007dd60c = 0;
+          }
+        }
+        else {
+          DAT_007dd608 = (int *)0x0;
+          _DAT_007dd60c = 0;
+          DAT_007dd610 = 0xffffffff;
+          uVar3 = 0x800;
+          piVar4[0xc] = (int)&DAT_007dce08;
+        }
+        uVar2 = FUN_00550bc0(piVar4[7]);
+        if (uVar2 == uVar5) {
+          piVar4[2] = 4;
+          piVar4[10] = uVar5;
+          piVar4[0xb] = uVar3;
+          FUN_00550950(piVar4[0xc],1,uVar3,piVar4[7]);
+        }
+        else {
+          piVar4[2] = 5;
+          FUN_005509b0(piVar4[7],uVar5,0);
+        }
+        break;
+      }
+    }
+    piVar4[2] = 1;
+    (*(code *)piVar4[0xd])(piVar4[7],piVar4[4],param_3,param_4,piVar4[0xe]);
+    piVar4 = (int *)0x0;
+    WaitForSingleObject(DAT_007dd620,0xffffffff);
+    if ((int **)DAT_007dd624 == &DAT_007dd624) {
+      ReleaseSemaphore(DAT_007dd61c,1,(LPLONG)0x0);
+    }
+    else {
+      piVar4 = DAT_007dd624;
+      if ((DAT_007dd608 != (int *)0x0) && (*DAT_007dd608 != 0)) {
+        piVar4 = DAT_007dd608;
+      }
+      *(int *)piVar4[1] = *piVar4;
+      *(int *)(*piVar4 + 4) = piVar4[1];
+      *piVar4 = 0;
+      piVar4[2] = 3;
+    }
+    ReleaseSemaphore(DAT_007dd620,1,(LPLONG)0x0);
+    DAT_007dd62c = piVar4;
+  } while (piVar4 != (int *)0x0);
+  ReleaseSemaphore(DAT_007dd618,1,(LPLONG)0x0);
+  return;
+}
+
+
+
+// FUN_0047b8d0 @ 0x0047b8d0  size=168  (MASHED.exe)
+// undefined FUN_0047b8d0(void)
+
+/* WARNING: Function: __chkstk replaced with injection: alloca_probe */
+/* WARNING: Function: __security_check_cookie replaced with injection: security_check_cookie */
+/* [C2 2026-06-02] Two-parameter function: `param_1` (file-name pointer, passed straight to fopen),
+   `param_2` (forwarded to FUN_0047b8a0)… */
+
+void FUN_0047b8d0(undefined4 param_1,undefined4 param_2)
+
+{
+  undefined4 uVar1;
+  undefined4 uVar2;
+  uint unaff_retaddr;
+  undefined1 local_8004 [32768];
+  uint local_4;
+  
+  local_4 = DAT_00616038 ^ unaff_retaddr;
+  FUN_004b6520(local_8004,0x8000);
+  uVar1 = thunk_FUN_005507b0(param_1,&DAT_005cf010);
+  thunk_FUN_005509b0(uVar1,0,2);
+  uVar2 = thunk_FUN_00550bc0(uVar1);
+  thunk_FUN_005509b0(uVar1,0,0);
+  uVar2 = thunk_FUN_00550950(local_8004,1,uVar2,uVar1);
+  thunk_FUN_00550910(uVar1);
+  FUN_0047b8a0(local_8004,uVar2,param_2);
+  return;
+}
+
+
+
