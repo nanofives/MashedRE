@@ -6383,7 +6383,9 @@ function runDiff() {
         for (let k = 0; k < stubAtS.length; k++) {
             const se = stubAtS[k];
             const sa = ptr((se && typeof se === 'object') ? se.addr : se);
-            let cb = recorder;
+            // {bare: true} (reearn/settings 2026-10-12): this entry gets the bare callback returning `ret` even when a
+            // recorder exists, for a 0-arg getter (0x004c2f00) whose stack "args" would be caller garbage.
+            let cb = (se && se.bare) ? null : recorder;
             if (!cb) {
                 const nA = (se && se.nargs) | 0, rv = (se && se.ret) | 0, ty = [];
                 for (let q = 0; q < nA; q++) ty.push('uint32');
@@ -6402,9 +6404,118 @@ function runDiff() {
                 return;
             }
         }
+        // `dialog` {controls: [{id, cls, style, text?, check?, items?: [[text, data]], sel?}]} (reearn/settings
+        // 2026-10-12): the dialog handlers 0x00498d60/0x00498f60/0x00499170/0x004991f0/0x00499740 act only through
+        // USER32 calls on control HWNDs, which a NULL or fake HWND turns into no-ops (every ABI defect in the cluster
+        // was invisible). Before EACH arm a hidden STATIC popup (id 0) and its WS_CHILD controls (hMenu = id) are
+        // created on this A/B thread, so the target's SendMessageA/SetWindowTextA/SetFocus run synchronously against
+        // them. An ARG value {dialog: id} resolves to that window's HWND (0 = the parent). After the call the
+        // fingerprint folds a readback: per window its text, BM_GETCHECK (BUTTON), CB_GETCOUNT + each item's text and
+        // item data + CB_GETCURSEL (COMBOBOX), then the id of the focused window. HWND values never enter it (they
+        // differ per arm). The tree is destroyed after each arm. The readback is also sent as a 'log' line.
+        const dlgCfg = CONFIG.dialog || null;
+        let dlg = null;
+        let U = null;
+        if (dlgCfg) {
+            const u32 = Process.getModuleByName('user32.dll');
+            const nf = function (n, r, a) { return new NativeFunction(u32.findExportByName(n), r, a, 'stdcall'); };
+            U = { create:  nf('CreateWindowExA', 'pointer', ['uint32', 'pointer', 'pointer', 'uint32', 'int', 'int',
+                                                             'int', 'int', 'pointer', 'pointer', 'pointer', 'pointer']),
+                  destroy: nf('DestroyWindow', 'int', ['pointer']),
+                  send:    nf('SendMessageA', 'int', ['pointer', 'uint32', 'pointer', 'pointer']),
+                  getText: nf('GetWindowTextA', 'int', ['pointer', 'pointer', 'int']),
+                  getFocus: nf('GetFocus', 'pointer', []) };
+            globalThis.__dlgKeep = U;
+        }
+        const dlgBuf = dlgCfg ? Memory.alloc(0x400) : null;
+        function dlgCreate() {
+            const parent = U.create(0, Memory.allocUtf8String('STATIC'), Memory.allocUtf8String(''), 0x80000000,
+                                    0, 0, 400, 300, NULL, NULL, NULL, NULL);
+            if (parent.isNull()) throw new Error('dialog: CreateWindowExA(parent) failed');
+            const kids = {};
+            (dlgCfg.controls || []).forEach(function (c) {
+                const h = U.create(0, Memory.allocUtf8String(c.cls), Memory.allocUtf8String(c.text || ''),
+                                   (0x40000000 | (c.style | 0)) >>> 0, 0, 0, 100, 100, parent, ptr(c.id | 0), NULL, NULL);
+                if (h.isNull()) throw new Error('dialog: CreateWindowExA(' + c.cls + ', ' + c.id + ') failed');
+                kids[c.id] = h;
+                if (c.check) U.send(h, 0xf1, ptr(c.check | 0), NULL);                       // BM_SETCHECK
+                (c.items || []).forEach(function (it) {
+                    const pos = U.send(h, 0x143, NULL, Memory.allocUtf8String(it[0]));      // CB_ADDSTRING
+                    U.send(h, 0x151, ptr(pos), ptr(it[1] >>> 0));                          // CB_SETITEMDATA
+                });
+                if (c.sel !== undefined && c.sel !== null) U.send(h, 0x14e, ptr(c.sel | 0), NULL);  // CB_SETCURSEL
+            });
+            dlg = { parent: parent, kids: kids };
+        }
+        function dlgHwnd(id) {
+            if ((id | 0) === 0) return dlg.parent;
+            const h = dlg.kids[id | 0];
+            if (h === undefined) throw new Error('dialog: no control ' + id);
+            return h;
+        }
+        // ANSI bytes outside 0x20..0x7e (the localized resource strings) are kept as \xNN: readCString folds every
+        // invalid UTF-8 byte into U+FFFD, so two different strings could fingerprint alike.
+        function dlgBytes(n) {
+            if (n <= 0) return '';
+            const b = new Uint8Array(dlgBuf.readByteArray(n));
+            let s = '';
+            for (let j = 0; j < b.length; j++)
+                s += (b[j] >= 0x20 && b[j] < 0x7f) ? String.fromCharCode(b[j]) : '\\x' + ('0' + b[j].toString(16)).slice(-2);
+            return s;
+        }
+        function dlgText(h) { return dlgBytes(U.getText(h, dlgBuf, 0x3ff)); }
+        function dlgReadback() {
+            const out = ['0:' + JSON.stringify(dlgText(dlg.parent))];
+            (dlgCfg.controls || []).forEach(function (c) {
+                const h = dlg.kids[c.id];
+                let s = c.id + ':' + JSON.stringify(dlgText(h));
+                if (c.cls === 'BUTTON') s += ' chk=' + U.send(h, 0xf0, NULL, NULL);          // BM_GETCHECK
+                if (c.cls === 'COMBOBOX') {
+                    const n = U.send(h, 0x146, NULL, NULL);                                 // CB_GETCOUNT
+                    const items = [];
+                    for (let k = 0; k < n && k < 64; k++) {
+                        const len = U.send(h, 0x148, ptr(k), dlgBuf);                       // CB_GETLBTEXT
+                        const d = U.send(h, 0x150, ptr(k), NULL);                           // CB_GETITEMDATA
+                        items.push(dlgBytes(len) + '=' + (d >>> 0).toString(16));
+                    }
+                    s += ' n=' + n + ' sel=' + U.send(h, 0x147, NULL, NULL) + ' [' + items.join('|') + ']';  // CB_GETCURSEL
+                }
+                out.push(s);
+            });
+            const f = U.getFocus();
+            let fid = 'none';
+            if (f.equals(dlg.parent)) fid = '0';
+            else Object.keys(dlg.kids).forEach(function (k) { if (f.equals(dlg.kids[k])) fid = k; });
+            out.push('focus=' + fid);
+            return out.join(' ; ');
+        }
+        function dlgDestroy() { if (dlg) { U.destroy(dlg.parent); dlg = null; } }
+        // `eax_arg` k (reearn/settings 2026-10-12): the target takes arg k in EAX (0x00498f60 / 0x00499170 read hDlg
+        // from EAX, 0x00498f66 / 0x00499179 mov esi,eax). Both arms go through `mov eax,[esp+4+4k]; jmp target`, so the
+        // arg is ALSO left on the stack (the cdecl caller cleans it; neither target reads it).
+        let OrigS = Orig, ReimplS = Reimpl;
+        if (CONFIG.eax_arg !== undefined && CONFIG.eax_arg !== null) {
+            const k = CONFIG.eax_arg | 0;
+            const mkEaxTramp = function (target) {
+                const code = Memory.alloc(Process.pageSize);
+                Memory.patchCode(code, 9, function (cw) {
+                    const w = new X86Writer(cw, { pc: code });
+                    w.putBytes([0x8B, 0x44, 0x24, (4 + 4 * k) & 0xff]);        // mov eax, [esp+4+4k]
+                    w.putU8(0xE9);                                               // jmp rel32
+                    const rel = target.sub(code.add(9)).toInt32();
+                    w.putBytes([rel & 0xff, (rel >>> 8) & 0xff, (rel >>> 16) & 0xff, (rel >>> 24) & 0xff]);
+                    w.flush();
+                });
+                return code;
+            };
+            globalThis.__eaxTrampKeep = [mkEaxTramp(TARGET_ADDR), mkEaxTramp(reimplAddr)];
+            OrigS = new NativeFunction(globalThis.__eaxTrampKeep[0], CONFIG.signature.ret, CONFIG.signature.args, origCallConv);
+            ReimplS = new NativeFunction(globalThis.__eaxTrampKeep[1], CONFIG.signature.ret, CONFIG.signature.args, reimplCallConv);
+        }
         function resolveVal(x) {
             if (x !== null && typeof x === 'object' && x.scratch !== undefined) return scratch.add(x.scratch | 0).toUInt32();
             if (x !== null && typeof x === 'object' && x.recorder) return recorder.toUInt32();
+            if (x !== null && typeof x === 'object' && x.dialog !== undefined) return dlgHwnd(x.dialog).toUInt32();
             return x;
         }
         function fillScratch() {
@@ -6440,6 +6551,11 @@ function runDiff() {
                 } else { r = ret >>> 0; }
                 for (let b = 0; b < 4; b++) fp = Math.imul(fp ^ ((r >>> (b * 8)) & 0xff), 0x01000193);
             }
+            if (dlg) {
+                const rb = dlgReadback();
+                send({ type: 'log', msg: 'dialog readback: ' + rb });
+                for (let j = 0; j < rb.length; j++) fp = Math.imul(fp ^ (rb.charCodeAt(j) & 0xffff), 0x01000193);
+            }
             return fp >>> 0;
         }
         function saveW() { return windows().map(function(w) { return w.a.readByteArray(w.len); }); }
@@ -6461,12 +6577,13 @@ function runDiff() {
             // Trim to the declared arity: the zero-arg entries carry a placeholder test `0`, which current Frida
             // rejects with "bad argument count" on BOTH arms (10 C3 rows read RED/RED, negctl 2026-10-11). A cdecl
             // caller cleans its own stack, so the placeholder never reached the target anyway.
-            const a = args.slice(0, CONFIG.signature.args.length).map(function(v, ai) {
+            // Resolved per arm: a {dialog: id} arg names a window created for that arm only.
+            const mkArgs = function () { return args.slice(0, CONFIG.signature.args.length).map(function(v, ai) {
                 const ty = CONFIG.signature.args[ai];
                 if (ty === 'float' || ty === 'double') return v;      // floats pass as JS numbers (>>>0 truncated them)
                 const r = resolveVal(v) >>> 0;
                 return ty === 'pointer' ? ptr(r) : r;
-            });
+            }); };
             const prepArgs = (t && t.prep_args) ? t.prep_args.map(function(v) { return v >>> 0; }) : null;
             // Per-test `seed`: [{addr, val, size=4}] written before EACH arm (after the fill), saved and restored
             // with the observe windows. Re-earn fixtures (negctl 2026-10-11) use it to drive a zero-arg or scalar
@@ -6484,10 +6601,12 @@ function runDiff() {
             function restoreSeeds() { seeds.forEach(function(g, ix) { g.a.writeByteArray(seedSaved[ix]); }); }
             let origV = null, reimV = null, errO = null, errR = null;
             const saved = saveW();
-            try { if (hasFill) fillW(preFillByte); applySeeds(); if (prepFn && prepArgs) prepFn.apply(null, prepArgs); const r = Orig.apply(null, a); origV = snapFp(r); } catch (e) { errO = e.message; }
+            try { if (hasFill) fillW(preFillByte); applySeeds(); if (dlgCfg) dlgCreate(); const a = mkArgs(); if (prepFn && prepArgs) prepFn.apply(null, prepArgs); const r = OrigS.apply(null, a); origV = snapFp(r); } catch (e) { errO = e.message; }
+            if (dlgCfg) dlgDestroy();
             restoreW(saved); restoreSeeds();
             fillScratch();
-            try { if (hasFill) fillW(preFillByte); applySeeds(); if (prepFn && prepArgs) prepFn.apply(null, prepArgs); const r = Reimpl.apply(null, a); reimV = snapFp(r); } catch (e) { errR = e.message; }
+            try { if (hasFill) fillW(preFillByte); applySeeds(); if (dlgCfg) dlgCreate(); const a = mkArgs(); if (prepFn && prepArgs) prepFn.apply(null, prepArgs); const r = ReimplS.apply(null, a); reimV = snapFp(r); } catch (e) { errR = e.message; }
+            if (dlgCfg) dlgDestroy();
             restoreW(saved); restoreSeeds();
             results.push({ idx: i, input: JSON.stringify(args), original: origV, reimpl: reimV,
                            match: (errO === null && errR === null && origV === reimV),

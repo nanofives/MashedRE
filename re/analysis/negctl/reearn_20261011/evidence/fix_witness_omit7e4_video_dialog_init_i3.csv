@@ -1,0 +1,6 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,"[{""dialog"":0}]",2056330957,0x7a911ecd,706780173,0x2a209c0d,False,,
+1,"[{""dialog"":0}]",3431832911,0xcc8d9d4f,3897628577,0xe85117a1,False,,
+2,"[{""dialog"":0}]",3957218696,0xebde5d88,3792486088,0xe20cbec8,False,,
+3,"[{""dialog"":0}]",4162900979,0xf820d3f3,3494632709,0xd04bdd05,False,,
+4,"[{""dialog"":0}]",4051350696,0xf17ab4a8,2332203112,0x8b029868,False,,

@@ -15,9 +15,10 @@
 //   re/analysis/promote_c2_settings_dialog/004991f0.md  (C2 plate)
 //
 // Calling-convention notes:
-//   0x00498d20 / 0x00498d60 take HWND in EAX implicitly (Ghidra in_EAX).
-//   Both are implemented as __declspec(naked) entry bridging EAX to body.
-//   0x004991f0 is a standard Win32 DLGPROC: (HWND, UINT, WPARAM, LPARAM) -> INT_PTR.
+//   0x00498d20 takes HWND in EAX (naked entry bridging EAX to the body).
+//   0x00498d60 is __cdecl with the combo HWND as its one stack arg (0x00498dd9; corrected 2026-10-12,
+//   the old port read EAX).
+//   0x004991f0 is a __stdcall Win32 DLGPROC (HWND, UINT, WPARAM, LPARAM) -> INT_PTR, ret 0x10.
 //   FormatDisplayModeString (0x00498a00) uses EBX as implicit mode-struct ptr;
 //   called via a naked wrapper (FormatModeString_Thunk) that sets EBX from param.
 //
@@ -120,181 +121,86 @@ RH_ScopedInstall(ReadModeFromCombo_j5, 0x00498d20);  // re-enabled 2026-05-24 ba
 // ============================================================================
 // 0x00498d60  PopulateModeCombo_s2
 //
-// Original 219 bytes (0x00498d60..0x00498e3a).  HWND via EAX (Ghidra in_EAX).
-// Fills the mode combo with all fullscreen modes >= 640x480 for the current
-// subsystem (DAT_0077340c).  Builds the DAT_00773418 index map.
+// Original 219 bytes (0x00498d60..0x00498e3a), re-ported from the bytes 2026-10-12 (negctl re-earn).
+// __cdecl, ONE stack arg: the mode combo HWND. 0x00498dd9 mov ebx,[esp+0x60] reads it (esp+0x60 = arg1 after
+// sub esp,0x48 + 4 pushes + the push of the format buffer); the callers push it at 0x00499136 and 0x004991ce and
+// clean it with add esp,4 at 0x00499149 / 0x004991d4. The old port read it from EAX.
 //
-// Analysis note: re/analysis/promote_c2_settings_dialog/00498d60.md (C2)
+// for (i = 0; i < counts[DAT_0077340c]; i++) {          // 0x00498d76..0x00498d86 / 0x00498e02..0x00498e21
+//     mode = modes[DAT_0077340c] + i * 0x18;             // 0x00498da0..0x00498db1 (both tables re-read each pass)
+//     if (mode[+0x0c] == 0) continue;                   // 0x00498dad..0x00498dbc test/sete/test/jne
+//     if ((int)mode[+0] < 0x280) continue;              // 0x00498dbe cmp/jl (signed)
+//     if ((int)mode[+4] < 0x1e0) continue;              // 0x00498dc6 cmp/jl (signed)
+//     FormatDisplayModeString(buf);                     // 0x00498dd4, EBX = mode
+//     pos = SendMessageA(hCombo, CB_ADDSTRING 0x143, 0, buf);    // 0x00498de4..0x00498ded
+//     SendMessageA(hCombo, CB_SETITEMDATA 0x151, pos, i);         // 0x00498def..0x00498df9
+//     DAT_00773418[i] = pos;                            // 0x00498dfb mov [edi*4+0x773418],esi
+// }
+// counts = *(int**)0x007731f8, modes = *(uint8_t***)0x00773408 (heap tables; 0x00498b60 frees both).
+// No NULL guard on either table in the original (the old port added two).
+// buf: 0x40 bytes at [esp+0x14] (frame 0x04..0x43, /GS cookie at frame 0x44, 0x00498d63..0x00498d72).
 //
-// Anti-island:
-//   Callers: VideoDialogInit_i3 (0x00498f60, C3), SubsystemSelectionChanged_i3
-//            (0x00499170, C3).
-//   Callees: FormatDisplayModeString (0x00498a00, C1 with EBX-implicit convention —
-//            reimpl calls via naked thunk); SendMessageA, CB_ADDSTRING,
-//            CB_SETITEMDATA (Win32 — satisfy callee rule).
-//
-// Globals read (cited at 0x00498d60 body):
-//   DAT_0077340c — current subsystem index
-//   DAT_007731f8 — int array: mode count per subsystem
-//   DAT_00773408 — ptr array: pointer to mode array per subsystem
-//
-// Globals written (cited at 0x00498d60 body):
-//   DAT_00773418[i] — valid-mode-index to combo-position map
-//
-// Mode filter (all three must pass, cited at 0x00498d60 body):
-//   flags (mode+0x0C) != 0
-//   width (mode+0x00) > 0x27f (i.e. > 639, meaning >= 640)
-//   height (mode+0x04) > 0x1df (i.e. > 479, meaning >= 480)
-//
-// Mode struct stride: 0x18 bytes (cited at 0x00498d60 body).
-//
-// FormatDisplayModeString calling convention (U-1667):
-//   0x00498a00 uses EBX as implicit mode-struct ptr (not a formal arg).
-//   param_1 is the output buffer (char[]).
-//   We call via naked thunk FormatModeString_Thunk(buf, mode_ptr) which
-//   sets EBX = mode_ptr and calls the game function.
-//
-// CB_ADDSTRING returns WPARAM (combo position). CB_SETITEMDATA stores the
-// valid-mode loop index as item data. DAT_00773418[lParam] = WPARAM.
+// The deployed reference has the show_windowed boot patch at 0x00498dbc (75 44 -> 90 90), so the flags != 0
+// filter is not diffable against it; fixtures keep +0x0c nonzero. The port keeps the unpatched bytes.
 // ============================================================================
 
-// Globals cited at 0x00498d60 body
-// NOTE on DAT_007731f8 / DAT_00773408 — access pattern analysis:
-//   `*(int*)(iVar1 + DAT_007731f8)` where iVar1 = subsys_idx * 4.
-//   VideoModeTableInit (0x00498c00, C2) ALLOCATES heap arrays and stores the
-//   BASE POINTERS in DAT_007731f8 and DAT_00773408. So these BSS slots hold pointers.
-//   The Ghidra expression `DAT_007731f8` = VALUE at BSS[0x007731f8] = heap ptr.
-//   Then `iVar1 + heap_ptr` = element address in heap array.
-//   Correct access: heap_ptr = *((int*)0x007731f8); mode_count = heap_ptr[subsys_idx].
-//   kModeCountArrPtr = BSS address that HOLDS the heap pointer (not the array itself).
-//   kModeArrPtrArrPtr = BSS address that HOLDS the heap ptr-array pointer.
-static constexpr std::uintptr_t kSubsysIdx        = 0x0077340cu;  // current subsystem index (int)
-static constexpr std::uintptr_t kModeCountArrPtr  = 0x007731f8u;  // holds ptr to heap int[] mode counts
-static constexpr std::uintptr_t kModeArrPtrArrPtr = 0x00773408u;  // holds ptr to heap ptr[] mode arrays
-static constexpr std::uintptr_t kModeIdxMapBase   = 0x00773418u;  // valid-mode -> combo pos map (BSS)
+static constexpr std::uintptr_t kSubsysIdx        = 0x0077340cu;  // 0x00498d76 / 0x00498e02 current subsystem
+static constexpr std::uintptr_t kModeCountArrPtr  = 0x007731f8u;  // 0x00498d6c / 0x00498e0b holds int* counts
+static constexpr std::uintptr_t kModeArrPtrArrPtr = 0x00773408u;  // 0x00498da0 holds uint8_t** mode arrays
+static constexpr std::uintptr_t kModeIdxMapBase   = 0x00773418u;  // 0x00498dfb int[] mode -> combo pos
 
-// Mode filter thresholds (cited at 0x00498d60 body)
-static constexpr int kMinWidth  = 0x27f;  // 639; width must be > 639 (>= 640)
-static constexpr int kMinHeight = 0x1df;  // 479; height must be > 479 (>= 480)
+static constexpr int kMinWidth         = 0x280;  // 0x00498dbe cmp [ebx],0x280 ; jl
+static constexpr int kMinHeight        = 0x1e0;  // 0x00498dc6 cmp [ebx+4],0x1e0 ; jl
+static constexpr int kModeFlagsOffset  = 0x0c;   // 0x00498dad mov edx,[ebx+esi+0xc]
+static constexpr int kModeStructStride = 0x18;   // 0x00498e18 add esi,0x18
 
-// Mode struct offsets (cited at 0x00498d60 body)
-static constexpr int kModeFlagsOffset  = 0x0c;  // 12
-static constexpr int kModeStructStride = 0x18;  // 24
+static constexpr UINT kCB_ADDSTRING_d   = 0x143;  // 0x00498de7
+static constexpr UINT kCB_SETITEMDATA_d = 0x151;  // 0x00498df3
 
-// Win32 combo messages (cited at 0x00498d60 body)
-static constexpr UINT kCB_ADDSTRING_d  = 0x143;  // 323
-static constexpr UINT kCB_SETITEMDATA_d = 0x151; // 337
+static constexpr int kModeStrBufSize = 0x40;      // [esp+0x14] .. cookie at [esp+0x54] (pre-push frame 0x04..0x44)
 
-// Output buffer size for FormatDisplayModeString — 0x7f bytes per mechanical desc
-static constexpr int kModeStrBufSize = 0x7f;
-
-// FormatDisplayModeString (0x00498a00): EBX-implicit calling convention.
-// Naked thunk: param_1 = buf ptr (via stack [esp+4]);
-//              param_2 = mode struct ptr set into EBX before call.
-// Declared as __cdecl(buf, mode_ptr) — body sets EBX = mode_ptr, then calls.
-// FormatDisplayModeString entry (0x00498a00; cited at 0x00498d60 body callee list)
-// Note: calling convention uses EBX as implicit mode-struct ptr. We set EBX
-// before the call; ECX is used as scratch for the call target.
+// 0x00498a00 FormatDisplayModeString: __cdecl(char* buf), mode record in EBX (0x00498a14 mov edx,[ebx+0xc],
+// 0x00498b27..0x00498b32 [ebx+8]/[ebx+4]/[ebx]). Caller cleans the one arg (0x00498ddd add esp,4).
 static void __cdecl FormatModeString_Thunk(char* buf, int* mode_ptr)
 {
-    // MSVC inline asm: load target RVA into ECX, then call via ECX.
-    // EBX = mode_ptr (unaff_EBX at original call site in FUN_00498d60).
-    // buf  = output string buffer (param_1 to 0x00498a00).
     __asm {
-        push    ebx                         // preserve EBX (callee-saved)
-        mov     ebx, mode_ptr               // EBX = mode struct ptr (unaff_EBX at call)
-        push    buf                         // param_1 = output buffer
-        mov     ecx, 0x00498a00             // FormatDisplayModeString RVA
-        call    ecx                         // call 0x00498a00
-        add     esp, 4                      // clean param_1 (callee is __cdecl)
-        pop     ebx                         // restore EBX
+        push    ebx
+        mov     ebx, mode_ptr
+        push    buf
+        mov     ecx, 0x00498a00
+        call    ecx
+        add     esp, 4
+        pop     ebx
     }
 }
 
-static void __stdcall PopulateModeCombo_Body(HWND hModeCombo)
+// 0x00498d60
+extern "C" __declspec(dllexport)
+void __cdecl PopulateModeCombo_s2(HWND hModeCombo)
 {
-    // 0x00498d60: iVar1 = DAT_0077340c * 4  (byte offset into heap arrays)
-    const int subsys_idx  = *reinterpret_cast<int*>(kSubsysIdx);
-
-    // 0x00498d60: *(int*)(iVar1 + DAT_007731f8)
-    //   DAT_007731f8 holds heap array base pointer; index = subsys_idx.
-    //   The heap array was allocated by VideoModeTableInit (0x00498c00, C2).
-    const int* const mode_count_base =
-        *reinterpret_cast<int* const*>(kModeCountArrPtr);  // 0x007731f8 = heap ptr
-
-    if (mode_count_base == nullptr) return;  // array not yet allocated
-    const int mode_count = mode_count_base[subsys_idx];  // 0x00498d60 body
-
-    if (mode_count <= 0) return;  // 0x00498d60: if (0 < mode_count) { ... }
-
-    // Output buffer for FormatDisplayModeString: 0x7f-byte local
     char mode_str[kModeStrBufSize];
 
-    // 0x00498d60: *(ptr*)(iVar1 + DAT_00773408)
-    //   DAT_00773408 holds array of mode-struct-array pointers; index = subsys_idx.
-    std::uint8_t* const* const mode_arr_ptr_base =
-        *reinterpret_cast<std::uint8_t* const* const*>(kModeArrPtrArrPtr);  // 0x00773408 = heap ptr
-    if (mode_arr_ptr_base == nullptr) return;  // ptr array not yet allocated
-    std::uint8_t* const mode_arr_base = mode_arr_ptr_base[subsys_idx];
-
-    // Valid-mode counter (lParam in original)
-    int lParam = 0;
-
-    // 0x00498d60: loop over all modes
-    for (int local_48 = 0; ; local_48 += kModeStructStride)
+    // 0x00498d76..0x00498d86: if (counts[DAT_0077340c] <= 0) skip the loop (jle, signed).
+    for (int i = 0;
+         i < (*reinterpret_cast<int* const*>(kModeCountArrPtr))[*reinterpret_cast<int*>(kSubsysIdx)];  // 0x00498e02..0x00498e1b
+         i++)
     {
-        // piVar2 = mode_arr_base + local_48 (byte offset)
-        int* mode_struct = reinterpret_cast<int*>(mode_arr_base + local_48);
+        // 0x00498da0..0x00498db1: mode = modes[DAT_0077340c] + i*0x18 (both reads repeated every pass).
+        std::uint8_t* const mode =
+            (*reinterpret_cast<std::uint8_t* const* const*>(kModeArrPtrArrPtr))[*reinterpret_cast<int*>(kSubsysIdx)]
+            + i * kModeStructStride;
+        int* const m = reinterpret_cast<int*>(mode);
 
-        // width at mode+0x00, height at mode+0x04, flags at mode+0x0C
-        const int width  = mode_struct[0];              // 0x00498d60 body
-        const int height = mode_struct[1];              // 0x00498d60 body
-        const int flags  = *reinterpret_cast<const int*>(
-            reinterpret_cast<std::uint8_t*>(mode_struct) + kModeFlagsOffset);
+        if (*reinterpret_cast<int*>(mode + kModeFlagsOffset) == 0) continue;  // 0x00498dbc jne skip
+        if (m[0] < kMinWidth) continue;                                      // 0x00498dc4 jl
+        if (m[1] < kMinHeight) continue;                                     // 0x00498dcd jl
 
-        // 0x00498d60: filter: flags!=0 AND width>0x27f AND height>0x1df
-        if (flags != 0 && width > kMinWidth && height > kMinHeight)
-        {
-            // 0x00498d60: FormatDisplayModeString(local_44, mode_struct)
-            // EBX = mode_struct (piVar2 at call site), param_1 = local_44 (buf)
-            FormatModeString_Thunk(mode_str, mode_struct);
-
-            // 0x00498d60: wParam = SendMessageA(hCombo, CB_ADDSTRING, 0, local_44)
-            LRESULT wParam = SendMessageA(hModeCombo, kCB_ADDSTRING_d, 0,
-                                          reinterpret_cast<LPARAM>(mode_str));
-
-            // 0x00498d60: SendMessageA(hCombo, CB_SETITEMDATA, wParam, lParam)
-            SendMessageA(hModeCombo, kCB_SETITEMDATA_d,
-                         static_cast<WPARAM>(wParam),
-                         static_cast<LPARAM>(lParam));
-
-            // 0x00498d60: (&DAT_00773418)[lParam] = wParam
-            reinterpret_cast<int*>(kModeIdxMapBase)[lParam] =
-                static_cast<int>(wParam);
-        }
-
-        lParam++;  // 0x00498d60: loop counter always increments
-
-        // Re-read mode count (original re-reads iVar1 = DAT_0077340c * 4 each iteration)
-        const int cur_subsys_idx  = *reinterpret_cast<int*>(kSubsysIdx);
-        const int cur_mode_count  = mode_count_base[cur_subsys_idx];
-
-        if (lParam >= cur_mode_count) break;  // 0x00498d60: while lParam < mode_count
-    }
-}
-
-// Naked entry: HWND via EAX, no other args.
-extern "C" __declspec(dllexport) __declspec(naked)
-void __cdecl PopulateModeCombo_s2()
-{
-    __asm {
-        push    ebp
-        mov     ebp, esp
-        push    eax                      // hModeCombo from EAX
-        call    PopulateModeCombo_Body
-        mov     esp, ebp
-        pop     ebp
-        ret
+        FormatModeString_Thunk(mode_str, m);                                 // 0x00498dd4
+        const LRESULT pos = SendMessageA(hModeCombo, kCB_ADDSTRING_d, 0,
+                                         reinterpret_cast<LPARAM>(mode_str));        // 0x00498ded
+        SendMessageA(hModeCombo, kCB_SETITEMDATA_d, static_cast<WPARAM>(pos),
+                     static_cast<LPARAM>(i));                                         // 0x00498df9
+        reinterpret_cast<int*>(kModeIdxMapBase)[i] = static_cast<int>(pos);          // 0x00498dfb
     }
 }
 
@@ -304,263 +210,135 @@ RH_ScopedInstall(PopulateModeCombo_s2, 0x00498d60);  // re-enabled 2026-05-24 ba
 // ============================================================================
 // 0x004991f0  VideoSettingsDlgProc_s2
 //
-// Original 453 bytes (0x004991f0..0x004993b4).  Standard Win32 DLGPROC.
-// Signature: INT_PTR CALLBACK fn(HWND, UINT, WPARAM, LPARAM)
+// Original 0x004991f0..0x004993b5 + tables 0x004993b8 (6 dword targets) / 0x004993d0 (0x2f byte indices).
+// Re-ported from the bytes 2026-10-12 (negctl re-earn). __stdcall DLGPROC: every exit is ret 0x10 (the old export
+// returned with a plain ret).
 //
-// Analysis note: re/analysis/promote_c2_settings_dialog/004991f0.md (C2)
-//
-// Anti-island:
-//   Callers: VideoSettingsDispatcher 0x00499400 (C2) via DialogBoxParamA.
-//   Callees:
-//     0x00498f60 VideoDialogInit_i3         (C3, this DLL export, HWND via EAX)
-//     0x00499170 SubsystemSelectionChanged_i3 (C3, this DLL export, HWND via EAX)
-//     0x00498d20 ReadModeFromCombo_j5       (C3, this DLL export, HWND via EAX)
-//     EndDialog                             (Win32)
-//
-// Messages handled (cited at 0x004991f0 body):
-//   WM_INITDIALOG (0x110): call VideoDialogInit(hDlg); return TRUE.
-//   WM_COMMAND    (0x111): dispatch on LOWORD(wParam):
-//     1 (IDOK):    ReadModeFromCombo(hDlg); EndDialog(hDlg, 1).
-//     2 (IDCANCEL): EndDialog(hDlg, 0).
-//     0x3e8 (1000): if CBN_SELCHANGE: SubsystemSelectionChanged(hDlg).
-//     0x3e9 (1001): if CBN_SELCHANGE: ReadModeFromCombo(hDlg).
-//     0x3eb (1003): no-op (U-3007).
-//     0x3ec (1004): no-op (U-3007).
-//     0x3ed (1005): no-op (U-3007).
-//     0x417 (1047): if BN_CLICKED: DAT_007733a8 = (BM_GETCHECK==0) [inverted].
-//     0x418 (1048): if BN_CLICKED: DAT_007733a4 = (BM_GETCHECK==0) [inverted].
-//     0x419 (1049): if BN_CLICKED: DAT_007733ac = BM_GETCHECK [non-inverted].
-//     0x41b (1051): if BN_CLICKED: DAT_007733b0 = (BM_GETCHECK==0) [inverted].
-//   Default: return FALSE.
-//
-// Globals written (cited at 0x004991f0 body):
-//   DAT_007733a8 <- (BM_GETCHECK==0) for control 0x417 (inverted)
-//   DAT_007733a4 <- (BM_GETCHECK==0) for control 0x418 (inverted)
-//   DAT_007733ac <- BM_GETCHECK for control 0x419 (non-inverted)
-//   DAT_007733b0 <- (BM_GETCHECK==0) for control 0x41b (inverted)
-//
-// [UNCERTAIN U-3007] Controls 1003/1004/1005: no-op handlers; semantics unclear.
-//   Non-blocking: handler is fall-through return TRUE.
-// [UNCERTAIN U-3008] Checkbox inversion: 1047/1048/1051 write (BM_GETCHECK==0);
-//   1049 writes raw. Semantic meaning unclear. Non-blocking: mechanics unambiguous.
+// uMsg 0x110 (0x004991f4 sub/je 0x00499393): 0x00498f60 with EAX = hDlg and three pushed args 0x110, wParam,
+//   lParam (0x0049939b..0x004993a6, add esp,0xc at 0x004993ab; the callee does not read them); return 1.
+// uMsg 0x111 (0x004991ff dec/jne): id = LOWORD(wParam) (0x0049920a movzx), hi = wParam >> 16 (shr ecx,0x10):
+//   1      0x0049924c: hi != 0 -> return 1; else 0x00498d20(EAX = hDlg), EndDialog(hDlg, 1), return 1.
+//   2      0x0049922d: hi != 0 -> return 1; else EndDialog(hDlg, hi == 0), return 1.
+//   0x3e8  0x00499275: 0x00499170(EAX = hDlg), return 1. NO notification test (the old port gated on hi == 1).
+//   0x3e9  0x0049929b: hi == 1 -> 0x00498d20(EAX = hDlg); return 1 either way.
+//   0x3eb  0x0049928d -> 0x004993ae return 1.   0x3ec 0x00499218 -> return 1.   0x3ed table slot 0 -> return 1.
+//   0x417  slot 1 0x004992d0: DAT_007733a8 = (SendMessageA(GetDlgItem(hDlg,0x417), BM_GETCHECK 0xf0, 0, 0) == 0)
+//   0x418  slot 2 0x00499302: DAT_007733a4 = (... 0x418 ... == 0)
+//   0x419  slot 3 0x00499334: DAT_007733ac =  ... 0x419 ...        (raw, no neg/sbb/inc)
+//   0x41b  slot 4 0x00499361: DAT_007733b0 = (... 0x41b ... == 0)
+//          the four checkbox arms return 1 and do NOT test hi (the old port gated them on hi == 0).
+//   0x3ea, 0x41a, 0x3ee..0x416, any id > 0x41b or < 0x3e8 other than 1/2: return 0 (0x00499296).
+// any other uMsg: return 0.
 // ============================================================================
 
-// Globals written by checkbox handlers (cited at 0x004991f0 body)
-static constexpr std::uintptr_t kDlgChkA_Global = 0x007733a8u;  // control 0x417 (inverted)
-static constexpr std::uintptr_t kDlgChkB_Global = 0x007733a4u;  // control 0x418 (inverted)
-static constexpr std::uintptr_t kDlgChkC_Global = 0x007733acu;  // control 0x419 (non-inverted)
-static constexpr std::uintptr_t kDlgChkD_Global = 0x007733b0u;  // control 0x41b (inverted)
+static constexpr std::uintptr_t kDlgChkA_Global = 0x007733a8u;  // 0x004992f5
+static constexpr std::uintptr_t kDlgChkB_Global = 0x007733a4u;  // 0x00499327
+static constexpr std::uintptr_t kDlgChkC_Global = 0x007733acu;  // 0x00499354
+static constexpr std::uintptr_t kDlgChkD_Global = 0x007733b0u;  // 0x00499386
 
-// Win32 button-query message (cited at 0x004991f0 body)
-static constexpr UINT kBM_GETCHECK_d = 0xf0;  // 240
+static constexpr UINT kBM_GETCHECK_d = 0xf0;  // 0x004992d8 etc.
 
-// Control IDs cited at 0x004991f0 body
-static constexpr int kDlgIdOk      = 1;      // IDOK
-static constexpr int kDlgIdCancel  = 2;      // IDCANCEL
-static constexpr int kDlgIdSubsys  = 0x3e8;  // 1000
-static constexpr int kDlgIdMode    = 0x3e9;  // 1001
-// 0x3eb/0x3ec/0x3ed — no-op handlers (U-3007); listed for completeness
-static constexpr int kDlgIdNoop1   = 0x3eb;  // 1003
-static constexpr int kDlgIdNoop2   = 0x3ec;  // 1004
-static constexpr int kDlgIdNoop3   = 0x3ed;  // 1005
-static constexpr int kDlgIdChkA    = 0x417;  // 1047
-static constexpr int kDlgIdChkB    = 0x418;  // 1048
-static constexpr int kDlgIdChkC    = 0x419;  // 1049
-static constexpr int kDlgIdChkD    = 0x41b;  // 1051
-
-// Notification codes cited at 0x004991f0 body
-static constexpr WORD kCBN_SELCHANGE = 1;   // combo-box selection changed
-static constexpr WORD kBN_CLICKED    = 0;   // button clicked
-
-// Internal callee wrappers (C3 exports; HWND via EAX at original call site).
-// We invoke the game's hooked RVAs directly: the inline-JMP redirects to our
-// reimplemented entry points at runtime.
-//
-// Pattern: set EAX = hDlg, then call the RVA (which reads EAX implicitly).
-// Invoke helpers for EAX-implicit callee hooks.
-// Each sets EAX = hDlg, then calls the hooked RVA via ECX (MSVC inline asm
-// cannot use an immediate as call target).
-static void __cdecl VideoDialogInit_Invoke(HWND hDlg)
+// Call helpers (not ports): the three callees below take hDlg in EAX. VideoDialogInit additionally gets three cdecl
+// stack args it never reads (call at 0x004993a6, add esp,0xc at 0x004993ab); they are pushed here for fidelity.
+static void __cdecl VideoDialogInit_Invoke(HWND hDlg, WPARAM wParam, LPARAM lParam)
 {
-    // 0x004991f0 body: calls 0x00498f60 with HWND in EAX.
     __asm {
-        mov     eax, hDlg
-        mov     ecx, 0x00498f60    // VideoDialogInit (C3; cited at 0x004991f0 body)
-        call    ecx
+        push    lParam                // 0x0049939b push eax ([esp+0x10] = lParam)
+        push    wParam                // 0x004993a0 push ecx ([esp+0xc]  = wParam)
+        push    0x110                 // 0x004993a1
+        mov     eax, hDlg             // 0x0049939c mov eax,[esp+8]
+        mov     ecx, 0x00498f60
+        call    ecx                   // 0x004993a6
+        add     esp, 0x0c             // 0x004993ab
     }
 }
 
 static void __cdecl SubsystemSelChanged_Invoke(HWND hDlg)
 {
-    // 0x004991f0 body: calls 0x00499170 with HWND in EAX.
     __asm {
-        mov     eax, hDlg
-        mov     ecx, 0x00499170    // SubsystemSelectionChanged (C3; cited at 0x004991f0 body)
-        call    ecx
+        mov     eax, hDlg             // 0x00499275
+        mov     ecx, 0x00499170
+        call    ecx                   // 0x00499279
     }
 }
 
 static void __cdecl ReadModeFromCombo_Invoke(HWND hDlg)
 {
-    // 0x004991f0 body: calls 0x00498d20 with HWND in EAX.
     __asm {
-        mov     eax, hDlg
-        mov     ecx, 0x00498d20    // ReadModeFromCombo (C3; cited at 0x004991f0 body)
-        call    ecx
+        mov     eax, hDlg             // 0x0049925c / 0x004992a7
+        mov     ecx, 0x00498d20
+        call    ecx                   // 0x0049925e / 0x004992ab
     }
 }
 
-// Forward declaration needed because the naked entry appears before the body.
-static INT_PTR __stdcall VideoSettingsDlgProc_s2_Body(
-    HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+static INT_PTR __stdcall VideoSettingsDlgProc_s2_Body(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-// Exported naked entry — serves as BOTH the Frida export AND the RH_ScopedInstall
-// target.  RH_ScopedInstall patches a JMP at 0x004991f0 to this symbol.
-//
-// Calling convention contract:
-//   - DialogBoxParamA calls the original at 0x004991f0 as __stdcall (4 args pushed,
-//     callee expected to clean 16 bytes via RET 16).
-//   - Our naked entry reads [esp+4..+16], calls the __stdcall body (which cleans its
-//     own 16 bytes with RET 16), then does RET to return to DialogBoxParamA with the
-//     same stack discipline as the original.
-//   - Frida calls with arg_type='none' (0 args pushed); [esp+4..+16] = garbage/0.
-//     The body receives uMsg=garbage → falls to default → returns FALSE (0).
-//     Both original and reimpl behave identically. crash_equal_ok=True handles any
-//     rare crash equality.
+// Exported naked entry, __stdcall shape: re-pushes the four args for the __stdcall body, then ret 0x10 like every
+// exit of the original (0x00499249, 0x00499272, 0x00499283, 0x00499298, ..., 0x004993b3).
 extern "C" __declspec(dllexport) __declspec(naked)
 void __cdecl VideoSettingsDlgProc_s2()
 {
     __asm {
-        // Stack layout on entry:
-        //   [esp+0]  = return address
-        //   [esp+4]  = hDlg
-        //   [esp+8]  = uMsg
-        //   [esp+12] = wParam
-        //   [esp+16] = lParam
-        push    dword ptr [esp+16]  // lParam  (push; esp now +4)
-        push    dword ptr [esp+16]  // wParam  (original [esp+12] = new [esp+16])
-        push    dword ptr [esp+16]  // uMsg    (original [esp+8]  = new [esp+16])
-        push    dword ptr [esp+16]  // hDlg    (original [esp+4]  = new [esp+16])
-        call    VideoSettingsDlgProc_s2_Body   // __stdcall cleans 16 bytes (ret 16)
-        // After call: stack is back to original position; EAX = return value.
-        ret                         // plain ret — DialogBoxParamA provided the retaddr
+        push    dword ptr [esp+16]    // lParam
+        push    dword ptr [esp+16]    // wParam
+        push    dword ptr [esp+16]    // uMsg
+        push    dword ptr [esp+16]    // hDlg
+        call    VideoSettingsDlgProc_s2_Body
+        ret     16
     }
 }
 
 RH_ScopedInstall(VideoSettingsDlgProc_s2, 0x004991f0);  // re-enabled 2026-05-24 batch-save-e
 
-// The actual DLGPROC body (__stdcall, static so no @16 export decoration issue).
-static INT_PTR __stdcall VideoSettingsDlgProc_s2_Body(
-    HWND   hDlg,
-    UINT   uMsg,
-    WPARAM wParam,
-    LPARAM lParam)
+static int ReadCheck(HWND hDlg, int id)
 {
-    // 0x004991f0: switch (uMsg)
-    switch (uMsg)
-    {
-    case 0x110:  // WM_INITDIALOG (0x110)
-        // 0x004991f0 body: WM_INITDIALOG => call VideoDialogInit(hDlg)
-        VideoDialogInit_Invoke(hDlg);
-        return TRUE;  // 0x004991f0 body: return 1
-
-    case 0x111:  // WM_COMMAND (0x111)
-    {
-        // 0x004991f0 body: dispatch on LOWORD(wParam) (control ID)
-        const WORD ctrl_id = LOWORD(wParam);
-        const WORD notif   = HIWORD(wParam);
-
-        switch (ctrl_id)
-        {
-        case kDlgIdOk:  // 1 (IDOK)
-            // 0x004991f0 body: BN_CLICKED handler — read mode then close
-            if (notif == kBN_CLICKED) {
-                ReadModeFromCombo_Invoke(hDlg);  // 0x004991f0 body
-                EndDialog(hDlg, 1);              // 0x004991f0 body: return code 1
-            }
-            return TRUE;
-
-        case kDlgIdCancel:  // 2 (IDCANCEL)
-            // 0x004991f0 body: BN_CLICKED handler — discard and close
-            if (notif == kBN_CLICKED) {
-                EndDialog(hDlg, 0);              // 0x004991f0 body: return code 0
-            }
-            return TRUE;
-
-        case kDlgIdSubsys:  // 0x3e8 (1000) — subsystem combo
-            // 0x004991f0 body: CBN_SELCHANGE => SubsystemSelectionChanged
-            if (notif == kCBN_SELCHANGE) {
-                SubsystemSelChanged_Invoke(hDlg);  // 0x004991f0 body
-            }
-            return TRUE;
-
-        case kDlgIdMode:  // 0x3e9 (1001) — mode combo
-            // 0x004991f0 body: CBN_SELCHANGE => ReadModeFromCombo
-            if (notif == kCBN_SELCHANGE) {
-                ReadModeFromCombo_Invoke(hDlg);  // 0x004991f0 body
-            }
-            return TRUE;
-
-        case kDlgIdNoop1:  // 0x3eb (1003) — no-op [U-3007]
-        case kDlgIdNoop2:  // 0x3ec (1004) — no-op [U-3007]
-        case kDlgIdNoop3:  // 0x3ed (1005) — no-op [U-3007]
-            // 0x004991f0 body: fall-through return 1
-            return TRUE;
-
-        case kDlgIdChkA:  // 0x417 (1047) — checkbox A [inverted]
-            // 0x004991f0 body: BN_CLICKED => write (BM_GETCHECK==0) [inverted]
-            if (notif == kBN_CLICKED) {
-                LRESULT chk = SendMessageA(
-                    GetDlgItem(hDlg, kDlgIdChkA),
-                    kBM_GETCHECK_d, 0, 0);
-                *reinterpret_cast<int*>(kDlgChkA_Global) =
-                    (chk == 0) ? 1 : 0;            // 0x004991f0 body (inverted)
-            }
-            return TRUE;
-
-        case kDlgIdChkB:  // 0x418 (1048) — checkbox B [inverted]
-            if (notif == kBN_CLICKED) {
-                LRESULT chk = SendMessageA(
-                    GetDlgItem(hDlg, kDlgIdChkB),
-                    kBM_GETCHECK_d, 0, 0);
-                *reinterpret_cast<int*>(kDlgChkB_Global) =
-                    (chk == 0) ? 1 : 0;            // 0x004991f0 body (inverted)
-            }
-            return TRUE;
-
-        case kDlgIdChkC:  // 0x419 (1049) — checkbox C [non-inverted]
-            if (notif == kBN_CLICKED) {
-                LRESULT chk = SendMessageA(
-                    GetDlgItem(hDlg, kDlgIdChkC),
-                    kBM_GETCHECK_d, 0, 0);
-                *reinterpret_cast<int*>(kDlgChkC_Global) =
-                    static_cast<int>(chk);          // 0x004991f0 body (raw, non-inverted)
-            }
-            return TRUE;
-
-        case kDlgIdChkD:  // 0x41b (1051) — checkbox D [inverted]
-            if (notif == kBN_CLICKED) {
-                LRESULT chk = SendMessageA(
-                    GetDlgItem(hDlg, kDlgIdChkD),
-                    kBM_GETCHECK_d, 0, 0);
-                *reinterpret_cast<int*>(kDlgChkD_Global) =
-                    (chk == 0) ? 1 : 0;            // 0x004991f0 body (inverted)
-            }
-            return TRUE;
-
-        default:
-            // 0x004991f0 body: unhandled control -> fall through to return FALSE
-            break;
-        }
-        break;
-    }
-
-    default:
-        break;
-    }
-
-    return FALSE;  // 0x004991f0 body: unhandled message
+    return static_cast<int>(SendMessageA(GetDlgItem(hDlg, id), kBM_GETCHECK_d, 0, 0));
 }
 
-// (RH_ScopedInstall for VideoSettingsDlgProc_s2 appears above the body, after the
-// naked entry definition.)
+static INT_PTR __stdcall VideoSettingsDlgProc_s2_Body(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+    if (uMsg == 0x110) {                                   // 0x004991f4 sub eax,0x110 ; je 0x00499393
+        VideoDialogInit_Invoke(hDlg, wParam, lParam);      // 0x004993a6
+        return 1;                                          // 0x004993ae
+    }
+    if (uMsg != 0x111) return 0;                           // 0x004991ff dec ; jne 0x00499296
+
+    const unsigned id = wParam & 0xffffu;                  // 0x0049920a movzx eax,cx
+    const unsigned hi = static_cast<unsigned>(wParam) >> 16;  // shr ecx,0x10
+
+    switch (id) {
+    case 1:                                                // 0x0049924c
+        if (hi != 0) return 1;                             // 0x00499251 jne 0x004993ae
+        ReadModeFromCombo_Invoke(hDlg);                    // 0x0049925e
+        EndDialog(hDlg, 1);                                // 0x00499266
+        return 1;
+    case 2:                                                // 0x0049922d
+        if (hi != 0) return 1;                             // 0x00499232 jne 0x004993ae
+        EndDialog(hDlg, static_cast<INT_PTR>(hi));         // 0x0049923c push ecx (= 0) ; 0x0049923e
+        return 1;
+    case 0x3e8:                                            // 0x00499225 je 0x00499275, no hi test
+        SubsystemSelChanged_Invoke(hDlg);                  // 0x00499279
+        return 1;
+    case 0x3e9:                                            // 0x0049928b je 0x0049929b
+        if (hi == 1) ReadModeFromCombo_Invoke(hDlg);       // 0x0049929e cmp ecx,1 ; 0x004992ab
+        return 1;
+    case 0x3eb:                                            // 0x00499290
+    case 0x3ec:                                            // 0x00499218
+    case 0x3ed:                                            // table slot 0 -> 0x004993ae
+        return 1;
+    case 0x417:                                            // slot 1 0x004992d0
+        *reinterpret_cast<int*>(kDlgChkA_Global) = (ReadCheck(hDlg, 0x417) == 0) ? 1 : 0;  // neg/sbb/inc
+        return 1;
+    case 0x418:                                            // slot 2 0x00499302
+        *reinterpret_cast<int*>(kDlgChkB_Global) = (ReadCheck(hDlg, 0x418) == 0) ? 1 : 0;
+        return 1;
+    case 0x419:                                            // slot 3 0x00499334
+        *reinterpret_cast<int*>(kDlgChkC_Global) = ReadCheck(hDlg, 0x419);
+        return 1;
+    case 0x41b:                                            // slot 4 0x00499361
+        *reinterpret_cast<int*>(kDlgChkD_Global) = (ReadCheck(hDlg, 0x41b) == 0) ? 1 : 0;
+        return 1;
+    default:                                               // 0x00499296 / table slot 5
+        return 0;
+    }
+}

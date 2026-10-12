@@ -7,7 +7,7 @@
 // Hooks in this file (5):
 //   0x00498f60  VideoDialogInit_i3              WM_INITDIALOG handler (HWND via EAX)
 //   0x00499170  SubsystemSelectionChanged_i3    WM_COMMAND/1000 handler (HWND via EAX)
-//   0x00499740  SetControlTextFromResource_i3   LoadStringA+SetWindowTextA helper (HWND via EAX)
+//   0x00499740  SetControlTextFromResource_i3   LoadStringA+SetWindowTextA helper, __cdecl(HWND, id)
 //   0x004b3b70  FileReadWrapper_i3              file_read(filename, buf, size) __cdecl
 //   0x004b3bb0  FileWriteWrapper_i3             file_write(filename, buf, size) __cdecl
 //
@@ -19,11 +19,11 @@
 //   re/analysis/save_gamesave/004b3bb0.md                (C1 plate, mech-verified)
 //
 // Calling-convention notes:
-//   - 0x00498f60 / 0x00499170 / 0x00499740 are dialog-procedure helpers
-//     that take HWND in EAX implicitly (Ghidra "in_EAX"). They are
-//     called only when the video settings dialog is open. We implement
-//     each as __declspec(naked) with `mov ecx, eax` to bridge EAX into
-//     the __fastcall ECX slot, then defer to a body function.
+//   - 0x00498f60 / 0x00499170 take hDlg in EAX (0x00498f64 / 0x00499179 mov esi,eax); each export is
+//     __declspec(naked), pushing EAX for a __stdcall body.
+//   - 0x00499740 is plain __cdecl (HWND, id) on the stack (0x00499778 / 0x00499752; corrected 2026-10-12,
+//     the old port took the HWND from EAX). 0x00498d60, called from both handlers above, is __cdecl with
+//     the combo HWND on the stack (the old ports called it __fastcall).
 //   - 0x004b3b70 / 0x004b3bb0 are plain __cdecl 3-arg file I/O wrappers
 //     that call into the game's stream-context layer (FUN_004cc230 +
 //     FUN_004cbd30/FUN_004cbe80 + FUN_004cc160). Reimplemented directly
@@ -187,7 +187,7 @@ static constexpr std::uintptr_t kCheckboxB       = 0x007733a4u;  // 0x418 source
 static constexpr std::uintptr_t kCheckboxC       = 0x007733acu;  // 0x419 source (inverted)
 static constexpr std::uintptr_t kCheckboxD       = 0x007733b0u;  // 0x41b source
 static constexpr std::uintptr_t kSubsysCount     = 0x00773410u;  // subsystem count
-static constexpr std::uintptr_t kSubsysNameBase  = 0x007731fcu;  // subsystem name array
+static constexpr std::uintptr_t kSubsysNameBase  = 0x007731fcu;  // holds char* to 0x50-stride name table (0x004990f6)
 static constexpr std::uintptr_t kCurSubsysIdx    = 0x0077340cu;  // current subsystem
 static constexpr std::uintptr_t kCurModeIdx      = 0x00773200u;  // current mode
 static constexpr std::uintptr_t kModeIdxMap      = 0x00773418u;  // mode->combo map
@@ -226,110 +226,87 @@ static constexpr UINT kBM_SETCHECK     = 0xf1;   // 241
 
 
 // ============================================================================
-// 0x00498d60  PopulateModeCombo  (callee, C2; cited at 0x00498f60/0x00499170)
-//   Called via stub address; signature: void __fastcall fn(HWND hModeCombo).
+// 0x00498d60  PopulateModeCombo  (callee; cited at 0x00499136 / 0x004991ce)
+//   __cdecl, one stack arg: callers push the combo HWND and clean it with add esp,4 (0x00499149 / 0x004991d4).
+//   Called through the RVA so an installed hook still routes to Save/SettingsDialog.cpp. The old ports here
+//   declared it __fastcall (HWND in ECX), so the original body read stack garbage as its combo.
 // ============================================================================
-using PopulateModeFn_t = void(__fastcall*)(HWND);
+using PopulateModeFn_t = void(__cdecl*)(HWND);
 static PopulateModeFn_t const g_PopulateModeCombo =
     reinterpret_cast<PopulateModeFn_t>(0x00498d60u);
 
-// 0x004c2e70  RW_SetCurrentSubSystem  (C2 render; cited at 0x00499170)
+// 0x004c2e70  RW_SetCurrentSubSystem  (cited at 0x004991ba; __cdecl, 0x004991bf add esp,4)
 using RwSetSubsystemFn_t = void(__cdecl*)(int);
 static RwSetSubsystemFn_t const g_RwSetSubsystem =
     reinterpret_cast<RwSetSubsystemFn_t>(0x004c2e70u);
 
-// 0x004c2f00  RW_GetCurrentMode  (C2 render; cited at 0x00499170)
+// 0x004c2f00  RW_GetCurrentMode  (cited at 0x004991d7; no args)
 using RwGetModeFn_t = int(__cdecl*)();
 static RwGetModeFn_t const g_RwGetCurrentMode =
     reinterpret_cast<RwGetModeFn_t>(0x004c2f00u);
 
 
 // ============================================================================
-// 0x00499740  SetControlTextFromResource_i3 (body)
+// 0x00499740  SetControlTextFromResource_i3
 //
-// Original 100 bytes.  HWND via EAX (Ghidra in_EAX).  Second arg is resource ID.
-// Body: LoadStringA(HINSTANCE, id, buf[256], 0x100) then SetWindowTextA(hCtrl, buf).
-// Stack-cookie wrapped in original (__security_check_cookie).
+// Original 100 bytes, re-ported from the bytes 2026-10-12 (negctl re-earn). __cdecl, two stack args
+// (hWnd, string id): 0x00499752 reads the id from [esp+0x10c] = arg2 and 0x00499778 the HWND from [esp+0x108] =
+// arg1 (after sub esp,0x104); every caller pushes id then HWND and cleans 8 (0x00498f71/0x00498f72/0x00498f84, and
+// 25 more call sites in 0x004974c5..0x00497e89). The old port took the HWND from EAX and arg1 as the id.
+//
+//   LoadStringA(DAT_007e9580, id, buf, 0x100);   // 0x00499766..0x00499772 (IAT 0x005cc290)
+//   SetWindowTextA(hWnd, buf);                   // 0x0049977f..0x00499785 (IAT 0x005cc294)
+// buf: 0x100 bytes at [esp] under a /GS cookie (0x00499746..0x0049975f, check 0x0049978b..0x0049979f).
 // ============================================================================
-static void __stdcall SetControlTextFromResource_Body(HWND hCtrl, UINT resource_id)
+extern "C" __declspec(dllexport)
+void __cdecl SetControlTextFromResource_i3(HWND hWnd, UINT resource_id)
 {
-    // 0x00499740 body: local CHAR[256], LoadStringA, SetWindowTextA.
-    char buf[256];
-    HINSTANCE hInst = *reinterpret_cast<HINSTANCE*>(kHInstanceGlobal);
-    // LoadStringA(hInst, id, buf, 0x100)
-    LoadStringA(hInst, resource_id, buf, 0x100);
-    SetWindowTextA(hCtrl, buf);
-}
-
-// Naked entry: original takes HWND via EAX. We bridge EAX into ECX for the
-// __fastcall body, treating param_2 (stack) as the resource id.
-// MSVC's __fastcall: param1=ECX, param2=EDX.
-// We instead use __stdcall for the body and manually arrange args.
-// Stack on entry: [esp+0] = retaddr, [esp+4] = resource_id (caller arg).
-// EAX = HWND.
-extern "C" __declspec(dllexport) __declspec(naked)
-void __cdecl SetControlTextFromResource_i3()
-{
-    __asm {
-        // Stack-cookie wrapper compatibility — push extra room for buf[256]
-        // is handled by the body function. We just bridge calling convention.
-        //
-        // Body is __stdcall: push args right-to-left then call.
-        // Original signature: HWND in EAX, resource_id at [esp+4].
-        push    ebp
-        mov     ebp, esp
-        push    dword ptr [ebp+8]   // resource_id
-        push    eax                 // hCtrl from EAX
-        call    SetControlTextFromResource_Body
-        // __stdcall body cleans its own args.
-        mov     esp, ebp
-        pop     ebp
-        ret
-    }
+    char buf[0x100];
+    LoadStringA(*reinterpret_cast<HINSTANCE*>(kHInstanceGlobal), resource_id, buf, 0x100);  // 0x00499772
+    SetWindowTextA(hWnd, buf);                                                             // 0x00499785
 }
 
 RH_ScopedInstall(SetControlTextFromResource_i3, 0x00499740);  // re-enabled 2026-05-24 batch-save-e
 
 
 // ============================================================================
-// 0x00499170  SubsystemSelectionChanged_i3 (body)
+// 0x00499170  SubsystemSelectionChanged_i3
 //
-// Original 128 bytes. WM_COMMAND/1000 handler. HWND via EAX.
+// Original 128 bytes (0x00499170..0x004991ef), re-ported from the bytes 2026-10-12. hDlg in EAX
+// (0x00499179 mov esi,eax), no stack args, plain ret (0x004991ef).
 //
-// Mechanical (verbatim from 00499170.md C1 plate):
-//   HWND hSubsysCombo = GetDlgItem(hDlg, 0x3e8);
-//   HWND hModeCombo   = GetDlgItem(hDlg, 0x3e9);
-//   WPARAM cur = SendMessageA(hSubsysCombo, CB_GETCURSEL, 0, 0);
-//   if (cur != DAT_0077340c) {
-//       DAT_0077340c = SendMessageA(hSubsysCombo, CB_GETITEMDATA, cur, 0);
-//       RW_SetSubSystem(DAT_0077340c);
-//       SendMessageA(hModeCombo, CB_RESETCONTENT, 0, 0);
-//       PopulateModeCombo(hModeCombo);
-//       DAT_00773200 = RW_GetCurrentMode();
-//       SendMessageA(hModeCombo, CB_SETCURSEL, DAT_00773200, 0);
-//   }
+//   hSub  = GetDlgItem(hDlg, 0x3e8);                          // 0x0049917b..0x00499181 -> EBX
+//   hMode = GetDlgItem(hDlg, 0x3e9);                          // 0x00499183..0x0049918b -> ESI
+//   cur   = SendMessageA(hSub, CB_GETCURSEL 0x147, 0, 0);     // 0x00499193..0x0049919f
+//   if (cur == DAT_0077340c) return;                          // 0x004991a1 cmp ; je 0x004991ec
+//   data  = SendMessageA(hSub, CB_GETITEMDATA 0x150, cur, 0); // 0x004991a9..0x004991b2
+//   DAT_0077340c = data;                                      // 0x004991b5
+//   FUN_004c2e70(data);                                       // 0x004991b4 push eax ; 0x004991ba
+//   SendMessageA(hMode, CB_RESETCONTENT 0x14b, 0, 0);         // 0x004991c2..0x004991cc
+//   FUN_00498d60(hMode);                                      // 0x004991ce push esi ; 0x004991cf (__cdecl)
+//   DAT_00773200 = FUN_004c2f00();                            // 0x004991d7 / 0x004991e5
+//   SendMessageA(hMode, CB_SETCURSEL 0x14e, that value, 0);   // 0x004991dc..0x004991ea (not mapped through 0x00773418)
 // ============================================================================
 static void __stdcall SubsystemSelectionChanged_Body(HWND hDlg)
 {
-    HWND hSubsysCombo = GetDlgItem(hDlg, kIdSubsys);  // 0x3e8
-    HWND hModeCombo   = GetDlgItem(hDlg, kIdMode);    // 0x3e9
-    LRESULT cur = SendMessageA(hSubsysCombo, kCB_GETCURSEL, 0, 0);
+    HWND hSubsysCombo = GetDlgItem(hDlg, kIdSubsys);                             // 0x00499181
+    HWND hModeCombo   = GetDlgItem(hDlg, kIdMode);                               // 0x0049918b
+    const LRESULT cur = SendMessageA(hSubsysCombo, kCB_GETCURSEL, 0, 0);         // 0x0049919f
 
-    auto* p_cur_subsys = reinterpret_cast<int*>(kCurSubsysIdx);
-    auto* p_cur_mode   = reinterpret_cast<int*>(kCurModeIdx);
+    if (static_cast<int>(cur) == *reinterpret_cast<int*>(kCurSubsysIdx)) return;  // 0x004991a7 je
 
-    if (cur != *p_cur_subsys) {
-        *p_cur_subsys = static_cast<int>(
-            SendMessageA(hSubsysCombo, kCB_GETITEMDATA, static_cast<WPARAM>(cur), 0));
-        g_RwSetSubsystem(*p_cur_subsys);
-        SendMessageA(hModeCombo, kCB_RESETCONTENT, 0, 0);
-        g_PopulateModeCombo(hModeCombo);
-        *p_cur_mode = g_RwGetCurrentMode();
-        SendMessageA(hModeCombo, kCB_SETCURSEL, static_cast<WPARAM>(*p_cur_mode), 0);
-    }
+    const int data = static_cast<int>(
+        SendMessageA(hSubsysCombo, kCB_GETITEMDATA, static_cast<WPARAM>(cur), 0));  // 0x004991b2
+    *reinterpret_cast<int*>(kCurSubsysIdx) = data;                                  // 0x004991b5
+    g_RwSetSubsystem(data);                                                         // 0x004991ba
+    SendMessageA(hModeCombo, kCB_RESETCONTENT, 0, 0);                               // 0x004991cc
+    g_PopulateModeCombo(hModeCombo);                                                // 0x004991cf
+    const int mode = g_RwGetCurrentMode();                                          // 0x004991d7
+    *reinterpret_cast<int*>(kCurModeIdx) = mode;                                    // 0x004991e5
+    SendMessageA(hModeCombo, kCB_SETCURSEL, static_cast<WPARAM>(mode), 0);          // 0x004991ea
 }
 
-// Naked entry: HWND via EAX, no other args.
+// Naked entry: hDlg in EAX, no stack args.
 extern "C" __declspec(dllexport) __declspec(naked)
 void __cdecl SubsystemSelectionChanged_i3()
 {
@@ -348,93 +325,83 @@ RH_ScopedInstall(SubsystemSelectionChanged_i3, 0x00499170);  // re-enabled 2026-
 
 
 // ============================================================================
-// 0x00498f60  VideoDialogInit_i3 (body)
+// 0x00498f60  VideoDialogInit_i3
 //
-// Original 516 bytes. WM_INITDIALOG handler. HWND via EAX.
+// Original 516 bytes (0x00498f60..0x00499163), re-ported from the bytes 2026-10-12. hDlg in EAX
+// (0x00498f64 mov esi,eax); its caller 0x004993a6 also pushes 0x110/wParam/lParam, never read here. Plain ret.
+// base = DAT_007719e8, re-read before every use.
 //
-// Mechanical sequence (verbatim from 00498f60.md C1 plate, ordered by RVA):
-//   1. SetControlTextFromResource(GetDlgItem(hDlg,1),     DAT_007719e8 + 0x7d0)  // OK
-//   2. SetControlTextFromResource(GetDlgItem(hDlg,2),     DAT_007719e8 + 0x7da)  // Cancel
-//   3. SetControlTextFromResource(GetDlgItem(hDlg,0x41a), DAT_007719e8 + 0x8c0)  // Label
-//   4. SetControlTextFromResource(GetDlgItem(hDlg,0x417), DAT_007719e8 + 0x8ca)  // Chk A
-//   5. SetControlTextFromResource(GetDlgItem(hDlg,0x418), DAT_007719e8 + 0x8d4)  // Chk B
-//   6. SetControlTextFromResource(GetDlgItem(hDlg,0x419), DAT_007719e8 + 0x8de)  // Chk C
-//   7. SetControlTextFromResource(GetDlgItem(hDlg,0x41b), DAT_007719e8 + 0x8e8)  // Chk D
-//   8. BM_SETCHECK on 0x417 with (DAT_007733a8 == 0) ? 1 : 0
-//   9. BM_SETCHECK on 0x418 with (DAT_007733a4 == 0) ? 1 : 0
-//  10. BM_SETCHECK on 0x419 with (DAT_007733ac != 0) ? 1 : 0   (INVERTED)
-//  11. BM_SETCHECK on 0x41b with (DAT_007733b0 == 0) ? 1 : 0
-//  12. Subsys combo populate loop:
-//        for (i = 0; i < DAT_00773410; i++) {
-//            CB_ADDSTRING(hCombo, 0, (LPARAM)(DAT_007731fc + i*0x50))
-//            CB_SETITEMDATA(hCombo, idx, i)   // idx = returned position
-//        }
-//        CB_SETCURSEL(hCombo, DAT_0077340c, 0)
-//  13. Mode combo populate:
-//        PopulateModeCombo(hModeCombo)
-//        CB_SETCURSEL(hModeCombo, (&DAT_00773418)[DAT_00773200])
-//        SetFocus(hModeCombo)
+//   SetControlText(hDlg, base + 0x7e4);                          // 0x00498f66..0x00498f73 (the dialog itself;
+//                                                                //  the old port omitted this call)
+//   SetControlText(GetDlgItem(hDlg, 1),     base + 0x7d0);       // 0x00498f78..0x00498f94
+//   SetControlText(GetDlgItem(hDlg, 2),     base + 0x7da);       // 0x00498f99..0x00498faf
+//   SetControlText(GetDlgItem(hDlg, 0x41a), base + 0x8c0);       // 0x00498fb4..0x00498fcb
+//   SetControlText(GetDlgItem(hDlg, 0x417), base + 0x8ca);       // 0x00498fd0..0x00498fe9
+//   SetControlText(GetDlgItem(hDlg, 0x418), base + 0x8d4);       // 0x00498fee..0x00499007
+//   SetControlText(GetDlgItem(hDlg, 0x419), base + 0x8de);       // 0x0049900c..0x00499023
+//   SetControlText(GetDlgItem(hDlg, 0x41b), base + 0x8e8);       // 0x00499028..0x00499041
+//   hSub  = GetDlgItem(hDlg, 0x3e8);                             // 0x00499049..0x0049904f -> EBP
+//   hMode = GetDlgItem(hDlg, 0x3e9);                             // 0x00499051..0x0049905b -> [esp+0x10]
+//   BM_SETCHECK 0xf1 on 0x417 with DAT_007733a8 == 0             // 0x0049905f..0x00499084
+//   BM_SETCHECK on 0x418 with DAT_007733a4 == 0                  // 0x00499086..0x004990a5
+//   BM_SETCHECK on 0x419 with DAT_007733ac != 0                  // 0x004990a7..0x004990c6
+//   BM_SETCHECK on 0x41b with DAT_007733b0 == 0                  // 0x004990c8..0x004990e7
+//   for (i = 0; i < DAT_00773410; i++) {                         // 0x004990e9..0x0049911f (count re-read, signed)
+//       SendMessageA(hSub, CB_ADDSTRING 0x143, 0, *(char**)0x007731fc + i*0x50);  // 0x004990f6..0x00499108
+//       SendMessageA(hSub, CB_SETITEMDATA 0x151, i, i);          // 0x0049910a..0x00499112 push esi ; push esi
+//   }
+//   SendMessageA(hSub, CB_SETCURSEL 0x14e, DAT_0077340c, 0);     // 0x00499121..0x00499130
+//   FUN_00498d60(hMode);                                         // 0x00499136 push esi ; 0x00499137 (__cdecl)
+//   SendMessageA(hMode, CB_SETCURSEL, DAT_00773418[DAT_00773200], 0);  // 0x0049913c..0x00499155
+//   SetFocus(hMode);                                             // 0x00499158 (IAT 0x005cc29c)
+//
+// Corrected vs the old port: the 0x7e4 call on hDlg; the subsystem-name table is the heap POINTER held at
+// 0x007731fc (0x004990f6 mov edx,[0x7731fc]; 0x00498ba2 frees it), not an inline array at 0x007731fc;
+// CB_SETITEMDATA's wParam is i, not the CB_ADDSTRING position; FUN_00498d60 takes its HWND on the stack.
 // ============================================================================
 static void __stdcall VideoDialogInit_Body(HWND hDlg)
 {
-    // Step 1-7: label localization (7x SetControlTextFromResource calls).
-    // We invoke the GAME's 0x00499740 directly via game-VA wrapper to preserve
-    // bit-identity (it expects HWND in EAX and resource_id on stack).
-    //
-    // For internal use here we replicate the body directly to avoid the EAX
-    // bridge dance — both paths produce identical LoadStringA/SetWindowTextA
-    // sequences.  See SetControlTextFromResource_Body above.
-    const int base_id = *reinterpret_cast<int*>(kStringResBase);
+    const auto base = []() { return *reinterpret_cast<int*>(kStringResBase); };
 
-    SetControlTextFromResource_Body(GetDlgItem(hDlg, kIdOk),     base_id + kStrOkOff);      // 1
-    SetControlTextFromResource_Body(GetDlgItem(hDlg, kIdCancel), base_id + kStrCancelOff);  // 2
-    SetControlTextFromResource_Body(GetDlgItem(hDlg, kIdLabel),  base_id + kStrLabelOff);   // 3
-    SetControlTextFromResource_Body(GetDlgItem(hDlg, kIdChkA),   base_id + kStrChkAOff);    // 4
-    SetControlTextFromResource_Body(GetDlgItem(hDlg, kIdChkB),   base_id + kStrChkBOff);    // 5
-    SetControlTextFromResource_Body(GetDlgItem(hDlg, kIdChkC),   base_id + kStrChkCOff);    // 6
-    SetControlTextFromResource_Body(GetDlgItem(hDlg, kIdChkD),   base_id + kStrChkDOff);    // 7
+    SetControlTextFromResource_i3(hDlg, base() + 0x7e4);                              // 0x00498f73
+    SetControlTextFromResource_i3(GetDlgItem(hDlg, kIdOk),     base() + kStrOkOff);      // 0x00498f94
+    SetControlTextFromResource_i3(GetDlgItem(hDlg, kIdCancel), base() + kStrCancelOff);  // 0x00498faf
+    SetControlTextFromResource_i3(GetDlgItem(hDlg, kIdLabel),  base() + kStrLabelOff);   // 0x00498fcb
+    SetControlTextFromResource_i3(GetDlgItem(hDlg, kIdChkA),   base() + kStrChkAOff);    // 0x00498fe9
+    SetControlTextFromResource_i3(GetDlgItem(hDlg, kIdChkB),   base() + kStrChkBOff);    // 0x00499007
+    SetControlTextFromResource_i3(GetDlgItem(hDlg, kIdChkC),   base() + kStrChkCOff);    // 0x00499023
+    SetControlTextFromResource_i3(GetDlgItem(hDlg, kIdChkD),   base() + kStrChkDOff);    // 0x00499041
 
-    // Step 8-11: BM_SETCHECK on 4 checkboxes
-    const int chkA = (*reinterpret_cast<int*>(kCheckboxA) == 0) ? 1 : 0;
-    const int chkB = (*reinterpret_cast<int*>(kCheckboxB) == 0) ? 1 : 0;
-    const int chkC = (*reinterpret_cast<int*>(kCheckboxC) != 0) ? 1 : 0;  // inverted
-    const int chkD = (*reinterpret_cast<int*>(kCheckboxD) == 0) ? 1 : 0;
+    HWND hSubsysCombo = GetDlgItem(hDlg, kIdSubsys);                                  // 0x0049904f
+    HWND hModeCombo   = GetDlgItem(hDlg, kIdMode);                                    // 0x00499059
 
     SendMessageA(GetDlgItem(hDlg, kIdChkA), kBM_SETCHECK,
-                 static_cast<WPARAM>(chkA), 0);
+                 (*reinterpret_cast<int*>(kCheckboxA) == 0) ? 1 : 0, 0);              // 0x00499084
     SendMessageA(GetDlgItem(hDlg, kIdChkB), kBM_SETCHECK,
-                 static_cast<WPARAM>(chkB), 0);
+                 (*reinterpret_cast<int*>(kCheckboxB) == 0) ? 1 : 0, 0);              // 0x004990a5
     SendMessageA(GetDlgItem(hDlg, kIdChkC), kBM_SETCHECK,
-                 static_cast<WPARAM>(chkC), 0);
+                 (*reinterpret_cast<int*>(kCheckboxC) != 0) ? 1 : 0, 0);              // 0x004990c6
     SendMessageA(GetDlgItem(hDlg, kIdChkD), kBM_SETCHECK,
-                 static_cast<WPARAM>(chkD), 0);
+                 (*reinterpret_cast<int*>(kCheckboxD) == 0) ? 1 : 0, 0);              // 0x004990e7
 
-    // Step 12: subsystem combo populate
-    HWND hSubsysCombo = GetDlgItem(hDlg, kIdSubsys);
-    const int subsys_count = *reinterpret_cast<int*>(kSubsysCount);
-    const std::uintptr_t name_base = kSubsysNameBase;
-    for (int i = 0; i < subsys_count; i++) {
-        const std::uintptr_t name_addr = name_base + (i * kSubsysNameStride);
-        LRESULT idx = SendMessageA(hSubsysCombo, kCB_ADDSTRING, 0,
-                                   static_cast<LPARAM>(name_addr));
+    for (int i = 0; i < *reinterpret_cast<int*>(kSubsysCount); i++) {                // 0x004990f2 / 0x0049911d
+        const std::uintptr_t names = *reinterpret_cast<std::uintptr_t*>(kSubsysNameBase);  // 0x004990f6
+        SendMessageA(hSubsysCombo, kCB_ADDSTRING, 0,
+                     static_cast<LPARAM>(names + i * kSubsysNameStride));             // 0x00499108
         SendMessageA(hSubsysCombo, kCB_SETITEMDATA,
-                     static_cast<WPARAM>(idx), static_cast<LPARAM>(i));
+                     static_cast<WPARAM>(i), static_cast<LPARAM>(i));                 // 0x00499112
     }
     SendMessageA(hSubsysCombo, kCB_SETCURSEL,
-                 static_cast<WPARAM>(*reinterpret_cast<int*>(kCurSubsysIdx)), 0);
+                 static_cast<WPARAM>(*reinterpret_cast<int*>(kCurSubsysIdx)), 0);     // 0x00499130
 
-    // Step 13: mode combo populate + focus
-    HWND hModeCombo = GetDlgItem(hDlg, kIdMode);
-    g_PopulateModeCombo(hModeCombo);
-    // CB_SETCURSEL on (&DAT_00773418)[DAT_00773200]
-    const int cur_mode = *reinterpret_cast<int*>(kCurModeIdx);
-    const int* mode_map = reinterpret_cast<int*>(kModeIdxMap);
+    g_PopulateModeCombo(hModeCombo);                                                  // 0x00499137
+    const int cur_mode = *reinterpret_cast<int*>(kCurModeIdx);                        // 0x0049913c
     SendMessageA(hModeCombo, kCB_SETCURSEL,
-                 static_cast<WPARAM>(mode_map[cur_mode]), 0);
-    SetFocus(hModeCombo);
+                 static_cast<WPARAM>(reinterpret_cast<int*>(kModeIdxMap)[cur_mode]), 0);  // 0x00499155
+    SetFocus(hModeCombo);                                                             // 0x00499158
 }
 
-// Naked entry: HWND via EAX.
+// Naked entry: hDlg in EAX.
 extern "C" __declspec(dllexport) __declspec(naked)
 void __cdecl VideoDialogInit_i3()
 {
