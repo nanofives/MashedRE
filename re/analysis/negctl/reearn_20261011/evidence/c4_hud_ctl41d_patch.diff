@@ -1,0 +1,13 @@
+diff --git a/mashedmod/src/mashed_re/HUD/HudBatch.cpp b/mashedmod/src/mashed_re/HUD/HudBatch.cpp
+index e8b2a896..bf82c6a7 100644
+--- a/mashedmod/src/mashed_re/HUD/HudBatch.cpp
++++ b/mashedmod/src/mashed_re/HUD/HudBatch.cpp
+@@ -106,7 +106,7 @@ void __cdecl Sub0041db80_HudThresholdDispatch()
+         dispatch_at(0x14u);   // 0x0041dac9
+     }
+     // 0x0041dad3: fcomp [0x005cd238]; jnp 0x0041db78 (return)
+-    if (c() < thr(0x005cd238u))
++    if (!(c() < thr(0x005cd238u)))   // C4 CONTROL: old inverted 0.34 test
+         return;
+     // 0x0041dae7: fcomp [0x005cd234]; jp 0x0041db03
+     if (c() < thr(0x005cd234u)) {

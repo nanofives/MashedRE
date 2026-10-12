@@ -1,0 +1,21 @@
+  spawned pid=31376 row=403160 arm=ctl
+  title: depth=1 phase=3
+  witness before attach: {'b0': 131, 'dword': 'a114ec83', 'tgt': None, 'mod': None}
+  ctl load: {'ok': True, 'base': '0x70ab0000', 'name': 'mashed_re_dev_ctl403.asi', 'path': 'C:\\Users\\maria\\AppData\\Local\\Temp\\claude\\C--Users-maria-Desktop-Proyectos-Mashed\\f90ad738-ca09-4c64-b4bc-7bf7dfc1943e\\scratchpad\\ctl\\mashed_re_dev_ctl403.asi'}
+  witness after load, before attach: {'b0': 233, 'dword': '6c103be9', 'tgt': '0x70ac41a0', 'mod': {'name': 'mashed_re_dev_ctl403.asi', 'path': 'C:\\Users\\maria\\AppData\\Local\\Temp\\claude\\C--Users-maria-Desktop-Proyectos-Mashed\\f90ad738-ca09-4c64-b4bc-7bf7dfc1943e\\scratchpad\\ctl\\mashed_re_dev_ctl403.asi', 'base': '0x70ab0000', 'off': '0x141a0'}}
+  arm: {'ok': True, 'entry': '0x70ac41a0 mashed_re_dev_ctl403.asi+0x141a0', 'jmp': 233, 'dword': '6c103be9'}
+   t+0s {'mode': 0, 'st': 0, 'rule': 0, 'sph': 1, 'ph': 3, 'd': 1, 'cnt': 0, 't8': 0.8166661262512207, 'f184': 0, 'f17c': 0, 'ai': 0, 'fcc': 0, 'y': 0, 'enter': 0, 'tx': 0, 'calls': 0, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 0}
+   t+5s {'mode': 0, 'st': 0, 'rule': 0, 'sph': 1, 'ph': 3, 'd': 1, 'cnt': 0, 't8': 4.950008869171143, 'f184': 0, 'f17c': 0, 'ai': 0, 'fcc': 0, 'y': 0, 'enter': 0, 'tx': 0, 'calls': 0, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 0}
+   t+10s {'mode': 0, 'st': 0, 'rule': 0, 'sph': 1, 'ph': 3, 'd': 1, 'cnt': 0, 't8': 9.91668701171875, 'f184': 0, 'f17c': 0, 'ai': 0, 'fcc': 0, 'y': 0, 'enter': 0, 'tx': 0, 'calls': 0, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 0}
+   t+15s {'mode': 0, 'st': 0, 'rule': 0, 'sph': 1, 'ph': 3, 'd': 1, 'cnt': 0, 't8': 14.899944305419922, 'f184': 0, 'f17c': 0, 'ai': 0, 'fcc': 0, 'y': 0, 'enter': 0, 'tx': 0, 'calls': 0, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 0}
+   t+20s {'mode': 0, 'st': 0, 'rule': 0, 'sph': 1, 'ph': 3, 'd': 1, 'cnt': 0, 't8': 19.93320083618164, 'f184': 0, 'f17c': 0, 'ai': 0, 'fcc': 0, 'y': 0, 'enter': 0, 'tx': 0, 'calls': 0, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 0}
+   t+25s {'mode': 0, 'st': 0, 'rule': 0, 'sph': 1, 'ph': 3, 'd': 1, 'cnt': 0, 't8': 24.949790954589844, 'f184': 0, 'f17c': 0, 'ai': 0, 'fcc': 0, 'y': 0, 'enter': 0, 'tx': 0, 'calls': 0, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 0}
+   t+30s {'mode': 0, 'st': 0, 'rule': 0, 'sph': 1, 'ph': 3, 'd': 1, 'cnt': 0, 't8': 29.966381072998047, 'f184': 0, 'f17c': 0, 'ai': 0, 'fcc': 0, 'y': 0, 'enter': 0, 'tx': 0, 'calls': 0, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 0}
+   t+35s {'mode': 0, 'st': 0, 'rule': 0, 'sph': 1, 'ph': 3, 'd': 1, 'cnt': 0, 't8': 34.999637603759766, 'f184': 0, 'f17c': 0, 'ai': 0, 'fcc': 0, 'y': 0, 'enter': 0, 'tx': 0, 'calls': 0, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 0}
+   t+40s {'mode': 0, 'st': 0, 'rule': 0, 'sph': 1, 'ph': 3, 'd': 1, 'cnt': 0, 't8': 39.766231536865234, 'f184': 0, 'f17c': 0, 'ai': 0, 'fcc': 0, 'y': 0, 'enter': 0, 'tx': 0, 'calls': 0, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 0}
+   t+45s {'mode': 0, 'st': 0, 'rule': 0, 'sph': 1, 'ph': 3, 'd': 1, 'cnt': 0, 't8': 44.78282165527344, 'f184': 0, 'f17c': 0, 'ai': 0, 'fcc': 0, 'y': 0, 'enter': 0, 'tx': 0, 'calls': 0, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 0}
+   t+50s {'mode': 0, 'st': 0, 'rule': 0, 'sph': 1, 'ph': 3, 'd': 1, 'cnt': 0, 't8': 49.782745361328125, 'f184': 0, 'f17c': 0, 'ai': 0, 'fcc': 0, 'y': 0, 'enter': 0, 'tx': 0, 'calls': 0, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 0}
+   t+55s {'mode': 0, 'st': 0, 'rule': 0, 'sph': 1, 'ph': 3, 'd': 1, 'cnt': 0, 't8': 54.78266906738281, 'f184': 0, 'f17c': 0, 'ai': 0, 'fcc': 0, 'y': 0, 'enter': 0, 'tx': 0, 'calls': 0, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 0}
+   t+60s {'mode': 0, 'st': 0, 'rule': 0, 'sph': 1, 'ph': 3, 'd': 1, 'cnt': 0, 't8': 59.71592712402344, 'f184': 0, 'f17c': 0, 'ai': 0, 'fcc': 0, 'y': 0, 'enter': 0, 'tx': 0, 'calls': 0, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 0}
+  [CRASH] {'kind': 'crash', 'pc': '0x3f1ffc9d', 'module': 'UNMAPPED', 'addr': 'read @ 0x3f1ffc9d', 'enter': 1, 'calls': 0, 'inBody': True}
+  verdict=NOT-REACHED calls=None keys=0 mmOrig=None mmOld=None crash=1 alive_at_end=False -> log\c4_hud\final\c4_hud_403160_ctl1.json

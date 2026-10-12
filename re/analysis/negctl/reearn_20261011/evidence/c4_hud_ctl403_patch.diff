@@ -1,0 +1,13 @@
+diff --git a/mashedmod/src/mashed_re/HUD/HudBatch.cpp b/mashedmod/src/mashed_re/HUD/HudBatch.cpp
+index e8b2a896..2bc5efcb 100644
+--- a/mashedmod/src/mashed_re/HUD/HudBatch.cpp
++++ b/mashedmod/src/mashed_re/HUD/HudBatch.cpp
+@@ -248,7 +248,7 @@ extern "C" __declspec(dllexport) int __cdecl Sub00403160_SubMode0BViewport() {
+         // call (0x004031c2 / 0x004031ff / 0x0040320c reload the global).
+         // Old port (pre 2026-10-12) read *(*(*0x007d3ff8)+0x20), one hop too many.
+         auto rs_set = [](int state_id, int value) {
+-            const std::uintptr_t rs_obj = *reinterpret_cast<volatile const std::uint32_t*>(0x007d3ff8u);
++            const std::uintptr_t rs_obj = *reinterpret_cast<volatile const std::uint32_t*>(*reinterpret_cast<volatile const std::uint32_t*>(0x007d3ff8u));  // C4 CONTROL: old double deref
+             reinterpret_cast<RenderStateSetFn>(
+                 *reinterpret_cast<const std::uint32_t*>(rs_obj + 0x20u))(state_id, value);
+         };

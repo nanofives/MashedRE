@@ -1,0 +1,25 @@
+  spawned pid=4316 row=403160 arm=on
+  title: depth=1 phase=3
+  witness before attach: {'b0': 233, 'dword': '24103be9', 'tgt': '0x6f6441a0', 'mod': {'name': 'mashed_re_dev.asi', 'path': 'C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\c4a1-h\\original\\mashed_re_dev.asi', 'base': '0x6f630000', 'off': '0x141a0'}}
+  arm: {'ok': True, 'entry': '0x6f6441a0 mashed_re_dev.asi+0x141a0', 'jmp': 233, 'dword': '24103be9'}
+   t+0s {'mode': 0, 'st': 0, 'rule': 0, 'sph': 1, 'ph': 3, 'd': 1, 'cnt': 0, 't8': 0.8499994277954102, 'f184': 0, 'f17c': 0, 'ai': 0, 'fcc': 0, 'y': 0, 'enter': 0, 'tx': 0, 'calls': 0, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 0}
+   t+5s {'mode': 0, 'st': 0, 'rule': 0, 'sph': 1, 'ph': 3, 'd': 1, 'cnt': 0, 't8': 5.8333539962768555, 'f184': 0, 'f17c': 0, 'ai': 0, 'fcc': 0, 'y': 0, 'enter': 0, 'tx': 0, 'calls': 0, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 0}
+   t+10s {'mode': 0, 'st': 0, 'rule': 0, 'sph': 1, 'ph': 3, 'd': 1, 'cnt': 0, 't8': 10.800006866455078, 'f184': 0, 'f17c': 0, 'ai': 0, 'fcc': 0, 'y': 0, 'enter': 0, 'tx': 0, 'calls': 0, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 0}
+   t+15s {'mode': 0, 'st': 0, 'rule': 0, 'sph': 1, 'ph': 3, 'd': 1, 'cnt': 0, 't8': 15.78326416015625, 'f184': 0, 'f17c': 0, 'ai': 0, 'fcc': 0, 'y': 0, 'enter': 0, 'tx': 0, 'calls': 0, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 0}
+   t+20s {'mode': 0, 'st': 0, 'rule': 0, 'sph': 1, 'ph': 3, 'd': 1, 'cnt': 0, 't8': 20.749855041503906, 'f184': 0, 'f17c': 0, 'ai': 0, 'fcc': 0, 'y': 0, 'enter': 0, 'tx': 0, 'calls': 0, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 0}
+   t+25s {'mode': 0, 'st': 0, 'rule': 0, 'sph': 1, 'ph': 3, 'd': 1, 'cnt': 0, 't8': 25.716445922851562, 'f184': 0, 'f17c': 0, 'ai': 0, 'fcc': 0, 'y': 0, 'enter': 0, 'tx': 0, 'calls': 0, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 0}
+   t+30s {'mode': 0, 'st': 0, 'rule': 0, 'sph': 1, 'ph': 3, 'd': 1, 'cnt': 0, 't8': 30.59970474243164, 'f184': 0, 'f17c': 0, 'ai': 0, 'fcc': 0, 'y': 0, 'enter': 0, 'tx': 0, 'calls': 0, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 0}
+   t+35s {'mode': 0, 'st': 0, 'rule': 0, 'sph': 1, 'ph': 3, 'd': 1, 'cnt': 0, 't8': 35.5662956237793, 'f184': 0, 'f17c': 0, 'ai': 0, 'fcc': 0, 'y': 0, 'enter': 0, 'tx': 0, 'calls': 0, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 0}
+   t+40s {'mode': 0, 'st': 0, 'rule': 0, 'sph': 1, 'ph': 3, 'd': 1, 'cnt': 0, 't8': 40.53288650512695, 'f184': 0, 'f17c': 0, 'ai': 0, 'fcc': 0, 'y': 0, 'enter': 0, 'tx': 0, 'calls': 0, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 0}
+   t+45s {'mode': 0, 'st': 0, 'rule': 0, 'sph': 1, 'ph': 3, 'd': 1, 'cnt': 0, 't8': 45.549476623535156, 'f184': 0, 'f17c': 0, 'ai': 0, 'fcc': 0, 'y': 0, 'enter': 0, 'tx': 0, 'calls': 0, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 0}
+   t+50s {'mode': 0, 'st': 0, 'rule': 0, 'sph': 1, 'ph': 3, 'd': 1, 'cnt': 0, 't8': 50.56606674194336, 'f184': 0, 'f17c': 0, 'ai': 0, 'fcc': 0, 'y': 0, 'enter': 0, 'tx': 0, 'calls': 0, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 0}
+   t+55s {'mode': 0, 'st': 0, 'rule': 0, 'sph': 1, 'ph': 3, 'd': 1, 'cnt': 0, 't8': 55.59932327270508, 'f184': 0, 'f17c': 0, 'ai': 0, 'fcc': 0, 'y': 0, 'enter': 0, 'tx': 0, 'calls': 0, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 0}
+   t+60s {'mode': 11, 'st': 0, 'rule': 6, 'sph': 1, 'ph': 5, 'd': 1, 'cnt': 0, 't8': 60.01592254638672, 'f184': 0, 'f17c': 0, 'ai': 0, 'fcc': 0, 'y': 0, 'enter': 0, 'tx': 0, 'calls': 0, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 0}
+  >>> first game call: {'mode': 11, 'st': 5, 'rule': 6, 'sph': 3, 'ph': 0, 'd': 1, 'cnt': 0.2499999850988388, 't8': 60.01592254638672, 'f184': 0, 'f17c': 0, 'ai': 1, 'fcc': 0, 'y': 0, 'enter': 13, 'tx': 0, 'calls': 12, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 2}
+   t+65s {'mode': 11, 'st': 6, 'rule': 6, 'sph': 3, 'ph': 0, 'd': 1, 'cnt': 2.5999977588653564, 't8': 60.01592254638672, 'f184': 0, 'f17c': 0, 'ai': 1, 'fcc': 0, 'y': 0, 'enter': 154, 'tx': 0, 'calls': 154, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 2}
+   t+70s {'mode': 11, 'st': 6, 'rule': 6, 'sph': 3, 'ph': 0, 'd': 1, 'cnt': 7.600044250488281, 't8': 60.01592254638672, 'f184': 0, 'f17c': 0, 'ai': 1, 'fcc': 0, 'y': 0, 'enter': 454, 'tx': 0, 'calls': 454, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 2}
+   t+75s {'mode': 11, 'st': 6, 'rule': 6, 'sph': 3, 'ph': 0, 'd': 1, 'cnt': 12.43331527709961, 't8': 60.01592254638672, 'f184': 0, 'f17c': 0, 'ai': 1, 'fcc': 0, 'y': 0, 'enter': 744, 'tx': 0, 'calls': 744, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 2}
+   t+80s {'mode': 11, 'st': 6, 'rule': 6, 'sph': 3, 'ph': 0, 'd': 1, 'cnt': 17.099910736083984, 't8': 60.01592254638672, 'f184': 0, 'f17c': 0, 'ai': 1, 'fcc': 0, 'y': 0, 'enter': 1024, 'tx': 0, 'calls': 1024, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 2}
+   t+86s {'mode': 11, 'st': 6, 'rule': 6, 'sph': 3, 'ph': 0, 'd': 1, 'cnt': 21.88317108154297, 't8': 60.01592254638672, 'f184': 0, 'f17c': 0, 'ai': 1, 'fcc': 0, 'y': 0, 'enter': 1311, 'tx': 0, 'calls': 1311, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 2}
+   t+91s {'mode': 11, 'st': 6, 'rule': 6, 'sph': 3, 'ph': 0, 'd': 1, 'cnt': 26.56643295288086, 't8': 60.01592254638672, 'f184': 0, 'f17c': 0, 'ai': 1, 'fcc': 0, 'y': 0, 'enter': 1592, 'tx': 0, 'calls': 1592, 'mmOrig': 0, 'mmOld': 0, 'nkeys': 2}
+  verdict=DONE calls=1705 keys=2 mmOrig=0 mmOld=0 crash=0 alive_at_end=True -> log\c4_hud\final\c4_hud_403160_on2.json

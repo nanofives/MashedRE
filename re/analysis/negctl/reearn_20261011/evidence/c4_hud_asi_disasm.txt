@@ -1,0 +1,282 @@
+# group-H control .asi vs deployed original/mashed_re_dev.asi (normalized: absolute addresses -> ADDR)
+c5594d6b933b24008e1fd408dba41dbe6870b5e4cc6c0b3e7d5f7dc6f6373840 *original/mashed_re_dev.asi
+d73fa6c95d2eecf8f6cef3dd65aeeef37aa022e238c71802e93f28655f9e21d7 *mashed_re_dev_ctl403.asi
+e147d15a3de7d9a69e7737624d38cd669c9211511bdda9a4520aa8a6c1621f49 *mashed_re_dev_ctl41d.asi
+cbbcacb7ab72192720787d9196a9172581eb688f78d026065fddc9d8bd7824d1 *mashed_re_dev_ctl4295.asi
+## ctl403 :: Sub00403160_SubMode0BViewport rva=0x141a0: DIFFERS
+    @@ -10 +10 @@
+    - +ADDR mov ebp, ADDR
+    + +ADDR mov eax, ADDR
+    @@ -12 +12 @@
+    - +ADDR call ebp
+    + +ADDR call eax
+    @@ -15,0 +16 @@
+    + +ADDR mov ebp, ADDR
+    @@ -18 +18,0 @@
+    - +ADDR mov eax, ADDR
+    @@ -21 +21 @@
+    - +ADDR call eax
+    + +ADDR call ebp
+    @@ -23 +23 @@
+    - +ADDR lea eax, [ebp + 0x10]
+    + +ADDR mov eax, ADDR
+    @@ -30,0 +31 @@
+    + +ADDR mov eax, dword ptr [eax]
+    @@ -35,0 +37 @@
+    + +ADDR mov eax, dword ptr [eax]
+    @@ -56,0 +59 @@
+    + +ADDR mov eax, dword ptr [eax]
+    @@ -61,0 +65 @@
+    + +ADDR mov eax, dword ptr [eax]
+    @@ -65 +69,2 @@
+    - +ADDR call ebp
+    + +ADDR mov eax, ADDR
+    + +ADDR call eax
+    @@ -71 +75,0 @@
+    - +ADDR mov eax, ADDR
+    @@ -73 +77 @@
+    - +ADDR call eax
+    + +ADDR call ebp
+## ctl403 :: Sub0041db80_HudThresholdDispatch rva=0x142a0: IDENTICAL
+## ctl403 :: HudDualLabelRender rva=0x18800: IDENTICAL
+## ctl41d :: Sub00403160_SubMode0BViewport rva=0x141a0: IDENTICAL
+## ctl41d :: Sub0041db80_HudThresholdDispatch rva=0x142a0: DIFFERS
+    @@ -19 +19 @@
+    - +ADDR ja ADDR
+    + +ADDR jbe ADDR
+## ctl41d :: HudDualLabelRender rva=0x18800: IDENTICAL
+## ctl4295 :: Sub00403160_SubMode0BViewport rva=0x141a0: IDENTICAL
+## ctl4295 :: Sub0041db80_HudThresholdDispatch rva=0x142a0: IDENTICAL
+## ctl4295 :: HudDualLabelRender rva=0x18800: DIFFERS
+    @@ -4,0 +5,5 @@
+    + +ADDR mov esi, ADDR
+    + +ADDR movss dword ptr [esp + 8], xmm0
+    + +ADDR call esi
+    + +ADDR fadd dword ptr [esp + 8]
+    + +ADDR push ecx
+    @@ -6,11 +11,2 @@
+    - +ADDR movss dword ptr [esp + 8], xmm0
+    - +ADDR call edi
+    - +ADDR fadd dword ptr [esp + 8]
+    - +ADDR push 2
+    - +ADDR push ADDR
+    - +ADDR push ADDR
+    - +ADDR push ADDR
+    - +ADDR fstp dword ptr [esp + 0x18]
+    - +ADDR movss xmm0, dword ptr [esp + 0x18]
+    - +ADDR mov esi, ADDR
+    - +ADDR push ecx
+    + +ADDR fstp dword ptr [esp + 0xc]
+    + +ADDR movss xmm0, dword ptr [esp + 0xc]
+    @@ -18,0 +15,2 @@
+    + +ADDR call edi
+    + +ADDR add esp, 8
+    @@ -20,2 +17,0 @@
+    - +ADDR add esp, 0x18
+    - +ADDR call edi
+    @@ -31 +27 @@
+    - +ADDR call esi
+    + +ADDR call edi
+
+## deployed bodies (full)
+== original/mashed_re_dev.asi :: Sub00403160_SubMode0BViewport rva=0x141a0
+  +0x0141a0 sub esp, 0x10
+  +0x0141a3 push ebx
+  +0x0141a4 push ebp
+  +0x0141a5 push esi
+  +0x0141a6 push edi
+  +0x0141a7 push 0
+  +0x0141a9 mov eax, 0x4671a0
+  +0x0141ae call eax
+  +0x0141b0 mov esi, eax
+  +0x0141b2 mov ebp, 0x4c19f0
+  +0x0141b7 push esi
+  +0x0141b8 call ebp
+  +0x0141ba mov edi, dword ptr [esi + 0x68]
+  +0x0141bd lea eax, [esp + 0x18]
+  +0x0141c1 mov ebx, dword ptr [esi + 0x6c]
+  +0x0141c4 push eax
+  +0x0141c5 push esi
+  +0x0141c6 mov eax, 0x4c1c80
+  +0x0141cb mov dword ptr [esp + 0x20], 0x3f4ccccd
+  +0x0141d3 mov dword ptr [esp + 0x24], 0x3f4ccccd
+  +0x0141db call eax
+  +0x0141dd push esi
+  +0x0141de lea eax, [ebp + 0x10]
+  +0x0141e1 call eax
+  +0x0141e3 add esp, 0x14
+  +0x0141e6 test eax, eax
+  +0x0141e8 je 0x1001426e
+  +0x0141ee mov eax, dword ptr [0x7d3ff8]
+  +0x0141f3 push 0
+  +0x0141f5 push 6
+  +0x0141f7 mov eax, dword ptr [eax + 0x20]
+  +0x0141fa call eax
+  +0x0141fc mov eax, dword ptr [0x7d3ff8]
+  +0x014201 push 0
+  +0x014203 push 8
+  +0x014205 mov eax, dword ptr [eax + 0x20]
+  +0x014208 call eax
+  +0x01420a add esp, 0x10
+  +0x01420d mov eax, 0x402fb0
+  +0x014212 call eax
+  +0x014214 mov eax, dword ptr [0x771964]
+  +0x014219 test eax, eax
+  +0x01421b je 0x1001424c
+  +0x01421d push 0
+  +0x01421f sub esp, 0x10
+  +0x014222 mov dword ptr [esp + 0xc], 0x42f00000
+  +0x01422a mov dword ptr [esp + 8], 0x43700000
+  +0x014232 mov dword ptr [esp + 4], 0x41f00000
+  +0x01423a mov dword ptr [esp], 0x42480000
+  +0x014241 push eax
+  +0x014242 mov eax, 0x428760
+  +0x014247 call eax
+  +0x014249 add esp, 0x18
+  +0x01424c mov eax, dword ptr [0x7d3ff8]
+  +0x014251 push 1
+  +0x014253 push 6
+  +0x014255 mov eax, dword ptr [eax + 0x20]
+  +0x014258 call eax
+  +0x01425a mov eax, dword ptr [0x7d3ff8]
+  +0x01425f push 1
+  +0x014261 push 8
+  +0x014263 mov eax, dword ptr [eax + 0x20]
+  +0x014266 call eax
+  +0x014268 push esi
+  +0x014269 call ebp
+  +0x01426b add esp, 0x14
+  +0x01426e lea eax, [esp + 0x18]
+  +0x014272 mov dword ptr [esp + 0x18], edi
+  +0x014276 push eax
+  +0x014277 push esi
+  +0x014278 mov eax, 0x4c1c80
+  +0x01427d mov dword ptr [esp + 0x24], ebx
+  +0x014281 call eax
+  +0x014283 push esi
+  +0x014284 mov eax, 0x4c1a00
+  +0x014289 call eax
+  +0x01428b add esp, 0xc
+  +0x01428e pop edi
+  +0x01428f pop esi
+  +0x014290 pop ebp
+  +0x014291 pop ebx
+  +0x014292 add esp, 0x10
+  +0x014295 ret 
+== original/mashed_re_dev.asi :: Sub0041db80_HudThresholdDispatch rva=0x142a0
+  +0x0142a0 movss xmm1, dword ptr [0x63d588]
+  +0x0142a8 mov eax, 0x5cc35c
+  +0x0142ad movss xmm0, dword ptr [eax]
+  +0x0142b1 comiss xmm0, xmm1
+  +0x0142b4 jbe 0x100142cf
+  +0x0142b6 mov eax, dword ptr [0x63d55c]
+  +0x0142bb push eax
+  +0x0142bc mov eax, dword ptr [eax + 0x48]
+  +0x0142bf call eax
+  +0x0142c1 mov eax, dword ptr [0x63d570]
+  +0x0142c6 push eax
+  +0x0142c7 mov eax, dword ptr [eax + 0x48]
+  +0x0142ca call eax
+  +0x0142cc add esp, 8
+  +0x0142cf movss xmm1, dword ptr [0x63d588]
+  +0x0142d7 mov eax, 0x5cd238
+  +0x0142dc movss xmm0, dword ptr [eax]
+  +0x0142e0 comiss xmm0, xmm1
+  +0x0142e3 ja 0x100143b2
+  +0x0142e9 movss xmm1, dword ptr [0x63d588]
+  +0x0142f1 mov eax, 0x5cd234
+  +0x0142f6 movss xmm0, dword ptr [eax]
+  +0x0142fa comiss xmm0, xmm1
+  +0x0142fd jbe 0x1001430f
+  +0x0142ff mov eax, dword ptr [0x63d560]
+  +0x014304 push eax
+  +0x014305 mov eax, dword ptr [eax + 0x48]
+  +0x014308 call eax
+  +0x01430a add esp, 4
+  +0x01430d jmp 0x1001437a
+  +0x01430f movss xmm1, dword ptr [0x63d588]
+  +0x014317 mov eax, 0x5cd230
+  +0x01431c movss xmm0, dword ptr [eax]
+  +0x014320 comiss xmm0, xmm1
+  +0x014323 jbe 0x10014340
+  +0x014325 mov eax, dword ptr [0x63d560]
+  +0x01432a push eax
+  +0x01432b mov eax, dword ptr [eax + 0x48]
+  +0x01432e call eax
+  +0x014330 mov eax, dword ptr [0x63d564]
+  +0x014335 push eax
+  +0x014336 mov eax, dword ptr [eax + 0x48]
+  +0x014339 call eax
+  +0x01433b add esp, 8
+  +0x01433e jmp 0x1001437a
+  +0x014340 movss xmm1, dword ptr [0x63d588]
+  +0x014348 mov eax, 0x5ccdf4
+  +0x01434d movss xmm0, dword ptr [eax]
+  +0x014351 comiss xmm0, xmm1
+  +0x014354 jbe 0x1001437a
+  +0x014356 mov eax, dword ptr [0x63d560]
+  +0x01435b push eax
+  +0x01435c mov eax, dword ptr [eax + 0x48]
+  +0x01435f call eax
+  +0x014361 mov eax, dword ptr [0x63d564]
+  +0x014366 push eax
+  +0x014367 mov eax, dword ptr [eax + 0x48]
+  +0x01436a call eax
+  +0x01436c mov eax, dword ptr [0x63d568]
+  +0x014371 push eax
+  +0x014372 mov eax, dword ptr [eax + 0x48]
+  +0x014375 call eax
+  +0x014377 add esp, 0xc
+  +0x01437a movss xmm1, dword ptr [0x63d588]
+  +0x014382 mov eax, 0x5ccdf4
+  +0x014387 movss xmm0, dword ptr [eax]
+  +0x01438b comiss xmm1, xmm0
+  +0x01438e jb 0x100143b2
+  +0x014390 movss xmm1, dword ptr [0x63d588]
+  +0x014398 mov eax, 0x5cc35c
+  +0x01439d movss xmm0, dword ptr [eax]
+  +0x0143a1 comiss xmm0, xmm1
+  +0x0143a4 jbe 0x100143b2
+  +0x0143a6 mov eax, dword ptr [0x63d56c]
+  +0x0143ab push eax
+  +0x0143ac mov eax, dword ptr [eax + 0x48]
+  +0x0143af call eax
+  +0x0143b1 pop ecx
+  +0x0143b2 ret 
+== original/mashed_re_dev.asi :: HudDualLabelRender rva=0x18800
+  +0x018800 push ecx
+  +0x018801 movss xmm0, dword ptr [0x5cc31c]
+  +0x018809 push esi
+  +0x01880a push edi
+  +0x01880b mov edi, 0x40dc80
+  +0x018810 movss dword ptr [esp + 8], xmm0
+  +0x018816 call edi
+  +0x018818 fadd dword ptr [esp + 8]
+  +0x01881c push 2
+  +0x01881e push 0x3f800000
+  +0x018823 push 0xff000000
+  +0x018828 push 0x427c0000
+  +0x01882d fstp dword ptr [esp + 0x18]
+  +0x018831 movss xmm0, dword ptr [esp + 0x18]
+  +0x018837 mov esi, 0x427e00
+  +0x01883c push ecx
+  +0x01883d movss dword ptr [esp], xmm0
+  +0x018842 push 0xff
+  +0x018847 call esi
+  +0x018849 add esp, 0x18
+  +0x01884c call edi
+  +0x01884e push 2
+  +0x018850 push 0x3f800000
+  +0x018855 push 0xff0000ff
+  +0x01885a push 0x42700000
+  +0x01885f fstp dword ptr [esp + 0x18]
+  +0x018863 movss xmm0, dword ptr [esp + 0x18]
+  +0x018869 push ecx
+  +0x01886a movss dword ptr [esp], xmm0
+  +0x01886f push 0xff
+  +0x018874 call esi
+  +0x018876 add esp, 0x18
+  +0x018879 pop edi
+  +0x01887a pop esi
+  +0x01887b pop ecx
+  +0x01887c ret 

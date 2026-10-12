@@ -1,0 +1,49 @@
+# Install copy used for the 0x004295a0 scenario (never original\)
+copy root: <scratchpad>/gameroot/original (robocopy of original/ 2026-10-12 16:32, 481 MB)
+b9977dab70607720cf58bc7832937c203b1e0b33ff5896da586baf56aa79fe87 *<copy>/MASHED.exe
+b9977dab70607720cf58bc7832937c203b1e0b33ff5896da586baf56aa79fe87 *original/MASHED.exe
+c5594d6b933b24008e1fd408dba41dbe6870b5e4cc6c0b3e7d5f7dc6f6373840 *<copy>/mashed_re_dev.asi
+c5594d6b933b24008e1fd408dba41dbe6870b5e4cc6c0b3e7d5f7dc6f6373840 *original/mashed_re_dev.asi
+80ccb2d449f0e5b75e57e2b74ad7a3c9f886fc87f4eb6c74185016402cbe2032 *<copy>/gamesave.bin
+bd18788182b2343e5203eb983fddd8bd947a5f3385e9fcaa46a152a9ec002a70 *original/gamesave.bin
+## gamesave.bin edit in the copy: span 0x24A40, 13 rows x 0x30, col 2 (+0x08, FrontendModeIndex(mode 4)=2) and col 5 (+0x14, FrontendModeIndex(mode 5)=5) set to 1 on all 13 rows. No other byte changed:
+  file+0x24a48 copy=1 orig=0 (octal)
+  file+0x24a54 copy=1 orig=0 (octal)
+  file+0x24a78 copy=1 orig=0 (octal)
+  file+0x24a84 copy=1 orig=0 (octal)
+  file+0x24aa8 copy=1 orig=0 (octal)
+  file+0x24ab4 copy=1 orig=0 (octal)
+  file+0x24ad8 copy=1 orig=0 (octal)
+  file+0x24ae4 copy=1 orig=0 (octal)
+  file+0x24b08 copy=1 orig=0 (octal)
+  file+0x24b14 copy=1 orig=0 (octal)
+  file+0x24b38 copy=1 orig=0 (octal)
+  file+0x24b44 copy=1 orig=0 (octal)
+  file+0x24b68 copy=1 orig=0 (octal)
+  file+0x24b74 copy=1 orig=0 (octal)
+  file+0x24b98 copy=1 orig=0 (octal)
+  file+0x24ba4 copy=1 orig=0 (octal)
+  file+0x24bc8 copy=1 orig=0 (octal)
+  file+0x24bd4 copy=1 orig=0 (octal)
+  file+0x24bf8 copy=1 orig=0 (octal)
+  file+0x24c04 copy=1 orig=0 (octal)
+  file+0x24c28 copy=1 orig=0 (octal)
+  file+0x24c34 copy=1 orig=0 (octal)
+  file+0x24c58 copy=1 orig=0 (octal)
+  file+0x24c64 copy=1 orig=0 (octal)
+  file+0x24c88 copy=1 orig=0 (octal)
+  file+0x24c94 copy=1 orig=0 (octal)
+row | c0  c1  c2  c3  c4  c5  c6  c7  c8  c9  c10 c11
+  0 | 0   1   1   2   2   1   0   0   0   0   0   1  
+  1 | 0   0   1   2   2   1   0   0   0   0   0   0  
+  2 | 0   0   1   2   2   1   0   0   0   0   0   0  
+  3 | 0   0   1   2   2   1   0   0   0   0   0   0  
+  4 | 0   0   1   0   2   1   0   0   0   0   0   0  
+  5 | 0   0   1   0   2   1   0   0   0   0   0   0  
+  6 | 0   0   1   0   2   1   0   0   0   0   0   0  
+  7 | 0   0   1   0   2   1   0   0   0   0   0   0  
+  8 | 0   0   1   0   2   1   0   0   0   0   0   0  
+  9 | 0   0   1   0   2   1   0   0   0   0   0   0  
+ 10 | 0   0   1   0   2   1   0   0   0   0   0   0  
+ 11 | 0   0   1   0   2   1   0   0   0   0   0   0  
+ 12 | 0   0   1   0   2   1   0   0   0   0   0   0  
