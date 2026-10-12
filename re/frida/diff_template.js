@@ -6389,7 +6389,21 @@ function runDiff() {
             if (!cb) {
                 const nA = (se && se.nargs) | 0, rv = (se && se.ret) | 0, ty = [];
                 for (let q = 0; q < nA; q++) ty.push('uint32');
-                cb = new NativeCallback(function () { return rv; }, 'int', ty, (se && se.abi) || 'mscdecl');
+                // `ret_scratch` {off, eax_stride?, eax_max?} (fix/u9663 2026-10-12): return scratch+off instead of `ret`,
+                // plus EAX*eax_stride when the callee takes its index in EAX (0x00497190 formats contcfg%d.bin from
+                // EAX), so the caller gets a fixture-seeded string and a wrong EAX selects a different one. An EAX
+                // above eax_max returns 0 (NULL), never an address outside the scratch.
+                const rs = (se && se.ret_scratch) || null;
+                if (rs && scratch) {
+                    const rOff = rs.off | 0, st = rs.eax_stride | 0, mx = (rs.eax_max === undefined) ? 0 : (rs.eax_max >>> 0);
+                    cb = new NativeCallback(function () {
+                        const e = st ? (this.context.eax.toUInt32() >>> 0) : 0;
+                        if (e > mx) return ptr(0);
+                        return scratch.add(rOff + e * st);
+                    }, 'pointer', ty, (se && se.abi) || 'mscdecl');
+                } else {
+                    cb = new NativeCallback(function () { return rv; }, 'int', ty, (se && se.abi) || 'mscdecl');
+                }
             }
             globalThis.__scatStubKeep.push(cb);
             const pre = sa.readByteArray(5);
