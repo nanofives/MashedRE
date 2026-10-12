@@ -1,0 +1,33 @@
+# 2026-10-12 standalone after the screen-4 change (user decision: match the original, push 6).
+# MASHED_GOTO=2, MASHED_NAV_KEYS as shown, 30-frame gap; state transitions only (tap lines + changes).
+# Original (FIX_RESULT.md table): screen 4 confirm pushes 6 in modes 3 and 10.
+
+== mode3
+tap=- depth=1 screen=2 cur=0 row=0 gm=0 flow=0 fph=3
+tap=e depth=1 screen=2 cur=0 row=0 gm=0 flow=0 fph=3
+tap=- depth=2 screen=4 cur=0 row=0 gm=3 flow=0 fph=3
+tap=e depth=2 screen=4 cur=0 row=0 gm=3 flow=0 fph=3
+tap=- depth=3 screen=6 cur=0 row=0 gm=3 flow=0 fph=3
+tap=d depth=3 screen=6 cur=0 row=0 gm=3 flow=0 fph=3
+tap=- depth=3 screen=6 cur=-1 row=1 gm=3 flow=0 fph=3
+tap=u depth=3 screen=6 cur=-1 row=1 gm=3 flow=0 fph=3
+tap=- depth=3 screen=6 cur=-1 row=0 gm=3 flow=0 fph=3
+tap=e depth=3 screen=6 cur=-1 row=0 gm=3 flow=0 fph=3
+tap=- depth=3 screen=6 cur=-1 row=0 gm=3 flow=1 fph=3
+
+== mode10
+tap=- depth=1 screen=2 cur=0 row=0 gm=0 flow=0 fph=3
+tap=d depth=1 screen=2 cur=0 row=0 gm=0 flow=0 fph=3
+tap=- depth=1 screen=2 cur=1 row=0 gm=0 flow=0 fph=3
+tap=e depth=1 screen=2 cur=1 row=0 gm=0 flow=0 fph=3
+tap=- depth=2 screen=4 cur=0 row=0 gm=10 flow=0 fph=3
+tap=e depth=2 screen=4 cur=0 row=0 gm=10 flow=0 fph=3
+tap=- depth=3 screen=6 cur=0 row=0 gm=10 flow=0 fph=3
+tap=d depth=3 screen=6 cur=0 row=0 gm=10 flow=0 fph=3
+tap=- depth=3 screen=6 cur=-1 row=1 gm=10 flow=0 fph=3
+tap=u depth=3 screen=6 cur=-1 row=1 gm=10 flow=0 fph=3
+tap=- depth=3 screen=6 cur=-1 row=0 gm=10 flow=0 fph=3
+tap=e depth=3 screen=6 cur=-1 row=0 gm=10 flow=0 fph=3
+tap=- depth=4 screen=24 cur=0 row=0 gm=10 flow=0 fph=3
+tap=e depth=4 screen=24 cur=0 row=0 gm=10 flow=0 fph=3
+tap=- depth=4 screen=24 cur=0 row=0 gm=10 flow=1 fph=3

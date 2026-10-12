@@ -26,6 +26,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-12  -  standalone menu  U-9672 item (1) resolved  Screen 4 confirm (0xff1d0000) now pushes 6 in modes 2/3/4/5/10 as the bytes do (0x0043e557..0x0043e584, FUN_00430760); the 2026-06-15 ecdc/ed6c reading pushed 7. User decision. Traces: mode 3 and mode 10 land on screen 6, cursor -1 and launch / screen 24 as the original.
 2026-10-12  0042ac90  MenuEntryGet  U-9667 RESOLVED  One shared MenuEntryWalk body (.asi + standalone), ItemActionCode deleted; standalone cursor -1 path ported (screens 6/7 go to -1, confirm branches on game mode). run_diff GREEN 16/16, path2 + full auto-hook PASS. re/analysis/u9667_menu_tables/FIX_RESULT.md
 2026-10-12  -  standalone menu  U-9672 / U-9673 filed  Residual menu differences (screen 4 -> 7 vs 6 and locked-track row are user calls; popup, extra writes, key repeat not ported) and the nav harness R2-2 crash (pre-existing 2528c8b3).
 2026-10-12  0041a3e0  HudDispatchMode10  C2->C3 (new port)  Ported from the bytes (no body existed). run_diff GREEN 8/8, self-baseline GREEN, negctl null/ret RED, mutation RED 6/8, path2 PASS, full auto-hook boot PASS. re/analysis/negctl/reearn_20261011/fix_hud_dispatch_RESULT.md

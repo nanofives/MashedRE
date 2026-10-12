@@ -178,6 +178,14 @@ int g_cup_continue_variant = 1;  // FUN_004307a0 stand-in (1 = single 0x135;
                                  // 0 = two-choice 0x136). Default = single until
                                  // the DAT_00614718 threshold table is harvested.
 
+// FUN_00430760 (0x00430760) - 1 iff the game mode DAT_0067e9fc is 2, 10, 3, 4 or 5
+// (cmp/je chain 0x00430765..0x0043077c -> mov eax,1 at 0x00430781; else xor eax,eax at 0x0043077e).
+// Verbatim; the compare order does not matter for the result.
+static bool Q_ModeIsCupFlow() {
+    const int m = g_game_state.game_mode;
+    return m == 2 || m == 10 || m == 3 || m == 4 || m == 5;
+}
+
 // FUN_0042bb60 (0x0042bb60) - team-composition validator. Counts active team
 // slots (DAT_007f1a14/24/34/44 >= 0); for each, reads its team byte
 // (&DAT_0067e938)[slot*3]-1 and tallies team-0 (iVar2) vs team-1 (iVar4).
@@ -272,17 +280,20 @@ int ActionToScreen(std::uint32_t action, int slot_kind) {
         case 0xff3b0000u: return 6;    // L914
         case 0xff400000u: return 4;    // L273 (LAB_0043f468 path; pushes 4)
         case 0xff1d0000u:
-            // Colour-select forward (FUN_0043dfd0 L303+). STATE-DEPENDENT, CORRECTED
-            // 2026-06-15: the post-colour screen is Challenge Select for the
-            // single-player flow, NOT Ability Select (user). The original:
-            //   ecdc != 0           -> push 6  (Challenge Select, kind-2)
-            //   ecdc == 0, ed6c == 0-> push 7  (Challenge Select, kind-0xa) [SP default]
-            //   ecdc == 0, ed6c != 0-> push 0xf (Ability) / 0x10 (Team)  [team/MP]
-            // Ability Select is the TEAM/MULTIPLAYER branch (after the per-player
-            // team-array setup), not the single-player Challenge Cup path.
-            if (g_game_state.flag_ecdc != 0) return 6;
-            if (g_game_state.flag_ed6c == 0) return 7;   // SP -> Challenge Select
-            return 0xf;  // team/MP -> Ability Select [residual: 0x10 Team when ea64!=0]
+            // Colour-select forward. Re-read from the bytes 2026-10-12 (user decision: match the original; this
+            // replaces the 2026-06-15 ecdc/ed6c reading, which pushed 7 in single player):
+            //   0x0043e557 cmp edi,0xff1d0000 / jne      -> this arm
+            //   0x0043e563 call FUN_00430760              -> 1 iff DAT_0067e9fc (game mode) is 2,10,3,4,5
+            //                                                (0x00430760..0x00430786)
+            //   != 0: 0x0043e584 FUN_0043d2a0(6,0)       -> push 6 (Challenge Select)
+            //   == 0: 0x0043e59e FUN_0042b9e0() == 0x1000 -> team setup, push 0xf (0x0043e5e9) or 0x10 when
+            //                                                DAT_0067ea64 != 0 (0x0043e5f8); 0 / 1 -> modal
+            //                                                FUN_0042bf30 (0x0043e607..), no nav
+            // There is no push of 7 in this arm. [UNCERTAIN U-9672] not ported here: the push-6 arm's side writes
+            // (DAT_007f1a1c from DAT_0067f0c0 at 0x0043e56c..7e, FUN_00431d00 at 0x0043e58e, DAT_0067ea78 = 0 at
+            // 0x0043e593) and the FUN_0042b9e0 gate of the team branch (kept as the previous residual below).
+            if (Q_ModeIsCupFlow()) return 6;
+            return 0xf;  // team/MP -> Ability Select [residual: 0x10 Team when ea64!=0; FUN_0042b9e0 gate]
         case 0xff4a0000u: return kActReload; // L1145 FUN_0043d2a0(0,2)
         case 0xff3a0000u: return kActReload; // L907 FUN_0043d2a0(0,2)
         case 0xff150000u: return kActReload; // L338 FUN_0043d2a0(0,2)
