@@ -1,0 +1,15 @@
+hook	rva	arg_type	lane	mode	verdict	mismatches	total	stats	err
+menu_menus_bc	0x0042f8d0	scalars_to_scattered_globals	warm	real	GREEN	0	9		
+menu_menus_bc	0x0042f8d0	scalars_to_scattered_globals	warm	baseline	GREEN	0	9		
+menu_menus_bc	0x0042f8d0	scalars_to_scattered_globals	warm	null	RED	9	9	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+menu_menus_bc	0x0042f8d0	scalars_to_scattered_globals	warm	ret	SKIP	0	0		void signature
+menu_menus_bc	0x0042f8d0	scalars_to_scattered_globals	warm	field_first	NA	0	9	calls=9 flips=0 changed=0 flip=0x00000000 noise=161 frozen=2	
+menu_menus_bc	0x0042f8d0	scalars_to_scattered_globals	warm	field_last	NA	0	9	calls=9 flips=0 changed=0 flip=0x00000000 noise=191 frozen=2	
+menu_menus_bc	0x0042f8d0	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	9	calls=9 flips=0 changed=0 flip=0x00000000 noise=193 frozen=2	
+read_mode_from_combo_j5	0x00498d20	scalars_to_scattered_globals	warm	real	GREEN	0	12		
+read_mode_from_combo_j5	0x00498d20	scalars_to_scattered_globals	warm	baseline	GREEN	0	12		
+read_mode_from_combo_j5	0x00498d20	scalars_to_scattered_globals	warm	null	RED	12	12	calls=0 flips=0 changed=0 flip=0x00000000 noise=193 frozen=2	
+read_mode_from_combo_j5	0x00498d20	scalars_to_scattered_globals	warm	ret	RED	12	12	calls=12 flips=0 changed=0 flip=0x00000000 noise=193 frozen=2	
+read_mode_from_combo_j5	0x00498d20	scalars_to_scattered_globals	warm	field_first	RED	12	12	calls=12 flips=12 changed=4 flip=0x00773200 noise=193 frozen=2	
+read_mode_from_combo_j5	0x00498d20	scalars_to_scattered_globals	warm	field_last	RED	12	12	calls=12 flips=12 changed=4 flip=0x00773203 noise=197 frozen=2	
+read_mode_from_combo_j5	0x00498d20	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	12	calls=12 flips=0 changed=4 flip=0x00000000 noise=213 frozen=2	

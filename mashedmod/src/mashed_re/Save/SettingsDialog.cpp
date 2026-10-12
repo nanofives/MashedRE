@@ -43,7 +43,7 @@
 // ============================================================================
 // 0x00498d20  ReadModeFromCombo_j5
 //
-// Original 53 bytes (0x00498d20..0x00498d52).  HWND via EAX (Ghidra in_EAX).
+// Original 53 bytes (0x00498d20..0x00498d54, ret at 0x00498d54).  HWND via EAX (Ghidra in_EAX).
 // Reads the current selection from the mode combo (control 0x3e9 = 1001) and
 // writes the associated CB_GETITEMDATA payload into DAT_00773200 (current mode).
 //

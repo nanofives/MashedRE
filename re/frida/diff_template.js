@@ -6428,6 +6428,10 @@ function runDiff() {
         // item data + CB_GETCURSEL (COMBOBOX), then the id of the focused window. HWND values never enter it (they
         // differ per arm). The tree is destroyed after each arm. The readback is also sent as a 'log' line.
         const dlgCfg = CONFIG.dialog || null;
+        // Per-test `dialog` (a2-dialog 2026-10-12): a test may carry its own {controls} tree, used for that test's
+        // two arms instead of CONFIG.dialog (0x00498d20 reads the 0x3e9 combo's selection, so each vector needs its
+        // own items / selection). CONFIG.dialog must still be set: it enables the USER32 bindings below.
+        let dlgCur = dlgCfg;
         let dlg = null;
         let U = null;
         if (dlgCfg) {
@@ -6447,7 +6451,7 @@ function runDiff() {
                                     0, 0, 400, 300, NULL, NULL, NULL, NULL);
             if (parent.isNull()) throw new Error('dialog: CreateWindowExA(parent) failed');
             const kids = {};
-            (dlgCfg.controls || []).forEach(function (c) {
+            (dlgCur.controls || []).forEach(function (c) {
                 const h = U.create(0, Memory.allocUtf8String(c.cls), Memory.allocUtf8String(c.text || ''),
                                    (0x40000000 | (c.style | 0)) >>> 0, 0, 0, 100, 100, parent, ptr(c.id | 0), NULL, NULL);
                 if (h.isNull()) throw new Error('dialog: CreateWindowExA(' + c.cls + ', ' + c.id + ') failed');
@@ -6480,7 +6484,7 @@ function runDiff() {
         function dlgText(h) { return dlgBytes(U.getText(h, dlgBuf, 0x3ff)); }
         function dlgReadback() {
             const out = ['0:' + JSON.stringify(dlgText(dlg.parent))];
-            (dlgCfg.controls || []).forEach(function (c) {
+            (dlgCur.controls || []).forEach(function (c) {
                 const h = dlg.kids[c.id];
                 let s = c.id + ':' + JSON.stringify(dlgText(h));
                 if (c.cls === 'BUTTON') s += ' chk=' + U.send(h, 0xf0, NULL, NULL);          // BM_GETCHECK
@@ -6587,6 +6591,7 @@ function runDiff() {
         try {
         for (let i = 0; i < CONFIG.tests.length; i++) {
             const t = CONFIG.tests[i];
+            if (dlgCfg) dlgCur = (t && t.dialog) ? t.dialog : dlgCfg;
             const args = (t && t.args) ? t.args : (Array.isArray(t) ? t : [t]);
             // Trim to the declared arity: the zero-arg entries carry a placeholder test `0`, which current Frida
             // rejects with "bad argument count" on BOTH arms (10 C3 rows read RED/RED, negctl 2026-10-11). A cdecl
