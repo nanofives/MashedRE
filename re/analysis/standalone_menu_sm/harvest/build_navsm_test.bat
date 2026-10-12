@@ -20,7 +20,11 @@ cl /nologo /EHsc /std:c++17 ^
    ..\..\..\..\mashedmod\src\mashed_re\Frontend\FrontendState.cpp ^
    ..\..\..\..\mashedmod\src\mashed_re\Frontend\MenuScoreSort.cpp ^
    ..\..\..\..\mashedmod\src\mashed_re\Race\RaceModes.cpp ^
-   /Fe:navsm_test.exe
+   /Fe:navsm_test.exe ^
+   /link /BASE:0x10000 /FIXED:NO /DYNAMICBASE:NO
+REM U-9673: the fixed low base keeps the test image's 10 MB .bss arena over
+REM 0x00500000..0x009fffff, the MASHED data addresses the ported code touches
+REM (navsm_test.cpp g_mashed_arena). Do not drop these link flags.
 if errorlevel 1 (echo [navsm_test] BUILD FAILED & popd & exit /b 1)
 
 echo === RUN navsm_test ===
