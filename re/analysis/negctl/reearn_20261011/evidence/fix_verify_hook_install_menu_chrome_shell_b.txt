@@ -1,0 +1,27 @@
+# provenance 2026-10-12: main build e923e607 deployed (asi sha256 0779182638dbb1da...), MASHED_HOOK_ONLY=0x0042e5b0, MASHED_VERIFY_ASI=original/mashed_re_dev.asi
+=== verify_hook_install report (menu_chrome_shell_b) ===
+
+target address: 0x0042e5b0  export: MenuChromeShellB
+PRE  bytes:     e9 bb cb 37 69 56 57 33
+asi base:       0x69790000
+reimpl addr:    0x697ab170
+POST bytes:     e9 bb cb 37 69 56 57 33
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x6937cbbb  expected 0x6937cbbb  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  1 / 1  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [], 'seed': [{'addr': 8208376, 'val': {'scratch': 0}}, {'addr': {'scratch': 24}, 'val': 1056964608}, {'addr': {'scratch': 32}, 'val': 4372662}, {'addr': {'scratch': 48}, 'val': 4372662}, {'addr': 6535424, 'val': {'scratch': 64}}, {'addr': {'scratch': 72}, 'val': {'scratch': 72}}, {'addr': 8208380, 'val': 308}, {'addr': {'scratch': 308}, 'val': {'scratch': 4096}}, {'addr': 8842440, 'val': 128}, {'addr': 8842444, 'val': 64}, {'addr': 8327184, 'val': 1090519040}, {'addr': 6809672, 'val': 4}, {'addr': 6811832, 'val': 6}, {'addr': 9015520, 'val': 256}]}  got=b0eb9428  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 1x as expected
+  + all 1 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_menu_chrome_shell_b.txt

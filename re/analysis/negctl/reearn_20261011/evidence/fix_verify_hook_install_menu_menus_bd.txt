@@ -1,0 +1,27 @@
+# provenance 2026-10-12: main build e923e607 deployed (asi sha256 0779182638dbb1da...), MASHED_HOOK_ONLY=0x0040b460, MASHED_VERIFY_ASI=original/mashed_re_dev.asi
+=== verify_hook_install report (menu_menus_bd) ===
+
+target address: 0x0040b460  export: MenuMenusBD
+PRE  bytes:     e9 5b aa 39 69 5c 24 18
+asi base:       0x69790000
+reimpl addr:    0x697a5ec0
+POST bytes:     e9 5b aa 39 69 5c 24 18
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x6939aa5b  expected 0x6939aa5b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  1 / 1  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [{'scratch': 0}], 'seed': [{'addr': 9082096, 'val': 3}, {'addr': 9082100, 'val': 9}, {'addr': 9082104, 'val': 1}, {'addr': 9082108, 'val': 5}, {'addr': 8329748, 'val': 0}, {'addr': 8329764, 'val': 1}, {'addr': 8329780, 'val': 2}, {'addr': 8329796, 'val': 3}, {'addr': 8327120, 'val': 0}, {'addr': 8327116, 'val': 0}]}  got=f5a6935  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 1x as expected
+  + all 1 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_menu_menus_bd.txt

@@ -1,0 +1,27 @@
+# provenance 2026-10-12: main build e923e607 deployed (asi sha256 0779182638dbb1da...), MASHED_HOOK_ONLY=0x0042b180, MASHED_VERIFY_ASI=original/mashed_re_dev.asi
+=== verify_hook_install report (menu_button_detect_b) ===
+
+target address: 0x0042b180  export: MenuButtonDetectB
+PRE  bytes:     e9 cb 72 37 69 56 57 33
+asi base:       0x69790000
+reimpl addr:    0x697a2450
+POST bytes:     e9 cb 72 37 69 56 57 33
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x693772cb  expected 0x693772cb  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  1 / 1  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [], 'seed': [{'addr': 8329740, 'val': 4096}, {'addr': 6810104, 'val': 0}, {'addr': 6810940, 'val': 6}, {'addr': 6812084, 'val': 1050253722}, {'addr': 8327172, 'val': 1045220557}, {'addr': 8327239, 'val': 0, 'size': 1}, {'addr': 8328455, 'val': 0, 'size': 1}, {'addr': 8327315, 'val': 1, 'size': 1}, {'addr': 8328531, 'val': 1, 'size': 1}, {'addr': 8327391, 'val': 0, 'size': 1}, {'addr': 8328607, 'val': 0, 'size': 1}, {'addr': 8327467, 'val': 0, 'size': 1}, {'addr': 8328683, 'val': 0, 'size': 1}, {'addr': 8327543, 'val': 0, 'size': 1}, {'addr': 8328759, 'val': 0, 'size': 1}, {'addr': 8327619, 'val': 0, 'size': 1}, {'addr': 8328835, 'val': 0, 'size': 1}, {'addr': 8327695, 'val': 0, 'size': 1}, {'addr': 8328911, 'val': 0, 'size': 1}, {'addr': 8327771, 'val': 0, 'size': 1}, {'addr': 8328987, 'val': 0, 'size': 1}, {'addr': 8329748, 'val': 4294967295}, {'addr': 8329764, 'val': 4294967295}, {'addr': 8329780, 'val': 4294967295}, {'addr': 8329796, 'val': 4294967295}]}  got=1,3c24d22a  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 1x as expected
+  + all 1 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_menu_button_detect_b.txt

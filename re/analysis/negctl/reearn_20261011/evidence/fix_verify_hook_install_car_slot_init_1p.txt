@@ -1,0 +1,27 @@
+# provenance 2026-10-12: main build e923e607 deployed (asi sha256 0779182638dbb1da...), MASHED_HOOK_ONLY=0x0042b960, MASHED_VERIFY_ASI=original/mashed_re_dev.asi
+=== verify_hook_install report (car_slot_init_1p) ===
+
+target address: 0x0042b960  export: CarSlotInit1P
+PRE  bytes:     e9 3b 74 37 69 7f 00 eb
+asi base:       0x69790000
+reimpl addr:    0x697a2da0
+POST bytes:     e9 3b 74 37 69 7f 00 eb
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x6937743b  expected 0x6937743b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  1 / 1  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [], 'seed': [{'addr': 6236016, 'val': {'scratch': 0}}, {'addr': 8327234, 'val': 0, 'size': 1}, {'addr': 8328450, 'val': 0, 'size': 1}, {'addr': 8327310, 'val': 0, 'size': 1}, {'addr': 8328526, 'val': 0, 'size': 1}, {'addr': 8327386, 'val': 1, 'size': 1}, {'addr': 8328602, 'val': 0, 'size': 1}, {'addr': 8327462, 'val': 0, 'size': 1}, {'addr': 8328678, 'val': 0, 'size': 1}, {'addr': 8327538, 'val': 0, 'size': 1}, {'addr': 8328754, 'val': 0, 'size': 1}, {'addr': 8327614, 'val': 0, 'size': 1}, {'addr': 8328830, 'val': 0, 'size': 1}, {'addr': 8327690, 'val': 0, 'size': 1}, {'addr': 8328906, 'val': 0, 'size': 1}, {'addr': 8327766, 'val': 0, 'size': 1}, {'addr': 8328982, 'val': 0, 'size': 1}]}  got=90bb6b83  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 1x as expected
+  + all 1 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_car_slot_init_1p.txt
