@@ -26,6 +26,8 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-12  004963e0  ConfigLogError  C4 grandfathered (user decision)  disable_log removes the body from the reference; C4 kept by decision, not re-earned. U-9655 DECIDED.
+2026-10-12  00496400  ConfigLogDebug  C4 grandfathered (user decision)  disable_log writes ret at the entry; C4 kept by decision, not re-earned. U-9656 DECIDED.
 2026-10-12  0049fa40  FUN_0049fa40  C3 accepted by inspection  xor eax,eax; ret 4: null mutant cannot differ. U-9658 DECIDED (user).
 2026-10-12  0045b350  RwInitNullStub  C3 accepted by inspection  single RET: no control can differ. U-9657 DECIDED (user).
 2026-10-12  004cbb50  RwComReleaseThunk  C3 accepted by inspection  no stores; null/ret RED. U-9668 DECIDED (user).
