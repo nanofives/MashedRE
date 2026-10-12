@@ -8,9 +8,12 @@ Shared evidence:
 - negctl run: `runs/fix_hud/negctl_20261012_045126.tsv`, copied to `evidence/fix_negctl_hud.tsv`
   (handler `scalars_to_scattered_globals`, classes null, ret, field_first, field_last, field_none, slots 1).
 - Fixtures: `re/frida/negctl_fixtures/z_fix_hud.py` overrides all six keys (loads last).
-- Harness: `re/frida/diff_template.js` gets the `stub_at` block for `scalars_to_scattered_globals`, copied by
-  hand from reearn/replay `e58dfc6c`. It is the single hunk of that commit's `diff_template.js` change and
-  nothing else. `run_diff.py` already forwards `stub_at` on this base.
+- Harness: `re/frida/diff_template.js` `stub_at` support for `scalars_to_scattered_globals`. ea7a93af first
+  carried a hand copy of the single `diff_template.js` hunk of reearn/replay `e58dfc6c`. After the parent's
+  note, race/first-frame-parity (with reearn/replay, 606a8bbd) was merged into this branch (6571b4a6). The
+  merge was clean, the block appears once, and `diff_template.js` is byte-identical to 606a8bbd, so the
+  support now comes from the merged commit. Rebuilt on the merged tree (`MASHED_NO_DEPLOY=1`), run_diff is
+  GREEN again on all six (5/5, 13/13, 6/6, 7/7, 7/7, 10/10). No merged fixture overrides the six hud keys.
 - Witness: one build with each function's principal old defect put back alone (the six functions are
   independent), run_diff RED on all six. Then the sources were restored, rebuilt, and run_diff re-run GREEN.
   The `fix_diff_*.csv` files come from that re-run, not from the witness build.
