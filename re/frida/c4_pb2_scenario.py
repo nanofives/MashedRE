@@ -60,6 +60,10 @@ assert not HOLD_PIZ or os.environ.get('C4PB2_GAMEROOT'), "C4PB2_HOLD_PIZ needs C
 # each race-loop tick; a PermissionError means the game holds that file without read sharing. Copy only.
 PROBE_PIZ = os.environ.get('C4PB2_PROBE_PIZ') == '1'
 assert not PROBE_PIZ or os.environ.get('C4PB2_GAMEROOT'), "C4PB2_PROBE_PIZ needs C4PB2_GAMEROOT"
+# C4PB2_PIZ_GLOB=<glob under <root>/TOASTART> picks the files HOLD_PIZ holds and PROBE_PIZ probes (default
+# TRACKS/*.piz, e.g. VEHICLES/*.piz or **/*.piz). C4PB2_PROBE_SECS = probe window after the confirm (default 1.2).
+PIZ_GLOB = os.environ.get('C4PB2_PIZ_GLOB', 'TRACKS/*.piz')
+PROBE_SECS = float(os.environ.get('C4PB2_PROBE_SECS', '1.2'))
 # C4PB2_BARRIER=<dir>: two harness runs (own PIDs each) meet before the screen-18 Play Game confirm and press
 # it at the same wall-clock instant, i.e. two MASHED processes starting the same track load together.
 BARRIER = os.environ.get('C4PB2_BARRIER')
@@ -81,7 +85,7 @@ def barrier_wait(tag, log):
     log(f"  BARRIER released at {time.time():.3f} (target {tgt:.3f})"); return tgt
 def probe_piz():
     locked = []
-    for f in sorted((ORIG / "TOASTART" / "TRACKS").glob("*.piz")):
+    for f in sorted((ORIG / "TOASTART").glob(PIZ_GLOB)):
         try:
             with open(f, "rb"): pass
         except PermissionError:
@@ -287,7 +291,7 @@ def main():
            "env": {k: env.get(k) for k in ("MASHED_HOOK_ONLY", "MASHED_RE_NO_AUTO_HOOK")},
            "recipe": {"picks": PICKS, "teams": TEAMS, "pulse": RACE_PULSE, "hold": RACE_HOLD, "steer": RACE_STEER, "extra_opp": EXTRA_OPP,
                       "s18_row": S18_ROW, "s18_force": S18_FORCE, "dev_zero": DEV_ZERO,
-                      "gameroot": str(ORIG), "hold_piz": HOLD_PIZ},
+                      "gameroot": str(ORIG), "hold_piz": HOLD_PIZ, "piz_glob": PIZ_GLOB},
            "log": [], "nav": [], "presses": [], "crash": [], "crash_full": []}
     def log(msg):
         print(msg, flush=True); rec["log"].append(msg)
@@ -426,13 +430,13 @@ def main():
                 if BARRIER:
                     rec["barrier_t"] = barrier_wait(tag, log)
                 if HOLD_PIZ:
-                    held = [open(f, "rb") for f in sorted((ORIG / "TOASTART" / "TRACKS").glob("*.piz"))]
+                    held = [open(f, "rb") for f in sorted((ORIG / "TOASTART").glob(PIZ_GLOB))]
                     rec["held_piz"] = [h.name for h in held]
-                    log(f"  HOLD_PIZ: holding {len(held)} track piz open read-only")
+                    log(f"  HOLD_PIZ: holding {len(held)} piz ({PIZ_GLOB}) open read-only")
             nav.press(4)
             if PROBE_PIZ:
                 t_c = time.time(); prev = None
-                while time.time() - t_c < 1.2:
+                while time.time() - t_c < PROBE_SECS:
                     lk = probe_piz()
                     if lk != prev:
                         rec.setdefault("piz_locks", []).append([round(time.time() - t_c, 3), lk]); log(f"  piz locked t+{time.time()-t_c:.2f}s after confirm {k}: {lk}"); prev = lk

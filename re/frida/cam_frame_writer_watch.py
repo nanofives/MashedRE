@@ -24,7 +24,14 @@
 # Watchpoint mechanism copied from probe_watchpoint.py (survives ~90s). Hot-path
 # rule: matrix writes are a few per frame, windows are short (default 2.5s).
 #
-# Usage: py -3.12 re/frida/cam_frame_writer_watch.py [--settle 3] [--window 2.5]
+# --pads (U-9676, 2026-10-12): instead of the frame passes, watch each RwMatrix pad slot
+# (+0x68/+0x78/+0x88, i.e. matrix +0x1c/+0x2c/+0x3c of the matrix at entry+0x4c) of every live
+# camera entry (0x008964c0 + k*0xd8, k < [0x00898994]), one slot per pass on DR0. Hits are keyed
+# by writer PC and by which 0x004464c0 callee is on the stack (return 0x004464e5 = 0x00445aa0,
+# 0x004464f5 = 0x00441d40, 0x00446505 = 0x00442440); ESI/EDI/ECX and the dword at ESI-4 are kept
+# so a rep movsd source can be resolved.
+#
+# Usage: py -3.12 re/frida/cam_frame_writer_watch.py [--settle 3] [--window 2.5] [--pads]
 import argparse, json, os, shutil, subprocess, sys, time
 from pathlib import Path
 import frida
@@ -48,8 +55,18 @@ let DELTA = 0;
 let counts = {};        // pc_rva -> count
 let samples = {};       // pc_rva -> {bt, val, esp, ...}
 let armedTids = [];
+let seq = [];           // last hits in order: pc|callee
+const SEQ_MAX = 12;
 let handlerInstalled = false;
 let WADDR = null;
+const DISPATCH_RETS = {0x4464e5: '445aa0', 0x4464f5: '441d40', 0x446505: '442440'};
+function callerOf(esp){
+  try { for (let k = 0; k < 512; k++){
+    let x = (esp.add(k*4).readU32() >>> 0) - DELTA;
+    if (DISPATCH_RETS[x] !== undefined) return {callee: DISPATCH_RETS[x], off: k*4};
+  } } catch(e){}
+  return {callee: 'none', off: -1};
+}
 const LO = 0x401000, HI = 0x995000;
 
 function rvaOf(p){ return '0x' + ((p.toUInt32() - DELTA) >>> 0).toString(16); }
@@ -70,14 +87,20 @@ function installHandler(){
     if (d.type === 'breakpoint' || d.type === 'single-step'){
       let c = d.context;
       let key = rvaOf(c.pc);
+      let cal = callerOf(c.esp);
+      key = key + '|' + cal.callee;
       counts[key] = (counts[key] || 0) + 1;
+      seq.push(key); if (seq.length > SEQ_MAX) seq.shift();
       if (!samples[key]){
+        let src = '?';
+        try { src = '0x' + (c.esi.sub(4).readU32() >>> 0).toString(16); } catch(e){}
         let v = '?';
         try { v = '0x' + (WADDR.readU32() >>> 0).toString(16); } catch(e){}
         samples[key] = { pc_abs: absHex(c.pc), val: v, esp: absHex(c.esp),
                          eax: absHex(c.eax), ecx: absHex(c.ecx), edx: absHex(c.edx),
                          esi: absHex(c.esi), edi: absHex(c.edi), ebx: absHex(c.ebx),
-                         ebp: absHex(c.ebp), bt: btOf(c.esp) };
+                         ebp: absHex(c.ebp), bt: btOf(c.esp),
+                         esi_m4: src, caller_off: cal.off };
       }
       return true;
     }
@@ -111,10 +134,18 @@ rpc.exports = {
     } catch(e){ out.error = String(e); }
     return out;
   },
+  entries: function(){
+    let n = ptr(0x00898994 + DELTA).readS32(); let t = [];
+    for (let k = 0; k < Math.max(0, Math.min(n, 16)); k++) t.push(ptr(0x008964c0 + DELTA + k*0xd8 + 4).readS32());
+    // 0x004c4a50 multiplies through call [ecx+edx+8] with ecx=[0x007d4028], edx=[0x007d3ff8] (0x004c4cd8)
+    let mul = '?';
+    try { mul = absHex(ptr(ptr(0x007d3ff8 + DELTA).readU32() + ptr(0x007d4028 + DELTA).readU32() + 8).readPointer()); } catch(e){ mul = String(e); }
+    return { count: n, types: t, mul_fn: mul };
+  },
   arm: function(addr_str){
     installHandler();
     WADDR = ptr(addr_str);
-    counts = {}; samples = {};
+    counts = {}; samples = {}; seq = [];
     armedTids = [];
     Process.enumerateThreads().forEach(function(t){
       try { t.setHardwareWatchpoint(0, WADDR, 4, 'w'); armedTids.push(t.id); }
@@ -128,7 +159,7 @@ rpc.exports = {
     rows.sort((a,b) => b.count - a.count);
     let cur = '?';
     try { cur = '0x' + (WADDR.readU32() >>> 0).toString(16); } catch(e){}
-    return { rows: rows, cur_val: cur };
+    return { rows: rows, cur_val: cur, seq: seq.slice() };
   },
   disarm: function(){
     Process.enumerateThreads().forEach(function(t){
@@ -145,6 +176,9 @@ def main():
     ap.add_argument("--settle", type=float, default=3.5)
     ap.add_argument("--window", type=float, default=2.5)
     ap.add_argument("--mode-sel", type=int, default=1)
+    ap.add_argument("--pads", action="store_true", help="U-9676: watch every camera entry's pad slots")
+    ap.add_argument("--pad-list", default=None, help="entry indices in pass order, e.g. 4,5,3; a final "
+                    "e0+0x68 pass is appended as the liveness control")
     ap.add_argument("--out", default=str(ROOT / "verify" / "camframe" / "writers.json"))
     args = ap.parse_args()
 
@@ -219,15 +253,23 @@ def main():
         if info.get("error"):
             sys.exit(f"resolve failed: {info['error']}")
 
-        for label, key in (("modelling+0x10", "modelling_addr"), ("ltm+0x50", "ltm_addr"),
-                           ("record0_matrix@0x0089650c", "record0_matrix")):
-            addr = info[key]
+        passes = [(label, info[key]) for label, key in (("modelling+0x10", "modelling_addr"),
+                  ("ltm+0x50", "ltm_addr"), ("record0_matrix@0x0089650c", "record0_matrix"))]
+        if args.pads:
+            ent = W.entries(); result["entries"] = ent
+            print(f"  entries: {ent}")
+            ks = ([int(x) for x in args.pad_list.split(",")] if args.pad_list else list(range(len(ent["types"]))))
+            passes = [(f"e{k}+0x{o:x}", hex(0x008964c0 + info['delta'] + k * 0xd8 + o))
+                      for k in ks for o in (0x68, 0x78, 0x88)]
+            if args.pad_list:
+                passes.append(("control e0+0x68", hex(0x008964c0 + info['delta'] + 0x68)))
+        for label, addr in passes:
             a = W.arm(addr)
             print(f"  === PASS {label}: armed DR0 on {a['armed']} threads at {a['addr']} ===")
             time.sleep(args.window)
             snap = W.snapshot()
             W.disarm()
-            print(f"  {label}: cur_val={snap['cur_val']} distinct_writers={len(snap['rows'])}")
+            print(f"  {label}: cur_val={snap['cur_val']} distinct_writers={len(snap['rows'])} seq={snap.get('seq')}")
             for r in snap["rows"]:
                 s = r["sample"]
                 print(f"    PC={r['pc']} count={r['count']} val={s['val']} bt={s['bt']}")

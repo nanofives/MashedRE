@@ -1,0 +1,81 @@
+  pid=31796
+  booting to menu...
+  in race (phase=0); settling 3.5s
+  setup: {
+  "delta": 0,
+  "base": "0x400000",
+  "ctrl_addr": "0x897fe0",
+  "cam": "0x2cee8b4",
+  "frame": "0x483c698",
+  "modelling_addr": "0x483c6a8",
+  "ltm_addr": "0x483c6e8",
+  "record0_matrix": "0x89650c",
+  "mat_modelling": {
+    "right": [
+      -0.8932693004608154,
+      0.4416145384311676,
+      -0.08394383639097214
+    ],
+    "up": [
+      0.4495219588279724,
+      0.8775560259819031,
+      -0.16680951416492462
+    ],
+    "at": [
+      -7.450580596923828e-08,
+      -0.18674039840698242,
+      -0.9824092984199524
+    ],
+    "pos": [
+      1.5893465280532837,
+      3.7500932216644287,
+      22.50733184814453
+    ]
+  },
+  "mat_ltm": {
+    "right": [
+      -0.8932693004608154,
+      0.4416145384311676,
+      -0.08394383639097214
+    ],
+    "up": [
+      0.4495219588279724,
+      0.8775560259819031,
+      -0.16680951416492462
+    ],
+    "at": [
+      -7.450580596923828e-08,
+      -0.18674039840698242,
+      -0.9824092984199524
+    ],
+    "pos": [
+      1.5893465280532837,
+      3.7500932216644287,
+      22.50733184814453
+    ]
+  }
+}
+  entries: {'count': 7, 'types': [0, 1, 1, 1, 2, 2, 3], 'mul_fn': '0x5cb2a0'}
+  === PASS e2+0x68: armed DR0 on 50 threads at 0x8966d8 ===
+  e2+0x68: cur_val=0x3 distinct_writers=2
+    PC=0x4c4cf1|441d40 count=122 val=0x3 bt=['0x8966bc', '0x8966bc', '0x8966dc', '0x8966bc', '0x40e2a7']
+    PC=0x4c4c1a|441d40 count=61 val=0x0 bt=['0x8966bc', '0x8966bc', '0x8966dc', '0x40e2a7', '0x897fe0', '0x40e2a7']
+  === PASS e2+0x78: armed DR0 on 50 threads at 0x8966e8 ===
+  e2+0x78: cur_val=0x3 distinct_writers=2
+    PC=0x4c4cf1|441d40 count=122 val=0x0 bt=['0x8966bc', '0x8966bc', '0x8966dc', '0x8966bc', '0x40e2a7']
+    PC=0x4c4c1a|441d40 count=61 val=0x40e2a7 bt=['0x8966bc', '0x8966bc', '0x8966dc', '0x40e2a7', '0x897fe0', '0x40e2a7']
+  === PASS e2+0x88: armed DR0 on 50 threads at 0x8966f8 ===
+  e2+0x88: cur_val=0x0 distinct_writers=2
+    PC=0x4c4cf3|441d40 count=122 val=0x40e2a7 bt=['0x8966bc', '0x8966bc', '0x8966dc', '0x8966bc', '0x40e2a7']
+    PC=0x4c4c1c|441d40 count=61 val=0x897fe0 bt=['0x8966bc', '0x8966bc', '0x8966dc', '0x40e2a7', '0x897fe0', '0x40e2a7']
+  === PASS e6+0x68: armed DR0 on 50 threads at 0x896a38 ===
+  e6+0x68: cur_val=0x0 distinct_writers=0
+  === PASS e6+0x78: armed DR0 on 50 threads at 0x896a48 ===
+  e6+0x78: cur_val=0x0 distinct_writers=0
+  === PASS e6+0x88: armed DR0 on 50 threads at 0x896a58 ===
+  e6+0x88: cur_val=0x0 distinct_writers=0
+  === PASS control e0+0x68: armed DR0 on 50 threads at 0x896528 ===
+  control e0+0x68: cur_val=0x3 distinct_writers=2
+    PC=0x4c4cf1|445aa0 count=122 val=0x3 bt=['0x89650c', '0x89650c', '0x89650c']
+    PC=0x4c4c1a|445aa0 count=61 val=0xbd7fc180 bt=['0x89650c', '0x89650c', '0x8964c0']
+  wrote C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\crashcam\re\analysis\negctl\session_20261012b\crashcam_evidence\u9676_padwatch4.json

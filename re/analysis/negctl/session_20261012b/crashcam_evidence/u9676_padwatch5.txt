@@ -1,0 +1,97 @@
+  pid=17600
+  booting to menu...
+  in race (phase=0); settling 3.5s
+  setup: {
+  "delta": 0,
+  "base": "0x400000",
+  "ctrl_addr": "0x897fe0",
+  "cam": "0x484e9dc",
+  "frame": "0x484c698",
+  "modelling_addr": "0x484c6a8",
+  "ltm_addr": "0x484c6e8",
+  "record0_matrix": "0x89650c",
+  "mat_modelling": {
+    "right": [
+      -0.8939294815063477,
+      0.4403233230113983,
+      -0.08369839191436768
+    ],
+    "up": [
+      0.4482076168060303,
+      0.8782045841217041,
+      -0.16693280637264252
+    ],
+    "at": [
+      -8.195638656616211e-08,
+      -0.18674039840698242,
+      -0.9824092984199524
+    ],
+    "pos": [
+      1.363403081893921,
+      3.8311095237731934,
+      22.601266860961914
+    ]
+  },
+  "mat_ltm": {
+    "right": [
+      -0.8939294815063477,
+      0.4403233230113983,
+      -0.08369839191436768
+    ],
+    "up": [
+      0.4482076168060303,
+      0.8782045841217041,
+      -0.16693280637264252
+    ],
+    "at": [
+      -8.195638656616211e-08,
+      -0.18674039840698242,
+      -0.9824092984199524
+    ],
+    "pos": [
+      1.363403081893921,
+      3.8311095237731934,
+      22.601266860961914
+    ]
+  }
+}
+  entries: {'count': 7, 'types': [0, 1, 1, 1, 2, 2, 3], 'mul_fn': '0x5cb2a0'}
+  === PASS e0+0x68: armed DR0 on 49 threads at 0x896528 ===
+  e0+0x68: cur_val=0x3 distinct_writers=2 seq=['0x4c4c1a|445aa0', '0x4c4cf1|445aa0', '0x4c4cf1|445aa0', '0x4c4c1a|445aa0', '0x4c4cf1|445aa0', '0x4c4cf1|445aa0', '0x4c4c1a|445aa0', '0x4c4cf1|445aa0', '0x4c4cf1|445aa0', '0x4c4c1a|445aa0', '0x4c4cf1|445aa0', '0x4c4cf1|445aa0']
+    PC=0x4c4cf1|445aa0 count=122 val=0x3 bt=['0x89650c', '0x89650c', '0x89650c']
+    PC=0x4c4c1a|445aa0 count=61 val=0xbd7fc180 bt=['0x89650c', '0x89650c', '0x8964c0']
+  === PASS e0+0x78: armed DR0 on 50 threads at 0x896538 ===
+  e0+0x78: cur_val=0x3 distinct_writers=2 seq=['0x4c4c1a|445aa0', '0x4c4cf1|445aa0', '0x4c4cf1|445aa0', '0x4c4c1a|445aa0', '0x4c4cf1|445aa0', '0x4c4cf1|445aa0', '0x4c4c1a|445aa0', '0x4c4cf1|445aa0', '0x4c4cf1|445aa0', '0x4c4c1a|445aa0', '0x4c4cf1|445aa0', '0x4c4cf1|445aa0']
+    PC=0x4c4cf1|445aa0 count=122 val=0xbd7fc180 bt=['0x89650c', '0x89650c', '0x89650c']
+    PC=0x4c4c1a|445aa0 count=61 val=0x0 bt=['0x89650c', '0x89650c', '0x8964c0']
+  === PASS e0+0x88: armed DR0 on 50 threads at 0x896548 ===
+  e0+0x88: cur_val=0xbd7fc180 distinct_writers=2 seq=['0x4c4c1c|445aa0', '0x4c4cf3|445aa0', '0x4c4cf3|445aa0', '0x4c4c1c|445aa0', '0x4c4cf3|445aa0', '0x4c4cf3|445aa0', '0x4c4c1c|445aa0', '0x4c4cf3|445aa0', '0x4c4cf3|445aa0', '0x4c4c1c|445aa0', '0x4c4cf3|445aa0', '0x4c4cf3|445aa0']
+    PC=0x4c4cf3|445aa0 count=122 val=0x0 bt=['0x89650c', '0x89650c', '0x89650c']
+    PC=0x4c4c1c|445aa0 count=61 val=0x8964c0 bt=['0x89650c', '0x89650c', '0x8964c0']
+  === PASS e4+0x68: armed DR0 on 50 threads at 0x896888 ===
+  e4+0x68: cur_val=0x0 distinct_writers=2 seq=['0x442469|442440', '0x4c4cf1|442440', '0x442469|442440', '0x4c4cf1|442440', '0x442469|442440', '0x4c4cf1|442440', '0x442469|442440', '0x4c4cf1|442440', '0x442469|442440', '0x4c4cf1|442440', '0x442469|442440', '0x4c4cf1|442440']
+    PC=0x442469|442440 count=61 val=0x0 bt=['0x897fe0', '0x896820', '0x881ec8', '0x446505', '0x896820', '0x897fe0', '0x4468fe', '0x897fe0', '0x88408c', '0x88e648', '0x88e5ec']
+    PC=0x4c4cf1|442440 count=61 val=0x0 bt=['0x8968ac', '0x89686c', '0x89686c']
+  === PASS e4+0x78: armed DR0 on 50 threads at 0x896898 ===
+  e4+0x78: cur_val=0x0 distinct_writers=2 seq=['0x442469|442440', '0x4c4cf1|442440', '0x442469|442440', '0x4c4cf1|442440', '0x442469|442440', '0x4c4cf1|442440', '0x442469|442440', '0x4c4cf1|442440', '0x442469|442440', '0x4c4cf1|442440', '0x442469|442440', '0x4c4cf1|442440']
+    PC=0x442469|442440 count=61 val=0x10d943b8 bt=['0x897fe0', '0x896820', '0x881ec8', '0x446505', '0x896820', '0x897fe0', '0x4468fe', '0x897fe0', '0x88408c', '0x88e648', '0x88e5ec']
+    PC=0x4c4cf1|442440 count=61 val=0x0 bt=['0x8968ac', '0x89686c', '0x89686c']
+  === PASS e4+0x88: armed DR0 on 50 threads at 0x8968a8 ===
+  e4+0x88: cur_val=0x0 distinct_writers=2 seq=['0x44246b|442440', '0x4c4cf3|442440', '0x44246b|442440', '0x4c4cf3|442440', '0x44246b|442440', '0x4c4cf3|442440', '0x44246b|442440', '0x4c4cf3|442440', '0x44246b|442440', '0x4c4cf3|442440', '0x44246b|442440', '0x4c4cf3|442440']
+    PC=0x44246b|442440 count=61 val=0x0 bt=['0x897fe0', '0x896820', '0x881ec8', '0x446505', '0x896820', '0x897fe0', '0x4468fe', '0x897fe0', '0x88408c', '0x88e648', '0x88e5ec']
+    PC=0x4c4cf3|442440 count=61 val=0x0 bt=['0x8968ac', '0x89686c', '0x89686c']
+  === PASS e1+0x68: armed DR0 on 50 threads at 0x896600 ===
+  e1+0x68: cur_val=0x3 distinct_writers=2 seq=['0x4c4c1a|441d40', '0x4c4cf1|441d40', '0x4c4cf1|441d40', '0x4c4c1a|441d40', '0x4c4cf1|441d40', '0x4c4cf1|441d40', '0x4c4c1a|441d40', '0x4c4cf1|441d40', '0x4c4cf1|441d40', '0x4c4c1a|441d40', '0x4c4cf1|441d40', '0x4c4cf1|441d40']
+    PC=0x4c4cf1|441d40 count=122 val=0x3 bt=['0x8965e4', '0x8965e4', '0x896604', '0x8965e4', '0x40e2a7']
+    PC=0x4c4c1a|441d40 count=61 val=0x3 bt=['0x8965e4', '0x8965e4', '0x896604', '0x89650c', '0x40e2a7', '0x897fe0', '0x40e2a7']
+  === PASS e1+0x78: armed DR0 on 50 threads at 0x896610 ===
+  e1+0x78: cur_val=0x3 distinct_writers=2 seq=['0x4c4c1a|441d40', '0x4c4cf1|441d40', '0x4c4cf1|441d40', '0x4c4c1a|441d40', '0x4c4cf1|441d40', '0x4c4cf1|441d40', '0x4c4c1a|441d40', '0x4c4cf1|441d40', '0x4c4cf1|441d40', '0x4c4c1a|441d40', '0x4c4cf1|441d40', '0x4c4cf1|441d40']
+    PC=0x4c4cf1|441d40 count=122 val=0x3 bt=['0x8965e4', '0x8965e4', '0x896604', '0x8965e4', '0x40e2a7']
+    PC=0x4c4c1a|441d40 count=61 val=0x40e2a7 bt=['0x8965e4', '0x8965e4', '0x896604', '0x89650c', '0x40e2a7', '0x897fe0', '0x40e2a7']
+  === PASS e1+0x88: armed DR0 on 50 threads at 0x896620 ===
+  e1+0x88: cur_val=0x3 distinct_writers=2 seq=['0x4c4c1c|441d40', '0x4c4cf3|441d40', '0x4c4cf3|441d40', '0x4c4c1c|441d40', '0x4c4cf3|441d40', '0x4c4cf3|441d40', '0x4c4c1c|441d40', '0x4c4cf3|441d40', '0x4c4cf3|441d40', '0x4c4c1c|441d40', '0x4c4cf3|441d40', '0x4c4cf3|441d40']
+    PC=0x4c4cf3|441d40 count=16 val=0x40e2a7 bt=['0x8965e4', '0x8965e4', '0x896604', '0x8965e4', '0x40e2a7']
+    PC=0x4c4c1c|441d40 count=8 val=0x897fe0 bt=['0x8965e4', '0x8965e4', '0x896604', '0x89650c', '0x40e2a7', '0x897fe0', '0x40e2a7']
+  === PASS control e0+0x68: armed DR0 on 50 threads at 0x896528 ===
+  control e0+0x68: cur_val=0x3 distinct_writers=0 seq=[]
+  wrote C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\crashcam\re\analysis\negctl\session_20261012b\crashcam_evidence\u9676_padwatch5.json
