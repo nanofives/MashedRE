@@ -1,0 +1,106 @@
+[decomp_pc] slot=Mashed_pool0 modes=decomp+callees+callers n=1
+// FUN_0041bc50 @ 0x0041bc50  size=603  (MASHED.exe)
+// undefined FUN_0041bc50(void)
+// callees: (none)
+// callers: FUN_0041c0c0@0x0041c0c0
+
+/* [C1 2026-05-03] Large function (body 0x0041bc50..0x0041beaa, 603 bytes). 29 guarded vtable
+   dispatches. */
+
+void FUN_0041bc50(void)
+
+{
+  int in_EAX;
+  
+  if (*(int *)(in_EAX + 0x1c) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0xbc) + 0x48))(*(int *)(in_EAX + 0xbc));
+  }
+  if (*(int *)(in_EAX + 0x18) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0xb8) + 0x48))(*(int *)(in_EAX + 0xb8));
+  }
+  if (*(int *)(in_EAX + 0x10) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0xb0) + 0x48))(*(int *)(in_EAX + 0xb0));
+  }
+  if (*(int *)(in_EAX + 0x14) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0xb4) + 0x48))(*(int *)(in_EAX + 0xb4));
+  }
+  if (*(int *)(in_EAX + 0x20) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0xc0) + 0x48))(*(int *)(in_EAX + 0xc0));
+  }
+  if (*(int *)(in_EAX + 0x80) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0x120) + 0x48))(*(int *)(in_EAX + 0x120));
+  }
+  if (*(int *)(in_EAX + 0x84) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0x124) + 0x48))(*(int *)(in_EAX + 0x124));
+  }
+  if (*(int *)(in_EAX + 0x88) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0x128) + 0x48))(*(int *)(in_EAX + 0x128));
+  }
+  if (*(int *)(in_EAX + 0x8c) != 0) {
+    (**(code **)(*(int *)(in_EAX + 300) + 0x48))(*(int *)(in_EAX + 300));
+  }
+  if (*(int *)(in_EAX + 0x90) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0x130) + 0x48))(*(int *)(in_EAX + 0x130));
+  }
+  if (*(int *)(in_EAX + 0x94) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0x134) + 0x48))(*(int *)(in_EAX + 0x134));
+  }
+  if (*(int *)(in_EAX + 0x68) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0x108) + 0x48))(*(int *)(in_EAX + 0x108));
+  }
+  if (*(int *)(in_EAX + 0x6c) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0x10c) + 0x48))(*(int *)(in_EAX + 0x10c));
+  }
+  if (*(int *)(in_EAX + 0x70) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0x110) + 0x48))(*(int *)(in_EAX + 0x110));
+  }
+  if (*(int *)(in_EAX + 0x74) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0x114) + 0x48))(*(int *)(in_EAX + 0x114));
+  }
+  if (*(int *)(in_EAX + 0x78) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0x118) + 0x48))(*(int *)(in_EAX + 0x118));
+  }
+  if (*(int *)(in_EAX + 0x7c) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0x11c) + 0x48))(*(int *)(in_EAX + 0x11c));
+  }
+  if (*(int *)(in_EAX + 0x3c) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0xdc) + 0x48))(*(int *)(in_EAX + 0xdc));
+  }
+  if (*(int *)(in_EAX + 0x40) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0xe0) + 0x48))(*(int *)(in_EAX + 0xe0));
+  }
+  if (*(int *)(in_EAX + 0x44) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0xe4) + 0x48))(*(int *)(in_EAX + 0xe4));
+  }
+  if (*(int *)(in_EAX + 0x48) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0xe8) + 0x48))(*(int *)(in_EAX + 0xe8));
+  }
+  if (*(int *)(in_EAX + 0x4c) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0xec) + 0x48))(*(int *)(in_EAX + 0xec));
+  }
+  if (*(int *)(in_EAX + 0x50) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0xf0) + 0x48))(*(int *)(in_EAX + 0xf0));
+  }
+  if (*(int *)(in_EAX + 0x24) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0xc4) + 0x48))(*(int *)(in_EAX + 0xc4));
+  }
+  if (*(int *)(in_EAX + 0x28) != 0) {
+    (**(code **)(*(int *)(in_EAX + 200) + 0x48))(*(int *)(in_EAX + 200));
+  }
+  if (*(int *)(in_EAX + 0x2c) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0xcc) + 0x48))(*(int *)(in_EAX + 0xcc));
+  }
+  if (*(int *)(in_EAX + 0x30) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0xd0) + 0x48))(*(int *)(in_EAX + 0xd0));
+  }
+  if (*(int *)(in_EAX + 0x34) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0xd4) + 0x48))(*(int *)(in_EAX + 0xd4));
+  }
+  if (*(int *)(in_EAX + 0x38) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0xd8) + 0x48))(*(int *)(in_EAX + 0xd8));
+  }
+  return;
+}
+
+
+

@@ -1,0 +1,12 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,"[{""scratch"":1024},{""scratch"":512}]",3775638251,0xe10baaeb,3775638251,0xe10baaeb,True,,
+1,"[{""scratch"":1024},{""scratch"":512}]",3562612069,0xd4592565,3562612069,0xd4592565,True,,
+2,"[{""scratch"":512},{""scratch"":1024}]",247020081,0x0eb93a31,247020081,0x0eb93a31,True,,
+3,"[{""scratch"":1024},{""scratch"":512}]",339936127,0x1443037f,339936127,0x1443037f,True,,
+4,"[{""scratch"":512},{""scratch"":1024}]",2169294238,0x814ccd9e,2169294238,0x814ccd9e,True,,
+5,"[{""scratch"":1024},{""scratch"":512}]",884026836,0x34b12dd4,884026836,0x34b12dd4,True,,
+6,"[{""scratch"":512},{""scratch"":1024}]",1072425641,0x3febeaa9,1072425641,0x3febeaa9,True,,
+7,"[{""scratch"":1024},{""scratch"":512}]",3775638251,0xe10baaeb,3775638251,0xe10baaeb,True,,
+8,"[{""scratch"":512},{""scratch"":1024}]",1131440652,0x43706a0c,1131440652,0x43706a0c,True,,
+9,"[6540324,6539960]",1338056972,0x4fc1210c,1338056972,0x4fc1210c,True,,
+10,"[6539960,6540324]",1762617078,0x690f66f6,1762617078,0x690f66f6,True,,

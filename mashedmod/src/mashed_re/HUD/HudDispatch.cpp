@@ -373,6 +373,110 @@ std::uint32_t __cdecl FUN_0041c2d0()
 RH_ScopedInstall(FUN_0041c2d0, 0x0041c2d0);  // 2026-10-12 re-ported from bytes (U-9671)
 
 // ---------------------------------------------------------------------------
+// 0x0041bc50  FUN_0041bc50   (603 bytes, 0x0041bc50..0x0041beaa)
+//
+// Re-ported from the bytes of original\MASHED.exe.unpatched on 2026-10-12
+// (U-9675). The record pointer arrives in EAX:
+//   0x0041bc50 push esi
+//   0x0041bc51 mov  esi,eax                ; esi = rec
+// then 29 pairs, each of this shape (first pair shown):
+//   0x0041bc53 mov  eax,[esi+0x1c]         ; flag dword at rec+X
+//   0x0041bc56 test eax,eax
+//   0x0041bc58 je   0x0041bc67             ; skip when the dword is 0
+//   0x0041bc5a mov  eax,[esi+0xbc]         ; o = [rec+X+0xa0]
+//   0x0041bc60 push eax
+//   0x0041bc61 call [eax+0x48]             ; o->[+0x48](o)
+//   0x0041bc64 add  esp,4                  ; caller cleans the one arg
+// and the last pair loads o into ESI instead of EAX:
+//   0x0041be9c mov  esi,[esi+0xd8] / 0x0041bea2 push esi /
+//   0x0041bea3 call [esi+0x48] / 0x0041bea6 add esp,4
+//   0x0041bea9 pop  esi
+//   0x0041beaa ret                         ; EAX = last pair's EAX
+// [o+0x48] is a function-pointer FIELD of the object, called with one
+// dereference. It is not a vtable slot: there is no `mov reg,[o]` before the
+// call. The flag is re-read after every call (each pair loads it fresh).
+// EAX at RET is the 0x38 flag when it is 0 (0x0041be98 je), else the
+// 0x0041bea3 call's EAX. ESI preserved. No other register is written.
+//
+// The 29 flag offsets in byte order (object at X+0xa0 in every pair):
+//   0x1c 0x18 0x10 0x14 0x20, 0x80 0x84 0x88 0x8c 0x90 0x94,
+//   0x68 0x6c 0x70 0x74 0x78 0x7c, 0x3c 0x40 0x44 0x48 0x4c 0x50,
+//   0x24 0x28 0x2c 0x30 0x34 0x38.
+// 0x54..0x64 are not read.
+//
+// The previous port here (MASS-DISABLED 2026-05-24, never installed) did not
+// match the bytes (U-9675): it read a vtable (`mov eax,[edi]; call
+// [eax+0x48]`), never popped the pushed argument, walked the flags in
+// ascending order from 0x10, and had 28 pairs (0x94 missing).
+//
+// Caller: 0x0041c0c0 HudDispatchSlot2 (0x0041c0c8 call, EAX = record
+// 0x0063cab8 / 0x0063cc24). The port is a naked EAX shim around a cdecl body,
+// the same shape as FUN_0041c2d0 above (U-9671). ECX/EDX at
+// return are not part of the contract: 0x0041c0c0 reads neither after
+// 0x0041c0c8 (0x0041c0cd add esi,0x16c; 0x0041c0d3 cmp; 0x0041c0db pop esi;
+// ret), per HudDispatch.cpp's 0x0041c0c0 block.
+// ---------------------------------------------------------------------------
+
+static const std::uint8_t s_bc50FlagOffsets[29] = {
+    0x1c,   // 0x0041bc53 (object 0xbc,  call 0x0041bc61)
+    0x18,   // 0x0041bc67 (object 0xb8,  call 0x0041bc75)
+    0x10,   // 0x0041bc7b (object 0xb0,  call 0x0041bc89)
+    0x14,   // 0x0041bc8f (object 0xb4,  call 0x0041bc9d)
+    0x20,   // 0x0041bca3 (object 0xc0,  call 0x0041bcb1)
+    0x80,   // 0x0041bcb7 (object 0x120, call 0x0041bcc8)
+    0x84,   // 0x0041bcce (object 0x124, call 0x0041bcdf)
+    0x88,   // 0x0041bce5 (object 0x128, call 0x0041bcf6)
+    0x8c,   // 0x0041bcfc (object 0x12c, call 0x0041bd0d)
+    0x90,   // 0x0041bd13 (object 0x130, call 0x0041bd24)
+    0x94,   // 0x0041bd2a (object 0x134, call 0x0041bd3b)
+    0x68,   // 0x0041bd41 (object 0x108, call 0x0041bd4f)
+    0x6c,   // 0x0041bd55 (object 0x10c, call 0x0041bd63)
+    0x70,   // 0x0041bd69 (object 0x110, call 0x0041bd77)
+    0x74,   // 0x0041bd7d (object 0x114, call 0x0041bd8b)
+    0x78,   // 0x0041bd91 (object 0x118, call 0x0041bd9f)
+    0x7c,   // 0x0041bda5 (object 0x11c, call 0x0041bdb3)
+    0x3c,   // 0x0041bdb9 (object 0xdc,  call 0x0041bdc7)
+    0x40,   // 0x0041bdcd (object 0xe0,  call 0x0041bddb)
+    0x44,   // 0x0041bde1 (object 0xe4,  call 0x0041bdef)
+    0x48,   // 0x0041bdf5 (object 0xe8,  call 0x0041be03)
+    0x4c,   // 0x0041be09 (object 0xec,  call 0x0041be17)
+    0x50,   // 0x0041be1d (object 0xf0,  call 0x0041be2b)
+    0x24,   // 0x0041be31 (object 0xc4,  call 0x0041be3f)
+    0x28,   // 0x0041be45 (object 0xc8,  call 0x0041be53)
+    0x2c,   // 0x0041be59 (object 0xcc,  call 0x0041be67)
+    0x30,   // 0x0041be6d (object 0xd0,  call 0x0041be7b)
+    0x34,   // 0x0041be81 (object 0xd4,  call 0x0041be8f)
+    0x38,   // 0x0041be95 (object 0xd8,  call 0x0041bea3)
+};
+
+static std::uint32_t __cdecl HudRec29DispatchBody(std::uint8_t* rec) {
+    std::uint32_t r = 0;
+    for (int i = 0; i < 29; ++i) {
+        const std::uint32_t x = s_bc50FlagOffsets[i];
+        r = *reinterpret_cast<volatile const std::uint32_t*>(rec + x);          // mov eax,[esi+X]
+        if (r != 0) {                                                            // test eax,eax / je
+            void* o = *reinterpret_cast<void* const*>(rec + x + 0xa0);           // mov eax,[esi+X+0xa0]
+            r = (*reinterpret_cast<HudMemberFn*>(static_cast<std::uint8_t*>(o) + 0x48))(o);  // push; call [eax+0x48]
+        }
+    }
+    return r;
+}
+
+// 0x0041bc50
+extern "C" __declspec(dllexport) __declspec(naked)
+std::uint32_t __cdecl FUN_0041bc50()
+{
+    __asm {
+        push eax                        // rec (arrives in EAX, 0x0041bc51)
+        call HudRec29DispatchBody
+        add  esp, 4
+        ret                             // EAX = last pair's EAX
+    }
+}
+
+RH_ScopedInstall(FUN_0041bc50, 0x0041bc50);  // 2026-10-12 re-ported from bytes (U-9675)
+
+// ---------------------------------------------------------------------------
 // 0x0041cc50  HudSlotUpdateCc50   (100 bytes)
 //
 // The STANDINGS PER-FRAME UPDATE, and the twin of HudSlotLoopCcc0 above: same
@@ -462,8 +566,8 @@ RH_ScopedInstall(HudSlotUpdateCc50, 0x0041cc50);  // C3 2026-09-03 (Finding 20; 
 //                    push obj; call [obj+0x48] when the flag is non-zero.
 // 0x0041c2d0 is ported above (U-9671, 2026-10-12): the two mode routers call
 // the port FUN_0041c2d0 directly with EAX loaded by inline asm. 0x0041bc50 is
-// not ported (C2), so 0x0041c0c0 calls it at its original RVA, as
-// HudSlotLoopB630 does for 0x0041b340.
+// ported above too (U-9675, 2026-10-12): 0x0041c0c0 calls the port
+// FUN_0041bc50 the same way.
 //
 // Return value: each original leaves EAX defined at RET, so the ports return
 // the same EAX (the flag read on the skip path, else the callee's EAX). No
@@ -511,8 +615,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl HudDispatchSlot2() {
     do {
         __asm {
             mov  eax, rec               // 0x0041c0c6
-            mov  ecx, 0x0041bc50
-            call ecx                    // 0x0041c0c8
+            call FUN_0041bc50           // 0x0041c0c8 (call 0x0041bc50 in the original; the port)
             mov  r, eax
         }
         rec += 0x16c;                                                          // 0x0041c0cd

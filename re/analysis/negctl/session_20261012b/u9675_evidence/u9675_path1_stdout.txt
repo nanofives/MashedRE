@@ -1,0 +1,11 @@
+hook: hud_rec29_dispatch  rva=0x0041bc50  export=FUN_0041bc50
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\u9675\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 34300
+  [agent] LUT ready  base=0x2c1ae10  offset=0x134  root=0x4910640  delta=0  attempts=6
+  [agent] .asi loaded  base=0x69810000  FUN_0041bc50@0x698241e0
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\u9675\log\diff_hud_rec29_dispatch.csv
+  total cases: 11
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.

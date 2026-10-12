@@ -1,0 +1,12 @@
+hook: hud_rec29_dispatch  rva=0x0041bc50  export=FUN_0041bc50
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\u9675\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 29224
+  [agent] LUT ready  base=0x135ae10  offset=0x134  root=0x4940640  delta=0  attempts=25
+  [agent] .asi loaded  base=0x69810000  FUN_0041bc50@0x698241e0
+  [agent] {'type': 'log', 'msg': 'self_baseline: reimpl arm bound to the original 0x41bc50'}
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\u9675\log\diff_hud_rec29_dispatch_selfbaseline.csv
+  total cases: 11
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.

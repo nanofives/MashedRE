@@ -1,0 +1,8 @@
+hook	rva	arg_type	lane	mode	verdict	mismatches	total	stats	err
+hud_rec29_dispatch	0x0041bc50	scalars_to_scattered_globals	warm	baseline	GREEN	0	11		
+hud_rec29_dispatch	0x0041bc50	scalars_to_scattered_globals	warm	field_first	NA	0	11	calls=11 flips=0 changed=0 flip=0x00000000 noise=274 frozen=2	
+hud_rec29_dispatch	0x0041bc50	scalars_to_scattered_globals	warm	field_last	NA	0	11	calls=11 flips=0 changed=0 flip=0x00000000 noise=279 frozen=2	
+hud_rec29_dispatch	0x0041bc50	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	11	calls=11 flips=0 changed=0 flip=0x00000000 noise=285 frozen=2	
+hud_rec29_dispatch	0x0041bc50	scalars_to_scattered_globals	warm	null	RED	10	11	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+hud_rec29_dispatch	0x0041bc50	scalars_to_scattered_globals	warm	real	GREEN	0	11		
+hud_rec29_dispatch	0x0041bc50	scalars_to_scattered_globals	warm	ret	RED	11	11	calls=11 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
