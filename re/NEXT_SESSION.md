@@ -1,5 +1,39 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-12 follow-ups (A2 x7, U-9671, U-9673, crash 0x1509b4 ALL DONE): **next = the user calls below, then C4 scenarios for the new C3 rows and U-9675.**
+>
+> Six children in worktrees, merged and removed; path2 + integration run_diff + self-baseline by the parent on the
+> merged deployed build. Notes: `re/analysis/negctl/followup_20261012/<item>_RESULT.md`.
+> - **8 rows C2 -> C3** (22c62412), path2 PASS for all 8: 0x00498d20 ReadModeFromCombo_j5 and 0x0042f8d0 MenuMenusBC
+>   (ports matched the bytes; new fixtures put a decoy in the stack slot, since the `eax_arg` trampoline also
+>   leaves the value on the stack and a stack-reading port passed), 0x00492270 SubsystemInit / 0x004026d0 /
+>   0x00404320 PerModeRenderMachine (real port defects fixed from the bytes), 0x0040d440 (unchanged),
+>   0x004464c0 CameraEntry::DispatchAll (16- vs 12-byte frame; [UNCERTAIN] callee attribution closed: no callee port
+>   involved), 0x0041c2d0 FUN_0041c2d0 (U-9671 re-port; HudDispatchMode10/Mode5 now call the port, GREEN).
+> - 0x00498d20 is fixture-only C3: C4 not earnable while skip_selector keeps dialog 0x65 closed (added to U-9674).
+> - **U-9673 RESOLVED** (956b9d2a): nav harness 75 OK / 0 FAIL, 30/30 runs, reachability 12/33. First break was
+>   b83b01e0, not 2528c8b3. Test-only .bss arena fix.
+> - **U-9677 RESOLVED (explained)** (f5878050): the original's 0x005509b4 AV is a track-piz sharing race between two
+>   MASHED processes (CreateFileA share 0 at 0x004b6738, unguarded seek at 0x0047b917), NOT the Vehicle setting.
+>   5/5 with a concurrent reader, 0/15 without. Standalone avoids it. **Harness rule: that crash signature in an
+>   original-side run means another session loaded the same track at the same moment; re-run it.**
+> - Harness gained: per-callee `call_log` recorders (scalars_to_scattered_globals, installed inside freeze_main),
+>   per-test `dialog`, c4_pb2_scenario crash/barrier/private-root options (env-gated, default off).
+> - Lost evidence: the a2-dialog / a2-stubat children named CSVs `diff_*.csv`, which .gitignore drops; they vanished
+>   at wt-remove. Committed CSVs are the parent's integration re-runs (`evidence/integ_*`); the stubat witness counts
+>   live only in its RESULT note. Name evidence CSVs without a `diff_` prefix (memory diff-csv-evidence-is-gitignored).
+>
+> **Open**
+> - USER: pin the nav reachable set `{0,1,2,3,4,6,8,15,19,30,31,32}` as a harness assertion? (child advises no: it is
+>   the port's set, not the original's).
+> - USER: concurrent-session mitigation for U-9677 (re-run rule only, private install copy per session, or a
+>   cross-session track lock).
+> - U-9675: the disabled 0x0041bc50 port has the same vtable misreading as U-9671 plus flag-order / 28-vs-29-pair
+>   errors. Re-port before any install.
+> - U-9676 (low): which callee instruction writes the camera entry's RwMatrix pad slots.
+> - C4 for the 7 non-dialog new C3 rows needs canonical scenarios (MenuMenusBC is natural on screens 15/16/5).
+> - Lead: group R ctl1 crash at MASHED.exe+0xe66db during track load may be the same collision, unexamined.
+
 > ## START HERE 2026-10-12 night (A1 real-C4 pass DONE: 13 of 19 at C4, 6 stay C3): **next = the A2 rows, U-9671, U-9673.**
 >
 > The 19 triage A1 rows got real canonical C4 scenarios (game-driven calls into the live port, a RED old-defect
@@ -11,7 +45,7 @@
 > - 6 stay C3: 5 settings-dialog rows (skip_selector / skip_controller_dialog keep the dialogs closed, U-9674),
 >   GameStateSlotsFill (never called on a reachable route).
 > - New scenario harnesses: re/frida/c4_champ_complete_scenario.py, c4_pb2_scenario.py, and the group H/M scripts.
-> - Side finding (not acted on): the UNMODIFIED original crashed at MASHED.exe+0x1509b4 at race start after the Vehicle
+> - Side finding (EXPLAINED 2026-10-12, U-9677: concurrent-session .piz race, not the Vehicle setting): the UNMODIFIED original crashed at MASHED.exe+0x1509b4 at race start after the Vehicle
 >   setting 0x0067ea94 changed 0 -> 1 (one stock run, group R exploration).
 > - Never use shared %TEMP% filenames for commit messages: another session overwrote $TEMP/m.txt (fixed a3545a59).
 
