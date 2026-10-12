@@ -129,7 +129,7 @@
 "Frontend\MenuMiscLeaves_t2.cpp"
 "Frontend\BucketMixed_t3.cpp"
 "Frontend\MenuLeaves_af6.cpp"
-"Frontend\Cluster_v3.cpp"
+"Frontend\ViewportScaledRectDraw.cpp"
 "Frontend\BatchAA_s4.cpp"
 "HUD\HudDispatch.cpp"
 "HUD\Cluster_v2.cpp"

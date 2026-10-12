@@ -6448,6 +6448,15 @@ function runDiff() {
         //              the ftol at 0x00431222). Default 'int' (EAX).
         // run_diff.py splits each arm's log on ';' and writes log/drawstream_<key>.csv, one row per call per vector,
         // and prints the first divergent call of every RED vector.
+        // NORMALISING forms (bnormalise 2026-10-12), for callees whose real result is a fresh heap pointer or whose
+        // args are pointers to the caller's own locals (0x004921d0 -> 0x004997b0 / 0x004c2ed0):
+        //   deref      also {argIdx: 'l'}: log 'stk' when the pointer lies in [ESP, ESP+0x4000) at recorder entry (a
+        //              local of the caller, whose exact address differs per arm because the port's frame differs),
+        //              else the raw value. A port passing NULL, a global or garbage still prints the value.
+        //   outs       {argIdx: v | [v_call0, ..]}: after logging, write dword v to *arg (an out-parameter the caller
+        //              reads back, e.g. 0x004997b0's (ptr, len) pair that 0x004921d0 forwards to 0x004b3eb0). A test's
+        //              stub_outs {name: {argIdx: v | [..]}} overrides it. Seeded distinct values make a swapped or
+        //              dropped out-pointer visible in the NEXT recorded call.
         const callLogCfg = CONFIG.call_log || [];
         const callLogFns = {};
         let callLog = [], callLogCounts = {}, callLogTest = null;
@@ -6488,12 +6497,17 @@ function runDiff() {
             for (let q = 0; q < nA; q++) ty.push('uint32');
             const deref = ce.deref || {}, regs = ce.regs || [], fargs = ce.fargs || [];
             const fRet = ce.ret_type === 'float';
+            const outs = ce.outs || {};
             const cb = new NativeCallback(function () {
-                const parts = [];
+                const parts = [], av = [];
+                const esp = this.context.esp.toUInt32() >>> 0;
                 for (let q = 0; q < nA; q++) {
                     const u = arguments[q] >>> 0, dm = deref[q];
+                    av.push(u);
                     let s = (fargs.indexOf(q) >= 0) ? clF32(u) : clNorm(u);
-                    if (typeof dm === 'string') {
+                    if (dm === 'l') {
+                        if (u >= esp && ((u - esp) >>> 0) < 0x4000) s = 'stk';
+                    } else if (typeof dm === 'string') {
                         if (s.charAt(0) !== 's') s = '';
                         try {
                             if (dm === 'w' || dm === 'a') s += '@' + clStr(ptr(u), dm === 'w');
@@ -6520,6 +6534,14 @@ function runDiff() {
                 callLog.push(line + ')');
                 const k = callLogCounts[ce.name] | 0;
                 callLogCounts[ce.name] = k + 1;
+                const so = (callLogTest && callLogTest.stub_outs) ? callLogTest.stub_outs[ce.name] : undefined;
+                const ov = Object.assign({}, outs, so || {});
+                Object.keys(ov).forEach(function (qs) {
+                    let v = ov[qs];
+                    if (Array.isArray(v)) v = v[Math.min(k, v.length - 1)];
+                    // A bad out-pointer is logged, never thrown: the arm must still return so its log is compared.
+                    try { ptr(av[qs | 0]).writeU32(v >>> 0); } catch (e) { callLog.push(ce.name + '.out' + qs + '@AV'); }
+                });
                 let rv = fRet ? +(ce.ret || 0) : (ce.ret | 0);
                 const sr = (callLogTest && callLogTest.stub_rets) ? callLogTest.stub_rets[ce.name] : undefined;
                 if (Array.isArray(sr)) rv = sr[Math.min(k, sr.length - 1)];

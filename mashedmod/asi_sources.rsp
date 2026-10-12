@@ -190,7 +190,7 @@
 "HUD\ScenarioLeaves_sa2.cpp"
 "HUD\ScenarioWriters_sa2s2.cpp"
 "HUD\ScenarioWriters_sa2s1.cpp"
-"Frontend\Cluster_v3.cpp"
+"Frontend\ViewportScaledRectDraw.cpp"
 "Frontend\BatchAA_s1.cpp"
 "Frontend\BatchAA_s2.cpp"
 "Frontend\BatchAA_s3.cpp"
