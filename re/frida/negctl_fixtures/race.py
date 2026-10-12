@@ -120,8 +120,9 @@ FIXES['sa2_ai_last_place_frustration'] = _s2('uint32', 1, [
 
 
 # ── 0x004922e0 CarEventTrigger(car, a, b, c) ─────────────────────────────────────────────────────────────────────────
-# FUN_0040e470(car) == 1 and FUN_0040e350() (DAT_0063ba8c) == 6 and DAT_007f105c[slot*0x13] != 0, slot =
-# DAT_007f1a14[car*4] -> rec = 0x007f1058 + slot*0x4c: +0x10 = a, +0 = 1, +0xc = b, +0x14 = c. In the race
+# FUN_0040e470(car) == 1 and FUN_0040e350() (DAT_0063ba8c) == 6 and dword [rec+4] != 0 (0x0049230e), slot =
+# dword @0x007f1a14 + car*0x10 (shl esi,4 @0x004922fd) -> rec = 0x007f1058 + slot*0x4c: +0x10 = a, +0 = 1,
+# +0xc = b, +0x14 = c. (Ghidra's DAT_007f105c[slot*0x13] / DAT_007f1a14[car*4] are DWORD-indexed.) In the race
 # DAT_0063ba8c is 3, so the old vectors never wrote (null BLIND). Drive every guard; written fields pre-seeded
 # 0xA5A5A5A5 so a write is visible.
 def _cev(car, active, mode, slot, flag, a, b, c):

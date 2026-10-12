@@ -106,8 +106,8 @@ static const std::uintptr_t k_0089a4e4 = 0x0089a4e4u; // timer base (+car*0x74)
 static const std::uintptr_t k_0089a4e8 = 0x0089a4e8u; // leader-progress float base (+car*0x74)
 
 // 0x004922e0 group
-static const std::uintptr_t k_007f1a14 = 0x007f1a14u; // car->player map (dword stride 4)
-static const std::uintptr_t k_007f105c = 0x007f105cu; // per-player guard byte (stride 0x13)
+static const std::uintptr_t k_007f1a14 = 0x007f1a14u; // car->slot dword, byte stride 0x10 (shl esi,4 @0x004922fd)
+static const std::uintptr_t k_007f105c = 0x007f105cu; // per-slot guard dword = block +4, byte stride 0x4c (@0x0049230e)
 static const std::uintptr_t k_007f1058 = 0x007f1058u; // per-player block base (stride 0x4c)
 static const std::uintptr_t k_007f1064 = 0x007f1064u; // block +0x0c
 static const std::uintptr_t k_007f1068 = 0x007f1068u; // block +0x10
@@ -262,10 +262,19 @@ RH_ScopedInstall(AiLastPlaceFrustration, 0x00415020);
 //     }
 //   }
 //
-// (&DAT_007f1a14)[i*4] indexes a dword table with element-stride 4 (i.e. the C
-// expression on an undefined1* base — &DAT_007f1a14 + param_1*4 read as int).
-// Likewise (&DAT_007f105c)[slot*0x13] is a byte-strided guard read, and the
-// four writes are at &DAT_007f1058/64/68/6c + slot*0x4c. Observable: 0x007f1058.
+// Both array subscripts are on Ghidra DWORD-typed bases, so they scale by 4.
+// Bytes (MASHED.exe.unpatched, read with capstone 2026-10-11):
+//   0x004922fd  shl esi,4                 ; car*0x10
+//   0x00492300  mov eax,[esi+0x7f1a14]    ; slot = dword @0x007f1a14+car*0x10
+//   0x00492306  imul eax,eax,0x4c
+//   0x00492309  add eax,0x7f1058          ; rec = 0x007f1058+slot*0x4c
+//   0x0049230e  mov ecx,[eax+4]           ; guard = DWORD @rec+4 (=0x007f105c+slot*0x4c)
+//   0x00492311  test ecx,ecx / je 0x00492330
+//   0x0049231d  mov [eax+0x10],p2   0x00492324 mov dword [eax],1
+//   0x0049232a  mov [eax+0xc],p3    0x0049232d mov [eax+0x14],p4
+// Guards: 0x004922ee cmp eax,1 on FUN_0040e470(car); 0x004922f8 cmp eax,6 on
+// FUN_0040e350() (= DAT_0063ba8c @0x0040e350). The earlier port read car*4
+// and an int8 at slot*0x13 (negctl re-earn 2026-10-11 demotion).
 // ref: re/analysis/bucket_vehicle_004922e0_0057c500/0x004922e0.md
 // ===========================================================================
 
@@ -277,9 +286,9 @@ extern "C" __declspec(dllexport) void __cdecl CarEventTrigger(int param_1,
 {
     if (s_F0040e470(param_1) == 1) {
         if (s_F0040e350() == 6) {
-            int slot = *reinterpret_cast<int*>(k_007f1a14 + param_1 * 4);
-            int iVar1 = slot * 0x4c;
-            if (*reinterpret_cast<std::int8_t*>(k_007f105c + slot * 0x13) != 0) {
+            int slot = *reinterpret_cast<int*>(k_007f1a14 + param_1 * 0x10);   // 0x00492300
+            int iVar1 = slot * 0x4c;                                              // 0x00492306
+            if (*reinterpret_cast<std::uint32_t*>(k_007f105c + iVar1) != 0) {     // 0x0049230e
                 *reinterpret_cast<std::uint32_t*>(k_007f1068 + iVar1) = param_2;
                 *reinterpret_cast<std::uint32_t*>(k_007f1058 + iVar1) = 1;
                 *reinterpret_cast<std::uint32_t*>(k_007f1064 + iVar1) = param_3;
