@@ -89,56 +89,61 @@ static inline void CallSlotWrite(int idx, std::uint32_t val) {
 #endif
 }
 
+// Player-slot record walk shared by 0x0042b310 / 0x0042b540 / 0x0042b770:
+// id dword at 0x007f1a14 + i*0x10, i = 0..3 (0x0042b3bf / 0x0042b877 `add esi, 0x10`).
+static constexpr std::uintptr_t kSlotRecStride = 0x10;
+
+static inline const std::int32_t* SlotRec(int i) {
+    return reinterpret_cast<const std::int32_t*>(kPlayerSlotArray + i * kSlotRecStride);
+}
+
+static inline char PadAt(std::uintptr_t base, std::int32_t pad) {
+    return *reinterpret_cast<const char*>(base + static_cast<std::uintptr_t>(pad * kStride));
+}
+
 // ---------------------------------------------------------------------------
 // 0x0042b770  MenuButtonDetectE
 //
-// Simplified button-detector: checks active byte col +5 AND !processed byte col +5.
+// Edge detect on held column 0x007f1049 / previous column 0x007f1509.
+// Re-ported from the bytes 2026-10-12 (negctl re-earn). The earlier port
+// walked the slot records at 4-byte stride over 8 iterations. The original
+// steps `add esi, 0x10` (0x0042b877) over 4 records up to 0x007f1a54
+// (0x0042b87b), with index EDI 0..3.
+//
+// 0x1000 path (0x0042b783..0x0042b836): pads 0..6 OR held && !previous into
+//   EBX. Pad 7 (0x007f125d / 0x007f171d) returns 1 directly (0x0042b836),
+//   otherwise return EBX.
+// Otherwise (0x0042b83d..0x0042b888): record i is eligible when its id != -1
+//   (0x0042b846) and FUN_0040e470(i) != 2 (0x0042b84c). Then held && !previous
+//   on pad id (0x0042b85e / 0x0042b868) sets EBX. No early exit. Return EBX.
 // No timer, no screen-type check.
-// Path A (DAT_007f1a0c == 0x1000): fixed stride scan N=0..6 + special-case N=7.
-// Path B: car-slot index array at 0x007f1a14, filter via FUN_0040e470 != 2.
-// Returns 1 (change detected) or 0.
-// ref: re/analysis/frontend_promote_menus_a/0x0042b770.md
 // ---------------------------------------------------------------------------
 
 // 0x0042b770
 extern "C" __declspec(dllexport) std::uint32_t __cdecl MenuButtonDetectE() {
-    std::uint32_t uVar2 = 0;
+    std::uint32_t edge = 0;  // EBX
 
-    const std::int32_t sel = *reinterpret_cast<std::int32_t*>(kDispatchSel);
-    if (sel == 0x1000) {
-        // Path A: iterate slots 0..6 by stride
-        for (int n = 0; n < 7; n++) {
-            const auto active   = reinterpret_cast<const char*>(kActiveBase5 + n * kStride);
-            const auto procsd   = reinterpret_cast<const char*>(kProcessedBase5 + n * kStride);
-            if (*active != '\0' && *procsd == '\0') {
-                uVar2 = 1;
-            }
+    if (*reinterpret_cast<const std::int32_t*>(kDispatchSel) == 0x1000) {
+        for (int k = 0; k < 7; ++k) {                       // 0x0042b783..0x0042b81f
+            if (PadAt(kActiveBase5, k) != '\0' && PadAt(kProcessedBase5, k) == '\0') edge = 1;
         }
-        // Slot 7 sentinel
         if (*reinterpret_cast<const char*>(kPathARow7Active5) != '\0' &&
             *reinterpret_cast<const char*>(kPathARow7Processed5) == '\0') {
-            return 1;
+            return 1u;                                      // 0x0042b836
         }
-    } else {
-        // Path B: iterate player-slot index array
-        const std::int32_t* piVar3 = reinterpret_cast<std::int32_t*>(kPlayerSlotArray);
-        for (int iVar4 = 0; iVar4 < 8; iVar4++, piVar3++) {
-            if (reinterpret_cast<std::uintptr_t>(piVar3) >= kPlayerSlotEnd) break;
-            const std::int32_t slotIdx = *piVar3;
-            if (slotIdx == -1) continue;
-            if (CallSlotState(iVar4) == 2) continue; // U-3445: skip state-2 slots
-            const auto active = reinterpret_cast<const char*>(kActiveBase5 + slotIdx * kStride);
-            const auto procsd = reinterpret_cast<const char*>(kProcessedBase5 + slotIdx * kStride);
-            if (*active != '\0' && *procsd == '\0') {
-                uVar2 = 1;
-            }
-        }
+        return edge;                                        // 0x0042b885
     }
 
-    return uVar2;
+    for (int i = 0; reinterpret_cast<std::uintptr_t>(SlotRec(i)) < kPlayerSlotEnd; ++i) {
+        const std::int32_t id = *SlotRec(i);                // 0x0042b846
+        if (id == -1) continue;
+        if (CallSlotState(i) == 2) continue;                // 0x0042b84c
+        if (PadAt(kActiveBase5, id) != '\0' && PadAt(kProcessedBase5, id) == '\0') edge = 1;  // 0x0042b85e / 0x0042b868
+    }
+    return edge;                                            // 0x0042b885
 }
 
-RH_ScopedInstall(MenuButtonDetectE, 0x0042b770);  // re-enabled 2026-05-24 batch-frontend
+RH_ScopedInstall(MenuButtonDetectE, 0x0042b770);  // re-ported 2026-10-12 (negctl re-earn)
 
 // ---------------------------------------------------------------------------
 // 0x0042b310  MenuButtonDetectC
@@ -165,16 +170,6 @@ RH_ScopedInstall(MenuButtonDetectE, 0x0042b770);  // re-enabled 2026-05-24 batch
 // Phase 3 (0x0042b419..0x0042b533): return 1 if any eligible pad has
 //   held != 0 && previous == 0, else 0. The slot walk does not stop early.
 // ---------------------------------------------------------------------------
-
-static constexpr std::uintptr_t kSlotRecStride = 0x10;  // 0x0042b3bf `add esi, 0x10`
-
-static inline const std::int32_t* SlotRec(int i) {
-    return reinterpret_cast<const std::int32_t*>(kPlayerSlotArray + i * kSlotRecStride);
-}
-
-static inline char PadAt(std::uintptr_t base, std::int32_t pad) {
-    return *reinterpret_cast<const char*>(base + static_cast<std::uintptr_t>(pad * kStride));
-}
 
 static std::uint32_t MenuButtonDetectScreenGate(std::uintptr_t heldBase, std::uintptr_t prevBase,
                                                 std::uintptr_t clearAddr) {

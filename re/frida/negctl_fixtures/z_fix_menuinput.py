@@ -105,3 +105,27 @@ for _k, _col, _clr, _src in (('menu_button_detect_c', 4, 0x0067f1b8, _b03),
         _detg(_col, _clr, 0x28, 0x08, 3, 0, mode=0, ids=(3, -1, 5, -1)),              # id 5 edge -> 1
         _detg(_col, _clr, 0x02, 0x02, 0x13, 1, mode=0, ids=(-1, 1, -1, -1)),          # held via record 1, sub 1
     ]
+
+
+# ── 0x0042b770 MenuButtonDetectE ──────────────────────────────────────────────────────────────────────────────────────
+# col +9 edge detect; the slot walk steps 0x10 over 4 records (0x0042b877 add esi,0x10; bound 0x0042b87b). b03's single
+# slot vector (0,-1,-1,-1) reads the same under a 4-byte walk; the four-record vectors below do not.
+def _dete(held, prev, mode=0x1000, ids=None, states=(1, 1, 1, 1)):
+    s = [{'addr': 0x007f1a0c, 'val': mode}] + _btn(9, held, prev)
+    if ids is not None:
+        s += _slotrecs(ids, states)
+    return {'args': [], 'seed': s}
+
+
+_old = _b03.FIXES['menu_button_detect_e']
+FIXES['menu_button_detect_e'] = dict(_old)
+FIXES['menu_button_detect_e']['scratch_size'] = 0x80
+FIXES['menu_button_detect_e']['scratch_fill'] = 0xA5
+FIXES['menu_button_detect_e']['path1_tests'] = list(_old['path1_tests']) + [
+    _dete(0x01, 0x00, 0, (-1, -1, -1, -1)),                          # all ids -1 -> 0
+    _dete(0x28, 0x08, 0, (3, -1, 5, -1), (1, 1, 2, 1)),              # id 5 skipped by state 2 -> 0
+    _dete(0x28, 0x08, 0, (3, -1, 5, -1)),                            # id 5 edge in record 2 -> 1
+    _dete(0x01, 0x00, 0, (0, -1, -1, -1)),                           # id 0 edge in record 0 -> 1
+    _dete(0x80, 0x00, 0, (-1, -1, -1, 7)),                           # id 7 edge in record 3 -> 1
+    _dete(0x80, 0x00, 0, (-1, -1, -1, 7), (1, 1, 1, 2)),             # record 3 skipped by state 2 -> 0
+]

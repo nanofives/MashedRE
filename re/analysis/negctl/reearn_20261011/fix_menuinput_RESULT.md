@@ -1,5 +1,7 @@
 # negctl re-earn fix: cluster MENUINPUT (2026-10-12)
 
+Rows: 0x0042aff0, 0x0042b180, 0x0042b310, 0x0042b540, 0x0042b960, plus follow-up 0x0042b770. All six are FIXED.
+
 Branch `reearn/menuinput`, fix commit `249aa785`. Every body was re-ported from a full disassembly of
 `original/MASHED.exe.unpatched`, not only from the defect the decision row named. Built with
 `MASHED_NO_DEPLOY=1`. path2 (`run_verify_hook.py`) was not run, and no tracker was edited. Both are left for the parent.
@@ -134,14 +136,49 @@ Evidence:
   field_none CTRL-GREEN
 - Witness 1 (miss -> 0): RED 2/6 (idx 3, 5). These are the decision row's two vectors.
 
+## 0x0042b770 MenuButtonDetectE (`menu_button_detect_e`, arg_type `scalars_to_scattered_globals`, old level C4)
+
+**Verdict: FIXED** (follow-up requested by the parent after the first five rows)
+
+Defect: slot walk stride. The original steps `add esi, 0x10` (`0x0042b877`) over 4 records up to `0x007f1a54`
+(`0x0042b87b`), with index EDI 0..3 passed to `FUN_0040e470` (`0x0042b84c`). The port stepped `piVar3++` (4 bytes) and capped
+at 8 iterations, reading `0x007f1a14..0x007f1a30` as ids with index 0..7. The b03 fixture had one slot vector,
+(0,-1,-1,-1), which a 4-byte walk reads correctly. That is why the row stayed GREEN at C4.
+
+Checked against the bytes and matching:
+- 0x1000 path: pads 0..6 OR `held && !previous` into EBX (`0x0042b783..0x0042b81f`, held `0x007f1049`,
+  previous `0x007f1509`, stride 0x4c)
+- pad 7 (`0x007f125d` / `0x007f171d`) returns 1 directly (`0x0042b836`), otherwise `mov eax, ebx` (`0x0042b885`)
+- slot path: id != -1 (`0x0042b846`), `FUN_0040e470(i) != 2` (`0x0042b854`), held / previous on pad id
+  (`0x0042b85e` / `0x0042b868`), no early exit
+- no timer, no screen-type check
+
+The slot-walk helpers (`SlotRec` / `PadAt`) now sit above E and are shared with C and D.
+
+Evidence:
+- Demotion witness: `evidence/fix_finding_stride4_menu_button_detect_e.csv`, the old port against a 4-record probe, RED 2/4.
+  idx 0 is all ids -1 (the original returns 0, the old port 1). idx 2 is id 5 in record 2 (the original returns 1, the old port 0).
+- Fixture: `z_fix_menuinput.py` keeps the 7 b03 vectors and adds 6 four-record vectors (state-2 skips in records 2 and 3,
+  edges in records 0, 2 and 3, all ids -1).
+- run_diff GREEN 13/13 (2 distinct, ret 0/1 is the only output): `evidence/fix_diff_menu_button_detect_e.csv`
+- self-baseline GREEN 13/13: `evidence/fix_diff_menu_button_detect_e_selfbaseline.csv`
+- negctl (`runs/fix_menuinput/negctl_20261012_044251.tsv`, rows appended to `evidence/fix_negctl_menuinput.tsv`):
+  - real GREEN 0/13, baseline GREEN 0/13
+  - null RED 7/13, ret RED 13/13
+  - field_first / field_last NA (E writes no field, observe set empty)
+  - field_none CTRL-GREEN
+- Witness (4-byte stride restored alone): RED 3/13 (idx 7, 8, 12): `evidence/fix_witness_stride4_menu_button_detect_e.csv`.
+  After restore and rebuild, run_diff and self-baseline were re-run, and the `fix_diff_*` files come from that run.
+- Plate `frontend_promote_menus_a/0x0042b770.md` corrected: path B is 4 records of 0x10, not `iVar4 = 0..7`.
+
 ## Same-file regression check
 
 These are other C3/C4 hooks whose bodies live in `Frontend/MenuNav.cpp` or `Frontend/MenuButtonDetect.cpp`. Each was
-re-run after the restore build (`evidence/fix_regress_diff_<hook>.csv`):
+re-run after the restore build (`evidence/fix_regress_diff_<hook>.csv`). After the E re-port, screen_width_get, screen_height_get and car_slot_assign were re-run GREEN again, and C, D and CarSlotInit1P were re-run GREEN with self-baseline (their `fix_diff_*` files are from that run). MenuNav.cpp was not touched by the E follow-up:
 
 | hook | RVA | conf | result |
 |---|---|---|---|
-| menu_button_detect_e | 0x0042b770 | C4 | GREEN 7/7 |
+| menu_button_detect_e | 0x0042b770 | C4 | GREEN 7/7 before its own re-port (b03 vectors only), superseded by the E section |
 | screen_width_get | 0x0042b8b0 | C3 | GREEN 10/10 |
 | screen_height_get | 0x0042b8c0 | C4 | GREEN 10/10 |
 | car_slot_assign | 0x0042b9e0 | C3 | GREEN 10/10 |
@@ -154,14 +191,9 @@ This is a pre-existing fixture void, not a regression. It needs a negctl fixture
 
 ## Findings outside the row list
 
-- **MenuButtonDetectE 0x0042b770 (C4) has the same slot-stride defect.** The original walks `add esi, 0x10`
-  (`0x0042b877`) up to `0x7f1a54` (`0x0042b87b`). The port (`MenuButtonDetect.cpp`, `MenuButtonDetectE`) steps
-  `piVar3++` (4 bytes) and caps at 8 iterations. Its b03 fixture uses only slots (0,-1,-1,-1), which the 4-byte walk
-  reads correctly, so it stays GREEN. A temporary 4-record probe (same `_slotrecs` seeding, not committed) read RED 2/4:
-  `evidence/fix_finding_stride4_menu_button_detect_e.csv`. idx 0 is all ids -1 (the original returns 0, the port 1). idx 2 is id 5 in record 2
-  (the original returns 1, the port 0). This needs a demotion and re-earn row. I did not change it because it is outside this cluster.
-- The remaining `MenuButtonDetect.cpp` constants `kActiveBase5` / `kPathARow7*` / `kPathBUpperBound` belong to E and
-  were left as they were.
+- MenuButtonDetectE 0x0042b770 had the same slot-stride defect. The parent asked for it as a follow-up, and it is now FIXED
+  (see its section above).
+- menu_entry_get 0x0042ac90: left alone, the parent is filing it.
 
 ## Plate corrections
 
