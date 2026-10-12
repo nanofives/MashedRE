@@ -1,5 +1,20 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-12 night (A1 real-C4 pass DONE): **next = the A2 rows, U-9671, U-9673.**
+>
+> The 19 triage A1 rows got real canonical C4 scenarios (game-driven calls into the live port, a RED old-defect
+> control, original arms run twice for noise; memory install-observe-may-never-execute-the-body):
+> - 13 back to C4: Championship::Complete (forced P1-won flag), MenuButtonDetectA/B/C, TimerSlotTickDispatcher
+>   (substituted control), FrontendPlayerSlotCheck (save edit), 0x00403160 / 0x0041db80 / 0x004295a0 (save edit),
+>   PlayerBlock2Field08Get / Field50Get (natural Team Play Race Results).
+> - 2 to C4 with a user-accepted LIVE forced input: PlayerBlock2Field00Get / Field04Get (fields 0 in every natural run).
+> - 6 stay C3: 5 settings-dialog rows (skip_selector / skip_controller_dialog keep the dialogs closed, U-9674),
+>   GameStateSlotsFill (never called on a reachable route).
+> - New scenario harnesses: re/frida/c4_champ_complete_scenario.py, c4_pb2_scenario.py, and the group H/M scripts.
+> - Side finding (not acted on): the UNMODIFIED original crashed at MASHED.exe+0x1509b4 at race start after the Vehicle
+>   setting 0x0067ea94 changed 0 -> 1 (one stock run, group R exploration).
+> - Never use shared %TEMP% filenames for commit messages: another session overwrote $TEMP/m.txt (fixed a3545a59).
+
 > ## START HERE 2026-10-12 late (triage follow-ups DONE): **next = the user calls in U-9672, then the A1 C4 rows.**
 >
 > - Triage of the 50 rows below their old level: `re/analysis/negctl/reearn_20261011/TRIAGE_2026-10-12.md` (verified).
