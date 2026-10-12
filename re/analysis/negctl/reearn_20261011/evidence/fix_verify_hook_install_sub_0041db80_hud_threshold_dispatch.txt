@@ -1,0 +1,27 @@
+# provenance 2026-10-12: main build be07a6fd deployed (asi sha256 afa7a992fdf9749a...), MASHED_HOOK_ONLY=0x0041db80, MASHED_VERIFY_ASI=original/mashed_re_dev.asi
+=== verify_hook_install report (sub_0041db80_hud_threshold_dispatch) ===
+
+target address: 0x0041db80  export: Sub0041db80_HudThresholdDispatch
+PRE  bytes:     e9 6b 66 82 5a e9 26 ff
+asi base:       0x5ac30000
+reimpl addr:    0x5ac441f0
+POST bytes:     e9 6b 66 82 5a e9 26 ff
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x5a82666b  expected 0x5a82666b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  1 / 1  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [], 'seed': [{'addr': 6542728, 'val': 1069547520}, {'addr': 9513732, 'val': 100}, {'addr': 6542684, 'val': {'scratch': 0}}, {'addr': {'scratch': 0}, 'val': 3235774464}, {'addr': {'scratch': 72}, 'val': 5582192}, {'addr': 6542688, 'val': {'scratch': 64}}, {'addr': {'scratch': 64}, 'val': 3235774465}, {'addr': {'scratch': 136}, 'val': 5582192}, {'addr': 6542692, 'val': {'scratch': 128}}, {'addr': {'scratch': 128}, 'val': 3235774466}, {'addr': {'scratch': 200}, 'val': 4680176}, {'addr': 6542696, 'val': {'scratch': 192}}, {'addr': {'scratch': 192}, 'val': 3235774467}, {'addr': {'scratch': 264}, 'val': 4680176}, {'addr': 6542700, 'val': {'scratch': 256}}, {'addr': {'scratch': 256}, 'val': 3235774468}, {'addr': {'scratch': 328}, 'val': 4233696}, {'addr': 6542704, 'val': {'scratch': 320}}, {'addr': {'scratch': 320}, 'val': 3235774469}, {'addr': {'scratch': 392}, 'val': 4233696}]}  got=b72a4e03  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 1x as expected
+  + all 1 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_sub_0041db80_hud_threshold_dispatch.txt

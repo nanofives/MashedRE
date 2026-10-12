@@ -1,0 +1,27 @@
+# provenance 2026-10-12: main build be07a6fd deployed (asi sha256 afa7a992fdf9749a...), MASHED_HOOK_ONLY=0x0041ded0, MASHED_VERIFY_ASI=original/mashed_re_dev.asi
+=== verify_hook_install report (hud_mode_guard_dispatch) ===
+
+target address: 0x0041ded0  export: HudModeGuardDispatch
+PRE  bytes:     e9 7b fd 83 5a 85 c0 74
+asi base:       0x5ac30000
+reimpl addr:    0x5ac5dc50
+POST bytes:     e9 7b fd 83 5a 85 c0 74
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x5a83fd7b  expected 0x5a83fd7b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  1 / 1  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [0], 'seed': [{'addr': {'scratch': 72}, 'val': 4317488}, {'addr': {'scratch': 152}, 'val': 4317488}, {'addr': {'scratch': 232}, 'val': 4317488}, {'addr': {'scratch': 312}, 'val': 4317488}, {'addr': {'scratch': 392}, 'val': 4317488}, {'addr': {'scratch': 472}, 'val': 4317488}, {'addr': {'scratch': 552}, 'val': 4317488}, {'addr': {'scratch': 632}, 'val': 4317488}, {'addr': {'scratch': 712}, 'val': 4317488}, {'addr': {'scratch': 792}, 'val': 4317488}, {'addr': {'scratch': 872}, 'val': 4317488}, {'addr': {'scratch': 952}, 'val': 4317488}, {'addr': {'scratch': 1032}, 'val': 4317488}, {'addr': {'scratch': 1112}, 'val': 4317488}, {'addr': 6542752, 'val': {'scratch': 0}}, {'addr': 6542756, 'val': {'scratch': 80}}, {'addr': 6542760, 'val': {'scratch': 160}}, {'addr': 6542764, 'val': {'scratch': 240}}, {'addr': 6542768, 'val': {'scratch': 320}}, {'addr': 6542772, 'val': {'scratch': 400}}, {'addr': 6542776, 'val': {'scratch': 480}}, {'addr': 6542780, 'val': {'scratch': 560}}, {'addr': 6542784, 'val': {'scratch': 640}}, {'addr': 6542788, 'val': {'scratch': 720}}, {'addr': 6542792, 'val': {'scratch': 800}}, {'addr': 6542796, 'val': {'scratch': 880}}, {'addr': 6542800, 'val': {'scratch': 960}}, {'addr': 6542804, 'val': {'scratch': 1040}}, {'addr': 6542824, 'val': 1}, {'addr': 8329756, 'val': 0}, {'addr': 6542832, 'val': 0}]}  got=b5534d07  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 1x as expected
+  + all 1 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_hud_mode_guard_dispatch.txt

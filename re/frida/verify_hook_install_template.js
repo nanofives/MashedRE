@@ -108,8 +108,28 @@ function callFn(fn, input, buf) {
         const scratch = sz > 0 ? Memory.alloc(sz) : null;
         verifyKeep.push(scratch);
         if (scratch) { const z = new Uint8Array(sz); z.fill((CONFIG.scratch_fill | 0) & 0xff); scratch.writeByteArray(z.buffer); }
+        // `recorder` {args, abi, off, max_calls}: mirror of diff_template's scalars_to_scattered_globals recorder. A seed
+        // value {recorder: true} resolves to its address (e.g. a fake RwGlobals device slot). Without it path2 called
+        // through an unfilled slot and AV'd at 0x0 after entry (0x00403160, 2026-10-12).
+        const recCfg = CONFIG.recorder || null;
+        let recorder = null;
+        if (recCfg && scratch) {
+            const nA = recCfg.args | 0, rOff = recCfg.off | 0, maxC = (recCfg.max_calls | 0) || 8;
+            const types = []; for (let k = 0; k < nA; k++) types.push('uint32');
+            recorder = new NativeCallback(function () {
+                const base = scratch.add(rOff), c = base.readU32();
+                if (c < maxC) for (let k = 0; k < nA; k++) base.add(4 + (c * nA + k) * 4).writeU32(arguments[k] >>> 0);
+                base.writeU32(c + 1);
+                return 0;
+            }, 'int', types, recCfg.abi || 'stdcall');
+            verifyKeep.push(recorder);
+        }
         const rA = function (x) { return (x !== null && typeof x === 'object' && x.scratch !== undefined) ? scratch.add(x.scratch | 0) : ptr(x); };
-        const rV = function (x) { return (x !== null && typeof x === 'object' && x.scratch !== undefined) ? scratch.add(x.scratch | 0).toUInt32() : x; };
+        const rV = function (x) {
+            if (x !== null && typeof x === 'object' && x.scratch !== undefined) return scratch.add(x.scratch | 0).toUInt32();
+            if (x !== null && typeof x === 'object' && x.recorder) return recorder.toUInt32();
+            return x;
+        };
         const obs = (CONFIG.observe || []).map(function (w) { return { a: rA(w.addr), len: (w.len === undefined || w.len === null) ? 4 : (w.len | 0) }; });
         const seeds = (input.seed || []).map(function (g) { return { a: rA(g.addr), v: rV(g.val), n: (g.size | 0) || 4 }; });
         const obsSaved = obs.map(function (w) { return w.a.readByteArray(w.len); });

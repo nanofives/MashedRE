@@ -140,6 +140,7 @@ def main():
         'observe':        hook.get('observe') or [],
         'scratch_size':   hook.get('scratch_size', 0),
         'scratch_fill':   hook.get('scratch_fill', 0),
+        'recorder':       hook.get('recorder'),   # {args,seed} fixtures' fake-callee recorder (2026-10-12)
         'tests':          hook['path2_tests'],
     }
     # Heap / import stand-ins (plan item #3): the SAME keys run_diff.build_config forwards, so path2 runs the

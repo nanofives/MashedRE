@@ -1,0 +1,27 @@
+# provenance 2026-10-12: main build be07a6fd deployed (asi sha256 afa7a992fdf9749a...), MASHED_HOOK_ONLY=0x004295a0, MASHED_VERIFY_ASI=original/mashed_re_dev.asi
+=== verify_hook_install report (hud_dual_label_render) ===
+
+target address: 0x004295a0  export: HudDualLabelRender
+PRE  bytes:     e9 4b f2 81 5a 6a 02 88
+asi base:       0x5ac30000
+reimpl addr:    0x5ac487f0
+POST bytes:     e9 4b f2 81 5a 6a 02 88
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x5a81f24b  expected 0x5a81f24b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  1 / 1  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [], 'seed': [{'addr': 6535440, 'val': 1120403456}]}  got=0,e5464095  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 1x as expected
+  + all 1 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_hud_dual_label_render.txt
