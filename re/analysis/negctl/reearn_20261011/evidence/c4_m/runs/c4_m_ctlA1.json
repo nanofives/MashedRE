@@ -1,0 +1,2475 @@
+{
+ "arm": "late",
+ "tag": "ctlA1",
+ "rows_live": [
+  "A"
+ ],
+ "force_f": false,
+ "exe_sha256": "B9977DAB70607720CF58BC7832937C203B1E0B33FF5896DA586BAF56AA79FE87",
+ "deployed_asi_sha256": "C5594D6B933B24008E1FD408DBA41DBE6870B5E4CC6C0B3E7D5F7DC6F6373840",
+ "ctl_asi": "log/c4_m/ctl1_mashed_re_dev.asi",
+ "ctl_asi_sha256": "564953D55786DC4729C654FACBF0BBEBC06607E8949133B815A57B63B84FEE5E",
+ "ctl_kind": null,
+ "env": {
+  "MASHED_HOOK_ONLY": "0x0042aff0",
+  "MASHED_RE_NO_AUTO_HOOK": "1"
+ },
+ "log": [
+  "  spawned pid=27528 arm=late live=['A']",
+  "  witness (pre-attach): {'A': {'b0': 161, 'dword': '7f1a0ca1', 'tgt': None, 'mod': None}, 'B': {'b0': 161, 'dword': '7f1a0ca1', 'tgt': None, 'mod': None}, 'C': {'b0': 161, 'dword': '7f1a0ca1', 'tgt': None, 'mod': None}, 'T': {'b0': 217, 'dword': 'e84005d9', 'tgt': None, 'mod': None}, 'F': {'b0': 139, 'dword': '424548b', 'tgt': None, 'mod': None}}",
+  "  ctl load: {'ok': True, 'base': '0x708a0000', 'name': 'ctl1_mashed_re_dev.asi', 'path': 'C:\\\\Users\\\\maria\\\\Desktop\\\\Proyectos\\\\Mashed\\\\.worktrees\\\\c4a1-m\\\\log\\\\c4_m\\\\ctl1_mashed_re_dev.asi'}",
+  "  witness (after load): {'A': {'b0': 233, 'dword': '48745be9', 'tgt': '0x708b2450', 'mod': {'name': 'ctl1_mashed_re_dev.asi', 'path': 'C:\\\\Users\\\\maria\\\\Desktop\\\\Proyectos\\\\Mashed\\\\.worktrees\\\\c4a1-m\\\\log\\\\c4_m\\\\ctl1_mashed_re_dev.asi', 'off': '0x12450'}}, 'B': {'b0': 161, 'dword': '7f1a0ca1', 'tgt': None, 'mod': None}, 'C': {'b0': 161, 'dword': '7f1a0ca1', 'tgt': None, 'mod': None}, 'T': {'b0': 217, 'dword': 'e84005d9', 'tgt': None, 'mod': None}, 'F': {'b0': 139, 'dword': '424548b', 'tgt': None, 'mod': None}}",
+  "  arm: {'ok': True, 'arm': {'A': {'entry': '0x708b2450', 'mod': 'ctl1_mashed_re_dev.asi+0x12450', 'hooked': True}, 'B': {'entry': '0x42b180', 'mod': 'MASHED.exe+0x2b180', 'hooked': False}, 'C': {'entry': '0x42b310', 'mod': 'MASHED.exe+0x2b310', 'hooked': False}, 'T': {'entry': '0x43c000', 'mod': 'MASHED.exe+0x3c000', 'hooked': False}, 'F': {'entry': '0x42ebe0', 'mod': 'MASHED.exe+0x2ebe0', 'hooked': False}}}",
+  "  after GTS: {'d': 2, 't': 1, 'sub': 0, 'ph': 3, 'sel': 4096, 'sph': 1, 'row': 0, 'col': 0, 'gm': 0, 'cur6': 0, 'calls': {'T': 26, 'A': 3, 'B': 3}, 'mm': {'T': 0, 'A': 0, 'B': 0}}",
+  "  single player: {'d': 3, 't': 2, 'sub': 0, 'ph': 3, 'sel': 1, 'sph': 1, 'row': 0, 'col': 0, 'gm': 0, 'cur6': 0, 'calls': {'T': 438, 'A': 209, 'B': 209}, 'mm': {'T': 0, 'A': 0, 'B': 0}}",
+  "  win sp_down: d=3 t=2 sub=1 row=0 col=0 cur6=0 calls={'T': 545, 'A': 316, 'B': 316} mm={'T': 0, 'A': 0, 'B': 0}",
+  "  colour-select: {'d': 4, 't': 4, 'sub': 0, 'ph': 3, 'sel': 1, 'sph': 1, 'row': 0, 'col': 11, 'gm': 10, 'cur6': 0, 'calls': {'T': 571, 'A': 317, 'B': 317, 'C': 25}, 'mm': {'T': 0, 'A': 0, 'B': 0, 'C': 0}}",
+  "  win t4_c9: d=4 t=4 sub=0 row=0 col=11 cur6=0 calls={'T': 857, 'A': 317, 'B': 317, 'C': 311} mm={'T': 0, 'A': 0, 'B': 0, 'C': 0}",
+  "  track-select: {'d': 5, 't': 6, 'sub': 0, 'ph': 3, 'sel': 1, 'sph': 1, 'row': 0, 'col': 11, 'gm': 10, 'cur6': 0, 'calls': {'T': 882, 'A': 341, 'B': 341, 'C': 336, 'F': 225}, 'mm': {'T': 0, 'A': 0, 'B': 0, 'C': 0, 'F': 0}}",
+  "  win t6_hold12: d=5 t=6 sub=-1 row=0 col=11 cur6=-1 calls={'T': 1068, 'A': 527, 'B': 527, 'C': 522, 'F': 1899} mm={'T': 0, 'A': 0, 'B': 0, 'C': 0, 'F': 0}",
+  "  win t6_hold11: d=5 t=6 sub=-1 row=0 col=11 cur6=-1 calls={'T': 1251, 'A': 710, 'B': 710, 'C': 705, 'F': 3546} mm={'T': 0, 'A': 0, 'B': 0, 'C': 0, 'F': 0}",
+  "  win t6_taps: d=5 t=6 sub=-1 row=0 col=11 cur6=-1 calls={'T': 1694, 'A': 1153, 'B': 1153, 'C': 1148, 'F': 7533} mm={'T': 0, 'A': 12, 'B': 0, 'C': 0, 'F': 0}",
+  "  after track confirm: {'d': 6, 't': 24, 'sub': 0, 'ph': 3, 'sel': 1, 'sph': 1, 'row': 0, 'col': 11, 'gm': 10, 'cur6': -1, 'calls': {'T': 1810, 'A': 1269, 'B': 1269, 'C': 1264, 'F': 7758}, 'mm': {'T': 0, 'A': 12, 'B': 0, 'C': 0, 'F': 0}}",
+  "  win t24_taps: d=6 t=24 sub=7 row=0 col=11 cur6=-1 calls={'T': 2156, 'A': 1615, 'B': 1615, 'C': 1610, 'F': 7758} mm={'T': 0, 'A': 13, 'B': 0, 'C': 0, 'F': 0}",
+  "  start-attempt 0: {'d': 6, 't': 24, 'sub': 0, 'ph': 3, 'sel': 1, 'sph': 1, 'row': 0, 'col': 11, 'gm': 10, 'cur6': -1, 'calls': {'T': 2270, 'A': 1729, 'B': 1729, 'C': 1724, 'F': 7758}, 'mm': {'T': 0, 'A': 13, 'B': 0, 'C': 0, 'F': 0}}",
+  "  start-attempt 1: {'d': 6, 't': 24, 'sub': 0, 'ph': 0, 'sel': 1, 'sph': 2, 'row': 0, 'col': 11, 'gm': 10, 'cur6': -1, 'calls': {'T': 2312, 'A': 1730, 'B': 1730, 'C': 1725, 'F': 7758}, 'mm': {'T': 0, 'A': 13, 'B': 0, 'C': 0, 'F': 0}}",
+  "   race t {'d': 6, 't': 24, 'sub': 0, 'ph': 0, 'sel': 1, 'sph': 2, 'row': 0, 'col': 11, 'gm': 10, 'cur6': -1, 'calls': {'T': 2312, 'A': 1730, 'B': 1730, 'C': 1725, 'F': 7758}, 'mm': {'T': 0, 'A': 13, 'B': 0, 'C': 0, 'F': 0}}",
+  "   race t {'d': 6, 't': 24, 'sub': 0, 'ph': 0, 'sel': 1, 'sph': 3, 'row': 0, 'col': 11, 'gm': 10, 'cur6': -1, 'calls': {'T': 2312, 'A': 1730, 'B': 1730, 'C': 1725, 'F': 7758}, 'mm': {'T': 0, 'A': 13, 'B': 0, 'C': 0, 'F': 0}}",
+  "  results: {'d': 1, 't': 5, 'sub': 0, 'ph': 3, 'sel': 1, 'sph': 1, 'row': 0, 'col': 11, 'gm': 10, 'cur6': 0, 'calls': {'T': 2550, 'A': 1730, 'B': 1730, 'C': 1725, 'F': 7758}, 'mm': {'T': 0, 'A': 13, 'B': 0, 'C': 0, 'F': 0}}",
+  "  after results confirm: {'d': 2, 't': 7, 'sub': 0, 'ph': 3, 'sel': 1, 'sph': 1, 'row': 0, 'col': 11, 'gm': 10, 'cur6': 0, 'calls': {'T': 2693, 'A': 1872, 'B': 1872, 'C': 1867, 'F': 9045}, 'mm': {'T': 0, 'A': 13, 'B': 0, 'C': 0, 'F': 0}}",
+  "  win t7_hold12: d=2 t=7 sub=-1 row=0 col=11 cur6=0 calls={'T': 2878, 'A': 2057, 'B': 2057, 'C': 2052, 'F': 10710} mm={'T': 0, 'A': 13, 'B': 0, 'C': 0, 'F': 0}",
+  "  win t7_hold11: d=2 t=7 sub=-1 row=0 col=11 cur6=0 calls={'T': 3063, 'A': 2242, 'B': 2242, 'C': 2237, 'F': 12375} mm={'T': 0, 'A': 13, 'B': 0, 'C': 0, 'F': 0}",
+  "  win t7_taps: d=2 t=7 sub=-1 row=0 col=11 cur6=0 calls={'T': 3397, 'A': 2576, 'B': 2576, 'C': 2571, 'F': 15381} mm={'T': 0, 'A': 37, 'B': 0, 'C': 0, 'F': 0}"
+ ],
+ "windows": [
+  {
+   "win": "sp_down",
+   "actions": [
+    [
+     0,
+     12,
+     200,
+     0.6
+    ]
+   ],
+   "s0": {
+    "d": 3,
+    "t": 2,
+    "sub": 0,
+    "ph": 3,
+    "sel": 1,
+    "sph": 1,
+    "row": 0,
+    "col": 0,
+    "gm": 0,
+    "cur6": 0,
+    "calls": {
+     "T": 438,
+     "A": 209,
+     "B": 209
+    },
+    "mm": {
+     "T": 0,
+     "A": 0,
+     "B": 0
+    }
+   },
+   "s1": {
+    "d": 3,
+    "t": 2,
+    "sub": 1,
+    "ph": 3,
+    "sel": 1,
+    "sph": 1,
+    "row": 0,
+    "col": 0,
+    "gm": 0,
+    "cur6": 0,
+    "calls": {
+     "T": 545,
+     "A": 316,
+     "B": 316
+    },
+    "mm": {
+     "T": 0,
+     "A": 0,
+     "B": 0
+    }
+   }
+  },
+  {
+   "win": "t4_c9",
+   "actions": [
+    [
+     0,
+     9,
+     200,
+     0.8
+    ],
+    [
+     1,
+     9,
+     200,
+     0.8
+    ],
+    [
+     2,
+     9,
+     200,
+     0.8
+    ],
+    [
+     0,
+     10,
+     200,
+     0.8
+    ]
+   ],
+   "s0": {
+    "d": 4,
+    "t": 4,
+    "sub": 0,
+    "ph": 3,
+    "sel": 1,
+    "sph": 1,
+    "row": 0,
+    "col": 11,
+    "gm": 10,
+    "cur6": 0,
+    "calls": {
+     "T": 571,
+     "A": 317,
+     "B": 317,
+     "C": 25
+    },
+    "mm": {
+     "T": 0,
+     "A": 0,
+     "B": 0,
+     "C": 0
+    }
+   },
+   "s1": {
+    "d": 4,
+    "t": 4,
+    "sub": 0,
+    "ph": 3,
+    "sel": 1,
+    "sph": 1,
+    "row": 0,
+    "col": 11,
+    "gm": 10,
+    "cur6": 0,
+    "calls": {
+     "T": 857,
+     "A": 317,
+     "B": 317,
+     "C": 311
+    },
+    "mm": {
+     "T": 0,
+     "A": 0,
+     "B": 0,
+     "C": 0
+    }
+   }
+  },
+  {
+   "win": "t6_hold12",
+   "actions": [
+    [
+     0,
+     12,
+     1500,
+     0.6
+    ]
+   ],
+   "s0": {
+    "d": 5,
+    "t": 6,
+    "sub": 0,
+    "ph": 3,
+    "sel": 1,
+    "sph": 1,
+    "row": 0,
+    "col": 11,
+    "gm": 10,
+    "cur6": 0,
+    "calls": {
+     "T": 882,
+     "A": 341,
+     "B": 341,
+     "C": 336,
+     "F": 225
+    },
+    "mm": {
+     "T": 0,
+     "A": 0,
+     "B": 0,
+     "C": 0,
+     "F": 0
+    }
+   },
+   "s1": {
+    "d": 5,
+    "t": 6,
+    "sub": -1,
+    "ph": 3,
+    "sel": 1,
+    "sph": 1,
+    "row": 0,
+    "col": 11,
+    "gm": 10,
+    "cur6": -1,
+    "calls": {
+     "T": 1068,
+     "A": 527,
+     "B": 527,
+     "C": 522,
+     "F": 1899
+    },
+    "mm": {
+     "T": 0,
+     "A": 0,
+     "B": 0,
+     "C": 0,
+     "F": 0
+    }
+   }
+  },
+  {
+   "win": "t6_hold11",
+   "actions": [
+    [
+     0,
+     11,
+     1500,
+     0.6
+    ]
+   ],
+   "s0": {
+    "d": 5,
+    "t": 6,
+    "sub": -1,
+    "ph": 3,
+    "sel": 1,
+    "sph": 1,
+    "row": 0,
+    "col": 11,
+    "gm": 10,
+    "cur6": -1,
+    "calls": {
+     "T": 1068,
+     "A": 527,
+     "B": 527,
+     "C": 522,
+     "F": 1899
+    },
+    "mm": {
+     "T": 0,
+     "A": 0,
+     "B": 0,
+     "C": 0,
+     "F": 0
+    }
+   },
+   "s1": {
+    "d": 5,
+    "t": 6,
+    "sub": -1,
+    "ph": 3,
+    "sel": 1,
+    "sph": 1,
+    "row": 0,
+    "col": 11,
+    "gm": 10,
+    "cur6": -1,
+    "calls": {
+     "T": 1251,
+     "A": 710,
+     "B": 710,
+     "C": 705,
+     "F": 3546
+    },
+    "mm": {
+     "T": 0,
+     "A": 0,
+     "B": 0,
+     "C": 0,
+     "F": 0
+    }
+   }
+  },
+  {
+   "win": "t6_taps",
+   "actions": [
+    [
+     1,
+     11,
+     200,
+     0.6
+    ],
+    [
+     1,
+     12,
+     200,
+     0.6
+    ],
+    [
+     1,
+     9,
+     200,
+     0.6
+    ],
+    [
+     2,
+     11,
+     200,
+     0.6
+    ],
+    [
+     2,
+     12,
+     200,
+     0.6
+    ],
+    [
+     2,
+     9,
+     200,
+     0.6
+    ],
+    [
+     0,
+     12,
+     200,
+     0.6
+    ],
+    [
+     0,
+     11,
+     200,
+     0.6
+    ]
+   ],
+   "s0": {
+    "d": 5,
+    "t": 6,
+    "sub": -1,
+    "ph": 3,
+    "sel": 1,
+    "sph": 1,
+    "row": 0,
+    "col": 11,
+    "gm": 10,
+    "cur6": -1,
+    "calls": {
+     "T": 1251,
+     "A": 710,
+     "B": 710,
+     "C": 705,
+     "F": 3546
+    },
+    "mm": {
+     "T": 0,
+     "A": 0,
+     "B": 0,
+     "C": 0,
+     "F": 0
+    }
+   },
+   "s1": {
+    "d": 5,
+    "t": 6,
+    "sub": -1,
+    "ph": 3,
+    "sel": 1,
+    "sph": 1,
+    "row": 0,
+    "col": 11,
+    "gm": 10,
+    "cur6": -1,
+    "calls": {
+     "T": 1694,
+     "A": 1153,
+     "B": 1153,
+     "C": 1148,
+     "F": 7533
+    },
+    "mm": {
+     "T": 0,
+     "A": 12,
+     "B": 0,
+     "C": 0,
+     "F": 0
+    }
+   }
+  },
+  {
+   "win": "t24_taps",
+   "actions": [
+    [
+     1,
+     11,
+     200,
+     0.6
+    ],
+    [
+     1,
+     12,
+     200,
+     0.6
+    ],
+    [
+     1,
+     9,
+     200,
+     0.6
+    ],
+    [
+     2,
+     11,
+     200,
+     0.6
+    ],
+    [
+     0,
+     12,
+     200,
+     0.6
+    ],
+    [
+     0,
+     11,
+     200,
+     0.6
+    ]
+   ],
+   "s0": {
+    "d": 6,
+    "t": 24,
+    "sub": 0,
+    "ph": 3,
+    "sel": 1,
+    "sph": 1,
+    "row": 0,
+    "col": 11,
+    "gm": 10,
+    "cur6": -1,
+    "calls": {
+     "T": 1810,
+     "A": 1269,
+     "B": 1269,
+     "C": 1264,
+     "F": 7758
+    },
+    "mm": {
+     "T": 0,
+     "A": 12,
+     "B": 0,
+     "C": 0,
+     "F": 0
+    }
+   },
+   "s1": {
+    "d": 6,
+    "t": 24,
+    "sub": 7,
+    "ph": 3,
+    "sel": 1,
+    "sph": 1,
+    "row": 0,
+    "col": 11,
+    "gm": 10,
+    "cur6": -1,
+    "calls": {
+     "T": 2156,
+     "A": 1615,
+     "B": 1615,
+     "C": 1610,
+     "F": 7758
+    },
+    "mm": {
+     "T": 0,
+     "A": 13,
+     "B": 0,
+     "C": 0,
+     "F": 0
+    }
+   }
+  },
+  {
+   "win": "t7_hold12",
+   "actions": [
+    [
+     0,
+     12,
+     1500,
+     0.6
+    ]
+   ],
+   "s0": {
+    "d": 2,
+    "t": 7,
+    "sub": 0,
+    "ph": 3,
+    "sel": 1,
+    "sph": 1,
+    "row": 0,
+    "col": 11,
+    "gm": 10,
+    "cur6": 0,
+    "calls": {
+     "T": 2693,
+     "A": 1872,
+     "B": 1872,
+     "C": 1867,
+     "F": 9045
+    },
+    "mm": {
+     "T": 0,
+     "A": 13,
+     "B": 0,
+     "C": 0,
+     "F": 0
+    }
+   },
+   "s1": {
+    "d": 2,
+    "t": 7,
+    "sub": -1,
+    "ph": 3,
+    "sel": 1,
+    "sph": 1,
+    "row": 0,
+    "col": 11,
+    "gm": 10,
+    "cur6": 0,
+    "calls": {
+     "T": 2878,
+     "A": 2057,
+     "B": 2057,
+     "C": 2052,
+     "F": 10710
+    },
+    "mm": {
+     "T": 0,
+     "A": 13,
+     "B": 0,
+     "C": 0,
+     "F": 0
+    }
+   }
+  },
+  {
+   "win": "t7_hold11",
+   "actions": [
+    [
+     0,
+     11,
+     1500,
+     0.6
+    ]
+   ],
+   "s0": {
+    "d": 2,
+    "t": 7,
+    "sub": -1,
+    "ph": 3,
+    "sel": 1,
+    "sph": 1,
+    "row": 0,
+    "col": 11,
+    "gm": 10,
+    "cur6": 0,
+    "calls": {
+     "T": 2878,
+     "A": 2057,
+     "B": 2057,
+     "C": 2052,
+     "F": 10710
+    },
+    "mm": {
+     "T": 0,
+     "A": 13,
+     "B": 0,
+     "C": 0,
+     "F": 0
+    }
+   },
+   "s1": {
+    "d": 2,
+    "t": 7,
+    "sub": -1,
+    "ph": 3,
+    "sel": 1,
+    "sph": 1,
+    "row": 0,
+    "col": 11,
+    "gm": 10,
+    "cur6": 0,
+    "calls": {
+     "T": 3063,
+     "A": 2242,
+     "B": 2242,
+     "C": 2237,
+     "F": 12375
+    },
+    "mm": {
+     "T": 0,
+     "A": 13,
+     "B": 0,
+     "C": 0,
+     "F": 0
+    }
+   }
+  },
+  {
+   "win": "t7_taps",
+   "actions": [
+    [
+     1,
+     11,
+     200,
+     0.6
+    ],
+    [
+     1,
+     12,
+     200,
+     0.6
+    ],
+    [
+     1,
+     9,
+     200,
+     0.6
+    ],
+    [
+     2,
+     11,
+     200,
+     0.6
+    ],
+    [
+     2,
+     12,
+     200,
+     0.6
+    ],
+    [
+     2,
+     9,
+     200,
+     0.6
+    ]
+   ],
+   "s0": {
+    "d": 2,
+    "t": 7,
+    "sub": -1,
+    "ph": 3,
+    "sel": 1,
+    "sph": 1,
+    "row": 0,
+    "col": 11,
+    "gm": 10,
+    "cur6": 0,
+    "calls": {
+     "T": 3063,
+     "A": 2242,
+     "B": 2242,
+     "C": 2237,
+     "F": 12375
+    },
+    "mm": {
+     "T": 0,
+     "A": 13,
+     "B": 0,
+     "C": 0,
+     "F": 0
+    }
+   },
+   "s1": {
+    "d": 2,
+    "t": 7,
+    "sub": -1,
+    "ph": 3,
+    "sel": 1,
+    "sph": 1,
+    "row": 0,
+    "col": 11,
+    "gm": 10,
+    "cur6": 0,
+    "calls": {
+     "T": 3397,
+     "A": 2576,
+     "B": 2576,
+     "C": 2571,
+     "F": 15381
+    },
+    "mm": {
+     "T": 0,
+     "A": 37,
+     "B": 0,
+     "C": 0,
+     "F": 0
+    }
+   }
+  }
+ ],
+ "crash": [],
+ "pid": 27528,
+ "witness_pre_attach": {
+  "A": {
+   "b0": 161,
+   "dword": "7f1a0ca1",
+   "tgt": null,
+   "mod": null
+  },
+  "B": {
+   "b0": 161,
+   "dword": "7f1a0ca1",
+   "tgt": null,
+   "mod": null
+  },
+  "C": {
+   "b0": 161,
+   "dword": "7f1a0ca1",
+   "tgt": null,
+   "mod": null
+  },
+  "T": {
+   "b0": 217,
+   "dword": "e84005d9",
+   "tgt": null,
+   "mod": null
+  },
+  "F": {
+   "b0": 139,
+   "dword": "424548b",
+   "tgt": null,
+   "mod": null
+  }
+ },
+ "ctl_load": {
+  "ok": true,
+  "base": "0x708a0000",
+  "name": "ctl1_mashed_re_dev.asi",
+  "path": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\c4a1-m\\log\\c4_m\\ctl1_mashed_re_dev.asi"
+ },
+ "witness_after_load": {
+  "A": {
+   "b0": 233,
+   "dword": "48745be9",
+   "tgt": "0x708b2450",
+   "mod": {
+    "name": "ctl1_mashed_re_dev.asi",
+    "path": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\c4a1-m\\log\\c4_m\\ctl1_mashed_re_dev.asi",
+    "off": "0x12450"
+   }
+  },
+  "B": {
+   "b0": 161,
+   "dword": "7f1a0ca1",
+   "tgt": null,
+   "mod": null
+  },
+  "C": {
+   "b0": 161,
+   "dword": "7f1a0ca1",
+   "tgt": null,
+   "mod": null
+  },
+  "T": {
+   "b0": 217,
+   "dword": "e84005d9",
+   "tgt": null,
+   "mod": null
+  },
+  "F": {
+   "b0": 139,
+   "dword": "424548b",
+   "tgt": null,
+   "mod": null
+  }
+ },
+ "arm_result": {
+  "ok": true,
+  "arm": {
+   "A": {
+    "entry": "0x708b2450",
+    "mod": "ctl1_mashed_re_dev.asi+0x12450",
+    "hooked": true
+   },
+   "B": {
+    "entry": "0x42b180",
+    "mod": "MASHED.exe+0x2b180",
+    "hooked": false
+   },
+   "C": {
+    "entry": "0x42b310",
+    "mod": "MASHED.exe+0x2b310",
+    "hooked": false
+   },
+   "T": {
+    "entry": "0x43c000",
+    "mod": "MASHED.exe+0x3c000",
+    "hooked": false
+   },
+   "F": {
+    "entry": "0x42ebe0",
+    "mod": "MASHED.exe+0x2ebe0",
+    "hooked": false
+   }
+  }
+ },
+ "slots_sp": {
+  "sel": 1,
+  "ids": [
+   0,
+   -1,
+   -1,
+   -1
+  ],
+  "raw": [
+   0,
+   0,
+   0,
+   0,
+   -1,
+   0,
+   0,
+   0,
+   -1,
+   0,
+   0,
+   0,
+   -1,
+   0,
+   0,
+   0
+  ],
+  "st": [
+   1,
+   0,
+   0,
+   0,
+   0,
+   6235944,
+   0,
+   0,
+   1,
+   2,
+   3,
+   1,
+   2,
+   3,
+   0,
+   2
+  ]
+ },
+ "slots_t4": {
+  "sel": 1,
+  "ids": [
+   0,
+   -1,
+   -1,
+   -1
+  ],
+  "raw": [
+   0,
+   0,
+   0,
+   0,
+   -1,
+   0,
+   0,
+   0,
+   -1,
+   0,
+   0,
+   0,
+   -1,
+   0,
+   0,
+   0
+  ],
+  "st": [
+   1,
+   0,
+   0,
+   0,
+   0,
+   6235944,
+   0,
+   0,
+   1,
+   2,
+   3,
+   1,
+   2,
+   3,
+   0,
+   2
+  ]
+ },
+ "slots_t6": {
+  "sel": 1,
+  "ids": [
+   0,
+   -1,
+   -1,
+   -1
+  ],
+  "raw": [
+   0,
+   0,
+   1,
+   0,
+   -1,
+   0,
+   0,
+   0,
+   -1,
+   0,
+   0,
+   0,
+   -1,
+   0,
+   0,
+   0
+  ],
+  "st": [
+   1,
+   0,
+   0,
+   0,
+   0,
+   6235944,
+   0,
+   0,
+   1,
+   2,
+   3,
+   1,
+   2,
+   3,
+   0,
+   2
+  ]
+ },
+ "results_reached": {
+  "d": 1,
+  "t": 5,
+  "sub": 0,
+  "ph": 3,
+  "sel": 1,
+  "sph": 1,
+  "row": 0,
+  "col": 11,
+  "gm": 10,
+  "cur6": 0,
+  "calls": {
+   "T": 2370,
+   "A": 1730,
+   "B": 1730,
+   "C": 1725,
+   "F": 7758
+  },
+  "mm": {
+   "T": 0,
+   "A": 13,
+   "B": 0,
+   "C": 0,
+   "F": 0
+  }
+ },
+ "slots_t7": {
+  "sel": 1,
+  "ids": [
+   0,
+   6,
+   7,
+   8
+  ],
+  "raw": [
+   0,
+   0,
+   1,
+   0,
+   6,
+   1,
+   0,
+   0,
+   7,
+   1,
+   3,
+   0,
+   8,
+   1,
+   2,
+   0
+  ],
+  "st": [
+   1,
+   2,
+   2,
+   2,
+   1,
+   6235944,
+   0,
+   0,
+   1,
+   2,
+   3,
+   1,
+   2,
+   3,
+   0,
+   2
+  ]
+ },
+ "witness_final": {
+  "A": {
+   "b0": 233,
+   "dword": "48745be9",
+   "tgt": "0x708b2450",
+   "mod": {
+    "name": "ctl1_mashed_re_dev.asi",
+    "path": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\c4a1-m\\log\\c4_m\\ctl1_mashed_re_dev.asi",
+    "off": "0x12450"
+   }
+  },
+  "B": {
+   "b0": 233,
+   "dword": "13557fe9",
+   "tgt": "0x1560704",
+   "mod": null
+  },
+  "C": {
+   "b0": 233,
+   "dword": "1354efe9",
+   "tgt": "0x1560804",
+   "mod": null
+  },
+  "T": {
+   "b0": 233,
+   "dword": "1248ffe9",
+   "tgt": "0x1560904",
+   "mod": null
+  },
+  "F": {
+   "b0": 233,
+   "dword": "131e1fe9",
+   "tgt": "0x1560a04",
+   "mod": null
+  }
+ },
+ "final": {
+  "d": 2,
+  "t": 7,
+  "sub": -1,
+  "ph": 3,
+  "sel": 1,
+  "sph": 1,
+  "row": 0,
+  "col": 11,
+  "gm": 10,
+  "cur6": 0,
+  "calls": {
+   "T": 3458,
+   "A": 2637,
+   "B": 2637,
+   "C": 2632,
+   "F": 15930
+  },
+  "mm": {
+   "T": 0,
+   "A": 37,
+   "B": 0,
+   "C": 0,
+   "F": 0
+  }
+ },
+ "dump": {
+  "ST": {
+   "T": {
+    "calls": 3458,
+    "ret1": 0,
+    "mmOrig": 0,
+    "mmCtl": 0,
+    "disc": 2855,
+    "ex": [],
+    "cwSplit": 0,
+    "unscored": 0,
+    "st1": 2855,
+    "st2": 96,
+    "padNZ": 0
+   },
+   "A": {
+    "calls": 2637,
+    "ret1": 19,
+    "mmOrig": 37,
+    "mmCtl": 0,
+    "disc": 37,
+    "ex": [
+     {
+      "t": 6,
+      "sel": 1,
+      "ids": [
+       0,
+       0,
+       1,
+       0,
+       -1,
+       0,
+       0,
+       0
+      ],
+      "st": [
+       1,
+       0,
+       0,
+       0,
+       0,
+       6235944,
+       0,
+       0
+      ],
+      "held": [
+       0,
+       255,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "ret": 1,
+      "tout": "3c888888",
+      "mo": [
+       {
+        "ret": 0,
+        "tout": 0
+       },
+       {
+        "ret": 0,
+        "tout": 0
+       }
+      ],
+      "mc": [
+       {
+        "ret": 1,
+        "tout": 1015580808
+       },
+       {
+        "ret": 1,
+        "tout": 1015580808
+       }
+      ],
+      "win": "t6_taps"
+     },
+     {
+      "t": 6,
+      "sel": 1,
+      "ids": [
+       0,
+       0,
+       1,
+       0,
+       -1,
+       0,
+       0,
+       0
+      ],
+      "st": [
+       1,
+       0,
+       0,
+       0,
+       0,
+       6235944,
+       0,
+       0
+      ],
+      "held": [
+       0,
+       255,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "ret": 0,
+      "tout": "3d088888",
+      "mo": [
+       {
+        "ret": 0,
+        "tout": 0
+       },
+       {
+        "ret": 0,
+        "tout": 0
+       }
+      ],
+      "mc": [
+       {
+        "ret": 0,
+        "tout": 1023969416
+       },
+       {
+        "ret": 0,
+        "tout": 1023969416
+       }
+      ],
+      "win": "t6_taps"
+     },
+     {
+      "t": 6,
+      "sel": 1,
+      "ids": [
+       0,
+       0,
+       1,
+       0,
+       -1,
+       0,
+       0,
+       0
+      ],
+      "st": [
+       1,
+       0,
+       0,
+       0,
+       0,
+       6235944,
+       0,
+       0
+      ],
+      "held": [
+       0,
+       255,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "ret": 0,
+      "tout": "3d4ccccc",
+      "mo": [
+       {
+        "ret": 0,
+        "tout": 0
+       },
+       {
+        "ret": 0,
+        "tout": 0
+       }
+      ],
+      "mc": [
+       {
+        "ret": 0,
+        "tout": 1028443340
+       },
+       {
+        "ret": 0,
+        "tout": 1028443340
+       }
+      ],
+      "win": "t6_taps"
+     },
+     {
+      "t": 6,
+      "sel": 1,
+      "ids": [
+       0,
+       0,
+       1,
+       0,
+       -1,
+       0,
+       0,
+       0
+      ],
+      "st": [
+       1,
+       0,
+       0,
+       0,
+       0,
+       6235944,
+       0,
+       0
+      ],
+      "held": [
+       0,
+       255,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "ret": 0,
+      "tout": "3d888888",
+      "mo": [
+       {
+        "ret": 0,
+        "tout": 0
+       },
+       {
+        "ret": 0,
+        "tout": 0
+       }
+      ],
+      "mc": [
+       {
+        "ret": 0,
+        "tout": 1032358024
+       },
+       {
+        "ret": 0,
+        "tout": 1032358024
+       }
+      ],
+      "win": "t6_taps"
+     },
+     {
+      "t": 6,
+      "sel": 1,
+      "ids": [
+       0,
+       0,
+       1,
+       0,
+       -1,
+       0,
+       0,
+       0
+      ],
+      "st": [
+       1,
+       0,
+       0,
+       0,
+       0,
+       6235944,
+       0,
+       0
+      ],
+      "held": [
+       0,
+       255,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "ret": 0,
+      "tout": "3daaaaaa",
+      "mo": [
+       {
+        "ret": 0,
+        "tout": 0
+       },
+       {
+        "ret": 0,
+        "tout": 0
+       }
+      ],
+      "mc": [
+       {
+        "ret": 0,
+        "tout": 1034594986
+       },
+       {
+        "ret": 0,
+        "tout": 1034594986
+       }
+      ],
+      "win": "t6_taps"
+     },
+     {
+      "t": 6,
+      "sel": 1,
+      "ids": [
+       0,
+       0,
+       1,
+       0,
+       -1,
+       0,
+       0,
+       0
+      ],
+      "st": [
+       1,
+       0,
+       0,
+       0,
+       0,
+       6235944,
+       0,
+       0
+      ],
+      "held": [
+       0,
+       255,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "ret": 0,
+      "tout": "3dcccccc",
+      "mo": [
+       {
+        "ret": 0,
+        "tout": 0
+       },
+       {
+        "ret": 0,
+        "tout": 0
+       }
+      ],
+      "mc": [
+       {
+        "ret": 0,
+        "tout": 1036831948
+       },
+       {
+        "ret": 0,
+        "tout": 1036831948
+       }
+      ],
+      "win": "t6_taps"
+     },
+     {
+      "t": 6,
+      "sel": 1,
+      "ids": [
+       0,
+       0,
+       1,
+       0,
+       -1,
+       0,
+       0,
+       0
+      ],
+      "st": [
+       1,
+       0,
+       0,
+       0,
+       0,
+       6235944,
+       0,
+       0
+      ],
+      "held": [
+       0,
+       255,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "ret": 0,
+      "tout": "3deeeeee",
+      "mo": [
+       {
+        "ret": 0,
+        "tout": 0
+       },
+       {
+        "ret": 0,
+        "tout": 0
+       }
+      ],
+      "mc": [
+       {
+        "ret": 0,
+        "tout": 1039068910
+       },
+       {
+        "ret": 0,
+        "tout": 1039068910
+       }
+      ],
+      "win": "t6_taps"
+     },
+     {
+      "t": 6,
+      "sel": 1,
+      "ids": [
+       0,
+       0,
+       1,
+       0,
+       -1,
+       0,
+       0,
+       0
+      ],
+      "st": [
+       1,
+       0,
+       0,
+       0,
+       0,
+       6235944,
+       0,
+       0
+      ],
+      "held": [
+       0,
+       255,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "ret": 0,
+      "tout": "3e088888",
+      "mo": [
+       {
+        "ret": 0,
+        "tout": 0
+       },
+       {
+        "ret": 0,
+        "tout": 0
+       }
+      ],
+      "mc": [
+       {
+        "ret": 0,
+        "tout": 1040746632
+       },
+       {
+        "ret": 0,
+        "tout": 1040746632
+       }
+      ],
+      "win": "t6_taps"
+     },
+     {
+      "t": 6,
+      "sel": 1,
+      "ids": [
+       0,
+       0,
+       1,
+       0,
+       -1,
+       0,
+       0,
+       0
+      ],
+      "st": [
+       1,
+       0,
+       0,
+       0,
+       0,
+       6235944,
+       0,
+       0
+      ],
+      "held": [
+       0,
+       255,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "ret": 0,
+      "tout": "3e199999",
+      "mo": [
+       {
+        "ret": 0,
+        "tout": 0
+       },
+       {
+        "ret": 0,
+        "tout": 0
+       }
+      ],
+      "mc": [
+       {
+        "ret": 0,
+        "tout": 1041865113
+       },
+       {
+        "ret": 0,
+        "tout": 1041865113
+       }
+      ],
+      "win": "t6_taps"
+     },
+     {
+      "t": 6,
+      "sel": 1,
+      "ids": [
+       0,
+       0,
+       1,
+       0,
+       -1,
+       0,
+       0,
+       0
+      ],
+      "st": [
+       1,
+       0,
+       0,
+       0,
+       0,
+       6235944,
+       0,
+       0
+      ],
+      "held": [
+       0,
+       255,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "ret": 0,
+      "tout": "3e2aaaaa",
+      "mo": [
+       {
+        "ret": 0,
+        "tout": 0
+       },
+       {
+        "ret": 0,
+        "tout": 0
+       }
+      ],
+      "mc": [
+       {
+        "ret": 0,
+        "tout": 1042983594
+       },
+       {
+        "ret": 0,
+        "tout": 1042983594
+       }
+      ],
+      "win": "t6_taps"
+     },
+     {
+      "t": 6,
+      "sel": 1,
+      "ids": [
+       0,
+       0,
+       1,
+       0,
+       -1,
+       0,
+       0,
+       0
+      ],
+      "st": [
+       1,
+       0,
+       0,
+       0,
+       0,
+       6235944,
+       0,
+       0
+      ],
+      "held": [
+       0,
+       255,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "ret": 0,
+      "tout": "3e3bbbbb",
+      "mo": [
+       {
+        "ret": 0,
+        "tout": 0
+       },
+       {
+        "ret": 0,
+        "tout": 0
+       }
+      ],
+      "mc": [
+       {
+        "ret": 0,
+        "tout": 1044102075
+       },
+       {
+        "ret": 0,
+        "tout": 1044102075
+       }
+      ],
+      "win": "t6_taps"
+     },
+     {
+      "t": 6,
+      "sel": 1,
+      "ids": [
+       0,
+       0,
+       1,
+       0,
+       -1,
+       0,
+       0,
+       0
+      ],
+      "st": [
+       1,
+       0,
+       0,
+       0,
+       0,
+       6235944,
+       0,
+       0
+      ],
+      "held": [
+       0,
+       255,
+       0,
+       0,
+       0,
+       0,
+       0,
+       0
+      ],
+      "ret": 0,
+      "tout": "3e4ccccc",
+      "mo": [
+       {
+        "ret": 0,
+        "tout": 0
+       },
+       {
+        "ret": 0,
+        "tout": 0
+       }
+      ],
+      "mc": [
+       {
+        "ret": 0,
+        "tout": 1045220556
+       },
+       {
+        "ret": 0,
+        "tout": 1045220556
+       }
+      ],
+      "win": "t6_taps"
+     }
+    ],
+    "cwSplit": 0,
+    "unscored": 0
+   },
+   "B": {
+    "calls": 2637,
+    "ret1": 16,
+    "mmOrig": 0,
+    "mmCtl": 36,
+    "disc": 36,
+    "ex": [],
+    "cwSplit": 0,
+    "unscored": 0
+   },
+   "C": {
+    "calls": 2632,
+    "ret1": 1,
+    "mmOrig": 0,
+    "mmCtl": 3,
+    "disc": 3,
+    "ex": [],
+    "cwSplit": 0,
+    "unscored": 0
+   },
+   "F": {
+    "calls": 15930,
+    "ret1": 0,
+    "mmOrig": 0,
+    "mmCtl": 0,
+    "disc": 0,
+    "ex": [],
+    "cwSplit": 0,
+    "unscored": 0,
+    "byP": {
+     "p10_r0": 5310,
+     "p11_r0": 5310,
+     "p12_r0": 5310
+    }
+   }
+  },
+  "WS": {
+   "nav_title": {
+    "T": {
+     "calls": 26,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0,
+     "st1": null,
+     "st2": null
+    },
+    "A": {
+     "calls": 3,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    },
+    "B": {
+     "calls": 3,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    }
+   },
+   "nav_gts": {
+    "T": {
+     "calls": 412,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0,
+     "st1": null,
+     "st2": null
+    },
+    "A": {
+     "calls": 206,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    },
+    "B": {
+     "calls": 206,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    }
+   },
+   "sp_down": {
+    "T": {
+     "calls": 107,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0,
+     "st1": null,
+     "st2": null
+    },
+    "A": {
+     "calls": 107,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    },
+    "B": {
+     "calls": 107,
+     "ret1": 1,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    }
+   },
+   "nav_sp": {
+    "T": {
+     "calls": 26,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 25,
+     "st1": null,
+     "st2": null
+    },
+    "A": {
+     "calls": 1,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    },
+    "B": {
+     "calls": 1,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    },
+    "C": {
+     "calls": 25,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    }
+   },
+   "t4_c9": {
+    "T": {
+     "calls": 286,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 286,
+     "st1": null,
+     "st2": null
+    },
+    "C": {
+     "calls": 286,
+     "ret1": 1,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    }
+   },
+   "nav_t4": {
+    "T": {
+     "calls": 25,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 25,
+     "st1": null,
+     "st2": null
+    },
+    "C": {
+     "calls": 25,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    },
+    "F": {
+     "calls": 225,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    },
+    "A": {
+     "calls": 24,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    },
+    "B": {
+     "calls": 24,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    }
+   },
+   "t6_hold12": {
+    "T": {
+     "calls": 186,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 186,
+     "st1": null,
+     "st2": null
+    },
+    "A": {
+     "calls": 186,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    },
+    "B": {
+     "calls": 186,
+     "ret1": 7,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    },
+    "C": {
+     "calls": 186,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    },
+    "F": {
+     "calls": 1674,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    }
+   },
+   "t6_hold11": {
+    "T": {
+     "calls": 183,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 183,
+     "st1": null,
+     "st2": null
+    },
+    "A": {
+     "calls": 183,
+     "ret1": 6,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    },
+    "B": {
+     "calls": 183,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    },
+    "C": {
+     "calls": 183,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    },
+    "F": {
+     "calls": 1647,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    }
+   },
+   "t6_taps": {
+    "T": {
+     "calls": 443,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 443,
+     "st1": null,
+     "st2": null
+    },
+    "A": {
+     "calls": 443,
+     "ret1": 2,
+     "mmOrig": 12,
+     "mmCtl": 0,
+     "disc": 12
+    },
+    "B": {
+     "calls": 443,
+     "ret1": 1,
+     "mmOrig": 0,
+     "mmCtl": 12,
+     "disc": 12
+    },
+    "C": {
+     "calls": 443,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 1,
+     "disc": 1
+    },
+    "F": {
+     "calls": 3987,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    }
+   },
+   "nav_t6": {
+    "T": {
+     "calls": 116,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 116,
+     "st1": null,
+     "st2": null
+    },
+    "A": {
+     "calls": 116,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    },
+    "B": {
+     "calls": 116,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    },
+    "C": {
+     "calls": 116,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    },
+    "F": {
+     "calls": 225,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    }
+   },
+   "t24_taps": {
+    "T": {
+     "calls": 346,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 346,
+     "st1": null,
+     "st2": null
+    },
+    "A": {
+     "calls": 346,
+     "ret1": 2,
+     "mmOrig": 1,
+     "mmCtl": 0,
+     "disc": 1
+    },
+    "B": {
+     "calls": 346,
+     "ret1": 1,
+     "mmOrig": 0,
+     "mmCtl": 1,
+     "disc": 1
+    },
+    "C": {
+     "calls": 346,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 1,
+     "disc": 1
+    }
+   },
+   "nav_t24": {
+    "T": {
+     "calls": 156,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 115,
+     "st1": null,
+     "st2": null
+    },
+    "A": {
+     "calls": 115,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    },
+    "B": {
+     "calls": 115,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    },
+    "C": {
+     "calls": 115,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    }
+   },
+   "race": {
+    "T": {
+     "calls": 58,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 42,
+     "st1": null,
+     "st2": null
+    }
+   },
+   "t5": {
+    "T": {
+     "calls": 180,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 180,
+     "st1": null,
+     "st2": null
+    }
+   },
+   "nav_t5": {
+    "T": {
+     "calls": 143,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 143,
+     "st1": null,
+     "st2": null
+    },
+    "F": {
+     "calls": 1287,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    },
+    "A": {
+     "calls": 142,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    },
+    "B": {
+     "calls": 142,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    },
+    "C": {
+     "calls": 142,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    }
+   },
+   "t7_hold12": {
+    "T": {
+     "calls": 185,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 185,
+     "st1": null,
+     "st2": null
+    },
+    "A": {
+     "calls": 185,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    },
+    "B": {
+     "calls": 185,
+     "ret1": 6,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    },
+    "C": {
+     "calls": 185,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    },
+    "F": {
+     "calls": 1665,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    }
+   },
+   "t7_hold11": {
+    "T": {
+     "calls": 185,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 185,
+     "st1": null,
+     "st2": null
+    },
+    "A": {
+     "calls": 185,
+     "ret1": 7,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    },
+    "B": {
+     "calls": 185,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    },
+    "C": {
+     "calls": 185,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    },
+    "F": {
+     "calls": 1665,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    }
+   },
+   "t7_taps": {
+    "T": {
+     "calls": 335,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 335,
+     "st1": null,
+     "st2": null
+    },
+    "A": {
+     "calls": 335,
+     "ret1": 2,
+     "mmOrig": 24,
+     "mmCtl": 0,
+     "disc": 24
+    },
+    "B": {
+     "calls": 335,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 23,
+     "disc": 23
+    },
+    "C": {
+     "calls": 335,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 1,
+     "disc": 1
+    },
+    "F": {
+     "calls": 3006,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    }
+   },
+   "end": {
+    "F": {
+     "calls": 549,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    },
+    "T": {
+     "calls": 60,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 60,
+     "st1": null,
+     "st2": null
+    },
+    "A": {
+     "calls": 60,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    },
+    "B": {
+     "calls": 60,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    },
+    "C": {
+     "calls": 60,
+     "ret1": 0,
+     "mmOrig": 0,
+     "mmCtl": 0,
+     "disc": 0
+    }
+   }
+  },
+  "ARM": {
+   "A": {
+    "entry": "0x708b2450",
+    "mod": "ctl1_mashed_re_dev.asi+0x12450",
+    "hooked": true
+   },
+   "B": {
+    "entry": "0x42b180",
+    "mod": "MASHED.exe+0x2b180",
+    "hooked": false
+   },
+   "C": {
+    "entry": "0x42b310",
+    "mod": "MASHED.exe+0x2b310",
+    "hooked": false
+   },
+   "T": {
+    "entry": "0x43c000",
+    "mod": "MASHED.exe+0x3c000",
+    "hooked": false
+   },
+   "F": {
+    "entry": "0x42ebe0",
+    "mod": "MASHED.exe+0x2ebe0",
+    "hooked": false
+   }
+  }
+ },
+ "alive_at_end": true,
+ "exit_code": 3735928559,
+ "verdict": "DONE"
+}

@@ -1,0 +1,385 @@
+##### deployed vs ctl1: MenuButtonDetectA  (66 diff lines)
+--- 
++++ 
+@@ -8,6 +8,7 @@
+   sub esp, 0xc
+-  mov edx, dword ptr [esp + 0x18]
+-  xor cl, cl
++  push ebx
++  mov ebx, dword ptr [esp + 0x1c]
++  xor al, al
+   cmp dword ptr [0x7f1a0c], 0x1000
+-  push ebx
++  mov ecx, 0x40e470
+   push ebp
+@@ -16,26 +17,26 @@
+   mov edi, dword ptr [esp + 0x20]
+-  mov ebp, 1
+-  mov dword ptr [esp + 0x10], ecx
+-  mov dword ptr [esp + 0x14], edx
++  mov edx, 1
++  mov dword ptr [esp + 0x10], eax
++  mov dword ptr [esp + 0x14], ebx
+   jne <rva>
+-  cmp byte ptr [edi], cl
++  cmp byte ptr [edi], al
+   setne al
+-  cmp byte ptr [edi + 0x4c], cl
++  cmp byte ptr [edi + 0x4c], 0
+   movzx eax, al
+-  cmovne eax, ebp
+-  cmp byte ptr [edi + 0x98], cl
++  cmovne eax, edx
++  cmp byte ptr [edi + 0x98], 0
+   movzx eax, al
+-  cmovne eax, ebp
+-  cmp byte ptr [edi + 0xe4], cl
++  cmovne eax, edx
++  cmp byte ptr [edi + 0xe4], 0
+   movzx eax, al
+-  cmovne eax, ebp
+-  cmp byte ptr [edi + 0x130], cl
++  cmovne eax, edx
++  cmp byte ptr [edi + 0x130], 0
+   movzx eax, al
+-  cmovne eax, ebp
+-  cmp byte ptr [edi + 0x17c], cl
++  cmovne eax, edx
++  cmp byte ptr [edi + 0x17c], 0
+   movzx eax, al
+-  cmovne eax, ebp
++  cmovne eax, edx
+   cmp byte ptr [edi + 0x1c8], 0
+-  movzx ecx, al
+-  cmovne ecx, ebp
++  movzx eax, al
++  cmovne eax, edx
+   cmp byte ptr [edi + 0x214], 0
+@@ -62,7 +63,7 @@
+   jne <rva>
+-  mov dword ptr [edx], 0x3e4ccccd
+   pop edi
+   pop esi
+-  mov eax, ebp
+   pop ebp
++  mov dword ptr [ebx], 0x3e4ccccd
++  mov eax, edx
+   pop ebx
+##### deployed vs ctl1: MenuButtonDetectB  (66 diff lines)
+--- 
++++ 
+@@ -8,6 +8,7 @@
+   sub esp, 0xc
+-  mov edx, dword ptr [esp + 0x18]
+-  xor cl, cl
++  push ebx
++  mov ebx, dword ptr [esp + 0x1c]
++  xor al, al
+   cmp dword ptr [0x7f1a0c], 0x1000
+-  push ebx
++  mov ecx, 0x40e470
+   push ebp
+@@ -16,26 +17,26 @@
+   mov edi, dword ptr [esp + 0x20]
+-  mov ebp, 1
+-  mov dword ptr [esp + 0x10], ecx
+-  mov dword ptr [esp + 0x14], edx
++  mov edx, 1
++  mov dword ptr [esp + 0x10], eax
++  mov dword ptr [esp + 0x14], ebx
+   jne <rva>
+-  cmp byte ptr [edi], cl
++  cmp byte ptr [edi], al
+   setne al
+-  cmp byte ptr [edi + 0x4c], cl
++  cmp byte ptr [edi + 0x4c], 0
+   movzx eax, al
+-  cmovne eax, ebp
+-  cmp byte ptr [edi + 0x98], cl
++  cmovne eax, edx
++  cmp byte ptr [edi + 0x98], 0
+   movzx eax, al
+-  cmovne eax, ebp
+-  cmp byte ptr [edi + 0xe4], cl
++  cmovne eax, edx
++  cmp byte ptr [edi + 0xe4], 0
+   movzx eax, al
+-  cmovne eax, ebp
+-  cmp byte ptr [edi + 0x130], cl
++  cmovne eax, edx
++  cmp byte ptr [edi + 0x130], 0
+   movzx eax, al
+-  cmovne eax, ebp
+-  cmp byte ptr [edi + 0x17c], cl
++  cmovne eax, edx
++  cmp byte ptr [edi + 0x17c], 0
+   movzx eax, al
+-  cmovne eax, ebp
++  cmovne eax, edx
+   cmp byte ptr [edi + 0x1c8], 0
+-  movzx ecx, al
+-  cmovne ecx, ebp
++  movzx eax, al
++  cmovne eax, edx
+   cmp byte ptr [edi + 0x214], 0
+@@ -62,7 +63,7 @@
+   jne <rva>
+-  mov dword ptr [edx], 0x3e4ccccd
+   pop edi
+   pop esi
+-  mov eax, ebp
+   pop ebp
++  mov dword ptr [ebx], 0x3e4ccccd
++  mov eax, edx
+   pop ebx
+##### deployed vs ctl1: MenuButtonDetectC  (22 diff lines)
+--- 
++++ 
+@@ -7,3 +7,3 @@
+   [callee]
+-  push ecx
++  sub esp, 8
+   push ebx
+@@ -16,3 +16,3 @@
+   push edi
+-  mov edi, dword ptr [esp + 0x18]
++  mov edi, dword ptr [esp + 0x1c]
+   mov dword ptr [esp + 0x10], ecx
+@@ -57,3 +57,3 @@
+   cmp byte ptr [edi], 0
+-  mov eax, dword ptr [esp + 0x1c]
++  mov eax, dword ptr [esp + 0x20]
+   je <rva>
+@@ -94,3 +94,3 @@
+   pop ebx
+-  pop ecx
++  add esp, 8
+   ret 
+##### deployed vs ctl1: TimerSlotTickDispatcher  (46 diff lines)
+--- 
++++ 
+@@ -2,4 +2,4 @@
+ mov ebp, esp
++push ecx
+ movss xmm1, dword ptr [0x5d757c]
+-sub esp, 8
+ movss xmm0, dword ptr [0x67e840]
+@@ -21,2 +21,3 @@
+ mov esi, 0x100dcbe8
++mov ecx, 0x4a2c48
+ mov eax, dword ptr [esi]
+@@ -26,12 +27,4 @@
+ jne <rva>
+-mov ecx, 0x5cc320
+-fld dword ptr [ecx]
+-mov ecx, 0x67e840
+-fsub dword ptr [ecx]
+-mov ecx, 0x5cd04c
+-fmul dword ptr [ecx]
+-mov eax, 0x4a2c48
+-call eax
+-mov dword ptr [ebp - 4], eax
+-mov ebx, dword ptr [ebp - 4]
++call ecx
++mov ebx, eax
+ mov byte ptr [edi + 4], bl
+@@ -41,17 +34,3 @@
+ call eax
+-jmp <rva>
+-cmp ebx, 2
+-jne <rva>
+-mov ecx, 0x67e840
+-fld dword ptr [ecx]
+-mov ecx, 0x5cd04c
+-fmul dword ptr [ecx]
+-mov eax, 0x4a2c48
+-call eax
+-mov dword ptr [ebp - 8], eax
+-mov ebx, dword ptr [ebp - 8]
+-mov byte ptr [edi + 4], bl
+-jmp <rva>
+-mov ecx, dword ptr [esi + 4]
+-mov byte ptr [ecx], 0
++mov ecx, 0x4a2c48
+ add esi, 0xc
+##### deployed vs ctl1: FrontendPlayerSlotCheck  (7 diff lines)
+--- 
++++ 
+@@ -21,3 +21,3 @@
+ add eax, 0x30
+-cmp ecx, 0xa
++cmp ecx, 1
+ jb <rva>
+##### deployed vs ctl2: MenuButtonDetectA  (66 diff lines)
+--- 
++++ 
+@@ -8,6 +8,7 @@
+   sub esp, 0xc
+-  mov edx, dword ptr [esp + 0x18]
+-  xor cl, cl
++  push ebx
++  mov ebx, dword ptr [esp + 0x1c]
++  xor al, al
+   cmp dword ptr [0x7f1a0c], 0x1000
+-  push ebx
++  mov ecx, 0x40e470
+   push ebp
+@@ -16,26 +17,26 @@
+   mov edi, dword ptr [esp + 0x20]
+-  mov ebp, 1
+-  mov dword ptr [esp + 0x10], ecx
+-  mov dword ptr [esp + 0x14], edx
++  mov edx, 1
++  mov dword ptr [esp + 0x10], eax
++  mov dword ptr [esp + 0x14], ebx
+   jne <rva>
+-  cmp byte ptr [edi], cl
++  cmp byte ptr [edi], al
+   setne al
+-  cmp byte ptr [edi + 0x4c], cl
++  cmp byte ptr [edi + 0x4c], 0
+   movzx eax, al
+-  cmovne eax, ebp
+-  cmp byte ptr [edi + 0x98], cl
++  cmovne eax, edx
++  cmp byte ptr [edi + 0x98], 0
+   movzx eax, al
+-  cmovne eax, ebp
+-  cmp byte ptr [edi + 0xe4], cl
++  cmovne eax, edx
++  cmp byte ptr [edi + 0xe4], 0
+   movzx eax, al
+-  cmovne eax, ebp
+-  cmp byte ptr [edi + 0x130], cl
++  cmovne eax, edx
++  cmp byte ptr [edi + 0x130], 0
+   movzx eax, al
+-  cmovne eax, ebp
+-  cmp byte ptr [edi + 0x17c], cl
++  cmovne eax, edx
++  cmp byte ptr [edi + 0x17c], 0
+   movzx eax, al
+-  cmovne eax, ebp
++  cmovne eax, edx
+   cmp byte ptr [edi + 0x1c8], 0
+-  movzx ecx, al
+-  cmovne ecx, ebp
++  movzx eax, al
++  cmovne eax, edx
+   cmp byte ptr [edi + 0x214], 0
+@@ -62,7 +63,7 @@
+   jne <rva>
+-  mov dword ptr [edx], 0x3e4ccccd
+   pop edi
+   pop esi
+-  mov eax, ebp
+   pop ebp
++  mov dword ptr [ebx], 0x3e4ccccd
++  mov eax, edx
+   pop ebx
+##### deployed vs ctl2: MenuButtonDetectB  (66 diff lines)
+--- 
++++ 
+@@ -8,6 +8,7 @@
+   sub esp, 0xc
+-  mov edx, dword ptr [esp + 0x18]
+-  xor cl, cl
++  push ebx
++  mov ebx, dword ptr [esp + 0x1c]
++  xor al, al
+   cmp dword ptr [0x7f1a0c], 0x1000
+-  push ebx
++  mov ecx, 0x40e470
+   push ebp
+@@ -16,26 +17,26 @@
+   mov edi, dword ptr [esp + 0x20]
+-  mov ebp, 1
+-  mov dword ptr [esp + 0x10], ecx
+-  mov dword ptr [esp + 0x14], edx
++  mov edx, 1
++  mov dword ptr [esp + 0x10], eax
++  mov dword ptr [esp + 0x14], ebx
+   jne <rva>
+-  cmp byte ptr [edi], cl
++  cmp byte ptr [edi], al
+   setne al
+-  cmp byte ptr [edi + 0x4c], cl
++  cmp byte ptr [edi + 0x4c], 0
+   movzx eax, al
+-  cmovne eax, ebp
+-  cmp byte ptr [edi + 0x98], cl
++  cmovne eax, edx
++  cmp byte ptr [edi + 0x98], 0
+   movzx eax, al
+-  cmovne eax, ebp
+-  cmp byte ptr [edi + 0xe4], cl
++  cmovne eax, edx
++  cmp byte ptr [edi + 0xe4], 0
+   movzx eax, al
+-  cmovne eax, ebp
+-  cmp byte ptr [edi + 0x130], cl
++  cmovne eax, edx
++  cmp byte ptr [edi + 0x130], 0
+   movzx eax, al
+-  cmovne eax, ebp
+-  cmp byte ptr [edi + 0x17c], cl
++  cmovne eax, edx
++  cmp byte ptr [edi + 0x17c], 0
+   movzx eax, al
+-  cmovne eax, ebp
++  cmovne eax, edx
+   cmp byte ptr [edi + 0x1c8], 0
+-  movzx ecx, al
+-  cmovne ecx, ebp
++  movzx eax, al
++  cmovne eax, edx
+   cmp byte ptr [edi + 0x214], 0
+@@ -62,7 +63,7 @@
+   jne <rva>
+-  mov dword ptr [edx], 0x3e4ccccd
+   pop edi
+   pop esi
+-  mov eax, ebp
+   pop ebp
++  mov dword ptr [ebx], 0x3e4ccccd
++  mov eax, edx
+   pop ebx
+##### deployed vs ctl2: MenuButtonDetectC  (22 diff lines)
+--- 
++++ 
+@@ -7,3 +7,3 @@
+   [callee]
+-  push ecx
++  sub esp, 8
+   push ebx
+@@ -16,3 +16,3 @@
+   push edi
+-  mov edi, dword ptr [esp + 0x18]
++  mov edi, dword ptr [esp + 0x1c]
+   mov dword ptr [esp + 0x10], ecx
+@@ -57,3 +57,3 @@
+   cmp byte ptr [edi], 0
+-  mov eax, dword ptr [esp + 0x1c]
++  mov eax, dword ptr [esp + 0x20]
+   je <rva>
+@@ -94,3 +94,3 @@
+   pop ebx
+-  pop ecx
++  add esp, 8
+   ret 
+##### deployed vs ctl2: TimerSlotTickDispatcher  (7 diff lines)
+--- 
++++ 
+@@ -36,3 +36,3 @@
+ mov ebx, dword ptr [ebp - 4]
+-mov byte ptr [edi + 4], bl
++mov dword ptr [edi + 4], ebx
+ mov eax, dword ptr [esi + 8]
+##### deployed vs ctl2: FrontendPlayerSlotCheck  (7 diff lines)
+--- 
++++ 
+@@ -21,3 +21,3 @@
+ add eax, 0x30
+-cmp ecx, 0xa
++cmp ecx, 1
+ jb <rva>

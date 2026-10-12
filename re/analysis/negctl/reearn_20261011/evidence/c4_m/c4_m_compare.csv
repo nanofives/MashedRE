@@ -1,0 +1,101 @@
+run,arm,force_f,row,live,b0_pre,b0_after_load,entry,calls,ret1,mmOrig,mmCtl,disc,unscored,cwSplit,st1,padNZ,byP,verdict,crash,alive_end,exit,ref,win_match,win_diff
+ctlA1,late,False,A,True,161,233,ctl1_mashed_re_dev.asi+0x12450,2637,19,37,0,37,0,0,,,,DONE,0,True,3735928559,stock1,6/9,"t6_taps:(2, (5, 6, -1, 0, 11, -1))vs(1, (5, 6, -1, 0, 11, -1));t24_taps:(2, (6, 24, 7, 0, 11, -1))vs(1, (6, 24, 0, 0, 11, -1));t7_taps:(2, (2, 7, -1, 0, 11, 0))vs(0, (2, 7, -1, 0, 11, 0))"
+ctlA1,late,False,B,False,161,161,MASHED.exe+0x2b180,2637,16,0,36,36,0,0,,,,DONE,0,True,3735928559,stock1,8/9,"t24_taps:(1, (6, 24, 7, 0, 11, -1))vs(1, (6, 24, 0, 0, 11, -1))"
+ctlA1,late,False,C,False,161,161,MASHED.exe+0x2b310,2632,1,0,3,3,0,0,,,,DONE,0,True,3735928559,stock1,8/9,"t24_taps:(0, (6, 24, 7, 0, 11, -1))vs(0, (6, 24, 0, 0, 11, -1))"
+ctlA1,late,False,T,False,217,217,MASHED.exe+0x3c000,3458,0,0,0,2855,0,0,2855,0,,DONE,0,True,3735928559,stock1,8/9,"t24_taps:(0, (6, 24, 7, 0, 11, -1))vs(0, (6, 24, 0, 0, 11, -1))"
+ctlA1,late,False,F,False,139,139,MASHED.exe+0x2ebe0,15930,0,0,0,0,0,0,,,"{""p10_r0"": 5310, ""p11_r0"": 5310, ""p12_r0"": 5310}",DONE,0,True,3735928559,stock1,8/9,"t24_taps:(0, (6, 24, 7, 0, 11, -1))vs(0, (6, 24, 0, 0, 11, -1))"
+ctlA2,late,False,A,True,161,233,ctl1_mashed_re_dev.asi+0x12450,2632,19,37,0,37,0,0,,,,DONE,0,True,3735928559,stock1,6/9,"t6_taps:(2, (5, 6, -1, 0, 11, -1))vs(1, (5, 6, -1, 0, 11, -1));t24_taps:(2, (6, 24, 7, 0, 11, -1))vs(1, (6, 24, 0, 0, 11, -1));t7_taps:(2, (2, 7, -1, 0, 11, 0))vs(0, (2, 7, -1, 0, 11, 0))"
+ctlA2,late,False,B,False,161,161,MASHED.exe+0x2b180,2632,16,0,37,37,0,0,,,,DONE,0,True,3735928559,stock1,8/9,"t24_taps:(1, (6, 24, 7, 0, 11, -1))vs(1, (6, 24, 0, 0, 11, -1))"
+ctlA2,late,False,C,False,161,161,MASHED.exe+0x2b310,2631,1,0,3,3,0,0,,,,DONE,0,True,3735928559,stock1,8/9,"t24_taps:(0, (6, 24, 7, 0, 11, -1))vs(0, (6, 24, 0, 0, 11, -1))"
+ctlA2,late,False,T,False,217,217,MASHED.exe+0x3c000,3447,0,0,0,2845,0,0,2845,0,,DONE,0,True,3735928559,stock1,8/9,"t24_taps:(0, (6, 24, 7, 0, 11, -1))vs(0, (6, 24, 0, 0, 11, -1))"
+ctlA2,late,False,F,False,139,139,MASHED.exe+0x2ebe0,15993,0,0,0,0,0,0,,,"{""p10_r0"": 5331, ""p11_r0"": 5331, ""p12_r0"": 5331}",DONE,0,True,3735928559,stock1,8/9,"t24_taps:(0, (6, 24, 7, 0, 11, -1))vs(0, (6, 24, 0, 0, 11, -1))"
+ctlB1,late,False,A,False,161,161,MASHED.exe+0x2aff0,2641,15,0,36,36,0,0,,,,DONE,0,True,3735928559,stock1,8/9,"t24_taps:(1, (6, 24, 1, 0, 11, -1))vs(1, (6, 24, 0, 0, 11, -1))"
+ctlB1,late,False,B,True,161,233,ctl1_mashed_re_dev.asi+0x12470,2641,20,36,0,36,0,0,,,,DONE,0,True,3735928559,stock1,6/9,"t6_taps:(2, (5, 6, -1, 0, 11, -1))vs(1, (5, 6, -1, 0, 11, -1));t24_taps:(2, (6, 24, 1, 0, 11, -1))vs(1, (6, 24, 0, 0, 11, -1));t7_taps:(2, (2, 7, -1, 0, 11, 0))vs(0, (2, 7, -1, 0, 11, 0))"
+ctlB1,late,False,C,False,161,161,MASHED.exe+0x2b310,2631,1,0,3,3,0,0,,,,DONE,0,True,3735928559,stock1,8/9,"t24_taps:(0, (6, 24, 1, 0, 11, -1))vs(0, (6, 24, 0, 0, 11, -1))"
+ctlB1,late,False,T,False,217,217,MASHED.exe+0x3c000,3470,0,0,0,2854,0,0,2854,0,,DONE,0,True,3735928559,stock1,8/9,"t24_taps:(0, (6, 24, 1, 0, 11, -1))vs(0, (6, 24, 0, 0, 11, -1))"
+ctlB1,late,False,F,False,139,139,MASHED.exe+0x2ebe0,15966,0,0,0,0,0,0,,,"{""p10_r0"": 5322, ""p11_r0"": 5322, ""p12_r0"": 5322}",DONE,0,True,3735928559,stock1,8/9,"t24_taps:(0, (6, 24, 1, 0, 11, -1))vs(0, (6, 24, 0, 0, 11, -1))"
+ctlB2,late,False,A,False,161,161,MASHED.exe+0x2aff0,2631,14,0,37,37,0,0,,,,DONE,0,True,3735928559,stock1,8/9,"t24_taps:(1, (6, 24, 1, 0, 11, -1))vs(1, (6, 24, 0, 0, 11, -1))"
+ctlB2,late,False,B,True,161,233,ctl1_mashed_re_dev.asi+0x12470,2631,19,37,0,37,0,0,,,,DONE,0,True,3735928559,stock1,6/9,"t6_taps:(2, (5, 6, -1, 0, 11, -1))vs(1, (5, 6, -1, 0, 11, -1));t24_taps:(2, (6, 24, 1, 0, 11, -1))vs(1, (6, 24, 0, 0, 11, -1));t7_taps:(2, (2, 7, -1, 0, 11, 0))vs(0, (2, 7, -1, 0, 11, 0))"
+ctlB2,late,False,C,False,161,161,MASHED.exe+0x2b310,2633,1,0,3,3,0,0,,,,DONE,0,True,3735928559,stock1,8/9,"t24_taps:(0, (6, 24, 1, 0, 11, -1))vs(0, (6, 24, 0, 0, 11, -1))"
+ctlB2,late,False,T,False,217,217,MASHED.exe+0x3c000,3450,0,0,0,2855,0,0,2855,0,,DONE,0,True,3735928559,stock1,8/9,"t24_taps:(0, (6, 24, 1, 0, 11, -1))vs(0, (6, 24, 0, 0, 11, -1))"
+ctlB2,late,False,F,False,139,139,MASHED.exe+0x2ebe0,15948,0,0,0,0,0,0,,,"{""p10_r0"": 5316, ""p11_r0"": 5316, ""p12_r0"": 5316}",DONE,0,True,3735928559,stock1,8/9,"t24_taps:(0, (6, 24, 1, 0, 11, -1))vs(0, (6, 24, 0, 0, 11, -1))"
+ctlC1,late,False,A,False,161,161,MASHED.exe+0x2aff0,2482,14,0,35,35,0,0,,,,DONE,0,True,3735928559,stock1,9/9,
+ctlC1,late,False,B,False,161,161,MASHED.exe+0x2b180,2482,15,0,35,35,0,0,,,,DONE,0,True,3735928559,stock1,9/9,
+ctlC1,late,False,C,True,161,233,ctl1_mashed_re_dev.asi+0x12e50,2483,4,3,0,3,0,0,,,,DONE,0,True,3735928559,stock1,6/9,"t6_taps:(1, (5, 6, -1, 0, 11, -1))vs(0, (5, 6, -1, 0, 11, -1));t24_taps:(1, (6, 24, 0, 0, 11, -1))vs(0, (6, 24, 0, 0, 11, -1));t7_taps:(1, (2, 7, -1, 0, 11, 0))vs(0, (2, 7, -1, 0, 11, 0))"
+ctlC1,late,False,T,False,217,217,MASHED.exe+0x3c000,3455,0,0,0,2706,0,0,2706,0,,DONE,0,True,3735928559,stock1,9/9,
+ctlC1,late,False,F,False,139,139,MASHED.exe+0x2ebe0,15543,0,0,0,0,0,0,,,"{""p10_r0"": 5181, ""p11_r0"": 5181, ""p12_r0"": 5181}",DONE,0,True,3735928559,stock1,9/9,
+ctlC2,late,False,A,False,161,161,MASHED.exe+0x2aff0,2468,14,0,32,32,0,0,,,,DONE,0,True,3735928559,stock1,9/9,
+ctlC2,late,False,B,False,161,161,MASHED.exe+0x2b180,2468,16,0,35,35,0,0,,,,DONE,0,True,3735928559,stock1,9/9,
+ctlC2,late,False,C,True,161,233,ctl1_mashed_re_dev.asi+0x12e50,2460,4,3,0,3,0,0,,,,DONE,0,True,3735928559,stock1,6/9,"t6_taps:(1, (5, 6, -1, 0, 11, -1))vs(0, (5, 6, -1, 0, 11, -1));t24_taps:(1, (6, 24, 0, 0, 11, -1))vs(0, (6, 24, 0, 0, 11, -1));t7_taps:(1, (2, 7, -1, 0, 11, 0))vs(0, (2, 7, -1, 0, 11, 0))"
+ctlC2,late,False,T,False,217,217,MASHED.exe+0x3c000,3294,0,0,0,2683,0,0,2683,0,,DONE,0,True,3735928559,stock1,9/9,
+ctlC2,late,False,F,False,139,139,MASHED.exe+0x2ebe0,15480,0,0,0,0,0,0,,,"{""p10_r0"": 5160, ""p11_r0"": 5160, ""p12_r0"": 5160}",DONE,0,True,3735928559,stock1,9/9,
+ctlF1,late,True,A,False,161,161,MASHED.exe+0x2aff0,2350,14,0,30,30,0,0,,,,DONE,0,True,3735928559,offF1,9/9,
+ctlF1,late,True,B,False,161,161,MASHED.exe+0x2b180,2350,14,0,27,27,0,0,,,,DONE,0,True,3735928559,offF1,9/9,
+ctlF1,late,True,C,False,161,161,MASHED.exe+0x2b310,2355,1,0,3,3,0,0,,,,DONE,0,True,3735928559,offF1,9/9,
+ctlF1,late,True,T,False,217,217,MASHED.exe+0x3c000,3157,0,0,0,2540,0,0,2540,0,,DONE,0,True,3735928559,offF1,9/9,
+ctlF1,late,True,F,True,139,233,ctl1_mashed_re_dev.asi+0x158b0,17523,12744,6372,0,6372,0,0,,,"{""p10_r1"": 6372, ""p11_r1"": 6372, ""p12_r0"": 4779}",DONE,0,True,3735928559,offF1,7/9,"t6_taps:(3488, (5, 6, -1, 0, 11, -1))vs(1760, (5, 6, -1, 0, 11, -1));t7_taps:(2232, (2, 7, -1, 0, 11, 0))vs(1368, (2, 7, -1, 0, 11, 0))"
+ctlF2,late,True,A,False,161,161,MASHED.exe+0x2aff0,2376,12,0,34,34,0,0,,,,DONE,0,True,3735928559,offF1,9/9,
+ctlF2,late,True,B,False,161,161,MASHED.exe+0x2b180,2375,15,0,35,35,0,0,,,,DONE,0,True,3735928559,offF1,9/9,
+ctlF2,late,True,C,False,161,161,MASHED.exe+0x2b310,2369,1,0,3,3,0,0,,,,DONE,0,True,3735928559,offF1,9/9,
+ctlF2,late,True,T,False,217,217,MASHED.exe+0x3c000,3153,0,0,0,2538,0,0,2538,0,,DONE,0,True,3735928559,offF1,9/9,
+ctlF2,late,True,F,True,139,233,ctl1_mashed_re_dev.asi+0x158b0,17765,12920,6460,0,6460,0,0,,,"{""p10_r1"": 6460, ""p11_r1"": 6460, ""p12_r0"": 4845}",DONE,0,True,3735928559,offF1,7/9,"t6_taps:(3560, (5, 6, -1, 0, 11, -1))vs(1760, (5, 6, -1, 0, 11, -1));t7_taps:(2384, (2, 7, -1, 0, 11, 0))vs(1368, (2, 7, -1, 0, 11, 0))"
+ctlT1,late,False,A,False,161,161,MASHED.exe+0x2aff0,2504,14,0,36,36,0,0,,,,DONE,0,True,3735928559,stock1,9/9,
+ctlT1,late,False,B,False,161,161,MASHED.exe+0x2b180,2504,15,0,35,35,0,0,,,,DONE,0,True,3735928559,stock1,9/9,
+ctlT1,late,False,C,False,161,161,MASHED.exe+0x2b310,2493,1,0,3,3,0,0,,,,DONE,0,True,3735928559,stock1,9/9,
+ctlT1,late,False,T,True,217,233,ctl1_mashed_re_dev.asi+0x18f10,3319,0,2698,0,2698,0,0,2698,0,,DONE,0,True,3735928559,stock1,9/9,
+ctlT1,late,False,F,False,139,139,MASHED.exe+0x2ebe0,15750,0,0,0,0,0,0,,,"{""p10_r0"": 5250, ""p11_r0"": 5250, ""p12_r0"": 5250}",DONE,0,True,3735928559,stock1,9/9,
+ctlT2,late,False,A,False,161,161,MASHED.exe+0x2aff0,2432,14,0,36,36,0,0,,,,DONE,0,True,3735928559,stock1,9/9,
+ctlT2,late,False,B,False,161,161,MASHED.exe+0x2b180,2432,15,0,36,36,0,0,,,,DONE,0,True,3735928559,stock1,9/9,
+ctlT2,late,False,C,False,161,161,MASHED.exe+0x2b310,2434,1,0,3,3,0,0,,,,DONE,0,True,3735928559,stock1,9/9,
+ctlT2,late,False,T,True,217,233,ctl1_mashed_re_dev.asi+0x18f10,3265,0,2656,0,2656,0,0,2656,0,,DONE,0,True,3735928559,stock1,9/9,
+ctlT2,late,False,F,False,139,139,MASHED.exe+0x2ebe0,15255,0,0,0,0,0,0,,,"{""p10_r0"": 5085, ""p11_r0"": 5085, ""p12_r0"": 5085}",DONE,0,True,3735928559,stock1,9/9,
+ctlTd1,late,False,A,False,161,161,MASHED.exe+0x2aff0,2423,14,0,37,37,0,0,,,,DONE,0,True,3735928559,stock1,9/9,
+ctlTd1,late,False,B,False,161,161,MASHED.exe+0x2b180,2423,15,0,36,36,0,0,,,,DONE,0,True,3735928559,stock1,9/9,
+ctlTd1,late,False,C,False,161,161,MASHED.exe+0x2b310,2399,1,0,3,3,0,0,,,,DONE,0,True,3735928559,stock1,9/9,
+ctlTd1,late,False,T,True,217,233,ctl2_mashed_re_dev.asi+0x18f10,3225,0,0,0,2613,0,0,2613,0,,DONE,0,True,3735928559,stock1,9/9,
+ctlTd1,late,False,F,False,139,139,MASHED.exe+0x2ebe0,15102,0,0,0,0,0,0,,,"{""p10_r0"": 5034, ""p11_r0"": 5034, ""p12_r0"": 5034}",DONE,0,True,3735928559,stock1,9/9,
+ctlTd2,late,False,A,False,161,161,MASHED.exe+0x2aff0,2497,14,0,37,37,0,0,,,,DONE,0,True,3735928559,stock1,9/9,
+ctlTd2,late,False,B,False,161,161,MASHED.exe+0x2b180,2497,15,0,36,36,0,0,,,,DONE,0,True,3735928559,stock1,9/9,
+ctlTd2,late,False,C,False,161,161,MASHED.exe+0x2b310,2501,1,0,3,3,0,0,,,,DONE,0,True,3735928559,stock1,9/9,
+ctlTd2,late,False,T,True,217,233,ctl2_mashed_re_dev.asi+0x18f10,3316,0,0,0,2724,0,0,2724,0,,DONE,0,True,3735928559,stock1,9/9,
+ctlTd2,late,False,F,False,139,139,MASHED.exe+0x2ebe0,15930,0,0,0,0,0,0,,,"{""p10_r0"": 5310, ""p11_r0"": 5310, ""p12_r0"": 5310}",DONE,0,True,3735928559,stock1,9/9,
+late1,late,False,A,True,161,233,mashed_re_dev.asi+0x12430,2508,14,0,36,36,0,0,,,,DONE,0,True,3735928559,stock1,9/9,
+late1,late,False,B,True,161,233,mashed_re_dev.asi+0x12450,2508,16,0,37,37,0,0,,,,DONE,0,True,3735928559,stock1,9/9,
+late1,late,False,C,True,161,233,mashed_re_dev.asi+0x12e20,2525,1,0,3,3,0,0,,,,DONE,0,True,3735928559,stock1,9/9,
+late1,late,False,T,True,217,233,mashed_re_dev.asi+0x18ed0,3343,0,0,0,2748,0,0,2748,0,,DONE,0,True,3735928559,stock1,9/9,
+late1,late,False,F,True,139,233,mashed_re_dev.asi+0x15880,15903,0,0,0,0,0,0,,,"{""p10_r0"": 5301, ""p11_r0"": 5301, ""p12_r0"": 5301}",DONE,0,True,3735928559,stock1,9/9,
+off1,off,False,A,False,161,,MASHED.exe+0x2aff0,2534,15,0,37,37,0,0,,,,DONE,0,True,3735928559,off1,,
+off1,off,False,B,False,161,,MASHED.exe+0x2b180,2534,15,0,37,37,0,0,,,,DONE,0,True,3735928559,off1,,
+off1,off,False,C,False,161,,MASHED.exe+0x2b310,2532,1,0,3,3,0,0,,,,DONE,0,True,3735928559,off1,,
+off1,off,False,T,False,217,,MASHED.exe+0x3c000,3370,0,0,0,2754,0,0,2754,0,,DONE,0,True,3735928559,off1,,
+off1,off,False,F,False,139,,MASHED.exe+0x2ebe0,15993,0,0,0,0,0,0,,,"{""p10_r0"": 5331, ""p11_r0"": 5331, ""p12_r0"": 5331}",DONE,0,True,3735928559,off1,,
+off2,off,False,A,False,161,,MASHED.exe+0x2aff0,2539,15,0,37,37,0,0,,,,DONE,0,True,3735928559,off1,9/9,
+off2,off,False,B,False,161,,MASHED.exe+0x2b180,2539,15,0,36,36,0,0,,,,DONE,0,True,3735928559,off1,9/9,
+off2,off,False,C,False,161,,MASHED.exe+0x2b310,2541,1,0,3,3,0,0,,,,DONE,0,True,3735928559,off1,9/9,
+off2,off,False,T,False,217,,MASHED.exe+0x3c000,3376,0,0,0,2760,0,0,2760,0,,DONE,0,True,3735928559,off1,9/9,
+off2,off,False,F,False,139,,MASHED.exe+0x2ebe0,16029,0,0,0,0,0,0,,,"{""p10_r0"": 5343, ""p11_r0"": 5343, ""p12_r0"": 5343}",DONE,0,True,3735928559,off1,9/9,
+offF1,off,True,A,False,161,,MASHED.exe+0x2aff0,2490,14,0,36,36,0,0,,,,DONE,0,True,3735928559,offF1,,
+offF1,off,True,B,False,161,,MASHED.exe+0x2b180,2490,16,0,37,37,0,0,,,,DONE,0,True,3735928559,offF1,,
+offF1,off,True,C,False,161,,MASHED.exe+0x2b310,2497,1,0,3,3,0,0,,,,DONE,0,True,3735928559,offF1,,
+offF1,off,True,T,False,217,,MASHED.exe+0x3c000,3277,0,0,0,2662,0,0,2662,0,,DONE,0,True,3735928559,offF1,,
+offF1,off,True,F,False,139,,MASHED.exe+0x2ebe0,17410,6964,0,5223,5223,0,0,,,"{""p10_r0"": 5223, ""p11_r1"": 6964, ""p12_r0"": 5223}",DONE,0,True,3735928559,offF1,,
+on1,on,False,A,True,233,,mashed_re_dev.asi+0x12430,2543,16,0,37,37,0,0,,,,DONE,0,True,3735928559,off1,9/9,
+on1,on,False,B,True,233,,mashed_re_dev.asi+0x12450,2543,17,0,37,37,0,0,,,,DONE,0,True,3735928559,off1,9/9,
+on1,on,False,C,True,233,,mashed_re_dev.asi+0x12e20,2544,1,0,3,3,0,0,,,,DONE,0,True,3735928559,off1,9/9,
+on1,on,False,T,True,233,,mashed_re_dev.asi+0x18ed0,3385,0,0,0,2764,0,0,2764,0,,DONE,0,True,3735928559,off1,9/9,
+on1,on,False,F,True,233,,mashed_re_dev.asi+0x15880,16029,0,0,0,0,0,0,,,"{""p10_r0"": 5343, ""p11_r0"": 5343, ""p12_r0"": 5343}",DONE,0,True,3735928559,off1,9/9,
+on2,on,False,A,True,233,,mashed_re_dev.asi+0x12430,2539,15,0,37,37,0,0,,,,DONE,0,True,3735928559,off1,9/9,
+on2,on,False,B,True,233,,mashed_re_dev.asi+0x12450,2539,17,0,35,35,0,0,,,,DONE,0,True,3735928559,off1,9/9,
+on2,on,False,C,True,233,,mashed_re_dev.asi+0x12e20,2541,1,0,3,3,0,0,,,,DONE,0,True,3735928559,off1,9/9,
+on2,on,False,T,True,233,,mashed_re_dev.asi+0x18ed0,3385,0,0,0,2764,0,0,2764,0,,DONE,0,True,3735928559,off1,9/9,
+on2,on,False,F,True,233,,mashed_re_dev.asi+0x15880,16011,0,0,0,0,0,0,,,"{""p10_r0"": 5337, ""p11_r0"": 5337, ""p12_r0"": 5337}",DONE,0,True,3735928559,off1,9/9,
+onF1,on,True,A,True,233,,mashed_re_dev.asi+0x12430,2505,15,0,37,37,0,0,,,,DONE,0,True,3735928559,offF1,9/9,
+onF1,on,True,B,True,233,,mashed_re_dev.asi+0x12450,2505,15,0,38,38,0,0,,,,DONE,0,True,3735928559,offF1,9/9,
+onF1,on,True,C,True,233,,mashed_re_dev.asi+0x12e20,2502,1,0,3,3,0,0,,,,DONE,0,True,3735928559,offF1,9/9,
+onF1,on,True,T,True,233,,mashed_re_dev.asi+0x18ed0,3286,0,0,0,2666,0,0,2666,0,,DONE,0,True,3735928559,offF1,9/9,
+onF1,on,True,F,True,233,,mashed_re_dev.asi+0x15880,17490,6996,0,5247,5247,0,0,,,"{""p10_r0"": 5247, ""p11_r1"": 6996, ""p12_r0"": 5247}",DONE,0,True,3735928559,offF1,7/9,"t6_taps:(1740, (5, 6, -1, 0, 11, -1))vs(1760, (5, 6, -1, 0, 11, -1));t7_taps:(1364, (2, 7, -1, 0, 11, 0))vs(1368, (2, 7, -1, 0, 11, 0))"
+stock1,stock,False,A,False,161,,MASHED.exe+0x2aff0,2510,15,0,37,37,0,0,,,,DONE,0,True,3735928559,stock1,,
+stock1,stock,False,B,False,161,,MASHED.exe+0x2b180,2510,15,0,37,37,0,0,,,,DONE,0,True,3735928559,stock1,,
+stock1,stock,False,C,False,161,,MASHED.exe+0x2b310,2504,1,0,3,3,0,0,,,,DONE,0,True,3735928559,stock1,,
+stock1,stock,False,T,False,217,,MASHED.exe+0x3c000,3504,0,0,0,2726,0,0,2726,0,,DONE,0,True,3735928559,stock1,,
+stock1,stock,False,F,False,139,,MASHED.exe+0x2ebe0,15867,0,0,0,0,0,0,,,"{""p10_r0"": 5289, ""p11_r0"": 5289, ""p12_r0"": 5289}",DONE,0,True,3735928559,stock1,,

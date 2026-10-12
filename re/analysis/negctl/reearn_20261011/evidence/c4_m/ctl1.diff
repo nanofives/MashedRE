@@ -1,0 +1,65 @@
+diff --git a/mashedmod/src/mashed_re/Frontend/MenuButtonDetect.cpp b/mashedmod/src/mashed_re/Frontend/MenuButtonDetect.cpp
+index 24663db5..f08d4c10 100644
+--- a/mashedmod/src/mashed_re/Frontend/MenuButtonDetect.cpp
++++ b/mashedmod/src/mashed_re/Frontend/MenuButtonDetect.cpp
+@@ -181,8 +181,8 @@ static std::uint32_t MenuButtonDetectScreenGate(std::uintptr_t heldBase, std::ui
+         }
+         if (PadAt(heldBase, 7) != '\0') held = true;        // 0x0042b386 jne 0x0042b3cf
+     } else {
+-        for (int i = 0; reinterpret_cast<std::uintptr_t>(SlotRec(i)) < kPlayerSlotEnd; ++i) {
+-            const std::int32_t id = *SlotRec(i);            // 0x0042b398
++        for (int i = 0; i < 8; ++i) {  /* C4-CONTROL: old 4-byte stride, 8 iterations */
++            const std::int32_t id = *reinterpret_cast<const std::int32_t*>(kPlayerSlotArray + i * 4);
+             if (id == -1) continue;
+             if (CallSlotState(i) == 2) continue;            // 0x0042b39e
+             if (PadAt(heldBase, id) != '\0') held = true;   // 0x0042b3b0
+@@ -210,8 +210,8 @@ static std::uint32_t MenuButtonDetectScreenGate(std::uintptr_t heldBase, std::ui
+         }
+         return edge;
+     }
+-    for (int i = 0; reinterpret_cast<std::uintptr_t>(SlotRec(i)) < kPlayerSlotEnd; ++i) {
+-        const std::int32_t id = *SlotRec(i);                // 0x0042b4f0
++    for (int i = 0; i < 8; ++i) {  /* C4-CONTROL: old 4-byte stride, 8 iterations */
++        const std::int32_t id = *reinterpret_cast<const std::int32_t*>(kPlayerSlotArray + i * 4);
+         if (id == -1) continue;
+         if (CallSlotState(i) == 2) continue;                // 0x0042b4f6
+         if (PadAt(heldBase, id) != '\0' && PadAt(prevBase, id) == '\0') edge = 1;  // 0x0042b508 / 0x0042b512
+diff --git a/mashedmod/src/mashed_re/Frontend/MenuHelpers.cpp b/mashedmod/src/mashed_re/Frontend/MenuHelpers.cpp
+index 38a9c587..002ed1d4 100644
+--- a/mashedmod/src/mashed_re/Frontend/MenuHelpers.cpp
++++ b/mashedmod/src/mashed_re/Frontend/MenuHelpers.cpp
+@@ -46,7 +46,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl FrontendPlayerSlotCheck(i
+         else if (param_1 == 11) col = base;                                        // 0x0042ebff
+         else if (param_1 == 12) col = base + 0xcu;                                 // 0x0042ec08
+         else continue;                                                             // 0x0042ec06 -> 0x0042ed53
+-        for (std::uint32_t row = 0; row < 10u; ++row) {
++        for (std::uint32_t row = 0; row < 1u; ++row) {  /* C4-CONTROL: rows 1..9 dropped */
+             if (*reinterpret_cast<const std::uint32_t*>(col + row * 0x30u) == 0) {
+                 found = 1;                                                         // 0x0042ece8
+                 goto tail;
+diff --git a/mashedmod/src/mashed_re/Frontend/MenuNav.cpp b/mashedmod/src/mashed_re/Frontend/MenuNav.cpp
+index 73cad1b7..c89d390b 100644
+--- a/mashedmod/src/mashed_re/Frontend/MenuNav.cpp
++++ b/mashedmod/src/mashed_re/Frontend/MenuNav.cpp
+@@ -59,7 +59,7 @@ static constexpr std::uintptr_t kFrameDelta        = 0x007f1004; // 0x0042b0c6 (
+ static constexpr std::uintptr_t kHoldThreshold     = 0x005ccac0; // 0x0042b0d8 (float)
+ // Player-slot records: id dword at 0x007f1a14 + i*0x10, i = 0..3.
+ static constexpr std::uintptr_t kPlayerSlotLoop    = 0x007f1a14; // 0x0042b070
+-static constexpr std::uintptr_t kPlayerSlotRecStride = 0x10;     // 0x0042b09c `add esi, 0x10`
++static constexpr std::uintptr_t kPlayerSlotRecStride = 4;  /* C4-CONTROL: old 4-byte stride */     // 0x0042b09c `add esi, 0x10`
+ static constexpr std::uintptr_t kPlayerSlotLoopEnd = 0x007f1a54; // 0x0042b0a0 (exclusive, 4 records)
+ 
+ // Callee 0x0040e470: returns DWORD at PTR_PTR_005f2770 + param*4 + 0x34.
+diff --git a/mashedmod/src/mashed_re/Util/UtilMid.cpp b/mashedmod/src/mashed_re/Util/UtilMid.cpp
+index 0c930cef..c5bd2d69 100644
+--- a/mashedmod/src/mashed_re/Util/UtilMid.cpp
++++ b/mashedmod/src/mashed_re/Util/UtilMid.cpp
+@@ -763,7 +763,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl TimerSlotTickDispatcher()
+         const std::uint32_t state = *reinterpret_cast<volatile const std::uint32_t*>(sl.state);
+         auto* counter = reinterpret_cast<volatile std::uint8_t*>(sl.state + 4u);
+         if (state == 1u) {
+-            eax = X87TimerElapsedFtol();
++            eax = static_cast<std::uint32_t>(as_fn<Fn_i_v_t>(0x004a2c48)());  /* C4-CONTROL: unloaded ST0 */
+             *counter = static_cast<std::uint8_t>(eax);
+             if (sl.action != 0)
+                 as_fn<Fn_void_void_t>(sl.action)();
