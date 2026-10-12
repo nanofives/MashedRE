@@ -1,0 +1,16 @@
+# Control build for c4_pb2 (group R): applied to mashedmod/src/mashed_re/Frontend/MenuLeaves_s3.cpp at 225236b5,
+# built with MASHED_NO_DEPLOY=1 (mashedmod\build.bat), the .asi copied out (SHA-256 7D6BDB0E...7721), then the source
+# restored with git checkout. It restores the pre-2e3cfead team-id stride alone (4 bytes instead of 0x10).
+diff --git a/mashedmod/src/mashed_re/Frontend/MenuLeaves_s3.cpp b/mashedmod/src/mashed_re/Frontend/MenuLeaves_s3.cpp
+index 64eede41..ca226ff8 100644
+--- a/mashedmod/src/mashed_re/Frontend/MenuLeaves_s3.cpp
++++ b/mashedmod/src/mashed_re/Frontend/MenuLeaves_s3.cpp
+@@ -51,7 +51,7 @@ static const unsigned k_Block2Stride = 0x4eu;          // dwords per player
+ // @0x00423ef2; the unrolled compares read 0x007f1a18/28/38/48 (@0x00423f06/18/2b/3e).
+ // (Re-port 2026-10-12: the old port used 4, which the negctl re-earn caught RED.)
+ static const unsigned k_TeamIdRoot   = 0x007f1a18u;
+-static const unsigned k_TeamIdStride = 0x10u;        // bytes per player
++static const unsigned k_TeamIdStride = 4u;           // C4 CONTROL: pre-2e3cfead stride (DO NOT COMMIT)
+ 
+ static const int k_PlayerCount = 4;
+ 
