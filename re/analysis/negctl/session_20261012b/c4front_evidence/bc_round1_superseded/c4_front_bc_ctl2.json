@@ -1,0 +1,159 @@
+{
+ "row": "bc",
+ "rva": "0x0042f8d0",
+ "arm": "ctl",
+ "tag": "bc_ctl2",
+ "exe_sha256": "B9977DAB70607720CF58BC7832937C203B1E0B33FF5896DA586BAF56AA79FE87",
+ "asi": "C:\\Users\\maria\\AppData\\Local\\Temp\\claude\\C--Users-maria-Desktop-Proyectos-Mashed\\d52c57ec-5c4e-410b-a7d9-2af88622915e\\scratchpad\\asi\\ctl\\mashed_re_dev.asi",
+ "asi_sha256": "1B5CE54027CB9FC8B5BE81A6ABE211C078B791EBA6E7B8ACF22FFB18B34111C7",
+ "env": {
+  "MASHED_HOOK_ONLY": "0x0042f8d0",
+  "MASHED_RE_NO_AUTO_HOOK": "1"
+ },
+ "log": [
+  "  spawned pid=19392 row=bc arm=ctl",
+  "  asi load (suspended): {'ok': True, 'base': '0x69440000', 'name': 'mashed_re_dev.asi', 'path': 'C:\\\\Users\\\\maria\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-maria-Desktop-Proyectos-Mashed\\\\d52c57ec-5c4e-410b-a7d9-2af88622915e\\\\scratchpad\\\\asi\\\\ctl\\\\mashed_re_dev.asi'}",
+  "  arm: {'ok': True, 'w': {'bytes': 'e9 db 65 02 69 8b 6c 24', 'b0': 233, 'rel32': 1761764827, 'target': '0x69455eb0', 'module': 'mashed_re_dev.asi', 'path': 'C:\\\\Users\\\\maria\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-maria-Desktop-Proyectos-Mashed\\\\d52c57ec-5c4e-410b-a7d9-2af88622915e\\\\scratchpad\\\\asi\\\\ctl\\\\mashed_re_dev.asi', 'off': '0x15eb0', 'exports': ['MenuMenusBC']}, 'entry': '0x69455eb0'}",
+  "  title: {'depth': 1, 'phase': 3, 'gate': 22, 'sph': 1, 'ui': 0, 'fd0': 0, 'calls': 0}",
+  "  track-select: depth=5 sel=0",
+  "  race launched: {'depth': 6, 'phase': 0, 'gate': 24, 'sph': 2, 'ui': 0, 'fd0': 0, 'calls': 0}",
+  "   wait pulses=0 {'depth': 6, 'phase': 0, 'gate': 24, 'sph': 2, 'ui': 0, 'fd0': 0, 'calls': 0}",
+  "   wait pulses=10 {'depth': 6, 'phase': 0, 'gate': 24, 'sph': 3, 'ui': 6, 'fd0': 0, 'calls': 0}",
+  "   wait pulses=20 {'depth': 6, 'phase': 0, 'gate': 24, 'sph': 3, 'ui': 6, 'fd0': 0, 'calls': 0}",
+  "   wait pulses=30 {'depth': 6, 'phase': 0, 'gate': 24, 'sph': 3, 'ui': 6, 'fd0': 0, 'calls': 0}",
+  "  >>> reached: {'depth': 1, 'phase': 3, 'gate': 5, 'sph': 1, 'ui': 10, 'fd0': 0, 'calls': 215}",
+  "  window: {'qcalls': 595, 'qquads': 2975, 'outside': 714}"
+ ],
+ "crash": [],
+ "pid": 19392,
+ "load": {
+  "ok": true,
+  "base": "0x69440000",
+  "name": "mashed_re_dev.asi",
+  "path": "C:\\Users\\maria\\AppData\\Local\\Temp\\claude\\C--Users-maria-Desktop-Proyectos-Mashed\\d52c57ec-5c4e-410b-a7d9-2af88622915e\\scratchpad\\asi\\ctl\\mashed_re_dev.asi"
+ },
+ "arm_result": {
+  "ok": true,
+  "w": {
+   "bytes": "e9 db 65 02 69 8b 6c 24",
+   "b0": 233,
+   "rel32": 1761764827,
+   "target": "0x69455eb0",
+   "module": "mashed_re_dev.asi",
+   "path": "C:\\Users\\maria\\AppData\\Local\\Temp\\claude\\C--Users-maria-Desktop-Proyectos-Mashed\\d52c57ec-5c4e-410b-a7d9-2af88622915e\\scratchpad\\asi\\ctl\\mashed_re_dev.asi",
+   "off": "0x15eb0",
+   "exports": [
+    "MenuMenusBC"
+   ]
+  },
+  "entry": "0x69455eb0"
+ },
+ "reached": {
+  "depth": 1,
+  "phase": 3,
+  "gate": 5,
+  "sph": 1,
+  "ui": 10,
+  "fd0": 0,
+  "calls": 215
+ },
+ "race_pulses": 33,
+ "pre_window": {
+  "depth": 1,
+  "phase": 3,
+  "gate": 5,
+  "sph": 1,
+  "ui": 10,
+  "fd0": 0,
+  "calls": 1345
+ },
+ "window": {
+  "qcalls": 595,
+  "qquads": 2975,
+  "outside": 714
+ },
+ "state_end": {
+  "depth": 1,
+  "phase": 3,
+  "gate": 5,
+  "sph": 1,
+  "ui": 10,
+  "fd0": 0,
+  "calls": 2835
+ },
+ "dump": {
+  "st": {
+   "row": "bc",
+   "rva": 4389072,
+   "entry": "0x69455eb0",
+   "calls": 2835,
+   "byGate": {
+    "5": 2835
+   },
+   "byRet": {
+    "43493d": 567,
+    "434ef3": 1134,
+    "4361c0": 567,
+    "43667b": 567
+   },
+   "witness": {
+    "bytes": "e9 db 65 02 69 8b 6c 24",
+    "b0": 233,
+    "rel32": 1761764827,
+    "target": "0x69455eb0",
+    "module": "mashed_re_dev.asi",
+    "path": "C:\\Users\\maria\\AppData\\Local\\Temp\\claude\\C--Users-maria-Desktop-Proyectos-Mashed\\d52c57ec-5c4e-410b-a7d9-2af88622915e\\scratchpad\\asi\\ctl\\mashed_re_dev.asi",
+    "off": "0x15eb0",
+    "exports": [
+     "MenuMenusBC"
+    ]
+   },
+   "crashes": 0
+  },
+  "log": [],
+  "nlog": 0,
+  "bc": {
+   "keys": {
+    "43af0000,42c80000,437a0000,41d00000,al=ff,g=5,ra=43493d": {
+     "n": 119,
+     "outs": {
+      "43af0000,42c80000,437a0000,41d00000,146ef0 | 43ae0000,42c80000,40000000,41d00000,1050b4 | 43ae0000,42c80000,437e0000,40000000,1050b4 | 43ae0000,42f80000,437e0000,40000000,1050b4 | 44160000,42c80000,40000000,41d00000,1050b4": 119
+     }
+    },
+    "43af0000,43140000,437a0000,41d00000,al=ff,g=5,ra=434ef3": {
+     "n": 119,
+     "outs": {
+      "43af0000,43140000,437a0000,41d00000,146ef0 | 43ae0000,43140000,40000000,41d00000,1050b4 | 43ae0000,43140000,437e0000,40000000,1050b4 | 43ae0000,432c0000,437e0000,40000000,1050b4 | 44160000,43140000,40000000,41d00000,1050b4": 119
+     }
+    },
+    "43af0000,43440000,437a0000,41d00000,al=ff,g=5,ra=434ef3": {
+     "n": 119,
+     "outs": {
+      "43af0000,43440000,437a0000,41d00000,146ef0 | 43ae0000,43440000,40000000,41d00000,1050b4 | 43ae0000,43440000,437e0000,40000000,1050b4 | 43ae0000,435c0000,437e0000,40000000,1050b4 | 44160000,43440000,40000000,41d00000,1050b4": 119
+     }
+    },
+    "42700000,43aa0000,44020000,42700000,al=ff,g=5,ra=4361c0": {
+     "n": 119,
+     "outs": {
+      "42700000,43aa0000,44020000,42700000,146ef0 | 42680000,43aa0000,40000000,42700000,1050b4 | 42680000,43aa0000,44030000,40000000,1050b4 | 42680000,43c70000,44030000,40000000,1050b4 | 44110000,43aa0000,40000000,42700000,1050b4": 119
+     }
+    },
+    "42a00000,43ac0000,42b6a83c,41800000,al=ff,g=5,ra=43667b": {
+     "n": 119,
+     "outs": {
+      "42a00000,43ac0000,42b6a83c,41800000,146ef0 | 429c0000,43ac0000,40000000,41800000,1050b4 | 429c0000,43ac0000,42bea83c,40000000,1050b4 | 429c0000,43b30000,42bea83c,40000000,1050b4 | 432b541e,43ac0000,40000000,41800000,1050b4": 119
+     }
+    }
+   },
+   "qcalls": 595,
+   "qquads": 2975,
+   "outside": 714
+  },
+  "pmr": {
+   "hist": {}
+  }
+ },
+ "alive_at_end": true,
+ "exit_code": 3735928559,
+ "verdict": "DONE"
+}

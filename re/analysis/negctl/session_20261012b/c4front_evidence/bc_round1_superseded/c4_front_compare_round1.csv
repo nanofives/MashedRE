@@ -1,0 +1,16 @@
+row,run,ref,result,verdict_run,game_calls,compared,observed,mismatch,first_mismatch,first_bytes,target,export,crash,asi_sha256,window
+subinit,subinit_stock2,subinit_stock1,GREEN,DONE,1,5,5,0,,6a 00 e8 99 14 00 00 83,,,0,,
+subinit,subinit_port1,subinit_stock1,GREEN,DONE,1,5,5,0,,e9 1b 5a 87 67 00 00 83,mashed_re_dev.asi+0x17c90,SubsystemInit,0,58D9A4AB2908975E,
+subinit,subinit_port2,subinit_stock1,GREEN,DONE,1,5,5,0,,e9 1b 5a d3 66 00 00 83,mashed_re_dev.asi+0x17c90,SubsystemInit,0,58D9A4AB2908975E,
+subinit,subinit_ctl1,subinit_stock1,RED,DONE,1,5,3,3,#2: ref=display() run=LEAVE=1,e9 1b 5a 87 67 00 00 83,mashed_re_dev.asi+0x17c90,SubsystemInit,0,1B5CE54027CB9FC8,
+subinit,subinit_ctl2,subinit_stock1,RED,DONE,1,5,3,3,#2: ref=display() run=LEAVE=1,e9 1b 5a 87 67 00 00 83,mashed_re_dev.asi+0x17c90,SubsystemInit,0,1B5CE54027CB9FC8,
+bqf,bqf_stock2,bqf_stock1,GREEN,DONE,1,34,34,0,,51 56 8b 74 24 0c 85 f6,,,0,,
+bqf,bqf_port1,bqf_stock1,GREEN,DONE,1,34,34,0,,e9 8b eb 90 67 0c 85 f6,mashed_re_dev.asi+0x21260,BootQueueFlush,0,58D9A4AB2908975E,
+bqf,bqf_port2,bqf_stock1,GREEN,DONE,1,34,34,0,,e9 8b eb 90 67 0c 85 f6,mashed_re_dev.asi+0x21260,BootQueueFlush,0,58D9A4AB2908975E,
+bqf,bqf_ctl1,bqf_stock1,RED,DONE,1,34,34,8,"#2: ref=clear(P0,@ff000000,3) run=clear(P0,AV,1afde8)",e9 8b eb c1 68 0c 85 f6,mashed_re_dev.asi+0x21260,BootQueueFlush,0,1B5CE54027CB9FC8,
+bqf,bqf_ctl2,bqf_stock1,RED,DONE,1,34,34,8,"#2: ref=clear(P0,@ff000000,3) run=clear(P0,AV,1afde8)",e9 8b eb c1 68 0c 85 f6,mashed_re_dev.asi+0x21260,BootQueueFlush,0,1B5CE54027CB9FC8,
+bc,bc_stock2,bc_stock1,GREEN,DONE,2860,590,5,0,,83 ec 0c 53 55 8b 6c 24,,,0,,"{""qcalls"": 590, ""qquads"": 2950, ""outside"": 708}"
+bc,bc_port1,bc_stock1,RED,DONE,2735,576,5,1,"key=43af0000,42c80000,437a0000,41d00000,al=ff,g=5,ra=43493d out=43af0000,42c80000,437a0000,41d00000,7f146ef0",e9 db 65 02 69 8b 6c 24,mashed_re_dev.asi+0x15eb0,MenuMenusBC,0,58D9A4AB2908975E,"{""qcalls"": 575, ""qquads"": 2875, ""outside"": 692}"
+bc,bc_port2,bc_stock1,GREEN,DONE,2745,565,5,0,,e9 db 65 02 69 8b 6c 24,mashed_re_dev.asi+0x15eb0,MenuMenusBC,0,58D9A4AB2908975E,"{""qcalls"": 565, ""qquads"": 2825, ""outside"": 678}"
+bc,bc_ctl1,bc_stock1,RED,DONE,2715,550,5,550,"key=43af0000,42c80000,437a0000,41d00000,al=ff,g=5,ra=43493d out=43af0000,42c80000,437a0000,41d00000,146ef0 | 43ae0000,42c80000,40000000,41d00000,1050b4 | 43ae0000,42c80000,437e0000,400",e9 db 65 02 69 8b 6c 24,mashed_re_dev.asi+0x15eb0,MenuMenusBC,0,1B5CE54027CB9FC8,"{""qcalls"": 550, ""qquads"": 2750, ""outside"": 660}"
+bc,bc_ctl2,bc_stock1,RED,DONE,2835,595,5,595,"key=43af0000,42c80000,437a0000,41d00000,al=ff,g=5,ra=43493d out=43af0000,42c80000,437a0000,41d00000,146ef0 | 43ae0000,42c80000,40000000,41d00000,1050b4 | 43ae0000,42c80000,437e0000,400",e9 db 65 02 69 8b 6c 24,mashed_re_dev.asi+0x15eb0,MenuMenusBC,0,1B5CE54027CB9FC8,"{""qcalls"": 595, ""qquads"": 2975, ""outside"": 714}"

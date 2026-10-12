@@ -1,0 +1,91 @@
+{
+ "row": "pmr",
+ "rva": "0x00404320",
+ "arm": "stock",
+ "tag": "pmr_stock1",
+ "exe_sha256": "B9977DAB70607720CF58BC7832937C203B1E0B33FF5896DA586BAF56AA79FE87",
+ "asi": null,
+ "asi_sha256": null,
+ "env": {
+  "MASHED_HOOK_ONLY": "__none__",
+  "MASHED_RE_NO_AUTO_HOOK": "1"
+ },
+ "log": [
+  "  spawned pid=40312 row=pmr arm=stock",
+  "  arm: {'ok': True, 'w': {'bytes': 'a1 d0 0f 7f 00 83 ec 10', 'b0': 161}, 'entry': '0x404320'}",
+  "  title: {'depth': 1, 'phase': 3, 'gate': 22, 'sph': 1, 'ui': 0, 'fd0': 0, 'calls': 0}",
+  "  track-select: depth=5 sel=0",
+  "  race launched: {'depth': 6, 'phase': 0, 'gate': 24, 'sph': 2, 'ui': 0, 'fd0': 0, 'calls': 0}",
+  "   wait pulses=0 {'depth': 6, 'phase': 0, 'gate': 24, 'sph': 2, 'ui': 0, 'fd0': 0, 'calls': 0}",
+  "   wait pulses=10 {'depth': 6, 'phase': 0, 'gate': 24, 'sph': 3, 'ui': 6, 'fd0': 0, 'calls': 565}",
+  "   wait pulses=20 {'depth': 6, 'phase': 0, 'gate': 24, 'sph': 3, 'ui': 7, 'fd0': 0, 'calls': 1151}",
+  "  >>> reached: {'depth': 6, 'phase': 0, 'gate': 24, 'sph': 3, 'ui': 6, 'fd0': 0, 'calls': 1733}"
+ ],
+ "crash": [],
+ "pid": 40312,
+ "arm_result": {
+  "ok": true,
+  "w": {
+   "bytes": "a1 d0 0f 7f 00 83 ec 10",
+   "b0": 161
+  },
+  "entry": "0x404320"
+ },
+ "reached": {
+  "depth": 6,
+  "phase": 0,
+  "gate": 24,
+  "sph": 3,
+  "ui": 6,
+  "fd0": 0,
+  "calls": 1733
+ },
+ "race_pulses": 30,
+ "state_end": {
+  "depth": 6,
+  "phase": 0,
+  "gate": 24,
+  "sph": 3,
+  "ui": 6,
+  "fd0": 0,
+  "calls": 1733
+ },
+ "dump": {
+  "st": {
+   "row": "pmr",
+   "rva": 4211488,
+   "entry": "0x404320",
+   "calls": 1733,
+   "byGate": {},
+   "byRet": {},
+   "witness": {
+    "bytes": "a1 d0 0f 7f 00 83 ec 10",
+    "b0": 161
+   },
+   "crashes": 0
+  },
+  "log": [],
+  "nlog": 0,
+  "bc": {
+   "keys": {},
+   "qcalls": 0,
+   "qquads": 0,
+   "outside": 0,
+   "edge": 0
+  },
+  "pmr": {
+   "hist": {
+    "fd0=0,sub=3,sph=3": 9,
+    "fd0=0,sub=4,sph=3": 4,
+    "fd0=0,sub=5,sph=3": 448,
+    "fd0=0,sub=6,sph=3": 890,
+    "fd0=0,sub=7,sph=3": 376,
+    "fd0=0,sub=8,sph=3": 3,
+    "fd0=0,sub=2,sph=3": 3
+   }
+  }
+ },
+ "alive_at_end": true,
+ "exit_code": 3735928559,
+ "verdict": "DONE"
+}

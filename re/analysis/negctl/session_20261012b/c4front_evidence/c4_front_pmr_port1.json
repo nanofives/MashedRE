@@ -1,0 +1,114 @@
+{
+ "row": "pmr",
+ "rva": "0x00404320",
+ "arm": "port",
+ "tag": "pmr_port1",
+ "exe_sha256": "B9977DAB70607720CF58BC7832937C203B1E0B33FF5896DA586BAF56AA79FE87",
+ "asi": "C:\\Users\\maria\\AppData\\Local\\Temp\\claude\\C--Users-maria-Desktop-Proyectos-Mashed\\d52c57ec-5c4e-410b-a7d9-2af88622915e\\scratchpad\\asi\\port\\mashed_re_dev.asi",
+ "asi_sha256": "58D9A4AB2908975ECB26FE34BB9C400DC1C30BE5B0A7277C5D47C129B0CA9ADC",
+ "env": {
+  "MASHED_HOOK_ONLY": "0x00404320",
+  "MASHED_RE_NO_AUTO_HOOK": "1"
+ },
+ "log": [
+  "  spawned pid=37528 row=pmr arm=port",
+  "  asi load (suspended): {'ok': True, 'base': '0x69030000', 'name': 'mashed_re_dev.asi', 'path': 'C:\\\\Users\\\\maria\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-maria-Desktop-Proyectos-Mashed\\\\d52c57ec-5c4e-410b-a7d9-2af88622915e\\\\scratchpad\\\\asi\\\\port\\\\mashed_re_dev.asi'}",
+  "  arm: {'ok': True, 'w': {'bytes': 'e9 eb cc c4 68 83 ec 10', 'b0': 233, 'rel32': 1757727979, 'target': '0x69051010', 'module': 'mashed_re_dev.asi', 'path': 'C:\\\\Users\\\\maria\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-maria-Desktop-Proyectos-Mashed\\\\d52c57ec-5c4e-410b-a7d9-2af88622915e\\\\scratchpad\\\\asi\\\\port\\\\mashed_re_dev.asi', 'off': '0x21010', 'exports': ['PerModeRenderMachine']}, 'entry': '0x69051010'}",
+  "  title: {'depth': 1, 'phase': 3, 'gate': 22, 'sph': 1, 'ui': 0, 'fd0': 0, 'calls': 0}",
+  "  track-select: depth=5 sel=0",
+  "  race launched: {'depth': 6, 'phase': 0, 'gate': 24, 'sph': 2, 'ui': 0, 'fd0': 0, 'calls': 0}",
+  "   wait pulses=0 {'depth': 6, 'phase': 0, 'gate': 24, 'sph': 2, 'ui': 0, 'fd0': 0, 'calls': 0}",
+  "   wait pulses=10 {'depth': 6, 'phase': 0, 'gate': 24, 'sph': 3, 'ui': 6, 'fd0': 0, 'calls': 565}",
+  "   wait pulses=20 {'depth': 6, 'phase': 0, 'gate': 24, 'sph': 3, 'ui': 6, 'fd0': 0, 'calls': 1167}",
+  "  >>> reached: {'depth': 6, 'phase': 0, 'gate': 24, 'sph': 3, 'ui': 6, 'fd0': 0, 'calls': 1750}"
+ ],
+ "crash": [],
+ "pid": 37528,
+ "load": {
+  "ok": true,
+  "base": "0x69030000",
+  "name": "mashed_re_dev.asi",
+  "path": "C:\\Users\\maria\\AppData\\Local\\Temp\\claude\\C--Users-maria-Desktop-Proyectos-Mashed\\d52c57ec-5c4e-410b-a7d9-2af88622915e\\scratchpad\\asi\\port\\mashed_re_dev.asi"
+ },
+ "arm_result": {
+  "ok": true,
+  "w": {
+   "bytes": "e9 eb cc c4 68 83 ec 10",
+   "b0": 233,
+   "rel32": 1757727979,
+   "target": "0x69051010",
+   "module": "mashed_re_dev.asi",
+   "path": "C:\\Users\\maria\\AppData\\Local\\Temp\\claude\\C--Users-maria-Desktop-Proyectos-Mashed\\d52c57ec-5c4e-410b-a7d9-2af88622915e\\scratchpad\\asi\\port\\mashed_re_dev.asi",
+   "off": "0x21010",
+   "exports": [
+    "PerModeRenderMachine"
+   ]
+  },
+  "entry": "0x69051010"
+ },
+ "reached": {
+  "depth": 6,
+  "phase": 0,
+  "gate": 24,
+  "sph": 3,
+  "ui": 6,
+  "fd0": 0,
+  "calls": 1750
+ },
+ "race_pulses": 30,
+ "state_end": {
+  "depth": 6,
+  "phase": 0,
+  "gate": 24,
+  "sph": 3,
+  "ui": 6,
+  "fd0": 0,
+  "calls": 1750
+ },
+ "dump": {
+  "st": {
+   "row": "pmr",
+   "rva": 4211488,
+   "entry": "0x69051010",
+   "calls": 1750,
+   "byGate": {},
+   "byRet": {},
+   "witness": {
+    "bytes": "e9 eb cc c4 68 83 ec 10",
+    "b0": 233,
+    "rel32": 1757727979,
+    "target": "0x69051010",
+    "module": "mashed_re_dev.asi",
+    "path": "C:\\Users\\maria\\AppData\\Local\\Temp\\claude\\C--Users-maria-Desktop-Proyectos-Mashed\\d52c57ec-5c4e-410b-a7d9-2af88622915e\\scratchpad\\asi\\port\\mashed_re_dev.asi",
+    "off": "0x21010",
+    "exports": [
+     "PerModeRenderMachine"
+    ]
+   },
+   "crashes": 0
+  },
+  "log": [],
+  "nlog": 0,
+  "bc": {
+   "keys": {},
+   "qcalls": 0,
+   "qquads": 0,
+   "outside": 0,
+   "edge": 0
+  },
+  "pmr": {
+   "hist": {
+    "fd0=0,sub=3,sph=3": 8,
+    "fd0=0,sub=4,sph=3": 4,
+    "fd0=0,sub=5,sph=3": 448,
+    "fd0=0,sub=6,sph=3": 905,
+    "fd0=0,sub=7,sph=3": 379,
+    "fd0=0,sub=8,sph=3": 3,
+    "fd0=0,sub=2,sph=3": 3
+   }
+  }
+ },
+ "alive_at_end": true,
+ "exit_code": 3735928559,
+ "verdict": "DONE"
+}

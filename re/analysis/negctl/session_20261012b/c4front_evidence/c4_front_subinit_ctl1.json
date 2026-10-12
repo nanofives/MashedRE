@@ -1,0 +1,93 @@
+{
+ "row": "subinit",
+ "rva": "0x00492270",
+ "arm": "ctl",
+ "tag": "subinit_ctl1",
+ "exe_sha256": "B9977DAB70607720CF58BC7832937C203B1E0B33FF5896DA586BAF56AA79FE87",
+ "asi": "C:\\Users\\maria\\AppData\\Local\\Temp\\claude\\C--Users-maria-Desktop-Proyectos-Mashed\\d52c57ec-5c4e-410b-a7d9-2af88622915e\\scratchpad\\asi\\ctl\\mashed_re_dev.asi",
+ "asi_sha256": "1B5CE54027CB9FC8B5BE81A6ABE211C078B791EBA6E7B8ACF22FFB18B34111C7",
+ "env": {
+  "MASHED_HOOK_ONLY": "0x00492270",
+  "MASHED_RE_NO_AUTO_HOOK": "1"
+ },
+ "log": [
+  "  spawned pid=39232 row=subinit arm=ctl",
+  "  asi load (suspended): {'ok': True, 'base': '0x67cf0000', 'name': 'mashed_re_dev.asi', 'path': 'C:\\\\Users\\\\maria\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-maria-Desktop-Proyectos-Mashed\\\\d52c57ec-5c4e-410b-a7d9-2af88622915e\\\\scratchpad\\\\asi\\\\ctl\\\\mashed_re_dev.asi'}",
+  "  arm: {'ok': True, 'w': {'bytes': 'e9 1b 5a 87 67 00 00 83', 'b0': 233, 'rel32': 1736923675, 'target': '0x67d07c90', 'module': 'mashed_re_dev.asi', 'path': 'C:\\\\Users\\\\maria\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-maria-Desktop-Proyectos-Mashed\\\\d52c57ec-5c4e-410b-a7d9-2af88622915e\\\\scratchpad\\\\asi\\\\ctl\\\\mashed_re_dev.asi', 'off': '0x17c90', 'exports': ['SubsystemInit']}, 'entry': '0x67d07c90'}",
+  "  title: {'depth': 1, 'phase': 3, 'gate': 22, 'sph': 1, 'ui': 0, 'fd0': 0, 'calls': 1}"
+ ],
+ "crash": [],
+ "pid": 39232,
+ "load": {
+  "ok": true,
+  "base": "0x67cf0000",
+  "name": "mashed_re_dev.asi",
+  "path": "C:\\Users\\maria\\AppData\\Local\\Temp\\claude\\C--Users-maria-Desktop-Proyectos-Mashed\\d52c57ec-5c4e-410b-a7d9-2af88622915e\\scratchpad\\asi\\ctl\\mashed_re_dev.asi"
+ },
+ "arm_result": {
+  "ok": true,
+  "w": {
+   "bytes": "e9 1b 5a 87 67 00 00 83",
+   "b0": 233,
+   "rel32": 1736923675,
+   "target": "0x67d07c90",
+   "module": "mashed_re_dev.asi",
+   "path": "C:\\Users\\maria\\AppData\\Local\\Temp\\claude\\C--Users-maria-Desktop-Proyectos-Mashed\\d52c57ec-5c4e-410b-a7d9-2af88622915e\\scratchpad\\asi\\ctl\\mashed_re_dev.asi",
+   "off": "0x17c90",
+   "exports": [
+    "SubsystemInit"
+   ]
+  },
+  "entry": "0x67d07c90"
+ },
+ "state_end": {
+  "depth": 1,
+  "phase": 3,
+  "gate": 22,
+  "sph": 1,
+  "ui": 0,
+  "fd0": 0,
+  "calls": 1
+ },
+ "dump": {
+  "st": {
+   "row": "subinit",
+   "rva": 4792944,
+   "entry": "0x67d07c90",
+   "calls": 1,
+   "byGate": {},
+   "byRet": {},
+   "witness": {
+    "bytes": "e9 1b 5a 87 67 00 00 83",
+    "b0": 233,
+    "rel32": 1736923675,
+    "target": "0x67d07c90",
+    "module": "mashed_re_dev.asi",
+    "path": "C:\\Users\\maria\\AppData\\Local\\Temp\\claude\\C--Users-maria-Desktop-Proyectos-Mashed\\d52c57ec-5c4e-410b-a7d9-2af88622915e\\scratchpad\\asi\\ctl\\mashed_re_dev.asi",
+    "off": "0x17c90",
+    "exports": [
+     "SubsystemInit"
+    ]
+   },
+   "crashes": 0
+  },
+  "log": [
+   "ENTER() ra=4923ad",
+   "rwinit(0)=1",
+   "LEAVE=1"
+  ],
+  "nlog": 3,
+  "bc": {
+   "keys": {},
+   "qcalls": 0,
+   "qquads": 0,
+   "outside": 0
+  },
+  "pmr": {
+   "hist": {}
+  }
+ },
+ "alive_at_end": true,
+ "exit_code": 3735928559,
+ "verdict": "DONE"
+}
