@@ -26,6 +26,8 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-12  0043c000  TimerSlotTickDispatcher  C3->C4 (user-accepted substituted control)  0 mismatches over ~3,350 calls/run; documented dword-store defect cannot show in game (bytes always 0); control = its other old defect (unloaded-ST0 conversion) restored alone, RED 2698/2698. re/analysis/negctl/reearn_20261011/c4_a1_m_RESULT.md
+2026-10-12  0042ebe0  FrontendPlayerSlotCheck  C3->C4 (user-accepted forced input)  Stock save returns 0 on every call; save-progress cells edited in an install copy; 0 mismatches natural and forced, row-0-only control RED 6372/6372. re/analysis/negctl/reearn_20261011/c4_a1_m_RESULT.md
 2026-10-12  0042aff0  MenuButtonDetectA  C3->C4  Natural Quick Battle -> Race Results scenario, ~2,540 calls/run, 0 mismatches x4, old-stride control RED 37/37 x2. re/analysis/negctl/reearn_20261011/c4_a1_m_RESULT.md
 2026-10-12  0042b180  MenuButtonDetectB  C3->C4  Same scenario, 0 mismatches x4, old-stride control RED 36/36 and 37/37. re/analysis/negctl/reearn_20261011/c4_a1_m_RESULT.md
 2026-10-12  0042b310  MenuButtonDetectC  C3->C4  Same scenario, 0 mismatches x4, old-stride control RED 3/3 x2; screen types 0x13/0x1e not reached (C3 fixture covers them). re/analysis/negctl/reearn_20261011/c4_a1_m_RESULT.md
