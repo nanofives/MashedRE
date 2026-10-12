@@ -1,0 +1,8 @@
+hook	rva	arg_type	lane	mode	verdict	mismatches	total	stats	err
+camera_entry_dispatch_all	0x004464c0	scalars_to_scattered_globals	warm	baseline	GREEN	0	8		
+camera_entry_dispatch_all	0x004464c0	scalars_to_scattered_globals	warm	field_first	RED	5	8	calls=8 flips=5 changed=24 flip=0x00896548 noise=1669 frozen=2	
+camera_entry_dispatch_all	0x004464c0	scalars_to_scattered_globals	warm	field_last	RED	5	8	calls=8 flips=5 changed=24 flip=0x008967f4 noise=2011 frozen=2	
+camera_entry_dispatch_all	0x004464c0	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	8	calls=8 flips=0 changed=93 flip=0x00000000 noise=10855 frozen=2	
+camera_entry_dispatch_all	0x004464c0	scalars_to_scattered_globals	warm	null	RED	7	8	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+camera_entry_dispatch_all	0x004464c0	scalars_to_scattered_globals	warm	real	GREEN	0	8		
+camera_entry_dispatch_all	0x004464c0	scalars_to_scattered_globals	warm	ret	RED	8	8	calls=8 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
