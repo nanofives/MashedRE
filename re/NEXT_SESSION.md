@@ -1,5 +1,26 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-12 (negctl re-earn port fixes DONE): **next = user decision on FsopenSafe, then the open items below.**
+>
+> 47 rows demoted by the negctl re-check were re-ported from the bytes and re-earned C2->C3 (8 parallel clusters:
+> replay, menuinput, audio, menudraw, hud, fstate, bootio, settings, plus PlayerBlock2Field*Get). Each has run_diff +
+> self-baseline GREEN, negctl mutants RED, a witness restoring the old defect alone going RED, and path2 PASS.
+> Per-cluster write-ups: `re/analysis/negctl/reearn_20261011/fix_<cluster>_RESULT.md`. Last commit 2e6704cf.
+>
+> **Open**
+> - DECISION: 0x004a4541 FsopenSafe is fixed but stays C2. The HookSystem guard refuses to install over the
+>   `fix_fopen` boot patch, so it never runs (U-9662). Keep the patch, or move its behaviour into the port.
+> - 0x004971b0 ControllerConfigLoad_j5 went C3->C2: its read path changed and no fixture reaches it (U-9663).
+> - MenuButtonDetectE 0x0042b770 went C4->C3. C4 needs a new canonical-scenario run with the fixed code.
+> - Broken fixtures, levels kept: U-9660 (0x0042ac90 MenuEntryGet), U-9661 (0x005ade90 AudioListDrain2).
+> - Coverage gaps: U-9664 (WindowMsgPump WaitMessage branch masked by no_focus_pause), U-9665, U-9666.
+> - ~26 demoted rows remain that need new harness work or cannot be measured against the patched reference
+>   (`decisions/*.tsv`, verdicts NEEDS_HARNESS / not re-earnable).
+> - Harness gained this session: build.bat `MASHED_NO_DEPLOY=1`; path2 pointer args, `recorder`, `dialog`, `eax_arg`;
+>   run_diff `dialog` + `eax_arg`; diff_template `stub_at` for scattered globals.
+> - Path2 transient seen 2/~45 runs: interceptor 0/1 with rel32 OK and the call returning; passes on the next boot.
+> - Fleet lesson: each worktree is ~3.4 GB; 8 at once filled C: (memory `worktree-fleet-fills-the-disk`).
+
 > ## START HERE 2026-10-11 (D3 bulk G-AILEAF Phase 2 DONE: port faithful, knob NOT accepted): **next = user decision.**
 >
 > Read [`aileaf/RESULT_AILEAF.md`](../verify/d3_bulk_20261011/aileaf/RESULT_AILEAF.md) (Phase 2 section).
