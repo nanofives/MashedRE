@@ -1,0 +1,188 @@
+  spawned pid=30916 arm=stock
+  booting...
+  title: depth=1 phase=3
+  arme: {'ok': True, 'entry': '0x42b770', 'jmp': 161}  modinfo={'b0': 233, 'dword': '144f8fe9', 'tgt': '0x1570704', 'mod': None}
+  after GTS: depth=2 sel=0
+	Using video mode 1 : 1680x1050
+At 10 bytes per pixel (16bit Z + 2*32bit FB) there is 4194304 - 21168000 = -13445696 bytes of video memory free
+Replay buffer will be 150076 bytes in size
+RtFSManagerRegister successful
+numpermwaves 43
+numpermvirtualvoices 139
+Waiting for boot status
+Waiting for boot status
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting f   wait timeout:  (depth=2 phase=3)
+   wait timeout:  (depth=2 phase=3)
+   wait timeout:  (depth=2 phase=3)
+   wait timeout:  (depth=2 phase=3)
+  single player: depth=3 sel=0
+  mode sel (Quick Battle): sel=1
+  colour-select: depth=4 sel=0
+  track-select: depth=5 sel=0
+  after track confirm: depth=6 phase=3
+  start-attempt 0: depth=6 phase=0
+  [shot] re\analysis\negctl\reearn_20261011\evidence\c4_detect_e_shots_stock1\race_enter.png
+   wait t+0s pulses=1 {'depth': 6, 'phase': 0, 'gate': 24, 'flag': 0, 'page': 0, 'sel': 1, 'sph': 3, 'ui': 3, 'fc': 0, 'b0': 233, 'eCalls': 0, 'eRet1': 0, 'c510': 0, 'c510e': 0, 'c510o': 0, 'mmOrig': 0, 'mmOld': 0, 'diffModels': 0}
+   wait t+10s pulses=10 {'depth': 6, 'phase': 0, 'gate': 24, 'flag': 0, 'page': 0, 'sel': 1, 'sph': 3, 'ui': 6, 'fc': 11950, 'b0': 233, 'eCalls': 0, 'eRet1': 0, 'c510': 0, 'c510e': 0, 'c510o': 0, 'mmOrig': 0, 'mmOld': 0, 'diffModels': 0}
+   wait t+20s pulses=20 {'depth': 6, 'phase': 0, 'gate': 24, 'flag': 0, 'page': 0, 'sel': 1, 'sph': 3, 'ui': 5, 'fc': 18550, 'b0': 233, 'eCalls': 0, 'eRet1': 0, 'c510': 0, 'c510e': 0, 'c510o': 0, 'mmOrig': 0, 'mmOld': 0, 'diffModels': 0}
+   wait t+30s pulses=29 {'depth': 6, 'phase': 0, 'gate': 24, 'flag': 0, 'page': 0, 'sel': 1, 'sph': 3, 'ui': 6, 'fc': 30400, 'b0': 233, 'eCalls': 0, 'eRet1': 0, 'c510': 0, 'c510e': 0, 'c510o': 0, 'mmOrig': 0, 'mmOld': 0, 'diffModels': 0}
+   wait t+40s pulses=39 {'depth': 6, 'phase': 0, 'gate': 24, 'flag': 0, 'page': 0, 'sel': 1, 'sph': 3, 'ui': 7, 'fc': 41400, 'b0': 233, 'eCalls': 0, 'eRet1': 0, 'c510': 0, 'c510e': 0, 'c510o': 0, 'mmOrig': 0, 'mmOld': 0, 'diffModels': 0}
+   wait t+50s pulses=49 {'depth': 6, 'phase': 0, 'gate': 24, 'flag': 0, 'page': 0, 'sel': 1, 'sph': 3, 'ui': 6, 'fc': 47850, 'b0': 233, 'eCalls': 0, 'eRet1': 0, 'c510': 0, 'c510e': 0, 'c510o': 0, 'mmOrig': 0, 'mmOld': 0, 'diffModels': 0}
+   wait t+60s pulses=59 {'depth': 6, 'phase': 0, 'gate': 24, 'flag': 0, 'page': 0, 'sel': 1, 'sph': 3, 'ui': 7, 'fc': 55300, 'b0': 233, 'eCalls': 0, 'eRet1': 0, 'c510': 0, 'c510e': 0, 'c510o': 0, 'mmOrig': 0, 'mmOld': 0, 'diffModels': 0}
+   wait t+70s pulses=68 {'depth': 6, 'phase': 0, 'gate': 24, 'flag': 0, 'page': 0, 'sel': 1, 'sph': 3, 'ui': 6, 'fc': 63950, 'b0': 233, 'eCalls': 0, 'eRet1': 0, 'c510': 0, 'c510e': 0, 'c510o': 0, 'mmOrig': 0, 'mmOld': 0, 'diffModels': 0}
+   wait t+81s pulses=78 {'depth': 6, 'phase': 0, 'gate': 24, 'flag': 0, 'page': 0, 'sel': 1, 'sph': 3, 'ui': 11, 'fc': 74000, 'b0': 233, 'eCalls': 0, 'eRet1': 0, 'c510': 0, 'c510e': 0, 'c510o': 0, 'mmOrig': 0, 'mmOld': 0, 'diffModels': 0}
+  >>> Race Results reached: {'depth': 1, 'phase': 3, 'gate': 5, 'flag': 0, 'page': 0, 'sel': 1, 'sph': 1, 'ui': 10, 'fc': 80500, 'b0': 233, 'eCalls': 2, 'eRet1': 0, 'c510': 0, 'c510e': 0, 'c510o': 0, 'mmOrig': 0, 'mmOld': 0, 'diffModels': 0}
+  [shot] re\analysis\negctl\reearn_20261011\evidence\c4_detect_e_shots_stock1\results_before.png
+  inputs at results: {'sel': 1, 'ids': [0, 0, 0, 0, 6, 1, 3, 0, 7, 1, 1, 0, 8, 1, 2, 0], 'held': [0, 0, 0, 0, 0, 0, 0, 0], 'prev': [0, 0, 0, 0, 0, 0, 0, 0], 'st': [1, 2, 2, 2, 1, 6235944, 0, 0]}
+  idle 3s: eCalls 34->83 eRet1 0->0 c510 0->0 page 0->0
+  press [0]: {'players': [0], 'eRet1': 1, 'c510': 1, 'c510e': 1, 'c510o': 0, 'page0': 0, 'page1': 2, 'gate': 5, 'flag1': 0, 'eCalls': 34}
+  press [1]: {'players': [1], 'eRet1': 0, 'c510': 0, 'c510e': 0, 'c510o': 0, 'page0': 2, 'page1': 2, 'gate': 5, 'flag1': 0, 'eCalls': 44}
+  press [2]: {'players': [2], 'eRet1': 0, 'c510': 0, 'c510e': 0, 'c510o': 0, 'page0': 2, 'page1': 2, 'gate': 5, 'flag1': 0, 'eCalls': 35}
+  press [3]: {'players': [3], 'eRet1': 0, 'c510': 0, 'c510e': 0, 'c510o': 0, 'page0': 2, 'page1': 2, 'gate': 5, 'flag1': 0, 'eCalls': 32}
+  press [0]: {'players': [0], 'eRet1': 1, 'c510': 1, 'c510e': 1, 'c510o': 0, 'page0': 2, 'page1': 3, 'gate': 5, 'flag1': 0, 'eCalls': 45}
+  press [1]: {'players': [1], 'eRet1': 0, 'c510': 0, 'c510e': 0, 'c510o': 0, 'page0': 3, 'page1': 3, 'gate': 5, 'flag1': 0, 'eCalls': 44}
+  press [2]: {'players': [2], 'eRet1': 0, 'c510': 0, 'c510e': 0, 'c510o': 0, 'page0': 3, 'page1': 3, 'gate': 5, 'flag1': 0, 'eCalls': 42}
+  press [3]: {'players': [3], 'eRet1': 0, 'c510': 0, 'c510e': 0, 'c510o': 0, 'page0': 3, 'page1': 3, 'gate': 5, 'flag1': 0, 'eCalls': 33}
+  press [0, 1, 2, 3]: {'players': [0, 1, 2, 3], 'eRet1': 1, 'c510': 1, 'c510e': 1, 'c510o': 0, 'page0': 3, 'page1': 4, 'gate': 5, 'flag1': 0, 'eCalls': 44}
+  [shot] re\analysis\negctl\reearn_20261011\evidence\c4_detect_e_shots_stock1\results_after.png
+  verdict=DONE -> re\analysis\negctl\reearn_20261011\evidence\c4_detect_e_stock1.json
