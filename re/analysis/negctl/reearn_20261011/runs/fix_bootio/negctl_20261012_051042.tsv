@@ -1,0 +1,5 @@
+hook	rva	arg_type	lane	mode	verdict	mismatches	total	stats	err
+fsopen_safe	0x004a4541	stub_dispatch_observe	warm	baseline	GREEN	0	7		
+fsopen_safe	0x004a4541	stub_dispatch_observe	warm	field_first	ERROR	0	0		TIMEOUT (process died)
+fsopen_safe	0x004a4541	stub_dispatch_observe	warm	field_none	CTRL-GREEN	0	7	calls=7 flips=0 changed=0 flip=0x00000000 noise=168 frozen=1	
+fsopen_safe	0x004a4541	stub_dispatch_observe	warm	real	GREEN	0	7		

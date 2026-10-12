@@ -9,7 +9,7 @@
 //   0x00495530  CreateDInputObject   — IDirectInput8A creation wrapper (calls
 //                                       game printf + dinput8!DirectInput8Create
 //                                       thunk).
-//   0x004955b0  CreateDInputObjectBool — 11-byte bool predicate wrapping the
+//   CreateDInputObjectBool (RVA 0x004955b0, forwarder to DInputInitPredicate) — 11-byte bool predicate wrapping the
 //                                         above (returns 1 if HRESULT>=0 else 0).
 //   0x0045b350  RwInitNullStub        — 1-byte bare RET (0xC3); zero-body
 //                                        placeholder called from RW init paths
@@ -151,15 +151,21 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl CreateDInputObject() {
 
 RH_ScopedInstall(CreateDInputObject, 0x00495530);  // re-enabled 2026-05-24 c3-input
 
+// Body of 0x004955b0 lives in Boot/RwEngineInit.cpp; CreateDInputObjectBool forwards to it.
+extern "C" std::uint32_t __cdecl DInputInitPredicate();
+
 // ---------------------------------------------------------------------------
-// 0x004955b0  CreateDInputObjectBool — bool(void)
+// CreateDInputObjectBool (RVA 0x004955b0) — bool(void), forwarder; the body is DInputInitPredicate
 // ---------------------------------------------------------------------------
 // 11-byte predicate wrapper:
 //   return FUN_00495530() != 0;
 // Pure thin wrapper. Promoted to C2 in ma1-ghidra-s3.
 //
+// Same RVA as DInputInitPredicate (Boot/RwEngineInit.cpp); one body, so the two exports cannot
+// drift. That body calls 0x00495530 through the game VA like `call 0x00495530` at 0x004955b0
+// (the old copy called the port CreateDInputObject directly, bypassing whatever owns that VA).
 extern "C" __declspec(dllexport) std::uint32_t __cdecl CreateDInputObjectBool() {
-    return CreateDInputObject() != 0 ? 1u : 0u;
+    return DInputInitPredicate();
 }
 
 RH_ScopedInstall(CreateDInputObjectBool, 0x004955b0);  // re-enabled 2026-05-24 c3-input

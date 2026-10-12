@@ -1,0 +1,8 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,"{""scalars"":[],""stub_rets"":{""cdi"":0}}",r=0|calls[1]=cdi:,,r=0|calls[1]=cdi:,,True,,
+1,"{""scalars"":[],""stub_rets"":{""cdi"":1}}",r=1|calls[1]=cdi:,,r=1|calls[1]=cdi:,,True,,
+2,"{""scalars"":[],""stub_rets"":{""cdi"":2}}",r=1|calls[1]=cdi:,,r=1|calls[1]=cdi:,,True,,
+3,"{""scalars"":[],""stub_rets"":{""cdi"":-1}}",r=1|calls[1]=cdi:,,r=1|calls[1]=cdi:,,True,,
+4,"{""scalars"":[],""stub_rets"":{""cdi"":-2147483648}}",r=1|calls[1]=cdi:,,r=1|calls[1]=cdi:,,True,,
+5,"{""scalars"":[],""stub_rets"":{""cdi"":256}}",r=1|calls[1]=cdi:,,r=1|calls[1]=cdi:,,True,,
+6,"{""scalars"":[],""stub_rets"":{""cdi"":0}}",r=0|calls[1]=cdi:,,r=0|calls[1]=cdi:,,True,,

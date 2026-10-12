@@ -217,19 +217,15 @@ static FUN_00493390_t const s_FUN_00493390 =
 //
 // Decompilation (re/analysis/boot_subsystem_d3/0x00493480.md):
 //   FUN_00493390()                               — raw frame delta update
-//   Snap buckets (citing RVAs from analysis note):
-//     [0x2f..0x35] → 0x32 (50)   at 0x00493495
-//     [0x61..0x67] → 100         at 0x004934a5
-//     [0x93..0x99] → 0x96 (150)  at 0x004934b5
-//     [0xc4..0xcb] → 200         at 0x004934c5
-//   DAT_007719d4 += DAT_007f1000
-//   if DAT_007719d4 > 49:
-//     uVar1 = DAT_007719d4 / 50
-//     DAT_007719d4 = DAT_007719d4 % 50
-//     if DAT_007719d4 >= 48: uVar1 += 1; DAT_007719d4 = 0
-//     if DAT_007719d4 <= 2:  DAT_007719d4 = 0
-//   DAT_007f1000 = uVar1 * 50
-//   DAT_007f1004 = float(uVar1 * 50) * DAT_005cc948    (DAT_005cc948 = 1/3000.0f)
+//   Snap buckets (signed, EAX only; disasm 0x0049348a..0x004934cf):
+//     [0x2f..0x35] -> 0x32, [0x61..0x67] -> 0x64, [0x93..0x99] -> 0x96, [0xc5..0xcb] -> 0xc8
+//   acc = DAT_007719d4 + ms; n = 0
+//   if (int)acc >= 50: n = acc / 50; acc = acc % 50
+//   DAT_007719d4 = acc
+//   if (int)acc > 47: n += 1; DAT_007719d4 = 0      (runs on every call)
+//   else if (int)acc < 3: DAT_007719d4 = 0
+//   DAT_007f1000 = n * 50
+//   DAT_007f1004 = (float)(int)DAT_007f1000 * DAT_005cc948    (x87 fild/fmul/fstp)
 //   return 1
 //
 // DAT_005cc948 raw bytes: 3e c3 ae 39 = 0.00033333... = 1/3000.0f (resolved U-3933).
@@ -240,43 +236,56 @@ static FUN_00493390_t const s_FUN_00493390 =
 static constexpr std::uintptr_t kSubFrameAccum_007719d4 = 0x007719d4u;
 // kFrameTickCounter_007f1000 shared with MainLoopInit (0x007f1000) above.
 static constexpr std::uintptr_t kFloatTickOutput_007f1004 = 0x007f1004u;
-// DAT_005cc948 = 1/3000.0f (verified from raw bytes 3ec3ae39).
-static constexpr float kTickToSeconds = 1.0f / 3000.0f;  // 0x005cc948
 
 // 0x00493480
+// Re-ported from the bytes 2026-10-12 (negctl re-earn, cluster bootio). The old body ran the
+// remainder round-up / zero-snap only inside an unsigned `accum > 49` and compared unsigned;
+// the original (disasm 0x00493480..0x00493531) compares SIGNED throughout and runs both
+// remainder tests on every call, and its 200 band starts at 0xc5 (0x004934c1), not 0xc4.
 extern "C" __declspec(dllexport) int __cdecl FpsDiscretise() {
-    // FUN_00493390() — updates DAT_007f1000 with raw frame delta
-    s_FUN_00493390();
+    s_FUN_00493390();                                                   // 0x00493480
 
-    std::uint32_t& frame_tick = *reinterpret_cast<std::uint32_t*>(kFrameTickCounter_007f1000);
+    // 0x00493485 mov eax,[0x7f1000]; the snapped value lives in EAX only (the global is
+    // overwritten at 0x00493514), signed jl/jg compares.
+    std::int32_t ms = *reinterpret_cast<const std::int32_t*>(kFrameTickCounter_007f1000);
+    if      (ms >= 0x2f && ms <= 0x35) ms = 0x32;                       // 0x0049348a..0x00493494
+    else if (ms >= 0x61 && ms <= 0x67) ms = 0x64;                       // 0x0049349b..0x004934a5
+    else if (ms >= 0x93 && ms <= 0x99) ms = 0x96;                       // 0x004934ac..0x004934ba
+    else if (ms >= 0xc5 && ms <= 0xcb) ms = 0xc8;                       // 0x004934c1..0x004934cf
 
-    // Snap to standard tick buckets (cited RVAs: 0x00493495, 0x004934a5, 0x004934b5, 0x004934c5)
-    if (frame_tick >= 0x2fu && frame_tick <= 0x35u)       { frame_tick = 0x32u; }  // 50Hz bucket
-    else if (frame_tick >= 0x61u && frame_tick <= 0x67u)  { frame_tick = 100u; }   // 100Hz bucket
-    else if (frame_tick >= 0x93u && frame_tick <= 0x99u)  { frame_tick = 0x96u; }  // 150Hz bucket
-    else if (frame_tick >= 0xc4u && frame_tick <= 0xcbu)  { frame_tick = 200u; }   // 200Hz bucket
-
-    // Accumulate sub-frame ticks (DAT_007719d4 at 0x004934d7)
-    std::uint32_t& accum = *reinterpret_cast<std::uint32_t*>(kSubFrameAccum_007719d4);
-    accum += frame_tick;
-
-    std::uint32_t uVar1 = 0u;
-    if (accum > 49u) {
-        uVar1 = accum / 50u;
-        accum = accum % 50u;
-        // Round up if remainder >= 48 (0x30)
-        if (accum >= 48u) { uVar1 += 1u; accum = 0u; }
-        // Snap to zero if remainder <= 2
-        if (accum <= 2u)  { accum = 0u; }
+    std::int32_t& accum = *reinterpret_cast<std::int32_t*>(kSubFrameAccum_007719d4);
+    // 0x004934d4..0x004934da add ecx,eax (wraps; computed unsigned to keep it defined)
+    std::uint32_t acc = static_cast<std::uint32_t>(accum) + static_cast<std::uint32_t>(ms);
+    std::uint32_t ticks = 0u;                                           // 0x004934dc xor edx,edx
+    if (static_cast<std::int32_t>(acc) >= 0x32) {                       // 0x004934de cmp ecx,0x32; jl
+        ticks = acc / 50u;                                              // 0x004934e3..0x004934ea mul 0x51eb851f; shr edx,4
+        acc  -= ticks * 50u;                                            // 0x004934ef..0x004934f2 imul -0x32; add
+    }
+    accum = static_cast<std::int32_t>(acc);                             // 0x004934f7
+    if (static_cast<std::int32_t>(acc) > 0x2f) {                        // 0x004934f4 cmp ecx,0x2f; jle
+        ++ticks;                                                        // 0x004934ff
+        accum = 0;                                                      // 0x00493507
+    } else if (static_cast<std::int32_t>(acc) < 3) {                    // 0x00493502 cmp ecx,3; jge
+        accum = 0;                                                      // 0x00493507
     }
 
-    // Write integer and float tick outputs
-    const std::uint32_t tick_out = uVar1 * 50u;
-    frame_tick = tick_out;
-    *reinterpret_cast<float*>(kFloatTickOutput_007f1004) =
-        static_cast<float>(tick_out) * kTickToSeconds;
+    std::int32_t& tick_ms = *reinterpret_cast<std::int32_t*>(kFrameTickCounter_007f1000);
+    tick_ms = static_cast<std::int32_t>(ticks * 50u);                   // 0x00493511..0x00493514
 
-    return 1;
+    // 0x0049351f fild dword [0x7f1000]; fmul dword [0x5cc948]; fstp dword [0x7f1004]: the
+    // product is formed in ST at the live control word and rounded once at the fstp. The
+    // constant is read from a local copy of its bits (0x39aec33e), not from the .rdata VA.
+    static const std::uint32_t kTickToSecondsBits = 0x39aec33eu;        // 0x005cc948
+    std::int32_t* const tick_p = &tick_ms;
+    float* const dt_out = reinterpret_cast<float*>(kFloatTickOutput_007f1004);
+    __asm {
+        mov  eax, tick_p
+        fild dword ptr [eax]
+        fmul dword ptr [kTickToSecondsBits]
+        mov  eax, dt_out
+        fstp dword ptr [eax]
+    }
+    return 1;                                                           // 0x0049351a
 }
 
 // Re-enabled r211 2026-06-15 (was MASS-DISABLED 2026-05-24 phase-a2): reimpl is

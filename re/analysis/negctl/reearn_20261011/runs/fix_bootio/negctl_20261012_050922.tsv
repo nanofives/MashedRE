@@ -1,0 +1,8 @@
+hook	rva	arg_type	lane	mode	verdict	mismatches	total	stats	err
+fsopen_safe	0x004a4541	stub_dispatch_observe	warm	baseline	GREEN	0	7		
+fsopen_safe	0x004a4541	stub_dispatch_observe	warm	field_first	ERROR	0	0		stub_at did NOT install at [object Object] — refusing to run, the REAL callee would execute
+fsopen_safe	0x004a4541	stub_dispatch_observe	warm	field_last	BLIND	0	7	calls=7 flips=5 changed=9 flip=0x045e342e noise=171 frozen=1	
+fsopen_safe	0x004a4541	stub_dispatch_observe	warm	field_none	CTRL-GREEN	0	7	calls=7 flips=0 changed=19 flip=0x00000000 noise=262516 frozen=2	
+fsopen_safe	0x004a4541	stub_dispatch_observe	warm	null	RED	7	7	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+fsopen_safe	0x004a4541	stub_dispatch_observe	warm	real	GREEN	0	7		
+fsopen_safe	0x004a4541	stub_dispatch_observe	warm	ret	RED	7	7	calls=7 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	

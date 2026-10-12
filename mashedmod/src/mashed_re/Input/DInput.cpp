@@ -50,14 +50,21 @@ static FilenameFormatFn_t const g_FormatContcfgName =
 //                              directly to avoid double-hooking.
 extern "C" __declspec(dllexport) void __cdecl ConfigLogDebug(const char* fmt, ...);
 
-// 0x004a4541  FsopenSafe  (2-arg form: filename, mode) — already C3 in
-//                          Save/FsOpen.cpp. Returns FILE* (or NULL on fail).
-extern "C" __declspec(dllexport) FILE* __cdecl FsopenSafe(
-    char* filename, char* mode);
-
-// CRT _fread and _fclose — game uses static-CRT thunks; we call libc directly,
-// which is the same code (statically linked into MASHED.exe).
-//   Cited at: 0x004971ef (CALL _fread), 0x004971fb (CALL _fclose).
+// 0x004a4541 / 0x004a49cf / 0x004a4368 — the three game-CRT calls, made through their game VAs
+// exactly like `call 0x4a4541` (0x004971cd), `call 0x4a49cf` (0x004971ed, _fread) and
+// `call 0x4a4368` (0x004971f3, _fclose); all cdecl, popped by `add esp,0x10` (0x004971d4) and
+// `add esp,0x1c` (0x00497203). The FILE* belongs to the game's CRT stream table, so it must be
+// read and closed by the game's CRT. (Until 2026-10-12 this body called the FsopenSafe export
+// and the DLL's own fread/fclose: one CRT end to end, but not the original's. FsopenSafe now
+// calls the game __fsopen, so mixing CRTs here would hand a game FILE* to the DLL's fread.)
+// Under the boot patch fix_fopen, 0x004a4541 is the JMP into the cave at 0x0050f6c4, which is
+// what the original's call reaches too.
+using GameFsopenSafeFn = FILE* (__cdecl*)(char* filename, char* mode);
+using GameFreadFn      = std::size_t (__cdecl*)(void* dst, std::size_t size, std::size_t count, FILE* fp);
+using GameFcloseFn     = int (__cdecl*)(FILE* fp);
+static const GameFsopenSafeFn s_GameFsopenSafe = reinterpret_cast<GameFsopenSafeFn>(0x004a4541u);
+static const GameFreadFn      s_GameFread      = reinterpret_cast<GameFreadFn>(0x004a49cfu);
+static const GameFcloseFn     s_GameFclose     = reinterpret_cast<GameFcloseFn>(0x004a4368u);
 
 
 // ============================================================================
@@ -126,7 +133,7 @@ static int __stdcall ControllerConfigLoad_Body(int slot_idx)
 
     ConfigLogDebug("Attempting to load controller config %s\n", filename);
 
-    FILE* fp = FsopenSafe(filename,
+    FILE* fp = s_GameFsopenSafe(filename,
                           reinterpret_cast<char*>(kModeRb_Addr));   // 0x005cf010 = "rb"
     if (fp == nullptr) {
         ConfigLogDebug("\tUnable to load controller config %s\n", filename);
@@ -137,8 +144,8 @@ static int __stdcall ControllerConfigLoad_Body(int slot_idx)
     void* dst = reinterpret_cast<void*>(
         kCtrlCfgBase + static_cast<std::uintptr_t>(
             static_cast<std::uint32_t>(slot_idx) * kCtrlCfgStride));
-    fread(dst, kFreadElemSize, kCtrlCfgReadSize, fp);
-    fclose(fp);                                                     // 0x004971fb
+    s_GameFread(dst, kFreadElemSize, kCtrlCfgReadSize, fp);         // 0x004971ed
+    s_GameFclose(fp);                                               // 0x004971f3
 
     ConfigLogDebug("\tLoaded controller config %s\n", filename);
     return 1;

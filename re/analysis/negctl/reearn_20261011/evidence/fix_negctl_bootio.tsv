@@ -1,0 +1,50 @@
+hook	rva	arg_type	lane	mode	verdict	mismatches	total	stats	err	source_run
+font_sys_init_render_state	0x00552c10	scalars_to_scattered_globals	warm	baseline	GREEN	0	3			050009
+font_sys_init_render_state	0x00552c10	scalars_to_scattered_globals	warm	field_first	RED	3	3	calls=3 flips=3 changed=741 flip=0x00912500 noise=186 frozen=2		050009
+font_sys_init_render_state	0x00552c10	scalars_to_scattered_globals	warm	field_last	RED	3	3	calls=3 flips=3 changed=741 flip=0x0091320b noise=189 frozen=2		050009
+font_sys_init_render_state	0x00552c10	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	3	calls=3 flips=0 changed=741 flip=0x00000000 noise=195 frozen=2		050009
+font_sys_init_render_state	0x00552c10	scalars_to_scattered_globals	warm	null	RED	3	3	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0		050009
+font_sys_init_render_state	0x00552c10	scalars_to_scattered_globals	warm	real	GREEN	0	3			050009
+font_sys_init_render_state	0x00552c10	scalars_to_scattered_globals	warm	ret	RED	3	3	calls=3 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0		050009
+fps_discretise	0x00493480	scalars_to_scattered_globals	warm	baseline	GREEN	0	30			050009
+fps_discretise	0x00493480	scalars_to_scattered_globals	warm	field_first	BLIND	0	30	calls=30 flips=30 changed=7 flip=0x0e1ee504 noise=195 frozen=2		050009
+fps_discretise	0x00493480	scalars_to_scattered_globals	warm	field_last	RED	30	30	calls=30 flips=30 changed=6 flip=0x007f1007 noise=195 frozen=2		050009
+fps_discretise	0x00493480	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	30	calls=30 flips=0 changed=7 flip=0x00000000 noise=198 frozen=2		050009
+fps_discretise	0x00493480	scalars_to_scattered_globals	warm	null	RED	30	30	calls=0 flips=0 changed=0 flip=0x00000000 noise=195 frozen=2		050009
+fps_discretise	0x00493480	scalars_to_scattered_globals	warm	real	GREEN	0	30			050009
+fps_discretise	0x00493480	scalars_to_scattered_globals	warm	ret	RED	30	30	calls=30 flips=0 changed=0 flip=0x00000000 noise=195 frozen=2		050009
+vfs_stream_read	0x00550980	scalars_to_scattered_globals	warm	baseline	GREEN	0	12			050009
+vfs_stream_read	0x00550980	scalars_to_scattered_globals	warm	field_first	RED	7	12	calls=12 flips=7 changed=0 flip=0x008a95a0 noise=200 frozen=2		050009
+vfs_stream_read	0x00550980	scalars_to_scattered_globals	warm	field_last	RED	7	12	calls=12 flips=7 changed=0 flip=0x008a95a3 noise=222 frozen=2		050009
+vfs_stream_read	0x00550980	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	12	calls=12 flips=0 changed=0 flip=0x00000000 noise=224 frozen=2		050009
+vfs_stream_read	0x00550980	scalars_to_scattered_globals	warm	null	RED	11	12	calls=0 flips=0 changed=0 flip=0x00000000 noise=198 frozen=2		050009
+vfs_stream_read	0x00550980	scalars_to_scattered_globals	warm	real	GREEN	0	12			050009
+vfs_stream_read	0x00550980	scalars_to_scattered_globals	warm	ret	RED	12	12	calls=12 flips=0 changed=0 flip=0x00000000 noise=198 frozen=2		050009
+window_msg_pump	0x00499690	standin_object_call	warm	baseline	GREEN	0	5			050009
+window_msg_pump	0x00499690	standin_object_call	warm	field_first	NA	0	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=247172 frozen=2		050009
+window_msg_pump	0x00499690	standin_object_call	warm	field_last	NA	0	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=247174 frozen=2		050009
+window_msg_pump	0x00499690	standin_object_call	warm	field_none	CTRL-GREEN	0	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=247176 frozen=2		050009
+window_msg_pump	0x00499690	standin_object_call	warm	null	RED	5	5	calls=0 flips=0 changed=0 flip=0x00000000 noise=247024 frozen=1		050009
+window_msg_pump	0x00499690	standin_object_call	warm	real	GREEN	0	5			050009
+window_msg_pump	0x00499690	standin_object_call	warm	ret	RED	5	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=247024 frozen=1		050009
+create_dinput_object_bool	0x004955b0	stub_dispatch_observe	warm	baseline	GREEN	0	7			050009
+create_dinput_object_bool	0x004955b0	stub_dispatch_observe	warm	field_first	NA	0	7	calls=7 flips=0 changed=0 flip=0x00000000 noise=227 frozen=2		050009
+create_dinput_object_bool	0x004955b0	stub_dispatch_observe	warm	field_last	NA	0	7	calls=7 flips=0 changed=0 flip=0x00000000 noise=229 frozen=2		050009
+create_dinput_object_bool	0x004955b0	stub_dispatch_observe	warm	field_none	CTRL-GREEN	0	7	calls=7 flips=0 changed=1 flip=0x00000000 noise=270 frozen=2		050009
+create_dinput_object_bool	0x004955b0	stub_dispatch_observe	warm	null	RED	7	7	calls=0 flips=0 changed=0 flip=0x00000000 noise=224 frozen=2		050009
+create_dinput_object_bool	0x004955b0	stub_dispatch_observe	warm	real	GREEN	0	7			050009
+create_dinput_object_bool	0x004955b0	stub_dispatch_observe	warm	ret	RED	7	7	calls=7 flips=0 changed=0 flip=0x00000000 noise=224 frozen=2		050009
+dinput_init_predicate	0x004955b0	stub_dispatch_observe	warm	baseline	GREEN	0	7			050009
+dinput_init_predicate	0x004955b0	stub_dispatch_observe	warm	field_first	NA	0	7	calls=7 flips=0 changed=0 flip=0x00000000 noise=270 frozen=2		050009
+dinput_init_predicate	0x004955b0	stub_dispatch_observe	warm	field_last	NA	0	7	calls=7 flips=0 changed=0 flip=0x00000000 noise=276 frozen=2		050009
+dinput_init_predicate	0x004955b0	stub_dispatch_observe	warm	field_none	CTRL-GREEN	0	7	calls=7 flips=0 changed=0 flip=0x00000000 noise=277 frozen=2		050009
+dinput_init_predicate	0x004955b0	stub_dispatch_observe	warm	null	RED	7	7	calls=0 flips=0 changed=0 flip=0x00000000 noise=270 frozen=2		050009
+dinput_init_predicate	0x004955b0	stub_dispatch_observe	warm	real	GREEN	0	7			050009
+dinput_init_predicate	0x004955b0	stub_dispatch_observe	warm	ret	RED	7	7	calls=7 flips=0 changed=0 flip=0x00000000 noise=270 frozen=2		050009
+fsopen_safe	0x004a4541	stub_dispatch_observe	warm	baseline	GREEN	0	7			050922
+fsopen_safe	0x004a4541	stub_dispatch_observe	warm	field_last	BLIND	0	7	calls=7 flips=5 changed=9 flip=0x045e342e noise=171 frozen=1		050922
+fsopen_safe	0x004a4541	stub_dispatch_observe	warm	field_none	CTRL-GREEN	0	7	calls=7 flips=0 changed=19 flip=0x00000000 noise=262516 frozen=2		050922
+fsopen_safe	0x004a4541	stub_dispatch_observe	warm	null	RED	7	7	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0		050922
+fsopen_safe	0x004a4541	stub_dispatch_observe	warm	real	GREEN	0	7			050922
+fsopen_safe	0x004a4541	stub_dispatch_observe	warm	ret	RED	7	7	calls=7 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0		050922
+fsopen_safe	0x004a4541	stub_dispatch_observe	warm	field_first	NA	0	7	calls=7 flips=0 changed=0 flip=0x00000000 noise=162 frozen=2		051101
