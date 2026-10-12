@@ -26,6 +26,8 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-12  0042ac90  MenuEntryGet  C3 kept, U-9660 RESOLVED  Both arms AV'd because the per-slot table pointer [slot*0x40+0x67ed38] is 0 at the main menu; z_fix_u9660.py seeds it. run_diff GREEN 16/16, self-baseline GREEN, negctl mutants RED. Install re-enabled (MASS-DISABLE was a harness limit); path2 PASS hook-only and full auto-hook.
+2026-10-12  0042ac90  MenuEntryGet  U-9667 filed  The standalone runs ItemActionCode (MenuNavSM.cpp:432) for this RVA, which differs from the bytes in three ways and is unmeasured.
 2026-10-12  004a4541  FsopenSafe  C2 (decided)  User decision: keep the fix_fopen boot patch, so the hook cannot install and C2 is the accepted level. U-9662 DECIDED; revisit only if the patch is retired.
 2026-10-12  00498d60  PopulateModeCombo  U-9666 filed  >63-char mode string overruns the original's 0x40 buffer; unmeasured.
 2026-10-12  00498d60  populate_mode_combo_s2  C2->C3 (re-earned after re-port)  ABI is __cdecl with the combo HWND as its one stack arg (mov ebx,[esp+0x60] @0x00498dd9; callers push it @0x00499136 / @0x004991ce); the port read it from EAX. Measured against a real hidden dialog (new run_diff `dialog` harness). Strings over 63 chars overrun the original's 0x40 buffer, U-9666. Re-port c22ad3de (merge 84af6e69); run_diff GREEN 8/8 (re/analysis/negctl/reearn_20261011/evidence/fix_diff_populate_mode_combo_s2.csv), self-baseline GREEN, negctl mutants RED, witness RED 6/8 (HWND from EAX restored alone; the GREEN two have count 0 / -1), path2 PASS. Result: re/analysis/negctl/reearn_20261011/fix_settings_RESULT.md.

@@ -119,7 +119,11 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl MenuEntryGet() {
     return *reinterpret_cast<std::uint32_t*>(iVar1 + 4 + iVar3 * 4);
 }
 
-// MASS-DISABLED 2026-05-24 needs-canonical-menu-ptr-table: RH_ScopedInstall(MenuEntryGet, 0x0042ac90);
+RH_ScopedInstall(MenuEntryGet, 0x0042ac90);
+// Re-enabled 2026-10-12 (U-9660): the MASS-DISABLE below was a harness limit, not a game fault. The fixture it asked
+// for now exists (re/frida/negctl_fixtures/z_fix_u9660.py: slot index, per-slot table pointer, cursor and decoy
+// slots seeded), and the port reads GREEN 16/16 against it with self-baseline GREEN. Original note kept below.
+// [was] MASS-DISABLED 2026-05-24 needs-canonical-menu-ptr-table.
 // Phase A1 audit 2026-05-24: function derefs *(0x0067ed38 + slot*0x40) (the
 // per-slot menu pointer table). At quiescent main menu without an active
 // menu screen, slot 0's pointer is NULL and both sides AV at 0x0

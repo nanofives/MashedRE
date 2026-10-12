@@ -1,0 +1,29 @@
+# provenance 2026-10-12: main build b58d2743+enable deployed (asi sha256 8b5e12a6224e910c...), MASHED_HOOK_ONLY=0x0042ac90, MASHED_VERIFY_ASI=original/mashed_re_dev.asi
+=== verify_hook_install report (menu_entry_get) ===
+
+target address: 0x0042ac90  export: MenuEntryGet
+PRE  bytes:     e9 ab 77 d2 6a 00 c1 e1
+asi base:       0x6b140000
+reimpl addr:    0x6b152440
+POST bytes:     e9 ab 77 d2 6a 00 c1 e1
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x6ad277ab  expected 0x6ad277ab  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  3 / 3  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [], 'seed': [{'addr': 6810104, 'val': 0}, {'addr': 6810936, 'val': {'scratch': 0}}, {'addr': 6810944, 'val': 0}, {'addr': {'scratch': 0}, 'val': 4278452224}, {'addr': {'scratch': 4}, 'val': 256}, {'addr': {'scratch': 8}, 'val': 4278517760}, {'addr': {'scratch': 12}, 'val': 2863267841}, {'addr': {'scratch': 16}, 'val': 4278583296}, {'addr': {'scratch': 20}, 'val': 4278452224}, {'addr': {'scratch': 24}, 'val': 257}, {'addr': {'scratch': 28}, 'val': 4279500800}, {'addr': {'scratch': 32}, 'val': 2863267842}, {'addr': {'scratch': 36}, 'val': 4278583296}, {'addr': {'scratch': 40}, 'val': 4278452224}, {'addr': {'scratch': 44}, 'val': 258}, {'addr': {'scratch': 48}, 'val': 51}, {'addr': {'scratch': 52}, 'val': 4278583296}, {'addr': {'scratch': 56}, 'val': 2863267843}]}  got=aaaa0001,811c9dc5  err=
+  [OK] input={'args': [], 'seed': [{'addr': 6810104, 'val': 2}, {'addr': 6810936, 'val': {'scratch': 0}}, {'addr': 6810944, 'val': 0}, {'addr': {'scratch': 0}, 'val': 4278452224}, {'addr': {'scratch': 4}, 'val': 2304}, {'addr': {'scratch': 8}, 'val': 4278517760}, {'addr': {'scratch': 12}, 'val': 3737124865}, {'addr': {'scratch': 16}, 'val': 4278583296}, {'addr': {'scratch': 20}, 'val': 4278452224}, {'addr': {'scratch': 24}, 'val': 2305}, {'addr': {'scratch': 28}, 'val': 4278517760}, {'addr': {'scratch': 32}, 'val': 3737124866}, {'addr': {'scratch': 36}, 'val': 4278583296}, {'addr': {'scratch': 40}, 'val': 4278452224}, {'addr': {'scratch': 44}, 'val': 2306}, {'addr': {'scratch': 48}, 'val': 4278517760}, {'addr': {'scratch': 52}, 'val': 3737124867}, {'addr': {'scratch': 56}, 'val': 4278583296}, {'addr': 6811000, 'val': {'scratch': 256}}, {'addr': 6811008, 'val': 0}, {'addr': {'scratch': 256}, 'val': 4278452224}, {'addr': {'scratch': 260}, 'val': 2304}, {'addr': {'scratch': 264}, 'val': 4278517760}, {'addr': {'scratch': 268}, 'val': 3737124865}, {'addr': {'scratch': 272}, 'val': 4278583296}, {'addr': {'scratch': 276}, 'val': 4278452224}, {'addr': {'scratch': 280}, 'val': 2305}, {'addr': {'scratch': 284}, 'val': 4278517760}, {'addr': {'scratch': 288}, 'val': 3737124866}, {'addr': {'scratch': 292}, 'val': 4278583296}, {'addr': {'scratch': 296}, 'val': 4278452224}, {'addr': {'scratch': 300}, 'val': 2306}, {'addr': {'scratch': 304}, 'val': 4278517760}, {'addr': {'scratch': 308}, 'val': 3737124867}, {'addr': {'scratch': 312}, 'val': 4278583296}, {'addr': 6811064, 'val': {'scratch': 512}}, {'addr': 6811072, 'val': 1}, {'addr': {'scratch': 512}, 'val': 4278452224}, {'addr': {'scratch': 516}, 'val': 256}, {'addr': {'scratch': 520}, 'val': 4278517760}, {'addr': {'scratch': 524}, 'val': 2863267841}, {'addr': {'scratch': 528}, 'val': 4278583296}, {'addr': {'scratch': 532}, 'val': 4278452224}, {'addr': {'scratch': 536}, 'val': 257}, {'addr': {'scratch': 540}, 'val': 4279500800}, {'addr': {'scratch': 544}, 'val': 2863267842}, {'addr': {'scratch': 548}, 'val': 4278583296}, {'addr': {'scratch': 552}, 'val': 4278452224}, {'addr': {'scratch': 556}, 'val': 258}, {'addr': {'scratch': 560}, 'val': 51}, {'addr': {'scratch': 564}, 'val': 4278583296}, {'addr': {'scratch': 568}, 'val': 2863267843}, {'addr': 6811128, 'val': {'scratch': 768}}, {'addr': 6811136, 'val': 0}, {'addr': {'scratch': 768}, 'val': 4278452224}, {'addr': {'scratch': 772}, 'val': 2304}, {'addr': {'scratch': 776}, 'val': 4278517760}, {'addr': {'scratch': 780}, 'val': 3737124865}, {'addr': {'scratch': 784}, 'val': 4278583296}, {'addr': {'scratch': 788}, 'val': 4278452224}, {'addr': {'scratch': 792}, 'val': 2305}, {'addr': {'scratch': 796}, 'val': 4278517760}, {'addr': {'scratch': 800}, 'val': 3737124866}, {'addr': {'scratch': 804}, 'val': 4278583296}, {'addr': {'scratch': 808}, 'val': 4278452224}, {'addr': {'scratch': 812}, 'val': 2306}, {'addr': {'scratch': 816}, 'val': 4278517760}, {'addr': {'scratch': 820}, 'val': 3737124867}, {'addr': {'scratch': 824}, 'val': 4278583296}]}  got=aaaa0002,811c9dc5  err=
+  [OK] input={'args': [], 'seed': [{'addr': 6810104, 'val': 0}, {'addr': 6810936, 'val': {'scratch': 0}}, {'addr': 6810944, 'val': 2}, {'addr': {'scratch': 0}, 'val': 4278452224}, {'addr': {'scratch': 4}, 'val': 256}, {'addr': {'scratch': 8}, 'val': 4278517760}, {'addr': {'scratch': 12}, 'val': 2863267841}, {'addr': {'scratch': 16}, 'val': 4278583296}, {'addr': {'scratch': 20}, 'val': 4278452224}, {'addr': {'scratch': 24}, 'val': 257}, {'addr': {'scratch': 28}, 'val': 4279500800}, {'addr': {'scratch': 32}, 'val': 2863267842}, {'addr': {'scratch': 36}, 'val': 4278583296}, {'addr': {'scratch': 40}, 'val': 4278452224}, {'addr': {'scratch': 44}, 'val': 258}, {'addr': {'scratch': 48}, 'val': 51}, {'addr': {'scratch': 52}, 'val': 4278583296}, {'addr': {'scratch': 56}, 'val': 2863267843}]}  got=ffffffff,811c9dc5  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 3x as expected
+  + all 3 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_menu_entry_get.txt
