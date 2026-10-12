@@ -1,0 +1,17 @@
+hook: replay_save  rva=0x004117b0  export=ReplaySave
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\reearn-replay\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 3536
+  [agent] LUT ready  base=0x2d4bf90  offset=0x134  root=0xce30048  delta=0  attempts=0
+  [agent] .asi loaded  base=0x68170000  ReplaySave@0x6817f0f0
+Traceback (most recent call last):
+  File "C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\reearn-replay\re\frida\run_diff.py", line 739, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\reearn-replay\re\frida\run_diff.py", line 656, in main
+    script.load()
+  File "C:\Users\maria\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\frida\core.py", line 94, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\maria\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\frida\core.py", line 310, in load
+    self._impl.load()
+frida.TransportError: the connection is closed

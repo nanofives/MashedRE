@@ -76,7 +76,19 @@ constexpr std::uintptr_t kFn_FUN_00430820 = 0x00430820;  // disk/state predicate
 constexpr std::uintptr_t kFn_FUN_00426c00 = 0x00426c00;  // player-ID getter
 constexpr std::uintptr_t kFn_FUN_00483ca0 = 0x00483ca0;  // serialise replay buffer
 constexpr std::uintptr_t kFn_FUN_004099a0 = 0x004099a0;  // bulk save trailer
-constexpr std::uintptr_t kFn_FID_wprintf  = 0;  // see WprintfDispatch below
+constexpr std::uintptr_t kFn_FUN_004987b0 = 0x004987b0;  // debug logger, variadic __cdecl (vsprintf -> OutputDebugStringA)
+constexpr std::uintptr_t kFn_printf       = 0x004a2cbd;  // narrow CRT printf (stdout FILE* 0x00616110)
+
+// Format strings the original pushes by address (read from MASHED.exe.unpatched .rdata).
+constexpr std::uintptr_t kStr_005ccedc = 0x005ccedc;  // "Time trial recording error time %d\n"
+constexpr std::uintptr_t kStr_005ccec4 = 0x005ccec4;  // "Hit intermediate 0 %d\n"
+constexpr std::uintptr_t kStr_005ccea4 = 0x005ccea4;  // "Hit intermediate 0 %d:%d:%f\n"
+constexpr std::uintptr_t kStr_005cce8c = 0x005cce8c;  // "Hit intermediate 1 %d\n"
+constexpr std::uintptr_t kStr_005cce6c = 0x005cce6c;  // "Hit intermediate 1 %d:%d:%f\n"
+constexpr std::uintptr_t kStr_005ccf14 = 0x005ccf14;  // "%sReplay%d.rep"
+constexpr std::uintptr_t kStr_005cce1c = 0x005cce1c;  // "c:\toast\"
+constexpr std::uintptr_t kStr_005cce10 = 0x005cce10;  // "%sAll%d.rep"
+constexpr std::uintptr_t kStr_005ccf00 = 0x005ccf00;  // "saving replay %s\n"
 
 // Function-pointer typedefs.
 using Fn_void_void_t    = void (__cdecl*)();
@@ -85,10 +97,22 @@ using Fn_void_int_t     = void (__cdecl*)(int);
 using Fn_int_intint_t   = int  (__cdecl*)(int, int);
 using Fn_void_p_t       = void (__cdecl*)(void*);
 using Fn_int_p_t        = int  (__cdecl*)(void*);
-using Fn_void_int_pptr3_t = void (__cdecl*)(int, void*, void*, void*);
-using Fn_void_pppt_t    = void (__cdecl*)(void*, void*, void*, void*);
-using Fn_void_int4ptr_t = void (__cdecl*)(int, void*, int, int);
+using Fn_void_u32x5_t   = void (__cdecl*)(std::uint32_t, std::uint32_t, std::uint32_t,
+                                          std::uint32_t, std::uint32_t);
+using Fn_void_u32p_u32_u32_t = void (__cdecl*)(std::uint32_t, std::uint32_t, int, int);
+using Fn_int_pp_t       = int  (__cdecl*)(std::uint32_t*, int);
+using Fn_void_iffi_t    = void (__cdecl*)(std::uint32_t, float*, int*, int*);
 using Fn_void_pi_t      = void (__cdecl*)(void*, int);
+using Fn_varargs_t      = int  (__cdecl*)(const char*, ...);
+// RwGlobals (DAT_007d3ff8) +0xc4 holds a sprintf-shaped function pointer. It is a plain
+// data slot, not a vtable, and the original calls it __cdecl: two calls of 4 pushes each
+// are popped together by 0x00411843 add esp,0x30 (with the 0x004987b0 and 0x00483ca0 pushes).
+using Fn_rwsprintf_t    = int  (__cdecl*)(char*, const char*, ...);
+
+template <typename T>
+inline T as_str(std::uintptr_t a) {
+    return reinterpret_cast<T>(a);
+}
 
 template <typename T>
 inline T as_fn(std::uintptr_t rva) {
@@ -102,11 +126,6 @@ inline std::uint32_t  l_u32(std::uintptr_t a) {
     return *reinterpret_cast<const std::uint32_t*>(a);
 }
 
-// 4-arg vtable thunk used by Save for the sprintf-equivalent at vtable+0xc4.
-//   (**(code **)(DAT_007d3ff8 + 0xc4))(buf, fmt, sub1, sub2);
-using VtSprintf_t = void (__thiscall*)(void* thisObj, char* outBuf,
-                                       const char* fmt, const char* s1, int n);
-
 } // namespace
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -118,9 +137,16 @@ using VtSprintf_t = void (__thiscall*)(void* thisObj, char* outBuf,
 //       return 1;
 //   }
 //   return 0;
-// Two guards; at quiescent menu DAT_0063bb10 == 0 so always returns 0.
-// Delegate FUN_00411530 stays original (refused in this batch).
+// Disasm 0x00411580..0x004115b9:
+//   0x00411580 mov eax,[DAT_0063bb10]; test; je -> return 0
+//   0x0041158d mov edx,[eax+ecx*4+0x17c]; test; je -> return 0
+//   0x00411598..0x004115a9 push p4, p3, p2, idx, obj; call 0x00411530
+//   0x004115ae add esp,0x14 (5 args: the record pointer IS the first argument)
+//   0x004115b1 mov eax,1
+// Re-port 2026-10-12: the previous body called 0x00411530 with 4 args and no
+// record pointer, so the callee read idx as the record and p2 as idx.
 // ─────────────────────────────────────────────────────────────────────────────
+// 0x00411580
 extern "C" __declspec(dllexport) std::uint32_t __cdecl ReplayGetBestTime(
         std::uint32_t idx, std::uint32_t frac, std::uint32_t secs, std::uint32_t mins) {
     const std::uint32_t best_ptr = l_u32(kDat_0063bb10);
@@ -128,11 +154,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl ReplayGetBestTime(
     const std::uint32_t ckpt = *reinterpret_cast<const std::uint32_t*>(
         best_ptr + kReplayCkpt0_17c + idx * 4u);
     if (ckpt == 0u) return 0u;
-    auto fn = as_fn<Fn_void_int_pptr3_t>(kFn_FUN_00411530);
-    fn(static_cast<int>(idx),
-       reinterpret_cast<void*>(static_cast<std::uintptr_t>(frac)),
-       reinterpret_cast<void*>(static_cast<std::uintptr_t>(secs)),
-       reinterpret_cast<void*>(static_cast<std::uintptr_t>(mins)));
+    as_fn<Fn_void_u32x5_t>(kFn_FUN_00411530)(best_ptr, idx, frac, secs, mins);  // 0x004115a9
     return 1u;
 }
 RH_ScopedInstall(ReplayGetBestTime, 0x00411580);  // re-enabled 2026-05-24 c3-vehicle
@@ -142,7 +164,10 @@ RH_ScopedInstall(ReplayGetBestTime, 0x00411580);  // re-enabled 2026-05-24 c3-ve
 // Structurally identical to GetBestTime; consumes DAT_0063bb14 instead.
 // U-1078: audio_sfx_dispatch also xrefs this function — purpose [UNCERTAIN
 // U-1078] (catalogued).
+// Disasm 0x004115c0..0x004115f9: same shape as 0x00411580 with DAT_0063bb14;
+// 0x004115e8 push eax (record), 0x004115e9 call 0x00411530, 0x004115ee add esp,0x14.
 // ─────────────────────────────────────────────────────────────────────────────
+// 0x004115c0
 extern "C" __declspec(dllexport) std::uint32_t __cdecl ReplayGetCurrentTime(
         std::uint32_t idx, std::uint32_t frac, std::uint32_t secs, std::uint32_t mins) {
     const std::uint32_t cur_ptr = l_u32(kDat_0063bb14);
@@ -150,11 +175,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl ReplayGetCurrentTime(
     const std::uint32_t ckpt = *reinterpret_cast<const std::uint32_t*>(
         cur_ptr + kReplayCkpt0_17c + idx * 4u);
     if (ckpt == 0u) return 0u;
-    auto fn = as_fn<Fn_void_int_pptr3_t>(kFn_FUN_00411530);
-    fn(static_cast<int>(idx),
-       reinterpret_cast<void*>(static_cast<std::uintptr_t>(frac)),
-       reinterpret_cast<void*>(static_cast<std::uintptr_t>(secs)),
-       reinterpret_cast<void*>(static_cast<std::uintptr_t>(mins)));
+    as_fn<Fn_void_u32x5_t>(kFn_FUN_00411530)(cur_ptr, idx, frac, secs, mins);  // 0x004115e9
     return 1u;
 }
 RH_ScopedInstall(ReplayGetCurrentTime, 0x004115c0);  // re-enabled 2026-05-24 c3-vehicle
@@ -192,61 +213,60 @@ RH_ScopedInstall(ReplayCleanup, 0x004114e0);  // re-enabled 2026-05-24 c3-vehicl
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00411600  Replay::RecordFrame  (REPLAY_FN: per-frame writer)
-// Body sequence:
-//   - mode-gate: if (FUN_0042f6a0() != 2) return;
-//   - sanity wprintf when DAT_0063bb14 == DAT_0063bb10
-//   - vehicle-state fetch into a 0x4c-byte local + WriteFrame
-//   - clears DAT_0063bb20
-//   - checkpoint-0 / -1 detection -> wprintf trios
-// At quiescent menu mode != 2 so the function returns immediately; the body
-// (wprintf calls, vehicle-state fetch, WriteFrame, checkpoint scan) is not
-// exercised.  We delegate to the original RVAs for the few helpers we cannot
-// safely re-implement standalone (per-vehicle state fetch, WriteFrame).
-// ─────────────────────────────────────────────────────────────────────────────
+// Re-ported from the bytes 2026-10-12 (disasm 0x00411600..0x0041174d). Frame:
+// sub esp,0x10 = four dword locals: L0 float frac, L1 int secs, L2 int mins
+// (0x00411350 outs) and L3 (the 0x0046d4a0 out).
+//   0x00411603 call 0x0042f6a0; 0x00411608 sub eax,2; jne -> return
+//   0x00411611 DAT_0063bb14 == DAT_0063bb10 -> 0x0041162a call 0x004987b0
+//              ("Time trial recording error time %d\n" @0x005ccedc, DAT_007f0ff4)
+//   0x0041163b call 0x0046d4a0(&L3, 0): stores ONE dword, 0x00881ec8 +
+//              idx*0xd04 + DAT_00881f48[idx*0xd04]*0x40 (0x0046d4ac..0x0046d4c6)
+//   0x00411653 call 0x004829d0(DAT_0063bb14 (re-read 0x00411648), L3, param_1, 10)
+//   0x0041165c DAT_0063bb20 = 0
+//   0x00411666 call 0x00407a00(0, 0); nonzero and [DAT_0063bb14+0x17c] == 0 ->
+//     0x00411681 [+0x17c] = param_1; 0x0041168d esi = [DAT_0063bb14+0x17c]
+//     0x004116a3 call 0x00411350(esi, &L0, &L1, &L2)
+//     0x004116ae printf("Hit intermediate 0 %d\n" @0x005ccec4, esi)
+//     0x004116cd printf("Hit intermediate 0 %d:%d:%f\n" @0x005ccea4, L2, L1, (double)L0)
+//   0x004116d9 call 0x00407a00(0, 1); same with +0x180 and 0x005cce8c / 0x005cce6c.
+// printf is the narrow CRT printf 0x004a2cbd, not wprintf. The previous port passed the
+// ADDRESS of a zeroed 0x4c-byte local as FUN_004829d0 arg 2 instead of the pointer value
+// FUN_0046d4a0 stores there, and dropped the logger call, the 0x00411350 calls and both
+// printf pairs.
+// ── Globals ─────────────────────────────────────────────────────────────────
+// 0x00411600
 extern "C" __declspec(dllexport) void __cdecl ReplayRecordFrame(int param_1) {
-    // mode-gate — Time Trial only
-    if (as_fn<Fn_int_void_t>(kFn_FUN_0042f6a0)() != 2) return;
+    if (as_fn<Fn_int_void_t>(kFn_FUN_0042f6a0)() != 2) return;          // 0x00411608
 
-    // Sanity wprintf — when both replay buffers point at the same object,
-    // the WriteFrame below would corrupt; emit a debug message before doing
-    // the write anyway (faithful to original).
-    const std::uint32_t curBuf  = l_u32(kDat_0063bb14);
-    const std::uint32_t bestBuf = l_u32(kDat_0063bb10);
-    if (curBuf == bestBuf) {
-        // Original: wprintf("Time trial recording error time %d\n", DAT_007f0ff4);
-        // We cannot reliably emit through the original FID_conflict__wprintf
-        // without resolving its IAT slot; the mode-gate makes this branch
-        // unreachable in our diff regime anyway.  No emit on this path.
-        (void)curBuf;
+    if (l_u32(kDat_0063bb14) == l_u32(kDat_0063bb10)) {                   // 0x00411616
+        as_fn<Fn_varargs_t>(kFn_FUN_004987b0)(as_str<const char*>(kStr_005ccedc),
+                                              l_u32(kDat_007f0ff4));      // 0x0041162a
     }
 
-    // Vehicle-state fetch + WriteFrame.  These touch real game state that
-    // only exists in Time-Trial mode; under the mode-gate above they never
-    // run during the diff harness's quiescent-menu calls.  We forward both
-    // helpers to the original RVAs so the in-game (post-menu) behaviour is
-    // bit-identical to the original.
-    std::uint8_t vehState[0x4c];
-    for (std::size_t i = 0; i < sizeof(vehState); ++i) vehState[i] = 0u;
-    as_fn<Fn_void_pi_t>(kFn_FUN_0046d4a0)(vehState, 0);
-    as_fn<Fn_void_int4ptr_t>(kFn_FUN_004829d0)(static_cast<int>(curBuf),
-                                                vehState, param_1, 10);
+    // L3: 0x0046d4a0 writes it unconditionally for index 0 (0x0046d4a4 cmp eax,0x10; jb).
+    std::uint32_t vehPtr = 0u;
+    as_fn<Fn_int_pp_t>(kFn_FUN_0046d4a0)(&vehPtr, 0);                     // 0x0041163b
+    as_fn<Fn_void_u32p_u32_u32_t>(kFn_FUN_004829d0)(l_u32(kDat_0063bb14), vehPtr,
+                                                     param_1, 10);        // 0x00411653
+    *g_u32(kDat_0063bb20) = 0u;                                           // 0x0041165c
 
-    *g_u32(kDat_0063bb20) = 0u;
-
-    // Checkpoint-0
-    if (as_fn<Fn_int_intint_t>(kFn_FUN_00407a00)(0, 0) != 0 &&
-        *reinterpret_cast<const std::uint32_t*>(curBuf + kReplayCkpt0_17c) == 0u) {
-        *reinterpret_cast<std::uint32_t*>(curBuf + kReplayCkpt0_17c) =
-            static_cast<std::uint32_t>(param_1);
-        // wprintf trio omitted (unreachable in diff regime).
-    }
-
-    // Checkpoint-1
-    if (as_fn<Fn_int_intint_t>(kFn_FUN_00407a00)(0, 1) != 0 &&
-        *reinterpret_cast<const std::uint32_t*>(curBuf + kReplayCkpt1_180) == 0u) {
-        *reinterpret_cast<std::uint32_t*>(curBuf + kReplayCkpt1_180) =
-            static_cast<std::uint32_t>(param_1);
-        // wprintf trio omitted (unreachable in diff regime).
+    struct Ckpt { std::ptrdiff_t off; int k; std::uintptr_t fmt1; std::uintptr_t fmt2; };
+    static const Ckpt kCkpt[2] = {
+        { kReplayCkpt0_17c, 0, kStr_005ccec4, kStr_005ccea4 },            // 0x00411666..0x004116d2
+        { kReplayCkpt1_180, 1, kStr_005cce8c, kStr_005cce6c },            // 0x004116d9..0x00411745
+    };
+    for (const Ckpt& c : kCkpt) {
+        if (as_fn<Fn_int_intint_t>(kFn_FUN_00407a00)(0, c.k) == 0) continue;
+        const std::uint32_t rec = l_u32(kDat_0063bb14);
+        if (*reinterpret_cast<const std::uint32_t*>(rec + c.off) != 0u) continue;
+        *reinterpret_cast<std::uint32_t*>(rec + c.off) = static_cast<std::uint32_t>(param_1);
+        const std::uint32_t t = *reinterpret_cast<const std::uint32_t*>(l_u32(kDat_0063bb14) + c.off);
+        float frac; int secs; int mins;
+        as_fn<Fn_void_iffi_t>(kFn_FUN_00411350)(t, &frac, &secs, &mins);
+        as_fn<Fn_varargs_t>(kFn_printf)(as_str<const char*>(c.fmt1), t);
+        // fld dword L0 / fstp qword: exact float -> double widening.
+        as_fn<Fn_varargs_t>(kFn_printf)(as_str<const char*>(c.fmt2), mins, secs,
+                                        static_cast<double>(frac));
     }
 }
 RH_ScopedInstall(ReplayRecordFrame, 0x00411600);  // re-enabled 2026-05-24 c3-vehicle
@@ -283,44 +303,45 @@ RH_ScopedInstall(ReplayStartLap, 0x00411750);  // re-enabled 2026-05-24 c3-vehic
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x004117b0  Replay::Save
-// Save-once latch (DAT_005f29c8) + non-null best-buf + disk-state predicate
-// gate the body.  Body sprintfs "c:\toast\Replay%d.rep" via vtable+0xc4,
-// serialises best buffer (FUN_00483ca0), then sprintfs "c:\toast\All267.rep"
-// (literal 0x10b == 267) and calls bulk-save trailer FUN_004099a0.
-//
-// At quiescent menu DAT_0063bb10 == 0 → outer guard fails → only latch write.
-// On the second and subsequent calls DAT_005f29c8 != 0 → early return → no
-// latch write either.  Both behaviours are deterministic under the diff.
-// ─────────────────────────────────────────────────────────────────────────────
+// Re-ported from the bytes 2026-10-12 (disasm 0x004117b0..0x00411865). /GS frame:
+// sub esp,0x44, 0x40-byte buffer at [esp], cookie at [esp+0x40].
+//   0x004117c0 DAT_005f29c8 != 0 -> return (no latch write)
+//   0x004117cd DAT_0063bb10 == 0 -> latch; 0x004117d6 call 0x00430820; != 0 -> latch
+//   0x004117e0 esi = DAT_007d3ff8 + 0xc4 (RwGlobals slot address, read BEFORE the getter)
+//   0x004117ec call 0x00426c00
+//   0x00411801 call [esi](buf, "%sReplay%d.rep" @0x005ccf14, "c:\toast\" @0x005cce1c, id)
+//   0x0041180d call 0x004987b0("saving replay %s\n" @0x005ccf00, buf)
+//   0x0041181e call 0x00483ca0(DAT_0063bb10 (re-read 0x00411812), 0x008a94a8)
+//   0x0041183d call [DAT_007d3ff8 (re-read 0x00411823) + 0xc4]
+//              (buf, "%sAll%d.rep" @0x005cce10, "c:\toast\" @0x005cce1c, 0x10b)
+//   0x00411843 add esp,0x30  -> the +0xc4 slot is __cdecl (caller pops)
+//   0x00411846 call 0x004099a0
+//   0x0041184c DAT_005f29c8 = 1
+// The previous port called the +0xc4 slot as __thiscall (no caller cleanup: ESP drifted
+// 0x20 and the process died at the /GS check), passed its own string literals, guarded
+// DAT_007d3ff8 against null (the original does not), and dropped the 0x004987b0 call.
+// ── Globals ─────────────────────────────────────────────────────────────────
+// 0x004117b0
 extern "C" __declspec(dllexport) void __cdecl ReplaySave() {
-    if (*g_u32(kDat_005f29c8) != 0u) return;
-    const std::uint32_t bestBuf = l_u32(kDat_0063bb10);
-    if (bestBuf != 0u) {
-        if (as_fn<Fn_int_void_t>(kFn_FUN_00430820)() == 0) {
-            // Original constructs "c:\toast\Replay%d.rep" via vtable[0xc4] on
-            // the global object at DAT_007d3ff8, then "c:\toast\All%d.rep"
-            // with literal 0x10b.  The vtable call shape is __thiscall with
-            // four explicit args after `this`; we mirror it verbatim.
-            char buf[256] = { 0 };
-            const std::uintptr_t globalObj = l_u32(kDat_007d3ff8);
-            if (globalObj != 0u) {
-                auto vt   = *reinterpret_cast<void* const*>(
-                                globalObj + 0xc4);
-                auto vtFn = reinterpret_cast<VtSprintf_t>(vt);
-                vtFn(reinterpret_cast<void*>(globalObj), buf,
-                     "%sReplay%d.rep", "c:\\toast\\",
-                     as_fn<Fn_int_void_t>(kFn_FUN_00426c00)());
-                // wprintf("saving replay %s\n", buf) — omitted (unreachable).
-                as_fn<Fn_void_pi_t>(kFn_FUN_00483ca0)(
-                    reinterpret_cast<void*>(static_cast<std::uintptr_t>(bestBuf)),
-                    static_cast<int>(kDat_008a94a8));
-                vtFn(reinterpret_cast<void*>(globalObj), buf,
-                     "%sAll%d.rep", "c:\\toast\\", 0x10b);
-                as_fn<Fn_void_void_t>(kFn_FUN_004099a0)();
-            }
-        }
+    if (*g_u32(kDat_005f29c8) != 0u) return;                              // 0x004117c7
+    if (l_u32(kDat_0063bb10) != 0u &&                                     // 0x004117d4
+        as_fn<Fn_int_void_t>(kFn_FUN_00430820)() == 0) {                  // 0x004117dd
+        char buf[0x40];
+        const std::uintptr_t slot = l_u32(kDat_007d3ff8) + 0xc4u;         // 0x004117e6
+        const int id = as_fn<Fn_int_void_t>(kFn_FUN_00426c00)();          // 0x004117ec
+        (*reinterpret_cast<const Fn_rwsprintf_t*>(slot))(
+            buf, as_str<const char*>(kStr_005ccf14),
+            as_str<const char*>(kStr_005cce1c), id);                      // 0x00411801
+        as_fn<Fn_varargs_t>(kFn_FUN_004987b0)(as_str<const char*>(kStr_005ccf00), buf);  // 0x0041180d
+        as_fn<Fn_void_pi_t>(kFn_FUN_00483ca0)(
+            reinterpret_cast<void*>(static_cast<std::uintptr_t>(l_u32(kDat_0063bb10))),
+            static_cast<int>(kDat_008a94a8));                             // 0x0041181e
+        (*reinterpret_cast<const Fn_rwsprintf_t*>(l_u32(kDat_007d3ff8) + 0xc4u))(
+            buf, as_str<const char*>(kStr_005cce10),
+            as_str<const char*>(kStr_005cce1c), 0x10b);                   // 0x0041183d
+        as_fn<Fn_void_void_t>(kFn_FUN_004099a0)();                        // 0x00411846
     }
-    *g_u32(kDat_005f29c8) = 1u;
+    *g_u32(kDat_005f29c8) = 1u;                                           // 0x0041184c
 }
 RH_ScopedInstall(ReplaySave, 0x004117b0);  // re-enabled 2026-05-24 c3-vehicle
 

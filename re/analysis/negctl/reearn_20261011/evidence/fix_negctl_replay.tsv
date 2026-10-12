@@ -1,0 +1,36 @@
+hook	rva	arg_type	lane	mode	verdict	mismatches	total	stats	err
+race_end_check_finish	0x00432080	scalars_to_scattered_globals	warm	baseline	GREEN	0	11		
+race_end_check_finish	0x00432080	scalars_to_scattered_globals	warm	field_first	RED	11	11	calls=11 flips=11 changed=4 flip=0x0067f19c noise=180 frozen=2	
+race_end_check_finish	0x00432080	scalars_to_scattered_globals	warm	field_last	RED	11	11	calls=11 flips=11 changed=4 flip=0x0067f19f noise=248 frozen=2	
+race_end_check_finish	0x00432080	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	11	calls=11 flips=0 changed=4 flip=0x00000000 noise=252 frozen=2	
+race_end_check_finish	0x00432080	scalars_to_scattered_globals	warm	null	RED	11	11	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+race_end_check_finish	0x00432080	scalars_to_scattered_globals	warm	real	GREEN	0	11		
+race_end_check_finish	0x00432080	scalars_to_scattered_globals	warm	ret	RED	11	11	calls=11 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+replay_get_best_time	0x00411580	scalars_to_scattered_globals	warm	baseline	GREEN	0	5		
+replay_get_best_time	0x00411580	scalars_to_scattered_globals	warm	field_first	RED	3	5	calls=5 flips=3 changed=0 flip=0x0d11bd80 noise=255 frozen=2	
+replay_get_best_time	0x00411580	scalars_to_scattered_globals	warm	field_last	RED	3	5	calls=5 flips=3 changed=0 flip=0x0d0f7983 noise=256 frozen=2	
+replay_get_best_time	0x00411580	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=257 frozen=2	
+replay_get_best_time	0x00411580	scalars_to_scattered_globals	warm	null	RED	3	5	calls=0 flips=0 changed=0 flip=0x00000000 noise=252 frozen=2	
+replay_get_best_time	0x00411580	scalars_to_scattered_globals	warm	real	GREEN	0	5		
+replay_get_best_time	0x00411580	scalars_to_scattered_globals	warm	ret	RED	5	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=252 frozen=2	
+replay_get_current_time	0x004115c0	scalars_to_scattered_globals	warm	baseline	GREEN	0	5		
+replay_get_current_time	0x004115c0	scalars_to_scattered_globals	warm	field_first	RED	3	5	calls=5 flips=3 changed=0 flip=0x0d07f4e8 noise=257 frozen=2	
+replay_get_current_time	0x004115c0	scalars_to_scattered_globals	warm	field_last	RED	3	5	calls=5 flips=3 changed=0 flip=0x0d05fbeb noise=257 frozen=2	
+replay_get_current_time	0x004115c0	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=258 frozen=2	
+replay_get_current_time	0x004115c0	scalars_to_scattered_globals	warm	null	RED	3	5	calls=0 flips=0 changed=0 flip=0x00000000 noise=257 frozen=2	
+replay_get_current_time	0x004115c0	scalars_to_scattered_globals	warm	real	GREEN	0	5		
+replay_get_current_time	0x004115c0	scalars_to_scattered_globals	warm	ret	RED	5	5	calls=5 flips=0 changed=0 flip=0x00000000 noise=257 frozen=2	
+replay_record_frame	0x00411600	scalars_to_scattered_globals	warm	baseline	GREEN	0	6		
+replay_record_frame	0x00411600	scalars_to_scattered_globals	warm	field_first	RED	5	6	calls=6 flips=5 changed=5 flip=0x0063bb20 noise=258 frozen=2	
+replay_record_frame	0x00411600	scalars_to_scattered_globals	warm	field_last	RED	2	6	calls=6 flips=5 changed=5 flip=0x007739f8 noise=264 frozen=2	
+replay_record_frame	0x00411600	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	6	calls=6 flips=0 changed=5 flip=0x00000000 noise=267 frozen=2	
+replay_record_frame	0x00411600	scalars_to_scattered_globals	warm	null	RED	5	6	calls=0 flips=0 changed=0 flip=0x00000000 noise=258 frozen=2	
+replay_record_frame	0x00411600	scalars_to_scattered_globals	warm	real	GREEN	0	6		
+replay_record_frame	0x00411600	scalars_to_scattered_globals	warm	ret	SKIP	0	0		void signature
+replay_save	0x004117b0	scalars_to_scattered_globals	warm	baseline	GREEN	0	5		
+replay_save	0x004117b0	scalars_to_scattered_globals	warm	field_first	RED	4	5	calls=5 flips=4 changed=1 flip=0x005f29c8 noise=268 frozen=2	
+replay_save	0x004117b0	scalars_to_scattered_globals	warm	field_last	RED	4	5	calls=5 flips=4 changed=1 flip=0x005f29c8 noise=269 frozen=2	
+replay_save	0x004117b0	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	5	calls=5 flips=0 changed=1 flip=0x00000000 noise=269 frozen=2	
+replay_save	0x004117b0	scalars_to_scattered_globals	warm	null	RED	4	5	calls=0 flips=0 changed=0 flip=0x00000000 noise=267 frozen=2	
+replay_save	0x004117b0	scalars_to_scattered_globals	warm	real	GREEN	0	5		
+replay_save	0x004117b0	scalars_to_scattered_globals	warm	ret	SKIP	0	0		void signature
