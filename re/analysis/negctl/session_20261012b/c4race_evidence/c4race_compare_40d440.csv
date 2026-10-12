@@ -1,0 +1,7 @@
+arm,ref,result,tag,alive_at_end,b0,calls,crash,crash_at,crash_enter,crash_inbody,enter,entry,exit_code,foreign_calls,hook_live,jmp_module,keys,match,missing_keys,mode,outside,ref_keys,rule,seed_calls,tx,verdict
+ctl,40d440_stock1,GREEN,ctl1,True,233,1,0,,,,1,0x67d70760 c4race_ctl.asi+0x80760,0xdeadbeef,0,True,c4race_ctl.asi,1,True,0,10,,1,0,,1,DONE
+ctl,40d440_stock1,GREEN,ctl2,True,233,1,0,,,,1,0x67bc0760 c4race_ctl.asi+0x80760,0xdeadbeef,0,True,c4race_ctl.asi,1,True,0,10,,1,0,,1,DONE
+late,40d440_stock1,GREEN,late1,True,233,1,0,,,,1,0x67d70760 c4race_fix.asi+0x80760,0xdeadbeef,0,True,c4race_fix.asi,1,True,0,10,,1,0,,1,DONE
+late,40d440_stock1,GREEN,late2,True,233,1,0,,,,1,0x69110760 c4race_fix.asi+0x80760,0xdeadbeef,0,True,c4race_fix.asi,1,True,0,10,,1,0,,1,DONE
+stock,40d440_stock2,GREEN,stock1,True,161,1,0,,,,1,0x40d440 MASHED.exe+0xd440,0xdeadbeef,0,False,,1,True,0,10,,1,0,,1,DONE
+stock,40d440_stock1,GREEN,stock2,True,161,1,0,,,,1,0x40d440 MASHED.exe+0xd440,0xdeadbeef,0,False,,1,True,0,10,,1,0,,1,DONE
