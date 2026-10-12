@@ -26,6 +26,9 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-12  00403160  Sub00403160_SubMode0BViewport  C3->C4  Attract demo (no input), ~1,700 game calls/run, per-call key identical to the original; old double-deref control crashes on the first call (2/2). re/analysis/negctl/reearn_20261011/c4_a1_h_RESULT.md
+2026-10-12  0041db80  Sub0041db80_HudThresholdDispatch  C3->C4  Race standings, ~1,200 calls/run, dispatch per counter range identical; inverted-0.34 control 720/960 calls off the model. re/analysis/negctl/reearn_20261011/c4_a1_h_RESULT.md
+2026-10-12  004295a0  HudDualLabelRender  C3->C4 (forced save state)  Silver cup track 2 timeout, ~1,300 calls/run, both text draws + return identical; 2-arg control RED on every call. Launch gates set in an install copy's save. re/analysis/negctl/reearn_20261011/c4_a1_h_RESULT.md
 2026-10-12  0043c000  TimerSlotTickDispatcher  C3->C4 (user-accepted substituted control)  0 mismatches over ~3,350 calls/run; documented dword-store defect cannot show in game (bytes always 0); control = its other old defect (unloaded-ST0 conversion) restored alone, RED 2698/2698. re/analysis/negctl/reearn_20261011/c4_a1_m_RESULT.md
 2026-10-12  0042ebe0  FrontendPlayerSlotCheck  C3->C4 (user-accepted forced input)  Stock save returns 0 on every call; save-progress cells edited in an install copy; 0 mismatches natural and forced, row-0-only control RED 6372/6372. re/analysis/negctl/reearn_20261011/c4_a1_m_RESULT.md
 2026-10-12  0042aff0  MenuButtonDetectA  C3->C4  Natural Quick Battle -> Race Results scenario, ~2,540 calls/run, 0 mismatches x4, old-stride control RED 37/37 x2. re/analysis/negctl/reearn_20261011/c4_a1_m_RESULT.md
