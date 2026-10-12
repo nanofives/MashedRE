@@ -1,0 +1,27 @@
+# provenance 2026-10-12: main build 84af6e69 deployed (asi sha256 33e45ddf4dae10d6...), MASHED_HOOK_ONLY=0x00499740, MASHED_VERIFY_ASI=original/mashed_re_dev.asi
+=== verify_hook_install report (set_control_text_from_resource_i3) ===
+
+target address: 0x00499740  export: SetControlTextFromResource_i3
+PRE  bytes:     e9 fb d5 55 69 00 a1 38
+asi base:       0x699e0000
+reimpl addr:    0x699f6d40
+POST bytes:     e9 fb d5 55 69 00 a1 38
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x6955d5fb  expected 0x6955d5fb  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  1 / 1  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [{'dialog': 1}, 2000]}  got=811c9dc5  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 1x as expected
+  + all 1 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_set_control_text_from_resource_i3.txt

@@ -1,0 +1,27 @@
+# provenance 2026-10-12: main build 84af6e69 deployed (asi sha256 33e45ddf4dae10d6...), MASHED_HOOK_ONLY=0x00499170, MASHED_VERIFY_ASI=original/mashed_re_dev.asi
+=== verify_hook_install report (subsystem_selection_changed_i3) ===
+
+target address: 0x00499170  export: SubsystemSelectionChanged_i3
+PRE  bytes:     e9 2b dc 55 69 0c c2 5c
+asi base:       0x699e0000
+reimpl addr:    0x699f6da0
+POST bytes:     e9 2b dc 55 69 0c c2 5c
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x6955dc2b  expected 0x6955dc2b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  1 / 1  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [{'dialog': 0}], 'seed': [{'addr': 7811576, 'val': {'scratch': 0}}, {'addr': {'scratch': 0}, 'val': 10}, {'addr': {'scratch': 4}, 'val': 4}, {'addr': 7812104, 'val': {'scratch': 16}}, {'addr': {'scratch': 16}, 'val': {'scratch': 64}}, {'addr': {'scratch': 20}, 'val': {'scratch': 512}}, {'addr': 7812108, 'val': 0}, {'addr': 7811580, 'val': {'scratch': 1024}}, {'addr': 7812112, 'val': 3}, {'addr': 7811584, 'val': 0}, {'addr': 7812008, 'val': 0}, {'addr': 7812004, 'val': 0}, {'addr': 7812012, 'val': 0}, {'addr': 7812016, 'val': 0}, {'addr': {'scratch': 64}, 'val': 640}, {'addr': {'scratch': 68}, 'val': 480}, {'addr': {'scratch': 72}, 'val': 16}, {'addr': {'scratch': 76}, 'val': 1}, {'addr': {'scratch': 88}, 'val': 320}, {'addr': {'scratch': 92}, 'val': 240}, {'addr': {'scratch': 96}, 'val': 16}, {'addr': {'scratch': 100}, 'val': 1}, {'addr': {'scratch': 112}, 'val': 800}, {'addr': {'scratch': 116}, 'val': 600}, {'addr': {'scratch': 120}, 'val': 32}, {'addr': {'scratch': 124}, 'val': 2}, {'addr': {'scratch': 136}, 'val': 1024}, {'addr': {'scratch': 140}, 'val': 768}, {'addr': {'scratch': 144}, 'val': 32}, {'addr': {'scratch': 148}, 'val': 3}, {'addr': {'scratch': 160}, 'val': 639}, {'addr': {'scratch': 164}, 'val': 480}, {'addr': {'scratch': 168}, 'val': 16}, {'addr': {'scratch': 172}, 'val': 1}, {'addr': {'scratch': 184}, 'val': 640}, {'addr': {'scratch': 188}, 'val': 479}, {'addr': {'scratch': 192}, 'val': 16}, {'addr': {'scratch': 196}, 'val': 1}, {'addr': {'scratch': 208}, 'val': 4294966656}, {'addr': {'scratch': 212}, 'val': 480}, {'addr': {'scratch': 216}, 'val': 16}, {'addr': {'scratch': 220}, 'val': 1}, {'addr': {'scratch': 232}, 'val': 1280}, {'addr': {'scratch': 236}, 'val': 1024}, {'addr': {'scratch': 240}, 'val': 32}, {'addr': {'scratch': 244}, 'val': 257}, {'addr': {'scratch': 256}, 'val': 1600}, {'addr': {'scratch': 260}, 'val': 1200}, {'addr': {'scratch': 264}, 'val': 32}, {'addr': {'scratch': 268}, 'val': 4}, {'addr': {'scratch': 280}, 'val': 800}, {'addr': {'scratch': 284}, 'val': 400}, {'addr': {'scratch': 288}, 'val': 16}, {'addr': {'scratch': 292}, 'val': 512}, {'addr': {'scratch': 512}, 'val': 1024}, {'addr': {'scratch': 516}, 'val': 768}, {'addr': {'scratch': 520}, 'val': 16}, {'addr': {'scratch': 524}, 'val': 1}, {'addr': {'scratch': 536}, 'val': 640}, {'addr': {'scratch': 540}, 'val': 480}, {'addr': {'scratch': 544}, 'val': 32}, {'addr': {'scratch': 548}, 'val': 256}, {'addr': {'scratch': 560}, 'val': 512}, {'addr': {'scratch': 564}, 'val': 384}, {'addr': {'scratch': 568}, 'val': 16}, {'addr': {'scratch': 572}, 'val': 1}, {'addr': {'scratch': 584}, 'val': 1152}, {'addr': {'scratch': 588}, 'val': 864}, {'addr': {'scratch': 592}, 'val': 32}, {'addr': {'scratch': 596}, 'val': 2}, {'addr': {'scratch': 1024}, 'val': 1701996868}, {'addr': {'scratch': 1028}, 'val': 1144222819}, {'addr': {'scratch': 1032}, 'val': 1095245881}, {'addr': {'scratch': 1036}, 'val': 76}, {'addr': {'scratch': 1104}, 'val': 1701209426}, {'addr': {'scratch': 1108}, 'val': 1668179314}, {'addr': {'scratch': 1112}, 'val': 1632772197}, {'addr': {'scratch': 1116}, 'val': 1919251571}, {'addr': {'scratch': 1120}, 'val': 1919253097}, {'addr': {'scratch': 1124}, 'val': 0}, {'addr': {'scratch': 1184}, 'val': 543323475}, {'addr': {'scratch': 1188}, 'val': 1701996628}, {'addr': {'scratch': 1192}, 'val': 101}]}  got=a557db24  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 1x as expected
+  + all 1 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_subsystem_selection_changed_i3.txt

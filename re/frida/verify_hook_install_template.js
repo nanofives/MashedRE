@@ -124,8 +124,53 @@ function callFn(fn, input, buf) {
             }, 'int', types, recCfg.abi || 'stdcall');
             verifyKeep.push(recorder);
         }
-        const rA = function (x) { return (x !== null && typeof x === 'object' && x.scratch !== undefined) ? scratch.add(x.scratch | 0) : ptr(x); };
+        // `dialog` / `eax_arg` (reearn/settings fixtures, 2026-10-12): lean mirror of diff_template. A hidden STATIC
+        // popup (id 0) with WS_CHILD controls is created per call on this thread, {dialog: id} resolves to its HWND,
+        // and the tree is destroyed after the call. No readback: path2 proves install + entry + return only; the
+        // behaviour is measured by run_diff. Without it the arg read as NULL / "expected a pointer" before entry.
+        const dlgCfg = CONFIG.dialog || null;
+        let dlg = null;
+        if (dlgCfg) {
+            if (!globalThis.__p2U) {
+                const u32 = Process.getModuleByName('user32.dll');
+                const nf = function (n, r, a) { return new NativeFunction(u32.findExportByName(n), r, a, 'stdcall'); };
+                globalThis.__p2U = { create: nf('CreateWindowExA', 'pointer', ['uint32', 'pointer', 'pointer', 'uint32', 'int', 'int',
+                                                                                'int', 'int', 'pointer', 'pointer', 'pointer', 'pointer']),
+                                     destroy: nf('DestroyWindow', 'int', ['pointer']),
+                                     send: nf('SendMessageA', 'int', ['pointer', 'uint32', 'pointer', 'pointer']) };
+            }
+            const U = globalThis.__p2U;
+            const parent = U.create(0, Memory.allocUtf8String('STATIC'), Memory.allocUtf8String(''), 0x80000000,
+                                    0, 0, 400, 300, NULL, NULL, NULL, NULL);
+            if (parent.isNull()) throw new Error('dialog: CreateWindowExA(parent) failed');
+            const kids = {};
+            (dlgCfg.controls || []).forEach(function (c) {
+                const h = U.create(0, Memory.allocUtf8String(c.cls), Memory.allocUtf8String(c.text || ''),
+                                   (0x40000000 | (c.style | 0)) >>> 0, 0, 0, 100, 100, parent, ptr(c.id | 0), NULL, NULL);
+                if (h.isNull()) throw new Error('dialog: CreateWindowExA(' + c.cls + ', ' + c.id + ') failed');
+                kids[c.id] = h;
+                if (c.check) U.send(h, 0xf1, ptr(c.check | 0), NULL);
+                (c.items || []).forEach(function (it) {
+                    const pos = U.send(h, 0x143, NULL, Memory.allocUtf8String(it[0]));
+                    U.send(h, 0x151, ptr(pos), ptr(it[1] >>> 0));
+                });
+                if (c.sel !== undefined && c.sel !== null) U.send(h, 0x14e, ptr(c.sel | 0), NULL);
+            });
+            dlg = { parent: parent, kids: kids, U: U };
+        }
+        const dlgHwnd = function (id) {
+            if (!dlg) throw new Error('dialog arg without a dialog config');
+            if ((id | 0) === 0) return dlg.parent;
+            const h = dlg.kids[id | 0];
+            if (h === undefined) throw new Error('dialog: no control ' + id);
+            return h;
+        };
+        const rA = function (x) {
+            if (x !== null && typeof x === 'object' && x.dialog !== undefined) return dlgHwnd(x.dialog);
+            return (x !== null && typeof x === 'object' && x.scratch !== undefined) ? scratch.add(x.scratch | 0) : ptr(x);
+        };
         const rV = function (x) {
+            if (x !== null && typeof x === 'object' && x.dialog !== undefined) return dlgHwnd(x.dialog).toUInt32();
             if (x !== null && typeof x === 'object' && x.scratch !== undefined) return scratch.add(x.scratch | 0).toUInt32();
             if (x !== null && typeof x === 'object' && x.recorder) return recorder.toUInt32();
             return x;
@@ -144,12 +189,32 @@ function callFn(fn, input, buf) {
             seeds.forEach(function (g) {
                 if (g.n === 1) g.a.writeU8(g.v & 0xff); else if (g.n === 2) g.a.writeU16(g.v & 0xffff); else g.a.writeU32(g.v >>> 0);
             });
-            ret = fn.apply(null, args);
+            let callFnS = fn;
+            if (CONFIG.eax_arg !== undefined && CONFIG.eax_arg !== null) {
+                // the target takes arg k in EAX: mov eax,[esp+4+4k]; jmp TARGET (through the installed JMP)
+                if (!globalThis.__p2EaxTramp) {
+                    const k = CONFIG.eax_arg | 0, code = Memory.alloc(Process.pageSize);
+                    Memory.patchCode(code, 9, function (cw) {
+                        const w = new X86Writer(cw, { pc: code });
+                        w.putBytes([0x8B, 0x44, 0x24, (4 + 4 * k) & 0xff]);
+                        w.putU8(0xE9);
+                        const rel = TARGET_ADDR.sub(code.add(9)).toInt32();
+                        w.putBytes([rel & 0xff, (rel >>> 8) & 0xff, (rel >>> 16) & 0xff, (rel >>> 24) & 0xff]);
+                        w.flush();
+                    });
+                    globalThis.__p2EaxTramp = new NativeFunction(code, CONFIG.signature.ret, CONFIG.signature.args,
+                                                                 CONFIG.orig_calling_convention || 'mscdecl');
+                    globalThis.__p2EaxKeep = code;
+                }
+                callFnS = globalThis.__p2EaxTramp;
+            }
+            ret = callFnS.apply(null, args);
             obs.forEach(function (w) {
                 const ba = new Uint8Array(w.a.readByteArray(w.len));
                 for (let j = 0; j < ba.length; j++) fp = Math.imul(fp ^ ba[j], 0x01000193);
             });
         } finally {
+            if (dlg) { dlg.U.destroy(dlg.parent); dlg = null; }
             obs.forEach(function (w, ix) { w.a.writeByteArray(obsSaved[ix]); });
             seeds.forEach(function (g, ix) { g.a.writeByteArray(seedSaved[ix]); });
         }
