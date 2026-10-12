@@ -1,5 +1,37 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-12b (U-9675, C4 x7, crash 0xe66db, U-9676, draw-stream ALL DONE): **next = the two user decisions below, then the remaining triage B rows.**
+>
+> Five children in worktrees, merged and removed; path2 by the parent on the merged deployed build. Notes:
+> `re/analysis/negctl/session_20261012b/<item>_RESULT.md`. Trackers: 19766af5 (C4 162 -> 165, C2 4702 -> 4699).
+> - **U-9675 RESOLVED**: 0x0041bc50 re-ported from the bytes (29 pairs in byte order, field call not vtable, plus a
+>   missing pop). C2 -> C3, run_diff / self-baseline GREEN 11/11, old port RED 11/11 x2 boots, path2 PASS.
+>   HudDispatchSlot2 now calls the port (port moved to HudDispatch.cpp so the exe links).
+> - **C4 earned (3)**: 0x00492270 SubsystemInit (boot, spawn-suspended .asi load), 0x0042f8d0 MenuMenusBC (natural
+>   Race Results, ~2,860 calls, controls RED on every call), 0x004464c0 CameraEntry::DispatchAll (attract demo, native
+>   counter stub, control RED 2/2; covers the .asi copy only). New harness: `re/frida/c4_front_scenario.py` +
+>   `c4_front_compare.py`; `c4_hud_scenario.py` rows 4464c0 / 40d440 / 41c2d0.
+> - **0x004026d0**: C4 evidence complete (GREEN 2/2, control RED 2/2), held at C3 for a user ruling on 5 passthrough
+>   STUBS rows S-0171..S-0175 (0x00403160 went C4 with S-0560 open on the same day).
+> - **Stay C3, blocked on one forced input**: 0x00404320 PerModeRenderMachine, 0x0040d440, 0x0041c2d0. On every
+>   stock-save route the ported path never runs (rule 0x007f0fd0 = 0; course 0 selected and loaded; rules 5/10 only in
+>   Silver/Gold cups). Unblocker for all three: group H's install-copy save (26 launch-gate dwords) + Silver event 2.
+> - **Crash MASHED.exe+0xe66db**: same collision class as U-9677, different file. A VEHICLES piz held by another
+>   process makes the DFF load (0x0042a5d0) return 0 into RpClumpForAllAtomics (0x004e66d0). 2/2 with a held vehicle
+>   piz, 2/2 0x1509b4 with a held track piz, 0/3 solo. CLAUDE.md re-run bullet now names both signatures.
+> - **U-9676 RESOLVED**: the camera pads' last writer is `rep movsd` at 0x004c4cf1 in FUN_004c4a50 (RwMatrixRotate's
+>   helper), copying stack slots that nothing writes. New U-9678 (low): does the rw_matrix_rotate diff compare them.
+> - **Triage B, draw-stream capture built** (run_diff call_log recorders + string/float deref, float returns, `--x87-cw`,
+>   `log/drawstream_<key>.csv`). 0x00427ad0 MenuMenusBB and 0x00430b90 C2 -> C3, path2 PASS. Both ports had real
+>   defects (SSE2 rounding in BB; 8 listing mismatches in ProgressBarSetA); both now x87 TUs in `x87_tus.txt`.
+>
+> **Open**
+> - DECISION: allow the install-copy save edit + Silver event 2 route for the 3 blocked C4 rows?
+> - DECISION: clear S-0171..S-0175 and promote 0x004026d0 to C4?
+> - 9 of the 11 triage B rows left (TRIAGE_2026-10-12.md B list; heavyweights 0x00427840, 0x004b3bb0, 0x00426dc0,
+>   0x004921d0, 0x00428610), each needs its own instrument.
+> - Side finding, not acted on: hooks.csv classes 0x004b3fc0 as CRT, but it calls RpClumpForAllAtomics with a game callback.
+
 > ## START HERE 2026-10-12 follow-ups (A2 x7, U-9671, U-9673, crash 0x1509b4 ALL DONE): **next = the user calls below, then C4 scenarios for the new C3 rows and U-9675.**
 >
 > Six children in worktrees, merged and removed; path2 + integration run_diff + self-baseline by the parent on the

@@ -1,4 +1,4 @@
-"""U-9675 (2026-10-12): fixture for the re-port of 0x0041bc50 FUN_0041bc50 (HUD/HudBatch.cpp). Key hud_rec29_dispatch.
+"""U-9675 (2026-10-12): fixture for the re-port of 0x0041bc50 FUN_0041bc50 (HUD/HudDispatch.cpp since 97e1560a). Key hud_rec29_dispatch.
 
 Bytes (original/MASHED.exe.unpatched, capstone and Ghidra pool decomp agree):
   0x0041bc50 push esi / 0x0041bc51 mov esi,eax                                  ; record in EAX

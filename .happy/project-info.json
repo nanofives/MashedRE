@@ -1,144 +1,129 @@
 {
-  "title": "Mashed RE — greenfield source port",
-  "updatedAt": "2026-10-09T08:30:00Z",
+  "title": "Mashed RE: greenfield source port",
+  "updatedAt": "2026-10-12T22:23:17Z",
   "sections": [
     {
-      "heading": "D-11073 leg 1b (2026-10-09)",
+      "heading": "Session 2026-10-12b (done)",
       "fields": [
         {
-          "label": "Boost writer FOUND",
-          "kind": "text",
-          "value": "FUN_00414180 (cd=3) -> Branch A presses frames 107..112 -> FUN_0046d7f0 charge 300 -> FUN_0046d780 arms 1300/1 = the measured seed exactly. FUN_00414180 is the one unported link."
-        },
-        {
-          "label": "Knob arms",
+          "label": "C2->C3 (path2 PASS)",
           "kind": "list",
           "value": [
-            "MASHED_SUBSTATE needs MASHED_MODE5_RESET (alone: over-rev bog rounds 2+)",
-            "MASHED_SUBSTATE_CD=3 is measurement-only",
-            "Symptom (b) non-inert; (a) bias374 sawtooth NOT reproduced"
+            "0x0041bc50 re-ported from bytes (U-9675 resolved)",
+            "0x00427ad0 MenuMenusBB, 0x00430b90 ProgressBarSetA (new draw-stream capture; 2 port defects fixed)"
           ]
         },
         {
-          "label": "D2 REOPEN CANDIDATE",
-          "kind": "text",
-          "value": "Knob ON: player post-GO speed -1.2% at f=31 (FUN_0046baa0 re-init zeroes a 2.7e-8 basis residue). Report only."
-        },
-        {
-          "label": "Result",
-          "kind": "text",
-          "value": "verify/d3_gatefire_20261008/RESULT_LEG1B.md"
-        }
-      ]
-    },
-    {
-      "heading": "Phase",
-      "fields": [
-        {
-          "label": "Roadmap",
-          "value": "D0 ✓, D1 ✓ (residue open), D2 PARKED 2026-10-02, D3 active",
-          "kind": "text"
-        },
-        {
-          "label": "Criterion (e)",
-          "value": "PASS 3/3 — launch 1426.4/2053.0/2055.2",
-          "kind": "text"
-        },
-        {
-          "label": "Criterion (b)",
-          "value": "5 failing bands (car<->car ON); AI over-speed +24-28% (was +41%)",
-          "kind": "text"
-        }
-      ]
-    },
-    {
-      "heading": "U-9186 / GATEFIRE 2026-10-08 — branch 2 pose AGREES 82/82; slot seed now DEFAULT-ON; D-11073 cheaper than its row says",
-      "fields": [
-        {
-          "label": "Boot AV FIXED (2026-10-09)",
-          "kind": "text",
-          "value": "Full auto-hook AV = VideoGetRender{Width,Height} hooks undoing fix_camera_res (live 1680x1050). HookSystem now refuses hooks over boot-patch bytes (4 refused); full-set verify works again."
-        },
-        {
-          "label": "Branch 2",
-          "value": "PORTED (shared TU), WIRED (MASHED_WIRE_B2) and FIRES — 18x on v2 with cars alive, LOS passing on all. All 4 PREREG_WIRE gates PASS.",
-          "kind": "text"
-        },
-        {
-          "label": "THE ROOT",
-          "value": "D-11073 race sub-state machine. aib_game_sub_mode() returns a hardcoded 6, upstream of THREE measured symptoms: bias374's ramp, the inert mode-5 branch, and GF1-CALLWISE's anchor split. Scope LOWERED 2026-10-08 — see the D-11073 scope field.",
-          "kind": "text"
-        },
-        {
-          "label": "GF1-CALLWISE",
-          "value": "RAN: 0 vs 64. Both windows are the first 220 mode-6 calls, but the original reaches mode 6 after 683 calls of phase 3 and the port is in mode 6 from frame 0.",
-          "kind": "text"
-        },
-        {
-          "label": "Phase 3 identified",
-          "value": "Camera-path keyframe fly-in over per-frame-re-initialised cars, chain 3->4->6. CORRECTED 2026-10-08 (SCOPE_SUBSTATE2.md): the HOLD does not need that module — FUN_004102f0 sets the exit flag itself and the flag alone blocks the AND. The module governs the motion, not the hold.",
-          "kind": "text"
-        },
-        {
-          "label": "Caveats to carry",
+          "label": "C3->C4",
+          "kind": "list",
           "value": [
-            "W-NOREG passed BLIND; a LATER window does not fix it — the two sides' firings are at DISJOINT offsets (orig 149-219, port 558-660)",
-            "Knob-off byte hashes are dead: schema is 84 cols and the seed is default-ON",
-            "hooks.csv exe_file is NOT ground truth — .rsp membership is",
-            "MASHED_GF1 probe MUTATES TimerAt/RankAt; off for any (b)/(e) scoring",
-            ".data is ~90% BSS — check offset < SizeOfRawData per address"
-          ],
-          "kind": "list"
+            "0x00492270 SubsystemInit",
+            "0x0042f8d0 MenuMenusBC",
+            "0x004464c0 CameraEntry::DispatchAll (.asi copy)"
+          ]
         },
         {
-          "label": "Default build",
-          "value": "One knob taken default-ON 2026-10-08: MASHED_SLOTSTATE_SEED (inert, 3 of 84 columns, byte-identical opt-out). Everything else still OFF. Current default control = H2_def.step.csv / c741a4c5. No C-level taken.",
-          "kind": "text"
+          "label": "Resolved",
+          "kind": "list",
+          "value": [
+            "U-9676: pads written by rep movsd 0x004c4cf1 (RwMatrixRotate helper) from never-written stack",
+            "Crash +0xe66db = cross-session VEHICLE piz collision (re-run rule)"
+          ]
         },
         {
-          "label": "Branch 2 POSE AGREES 82/82",
-          "value": "RESULT_FIRESHAPE.md 2026-10-08: scored call-wise instead of by window. Original 64/64 and port 18/18 firing calls both give (c0,c1,c4,c5)=(0,0,0,255), vs control arms steering across 13-75 distinct values. First behavioural agreement for branch 2. Timing and car distribution still disagree — both downstream of D-11073.",
-          "kind": "text"
+          "label": "Fleet",
+          "kind": "text",
+          "value": "5 children merged and closed, no worktrees left."
+        }
+      ]
+    },
+    {
+      "heading": "Current phase",
+      "fields": [
+        {
+          "label": "Phase",
+          "kind": "text",
+          "value": "D3 active (default AI, powerups, modes); D2 reopened 2026-09-29"
+        },
+        {
+          "label": "Pending user decisions",
+          "kind": "list",
+          "value": [
+            "Install-copy save edit (Silver event 2) for C4 of 0x00404320 / 0x0040d440 / 0x0041c2d0",
+            "0x004026d0 C4: clear passthrough STUBS S-0171..S-0175?"
+          ]
         },
         {
           "label": "Next",
-          "value": "Port FUN_00414180 (cd producer, 154 B) behind MASHED_SUBSTATE; predict its RNG output first. Then D-11073 leg 2 (phase 3). Kickoff in re/NEXT_SESSION.md.",
-          "kind": "text"
-        },
-        {
-          "label": "W-SHAPE",
-          "value": "CLOSED NEGATIVE. Entry pose is 0 on 42,654/42,654 port rows AND 5,318/5,318 original rows — both sides zero ctrl before every call, so the quantity is dead. Probe is sound (disagrees with output on 99.2% of rows). The ctrl[4] claim stands on static transcription only.",
-          "kind": "text"
-        },
-        {
-          "label": "D-11073 scope",
-          "value": "Leg 0, 1a DONE. Leg 1b DONE 2026-10-09: FUN_0040dbd0 + FUN_004103a0 ported (C3) behind MASHED_SUBSTATE (default OFF). 1x state 4 + 112x state 5 every round, exit read 0x3feeeee2, cars held bit-exact; default byte-identical. Leg 2 (phase 3) open.",
-          "kind": "text"
-        },
-        {
-          "label": "H2 DECIDED",
-          "value": "SPLIT. MASHED_SLOTSTATE_SEED is DEFAULT-ON (5 gates PASS; 3 of 84 columns move; opt-out byte-identical). MASHED_SLOT_PLAYER stays OFF — partial bridge at an unfaithful site, enables a default-OFF feature, and the metrics never cover car 0.",
-          "kind": "text"
-        },
-        {
-          "label": "Default control MOVED",
-          "value": "86b7b2bb (80 col) and 7ced2aa3 (84 col) are PRE-SEED. Current default = H2_def.step.csv, c741a4c5. ss_base/ss_v/ss_raw differ by design — not a regression. Use det_prefix.py --common-cols.",
-          "kind": "text"
+          "kind": "list",
+          "value": [
+            "Remaining 9 triage B rows (new harness each)",
+            "U-9672 small standalone menu residuals"
+          ]
         }
       ]
     },
     {
-      "heading": "Recent wins (2026-10-05/07)",
+      "heading": "Tracker",
       "fields": [
         {
-          "label": "Car<->car",
-          "value": "3 legs complete, default-ON, cut AI over-speed from 41% to 26%",
-          "kind": "text"
+          "label": "hooks.csv rows",
+          "kind": "number",
+          "value": 5933
         },
         {
-          "label": "race_pct bridge",
-          "value": "correct + proven consumed (G-LIVE), inert at fd0=0",
-          "kind": "text"
+          "label": "Top subsystems",
+          "kind": "list",
+          "value": [
+            "render 904",
+            "audio 585",
+            "gameplay 370",
+            "frontend 266",
+            "boot 279"
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Default build",
+      "fields": [
+        {
+          "label": "Default-ON",
+          "kind": "text",
+          "value": "B2 flip (A364_RESET, REFDIST, RACEPCT_BRIDGE, WIRE_B2), MASHED_SLOTSTATE_SEED, car<->car"
+        },
+        {
+          "label": "Parked",
+          "kind": "text",
+          "value": "D2 reopen triggers: 2/3 metrics, driving-median 1.3% short (U-9212)"
+        },
+        {
+          "label": "Pending decisions",
+          "kind": "list",
+          "value": [
+            "Default-ON MASHED_ROUND_GRID (+_ORDER)",
+            "MASHED_AILEAF: stack or default-ON"
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Stack",
+      "fields": [
+        {
+          "label": "Engine",
+          "kind": "text",
+          "value": "RenderWare 3.x (Criterion); native PE32 MSVC-era"
+        },
+        {
+          "label": "Toolchain",
+          "kind": "text",
+          "value": "MSVC Build Tools 2022 (x86), Ghidra 12.0.3, Frida, Python 3.12"
+        },
+        {
+          "label": "Anchor",
+          "kind": "text",
+          "value": "MASHED.exe SHA-256 BDCAE093...3C0E (guard: original\\MASHED.exe.unpatched)"
         }
       ]
     }
