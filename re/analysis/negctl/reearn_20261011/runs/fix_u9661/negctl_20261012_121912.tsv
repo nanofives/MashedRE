@@ -1,0 +1,8 @@
+hook	rva	arg_type	lane	mode	verdict	mismatches	total	stats	err
+audio_list_drain	0x005ade90	scalars_to_scattered_globals	warm	baseline	GREEN	0	11		
+audio_list_drain	0x005ade90	scalars_to_scattered_globals	warm	field_first	RED	10	11	calls=11 flips=10 changed=7 flip=0x0d79aab0 noise=172 frozen=2	
+audio_list_drain	0x005ade90	scalars_to_scattered_globals	warm	field_last	RED	10	11	calls=11 flips=10 changed=6 flip=0x0d639bff noise=182 frozen=2	
+audio_list_drain	0x005ade90	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	11	calls=11 flips=0 changed=6 flip=0x00000000 noise=183 frozen=2	
+audio_list_drain	0x005ade90	scalars_to_scattered_globals	warm	null	RED	10	11	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+audio_list_drain	0x005ade90	scalars_to_scattered_globals	warm	real	GREEN	0	11		
+audio_list_drain	0x005ade90	scalars_to_scattered_globals	warm	ret	SKIP	0	0		void signature

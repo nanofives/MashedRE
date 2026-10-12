@@ -1,0 +1,12 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,"[{""scratch"":384}]",363319496,0x15a7d0c8,363319496,0x15a7d0c8,True,,
+1,"[{""scratch"":384}]",1755740796,0x68a67a7c,1755740796,0x68a67a7c,True,,
+2,"[{""scratch"":384}]",2080196324,0x7bfd46e4,2080196324,0x7bfd46e4,True,,
+3,"[{""scratch"":384}]",1933213444,0x733a7f04,1933213444,0x733a7f04,True,,
+4,"[{""scratch"":384}]",2668520284,0x9f0e635c,2668520284,0x9f0e635c,True,,
+5,"[{""scratch"":384}]",719708944,0x2ae5e310,719708944,0x2ae5e310,True,,
+6,"[{""scratch"":384}]",4177383512,0xf8fdd058,4177383512,0xf8fdd058,True,,
+7,"[{""scratch"":384}]",3097956078,0xb8a70eee,3097956078,0xb8a70eee,True,,
+8,"[{""scratch"":384}]",985496004,0x3abd79c4,985496004,0x3abd79c4,True,,
+9,"[{""scratch"":384}]",3535739692,0xd2bf1b2c,3535739692,0xd2bf1b2c,True,,
+10,"[{""scratch"":384}]",4037040650,0xf0a05a0a,4037040650,0xf0a05a0a,True,,
