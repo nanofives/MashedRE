@@ -286,7 +286,7 @@ RH_ScopedInstall(MenuMenusBB, 0x00427ad0);  // re-enabled 2026-05-24 c3-frontend
 // ---------------------------------------------------------------------------
 // MenuMenusBC  --  0x0042f8d0
 //
-// Original: FUN_0042f8d0  (body 0x0042f8d0..0x0042f9f8, 102 instructions)
+// Original: FUN_0042f8d0  (body 0x0042f8d0..0x0042f9f8, 95 instructions)
 // Signature: void __cdecl FUN_0042f8d0(float x, float y, float w, float h)
 //            PLUS a fifth argument, the panel ALPHA, passed in AL.
 //
@@ -468,6 +468,10 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl MenuMenusBC(
 // re/frida/hooks_registry.py 'menu_menus_bc'); acceptance for this function is
 // the hook-on vs hook-off draw-stream A/B with an off-vs-off control, which is
 // the channel that detected the missing AL argument in the first place.
+// 2026-10-12 (a2-dialog): path1 is live again. re/frida/negctl_fixtures/z_fix_a2_dialog.py drives AL through
+// `eax_arg` with a decoy in the 5th stack slot, and replaces 0x00472c60 with a recorder, so x/y/w/h and both
+// colours of all five quads are compared. Witnesses: AL ignored (`mov bl,0`) RED 8/9, alpha read from the
+// 5th stack slot RED 9/9 (re/analysis/negctl/followup_20261012/a2-dialog_RESULT.md).
 RH_ScopedInstall(MenuMenusBC, 0x0042f8d0);
 
 // ---------------------------------------------------------------------------
