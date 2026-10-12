@@ -26,6 +26,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-12  0042b770  MenuButtonDetectE  C3->C4  Canonical scenario with the fixed port live: natural Race Results (the only screen whose code calls E), per-pad action-7 presses; port = original 9/9 in 4/4 runs, old-stride control RED 2/9, hook proven live (0xE9 + 496..689 game calls/run). The previous C4 never executed the body. re/analysis/negctl/reearn_20261011/c4_menu_button_detect_e_RESULT.md
 2026-10-12  004963e0  ConfigLogError  C4 grandfathered (user decision)  disable_log removes the body from the reference; C4 kept by decision, not re-earned. U-9655 DECIDED.
 2026-10-12  00496400  ConfigLogDebug  C4 grandfathered (user decision)  disable_log writes ret at the entry; C4 kept by decision, not re-earned. U-9656 DECIDED.
 2026-10-12  0049fa40  FUN_0049fa40  C3 accepted by inspection  xor eax,eax; ret 4: null mutant cannot differ. U-9658 DECIDED (user).
