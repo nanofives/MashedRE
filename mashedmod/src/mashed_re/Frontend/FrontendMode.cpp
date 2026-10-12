@@ -7,6 +7,7 @@
 //   (preserved in original\MASHED.exe.unpatched)
 
 #include "../Core/HookSystem.h"
+#include "RowMovers.h"
 
 #include <cstdint>
 
@@ -31,10 +32,9 @@
 // ref: re/analysis/hud_frontend_d5/0x004309b0.md
 // ---------------------------------------------------------------------------
 
-// 0x004309b0
-extern "C" __declspec(dllexport) int __cdecl FrontendModeIndex() {
-    // 0x004309b0: read DAT_0067e9fc (game mode global)
-    const std::int32_t mode = *reinterpret_cast<const std::int32_t*>(0x0067e9fcu);
+// 0x004309b0 — the body, with the mode global as a parameter (RowMovers.h);
+// the standalone's challenge launch gate calls it on its own game mode.
+int mashed_re::Frontend::FrontendModeIndexFor(std::int32_t mode) {
     // 0x004309b5: switch on (mode - 2)
     const std::int32_t iVar1 = mode - 2;
     switch (iVar1) {
@@ -49,6 +49,12 @@ extern "C" __declspec(dllexport) int __cdecl FrontendModeIndex() {
         case 8: return 0xb;  // mode 10 → index 11 (0xb)
         default: return iVar1; // other → mode - 2
     }
+}
+
+// 0x004309b0 — hook binding: reads DAT_0067e9fc (game mode global).
+extern "C" __declspec(dllexport) int __cdecl FrontendModeIndex() {
+    return mashed_re::Frontend::FrontendModeIndexFor(
+        *reinterpret_cast<const std::int32_t*>(0x0067e9fcu));
 }
 
 RH_ScopedInstall(FrontendModeIndex, 0x004309b0);  // re-enabled 2026-05-24 c3-frontend-b

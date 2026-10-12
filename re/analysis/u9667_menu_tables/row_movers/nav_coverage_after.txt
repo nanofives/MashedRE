@@ -1,0 +1,23 @@
+screens: 34 ids, 33 with tables, reachable from root 1: 11
+
+TABLE HOLES (no harvested descriptor): [27]
+
+NO STATIC PUSH PATH from root (table exists, but only ActionToScreen's static/gated returns are walked — screens behind the 0xff260000 mode-tile sub-handler's internal codes or behind modals are NOT visited): [0, 5, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24, 25, 26, 28, 29]
+
+KIND CONSISTENCY (screens sharing a kind where only some have sid-specific code in exe_main.cpp):
+  kind 2: handled [4, 6, 8] / NOT handled [2, 3]
+  kind 4: handled [19, 32] / NOT handled [31, 33]
+
+PER-SCREEN INVENTORY (reachable):
+  scr kind   back items sid-ref  actions
+    1    1 0x  40     5       -  2,3,0xff500000,0xff800000,0xff820000
+    2    2 0x  21     3       -  0xff3d0000,0xff400000,0xff4d0000
+    3    2 0x  22     2       -  0xff2c0000,0xff2e0000
+    4    2 0x 130     1     yes  0xff1d0000
+    6    2 0x 270     1     yes  0xff260000
+    8    2 0x  27     5     yes  0xff430000,0xff440000,0xff470000,0xff730000,0xff830000
+   19    4 0x 156     4     yes  0xff450000
+   30    6 0x 234     1     yes  0xffffffff
+   31    4 0x 26b     4       -  0xff450000
+   32    4 0x 25f     1     yes  0xff450000
+   33    4 0x 26b     2       -  0xff450000

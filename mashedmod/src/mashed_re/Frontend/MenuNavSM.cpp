@@ -22,7 +22,8 @@
 
 #include "MenuNavSM.h"
 #include "MenuNav.h"            // MenuEntryWalk: the shared 0x0042ac90 body
-#include "../Race/GameFlow.h"   // Campaign_CurrentCup (challenge-cup row count)
+#include "../Race/RaceModes.h"  // SelectionToGameMode: the exe body of 0x0042f6b0
+#include "RowMovers.h"          // challenge-row movers 0x004322c0 / 0x004323c0
 
 #include <cstring>
 
@@ -168,6 +169,8 @@ const MenuGameState kFreshState = {
     2,                   // ea9c  Opp2      (s18/s24 probe default; wrap 0..6)
     3,                   // eaa0  Opp3      (s18/s24 probe default; wrap 0..6)
     0,                   // eaac  toggle    (not probed; [UNCERTAIN] default 0)
+    0,                   // sel_f184 (DAT_0067f184; image-zero)
+    0,                   // ea68     (DAT_0067ea68; image-zero)
 };
 MenuGameState g_game_state = kFreshState;
 
@@ -1101,36 +1104,76 @@ static void CursorStep(NavSlot& s, int delta) {
     s.cursor = -1;
 }
 
+// Standalone binding of the two challenge-row movers (Frontend/RowMovers.h;
+// bodies in FrontendNav.cpp). Each callee is the single port of its RVA, run
+// on the standalone's mode / selection / row instead of the image's globals.
+// FUN_00430830 and FUN_00430910 read the 0x007f0a40 table live; the standalone
+// fills that address from the save (Nav_GameStateLoadSave mirrors the span),
+// so they see exactly the table the original restored from the same save.
+static int __cdecl RowAvail(int row) {                       // FUN_00430830
+    return static_cast<int>(SplitScreenTrackAssignmentFor(g_game_state.game_mode, row));
+}
+static int __cdecl RowOptValid() {                           // FUN_00430910
+    return MenuOptionSlotGetFor(g_game_state.game_mode, g_game_state.sel_f184,
+                                g_challenge_row);
+}
+static void __cdecl RowModeSync() {                          // FUN_0042f6b0
+    const int m = mashed_re::Race::RaceModes::SelectionToGameMode(g_game_state.sel_f184);
+    if (m >= 0) g_game_state.game_mode = m;   // sel 4/6/7/>11: the original writes nothing
+}
+
+// DAT_0067f1a4 analogue. Set to 1 by both arms before the mover (harvest
+// L1346 / L1353), zeroed by the movers' clamp/stop paths. Nothing in the
+// standalone reads it yet; it is kept so the movers write what the original
+// writes and the trace can show it.
+static int g_nav_flag_f1a4 = 0;
+
+static RowMoverIo StandaloneRowIo() {
+    RowMoverIo io;
+    io.row      = &g_challenge_row;
+    io.sel      = &g_game_state.sel_f184;
+    io.mode     = &g_game_state.game_mode;
+    io.flag     = &g_nav_flag_f1a4;
+    io.ea68     = &g_game_state.ea68;
+    io.avail    = &RowAvail;
+    io.optValid = &RowOptValid;
+    io.modeSync = &RowModeSync;
+    return io;
+}
+
 void Nav_MoveCursor(int delta) {
     NavSlot& s = g_stack[g_nav_depth];
-    // UP arm (harvest L1345-1352): FUN_0042aa00(-1), then on screen kind 6/7
-    // FUN_004323c0 (row back). DOWN arm (L1353-1355): FUN_004322c0, which is
-    // FUN_0042aa00(1) followed by the row-forward loop on kind 6/7. Each arm is
-    // gated on its table flag. Not ported: the hold-repeat of FUN_0042aff0 /
+    // UP arm (harvest L1345-1352): DAT_0067f1a4 = 1; FUN_0042aa00(-1), then on
+    // screen kind 6/7 FUN_004323c0 (row back). DOWN arm (L1353-1355):
+    // DAT_0067f1a4 = 1; FUN_004322c0, which is FUN_0042aa00(1) (0x004322c2)
+    // then, on kind 6/7 (0x004322d8/0x004322e1), the row-forward loop. Each arm
+    // is gated on its table flag. Not ported: the hold-repeat of FUN_0042aff0 /
     // FUN_0042b180 (edge-only here) and the DAT_00898ab0 == 0 condition.
     const bool up = delta < 0;
     if (!TableHasNavFlag(s.desc_table, up ? 0xff0b0000u : 0xff0c0000u)) return;
+    g_nav_flag_f1a4 = 1;
     CursorStep(s, up ? -1 : 1);
     // On 6/7 nav_count is 0 (the single kT6/kT7 item has id 0xffffffff), so the
     // slot cursor is now -1, as in the original (dump_input_r*.json, 3/3 runs).
     //
-    // The ROW is DAT_0067f17c. The original's FUN_004323c0 / FUN_004322c0 clamp
-    // it to 0..0xc and skip rows FUN_00430830 reports unavailable. The standalone
-    // keeps the [Bug #2 / 2026-09-06] user directive instead: the row wraps over
-    // cup.trackCount and may rest on a locked row; the LAUNCH is gated on unlock
-    // in exe_main. That divergence is unchanged by U-9667; only the variable
-    // moved off the slot cursor.
+    // The ROW is DAT_0067f17c. 2026-10-12 user decision (U-9672 item 2): match
+    // the original. This replaces the [Bug #2 / 2026-09-06] directive (row
+    // wrapped over cup.trackCount and could rest on a locked row). The movers
+    // clamp the row to 0..0xc, skip rows FUN_00430830 reports unavailable under
+    // the current mode, and may walk the mode selection down (changing the game
+    // mode) to find one. UP can leave the row at -1 (0x0043243c).
     if (s.screen_id == 6 || s.screen_id == 7) {
-        const int rows = mashed_re::Race::Campaign_CurrentCup().trackCount;
-        if (rows <= 0) return;
-        int c = (g_challenge_row < 0) ? 0 : g_challenge_row;
-        if (c >= rows) c = rows - 1;
-        c = (c + (up ? -1 : 1) + rows) % rows;
-        g_challenge_row = c;
+        const RowMoverIo io = StandaloneRowIo();
+        if (up) RowMoveBack(io);   // 0x004323c0
+        else    RowMoveFwd(io);    // 0x004322c0 from 0x004322ea
     }
 }
 
 int Nav_ChallengeRow() { return g_challenge_row; }
+int Nav_NavFlagF1a4()  { return g_nav_flag_f1a4; }
+// FUN_0043dfd0 zeroes DAT_0067f1a4 on every call before reading input (harvest
+// L61, after the DAT_0067f19c == 2 early return), so 1 lasts one frame.
+void Nav_FrameInputBegin() { g_nav_flag_f1a4 = 0; }
 
 // FUN_0043dfd0 menu-action -> game-mode side effects (WS-G2; Mashed_pool6,
 // 2026-06-16). Selecting a Single-/Multi-Player MODE item writes the selection
@@ -1163,6 +1206,21 @@ void ApplyActionGameMode(std::uint32_t action) {
         case 0xff400000u: g_game_state.game_mode = 2;  g_game_state.flag_ea64 = 0; break;
         case 0xff2c0000u: g_game_state.game_mode = 6;  g_game_state.flag_ea64 = 0; break;
         case 0xff2e0000u: g_game_state.game_mode = 6;  g_game_state.flag_ea64 = 1; break;
+        default: break;
+    }
+    // DAT_0067f184, the selection index those modes come from (the movers walk
+    // it): 0xff3d0000 -> 1 (L259), 0xff400000 -> 0 (L262), 0xff4d0000 -> 0xb
+    // (L931), 0xff2c0000 / 0xff2e0000 -> 3 (L827). Each is followed by
+    // FUN_0042f6b0, whose result is the game_mode written above.
+    // DAT_0067ea68: 0 on 0xff3d0000 / 0xff400000 (L275, via LAB_0043f468) and
+    // 0xff4d0000 (L943), 1 on 0xff710000 / 0xff720000 (screen 29 items, L1200 /
+    // L1206). 0xff2c0000 / 0xff2e0000 leave it unchanged.
+    switch (action) {
+        case 0xff3d0000u: g_game_state.sel_f184 = 1;   g_game_state.ea68 = 0; break;
+        case 0xff400000u: g_game_state.sel_f184 = 0;   g_game_state.ea68 = 0; break;
+        case 0xff4d0000u: g_game_state.sel_f184 = 0xb; g_game_state.ea68 = 0; break;
+        case 0xff2c0000u: case 0xff2e0000u: g_game_state.sel_f184 = 3; break;
+        case 0xff710000u: case 0xff720000u: g_game_state.ea68 = 1; break;
         default: break;
     }
 }

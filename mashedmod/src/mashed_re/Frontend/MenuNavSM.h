@@ -122,6 +122,12 @@ struct MenuGameState {
     int  ea9c;              // DAT_0067ea9c Opp2        (sel==5 screen24; wrap 0..6, ditto)
     int  eaa0;              // DAT_0067eaa0 Opp3        (sel==6 screen24; wrap 0..6, ditto)
     int  eaac;              // DAT_0067eaac toggle bool (sel==7 screen24, XOR 1)
+
+    // Challenge-row mover state (FUN_004322c0 / FUN_004323c0, row-movers
+    // 2026-10-12). The row itself (DAT_0067f17c) is Nav_ChallengeRow().
+    int  sel_f184;          // DAT_0067f184 mode-selection index (FUN_0042f6b0 input)
+    int  ea68;              // DAT_0067ea68 (0 after the SP mode items, 1 after
+                            //   0xff710000 / 0xff720000; harvest L275/L943/L1200/L1206)
 };
 
 // Access / reset the standalone game state (defaults = fresh main menu).
@@ -180,6 +186,10 @@ std::uint32_t Nav_SelectAction();
 // slot cursor (which the original leaves at -1 there). Reset to 0 by the
 // mode-select actions that write DAT_0067f17c = 0 in FUN_0043dfd0.
 int Nav_ChallengeRow();
+// DAT_0067f1a4 analogue (written by the UP/DOWN arms and the row movers; trace only).
+int Nav_NavFlagF1a4();
+// Per-frame start of menu input (FUN_0043dfd0's DAT_0067f1a4 = 0, harvest L61).
+void Nav_FrameInputBegin();
 
 // FUN_0043dfd0 action 0xff260000 arm, the part after its unlock test (harvest
 // L402-L815): game mode 10 pushes screen 0x18, modes 2..5 launch the race

@@ -172,6 +172,7 @@
 #include "LibRw/RwRaceSubmit.h"             // E2'b step 3: in-loop submit (MASHED_RENDER_LIBRW)
 #include "Compat/StandaloneRvaThunks.h"     // B16: standalone RVA-thunk installer
 #include "Frontend/MenuNavSM.h"             // standalone menu nav state machine (FUN_0043d2a0 port)
+#include "Frontend/RowMovers.h"             // FrontendModeIndexFor: 0x004309b0 (challenge launch gate)
 #include "Race/GameFlow.h"                  // top-level game state machine + race scaffold
 #include "Race/RaceModes.h"                 // [WS-G1] real game-mode -> race-rule pipeline
 #include "Audio/AudioEngine.h"              // real DirectSound playback (in-race ambience)
@@ -1465,9 +1466,10 @@ bool RunNavKeysStep() {
     }
     std::FILE* lf = std::fopen(kLogPath, "a");
     if (lf) {
-        std::fprintf(lf, "NAV_KEYS f=%d tap=%s depth=%d screen=%d cur=%d row=%d gm=%d flow=%d fph=%d\n",
+        std::fprintf(lf, "NAV_KEYS f=%d tap=%s depth=%d screen=%d cur=%d row=%d gm=%d sel=%d ea68=%d f1a4=%d flow=%d fph=%d\n",
                      frame, tap, Nav_Depth(), Nav_ScreenId(), Nav_Cursor(),
                      Nav_ChallengeRow(), Nav_GameState().game_mode,
+                     Nav_GameState().sel_f184, Nav_GameState().ea68, Nav_NavFlagF1a4(),
                      static_cast<int>(mashed_re::Race::GameFlow_Mode()),
                      g_frontend_phase);
         std::fclose(lf);
@@ -2005,6 +2007,7 @@ static void MenuLaunchRace(int launchMode) {
 
 bool UpdateMenuSelection() {
     using namespace mashed_re::Frontend;
+    Nav_FrameInputBegin();   // FUN_0043dfd0 per-frame resets (harvest L59-L61)
     if (!g_kbd) return false;
     // #1 (user review): DirectInput is DISCL_BACKGROUND|NONEXCLUSIVE, so g_kbd
     // reads GLOBAL key state even when our window isn't focused — meaning keys
@@ -2204,6 +2207,11 @@ bool UpdateMenuSelection() {
                 }
                 if (next != cur_gm) {
                     gm = next;
+                    // The original moves DAT_0067f184 (1/2/5) and derives the
+                    // mode from it (FUN_0042f6b0: 1->3, 2->4, 5->5). Keep the
+                    // selection in step: the row movers walk it.
+                    mashed_re::Frontend::Nav_GameState().sel_f184 =
+                        (next == 3) ? 1 : (next == 4) ? 2 : 5;
                     mashed_re::Audio::SfxPlay("menu navigation", 0.7f);
                 }
             }
@@ -2280,40 +2288,44 @@ bool UpdateMenuSelection() {
                 int g = std::atoi(gm);
                 if (g >= 2 && g <= 10) { launchMode = g; modeForced = true; }
             }
-            // [D-11054] cup-tier LAUNCH gate (FUN_0043dfd0 harvest L406-407:
-            // `if ((&DAT_007f0a40)[FUN_004309b0() + track*0xc] == 0) ->
-            // blocked`; FUN_004309b0 (0x004309b0): mode 4 -> col 2, mode 5 ->
-            // col 5). Mode 3 keeps the existing Campaign unlock flow (the
-            // fresh-save fallback lives there). MASHED_GAME_MODE-forced modes
-            // bypass the gate (dev/verification). MASHED_CUP_TIERS=0 reverts.
-            {
-                static const bool s_tiers2 = [] {
-                    const char* e = std::getenv("MASHED_CUP_TIERS");
-                    return !(e && e[0] == '0');
-                }();
-                if (s_tiers2 && !modeForced &&
-                    (launchMode == 4 || launchMode == 5)) {
-                    const int col = (launchMode == 4) ? 2 : 5;
-                    if (!mashed_re::Race::Campaign_TierUnlocked(trackSel, col)) {
-                        mashed_re::Audio::SfxPlay("menu navigation", 0.5f);
-                        return false;                // tier locked: no launch
-                    }
-                }
-            }
-            // [Bug #2 / 2026-09-06] Challenge-launch unlock guard. Now that the
-            // Challenge Select cursor can REST on locked cup rows (MenuNavSM
-            // Nav_MoveCursor traverses all cup.trackCount rows), the LAUNCH must
-            // stay gated on unlock: a locked track must not start a race. The
-            // mode-4/5 tier gate above only covers the tier columns; the mode-3
-            // (default challenge) path had no per-row gate. Refuse when the
-            // selected cup row is locked. Dev overrides (MASHED_TRACK_SEL /
-            // MASHED_GAME_MODE) bypass, matching the tier gate.
-            if (!trackOverride && !modeForced) {
-                const mashed_re::Race::Cup& cup = mashed_re::Race::Campaign_CurrentCup();
-                if (trackSel >= 0 && trackSel < cup.trackCount &&
-                    !cup.tracks[trackSel].unlocked) {
+            // Challenge LAUNCH gate, as the original has it (2026-10-12,
+            // row-movers; user decision U-9672 item 2: match the original).
+            // FUN_0043dfd0's 0xff260000 arm opens with (harvest L405-409)
+            //   iVar8 = FUN_004309b0();
+            //   if ((&DAT_007f0a40)[iVar8 + DAT_0067f17c * 0xc] == 0) {
+            //     _DAT_0067e840 = 0.0; goto LAB_0043f6d4; }   // no launch, no push
+            // FUN_004309b0 (0x004309b0) maps the game mode to the column:
+            // 2->0, 3->1, 4->2, 5->5, 6..9->3, 10->0xb. One test for every mode,
+            // on the raw row (no clamp). The mode is launchMode, i.e. the game
+            // mode with the standalone's 0->3 default: mode 0 on screen 6 exists
+            // only on dev routes that jump there (MASHED_GOTO=6, the race-demo
+            // capture recipe in re/tools/ab_report.py); the original reaches
+            // screen 6 only after a mode pick. On every reachable state
+            // launchMode == DAT_0067e9fc's analogue. It
+            // replaces two stand-ins: the [D-11054] tier gate (modes 4/5 only,
+            // MASHED_CUP_TIERS=0 to disable) and the [Bug #2 / 2026-09-06]
+            // guard (mode 3, Campaign unlock = column 4 OR the sidecar
+            // progression), which existed because the directive let the row
+            // rest on a locked track. The gate still matters under the movers:
+            // they test FUN_00430830's column, which equals this one only for
+            // modes 3/4/5/6 (modes 2 and 10 test column 1, modes 7/8/9 test
+            // 8/9/0xa; 0x00430848..0x004308da), they leave the row on 0 or -1
+            // when nothing is available, and LEFT/RIGHT changes the mode
+            // without moving the row.
+            // MASHED_TRACK_SEL / MASHED_GAME_MODE overrides still bypass it.
+            // [UNCERTAIN] _DAT_0067e840 = 0.0 is not ported, and the refusal
+            // keeps the standalone's "menu navigation" SFX; what the original
+            // plays at LAB_0043f6d4 on this path is not captured.
+            if (!trackOverride && !modeForced &&
+                Nav_SelectAction() == 0xff260000u) {
+                const int gateRow = Nav_ChallengeRow();                    // DAT_0067f17c
+                const int gateCol = mashed_re::Frontend::FrontendModeIndexFor(
+                    launchMode);                                           // FUN_004309b0
+                const std::int32_t* const tbl =
+                    reinterpret_cast<const std::int32_t*>(0x007f0a40);
+                if (tbl[gateCol + gateRow * 0xc] == 0) {
                     mashed_re::Audio::SfxPlay("menu navigation", 0.5f);
-                    return false;                // locked cup row: no launch
+                    return false;                // locked cell: no launch
                 }
             }
             // U-9667: the original's select calls 0x0042ac90 with the slot
@@ -6083,7 +6095,10 @@ bool RenderFrame() {
                 // = 320 stepping by height * 0x10/0x1e0 = 16, size
                 // width * 0.0375 x height * 0.05 = 24 x 24.
                 {
-                    const int chal = *reinterpret_cast<const std::int32_t*>(0x0067f17c);
+                    // DAT_0067f17c's analogue. The standalone never writes the
+                    // image address, so reading 0x0067f17c here always gave 0
+                    // (row-movers 2026-10-12; the movers now move the row).
+                    const int chal = Nav_ChallengeRow();
                     const int ea64 = *reinterpret_cast<const std::int32_t*>(0x0067ea64);
                     const std::uintptr_t base =
                         static_cast<std::uintptr_t>(chal) * 0x30u;
