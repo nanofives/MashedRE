@@ -1,0 +1,26 @@
+[decomp_pc] slot=Mashed_pool0 modes=callers n=5
+// FUN_0047b8d0 @ 0x0047b8d0  size=168  (MASHED.exe)
+// NOTE: 0x0047b917 is not a function entry; showing containing function
+// undefined FUN_0047b8d0(void)
+// callers: FUN_0047b9b0@0x0047b9b0
+
+// FUN_005ab100 @ 0x005ab100  size=310  (MASHED.exe)
+// NOTE: 0x005ab2e3 is not a function entry; showing containing function
+// undefined FUN_005ab100(void)
+// callers: (none)
+
+// FUN_005ab1c0 @ 0x005ab1c0  size=56  (MASHED.exe)
+// NOTE: 0x005ab1ef is not a function entry; showing containing function
+// undefined FUN_005ab1c0(void)
+// callers: FUN_005b15e0@0x005b15e0, FUN_005b2190@0x005b2190, FUN_005b2de0@0x005b2de0, FUN_005b2e70@0x005b2e70
+
+// FUN_005ab710 @ 0x005ab710  size=617  (MASHED.exe)
+// NOTE: 0x005ab95b is not a function entry; showing containing function
+// undefined FUN_005ab710(void)
+// callers: FUN_005ab560@0x005ab560, FUN_005ab620@0x005ab620
+
+// FUN_004cc050 @ 0x004cc050  size=250  (MASHED.exe)
+// NOTE: 0x004cc084 is not a function entry; showing containing function
+// undefined FUN_004cc050(void)
+// callers: FUN_004cc5e0@0x004cc5e0, FUN_004cee90@0x004cee90, FUN_004d8810@0x004d8810, FUN_004e1b60@0x004e1b60, FUN_004e1df0@0x004e1df0, FUN_0052cb00@0x0052cb00, FUN_0052ec50@0x0052ec50, FUN_0053d920@0x0053d920, FUN_005a7b60@0x005a7b60, FUN_005ab410@0x005ab410
+

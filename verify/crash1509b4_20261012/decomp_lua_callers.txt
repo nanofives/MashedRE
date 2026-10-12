@@ -1,0 +1,196 @@
+[decomp_pc] slot=Mashed_pool0 modes=decomp+callers n=5
+// FUN_00426340 @ 0x00426340  size=280  (MASHED.exe)
+// undefined FUN_00426340(void)
+// callers: FUN_0040d270@0x0040d270
+
+/* WARNING: Function: __security_check_cookie replaced with injection: security_check_cookie */
+/* [C2 2026-06-02] `KTCScript.lua` loader for a track. Builds the track piz path `"toastart/tracks/"
+   + <name> + <suffix>` (name via… */
+
+void FUN_00426340(undefined4 param_1)
+
+{
+  undefined4 uVar1;
+  int iVar2;
+  undefined4 *puVar3;
+  uint unaff_retaddr;
+  undefined1 auStack_114 [4];
+  undefined1 local_110;
+  undefined4 local_10f;
+  undefined1 local_90;
+  undefined4 local_8f;
+  uint local_c;
+  
+  local_c = DAT_00616038 ^ unaff_retaddr;
+  local_110 = 0;
+  puVar3 = &local_10f;
+  for (iVar2 = 0x1f; iVar2 != 0; iVar2 = iVar2 + -1) {
+    *puVar3 = 0;
+    puVar3 = puVar3 + 1;
+  }
+  *(undefined2 *)puVar3 = 0;
+  *(undefined1 *)((int)puVar3 + 2) = 0;
+  uVar1 = FUN_0041e980(param_1);
+  local_90 = 0;
+  puVar3 = &local_8f;
+  for (iVar2 = 0x1f; iVar2 != 0; iVar2 = iVar2 + -1) {
+    *puVar3 = 0;
+    puVar3 = puVar3 + 1;
+  }
+  *(undefined2 *)puVar3 = 0;
+  *(undefined1 *)((int)puVar3 + 2) = 0;
+  (**(code **)(DAT_007d3ff8 + 0xcc))(&local_110,"toastart/tracks/");
+  (**(code **)(DAT_007d3ff8 + 0xd4))(&local_110,uVar1);
+  (**(code **)(DAT_007d3ff8 + 0xd4))(&local_110,&DAT_005cd280);
+  puVar3 = (undefined4 *)(DAT_007d3ff8 + 0xcc);
+  uVar1 = FUN_0042a8d0(&local_110);
+  (*(code *)*puVar3)(&local_90,uVar1);
+  FUN_00458c70();
+  FUN_004074a0();
+  FUN_00495280(&local_90);
+  iVar2 = FUN_0042a470(0,"KTCScript.lua",1);
+  if (iVar2 != 0) {
+    FUN_0047b9b0("KTCScript.lua",auStack_114,FUN_00440bc0);
+    FUN_004073b0();
+  }
+  FUN_004952f0();
+  return;
+}
+
+
+
+// FUN_0045bae0 @ 0x0045bae0  size=175  (MASHED.exe)
+// undefined FUN_0045bae0(void)
+// callers: FUN_00402750@0x00402750
+
+/* [C1 2026-05-23] Takes no parameters; no return value. */
+
+void FUN_0045bae0(void)
+
+{
+  int iVar1;
+  int iVar2;
+  undefined **ppuVar3;
+  undefined1 auStack_4 [4];
+  
+  iVar2 = 0;
+  iVar1 = 0;
+  do {
+    FUN_0045ba10();
+    *(int *)((int)&DAT_0088fc90 + iVar1) = iVar2;
+    FUN_0045ba10();
+    (&DAT_0068d4d0)[iVar2] = 0;
+    iVar2 = iVar2 + 1;
+    iVar1 = iVar1 + 0xb4;
+  } while (iVar2 < 4);
+  DAT_0068d4e0 = FUN_0042a6b0("PowerUpModels.txd",0,0);
+  iVar1 = 0;
+  if (0 < DAT_005f9bd8) {
+    ppuVar3 = &PTR_FUN_005f99ac;
+    do {
+      (*(code *)*ppuVar3)();
+      iVar1 = iVar1 + 1;
+      ppuVar3 = ppuVar3 + 0x10;
+    } while (iVar1 < DAT_005f9bd8);
+  }
+  FUN_00459290();
+  FUN_004587a0();
+  FUN_00453f30();
+  FUN_0047b9b0("powerups_all.lua",auStack_4,FUN_00440bc0);
+  FUN_00411f30();
+  FUN_004039c0();
+  return;
+}
+
+
+
+// FUN_0047a020 @ 0x0047a020  size=196  (MASHED.exe)
+// undefined FUN_0047a020(void)
+// callers: FUN_00426e10@0x00426e10
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C2 2026-06-02] Course/BSP-collision init ("CourseDescInit"). Single caller = track loader
+   FUN_00426e10, which invokes it as… */
+
+undefined4 FUN_0047a020(undefined4 param_1,undefined4 param_2,int param_3)
+
+{
+  undefined4 uVar1;
+  int iVar2;
+  undefined4 *puVar3;
+  
+  iVar2 = param_3;
+  uVar1 = param_2;
+  DAT_006bf1c8 = param_2;
+  DAT_006bf1cc = param_3;
+  _DAT_006bf1d0 = 0;
+  DAT_006bf1d4 = 0;
+  FUN_00478cb0(param_2);
+  FUN_004b6520(iVar2,0x21c);
+  *(undefined4 *)(iVar2 + 0x204) = 0;
+  *(undefined4 *)(iVar2 + 0x208) = 0x3f800000;
+  *(undefined4 *)(iVar2 + 0x20c) = 0x3f800000;
+  *(undefined4 *)(iVar2 + 0x210) = 0x3f800000;
+  FUN_004b6520(&DAT_0086cac0,0x2200);
+  puVar3 = &DAT_0086cba4;
+  do {
+    puVar3[-0x39] = 0;
+    puVar3[4] = 0x3f000000;
+    *puVar3 = 0x3f800000;
+    puVar3[1] = 0;
+    puVar3[2] = 0;
+    puVar3[3] = 0;
+    puVar3[5] = 0x3f000000;
+    puVar3[6] = 0x3c23d70a;
+    puVar3 = puVar3 + 0x44;
+  } while ((int)puVar3 < 0x86eda4);
+  FUN_0047b9b0(param_1,&param_2,FUN_00440bc0);
+  return uVar1;
+}
+
+
+
+// FUN_0047a0f0 @ 0x0047a0f0  size=59  (MASHED.exe)
+// undefined FUN_0047a0f0(void)
+// callers: FUN_00426e10@0x00426e10
+
+/* [C2 2026-06-02] Course Lua-init root. Records the asset-table base `param_2` into `DAT_006bf1d8`,
+   resets the table counter… */
+
+undefined4 FUN_0047a0f0(undefined4 param_1,undefined4 param_2)
+
+{
+  undefined4 uVar1;
+  
+  uVar1 = param_2;
+  DAT_006bf1d8 = param_2;
+  DAT_006bf1dc = 0;
+  FUN_004b6520(param_2,0x16264);
+  FUN_0047b9b0(param_1,&param_2,FUN_00440bc0);
+  return uVar1;
+}
+
+
+
+// FUN_0047a130 @ 0x0047a130  size=65  (MASHED.exe)
+// undefined FUN_0047a130(void)
+// callers: FUN_004264d0@0x004264d0
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C1 2026-06-01] Initializes the sky rendering context: zeros three consecutive floats at */
+
+void FUN_0047a130(undefined4 param_1)
+
+{
+  undefined1 local_4 [4];
+  
+  _DAT_006bf1bc = 0;
+  _DAT_006bf1c0 = 0;
+  _DAT_006bf1c4 = 0;
+  DAT_006132fc = 0xffffffff;
+  FUN_0047b9b0(param_1,local_4,FUN_00440bc0);
+  return;
+}
+
+
+

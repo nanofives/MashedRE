@@ -1,0 +1,150 @@
+[decomp_pc] slot=Mashed_pool0 modes=decomp n=3
+// FUN_0042a530 @ 0x0042a530  size=160  (MASHED.exe)
+// undefined FUN_0042a530(void)
+
+/* [C1 2026-05-02] Calls FUN_00496400("Searching piz for %s \n", param_2) at entry. */
+
+undefined4 FUN_0042a530(undefined4 param_1,undefined4 param_2)
+
+{
+  int iVar1;
+  
+  FUN_00496400("Searching piz for %s \n",param_2);
+  iVar1 = FUN_0042a470(param_1,param_2,4);
+  if (iVar1 != 0) {
+    return 4;
+  }
+  iVar1 = FUN_0042a470(param_1,param_2,1);
+  if (iVar1 != 0) {
+    return 1;
+  }
+  iVar1 = FUN_0042a470(param_1,param_2,3);
+  if (iVar1 != 0) {
+    return 3;
+  }
+  iVar1 = FUN_0042a470(param_1,param_2,2);
+  if (iVar1 != 0) {
+    return 2;
+  }
+  iVar1 = FUN_0042a470(param_1,param_2,5);
+  if (iVar1 != 0) {
+    return 5;
+  }
+  FUN_00496400("Unable to find %s in piz\n",param_2);
+  return 0;
+}
+
+
+
+// FUN_0042a470 @ 0x0042a470  size=167  (MASHED.exe)
+// undefined FUN_0042a470(void)
+
+/* [C1 2026-06-01] Builds a platform-prefixed file path into a global string buffer and checks for
+   the file's existence. */
+
+undefined4 FUN_0042a470(int param_1,undefined4 param_2,undefined4 param_3)
+
+{
+  int iVar1;
+  char *pcVar2;
+  
+  switch(param_3) {
+  case 1:
+    (**(code **)(DAT_007d3ff8 + 0xcc))(&DAT_0067daa8,param_2);
+    goto switchD_0042a47a_default;
+  case 2:
+    pcVar2 = "ps2/";
+    break;
+  case 3:
+    pcVar2 = "xbox/";
+    break;
+  case 4:
+    pcVar2 = "pc/";
+    break;
+  case 5:
+    pcVar2 = "gamecube/";
+    break;
+  default:
+    goto switchD_0042a47a_default;
+  }
+  (**(code **)(DAT_007d3ff8 + 0xcc))(&DAT_0067daa8,pcVar2);
+  (**(code **)(DAT_007d3ff8 + 0xd4))(&DAT_0067daa8,param_2);
+switchD_0042a47a_default:
+  iVar1 = thunk_FUN_00550b00(&DAT_0067daa8);
+  if (iVar1 == 0) {
+    return 0;
+  }
+  if (param_1 != 0) {
+    (**(code **)(DAT_007d3ff8 + 0xcc))(param_1,&DAT_0067daa8);
+  }
+  return 1;
+}
+
+
+
+// FUN_00550580 @ 0x00550580  size=237  (MASHED.exe)
+// undefined FUN_00550580(void)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C1 2026-05-19] 5-param `(fs_record, name, flags, async_cb_ctx, async_cb_arg)`. Open-file routine
+   on FS instance. */
+
+int FUN_00550580(int param_1,undefined4 param_2,uint param_3,undefined4 param_4,undefined4 param_5)
+
+{
+  int iVar1;
+  int iVar2;
+  int iVar3;
+  
+  iVar3 = 0;
+  if (param_1 == 0) {
+    if (DAT_007dc768 != (code *)0x0) {
+      (*DAT_007dc768)(4);
+    }
+  }
+  else {
+    EnterCriticalSection((LPCRITICAL_SECTION)&DAT_009124e0);
+    iVar2 = 0;
+    if (0 < *(int *)(param_1 + 4)) {
+      do {
+        iVar1 = (**(code **)(param_1 + 0x14))(param_1,iVar2);
+        if (*(int *)(iVar1 + 0x20) == 1) {
+          *(undefined4 *)(iVar1 + 0x20) = 5;
+          iVar3 = iVar1;
+          break;
+        }
+        iVar2 = iVar2 + 1;
+      } while (iVar2 < *(int *)(param_1 + 4));
+    }
+    LeaveCriticalSection((LPCRITICAL_SECTION)&DAT_009124e0);
+    if (iVar3 != 0) {
+      if (((param_3 & 0x10) != 0) || (*(int *)(iVar3 + 0x18) != 0)) {
+        *(undefined4 *)(iVar3 + 0x28) = 2;
+        *(undefined4 *)(iVar3 + 0x30) = param_4;
+        *(undefined4 *)(iVar3 + 0x34) = param_5;
+      }
+      if (*(int *)(param_1 + 0x10) != 0) {
+        param_3 = param_3 | 0x10;
+        *(undefined4 *)(iVar3 + 0x28) = 2;
+        *(undefined4 *)(iVar3 + 0x30) = param_4;
+        *(undefined4 *)(iVar3 + 0x34) = param_5;
+      }
+      iVar2 = (**(code **)(param_1 + 0x28))(param_1,iVar3,param_2,param_3);
+      if (iVar2 == 1) {
+        *(undefined4 *)(iVar3 + 0x1c) = 2;
+        return iVar3;
+      }
+      *(undefined4 *)(iVar3 + 0x20) = 1;
+      return 0;
+    }
+    _DAT_007dc764 = 8;
+    if (DAT_007dc768 != (code *)0x0) {
+      (*DAT_007dc768)(8);
+      return 0;
+    }
+  }
+  return 0;
+}
+
+
+

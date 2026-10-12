@@ -31,7 +31,9 @@
 # 0x0067eae0[0..3] is recorded; FUN_0042c510 entries by return address; page index 0x0067ea08.
 #
 # Usage: py -3.12 re/frida/c4_pb2_scenario.py --arm off|on|stock|ctl [--ctl-asi PATH] [--round 300]
-#        [--out DIR] [--tag NAME] [--presses 18]
+#        [--out DIR] [--tag NAME] [--presses 18] [--catch-crash]
+# --catch-crash also loads poll_attach_catch_crash.py's exception-handler agent (registers, bytes at
+# EIP, 320-dword stack, module table) into the same session; the payload is saved as rec['crash_full'].
 import json, os, sys, time, hashlib
 from pathlib import Path
 import frida
@@ -45,10 +47,59 @@ from statenav import Nav, shoot, _open_handle, _exit_code
 
 EXE = statenav.EXE
 ORIG = statenav.ORIG
+# C4PB2_GAMEROOT=<dir holding MASHED.exe>: run a private install copy instead of original/ (crash1509b4).
+if os.environ.get('C4PB2_GAMEROOT'):
+    ORIG = Path(os.environ['C4PB2_GAMEROOT']); EXE = ORIG / "MASHED.exe"
+# C4PB2_HOLD_PIZ=1: just before the screen-18 Play Game confirm, open every <root>/TOASTART/TRACKS/*.piz
+# read-only from this harness and keep the handles until exit, i.e. what a second MASHED process with
+# that track loaded looks like to FUN_004b6710's CreateFileA(.., dwShareMode=0, ..). Use with
+# C4PB2_GAMEROOT only, never on the shared original/ (it would break other sessions' track loads).
+HOLD_PIZ = os.environ.get('C4PB2_HOLD_PIZ') == '1'
+assert not HOLD_PIZ or os.environ.get('C4PB2_GAMEROOT'), "C4PB2_HOLD_PIZ needs C4PB2_GAMEROOT"
+# C4PB2_PROBE_PIZ=1: from the Play Game confirm on, try open(..,'rb') + close on every track piz of the copy
+# each race-loop tick; a PermissionError means the game holds that file without read sharing. Copy only.
+PROBE_PIZ = os.environ.get('C4PB2_PROBE_PIZ') == '1'
+assert not PROBE_PIZ or os.environ.get('C4PB2_GAMEROOT'), "C4PB2_PROBE_PIZ needs C4PB2_GAMEROOT"
+# C4PB2_BARRIER=<dir>: two harness runs (own PIDs each) meet before the screen-18 Play Game confirm and press
+# it at the same wall-clock instant, i.e. two MASHED processes starting the same track load together.
+BARRIER = os.environ.get('C4PB2_BARRIER')
+def barrier_wait(tag, log):
+    d = Path(BARRIER); d.mkdir(parents=True, exist_ok=True); (d / f"ready_{tag}").write_text(str(time.time()))
+    go = d / "go"; t0 = time.time()
+    while not go.exists():
+        if len(list(d.glob("ready_*"))) >= 2 and not go.exists():
+            try:
+                with open(go, "x") as fh: fh.write(str(time.time() + 2.0))
+            except FileExistsError: pass
+        if time.time() - t0 > 240: log("  BARRIER timeout"); return None
+        time.sleep(0.05)
+    for _ in range(50):
+        try: tgt = float(go.read_text()); break
+        except Exception: time.sleep(0.02)
+    tgt += float(os.environ.get('C4PB2_BARRIER_DELAY', '0'))   # per-side offset (desynchronized control)
+    while time.time() < tgt: time.sleep(0.002)
+    log(f"  BARRIER released at {time.time():.3f} (target {tgt:.3f})"); return tgt
+def probe_piz():
+    locked = []
+    for f in sorted((ORIG / "TOASTART" / "TRACKS").glob("*.piz")):
+        try:
+            with open(f, "rb"): pass
+        except PermissionError:
+            locked.append(f.name)
+    return locked
 RVAS = "0x00423ee0,0x00423f60,0x00423ff0,0x00424070"
 PICKS = [(0, 1), (1, 2), (2, 3)]     # profile -> RIGHT presses on screen 4 (colour choice 1/2/3)
 TEAMS = [(0, 1), (1, 2), (2, 1)]     # profile -> RIGHT presses on screen 16 (A / B / A)
-EXTRA_OPP = int(os.environ.get('C4PB2_EXTRA_OPP', '0'))   # RIGHT presses on screen 18 row 3
+EXTRA_OPP = int(os.environ.get('C4PB2_EXTRA_OPP', '0'))   # RIGHT presses on screen 18 row S18_ROW
+# Screen-18 row to edit (default 3, Extra Opponents). C4PB2_S18_ROW=4 (Vehicle, 0x0067ea94) with
+# C4PB2_EXTRA_OPP=1 is explore5's route that AV'd the stock original at race start (crash1509b4).
+# Setting C4PB2_S18_ROW runs the cursor leg even with 0 presses (the no-edit control of that route).
+S18_ROW = int(os.environ.get('C4PB2_S18_ROW', '3'))
+S18_FORCE = 'C4PB2_S18_ROW' in os.environ
+# Profiles whose input-device dword 0x007e96fc + p*0x200 is written 0 at the title (crash1509b4
+# investigation input): FUN_00497450 (0x0049745f) then reports the profile absent and FUN_004332a0 sets its
+# colour choice to -1, which is what explore3..6 recorded for profile 3 with 3 devices attached.
+DEV_ZERO = [int(x) for x in os.environ.get('C4PB2_DEV_ZERO', '').split(',') if x]
 POKE_F00 = [3, 5, 7, 11]             # forced phase-'poke' values, f00 field (0x00899f20 + k*0x138)
 POKE_F04 = [2, 6, 1, 9]              # forced phase-'poke' values, f04 field (0x00899f24 + k*0x138)
 RACE_PULSE = [0, 1, 2]               # profiles pulsed with control 4 while 0x00771968 == 3
@@ -189,7 +240,11 @@ rpc.exports={
 Process.setExceptionHandler(function (d) {
   if (d.type !== 'access-violation') return false;
   try { const pc=d.context.pc; const m=Process.findModuleByAddress(pc);
-    send({kind:'crash', pc:pc.toString(), module: m ? (m.name+'+0x'+pc.sub(m.base).toUInt32().toString(16)) : 'UNMAPPED',
+    // Deep stack scan (crash1509b4): FUN_0047b8d0 keeps a 0x8000-byte buffer on the stack, so the 320-dword
+    // walk of poll_attach_catch_crash.py stops inside it. Scan 0x10000 bytes for .text return candidates.
+    const deep=[]; try { const sp=d.context.esp; for (let o=0;o<0x10000;o+=4){ let v; try{ v=sp.add(o).readU32(); }catch(e){ break; }
+      if (v>=0x401000 && v<0x5cc000) deep.push([o, v.toString(16)]); } } catch(e){}
+    send({kind:'crash', deep:deep, tid:Process.getCurrentThreadId(), threads:Process.enumerateThreads().map(function(t){return t.id;}), pc:pc.toString(), module: m ? (m.name+'+0x'+pc.sub(m.base).toUInt32().toString(16)) : 'UNMAPPED',
           addr: d.memory ? (d.memory.operation+' @ '+d.memory.address) : null}); } catch(e){}
   return false;
 });
@@ -230,8 +285,10 @@ def main():
            "deployed_asi_sha256": sha256(ORIG / "mashed_re_dev.asi"),
            "ctl_asi": ctl_asi if arm == "ctl" else None, "ctl_asi_sha256": sha256(ctl_asi) if arm == "ctl" else None,
            "env": {k: env.get(k) for k in ("MASHED_HOOK_ONLY", "MASHED_RE_NO_AUTO_HOOK")},
-           "recipe": {"picks": PICKS, "teams": TEAMS, "pulse": RACE_PULSE, "hold": RACE_HOLD, "steer": RACE_STEER, "extra_opp": EXTRA_OPP},
-           "log": [], "nav": [], "presses": [], "crash": []}
+           "recipe": {"picks": PICKS, "teams": TEAMS, "pulse": RACE_PULSE, "hold": RACE_HOLD, "steer": RACE_STEER, "extra_opp": EXTRA_OPP,
+                      "s18_row": S18_ROW, "s18_force": S18_FORCE, "dev_zero": DEV_ZERO,
+                      "gameroot": str(ORIG), "hold_piz": HOLD_PIZ},
+           "log": [], "nav": [], "presses": [], "crash": [], "crash_full": []}
     def log(msg):
         print(msg, flush=True); rec["log"].append(msg)
 
@@ -246,6 +303,15 @@ def main():
         elif m.get("type") == "error":
             print("  agent err:", m.get("description"), flush=True)
     scr = sess.create_script(AGENT); scr.on("message", on_msg); scr.load()
+    if "--catch-crash" in av:
+        import poll_attach_catch_crash as pacc
+        def on_full(m, d):
+            p = m.get("payload") if isinstance(m, dict) else None
+            if isinstance(p, dict) and p.get("kind") == "crash":
+                rec["crash_full"].append(p)
+                print("  [CRASH-FULL]", {k: p.get(k) for k in ("type", "eip", "mem_op", "mem_address", "eax", "ebx",
+                      "ecx", "edx", "esi", "edi", "ebp", "esp", "bytes_at_eip")}, flush=True)
+        scr2 = sess.create_script(pacc.AGENT_JS); scr2.on("message", on_full); scr2.load()
     X = scr.exports_sync
     X.init()
     dev.resume(pid)
@@ -259,6 +325,12 @@ def main():
         log("  booting...")
         nav.wait(lambda: nav.phase() == 3 and nav.depth() >= 1, 25.0, "title up")
         navlog("title")
+        rec["devices_at_title"] = [X.rd(0x007e96fc + p * 0x200) for p in range(4)]
+        log(f"  devices 0x007e96fc+p*0x200 at title: {rec['devices_at_title']}")
+        if DEV_ZERO:
+            X.poke([[0x007e96fc + p * 0x200, 0] for p in DEV_ZERO])
+            rec["devices_after_zero"] = [X.rd(0x007e96fc + p * 0x200) for p in range(4)]
+            log(f"  DEV_ZERO {DEV_ZERO}: devices now {rec['devices_after_zero']}")
         if arm == "ctl":
             r = X.loadctl(str(Path(ctl_asi).resolve())); log(f"  ctl load: {r}")
         if arm in ("off", "stock"):
@@ -328,7 +400,7 @@ def main():
         def blk(): return [X.rd(0x0067ea60 + 4 * i) for i in range(22)]
         for k in range(24):
             if nav.phase() != 3: break
-            if s["gate"] == 18 and not did18 and EXTRA_OPP > 0:
+            if s["gate"] == 18 and not did18 and (EXTRA_OPP > 0 or S18_FORCE):
                 # Screen 18 (game setup, rows 0x150 Play Game, 0x56, 0x24c Game Length, 0x103 Extra
                 # Opponents, ...; frontend_config_screens_REmap_20260614.md). A human-only Team Play
                 # match never ended in 420/480 s (explore3/4): no AI car, so no elimination. Raise
@@ -337,20 +409,36 @@ def main():
                 # Closed loop on the cursor: three blind downs landed on row 4 (Vehicle, 0x0067ea94),
                 # whose edit then AV'd the stock original at race start (explore5).
                 for _ in range(8):
-                    if X.sel() == 3: break
-                    nav.press(12 if X.sel() < 3 else 11); time.sleep(0.3)
-                s = navlog("s18 cursor -> Extra Opponents")
-                if s["sel"] != 3:
+                    if X.sel() == S18_ROW: break
+                    nav.press(12 if X.sel() < S18_ROW else 11); time.sleep(0.3)
+                s = navlog(f"s18 cursor -> row {S18_ROW}")
+                if s["sel"] != S18_ROW:
                     verdict = "NAV-S18-FAILED"; raise SystemExit
                 for _ in range(EXTRA_OPP): X.pressp([0], 10, 200); time.sleep(0.6)
                 b1 = blk()
                 rec["s18_extra_opp"] = {hex(0x0067ea60 + 4 * i): [b0[i], b1[i]] for i in range(22) if b0[i] != b1[i]}
-                log(f"  s18 extra-opponents edit, changed dwords: {rec['s18_extra_opp']}")
+                rec["s18_block_after"] = {hex(0x0067ea60 + 4 * i): b1[i] for i in range(22)}
+                log(f"  s18 row {S18_ROW} edit x{EXTRA_OPP}, changed dwords: {rec['s18_extra_opp']}")
                 for _ in range(8):
                     if X.sel() == 0: break
                     nav.press(11); time.sleep(0.3)
                 s = navlog("s18 cursor -> Play Game")
-            nav.press(4); time.sleep(1.2)
+                if BARRIER:
+                    rec["barrier_t"] = barrier_wait(tag, log)
+                if HOLD_PIZ:
+                    held = [open(f, "rb") for f in sorted((ORIG / "TOASTART" / "TRACKS").glob("*.piz"))]
+                    rec["held_piz"] = [h.name for h in held]
+                    log(f"  HOLD_PIZ: holding {len(held)} track piz open read-only")
+            nav.press(4)
+            if PROBE_PIZ:
+                t_c = time.time(); prev = None
+                while time.time() - t_c < 1.2:
+                    lk = probe_piz()
+                    if lk != prev:
+                        rec.setdefault("piz_locks", []).append([round(time.time() - t_c, 3), lk]); log(f"  piz locked t+{time.time()-t_c:.2f}s after confirm {k}: {lk}"); prev = lk
+                    time.sleep(0.02)
+            else:
+                time.sleep(1.2)
             s = navlog(f"confirm {k}")
             cur = (s["depth"], s["gate"])
             if cur == last:
@@ -369,6 +457,10 @@ def main():
         while time.time() < end:
             if not nav.alive(): log("   process exited during race"); break
             s = X.state()
+            if PROBE_PIZ:
+                lk = probe_piz(); pv = rec.get("piz_locks", [[0, None]])[-1][1]
+                if lk != pv:
+                    rec.setdefault("piz_locks", []).append([round(time.time() - (end - round_secs), 3), lk]); log(f"  piz locked race t+{time.time()-(end-round_secs):.2f}s: {lk}")
             # All three human profiles (0..2, the ones that picked a colour) get the pulse: with only
             # player 0 pulsed the match sat 420 s in session phase 3 with no round end (explore3).
             if s["sph"] == 3 and time.time() - t_pulse > 1.0:
@@ -388,6 +480,11 @@ def main():
                     elif 3.0 <= q < 4.5: X.pressp([pp], 10, 900)
             if time.time() - t_log > 10:
                 t_log = time.time(); log(f"   wait t+{int(round_secs-(end-time.time()))}s pulses={n_pulse} {s}")
+                if psutil:
+                    try:
+                        pz = sorted(f.path for f in psutil.Process(pid).open_files() if f.path.lower().endswith(".piz"))
+                        rec.setdefault("open_piz", []).append(pz); log(f"   open .piz in pid {pid}: {pz}")
+                    except Exception as e: log(f"   open_files failed: {e}")
             if s["phase"] == 3 and s["gate"] == 5 and s["sph"] != 3:
                 reached = s; break
             time.sleep(0.25)

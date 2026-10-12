@@ -1,0 +1,866 @@
+{
+ "arm": "stock",
+ "tag": "pair2a",
+ "exe_sha256": "B9977DAB70607720CF58BC7832937C203B1E0B33FF5896DA586BAF56AA79FE87",
+ "deployed_asi": "C:\\Users\\maria\\AppData\\Local\\Temp\\claude\\C--Users-maria-Desktop-Proyectos-Mashed\\9eafd301-97ce-428b-80c5-c57899a60131\\scratchpad\\gameroot\\original\\mashed_re_dev.asi",
+ "deployed_asi_sha256": "C5594D6B933B24008E1FD408DBA41DBE6870B5E4CC6C0B3E7D5F7DC6F6373840",
+ "ctl_asi": null,
+ "ctl_asi_sha256": null,
+ "env": {
+  "MASHED_HOOK_ONLY": "__none__",
+  "MASHED_RE_NO_AUTO_HOOK": "1"
+ },
+ "recipe": {
+  "picks": [
+   [
+    0,
+    1
+   ],
+   [
+    1,
+    2
+   ],
+   [
+    2,
+    3
+   ]
+  ],
+  "teams": [
+   [
+    0,
+    1
+   ],
+   [
+    1,
+    2
+   ],
+   [
+    2,
+    1
+   ]
+  ],
+  "pulse": [
+   0,
+   1,
+   2
+  ],
+  "hold": [
+   0
+  ],
+  "steer": [],
+  "extra_opp": 0,
+  "s18_row": 4,
+  "s18_force": true,
+  "dev_zero": [],
+  "gameroot": "C:\\Users\\maria\\AppData\\Local\\Temp\\claude\\C--Users-maria-Desktop-Proyectos-Mashed\\9eafd301-97ce-428b-80c5-c57899a60131\\scratchpad\\gameroot\\original",
+  "hold_piz": false
+ },
+ "log": [
+  "  spawned pid=26268 arm=stock",
+  "  booting...",
+  "  title: depth=1 type=22 sel=0 phase=3 mode=0 tg=0 sph=1",
+  "  devices 0x007e96fc+p*0x200 at title: [1, 1, 1, 2]",
+  "  armg: {'ok': True, 'g': {'f00': {'b0': 232}, 'f04': {'b0': 232}, 'f50': {'b0': 232}, 'f08': {'b0': 232}}}",
+  "  GTS: depth=2 type=1 sel=0 phase=3 mode=0 tg=0 sph=1",
+  "  GTS down 0: depth=2 type=1 sel=0 phase=3 mode=0 tg=0 sph=1",
+  "  GTS modal-confirm 0: depth=2 type=1 sel=0 phase=3 mode=0 tg=0 sph=1",
+  "  GTS down 1: depth=2 type=1 sel=0 phase=3 mode=0 tg=0 sph=1",
+  "  GTS modal-confirm 1: depth=2 type=1 sel=0 phase=3 mode=0 tg=0 sph=1",
+  "  GTS down 2: depth=2 type=1 sel=1 phase=3 mode=0 tg=0 sph=1",
+  "  MP screen: depth=3 type=3 sel=0 phase=3 mode=0 tg=0 sph=1",
+  "  MP down (Team Play): depth=3 type=3 sel=1 phase=3 mode=0 tg=0 sph=1",
+  "  after Team Play confirm: depth=4 type=4 sel=0 phase=3 mode=6 tg=1 sph=1",
+  "  colour choices 0x0067eaf0+12p: [1, 2, 3, 0]",
+  "  colour confirm: depth=5 type=16 sel=0 phase=3 mode=6 tg=1 sph=1",
+  "  team picks 0x0067e938+12p: [1, 2, 1, 0]",
+  "  confirm 0: depth=6 type=15 sel=0 phase=3 mode=6 tg=1 sph=1",
+  "  confirm 1: depth=7 type=6 sel=0 phase=3 mode=6 tg=1 sph=1",
+  "  confirm 2: depth=8 type=18 sel=0 phase=3 mode=6 tg=1 sph=1",
+  "  s18 cursor -> row 4: depth=8 type=18 sel=4 phase=3 mode=6 tg=1 sph=1",
+  "  s18 row 4 edit x0, changed dwords: {'0x67ea60': [1081081842, 1086219925]}",
+  "  s18 cursor -> Play Game: depth=8 type=18 sel=0 phase=3 mode=6 tg=1 sph=1",
+  "  BARRIER released at 1791839170.229 (target 1791839170.229)",
+  "  confirm 3: depth=8 type=18 sel=0 phase=0 mode=6 tg=1 sph=2",
+  "   wait t+0s pulses=1 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 3, 'fc': 0, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}",
+  "   open .piz in pid 26268: []",
+  "   wait t+10s pulses=10 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 24850, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}",
+  "   open .piz in pid 26268: []",
+  "   wait t+20s pulses=20 {'depth': 8, 'phase': 0, 'gate': 18, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 0, 'sph': 3, 'ui': 6, 'fc': 48500, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}",
+  "   open .piz in pid 26268: []",
+  "   wait t+30s pulses=30 {'depth': 1, 'phase': 2, 'gate': 5, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 4, 'sph': 1, 'ui': 10, 'fc': 72500, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}",
+  "   open .piz in pid 26268: []",
+  "  >>> Race Results reached: {'depth': 1, 'phase': 3, 'gate': 5, 'sel': 0, 'page': 0, 'mode': 6, 'tg': 1, 'ebc8': 4, 'sph': 1, 'ui': 10, 'fc': 73850, 'calls': {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}, 'tot': 0, 'c510': 0, 'consOk': 0, 'consBad': 0}",
+  "  inputs at results: {'mode': 6, 'tg': 1, 'rec': [0, 0, 0, 0, 1, 1, 1, 0, 2, 0, 2, 0, -1, -1, 0, 0], 'f': {'f00': [0, 0, 0, 0], 'f04': [0, 0, 0, 0], 'f50': [22, 0, 0, 0], 'f08': [0, 4, 4, 0]}}",
+  "  idle 3s: calls {'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0}->{'f00': 0, 'f04': 0, 'f50': 0, 'f08': 0} page 0->3 c510 0->1"
+ ],
+ "nav": [
+  {
+   "what": "title",
+   "depth": 1,
+   "phase": 3,
+   "gate": 22,
+   "sel": 0,
+   "page": 0,
+   "mode": 0,
+   "tg": 0,
+   "ebc8": 0,
+   "sph": 1,
+   "ui": 0,
+   "fc": 0,
+   "calls": {
+    "f00": 0,
+    "f04": 0,
+    "f50": 0,
+    "f08": 0
+   },
+   "tot": 0,
+   "c510": 0,
+   "consOk": 0,
+   "consBad": 0
+  },
+  {
+   "what": "GTS",
+   "depth": 2,
+   "phase": 3,
+   "gate": 1,
+   "sel": 0,
+   "page": 0,
+   "mode": 0,
+   "tg": 0,
+   "ebc8": 0,
+   "sph": 1,
+   "ui": 0,
+   "fc": 0,
+   "calls": {
+    "f00": 0,
+    "f04": 0,
+    "f50": 0,
+    "f08": 0
+   },
+   "tot": 0,
+   "c510": 0,
+   "consOk": 0,
+   "consBad": 0
+  },
+  {
+   "what": "GTS down 0",
+   "depth": 2,
+   "phase": 3,
+   "gate": 1,
+   "sel": 0,
+   "page": 0,
+   "mode": 0,
+   "tg": 0,
+   "ebc8": 0,
+   "sph": 1,
+   "ui": 0,
+   "fc": 0,
+   "calls": {
+    "f00": 0,
+    "f04": 0,
+    "f50": 0,
+    "f08": 0
+   },
+   "tot": 0,
+   "c510": 0,
+   "consOk": 0,
+   "consBad": 0
+  },
+  {
+   "what": "GTS modal-confirm 0",
+   "depth": 2,
+   "phase": 3,
+   "gate": 1,
+   "sel": 0,
+   "page": 0,
+   "mode": 0,
+   "tg": 0,
+   "ebc8": 0,
+   "sph": 1,
+   "ui": 0,
+   "fc": 0,
+   "calls": {
+    "f00": 0,
+    "f04": 0,
+    "f50": 0,
+    "f08": 0
+   },
+   "tot": 0,
+   "c510": 0,
+   "consOk": 0,
+   "consBad": 0
+  },
+  {
+   "what": "GTS down 1",
+   "depth": 2,
+   "phase": 3,
+   "gate": 1,
+   "sel": 0,
+   "page": 0,
+   "mode": 0,
+   "tg": 0,
+   "ebc8": 0,
+   "sph": 1,
+   "ui": 0,
+   "fc": 0,
+   "calls": {
+    "f00": 0,
+    "f04": 0,
+    "f50": 0,
+    "f08": 0
+   },
+   "tot": 0,
+   "c510": 0,
+   "consOk": 0,
+   "consBad": 0
+  },
+  {
+   "what": "GTS modal-confirm 1",
+   "depth": 2,
+   "phase": 3,
+   "gate": 1,
+   "sel": 0,
+   "page": 0,
+   "mode": 0,
+   "tg": 0,
+   "ebc8": 0,
+   "sph": 1,
+   "ui": 0,
+   "fc": 0,
+   "calls": {
+    "f00": 0,
+    "f04": 0,
+    "f50": 0,
+    "f08": 0
+   },
+   "tot": 0,
+   "c510": 0,
+   "consOk": 0,
+   "consBad": 0
+  },
+  {
+   "what": "GTS down 2",
+   "depth": 2,
+   "phase": 3,
+   "gate": 1,
+   "sel": 1,
+   "page": 0,
+   "mode": 0,
+   "tg": 0,
+   "ebc8": 0,
+   "sph": 1,
+   "ui": 0,
+   "fc": 0,
+   "calls": {
+    "f00": 0,
+    "f04": 0,
+    "f50": 0,
+    "f08": 0
+   },
+   "tot": 0,
+   "c510": 0,
+   "consOk": 0,
+   "consBad": 0
+  },
+  {
+   "what": "MP screen",
+   "depth": 3,
+   "phase": 3,
+   "gate": 3,
+   "sel": 0,
+   "page": 0,
+   "mode": 0,
+   "tg": 0,
+   "ebc8": 0,
+   "sph": 1,
+   "ui": 0,
+   "fc": 0,
+   "calls": {
+    "f00": 0,
+    "f04": 0,
+    "f50": 0,
+    "f08": 0
+   },
+   "tot": 0,
+   "c510": 0,
+   "consOk": 0,
+   "consBad": 0
+  },
+  {
+   "what": "MP down (Team Play)",
+   "depth": 3,
+   "phase": 3,
+   "gate": 3,
+   "sel": 1,
+   "page": 0,
+   "mode": 0,
+   "tg": 0,
+   "ebc8": 0,
+   "sph": 1,
+   "ui": 0,
+   "fc": 0,
+   "calls": {
+    "f00": 0,
+    "f04": 0,
+    "f50": 0,
+    "f08": 0
+   },
+   "tot": 0,
+   "c510": 0,
+   "consOk": 0,
+   "consBad": 0
+  },
+  {
+   "what": "after Team Play confirm",
+   "depth": 4,
+   "phase": 3,
+   "gate": 4,
+   "sel": 0,
+   "page": 0,
+   "mode": 6,
+   "tg": 1,
+   "ebc8": 0,
+   "sph": 1,
+   "ui": 0,
+   "fc": 0,
+   "calls": {
+    "f00": 0,
+    "f04": 0,
+    "f50": 0,
+    "f08": 0
+   },
+   "tot": 0,
+   "c510": 0,
+   "consOk": 0,
+   "consBad": 0
+  },
+  {
+   "what": "colour confirm",
+   "depth": 5,
+   "phase": 3,
+   "gate": 16,
+   "sel": 0,
+   "page": 0,
+   "mode": 6,
+   "tg": 1,
+   "ebc8": 0,
+   "sph": 1,
+   "ui": 0,
+   "fc": 0,
+   "calls": {
+    "f00": 0,
+    "f04": 0,
+    "f50": 0,
+    "f08": 0
+   },
+   "tot": 0,
+   "c510": 0,
+   "consOk": 0,
+   "consBad": 0
+  },
+  {
+   "what": "confirm 0",
+   "depth": 6,
+   "phase": 3,
+   "gate": 15,
+   "sel": 0,
+   "page": 0,
+   "mode": 6,
+   "tg": 1,
+   "ebc8": 0,
+   "sph": 1,
+   "ui": 0,
+   "fc": 0,
+   "calls": {
+    "f00": 0,
+    "f04": 0,
+    "f50": 0,
+    "f08": 0
+   },
+   "tot": 0,
+   "c510": 0,
+   "consOk": 0,
+   "consBad": 0
+  },
+  {
+   "what": "confirm 1",
+   "depth": 7,
+   "phase": 3,
+   "gate": 6,
+   "sel": 0,
+   "page": 0,
+   "mode": 6,
+   "tg": 1,
+   "ebc8": 0,
+   "sph": 1,
+   "ui": 0,
+   "fc": 0,
+   "calls": {
+    "f00": 0,
+    "f04": 0,
+    "f50": 0,
+    "f08": 0
+   },
+   "tot": 0,
+   "c510": 0,
+   "consOk": 0,
+   "consBad": 0
+  },
+  {
+   "what": "confirm 2",
+   "depth": 8,
+   "phase": 3,
+   "gate": 18,
+   "sel": 0,
+   "page": 0,
+   "mode": 6,
+   "tg": 1,
+   "ebc8": 0,
+   "sph": 1,
+   "ui": 0,
+   "fc": 0,
+   "calls": {
+    "f00": 0,
+    "f04": 0,
+    "f50": 0,
+    "f08": 0
+   },
+   "tot": 0,
+   "c510": 0,
+   "consOk": 0,
+   "consBad": 0
+  },
+  {
+   "what": "s18 cursor -> row 4",
+   "depth": 8,
+   "phase": 3,
+   "gate": 18,
+   "sel": 4,
+   "page": 0,
+   "mode": 6,
+   "tg": 1,
+   "ebc8": 0,
+   "sph": 1,
+   "ui": 0,
+   "fc": 0,
+   "calls": {
+    "f00": 0,
+    "f04": 0,
+    "f50": 0,
+    "f08": 0
+   },
+   "tot": 0,
+   "c510": 0,
+   "consOk": 0,
+   "consBad": 0
+  },
+  {
+   "what": "s18 cursor -> Play Game",
+   "depth": 8,
+   "phase": 3,
+   "gate": 18,
+   "sel": 0,
+   "page": 0,
+   "mode": 6,
+   "tg": 1,
+   "ebc8": 0,
+   "sph": 1,
+   "ui": 0,
+   "fc": 0,
+   "calls": {
+    "f00": 0,
+    "f04": 0,
+    "f50": 0,
+    "f08": 0
+   },
+   "tot": 0,
+   "c510": 0,
+   "consOk": 0,
+   "consBad": 0
+  },
+  {
+   "what": "confirm 3",
+   "depth": 8,
+   "phase": 0,
+   "gate": 18,
+   "sel": 0,
+   "page": 0,
+   "mode": 6,
+   "tg": 1,
+   "ebc8": 0,
+   "sph": 2,
+   "ui": 0,
+   "fc": 0,
+   "calls": {
+    "f00": 0,
+    "f04": 0,
+    "f50": 0,
+    "f08": 0
+   },
+   "tot": 0,
+   "c510": 0,
+   "consOk": 0,
+   "consBad": 0
+  }
+ ],
+ "presses": [],
+ "crash": [],
+ "crash_full": [],
+ "pid": 26268,
+ "devices_at_title": [
+  1,
+  1,
+  1,
+  2
+ ],
+ "arm_result": {
+  "ok": true,
+  "g": {
+   "f00": {
+    "b0": 232
+   },
+   "f04": {
+    "b0": 232
+   },
+   "f50": {
+    "b0": 232
+   },
+   "f08": {
+    "b0": 232
+   }
+  }
+ },
+ "modinfo_at_arm": {
+  "f00": {
+   "b0": 233,
+   "dword": "7acb1fe9",
+   "tgt": "0x2bd0a04",
+   "mod": null
+  },
+  "f04": {
+   "b0": 233,
+   "dword": "7acb9fe9",
+   "tgt": "0x2bd0b04",
+   "mod": null
+  },
+  "f50": {
+   "b0": 233,
+   "dword": "7acc0fe9",
+   "tgt": "0x2bd0c04",
+   "mod": null
+  },
+  "f08": {
+   "b0": 233,
+   "dword": "7acc8fe9",
+   "tgt": "0x2bd0d04",
+   "mod": null
+  }
+ },
+ "colour_choice": [
+  1,
+  2,
+  3,
+  0
+ ],
+ "team_pick": [
+  1,
+  2,
+  1,
+  0
+ ],
+ "s18_extra_opp": {
+  "0x67ea60": [
+   1081081842,
+   1086219925
+  ]
+ },
+ "s18_block_after": {
+  "0x67ea60": 1086219925,
+  "0x67ea64": 1,
+  "0x67ea68": 1,
+  "0x67ea6c": 0,
+  "0x67ea70": 1,
+  "0x67ea74": 1,
+  "0x67ea78": 0,
+  "0x67ea7c": 0,
+  "0x67ea80": 0,
+  "0x67ea84": 1,
+  "0x67ea88": 0,
+  "0x67ea8c": 0,
+  "0x67ea90": 1,
+  "0x67ea94": 0,
+  "0x67ea98": 4,
+  "0x67ea9c": 2,
+  "0x67eaa0": 3,
+  "0x67eaa4": 0,
+  "0x67eaa8": 1050253722,
+  "0x67eaac": 0,
+  "0x67eab0": 0,
+  "0x67eab4": 444
+ },
+ "barrier_t": 1791839170.2290156,
+ "open_piz": [
+  [],
+  [],
+  [],
+  []
+ ],
+ "reached": {
+  "depth": 1,
+  "phase": 3,
+  "gate": 5,
+  "sel": 0,
+  "page": 0,
+  "mode": 6,
+  "tg": 1,
+  "ebc8": 4,
+  "sph": 1,
+  "ui": 10,
+  "fc": 73850,
+  "calls": {
+   "f00": 0,
+   "f04": 0,
+   "f50": 0,
+   "f08": 0
+  },
+  "tot": 0,
+  "c510": 0,
+  "consOk": 0,
+  "consBad": 0
+ },
+ "race_pulses": 30,
+ "inputs_results": {
+  "mode": 6,
+  "tg": 1,
+  "rec": [
+   0,
+   0,
+   0,
+   0,
+   1,
+   1,
+   1,
+   0,
+   2,
+   0,
+   2,
+   0,
+   -1,
+   -1,
+   0,
+   0
+  ],
+  "f": {
+   "f00": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "f04": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "f50": [
+    22,
+    0,
+    0,
+    0
+   ],
+   "f08": [
+    0,
+    4,
+    4,
+    0
+   ]
+  }
+ },
+ "baseline": {
+  "depth": 1,
+  "phase": 3,
+  "gate": 5,
+  "sel": 0,
+  "page": 0,
+  "mode": 6,
+  "tg": 1,
+  "ebc8": 4,
+  "sph": 1,
+  "ui": 10,
+  "fc": 79850,
+  "calls": {
+   "f00": 0,
+   "f04": 0,
+   "f50": 0,
+   "f08": 0
+  },
+  "tot": 0,
+  "c510": 0,
+  "consOk": 0,
+  "consBad": 0
+ },
+ "baseline_after_3s": {
+  "depth": 1,
+  "phase": 3,
+  "gate": 5,
+  "sel": 0,
+  "page": 3,
+  "mode": 6,
+  "tg": 1,
+  "ebc8": 4,
+  "sph": 1,
+  "ui": 10,
+  "fc": 88850,
+  "calls": {
+   "f00": 0,
+   "f04": 0,
+   "f50": 0,
+   "f08": 0
+  },
+  "tot": 0,
+  "c510": 1,
+  "consOk": 0,
+  "consBad": 0
+ },
+ "final": {
+  "depth": 1,
+  "phase": 3,
+  "gate": 5,
+  "sel": 0,
+  "page": 3,
+  "mode": 6,
+  "tg": 1,
+  "ebc8": 4,
+  "sph": 1,
+  "ui": 10,
+  "fc": 88850,
+  "calls": {
+   "f00": 0,
+   "f04": 0,
+   "f50": 0,
+   "f08": 0
+  },
+  "tot": 0,
+  "c510": 1,
+  "consOk": 0,
+  "consBad": 0
+ },
+ "modinfo_final": {
+  "f00": {
+   "b0": 233,
+   "dword": "7acb1fe9",
+   "tgt": "0x2bd0a04",
+   "mod": null
+  },
+  "f04": {
+   "b0": 233,
+   "dword": "7acb9fe9",
+   "tgt": "0x2bd0b04",
+   "mod": null
+  },
+  "f50": {
+   "b0": 233,
+   "dword": "7acc0fe9",
+   "tgt": "0x2bd0c04",
+   "mod": null
+  },
+  "f08": {
+   "b0": 233,
+   "dword": "7acc8fe9",
+   "tgt": "0x2bd0d04",
+   "mod": null
+  }
+ },
+ "dump": {
+  "st": {
+   "calls": {
+    "f00": 0,
+    "f04": 0,
+    "f50": 0,
+    "f08": 0
+   },
+   "byRa": {
+    "f00": {},
+    "f04": {},
+    "f50": {},
+    "f08": {}
+   },
+   "mmOrig": {
+    "f00": 0,
+    "f04": 0,
+    "f50": 0,
+    "f08": 0
+   },
+   "mmOld": {
+    "f00": 0,
+    "f04": 0,
+    "f50": 0,
+    "f08": 0
+   },
+   "disc": {
+    "f00": 0,
+    "f04": 0,
+    "f50": 0,
+    "f08": 0
+   },
+   "entry": {
+    "f00": "0x423ee0",
+    "f04": "0x423f60",
+    "f50": "0x423ff0",
+    "f08": "0x424070"
+   },
+   "jmp": {
+    "f00": 232,
+    "f04": 232,
+    "f50": 232,
+    "f08": 232
+   },
+   "c510": 1,
+   "c510by": {
+    "42d020": 1
+   },
+   "consOk": 0,
+   "consBad": 0,
+   "consBy": {},
+   "consBadEv": [],
+   "sort": [
+    {
+     "t": 1791839202759,
+     "ty": 2,
+     "fl": 0,
+     "out": [
+      1,
+      0,
+      2,
+      3
+     ],
+     "page": 0
+    },
+    {
+     "t": 1791839206286,
+     "ty": 6,
+     "fl": 0,
+     "out": [
+      0,
+      1,
+      1,
+      3
+     ],
+     "page": 3
+    }
+   ],
+   "dupKeys": 0
+  },
+  "ev": [
+   {
+    "t": 1791839206269,
+    "c510": "42d020",
+    "page": 0
+   }
+  ]
+ },
+ "alive_at_end": true,
+ "exit_code": 3735928559,
+ "verdict": "DONE"
+}

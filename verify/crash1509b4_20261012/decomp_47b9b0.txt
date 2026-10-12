@@ -1,0 +1,122 @@
+[decomp_pc] slot=Mashed_pool0 modes=decomp+callers n=3
+// FUN_0047b9b0 @ 0x0047b9b0  size=39  (MASHED.exe)
+// undefined FUN_0047b9b0(void)
+// callers: FUN_00426340@0x00426340, FUN_0045bae0@0x0045bae0, FUN_0047a020@0x0047a020, FUN_0047a0f0@0x0047a0f0, FUN_0047a130@0x0047a130
+
+/* [C2 2026-06-02] `FUN_0047b860()` — pre-setup (no visible args; existing notes:
+   creates/initialises a Lua state). 2. `(*param_3)()` —… */
+
+undefined4 FUN_0047b9b0(undefined4 param_1,undefined4 param_2,code *param_3)
+
+{
+  undefined4 uVar1;
+  
+  FUN_0047b860();
+  (*param_3)();
+  uVar1 = FUN_0047b8d0(param_1,param_2);
+  FUN_0047b880();
+  return uVar1;
+}
+
+
+
+// FUN_0047b8a0 @ 0x0047b8a0  size=47  (MASHED.exe)
+// undefined FUN_0047b8a0(void)
+// callers: FUN_0047b8d0@0x0047b8d0
+
+/* [C2 2026-06-02] Three-parameter function: `param_1` (undefined4), `param_2` (undefined4),
+   `param_3` (int*). Returns `bool`. 46 bytes. */
+
+bool FUN_0047b8a0(undefined4 param_1,undefined4 param_2,int *param_3)
+
+{
+  int iVar1;
+  
+  iVar1 = FUN_004b7a70(DAT_006bf1e0,param_1,param_2,0);
+  if (param_3 != (int *)0x0) {
+    *param_3 = iVar1;
+  }
+  return iVar1 == 0;
+}
+
+
+
+// FUN_005507b0 @ 0x005507b0  size=341  (MASHED.exe)
+// undefined FUN_005507b0(void)
+// callers: FUN_004cc230@0x004cc230, FUN_00555910@0x00555910
+
+undefined4 FUN_005507b0(char *param_1,char *param_2)
+
+{
+  char *pcVar1;
+  char *pcVar2;
+  int iVar3;
+  undefined4 uVar4;
+  uint uVar5;
+  uint uVar6;
+  undefined4 *puVar7;
+  uint uVar8;
+  bool bVar9;
+  char cStack_64;
+  undefined1 auStack_63 [99];
+  
+  uVar5 = 0;
+  pcVar1 = _strstr(param_2,&DAT_00623de4);
+  bVar9 = pcVar1 != (char *)0x0;
+  pcVar1 = _strstr(param_2,&DAT_00623de0);
+  pcVar2 = _strstr(param_2,&DAT_00617378);
+  if ((pcVar2 != (char *)0x0) && (uVar5 = 1, bVar9)) {
+    uVar5 = 0xb;
+  }
+  pcVar2 = _strstr(param_2,&DAT_00623ddc);
+  uVar6 = uVar5;
+  if ((pcVar2 != (char *)0x0) && (uVar6 = uVar5 | 6, bVar9)) {
+    uVar6 = uVar5 | 7;
+  }
+  pcVar2 = _strstr(param_2,&DAT_00623dd8);
+  if (pcVar2 != (char *)0x0) {
+    uVar5 = uVar6 | 10;
+    if (bVar9) {
+      uVar5 = uVar6 | 0xb;
+    }
+    uVar6 = uVar5;
+    if (pcVar1 != (char *)0x0) {
+      uVar6 = uVar6 | 4;
+    }
+  }
+  if (DAT_007dc75c != 0) {
+    uVar5 = (**(code **)(DAT_007d3ff8 + 0xf4))(param_1);
+    uVar8 = 0;
+    if (uVar5 != 0) {
+      do {
+        if (param_1[uVar8] == ':') {
+          _strncpy(&cStack_64,param_1,uVar8 + 1);
+          auStack_63[uVar8] = 0;
+          for (puVar7 = DAT_007dc754; puVar7 != (undefined4 *)0x0; puVar7 = (undefined4 *)*puVar7) {
+            iVar3 = (**(code **)(DAT_007d3ff8 + 0xf0))(&cStack_64,puVar7[3]);
+            if (iVar3 == 0) {
+              if (puVar7 == (undefined4 *)0x0) {
+                return 0;
+              }
+              goto LAB_005508ee;
+            }
+          }
+        }
+        uVar8 = uVar8 + 1;
+      } while (uVar8 < uVar5);
+    }
+    puVar7 = DAT_007dc76c;
+    if (DAT_007dc76c != (undefined4 *)0x0) {
+LAB_005508ee:
+      uVar4 = FUN_00550580(puVar7,param_1,uVar6,0,0);
+      return uVar4;
+    }
+  }
+  if (DAT_007dc768 != (code *)0x0) {
+    (*DAT_007dc768)(6);
+  }
+  return 0;
+}
+
+
+

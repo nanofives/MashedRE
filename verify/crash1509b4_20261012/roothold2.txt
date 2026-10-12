@@ -1,0 +1,198 @@
+  spawned pid=3172 arm=stock
+  booting...
+  title: depth=1 type=22 sel=0 phase=3 mode=0 tg=0 sph=1
+  devices 0x007e96fc+p*0x200 at title: [1, 1, 1, 2]
+  armg: {'ok': True, 'g': {'f00': {'b0': 232}, 'f04': {'b0': 232}, 'f50': {'b0': 232}, 'f08': {'b0': 232}}}
+  GTS: depth=2 type=1 sel=0 phase=3 mode=0 tg=0 sph=1
+	Using video mode 1 : 640x480
+At 10 bytes per pixel (16bit Z + 2*32bit FB) there is 4194304 - 3686400 = 1122304 bytes of video memory free
+Replay buffer will be 150076 bytes in size
+RtFSManagerRegister successful
+numpermwaves 43
+numpermvirtualvoices 139
+Waiting for boot status
+Waiting for boot status
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for ti  GTS down 0: depth=2 type=1 sel=0 phase=3 mode=0 tg=0 sph=1
+  GTS modal-confirm 0: depth=2 type=1 sel=0 phase=3 mode=0 tg=0 sph=1
+  GTS down 1: depth=2 type=1 sel=0 phase=3 mode=0 tg=0 sph=1
+  GTS modal-confirm 1: depth=2 type=1 sel=0 phase=3 mode=0 tg=0 sph=1
+  GTS down 2: depth=2 type=1 sel=1 phase=3 mode=0 tg=0 sph=1
+  MP screen: depth=3 type=3 sel=0 phase=3 mode=0 tg=0 sph=1
+  MP down (Team Play): depth=3 type=3 sel=1 phase=3 mode=0 tg=0 sph=1
+  after Team Play confirm: depth=4 type=4 sel=0 phase=3 mode=6 tg=1 sph=1
+  colour choices 0x0067eaf0+12p: [1, 2, 3, 0]
+  colour confirm: depth=5 type=16 sel=0 phase=3 mode=6 tg=1 sph=1
+  team picks 0x0067e938+12p: [1, 2, 1, 0]
+  [shot] verify\crash1509b4_20261012\c4_pb2_shots_roothold2\after_teamplay.png
+  confirm 0: depth=6 type=15 sel=0 phase=3 mode=6 tg=1 sph=1
+  [shot] verify\crash1509b4_20261012\c4_pb2_shots_roothold2\nav_0_d6_t15.png
+  confirm 1: depth=7 type=6 sel=0 phase=3 mode=6 tg=1 sph=1
+  [shot] verify\crash1509b4_20261012\c4_pb2_shots_roothold2\nav_1_d7_t6.png
+  confirm 2: depth=8 type=18 sel=0 phase=3 mode=6 tg=1 sph=1
+  [shot] verify\crash1509b4_20261012\c4_pb2_shots_roothold2\nav_2_d8_t18.png
+  s18 cursor -> row 4: depth=8 type=18 sel=4 phase=3 mode=6 tg=1 sph=1
+  s18 row 4 edit x0, changed dwords: {'0x67ea60': [1080942032, 1086184972]}
+  s18 cursor -> Play Game: depth=8 type=18 sel=0 phase=3 mode=6 tg=1 sph=1
+  HOLD_PIZ: holding 13 track piz open read-only
+  [CRASH] {'kind': 'crash', 'deep': [[0, '47b91c'], [32812, '47b9c9'], [32828, '47a0de'], [32840, '440bc0'], [32856, '426f2d'], [33164, '40d033'], [33172, '40d2f5'], [33200, '40d452'], [33212, '492a6c'], [33236, '4922ae'], [33240, '4923de'], [33248, '4a4d38'], [33412, '4a4bcf'], [33416, '4a4bb7'], [33420, '4a4bb7'], [33528, '4ac660'], [33668, '4a4bb7'], [34164, '57005c'], [34168, '4e0049'], [34172, '4f0044'], [34176, '530057'], [34180, '57005c'], [34192, '5c0073'], [34660, '4b0063'], [34784, '530022'], [35064, '41006e'], [35248, '41006e'], [35288, '410072'], [35344, '540079'], [35468, '430022'], [35472, '5c003a'], [35476, '490057'], [35480, '44004e'], [35484, '57004f'], [35488, '5c0053'], [35496, '53006e'], [35500, '530078'], [35968, '500069'], [36128, '500069'], [36156, '410072'], [36212, '540079'], [36336, '430022'], [36340, '5c003a'], [36344, '490057'], [36348, '44004e'], [36352, '57004f'], [36356, '5c0053'], [36364, '53006e'], [36368, '530078'], [36796, '43002d'], [36972, '43002d'], [37008, '410072'], [37064, '540079'], [37196, '57005c'], [37200, '4e0049'], [37204, '4f0044'], [37208, '530057'], [37212, '57005c'], [37224, '5c0053'], [37244, '5c0073'], [37692, '41006e'], [37724, '530079'], [37896, '41006e'], [37928, '530079'], [37956, '410072'], [38012, '540079'], [38136, '430022'], [38140, '5c003a'], [38144, '490057'], [38148, '44004e'], [38152, '57004f'], [38156, '5c0053'], [38164, '53006e'], [38168, '530078'], [38656, '43002d'], [38852, '43002d'], [38916, '45002d'], [38992, '4b0063'], [39124, '430022'], [39128, '5c003a'], [39132, '490057'], [39136, '44004e'], [39140, '57004f'], [39144, '5c0053'], [39152, '53006e'], [39156, '530078'], [39608, '45002d'], [40192, '57005c'], [40196, '4e0049'], [40200, '4f0044'], [40204, '530057'], [40224, '5c0032'], [40272, '57005c'], [40276, '4e0049'], [40280, '4f0044'], [40284, '530057'], [40288, '53005c'], [40296, '4f0057'], [40304, '5c0034'], [40352, '500069'], [40396, '57005c'], [40400, '4e0049'], [40404, '4f0044'], [40408, '530057'], [40428, '5c0032'], [40436, '500069'], [40480, '57005c'], [40484, '4e0049'], [40488, '4f0044'], [40492, '530057'], [40496, '53005c'], [40504, '4f0057'], [40512, '5c0034'], [40520, '500069'], [40612, '57005c'], [40616, '4e0049'], [40620, '4f0044'], [40624, '530057'], [40644, '5c0032'], [40700, '57005c'], [40704, '4e0049'], [40708, '4f0044'], [40712, '530057'], [40716, '53005c'], [40724, '4f0057'], [40732, '5c0034'], [40832, '57005c'], [40836, '4e0049'], [40840, '4f0044'], [40844, '530057'], [40864, '5c0032'], [40916, '57005c'], [40920, '4e0049'], [40924, '4f0044'], [40928, '530057'], [40932, '53005c'], [40940, '4f0057'], [40948, '5c0034'], [41044, '57005c'], [41048, '4e0049'], [41052, '4f0044'], [41056, '530057'], [41076, '5c0032'], [41128, '57005c'], [41132, '4e0049'], [41136, '4f0044'], [41140, '530057'], [41144, '53005c'], [41152, '4f0057'], [41160, '5c0034'], [41268, '57005c'], [41272, '4e0049'], [41276, '4f0044'], [41280, '530057'], [41300, '5c0032'], [41364, '57005c'], [41368, '4e0049'], [41372, '4f0044'], [41376, '530057'], [41380, '53005c'], [41388, '4f0057'], [41396, '5c0034'], [42328, '570072'], [42384, '570072'], [42440, '42006f'], [42492, '42006f'], [43148, '480073'], [43196, '480073'], [43248, '4c0073'], [43256, '560074'], [43300, '4c0073'], [43308, '560074'], [43356, '540073'], [43364, '560065'], [43408, '540073'], [43416, '560065'], [43464, '540073'], [43520, '540073'], [43580, '490073'], [43584, '410050'], [43636, '490073'], [43640, '410050'], [43692, '500073'], [43736, '500073'], [44452, '410073'], [44504, '410073'], [44556, '4d0073'], [44608, '4d0073'], [44664, '440073'], [44672, '540065'], [44680, '500065'], [44724, '440073'], [44732, '540065'], [44740, '500065'], [44792, '570072'], [44844, '570072'], [45060, '4c006f'], [45104, '4c006f'], [45704, '430074'], [45880, '430074'], [46272, '410049'], [46640, '430074'], [46708, '430074']], 'tid': 34504, 'threads': [34504, 32844, 17000, 31036, 16880, 37788, 3156, 29800, 39076, 29748, 8912, 40104, 34572, 38568, 34712, 37708, 18592, 12748, 35764, 35144, 11844, 31664, 32944, 13428, 28496, 27920, 31376, 40824, 33124, 37100, 5048, 3304, 28988, 39276, 29248, 14040, 2980, 38708, 18484, 39536, 31000, 33696, 30948, 40240, 26784, 28296, 2996, 36108, 28484, 26956], 'pc': '0x5509b4', 'module': 'MASHED.exe+0x1509b4', 'addr': 'read @ 0x38'}
+  [CRASH-FULL] {'type': 'access-violation', 'eip': '0x5509b4', 'mem_op': 'read', 'mem_address': '0x38', 'eax': '0x0', 'ebx': '0x1e', 'ecx': '0x5cd584', 'edx': '0x7eff4054', 'esi': '0x0', 'edi': '0x644158', 'ebp': '0x644378', 'esp': '0x1a7c70', 'bytes_at_eip': '8b 48 38 8b 50 18 83 c1 28 85 d2 74 0e c7 40 28'}
+  verdict=INCOMPLETE -> verify\crash1509b4_20261012\c4_pb2_roothold2.json
+Traceback (most recent call last):
+  File "C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\crash1509b4\re\frida\c4_pb2_scenario.py", line 500, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\crash1509b4\re\frida\c4_pb2_scenario.py", line 400, in main
+    s = navlog(f"confirm {k}")
+        ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\crash1509b4\re\frida\c4_pb2_scenario.py", line 290, in navlog
+    s = X.state(); rec["nav"].append({"what": what, **s})
+        ^^^^^^^^^
+  File "C:\Users\maria\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\frida\core.py", line 188, in method
+    return script._rpc_request(request, data, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\maria\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\frida\core.py", line 94, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\maria\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\frida\core.py", line 499, in _rpc_request
+    raise result.error
+frida.InvalidOperationError: script has been destroyed
