@@ -26,6 +26,8 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-12  00424070  PlayerBlock2Field08Get  C3->C4 (natural data)  Team Play Race Results stat pages (mode 6), hook live, GREEN x4 vs the byte model and the original; stride-4 control RED 2/2. re/analysis/negctl/reearn_20261011/c4_a1_r_RESULT.md
+2026-10-12  00423ff0  PlayerBlock2Field50Get  C3->C4 (natural data)  Team Play Race Results stat pages (mode 6), hook live, GREEN x4 vs the byte model and the original; stride-4 control RED 2/2. re/analysis/negctl/reearn_20261011/c4_a1_r_RESULT.md
 2026-10-12  00403160  Sub00403160_SubMode0BViewport  C3->C4  Attract demo (no input), ~1,700 game calls/run, per-call key identical to the original; old double-deref control crashes on the first call (2/2). re/analysis/negctl/reearn_20261011/c4_a1_h_RESULT.md
 2026-10-12  0041db80  Sub0041db80_HudThresholdDispatch  C3->C4  Race standings, ~1,200 calls/run, dispatch per counter range identical; inverted-0.34 control 720/960 calls off the model. re/analysis/negctl/reearn_20261011/c4_a1_h_RESULT.md
 2026-10-12  004295a0  HudDualLabelRender  C3->C4 (forced save state)  Silver cup track 2 timeout, ~1,300 calls/run, both text draws + return identical; 2-arg control RED on every call. Launch gates set in an install copy's save. re/analysis/negctl/reearn_20261011/c4_a1_h_RESULT.md
