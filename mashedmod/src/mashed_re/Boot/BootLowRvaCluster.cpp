@@ -47,9 +47,11 @@ static FUN_004671a0_3arg_t const s_FUN_004671a0_3 =
 static FUN_004671a0_1arg_t const s_FUN_004671a0_1 =
     reinterpret_cast<FUN_004671a0_1arg_t>(0x004671a0u);
 
-// 0x004c1bb0 — RW cam op: commit/upload; void(uint32 handle).
+// 0x004c1bb0 — RW cam op: commit/upload; reads THREE stack args: [esp+4] (0x004c1bbe), [esp+8] (0x004c1bb9),
+// [esp+0xc] (0x004c1bb0), and forwards them to *(*(0x007d3ff8)+0x9c) (0x004c1bc2..0x004c1bcb).
 // Stub S-0172. Cited at 0x004026d0 body (first inner call after mode-3 alloc).
-using FUN_004c1bb0_t = void (__cdecl*)(std::uint32_t);
+// [followup/a2-stubat 2026-10-12] was declared 1-arg, so args 2/3 were the port's stack garbage; see BootQueueFlush.
+using FUN_004c1bb0_t = void (__cdecl*)(std::uint32_t, void*, std::uint32_t);
 static FUN_004c1bb0_t const s_FUN_004c1bb0 =
     reinterpret_cast<FUN_004c1bb0_t>(0x004c1bb0u);
 
@@ -65,9 +67,11 @@ using FUN_004c19f0_t = void (__cdecl*)(std::uint32_t);
 static FUN_004c19f0_t const s_FUN_004c19f0 =
     reinterpret_cast<FUN_004c19f0_t>(0x004c19f0u);
 
-// 0x004c1be0 — RW cam op: finalize; void(uint32 handle).
+// 0x004c1be0 — RW cam op: finalize; reads THREE stack args: [esp+4] (0x004c1be9), [esp+8] (0x004c1be4),
+// [esp+0xc] (0x004c1be0), forwarded to 0x004c7730 with *(arg0+0x60) (0x004c1bef..0x004c1bf3).
 // Stub S-0175. Cited at 0x004026d0 body (after mode-1 alloc).
-using FUN_004c1be0_t = void (__cdecl*)(std::uint32_t);
+// [followup/a2-stubat 2026-10-12] was declared 1-arg; see BootQueueFlush.
+using FUN_004c1be0_t = void (__cdecl*)(std::uint32_t, void*, std::uint32_t);
 static FUN_004c1be0_t const s_FUN_004c1be0 =
     reinterpret_cast<FUN_004c1be0_t>(0x004c1be0u);
 
@@ -123,8 +127,10 @@ void __cdecl BootQueueFlush(std::int32_t param_1)
                 reinterpret_cast<void*>(&local_4),
                 3u);
 
-            // FUN_004c1bb0(uVar1) — commit/upload (Stub S-0172)
-            s_FUN_004c1bb0(uVar1);
+            // 0x004026fe add esp,4 pops only the leading 0, leaving (&local_4, 3) pushed at 0x004026f0/0x004026f6;
+            // 0x00402701 push eax; 0x00402702 call 0x4c1bb0 -> FUN_004c1bb0(uVar1, &local_4, 3). The decomp shows
+            // FUN_004c1bb0(uVar1) only. [followup/a2-stubat 2026-10-12: the 1-arg call was the port defect.]
+            s_FUN_004c1bb0(uVar1, reinterpret_cast<void*>(&local_4), 3u);
 
             // uVar1 = FUN_004671a0(0) — re-fetch handle
             uVar1 = s_FUN_004671a0_1(0u);
@@ -138,9 +144,11 @@ void __cdecl BootQueueFlush(std::int32_t param_1)
                 s_FUN_004c19f0(uVar1);
             }
 
-            // uVar1 = FUN_004671a0(0, 0, 1) — mode-1 alloc; FUN_004c1be0(uVar1) (Stub S-0175)
+            // uVar1 = FUN_004671a0(0, 0, 1) — mode-1 alloc (Stub S-0175)
             uVar1 = s_FUN_004671a0_3(0u, nullptr, 1u);
-            s_FUN_004c1be0(uVar1);
+            // 0x00402736 add esp,4 leaves (0, 1) from 0x0040272b/0x0040272d; 0x00402739 push eax;
+            // 0x0040273a call 0x4c1be0 -> FUN_004c1be0(uVar1, 0, 1); 0x0040273f add esp,0xc.
+            s_FUN_004c1be0(uVar1, nullptr, 1u);
 
             param_1--;
         } while (param_1 != 0);

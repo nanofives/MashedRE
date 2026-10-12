@@ -169,7 +169,48 @@ function callFn(fn, input, buf) {
             if (x !== null && typeof x === 'object' && x.dialog !== undefined) return dlgHwnd(x.dialog);
             return (x !== null && typeof x === 'object' && x.scratch !== undefined) ? scratch.add(x.scratch | 0) : ptr(x);
         };
+        // `call_log` (followup/a2-stubat 2026-10-12): lean mirror of diff_template. Each named entry becomes a callback
+        // returning its `ret` (or the test's stub_rets[name], per call); `at` entries are Interceptor.replace'd once,
+        // on the first test, after freeze_main stops the game's first thread, and reverted after the last test
+        // (see the test loop below). A value {call_log: name} resolves to that callback. No logging: path2 proves
+        // install + entry + return; run_diff measures the call sequence.
+        const clCfg = CONFIG.call_log || [];
+        if (clCfg.length && !globalThis.__p2CallLog) {
+            const fns = {}, counts = {};
+            clCfg.forEach(function (ce) {
+                fns[ce.name] = new NativeCallback(function () {
+                    const k = counts[ce.name] | 0; counts[ce.name] = k + 1;
+                    const t = globalThis.__p2CallLogTest;
+                    const sr = (t && t.stub_rets) ? t.stub_rets[ce.name] : undefined;
+                    if (Array.isArray(sr)) return sr[Math.min(k, sr.length - 1)] | 0;
+                    if (sr !== undefined) return sr | 0;
+                    return ce.ret | 0;
+                }, 'int', new Array(ce.nargs | 0).fill('uint32'), ce.abi || 'mscdecl');
+                verifyKeep.push(fns[ce.name]);
+            });
+            const at = clCfg.filter(function (ce) { return ce.at !== undefined && ce.at !== null; });
+            globalThis.__p2CallLog = { fns: fns, counts: counts, at: at, frozen: false };
+            if (at.length) {
+                if (!CONFIG.freeze_main) throw new Error('call_log `at` entries require freeze_main');
+                __freeze.thread();
+                globalThis.__p2CallLog.frozen = true;
+                at.forEach(function (ce) {
+                    const sa = ptr(ce.at), pre = new Uint8Array(sa.readByteArray(5));
+                    Interceptor.replace(sa, fns[ce.name]);
+                    Interceptor.flush();
+                    const post = new Uint8Array(sa.readByteArray(5));
+                    let patched = false;
+                    for (let b = 0; b < 5; b++) if (post[b] !== pre[b]) { patched = true; break; }
+                    if (!patched) throw new Error('call_log did NOT install at ' + sa);
+                });
+            }
+        }
+        if (globalThis.__p2CallLog) {
+            globalThis.__p2CallLogTest = input;
+            Object.keys(globalThis.__p2CallLog.counts).forEach(function (k) { delete globalThis.__p2CallLog.counts[k]; });
+        }
         const rV = function (x) {
+            if (x !== null && typeof x === 'object' && x.call_log !== undefined) return globalThis.__p2CallLog.fns[x.call_log].toUInt32();
             if (x !== null && typeof x === 'object' && x.dialog !== undefined) return dlgHwnd(x.dialog).toUInt32();
             if (x !== null && typeof x === 'object' && x.scratch !== undefined) return scratch.add(x.scratch | 0).toUInt32();
             if (x !== null && typeof x === 'object' && x.recorder) return recorder.toUInt32();
@@ -792,6 +833,11 @@ function runVerification() {
         let got, err = null;
         try { got = callFn(Patched, t, buf); } catch (e) { got = null; err = e.message; }
         results.push({ idx: i, input: t, got: got, err: err });
+    }
+    if (globalThis.__p2CallLog && globalThis.__p2CallLog.frozen) {
+        globalThis.__p2CallLog.at.forEach(function (ce) { try { Interceptor.revert(ptr(ce.at)); } catch (e) {} });
+        Interceptor.flush();
+        __freeze.flush();
     }
     const afterCount = reimplEntries;
 

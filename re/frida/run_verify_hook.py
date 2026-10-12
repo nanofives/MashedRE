@@ -143,6 +143,7 @@ def main():
         'recorder':       hook.get('recorder'),   # {args,seed} fixtures' fake-callee recorder (2026-10-12)
         'dialog':         hook.get('dialog'),     # {dialog: id} args: hidden dialog per call (2026-10-12)
         'eax_arg':        hook.get('eax_arg'),    # target takes arg k in EAX (2026-10-12)
+        'call_log':       hook.get('call_log'),   # named callee recorders, installed under freeze_main (2026-10-12)
         'tests':          hook['path2_tests'],
     }
     # Heap / import stand-ins (plan item #3): the SAME keys run_diff.build_config forwards, so path2 runs the
