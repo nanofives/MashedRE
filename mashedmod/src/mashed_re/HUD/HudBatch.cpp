@@ -352,7 +352,8 @@ void __cdecl FontText_UTF16WidenCopy()
         jle  null_term
 
 copy_loop:
-        movzx ecx, byte ptr [edi]           // load src byte zero-extended (orig MOVZX CX,[EDI])
+        movzx cx, byte ptr [edi]            // load src byte zero-extended (orig 0x00427860 MOVZX CX,[EDI]: 16-bit,
+                                            // ECX bits 16..31 keep the length getter's value, as in the original)
         mov  word ptr [esi], cx             // store as ushort              (orig MOV [ESI],CX)
         add  esi, 2
         inc  edi
