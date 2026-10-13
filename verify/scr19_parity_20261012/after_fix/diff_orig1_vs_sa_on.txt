@@ -1,0 +1,18 @@
+== orig1_f0 (A: 136 draws, x1.0) vs f200 (B: 136 draws, x1.0)
+   matched 135  mismatched 0  missing 1  extra 1
+  MISSING  A[135] x= 457.00 y= 277.00 w=  16.00 h= 16.00 col=ff000000  @0x4739e7,0x430ef1
+  EXTRA    B[135] x= 465.10 y= 277.00 w=  16.00 h= 16.00 col=ff000000 tex=46 blend=1:5/6  @0xb78f8<HudIm2DQuad+0x188>,0x1b40c<WinMain@16+0x1d1c>
+== orig1_f1 (A: 136 draws, x1.0) vs f201 (B: 136 draws, x1.0)
+   matched 135  mismatched 0  missing 1  extra 1
+  MISSING  A[135] x= 457.00 y= 277.00 w=  16.00 h= 16.00 col=ff000000  @0x4739e7,0x430ef1
+  EXTRA    B[135] x= 465.10 y= 277.00 w=  16.00 h= 16.00 col=ff000000 tex=46 blend=1:5/6  @0xb78f8<HudIm2DQuad+0x188>,0x1b40c<WinMain@16+0x1d1c>
+== orig1_f2 (A: 136 draws, x1.0) vs f202 (B: 136 draws, x1.0)
+   matched 135  mismatched 0  missing 1  extra 1
+  MISSING  A[135] x= 457.00 y= 277.00 w=  16.00 h= 16.00 col=ff000000  @0x4739e7,0x430ef1
+  EXTRA    B[135] x= 465.10 y= 277.00 w=  16.00 h= 16.00 col=ff000000 tex=46 blend=1:5/6  @0xb78f8<HudIm2DQuad+0x188>,0x1b40c<WinMain@16+0x1d1c>
+== orig1_f3 (A: 136 draws, x1.0) vs f203 (B: 136 draws, x1.0)
+   matched 135  mismatched 0  missing 1  extra 1
+  MISSING  A[135] x= 457.00 y= 277.00 w=  16.00 h= 16.00 col=ff000000  @0x4739e7,0x430ef1
+  EXTRA    B[135] x= 465.10 y= 277.00 w=  16.00 h= 16.00 col=ff000000 tex=46 blend=1:5/6  @0xb78f8<HudIm2DQuad+0x188>,0x1b40c<WinMain@16+0x1d1c>
+-> verify\scr19_parity_20261012\after_fix\diff_orig1_vs_sa_on.json
+VERDICT: RED (match=540 mismatch=0 missing=4 extra=4)

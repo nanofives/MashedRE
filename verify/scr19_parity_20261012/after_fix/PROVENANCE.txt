@@ -1,0 +1,50 @@
+scr19 settings-widget fix, re-measurement, 2026-10-12
+Worktree .worktrees/scr19fix, branch work/scr19fix. Source = commit a9a066f9 (fixes 1, 2, 4).
+mashedmod\build\mashed_re.exe built from that tree ($env:MASHED_NO_DEPLOY='1'; cmd /c mashedmod\build.bat), 23:09.
+Result note: re/analysis/negctl/session_20261012b/scr19_fix_RESULT.md
+
+ORIGINAL, screen 19: REUSED ../orig1_settled.json and ../orig2_settled.json (same day).
+  Reuse is valid: original\MASHED.exe unchanged, and re/frida/menu_draw_burst.py and
+  re/tools/drawlist_diff.py have no commits since 3419790d (git log 3419790d..HEAD -- <both>: empty).
+ORIGINAL, screens 30 and 32: fresh, same recipe as orig1 (tool spawns and kills its own PID,
+  MASHED_RE_NO_AUTO_HOOK=1, synthetic push, no key input):
+  py -3.12 re/frida/menu_draw_burst.py --screen 30 --frames 4 --settle 6 --text-trace --label orig30 --out <here>/orig_scr30.json
+  py -3.12 re/frida/menu_draw_burst.py --screen 32 --frames 4 --settle 6 --text-trace --label orig32 --out <here>/orig_scr32.json
+
+STANDALONE (run_sa.ps1, copied here; CWD = worktree root; PID tracked and killed by PID):
+  env MASHED_GOTO=<S> MASHED_DBG_DRAWSTREAM=200:203 MASHED_DBG_DRAWSTREAM_OUT=<abs> MASHED_WIN_POS=primary-bl
+  [+ MASHED_SETTINGS_DEFAULTS=1 for *_knob_on]
+  sa_knob_on.json   S=19 knob ON   PID 40076  log: settings: source=defaults(MASHED_SETTINGS_DEFAULTS) music=7 sfx=7 insults=7 insults_on=2 gamma=3 autosave=1
+  sa_knob_off.json  S=19 knob OFF  PID 28304  log: settings: source=mashed_re_settings.bin-or-defaults music=10 sfx=7 insults=7 insults_on=0 gamma=10 autosave=0
+  sa30_knob_on.json S=30 knob ON   PID 7468   log: same defaults line as sa_knob_on
+  sa32_knob_on.json S=32 knob ON   PID 17384  log: same defaults line as sa_knob_on
+  Settings file: the worktree root holds a byte copy of the repo-root mashed_re_settings.bin
+  (SHA-256 95FCEF16...93C89, 28 bytes, MRES 10/7/7/0/10/0). So the knob-ON runs ignored a file
+  that WAS present. The repo-root original was read once, never written: same hash and mtime
+  (2026-09-07T09:06:13) after all runs.
+
+DIFFS (all: --scale-b 1 --exclude-tex 9 --map mashedmod/build/mashed_re.map --rotate-a 0x42e65a):
+  ../orig1_settled.json vs sa_knob_on.json  --tol-anim 4               -> diff_orig1_vs_sa_on.txt/.json
+  ../orig1_settled.json vs sa_knob_on.json  (strict)                   -> diff_orig1_vs_sa_on_strict.txt
+  ../orig1_settled.json vs sa_knob_on.json  --tol-pos 0.01 --tol-size 0.01 -> diff_orig1_vs_sa_on_tol001.txt/.json
+  ../orig2_settled.json vs sa_knob_on.json  --tol-anim 4 / strict      -> diff_orig2_vs_sa_on.txt / _strict.txt
+  ../orig1_settled.json vs sa_knob_off.json --tol-anim 4               -> diff_orig1_vs_sa_off.txt
+  ../sa_settled.json (pre-fix, same user settings) vs sa_knob_off.json, --scale-b 1 --exclude-tex 9 only:
+     default tol -> diff_sa_prefix_vs_knob_off_strict.txt ; --tol-pos 0.5 --tol-size 0.5 -> diff_sa_prefix_vs_knob_off_tight.txt
+     (the 100 MISSING rows per frame are side-A tex-9 glyph quads: --exclude-tex filters side B only, drawlist_diff.py:336-337)
+  orig_scr30.json vs sa30_knob_on.json: --tol-anim 4 / strict / 0.01   -> diff_scr30_on*.txt/.json
+  orig_scr32.json vs sa32_knob_on.json: --tol-anim 4 / strict / 0.01   -> diff_scr32_on*.txt/.json
+  sumdiff.py <diff.json>     groups non-checker rows (checker = 0x474464 via 0x42e89c, standalone LogoOverlayDraw)
+  widgetrows.py <orig.json>  decodes the original's widget draws (caller 0x430xxx-0x432xxx) with drawlist_diff.normalize
+
+LISTINGS (capstone over original\MASHED.exe.unpatched, cs_listing.py):
+  listing_00430b90_00431240.txt  screen-19 widget (FUN_00430b90)
+  listing_00431840_00431aa0.txt  screen-30 widget slice
+
+FILL-GATE SELF-CHECK (fix 2; no original-side zero-slider capture exists):
+  Worktree-root settings COPY edited to music=0 (repo-root file untouched), knob OFF, S=19, PID 31648.
+  log: settings: source=mashed_re_settings.bin-or-defaults music=0 sfx=7 insults=7 insults_on=0 gamma=10 autosave=0
+  -> sa_music0.json. Copy restored to the user's bytes afterwards (hash 95FCEF16...93C89).
+  sa_knob_off.json vs sa_music0.json --scale-b 1 --exclude-tex 9 --tol-pos 0.5 --tol-size 0.5
+     -> diff_sa_off_vs_music0.txt/.json : per frame 135 matched, the only non-glyph row is the
+        row-0 fill (377,191,100x10) MISSING on the music=0 side. No w=0 quad is emitted.
