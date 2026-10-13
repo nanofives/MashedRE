@@ -1,0 +1,30 @@
+== G-ORIG-DET / window
+  rd1: producer calls 1440, W = 631 calls, clk 40400..71900; refdist==0 per car [15, 349, 246, 21]; reference (0x008989a8) {0: 15, 1: 349, 2: 246, 3: 21}
+  rd2: producer calls 1098, W = 220 calls, clk 43850..54800; refdist==0 per car [15, 164, 12, 29]; reference (0x008989a8) {0: 15, 1: 164, 2: 12, 3: 29}
+  rd3: producer calls 1017, W = 220 calls, clk 39800..50750; refdist==0 per car [15, 164, 12, 29]; reference (0x008989a8) {0: 15, 1: 164, 2: 12, 3: 29}
+  spread per car [0, 185, 234, 8] -> G-ORIG-DET FAIL (spread is the floor)
+== G-PROBE (producer refdist[v] at leave vs the consumer's refdist at its next call, same run)
+  rd1: 476 / 1082 consumer calls equal bits (43.99 %) -> FAIL
+  rd2: 201 / 561 consumer calls equal bits (35.83 %) -> FAIL
+  rd3: 201 / 561 consumer calls equal bits (35.83 %) -> FAIL
+== G-PROBE' (amendment A1: consumer refdist at clock c vs the producer's leave output at c - 50)
+  rd1: 1082 / 1082 (100.00 %) -> PASS   (exploratory)
+  rd2: 561 / 561 (100.00 %) -> PASS   (exploratory)
+  rd3: 561 / 561 (100.00 %) -> PASS   <- confirmatory (A1)
+== G-REPLAY-SEL / G-REPLAY-DIST (port ComputeDistancesCore on the original's inputs)
+  rd1: SEL 630 / 631 (99.84 %) -> PASS; DIST 2521 / 2524 (99.88 %) -> PASS
+    first mismatches (n, clk, port ref, port other, orig a8, orig c8): [(1129, 56350, '2', '0', 3, 0)]
+    rel |port-orig|/orig on nonzero: median 4.18e-05, max 1.00e+00, bit-equal 630 / 2524
+  rd2: SEL 220 / 220 (100.00 %) -> PASS; DIST 880 / 880 (100.00 %) -> PASS
+    rel |port-orig|/orig on nonzero: median 3.97e-05, max 1.19e-04, bit-equal 221 / 880
+  rd3: SEL 220 / 220 (100.00 %) -> PASS; DIST 880 / 880 (100.00 %) -> PASS
+    rel |port-orig|/orig on nonzero: median 3.97e-05, max 1.19e-04, bit-equal 221 / 880
+== G-REFDIST / G-MODE7 (consumer calls in W; exe = same number of calls per car from its first call)
+  orig rd1: calls {1: 532, 2: 341, 3: 209} refdist0 {1: 347, 2: 129, 3: 0} ret2 {1: 60, 2: 0, 3: 0}
+  orig rd2: calls {1: 204, 2: 175, 3: 182} refdist0 {1: 164, 2: 4, 3: 29} ret2 {1: 49, 2: 0, 3: 0}
+  orig rd3: calls {1: 204, 2: 175, 3: 182} refdist0 {1: 164, 2: 4, 3: 29} ret2 {1: 49, 2: 0, 3: 0}
+  orig rd1: ret2 over all ba8c==6 calls {1: 60}
+  orig rd2: ret2 over all ba8c==6 calls {1: 49}
+  orig rd3: ret2 over all ba8c==6 calls {1: 49}
+  exe M4_ON.c30.tsv: calls {1: 532, 2: 341, 3: 209} refdist0 {1: 260, 2: 80, 3: 47} ret2(W) {1: 25, 2: 20, 3: 0} ret2(all) {1: 25, 2: 52, 3: 43} -> G-REFDIST PASS [True, True, True]; G-MODE7 FAIL
+    (report) over the rd3 round length: calls {1: 204, 2: 175, 3: 182} refdist0 {1: 102, 2: 47, 3: 20} ret2 {1: 25, 2: 20, 3: 0}  vs orig rd3 refdist0 {1: 164, 2: 4, 3: 29}

@@ -1,0 +1,15 @@
+# arm A: csv:C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\5757469d-e0f1-4411-bb92-d087317a440e\scratchpad\piv_o_rd3.csv(2055 frames)
+# arm B: csv:C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\5757469d-e0f1-4411-bb92-d087317a440e\scratchpad\piv_U_M4ON.csv(13678 frames)
+# noise floor: 259 fields, from 2043 A-pair frames and 13678 B-pair frames
+# aligned frames 2055 [2..2168]   paired fields 94   A-only 15   B-only 150
+
+=== CROSS-SIDE BAND MEDIANS, ranked by worst gap / noise floor (0 of 0 paired fields exceed their floor in some band) ===
+field                  scope      band          nA   nB | medSpd A  medSpd B | medFrm A medFrm B |        med A        med B   gap/floor
+----------------------------------------------------------------------------------------------------------------------------------------
+=== WITHIN THE NOISE FLOOR in every shared band: 0 fields ===
+
+=== UNPAIRED (one arm only; not comparable) ===
+  A-only: 15 fields
+  B-only: 150 fields: s.v1.arclaps  s.v1.arcpct  s.v1.arcprog  s.v1.b2_los  s.v1.b2_ret  s.v1.gate  s.v1.h4x  s.v1.h4y  s.v1.h4z  s.v1.h5x  s.v1.h5y  s.v1.h5z  s.v1.h6x  s.v1.h6y  s.v1.h6z  s.v1.h7x  s.v1.h7y  s.v1.h7z  s.v1.lap  s.v1.lap_9648  s.v1.look_best  s.v1.look_blk  s.v1.look_idx  s.v1.prog ...
+
+csv -> verify\d3_u9219_20261013\COLLATERAL_U9219.txt
