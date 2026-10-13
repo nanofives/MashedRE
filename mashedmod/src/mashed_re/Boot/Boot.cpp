@@ -64,16 +64,21 @@ static CrtExitCoreFn_t const g_CrtExitCore =
 //   "CorExitProcess"     — arg to GetProcAddress
 //
 // No globals read or written. All state via parameters and Win32 calls.
+//
+// CorExitProcess is CALLEE-CLEANS (__stdcall): 0x004a31d0 push [esp+4]; 0x004a31d4 call eax; 0x004a31d6
+// push [esp+4] -- no stack adjust after the call, and [esp+4] must again be exit_code. The old __cdecl cast
+// compiled to `call eax; add esp, 4` (0x10017b75 in the 2026-10-12 build), so when CorExitProcess returned,
+// ExitProcess got the stack slot ABOVE exit_code (bnoreturn witness: 0xf9cc100 for code 0xff).
 // ============================================================================
 extern "C" __declspec(dllexport)
 void __cdecl CrtExitProcess_j5(int exit_code)
 {
     HMODULE hModule = GetModuleHandleA("mscoree.dll");                   // 0x004a31b1 body
     if (hModule != nullptr) {
-        FARPROC pFn = GetProcAddress(hModule, "CorExitProcess");         // 0x004a31b1 body
+        FARPROC pFn = GetProcAddress(hModule, "CorExitProcess");         // 0x004a31c6
         if (pFn != nullptr) {
-            // Indirect call -> CorExitProcess(exit_code)
-            reinterpret_cast<void(__cdecl*)(int)>(pFn)(exit_code);
+            // Indirect call -> CorExitProcess(exit_code), callee pops its arg (0x004a31d4)
+            reinterpret_cast<void(__stdcall*)(int)>(pFn)(exit_code);
         }
     }
     ExitProcess(static_cast<UINT>(exit_code));                            // 0x004a31b1 body

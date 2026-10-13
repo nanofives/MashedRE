@@ -1,0 +1,15 @@
+hook	rva	arg_type	lane	mode	verdict	mismatches	total	stats	err
+crt_exit_no_return_j5	0x004a332b	scalars_to_scattered_globals	warm	real	GREEN	0	8		
+crt_exit_no_return_j5	0x004a332b	scalars_to_scattered_globals	warm	baseline	GREEN	0	8		
+crt_exit_no_return_j5	0x004a332b	scalars_to_scattered_globals	warm	null	RED	8	8	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+crt_exit_no_return_j5	0x004a332b	scalars_to_scattered_globals	warm	ret	SKIP	0	0		void signature
+crt_exit_no_return_j5	0x004a332b	scalars_to_scattered_globals	warm	field_first	RED	6	8	calls=8 flips=6 changed=0 flip=0x00639d70 noise=153 frozen=2	
+crt_exit_no_return_j5	0x004a332b	scalars_to_scattered_globals	warm	field_last	RED	6	8	calls=8 flips=6 changed=0 flip=0x008ab6cc noise=169 frozen=2	
+crt_exit_no_return_j5	0x004a332b	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	8	calls=8 flips=0 changed=0 flip=0x00000000 noise=175 frozen=2	
+crt_exit_process_j5	0x004a31b1	scalars_to_scattered_globals	warm	real	GREEN	0	9		
+crt_exit_process_j5	0x004a31b1	scalars_to_scattered_globals	warm	baseline	GREEN	0	9		
+crt_exit_process_j5	0x004a31b1	scalars_to_scattered_globals	warm	null	RED	9	9	calls=0 flips=0 changed=0 flip=0x00000000 noise=175 frozen=2	
+crt_exit_process_j5	0x004a31b1	scalars_to_scattered_globals	warm	ret	SKIP	0	0		void signature
+crt_exit_process_j5	0x004a31b1	scalars_to_scattered_globals	warm	field_first	NA	0	9	calls=9 flips=0 changed=0 flip=0x00000000 noise=176 frozen=2	
+crt_exit_process_j5	0x004a31b1	scalars_to_scattered_globals	warm	field_last	NA	0	9	calls=9 flips=0 changed=0 flip=0x00000000 noise=178 frozen=2	
+crt_exit_process_j5	0x004a31b1	scalars_to_scattered_globals	warm	field_none	CTRL-GREEN	0	9	calls=9 flips=0 changed=0 flip=0x00000000 noise=178 frozen=2	

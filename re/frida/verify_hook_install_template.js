@@ -852,12 +852,35 @@ function runVerification() {
             send({ type: 'error', msg: 'standin_object_call: ' + e.message });
         }
     }
+    // Import / heap stand-ins for the other handlers (bnoreturn 2026-10-12): the same install diff_template's generic
+    // wrapper uses, armed around each call with the test's `import_rets`. A no-return import (ExitProcess /
+    // TerminateProcess) records the call and ends it by faulting on the stand-in's sentinel page; that is the call's
+    // normal end here, so the real API never runs and the game survives path2. `got` carries the stand-in log.
+    let SIp = null;
+    if (CONFIG.arg_type !== 'standin_object_call' && (CONFIG.heap_standin || CONFIG.import_standin)) {
+        try {
+            SIp = __standins.install({ heap: CONFIG.heap_standin, imports: CONFIG.import_standin, asi: module,
+                                       fakes: CONFIG.standin_fakes });
+        } catch (e) {
+            send({ type: 'error', msg: 'standins install: ' + e.message });
+            return;
+        }
+    }
     for (let i = 0; i < CONFIG.tests.length && CONFIG.arg_type !== 'standin_object_call'; i++) {
         const t = CONFIG.tests[i];
         let got, err = null;
-        try { got = callFn(Patched, t, buf); } catch (e) { got = null; err = e.message; }
+        if (SIp) {
+            SIp.arm({ rets: (t && t.import_rets) || undefined });
+            try { got = callFn(Patched, t, buf); }
+            catch (e) { if (SIp.isNoReturnEnd(e)) got = null; else { got = null; err = e.message; } }
+            const lg = SIp.disarm();
+            got = (got === null || got === undefined) ? 'S[' + lg + ']' : got + ' S[' + lg + ']';
+        } else {
+            try { got = callFn(Patched, t, buf); } catch (e) { got = null; err = e.message; }
+        }
         results.push({ idx: i, input: t, got: got, err: err });
     }
+    if (SIp) SIp.uninstall();
     if (globalThis.__p2CallLog && globalThis.__p2CallLog.frozen) {
         globalThis.__p2CallLog.at.forEach(function (ce) { try { Interceptor.revert(ptr(ce.at)); } catch (e) {} });
         Interceptor.flush();

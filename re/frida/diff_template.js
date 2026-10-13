@@ -1701,30 +1701,44 @@ function runDiff() {
     // paired with the k-th Reimpl call's and appended as result rows 'S<k>' (a count mismatch is its own RED row).
     // Handlers that call TARGET_ADDR / reimplAddr through their own asm trampolines bypass the wrapper: the arena is
     // then never reset between arms, so they read RED, never a false GREEN. Use standin_object_call for those.
+    // No-return imports (bnoreturn 2026-10-12, standins.js header): an import spec with `noreturn: true` ends the arm by
+    // faulting on the stand-in's sentinel page after it recorded the call. That fault is caught here and is the arm's
+    // NORMAL end (return 0 / undefined); any other error still propagates. `standin_fakes` are function pointers a
+    // stand-in can return ({fake: name} in a test's `import_rets`). A test's `import_rets` overrides import / fake
+    // returns for its two arms (handlers that publish the test in globalThis.__standinTest: scalars_to_scattered_globals).
+    // Under negctl, NegCtl_NoReturn (Harness/NegCtl.cpp) runs at the no-return call, so the field classes can still
+    // flip a byte of the port's: the forwarder's own post-call step never runs when the port never returns.
     if (CONFIG.heap_standin || CONFIG.import_standin) {
-        const SI = __standins.install({ heap: CONFIG.heap_standin, imports: CONFIG.import_standin, asi: module });
+        const ncNrAddr = (CONFIG.negctl && !CONFIG.self_baseline) ? module.findExportByName('NegCtl_NoReturn') : null;
+        const ncNr = ncNrAddr ? new NativeFunction(ncNrAddr, 'void', [], 'mscdecl') : null;
+        const SI = __standins.install({ heap: CONFIG.heap_standin, imports: CONFIG.import_standin, asi: module,
+                                        fakes: CONFIG.standin_fakes, onNoReturn: ncNr ? function () { ncNr(); } : null });
         const logs = { O: [], R: [] };
         const wrap = function (fn, side) {
             return function () {
-                SI.arm();
-                try { return fn.apply(null, arguments); } finally { logs[side].push(SI.disarm()); }
+                const st = globalThis.__standinTest;
+                SI.arm({ rets: (st && st.import_rets) || undefined });
+                try { return fn.apply(null, arguments); }
+                catch (e) {
+                    if (SI.isNoReturnEnd(e)) return (CONFIG.signature.ret === 'void') ? undefined : 0;
+                    throw e;
+                }
+                finally { const d = SI.disarm(); logs[side].push(d); globalThis.__standinLast = d; }
             };
         };
         Orig = wrap(Orig, 'O');
         Reimpl = wrap(Reimpl, 'R');
-        const realSend = send;
-        globalThis.send = function (msg, data) {
-            if (msg && msg.type === 'results' && Array.isArray(msg.data)) {
-                SI.uninstall();
-                const n = Math.max(logs.O.length, logs.R.length);
-                for (let k = 0; k < n; k++) {
-                    const o = k < logs.O.length ? logs.O[k] : null, r = k < logs.R.length ? logs.R[k] : null;
-                    msg.data.push({ idx: 'S' + k, input: 'standin log, call ' + k, original: o, reimpl: r,
-                                    match: o !== null && r !== null && o === r, err_original: null, err_reimpl: null });
-                }
-            }
-            return realSend(msg, data);
-        };
+        // The S<k> rows used to be appended by overriding `send`, which is read-only under 'use strict': every handler
+        // other than standin_object_call died "TypeError: 'send' is read-only" before its first test (bnoreturn
+        // 2026-10-12; no registry entry had used this path). scalars_to_scattered_globals now folds each arm's log
+        // (globalThis.__standinLast, set in the finally above) into that vector's own fingerprint and returns it with
+        // it. Any other handler is refused: it would compare return values while the stand-in log went nowhere.
+        if (CONFIG.arg_type !== 'scalars_to_scattered_globals') {
+            send({ type: 'error', msg: 'heap_standin / import_standin need arg_type standin_object_call or ' +
+                   'scalars_to_scattered_globals (' + CONFIG.arg_type + ' would drop the stand-in log)' });
+            return;
+        }
+        globalThis.__standinUninstall = function () { SI.uninstall(); };
     }
 
     const buf = (['vec3_ptr', 'out3_idx', 'vec2_ptr'].includes(CONFIG.arg_type)) ? Memory.alloc(12)
@@ -6788,6 +6802,13 @@ function runDiff() {
                 send({ type: 'log', msg: 'dialog readback: ' + rb });
                 for (let j = 0; j < rb.length; j++) fp = Math.imul(fp ^ (rb.charCodeAt(j) & 0xffff), 0x01000193);
             }
+            // Heap / import stand-in log of the arm that just returned (or ended at a no-return import), set by the
+            // generic stand-in wrapper's finally (bnoreturn 2026-10-12). Folded and returned like the call log, after
+            // ' S[', so the CSV carries every recorded import with its arguments and the NORETURN that ended the arm.
+            const sl = globalThis.__standinLast;
+            globalThis.__standinLast = undefined;
+            const slTxt = (typeof sl === 'string') ? ' S[' + sl + ']' : '';
+            for (let j = 0; j < slTxt.length; j++) fp = Math.imul(fp ^ (slTxt.charCodeAt(j) & 0xffff), 0x01000193);
             if (CONFIG.observe_raw && !callLogCfg.length) {
                 // observe_raw (bworld 2026-10-12): also return each observe window as hex and the folded return, so the
                 // CSV says WHICH outcome each vector produced (miss / hit with 0 / hit with a value), not only a hash.
@@ -6797,14 +6818,15 @@ function runDiff() {
                     return s;
                 });
                 if (foldRet) raw.push('r=' + ((ret === null || ret === undefined) ? 'null' : (ret >>> 0).toString(16)));
-                return (fp >>> 0).toString(16) + ' ' + raw.join(';');
+                return (fp >>> 0).toString(16) + ' ' + raw.join(';') + slTxt;
             }
             if (callLogCfg.length) {
                 // The call log is both folded and returned, so the CSV carries the sequence each arm made.
                 const cl = callLog.join(';');
                 for (let j = 0; j < cl.length; j++) fp = Math.imul(fp ^ (cl.charCodeAt(j) & 0xffff), 0x01000193);
-                return (fp >>> 0).toString(16) + ' ' + cl;
+                return (fp >>> 0).toString(16) + ' ' + cl + slTxt;
             }
+            if (slTxt) return (fp >>> 0).toString(16) + slTxt;
             return fp >>> 0;
         }
         function saveW() { return windows().map(function(w) { return w.a.readByteArray(w.len); }); }
@@ -6828,6 +6850,7 @@ function runDiff() {
             const t = CONFIG.tests[i];
             if (dlgCfg) dlgCur = (t && t.dialog) ? t.dialog : dlgCfg;
             callLogTest = (t && typeof t === 'object' && !Array.isArray(t)) ? t : null;
+            globalThis.__standinTest = callLogTest;      // per-test import_rets for the stand-in wrapper (bnoreturn)
             const args = (t && t.args) ? t.args : (Array.isArray(t) ? t : [t]);
             // Trim to the declared arity: the zero-arg entries carry a placeholder test `0`, which current Frida
             // rejects with "bad argument count" on BOTH arms (10 C3 rows read RED/RED, negctl 2026-10-11). A cdecl
@@ -6870,7 +6893,12 @@ function runDiff() {
         } catch (e) {
             send({ type: 'error', msg: 'scalars_to_scattered_globals: ' + e.message });
             return;
-        } finally { if (callLogAt.length) callLogRevert(); if (CONFIG.freeze_main) __freeze.flush(); }
+        } finally {
+            if (callLogAt.length) callLogRevert();
+            // IAT slots back before the game's first thread resumes (bnoreturn 2026-10-12).
+            if (globalThis.__standinUninstall) globalThis.__standinUninstall();
+            if (CONFIG.freeze_main) __freeze.flush();
+        }
         send({ type: 'results', data: results });
         return;
     }
