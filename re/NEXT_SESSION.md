@@ -14,7 +14,7 @@
 > **Open**
 > - DONE 2026-10-13: screen-32 toggle arrow + value text ported from FUN_00431240 (widget GREEN at 0.01 px). The parity knob
 >   now pins autosave Off like the original. Left: scr32 value text 1 px low (y 240.0), L fixed at 356 (longer
->   non-English labels would move it), and USER: should the shipping autosave default (On) follow the original (Off)?
+>   non-English labels would move it), and DECIDED (user 2026-10-13): the shipping autosave default stays On (only the parity knob pins Off).
 > - U-9680 (low): derive `[0x0067d830]` / `[0x0067d834]` instead of the measured 0x3f7fffff.
 > - Fade alpha / early-out in the standalone widget (fix 3, not requested). The exit fade is uncaptured.
 > - `after_fix/sumdiff.py` keys checker noise on a fixed return address (0xb8202); key it on the map symbol.
