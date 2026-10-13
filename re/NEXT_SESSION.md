@@ -1,6 +1,6 @@
 # Next session kickoff
 
-> ## START HERE 2026-10-13 D3 results (items 1+2 run): **decisions taken; next = the car-2 opening-pickup miss (in progress).**
+> ## START HERE 2026-10-13 D3 results (items 1+2 run): **decisions taken; car-2 opening-pickup miss fixed and merged; next = the candidates in the last bullet.**
 >
 > - **U-9219 premise REFUTED** (`verify/d3_u9219_20261013/RESULT_U9219.md`, merged 2026-10-13, no code-behaviour
 >   change). The port's 0x00442a60 matches the original on its own inputs (220/220 selections, 880/880 refdist). What
@@ -22,7 +22,15 @@
 >   **A 2/3, B 1/3, C 0/3.** A car 2 fails abs_steer~ (0 vs 7..23). B car 1 fails c1#/c1~/abs_steer~ (57/49/49),
 >   car 2 fails c0#/c1#/steer# (43/47/89). C at 196 per car: car 1 fails 5 items, car 2 4, car 3 5 (envelopes width 0).
 >   A and B verdicts are unchanged by the C rule. All 31 original runs PASS their own envelopes (93/93 car-windows).
-> - **Car-2 opening-pickup miss IN PROGRESS (child car2pickup, worktree .worktrees/car2pickup), U-9682.**
+> - **Car-2 opening-pickup miss FIXED, merged default ON (user decision), U-9682 RESOLVED** (`verify/d3_car2pickup_20261013/RESULT_CAR2PICKUP.md`). Two port
+>   defects in VehiclePhysicsRun.cpp: the adapter IN erased the other car's FUN_00469df0 impulse, and the +0xaec A4 coast
+>   gate (FUN_00470c70 0x0047101b..0x00471048) was unported. Opt-outs MASHED_NO_RECORD_VEL_KEEP / MASHED_NO_A4_CONTACT_GATE.
+>   **New default G-CTRL `991a5fff / be0d47ea / bc75b405`.** **(b) default build now A 1/3, B 2/3, C 0/3** (A cars 1/3
+>   fail abs_steer~, B car 2 fails c1#/steer#). Residues: car 2 collects 2 ticks early (5 on the mode-7 stack).
+> - **Next candidates:** (1) the regime-A car-1 / car-3 mutual contacts at steps 64 / 130 that the original never has
+>   (they cost A its third car, cause upstream in the car 1 / car 3 paths, U-9185 / U-9186); (2) the post-contact AI
+>   brake, `c1` 255 x16 in the original, absent in the exe (U-9684); (3) car 2's two refdist-0 mode-7 entries at
+>   frames 16-17, before the contact (U-9685: grid pose `MASHED_ROUND_GRID` or the U-9683 ordering).
 
 > ## START HERE 2026-10-13 D3 survey (back to the roadmap): superseded by the results block above.
 >
