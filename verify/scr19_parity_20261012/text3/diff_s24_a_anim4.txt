@@ -1,0 +1,338 @@
+== orig24_f0 (A: 174 draws, x1.0) vs f200 (B: 163 draws, x1.0)
+   matched 127  mismatched 3  missing 44  extra 33
+  MISMATCH(moved)
+    A[150] x=  72.00 y= 316.00 w=  56.00 h= 56.00 col=ffffffff  @0x473c19,0x438247
+    B[143] x=  73.00 y= 309.00 w=  63.00 h= 63.00 col=ffffffff tex=45 blend=1:5/6  @0xb7f58<HudIm2DQuad+0x188>,0x1ba6c<WinMain@16+0x1d2c>
+  MISMATCH(moved)
+    A[151] x= 136.00 y= 316.00 w=  56.00 h= 56.00 col=ffffffff  @0x473c19,0x43827a
+    B[144] x= 137.00 y= 309.00 w=  63.00 h= 63.00 col=ffffffff tex=45 blend=1:5/6  @0xb7f58<HudIm2DQuad+0x188>,0x1ba6c<WinMain@16+0x1d2c>
+  MISMATCH(moved)
+    A[152] x= 200.00 y= 316.00 w=  56.00 h= 56.00 col=ffffffff  @0x473c19,0x4382ad
+    B[145] x= 201.00 y= 309.00 w=  63.00 h= 63.00 col=ffffffff tex=45 blend=1:5/6  @0xb7f58<HudIm2DQuad+0x188>,0x1ba6c<WinMain@16+0x1d2c>
+  MISSING  A[  3] x= 928.00 y=   0.00 w= 128.00 h= 64.00 col=00000000/ff000000/00000000/ff000000  @0x473532,0x473f6c
+  MISSING  A[  4] x= 928.00 y= 416.00 w= 128.00 h= 64.00 col=00000000/ff000000/00000000/ff000000  @0x473532,0x473f87
+  MISSING  A[  5] x= 928.00 y=   0.00 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[  6] x=   0.00 y=   0.00 w= 928.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[  7] x= 883.10 y=  34.13 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[  8] x=   0.00 y=  34.13 w= 883.10 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[  9] x= 866.81 y=  68.27 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 10] x=   0.00 y=  68.27 w= 866.81 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 11] x= 856.00 y= 102.40 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 12] x=   0.00 y= 102.40 w= 856.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 13] x= 848.40 y= 136.53 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 14] x=   0.00 y= 136.53 w= 848.40 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 15] x= 843.15 y= 170.67 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 16] x=   0.00 y= 170.67 w= 843.15 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 17] x= 839.82 y= 204.80 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 18] x=   0.00 y= 204.80 w= 839.82 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 19] x= 838.20 y= 238.93 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 20] x=   0.00 y= 238.93 w= 838.20 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 21] x= 838.20 y= 273.07 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 22] x=   0.00 y= 273.07 w= 838.20 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 23] x= 839.82 y= 307.20 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 24] x=   0.00 y= 307.20 w= 839.82 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 25] x= 843.15 y= 341.33 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 26] x=   0.00 y= 341.33 w= 843.15 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 27] x= 848.40 y= 375.47 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 28] x=   0.00 y= 375.47 w= 848.40 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 29] x= 856.00 y= 409.60 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 30] x=   0.00 y= 409.60 w= 856.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 31] x= 866.81 y= 443.73 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 32] x=   0.00 y= 443.73 w= 866.81 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 33] x= 883.10 y= 477.87 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 34] x=   0.00 y= 477.87 w= 883.10 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[138] x= 330.00 y=  96.00 w= 135.00 h=180.00 col=ffffffff  @0x474bd3,0x42ea94
+  MISSING  A[139] x= 465.00 y=  96.00 w= 135.00 h=180.00 col=ffffffff  @0x474d0c,0x42ea94
+  MISSING  A[140] x= 328.00 y=  94.00 w=   2.00 h=184.00 col=ff000000  @0x472db4,0x42eb43
+  MISSING  A[141] x= 328.00 y=  94.00 w= 274.00 h=  2.00 col=ff000000  @0x472db4,0x42eb65
+  MISSING  A[142] x= 328.00 y= 276.00 w= 274.00 h=  2.00 col=ff000000  @0x472db4,0x42eb7f
+  MISSING  A[143] x= 600.00 y=  94.00 w=   2.00 h=182.00 col=ff000000  @0x472db4,0x42ebb9
+  MISSING  A[144] x=  32.00 y= 300.00 w= 576.00 h= 96.00 col=aa000000  @0x472db4,0x436996
+  MISSING  A[165] x= 558.00 y= 372.00 w=  48.00 h= 48.00 col=ffffffff  @0x4739e7,0x43baee
+  EXTRA    B[  3] x= 384.00 y=   0.00 w= 128.00 h= 64.00 col=00000000/ff000000/00000000/ff000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[  4] x= 384.00 y= 416.00 w= 128.00 h= 64.00 col=00000000/ff000000/00000000/ff000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[  5] x= 384.00 y=   0.00 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[  6] x=   0.00 y=   0.00 w= 384.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[  7] x= 339.10 y=  34.13 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[  8] x=   0.00 y=  34.13 w= 339.10 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[  9] x= 322.81 y=  68.27 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 10] x=   0.00 y=  68.27 w= 322.81 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 11] x= 312.00 y= 102.40 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 12] x=   0.00 y= 102.40 w= 312.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 13] x= 304.40 y= 136.53 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 14] x=   0.00 y= 136.53 w= 304.40 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 15] x= 299.15 y= 170.67 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 16] x=   0.00 y= 170.67 w= 299.15 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 17] x= 295.82 y= 204.80 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 18] x=   0.00 y= 204.80 w= 295.82 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 19] x= 294.20 y= 238.93 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 20] x=   0.00 y= 238.93 w= 294.20 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 21] x= 294.20 y= 273.07 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 22] x=   0.00 y= 273.07 w= 294.20 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 23] x= 295.82 y= 307.20 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 24] x=   0.00 y= 307.20 w= 295.82 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 25] x= 299.15 y= 341.33 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 26] x=   0.00 y= 341.33 w= 299.15 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 27] x= 304.40 y= 375.47 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 28] x=   0.00 y= 375.47 w= 304.40 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 29] x= 312.00 y= 409.60 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 30] x=   0.00 y= 409.60 w= 312.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 31] x= 322.81 y= 443.73 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 32] x=   0.00 y= 443.73 w= 322.81 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 33] x= 339.10 y= 477.87 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 34] x=   0.00 y= 477.87 w= 339.10 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[162] x= 458.00 y= 147.00 w= 145.00 h=141.00 col=ffffffff tex=52 blend=1:5/6  @0xb7f58<HudIm2DQuad+0x188>,0x1ba6c<WinMain@16+0x1d2c>
+== orig24_f1 (A: 174 draws, x1.0) vs f201 (B: 163 draws, x1.0)
+   matched 127  mismatched 3  missing 44  extra 33
+  MISMATCH(moved)
+    A[150] x=  72.00 y= 316.00 w=  56.00 h= 56.00 col=ffffffff  @0x473c19,0x438247
+    B[143] x=  73.00 y= 309.00 w=  63.00 h= 63.00 col=ffffffff tex=45 blend=1:5/6  @0xb7f58<HudIm2DQuad+0x188>,0x1ba6c<WinMain@16+0x1d2c>
+  MISMATCH(moved)
+    A[151] x= 136.00 y= 316.00 w=  56.00 h= 56.00 col=ffffffff  @0x473c19,0x43827a
+    B[144] x= 137.00 y= 309.00 w=  63.00 h= 63.00 col=ffffffff tex=45 blend=1:5/6  @0xb7f58<HudIm2DQuad+0x188>,0x1ba6c<WinMain@16+0x1d2c>
+  MISMATCH(moved)
+    A[152] x= 200.00 y= 316.00 w=  56.00 h= 56.00 col=ffffffff  @0x473c19,0x4382ad
+    B[145] x= 201.00 y= 309.00 w=  63.00 h= 63.00 col=ffffffff tex=45 blend=1:5/6  @0xb7f58<HudIm2DQuad+0x188>,0x1ba6c<WinMain@16+0x1d2c>
+  MISSING  A[  3] x= 928.00 y=   0.00 w= 128.00 h= 64.00 col=00000000/ff000000/00000000/ff000000  @0x473532,0x473f6c
+  MISSING  A[  4] x= 928.00 y= 416.00 w= 128.00 h= 64.00 col=00000000/ff000000/00000000/ff000000  @0x473532,0x473f87
+  MISSING  A[  5] x= 928.00 y=   0.00 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[  6] x=   0.00 y=   0.00 w= 928.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[  7] x= 883.10 y=  34.13 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[  8] x=   0.00 y=  34.13 w= 883.10 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[  9] x= 866.81 y=  68.27 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 10] x=   0.00 y=  68.27 w= 866.81 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 11] x= 856.00 y= 102.40 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 12] x=   0.00 y= 102.40 w= 856.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 13] x= 848.40 y= 136.53 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 14] x=   0.00 y= 136.53 w= 848.40 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 15] x= 843.15 y= 170.67 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 16] x=   0.00 y= 170.67 w= 843.15 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 17] x= 839.82 y= 204.80 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 18] x=   0.00 y= 204.80 w= 839.82 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 19] x= 838.20 y= 238.93 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 20] x=   0.00 y= 238.93 w= 838.20 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 21] x= 838.20 y= 273.07 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 22] x=   0.00 y= 273.07 w= 838.20 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 23] x= 839.82 y= 307.20 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 24] x=   0.00 y= 307.20 w= 839.82 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 25] x= 843.15 y= 341.33 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 26] x=   0.00 y= 341.33 w= 843.15 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 27] x= 848.40 y= 375.47 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 28] x=   0.00 y= 375.47 w= 848.40 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 29] x= 856.00 y= 409.60 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 30] x=   0.00 y= 409.60 w= 856.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 31] x= 866.81 y= 443.73 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 32] x=   0.00 y= 443.73 w= 866.81 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 33] x= 883.10 y= 477.87 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 34] x=   0.00 y= 477.87 w= 883.10 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[138] x= 330.00 y=  96.00 w= 135.00 h=180.00 col=ffffffff  @0x474bd3,0x42ea94
+  MISSING  A[139] x= 465.00 y=  96.00 w= 135.00 h=180.00 col=ffffffff  @0x474d0c,0x42ea94
+  MISSING  A[140] x= 328.00 y=  94.00 w=   2.00 h=184.00 col=ff000000  @0x472db4,0x42eb43
+  MISSING  A[141] x= 328.00 y=  94.00 w= 274.00 h=  2.00 col=ff000000  @0x472db4,0x42eb65
+  MISSING  A[142] x= 328.00 y= 276.00 w= 274.00 h=  2.00 col=ff000000  @0x472db4,0x42eb7f
+  MISSING  A[143] x= 600.00 y=  94.00 w=   2.00 h=182.00 col=ff000000  @0x472db4,0x42ebb9
+  MISSING  A[144] x=  32.00 y= 300.00 w= 576.00 h= 96.00 col=aa000000  @0x472db4,0x436996
+  MISSING  A[165] x= 558.00 y= 372.00 w=  48.00 h= 48.00 col=ffffffff  @0x4739e7,0x43baee
+  EXTRA    B[  3] x= 384.00 y=   0.00 w= 128.00 h= 64.00 col=00000000/ff000000/00000000/ff000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[  4] x= 384.00 y= 416.00 w= 128.00 h= 64.00 col=00000000/ff000000/00000000/ff000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[  5] x= 384.00 y=   0.00 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[  6] x=   0.00 y=   0.00 w= 384.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[  7] x= 339.10 y=  34.13 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[  8] x=   0.00 y=  34.13 w= 339.10 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[  9] x= 322.81 y=  68.27 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 10] x=   0.00 y=  68.27 w= 322.81 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 11] x= 312.00 y= 102.40 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 12] x=   0.00 y= 102.40 w= 312.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 13] x= 304.40 y= 136.53 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 14] x=   0.00 y= 136.53 w= 304.40 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 15] x= 299.15 y= 170.67 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 16] x=   0.00 y= 170.67 w= 299.15 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 17] x= 295.82 y= 204.80 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 18] x=   0.00 y= 204.80 w= 295.82 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 19] x= 294.20 y= 238.93 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 20] x=   0.00 y= 238.93 w= 294.20 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 21] x= 294.20 y= 273.07 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 22] x=   0.00 y= 273.07 w= 294.20 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 23] x= 295.82 y= 307.20 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 24] x=   0.00 y= 307.20 w= 295.82 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 25] x= 299.15 y= 341.33 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 26] x=   0.00 y= 341.33 w= 299.15 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 27] x= 304.40 y= 375.47 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 28] x=   0.00 y= 375.47 w= 304.40 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 29] x= 312.00 y= 409.60 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 30] x=   0.00 y= 409.60 w= 312.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 31] x= 322.81 y= 443.73 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 32] x=   0.00 y= 443.73 w= 322.81 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 33] x= 339.10 y= 477.87 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 34] x=   0.00 y= 477.87 w= 339.10 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[162] x= 458.00 y= 147.00 w= 145.00 h=141.00 col=ffffffff tex=52 blend=1:5/6  @0xb7f58<HudIm2DQuad+0x188>,0x1ba6c<WinMain@16+0x1d2c>
+== orig24_f2 (A: 174 draws, x1.0) vs f202 (B: 163 draws, x1.0)
+   matched 127  mismatched 3  missing 44  extra 33
+  MISMATCH(moved)
+    A[150] x=  72.00 y= 316.00 w=  56.00 h= 56.00 col=ffffffff  @0x473c19,0x438247
+    B[143] x=  73.00 y= 309.00 w=  63.00 h= 63.00 col=ffffffff tex=45 blend=1:5/6  @0xb7f58<HudIm2DQuad+0x188>,0x1ba6c<WinMain@16+0x1d2c>
+  MISMATCH(moved)
+    A[151] x= 136.00 y= 316.00 w=  56.00 h= 56.00 col=ffffffff  @0x473c19,0x43827a
+    B[144] x= 137.00 y= 309.00 w=  63.00 h= 63.00 col=ffffffff tex=45 blend=1:5/6  @0xb7f58<HudIm2DQuad+0x188>,0x1ba6c<WinMain@16+0x1d2c>
+  MISMATCH(moved)
+    A[152] x= 200.00 y= 316.00 w=  56.00 h= 56.00 col=ffffffff  @0x473c19,0x4382ad
+    B[145] x= 201.00 y= 309.00 w=  63.00 h= 63.00 col=ffffffff tex=45 blend=1:5/6  @0xb7f58<HudIm2DQuad+0x188>,0x1ba6c<WinMain@16+0x1d2c>
+  MISSING  A[  3] x= 928.00 y=   0.00 w= 128.00 h= 64.00 col=00000000/ff000000/00000000/ff000000  @0x473532,0x473f6c
+  MISSING  A[  4] x= 928.00 y= 416.00 w= 128.00 h= 64.00 col=00000000/ff000000/00000000/ff000000  @0x473532,0x473f87
+  MISSING  A[  5] x= 928.00 y=   0.00 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[  6] x=   0.00 y=   0.00 w= 928.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[  7] x= 883.10 y=  34.13 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[  8] x=   0.00 y=  34.13 w= 883.10 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[  9] x= 866.81 y=  68.27 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 10] x=   0.00 y=  68.27 w= 866.81 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 11] x= 856.00 y= 102.40 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 12] x=   0.00 y= 102.40 w= 856.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 13] x= 848.40 y= 136.53 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 14] x=   0.00 y= 136.53 w= 848.40 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 15] x= 843.15 y= 170.67 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 16] x=   0.00 y= 170.67 w= 843.15 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 17] x= 839.82 y= 204.80 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 18] x=   0.00 y= 204.80 w= 839.82 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 19] x= 838.20 y= 238.93 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 20] x=   0.00 y= 238.93 w= 838.20 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 21] x= 838.20 y= 273.07 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 22] x=   0.00 y= 273.07 w= 838.20 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 23] x= 839.82 y= 307.20 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 24] x=   0.00 y= 307.20 w= 839.82 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 25] x= 843.15 y= 341.33 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 26] x=   0.00 y= 341.33 w= 843.15 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 27] x= 848.40 y= 375.47 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 28] x=   0.00 y= 375.47 w= 848.40 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 29] x= 856.00 y= 409.60 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 30] x=   0.00 y= 409.60 w= 856.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 31] x= 866.81 y= 443.73 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 32] x=   0.00 y= 443.73 w= 866.81 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 33] x= 883.10 y= 477.87 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 34] x=   0.00 y= 477.87 w= 883.10 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[138] x= 330.00 y=  96.00 w= 135.00 h=180.00 col=ffffffff  @0x474bd3,0x42ea94
+  MISSING  A[139] x= 465.00 y=  96.00 w= 135.00 h=180.00 col=ffffffff  @0x474d0c,0x42ea94
+  MISSING  A[140] x= 328.00 y=  94.00 w=   2.00 h=184.00 col=ff000000  @0x472db4,0x42eb43
+  MISSING  A[141] x= 328.00 y=  94.00 w= 274.00 h=  2.00 col=ff000000  @0x472db4,0x42eb65
+  MISSING  A[142] x= 328.00 y= 276.00 w= 274.00 h=  2.00 col=ff000000  @0x472db4,0x42eb7f
+  MISSING  A[143] x= 600.00 y=  94.00 w=   2.00 h=182.00 col=ff000000  @0x472db4,0x42ebb9
+  MISSING  A[144] x=  32.00 y= 300.00 w= 576.00 h= 96.00 col=aa000000  @0x472db4,0x436996
+  MISSING  A[165] x= 558.00 y= 372.00 w=  48.00 h= 48.00 col=ffffffff  @0x4739e7,0x43baee
+  EXTRA    B[  3] x= 384.00 y=   0.00 w= 128.00 h= 64.00 col=00000000/ff000000/00000000/ff000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[  4] x= 384.00 y= 416.00 w= 128.00 h= 64.00 col=00000000/ff000000/00000000/ff000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[  5] x= 384.00 y=   0.00 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[  6] x=   0.00 y=   0.00 w= 384.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[  7] x= 339.10 y=  34.13 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[  8] x=   0.00 y=  34.13 w= 339.10 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[  9] x= 322.81 y=  68.27 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 10] x=   0.00 y=  68.27 w= 322.81 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 11] x= 312.00 y= 102.40 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 12] x=   0.00 y= 102.40 w= 312.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 13] x= 304.40 y= 136.53 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 14] x=   0.00 y= 136.53 w= 304.40 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 15] x= 299.15 y= 170.67 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 16] x=   0.00 y= 170.67 w= 299.15 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 17] x= 295.82 y= 204.80 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 18] x=   0.00 y= 204.80 w= 295.82 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 19] x= 294.20 y= 238.93 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 20] x=   0.00 y= 238.93 w= 294.20 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 21] x= 294.20 y= 273.07 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 22] x=   0.00 y= 273.07 w= 294.20 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 23] x= 295.82 y= 307.20 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 24] x=   0.00 y= 307.20 w= 295.82 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 25] x= 299.15 y= 341.33 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 26] x=   0.00 y= 341.33 w= 299.15 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 27] x= 304.40 y= 375.47 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 28] x=   0.00 y= 375.47 w= 304.40 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 29] x= 312.00 y= 409.60 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 30] x=   0.00 y= 409.60 w= 312.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 31] x= 322.81 y= 443.73 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 32] x=   0.00 y= 443.73 w= 322.81 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 33] x= 339.10 y= 477.87 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 34] x=   0.00 y= 477.87 w= 339.10 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[162] x= 458.00 y= 147.00 w= 145.00 h=141.00 col=ffffffff tex=52 blend=1:5/6  @0xb7f58<HudIm2DQuad+0x188>,0x1ba6c<WinMain@16+0x1d2c>
+== orig24_f3 (A: 174 draws, x1.0) vs f203 (B: 163 draws, x1.0)
+   matched 127  mismatched 3  missing 44  extra 33
+  MISMATCH(moved)
+    A[150] x=  72.00 y= 316.00 w=  56.00 h= 56.00 col=ffffffff  @0x473c19,0x438247
+    B[143] x=  73.00 y= 309.00 w=  63.00 h= 63.00 col=ffffffff tex=45 blend=1:5/6  @0xb7f58<HudIm2DQuad+0x188>,0x1ba6c<WinMain@16+0x1d2c>
+  MISMATCH(moved)
+    A[151] x= 136.00 y= 316.00 w=  56.00 h= 56.00 col=ffffffff  @0x473c19,0x43827a
+    B[144] x= 137.00 y= 309.00 w=  63.00 h= 63.00 col=ffffffff tex=45 blend=1:5/6  @0xb7f58<HudIm2DQuad+0x188>,0x1ba6c<WinMain@16+0x1d2c>
+  MISMATCH(moved)
+    A[152] x= 200.00 y= 316.00 w=  56.00 h= 56.00 col=ffffffff  @0x473c19,0x4382ad
+    B[145] x= 201.00 y= 309.00 w=  63.00 h= 63.00 col=ffffffff tex=45 blend=1:5/6  @0xb7f58<HudIm2DQuad+0x188>,0x1ba6c<WinMain@16+0x1d2c>
+  MISSING  A[  3] x= 928.00 y=   0.00 w= 128.00 h= 64.00 col=00000000/ff000000/00000000/ff000000  @0x473532,0x473f6c
+  MISSING  A[  4] x= 928.00 y= 416.00 w= 128.00 h= 64.00 col=00000000/ff000000/00000000/ff000000  @0x473532,0x473f87
+  MISSING  A[  5] x= 928.00 y=   0.00 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[  6] x=   0.00 y=   0.00 w= 928.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[  7] x= 883.10 y=  34.13 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[  8] x=   0.00 y=  34.13 w= 883.10 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[  9] x= 866.81 y=  68.27 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 10] x=   0.00 y=  68.27 w= 866.81 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 11] x= 856.00 y= 102.40 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 12] x=   0.00 y= 102.40 w= 856.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 13] x= 848.40 y= 136.53 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 14] x=   0.00 y= 136.53 w= 848.40 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 15] x= 843.15 y= 170.67 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 16] x=   0.00 y= 170.67 w= 843.15 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 17] x= 839.82 y= 204.80 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 18] x=   0.00 y= 204.80 w= 839.82 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 19] x= 838.20 y= 238.93 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 20] x=   0.00 y= 238.93 w= 838.20 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 21] x= 838.20 y= 273.07 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 22] x=   0.00 y= 273.07 w= 838.20 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 23] x= 839.82 y= 307.20 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 24] x=   0.00 y= 307.20 w= 839.82 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 25] x= 843.15 y= 341.33 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 26] x=   0.00 y= 341.33 w= 843.15 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 27] x= 848.40 y= 375.47 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 28] x=   0.00 y= 375.47 w= 848.40 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 29] x= 856.00 y= 409.60 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 30] x=   0.00 y= 409.60 w= 856.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 31] x= 866.81 y= 443.73 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 32] x=   0.00 y= 443.73 w= 866.81 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[ 33] x= 883.10 y= 477.87 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISSING  A[ 34] x=   0.00 y= 477.87 w= 883.10 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISSING  A[138] x= 330.00 y=  96.00 w= 135.00 h=180.00 col=ffffffff  @0x474bd3,0x42ea94
+  MISSING  A[139] x= 465.00 y=  96.00 w= 135.00 h=180.00 col=ffffffff  @0x474d0c,0x42ea94
+  MISSING  A[140] x= 328.00 y=  94.00 w=   2.00 h=184.00 col=ff000000  @0x472db4,0x42eb43
+  MISSING  A[141] x= 328.00 y=  94.00 w= 274.00 h=  2.00 col=ff000000  @0x472db4,0x42eb65
+  MISSING  A[142] x= 328.00 y= 276.00 w= 274.00 h=  2.00 col=ff000000  @0x472db4,0x42eb7f
+  MISSING  A[143] x= 600.00 y=  94.00 w=   2.00 h=182.00 col=ff000000  @0x472db4,0x42ebb9
+  MISSING  A[144] x=  32.00 y= 300.00 w= 576.00 h= 96.00 col=aa000000  @0x472db4,0x436996
+  MISSING  A[165] x= 558.00 y= 372.00 w=  48.00 h= 48.00 col=ffffffff  @0x4739e7,0x43baee
+  EXTRA    B[  3] x= 384.00 y=   0.00 w= 128.00 h= 64.00 col=00000000/ff000000/00000000/ff000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[  4] x= 384.00 y= 416.00 w= 128.00 h= 64.00 col=00000000/ff000000/00000000/ff000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[  5] x= 384.00 y=   0.00 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[  6] x=   0.00 y=   0.00 w= 384.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[  7] x= 339.10 y=  34.13 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[  8] x=   0.00 y=  34.13 w= 339.10 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[  9] x= 322.81 y=  68.27 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 10] x=   0.00 y=  68.27 w= 322.81 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 11] x= 312.00 y= 102.40 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 12] x=   0.00 y= 102.40 w= 312.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 13] x= 304.40 y= 136.53 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 14] x=   0.00 y= 136.53 w= 304.40 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 15] x= 299.15 y= 170.67 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 16] x=   0.00 y= 170.67 w= 299.15 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 17] x= 295.82 y= 204.80 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 18] x=   0.00 y= 204.80 w= 295.82 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 19] x= 294.20 y= 238.93 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 20] x=   0.00 y= 238.93 w= 294.20 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 21] x= 294.20 y= 273.07 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 22] x=   0.00 y= 273.07 w= 294.20 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 23] x= 295.82 y= 307.20 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 24] x=   0.00 y= 307.20 w= 295.82 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 25] x= 299.15 y= 341.33 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 26] x=   0.00 y= 341.33 w= 299.15 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 27] x= 304.40 y= 375.47 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 28] x=   0.00 y= 375.47 w= 304.40 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 29] x= 312.00 y= 409.60 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 30] x=   0.00 y= 409.60 w= 312.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 31] x= 322.81 y= 443.73 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 32] x=   0.00 y= 443.73 w= 322.81 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 33] x= 339.10 y= 477.87 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000 tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[ 34] x=   0.00 y= 477.87 w= 339.10 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff tex=0 blend=1:5/6  @0xb7bf1<?A0xb665cd3f::LogoGradientQuadPx+0x161>,0x10f28<?A0x6e9f7f4d::RenderFrame+0x2c98>
+  EXTRA    B[162] x= 458.00 y= 147.00 w= 145.00 h=141.00 col=ffffffff tex=52 blend=1:5/6  @0xb7f58<HudIm2DQuad+0x188>,0x1ba6c<WinMain@16+0x1d2c>
+-> verify/scr19_parity_20261012/text3/diff_s24_a_anim4.json
+VERDICT: RED (match=508 mismatch=12 missing=176 extra=132)

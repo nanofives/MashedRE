@@ -1,0 +1,90 @@
+0x00496010: call    0x495e80
+0x00496015: push    0x1120
+0x0049601a: push    0x771e88
+0x0049601f: call    0x4b6520
+0x00496024: xor     eax, eax
+0x00496026: add     esp, 8
+0x00496029: mov     dword ptr [0x772fac], eax  ; [0x00772fac] BSS
+0x0049602e: mov     dword ptr [0x771e80], eax  ; [0x00771e80] BSS
+0x00496033: mov     dword ptr [0x772fa8], eax  ; [0x00772fa8] BSS
+0x00496038: mov     dword ptr [0x772fb0], eax  ; [0x00772fb0] BSS
+0x0049603d: ret     
+0x0049603e: nop     
+0x0049603f: nop     
+0x00496040: push    esi
+0x00496041: push    0x5cffbc
+0x00496046: call    0x4987b0
+0x0049604b: add     esp, 4
+0x0049604e: call    0x495520
+0x00496053: mov     esi, dword ptr [eax]
+0x00496055: push    1
+0x00496057: push    0x772fac
+0x0049605c: push    0x495ee0
+0x00496061: push    4
+0x00496063: call    0x495520
+0x00496068: push    eax
+0x00496069: call    dword ptr [esi + 0x10]
+0x0049606c: test    eax, eax
+0x0049606e: pop     esi
+0x0049606f: jge     0x496081
+0x00496071: push    0x5cfeac
+0x00496076: call    0x4987b0
+0x0049607b: add     esp, 4
+0x0049607e: xor     eax, eax
+0x00496080: ret     
+0x00496081: mov     eax, dword ptr [0x772fac]  ; [0x00772fac] BSS
+0x00496086: push    eax
+0x00496087: push    0x5cffa8
+0x0049608c: call    0x4987b0
+0x00496091: add     esp, 8
+0x00496094: mov     eax, 1
+0x00496099: ret     
+0x0049609a: nop     
+0x0049609b: nop     
+0x0049609c: nop     
+0x0049609d: nop     
+0x0049609e: nop     
+0x0049609f: nop     
+0x004960a0: call    0x495520
+0x004960a5: mov     eax, dword ptr [esp + 4]
+0x004960a9: mov     dword ptr [0x772fb0], eax  ; [0x00772fb0] BSS
+0x004960ae: call    0x496040
+0x004960b3: test    eax, eax
+0x004960b5: jne     0x4960b8
+0x004960b7: ret     
+0x004960b8: mov     dword ptr [0x771e80], 0x10  ; [0x00771e80] BSS
+0x004960c2: mov     dword ptr [0x772fa8], 0x3eb33333  ; [0x00772fa8] BSS
+0x004960cc: mov     eax, 1
+0x004960d1: ret     
+0x004960d2: nop     
+0x004960d3: nop     
+0x004960d4: nop     
+0x004960d5: nop     
+0x004960d6: nop     
+0x004960d7: nop     
+0x004960d8: nop     
+0x004960d9: nop     
+0x004960da: nop     
+0x004960db: nop     
+0x004960dc: nop     
+0x004960dd: nop     
+0x004960de: nop     
+0x004960df: nop     
+0x004960e0: mov     eax, dword ptr [0x772fb8]  ; [0x00772fb8] BSS
+0x004960e5: test    eax, eax
+0x004960e7: je      0x4960fd
+0x004960e9: mov     ecx, dword ptr [esp + 4]
+0x004960ed: test    ecx, ecx
+0x004960ef: push    eax
+0x004960f0: je      0x4960f8
+0x004960f2: mov     ecx, dword ptr [eax]
+0x004960f4: call    dword ptr [ecx + 0x1c]
+0x004960f7: ret     
+0x004960f8: mov     edx, dword ptr [eax]
+0x004960fa: call    dword ptr [edx + 0x20]
+0x004960fd: ret     
+0x004960fe: nop     
+0x004960ff: nop     
+0x00496100: sub     esp, 0x118
+0x00496106: mov     eax, dword ptr [0x616038]  ; [0x00616038] dw 0xbb40e64e f -0.00294341473 d 8.28209259e-310
+0x0049610b: xor     eax, dword ptr [esp + 0x118]

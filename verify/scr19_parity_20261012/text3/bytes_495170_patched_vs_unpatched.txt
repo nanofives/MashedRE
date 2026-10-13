@@ -1,0 +1,112 @@
+== original/MASHED.exe.unpatched
+0x00495170: mov eax, dword ptr [0x7719e8]
+0x00495175: add esp, 8
+0x00495178: cmp eax, 5
+0x0049517b: ja 0x4951a7
+0x0049517d: jmp dword ptr [eax*4 + 0x4951c8]
+0x00495184: mov eax, 2
+0x00495189: jmp 0x4951a9
+0x0049518b: mov eax, 3
+0x00495190: jmp 0x4951a9
+0x00495192: mov eax, 4
+0x00495197: jmp 0x4951a9
+0x00495199: mov eax, 5
+0x0049519e: jmp 0x4951a9
+0x004951a0: mov eax, 1
+0x004951a5: jmp 0x4951a9
+0x004951a7: xor eax, eax
+0x004951a9: push eax
+0x004951aa: mov eax, dword ptr [0x6147c0]
+0x004951af: push eax
+0x004951b0: call 0x498510
+0x004951b5: mov ecx, dword ptr [0x7719e4]
+0x004951bb: xor eax, eax
+0x004951bd: add esp, 8
+0x004951c0: test ecx, ecx
+0x004951c2: sete al
+0x004951c5: ret 
+0x004951c6: mov edi, edi
+0x004951c8: cmpsd dword ptr [esi], dword ptr es:[edi]
+0x004951c9: push ecx
+0x004951ca: dec ecx
+0x004951cb: add byte ptr [ecx + edx*2 + 0x518b0049], al
+0x004951d2: dec ecx
+0x004951d3: add byte ptr [edx - 0x66ffb6af], dl
+0x004951d9: push ecx
+0x004951da: dec ecx
+0x004951db: add byte ptr [eax - 0x16ffb6af], ah
+0x004951e1: wait 
+0x004951e2: add eax, 0x90900000
+0x004951e7: nop 
+0x004951e8: nop 
+0x004951e9: nop 
+0x004951ea: nop 
+0x004951eb: nop 
+0x004951ec: nop 
+0x004951ed: nop 
+0x004951ee: nop 
+0x004951ef: nop 
+0x004951f0: mov eax, dword ptr [0x6147bc]
+0x004951f5: push eax
+0x004951f6: call 0x499400
+0x004951fb: add esp, 4
+0x004951fe: test eax, eax
+== original/MASHED.exe
+0x00495170: mov eax, dword ptr [0x7719e8]
+0x00495175: add esp, 8
+0x00495178: cmp eax, 5
+0x0049517b: ja 0x4951a7
+0x0049517d: jmp dword ptr [eax*4 + 0x4951c8]
+0x00495184: mov eax, 2
+0x00495189: jmp 0x4951a9
+0x0049518b: mov eax, 3
+0x00495190: jmp 0x4951a9
+0x00495192: mov eax, 4
+0x00495197: jmp 0x4951a9
+0x00495199: mov eax, 5
+0x0049519e: jmp 0x4951a9
+0x004951a0: mov eax, 1
+0x004951a5: jmp 0x4951a9
+0x004951a7: xor eax, eax
+0x004951a9: push eax
+0x004951aa: xor eax, eax
+0x004951ac: nop 
+0x004951ad: nop 
+0x004951ae: nop 
+0x004951af: push eax
+0x004951b0: call 0x498510
+0x004951b5: mov ecx, dword ptr [0x7719e4]
+0x004951bb: xor eax, eax
+0x004951bd: add esp, 8
+0x004951c0: test ecx, ecx
+0x004951c2: sete al
+0x004951c5: ret 
+0x004951c6: mov edi, edi
+0x004951c8: cmpsd dword ptr [esi], dword ptr es:[edi]
+0x004951c9: push ecx
+0x004951ca: dec ecx
+0x004951cb: add byte ptr [ecx + edx*2 + 0x518b0049], al
+0x004951d2: dec ecx
+0x004951d3: add byte ptr [edx - 0x66ffb6af], dl
+0x004951d9: push ecx
+0x004951da: dec ecx
+0x004951db: add byte ptr [eax - 0x16ffb6af], ah
+0x004951e1: wait 
+0x004951e2: add eax, 0x90900000
+0x004951e7: nop 
+0x004951e8: nop 
+0x004951e9: nop 
+0x004951ea: nop 
+0x004951eb: nop 
+0x004951ec: nop 
+0x004951ed: nop 
+0x004951ee: nop 
+0x004951ef: nop 
+0x004951f0: xor eax, eax
+0x004951f2: nop 
+0x004951f3: nop 
+0x004951f4: nop 
+0x004951f5: push eax
+0x004951f6: call 0x499400
+0x004951fb: add esp, 4
+0x004951fe: test eax, eax

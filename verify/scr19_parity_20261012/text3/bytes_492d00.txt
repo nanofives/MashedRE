@@ -1,0 +1,16 @@
+0x00492d00: add     al, 0x2c
+0x00492d02: dec     ecx
+0x00492d03: add     byte ptr [eax - 0x6f6f6f70], dl
+0x00492d09: nop     
+0x00492d0a: nop     
+0x00492d0b: nop     
+0x00492d0c: nop     
+0x00492d0d: nop     
+0x00492d0e: nop     
+0x00492d0f: nop     
+0x00492d10: mov     eax, dword ptr [0x771968]  ; [0x00771968] BSS
+0x00492d15: ret     
+0x00492d16: nop     
+0x00492d17: nop     
+0x00492d18: nop     
+0x00492d19: nop     

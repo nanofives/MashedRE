@@ -1,0 +1,14 @@
+0x004953a0: push    eax
+0x004953a1: lea     ecx, [esp + 0x38]
+0x004953a5: push    ecx
+0x004953a6: call    0x493f80
+0x004953ab: mov     ebp, dword ptr [0x5cc034]  ; [0x005cc034] dw 0x001e8494 f 2.80262495e-39 d 4.244051e-308
+0x004953b1: add     esp, 0x14
+0x004953b4: xor     edi, edi
+0x004953b6: push    edi
+0x004953b7: call    0x4671a0
+0x004953bc: mov     esi, eax
+0x004953be: call    0x492d20
+0x004953c3: push    edi
+0x004953c4: call    0x494480
+0x004953c9: add     esp, 8

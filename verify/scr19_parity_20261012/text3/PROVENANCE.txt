@@ -1,0 +1,57 @@
+text3: screen 18/24 arrow draw order (Part A) + screen-4 row count (Part B), 2026-10-13, claude-opus-5-5 (account2)
+Worktree .worktrees/text3, branch work/text3, parent f1959b30.
+Note: re/analysis/negctl/session_20261012b/text3_RESULT.md
+
+BUILDS (PowerShell, $env:MASHED_NO_DEPLOY='1'; cmd /c "mashedmod\build.bat", "=== Build OK ===", asi NOT deployed;
+  mashedmod/build/ is gitignored, the exes are not committed)
+  base : HEAD f1959b30 (Part A diff saved, file checked out, built, diff re-applied with git apply)
+         -> mashedmod\build\mashed_re_base.exe/.map  SHA-256 7DE681CE141F171CFBF5A220E631EC8887BC0B5D576081A30A31EB3ACDBDEFD7
+  a    : Part A -> mashed_re_a.exe/.map              SHA-256 6F00C969A8AF79180B9BD25266A1DE64867CC4ABF574173F7F231EA8A98A8CB0
+
+PART A BYTES (../scr32_texty_recheck/mdis.py, original\MASHED.exe.unpatched; scratch xref scanners not committed)
+  bytes_43c5b0_head.txt  FUN_0043c5b0 head: backdrop 0x0043c673 (FUN_0042e5b0), header 0x0043c67b (FUN_0042e3a0)
+  bytes_43d200.txt       FUN_0043c5b0 record loop tail 0x0043d266, then 0x0043d26c call FUN_0043bf30
+  bytes_43bf00.txt       FUN_0043bf30 flag-gated overlay calls, FUN_0043af10 at 0x0043bf63 ([0x0067e7f0])
+  bytes_43af10_full.txt  FUN_0043af10: FUN_004368e0 at 0x0043af8e, rows 0x0043b1bc.., power-ups, vehicle 0x0043bcf3
+  bytes_4368e0.txt / bytes_4368e0_full.txt  FUN_004368e0: frame 0x00436921, box 0x00436991, divider 0x004369d3,
+                         jump table 0x00436a9b, car icons 0x00438144.., vs 0x00438242..
+  bytes_42f0c0.txt       FUN_0042f0c0 (gated on [0x0067e7b0], not the preview path)
+
+ORIGINAL (original\MASHED.exe, re/frida/menu_draw_burst.py spawns its own PID, MASHED_RE_NO_AUTO_HOOK=1, kills it by PID)
+  py -3.12 re/frida/menu_draw_burst.py --screen 18 --frames 4 --settle 6 --text-trace --label orig18 --out dl_orig18.json
+  py -3.12 re/frida/menu_draw_burst.py --screen 24 --frames 4 --settle 6 --text-trace --label orig24 --out dl_orig24.json
+  2/2 first attempt, no piz-collision re-runs. Run while no other MASHED of this session was up.
+
+STANDALONE (inline PowerShell runner, same env as ../scr32_texty_recheck/run_sa.ps1: MASHED_GOTO=<S>,
+  MASHED_SETTINGS_DEFAULTS=1, MASHED_DBG_DRAWSTREAM=200:203, MASHED_WIN_POS=primary-bl, MASHED_DBG_MEASURE=1;
+  one PID at a time, each killed by its own PID; no mashed_re_settings.bin in the worktree, the repo-root one untouched.)
+  sa{18,24}_{base,a}.json; sweep/sa<S>_{base,a}.json for S = 0..33 except 27 (66/66, sweep/sweep_runs.txt)
+
+CHECKS (Part A)
+  re/tools/drawlist_diff.py dl_orig<S>.json sa<S>_<b>.json --scale-b 1 --exclude-tex 9 --rotate-a 0x42e65a
+     --map mashedmod/build/mashed_re_<b>.map [--tol-anim 4 | (strict) | --tol-pos 0.01 --tol-size 0.01]
+     --json diff_s<S>_<b>_<tol>.json       (exit 1 = the tool's RED status)
+  ../text2/s18sum.py <diff.json> --map <map> -> drawlist_partA.txt (fresh text3 originals)
+                                             -> drawlist_partA_t2orig.txt (same, against ../text2/dl_orig{18,24}.json)
+  sweep/: ../../scr32_texty_recheck/recheck_quad_diff.py orig_frame<S>.json sa<S>_base.json sa<S>_a.json --json quad_<S>.json
+          -> quad_diff_sweep.txt, aggregate_sites.py -> sites_table.md, ../../scr32_texty_sites/ds_compare.py -> ds_compare_all.txt,
+          inline record-multiset compare -> multiset_base_vs_a.txt,
+          drawlist_diff vs ../../scr32_texty_recheck/dl_orig{19a,19b,30,32}.json + ../../scr32_fix/sumdiff32.py -> drawlist_summary.txt
+
+PART B
+  BUILD b : Part A + B -> mashed_re_b.exe/.map  SHA-256 7B4EF2626540917D6F04DCF9A246A26876D368A94765FFC0A3128F4C913486AE
+  BYTES   bytes_4967c0.txt (FUN_004967e0 writer, FUN_00496910/20/30 readers), bytes_497450.txt + bytes_49745c.txt
+          (FUN_00497450, FUN_00497470 dialog writer), bytes_4975e0.txt (dialog init loop, reads only),
+          bytes_497ae0.txt, bytes_4971b0.txt (contcfg loader/saver), bytes_498510.txt + bytes_498590.txt
+          (FUN_00498510 slot defaults + contcfg merge), bytes_slot_sites.txt (computed-base slot sites),
+          bytes_495790.txt, bytes_495fe0.txt (poll), bytes_496010.txt (zero + EnumDevices), bytes_495ee0.txt
+          (callback), bytes_495170_patched_vs_unpatched.txt (skip_controller_dialog site), bytes_492290.txt /
+          bytes_492d1b.txt / bytes_4953a0.txt / bytes_429280.txt (FUN_004967e0 call sites)
+          xref_772f00_773100.txt, xref_7e9400_7ea000.txt: every .text imm32/disp32 in those ranges (scratch scanner
+          xref_range.py, not committed; misaligned decodes such as sbb/adc/or with these immediates are noise)
+  LIVE    probe_devcount.py live/devcount_boot<k>.json --wait 15, k = 1..3: own PID each (29896, 42072, 41220),
+          Memory reads only, killed by PID. No contcfg*.bin in original\ (Get-ChildItem, none).
+  STANDALONE sweep/sa<S>_b.json, S = 0..33 except 27 (33/33, sweep/sweep_runs_b.txt; each line carries the
+          standalone's 'input slots:' log line)
+  CHECKS  (from sweep/) recheck_quad_diff.py orig_frame<S>.json sa<S>_a.json sa<S>_b.json --json partB/quad_<S>.json
+          -> partB/quad_diff_sweep.txt, aggregate_sites.py -> partB/sites_table.md, inline multiset -> partB/multiset_a_vs_b.txt

@@ -1,0 +1,276 @@
+=== s18 base_anim4
+orig18_f0|f200: matched=68 plate/arrow RED=18 | extra:other=27, extra:region=6, mismatched:arrow=12, mismatched:checker=39, mismatched:other=4, missing:other=48
+  [arrow ] mismatched reordered x=310.000 y=116.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x473c19,0x43b3e3
+                       B: x=310.000 y=116.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=227.000 y=116.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x4739e7,0x43b595
+                       B: x=227.000 y=116.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=310.000 y=146.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x473c19,0x43b3e3
+                       B: x=310.000 y=146.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=245.000 y=146.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x4739e7,0x43b595
+                       B: x=245.000 y=146.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=310.000 y=176.000 w=12.000 h=12.000 col=30000000/30000000/30000000/30000000 ret=0x473c19,0x43b3e3
+                       B: x=310.000 y=176.000 w=12.000 h=12.000 col=30000000/30000000/30000000/30000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=272.000 y=176.000 w=12.000 h=12.000 col=30000000/30000000/30000000/30000000 ret=0x4739e7,0x43b595
+                       B: x=272.000 y=176.000 w=12.000 h=12.000 col=30000000/30000000/30000000/30000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=310.000 y=206.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x473c19,0x43b3e3
+                       B: x=310.000 y=206.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=196.000 y=206.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x4739e7,0x43b595
+                       B: x=196.000 y=206.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=310.000 y=236.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x473c19,0x43b3e3
+                       B: x=310.000 y=236.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=272.000 y=236.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x4739e7,0x43b595
+                       B: x=272.000 y=236.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=310.000 y=266.000 w=12.000 h=12.000 col=30000000/30000000/30000000/30000000 ret=0x473c19,0x43b3e3
+                       B: x=310.000 y=266.000 w=12.000 h=12.000 col=30000000/30000000/30000000/30000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=203.000 y=266.000 w=12.000 h=12.000 col=30000000/30000000/30000000/30000000 ret=0x4739e7,0x43b595
+                       B: x=203.000 y=266.000 w=12.000 h=12.000 col=30000000/30000000/30000000/30000000 ret=0xb7f18,0x1ba2c
+  [region] extra       x=312.000 y=102.400 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bb1,0x10f28
+  [region] extra       x=304.401 y=136.533 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bb1,0x10f28
+  [region] extra       x=299.147 y=170.667 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bb1,0x10f28
+  [region] extra       x=295.818 y=204.800 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bb1,0x10f28
+  [region] extra       x=294.200 y=238.933 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bb1,0x10f28
+  [region] extra       x=294.200 y=273.067 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bb1,0x10f28
+orig18_f1|f201: matched=68 plate/arrow RED=18 | extra:other=27, extra:region=6, mismatched:arrow=12, mismatched:checker=39, mismatched:other=4, missing:other=48
+orig18_f2|f202: matched=68 plate/arrow RED=18 | extra:other=27, extra:region=6, mismatched:arrow=12, mismatched:checker=39, mismatched:other=4, missing:other=48
+orig18_f3|f203: matched=69 plate/arrow RED=18 | extra:other=27, extra:region=6, mismatched:arrow=12, mismatched:checker=38, mismatched:other=4, missing:other=48
+=== s18 base_strict
+orig18_f0|f200: matched=65 plate/arrow RED=18 | extra:other=27, extra:region=6, mismatched:arrow=12, mismatched:checker=42, mismatched:other=4, missing:other=48
+  [arrow ] mismatched reordered x=310.000 y=116.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x473c19,0x43b3e3
+                       B: x=310.000 y=116.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=227.000 y=116.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x4739e7,0x43b595
+                       B: x=227.000 y=116.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=310.000 y=146.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x473c19,0x43b3e3
+                       B: x=310.000 y=146.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=245.000 y=146.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x4739e7,0x43b595
+                       B: x=245.000 y=146.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=310.000 y=176.000 w=12.000 h=12.000 col=30000000/30000000/30000000/30000000 ret=0x473c19,0x43b3e3
+                       B: x=310.000 y=176.000 w=12.000 h=12.000 col=30000000/30000000/30000000/30000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=272.000 y=176.000 w=12.000 h=12.000 col=30000000/30000000/30000000/30000000 ret=0x4739e7,0x43b595
+                       B: x=272.000 y=176.000 w=12.000 h=12.000 col=30000000/30000000/30000000/30000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=310.000 y=206.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x473c19,0x43b3e3
+                       B: x=310.000 y=206.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=196.000 y=206.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x4739e7,0x43b595
+                       B: x=196.000 y=206.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=310.000 y=236.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x473c19,0x43b3e3
+                       B: x=310.000 y=236.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=272.000 y=236.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x4739e7,0x43b595
+                       B: x=272.000 y=236.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=310.000 y=266.000 w=12.000 h=12.000 col=30000000/30000000/30000000/30000000 ret=0x473c19,0x43b3e3
+                       B: x=310.000 y=266.000 w=12.000 h=12.000 col=30000000/30000000/30000000/30000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=203.000 y=266.000 w=12.000 h=12.000 col=30000000/30000000/30000000/30000000 ret=0x4739e7,0x43b595
+                       B: x=203.000 y=266.000 w=12.000 h=12.000 col=30000000/30000000/30000000/30000000 ret=0xb7f18,0x1ba2c
+  [region] extra       x=312.000 y=102.400 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bb1,0x10f28
+  [region] extra       x=304.401 y=136.533 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bb1,0x10f28
+  [region] extra       x=299.147 y=170.667 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bb1,0x10f28
+  [region] extra       x=295.818 y=204.800 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bb1,0x10f28
+  [region] extra       x=294.200 y=238.933 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bb1,0x10f28
+  [region] extra       x=294.200 y=273.067 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bb1,0x10f28
+orig18_f1|f201: matched=65 plate/arrow RED=18 | extra:other=27, extra:region=6, mismatched:arrow=12, mismatched:checker=42, mismatched:other=4, missing:other=48
+orig18_f2|f202: matched=65 plate/arrow RED=18 | extra:other=27, extra:region=6, mismatched:arrow=12, mismatched:checker=42, mismatched:other=4, missing:other=48
+orig18_f3|f203: matched=65 plate/arrow RED=18 | extra:other=27, extra:region=6, mismatched:arrow=12, mismatched:checker=42, mismatched:other=4, missing:other=48
+=== s18 base_tol001
+orig18_f0|f200: matched=64 plate/arrow RED=18 | extra:checker=42, extra:other=32, extra:region=6, mismatched:arrow=12, missing:checker=42, missing:other=53
+  [arrow ] mismatched reordered x=310.000 y=116.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x473c19,0x43b3e3
+                       B: x=310.000 y=116.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=227.000 y=116.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x4739e7,0x43b595
+                       B: x=227.000 y=116.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=310.000 y=146.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x473c19,0x43b3e3
+                       B: x=310.000 y=146.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=245.000 y=146.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x4739e7,0x43b595
+                       B: x=245.000 y=146.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=310.000 y=176.000 w=12.000 h=12.000 col=30000000/30000000/30000000/30000000 ret=0x473c19,0x43b3e3
+                       B: x=310.000 y=176.000 w=12.000 h=12.000 col=30000000/30000000/30000000/30000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=272.000 y=176.000 w=12.000 h=12.000 col=30000000/30000000/30000000/30000000 ret=0x4739e7,0x43b595
+                       B: x=272.000 y=176.000 w=12.000 h=12.000 col=30000000/30000000/30000000/30000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=310.000 y=206.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x473c19,0x43b3e3
+                       B: x=310.000 y=206.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=196.000 y=206.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x4739e7,0x43b595
+                       B: x=196.000 y=206.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=310.000 y=236.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x473c19,0x43b3e3
+                       B: x=310.000 y=236.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=272.000 y=236.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x4739e7,0x43b595
+                       B: x=272.000 y=236.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=310.000 y=266.000 w=12.000 h=12.000 col=30000000/30000000/30000000/30000000 ret=0x473c19,0x43b3e3
+                       B: x=310.000 y=266.000 w=12.000 h=12.000 col=30000000/30000000/30000000/30000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=203.000 y=266.000 w=12.000 h=12.000 col=30000000/30000000/30000000/30000000 ret=0x4739e7,0x43b595
+                       B: x=203.000 y=266.000 w=12.000 h=12.000 col=30000000/30000000/30000000/30000000 ret=0xb7f18,0x1ba2c
+  [region] extra       x=312.000 y=102.400 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bb1,0x10f28
+  [region] extra       x=304.401 y=136.533 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bb1,0x10f28
+  [region] extra       x=299.147 y=170.667 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bb1,0x10f28
+  [region] extra       x=295.818 y=204.800 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bb1,0x10f28
+  [region] extra       x=294.200 y=238.933 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bb1,0x10f28
+  [region] extra       x=294.200 y=273.067 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bb1,0x10f28
+orig18_f1|f201: matched=64 plate/arrow RED=18 | extra:checker=42, extra:other=32, extra:region=6, mismatched:arrow=12, missing:checker=42, missing:other=53
+orig18_f2|f202: matched=64 plate/arrow RED=18 | extra:checker=42, extra:other=32, extra:region=6, mismatched:arrow=12, missing:checker=42, missing:other=53
+orig18_f3|f203: matched=64 plate/arrow RED=18 | extra:checker=42, extra:other=32, extra:region=6, mismatched:arrow=12, missing:checker=42, missing:other=53
+=== s18 a_anim4
+orig18_f0|f200: matched=81 plate/arrow RED=6 | extra:other=27, extra:region=6, mismatched:checker=39, mismatched:other=3, missing:other=48
+  [region] extra       x=312.000 y=102.400 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bf1,0x10f28
+  [region] extra       x=304.401 y=136.533 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bf1,0x10f28
+  [region] extra       x=299.147 y=170.667 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bf1,0x10f28
+  [region] extra       x=295.818 y=204.800 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bf1,0x10f28
+  [region] extra       x=294.200 y=238.933 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bf1,0x10f28
+  [region] extra       x=294.200 y=273.067 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bf1,0x10f28
+orig18_f1|f201: matched=81 plate/arrow RED=6 | extra:other=27, extra:region=6, mismatched:checker=39, mismatched:other=3, missing:other=48
+orig18_f2|f202: matched=81 plate/arrow RED=6 | extra:other=27, extra:region=6, mismatched:checker=39, mismatched:other=3, missing:other=48
+orig18_f3|f203: matched=82 plate/arrow RED=6 | extra:other=27, extra:region=6, mismatched:checker=38, mismatched:other=3, missing:other=48
+=== s18 a_strict
+orig18_f0|f200: matched=78 plate/arrow RED=6 | extra:other=27, extra:region=6, mismatched:checker=42, mismatched:other=3, missing:other=48
+  [region] extra       x=312.000 y=102.400 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bf1,0x10f28
+  [region] extra       x=304.401 y=136.533 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bf1,0x10f28
+  [region] extra       x=299.147 y=170.667 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bf1,0x10f28
+  [region] extra       x=295.818 y=204.800 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bf1,0x10f28
+  [region] extra       x=294.200 y=238.933 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bf1,0x10f28
+  [region] extra       x=294.200 y=273.067 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bf1,0x10f28
+orig18_f1|f201: matched=78 plate/arrow RED=6 | extra:other=27, extra:region=6, mismatched:checker=42, mismatched:other=3, missing:other=48
+orig18_f2|f202: matched=78 plate/arrow RED=6 | extra:other=27, extra:region=6, mismatched:checker=42, mismatched:other=3, missing:other=48
+orig18_f3|f203: matched=78 plate/arrow RED=6 | extra:other=27, extra:region=6, mismatched:checker=42, mismatched:other=3, missing:other=48
+=== s18 a_tol001
+orig18_f0|f200: matched=76 plate/arrow RED=6 | extra:checker=42, extra:other=32, extra:region=6, missing:checker=42, missing:other=53
+  [region] extra       x=312.000 y=102.400 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bf1,0x10f28
+  [region] extra       x=304.401 y=136.533 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bf1,0x10f28
+  [region] extra       x=299.147 y=170.667 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bf1,0x10f28
+  [region] extra       x=295.818 y=204.800 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bf1,0x10f28
+  [region] extra       x=294.200 y=238.933 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bf1,0x10f28
+  [region] extra       x=294.200 y=273.067 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bf1,0x10f28
+orig18_f1|f201: matched=76 plate/arrow RED=6 | extra:checker=42, extra:other=32, extra:region=6, missing:checker=42, missing:other=53
+orig18_f2|f202: matched=76 plate/arrow RED=6 | extra:checker=42, extra:other=32, extra:region=6, missing:checker=42, missing:other=53
+orig18_f3|f203: matched=76 plate/arrow RED=6 | extra:checker=42, extra:other=32, extra:region=6, missing:checker=42, missing:other=53
+=== s24 base_anim4
+orig24_f0|f200: matched=114 plate/arrow RED=18 | extra:other=27, extra:region=6, mismatched:arrow=12, mismatched:other=4, missing:other=44
+  [arrow ] mismatched reordered x=310.000 y=106.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x473c19,0x43b206
+                       B: x=310.000 y=106.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=219.000 y=106.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x4739e7,0x43b595
+                       B: x=219.000 y=106.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=310.000 y=134.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x473c19,0x43b206
+                       B: x=310.000 y=134.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=239.000 y=134.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x4739e7,0x43b595
+                       B: x=239.000 y=134.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=310.000 y=190.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x473c19,0x43b206
+                       B: x=310.000 y=190.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=256.000 y=190.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x4739e7,0x43b595
+                       B: x=256.000 y=190.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=310.000 y=218.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x473c19,0x43b206
+                       B: x=310.000 y=218.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=233.000 y=218.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x4739e7,0x43b595
+                       B: x=233.000 y=218.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=310.000 y=246.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x473c19,0x43b206
+                       B: x=310.000 y=246.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=244.000 y=246.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x4739e7,0x43b595
+                       B: x=244.000 y=246.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=310.000 y=274.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x473c19,0x43b206
+                       B: x=310.000 y=274.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=169.000 y=274.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x4739e7,0x43b595
+                       B: x=169.000 y=274.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [region] extra       x=312.000 y=102.400 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bb1,0x10f28
+  [region] extra       x=304.401 y=136.533 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bb1,0x10f28
+  [region] extra       x=299.147 y=170.667 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bb1,0x10f28
+  [region] extra       x=295.818 y=204.800 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bb1,0x10f28
+  [region] extra       x=294.200 y=238.933 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bb1,0x10f28
+  [region] extra       x=294.200 y=273.067 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bb1,0x10f28
+orig24_f1|f201: matched=114 plate/arrow RED=18 | extra:other=27, extra:region=6, mismatched:arrow=12, mismatched:other=4, missing:other=44
+orig24_f2|f202: matched=114 plate/arrow RED=18 | extra:other=27, extra:region=6, mismatched:arrow=12, mismatched:other=4, missing:other=44
+orig24_f3|f203: matched=114 plate/arrow RED=18 | extra:other=27, extra:region=6, mismatched:arrow=12, mismatched:other=4, missing:other=44
+=== s24 base_strict
+orig24_f0|f200: matched=72 plate/arrow RED=18 | extra:other=27, extra:region=6, mismatched:arrow=12, mismatched:checker=42, mismatched:other=4, missing:other=44
+  [arrow ] mismatched reordered x=310.000 y=106.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x473c19,0x43b206
+                       B: x=310.000 y=106.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=219.000 y=106.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x4739e7,0x43b595
+                       B: x=219.000 y=106.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=310.000 y=134.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x473c19,0x43b206
+                       B: x=310.000 y=134.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=239.000 y=134.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x4739e7,0x43b595
+                       B: x=239.000 y=134.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=310.000 y=190.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x473c19,0x43b206
+                       B: x=310.000 y=190.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=256.000 y=190.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x4739e7,0x43b595
+                       B: x=256.000 y=190.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=310.000 y=218.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x473c19,0x43b206
+                       B: x=310.000 y=218.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=233.000 y=218.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x4739e7,0x43b595
+                       B: x=233.000 y=218.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=310.000 y=246.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x473c19,0x43b206
+                       B: x=310.000 y=246.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=244.000 y=246.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x4739e7,0x43b595
+                       B: x=244.000 y=246.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=310.000 y=274.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x473c19,0x43b206
+                       B: x=310.000 y=274.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=169.000 y=274.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x4739e7,0x43b595
+                       B: x=169.000 y=274.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [region] extra       x=312.000 y=102.400 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bb1,0x10f28
+  [region] extra       x=304.401 y=136.533 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bb1,0x10f28
+  [region] extra       x=299.147 y=170.667 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bb1,0x10f28
+  [region] extra       x=295.818 y=204.800 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bb1,0x10f28
+  [region] extra       x=294.200 y=238.933 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bb1,0x10f28
+  [region] extra       x=294.200 y=273.067 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bb1,0x10f28
+orig24_f1|f201: matched=72 plate/arrow RED=18 | extra:other=27, extra:region=6, mismatched:arrow=12, mismatched:checker=42, mismatched:other=4, missing:other=44
+orig24_f2|f202: matched=72 plate/arrow RED=18 | extra:other=27, extra:region=6, mismatched:arrow=12, mismatched:checker=42, mismatched:other=4, missing:other=44
+orig24_f3|f203: matched=72 plate/arrow RED=18 | extra:other=27, extra:region=6, mismatched:arrow=12, mismatched:checker=42, mismatched:other=4, missing:other=44
+=== s24 base_tol001
+orig24_f0|f200: matched=71 plate/arrow RED=18 | extra:checker=42, extra:other=32, extra:region=6, mismatched:arrow=12, missing:checker=42, missing:other=49
+  [arrow ] mismatched reordered x=310.000 y=106.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x473c19,0x43b206
+                       B: x=310.000 y=106.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=219.000 y=106.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x4739e7,0x43b595
+                       B: x=219.000 y=106.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=310.000 y=134.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x473c19,0x43b206
+                       B: x=310.000 y=134.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=239.000 y=134.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x4739e7,0x43b595
+                       B: x=239.000 y=134.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=310.000 y=190.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x473c19,0x43b206
+                       B: x=310.000 y=190.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=256.000 y=190.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x4739e7,0x43b595
+                       B: x=256.000 y=190.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=310.000 y=218.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x473c19,0x43b206
+                       B: x=310.000 y=218.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=233.000 y=218.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x4739e7,0x43b595
+                       B: x=233.000 y=218.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=310.000 y=246.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x473c19,0x43b206
+                       B: x=310.000 y=246.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=244.000 y=246.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x4739e7,0x43b595
+                       B: x=244.000 y=246.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=310.000 y=274.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x473c19,0x43b206
+                       B: x=310.000 y=274.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [arrow ] mismatched reordered x=169.000 y=274.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0x4739e7,0x43b595
+                       B: x=169.000 y=274.000 w=12.000 h=12.000 col=ff000000/ff000000/ff000000/ff000000 ret=0xb7f18,0x1ba2c
+  [region] extra       x=312.000 y=102.400 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bb1,0x10f28
+  [region] extra       x=304.401 y=136.533 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bb1,0x10f28
+  [region] extra       x=299.147 y=170.667 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bb1,0x10f28
+  [region] extra       x=295.818 y=204.800 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bb1,0x10f28
+  [region] extra       x=294.200 y=238.933 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bb1,0x10f28
+  [region] extra       x=294.200 y=273.067 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bb1,0x10f28
+orig24_f1|f201: matched=71 plate/arrow RED=18 | extra:checker=42, extra:other=32, extra:region=6, mismatched:arrow=12, missing:checker=42, missing:other=49
+orig24_f2|f202: matched=71 plate/arrow RED=18 | extra:checker=42, extra:other=32, extra:region=6, mismatched:arrow=12, missing:checker=42, missing:other=49
+orig24_f3|f203: matched=71 plate/arrow RED=18 | extra:checker=42, extra:other=32, extra:region=6, mismatched:arrow=12, missing:checker=42, missing:other=49
+=== s24 a_anim4
+orig24_f0|f200: matched=127 plate/arrow RED=6 | extra:other=27, extra:region=6, mismatched:other=3, missing:other=44
+  [region] extra       x=312.000 y=102.400 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bf1,0x10f28
+  [region] extra       x=304.401 y=136.533 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bf1,0x10f28
+  [region] extra       x=299.147 y=170.667 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bf1,0x10f28
+  [region] extra       x=295.818 y=204.800 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bf1,0x10f28
+  [region] extra       x=294.200 y=238.933 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bf1,0x10f28
+  [region] extra       x=294.200 y=273.067 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bf1,0x10f28
+orig24_f1|f201: matched=127 plate/arrow RED=6 | extra:other=27, extra:region=6, mismatched:other=3, missing:other=44
+orig24_f2|f202: matched=127 plate/arrow RED=6 | extra:other=27, extra:region=6, mismatched:other=3, missing:other=44
+orig24_f3|f203: matched=127 plate/arrow RED=6 | extra:other=27, extra:region=6, mismatched:other=3, missing:other=44
+=== s24 a_strict
+orig24_f0|f200: matched=85 plate/arrow RED=6 | extra:other=27, extra:region=6, mismatched:checker=42, mismatched:other=3, missing:other=44
+  [region] extra       x=312.000 y=102.400 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bf1,0x10f28
+  [region] extra       x=304.401 y=136.533 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bf1,0x10f28
+  [region] extra       x=299.147 y=170.667 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bf1,0x10f28
+  [region] extra       x=295.818 y=204.800 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bf1,0x10f28
+  [region] extra       x=294.200 y=238.933 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bf1,0x10f28
+  [region] extra       x=294.200 y=273.067 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bf1,0x10f28
+orig24_f1|f201: matched=85 plate/arrow RED=6 | extra:other=27, extra:region=6, mismatched:checker=42, mismatched:other=3, missing:other=44
+orig24_f2|f202: matched=85 plate/arrow RED=6 | extra:other=27, extra:region=6, mismatched:checker=42, mismatched:other=3, missing:other=44
+orig24_f3|f203: matched=85 plate/arrow RED=6 | extra:other=27, extra:region=6, mismatched:checker=42, mismatched:other=3, missing:other=44
+=== s24 a_tol001
+orig24_f0|f200: matched=83 plate/arrow RED=6 | extra:checker=42, extra:other=32, extra:region=6, missing:checker=42, missing:other=49
+  [region] extra       x=312.000 y=102.400 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bf1,0x10f28
+  [region] extra       x=304.401 y=136.533 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bf1,0x10f28
+  [region] extra       x=299.147 y=170.667 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bf1,0x10f28
+  [region] extra       x=295.818 y=204.800 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bf1,0x10f28
+  [region] extra       x=294.200 y=238.933 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bf1,0x10f28
+  [region] extra       x=294.200 y=273.067 w=128.000 h=34.133 col=60ffffff/00000000/60ffffff/00000000 ret=0xb7bf1,0x10f28
+orig24_f1|f201: matched=83 plate/arrow RED=6 | extra:checker=42, extra:other=32, extra:region=6, missing:checker=42, missing:other=49
+orig24_f2|f202: matched=83 plate/arrow RED=6 | extra:checker=42, extra:other=32, extra:region=6, missing:checker=42, missing:other=49
+orig24_f3|f203: matched=83 plate/arrow RED=6 | extra:checker=42, extra:other=32, extra:region=6, missing:checker=42, missing:other=49

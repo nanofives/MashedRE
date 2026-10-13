@@ -1,0 +1,12 @@
+0x00492d1b: nop     
+0x00492d1c: nop     
+0x00492d1d: nop     
+0x00492d1e: nop     
+0x00492d1f: nop     
+0x00492d20: call    0x4967e0
+0x00492d25: mov     eax, 1
+0x00492d2a: ret     
+0x00492d2b: nop     
+0x00492d2c: nop     
+0x00492d2d: nop     
+0x00492d2e: nop     

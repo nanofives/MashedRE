@@ -334,6 +334,18 @@ bool               g_depth_disabled = false;  // set if device fell back to no a
 // FUN_004997b0 / FUN_004998a0 callchain; we own ours directly.
 IDirectInput8A*       g_dinput        = nullptr;
 IDirectInputDevice8A* g_kbd           = nullptr;
+// Input slot types and the active-slot count, as the original derives them at
+// boot (text3, re/analysis/negctl/session_20261012b/text3_RESULT.md):
+//   J = attached game controllers whose CreateDevice succeeds: FUN_00496040
+//       EnumDevices(4, FUN_00495ee0, &[0x00772fac], 1) (0x00496055..0x00496069),
+//       callback increments at 0x00495fcb only past the CreateDevice test 0x00495f15.
+//   slot i type ([0x007e95c0 + i*0x200 + 0x13c]), FUN_00498510: i < J -> 1
+//       (0x0049861a), i == J -> 2 (0x0049865f), else 0 (0x004986cd).
+//   [0x00772ffc] = number of slots 0..3 with type != 0, FUN_004967e0
+//       (0x0049680d / 0x00496825 via FUN_00497450).
+// Defaults to J = 0 until InitDirectInput runs.
+int g_input_slot_type[4]   = {2, 0, 0, 0};
+int g_input_active_slots   = 1;
 unsigned char         g_keys[256]     = {};   // raw DInput key state, set 0x80 if held
 unsigned char         g_keys_prev[256]= {};   // last frame, for edge detection
 
@@ -986,6 +998,39 @@ bool PumpOnce() {
 // us read keys without stealing focus, matching the title-screen UX. Failures
 // are non-fatal — the frame loop still renders the title-screen quad, just
 // without keyboard navigation.
+// FUN_00495ee0's count: one per enumerated device whose CreateDevice returns
+// >= 0 (0x00495f10..0x00495f15, inc [pvRef] at 0x00495fcb). The device is not
+// kept: the standalone does not poll joysticks.
+static BOOL CALLBACK CountGameCtrlCb(LPCDIDEVICEINSTANCEA inst, LPVOID ref) {
+    IDirectInputDevice8A* dev = nullptr;
+    if (SUCCEEDED(g_dinput->CreateDevice(inst->guidInstance, &dev, nullptr)) && dev) {
+        ++*static_cast<int*>(ref);
+        dev->Release();
+    }
+    return DIENUM_CONTINUE;   // 0x00495fd0: always 1
+}
+
+// FUN_00498510's slot types (no contcfg<i>.bin override, see the note) and
+// FUN_004967e0's active count.
+static void DeriveInputSlots() {
+    int j = 0;
+    if (g_dinput)
+        g_dinput->EnumDevices(DI8DEVCLASS_GAMECTRL, CountGameCtrlCb, &j,
+                              DIEDFL_ATTACHEDONLY);
+    int n = 0;
+    for (int i = 0; i < 4; ++i) {
+        g_input_slot_type[i] = (i < j) ? 1 : (i == j) ? 2 : 0;
+        if (g_input_slot_type[i] != 0) ++n;
+    }
+    g_input_active_slots = n;
+    if (std::FILE* log = std::fopen(kLogPath, "a")) {
+        std::fprintf(log, "\ninput slots: game controllers %d, types %d %d %d %d, active %d\n",
+                     j, g_input_slot_type[0], g_input_slot_type[1],
+                     g_input_slot_type[2], g_input_slot_type[3], n);
+        std::fclose(log);
+    }
+}
+
 bool InitDirectInput(HINSTANCE hInstance) {
     HRESULT hr = DirectInput8Create(
         hInstance,
@@ -1003,6 +1048,7 @@ bool InitDirectInput(HINSTANCE hInstance) {
         }
         return false;
     }
+    DeriveInputSlots();
     hr = g_dinput->CreateDevice(GUID_SysKeyboard, &g_kbd, nullptr);
     if (FAILED(hr) || !g_kbd) {
         std::FILE* log = std::fopen(kLogPath, "a");
@@ -5286,9 +5332,14 @@ bool RenderFrame() {
                 // The FIRST row moves and the LAST stays put at ~279, so the
                 // block grows upward from a fixed bottom. Anchoring there keeps
                 // the last row correct whatever count we end up modelling.
-                // 3, matching the reference capture. 4 made the comparison
-                // unfair (user). The count is live device state either way.
-                const int   nrows4 = 3;   // [UNCERTAIN] live device state
+                // Row count = the original's active-slot count [0x00772ffc]
+                // (FUN_00496910, read at 0x0043350c), derived the same way at
+                // boot (g_input_active_slots, see DeriveInputSlots). Rows are
+                // laid out per slot with type != 0 (FUN_004332a0
+                // 0x00433570..0x004335ac via FUN_00496900), which are slots
+                // 0..n-1. Was the constant 3. This machine: 3 game controllers
+                // + keyboard = 4, read live on the original (text3 live/).
+                const int   nrows4 = g_input_active_slots;
                 // 261.25, not 279. MEASURED bar tops (device, 1024x768):
                 //   original 309 / 364 / 418   ours 338 / 392 / 447
                 // ours sat 29 device = 18.1 virtual too LOW; the original's
@@ -5320,8 +5371,10 @@ bool RenderFrame() {
                     // the ink at x132 against the original's 121.
                     const float isw = 51.7f * kVScale;
                     const float ish = 29.0f * kVScale;
-                    const int   h_icon = (r == nrows4 - 1) ? kHandleInputKbd
-                                                           : kHandleInputJoy;
+                    // Glyph by slot type, as FUN_0042bcb0 picks it (2 =
+                    // "keyboard", 1 = joypad; see below). Was "last row".
+                    const int   h_icon = (g_input_slot_type[r] == 2) ? kHandleInputKbd
+                                                                     : kHandleInputJoy;
                     // [#1b 2026-09-07, corrected 2026-09-09 from Ghidra
                     // (Mashed_pool14)] The player's device icon IS the selection
                     // indicator and it BOTH slides and tints:
@@ -6580,13 +6633,6 @@ bool RenderFrame() {
                 // (MenuNavSM.cpp, 0x3f4ccccd). The 0.776 / 0.6 pair was an ink fit.
                 const float labCell =
                     ((r == selRow) ? 0.8f : 0.58f) * 0.0708f * 480.f * kVScale;
-                // Value scale is a literal push: 0x3f051eb8 (0.52) on s18 at
-                // 0x0043b502 (call 0x00427e00 ret 0x0043b529), 0x3f147ae1 (0.58)
-                // on s24 at 0x0043b304 (ret 0x0043b32b). The same constant feeds
-                // the arrow call FUN_004282a0 right after each (0x0043b529 /
-                // 0x0043b32b), so the arrow measures with it too.
-                const float valScale = sp ? 0.58f : 0.52f;
-                const float valCell = valScale * 0.0708f * 480.f * kVScale;
                 // DISABLED rows draw BLACK AT ALPHA 0x30, not full black. This
                 // block previously ignored availability entirely and drew every
                 // label/value at 0xff000000, so nothing ever greyed here.
@@ -6619,59 +6665,26 @@ bool RenderFrame() {
                 // fractions. There is ONE label level and ONE value level.
                 const bool rowOff = !Nav_ItemEnabled(r);
                 const std::uint32_t labInk = rowOff ? 0x80000000u : 0xff000000u;
-                const std::uint32_t valInk = rowOff ? 0x30000000u : 0xff000000u;
                 wchar_t lab[64];
                 if (GetMenuMessage(rows[r].label, lab, 64) > 0)
                     DrawMashedString(lab, labelX * kVScale, cy * kVScale, labCell,
                                      labInk, /*anchor_left*/ true);
-                if (rows[r].value >= 0) {
-                    // Two "Arrow" sprites (0x005cd828, BADGES.TXD kHandleMenuArrow)
-                    // per value row, in the value's colour (edi: the same dword
-                    // the value text gets). Order as in FUN_0043af10: right arrow,
-                    // value, left arrow. s24 row 3 draws both only when
-                    // FUN_00430830(1) != 0 (0x0043b186..0x0043b199 and
-                    // 0x0043b35f..0x0043b388); s18 has no such test.
-                    const bool arrows = g_menu_arrow_ready &&
-                        !(sp && r == 3 &&
-                          mashed_re::Frontend::SplitScreenTrackAssignmentFor(gs.game_mode, 1) == 0);
-                    const float ay = (kScrH * (cy - 6.0f)) * bitsF(0x3b088889u);
-                    // Right arrow: FUN_004739f0("Arrow", A, ay, aw, ah, colour,
-                    // mirrored u) at 0x0043b3d5 (s18) / 0x0043b1f8 (s24).
-                    if (arrows)
-                        HudIm2DQuad(kHandleMenuArrow, colA * kVScale, ay * kVScale,
-                                    arrW * kVScale, arrH * kVScale, valInk, uvr);
-                    wchar_t val[64];
-                    if (GetMenuMessage(rows[r].value, val, 64) > 0)
-                        DrawMashedString(val, valRight * kVScale, cy * kVScale, valCell,
-                                         valInk, false, 1.0f, /*anchor_right*/ true);
-                    // Left arrow: FUN_00473870("Arrow", x, ay, aw, ah, colour, 1)
-                    // at 0x0043b590, x from the value's measured width at the
-                    // scale it is drawn at (0x0043b529 / 0x0043b32b):
-                    //   w = _ftol2(FUN_004282a0(id, s))       0x0043b537 (0x004a2c48 truncates)
-                    //   D = (W * (w + 0x12)) / 640            0x0043b53e..0x0043b55f
-                    //       (0x66666667 multiply, sar 8, sign fix = int division)
-                    //   x = (A - D) + 2.0                     0x0043b568..0x0043b573 ([0x005cc574])
-                    // Same at 0x0043b339..0x0043b372 on s24. The old x
-                    // (valRight - MeasureMashedString(val, 0.6 cell) - 12.5 - 3)
-                    // was fitted on orig_s24 ink and measured the value at 0.6.
-                    if (arrows) {
-                        const int mw = static_cast<int>(
-                            MeasureMenuMessage(rows[r].value, valScale));
-                        const int d  = static_cast<int>(kScrW) * (mw + 0x12) / 640;
-                        const float ax = (colA - static_cast<float>(d)) + 2.0f;
-                        HudIm2DQuad(kHandleMenuArrow, ax * kVScale, ay * kVScale,
-                                    arrW * kVScale, arrH * kVScale, valInk, uvf);
-                    }
-                }
             }
-            // Selected vehicle preview (center-right): the "car<N>" render incl.
-            // its "<NAME> V8" caption. Default slot -> Hammerhead = car1
-            // (kHandleVehPrev0). Box measured from orig_s24.bmp (x~459-599).
-            // [residual: the dynamic vehicle->sprite index needs the runtime
-            // 0x5f6748 table / FUN_0042a980; default shows car1.]
-            if (g_vehprev_ready)
-                HudIm2DQuad(kHandleVehPrev0, 458.0f * kVScale, 147.0f * kVScale,
-                            145.0f * kVScale, 141.0f * kVScale, 0xffffffffu, uvf);
+            // Draw order below follows the original frame, read from the bytes
+            // (text3, verify/scr19_parity_20261012/text3/):
+            //   FUN_0043c5b0's record loop 0x0043c730..0x0043d266 draws every
+            //   record's plate, borders, Button and label (the loop above), then
+            //   0x0043d26c calls FUN_0043bf30, which calls FUN_0043af10 at
+            //   0x0043bf63 when [0x0067e7f0] != 0. FUN_0043af10 first calls
+            //   FUN_004368e0 at 0x0043af8e (preview frame 0x00436921, panel box
+            //   0x00436991, divider 0x004369d3, then the car icons 0x00438144.. and
+            //   "vs" 0x00438242.. through the jump table at 0x00436a9b), and only
+            //   then runs the per-row value/arrow loop (0x0043b1bc..), the
+            //   power-up row (0x0043b9c3..) and the vehicle sprite (0x0043bcf3).
+            // The standalone drew each row's value and arrows inside the plate
+            // loop and the vehicle sprite before the panel. Same draws, same
+            // arguments, moved into that order. The preview frame and panel box
+            // are not drawn by the standalone (missing rows in the diff).
             // 4 red-devil "vs" car icons + separator at the bottom-left (the
             // FUN_004368e0 active-player car row; all car0/red at the default).
             // Geometry RE-MEASURED from the 1024x768 capture (kVScale 1.6). The
@@ -6707,6 +6720,14 @@ bool RenderFrame() {
             // which is the squash. Content fills ~0.895 of the quad, so a
             // 57-device content height needs a 63.7-device = 40-virtual quad.
             // Drawn AFTER the cars (on top) -- see the s18/s24 note.
+            // (No quad overlaps the separator, so drawing it first changes no pixel.)
+            // Separator: original white bar occupies device cols 511..513, rows
+            // 493..620 -> x 319.375, w 1.875, y 308.125, h 80.0 virtual.
+            // Drawn before the car icons: FUN_004368e0 draws its divider at
+            // 0x004369d3, ahead of the jump table (0x00436a9b) that reaches the
+            // car icons (0x00438144..) and "vs" (0x00438242..).
+            HudIm2DQuad(0, 319.5f * kVScale, 308.0f * kVScale,
+                        2.0f * kVScale, 80.0f * kVScale, 0xffffffffu, uvf);
             for (int c = 0; c < 4; ++c)
                 HudIm2DQuad(kHandleCar0, (40.0f + c * 64.0f) * kVScale,
                             308.0f * kVScale, 72.0f * kVScale, 72.0f * kVScale,
@@ -6722,10 +6743,58 @@ bool RenderFrame() {
                                 340.5f * kVScale - vsh * 0.5f,
                                 vsw, vsh, 0xffffffffu, uvf);
             }
-            // Separator: original white bar occupies device cols 511..513, rows
-            // 493..620 -> x 319.375, w 1.875, y 308.125, h 80.0 virtual.
-            HudIm2DQuad(0, 319.5f * kVScale, 308.0f * kVScale,
-                        2.0f * kVScale, 80.0f * kVScale, 0xffffffffu, uvf);
+            // Per-row values and arrows, FUN_0043af10's row loop (0x0043b1bc..),
+            // after FUN_004368e0 returns (0x0043af8e).
+            // Value scale is a literal push: 0x3f051eb8 (0.52) on s18 at
+            // 0x0043b502 (call 0x00427e00 ret 0x0043b529), 0x3f147ae1 (0.58)
+            // on s24 at 0x0043b304 (ret 0x0043b32b). The same constant feeds
+            // the arrow call FUN_004282a0 right after each (0x0043b529 /
+            // 0x0043b32b), so the arrow measures with it too.
+            const float valScale = sp ? 0.58f : 0.52f;
+            const float valCell = valScale * 0.0708f * 480.f * kVScale;
+            for (int r = 0; r < nrows && g_font.ready(); ++r) {
+                if (rows[r].value < 0) continue;
+                const float cy = y0 + r * pitch;                 // row centre (virtual)
+                // Disabled value ink 0x30, see the label note in the loop above.
+                const std::uint32_t valInk = !Nav_ItemEnabled(r) ? 0x30000000u : 0xff000000u;
+                // Two "Arrow" sprites (0x005cd828, BADGES.TXD kHandleMenuArrow)
+                // per value row, in the value's colour (edi: the same dword
+                // the value text gets). Order as in FUN_0043af10: right arrow,
+                // value, left arrow. s24 row 3 draws both only when
+                // FUN_00430830(1) != 0 (0x0043b186..0x0043b199 and
+                // 0x0043b35f..0x0043b388); s18 has no such test.
+                const bool arrows = g_menu_arrow_ready &&
+                    !(sp && r == 3 &&
+                      mashed_re::Frontend::SplitScreenTrackAssignmentFor(gs.game_mode, 1) == 0);
+                const float ay = (kScrH * (cy - 6.0f)) * bitsF(0x3b088889u);
+                // Right arrow: FUN_004739f0("Arrow", A, ay, aw, ah, colour,
+                // mirrored u) at 0x0043b3d5 (s18) / 0x0043b1f8 (s24).
+                if (arrows)
+                    HudIm2DQuad(kHandleMenuArrow, colA * kVScale, ay * kVScale,
+                                arrW * kVScale, arrH * kVScale, valInk, uvr);
+                wchar_t val[64];
+                if (GetMenuMessage(rows[r].value, val, 64) > 0)
+                    DrawMashedString(val, valRight * kVScale, cy * kVScale, valCell,
+                                     valInk, false, 1.0f, /*anchor_right*/ true);
+                // Left arrow: FUN_00473870("Arrow", x, ay, aw, ah, colour, 1)
+                // at 0x0043b590, x from the value's measured width at the
+                // scale it is drawn at (0x0043b529 / 0x0043b32b):
+                //   w = _ftol2(FUN_004282a0(id, s))       0x0043b537 (0x004a2c48 truncates)
+                //   D = (W * (w + 0x12)) / 640            0x0043b53e..0x0043b55f
+                //       (0x66666667 multiply, sar 8, sign fix = int division)
+                //   x = (A - D) + 2.0                     0x0043b568..0x0043b573 ([0x005cc574])
+                // Same at 0x0043b339..0x0043b372 on s24. The old x
+                // (valRight - MeasureMashedString(val, 0.6 cell) - 12.5 - 3)
+                // was fitted on orig_s24 ink and measured the value at 0.6.
+                if (arrows) {
+                    const int mw = static_cast<int>(
+                        MeasureMenuMessage(rows[r].value, valScale));
+                    const int d  = static_cast<int>(kScrW) * (mw + 0x12) / 640;
+                    const float ax = (colA - static_cast<float>(d)) + 2.0f;
+                    HudIm2DQuad(kHandleMenuArrow, ax * kVScale, ay * kVScale,
+                                arrW * kVScale, arrH * kVScale, valInk, uvf);
+                }
+            }
             // --- power-up preview row, bottom right. VERBATIM against the
             // original's own table rather than a hardcoded set.
             // The original's loop (inside FUN_0043af10) is:
@@ -6779,6 +6848,16 @@ bool RenderFrame() {
                     }
                 }
             }
+            // Selected vehicle preview (center-right): the "car<N>" render incl.
+            // its "<NAME> V8" caption. Default slot -> Hammerhead = car1
+            // (kHandleVehPrev0). Box measured from orig_s24.bmp (x~459-599).
+            // [residual: the dynamic vehicle->sprite index needs the runtime
+            // 0x5f6748 table / FUN_0042a980; default shows car1.]
+            // Last quad of the frame, as FUN_0043af10's FUN_004739f0 at 0x0043bcf3
+            // comes after its power-up row (0x0043b9c3..0x0043bbea).
+            if (g_vehprev_ready)
+                HudIm2DQuad(kHandleVehPrev0, 458.0f * kVScale, 147.0f * kVScale,
+                            145.0f * kVScale, 141.0f * kVScale, 0xffffffffu, uvf);
         }
 
         // --- bottom prompt strip: F4 CLOSED 2026-06-11. FUN_00432b30 is now
