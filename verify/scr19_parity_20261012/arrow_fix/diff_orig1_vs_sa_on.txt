@@ -1,0 +1,10 @@
+== orig1_f0 (A: 136 draws, x1.0) vs f200 (B: 136 draws, x1.0)
+   matched 136  mismatched 0  missing 0  extra 0
+== orig1_f1 (A: 136 draws, x1.0) vs f201 (B: 136 draws, x1.0)
+   matched 136  mismatched 0  missing 0  extra 0
+== orig1_f2 (A: 136 draws, x1.0) vs f202 (B: 136 draws, x1.0)
+   matched 136  mismatched 0  missing 0  extra 0
+== orig1_f3 (A: 136 draws, x1.0) vs f203 (B: 136 draws, x1.0)
+   matched 136  mismatched 0  missing 0  extra 0
+-> verify/scr19_parity_20261012/arrow_fix/diff_orig1_vs_sa_on.json
+VERDICT: GREEN (match=544 mismatch=0 missing=0 extra=0)

@@ -1,0 +1,24 @@
+ink = pixels with max(R,G,B) < 48 in x 374..455, y 270..301 (between the two arrows; left arrow 356..372, right arrow 457..473)
+orig_scr19_bb.bmp    ink x 378..449  y 279..291  dark px 392
+sa_scr19_bb.bmp      ink x 377..449  y 279..291  dark px 450
+  shift sa by dx -3 dy -1: dark-pixel IoU 0.158
+  shift sa by dx -2 dy -1: dark-pixel IoU 0.276
+  shift sa by dx -1 dy -1: dark-pixel IoU 0.496
+  shift sa by dx +0 dy -1: dark-pixel IoU 0.743
+  shift sa by dx +1 dy -1: dark-pixel IoU 0.539
+  shift sa by dx +2 dy -1: dark-pixel IoU 0.309
+  shift sa by dx +3 dy -1: dark-pixel IoU 0.178
+  shift sa by dx -3 dy +0: dark-pixel IoU 0.176
+  shift sa by dx -2 dy +0: dark-pixel IoU 0.309
+  shift sa by dx -1 dy +0: dark-pixel IoU 0.548
+  shift sa by dx +0 dy +0: dark-pixel IoU 0.815
+  shift sa by dx +1 dy +0: dark-pixel IoU 0.559
+  shift sa by dx +2 dy +0: dark-pixel IoU 0.314
+  shift sa by dx +3 dy +0: dark-pixel IoU 0.173
+  shift sa by dx -3 dy +1: dark-pixel IoU 0.149
+  shift sa by dx -2 dy +1: dark-pixel IoU 0.249
+  shift sa by dx -1 dy +1: dark-pixel IoU 0.418
+  shift sa by dx +0 dy +1: dark-pixel IoU 0.565
+  shift sa by dx +1 dy +1: dark-pixel IoU 0.413
+  shift sa by dx +2 dy +1: dark-pixel IoU 0.240
+  shift sa by dx +3 dy +1: dark-pixel IoU 0.139

@@ -154,3 +154,6 @@ DUP-IN-TARGET:0041eda0:Util/TimerInit.cpp,Util/TimerSlot.cpp   # audit=UNREVIEWE
 DUP-IN-TARGET:0041f000:Util/TimerInit.cpp,Util/TimerSlot.cpp   # audit=UNREVIEWED-U9156; [asi] two bodies: Util/TimerInit.cpp:78 (TimerSlotDataCopy), Util/TimerSlot.cpp:50 (SlotDataCopy)
 DUP-IN-TARGET:00420d40:Util/TimerInit.cpp,Util/TimerSlot.cpp   # audit=UNREVIEWED-U9156; [asi] two bodies: Util/TimerInit.cpp:110 (TimerStructArrayClear), Util/TimerSlot.cpp:96 (SlotArrayClear)
 CROSS-TARGET:00442c80:Util/UtilMid.cpp,Vehicle/ForceIntegrator.cpp   # audit=UNREVIEWED-U9156; exe-only Vehicle/ForceIntegrator.cpp  vs  asi-only Util/UtilMid.cpp
+
+# --- ADDED 2026-10-13 (scr19 arrow fix, work/scr19arrow)
+CROSS-TARGET:004282a0:Frontend/MenuMenusB.cpp,exe_main.cpp   # DELIBERATE, split by target. asi-only Frontend/MenuMenusB.cpp:MenuMenusBA is the C3 naked-asm copy that calls the original's FUN_00427780/FUN_004277a0/FUN_005554d0 at their absolute RVAs and reads [0x0067d838]/[0x0067d830] -- none of that exists in mashed_re.exe. exe-only exe_main.cpp:MeasureMenuMessage is the same computation over g_msg_dat/g_font with [0x0067d830] as the measured constant 0x3f7fffff; bit-equal to the original's return for ids 0x59/0x1b2/0x1b1 at 0.6/0.7/0.72 (verify/scr19_parity_20261012/arrow_fix/measure_table.txt). Same shape as 0046b1c0.

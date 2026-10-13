@@ -2806,6 +2806,44 @@ float MeasureMashedString(const wchar_t* s, float height_px) {
     return total;
 }
 
+// [0x0067d830], the divisor FUN_004282a0 applies at 0x004282f1. Written by
+// FUN_004275d0 through FUN_00553cf0(.., &0x0067d828) (push 0x67d828 at
+// 0x004275f2), zeroed by the font init at 0x00427de4. MEASURED, not derived:
+// 0x3f7fffff on two original boots at screen 19
+// (verify/scr19_parity_20261012/arrow_fix/orig_measure_probe*.json). The
+// FUN_00553cf0 chain that produces it is not ported.
+static const std::uint32_t kMenuMeasureDivBits = 0x3f7fffffu;
+
+// 0x004282a0  FUN_004282a0(id, scale) for the standalone: the message text
+// (FUN_00427780 + FUN_004277a0 remap = GetMenuMessage) measured by
+// FUN_005554d0 (0x005554d0..0x005555aa): sum over 16-bit codes of
+// (rec+0x00 width + [ctx+0x0c] tracking) for codes with a glyph (ASCII LUT
+// ctx+0x24 below 0x80, ext table ctx+0x12c for code-[ctx+0x124] < [ctx+0x128],
+// no advance otherwise), times (scale * 0.0708 [0x005cd5fc]) (0x004282d7),
+// / [0x0067d830] (0x004282f1), * 640.0 [0x005cd618] (0x00428309). Returns the
+// value the original leaves in ST0. The original runs this at x87 PC_24 (every
+// return the probe read is float-exact), so each op rounds to float, which is
+// what SSE2 float arithmetic does here. Bit-equal to the original's return for
+// ids 0x59/0x1b2/0x1b1 at 0.6/0.7/0.72 (arrow_fix/measure_table.txt).
+float MeasureMenuMessage(int id, float scale) {
+    if (!g_font.ready()) return 0.f;
+    wchar_t buf[0x200];
+    if (GetMenuMessage(id, buf, 0x200) <= 0) return 0.f;
+    const float trk = g_font.tracking();
+    float sum = 0.f;
+    for (const wchar_t* p = buf; *p; ++p) {
+        const unsigned c = static_cast<unsigned>(*p);
+        if (c > 0xffu) continue;  // past the ext table: idx -1, no advance
+        float uv[4], wf;
+        if (g_font.Glyph(static_cast<unsigned char>(c), uv, &wf))
+            sum = sum + (wf + trk);                       // 0x00555585..0x0055558b
+    }
+    float div;
+    std::memcpy(&div, &kMenuMeasureDivBits, 4);
+    const float sf = scale * 0.0708f;                     // 0x004282d7
+    return ((sum * sf) / div) * 640.0f;                   // 0x0055559f, 0x004282f1, 0x00428309
+}
+
 void DrawMashedString(const wchar_t* s, float cx, float anchor_y,
                       float height_px, std::uint32_t argb,
                       bool anchor_left = false, float grad_bot_frac = 1.0f,
@@ -4981,11 +5019,10 @@ bool RenderFrame() {
                                     10.0f * S, 0xff2080d8u, uv_full);          // fill
                     }
                 }
-                // Tri-state/toggle VALUE text: scale 0.6 (clean scr19
-                // baseline: "Manual" ink spans 378..448 = 70 virtual px ->
-                // 0.6x0.0708x640 cell width law), left-anchored at x=378.
-                // The right arrow trails the text dynamically ("Manual" ->
-                // x=457 = 378 + 70 + 9 pad).
+                // Toggle VALUE text: scale 0.6 (clean scr19 baseline fit),
+                // left-anchored at x=378, right arrow at 378 + width + 9.
+                // The tri-state (insults) row uses the original's formula
+                // instead, see the kTriText branch below.
                 float dyn_rax = rax;
                 const float vth = 0.6f * 0.0708f * 480.f * S;
                 // VALUE TEXT BY MESSAGE ID (2026-09-04, Finding 35). Both were
@@ -5019,19 +5056,24 @@ bool RenderFrame() {
                     const wchar_t* val =
                         (GetMenuMessage(kInsultIds[m], vbuf, 48) > 0) ? vbuf
                                                                       : kInsults[m];
-                    // #8 (2026-06-13): the insults value reads a little small —
-                    // bump it to scale 0.72 (the volume rows keep the 0.6 law).
-                    // [UNCERTAIN] the original passes 0x3f333333 = 0.7 as the
-                    // scale for BOTH this row and the autosave row, so the
-                    // port's 0.6/0.72 split has no counterpart there. Left
-                    // alone because 0.6 was fitted to a measured capture and
-                    // the two scale laws are not the same quantity; recorded
-                    // rather than tuned.
-                    const float vthIns = 0.72f * 0.0708f * 480.f * S;
-                    DrawMashedString(val, 378.0f * S + slideX,
+                    // FUN_00430b90 insults row, from the bytes (2026-10-13):
+                    // value text FUN_00427e00(id, 376.0 [push 0x43bc0000 at
+                    // 0x004311f7], y, colour, 0.7 [push 0x3f333333 at
+                    // 0x004311f0], 0) at 0x004311fd. Live text trace at screen
+                    // 19: (0x1b1, 376.0, 285.0, ff000000, 0.7, 0). This replaces
+                    // the fitted 378 / 0.72 (#8, 2026-06-13).
+                    const float vthIns = 0.7f * 0.0708f * 480.f * S;
+                    DrawMashedString(val, 376.0f * S + slideX,
                                      rec.y * S - 1.0f * S, vthIns, 0xff000000u, true);
-                    dyn_rax = 378.0f * S +
-                              MeasureMashedString(val, vthIns) + 9.0f * S;
+                    // Right arrow x: ftol(FUN_004282a0(id, 0.7)) (0x0043121a,
+                    // ftol 0x00431222 truncates) + 0x17e (0x00430ea1), times
+                    // (short)W (FUN_0042b8b0, movsx 0x00430e9e), / 640 by the
+                    // 0x66666667 / sar 8 / sign-add sequence at
+                    // 0x00430eaa..0x00430ebf (= C integer division), fild.
+                    const int mw = static_cast<int>(
+                        MeasureMenuMessage(kInsultIds[m], 0.7f));
+                    const int W = static_cast<short>(kWidth);
+                    dyn_rax = static_cast<float>((W * (mw + 0x17e)) / 640);
                 } else if (kind == kToggle && g_font.ready()) {
                     const int tid = 0x59 + (g_settings.autosave ? 1 : 0);
                     const wchar_t* tv =

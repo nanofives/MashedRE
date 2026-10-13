@@ -1,0 +1,47 @@
+scr19 row-3 (insults tri-state) right-arrow fix, 2026-10-13
+Worktree .worktrees/scr19arrow, branch work/scr19arrow, base fca549d6.
+mashedmod\build\mashed_re.exe built from that tree ($env:MASHED_NO_DEPLOY='1'; cmd /c mashedmod\build.bat).
+Result note: re/analysis/negctl/session_20261012b/scr19_arrow_RESULT.md
+
+ORIGINAL, measure probe (measure_probe.py, this folder). Spawns original\MASHED.exe with
+MASHED_RE_NO_AUTO_HOOK=1, waits for menu phase 3, pushes nav screen 19 (FUN_0043d2a0 + 0x0067ecb0, the
+menu_draw_burst.py recipe), settles 6 s, then inside ONE onEnter of the frame shell 0x0042e3a0 (game thread,
+detached immediately) calls the original's FUN_004282a0(id, scale) for ids 0x59/0x1b2/0x1b1 at 0.7/0.72/0.6
+and reads the ST0 return as a double. Also reads [0x0067d830], the font ctx [0x0067d838] fields and the
+per-glyph widths. Writes nothing into game memory. No key input. Kills only its own PID.
+  orig_measure_probe.json        PID 21684
+  orig_measure_probe_boot2.json  PID 30380   (same 9 returns, same [0x0067d830] = 0x3f7fffff)
+  orig_measure_probe_boot3.json  PID 17772   (same; this run also wrote orig_scr19_bb.bmp through the
+                                             d3d9 shim's MASHED_ORIG_BBDUMP_REQ channel)
+  (an earlier attempt, PID 39240/18248, AV'd inside a fnstcw stub before any call; stub removed)
+  measure_table.txt   offline recompute (numpy float32 = the PC_24 op sequence) vs the returns.
+
+ORIGINAL, screen-19 draw lists: REUSED ../orig1_settled.json and ../orig2_settled.json, screens 30/32:
+REUSED ../after_fix/orig_scr30.json and orig_scr32.json. Valid: original\MASHED.exe mtime 2026-08-19
+(unchanged), git log 3419790d..HEAD -- re/frida/menu_draw_burst.py re/tools/drawlist_diff.py is empty.
+
+STANDALONE (run_sa.ps1, copied from ../after_fix with the worktree path changed; MASHED_SETTINGS_DEFAULTS=1):
+  sa_knob_on.json   S=19  PID 10880
+  sa30_knob_on.json S=30  PID 34800
+  sa32_knob_on.json S=32  PID 29076
+  sa_scr19_bb.bmp   S=19  PID 39388, plus MASHED_DBG_BBDUMP=1 MASHED_DBG_BBDUMP_OUT=<here>\sa_scr19_bb.bmp
+  every run logged: settings: source=defaults(MASHED_SETTINGS_DEFAULTS) music=7 sfx=7 insults=7 insults_on=2 gamma=3 autosave=1
+  No mashed_re_settings.bin exists in this worktree root, and the repo-root file was not touched.
+
+DIFFS (all: --scale-b 1 --exclude-tex 9 --map mashedmod/build/mashed_re.map --rotate-a 0x42e65a):
+  ../orig1_settled.json vs sa_knob_on.json  --tol-anim 4                  -> diff_orig1_vs_sa_on.txt/.json
+  ../orig1_settled.json vs sa_knob_on.json  (strict)                      -> diff_orig1_vs_sa_on_strict.txt/.json
+  ../orig1_settled.json vs sa_knob_on.json  --tol-pos 0.01 --tol-size 0.01 -> diff_orig1_vs_sa_on_tol001.txt/.json
+  ../orig2_settled.json vs sa_knob_on.json  --tol-anim 4 / strict         -> diff_orig2_vs_sa_on*.txt/.json
+  ../after_fix/orig_scr30.json vs sa30_knob_on.json --tol-anim 4 / strict / 0.01 -> diff_scr30_on*.txt/.json
+  ../after_fix/orig_scr32.json vs sa32_knob_on.json --tol-anim 4 / strict / 0.01 -> diff_scr32_on*.txt/.json
+  ../after_fix/sa{30,32}_knob_on.json vs sa{30,32}_knob_on.json --scale-b 1 --tol-pos 0.01 --tol-size 0.01
+                                                                          -> diff_sa{30,32}_afterfix_vs_arrowfix.*
+  NOTE ../after_fix/sumdiff.py filters the standalone checker by the literal return address 0xb8202. This
+  build moved _LogoOverlayDraw (map: 0xb7d00), so its rows return at 0xb83e2 and sumdiff prints them as
+  "other" in the 0.01 run. They are the same 42 checker rows; widget rows were counted by the original-side
+  caller range 0x430000-0x432fff instead.
+
+VALUE TEXT (tex 9 is excluded from the draw-list diff, so a pixel check):
+  orig_scr19_bb.bmp vs sa_scr19_bb.bmp, ink (max(R,G,B) < 48) in x 374..455, y 270..301 -> value_text_ink.txt
+  crops *_row3.png (x 340..500, y 260..305, 4x nearest).
