@@ -1,6 +1,6 @@
 # Next session kickoff
 
-> ## START HERE 2026-10-13 D3 results (items 1+2 run): **next = the user decisions below.**
+> ## START HERE 2026-10-13 D3 results (items 1+2 run): **decisions taken; next = the car-2 opening-pickup miss (in progress).**
 >
 > - **U-9219 premise REFUTED** (`verify/d3_u9219_20261013/RESULT_U9219.md`, merged 2026-10-13, no code-behaviour
 >   change). The port's 0x00442a60 matches the original on its own inputs (220/220 selections, 880/880 refdist). What
@@ -14,10 +14,15 @@
 >   2=C; FUN_004177b0). The original's noise inside a regime is zero on every metric. In regime C the original's cars
 >   1/2 get only 196 calls in 4/4 runs, so C at 220 can score car 3 only. U-9204's "flag 2 inert" is out of date.
 >   Raw .msd binaries were lost with the worktree (gitignored), the per-run aistep CSVs, labels and provenance are committed.
-> - **Decisions needed:** resolve U-9219 as refuted and open a row for the car-2 opening-pickup miss (now the mode-7
->   carrier); test the one-tick refdist ordering behind a knob or not; adopt the new B envelope into
->   re/tools/b_envelopes.json (command in RESULT_REGIMES §4); regime C window (keep 220 car-3 only / 196 pooled /
->   196 per car); rewrite U-9204 via re-classify.
+> - **Decisions taken (Mariano, 2026-10-13), applied:** U-9219 RESOLVED (refuted premise). New U-9682 = the car-2
+>   opening-pickup miss (the mode-7 carrier for car 2). New U-9683 = the one-tick refdist ordering, not tested (user did
+>   not request it). B envelope adopted into re/tools/b_envelopes.json (RESULT_REGIMES §4 command). Regime C is scored
+>   at 196 calls PER CAR (A/B stay at 220, cars pooled; `ai_ctrl_window.py` REGIME_N / REGIME_PER_CAR). U-9204 rewritten.
+> - **(b) per regime, default build, decided rule** (`verify/d3_regimes_20261013/SCORE_REGIMES_C196.txt`):
+>   **A 2/3, B 1/3, C 0/3.** A car 2 fails abs_steer~ (0 vs 7..23). B car 1 fails c1#/c1~/abs_steer~ (57/49/49),
+>   car 2 fails c0#/c1#/steer# (43/47/89). C at 196 per car: car 1 fails 5 items, car 2 4, car 3 5 (envelopes width 0).
+>   A and B verdicts are unchanged by the C rule. All 31 original runs PASS their own envelopes (93/93 car-windows).
+> - **Car-2 opening-pickup miss IN PROGRESS (child car2pickup, worktree .worktrees/car2pickup), U-9682.**
 
 > ## START HERE 2026-10-13 D3 survey (back to the roadmap): superseded by the results block above.
 >
