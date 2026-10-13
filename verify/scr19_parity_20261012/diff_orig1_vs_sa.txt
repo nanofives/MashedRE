@@ -1,0 +1,26 @@
+== orig1_f0 (A: 136 draws, x1.0) vs f200 (B: 136 draws, x1.0)
+   matched 134  mismatched 0  missing 2  extra 2
+  MISSING  A[116] x= 377.00 y= 191.00 w=  70.00 h= 10.00 col=ffd88020  @0x472db4,0x430e8d
+  MISSING  A[135] x= 457.00 y= 277.00 w=  16.00 h= 16.00 col=ff000000  @0x4739e7,0x430ef1
+  EXTRA    B[116] x= 377.00 y= 191.00 w= 100.00 h= 10.00 col=ffd88020 tex=0 blend=1:5/6  @0xb77c8<HudIm2DQuad+0x188>,0x1b2dc<WinMain@16+0x1cac>
+  EXTRA    B[135] x= 417.65 y= 277.00 w=  16.00 h= 16.00 col=ff000000 tex=46 blend=1:5/6  @0xb77c8<HudIm2DQuad+0x188>,0x1b2dc<WinMain@16+0x1cac>
+== orig1_f1 (A: 136 draws, x1.0) vs f201 (B: 136 draws, x1.0)
+   matched 134  mismatched 0  missing 2  extra 2
+  MISSING  A[116] x= 377.00 y= 191.00 w=  70.00 h= 10.00 col=ffd88020  @0x472db4,0x430e8d
+  MISSING  A[135] x= 457.00 y= 277.00 w=  16.00 h= 16.00 col=ff000000  @0x4739e7,0x430ef1
+  EXTRA    B[116] x= 377.00 y= 191.00 w= 100.00 h= 10.00 col=ffd88020 tex=0 blend=1:5/6  @0xb77c8<HudIm2DQuad+0x188>,0x1b2dc<WinMain@16+0x1cac>
+  EXTRA    B[135] x= 417.65 y= 277.00 w=  16.00 h= 16.00 col=ff000000 tex=46 blend=1:5/6  @0xb77c8<HudIm2DQuad+0x188>,0x1b2dc<WinMain@16+0x1cac>
+== orig1_f2 (A: 136 draws, x1.0) vs f202 (B: 136 draws, x1.0)
+   matched 134  mismatched 0  missing 2  extra 2
+  MISSING  A[116] x= 377.00 y= 191.00 w=  70.00 h= 10.00 col=ffd88020  @0x472db4,0x430e8d
+  MISSING  A[135] x= 457.00 y= 277.00 w=  16.00 h= 16.00 col=ff000000  @0x4739e7,0x430ef1
+  EXTRA    B[116] x= 377.00 y= 191.00 w= 100.00 h= 10.00 col=ffd88020 tex=0 blend=1:5/6  @0xb77c8<HudIm2DQuad+0x188>,0x1b2dc<WinMain@16+0x1cac>
+  EXTRA    B[135] x= 417.65 y= 277.00 w=  16.00 h= 16.00 col=ff000000 tex=46 blend=1:5/6  @0xb77c8<HudIm2DQuad+0x188>,0x1b2dc<WinMain@16+0x1cac>
+== orig1_f3 (A: 136 draws, x1.0) vs f203 (B: 136 draws, x1.0)
+   matched 134  mismatched 0  missing 2  extra 2
+  MISSING  A[116] x= 377.00 y= 191.00 w=  70.00 h= 10.00 col=ffd88020  @0x472db4,0x430e8d
+  MISSING  A[135] x= 457.00 y= 277.00 w=  16.00 h= 16.00 col=ff000000  @0x4739e7,0x430ef1
+  EXTRA    B[116] x= 377.00 y= 191.00 w= 100.00 h= 10.00 col=ffd88020 tex=0 blend=1:5/6  @0xb77c8<HudIm2DQuad+0x188>,0x1b2dc<WinMain@16+0x1cac>
+  EXTRA    B[135] x= 417.65 y= 277.00 w=  16.00 h= 16.00 col=ff000000 tex=46 blend=1:5/6  @0xb77c8<HudIm2DQuad+0x188>,0x1b2dc<WinMain@16+0x1cac>
+-> verify/scr19_parity_20261012/diff_orig1_vs_sa.json
+VERDICT: RED (match=536 mismatch=0 missing=8 extra=8)

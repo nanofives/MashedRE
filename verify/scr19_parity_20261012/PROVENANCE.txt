@@ -1,0 +1,28 @@
+scr19 settings-screen parity, 2026-10-12 (measurement only, no source/harness/tracker edits)
+HEAD 3419790d, mashedmod\build\mashed_re.exe as built at that commit (not rebuilt).
+Result note: re/analysis/negctl/session_20261012b/scr19_parity_RESULT.md
+
+ORIGINAL (each run spawns and kills its own PID; MASHED_RE_NO_AUTO_HOOK=1, stock):
+  py -3.12 re/frida/menu_draw_burst.py --screen 19 --frames 4  --settle 6    --text-trace --label orig1    --out verify/scr19_parity_20261012/orig1_settled.json
+  py -3.12 re/frida/menu_draw_burst.py --screen 19 --frames 4  --settle 6    --text-trace --label orig2    --out verify/scr19_parity_20261012/orig2_settled.json
+  py -3.12 re/frida/menu_draw_burst.py --screen 19 --frames 12 --settle 0.05              --label origfade --out verify/scr19_parity_20261012/orig_fade.json
+  py -3.12 verify/scr19_parity_20261012/alpha_probe.py verify/scr19_parity_20261012/orig_alpha_probe.json
+     (scratch probe, copied here as provenance. It loads menu_draw_burst's own agent for init/phase/push,
+      plus a second script that only READS [0x0067e7f8] mode, [0x0067e7fc] alpha, [0x0067ecb0] screen,
+      [0x0067e9f8] depth, float [0x0067e840] x on every ShellA 0x0042e3a0 entry. Rows: [frame, mode, alpha, screen, depth, x].)
+  Navigation = the tool's synthetic push (FUN_0043d2a0(19,0) + write of [0x0067ecb0]), the documented
+  parity recipe. No save edits, no settings writes.
+
+STANDALONE (PowerShell, CWD = repo root, PIDs 37576 / 6456 killed by PID):
+  MASHED_GOTO=19 MASHED_DBG_DRAWSTREAM=200:203 MASHED_DBG_DRAWSTREAM_OUT=<abs>\sa_settled.json MASHED_WIN_POS=primary-bl
+  MASHED_GOTO=19 MASHED_DBG_DRAWSTREAM=1:12    MASHED_DBG_DRAWSTREAM_OUT=<abs>\sa_run2_f200.json
+     (the 1:12 request produced frame 200 only, so this file is a second settled run, not an early one)
+  Settings source: repo-root mashed_re_settings.bin (gitignored, mtime 2026-09-07), read not modified:
+     'MRES' + {music 10, sfx 7, insults 7, insults_on 0, gamma 10, autosave 0}
+
+DIFFS (scale-b 1: the standalone now emits 640x480 virtual coordinates, the 0.8 default is stale):
+  drawlist_diff.py orig1_settled.json sa_settled.json --scale-b 1 --exclude-tex 9 --map mashedmod/build/mashed_re.map --rotate-a 0x42e65a --tol-anim 4  -> diff_orig1_vs_sa.txt/.json
+  same, no --tol-anim (strict)                                                                                                                        -> diff_orig1_vs_sa_strict.txt
+  orig2_settled.json vs sa_settled.json, --tol-anim 4                                                                                                 -> diff_orig2_vs_sa.txt/.json
+  orig1 vs orig2 (original self-noise), --scale-b 1 --rotate-a 0x42e65a                                                                               -> diff_orig1_vs_orig2.txt/.json
+  sa_settled f200 vs sa_run2_f200 f200 (standalone self-noise), --scale-b 1                                                                           -> diff_sa_vs_sa.txt

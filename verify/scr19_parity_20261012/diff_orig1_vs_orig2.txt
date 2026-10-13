@@ -1,0 +1,934 @@
+== orig1_f0 (A: 136 draws, x1.0) vs orig2_f0 (B: 136 draws, x1.0)
+   matched 59  mismatched 77  missing 0  extra 0
+  MISMATCH(reordered)
+    A[  0] x=   0.00 y=   0.00 w= 512.00 h=512.00 col=ffffffff  @0x473ebd,0x42e65a
+    B[ 59] x=   0.00 y=   0.00 w= 512.00 h=512.00 col=ffffffff  @0x473ebd,0x42e65a
+  MISMATCH(reordered)
+    A[  1] x= 288.00 y=  64.00 w= 176.00 h=352.00 col=00ffffff/ffffffff/00ffffff/ffffffff  @0x474bd3,0x42e80c
+    B[ 60] x= 288.00 y=  64.00 w= 176.00 h=352.00 col=00ffffff/ffffffff/00ffffff/ffffffff  @0x474bd3,0x42e7ba
+  MISMATCH(reordered)
+    A[  2] x= 464.00 y=  64.00 w= 176.00 h=352.00 col=ffffffff  @0x474d0c,0x42e80c
+    B[ 61] x= 464.00 y=  64.00 w= 176.00 h=352.00 col=ffffffff  @0x474d0c,0x42e7ba
+  MISMATCH(reordered)
+    A[  3] x= 384.00 y=   0.00 w= 128.00 h= 64.00 col=00000000/ff000000/00000000/ff000000  @0x473532,0x473f6c
+    B[ 62] x= 384.00 y=   0.00 w= 128.00 h= 64.00 col=00000000/ff000000/00000000/ff000000  @0x473532,0x473f6c
+  MISMATCH(reordered)
+    A[  4] x= 384.00 y= 416.00 w= 128.00 h= 64.00 col=00000000/ff000000/00000000/ff000000  @0x473532,0x473f87
+    B[ 63] x= 384.00 y= 416.00 w= 128.00 h= 64.00 col=00000000/ff000000/00000000/ff000000  @0x473532,0x473f87
+  MISMATCH(reordered)
+    A[  5] x= 384.00 y=   0.00 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 64] x= 384.00 y=   0.00 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[  6] x=   0.00 y=   0.00 w= 384.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 65] x=   0.00 y=   0.00 w= 384.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[  7] x= 339.10 y=  34.13 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 66] x= 339.10 y=  34.13 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[  8] x=   0.00 y=  34.13 w= 339.10 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 67] x=   0.00 y=  34.13 w= 339.10 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[  9] x= 322.81 y=  68.27 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 68] x= 322.81 y=  68.27 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 10] x=   0.00 y=  68.27 w= 322.81 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 69] x=   0.00 y=  68.27 w= 322.81 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 11] x= 312.00 y= 102.40 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 70] x= 312.00 y= 102.40 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 12] x=   0.00 y= 102.40 w= 312.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 71] x=   0.00 y= 102.40 w= 312.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 13] x= 304.40 y= 136.53 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 72] x= 304.40 y= 136.53 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 14] x=   0.00 y= 136.53 w= 304.40 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 73] x=   0.00 y= 136.53 w= 304.40 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 15] x= 299.15 y= 170.67 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 74] x= 299.15 y= 170.67 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 16] x=   0.00 y= 170.67 w= 299.15 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 75] x=   0.00 y= 170.67 w= 299.15 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 17] x= 295.82 y= 204.80 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 76] x= 295.82 y= 204.80 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 18] x=   0.00 y= 204.80 w= 295.82 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 77] x=   0.00 y= 204.80 w= 295.82 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 19] x= 294.20 y= 238.93 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 78] x= 294.20 y= 238.93 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 20] x=   0.00 y= 238.93 w= 294.20 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 79] x=   0.00 y= 238.93 w= 294.20 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 21] x= 294.20 y= 273.07 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 80] x= 294.20 y= 273.07 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 22] x=   0.00 y= 273.07 w= 294.20 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 81] x=   0.00 y= 273.07 w= 294.20 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 23] x= 295.82 y= 307.20 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 82] x= 295.82 y= 307.20 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 24] x=   0.00 y= 307.20 w= 295.82 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 83] x=   0.00 y= 307.20 w= 295.82 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 25] x= 299.15 y= 341.33 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 84] x= 299.15 y= 341.33 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 26] x=   0.00 y= 341.33 w= 299.15 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 85] x=   0.00 y= 341.33 w= 299.15 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 27] x= 304.40 y= 375.47 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 86] x= 304.40 y= 375.47 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 28] x=   0.00 y= 375.47 w= 304.40 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 87] x=   0.00 y= 375.47 w= 304.40 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 29] x= 312.00 y= 409.60 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 88] x= 312.00 y= 409.60 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 30] x=   0.00 y= 409.60 w= 312.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 89] x=   0.00 y= 409.60 w= 312.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 31] x= 322.81 y= 443.73 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 90] x= 322.81 y= 443.73 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 32] x=   0.00 y= 443.73 w= 322.81 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 91] x=   0.00 y= 443.73 w= 322.81 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 33] x= 339.10 y= 477.87 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 92] x= 339.10 y= 477.87 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 34] x=   0.00 y= 477.87 w= 339.10 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 93] x=   0.00 y= 477.87 w= 339.10 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(moved)
+    A[ 35] x= 361.30 y=   0.65 w=  23.59 h= 21.80 col=00000000/ff808080/00000000/ff808080  @0x474464,0x42e89c
+    B[ 94] x= 358.07 y=  -0.97 w=  26.92 h= 23.96 col=00000000/ff808080/00000000/ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 36] x= 402.90 y=   1.45 w=  21.00 h= 19.17 col=ff808080  @0x474464,0x42e89c
+    B[ 95] x= 401.90 y=   0.95 w=  23.09 h= 21.25 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 37] x= 439.25 y=  -0.38 w=  21.00 h= 19.75 col=ff808080  @0x474464,0x42e89c
+    B[ 96] x= 442.41 y=   1.20 w=  21.00 h= 19.10 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 38] x= 476.29 y=  -1.86 w=  21.45 h= 22.95 col=ff808080  @0x474464,0x42e89c
+    B[ 97] x= 478.61 y=  -0.69 w=  21.00 h= 20.28 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 39] x= 516.29 y=  -1.86 w=  24.90 h= 24.59 col=ff808080  @0x474464,0x42e89c
+    B[ 98] x= 516.09 y=  -1.95 w=  22.07 h= 23.37 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 40] x= 556.74 y=  -1.63 w=  27.72 h= 24.41 col=ff808080  @0x474464,0x42e89c
+    B[ 99] x= 556.09 y=  -1.95 w=  25.75 h= 24.83 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 41] x= 600.19 y=   0.09 w=  24.36 h= 22.68 col=ff808080  @0x474464,0x42e89c
+    B[100] x= 597.17 y=  -1.42 w=  27.58 h= 24.29 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 42] x= 383.90 y=  20.62 w=  21.00 h= 19.75 col=ff808080  @0x474464,0x42e89c
+    B[101] x= 382.90 y=  22.20 w=  23.09 h= 19.10 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 43] x= 420.25 y=  19.14 w=  21.00 h= 22.95 col=ff808080  @0x474464,0x42e89c
+    B[102] x= 423.41 y=  20.31 w=  21.00 h= 20.28 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 44] x= 457.29 y=  19.14 w=  21.45 h= 24.59 col=ff808080  @0x474464,0x42e89c
+    B[103] x= 459.61 y=  19.05 w=  21.00 h= 23.37 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 45] x= 497.29 y=  19.37 w=  24.90 h= 24.41 col=ff808080  @0x474464,0x42e89c
+    B[104] x= 497.09 y=  19.05 w=  22.07 h= 24.83 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 46] x= 537.74 y=  21.09 w=  27.72 h= 22.68 col=ff808080  @0x474464,0x42e89c
+    B[105] x= 537.09 y=  19.58 w=  25.75 h= 24.29 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 47] x= 581.19 y=  22.73 w=  24.36 h= 19.46 col=ff808080  @0x474464,0x42e89c
+    B[106] x= 578.17 y=  21.42 w=  27.58 h= 22.18 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 48] x= 624.46 y=  21.19 w=  21.09 h= 19.24 col=ff808080  @0x474464,0x42e89c
+    B[107] x= 621.84 y=  22.60 w=  23.90 h= 19.26 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 49] x= 359.25 y=  40.14 w=  21.00 h= 23.86 col=00000000/ff808080/00000000/ff808080  @0x474464,0x42e89c
+    B[108] x= 362.41 y=  40.05 w=  21.00 h= 23.95 col=00000000/ff808080/00000000/ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 50] x= 396.29 y=  40.37 w=  21.45 h= 23.63 col=ff808080  @0x474464,0x42e89c
+    B[109] x= 398.61 y=  40.05 w=  21.00 h= 23.95 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 51] x= 436.29 y=  42.09 w=  24.90 h= 21.91 col=ff808080  @0x474464,0x42e89c
+    B[110] x= 436.09 y=  40.58 w=  22.07 h= 23.42 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 52] x= 476.74 y=  43.73 w=  27.72 h= 20.27 col=ff808080  @0x474464,0x42e89c
+    B[111] x= 476.09 y=  42.42 w=  25.75 h= 21.58 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 53] x= 520.19 y=  42.19 w=  24.36 h= 21.81 col=ff808080  @0x474464,0x42e89c
+    B[112] x= 517.17 y=  43.60 w=  27.58 h= 20.40 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 54] x= 563.46 y=  40.43 w=  21.09 h= 23.57 col=ff808080  @0x474464,0x42e89c
+    B[113] x= 560.84 y=  41.86 w=  23.90 h= 22.14 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 55] x= 600.38 y=  40.11 w=  21.00 h= 23.89 col=ff808080  @0x474464,0x42e89c
+    B[114] x= 603.20 y=  40.24 w=  21.00 h= 23.76 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 56] x= 361.30 y= 416.00 w=  23.59 h= 22.45 col=00000000/ff808080/00000000/ff808080  @0x474464,0x42e89c
+    B[115] x= 358.07 y= 416.00 w=  26.92 h= 22.99 col=00000000/ff808080/00000000/ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 57] x= 402.90 y= 416.00 w=  21.00 h= 20.62 col=ff808080  @0x474464,0x42e89c
+    B[116] x= 401.90 y= 416.00 w=  23.09 h= 22.20 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 58] x= 439.25 y= 416.00 w=  21.00 h= 19.37 col=ff808080  @0x474464,0x42e89c
+    B[117] x= 442.41 y= 416.00 w=  21.00 h= 20.31 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 59] x= 476.29 y= 416.00 w=  21.45 h= 21.09 col=ff808080  @0x474464,0x42e89c
+    B[118] x= 478.61 y= 416.00 w=  21.00 h= 19.58 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 60] x= 516.29 y= 416.00 w=  24.90 h= 22.73 col=ff808080  @0x474464,0x42e89c
+    B[119] x= 516.09 y= 416.00 w=  22.07 h= 21.42 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 61] x= 556.74 y= 416.00 w=  27.72 h= 22.78 col=ff808080  @0x474464,0x42e89c
+    B[120] x= 556.09 y= 416.00 w=  25.75 h= 22.87 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 62] x= 600.19 y= 416.00 w=  24.36 h= 22.78 col=ff808080  @0x474464,0x42e89c
+    B[121] x= 597.17 y= 416.00 w=  27.58 h= 22.87 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 63] x= 383.90 y= 436.62 w=  21.00 h= 19.75 col=ff808080  @0x474464,0x42e89c
+    B[122] x= 382.90 y= 438.20 w=  23.09 h= 19.10 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 64] x= 420.25 y= 435.14 w=  21.00 h= 22.95 col=ff808080  @0x474464,0x42e89c
+    B[123] x= 423.41 y= 436.31 w=  21.00 h= 20.28 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 65] x= 457.29 y= 435.14 w=  21.45 h= 24.59 col=ff808080  @0x474464,0x42e89c
+    B[124] x= 459.61 y= 435.05 w=  21.00 h= 23.37 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 66] x= 497.29 y= 435.37 w=  24.90 h= 24.41 col=ff808080  @0x474464,0x42e89c
+    B[125] x= 497.09 y= 435.05 w=  22.07 h= 24.83 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 67] x= 537.74 y= 437.09 w=  27.72 h= 22.68 col=ff808080  @0x474464,0x42e89c
+    B[126] x= 537.09 y= 435.58 w=  25.75 h= 24.29 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 68] x= 581.19 y= 438.73 w=  24.36 h= 19.46 col=ff808080  @0x474464,0x42e89c
+    B[127] x= 578.17 y= 437.42 w=  27.58 h= 22.18 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 69] x= 624.46 y= 437.19 w=  21.09 h= 19.24 col=ff808080  @0x474464,0x42e89c
+    B[128] x= 621.84 y= 438.60 w=  23.90 h= 19.26 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 70] x= 359.25 y= 456.14 w=  21.00 h= 24.59 col=00000000/ff808080/00000000/ff808080  @0x474464,0x42e89c
+    B[129] x= 362.41 y= 456.05 w=  21.00 h= 23.37 col=00000000/ff808080/00000000/ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 71] x= 396.29 y= 456.37 w=  21.45 h= 24.41 col=ff808080  @0x474464,0x42e89c
+    B[130] x= 398.61 y= 456.05 w=  21.00 h= 24.83 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 72] x= 436.29 y= 458.09 w=  24.90 h= 22.68 col=ff808080  @0x474464,0x42e89c
+    B[131] x= 436.09 y= 456.58 w=  22.07 h= 24.29 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 73] x= 476.74 y= 459.73 w=  27.72 h= 19.46 col=ff808080  @0x474464,0x42e89c
+    B[132] x= 476.09 y= 458.42 w=  25.75 h= 22.18 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 74] x= 520.19 y= 458.19 w=  24.36 h= 19.24 col=ff808080  @0x474464,0x42e89c
+    B[133] x= 517.17 y= 459.60 w=  27.58 h= 19.26 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 75] x= 563.46 y= 456.43 w=  21.09 h= 22.11 col=ff808080  @0x474464,0x42e89c
+    B[134] x= 560.84 y= 457.86 w=  23.90 h= 19.39 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 76] x= 600.38 y= 456.11 w=  21.00 h= 24.27 col=ff808080  @0x474464,0x42e89c
+    B[135] x= 603.20 y= 456.24 w=  21.00 h= 22.61 col=ff808080  @0x474464,0x42e89c
+== orig1_f1 (A: 136 draws, x1.0) vs orig2_f1 (B: 136 draws, x1.0)
+   matched 59  mismatched 77  missing 0  extra 0
+  MISMATCH(reordered)
+    A[  0] x=   0.00 y=   0.00 w= 512.00 h=512.00 col=ffffffff  @0x473ebd,0x42e65a
+    B[ 59] x=   0.00 y=   0.00 w= 512.00 h=512.00 col=ffffffff  @0x473ebd,0x42e65a
+  MISMATCH(reordered)
+    A[  1] x= 288.00 y=  64.00 w= 176.00 h=352.00 col=00ffffff/ffffffff/00ffffff/ffffffff  @0x474bd3,0x42e80c
+    B[ 60] x= 288.00 y=  64.00 w= 176.00 h=352.00 col=00ffffff/ffffffff/00ffffff/ffffffff  @0x474bd3,0x42e7ba
+  MISMATCH(reordered)
+    A[  2] x= 464.00 y=  64.00 w= 176.00 h=352.00 col=ffffffff  @0x474d0c,0x42e80c
+    B[ 61] x= 464.00 y=  64.00 w= 176.00 h=352.00 col=ffffffff  @0x474d0c,0x42e7ba
+  MISMATCH(reordered)
+    A[  3] x= 384.00 y=   0.00 w= 128.00 h= 64.00 col=00000000/ff000000/00000000/ff000000  @0x473532,0x473f6c
+    B[ 62] x= 384.00 y=   0.00 w= 128.00 h= 64.00 col=00000000/ff000000/00000000/ff000000  @0x473532,0x473f6c
+  MISMATCH(reordered)
+    A[  4] x= 384.00 y= 416.00 w= 128.00 h= 64.00 col=00000000/ff000000/00000000/ff000000  @0x473532,0x473f87
+    B[ 63] x= 384.00 y= 416.00 w= 128.00 h= 64.00 col=00000000/ff000000/00000000/ff000000  @0x473532,0x473f87
+  MISMATCH(reordered)
+    A[  5] x= 384.00 y=   0.00 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 64] x= 384.00 y=   0.00 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[  6] x=   0.00 y=   0.00 w= 384.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 65] x=   0.00 y=   0.00 w= 384.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[  7] x= 339.10 y=  34.13 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 66] x= 339.10 y=  34.13 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[  8] x=   0.00 y=  34.13 w= 339.10 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 67] x=   0.00 y=  34.13 w= 339.10 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[  9] x= 322.81 y=  68.27 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 68] x= 322.81 y=  68.27 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 10] x=   0.00 y=  68.27 w= 322.81 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 69] x=   0.00 y=  68.27 w= 322.81 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 11] x= 312.00 y= 102.40 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 70] x= 312.00 y= 102.40 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 12] x=   0.00 y= 102.40 w= 312.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 71] x=   0.00 y= 102.40 w= 312.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 13] x= 304.40 y= 136.53 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 72] x= 304.40 y= 136.53 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 14] x=   0.00 y= 136.53 w= 304.40 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 73] x=   0.00 y= 136.53 w= 304.40 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 15] x= 299.15 y= 170.67 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 74] x= 299.15 y= 170.67 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 16] x=   0.00 y= 170.67 w= 299.15 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 75] x=   0.00 y= 170.67 w= 299.15 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 17] x= 295.82 y= 204.80 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 76] x= 295.82 y= 204.80 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 18] x=   0.00 y= 204.80 w= 295.82 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 77] x=   0.00 y= 204.80 w= 295.82 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 19] x= 294.20 y= 238.93 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 78] x= 294.20 y= 238.93 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 20] x=   0.00 y= 238.93 w= 294.20 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 79] x=   0.00 y= 238.93 w= 294.20 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 21] x= 294.20 y= 273.07 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 80] x= 294.20 y= 273.07 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 22] x=   0.00 y= 273.07 w= 294.20 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 81] x=   0.00 y= 273.07 w= 294.20 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 23] x= 295.82 y= 307.20 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 82] x= 295.82 y= 307.20 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 24] x=   0.00 y= 307.20 w= 295.82 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 83] x=   0.00 y= 307.20 w= 295.82 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 25] x= 299.15 y= 341.33 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 84] x= 299.15 y= 341.33 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 26] x=   0.00 y= 341.33 w= 299.15 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 85] x=   0.00 y= 341.33 w= 299.15 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 27] x= 304.40 y= 375.47 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 86] x= 304.40 y= 375.47 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 28] x=   0.00 y= 375.47 w= 304.40 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 87] x=   0.00 y= 375.47 w= 304.40 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 29] x= 312.00 y= 409.60 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 88] x= 312.00 y= 409.60 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 30] x=   0.00 y= 409.60 w= 312.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 89] x=   0.00 y= 409.60 w= 312.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 31] x= 322.81 y= 443.73 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 90] x= 322.81 y= 443.73 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 32] x=   0.00 y= 443.73 w= 322.81 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 91] x=   0.00 y= 443.73 w= 322.81 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 33] x= 339.10 y= 477.87 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 92] x= 339.10 y= 477.87 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 34] x=   0.00 y= 477.87 w= 339.10 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 93] x=   0.00 y= 477.87 w= 339.10 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(moved)
+    A[ 35] x= 361.42 y=   0.71 w=  23.49 h= 21.69 col=00000000/ff808080/00000000/ff808080  @0x474464,0x42e89c
+    B[ 94] x= 358.19 y=  -0.91 w=  26.81 h= 23.91 col=00000000/ff808080/00000000/ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 36] x= 402.81 y=   1.40 w=  21.00 h= 19.16 col=ff808080  @0x474464,0x42e89c
+    B[ 95] x= 402.02 y=   1.01 w=  22.98 h= 21.14 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 37] x= 439.12 y=  -0.44 w=  21.00 h= 19.85 col=ff808080  @0x474464,0x42e89c
+    B[ 96] x= 442.30 y=   1.15 w=  21.00 h= 19.09 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 38] x= 476.24 y=  -1.88 w=  21.58 h= 23.04 col=ff808080  @0x474464,0x42e89c
+    B[ 97] x= 478.49 y=  -0.76 w=  21.00 h= 20.39 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 39] x= 516.24 y=  -1.88 w=  25.08 h= 24.64 col=ff808080  @0x474464,0x42e89c
+    B[ 98] x= 516.07 y=  -1.97 w=  22.19 h= 23.45 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 40] x= 556.82 y=  -1.59 w=  27.71 h= 24.35 col=ff808080  @0x474464,0x42e89c
+    B[ 99] x= 556.07 y=  -1.97 w=  25.91 h= 24.86 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 41] x= 600.32 y=   0.16 w=  24.21 h= 22.58 col=ff808080  @0x474464,0x42e89c
+    B[100] x= 597.26 y=  -1.37 w=  27.53 h= 24.26 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 42] x= 383.81 y=  20.56 w=  21.00 h= 19.85 col=ff808080  @0x474464,0x42e89c
+    B[101] x= 383.02 y=  22.15 w=  22.98 h= 19.09 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 43] x= 420.12 y=  19.12 w=  21.00 h= 23.04 col=ff808080  @0x474464,0x42e89c
+    B[102] x= 423.30 y=  20.24 w=  21.00 h= 20.39 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 44] x= 457.24 y=  19.12 w=  21.58 h= 24.64 col=ff808080  @0x474464,0x42e89c
+    B[103] x= 459.49 y=  19.03 w=  21.00 h= 23.45 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 45] x= 497.24 y=  19.41 w=  25.08 h= 24.35 col=ff808080  @0x474464,0x42e89c
+    B[104] x= 497.07 y=  19.03 w=  22.19 h= 24.86 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 46] x= 537.82 y=  21.16 w=  27.71 h= 22.58 col=ff808080  @0x474464,0x42e89c
+    B[105] x= 537.07 y=  19.63 w=  25.91 h= 24.26 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 47] x= 581.32 y=  22.75 w=  24.21 h= 19.38 col=ff808080  @0x474464,0x42e89c
+    B[106] x= 578.26 y=  21.49 w=  27.53 h= 22.07 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 48] x= 624.49 y=  21.12 w=  21.00 h= 19.26 col=ff808080  @0x474464,0x42e89c
+    B[107] x= 621.97 y=  22.56 w=  23.82 h= 19.23 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 49] x= 359.12 y=  40.12 w=  21.00 h= 23.88 col=00000000/ff808080/00000000/ff808080  @0x474464,0x42e89c
+    B[108] x= 362.30 y=  40.03 w=  21.00 h= 23.97 col=00000000/ff808080/00000000/ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 50] x= 396.24 y=  40.41 w=  21.58 h= 23.59 col=ff808080  @0x474464,0x42e89c
+    B[109] x= 398.49 y=  40.03 w=  21.00 h= 23.97 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 51] x= 436.24 y=  42.16 w=  25.08 h= 21.84 col=ff808080  @0x474464,0x42e89c
+    B[110] x= 436.07 y=  40.63 w=  22.19 h= 23.37 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 52] x= 476.82 y=  43.75 w=  27.71 h= 20.25 col=ff808080  @0x474464,0x42e89c
+    B[111] x= 476.07 y=  42.49 w=  25.91 h= 21.51 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 53] x= 520.32 y=  42.12 w=  24.21 h= 21.88 col=ff808080  @0x474464,0x42e89c
+    B[112] x= 517.26 y=  43.56 w=  27.53 h= 20.44 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 54] x= 563.49 y=  40.39 w=  21.00 h= 23.61 col=ff808080  @0x474464,0x42e89c
+    B[113] x= 560.97 y=  41.79 w=  23.82 h= 22.21 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 55] x= 600.24 y=  40.13 w=  21.00 h= 23.87 col=ff808080  @0x474464,0x42e89c
+    B[114] x= 603.12 y=  40.21 w=  21.00 h= 23.79 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 56] x= 361.42 y= 416.00 w=  23.49 h= 22.40 col=00000000/ff808080/00000000/ff808080  @0x474464,0x42e89c
+    B[115] x= 358.19 y= 416.00 w=  26.81 h= 23.00 col=00000000/ff808080/00000000/ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 57] x= 402.81 y= 416.00 w=  21.00 h= 20.56 col=ff808080  @0x474464,0x42e89c
+    B[116] x= 402.02 y= 416.00 w=  22.98 h= 22.15 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 58] x= 439.12 y= 416.00 w=  21.00 h= 19.41 col=ff808080  @0x474464,0x42e89c
+    B[117] x= 442.30 y= 416.00 w=  21.00 h= 20.24 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 59] x= 476.24 y= 416.00 w=  21.58 h= 21.16 col=ff808080  @0x474464,0x42e89c
+    B[118] x= 478.49 y= 416.00 w=  21.00 h= 19.63 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 60] x= 516.24 y= 416.00 w=  25.08 h= 22.76 col=ff808080  @0x474464,0x42e89c
+    B[119] x= 516.07 y= 416.00 w=  22.19 h= 21.49 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 61] x= 556.82 y= 416.00 w=  27.71 h= 22.76 col=ff808080  @0x474464,0x42e89c
+    B[120] x= 556.07 y= 416.00 w=  25.91 h= 22.90 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 62] x= 600.32 y= 416.00 w=  24.21 h= 22.75 col=ff808080  @0x474464,0x42e89c
+    B[121] x= 597.26 y= 416.00 w=  27.53 h= 22.90 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 63] x= 383.81 y= 436.56 w=  21.00 h= 19.85 col=ff808080  @0x474464,0x42e89c
+    B[122] x= 383.02 y= 438.15 w=  22.98 h= 19.09 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 64] x= 420.12 y= 435.12 w=  21.00 h= 23.04 col=ff808080  @0x474464,0x42e89c
+    B[123] x= 423.30 y= 436.24 w=  21.00 h= 20.39 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 65] x= 457.24 y= 435.12 w=  21.58 h= 24.64 col=ff808080  @0x474464,0x42e89c
+    B[124] x= 459.49 y= 435.03 w=  21.00 h= 23.45 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 66] x= 497.24 y= 435.41 w=  25.08 h= 24.35 col=ff808080  @0x474464,0x42e89c
+    B[125] x= 497.07 y= 435.03 w=  22.19 h= 24.86 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 67] x= 537.82 y= 437.16 w=  27.71 h= 22.58 col=ff808080  @0x474464,0x42e89c
+    B[126] x= 537.07 y= 435.63 w=  25.91 h= 24.26 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 68] x= 581.32 y= 438.75 w=  24.21 h= 19.38 col=ff808080  @0x474464,0x42e89c
+    B[127] x= 578.26 y= 437.49 w=  27.53 h= 22.07 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 69] x= 624.49 y= 437.12 w=  21.00 h= 19.26 col=ff808080  @0x474464,0x42e89c
+    B[128] x= 621.97 y= 438.56 w=  23.82 h= 19.23 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 70] x= 359.12 y= 456.12 w=  21.00 h= 24.64 col=00000000/ff808080/00000000/ff808080  @0x474464,0x42e89c
+    B[129] x= 362.30 y= 456.03 w=  21.00 h= 23.45 col=00000000/ff808080/00000000/ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 71] x= 396.24 y= 456.41 w=  21.58 h= 24.35 col=ff808080  @0x474464,0x42e89c
+    B[130] x= 398.49 y= 456.03 w=  21.00 h= 24.86 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 72] x= 436.24 y= 458.16 w=  25.08 h= 22.58 col=ff808080  @0x474464,0x42e89c
+    B[131] x= 436.07 y= 456.63 w=  22.19 h= 24.26 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 73] x= 476.82 y= 459.75 w=  27.71 h= 19.38 col=ff808080  @0x474464,0x42e89c
+    B[132] x= 476.07 y= 458.49 w=  25.91 h= 22.07 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 74] x= 520.32 y= 458.12 w=  24.21 h= 19.26 col=ff808080  @0x474464,0x42e89c
+    B[133] x= 517.26 y= 459.56 w=  27.53 h= 19.23 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 75] x= 563.49 y= 456.39 w=  21.00 h= 22.21 col=ff808080  @0x474464,0x42e89c
+    B[134] x= 560.97 y= 457.79 w=  23.82 h= 19.49 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 76] x= 600.24 y= 456.13 w=  21.00 h= 24.30 col=ff808080  @0x474464,0x42e89c
+    B[135] x= 603.12 y= 456.21 w=  21.00 h= 22.71 col=ff808080  @0x474464,0x42e89c
+== orig1_f2 (A: 136 draws, x1.0) vs orig2_f2 (B: 136 draws, x1.0)
+   matched 59  mismatched 77  missing 0  extra 0
+  MISMATCH(reordered)
+    A[  0] x=   0.00 y=   0.00 w= 512.00 h=512.00 col=ffffffff  @0x473ebd,0x42e65a
+    B[ 59] x=   0.00 y=   0.00 w= 512.00 h=512.00 col=ffffffff  @0x473ebd,0x42e65a
+  MISMATCH(reordered)
+    A[  1] x= 288.00 y=  64.00 w= 176.00 h=352.00 col=00ffffff/ffffffff/00ffffff/ffffffff  @0x474bd3,0x42e80c
+    B[ 60] x= 288.00 y=  64.00 w= 176.00 h=352.00 col=00ffffff/ffffffff/00ffffff/ffffffff  @0x474bd3,0x42e7ba
+  MISMATCH(reordered)
+    A[  2] x= 464.00 y=  64.00 w= 176.00 h=352.00 col=ffffffff  @0x474d0c,0x42e80c
+    B[ 61] x= 464.00 y=  64.00 w= 176.00 h=352.00 col=ffffffff  @0x474d0c,0x42e7ba
+  MISMATCH(reordered)
+    A[  3] x= 384.00 y=   0.00 w= 128.00 h= 64.00 col=00000000/ff000000/00000000/ff000000  @0x473532,0x473f6c
+    B[ 62] x= 384.00 y=   0.00 w= 128.00 h= 64.00 col=00000000/ff000000/00000000/ff000000  @0x473532,0x473f6c
+  MISMATCH(reordered)
+    A[  4] x= 384.00 y= 416.00 w= 128.00 h= 64.00 col=00000000/ff000000/00000000/ff000000  @0x473532,0x473f87
+    B[ 63] x= 384.00 y= 416.00 w= 128.00 h= 64.00 col=00000000/ff000000/00000000/ff000000  @0x473532,0x473f87
+  MISMATCH(reordered)
+    A[  5] x= 384.00 y=   0.00 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 64] x= 384.00 y=   0.00 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[  6] x=   0.00 y=   0.00 w= 384.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 65] x=   0.00 y=   0.00 w= 384.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[  7] x= 339.10 y=  34.13 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 66] x= 339.10 y=  34.13 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[  8] x=   0.00 y=  34.13 w= 339.10 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 67] x=   0.00 y=  34.13 w= 339.10 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[  9] x= 322.81 y=  68.27 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 68] x= 322.81 y=  68.27 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 10] x=   0.00 y=  68.27 w= 322.81 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 69] x=   0.00 y=  68.27 w= 322.81 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 11] x= 312.00 y= 102.40 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 70] x= 312.00 y= 102.40 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 12] x=   0.00 y= 102.40 w= 312.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 71] x=   0.00 y= 102.40 w= 312.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 13] x= 304.40 y= 136.53 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 72] x= 304.40 y= 136.53 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 14] x=   0.00 y= 136.53 w= 304.40 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 73] x=   0.00 y= 136.53 w= 304.40 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 15] x= 299.15 y= 170.67 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 74] x= 299.15 y= 170.67 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 16] x=   0.00 y= 170.67 w= 299.15 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 75] x=   0.00 y= 170.67 w= 299.15 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 17] x= 295.82 y= 204.80 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 76] x= 295.82 y= 204.80 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 18] x=   0.00 y= 204.80 w= 295.82 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 77] x=   0.00 y= 204.80 w= 295.82 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 19] x= 294.20 y= 238.93 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 78] x= 294.20 y= 238.93 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 20] x=   0.00 y= 238.93 w= 294.20 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 79] x=   0.00 y= 238.93 w= 294.20 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 21] x= 294.20 y= 273.07 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 80] x= 294.20 y= 273.07 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 22] x=   0.00 y= 273.07 w= 294.20 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 81] x=   0.00 y= 273.07 w= 294.20 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 23] x= 295.82 y= 307.20 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 82] x= 295.82 y= 307.20 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 24] x=   0.00 y= 307.20 w= 295.82 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 83] x=   0.00 y= 307.20 w= 295.82 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 25] x= 299.15 y= 341.33 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 84] x= 299.15 y= 341.33 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 26] x=   0.00 y= 341.33 w= 299.15 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 85] x=   0.00 y= 341.33 w= 299.15 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 27] x= 304.40 y= 375.47 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 86] x= 304.40 y= 375.47 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 28] x=   0.00 y= 375.47 w= 304.40 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 87] x=   0.00 y= 375.47 w= 304.40 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 29] x= 312.00 y= 409.60 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 88] x= 312.00 y= 409.60 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 30] x=   0.00 y= 409.60 w= 312.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 89] x=   0.00 y= 409.60 w= 312.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 31] x= 322.81 y= 443.73 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 90] x= 322.81 y= 443.73 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 32] x=   0.00 y= 443.73 w= 322.81 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 91] x=   0.00 y= 443.73 w= 322.81 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 33] x= 339.10 y= 477.87 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 92] x= 339.10 y= 477.87 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 34] x=   0.00 y= 477.87 w= 339.10 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 93] x=   0.00 y= 477.87 w= 339.10 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(moved)
+    A[ 35] x= 361.55 y=   0.77 w=  23.39 h= 21.58 col=00000000/ff808080/00000000/ff808080  @0x474464,0x42e89c
+    B[ 94] x= 358.30 y=  -0.85 w=  26.70 h= 23.85 col=00000000/ff808080/00000000/ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 36] x= 402.71 y=   1.36 w=  21.00 h= 19.14 col=ff808080  @0x474464,0x42e89c
+    B[ 95] x= 402.13 y=   1.07 w=  22.87 h= 21.03 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 37] x= 438.99 y=  -0.51 w=  21.00 h= 19.96 col=ff808080  @0x474464,0x42e89c
+    B[ 96] x= 442.19 y=   1.09 w=  21.00 h= 19.09 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 38] x= 476.20 y=  -1.90 w=  21.70 h= 23.13 col=ff808080  @0x474464,0x42e89c
+    B[ 97] x= 478.37 y=  -0.82 w=  21.00 h= 20.50 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 39] x= 516.20 y=  -1.90 w=  25.26 h= 24.70 col=ff808080  @0x474464,0x42e89c
+    B[ 98] x= 516.04 y=  -1.98 w=  22.31 h= 23.53 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 40] x= 556.90 y=  -1.55 w=  27.69 h= 24.34 col=ff808080  @0x474464,0x42e89c
+    B[ 99] x= 556.04 y=  -1.98 w=  26.06 h= 24.89 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 41] x= 600.45 y=   0.23 w=  24.14 h= 22.49 col=ff808080  @0x474464,0x42e89c
+    B[100] x= 597.36 y=  -1.32 w=  27.47 h= 24.24 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 42] x= 383.71 y=  20.49 w=  21.00 h= 19.96 col=ff808080  @0x474464,0x42e89c
+    B[101] x= 383.13 y=  22.09 w=  22.87 h= 19.09 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 43] x= 419.99 y=  19.10 w=  21.00 h= 23.13 col=ff808080  @0x474464,0x42e89c
+    B[102] x= 423.19 y=  20.18 w=  21.00 h= 20.50 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 44] x= 457.20 y=  19.10 w=  21.70 h= 24.70 col=ff808080  @0x474464,0x42e89c
+    B[103] x= 459.37 y=  19.02 w=  21.00 h= 23.53 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 45] x= 497.20 y=  19.45 w=  25.26 h= 24.34 col=ff808080  @0x474464,0x42e89c
+    B[104] x= 497.04 y=  19.02 w=  22.31 h= 24.89 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 46] x= 537.90 y=  21.23 w=  27.69 h= 22.49 col=ff808080  @0x474464,0x42e89c
+    B[105] x= 537.04 y=  19.68 w=  26.06 h= 24.24 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 47] x= 581.45 y=  22.71 w=  24.14 h= 19.34 col=ff808080  @0x474464,0x42e89c
+    B[106] x= 578.36 y=  21.55 w=  27.47 h= 21.97 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 48] x= 624.42 y=  21.06 w=  21.00 h= 19.29 col=ff808080  @0x474464,0x42e89c
+    B[107] x= 622.10 y=  22.52 w=  23.73 h= 19.21 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 49] x= 358.99 y=  40.10 w=  21.00 h= 23.90 col=00000000/ff808080/00000000/ff808080  @0x474464,0x42e89c
+    B[108] x= 362.19 y=  40.02 w=  21.00 h= 23.98 col=00000000/ff808080/00000000/ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 50] x= 396.20 y=  40.45 w=  21.70 h= 23.55 col=ff808080  @0x474464,0x42e89c
+    B[109] x= 398.37 y=  40.02 w=  21.00 h= 23.98 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 51] x= 436.20 y=  42.23 w=  25.26 h= 21.77 col=ff808080  @0x474464,0x42e89c
+    B[110] x= 436.04 y=  40.68 w=  22.31 h= 23.32 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 52] x= 476.90 y=  43.71 w=  27.69 h= 20.29 col=ff808080  @0x474464,0x42e89c
+    B[111] x= 476.04 y=  42.55 w=  26.06 h= 21.45 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 53] x= 520.45 y=  42.06 w=  24.14 h= 21.94 col=ff808080  @0x474464,0x42e89c
+    B[112] x= 517.36 y=  43.52 w=  27.47 h= 20.48 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 54] x= 563.42 y=  40.35 w=  21.00 h= 23.65 col=ff808080  @0x474464,0x42e89c
+    B[113] x= 561.10 y=  41.73 w=  23.73 h= 22.27 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 55] x= 600.11 y=  40.16 w=  21.00 h= 23.84 col=ff808080  @0x474464,0x42e89c
+    B[114] x= 603.04 y=  40.18 w=  21.00 h= 23.82 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 56] x= 361.55 y= 416.00 w=  23.39 h= 22.36 col=00000000/ff808080/00000000/ff808080  @0x474464,0x42e89c
+    B[115] x= 358.30 y= 416.00 w=  26.70 h= 23.00 col=00000000/ff808080/00000000/ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 57] x= 402.71 y= 416.00 w=  21.00 h= 20.49 col=ff808080  @0x474464,0x42e89c
+    B[116] x= 402.13 y= 416.00 w=  22.87 h= 22.09 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 58] x= 438.99 y= 416.00 w=  21.00 h= 19.45 col=ff808080  @0x474464,0x42e89c
+    B[117] x= 442.19 y= 416.00 w=  21.00 h= 20.18 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 59] x= 476.20 y= 416.00 w=  21.70 h= 21.23 col=ff808080  @0x474464,0x42e89c
+    B[118] x= 478.37 y= 416.00 w=  21.00 h= 19.68 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 60] x= 516.20 y= 416.00 w=  25.26 h= 22.79 col=ff808080  @0x474464,0x42e89c
+    B[119] x= 516.04 y= 416.00 w=  22.31 h= 21.55 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 61] x= 556.90 y= 416.00 w=  27.69 h= 22.79 col=ff808080  @0x474464,0x42e89c
+    B[120] x= 556.04 y= 416.00 w=  26.06 h= 22.92 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 62] x= 600.45 y= 416.00 w=  24.14 h= 22.71 col=ff808080  @0x474464,0x42e89c
+    B[121] x= 597.36 y= 416.00 w=  27.47 h= 22.92 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 63] x= 383.71 y= 436.49 w=  21.00 h= 19.96 col=ff808080  @0x474464,0x42e89c
+    B[122] x= 383.13 y= 438.09 w=  22.87 h= 19.09 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 64] x= 419.99 y= 435.10 w=  21.00 h= 23.13 col=ff808080  @0x474464,0x42e89c
+    B[123] x= 423.19 y= 436.18 w=  21.00 h= 20.50 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 65] x= 457.20 y= 435.10 w=  21.70 h= 24.70 col=ff808080  @0x474464,0x42e89c
+    B[124] x= 459.37 y= 435.02 w=  21.00 h= 23.53 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 66] x= 497.20 y= 435.45 w=  25.26 h= 24.34 col=ff808080  @0x474464,0x42e89c
+    B[125] x= 497.04 y= 435.02 w=  22.31 h= 24.89 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 67] x= 537.90 y= 437.23 w=  27.69 h= 22.49 col=ff808080  @0x474464,0x42e89c
+    B[126] x= 537.04 y= 435.68 w=  26.06 h= 24.24 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 68] x= 581.45 y= 438.71 w=  24.14 h= 19.34 col=ff808080  @0x474464,0x42e89c
+    B[127] x= 578.36 y= 437.55 w=  27.47 h= 21.97 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 69] x= 624.42 y= 437.06 w=  21.00 h= 19.29 col=ff808080  @0x474464,0x42e89c
+    B[128] x= 622.10 y= 438.52 w=  23.73 h= 19.21 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 70] x= 358.99 y= 456.10 w=  21.00 h= 24.70 col=00000000/ff808080/00000000/ff808080  @0x474464,0x42e89c
+    B[129] x= 362.19 y= 456.02 w=  21.00 h= 23.53 col=00000000/ff808080/00000000/ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 71] x= 396.20 y= 456.45 w=  21.70 h= 24.34 col=ff808080  @0x474464,0x42e89c
+    B[130] x= 398.37 y= 456.02 w=  21.00 h= 24.89 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 72] x= 436.20 y= 458.23 w=  25.26 h= 22.49 col=ff808080  @0x474464,0x42e89c
+    B[131] x= 436.04 y= 456.68 w=  22.31 h= 24.24 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 73] x= 476.90 y= 459.71 w=  27.69 h= 19.34 col=ff808080  @0x474464,0x42e89c
+    B[132] x= 476.04 y= 458.55 w=  26.06 h= 21.97 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 74] x= 520.45 y= 458.06 w=  24.14 h= 19.29 col=ff808080  @0x474464,0x42e89c
+    B[133] x= 517.36 y= 459.52 w=  27.47 h= 19.21 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 75] x= 563.42 y= 456.35 w=  21.00 h= 22.32 col=ff808080  @0x474464,0x42e89c
+    B[134] x= 561.10 y= 457.73 w=  23.73 h= 19.59 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 76] x= 600.11 y= 456.16 w=  21.00 h= 24.32 col=ff808080  @0x474464,0x42e89c
+    B[135] x= 603.04 y= 456.18 w=  21.00 h= 22.81 col=ff808080  @0x474464,0x42e89c
+== orig1_f3 (A: 136 draws, x1.0) vs orig2_f3 (B: 136 draws, x1.0)
+   matched 59  mismatched 77  missing 0  extra 0
+  MISMATCH(reordered)
+    A[  0] x=   0.00 y=   0.00 w= 512.00 h=512.00 col=ffffffff  @0x473ebd,0x42e65a
+    B[ 59] x=   0.00 y=   0.00 w= 512.00 h=512.00 col=ffffffff  @0x473ebd,0x42e65a
+  MISMATCH(reordered)
+    A[  1] x= 288.00 y=  64.00 w= 176.00 h=352.00 col=00ffffff/ffffffff/00ffffff/ffffffff  @0x474bd3,0x42e80c
+    B[ 60] x= 288.00 y=  64.00 w= 176.00 h=352.00 col=00ffffff/ffffffff/00ffffff/ffffffff  @0x474bd3,0x42e7ba
+  MISMATCH(reordered)
+    A[  2] x= 464.00 y=  64.00 w= 176.00 h=352.00 col=ffffffff  @0x474d0c,0x42e80c
+    B[ 61] x= 464.00 y=  64.00 w= 176.00 h=352.00 col=ffffffff  @0x474d0c,0x42e7ba
+  MISMATCH(reordered)
+    A[  3] x= 384.00 y=   0.00 w= 128.00 h= 64.00 col=00000000/ff000000/00000000/ff000000  @0x473532,0x473f6c
+    B[ 62] x= 384.00 y=   0.00 w= 128.00 h= 64.00 col=00000000/ff000000/00000000/ff000000  @0x473532,0x473f6c
+  MISMATCH(reordered)
+    A[  4] x= 384.00 y= 416.00 w= 128.00 h= 64.00 col=00000000/ff000000/00000000/ff000000  @0x473532,0x473f87
+    B[ 63] x= 384.00 y= 416.00 w= 128.00 h= 64.00 col=00000000/ff000000/00000000/ff000000  @0x473532,0x473f87
+  MISMATCH(reordered)
+    A[  5] x= 384.00 y=   0.00 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 64] x= 384.00 y=   0.00 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[  6] x=   0.00 y=   0.00 w= 384.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 65] x=   0.00 y=   0.00 w= 384.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[  7] x= 339.10 y=  34.13 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 66] x= 339.10 y=  34.13 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[  8] x=   0.00 y=  34.13 w= 339.10 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 67] x=   0.00 y=  34.13 w= 339.10 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[  9] x= 322.81 y=  68.27 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 68] x= 322.81 y=  68.27 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 10] x=   0.00 y=  68.27 w= 322.81 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 69] x=   0.00 y=  68.27 w= 322.81 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 11] x= 312.00 y= 102.40 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 70] x= 312.00 y= 102.40 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 12] x=   0.00 y= 102.40 w= 312.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 71] x=   0.00 y= 102.40 w= 312.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 13] x= 304.40 y= 136.53 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 72] x= 304.40 y= 136.53 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 14] x=   0.00 y= 136.53 w= 304.40 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 73] x=   0.00 y= 136.53 w= 304.40 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 15] x= 299.15 y= 170.67 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 74] x= 299.15 y= 170.67 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 16] x=   0.00 y= 170.67 w= 299.15 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 75] x=   0.00 y= 170.67 w= 299.15 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 17] x= 295.82 y= 204.80 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 76] x= 295.82 y= 204.80 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 18] x=   0.00 y= 204.80 w= 295.82 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 77] x=   0.00 y= 204.80 w= 295.82 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 19] x= 294.20 y= 238.93 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 78] x= 294.20 y= 238.93 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 20] x=   0.00 y= 238.93 w= 294.20 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 79] x=   0.00 y= 238.93 w= 294.20 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 21] x= 294.20 y= 273.07 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 80] x= 294.20 y= 273.07 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 22] x=   0.00 y= 273.07 w= 294.20 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 81] x=   0.00 y= 273.07 w= 294.20 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 23] x= 295.82 y= 307.20 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 82] x= 295.82 y= 307.20 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 24] x=   0.00 y= 307.20 w= 295.82 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 83] x=   0.00 y= 307.20 w= 295.82 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 25] x= 299.15 y= 341.33 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 84] x= 299.15 y= 341.33 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 26] x=   0.00 y= 341.33 w= 299.15 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 85] x=   0.00 y= 341.33 w= 299.15 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 27] x= 304.40 y= 375.47 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 86] x= 304.40 y= 375.47 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 28] x=   0.00 y= 375.47 w= 304.40 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 87] x=   0.00 y= 375.47 w= 304.40 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 29] x= 312.00 y= 409.60 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 88] x= 312.00 y= 409.60 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 30] x=   0.00 y= 409.60 w= 312.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 89] x=   0.00 y= 409.60 w= 312.00 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 31] x= 322.81 y= 443.73 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 90] x= 322.81 y= 443.73 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 32] x=   0.00 y= 443.73 w= 322.81 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 91] x=   0.00 y= 443.73 w= 322.81 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(reordered)
+    A[ 33] x= 339.10 y= 477.87 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+    B[ 92] x= 339.10 y= 477.87 w= 128.00 h= 34.13 col=60ffffff/00000000/60ffffff/00000000  @0x4733a2,0x474072
+  MISMATCH(reordered)
+    A[ 34] x=   0.00 y= 477.87 w= 339.10 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+    B[ 93] x=   0.00 y= 477.87 w= 339.10 h= 34.13 col=78ffffff/60ffffff/78ffffff/60ffffff  @0x4733a2,0x4740b7
+  MISMATCH(moved)
+    A[ 35] x= 361.67 y=   0.83 w=  23.29 h= 21.47 col=00000000/ff808080/00000000/ff808080  @0x474464,0x42e89c
+    B[ 94] x= 358.43 y=  -0.79 w=  26.57 h= 23.79 col=00000000/ff808080/00000000/ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 36] x= 402.61 y=   1.31 w=  21.00 h= 19.12 col=ff808080  @0x474464,0x42e89c
+    B[ 95] x= 402.24 y=   1.12 w=  22.75 h= 20.92 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 37] x= 438.86 y=  -0.57 w=  21.00 h= 20.06 col=ff808080  @0x474464,0x42e89c
+    B[ 96] x= 442.08 y=   1.04 w=  21.00 h= 19.08 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 38] x= 476.16 y=  -1.92 w=  21.83 h= 23.21 col=ff808080  @0x474464,0x42e89c
+    B[ 97] x= 478.25 y=  -0.88 w=  21.00 h= 20.61 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 39] x= 516.16 y=  -1.92 w=  25.43 h= 24.74 col=ff808080  @0x474464,0x42e89c
+    B[ 98] x= 516.03 y=  -1.99 w=  22.43 h= 23.60 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 40] x= 556.99 y=  -1.51 w=  27.66 h= 24.33 col=ff808080  @0x474464,0x42e89c
+    B[ 99] x= 556.03 y=  -1.99 w=  26.20 h= 24.92 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 41] x= 600.59 y=   0.29 w=  24.06 h= 22.38 col=ff808080  @0x474464,0x42e89c
+    B[100] x= 597.46 y=  -1.27 w=  27.41 h= 24.20 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 42] x= 383.61 y=  20.43 w=  21.00 h= 20.06 col=ff808080  @0x474464,0x42e89c
+    B[101] x= 383.24 y=  22.04 w=  22.75 h= 19.08 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 43] x= 419.86 y=  19.08 w=  21.00 h= 23.21 col=ff808080  @0x474464,0x42e89c
+    B[102] x= 423.08 y=  20.12 w=  21.00 h= 20.61 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 44] x= 457.16 y=  19.08 w=  21.83 h= 24.74 col=ff808080  @0x474464,0x42e89c
+    B[103] x= 459.25 y=  19.01 w=  21.00 h= 23.60 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 45] x= 497.16 y=  19.49 w=  25.43 h= 24.33 col=ff808080  @0x474464,0x42e89c
+    B[104] x= 497.03 y=  19.01 w=  22.43 h= 24.92 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 46] x= 537.99 y=  21.29 w=  27.66 h= 22.38 col=ff808080  @0x474464,0x42e89c
+    B[105] x= 537.03 y=  19.73 w=  26.20 h= 24.20 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 47] x= 581.59 y=  22.68 w=  24.06 h= 19.31 col=ff808080  @0x474464,0x42e89c
+    B[106] x= 578.46 y=  21.62 w=  27.41 h= 21.86 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 48] x= 624.35 y=  20.99 w=  21.00 h= 19.32 col=ff808080  @0x474464,0x42e89c
+    B[107] x= 622.23 y=  22.47 w=  23.64 h= 19.19 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 49] x= 358.86 y=  40.08 w=  21.00 h= 23.92 col=00000000/ff808080/00000000/ff808080  @0x474464,0x42e89c
+    B[108] x= 362.08 y=  40.01 w=  21.00 h= 23.99 col=00000000/ff808080/00000000/ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 50] x= 396.16 y=  40.49 w=  21.83 h= 23.51 col=ff808080  @0x474464,0x42e89c
+    B[109] x= 398.25 y=  40.01 w=  21.00 h= 23.99 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 51] x= 436.16 y=  42.29 w=  25.43 h= 21.71 col=ff808080  @0x474464,0x42e89c
+    B[110] x= 436.03 y=  40.73 w=  22.43 h= 23.27 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 52] x= 476.99 y=  43.68 w=  27.66 h= 20.32 col=ff808080  @0x474464,0x42e89c
+    B[111] x= 476.03 y=  42.62 w=  26.20 h= 21.38 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 53] x= 520.59 y=  41.99 w=  24.06 h= 22.01 col=ff808080  @0x474464,0x42e89c
+    B[112] x= 517.46 y=  43.47 w=  27.41 h= 20.53 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 54] x= 563.35 y=  40.31 w=  21.00 h= 23.69 col=ff808080  @0x474464,0x42e89c
+    B[113] x= 561.23 y=  41.66 w=  23.64 h= 22.34 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 55] x= 599.98 y=  40.19 w=  21.00 h= 23.81 col=ff808080  @0x474464,0x42e89c
+    B[114] x= 602.95 y=  40.16 w=  21.00 h= 23.84 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 56] x= 361.67 y= 416.00 w=  23.29 h= 22.31 col=00000000/ff808080/00000000/ff808080  @0x474464,0x42e89c
+    B[115] x= 358.43 y= 416.00 w=  26.57 h= 23.00 col=00000000/ff808080/00000000/ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 57] x= 402.61 y= 416.00 w=  21.00 h= 20.43 col=ff808080  @0x474464,0x42e89c
+    B[116] x= 402.24 y= 416.00 w=  22.75 h= 22.04 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 58] x= 438.86 y= 416.00 w=  21.00 h= 19.49 col=ff808080  @0x474464,0x42e89c
+    B[117] x= 442.08 y= 416.00 w=  21.00 h= 20.12 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 59] x= 476.16 y= 416.00 w=  21.83 h= 21.29 col=ff808080  @0x474464,0x42e89c
+    B[118] x= 478.25 y= 416.00 w=  21.00 h= 19.73 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 60] x= 516.16 y= 416.00 w=  25.43 h= 22.82 col=ff808080  @0x474464,0x42e89c
+    B[119] x= 516.03 y= 416.00 w=  22.43 h= 21.61 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 61] x= 556.99 y= 416.00 w=  27.66 h= 22.82 col=ff808080  @0x474464,0x42e89c
+    B[120] x= 556.03 y= 416.00 w=  26.20 h= 22.93 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 62] x= 600.59 y= 416.00 w=  24.06 h= 22.68 col=ff808080  @0x474464,0x42e89c
+    B[121] x= 597.46 y= 416.00 w=  27.41 h= 22.93 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 63] x= 383.61 y= 436.43 w=  21.00 h= 20.06 col=ff808080  @0x474464,0x42e89c
+    B[122] x= 383.24 y= 438.04 w=  22.75 h= 19.08 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 64] x= 419.86 y= 435.08 w=  21.00 h= 23.21 col=ff808080  @0x474464,0x42e89c
+    B[123] x= 423.08 y= 436.12 w=  21.00 h= 20.61 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 65] x= 457.16 y= 435.08 w=  21.83 h= 24.74 col=ff808080  @0x474464,0x42e89c
+    B[124] x= 459.25 y= 435.01 w=  21.00 h= 23.60 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 66] x= 497.16 y= 435.49 w=  25.43 h= 24.33 col=ff808080  @0x474464,0x42e89c
+    B[125] x= 497.03 y= 435.01 w=  22.43 h= 24.92 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 67] x= 537.99 y= 437.29 w=  27.66 h= 22.38 col=ff808080  @0x474464,0x42e89c
+    B[126] x= 537.03 y= 435.73 w=  26.20 h= 24.20 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 68] x= 581.59 y= 438.68 w=  24.06 h= 19.31 col=ff808080  @0x474464,0x42e89c
+    B[127] x= 578.46 y= 437.62 w=  27.41 h= 21.86 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 69] x= 624.35 y= 436.99 w=  21.00 h= 19.32 col=ff808080  @0x474464,0x42e89c
+    B[128] x= 622.23 y= 438.47 w=  23.64 h= 19.19 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 70] x= 358.86 y= 456.08 w=  21.00 h= 24.74 col=00000000/ff808080/00000000/ff808080  @0x474464,0x42e89c
+    B[129] x= 362.08 y= 456.01 w=  21.00 h= 23.60 col=00000000/ff808080/00000000/ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 71] x= 396.16 y= 456.49 w=  21.83 h= 24.33 col=ff808080  @0x474464,0x42e89c
+    B[130] x= 398.25 y= 456.01 w=  21.00 h= 24.92 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 72] x= 436.16 y= 458.29 w=  25.43 h= 22.38 col=ff808080  @0x474464,0x42e89c
+    B[131] x= 436.03 y= 456.73 w=  22.43 h= 24.20 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 73] x= 476.99 y= 459.68 w=  27.66 h= 19.31 col=ff808080  @0x474464,0x42e89c
+    B[132] x= 476.03 y= 458.62 w=  26.20 h= 21.86 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 74] x= 520.59 y= 457.99 w=  24.06 h= 19.32 col=ff808080  @0x474464,0x42e89c
+    B[133] x= 517.46 y= 459.47 w=  27.41 h= 19.19 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 75] x= 563.35 y= 456.31 w=  21.00 h= 22.42 col=ff808080  @0x474464,0x42e89c
+    B[134] x= 561.23 y= 457.66 w=  23.64 h= 19.69 col=ff808080  @0x474464,0x42e89c
+  MISMATCH(moved)
+    A[ 76] x= 599.98 y= 456.19 w=  21.00 h= 24.33 col=ff808080  @0x474464,0x42e89c
+    B[135] x= 602.95 y= 456.16 w=  21.00 h= 22.90 col=ff808080  @0x474464,0x42e89c
+-> verify/scr19_parity_20261012/diff_orig1_vs_orig2.json
+VERDICT: RED (match=236 mismatch=308 missing=0 extra=0)
