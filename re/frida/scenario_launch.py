@@ -2121,6 +2121,51 @@ function c30ProbeArm(n){
 }
 function c30ProbeDrain(){ const r = C3.rows; C3.rows = []; return r; }
 
+// --- refdist producer probe (U-9219, 2026-10-13) ------------------------------------
+// Entry + leave on FUN_00442a60 (void; its only caller is FUN_00446520). Entry: clock 0x007f0ff4,
+// DAT_0063ba8c, 0x008989a8 / 0x008989c8 before, and per car c = 0..3 every input the body reads:
+// act = *(*0x005f2770 + 0x34 + 4c) (FUN_0040e370), alive = 0x008815a4 + c*0xd04 (FUN_0046c7b0),
+// st / st2 = 0x00881f90 / 0x00881f94 + c*0xd04 (FUN_0046cbb0), race_pct 0x008a96ec + c*0x30c (FUN_00408ad0),
+// the FUN_0046d4a0 matrix translation (0x00881ec8 + c*0xd04 + [0x00881f48 + c*0xd04]*0x40, +0x30/+0x34/+0x38).
+// Leave: 0x008989a8, 0x008989c8, 0x008989b0[0..3]. Floats as raw u32 hex. Read-only.
+const RD = { armed:false, rows:[], n:0, err:null };
+function rdU(a){ return (ga(a).readU32() >>> 0).toString(16); }
+function refdistProbeArm(){
+  if (RD.armed) return 'already armed';
+  try {
+    Interceptor.attach(ga(0x00442a60), {
+      onEnter(){
+        this.row = null;
+        try {
+          RD.n++;
+          const tp = ga(0x005f2770).readPointer();
+          const cars = [];
+          for (let c = 0; c < 4; c++) {
+            const rec = 0x00881ec8 + c * 0xd04;
+            const slot = ga(0x00881f48 + c * 0xd04).readS32();
+            const m = rec + slot * 0x40;
+            cars.push([tp.isNull() ? 'x' : tp.add(0x34 + 4 * c).readS32(), ga(0x008815a4 + c * 0xd04).readS32(),
+                       rdU(0x00881f90 + c * 0xd04), rdU(0x00881f94 + c * 0xd04), rdU(0x008a96ec + c * 0x30c),
+                       rdU(m + 0x30), rdU(m + 0x34), rdU(m + 0x38), slot].join(':'));
+          }
+          this.row = [RD.n, ga(0x007f0ff4).readS32(), ga(0x0063ba8c).readS32(), ga(0x008989a8).readS32(),
+                      ga(0x008989c8).readS32(), cars.join(';')];
+        } catch(e){ if (!RD.err) RD.err = 'rd ' + e; }
+      },
+      onLeave(){
+        try {
+          if (!this.row) return;
+          this.row.push(ga(0x008989a8).readS32(), ga(0x008989c8).readS32(),
+                        [0,1,2,3].map(function(c){ return rdU(0x008989b0 + 4 * c); }).join(';'));
+          RD.rows.push(this.row);
+        } catch(e){ if (!RD.err) RD.err = 'rdL ' + e; }
+      }});
+    RD.armed = true;
+    return 'refdist-probe armed (0x442a60 entry+leave)';
+  } catch(e){ return 'ERR ' + e; }
+}
+function refdistProbeDrain(){ const r = RD.rows; RD.rows = []; return r; }
+
 // --- G-AILEAF probe (D3 bulk, 2026-10-11) ----------------------------------------
 // Entry + leave on FUN_00414570(spline, &look, &cand, v). Every input the body reads, as the rows of
 // MASHED_AILEAF_LIVEROWS (mashedmod Ai/AiLeafTargets.cpp), so re/tools/aileaf_unicorn.py --check runs
@@ -3093,6 +3138,9 @@ rpc.exports = {
   c30ProbeArm: function(n){ return c30ProbeArm(n); },
   c30ProbeDrain: function(){ return c30ProbeDrain(); },
   c30ProbeStats: function(){ return JSON.stringify({armed:C3.armed, calls:C3.n, err:C3.err}); },
+  refdistProbeArm: function(){ return refdistProbeArm(); },
+  refdistProbeDrain: function(){ return refdistProbeDrain(); },
+  refdistProbeStats: function(){ return JSON.stringify({armed:RD.armed, calls:RD.n, rows:RD.rows.length, err:RD.err}); },
   cbProbeDrain: function(){ return cbProbeDrain(); },
   cbProbeStats: function(){ return JSON.stringify({armed:CB.armed, n920:CB.n920, n630:CB.n630, c010_outside:CB.c010out, err:CB.err}); },
   pkProbeArm: function(n){ return pkProbeArm(n); },
@@ -3714,6 +3762,10 @@ def main():
     ap.add_argument("--c30-probe", type=int, default=0,
                     help="[mode 7 M4] N: FUN_00414c30 entry+leave, first N calls then every 50th, with registry, matrices "
                          "and nested FUN_00414300 calls. Writes <out>.c30.tsv. Requires --statediff-out.")
+    ap.add_argument("--refdist-probe", action="store_true",
+                    help="[U-9219] FUN_00442a60 entry+leave: every input it reads per car (slot table, alive, state, "
+                         "race_pct, matrix translation) and its outputs 0x008989a8/c8 + 0x008989b0[0..3]. "
+                         "Writes <out>.rd.tsv. Requires --statediff-out.")
     ap.add_argument("--cb-probe", action="store_true",
                     help="[mode 7 M3] registry callbacks FUN_00458920 / FUN_00486630 entry+leave, callee "
                          "witnesses, pickup-pool state transitions. Writes <out>.cb.tsv. Requires --statediff-out.")
@@ -3914,6 +3966,8 @@ def main():
                 print("  [statediff]", E.grid_probe_arm())
             if args.c30_probe:
                 print("  [statediff]", E.c30_probe_arm(args.c30_probe))
+            if args.refdist_probe:
+                print("  [statediff]", E.refdist_probe_arm())
             if args.pool_probe:
                 print("  [statediff]", E.pk_probe_arm(args.pool_probe))
             if args.statediff_puhook:
@@ -4525,6 +4579,17 @@ def main():
                             for r in _c3: f.write(chr(9).join(str(x) for x in r) + chr(10))
                         print(f"  [statediff] c30-probe {len(_c3)} rows -> {_c3f}")
                     except Exception as _e: print("  [statediff] c30 drain failed:", _e)
+                if args.refdist_probe:
+                    try: print("  [statediff] refdist-probe agent:", E.refdist_probe_stats())
+                    except Exception as _e: print("  [statediff] refdist stats failed:", _e)
+                    try:
+                        _rd = E.refdist_probe_drain()
+                        _rdf = outp.with_suffix(outp.suffix + ".rd.tsv")
+                        with open(_rdf, "w", newline="") as f:
+                            f.write(chr(9).join(["n","clk","ba8c","a8_in","c8_in","cars","a8","c8","rd"]) + chr(10))
+                            for r in _rd: f.write(chr(9).join(str(x) for x in r) + chr(10))
+                        print(f"  [statediff] refdist-probe {len(_rd)} rows -> {_rdf}")
+                    except Exception as _e: print("  [statediff] refdist drain failed:", _e)
                 if args.cb_probe:
                     try: print("  [statediff] cb-probe agent:", E.cb_probe_stats())
                     except Exception as _e: print("  [statediff] cb stats failed:", _e)

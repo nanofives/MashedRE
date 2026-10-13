@@ -41,7 +41,11 @@
 
 #include <cmath>
 #include <cstdint>
+#include <cstdio>
 #include <cstdlib>
+#include <cstring>
+#include <string>
+#include <vector>
 
 // Readers made standalone-reachable by legs H1a / H1b.
 extern "C" std::uint32_t __cdecl VehicleSlotGetter(std::uint32_t vehicleIdx);          // 0x0046c7b0
@@ -144,29 +148,54 @@ void FillCamCars(RaceCamCar cars[4]) {
     }
 }
 
-// ---------------------------------------------------------------------------
-// 0x00442a60  Spectator::ComputeDistances — writes 0x008989b0[0..3].
-// ---------------------------------------------------------------------------
-void ComputeDistances() {
-    float* const refdist = reinterpret_cast<float*>(0x008989b0u);
-    for (int i = 0; i < 4; ++i) refdist[i] = 0.0f;      // the entry zeroing
+// The inputs FUN_00442a60 reads, one set per call. The live path fills them from
+// the record readers (FillRefDistIn); the U-9219 replay fills them from a capture
+// of the original (verify/d3_u9219_20261013, scenario_launch.py --refdist-probe).
+struct RefDistIn {
+    RaceCamCar cars[4];          // active / alive / dead_flag / pos / race_pct, as FillCamCars
+    std::uint32_t st[4];         // FUN_0046cbb0 out1
+    bool pos_ok[4];              // FUN_0046d4a0 returned a pointer
+};
+struct RefDistOut {
+    float rd[4];
+    bool stored;                 // the 0x008989a8 / 0x008989c8 stores ran
+    int ref, other;
+};
 
-    RaceCamCar cars[4];
-    FillCamCars(cars);
+namespace {
+void FillRefDistIn(RefDistIn* in) {
+    FillCamCars(in->cars);
+    for (int i = 0; i < 4; ++i) {
+        std::uint32_t sec = 0u;
+        in->st[i] = 0u;
+        VehicleCarStateRead(static_cast<std::uint32_t>(i), &in->st[i], &sec);   // FUN_0046cbb0
+        std::uint32_t p = 0u;
+        in->pos_ok[i] = PtrCompute881ec8(&p, static_cast<std::uint32_t>(i)) && p;  // FUN_0046d4a0
+    }
+}
+}  // namespace
+
+// ---------------------------------------------------------------------------
+// 0x00442a60  Spectator::ComputeDistances — the selection and distance body on
+// explicit inputs. Value-identical to the pre-2026-10-13 live body (same
+// expressions); G-CTRL in verify/d3_u9219_20261013/PREREG_U9219.md checks it.
+// ---------------------------------------------------------------------------
+void ComputeDistancesCore(const RefDistIn& in, RefDistOut* out) {
+    for (int i = 0; i < 4; ++i) out->rd[i] = 0.0f;      // the entry zeroing
+    out->stored = false; out->ref = -1; out->other = -1;
+
     int a = 4, b = 0;
-    RaceCamera::MostSeparatedPair(cars, &a, &b);        // FUN_0040e180
+    RaceCamera::MostSeparatedPair(in.cars, &a, &b);     // FUN_0040e180
 
-    float pa = RacePct(a);                              // FUN_00408ad0
-    float pb = RacePct(b);
+    float pa = in.cars[a].race_pct;                     // FUN_00408ad0
+    float pb = in.cars[b].race_pct;
     if ((pa <= kWrapHi) || (kWrapLo <= pb)) {
         if ((kWrapHi < pb) && (pa < kWrapLo)) pb -= kLapSpan;
     } else {
         pa -= kLapSpan;
     }
 
-    std::uint32_t sa = 0u, sb = 0u, ta = 0u, tb = 0u;   // FUN_0046cbb0 out1 (state), out2
-    VehicleCarStateRead(static_cast<std::uint32_t>(a), &sa, &ta);   // FUN_0046cbb0
-    VehicleCarStateRead(static_cast<std::uint32_t>(b), &sb, &tb);
+    const std::uint32_t sa = in.st[a], sb = in.st[b];   // FUN_0046cbb0 out1 (state)
 
     // [U-9205 fix, 2026-10-09; verify/d3_bscore_20261009/PREREG_REFDIST_FIX.md] The reference is the
     // pair's LEADING car (higher race_pct) unless its state is non-zero. This replaced
@@ -185,29 +214,119 @@ void ComputeDistances() {
         else if (sa == 0u) { ref = a; other = b; }
         else return;
     }
-    *reinterpret_cast<std::int32_t*>(0x008989a8u) = ref;      // 0x00442b91
-    *reinterpret_cast<std::int32_t*>(0x008989c8u) = other;    // 0x00442b97
-    if (!IsCarSlotActive(ref)) return;                              // FUN_0040e370
-    if (VehicleSlotGetter(static_cast<std::uint32_t>(ref)) != 1u) return;  // FUN_0046c7b0
-
-    float rx = 0.0f, rz = 0.0f;
-    if (!CarXZ(ref, &rx, &rz)) return;                              // FUN_0046d4a0
+    out->stored = true; out->ref = ref; out->other = other;   // 0x00442b91 / 0x00442b97
+    if (!in.cars[ref].active) return;                               // FUN_0040e370
+    if (!in.cars[ref].alive) return;                                // FUN_0046c7b0
+    if (!in.pos_ok[ref]) return;                                    // FUN_0046d4a0
+    const float rx = in.cars[ref].pos[0], rz = in.cars[ref].pos[2];
 
     for (int i = 0; i < 4; ++i) {
-        if (!IsCarSlotActive(i)) continue;
-        if (VehicleSlotGetter(static_cast<std::uint32_t>(i)) != 1u) continue;
-        float cx = 0.0f, cz = 0.0f;
-        if (!CarXZ(i, &cx, &cz)) continue;
+        if (!in.cars[i].active) continue;
+        if (!in.cars[i].alive) continue;
+        if (!in.pos_ok[i]) continue;
+        const float cx = in.cars[i].pos[0], cz = in.cars[i].pos[2];
         const float dx = rx - cx;
         const float dz = rz - cz;                                   // y term is 0.0
-        refdist[i] = std::sqrt(dx * dx + dz * dz) * kDistScale;     // FUN_004c3ac0 * 0.8
+        out->rd[i] = std::sqrt(dx * dx + dz * dz) * kDistScale;     // FUN_004c3ac0 * 0.8
     }
 }
+
+// ---------------------------------------------------------------------------
+// Live entry for the body above (not a second body; the comment does not lead
+// with the RVA token, see the lint note above FillCamCars): fill the inputs from
+// the record, write the outputs to 0x008989b0 / 0x008989a8 / 0x008989c8.
+// ---------------------------------------------------------------------------
+void ComputeDistances() {
+    RefDistIn in;
+    FillRefDistIn(&in);
+    RefDistOut out;
+    ComputeDistancesCore(in, &out);
+    float* const refdist = reinterpret_cast<float*>(0x008989b0u);
+    for (int i = 0; i < 4; ++i) refdist[i] = out.rd[i];
+    if (out.stored) {
+        *reinterpret_cast<std::int32_t*>(0x008989a8u) = out.ref;    // 0x00442b91
+        *reinterpret_cast<std::int32_t*>(0x008989c8u) = out.other;  // 0x00442b97
+    }
+}
+
+// ---------------------------------------------------------------------------
+// [U-9219] MEASUREMENT ONLY, env-gated (MASHED_REFDIST_REPLAY=<a.rd.tsv>[;...],
+// report MASHED_REFDIST_REPLAY_OUT). Feeds each captured FUN_00442a60 call's
+// inputs to ComputeDistancesCore and compares the outputs with the original's.
+// Row: n clk ba8c a8_in c8_in cars a8 c8 rd, cars = 4 x act:alive:st:st2:pct:x:y:z:slot
+// (u32 hex for st..z). Writes nothing into game state.
+// ---------------------------------------------------------------------------
+namespace {
+std::vector<std::string> Split(const std::string& s, char d) {
+    std::vector<std::string> r; std::size_t p = 0;
+    for (;;) { const std::size_t e = s.find(d, p); r.push_back(s.substr(p, e == std::string::npos ? std::string::npos : e - p));
+               if (e == std::string::npos) break; p = e + 1; }
+    return r;
+}
+float HexF(const std::string& h) {
+    const std::uint32_t u = static_cast<std::uint32_t>(std::strtoul(h.c_str(), nullptr, 16));
+    float f; std::memcpy(&f, &u, 4); return f;
+}
+void MaybeReplay() {
+    const char* inList = std::getenv("MASHED_REFDIST_REPLAY");
+    if (!inList) return;
+    const char* outp = std::getenv("MASHED_REFDIST_REPLAY_OUT");
+    std::FILE* o = outp ? std::fopen(outp, "w") : nullptr;
+    if (!o) return;
+    std::fprintf(o, "file\tn\tclk\tba8c\torig_a8\torig_c8\tport_stored\tport_ref\tport_other\torig_rd\tport_rd\n");
+    for (const std::string& path : Split(inList, ';')) {
+        std::FILE* f = std::fopen(path.c_str(), "rb");
+        if (!f) { std::fprintf(o, "#MISSING %s\n", path.c_str()); continue; }
+        std::string all;
+        { char buf[1 << 16]; std::size_t n; while ((n = std::fread(buf, 1, sizeof buf, f)) > 0) all.append(buf, n); }
+        std::fclose(f);
+        std::size_t p = all.find('\n') + 1;
+        while (p < all.size()) {
+            std::size_t e = all.find('\n', p); if (e == std::string::npos) e = all.size();
+            std::string ln = all.substr(p, e - p); if (!ln.empty() && ln.back() == '\r') ln.pop_back();
+            p = e + 1;
+            const std::vector<std::string> c = Split(ln, '\t');
+            if (c.size() != 9) continue;
+            const std::vector<std::string> cars = Split(c[5], ';');
+            if (cars.size() != 4) continue;
+            RefDistIn in{};
+            bool ok = true;
+            for (int i = 0; i < 4 && ok; ++i) {
+                const std::vector<std::string> q = Split(cars[i], ':');
+                if (q.size() != 9) { ok = false; break; }
+                in.cars[i].active    = (q[0] != "x") && std::atoi(q[0].c_str()) != 0;   // FUN_0040e370
+                in.cars[i].alive     = std::atoi(q[1].c_str()) == 1;                      // FUN_0046c7b0
+                in.st[i]             = static_cast<std::uint32_t>(std::strtoul(q[2].c_str(), nullptr, 16));
+                in.cars[i].dead_flag = in.st[i] != 0u;
+                in.cars[i].race_pct  = HexF(q[4]);
+                in.cars[i].pos[0] = HexF(q[5]); in.cars[i].pos[1] = HexF(q[6]); in.cars[i].pos[2] = HexF(q[7]);
+                in.pos_ok[i] = true;
+            }
+            if (!ok) continue;
+            RefDistOut out;
+            ComputeDistancesCore(in, &out);
+            std::string prd;
+            for (int i = 0; i < 4; ++i) {
+                std::uint32_t u; std::memcpy(&u, &out.rd[i], 4);
+                char b[12]; std::snprintf(b, sizeof b, "%x", u);
+                if (i) prd += ';';
+                prd += b;
+            }
+            std::fprintf(o, "%s\t%s\t%s\t%s\t%s\t%s\t%d\t%d\t%d\t%s\t%s\n", path.c_str(), c[0].c_str(), c[1].c_str(),
+                         c[2].c_str(), c[6].c_str(), c[7].c_str(), out.stored ? 1 : 0, out.ref, out.other,
+                         c[8].c_str(), prd.c_str());
+        }
+    }
+    std::fclose(o);
+}
+}  // namespace
 
 // Default-OFF entry point. Called once per race tick from TrackRenderer.
 // extern "C" with a flat name: the caller lives in mashed_re::D3d9Render and
 // cannot re-open mashed_re::Race from there.
 void ComputeDistancesTickImpl() {
+    static bool s_replayed = false;
+    if (!s_replayed) { s_replayed = true; MaybeReplay(); }   // [U-9219] env-gated, no state written
     static const bool s_on = (std::getenv("MASHED_NO_REFDIST") == nullptr);   // DEFAULT-ON 2026-10-09 (verify/d3_b2flip_20261009); MASHED_REFDIST is now a no-op
     if (!s_on) return;
     ComputeDistances();

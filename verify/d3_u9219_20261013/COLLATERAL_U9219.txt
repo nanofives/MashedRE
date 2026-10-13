@@ -1,0 +1,1 @@
+field,scope,band_lo,band_hi,n_A,n_B,med_speed_A,med_speed_B,med_frame_A,med_frame_B,med_A,med_B,gap,noise_floor,gap_over_floor
