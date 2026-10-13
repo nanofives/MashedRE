@@ -1,5 +1,29 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-12c (triage B: 8 of 9 re-earned C3)
+>
+> Four children (bregargs, bnormalise, bworld, bnoreturn), path2 by the parent on the merged deployed build.
+> Notes: `re/analysis/negctl/session_20261012b/<item>_RESULT.md`, path2 reports in `re/analysis/negctl/session_20261012b/path2/`.
+> - 0x00427840 FontText_UTF16WidenCopy: C2 -> C3, reg_args warm lane, movzx width defect fixed, path2 PASS.
+> - 0x00495530 CreateDInputObject: C2 -> C3, IAT stand-in + import_ret, port unchanged, path2 PASS.
+> - 0x004b3bb0 FileWriteWrapper_i3: C2 -> C3, callee recorders with seeded returns, port unchanged, path2 PASS.
+> - 0x004921d0 DisplayInit: C2 -> C3, 10 callee recorders (deref 'l', outs, stub_outs), port unchanged, path2 PASS.
+> - 0x00428610 ViewportScaledRectDraw: C2 -> C3, re-ported as an x87 TU (3 defects), file Frontend/ViewportScaledRectDraw.cpp, path2 PASS.
+> - 0x00426dc0 FrontendRaycastForward: C2 -> C3, race_sentinel + live-anchored rays, return type fixed, path2 PASS.
+> - 0x004a31b1 CrtExitProcess_j5: C2 -> C3, noreturn import stand-in, CorExitProcess convention fixed, path2 PASS.
+> - 0x004a332b CrtExitNoReturn_j5: C2 -> C3, noreturn stand-in + seeded atexit tables, path2 PASS.
+> - **0x00493540 thunk_LaunchLangGate: STAYS C2.** path1 GREEN 14/14, but the original is a native 5-byte E9 thunk and the
+>   HookSystem dual-install guard (Core/HookSystem.cpp:131) refuses any E9 target, so path2 FAILs by design. U-9679 filed.
+> - New instruments: warm-lane reg_args, import_ret stand-in returns, string deref, callee recorders (deref 'l', outs,
+>   stub_outs), race_sentinel, {f32_at, add} seeds, observe_raw, noreturn import stand-in, standin_fakes, import_rets,
+>   NegCtl_NoReturn, never-freed gate stubs, fixed generic stand-in wrapper.
+>
+> **Open**
+> - U-9679 user decision: (a) per-hook flag to install over a NATIVE E9 thunk, checked against MASHED.exe.unpatched, or
+>   (b) accept C2 by design like FsopenSafe U-9662.
+> - 0x00404320 rules 5/8/9 arms and the 0x0041c300 caller coverage need forced inputs (not requested).
+> - Triage B is fully drained except 0x00493540.
+
 > ## START HERE 2026-10-12b (U-9675, C4 x7, crash 0xe66db, U-9676, draw-stream ALL DONE): **next = the two user decisions below, then the remaining triage B rows.**
 >
 > Five children in worktrees, merged and removed; path2 by the parent on the merged deployed build. Notes:

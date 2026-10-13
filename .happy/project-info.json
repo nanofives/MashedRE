@@ -1,7 +1,31 @@
 {
   "title": "Mashed RE: greenfield source port",
-  "updatedAt": "2026-10-12T23:16:48Z",
+  "updatedAt": "2026-10-13T00:11:54Z",
   "sections": [
+    {
+      "heading": "Session 2026-10-12c (triage B)",
+      "fields": [
+        {
+          "label": "C2->C3 (path2 PASS)",
+          "kind": "list",
+          "value": [
+            "0x00427840 FontText_UTF16WidenCopy",
+            "0x00495530 CreateDInputObject",
+            "0x004b3bb0 FileWriteWrapper_i3",
+            "0x004921d0 DisplayInit",
+            "0x00428610 ViewportScaledRectDraw",
+            "0x00426dc0 FrontendRaycastForward",
+            "0x004a31b1 CrtExitProcess_j5",
+            "0x004a332b CrtExitNoReturn_j5"
+          ]
+        },
+        {
+          "label": "Blocked",
+          "kind": "text",
+          "value": "0x00493540: native E9 thunk, HookSystem guard refuses install (user decision)"
+        }
+      ]
+    },
     {
       "heading": "Session 2026-10-12b (done)",
       "fields": [
@@ -51,6 +75,7 @@
           "label": "Pending user decisions",
           "kind": "list",
           "value": [
+            "U-9679: install over native E9 thunks (0x00493540) or accept C2 by design",
             "Gold event / challenge 6,10 routes for remaining 0x00404320 and 0x0041c300 coverage (not requested)"
           ]
         },
@@ -58,7 +83,6 @@
           "label": "Next",
           "kind": "list",
           "value": [
-            "Remaining 9 triage B rows (new harness each)",
             "U-9672 small standalone menu residuals"
           ]
         }
