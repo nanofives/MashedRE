@@ -1,0 +1,268 @@
+{
+ "envelopes": {
+  "A": {
+   "c0_distinct": [
+    13,
+    35
+   ],
+   "c1_distinct": [
+    21,
+    70
+   ],
+   "steer_distinct": [
+    33,
+    96
+   ],
+   "c0_median": [
+    0.0,
+    0.0
+   ],
+   "c1_median": [
+    0.0,
+    0.0
+   ],
+   "abs_steer_median": [
+    7.0,
+    23.0
+   ],
+   "accel_distinct": [
+    2,
+    3
+   ],
+   "accel_median": [
+    255.0,
+    255.0
+   ],
+   "brake_distinct": [
+    2,
+    2
+   ],
+   "brake_median": [
+    0.0,
+    0.0
+   ]
+  },
+  "B": {
+   "c0_distinct": [
+    13,
+    37
+   ],
+   "c1_distinct": [
+    17,
+    46
+   ],
+   "steer_distinct": [
+    29,
+    84
+   ],
+   "c0_median": [
+    0.0,
+    0.0
+   ],
+   "c1_median": [
+    0.0,
+    0.0
+   ],
+   "abs_steer_median": [
+    0.0,
+    16.0
+   ],
+   "accel_distinct": [
+    3,
+    4
+   ],
+   "accel_median": [
+    25.0,
+    102.0
+   ],
+   "brake_distinct": [
+    2,
+    2
+   ],
+   "brake_median": [
+    0.0,
+    0.0
+   ]
+  },
+  "C": {
+   "c0_distinct": [
+    27,
+    27
+   ],
+   "c1_distinct": [
+    95,
+    95
+   ],
+   "steer_distinct": [
+    121,
+    121
+   ],
+   "c0_median": [
+    0.0,
+    0.0
+   ],
+   "c1_median": [
+    27.5,
+    27.5
+   ],
+   "abs_steer_median": [
+    36.5,
+    36.5
+   ],
+   "accel_distinct": [
+    2,
+    2
+   ],
+   "accel_median": [
+    255.0,
+    255.0
+   ],
+   "brake_distinct": [
+    2,
+    2
+   ],
+   "brake_median": [
+    0.0,
+    0.0
+   ]
+  }
+ },
+ "runs": [
+  {
+   "run": "verify/d3_bscore_20261009/o_breg_r1.msd.aistep.csv",
+   "regime": "A"
+  },
+  {
+   "run": "verify/d3_bscore_20261009/o_breg_r3.msd.aistep.csv",
+   "regime": "A"
+  },
+  {
+   "run": "verify/d3_bscore_20261009/o_breg_r4.msd.aistep.csv",
+   "regime": "A"
+  },
+  {
+   "run": "verify/d3_bscore_20261009/o_breg_r5.msd.aistep.csv",
+   "regime": "A"
+  },
+  {
+   "run": "verify/d3_bscore_20261009/o_breg_r7.msd.aistep.csv",
+   "regime": "A"
+  },
+  {
+   "run": "verify/d3_bscore_20261009/o_breg_r8.msd.aistep.csv",
+   "regime": "A"
+  },
+  {
+   "run": "verify/d3_drive_20260928/e3.msd.aistep.csv",
+   "regime": "A"
+  },
+  {
+   "run": "verify/d3_drive_20260928/e4.msd.aistep.csv",
+   "regime": "A"
+  },
+  {
+   "run": "verify/d3_regimes_20261013/o_reg_r1.msd.aistep.csv",
+   "regime": "A"
+  },
+  {
+   "run": "verify/d3_regimes_20261013/o_reg_r2.msd.aistep.csv",
+   "regime": "A"
+  },
+  {
+   "run": "verify/d3_regimes_20261013/o_reg_r4.msd.aistep.csv",
+   "regime": "A"
+  },
+  {
+   "run": "verify/d3_regimes_20261013/o_reg_r6.msd.aistep.csv",
+   "regime": "A"
+  },
+  {
+   "run": "verify/d3_regimes_20261013/o_reg_r7.msd.aistep.csv",
+   "regime": "A"
+  },
+  {
+   "run": "verify/d3_regimes_20261013/o_reg_r8.msd.aistep.csv",
+   "regime": "A"
+  },
+  {
+   "run": "verify/d3_regimes_20261013/o_reg_r9.msd.aistep.csv",
+   "regime": "A"
+  },
+  {
+   "run": "verify/d3_regimes_20261013/o_reg_r10.msd.aistep.csv",
+   "regime": "A"
+  },
+  {
+   "run": "verify/d3_regimes_20261013/o_reg_r11.msd.aistep.csv",
+   "regime": "A"
+  },
+  {
+   "run": "verify/d3_regimes_20261013/o_reg_r12.msd.aistep.csv",
+   "regime": "A"
+  },
+  {
+   "run": "verify/d3_regimes_20261013/o_reg_r14.msd.aistep.csv",
+   "regime": "A"
+  },
+  {
+   "run": "verify/d3_regimes_20261013/o_reg_r16.msd.aistep.csv",
+   "regime": "A"
+  },
+  {
+   "run": "verify/d3_regimes_20261013/o_reg_r17.msd.aistep.csv",
+   "regime": "A"
+  },
+  {
+   "run": "verify/d3_ai_20260926/o_inputs.msd.aistep.csv",
+   "regime": "B"
+  },
+  {
+   "run": "verify/d3_ai_20260927/o4.msd.aistep.csv",
+   "regime": "B"
+  },
+  {
+   "run": "verify/d3_drive_20260928/e1.msd.aistep.csv",
+   "regime": "B"
+  },
+  {
+   "run": "verify/d3_regimes_20261013/o_reg_r13.msd.aistep.csv",
+   "regime": "B"
+  },
+  {
+   "run": "verify/d3_regimes_20261013/o_reg_r15.msd.aistep.csv",
+   "regime": "B"
+  },
+  {
+   "run": "verify/d3_regimes_20261013/o_reg_r18.msd.aistep.csv",
+   "regime": "B"
+  },
+  {
+   "run": "verify/d3_bscore_20261009/o_breg_r2.msd.aistep.csv",
+   "regime": "C"
+  },
+  {
+   "run": "verify/d3_drive_20260928/e2.msd.aistep.csv",
+   "regime": "C"
+  },
+  {
+   "run": "verify/d3_regimes_20261013/o_reg_r19.msd.aistep.csv",
+   "regime": "C"
+  },
+  {
+   "run": "verify/d3_regimes_20261013/o_reg_r20.msd.aistep.csv",
+   "regime": "C"
+  }
+ ],
+ "metrics": [
+  "c0_distinct",
+  "c1_distinct",
+  "steer_distinct",
+  "c0_median",
+  "c1_median",
+  "abs_steer_median",
+  "accel_distinct",
+  "accel_median",
+  "brake_distinct",
+  "brake_median"
+ ]
+}

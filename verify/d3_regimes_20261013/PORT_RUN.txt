@@ -1,0 +1,8 @@
+K=0 pid=33344 exit=0 lines=2394 sha8=3b0a3d5d
+K=1 pid=38676 exit=0 lines=3031 sha8=fe0c45d2
+K=2 pid=36196 exit=0 lines=2394 sha8=59e9bc47
+K=4 pid=41712 exit=0 lines=3031 sha8=f324318b
+K=26 pid=34328 exit=0 lines=2121 sha8=6ae8c99d
+K=27 pid=41112 exit=0 lines=3031 sha8=fe0c45d2
+K=54 pid=35908 exit=0 lines=1932 sha8=14633745
+K=57 pid=17184 exit=0 lines=1932 sha8=14633745

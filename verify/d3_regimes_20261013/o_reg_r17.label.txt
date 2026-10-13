@@ -1,0 +1,5 @@
+poll mode368 counts {'0': 3914}
+v1 regime=A window_start=845 calls=220 first_nonzero_flag(frame,value)=None
+v2 regime=A window_start=845 calls=220 first_nonzero_flag(frame,value)=None
+v3 regime=A window_start=845 calls=220 first_nonzero_flag(frame,value)=None
+A

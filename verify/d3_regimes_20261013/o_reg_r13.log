@@ -1,0 +1,58 @@
+  [keep-awake] display-sleep suppressed + wake nudge sent
+=== scenario_launch  pid=9312  track=0 mode=10 cars=4 ===
+  attaching ASAP...
+  [agent] ready
+    phase=0  (waiting for menu (phase 1))
+    phase=1  (waiting for menu (phase 1))
+  [setup] set track=0 mode=10 cars=4 car=0 rule=0 team=0
+  [statediff] statediff armed (tick 0x004c1be0, car 1, rec@0x8822a4)
+  [statediff] aistep armed (FUN_00416250 @0x00416250)
+  [launch] poke DAT_00771968 = 2 -> 1
+    phase=2  (waiting for race running (phase 3))
+    phase=3  (waiting for race running (phase 3))
+
+  *** RACE RUNNING (phase 3) ***
+  [ctrl-slots] ctrl slot table was [0,0,0,0] -> [0,1,2,3]
+  car spawn fired: 12   grounded=4  airflag=0
+  vel=[0, 0, 0]  fwd=[-8.742277657347586e-08, 0, -1]
+
+  VERDICT: launcher reached a running race and spawned a car. [OK]
+
+  racing 60s — pulsing control 4 (confirm/accel) to skip the start intro + continue rounds...
+    +  4s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]       +  9s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]       + 13s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]       + 18s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[-10.9, 0, -794.8]       + 23s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[-6.0, 0, -440.9]       + 28s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]       + 33s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]       + 37s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]       + 42s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]       + 47s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]       + 52s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]       + 57s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]   
+  [statediff] agent: {"armed":true,"frames":3634,"car":1,"err":null,"ai":false,"aiErr":null}
+  [statediff] 3634 frames -> verify\d3_regimes_20261013\o_reg_r13.msd  (distinct payloads=2321, nonzero=3634)
+  [statediff] aistep agent: {"armed":true,"calls":6284,"pending":6284,"err":null,"locals":5768,"curv":6284,"localsErr":null,"noLocals":0,"joinMiss":0,"recp":4,"tgt14a70":6284,"tgt14c30":5473,"tgt150e0":5413,"tgt16060":983,"tgt148b0":1022}
+  [statediff] aistep 6284 calls -> verify\d3_regimes_20261013\o_reg_r13.msd.aistep.csv  (cars=[1, 2, 3], distinct blocks=3)
+  [statediff] provenance -> verify\d3_regimes_20261013\o_reg_r13.msd.provenance.json
+[hygiene] MASHED.exe PIDs already running (NOT touched): none
+[launch] C:\Users\maria\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\python.exe C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\d3regimes\re\frida\scenario_launch.py --track 0 --mode 10 --cars 4 --car 0 --poke-ctrl-slots --statediff-out verify/d3_regimes_20261013/o_reg_r13.msd --statediff-car 1 --statediff-aistep --hold 60
+[adopt] polling pid 9312 (READ-ONLY; this tool never kills MASHED)
+[hygiene] scenario_launch exited rc=0; MASHED pid 9312 was NOT killed by this tool
+[out] verify\d3_regimes_20261013\o_reg_r13.poll.csv  rows=3911
+
+=== ORIGINAL-side ramp ===
+  clk_0ff4   range 0 .. 74650
+  tick_0ff8  range 0 .. 37500
+  tickscale  range 0.000 .. 12.500  (seconds; bands at 2/12/22/42/60-62)
+  bias374 distinct values: [0]
+
+=== FUN_0040e470 per car (branch 2 needs == 1 at FUN_004148b0:104) ===
+  slotptr non-null on 3911/3911 samples
+  v0: [(1, 3634), (0, 277)]
+  v1: [(2, 3634), (0, 277)]
+  v2: [(2, 3634), (0, 277)]
+  v3: [(2, 3634), (0, 277)]
+  values present: [0, 1, 2]
+  ANY car ever reading exactly 1? True
+
+=== FUN_0046c7b0 car_alive per car (== 1 means VehicleStep runs) ===
+  v0: ==1 on 1407/3911 samples (36.0%)   values [(0, 2504), (1, 1407)]
+  v1: ==1 on 3521/3911 samples (90.0%)   values [(1, 3521), (0, 390)]
+  v2: ==1 on 1407/3911 samples (36.0%)   values [(0, 2504), (1, 1407)]
+  v3: ==1 on 1407/3911 samples (36.0%)   values [(0, 2504), (1, 1407)]
+  PORT for comparison: v1 1446/13858 (10.4%), v2 3177 (22.9%), v3 13858 (100%)
+  (the PORT reads {v0: 0, v1/v2/v3: 2} and never 1 -- RESULT_GF1.md s3)
+    t=   0.95s  clk=0        tick=0        tickscale=0.0      -> bias374=0
+
+  LIVENESS: clk advanced = True  (a flat clock makes every row above VOID)
