@@ -153,6 +153,17 @@ bool          g_startBoosted[16] = { false };
 // call runs with the post-memset wheel states, where A6a's drive/boost gate
 // `p[-0xf] == 2` is false, so the boost would be armed and then sit unconsumed).
 bool          g_inSpawnSettle = false;
+// [car2pickup 2026-10-13] what the adapter OUT last handed each slot's caller (bits), so
+// the adapter IN can tell "the caller changed it" from "the caller round-tripped it".
+// See the adapter IN block in VehiclePhysics_StepCar. Cleared by VehiclePhysics_Init.
+float         g_outVel[16][3] = { { 0.f } };
+float         g_outSpeed[16]  = { 0.f };
+bool          g_outValid[16]  = { false };
+// [car2pickup 2026-10-13] the +0xaec A4 gate of FUN_00470c70 (0x0047101b..0x00471048),
+// evaluated once per frame for every car at the frame boundary. g_a4Skip = skip A4 this
+// frame; g_a4GateDone = this frame's gate already ran for the slot.
+bool          g_a4Skip[16]     = { false };
+bool          g_a4GateDone[16] = { false };
 
 // A8 position law constants (re/analysis/data/A8_position_law_20260825.md).
 // FUN_0046e9e0 builds the per-substep position increment as
@@ -178,6 +189,36 @@ inline float SvpVelMag(unsigned char* r) {
     const double x = F(r, off::kVelocity + 0), y = F(r, off::kVelocity + 4),
                  z = F(r, off::kVelocity + 8);
     return static_cast<float>(std::sqrt(x * x + y * y + z * z));
+}
+
+// [car2pickup 2026-10-13] FUN_00470c70's per-vehicle A4 loop, the part before the A4 call
+// (MASHED.exe.unpatched; esi = record + 0x9f0, so [esi+0xfc] = +0xaec):
+//   0x00470ffe  mov eax,[esi-0x9dc] / jne 0x47107e   ; +0x14 != 0       -> no A4
+//   0x0047100a  cmp [esi-0x9ec],0 / jne 0x47101b     ; +0x4 != 0        -> qualifies
+//   0x00471012  cmp [esi-0x9e0],1 / jne 0x47107e     ; else +0x10 == 1  -> qualifies
+//   0x0047101b  mov eax,[esi+0xfc] / cmp / je 0x471057 ; +0xaec == 0    -> A4
+//   0x0047102b  sub eax,[esp+0x10]                    ; -= chunk ms (local_24, min(rem,0x32))
+//   0x0047102f  cmp eax,0xfffffb50 / mov [esi+0xfc],eax / jge 0x471042
+//   0x0047103c  mov [esi+0xfc],ecx                    ; below -1200 -> 0
+//   0x00471042  cmp [esi+0xfc],0 / jge 0x47107e       ; still >= 0 -> SKIP the A4 call (0x00471076)
+// +0xaec is armed to 0x1e0 (480) by the car<->car contact FUN_00469df0 (0x0046ac6c..0x0046ac88,
+// only when it is 0) and by 0x0046c543. 480 - 50 per frame is >= 0 on 9 frames, so a car
+// that touched another car skips A4 (A5 + A6a + A6b, every force) for the next 9 frames and
+// coasts on the velocity the contact left. Measured on the original: car 2's +0xaec
+// 480, 430, ..., 30, -20 and +0x9b0..+0x9b8 bit-identical on frames 855..864
+// (verify/d3_car2pickup_20261013/o_p2a.msd). Returns true when A4 must be skipped.
+// NOT ported: the `mov [esi-0x9e4],ecx` (+0xc = 0) at 0x00471023, which the port has no
+// reader for.
+bool A4ContactGate(unsigned char* r, int chunkMs) {
+    if (I(r, 0x14) != 0) return false;                       // 0x00470ffe: no A4 at all; the
+                                                             // port's caller decides that part
+    if (!(I(r, 0x4) != 0 || I(r, 0x10) == 1)) return false;  // 0x0047100a / 0x00471012
+    int t = I(r, 0xaec);                                     // 0x0047101b
+    if (t == 0) return false;                                // 0x00471029 je -> A4
+    t -= chunkMs;                                            // 0x0047102b
+    I(r, 0xaec) = t;                                         // 0x00471034
+    if (t < -0x4b0) I(r, 0xaec) = 0;                         // 0x0047102f / 0x0047103c
+    return I(r, 0xaec) >= 0;                                 // 0x00471042 / 0x00471048
 }
 }  // namespace
 
@@ -242,6 +283,7 @@ void VehiclePhysics_Init(int carCount, int trackType) {
     for (int s = 0; s < 16; ++s) g_bodyBasisOk[s] = false;   // A8: basis reseeds at first step
     for (int s = 0; s < 16; ++s) g_settled[s] = false;       // U-D3-DRIVE spawn settle
     for (int s = 0; s < 16; ++s) g_startBoosted[s] = false;  // U-D3-DRIVE-FORCE start boost
+    for (int s = 0; s < 16; ++s) { g_outValid[s] = false; g_a4Skip[s] = false; g_a4GateDone[s] = false; }
     // DAT_008a94d0 stand-in for FUN_0040e340: the A6a start-boost 8e6 arm tests it == 4.
     g_participantCount = carCount;
     Fi_UpdateBoostOrder();                                   // seed DAT_0088e668/66c
@@ -665,13 +707,30 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     }
 
     // --- adapter IN: world velocity, forward (= {cos,0,sin} per TrackRenderer), speed ---
-    F(r, off::kVelocity + 0) = io.vel[0];
-    F(r, off::kVelocity + 4) = io.vel[1];
-    F(r, off::kVelocity + 8) = io.vel[2];
+    //
+    // [car2pickup 2026-10-13] The record is the original's only velocity store. Between
+    // this slot's last adapter OUT and now, an EARLIER slot's step may have written it:
+    // the car<->car pair loop (FUN_004709a0, call 0x00470bcd) applies the impulse to BOTH
+    // cars, and the other car is always a later slot (j = i+1..15), so in the port it has
+    // not stepped yet this frame. Re-seeding from the caller's copy erased that impulse:
+    // measured, the exe's car 2 kept 2375 -> 2400 -> 2424 through the contact where the
+    // original's dropped to 1050.41 (verify/d3_car2pickup_20261013/PREREG §0.4). So the
+    // caller's value is written only when the caller CHANGED it since the last OUT
+    // (respawn, spin-out, off-mesh, the spawn settle); a round-tripped value leaves the
+    // record alone. `MASHED_NO_RECORD_VEL_KEEP=1` restores the unconditional re-seed (A/B).
+    static const bool s_noVelKeep = (std::getenv("MASHED_NO_RECORD_VEL_KEEP") != nullptr);
+    const bool callerKept = !s_noVelKeep && g_outValid[slot] &&
+        std::memcmp(io.vel, g_outVel[slot], sizeof(g_outVel[slot])) == 0 &&
+        std::memcmp(&io.speed, &g_outSpeed[slot], sizeof(float)) == 0;
+    if (!callerKept) {
+        F(r, off::kVelocity + 0) = io.vel[0];
+        F(r, off::kVelocity + 4) = io.vel[1];
+        F(r, off::kVelocity + 8) = io.vel[2];
+        F(r, off::kSpeed)        = io.speed;
+    }
     F(r, off::kForward + 0)  = std::cos(io.yaw);
     F(r, off::kForward + 4)  = 0.f;
     F(r, off::kForward + 8)  = std::sin(io.yaw);
-    F(r, off::kSpeed)        = io.speed;
     I(r, off::kActiveFlag)   = 1;
 
     std::uint8_t input[8];
@@ -898,9 +957,46 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     // disarms the channel so ContactFixup's sites (which never see `slot`) stay slot-0.
     // Diagnostic, default-OFF (MASHED_D2SINK). verify/d2_sink_20261002/PREREG_STEP1.md.
     D2Sink::Begin(slot);
+
+    // [car2pickup 2026-10-13] the +0xaec A4 gate (A4ContactGate above). The original runs it
+    // in its per-vehicle A4 loop, for EVERY car, before any car's substeps; a contact that a
+    // car takes in this frame's substeps therefore cannot touch this frame's gate. The port
+    // steps the cars one after another, so the gate runs for all slots at the frame
+    // boundary (slot 0 steps first, as for Fi_UpdateBoostOrder above); a slot whose gate
+    // did not run there (slot 0 not stepped this frame) runs its own. Chunk = the
+    // 0x00470f50..0x00470f61 min(remaining, 0x32). On a skipped frame the original still
+    // refreshes +0x9e4 = |+0x9b0| and +0x9e8 = |+0x9bc| in the loop that follows the A4 loop
+    // (0x004710a1..0x004710da, same +0x4 / +0x10 gate), and A6a, the port's only writer of
+    // the two, does not run, so the refresh is made here on skipped frames.
+    // [UNCERTAIN] the original makes that refresh on EVERY frame, after A4; the port's
+    // +0x9e4 on non-skipped frames is still A6a's entry value |v before A6a|. Not changed
+    // here (it is D2-visible on every frame). `MASHED_NO_A4_CONTACT_GATE=1` disables the gate.
+    static const bool s_noA4Gate = (std::getenv("MASHED_NO_A4_CONTACT_GATE") != nullptr);
+    bool a4Skip = false;
+    if (!s_noA4Gate && !g_inSpawnSettle) {
+        const int gateChunk = ((int)frameMs < 0x32) ? (int)frameMs : 0x32;
+        if (slot == 0) {
+            for (int s = 0; s < 16; ++s) {
+                if (s >= g_participantCount) break;
+                g_a4Skip[s] = A4ContactGate(rec(s), gateChunk);
+                g_a4GateDone[s] = true;
+            }
+        } else if (!g_a4GateDone[slot]) {
+            g_a4Skip[slot] = A4ContactGate(r, gateChunk);
+            g_a4GateDone[slot] = true;
+        }
+        a4Skip = g_a4Skip[slot];
+        g_a4Skip[slot] = false;
+    }
+    if (a4Skip) {
+        F(r, off::kSpeed) = Vec3Mag3(reinterpret_cast<const float*>(r + off::kVelocity)); // 0x004710c3/c8
+        F(r, 0x9e8)       = Vec3Mag3(reinterpret_cast<const float*>(r + 0x9bc));          // 0x004710d5/da
+    }
+
     if (s_a4First) {
         g_torqueRingPhase = (g_torqueRingPhase + 1) & 0xf;
-        VehicleControlIntegrate(reinterpret_cast<int*>(r), frameMs, input, basis, slot);
+        if (!a4Skip)   // 0x00471042 / 0x00471048: jge past the A4 call
+            VehicleControlIntegrate(reinterpret_cast<int*>(r), frameMs, input, basis, slot);
         ReassertContacts(r);
     }
 
@@ -1243,7 +1339,8 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     // since its contacts are solved in the loop that follows A4.
     if (!s_a4First) {   // [A8-ORDER] see the knob above the substep loop
         g_torqueRingPhase = (g_torqueRingPhase + 1) & 0xf;
-        VehicleControlIntegrate(reinterpret_cast<int*>(r), frameMs, input, basis, slot);
+        if (!a4Skip)    // [car2pickup] the +0xaec gate, see above the substep loop
+            VehicleControlIntegrate(reinterpret_cast<int*>(r), frameMs, input, basis, slot);
         // A6a's drive block can clear wheel states in some branches; re-assert from the
         // cached contact result (no re-broadphase) so the next frame stays engaged.
         ReassertContacts(r);
@@ -1573,6 +1670,10 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     io.vel[1] = F(r, off::kVelocity + 4);
     io.vel[2] = F(r, off::kVelocity + 8);
     io.speed  = F(r, off::kSpeed);
+    std::memcpy(g_outVel[slot], io.vel, sizeof(g_outVel[slot]));   // [car2pickup] adapter IN
+    g_outSpeed[slot] = io.speed;
+    g_outValid[slot] = true;
+    g_a4GateDone[slot] = false;                                    // next frame's gate is due
 
     if (prof::g_on) prof::f_physMs += prof::NowMs() - t_phys0;   // PERF: whole-step cost
 }

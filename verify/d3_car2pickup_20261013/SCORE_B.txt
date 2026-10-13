@@ -1,0 +1,43 @@
+====================================================================================================
+REGIME A: 21 original runs
+  orig car 1: window hashes ['15c70a27'] | c0#=[13] c1#=[21] steer#=[33] c0~=[0.0] c1~=[0.0] abs_steer~=[7.0] accel#=[3] accel~=[255.0] brake#=[2] brake~=[0.0]
+  orig car 2: window hashes ['a48c1780'] | c0#=[35] c1#=[50] steer#=[85] c0~=[0.0] c1~=[0.0] abs_steer~=[11.0] accel#=[2] accel~=[255.0] brake#=[2] brake~=[0.0]
+  orig car 3: window hashes ['c2c7f265'] | c0#=[27] c1#=[70] steer#=[96] c0~=[0.0] c1~=[0.0] abs_steer~=[23.0] accel#=[2] accel~=[255.0] brake#=[2] brake~=[0.0]
+  envelope: c0#=[13, 35] c1#=[21, 70] steer#=[33, 96] c0~=[0.0, 0.0] c1~=[0.0, 0.0] abs_steer~=[7.0, 23.0] accel#=[2, 3] accel~=[255.0, 255.0] brake#=[2, 2] brake~=[0.0, 0.0]
+  port B_K00.step.csv car 1: FAIL abs_steer~=0.0 not in [7.0, 23.0]  [c0#=17 c1#=34 steer#=50 c0~=0.0 c1~=0.0 abs_steer~=0.0 accel#=2 accel~=255.0 brake#=2 brake~=0.0]
+  port B_K00.step.csv car 2: PASS  [c0#=30 c1#=67 steer#=96 c0~=0.0 c1~=0.0 abs_steer~=14.5 accel#=2 accel~=255.0 brake#=2 brake~=0.0]
+  port B_K00.step.csv car 3: FAIL abs_steer~=0.0 not in [7.0, 23.0]  [c0#=21 c1#=36 steer#=56 c0~=0.0 c1~=0.0 abs_steer~=0.0 accel#=2 accel~=255.0 brake#=2 brake~=0.0]
+  port B_K00.step.csv regime A: 1/3
+====================================================================================================
+REGIME B: 6 original runs
+  orig car 1: window hashes ['25f5d2d5'] | c0#=[13] c1#=[17] steer#=[29] c0~=[0.0] c1~=[0.0] abs_steer~=[0.0] accel#=[4] accel~=[25.0] brake#=[2] brake~=[0.0]
+  orig car 2: window hashes ['d4be200f'] | c0#=[37] c1#=[46] steer#=[84] c0~=[0.0] c1~=[0.0] abs_steer~=[16.0] accel#=[3] accel~=[102.0] brake#=[2] brake~=[0.0]
+  orig car 3: window hashes ['5903d089'] | c0#=[34] c1#=[39] steer#=[73] c0~=[0.0] c1~=[0.0] abs_steer~=[8.0] accel#=[3] accel~=[102.0] brake#=[2] brake~=[0.0]
+  envelope: c0#=[13, 37] c1#=[17, 46] steer#=[29, 84] c0~=[0.0, 0.0] c1~=[0.0, 0.0] abs_steer~=[0.0, 16.0] accel#=[3, 4] accel~=[25.0, 102.0] brake#=[2, 2] brake~=[0.0, 0.0]
+  port B_K01.step.csv car 1: PASS  [c0#=24 c1#=19 steer#=42 c0~=0.0 c1~=0.0 abs_steer~=0.0 accel#=3 accel~=102.0 brake#=2 brake~=0.0]
+  port B_K01.step.csv car 2: FAIL c1#=60 not in [17, 46]; steer#=93 not in [29, 84]  [c0#=34 c1#=60 steer#=93 c0~=0.0 c1~=0.0 abs_steer~=9.0 accel#=3 accel~=102.0 brake#=2 brake~=0.0]
+  port B_K01.step.csv car 3: PASS  [c0#=34 c1#=29 steer#=62 c0~=0.0 c1~=0.0 abs_steer~=0.0 accel#=3 accel~=102.0 brake#=2 brake~=0.0]
+  port B_K01.step.csv regime B: 2/3
+====================================================================================================
+REGIME C: 4 original runs
+  orig car 1: window hashes ['SHORT196'] | no full window
+  orig car 2: window hashes ['SHORT196'] | no full window
+  orig car 3: window hashes ['1047323e', '2743f943'] | c0#=[27] c1#=[95] steer#=[121] c0~=[0.0] c1~=[27.5] abs_steer~=[36.5] accel#=[2] accel~=[255.0] brake#=[2] brake~=[0.0]
+  envelope: c0#=[27, 27] c1#=[95, 95] steer#=[121, 121] c0~=[0.0, 0.0] c1~=[27.5, 27.5] abs_steer~=[36.5, 36.5] accel#=[2, 2] accel~=[255.0, 255.0] brake#=[2, 2] brake~=[0.0, 0.0]
+  port B_K26.step.csv car 1: FAIL c0#=9 not in [27, 27]; c1#=91 not in [95, 95]; steer#=99 not in [121, 121]; c1~=66.5 not in [27.5, 27.5]; abs_steer~=66.5 not in [36.5, 36.5]  [c0#=9 c1#=91 steer#=99 c0~=0.0 c1~=66.5 abs_steer~=66.5 accel#=2 accel~=255.0 brake#=2 brake~=0.0]
+  port B_K26.step.csv car 2: FAIL c0#=26 not in [27, 27]; c1#=81 not in [95, 95]; steer#=106 not in [121, 121]; c1~=4.0 not in [27.5, 27.5]; abs_steer~=22.5 not in [36.5, 36.5]  [c0#=26 c1#=81 steer#=106 c0~=0.0 c1~=4.0 abs_steer~=22.5 accel#=2 accel~=255.0 brake#=2 brake~=0.0]
+  port B_K26.step.csv car 3: FAIL c0#=21 not in [27, 27]; c1#=84 not in [95, 95]; steer#=104 not in [121, 121]; c1~=9.0 not in [27.5, 27.5]; abs_steer~=22.5 not in [36.5, 36.5]  [c0#=21 c1#=84 steer#=104 c0~=0.0 c1~=9.0 abs_steer~=22.5 accel#=2 accel~=255.0 brake#=2 brake~=0.0]
+  port B_K26.step.csv regime C: 0/3
+====================================================================================================
+DIAGNOSTIC (not the committed window): regime C at n=196, cars 1..3 of the original C runs
+  orig C car 1 @196: c0#=[20, 20] c1#=[18, 18] steer#=[40, 40] c0~=[0.0, 0.0] c1~=[0.0, 0.0] abs_steer~=[8.0, 8.0] accel#=[3, 3] accel~=[255.0, 255.0] brake#=[2, 2] brake~=[0.0, 0.0]
+  orig C car 2 @196: c0#=[32, 32] c1#=[41, 41] steer#=[73, 73] c0~=[0.0, 0.0] c1~=[0.0, 0.0] abs_steer~=[9.0, 9.0] accel#=[2, 2] accel~=[255.0, 255.0] brake#=[2, 2] brake~=[0.0, 0.0]
+  orig C car 3 @196: c0#=[27, 27] c1#=[79, 79] steer#=[105, 105] c0~=[0.0, 0.0] c1~=[23.5, 23.5] abs_steer~=[28.0, 28.0] accel#=[2, 2] accel~=[255.0, 255.0] brake#=[2, 2] brake~=[0.0, 0.0]
+  port B_K26.step.csv car 1 @196 vs original car 1: DIFF c0#,c1#,steer#,abs_steer~,accel#,brake#  [c0#=9 c1#=75 steer#=83 c0~=0.0 c1~=0.0 abs_steer~=11.0 accel#=1 accel~=255.0 brake#=1 brake~=0.0]
+  port B_K26.step.csv car 2 @196 vs original car 2: DIFF c0#,c1#,steer#,abs_steer~  [c0#=26 c1#=66 steer#=91 c0~=0.0 c1~=0.0 abs_steer~=12.0 accel#=2 accel~=255.0 brake#=2 brake~=0.0]
+  port B_K26.step.csv car 3 @196 vs original car 3: DIFF c0#,c1#,steer#,c1~,abs_steer~  [c0#=21 c1#=69 steer#=89 c0~=0.0 c1~=0.0 abs_steer~=14.0 accel#=2 accel~=255.0 brake#=2 brake~=0.0]
+  pooled C envelope @196: c0#=[20, 32] c1#=[18, 79] steer#=[40, 105] c0~=[0.0, 0.0] c1~=[0.0, 23.5] abs_steer~=[8.0, 28.0] accel#=[2, 3] accel~=[255.0, 255.0] brake#=[2, 2] brake~=[0.0, 0.0]
+  port B_K26.step.csv car 1 @196 vs pooled C: FAIL c0#,accel#,brake#
+  port B_K26.step.csv car 2 @196 vs pooled C: PASS
+  port B_K26.step.csv car 3 @196 vs pooled C: PASS
+  port B_K26.step.csv regime C @196 pooled: 2/3
