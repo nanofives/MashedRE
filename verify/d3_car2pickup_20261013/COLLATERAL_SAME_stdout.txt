@@ -1,0 +1,291 @@
+# arm A: csv:C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\868ce32f-ef9d-4eec-9b07-15aca0fca49f\scratchpad\piv_C_OPT.csv(13858 frames)
+# arm B: csv:C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\868ce32f-ef9d-4eec-9b07-15aca0fca49f\scratchpad\piv_C_DEF.csv(13678 frames)
+# noise floor: 244 fields, from 13858 A-pair frames and 13678 B-pair frames
+# aligned frames 13678 [0..13677]   paired fields 244   A-only 0   B-only 0
+
+=== DIVERGENT FIELDS, ranked by first frame past the noise floor (171 of 244 paired) ===
+field                  scope       first      n |      med A      med B    med|A-B|      floor
+----------------------------------------------------------------------------------------------
+s.v2.rec_9e4           outside         24   5014 |       3293       3269       801.2          0
+s.v2.curv              outside         24   5014 |      34.17      33.47       58.26          0
+s.v2.racepct           outside         24   5014 |      39.35      39.67       23.66          0
+s.v2.h6z               outside         24   5014 |     -1.693     -0.803       19.13          0
+s.v2.h4z               outside         24   5014 |     -2.268     -1.276       18.95          0
+s.v2.own_z             outside         24   5014 |     -2.226     -1.052       18.94          0
+s.v2.rec_960           outside         24   5014 |     -2.226     -1.052       18.89          0
+s.v2.rec_9a0           outside         24   5014 |     -2.226     -1.052       18.89          0
+s.v2.h7z               outside         24   5014 |     -1.794    -0.8573       18.81          0
+s.v2.h5z               outside         24   5014 |     -2.278     -1.358       18.67          0
+s.v2.look_z            outside         24   5014 |     -4.306     -3.708       17.99          0
+s.v2.rec_b0c           outside         24   5014 |       3.61      4.521       13.92          0
+s.v2.prog              outside         24   5014 |      27.75      21.79       7.899          0
+s.v2.look_x            outside         24   5014 |      8.462      7.996       6.609          0
+s.v2.h4x               outside         24   5014 |      7.932      8.423        6.28          0
+s.v2.h6x               outside         24   5014 |      7.741      8.137       6.246          0
+s.v2.rec_958           outside         24   5014 |      7.789      8.212       6.091          0
+s.v2.rec_998           outside         24   5014 |      7.789      8.212       6.091          0
+s.v2.own_x             outside         24   5014 |      7.772      8.206       6.089          0
+s.v2.h5x               outside         24   5014 |       7.81      8.327       6.001          0
+s.v2.h7x               outside         24   5014 |      7.608      8.012       5.976          0
+s.v2.look_best         outside         24   5014 |          6          5           5          0
+s.v2.look_idx          outside         24   5014 |          6          5           5          0
+s.v2.rec_9dc           outside         24   5014 |     0.2119     0.2669      0.8236          0
+s.v2.rec_9d4           outside         24   5014 |    0.04026     0.0242      0.5674          0
+  ... 146 more (raise --top)
+
+=== WITHIN THE NOISE FLOOR on every aligned frame: 73 fields ===
+  frame  s.v1.ai_mode  s.v1.ai_override  s.v1.ai_type  s.v1.arclaps  s.v1.block  s.v1.c3  s.v1.c4_in  s.v1.c5_in  s.v1.clk_0ff4  s.v1.diff_a360  s.v1.flag_a368  s.v1.lap  s.v1.lap_9648  s.v1.look_blk  s.v1.march_idx0  s.v1.march_n  s.v1.rec_10  s.v1.rec_4a4  s.v1.rtick  s.v1.sel_9a8  s.v1.sel_9ac  s.v1.spline  s.v1.ss_base ...
+
+=== PER-BAND medians for the top 25 divergent fields (banded on s.v2.rec_9e4) ===
+  s.v2.rec_9e4           40-70       n=  15  med speed     54.0  A       54.014  B       2867.8  B/A  53.0943
+                         70-100      n=  25  med speed     89.1  A       89.063  B       2966.8  B/A  33.3111
+                         100-150     n=  32  med speed    122.2  A       122.22  B       2582.5  B/A  21.1306
+                         150-260     n=  47  med speed    200.2  A       200.18  B       2843.9  B/A  14.2066
+                         260-500     n=  82  med speed    369.0  A          369  B       3254.8  B/A   8.8204
+                         500-1000    n= 159  med speed    753.4  A       753.44  B       2856.5  B/A   3.7912
+                         1000-1500   n= 227  med speed   1382.9  A       1382.9  B       2884.6  B/A   2.0859
+                         1500-2000   n= 122  med speed   1819.3  A       1819.3  B         3348  B/A   1.8402
+                         2000-2600   n= 365  med speed   2288.1  A       2288.1  B       3251.7  B/A   1.4211
+
+  s.v2.curv              40-70       n=  15  med speed     54.0  A        16.08  B        87.34  B/A   5.4316
+                         70-100      n=  25  med speed     89.1  A       19.527  B       85.864  B/A   4.3973
+                         100-150     n=  32  med speed    122.2  A        19.46  B       83.295  B/A   4.2804
+                         150-260     n=  47  med speed    200.2  A       17.044  B       83.584  B/A   4.9039
+                         260-500     n=  82  med speed    369.0  A       17.247  B       75.341  B/A   4.3685
+                         500-1000    n= 159  med speed    753.4  A       17.046  B       64.128  B/A   3.7619
+                         1000-1500   n= 227  med speed   1382.9  A       3.8723  B        37.16  B/A   9.5962
+                         1500-2000   n= 122  med speed   1819.3  A        5.545  B       36.851  B/A   6.6459
+                         2000-2600   n= 365  med speed   2288.1  A       84.557  B       25.975  B/A   0.3072
+
+  s.v2.racepct           40-70       n=  15  med speed     54.0  A       13.332  B        32.58  B/A   2.4438
+                         70-100      n=  25  med speed     89.1  A        18.94  B       25.836  B/A   1.3641
+                         100-150     n=  32  med speed    122.2  A        9.586  B       25.898  B/A   2.7016
+                         150-260     n=  47  med speed    200.2  A       18.934  B       26.044  B/A   1.3755
+                         260-500     n=  82  med speed    369.0  A       18.931  B       27.516  B/A   1.4535
+                         500-1000    n= 159  med speed    753.4  A       18.948  B       29.552  B/A   1.5596
+                         1000-1500   n= 227  med speed   1382.9  A       5.1048  B       29.216  B/A   5.7232
+                         1500-2000   n= 122  med speed   1819.3  A       13.043  B       36.303  B/A   2.7833
+                         2000-2600   n= 365  med speed   2288.1  A       22.623  B       49.293  B/A   2.1789
+
+  s.v2.h6z               40-70       n=  15  med speed     54.0  A      0.14725  B      -14.006  B/A -95.1183
+                         70-100      n=  25  med speed     89.1  A      -4.3473  B      -20.827  B/A   4.7907
+                         100-150     n=  32  med speed    122.2  A      -4.3405  B      -21.179  B/A   4.8794
+                         150-260     n=  47  med speed    200.2  A      0.38407  B      -14.822  B/A -38.5903
+                         260-500     n=  82  med speed    369.0  A      0.51322  B      -15.422  B/A -30.0491
+                         500-1000    n= 159  med speed    753.4  A    -0.024942  B      -17.487  B/A 701.1287
+                         1000-1500   n= 227  med speed   1382.9  A      -1.6932  B      -19.302  B/A  11.3995
+                         1500-2000   n= 122  med speed   1819.3  A      -2.5768  B      -9.5111  B/A   3.6911
+                         2000-2600   n= 365  med speed   2288.1  A      -5.9493  B       4.5402  B/A  -0.7631
+
+  s.v2.h4z               40-70       n=  15  med speed     54.0  A      0.58692  B      -14.981  B/A -25.5240
+                         70-100      n=  25  med speed     89.1  A      -5.1647  B      -21.023  B/A   4.0705
+                         100-150     n=  32  med speed    122.2  A      -3.4462  B      -20.793  B/A   6.0335
+                         150-260     n=  47  med speed    200.2  A     -0.30654  B      -15.798  B/A  51.5360
+                         260-500     n=  82  med speed    369.0  A     -0.31314  B      -16.398  B/A  52.3657
+                         500-1000    n= 159  med speed    753.4  A     -0.87866  B      -17.577  B/A  20.0041
+                         1000-1500   n= 227  med speed   1382.9  A      -2.6438  B      -18.748  B/A   7.0911
+                         1500-2000   n= 122  med speed   1819.3  A      -3.3735  B      -8.5363  B/A   2.5304
+                         2000-2600   n= 365  med speed   2288.1  A      -6.9237  B       4.9787  B/A  -0.7191
+
+  s.v2.own_z             40-70       n=  15  med speed     54.0  A      0.19913  B      -14.544  B/A -73.0386
+                         70-100      n=  25  med speed     89.1  A      -4.8962  B      -21.075  B/A   4.3044
+                         100-150     n=  32  med speed    122.2  A      -3.9277  B       -20.94  B/A   5.3314
+                         150-260     n=  47  med speed    200.2  A      0.16899  B      -15.353  B/A -90.8544
+                         260-500     n=  82  med speed    369.0  A     0.078669  B      -15.957  B/A -202.8306
+                         500-1000    n= 159  med speed    753.4  A     -0.49197  B      -17.475  B/A  35.5211
+                         1000-1500   n= 227  med speed   1382.9  A       -2.253  B      -19.062  B/A   8.4610
+                         1500-2000   n= 122  med speed   1819.3  A      -2.8955  B      -9.0039  B/A   3.1096
+                         2000-2600   n= 365  med speed   2288.1  A      -6.4876  B       4.9041  B/A  -0.7559
+
+  s.v2.rec_960           40-70       n=  15  med speed     54.0  A      0.19913  B      -14.544  B/A -73.0386
+                         70-100      n=  25  med speed     89.1  A      -4.8962  B      -21.075  B/A   4.3044
+                         100-150     n=  32  med speed    122.2  A      -3.9277  B       -20.94  B/A   5.3314
+                         150-260     n=  47  med speed    200.2  A      0.16899  B      -15.353  B/A -90.8544
+                         260-500     n=  82  med speed    369.0  A     0.078669  B      -15.957  B/A -202.8306
+                         500-1000    n= 159  med speed    753.4  A     -0.49197  B      -17.475  B/A  35.5211
+                         1000-1500   n= 227  med speed   1382.9  A       -2.253  B      -19.062  B/A   8.4610
+                         1500-2000   n= 122  med speed   1819.3  A      -2.8955  B      -9.0039  B/A   3.1096
+                         2000-2600   n= 365  med speed   2288.1  A      -6.4876  B       4.9041  B/A  -0.7559
+
+  s.v2.rec_9a0           40-70       n=  15  med speed     54.0  A      0.19913  B      -14.544  B/A -73.0386
+                         70-100      n=  25  med speed     89.1  A      -4.8962  B      -21.075  B/A   4.3044
+                         100-150     n=  32  med speed    122.2  A      -3.9277  B       -20.94  B/A   5.3314
+                         150-260     n=  47  med speed    200.2  A      0.16899  B      -15.353  B/A -90.8544
+                         260-500     n=  82  med speed    369.0  A     0.078669  B      -15.957  B/A -202.8306
+                         500-1000    n= 159  med speed    753.4  A     -0.49197  B      -17.475  B/A  35.5211
+                         1000-1500   n= 227  med speed   1382.9  A       -2.253  B      -19.062  B/A   8.4610
+                         1500-2000   n= 122  med speed   1819.3  A      -2.8955  B      -9.0039  B/A   3.1096
+                         2000-2600   n= 365  med speed   2288.1  A      -6.4876  B       4.9041  B/A  -0.7559
+
+  s.v2.h7z               40-70       n=  15  med speed     54.0  A     -0.21144  B      -14.039  B/A  66.3973
+                         70-100      n=  25  med speed     89.1  A      -4.4885  B      -20.584  B/A   4.5860
+                         100-150     n=  32  med speed    122.2  A      -4.4778  B      -20.902  B/A   4.6680
+                         150-260     n=  47  med speed    200.2  A      0.15966  B      -14.839  B/A -92.9445
+                         260-500     n=  82  med speed    369.0  A      0.38989  B      -15.446  B/A -39.6161
+                         500-1000    n= 159  med speed    753.4  A     -0.12874  B      -17.402  B/A 135.1679
+                         1000-1500   n= 227  med speed   1382.9  A      -1.7945  B      -19.131  B/A  10.6610
+                         1500-2000   n= 122  med speed   1819.3  A      -2.5254  B       -9.541  B/A   3.7780
+                         2000-2600   n= 365  med speed   2288.1  A      -5.9822  B       4.7064  B/A  -0.7867
+
+  s.v2.h5z               40-70       n=  15  med speed     54.0  A      0.25201  B      -15.013  B/A -59.5735
+                         70-100      n=  25  med speed     89.1  A      -5.3969  B      -20.697  B/A   3.8349
+                         100-150     n=  32  med speed    122.2  A      -3.5118  B      -20.471  B/A   5.8294
+                         150-260     n=  47  med speed    200.2  A     -0.21787  B      -15.816  B/A  72.5917
+                         260-500     n=  82  med speed    369.0  A     -0.36668  B      -16.422  B/A  44.7853
+                         500-1000    n= 159  med speed    753.4  A     -0.95404  B      -17.522  B/A  18.3666
+                         1000-1500   n= 227  med speed   1382.9  A      -2.7451  B      -18.666  B/A   6.7998
+                         1500-2000   n= 122  med speed   1819.3  A      -3.3289  B      -8.5661  B/A   2.5733
+                         2000-2600   n= 365  med speed   2288.1  A      -6.9565  B       5.1463  B/A  -0.7398
+
+  s.v2.look_z            40-70       n=  15  med speed     54.0  A      -6.6204  B      -10.839  B/A   1.6372
+                         70-100      n=  25  med speed     89.1  A      -9.8086  B      -20.128  B/A   2.0521
+                         100-150     n=  32  med speed    122.2  A      -7.6363  B      -20.105  B/A   2.6328
+                         150-260     n=  47  med speed    200.2  A      -6.6204  B      -18.556  B/A   2.8029
+                         260-500     n=  82  med speed    369.0  A      -6.6562  B      -18.742  B/A   2.8158
+                         500-1000    n= 159  med speed    753.4  A      -6.8886  B      -14.385  B/A   2.0882
+                         1000-1500   n= 227  med speed   1382.9  A      -8.0621  B        -13.2  B/A   1.6372
+                         1500-2000   n= 122  med speed   1819.3  A      -9.2861  B      -7.5891  B/A   0.8173
+                         2000-2600   n= 365  med speed   2288.1  A      -13.259  B       5.6656  B/A  -0.4273
+
+  s.v2.rec_b0c           40-70       n=  15  med speed     54.0  A     0.066253  B         6.71  B/A 101.2774
+                         70-100      n=  25  med speed     89.1  A      0.24937  B       11.874  B/A  47.6141
+                         100-150     n=  32  med speed    122.2  A      0.29233  B       19.196  B/A  65.6652
+                         150-260     n=  47  med speed    200.2  A      0.43203  B       13.519  B/A  31.2918
+                         260-500     n=  82  med speed    369.0  A      0.10897  B       11.649  B/A 106.9027
+                         500-1000    n= 159  med speed    753.4  A     0.034324  B       25.335  B/A 738.1166
+                         1000-1500   n= 227  med speed   1382.9  A       4.9116  B       10.794  B/A   2.1976
+                         1500-2000   n= 122  med speed   1819.3  A       2.6428  B       0.8747  B/A   0.3310
+                         2000-2600   n= 365  med speed   2288.1  A       6.4624  B       2.5592  B/A   0.3960
+
+  s.v2.prog              40-70       n=  15  med speed     54.0  A       3.9995  B       9.7741  B/A   2.4438
+                         70-100      n=  25  med speed     89.1  A       5.6819  B       7.7507  B/A   1.3641
+                         100-150     n=  32  med speed    122.2  A       2.8758  B       7.7693  B/A   2.7016
+                         150-260     n=  47  med speed    200.2  A       5.6801  B       7.8131  B/A   1.3755
+                         260-500     n=  82  med speed    369.0  A       5.6794  B       8.2548  B/A   1.4535
+                         500-1000    n= 159  med speed    753.4  A       5.6844  B       8.8656  B/A   1.5596
+                         1000-1500   n= 227  med speed   1382.9  A       1.5314  B       8.7648  B/A   5.7232
+                         1500-2000   n= 122  med speed   1819.3  A       3.9128  B       10.891  B/A   2.7833
+                         2000-2600   n= 365  med speed   2288.1  A       6.8608  B       14.866  B/A   2.1668
+
+  s.v2.look_x            40-70       n=  15  med speed     54.0  A       1.2433  B       10.158  B/A   8.1705
+                         70-100      n=  25  med speed     89.1  A       8.3491  B       9.7945  B/A   1.1731
+                         100-150     n=  32  med speed    122.2  A       1.2435  B        9.672  B/A   7.7783
+                         150-260     n=  47  med speed    200.2  A       8.3895  B       6.8488  B/A   0.8163
+                         260-500     n=  82  med speed    369.0  A       8.4429  B       7.9051  B/A   0.9363
+                         500-1000    n= 159  med speed    753.4  A       8.5648  B       9.7077  B/A   1.1334
+                         1000-1500   n= 227  med speed   1382.9  A      -0.2384  B       12.243  B/A -51.3548
+                         1500-2000   n= 122  med speed   1819.3  A       1.3112  B       12.706  B/A   9.6904
+                         2000-2600   n= 365  med speed   2288.1  A       5.9943  B       12.723  B/A   2.1225
+
+  s.v2.h4x               40-70       n=  15  med speed     54.0  A        1.544  B         9.52  B/A   6.1658
+                         70-100      n=  25  med speed     89.1  A       1.6546  B       8.2984  B/A   5.0155
+                         100-150     n=  32  med speed    122.2  A       1.4716  B       8.1442  B/A   5.5344
+                         150-260     n=  47  med speed    200.2  A       1.9981  B        6.364  B/A   3.1851
+                         260-500     n=  82  med speed    369.0  A       2.1861  B         7.94  B/A   3.6321
+                         500-1000    n= 159  med speed    753.4  A       2.4409  B       10.181  B/A   4.1708
+                         1000-1500   n= 227  med speed   1382.9  A     -0.33563  B       12.422  B/A -37.0113
+                         1500-2000   n= 122  med speed   1819.3  A       1.8374  B       13.015  B/A   7.0831
+                         2000-2600   n= 365  med speed   2288.1  A       5.2222  B       13.039  B/A   2.4969
+
+  s.v2.h6x               40-70       n=  15  med speed     54.0  A       1.7093  B       8.7869  B/A   5.1405
+                         70-100      n=  25  med speed     89.1  A       1.6493  B        7.488  B/A   4.5400
+                         100-150     n=  32  med speed    122.2  A       1.6414  B       7.3198  B/A   4.4594
+                         150-260     n=  47  med speed    200.2  A       1.5086  B       7.3274  B/A   4.8572
+                         260-500     n=  82  med speed    369.0  A       1.4635  B        8.909  B/A   6.0876
+                         500-1000    n= 159  med speed    753.4  A       1.4678  B       10.663  B/A   7.2642
+                         1000-1500   n= 227  med speed   1382.9  A      -0.1278  B        12.38  B/A -96.8682
+                         1500-2000   n= 122  med speed   1819.3  A       1.7331  B       12.789  B/A   7.3796
+                         2000-2600   n= 365  med speed   2288.1  A       4.2857  B       12.935  B/A   3.0182
+
+  s.v2.rec_958           40-70       n=  15  med speed     54.0  A       1.5454  B       9.0348  B/A   5.8464
+                         70-100      n=  25  med speed     89.1  A       1.5823  B       7.7998  B/A   4.9293
+                         100-150     n=  32  med speed    122.2  A       1.5661  B       7.6438  B/A   4.8808
+                         150-260     n=  47  med speed    200.2  A       1.6321  B        6.848  B/A   4.1957
+                         260-500     n=  82  med speed    369.0  A       1.7369  B        8.418  B/A   4.8467
+                         500-1000    n= 159  med speed    753.4  A       1.9692  B       10.142  B/A   5.1503
+                         1000-1500   n= 227  med speed   1382.9  A    -0.053332  B       12.226  B/A -229.2410
+                         1500-2000   n= 122  med speed   1819.3  A       2.0095  B       12.676  B/A   6.3084
+                         2000-2600   n= 365  med speed   2288.1  A       4.7191  B       12.808  B/A   2.7141
+
+  s.v2.rec_998           40-70       n=  15  med speed     54.0  A       1.5454  B       9.0348  B/A   5.8464
+                         70-100      n=  25  med speed     89.1  A       1.5823  B       7.7998  B/A   4.9293
+                         100-150     n=  32  med speed    122.2  A       1.5661  B       7.6438  B/A   4.8808
+                         150-260     n=  47  med speed    200.2  A       1.6321  B        6.848  B/A   4.1957
+                         260-500     n=  82  med speed    369.0  A       1.7369  B        8.418  B/A   4.8467
+                         500-1000    n= 159  med speed    753.4  A       1.9692  B       10.142  B/A   5.1503
+                         1000-1500   n= 227  med speed   1382.9  A    -0.053332  B       12.226  B/A -229.2410
+                         1500-2000   n= 122  med speed   1819.3  A       2.0095  B       12.676  B/A   6.3084
+                         2000-2600   n= 365  med speed   2288.1  A       4.7191  B       12.808  B/A   2.7141
+
+  s.v2.own_x             40-70       n=  15  med speed     54.0  A       1.5454  B       9.0348  B/A   5.8464
+                         70-100      n=  25  med speed     89.1  A       1.5823  B       7.7998  B/A   4.9293
+                         100-150     n=  32  med speed    122.2  A       1.5661  B       7.6438  B/A   4.8808
+                         150-260     n=  47  med speed    200.2  A       1.6321  B        6.848  B/A   4.1957
+                         260-500     n=  82  med speed    369.0  A       1.7369  B        8.418  B/A   4.8467
+                         500-1000    n= 159  med speed    753.4  A       1.9692  B       10.142  B/A   5.1503
+                         1000-1500   n= 227  med speed   1382.9  A    -0.084956  B       12.226  B/A -143.9081
+                         1500-2000   n= 122  med speed   1819.3  A       2.0095  B       12.676  B/A   6.3084
+                         2000-2600   n= 365  med speed   2288.1  A       4.7191  B       12.808  B/A   2.7141
+
+  s.v2.h5x               40-70       n=  15  med speed     54.0  A       1.6608  B       9.2307  B/A   5.5581
+                         70-100      n=  25  med speed     89.1  A       2.0174  B       8.0539  B/A   3.9922
+                         100-150     n=  32  med speed    122.2  A       1.6779  B       7.9093  B/A   4.7139
+                         150-260     n=  47  med speed    200.2  A        2.131  B        6.437  B/A   3.0207
+                         260-500     n=  82  med speed    369.0  A        2.195  B       7.9959  B/A   3.6427
+                         500-1000    n= 159  med speed    753.4  A       2.4013  B       9.9525  B/A   4.1446
+                         1000-1500   n= 227  med speed   1382.9  A     0.089556  B       12.055  B/A 134.6089
+                         1500-2000   n= 122  med speed   1819.3  A       2.2731  B       12.596  B/A   5.5412
+                         2000-2600   n= 365  med speed   2288.1  A        5.097  B       12.612  B/A   2.4743
+
+  s.v2.h7x               40-70       n=  15  med speed     54.0  A       1.9194  B       8.4976  B/A   4.4273
+                         70-100      n=  25  med speed     89.1  A        1.917  B       7.2435  B/A   3.7786
+                         100-150     n=  32  med speed    122.2  A       1.9144  B       7.0849  B/A   3.7008
+                         150-260     n=  47  med speed    200.2  A       1.9027  B       7.4004  B/A   3.8894
+                         260-500     n=  82  med speed    369.0  A       1.8779  B       8.9649  B/A   4.7739
+                         500-1000    n= 159  med speed    753.4  A       1.8089  B       10.586  B/A   5.8525
+                         1000-1500   n= 227  med speed   1382.9  A      0.28855  B       11.986  B/A  41.5399
+                         1500-2000   n= 122  med speed   1819.3  A       2.1679  B       12.353  B/A   5.6983
+                         2000-2600   n= 365  med speed   2288.1  A       4.1617  B       12.548  B/A   3.0151
+
+  s.v2.look_best         40-70       n=  15  med speed     54.0  A           14  B            1  B/A   0.0714
+                         70-100      n=  25  med speed     89.1  A           15  B            3  B/A   0.2000
+                         100-150     n=  32  med speed    122.2  A           15  B            3  B/A   0.2000
+                         150-260     n=  47  med speed    200.2  A           15  B            3  B/A   0.2000
+                         260-500     n=  82  med speed    369.0  A           15  B            3  B/A   0.2000
+                         500-1000    n= 159  med speed    753.4  A           15  B            3  B/A   0.2000
+                         1000-1500   n= 227  med speed   1382.9  A           14  B            6  B/A   0.4286
+                         1500-2000   n= 122  med speed   1819.3  A           13  B            6  B/A   0.4615
+                         2000-2600   n= 365  med speed   2288.1  A            9  B            7  B/A   0.7778
+
+  s.v2.look_idx          40-70       n=  15  med speed     54.0  A           14  B            1  B/A   0.0714
+                         70-100      n=  25  med speed     89.1  A           15  B            3  B/A   0.2000
+                         100-150     n=  32  med speed    122.2  A           15  B            3  B/A   0.2000
+                         150-260     n=  47  med speed    200.2  A           15  B            3  B/A   0.2000
+                         260-500     n=  82  med speed    369.0  A           15  B            3  B/A   0.2000
+                         500-1000    n= 159  med speed    753.4  A           15  B            3  B/A   0.2000
+                         1000-1500   n= 227  med speed   1382.9  A           14  B            6  B/A   0.4286
+                         1500-2000   n= 122  med speed   1819.3  A           12  B            6  B/A   0.5000
+                         2000-2600   n= 365  med speed   2288.1  A            9  B            7  B/A   0.7778
+
+  s.v2.rec_9dc           40-70       n=  15  med speed     54.0  A      0.52638  B      0.66111  B/A   1.2560
+                         70-100      n=  25  med speed     89.1  A     -0.65185  B      0.55869  B/A  -0.8571
+                         100-150     n=  32  med speed    122.2  A     -0.46144  B      0.53678  B/A  -1.1633
+                         150-260     n=  47  med speed    200.2  A     -0.23929  B      0.12226  B/A  -0.5109
+                         260-500     n=  82  med speed    369.0  A    -0.020425  B      0.26629  B/A -13.0374
+                         500-1000    n= 159  med speed    753.4  A     0.090473  B      0.58549  B/A   6.4715
+                         1000-1500   n= 227  med speed   1382.9  A     -0.97286  B      0.91724  B/A  -0.9428
+                         1500-2000   n= 122  med speed   1819.3  A     -0.98599  B      0.97185  B/A  -0.9857
+                         2000-2600   n= 365  med speed   2288.1  A   -0.0071573  B      0.82036  B/A -114.6188
+
+  s.v2.rec_9d4           40-70       n=  15  med speed     54.0  A  -3.1396e-05  B     0.047308  B/A -1506.8325
+                         70-100      n=  25  med speed     89.1  A  -0.00011246  B      0.55411  B/A -4927.2902
+                         100-150     n=  32  med speed    122.2  A     -0.11628  B      0.63251  B/A  -5.4396
+                         150-260     n=  47  med speed    200.2  A      0.31976  B      0.14066  B/A   0.4399
+                         260-500     n=  82  med speed    369.0  A      0.48879  B        0.163  B/A   0.3335
+                         500-1000    n= 159  med speed    753.4  A  -0.00023977  B      0.23603  B/A -984.3907
+                         1000-1500   n= 227  med speed   1382.9  A     -0.23139  B      0.25794  B/A  -1.1147
+                         1500-2000   n= 122  med speed   1819.3  A      0.09477  B      0.14278  B/A   1.5066
+                         2000-2600   n= 365  med speed   2288.1  A     0.067945  B     0.094392  B/A   1.3892
+
+
+csv -> verify\d3_car2pickup_20261013\COLLATERAL_SAME.txt
