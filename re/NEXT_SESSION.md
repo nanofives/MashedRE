@@ -1,6 +1,25 @@
 # Next session kickoff
 
-> ## START HERE 2026-10-13 D3 survey (back to the roadmap): **next = one of the three unblocked items below.**
+> ## START HERE 2026-10-13 D3 results (items 1+2 run): **next = the user decisions below.**
+>
+> - **U-9219 premise REFUTED** (`verify/d3_u9219_20261013/RESULT_U9219.md`, merged 2026-10-13, no code-behaviour
+>   change). The port's 0x00442a60 matches the original on its own inputs (220/220 selections, 880/880 refdist). What
+>   keeps the original's car 2 out of mode 7 is the held power-up word: FUN_00414490 refuses mode 7 once
+>   `(&DAT_0088fc88)[v*0x2d]` != 0, and the original's car 2 picks up at driving call 27 every run while the exe's
+>   holds nothing until call 1742 (the known car-2 opening-pickup miss). Car 3's 43 entries are after the original's
+>   round ended. Found, not fixed: the port computes refdist before the AI tick, the original's AI reads the previous
+>   tick's value (TrackRenderer.cpp:5836).
+> - **(b) per regime, default build** (`verify/d3_regimes_20261013/RESULT_REGIMES.md`): A 2/3 (car 2 abs_steer),
+>   B 1/3 (cars 1, 2 fail), C 0/3. Labelling: first non-zero DAT_0089a368 in the car's 220-call window (none=A, 1=B,
+>   2=C; FUN_004177b0). The original's noise inside a regime is zero on every metric. In regime C the original's cars
+>   1/2 get only 196 calls in 4/4 runs, so C at 220 can score car 3 only. U-9204's "flag 2 inert" is out of date.
+>   Raw .msd binaries were lost with the worktree (gitignored), the per-run aistep CSVs, labels and provenance are committed.
+> - **Decisions needed:** resolve U-9219 as refuted and open a row for the car-2 opening-pickup miss (now the mode-7
+>   carrier); test the one-tick refdist ordering behind a knob or not; adopt the new B envelope into
+>   re/tools/b_envelopes.json (command in RESULT_REGIMES §4); regime C window (keep 220 car-3 only / 196 pooled /
+>   196 per car); rewrite U-9204 via re-classify.
+
+> ## START HERE 2026-10-13 D3 survey (back to the roadmap): superseded by the results block above.
 >
 > Worker survey (account2, claude-opus-5-5). D3 powerups and modes thirds are met. The AI third is open only on
 > criterion (b), the ctrl-byte bands per regime (ROADMAP.md:2177-2235, amendment :2190): default build regime A 2/3,
