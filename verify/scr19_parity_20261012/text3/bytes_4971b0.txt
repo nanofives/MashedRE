@@ -1,0 +1,70 @@
+0x004971b0: push    ebx
+0x004971b1: push    esi
+0x004971b2: push    edi
+0x004971b3: mov     esi, eax
+0x004971b5: call    0x497190
+0x004971ba: mov     edi, eax
+0x004971bc: push    edi
+0x004971bd: push    0x5d0064
+0x004971c2: call    0x496400
+0x004971c7: push    0x5cf010
+0x004971cc: push    edi
+0x004971cd: call    0x4a4541
+0x004971d2: mov     ebx, eax
+0x004971d4: add     esp, 0x10
+0x004971d7: test    ebx, ebx
+0x004971d9: je      0x49720f
+0x004971db: push    ebx
+0x004971dc: push    0x200
+0x004971e1: shl     esi, 9
+0x004971e4: push    1
+0x004971e6: add     esi, 0x7e95c0
+0x004971ec: push    esi
+0x004971ed: call    0x4a49cf
+0x004971f2: push    ebx
+0x004971f3: call    0x4a4368
+0x004971f8: push    edi
+0x004971f9: push    0x5d0044
+0x004971fe: call    0x496400
+0x00497203: add     esp, 0x1c
+0x00497206: pop     edi
+0x00497207: pop     esi
+0x00497208: mov     eax, 1
+0x0049720d: pop     ebx
+0x0049720e: ret     
+0x0049720f: push    edi
+0x00497210: push    0x5d001c
+0x00497215: call    0x496400
+0x0049721a: add     esp, 8
+0x0049721d: pop     edi
+0x0049721e: pop     esi
+0x0049721f: xor     eax, eax
+0x00497221: pop     ebx
+0x00497222: ret     
+0x00497223: nop     
+0x00497224: nop     
+0x00497225: nop     
+0x00497226: nop     
+0x00497227: nop     
+0x00497228: nop     
+0x00497229: nop     
+0x0049722a: nop     
+0x0049722b: nop     
+0x0049722c: nop     
+0x0049722d: nop     
+0x0049722e: nop     
+0x0049722f: nop     
+0x00497230: push    ebx
+0x00497231: push    esi
+0x00497232: push    edi
+0x00497233: mov     esi, eax
+0x00497235: call    0x497190
+0x0049723a: mov     edi, eax
+0x0049723c: push    edi
+0x0049723d: push    0x5d00dc
+0x00497242: call    0x496400
+0x00497247: push    0x5d00d8
+0x0049724c: push    edi
+0x0049724d: call    0x4a4541
+0x00497252: mov     ebx, eax
+0x00497254: add     esp, 0x10

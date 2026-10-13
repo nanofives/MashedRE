@@ -1,0 +1,5 @@
+0x00497450: mov     eax, dword ptr [esp + 4]
+0x00497454: cmp     eax, 3
+0x00497457: jle     0x49745c
+0x00497459: xor     eax, eax
+0x0049745b: ret     

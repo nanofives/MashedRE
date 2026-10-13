@@ -1,0 +1,16 @@
+0x00495fe0: mov     eax, dword ptr [0x772fac]  ; [0x00772fac] BSS
+0x00495fe5: push    edi
+0x00495fe6: xor     edi, edi
+0x00495fe8: test    eax, eax
+0x00495fea: jle     0x496008
+0x00495fec: push    esi
+0x00495fed: mov     esi, 0x771e88
+0x00495ff2: call    0x495870
+0x00495ff7: mov     eax, dword ptr [0x772fac]  ; [0x00772fac] BSS
+0x00495ffc: inc     edi
+0x00495ffd: add     esi, 0x448
+0x00496003: cmp     edi, eax
+0x00496005: jl      0x495ff2
+0x00496007: pop     esi
+0x00496008: pop     edi
+0x00496009: ret     

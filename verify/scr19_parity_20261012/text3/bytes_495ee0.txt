@@ -1,0 +1,80 @@
+0x00495ee0: mov     eax, dword ptr [esp + 8]
+0x00495ee4: push    ebx
+0x00495ee5: push    ebp
+0x00495ee6: push    esi
+0x00495ee7: mov     esi, dword ptr [eax]
+0x00495ee9: push    edi
+0x00495eea: mov     edi, esi
+0x00495eec: imul    edi, edi, 0x448
+0x00495ef2: lea     ebx, [edi + 0x771e88]  ; [0x00771e88] BSS
+0x00495ef8: call    0x495520
+0x00495efd: mov     ecx, dword ptr [esp + 0x14]
+0x00495f01: mov     ebp, dword ptr [eax]
+0x00495f03: push    0
+0x00495f05: add     ecx, 4
+0x00495f08: push    ebx
+0x00495f09: push    ecx
+0x00495f0a: call    0x495520
+0x00495f0f: push    eax
+0x00495f10: call    dword ptr [ebp + 0xc]
+0x00495f13: test    eax, eax
+0x00495f15: jl      0x495fcd
+0x00495f1b: push    esi
+0x00495f1c: push    0x5cff94
+0x00495f21: call    0x4987b0
+0x00495f26: mov     ebx, dword ptr [ebx]
+0x00495f28: push    esi
+0x00495f29: push    0x5cff74
+0x00495f2e: call    0x4987b0
+0x00495f33: add     esp, 0x10
+0x00495f36: lea     edi, [edi + 0x771e8c]  ; [0x00771e8c] BSS
+0x00495f3c: push    edi
+0x00495f3d: mov     dword ptr [edi], 0x244
+0x00495f43: mov     edx, dword ptr [ebx]
+0x00495f45: push    ebx
+0x00495f46: call    dword ptr [edx + 0x3c]
+0x00495f49: test    eax, eax
+0x00495f4b: jge     0x495f5a
+0x00495f4d: push    0x5cfeac
+0x00495f52: call    0x4987b0
+0x00495f57: add     esp, 4
+0x00495f5a: lea     eax, [edi + 0x12c]
+0x00495f60: push    eax
+0x00495f61: add     edi, 0x28
+0x00495f64: push    edi
+0x00495f65: push    esi
+0x00495f66: push    0x5cff60
+0x00495f6b: call    0x4987b0
+0x00495f70: push    esi
+0x00495f71: push    0x5cff40
+0x00495f76: call    0x4987b0
+0x00495f7b: mov     ecx, dword ptr [ebx]
+0x00495f7d: add     esp, 0x18
+0x00495f80: push    0x5d076c
+0x00495f85: push    ebx
+0x00495f86: call    dword ptr [ecx + 0x2c]
+0x00495f89: test    eax, eax
+0x00495f8b: jge     0x495f9a
+0x00495f8d: push    0x5cfeac
+0x00495f92: call    0x4987b0
+0x00495f97: add     esp, 4
+0x00495f9a: push    esi
+0x00495f9b: push    0x5cff18
+0x00495fa0: call    0x4987b0
+0x00495fa5: mov     eax, dword ptr [0x772fb0]  ; [0x00772fb0] BSS
+0x00495faa: mov     edx, dword ptr [ebx]
+0x00495fac: add     esp, 8
+0x00495faf: push    5
+0x00495fb1: push    eax
+0x00495fb2: push    ebx
+0x00495fb3: call    dword ptr [edx + 0x34]
+0x00495fb6: test    eax, eax
+0x00495fb8: jge     0x495fc7
+0x00495fba: push    0x5cfeac
+0x00495fbf: call    0x4987b0
+0x00495fc4: add     esp, 4
+0x00495fc7: mov     eax, dword ptr [esp + 0x18]
+0x00495fcb: inc     dword ptr [eax]
+0x00495fcd: pop     edi
+0x00495fce: pop     esi
+0x00495fcf: pop     ebp

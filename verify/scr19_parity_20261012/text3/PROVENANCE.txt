@@ -37,3 +37,21 @@ CHECKS (Part A)
           -> quad_diff_sweep.txt, aggregate_sites.py -> sites_table.md, ../../scr32_texty_sites/ds_compare.py -> ds_compare_all.txt,
           inline record-multiset compare -> multiset_base_vs_a.txt,
           drawlist_diff vs ../../scr32_texty_recheck/dl_orig{19a,19b,30,32}.json + ../../scr32_fix/sumdiff32.py -> drawlist_summary.txt
+
+PART B
+  BUILD b : Part A + B -> mashed_re_b.exe/.map  SHA-256 7B4EF2626540917D6F04DCF9A246A26876D368A94765FFC0A3128F4C913486AE
+  BYTES   bytes_4967c0.txt (FUN_004967e0 writer, FUN_00496910/20/30 readers), bytes_497450.txt + bytes_49745c.txt
+          (FUN_00497450, FUN_00497470 dialog writer), bytes_4975e0.txt (dialog init loop, reads only),
+          bytes_497ae0.txt, bytes_4971b0.txt (contcfg loader/saver), bytes_498510.txt + bytes_498590.txt
+          (FUN_00498510 slot defaults + contcfg merge), bytes_slot_sites.txt (computed-base slot sites),
+          bytes_495790.txt, bytes_495fe0.txt (poll), bytes_496010.txt (zero + EnumDevices), bytes_495ee0.txt
+          (callback), bytes_495170_patched_vs_unpatched.txt (skip_controller_dialog site), bytes_492290.txt /
+          bytes_492d1b.txt / bytes_4953a0.txt / bytes_429280.txt (FUN_004967e0 call sites)
+          xref_772f00_773100.txt, xref_7e9400_7ea000.txt: every .text imm32/disp32 in those ranges (scratch scanner
+          xref_range.py, not committed; misaligned decodes such as sbb/adc/or with these immediates are noise)
+  LIVE    probe_devcount.py live/devcount_boot<k>.json --wait 15, k = 1..3: own PID each (29896, 42072, 41220),
+          Memory reads only, killed by PID. No contcfg*.bin in original\ (Get-ChildItem, none).
+  STANDALONE sweep/sa<S>_b.json, S = 0..33 except 27 (33/33, sweep/sweep_runs_b.txt; each line carries the
+          standalone's 'input slots:' log line)
+  CHECKS  (from sweep/) recheck_quad_diff.py orig_frame<S>.json sa<S>_a.json sa<S>_b.json --json partB/quad_<S>.json
+          -> partB/quad_diff_sweep.txt, aggregate_sites.py -> partB/sites_table.md, inline multiset -> partB/multiset_a_vs_b.txt

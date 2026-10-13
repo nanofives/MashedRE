@@ -1,0 +1,2 @@
+0x00495790: mov     eax, dword ptr [0x772fac]  ; [0x00772fac] BSS
+0x00495795: ret     

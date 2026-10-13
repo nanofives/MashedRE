@@ -1,0 +1,60 @@
+0x0049745c: shl     eax, 9
+0x0049745f: mov     edx, dword ptr [eax + 0x7e96fc]  ; [0x007e96fc] BSS
+0x00497465: xor     ecx, ecx
+0x00497467: test    edx, edx
+0x00497469: setne   cl
+0x0049746c: mov     eax, ecx
+0x0049746e: ret     
+0x0049746f: nop     
+0x00497470: push    ebx
+0x00497471: push    esi
+0x00497472: push    edi
+0x00497473: push    eax
+0x00497474: push    ecx
+0x00497475: mov     esi, edx
+0x00497477: call    dword ptr [0x5cc20c]  ; [0x005cc20c] dw 0x001e87cc f 2.80377962e-39 d 4.24571889e-308
+0x0049747d: mov     ebx, dword ptr [0x5cc224]  ; [0x005cc224] dw 0x001e87bc f 2.8037572e-39 d 4.24630031e-308
+0x00497483: push    0
+0x00497485: push    0
+0x00497487: mov     edi, eax
+0x00497489: push    0x147
+0x0049748e: push    edi
+0x0049748f: call    ebx
+0x00497491: push    0
+0x00497493: push    eax
+0x00497494: push    0x150
+0x00497499: push    edi
+0x0049749a: call    ebx
+0x0049749c: shl     esi, 9
+0x0049749f: pop     edi
+0x004974a0: mov     dword ptr [esi + 0x7e96fc], eax  ; [0x007e96fc] BSS
+0x004974a6: pop     esi
+0x004974a7: mov     eax, 1
+0x004974ac: pop     ebx
+0x004974ad: ret     
+0x004974ae: nop     
+0x004974af: nop     
+0x004974b0: sub     esp, 0x10
+0x004974b3: push    ebx
+0x004974b4: push    ebp
+0x004974b5: push    esi
+0x004974b6: mov     esi, eax
+0x004974b8: mov     eax, dword ptr [0x7719e8]  ; [0x007719e8] BSS
+0x004974bd: push    edi
+0x004974be: add     eax, 0x7ee
+0x004974c3: push    eax
+0x004974c4: push    esi
+0x004974c5: call    0x499740
+0x004974ca: mov     ecx, dword ptr [0x7719e8]  ; [0x007719e8] BSS
+0x004974d0: mov     edi, dword ptr [0x5cc20c]  ; [0x005cc20c] dw 0x001e87cc f 2.80377962e-39 d 4.24571889e-308
+0x004974d6: add     esp, 8
+0x004974d9: add     ecx, 0x7f8
+0x004974df: push    ecx
+0x004974e0: push    0x411
+0x004974e5: push    esi
+0x004974e6: call    edi
+0x004974e8: push    eax
+0x004974e9: call    0x499740
+0x004974ee: mov     edx, dword ptr [0x7719e8]  ; [0x007719e8] BSS
+0x004974f4: add     esp, 8
+0x004974f7: add     edx, 0x802

@@ -334,6 +334,18 @@ bool               g_depth_disabled = false;  // set if device fell back to no a
 // FUN_004997b0 / FUN_004998a0 callchain; we own ours directly.
 IDirectInput8A*       g_dinput        = nullptr;
 IDirectInputDevice8A* g_kbd           = nullptr;
+// Input slot types and the active-slot count, as the original derives them at
+// boot (text3, re/analysis/negctl/session_20261012b/text3_RESULT.md):
+//   J = attached game controllers whose CreateDevice succeeds: FUN_00496040
+//       EnumDevices(4, FUN_00495ee0, &[0x00772fac], 1) (0x00496055..0x00496069),
+//       callback increments at 0x00495fcb only past the CreateDevice test 0x00495f15.
+//   slot i type ([0x007e95c0 + i*0x200 + 0x13c]), FUN_00498510: i < J -> 1
+//       (0x0049861a), i == J -> 2 (0x0049865f), else 0 (0x004986cd).
+//   [0x00772ffc] = number of slots 0..3 with type != 0, FUN_004967e0
+//       (0x0049680d / 0x00496825 via FUN_00497450).
+// Defaults to J = 0 until InitDirectInput runs.
+int g_input_slot_type[4]   = {2, 0, 0, 0};
+int g_input_active_slots   = 1;
 unsigned char         g_keys[256]     = {};   // raw DInput key state, set 0x80 if held
 unsigned char         g_keys_prev[256]= {};   // last frame, for edge detection
 
@@ -986,6 +998,39 @@ bool PumpOnce() {
 // us read keys without stealing focus, matching the title-screen UX. Failures
 // are non-fatal — the frame loop still renders the title-screen quad, just
 // without keyboard navigation.
+// FUN_00495ee0's count: one per enumerated device whose CreateDevice returns
+// >= 0 (0x00495f10..0x00495f15, inc [pvRef] at 0x00495fcb). The device is not
+// kept: the standalone does not poll joysticks.
+static BOOL CALLBACK CountGameCtrlCb(LPCDIDEVICEINSTANCEA inst, LPVOID ref) {
+    IDirectInputDevice8A* dev = nullptr;
+    if (SUCCEEDED(g_dinput->CreateDevice(inst->guidInstance, &dev, nullptr)) && dev) {
+        ++*static_cast<int*>(ref);
+        dev->Release();
+    }
+    return DIENUM_CONTINUE;   // 0x00495fd0: always 1
+}
+
+// FUN_00498510's slot types (no contcfg<i>.bin override, see the note) and
+// FUN_004967e0's active count.
+static void DeriveInputSlots() {
+    int j = 0;
+    if (g_dinput)
+        g_dinput->EnumDevices(DI8DEVCLASS_GAMECTRL, CountGameCtrlCb, &j,
+                              DIEDFL_ATTACHEDONLY);
+    int n = 0;
+    for (int i = 0; i < 4; ++i) {
+        g_input_slot_type[i] = (i < j) ? 1 : (i == j) ? 2 : 0;
+        if (g_input_slot_type[i] != 0) ++n;
+    }
+    g_input_active_slots = n;
+    if (std::FILE* log = std::fopen(kLogPath, "a")) {
+        std::fprintf(log, "\ninput slots: game controllers %d, types %d %d %d %d, active %d\n",
+                     j, g_input_slot_type[0], g_input_slot_type[1],
+                     g_input_slot_type[2], g_input_slot_type[3], n);
+        std::fclose(log);
+    }
+}
+
 bool InitDirectInput(HINSTANCE hInstance) {
     HRESULT hr = DirectInput8Create(
         hInstance,
@@ -1003,6 +1048,7 @@ bool InitDirectInput(HINSTANCE hInstance) {
         }
         return false;
     }
+    DeriveInputSlots();
     hr = g_dinput->CreateDevice(GUID_SysKeyboard, &g_kbd, nullptr);
     if (FAILED(hr) || !g_kbd) {
         std::FILE* log = std::fopen(kLogPath, "a");
@@ -5286,9 +5332,14 @@ bool RenderFrame() {
                 // The FIRST row moves and the LAST stays put at ~279, so the
                 // block grows upward from a fixed bottom. Anchoring there keeps
                 // the last row correct whatever count we end up modelling.
-                // 3, matching the reference capture. 4 made the comparison
-                // unfair (user). The count is live device state either way.
-                const int   nrows4 = 3;   // [UNCERTAIN] live device state
+                // Row count = the original's active-slot count [0x00772ffc]
+                // (FUN_00496910, read at 0x0043350c), derived the same way at
+                // boot (g_input_active_slots, see DeriveInputSlots). Rows are
+                // laid out per slot with type != 0 (FUN_004332a0
+                // 0x00433570..0x004335ac via FUN_00496900), which are slots
+                // 0..n-1. Was the constant 3. This machine: 3 game controllers
+                // + keyboard = 4, read live on the original (text3 live/).
+                const int   nrows4 = g_input_active_slots;
                 // 261.25, not 279. MEASURED bar tops (device, 1024x768):
                 //   original 309 / 364 / 418   ours 338 / 392 / 447
                 // ours sat 29 device = 18.1 virtual too LOW; the original's
@@ -5320,8 +5371,10 @@ bool RenderFrame() {
                     // the ink at x132 against the original's 121.
                     const float isw = 51.7f * kVScale;
                     const float ish = 29.0f * kVScale;
-                    const int   h_icon = (r == nrows4 - 1) ? kHandleInputKbd
-                                                           : kHandleInputJoy;
+                    // Glyph by slot type, as FUN_0042bcb0 picks it (2 =
+                    // "keyboard", 1 = joypad; see below). Was "last row".
+                    const int   h_icon = (g_input_slot_type[r] == 2) ? kHandleInputKbd
+                                                                     : kHandleInputJoy;
                     // [#1b 2026-09-07, corrected 2026-09-09 from Ghidra
                     // (Mashed_pool14)] The player's device icon IS the selection
                     // indicator and it BOTH slides and tints:
