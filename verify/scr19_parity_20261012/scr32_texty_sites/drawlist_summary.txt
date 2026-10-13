@@ -1,0 +1,48 @@
+== 19a anim4 sites:
+orig19a_f0|f200: matched=101 checker=35 widget_red=0 other=2
+  [other]   missing    x=288.00 y=64.00 w=176.00 h=352.00 col=00ffffff ret=0x474bd3,0x42e80c
+  [other]   missing    x=464.00 y=64.00 w=176.00 h=352.00 col=60ffffff ret=0x474d0c,0x42e80c
+== 19a strict sites:
+orig19a_f0|f200: matched=94 checker=42 widget_red=0 other=2
+  [other]   missing    x=288.00 y=64.00 w=176.00 h=352.00 col=00ffffff ret=0x474bd3,0x42e80c
+  [other]   missing    x=464.00 y=64.00 w=176.00 h=352.00 col=60ffffff ret=0x474d0c,0x42e80c
+== 19a tol001 sites:
+orig19a_f0|f200: matched=93 checker=84 widget_red=0 other=4
+  [other]   missing    x=0.00 y=0.00 w=512.00 h=512.00 col=ffffffff ret=0x473ebd,0x42e65a
+  [other]   missing    x=288.00 y=64.00 w=176.00 h=352.00 col=00ffffff ret=0x474bd3,0x42e80c
+== 19b anim4 sites:
+orig19b_f0|f200: matched=94 checker=42 widget_red=0 other=0
+orig19b_f1|f201: matched=94 checker=42 widget_red=0 other=0
+orig19b_f2|f202: matched=94 checker=42 widget_red=0 other=0
+== 19b strict sites:
+orig19b_f0|f200: matched=94 checker=42 widget_red=0 other=0
+orig19b_f1|f201: matched=94 checker=42 widget_red=0 other=0
+orig19b_f2|f202: matched=94 checker=42 widget_red=0 other=0
+== 19b tol001 sites:
+orig19b_f0|f200: matched=93 checker=84 widget_red=0 other=2
+  [other]   missing    x=0.00 y=0.00 w=512.00 h=512.00 col=ffffffff ret=0x473ebd,0x42e65a
+  [other]   extra      x=-0.50 y=-0.50 w=512.00 h=512.00 col=ffffffff ret=0x1b72c,0x146ca6
+== 30 anim4 sites:
+orig30_f0|f200: matched=55 checker=42 widget_red=0 other=0
+orig30_f1|f201: matched=58 checker=39 widget_red=0 other=0
+orig30_f2|f202: matched=58 checker=39 widget_red=0 other=0
+== 30 strict sites:
+orig30_f0|f200: matched=55 checker=42 widget_red=0 other=0
+orig30_f1|f201: matched=55 checker=42 widget_red=0 other=0
+orig30_f2|f202: matched=55 checker=42 widget_red=0 other=0
+== 30 tol001 sites:
+orig30_f0|f200: matched=54 checker=84 widget_red=0 other=2
+  [other]   missing    x=0.00 y=0.00 w=512.00 h=512.00 col=ffffffff ret=0x473ebd,0x42e65a
+  [other]   extra      x=-0.50 y=-0.50 w=512.00 h=512.00 col=ffffffff ret=0x1b72c,0x146ca6
+== 32 anim4 sites:
+orig32_f0|f200: matched=66 checker=25 widget_red=0 other=0
+orig32_f1|f201: matched=67 checker=24 widget_red=0 other=0
+orig32_f2|f202: matched=67 checker=24 widget_red=0 other=0
+== 32 strict sites:
+orig32_f0|f200: matched=49 checker=42 widget_red=0 other=0
+orig32_f1|f201: matched=49 checker=42 widget_red=0 other=0
+orig32_f2|f202: matched=49 checker=42 widget_red=0 other=0
+== 32 tol001 sites:
+orig32_f0|f200: matched=48 checker=84 widget_red=0 other=2
+  [other]   missing    x=0.00 y=0.00 w=512.00 h=512.00 col=ffffffff ret=0x473ebd,0x42e65a
+  [other]   extra      x=-0.50 y=-0.50 w=512.00 h=512.00 col=ffffffff ret=0x1b72c,0x146ca6
