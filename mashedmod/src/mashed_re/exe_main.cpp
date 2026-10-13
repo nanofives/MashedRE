@@ -1826,7 +1826,8 @@ bool  g_assets_loaded = false;
 
 // Parity knob: MASHED_SETTINGS_DEFAULTS=1 ignores mashed_re_settings.bin and
 // keeps the compiled defaults above (7/7/7/Manual = the original's clean
-// baseline), so value-dependent rows (slider fills, insults text and its
+// baseline) except autosave, which it sets to Off (see LoadMenuSettings),
+// so value-dependent rows (slider fills, insults text and its
 // right arrow) are comparable in a draw-list diff. It also suppresses the
 // save, so a run with the knob on never rewrites the user's file. Default OFF.
 static bool SettingsDefaultsKnob() {
@@ -1846,7 +1847,17 @@ void SaveMenuSettings() {
     }
 }
 void LoadMenuSettings() {
-    if (SettingsDefaultsKnob()) return;
+    if (SettingsDefaultsKnob()) {
+        // The compiled autosave default (1, user review #23) is NOT the
+        // original's baseline. FUN_00431240 picks its value id from
+        // FUN_0040ad20 = [0x008a95ac] (0x004313f5), which reads 0 at screen 32
+        // (scr32_fix/orig_measure_probe32.json; text trace id 0x59 "Off").
+        // Writers of 0x008a95ac: 0x004098c6 / 0x004098eb store 0,
+        // 0x00404ec1 copies [0x00828254], 0x0040ad34 is the setter. Under the
+        // knob only, pin Off so the toggle row is comparable.
+        g_settings.autosave = 0;
+        return;
+    }
     if (std::FILE* f = std::fopen(kSettingsPath, "rb")) {
         char magic[4] = {};
         MenuSettings s;
