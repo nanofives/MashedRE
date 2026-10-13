@@ -71,6 +71,26 @@ Decisions (pre-committed; the mechanism is NOT pre-committed, see memory pre-reg
 3. **G-PROBE fails:** the probe does not read what the consumer reads; no replay verdict is taken from it.
 4. **G-CTRL fails:** the refactor changed behaviour; it is reverted and the replay is not used.
 
+## 2a. AMENDMENT A1 (committed after `o_rd1` / `o_rd2` were scored, before `o_rd3` exists)
+
+G-PROBE failed as written: 476 / 1082 and 201 / 561 (`score_u9219.py`). Decision 3 fired, so **no replay verdict is
+taken from `o_rd1` / `o_rd2`**. The rationale attached to decision 3 ("the probe does not read what the consumer
+reads") is wrong, and this says so: `probe_align.py` shows the consumer's refdist equals the producer output of
+the PREVIOUS clock tick (`clk - 50`) on 1082 / 1082 and 561 / 561 in-W calls. The pre-registered alignment rule
+("latest producer row with `clk <= c`") picked the same-tick row, which the original writes AFTER its AI tick has
+read the array. The fault was the alignment rule, not the probe.
+
+Confirmatory measurement, registered now: one more original capture `o_rd3` (same argv), scored with
+
+| gate | pass rule |
+|---|---|
+| **G-PROBE'** | the consumer's refdist bits at clock `c` equal the producer's leave output at `c - 50` on >= 95 % of in-W consumer calls that have a producer row at `c - 50` |
+| **G-REPLAY-SEL'** / **G-REPLAY-DIST'** | the section 2 rules, on `o_rd3` only |
+
+Decisions are the section 2 decisions, unchanged, applied to `o_rd3`. G-ORIG-DET already failed (car 2 refdist-0
+consumer calls 129 in `o_rd1` vs 4 in `o_rd2`), so its spread is the floor for G-REFDIST, as section 2 says. That
+floor (2 x 125 for car 2) makes G-REFDIST unable to fail. It is reported, and it is not evidence either way.
+
 ## 3. Attribution (report-only, run only under decision 1)
 
 Per in-W call, which input decides the reference: (a) the pair (positions), (b) the race_pct order within the pair,
