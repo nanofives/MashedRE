@@ -5343,6 +5343,7 @@ bool RenderFrame() {
                     // The port models profile 0 on its keyboard row from the ea98
                     // cursor (see Region A note); joypad rows stay parked at the
                     // choice-0 position. [SCOPED: other profiles not modelled.]
+                    float icx = 85.0f;   // the profile record's x (virtual)
                     float ix = (85.0f * kVScale) - isw * 0.5f;
                     std::uint32_t itint = white;
                     if (h_icon == kHandleInputKbd) {
@@ -5350,6 +5351,7 @@ bool RenderFrame() {
                             *reinterpret_cast<const std::int32_t*>(0x0067ea98u);
                         const float cx = (sel >= 1 && sel <= 6)
                                              ? 170.0f + (sel - 1) * 70.0f : 85.0f;
+                        icx = cx;
                         ix = cx * kVScale - isw * 0.5f;
                         if (sel >= 1 && sel <= 5)      itint = kSwatch[sel - 1];
                         else if (sel == 6)             itint = 0xffD7D7D7u;
@@ -5359,10 +5361,33 @@ bool RenderFrame() {
                     if (g_inputicons_ready)
                         HudIm2DQuad(h_icon, ix, iy, isw, ish, itint, uv_full);
                     if (g_font.ready()) {
+                        // FUN_004335f0's number, 0x00433e42..0x00433ef7:
+                        //   FUN_00427f00("1" + row, x, y, colour, 0.6, 0)
+                        //   scale 0x3f19999a @0x00433ed3, align 0 @0x00433ece
+                        //   x = float(_ftol2(FUN_004282a0(0x36, 0.8)) / 2 + 4)
+                        //       + rec.x + 15.0   (0x00433e42..0x00433e62, fadd
+                        //       [edi-4] @0x00433ed0, [0x005cc9b0] 15.0 @0x00433edb)
+                        //   y = rec.y            ([edi] @0x00433ecc; the icon
+                        //       gets rec.y - 1.0, 0x00433e24..0x00433e28)
+                        // rec is FUN_004332a0's profile record: x 85.0
+                        // (0x42aa0000 @0x00433567) or 170 + 70*(choice-1), and
+                        // y = Q_ListBaseY(n, 0x22) + 34*k (0x00433511..0x0043351b,
+                        // [0x005cd908] 34.0 @0x00433598). FUN_0042ac50: odd n
+                        // 240 - ((n-1)>>1)*p, even 240 - p/2 - ((n-1)>>1)*p. n is
+                        // FUN_00496910 = the live count [0x00772ffc], modelled as
+                        // nrows4. The old anchor (bar centre, 206.35 + 34r) and cell
+                        // 0.55 were fitted to backbuffer ink.
                         wchar_t num[2] = { static_cast<wchar_t>(L'1' + r), 0 };
-                        const float ncell2 = 0.55f * 0.0708f * 480.f * kVScale;
-                        DrawMashedString(num, ix + isw + 5.0f * kVScale,
-                                         by + bh * 0.5f, ncell2, 0xff000000u, true);
+                        const int n4 = nrows4;
+                        const int base4 = ((n4 & 1) == 0)
+                            ? (0xf0 - 0x22 / 2) - ((n4 - 1) >> 1) * 0x22
+                            : 0xf0 - ((n4 - 1) >> 1) * 0x22;
+                        const float ny = static_cast<float>(base4) + 34.0f * r;
+                        const int nw = static_cast<int>(MeasureMenuMessage(0x36, 0.8f));
+                        const float nx = (static_cast<float>(nw / 2 + 4) + icx) + 15.0f;
+                        const float ncell2 = 0.6f * 0.0708f * 480.f * kVScale;
+                        DrawMashedString(num, nx * kVScale, ny * kVScale, ncell2,
+                                         0xff000000u, true);
                     }
                 }
             }
@@ -5698,16 +5723,9 @@ bool RenderFrame() {
             const int ncol = team ? 2 : 4;
             const wchar_t* const* cols = team ? kCols2 : kCols4;
             const int* const colIds = team ? kColIds2 : kColIds4;
-            // 0.752, not 0.55. Cap heights measured on all four difficulty words
-            // in the 1024x768 capture: original 22 device, ours 16-17. Ratio by
-            // cap height 1.354 (modal 1.375), cross-checked by word ink-bbox
-            // width 1.381 -- the two agree within 2.0%, so this is a UNIFORM size
-            // error, not an aspect error. 0.55 * 1.3675 = 0.752 (bracket
-            // 0.745..0.759 across the two estimators).
-            // Do NOT estimate this from ink AREA: area ratios read 1.54-1.60
-            // because stroke weight does not scale linearly at 16-22px, which
-            // would overshoot the correction by roughly 15%.
-            const float hcell = 0.752f * 0.0708f * 480.f * kVScale;
+            // Header text cell: the literal scale pushes of both renderers
+            // (0.75 ability, 0.8 team; see the label call below). The 0.752 ink
+            // fit (cap-height ratio 1.3675 x 0.55) that both used to share is gone.
             // Header plates, now EXACT from both renderers rather than measured:
             //   team    (FUN_0043aa30) 2 plates x 250.0 / 430.0, w 140.0
             //   ability (FUN_0043a610) 4 plates x 65.0 + c * 130.0, w 120.0
@@ -5732,12 +5750,15 @@ bool RenderFrame() {
                     // FUN_00427e00(id, x, y, colour, scale, 2) calls at
                     // 0x0043a989..0x0043aa07 push y 0x431c0000 = 156.0
                     // (0x0043a9a1) and scale 0x3f400000 = 0.75 (0x0043a98b), x
-                    // 125/255/385/515 (= hx + hw/2 here). The team path keeps the
-                    // plate-centre anchor and hcell: FUN_0043aa30's pushes are not
-                    // read yet.
-                    const float ty = team ? hy + hh * 0.5f : 156.0f * kVScale;
-                    const float tcell =
-                        team ? hcell : 0.75f * 0.0708f * 480.f * kVScale;
+                    // 125/255/385/515 (= hx + hw/2 here).
+                    // Team (screens 9 and 16, FUN_0043aa30): two calls
+                    // FUN_00427e00(id, x, 0x431a0000 = 154.0, colour,
+                    // 0x3f4ccccd = 0.8, 2) at 0x0043ab5e..0x0043ab75 (id 0x9f,
+                    // x 0x43a00000 = 320.0) and 0x0043ab98..0x0043abaf (id 0xa0,
+                    // x 0x43fa0000 = 500.0). x and y already land there (hx +
+                    // hw/2, hy + hh/2); the cell was the 0.752 ink fit.
+                    const float ty = (team ? 154.0f : 156.0f) * kVScale;
+                    const float tcell = (team ? 0.8f : 0.75f) * 0.0708f * 480.f * kVScale;
                     DrawMashedString(lbl, hx + hw * 0.5f, ty,
                                      tcell, 0xff000000u /*black, centered*/);
                 }
@@ -5852,9 +5873,10 @@ bool RenderFrame() {
                 //   ability x = ability * 130.0 + 64.0   (0x82, _DAT_005cd6d4)
                 // 130 is exactly the ability header pitch, and 180 the team
                 // header spacing -- the sprite lands in the chosen column.
-                const float cx = team
-                    ? ((static_cast<float>(TeamPick(slot))    * 180.0f + 82.0f) * kVScale)
-                    : ((static_cast<float>(AbilityPick(slot)) * 130.0f + 64.0f) * kVScale);
+                const float cxv = team
+                    ? (static_cast<float>(TeamPick(slot))    * 180.0f + 82.0f)
+                    : (static_cast<float>(AbilityPick(slot)) * 130.0f + 64.0f);
+                const float cx = cxv * kVScale;
                 // Sprite is the PLAYER'S COLOUR, not car 0: the original draws
                 // FUN_0042fab0(*piVar5) where piVar5 is the slot's +0x08 field,
                 // i.e. the Player Colour CarSlotAssign wrote as pick - 1
@@ -5908,9 +5930,33 @@ bool RenderFrame() {
                     HudIm2DQuad(kHandleInputJoy, jx, jy, jw, jh, joyTint, uv_full);
                 else
                     HudIm2DQuad(0, jx, jy, jw, jh, 0xff202020u, uv_full);
-                if (g_font.ready())
-                    DrawMashedString(L"1", jx + 34.0f * kVScale,
-                                     ry + rowH * 0.5f, ncell, 0xff000000u, true);
+                // The number: FUN_00427f00(str, x, y, colour, 0.6, 0), off the
+                // sprite's own sliding x (cxv) and the row y, both renderers:
+                //   ability FUN_0043a610, 0x0043a810..0x0043a8ec:
+                //     x = _ftol2(FUN_004282a0(0x36, 0.9)) / 2 + (pick*0x82 + 64.0) + 65.0
+                //     (0x3f666666 @0x0043a87b, cdq/sub/sar 0x0043a88f..0x0043a892,
+                //      [0x005cd6d4] 64.0 @0x0043a831, [0x005cda6c] 65.0 @0x0043a8d7)
+                //   team    FUN_0043aa30, 0x0043adb5..0x0043ae70:
+                //     x = (_ftol2(FUN_004282a0(0x36, 0.9)) / 2 + 4.0) + (pick*0xb4 + 82.0) + 65.0
+                //     ([0x005cc35c] 4.0 @0x0043ae1f, fadd [esp+0x30] @0x0043ae4f)
+                //   y = (rowY - 2.0) + 15.0 on both ([0x005cc574] @0x0043a843 /
+                //       [0x005cc9b0] @0x0043a84d, fadd 15.0 @0x0043adbc)
+                //   scale 0x3f19999a (0x0043a8d2 / 0x0043ae55), align 0.
+                // The old jx + 34 (static carX + 78) / plate-centre anchor /
+                // 0.55 cell were ink fits; the original's number also slides with
+                // the pick. The string stays "1": the original builds '1' + the
+                // profile index (0x0043a8b6 / 0x0043ae47), which is "1" for the
+                // profile-0 rows this port draws.
+                if (g_font.ready()) {
+                    const int numW = static_cast<int>(MeasureMenuMessage(0x36, 0.9f));
+                    float px1 = static_cast<float>(numW / 2);
+                    if (team) px1 = px1 + 4.0f;
+                    px1 = (px1 + cxv) + 65.0f;
+                    const float ryv = 200.0f + 40.0f * static_cast<float>(r);  // rowY0 / rowDY, virtual
+                    const float py1 = (ryv - 2.0f) + 15.0f;
+                    DrawMashedString(L"1", px1 * kVScale, py1 * kVScale,
+                                     0.6f * 0.0708f * 480.f * kVScale, 0xff000000u, true);
+                }
                 // ---- the per-row team marker: DROPPED 2026-09-05 -----------
                 // This used to draw an A / B / - letter at the right edge of
                 // each row, added when no capture of a populated Team Select

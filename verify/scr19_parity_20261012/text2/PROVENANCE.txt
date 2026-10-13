@@ -6,6 +6,10 @@ BUILDS (PowerShell, $env:MASHED_NO_DEPLOY='1'; cmd /c "mashedmod\build.bat", "==
   mashedmod/build/ is gitignored, the exes are not committed)
   base : HEAD 77e7e529 -> mashedmod\build\mashed_re_base.exe/.map  SHA-256 290381EB4100933786045817E8561688B4C85AA171CA1DA097FCFA5F5188C3E4
   a    : Part A          -> mashed_re_a.exe/.map                    SHA-256 A6174CD78BCDE613F9A635EE932CDAC243D4BF8E1BC33432A0F7EE30CE65A825
+  b    : Part A + B      -> mashed_re_b.exe/.map                    SHA-256 5E1956067BA92E193DD0D88D8E4F3B4FE0D2333141104B46171B30EFF8DFA0E8
+  b4   : b with ONLY `nrows4 = 3` -> `4` (exe_main.cpp screen-4 rows), built, then the line reverted
+         (the committed source is b) -> mashed_re_b4.exe/.map  SHA-256 35F0E98D9BD19B1AADBB464A543DF7FCD83DA4CCF57356BBADFBF4060E99E799
+         Purpose: measure the screen-4 digit at the row count the original capture had (n = 4).
 
 BYTES (../scr32_texty_recheck/mdis.py, original\MASHED.exe.unpatched)
   bytes_43afa3.txt   FUN_0043af10 row setup, A / arrow y / w / h, s24 right arrow     (0x0043afa3..)
@@ -34,4 +38,23 @@ CHECKS
   s18sum.py <diff.json> --map <map>       -> drawlist_partA.txt (plate / arrow buckets by original caller)
   ../scr32_texty_recheck/recheck_quad_diff.py ../scr32_texty_recheck/orig_frame<S>.json sa<S>_base.json sa<S>_a.json
                                           -> quad_partA.txt
-  dl_dump.py / sa_dump.py                 -> dump_orig{18,24}_f0.txt, dump_sa18_before.txt, dump_sa18_a.txt
+  dl_dump.py / sa_dump.py                 -> dump_orig{18,24}_f0.txt, dump_sa18_before.txt (from
+                                             ../scr32_texty_sites/sa18_sites.json), dump_sa18_a.txt
+
+PART B
+  BYTES  bytes_433e40.txt (FUN_004335f0 digit), bytes_4332a0.txt (FUN_004332a0 profile records),
+         bytes_43a610.txt (FUN_0043a610 ability: tabs, numbers, sprite), bytes_43aa30.txt (FUN_0043aa30 team).
+         FUN_00496910 / FUN_0042aad0 / 0x004a2c48 listings are quoted in the note.
+  STANDALONE sweep/ : same inline runner, 33 screens (0..33 except 27), one PID at a time, killed by PID
+         sa<S>_base.json (33/33, sweep_base.log), sa<S>_b.json (33/33, sweep_b.log),
+         sa{4,9,15,16}_b4.json (4/4, sweep_b4.log). Logs gitignored.
+  CHECKS (run from sweep/)
+    ../../scr32_texty_recheck/recheck_quad_diff.py ../../scr32_texty_recheck/orig_frame<S>.json sa<S>_base.json sa<S>_b.json
+        --json quad_<S>.json        all 33 -> quad_diff_sweep.txt
+    ../../scr32_texty_recheck/aggregate_sites.py <33 screens>                  -> sites_table.md
+    recheck_quad_diff.py orig_frame<S>.json sa<S>_base.json sa<S>_b4.json --json quadb4_<S>.json  S = 4,9,15,16 -> quad_b4.txt
+    ../../scr32_texty_sites/ds_compare.py sa<S>_base.json sa<S>_b.json  all 33 -> ds_compare_all.txt
+    re/tools/drawlist_diff.py ../../scr32_texty_recheck/dl_orig<L>.json sa<S>_b.json --scale-b 1 --exclude-tex 9
+        --rotate-a 0x42e65a --map mashedmod/build/mashed_re_b.map [--tol-anim 4 | (strict) | --tol-pos 0.01 --tol-size 0.01]
+        --json diff_scr<L>_b_<tol>.json   (L = 19a/19b -> S 19, 30, 32; exit 1 = the tool's RED status)
+    ../../scr32_fix/sumdiff32.py <diff.json> mashedmod/build/mashed_re_b.map -> drawlist_summary.txt (widget_red 0 in all 12)
