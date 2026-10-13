@@ -2782,8 +2782,10 @@ int GetMenuMessage(int id, wchar_t* out, int cap);
 // gradient (top = argb, bottom = argb with alpha*frac), matching the original's
 // menu-item text (FUN_00428140 -> FUN_00556e90 sets top=base / bottom=faded).
 // 1.0 = flat (the title/chrome path FUN_00427e00 passes all-same).
-// Verbatim FUN_00554940 / FUN_00427680 text law (pool0 decomp + original
-// backbuffer calibration 2026-06-12, verify/orig_backbuffer_f300.bmp):
+// Verbatim FUN_00554940 / FUN_00427680 text law (pool0 decomp; the vertical
+// anchor was re-verified 2026-10-13 against the original's own submitted glyph
+// vertices, see the top_y comment below — it was previously fitted against the
+// backbuffer ink of 2026-06-12, verify/orig_backbuffer_f300.bmp):
 //  - The original's text pipe works in a normalized [0,1]^2 space over the
 //    FULL screen: print scale = menu_scale x 0.0708 (_DAT_005cd5fc), x via
 //    1/640 (@0x005cd5a8), y via 1/480 (@0x005cc560). So the glyph cell is
@@ -2864,11 +2866,27 @@ void DrawMashedString(const wchar_t* s, float cx, float anchor_y,
     const float cell_h = height_px;
     const float cell_w = height_px * (4.0f / 3.0f);  // ScreenW/ScreenH (4:3 both sides)
     const float trk    = g_font.tracking();
-    // +0.055: pixel calibration vs the CLEAN scr19 baseline (label ink
-    // centroids ran 1.5px@640 high at s=0.8; the law's normalized-space
-    // camera factor _DAT_0067d834 is runtime-derived and was assumed 1.0).
+    // No calibration term (2026-10-13). The original's OWN glyph vertices land
+    // on this law exactly. Measured, verify/scr19_parity_20261012/scr32_texty/:
+    // FUN_00427680 (plate re/analysis/hud_promote_c2_b/0x00427680.md) writes
+    // screen_y = [0x005cc320] - (H*[0x005cc560]*y)/(float)H * [0x0067d834]
+    //            - scale*[0x005cc9a4]
+    // and FUN_00554940 submits the glyph cell through Im3D (0x004cd070) in unit
+    // local space (y 0..1) with LTM y-scale s*0.0708*1.6 and the frontend
+    // camera (raster 640x480, view window 0.8x0.8, view diag -0.625, offset
+    // +0.5). Live at screen 32, id 0x59, y 240.0 (0x43700000), s 0.7
+    // (0x3f333333): [0x0067d830] and [0x0067d834] both read 0x3f7fffff, the
+    // LTM is (-0.079296, +0.079296, 1) / (-0.13999987, -0.04001457, 0)
+    // (orig_texty32.json), so the projected quad spans pixel y
+    // 228.2156..252.0044 = anchor_y - 0.49537*cell_h with cell_h 23.7888.
+    // That is this expression with no extra term. The old +0.055 (fitted
+    // 2026-06-12 against scr19 label INK centroids, which carry the glyph's
+    // empty top/bottom rows) put every glyph 0.055*cell_h low: 1.4953 px at
+    // s 0.8, 1.3084 at 0.7, 1.1215 at 0.6 — the exact per-call dy the
+    // vertex-level diff measured on screens 1/6/8/15/19/30/32 before the fix
+    // (pre_quad_diff_*.txt) and 0.0000 after (post_quad_diff_all.txt).
     const float top_y  = anchor_y +
-        cell_h * (0.025f / 0.0708f + g_font.baseline_c8() - 1.0f + 0.055f);
+        cell_h * (0.025f / 0.0708f + g_font.baseline_c8() - 1.0f);
     // Codepoints 0..255 flow through: 0..127 hit the ASCII LUT, 0x80..0xFF the
     // FGDC20 extended table (FUN_00554390 font+0x12c) — the prompt strip's nav
     // glyphs (remapped 0x80..0x8f arrows/back) resolve there. Only codepoints
@@ -5070,10 +5088,14 @@ bool RenderFrame() {
                     // 0x004311f7], y, colour, 0.7 [push 0x3f333333 at
                     // 0x004311f0], 0) at 0x004311fd. Live text trace at screen
                     // 19: (0x1b1, 376.0, 285.0, ff000000, 0.7, 0). This replaces
-                    // the fitted 378 / 0.72 (#8, 2026-06-13).
+                    // the fitted 378 / 0.72 (#8, 2026-06-13). y is the row
+                    // anchor with no offset: the `- 1.0f * S` that sat here
+                    // was compensating DrawMashedString's old +0.055 term
+                    // (both removed 2026-10-13). The vertex diff now reads
+                    // dy 0.0000 for this call (ret 0x431202).
                     const float vthIns = 0.7f * 0.0708f * 480.f * S;
-                    DrawMashedString(val, 376.0f * S + slideX,
-                                     rec.y * S - 1.0f * S, vthIns, 0xff000000u, true);
+                    DrawMashedString(val, 376.0f * S + slideX, rec.y * S,
+                                     vthIns, 0xff000000u, true);
                     // Right arrow x: ftol(FUN_004282a0(id, 0.7)) (0x0043121a,
                     // ftol 0x00431222 truncates) + 0x17e (0x00430ea1), times
                     // (short)W (FUN_0042b8b0, movsx 0x00430e9e), / 640 by the
