@@ -1,0 +1,10 @@
+0x00430830: mov     eax, dword ptr [0x67e9fc]  ; [0x0067e9fc] BSS
+0x00430835: add     eax, -2
+0x00430838: cmp     eax, 8
+0x0043083b: ja      0x4308e1
+0x00430841: jmp     dword ptr [eax*4 + 0x4308e4]  ; [0x004308e4] dw 0x00430848 f 6.155949e-39 d 2.11744793e-307
+0x00430848: mov     eax, dword ptr [esp + 4]
+0x0043084c: lea     eax, [eax + eax*2]
+0x0043084f: shl     eax, 4
+0x00430852: mov     eax, dword ptr [eax + 0x7f0a44]  ; [0x007f0a44] BSS
+0x00430858: ret     

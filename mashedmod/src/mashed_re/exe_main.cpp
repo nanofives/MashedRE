@@ -5343,6 +5343,7 @@ bool RenderFrame() {
                     // The port models profile 0 on its keyboard row from the ea98
                     // cursor (see Region A note); joypad rows stay parked at the
                     // choice-0 position. [SCOPED: other profiles not modelled.]
+                    float icx = 85.0f;   // the profile record's x (virtual)
                     float ix = (85.0f * kVScale) - isw * 0.5f;
                     std::uint32_t itint = white;
                     if (h_icon == kHandleInputKbd) {
@@ -5350,6 +5351,7 @@ bool RenderFrame() {
                             *reinterpret_cast<const std::int32_t*>(0x0067ea98u);
                         const float cx = (sel >= 1 && sel <= 6)
                                              ? 170.0f + (sel - 1) * 70.0f : 85.0f;
+                        icx = cx;
                         ix = cx * kVScale - isw * 0.5f;
                         if (sel >= 1 && sel <= 5)      itint = kSwatch[sel - 1];
                         else if (sel == 6)             itint = 0xffD7D7D7u;
@@ -5359,10 +5361,33 @@ bool RenderFrame() {
                     if (g_inputicons_ready)
                         HudIm2DQuad(h_icon, ix, iy, isw, ish, itint, uv_full);
                     if (g_font.ready()) {
+                        // FUN_004335f0's number, 0x00433e42..0x00433ef7:
+                        //   FUN_00427f00("1" + row, x, y, colour, 0.6, 0)
+                        //   scale 0x3f19999a @0x00433ed3, align 0 @0x00433ece
+                        //   x = float(_ftol2(FUN_004282a0(0x36, 0.8)) / 2 + 4)
+                        //       + rec.x + 15.0   (0x00433e42..0x00433e62, fadd
+                        //       [edi-4] @0x00433ed0, [0x005cc9b0] 15.0 @0x00433edb)
+                        //   y = rec.y            ([edi] @0x00433ecc; the icon
+                        //       gets rec.y - 1.0, 0x00433e24..0x00433e28)
+                        // rec is FUN_004332a0's profile record: x 85.0
+                        // (0x42aa0000 @0x00433567) or 170 + 70*(choice-1), and
+                        // y = Q_ListBaseY(n, 0x22) + 34*k (0x00433511..0x0043351b,
+                        // [0x005cd908] 34.0 @0x00433598). FUN_0042ac50: odd n
+                        // 240 - ((n-1)>>1)*p, even 240 - p/2 - ((n-1)>>1)*p. n is
+                        // FUN_00496910 = the live count [0x00772ffc], modelled as
+                        // nrows4. The old anchor (bar centre, 206.35 + 34r) and cell
+                        // 0.55 were fitted to backbuffer ink.
                         wchar_t num[2] = { static_cast<wchar_t>(L'1' + r), 0 };
-                        const float ncell2 = 0.55f * 0.0708f * 480.f * kVScale;
-                        DrawMashedString(num, ix + isw + 5.0f * kVScale,
-                                         by + bh * 0.5f, ncell2, 0xff000000u, true);
+                        const int n4 = nrows4;
+                        const int base4 = ((n4 & 1) == 0)
+                            ? (0xf0 - 0x22 / 2) - ((n4 - 1) >> 1) * 0x22
+                            : 0xf0 - ((n4 - 1) >> 1) * 0x22;
+                        const float ny = static_cast<float>(base4) + 34.0f * r;
+                        const int nw = static_cast<int>(MeasureMenuMessage(0x36, 0.8f));
+                        const float nx = (static_cast<float>(nw / 2 + 4) + icx) + 15.0f;
+                        const float ncell2 = 0.6f * 0.0708f * 480.f * kVScale;
+                        DrawMashedString(num, nx * kVScale, ny * kVScale, ncell2,
+                                         0xff000000u, true);
                     }
                 }
             }
@@ -5698,16 +5723,9 @@ bool RenderFrame() {
             const int ncol = team ? 2 : 4;
             const wchar_t* const* cols = team ? kCols2 : kCols4;
             const int* const colIds = team ? kColIds2 : kColIds4;
-            // 0.752, not 0.55. Cap heights measured on all four difficulty words
-            // in the 1024x768 capture: original 22 device, ours 16-17. Ratio by
-            // cap height 1.354 (modal 1.375), cross-checked by word ink-bbox
-            // width 1.381 -- the two agree within 2.0%, so this is a UNIFORM size
-            // error, not an aspect error. 0.55 * 1.3675 = 0.752 (bracket
-            // 0.745..0.759 across the two estimators).
-            // Do NOT estimate this from ink AREA: area ratios read 1.54-1.60
-            // because stroke weight does not scale linearly at 16-22px, which
-            // would overshoot the correction by roughly 15%.
-            const float hcell = 0.752f * 0.0708f * 480.f * kVScale;
+            // Header text cell: the literal scale pushes of both renderers
+            // (0.75 ability, 0.8 team; see the label call below). The 0.752 ink
+            // fit (cap-height ratio 1.3675 x 0.55) that both used to share is gone.
             // Header plates, now EXACT from both renderers rather than measured:
             //   team    (FUN_0043aa30) 2 plates x 250.0 / 430.0, w 140.0
             //   ability (FUN_0043a610) 4 plates x 65.0 + c * 130.0, w 120.0
@@ -5732,12 +5750,15 @@ bool RenderFrame() {
                     // FUN_00427e00(id, x, y, colour, scale, 2) calls at
                     // 0x0043a989..0x0043aa07 push y 0x431c0000 = 156.0
                     // (0x0043a9a1) and scale 0x3f400000 = 0.75 (0x0043a98b), x
-                    // 125/255/385/515 (= hx + hw/2 here). The team path keeps the
-                    // plate-centre anchor and hcell: FUN_0043aa30's pushes are not
-                    // read yet.
-                    const float ty = team ? hy + hh * 0.5f : 156.0f * kVScale;
-                    const float tcell =
-                        team ? hcell : 0.75f * 0.0708f * 480.f * kVScale;
+                    // 125/255/385/515 (= hx + hw/2 here).
+                    // Team (screens 9 and 16, FUN_0043aa30): two calls
+                    // FUN_00427e00(id, x, 0x431a0000 = 154.0, colour,
+                    // 0x3f4ccccd = 0.8, 2) at 0x0043ab5e..0x0043ab75 (id 0x9f,
+                    // x 0x43a00000 = 320.0) and 0x0043ab98..0x0043abaf (id 0xa0,
+                    // x 0x43fa0000 = 500.0). x and y already land there (hx +
+                    // hw/2, hy + hh/2); the cell was the 0.752 ink fit.
+                    const float ty = (team ? 154.0f : 156.0f) * kVScale;
+                    const float tcell = (team ? 0.8f : 0.75f) * 0.0708f * 480.f * kVScale;
                     DrawMashedString(lbl, hx + hw * 0.5f, ty,
                                      tcell, 0xff000000u /*black, centered*/);
                 }
@@ -5852,9 +5873,10 @@ bool RenderFrame() {
                 //   ability x = ability * 130.0 + 64.0   (0x82, _DAT_005cd6d4)
                 // 130 is exactly the ability header pitch, and 180 the team
                 // header spacing -- the sprite lands in the chosen column.
-                const float cx = team
-                    ? ((static_cast<float>(TeamPick(slot))    * 180.0f + 82.0f) * kVScale)
-                    : ((static_cast<float>(AbilityPick(slot)) * 130.0f + 64.0f) * kVScale);
+                const float cxv = team
+                    ? (static_cast<float>(TeamPick(slot))    * 180.0f + 82.0f)
+                    : (static_cast<float>(AbilityPick(slot)) * 130.0f + 64.0f);
+                const float cx = cxv * kVScale;
                 // Sprite is the PLAYER'S COLOUR, not car 0: the original draws
                 // FUN_0042fab0(*piVar5) where piVar5 is the slot's +0x08 field,
                 // i.e. the Player Colour CarSlotAssign wrote as pick - 1
@@ -5908,9 +5930,33 @@ bool RenderFrame() {
                     HudIm2DQuad(kHandleInputJoy, jx, jy, jw, jh, joyTint, uv_full);
                 else
                     HudIm2DQuad(0, jx, jy, jw, jh, 0xff202020u, uv_full);
-                if (g_font.ready())
-                    DrawMashedString(L"1", jx + 34.0f * kVScale,
-                                     ry + rowH * 0.5f, ncell, 0xff000000u, true);
+                // The number: FUN_00427f00(str, x, y, colour, 0.6, 0), off the
+                // sprite's own sliding x (cxv) and the row y, both renderers:
+                //   ability FUN_0043a610, 0x0043a810..0x0043a8ec:
+                //     x = _ftol2(FUN_004282a0(0x36, 0.9)) / 2 + (pick*0x82 + 64.0) + 65.0
+                //     (0x3f666666 @0x0043a87b, cdq/sub/sar 0x0043a88f..0x0043a892,
+                //      [0x005cd6d4] 64.0 @0x0043a831, [0x005cda6c] 65.0 @0x0043a8d7)
+                //   team    FUN_0043aa30, 0x0043adb5..0x0043ae70:
+                //     x = (_ftol2(FUN_004282a0(0x36, 0.9)) / 2 + 4.0) + (pick*0xb4 + 82.0) + 65.0
+                //     ([0x005cc35c] 4.0 @0x0043ae1f, fadd [esp+0x30] @0x0043ae4f)
+                //   y = (rowY - 2.0) + 15.0 on both ([0x005cc574] @0x0043a843 /
+                //       [0x005cc9b0] @0x0043a84d, fadd 15.0 @0x0043adbc)
+                //   scale 0x3f19999a (0x0043a8d2 / 0x0043ae55), align 0.
+                // The old jx + 34 (static carX + 78) / plate-centre anchor /
+                // 0.55 cell were ink fits; the original's number also slides with
+                // the pick. The string stays "1": the original builds '1' + the
+                // profile index (0x0043a8b6 / 0x0043ae47), which is "1" for the
+                // profile-0 rows this port draws.
+                if (g_font.ready()) {
+                    const int numW = static_cast<int>(MeasureMenuMessage(0x36, 0.9f));
+                    float px1 = static_cast<float>(numW / 2);
+                    if (team) px1 = px1 + 4.0f;
+                    px1 = (px1 + cxv) + 65.0f;
+                    const float ryv = 200.0f + 40.0f * static_cast<float>(r);  // rowY0 / rowDY, virtual
+                    const float py1 = (ryv - 2.0f) + 15.0f;
+                    DrawMashedString(L"1", px1 * kVScale, py1 * kVScale,
+                                     0.6f * 0.0708f * 480.f * kVScale, 0xff000000u, true);
+                }
                 // ---- the per-row team marker: DROPPED 2026-09-05 -----------
                 // This used to draw an A / B / - letter at the right edge of
                 // each row, added when no capture of a populated Team Select
@@ -6416,37 +6462,62 @@ bool RenderFrame() {
             // (7 rows) = 150 - 58 + 30r = 92 + 30r. Matches the original's pens
             // (s18 y 92..272, s24 84..280). s18 was 98 + 28r here before.
             const float y0 = sp ? 84.0f : 92.0f, pitch = sp ? 28.0f : 30.0f;
-            // The plate is SOLID for 169 then a horizontal alpha fade to 0 over
-            // the remaining 81 (total extent 250, which is what the label/value
-            // anchors key off). MEASURED per-column max red over the row-0 band
-            // of the 1024x768 capture (kVScale 1.6), plate x 100..500 device on
-            // BOTH sides, so only the fade was missing:
-            //   original  R=176 flat to x=370, then 168 160 152 144 136 120 104
-            //             88 72 48 32 8 -> 0 at x=500  (fade = 130 device = 81 virtual)
-            //   ours      R=151 flat all the way to x=490, then a hard cut
-            // 250 - 81 = 169 recovers the value the old comment discarded: 169
-            // was the SOLID width, not the total, so widening it to 250 traded a
-            // label overlap for a missing fade. Both are kept now.
-            // plateX 62.5, not 58: the plate MEASURES device 100..500 at
-            // 1024x768 = virtual 62.5..312.5, and 58 put it 4.5 virtual left.
-            const float plateX = 62.5f, plateW = 250.0f;
-            const float plateSolidW = 169.0f;
-            const float plateFadeW  = plateW - plateSolidW;   // 81
-            // valRight sits at the plate's RIGHT EDGE, no 18-virtual margin:
-            // the original's value glyphs run x375..~500 device, i.e. out to
-            // plateX+plateW. The old margin pulled the whole value (and the
-            // arrow anchored off it) 35 device px left of the original.
-            const float labelX = 66.0f, valRight = plateX + plateW;
-            const float plateH = 26.0f, bt = 1.0f * kVScale;
-            const float cell = 0.6f * 0.0708f * 480.f * kVScale;
+            // Row plates: the original draws these rows through its generic
+            // record path FUN_0043c5b0 (the same one the list rows above port),
+            // which picks a narrower plate for these two tables. All literals:
+            //   y = rec.y - 13.0 + 1.0   0x0043c766 fsub [0x005cd8d8] (13.0),
+            //                            0x0043c77e fadd [0x005cc320] (1.0)
+            //   x 60.0                   0x0043c7a1 (0x42700000)
+            //   table 0x5f72a0 (s18) / 0x5f7370 (s24), 0x0043c78b..0x0043c7b0:
+            //     solid w 166.0 (0x43260000 @0x0043c7e3), fade x 226.0
+            //     (0x43620000 @0x0043c7f3), fade w 84.0 (0x42a80000 @0x0043c7eb)
+            //     (the other tables take 210 / 270 / 100, 0x0043c7c9..0x0043c7d9)
+            //   h 26.0                   0x0043c80c (0x41d00000)
+            //   borders only when h > 2.0 (0x0043cd0a / 0x0043cf35), each 2.0
+            //   thick (0x40000000 @0x0043cd43 / 0x0043cf6b): top at y, bottom at
+            //   y + ftol(h) - 2 (0x0043cd86 / 0x0043cfb6), left at x - 2.0
+            //   (0x0043cdfb / 0x0043d02b), w 2.0, h ftol(h) (0x0043ce05).
+            // Settled plates in the original draw list (dl_orig18/24.json,
+            // verify/scr19_parity_20261012/text2/) sit at x 60..226..310, tops
+            // 80 + 30r (s18) / 72 + 28r (s24). The old 62.5 / 169 + 81 / 1 px
+            // values were fitted to backbuffer ink and put each plate 1 px high.
+            const float plateX = 60.0f, plateSolidW = 166.0f;
+            const float plateFadeX = 226.0f, plateFadeW = 84.0f;
+            const float plateH = 26.0f, bt = 2.0f * kVScale;
+            // FUN_0043af10's value column. Per row, 0x0043b0fd..0x0043b17c:
+            //   A = W * 0.484375  ([0x005cda78] 0x3ef80000, 0x0043b10d)
+            //   ay = H * (y - 6.0) * 0.00208333344  ([0x005cd0a0] 6.0,
+            //        [0x005cc560] 0x3b088889, 0x0043b12b..0x0043b139)
+            //   aw = W * 0.01875  ([0x005cda74] 0x3c99999a, 0x0043b14d)
+            //   ah = H * 0.025    ([0x005cc9a4] 0x3ccccccd, 0x0043b176)
+            // W / H are the screen-dim words [0x0067ea54] / [0x0067ea56]
+            // (FUN_0042b8b0 / FUN_0042b8c0), 640 x 480 on the parity frame:
+            // the original's own quads put the right arrow at x 310 = A.
+            // The value is right-aligned at x = (A - 1.0) / W * 640.0
+            // (0x0043b4f2..0x0043b520 s18, 0x0043b2f4..0x0043b322 s24) = 309.0,
+            // the 0x439a8000 the s18 capture passes. The label is the record's
+            // own x, 0x42800000 = 64.0 (FUN_0043c5b0 arg [esi-0x14], 0x0043cc68;
+            // orig_frame18.json raw). The old 66 / 312.5 were ink fits.
+            auto bitsF = [](std::uint32_t b) { float f; std::memcpy(&f, &b, 4); return f; };
+            const float kScrW = 640.0f, kScrH = 480.0f;
+            const float colA = kScrW * bitsF(0x3ef80000u);                    // 310.0
+            const float arrW = kScrW * bitsF(0x3c99999au);                    // 12.0
+            const float arrH = kScrH * bitsF(0x3ccccccdu);                    // 12.0
+            const float labelX = 64.0f;
+            const float valRight = ((colA - 1.0f) / kScrW) * 640.0f;          // 309.0
             std::uint32_t uvf[4] = {0u, 0u, 0x3f800000u, 0x3f800000u};
+            // Right arrow: u mirrored, (0x3f7ff972, 0) .. (0, 1.0), pushed at
+            // 0x0043b3bb..0x0043b3c6 (s18) / 0x0043b1de..0x0043b1e9 (s24).
+            std::uint32_t uvr[4] = {0x3f7ff972u, 0u, 0u, 0x3f800000u};
             // Selected row follows the live nav cursor (fresh entry = 0, same
             // as the parity references).
             const int selRow = (Nav_Cursor() >= 0) ? Nav_Cursor() : 0;
             for (int r = 0; r < nrows; ++r) {
                 const float cy = y0 + r * pitch;                 // row centre (virtual)
-                const float pt = (cy - plateH * 0.5f) * kVScale; // plate top
-                const float pw = plateW * kVScale, px = plateX * kVScale;
+                const float pt = (cy - 13.0f + 1.0f) * kVScale;  // plate top, 0x0043c766..0x0043c77e
+                const float px = plateX * kVScale;
+                // Fill bytes f0 6e 14 a0 (selected, 0x0043cef5..0x0043cf04) /
+                // the idle record colour, passed packed as the generic path does.
                 const std::uint32_t fill = (r == selRow) ? 0xa0146ef0u   // selected = orange
                                                          : 0x40f8d0e8u;  // idle = blue
                 // Solid body, then the right-hand alpha fade — same construction
@@ -6461,19 +6532,40 @@ bool RenderFrame() {
                 // no ASM is cited for a second draw here. Left at 0xa0 rather
                 // than tuned to hit 176 — the gap is real and unexplained.
                 const float psw = plateSolidW * kVScale;
+                const float pfx = plateFadeX  * kVScale;
                 const float pfw = plateFadeW  * kVScale;
                 const std::uint32_t fill0 = fill & 0x00ffffffu;
-                const std::uint32_t bord  = 0xff1050b4u;
+                // Border: selected b4 50 10 ff (0x0043cf3e..0x0043cf4f), idle
+                // 13 15 50 (0x0043cd13..0x0043cd1d) at alpha 0xff, which
+                // FUN_0042aad0 (0x0042aad0: byte [eax+3] = 0x30) drops to 0x30
+                // on a row whose avail slot reads 0 (0x0043ccaf..0x0043ccbd).
+                const bool rowOffPlate = !Nav_ItemEnabled(r);
+                const std::uint32_t bord  = (r == selRow) ? 0xff1050b4u
+                                          : rowOffPlate   ? 0x30501513u
+                                                          : 0xff501513u;
                 const std::uint32_t bord0 = bord & 0x00ffffffu;
-                HudIm2DQuad(0, px, pt, psw, plateH * kVScale, fill, uvf);
-                HudIm2DQuadCorners(0, px + psw, pt, pfw, plateH * kVScale,
+                const float ph = plateH * kVScale;
+                HudIm2DQuad(0, px, pt, psw, ph, fill, uvf);
+                HudIm2DQuadCorners(0, pfx, pt, pfw, ph,
                                    fill, fill0, fill, fill0, uvf);
                 HudIm2DQuad(0, px, pt, psw, bt, bord, uvf);
-                HudIm2DQuadCorners(0, px + psw, pt, pfw, bt,
+                HudIm2DQuadCorners(0, pfx, pt, pfw, bt,
                                    bord, bord0, bord, bord0, uvf);
-                HudIm2DQuad(0, px, pt + plateH * kVScale - bt, psw, bt, bord, uvf);
-                HudIm2DQuadCorners(0, px + psw, pt + plateH * kVScale - bt, pfw, bt,
+                HudIm2DQuad(0, px, pt + ph - bt, psw, bt, bord, uvf);
+                HudIm2DQuadCorners(0, pfx, pt + ph - bt, pfw, bt,
                                    bord, bord0, bord, bord0, uvf);
+                HudIm2DQuad(0, px - 2.0f * kVScale, pt, bt, ph, bord, uvf);  // left, 0x0043ce19 / 0x0043d049
+                // Selected row: the "Button" cap (0x005cda7c) through
+                // FUN_004739f0 (0x0043d0b0) at x - 2.0 - 13.0 (0x0043d02b,
+                // 0x0043d063), w 13.0 (0x41500000 @0x0043d08b), plate height.
+                // Same sprite and u0 crop as the list-row path's Button above;
+                // the original passes the full 0..1 UV.
+                if (r == selRow && g_menu_badge_ready) {
+                    std::uint32_t uv_badge[4] = {
+                        0x3e000000u /*0.125*/, 0u, 0x3f800000u, 0x3f800000u };
+                    HudIm2DQuad(kHandleMenuBadge, (plateX - 2.0f - 13.0f) * kVScale, pt,
+                                13.0f * kVScale, ph, bord, uv_badge);
+                }
                 if (!g_font.ready()) continue;
                 // The SELECTED row's label is drawn larger than the idle rows
                 // (earlier ink fit: 0.776 selected, 0.6 idle, from cap heights on
@@ -6493,7 +6585,8 @@ bool RenderFrame() {
                 // on s24 at 0x0043b304 (ret 0x0043b32b). The same constant feeds
                 // the arrow call FUN_004282a0 right after each (0x0043b529 /
                 // 0x0043b32b), so the arrow measures with it too.
-                const float valCell = (sp ? 0.58f : 0.52f) * 0.0708f * 480.f * kVScale;
+                const float valScale = sp ? 0.58f : 0.52f;
+                const float valCell = valScale * 0.0708f * 480.f * kVScale;
                 // DISABLED rows draw BLACK AT ALPHA 0x30, not full black. This
                 // block previously ignored availability entirely and drew every
                 // label/value at 0xff000000, so nothing ever greyed here.
@@ -6532,32 +6625,42 @@ bool RenderFrame() {
                     DrawMashedString(lab, labelX * kVScale, cy * kVScale, labCell,
                                      labInk, /*anchor_left*/ true);
                 if (rows[r].value >= 0) {
+                    // Two "Arrow" sprites (0x005cd828, BADGES.TXD kHandleMenuArrow)
+                    // per value row, in the value's colour (edi: the same dword
+                    // the value text gets). Order as in FUN_0043af10: right arrow,
+                    // value, left arrow. s24 row 3 draws both only when
+                    // FUN_00430830(1) != 0 (0x0043b186..0x0043b199 and
+                    // 0x0043b35f..0x0043b388); s18 has no such test.
+                    const bool arrows = g_menu_arrow_ready &&
+                        !(sp && r == 3 &&
+                          mashed_re::Frontend::SplitScreenTrackAssignmentFor(gs.game_mode, 1) == 0);
+                    const float ay = (kScrH * (cy - 6.0f)) * bitsF(0x3b088889u);
+                    // Right arrow: FUN_004739f0("Arrow", A, ay, aw, ah, colour,
+                    // mirrored u) at 0x0043b3d5 (s18) / 0x0043b1f8 (s24).
+                    if (arrows)
+                        HudIm2DQuad(kHandleMenuArrow, colA * kVScale, ay * kVScale,
+                                    arrW * kVScale, arrH * kVScale, valInk, uvr);
                     wchar_t val[64];
                     if (GetMenuMessage(rows[r].value, val, 64) > 0)
                         DrawMashedString(val, valRight * kVScale, cy * kVScale, valCell,
                                          valInk, false, 1.0f, /*anchor_right*/ true);
-                    // The arrow below still measures the value at the old 0.6
-                    // `cell`: its x formula was fitted at that width, and moving it
-                    // to valCell is a separate arrow-parity change.
-                    // The "Arrow" sprite (BADGES.TXD, kHandleMenuArrow) just left
-                    // of each value, matching FUN_0040bb50("Arrow",...). Width is
-                    // estimated from the glyph count (no measure fn in-scope).
-                    if (g_menu_arrow_ready) {
-                        // Measure the value properly instead of estimating it
-                        // from the glyph count. The old 0.62*cell*len guess put
-                        // the arrow ~67 device px too far left, which is the
-                        // user's "arrow should be nearer the selected option".
-                        // MEASURED on orig_s24 row 1: the arrow occupies device
-                        // x350..370 (20x19) and "Standard" starts at 375, with
-                        // valRight = 464 device. 464 - 89(value) - 20(arrow) -
-                        // 5(gap) = 350, i.e. the formula lands exactly once the
-                        // value width is real. Arrow 20x19 device = 12.5 virtual.
-                        const float vw  = MeasureMashedString(val, cell);
-                        const float asz = 12.5f * kVScale;
-                        HudIm2DQuad(kHandleMenuArrow,
-                                    valRight * kVScale - vw - asz - 3.0f * kVScale,
-                                    cy * kVScale - asz * 0.5f, asz, asz,
-                                    0xff000000u, uvf);
+                    // Left arrow: FUN_00473870("Arrow", x, ay, aw, ah, colour, 1)
+                    // at 0x0043b590, x from the value's measured width at the
+                    // scale it is drawn at (0x0043b529 / 0x0043b32b):
+                    //   w = _ftol2(FUN_004282a0(id, s))       0x0043b537 (0x004a2c48 truncates)
+                    //   D = (W * (w + 0x12)) / 640            0x0043b53e..0x0043b55f
+                    //       (0x66666667 multiply, sar 8, sign fix = int division)
+                    //   x = (A - D) + 2.0                     0x0043b568..0x0043b573 ([0x005cc574])
+                    // Same at 0x0043b339..0x0043b372 on s24. The old x
+                    // (valRight - MeasureMashedString(val, 0.6 cell) - 12.5 - 3)
+                    // was fitted on orig_s24 ink and measured the value at 0.6.
+                    if (arrows) {
+                        const int mw = static_cast<int>(
+                            MeasureMenuMessage(rows[r].value, valScale));
+                        const int d  = static_cast<int>(kScrW) * (mw + 0x12) / 640;
+                        const float ax = (colA - static_cast<float>(d)) + 2.0f;
+                        HudIm2DQuad(kHandleMenuArrow, ax * kVScale, ay * kVScale,
+                                    arrW * kVScale, arrH * kVScale, valInk, uvf);
                     }
                 }
             }

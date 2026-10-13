@@ -1,0 +1,7 @@
+0x0040bb50: mov     eax, dword ptr [esp + 4]
+0x0040bb54: mov     ecx, dword ptr [0x63b8fc]  ; [0x0063b8fc] BSS
+0x0040bb5a: push    eax
+0x0040bb5b: push    ecx
+0x0040bb5c: call    0x4c5c00
+0x0040bb61: add     esp, 8
+0x0040bb64: ret     

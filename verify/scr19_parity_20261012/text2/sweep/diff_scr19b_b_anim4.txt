@@ -1,0 +1,10 @@
+== orig19b_f0 (A: 136 draws, x1.0) vs f200 (B: 136 draws, x1.0)
+   matched 136  mismatched 0  missing 0  extra 0
+== orig19b_f1 (A: 136 draws, x1.0) vs f201 (B: 136 draws, x1.0)
+   matched 136  mismatched 0  missing 0  extra 0
+== orig19b_f2 (A: 136 draws, x1.0) vs f202 (B: 136 draws, x1.0)
+   matched 136  mismatched 0  missing 0  extra 0
+== orig19b_f3 (A: 136 draws, x1.0) vs f203 (B: 136 draws, x1.0)
+   matched 136  mismatched 0  missing 0  extra 0
+-> verify\scr19_parity_20261012\text2\sweep\diff_scr19b_b_anim4.json
+VERDICT: GREEN (match=544 mismatch=0 missing=0 extra=0)
