@@ -1,0 +1,35 @@
+=== scr32 pre (box 374..410 x 225..255, as scr32_fix)
+orig ink x 377..405 y 233..246 n=209
+sa   ink x 377..405 y 235..247 n=198
+IoU by shift (dx,dy) top 3: [('0.833', 0, -1), ('0.801', 0, -2), ('0.622', -1, -1)]
+ink row centroid sa - orig: +1.596 px
+=== scr19 pre (box 374..444 x 270..300)
+orig ink x 378..443 y 279..291 n=394
+sa   ink x 377..442 y 279..291 n=425
+IoU by shift (dx,dy) top 3: [('0.796', 0, 0), ('0.721', 0, -1), ('0.603', 1, 0)]
+ink row centroid sa - orig: +0.327 px
+=== scr32 post (box 374..410 x 225..255, as scr32_fix)
+orig ink x 377..405 y 233..246 n=209
+sa   ink x 377..405 y 234..246 n=186
+IoU by shift (dx,dy) top 3: [('0.872', 0, 0), ('0.674', 0, -1), ('0.646', 0, 1)]
+ink row centroid sa - orig: +0.247 px
+=== scr19 post (box 374..444 x 270..300)
+orig ink x 378..443 y 279..291 n=394
+sa   ink x 377..442 y 279..291 n=399
+IoU by shift (dx,dy) top 3: [('0.840', 0, 0), ('0.638', 0, -1), ('0.625', 1, 0)]
+ink row centroid sa - orig: -0.054 px
+=== CROSS: previous session orig_scr32_bb.bmp vs this session sa_bb32_post.bmp
+orig ink x 377..405 y 233..246 n=208
+sa   ink x 377..405 y 234..246 n=186
+IoU by shift (dx,dy) top 3: [('0.885', 0, 0), ('0.684', 0, -1), ('0.642', 0, 1)]
+ink row centroid sa - orig: +0.165 px
+=== CROSS: this session orig_bb32.bmp vs previous session sa_scr32_bb.bmp (post)
+orig ink x 377..405 y 233..246 n=209
+sa   ink x 377..405 y 233..246 n=195
+IoU by shift (dx,dy) top 3: [('0.897', 0, 0), ('0.705', 0, -1), ('0.656', 0, 1)]
+ink row centroid sa - orig: +0.338 px
+=== CROSS: original vs original (previous orig_scr32_bb.bmp as 'sa')
+orig ink x 377..405 y 233..246 n=209
+sa   ink x 377..405 y 233..246 n=208
+IoU by shift (dx,dy) top 3: [('0.949', 0, 0), ('0.702', 0, 1), ('0.695', 0, -1)]
+ink row centroid sa - orig: +0.082 px
