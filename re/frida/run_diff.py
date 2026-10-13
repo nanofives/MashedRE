@@ -529,7 +529,9 @@ NEGCTL_CLASSES = ('null', 'ret_int', 'ret_float', 'field_first', 'field_last', '
                   'field_none')
 
 STANDIN_KEYS = ('heap_standin', 'import_standin', 'freeze_main', 'object_size', 'object_alloc',
-                'observe_ret_len', 'observe_globals', 'reg_args', 'callee_pops')
+                'observe_ret_len', 'observe_globals', 'reg_args', 'callee_pops',
+                # fake function pointers a stand-in can return (no-return imports, bnoreturn 2026-10-12).
+                'standin_fakes')
 STANDINS_JS = ROOT / 're' / 'frida' / 'js' / 'standins.js'
 
 

@@ -46,6 +46,24 @@
 //         record ('all' | N leading args | [indices] | false), forward (call the real API, still recorded).
 // regions: optional function returning [[name, base(NativePointer), size], ...]; obs values inside a region are
 //   written as name+off (the arena is always 'A'), so pointer identity is compared, not raw addresses.
+//
+// NO-RETURN imports and FAKE function pointers (bnoreturn 2026-10-12). ExitProcess / TerminateProcess never return,
+// so a stand-in that returns sends the caller into whatever follows the call (0x004a31e0 is an int3) and BOTH arms
+// error alike. An import spec with `noreturn: true` records the call like any other, logs it with a trailing NORETURN
+// marker, then ENDS THE ARM: the gate jumps to a 2-instruction trampoline
+//     call <NativeCallback>     ; records (retaddr, a0..an-1), runs opts.onNoReturn
+//     mov eax, [sentinel]       ; sentinel = a PAGE_NOACCESS page of our own
+// whose access violation Frida's NativeFunction (exceptions: 'steal', the default) catches: it restores the call frame
+// it saved at entry (gum_exceptor setjmp/longjmp) and throws "access violation accessing <sentinel>" in JS. The caller
+// asks S.noreturn() (the import that ended this arm, or null) and S.sentinel() to tell that end from a real crash.
+// The real API never runs on the A/B thread while armed; other threads still forward to it through the gate.
+// Nothing is popped from Gum's interceptor state by the unwind: IAT slots are swapped data, not Interceptor hooks.
+//   spec.strings  [argIdx, ..]: log that arg as the NUL-terminated ANSI string it points to (a"..", <= 256 bytes),
+//                 not as an address (the original passes .rdata 0x005d11e0, the .asi its own literal).
+//   opts.fakes    {name: {args, abi ('stdcall'), ret, noreturn}}: callbacks with no IAT slot, for a function POINTER a
+//                 stand-in returns (GetProcAddress -> CorExitProcess). Logged as 'fake:<name>:<args>'.
+//   arm({rets})   per-arm return override {api-or-fake-name: value | [per call] | {fake: name}}; {fake: name} is that
+//                 fake's address, so a test picks which fake (or 0) GetProcAddress hands back.
 (function () {
   if (globalThis.__standins) return;
   const keep = globalThis.__standinKeep = globalThis.__standinKeep || [];
@@ -75,8 +93,32 @@
   //   1b f0 ff 05 <counter>    lock inc dword ptr [counter]
   //   22 ff 25 <prevSlot>      jmp dword ptr [prevSlot]
   function u32(v) { return [v & 0xff, (v >>> 8) & 0xff, (v >>> 16) & 0xff, (v >>> 24) & 0xff]; }
+  // PERSISTENT memory for everything a game thread can reach after the script unloads: the gate stub, its `armed`
+  // flag, its forward slot and counter (bnoreturn 2026-10-12). Memory.alloc'd pages are freed at unload, and the IAT
+  // swap is undone before that, but MSVC hoists an IAT load into a register across a loop (`mov esi, [__imp_X]` ..
+  // `call esi`): a game thread that read the slot while it held the stub kept calling the stub after it was freed and
+  // died executing the page base (AV read@0xe760000 / 0xeac0000 == addr, 2 of 8 warm boots with EnterCriticalSection
+  // stood in). VirtualAlloc'd pages are never freed, so such a stale pointer keeps forwarding to the real API
+  // (`armed` is 0 outside an arm). Carved from 64 KB VirtualAlloc regions (one allocation granule; a 32-bit game's
+  // address space is tight), 16-byte aligned: one region per script that installs stand-ins, for the process's life.
+  let vAlloc = null, pRegion = null, pUsed = 0;
+  const P_REGION = 0x10000;
+  function persistAlloc(n) {
+    const need = (n + 15) & ~15;
+    if (need > P_REGION) throw new Error('standins: persistAlloc(' + n + ') larger than one region');
+    if (!pRegion || pUsed + need > P_REGION) {
+      if (!vAlloc) vAlloc = new NativeFunction(Process.getModuleByName('kernel32.dll').getExportByName('VirtualAlloc'),
+                                               'pointer', ['pointer', 'uint32', 'uint32', 'uint32'], 'stdcall');
+      pRegion = vAlloc(NULL, P_REGION, 0x3000 /* MEM_COMMIT|MEM_RESERVE */, 0x40 /* PAGE_EXECUTE_READWRITE */);
+      if (pRegion.isNull()) throw new Error('standins: VirtualAlloc(0x10000) failed');
+      pUsed = 0;
+    }
+    const p = pRegion.add(pUsed);
+    pUsed += need;
+    return p;
+  }
   function makeStub(tid, armed, cb, prevSlot, counter) {
-    const stub = keepAlloc(Process.pageSize);
+    const stub = persistAlloc(0x30);                    // 0x28 bytes of code
     const bytes = [0x64, 0xa1, 0x24, 0x00, 0x00, 0x00]
       .concat([0x3d], u32(tid >>> 0))
       .concat([0x75, 0x0e])
@@ -122,10 +164,46 @@
 
   function hex(v) { return '0x' + (v >>> 0).toString(16); }
 
+  // The ANSI string at p (<= 256 bytes) for a log entry: printable ASCII kept, the log's own separators (':' and ' ')
+  // and everything else escaped as \xNN, so two different strings never log alike. 'AV' if p is unreadable.
+  function cstr(p) {
+    try {
+      let s = '';
+      for (let i = 0; i < 256; i++) {
+        const c = ptr(p).add(i).readU8();
+        if (c === 0) return 'a"' + s + '"';
+        s += (c > 0x20 && c < 0x7f && c !== 0x3a && c !== 0x22 && c !== 0x5c)
+          ? String.fromCharCode(c) : '\\x' + ('0' + c.toString(16)).slice(-2);
+      }
+      return 'a"' + s + '"+';
+    } catch (e) { return 'a@AV'; }
+  }
+
+  // No-return trampoline (see header): call cb (it sees the caller's return address as its first arg), then fault on
+  // the sentinel page.  00 e8 <rel cb>  call cb | 05 a1 <sentinel>  mov eax, [sentinel] | 0a cc  int3
+  let noretPage = null;
+  function noretSentinel() {
+    if (!noretPage) {
+      noretPage = Memory.alloc(Process.pageSize);      // a whole page: Memory.alloc page-aligns >= pageSize requests
+      keep.push(noretPage);
+      Memory.protect(noretPage, Process.pageSize, '---');
+    }
+    return noretPage;
+  }
+  function makeNoretTramp(cb) {
+    const t = keepAlloc(Process.pageSize);
+    const bytes = [0xe8].concat(u32(cb.sub(t.add(5)).toUInt32()))
+      .concat([0xa1], u32(noretSentinel().toUInt32())).concat([0xcc]);
+    Memory.patchCode(t, bytes.length, function (code) { code.writeByteArray(bytes); });
+    const back = new Uint8Array(t.readByteArray(bytes.length));
+    if (back.some(function (b, i) { return b !== bytes[i]; })) throw new Error('standins: no-return trampoline write failed');
+    return t;
+  }
+
   function install(opts) {
     opts = opts || {};
     const tid = Process.getCurrentThreadId();
-    const armed = keepAlloc(4); armed.writeU32(0);
+    const armed = persistAlloc(4); armed.writeU32(0);        // persistent: read by stubs that outlive the script
     const undo = [];               // newest last; uninstall runs them newest first
     const counters = [];           // [label, NativePointer] forwarded-call counters (other threads)
     let log = [];                  // current arm's log entries (strings before normalization: arrays)
@@ -134,8 +212,8 @@
     let arena = null, arenaSize = 0, fill = 0xcd, cursor = 0, allocCalls = 0;
 
     function gate(cb, label) {
-      const prevSlot = keepAlloc(4);
-      const counter = keepAlloc(4); counter.writeU32(0);
+      const prevSlot = persistAlloc(8);
+      const counter = prevSlot.add(4); counter.writeU32(0);
       counters.push([label, counter]);
       keep.push(cb);
       return { stub: makeStub(tid, armed, cb, prevSlot, counter), prevSlot: prevSlot };
@@ -235,6 +313,53 @@
       }
     }
 
+    // Per-arm state for the no-return / fake extension (see header).
+    let armRets = {}, noretHit = null;
+    const fakeAddrs = {}, fakeCalls = {};
+    function pickRet(v, n) {
+      if (Array.isArray(v)) v = v[Math.min(n, v.length - 1)];
+      if (v !== null && typeof v === 'object' && v.fake !== undefined) {
+        if (!fakeAddrs[v.fake]) throw new Error('standins: no fake named ' + v.fake);
+        return fakeAddrs[v.fake].toUInt32();
+      }
+      return v === undefined ? 0 : v;
+    }
+    function logVals(a, which, strs) {
+      let idx;
+      if (which === false) idx = [];
+      else if (which === 'all') idx = a.map(function (_, i) { return i; });
+      else if (typeof which === 'number') idx = a.slice(0, which).map(function (_, i) { return i; });
+      else idx = which;
+      return idx.map(function (i) { return strs.indexOf(i) >= 0 ? cstr(a[i] >>> 0) : ptr(a[i] >>> 0); });
+    }
+    // A no-return callback: args arrive as (retaddr, a0..an-1) from the trampoline's `call`; record, mark, return
+    // into the fault. Returns the trampoline (the address the gate or the fake pointer jumps to).
+    function noretCallback(kind, label, nargs, strs, which) {
+      const cb = new NativeCallback(function () {
+        const a = Array.prototype.slice.call(arguments, 1);
+        log.push([kind, label].concat(logVals(a, which, strs), ['NORETURN']));
+        noretHit = label;
+        if (opts.onNoReturn) opts.onNoReturn(label);
+      }, 'void', Array(nargs + 1).fill('uint32'), 'mscdecl');
+      keep.push(cb);
+      return makeNoretTramp(cb);
+    }
+    Object.keys(opts.fakes || {}).forEach(function (name) {
+      const spec = opts.fakes[name] || {};
+      const nargs = spec.args | 0, abi = spec.abi || 'stdcall', strs = spec.strings || [];
+      const which = spec.record === undefined ? 'all' : spec.record;
+      fakeCalls[name] = 0;
+      if (spec.noreturn) { fakeAddrs[name] = noretCallback('fake', name, nargs, strs, which); return; }
+      const cb = new NativeCallback(function () {
+        const a = Array.prototype.slice.call(arguments);
+        const n = fakeCalls[name]++;
+        log.push(['fake', name].concat(logVals(a, which, strs)));
+        return pickRet(armRets[name] !== undefined ? armRets[name] : spec.ret, n) >>> 0;
+      }, 'uint32', Array(nargs).fill('uint32'), abi);
+      keep.push(cb);
+      fakeAddrs[name] = cb;
+    });
+
     const imports = opts.imports || {};
     const names = Object.keys(imports);
     const impCalls = names.map(function () { return 0; });
@@ -249,6 +374,8 @@
         if (nargs === undefined) throw new Error('standins: give `args` for ' + full);
         const abi = spec.abi || 'stdcall';
         const which = spec.record === undefined ? 'all' : spec.record;
+        const strs = spec.strings || [];
+        if (spec.noreturn && spec.forward) throw new Error('standins: ' + full + ' cannot be both noreturn and forward');
         let found = 0;
         bases.forEach(function (mb) {
           const slot = findSlot(mb[1], dll, api);
@@ -256,19 +383,13 @@
           found++;
           const argt = Array(nargs).fill('uint32');
           let orig = null;
-          const cb = new NativeCallback(function () {
+          const cb = spec.noreturn ? noretCallback('imp', api, nargs, strs, which) : new NativeCallback(function () {
             const a = Array.prototype.slice.call(arguments);
             const n = impCalls[idx]++;
-            let vals;
-            if (which === false) vals = [];
-            else if (which === 'all') vals = a;
-            else if (typeof which === 'number') vals = a.slice(0, which);
-            else vals = which.map(function (i) { return a[i]; });
-            log.push(['imp', api].concat(vals.map(function (v) { return ptr(v >>> 0); })));
+            log.push(['imp', api].concat(logVals(a, which, strs)));
             let r;
             if (spec.forward) r = orig.apply(null, a);
-            else if (Array.isArray(spec.ret)) r = spec.ret[Math.min(n, spec.ret.length - 1)];
-            else r = spec.ret === undefined ? 0 : spec.ret;
+            else r = pickRet(armRets[api] !== undefined ? armRets[api] : spec.ret, n);
             return (r >>> 0);
           }, 'uint32', argt, abi);
           const prev = patchSlot(slot, cb, mb[0] + ':' + api);
@@ -302,6 +423,9 @@
       // fail: optional per-arm {failMask, failSize} overriding the install-time schedule
       arm: function (fail) {
         armFail = fail || {};
+        armRets = armFail.rets || {};
+        noretHit = null;
+        Object.keys(fakeCalls).forEach(function (k) { fakeCalls[k] = 0; });
         log = [];
         cursor = 0;
         allocCalls = 0;
@@ -329,6 +453,14 @@
         }
         return parts.join(' ');
       },
+      // The no-return import / fake that ended the current arm (null if none fired), and the sentinel address its
+      // fault names, so a caller can tell that end from a real crash (both must hold).
+      noreturn: function () { return noretHit; },
+      sentinel: function () { return noretPage ? noretPage.toString() : null; },
+      isNoReturnEnd: function (e) {
+        return noretHit !== null && noretPage !== null && e && String(e.message).indexOf(noretPage.toString()) >= 0;
+      },
+      fake: function (name) { return fakeAddrs[name] || null; },
       forwarded: function () {
         const o = {};
         counters.forEach(function (c) { o[c[0]] = c[1].readU32(); });

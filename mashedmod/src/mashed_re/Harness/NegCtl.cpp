@@ -90,6 +90,7 @@ unsigned s_calls = 0, s_flips = 0, s_lastChanged = 0;
 uint8_t* s_lastFlip = nullptr;
 uint8_t  s_lastOld = 0, s_lastNew = 0;
 bool     s_pending = false;
+bool     s_inFwd = false;               // between NegCtlPre and NegCtlPost of the forwarded call (NegCtl_NoReturn)
 char     s_stats[256];
 
 void FindGlobalRegions() {
@@ -227,6 +228,7 @@ void ThawGameThreads() {
 // the saved ESP points at stack arg 0 (the return address was already popped).
 extern "C" void __cdecl NegCtlPre(const uint32_t* regs) {
     ++s_calls;
+    s_inFwd = true;
     if (g_ncCls == kHeapExtra) {
         reinterpret_cast<void*(__cdecl*)(size_t)>(0x004a45fb)(0x20);   // game CRT _malloc, leaked
     } else if (g_ncCls == kImportExtra) {
@@ -247,6 +249,7 @@ extern "C" void __cdecl NegCtlPre(const uint32_t* regs) {
 }
 
 extern "C" void __cdecl NegCtlPost() {
+    s_inFwd = false;
     if (!IsField()) return;
     uint8_t* first = nullptr;
     uint8_t* last  = nullptr;
@@ -322,6 +325,14 @@ extern "C" __declspec(naked) void NegCtl_Entry() {
     }
 }
 
+// A port that never returns (it ends in ExitProcess / TerminateProcess) unwinds past NegCtlPost, so the field
+// classes would never flip and read NA. The harness's no-return import stand-in (re/frida/js/standins.js, bnoreturn
+// 2026-10-12) calls this at the no-return call instead: it runs the post-call step (diff, thaw, flip) there, once,
+// and only inside a forwarded call (the ORIGINAL arm reaches the same stand-in and must not flip anything).
+extern "C" __declspec(dllexport) void __cdecl NegCtl_NoReturn() {
+    if (s_inFwd) NegCtlPost();
+}
+
 // Arm the forwarder for one run. Returns NegCtl_Entry, or NULL when MASHED_NEGCTL != 1
 // or the class is unknown. Undoes the previous run's flip first.
 extern "C" __declspec(dllexport) void* __cdecl NegCtl_Arm(void* target, int cls, unsigned stdcallBytes, int floatRet) {
@@ -337,6 +348,7 @@ extern "C" __declspec(dllexport) void* __cdecl NegCtl_Arm(void* target, int cls,
     g_ncFloatRet = floatRet;
     s_calls = s_flips = s_lastChanged = 0;
     s_lastFlip = nullptr;
+    s_inFwd = false;
     if (cls == kFieldFirst || cls == kFieldLast || cls == kFieldNone) {
         FindGlobalRegions();
         Calibrate();
