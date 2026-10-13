@@ -1,0 +1,14 @@
+[0x0067d830] live = 3f7fffff, [0x008a95ac] live = 0, label call {'id': 607, 'scale_hex': '3f4ccccd', 'scale': 0.800000011920929, 'esi': 52, 'row': 1, 'rec_x': 64, 'rec_x_hex': '42800000', 'autosave': 0}
+exe side: mashed_re.log 'measure:' lines (MASHED_DBG_MEASURE=1, last SA run PID 7912)
+ id     text      scale  orig FUN_004282a0          exe MeasureMenuMessage   equal
+ 0x059  Off       0.70  29.79607582 (41ee5e5d)  29.79607582 (41ee5e5d)  True
+ 0x059  Off       0.60  25.53949356 (41cc50e2)  25.53949356 (41cc50e2)  True
+ 0x059  Off       0.80  34.05265808 (420835ec)  34.05265808 (420835ec)  True
+ 0x05a  On        0.70  26.91258430 (41d74cf9)  26.91258430 (41d74cf9)  True
+ 0x05a  On        0.60  23.06793022 (41b88b1f)  23.06793022 (41b88b1f)  True
+ 0x05a  On        0.80  30.75723839 (41f60ed3)  30.75723839 (41f60ed3)  True
+ 0x25f  Autosave  0.70  89.38822937 (42b2c6c6)  89.38822937 (42b2c6c6)  True
+ 0x25f  Autosave  0.60  76.61848450 (42993caa)  76.61848450 (42993caa)  True
+ 0x25f  Autosave  0.80  102.15797424 (42cc50e2)  102.15797424 (42cc50e2)  True
+ right arrow for 0x59 Off: ftol 29 -> 640*(29+356+26)*0.0015625f = 411.000000
+ right arrow for 0x5a On: ftol 26 -> 640*(26+356+26)*0.0015625f = 408.000000

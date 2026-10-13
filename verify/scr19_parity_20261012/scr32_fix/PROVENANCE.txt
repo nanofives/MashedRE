@@ -1,0 +1,54 @@
+scr32 autosave toggle (row 0) right-arrow fix, 2026-10-13
+Worktree .worktrees/scr32arrow, branch work/scr32arrow, base 183ba7bb.
+mashedmod\build\mashed_re.exe built from that tree ($env:MASHED_NO_DEPLOY='1'; cmd /c mashedmod\build.bat).
+Result note: re/analysis/negctl/session_20261012b/scr32_arrow_RESULT.md
+
+Two builds:
+  d62c8e25  formula port only (arrow + value text from FUN_00431240), knob still autosave=1
+  HEAD      + MASHED_SETTINGS_DEFAULTS pins autosave=0 (the original's live [0x008a95ac] = 0)
+
+ORIGINAL, measure probe (measure_probe32.py, this folder; scr32 variant of ../arrow_fix/measure_probe.py).
+Spawns original\MASHED.exe with MASHED_RE_NO_AUTO_HOOK=1, waits for menu phase 3, pushes nav screen 32
+(FUN_0043d2a0 + 0x0067ecb0), settles 6 s, dumps the backbuffer through the d3d9 shim's
+MASHED_ORIG_BBDUMP_REQ channel, then:
+  - one entry hook on 0x004282a0 filtered on return address 0x00431310 (the label call at 0x0043130b),
+    detached after one hit: pushed id/scale, ESI, record float [ESI+0x898aa4], [0x008a95ac]
+  - inside one onEnter of the frame shell 0x0042e3a0 (game thread): FUN_004282a0(id, s) for
+    ids 0x59/0x5a/0x25f x scales 0.7/0.6/0.8, ST0 read as double
+Writes nothing into game memory. No key input. Kills only its own PID.
+  orig_measure_probe32.json   PID 37696
+  orig_scr32_bb.bmp (+ .draw3d.json from the shim)   same PID
+  measure_table.txt           original returns vs the exe's MeasureMenuMessage (exe_measure_log.txt)
+
+ORIGINAL draw lists: REUSED ../after_fix/orig_scr32.json (+ .text.json), ../after_fix/orig_scr30.json,
+../orig1_settled.json, ../orig2_settled.json. Valid: original\MASHED.exe mtime 2026-08-19 00:13:56
+(unchanged), git log 3419790d..HEAD -- re/frida/menu_draw_burst.py re/tools/drawlist_diff.py is empty.
+
+STANDALONE (run_sa.ps1, copied from ../arrow_fix with the worktree path changed, plus
+MASHED_DBG_MEASURE=1; MASHED_SETTINGS_DEFAULTS=1):
+  sa32_formula_only.json  S=32  PID 15512  build d62c8e25, log autosave=1, toggle id 0x5a arrow_x 408.000000
+  sa32_knob_on.json       S=32  PID 35068  HEAD, log autosave=0, toggle id 0x59 arrow_x 411.000000
+  sa_knob_on.json         S=19  PID 14472  HEAD
+  sa30_knob_on.json       S=30  PID 29800  HEAD
+  sa_scr32_bb.bmp         S=32  PID 7912   HEAD, plus MASHED_DBG_BBDUMP=1 MASHED_DBG_BBDUMP_OUT=<here>\sa_scr32_bb.bmp
+                                          (its drawstream sa32_bb_drawstream.json is a by-product)
+  exe_measure_log.txt     settings:/measure: lines of mashed_re.log from PID 7912 (the log is truncated per run;
+                          from PID 35068 only its toggle line was kept: id 0x59 arrow_x 411.000000;
+                          PID 15512 printed the same 9 measure bits as PID 7912)
+  No mashed_re_settings.bin exists in this worktree root, and the repo-root file was not touched.
+
+DIFFS (all: --scale-b 1 --exclude-tex 9 --map mashedmod/build/mashed_re.map --rotate-a 0x42e65a):
+  ../after_fix/orig_scr32.json vs sa32_formula_only.json --tol-pos 0.01 --tol-size 0.01 -> diff_scr32_formula_only_tol001.*
+      (rets in that json belong to build d62c8e25; its sumdiff32 run used that build's map)
+  ../after_fix/orig_scr32.json vs sa32_knob_on.json --tol-anim 4 / strict / 0.01 -> diff_scr32_on*.txt/.json
+  ../orig1_settled.json vs sa_knob_on.json          --tol-anim 4 / strict / 0.01 -> diff_orig1_vs_sa_on*
+  ../orig2_settled.json vs sa_knob_on.json          --tol-anim 4 / strict / 0.01 -> diff_orig2_vs_sa_on*
+  ../after_fix/orig_scr30.json vs sa30_knob_on.json --tol-anim 4 / strict / 0.01 -> diff_scr30_on*
+  Summaries: py -3.12 sumdiff32.py <diff.json> mashedmod/build/mashed_re.map
+      widget rows = original caller 0x430000-0x432fff; checker = original caller 0x42e89c, or a standalone
+      extra whose first return address lies in _LogoOverlayDraw per the map (replaces sumdiff.py's literal
+      0xb8202).
+
+VALUE TEXT (tex 9 is outside the draw-list diff, so a pixel check):
+  value_text_ink.py: orig_scr32_bb.bmp vs sa_scr32_bb.bmp, ink (max(R,G,B) < 48) in x 374..410, y 225..255
+  -> value_text_ink.txt. Crops *_row0.png (x 340..440, y 215..265, 4x nearest).
