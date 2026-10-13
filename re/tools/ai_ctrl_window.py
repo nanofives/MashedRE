@@ -10,7 +10,7 @@ Per car prints: steer = c1 - c0 distinct count and median, |steer| median, accel
 distinct set + fraction 255, brake c5 distinct set + fraction 255.
 
 Usage: py -3.12 re/tools/ai_ctrl_window.py <csv> [<csv> ...] [--n 220] [--skip 0]
-                                           [--json] [--check]
+                                           [--json] [--check] [--check-regime <envelopes.json>]
 
 --skip K moves the window to [i0+K, i0+K+N). The committed (b) TOLERANCE below was
 established at K=0 and does NOT transfer: at K=558 only 2 of the original's 12
@@ -27,7 +27,16 @@ ORIGINAL's 12 observations (4 runs x cars 1..3) in verify/d3_ai_20260914 + d3_ai
 # window (none -> A, 1 -> B, 2 -> C), and each car is checked against THAT regime's envelope
 # (re/tools/b_envelopes.py).
 # --check (the 2026-09-26 pooled TOLERANCE) is kept unchanged as the legacy rule.
+# Regime window (AMENDMENT 2026-10-13, user decision; verify/d3_regimes_20261013/RESULT_REGIMES.md):
+# the regime is labelled on the LABEL_N window, then each car is scored on its regime's window.
+# A and B: 220 calls, cars-pooled envelope. C: 196 calls, PER-CAR envelope (envelopes["C"]["<v>"]),
+# because the original steps cars 1/2 exactly 196 calls after the window start in 4/4 C runs.
+# --n does not change the --check-regime window.
 import csv, json, statistics, sys
+
+LABEL_N = 220
+REGIME_N = {"A": 220, "B": 220, "C": 196}
+REGIME_PER_CAR = {"C"}
 
 def window_stats(path, n, skip=0):
     rows = list(csv.DictReader(open(path, newline="")))
@@ -95,6 +104,34 @@ def window_regime(path, n, skip=0):
         out[v] = {None: "A", "1": "B", "2": "C"}.get(first, "?")
     return out
 
+def regime_envelope(env, reg, v):
+    """The envelope car v is scored against in regime reg (per car for REGIME_PER_CAR), or None."""
+    e = env["envelopes"].get(reg)
+    if e is not None and reg in REGIME_PER_CAR:
+        e = e.get(str(v))
+    return e
+
+def check_regime(path, env, skip=0):
+    """--check-regime rule. Per car v: {"regime", "n", "stats", "fails"}; "fails" is None when the car
+    cannot be scored, with the reason in "why"."""
+    labels = window_regime(path, LABEL_N, skip)
+    stats = {}
+    out = {}
+    for v, reg in labels.items():
+        n = REGIME_N.get(reg)
+        r = {"regime": reg, "n": n, "stats": None, "fails": None}
+        out[v] = r
+        e = regime_envelope(env, reg, v)
+        if n is None or e is None:
+            r["why"] = "regime %s car %d has no envelope" % (reg, v); continue
+        s = stats.setdefault(n, window_stats(path, n, skip))[v]
+        r["stats"] = s
+        if s.get("short") or not s.get("calls"):
+            r["why"] = "%d of %d calls" % (s["calls"], n); continue
+        r["fails"] = [("%s=%s not in [%s,%s]" % (k, s[k], lo, hi))
+                      for k, (lo, hi) in e.items() if not (lo <= s[k] <= hi)]
+    return out
+
 def check(s):
     fails = []
     for k, (lo, hi) in TOLERANCE.items():
@@ -118,11 +155,27 @@ def main(argv):
     if skip:
         print("# window [i0+%d, i0+%d) -- NOT the committed (b) window; the TOLERANCE"
               " envelope below was established at skip=0 only." % (skip, skip + n))
+    env = json.load(open(argv[argv.index("--check-regime") + 1])) if "--check-regime" in argv else None
+    def print_regime(p, v):
+        cr = check_regime(p, env, skip)
+        if not cr:
+            print("      (b-regime) NO flag_a368 column -- cannot label; not scored"); return
+        r = cr.get(v)
+        if r is None:
+            print("      (b-regime) car %d not labelled -- not scored" % v)
+        elif r["fails"] is None:
+            print("      (b-regime %s @%s) not scored: %s" % (r["regime"], r["n"], r["why"]))
+        else:
+            print("      (b-regime %s @%d%s) %s%s" % (r["regime"], r["n"],
+                  " car %d" % v if r["regime"] in REGIME_PER_CAR else "",
+                  "PASS" if not r["fails"] else "FAIL: ", "; ".join(r["fails"])))
     for p, cars in res.items():
         print(p)
         for v, s in cars.items():
             if s.get("short"):
                 print("  v%d  SHORT: %d of %d calls -- not scored" % (v, s["calls"], s["want"]))
+                if env is not None:
+                    print_regime(p, v)
                 continue
             if not s["calls"]:
                 print("  v%d  no call with c4 != 0" % v); continue
@@ -135,17 +188,8 @@ def main(argv):
             if "--check" in argv:
                 f = check(s)
                 print("      (b) %s%s" % ("PASS" if not f else "FAIL: ", "; ".join(f)))
-            if "--check-regime" in argv:
-                env = json.load(open(argv[argv.index("--check-regime") + 1]))
-                reg = window_regime(p, n, skip).get(v)
-                if reg is None:
-                    print("      (b-regime) NO flag_a368 column -- cannot label; not scored")
-                elif reg not in env["envelopes"]:
-                    print("      (b-regime) regime %s has no envelope -- not scored" % reg)
-                else:
-                    f = [("%s=%s not in [%s,%s]" % (k, s[k], lo, hi))
-                         for k, (lo, hi) in env["envelopes"][reg].items() if not (lo <= s[k] <= hi)]
-                    print("      (b-regime %s) %s%s" % (reg, "PASS" if not f else "FAIL: ", "; ".join(f)))
+            if env is not None:
+                print_regime(p, v)
 
 if __name__ == "__main__":
     main(sys.argv[1:])

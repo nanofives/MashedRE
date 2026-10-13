@@ -1,0 +1,273 @@
+verify/d3_regimes_20261013/P_K00.step.csv
+  v1 start=0 n=220 steerD=81 steerMed=0.0 |steer|Med=7.0 accel=[0, 255] a255=0.895 brake=[0, 255] b255=0.105
+      (b-regime A @220) PASS
+  v2 start=0 n=220 steerD=64 steerMed=0.0 |steer|Med=0.0 accel=[0, 255] a255=0.691 brake=[0, 255] b255=0.423
+      (b-regime A @220) FAIL: abs_steer_median=0.0 not in [7.0,23.0]
+  v3 start=0 n=220 steerD=82 steerMed=0.0 |steer|Med=10.0 accel=[0, 255] a255=0.873 brake=[0, 255] b255=0.127
+      (b-regime A @220) PASS
+verify/d3_regimes_20261013/P_K01.step.csv
+  v1 start=0 n=220 steerD=71 steerMed=49.0 |steer|Med=49.0 accel=[0, 102, 255] a255=0.273 brake=[0, 255] b255=0.191
+      (b-regime B @220) FAIL: c1_distinct=57 not in [17,46]; c1_median=49.0 not in [0.0,0.0]; abs_steer_median=49.0 not in [0.0,16.0]
+  v2 start=0 n=220 steerD=89 steerMed=0.0 |steer|Med=16.0 accel=[0, 102, 255] a255=0.273 brake=[0, 255] b255=0.241
+      (b-regime B @220) FAIL: c0_distinct=43 not in [13,37]; c1_distinct=47 not in [17,46]; steer_distinct=89 not in [29,84]
+  v3 start=0 n=220 steerD=60 steerMed=0.0 |steer|Med=0.0 accel=[0, 102, 255] a255=0.273 brake=[0, 255] b255=0.245
+      (b-regime B @220) PASS
+verify/d3_regimes_20261013/P_K02.step.csv
+  v1 start=0 n=220 steerD=81 steerMed=0.0 |steer|Med=7.0 accel=[0, 255] a255=0.895 brake=[0, 255] b255=0.105
+      (b-regime A @220) PASS
+  v2 start=0 n=220 steerD=64 steerMed=0.0 |steer|Med=0.0 accel=[0, 255] a255=0.691 brake=[0, 255] b255=0.423
+      (b-regime A @220) FAIL: abs_steer_median=0.0 not in [7.0,23.0]
+  v3 start=0 n=220 steerD=82 steerMed=0.0 |steer|Med=10.0 accel=[0, 255] a255=0.873 brake=[0, 255] b255=0.127
+      (b-regime A @220) PASS
+verify/d3_regimes_20261013/P_K04.step.csv
+  v1 start=0 n=220 steerD=71 steerMed=49.0 |steer|Med=49.0 accel=[0, 102, 255] a255=0.273 brake=[0, 255] b255=0.191
+      (b-regime B @220) FAIL: c1_distinct=57 not in [17,46]; c1_median=49.0 not in [0.0,0.0]; abs_steer_median=49.0 not in [0.0,16.0]
+  v2 start=0 n=220 steerD=89 steerMed=0.0 |steer|Med=16.0 accel=[0, 102, 255] a255=0.273 brake=[0, 255] b255=0.241
+      (b-regime B @220) FAIL: c0_distinct=43 not in [13,37]; c1_distinct=47 not in [17,46]; steer_distinct=89 not in [29,84]
+  v3 start=0 n=220 steerD=60 steerMed=0.0 |steer|Med=0.0 accel=[0, 102, 255] a255=0.273 brake=[0, 255] b255=0.245
+      (b-regime B @220) PASS
+verify/d3_regimes_20261013/P_K26.step.csv
+  v1 start=0 n=220 steerD=83 steerMed=0.0 |steer|Med=7.0 accel=[0, 255] a255=0.923 brake=[0, 255] b255=0.077
+      (b-regime C @196 car 1) FAIL: c0_distinct=15 not in [20,20]; c1_distinct=54 not in [18,18]; steer_distinct=68 not in [40,40]; abs_steer_median=6.0 not in [8.0,8.0]; accel_distinct=2 not in [3,3]
+  v2 start=0 n=220 steerD=113 steerMed=5.5 |steer|Med=44.5 accel=[0, 255] a255=0.836 brake=[0, 255] b255=0.164
+      (b-regime C @196 car 2) FAIL: c0_distinct=39 not in [32,32]; c1_distinct=59 not in [41,41]; steer_distinct=97 not in [73,73]; abs_steer_median=29.5 not in [9.0,9.0]
+  v3 start=0 n=220 steerD=77 steerMed=0.0 |steer|Med=11.5 accel=[0, 255] a255=0.959 brake=[0, 255] b255=0.041
+      (b-regime C @196 car 3) FAIL: c0_distinct=30 not in [27,27]; c1_distinct=29 not in [79,79]; steer_distinct=58 not in [105,105]; c1_median=0.0 not in [23.5,23.5]; abs_steer_median=9.0 not in [28.0,28.0]
+verify/d3_regimes_20261013/P_K27.step.csv
+  v1 start=0 n=220 steerD=71 steerMed=49.0 |steer|Med=49.0 accel=[0, 102, 255] a255=0.273 brake=[0, 255] b255=0.191
+      (b-regime B @220) FAIL: c1_distinct=57 not in [17,46]; c1_median=49.0 not in [0.0,0.0]; abs_steer_median=49.0 not in [0.0,16.0]
+  v2 start=0 n=220 steerD=89 steerMed=0.0 |steer|Med=16.0 accel=[0, 102, 255] a255=0.273 brake=[0, 255] b255=0.241
+      (b-regime B @220) FAIL: c0_distinct=43 not in [13,37]; c1_distinct=47 not in [17,46]; steer_distinct=89 not in [29,84]
+  v3 start=0 n=220 steerD=60 steerMed=0.0 |steer|Med=0.0 accel=[0, 102, 255] a255=0.273 brake=[0, 255] b255=0.245
+      (b-regime B @220) PASS
+verify/d3_regimes_20261013/P_K54.step.csv
+  v1 start=0 n=220 steerD=83 steerMed=0.0 |steer|Med=7.0 accel=[0, 255] a255=0.923 brake=[0, 255] b255=0.077
+      (b-regime C @196 car 1) FAIL: c0_distinct=15 not in [20,20]; c1_distinct=54 not in [18,18]; steer_distinct=68 not in [40,40]; abs_steer_median=6.0 not in [8.0,8.0]; accel_distinct=2 not in [3,3]
+  v2 start=0 n=220 steerD=113 steerMed=5.5 |steer|Med=44.5 accel=[0, 255] a255=0.836 brake=[0, 255] b255=0.164
+      (b-regime C @196 car 2) FAIL: c0_distinct=39 not in [32,32]; c1_distinct=59 not in [41,41]; steer_distinct=97 not in [73,73]; abs_steer_median=29.5 not in [9.0,9.0]
+  v3 start=0 n=220 steerD=77 steerMed=0.0 |steer|Med=11.5 accel=[0, 255] a255=0.959 brake=[0, 255] b255=0.041
+      (b-regime C @196 car 3) FAIL: c0_distinct=30 not in [27,27]; c1_distinct=29 not in [79,79]; steer_distinct=58 not in [105,105]; c1_median=0.0 not in [23.5,23.5]; abs_steer_median=9.0 not in [28.0,28.0]
+verify/d3_regimes_20261013/P_K57.step.csv
+  v1 start=0 n=220 steerD=83 steerMed=0.0 |steer|Med=7.0 accel=[0, 255] a255=0.923 brake=[0, 255] b255=0.077
+      (b-regime C @196 car 1) FAIL: c0_distinct=15 not in [20,20]; c1_distinct=54 not in [18,18]; steer_distinct=68 not in [40,40]; abs_steer_median=6.0 not in [8.0,8.0]; accel_distinct=2 not in [3,3]
+  v2 start=0 n=220 steerD=113 steerMed=5.5 |steer|Med=44.5 accel=[0, 255] a255=0.836 brake=[0, 255] b255=0.164
+      (b-regime C @196 car 2) FAIL: c0_distinct=39 not in [32,32]; c1_distinct=59 not in [41,41]; steer_distinct=97 not in [73,73]; abs_steer_median=29.5 not in [9.0,9.0]
+  v3 start=0 n=220 steerD=77 steerMed=0.0 |steer|Med=11.5 accel=[0, 255] a255=0.959 brake=[0, 255] b255=0.041
+      (b-regime C @196 car 3) FAIL: c0_distinct=30 not in [27,27]; c1_distinct=29 not in [79,79]; steer_distinct=58 not in [105,105]; c1_median=0.0 not in [23.5,23.5]; abs_steer_median=9.0 not in [28.0,28.0]
+verify/d3_bscore_20261009/o_breg_r1.msd.aistep.csv
+  v1 start=878 n=220 steerD=33 steerMed=0.0 |steer|Med=7.0 accel=[0, 64, 255] a255=0.636 brake=[0, 255] b255=0.214
+      (b-regime A @220) PASS
+  v2 start=878 n=220 steerD=85 steerMed=0.0 |steer|Med=11.0 accel=[0, 255] a255=0.918 brake=[0, 255] b255=0.186
+      (b-regime A @220) PASS
+  v3 start=878 n=220 steerD=96 steerMed=0.0 |steer|Med=23.0 accel=[0, 255] a255=0.709 brake=[0, 255] b255=0.300
+      (b-regime A @220) PASS
+verify/d3_bscore_20261009/o_breg_r3.msd.aistep.csv
+  v1 start=878 n=220 steerD=33 steerMed=0.0 |steer|Med=7.0 accel=[0, 64, 255] a255=0.636 brake=[0, 255] b255=0.214
+      (b-regime A @220) PASS
+  v2 start=878 n=220 steerD=85 steerMed=0.0 |steer|Med=11.0 accel=[0, 255] a255=0.918 brake=[0, 255] b255=0.186
+      (b-regime A @220) PASS
+  v3 start=878 n=220 steerD=96 steerMed=0.0 |steer|Med=23.0 accel=[0, 255] a255=0.709 brake=[0, 255] b255=0.300
+      (b-regime A @220) PASS
+verify/d3_bscore_20261009/o_breg_r4.msd.aistep.csv
+  v1 start=843 n=220 steerD=33 steerMed=0.0 |steer|Med=7.0 accel=[0, 64, 255] a255=0.636 brake=[0, 255] b255=0.214
+      (b-regime A @220) PASS
+  v2 start=843 n=220 steerD=85 steerMed=0.0 |steer|Med=11.0 accel=[0, 255] a255=0.918 brake=[0, 255] b255=0.186
+      (b-regime A @220) PASS
+  v3 start=843 n=220 steerD=96 steerMed=0.0 |steer|Med=23.0 accel=[0, 255] a255=0.709 brake=[0, 255] b255=0.300
+      (b-regime A @220) PASS
+verify/d3_bscore_20261009/o_breg_r5.msd.aistep.csv
+  v1 start=893 n=220 steerD=33 steerMed=0.0 |steer|Med=7.0 accel=[0, 64, 255] a255=0.636 brake=[0, 255] b255=0.214
+      (b-regime A @220) PASS
+  v2 start=893 n=220 steerD=85 steerMed=0.0 |steer|Med=11.0 accel=[0, 255] a255=0.918 brake=[0, 255] b255=0.186
+      (b-regime A @220) PASS
+  v3 start=893 n=220 steerD=96 steerMed=0.0 |steer|Med=23.0 accel=[0, 255] a255=0.709 brake=[0, 255] b255=0.300
+      (b-regime A @220) PASS
+verify/d3_bscore_20261009/o_breg_r7.msd.aistep.csv
+  v1 start=847 n=220 steerD=33 steerMed=0.0 |steer|Med=7.0 accel=[0, 64, 255] a255=0.636 brake=[0, 255] b255=0.214
+      (b-regime A @220) PASS
+  v2 start=847 n=220 steerD=85 steerMed=0.0 |steer|Med=11.0 accel=[0, 255] a255=0.918 brake=[0, 255] b255=0.186
+      (b-regime A @220) PASS
+  v3 start=847 n=220 steerD=96 steerMed=0.0 |steer|Med=23.0 accel=[0, 255] a255=0.709 brake=[0, 255] b255=0.300
+      (b-regime A @220) PASS
+verify/d3_bscore_20261009/o_breg_r8.msd.aistep.csv
+  v1 start=780 n=220 steerD=33 steerMed=0.0 |steer|Med=7.0 accel=[0, 64, 255] a255=0.636 brake=[0, 255] b255=0.214
+      (b-regime A @220) PASS
+  v2 start=780 n=220 steerD=85 steerMed=0.0 |steer|Med=11.0 accel=[0, 255] a255=0.918 brake=[0, 255] b255=0.186
+      (b-regime A @220) PASS
+  v3 start=780 n=220 steerD=96 steerMed=0.0 |steer|Med=23.0 accel=[0, 255] a255=0.709 brake=[0, 255] b255=0.300
+      (b-regime A @220) PASS
+verify/d3_drive_20260928/e3.msd.aistep.csv
+  v1 start=860 n=220 steerD=33 steerMed=0.0 |steer|Med=7.0 accel=[0, 64, 255] a255=0.636 brake=[0, 255] b255=0.214
+      (b-regime A @220) PASS
+  v2 start=860 n=220 steerD=85 steerMed=0.0 |steer|Med=11.0 accel=[0, 255] a255=0.918 brake=[0, 255] b255=0.186
+      (b-regime A @220) PASS
+  v3 start=860 n=220 steerD=96 steerMed=0.0 |steer|Med=23.0 accel=[0, 255] a255=0.709 brake=[0, 255] b255=0.300
+      (b-regime A @220) PASS
+verify/d3_drive_20260928/e4.msd.aistep.csv
+  v1 start=891 n=220 steerD=33 steerMed=0.0 |steer|Med=7.0 accel=[0, 64, 255] a255=0.636 brake=[0, 255] b255=0.214
+      (b-regime A @220) PASS
+  v2 start=891 n=220 steerD=85 steerMed=0.0 |steer|Med=11.0 accel=[0, 255] a255=0.918 brake=[0, 255] b255=0.186
+      (b-regime A @220) PASS
+  v3 start=891 n=220 steerD=96 steerMed=0.0 |steer|Med=23.0 accel=[0, 255] a255=0.709 brake=[0, 255] b255=0.300
+      (b-regime A @220) PASS
+verify/d3_regimes_20261013/o_reg_r1.msd.aistep.csv
+  v1 start=858 n=220 steerD=33 steerMed=0.0 |steer|Med=7.0 accel=[0, 64, 255] a255=0.636 brake=[0, 255] b255=0.214
+      (b-regime A @220) PASS
+  v2 start=858 n=220 steerD=85 steerMed=0.0 |steer|Med=11.0 accel=[0, 255] a255=0.918 brake=[0, 255] b255=0.186
+      (b-regime A @220) PASS
+  v3 start=858 n=220 steerD=96 steerMed=0.0 |steer|Med=23.0 accel=[0, 255] a255=0.709 brake=[0, 255] b255=0.300
+      (b-regime A @220) PASS
+verify/d3_regimes_20261013/o_reg_r2.msd.aistep.csv
+  v1 start=842 n=220 steerD=33 steerMed=0.0 |steer|Med=7.0 accel=[0, 64, 255] a255=0.636 brake=[0, 255] b255=0.214
+      (b-regime A @220) PASS
+  v2 start=842 n=220 steerD=85 steerMed=0.0 |steer|Med=11.0 accel=[0, 255] a255=0.918 brake=[0, 255] b255=0.186
+      (b-regime A @220) PASS
+  v3 start=842 n=220 steerD=96 steerMed=0.0 |steer|Med=23.0 accel=[0, 255] a255=0.709 brake=[0, 255] b255=0.300
+      (b-regime A @220) PASS
+verify/d3_regimes_20261013/o_reg_r4.msd.aistep.csv
+  v1 start=849 n=220 steerD=33 steerMed=0.0 |steer|Med=7.0 accel=[0, 64, 255] a255=0.636 brake=[0, 255] b255=0.214
+      (b-regime A @220) PASS
+  v2 start=849 n=220 steerD=85 steerMed=0.0 |steer|Med=11.0 accel=[0, 255] a255=0.918 brake=[0, 255] b255=0.186
+      (b-regime A @220) PASS
+  v3 start=849 n=220 steerD=96 steerMed=0.0 |steer|Med=23.0 accel=[0, 255] a255=0.709 brake=[0, 255] b255=0.300
+      (b-regime A @220) PASS
+verify/d3_regimes_20261013/o_reg_r6.msd.aistep.csv
+  v1 start=853 n=220 steerD=33 steerMed=0.0 |steer|Med=7.0 accel=[0, 64, 255] a255=0.636 brake=[0, 255] b255=0.214
+      (b-regime A @220) PASS
+  v2 start=853 n=220 steerD=85 steerMed=0.0 |steer|Med=11.0 accel=[0, 255] a255=0.918 brake=[0, 255] b255=0.186
+      (b-regime A @220) PASS
+  v3 start=853 n=220 steerD=96 steerMed=0.0 |steer|Med=23.0 accel=[0, 255] a255=0.709 brake=[0, 255] b255=0.300
+      (b-regime A @220) PASS
+verify/d3_regimes_20261013/o_reg_r7.msd.aistep.csv
+  v1 start=843 n=220 steerD=33 steerMed=0.0 |steer|Med=7.0 accel=[0, 64, 255] a255=0.636 brake=[0, 255] b255=0.214
+      (b-regime A @220) PASS
+  v2 start=843 n=220 steerD=85 steerMed=0.0 |steer|Med=11.0 accel=[0, 255] a255=0.918 brake=[0, 255] b255=0.186
+      (b-regime A @220) PASS
+  v3 start=843 n=220 steerD=96 steerMed=0.0 |steer|Med=23.0 accel=[0, 255] a255=0.709 brake=[0, 255] b255=0.300
+      (b-regime A @220) PASS
+verify/d3_regimes_20261013/o_reg_r8.msd.aistep.csv
+  v1 start=779 n=220 steerD=33 steerMed=0.0 |steer|Med=7.0 accel=[0, 64, 255] a255=0.636 brake=[0, 255] b255=0.214
+      (b-regime A @220) PASS
+  v2 start=779 n=220 steerD=85 steerMed=0.0 |steer|Med=11.0 accel=[0, 255] a255=0.918 brake=[0, 255] b255=0.186
+      (b-regime A @220) PASS
+  v3 start=779 n=220 steerD=96 steerMed=0.0 |steer|Med=23.0 accel=[0, 255] a255=0.709 brake=[0, 255] b255=0.300
+      (b-regime A @220) PASS
+verify/d3_regimes_20261013/o_reg_r9.msd.aistep.csv
+  v1 start=831 n=220 steerD=33 steerMed=0.0 |steer|Med=7.0 accel=[0, 64, 255] a255=0.636 brake=[0, 255] b255=0.214
+      (b-regime A @220) PASS
+  v2 start=831 n=220 steerD=85 steerMed=0.0 |steer|Med=11.0 accel=[0, 255] a255=0.918 brake=[0, 255] b255=0.186
+      (b-regime A @220) PASS
+  v3 start=831 n=220 steerD=96 steerMed=0.0 |steer|Med=23.0 accel=[0, 255] a255=0.709 brake=[0, 255] b255=0.300
+      (b-regime A @220) PASS
+verify/d3_regimes_20261013/o_reg_r10.msd.aistep.csv
+  v1 start=918 n=220 steerD=33 steerMed=0.0 |steer|Med=7.0 accel=[0, 64, 255] a255=0.636 brake=[0, 255] b255=0.214
+      (b-regime A @220) PASS
+  v2 start=918 n=220 steerD=85 steerMed=0.0 |steer|Med=11.0 accel=[0, 255] a255=0.918 brake=[0, 255] b255=0.186
+      (b-regime A @220) PASS
+  v3 start=918 n=220 steerD=96 steerMed=0.0 |steer|Med=23.0 accel=[0, 255] a255=0.709 brake=[0, 255] b255=0.300
+      (b-regime A @220) PASS
+verify/d3_regimes_20261013/o_reg_r11.msd.aistep.csv
+  v1 start=841 n=220 steerD=33 steerMed=0.0 |steer|Med=7.0 accel=[0, 64, 255] a255=0.636 brake=[0, 255] b255=0.214
+      (b-regime A @220) PASS
+  v2 start=841 n=220 steerD=85 steerMed=0.0 |steer|Med=11.0 accel=[0, 255] a255=0.918 brake=[0, 255] b255=0.186
+      (b-regime A @220) PASS
+  v3 start=841 n=220 steerD=96 steerMed=0.0 |steer|Med=23.0 accel=[0, 255] a255=0.709 brake=[0, 255] b255=0.300
+      (b-regime A @220) PASS
+verify/d3_regimes_20261013/o_reg_r12.msd.aistep.csv
+  v1 start=808 n=220 steerD=33 steerMed=0.0 |steer|Med=7.0 accel=[0, 64, 255] a255=0.636 brake=[0, 255] b255=0.214
+      (b-regime A @220) PASS
+  v2 start=808 n=220 steerD=85 steerMed=0.0 |steer|Med=11.0 accel=[0, 255] a255=0.918 brake=[0, 255] b255=0.186
+      (b-regime A @220) PASS
+  v3 start=808 n=220 steerD=96 steerMed=0.0 |steer|Med=23.0 accel=[0, 255] a255=0.709 brake=[0, 255] b255=0.300
+      (b-regime A @220) PASS
+verify/d3_regimes_20261013/o_reg_r14.msd.aistep.csv
+  v1 start=873 n=220 steerD=33 steerMed=0.0 |steer|Med=7.0 accel=[0, 64, 255] a255=0.636 brake=[0, 255] b255=0.214
+      (b-regime A @220) PASS
+  v2 start=873 n=220 steerD=85 steerMed=0.0 |steer|Med=11.0 accel=[0, 255] a255=0.918 brake=[0, 255] b255=0.186
+      (b-regime A @220) PASS
+  v3 start=873 n=220 steerD=96 steerMed=0.0 |steer|Med=23.0 accel=[0, 255] a255=0.709 brake=[0, 255] b255=0.300
+      (b-regime A @220) PASS
+verify/d3_regimes_20261013/o_reg_r16.msd.aistep.csv
+  v1 start=839 n=220 steerD=33 steerMed=0.0 |steer|Med=7.0 accel=[0, 64, 255] a255=0.636 brake=[0, 255] b255=0.214
+      (b-regime A @220) PASS
+  v2 start=839 n=220 steerD=85 steerMed=0.0 |steer|Med=11.0 accel=[0, 255] a255=0.918 brake=[0, 255] b255=0.186
+      (b-regime A @220) PASS
+  v3 start=839 n=220 steerD=96 steerMed=0.0 |steer|Med=23.0 accel=[0, 255] a255=0.709 brake=[0, 255] b255=0.300
+      (b-regime A @220) PASS
+verify/d3_regimes_20261013/o_reg_r17.msd.aistep.csv
+  v1 start=845 n=220 steerD=33 steerMed=0.0 |steer|Med=7.0 accel=[0, 64, 255] a255=0.636 brake=[0, 255] b255=0.214
+      (b-regime A @220) PASS
+  v2 start=845 n=220 steerD=85 steerMed=0.0 |steer|Med=11.0 accel=[0, 255] a255=0.918 brake=[0, 255] b255=0.186
+      (b-regime A @220) PASS
+  v3 start=845 n=220 steerD=96 steerMed=0.0 |steer|Med=23.0 accel=[0, 255] a255=0.709 brake=[0, 255] b255=0.300
+      (b-regime A @220) PASS
+verify/d3_ai_20260926/o_inputs.msd.aistep.csv
+  v1 start=847 n=220 steerD=29 steerMed=0.0 |steer|Med=0.0 accel=[0, 25, 102, 255] a255=0.277 brake=[0, 255] b255=0.250
+      (b-regime B @220) PASS
+  v2 start=847 n=220 steerD=84 steerMed=0.0 |steer|Med=16.0 accel=[0, 102, 255] a255=0.277 brake=[0, 255] b255=0.109
+      (b-regime B @220) PASS
+  v3 start=847 n=220 steerD=73 steerMed=0.0 |steer|Med=8.0 accel=[0, 102, 255] a255=0.209 brake=[0, 255] b255=0.268
+      (b-regime B @220) PASS
+verify/d3_ai_20260927/o4.msd.aistep.csv
+  v1 start=852 n=220 steerD=29 steerMed=0.0 |steer|Med=0.0 accel=[0, 25, 102, 255] a255=0.277 brake=[0, 255] b255=0.250
+      (b-regime B @220) PASS
+  v2 start=852 n=220 steerD=84 steerMed=0.0 |steer|Med=16.0 accel=[0, 102, 255] a255=0.277 brake=[0, 255] b255=0.109
+      (b-regime B @220) PASS
+  v3 start=852 n=220 steerD=73 steerMed=0.0 |steer|Med=8.0 accel=[0, 102, 255] a255=0.209 brake=[0, 255] b255=0.268
+      (b-regime B @220) PASS
+verify/d3_drive_20260928/e1.msd.aistep.csv
+  v1 start=826 n=220 steerD=29 steerMed=0.0 |steer|Med=0.0 accel=[0, 25, 102, 255] a255=0.277 brake=[0, 255] b255=0.250
+      (b-regime B @220) PASS
+  v2 start=826 n=220 steerD=84 steerMed=0.0 |steer|Med=16.0 accel=[0, 102, 255] a255=0.277 brake=[0, 255] b255=0.109
+      (b-regime B @220) PASS
+  v3 start=826 n=220 steerD=73 steerMed=0.0 |steer|Med=8.0 accel=[0, 102, 255] a255=0.209 brake=[0, 255] b255=0.268
+      (b-regime B @220) PASS
+verify/d3_regimes_20261013/o_reg_r13.msd.aistep.csv
+  v1 start=864 n=220 steerD=29 steerMed=0.0 |steer|Med=0.0 accel=[0, 25, 102, 255] a255=0.277 brake=[0, 255] b255=0.250
+      (b-regime B @220) PASS
+  v2 start=864 n=220 steerD=84 steerMed=0.0 |steer|Med=16.0 accel=[0, 102, 255] a255=0.277 brake=[0, 255] b255=0.109
+      (b-regime B @220) PASS
+  v3 start=864 n=220 steerD=73 steerMed=0.0 |steer|Med=8.0 accel=[0, 102, 255] a255=0.209 brake=[0, 255] b255=0.268
+      (b-regime B @220) PASS
+verify/d3_regimes_20261013/o_reg_r15.msd.aistep.csv
+  v1 start=930 n=220 steerD=29 steerMed=0.0 |steer|Med=0.0 accel=[0, 25, 102, 255] a255=0.277 brake=[0, 255] b255=0.250
+      (b-regime B @220) PASS
+  v2 start=930 n=220 steerD=84 steerMed=0.0 |steer|Med=16.0 accel=[0, 102, 255] a255=0.277 brake=[0, 255] b255=0.109
+      (b-regime B @220) PASS
+  v3 start=930 n=220 steerD=73 steerMed=0.0 |steer|Med=8.0 accel=[0, 102, 255] a255=0.209 brake=[0, 255] b255=0.268
+      (b-regime B @220) PASS
+verify/d3_regimes_20261013/o_reg_r18.msd.aistep.csv
+  v1 start=854 n=220 steerD=29 steerMed=0.0 |steer|Med=0.0 accel=[0, 25, 102, 255] a255=0.277 brake=[0, 255] b255=0.250
+      (b-regime B @220) PASS
+  v2 start=854 n=220 steerD=84 steerMed=0.0 |steer|Med=16.0 accel=[0, 102, 255] a255=0.277 brake=[0, 255] b255=0.109
+      (b-regime B @220) PASS
+  v3 start=854 n=220 steerD=73 steerMed=0.0 |steer|Med=8.0 accel=[0, 102, 255] a255=0.209 brake=[0, 255] b255=0.268
+      (b-regime B @220) PASS
+verify/d3_bscore_20261009/o_breg_r2.msd.aistep.csv
+  v1  SHORT: 196 of 220 calls -- not scored
+      (b-regime C @196 car 1) PASS
+  v2  SHORT: 196 of 220 calls -- not scored
+      (b-regime C @196 car 2) PASS
+  v3 start=820 n=220 steerD=121 steerMed=27.5 |steer|Med=36.5 accel=[0, 255] a255=0.764 brake=[0, 255] b255=0.132
+      (b-regime C @196 car 3) PASS
+verify/d3_drive_20260928/e2.msd.aistep.csv
+  v1  SHORT: 196 of 220 calls -- not scored
+      (b-regime C @196 car 1) PASS
+  v2  SHORT: 196 of 220 calls -- not scored
+      (b-regime C @196 car 2) PASS
+  v3 start=817 n=220 steerD=121 steerMed=27.5 |steer|Med=36.5 accel=[0, 255] a255=0.764 brake=[0, 255] b255=0.132
+      (b-regime C @196 car 3) PASS
+verify/d3_regimes_20261013/o_reg_r19.msd.aistep.csv
+  v1  SHORT: 196 of 220 calls -- not scored
+      (b-regime C @196 car 1) PASS
+  v2  SHORT: 196 of 220 calls -- not scored
+      (b-regime C @196 car 2) PASS
+  v3 start=812 n=220 steerD=121 steerMed=27.5 |steer|Med=36.5 accel=[0, 255] a255=0.764 brake=[0, 255] b255=0.132
+      (b-regime C @196 car 3) PASS
+verify/d3_regimes_20261013/o_reg_r20.msd.aistep.csv
+  v1  SHORT: 196 of 220 calls -- not scored
+      (b-regime C @196 car 1) PASS
+  v2  SHORT: 196 of 220 calls -- not scored
+      (b-regime C @196 car 2) PASS
+  v3 start=857 n=220 steerD=121 steerMed=27.5 |steer|Med=36.5 accel=[0, 255] a255=0.764 brake=[0, 255] b255=0.132
+      (b-regime C @196 car 3) PASS
