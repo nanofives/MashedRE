@@ -1,0 +1,5 @@
+poll mode368 counts {'0': 1326, '1': 2597}
+v1 regime=B window_start=930 calls=220 first_nonzero_flag(frame,value)=('991', '1')
+v2 regime=B window_start=930 calls=220 first_nonzero_flag(frame,value)=('991', '1')
+v3 regime=B window_start=930 calls=220 first_nonzero_flag(frame,value)=('991', '1')
+B

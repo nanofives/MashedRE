@@ -1,0 +1,33 @@
+# Original runs labelled by label_run.py / ai_ctrl_window.window_regime. All share the exact regime-A reference argv
+# (--track 0 --mode 10 --cars 4 --car 0 --poke-ctrl-slots --statediff-car 1 --statediff-aistep --hold 60).
+verify/d3_bscore_20261009/o_breg_r1.msd.aistep.csv=A
+verify/d3_bscore_20261009/o_breg_r3.msd.aistep.csv=A
+verify/d3_bscore_20261009/o_breg_r4.msd.aistep.csv=A
+verify/d3_bscore_20261009/o_breg_r5.msd.aistep.csv=A
+verify/d3_bscore_20261009/o_breg_r7.msd.aistep.csv=A
+verify/d3_bscore_20261009/o_breg_r8.msd.aistep.csv=A
+verify/d3_drive_20260928/e3.msd.aistep.csv=A
+verify/d3_drive_20260928/e4.msd.aistep.csv=A
+verify/d3_regimes_20261013/o_reg_r1.msd.aistep.csv=A
+verify/d3_regimes_20261013/o_reg_r2.msd.aistep.csv=A
+verify/d3_regimes_20261013/o_reg_r4.msd.aistep.csv=A
+verify/d3_regimes_20261013/o_reg_r6.msd.aistep.csv=A
+verify/d3_regimes_20261013/o_reg_r7.msd.aistep.csv=A
+verify/d3_regimes_20261013/o_reg_r8.msd.aistep.csv=A
+verify/d3_regimes_20261013/o_reg_r9.msd.aistep.csv=A
+verify/d3_regimes_20261013/o_reg_r10.msd.aistep.csv=A
+verify/d3_regimes_20261013/o_reg_r11.msd.aistep.csv=A
+verify/d3_regimes_20261013/o_reg_r12.msd.aistep.csv=A
+verify/d3_regimes_20261013/o_reg_r14.msd.aistep.csv=A
+verify/d3_regimes_20261013/o_reg_r16.msd.aistep.csv=A
+verify/d3_regimes_20261013/o_reg_r17.msd.aistep.csv=A
+verify/d3_ai_20260926/o_inputs.msd.aistep.csv=B
+verify/d3_ai_20260927/o4.msd.aistep.csv=B
+verify/d3_drive_20260928/e1.msd.aistep.csv=B
+verify/d3_regimes_20261013/o_reg_r13.msd.aistep.csv=B
+verify/d3_regimes_20261013/o_reg_r15.msd.aistep.csv=B
+verify/d3_regimes_20261013/o_reg_r18.msd.aistep.csv=B
+verify/d3_bscore_20261009/o_breg_r2.msd.aistep.csv=C
+verify/d3_drive_20260928/e2.msd.aistep.csv=C
+verify/d3_regimes_20261013/o_reg_r19.msd.aistep.csv=C
+verify/d3_regimes_20261013/o_reg_r20.msd.aistep.csv=C

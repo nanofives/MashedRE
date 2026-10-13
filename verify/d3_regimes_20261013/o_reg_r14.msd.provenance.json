@@ -1,0 +1,60 @@
+{
+  "msd": "o_reg_r14.msd",
+  "captured_utc": "2026-10-13T21:50:07Z",
+  "argv": [
+    "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\d3regimes\\re\\frida\\scenario_launch.py",
+    "--track",
+    "0",
+    "--mode",
+    "10",
+    "--cars",
+    "4",
+    "--car",
+    "0",
+    "--poke-ctrl-slots",
+    "--statediff-out",
+    "verify/d3_regimes_20261013/o_reg_r14.msd",
+    "--statediff-car",
+    "1",
+    "--statediff-aistep",
+    "--hold",
+    "60"
+  ],
+  "cwd": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\d3regimes",
+  "git_head": "0bc7ccd0e53e60a9d0c5a4ba79956a69edaeff24",
+  "host": "MARIANO-PC",
+  "statediff": {
+    "car": 1,
+    "base_va": "0x8822a4",
+    "rec_size": "0xd04",
+    "drive": false,
+    "drive_late": false,
+    "steer": 0,
+    "aictrl": false,
+    "aistep": true,
+    "steer_schedule": "",
+    "steer_schedule_applied": null,
+    "steer_schedule_t0_offset_s": null,
+    "noop_cook": false,
+    "hooks": ""
+  },
+  "capture": {
+    "frames": 3629,
+    "distinct_payloads": 2766,
+    "nonzero_frames": 3629
+  },
+  "descriptor_writes": {
+    "block_base": "0x007f1038",
+    "accel_byte": 4,
+    "steer_bytes": [
+      0,
+      1
+    ],
+    "legacy_steer_bytes": [
+      2,
+      3,
+      14,
+      15
+    ]
+  }
+}

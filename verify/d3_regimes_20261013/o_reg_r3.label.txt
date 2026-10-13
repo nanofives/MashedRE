@@ -1,0 +1,2 @@
+poll mode368 counts {'0': 232}
+NO-GO
