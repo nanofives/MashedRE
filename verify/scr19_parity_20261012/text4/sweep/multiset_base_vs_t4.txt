@@ -1,0 +1,73 @@
+s0: records base 952 t4 952 | checker 168/168 | font 484/484 | non-checker only-base 0 only-t4 0
+s1: records base 952 t4 952 | checker 168/168 | font 484/484 | non-checker only-base 0 only-t4 0
+s2: records base 824 t4 824 | checker 168/168 | font 412/412 | non-checker only-base 0 only-t4 0
+s3: records base 736 t4 736 | checker 168/168 | font 352/352 | non-checker only-base 0 only-t4 0
+s4: records base 780 t4 780 | checker 168/168 | font 344/344 | non-checker only-base 0 only-t4 0
+s5: records base 668 t4 668 | checker 168/168 | font 344/344 | non-checker only-base 0 only-t4 0
+s6: records base 1088 t4 1088 | checker 168/168 | font 680/680 | non-checker only-base 4 only-t4 4
+  -base x1 x=206.39 y=123.39 w=49.22 h=49.22 col=ffffffff/ffffffff s=(86, 1, 5, 6)
+  -base x1 x=205.46 y=122.46 w=51.08 h=51.08 col=ffffffff/ffffffff s=(86, 1, 5, 6)
+  -base x1 x=204.5 y=121.5 w=53.0 h=53.0 col=ffffffff/ffffffff s=(86, 1, 5, 6)
+  -base x1 x=203.57 y=120.57 w=54.86 h=54.86 col=ffffffff/ffffffff s=(86, 1, 5, 6)
+  +t4   x1 x=204.59 y=121.59 w=52.82 h=52.82 col=ffffffff/ffffffff s=(86, 1, 5, 6)
+  +t4   x1 x=205.52 y=122.52 w=50.96 h=50.96 col=ffffffff/ffffffff s=(86, 1, 5, 6)
+  +t4   x1 x=206.0 y=123.0 w=50.0 h=50.0 col=ffffffff/ffffffff s=(86, 1, 5, 6)
+  +t4   x1 x=206.93 y=123.93 w=48.14 h=48.14 col=ffffffff/ffffffff s=(86, 1, 5, 6)
+s7: records base 1128 t4 1128 | checker 168/168 | font 720/720 | non-checker only-base 4 only-t4 4
+  -base x1 x=203.48 y=120.48 w=55.04 h=55.04 col=ffffffff/ffffffff s=(86, 1, 5, 6)
+  -base x1 x=202.55 y=119.55 w=56.9 h=56.9 col=ffffffff/ffffffff s=(86, 1, 5, 6)
+  -base x1 x=201.62 y=118.62 w=58.76 h=58.76 col=ffffffff/ffffffff s=(86, 1, 5, 6)
+  -base x1 x=200.66 y=117.66 w=60.68 h=60.68 col=ffffffff/ffffffff s=(86, 1, 5, 6)
+  +t4   x1 x=207.02 y=124.02 w=47.96 h=47.96 col=ffffffff/ffffffff s=(86, 1, 5, 6)
+  +t4   x1 x=207.95 y=124.95 w=46.1 h=46.1 col=ffffffff/ffffffff s=(86, 1, 5, 6)
+  +t4   x1 x=208.88 y=125.88 w=44.24 h=44.24 col=ffffffff/ffffffff s=(86, 1, 5, 6)
+  +t4   x1 x=208.16 y=125.16 w=45.68 h=45.68 col=ffffffff/ffffffff s=(86, 1, 5, 6)
+s8: records base 880 t4 880 | checker 168/168 | font 412/412 | non-checker only-base 0 only-t4 0
+s9: records base 656 t4 656 | checker 168/168 | font 272/272 | non-checker only-base 0 only-t4 0
+s10: records base 672 t4 672 | checker 168/168 | font 260/260 | non-checker only-base 0 only-t4 0
+s11: records base 748 t4 748 | checker 168/168 | font 364/364 | non-checker only-base 0 only-t4 0
+s12: records base 532 t4 532 | checker 168/168 | font 208/208 | non-checker only-base 0 only-t4 0
+s13: records base 732 t4 732 | checker 168/168 | font 376/376 | non-checker only-base 0 only-t4 0
+s14: records base 460 t4 460 | checker 168/168 | font 136/136 | non-checker only-base 0 only-t4 0
+s15: records base 784 t4 784 | checker 168/168 | font 372/372 | non-checker only-base 0 only-t4 0
+s16: records base 824 t4 824 | checker 168/168 | font 436/436 | non-checker only-base 0 only-t4 0
+s17: records base 684 t4 684 | checker 168/168 | font 272/272 | non-checker only-base 0 only-t4 0
+s18: records base 1308 t4 1352 | checker 168/168 | font 684/684 | non-checker only-base 148 only-t4 192
+  -base x4 x=384.0 y=0.0 w=128.0 h=64.0 col=00000000/ff000000 s=(0, 1, 5, 6)
+  -base x4 x=384.0 y=416.0 w=128.0 h=64.0 col=00000000/ff000000 s=(0, 1, 5, 6)
+  -base x4 x=384.0 y=0.0 w=128.0 h=34.1333 col=60ffffff/00000000 s=(0, 1, 5, 6)
+  -base x4 x=0.0 y=0.0 w=384.0 h=34.1333 col=78ffffff/60ffffff s=(0, 1, 5, 6)
+  -base x4 x=339.1001 y=34.1333 w=128.0 h=34.1333 col=60ffffff/00000000 s=(0, 1, 5, 6)
+  -base x4 x=0.0 y=34.1333 w=339.1001 h=34.1333 col=78ffffff/60ffffff s=(0, 1, 5, 6)
+  +t4   x4 x=928.0 y=0.0 w=128.0 h=64.0 col=00000000/ff000000 s=(0, 1, 5, 6)
+  +t4   x4 x=928.0 y=416.0 w=128.0 h=64.0 col=00000000/ff000000 s=(0, 1, 5, 6)
+  +t4   x4 x=928.0 y=0.0 w=128.0 h=34.1333 col=60ffffff/00000000 s=(0, 1, 5, 6)
+  +t4   x4 x=0.0 y=0.0 w=928.0 h=34.1333 col=78ffffff/60ffffff s=(0, 1, 5, 6)
+  +t4   x4 x=883.1001 y=34.1333 w=128.0 h=34.1333 col=60ffffff/00000000 s=(0, 1, 5, 6)
+  +t4   x4 x=0.0 y=34.1333 w=883.1001 h=34.1333 col=78ffffff/60ffffff s=(0, 1, 5, 6)
+s19: records base 956 t4 956 | checker 168/168 | font 412/412 | non-checker only-base 0 only-t4 0
+s20: records base 684 t4 684 | checker 168/168 | font 360/360 | non-checker only-base 0 only-t4 0
+s21: records base 668 t4 668 | checker 168/168 | font 256/256 | non-checker only-base 0 only-t4 0
+s22: records base 404 t4 404 | checker 168/168 | font 80/80 | non-checker only-base 0 only-t4 0
+s23: records base 628 t4 628 | checker 168/168 | font 304/304 | non-checker only-base 0 only-t4 0
+s24: records base 1432 t4 1476 | checker 168/168 | font 780/780 | non-checker only-base 148 only-t4 192
+  -base x4 x=384.0 y=0.0 w=128.0 h=64.0 col=00000000/ff000000 s=(0, 1, 5, 6)
+  -base x4 x=384.0 y=416.0 w=128.0 h=64.0 col=00000000/ff000000 s=(0, 1, 5, 6)
+  -base x4 x=384.0 y=0.0 w=128.0 h=34.1333 col=60ffffff/00000000 s=(0, 1, 5, 6)
+  -base x4 x=0.0 y=0.0 w=384.0 h=34.1333 col=78ffffff/60ffffff s=(0, 1, 5, 6)
+  -base x4 x=339.1001 y=34.1333 w=128.0 h=34.1333 col=60ffffff/00000000 s=(0, 1, 5, 6)
+  -base x4 x=0.0 y=34.1333 w=339.1001 h=34.1333 col=78ffffff/60ffffff s=(0, 1, 5, 6)
+  +t4   x4 x=928.0 y=0.0 w=128.0 h=64.0 col=00000000/ff000000 s=(0, 1, 5, 6)
+  +t4   x4 x=928.0 y=416.0 w=128.0 h=64.0 col=00000000/ff000000 s=(0, 1, 5, 6)
+  +t4   x4 x=928.0 y=0.0 w=128.0 h=34.1333 col=60ffffff/00000000 s=(0, 1, 5, 6)
+  +t4   x4 x=0.0 y=0.0 w=928.0 h=34.1333 col=78ffffff/60ffffff s=(0, 1, 5, 6)
+  +t4   x4 x=883.1001 y=34.1333 w=128.0 h=34.1333 col=60ffffff/00000000 s=(0, 1, 5, 6)
+  +t4   x4 x=0.0 y=34.1333 w=883.1001 h=34.1333 col=78ffffff/60ffffff s=(0, 1, 5, 6)
+s25: records base 420 t4 420 | checker 168/168 | font 96/96 | non-checker only-base 0 only-t4 0
+s26: records base 636 t4 636 | checker 168/168 | font 296/296 | non-checker only-base 0 only-t4 0
+s28: records base 748 t4 748 | checker 168/168 | font 312/312 | non-checker only-base 0 only-t4 0
+s29: records base 776 t4 776 | checker 168/168 | font 392/392 | non-checker only-base 0 only-t4 0
+s30: records base 676 t4 676 | checker 168/168 | font 288/288 | non-checker only-base 0 only-t4 0
+s31: records base 872 t4 872 | checker 168/168 | font 432/432 | non-checker only-base 0 only-t4 0
+s32: records base 648 t4 648 | checker 168/168 | font 284/284 | non-checker only-base 0 only-t4 0
+s33: records base 684 t4 684 | checker 168/168 | font 300/300 | non-checker only-base 0 only-t4 0

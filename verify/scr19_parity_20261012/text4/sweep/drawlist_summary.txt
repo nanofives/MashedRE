@@ -1,0 +1,60 @@
+=== scr19a t4_anim4
+orig19a_f0|f200: matched=96 checker=40 widget_red=0 other=2
+orig19a_f1|f201: matched=101 checker=35 widget_red=0 other=2
+orig19a_f2|f202: matched=99 checker=37 widget_red=0 other=2
+orig19a_f3|f203: matched=99 checker=37 widget_red=0 other=2
+=== scr19a t4_strict
+orig19a_f0|f200: matched=94 checker=42 widget_red=0 other=2
+orig19a_f1|f201: matched=94 checker=42 widget_red=0 other=2
+orig19a_f2|f202: matched=94 checker=42 widget_red=0 other=2
+orig19a_f3|f203: matched=94 checker=42 widget_red=0 other=2
+=== scr19a t4_tol001
+orig19a_f0|f200: matched=93 checker=84 widget_red=0 other=4
+orig19a_f1|f201: matched=93 checker=84 widget_red=0 other=4
+orig19a_f2|f202: matched=93 checker=84 widget_red=0 other=4
+orig19a_f3|f203: matched=93 checker=84 widget_red=0 other=4
+=== scr19b t4_anim4
+orig19b_f0|f200: matched=94 checker=42 widget_red=0 other=0
+orig19b_f1|f201: matched=94 checker=42 widget_red=0 other=0
+orig19b_f2|f202: matched=94 checker=42 widget_red=0 other=0
+orig19b_f3|f203: matched=94 checker=42 widget_red=0 other=0
+=== scr19b t4_strict
+orig19b_f0|f200: matched=94 checker=42 widget_red=0 other=0
+orig19b_f1|f201: matched=94 checker=42 widget_red=0 other=0
+orig19b_f2|f202: matched=94 checker=42 widget_red=0 other=0
+orig19b_f3|f203: matched=94 checker=42 widget_red=0 other=0
+=== scr19b t4_tol001
+orig19b_f0|f200: matched=93 checker=84 widget_red=0 other=2
+orig19b_f1|f201: matched=93 checker=84 widget_red=0 other=2
+orig19b_f2|f202: matched=93 checker=84 widget_red=0 other=2
+orig19b_f3|f203: matched=93 checker=84 widget_red=0 other=2
+=== scr30 t4_anim4
+orig30_f0|f200: matched=55 checker=42 widget_red=0 other=0
+orig30_f1|f201: matched=58 checker=39 widget_red=0 other=0
+orig30_f2|f202: matched=58 checker=39 widget_red=0 other=0
+orig30_f3|f203: matched=61 checker=36 widget_red=0 other=0
+=== scr30 t4_strict
+orig30_f0|f200: matched=55 checker=42 widget_red=0 other=0
+orig30_f1|f201: matched=55 checker=42 widget_red=0 other=0
+orig30_f2|f202: matched=55 checker=42 widget_red=0 other=0
+orig30_f3|f203: matched=55 checker=42 widget_red=0 other=0
+=== scr30 t4_tol001
+orig30_f0|f200: matched=54 checker=84 widget_red=0 other=2
+orig30_f1|f201: matched=54 checker=84 widget_red=0 other=2
+orig30_f2|f202: matched=54 checker=84 widget_red=0 other=2
+orig30_f3|f203: matched=54 checker=84 widget_red=0 other=2
+=== scr32 t4_anim4
+orig32_f0|f200: matched=66 checker=25 widget_red=0 other=0
+orig32_f1|f201: matched=67 checker=24 widget_red=0 other=0
+orig32_f2|f202: matched=67 checker=24 widget_red=0 other=0
+orig32_f3|f203: matched=67 checker=24 widget_red=0 other=0
+=== scr32 t4_strict
+orig32_f0|f200: matched=49 checker=42 widget_red=0 other=0
+orig32_f1|f201: matched=49 checker=42 widget_red=0 other=0
+orig32_f2|f202: matched=49 checker=42 widget_red=0 other=0
+orig32_f3|f203: matched=49 checker=42 widget_red=0 other=0
+=== scr32 t4_tol001
+orig32_f0|f200: matched=48 checker=84 widget_red=0 other=2
+orig32_f1|f201: matched=48 checker=84 widget_red=0 other=2
+orig32_f2|f202: matched=48 checker=84 widget_red=0 other=2
+orig32_f3|f203: matched=48 checker=84 widget_red=0 other=2
