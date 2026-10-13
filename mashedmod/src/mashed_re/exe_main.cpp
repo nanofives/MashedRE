@@ -5019,12 +5019,10 @@ bool RenderFrame() {
                                     10.0f * S, 0xff2080d8u, uv_full);          // fill
                     }
                 }
-                // Toggle VALUE text: scale 0.6 (clean scr19 baseline fit),
-                // left-anchored at x=378, right arrow at 378 + width + 9.
-                // The tri-state (insults) row uses the original's formula
-                // instead, see the kTriText branch below.
+                // Value text and right arrow for the tri-state (insults) and
+                // toggle (autosave) rows follow their originals' formulas, see
+                // the kTriText and kToggle branches below.
                 float dyn_rax = rax;
-                const float vth = 0.6f * 0.0708f * 480.f * S;
                 // VALUE TEXT BY MESSAGE ID (2026-09-04, Finding 35). Both were
                 // literals; both originals pick an id and hand it to
                 // FUN_00427e00, so the ids are read off the listing:
@@ -5079,9 +5077,56 @@ bool RenderFrame() {
                     const wchar_t* tv =
                         (GetMenuMessage(tid, vbuf, 48) > 0)
                             ? vbuf : (g_settings.autosave ? L"On" : L"Off");
-                    DrawMashedString(tv, 378.0f * S + slideX, rec.y * S,
-                                     vth, 0xff000000u, true);
-                    dyn_rax = 378.0f * S + MeasureMashedString(tv, vth) + 9.0f * S;
+                    // FUN_00431240 autosave row, from the bytes (2026-10-13).
+                    // Left-arrow base L ([esp+0x14]): FUN_004282a0(label, 0.8
+                    // [push 0x3f4ccccd at 0x00431305]) + record x
+                    // [row*0x34+0x898aa4] (fadd 0x00431310); below 356.0
+                    // ([0x005cd8e0], fcom 0x00431319) L = 356.0 (0x00431328),
+                    // else that sum + 20.0. Live: "Autosave" 102.158 + 64.0
+                    // = 166.16, so L = 356.0 (scr32_fix/orig_measure_probe32.json),
+                    // the 356 the left arrow above already uses.
+                    // Value text FUN_00427e00(id, L + 20.0 [0x005ccd6c, fadd
+                    // 0x004313fe], y, colour, 0.7 [push 0x3f333333 at
+                    // 0x0043140c], 0) at 0x00431421. Live text trace at screen
+                    // 32: (0x59, 376.0, 240.0, ff000000, 0.7, 0). This replaces
+                    // the fitted 378 / 0.6.
+                    const float vthTog = 0.7f * 0.0708f * 480.f * S;
+                    DrawMashedString(tv, 376.0f * S + slideX, rec.y * S,
+                                     vthTog, 0xff000000u, true);
+                    // Right arrow x: ftol(FUN_004282a0(id, 0.7)) (0x0043142c,
+                    // ftol 0x00431434 truncates), fild, + L, + 26.0 ([0x005cd8dc],
+                    // 0x00431455), times (short)W (FUN_0042b8b0, fild
+                    // 0x00431449, fmulp 0x00431461), times 0.0015625
+                    // ([0x005cd5a8], 0x00431465). x87 at PC_24, so each op
+                    // rounds to float. Unlike the insults row this is float
+                    // math, not an integer /640.
+                    const float mw = static_cast<float>(
+                        static_cast<int>(MeasureMenuMessage(tid, 0.7f)));
+                    const float W = static_cast<float>(static_cast<short>(kWidth));
+                    const float sum = (mw + 356.0f) + 26.0f;
+                    dyn_rax = (W * sum) * 0.0015625f;
+                    static bool s_measLogged = false;
+                    if (!s_measLogged &&
+                        GetEnvironmentVariableA("MASHED_DBG_MEASURE", nullptr, 0)) {
+                        s_measLogged = true;
+                        if (std::FILE* lf = std::fopen(kLogPath, "a")) {
+                            static const int kIds[3] = { 0x59, 0x5a, 0x25f };
+                            static const float kSc[3] = { 0.7f, 0.6f, 0.8f };
+                            for (int ii = 0; ii < 3; ++ii)
+                                for (int si = 0; si < 3; ++si) {
+                                    const float r = MeasureMenuMessage(kIds[ii], kSc[si]);
+                                    std::uint32_t rb;
+                                    std::memcpy(&rb, &r, 4);
+                                    std::fprintf(lf, "measure: id=0x%x scale=%.2f ret=%.8f bits=%08x\n",
+                                                 kIds[ii], kSc[si], r, rb);
+                                }
+                            std::uint32_t xb;
+                            std::memcpy(&xb, &dyn_rax, 4);
+                            std::fprintf(lf, "measure: toggle id=0x%x arrow_x=%.6f bits=%08x\n",
+                                         tid, dyn_rax, xb);
+                            std::fclose(lf);
+                        }
+                    }
                 }
                 // RIGHT arrow last (the original's per-row stream order).
                 if (kind != kNone) {
