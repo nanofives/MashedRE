@@ -1,0 +1,11 @@
+settings: source=defaults(MASHED_SETTINGS_DEFAULTS) music=7 sfx=7 insults=7 insults_on=2 gamma=3 autosave=0
+measure: id=0x59 scale=0.70 ret=29.79607582 bits=41ee5e5d
+measure: id=0x59 scale=0.60 ret=25.53949356 bits=41cc50e2
+measure: id=0x59 scale=0.80 ret=34.05265808 bits=420835ec
+measure: id=0x5a scale=0.70 ret=26.91258430 bits=41d74cf9
+measure: id=0x5a scale=0.60 ret=23.06793022 bits=41b88b1f
+measure: id=0x5a scale=0.80 ret=30.75723839 bits=41f60ed3
+measure: id=0x25f scale=0.70 ret=89.38822937 bits=42b2c6c6
+measure: id=0x25f scale=0.60 ret=76.61848450 bits=42993caa
+measure: id=0x25f scale=0.80 ret=102.15797424 bits=42cc50e2
+measure: toggle id=0x59 arrow_x=411.000000 bits=43cd8000
