@@ -1,0 +1,25 @@
+=== verify_hook_install report (create_dinput_object) ===
+
+target address: 0x00495530  export: CreateDInputObject
+PRE  bytes:     e9 9b 49 59 6f e8 76 32
+asi base:       0x6fa10000
+reimpl addr:    0x6fa29ed0
+POST bytes:     e9 9b 49 59 6f e8 76 32
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x6f59499b  expected 0x6f59499b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  2 / 2  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [], 'import_ret': {'DirectInput8Create': 0}}  got=ret=0x1 obj=[] globals=[0x771e78:0xc9a144] log=[imp:OutputDebugStringA:a"Creating\x20DInput\x20object\x0a" imp:GetModuleHandleA:0x0 imp:DirectInput8Create:0x51510000:0x800:0x5d0a8c:0x771e78:0x0]  err=
+  [OK] input={'args': [], 'import_ret': {'DirectInput8Create': 2147500037}}  got=ret=0x0 obj=[] globals=[0x771e78:0xc9a144] log=[imp:OutputDebugStringA:a"Creating\x20DInput\x20object\x0a" imp:GetModuleHandleA:0x0 imp:DirectInput8Create:0x51510000:0x800:0x5d0a8c:0x771e78:0x0 imp:OutputDebugStringA:a"Failed\x0a"]  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 2x as expected
+  + all 2 calls returned without exception
+FAIL:
+  (none)

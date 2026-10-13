@@ -1,0 +1,25 @@
+=== verify_hook_install report (file_write_wrapper_i3) ===
+
+target address: 0x004b3bb0  export: FileWriteWrapper_i3
+PRE  bytes:     e9 eb 32 57 6f 6a 02 6a
+asi base:       0x6fa10000
+reimpl addr:    0x6fa26ea0
+POST bytes:     e9 eb 32 57 6f 6a 02 6a
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x6f5732eb  expected 0x6f5732eb  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  2 / 2  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [{'scratch': 0}, {'scratch': 256}, 64], 'seed': [{'addr': {'scratch': 0}, 'val': 1768042081}, {'addr': {'scratch': 4}, 'val': 110}], 'stub_rets': {'open': 1510735873, 'write': 1510735873}}  got=5a0c0001,811c9dc5  err=
+  [OK] input={'args': [{'scratch': 0}, {'scratch': 256}, 0], 'seed': [{'addr': {'scratch': 0}, 'val': 778329187}, {'addr': {'scratch': 4}, 'val': 7235938}], 'stub_rets': {'open': 4294967295, 'write': 305419896}}  got=12345678,811c9dc5  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 2x as expected
+  + all 2 calls returned without exception
+FAIL:
+  (none)

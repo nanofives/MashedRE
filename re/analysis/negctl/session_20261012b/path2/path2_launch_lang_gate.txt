@@ -1,0 +1,24 @@
+=== verify_hook_install report (launch_lang_gate) ===
+
+target address: 0x00493540  export: thunk_LaunchLangGate
+PRE  bytes:     e9 0b 1c 00 00 90 90 90
+asi base:       0x6f370000
+reimpl addr:    0x6f390f40
+POST bytes:     e9 0b 1c 00 00 90 90 90
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x1c0b  expected 0x6eefd9fb  -> FAIL
+bytes changed:  False
+
+interceptor entries (reimpl):  0 / 2  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [], 'seed': [{'addr': 7805416, 'val': 5}, {'addr': 7805412, 'val': 0}, {'addr': 6375360, 'val': 1592590337}]}  got=1,549b886  err=
+  [OK] input={'args': [], 'seed': [{'addr': 7805416, 'val': 2}, {'addr': 7805412, 'val': 1}, {'addr': 6375360, 'val': 1592590338}]}  got=0,f3515d8f  err=
+
+PASS:
+  + opcode == 0xE9
+  + all 2 calls returned without exception
+FAIL:
+  - rel32 mismatch
+  - bytes unchanged after Module.load and site holds no valid JMP
+  - reimpl interceptor fired 0 times, expected 2

@@ -1,0 +1,25 @@
+=== verify_hook_install report (font_text_utf16_widen_copy) ===
+
+target address: 0x00427840  export: FontText_UTF16WidenCopy
+PRE  bytes:     e9 cb c9 5f 6f f8 3f 7d
+asi base:       0x6fa10000
+reimpl addr:    0x6fa24210
+POST bytes:     e9 cb c9 5f 6f f8 3f 7d
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x6f5fc9cb  expected 0x6f5fc9cb  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  2 / 2  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [{'scratch': 0}, {'scratch': 256}], 'seed': [{'addr': {'scratch': 0}, 'val': 1819043144}, {'addr': {'scratch': 4}, 'val': 111}]}  got=0,9e944a97  err=
+  [OK] input={'args': [{'scratch': 0}, {'scratch': 256}], 'seed': [{'addr': {'scratch': 0}, 'val': 3925846400}, {'addr': {'scratch': 4}, 'val': 383}]}  got=0,8c36f955  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 2x as expected
+  + all 2 calls returned without exception
+FAIL:
+  (none)

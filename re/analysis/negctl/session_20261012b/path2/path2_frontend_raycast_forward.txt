@@ -1,0 +1,25 @@
+=== verify_hook_install report (frontend_raycast_forward) ===
+
+target address: 0x00426dc0  export: FrontendRaycastForward
+PRE  bytes:     e9 3b 6d f7 6e 4c 24 08
+asi base:       0x6f370000
+reimpl addr:    0x6f39db00
+POST bytes:     e9 3b 6d f7 6e 4c 24 08
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x6ef76d3b  expected 0x6ef76d3b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  2 / 2  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [{'scratch': 0}, {'scratch': 64}, {'scratch': 68}], 'seed': [{'addr': {'scratch': 0}, 'val': {'f32_at': 8920824, 'add': 0}}, {'addr': {'scratch': 4}, 'val': {'f32_at': 8920828, 'add': 5}}, {'addr': {'scratch': 8}, 'val': {'f32_at': 8920832, 'add': 0}}, {'addr': {'scratch': 12}, 'val': {'f32_at': 8920824, 'add': 0}}, {'addr': {'scratch': 16}, 'val': {'f32_at': 8920828, 'add': -5}}, {'addr': {'scratch': 20}, 'val': {'f32_at': 8920832, 'add': 0}}]}  got=1,81fbf5d0  err=
+  [OK] input={'args': [{'scratch': 0}, {'scratch': 64}, {'scratch': 68}], 'seed': [{'addr': {'scratch': 0}, 'val': {'f32_at': 8920824, 'add': 0}}, {'addr': {'scratch': 4}, 'val': {'f32_at': 8920828, 'add': 500}}, {'addr': {'scratch': 8}, 'val': {'f32_at': 8920832, 'add': 0}}, {'addr': {'scratch': 12}, 'val': {'f32_at': 8920824, 'add': 0}}, {'addr': {'scratch': 16}, 'val': {'f32_at': 8920828, 'add': 400}}, {'addr': {'scratch': 20}, 'val': {'f32_at': 8920832, 'add': 0}}]}  got=0,6446692d  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 2x as expected
+  + all 2 calls returned without exception
+FAIL:
+  (none)

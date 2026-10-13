@@ -1,0 +1,25 @@
+=== verify_hook_install report (display_init) ===
+
+target address: 0x004921d0  export: DisplayInit
+PRE  bytes:     e9 db 59 59 6f e8 26 0d
+asi base:       0x6fa10000
+reimpl addr:    0x6fa27bb0
+POST bytes:     e9 db 59 59 6f e8 26 0d
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x6f5959db  expected 0x6f5959db  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  2 / 2  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [], 'seed': [{'addr': 7805276, 'val': 1515847681}, {'addr': 7805280, 'val': 1515847682}, {'addr': 6810196, 'val': 1510169092}], 'stub_rets': {'vmode': 3, 'rw': 640, 'rh': 480, 'txd': 195887105, 'find': 195887106}, 'stub_outs': {'res': {'2': 10489856, '3': 8000}}}  got=21b3fd6f  err=
+  [OK] input={'args': [], 'seed': [{'addr': 7805276, 'val': 1515847681}, {'addr': 7805280, 'val': 1515847682}, {'addr': 6810196, 'val': 1510169092}], 'stub_rets': {'vmode': 0, 'rw': 800, 'rh': 600, 'txd': 0, 'find': 195887138}, 'stub_outs': {'res': {'2': 0, '3': 0}}}  got=96236a4c  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 2x as expected
+  + all 2 calls returned without exception
+FAIL:
+  (none)

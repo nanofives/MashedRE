@@ -1,0 +1,25 @@
+=== verify_hook_install report (crt_exit_process_j5) ===
+
+target address: 0x004a31b1  export: CrtExitProcess_j5
+PRE  bytes:     e9 aa 49 50 6f ff 15 38
+asi base:       0x6f990000
+reimpl addr:    0x6f9a7b60
+POST bytes:     e9 aa 49 50 6f ff 15 38
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x6f5049aa  expected 0x6f5049aa  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  2 / 2  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [255], 'seed': [], 'import_rets': {'GetModuleHandleA': 2119630848, 'GetProcAddress': {'fake': 'CorExitProcess'}}}  got=S[imp:GetModuleHandleA:a"mscoree.dll" imp:GetProcAddress:0x7e570000:a"CorExitProcess" fake:CorExitProcess:0xff imp:ExitProcess:0xff:NORETURN]  err=
+  [OK] input={'args': [7], 'seed': [], 'import_rets': {'GetModuleHandleA': 2119630848, 'GetProcAddress': {'fake': 'CorExitProcessNR'}}}  got=S[imp:GetModuleHandleA:a"mscoree.dll" imp:GetProcAddress:0x7e570000:a"CorExitProcess" fake:CorExitProcessNR:0x7:NORETURN]  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 2x as expected
+  + all 2 calls returned without exception
+FAIL:
+  (none)
