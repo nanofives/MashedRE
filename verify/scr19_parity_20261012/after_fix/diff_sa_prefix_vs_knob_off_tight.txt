@@ -1,0 +1,313 @@
+== f200 (A: 236 draws, x1.0) vs f200 (B: 136 draws, x1.0)
+   matched 124  mismatched 12  missing 100  extra 0
+  MISMATCH(moved)
+    A[208] x= 374.00 y= 187.00 w= 106.00 h= 16.00 col=7f000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[111] x= 374.00 y= 188.00 w= 106.00 h= 16.00 col=7f000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[209] x= 374.00 y= 187.00 w= 106.00 h=  3.00 col=ff000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[112] x= 374.00 y= 188.00 w= 106.00 h=  3.00 col=ff000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[211] x= 374.00 y= 187.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[114] x= 374.00 y= 188.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[212] x= 477.00 y= 187.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[115] x= 477.00 y= 188.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[216] x= 374.00 y= 217.00 w= 106.00 h= 16.00 col=7f000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[119] x= 374.00 y= 218.00 w= 106.00 h= 16.00 col=7f000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[217] x= 374.00 y= 217.00 w= 106.00 h=  3.00 col=ff000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[120] x= 374.00 y= 218.00 w= 106.00 h=  3.00 col=ff000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[219] x= 374.00 y= 217.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[122] x= 374.00 y= 218.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[220] x= 477.00 y= 217.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[123] x= 477.00 y= 218.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[224] x= 374.00 y= 247.00 w= 106.00 h= 16.00 col=7f000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[127] x= 374.00 y= 248.00 w= 106.00 h= 16.00 col=7f000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[225] x= 374.00 y= 247.00 w= 106.00 h=  3.00 col=ff000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[128] x= 374.00 y= 248.00 w= 106.00 h=  3.00 col=ff000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[227] x= 374.00 y= 247.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[130] x= 374.00 y= 248.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[228] x= 477.00 y= 247.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[131] x= 477.00 y= 248.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISSING  A[ 81] x= 498.94 y=  40.03 w=  21.97 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 82] x= 520.91 y=  40.03 w=  15.38 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 83] x= 536.29 y=  40.03 w=  15.38 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 84] x= 551.67 y=  40.03 w=  17.58 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 85] x= 569.24 y=  40.03 w=  14.28 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 86] x= 583.52 y=  40.03 w=  16.48 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 87] x= 494.94 y=  36.03 w=  21.97 h= 27.19 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 88] x= 516.91 y=  36.03 w=  15.38 h= 27.19 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 89] x= 532.29 y=  36.03 w=  15.38 h= 27.19 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 90] x= 547.67 y=  36.03 w=  17.58 h= 27.19 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 91] x= 565.24 y=  36.03 w=  14.28 h= 27.19 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 92] x= 579.52 y=  36.03 w=  16.48 h= 27.19 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 93] x=  67.00 y=  42.02 w=  11.53 h= 20.39 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 94] x=  78.53 y=  42.02 w=   9.89 h= 20.39 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 95] x=  88.42 y=  42.02 w=  10.71 h= 20.39 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 96] x=  99.13 y=  42.02 w=  10.71 h= 20.39 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 97] x= 109.84 y=  42.02 w=  10.71 h= 20.39 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 98] x=  64.00 y=  39.02 w=  11.53 h= 20.39 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 99] x=  75.53 y=  39.02 w=   9.89 h= 20.39 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[100] x=  85.42 y=  39.02 w=  10.71 h= 20.39 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[101] x=  96.13 y=  39.02 w=  10.71 h= 20.39 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[102] x= 106.84 y=  39.02 w=  10.71 h= 20.39 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[111] x=  64.00 y= 183.03 w=  21.97 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[112] x=  85.97 y= 183.03 w=  14.28 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[113] x= 100.25 y= 183.03 w=  12.08 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[114] x= 112.33 y= 183.03 w=   7.69 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[115] x= 120.02 y= 183.03 w=  13.18 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[116] x= 133.20 y= 183.03 w=   5.49 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[117] x= 138.70 y= 183.03 w=  13.18 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[118] x= 151.88 y= 183.03 w=  13.18 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[119] x= 165.06 y= 183.03 w=   7.69 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[120] x= 172.75 y= 183.03 w=  14.28 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[121] x= 187.03 y= 183.03 w=  20.87 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[122] x= 207.90 y= 183.03 w=  13.18 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[130] x=  64.00 y= 213.03 w=  15.38 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[131] x=  79.38 y= 213.03 w=  13.18 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[132] x=  92.56 y= 213.03 w=  14.28 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[133] x= 106.84 y= 213.03 w=   5.49 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[134] x= 112.33 y= 213.03 w=  13.18 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[135] x= 125.51 y= 213.03 w=  13.18 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+== f201 (A: 236 draws, x1.0) vs f201 (B: 136 draws, x1.0)
+   matched 124  mismatched 12  missing 100  extra 0
+  MISMATCH(moved)
+    A[208] x= 374.00 y= 187.00 w= 106.00 h= 16.00 col=7f000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[111] x= 374.00 y= 188.00 w= 106.00 h= 16.00 col=7f000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[209] x= 374.00 y= 187.00 w= 106.00 h=  3.00 col=ff000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[112] x= 374.00 y= 188.00 w= 106.00 h=  3.00 col=ff000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[211] x= 374.00 y= 187.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[114] x= 374.00 y= 188.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[212] x= 477.00 y= 187.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[115] x= 477.00 y= 188.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[216] x= 374.00 y= 217.00 w= 106.00 h= 16.00 col=7f000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[119] x= 374.00 y= 218.00 w= 106.00 h= 16.00 col=7f000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[217] x= 374.00 y= 217.00 w= 106.00 h=  3.00 col=ff000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[120] x= 374.00 y= 218.00 w= 106.00 h=  3.00 col=ff000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[219] x= 374.00 y= 217.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[122] x= 374.00 y= 218.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[220] x= 477.00 y= 217.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[123] x= 477.00 y= 218.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[224] x= 374.00 y= 247.00 w= 106.00 h= 16.00 col=7f000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[127] x= 374.00 y= 248.00 w= 106.00 h= 16.00 col=7f000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[225] x= 374.00 y= 247.00 w= 106.00 h=  3.00 col=ff000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[128] x= 374.00 y= 248.00 w= 106.00 h=  3.00 col=ff000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[227] x= 374.00 y= 247.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[130] x= 374.00 y= 248.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[228] x= 477.00 y= 247.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[131] x= 477.00 y= 248.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISSING  A[ 81] x= 498.94 y=  40.03 w=  21.97 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 82] x= 520.91 y=  40.03 w=  15.38 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 83] x= 536.29 y=  40.03 w=  15.38 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 84] x= 551.67 y=  40.03 w=  17.58 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 85] x= 569.24 y=  40.03 w=  14.28 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 86] x= 583.52 y=  40.03 w=  16.48 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 87] x= 494.94 y=  36.03 w=  21.97 h= 27.19 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 88] x= 516.91 y=  36.03 w=  15.38 h= 27.19 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 89] x= 532.29 y=  36.03 w=  15.38 h= 27.19 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 90] x= 547.67 y=  36.03 w=  17.58 h= 27.19 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 91] x= 565.24 y=  36.03 w=  14.28 h= 27.19 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 92] x= 579.52 y=  36.03 w=  16.48 h= 27.19 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 93] x=  67.00 y=  42.02 w=  11.53 h= 20.39 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 94] x=  78.53 y=  42.02 w=   9.89 h= 20.39 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 95] x=  88.42 y=  42.02 w=  10.71 h= 20.39 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 96] x=  99.13 y=  42.02 w=  10.71 h= 20.39 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 97] x= 109.84 y=  42.02 w=  10.71 h= 20.39 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 98] x=  64.00 y=  39.02 w=  11.53 h= 20.39 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 99] x=  75.53 y=  39.02 w=   9.89 h= 20.39 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[100] x=  85.42 y=  39.02 w=  10.71 h= 20.39 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[101] x=  96.13 y=  39.02 w=  10.71 h= 20.39 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[102] x= 106.84 y=  39.02 w=  10.71 h= 20.39 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[111] x=  64.00 y= 183.03 w=  21.97 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[112] x=  85.97 y= 183.03 w=  14.28 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[113] x= 100.25 y= 183.03 w=  12.08 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[114] x= 112.33 y= 183.03 w=   7.69 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[115] x= 120.02 y= 183.03 w=  13.18 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[116] x= 133.20 y= 183.03 w=   5.49 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[117] x= 138.70 y= 183.03 w=  13.18 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[118] x= 151.88 y= 183.03 w=  13.18 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[119] x= 165.06 y= 183.03 w=   7.69 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[120] x= 172.75 y= 183.03 w=  14.28 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[121] x= 187.03 y= 183.03 w=  20.87 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[122] x= 207.90 y= 183.03 w=  13.18 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[130] x=  64.00 y= 213.03 w=  15.38 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[131] x=  79.38 y= 213.03 w=  13.18 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[132] x=  92.56 y= 213.03 w=  14.28 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[133] x= 106.84 y= 213.03 w=   5.49 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[134] x= 112.33 y= 213.03 w=  13.18 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[135] x= 125.51 y= 213.03 w=  13.18 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+== f202 (A: 236 draws, x1.0) vs f202 (B: 136 draws, x1.0)
+   matched 124  mismatched 12  missing 100  extra 0
+  MISMATCH(moved)
+    A[208] x= 374.00 y= 187.00 w= 106.00 h= 16.00 col=7f000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[111] x= 374.00 y= 188.00 w= 106.00 h= 16.00 col=7f000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[209] x= 374.00 y= 187.00 w= 106.00 h=  3.00 col=ff000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[112] x= 374.00 y= 188.00 w= 106.00 h=  3.00 col=ff000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[211] x= 374.00 y= 187.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[114] x= 374.00 y= 188.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[212] x= 477.00 y= 187.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[115] x= 477.00 y= 188.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[216] x= 374.00 y= 217.00 w= 106.00 h= 16.00 col=7f000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[119] x= 374.00 y= 218.00 w= 106.00 h= 16.00 col=7f000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[217] x= 374.00 y= 217.00 w= 106.00 h=  3.00 col=ff000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[120] x= 374.00 y= 218.00 w= 106.00 h=  3.00 col=ff000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[219] x= 374.00 y= 217.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[122] x= 374.00 y= 218.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[220] x= 477.00 y= 217.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[123] x= 477.00 y= 218.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[224] x= 374.00 y= 247.00 w= 106.00 h= 16.00 col=7f000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[127] x= 374.00 y= 248.00 w= 106.00 h= 16.00 col=7f000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[225] x= 374.00 y= 247.00 w= 106.00 h=  3.00 col=ff000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[128] x= 374.00 y= 248.00 w= 106.00 h=  3.00 col=ff000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[227] x= 374.00 y= 247.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[130] x= 374.00 y= 248.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[228] x= 477.00 y= 247.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[131] x= 477.00 y= 248.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISSING  A[ 81] x= 498.94 y=  40.03 w=  21.97 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 82] x= 520.91 y=  40.03 w=  15.38 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 83] x= 536.29 y=  40.03 w=  15.38 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 84] x= 551.67 y=  40.03 w=  17.58 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 85] x= 569.24 y=  40.03 w=  14.28 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 86] x= 583.52 y=  40.03 w=  16.48 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 87] x= 494.94 y=  36.03 w=  21.97 h= 27.19 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 88] x= 516.91 y=  36.03 w=  15.38 h= 27.19 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 89] x= 532.29 y=  36.03 w=  15.38 h= 27.19 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 90] x= 547.67 y=  36.03 w=  17.58 h= 27.19 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 91] x= 565.24 y=  36.03 w=  14.28 h= 27.19 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 92] x= 579.52 y=  36.03 w=  16.48 h= 27.19 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 93] x=  67.00 y=  42.02 w=  11.53 h= 20.39 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 94] x=  78.53 y=  42.02 w=   9.89 h= 20.39 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 95] x=  88.42 y=  42.02 w=  10.71 h= 20.39 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 96] x=  99.13 y=  42.02 w=  10.71 h= 20.39 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 97] x= 109.84 y=  42.02 w=  10.71 h= 20.39 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 98] x=  64.00 y=  39.02 w=  11.53 h= 20.39 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 99] x=  75.53 y=  39.02 w=   9.89 h= 20.39 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[100] x=  85.42 y=  39.02 w=  10.71 h= 20.39 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[101] x=  96.13 y=  39.02 w=  10.71 h= 20.39 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[102] x= 106.84 y=  39.02 w=  10.71 h= 20.39 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[111] x=  64.00 y= 183.03 w=  21.97 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[112] x=  85.97 y= 183.03 w=  14.28 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[113] x= 100.25 y= 183.03 w=  12.08 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[114] x= 112.33 y= 183.03 w=   7.69 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[115] x= 120.02 y= 183.03 w=  13.18 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[116] x= 133.20 y= 183.03 w=   5.49 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[117] x= 138.70 y= 183.03 w=  13.18 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[118] x= 151.88 y= 183.03 w=  13.18 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[119] x= 165.06 y= 183.03 w=   7.69 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[120] x= 172.75 y= 183.03 w=  14.28 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[121] x= 187.03 y= 183.03 w=  20.87 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[122] x= 207.90 y= 183.03 w=  13.18 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[130] x=  64.00 y= 213.03 w=  15.38 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[131] x=  79.38 y= 213.03 w=  13.18 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[132] x=  92.56 y= 213.03 w=  14.28 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[133] x= 106.84 y= 213.03 w=   5.49 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[134] x= 112.33 y= 213.03 w=  13.18 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[135] x= 125.51 y= 213.03 w=  13.18 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+== f203 (A: 236 draws, x1.0) vs f203 (B: 136 draws, x1.0)
+   matched 124  mismatched 12  missing 100  extra 0
+  MISMATCH(moved)
+    A[208] x= 374.00 y= 187.00 w= 106.00 h= 16.00 col=7f000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[111] x= 374.00 y= 188.00 w= 106.00 h= 16.00 col=7f000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[209] x= 374.00 y= 187.00 w= 106.00 h=  3.00 col=ff000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[112] x= 374.00 y= 188.00 w= 106.00 h=  3.00 col=ff000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[211] x= 374.00 y= 187.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[114] x= 374.00 y= 188.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[212] x= 477.00 y= 187.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[115] x= 477.00 y= 188.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[216] x= 374.00 y= 217.00 w= 106.00 h= 16.00 col=7f000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[119] x= 374.00 y= 218.00 w= 106.00 h= 16.00 col=7f000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[217] x= 374.00 y= 217.00 w= 106.00 h=  3.00 col=ff000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[120] x= 374.00 y= 218.00 w= 106.00 h=  3.00 col=ff000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[219] x= 374.00 y= 217.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[122] x= 374.00 y= 218.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[220] x= 477.00 y= 217.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[123] x= 477.00 y= 218.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[224] x= 374.00 y= 247.00 w= 106.00 h= 16.00 col=7f000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[127] x= 374.00 y= 248.00 w= 106.00 h= 16.00 col=7f000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[225] x= 374.00 y= 247.00 w= 106.00 h=  3.00 col=ff000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[128] x= 374.00 y= 248.00 w= 106.00 h=  3.00 col=ff000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[227] x= 374.00 y= 247.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[130] x= 374.00 y= 248.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISMATCH(moved)
+    A[228] x= 477.00 y= 247.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb77c8,0x1b2dc
+    B[131] x= 477.00 y= 248.00 w=   3.00 h= 16.00 col=ff000000 tex=0 blend=1:5/6  @0xb78f8,0x1b40c
+  MISSING  A[ 81] x= 498.94 y=  40.03 w=  21.97 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 82] x= 520.91 y=  40.03 w=  15.38 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 83] x= 536.29 y=  40.03 w=  15.38 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 84] x= 551.67 y=  40.03 w=  17.58 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 85] x= 569.24 y=  40.03 w=  14.28 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 86] x= 583.52 y=  40.03 w=  16.48 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 87] x= 494.94 y=  36.03 w=  21.97 h= 27.19 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 88] x= 516.91 y=  36.03 w=  15.38 h= 27.19 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 89] x= 532.29 y=  36.03 w=  15.38 h= 27.19 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 90] x= 547.67 y=  36.03 w=  17.58 h= 27.19 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 91] x= 565.24 y=  36.03 w=  14.28 h= 27.19 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 92] x= 579.52 y=  36.03 w=  16.48 h= 27.19 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 93] x=  67.00 y=  42.02 w=  11.53 h= 20.39 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 94] x=  78.53 y=  42.02 w=   9.89 h= 20.39 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 95] x=  88.42 y=  42.02 w=  10.71 h= 20.39 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 96] x=  99.13 y=  42.02 w=  10.71 h= 20.39 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 97] x= 109.84 y=  42.02 w=  10.71 h= 20.39 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 98] x=  64.00 y=  39.02 w=  11.53 h= 20.39 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[ 99] x=  75.53 y=  39.02 w=   9.89 h= 20.39 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[100] x=  85.42 y=  39.02 w=  10.71 h= 20.39 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[101] x=  96.13 y=  39.02 w=  10.71 h= 20.39 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[102] x= 106.84 y=  39.02 w=  10.71 h= 20.39 col=ffffffff tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[111] x=  64.00 y= 183.03 w=  21.97 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[112] x=  85.97 y= 183.03 w=  14.28 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[113] x= 100.25 y= 183.03 w=  12.08 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[114] x= 112.33 y= 183.03 w=   7.69 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[115] x= 120.02 y= 183.03 w=  13.18 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[116] x= 133.20 y= 183.03 w=   5.49 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[117] x= 138.70 y= 183.03 w=  13.18 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[118] x= 151.88 y= 183.03 w=  13.18 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[119] x= 165.06 y= 183.03 w=   7.69 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[120] x= 172.75 y= 183.03 w=  14.28 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[121] x= 187.03 y= 183.03 w=  20.87 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[122] x= 207.90 y= 183.03 w=  13.18 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[130] x=  64.00 y= 213.03 w=  15.38 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[131] x=  79.38 y= 213.03 w=  13.18 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[132] x=  92.56 y= 213.03 w=  14.28 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[133] x= 106.84 y= 213.03 w=   5.49 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[134] x= 112.33 y= 213.03 w=  13.18 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+  MISSING  A[135] x= 125.51 y= 213.03 w=  13.18 h= 27.19 col=ff000000 tex=9 blend=1:5/6  @0xb77c8
+VERDICT: RED (match=496 mismatch=48 missing=400 extra=0)
