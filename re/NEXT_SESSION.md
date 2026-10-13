@@ -12,7 +12,9 @@
 > - Notes: `re/analysis/negctl/session_20261012b/scr19_{parity,fix,arrow}_RESULT.md`, evidence `verify/scr19_parity_20261012/`.
 >
 > **Open**
-> - Screen-32 toggle arrow 0.93 px off (411.00 vs 410.07), same formula at 0x00431489: small fix with `MeasureMenuMessage`.
+> - DONE 2026-10-13: screen-32 toggle arrow + value text ported from FUN_00431240 (widget GREEN at 0.01 px). The parity knob
+>   now pins autosave Off like the original. Left: scr32 value text 1 px low (y 240.0), L fixed at 356 (longer
+>   non-English labels would move it), and USER: should the shipping autosave default (On) follow the original (Off)?
 > - U-9680 (low): derive `[0x0067d830]` / `[0x0067d834]` instead of the measured 0x3f7fffff.
 > - Fade alpha / early-out in the standalone widget (fix 3, not requested). The exit fade is uncaptured.
 > - `after_fix/sumdiff.py` keys checker noise on a fixed return address (0xb8202); key it on the map symbol.
