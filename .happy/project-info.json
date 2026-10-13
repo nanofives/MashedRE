@@ -1,6 +1,6 @@
 {
   "title": "Mashed RE: greenfield source port",
-  "updatedAt": "2026-10-13T00:11:54Z",
+  "updatedAt": "2026-10-13T01:33:40Z",
   "sections": [
     {
       "heading": "Session 2026-10-12c (triage B)",
@@ -22,7 +22,7 @@
         {
           "label": "Blocked",
           "kind": "text",
-          "value": "0x00493540: native E9 thunk, HookSystem guard refuses install (user decision)"
+          "value": "0x00493540: native E9 thunk, stays C2 by design (U-9679 decided 2026-10-12)"
         }
       ]
     },
@@ -75,7 +75,6 @@
           "label": "Pending user decisions",
           "kind": "list",
           "value": [
-            "U-9679: install over native E9 thunks (0x00493540) or accept C2 by design",
             "Gold event / challenge 6,10 routes for remaining 0x00404320 and 0x0041c300 coverage (not requested)"
           ]
         },

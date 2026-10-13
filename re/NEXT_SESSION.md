@@ -19,8 +19,7 @@
 >   NegCtl_NoReturn, never-freed gate stubs, fixed generic stand-in wrapper.
 >
 > **Open**
-> - U-9679 user decision: (a) per-hook flag to install over a NATIVE E9 thunk, checked against MASHED.exe.unpatched, or
->   (b) accept C2 by design like FsopenSafe U-9662.
+> - DECIDED (user 2026-10-12): U-9679 option (b). 0x00493540 stays C2 by design, no HookSystem change.
 > - 0x00404320 rules 5/8/9 arms and the 0x0041c300 caller coverage need forced inputs (not requested).
 > - Triage B is fully drained except 0x00493540.
 
