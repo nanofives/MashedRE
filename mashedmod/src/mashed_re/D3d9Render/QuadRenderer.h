@@ -60,7 +60,9 @@ public:
     // this bump or its UploadFromTextureToSlot silently returns false (same latent-
     // overflow class as the 64->80 and 80->96 bumps above). The handle map
     // (RwIm2DBridge kMaxTexHandles=96) still has headroom, so only the slot cap moves.
-    static constexpr std::uint32_t kMaxSlots = 97;  // +24 track previews (F2) +11 color-select (#25) +8 veh +4 powerup +13 standings +1 chalsel dot
+    // 98 (2026-10-13): +1 for the s18/s24 "Powerupshadow" frame (INTERFACE.TXD,
+    // FUN_0043af10 0x0043bae9) at slot 97. Handle 88 is still under 96.
+    static constexpr std::uint32_t kMaxSlots = 98;  // +24 track previews (F2) +11 color-select (#25) +8 veh +4 powerup +13 standings +1 chalsel dot +1 powerup frame
 
     QuadRenderer() = default;
     ~QuadRenderer() { Shutdown(); }
