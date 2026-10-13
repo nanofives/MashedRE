@@ -1,0 +1,10 @@
+== s18
+region               px | base mean  max     >16 |  t4 mean  max     >16
+preview_borders    1816 |    133.23  255  99.39% |      1.04   15   0.00%
+vehicle_opaque    17785 |     62.78  255  67.28% |      3.89  102   0.33%
+pu_frame_opaque     684 |    110.22  199 100.00% |      2.83   11   0.00%
+== s24
+region               px | base mean  max     >16 |  t4 mean  max     >16
+preview_borders    1816 |    133.14  255  99.39% |      1.04   15   0.00%
+vehicle_opaque    17785 |     62.73  255  67.26% |      4.01  125   0.67%
+pu_frame_opaque     684 |    123.63  207 100.00% |     13.50   31  48.83%

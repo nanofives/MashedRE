@@ -421,6 +421,15 @@ inline DWORD DetTicks() {
         : GetTickCount();
 }
 
+// DAT_007f1010 analogue (seconds / 3, read by FUN_00473ee0 and FUN_0042e8b0).
+// The clock starts on the first call, which is the chrome block's.
+inline float FrontendWaveT() {
+    static DWORD s_t0 = 0;
+    const DWORD now = DetTicks();
+    if (s_t0 == 0) s_t0 = now;
+    return static_cast<float>(now - s_t0) * (1.0f / 3000.0f);
+}
+
 // Apply the MASHED_RES / MASHED_HIRES / MASHED_PARITY_BG envs (call before
 // InitD3D9). MASHED_RES=WxH takes precedence over MASHED_HIRES, matching the
 // d3d9 shim's ForcedBackBufInit precedence (d3d9_shim.cpp:67-81) so a single
@@ -570,6 +579,14 @@ bool g_previews_ready = false;
 int  g_chrome_spriteA = 0;   // DAT_0067e848 analogue
 int  g_chrome_spriteB = 1;   // DAT_0067f0b8 analogue (forced odd)
 unsigned g_chrome_frame = 0; // FrameCounter analogue
+// DAT_008990e0: the FUN_00473ee0 slide. FUN_0042e5b0 reads it as
+// float(slide) + 512.0 and steps it -0x10, clamped to 0..0x200
+// (0x0042e80f..0x0042e865). FUN_0042e8b0, the s18/s24 preview frame, adds 0x20
+// per call (0x0042ebb9..0x0042ebc7), so on those screens it holds at 0x220.
+int  g_chrome_slide = 0;
+// FUN_0042e8b0's own crossfade slot counters (not the backdrop's pair):
+int  g_pvframe_slotA = 0;    // DAT_0067ea58 (+2 at 0x0042e973)
+int  g_pvframe_slotB = 0;    // DAT_0067f0bc (+2 at 0x0042e9a5, forced odd 0x0042e97f..0x0042e985)
 bool             g_menu_bg_ready   = false;
 mashed_re::D3d9Render::MpegVideoTexture g_menu_video;  // F1 video backdrop
 bool             g_menu_logo_ready = false;
@@ -847,6 +864,13 @@ bool             g_category_mp_ready = false;
 constexpr std::uint32_t kSlotDot       = 96;
 constexpr int           kHandleDot     = 87;
 bool             g_dot_ready = false;
+// s18/s24 power-up frame: FUN_0043af10 draws FUN_0040bb90("Powerupshadow")
+// (name 0x005cda04, pushed at 0x0043badb) behind each power-up icon, so it is
+// INTERFACE.TXD's (0x0040bb90 -> head 0x0063b904). Slot 97 needs the
+// QuadRenderer::kMaxSlots 97->98 bump made alongside this.
+constexpr std::uint32_t kSlotPowerupShadow   = 97;
+constexpr int           kHandlePowerupShadow = 88;
+bool             g_pushadow_ready = false;
 // The "vs" separator sprite (INTERFACE.TXD) was LOADED and registered to
 // kHandleVs but had no ready flag and no draw call anywhere — so it never
 // appeared. User-reported on s6/s18/s24 across two review rounds.
@@ -3041,6 +3065,113 @@ float DrawWrappedLeft(const wchar_t* text, float x, float y, float h,
     return y;
 }
 
+// FUN_00474890's UV law, the 8th argument selecting the case (jump table
+// 0x00474d18, cases 1..5 at 0x00474920..0x004749e8, default 0x00474a16).
+// p = the 7th argument (int), k = p * (1/2048) ([0x005cead4]).
+//   1: vt = 0.125 - k, vb = 1 - vt, u0 = vt,         u1 = vb
+//   2: vt = 0.0625,    vb = 0.9375, u0 = 0.125 - k,  u1 = 1 - k
+//   3: vt = 0.0625,    vb = 0.9375, u0 = 0.125 - (0.125 - k), u1 = 1 - (0.125 - k)
+//   4: j = 0.125 - k:  vt = 0.125 - j, vb = 1 - j,   u0 = 0.0625, u1 = 0.9375
+//   5: j = k:          vt = 0.125 - j, vb = 1 - j,   u0 = 0.0625, u1 = 0.9375
+//   default:           vt = k,     vb = 1 - k,      u0 = k,      u1 = 1 - k
+// The quad is drawn as two halves of width w * 0.5 ([0x005cc32c]): the left one
+// u0 .. u1*0.5, the right one u1*0.5 .. 2*(u1*0.5), both vt .. vb. With the 9th
+// argument 0 every corner takes the colour (0x00474b4a: no V0/V2 alpha fade).
+void PreviewPairQuad(int handle, float x, float y, float w, float h,
+                     std::uint32_t argb, int p, int mode) {
+    const float k = static_cast<float>(p) * (1.0f / 2048.0f);
+    float vt, vb, u0, u1;
+    switch (mode) {
+    case 1: vt = 0.125f - k; vb = 1.0f - vt; u0 = vt; u1 = vb; break;
+    case 2: vt = 0.0625f; vb = 0.9375f; u0 = 0.125f - k; u1 = 1.0f - k; break;
+    case 3: { const float j = 0.125f - k;
+              vt = 0.0625f; vb = 0.9375f; u0 = 0.125f - j; u1 = 1.0f - j; } break;
+    case 4: { const float j = 0.125f - k;
+              vt = 0.125f - j; vb = 1.0f - j; u0 = 0.0625f; u1 = 0.9375f; } break;
+    case 5: vt = 0.125f - k; vb = 1.0f - k; u0 = 0.0625f; u1 = 0.9375f; break;
+    default: vt = k; vb = 1.0f - k; u0 = k; u1 = vb; break;
+    }
+    const float uh = u1 * 0.5f;
+    const float uh2 = uh + uh;
+    auto fb = [](float f) { std::uint32_t b; std::memcpy(&b, &f, 4); return b; };
+    std::uint32_t uvL[4] = { fb(u0), fb(vt), fb(uh), fb(vb) };
+    std::uint32_t uvR[4] = { fb(uh), fb(vt), fb(uh2), fb(vb) };
+    const float hw = w * 0.5f;
+    HudIm2DQuad(handle, x, y, hw, h, argb, uvL);
+    HudIm2DQuad(handle, x + hw, y, hw, h, argb, uvR);
+}
+
+// FUN_0042e8b0 (0x0042e8b0..0x0042ebd0), the s18/s24 preview frame, called by
+// FUN_004368e0 at 0x00436921 with its alpha byte a. Coordinates are 640x480
+// virtual (the callees scale by W/640, H/480).
+//   t = ftol(DAT_007f1010 * 60.0 [0x005cc728]) & 0x1ff        0x0042e8b3..0x0042e963
+//   t == 0x1e0: [0x0067ea58] += 2                             0x0042e973
+//   t == 0xe0:  [0x0067f0bc] += 2                             0x0042e99d..0x0042e9a5
+//   [0x0067f0bc] even -> +1                                   0x0042e97f..0x0042e985
+//   alphas cA ([0x0067ea58] layer) / cB ([0x0067f0bc] layer), 0x0042e98b..0x0042e9fd:
+//     t < 0xe0: cA 0xff, cB 0. t < 0x100: d = t-0xe0, d < 0x10 ? (cB d<<4, cA 0xff)
+//     : (cA (0x1f-d)<<4, cB 0xff). t < 0x1e0: cA 0, cB 0xff. else d = t-0x1e0,
+//     d < 0x10 ? (cA d<<4, cB 0xff) : (cB (0x1f-d)<<4, cA 0xff).
+//   mode = {0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3}[slot & 0xf]       0x0042e8f2..0x0042e92e
+//   rect 330, 96, 270, 180 (0x43a50000 / 0x42c00000 / 0x43870000 / 0x43340000,
+//     0x0042e93e..0x0042e956)
+//   A (cA != 0): colour (cA*a/255)<<24 | 0xffffff, p = (((t+0x20) wrapped below
+//     0x200) << 8) / 288, FUN_00474890(FUN_0042e590(0), ..)    0x0042ea2a..0x0042ea8f
+//   B (cB != 0): colour (cB*a/255)<<24 | 0xffffff, p = ((t-0xe0) << 8) / 288,
+//     FUN_00474890(FUN_0042e590(1), ..)                       0x0042ea9b..0x0042eaf5
+//   FUN_0042e590(n) = TrackImages name [0x005f79d8 + (n + [0x0067f17c]*2)*4]
+//   borders, FUN_00472c60 colour a<<24 (black):                0x0042eb05..0x0042ebb4
+//     (328, 94, 2, 184), (328, 94, 274, 2), (328, 276, 274, 2), (600, 94, 2, 182)
+//   [0x008990e0] += 0x20                                       0x0042ebb9..0x0042ebc7
+void DrawPreviewFrame(int a) {
+    static const int kMode[16] = {0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3};
+    const int t = static_cast<int>(static_cast<double>(FrontendWaveT()) * 60.0) & 0x1ff;
+    if (t == 0x1e0) g_pvframe_slotA += 2;
+    else if (t == 0xe0) g_pvframe_slotB += 2;
+    if ((g_pvframe_slotB & 1) == 0) g_pvframe_slotB += 1;
+    int cA, cB;
+    if (t < 0xe0) { cB = 0; cA = 0xff; }
+    else if (t < 0x100) {
+        const int d = t - 0xe0;
+        if (d < 0x10) { cB = d << 4; cA = 0xff; }
+        else          { cA = (0x1f - d) << 4; cB = 0xff; }
+    } else if (t < 0x1e0) { cA = 0; cB = 0xff; }
+    else {
+        const int d = t - 0x1e0;
+        if (d < 0x10) { cB = 0xff; cA = d << 4; }
+        else          { cB = (0x1f - d) << 4; cA = 0xff; }
+    }
+    const float x = 330.0f, y = 96.0f, w = 270.0f, h = 180.0f;
+    const int row = mashed_re::Frontend::Nav_ChallengeRow();
+    // The standalone loads the first 24 of the table's 26 names (LoadTrackPreviews);
+    // an index past them has no texture and the layer is skipped.
+    auto layerHandle = [&](int n) {
+        const int idx = n + row * 2;
+        return (idx >= 0 && idx < 24) ? kHandlePreview0 + idx : 0;
+    };
+    if (g_previews_ready && cA != 0) {
+        int e = t + 0x20;
+        if (e > 0x1ff) e -= 0x200;
+        const std::uint32_t c = (static_cast<std::uint32_t>((cA * a) / 255) << 24) | 0xffffffu;
+        if (const int hA = layerHandle(0))
+            PreviewPairQuad(hA, x * kVScale, y * kVScale, w * kVScale, h * kVScale,
+                            c, (e << 8) / 288, kMode[g_pvframe_slotA & 0xf]);
+    }
+    if (g_previews_ready && cB != 0) {
+        const std::uint32_t c = (static_cast<std::uint32_t>((cB * a) / 255) << 24) | 0xffffffu;
+        if (const int hB = layerHandle(1))
+            PreviewPairQuad(hB, x * kVScale, y * kVScale, w * kVScale, h * kVScale,
+                            c, ((t - 0xe0) << 8) / 288, kMode[g_pvframe_slotB & 0xf]);
+    }
+    std::uint32_t uvf[4] = {0u, 0u, 0x3f800000u, 0x3f800000u};
+    const std::uint32_t black = static_cast<std::uint32_t>(a) << 24;
+    HudIm2DQuad(0, 328.0f * kVScale, 94.0f * kVScale, 2.0f * kVScale, 184.0f * kVScale, black, uvf);
+    HudIm2DQuad(0, 328.0f * kVScale, 94.0f * kVScale, 274.0f * kVScale, 2.0f * kVScale, black, uvf);
+    HudIm2DQuad(0, 328.0f * kVScale, 276.0f * kVScale, 274.0f * kVScale, 2.0f * kVScale, black, uvf);
+    HudIm2DQuad(0, 600.0f * kVScale, 94.0f * kVScale, 2.0f * kVScale, 182.0f * kVScale, black, uvf);
+    g_chrome_slide += 0x20;
+}
+
 // Render one frame: clear to teal, present. Returns false on unrecoverable
 // device loss (caller should exit).
 bool RenderFrame() {
@@ -4414,14 +4545,13 @@ bool RenderFrame() {
     if (!g_parity && g_bridge_installed && g_frontend_phase >= 1 &&
         GetEnvironmentVariableA("MASHED_DBG_NO_ARC", nullptr, 0) == 0) {
         using namespace mashed_re::Frontend;
-        static int s_chrome_slide = 0;
-        const float pre = static_cast<float>(s_chrome_slide);
-        s_chrome_slide -= 0x10;
-        if (s_chrome_slide < 0) s_chrome_slide = 0;
-        static DWORD s_t0 = 0;
-        const DWORD now = DetTicks();
-        if (s_t0 == 0) s_t0 = now;
-        const float wave_t = static_cast<float>(now - s_t0) * (1.0f / 3000.0f);
+        // FUN_0042e5b0 0x0042e80f..0x0042e865: f = float(slide) + 512.0, read
+        // before the step; slide -= 0x10; < 0 -> 0; > 0x200 -> 0x200.
+        const float pre = static_cast<float>(g_chrome_slide);
+        g_chrome_slide -= 0x10;
+        if (g_chrome_slide < 0) g_chrome_slide = 0;
+        else if (g_chrome_slide > 0x200) g_chrome_slide = 0x200;
+        const float wave_t = FrontendWaveT();
         // Pass the ACTUAL backbuffer dims (LogoOverlayDraw scales every coord by
         // screen_w/640, screen_h/480). After the 640x480 switch the old hardcoded
         // 800x600 scaled the race-flag bands 1.25x: the top band (0..64) spilled
@@ -6683,8 +6813,22 @@ bool RenderFrame() {
             //   power-up row (0x0043b9c3..) and the vehicle sprite (0x0043bcf3).
             // The standalone drew each row's value and arrows inside the plate
             // loop and the vehicle sprite before the panel. Same draws, same
-            // arguments, moved into that order. The preview frame and panel box
-            // are not drawn by the standalone (missing rows in the diff).
+            // arguments, moved into that order.
+            // FUN_004368e0's alpha byte is [0x0067e7f4] (pushed at 0x0043af87..
+            // 0x0043af8d). Its writer 0x0043c206..0x0043c23a ramps it from
+            // [0x0067e840] while [0x0067e7f0] is 1 or 2 and otherwise stores bl.
+            // The settled capture has the panel at 0xaa = 2*0xff/3, so a = 0xff
+            // there. The ramp is not modelled, as for the rest of this overlay.
+            const int ovA = 0xff;
+            // Preview frame, FUN_0042e8b0 at 0x00436921 (text4).
+            DrawPreviewFrame(ovA);
+            // Panel box, FUN_00472c60(32, 300, 576, 96, colour) at 0x00436991:
+            // x 0x42000000 (0x00436974), y 0x43960000 (0x00436968), w 0x44100000
+            // (0x0043695b), h 0x42c00000 (0x0043694e); colour bytes 0,0,0 and
+            // alpha (2a)/3 (0x00436926..0x00436944, 0x55555556 multiply).
+            HudIm2DQuad(0, 32.0f * kVScale, 300.0f * kVScale, 576.0f * kVScale,
+                        96.0f * kVScale,
+                        static_cast<std::uint32_t>((2 * ovA) / 3) << 24, uvf);
             // 4 red-devil "vs" car icons + separator at the bottom-left (the
             // FUN_004368e0 active-player car row; all car0/red at the default).
             // Geometry RE-MEASURED from the 1024x768 capture (kVScale 1.6). The
@@ -6706,42 +6850,32 @@ bool RenderFrame() {
             // ambiguity. [UNCERTAIN] 72x72 being square is consistent with the
             // measurements (w 71.92+-0.68, h 72.13) but is not demonstrated.
             // Image-derived only -- no disassembly was read for these values.
-            // "vs" separator between adjacent car icons — 3 of them for 4 cars.
-            // MEASURED from orig_s18.bmp (1024x768): the glyph sits in each gap
-            // between the devils' red bboxes (77-147, 179-250, 282-352,
-            // 384-454 device), gap centres 101.9 / 166.3 / 230.0 virtual, i.e.
-            // spacing 64.05 = exactly the icon pitch. Its ink band measured
-            // inside the gaps (where nothing else can contribute) is y 514..570
-            // device = 321.3..356.3 virtual, so centre y 338.75, height ~35.6.
-            // SQUARE quad: every texture in SFX.piz's INTERFACE.TXD is 256x256,
-            // so a non-square quad distorts the sprite. Round 1 used 44x35.6
-            // (aspect 1.24) and measured 1946 gap-ink px against the original's
-            // 2898 with content height 51 vs 57 -- too thin AND too short,
-            // which is the squash. Content fills ~0.895 of the quad, so a
-            // 57-device content height needs a 63.7-device = 40-virtual quad.
-            // Drawn AFTER the cars (on top) -- see the s18/s24 note.
-            // (No quad overlaps the separator, so drawing it first changes no pixel.)
-            // Separator: original white bar occupies device cols 511..513, rows
-            // 493..620 -> x 319.375, w 1.875, y 308.125, h 80.0 virtual.
-            // Drawn before the car icons: FUN_004368e0 draws its divider at
-            // 0x004369d3, ahead of the jump table (0x00436a9b) that reaches the
+            // "vs" between adjacent car icons, 3 for 4 cars, drawn after the cars.
+            // Divider, FUN_00472c60(319.0, 308, 2, 80, colour) at 0x004369d3:
+            // x 0x439f8000 (0x004369c5), y 0x439a0000 (0x004369b9), w 0x40000000
+            // (0x004369ac), h 0x42a00000 (0x0043699f), colour ff,ff,ff,a
+            // (0x00436996). Was 319.5 from an ink measurement.
+            // Drawn before the car icons: FUN_004368e0 draws its divider
+            // ahead of the jump table (0x00436a9b) that reaches the
             // car icons (0x00438144..) and "vs" (0x00438242..).
-            HudIm2DQuad(0, 319.5f * kVScale, 308.0f * kVScale,
-                        2.0f * kVScale, 80.0f * kVScale, 0xffffffffu, uvf);
+            HudIm2DQuad(0, 319.0f * kVScale, 308.0f * kVScale,
+                        2.0f * kVScale, 80.0f * kVScale,
+                        (static_cast<std::uint32_t>(ovA) << 24) | 0xffffffu, uvf);
             for (int c = 0; c < 4; ++c)
                 HudIm2DQuad(kHandleCar0, (40.0f + c * 64.0f) * kVScale,
                             308.0f * kVScale, 72.0f * kVScale, 72.0f * kVScale,
                             0xffffffffu, uvf);
             if (g_vs_ready) {
-                // 60, and 1.75 lower. MEASURED VS band in the icon gaps:
-                // original y 514..570 (h 57), ours y 514..564 (h 51) -- so
-                // ~1.118x small and its centre 3 device px high.
-                const float vsw = 63.0f * kVScale, vsh = 63.0f * kVScale;
+                // FUN_004739f0(FUN_0040bb90("vs" 0x005cda30), x, 316, 56, 56,
+                // colour, u 0..1, v 0..1, 1, 1) at 0x00438242 / 0x00438275 /
+                // 0x004382a8: x 0x42900000 (72, 0x00438203), 0x43080000 (136,
+                // 0x00438261), 0x43480000 (200, 0x0043829a); y 0x439e0000
+                // (0x0043820b); w = h = 0x42600000 (0x004381ee / 0x004381fb).
+                // Replaces the ink-fitted 63x63 centred at 104.5 + 64c, 340.5.
+                static const float kVsX[3] = {72.0f, 136.0f, 200.0f};
                 for (int c = 0; c < 3; ++c)
-                    HudIm2DQuad(kHandleVs,
-                                (104.5f + c * 64.0f) * kVScale - vsw * 0.5f,
-                                340.5f * kVScale - vsh * 0.5f,
-                                vsw, vsh, 0xffffffffu, uvf);
+                    HudIm2DQuad(kHandleVs, kVsX[c] * kVScale, 316.0f * kVScale,
+                                56.0f * kVScale, 56.0f * kVScale, 0xffffffffu, uvf);
             }
             // Per-row values and arrows, FUN_0043af10's row loop (0x0043b1bc..),
             // after FUN_004368e0 returns (0x0043af8e).
@@ -6842,6 +6976,21 @@ bool RenderFrame() {
                         if (id < 0 || id > 22) continue;          // -1 terminator
                         const int icon = kPowerupIdToIcon[id];
                         if (icon < 0) continue;                   // NULL sprite
+                        // Frame first, under the same id/sprite gates
+                        // (0x0043b9ee, 0x0043ba0c): FUN_00473870(
+                        // FUN_0040bb90("Powerupshadow"), x, y, w, h, colour, 0)
+                        // at 0x0043bae9. In Standard the zoom [esp+0x1c] is 0
+                        // (0x0043b9fd), so 0x0043ba12..0x0043bacb give
+                        //   x = W*0.878125 [0x005cda70] - (W*col*0x26)/640 - 4.0
+                        //   y = H*0.783333 [0x005cda1c] - 4.0 [0x005cc35c]
+                        //   w = W*0.075 [0x005cd988], h = H*0.1 [0x005cc56c]
+                        // = (558 - 38*col, 372, 48, 48) at 640x480. Last arg 0 =
+                        // point filter (render state 9 = 1, FUN_00473870).
+                        if (g_pushadow_ready)
+                            HudIm2DQuad(kHandlePowerupShadow,
+                                        (558.0f - col * 38.0f) * kVScale,
+                                        372.0f * kVScale, 48.0f * kVScale,
+                                        48.0f * kVScale, 0xffffffffu, uvf);
                         HudIm2DQuad(kHandlePowerup0 + icon,
                                     (562.0f - col * 38.0f) * kVScale,
                                     376.0f * kVScale, pz, pz, 0xffffffffu, uvf);
@@ -6850,14 +6999,19 @@ bool RenderFrame() {
             }
             // Selected vehicle preview (center-right): the "car<N>" render incl.
             // its "<NAME> V8" caption. Default slot -> Hammerhead = car1
-            // (kHandleVehPrev0). Box measured from orig_s24.bmp (x~459-599).
+            // (kHandleVehPrev0).
             // [residual: the dynamic vehicle->sprite index needs the runtime
             // 0x5f6748 table / FUN_0042a980; default shows car1.]
-            // Last quad of the frame, as FUN_0043af10's FUN_004739f0 at 0x0043bcf3
-            // comes after its power-up row (0x0043b9c3..0x0043bbea).
+            // Last quad of the frame, after the power-up row (0x0043b9c3..
+            // 0x0043bbea): FUN_004739f0(FUN_0040bb70(car name), 456, 144, 152,
+            // 152, colour, u 0..1, v 0..1, 1, 0) at 0x0043bc77 (s24, table
+            // 0x5f7370) / 0x0043bcf3 (s18, table 0x5f72a0). x 0x43e40000, y
+            // 0x43100000, w = h 0x43180000. Was 458, 147, 145x141 from an ink
+            // measurement. The last arg 0 selects the point filter (render state
+            // 9 = 1), set on these handles at load.
             if (g_vehprev_ready)
-                HudIm2DQuad(kHandleVehPrev0, 458.0f * kVScale, 147.0f * kVScale,
-                            145.0f * kVScale, 141.0f * kVScale, 0xffffffffu, uvf);
+                HudIm2DQuad(kHandleVehPrev0, 456.0f * kVScale, 144.0f * kVScale,
+                            152.0f * kVScale, 152.0f * kVScale, 0xffffffffu, uvf);
         }
 
         // --- bottom prompt strip: F4 CLOSED 2026-06-11. FUN_00432b30 is now
@@ -7528,6 +7682,10 @@ bool LoadTrackPreviews() {
             if (g_quad_renderer.UploadFromTextureToSlot(slot, tex)) {
                 mashed_re::D3d9Render::RwIm2DBridge_RegisterTexture(
                     kHandleVehPrev0 + n, g_quad_renderer.slot_texture(slot));
+                // FUN_0043af10 draws these with FUN_004739f0's last arg 0
+                // (0x0043bc77 / 0x0043bcf3) = render state 9 (filter) 1.
+                mashed_re::D3d9Render::RwIm2DBridge_SetTexturePointFilter(
+                    kHandleVehPrev0 + n, true);
                 ++veh;
             }
             break;
@@ -7726,6 +7884,24 @@ bool LoadCarColorSprites() {
             vs_ok = true;
             g_vs_ready = true;
         }
+        break;
+    }
+    // s18/s24 power-up frame "Powerupshadow" (0x005cda04), resolved through
+    // FUN_0040bb90 at 0x0043bae0, i.e. this dictionary. FUN_00473870's last
+    // arg is 0 there (0x0043bab6), the point filter.
+    for (std::uint32_t i = 0; i < dict.count(); ++i) {
+        const auto& tex = dict.texture(i);
+        if (_stricmp(tex.name, "Powerupshadow") != 0) continue;
+        if (g_quad_renderer.UploadFromTextureToSlot(kSlotPowerupShadow, tex)) {
+            mashed_re::D3d9Render::RwIm2DBridge_RegisterTexture(
+                kHandlePowerupShadow, g_quad_renderer.slot_texture(kSlotPowerupShadow));
+            mashed_re::D3d9Render::RwIm2DBridge_SetTexturePointFilter(
+                kHandlePowerupShadow, true);
+            g_pushadow_ready = true;
+        }
+        if (log) std::fprintf(log, "text4: interface.txd 'Powerupshadow' %ux%u upload %s\n",
+                              tex.width(), tex.height(),
+                              g_pushadow_ready ? "OK" : "FAILED");
         break;
     }
     // Challenge-select gold "Star" sprite (same INTERFACE.TXD).

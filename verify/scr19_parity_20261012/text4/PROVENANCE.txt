@@ -1,0 +1,43 @@
+text4: screens 18/24, the original's preview frame, panel box, power-up frames (+ divider, "vs", vehicle sprite,
+backdrop slide), 2026-10-13, claude-opus-5-5 (account2)
+Worktree .worktrees/text4, branch work/text4, parent 23d53fed.
+Note: re/analysis/negctl/session_20261012b/text4_RESULT.md
+
+BUILDS (PowerShell, $env:MASHED_NO_DEPLOY='1'; cmd /c "mashedmod\build.bat", "=== Build OK ===", asi NOT deployed;
+  mashedmod/build/ is gitignored, the exes are not committed)
+  base : HEAD 23d53fed -> mashedmod\build\mashed_re_base.exe/.map  SHA-256 0A272A5C4C1848BC2F375AB30046C6751519F2D9AD6808E4E0E2CF5B59DC64B9
+  t4   : this change   -> mashed_re_t4.exe/.map                    SHA-256 FF095C8C92BC888CD232D403BED033B5080BE3D08AF0B09212848C925CAF2147
+
+BYTES (original\MASHED.exe.unpatched; ../scr32_texty_recheck/mdis.py, re/tools/decomp_pc.py on pool slot Mashed_pool1,
+  read-only; scratch xref/table readers not committed)
+  FUN_0042e8b0 0x0042e8b0..0x0042ebd0 (preview frame), FUN_00474890 (UV law, jump table 0x00474d18),
+  FUN_0042e590 + name table 0x005f79d8 (26 TrackImages names), FUN_0042e5b0 slide 0x0042e80f..0x0042e865,
+  writers of 0x008990e0 (only 0x0042e843/0x0042e84a/0x0042e865 and 0x0042ebc7), FUN_004368e0 head 0x004368e0..0x004369d8
+  (../text3/bytes_4368e0.txt), "vs" 0x004381ee..0x004382ad (../text3/bytes_4368e0_full.txt), FUN_0043af10 power-up loop
+  0x0043b939..0x0043bbfa and vehicle 0x0043bc00.. (../text3/bytes_43af10_full.txt), FUN_004739f0 / FUN_00473870 args
+  (filter = render state 9), [0x0067e7f4] writer 0x0043c206..0x0043c23a, vehicle names 0x005f6710.
+
+ORIGINAL (original\MASHED.exe, each tool spawns its own PID with MASHED_RE_NO_AUTO_HOOK=1 and kills it by PID;
+  no standalone running meanwhile; 0 piz-collision re-runs)
+  py -3.12 re/frida/menu_draw_burst.py --screen <S> --frames 4 --settle 6 --text-trace --label orig<S> --out dl_orig<S>.json   S = 18, 24
+  py -3.12 ../scr32_texty_recheck/recheck_frame_probe.py <S> probe_orig<S>.json orig_bb<S>.bmp                              (backbuffer)
+  py -3.12 probe_chalrow.py <S> chalrow_orig<S>.json   (read-only: [0x0067f17c] = 0 on both, FUN_0042e590(0/1) = Training1/2)
+
+STANDALONE (inline PowerShell runner, same env as ../scr32_texty_recheck/run_sa.ps1: MASHED_GOTO=<S>, MASHED_SETTINGS_DEFAULTS=1,
+  MASHED_DBG_DRAWSTREAM=200:203, MASHED_WIN_POS=primary-bl, MASHED_DBG_MEASURE=1; one PID at a time, each killed by its own PID;
+  no mashed_re_settings.bin in the worktree, the repo-root one untouched)
+  sa{18,24}_{base,t4}.json; sa{18,24}_{base,t4}_bbrun.json + sa_bb{18,24}_{base,t4}.bmp (MASHED_DBG_BBDUMP=1, frame 200);
+  sa18_t4_f900.json (frames 900:903); sweep/sa<S>_{base,t4}.json, S = 0..33 except 27 (66/66, sweep/sweep_runs.txt)
+
+CHECKS
+  re/tools/drawlist_diff.py dl_orig<S>.json sa<S>_<b>.json --scale-b 1 --exclude-tex 9 --rotate-a 0x42e65a
+     --map mashedmod/build/mashed_re_<b>.map [--tol-anim 4 | (strict) | --tol-pos 0.01 --tol-size 0.01]
+     --json diff_s<S>_<b>_<tol>.json  (and diff_t3orig_* against ../text3/dl_orig<S>.json)
+  groupsum.py diff_s*.json -> groupsum.txt    (rows grouped by the original caller)
+  uvcheck.py <capture>                         (FUN_00474890 UV law against captured preview vertices)
+  regiondiff.py / maskdiff.py orig_bb<S>.bmp sa_bb<S>_base.bmp sa_bb<S>_t4.bmp -> pixel/ (maskdiff.txt);
+     pixel/tex/*.png from txd_peek.py (sfx.piz TRACKIMAGES.TXD car1, INTERFACE.TXD Powerupshadow)
+  sweep/: mscompare.py sweep base.map t4.map -> multiset_base_vs_t4.txt;
+          ../../scr32_texty_recheck/recheck_quad_diff.py orig_frame<S>.json sa<S>_base.json sa<S>_t4.json --json quad_<S>.json
+          -> quad_diff_sweep.txt, text_dy_check.txt, aggregate_sites.py -> sites_table.md;
+          drawlist_diff vs ../../scr32_texty_recheck/dl_orig{19a,19b,30,32}.json + ../../scr32_fix/sumdiff32.py -> drawlist_summary.txt

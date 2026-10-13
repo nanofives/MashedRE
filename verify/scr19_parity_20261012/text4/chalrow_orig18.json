@@ -1,0 +1,132 @@
+{
+ "pid": 27928,
+ "screen": 18,
+ "before_push": {
+  "row": 0,
+  "names": [
+   {
+    "n": 0,
+    "idx": 0,
+    "name": "Training1\ufffd\ufffd\ufffdTraining2\ufffd\ufffd\ufffdEgypt1\ufffd\ufffd"
+   },
+   {
+    "n": 1,
+    "idx": 1,
+    "name": "Training2\ufffd\ufffd\ufffdEgypt1\ufffd\ufffdEgypt2\ufffd\ufffdNeus"
+   }
+  ],
+  "ea74": 1,
+  "depth": 1,
+  "slotA": 0,
+  "slotB": 0,
+  "screen": 33
+ },
+ "samples": [
+  {
+   "row": 0,
+   "names": [
+    {
+     "n": 0,
+     "idx": 0,
+     "name": "Training1\ufffd\ufffd\ufffdTraining2\ufffd\ufffd\ufffdEgypt1\ufffd\ufffd"
+    },
+    {
+     "n": 1,
+     "idx": 1,
+     "name": "Training2\ufffd\ufffd\ufffdEgypt1\ufffd\ufffdEgypt2\ufffd\ufffdNeus"
+    }
+   ],
+   "ea74": 1,
+   "depth": 2,
+   "slotA": 0,
+   "slotB": 1,
+   "screen": 18,
+   "t": 1791914242.1503062
+  },
+  {
+   "row": 0,
+   "names": [
+    {
+     "n": 0,
+     "idx": 0,
+     "name": "Training1\ufffd\ufffd\ufffdTraining2\ufffd\ufffd\ufffdEgypt1\ufffd\ufffd"
+    },
+    {
+     "n": 1,
+     "idx": 1,
+     "name": "Training2\ufffd\ufffd\ufffdEgypt1\ufffd\ufffdEgypt2\ufffd\ufffdNeus"
+    }
+   ],
+   "ea74": 1,
+   "depth": 2,
+   "slotA": 0,
+   "slotB": 1,
+   "screen": 18,
+   "t": 1791914243.1512733
+  },
+  {
+   "row": 0,
+   "names": [
+    {
+     "n": 0,
+     "idx": 0,
+     "name": "Training1\ufffd\ufffd\ufffdTraining2\ufffd\ufffd\ufffdEgypt1\ufffd\ufffd"
+    },
+    {
+     "n": 1,
+     "idx": 1,
+     "name": "Training2\ufffd\ufffd\ufffdEgypt1\ufffd\ufffdEgypt2\ufffd\ufffdNeus"
+    }
+   ],
+   "ea74": 1,
+   "depth": 2,
+   "slotA": 0,
+   "slotB": 1,
+   "screen": 18,
+   "t": 1791914244.1531599
+  },
+  {
+   "row": 0,
+   "names": [
+    {
+     "n": 0,
+     "idx": 0,
+     "name": "Training1\ufffd\ufffd\ufffdTraining2\ufffd\ufffd\ufffdEgypt1\ufffd\ufffd"
+    },
+    {
+     "n": 1,
+     "idx": 1,
+     "name": "Training2\ufffd\ufffd\ufffdEgypt1\ufffd\ufffdEgypt2\ufffd\ufffdNeus"
+    }
+   ],
+   "ea74": 1,
+   "depth": 2,
+   "slotA": 0,
+   "slotB": 1,
+   "screen": 18,
+   "t": 1791914245.1545324
+  },
+  {
+   "row": 0,
+   "names": [
+    {
+     "n": 0,
+     "idx": 0,
+     "name": "Training1\ufffd\ufffd\ufffdTraining2\ufffd\ufffd\ufffdEgypt1\ufffd\ufffd"
+    },
+    {
+     "n": 1,
+     "idx": 1,
+     "name": "Training2\ufffd\ufffd\ufffdEgypt1\ufffd\ufffdEgypt2\ufffd\ufffdNeus"
+    }
+   ],
+   "ea74": 1,
+   "depth": 2,
+   "slotA": 0,
+   "slotB": 3,
+   "screen": 18,
+   "t": 1791914246.1557496
+  }
+ ],
+ "push_depth": 2
+}

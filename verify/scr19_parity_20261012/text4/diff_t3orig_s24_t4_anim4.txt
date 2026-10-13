@@ -1,0 +1,22 @@
+== orig24_f0 (A: 174 draws, x1.0) vs f200 (B: 174 draws, x1.0)
+   matched 170  mismatched 4  missing 0  extra 0
+  MISMATCH(moved)
+    A[ 48] x= 617.01 y=  19.00 w=  23.07 h= 24.99 col=ff808080  @0x474464,0x42e89c
+    B[ 48] x= 617.03 y=  20.15 w=  27.09 h= 23.85 col=ff808080 tex=0 blend=1:5/6  @0xb9202<LogoOverlayDraw+0x6e2>,0x1187a<?A0x5c514b53::RenderFrame+0x2c8a>
+  MISMATCH(moved)
+    A[ 54] x= 556.01 y=  41.04 w=  23.07 h= 22.96 col=ff808080  @0x474464,0x42e89c
+    B[ 54] x= 556.03 y=  43.06 w=  27.09 h= 20.94 col=ff808080 tex=0 blend=1:5/6  @0xb9202<LogoOverlayDraw+0x6e2>,0x1187a<?A0x5c514b53::RenderFrame+0x2c8a>
+  MISMATCH(moved)
+    A[ 69] x= 617.01 y= 435.00 w=  23.07 h= 24.99 col=ff808080  @0x474464,0x42e89c
+    B[ 69] x= 617.03 y= 436.15 w=  27.09 h= 23.85 col=ff808080 tex=0 blend=1:5/6  @0xb9202<LogoOverlayDraw+0x6e2>,0x1187a<?A0x5c514b53::RenderFrame+0x2c8a>
+  MISMATCH(moved)
+    A[ 75] x= 556.01 y= 457.04 w=  23.07 h= 23.96 col=ff808080  @0x474464,0x42e89c
+    B[ 75] x= 556.03 y= 459.06 w=  27.09 h= 21.04 col=ff808080 tex=0 blend=1:5/6  @0xb9202<LogoOverlayDraw+0x6e2>,0x1187a<?A0x5c514b53::RenderFrame+0x2c8a>
+== orig24_f1 (A: 174 draws, x1.0) vs f201 (B: 174 draws, x1.0)
+   matched 174  mismatched 0  missing 0  extra 0
+== orig24_f2 (A: 174 draws, x1.0) vs f202 (B: 174 draws, x1.0)
+   matched 174  mismatched 0  missing 0  extra 0
+== orig24_f3 (A: 174 draws, x1.0) vs f203 (B: 174 draws, x1.0)
+   matched 174  mismatched 0  missing 0  extra 0
+-> verify\scr19_parity_20261012\text4\diff_t3orig_s24_t4_anim4.json
+VERDICT: RED (match=692 mismatch=4 missing=0 extra=0)

@@ -1,0 +1,60 @@
+=== C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\text4\verify\scr19_parity_20261012\text4\diff_s18_base_anim4.json
+  orig18_f0|f200: matched=84 | band/missing=32, checker/mism:moved=36, other/extra=33, panelbox/missing=1, preview/missing=6, pu_frame/missing=4, vehicle/missing=1, vs/mism:moved=3
+  orig18_f1|f201: matched=84 | band/missing=32, checker/mism:moved=36, other/extra=33, panelbox/missing=1, preview/missing=6, pu_frame/missing=4, vehicle/missing=1, vs/mism:moved=3
+  orig18_f2|f202: matched=81 | band/missing=32, checker/mism:moved=39, other/extra=33, panelbox/missing=1, preview/missing=6, pu_frame/missing=4, vehicle/missing=1, vs/mism:moved=3
+  orig18_f3|f203: matched=81 | band/missing=32, checker/mism:moved=39, other/extra=33, panelbox/missing=1, preview/missing=6, pu_frame/missing=4, vehicle/missing=1, vs/mism:moved=3
+=== C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\text4\verify\scr19_parity_20261012\text4\diff_s18_base_strict.json
+  orig18_f0|f200: matched=78 | band/missing=32, checker/mism:moved=42, other/extra=33, panelbox/missing=1, preview/missing=6, pu_frame/missing=4, vehicle/missing=1, vs/mism:moved=3
+  orig18_f1|f201: matched=78 | band/missing=32, checker/mism:moved=42, other/extra=33, panelbox/missing=1, preview/missing=6, pu_frame/missing=4, vehicle/missing=1, vs/mism:moved=3
+  orig18_f2|f202: matched=78 | band/missing=32, checker/mism:moved=42, other/extra=33, panelbox/missing=1, preview/missing=6, pu_frame/missing=4, vehicle/missing=1, vs/mism:moved=3
+  orig18_f3|f203: matched=78 | band/missing=32, checker/mism:moved=42, other/extra=33, panelbox/missing=1, preview/missing=6, pu_frame/missing=4, vehicle/missing=1, vs/mism:moved=3
+=== C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\text4\verify\scr19_parity_20261012\text4\diff_s18_base_tol001.json
+  orig18_f0|f200: matched=76 | backdrop/missing=1, band/missing=32, checker/missing=42, divider/missing=1, other/extra=80, panelbox/missing=1, preview/missing=6, pu_frame/missing=4, vehicle/missing=1, vs/missing=3
+  orig18_f1|f201: matched=76 | backdrop/missing=1, band/missing=32, checker/missing=42, divider/missing=1, other/extra=80, panelbox/missing=1, preview/missing=6, pu_frame/missing=4, vehicle/missing=1, vs/missing=3
+  orig18_f2|f202: matched=76 | backdrop/missing=1, band/missing=32, checker/missing=42, divider/missing=1, other/extra=80, panelbox/missing=1, preview/missing=6, pu_frame/missing=4, vehicle/missing=1, vs/missing=3
+  orig18_f3|f203: matched=76 | backdrop/missing=1, band/missing=32, checker/missing=42, divider/missing=1, other/extra=80, panelbox/missing=1, preview/missing=6, pu_frame/missing=4, vehicle/missing=1, vs/missing=3
+=== C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\text4\verify\scr19_parity_20261012\text4\diff_s18_t4_anim4.json
+  orig18_f0|f200: matched=131 | checker/mism:moved=36
+  orig18_f1|f201: matched=131 | checker/mism:moved=36
+  orig18_f2|f202: matched=128 | checker/mism:moved=39
+  orig18_f3|f203: matched=128 | checker/mism:moved=39
+=== C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\text4\verify\scr19_parity_20261012\text4\diff_s18_t4_strict.json
+  orig18_f0|f200: matched=125 | checker/mism:moved=42
+  orig18_f1|f201: matched=125 | checker/mism:moved=42
+  orig18_f2|f202: matched=125 | checker/mism:moved=42
+  orig18_f3|f203: matched=125 | checker/mism:moved=42
+=== C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\text4\verify\scr19_parity_20261012\text4\diff_s18_t4_tol001.json
+  orig18_f0|f200: matched=124 | backdrop/missing=1, checker/missing=42, other/extra=43
+  orig18_f1|f201: matched=124 | backdrop/missing=1, checker/missing=42, other/extra=43
+  orig18_f2|f202: matched=124 | backdrop/missing=1, checker/missing=42, other/extra=43
+  orig18_f3|f203: matched=124 | backdrop/missing=1, checker/missing=42, other/extra=43
+=== C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\text4\verify\scr19_parity_20261012\text4\diff_s24_base_anim4.json
+  orig24_f0|f200: matched=127 | band/missing=32, other/extra=33, panelbox/missing=1, preview/missing=6, pu_frame/missing=4, vehicle/missing=1, vs/mism:moved=3
+  orig24_f1|f201: matched=127 | band/missing=32, other/extra=33, panelbox/missing=1, preview/missing=6, pu_frame/missing=4, vehicle/missing=1, vs/mism:moved=3
+  orig24_f2|f202: matched=127 | band/missing=32, other/extra=33, panelbox/missing=1, preview/missing=6, pu_frame/missing=4, vehicle/missing=1, vs/mism:moved=3
+  orig24_f3|f203: matched=127 | band/missing=32, other/extra=33, panelbox/missing=1, preview/missing=6, pu_frame/missing=4, vehicle/missing=1, vs/mism:moved=3
+=== C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\text4\verify\scr19_parity_20261012\text4\diff_s24_base_strict.json
+  orig24_f0|f200: matched=127 | band/missing=32, other/extra=33, panelbox/missing=1, preview/missing=6, pu_frame/missing=4, vehicle/missing=1, vs/mism:moved=3
+  orig24_f1|f201: matched=117 | band/missing=32, checker/mism:moved=10, other/extra=33, panelbox/missing=1, preview/missing=6, pu_frame/missing=4, vehicle/missing=1, vs/mism:moved=3
+  orig24_f2|f202: matched=108 | band/missing=32, checker/mism:moved=19, other/extra=33, panelbox/missing=1, preview/missing=6, pu_frame/missing=4, vehicle/missing=1, vs/mism:moved=3
+  orig24_f3|f203: matched=100 | band/missing=32, checker/mism:moved=27, other/extra=33, panelbox/missing=1, preview/missing=6, pu_frame/missing=4, vehicle/missing=1, vs/mism:moved=3
+=== C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\text4\verify\scr19_parity_20261012\text4\diff_s24_base_tol001.json
+  orig24_f0|f200: matched=83 | backdrop/missing=1, band/missing=32, checker/missing=42, divider/missing=1, other/extra=80, panelbox/missing=1, preview/missing=6, pu_frame/missing=4, vehicle/missing=1, vs/missing=3
+  orig24_f1|f201: matched=83 | backdrop/missing=1, band/missing=32, checker/missing=42, divider/missing=1, other/extra=80, panelbox/missing=1, preview/missing=6, pu_frame/missing=4, vehicle/missing=1, vs/missing=3
+  orig24_f2|f202: matched=83 | backdrop/missing=1, band/missing=32, checker/missing=42, divider/missing=1, other/extra=80, panelbox/missing=1, preview/missing=6, pu_frame/missing=4, vehicle/missing=1, vs/missing=3
+  orig24_f3|f203: matched=83 | backdrop/missing=1, band/missing=32, checker/missing=42, divider/missing=1, other/extra=80, panelbox/missing=1, preview/missing=6, pu_frame/missing=4, vehicle/missing=1, vs/missing=3
+=== C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\text4\verify\scr19_parity_20261012\text4\diff_s24_t4_anim4.json
+  orig24_f0|f200: matched=174 | none
+  orig24_f1|f201: matched=174 | none
+  orig24_f2|f202: matched=174 | none
+  orig24_f3|f203: matched=174 | none
+=== C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\text4\verify\scr19_parity_20261012\text4\diff_s24_t4_strict.json
+  orig24_f0|f200: matched=174 | none
+  orig24_f1|f201: matched=166 | checker/mism:moved=8
+  orig24_f2|f202: matched=158 | checker/mism:moved=16
+  orig24_f3|f203: matched=147 | checker/mism:moved=27
+=== C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\text4\verify\scr19_parity_20261012\text4\diff_s24_t4_tol001.json
+  orig24_f0|f200: matched=131 | backdrop/missing=1, checker/missing=42, other/extra=43
+  orig24_f1|f201: matched=131 | backdrop/missing=1, checker/missing=42, other/extra=43
+  orig24_f2|f202: matched=131 | backdrop/missing=1, checker/missing=42, other/extra=43
+  orig24_f3|f203: matched=131 | backdrop/missing=1, checker/missing=42, other/extra=43
