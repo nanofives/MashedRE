@@ -13,6 +13,7 @@ mechanical: diff structured draw streams, not pixels or impressions.
 | Tool | Side | What it does |
 |---|---|---|
 | `MASHED_DBG_DRAWSTREAM=<N|N:M>` (env, standalone) | RE | dumps every bridge Im2D draw of frontend frames N..M to `log/drawstream_re.json` (raw vert blobs + module-relative retaddrs + mirrored blend/tex state). `1` = frame 200 (BBDUMP timing). Pair with `MASHED_GOTO=<screen>`. |
+| `MASHED_SETTINGS_DEFAULTS=1` (env, standalone) | RE | ignores `mashed_re_settings.bin` and keeps the compiled settings defaults (music/sfx/insults 7/7/7, insults Manual, gamma 3, autosave On = the original's clean baseline), and suppresses the settings save so the user's file is never rewritten. Default OFF. Needed for any screen with value-dependent rows (19 sliders and insults text, 30 gamma, 32 autosave). The standalone log (`./mashed_re.log`) prints a `settings: source=...` line with the values it used, so check that the knob took. Added 2026-10-12. |
 | `re/frida/menu_draw_burst.py` | original | K consecutive frames of the original's device draw stream, raw blobs + RVA retaddr chains, nav-pushed to a screen. `--screen N --frames K`. Set `MASHED_ROOT` when running a worktree copy. |
 | `re/tools/drawlist_diff.py` | both | aligns the two streams (LCS + tolerance), classifies each divergence: MISSING / EXTRA / MISMATCH(color) / MISMATCH(moved) / MISMATCH(reordered). `--map mashedmod/build/mashed_re.map` resolves standalone retaddrs to function names. Exit 0 = GREEN. |
 | `re/tools/nav_coverage.py` | RE source | static walk of the kT* descriptor tables + ActionToScreen push map; flags table holes, dead-end actions, kind-inconsistent screens (screens of a kind where only some have `sid == N` handling — the "whole screen missing" class of items 20-25). |
@@ -30,13 +31,14 @@ Composition check for screen S (the per-fix acceptance gate):
 py -3.12 re\frida\menu_draw_burst.py --screen S --frames 4
 
 # 2. standalone capture (MASHED_GOTO pushes at boot, skips splash/title)
-$env:MASHED_GOTO="S"; $env:MASHED_DBG_DRAWSTREAM="200:203"
+#    MASHED_SETTINGS_DEFAULTS=1 makes settings-dependent rows comparable
+$env:MASHED_GOTO="S"; $env:MASHED_DBG_DRAWSTREAM="200:203"; $env:MASHED_SETTINGS_DEFAULTS="1"
 mashedmod\build\mashed_re.exe   # from repo root; kill after log/drawstream_re.json appears
-$env:MASHED_GOTO=$null; $env:MASHED_DBG_DRAWSTREAM=$null
+$env:MASHED_GOTO=$null; $env:MASHED_DBG_DRAWSTREAM=$null; $env:MASHED_SETTINGS_DEFAULTS=$null
 
 # 3. diff (font glyphs excluded: the original capture can't see its text pipe)
 py -3.12 re\tools\drawlist_diff.py log\menu_draw_burst.json log\drawstream_re.json `
-    --exclude-tex 9 --map mashedmod\build\mashed_re.map `
+    --scale-b 1 --exclude-tex 9 --map mashedmod\build\mashed_re.map `
     --rotate-a 0x42e65a --tol-anim 4
 ```
 
@@ -78,8 +80,17 @@ draw order, missing element):
 
 ## Known asymmetries and limits (read before trusting a RED)
 
-- **Scale**: original renders 640x480 virtual, standalone 800x600; the differ
-  defaults `--scale-b 0.8`. Like-vs-like comparisons need `--scale-b 1`.
+- **Scale**: both sides now emit 640x480 virtual coordinates, so pass
+  `--scale-b 1`. The differ still defaults to `--scale-b 0.8` (from when the
+  standalone emitted 800x600), and that default is stale: on scr19
+  (2026-10-12) `--scale-b 1` matched 134/136 rows per frame and 0.8 matched 0/136.
+- **Tolerance edge**: `--tol-pos` compares with `<=`, so the default 1.0 hides
+  a gap of exactly 1 px (and `--tol-anim 4` pairs such rows as matched). To
+  check a 1 px placement fix, run once with `--tol-pos 0.5` or lower.
+- **Settings values**: the standalone reads `mashed_re_settings.bin` (CWD-
+  relative), the original reads its own save. Run the standalone with
+  `MASHED_SETTINGS_DEFAULTS=1` or every slider fill and value-text row is a
+  settings difference, not a code difference.
 - **Text pipe**: the original's RtCharset glyph draws do NOT pass through the
   hooked device vtbl+0x30 draw, so original captures contain NO text glyphs.
   The standalone's font glyphs are tex handle 9 → `--exclude-tex 9` for chrome

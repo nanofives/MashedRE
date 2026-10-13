@@ -1824,7 +1824,21 @@ float g_wall_dt = 0.016f;
 // screen's auto-advance (so its duration tracks load time, with a min dwell).
 bool  g_assets_loaded = false;
 
+// Parity knob: MASHED_SETTINGS_DEFAULTS=1 ignores mashed_re_settings.bin and
+// keeps the compiled defaults above (7/7/7/Manual = the original's clean
+// baseline), so value-dependent rows (slider fills, insults text and its
+// right arrow) are comparable in a draw-list diff. It also suppresses the
+// save, so a run with the knob on never rewrites the user's file. Default OFF.
+static bool SettingsDefaultsKnob() {
+    static const bool s_on = [] {
+        const char* e = std::getenv("MASHED_SETTINGS_DEFAULTS");
+        return e && e[0] == '1';
+    }();
+    return s_on;
+}
+
 void SaveMenuSettings() {
+    if (SettingsDefaultsKnob()) return;
     if (std::FILE* f = std::fopen(kSettingsPath, "wb")) {
         std::fwrite("MRES", 1, 4, f);
         std::fwrite(&g_settings, sizeof(g_settings), 1, f);
@@ -1832,6 +1846,7 @@ void SaveMenuSettings() {
     }
 }
 void LoadMenuSettings() {
+    if (SettingsDefaultsKnob()) return;
     if (std::FILE* f = std::fopen(kSettingsPath, "rb")) {
         char magic[4] = {};
         MenuSettings s;
@@ -4942,18 +4957,29 @@ bool RenderFrame() {
                     }
                     const float bx = 374.0f * S + slideX;
                     const float bw = 106.0f * S, bh = 16.0f * S, bt = 3.0f * S;
-                    // Inner geometry pinned to the clean scr19/scr30 baselines:
-                    // bottom border sits at bar+14 (A y=261 for bar 247) and
-                    // the fill at bar+4 (A y=191/236) — one px below the old
-                    // +3-based placement.
-                    HudIm2DQuad(0, bx, by, bw, bh, 0x7f000000u, uv_full);      // bg
-                    HudIm2DQuad(0, bx, by, bw, bt, 0xff000000u, uv_full);      // top
-                    HudIm2DQuad(0, bx, by + bh - bt + 1.0f * S, bw, bt, 0xff000000u, uv_full); // bottom
-                    HudIm2DQuad(0, bx, by, bt, bh, 0xff000000u, uv_full);      // left
-                    HudIm2DQuad(0, bx + bw - bt, by, bt, bh, 0xff000000u, uv_full); // right
-                    HudIm2DQuad(0, 377.0f * S + slideX, by + 4.0f * S,
-                                (disp / 10.0f) * 100.0f * S,
-                                10.0f * S, 0xff2080d8u, uv_full);              // fill
+                    // Bar y per FUN_00430b90 (row 0; rows 1/2 repeat it at
+                    // 0x00430f45/0x00431082): yy = rowY - 7.0 ([0x005cc9b8],
+                    // fsub at 0x00430d5c), while the arrows sit at rowY - 8.0
+                    // ([0x005cc9f4], 0x00430cbd) = `by`. So the box is 1 px
+                    // below the arrows. Bottom border at yy + 13.0 ([0x005cd8d8],
+                    // 0x00430dba), fill at yy + 3.0 ([0x005cc31c], 0x00430e35).
+                    const float bary = by + 1.0f * S;
+                    HudIm2DQuad(0, bx, bary, bw, bh, 0x7f000000u, uv_full);    // bg
+                    HudIm2DQuad(0, bx, bary, bw, bt, 0xff000000u, uv_full);    // top
+                    HudIm2DQuad(0, bx, bary + 13.0f * S, bw, bt, 0xff000000u, uv_full); // bottom
+                    HudIm2DQuad(0, bx, bary, bt, bh, 0xff000000u, uv_full);    // left
+                    HudIm2DQuad(0, bx + bw - bt, bary, bt, bh, 0xff000000u, uv_full); // right
+                    // Fill gate: the original computes fill = global * 100.0
+                    // ([0x005cc568], 0x00430e50) and skips the quad unless
+                    // fill > 1.0 ([0x005cc320], fcomp 0x00430e5a, test ah,0x41 /
+                    // jne at 0x00430e62-65: equal or below skips). Gate on the
+                    // target value (the original has no animation); the drawn
+                    // width keeps the constant-rate animation above.
+                    if ((static_cast<float>(value) / 10.0f) * 100.0f > 1.0f) {
+                        HudIm2DQuad(0, 377.0f * S + slideX, bary + 3.0f * S,
+                                    (disp / 10.0f) * 100.0f * S,
+                                    10.0f * S, 0xff2080d8u, uv_full);          // fill
+                    }
                 }
                 // Tri-state/toggle VALUE text: scale 0.6 (clean scr19
                 // baseline: "Manual" ink spans 378..448 = 70 virtual px ->
@@ -8574,6 +8600,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         // R2-close: persisted menu settings (Sound screen values).
         LoadMenuSettings();
         ApplyOptionSettings();   // [WS-G4] push loaded settings into audio/save
+        if (std::FILE* lf = std::fopen(kLogPath, "a")) {
+            std::fprintf(lf, "settings: source=%s music=%d sfx=%d insults=%d "
+                             "insults_on=%d gamma=%d autosave=%d\n",
+                         SettingsDefaultsKnob() ? "defaults(MASHED_SETTINGS_DEFAULTS)"
+                                                : "mashed_re_settings.bin-or-defaults",
+                         g_settings.music, g_settings.sfx, g_settings.insults,
+                         g_settings.insults_on, g_settings.gamma, g_settings.autosave);
+            std::fclose(lf);
+        }
         // R4: MASHED_TRACK_VIEW=<1 | track name | piz path> -> fly-through.
         // A bare name (no slash, no .piz) resolves to TRACKS/<name>.piz.
         {
