@@ -16,7 +16,7 @@
 
 > **Open**
 > - DONE 2026-10-13 (text2): scr18/24 label/value x, value arrows, plates; scr4/15/16 text sites. Left: scr18/24 arrow
->   draw order and scr4 row count DONE (text3). Left: U-9681 contcfg slot merge (low), original preview frame / panel box / power-up frames not drawn by the standalone.
+>   draw order and scr4 row count DONE (text3). Left: U-9681 contcfg slot merge (low), scr18/24 frames DONE (text4, s24 174/174). Frontend parity is paused: next session returns to D3 (see the D3 survey below).
 > - DONE 2026-10-13: screen-32 toggle arrow + value text ported from FUN_00431240 (widget GREEN at 0.01 px). The parity knob
 >   now pins autosave Off like the original. Left: scr32 value text 1 px low (y 240.0), L fixed at 356 (longer
 >   non-English labels would move it), and DECIDED (user 2026-10-13): the shipping autosave default stays On (only the parity knob pins Off).
