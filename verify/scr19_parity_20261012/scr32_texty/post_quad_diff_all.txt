@@ -1,0 +1,104 @@
+=== scr1
+orig glyphs 219  sa glyphs 121  sa unmatched 0
+call  0 fn 427e00 ret 0x42e351 id 0x15c x 442.0 y 302.0 s 0.600 a 2: glyphs 25 matched 0 dx    n/a dy    n/a dh    n/a
+call  1 fn 427e00 ret 0x42e37f id 0x15c x 440.0 y 300.0 s 0.600 a 2: glyphs 25 matched 0 dx    n/a dy    n/a dh    n/a
+call  2 fn 427e00 ret 0x42e351 id 0x15d x 442.0 y 318.0 s 0.600 a 2: glyphs 24 matched 0 dx    n/a dy    n/a dh    n/a
+call  3 fn 427e00 ret 0x42e37f id 0x15d x 440.0 y 316.0 s 0.600 a 2: glyphs 24 matched 0 dx    n/a dy    n/a dh    n/a
+call  4 fn 427e00 ret 0x43c6c7 id 0x41 x 600.0 y 52.0 s 0.800 a 1: glyphs 6 matched 6 dx +0.0000 dy +0.0000 dh -0.0000
+call  5 fn 427e00 ret 0x43c6f8 id 0x41 x 596.0 y 48.0 s 0.800 a 1: glyphs 6 matched 6 dx +0.0000 dy +0.0000 dh -0.0000
+call  6 fn 428140 ret 0x43d239 id 0x40 x 67.0 y 51.0 s 0.600 a 0: glyphs 16 matched 16 dx +0.0000 dy +0.0000 dh -0.0000
+call  7 fn 428140 ret 0x43d25a id 0x40 x 64.0 y 48.0 s 0.600 a 0: glyphs 16 matched 16 dx -0.0000 dy +0.0000 dh -0.0000
+call  8 fn 428140 ret 0x43d164 id 0x21 x 64.0 y 180.0 s 0.800 a 0: glyphs 13 matched 13 dx -0.0000 dy +0.0000 dh -0.0000
+call  9 fn 428140 ret 0x43d164 id 0x22 x 64.0 y 210.0 s 0.800 a 0: glyphs 12 matched 12 dx -0.0000 dy +0.0000 dh -0.0000
+call 10 fn 428140 ret 0x43d164 id 0x27 x 64.0 y 240.0 s 0.800 a 0: glyphs 7 matched 7 dx -0.0000 dy -0.0000 dh -0.0000
+call 11 fn 428140 ret 0x43d10c id 0x26b x 64.0 y 270.0 s 0.800 a 0: glyphs 14 matched 14 dx -0.0000 dy +0.0000 dh -0.0000
+call 12 fn 428140 ret 0x43d164 id 0x261 x 64.0 y 300.0 s 0.800 a 0: glyphs 15 matched 15 dx -0.0000 dy +0.0000 dh -0.0000
+call 13 fn 428140 ret 0x43d239 id 0x42 x 67.0 y 431.0 s 0.600 a 0: glyphs 8 matched 8 dx -2.0000 dy -2.0000 dh +0.0000
+call 14 fn 428140 ret 0x43d25a id 0x42 x 64.0 y 428.0 s 0.600 a 0: glyphs 8 matched 8 dx -0.0000 dy +0.0000 dh +0.0000
+ALL matched 121: dy median +0.0000 min -2.0000 max +0.0000 mean|dy| 0.1322
+=== scr6
+orig glyphs 114  sa glyphs 170  sa unmatched 56
+call  0 fn 427e00 ret 0x43c6c7 id 0x41 x 600.0 y 52.0 s 0.800 a 1: glyphs 6 matched 6 dx +0.0000 dy +0.0000 dh -0.0000
+call  1 fn 427e00 ret 0x43c6f8 id 0x41 x 596.0 y 48.0 s 0.800 a 1: glyphs 6 matched 6 dx +0.0000 dy +0.0000 dh -0.0000
+call  2 fn 428140 ret 0x43d239 id 0x270 x 67.0 y 51.0 s 0.600 a 0: glyphs 16 matched 16 dx +0.0000 dy +0.0000 dh -0.0000
+call  3 fn 428140 ret 0x43d25a id 0x270 x 64.0 y 48.0 s 0.600 a 0: glyphs 16 matched 16 dx +0.0000 dy +0.0000 dh -0.0000
+call  4 fn 428140 ret 0x43d239 id 0x43 x 67.0 y 431.0 s 0.600 a 0: glyphs 15 matched 15 dx -2.0000 dy -2.0000 dh +0.0000
+call  5 fn 428140 ret 0x43d25a id 0x43 x 64.0 y 428.0 s 0.600 a 0: glyphs 15 matched 15 dx -0.0000 dy +0.0000 dh +0.0000
+call  6 fn 427e00 ret 0x439aec id 0x49 x 64.0 y 148.0 s 0.600 a 0: glyphs 10 matched 10 dx +1.4750 dy -4.2474 dh +0.4996
+call  7 fn 427e00 ret 0x439aec id 0x4a x 64.0 y 170.0 s 0.580 a 0: glyphs 13 matched 13 dx +3.8532 dy -4.5842 dh +1.1792
+call  8 fn 427e00 ret 0x439aec id 0x4b x 64.0 y 192.0 s 0.580 a 0: glyphs 8 matched 8 dx +2.5429 dy -4.5842 dh +1.1792
+call  9 fn 427e00 ret 0x439aec id 0x4c x 64.0 y 214.0 s 0.580 a 0: glyphs 9 matched 9 dx +2.7097 dy -4.5842 dh +1.1792
+ALL matched 114: dy median +0.0000 min -4.5842 max +0.0000 mean|dy| 1.8421
+=== scr8
+orig glyphs 103  sa glyphs 103  sa unmatched 0
+call  0 fn 427e00 ret 0x43c6c7 id 0x41 x 600.0 y 52.0 s 0.800 a 1: glyphs 6 matched 6 dx +0.0000 dy +0.0000 dh -0.0000
+call  1 fn 427e00 ret 0x43c6f8 id 0x41 x 596.0 y 48.0 s 0.800 a 1: glyphs 6 matched 6 dx +0.0000 dy +0.0000 dh -0.0000
+call  2 fn 428140 ret 0x43d239 id 0x27 x 67.0 y 51.0 s 0.600 a 0: glyphs 7 matched 7 dx +0.0000 dy +0.0000 dh -0.0000
+call  3 fn 428140 ret 0x43d25a id 0x27 x 64.0 y 48.0 s 0.600 a 0: glyphs 7 matched 7 dx -0.0000 dy +0.0000 dh -0.0000
+call  4 fn 428140 ret 0x43d164 id 0x156 x 64.0 y 180.0 s 0.800 a 0: glyphs 5 matched 5 dx -0.0000 dy +0.0000 dh -0.0000
+call  5 fn 428140 ret 0x43d164 id 0x234 x 64.0 y 210.0 s 0.800 a 0: glyphs 16 matched 16 dx +0.0000 dy +0.0000 dh -0.0000
+call  6 fn 428140 ret 0x43d164 id 0x157 x 64.0 y 240.0 s 0.800 a 0: glyphs 9 matched 9 dx -0.0000 dy -0.0000 dh -0.0000
+call  7 fn 428140 ret 0x43d164 id 0x250 x 64.0 y 270.0 s 0.800 a 0: glyphs 9 matched 9 dx -0.0000 dy +0.0000 dh -0.0000
+call  8 fn 428140 ret 0x43d164 id 0x25f x 64.0 y 300.0 s 0.800 a 0: glyphs 8 matched 8 dx -0.0000 dy +0.0000 dh -0.0000
+call  9 fn 428140 ret 0x43d239 id 0x43 x 67.0 y 431.0 s 0.600 a 0: glyphs 15 matched 15 dx -2.0000 dy -2.0000 dh +0.0000
+call 10 fn 428140 ret 0x43d25a id 0x43 x 64.0 y 428.0 s 0.600 a 0: glyphs 15 matched 15 dx -0.0000 dy +0.0000 dh +0.0000
+ALL matched 103: dy median +0.0000 min -2.0000 max +0.0000 mean|dy| 0.2913
+=== scr15
+orig glyphs 95  sa glyphs 93  sa unmatched 0
+call  0 fn 427e00 ret 0x43c6c7 id 0x41 x 600.0 y 52.0 s 0.800 a 1: glyphs 6 matched 6 dx +0.0000 dy +0.0000 dh -0.0000
+call  1 fn 427e00 ret 0x43c6f8 id 0x41 x 596.0 y 48.0 s 0.800 a 1: glyphs 6 matched 6 dx +0.0000 dy +0.0000 dh -0.0000
+call  2 fn 428140 ret 0x43d239 id 0xcf x 67.0 y 51.0 s 0.600 a 0: glyphs 14 matched 14 dx +0.0000 dy +0.0000 dh -0.0000
+call  3 fn 428140 ret 0x43d25a id 0xcf x 64.0 y 48.0 s 0.600 a 0: glyphs 14 matched 14 dx -0.0000 dy +0.0000 dh -0.0000
+call  4 fn 428140 ret 0x43d239 id 0x43 x 67.0 y 431.0 s 0.600 a 0: glyphs 15 matched 15 dx -2.0000 dy -2.0000 dh +0.0000
+call  5 fn 428140 ret 0x43d25a id 0x43 x 64.0 y 428.0 s 0.600 a 0: glyphs 19 matched 17 dx -0.0000 dy +0.0000 dh +0.0000
+call  6 fn 427e00 ret 0x43a9b5 id 0xe3 x 125.0 y 156.0 s 0.750 a 2: glyphs 5 matched 5 dx -0.0096 dy -2.0336 dh +0.0680
+call  7 fn 427e00 ret 0x43a9d1 id 0xd2 x 255.0 y 156.0 s 0.750 a 2: glyphs 3 matched 3 dx -0.0082 dy -2.0336 dh +0.0680
+call  8 fn 427e00 ret 0x43a9ed id 0xd3 x 385.0 y 156.0 s 0.750 a 2: glyphs 7 matched 7 dx +0.0069 dy -2.0336 dh +0.0680
+call  9 fn 427e00 ret 0x43aa0c id 0xd4 x 515.0 y 156.0 s 0.750 a 2: glyphs 6 matched 6 dx -0.0055 dy -2.0336 dh +0.0680
+ALL matched 93: dy median +0.0000 min -2.0336 max +1.8418 mean|dy| 0.8214
+=== scr19
+orig glyphs 103  sa glyphs 103  sa unmatched 0
+call  0 fn 427e00 ret 0x43c6c7 id 0x41 x 600.0 y 52.0 s 0.800 a 1: glyphs 6 matched 6 dx +0.0000 dy +0.0000 dh -0.0000
+call  1 fn 427e00 ret 0x43c6f8 id 0x41 x 596.0 y 48.0 s 0.800 a 1: glyphs 6 matched 6 dx +0.0000 dy +0.0000 dh -0.0000
+call  2 fn 428140 ret 0x43d239 id 0x156 x 67.0 y 51.0 s 0.600 a 0: glyphs 5 matched 5 dx +0.0000 dy +0.0000 dh -0.0000
+call  3 fn 428140 ret 0x43d25a id 0x156 x 64.0 y 48.0 s 0.600 a 0: glyphs 5 matched 5 dx -0.0000 dy +0.0000 dh -0.0000
+call  4 fn 428140 ret 0x43d164 id 0x158 x 64.0 y 195.0 s 0.800 a 0: glyphs 12 matched 12 dx -0.0000 dy +0.0000 dh -0.0000
+call  5 fn 428140 ret 0x43d164 id 0x159 x 64.0 y 225.0 s 0.800 a 0: glyphs 10 matched 10 dx -0.0000 dy +0.0000 dh -0.0000
+call  6 fn 428140 ret 0x43d164 id 0x260 x 64.0 y 255.0 s 0.800 a 0: glyphs 14 matched 14 dx -0.0000 dy +0.0000 dh -0.0000
+call  7 fn 428140 ret 0x43d164 id 0x15b x 64.0 y 285.0 s 0.800 a 0: glyphs 7 matched 7 dx -0.0000 dy +0.0000 dh -0.0000
+call  8 fn 428140 ret 0x43d239 id 0x225 x 67.0 y 431.0 s 0.600 a 0: glyphs 16 matched 16 dx -2.0000 dy -2.0000 dh +0.0000
+call  9 fn 428140 ret 0x43d25a id 0x225 x 64.0 y 428.0 s 0.600 a 0: glyphs 16 matched 16 dx -0.0000 dy +0.0000 dh +0.0000
+call 10 fn 427e00 ret 0x431202 id 0x1b1 x 376.0 y 285.0 s 0.700 a 0: glyphs 6 matched 6 dx +0.0000 dy +0.0000 dh -0.0000
+ALL matched 103: dy median +0.0000 min -2.0000 max +0.0000 mean|dy| 0.3107
+=== scr30
+orig glyphs 72  sa glyphs 72  sa unmatched 0
+call  0 fn 427e00 ret 0x43c6c7 id 0x41 x 600.0 y 52.0 s 0.800 a 1: glyphs 6 matched 6 dx +0.0000 dy +0.0000 dh -0.0000
+call  1 fn 427e00 ret 0x43c6f8 id 0x41 x 596.0 y 48.0 s 0.800 a 1: glyphs 6 matched 6 dx +0.0000 dy +0.0000 dh -0.0000
+call  2 fn 428140 ret 0x43d239 id 0x234 x 67.0 y 51.0 s 0.600 a 0: glyphs 16 matched 16 dx +0.0000 dy +0.0000 dh -0.0000
+call  3 fn 428140 ret 0x43d25a id 0x234 x 64.0 y 48.0 s 0.600 a 0: glyphs 16 matched 16 dx +0.0000 dy +0.0000 dh -0.0000
+call  4 fn 428140 ret 0x43d164 id 0x234 x 64.0 y 240.0 s 0.800 a 0: glyphs 16 matched 16 dx +0.0000 dy -0.0000 dh -0.0000
+call  5 fn 428140 ret 0x43d239 id 0x58 x 67.0 y 431.0 s 0.600 a 0: glyphs 6 matched 6 dx -2.0000 dy -2.0000 dh +0.0000
+call  6 fn 428140 ret 0x43d25a id 0x58 x 64.0 y 428.0 s 0.600 a 0: glyphs 6 matched 6 dx -0.0000 dy +0.0000 dh +0.0000
+ALL matched 72: dy median +0.0000 min -2.0000 max +0.0000 mean|dy| 0.1667
+=== scr32
+orig glyphs 71  sa glyphs 71  sa unmatched 0
+call  0 fn 427e00 ret 0x43c6c7 id 0x41 x 600.0 y 52.0 s 0.800 a 1: glyphs 6 matched 6 dx +0.0000 dy +0.0000 dh -0.0000
+call  1 fn 427e00 ret 0x43c6f8 id 0x41 x 596.0 y 48.0 s 0.800 a 1: glyphs 6 matched 6 dx +0.0000 dy +0.0000 dh -0.0000
+call  2 fn 428140 ret 0x43d239 id 0x25f x 67.0 y 51.0 s 0.600 a 0: glyphs 8 matched 8 dx +0.0000 dy +0.0000 dh -0.0000
+call  3 fn 428140 ret 0x43d25a id 0x25f x 64.0 y 48.0 s 0.600 a 0: glyphs 8 matched 8 dx -0.0000 dy +0.0000 dh -0.0000
+call  4 fn 428140 ret 0x43d164 id 0x25f x 64.0 y 240.0 s 0.800 a 0: glyphs 8 matched 8 dx -0.0000 dy -0.0000 dh -0.0000
+call  5 fn 428140 ret 0x43d239 id 0x225 x 67.0 y 431.0 s 0.600 a 0: glyphs 16 matched 16 dx -2.0000 dy -2.0000 dh +0.0000
+call  6 fn 428140 ret 0x43d25a id 0x225 x 64.0 y 428.0 s 0.600 a 0: glyphs 16 matched 16 dx -0.0000 dy +0.0000 dh +0.0000
+call  7 fn 427e00 ret 0x431426 id 0x59 x 376.0 y 240.0 s 0.700 a 0: glyphs 3 matched 3 dx +0.0000 dy -0.0000 dh +0.0000
+ALL matched 71: dy median +0.0000 min -2.0000 max +0.0000 mean|dy| 0.4507
+=== scr32 PRE
+orig glyphs 71  sa glyphs 71  sa unmatched 0
+call  0 fn 427e00 ret 0x43c6c7 id 0x41 x 600.0 y 52.0 s 0.800 a 1: glyphs 6 matched 6 dx +0.0000 dy +1.4953 dh -0.0000
+call  1 fn 427e00 ret 0x43c6f8 id 0x41 x 596.0 y 48.0 s 0.800 a 1: glyphs 6 matched 6 dx +0.0000 dy +1.4953 dh -0.0000
+call  2 fn 428140 ret 0x43d239 id 0x25f x 67.0 y 51.0 s 0.600 a 0: glyphs 8 matched 8 dx +0.0000 dy +1.1215 dh -0.0000
+call  3 fn 428140 ret 0x43d25a id 0x25f x 64.0 y 48.0 s 0.600 a 0: glyphs 8 matched 8 dx -0.0000 dy +1.1215 dh -0.0000
+call  4 fn 428140 ret 0x43d164 id 0x25f x 64.0 y 240.0 s 0.800 a 0: glyphs 8 matched 8 dx -0.0000 dy +1.4953 dh -0.0000
+call  5 fn 428140 ret 0x43d239 id 0x225 x 67.0 y 431.0 s 0.600 a 0: glyphs 16 matched 16 dx -2.0000 dy -0.8785 dh +0.0000
+call  6 fn 428140 ret 0x43d25a id 0x225 x 64.0 y 428.0 s 0.600 a 0: glyphs 16 matched 16 dx -0.0000 dy +1.1215 dh +0.0000
+call  7 fn 427e00 ret 0x431426 id 0x59 x 376.0 y 240.0 s 0.700 a 0: glyphs 3 matched 3 dx +0.0000 dy +1.3084 dh +0.0000
+ALL matched 71: dy median +1.1215 min -0.8785 max +1.4953 mean|dy| 1.1799

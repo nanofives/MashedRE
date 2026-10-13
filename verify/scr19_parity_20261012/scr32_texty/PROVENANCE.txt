@@ -1,0 +1,65 @@
+scr32 / scr19 value-text vertical anchor, 2026-10-13
+Worktree .worktrees/scr32texty, branch work/scr32texty, base 5c144c99.
+Result note: re/analysis/negctl/session_20261012b/scr32_texty_RESULT.md
+
+TOOLS (all in this folder; read-only on the original, no key input, each kills only its own PID)
+  text_y_probe.py      ONE FUN_00427e00 call: args, the glyph vertices (Im3D 0x004cd070 while the
+                       call is live), the LTM, the camera at [0x00912c0c], and
+                       [0x0067d828..0x0067d834]. Return-address filter 0x00431426 (scr32) /
+                       0x00431202 (scr19).
+  text_frame_probe.py  ONE frame between two entries of the frame shell 0x0042e3a0: every text call
+                       (0x00427e00 / 0x00428140 entry hooks: id, x, y, colour, scale, align, return
+                       address) and every glyph vertex submitted through 0x004cd070 with a return
+                       address inside FUN_00554940 (0x00554940..0x005551ca), plus the camera.
+  orig_text_quads.py   projection helper (p = local*ltm, p' = p*view, pixel = (x/z*W, y/z*H)).
+  sa_text_quads.py     the same read-out for the standalone drawstream.
+  text_quad_diff.py    matches each original glyph to a standalone tex-9 quad by atlas cell
+                       (u,v within 1e-3) and nearest top-left within 40 px; prints median
+                       dx / dy / cell-height delta per original text call (standalone - original).
+  value_text_ink.py    (copied from ../scr32_fix) ink = max(R,G,B) < 48 in x 374..410, y 225..255 of
+                       orig_scr32_bb.bmp vs sa_scr32_bb.bmp; IoU by integer shift.
+  run_sa.ps1           spawns this worktree's mashed_re.exe with MASHED_GOTO / MASHED_DBG_DRAWSTREAM
+                       (frames 200:203) / MASHED_WIN_POS=primary-bl / MASHED_DBG_MEASURE=1, and
+                       -Defaults = MASHED_SETTINGS_DEFAULTS=1.
+
+ORIGINAL
+  orig_frame{1,6,8,15,19,30,32}.json  text_frame_probe.py, PREVIOUS session, reused unchanged.
+  orig_texty32.json                   text_y_probe.py 32, THIS session, PID 33136.
+                                      [0x0067d830] and [0x0067d834] both 3f7fffff.
+  orig_scr32_bb.bmp (+ .draw3d.json)  previous session, reused (force-added: verify/**/*.bmp is
+                                      gitignored and original captures are not reproducible).
+  orig_scr32_row0.png                 crop x 340..440 y 215..265, 4x nearest, of that bmp.
+  Draw lists reused from the parent folder: ../after_fix/orig_scr32.json,
+  ../after_fix/orig_scr30.json, ../orig1_settled.json, ../orig2_settled.json. original\MASHED.exe
+  untouched.
+
+STANDALONE
+  Build: $env:MASHED_NO_DEPLOY='1'; cmd /c "mashedmod\build.bat" in this worktree.
+  sa{1,6,8,15,19,30,32}_pre.json   PREVIOUS session, source state = the +0.055 renderer.
+  pre_quad_diff_6_15.txt           pre-fix quad diffs, screens 6 and 15 (previous session).
+  pre_quad_diff_others.txt         pre-fix quad diffs, screens 1, 8, 19, 30 (previous session).
+  sa{1,6,8,15,19,30,32}_post.json  THIS session, post-fix build. PIDs 10880, 12656, 22972, 34576,
+                                   25228, 28440, 25976.
+  sa32_bb_post.json + sa_scr32_bb.bmp   PID 31648, same build, MASHED_DBG_BBDUMP=1.
+  sa_scr32_row0_post.png           crop of that bmp, same box/zoom as the original's.
+  post_quad_diff_all.txt           py -3.12 text_quad_diff.py orig_frame<S>.json sa<S>_post.json
+                                   for S in 1 6 8 15 19 30 32, then a trailing "=== scr32 PRE"
+                                   block (the same tool against sa32_pre.json).
+  value_text_ink_post.txt          py -3.12 value_text_ink.py (run in this folder).
+  No mashed_re_settings.bin exists in this worktree root; the repo-root file was not touched.
+
+PRE-FIX scr32 QUAD DIFF (run this session on the previous session's captures, for the table in §3):
+  py -3.12 text_quad_diff.py orig_frame32.json sa32_pre.json
+  -> value text (ret 0x431426, id 0x59, s 0.7) dy +1.3084, every other call +1.4953 / +1.1215 /
+     -0.8785 (the 0x43d239 shadow).
+
+DRAW-LIST DIFFS (post-fix; all with
+  --scale-b 1 --exclude-tex 9 --map mashedmod/build/mashed_re.map --rotate-a 0x42e65a):
+  ../after_fix/orig_scr32.json vs sa32_post.json  --tol-anim 4 / strict / --tol-pos 0.01 --tol-size 0.01
+      -> diff_scr32_post_{anim4,strict,tol001}.{txt,json}
+  ../orig1_settled.json        vs sa19_post.json  same three -> diff_scr19_orig1_post_*
+  ../orig2_settled.json        vs sa19_post.json  same three -> diff_scr19_orig2_post_*
+  ../after_fix/orig_scr30.json vs sa30_post.json  same three -> diff_scr30_post_*
+  Summaries: py -3.12 ../scr32_fix/sumdiff32.py <diff.json> mashedmod/build/mashed_re.map
+  All twelve: widget_red = 0. Note --exclude-tex 9 drops text, so these diffs are blind to the
+  change by construction; they are here to show nothing else moved.

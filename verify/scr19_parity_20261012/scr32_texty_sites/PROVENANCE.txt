@@ -1,0 +1,38 @@
+scr32 text-y per-site fixes, 2026-10-13, claude-opus-5-5 (account2)
+Worktree .worktrees/scr32texty, branch work/scr32texty, parent 32d80b35 (renderer fix cfa6eb8d + recheck).
+Note: re/analysis/negctl/session_20261012b/scr32_texty_SITES.md
+
+BUILD (PowerShell, $env:MASHED_NO_DEPLOY='1'; cmd /c "mashedmod\build.bat", "=== Build OK ===", asi NOT deployed)
+  one build with all six fixes, copied to mashedmod\build\mashed_re_sites.exe/.map
+  SHA-256 52E962C20143F4AAC1501A6DE37CD40DF3FC2B75A6471A243FF5ED15407F1AD1  (mashedmod/build/ gitignored)
+  "before" = the recheck's post build (cfa6eb8d, mashed_re_post.exe/.map), captures in ../scr32_texty_recheck/sa<S>_post.json
+
+BYTES
+  bytes_sites.txt   ../scr32_texty_recheck/mdis.py listings (original\MASHED.exe.unpatched) for every address the note cites.
+
+STANDALONE (run_sa.ps1 / run_sa_batch.ps1 here: MASHED_GOTO=<S>, MASHED_SETTINGS_DEFAULTS=1, MASHED_DBG_DRAWSTREAM=200:203,
+  MASHED_WIN_POS=primary-bl, MASHED_DBG_MEASURE=1; one PID at a time, each killed by its own PID; no
+  mashed_re_settings.bin in the worktree, the repo-root one untouched)
+  run_sa_batch.ps1 -Screens 1,6,7,8,15,18,19,24,30,32          (with MASHED_DBG_BBDUMP -> sa_bb<S>_sites.bmp, not committed)
+  run_sa_batch.ps1 -Screens 0,2,3,4,5,9..14,16,17,20..23,25,26,28,29,31,33 -NoBmp
+  -> sa<S>_sites.json, 33/33 OK. Log sa_batch.log.
+
+ORIGINAL
+  Vertex reference: ../scr32_texty_recheck/orig_frame<S>.json (recheck probe, same anchored binary, captured earlier 2026-10-13).
+  Second fresh boot on the fixed screens: py -3.12 ../scr32_texty_recheck/recheck_frame_probe.py <S> orig2_frame<S>.json orig2_bb<S>.bmp
+     for S = 6, 15, 18 (original\MASHED.exe, MASHED_RE_NO_AUTO_HOOK=1, screen push only, no key input).
+     PIDs 7428, 28036, 32188, each killed by the probe itself. 3/3 first attempt, no piz-collision re-runs. Log orig2_batch.log.
+     orig2_bb{6,15,18}.bmp force-added (verify/**/*.bmp gitignored).
+  Draw lists: ../scr32_texty_recheck/dl_orig{19a,19b,30,32}.json (menu_draw_burst.py, same session as the recheck).
+
+CHECKS
+  ../scr32_texty_recheck/recheck_quad_diff.py ../scr32_texty_recheck/orig_frame<S>.json ../scr32_texty_recheck/sa<S>_post.json sa<S>_sites.json --json quad_<S>.json
+                                   all 33 -> quad_diff_sweep.txt ("pre" column = before = recheck post, "post" column = this build)
+  ../scr32_texty_recheck/aggregate_sites.py <all 33>   -> sites_table.md
+  recheck_quad_diff.py orig2_frame<S>.json ... --json quad2_<S>.json   S = 6, 15, 18 -> quad2_diff.txt
+  ds_compare.py ../scr32_texty_recheck/sa<S>_post.json sa<S>_sites.json   all 33 -> ds_compare_all.txt
+     control: ds_compare.py ../scr32_texty_recheck/sa{0,1}_pre.json ../scr32_texty_recheck/sa{0,1}_post.json (two boots)
+  re/tools/drawlist_diff.py ../scr32_texty_recheck/dl_orig<L>.json sa<S>_sites.json --scale-b 1 --exclude-tex 9
+     --rotate-a 0x42e65a --map mashedmod/build/mashed_re_sites.map [--tol-anim 4 | (strict) | --tol-pos 0.01 --tol-size 0.01]
+     --json diff_scr<L>_sites_<tol>.json   (12 diffs, exit 1 = the tool's RED status, all ran)
+  ../scr32_fix/sumdiff32.py <diff.json> mashedmod/build/mashed_re_sites.map -> drawlist_summary.txt (widget_red 0 in all 12)

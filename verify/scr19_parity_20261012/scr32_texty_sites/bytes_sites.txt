@@ -1,0 +1,288 @@
+# capstone listings of original\MASHED.exe.unpatched (mdis.py from ../scr32_texty_recheck) cited in scr32_texty_SITES.md
+
+## 0x0043d1f2 prompt-strip shadow +3.0 x/y
+0x0043d1f2: mov     eax, dword ptr [esi - 0x28]
+0x0043d1f5: test    eax, eax
+0x0043d1f7: je      0x43d25d
+0x0043d1f9: cmp     eax, 2
+0x0043d1fc: je      0x43d25d
+0x0043d1fe: mov     eax, dword ptr [esi - 4]
+0x0043d201: cmp     eax, -1
+0x0043d204: je      0x43d25d
+0x0043d206: mov     ecx, dword ptr [esi - 0x1c]
+0x0043d209: fld     dword ptr [esi - 0x10]
+0x0043d20c: mov     edx, dword ptr [esi - 8]
+0x0043d20f: fadd    dword ptr [0x5cc31c]  ; [0x005cc31c] dw 0x40400000 f 3 d 0.00781250187
+0x0043d215: push    ecx
+0x0043d216: mov     ecx, dword ptr [esi - 0x18]
+0x0043d219: push    edx
+0x0043d21a: mov     edx, dword ptr [esp + 0x20]
+0x0043d21e: push    ecx
+0x0043d21f: push    edx
+0x0043d220: sub     esp, 8
+0x0043d223: fstp    dword ptr [esp + 4]
+0x0043d227: fld     dword ptr [esi - 0x14]
+0x0043d22a: fadd    dword ptr [0x5cc31c]  ; [0x005cc31c] dw 0x40400000 f 3 d 0.00781250187
+0x0043d230: fstp    dword ptr [esp]
+0x0043d233: push    eax
+0x0043d234: call    0x428140
+0x0043d239: mov     eax, dword ptr [esi - 0x1c]
+0x0043d23c: mov     ecx, dword ptr [esi - 8]
+0x0043d23f: mov     edx, dword ptr [esi - 0x18]
+0x0043d242: push    eax
+0x0043d243: mov     eax, dword ptr [esi - 0x20]
+
+## 0x00439730 cup list: n count, base y, scroll clamp
+0x00439730: cmp     esi, 0xa
+0x00439733: jl      0x439744
+0x00439735: push    esi
+0x00439736: call    0x42ebe0
+0x0043973b: add     esp, 4
+0x0043973e: test    eax, eax
+0x00439740: jne     0x439755
+0x00439742: jmp     0x439756
+0x00439744: test    esi, esi
+0x00439746: jle     0x439755
+0x00439748: push    esi
+0x00439749: call    0x436810
+0x0043974e: add     esp, 4
+0x00439751: test    eax, eax
+0x00439753: je      0x439756
+0x00439755: inc     edi
+0x00439756: inc     esi
+0x00439757: cmp     esi, 0xd
+0x0043975a: jl      0x439730
+0x0043975c: cmp     edi, 7
+0x0043975f: fld     dword ptr [0x5cda68]  ; [0x005cda68] dw 0x42ec0000 f 118 d 2.47390171e+12
+0x00439765: mov     dword ptr [esp + 0x40], edi
+0x00439769: jge     0x43978d
+0x0043976b: mov     eax, 7
+0x00439770: fstp    st(0)
+0x00439772: sub     eax, edi
+0x00439774: lea     eax, [eax + eax*4]
+0x00439777: shl     eax, 2
+0x0043977a: cdq     
+0x0043977b: sub     eax, edx
+0x0043977d: sar     eax, 1
+0x0043977f: mov     dword ptr [esp + 0x48], eax
+0x00439783: fild    dword ptr [esp + 0x48]
+0x00439787: fadd    dword ptr [0x5cda68]  ; [0x005cda68] dw 0x42ec0000 f 118 d 2.47390171e+12
+0x0043978d: mov     esi, dword ptr [0x67f17c]  ; [0x0067f17c] BSS
+0x00439793: fild    dword ptr [0x67f180]  ; [0x0067f180] BSS
+0x00439799: mov     edi, dword ptr [0x67f180]  ; [0x0067f180] BSS
+0x0043979f: mov     eax, esi
+0x004397a1: imul    eax, eax, 0x16
+0x004397a4: fadd    st(1)
+0x004397a6: fstp    dword ptr [esp + 0x28]
+0x004397aa: fstp    st(0)
+0x004397ac: add     eax, edi
+0x004397ae: cmp     eax, 0x84
+0x004397b3: mov     ecx, 3
+0x004397b8: jle     0x4397c4
+0x004397ba: mov     edx, edi
+0x004397bc: sub     edx, ecx
+0x004397be: mov     dword ptr [0x67f180], edx  ; [0x0067f180] BSS
+0x004397c4: test    eax, eax
+0x004397c6: jge     0x4397ce
+0x004397c8: add     dword ptr [0x67f180], ecx  ; [0x0067f180] BSS
+0x004397ce: fld     dword ptr [esp + 0x28]
+0x004397d2: mov     eax, dword ptr [0x67e9fc]  ; [0x0067e9fc] BSS
+0x004397d7: cmp     eax, 2
+0x004397da: fsub    dword ptr [0x5cda64]  ; [0x005cda64] dw 0x41300000 f 11 d 2.46290639e+14
+0x004397e0: mov     dword ptr [esp + 0x58], 0
+
+## 0x004399a5 cup row y = k + base
+0x004399a5: xor     eax, eax
+0x004399a7: mov     dword ptr [esp + 0x1c], eax
+0x004399ab: mov     dword ptr [esp + 0x24], eax
+0x004399af: nop     
+0x004399b0: fild    dword ptr [esp + 0x24]
+0x004399b4: fst     dword ptr [esp + 0x34]
+0x004399b8: fadd    dword ptr [esp + 0x28]
+0x004399bc: fst     dword ptr [esp + 0x40]
+0x004399c0: call    0x4a2c48
+0x004399c5: mov     edi, eax
+
+## 0x00439a9b cup name call: scale/x/y
+0x00439a9b: mov     ecx, dword ptr [0x67f17c]  ; [0x0067f17c] BSS
+0x00439aa1: cmp     dword ptr [esp + 0x1c], ecx
+0x00439aa5: mov     dword ptr [esp + 0x60], 0x3f19999a
+0x00439aad: je      0x439ab7
+0x00439aaf: mov     dword ptr [esp + 0x60], 0x3f147ae1
+0x00439ab7: cmp     edi, 2
+0x00439aba: jne     0x439d2b
+0x00439ac0: mov     edx, dword ptr [esp + 0x60]
+0x00439ac4: mov     eax, dword ptr [esp + 0x18]
+0x00439ac8: mov     ecx, dword ptr [esp + 0x40]
+0x00439acc: mov     ebp, dword ptr [esp + 0x1c]
+0x00439ad0: push    0
+0x00439ad2: push    edx
+0x00439ad3: push    eax
+0x00439ad4: push    ecx
+0x00439ad5: add     ebp, 0x3de
+0x00439adb: lea     edx, [ebp - 0x395]
+0x00439ae1: push    0x42800000
+0x00439ae6: push    edx
+0x00439ae7: call    0x427e00
+0x00439aec: mov     eax, dword ptr [0x67e9fc]  ; [0x0067e9fc] BSS
+0x00439af1: add     esp, 0x18
+0x00439af4: cmp     eax, 4
+0x00439af7: mov     edi, eax
+
+## 0x00439d2b cup row step 0x16
+0x00439d2b: mov     eax, dword ptr [esp + 0x24]
+0x00439d2f: mov     esi, dword ptr [esp + 0x1c]
+0x00439d33: add     eax, 0x16
+0x00439d36: inc     esi
+0x00439d37: cmp     eax, 0x11e
+0x00439d3c: mov     dword ptr [esp + 0x1c], esi
+0x00439d40: mov     dword ptr [esp + 0x24], eax
+0x00439d44: jl      0x4399b0
+
+## 0x0043a989 screen 15 header tabs
+0x0043a989: push    2
+0x0043a98b: push    0x3f400000
+0x0043a990: mov     byte ptr [esp + 0x45], bl
+0x0043a994: mov     byte ptr [esp + 0x46], bl
+0x0043a998: mov     byte ptr [esp + 0x44], bl
+0x0043a99c: mov     esi, dword ptr [esp + 0x44]
+0x0043a9a0: push    esi
+0x0043a9a1: push    0x431c0000
+0x0043a9a6: push    0x42fa0000
+0x0043a9ab: push    0xe3
+0x0043a9b0: call    0x427e00
+0x0043a9b5: push    2
+0x0043a9b7: push    0x3f400000
+0x0043a9bc: push    esi
+0x0043a9bd: push    0x431c0000
+0x0043a9c2: push    0x437f0000
+0x0043a9c7: push    0xd2
+0x0043a9cc: call    0x427e00
+0x0043a9d1: push    2
+0x0043a9d3: push    0x3f400000
+0x0043a9d8: push    esi
+0x0043a9d9: push    0x431c0000
+0x0043a9de: push    0x43c08000
+0x0043a9e3: push    0xd3
+0x0043a9e8: call    0x427e00
+0x0043a9ed: add     esp, 0x48
+0x0043a9f0: push    2
+0x0043a9f2: push    0x3f400000
+0x0043a9f7: push    esi
+0x0043a9f8: push    0x431c0000
+0x0043a9fd: push    0x4400c000
+0x0043aa02: push    0xd4
+0x0043aa07: call    0x427e00
+0x0043aa0c: mov     edx, dword ptr [0x7d3ff8]  ; [0x007d3ff8] BSS
+0x0043aa12: push    1
+
+## 0x004326a5 FUN_004325c0 list layout pitch 0x1e / 0x1c, -58
+0x004326a5: cmp     edi, 2
+0x004326a8: jne     0x4326b8
+0x004326aa: mov     dword ptr [esi], 0x1ff
+0x004326b0: mov     dword ptr [esi - 0xc], ebx
+0x004326b3: jmp     0x4327d7
+0x004326b8: mov     edi, dword ptr [esi + 0x10]
+0x004326bb: mov     ecx, 0x1e
+0x004326c0: mov     eax, ebp
+0x004326c2: mov     dword ptr [esi], 0
+0x004326c8: mov     dword ptr [esi - 0xc], 1
+0x004326cf: call    0x42ac50
+0x004326d4: mov     ebx, dword ptr [esi + 0x20]
+0x004326d7: mov     dword ptr [esp + 0x14], eax
+0x004326db: fild    dword ptr [esp + 0x14]
+0x004326df: mov     eax, edi
+0x004326e1: imul    eax, eax, 0x1e
+0x004326e4: cmp     ebx, 0x5f7370
+0x004326ea: mov     dword ptr [esp + 0x14], eax
+0x004326ee: fiadd   dword ptr [esp + 0x14]
+0x004326f2: fstp    dword ptr [esi + 0xc]
+0x004326f5: jne     0x43271f
+0x004326f7: mov     ecx, 0x1c
+0x004326fc: mov     eax, ebp
+0x004326fe: call    0x42ac50
+0x00432703: imul    edi, edi, 0x1c
+0x00432706: mov     dword ptr [esp + 0x14], eax
+0x0043270a: fild    dword ptr [esp + 0x14]
+0x0043270e: mov     dword ptr [esp + 0x14], edi
+0x00432712: fiadd   dword ptr [esp + 0x14]
+0x00432716: fsub    dword ptr [0x5cd900]  ; [0x005cd900] dw 0x42680000 f 58 d -1.96450476e+24
+0x0043271c: fstp    dword ptr [esi + 0xc]
+0x0043271f: cmp     ebx, 0x5f72a0
+0x00432725: jne     0x4327d7
+0x0043272b: fld     dword ptr [esi + 0xc]
+0x0043272e: fsub    dword ptr [0x5cd900]  ; [0x005cd900] dw 0x42680000 f 58 d -1.96450476e+24
+0x00432734: fstp    dword ptr [esi + 0xc]
+0x00432737: jmp     0x4327d7
+0x0043273c: cmp     eax, 0xff120000
+0x00432741: je      0x43277c
+
+## 0x0042ac50 Q_ListBaseY FUN_0042ac50
+0x0042ac50: push    ebx
+0x0042ac51: mov     ebx, eax
+0x0042ac53: test    bl, 1
+0x0042ac56: jne     0x42ac72
+0x0042ac58: mov     eax, ecx
+0x0042ac5a: cdq     
+0x0042ac5b: sub     eax, edx
+0x0042ac5d: mov     edx, eax
+0x0042ac5f: sar     edx, 1
+0x0042ac61: mov     eax, 0xf0
+0x0042ac66: sub     eax, edx
+0x0042ac68: dec     ebx
+0x0042ac69: shr     ebx, 1
+0x0042ac6b: imul    ebx, ecx
+0x0042ac6e: sub     eax, ebx
+0x0042ac70: pop     ebx
+0x0042ac71: ret     
+0x0042ac72: dec     ebx
+0x0042ac73: shr     ebx, 1
+0x0042ac75: imul    ebx, ecx
+0x0042ac78: mov     eax, 0xf0
+0x0042ac7d: sub     eax, ebx
+
+## 0x0043b4f2 s18 value scale 0.52
+0x0043b4f2: fld     dword ptr [esp + 0x2c]
+0x0043b4f6: mov     eax, dword ptr [esp + 0x14]
+0x0043b4fa: fsub    dword ptr [0x5cc320]  ; [0x005cc320] dw 0x3f800000 f 1 d 1.08949935e-14
+0x0043b500: push    1
+0x0043b502: push    0x3f051eb8
+0x0043b507: push    edi
+0x0043b508: push    eax
+0x0043b509: call    0x42b8b0
+0x0043b50e: movsx   ecx, ax
+0x0043b511: mov     dword ptr [esp + 0x38], ecx
+0x0043b515: push    ecx
+0x0043b516: fidiv   dword ptr [esp + 0x3c]
+0x0043b51a: fmul    dword ptr [0x5cd618]  ; [0x005cd618] dw 0x44200000 f 640 d -134217762
+0x0043b520: fstp    dword ptr [esp]
+0x0043b523: push    esi
+0x0043b524: call    0x427e00
+0x0043b529: push    0x3f051eb8
+0x0043b52e: push    esi
+
+## 0x0043b304 s24 value scale 0.58
+0x0043b304: push    0x3f147ae1
+0x0043b309: push    edi
+0x0043b30a: push    eax
+0x0043b30b: call    0x42b8b0
+0x0043b310: movsx   ecx, ax
+0x0043b313: mov     dword ptr [esp + 0x38], ecx
+0x0043b317: push    ecx
+0x0043b318: fidiv   dword ptr [esp + 0x3c]
+0x0043b31c: fmul    dword ptr [0x5cd618]  ; [0x005cd618] dw 0x44200000 f 640 d -134217762
+0x0043b322: fstp    dword ptr [esp]
+0x0043b325: push    esi
+0x0043b326: call    0x427e00
+0x0043b32b: push    0x3f147ae1
+0x0043b330: push    esi
+
+## 0x0043d145 record label draw, scale = [esi-0x18]
+0x0043d145: mov     edx, dword ptr [esi - 0x1c]
+0x0043d148: mov     ecx, dword ptr [esi - 8]
+0x0043d14b: push    edx
+0x0043d14c: mov     edx, dword ptr [esi - 0x18]
+0x0043d14f: push    ecx
+0x0043d150: mov     ecx, dword ptr [esp + 0x18]
+0x0043d154: push    edx
+0x0043d155: mov     edx, dword ptr [esi - 0x10]

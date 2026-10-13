@@ -2782,8 +2782,10 @@ int GetMenuMessage(int id, wchar_t* out, int cap);
 // gradient (top = argb, bottom = argb with alpha*frac), matching the original's
 // menu-item text (FUN_00428140 -> FUN_00556e90 sets top=base / bottom=faded).
 // 1.0 = flat (the title/chrome path FUN_00427e00 passes all-same).
-// Verbatim FUN_00554940 / FUN_00427680 text law (pool0 decomp + original
-// backbuffer calibration 2026-06-12, verify/orig_backbuffer_f300.bmp):
+// Verbatim FUN_00554940 / FUN_00427680 text law (pool0 decomp; the vertical
+// anchor was re-verified 2026-10-13 against the original's own submitted glyph
+// vertices, see the top_y comment below — it was previously fitted against the
+// backbuffer ink of 2026-06-12, verify/orig_backbuffer_f300.bmp):
 //  - The original's text pipe works in a normalized [0,1]^2 space over the
 //    FULL screen: print scale = menu_scale x 0.0708 (_DAT_005cd5fc), x via
 //    1/640 (@0x005cd5a8), y via 1/480 (@0x005cc560). So the glyph cell is
@@ -2864,11 +2866,27 @@ void DrawMashedString(const wchar_t* s, float cx, float anchor_y,
     const float cell_h = height_px;
     const float cell_w = height_px * (4.0f / 3.0f);  // ScreenW/ScreenH (4:3 both sides)
     const float trk    = g_font.tracking();
-    // +0.055: pixel calibration vs the CLEAN scr19 baseline (label ink
-    // centroids ran 1.5px@640 high at s=0.8; the law's normalized-space
-    // camera factor _DAT_0067d834 is runtime-derived and was assumed 1.0).
+    // No calibration term (2026-10-13). The original's OWN glyph vertices land
+    // on this law exactly. Measured, verify/scr19_parity_20261012/scr32_texty/:
+    // FUN_00427680 (plate re/analysis/hud_promote_c2_b/0x00427680.md) writes
+    // screen_y = [0x005cc320] - (H*[0x005cc560]*y)/(float)H * [0x0067d834]
+    //            - scale*[0x005cc9a4]
+    // and FUN_00554940 submits the glyph cell through Im3D (0x004cd070) in unit
+    // local space (y 0..1) with LTM y-scale s*0.0708*1.6 and the frontend
+    // camera (raster 640x480, view window 0.8x0.8, view diag -0.625, offset
+    // +0.5). Live at screen 32, id 0x59, y 240.0 (0x43700000), s 0.7
+    // (0x3f333333): [0x0067d830] and [0x0067d834] both read 0x3f7fffff, the
+    // LTM is (-0.079296, +0.079296, 1) / (-0.13999987, -0.04001457, 0)
+    // (orig_texty32.json), so the projected quad spans pixel y
+    // 228.2156..252.0044 = anchor_y - 0.49537*cell_h with cell_h 23.7888.
+    // That is this expression with no extra term. The old +0.055 (fitted
+    // 2026-06-12 against scr19 label INK centroids, which carry the glyph's
+    // empty top/bottom rows) put every glyph 0.055*cell_h low: 1.4953 px at
+    // s 0.8, 1.3084 at 0.7, 1.1215 at 0.6 — the exact per-call dy the
+    // vertex-level diff measured on screens 1/6/8/15/19/30/32 before the fix
+    // (pre_quad_diff_*.txt) and 0.0000 after (post_quad_diff_all.txt).
     const float top_y  = anchor_y +
-        cell_h * (0.025f / 0.0708f + g_font.baseline_c8() - 1.0f + 0.055f);
+        cell_h * (0.025f / 0.0708f + g_font.baseline_c8() - 1.0f);
     // Codepoints 0..255 flow through: 0..127 hit the ASCII LUT, 0x80..0xFF the
     // FGDC20 extended table (FUN_00554390 font+0x12c) — the prompt strip's nav
     // glyphs (remapped 0x80..0x8f arrows/back) resolve there. Only codepoints
@@ -4683,7 +4701,11 @@ bool RenderFrame() {
                             // One down-right black shadow, then the colour: text in
                             // WHITE, the Select arrow green / Back arrow (0x7f) red
                             // chosen per-glyph in DrawMashedString.
-                            const float ob = 1.0f * kVScale;
+                            // Shadow offset is 3.0 on BOTH axes, not 1.0: y
+                            // `fadd [0x005cc31c]` (0x40400000 = 3.0) at 0x0043d20f,
+                            // x the same add at 0x0043d22a, feeding the shadow
+                            // call 0x00428140 at 0x0043d234 (ret 0x0043d239).
+                            const float ob = 3.0f * kVScale;
                             DrawMashedString(stxt, sx + ob, sy + ob, sth,
                                              0xff000000u, true);
                             DrawMashedString(stxt, sx, sy, sth, 0xffffffffu,
@@ -5070,10 +5092,14 @@ bool RenderFrame() {
                     // 0x004311f7], y, colour, 0.7 [push 0x3f333333 at
                     // 0x004311f0], 0) at 0x004311fd. Live text trace at screen
                     // 19: (0x1b1, 376.0, 285.0, ff000000, 0.7, 0). This replaces
-                    // the fitted 378 / 0.72 (#8, 2026-06-13).
+                    // the fitted 378 / 0.72 (#8, 2026-06-13). y is the row
+                    // anchor with no offset: the `- 1.0f * S` that sat here
+                    // was compensating DrawMashedString's old +0.055 term
+                    // (both removed 2026-10-13). The vertex diff now reads
+                    // dy 0.0000 for this call (ret 0x431202).
                     const float vthIns = 0.7f * 0.0708f * 480.f * S;
-                    DrawMashedString(val, 376.0f * S + slideX,
-                                     rec.y * S - 1.0f * S, vthIns, 0xff000000u, true);
+                    DrawMashedString(val, 376.0f * S + slideX, rec.y * S,
+                                     vthIns, 0xff000000u, true);
                     // Right arrow x: ftol(FUN_004282a0(id, 0.7)) (0x0043121a,
                     // ftol 0x00431222 truncates) + 0x17e (0x00430ea1), times
                     // (short)W (FUN_0042b8b0, movsx 0x00430e9e), / 640 by the
@@ -5702,8 +5728,18 @@ bool RenderFrame() {
                     wchar_t hdr[48];
                     const wchar_t* lbl =
                         (GetMenuMessage(colIds[c], hdr, 48) > 0) ? hdr : cols[c];
-                    DrawMashedString(lbl, hx + hw * 0.5f, hy + hh * 0.5f,
-                                     hcell, 0xff000000u /*black, centered*/);
+                    // Ability (screen 15, FUN_0043a610): the original's four
+                    // FUN_00427e00(id, x, y, colour, scale, 2) calls at
+                    // 0x0043a989..0x0043aa07 push y 0x431c0000 = 156.0
+                    // (0x0043a9a1) and scale 0x3f400000 = 0.75 (0x0043a98b), x
+                    // 125/255/385/515 (= hx + hw/2 here). The team path keeps the
+                    // plate-centre anchor and hcell: FUN_0043aa30's pushes are not
+                    // read yet.
+                    const float ty = team ? hy + hh * 0.5f : 156.0f * kVScale;
+                    const float tcell =
+                        team ? hcell : 0.75f * 0.0708f * 480.f * kVScale;
+                    DrawMashedString(lbl, hx + hw * 0.5f, ty,
+                                     tcell, 0xff000000u /*black, centered*/);
                 }
             }
             // Player rows. For TEAM SELECT these are now read out of the
@@ -6140,10 +6176,9 @@ bool RenderFrame() {
                         HudIm2DQuad(handle, 220.0f * kVScale, icy - 11.0f * kVScale,
                                     22.0f * kVScale, 22.0f * kVScale, 0x3f000000u, uv_full);
                 }
-                // Text x: original ink left edge 103 device = 64.375 virtual
-                // (ours was 109 at draw-x 108.8). [UNCERTAIN] the left
-                // side-bearing scales with lcell, which just changed, so this is
-                // sub-pixel-approximate and should be re-measured.
+                // Text x / y / scale: the original's own call arguments, see the
+                // block above the DrawMashedString below (the earlier 64.375 was
+                // an ink-edge fit).
                 //
                 // NAME comes from the message table, NOT from kAreas. The list
                 // row is a CUP TRACK SLOT, which is a different thing from an
@@ -6171,11 +6206,39 @@ bool RenderFrame() {
                 // because the parity harness nops the video backdrop to black,
                 // against which black text vanishes.)
                 // Drawn for LOCKED rows too, matching the original's request set.
+                // Name geometry from the original's call at 0x00439ae7
+                // (FUN_00427e00(0x49 + row, x, y, colour, scale, 0)), not the old
+                // ink fit (x 64.375 / lcell 0.6147 / row0 144):
+                //   x     = 0x42800000 = 64.0, push at 0x00439ae1.
+                //   scale = 0x3f19999a (0.6) when row == [0x0067f17c]
+                //           (0x00439a9b..0x00439aa5), else 0x3f147ae1 (0.58)
+                //           (0x00439aaf).
+                //   y     = float(k) + base, k = 22*row (`add eax,0x16` at
+                //           0x00439d33; fild/fadd/fst at 0x004399b0..0x004399bc).
+                //           base = fild [0x0067f180] + 118.0 (`[0x005cda68]` =
+                //           0x42ec0000, 0x0043975f / 0x00439787), plus the int
+                //           ((7-n)*20)/2 when n < 7 (`cmp edi,7` 0x0043975c;
+                //           cdq/sub/sar signed /2 at 0x0043977a..0x0043977d), stored
+                //           at 0x004397a6. n = available-entry count (loop
+                //           0x00439730..0x0043975a); cup.trackCount here (measured
+                //           n = 4: pens y 148/170/192/214).
+                //   [0x0067f180] is only moved by the clamp at 0x004397ae..0x004397c8
+                //   when 22*sel + it leaves 0..0x84; with n <= 7 rows (22*6 = 132)
+                //   it stays at its BSS 0 (measured 0), so it is 0 here.
                 if (g_font.ready()) {
                     wchar_t tname[64];
-                    if (GetMenuMessage(0x49 + i, tname, 64) > 0)
-                        DrawMashedString(tname, 64.375f * kVScale, cy, lcell,
+                    if (GetMenuMessage(0x49 + i, tname, 64) > 0) {
+                        const int n = cup.trackCount;
+                        const int cupScroll = 0;   // [0x0067f180]
+                        const float nbase =
+                            static_cast<float>(cupScroll) + 118.0f +
+                            (n < 7 ? static_cast<float>(((7 - n) * 20) / 2) : 0.0f);
+                        const float ny = static_cast<float>(22 * i) + nbase;
+                        const float ncell =
+                            (selrow ? 0.6f : 0.58f) * 0.0708f * 480.f * kVScale;
+                        DrawMashedString(tname, 64.0f * kVScale, ny * kVScale, ncell,
                                          0xff000000u, true);
+                    }
                 }
             }
             // Right side: the selected track's map preview rect + a semi-transparent
@@ -6342,11 +6405,17 @@ bool RenderFrame() {
                 {0x24d, ea88 == 2 ? 0x141 : ea88 == 1 ? 0x24b : 0xec}};       // Game Mode
             const GmRow* rows = sp ? s24rows : s18rows;
             const int nrows = sp ? 8 : 7;
-            // Row Y from the VERBATIM list layout: Q_ListBaseY(count,0x1c)-58
-            // (FUN_004325c0 screen-24/18 settle path) -> s24 row0=84, s18 row0=98,
-            // pitch 28 (the original's 0x1c). Plate/label/value geometry measured
-            // from verify/parity/orig_s24.bmp / orig_s18.bmp.
-            const float y0 = sp ? 84.0f : 98.0f, pitch = 28.0f;
+            // Row Y from the VERBATIM list layout in FUN_004325c0's settle path.
+            // Every record first gets Q_ListBaseY(count, 0x1e) + 0x1e*row
+            // (`mov ecx,0x1e` 0x004326bb, `imul eax,eax,0x1e` 0x004326e1, store
+            // 0x004326f2). Table 0x005f7370 (s24) recomputes with 0x1c and -58
+            // (0x004326f7..0x0043271c, [0x005cd900] = 58.0); table 0x005f72a0
+            // (s18) keeps pitch 0x1e and takes -58 at 0x0043272e. Q_ListBaseY
+            // (FUN_0042ac50): odd count 240 - ((n-1)>>1)*p, even 240 - p/2 -
+            // ((n-1)>>1)*p. So s24 (8 rows) = 142 - 58 + 28r = 84 + 28r and s18
+            // (7 rows) = 150 - 58 + 30r = 92 + 30r. Matches the original's pens
+            // (s18 y 92..272, s24 84..280). s18 was 98 + 28r here before.
+            const float y0 = sp ? 84.0f : 92.0f, pitch = sp ? 28.0f : 30.0f;
             // The plate is SOLID for 169 then a horizontal alpha fade to 0 over
             // the remaining 81 (total extent 250, which is what the label/value
             // anchors key off). MEASURED per-column max red over the row-0 band
@@ -6406,21 +6475,25 @@ bool RenderFrame() {
                 HudIm2DQuadCorners(0, px + psw, pt + plateH * kVScale - bt, pfw, bt,
                                    bord, bord0, bord, bord0, uvf);
                 if (!g_font.ready()) continue;
-                // The SELECTED row's label is drawn larger than the idle rows.
-                // Measured cap heights on the 1024x768 capture, per row, orig vs
-                // ours: r0 22/17, r1 16/17, r2 16/16, r3 16/16, r4 17/18,
-                // r5 17/18, r6 18/18, r7 18/18. Only row 0 -- the cursor row --
-                // is undersized; rows 1..7 already match within 0-1px. So this
-                // is a per-row cell, NOT a global bump: raising `cell` for every
-                // row would have broken the seven rows that were already right.
-                // Selected factor: cap-height P 0.6*(22/17)=0.776, cap-height G
-                // 0.6*(24/18)=0.800, width "Play Game" 0.6*(186/139)=0.803.
-                // 0.79 sits in the 0.776..0.803 bracket. [UNCERTAIN] mechanism
-                // unknown -- no ASM was read to confirm the original passes a
-                // different scale for the cursor row rather than, say, a second
-                // bold draw. Measured geometry match only, do not promote past C2.
-                const float labCell = (r == selRow) ? 0.776f * 0.0708f * 480.f * kVScale
-                                                    : cell;
+                // The SELECTED row's label is drawn larger than the idle rows
+                // (earlier ink fit: 0.776 selected, 0.6 idle, from cap heights on
+                // the 1024x768 capture).
+                // Mechanism now read: the label goes through the record draw at
+                // 0x0043d145..0x0043d15f, whose scale arg is the record's own
+                // [esi-0x18] (+0x14 scale). The original's settled s18 AND s24
+                // frames pass 0x3f4ccccd (0.8) on the cursor row and 0x3f147ae1
+                // (0.58) on the rest (call args at ret 0x0043d164 / 0x0043d10c,
+                // verify/scr19_parity_20261012/scr32_texty_recheck/
+                // orig_frame{18,24}.json). 0.8 is the record init value
+                // (MenuNavSM.cpp, 0x3f4ccccd). The 0.776 / 0.6 pair was an ink fit.
+                const float labCell =
+                    ((r == selRow) ? 0.8f : 0.58f) * 0.0708f * 480.f * kVScale;
+                // Value scale is a literal push: 0x3f051eb8 (0.52) on s18 at
+                // 0x0043b502 (call 0x00427e00 ret 0x0043b529), 0x3f147ae1 (0.58)
+                // on s24 at 0x0043b304 (ret 0x0043b32b). The same constant feeds
+                // the arrow call FUN_004282a0 right after each (0x0043b529 /
+                // 0x0043b32b), so the arrow measures with it too.
+                const float valCell = (sp ? 0.58f : 0.52f) * 0.0708f * 480.f * kVScale;
                 // DISABLED rows draw BLACK AT ALPHA 0x30, not full black. This
                 // block previously ignored availability entirely and drew every
                 // label/value at 0xff000000, so nothing ever greyed here.
@@ -6461,8 +6534,11 @@ bool RenderFrame() {
                 if (rows[r].value >= 0) {
                     wchar_t val[64];
                     if (GetMenuMessage(rows[r].value, val, 64) > 0)
-                        DrawMashedString(val, valRight * kVScale, cy * kVScale, cell,
+                        DrawMashedString(val, valRight * kVScale, cy * kVScale, valCell,
                                          valInk, false, 1.0f, /*anchor_right*/ true);
+                    // The arrow below still measures the value at the old 0.6
+                    // `cell`: its x formula was fitted at that width, and moving it
+                    // to valCell is a separate arrow-parity change.
                     // The "Arrow" sprite (BADGES.TXD, kHandleMenuArrow) just left
                     // of each value, matching FUN_0040bb50("Arrow",...). Width is
                     // estimated from the glyph count (no measure fn in-scope).
