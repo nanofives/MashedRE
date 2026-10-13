@@ -1,0 +1,80 @@
+0x0043bf00: int3    
+0x0043bf01: mov     dl, 0x43
+0x0043bf03: add     al, bl
+0x0043bf05: mov     dl, 0x43
+0x0043bf07: add     ah, ah
+0x0043bf09: mov     dl, 0x43
+0x0043bf0b: add     bl, bh
+0x0043bf0d: mov     bl, 0x43
+0x0043bf0f: add     byte ptr [eax], dh
+0x0043bf11: mov     ah, 0x43
+0x0043bf13: add     byte ptr [ebp - 0x4c], ah
+0x0043bf16: inc     ebx
+0x0043bf17: add     byte ptr [ebp - 0x47ffbc4c], ah
+0x0043bf1d: mov     ah, 0x43
+0x0043bf1f: add     ah, cl
+0x0043bf21: mov     ah, 0x43
+0x0043bf23: add     byte ptr [eax - 0x6f6f6f70], dl
+0x0043bf29: nop     
+0x0043bf2a: nop     
+0x0043bf2b: nop     
+0x0043bf2c: nop     
+0x0043bf2d: nop     
+0x0043bf2e: nop     
+0x0043bf2f: nop     
+0x0043bf30: mov     eax, dword ptr [0x67e7a8]  ; [0x0067e7a8] BSS
+0x0043bf35: test    eax, eax
+0x0043bf37: je      0x43bf3e
+0x0043bf39: call    0x4335f0
+0x0043bf3e: mov     eax, dword ptr [0x67e7d8]  ; [0x0067e7d8] BSS
+0x0043bf43: test    eax, eax
+0x0043bf45: je      0x43bf4c
+0x0043bf47: call    0x43a610
+0x0043bf4c: mov     eax, dword ptr [0x67e7b0]  ; [0x0067e7b0] BSS
+0x0043bf51: test    eax, eax
+0x0043bf53: je      0x43bf5a
+0x0043bf55: call    0x42f0c0
+0x0043bf5a: mov     eax, dword ptr [0x67e7f0]  ; [0x0067e7f0] BSS
+0x0043bf5f: test    eax, eax
+0x0043bf61: je      0x43bf68
+0x0043bf63: call    0x43af10
+0x0043bf68: mov     eax, dword ptr [0x67e7c8]  ; [0x0067e7c8] BSS
+0x0043bf6d: test    eax, eax
+0x0043bf6f: je      0x43bf76
+0x0043bf71: call    0x434720
+0x0043bf76: mov     eax, dword ptr [0x67e7f8]  ; [0x0067e7f8] BSS
+0x0043bf7b: test    eax, eax
+0x0043bf7d: je      0x43bf84
+0x0043bf7f: call    0x430b90
+0x0043bf84: mov     eax, dword ptr [0x67e838]  ; [0x0067e838] BSS
+0x0043bf89: test    eax, eax
+0x0043bf8b: je      0x43bf92
+0x0043bf8d: call    0x431240
+0x0043bf92: mov     eax, dword ptr [0x67e830]  ; [0x0067e830] BSS
+0x0043bf97: test    eax, eax
+0x0043bf99: je      0x43bfa0
+0x0043bf9b: call    0x4314b0
+0x0043bfa0: mov     eax, dword ptr [0x67e820]  ; [0x0067e820] BSS
+0x0043bfa5: test    eax, eax
+0x0043bfa7: je      0x43bfae
+0x0043bfa9: call    0x431710
+0x0043bfae: mov     eax, dword ptr [0x67e7e0]  ; [0x0067e7e0] BSS
+0x0043bfb3: test    eax, eax
+0x0043bfb5: je      0x43bfbc
+0x0043bfb7: call    0x43aa30
+0x0043bfbc: mov     eax, dword ptr [0x67e7e8]  ; [0x0067e7e8] BSS
+0x0043bfc1: test    eax, eax
+0x0043bfc3: je      0x43bfca
+0x0043bfc5: call    0x42fb70
+0x0043bfca: mov     eax, dword ptr [0x67e810]  ; [0x0067e810] BSS
+0x0043bfcf: test    eax, eax
+0x0043bfd1: je      0x43bfd8
+0x0043bfd3: call    0x42fe90
+0x0043bfd8: mov     eax, dword ptr [0x67e818]  ; [0x0067e818] BSS
+0x0043bfdd: test    eax, eax
+0x0043bfdf: je      0x43bfe6
+0x0043bfe1: call    0x430120
+0x0043bfe6: mov     eax, dword ptr [0x67e7b8]  ; [0x0067e7b8] BSS
+0x0043bfeb: test    eax, eax
+0x0043bfed: je      0x43bff4
+0x0043bfef: jmp     0x439210

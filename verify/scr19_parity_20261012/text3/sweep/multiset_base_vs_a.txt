@@ -1,0 +1,33 @@
+s 0 recs 238/238 only_base 0 only_a 0 same_order True
+s 1 recs 238/238 only_base 42 only_a 42 same_order False
+s 2 recs 206/206 only_base 42 only_a 42 same_order False
+s 3 recs 184/184 only_base 42 only_a 42 same_order False
+s 4 recs 190/190 only_base 42 only_a 42 same_order False
+s 5 recs 167/167 only_base 0 only_a 0 same_order True
+s 6 recs 272/272 only_base 1 only_a 1 same_order False
+s 7 recs 282/282 only_base 43 only_a 43 same_order False
+s 8 recs 220/220 only_base 42 only_a 42 same_order False
+s 9 recs 164/164 only_base 42 only_a 42 same_order False
+s10 recs 168/168 only_base 42 only_a 42 same_order False
+s11 recs 187/187 only_base 0 only_a 0 same_order True
+s12 recs 133/133 only_base 42 only_a 42 same_order False
+s13 recs 183/183 only_base 42 only_a 42 same_order False
+s14 recs 115/115 only_base 42 only_a 42 same_order False
+s15 recs 196/196 only_base 42 only_a 42 same_order False
+s16 recs 206/206 only_base 42 only_a 42 same_order False
+s17 recs 171/171 only_base 42 only_a 42 same_order False
+s18 recs 327/327 only_base 0 only_a 0 same_order False
+s19 recs 239/239 only_base 42 only_a 42 same_order False
+s20 recs 171/171 only_base 42 only_a 42 same_order False
+s21 recs 167/167 only_base 0 only_a 0 same_order True
+s22 recs 101/101 only_base 42 only_a 42 same_order False
+s23 recs 157/157 only_base 0 only_a 0 same_order True
+s24 recs 358/358 only_base 42 only_a 42 same_order False
+s25 recs 105/105 only_base 42 only_a 42 same_order False
+s26 recs 159/159 only_base 42 only_a 42 same_order False
+s28 recs 187/187 only_base 42 only_a 42 same_order False
+s29 recs 194/194 only_base 42 only_a 42 same_order False
+s30 recs 169/169 only_base 42 only_a 42 same_order False
+s31 recs 218/218 only_base 0 only_a 0 same_order True
+s32 recs 162/162 only_base 42 only_a 42 same_order False
+s33 recs 171/171 only_base 42 only_a 42 same_order False
