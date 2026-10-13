@@ -1,0 +1,11 @@
+[0x0067d830] live = 3f7fffff (0.9999999403953552); ctx+0x0c tracking = 0
+    id text       orig ret 0.7       port 0.7  port(div=1.0)  sa old 0.72  sa old @0.7 | ftol orig/port | arrow orig / port / sa-old
+  0x59 Off         29.79607582    29.79607582    29.79607391     30.64739     29.79607 |  29/ 29 | 411 / 411 / 417.65  bit-equal=True
+       check scale 0.72: orig 30.64739418 port 30.64739418 equal=True
+       check scale 0.6: orig 25.53949356 port 25.53949356 equal=True
+ 0x1b2 Auto        45.17469788    45.17469788    45.17469406     46.46540     45.17469 |  45/ 45 | 427 / 427 / 433.47  bit-equal=True
+       check scale 0.72: orig 46.46540833 port 46.46540833 equal=True
+       check scale 0.6: orig 38.72116852 port 38.72116852 equal=True
+ 0x1b1 Manual      75.93193817    75.93193817    75.93193054     78.10142     75.93193 |  75/ 75 | 457 / 457 / 465.10  bit-equal=True
+       check scale 0.72: orig 78.10141754 port 78.10141754 equal=True
+       check scale 0.6: orig 65.08451843 port 65.08451843 equal=True
