@@ -1,5 +1,22 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-13 D3 survey (back to the roadmap): **next = one of the three unblocked items below.**
+>
+> Worker survey (account2, claude-opus-5-5). D3 powerups and modes thirds are met. The AI third is open only on
+> criterion (b), the ctrl-byte bands per regime (ROADMAP.md:2177-2235, amendment :2190): default build regime A 2/3,
+> car 2 fails (`abs_steer` median 0, `verify/d3_b2flip_20261009/RESULT_B2FLIP.md`), regime B unscored (no labelled
+> original run), regime C 0/3 on one reference run. Car-1 residue D3-R1 owed before D5.
+> Top 3 unblocked:
+> 1. U-9219: the mode-7 refdist bridge gives car 2 refdist 0 on 74/201 frames (original 0/890). Capture the original's
+>    per-car refdist (`--c30-probe` refdist column), fix the bridge or port FUN_00442a60, re-score mode 7 and (b).
+>    `verify/d3_mode7_m4_20261010/RESULT_M4.md` §3.1.
+> 2. A labelled original regime-B run and a second regime-C run (extend `capture_breg.sh`, then the `MASHED_RING_SKIP`
+>    sweep). Without them (b) cannot pass in 2 of 3 regimes.
+> 3. Round-grid re-classify row + C3 leg for 0x00409290 (shared-TU body, run_diff, path2).
+>    `verify/d3_bulk_20261011/roundgrid/FIX_BRIEF.md:110-118`.
+> Pending user decisions: MASHED_ROUND_GRID (+_ORDER) default-ON (needs PATHPROG, which alone drops (b) to 0/3),
+> MASHED_AILEAF stack or default-ON, mode-7 knob defaults, G-EVQ D2-reopen candidate, the non-D3 bulk lane.
+
 > ## START HERE 2026-10-13 (standalone screen-19 settings widget GREEN): **next = the follow-ups below.**
 >
 > - No stale copies in the standalone: 0x00428610 is built into the exe (exe_file set), 0x00427ad0 / 0x00430b90 are
