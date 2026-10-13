@@ -15,8 +15,8 @@
 >   text fixes (prompt shadow 3.0, scr6/7 cup names, scr15 tabs, scr18/24 rows). All measured sites dy 0.
 
 > **Open**
-> - Text leftovers: scr18 label/value x +2.0/+3.5, scr18 value arrow still measures at 0.6, scr18 plates 1 px high,
->   call sites exe_main.cpp 5364 (scr4 digit, [UNCERTAIN] pairing), 5741 (team path), 5912 (player numbers).
+> - DONE 2026-10-13 (text2): scr18/24 label/value x, value arrows, plates; scr4/15/16 text sites. Left: scr18/24 arrow
+>   draw ORDER differs (needs reordering other subsystems), scr4 row count is live state [0x00772ffc] ([UNCERTAIN]).
 > - DONE 2026-10-13: screen-32 toggle arrow + value text ported from FUN_00431240 (widget GREEN at 0.01 px). The parity knob
 >   now pins autosave Off like the original. Left: scr32 value text 1 px low (y 240.0), L fixed at 356 (longer
 >   non-English labels would move it), and DECIDED (user 2026-10-13): the shipping autosave default stays On (only the parity knob pins Off).
