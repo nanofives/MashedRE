@@ -1,5 +1,23 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-13 (standalone screen-19 settings widget GREEN): **next = the follow-ups below.**
+>
+> - No stale copies in the standalone: 0x00428610 is built into the exe (exe_file set), 0x00427ad0 / 0x00430b90 are
+>   .asi-only and the exe draws those rows with its own code.
+> - Screen-19 draw-list diff vs the original: widget RED 14 -> 0 (strict, default, 0.01 px, both original captures).
+>   Bar box at rowY-7, fill gate from 0x005cc320, insults arrow by the original formula with a new exe
+>   `MeasureMenuMessage` (0x004282a0 twin, bit-equal 9/9), value text x 376 / scale 0.7. Screen 30 GREEN as a side effect.
+> - New knob `MASHED_SETTINGS_DEFAULTS=1` (default OFF): ignore `mashed_re_settings.bin` for parity runs, never saves.
+>   `parity_tooling.md` now says `--scale-b 1`.
+> - Notes: `re/analysis/negctl/session_20261012b/scr19_{parity,fix,arrow}_RESULT.md`, evidence `verify/scr19_parity_20261012/`.
+>
+> **Open**
+> - Screen-32 toggle arrow 0.93 px off (411.00 vs 410.07), same formula at 0x00431489: small fix with `MeasureMenuMessage`.
+> - U-9680 (low): derive `[0x0067d830]` / `[0x0067d834]` instead of the measured 0x3f7fffff.
+> - Fade alpha / early-out in the standalone widget (fix 3, not requested). The exit fade is uncaptured.
+> - `after_fix/sumdiff.py` keys checker noise on a fixed return address (0xb8202); key it on the map symbol.
+> - 0x00430b90 port text y 284 vs 285 (unchecked).
+
 > ## START HERE 2026-10-12c (triage B: 8 of 9 re-earned C3)
 >
 > Four children (bregargs, bnormalise, bworld, bnoreturn), path2 by the parent on the merged deployed build.

@@ -1,7 +1,30 @@
 {
   "title": "Mashed RE: greenfield source port",
-  "updatedAt": "2026-10-13T01:33:40Z",
+  "updatedAt": "2026-10-13T03:16:02Z",
   "sections": [
+    {
+      "heading": "Standalone parity 2026-10-13",
+      "fields": [
+        {
+          "label": "Screen 19 settings widget",
+          "kind": "text",
+          "value": "GREEN vs original (RED 14 -> 0)"
+        },
+        {
+          "label": "New knob",
+          "kind": "text",
+          "value": "MASHED_SETTINGS_DEFAULTS=1 (parity runs ignore mashed_re_settings.bin)"
+        },
+        {
+          "label": "Follow-ups",
+          "kind": "list",
+          "value": [
+            "Screen-32 toggle arrow 0.93 px",
+            "U-9680 font divisor derivation"
+          ]
+        }
+      ]
+    },
     {
       "heading": "Session 2026-10-12c (triage B)",
       "fields": [
