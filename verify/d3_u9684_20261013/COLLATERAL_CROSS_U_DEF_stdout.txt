@@ -1,5 +1,5 @@
-# arm A: csv:C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\f96bf912-d62f-4395-8013-b80c1f82831f\scratchpad\cut_o_p2b.csv(600 frames)
-# arm B: csv:C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\f96bf912-d62f-4395-8013-b80c1f82831f\scratchpad\cut_U_DEF.csv(600 frames)
+# arm A: csv:C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\f7669eed-c678-4c22-953d-d4cfe771e2f7\scratchpad\cut_o_p2b.csv(600 frames)
+# arm B: csv:C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\f7669eed-c678-4c22-953d-d4cfe771e2f7\scratchpad\cut_U_DEF.csv(600 frames)
 # noise floor: 259 fields, from 563 A-pair frames and 600 B-pair frames
 # anchor A: s.v2.substate ge 6 first at frame 829 -> rebased to 0
 # anchor B: s.v2.substate ge 6 first at frame 0 -> rebased to 0
@@ -179,4 +179,4 @@ s.v1.ai_mode           outside    1000-1500     37   70 |   1341.1    1280.5 |  
   A-only: 15 fields
   B-only: 150 fields: s.v1.arclaps  s.v1.arcpct  s.v1.arcprog  s.v1.b2_los  s.v1.b2_ret  s.v1.gate  s.v1.h4x  s.v1.h4y  s.v1.h4z  s.v1.h5x  s.v1.h5y  s.v1.h5z  s.v1.h6x  s.v1.h6y  s.v1.h6z  s.v1.h7x  s.v1.h7y  s.v1.h7z  s.v1.lap  s.v1.lap_9648  s.v1.look_best  s.v1.look_blk  s.v1.look_idx  s.v1.prog ...
 
-csv -> verify/d3_u9684_20261013\COLLATERAL_CROSS_U_DEF.txt
+csv -> verify\d3_u9684_20261013\COLLATERAL_CROSS_U_DEF.txt
