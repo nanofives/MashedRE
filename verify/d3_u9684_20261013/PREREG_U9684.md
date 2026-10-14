@@ -90,3 +90,18 @@ player now receives the impulse, so I predict the car-2 contact run reproduces w
 the exe's window starts on the grid with the cars bunched (no countdown, D-11073). I predict (b) does NOT improve
 and is worse in at least one regime, which would leave the producer default-OFF. That outcome is not decided here.
 The table above decides it.
+
+## 3. AMENDMENT 2026-10-13, written after G-LIVE failed and before the arms below were run
+
+G-LIVE on `U_TGT` FAILED as registered: the exe's car 2 has `FUN_00414a70` = 1 from its first call on the grid
+(27 calls), steers off the line and never makes the step-24 contact. First differing input (`S_TGT600.pathprog.csv`
+vs `o_tg1.msd.tgt.csv`): the player's progress `0x008a96e8` is 0.000862 (node 0) in the exe, 30.000 in the
+original. The AI cars' progress agrees. Per section 2, the knob stays default-OFF and U-9684 stays open, narrowed.
+
+Report-only diagnostic arms, to test whether that input is the only carrier. They do NOT change the section-2
+decision rule, and nothing below can flip a default: `ROUND_GRID` is a pending user decision.
+- `U_RG` = `MASHED_PATHPROG MASHED_ROUND_GRID MASHED_ROUND_GRID_ORDER`;
+  `U_TGT_RG` = the same plus `MASHED_TGT3` (+ trace, + `MASHED_PATHPROG_TRACE`). Both are existing knobs
+  (`verify/d3_bulk_20261011/roundgrid`), so no new forced input.
+- Read-outs: the player's progress on frame 1, then G-LIVE re-scored with the same bounds, and (b) per regime on
+  `B_TGT_RG_K*`.
