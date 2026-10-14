@@ -1,0 +1,1 @@
+G-P3-REPLAY pairs=5490 exact=5490 ret_mismatch=0 cand_mismatch=0 cand_touched_on_ret!=1=0 orig_ret0=5391 orig_ret1=63 orig_ret2=36 pc=24 rows_read=5490
