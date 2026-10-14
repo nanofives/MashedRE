@@ -105,3 +105,29 @@ decision rule, and nothing below can flip a default: `ROUND_GRID` is a pending u
   (`verify/d3_bulk_20261011/roundgrid`), so no new forced input.
 - Read-outs: the player's progress on frame 1, then G-LIVE re-scored with the same bounds, and (b) per regime on
   `B_TGT_RG_K*`.
+
+## 4. AMENDMENT 2, 2026-10-14, written after `U_TGT_RG` and before the arms below were run
+
+Resumed session (claude-opus-5-5). Re-run on a fresh build of `b5ed1601` (exe sha `C9123FB212E3`): G-SRC 16/16 x3,
+G-REPLAY 5,490/5,490, `U_DEF` = `U_DEF2` = `991a5fff / be0d47ea / bc75b405`, `U_TGT` = `U_TGT2` and `U_PP`, `U_RG` equal
+their WIP hashes. G-LIVE FAILS on `U_TGT` and on `U_TGT_RG`: car 2 returns 1 from its second call (frame 1) in both.
+
+`U_TGT_RG` puts all four cars on the original's frame-0 grid bit-exactly (player x/z `0.50093675 / -1.99903715` both
+sides, `o_tg1` row n 1 vs `U_TGT_RG.ptrace.log` f=1). Two player inputs of `FUN_00414a70` still differ from the
+original's car-2 call at frame 50 (`o_tg1` row n 4) onward:
+- position z: the original's player moves once, -1.99903715 -> -1.99894500 (+0.0000921) between frame 0 and frame 50
+  at speed 0, then rests; progress `0x008a96e8` becomes `0x41effff4` = 29.999977. The exe's player never moves
+  (z -1.99903715 on every ptrace row), progress stays 0.000000.
+- speed `0x00881f84 + i*0xd04` (= rec `+0x9e4`): original player 0.0 until the contact; exe player 0.638046 at rest
+  (`v9e4` in the ptrace, vel (0,0,0)).
+
+Report-only counterfactual arms, offline, through the G-REPLAY path (the verified naked body, `MASHED_TGT3_REPLAY`),
+no live forced input. Input = the `o_tg1.msd.tgt.csv` rows with frame < 45150 (before the player first moves), with
+the player's (car 0) recorded columns replaced by the exe's values:
+- `CF_PR`: `pr0` := `0x00000000`; `CF_Z`: `z0` := bits(-1.99903715); `CF_SP`: `sp0` := bits(0.638046);
+  `CF_ALL`: all three. `CF_NONE`: unmodified (the control, must give 0 mismatches).
+- Statistic per arm: the replay's `ret_mismatch` count, and the car-2 rows whose return flips 0 -> 1.
+- Prediction (before the run): `CF_PR` and `CF_ALL` flip car 2 to 1 on its early calls, `CF_SP` and `CF_Z` alone
+  do not. Not tested before, so this is a guess, recorded so the result can refute it.
+- Decision: none of these can flip a default. They only name which input carries car 2's early return of 1, for the
+  U-9684 narrowing. Porting the player's grid settle is a D2-physics change and needs the user's decision.
