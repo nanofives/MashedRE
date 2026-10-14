@@ -1,13 +1,18 @@
 # Next session kickoff
 
-> ## PAUSED 2026-10-13: U-9684 post-contact AI braking (claude2 tokens exhausted, user paused the children)
+> ## START HERE 2026-10-14 U-9684 (post-contact AI brake): producer found, kept default-OFF, **next = user decisions below.**
 >
-> Worktree `.worktrees/u9684`, branch `work/u9684`, NOT merged. Commits: adc86b49 (pre-registration), a8f364e7 (PREREG
-> amendment: G-LIVE failed, report-only round-grid diagnostic arms added, unrun), b5ed1601 (WIP: the uncommitted
-> evidence so far, unverified, committed by the orchestrator when pausing). Brief:
-> `re/orchestrator_briefs/d3_u9684_brief.txt`. Resume: spawn a claude2 child (model "opus",
-> verify claude-opus-5-5 first) on the same worktree, tell it to read the PREREG + amendment + its WIP evidence and
-> continue from G-LIVE. The child's stopped session is cmv7cqagc9430rp1uon8qt0e8 (left un-archived for resume).
+> `verify/d3_u9684_20261013/RESULT_U9684.md` (merged 88cacb0c, evidence only, no code change). The brake is FUN_00414a70
+> returning 1 -> FUN_00416250 mode 3 (0x00416394) -> band rules (c1/c4/c5 = 255 at 0x00416863..0x00416885, c0 ramp
+> 0x00416738..0x00416758). It is ALREADY ported (Ai/AiTargetClosest.cpp) behind MASHED_TGT3 + MASHED_PATHPROG, default OFF.
+> G-SRC 16/16, G-REPLAY 5490/5490 exact, but G-LIVE FAILS: the exe's car 2 targets the player from its 2nd grid call and
+> never makes the contact, because the parked player's progress [0x008a96e8] is 0.0 in the exe and 29.999977 in the
+> original (the original's player settles +0.0000921 z on its first step, the exe's never moves; counterfactual: swapping
+> only player progress flips 790/791 calls). With TGT on, (b) gets worse (A 0/3, B 0/3) and collateral 41/97 vs 39/94.
+> Default unchanged (G-CTRL 991a5fff / be0d47ea / bc75b405).
+> Decisions: open a row for the player at rest (first-step settle, +0x9e4 reads 0.638 at rest vs 0.0); it is a
+> player-physics change on the D2 watch list. Do not run more U-9684 arms until that is fixed. MASHED_ROUND_GRID fixes
+> the round-1 grid bit-exactly but not car 2's early targeting.
 
 > ## START HERE 2026-10-13 D3 results (items 1+2 run): **decisions taken; car-2 opening-pickup miss fixed and merged; next = the candidates in the last bullet.**
 >
