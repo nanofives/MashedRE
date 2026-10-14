@@ -1,5 +1,14 @@
 # Next session kickoff
 
+> ## PAUSED 2026-10-13: U-9684 post-contact AI braking (claude2 tokens exhausted, user paused the children)
+>
+> Worktree `.worktrees/u9684`, branch `work/u9684`, NOT merged. Commits: adc86b49 (pre-registration), a8f364e7 (PREREG
+> amendment: G-LIVE failed, report-only round-grid diagnostic arms added, unrun), b5ed1601 (WIP: the uncommitted
+> evidence so far, unverified, committed by the orchestrator when pausing). Brief:
+> `re/orchestrator_briefs/d3_u9684_brief.txt`. Resume: spawn a claude2 child (model "opus",
+> verify claude-opus-5-5 first) on the same worktree, tell it to read the PREREG + amendment + its WIP evidence and
+> continue from G-LIVE. The child's stopped session is cmv7cqagc9430rp1uon8qt0e8 (left un-archived for resume).
+
 > ## START HERE 2026-10-13 D3 results (items 1+2 run): **decisions taken; car-2 opening-pickup miss fixed and merged; next = the candidates in the last bullet.**
 >
 > - **U-9219 premise REFUTED** (`verify/d3_u9219_20261013/RESULT_U9219.md`, merged 2026-10-13, no code-behaviour
