@@ -1,3 +1,4 @@
-G-CTRL default build, branch work/fe_residuals_b at 017fc698 + nothing (run_h4_wt.ps1 F_NEW, private MASHED_ROOT gameroot copy):
-step 991a5fff  gates be0d47ea  ptrace bc75b405   (matches memory default-ctrl-hashes-after-b2-flip)
-Large logs (step/gates/ptrace) not committed.
+G-CTRL default build via run_h4_wt.ps1 F_NEW, private MASHED_ROOT copy.
+before (017fc698 code): step 991a5fff gates be0d47ea ptrace bc75b405
+after (final tree, exe sha256 EBBDF39C...): step 991a5fff gates be0d47ea ptrace bc75b405
+Large logs not committed.

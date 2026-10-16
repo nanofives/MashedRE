@@ -1,20 +1,38 @@
 # RESULT fe_residuals (2026-10-16, model claude-sonnet-5-5)
 
 Base: 017fc6984c4d0240cf4346c6b78d0ab707aadc36 (= race/first-frame-parity). Branch work/fe_residuals_b, worktree .worktrees/fe_residuals.
-The prepared worktree .claude/worktrees/fe_residuals (branch work/fe_residuals) was locked by live claude pid 13016 (EnterWorktree refused), so a fresh worktree was made.
+The prepared worktree .claude/worktrees/fe_residuals (branch work/fe_residuals) was locked by live claude pid 13016 (EnterWorktree refused), so a fresh
+worktree and branch were made. The prepared one was left untouched.
 
-## STATUS: PARTIAL. Item 2 narrowed (one small fix committed). Items 1 and 3 NOT STARTED.
-No standalone build, no original-side capture, no G-CTRL run was done. Default build behaviour is unchanged (no .cpp touched).
+## G-CTRL (default build, run_h4_wt.ps1 F_NEW, private MASHED_ROOT gameroot)
+Before any change (017fc698 code): 991a5fff / be0d47ea / bc75b405. After all three items (final tree): 991a5fff / be0d47ea / bc75b405.
+Note: the exe chdirs into MASHED_ROOT, so a worktree run with MASHED_ROOT = the main checkout writes mashed_re.log / player_trace.log into the
+shared main checkout (a first run did, before it was noticed). All later runs used a private copy of original\ (~480 MB) as MASHED_ROOT.
 
-## Item 2 / U-9680: static derivation (Ghidra slot Mashed_pool1, read-only), not yet a replacement for 0x3f7fffff
-- FUN_004275d0 (0x004275d0): FUN_00552a60(p), FUN_00552d10, FUN_00552750, u=FUN_00553ef0, FUN_00552920(u), FUN_00553cf0(u,&0x0067d828), ...
-- FUN_00553cf0 (0x00553cf0) fills float[4] at 0x0067d828: [0]=min x, [1]=min y, [2]=max x - min x (final 0x00553dd?), [3]=max y - min y. So 0x0067d830 = bbox WIDTH and 0x0067d834 = bbox HEIGHT of the path built by FUN_00552920 (bbox per path: FUN_00553c50, points at stride 6 floats).
-- FUN_00552920 (0x00552920): rectangle corners at +-0.5 ([0x005cd50c]=0xbf000000, [0x005cc32c]=0x3f000000) times DAT_00912b08/0c (width/height) times s, s = 1.0 if [[0x00912c0c]+0x14]==2 else DAT_00912be0 (only write 0x00552c48 = 0x3f800000). The 4 points then go through the RW function at *(DAT_007d3ffc+0xc+DAT_007d3ff8) (FUN_004c3d90) with matrix DAT_00912b58 built by FUN_00552e40.
-- DAT_00912b08/0c = 2 * camera view window x/y (0x00552a99; FUN_00552a60 reads [cam+0x68]/[cam+0x6c]). Frontend view window is 0.8 (exe_main.cpp comment), so the untransformed rectangle is 1.6 wide; 0x3f7fffff must come from the matrix/transform (FUN_00552e40 builds it from FUN_004c4600/4c5010/4c51a0/4c4dc0 and the camera matrix via FUN_004c0ed0). I did NOT decode those, so the 1-ulp-below-1.0 value is not derived.
-- Conclusion: the value is a function of the frontend camera view window (not a font constant); it is the same for x and y at view window 0.8x0.8. The measured 0x3f7fffff stays in exe_main.cpp:2898. Proposed U-9680 narrowing (tracker NOT edited): "divisors are bbox width/height of FUN_00552920's rectangle through FUN_00552e40's matrix; owed: decode FUN_004c4600/4c5010/4c51a0/4c4dc0 + FUN_004c0ed0 and the RW transform to reproduce 0x3f7fffff bit-exactly; other screens use the same camera so no per-screen variation expected [UNCERTAIN, unprobed]".
+## Item 2 (U-9680 and residues): CLOSED, commits ccb5548a, 0b46d491 (and e3ef411b, the earlier partial)
+- U-9680: [0x0067d830] / [0x0067d834] derived. Probe (verify/fe_residuals_20261016/u9680/rect_probe.py, original, read-only): view window 0x3f4ccccd,
+  DAT_00912b08/0c 0x3fcccccd, DAT_00912b18 = diag(-1.6,1.6,1) pos(0.8,-0.8), DAT_00912b58 (cofactor inverse, flag word 0) diag(-0.62499994,0.62499994)
+  pos(0.49999997). The ported RwMatrixInvert reproduces all 16 words at PC_24 (inv_test.cpp); the rectangle corners +-0.8 map to a 0x3f7fffff-wide box.
+  exe_main.cpp `DeriveMenuMeasureDiv` computes it (0x3f7fffff at PC_24 and PC_64, derive_test.cpp). Standalone draw lists for screens 19/30/32 are
+  byte-identical to the pre-change build except the animated logo-overlay rows (sa_ctrl_* vs sa_new_*). Row closed in UNCERTAINTIES.md, CHANGELOG line added.
+- scr32 value text y 240.0 and scr19 value text y 285.0 (the 0x00430b90 row): fresh original captures (text/orig_frame{19,32}.json, text_frame_probe.py)
+  vs the current build, text_quad_diff.py: 103 and 71 glyphs, dy 0.0000. The NEXT_SESSION notes predate the 2026-10-13 text-y anchor fix. No code change.
+- sumdiff.py keys the LogoOverlayDraw checker on the map symbol with --map (not run against a map; no-map output unchanged).
+- Whole-screen drawlist_diff vs the original is RED on this base for reasons present before the change (the logo overlay and the order of 14 draws);
+  ctrl and new builds give identical diffs, so the change is neutral (u9680/diff_orig_vs_{ctrl,new}_*.txt, diff_cur_*.txt).
 
-## Item 2 residue: sumdiff.py (done, commit below)
-verify/scr19_parity_20261012/after_fix/sumdiff.py: the fixed 0xb8202 return-address filter is now keyed on the map symbol LogoOverlayDraw when run with `--map <mashed_re.map>` (reuses re/tools/drawlist_diff.load_msvc_map); the old dead `'LogoOverlayDraw' in json.dumps(r)` test (JSON has no symbols) is gone. Without --map it falls back to 0xb8202. NOT verified with a map (no .map on disk, no build run); verified only that the no-map path gives the same output as before on diff_orig1_vs_sa_on.json (matched=135, other=2).
-Not done: scr32 value text 1 px low, 0x00430b90 port text y 284 vs 285 (both need original captures + standalone runs).
+## Item 1 (U-9672): NARROWED, commit 9ff28b50
+Done: screens 20/23 captured on the original; one real defect fixed (0xff4c0000 on screen 23 now pushes screen 1, slot kind = screen id); single-OK
+refusal popups 0x24f (no opponents) and 0xd6..0xd9 (team composition) open; key repeat on hold for screens 6/7 matches the original timeline
+(first repeat 0.4 s, then 0.2 s). Not done, each named with its bytes in u9672/RESULT.md section E and the U-9672 row: push-6 side writes
+(consumers: screen-6 overlay state), the `DAT_00898ab0 == 0` input gate (writers not decoded), the refusal sound and the `_DAT_0067e840` overlay ramp
+(sound source not located), rows 8..12 vs 8 cup tracks. mashedmod\run_tests.bat: navsm / ruleengine / racemodes GREEN; menustr / badges FAIL only for
+lack of original\TOASTART in the worktree.
 
-## Item 1 / U-9672 (3 sub-items) and Item 3 / collision-FX re-measure: not started. Needs original captures / race runs.
+## Item 3 (collision FX re-measure): DONE, commit 695724f3
+verify/fe_residuals_20261016/fx/RESULT_FX.md. Original-side: only the spark path has a counterpart (24 bursts / 115 particles in about 45 s of a 4-car
+race, FUN_004864f0 / 00486370 / 00486610 entry counters); skids have no original counterpart. Default build, 240 s: skids/slot 1027 / 2519 / 12668 / 16959,
+sparks 392 / 302 / 1498 / 1728, pool peak 1200 of 1200, median 188. Cause: EmitCarFx received the chain's internal-unit speed (about 389x the world
+step; |dpos|/dt / sp = 0.00257 over 3449 frames). Fixed from the position step: skids 62 / 815 / 5139 / 5489, sparks 2 / 4 / 15 / 32, pool peak 598, median
+110. Baseline compared against for skids/pool: the 2026-08-15 standalone numbers (772/358/241/378; peak 175, median 130), a different race length and
+track. Residual: AI slots 2/3 still over-emit skids (14-22x that baseline); thresholds untouched.
