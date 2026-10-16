@@ -1,0 +1,33 @@
+== B0 vs N0 (exe1, knobs unset)
+training:884 bytes-identical
+training:924 bytes-identical
+training:959 bytes-identical
+arctic:1051 bytes-identical
+arctic:1091 bytes-identical
+arctic:1126 bytes-identical
+city:761 bytes-identical
+city:801 bytes-identical
+city:836 bytes-identical
+identical (excl t): 9/9
+== B0 vs O2 (exe2, all five knobs =0)
+training:884 bytes-identical
+training:924 bytes-identical
+training:959 bytes-identical
+arctic:1051 bytes-identical
+arctic:1091 bytes-identical
+arctic:1126 bytes-identical
+city:761 bytes-identical
+city:801 bytes-identical
+city:836 bytes-identical
+identical (excl t): 9/9
+== S5 (exe1, all knobs =1) vs D2 (exe2 default)
+training:884 bytes-identical
+training:924 bytes-identical
+training:959 bytes-identical
+arctic:1051 bytes-identical
+arctic:1091 bytes-identical
+arctic:1126 bytes-identical
+city:761 bytes-identical
+city:801 bytes-identical
+city:836 bytes-identical
+identical (excl t): 9/9

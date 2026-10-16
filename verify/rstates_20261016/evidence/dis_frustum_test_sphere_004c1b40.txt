@@ -1,0 +1,41 @@
+0x004c1b40  8b 44 24 04               mov eax, dword ptr [esp + 4]
+0x004c1b44  8b 54 24 08               mov edx, dword ptr [esp + 8]
+0x004c1b48  56                        push esi
+0x004c1b49  57                        push edi
+0x004c1b4a  bf 02 00 00 00            mov edi, 2
+0x004c1b4f  8d 88 94 00 00 00         lea ecx, [eax + 0x94]
+0x004c1b55  be 06 00 00 00            mov esi, 6
+0x004c1b5a  d9 41 04                  fld dword ptr [ecx + 4]
+0x004c1b5d  d8 4a 04                  fmul dword ptr [edx + 4]
+0x004c1b60  4e                        dec esi
+0x004c1b61  d9 01                     fld dword ptr [ecx]
+0x004c1b63  d8 0a                     fmul dword ptr [edx]
+0x004c1b65  de c1                     faddp st(1)
+0x004c1b67  d9 41 08                  fld dword ptr [ecx + 8]
+0x004c1b6a  d8 4a 08                  fmul dword ptr [edx + 8]
+0x004c1b6d  de c1                     faddp st(1)
+0x004c1b6f  d8 61 0c                  fsub dword ptr [ecx + 0xc]
+0x004c1b72  d8 52 0c                  fcom dword ptr [edx + 0xc]
+0x004c1b75  df e0                     fnstsw ax
+0x004c1b77  25 00 41 00 00            and eax, 0x4100
+0x004c1b7c  74 23                     je 0x4c1ba1
+0x004c1b7e  d9 42 0c                  fld dword ptr [edx + 0xc]
+0x004c1b81  d9 e0                     fchs 
+0x004c1b83  d9 c9                     fxch st(1)
+0x004c1b85  de d9                     fcompp 
+0x004c1b87  df e0                     fnstsw ax
+0x004c1b89  25 00 41 00 00            and eax, 0x4100
+0x004c1b8e  75 05                     jne 0x4c1b95
+0x004c1b90  bf 01 00 00 00            mov edi, 1
+0x004c1b95  83 c1 14                  add ecx, 0x14
+0x004c1b98  85 f6                     test esi, esi
+0x004c1b9a  75 be                     jne 0x4c1b5a
+0x004c1b9c  8b c7                     mov eax, edi
+0x004c1b9e  5f                        pop edi
+0x004c1b9f  5e                        pop esi
+0x004c1ba0  c3                        ret 
+0x004c1ba1  5f                        pop edi
+0x004c1ba2  33 c0                     xor eax, eax
+0x004c1ba4  dd d8                     fstp st(0)
+0x004c1ba6  5e                        pop esi
+0x004c1ba7  c3                        ret 

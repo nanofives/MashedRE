@@ -1,0 +1,121 @@
+0x004e6100  51                        push ecx
+0x004e6101  56                        push esi
+0x004e6102  57                        push edi
+0x004e6103  8b 7c 24 10               mov edi, dword ptr [esp + 0x10]
+0x004e6107  8a 47 4c                  mov al, byte ptr [edi + 0x4c]
+0x004e610a  8b 77 04                  mov esi, dword ptr [edi + 4]
+0x004e610d  a8 02                     test al, 2
+0x004e610f  74 09                     je 0x4e611a
+0x004e6111  57                        push edi
+0x004e6112  e8 a9 fe ff ff            call 0x4e5fc0
+0x004e6117  83 c4 04                  add esp, 4
+0x004e611a  56                        push esi
+0x004e611b  e8 f0 a9 fd ff            call 0x4c0b10
+0x004e6120  83 c4 04                  add esp, 4
+0x004e6123  85 c0                     test eax, eax
+0x004e6125  75 0a                     jne 0x4e6131
+0x004e6127  f6 47 03 01               test byte ptr [edi + 3], 1
+0x004e612b  0f 84 0f 01 00 00         je 0x4e6240
+0x004e6131  56                        push esi
+0x004e6132  e8 99 ad fd ff            call 0x4c0ed0
+0x004e6137  8b f0                     mov esi, eax
+0x004e6139  8d 47 1c                  lea eax, [edi + 0x1c]
+0x004e613c  56                        push esi
+0x004e613d  8d 4f 2c                  lea ecx, [edi + 0x2c]
+0x004e6140  50                        push eax
+0x004e6141  51                        push ecx
+0x004e6142  e8 19 dc fd ff            call 0x4c3d60
+0x004e6147  8b 56 0c                  mov edx, dword ptr [esi + 0xc]
+0x004e614a  83 c4 10                  add esp, 0x10
+0x004e614d  83 e2 03                  and edx, 3
+0x004e6150  80 fa 03                  cmp dl, 3
+0x004e6153  0f 84 d9 00 00 00         je 0x4e6232
+0x004e6159  d9 46 04                  fld dword ptr [esi + 4]
+0x004e615c  d9 06                     fld dword ptr [esi]
+0x004e615e  d9 46 08                  fld dword ptr [esi + 8]
+0x004e6161  d9 c1                     fld st(1)
+0x004e6163  d8 ca                     fmul st(2)
+0x004e6165  d9 c3                     fld st(3)
+0x004e6167  d8 cc                     fmul st(4)
+0x004e6169  de c1                     faddp st(1)
+0x004e616b  d9 c1                     fld st(1)
+0x004e616d  d8 ca                     fmul st(2)
+0x004e616f  de c1                     faddp st(1)
+0x004e6171  dd db                     fstp st(3)
+0x004e6173  dd d8                     fstp st(0)
+0x004e6175  dd d8                     fstp st(0)
+0x004e6177  d9 46 14                  fld dword ptr [esi + 0x14]
+0x004e617a  d9 46 10                  fld dword ptr [esi + 0x10]
+0x004e617d  d9 46 18                  fld dword ptr [esi + 0x18]
+0x004e6180  d9 c1                     fld st(1)
+0x004e6182  d8 ca                     fmul st(2)
+0x004e6184  d9 c3                     fld st(3)
+0x004e6186  d8 cc                     fmul st(4)
+0x004e6188  de c1                     faddp st(1)
+0x004e618a  d9 c1                     fld st(1)
+0x004e618c  d8 ca                     fmul st(2)
+0x004e618e  de c1                     faddp st(1)
+0x004e6190  d9 5c 24 10               fstp dword ptr [esp + 0x10]
+0x004e6194  dd d8                     fstp st(0)
+0x004e6196  dd d8                     fstp st(0)
+0x004e6198  dd d8                     fstp st(0)
+0x004e619a  d9 46 24                  fld dword ptr [esi + 0x24]
+0x004e619d  d9 46 20                  fld dword ptr [esi + 0x20]
+0x004e61a0  d9 46 28                  fld dword ptr [esi + 0x28]
+0x004e61a3  d9 c1                     fld st(1)
+0x004e61a5  d8 ca                     fmul st(2)
+0x004e61a7  d9 c3                     fld st(3)
+0x004e61a9  d8 cc                     fmul st(4)
+0x004e61ab  de c1                     faddp st(1)
+0x004e61ad  d9 c1                     fld st(1)
+0x004e61af  d8 ca                     fmul st(2)
+0x004e61b1  de c1                     faddp st(1)
+0x004e61b3  d9 5c 24 08               fstp dword ptr [esp + 8]
+0x004e61b7  dd d8                     fstp st(0)
+0x004e61b9  dd d8                     fstp st(0)
+0x004e61bb  dd d8                     fstp st(0)
+0x004e61bd  d9 44 24 10               fld dword ptr [esp + 0x10]
+0x004e61c1  d8 5c 24 08               fcomp dword ptr [esp + 8]
+0x004e61c5  df e0                     fnstsw ax
+0x004e61c7  25 00 01 00 00            and eax, 0x100
+0x004e61cc  75 06                     jne 0x4e61d4
+0x004e61ce  d9 44 24 10               fld dword ptr [esp + 0x10]
+0x004e61d2  eb 04                     jmp 0x4e61d8
+0x004e61d4  d9 44 24 08               fld dword ptr [esp + 8]
+0x004e61d8  d9 c1                     fld st(1)
+0x004e61da  de d9                     fcompp 
+0x004e61dc  df e0                     fnstsw ax
+0x004e61de  25 00 01 00 00            and eax, 0x100
+0x004e61e3  75 06                     jne 0x4e61eb
+0x004e61e5  d9 5c 24 10               fstp dword ptr [esp + 0x10]
+0x004e61e9  eb 25                     jmp 0x4e6210
+0x004e61eb  dd d8                     fstp st(0)
+0x004e61ed  d9 44 24 10               fld dword ptr [esp + 0x10]
+0x004e61f1  d8 5c 24 08               fcomp dword ptr [esp + 8]
+0x004e61f5  df e0                     fnstsw ax
+0x004e61f7  25 00 01 00 00            and eax, 0x100
+0x004e61fc  75 0a                     jne 0x4e6208
+0x004e61fe  8b 44 24 10               mov eax, dword ptr [esp + 0x10]
+0x004e6202  89 44 24 10               mov dword ptr [esp + 0x10], eax
+0x004e6206  eb 08                     jmp 0x4e6210
+0x004e6208  8b 4c 24 08               mov ecx, dword ptr [esp + 8]
+0x004e620c  89 4c 24 10               mov dword ptr [esp + 0x10], ecx
+0x004e6210  8b 54 24 10               mov edx, dword ptr [esp + 0x10]
+0x004e6214  52                        push edx
+0x004e6215  e8 16 d9 fd ff            call 0x4c3b30
+0x004e621a  d8 4f 28                  fmul dword ptr [edi + 0x28]
+0x004e621d  8a 47 03                  mov al, byte ptr [edi + 3]
+0x004e6220  83 c4 04                  add esp, 4
+0x004e6223  24 fe                     and al, 0xfe
+0x004e6225  88 47 03                  mov byte ptr [edi + 3], al
+0x004e6228  8d 47 2c                  lea eax, [edi + 0x2c]
+0x004e622b  d9 5f 38                  fstp dword ptr [edi + 0x38]
+0x004e622e  5f                        pop edi
+0x004e622f  5e                        pop esi
+0x004e6230  59                        pop ecx
+0x004e6231  c3                        ret 
+0x004e6232  8b 47 28                  mov eax, dword ptr [edi + 0x28]
+0x004e6235  89 47 38                  mov dword ptr [edi + 0x38], eax
+0x004e6238  8a 47 03                  mov al, byte ptr [edi + 3]
+0x004e623b  24 fe                     and al, 0xfe
+0x004e623d  88 47 03                  mov byte ptr [edi + 3], al

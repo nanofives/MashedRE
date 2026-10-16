@@ -1,0 +1,25 @@
+== cell boxes (FUN_004e51e0)
+training:884 EXACT orig=[22, 16, 18, 7, 5, 11, 13, 3, 0] model=[22, 16, 18, 7, 5, 11, 13, 3, 0]
+training:924 EXACT orig=[7, 5, 11, 13, 3, 0, 22, 16, 18] model=[7, 5, 11, 13, 3, 0, 22, 16, 18]
+training:959 EXACT orig=[7, 5, 11, 13, 3, 0, 22, 16, 18] model=[7, 5, 11, 13, 3, 0, 22, 16, 18]
+arctic:1051 EXACT orig=[5, 4, 3, 2, 0, 9, 8, 10] model=[5, 4, 3, 2, 0, 9, 8, 10]
+arctic:1091 EXACT orig=[5, 4, 3, 2, 0, 10, 9, 8] model=[5, 4, 3, 2, 0, 10, 9, 8]
+arctic:1126 EXACT orig=[5, 4, 3, 2, 0, 10, 9, 8] model=[5, 4, 3, 2, 0, 10, 9, 8]
+city:761 EXACT orig=[2, 3, 4, 1, 5, 6] model=[2, 3, 4, 1, 5, 6]
+city:801 EXACT orig=[4, 2, 3, 1, 5, 6] model=[4, 2, 3, 1, 5, 6]
+city:836 EXACT orig=[6, 4, 2, 3, 1, 5] model=[6, 4, 2, 3, 1, 5]
+EXACT 9/9 (box cell, skip planes ())
+== stream boxes
+training:884 EXACT orig=[22, 16, 18, 7, 5, 11, 13, 3, 0] model=[22, 16, 18, 7, 5, 11, 13, 3, 0]
+training:924 EXACT orig=[7, 5, 11, 13, 3, 0, 22, 16, 18] model=[7, 5, 11, 13, 3, 0, 22, 16, 18]
+training:959 EXACT orig=[7, 5, 11, 13, 3, 0, 22, 16, 18] model=[7, 5, 11, 13, 3, 0, 22, 16, 18]
+arctic:1051 DIFFER orig=[5, 4, 3, 2, 0, 9, 8, 10] model=[5, 4, 3, 2, 9, 8, 10]
+    only orig [0] only model [] common-order-equal True
+arctic:1091 DIFFER orig=[5, 4, 3, 2, 0, 10, 9, 8] model=[5, 4, 3, 2, 10, 9, 8]
+    only orig [0] only model [] common-order-equal True
+arctic:1126 DIFFER orig=[5, 4, 3, 2, 0, 10, 9, 8] model=[5, 4, 3, 2, 10, 9, 8]
+    only orig [0] only model [] common-order-equal True
+city:761 EXACT orig=[2, 3, 4, 1, 5, 6] model=[2, 3, 4, 1, 5, 6]
+city:801 EXACT orig=[4, 2, 3, 1, 5, 6] model=[4, 2, 3, 1, 5, 6]
+city:836 EXACT orig=[6, 4, 2, 3, 1, 5] model=[6, 4, 2, 3, 1, 5]
+EXACT 6/9 (box stream, skip planes ())

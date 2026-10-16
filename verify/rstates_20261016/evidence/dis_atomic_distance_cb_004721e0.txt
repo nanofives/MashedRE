@@ -1,0 +1,104 @@
+0x004721e0  a1 f8 3f 7d 00            mov eax, dword ptr [0x7d3ff8]
+0x004721e5  83 ec 0c                  sub esp, 0xc
+0x004721e8  53                        push ebx
+0x004721e9  8b 5c 24 14               mov ebx, dword ptr [esp + 0x14]
+0x004721ed  55                        push ebp
+0x004721ee  8b 28                     mov ebp, dword ptr [eax]
+0x004721f0  56                        push esi
+0x004721f1  57                        push edi
+0x004721f2  53                        push ebx
+0x004721f3  e8 08 3f 07 00            call 0x4e6100
+0x004721f8  8b 0d d4 ec 86 00         mov ecx, dword ptr [0x86ecd4]
+0x004721fe  8d 34 19                  lea esi, [ecx + ebx]
+0x00472201  8b f8                     mov edi, eax
+0x00472203  8b 06                     mov eax, dword ptr [esi]
+0x00472205  83 c4 04                  add esp, 4
+0x00472208  3d 00 00 80 bf            cmp eax, 0xbf800000
+0x0047220d  75 27                     jne 0x472236
+0x0047220f  f6 43 4c 02               test byte ptr [ebx + 0x4c], 2
+0x00472213  74 09                     je 0x47221e
+0x00472215  53                        push ebx
+0x00472216  e8 a5 3d 07 00            call 0x4e5fc0
+0x0047221b  83 c4 04                  add esp, 4
+0x0047221e  68 36 61 82 37            push 0x37826136
+0x00472223  e8 08 19 05 00            call 0x4c3b30
+0x00472228  d8 7b 28                  fdivr dword ptr [ebx + 0x28]
+0x0047222b  83 c4 04                  add esp, 4
+0x0047222e  d9 c0                     fld st(0)
+0x00472230  d8 c9                     fmul st(1)
+0x00472232  d9 1e                     fstp dword ptr [esi]
+0x00472234  dd d8                     fstp st(0)
+0x00472236  8b 45 04                  mov eax, dword ptr [ebp + 4]
+0x00472239  d9 40 40                  fld dword ptr [eax + 0x40]
+0x0047223c  d8 27                     fsub dword ptr [edi]
+0x0047223e  d9 40 44                  fld dword ptr [eax + 0x44]
+0x00472241  d8 67 04                  fsub dword ptr [edi + 4]
+0x00472244  d9 40 48                  fld dword ptr [eax + 0x48]
+0x00472247  8b 46 08                  mov eax, dword ptr [esi + 8]
+0x0047224a  85 c0                     test eax, eax
+0x0047224c  d8 67 08                  fsub dword ptr [edi + 8]
+0x0047224f  d9 c1                     fld st(1)
+0x00472251  d8 ca                     fmul st(2)
+0x00472253  d9 c3                     fld st(3)
+0x00472255  d8 cc                     fmul st(4)
+0x00472257  de c1                     faddp st(1)
+0x00472259  d9 c1                     fld st(1)
+0x0047225b  d8 ca                     fmul st(2)
+0x0047225d  de c1                     faddp st(1)
+0x0047225f  d8 4d 68                  fmul dword ptr [ebp + 0x68]
+0x00472262  dd db                     fstp st(3)
+0x00472264  dd d8                     fstp st(0)
+0x00472266  dd d8                     fstp st(0)
+0x00472268  74 22                     je 0x47228c
+0x0047226a  8b 50 18                  mov edx, dword ptr [eax + 0x18]
+0x0047226d  dd d8                     fstp st(0)
+0x0047226f  6a 01                     push 1
+0x00472271  52                        push edx
+0x00472272  53                        push ebx
+0x00472273  e8 28 46 07 00            call 0x4e68a0
+0x00472278  53                        push ebx
+0x00472279  ff 15 d0 ec 86 00         call dword ptr [0x86ecd0]
+0x0047227f  83 c4 10                  add esp, 0x10
+0x00472282  5f                        pop edi
+0x00472283  5e                        pop esi
+0x00472284  5d                        pop ebp
+0x00472285  8b c3                     mov eax, ebx
+0x00472287  5b                        pop ebx
+0x00472288  83 c4 0c                  add esp, 0xc
+0x0047228b  c3                        ret 
+0x0047228c  d8 16                     fcom dword ptr [esi]
+0x0047228e  df e0                     fnstsw ax
+0x00472290  f6 c4 05                  test ah, 5
+0x00472293  7a 3f                     jp 0x4722d4
+0x00472295  d9 5c 24 10               fstp dword ptr [esp + 0x10]
+0x00472299  8b 46 04                  mov eax, dword ptr [esi + 4]
+0x0047229c  85 c0                     test eax, eax
+0x0047229e  74 20                     je 0x4722c0
+0x004722a0  d9 06                     fld dword ptr [esi]
+0x004722a2  8d 4c 24 10               lea ecx, [esp + 0x10]
+0x004722a6  d8 0d 2c c3 5c 00         fmul dword ptr [0x5cc32c]
+0x004722ac  51                        push ecx
+0x004722ad  53                        push ebx
+0x004722ae  d9 5c 24 20               fstp dword ptr [esp + 0x20]
+0x004722b2  8b 06                     mov eax, dword ptr [esi]
+0x004722b4  89 44 24 1c               mov dword ptr [esp + 0x1c], eax
+0x004722b8  e8 f3 fe ff ff            call 0x4721b0
+0x004722bd  83 c4 08                  add esp, 8
+0x004722c0  53                        push ebx
+0x004722c1  ff 15 d0 ec 86 00         call dword ptr [0x86ecd0]
+0x004722c7  83 c4 04                  add esp, 4
+0x004722ca  5f                        pop edi
+0x004722cb  5e                        pop esi
+0x004722cc  5d                        pop ebp
+0x004722cd  8b c3                     mov eax, ebx
+0x004722cf  5b                        pop ebx
+0x004722d0  83 c4 0c                  add esp, 0xc
+0x004722d3  c3                        ret 
+0x004722d4  5f                        pop edi
+0x004722d5  dd d8                     fstp st(0)
+0x004722d7  5e                        pop esi
+0x004722d8  5d                        pop ebp
+0x004722d9  8b c3                     mov eax, ebx
+0x004722db  5b                        pop ebx
+0x004722dc  83 c4 0c                  add esp, 0xc
+0x004722df  c3                        ret 

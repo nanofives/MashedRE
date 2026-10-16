@@ -1,0 +1,39 @@
+0x0049a0a0  a1 68 39 77 00            mov eax, dword ptr [0x773968]
+0x0049a0a5  83 e8 00                  sub eax, 0
+0x0049a0a8  74 10                     je 0x49a0ba
+0x0049a0aa  48                        dec eax
+0x0049a0ab  74 08                     je 0x49a0b5
+0x0049a0ad  48                        dec eax
+0x0049a0ae  75 0f                     jne 0x49a0bf
+0x0049a0b0  e9 2b 02 00 00            jmp 0x49a2e0
+0x0049a0b5  e9 86 06 00 00            jmp 0x49a740
+0x0049a0ba  e9 91 12 fc ff            jmp 0x45b350
+0x0049a0bf  c3                        ret 
+0x0049a0c0  a1 68 39 77 00            mov eax, dword ptr [0x773968]
+0x0049a0c5  83 e8 00                  sub eax, 0
+0x0049a0c8  74 10                     je 0x49a0da
+0x0049a0ca  48                        dec eax
+0x0049a0cb  74 08                     je 0x49a0d5
+0x0049a0cd  48                        dec eax
+0x0049a0ce  75 0f                     jne 0x49a0df
+0x0049a0d0  e9 1b 02 00 00            jmp 0x49a2f0
+0x0049a0d5  e9 76 06 00 00            jmp 0x49a750
+0x0049a0da  e9 91 00 00 00            jmp 0x49a170
+0x0049a0df  c3                        ret 
+0x0049a0e0  a1 d4 6a 63 00            mov eax, dword ptr [0x636ad4]
+0x0049a0e5  85 c0                     test eax, eax
+0x0049a0e7  74 0f                     je 0x49a0f8
+0x0049a0e9  c7 05 68 39 77 00 00 00 00 00  mov dword ptr [0x773968], 0
+0x0049a0f3  e9 58 12 fc ff            jmp 0x45b350
+0x0049a0f8  a1 58 1e 77 00            mov eax, dword ptr [0x771e58]
+0x0049a0fd  8b 88 c4 00 00 00         mov ecx, dword ptr [eax + 0xc4]
+0x0049a103  81 e1 ff ff 00 00         and ecx, 0xffff
+0x0049a109  81 f9 01 01 00 00         cmp ecx, 0x101
+0x0049a10f  72 23                     jb 0x49a134
+0x0049a111  8b 90 cc 00 00 00         mov edx, dword ptr [eax + 0xcc]
+0x0049a117  81 e2 ff ff 00 00         and edx, 0xffff
+0x0049a11d  81 fa 01 01 00 00         cmp edx, 0x101
+0x0049a123  72 0f                     jb 0x49a134
+0x0049a125  c7 05 68 39 77 00 01 00 00 00  mov dword ptr [0x773968], 1
+0x0049a12f  e9 ac 09 00 00            jmp 0x49aae0
+0x0049a134  c7 05 68 39 77 00 02 00 00 00  mov dword ptr [0x773968], 2

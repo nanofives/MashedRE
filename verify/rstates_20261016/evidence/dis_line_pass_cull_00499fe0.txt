@@ -1,0 +1,58 @@
+0x00499fe0  d8 41 c8                  fadd dword ptr [ecx - 0x38]
+0x00499fe3  d9 58 f4                  fstp dword ptr [eax - 0xc]
+0x00499fe6  d9 41 d8                  fld dword ptr [ecx - 0x28]
+0x00499fe9  d8 41 cc                  fadd dword ptr [ecx - 0x34]
+0x00499fec  89 50 fc                  mov dword ptr [eax - 4], edx
+0x00499fef  d9 58 f8                  fstp dword ptr [eax - 8]
+0x00499ff2  75 92                     jne 0x499f86
+0x00499ff4  68 28 39 77 00            push 0x773928
+0x00499ff9  68 00 01 00 00            push 0x100
+0x00499ffe  e8 2d 13 03 00            call 0x4cb330
+0x0049a003  6a 00                     push 0
+0x0049a005  68 89 00 00 00            push 0x89
+0x0049a00a  e8 71 b4 03 00            call 0x4d5480
+0x0049a00f  6a 01                     push 1
+0x0049a011  6a 16                     push 0x16
+0x0049a013  e8 68 b4 03 00            call 0x4d5480
+0x0049a018  a1 c8 81 61 00            mov eax, dword ptr [0x6181c8]
+0x0049a01d  b9 42 00 00 00            mov ecx, 0x42
+0x0049a022  83 c4 18                  add esp, 0x18
+0x0049a025  3b c1                     cmp eax, ecx
+0x0049a027  74 1f                     je 0x49a048
+0x0049a029  a1 10 41 7d 00            mov eax, dword ptr [0x7d4110]
+0x0049a02e  51                        push ecx
+0x0049a02f  89 0d c8 81 61 00         mov dword ptr [0x6181c8], ecx
+0x0049a035  c7 05 cc 81 61 00 ff ff ff ff  mov dword ptr [0x6181cc], 0xffffffff
+0x0049a03f  8b 10                     mov edx, dword ptr [eax]
+0x0049a041  50                        push eax
+0x0049a042  ff 92 64 01 00 00         call dword ptr [edx + 0x164]
+0x0049a048  a1 f8 3f 7d 00            mov eax, dword ptr [0x7d3ff8]
+0x0049a04d  6a 01                     push 1
+0x0049a04f  6a 0c                     push 0xc
+0x0049a051  ff 50 20                  call dword ptr [eax + 0x20]
+0x0049a054  6a 00                     push 0
+0x0049a056  6a 00                     push 0
+0x0049a058  6a 00                     push 0
+0x0049a05a  6a 00                     push 0
+0x0049a05c  e8 cf 10 03 00            call 0x4cb130
+0x0049a061  83 c4 18                  add esp, 0x18
+0x0049a064  e8 47 b3 03 00            call 0x4d53b0
+0x0049a069  a1 10 41 7d 00            mov eax, dword ptr [0x7d4110]
+0x0049a06e  8b 08                     mov ecx, dword ptr [eax]
+0x0049a070  6a 10                     push 0x10
+0x0049a072  68 80 25 7e 00            push 0x7e2580
+0x0049a077  55                        push ebp
+0x0049a078  6a 02                     push 2
+0x0049a07a  50                        push eax
+0x0049a07b  ff 91 4c 01 00 00         call dword ptr [ecx + 0x14c]
+0x0049a081  8b 15 f8 3f 7d 00         mov edx, dword ptr [0x7d3ff8]
+0x0049a087  6a 00                     push 0
+0x0049a089  6a 0c                     push 0xc
+0x0049a08b  ff 52 20                  call dword ptr [edx + 0x20]
+0x0049a08e  83 c4 08                  add esp, 8
+0x0049a091  5f                        pop edi
+0x0049a092  5e                        pop esi
+0x0049a093  5d                        pop ebp
+0x0049a094  b8 01 00 00 00            mov eax, 1
+0x0049a099  5b                        pop ebx
+0x0049a09a  c3                        ret 

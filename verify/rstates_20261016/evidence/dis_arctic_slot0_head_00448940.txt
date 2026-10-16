@@ -1,0 +1,14 @@
+0x00448940  83 ec 24                  sub esp, 0x24
+0x00448943  53                        push ebx
+0x00448944  55                        push ebp
+0x00448945  56                        push esi
+0x00448946  57                        push edi
+0x00448947  e8 94 17 05 00            call 0x49a0e0
+0x0044894c  68 c0 a0 49 00            push 0x49a0c0
+0x00448951  e8 aa e3 04 00            call 0x496d00
+0x00448956  8b 74 24 3c               mov esi, dword ptr [esp + 0x3c]
+0x0044895a  8b 86 d4 05 01 00         mov eax, dword ptr [esi + 0x105d4]
+0x00448960  6a 01                     push 1
+0x00448962  50                        push eax
+0x00448963  e8 b8 e3 04 00            call 0x496d20
+0x00448968  68 00 06 00 00            push 0x600
