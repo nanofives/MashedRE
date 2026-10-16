@@ -12,6 +12,11 @@ void PathProg_RaceInit();
 // FUN_0040da50's FUN_00408610 loop, once per frame, before the AI tick. No-op unless enabled.
 void PathProg_FrameTick();
 
+// [U-9685] Arm R (MASHED_RACEPCT_FUN408610, see PathNodes.h): once per race frame at the end of UpdateCar,
+// the verbatim step runs on a private shadow row per car and only race_pct (+0xcc) is written into the
+// real row 0x008a9620 + v*0x30c. No-op unless RacePctOrig_Enabled() and not PathProg_Enabled().
+void PathProg_RacePctTick();
+
 // G-P2-REPLAY: MASHED_PATHPROG_REPLAY=<pathprog.csv> replays the original's recorded calls
 // through the port step and writes a report to MASHED_PATHPROG_REPLAY_OUT. Called once after
 // the course block is built.

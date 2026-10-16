@@ -343,8 +343,16 @@ bool PathProg_Enabled() {
     return s_on;
 }
 
+bool RacePctOrig_Enabled() {
+    static const bool s_on = [] {
+        const char* e = std::getenv("MASHED_RACEPCT_FUN408610");
+        return e && e[0] && e[0] != '0';
+    }();
+    return s_on;
+}
+
 void PathNodes_Build(const Track::World& ai, const char* lap, std::size_t lapLen) {
-    if (!PathProg_Enabled()) return;
+    if (!PathProg_Enabled() && !RacePctOrig_Enabled()) return;
     std::memset(reinterpret_cast<void*>(kCourse), 0, kZeroLen);    // FUN_0047a0f0 -> FUN_004b6520
     s_routeCursor = 0;                                              // DAT_006bf1dc = 0
     if (lap && lapLen) RunLapData(lap, lapLen);

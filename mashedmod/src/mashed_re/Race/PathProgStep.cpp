@@ -154,7 +154,20 @@ bool FromHex(const std::string& h, std::uint8_t* out, std::size_t n) {
 
 }  // namespace
 
+namespace {
+// [U-9685] Arm R: the step's persistent per-car state (it reads its own previous row every call), kept off
+// the real block so only race_pct reaches the game's array.
+std::uint8_t s_shadow[4][0xc3u * 4u];
+}  // namespace
+
 void PathProg_RaceInit() {                               // FUN_00407a60
+    if (RacePctOrig_Enabled() && !PathProg_Enabled()) {   // arm R: initialise the shadow rows the same way
+        for (int v = 0; v < 4; ++v) {
+            std::memset(s_shadow[v], 0, sizeof s_shadow[v]);
+            *reinterpret_cast<std::int32_t*>(s_shadow[v] + 0x28) = -1;
+        }
+        return;
+    }
     if (!PathProg_Enabled()) return;
     for (int v = 0; v < 4; ++v) {
         const std::uintptr_t blk = 0x008a9620u + static_cast<std::uintptr_t>(v) * 0x30cu;
@@ -194,6 +207,35 @@ void PathProg_FrameTick() {                              // FUN_0040da50's FUN_0
         if ((s_fr & 63) == 0) std::fflush(s_tr);
     }
     ++s_fr;
+}
+
+void PathProg_RacePctTick() {
+    if (!RacePctOrig_Enabled() || PathProg_Enabled() || PathNodes_TriCount() == 0) return;
+    EnsureLut();
+    PcScope pc;
+    for (int v = 0; v < 4; ++v) {
+        if (IsCarSlotActive(v) == 0) continue;               // the same two predicates as PathProg_FrameTick
+        if (VehicleSlotGetter(static_cast<std::uint32_t>(v)) != 1u) continue;
+        std::uint32_t rec = 0;
+        PtrCompute881ec8(&rec, static_cast<std::uint32_t>(v));
+        std::uint8_t* const blk = reinterpret_cast<std::uint8_t*>(0x008a9620u + static_cast<std::uintptr_t>(v) * 0x30cu);
+        std::uint8_t saved[sizeof s_shadow[0]];
+        std::memcpy(saved, blk, sizeof saved);                // the row the rest of the port sees
+        std::memcpy(blk, s_shadow[v], sizeof saved);          // the step's own persistent row
+        Step()(reinterpret_cast<void*>(rec), nullptr, v);
+        std::memcpy(s_shadow[v], blk, sizeof saved);
+        const std::uint32_t pct = *reinterpret_cast<const std::uint32_t*>(blk + 0xcc);   // +0xcc = 0x008a96ec: race_pct
+        std::memcpy(blk, saved, sizeof saved);
+        *reinterpret_cast<std::uint32_t*>(blk + 0xcc) = pct;  // only race_pct is published
+    }
+    static bool s_logged = false;
+    if (!s_logged) {
+        s_logged = true;
+        if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {   // the game's own witness that arm R is live
+            std::fprintf(lf, "[U-9685] MASHED_RACEPCT_FUN408610: race_pct from the verbatim step on a shadow row\n");
+            std::fclose(lf);
+        }
+    }
 }
 
 void PathProg_MaybeReplay() {
