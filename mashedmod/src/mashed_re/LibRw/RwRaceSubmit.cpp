@@ -6,6 +6,7 @@
 
 #include "RwBridge.h"
 #include "RwCarFx.h"
+#include "RwRaceFx.h"
 #include "RwRasterBridge.h"
 #include "RwSceneBuild.h"
 
@@ -1143,6 +1144,9 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
                 f->updateObjects();
             }
         }
+        // [rfx 2026-10-16] the car shadow and headlight beam (LibRw/RwRaceFx.h): FUN_0041ebb0
+        // @ 0x0041ebb0 runs after the four car renders (FUN_00410b30, 0x00410bb9).
+        RaceFx_DrawCarFx(g_cam);
     }
     g_insts.clear();
     g_sky.clear();

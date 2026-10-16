@@ -20,6 +20,7 @@
 #include "../Audio/AudioEngine.h"   // real SFX (permdict.rws) for countdown/powerups
 #include "../LibRw/RwRaceSubmit.h"  // E2'b step 3: in-loop librw submit (the shipping race renderer)
 #include "../LibRw/RwCarFx.h"       // rtex: car dirt / env-map set-up tables (U-9693)
+#include "../LibRw/RwRaceFx.h"      // rfx: car shadow / headlight beam / HUD on librw
 #include "PngLoader.h"              // rtex: dirt.piz PNGs (WIC)
 // rtex: 0x004c4d20 RwMatrixRotate (Math/RwMatrixRotate.cpp), for RwFrameRotate's REPLACE build
 extern "C" void* __cdecl RwMatrixRotate(void* matrix, const float* axis, float angle_deg, int mode);
@@ -2768,10 +2769,13 @@ static void CarDropNonRenderAtomics(Track::DffModel& model, const char* tag,
 // [UNCERTAIN U-9697] FUN_00559040's weight matrix is not transcribed: it is replaced by the
 // Moller-Trumbore barycentrics, equal in exact arithmetic; and the candidate set is the flat
 // soup, not FUN_00538c80's BSP walk.
+// [rfx 2026-10-16] `out_t`, when non-null, receives the hit's segment fraction: FUN_0041f590's
+// second output ([esp+8], 0x0041f619), from which it stores rec+0x288 = 1 - t (0x0041f648).
 static bool CollisionPrelitSample(const std::vector<float>& vtx, const std::vector<std::uint32_t>& tri,
                                   const std::vector<std::uint32_t>& prelit,
                                   const std::vector<std::uint8_t>& has_pl,
-                                  const float a[3], const float b[3], float* out) {
+                                  const float a[3], const float b[3], float* out,
+                                  float* out_t = nullptr) {
     const float d[3] = { b[0] - a[0], b[1] - a[1], b[2] - a[2] };
     float best = 2.f, bu = 0.f, bw = 0.f;
     std::size_t bi = static_cast<std::size_t>(-1);
@@ -2799,6 +2803,7 @@ static bool CollisionPrelitSample(const std::vector<float>& vtx, const std::vect
         best = t; bu = u; bw = w; bi = i;
     }
     if (bi == static_cast<std::size_t>(-1)) return false;
+    if (out_t) *out_t = best;
     if (bi >= has_pl.size() || !has_pl[bi]) { *out = 1.0f; return true; }
     const float r0 = static_cast<float>(prelit[tri[bi * 3 + 0]] & 0xff) * (1.0f / 255.0f);
     const float r1 = static_cast<float>(prelit[tri[bi * 3 + 1]] & 0xff) * (1.0f / 255.0f);
@@ -2877,6 +2882,17 @@ int TrackRenderer::RegisterCarModel(IDirect3DDevice9* dev, const char* dff_entry
         if (log) std::fprintf(log, "[librwrest] car model %s: %s\n", dff_entry, model.last_error());
         return -1;
     }
+    // [rfx 2026-10-16] the headlight beam's two frames, parts 25 / 28 (FUN_0041faf0 reads
+    // rec+0x64 / rec+0x70; FUN_00420420 stores each atomic at rec + part*4). Taken BEFORE
+    // CarDropNonRenderAtomics: both are one-triangle frame markers it removes.
+    {
+        bool h25 = false, h28 = false;
+        for (const auto& b : model.batches) {
+            if (b.part_id == 25 && !h25) { std::memcpy(car_part25_, b.frame_pos, sizeof(car_part25_)); h25 = true; }
+            if (b.part_id == 28 && !h28) { std::memcpy(car_part28_, b.frame_pos, sizeof(car_part28_)); h28 = true; }
+        }
+        car_beam_parts_ok_ = h25 && h28;
+    }
     CarDropNonRenderAtomics(model, dff_entry, log);
     std::vector<Txd::Dictionary> dicts(txds.size());
     for (std::size_t di = 0; di < txds.size(); ++di)
@@ -2947,6 +2963,11 @@ int TrackRenderer::RegisterCarModel(IDirect3DDevice9* dev, const char* dff_entry
         std::fprintf(log, "\n");
     }
     if (cm.handle < 0) return -1;
+    // [rfx 2026-10-16] the car's descriptor family for the shadow tables, and the beam parts
+    // captured before CarDropNonRenderAtomics above (LibRw/RwRaceFx.h).
+    car_family_ = LibRw::RaceFx_FamilyOfPiz(car_piz_);
+    LibRw::RaceFx_SetCarModel(car_family_, car_part25_, car_part28_, car_beam_parts_ok_);
+    for (float& f : car_fade_) f = 0.f;   // FUN_00420420 zero-clears the record (FUN_004b6520, 0x00420457)
     // [rtex 2026-10-16] the car material passes (U-9693, LibRw/RwCarFx.h), per model.
     {
         char base[64] = {};
@@ -6190,6 +6211,7 @@ struct CamReplay {
     bool has_m = false, has_f = false;
     int q_c[4][12];             // [librwrest] Q{i}_*: the car clump root's LTM
     bool has_q = false;
+    int c_ba8c = -1;            // [rfx] the HUD replay reads the trace's ba8c / dtb columns
 };
 // [d1r1] the consumed row's transplant values, read by Render under MASHED_CAM_REPLAY_BASIS /
 // MASHED_CAR_REPLAY (diagnostic knobs, default OFF)
@@ -6198,7 +6220,8 @@ float s_rep_vwy = 0.f;
 bool  s_rep_basis_ok = false;
 float s_rep_car[4][12];         // rx,ry,rz, ux,uy,uz, ax,ay,az, px,py,pz
 bool  s_rep_car_ok = false;
-float s_rep_root[4][12];        // [librwrest] Q{i}_* (clump root LTM), same order
+float s_rep_root[4][12];        // [librwrest] Q{i}_* (clump root LTM), same order; [rfx] the car
+                                // shadow's root (equal to R{i}_* for a root frame)
 bool  s_rep_root_ok = false;
 CamReplay& CamReplayState() {
     static CamReplay R = [] {
@@ -6251,6 +6274,7 @@ CamReplay& CamReplayState() {
             }
             r.c_vwy = col("rvwy");
             if (r.c_vwy < 0) r.has_m = false;
+            r.c_ba8c = col("ba8c");
         }
         while (ok && std::fgets(line, sizeof(line), f)) {
             split(line, f2);
@@ -6327,6 +6351,9 @@ void TrackRenderer::RaceCamUpdate(const Race::RaceCamCar* cc_in, bool reset) {
                 for (int i = 0; i < 4; ++i)
                     for (int k = 0; k < 12; ++k)
                         s_rep_root[i][k] = static_cast<float>(at(R.q_c[i][k]));
+            // [rfx] the HUD replay input: this row's DAT_0063ba8c and DAT_007f100c
+            if (R.c_ba8c >= 0)
+                LibRw::RaceFx_ReplayHudRow(static_cast<int>(at(R.c_ba8c)), dtb);
             cam_replay_row_ = static_cast<int>(R.next++);
         } else {
             cam_replay_row_ = -2;                             // trace exhausted: host inputs again
@@ -7579,6 +7606,56 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
                 rep_body[slot] = true;
             }
         };
+        // [rfx 2026-10-16] car shadow / headlight beam inputs (LibRw/RwRaceFx.h), per car slot.
+        // root = the clump frame (the car instance matrix; under MASHED_CAR_REPLAY the trace's
+        // root LTM Q{i}_*, equal to R{i}_* for a root frame), body = the frame the beam parts
+        // hang off (F{i}_* under the replay; outside it the instance matrix, without the
+        // librwrest body pose [UNCERTAIN U-9699]).
+        auto fx_car = [&](int slot, const D3DMATRIX& body) {
+            LibRw::CarFxInput in{};
+            std::memcpy(in.body, &body, sizeof(in.body));
+            std::memcpy(in.root, &body, sizeof(in.root));
+            if (s_car_rep && s_rep_car_ok) {
+                const float* f = s_rep_car[slot];
+                D3DMATRIX b;
+                MatIdentity(&b);
+                b._11 = f[0]; b._12 = f[1];  b._13 = f[2];
+                b._21 = f[3]; b._22 = f[4];  b._23 = f[5];
+                b._31 = f[6]; b._32 = f[7];  b._33 = f[8];
+                b._41 = f[9]; b._42 = f[10]; b._43 = f[11];
+                std::memcpy(in.body, &b, sizeof(in.body));
+            }
+            if (s_car_rep && s_rep_root_ok) {
+                const float* f = s_rep_root[slot];
+                D3DMATRIX r;
+                MatIdentity(&r);
+                r._11 = f[0]; r._12 = f[1];  r._13 = f[2];
+                r._21 = f[3]; r._22 = f[4];  r._23 = f[5];
+                r._31 = f[6]; r._32 = f[7];  r._33 = f[8];
+                r._41 = f[9]; r._42 = f[10]; r._43 = f[11];
+                std::memcpy(in.root, &r, sizeof(in.root));
+            }
+            // FUN_0041f590 @ 0x0041f590 (from FUN_00420870): when (DAT_007f101c & 3) == rec+0x290
+            // (= slot, 0x0041f611), cast the clump frame position +[0x005cd058] (0.0625) to
+            // -[0x005cd278] (0.9375) in y (FUN_00426dc0, 0x0041f628) and store rec+0x288 =
+            // 1.0 - t ([0x5cc320], 0x0041f63e..0x0041f648), t initialised to 1.0 (0x0041f5a2).
+            if ((gloss_frame_ & 3u) == static_cast<std::uint32_t>(slot)) {
+                const float a[3] = { in.root[12], in.root[13] + 0.0625f, in.root[14] };
+                const float b[3] = { in.root[12], in.root[13] - 0.9375f, in.root[14] };
+                float s = 0.f, t = 1.f;
+                CollisionPrelitSample(col_verts_, col_tris_, col_prelit_, col_tri_pl_, a, b, &s, &t);
+                car_fade_[slot] = 1.0f - t;
+            }
+            in.fade = car_fade_[slot];
+            // rec+0x294 & 0x40 = DAT_0063bc44[car] (FUN_0040da50 -> FUN_0041eeb0, 0x0040db3d): set when
+            // FUN_00426c00() = DAT_00644158 (= COURSE.LUA Course_Id, course_id_) is 0, 0x1a, 0x21 or
+            // 0x24 and the car's vehicle slot is live (FUN_0046c7b0 / FUN_0046c770 == 1).
+            // [UNCERTAIN U-9699] liveness is aib_alive(slot) here; FUN_0041eeb0's clears of 0x40 under
+            // rec+0x294 bits 0x10 / 0x400 (not set by the standalone) are not modelled.
+            in.lights = (course_id_ == 0 || course_id_ == 0x1a || course_id_ == 0x21 ||
+                         course_id_ == 0x24) && aib_alive(slot) == 1;
+            LibRw::RaceFx_QueueCar(slot, in);
+        };
         // [rtex 2026-10-16] per-car shade / env state, in the order FUN_00420870 @ 0x00420870
         // runs it each frame: env frame angle, shade window (FUN_0041f590), then the
         // coefficient FUN_00420340 -> FUN_00420290 applies (LibRw/RwCarFx.h). [librwrest] The
@@ -7657,6 +7734,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
             }
         };
         rep_car(0, &carm);
+        fx_car(0, carm);                                             // [rfx]
         submit(0, carm, car_vel_);
         int ai_slot = 1;
         for (const auto& a : ai_cars_) {
@@ -7673,6 +7751,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
             am._41 = a.pos[0]; am._42 = a.pos[1]; am._43 = a.pos[2];
             if (ai_slot < 4) {
                 rep_car(ai_slot, &am);
+                fx_car(ai_slot, am);                                 // [rfx]
                 submit(ai_slot, am, a.vel);
             } else {
                 LibRw::RaceSubmit_AddInstance(rw_car_model_, (const float*)&am);

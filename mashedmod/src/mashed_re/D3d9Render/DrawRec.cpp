@@ -104,6 +104,11 @@ struct Call {
 
 UINT NIdx(int pt, UINT pc) { return pt == 4 ? 3 * pc : (pt == 5 || pt == 6) ? pc + 2 : 0; }
 
+// [rfx] SetNextGeometry's pending CPU copy for the next indexed draw (see DrawRec.h)
+const std::uint8_t* s_pend_v = nullptr;
+UINT                s_pend_stride = 0;
+std::vector<UINT>   s_pend_idx;
+
 void Tris(int pt, const std::vector<UINT>& idx, UINT pc, std::vector<UINT>& out3) {
     for (UINT k = 0; k < pc; ++k) {
         UINT a, b, c;
@@ -129,7 +134,14 @@ void Geometry(IDirect3DDevice9* dev, int slot, const Call& c, const float* w, DW
     IDirect3DVertexBuffer9* vb = nullptr;
     IDirect3DIndexBuffer9* ib = nullptr;
     INT base = 0;
-    if (slot == 82) {
+    const bool pend = (slot == 82 && s_pend_v != nullptr);
+    if (pend) {                                // [rfx] librw im3d: the submitted CPU copy
+        for (UINT k = 0; k < n && c.start + k < s_pend_idx.size(); ++k) idx.push_back(s_pend_idx[c.start + k]);
+        vbase = s_pend_v;
+        stride = s_pend_stride;
+        base = c.base;
+        s_pend_v = nullptr;
+    } else if (slot == 82) {
         dev->GetIndices(&ib);
         if (!ib) return;
         D3DINDEXBUFFER_DESC d{};
@@ -150,7 +162,9 @@ void Geometry(IDirect3DDevice9* dev, int slot, const Call& c, const float* w, DW
         for (UINT k = 0; k < n; ++k) idx.push_back((slot == 81 ? c.start : 0) + k);
         by_pos = true;
     }
-    if (slot == 81 || slot == 82) {
+    if (pend) {
+        // vbase / stride already set from the pending copy
+    } else if (slot == 81 || slot == 82) {
         UINT off = 0;
         dev->GetStreamSource(0, &vb, &off, &stride);
         if (!vb) return;
@@ -390,6 +404,13 @@ void Patch(void** vt, int slot, void* thunk, void** save) {
 bool Enabled() {
     static const bool on = GetEnvironmentVariableA("MASHED_DBG_D3DREC", nullptr, 0) > 0;
     return on;
+}
+
+void SetNextGeometry(const void* verts, unsigned stride, const unsigned short* idx, unsigned nidx) {
+    if (!s_installed || !s_armed || !verts || !idx) return;
+    s_pend_v = static_cast<const std::uint8_t*>(verts);
+    s_pend_stride = stride;
+    s_pend_idx.assign(idx, idx + nidx);
 }
 
 void NameTexture(const void* d3dtex, const char* name) {
