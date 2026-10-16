@@ -50,6 +50,18 @@ for k in (0, 1, 26):
 # PREREG amendment A1 (report-only causal probe): the faithful race_pct producer on the mode-7 stack
 ARMS.append(dict(n="M_PP", exe=NEW, recipe="h4", knobs=M7 + ["MASHED_PATHPROG"]))
 ARMS.append(dict(n="M_PP_ON", exe=NEW, recipe="h4", knobs=M7 + ["MASHED_PATHPROG", AFT]))
+# PREREG amendment A2: the same gates re-run on the base 232f9f76 (default = producer after the AI block, OPT = the base order)
+ARMS.append(dict(n="R_H_OPTOUT", exe=NEW, recipe="h4", knobs=[OPT]))
+ARMS.append(dict(n="R_H_DEF", exe=NEW, recipe="h4", knobs=[]))
+ARMS.append(dict(n="R_H_DEF2", exe=NEW, recipe="h4", knobs=[]))
+ARMS.append(dict(n="R_M_OPTOUT", exe=NEW, recipe="h4", knobs=M7 + [OPT]))
+ARMS.append(dict(n="R_M_DEF", exe=NEW, recipe="h4", knobs=list(M7)))
+ARMS.append(dict(n="R_M_DEF2", exe=NEW, recipe="h4", knobs=list(M7)))
+ARMS.append(dict(n="R_M_PP_OPTOUT", exe=NEW, recipe="h4", knobs=M7 + ["MASHED_PATHPROG", OPT]))
+ARMS.append(dict(n="R_M_PP_DEF", exe=NEW, recipe="h4", knobs=M7 + ["MASHED_PATHPROG"]))
+for k in (0, 2, 1, 4, 27, 26, 54, 57):
+    ARMS.append(dict(n="R_B_OFF_K%02d" % k, exe=NEW, recipe="fk", k=k, knobs=[OPT]))
+    ARMS.append(dict(n="R_B_ON_K%02d" % k, exe=NEW, recipe="fk", k=k, knobs=[]))
 for k in (0, 2, 1, 4, 27, 26, 54, 57):
     ARMS.append(dict(n="B_OFF_K%02d" % k, exe=NEW, recipe="fk", k=k, knobs=[]))
     ARMS.append(dict(n="B_ON_K%02d" % k, exe=NEW, recipe="fk", k=k, knobs=[AFT]))

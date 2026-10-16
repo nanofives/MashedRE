@@ -131,6 +131,31 @@ per car vs the original (164 / 4 / 29), car-2 in-window returns of 2 (`M_OFF` 2)
 >= 200 / 220 and car 2's two in-window returns vanish (55 %), i.e. U-9685's cause is the race_pct input of the producer. If the
 returns stay, the cause is not race_pct and U-9685 keeps both its other candidates (grid pose, car-2 state at frames 16-17).
 
+## 3b. AMENDMENT A2 (committed after the first full measurement round, before any `R_*` arm exists)
+
+The orchestrator moved the base (`race/first-frame-parity` -> `232f9f76`: race camera drives the renderer, `MASHED_PLAYERTRACE_OUT`,
+A3 `FUN_0046b540` LUT sqrt default ON). `work/u9683` is rebased onto `232f9f76` (clean, no conflicts; the knob sites are intact:
+`UpdateRace`, the after-AI call, the trace hooks). The new default control trio is `c2e4d60d / b50bd39b / ba90ed88`
+(`MASHED_NO_A3_LUT=1` reproduces the old `991a5fff / be0d47ea / bc75b405`). Everything measured so far stays on record as the
+pre-rebase round (commits `96df7719`..`0ffc33fb` before the rebase) and is NOT reused as final evidence.
+
+Re-run on the new base with the SAME gates, rules and decisions of section 3, arms prefixed `R_`:
+
+| arm | knobs | purpose |
+|---|---|---|
+| `R_H_OPTOUT` | `MASHED_NO_REFDIST_AFTER_AI` | G-CTRL: must equal `c2e4d60d / b50bd39b / ba90ed88` (the orchestrator's number for `232f9f76`). It replaces the HEAD-exe arm: the opt-out path is the base's call site, and the base trio comes from another session's run |
+| `R_H_DEF`, `R_H_DEF2` | none | new default, determinism floor |
+| `R_M_OPTOUT`, `R_M_DEF`, `R_M_DEF2` | mode-7 stack (+ opt-out for `R_M_OPTOUT`) | G-TOOK, G-REFDIST, G-MODE7 / U-9685, collateral floor |
+| `R_M_PP_OPTOUT`, `R_M_PP_DEF` | mode-7 stack + `MASHED_PATHPROG` (+ opt-out) | the report-only race_pct probe of A1 |
+| `R_B_OFF_K`, `R_B_ON_K` (K = 0, 2, 1, 4, 27, 26, 54, 57) | opt-out / none | (b) per regime |
+
+Validity rule: if `R_H_OPTOUT` does not reproduce the base trio, nothing from the round is scored and it is reported as a failed control.
+Predictions carry over unchanged (the hashes will differ): `R_H_DEF` step and ptrace equal `R_H_OPTOUT` (gates differ); `R_M_*` in-window returns of 2
+stay 49 / 2 / 0 (default, opt-out) and 49 / 0 / 0 (PATHPROG probe); (b) per regime A 1/3, B 2/3, C 0/3 on both orders (the orchestrator
+reports the base's (b) unchanged, which is the OFF side of this comparison). If any prediction fails the round is reported as it came
+out and the default decision (section 3 decision 1) is re-evaluated on it. The player trace is read from the driver's private game root (single
+process per root), and its line count is checked against the opt-out arm's.
+
 ## 4. Not done here (registered)
 
 - No hooks.csv change (`0x00442a60` is an EXE-ONLY TU, no `.asi` body, no run_diff / path2 leg, no C-level moves).
