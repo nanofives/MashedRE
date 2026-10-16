@@ -241,6 +241,15 @@ struct RaceSceneState {
     float         car_part19_[3] = {};      // part 0x13's frame origin, model space
     bool          car_part19_ok_ = false;
     bool          car_env_ok_ = false;      // SetupCarEnv bound env materials
+    // [rfx 2026-10-16] car shadow / headlight beam inputs (LibRw/RwRaceFx.h). car_fade_ =
+    // rec+0x288 per slot (1 - ground-ray hit fraction, FUN_0041f590 @ 0x0041f648; the record
+    // is zero-cleared at FUN_00420420, so 0 until the first sample). Parts 25 / 28 = the two
+    // headlight frames the beam spans (rec+0x64 / rec+0x70, FUN_0041faf0), model space.
+    float         car_fade_[4] = {};
+    float         car_part25_[3] = {};
+    float         car_part28_[3] = {};
+    bool          car_beam_parts_ok_ = false;
+    int           car_family_ = -1;         // vehicle descriptor family (id / 6), 0x005f37a8
 
     // ---- power-up effect state ----------------------------------------------
     float boost_timer_  = 0.f;     // no powerup sets it now (general hook)
