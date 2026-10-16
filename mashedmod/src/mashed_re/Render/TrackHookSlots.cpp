@@ -82,7 +82,8 @@ const HookDraw kWarzoneDraws[] = {
     { K::Clump, 19, -1, kHookPassSlot2,  0x00452d2fu, 1 },   // Fence_1
     { K::Clump, 20, -1, kHookPassSlot2,  0x00452d42u, 1 },   // Pylon_H (Clump_Mts_Pair 20,5)
     { K::Group, 22,  6, kHookPassSlot2,  0x00452d51u, 1 },   // Fence_2 x fence_2.mts
-    { K::Clump,  1, -1, kHookPassSlot2,  0x00452d68u, 2 },   // Boat (FUN_00452130; BoatAnim not ported, U-row)
+    { K::Clump,  1, -1, kHookPassSlot2,  0x00452d68u, 2 },   // Boat: the pontoon object 0x00684d18 at its rest pose (FUN_00452130; its
+                                                          // state machine FUN_00451d80 is not ported, U-9719)
     { K::Clump,  0, -1, kHookPassSlot2,  0x00452d74u, 2 },   // River
     { K::Switch,  9, -1, kHookPassSwitch, 0x004725c1u },   // Crater_1, switch entry 0
     { K::Switch, 10, -1, kHookPassSwitch, 0x004725c1u },   // Crater_2, switch entry 1

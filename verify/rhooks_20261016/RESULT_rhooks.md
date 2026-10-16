@@ -115,16 +115,16 @@ Corrections made on the way, each recorded in an addendum before the affected me
    `dispref.py` found it. Use both directions before calling a clump "never drawn".
 3. **Ghidra's `ROUND` in `FUN_00557a60` is a chop**: the function forces RC = 11 before the `fistp`.
 4. **Warzone's Lua adds the Hut C walls to `HUT_B_DESTROYED_SCENARIO`** (COURSE.LUA 394..397); the port follows it literally.
-5. **`trainroof` exists only in CITY.TXD** inside dump.piz; the original draws the roof untextured (U-9722).
+5. **`trainroof` exists only in CITY.TXD** inside dump.piz; the original draws the roof untextured (U-9724).
 6. Neustein's posts: the original draws none of Post_1's 49 records at these frames; creation (`FUN_00480340` ->
    `FUN_0047ff70`) has no cap and no scenario holds them. Cause not decoded (U-9716).
 
 ## 8. Open (new U-rows)
 
-U-9719 Roundabout railcars (3 world clones of clump 2 on spline course+0x100b8, scene physics bodies, `FUN_0044c8b0`,
-`FUN_0044c4f0`, slot 1 `FUN_0044c920`); U-9720 Roundabout crane pose (slot 1 `FUN_0044cb00`, two atomics the original does
-not draw); U-9721 Highway traffic (array `0x00890060`, slots 0 / 1 / 2) and the Jet gate `DAT_005f9748`; U-9722 TXD scope;
-U-9723 SetClumpAnim one-tick lead on the replay rows; U-9724 hook-slot state that changes after the race starts (Sands bridge
+U-9721 Roundabout railcars (3 world clones of clump 2 on spline course+0x100b8, scene physics bodies, `FUN_0044c8b0`,
+`FUN_0044c4f0`, slot 1 `FUN_0044c920`); U-9722 Roundabout crane pose (slot 1 `FUN_0044cb00`, two atomics the original does
+not draw); U-9723 Highway traffic (array `0x00890060`, slots 0 / 1 / 2) and the Jet gate `DAT_005f9748`; U-9724 TXD scope;
+U-9725 SetClumpAnim one-tick lead on the replay rows; U-9726 hook-slot state that changes after the race starts (Sands bridge
 stages and Debris, Warzone crater switch-off `0x0045260b`, boat `BoatAnim`, chunk flags). Leaf sprites (RpPTank
 `FUN_00534b60(0x800, 0x87, 0)` at `0x0047c330`, per-frame `FUN_0047cbb0`, draw `FUN_0047cd30`) extend U-9701.
 

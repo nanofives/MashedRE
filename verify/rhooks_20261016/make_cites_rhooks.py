@@ -19,14 +19,14 @@ for c in src:
     elif c["id"] == "C22-SLOT-PLACEMENT" and c.get("tracks") == ["Highway"]:
         c["note"] = ("[rhooks] The excluded truck / lorry / Jet clumps are no longer drawn at the origin (no draw site "
                      "outside slot 2's traffic array 0x00890060 and the DAT_005f9748-gated Jet). The traffic itself (slots "
-                     "0 / 1 0x0044f970 / 0x0044eeb0) is not ported: one MISSING traffic3 row per frame, U-9721. Original "
+                     "0 / 1 0x0044f970 / 0x0044eeb0) is not ported: one MISSING traffic3 row per frame, U-9723. Original "
                      "note: " + c["note"])
     elif c["id"] == "C22-SLOT-PLACEMENT" and c.get("tracks") == ["Roundabout"]:
         c["note"] = ("[rhooks] The LOD hooks (Pylon 17<-18 r60, Frame 19<-20 r30, FUN_00557a60) and the slot-2 states are "
                      "ported and match on every frame. What remains: the three railcar clones of clump 2 (comp2 716 + "
                      "gravel2, FUN_0044c8b0 / FUN_0044c4f0: in the RpWorld, on the course spline course+0x100b8, scene "
-                     "physics bodies, U-9719) and the crane clump 1's pose (slot 1 FUN_0044cb00, two atomics not drawn "
-                     "by the original, U-9720). Original note: " + c["note"])
+                     "physics bodies, U-9721) and the crane clump 1's pose (slot 1 FUN_0044cb00, two atomics not drawn "
+                     "by the original, U-9722). Original note: " + c["note"])
     elif c["id"] == "C26-RWP-OBJECTS":
         c["note"] = ("[rhooks] The race-reset scenario visibility FUN_00471cf0 is ported (TrackRenderer.cpp, "
                      "MASHED_NO_SCENARIOVIS): the walls / Hut_Signs extras are gone. What remains: Roundabout Trucktyre "
@@ -37,7 +37,7 @@ for c in src:
         c["status"] = "PORTED"
         c["note"] = ("[rhooks] SetClumpAnim ported (FUN_0047ad40 records, FUN_00426700 tick on the copters' units, "
                      "FUN_004b47e0 / FUN_00532b80 for LINEAR = 1). The train is drawn; on all three frames it is 0.0571 "
-                     "ahead in x, the train's motion over one tick (2.28 per 40 rows): a one-tick phase, U-9723. "
+                     "ahead in x, the train's motion over one tick (2.28 per 40 rows): a one-tick phase, U-9725. "
                      "Original note: " + c["note"])
     elif c["id"] == "C29-RESIDUAL":
         c["note"] = ("[rhooks] The Neustein part is resolved: the thin untextured mesh at the origin was the Trunk base "
@@ -49,6 +49,6 @@ out.append({
     "note": ("Once the train is drawn (C28), its roof material: the original draws those 32 triangles UNTEXTURED (the "
              "matched-AABB A-side draw sits in C03-UNTEXTURED), the standalone with 'trainroof'. The texture exists only "
              "in CITY.TXD inside dump.piz; COURSE.LUA names Texture_Dictionary_Filename(\"dump.txd\"); the standalone "
-             "resolves materials across every TXD in the piz (TrackRenderer.cpp:1419-1421). U-9722.")})
+             "resolves materials across every TXD in the piz (TrackRenderer.cpp:1419-1421). U-9724.")})
 (HERE / "cites_rhooks.json").write_text(json.dumps(out, indent=1))
 print(len(src), "->", len(out))

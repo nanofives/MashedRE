@@ -4,7 +4,7 @@ this lane resolves). No function moves on the C0..C4 ladder: hooks.csv, STUBS.md
 
     py -3.12 verify\\rhooks_20261016\\apply_trackers.py [--dry-run]
 
-Idempotent: refuses to run twice (the U-9724 row is the marker). UNCERTAINTIES.md is CRLF, CHANGELOG.md is LF; both are read
+Idempotent: refuses to run twice (the U-9726 row is the marker). UNCERTAINTIES.md is CRLF, CHANGELOG.md is LF; both are read
 and written as bytes so no line ending changes.
 """
 import argparse
@@ -18,7 +18,7 @@ R = "verify/rhooks_20261016/RESULT_rhooks.md"
 S = "mashedmod/src/mashed_re/Render/TrackHookSlots.cpp"
 
 ROWS = [
-    ("U-9724", "structural",
+    ("U-9726", "structural",
      "hook-slot state that changes after the race starts, on the tracks `" + S + "` covers",
      "The port draws each track's hook-slot state as it is at race reset. The original changes it later: Sands slot 1 "
      "`FUN_004507b0` advances the bridge stages (`_DAT_00684c40`, from `FUN_00407a40(0)`) and flips switch entries 0..3 "
@@ -32,7 +32,7 @@ ROWS = [
      "decode Sands slot 1 and `FUN_00407a40`, Warzone `FUN_004525xx` (caller of `0x0045260b`) and slot 1 `0x00452b20`, port, "
      "capture a later race row on Sands / Warzone and score it with `score_tracks.py`.",
      "none (no row on the capfix frames)"),
-    ("U-9723", "semantic",
+    ("U-9725", "semantic",
      "SetClumpAnim clock in the standalone (`TrackRenderer::ClumpAnimTick`, called from `CopterTick`)",
      "The ported Dump train is drawn 0.0571 ahead in x on all three capfix frames (735, 775, 810); the train covers 2.28 "
      "over the 40 rows between frames, so the lead is the motion of one tick. The tick runs on the copters' units "
@@ -42,7 +42,7 @@ ROWS = [
      "count the original's `FUN_00426700` calls before the row-735 draw (Frida, explicit PID) against the standalone's "
      "`ClumpAnimTick` count before its row-735 frame; the copters' C14 rows share the clock.",
      "none (Dump, 3 MOVED rows of 0.057)"),
-    ("U-9722", "structural",
+    ("U-9724", "structural",
      "`D3d9Render/TrackRenderer.cpp:1419-1421` (every `*.TXD` of the track piz decoded and searched)",
      "dump.piz holds DUMP.TXD and CITY.TXD; COURSE.LUA names `Texture_Dictionary_Filename(\"dump.txd\")`. Train.dff's roof "
      "material `trainroof` exists only in CITY.TXD. The original draws the roof's 32 triangles untextured (Dump 735, the "
@@ -55,7 +55,7 @@ ROWS = [
      "`Course::CreateFromDescription` (`0x00479330`), then list every material of every track that resolves only outside "
      "the named TXD.",
      "none beyond the row"),
-    ("U-9721", "structural",
+    ("U-9723", "structural",
      "Highway traffic: the 80-entry vehicle array `0x00890060` (stride 0xf8), slots 0 / 1 / 2 of record \"highway\" "
      "(`0x0044f970`, `0x0044eeb0`, `0x0044e470`)",
      "Slot 2 `FUN_0044e470` draws each vehicle that passes a frustum test (`FUN_004c1b40`) as an LOD atomic plus its wheel and "
@@ -67,7 +67,7 @@ ROWS = [
      "decode slots 0 and 1 and the record, port the motion, compare the traffic3 draws per frame; if vehicles collide, "
      "measure D2 / D3 with the G-CTRL recipe.",
      "Highway D1 breadth (3 rows)"),
-    ("U-9720", "structural",
+    ("U-9722", "structural",
      "Roundabout crane (clump 1 crane.dff, in the RpWorld), slot 1 `FUN_0044d3f0` -> `FUN_0044cb00`; scenario functions "
      "`RoundaboutStartCrane` / `RoundaboutStopCrane` (registered by slot 12 `0x0044ca70`)",
      "The original draws the crane's comp2 / girders / rustycable atomics 4 to 5 units off the standalone's in z on frame "
@@ -77,7 +77,7 @@ ROWS = [
      "decode `FUN_0044cb00` and the RoundaboutStartCrane function, port the frame poses and the RENDER bits, re-score "
      "Roundabout 1091.",
      "Roundabout D1 breadth (5 rows)"),
-    ("U-9719", "structural",
+    ("U-9721", "structural",
      "Roundabout railcars: `FUN_0044c8b0` (slot 0) clones clump 2 (railcar.dff) three times and adds each to the RpWorld; "
      "`FUN_0044c4f0` puts each on the spline at course + 0x100b8 (parameter `DAT_005f9724[i]`) and registers it as a scene "
      "physics body (`FUN_0047fad0`, `FUN_0047cdc0(.., 100.0)`); slot 1 `FUN_0044c920` steps them (pairwise `FUN_0044c740`, "
@@ -103,17 +103,29 @@ RESOLVED = {
                "row asked for: Warzone groups OakTrunk x OakTrees_1 / OakTrees_2 and CrossTree x Crosstrees (slot 10), "
                "Fence_2 x fence_2 (slot 2), craters 9..16 as switch entries ON; Sands draws BridgeWhole alone (switch entry "
                "0 ON, 18 / 19 / Jump OFF). Scoring of the ten capfix tracks: C22 rows 50 -> 14, matched draws 5578 -> 6405 "
-               "of 7691 (with U-9716 / U-9717), G-CTRL unchanged (`" + R + "`). What C22 still holds is filed as U-9719 "
-               "(railcars), U-9720 (crane), U-9721 (Highway traffic), U-9724 (state after the race starts). | none | none | none |"),
+               "of 7691 (with U-9716 / U-9717), G-CTRL unchanged (`" + R + "`). What C22 still holds is filed as U-9721 "
+               "(railcars), U-9722 (crane), U-9723 (Highway traffic), U-9726 (state after the race starts). | none | none | none |"),
     "U-9717": ("| U-9717 | ~~structural~~ **RESOLVED 2026-10-16** (rhooks: SetClumpAnim ported) | Dump `Train.dff` "
                "(`SetClumpAnim( LINEAR , 0 , 3 )`, `local LINEAR = 1`) | Ported, default ON (`MASHED_NO_CLUMPANIM=1` opts "
                "out): records of `FUN_0047ad40` (+0x70 clump, +0x71 anim, +0x74 time, +0x78 type), tick `FUN_00426700` on "
                "the copters' units, sampler `FUN_004b47e0` -> `FUN_00532b80` -> `FUN_00532a60` for type 1. The train is drawn "
-               "on all three Dump frames, 0.0571 ahead in x (one tick, U-9723); its roof is textured where the original's "
-               "is not (U-9722). G-CTRL unchanged (`" + R + "`). | none | none | none |"),
+               "on all three Dump frames, 0.0571 ahead in x (one tick, U-9725); its roof is textured where the original's "
+               "is not (U-9724). G-CTRL unchanged (`" + R + "`). | none | none | none |"),
 }
 
 APPEND = {
+    "U-9719": " [rhooks] The 0 -> 1 write is `FUN_00451820` @ 0x00451820 (case 0 of `FUN_00451d80`): per car, the car "
+              "matrix (`FUN_0046d4a0`) times the inverse of the object matrix `[obj+0x94]` (`FUN_004c4dc0` invert, "
+              "`FUN_004c52f0` transform, combine 2); if the transformed x lies between `[obj+0x20]` and `[obj+0x14]` and z "
+              "between `[obj+0x28]` and `[obj+0x1c]`, `[obj+0x48] = 1` (it also calls `FUN_0046be10(&DAT_005f9788, car, 0, 0)` "
+              "for every car). The object is slot 0's `FUN_00451760(&DAT_00684d18, clump 1 Boat.dff, anim table +0x105b0)` "
+              "pontoon: an RpHAnim hierarchy (`FUN_004b4790`, `FUN_00533ec0` update, time `+0xc8`), drawn by slot 2 "
+              "(`FUN_00452130`, `0x00452d68`), reset by slots 6 / 7 (`FUN_00451cc0`) and by the callback `0x00452170` "
+              "(Tower / Deck object matrices back to `0x00684de8` / `0x00684c58`, `FUN_0047d180`). Slot 0 hides the Tower "
+              "(label 1000) and Deck (label 2000) objects' RENDER bit (`FUN_0047d100(.., 0)`). A car leaving the box gets the "
+              "object's movement `[obj+0xa8..0xb0]` (`FUN_0046bf50`) and a wheel test (`FUN_0041f1e0`, `FUN_00481750`, "
+              "`FUN_00480720`): porting the producer needs that car coupling and the Deck physics body, which the standalone "
+              "does not have (`" + R + "` section 8).",
     "U-9716": " [rhooks] The race-reset rule is decoded and ported (default ON, `MASHED_NO_SCENARIOVIS=1`): `FUN_00471cf0` "
               "(from `FUN_004111c0`) sets the objects of every scenario in a Set_Sequence list to physics membership "
               "(`FUN_0047d080`) and RENDER bit (`FUN_0047d100`) = (scenario == the list's first); hidden objects cast no "
@@ -137,15 +149,15 @@ CHG_ENTRY = ("2026-10-16  rhooks (work/rhooks): U-9713 and U-9717 RESOLVED. Per-
              "hooks FUN_004758d0 / FUN_00557a60, switch table FUN_004725c0, slot render states), SetClumpAnim "
              "(FUN_0047ad40 / FUN_00426700 / FUN_004b47e0) and the race-reset scenario visibility (FUN_00471cf0), all "
              "default ON with opt-outs. Ten capfix tracks: 979 -> 879 rows, 0 RED, matched draws 5578 -> 6405 of 7691, "
-             "triangles 86.6 -> 88.2 %; G-CTRL 2b4d47bb / 356821c8 / f7a155e1 unchanged. New U-9719 .. U-9724; U-9701 / "
-             "U-9710 / U-9716 / U-9718 extended. No function moved on the ladder.  " + R + "\n")
+             "triangles 86.6 -> 88.2 %; G-CTRL 2b4d47bb / 356821c8 / f7a155e1 unchanged. New U-9721 .. U-9726; U-9701 / "
+             "U-9710 / U-9716 / U-9718 / U-9719 extended. No function moved on the ladder.  " + R + "\n")
 
 
 def main() -> int:
     ap = argparse.ArgumentParser(); ap.add_argument("--dry-run", action="store_true"); a = ap.parse_args()
     u = UNC.read_bytes().decode("utf-8")
-    if "| U-9724 |" in u:
-        print("U-9724 already present: the transaction was applied, nothing to do"); return 1
+    if "| U-9726 |" in u:
+        print("U-9726 already present: the transaction was applied, nothing to do"); return 1
     eol = "\r\n"
     sep = "|----|------|-------|-----------|------------------|--------------------|--------|" + eol
     i = u.index(sep) + len(sep)
