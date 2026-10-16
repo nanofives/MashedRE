@@ -1,0 +1,2 @@
+griddir node=0 L=(0.00192259776,-1.00007451) bits=3afbffad/bf800271 law_deg=180 port_yaw=-1.57079637
+griddir node=0 L=(0.00192259776,-1.00007451) bits=3afbffad/bf800271 law_deg=180 port_yaw=-1.57079637

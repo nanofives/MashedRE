@@ -21,7 +21,7 @@ assert os.path.exists(os.path.join(ROOT, r'original\TOASTART\Common\Frontend.piz
 GT = 'MASHED_GRID_DIR_TRACE=@OUT@\\{n}.griddir.txt'
 STACK = {'DEF': [], 'B': ['MASHED_POS_MODEL'],
          # gridyaw: G = the knob (+ its trace), GL = the knob + d2lateral's refresh knob
-         'G': ['MASHED_GRID_DIR'], 'GL': ['MASHED_GRID_DIR', 'MASHED_D2LAT_REFRESH'], 'BG': ['MASHED_POS_MODEL', 'MASHED_GRID_DIR'],
+         'G': ['MASHED_GRID_DIR'], 'GL': ['MASHED_GRID_DIR', 'MASHED_D2LAT_REFRESH'], 'BG': ['MASHED_POS_MODEL', 'MASHED_GRID_DIR'], 'BGL': ['MASHED_POS_MODEL', 'MASHED_GRID_DIR', 'MASHED_D2LAT_REFRESH'],
          # amendment 2: L = the knob; C = d2settle's fix C (exact sqrt), report; BL = fix B + the knob, report
          'L': ['MASHED_D2LAT_REFRESH'], 'C': ['MASHED_SPEED_REFRESH'], 'BL': ['MASHED_POS_MODEL', 'MASHED_D2LAT_REFRESH'],
          # amendment 3 (diagnostic): the original's spawn heading, alone and with the knob
@@ -127,6 +127,12 @@ for name in sys.argv[1:]:
         step = os.path.join(OUT, name + '.step.csv'); e['MASHED_AI_STEPDUMP'] = step
         knobs(e, STACK[stack])
         run(exe, name, e, [step], 600)
+    elif arm.startswith('P_'):   # G-GRID: the four cars' grid positions (MASHED_DBG_CARPOS), 4-car H recipe, 120 frames
+        e = base_env(120)
+        cp = os.path.join(OUT, name + '.carpos.txt')
+        e['MASHED_DBG_CARPOS'] = '1'; e['MASHED_DBG_CARPOS_OUT'] = cp
+        knobs(e, STACK[tag_of(arm[2:])])
+        run(exe, name, e, [cp], 300)
     elif arm.startswith('D_'):
         e = base_env(300); e['MASHED_PLAYERTRACE'] = '1'
         sd = os.path.join(OUT, name + '.settle.txt'); e['MASHED_SETTLE_DIAG'] = sd
