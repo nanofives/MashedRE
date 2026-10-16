@@ -102,3 +102,23 @@ A fix is wired default ON, with its opt-out, only if: its own gates PASS; the no
 1500-2000 and slip 2000-2600 stay inside their bounds on 3/3 runs; D3 (b) loses no car-regime pass against the
 base; collateral is not worse than the base by more than 2 paired fields. Otherwise it stays default OFF with a
 recommendation. Any D2-metric move is reported (D2 watch-list hits are allowed this round, user 2026-10-16).
+
+## Amendment 1 (2026-10-16, before any original-side run; Stage 0 D0-a already run, report only)
+
+D0-a result (`D_DEF.settle.txt`, base build + default-OFF diags, 300 frames): the exe's settle step leaves
+vel `(0, -216.668411, 0)` after A4, runs 2 substeps of 25 with `c9ec = 0` (no world contact, no fixup), and
+produces `drive_delta = (0, -0.0100310249, 0)` -- no z component -- which is then discarded. Its spawn record y is
+0.47481969 against the original's 0.43742681 (+0.0374, `car_ground_off_ = -model.bbox[1]`,
+`TrackRenderer.cpp:2954`). The 0.638 is A6a's pre-full-stop `|v|` (n=2 postA4: vel 0, `+0x9e4` 0.638038516).
+`MASHED_A3_LOG` (base): `4a4=3f2d9196 58=44b13443 5c=3a38eaab` (original `3f2d93d1 / 44b136a0 / 3a38e833`).
+
+D0-b (report only, NOT a gate): one ORIGINAL capture of the player's first ticks,
+`re/frida/scenario_launch.py --track 0 --mode 10 --cars 4 --car 0 --poke-ctrl-slots --statediff-out
+verify/d2settle_20261016/o_fx1.msd --statediff-car 0 --fixup-probe --hold 20`. Read: the first substep /
+fixup rows of slot 0 (velocity at the substep entry, `+0x9ec`, contact slot depth / normal / arm), to name the
+velocity write that carries the original's dz. A piz-collision crash (`+0x1509b4` / `+0xe66db`) means re-run.
+
+Fix C (registered now, gate G-9E4 of section 3): port the every-frame refresh `0x004710a1..0x004710da`
+(`+0x9e4 = |+0x9b0|`, `+0x9e8 = |+0x9bc|` for cars with `+0x4 != 0 || +0x10 == 1`, after the A4 loop, before
+the substep loop at `0x00471110`). The port does it only on A4-skipped frames (`VehiclePhysicsRun.cpp:991-994`).
+Opt-out `MASHED_NO_SPEED_REFRESH=1`. Prediction: G-9E4 PASS (exe player `+0x9e4` = 0.0 at rest).
