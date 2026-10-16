@@ -283,27 +283,15 @@ extern "C" __declspec(dllexport) void __cdecl MenuTeamSelectTick() {
     }
 }
 
-// DELIBERATELY NOT INSTALLED. 0x0042fa00 already has a live hook: the
-// .asi-side PlayerSlotEdgeAdjust in Frontend/SkeletonAndScatter_t6.cpp (C3,
-// GREEN 0/10). This is its EXE-SIDE TWIN and exists only because that TU is in
-// asi_sources.rsp but NOT in build.bat's exe list, so the standalone cannot
-// reach it -- which is the actual reason the standalone could not assign teams.
-// MenuNav.cpp is in both lists, so putting the copy here makes it available to
-// mashed_re.exe without dragging a PIZ/Im2D-heavy TU into the exe link.
-//
-// A second RH_ScopedInstall on one RVA is the U-9065 failure mode: both
-// register, one silently wins, and the other becomes dead code that still reads
-// as C3. This copy therefore registers nothing, and the .asi keeps the
-// established install.
-//
-// KNOWN DIVERGENCE between the twins, both inert, recorded so it cannot drift
-// unnoticed: PlayerSlotEdgeAdjust guards with `*piVar5 > 0` and then adds a
-// trailing `if (<0) =0; if (>2) =2;` clamp pair. The original has NEITHER --
-// it guards `*piVar5 != 0` and clamps only through the two ±1 guards
-// (0x0042fa00 body). Both forms are equivalent for values already in [0,2],
-// which is why that copy diffed GREEN. This copy follows the original.
-// Verified path1 GREEN 7/7 non-degenerate as `menu_team_select_tick`
-// (log/diff_menu_team_select_tick.csv).
+// INSTALLED HERE (dualcopy4, 2026-10-16). Until now 0x0042fa00 was hooked by the .asi-side PlayerSlotEdgeAdjust in
+// Frontend/SkeletonAndScatter_t6.cpp (asi-only TU) while this copy, which both targets compile, registered nothing so as not to
+// double-install (U-9065). That left two bodies that differ for any team value outside [0, 2]: the asi copy guarded `*team > 0` and
+// clamped to [0, 2], the original does neither (verify/dualcopy4_20261016/decomp_42fa00.txt: guard `*piVar5 != 0` on the decrement,
+// `< 2` on the increment, no clamp). This body follows the original, so it is the one body and now owns the install; the asi copy is
+// deleted and its registry key player_slot_edge_adjust retired. The exe already called this one (exe_main.cpp, under `if (team)`).
+// Verified path1 as `menu_team_select_tick` (cache_setter_observe, log/diff_menu_team_select_tick.csv 7/7 on 2026-09-04; re-run on
+// the installed build in verify/dualcopy4_20261016/wb/).
+RH_ScopedInstall(MenuTeamSelectTick, 0x0042fa00);
 
 // ---------------------------------------------------------------------------
 // 0x0042aff0  MenuButtonDetectA

@@ -1,0 +1,11 @@
+// ───────────────────────────────────────────────────────────────────────────
+// 0x0042fa00  PlayerSlotEdgeAdjust: DELETED (dualcopy4, 2026-10-16, ROADMAP D4)
+// ───────────────────────────────────────────────────────────────────────────
+//
+// This was the .asi's installed body for FUN_0042fa00 (162/163 bytes, 0x0042fa00..0x0042faa2) and a second copy of
+// Frontend/MenuNav.cpp:MenuTeamSelectTick (both targets). The two differed from the original exactly where this copy added a
+// `*team > 0` guard and a trailing clamp `[0, 2]`: the decompiled original guards `*team != 0` and has no clamp (decomp_pc 0x0042fa00,
+// verify/dualcopy4_20261016/decomp_42fa00.txt: `if (pcVar3[-0x4c0] != 0 && *pcVar3 == 0 && *piVar5 != 0) *piVar5 -= 1`). They agree
+// for values already in [0, 2] and differ for any other value. MenuTeamSelectTick follows the original, is the one body for both
+// targets and now owns the install and the registry key menu_team_select_tick. The key player_slot_edge_adjust is retired.
+// ref: re/analysis/frontend_unmapped_a/0x0042fa00.md

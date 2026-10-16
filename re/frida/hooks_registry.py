@@ -12160,23 +12160,7 @@ HOOKS = {
         'path2_tests':    [0, 3, 0xDEADBEEF],
     },
 
-    # 0x0042fa00  PlayerSlotEdgeAdjust  void(void)
-    # 162B pure leaf. Loops 12 slots; iff iVar4 matches one of 4 active-player
-    # slot ids, conditionally inc/dec/clamp slot property at DAT_0067e938.
-    # At quiescent main menu, active-slot ids are sentinels (-1 / unset) so loop
-    # body short-circuits â€” both sides do identical no-op.
-    # arg_type='none': void return, called 10Ã— at quiescent menu; both sides
-    # return undefined; identity check passes.
-    # ref: re/analysis/frontend_unmapped_a/0x0042fa00.md
-    'player_slot_edge_adjust': {
-        'rva':            0x0042fa00,
-        'export':         'PlayerSlotEdgeAdjust',
-        'signature':      {'ret': 'void', 'args': []},
-        'arg_type':       'none',
-        'lut_root_delta': 0,
-        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-        'path2_tests':    [0, 1, 2],
-    },
+    # dualcopy4 2026-10-16: key 'player_slot_edge_adjust' (0x0042fa00, export PlayerSlotEdgeAdjust) RETIRED: it measured a second body of the same RVA; the one body is key 'menu_team_select_tick'.
 
     # 0x00426020  GlobalDat00646e58Get
     # Signature: void* fn(void)
@@ -21941,16 +21925,58 @@ HOOKS = {
                       {'addr': '0x007f1128', 'val': 0}, {'addr': '0x007f15e8', 'val': 0}],
              'args': [],
              'obs':  ['0x0067e938', '0x0067e944', '0x0067e950', '0x0067e95c', '0x0067ea88']},
+            # v7 dualcopy4: team -1 with UP pressed -> the original decrements (guard != 0); the retired clamped twin gave 0
+            {'seed': [{'addr': '0x007f1a14', 'val': 0}, {'addr': '0x007f1a24', 'val': 1}, {'addr': '0x007f1a34', 'val': 2}, {'addr': '0x007f1a44', 'val': 3},
+                      {'addr': '0x0067e938', 'val': 0xFFFFFFFF}, {'addr': '0x0067e944', 'val': 0}, {'addr': '0x0067e950', 'val': 1}, {'addr': '0x0067e95c', 'val': 2},
+                      {'addr': '0x0067ea88', 'val': 0},
+                      {'addr': '0x007f1044', 'val': 0x00000001}, {'addr': '0x007f1504', 'val': 0},
+                      {'addr': '0x007f1090', 'val': 0}, {'addr': '0x007f1550', 'val': 0},
+                      {'addr': '0x007f10dc', 'val': 0}, {'addr': '0x007f159c', 'val': 0},
+                      {'addr': '0x007f1128', 'val': 0}, {'addr': '0x007f15e8', 'val': 0}],
+             'args': [],
+             'obs':  ['0x0067e938', '0x0067e944', '0x0067e950', '0x0067e95c', '0x0067ea88']},
+            # v8 dualcopy4: team 3, no press -> the original leaves it; the retired clamped twin clamped to 2
+            {'seed': [{'addr': '0x007f1a14', 'val': 0}, {'addr': '0x007f1a24', 'val': 1}, {'addr': '0x007f1a34', 'val': 2}, {'addr': '0x007f1a44', 'val': 3},
+                      {'addr': '0x0067e938', 'val': 3}, {'addr': '0x0067e944', 'val': 0}, {'addr': '0x0067e950', 'val': 1}, {'addr': '0x0067e95c', 'val': 2},
+                      {'addr': '0x0067ea88', 'val': 0},
+                      {'addr': '0x007f1044', 'val': 0}, {'addr': '0x007f1504', 'val': 0},
+                      {'addr': '0x007f1090', 'val': 0}, {'addr': '0x007f1550', 'val': 0},
+                      {'addr': '0x007f10dc', 'val': 0}, {'addr': '0x007f159c', 'val': 0},
+                      {'addr': '0x007f1128', 'val': 0}, {'addr': '0x007f15e8', 'val': 0}],
+             'args': [],
+             'obs':  ['0x0067e938', '0x0067e944', '0x0067e950', '0x0067e95c', '0x0067ea88']},
         ],
-        # NO path2_tests ON PURPOSE. path2 asserts that the inline JMP at the
-        # RVA points at THIS export, and it does not: 0x0042fa00's installed
-        # hook is the .asi-side twin PlayerSlotEdgeAdjust
-        # (Frontend/SkeletonAndScatter_t6.cpp). MenuTeamSelectTick is the
-        # EXE-SIDE copy, registered nowhere by design, so a path2 run here
-        # would either FAIL or -- worse -- pass only because a duplicate
-        # install had displaced the established one. This entry is a path1
-        # bit-identity check of the exe-side copy against the original; the
-        # RVA's C3 rests on the installed twin, and nothing here promotes it.
+        # path2 (dualcopy4): MenuTeamSelectTick is now the INSTALLED body of 0x0042fa00 (MenuNav.cpp RH_ScopedInstall), so the
+        # JMP at the RVA points at this export. The entry had no path2_tests while the installed hook was the asi twin.
+        'path2_tests': [
+            {'seed': [{'addr': '0x007f1a14', 'val': 0}, {'addr': '0x007f1a24', 'val': 1}, {'addr': '0x007f1a34', 'val': 2}, {'addr': '0x007f1a44', 'val': 3},
+                      {'addr': '0x0067e938', 'val': 0}, {'addr': '0x0067e944', 'val': 0}, {'addr': '0x0067e950', 'val': 1}, {'addr': '0x0067e95c', 'val': 2},
+                      {'addr': '0x0067ea88', 'val': 0},
+                      {'addr': '0x007f1044', 'val': 0x00000100}, {'addr': '0x007f1504', 'val': 0},
+                      {'addr': '0x007f1090', 'val': 0}, {'addr': '0x007f1550', 'val': 0},
+                      {'addr': '0x007f10dc', 'val': 0}, {'addr': '0x007f159c', 'val': 0},
+                      {'addr': '0x007f1128', 'val': 0}, {'addr': '0x007f15e8', 'val': 0}],
+             'args': [],
+             'obs':  ['0x0067e938', '0x0067e944', '0x0067e950', '0x0067e95c', '0x0067ea88']},
+            {'seed': [{'addr': '0x007f1a14', 'val': 0}, {'addr': '0x007f1a24', 'val': 1}, {'addr': '0x007f1a34', 'val': 2}, {'addr': '0x007f1a44', 'val': 3},
+                      {'addr': '0x0067e938', 'val': 1}, {'addr': '0x0067e944', 'val': 0}, {'addr': '0x0067e950', 'val': 1}, {'addr': '0x0067e95c', 'val': 2},
+                      {'addr': '0x0067ea88', 'val': 0},
+                      {'addr': '0x007f1044', 'val': 0x00000001}, {'addr': '0x007f1504', 'val': 0},
+                      {'addr': '0x007f1090', 'val': 0}, {'addr': '0x007f1550', 'val': 0},
+                      {'addr': '0x007f10dc', 'val': 0}, {'addr': '0x007f159c', 'val': 0},
+                      {'addr': '0x007f1128', 'val': 0}, {'addr': '0x007f15e8', 'val': 0}],
+             'args': [],
+             'obs':  ['0x0067e938', '0x0067e944', '0x0067e950', '0x0067e95c', '0x0067ea88']},
+            {'seed': [{'addr': '0x007f1a14', 'val': 0}, {'addr': '0x007f1a24', 'val': 1}, {'addr': '0x007f1a34', 'val': 2}, {'addr': '0x007f1a44', 'val': 3},
+                      {'addr': '0x0067e938', 'val': 0xFFFFFFFF}, {'addr': '0x0067e944', 'val': 0}, {'addr': '0x0067e950', 'val': 1}, {'addr': '0x0067e95c', 'val': 2},
+                      {'addr': '0x0067ea88', 'val': 0},
+                      {'addr': '0x007f1044', 'val': 0x00000001}, {'addr': '0x007f1504', 'val': 0},
+                      {'addr': '0x007f1090', 'val': 0}, {'addr': '0x007f1550', 'val': 0},
+                      {'addr': '0x007f10dc', 'val': 0}, {'addr': '0x007f159c', 'val': 0},
+                      {'addr': '0x007f1128', 'val': 0}, {'addr': '0x007f15e8', 'val': 0}],
+             'args': [],
+             'obs':  ['0x0067e938', '0x0067e944', '0x0067e950', '0x0067e95c', '0x0067ea88']},
+        ],
     },
 
     # 0x0042f7b0  FrontendCursorUpdate -- ABILITY SELECT's per-frame input step
