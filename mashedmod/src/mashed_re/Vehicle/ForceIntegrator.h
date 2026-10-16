@@ -92,6 +92,7 @@ void  Rw_TransformPoints(float* dst, const float* src, int count, void* mtx);   
 void  Rw_MatrixFromAxisAngle(void* outMtx, const float* axis, float angle, int);// FUN_004c4d20
 float Fi_RandRange(float lo, float hi);                                         // FUN_00472650 (+FUN_00534870 PRNG)
 int   Fi_GameMode();                                                            // FUN_0040e350
+extern int g_fiGameModeHold;   // [d2engage] nonzero = Fi_GameMode() during a pre-release hold tick (0 = stub)
 void  Fi_GameModeTick();                                                        // FUN_0040e340
 
 // ---- runtime globals the integrator reads (provided by B4 wiring) ------------

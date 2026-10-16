@@ -125,6 +125,9 @@ void VehiclePhysics_StepPlayer(float dt, PlayerCarIO& io);
 // opponents). The caller supplies the descriptor input (io.input[4]/[5] throttle +
 // io.steer) and persists vel/yaw/pos per car. StepPlayer == StepCar(0, ...).
 void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io);
+// [d2engage 2026-10-16] fix B part 4 (MASHED_POS_ORDER): run only slot's one-shot spawn-settle step
+// (no-op once it has run). With part 3 on, io.pos returns the settled position, as from StepCar.
+void VehiclePhysics_SpawnSettle(int slot, float dt, PlayerCarIO& io);
 // A8 (2026-08-25): (re)seed a slot's integrated body-orientation basis from a yaw.
 // The body basis is now persistent state inside the physics module (the original
 // keeps it in the record's +0x928 double buffer; see BodyOrientationIntegrate.cpp

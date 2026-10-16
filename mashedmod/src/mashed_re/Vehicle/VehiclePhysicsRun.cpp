@@ -727,7 +727,21 @@ void VehiclePhysics_StepPlayer(float dt, PlayerCarIO& io) {
     VehiclePhysics_StepCar(0, dt, io);
 }
 
+// [d2engage 2026-10-16] fix B part 4 (MASHED_POS_ORDER, PREREG_d2engage.md 1). Runs ONLY the
+// spawn-settle block of StepCar for `slot` (if it has not run yet), so the caller can place it
+// before LaunchRev_Release on the GO frame: the settle stands in for the original's pre-release
+// hold ticks (FUN_004103a0: FUN_0046baa0 0x0041043a, charge 0x00410441, release 0x0041049b, then
+// the frame's physics). A later StepCar finds g_settled set and runs the normal step.
+static bool g_settleOnly = false;
+void VehiclePhysics_SpawnSettle(int slot, float dt, PlayerCarIO& io) {
+    g_settleOnly = true;
+    VehiclePhysics_StepCar(slot, dt, io);
+    g_settleOnly = false;
+}
+
 void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
+    const bool settleOnly = g_settleOnly;   // [d2engage] consumed here: the settle's inner step runs normally
+    g_settleOnly = false;
     if (!g_inited) VehiclePhysics_Init(4, 0);
     if (dt <= 0.f) return;
     if (slot < 0 || slot >= 16) return;
@@ -824,9 +838,22 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
                 }
             }
         }
+        // [d2engage 2026-10-16] fix B part 4 (MASHED_POS_ORDER): this step is a pre-release hold
+        // tick, so FUN_0040e350 reads the countdown sub-state 5, not the in-race 6 the stub returns
+        // (DAT_0063ba8c = 6 is written at 0x004104e3, after the release). A6a's `== 6` decrement
+        // site then does not run on it, as on the original's hold frames (orig_solo3 idx 878-885:
+        // +0xbf4 = 3000 with the front-wheel gate open). PREREG_d2engage.md 0.1 / 1(c).
+        if (PosModelOrder() && slot == 0 && std::getenv("MASHED_MOTION_DIAG")) {
+            if (std::FILE* lf = std::fopen("motion_diag.log", "a")) {   // marker: no sp=/b14= tokens
+                std::fprintf(lf, "settle slot=0 order=1 settleOnly=%d\n", settleOnly ? 1 : 0);
+                std::fclose(lf);
+            }
+        }
+        if (PosModelOrder()) g_fiGameModeHold = 5;
         g_inSpawnSettle = true;          // keep the START BOOST ARM out of this call
         VehiclePhysics_StepCar(slot, dt, s);
         g_inSpawnSettle = false;
+        g_fiGameModeHold = 0;
         // [d2settle D0-a] MASHED_SETTLE_DIAG=<path>: what the settle step produced before it
         // is discarded. DIAGNOSTIC ONLY, default-OFF, writes nothing when unset.
         if (const char* sd = std::getenv("MASHED_SETTLE_DIAG")) {
@@ -860,7 +887,14 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         F(r, 0xb0c)       = 0.f;   // slide measure, the original's at-rest value
         I(r, 0x490)       = 0;     // gear
         I(r, 0x494)       = 0;     // shift timer
+        // [d2engage 2026-10-16] fix B part 4: the release tick is itself a FUN_004103a0 tick, whose
+        // per-car loop runs FUN_0046baa0 (0x0041043a) before the release and before that frame's
+        // physics, so the first real step enters reset (states 1, fv 0, +0x9e0 4.0, vel 0, ...).
+        // It writes neither +0xbf4 nor +0xbf8 (d2posmodel PREREG 0.3), so the charge the release
+        // reads is unchanged. Every slot: the original's loop covers every alive car.
+        if (PosModelOrder()) VehiclePhysicsStateReset(static_cast<std::uint32_t>(slot));
     }
+    if (settleOnly) return;   // [d2engage] VehiclePhysics_SpawnSettle: the settle block only
     // =====================================================================
 
     // [d2posmodel 2026-10-16] fix B part 3 adapter IN (MASHED_POS_TRANS). Inside StepCar
@@ -1216,7 +1250,16 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         g_torqueRingPhase = (g_torqueRingPhase + 1) & 0xf;
         if (!a4Skip)   // 0x00471042 / 0x00471048: jge past the A4 call
             VehicleControlIntegrate(reinterpret_cast<int*>(r), frameMs, input, basis, slot);
-        ReassertContacts(r);
+        // [d2engage 2026-10-16] fix B part 5 (MASHED_POS_CONTACTS): the original writes no wheel
+        // state, contact normal or +0x9e0 between the A4 loop and the substep loop. FUN_00470c70
+        // 0x0047109f..0x00471106 holds only the speed refresh (0x004710bc..0x004710da) and
+        // FUN_0046dc20 (0x004710f4, VehicleOOBDebugDraw: reads +0x9f0, writes the debug queue
+        // 0x007e9de0 only). This call also reads the g_c* cache of whichever car's solver ran last
+        // (slot 0's first step: the initial grounded=false, which zeroes the FUN_0046baa0 seeds).
+        // The port's A6a writes no wheel state, so the "A6a can clear states" reason below has no
+        // writer. PREREG_d2engage.md 0.4. With the knob on, every remaining ReassertContacts call
+        // reads the cache its own car's SolveWheelContacts set in the same call.
+        if (!PosModelContacts()) ReassertContacts(r);
         if (!s_noSpeedRefresh && !a4Skip && (I(r, 0x4) != 0 || I(r, 0x10) == 1)) {
             F(r, off::kSpeed) = Vec3Mag3(reinterpret_cast<const float*>(r + off::kVelocity)); // 0x004710c8
             F(r, 0x9e8)       = Vec3Mag3(reinterpret_cast<const float*>(r + 0x9bc));          // 0x004710da
@@ -1729,7 +1772,11 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
                     // byte-identical and a8_launch.py / a8_medframe.py are unaffected
                     // (PREREG_STEP2.md §3, gate D-0).
                     "wle4=[%g,%g,%g,%g] wld4=[%g,%g,%g,%g] b0c=%g gb498=%g gb49c=%g"
-                    " vel=[%g,%g,%g] fwd=[%g,%g,%g]\n",
+                    " vel=[%g,%g,%g] fwd=[%g,%g,%g]"
+                    // [d2engage 2026-10-16] APPENDED AT THE END (every earlier token byte-identical):
+                    // the boost charge / state A6a's +0xbf8 == 2 arm counts down (PREREG_d2engage.md
+                    // 0.1) and the four wheel states, all after the step, as the .msd samples them.
+                    " bf4=%d bf8=%d st=[%d,%d,%d,%d]\n",
                     g_bodyBasisReseed[slot] ? 1 : 0,
                     I(r, 0x490), I(r, 0x494),   // gearbox state (Integrate2.cpp:137-143)
                     // [A8-FTOTDIR] the SUMMED per-wheel force VECTOR, p[0x1c..0x1e]
@@ -1775,7 +1822,9 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
                     g_a8WheelLd4[0], g_a8WheelLd4[1], g_a8WheelLd4[2], g_a8WheelLd4[3],
                     F(r, 0xb0c), F(r, 0x498), F(r, 0x49c),
                     F(r, 0x9b0), F(r, 0x9b4), F(r, 0x9b8),
-                    F(r, 0x9d4), F(r, 0x9d8), F(r, 0x9dc));
+                    F(r, 0x9d4), F(r, 0x9d8), F(r, 0x9dc),
+                    I(r, 0xbf4), I(r, 0xbf8),
+                    I(r, 0x198), I(r, 0x25c), I(r, 0x320), I(r, 0x3e4));
                 std::fclose(lf);
                 g_bodyBasisReseed[slot] = false;
             }
