@@ -1,0 +1,9 @@
+T rows 13678 13498 | first T row whose cars 1-3 array differs: index 530 ord 531 clk 26550
+car 1 calls 967 1164 first consumer refdist diff at call 348 clock 26550
+car 2 calls 13315 13292 first consumer refdist diff at call 530 clock 26550
+car 3 calls 2192 2568 first consumer refdist diff at call 347 clock 26550
+car 1 step rows 967 1164 first differing row 348 frame 530
+car 2 step rows 13315 13292 first differing row 530 frame 530
+car 3 step rows 2192 2568 first differing row 395 frame 578
+ptrace lines 27356 26996 first differing line 1162 f=582
+H gates rows 56152 56152 differing columns {'refdist': 1863, 'other_idx': 4}

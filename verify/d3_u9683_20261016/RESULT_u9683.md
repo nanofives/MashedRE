@@ -1,7 +1,33 @@
 # RESULT: U-9683 (refdist producer order) and U-9685 (car 2's mode-7 entries at driving calls 16-17)
 
-Pre-registration `PREREG_u9683.md` (`898d298e`, before any measuring run) plus amendment A1 (`cff40ebf`, before any `M_PP` arm).
-Branch `work/u9683`, base `1caf1a10`. Model claude-sonnet-5-5 (account2, no Ghidra MCP: bytes via `re/tools/decomp_pc.py`).
+Pre-registration `PREREG_u9683.md` (`6721bc2c`, before any measuring run), amendment A1 (`21ea2e22`, before any `M_PP` arm) and
+amendment A2 (`dfff9377`, before any `R_*` arm). Branch `work/u9683`, **rebased onto `232f9f76`** (orchestrator notice 3) after a first
+measurement round on `1caf1a10`. Model claude-sonnet-5-5 (account2, no Ghidra MCP: bytes via `re/tools/decomp_pc.py`).
+**The final evidence is the `R_*` round on `232f9f76` (section 2a). Sections 2 and 3 keep the first round, same gates, hashes of the old base.**
+
+## 2a. FINAL ROUND on `232f9f76` (`R_*` arms, amendment A2)
+
+New base trio `c2e4d60d / b50bd39b / ba90ed88`. Everything below was measured with the rebased build, private game root, every run exit 0.
+
+| gate | result |
+|---|---|
+| G-CTRL (replaces the HEAD-exe arm, A2) | **PASS.** `R_H_OPTOUT` (opt-out = the base's call site) = `c2e4d60d / b50bd39b / ba90ed88`, the orchestrator's number for `232f9f76` |
+| new default | `R_H_DEF` = `R_H_DEF2` = **`c2e4d60d / 603ab244 / ba90ed88`**: step and ptrace equal the opt-out arm, only the gates dump differs (`refdist` 1863 of 56152 rows, `other_idx` 4) |
+| G-ARM-DET | **PASS** `R_H_DEF` = `R_H_DEF2`, `R_M_DEF` = `R_M_DEF2` (`eebf5616 / ... / 3fd78ec8`) |
+| G-TOOK | **PASS.** `R_M_OPTOUT` 13678 P rows all site `U`, lag 0 on 13678 / 13678. `R_M_DEF` 13498 P rows all site `A`, lag 1 on 13497 / 13497. Array == latest P row 100 % |
+| G-REFDIST / -VAL | FAIL (cars 1, 3) both arms, identical numbers: refdist-0 140 / 6 / 23 vs original 164 / 4 / 29, within-band 238 / 561 (42.42 %), **ON - OFF = +0.00 points** |
+| G-MODE7 / U-9685 | **does not close.** `R_M_OPTOUT` and `R_M_DEF` in-window returns of 2: 49 / **2** / 0 (original 49 / 0 / 0), car 2 at driving calls 16 and 17, clocks 850 and 900, held 0, refdist 0, original `3feb3cf3` / `3fe97d8a`. Car 2 first held != 0 at call 38 (original 27) |
+| probe (A1) | `R_M_PP_OPTOUT` = `R_M_PP_DEF` (step `f5968c94`, ptrace `6ab21eb5`): in-window **49 / 0 / 0 = original**, refdist-0 148 / 1 / 21, reference index == original on 183 / 220 (opt-out) and 183 / 220 (default) on the plain stack, 191 / 189 on the PATHPROG stack. U-9685 **closes under the faithful race_pct**, with either order |
+| (b) per regime | **A 1/3, B 2/3, C 0/3 on all 16 `R_B_*` runs**, equal to the orchestrator's base figure. Every `R_B_ON_K` step hash equals its `R_B_OFF_K` (K00 `08cbe07d`, K02 `1ace2f90`, K01 = K27 `da6c1125`, K04 `41e5454e`, K26 `328ee987`, K54 = K57 `a590bcd1`) |
+| collateral | default stack: **0 of 244** step fields diverge (`COLLATERAL_R_H_stdout.txt`), ptrace equal, gates dump only. Mode-7 stack (`COLLATERAL_R_M_stdout.txt`, `COLLATERAL_R_first.txt`): first consumer-visible refdist difference clock 26550, first step divergence frame 530 (cars 1, 2) and 578 (car 3), first ptrace difference frame 582, 171 of 244 fields after it, none before. Floor-a is the arm itself (no opt-out repeat, determinism shown by the `*_DEF2` repeats and by the pre-rebase `H_HEAD` / `H_OFF` equality) |
+
+Prediction check (A2): all carried over predictions held (ON = OFF on step and ptrace, in-window 49 / 2 / 0 and 49 / 0 / 0, (b) unchanged).
+The decision of section 0 therefore stands on the new base: **default ON, opt-out `MASHED_NO_REFDIST_AFTER_AI`. The default control trio on
+`232f9f76` + this branch is `c2e4d60d / 603ab244 / ba90ed88`.**
+
+**Disclosure.** Before I moved to a private game root, two driver invocations (`H_HEAD` + `H_OFF`, then `H_OFF`, between about 02:10 and 02:27, three arm starts) deleted the main
+root's `mashed_re.log` and `player_trace.log` at each arm start, the files the orchestrator says must not be deleted. I did not know the
+files were shared then. No file was deleted after the private root was in use, and all evidence above comes from the private root.
 
 ## 0. Verdict first
 
@@ -18,8 +44,9 @@ Branch `work/u9683`, base `1caf1a10`. Model claude-sonnet-5-5 (account2, no Ghid
 > the reference and `refdist[2]` = 0. With the faithful race_pct (`MASHED_PATHPROG`, report-only probe, not a default
 > candidate) car 2's in-window returns are **0** and cars 1 / 3 stay at the original's 49 / 0: **49 / 0 / 0 = the original**.
 >
-> Default build changes: G-CTRL gates hash only. New default trio **`991a5fff / a52c6b0e / bc75b405`**, opt-out
-> `MASHED_NO_REFDIST_AFTER_AI` reproduces the previous `991a5fff / be0d47ea / bc75b405`.
+> Default build changes: G-CTRL gates hash only. On the final base `232f9f76`: new default trio **`c2e4d60d / 603ab244 / ba90ed88`**,
+> opt-out `MASHED_NO_REFDIST_AFTER_AI` reproduces the base `c2e4d60d / b50bd39b / ba90ed88` (first-round figures on `1caf1a10`:
+> `991a5fff / a52c6b0e / bc75b405` and `991a5fff / be0d47ea / bc75b405`).
 
 ## 1. Bytes (G-ORDER), `FUN_0040fc00` (per-frame race tick, sole caller `FUN_004111c0`)
 
@@ -77,7 +104,7 @@ Prediction check (PREREG A1): car 2's returns vanish, as predicted (55 %). Refer
 alone it drops (b) to 0 / 3 (NEXT_SESSION 2026-10-13), and car 2's first held word moves to call 47 (original 27). The grid pose
 (`MASHED_ROUND_GRID`, not flipped) is not needed for the two returns to vanish.
 
-## 4. Code (commits `96df7719`, `f58ddc1f`)
+## 4. Code (commits `d907921d`, `9be4b950`, rebased from `96df7719`, `f58ddc1f`)
 
 - `Race/SpectatorDistances.cpp`: `RaceComputeDistancesTick(int site)`, `RaceRefDistAfterAi()`, `MASHED_REFDIST_TRACE` rows (P / T, frame
   ordinal bumped once per race frame before player physics). EXE-ONLY TU, no `.asi` body.
@@ -108,7 +135,7 @@ alone it drops (b) to 0 / 3 (NEXT_SESSION 2026-10-13), and car 2's first held wo
 
 ## 7. Decisions needed (user)
 
-1. Keep the default-ON order on the merge, or revert to opt-in? It changes only the gates-dump hash (`be0d47ea` -> `a52c6b0e`) of the default control trio.
+1. Keep the default-ON order on the merge, or revert to opt-in? It changes only the gates-dump hash (`b50bd39b` -> `603ab244`) of the default control trio.
 2. U-9685: default-ON `MASHED_PATHPROG` (known (b) cost) or a bridge fix for the pre-line race_pct? Neither was started.
 
 ## 8. Raw
