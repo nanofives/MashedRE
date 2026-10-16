@@ -1,0 +1,436 @@
+== C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\5a3bdb56-12f1-46ea-b31e-f18965df031a\scratchpad\piz_training\ROAD.DFF (70512 bytes)
+    GEOMETRY flags=0x2008b numTexCoordSets=2 tris=36 verts=42
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='CliffEdge' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow_Small', 'mask': ''}}, {'eff': 0}]}
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Dirt' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    mat[2] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='RoadTarmac' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    GEOMETRY flags=0x2008b numTexCoordSets=2 tris=32 verts=44
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='CliffEdge' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow_Small', 'mask': ''}}, {'eff': 0}]}
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Dirt' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    mat[2] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='RoadTarmac' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    GEOMETRY flags=0x2008b numTexCoordSets=2 tris=44 verts=60
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='CliffEdge' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow_Small', 'mask': ''}}, {'eff': 0}]}
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Dirt' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    mat[2] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='RoadTarmac' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    mat[3] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Wall' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x2008b numTexCoordSets=2 tris=42 verts=54
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='CliffEdge' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow_Small', 'mask': ''}}, {'eff': 0}]}
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Dirt' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    mat[2] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='RoadTarmac' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    mat[3] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Wall' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x2008b numTexCoordSets=2 tris=28 verts=40
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='CliffEdge' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow_Small', 'mask': ''}}, {'eff': 0}]}
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Dirt' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    mat[2] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='RoadTarmac' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    mat[3] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Wall' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x2008b numTexCoordSets=2 tris=42 verts=56
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='CliffEdge' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow_Small', 'mask': ''}}, {'eff': 0}]}
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Dirt' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    mat[2] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='RoadTarmac' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    mat[3] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Wall' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x2008b numTexCoordSets=2 tris=50 verts=67
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='CliffEdge' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow_Small', 'mask': ''}}, {'eff': 0}]}
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Dirt' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    mat[2] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='RoadTarmac' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    mat[3] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Wall' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x2008b numTexCoordSets=2 tris=26 verts=32
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='CliffEdge' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow_Small', 'mask': ''}}, {'eff': 0}]}
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Dirt' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    mat[2] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='RoadTarmac' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    GEOMETRY flags=0x2008b numTexCoordSets=2 tris=39 verts=61
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='CliffEdge' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow_Small', 'mask': ''}}, {'eff': 0}]}
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Dirt' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    mat[2] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='RoadTarmac' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    mat[3] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Wall' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x2008b numTexCoordSets=2 tris=130 verts=133
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='CliffEdge' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow_Small', 'mask': ''}}, {'eff': 0}]}
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Dirt' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    mat[2] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='RoadTarmac' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    mat[3] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Wall' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x2008b numTexCoordSets=2 tris=57 verts=75
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='CliffEdge' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow_Small', 'mask': ''}}, {'eff': 0}]}
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Dirt' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    mat[2] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='RoadTarmac' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    mat[3] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Wall' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x2008b numTexCoordSets=2 tris=32 verts=46
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='CliffEdge' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow_Small', 'mask': ''}}, {'eff': 0}]}
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Dirt' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    mat[2] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='RoadTarmac' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    mat[3] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Wall' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    mat[4] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Wall' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x2008b numTexCoordSets=2 tris=28 verts=43
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='CliffEdge' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow_Small', 'mask': ''}}, {'eff': 0}]}
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Dirt' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    mat[2] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='RoadTarmac' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    mat[3] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Wall' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    mat[4] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Wall' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x2008b numTexCoordSets=2 tris=28 verts=45
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='CliffEdge' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow_Small', 'mask': ''}}, {'eff': 0}]}
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Dirt' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    mat[2] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='RoadTarmac' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    mat[3] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Wall' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    mat[4] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Wall' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x2008b numTexCoordSets=2 tris=55 verts=66
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='CliffEdge' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow_Small', 'mask': ''}}, {'eff': 0}]}
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Dirt' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    mat[2] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='RoadTarmac' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    mat[3] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Wall' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    mat[4] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Wall' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x2008b numTexCoordSets=2 tris=28 verts=47
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='CliffEdge' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow_Small', 'mask': ''}}, {'eff': 0}]}
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Dirt' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    mat[2] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='RoadTarmac' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    mat[3] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Wall' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    mat[4] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Wall' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x2008b numTexCoordSets=2 tris=31 verts=37
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='CliffEdge' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow_Small', 'mask': ''}}, {'eff': 0}]}
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Dirt' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    mat[2] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='RoadTarmac' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    GEOMETRY flags=0x2008b numTexCoordSets=2 tris=24 verts=36
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='CliffEdge' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow_Small', 'mask': ''}}, {'eff': 0}]}
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Dirt' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    mat[2] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='RoadTarmac' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    GEOMETRY flags=0x2008b numTexCoordSets=2 tris=29 verts=35
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Dirt' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    GEOMETRY flags=0x2008b numTexCoordSets=2 tris=9 verts=11
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Dirt' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+    GEOMETRY flags=0x2008b numTexCoordSets=2 tris=19 verts=20
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Dirt' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow', 'mask': ''}}, {'eff': 0}]}
+  ATOMIC MatFX enabled=1
+  ATOMIC MatFX enabled=1
+  ATOMIC MatFX enabled=1
+  ATOMIC MatFX enabled=1
+  ATOMIC MatFX enabled=1
+  ATOMIC MatFX enabled=1
+  ATOMIC MatFX enabled=1
+  ATOMIC MatFX enabled=1
+  ATOMIC MatFX enabled=1
+  ATOMIC MatFX enabled=1
+  ATOMIC MatFX enabled=1
+  ATOMIC MatFX enabled=1
+  ATOMIC MatFX enabled=1
+  ATOMIC MatFX enabled=1
+  ATOMIC MatFX enabled=1
+  ATOMIC MatFX enabled=1
+  ATOMIC MatFX enabled=1
+  ATOMIC MatFX enabled=1
+  ATOMIC MatFX enabled=1
+  ATOMIC MatFX enabled=1
+  ATOMIC MatFX enabled=1
+== C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\5a3bdb56-12f1-46ea-b31e-f18965df031a\scratchpad\piz_training\GRAPH.BSP (594516 bytes)
+WORLD struct (0, -0.0, -0.0, -0.0, 11469, 12767, 41, 42, 0, 1073873097) format=0x400200c9 numTexCoordSets=2
+  MATLIST (world)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='CliffEdge_Small' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'newShadow_Small', 'mask': ''}}, {'eff': 0}]}
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Brick' mask='' filt=2 addr=(1, 1)
+    mat[2] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='CliffEdge2' mask='' filt=2 addr=(1, 1)
+    mat[3] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='CliffEdge_Small' mask='' filt=2 addr=(1, 1)
+    mat[4] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Cliff' mask='' filt=2 addr=(1, 1)
+    mat[5] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Dirt' mask='' filt=2 addr=(1, 1)
+    mat[6] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Wall' mask='' filt=2 addr=(1, 1)
+    mat[7] rgba=(102, 102, 102, 255) surf=(1.0, 1.0, 1.0) tex=None mask=None filt=None addr=None
+    mat[8] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Met' mask='' filt=2 addr=(1, 1)
+    mat[9] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='NewConc' mask='' filt=2 addr=(1, 1)
+    mat[10] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='NewWorld' mask='' filt=2 addr=(1, 1)
+    mat[11] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Corru_steel' mask='' filt=2 addr=(1, 1)
+    mat[12] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='waterTank_blue' mask='' filt=2 addr=(1, 1)
+    mat[13] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='greyBrick' mask='' filt=2 addr=(1, 1)
+    mat[14] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Tyres' mask='' filt=2 addr=(1, 1)
+    mat[15] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='RoadTarmac_Small' mask='' filt=2 addr=(1, 1)
+    mat[16] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Camstand' mask='' filt=2 addr=(1, 1)
+    mat[17] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='NewConc' mask='' filt=2 addr=(1, 1)
+    mat[18] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Ads' mask='' filt=2 addr=(1, 1)
+    mat[19] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='waterTank_blue' mask='' filt=2 addr=(1, 1)
+    mat[20] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Cliff_Small' mask='' filt=2 addr=(1, 1)
+    mat[21] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='newConc_Small' mask='' filt=2 addr=(1, 1)
+    mat[22] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='NewWorld_Small' mask='' filt=2 addr=(1, 1)
+    mat[23] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Brick_Small' mask='' filt=2 addr=(1, 1)
+== C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\5a3bdb56-12f1-46ea-b31e-f18965df031a\scratchpad\piz_Arctic\GRAPH.BSP (636432 bytes)
+WORLD struct (0, -0.0, -0.0, -0.0, 16480, 16229, 11, 12, 0, 1073807437) format=0x4001004d numTexCoordSets=1
+  MATLIST (world)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='BrickWall' mask='' filt=2 addr=(1, 1)
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Pav' mask='' filt=2 addr=(1, 1)
+    mat[2] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='WetRoad' mask='' filt=2 addr=(1, 1)
+    mat[3] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Rock' mask='' filt=2 addr=(1, 1)
+    mat[4] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Snow' mask='' filt=2 addr=(1, 1)
+    mat[5] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='World' mask='' filt=2 addr=(1, 1)
+    mat[6] rgba=(102, 102, 102, 255) surf=(1.0, 1.0, 1.0) tex=None mask=None filt=None addr=None
+    mat[7] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Vehicles' mask='' filt=2 addr=(1, 1)
+    mat[8] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Van' mask='' filt=2 addr=(1, 1)
+    mat[9] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Tyres' mask='' filt=2 addr=(1, 1)
+    mat[10] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Camstand' mask='' filt=2 addr=(1, 1)
+    mat[11] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Ads' mask='' filt=2 addr=(1, 1)
+    mat[12] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Dozer' mask='' filt=2 addr=(1, 1)
+== C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\5a3bdb56-12f1-46ea-b31e-f18965df031a\scratchpad\piz_City\GRAPHICS.BSP (828056 bytes)
+WORLD struct (0, -0.0, -0.0, -0.0, 18426, 21984, 6, 7, 0, 1073807437) format=0x4001004d numTexCoordSets=1
+  MATLIST (world)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='ads' mask='' filt=2 addr=(1, 1)
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='railings' mask='' filt=2 addr=(1, 1)
+    mat[2] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='RWLamposts' mask='' filt=2 addr=(1, 1)
+    mat[3] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='subwaytile' mask='' filt=2 addr=(1, 1)
+    mat[4] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='comp2' mask='' filt=2 addr=(1, 1)
+    mat[5] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='trainroof' mask='' filt=2 addr=(1, 1)
+    mat[6] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='train2' mask='' filt=2 addr=(1, 1)
+    mat[7] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Hall' mask='' filt=2 addr=(1, 1)
+    mat[8] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Path2' mask='' filt=2 addr=(1, 1)
+    mat[9] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='botapart' mask='' filt=2 addr=(1, 1)
+    mat[10] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Apart5windows NT' mask='' filt=2 addr=(1, 1)
+    mat[11] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='buildconc2' mask='' filt=2 addr=(1, 1)
+    mat[12] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Camstand' mask='' filt=2 addr=(1, 1)
+    mat[13] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Apart2 NT' mask='' filt=2 addr=(1, 1)
+    mat[14] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Apart3 NT' mask='' filt=2 addr=(1, 1)
+    mat[15] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Apart4' mask='' filt=2 addr=(1, 1)
+    mat[16] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Base01' mask='' filt=2 addr=(1, 1)
+    mat[17] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='road' mask='' filt=2 addr=(1, 1)
+    mat[18] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='windows08NT' mask='' filt=2 addr=(1, 1)
+    mat[19] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='firehouse NT' mask='' filt=2 addr=(1, 1)
+    mat[20] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Building_02NT' mask='' filt=2 addr=(1, 1)
+    mat[21] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='shoptype02 NT' mask='' filt=2 addr=(1, 1)
+    mat[22] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='windows06 NT' mask='' filt=2 addr=(1, 1)
+    mat[23] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='shopfront02' mask='' filt=2 addr=(1, 1)
+    mat[24] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='windows02 NT' mask='' filt=2 addr=(1, 1)
+    mat[25] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='rooftop' mask='' filt=2 addr=(1, 1)
+    mat[26] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='CityBuild_01' mask='' filt=2 addr=(1, 1)
+    mat[27] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Camstand' mask='' filt=2 addr=(1, 1)
+    mat[28] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='residential02 NT' mask='' filt=2 addr=(1, 1)
+    mat[29] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='shoptype01 NT' mask='' filt=2 addr=(1, 1)
+    mat[30] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Apart6windows' mask='' filt=2 addr=(1, 1)
+    mat[31] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='build6' mask='' filt=2 addr=(1, 1)
+    mat[32] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='build9beam NT' mask='' filt=2 addr=(1, 1)
+    mat[33] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='shopfront03' mask='' filt=2 addr=(1, 1)
+    mat[34] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='shopfront04' mask='' filt=2 addr=(1, 1)
+    mat[35] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='build' mask='' filt=2 addr=(1, 1)
+    mat[36] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='windows04' mask='' filt=2 addr=(1, 1)
+    mat[37] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='build7beam' mask='' filt=2 addr=(1, 1)
+    mat[38] rgba=(102, 102, 102, 255) surf=(1.0, 1.0, 1.0) tex=None mask=None filt=None addr=None
+    mat[39] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='office-block' mask='' filt=2 addr=(1, 1)
+    mat[40] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='brooklyn1' mask='' filt=2 addr=(1, 1)
+    mat[41] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='BrickWallarrows' mask='' filt=2 addr=(1, 1)
+    mat[42] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='pavingbeigepath' mask='' filt=2 addr=(1, 1)
+    mat[43] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='pavingbeigep' mask='' filt=2 addr=(1, 1)
+    mat[44] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='buildconc2' mask='' filt=2 addr=(1, 1)
+    mat[45] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='BrickWall' mask='' filt=2 addr=(1, 1)
+    mat[46] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='office NT' mask='' filt=2 addr=(1, 1)
+    mat[47] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='sandblends' mask='' filt=2 addr=(1, 1)
+    mat[48] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Grass' mask='' filt=2 addr=(1, 1)
+    mat[49] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='sand' mask='' filt=2 addr=(1, 1)
+    mat[50] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Trucktyre' mask='' filt=2 addr=(1, 1)
+    mat[51] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='thickgirders' mask='' filt=2 addr=(1, 1)
+    mat[52] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='thickgirders' mask='' filt=2 addr=(1, 1)
+    mat[53] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='thickgirders2' mask='' filt=2 addr=(1, 1)
+    mat[54] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='track' mask='' filt=2 addr=(1, 1)
+    mat[55] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='parking' mask='' filt=2 addr=(1, 1)
+    mat[56] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='taxi' mask='' filt=2 addr=(1, 1)
+    mat[57] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='sKYLINE' mask='' filt=2 addr=(1, 1)
+    mat[58] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='water00' mask='' filt=2 addr=(1, 1)
+    mat[59] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='shops' mask='' filt=2 addr=(1, 1)
+    mat[60] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='residential01 NT' mask='' filt=2 addr=(1, 1)
+    mat[61] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='JetRanger' mask='' filt=2 addr=(1, 1)
+    mat[62] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Ads1' mask='' filt=2 addr=(1, 1)
+== C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\5a3bdb56-12f1-46ea-b31e-f18965df031a\scratchpad\piz_City\ROAD.DFF (92428 bytes)
+    GEOMETRY flags=0x1000f numTexCoordSets=1 tris=21 verts=32
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Path2' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x1000f numTexCoordSets=1 tris=120 verts=194
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Path2' mask='' filt=2 addr=(1, 1)
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='road' mask='' filt=2 addr=(1, 1)
+    mat[2] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Roadcross' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x1000f numTexCoordSets=1 tris=62 verts=112
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Path2' mask='' filt=2 addr=(1, 1)
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='road' mask='' filt=2 addr=(1, 1)
+    mat[2] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Roadcross' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x1000f numTexCoordSets=1 tris=70 verts=114
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Path2' mask='' filt=2 addr=(1, 1)
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='road' mask='' filt=2 addr=(1, 1)
+    mat[2] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Roadcross' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x1000f numTexCoordSets=1 tris=96 verts=144
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Path2' mask='' filt=2 addr=(1, 1)
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='road' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x1000f numTexCoordSets=1 tris=44 verts=68
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Path2' mask='' filt=2 addr=(1, 1)
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='road' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x1000f numTexCoordSets=1 tris=49 verts=73
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Path2' mask='' filt=2 addr=(1, 1)
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='road' mask='' filt=2 addr=(1, 1)
+    mat[2] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Roadcross' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x1000f numTexCoordSets=1 tris=68 verts=115
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Path2' mask='' filt=2 addr=(1, 1)
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='road' mask='' filt=2 addr=(1, 1)
+    mat[2] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Roadcross' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x1000f numTexCoordSets=1 tris=38 verts=68
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Path2' mask='' filt=2 addr=(1, 1)
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='road' mask='' filt=2 addr=(1, 1)
+    mat[2] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Roadcross' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x1000f numTexCoordSets=1 tris=49 verts=89
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Path2' mask='' filt=2 addr=(1, 1)
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='road2' mask='' filt=2 addr=(1, 1)
+    mat[2] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='road' mask='' filt=2 addr=(1, 1)
+    mat[3] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Roadcross' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x1000f numTexCoordSets=1 tris=60 verts=88
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Path2' mask='' filt=2 addr=(1, 1)
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='road' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x1000f numTexCoordSets=1 tris=64 verts=96
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Path2' mask='' filt=2 addr=(1, 1)
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='road' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x1000f numTexCoordSets=1 tris=74 verts=124
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Path2' mask='' filt=2 addr=(1, 1)
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='road' mask='' filt=2 addr=(1, 1)
+    mat[2] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Roadcross' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x1000f numTexCoordSets=1 tris=26 verts=50
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Path2' mask='' filt=2 addr=(1, 1)
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='road' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x1000f numTexCoordSets=1 tris=6 verts=12
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Path2' mask='' filt=2 addr=(1, 1)
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='road' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x1000f numTexCoordSets=1 tris=56 verts=82
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Path2' mask='' filt=2 addr=(1, 1)
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='road' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x1000f numTexCoordSets=1 tris=61 verts=86
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Path2' mask='' filt=2 addr=(1, 1)
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='road' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x1000f numTexCoordSets=1 tris=38 verts=66
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Path2' mask='' filt=2 addr=(1, 1)
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='road2' mask='' filt=2 addr=(1, 1)
+    mat[2] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='road' mask='' filt=2 addr=(1, 1)
+    mat[3] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Roadcross' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x1000f numTexCoordSets=1 tris=27 verts=45
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Path2' mask='' filt=2 addr=(1, 1)
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='road' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x1000f numTexCoordSets=1 tris=47 verts=75
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Path2' mask='' filt=2 addr=(1, 1)
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='road2' mask='' filt=2 addr=(1, 1)
+    mat[2] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='road' mask='' filt=2 addr=(1, 1)
+    mat[3] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Roadcross' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x1000f numTexCoordSets=1 tris=46 verts=78
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Path2' mask='' filt=2 addr=(1, 1)
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='road' mask='' filt=2 addr=(1, 1)
+    mat[2] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Roadcross' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x1000f numTexCoordSets=1 tris=19 verts=31
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Path2' mask='' filt=2 addr=(1, 1)
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='road' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x1000f numTexCoordSets=1 tris=127 verts=88
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Pathpattern' mask='' filt=2 addr=(1, 1)
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Path2' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x1000f numTexCoordSets=1 tris=8 verts=12
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Path2' mask='' filt=2 addr=(1, 1)
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='road' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x1000f numTexCoordSets=1 tris=2 verts=4
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Path2' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x1000f numTexCoordSets=1 tris=26 verts=38
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Path2' mask='' filt=2 addr=(1, 1)
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='road' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x1000f numTexCoordSets=1 tris=96 verts=113
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Pathpattern' mask='' filt=2 addr=(1, 1)
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Path2' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x1000f numTexCoordSets=1 tris=24 verts=36
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Path2' mask='' filt=2 addr=(1, 1)
+    mat[1] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='road' mask='' filt=2 addr=(1, 1)
