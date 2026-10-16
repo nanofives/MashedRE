@@ -1,5 +1,5 @@
 # arm A: csv:C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\6f2f5c3b-7736-4b65-b205-39c7e7188055\scratchpad\cut_o_p2b.csv(600 frames)
-# arm B: csv:C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\6f2f5c3b-7736-4b65-b205-39c7e7188055\scratchpad\cut_H_DEF.csv(600 frames)
+# arm B: csv:verify\d2posmodel_20261016\cut_H_DEF.csv(600 frames)
 # noise floor: 259 fields, from 563 A-pair frames and 600 B-pair frames
 # anchor A: s.v2.substate ge 6 first at frame 829 -> rebased to 0
 # anchor B: s.v2.substate ge 6 first at frame 0 -> rebased to 0

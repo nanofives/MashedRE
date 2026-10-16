@@ -1,14 +1,18 @@
 # RESULT d2posmodel: fix B (the exe's car position model made the original's)
 
-Pre-registration `PREREG_d2posmodel.md` (`b9330cb6`), amendments 1-3 (`66b57ade`, `67f31f2e`, `787ce166`). Branch
-`work/d2posmodel`, base `232f9f76`. Model claude-opus-5-5 (account2). Exe runs used `MASHED_ROOT` = a private copy of
-`original/` (two copies, so deterministic arms could run next to the wall-clock D2 arms). Exes `90a55dc7`, then
-`06642c53` (adds the amendment-2 diag knobs only; its full-reset path reproduces `90a55dc7`, section 6).
+Pre-registration `PREREG_d2posmodel.md` (`6c26aead`), amendments 1-4 (`ef28fd3e`, `45430848`, `7f918272`, `e917d0d8`).
+Branch `work/d2posmodel`, **rebased onto `39ecd74d`** (orchestrator notice 4). The pre-rebase history is kept as
+`work/d2posmodel-prerebase` (`2368cb3d`, base `232f9f76`; same commits, PREREG `b9330cb6`, amendments `66b57ade`,
+`67f31f2e`, `787ce166`). Model claude-opus-5-5 (account2). Exe runs used `MASHED_ROOT` = a private copy of
+`original/` (two copies, so deterministic arms could run next to the wall-clock D2 arms). Pre-rebase exes
+`90a55dc7` and `06642c53` (the second adds the amendment-2 diag knobs only). Rebased exe `151728dc`. **Every gate verdict
+below was re-taken on the rebased exe (section 8) and none changed.** The bisect and per-part arms are pre-rebase.
 
 ## 0. Verdict first
 
 > **PARTIAL. Fix B is ported behind default-OFF knobs. The settle it was written for now happens in the exe, but
-> fix B fails D2. Default build unchanged: G-CTRL `c2e4d60d / b50bd39b / ba90ed88`.**
+> fix B fails D2. Default build unchanged: G-CTRL `716cb2fd / 2a2afda1 / ba90ed88` on the rebased base, x2
+> (pre-rebase `c2e4d60d / b50bd39b / ba90ed88`, x3).**
 >
 > 1. **The settle works.** With `MASHED_POS_MODEL=1` on the original's grid (`D_BRG`), the player's first-step move is
 >    (0, -0.00295204, +0.0000922714) against the original's (0, -0.0029474, +0.0000921): x bit-identical, dz +1.2e-7,
@@ -44,8 +48,8 @@ Pre-registration `PREREG_d2posmodel.md` (`b9330cb6`), amendments 1-3 (`66b57ade`
 | recovery H1, 3/3 | `D2_B_1..3` | **FAIL** 11/400 (2.8 %), median 32.0 |
 | D3 (b) report | `B_B_K*` | A **0/3** (car 2 lost), B 2/3, C 0/3 (base 1/3, 2/3, 0/3) |
 | collateral (<= base + 2) | `H_B` / `H_B-2` | PASS 40 / 94 (base `H_DEF` 39 / 94; `s.v1.c1` moved out) |
-| no-op control | `H_DEF`, `H_DEF-2`, `H_DEF-3` | PASS `c2e4d60d / b50bd39b / ba90ed88` (see section 6 for `-3`) |
-| determinism | `H_B` = `H_B-2`; `H_BMIN` = `H_BMIN-2` | PASS `b1b6f319 / 4ea8366f / e92bdf83` |
+| no-op control | rebased `H_DEF`, `H_DEF-2` | PASS `716cb2fd / 2a2afda1 / ba90ed88` (pre-rebase x3 `c2e4d60d / b50bd39b / ba90ed88`) |
+| determinism | rebased `H_B` = `H_B-2` | PASS `38fc6b40 / c46a1d2a / ac9365f0` (pre-rebase `b1b6f319 / 4ea8366f / e92bdf83`, = `H_BMIN`) |
 
 Default rule (PREREG section 5): G-SETTLE, D2 and recovery fail, so **fix B stays default OFF**. `BMIN` was
 ineligible by registration and also collapses. **No default flip.**
@@ -147,7 +151,7 @@ untouched), `H_B` = `H_BMIN` `b1b6f319 / 4ea8366f / e92bdf83`, `H_BC` `b300e27a 
 - PIDs: only spawned PIDs were waited on or killed (`run_arms.py`). Two foreign `mashed_re` processes seen at start
   (20544, 24044) were not touched. No original-side (MASHED.exe) run in this lane.
 - Exe `06642c53` vs `90a55dc7`: `D_B-2` settle = `D_B` (`8a6efcb4`), `D2_P1_2` = `D2_P1_1`. `H_DEF-3` on `06642c53` (the
-  final branch exe) = `c2e4d60d / b50bd39b / ba90ed88`, so the shipped default is the base, bit for bit.
+  final pre-rebase exe) = `c2e4d60d / b50bd39b / ba90ed88`, so the shipped default is the base, bit for bit.
 
 ## 7. Proposed tracker transaction (re-classify, NOT applied here)
 
@@ -169,9 +173,35 @@ IDs: next free at base is U-9687 (d2settle's proposed rows were never applied; r
 - **CHANGELOG (proposed):** `2026-10-16 d2posmodel (verify/d2posmodel_20261016/RESULT_d2posmodel.md): fix B (FUN_0046baa0
   seed, real suspension points, 0x0046f6c0 translation as position) ported behind MASHED_POS_MODEL / _SEED / _WHEELS
   / _TRANS, default OFF; settle reproduced on the original's grid; D2 fails (seed shifts +0xb14 to d=14, wall pin);
-  parts 2+3 alone driving-median 1875.84; G-CTRL unchanged c2e4d60d/b50bd39b/ba90ed88.`
+  parts 2+3 alone driving-median 1875.84; G-CTRL unchanged 716cb2fd/2a2afda1/ba90ed88 on 39ecd74d.`
 
-## 8. Raw
+## 8. Re-measurement on the rebased base `39ecd74d` (amendment 4, exe `151728dc`)
+
+| arm | rebased | pre-rebase | changed? |
+|---|---|---|---|
+| `H_DEF` = `H_DEF-2` (no-op) | `716cb2fd / 2a2afda1 / ba90ed88` | `c2e4d60d / b50bd39b / ba90ed88` | base moved, = new default: PASS |
+| `H_B` = `H_B-2` | `38fc6b40 / c46a1d2a / ac9365f0` | `b1b6f319 / 4ea8366f / e92bdf83` | yes (base interaction), determinism PASS |
+| `D_B` / `D_BRG` settle + ptrace | `8a6efcb4 / 7df792b1`, `502dd9cb / 8716d18a` | identical | no: G-SETTLE FAIL / report PASS, G-PROG PASS |
+| `D_RG` (control) | settle `204c6188`, prog 0.0 x27 | identical settle | no |
+| `D2_DEF_1` (new baseline) | 0.1927 / 0.2489 / 1860.27 (n 376 / 562 / 1367), rec 398/400 | 1860.35 | no |
+| `D2_B_1..3` | NA / NA / 1338.62 n=54 x3, rec 11/400, `+0xb14` d=14, fit 6.93 % | identical | no: D2 + recovery FAIL |
+| `D2_P23_1` | 0.1944 / 0.2538 / 1872.33 (n 1341), rec 398/400 | 1875.84 (n 1338) | run-to-run spread only |
+| D3 (b) `B_DEF_K*` / `B_B_K*` | A 1/3, B 2/3, C 0/3 / A 0/3, B 2/3, C 0/3 | identical | no |
+| collateral `H_DEF` / `H_B` | 39 / 94 / 40 / 94 (`s.v1.c1` out) | identical | no |
+
+Files: `SCORE_D2_REBASED.txt`, `SCORE_LAUNCH_REBASED.txt`, `G_SETTLE_REBASED.txt`, `SCORE_B_REBASED.txt`, the
+`COLLATERAL_CROSS_H_{DEF,B}*` and `cut_H_*.csv` (now the rebased ones). `SCORE_D2.txt` / `SCORE_LAUNCH.txt` / `G_SETTLE.txt` /
+`SCORE_B.txt` keep the pre-rebase scores. The five re-run D2 motion logs were overwritten by the rebased runs.
+
+**Orchestrator inputs folded in.** (1) librwrest: the exe renders the car from position + yaw only. Making the render
+take the ring matrix would NOT show pitch or roll from this slice. The port's ring rows are the `BodyOrient` basis,
+and the solver's own rotation alignment (`0x0046f6c0` bVar16 == 3 branch) never runs: its normal source
+`FUN_0046c5f0` is an unported register-arg call, and `local_e0` is zero-initialised (`WheelContactSolver.cpp`, the
+[UNCERTAIN] there). Porting that branch comes before a full-matrix render. (2) Grid offsets 0.3-7 cm: this lane's
+default-grid G-SETTLE miss comes from that grid pose (z -2.00247 vs -1.99904, yaw -1.576028 vs -1.568874). On
+`MASHED_ROUND_GRID` + `_ORDER` the pose and the settle match. No original-side capture was needed or queued.
+
+## 9. Raw
 
 Committed: `PREREG_d2posmodel.md`, this file, `run_arms.py`, `g_settle.py`, `RUNLOG.txt`, `SCORE_D2.txt`,
 `SCORE_LAUNCH.txt`, `SCORE_B.txt`, `G_SETTLE.txt`, `COLLATERAL_CROSS_H_{DEF,B}{,_stdout}.txt`, `D_*.settle.txt`,
