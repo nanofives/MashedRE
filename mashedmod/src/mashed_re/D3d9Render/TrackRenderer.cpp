@@ -6758,6 +6758,18 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         Race::ResolveRaceRenderCamera(race_cam_, &rrc);
         for (int i = 0; i < 3; ++i) { eye[i] = rrc.pos[i]; at[i] = rrc.pos[i] + rrc.at[i]; }
         race_basis = true;
+    } else if (car_ready_ && !s_basis_optout && race_cam_.node_count() > 0) {
+        // The first in-race Render comes before the first UpdateCar (measured: the
+        // race-demo dump's seq 1 has countdown 3.0 and no director output). Evaluate
+        // a COPY of the director on its snap path, which is what that first update
+        // runs, so this frame is the game camera too. race_cam_ itself is untouched.
+        Race::RaceCamera snap = race_cam_;
+        Race::RaceCamCar cc[kRaceCars] = {};
+        FillRaceCamCars(cc);
+        snap.Update(cc, course_id_, 1.f / 60.f, static_cast<std::uint32_t>(cam_ticks_), 0.f, true);
+        Race::ResolveRaceRenderCamera(snap, &rrc);   // nodes > 0, so Update ran (primes)
+        for (int i = 0; i < 3; ++i) { eye[i] = rrc.pos[i]; at[i] = rrc.pos[i] + rrc.at[i]; }
+        race_basis = true;
     } else if (car_ready_ && s_basis_optout) {
         // [opt-out] pre-d1r2 default: eye = director pos, target = director
         // look-at, Y-up LookAt below; a {0,0,0} pos (director not yet run) takes

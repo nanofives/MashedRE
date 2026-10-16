@@ -38,13 +38,17 @@ let camFires=0; let trace=[]; let tracing=false;
 // Present dumps the frame this row's camera produced (d3d9_shim.cpp:526-527 polls the
 // request once per Present).
 let frameMode=false, maxRows=1200, shotRows={}, reqPath='', shotDir='';
+// relShots: offsets from the FIRST DAT_0063ba8c == 6 row (racing), because phase 3's
+// length follows the QPC clock and differs per run (memory: phase-3 length is the QPC clock).
+let relShots={}, raceStart=-1;
 function abs(r){return ptr(r+DELTA);}
 function rd(p,n){ const o=[]; for(let i=0;i<n;i++) o.push(p.add(i*4).readFloat()); return o; }
 // RwMatrix rows right/up/at/pos at +0x00/+0x10/+0x20/+0x30 -> 12 floats (flags/pads dropped)
 function mat12(p){ const m=rd(p,16); return [m[0],m[1],m[2],m[4],m[5],m[6],m[8],m[9],m[10],m[12],m[13],m[14]]; }
 rpc.exports={
-  config:function(fm, mr, shots, rq, sd){ frameMode=!!fm; maxRows=mr; shotRows={};
-    for (const k of shots) shotRows[k]=1; reqPath=rq; shotDir=sd; return 1; },
+  config:function(fm, mr, shots, rq, sd, rel){ frameMode=!!fm; maxRows=mr; shotRows={};
+    for (const k of shots) shotRows[k]=1; reqPath=rq; shotDir=sd;
+    relShots={}; for (const k of (rel||[])) relShots[k]=1; raceStart=-1; return 1; },
   tracelen:function(){ return trace.length; },
   init:function(){ const m=Process.findModuleByName('MASHED.exe')||Process.enumerateModules()[0];
     DELTA=m.base.toUInt32()-IMG;
@@ -180,7 +184,9 @@ rpc.exports={
           row.E = mat12(abs(0x0089650c));            // entry 0 + 0x4c
           row.e0c0 = abs(0x00896580).readFloat();    // entry 0 + 0xc0
           row.shot = 0;
-          if (shotRows[trace.length] && reqPath) {
+          if (row.ba8c === 6 && raceStart < 0) raceStart = trace.length;
+          const relHit = raceStart >= 0 && relShots[trace.length - raceStart];
+          if ((shotRows[trace.length] || relHit) && reqPath) {
             const nm = shotDir + '\\orig_row_' + ('00000' + trace.length).slice(-5) + '.bmp';
             const f = new File(reqPath, 'w'); f.write(nm + '\n'); f.close();
             row.shot = 1;
@@ -236,16 +242,20 @@ def main():
     ap.add_argument("--shots", default="",
                     help="[d1r2] comma list of trace rows to dump the backbuffer at "
                          "(needs the d3d9 shim; implies --frame)")
+    ap.add_argument("--shots-race", default="",
+                    help="[d1r2] comma list of offsets from the first DAT_0063ba8c == 6 "
+                         "(racing) row to dump the backbuffer at")
     args = ap.parse_args()
     out_csv, out_static = Path(args.out), Path(args.static_out)
     shots = [int(s) for s in args.shots.split(",") if s.strip()]
-    if shots: args.frame = True
+    rel = [int(s) for s in args.shots_race.split(",") if s.strip()]
+    if shots or rel: args.frame = True
     LOG.mkdir(exist_ok=True)
     out_csv.parent.mkdir(parents=True, exist_ok=True)
     env = dict(os.environ); env["MASHED_RE_NO_AUTO_HOOK"] = "1"
     env.setdefault("MASHED_WIN_POS", "primary-bl")
     req = out_csv.parent / "orig_bbdump.req"
-    if shots:
+    if shots or rel:
         if not (ORIG / "d3d9.dll").exists():
             sys.exit(f"--shots needs the d3d9 shim at {ORIG / 'd3d9.dll'}")
         try: req.unlink()
@@ -257,8 +267,8 @@ def main():
     sess = dev.attach(pid)
     scr = sess.create_script(AGENT); scr.on("message", lambda m, d: None); scr.load()
     scr.exports_sync.init()
-    scr.exports_sync.config(args.frame, args.rows, shots, str(req) if shots else "",
-                            str(out_csv.parent.resolve()))
+    scr.exports_sync.config(args.frame, args.rows, shots, str(req) if (shots or rel) else "",
+                            str(out_csv.parent.resolve()), rel)
     dev.resume(pid)
     E = scr.exports_sync
 
@@ -300,8 +310,15 @@ def main():
     if args.early:
         fires3s = -1
         t0 = time.time()
+        last_n, last_t = 0, time.time()
         while E.tracelen() < args.rows and time.time() - t0 < args.rows / 30.0 + 60:
             time.sleep(1.0)
+            n_now = E.tracelen()
+            if n_now != last_n:
+                last_n, last_t = n_now, time.time()
+            elif n_now > 100 and time.time() - last_t > 8.0:
+                print(f"trace stalled at {n_now} rows (director no longer called)")
+                break
     else:
         time.sleep(2.0)
         E.hookcam()
@@ -403,12 +420,14 @@ def main():
     else:
         print("capture self-check: OK (car Y plausible, selector in {0,1}, "
               "velocity gate all zero)")
-    if shots:
+    if shots or rel:
         end = time.time() + 5.0
         while req.exists() and time.time() < end: time.sleep(0.1)
-        for k in shots:
+        fired = [i for i, r in enumerate(rows) if r.get("shot")]
+        print(f"shot rows requested: abs {shots} race-relative {rel}; fired at {fired}")
+        for k in fired:
             bmp = out_csv.parent / f"orig_row_{k:05d}.bmp"
-            print(f"shot row {k}: {'OK' if bmp.exists() else 'MISSING'} {bmp}")
+            print(f"shot row {k} (ba8c={rows[k]['ba8c']}): {'OK' if bmp.exists() else 'MISSING'} {bmp}")
     try: dev.kill(pid)
     except Exception: pass
     print(f"done -> {out_csv}, {out_static}")

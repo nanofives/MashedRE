@@ -27,6 +27,11 @@ def fl(r, k):
     return float(r[k])
 
 
+def f32(x):
+    import struct
+    return struct.unpack("<f", struct.pack("<f", x))[0]
+
+
 def vec(r, pfx, comp):
     return [fl(r, f"{pfx}{comp}{a}") for a in "xyz"]
 
@@ -212,7 +217,8 @@ def g_pose(a):
         pos.append(dist(m["p"], [fl(s, "ex"), fl(s, "ey"), fl(s, "ez")]))
         at.append(ang(m["a"], [fl(s, "ax"), fl(s, "ay"), fl(s, "az")]))
         rt.append(ang(m["r"], [fl(s, "rx"), fl(s, "ry"), fl(s, "rz")]))
-        vw.append(abs(fl(s, "vw58") - fl(r, "vw58")))
+        # compare as float32 BITS: the exe prints %.9g, Frida prints 17 digits of the same float
+        vw.append(abs(f32(fl(s, "vw58")) - f32(fl(r, "vw58"))))
     print(f"shift={a.shift}  joined racing rows={len(pos)}  exe src counts {src}")
     for n, xs, u in (("pos", pos, ""), ("at", at, " deg"), ("right", rt, " deg"), ("vw58", vw, "")):
         print(summary(n, xs, u))
@@ -252,6 +258,46 @@ def g_wire(a):
     return 0 if ok else 1
 
 
+def imgdiff_mean(a_path, b_path):
+    """re/tools/imgdiff.py's 'all' mean abs diff (B resampled to A's size)."""
+    import re
+    import subprocess
+    from pathlib import Path
+    tool = Path(__file__).resolve().parents[2] / "re" / "tools" / "imgdiff.py"
+    out = subprocess.run([sys.executable, str(tool), str(a_path), str(b_path)],
+                         capture_output=True, text=True).stdout
+    m = re.search(r"\(all ([0-9.]+)\)", out)
+    over = re.search(r"pixels over threshold \d+: \d+ \(([0-9.]+)%\)", out)
+    return (float(m.group(1)) if m else float("nan"), float(over.group(1)) if over else float("nan"))
+
+
+def g_frame(a):
+    from pathlib import Path
+    from PIL import Image
+    od, sd = Path(a.orig_dir), Path(a.stand_dir)
+    ok_all = True
+    for k in a.rows:
+        o = od / f"orig_row_{k:05d}.bmp"
+        res = {}
+        for off in (0, -a.ctl, a.ctl):
+            s = sd / f"stand_row_{k + off:05d}.bmp"
+            res[off] = imgdiff_mean(o, s) if (o.exists() and s.exists()) else (float("nan"), float("nan"))
+        ok = res[0][0] < res[-a.ctl][0] and res[0][0] < res[a.ctl][0]
+        ok_all &= ok
+        print(f"K={k}: mean-abs(orig@K, stand@K)={res[0][0]:.2f} ({res[0][1]:.1f}% over 16)  "
+              f"stand@K-{a.ctl}={res[-a.ctl][0]:.2f}  stand@K+{a.ctl}={res[a.ctl][0]:.2f}: {verdict(ok)}")
+        if a.sbs and o.exists() and (sd / f"stand_row_{k:05d}.bmp").exists():
+            io = Image.open(o).convert("RGB")
+            ist = Image.open(sd / f"stand_row_{k:05d}.bmp").convert("RGB").resize(io.size)
+            sbs = Image.new("RGB", (io.width * 2, io.height))
+            sbs.paste(io, (0, 0)); sbs.paste(ist, (io.width, 0))
+            p = Path(a.sbs) / f"sbs_row_{k:05d}.png"
+            sbs.save(p)
+            print(f"   side-by-side (original | standalone) -> {p}")
+    print(f"G-FRAME: {verdict(ok_all)}")
+    return 0 if ok_all else 1
+
+
 def nodes_out(a):
     import json
     st = json.load(open(a.static))
@@ -287,6 +333,9 @@ def main():
     s = sp.add_parser("pose"); s.add_argument("trace"); s.add_argument("dump")
     s.add_argument("--shift", type=int, default=0); s.set_defaults(fn=g_pose)
     s = sp.add_parser("wire"); s.add_argument("dump"); s.add_argument("librw"); s.set_defaults(fn=g_wire)
+    s = sp.add_parser("frame"); s.add_argument("orig_dir"); s.add_argument("stand_dir")
+    s.add_argument("rows", type=int, nargs="+"); s.add_argument("--ctl", type=int, default=60)
+    s.add_argument("--sbs", default=""); s.set_defaults(fn=g_frame)
     a = ap.parse_args()
     return a.fn(a)
 
