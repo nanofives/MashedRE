@@ -176,7 +176,7 @@
   "id": "C21-ORDER",
   "kind": "ORDER",
   "tex": ".*",
-  "note": "[rstates] World-sector and tied-prop order follows RenderWare since F2 (sector sequence equal to the original on 9/9 frames) and clump atomic order since F5. Surviving ORDER rows: car Glass vs body parts (U-9707), Arctic sky-pass World mesh drawn after the world by the port (U-9696), City post-world building copies (U-9695) and within-sector tie order (U-9706). d1r1 note: Draw order of blended draws against matched draws: the original renders world sectors in RW's traversal order with each sector's atomics, the standalone renders librw's one-clump world in sector-list order and then all instances. U-9694."
+  "note": "[rstates] World-sector and tied-prop order follows RenderWare since F2 (sector sequence equal to the original on 9/9 frames), clump atomic order since F5, the after-world clump order since F6 (each track's hook slot +0x1c), mesh order within an atomic since F7 (BinMesh PLG) and the Mts pair copy order since F8. Surviving ORDER rows: car Glass vs body parts (U-9707), Arctic sky-pass World mesh drawn after the world by the port (U-9696), within-sector tie order (U-9706: City Path2 / railings / thickgirders). d1r1 note: Draw order of blended draws against matched draws: the original renders world sectors in RW's traversal order with each sector's atomics, the standalone renders librw's one-clump world in sector-list order and then all instances. U-9694."
  },
  {
   "id": "C01b-CULL-AABB",

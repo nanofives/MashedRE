@@ -12,3 +12,17 @@ arctic T0 9.24 / 7.02 / 6.47
 arctic T2 9.18 / 7.02 / 6.46
 city T0 10.49 / 6.89 / 6.62
 city T2 10.49 / 6.85 / 6.60
+# 04dee0ed arms (U0 base, U2 F1-F6), imgdiff.py "all" mean abs diff vs orig_row_K.bmp:
+training U0 14.24 / 9.98 / 8.66
+training U2 12.12 / 8.61 / 7.31
+arctic U0 9.24 / 7.06 / 6.50
+arctic U2 9.18 / 7.05 / 6.48
+city U0 10.56 / 6.92 / 6.63
+city U2 10.55 / 6.88 / 6.61
+# 04dee0ed final (W8 F1-F8 default), same metric:
+training V7 12.12 / 8.61 / 7.31
+training W8 12.12 / 8.61 / 7.31
+arctic V7 9.18 / 7.05 / 6.48
+arctic W8 9.18 / 7.05 / 6.48
+city V7 10.55 / 6.88 / 6.61
+city W8 10.55 / 6.88 / 6.61

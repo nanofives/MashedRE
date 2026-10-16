@@ -1,31 +1,35 @@
 # RESULT rstates: RenderWare render states and world draw order (U-9689, U-9690, U-9694)
 
-**Verdict: kept, default ON.** Five render-only fixes, F1 (d1r1) and F2-F5 (new), pass every
-pre-registered rule (`PREREG_rstates.md` §3) on the 9 d1r1 frames. They pass on both bases they were
-measured on.
+**Verdict: kept, default ON.** Eight render-only fixes pass every pre-registered rule
+(`PREREG_rstates.md` §3 and amendments 1-3) on the 9 d1r1 frames: F1 (d1r1) and F2-F8 (new).
+Each fix has an opt-out knob.
 
-Rebased onto `race/first-frame-parity` 0020d521 (rtex, d1r3, librwrest, u9683, dupinstall, u9685
-merged); numbers from the rebased arms (R0 base, R1 base + F1, R2 final default, R3 final with all
-five knobs at 0):
+Final base: `race/first-frame-parity` 04dee0ed (rprops, rfx, d2posmodel, librwrest_checks and
+dupinstall2 merged). Arms: U0 base, U2 F1-F6, V7 F1-F7, W8 final default F1-F8, and W0 final with
+all eight knobs at 0.
 - Rows per frame against the original, base -> final default build:
-  - TRAINING 77/76/76 -> 30/29/29
-  - Arctic 76/76/76 -> 44/43/41
-  - City 153/151/149 -> 57/57/55
-- 0 RED on every frame. Matched draws are unchanged (196/193/193, 138/138/101, 351/339/292).
+  - TRAINING 77/76/76 -> 28/27/27
+  - Arctic 78/77/77 -> 41/41/40
+  - City 126/124/122 -> 29/29/27
+- 0 RED on every frame. Matched draws are unchanged (198/195/195, 145/144/105, 474/462/415).
 - The standalone's world-sector draw sequence equals the original's on **9/9** frames (0/9 on the
   base).
-- G-CTRL is unchanged at the new default trio, `716cb2fd / 2a2afda1 / ba90ed88`.
-- With all five knobs at 0 the build is byte-identical to the base on 9/9 frames.
-- Pixels:
-  - TRAINING 14.33/10.07/8.71 -> 12.22/8.72/7.36
-  - Arctic 10.35/6.84/6.34 -> 10.31/6.82/6.33
-  - City 14.84/12.11/11.40 -> 14.83/12.06/11.39
+- G-CTRL: base `716cb2fd / 2a2afda1 / ba90ed88`, final `716cb2fd / 2a2afda1 / ba90ed88` (unchanged, `gctrl_04dee0ed.txt`).
+- With all eight knobs at 0 the final build is byte-identical to the base on 9/9 frames (`noop_final.txt`).
+- Pixels (`imgdiff` mean, vs the original BMP):
+  - TRAINING 14.24/9.98/8.66 -> 12.12/8.61/7.31
+  - Arctic 9.24/7.06/6.50 -> 9.18/7.05/6.48
+  - City 10.56/6.92/6.63 -> 10.55/6.88/6.61
 
-On the original base ec3301f3 (`scores.txt` "PRE-REBASE"):
-- Rows: 86/85/85 -> 39/38/38, 81/81/81 -> 49/48/46, 157/155/152 -> 61/61/58.
-- G-CTRL `c2e4d60d / b50bd39b / ba90ed88` before and after.
+Earlier bases, same rules, all PASS (`scores.txt`). F6-F8 came in by amendment after the d074095d
+round:
+- d074095d (F1-F5): 78/77/77 -> 29/28/28, 78/77/77 -> 43/43/42, 128/126/124 -> 33/33/31.
+- 0020d521: 77/76/76 -> 30/29/29, 76/76/76 -> 44/43/41, 153/151/149 -> 57/57/55.
+- ec3301f3: 86/85/85 -> 39/38/38, 81/81/81 -> 49/48/46, 157/155/152 -> 61/61/58.
+- G-CTRL was unchanged on each.
 
-PREREG committed before any measuring run (c823edc0 after the rebase, d0cb7014 before).
+PREREG committed before any measuring run. Amendments 1-3 (F6, F7, F8) were each committed before
+that fix's first run.
 
 ## 0. The rebase (what had to change)
 
@@ -40,8 +44,16 @@ PREREG committed before any measuring run (c823edc0 after the rebase, d0cb7014 b
   F3's sector handling is unaffected.
 - **d1r3** deleted the legacy D3D9 renderer: the prop/car queue sites and the track-load hook
   were re-applied to the librw-only code.
-- **U-ids** are renumbered at each rebase (d1r3 took U-9698, rprops U-9699..U-9702). This lane's rows are **U-9706** (tie order) and **U-9707**
-  (car glass order).
+- **rprops** (on d074095d) draws the sky through its own librw pass `g_sky` and places camera-men,
+  the Arctic ships and every `Clump_Mts_Pair` copy. F3's sticky flag is set before that sky pass.
+  The copies are queued with their clump's kind, so they are tied into sectors when the clump is
+  in the world. The original does the same, for a reason a call search misses: section 1, "Clones".
+- **rfx** (on 04dee0ed) queues a car-FX marker (shadow, beam) after the cars. It is handled first
+  in the instance loop, before the walk's kind checks. rfx left 6 Arctic CULL STATE rows on the
+  shadow and beam cited to U-9690. Under F4 they are drawn with the leaked cull NONE (section 3).
+- **U-ids** are renumbered at each rebase (d1r3 took U-9698, rprops U-9699..U-9702, rfx
+  U-9703..U-9705). This lane's rows are **U-9706** (tie order), **U-9707** (car glass order) and
+  **U-9708** (after-world clumps no slot-2 list draws, F6).
 
 ## 1. What the original does (cited to bytes; extracts in `evidence/dis_*.txt`)
 
@@ -73,6 +85,50 @@ tie list that is RENDER-flagged and has `renderFrame != now`.
   of each sector list (`0x004e3d30..0x004e3d48`).
 - Clumps join the world through `0x004e4450`, only when not `Clump_Exclude_From_World`
   (`0x00479da6`).
+
+**Clones.** A clone of an in-world clump is in the world.
+- The world plugin registers a clump extension (`0x004e34c6..0x004e34e3`, `call 0x004e7d70`,
+  offset `DAT_007d7174`) whose copy callback `0x004e3e70` reads the source's world and calls
+  `0x004e4450(world, clone)` at `0x004e3e88`.
+- The atomic extension (`DAT_007d7170`) has a no-op copy (`0x004d7ff0`).
+- The camera-man clones (TRAINING `0x004511c0`, Arctic `0x00448820`, RpClumpClone `0x004e6ab0`)
+  are made in slot 0. Slot 0 runs after the course load: `0x00426f3c` calls `0x00479330`
+  (registration `0x00479db3`) before `0x0042709f` reaches slot 0 through `0x0041e8b0`.
+- The teardowns remove the clones from the world (`0x00451539` -> `0x004e45b0`).
+- So every copy takes its base clump's world membership, as the port's per-prop kind does.
+- On the 9 frames the visible camera-men are the base clumps (camera table row 1: TRAINING
+  `(2, 0.625, -26.125)`, Arctic `(-27.513, 1.004, 43.407)`). The draw records cannot witness
+  the clones, only the bytes.
+- Extracts: `evidence/dis_clump_world_copy_cb_004e3e70.txt`,
+  `evidence/dis_slot0_after_course_load_0042709f.txt`.
+
+**After-world order (F6).** Excluded clumps are not in the world, so they are drawn by course
+code.
+- The per-track hook record (`0x005f33f8`, stride `0x48`, Course_Id at `+0x10`) has an
+  after-world slot at `+0x1c`. It calls RpClumpRender `0x004e6680` on course clump slots
+  `[course + 0x10110 + 4*i]`, in its own order.
+- City `0x0044b8f0` draws 6, 7, 8, 9, 10, **12, 11**, 13 (`0x0044b920..0x0044b97b`): the trees
+  before the road. TRAINING `0x00451460` draws 9, 3, 4, 5, 6, 7, 8.
+- `slot2_order.py` reads all 13 records, giving `slot2_order.json`. Dump loops over slots
+  (`0x00449583`), and Arctic and Egypt draw no course clump slot there.
+- `excluded_vs_slot2.py` shows each list is a subset of COURSE.LUA's
+  `Clump_Exclude_From_World` set, and the whole set on TRAINING and City. Where the rest are
+  drawn is U-9708.
+
+**Mesh order (F7).** RenderWare draws an atomic's meshes in its geometry's BinMesh PLG order
+(chunk `0x50E`), which the stream stores and which need not be material order.
+- City STANDARD.DFF lists matIndex `[0,1,2,4,5,6,7,8,9,10,3]`, so the blended `Path2` (3) comes
+  last. BUILD04.DFF also ends on `Path2` (`binmesh_order.py`).
+- The original's row-761 record draws each copy in exactly that order. The port drew material
+  order.
+
+**Mts pair copies (F8).** The course load's pair loop (`0x00479cc0..0x00479cff`) works per record:
+- record 0 keeps the clump's own atomic (`je 0x00479cf7`);
+- every later record is cloned (`0x004e69a0`) and added with RpClumpAddAtomic (`0x00479ce5` ->
+  `0x004e6f80`, head insertion), and its new frame takes the record (`0x004c1480`).
+- So RpClumpRender draws the copies from the last record to record 0. In row 761 the six STANDARD
+  copies and the 27 TreeTrunk copies are in exactly the reverse of the port's order (copy centres).
+- Extract: `evidence/dis_mts_pair_clone_loop_00479cc0.txt`.
 
 **Clump order.** `RpClumpAddAtomic` `FUN_004e6f80`, and the stream reader's inline copy at
 `0x004e7947`, insert at the head. `RpClumpRender` `0x004e6680` walks from the head, so RW draws
@@ -113,42 +169,56 @@ a clump's atomics newest-first. librw appends (`clump.cpp:103`).
 | F3 | `MASHED_LIBRW_STICKYVA` | on Arctic (Course_Id 0) sector meshes keep the vertex-alpha flag; the world starts with the sky's last-mesh need; librw skips empty material meshes (`deps/librw/src/d3d/d3d9render.cpp`, `MASHED_PATCHES.md`) |
 | F4 | `MASHED_LIBRW_RAINCULL` | on `RainEnable()` tracks D3D cull NONE is written to the device, past librw's cache, before the cars |
 | F5 | `MASHED_LIBRW_CLUMPORDER` | non-car clumps draw their DFF atomics newest-first |
+| F6 | `MASHED_LIBRW_AFTERWORLDORDER` | the after-world props a track's slot 2 draws are queued in slot-2 order, as one group where the first of them sits (`D3d9Render/TrackRenderer.cpp` BuildPropOrder, PREREG amendment 1) |
+| F7 | `MASHED_LIBRW_BINMESHORDER` | DFF batches (one librw atomic each) in the geometry's BinMesh PLG mesh order instead of material order (`Track/DffModel.cpp`, PREREG amendment 2); world sectors untouched |
+| F8 | `MASHED_LIBRW_PAIRORDER` | an after-world `Clump_Mts_Pair` queues its copies from the last Mts record to the first (`D3d9Render/TrackRenderer.cpp`, PREREG amendment 3) |
 
 `MASHED_LIBRW_WALKLOG=<file>` (diagnostic) logs each frame's sector list and tied atomics.
 
-## 3. Rules (`PREREG_rstates.md` §3)
+## 3. Rules (`PREREG_rstates.md` §3, amendments 1-3)
 
-| rule | result (rebased, 0020d521) |
+| rule | result (04dee0ed) |
 |---|---|
-| 1 targets gone | PASS. Arctic: the first sector's 10 STATE rows and the Advantage/AdvantageSmall/Glass CULL rows are gone on 3/3 frames (STATE 26 -> 1, with F1 alone 13-14). World-sector EXTRA rows are gone (EXTRA 27->6, 14-16->7, 30->5 per track). World-sector ORDER inversions are gone: Arctic's first-sector rows fall from 27 to 1 inversion each, WetRoad 98 -> 4, TRAINING `Wet_Water00` (234) goes, City `railings` 281 -> 79, `thickgirders` 100 -> 14, `Path2` 2093 -> 130, `Pathpattern`/`road2` go. Every inversion left is against a cause outside F2-F5 (section 4). |
-| 2 no new row | PASS with 9 listed re-keys (`rowdelta_R0_R2.txt`). Six are C13 MOVED -> MISSING: CamManHot on TRAINING x3, Arctic CamManCold x1, Vehicles x2. The standalone places these props at the world origin (U-9695), and the sphere test now culls them there; before, it drew them off-screen at the origin. Three are the Arctic `World` STATE row, which now differs only in Z/ZW/ZF: `windows.dff` is drawn depth-off in the sky pass, cited C15c, U-9696. RED 0 on 9/9. Against F1 alone (R1): 6 (the C13 re-keys). |
-| 3 G-CTRL | PASS: base and final default build both `716cb2fd / 2a2afda1 / ba90ed88` (`gctrl_rebased.txt`; pre-rebase `gctrl.txt` `c2e4d60d / b50bd39b / ba90ed88` three times) |
-| 4 no-op control | PASS: all five knobs `=0` on the final build == base, byte for byte, 9/9 (`noop_rebased.txt`). Pre-rebase also: knobs unset on the opt-in build == base, and the final default == the opt-in build with all knobs on, 9/9 (`noop.txt`). |
-| 5 pixels | PASS: TRAINING 14.33/10.07/8.71 -> 12.22/8.72/7.36. Arctic 10.35/6.84/6.34 -> 10.31/6.82/6.33. City 14.84/12.11/11.40 -> 14.83/12.06/11.39 (`pixels.txt`). |
+| 1 targets gone | PASS. Base U0 -> final W8 on 3/3 frames of each track. Arctic: the first sector's STATE rows and the car CULL rows are gone (STATE 31 -> 3). The world-sector EXTRA rows are gone (TRAINING 28 -> 6, Arctic 16 -> 7, City 30 -> 5). ORDER inversions (frame 1 of each track): Arctic first-sector meshes 27 -> 1 each, WetRoad 106 -> 4. TRAINING `Wet_Water00` 234 -> 0. City `Path2` 3977 -> 114, `Pathpattern` 240 -> 0, `road2` 354 -> 0, `railings` 281 -> 75, `thickgirders` 100 -> 14. Per amendment: F6 (U5 -> U2) `Pathpattern` 108 -> 0, `road2` 162 -> 0, `Path2` 2014 -> 502. F7 (U2 -> V7) `Path2` 502 -> 444, `railings` 79 -> 75. F8 (V7 -> W8) `Path2` 444 -> 114. |
+| 2 no new row | PASS. U0 -> W8 has 15 new rows (`rowdelta_U0_W8.txt`), all cited STATE re-keys of sky draws whose only remaining differences are depth encoding or cull. TRAINING `Sky` (Z/ZF, C20) x3. Arctic `sky` x2 (Z/ZF, and the first one CULL, C20) and `World` (Z/ZW/ZF, C15c, U-9696), each x3. City `sKYLINE` (Z/ZF, C19) x3. F6, F7 and F8 each add 0 rows against the arm before them (`rowdelta_U5_U2.txt`, `rowdelta_U2_V7.txt`, `rowdelta_V7_W8.txt`). RED 0 on 9/9. |
+| 3 G-CTRL | PASS: base 04dee0ed and final default build both `716cb2fd / 2a2afda1 / ba90ed88` (`gctrl_04dee0ed.txt`). The same on d074095d (base and F1-F5), 0020d521 (`gctrl_rebased.txt`), and ec3301f3 `c2e4d60d / b50bd39b / ba90ed88` (`gctrl.txt`). |
+| 4 no-op control | PASS: all eight knobs `=0` on the final build == U0, byte for byte, 9/9 (`noop_final.txt`). F8 `=0` == V7 9/9 (`noop_F8.txt`). F7 `=0` on the F1-F7 build == U2 9/9 (`noop_F7.txt`). On d074095d all five F1-F5 knobs `=0` == base 9/9 (`noop_round3.txt`), and on 04dee0ed all six F1-F6 knobs `=0` == base 9/9 (`noop_round4.txt`). |
+| 5 pixels | PASS: no frame rises. TRAINING 14.24/9.98/8.66 -> 12.12/8.61/7.31, Arctic 9.24/7.06/6.50 -> 9.18/7.05/6.48, City 10.56/6.92/6.63 -> 10.55/6.88/6.61 (`pixels.txt`). |
 
-Per-frame counts for every arm are in `scores.txt`, rebased and pre-rebase. In the pre-rebase arms F5 alone removed City's `Pathpattern` and `road2` ORDER rows, cut `Path2` from 1966 to 130 inversions, and added nothing (`rowdelta_S1_S5.txt`).
+Predictions:
+- Pr-1 to Pr-5 (the original registration) are confirmed on every base. Pr-1 is the sector
+  sequence, 9/9 on the final build (`seqcheck_W8.txt`). For Pr-3, more EXTRA rows went than the
+  sim's sector-only estimate, because prop culling also drops off-screen props.
+- Pr-6 is partly confirmed. City `Pathpattern` and `road2` went, but `Path2` fell only to 502, not
+  to about 130, until F7 and F8.
+- Pr-7 is confirmed: Arctic is byte-identical with F6 on and off (`bytecompare_U5_U2.txt`).
+- Pr-8 is confirmed.
+- Pr-9 to Pr-13 are confirmed: TRAINING and Arctic are byte-identical across F7 and F8.
+
+rfx's 6 Arctic CULL rows (`car_shadow`, `Beam`; their RESULT cites them to U-9690) are on U0 and gone
+on U2/W8. The shadow and beam draw after the cars, so under F4 they read the leaked cull NONE, as
+the original's do.
 
 ## 4. What is left, and why
 
-- **Glass ORDER** (all tracks, 88 inversions per frame): the original draws each car's opaque
-  parts, then each Glass part with its additive CarGloss pass. The standalone's car keeps stream
-  order, and F5 is not applied to cars. U-9707 (new).
-- **Arctic first-sector meshes and WetRoad vs `World`; `World` vs sea**: the sky-pass
-  `windows.dff` mesh is drawn after the world by the port. U-9696 (sky pass).
-- **City `Path2` 130, `railings` 79, `thickgirders` 14**: the building copies the original places
-  per instance (U-9695), and the order of tied atomics within a sector (U-9706, new). TRAINING
-  sector 22: the original draws ROAD.DFF atomics 0, 17, 10, 16, 20, the port 0, 10, 16, 17, 20.
-  The frame-sync order behind tie creation is not decoded.
-- Storm runs F4 (RainEnable), but no original capture of Storm exists. The 13-track smoke boots
-  and races every track (§5).
+- **Glass ORDER** (88 inversions per frame, all tracks): the original draws each car's opaque parts,
+  then each Glass part with its CarGloss pass. U-9707.
+- **Arctic `World` vs sea (77-82) and the one inversion each on the first-sector meshes**: the
+  sky-pass `windows.dff` mesh (`FUN_004492b0`, return `0x004493b0`) is drawn after the world by the
+  port. U-9696 (sky pass).
+- **City `Path2` 114, `railings` 66-75, `thickgirders` 14**: tied atomics within a sector, against
+  `buildconc2`, `Camstand`, lamp posts. The original's tie order comes from RW's frame sync, which
+  is not decoded (U-9706). TRAINING sector 22: the original draws ROAD.DFF atomics 0, 17, 10, 16,
+  20, the port 0, 10, 16, 17, 20.
+- **Arctic's first `sky` draw has CULL NONE in the original** and CW in the port (cited C20). The
+  sky clump `+0x100f0` renders at `0x0044938b`, before `RwRenderStateSet(0x14, 2)` at
+  `0x004493a1`, so it inherits the previous frame's last cull. That is the sky pass's lane.
+- **Excluded clumps outside a slot-2 list** (eleven tracks) keep clump order. U-9708.
+- Storm runs F4 (`RainEnable`), but no original capture of Storm exists.
 
-## 5. Predictions and smoke
+## 5. Smoke
 
-Pr-1 confirmed (9/9). Pr-2 confirmed. Pr-3 confirmed, with more EXTRA rows gone than the sim's
-sector-only estimate, because prop culling also drops off-screen props. Pr-4 confirmed: Glass, City
-buildings and the Arctic sky-pass mesh survive, and TRAINING `Wet_Water00` and Arctic WetRoad's
-Tyres inversions are gone, so the tie interleave is right on those frames. Pr-5 confirmed.
-`smoke_tracks.py` (final default, 900 deterministic frames, every track piz): **13/13 exit 0** on the rebased build (`smoke_rebased.txt`) and on the pre-rebase build (`smoke.txt`), the sector walk logged on all 899 rendered frames of each track.
+`smoke_tracks.py` (final default F1-F8 on 04dee0ed, 900 deterministic frames on every track piz): **13/13 exit 0**, with the sector walk logged on all 899 rendered frames of each track (`smoke_final.txt`). Earlier builds also passed 13/13 (`smoke_rebased.txt`, `smoke.txt`).
 
 ## 6. Reproduce
 
@@ -157,4 +227,8 @@ py -3.12 verify\rstates_20261016\run_bsp9.py [cell|stream]
 py -3.12 verify\rstates_20261016\run9.py <exe> <arm> [KNOB=0 ...]
 py -3.12 verify\rstates_20261016\rowdelta2.py B0 <arm> ; seqcheck.py <arm> ; noop_check.py B0 <arm>
 py -3.12 verify\rstates_20261016\run_gctrl.py <exe> <name>
+py -3.12 verify\rstates_20261016\slot2_order.py --json slot2_order.json ; excluded_vs_slot2.py
+py -3.12 verify\rstates_20261016\binmesh_order.py City [texture filter]
 ```
+
+Arms: `log/rstates/<arm>/` (not committed). The final arm's diffs are `evidence/<track>_W8_diff_<K>.json`.
