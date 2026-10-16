@@ -2889,13 +2889,46 @@ float MeasureMashedString(const wchar_t* s, float height_px) {
     return total;
 }
 
-// [0x0067d830], the divisor FUN_004282a0 applies at 0x004282f1. Written by
-// FUN_004275d0 through FUN_00553cf0(.., &0x0067d828) (push 0x67d828 at
-// 0x004275f2), zeroed by the font init at 0x00427de4. MEASURED, not derived:
-// 0x3f7fffff on two original boots at screen 19
-// (verify/scr19_parity_20261012/arrow_fix/orig_measure_probe*.json). The
-// FUN_00553cf0 chain that produces it is not ported.
-static const std::uint32_t kMenuMeasureDivBits = 0x3f7fffffu;
+// [0x0067d830], the divisor FUN_004282a0 applies at 0x004282f1. DERIVED (U-9680,
+// verify/fe_residuals_20261016/u9680/): FUN_004275d0 calls FUN_00552a60(cam), FUN_00552d10,
+// FUN_00552750, FUN_00552920(path), FUN_00553cf0(path, &0x0067d828) (push 0x67d828 at
+// 0x004275f2); [0x0067d830] = bbox width (max x - min x, 0x00553dd.. in FUN_00553cf0), the
+// y twin [0x0067d834] = bbox height.
+//   0x00552a99/0x00552aca: DAT_00912b08/0c = view window x2 = 0.8f+0.8f = 0x3fcccccd
+//     (camera +0x68/+0x6c read 0x3f4ccccd on the original, rect_probe orig_rect_probe1.json).
+//   FUN_00552e40 builds DAT_00912b18 = diag(-m, m, 1), pos (b08*s*0.5, -(b0c*s*0.5), 0),
+//     m = min(b08,b0c), s = DAT_00912be0 = 1.0 (0x00552c48) or 1.0 for camera type 2;
+//     0.5 = [0x005cc32c]. Probed bits: bfcccccd,0,0,0,80000000,3fcccccd,0,0,80000000,0,
+//     3f800000,0,3f4ccccd,bf4ccccd,0,0. The flag word is 0, so FUN_004c4dc0 takes the
+//     cofactor path 0x004c4eb0 into DAT_00912b58 (probed bits: bf1fffff,0,80000000,0,0,
+//     3f1fffff,80000000,0,80000000,80000000,3f800000,0,3effffff,3effffff,80000000,0;
+//     the verbatim port RwMatrixInvert reproduces all 16 at PC_24).
+//   FUN_00552920: rect corners +-0.5 ([0x005cd50c]=-0.5, [0x005cc32c]=+0.5) * b08 * s,
+//     mapped through DAT_00912b58 (x' = x*m00 + m30). Width = x'(-0.8f) - x'(+0.8f)
+//     = 0x3f7fffff, 1 ulp below 1.0: 1/1.6f in the cofactor path is 0x3f1fffff, not 0.625.
+extern "C" void __cdecl RwMatrixInvert(void* out, void* in);   // 0x004c4eb0
+static float DeriveMenuMeasureDiv() {
+    const float vw   = 0.8f;                      // camera +0x68 / +0x6c = 0x3f4ccccd
+    const float W    = vw + vw;                   // DAT_00912b08 (0x00552a99)
+    const float H    = vw + vw;                   // DAT_00912b0c
+    const float s    = 1.0f;                      // DAT_00912be0 (0x00552c48)
+    const float half = 0.5f;                      // [0x005cc32c]
+    const float m    = (W < H) ? W : H;           // 0x00552ebc..0x00552ece
+    const std::uint32_t kPos0 = 0x00000000u, kNeg0 = 0x80000000u;
+    std::uint32_t b18[16] = { 0, kPos0, kPos0, kPos0, kNeg0, 0, kPos0, kPos0,
+                              kNeg0, kPos0, 0x3f800000u, kPos0, 0, 0, kPos0, kPos0 };
+    const float c[16] = { -m, 0.f, 0.f, 0.f, 0.f, m, 0.f, 0.f, 0.f, 0.f, 1.f, 0.f,
+                          W * s * half, -(H * s * half), 0.f, 0.f };
+    float in[16], inv[16] = {};
+    std::memcpy(in, b18, sizeof(in));
+    in[0] = c[0]; in[5] = c[5]; in[12] = c[12]; in[13] = c[13];
+    RwMatrixInvert(inv, in);                      // 0x004c4eb0 (flag word 0 -> cofactor path)
+    const float m00 = inv[0], m30 = inv[12];
+    const float x0 = (W * s) * (-half), x1 = (W * s) * half;   // 0x00552920 corners
+    const float a = x0 * m00 + m30, b = x1 * m00 + m30;        // FUN_004dc370 / 0x004c3d90
+    const float lo = (a < b) ? a : b, hi = (a < b) ? b : a;
+    return hi - lo;                               // FUN_00553cf0: max - min
+}
 
 // 0x004282a0  FUN_004282a0(id, scale) for the standalone: the message text
 // (FUN_00427780 + FUN_004277a0 remap = GetMenuMessage) measured by
@@ -2921,8 +2954,7 @@ float MeasureMenuMessage(int id, float scale) {
         if (g_font.Glyph(static_cast<unsigned char>(c), uv, &wf))
             sum = sum + (wf + trk);                       // 0x00555585..0x0055558b
     }
-    float div;
-    std::memcpy(&div, &kMenuMeasureDivBits, 4);
+    static const float div = DeriveMenuMeasureDiv();
     const float sf = scale * 0.0708f;                     // 0x004282d7
     return ((sum * sf) / div) * 640.0f;                   // 0x0055559f, 0x004282f1, 0x00428309
 }
