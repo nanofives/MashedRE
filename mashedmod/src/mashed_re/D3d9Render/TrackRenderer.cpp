@@ -16,6 +16,7 @@
 #include "../Track/PowerupMarkers.h"  // POWERUPS_GOLD.DFF placement (FUN_00426460)
 #include "../Render/ArcticTrackNodeSlot0.h"  // the real 0x00448940 body + its sea grid
 #include "../Render/TrackHookSlots.h"        // [rhooks U-9713] per-track hook-slot draw model
+#include "../Track/WarzonePontoon.h"         // [pontoon] Warzone track object 0x00684d18 (MASHED_PONTOON_*)
 #include "../Track/LapLogic.h"      // F4 lap-line crossing sequence (shared w/ test)
 #include "../Txd/TxdDecoder.h"
 #include "../Audio/AudioEngine.h"   // real SFX (permdict.rws) for countdown/powerups
@@ -1481,6 +1482,7 @@ enum { kAnimFreighter = 1, kAnimBoat = 2 };
 }  // namespace
 
 namespace { void InvalidateBatchCache(); }  // WS-A s3 PERF (defined before Render)
+namespace { TrackRenderer* s_pontoonTr = nullptr; }   // [pontoon] the renderer the platform's host callbacks reach
 
 namespace {
 // [d2lateral 2026-10-16] MASHED_D2LAT_SPAWN_YAW=<rad> - DIAGNOSTIC ONLY, default OFF, never a fix.
@@ -1975,12 +1977,21 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
         auto load_prop = [&](const char* dff_name, Prop* p,
                              bool d3d9_batches = false,
                              bool bake_frames = true,
-                             float* sphere_out = nullptr) -> bool {
+                             float* sphere_out = nullptr,
+                             int only_atomic = -1) -> bool {
             std::uint32_t dl = 0;
             const std::uint8_t* db = find_entry(dff_name, &dl);
             if (!db) return false;
             Track::DffModel m;
             if (!m.Parse(db, dl, bake_frames)) return false;
+            // [pontoon 2026-10-16] one DFF atomic's batches only (Warzone's boat, drawn per atomic at its frame LTM)
+            if (only_atomic >= 0) {
+                std::vector<Track::DffBatch> keep;
+                for (auto& b : m.batches)
+                    if (b.atomic == only_atomic) keep.push_back(std::move(b));
+                m.batches = std::move(keep);
+                if (m.batches.empty()) return false;
+            }
             // [rfx2] the RWP object's atomic is FUN_004b3f90 @ 0x004b3f90's: RpClumpForAllAtomics
             // with a callback that keeps the first atomic visited and stops (0x004b4070), i.e. the
             // clump list head = the LAST streamed atomic (RpClumpAddAtomic head insertion). Its
@@ -2592,6 +2603,7 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
             if (log)
                 std::fprintf(log, "  HOOKSLOT course_id=%d covered=%d (%s)\n", course_id_, hook ? 1 : 0,
                              hook ? hook->name : "-");
+            pontoon_parts_[0] = pontoon_parts_[1] = pontoon_parts_[2] = -1;   // [pontoon] set by the boat split below
             for (const auto& c : clumps) {
                 if (excluded[c.idx] && s_skip_excluded) continue;
                 int hook_pass = 0, hook_order = -1;
@@ -2798,9 +2810,77 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                             anim_kind = kAnimBoat;
                         }
                     }
+                    // [pontoon 2026-10-16] Warzone's boat (clump 1, the 0x00684d18 object's clump): the original draws
+                    // its three atomics one by one at their frame LTMs (slot 2 FUN_00452130 @ 0x00452130, clump list order
+                    // = DFF atomics 2, 1, 0), which the ported RpHAnim update moves (Track/WarzonePontoon.cpp). Behind
+                    // MASHED_PONTOON_ANIM (default OFF): one unbaked model per atomic, same hook entry, queued 2, 1, 0.
+                    if (course_id_ == 33 && c.idx == 1 && Track::Pontoon_AnimOn()) {
+                        bool split = true;
+                        Prop parts[3];
+                        for (int k = 0; k < 3 && split; ++k) {
+                            const int at = 2 - k;
+                            parts[k].rw_kind = p.rw_kind; parts[k].clump_idx = p.clump_idx;
+                            parts[k].hook_key = p.hook_key; parts[k].hook_pass = p.hook_pass;
+                            parts[k].hook_cull = p.hook_cull; parts[k].hook_zwrite = p.hook_zwrite;
+                            split = load_prop(c.dff, &parts[k], false, false, nullptr, at);
+                            D3DMATRIX id; MatIdentity(&id); parts[k].instances.push_back(id);
+                        }
+                        if (split) {
+                            for (int k = 0; k < 3; ++k) {
+                                pontoon_parts_[2 - k] = static_cast<int>(props_.size());
+                                props_.push_back(std::move(parts[k]));
+                            }
+                            if (log) std::fprintf(log, "  PONTOON course_id=33 clump=1 dff=%s split into atomics 2,1,0 "
+                                                       "props %d %d %d\n", c.dff, pontoon_parts_[2], pontoon_parts_[1],
+                                                       pontoon_parts_[0]);
+                            continue;
+                        }
+                        if (log) std::fprintf(log, "  PONTOON course_id=33 clump=1 split FAILED, baked prop kept\n");
+                    }
                     props_.push_back(std::move(p));
                     if (anim_kind) prop_anims_.push_back({ anim_kind, props_.size() - 1 });
                 }
+            }
+            // [pontoon 2026-10-16] slot 0 0x004527f0's object part: FUN_0047ce40(1000) / (2000) are the RWP objects
+            // with BaseLabel 1000 (Tower) / 2000 (Deck), their body matrices the first Mts record (flags 0, captured);
+            // FUN_00451760(&obj, clump 1, General_Anim 0). Default OFF (MASHED_PONTOON_ANIM / _STATE / _CARRY).
+            Track::Pontoon_Shutdown();
+            if (course_id_ == 33 && Track::Pontoon_AnimOn()) {
+                const char* boat = nullptr;
+                for (const auto& c : clumps) if (c.idx == 1) boat = c.dff;
+                std::uint32_t dl = 0, al = 0;
+                const std::uint8_t* db = boat ? find_entry(boat, &dl) : nullptr;
+                const std::uint8_t* ab = anim_names[0].empty() ? nullptr : find_entry(anim_names[0].c_str(), &al);
+                float tw[16] = {}, dk[16] = {};
+                auto body = [&](int label, float* out) -> bool {
+                    for (int d = 0; d < 32; ++d) {
+                        if (!rwp[d].have || rwp[d].label != label || rwp[d].inst.empty()) continue;
+                        const D3DMATRIX& m = rwp[d].inst[0];
+                        out[0] = m._11; out[1] = m._12; out[2] = m._13;
+                        out[4] = m._21; out[5] = m._22; out[6] = m._23;
+                        out[8] = m._31; out[9] = m._32; out[10] = m._33;
+                        out[12] = m._41; out[13] = m._42; out[14] = m._43;
+                        return true;
+                    }
+                    return false;
+                };
+                const bool tok = body(1000, tw), dok = body(2000, dk);
+                Track::PontoonHost ph;
+                s_pontoonTr = this;
+                ph.car_count = [] { return s_pontoonTr ? s_pontoonTr->ParticipantCount() : 0; };
+                ph.car_matrix = [](int v) -> float* {
+                    unsigned char* r = Vehicle::VehiclePhysics_RecordPtr(v);
+                    if (!r) return nullptr;
+                    int sel = 0; std::memcpy(&sel, r + 0x9a8, 4);            // FUN_0046d4a0: +0x928 + [+0x9a8] * 0x40
+                    return reinterpret_cast<float*>(r + 0x928 + sel * 0x40);
+                };
+                ph.car_carried = [](int v, const float* m) { if (s_pontoonTr) s_pontoonTr->PontoonCarried(v, m); };
+                ph.car_record = [](int v) { return Vehicle::VehiclePhysics_RecordPtr(v); };
+                ph.sphere_visible = nullptr;   // [UNCERTAIN] state 5's frustum test is not bound (see RESULT_pontoon.md)
+                Track::Pontoon_SetHost(ph);
+                const bool ok = db && ab && tok && dok && Track::Pontoon_Init(db, dl, ab, al, tw, dk);
+                if (log) std::fprintf(log, "  PONTOON init course_id=33 boat=%s anim=%s tower=%d deck=%d ok=%d\n",
+                                      boat ? boat : "-", anim_names[0].c_str(), tok ? 1 : 0, dok ? 1 : 0, ok ? 1 : 0);
             }
             if (hook) {
                 auto dff_of = [&](int idx) -> const char* {
@@ -4341,7 +4421,43 @@ void TrackRenderer::ClumpAnimTick(int units) {
     }
 }
 
+// [pontoon 2026-10-16] the Warzone boat's three atomics, posed at the ported hierarchy's frame LTMs (RwMatrix rows ->
+// D3DMATRIX rows, as read_mts maps an Mts record).
+void TrackRenderer::UpdatePontoonParts() {
+    for (int k = 0; k < 3; ++k) {
+        const int pi = pontoon_parts_[k];
+        float m[16];
+        if (pi < 0 || pi >= static_cast<int>(props_.size()) || !Track::Pontoon_AtomicLtm(k, m)) continue;
+        auto& inst = props_[static_cast<std::size_t>(pi)].instances;
+        inst.resize(1);
+        D3DMATRIX& d = inst[0];
+        MatIdentity(&d);
+        d._11 = m[0]; d._12 = m[1]; d._13 = m[2];
+        d._21 = m[4]; d._22 = m[5]; d._23 = m[6];
+        d._31 = m[8]; d._32 = m[9]; d._33 = m[10];
+        d._41 = m[12]; d._42 = m[13]; d._43 = m[14];
+    }
+}
+
+// [pontoon 2026-10-16] FUN_00451ad0 @ 0x00451b26's in-place carry reached car v: move the physics pose (ring, basis,
+// adapter positions) and this file's position / heading state with it (MASHED_PONTOON_CARRY only).
+void TrackRenderer::PontoonCarried(int v, const float* m) {
+    float pos[3], yaw = 0.f;
+    Vehicle::VehiclePhysics_CarryTo(v, m, car_ground_off_, pos, &yaw);
+    if (v == 0) {
+        car_pos_[0] = pos[0]; car_pos_[1] = pos[1]; car_pos_[2] = pos[2];
+        car_yaw_ = yaw;
+    } else if (v - 1 < static_cast<int>(ai_cars_.size())) {
+        AiCar& a = ai_cars_[static_cast<std::size_t>(v - 1)];
+        a.pos[0] = pos[0]; a.pos[1] = pos[1]; a.pos[2] = pos[2];
+        a.yaw = yaw;
+    }
+}
+
 void TrackRenderer::CopterTick(int units) {
+    // [pontoon 2026-10-16] FUN_0040fc00 -> FUN_00426ab0 (0x0040fc94) runs the course's slot 1 at 0x00426ae3 before the
+    // clump anims (FUN_00426700): Warzone's 0x00452b20 -> FUN_00451d80. Inactive unless MASHED_PONTOON_* is set.
+    if (course_id_ == 33) Track::Pontoon_Tick(units);
     ClumpAnimTick(units);                               // [rhooks] FUN_0040fc00's 0x0040fc94 first
     std::uint32_t kb = 0x39aec33eu;                     // _DAT_005cc948 (1/3000)
     float k3000;
@@ -6617,6 +6733,9 @@ void TrackRenderer::UpdatePowerups(float dt) {
 
 void TrackRenderer::StartRound() {
     if (gates_.size() < 4 || !car_ready_) return;
+    // [pontoon 2026-10-16] FUN_004111c0's race / round reset runs the course's slots 7 (0x0040fefe) and 6 (0x00410195):
+    // Warzone's 0x00452ad0 / 0x00452af0 -> FUN_00451cc0(&obj). No-op unless the platform is active.
+    Track::Pontoon_Reset();
     round_mode_ = true;
     round_alive_ = kRaceCars;
     round_winner_ = -1;
@@ -8692,6 +8811,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     }
 
     if (!prop_anims_.empty()) UpdatePropAnims();   // [rprops] Arctic ships, once per frame
+    if (pontoon_parts_[0] >= 0) UpdatePontoonParts();   // [pontoon] Warzone boat atomics at their LTMs
     // [rhooks U-9717] SetClumpAnim clumps: FUN_004756e0 sets the clump frame to FUN_004752f0's matrix
     // at the record's time (FUN_004c1480 REPLACE); before the first tick the frame is the DFF's.
     for (const auto& ca : clump_anims_) {

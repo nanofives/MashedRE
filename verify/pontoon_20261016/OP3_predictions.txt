@@ -1,0 +1,19 @@
+# OP3: 1073 rows, n 0..2986
+P1 units [50]; anim4c non-zero on all rows: True; box ['406f7803', '00000000', '4074f0d8', 'c0885604', '00000000', 'c08598c8']
+P2 transition n=1982 0->1 ff50=[0, 0, 0, 1] c8=0.000000 a4=1.000000
+P2 transition n=2043 1->2 ff50=[0, 0, 0, 1] c8=0.000000 a4=-0.015651
+P2 transition n=2499 2->3 ff50=[0, 0, 0, 0] c8=15.184874 a4=-0.015651
+P2 transition n=2956 3->0 ff50=[0, 0, 0, 0] c8=0.000000 a4=-0.015651
+P2 calls with state_in 1: 61
+P2 state-1 a4 step mismatches (float32 model): 0 of 61
+P2 state-2 calls 456, c8 step mismatches (float32 model, d=np.float32(0.0333)): 0
+P2 2->3 row: all words 0 = True, c8 > 2.0 = True
+P2 3->0 row: c8 after = 0.0; c8 before = 0.000000
+P3 carried car-rows 602, max |leave - enter*inv(M54)*M94| = 9.16e-05; not-in-box rows 3688, changed by the call: 0
+P4 exit n=2499 car 3: rwp 1->1 timer 0 vel_in [17.514, 0.0, -9.582] vel_out [17.513832092285156, 0.0, -9.582258224487305, 0.0, 0.0, 0.0] mov [-25.2795, 0.0, 21.7694]
+P4 exit n=2587 car 3: rwp 1->1 timer 0 vel_in [17.514, 0.0, -9.582] vel_out [17.513832092285156, 0.0, -9.582258224487305, 0.0, 0.0, 0.0] mov [25.2795, 0.0, -21.7694]
+P5 car y while aboard in states 2/3: n=541 min -1.4308 max -0.8632 median -1.4307; platform node y -1.4298
+P5 car y while aboard in states 0/1: n=61 median -1.4307
+marker (colour, on) at leave: (ff804040,0), (ff804040,1)
+tower_rest 3f0f2744 00000000 3f543bce 00000000 00000000 3f7ffffe 80000000 00000000 bf543bcd 00000000 3f0f2743 00000000 4331cf68 bf965b78 4273138c 00000000
+deck_rest  3f54bcac 00000000 bf0e677d 00000000 00000000 3f800000 00000000 00000000 3f0e677d 80000000 3f54bcac 00000000 432d2c6e bfc450c1 4269bd6b 00000000
