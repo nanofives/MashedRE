@@ -1,0 +1,37 @@
+hook: input_axis_scale_bias_apply  rva=0x00495080  export=Fwd494fd0_DoublePlusHalf
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 7840
+  [agent] pre_snapshot
+  [agent] asi_loaded
+  [agent] post_snapshot
+  [agent] {'type': 'log', 'msg': 'stubbed callee 0x494fd0'}
+  [agent] results
+
+=== verify_hook_install report (input_axis_scale_bias_apply) ===
+
+target address: 0x00495080  export: Fwd494fd0_DoublePlusHalf
+PRE  bytes:     e9 2b 36 09 5e 44 24 08
+asi base:       0x5e4a0000
+reimpl addr:    0x5e5286b0
+POST bytes:     e9 2b 36 09 5e 44 24 08
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x5e09362b  expected 0x5e09362b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  2 / 2  (other threads: 0)
+
+per-input results:
+  [OK] input={'scalars': [0.1, 68]}  got=(void)  err=
+  [OK] input={'scalars': [1, 34]}  got=(void)  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 2x as expected
+  + all 2 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\fwd494fd0\log\verify_hook_install_input_axis_scale_bias_apply.txt
+

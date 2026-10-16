@@ -103,6 +103,12 @@ extern "C" int g_tg3Ret[4]; extern "C" int g_tg3Los[4];
 #include <cstdlib>   // std::getenv (G4 pure-pursuit toggle)
 #include <cstdio>    // [G4] env-gated AI nav trace
 
+// FUN_0040e480: the one body, Ai/CarSlotState.cpp. Declared at global scope on purpose: an extern "C"
+// declaration inside the unnamed namespace below would name a different entity.
+extern "C" void __cdecl CarSlotStateSet(int, std::uint32_t);
+// FUN_00417180: the one body, Ai/AiBankSwitch.cpp (same reason for global scope).
+extern "C" void __cdecl AiBankSwitch(int);
+
 namespace Ai {
 
 namespace {
@@ -1411,116 +1417,15 @@ std::uintptr_t SelectSpline(int v)
     }
 }
 
-// FUN_00414030(-1) — AiSplineBankTimerReset (hooks.csv C3): "sets
-// DAT_008032d4[v*5]=1000; param=-1 resets all 5 slots". Every BankSwitch call
-// site below passes -1, so only that path is ported (matches the C3 evidence:
-// "param=-1 fill path UNTESTED by the harness" — U-7564, flagged
-// data-semantic non-blocking). 0x008032d4 is the SAME per-vehicle spline-
-// index-continuity field SplineLookahead's Phase 2 reads/writes; forcing it
-// to 1000 (>= any real spline count) makes the next lookahead reseed to the
-// true-nearest point, matching a "reset" semantic.
-inline void SplineBankTimerReset() {
-    for (int vv = 0; vv < 4; ++vv) {
-        I32(0x008032d4u + static_cast<std::uintptr_t>(vv) * 0x14u) = 1000;
-    }
-}
-
-// FUN_00472650(0, hiBits) — original PRNG (float10-ST0), NOT one of the 4
-// ported RVAs. Substituted with std::rand()/RAND_MAX (documented
-// approximation, same precedent as Normalize2's std::sqrt substitute for the
-// original's fast-rsqrt LUT above). Only feeds BankSwitch's once-per-~9000-
-// frame cosmetic spline-index variety roll — does not affect steer/accel/
-// brake output.
-// [D3 2026-09-26] now AiRand(0,1): the FUN_00472650 law with the LCG stand-in for u.
-inline float RandUnit() { return AiRand(0.0f, 1.0f); }
-
 // ===========================================================================
-// FUN_00417180 — AI spline-bank switcher (hooks.csv: AiBankSwitch, C3
-// 2026-07-02; verbatim decomp+disasm re/analysis/wsr6_port_prep/
-// 0x00417180_decomp.md). Per-vehicle state machine: services a pending
-// line-type switch request (race/inside/slow/cheat cycling with per-type
-// count-check), runs the switch-in timer (up to 9000 host-tick units), then
-// (once idle) applies the DAT_0089a368 slow-line-flag reset and a low-
-// frequency (~every 9000 frames) random spline-index variation roll. Raw-asm
-// corrections already folded in via the Ai/AiPreTick.cpp reference port: the
-// type-0/type-3 branches call the timer-reset on BOTH count-check outcomes;
-// type-2/type-1 test the line-type read ONCE into a local while type-0/
-// type-3 RE-READ memory.
+// BankSwitch (the original's FUN_00417180) lived here until 2026-10-16 (fwd494fd0). Its one body is now
+// Ai/AiBankSwitch.cpp, `AiBankSwitch`, compiled into BOTH targets and installed in the .asi; the call in
+// VehicleStep below goes to it. Read line by line against the .asi port first: same addresses, same branch
+// order, same read-once/re-read pattern, same 9000 cap. The two things that differed are the shared body's
+// two thunks: the reset (the original's -1 path writes 1000 into FOUR slots, 0x008032d4 + i*0x14, i < 4, as
+// SplineBankTimerReset here did) and the random roll (this file's AiRand ring port in the exe, the original's
+// FUN_00472650 in the .asi). That ring port stays in this file as Ai_RandRange.
 // ===========================================================================
-void BankSwitch(int v)
-{
-    const std::uintptr_t s = static_cast<std::uintptr_t>(v) * 0x74u;
-
-    if (I32(0x0089a500u + s) != 0) {                        // switch request pending
-        const int t = I32(kAiLineType + s);                 // read ONCE (t==2/t==1 test this copy)
-        I32(0x0089a504u + s) = 1;                            // start timer
-        if (t == 2) {                                        // slow lines
-            int idx = I32(kAiSplineIndex + s) + 1;
-            I32(kAiSplineIndex + s) = idx;
-            if (idx > 2) I32(kAiSplineIndex + s) = 0;
-            SplineBankTimerReset();
-        }
-        if (t == 1) {                                        // inside lines
-            int idx = I32(kAiSplineIndex + s) + 1;
-            I32(kAiSplineIndex + s) = idx;
-            if (idx > 2 || I32(kSplineInsideCnt + static_cast<std::uintptr_t>(idx) * kSplineStride) < 4) {
-                I32(kAiLineType + s) = 2;
-                I32(kAiSplineIndex + s) = 0;
-            }
-        }
-        if (I32(kAiLineType + s) == 0) {                     // race lines (RE-READS memory)
-            int idx = I32(kAiSplineIndex + s) + 1;
-            I32(kAiSplineIndex + s) = idx;
-            if (idx > 2 || I32(kSplineRaceCnt + static_cast<std::uintptr_t>(idx) * kSplineStride) < 4) {
-                I32(kAiLineType + s) = 1;
-                I32(kAiSplineIndex + s) = 0;
-            }
-            SplineBankTimerReset();                          // called on BOTH outcomes
-        }
-        if (I32(kAiLineType + s) == 3) {                     // cheat lines (RE-READS memory)
-            int idx = I32(kAiSplineIndex + s) + 1;
-            I32(kAiSplineIndex + s) = idx;
-            if (idx > 2 || I32(kSplineCheatCnt + static_cast<std::uintptr_t>(idx) * kSplineStride) < 4) {
-                I32(kAiLineType + s) = 0;
-                I32(kAiSplineIndex + s) = 0;
-            }
-            SplineBankTimerReset();                          // called on BOTH outcomes
-        }
-        I32(0x0089a500u + s) = 0;                            // clear request
-    }
-
-    // switch-in timer
-    const int timer = I32(0x0089a504u + s);
-    if (timer != 0 && timer < 9000) {
-        I32(0x0089a504u + s) = timer + I32(0x007f1008u);
-        return;
-    }
-    I32(0x0089a504u + s) = 0;
-
-    // line-type reset by DAT_0089a368 (shared slow-line-targeting flag; set by
-    // FUN_004177b0 AiPreTick, out of scope — currently always 0 in the
-    // standalone since AiPreTick isn't wired, so this always forces type=0).
-    if (I32(0x0089a368u) == 0) I32(kAiLineType + s) = 0;
-    if (I32(0x0089a368u) == 2) I32(kAiLineType + s) = 0;
-    if (I32(0x0089a368u) == 1) {
-        if (I32(kAiLineType + s) != 2) SplineBankTimerReset();
-        I32(kAiLineType + s) = 2;
-    }
-
-    // low-frequency random spline-index variation
-    const int period = I32(0x007f0ff8u) / 3000;
-    if ((period & 0xf) == 0xf) {
-        if (I32(0x0063bd90u) != period) {
-            if (RandUnit() < kBankRandGate) {                // _DAT_005cc32c = 0.5
-                I32(kAiSplineIndex + s) = I32(kAiSplineIndex + s) + 1;
-                SplineBankTimerReset();
-            }
-        }
-        I32(0x0063bd90u) = period;
-    } else {
-        I32(0x0063bd90u) = 0;
-    }
-}
 
 // ===========================================================================
 // FUN_00417640 — post-step powerup-brake override (hooks.csv:
@@ -1559,7 +1464,13 @@ void PostStepPowerupBrake(int v, std::uint8_t* ctrl)
 }
 
 // ===========================================================================
-// FUN_0040e480 — CarSlotStateSet (hooks.csv C2, drift-promoted 2026-05-14;
+// CarSlotStateSet (original FUN_0040e480) — ONE BODY since 2026-10-16 (fwd494fd0): the exported
+// Ai/CarSlotState.cpp CarSlotStateSet, compiled into BOTH targets and installed in the .asi. What
+// stood here was the exe's private copy (Frontend/RaceResults.cpp held the .asi's); the inline
+// forwarder below keeps this file's call sites unchanged and the guard moved into the shared body.
+// The history of that guard follows.
+//
+// (hooks.csv C2, drift-promoted 2026-05-14;
 // re/analysis/c0_promotion_frontend_a/0x0040e480.md). Body: `*(undefined4 *)
 // (PTR_PTR_005f2770 + param_1*4 + 0x34) = param_2;` -- ONE dereference of the
 // global pointer at 0x005f2770 (all 40 references via `reference_to` this
@@ -1593,9 +1504,7 @@ void PostStepPowerupBrake(int v, std::uint8_t* ctrl)
 // open stub, see re/analysis/D3_AI_TICK_WIRING_2026-09-14.md.
 inline void CarSlotStateSet(int v, std::int32_t state)
 {
-    const std::uintptr_t base = static_cast<std::uintptr_t>(U32(0x005f2770u));
-    if (base == 0) return;   // standalone image-pad: no table (see note above)
-    I32(base + static_cast<std::uintptr_t>(v) * 4u + 0x34u) = state;
+    ::CarSlotStateSet(v, static_cast<std::uint32_t>(state));   // Ai/CarSlotState.cpp, null-base guard inside
 }
 
 // FUN_0046dd80/0046dd90 getter/setter pair used by AiPreTickRubberBand: reads
@@ -1853,7 +1762,7 @@ void VehicleStep(int v)
         }
     }
 
-    BankSwitch(v);                            // FUN_00417180
+    ::AiBankSwitch(v);                        // FUN_00417180, Ai/AiBankSwitch.cpp (the one body)
     std::uintptr_t spline = SelectSpline(v);
 
     const int fd0 = s_host.game_mode_fd0();

@@ -60,6 +60,8 @@
 //   [esp+0x18] single copy of x   (sign source)
 //   [esp+0x00] single residual scratch
 // ---------------------------------------------------------------------------
+
+// 0x004a2c48
 __declspec(naked) void FPURound_4a2c48()
 {
     __asm {

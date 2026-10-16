@@ -1,0 +1,7 @@
+[trimmed from build_final_raw.log: 54 lines, 30 warning lines, 0 error lines; summary lines kept]
+[rva-lint] 56 finding(s): CROSS-TARGET=13, DUP-IN-TARGET=43  |  allowlisted=56 NEW=0
+[rva-lint] OK -- no NEW duplicate bodies (56 known, tracked in re\tools\dual_copy_allowlist.txt)
+[asm-lint] OK -- no bare absolute asm operand in 623 source files
+[skip] MASHED_NO_DEPLOY set: mashed_re_dev.asi NOT deployed to original\
+=== Build OK ===
+exit=0

@@ -106,7 +106,8 @@ auto* const oStrText = reinterpret_cast<StrTextFn>(0x00427f00);
 using MeasureFn = void(__cdecl*)(std::uint32_t, float);
 auto* const oMeasure = reinterpret_cast<MeasureFn>(0x004282a0);
 
-// 0x004a2c48  round ST0 -> int (and pop). C3-impl.
+// Call-through to the original __ftol (0x004a2c48): round ST0 -> int (and pop). C3-impl.
+// A caller's function pointer, not a body of 0x004a2c48.
 using RoundSt0Fn = int(__cdecl*)();
 auto* const oRoundSt0 = reinterpret_cast<RoundSt0Fn>(0x004a2c48);
 

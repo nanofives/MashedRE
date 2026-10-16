@@ -123,7 +123,7 @@ RH_ScopedInstall(ClumpForAllAtomics_Cb4b5560, 0x004b5580);
 //   mov   eax,[esp+8]            ; a2
 //   fadd  st(0),st(0)            ; a1 + a1   (exact: a doubling)
 //   push  esi
-//   mov   esi,[0x771a0c]         ; DEAD LOAD - ESI is never read afterwards
+//   mov   esi,[0x771a0c]         ; 8B 35 0C 1A 77 00. NOT dead: FUN_00494fd0 reads ESI (corrected 2026-10-16)
 //   push  eax                    ; a2
 //   fadd  dword ptr [0x5cc32c]   ; + 0.5f
 //   push  ecx                    ; placeholder to RESERVE the float's stack slot
@@ -143,9 +143,11 @@ RH_ScopedInstall(ClumpForAllAtomics_Cb4b5560, 0x004b5580);
 // units — so the safe transcription is the instruction stream, not the algebra.
 //
 // TWO DETAILS TRANSCRIBED RATHER THAN TIDIED:
-//   * `mov esi,[0x771a0c]` is a dead load — ESI is pushed, loaded, and popped
-//     without ever being read. Kept, because removing it would change the memory
-//     accesses the function performs even though it cannot change any result.
+//   * `mov esi,[0x771a0c]` was first read here as a dead load (ESI pushed, loaded and
+//     popped with no read in this function). WRONG, corrected 2026-10-16: ESI is a
+//     REGISTER INPUT of FUN_00494fd0 (`mov eax,[esi]` at 0x00494fee, `call [eax+0x1c]`
+//     at 0x00494ff1, the DirectInput device pointer). The load is the whole point of the
+//     wrapper's ESI handling and must be a memory load, not an immediate.
 //   * `push ecx` is NOT an argument; it reserves the 4 bytes that `fstp [esp]`
 //     then overwrites with the float. Reading it as a third argument would be
 //     wrong.
@@ -169,11 +171,17 @@ Fwd494fd0_DoublePlusHalf(float /*a1*/, std::uint32_t /*a2*/)
         mov     eax, dword ptr [esp + 8]
         fadd    st(0), st(0)
         push    esi
-        mov     esi, dword ptr [771A0Ch]
+        // `ds:` IS LOAD-BEARING. MSVC's inline assembler reads a bare `[771A0Ch]` as the IMMEDIATE:
+        // `mov esi, dword ptr [771A0Ch]` assembles to BE 0C 1A 77 00 (`mov esi, 0x771a0c`), not to
+        // 8B 35 0C 1A 77 00 (`mov esi,[0x771a0c]`). The first spelling shipped here as C3 and put the ADDRESS in
+        // ESI; FUN_00494fd0 reads its DirectInput device pointer from ESI (`mov eax,[esi]` at 0x00494fee, `call
+        // [eax+0x1c]` at 0x00494ff1), so every installed run jumped to 0x1 (re/diag/KNOWN_ISSUES.md
+        // AUTOHOOK-INLINE-ASM-IMMEDIATE). scripts/lint_inline_asm_abs.py fails the build on the bare form.
+        mov     esi, dword ptr ds:[771A0Ch]
         push    eax
         // MSVC's inline assembler rejects an x87 memory operand given as a bare
-        // absolute (`fadd dword ptr [5CC32Ch]` -> C2415), though it accepts the
-        // same form for `mov`. Addressing it through a register is the way in.
+        // absolute (`fadd dword ptr [5CC32Ch]` -> C2415) (and reads the same bare form as an
+        // immediate for `mov`, see above). Addressing it through a register is the way in.
         // ECX is the right choice and costs nothing observable: the original's
         // `push ecx` is only reserving 4 bytes, and `fstp [esp]` overwrites that
         // slot with the float before anything can read it. So the pushed

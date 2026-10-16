@@ -1,0 +1,11 @@
+12:06:34 shared asi sha256 before = 270e036fad840e93  size=1153536
+12:06:36 deployed worktree build sha256 = 8cfbae1004573298
+12:06:41 path1_car_slot_state_set                   rc=0 (5s)
+12:06:47 path2_car_slot_state_set                   rc=1 (6s)
+12:08:59 ab_AbAiBank_track0                         rc=0 (132s)
+12:11:14 ab_AbAiBank_track3                         rc=0 (135s)
+12:11:42 nav_probe_full_hookset                     rc=0 (27s)
+12:12:08 nav_probe_only_CarSlotStateSet             rc=0 (27s)
+12:12:35 nav_probe_only_AiBankSwitch                rc=0 (26s)
+12:13:22 install_observe_all                        rc=0 (47s)
+12:13:22 shared asi sha256 after restore = 270e036fad840e93  matches original: True

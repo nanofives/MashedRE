@@ -1,0 +1,4 @@
+12:13:28 shared asi sha256 before = 270e036fad840e93  size=1153536
+12:13:29 deployed worktree build sha256 = 8cfbae1004573298
+12:13:33 path2_car_slot_state_set                   rc=0 (4s)
+12:13:33 shared asi sha256 after restore = 270e036fad840e93  matches original: True

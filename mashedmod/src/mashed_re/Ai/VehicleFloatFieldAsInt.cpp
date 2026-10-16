@@ -21,7 +21,8 @@ constexpr std::uintptr_t kFieldBase_881f80 = 0x00881f80u;
 constexpr std::uint32_t  kVehicleStride    = 0x0d04u;
 constexpr std::uint32_t  kMaxIndex         = 0x10u;
 
-// 0x004a2c48 __ftol — MSVC's float->long helper. Takes its operand in ST0 and
+// Thunk INTO the original __ftol at 0x004a2c48 (a call-through, NOT a body of it:
+// the body is Math/FPURound.cpp). MSVC's float->long helper takes its operand in ST0 and
 // returns in EAX, which no C declaration can express, so this loads the float
 // and TAIL-JUMPS into it: `push imm / ret` sets EIP without disturbing the
 // return address, so __ftol returns straight to our caller with EAX set. Same

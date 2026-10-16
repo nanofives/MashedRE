@@ -1,0 +1,112 @@
+[
+ {
+  "name": "path1_car_slot_state_set",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_diff.py",
+   "car_slot_state_set"
+  ]
+ },
+ {
+  "name": "path2_car_slot_state_set",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_verify_hook.py",
+   "car_slot_state_set"
+  ],
+  "env": {
+   "MASHED_VERIFY_ASI": "{ASI}"
+  }
+ },
+ {
+  "name": "ab_AbAiBank_track0",
+  "timeout": 700,
+  "cmd": [
+   "py",
+   "-3.12",
+   "verify/fwd494fd0_20261016/ab_run.py",
+   "{OUT}/ab",
+   "track0",
+   "AbAiBank",
+   "ai_ab_bank.log",
+   "--track",
+   "0",
+   "--cars",
+   "4",
+   "--hold",
+   "120"
+  ]
+ },
+ {
+  "name": "ab_AbAiBank_track3",
+  "timeout": 700,
+  "cmd": [
+   "py",
+   "-3.12",
+   "verify/fwd494fd0_20261016/ab_run.py",
+   "{OUT}/ab",
+   "track3",
+   "AbAiBank",
+   "ai_ab_bank.log",
+   "--track",
+   "3",
+   "--cars",
+   "4",
+   "--hold",
+   "120"
+  ]
+ },
+ {
+  "name": "nav_probe_full_hookset",
+  "timeout": 240,
+  "cmd": [
+   "py",
+   "-3.12",
+   "verify/dupinstall2_20261016/nav_probe.py",
+   "fix_full"
+  ]
+ },
+ {
+  "name": "nav_probe_only_CarSlotStateSet",
+  "timeout": 240,
+  "cmd": [
+   "py",
+   "-3.12",
+   "verify/dupinstall2_20261016/nav_probe.py",
+   "--only",
+   "CarSlotStateSet",
+   "only_slotstate"
+  ]
+ },
+ {
+  "name": "nav_probe_only_AiBankSwitch",
+  "timeout": 240,
+  "cmd": [
+   "py",
+   "-3.12",
+   "verify/dupinstall2_20261016/nav_probe.py",
+   "--only",
+   "AiBankSwitch",
+   "only_bank"
+  ]
+ },
+ {
+  "name": "install_observe_all",
+  "timeout": 200,
+  "cmd": [
+   "py",
+   "-3.12",
+   "verify/dupinstall2_20261016/install_observe.py",
+   "ALL",
+   "--seconds",
+   "45"
+  ],
+  "env": {
+   "DUPINSTALL_OUT": "{OUT}/install_all"
+  }
+ }
+]

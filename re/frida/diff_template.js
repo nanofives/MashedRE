@@ -3654,6 +3654,16 @@ function runDiff() {
         // A named recorder logs "name:args", so the call sequence also says
         // WHICH recorder fired. Absent a spec, everything is as before.
         let curTest = null;
+        // stub_esi (fwd494fd0 2026-10-16, ADDITIVE, defaulted off): record the value ESI holds when a stub_at callee is
+        // entered, as `esi=0x...` appended to that call's record. For callees that take a REGISTER input the
+        // recorder cannot see (FUN_00494fd0 reads its DirectInput device pointer from ESI, set by the caller with
+        // `mov esi,[0x771a0c]`): the stack-args-only recorder is blind to it, which is how 0x00495080 shipped a
+        // miscompiled `mov esi, imm32` as C3 (re/diag/KNOWN_ISSUES.md AUTOHOOK-INLINE-ASM-IMMEDIATE). The stub_at
+        // entry is replaced by a 6-byte thunk `mov [slot], esi ; jmp <recorder>` instead of the bare recorder.
+        // CONFIG.stub_esi_seed {addr, val}: write val to that global for the whole test run (restored after), so the
+        // register source is non-zero and distinct from its own address; without it a menu-time zero would still
+        // differ from the address-as-immediate, but a seeded sentinel makes the failure unambiguous.
+        const esiSlot = CONFIG.stub_esi ? Memory.alloc(8) : null;
         const mkStub = function (spec) {
             const sp = (spec && typeof spec === 'object') ? spec : {};
             const n = (sp.nargs === undefined) ? NA : (sp.nargs | 0);
@@ -3663,6 +3673,7 @@ function runDiff() {
                 const got = [];
                 for (let k = 0; k < arguments.length; k++)
                     got.push(normPtr(arguments[k]));
+                if (esiSlot) got.push('esi=0x' + (esiSlot.readU32() >>> 0).toString(16));
                 calls.push((sp.name ? sp.name + ':' : '') + got.join(','));
                 if (sp.name && curTest && curTest.stub_rets &&
                     curTest.stub_rets[sp.name] !== undefined)
@@ -3708,7 +3719,19 @@ function runDiff() {
             for (let b = 0; b < 5; b++) pre.push(sa.add(b).readU8());
             const cb = (se && typeof se === 'object') ? mkStub(se) : mkStub();
             keep.push(cb);
-            Interceptor.replace(sa, cb);
+            let rep = cb;
+            if (esiSlot) {
+                const thunk = Memory.alloc(Process.pageSize);
+                Memory.patchCode(thunk, 16, function (tp) {
+                    const w = new X86Writer(tp, { pc: thunk });
+                    w.putMovNearPtrReg(esiSlot, 'esi');
+                    w.putJmpAddress(cb);
+                    w.flush();
+                });
+                keep.push(thunk);
+                rep = thunk;
+            }
+            Interceptor.replace(sa, rep);
             Interceptor.flush();
             let patched = false;
             for (let b = 0; b < 5; b++)
@@ -3798,6 +3821,9 @@ function runDiff() {
             }
             return parts.join('|');
         };
+        const esiSeed = CONFIG.stub_esi_seed || null;
+        let esiSeedSaved = 0;
+        if (esiSeed) { esiSeedSaved = ptr(esiSeed.addr).readU32(); ptr(esiSeed.addr).writeU32(esiSeed.val >>> 0); }
         for (let i = 0; i < CONFIG.tests.length; i++) {
             const t = CONFIG.tests[i];
             const scalars = t.scalars || [];
@@ -3816,6 +3842,7 @@ function runDiff() {
                            match: (!errO && !errR && fO === fR),
                            err_original: errO, err_reimpl: errR });
         }
+        if (esiSeed) ptr(esiSeed.addr).writeU32(esiSeedSaved);
         send({ type: 'results', data: results });
         return;
     }

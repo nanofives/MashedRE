@@ -1,9 +1,9 @@
 // Mashed RE — WS-R6 final drain: AI line-bank switcher + per-frame pre-tick,
 // verbatim ports authored from raw asm (Mashed_pool13 RO, 2026-07-02):
 //
-//   0x00417180  AiBankSwitch(vehicle)   spline-index cycling / line-type bank
-//                                       switching / switch timer / random
-//                                       spline variation
+//   FUN_00417180  AiBankSwitch(vehicle)  MOVED 2026-10-16 (fwd494fd0) to Ai/AiBankSwitch.cpp, ONE body
+//                                       for both targets (this TU is .asi-only); the raw-asm notes
+//                                       below about it are the history of that port.
 //   0x004177b0  AiPreTick(void)         race-angle array update + candidate
 //                                       slots + mode-4/9 speed rubber-banding
 //                                       + powerup speed doubling + slow-line
@@ -62,7 +62,6 @@ typedef float (__cdecl* fn_fi_t)(int);
 typedef void  (__cdecl* fn_vif_t)(int, float);
 typedef float (__cdecl* fn_rand_t)(int, std::uint32_t);
 
-inline void  SplineReset(int a)      { reinterpret_cast<fn_vi_t>(0x00414030)(a); }   // writes 0x008032d4+i*0x14 only (decomp this session)
 inline float RandFloat(std::uint32_t hiBits) { return reinterpret_cast<fn_rand_t>(0x00472650)(0, hiBits); } // float10-ST0
 inline int   TargetEnable()          { return reinterpret_cast<fn_iv_t>(0x00443080)(); }
 inline float SpeedBaseGet()          { return reinterpret_cast<fn_fv_t>(0x0046dd80)(); }   // float10-ST0 (f32-sourced)
@@ -84,85 +83,6 @@ __declspec(naked) int Ftol(double /*x*/) {
 }
 
 } // namespace
-
-// ===========================================================================
-// 0x00417180  AiBankSwitch(vehicle)
-// ===========================================================================
-extern "C" __declspec(dllexport)
-void __cdecl AiBankSwitch(int veh)
-{
-    const std::uintptr_t s = static_cast<std::uintptr_t>(veh) * 0x74u;
-
-    if (I32(0x0089a500u + s) != 0) {                       // 0x0041718a switch request
-        int t = I32(0x0089a4ccu + s);                      // 0x004171a5 (read ONCE into ECX)
-        I32(0x0089a504u + s) = 1;                          // 0x004171ad start timer
-        if (t == 2) {                                      // 0x004171ab slow lines
-            int idx = I32(0x0089a4d0u + s) + 1;            // 0x004171b5
-            I32(0x0089a4d0u + s) = idx;                    // 0x004171c0
-            if (idx > 2) I32(0x0089a4d0u + s) = 0;         // 0x004171c8
-            SplineReset(-1);                               // 0x004171d0
-        }
-        if (t == 1) {                                      // 0x004171d8 inside lines
-            int idx = I32(0x0089a4d0u + s) + 1;            // 0x004171e1
-            I32(0x0089a4d0u + s) = idx;                    // 0x004171ea
-            if (idx > 2 || I32(0x008022acu + static_cast<std::uintptr_t>(idx) * 0x204u) < 4) { // 0x004171f0/0x004171f8
-                I32(0x0089a4ccu + s) = 2;                  // 0x00417200
-                I32(0x0089a4d0u + s) = 0;                  // 0x00417206
-            }
-        }
-        if (I32(0x0089a4ccu + s) == 0) {                   // 0x0041720c race lines (RE-READS memory)
-            int idx = I32(0x0089a4d0u + s) + 1;            // 0x00417214
-            I32(0x0089a4d0u + s) = idx;                    // 0x0041721d
-            if (idx > 2 || I32(0x00801ca0u + static_cast<std::uintptr_t>(idx) * 0x204u) < 4) { // 0x00417223/0x0041722b
-                I32(0x0089a4ccu + s) = 1;                  // 0x00417233
-                I32(0x0089a4d0u + s) = 0;                  // 0x00417239
-            }
-            SplineReset(-1);                               // 0x00417241 (called on BOTH outcomes)
-        }
-        if (I32(0x0089a4ccu + s) == 3) {                   // 0x00417249 cheat lines (RE-READS memory)
-            int idx = I32(0x0089a4d0u + s) + 1;            // 0x00417252
-            I32(0x0089a4d0u + s) = idx;                    // 0x0041725b
-            if (idx > 2 || I32(0x00802ec4u + static_cast<std::uintptr_t>(idx) * 0x204u) < 4) { // 0x00417261/0x00417269
-                I32(0x0089a4ccu + s) = 0;                  // 0x00417271
-                I32(0x0089a4d0u + s) = 0;                  // 0x00417277
-            }
-            SplineReset(-1);                               // 0x0041727f (called on BOTH outcomes)
-        }
-        I32(0x0089a500u + s) = 0;                          // 0x00417287 clear request
-    }
-
-    // switch timer (0x0041728d)
-    int timer = I32(0x0089a504u + s);
-    if (timer != 0 && timer < 9000) {                      // 0x00417293/0x00417297
-        I32(0x0089a504u + s) = timer + I32(0x007f1008u);   // 0x0041729e..0x004172a7
-        return;                                            // 0x004172b0
-    }
-    I32(0x0089a504u + s) = 0;                              // 0x004172b1
-
-    // line-type reset by debug flag (0x004172b7)
-    if (I32(0x0089a368u) == 0) I32(0x0089a4ccu + s) = 0;   // 0x004172b7/0x004172bf
-    if (I32(0x0089a368u) == 2) I32(0x0089a4ccu + s) = 0;   // 0x004172c5/0x004172cd
-    if (I32(0x0089a368u) == 1) {                           // 0x004172d3
-        if (I32(0x0089a4ccu + s) != 2) SplineReset(-1);    // 0x004172db/0x004172e5
-        I32(0x0089a4ccu + s) = 2;                          // 0x004172ed
-    }
-
-    // low-frequency random spline variation (0x004172f3)
-    int period = I32(0x007f0ff8u) / 3000;                  // 0x004172f9 (signed /3000 idiom)
-    if ((period & 0xf) == 0xf) {                           // 0x0041730e/0x00417311
-        if (I32(0x0063bd90u) != period) {                  // 0x00417316 dedup
-            float rnd = RandFloat(0x3f800000u);            // 0x00417324 FUN_00472650(0, 1.0f)
-            if (rnd < F32(0x005cc32cu)) {                  // 0x00417329 (TEST 0x5/JP-skip)
-                I32(0x0089a4d0u + s) = I32(0x0089a4d0u + s) + 1; // 0x00417339
-                SplineReset(-1);                           // 0x00417348
-            }
-        }
-        I32(0x0063bd90u) = period;                         // 0x00417350
-    } else {
-        I32(0x0063bd90u) = 0;                              // 0x0041735e
-    }
-}
-RH_ScopedInstall(AiBankSwitch, 0x00417180);
 
 // ===========================================================================
 // 0x004177b0  AiPreTick(void)
