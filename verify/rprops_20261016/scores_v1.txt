@@ -1,0 +1,39 @@
+arm v1
+frame          orig match orig tri match tri   tri%  rows red  verdict
+training 884    242   195    18128     16569  91.4%    87   0  CITED
+training 924    257   192    18358     16533  90.1%    86   0  CITED
+training 959    233   192    18079     16533  91.4%    86   0  CITED
+arctic 1051     180   140    35412     32437  91.6%    83   0  CITED
+arctic 1091     177   138    35197     32083  91.2%    82   0  CITED
+arctic 1126     131   101    29307     26823  91.5%    81   0  CITED
+city 761        512   405    42182     36018  85.4%   143   0  CITED
+city 801        496   393    41692     35558  85.3%   141   0  CITED
+city 836        444   346    34493     28587  82.9%   138   0  CITED
+rows by citation id (summed per track):
+  training C01=69 C01b=3 C02=9 C03=3 C04=4 C05=9 C06=6 C07=9 C08=18 C10=3 C11=6 C14=6 C16=15 C17=9 C18=3 C19=78 C20=3 C21=6
+  arctic   C01=42 C02=9 C03=3 C04=9 C05=6 C06=6 C08=18 C09=10 C13=2 C15=12 C16=3 C17=7 C18=3 C19=80 C21=36
+  city     C01=81 C02=9 C03=3 C04=6 C05=8 C06=6 C07=1 C08=21 C09=10 C12=39 C14=9 C17=6 C18=3 C19=203 C21=17
+rule 2 collateral review vs arm base (NEW = row here the other arm lacks):
+  training 884: rows 86->87 gone 1 NEW 2 matched 194->195 (+1) tri 16392->16569 (+177)
+      NEW EXTRA CamManHot [C01-CULL]: B-only 2 draws 354 tri (2 offscreen); first k82 pt4 tri=177 tex=CamManHot tex1=- bb=[18.97,1.82,23.72,19.12,2.14,24.19] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 A
+      NEW STATE CamManHot [C19-STATE-LIBRW]: 1 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DS
+  training 924: rows 85->86 gone 1 NEW 2 matched 191->192 (+1) tri 16356->16533 (+177)
+      NEW EXTRA CamManHot [C01-CULL]: B-only 2 draws 354 tri (2 offscreen); first k82 pt4 tri=177 tex=CamManHot tex1=- bb=[18.97,1.82,23.72,19.12,2.14,24.19] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 A
+      NEW STATE CamManHot [C19-STATE-LIBRW]: 1 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DS
+  training 959: rows 85->86 gone 1 NEW 2 matched 191->192 (+1) tri 16356->16533 (+177)
+      NEW EXTRA CamManHot [C01-CULL]: B-only 2 draws 354 tri (2 offscreen); first k82 pt4 tri=177 tex=CamManHot tex1=- bb=[18.97,1.82,23.72,19.12,2.14,24.19] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 A
+      NEW STATE CamManHot [C19-STATE-LIBRW]: 1 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DS
+  arctic 1051: rows 81->83 gone 1 NEW 3 matched 138->140 (+2) tri 32143->32437 (+294)
+      NEW EXTRA CamManCold [C01-CULL]: B-only 4 draws 708 tri (4 offscreen); first k82 pt4 tri=177 tex=CamManCold tex1=- bb=[13.24,10.63,1.45,13.40,10.94,1.92] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 
+      NEW EXTRA Vehicles [C01-CULL]: B-only 4 draws 682 tri (4 offscreen); first k82 pt4 tri=331 tex=Vehicles tex1=- bb=[-27.48,-4.99,-70.85,-4.91,3.05,-59.98] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=
+      NEW STATE CamManCold [C19-STATE-LIBRW]: 1 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DS
+  arctic 1091: rows 81->82 gone 0 NEW 1 matched 138->138 (+0) tri 32083->32083 (+0)
+      NEW EXTRA Vehicles [C01-CULL]: B-only 4 draws 682 tri (4 offscreen); first k82 pt4 tri=331 tex=Vehicles tex1=- bb=[-27.43,-5.50,-70.49,-4.81,2.77,-59.83] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=
+  arctic 1126: rows 81->81 gone 0 NEW 0 matched 101->101 (+0) tri 26823->26823 (+0)
+  city 761: rows 157->143 gone 15 NEW 1 matched 351->405 (+54) tri 34236->36018 (+1782)
+      NEW STATE bark [C19-STATE-LIBRW]: 27 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 D
+  city 801: rows 155->141 gone 15 NEW 1 matched 339->393 (+54) tri 33776->35558 (+1782)
+      NEW STATE bark [C19-STATE-LIBRW]: 27 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 D
+  city 836: rows 152->138 gone 15 NEW 1 matched 292->346 (+54) tri 26805->28587 (+1782)
+      NEW STATE bark [C19-STATE-LIBRW]: 27 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 D
+  NEW ROWS TOTAL 13; frames with fewer matched draws or triangles: 0

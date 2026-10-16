@@ -71,7 +71,7 @@ def main():
     arm = a[0]
     vs = a[a.index("--vs") + 1] if "--vs" in a else None
     outp = Path(a[a.index("--out") + 1]) if "--out" in a else None
-    cites = D1 / "cites_d1r1.json"
+    cites = Path(a[a.index("--cites") + 1]) if "--cites" in a else D1 / "cites_d1r1.json"
     lines = []
     res = {}
     for trk, ks in FRAMES.items():
