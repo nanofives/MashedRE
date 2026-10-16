@@ -63,3 +63,15 @@ pwsh -NoProfile -File verify\rskyverify_20261016\run_verify.ps1 -Root <private g
 py -3.12 verify\rsky_20261016\run13.py score --out log\rsky\verify --cite verify\rskyverify_20261016\cites_merged.json --prefix rs_
 py -3.12 verify\rsky_20261016\compare_rows.py log\rsky\pre log\rsky\verify --prefix rs_
 ```
+
+## Addendum: re-verified on race/first-frame-parity `32931432` (d2close merged)
+
+The orchestrator moved the branch (BSP terrain walk default ON, D2 closed; expected G-CTRL `d3b90ee0 / 80f01f35 / 56d62ae7`). `work/rsky-verify` was rebased onto `32931432` and everything above re-run there
+(`evidence2/`, exe `log/rsky/exe_verify2.exe` SHA-256 `EAFA20392CFD07A86763FA20DD5C4CA0B654FDF41EA9FFCE8C2FCB17308D1D2B`, clean build, `MASHED_NO_DEPLOY=1`).
+
+- **G-CTRL: step `d3b90ee0`, gates `80f01f35`, ptrace `56d62ae7`** (18671 / 55433 / 27716 lines) = the new expected default.
+- **13 tracks x 3 frames: 1047 rows, 0 RED, row-for-row identical to the `2dec160eb` run on 39 of 39 frames** (`evidence2/compare_2dec160eb_vs_32931432.txt`). The physics change does not move a render row, as the matched-pose replay predicts.
+  The earlier control comparison therefore still holds unchanged: control `042acdac4` 1111 rows / 32 RED against 1047 / 0 RED, delta = rsky's isolated delta.
+- Neustein named capture: 227 / 223 / 179 matched draws, rows 20 / 20 / 21, 0 RED, gates PASS, identical to the `2dec160eb` run on 3 of 3 frames.
+- All six opt-outs on the new exe, 7 tracks x 3 frames: equal to the `f76ae153b` baseline on 21 of 21 frames.
+- The only gate failure of the 13 tracks is still capfix Neustein row 1169 (73/77, r10).
