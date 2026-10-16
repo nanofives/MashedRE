@@ -1,0 +1,15 @@
+# REBASED 0020d521
+=== base2_default  exe=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\rstates\log\rstates\base2\mashed_re.exe  knobs=[] ===
+    pid=4636
+    exit=0  self_exited=True
+    base2_default.step.csv  lines=18664  sha8=716cb2fd
+    base2_default.gates.csv  lines=56153  sha8=2a2afda1
+    base2_default.ptrace.log  lines=28076  sha8=ba90ed88
+GCTRL DONE
+=== exe3_default  exe=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\rstates\log\rstates\exe3\mashed_re.exe  knobs=[] ===
+    pid=7564
+    exit=0  self_exited=True
+    exe3_default.step.csv  lines=18664  sha8=716cb2fd
+    exe3_default.gates.csv  lines=56153  sha8=2a2afda1
+    exe3_default.ptrace.log  lines=28076  sha8=ba90ed88
+GCTRL DONE

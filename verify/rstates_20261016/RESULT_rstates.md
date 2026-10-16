@@ -1,19 +1,47 @@
 # RESULT rstates: RenderWare render states and world draw order (U-9689, U-9690, U-9694)
 
 **Verdict: kept, default ON.** Five render-only fixes, F1 (d1r1) and F2-F5 (new), pass every
-pre-registered rule (`PREREG_rstates.md` §3) on the 9 d1r1 frames.
+pre-registered rule (`PREREG_rstates.md` §3) on the 9 d1r1 frames. They pass on both bases they were
+measured on.
 
+Rebased onto `race/first-frame-parity` 0020d521 (rtex, d1r3, librwrest, u9683, dupinstall, u9685
+merged); numbers from the rebased arms (R0 base, R1 base + F1, R2 final default, R3 final with all
+five knobs at 0):
 - Rows per frame against the original, base -> final default build:
-  - TRAINING 86/85/85 -> 39/38/38
-  - Arctic 81/81/81 -> 49/48/46
-  - City 157/155/152 -> 61/61/58
-- 0 RED on every frame. Matched draws are unchanged.
-- The standalone's world-sector draw sequence equals the original's on **9/9** frames (0/9 before).
-- G-CTRL is unchanged: `c2e4d60d / b50bd39b / ba90ed88`.
+  - TRAINING 77/76/76 -> 30/29/29
+  - Arctic 76/76/76 -> 44/43/41
+  - City 153/151/149 -> 57/57/55
+- 0 RED on every frame. Matched draws are unchanged (196/193/193, 138/138/101, 351/339/292).
+- The standalone's world-sector draw sequence equals the original's on **9/9** frames (0/9 on the
+  base).
+- G-CTRL is unchanged at the new default trio, `716cb2fd / 2a2afda1 / ba90ed88`.
 - With all five knobs at 0 the build is byte-identical to the base on 9/9 frames.
+- Pixels:
+  - TRAINING 14.33/10.07/8.71 -> 12.22/8.72/7.36
+  - Arctic 10.35/6.84/6.34 -> 10.31/6.82/6.33
+  - City 14.84/12.11/11.40 -> 14.83/12.06/11.39
 
-Base `race/first-frame-parity` ec3301f3. PREREG committed before any measuring run (d0cb7014).
-Implementation is 356adf9e.
+On the original base ec3301f3 (`scores.txt` "PRE-REBASE"):
+- Rows: 86/85/85 -> 39/38/38, 81/81/81 -> 49/48/46, 157/155/152 -> 61/61/58.
+- G-CTRL `c2e4d60d / b50bd39b / ba90ed88` before and after.
+
+PREREG committed before any measuring run (c823edc0 after the rebase, d0cb7014 before).
+
+## 0. The rebase (what had to change)
+
+- **librwrest** draws cars and copters with per-frame poses, env passes, per-model draw order and
+  RW states. The merged loop sent every instance to the walk's per-DFF-atomic path, cars
+  included. Now only plain copies take that path: not a car, no poses, no env, no model draw
+  order, no per-model states. Cars keep the FUN_00420870 path and copters FUN_00425e40's order
+  and cull. Copters are queued `kInstAfterWorld`, cars `kInstCar` (`AddInstancePosed` gained
+  the `kind` argument).
+- **rtex** P9 renders DUAL sectors and props through `matfxRenderCB_Shader`. The empty-mesh
+  skip is applied there too. Arctic and City worlds carry no DUAL material (rtex census), so
+  F3's sector handling is unaffected.
+- **d1r3** deleted the legacy D3D9 renderer: the prop/car queue sites and the track-load hook
+  were re-applied to the librw-only code.
+- **U-ids** are renumbered at each rebase (d1r3 took U-9698, rprops U-9699..U-9702). This lane's rows are **U-9703** (tie order) and **U-9704**
+  (car glass order).
 
 ## 1. What the original does (cited to bytes; extracts in `evidence/dis_*.txt`)
 
@@ -90,17 +118,15 @@ a clump's atomics newest-first. librw appends (`clump.cpp:103`).
 
 ## 3. Rules (`PREREG_rstates.md` §3)
 
-| rule | result |
+| rule | result (rebased, 0020d521) |
 |---|---|
-| 1 targets gone | PASS. Arctic: the first sector's 10 STATE rows and the Advantage/AdvantageSmall/Glass CULL rows are gone on 3/3 frames (STATE 13-14 -> 1). World-sector EXTRA rows are gone (EXTRA 29->8, 18-20->11, 33->8). World-sector ORDER inversions are gone: the surviving ORDER rows invert only against causes outside F2-F5 (§4). |
-| 2 no new row | PASS with 9 listed re-keys (`rowdelta_B0_D2.txt`). Six are C13 MOVED -> MISSING: CamManHot on TRAINING x3, Arctic CamManCold x1, Vehicles x2. The standalone places these props at the world origin (U-9695), and the sphere test now culls them there; before, it drew them off-screen at the origin. Three are the Arctic `World` STATE row, which differs only in Z/ZW/ZF since F1: `windows.dff` is drawn depth-off in the sky pass, cited C15c, U-9696. RED 0 on 9/9. |
-| 3 G-CTRL | PASS: base, opt-in build, final default build all `c2e4d60d / b50bd39b / ba90ed88` (`gctrl.txt`) |
-| 4 no-op control | PASS: knobs unset on the opt-in build == base, byte for byte, 9/9. All five knobs `=0` on the final build == base, byte for byte, 9/9. The final default == the opt-in build with all knobs on, 9/9 (`noop.txt`). |
-| 5 pixels | PASS: TRAINING 28.52/21.30/15.76 -> 28.33/21.18/15.42. Arctic 10.97/7.07/6.43 -> 10.93/7.05/6.42. City 16.91/13.15/12.10 -> 16.92/13.10/12.11. |
+| 1 targets gone | PASS. Arctic: the first sector's 10 STATE rows and the Advantage/AdvantageSmall/Glass CULL rows are gone on 3/3 frames (STATE 26 -> 1, with F1 alone 13-14). World-sector EXTRA rows are gone (EXTRA 27->6, 14-16->7, 30->5 per track). World-sector ORDER inversions are gone: Arctic's first-sector rows fall from 27 to 1 inversion each, WetRoad 98 -> 4, TRAINING `Wet_Water00` (234) goes, City `railings` 281 -> 79, `thickgirders` 100 -> 14, `Path2` 2093 -> 130, `Pathpattern`/`road2` go. Every inversion left is against a cause outside F2-F5 (section 4). |
+| 2 no new row | PASS with 9 listed re-keys (`rowdelta_R0_R2.txt`). Six are C13 MOVED -> MISSING: CamManHot on TRAINING x3, Arctic CamManCold x1, Vehicles x2. The standalone places these props at the world origin (U-9695), and the sphere test now culls them there; before, it drew them off-screen at the origin. Three are the Arctic `World` STATE row, which now differs only in Z/ZW/ZF: `windows.dff` is drawn depth-off in the sky pass, cited C15c, U-9696. RED 0 on 9/9. Against F1 alone (R1): 6 (the C13 re-keys). |
+| 3 G-CTRL | PASS: base and final default build both `716cb2fd / 2a2afda1 / ba90ed88` (`gctrl_rebased.txt`; pre-rebase `gctrl.txt` `c2e4d60d / b50bd39b / ba90ed88` three times) |
+| 4 no-op control | PASS: all five knobs `=0` on the final build == base, byte for byte, 9/9 (`noop_rebased.txt`). Pre-rebase also: knobs unset on the opt-in build == base, and the final default == the opt-in build with all knobs on, 9/9 (`noop.txt`). |
+| 5 pixels | PASS: TRAINING 14.33/10.07/8.71 -> 12.22/8.72/7.36. Arctic 10.35/6.84/6.34 -> 10.31/6.82/6.33. City 14.84/12.11/11.40 -> 14.83/12.06/11.39 (`pixels.txt`). |
 
-Per-frame counts for every arm are in `scores.txt`: B0 base, B1 F1, S1 F1-F4, S5 F1-F5, D2 final
-default, O2 final with all knobs at 0. F5 removes City's `Pathpattern` and `road2` ORDER rows and
-cuts `Path2` from 1966 to 130 inversions. It adds nothing on any frame (`rowdelta_S1_S5.txt`).
+Per-frame counts for every arm are in `scores.txt`, rebased and pre-rebase. In the pre-rebase arms F5 alone removed City's `Pathpattern` and `road2` ORDER rows, cut `Path2` from 1966 to 130 inversions, and added nothing (`rowdelta_S1_S5.txt`).
 
 ## 4. What is left, and why
 
@@ -122,7 +148,7 @@ Pr-1 confirmed (9/9). Pr-2 confirmed. Pr-3 confirmed, with more EXTRA rows gone 
 sector-only estimate, because prop culling also drops off-screen props. Pr-4 confirmed: Glass, City
 buildings and the Arctic sky-pass mesh survive, and TRAINING `Wet_Water00` and Arctic WetRoad's
 Tyres inversions are gone, so the tie interleave is right on those frames. Pr-5 confirmed.
-`smoke_tracks.py` (final default, 900 deterministic frames, every track piz): **13/13 exit 0**, the sector walk logged on all 899 rendered frames of each (`smoke.txt`).
+`smoke_tracks.py` (final default, 900 deterministic frames, every track piz): **13/13 exit 0** on the rebased build (`smoke_rebased.txt`) and on the pre-rebase build (`smoke.txt`), the sector walk logged on all 899 rendered frames of each track.
 
 ## 6. Reproduce
 

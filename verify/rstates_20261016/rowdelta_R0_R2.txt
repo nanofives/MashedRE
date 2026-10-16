@@ -1,0 +1,19 @@
+training:884    before  77 after  30  gone  48  NEW 1  RED 0
+    NEW MISSING CamManHot [C13-PROPPLACE]: A-only 1 draws 177 tri (0 offscreen); first k82 pt5 tri=177 tex=CamManHot tex1=- bb=[1.93,0.62,-26.30,2.08,0.94,-25.83] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 
+training:924    before  76 after  29  gone  48  NEW 1  RED 0
+    NEW MISSING CamManHot [C13-PROPPLACE]: A-only 1 draws 177 tri (0 offscreen); first k82 pt5 tri=177 tex=CamManHot tex1=- bb=[1.93,0.62,-26.30,2.08,0.94,-25.83] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 
+training:959    before  76 after  29  gone  48  NEW 1  RED 0
+    NEW MISSING CamManHot [C13-PROPPLACE]: A-only 1 draws 177 tri (0 offscreen); first k82 pt5 tri=177 tex=CamManHot tex1=- bb=[1.93,0.62,-26.30,2.08,0.94,-25.83] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 
+arctic:1051   before  76 after  44  gone  35  NEW 3  RED 0
+    NEW MISSING CamManCold [C13-PROPPLACE]: A-only 1 draws 177 tri (0 offscreen); first k82 pt5 tri=177 tex=CamManCold tex1=- bb=[-27.60,1.00,43.11,-27.43,1.32,43.58] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC
+    NEW MISSING Vehicles [C13-PROPPLACE]: A-only 2 draws 448 tri (0 offscreen); first k82 pt5 tri=331 tex=Vehicles tex1=- bb=[-33.20,-4.98,76.92,-9.87,3.06,84.26] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0
+    NEW STATE World [C15c-SKY-DEPTH]: 1 matched draws differ in Z,ZW,ZF: A Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+arctic:1091   before  76 after  43  gone  35  NEW 2  RED 0
+    NEW MISSING Vehicles [C13-PROPPLACE]: A-only 2 draws 448 tri (0 offscreen); first k82 pt5 tri=331 tex=Vehicles tex1=- bb=[-33.25,-5.48,77.09,-9.97,2.79,84.67] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0
+    NEW STATE World [C15c-SKY-DEPTH]: 1 matched draws differ in Z,ZW,ZF: A Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+arctic:1126   before  76 after  41  gone  36  NEW 1  RED 0
+    NEW STATE World [C15c-SKY-DEPTH]: 1 matched draws differ in Z,ZW,ZF: A Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+city:761    before 153 after  57  gone  96  NEW 0  RED 0
+city:801    before 151 after  57  gone  94  NEW 0  RED 0
+city:836    before 149 after  55  gone  94  NEW 0  RED 0
+NEW ROWS TOTAL: 9   RED TOTAL: 0
