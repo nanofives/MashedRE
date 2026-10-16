@@ -1,0 +1,9 @@
+training   884 plates=0 nearest(car,dist)=[] mask=0x0
+training   924 plates=0 nearest(car,dist)=[] mask=0x0
+training   959 plates=0 nearest(car,dist)=[] mask=0x0
+arctic    1051 plates=0 nearest(car,dist)=[] mask=0x0
+arctic    1091 plates=1 nearest(car,dist)=[(3, 0.51)] mask=0x8
+arctic    1126 plates=1 nearest(car,dist)=[(1, 0.51)] mask=0x2
+city       761 plates=0 nearest(car,dist)=[] mask=0x0
+city       801 plates=0 nearest(car,dist)=[] mask=0x0
+city       836 plates=2 nearest(car,dist)=[(1, 0.51), (2, 0.51)] mask=0x6

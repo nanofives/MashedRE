@@ -54,6 +54,7 @@ def main() -> int:
     rest = args[2:]
     tracks = list(TRACKS)
     skip = False
+    brake = True            # PREREG_carlod amendment 4: MASHED_CAR_BRAKE_ROWS from brake_rows.json
     knobs = []
     i = 0
     while i < len(rest):
@@ -61,7 +62,10 @@ def main() -> int:
             tracks = rest[i + 1].split(","); i += 2; continue
         if rest[i] == "--skip-run":
             skip = True; i += 1; continue
+        if rest[i] == "--no-brake":
+            brake = False; i += 1; continue
         knobs.append(rest[i]); i += 1
+    brake_rows = json.loads((HERE / "brake_rows.json").read_text())
     base = LOG / arm
     base.mkdir(parents=True, exist_ok=True)
     lines = []
@@ -73,6 +77,9 @@ def main() -> int:
                    "--trace", str(D1 / f"orig_{t}" / "trace.csv"),
                    "--shots", ",".join(str(k) for k in shots), "--track", view,
                    "--frames", str(FRAMES)] + knobs
+            br = {k: v for k, v in brake_rows.get(t, {}).items() if v}
+            if brake and br:
+                cmd.append("MASHED_CAR_BRAKE_ROWS=" + ",".join(f"{k}:{v}" for k, v in br.items()))
             print(" ".join(cmd), flush=True)
             subprocess.run(cmd, check=False)
         for k in shots:
@@ -93,10 +100,10 @@ def main() -> int:
                             out / "d1r2" / f"stand_row_{k:05d}.bmp")
             lines.append(f"{t:<9}{k:>5}  rows {len(rows):>3}  red {red:>2}  matched {d.get('matched')}/{d.get('na')}"
                          f"  tri {matched_tri(oa, sb)}/{d.get('tri_a')}  pix {mad:.2f}")
-    print(f"== arm {arm} exe={exe} knobs={knobs}")
+    print(f"== arm {arm} exe={exe} knobs={knobs} brake_rows={brake}")
     for ln in lines:
         print(ln)
-    (base / "summary.txt").write_text(f"arm {arm} exe={exe} knobs={knobs}\n" + "\n".join(lines) + "\n")
+    (base / "summary.txt").write_text(f"arm {arm} exe={exe} knobs={knobs} brake_rows={brake}\n" + "\n".join(lines) + "\n")
     return 0
 
 

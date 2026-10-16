@@ -170,3 +170,29 @@ chosen by S (`[esi+0x38]` part 0xe or `[esi+0xbc]` part 0x2f; `[esi+0x3c]` part 
 section 4 is the build with the glass pass; `vis1_noglass` stays on record as the failed first attempt.
 Predictions and rules are unchanged: Pr-1 now reads "11 (TRAINING) / 13 (Arctic, City) opaque parts plus the
 2 glass atomics per car".
+### Amendment 4 (written after the second `vis` arm was read, before any arm that uses the input; instrument input, rules unchanged)
+
+The second `vis` arm (the build with RENDER bits and the glass pass, `log/carlod/vis`): 0 RED, the three C02
+rows and the C21 Glass ORDER row gone on all 9 frames, TRAINING 0 new rows and matched 194 / 191 / 191
+(equal to base), pixels down on all 9 frames. It still fails rules 2 and 3 on Arctic 1091 and 1126 and City 836:
+a NEW MISSING `Advantage` row (1, 1 and 2 original draws of 4 triangles) and matched draws 138 -> 137,
+101 -> 100, 292 -> 290. Part 0x11 has 4 triangles (`evidence/car_parts.txt`) and is the only 4-triangle
+visible part; it shows when F & 0x800, the controller's brake byte (section 1 C), and the standalone's default
+AI cars produce no such byte. The base build matched those plates by accident, because it drew every atomic
+of every car.
+
+Instrument input, in the spirit of the car-pose transplant: `MASHED_CAR_BRAKE_ROWS=row:mask,...` (default
+unset, `TrackRenderer`, measurement only) sets F & 0x800 for the slots in `mask` on the frame that consumed
+trace row `row`. `brake_from_draws.py` derives the masks from the ORIGINAL's committed draw records: a
+4-triangle `Advantage` draw whose box centre is within 3 m of a car's frame origin (`brake_rows.json`,
+`evidence/brake_from_draws.txt`: Arctic 1091 slot 3, 1126 slot 1, City 836 slots 1 and 2, none on the other
+six frames, every plate 0.51 m from its car). The derivation is circular for the 0x11 plates (it reads the
+draws the arm is scored against), so the arm that uses it is NOT evidence for the 0x11 gate. That gate rests on
+the disassembly (`0x00420b7d`, `FUN_0041eeb0`) and on the live witness (`vis_model_check.txt`: City row 900,
+the two cars with F = 0x8c8 show part 0x11). What the arm shows is that, with that one input supplied, no
+other row appears and no matched draw is lost.
+
+Arms: `vis` (the build as is, no brake input, the failing record above), `visb` (same exe, brake input on),
+`visb_off` (`MASHED_CAR_VIS=0`, brake input on: rule 4 control). Rule 2 and 3 for F-VIS read `visb` against
+`base`. The default build still shows no brake lights on AI cars; that is U-9698's open half and is reported,
+not closed.
