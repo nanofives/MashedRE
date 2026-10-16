@@ -1,0 +1,19 @@
+// FUN_00416250 @ 0x00416250  size=2015  (MASHED.exe)
+// undefined FUN_00416250(void)
+// xrefs (1):
+//   UNCONDITIONAL_CALL 0x004187b7 in FUN_00418560
+
+// FUN_00416a30 @ 0x00416a30  size=1871  (MASHED.exe)
+// undefined FUN_00416a30(void)
+// xrefs (1):
+//   UNCONDITIONAL_CALL 0x004187c6 in FUN_00418560
+
+// FUN_00417da0 @ 0x00417da0  size=1980  (MASHED.exe)
+// undefined FUN_00417da0(void)
+// xrefs (1):
+//   UNCONDITIONAL_CALL 0x00418780 in FUN_00418560
+
+// FUN_0040da50 @ 0x0040da50  size=265  (MASHED.exe)
+// undefined FUN_0040da50(void)
+// xrefs (1):
+//   UNCONDITIONAL_CALL 0x0040fc75 in FUN_0040fc00
