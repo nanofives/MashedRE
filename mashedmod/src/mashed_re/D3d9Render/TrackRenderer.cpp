@@ -1028,6 +1028,67 @@ bool ParseLightsDffDirectional(const std::uint8_t* d, std::uint32_t len,
     return false;
 }
 
+// [rsky U-9714] COURSE.LUA `Sky_Filename`, handler 0x0047a1e0. With n arguments it reads the slot
+// from argument n-1 (FUN_004b7090 @ 0x004b7090 -> ftol 0x004a2c48, a truncation) and the name from
+// argument n (FUN_004b70d0 @ 0x004b70d0), and files the name under `names + (slot + 1) * 0x40`
+// (0x0047a248..0x0047a26a). The one-argument form `Sky_Filename("x.dff")` reads argument 0, a stack
+// cell that is not a number, and FUN_004b7090 then returns _DAT_005d1008 = 0.0 (file bytes at
+// 0x005d1008 are zero), so it lands in slot 0. [UNCERTAIN U-9719: the stack cell's tag is read from
+// past the arguments; Roundabout's original drawing `Sky3` / `Sky4` is the witness.] Slots 0..3
+// are loaded by CreateFromDescription (0x00479330, "Loading SkyDome [%s] into sky[%d]"); a slot
+// outside 0..3 would write other name-table entries and is not parsed.
+// MASHED_NO_SKYSLOTS=1 restores the pre-rsky parse: the two-argument form only, every line in one slot.
+static bool parse_slot_name_cmd(const char* line, const char* key, int max_slot, bool old_form,
+                                char* name, std::size_t name_cap, int* slot) {
+    const char* p = line;
+    while (*p == ' ' || *p == '\t') ++p;
+    const std::size_t klen = std::strlen(key);
+    if (std::strncmp(p, key, klen) != 0) return false;
+    p += klen;
+    while (*p == ' ' || *p == '\t') ++p;
+    if (*p != '(') return false;
+    ++p;
+    while (*p == ' ' || *p == '\t') ++p;
+    int idx = 0;
+    bool has_idx = false;
+    if (*p != '"') {
+        char* end = nullptr;
+        const double v = std::strtod(p, &end);
+        if (end == p) return false;
+        idx = static_cast<int>(v);          // ftol: truncation toward zero
+        has_idx = true;
+        p = end;
+        while (*p == ' ' || *p == '\t') ++p;
+        if (*p != ',') return false;
+        ++p;
+        while (*p == ' ' || *p == '\t') ++p;
+    }
+    if (*p != '"') return false;
+    ++p;
+    std::size_t n = 0;
+    while (p[n] && p[n] != '"') ++n;
+    if (p[n] != '"' || n == 0 || n >= name_cap || n >= 64) return false;
+    if (old_form) {
+        if (!has_idx) return false;
+        idx = 0;
+    }
+    if (idx < 0 || idx > max_slot) return false;
+    std::memcpy(name, p, n);
+    name[n] = '\0';
+    *slot = idx;
+    return true;
+}
+static bool parse_sky_filename(const char* line, char* name, std::size_t name_cap, int* slot) {
+    static const bool s_old = std::getenv("MASHED_NO_SKYSLOTS") != nullptr;
+    return parse_slot_name_cmd(line, "Sky_Filename", 3, s_old, name, name_cap, slot);
+}
+// [rsky U-9715] `Object_Bsp_Filename( slot , "x.bsp" )`, handler 0x0047a610: the same two-branch shape as
+// Sky_Filename (0x0047a1e0) with the name filed under `names + (slot + 0xe) * 0x40` and the count at
+// course_desc + 4 incremented. Forest's COURSE.LUA is the only one that calls it (13 of 13 read).
+static bool parse_object_bsp_filename(const char* line, char* name, std::size_t name_cap, int* slot) {
+    return parse_slot_name_cmd(line, "Object_Bsp_Filename", 15, false, name, name_cap, slot);
+}
+
 // [rfx2] The course directional light's frame LTM (course +0x105e4 = DAT_0065743c, read by
 // FUN_004260b0), which FUN_00487280 reads whole (at = the shadow ray, up offsets the
 // projection, the inverse maps the object's bbox): FUN_00479330's DFF branch keeps the LAST light
@@ -1419,6 +1480,8 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
     // why this cannot live at the tail alongside RaceSubmit_OnTrackLoaded.
     LibRw::RaceSubmit_BeginTrackLoad();
     rain_enabled_ = false;    // [rstates] re-read from this track's COURSE.LUA below
+    for (Prop& sk : skies_) sk = Prop{};   // [rsky] the sky slots and the object BSP name are per track
+    obj_bsp_name_[0] = '\0';
     std::FILE* log = log_path ? std::fopen(log_path, "a") : nullptr;
     auto fail = [&](const char* why) {
         if (log) { std::fprintf(log, "R4 track load FAILED: %s\n", why); std::fclose(log); }
@@ -2116,6 +2179,7 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                     // 250/255 — every track has near < far.)
                     float fa = 0.f, fb = 0.f; int fr = 0, fg2 = 0, fb2 = 0;
                     char sk[64] = {};
+                    int sky_slot = 0;
                     if (std::sscanf(line.c_str(),
                                     " Setup_Fog( %f , %f , %d , %d , %d )",
                                     &fa, &fb, &fr, &fg2, &fb2) == 5 ||
@@ -2136,20 +2200,21 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                         fog_end_   = fb;
                         fog_color_ = D3DCOLOR_XRGB(fr & 0xFF, fg2 & 0xFF,
                                                    fb2 & 0xFF);
-                    } else if (std::sscanf(line.c_str(),
-                                    " Sky_Filename( %*d , \"%63[^\"]\" )",
-                                    sk) == 1 ||
-                               std::sscanf(line.c_str(),
-                                    " Sky_Filename(%*d,\"%63[^\"]\")",
-                                    sk) == 1) {
+                    } else if (parse_sky_filename(line.c_str(), sk, sizeof(sk), &sky_slot)) {
                         // sky clump: drawn first, z-write off, unfogged. The only
                         // prop that keeps a D3D9 bake (librw does not draw it).
                         // [rprops U-9696] the game
                         // rebuilds the sky clump frame every frame (0x004491e0 / 0x00426d20), so
                         // its root-frame offset (Arctic SKY.DFF y -0.155, City SKYDOME.DFF y -0.070)
                         // must not be baked into the vertices.
+                        // [rsky U-9714] one Prop per sky slot: the handler 0x0047a1e0 files the name
+                        // under `names + (slot+1)*0x40` and CreateFromDescription (0x00479330, the
+                        // "Loading SkyDome [%s] into sky[%d]" loop) loads slots 0..3 into course+0x100f0.
                         static const bool s_no_skyfix_ld = std::getenv("MASHED_NO_SKYFIX") != nullptr;
-                        load_prop(sk, &sky_, /*d3d9_batches=*/true, s_no_skyfix_ld);
+                        load_prop(sk, &skies_[sky_slot], /*d3d9_batches=*/true, s_no_skyfix_ld);
+                    } else if (parse_object_bsp_filename(line.c_str(), sk, sizeof(sk), &sky_slot)) {
+                        // [rsky U-9715] kept for Load's tail; only slot 0 is ever used
+                        if (sky_slot == 0) std::snprintf(obj_bsp_name_, sizeof(obj_bsp_name_), "%s", sk);
                     } else if (std::sscanf(line.c_str(),
                                     " AI_Bsp_Filename( \"%63[^\"]\" )", sk) == 1 ||
                                std::sscanf(line.c_str(),
@@ -2333,8 +2398,28 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
             // measurement cannot see it, and none is claimed here.
             static const bool s_skip_excluded =
                 std::getenv("MASHED_TRACK_SKIP_EXCLUDED") != nullptr;
+            // [rsky U-9715] MASHED_NO_OBJBSP=1 keeps the pre-rsky Forest: no object world, the tree
+            // clumps drawn once at the origin.
+            static const bool s_no_objbsp = std::getenv("MASHED_NO_OBJBSP") != nullptr;
             for (const auto& c : clumps) {
                 if (excluded[c.idx] && s_skip_excluded) continue;
+                // [rsky U-9715] Forest's tree clumps (2 FarTree, 3 NearTree, 4 Bushes, 5 MidTree) are excluded
+                // from the world, and the only other thing the original does with them is slot 0's
+                // FUN_0044dc00 @ 0x0044dc00: six sets of FUN_00479f30 clones of their FIRST atomic, each a
+                // lone atomic with its own frame (FUN_00479e80 @ 0x00479e80: RwFrameCreate, RpAtomicClone,
+                // RpAtomicSetFrame and no world, clump or tie call; FUN_00479fb0 @ 0x00479fb0 destroys them).
+                // Nothing draws a set: the original's Forest frames (verify/capfix_20261016/09_Forest) have no
+                // 157-triangle bark, 48-triangle OakTreeSprite3 or 8-triangle Bush2 draw, which is what a set
+                // copy is, and every tree draw they have is a Trees.bsp sector's material mesh. The trees are the
+                // object world's (RaceSubmit_SetObjectWorld), so these clumps are loaded by the original and
+                // drawn by nothing.
+                if (course_id_ == 34 && c.idx >= 2 && c.idx <= 5 && obj_bsp_name_[0] && !s_no_objbsp) {
+                    if (log)
+                        std::fprintf(log, "  FOREST-TREE-CLUMP course_id=%d clump=%d dff=%s not drawn "
+                                          "(in no world; sets of its first atomic are never rendered)\n",
+                                     course_id_, c.idx, c.dff);
+                    continue;
+                }
                 Prop p;
                 // [rprops U-9695] a Clump_Mts_Pair clump's atomic frame is replaced by the Mts
                 // record and its clump-frame translation zeroed (0x00479330), so its vertices must
@@ -2343,7 +2428,8 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                 bool paired = false;
                 if (!s_no_propplace)
                     for (const auto& mp : mts_pairs)
-                        if (mp.clump == c.idx && mts_names[mp.mts][0]) paired = true;                if (load_prop(c.dff, &p, false, !paired)) {
+                        if (mp.clump == c.idx && mts_names[mp.mts][0]) paired = true;
+                if (load_prop(c.dff, &p, false, !paired)) {
                     // [SEA-TILE 2026-09-29] Arctic's sea is NOT placed by its DFF
                     // (SEA.DFF frame[0].pos == (0,0,0), verts Y 0.000..0.904) and NOT
                     // by COURSE.LUA (no placement command exists in the 68-entry Lua
@@ -2501,7 +2587,7 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
     if (log) {
         int pc = 0; for (const auto& pr : props_) for (const auto& s : pr.mat_scroll)
                         if (s.du != 0.f || s.dv != 0.f) ++pc;
-        int sc = 0; for (const auto& s : sky_.mat_scroll) if (s.du != 0.f || s.dv != 0.f) ++sc;
+        int sc = 0; for (const auto& sk : skies_) for (const auto& s : sk.mat_scroll) if (s.du != 0.f || s.dv != 0.f) ++sc;
         std::fprintf(log, "  F3 UV-anim: %zu .UVA rate(s); scrolling materials "
                           "props=%d sky=%d\n", uv_rates.size(), pc, sc);
     }
@@ -2778,6 +2864,7 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
     // a second copy that could disagree with this one. There is no D3D9 world to
     // fall back to (deleted in D1-residue R3, 2026-10-16), so a failed scene build
     // fails the load: a race with no world must not look like a loaded track.
+    // [rsky U-9715] the object world needs the scene OnTrackLoaded builds, so it follows it (below)
     if (!LibRw::RaceSubmit_OnTrackLoaded(world, dicts.data(), dicts.size())) {
         if (std::FILE* ef = log_path ? std::fopen(log_path, "a") : nullptr) {
             std::fprintf(ef, "R4 track load FAILED: librw scene build failed "
@@ -2785,6 +2872,23 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
             std::fclose(ef);
         }
         return false;
+    }
+    // [rsky U-9715] CreateFromDescription (0x00479330, "if (*pcVar9 != 0) FUN_0042a640(name)" over
+    // names + 0x380) loads the object BSP with the world-BSP loader; the stream is the same RpWorld.
+    obj_world_ready_ = false;
+    {
+        static const bool s_no_objbsp_ld = std::getenv("MASHED_NO_OBJBSP") != nullptr;
+        if (obj_bsp_name_[0] && !s_no_objbsp_ld) {
+            const std::uint8_t* ob = nullptr; std::uint32_t ol = 0;
+            for (std::uint32_t i = 0; i < piz.count() && !ob; ++i)
+                if (_stricmp(piz.entry(i).name, obj_bsp_name_) == 0) ob = piz.blob(i, &ol);
+            Track::World ow;
+            if (ob && ow.Parse(ob, ol))
+                obj_world_ready_ = LibRw::RaceSubmit_SetObjectWorld(ow, dicts.data(), dicts.size());
+            if (log)
+                std::fprintf(log, "  OBJ-BSP [%s] %s sectors=%zu\n", obj_bsp_name_,
+                             obj_world_ready_ ? "loaded" : "FAILED", ob ? ow.sectors.size() : 0u);
+        }
     }
     {
         // [rstates] the course facts RenderWare's world pass depends on
@@ -2795,7 +2899,14 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
         // 0x00426d9d), so the flag the world starts with is that sky's last-mesh need.
         LibRw::RaceCourseFacts facts;
         facts.sector_keeps_vertex_alpha = (course_id_ == 0);
-        facts.sky_last_vertex_alpha     = sky_.last_mesh_va;
+        // [rsky] the draw before the first sector is the LAST sky RpClumpRender'd: the highest
+        // loaded slot (FUN_00426d90 walks slots 0..3 ascending, 0x00426d90).
+        facts.sky_last_vertex_alpha     = false;
+        for (int si = 3; si >= 0; --si)
+            if (skies_[si].rw_model >= 0 || !skies_[si].batches.empty()) {
+                facts.sky_last_vertex_alpha = skies_[si].last_mesh_va;
+                break;
+            }
         facts.rain                      = rain_enabled_;
         LibRw::RaceSubmit_SetCourseFacts(facts);
     }
@@ -7953,7 +8064,9 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     LibRw::RaceSubmit_SetAnimTime(s_uvscroll_off ? 0.f : t);
 
     // sky clump first: unfogged, no depth write (renderer-gap closure)
-    if (!sky_.batches.empty()) {
+    bool any_sky = false;
+    for (const Prop& sk : skies_) any_sky = any_sky || !sk.batches.empty();
+    if (any_sky) {
         dev->SetRenderState(D3DRS_FOGENABLE, FALSE);
         dev->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
         // WS-E skybox: SKY.DFF is a small CAMERA-LOCKED dome (Arctic radius
@@ -7986,13 +8099,20 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         // MASHED_SKY_D3D9=1 keeps the sky on the legacy D3D9 draw (fixed matrices, old route);
         // MASHED_NO_SKYFIX=1 restores the whole pre-rprops sky: that route, one translate-only copy.
         static const bool s_sky_d3d9 = std::getenv("MASHED_SKY_D3D9") != nullptr;
-        if (!s_sky_d3d9 && !s_no_skyfix && LibRw::RaceSubmit_Active() && sky_.rw_model >= 0) {
+        // [rsky U-9714] every loaded sky slot, ascending (FUN_00426d90 @ 0x00426d90 walks the four
+        // handles at 0x00656f48..0x00656f54 and RpClumpRenders each non-null one).
+        bool any_sky_rw = false;
+        for (const Prop& sk : skies_) any_sky_rw = any_sky_rw || sk.rw_model >= 0;
+        if (!s_sky_d3d9 && !s_no_skyfix && LibRw::RaceSubmit_Active() && any_sky_rw) {
             // The librw path draws the sky before its world, depth and fog off (RwRaceSubmit.cpp).
             for (int si = 0; si < nsky; ++si)
-                LibRw::RaceSubmit_AddSky(sky_.rw_model, reinterpret_cast<const float*>(&skym[si]));
+                for (const Prop& sk : skies_)
+                    if (sk.rw_model >= 0)
+                        LibRw::RaceSubmit_AddSky(sk.rw_model, reinterpret_cast<const float*>(&skym[si]));
         } else
         for (int si = 0; si < nsky; ++si) {
             dev->SetTransform(D3DTS_WORLD, &skym[si]);
+            for (const Prop& sky_ : skies_)
             for (std::size_t mi = 0; mi < sky_.batches.size(); ++mi) {
                 const auto& b = sky_.batches[mi];
                 if (b.empty()) continue;
@@ -8145,6 +8265,8 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         for (const auto& inst : p.instances)
             LibRw::RaceSubmit_AddInstance(p.rw_model, (const float*)&inst, p.rw_kind);
     }
+    // [rsky U-9715] Forest slot 2 (0x0044df00): RpClumpRender(clump 0), then FUN_0044dce0's object world pass
+    if (obj_world_ready_) LibRw::RaceSubmit_AddObjWorldMarker();
 
     MARK(d_props);   // instanced track props
 
