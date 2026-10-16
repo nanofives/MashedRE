@@ -187,3 +187,23 @@ U2 byte for byte on 9/9.
 
 Predictions (not evidence): **Pr-9** City `Path2` falls below 502 on 3/3. **Pr-10** the Glass rows
 are unchanged (car glass is separate atomics, U-9707). **Pr-11** no new row on TRAINING or Arctic.
+
+### Amendment 3 (2026-10-16, before any F8 run): F8, the copy order of an after-world Mts pair
+
+Reason: with F1-F7 (arm V7) City `Path2` keeps 444 inversions, against the STANDARD.DFF copies'
+opaque meshes. In row 761 the original draws the six STANDARD copies and the 27 TreeTrunk copies
+in exactly the reverse of the port's order (copy centres, `log/rstates/V7` vs the d1r1 record).
+The bytes give the reason. The course load's pair loop (`0x00479cc0..0x00479cff`) keeps the clump's own atomic
+for record 0 (`je 0x00479cf7`) and, for every later record, clones it (`0x004e69a0`) and adds it
+with RpClumpAddAtomic `0x004e6f80` (`0x00479ce5`), which inserts at the head. RpClumpRender
+(`0x004e6680`) walks from the head, so the copies draw from the last record to record 0.
+
+**F8** (`MASHED_LIBRW_PAIRORDER`, `=0` opts out): an after-world `Clump_Mts_Pair` prop queues its
+copies from the last Mts record to the first. In-world paired clumps are not touched: their
+draw order is the sector tie order (U-9706).
+
+Rules: §3 rules 1-5 against **V7** (F1-F7). Rule 1 target: City `Path2` inversions fall on 3/3.
+Rule 4: F8 `=0` equals V7 byte for byte on 9/9.
+
+Predictions (not evidence): **Pr-12** City `Path2` falls below 444 on 3/3. **Pr-13** TRAINING and
+Arctic records equal V7 byte for byte (no after-world Mts pair is drawn in their frames).
