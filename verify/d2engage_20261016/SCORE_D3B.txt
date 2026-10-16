@@ -1,0 +1,24 @@
+  B_DEF_K0.step.csv car 1 @220: FAIL abs_steer_median=0.0 not in [7.0,23.0]
+  B_DEF_K0.step.csv car 2 @220: PASS
+  B_DEF_K0.step.csv car 3 @220: FAIL abs_steer_median=0.0 not in [7.0,23.0]
+B_DEF_K0.step.csv regime A: 1/3
+  B_DEF_K1.step.csv car 1 @220: PASS
+  B_DEF_K1.step.csv car 2 @220: FAIL c1_distinct=60 not in [17,46]; steer_distinct=93 not in [29,84]
+  B_DEF_K1.step.csv car 3 @220: PASS
+B_DEF_K1.step.csv regime B: 2/3
+  B_DEF_K26.step.csv car 1 @196: FAIL c0_distinct=9 not in [20,20]; c1_distinct=75 not in [18,18]; steer_distinct=83 not in [40,40]; abs_steer_median=11.0 not in [8.0,8.0]; accel_distinct=1 not in [3,3]; brake_distinct=1 not in [2,2]
+  B_DEF_K26.step.csv car 2 @196: FAIL c0_distinct=26 not in [32,32]; c1_distinct=66 not in [41,41]; steer_distinct=91 not in [73,73]; abs_steer_median=12.0 not in [9.0,9.0]
+  B_DEF_K26.step.csv car 3 @196: FAIL c0_distinct=21 not in [27,27]; c1_distinct=69 not in [79,79]; steer_distinct=89 not in [105,105]; c1_median=0.0 not in [23.5,23.5]; abs_steer_median=14.0 not in [28.0,28.0]
+B_DEF_K26.step.csv regime C: 0/3
+  B_B_K0.step.csv car 1 @220: FAIL abs_steer_median=0.0 not in [7.0,23.0]
+  B_B_K0.step.csv car 2 @220: FAIL c1_distinct=74 not in [21,70]; steer_distinct=99 not in [33,96]; c1_median=9.0 not in [0.0,0.0]
+  B_B_K0.step.csv car 3 @220: FAIL abs_steer_median=0.0 not in [7.0,23.0]
+B_B_K0.step.csv regime A: 0/3
+  B_B_K1.step.csv car 1 @220: PASS
+  B_B_K1.step.csv car 2 @220: FAIL c1_distinct=58 not in [17,46]; steer_distinct=92 not in [29,84]
+  B_B_K1.step.csv car 3 @220: FAIL c0_distinct=38 not in [13,37]
+B_B_K1.step.csv regime B: 1/3
+  B_B_K26.step.csv car 1 @196: FAIL c0_distinct=9 not in [20,20]; c1_distinct=72 not in [18,18]; steer_distinct=80 not in [40,40]; abs_steer_median=10.0 not in [8.0,8.0]; accel_distinct=1 not in [3,3]; brake_distinct=1 not in [2,2]
+  B_B_K26.step.csv car 2 @196: FAIL c0_distinct=26 not in [32,32]; c1_distinct=64 not in [41,41]; steer_distinct=89 not in [73,73]; abs_steer_median=13.0 not in [9.0,9.0]
+  B_B_K26.step.csv car 3 @196: FAIL c0_distinct=21 not in [27,27]; c1_distinct=69 not in [79,79]; steer_distinct=89 not in [105,105]; c1_median=0.0 not in [23.5,23.5]; abs_steer_median=14.0 not in [28.0,28.0]
+B_B_K26.step.csv regime C: 0/3

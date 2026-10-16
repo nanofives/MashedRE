@@ -107,11 +107,16 @@ float Fi_RandRange(float lo, float /*hi*/) { return lo; }  // deterministic stan
 //
 // Revert for A/B only (v3 rule: a flag may only turn the ported behaviour OFF):
 // MASHED_GAMEMODE_STUB=0 restores the pre-2026-09-29 constant.
+// [d2engage 2026-10-16] g_fiGameModeHold != 0 overrides the stub for the duration of one pre-release
+// hold tick (VehiclePhysicsRun.cpp spawn settle, MASHED_POS_ORDER only). DAT_0063ba8c is 5 on
+// FUN_004103a0's countdown ticks and becomes 6 at 0x004104e3, after the release (PREREG_d2engage.md 1(c)).
+int g_fiGameModeHold = 0;
 int Fi_GameMode() {
     static const int s_mode = [] {
         const char* e = std::getenv("MASHED_GAMEMODE_STUB");
         return (e && e[0] == '0') ? 0 : 6;
     }();
+    if (g_fiGameModeHold != 0) return g_fiGameModeHold;
     return s_mode;
 }
 // FUN_0040e340 — game-mode tick (side-effecting; no-op stand-in).

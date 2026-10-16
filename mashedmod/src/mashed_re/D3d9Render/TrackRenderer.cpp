@@ -3880,6 +3880,28 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         Vehicle::LaunchRev_PreRaceTick(in.dt, in.accel);
         if (countdown_ <= 0.f) {
             Audio::SfxPlay("go", 0.9f);                      // real "GO!" SFX
+            // [d2engage 2026-10-16] fix B part 4 (MASHED_POS_ORDER, default OFF): the player's
+            // spawn-settle step is the exe's stand-in for the original's pre-release hold ticks, so
+            // it runs BEFORE the release (FUN_004103a0: 0x0041043a / 0x00410441, then 0x0041049b),
+            // not after it inside the first StepPlayer below. With the seed on, a post-release settle
+            // opened A6a's front-wheel gate under +0xbf8 == 2 and spent one 200-unit decrement of
+            // the 3000 charge: engagement at d=14, the original d=15. PREREG_d2engage.md 0.1-0.3.
+            // The io is the one StepPlayer builds below (the settle zeroes the inputs itself).
+            if (Vehicle::PosModelOrder() && Vehicle::VehiclePhysics_Enabled()) {
+                Vehicle::PlayerCarIO sio;
+                sio.pos[0] = car_pos_[0]; sio.pos[1] = car_pos_[1]; sio.pos[2] = car_pos_[2];
+                sio.vel[0] = car_vel_[0]; sio.vel[1] = car_vel_[1]; sio.vel[2] = car_vel_[2];
+                sio.yaw = car_yaw_; sio.speed = car_speed_;
+                for (int k = 0; k < 8; ++k) sio.input[k] = 0;
+                sio.steer = 0.f;
+                sio.ground_off = car_ground_off_;
+                bool sgok = false;
+                GroundHeight(car_pos_[0], car_pos_[2], &sgok);
+                sio.grounded = sgok ? 1 : 0;
+                for (int k = 0; k < 3; ++k) sio.drive_delta[k] = 0.f;
+                Vehicle::VehiclePhysics_SpawnSettle(0, in.dt, sio);
+                if (Vehicle::PosModelTrans()) { car_pos_[0] = sio.pos[0]; car_pos_[1] = sio.pos[1]; car_pos_[2] = sio.pos[2]; }
+            }
             Vehicle::LaunchRev_Release();
         }
         // [d1r2] The original runs the director on every pre-race frame (sub-states
