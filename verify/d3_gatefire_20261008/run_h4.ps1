@@ -17,7 +17,7 @@ $LANE = @('MASHED_REFDIST','MASHED_SLOTSTATE_SEED','MASHED_SLOT_PLAYER',
           'MASHED_A364_RESET','MASHED_RACEPCT_BRIDGE','MASHED_NO_ELIM',
           'MASHED_WIRE_B2','MASHED_U9186_GATES','MASHED_AI_STEPDUMP',
           'MASHED_NO_SLOTSTATE_SEED','MASHED_NO_SLOT_PLAYER','MASHED_GF1',
-          'MASHED_PLAYERTRACE','MASHED_SUBSTATE','MASHED_MODE5_RESET','MASHED_SUBSTATE_CD',
+          'MASHED_PLAYERTRACE','MASHED_PLAYERTRACE_OUT','MASHED_SUBSTATE','MASHED_MODE5_RESET','MASHED_SUBSTATE_CD',
           'MASHED_L1B_INPUTS','MASHED_P3_MEASURE','MASHED_LEG2_TRACE','MASHED_CAM_TICKS_REPLAY','MASHED_NO_WIRE_B2','MASHED_NO_RACEPCT_BRIDGE','MASHED_NO_A364_RESET','MASHED_NO_REFDIST','MASHED_PATHPROG','MASHED_PATHPROG_TRACE','MASHED_PATHPROG_PC','MASHED_TGT3','MASHED_TGT3_TRACE','MASHED_TGT3_PC','MASHED_REGISTRY','MASHED_REGISTRY_PC','MASHED_PICKUPS_ORIG','MASHED_PICKUPS_PC','MASHED_REGISTRY_TRACE','MASHED_REG_CARS','MASHED_REG_CALLBACKS','MASHED_PKCB_TRACE','MASHED_PU_STEPDUMP','MASHED_MODE7','MASHED_MODE7_TRACE','MASHED_MODE7_PC','MASHED_AILEAF','MASHED_AILEAF_PC','MASHED_AILEAF_TRACE','MASHED_AILEAF_SEED4C0','MASHED_AILEAF_LIVEROWS','MASHED_ROUND_GRID','MASHED_ROUND_GRID_TRACE','MASHED_ROUND_GRID_CHECK','MASHED_ROUND_GRID_REPLAY','MASHED_ROUND_GRID_REPLAY_OUT','MASHED_ROUND_GRID_ORDER','MASHED_ROUND_GRID_ORDER_REPLAY','MASHED_ROUND_GRID_ORDER_REPLAY_OUT')
 
 $B2 = @('MASHED_A364_RESET','MASHED_REFDIST','MASHED_RACEPCT_BRIDGE','MASHED_NO_ELIM','MASHED_WIRE_B2')
@@ -114,8 +114,10 @@ else { $runs = $runs | Where-Object { $_.name -notlike 'H4_post*' -and $_.name -
 
 foreach ($r in $runs) {
   $log = Join-Path $root 'mashed_re.log'
-  $pt  = Join-Path $root 'player_trace.log'
-  foreach ($f in @($log, $pt)) { if (Test-Path $f) { Remove-Item $f -Force } }
+  # 2026-10-16: the ptrace goes to a private per-arm path (MASHED_PLAYERTRACE_OUT, e6498ad6).
+  # The CWD files are shared by every exe run from the main root, so nothing here deletes them.
+  $pt  = Join-Path $out "$($r.name).ptrace.log"
+  if (Test-Path $pt) { Remove-Item $pt -Force }
   foreach ($k in $LANE) { Remove-Item "Env:\$k" -ErrorAction SilentlyContinue }
 
   $env:MASHED_MUTE          = '1'
@@ -127,6 +129,7 @@ foreach ($r in $runs) {
   $env:MASHED_DETERMINISTIC = '1'
   $env:MASHED_DET_FRAMES    = "$FRAMES"
   $env:MASHED_PLAYERTRACE   = '1'
+  $env:MASHED_PLAYERTRACE_OUT = $pt
 
   $step  = Join-Path $out "$($r.name).step.csv"
   $gates = Join-Path $out "$($r.name).gates.csv"
@@ -149,7 +152,6 @@ foreach ($r in $runs) {
   }
   Write-Host "    exit=$($p.ExitCode)  self_exited=$exited"
   if (Test-Path $log) { Copy-Item $log (Join-Path $out "$($r.name).log") -Force }
-  if (Test-Path $pt)  { Copy-Item $pt  (Join-Path $out "$($r.name).ptrace.log") -Force }
   foreach ($f in @($step, $gates, (Join-Path $out "$($r.name).ptrace.log"))) {
     if (Test-Path $f) {
       Write-Host ("    {0}  lines={1}  sha8={2}" -f (Split-Path $f -Leaf),
