@@ -10,6 +10,9 @@ control (all three knobs off) equals the base build's draw records on 9/9 frames
 `PREREG_rfx.md` (`8a7f974e`, amendment 1 `44d8c595`), base `b26d9f3c`. Sections 1-7 measure
 `work/rfx` on `b26d9f3c`; section 8 repeats every rule on `work/rfx-rb`, rebased onto `0020d521`:
 the same 96 -> 24, 0 RED, G-CTRL `716cb2fd / 2a2afda1 / ba90ed88` unchanged against that base.
+Section 9 does it again on `work/rfx-rb2`, rebased onto `d074095d` (rprops, librwrest_checks,
+dupinstall2 merged): the same result. On that branch the rfx tracker rows are U-9703 / U-9704 /
+U-9705 (head holds rprops' U-9699..U-9702).
 
 ## 1. What changed in the default build
 
@@ -161,3 +164,25 @@ the replay the beam's body frame is the stand-in car matrix, not the librwrest b
 - **R5** pixels: default -0.09..+0.07; HUD replay -2.2..-4.0 (TRAINING 884 14.33 -> 10.36).
 - One Arctic HUD-replay run on the first rebased build came back without the car FX records
   (U-9677 class); the sequential re-run was exact.
+
+## 9. Rebased onto `d074095d` (`work/rfx-rb2`)
+
+Base arm `hb2` = `d074095d` built unchanged; `rb3` = `work/rfx-rb2` at `2519b23f` (the rebase
+conflicted only in `re/analysis/CHANGELOG.md`; the car FX marker still sits after the AI car loop
+and before the copters). The base rows changed with rprops (City 153 -> 128).
+
+| frame | hb2 | rb3, HUD replay | rb3, default |
+|---|---|---|---|
+| TRAINING 884 / 924 / 959 | 78 / 77 / 77 | 71 / 70 / 70 | 77 / 76 / 76 |
+| Arctic 1051 / 1091 / 1126 | 78 / 77 / 77 | 72 / 71 / 71 | 78 / 77 / 77 |
+| City 761 / 801 / 836 | 128 / 126 / 124 | 120 / 118 / 116 | 126 / 124 / 122 |
+
+`scores_rb3.txt`, `rowdelta_rb3_hud.txt`, `rowdelta_rb3_default.txt`, `noop_rb3.txt`, `pixels_rb3.txt`.
+- **R1** C08 GREEN 9/9 with the HUD replay; car_shadow GREEN TRAINING + City, Beam GREEN City;
+  Arctic car_shadow / Beam STATE CULL 1 (original) vs 2 (standalone), U-9690. C04 / C08 / C09
+  rows 96 -> 24 (HUD replay), 96 -> 81 (default).
+- **R2** new row keys vs `hb2`: the same 6 Arctic STATE rows (both arms), nothing else.
+- **R3** G-CTRL `716cb2fd / 2a2afda1 / ba90ed88` on `hb2` and `rb3` (`evidence/gctrl_hb2.txt`,
+  `gctrl_rb3.txt`).
+- **R4** no-op control == `hb2` draw records 9/9 (`noop_rb3.txt`).
+- **R5** pixels: default -0.09..+0.07; HUD replay -2.2..-4.0 (TRAINING 884 14.33 -> 10.36).
