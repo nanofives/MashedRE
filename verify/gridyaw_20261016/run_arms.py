@@ -21,7 +21,7 @@ assert os.path.exists(os.path.join(ROOT, r'original\TOASTART\Common\Frontend.piz
 GT = 'MASHED_GRID_DIR_TRACE=@OUT@\\{n}.griddir.txt'
 STACK = {'DEF': [], 'B': ['MASHED_POS_MODEL'],
          # gridyaw: G = the knob (+ its trace), GL = the knob + d2lateral's refresh knob
-         'G': ['MASHED_GRID_DIR'], 'GL': ['MASHED_GRID_DIR', 'MASHED_D2LAT_REFRESH'],
+         'G': ['MASHED_GRID_DIR'], 'GL': ['MASHED_GRID_DIR', 'MASHED_D2LAT_REFRESH'], 'BG': ['MASHED_POS_MODEL', 'MASHED_GRID_DIR'],
          # amendment 2: L = the knob; C = d2settle's fix C (exact sqrt), report; BL = fix B + the knob, report
          'L': ['MASHED_D2LAT_REFRESH'], 'C': ['MASHED_SPEED_REFRESH'], 'BL': ['MASHED_POS_MODEL', 'MASHED_D2LAT_REFRESH'],
          # amendment 3 (diagnostic): the original's spawn heading, alone and with the knob

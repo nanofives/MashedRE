@@ -129,3 +129,21 @@ The R6 spawn uses the same node-0 yaw.
 A1.4 **Prediction (registered now).** Knob-took: the trace reads node 0, L bits 0x3afbffad / 0xbf800271, law 180.0,
 port yaw -1.5707964 on Training. On the D2 arm, slot 0's first-step heading equals `D2_Y_1`'s
 (`MASHED_D2LAT_SPAWN_YAW=-1.5707964`), and the position x/z equals `D_BRG`'s (0.50093675, -1.99903715) within 1e-6.
+
+## Amendment 2 (2026-10-16, after `D_DEF` and `D_G`; before `D_B` / `D_BG`)
+
+A2.1 **Knob-took (section 3).** `G.griddir.txt` holds two lines (R6 and StartRound): node 0, L = (0.00192259776,
+-1.00007451), bits 3afbffad / bf800271, law 180, port yaw -1.57079637. A1.4's prediction holds. Spawn on `D_G`:
+(0.500936747, 0.474926978, -1.99903715), whose x/z equal the original's frame-1 x/z bit-for-bit (0.50093675,
+-1.99903715). `D_DEF` spawns at z -2.00247097. physy0 is 0.437426984 against the original's 0.4374268055 (+1.8e-7).
+
+A2.2 **Correction to section 3, G-SETTLE.** `g_settle.py` scores the first-StepCar move against the original's
+settle (0, -0.0029474, +0.0000921). The default build makes no settle move: `D_DEF` and `D_G` both read about 1e-10,
+so the gate fails on both arms whatever the grid. It is a gate of fix B's settle model (`MASHED_POS_MODEL`,
+d2posmodel / d2engage), and d2posmodel 5.2 asked which grid witnesses it. It is re-pointed at fix B: **`D_BG`
+(`MASHED_POS_MODEL` + `MASHED_GRID_DIR`) is the G-SETTLE arm**, with `D_B` (fix B, default grid; d2engage FAIL on
+dz 3.6e-7 and dy -1.33e-5) as control. Thresholds unchanged. `D_DEF` and `D_G` are kept as the no-settle record.
+Section 3's default rule now reads "G-SETTLE on `D_BG`".
+
+A2.3 **Prediction.** `D_BG` passes G-SETTLE like d2posmodel's `D_BRG` (dz +1.2e-7, dy -4.6e-6), since its spawn x / z /
+yaw are the original's. `D_B` repeats d2engage's FAIL.
