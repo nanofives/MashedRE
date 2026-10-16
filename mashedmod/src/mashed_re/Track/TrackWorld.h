@@ -40,6 +40,12 @@ struct Sector {
     // RW keeps it as the tight box (sector+0x60/+0x6c, 0x004e9eee..0x004e9f18); the
     // frustum walk tests the BSP CELL box instead (World::planes, FUN_004e51e0).
     float                      box[6] = {};
+    // [rsky] the sector EXTENSION's BinMesh PLG (chunk 0x50E: u32 flags, numMeshes, totalIndices,
+    // then per mesh u32 numIndices, u32 matIndex, numIndices u32 indices): the matIndex of each
+    // mesh in the order RpClumpRender-style sector drawing walks them. Empty if the sector has no
+    // BinMesh chunk, or its mesh materials are not exactly the materials its triangles use.
+    // The index is the same value as tris[i*4] (the world material list index).
+    std::vector<std::uint16_t> mesh_order;
 };
 
 // [rstates] One PLANESECTOR (0x0A) of the world BSP, STRUCT order {type, value,

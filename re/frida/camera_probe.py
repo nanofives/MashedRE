@@ -94,6 +94,19 @@ function buildNameMap(){
       const d=r.add(extoff).readPointer(); if (d.isNull()) continue;
       d3dName[d.toString()]={name:texByPtr[k], rw:r.add(0xc).readS32()+'x'+r.add(0x10).readS32()}; n++;
     } catch(e) { bad++; } }
+  // [rsky] the car shadow render-to-texture. FUN_0041f8f0 @ 0x0041f8f0 picks (&DAT_0063e490)[b] as the camera and
+  // (&DAT_0063d854)[b] as the texture (b = rec+0x298 == 2, two entries), hands it to the shadow pass through
+  // FUN_00422ac0 / FUN_00422af0, and FUN_004228f0 @ 0x004228f0 draws it (`**(int**)slot` = RwTexture -> raster, first
+  // field) with RenderState 1 = TEXTURERASTER. It is an RwTexture created from the camera's raster, so
+  // RwTextureSetName never names it and it surfaced as `#64x64:21` (Neustein) / `#256x256:21` (TRAINING),
+  // U-9702 I-NAME. Name it by its slot. Same raster -> D3D texture step as the loop above.
+  for (let i=0;i<2;i++) {
+    try { const t=abs(0x0063d854+4*i).readPointer(); if (t.isNull()) continue;
+      const r=t.readPointer(); if (r.isNull()) continue;
+      const d=r.add(extoff).readPointer(); if (d.isNull()) continue;
+      if (d3dName[d.toString()]===undefined) {
+        d3dName[d.toString()]={name:'@shadowrt'+i, rw:r.add(0xc).readS32()+'x'+r.add(0x10).readS32()}; n++; }
+    } catch(e) { bad++; } }
   return [n,bad];
 }
 // [d1r1 amendment 1] geometry actually drawn: non-degenerate triangle count and the world-space

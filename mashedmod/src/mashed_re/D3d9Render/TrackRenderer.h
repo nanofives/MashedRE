@@ -286,7 +286,13 @@ private:
     // moved to Race::RaceSceneState in E2'b step 3 (2026-08-01) and retyped to
     // uint32_t so the librw submitter can read them; they are inherited, so every
     // use site in this file is unchanged.
-    Prop     sky_;
+    // [rsky U-9714] one Prop per sky slot (CreateFromDescription 0x00479330 loads slots 0..3 into
+    // course+0x100f0); FUN_00426d90 @ 0x00426d90 renders them in ascending slot order.
+    Prop     skies_[4];
+    // [rsky U-9715] COURSE.LUA Object_Bsp_Filename slot 0 (course + 0x10040[0], the only slot the
+    // original reads: findoffset +0x10040 has 3 readers, all in FUN_0044dce0). Empty = none.
+    char     obj_bsp_name_[64] = {};
+    bool     obj_world_ready_ = false;   // RaceSubmit_SetObjectWorld succeeded for this track
     // WS-E vehicle lighting (RpLight subset, env MASHED_RPLIGHT, default ON;
     // =0 reverts to the legacy load-time model-space bake). Faithful
     // FUN_00479330 (0x00479330) light acquisition: float-precision colours

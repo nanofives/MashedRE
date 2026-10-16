@@ -255,6 +255,45 @@ bool World::Parse(const std::uint8_t* data, std::size_t len) {
             s.tris[i * 4 + 2] = t4[1];
             s.tris[i * 4 + 3] = t4[2];
         }
+        // [rsky] the sector EXTENSION (0x03) after the struct holds the BinMesh PLG (0x50E): the mesh
+        // order RenderWare draws the sector's materials in (a world material is not drawn in list order).
+        {
+            Chunk ex;
+            const std::size_t after = as.payload + as.size;
+            if (read_chunk(r, after, &ex) && ex.id == 0x03) {
+                std::size_t eo = ex.payload;
+                const std::size_t ee = ex.payload + ex.size;
+                while (eo + 12 <= ee) {
+                    Chunk ch;
+                    if (!read_chunk(r, eo, &ch)) break;
+                    if (ch.id == 0x50E && ch.size >= 12) {
+                        const std::uint32_t nm = r.u32(ch.payload + 4);
+                        std::size_t mo = ch.payload + 12;
+                        const std::size_t me2 = ch.payload + ch.size;
+                        std::vector<std::uint16_t> order;
+                        bool good = true;
+                        for (std::uint32_t k = 0; k < nm && good; ++k) {
+                            if (mo + 8 > me2) { good = false; break; }
+                            const std::uint32_t cnt = r.u32(mo);
+                            const std::uint32_t mi  = r.u32(mo + 4);
+                            if (mi >= materials.size() || mo + 8 + static_cast<std::size_t>(cnt) * 4 > me2) {
+                                good = false; break;
+                            }
+                            order.push_back(static_cast<std::uint16_t>(mi));
+                            mo += 8 + static_cast<std::size_t>(cnt) * 4;
+                        }
+                        if (good) {
+                            // usable only when it names exactly the materials the triangles use
+                            std::vector<std::uint8_t> used(materials.size(), 0), named(materials.size(), 0);
+                            for (std::uint32_t i = 0; i < nt; ++i) used[s.tris[i * 4]] = 1;
+                            for (std::uint16_t mi : order) named[mi] = 1;
+                            if (used == named) s.mesh_order = std::move(order);
+                        }
+                    }
+                    eo = ch.payload + ch.size;
+                }
+            }
+        }
         total_tris  += nt;
         total_verts += nv;
         sectors.push_back(std::move(s));

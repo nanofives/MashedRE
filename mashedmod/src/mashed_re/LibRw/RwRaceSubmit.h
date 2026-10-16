@@ -108,6 +108,16 @@ int RaceSubmit_RegisterModel(const Track::DffModel& model,
 //   kInstCar         the car bodies: after the world, after the rain line pass (F4).
 enum : int { kInstAfterWorld = 0, kInstInWorld = 1, kInstCar = 2 };
 
+// [rsky U-9715] The object world (COURSE.LUA Object_Bsp_Filename, handler 0x0047a610; CreateFromDescription
+// loads it with the world-BSP loader 0x0042a640 into course + 0x10040). Forest's slot 2 (0x0044df00) renders
+// clump 0, then FUN_0044dce0: end the camera update, move the camera from the main world to the object world
+// (0x004e4350 / 0x004e4320), begin update, cull mode NONE (RwRenderStateSet 0x14, 1), RpWorldRender (0x004e5660),
+// cull mode 2, and swap back. Built after RaceSubmit_OnTrackLoaded (which drops the previous one).
+bool RaceSubmit_SetObjectWorld(const Track::World& world, const Txd::Dictionary* dicts, std::size_t ndicts);
+// The queue point of that pass: queued after the track's after-world props (Forest: clump 0), before the
+// copters and cars. A no-op frame when no object world was set.
+void RaceSubmit_AddObjWorldMarker();
+
 // [librwrest] Per hierarchy model, how a copy is drawn (FUN_00425e40 @ 0x00425e40 for the
 // copters): skip the whole copy when the world bounding sphere of the atomic on FRAMELIST frame
 // `cull_frame` lies outside the camera frustum (FUN_004c1b40 @ 0x004c1b40 on
