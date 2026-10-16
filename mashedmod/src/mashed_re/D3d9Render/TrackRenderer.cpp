@@ -3196,10 +3196,20 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
         // its first sector is the slot-3 sky (RpClumpRender of the Sky_Filename clumps,
         // 0x00426d9d), so the flag the world starts with is that sky's last-mesh need.
         LibRw::RaceCourseFacts facts;
-        facts.sector_keeps_vertex_alpha = (course_id_ == 0);
+        // [rres] SuperG (Course_Id 25) is the other record that installs it: its slot 0 FUN_00450f00
+        // calls FUN_00496d00(&LAB_0049a0c0) at 0x00450f35 and FUN_00496d20 at 0x00450f43. A scan of every
+        // E8 rel32 in .text finds exactly two callers of FUN_00496d00, 0x00448951 (Arctic) and
+        // 0x00450f35 (SuperG). MASHED_LIBRW_SUPERG_VA=0 keeps the Arctic-only rule (A/B knob).
+        static const bool s_superg_va = [] { const char* e = std::getenv("MASHED_LIBRW_SUPERG_VA");
+                                             return !(e && e[0] == '0' && e[1] == '\0'); }();
+        facts.sector_keeps_vertex_alpha = (course_id_ == 0) || (s_superg_va && course_id_ == 25);
+        // [rres] the flag the world starts with when no sky is loaded: FUN_004270f0 opens the frame with
+        // the screen rect FUN_00450b10 (call 0x004271e8), which ends with RS 0xc (vertex alpha) = 1 and
+        // never clears it; SuperG's first sector is drawn right after it (rres capture, draw 83 of
+        // orig_row_00743: k81 fvf 0x144 512x512, then S27 with AB 1).
+        facts.sky_last_vertex_alpha     = true;
         // [rsky] the draw before the first sector is the LAST sky RpClumpRender'd: the highest
         // loaded slot (FUN_00426d90 walks slots 0..3 ascending, 0x00426d90).
-        facts.sky_last_vertex_alpha     = false;
         for (int si = 3; si >= 0; --si)
             if (skies_[si].rw_model >= 0 || !skies_[si].batches.empty()) {
                 facts.sky_last_vertex_alpha = skies_[si].last_mesh_va;

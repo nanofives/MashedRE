@@ -713,6 +713,45 @@ rpc.exports={
       for(let j=0;j<Math.min(k,64);j++) sh.push({m:mp.isNull()?null:rd(mp.add(j*0x40),16),
         c:cp.isNull()?null:cp.add(j*4).readU32()}); out.shad=sh; }catch(e){ out.shad_err=''+e; }
     return JSON.stringify(out); },
+  // [rres 2026-10-16] read-only witness of the car shadow render-to-texture (PREREG_rres.md): per player p
+  // the record rec = 0x0063d9e0 + p*0x2ac (fade rec+0x284/0x288, hull index +0x28c, slot +0x290, mode +0x298,
+  // car position +0x258, camera +0x2a0, texture +0x2a8), the chosen RwCamera (viewMatrix +0x20, projection
+  // +0x14, viewWindow +0x68, near/far +0x80/+0x84, frame modelling +0x10 / LTM +0x50 and raster size), the
+  // hull atomic rec[idx] (frame LTM, geometry), the batch of FUN_00422570 / FUN_004228f0 for slot p
+  // (count 0x00641318, colour 0x00641310, previous query position 0x006403b8 + p*0xc, entries 0x006403e8,
+  // stride 0x3c: v0 v1 v2 (9 floats) then u0 v0 u1 v1 u2 v2), the gates DAT_00636acc / DAT_00657490, the
+  // worlds DAT_0065742c / DAT_00656ee8, the light DAT_0063d850 (frame modelling / LTM) and the floats
+  // 0x00644368 / 0x0064435c / 0x00644360 / 0x006146fc.
+  shadowstate:function(){ const r32=(a)=>abs(a).readS32(); const u32=(a)=>abs(a).readU32();
+    const out={row: trace.length, ba8c: r32(0x0063ba8c), g636acc: r32(0x00636acc), g657490: r32(0x00657490),
+      w65742c: u32(0x0065742c), w656ee8: u32(0x00656ee8), w80332c: u32(0x0080332c),
+      f644368: abs(0x00644368).readFloat(), f64435c: abs(0x0064435c).readFloat(), f644360: abs(0x00644360).readFloat(),
+      up: rd(abs(0x006146fc),3)};
+    try{ const L=abs(0x0063d850).readPointer(); out.light_ptr=L.toString();
+      if(!L.isNull()){ const fr=L.add(4).readPointer(); out.light_mod=rd(fr.add(0x10),16); out.light_ltm=rd(fr.add(0x50),16); } }catch(e){ out.light_err=''+e; }
+    const cams=[]; for(let b=0;b<2;b++){ try{ const c=abs(0x0063e490+b*4).readPointer(); const t=abs(0x0063d854+b*4).readPointer();
+      const fr=c.add(4).readPointer(); const ras=c.add(0x60).readPointer();
+      cams.push({ptr:c.toString(), tex:t.toString(), proj:c.add(0x14).readS32(), view:rd(c.add(0x20),16), vw:rd(c.add(0x68),2),
+        nf:rd(c.add(0x80),2), mod:rd(fr.add(0x10),16), ltm:rd(fr.add(0x50),16), ras:[ras.add(0xc).readS32(), ras.add(0x10).readS32(), ras.add(0x14).readS32(), ras.add(0x23).readU8()]}); }catch(e){ cams.push({err:''+e}); } }
+    out.cams=cams;
+    const pl=[]; for(let p=0;p<4;p++){ const rec=abs(0x0063d9e0+p*0x2ac); const o={p:p};
+      try{ o.f284=rec.add(0x284).readFloat(); o.f288=rec.add(0x288).readFloat(); o.idx=rec.add(0x28c).readS32();
+        o.slot=rec.add(0x290).readS32(); o.flags=rec.add(0x294).readU32(); o.mode=rec.add(0x298).readS32();
+        o.pos=rd(rec.add(0x258),4); o.cam=rec.add(0x2a0).readU32(); o.tex=rec.add(0x2a8).readU32(); o.fr26c=rec.add(0x26c).readU32();
+        const hulls=[]; for(let k=0x3b;k<=0x3e;k++){ const a=rec.add(k*4).readPointer(); const h={k:k,ptr:a.toString()};
+          if(!a.isNull()){ const fr=a.add(4).readPointer(); h.aflags=a.add(2).readU8(); if(!fr.isNull()) h.ltm=rd(fr.add(0x50),16);
+            const g=a.add(0x18).readPointer(); if(!g.isNull()){ h.gflags=g.add(8).readU32(); h.ntri=g.add(0x10).readS32(); h.nvert=g.add(0x14).readS32(); } }
+          hulls.push(h); }
+        o.hulls=hulls;
+        const carf=rec.add(0x26c).readPointer(); if(!carf.isNull()){ const f2=carf.add(4).readPointer(); if(!f2.isNull()) o.carmod=rd(f2.add(0x10),16); }
+        const base=0x006403e8+p*0xf40; o.cnt=r32(0x00641318+p*0xf40); o.col=u32(0x00641310+p*0xf40); o.bias=abs(0x00641324+p*0xf40).readFloat();
+        o.lastq=rd(abs(0x006403b8+p*12),3); o.texidx=r32(0x0064131c+p*0xf40); o.texptrs=[0,1,2,3].map(k=>u32(0x006412e8+p*0xf40+k*4));
+        o.camsaved=u32(0x00641320+p*0xf40);
+        const ents=[]; for(let k=0;k<Math.min(o.cnt,64);k++) ents.push(rd(abs(base+k*0x3c),15)); o.ents=ents;
+      }catch(e){ o.err=''+e; }
+      pl.push(o); }
+    out.pl=pl;
+    return JSON.stringify(out); },
   ovrtable:function(n){ const out=[];
     for(let i=0;i<n;i++){ const e=abs(OVR+i*0xc);
       out.push([e.readFloat(), e.add(4).readFloat(), e.add(8).readFloat()]); }
@@ -798,6 +837,9 @@ def main():
     ap.add_argument("--fx-out", default="",
                     help="[rfx2] with --early: sample the FX witness (fxstate: object shadows, "
                          "course light, RWObjShad batch) every 0.5 s into this JSON")
+    ap.add_argument("--shadow-out", default="",
+                    help="[rres] with --early: sample the car shadow render-to-texture witness (shadowstate) "
+                         "every 0.5 s into this JSON")
     ap.add_argument("--drawrec-bt", default="",
                     help="[d1r1] regex on stage-0 texture names: record a return-address "
                          "backtrace (MASHED.exe VAs) for each matching draw")
@@ -900,12 +942,18 @@ def main():
         last_n, last_t, last_f = 0, time.time(), E.fires()
         hud = []
         fx = []
+        shad = []
         while E.tracelen() < args.rows and time.time() - t0 < args.rows / 30.0 + 60:
             if args.hud_out:
                 # [rfx] sample the HUD inputs 4x per second, tagged with the trace row count
                 for _ in range(4):
                     hud.append(json.loads(E.hudglobals()))
                     time.sleep(0.25)
+            elif args.shadow_out:
+                # [rres] the shadow render-to-texture witness twice per second, tagged with the trace row count
+                for _ in range(2):
+                    shad.append(json.loads(E.shadowstate()))
+                    time.sleep(0.5)
             elif args.fx_out:
                 # [rfx2] the FX witness twice per second, tagged with the trace row count
                 for _ in range(2):
@@ -934,6 +982,9 @@ def main():
     if args.early and args.hud_out:
         Path(args.hud_out).write_text(json.dumps(hud, indent=0))
         print(f"[rfx] HUD samples: {len(hud)} -> {args.hud_out}")
+    if args.early and args.shadow_out:
+        Path(args.shadow_out).write_text(json.dumps(shad))
+        print(f"[rres] shadow samples: {len(shad)} -> {args.shadow_out}")
     if args.early and args.fx_out:
         Path(args.fx_out).write_text(json.dumps(fx))
         print(f"[rfx2] FX samples: {len(fx)} -> {args.fx_out}")
