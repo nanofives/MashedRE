@@ -1,0 +1,10 @@
+arm base exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\carlod\exe_base\mashed_re.exe knobs=[]
+training   884  MISSING standalone record C:\Users\maria\Desktop\Proyectos\Mashed\log\carlod\base\training\d1r2\stand_row_00884.draws.json
+training   924  MISSING standalone record C:\Users\maria\Desktop\Proyectos\Mashed\log\carlod\base\training\d1r2\stand_row_00924.draws.json
+training   959  MISSING standalone record C:\Users\maria\Desktop\Proyectos\Mashed\log\carlod\base\training\d1r2\stand_row_00959.draws.json
+arctic    1051  rows  80  red  0  matched 138/180  tri 32143/35412  pix 10.89
+arctic    1091  rows  80  red  0  matched 138/177  tri 32083/35197  pix 7.07
+arctic    1126  rows  80  red  0  matched 101/131  tri 26823/29307  pix 6.43
+city       761  rows 156  red  0  matched 351/512  tri 34236/42182  pix 16.47
+city       801  rows 154  red  0  matched 339/496  tri 33776/41692  pix 13.09
+city       836  rows 152  red  0  matched 292/444  tri 26805/34493  pix 12.09

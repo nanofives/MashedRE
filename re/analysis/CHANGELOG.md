@@ -26,6 +26,12 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-16  U-9698  filed  standalone inputs of the car part visibility (damage / wreck / brake flags, slot-0 state modes, S timing)  verify/carlod_20261016/RESULT_carlod.md
+2026-10-16  U-9697  ANNOTATED  (c) Arctic collision colours parsed (TrackWorld header flags), (g) Atmos / Storm not in any cited frame  verify/carlod_20261016/RESULT_carlod.md
+2026-10-16  U-9693  NARROWED  car dirt and env passes both default ON; env coefficient uses the previous row's camera (112 live records exact); Arctic shade fixed  verify/carlod_20261016/RESULT_carlod.md
+2026-10-16  U-9079  CONSUMER PORTED  FUN_00420870 per-part RENDER bits by part code (112 live car records reproduced) + FUN_00420050 glass pass; 27 C02 rows gone  verify/carlod_20261016/RESULT_carlod.md
+2026-10-16  00420870  C2=C2  visibility switch transcribed for the standalone (LibRw/RwCarFx.cpp), glass pass of FUN_00420050 added; not hooked  verify/carlod_20261016/RESULT_carlod.md
+2026-10-16  004b5240  C3->C2  Or4b5240 lacked the clear arm (and cl,0xfb at 0x004b5256); body fixed, the r115 vector never had flag=0 with the bit set; needs a re-diff  verify/carlod_20261016/evidence/dis_004b5240.txt
 2026-10-16  0x004e5680  RpWorldForAllAtomicsCallback  C2->C2  exe_file cleared: D3d9Render/RwWorldRender.cpp deleted (inert, no caller; librwrest, verify/librwrest_20261016/RESULT_librwrest.md)
 2026-10-16  0x004d40d0  FUN_004d40d0  C2->C2  exe_file cleared: D3d9Render/RwWorldRender.cpp deleted (inert, no caller; librwrest, verify/librwrest_20261016/RESULT_librwrest.md)
 2026-10-16  0x004e47b0  FUN_004e47b0  C2->C2  exe_file cleared: D3d9Render/RwWorldRender.cpp deleted (inert, no caller; librwrest, verify/librwrest_20261016/RESULT_librwrest.md)

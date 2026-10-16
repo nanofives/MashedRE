@@ -1,0 +1,17 @@
+G-CTRL default-build fingerprint (verify/carlod_20261016/run_gctrl.py, TRAINING default arm), 2026-10-16
+expected c2e4d60d / b50bd39b / ba90ed88 (step / gates / ptrace)
+
+=== gctrl_base  exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\carlod\exe_base\mashed_re.exe  knobs=[] ===
+    pid=23272
+    exit=0  self_exited=True
+    gctrl_base.step.csv  lines=18664  sha8=c2e4d60d
+    gctrl_base.gates.csv  lines=56153  sha8=b50bd39b
+    gctrl_base.ptrace.log  lines=28076  sha8=ba90ed88
+GCTRL DONE
+=== gctrl_final  exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\carlod\exe_final\mashed_re.exe  knobs=[] ===
+    pid=2308
+    exit=0  self_exited=True
+    gctrl_final.step.csv  lines=18664  sha8=c2e4d60d
+    gctrl_final.gates.csv  lines=56153  sha8=b50bd39b
+    gctrl_final.ptrace.log  lines=28076  sha8=ba90ed88
+GCTRL DONE
