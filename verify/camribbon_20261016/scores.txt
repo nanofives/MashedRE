@@ -207,3 +207,29 @@ coll_substate rows 1199 src counts {'1': 567, '2': 632}
     final_default.gates.csv  lines=54713  sha8=be0d47ea
     final_default.ptrace.log  lines=27356  sha8=bc75b405
 GCTRL DONE
+
+## REBASE onto f037458d: G-CTRL (rebased exe)
+=== G-CTRL arm=reb_default knobs=[]  exe=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\camribbon\log\camribbon\rebased\mashed_re.exe
+    pid=216
+    exit=0  self_exited=True
+    reb_default.step.csv  lines=18664  sha8=c2e4d60d
+    reb_default.gates.csv  lines=56153  sha8=b50bd39b
+    reb_default.ptrace.log  lines=28076  sha8=ba90ed88
+GCTRL DONE
+=== G-CTRL arm=reb_optout knobs=['MASHED_NO_CAM_RIBBON_FIX=1']  exe=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\camribbon\log\camribbon\rebased\mashed_re.exe
+    pid=1860
+    exit=0  self_exited=True
+    reb_optout.step.csv  lines=18664  sha8=c2e4d60d
+    reb_optout.gates.csv  lines=56153  sha8=b50bd39b
+    reb_optout.ptrace.log  lines=28076  sha8=ba90ed88
+GCTRL DONE
+=== G-CTRL arm=reb_noa3 knobs=['MASHED_NO_A3_LUT=1']  exe=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\camribbon\log\camribbon\rebased\mashed_re.exe
+    pid=21944
+    exit=0  self_exited=True
+    reb_noa3.step.csv  lines=21403  sha8=991a5fff
+    reb_noa3.gates.csv  lines=54713  sha8=be0d47ea
+    reb_noa3.ptrace.log  lines=27356  sha8=bc75b405
+GCTRL DONE
+
+## REBASE: node gates and pose on the rebased exe (same numbers as before the rebase)
+nodes sha8 Training 24992f1d, City 5470b9a4, Arctic 123fdb70 (all three equal the pre-rebase files)

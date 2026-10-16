@@ -1,0 +1,7 @@
+=== G-CTRL arm=reb_noa3 knobs=['MASHED_NO_A3_LUT=1']  exe=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\camribbon\log\camribbon\rebased\mashed_re.exe
+    pid=21944
+    exit=0  self_exited=True
+    reb_noa3.step.csv  lines=21403  sha8=991a5fff
+    reb_noa3.gates.csv  lines=54713  sha8=be0d47ea
+    reb_noa3.ptrace.log  lines=27356  sha8=bc75b405
+GCTRL DONE

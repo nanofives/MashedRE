@@ -2,7 +2,7 @@
 
 **Verdict: closed, default ON** with the opt-out `MASHED_NO_CAM_RIBBON_FIX=1`. Every gate of `PREREG_camribbon.md` and
 its two addenda passed, the controls failed where they had to, and G-CTRL is unchanged. All numbers are in `scores.txt`.
-Branch `work/camribbon`, base `race/first-frame-parity` 118fb99d.
+Branch `work/camribbon`, measured on base `race/first-frame-parity` 118fb99d, then rebased onto f037458d (section 9).
 
 ## 1. What was wrong, from the bytes
 
@@ -96,7 +96,8 @@ geometry), the before frame looks down a different street. The standalone's cars
 
 ## 6. Control and collateral
 
-- **G-CTRL** (`run_cam.py gctrl`, default arm, step / gates / ptrace): baseline exe `991a5fff / be0d47ea / bc75b405`, new
+- **G-CTRL** (`run_cam.py gctrl`, default arm, step / gates / ptrace), on the 118fb99d base (after the rebase the recorded
+  default is `c2e4d60d / b50bd39b / ba90ed88`, section 9): baseline exe `991a5fff / be0d47ea / bc75b405`, new
   exe default `991a5fff / be0d47ea / bc75b405`, new exe opt-out `991a5fff / be0d47ea / bc75b405`, final exe (the one the code in this commit builds) `991a5fff / be0d47ea / bc75b405`.
 - **G-P1-REGRESS**: `MASHED_PATHPROG_DUMP` course block, baseline exe vs new exe: Training `0393688d` twice, Arctic `38238db4` twice.
 - Warnings: TrackRenderer.cpp +1 C4996 `fopen`, +1 C4996 `getenv` (the classes already there), PathNodes.cpp unchanged, no new class.
@@ -128,7 +129,24 @@ That is a gate, not a one-liner, and the default build never executes it, so it 
   `.asi` into this worktree's own `original/` (not the shared one: `original\mashed_re_dev.asi` there is still the
   13 Oct 20:39 file); later builds ran with `MASHED_NO_DEPLOY=1`.
 
-## 9. Files
+## 9. Rebase onto f037458d (orchestrator notice 3: the default G-CTRL changed with d2settle's A3 LUT sqrt)
+
+`work/camribbon` was rebased onto `race/first-frame-parity` f037458d (clean, no conflicts, U-9687 still unique), rebuilt,
+and re-measured on that exe (`log/camribbon/rebased/`):
+
+| arm (`run_cam.py gctrl`) | step / gates / ptrace |
+|---|---|
+| default | `c2e4d60d / b50bd39b / ba90ed88` (the new recorded default) |
+| `MASHED_NO_CAM_RIBBON_FIX=1` | `c2e4d60d / b50bd39b / ba90ed88` |
+| `MASHED_NO_A3_LUT=1` | `991a5fff / be0d47ea / bc75b405` (the old trio, so the ribbon change adds nothing on top of A3) |
+
+Node gates on the rebased exe are unchanged: TRAINING 30 / 30 and the City ribbon 117 / 117 bit-equal to the
+original's live records, ARCTIC 94 / 94 against `o_course_t3.bin` (nodes files sha8 `24992f1d`, `5470b9a4`, `123fdb70`,
+identical to before the rebase). Pose replay on the rebased exe, pin 25.5: after eye median 0.00031 / p95 0.0020,
+at-axis 0.0010 / 0.0063 deg, PASS; before eye 2.49, at-axis 13.4 deg, FAIL; Training pin control PASS. Same numbers as
+section 5. Warnings in the touched files are C4996 only (TrackRenderer 126, PathNodes 5), no new class.
+
+## 10. Files
 
 `PREREG_camribbon.md`, `PREREG_camribbon_addendum1.md`, `PREREG_camribbon_addendum2.md` (committed before the runs they
 gate), `scores.txt`, `scan_tracks.txt`, `nodes/` (every nodes file scored), `orig_city_*_trace_v3.csv` + `_static.json`
