@@ -150,3 +150,37 @@ This lane changes the inputs of `0x0046f6c0` (wheel contact positions, ring rota
 consumes its translation output; it changes player-car speed on Training through every physics path. It does not
 change `+0x4a4`, `ProduceTerrainBatch` / `FUN_00538c80`, grip-clamp #6, the substep / chunk loop or
 `ReassertContacts` code. Every measured hit is reported in the RESULT.
+
+## Amendment 1 (2026-10-16, after the D arms, before any H / D2 / B run and before the G-PROG re-read)
+
+Recorded as measured (`g_settle.py`, `D_*.settle.txt`, `D_*.ptrace.log`; the first batch of 7 D runs ran with a
+`MASHED_ROOT` lacking `original\`, fell back to the main root and appended to its CWD logs, and is void; the
+re-run with the fixed root reproduced every `settle.txt` sha8 exactly):
+- **G-SETTLE (registered arm `D_B`, default grid): FAIL.** move (0, -0.00296074, +0.0000925063): dz off by
+  +3.6e-7 (tolerance 2.4e-7), dy off by -1.33e-5 (tolerance 1e-5), x bit-identical. Not re-thresholded.
+  Report: on `D_BRG` (the original's grid x / z / yaw) the same gate reads dz +1.2e-7, dy -4.6e-6, x bit-identical,
+  i.e. it passes there. The two arms differ in spawn pose only: yaw -1.576028 (default grid) vs -1.568874, z
+  -2.00247 vs -1.99904. The call-2 fv differ left/right by +-3.7e-5 (`D_B` 0.009368 / 0.009423 vs `D_BRG`
+  0.009405 / 0.009385), which is what a yaw rotation on a sloped tri gives.
+- **G-SPAWNY (report):** `D_BRG` physy0 0.437426984 vs 0.4374268055, +1.8e-7. Prediction 4.6 (1e-6) PASS.
+- **Prediction 4.2:** `D_P1` settle postA4 vel (0,0,0), `+0xb20` 0, loads 1083.34192 x3 / 541.670959. PASS.
+- **Knob-took for part 1, as registered: FAIL.** The settle's first solver call enters with st (0,0,0,0) fv 0 gc 0
+  on every arm. Cause, from the code and the `SOLVER_IN` lines: the A4-first `ReassertContacts(r)` after A4 runs
+  before this car's first `SolveWheelContacts` and uses the cached `g_cGrounded`, which is one global written by
+  every car's last solver call (initial false for slot 0's first step), so it zeroes the four seeded states. The
+  solver's call 1 then yields (0,0,2,2), `ReassertContacts` promotes to (1,1,2,2), and the 4 -> 3 drop translation
+  happens on call 2. The end-of-frame position is still the D0-e one (`D_BRG` above). Not changed in this lane
+  (`ReassertContacts` is a D2 watch-list item), reported.
+- **Prediction 4.3** (`D_P3` climbs > 0.05 in 3 frames): PASS, +0.1398 in the first StepCar.
+- **Prediction 4.4** (`D_P23`, no seed): the first nonzero correction is upward (+0.00706·n) as predicted, but
+  the settle step keeps vy -216.668, so the y integral (-0.0100) dominates and the net move is (0, -0.00297, -0.00022):
+  dy has the original's sign, dz the wrong one. Half MISSED.
+- **G-PROG, as registered: FAIL**, and the reading point was mis-registered. The last pathprog row is frame 117,
+  where the player has driven off (ptrace velocity nonzero from `f=24`, prog 1.04706). The brief's and d2settle's
+  definition is the parked player's progress after the settle. On `D_BRG` the v=0 prog reads 29.999977 on every
+  row from frame 0 while the player is parked; d2settle's base `D_RG` read 0.000000 there.
+
+Amended reading (governs the re-scored `D_BRG` and a new base control `D_RG`, both run after this commit):
+**G-PROG** = the v=0 prog on every pathprog row before the frame at which the player's ptrace velocity first
+becomes nonzero, all equal to 29.999977 +- 1e-5; the control `D_RG` (no fix B) is predicted to read 0.000000 there.
+The registered G-SETTLE result above stands as the gate result; `D_BRG` is the report.
