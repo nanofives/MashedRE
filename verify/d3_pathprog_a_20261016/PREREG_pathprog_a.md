@@ -145,6 +145,39 @@ New arms:
 Decision 1 of section 3 is unchanged and `X7` is not proposed as default if A 0/3. If G-MUTANT-RG passes, the report states the chain: live progress -> `Fi_UpdateBoostOrder` pair -> the player's pose relative to the line; the fix of the input is the grid anchor
 (`MASHED_ROUND_GRID`, a user decision), and the live row then needs a second (b) look because regime A is 0/3 for a different reason (car 2's command distinctness).
 
+## 3c. AMENDMENT A3 (committed after the A2 arms were scored, before any arm below exists)
+
+Seen first (`SCORE_S2.txt`, `SCORE_FIELD_X7.txt`, `SCORE_FIELD_X7RG.txt`, `analyze_why.py`):
+
+- **Stage 2**: regime B n/3 is 1/3 for `X7` on K01, K04 and K27 (default 2/3), regime C is 0/3 for both. The live row costs B as well as A.
+- **G-FIELD passes for cars 1 to 3** (`X7_H`): published progress at frame 1 within 0.005 of the original (29.7277 / 29.4599 / 29.1849 vs 29.7277 / 29.4549 / 29.1828), lap counter -1 until exactly the frame the progress wraps (20 / 34 / 35), then 0, as the original.
+  The player is the only car that differs: 0.0009 (gate anchor) against the original's 30.0.
+- **The A2 hypothesis is refuted**: under `MASHED_ROUND_GRID` the player stands at the original's z (-1.99904) yet its published progress at frame 1 is **0.0000**, so the two least are still `[3, 0]`, and `X7_RG_BS` is NOT equal to `X7_RG`
+  (car 2 differs from frame 3). Moving the pose to the original's z did not move the node the player resolves to.
+- So the open link is **which node the probe resolves for a car that stands on the start line**: the original resolves the player to node 29 (progress 30.0, race_pct 99.9999 / 100.0), the port to node 0 (progress 0.0000 to 0.0009). The only code between the pose and the node is the sphere query (`PP_SphereQuery`, the port's walk of the AI-BSP triangles
+  in stream order, `FUN_00407a90` keeps the LAST hit, `[UNCERTAIN U-9209]` in the source: the within-sector order of the original is not reproduced).
+
+Hypothesis registered now, to be tested, not a result: the player's sphere (centre y 0.47, r 0.6) hits triangles of both node 29 and node 0, and the stream-order last hit is node 0 where the original's order leaves node 29 last.
+
+Measurement-only knobs (default OFF): `MASHED_PP_SPHERE_DUMP=<file>` logs every hit of car 0's first 6 sphere queries (stream index, node id, distance); `MASHED_PP_SPHERE_FIRST` makes the first hit win instead of the last.
+
+| arm | knobs | recipe | purpose |
+|---|---|---|---|
+| `X7_DMP`, `X7_RG_DMP` | `MASHED_PP_PUBLISH=7` (+ `MASHED_ROUND_GRID`) + `MASHED_PP_SPHERE_DUMP` | fk, K00 | the player's hit set and order |
+| `X7_SF_K`, `X7_RG_SF_K` | `MASHED_PP_PUBLISH=7` (+ `MASHED_ROUND_GRID`) + `MASHED_PP_SPHERE_FIRST` | fk, K in 0, 2 | first hit wins (mutant) |
+| `X7_SF_H` | `MASHED_PP_PUBLISH=7` + `MASHED_PP_SPHERE_FIRST` | h4 | the player's published progress at the lights (gates) |
+| `X7_SFD_K` | `MASHED_PP_PUBLISH=0` + `MASHED_PP_SPHERE_FIRST` | fk, K in 0, 2 | no-op control of the mutant: with nothing published but race_pct it must equal `D` on every control byte |
+
+| gate | statistic | pass rule | prediction |
+|---|---|---|---|
+| G-HITS (report) | `X7_DMP`, `X7_RG_DMP` sphere dumps, queries 0 to 5 | the node ids hit and their order | both node 29 and node 0, node 0 last (70 %) |
+| **G-SF-NOOP** | `X7_SFD_K` control bytes vs `D` | equal | PASS |
+| **G-FIRST** | `X7_SF_H` gates `prog_96e8` frame 1, car 0 | >= 29.99 (the original's 30.0) and the two least `[2, 3]`; then the control bytes of `X7_SF_K` equal `X7_BS_K` (the seeded-pair counterfactual, the u9683-style `X7_BS` of A1) | PASS (45 %) |
+| (b) | `X7_SF_K`, `X7_RG_SF_K` n/3 on regime A, K = 0, 2 | report against `D` (A 1/3) | `X7_SF` A 1/3 if G-FIRST passes |
+
+Decision 1 of section 3 stands. If G-FIRST passes, `X7` + first-hit-wins is a faithful-pair counterfactual, NOT a fix: the original's order inside a sector is not known, so the report names the open item (the original's BSP triangle visiting order for the node-29 / node-0 triangles at the start line, `U-9209`) and no default changes.
+If G-FIRST fails, the report states that the player's node is decided by something other than the hit order (pose y, sphere overlap), with the dump as the evidence.
+
 ## 4. Not done here (registered)
 
 - No hooks.csv change (`FUN_00408610` is an EXE-ONLY naked transcription). No tracker is edited by hand. The memory index is not touched (orchestrator's).

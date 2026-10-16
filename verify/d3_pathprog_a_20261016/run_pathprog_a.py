@@ -67,6 +67,16 @@ for _k in (0, 2):
     ARMS.append(dict(n="X7_RG_BS_K%02d" % _k, recipe="fk", k=_k, knobs=["%s=7" % PUB, RGK, BS]))
 ARMS.append(dict(n="X7_RG_H", recipe="h4", knobs=["%s=7" % PUB, RGK]))
 # (X7_H, D_K and X7_K already exist above)
+# PREREG amendment A3
+SF = "MASHED_PP_SPHERE_FIRST"
+DMP = "MASHED_PP_SPHERE_DUMP=@OUT@/@N@.sphere.txt"
+ARMS.append(dict(n="X7_DMP", recipe="fk", k=0, knobs=["%s=7" % PUB, DMP]))
+ARMS.append(dict(n="X7_RG_DMP", recipe="fk", k=0, knobs=["%s=7" % PUB, RGK, DMP]))
+for _k in (0, 2):
+    ARMS.append(dict(n="X7_SF_K%02d" % _k, recipe="fk", k=_k, knobs=["%s=7" % PUB, SF]))
+    ARMS.append(dict(n="X7_RG_SF_K%02d" % _k, recipe="fk", k=_k, knobs=["%s=7" % PUB, RGK, SF]))
+    ARMS.append(dict(n="X7_SFD_K%02d" % _k, recipe="fk", k=_k, knobs=["%s=0" % PUB, SF]))
+ARMS.append(dict(n="X7_SF_H", recipe="h4", knobs=["%s=7" % PUB, SF]))
 # arms added per PREREG are appended below this line
 
 

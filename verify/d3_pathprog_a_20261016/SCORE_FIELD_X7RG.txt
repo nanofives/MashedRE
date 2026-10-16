@@ -1,0 +1,9 @@
+== X7_RG_H: live node progress (gates prog_96e8) at frame 1: car 0 0.0000, car 1 29.7297, car 2 29.4578, car 3 29.1857
+   descending order at frame 1: [1, 2, 3, 0] -> two least = [3, 0] (original: [0, 1, 2, 3] -> [2, 3])
+   car 1 frame-1 progress 29.7297 vs original 29.7277 (|d| 0.0020)
+   car 2 frame-1 progress 29.4578 vs original 29.4549 (|d| 0.0030)
+   car 3 frame-1 progress 29.1857 vs original 29.1828 (|d| 0.0029)
+   car 1: lap counter first != -1 at step frame 20; progress wraps at gates frame 20; first lap value 0
+   car 2: lap counter first != -1 at step frame 34; progress wraps at gates frame 34; first lap value 0
+   car 3: lap counter first != -1 at step frame 35; progress wraps at gates frame 35; first lap value 0
+   G-FIELD cars 1-3: PASS

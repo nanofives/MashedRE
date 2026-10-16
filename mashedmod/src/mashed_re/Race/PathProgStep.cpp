@@ -91,10 +91,23 @@ void* __cdecl PP_SphereQuery(void* world, float* sphere, void* /*cb*/, std::int3
     typedef int (__cdecl* tri_fn)(float*, const float*, const float*, const float*, float*, float*);
     const tri_fn test = reinterpret_cast<tri_fn>(&PP_547450);
     const int n = mashed_re::Race::PathNodes_TriCount();
+    // [PATHPROG split, PREREG amendment A3] MEASUREMENT ONLY: MASHED_PP_SPHERE_DUMP=<file> logs, for car 0 (the player) on its
+    // first 6 queries, every triangle the sphere hits (stream index, node id, sphere centre); MASHED_PP_SPHERE_FIRST makes
+    // the FIRST hit win instead of the last (FUN_00407a90 keeps the last). Both default OFF.
+    static const char* s_dumpPath = std::getenv("MASHED_PP_SPHERE_DUMP");
+    static const bool  s_first    = (std::getenv("MASHED_PP_SPHERE_FIRST") != nullptr);
+    static std::FILE*  s_dump     = (s_dumpPath && s_dumpPath[0]) ? std::fopen(s_dumpPath, "w") : nullptr;
+    static int         s_dumpCalls = 0;
+    const bool dumpThis = s_dump && v == 0 && s_dumpCalls < 6;
+    if (dumpThis) { std::fprintf(s_dump, "query %d centre %.6f %.6f %.6f r %.4f\n", s_dumpCalls, sphere[0], sphere[1], sphere[2], sphere[3]); ++s_dumpCalls; }
+    bool hit = false;
     for (int t = 0; t < n; ++t) {
         const float* tv = mashed_re::Race::PathNodes_Tri(t);
         float nrm[3], dist;
         if (test(sphere, tv, tv + 3, tv + 6, nrm, &dist) == 0) continue;
+        if (dumpThis) std::fprintf(s_dump, "  hit tri %d node %u dist %.6f\n", t, mashed_re::Race::PathNodes_TriNode(t), dist);
+        if (s_first && hit) continue;
+        hit = true;
         // FUN_00407a90: node id = ushort at RpMaterial+4 (colour red | green << 8), normal.
         const std::uintptr_t blk = 0x008a9620u + static_cast<std::uintptr_t>(v) * 0x30cu;
         *reinterpret_cast<std::uint32_t*>(blk + 0x20) = mashed_re::Race::PathNodes_TriNode(t);
@@ -102,6 +115,7 @@ void* __cdecl PP_SphereQuery(void* world, float* sphere, void* /*cb*/, std::int3
         *reinterpret_cast<float*>(blk + 0xc0) = nrm[1];
         *reinterpret_cast<float*>(blk + 0xc4) = nrm[2];
     }
+    if (dumpThis) std::fflush(s_dump);
     return world;
 }
 
