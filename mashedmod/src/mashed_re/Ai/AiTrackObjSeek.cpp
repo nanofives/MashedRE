@@ -1,16 +1,16 @@
-// Mashed RE — AI Warzone platform seek (FUN_00414f00): ONE body for both build targets (seek414f00, 2026-10-16).
+// Mashed RE — AI course-0x21 track-object seek (FUN_00414f00): ONE body for both build targets (seek414f00, 2026-10-16).
 //
 // hooks.csv called this "powerup-seek targeting". The bytes show what it reads (verify/seek414f00_20261016, PREREG section 0):
 //   0x00684de0 = obj+0xc8 and 0x00684dac = obj+0x94 of the Warzone track object at 0x00684d18, whose state machine
-//   FUN_00451d80 (one caller, 0x00452ba2 in the course-0x21 per-track tick 0x00452b20, record slot 0x005f3578) moves a
-//   platform clump and writes DAT_0088ff50[v] = FUN_00451990(obj, car v matrix), an XZ box test (FUN_00451ad0, 0x00451b47 = 1,
+//   FUN_00451d80 (one caller, 0x00452ba2 in the course-0x21 per-track tick 0x00452b20, record slot 0x005f3578) moves the
+//   object's matrix row (measured: z 58.45 -> 64.62 in states 2/3, captures O2/O3) and writes DAT_0088ff50[v] = FUN_00451990(obj, car v matrix), an XZ box test (FUN_00451ad0, 0x00451b47 = 1,
 //   0x00451b5b = 0). This function READS those words; it is not their producer (the dualcopy3 note had it inverted).
 //
 // What the original does (listing 0x00414f00..0x00415011, disasm_414f00.txt):
 //   0x00414f03  fld [0x00684de0]; fcomp [0x005cc32c] (0.5); test ah,5; jnp -> return 0     (h < 0.5 -> 0; NaN passes)
 //   0x00414f15  fld [0x00684de0]; fcomp [0x005cc72c] (30.0); test ah,0x41; jne -> go on   (h > 30.0 -> 0; NaN passes)
 //   0x00414f34  FUN_00452ea0(v) = [0x0088ff50 + v*4]; == 0 -> return 0
-//   0x00414f44  esi = FUN_00452160() = [0x00684dac] + 0x30    (the platform matrix's translation row)
+//   0x00414f44  esi = FUN_00452160() = [0x00684dac] + 0x30    (the object matrix's translation row)
 //   0x00414f51  FUN_0046d6d0(&l14, v), 0x00414f5c FUN_0046d570(&l10, v): results never read (U-7574). Both write only their
 //               out-param, a stack local here (0x0046d6ec `mov [ecx],eax`; 0x0046d580 / 0x0046d647 `[edi]`, and FUN_0046d570's
 //               normalize writes its own [esp+0xc], 0x0046d5d6). Dead artifacts, elided in both targets.
@@ -34,7 +34,7 @@
 //   reads zero): 0x005cc32c = 0x3f000000 = 0.5, 0x005cc72c = 0x41f00000 = 30.0, 0x005cc348 = 0x3fc00000 = 1.5,
 //   0x005cc564 = 0x3e800000 = 0.25.
 // The three one-line leaf reads (0x00684de0, 0x0088ff50[v], 0x00684dac) are direct reads in both targets. The exe has no writer
-// of any of them yet (the platform object is not ported), so there gate 1 fails on 0.0 and the body returns 0.
+// of any of them yet (the track object at 0x00684d18 is not ported), so there gate 1 fails on 0.0 and the body returns 0.
 //
 // Anchored to MASHED.exe SHA-256:
 //   BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E
@@ -43,7 +43,7 @@
 #include "../Core/HookSystem.h"
 #include "AiState.h"
 #include "AiStandalone.h"
-#include "AiPowerupSeek.h"
+#include "AiTrackObjSeek.h"
 #ifdef MASHED_STANDALONE
 #include "../Math/RwLutTables.h"
 #include "../Vehicle/VehiclePhysicsRun.h"
@@ -96,10 +96,10 @@ inline float NearGate()            { return F32(0x005cc564u); }
 } // namespace
 
 // ===========================================================================
-// 0x00414f00  AiPowerupSeek(spline, look, cand, vehicle) -> 0 / 1
+// 0x00414f00  AiTrackObjSeek(spline, look, cand, vehicle) -> 0 / 1
 // ===========================================================================
 extern "C" __declspec(dllexport)
-int __cdecl AiPowerupSeek(void* /*param_1*/, void* /*param_2*/, std::uint32_t* param_3, int param_4)
+int __cdecl AiTrackObjSeek(void* /*param_1*/, void* /*param_2*/, std::uint32_t* param_3, int param_4)
 {
     const float held = F32(0x00684de0u);                                   // FUN_00452eb0 @0x00414f03
     if (held < GateLo()) return 0;                                          // fcomp _DAT_005cc32c, jnp @0x00414f13
@@ -129,7 +129,7 @@ int __cdecl AiPowerupSeek(void* /*param_1*/, void* /*param_2*/, std::uint32_t* p
     }
     return 0;
 }
-RH_ScopedInstall(AiPowerupSeek, 0x00414f00);
+RH_ScopedInstall(AiTrackObjSeek, 0x00414f00);
 
 #ifdef MASHED_STANDALONE
 // ===========================================================================
@@ -157,10 +157,10 @@ bool Seek414f00_Enabled() {
     return s_on;
 }
 
-int AiPowerupSeek_Exe(int v, float cand[2]) {
+int AiTrackObjSeek_Exe(int v, float cand[2]) {
     std::uint32_t c[2];
     std::memcpy(c, cand, 8);
-    const int r = AiPowerupSeek(nullptr, nullptr, c, v);
+    const int r = AiTrackObjSeek(nullptr, nullptr, c, v);
     std::memcpy(cand, c, 8);
     ++s_seekCalls;
     const float h = F32(0x00684de0u);

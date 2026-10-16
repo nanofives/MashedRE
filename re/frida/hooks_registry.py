@@ -10215,15 +10215,15 @@ HOOKS = {
     # aligned (range small) vs opposed (range large) with rate above, on and below the 100.0 boundary. The dead displacement
     # computation derefs *(u32*)0x00684dac + 0x30, so that pointer is seeded to a readable block.
     # The A/B driver AbAiPost (live race, forced passes) is the stronger evidence; this key is the synthetic path1 + the path2 install.
-    # [seek414f00 2026-10-16] FUN_00414f00, the AI Warzone platform seek (Ai/AiPowerupSeek.cpp, one body in both targets).
-    # Reads 0x00684de0 / 0x0088ff50[v] / [0x00684dac]+0x30 (the platform object 0x00684d18, written by its state machine
+    # [seek414f00 2026-10-16] FUN_00414f00, the AI course-0x21 track-object seek (Ai/AiTrackObjSeek.cpp, one body in both targets).
+    # Reads 0x00684de0 / 0x0088ff50[v] / [0x00684dac]+0x30 (the track object 0x00684d18, written by its state machine
     # FUN_00451d80) and the FUN_0046d4a0 rows of car v and car 0. Vectors from the ORIGINAL capture
     # verify/seek414f00_20261016/O3.msd.seek.csv (Warzone, rule 8: 29 natural ret=1 rows) plus contrived rows for the car-0
     # branch and the 0.5 / 30.0 / NaN gate edges (make_vectors.py). Observable = EAX (fold_ret) + the two cand dwords, which
     # start at the 0xaaaaaaaa sentinel, so a no-write is visible. Every seeded VA is restored.
-    'ai_powerup_seek': {
+    'ai_track_obj_seek': {
         'rva':            0x00414f00,
-        'export':         'AiPowerupSeek',
+        'export':         'AiTrackObjSeek',
         'signature':      {'ret': 'uint32', 'args': ['uint32', 'uint32', 'uint32', 'int32']},
         'arg_type':       'cache_setter_observe',
         'fold_ret':       True,

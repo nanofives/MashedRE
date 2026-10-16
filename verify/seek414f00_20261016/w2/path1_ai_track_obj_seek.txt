@@ -1,0 +1,12 @@
+hook: ai_track_obj_seek  rva=0x00414f00  export=AiTrackObjSeek
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 5584
+  [agent] LUT ready  base=0x2cca6c8  offset=0x134  root=0x5020680  delta=0  attempts=19
+  [agent] .asi loaded  base=0x60190000  AiTrackObjSeek@0x601c6f60
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\seek414f00\log\diff_ai_track_obj_seek.csv
+  total cases: 53
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.
+

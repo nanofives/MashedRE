@@ -96,7 +96,7 @@
 #ifdef MASHED_STANDALONE
 #include "AiTargetClosest.h"            // [D-11072 P3] FUN_00414a70 (MASHED_TGT3)
 #include "AiLeafTargets.h"              // [D3 bulk G-AILEAF] FUN_00414570 / FUN_00415880 (MASHED_AILEAF)
-#include "AiPowerupSeek.h"              // [seek414f00] FUN_00414f00, the mode-10 blocks
+#include "AiTrackObjSeek.h"              // [seek414f00] FUN_00414f00, the mode-10 blocks
 extern "C" int g_tg3Ret[4]; extern "C" int g_tg3Los[4];
 #endif
 
@@ -991,11 +991,11 @@ void ControlStep(std::uintptr_t spline, int v, std::uint8_t* ctrl)
     // Every path that did not return above reaches it (mode 1/2/3/9 via 0x0041645e, mode 7 by its jump to 0x00416462):
     //   if ((FUN_00426c00() == 0x21) && (FUN_00414f00(param_1,&local_24,&local_2c,param_2) != 0)) {
     //     local_24 = local_2c; local_20 = local_28; local_48 = 10; }
-    // FUN_00414f00 reads the Warzone platform words 0x00684de0 / 0x0088ff50[v] / 0x00684dac (Ai/AiPowerupSeek.cpp), which no exe
+    // FUN_00414f00 reads the course-0x21 track-object words 0x00684de0 / 0x0088ff50[v] / 0x00684dac (Ai/AiTrackObjSeek.cpp), which no exe
     // TU writes yet, so here it returns 0 at its first gate. PREREG: verify/seek414f00_20261016/PREREG_seek414f00.md.
     if (s_host.track_index() == 0x21 && Seek414f00_Enabled()) {
         float cand[2] = { 0.0f, 0.0f };
-        if (AiPowerupSeek_Exe(v, cand) != 0) {
+        if (AiTrackObjSeek_Exe(v, cand) != 0) {
             tx = cand[0]; tz = cand[1];                                   // 0x0041647f..0x00416484
             mode = 10;
         }
@@ -1323,7 +1323,7 @@ void ControlStepM8(std::uintptr_t spline, int v, std::uint8_t* ctrl)
     // ON, MASHED_NO_SEEK414F00 opts out). The targeting chain before it stays omitted, as described above.
     if (s_host.track_index() == 0x21 && Seek414f00_Enabled()) {
         float cand[2] = { 0.0f, 0.0f };
-        if (AiPowerupSeek_Exe(v, cand) != 0) { tx = cand[0]; tz = cand[1]; mode = 10; }
+        if (AiTrackObjSeek_Exe(v, cand) != 0) { tx = cand[0]; tz = cand[1]; mode = 10; }
     }
 #endif
     I32(a74(0x0089a52cu, v)) = mode;                 // commit behaviour mode (present for this variant)
@@ -1917,7 +1917,7 @@ void Ai_SetCarSlotState(int v, int state)
 // [dualcopy3 2026-10-16] the two Host reads the shared FUN_00417640 body takes in the exe (declared in AiStandalone.h).
 int   Ai_HostTrackIndex()                { return s_host.track_index(); }
 float Ai_HostVehF32(int v, int off)      { return s_host.veh_f32(v, off); }
-// [seek414f00 2026-10-16] FUN_0046c7b0 for the shared FUN_00414f00 body (Ai/AiPowerupSeek.cpp).
+// [seek414f00 2026-10-16] FUN_0046c7b0 for the shared FUN_00414f00 body (Ai/AiTrackObjSeek.cpp).
 int   Ai_HostCarAlive(int v)             { return s_host.car_alive(v); }
 
 void Ai_ResetRace()

@@ -1,0 +1,4 @@
+base\mashed_re.exe sha256 CBAAE92544C67FD1
+base\mashed_re_dev.asi sha256 4ED96C6AE1C828C5
+final\mashed_re.exe sha256 AEB09795E968936C
+final\mashed_re_dev.asi sha256 C13DB8AFF7895DAF
