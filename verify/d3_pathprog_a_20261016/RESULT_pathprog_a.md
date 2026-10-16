@@ -72,10 +72,10 @@ All measurement-only knobs are unset in every default arm; no hooks.csv change (
 - CHANGELOG line: `2026-10-16 PATHPROG split: of wholesale MASHED_PATHPROG's four parts only the live node progress moves (b) (A 0/3, B 1/3); its sole consumer is Fi_UpdateBoostOrder (mutant byte-identical to default); the cause is the port player's missing first-step settle (+0.0000921 z), which puts it on the wrong side of node 0's gate plane (progress 0.0009 vs the original's 30.0). With the settle the live row at 0x0040fc75 is (b)-neutral on A/B/C. No default changed. verify/d3_pathprog_a_20261016/RESULT_pathprog_a.md`
 - Memory: the orchestrator maintains the index; no memory file edited by this session this round.
 
-## 6. Decisions needed (user)
+## 6. Decisions (user)
 
-1. Port the player's first-step settle (z +0.0000921, y about -0.0029)? It is the one change that makes the live row, `MASHED_ROUND_GRID` and a faithful boost pair neutral for (b), and it is a player-physics change (D2 watch list).
-2. After it: make the live row at the original's place (`MASHED_PP_PUBLISH=7` form) the default and decide `MASHED_ROUND_GRID` on its own (b) merits.
+1. **DECIDED 2026-10-16 (user): do not port the player's first-step settle now. Keep the default unchanged.** The settle (z +0.0000921, y about -0.0029) stays an open row (the U-9684 player-at-rest row), not started. No code or default follows from this note.
+2. Parked with it: the live row at the original's place (`MASHED_PP_PUBLISH=7` form) as a default, and the `MASHED_ROUND_GRID` default question. Both are unblocked only by the settle, and nothing here changes them. The measurement-only knobs stay in the branch, default OFF.
 
 ## 7. Raw
 
