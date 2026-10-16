@@ -1,0 +1,7 @@
+02_Neustein      files=3 identical=3 different=0 
+05_Sands         files=3 identical=3 different=0 
+10_Dump          files=3 identical=3 different=0 
+11_Warzone       files=3 identical=3 different=0 
+12_City          files=3 identical=3 different=0 
+13_Training      files=3 identical=3 different=0 
+TOTAL files=18 identical=18 different=0

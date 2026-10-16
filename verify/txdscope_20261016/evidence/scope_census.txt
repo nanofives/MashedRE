@@ -1,0 +1,15 @@
+Arctic.piz     named=textures.txd txds={'TEXTURES.TXD': 17} refs=17 in_named=17 only_other=0 nowhere=0
+City.piz       named=City.txd     txds={'CITY.TXD': 71} refs=70 in_named=68 only_other=0 nowhere=2
+dump.piz       named=dump.txd     txds={'DUMP.TXD': 56, 'CITY.TXD': 104} refs=54 in_named=48 only_other=2 nowhere=4
+     only in a non-named TXD: building_02nt  <- ['TRUNK.DFF']
+     only in a non-named TXD: trainroof  <- ['TRAIN.DFF']
+Egypt.piz      named=textures.txd txds={'TEXTURES.TXD': 22} refs=21 in_named=21 only_other=0 nowhere=0
+Forest.piz     named=textures.txd txds={'TEXTURES.TXD': 76} refs=52 in_named=40 only_other=0 nowhere=12
+Highway.piz    named=textures.txd txds={'TEXTURES.TXD': 25} refs=25 in_named=25 only_other=0 nowhere=0
+Neustein.piz   named=Neustein.txd txds={'NEUSTEIN.TXD': 36} refs=33 in_named=33 only_other=0 nowhere=0
+rouabout.piz   named=textures.txd txds={'TEXTURES.TXD': 44} refs=41 in_named=41 only_other=0 nowhere=0
+sands.piz      named=Sands.txd    txds={'SANDS.TXD': 69} refs=28 in_named=27 only_other=0 nowhere=1
+Storm.piz      named=textures.txd txds={'TEXTURES.TXD': 27} refs=26 in_named=26 only_other=0 nowhere=0
+SuperG.piz     named=textures.txd txds={'TEXTURES.TXD': 24} refs=24 in_named=24 only_other=0 nowhere=0
+training.piz   named=textures.txd txds={'TEXTURES.TXD': 62} refs=29 in_named=28 only_other=0 nowhere=1
+Warzone.piz    named=Warzone.txd  txds={'WARZONE.TXD': 83} refs=52 in_named=51 only_other=0 nowhere=1

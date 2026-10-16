@@ -1,0 +1,222 @@
+{
+ "Arctic.piz": {
+  "named": "textures.txd",
+  "named_entry": "TEXTURES.TXD",
+  "txds": {
+   "TEXTURES.TXD": 17
+  },
+  "referenced": 17,
+  "resolved_in_named": 17,
+  "only_other": {},
+  "nowhere": {}
+ },
+ "City.piz": {
+  "named": "City.txd",
+  "named_entry": "CITY.TXD",
+  "txds": {
+   "CITY.TXD": 71
+  },
+  "referenced": 70,
+  "resolved_in_named": 68,
+  "only_other": {},
+  "nowhere": {
+   "cammanhot": [
+    "CAMMAN.DFF"
+   ],
+   "jetranger": [
+    "GRAPHICS.BSP"
+   ]
+  }
+ },
+ "dump.piz": {
+  "named": "dump.txd",
+  "named_entry": "DUMP.TXD",
+  "txds": {
+   "DUMP.TXD": 56,
+   "CITY.TXD": 104
+  },
+  "referenced": 54,
+  "resolved_in_named": 48,
+  "only_other": {
+   "building_02nt": [
+    "TRUNK.DFF"
+   ],
+   "trainroof": [
+    "TRAIN.DFF"
+   ]
+  },
+  "nowhere": {
+   "bin02": [
+    "BIN02.DFF"
+   ],
+   "clouds": [
+    "SKYDOME02.DFF"
+   ],
+   "gloss3": [
+    "REFLECTIONS.DFF"
+   ],
+   "skyref": [
+    "REFLECTIONS.DFF"
+   ]
+  }
+ },
+ "Egypt.piz": {
+  "named": "textures.txd",
+  "named_entry": "TEXTURES.TXD",
+  "txds": {
+   "TEXTURES.TXD": 22
+  },
+  "referenced": 21,
+  "resolved_in_named": 21,
+  "only_other": {},
+  "nowhere": {}
+ },
+ "Forest.piz": {
+  "named": "textures.txd",
+  "named_entry": "TEXTURES.TXD",
+  "txds": {
+   "TEXTURES.TXD": 76
+  },
+  "referenced": 52,
+  "resolved_in_named": 40,
+  "only_other": {},
+  "nowhere": {
+   "bush": [
+    "BUSH.DFF"
+   ],
+   "cliff": [
+    "REFLECTION.DFF"
+   ],
+   "crosstree2": [
+    "CROSSTREE.DFF"
+   ],
+   "mudy": [
+    "LEAVESALPHA.DFF"
+   ],
+   "newfloor": [
+    "REFLECTION.DFF"
+   ],
+   "newfloortoscrub": [
+    "REFLECTION.DFF"
+   ],
+   "newgrassytarmac": [
+    "REFLECTION.DFF"
+   ],
+   "newscrubbytarmac": [
+    "REFLECTION.DFF"
+   ],
+   "rockwall": [
+    "REFLECTION.DFF"
+   ],
+   "rustysteel": [
+    "REFLECTION.DFF"
+   ],
+   "rustysteelrails": [
+    "REFLECTION.DFF"
+   ],
+   "tyres": [
+    "REDTYRE.DFF"
+   ]
+  }
+ },
+ "Highway.piz": {
+  "named": "textures.txd",
+  "named_entry": "TEXTURES.TXD",
+  "txds": {
+   "TEXTURES.TXD": 25
+  },
+  "referenced": 25,
+  "resolved_in_named": 25,
+  "only_other": {},
+  "nowhere": {}
+ },
+ "Neustein.piz": {
+  "named": "Neustein.txd",
+  "named_entry": "NEUSTEIN.TXD",
+  "txds": {
+   "NEUSTEIN.TXD": 36
+  },
+  "referenced": 33,
+  "resolved_in_named": 33,
+  "only_other": {},
+  "nowhere": {}
+ },
+ "rouabout.piz": {
+  "named": "textures.txd",
+  "named_entry": "TEXTURES.TXD",
+  "txds": {
+   "TEXTURES.TXD": 44
+  },
+  "referenced": 41,
+  "resolved_in_named": 41,
+  "only_other": {},
+  "nowhere": {}
+ },
+ "sands.piz": {
+  "named": "Sands.txd",
+  "named_entry": "SANDS.TXD",
+  "txds": {
+   "SANDS.TXD": 69
+  },
+  "referenced": 28,
+  "resolved_in_named": 27,
+  "only_other": {},
+  "nowhere": {
+   "pitequipment": [
+    "GRAPHICS.BSP"
+   ]
+  }
+ },
+ "Storm.piz": {
+  "named": "textures.txd",
+  "named_entry": "TEXTURES.TXD",
+  "txds": {
+   "TEXTURES.TXD": 27
+  },
+  "referenced": 26,
+  "resolved_in_named": 26,
+  "only_other": {},
+  "nowhere": {}
+ },
+ "SuperG.piz": {
+  "named": "textures.txd",
+  "named_entry": "TEXTURES.TXD",
+  "txds": {
+   "TEXTURES.TXD": 24
+  },
+  "referenced": 24,
+  "resolved_in_named": 24,
+  "only_other": {},
+  "nowhere": {}
+ },
+ "training.piz": {
+  "named": "textures.txd",
+  "named_entry": "TEXTURES.TXD",
+  "txds": {
+   "TEXTURES.TXD": 62
+  },
+  "referenced": 29,
+  "resolved_in_named": 28,
+  "only_other": {},
+  "nowhere": {
+   "shrub": [
+    "TEST.DFF"
+   ]
+  }
+ },
+ "Warzone.piz": {
+  "named": "Warzone.txd",
+  "named_entry": "WARZONE.TXD",
+  "txds": {
+   "WARZONE.TXD": 83
+  },
+  "referenced": 52,
+  "resolved_in_named": 51,
+  "only_other": {},
+  "nowhere": {
+   "van": [
+    "GRAPHICS.BSP"
+   ]
+  }
+ }
+}

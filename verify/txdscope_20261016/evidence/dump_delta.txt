@@ -1,0 +1,13 @@
+== row 735: events base=341 after=341
+   keys of an event: ['bb', 'e', 'fvf', 'k', 'n', 'o', 'pt', 'rs', 'src', 'st', 'td', 'tex', 'tex1', 'tri', 'tss', 'va', 'vn', 'vs', 'w']
+   differing events (same index): 1
+   x1    tex: "trainroof" -> "-"   (first at event 30)
+== row 775: events base=318 after=318
+   keys of an event: ['bb', 'e', 'fvf', 'k', 'n', 'o', 'pt', 'rs', 'src', 'st', 'td', 'tex', 'tex1', 'tri', 'tss', 'va', 'vn', 'vs', 'w']
+   differing events (same index): 1
+   x1    tex: "trainroof" -> "-"   (first at event 32)
+== row 810: events base=206 after=206
+   keys of an event: ['bb', 'e', 'fvf', 'k', 'n', 'o', 'pt', 'rs', 'src', 'st', 'td', 'tex', 'tex1', 'tri', 'tss', 'va', 'vn', 'vs', 'w']
+   differing events (same index): 1
+   x1    td: "#64x64:21" -> "#32x32:21"   (first at event 10)
+   x1    tex: "trainroof" -> "-"   (first at event 10)

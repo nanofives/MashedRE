@@ -1,0 +1,14 @@
+01_Egypt         files=3 identical=3 different=0 
+02_Neustein      files=3 identical=3 different=0 
+03_Arctic        files=3 identical=3 different=0 
+04_Highway       files=3 identical=3 different=0 
+05_Sands         files=3 identical=3 different=0 
+06_SuperG        files=3 identical=3 different=0 
+07_Roundabout    files=3 identical=3 different=0 
+08_Storm         files=3 identical=3 different=0 
+09_Forest        files=3 identical=3 different=0 
+10_Dump          files=3 identical=0 different=3 ['stand_row_00735.draws.json', 'stand_row_00775.draws.json', 'stand_row_00810.draws.json']
+11_Warzone       files=3 identical=3 different=0 
+12_City          files=3 identical=3 different=0 
+13_Training      files=3 identical=3 different=0 
+TOTAL files=39 identical=36 different=3
