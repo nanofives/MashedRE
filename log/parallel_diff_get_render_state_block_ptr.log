@@ -1,0 +1,12 @@
+=== get_render_state_block_ptr on slot 0 ===
+hook: get_render_state_block_ptr  rva=0x004cbb60  export=GetRenderStateBlockPtr
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 34528
+  [agent] LUT ready  base=0x2d81bb8  offset=0x134  root=0x4970640  delta=0  attempts=3
+  [agent] .asi loaded  base=0x73820000  GetRenderStateBlockPtr@0x73832440
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\log\diff_get_render_state_block_ptr.csv
+  total cases: 10
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.

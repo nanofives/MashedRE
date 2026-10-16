@@ -1,0 +1,62 @@
+=== observe_c4_sweep_20260517 batch B2 ===
+
+observe seconds: 10
+boot wait:       8.0
+hook count:      5
+
+asi module base: 0x6a5a0000  size: 192512
+
+per-hook install verification:
+  [OK] ModeGatedPlayerCheck                 rva=0x00442c80  reimpl=0x6a5a7db0
+         PRE  bytes:  e8 cb b6 fc ff 83 f8 06
+         POST bytes:  e9 2b 51 16 6a 83 f8 06
+         opcode:      0xe9  expected 0xe9  -> OK
+         rel32:       0x6a16512b  expected 0x6a16512b  -> OK
+  [OK] GameStateSlotsFill                   rva=0x00429aa0  reimpl=0x6a5a79b0
+         PRE  bytes:  e8 7b 6d 00 00 85 c0 74
+         POST bytes:  e9 0b df 17 6a 85 c0 74
+         opcode:      0xe9  expected 0xe9  -> OK
+         rel32:       0x6a17df0b  expected 0x6a17df0b  -> OK
+  [OK] HudDualLabelRender                   rva=0x004295a0  reimpl=0x6a5a7b80
+         PRE  bytes:  83 ec 08 32 c0 6a 02 88
+         POST bytes:  e9 db e5 17 6a 6a 02 88
+         opcode:      0xe9  expected 0xe9  -> OK
+         rel32:       0x6a17e5db  expected 0x6a17e5db  -> OK
+  [OK] TimerSlotTickDispatcher              rva=0x0043c000  reimpl=0x6a5a8250
+         PRE  bytes:  d9 05 40 e8 67 00 53 d8
+         POST bytes:  e9 4b c2 16 6a 00 53 d8
+         opcode:      0xe9  expected 0xe9  -> OK
+         rel32:       0x6a16c24b  expected 0x6a16c24b  -> OK
+  [OK] PendingOpQueueFlush                  rva=0x00475a60  reimpl=0x6a5a7df0
+         PRE  bytes:  a1 0c 16 69 00 56 33 f6
+         POST bytes:  e9 8b 23 13 6a 56 33 f6
+         opcode:      0xe9  expected 0xe9  -> OK
+         rel32:       0x6a13238b  expected 0x6a13238b  -> OK
+
+alive throughout observation: True
+alive at end of observation:  True
+exit method:                  wm_close
+exit code:                    1
+
+final byte state (RPC poll after observation window):
+  [OK] ModeGatedPlayerCheck                 rva=0x00442c80  opcode=0xe9  bytes=e9 2b 51 16 6a 83 f8 06
+  [OK] GameStateSlotsFill                   rva=0x00429aa0  opcode=0xe9  bytes=e9 0b df 17 6a 85 c0 74
+  [OK] HudDualLabelRender                   rva=0x004295a0  opcode=0xe9  bytes=e9 db e5 17 6a 6a 02 88
+  [OK] TimerSlotTickDispatcher              rva=0x0043c000  opcode=0xe9  bytes=e9 4b c2 16 6a 00 53 d8
+  [OK] PendingOpQueueFlush                  rva=0x00475a60  opcode=0xe9  bytes=e9 8b 23 13 6a 56 33 f6
+
+PASS:
+  + ModeGatedPlayerCheck installed cleanly (E9 + correct rel32)
+  + GameStateSlotsFill installed cleanly (E9 + correct rel32)
+  + HudDualLabelRender installed cleanly (E9 + correct rel32)
+  + TimerSlotTickDispatcher installed cleanly (E9 + correct rel32)
+  + PendingOpQueueFlush installed cleanly (E9 + correct rel32)
+  + process alive throughout 10s observation window with 5 hooks installed
+  + shutdown via WM_CLOSE, exit code 1
+  + ModeGatedPlayerCheck bytes still patched at end of observation
+  + GameStateSlotsFill bytes still patched at end of observation
+  + HudDualLabelRender bytes still patched at end of observation
+  + TimerSlotTickDispatcher bytes still patched at end of observation
+  + PendingOpQueueFlush bytes still patched at end of observation
+FAIL:
+  (none)

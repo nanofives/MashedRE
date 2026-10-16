@@ -1,0 +1,11 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,"{""src_val"":18,""size"":1}",18,0x00000012,18,0x00000012,True,,
+1,"{""src_val"":171,""size"":1}",171,0x000000ab,171,0x000000ab,True,,
+2,"{""src_val"":255,""size"":1}",255,0x000000ff,255,0x000000ff,True,,
+3,"{""src_val"":4660,""size"":2}",13330,0x00003412,13330,0x00003412,True,,
+4,"{""src_val"":43981,""size"":2}",52651,0x0000cdab,52651,0x0000cdab,True,,
+5,"{""src_val"":1,""size"":2}",256,0x00000100,256,0x00000100,True,,
+6,"{""src_val"":305419896,""size"":4}",2018915346,0x78563412,2018915346,0x78563412,True,,
+7,"{""src_val"":3735928559,""size"":4}",4022250974,0xefbeadde,4022250974,0xefbeadde,True,,
+8,"{""src_val"":1,""size"":4}",16777216,0x01000000,16777216,0x01000000,True,,
+9,"{""src_val"":4278190080,""size"":4}",255,0x000000ff,255,0x000000ff,True,,

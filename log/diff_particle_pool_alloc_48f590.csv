@@ -1,0 +1,4 @@
+idx,input,original,reimpl,match
+0,0,1|111|0|eeeeeeee|0|eeeeeeee,1|111|0|eeeeeeee|0|eeeeeeee,True
+1,1,1|eeeeeeee|1|111|0|eeeeeeee,1|eeeeeeee|1|111|0|eeeeeeee,True
+2,2,1|eeeeeeee|1|eeeeeeee|1|111,1|eeeeeeee|1|eeeeeeee|1|111,True

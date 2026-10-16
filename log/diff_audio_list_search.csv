@@ -1,0 +1,17 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,0,,,,,True,access violation accessing 0xfffffffc,access violation accessing 0xfffffffc
+1,1,,,,,True,access violation accessing 0xfffffffc,access violation accessing 0xfffffffc
+2,2,,,,,True,access violation accessing 0xfffffffc,access violation accessing 0xfffffffc
+3,3,,,,,True,access violation accessing 0xfffffffc,access violation accessing 0xfffffffc
+4,4,,,,,True,access violation accessing 0xfffffffc,access violation accessing 0xfffffffc
+5,5,,,,,True,access violation accessing 0xfffffffc,access violation accessing 0xfffffffc
+6,6,,,,,True,access violation accessing 0xfffffffc,access violation accessing 0xfffffffc
+7,7,,,,,True,access violation accessing 0xfffffffc,access violation accessing 0xfffffffc
+8,16,,,,,True,access violation accessing 0xfffffffc,access violation accessing 0xfffffffc
+9,32,,,,,True,access violation accessing 0xfffffffc,access violation accessing 0xfffffffc
+10,256,,,,,True,access violation accessing 0xfffffffc,access violation accessing 0xfffffffc
+11,4096,,,,,True,access violation accessing 0xfffffffc,access violation accessing 0xfffffffc
+12,3735928559,,,,,True,access violation accessing 0xfffffffc,access violation accessing 0xfffffffc
+13,3405691582,,,,,True,access violation accessing 0xfffffffc,access violation accessing 0xfffffffc
+14,2147483647,,,,,True,access violation accessing 0xfffffffc,access violation accessing 0xfffffffc
+15,4294967295,,,,,True,access violation accessing 0xfffffffc,access violation accessing 0xfffffffc

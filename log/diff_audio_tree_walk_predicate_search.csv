@@ -1,0 +1,11 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,0,,,,,True,bad argument count,bad argument count
+1,1,,,,,True,bad argument count,bad argument count
+2,2,,,,,True,bad argument count,bad argument count
+3,3,,,,,True,bad argument count,bad argument count
+4,4,,,,,True,bad argument count,bad argument count
+5,5,,,,,True,bad argument count,bad argument count
+6,6,,,,,True,bad argument count,bad argument count
+7,7,,,,,True,bad argument count,bad argument count
+8,8,,,,,True,bad argument count,bad argument count
+9,9,,,,,True,bad argument count,bad argument count

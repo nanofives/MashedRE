@@ -1,0 +1,6 @@
+rva	n_callers	callers_c2plus	callers_identified	callers	n_callees	callees_c2plus	callees_identified	callees	gate
+00546c50	1	1	0	00546b10:C3:FUN_00546b10	1	1	1	004c3b30:C4:FastSqrt	PASS
+00565200	2	1	1	0055abb0:C3:FUN_0055abb0;0055ae70:C1:PhysicsSceneBodySetShapeFlags	0	0	0		LEAF
+0056cf90	1	1	0	0056d070:C2:FUN_0056d070	0	0	0		LEAF
+0056ed60	1	1	0	0056e680:C2:FUN_0056e680	0	0	0		LEAF
+0056fad0	1	1	0	0056f350:C2:FUN_0056f350	0	0	0		LEAF

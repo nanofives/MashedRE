@@ -1,0 +1,11 @@
+hook: cosine_lerp  rva=0x00422440  export=CosineLerp
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 41784
+  [agent] LUT ready  base=0x2ce9ed8  offset=0x134  root=0xda40048  delta=0  attempts=4
+  [agent] .asi loaded  base=0x736c0000  CosineLerp@0x736ca440
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\log\diff_cosine_lerp.csv
+  total cases: 14
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.

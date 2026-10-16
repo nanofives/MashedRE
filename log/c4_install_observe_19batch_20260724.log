@@ -1,0 +1,22 @@
+# C4 install-observe batch — 19 account2-rewired containers — 2026-07-24
+# canonical_install_observe.py: all 19 JMP-LIVE(0xE9), 19/19 installed, boot-to-menu, 25s survival, no crash.
+# manifest (idx  rva  installed  name):
+254	0x00430B90	1	ProgressBarSetA
+255	0x00439210	1	LobbySlotListRender
+316	0x00423EE0	1	PlayerBlock2Field00Get
+317	0x00423F60	1	PlayerBlock2Field04Get
+318	0x00423FF0	1	PlayerBlock2Field50Get
+319	0x00424070	1	PlayerBlock2Field08Get
+417	0x004CC6E0	1	RwStreamWriteChunked
+455	0x00423CC0	1	PlayerScoreTeamAccGatedB
+456	0x00423D50	1	PlayerScoreTeamAccBaseB
+457	0x00423DD0	1	PlayerScoreTeamAccGatedC
+458	0x00423E60	1	PlayerScoreTeamAccCumB
+496	0x00428610	1	ViewportScaledRectDraw
+504	0x00424100	1	TeamBlockZeroGet
+509	0x004241C0	1	TeamBlockOneGet
+572	0x0040B9A0	1	PlayerScoreMaxTest
+573	0x0040BA60	1	PlayerScoreGateInvert
+575	0x0040B890	1	GetGridCount8or12
+576	0x0040B8E0	1	GetScoreThreshold7or10
+1040	0x004CC770	1	RwStreamWriteBytes

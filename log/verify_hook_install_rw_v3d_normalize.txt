@@ -1,0 +1,29 @@
+=== verify_hook_install report (rw_v3d_normalize) ===
+
+target address: 0x004c39b0  export: RwV3dNormalize
+PRE  bytes:     83 ec 0c 8b 44 24 14 8b
+asi base:       0x70e10000
+reimpl addr:    0x70e1b940
+POST bytes:     e9 8b 7f 95 70 24 14 8b
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x70957f8b  expected 0x70957f8b  -> OK
+bytes changed:  True
+
+interceptor entries (reimpl):  0 / 4
+
+per-input results:
+  [FAIL] input=[1, 0, 0]  got=None  err=bad argument count
+  [FAIL] input=[3, 4, 0]  got=None  err=bad argument count
+  [FAIL] input=[2, 3, 6]  got=None  err=bad argument count
+  [FAIL] input=[0, 0, 0]  got=None  err=bad argument count
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + first 8 bytes mutated by patcher
+FAIL:
+  - reimpl interceptor fired 0 times, expected 4
+  - call 0 (input=[1, 0, 0]) failed: bad argument count
+  - call 1 (input=[3, 4, 0]) failed: bad argument count
+  - call 2 (input=[2, 3, 6]) failed: bad argument count
+  - call 3 (input=[0, 0, 0]) failed: bad argument count

@@ -1,0 +1,39 @@
+{
+  "pid": 6244,
+  "settle": 25.0,
+  "dwell": 5.0,
+  "probes": [
+    {
+      "action": 5,
+      "before": {
+        "screen": 0,
+        "phase": 3
+      },
+      "after": {
+        "screen": 0,
+        "phase": 3
+      },
+      "trace": [
+        [
+          0,
+          3
+        ]
+      ],
+      "override_landed": true,
+      "screen_moved": false,
+      "phase_moved": false
+    }
+  ],
+  "baseline": {
+    "screen": 33,
+    "phase": 3
+  },
+  "control_no_press": {
+    "screen": 33,
+    "phase": 3
+  },
+  "after_prefix": {
+    "screen": 0,
+    "phase": 3
+  }
+}

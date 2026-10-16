@@ -1,0 +1,5 @@
+final counts after 30s at main menu:
+  GetEventFlag        0
+  GetPlayerStateBits  0
+  CarSlotInit         0
+  EntityFieldSet      0

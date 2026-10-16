@@ -1,0 +1,25 @@
+=== verify_hook_install report (menu_menus_bb) ===
+
+target address: 0x00427ad0  export: MenuMenusBB
+PRE  bytes:     e9 4b e5 fa 68 00 a1 38
+asi base:       0x693c0000
+reimpl addr:    0x693d6020
+POST bytes:     e9 4b e5 fa 68 00 a1 38
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x68fae54b  expected 0x68fae54b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  2 / 2  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [2, 1123477881, 1117480550, 1134995046, 1109891482, 4286595264, 1099589222], 'seed': [{'addr': 6805560, 'val': 251754552}, {'addr': 6805564, 'val': 201422908}, {'addr': 6805552, 'val': 1142947840}, {'addr': 6805556, 'val': 1139802112}, {'addr': {'scratch': 256}, 'val': 4259853}, {'addr': {'scratch': 260}, 'val': 589832}, {'addr': {'scratch': 264}, 'val': 720906}, {'addr': {'scratch': 268}, 'val': 851980}, {'addr': {'scratch': 272}, 'val': 7995406}, {'addr': {'scratch': 276}, 'val': 8454159}, {'addr': {'scratch': 280}, 'val': 5308543}, {'addr': {'scratch': 284}, 'val': 0}, {'addr': 6740016, 'val': {'scratch': 256, 'minus': 6740008}}]}  got=811c9dc5  err=
+  [OK] input={'args': [1, 1092616192, 1101004800, 1128792064, 1106247680, 4286595264, 1103101952], 'seed': [{'addr': 6805560, 'val': 251754552}, {'addr': 6805564, 'val': 201422908}, {'addr': 6805552, 'val': 1142947840}, {'addr': 6805556, 'val': 1139802112}]}  got=811c9dc5  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 2x as expected
+  + all 2 calls returned without exception
+FAIL:
+  (none)

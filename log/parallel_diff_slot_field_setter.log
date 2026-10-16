@@ -1,0 +1,12 @@
+=== slot_field_setter on slot 0 ===
+hook: slot_field_setter  rva=0x00425b70  export=SlotFieldSetter
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 18132
+  [agent] LUT ready  base=0x2b61bb8  offset=0x134  root=0x4970640  delta=0  attempts=6
+  [agent] .asi loaded  base=0x6c430000  SlotFieldSetter@0x6c442280
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\log\diff_slot_field_setter.csv
+  total cases: 10
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.

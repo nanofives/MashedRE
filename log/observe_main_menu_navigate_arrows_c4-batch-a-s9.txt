@@ -1,0 +1,89 @@
+=== canonical-scenario observation: main_menu_navigate_arrows (c4-batch-a-s9) ===
+date: 2026-05-15
+session: c4-batch-a-s9
+scenario: main_menu_navigate_arrows
+
+hooks observed:
+  FrontendCursorUpdate    rva=0x0042f7b0  export=FrontendCursorUpdate
+  FrontendPlayerSlotCheck rva=0x0042ebe0  export=FrontendPlayerSlotCheck
+  MenuCursorBack          rva=0x004323c0  export=MenuCursorBack
+  MenuTeamBalance         rva=0x0042bb60  export=MenuTeamBalance
+
+--- path2 install verification (from run_verify_hook.py) ---
+
+FrontendCursorUpdate (frontend_cursor_update):
+  opcode: 0xe9  expected 0xe9  -> OK
+  rel32:  0x7243504b  expected 0x7243504b  -> OK
+  bytes changed: True
+  interceptor: 0/3 (harness-limited: void_write_observe arg_type not supported by path2 caller)
+  install verdict: PASS (E9+rel32+bytes)
+
+FrontendPlayerSlotCheck (frontend_player_slot_check):
+  opcode: 0xe9  expected 0xe9  -> OK
+  rel32:  0x721f5d2b  expected 0x721f5d2b  -> OK
+  bytes changed: True
+  interceptor: 3/3 PASS
+  per-input: [OK] input=10 got=0, [OK] input=11 got=0, [OK] input=12 got=0
+  install verdict: FULL PASS
+
+MenuCursorBack (menu_cursor_back):
+  opcode: 0xe9  expected 0xe9  -> OK
+  rel32:  0x721f0dab  expected 0x721f0dab  -> OK
+  bytes changed: True
+  interceptor: 0/3 (harness-limited: cursor_back arg_type not supported by path2 caller)
+  install verdict: PASS (E9+rel32+bytes)
+
+MenuTeamBalance / FUN_0042bb60 (menu_team_balance):
+  opcode: 0xe9  expected 0xe9  -> OK
+  rel32:  0x71bb72eb  expected 0x71bb72eb  -> OK
+  bytes changed: True
+  interceptor: 0/3 (harness-limited: none arg_type invocation failure)
+  install verdict: PASS (E9+rel32+bytes)
+
+--- canonical scenario observation attempt ---
+
+attempt 1: auto_count_at_menu.py --hooks=frontend_cursor_update,...
+  result: process died at ~4s (Interceptor on key-press-driven hooks destabilized game)
+  invocation counts: 0/0/0/0 (process died before any key event possible)
+
+attempt 2: observe_hooks_at_menu.py --observe-seconds=10 --boot-wait=10 --no-minimize
+  result: ASI loaded, InjectHooks() called at 0x72621b10
+  process alive at t=0,2,4,6,8 (True)
+  process died between t=8 and t=10 of observation (exit code 0xC0000005 = ACCESS_VIOLATION)
+  NOTE: this script tracks Vec3Magnitude/FastSqrt/FastInvSqrt (hardcoded), NOT our 4 hooks
+
+baseline stability (no Frida):
+  game ran for 20s+ without Frida attached, WITH auto-hook enabled
+  confirming crash is Frida+ASI interaction, not hook code itself
+
+--- harness-limitation analysis ---
+
+FrontendCursorUpdate: key-press-driven function; fires only on d-pad events
+FrontendPlayerSlotCheck: called by slot-check logic; may fire passively or on key-press
+MenuCursorBack: fires only on BACK key press (by design)
+MenuTeamBalance: fires during team-balance evaluation (screen-dependent)
+
+auto_count_at_menu.py uses Interceptor.attach at original RVAs (no ASI).
+Interceptor overhead on menu-frame-rate hooks caused process death at ~4s.
+observe_hooks_at_menu.py uses NO Interceptor but hardcodes 3 different hooks.
+No harness supports: ASI-loaded + Interceptor + key-send for these 4 hooks.
+
+--- verdict ---
+
+FrontendPlayerSlotCheck: FULL path2 PASS -> promote to C4
+  Evidence: E9+rel32+bytes+interceptor 3/3; harness-limited canonical only
+
+FrontendCursorUpdate: REFUSE C4
+  Reason: invocation count = 0 (Interceptor destabilized game); key-press hook
+  harness cannot send keys; canonical scenario harness-limited
+
+MenuCursorBack: REFUSE C4
+  Reason: invocation count = 0 (Interceptor destabilized game); BACK-key-only hook
+  harness cannot send keys; canonical scenario harness-limited
+
+FUN_0042bb60 (MenuTeamBalance): REFUSE C4
+  Reason: invocation count = 0 (Interceptor destabilized game); screen-state-dependent
+  canonical scenario harness-limited
+
+PASS: 1/4 (FrontendPlayerSlotCheck)
+REFUSED: 3/4 (FrontendCursorUpdate, MenuCursorBack, FUN_0042bb60)

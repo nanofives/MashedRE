@@ -1,0 +1,11 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,0,,,,,True,,
+1,1,,,,,True,,
+2,1111638594,,,,,True,,
+3,3735928559,,,,,True,,
+4,2147483649,,,,,True,,
+5,1065353216,,,,,True,,
+6,4294967295,,,,,True,,
+7,123,,,,,True,,
+8,3405691582,,,,,True,,
+9,305419896,,,,,True,,

@@ -1,0 +1,22 @@
+mass_canonical_observe.py result
+=================================
+spawn_method      : frida.spawn (suspended before resume)
+idle_seconds      : 30
+reached_main_menu : True
+alive_at_end      : True
+overall_verdict   : GREEN
+
+RVA           Name                     Count   AttachErr  Verdict
+------------  ----------------------  ------  ----------  -------
+0x00492370    sub_00492370                 1        none  GREEN C2->C3
+0x00492290    sub_00492290                 1        none  GREEN C2->C3
+0x00492770    MainLoopInit                 1        none  GREEN C2->C3
+0x004924f0    DataZeroFill                 1        none  GREEN C2->C3
+0x00493900    CmdlineParse                 1        none  GREEN C2->C3
+0x00493710    RW_INIT_FN                   1        none  GREEN C2->C3
+0x00402750    AppInitOnBoot                1        none  GREEN C2->C3
+0x004aa3fe    __heap_init                  1        none  GREEN C2->C3
+0x004a8a04    FUN_004a8a04                 1        none  GREEN C2->C3
+0x004ac04a    FUN_004ac04a                 1        none  GREEN C2->C3
+0x004c2c90    FUN_004c2c90               244        none  GREEN C2->C3
+0x004c2fb0    FUN_004c2fb0                 1        none  GREEN C2->C3

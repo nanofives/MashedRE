@@ -1,0 +1,7 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,"{""scalars"":[0]}","r=19264|calls[1]=0x0,0x0",,"r=19264|calls[1]=0x0,0x0",,True,,
+1,"{""scalars"":[1]}","r=19264|calls[1]=0x1,0x0",,"r=19264|calls[1]=0x1,0x0",,True,,
+2,"{""scalars"":[3735928559]}","r=19264|calls[1]=0xdeadbeef,0x0",,"r=19264|calls[1]=0xdeadbeef,0x0",,True,,
+3,"{""scalars"":[4294967295]}","r=19264|calls[1]=0xffffffff,0x0",,"r=19264|calls[1]=0xffffffff,0x0",,True,,
+4,"{""scalars"":[305419896]}","r=19264|calls[1]=0x12345678,0x0",,"r=19264|calls[1]=0x12345678,0x0",,True,,
+5,"{""scalars"":[2147483647]}","r=19264|calls[1]=0x7fffffff,0x0",,"r=19264|calls[1]=0x7fffffff,0x0",,True,,

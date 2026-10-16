@@ -1,0 +1,6 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,"{""seeds"":[{""off"":0,""type"":""u32"",""value"":2864434397}],""nested"":[{""ptr_off"":24,""size"":40,""fields"":[{""off"":36,""type"":""u32"",""value"":2}]}]}",struct+0=aabbccdd,,struct+0=aabbccdd,,True,,
+1,"{""seeds"":[{""off"":0,""type"":""u32"",""value"":287454020}],""nested"":[{""ptr_off"":24,""size"":40,""fields"":[{""off"":36,""type"":""u32"",""value"":0}]}]}",struct+0=11223344,,struct+0=11223344,,True,,
+2,"{""seeds"":[{""off"":0,""type"":""u32"",""value"":3735928559}],""nested"":[{""ptr_off"":24,""size"":40,""fields"":[{""off"":36,""type"":""u32"",""value"":5}]}]}",struct+0=deadbeef,,struct+0=deadbeef,,True,,
+3,"{""seeds"":[{""off"":0,""type"":""u32"",""value"":1432778632}],""nested"":[{""ptr_off"":24,""size"":40,""fields"":[{""off"":36,""type"":""u32"",""value"":4294967295}]}]}",struct+0=55667788,,struct+0=55667788,,True,,
+4,"{""seeds"":[{""off"":0,""type"":""u32"",""value"":2578103244}],""nested"":[{""ptr_off"":24,""size"":40,""fields"":[{""off"":36,""type"":""u32"",""value"":1}]}]}",struct+0=99aabbcc,,struct+0=99aabbcc,,True,,

@@ -1,0 +1,12 @@
+=== end_of_round_accumulator on slot 0 ===
+hook: end_of_round_accumulator  rva=0x00424920  export=EndOfRoundAccumulator
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 57760
+  [agent] LUT ready  base=0x2c71b90  offset=0x134  root=0x4960640  delta=0  attempts=5
+  [agent] .asi loaded  base=0x72890000  EndOfRoundAccumulator@0x728a0e70
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\log\diff_end_of_round_accumulator.csv
+  total cases: 10
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.

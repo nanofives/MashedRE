@@ -1,0 +1,6 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,"{""seeds"":[{""off"":16,""type"":""u32"",""value"":2}]}",r=1|struct+16=1,,r=1|struct+16=1,,True,,
+1,"{""seeds"":[{""off"":16,""type"":""u32"",""value"":3}]}",r=2|struct+16=2,,r=2|struct+16=2,,True,,
+2,"{""seeds"":[{""off"":16,""type"":""u32"",""value"":5}]}",r=4|struct+16=4,,r=4|struct+16=4,,True,,
+3,"{""seeds"":[{""off"":16,""type"":""u32"",""value"":16}]}",r=15|struct+16=f,,r=15|struct+16=f,,True,,
+4,"{""seeds"":[{""off"":16,""type"":""u32"",""value"":2147483647}]}",r=2147483646|struct+16=7ffffffe,,r=2147483646|struct+16=7ffffffe,,True,,

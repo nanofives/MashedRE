@@ -1,0 +1,1287 @@
+{
+ "verdict": "GREEN",
+ "vectors": 84,
+ "mismatches": 0,
+ "rows": [
+  {
+   "car": 0,
+   "delta": 1,
+   "seed": 0,
+   "orig": {
+    "score": 1,
+    "prev": 0,
+    "ddisp": 1,
+    "pclamp": 1,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     0,
+     1
+    ]
+   },
+   "reimpl": {
+    "score": 1,
+    "prev": 0,
+    "ddisp": 1,
+    "pclamp": 1,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     0,
+     1
+    ]
+   },
+   "match": true
+  },
+  {
+   "car": 0,
+   "delta": 1,
+   "seed": 3,
+   "orig": {
+    "score": 4,
+    "prev": 3,
+    "ddisp": 1,
+    "pclamp": 1,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     0,
+     1
+    ]
+   },
+   "reimpl": {
+    "score": 4,
+    "prev": 3,
+    "ddisp": 1,
+    "pclamp": 1,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     0,
+     1
+    ]
+   },
+   "match": true
+  },
+  {
+   "car": 0,
+   "delta": 1,
+   "seed": -4,
+   "orig": {
+    "score": 0,
+    "prev": -4,
+    "ddisp": 1,
+    "pclamp": 1,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     0,
+     1
+    ]
+   },
+   "reimpl": {
+    "score": 0,
+    "prev": -4,
+    "ddisp": 1,
+    "pclamp": 1,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     0,
+     1
+    ]
+   },
+   "match": true
+  },
+  {
+   "car": 0,
+   "delta": -1,
+   "seed": 0,
+   "orig": {
+    "score": 0,
+    "prev": 0,
+    "ddisp": -1,
+    "pclamp": -1,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     0,
+     -1
+    ]
+   },
+   "reimpl": {
+    "score": 0,
+    "prev": 0,
+    "ddisp": -1,
+    "pclamp": -1,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     0,
+     -1
+    ]
+   },
+   "match": true
+  },
+  {
+   "car": 0,
+   "delta": -1,
+   "seed": 3,
+   "orig": {
+    "score": 2,
+    "prev": 3,
+    "ddisp": -1,
+    "pclamp": -1,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     0,
+     -1
+    ]
+   },
+   "reimpl": {
+    "score": 2,
+    "prev": 3,
+    "ddisp": -1,
+    "pclamp": -1,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     0,
+     -1
+    ]
+   },
+   "match": true
+  },
+  {
+   "car": 0,
+   "delta": -1,
+   "seed": -4,
+   "orig": {
+    "score": 0,
+    "prev": -4,
+    "ddisp": -1,
+    "pclamp": -1,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     0,
+     -1
+    ]
+   },
+   "reimpl": {
+    "score": 0,
+    "prev": -4,
+    "ddisp": -1,
+    "pclamp": -1,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     0,
+     -1
+    ]
+   },
+   "match": true
+  },
+  {
+   "car": 0,
+   "delta": 2,
+   "seed": 0,
+   "orig": {
+    "score": 2,
+    "prev": 0,
+    "ddisp": 2,
+    "pclamp": 2,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     0,
+     2
+    ]
+   },
+   "reimpl": {
+    "score": 2,
+    "prev": 0,
+    "ddisp": 2,
+    "pclamp": 2,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     0,
+     2
+    ]
+   },
+   "match": true
+  },
+  {
+   "car": 0,
+   "delta": 2,
+   "seed": 3,
+   "orig": {
+    "score": 5,
+    "prev": 3,
+    "ddisp": 2,
+    "pclamp": 2,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     0,
+     2
+    ]
+   },
+   "reimpl": {
+    "score": 5,
+    "prev": 3,
+    "ddisp": 2,
+    "pclamp": 2,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     0,
+     2
+    ]
+   },
+   "match": true
+  },
+  {
+   "car": 0,
+   "delta": 2,
+   "seed": -4,
+   "orig": {
+    "score": 0,
+    "prev": -4,
+    "ddisp": 2,
+    "pclamp": 2,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     0,
+     2
+    ]
+   },
+   "reimpl": {
+    "score": 0,
+    "prev": -4,
+    "ddisp": 2,
+    "pclamp": 2,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     0,
+     2
+    ]
+   },
+   "match": true
+  },
+  {
+   "car": 0,
+   "delta": -2,
+   "seed": 0,
+   "orig": {
+    "score": 0,
+    "prev": 0,
+    "ddisp": -2,
+    "pclamp": -2,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     0,
+     -2
+    ]
+   },
+   "reimpl": {
+    "score": 0,
+    "prev": 0,
+    "ddisp": -2,
+    "pclamp": -2,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     0,
+     -2
+    ]
+   },
+   "match": true
+  },
+  {
+   "car": 0,
+   "delta": -2,
+   "seed": 3,
+   "orig": {
+    "score": 1,
+    "prev": 3,
+    "ddisp": -2,
+    "pclamp": -2,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     0,
+     -2
+    ]
+   },
+   "reimpl": {
+    "score": 1,
+    "prev": 3,
+    "ddisp": -2,
+    "pclamp": -2,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     0,
+     -2
+    ]
+   },
+   "match": true
+  },
+  {
+   "car": 0,
+   "delta": -2,
+   "seed": -4,
+   "orig": {
+    "score": 0,
+    "prev": -4,
+    "ddisp": -2,
+    "pclamp": -2,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     0,
+     -2
+    ]
+   },
+   "reimpl": {
+    "score": 0,
+    "prev": -4,
+    "ddisp": -2,
+    "pclamp": -2,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     0,
+     -2
+    ]
+   },
+   "match": true
+  },
+  {
+   "car": 0,
+   "delta": 0,
+   "seed": 0,
+   "orig": {
+    "score": 0,
+    "prev": 0,
+    "ddisp": 0,
+    "pclamp": 0,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     0,
+     0
+    ]
+   },
+   "reimpl": {
+    "score": 0,
+    "prev": 0,
+    "ddisp": 0,
+    "pclamp": 0,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     0,
+     0
+    ]
+   },
+   "match": true
+  },
+  {
+   "car": 0,
+   "delta": 0,
+   "seed": 3,
+   "orig": {
+    "score": 3,
+    "prev": 3,
+    "ddisp": 0,
+    "pclamp": 0,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     0,
+     0
+    ]
+   },
+   "reimpl": {
+    "score": 3,
+    "prev": 3,
+    "ddisp": 0,
+    "pclamp": 0,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     0,
+     0
+    ]
+   },
+   "match": true
+  },
+  {
+   "car": 0,
+   "delta": 0,
+   "seed": -4,
+   "orig": {
+    "score": 0,
+    "prev": -4,
+    "ddisp": 0,
+    "pclamp": 0,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     0,
+     0
+    ]
+   },
+   "reimpl": {
+    "score": 0,
+    "prev": -4,
+    "ddisp": 0,
+    "pclamp": 0,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     0,
+     0
+    ]
+   },
+   "match": true
+  },
+  {
+   "car": 0,
+   "delta": 5,
+   "seed": 0,
+   "orig": {
+    "score": 5,
+    "prev": 0,
+    "ddisp": 5,
+    "pclamp": 5,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     0,
+     5
+    ]
+   },
+   "reimpl": {
+    "score": 5,
+    "prev": 0,
+    "ddisp": 5,
+    "pclamp": 5,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     0,
+     5
+    ]
+   },
+   "match": true
+  },
+  {
+   "car": 0,
+   "delta": 5,
+   "seed": 3,
+   "orig": {
+    "score": 8,
+    "prev": 3,
+    "ddisp": 5,
+    "pclamp": 5,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     0,
+     5
+    ]
+   },
+   "reimpl": {
+    "score": 8,
+    "prev": 3,
+    "ddisp": 5,
+    "pclamp": 5,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     0,
+     5
+    ]
+   },
+   "match": true
+  },
+  {
+   "car": 0,
+   "delta": 5,
+   "seed": -4,
+   "orig": {
+    "score": 1,
+    "prev": -4,
+    "ddisp": 5,
+    "pclamp": 5,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     0,
+     5
+    ]
+   },
+   "reimpl": {
+    "score": 1,
+    "prev": -4,
+    "ddisp": 5,
+    "pclamp": 5,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     0,
+     5
+    ]
+   },
+   "match": true
+  },
+  {
+   "car": 0,
+   "delta": -100,
+   "seed": 0,
+   "orig": {
+    "score": 0,
+    "prev": 0,
+    "ddisp": -100,
+    "pclamp": -100,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     0,
+     -100
+    ]
+   },
+   "reimpl": {
+    "score": 0,
+    "prev": 0,
+    "ddisp": -100,
+    "pclamp": -100,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     0,
+     -100
+    ]
+   },
+   "match": true
+  },
+  {
+   "car": 0,
+   "delta": -100,
+   "seed": 3,
+   "orig": {
+    "score": 0,
+    "prev": 3,
+    "ddisp": -100,
+    "pclamp": -100,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     0,
+     -100
+    ]
+   },
+   "reimpl": {
+    "score": 0,
+    "prev": 3,
+    "ddisp": -100,
+    "pclamp": -100,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     0,
+     -100
+    ]
+   },
+   "match": true
+  },
+  {
+   "car": 0,
+   "delta": -100,
+   "seed": -4,
+   "orig": {
+    "score": 0,
+    "prev": -4,
+    "ddisp": -100,
+    "pclamp": -100,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     0,
+     -100
+    ]
+   },
+   "reimpl": {
+    "score": 0,
+    "prev": -4,
+    "ddisp": -100,
+    "pclamp": -100,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     0,
+     -100
+    ]
+   },
+   "match": true
+  },
+  {
+   "car": 1,
+   "delta": 1,
+   "seed": 0,
+   "orig": {
+    "score": 1,
+    "prev": 0,
+    "ddisp": 1,
+    "pclamp": 1,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     1,
+     1
+    ]
+   },
+   "reimpl": {
+    "score": 1,
+    "prev": 0,
+    "ddisp": 1,
+    "pclamp": 1,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     1,
+     1
+    ]
+   },
+   "match": true
+  },
+  {
+   "car": 1,
+   "delta": 1,
+   "seed": 3,
+   "orig": {
+    "score": 4,
+    "prev": 3,
+    "ddisp": 1,
+    "pclamp": 1,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     1,
+     1
+    ]
+   },
+   "reimpl": {
+    "score": 4,
+    "prev": 3,
+    "ddisp": 1,
+    "pclamp": 1,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     1,
+     1
+    ]
+   },
+   "match": true
+  },
+  {
+   "car": 1,
+   "delta": 1,
+   "seed": -4,
+   "orig": {
+    "score": 0,
+    "prev": -4,
+    "ddisp": 1,
+    "pclamp": 1,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     1,
+     1
+    ]
+   },
+   "reimpl": {
+    "score": 0,
+    "prev": -4,
+    "ddisp": 1,
+    "pclamp": 1,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     1,
+     1
+    ]
+   },
+   "match": true
+  },
+  {
+   "car": 1,
+   "delta": -1,
+   "seed": 0,
+   "orig": {
+    "score": 0,
+    "prev": 0,
+    "ddisp": -1,
+    "pclamp": -1,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     1,
+     -1
+    ]
+   },
+   "reimpl": {
+    "score": 0,
+    "prev": 0,
+    "ddisp": -1,
+    "pclamp": -1,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     1,
+     -1
+    ]
+   },
+   "match": true
+  },
+  {
+   "car": 1,
+   "delta": -1,
+   "seed": 3,
+   "orig": {
+    "score": 2,
+    "prev": 3,
+    "ddisp": -1,
+    "pclamp": -1,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     1,
+     -1
+    ]
+   },
+   "reimpl": {
+    "score": 2,
+    "prev": 3,
+    "ddisp": -1,
+    "pclamp": -1,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     1,
+     -1
+    ]
+   },
+   "match": true
+  },
+  {
+   "car": 1,
+   "delta": -1,
+   "seed": -4,
+   "orig": {
+    "score": 0,
+    "prev": -4,
+    "ddisp": -1,
+    "pclamp": -1,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     1,
+     -1
+    ]
+   },
+   "reimpl": {
+    "score": 0,
+    "prev": -4,
+    "ddisp": -1,
+    "pclamp": -1,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     1,
+     -1
+    ]
+   },
+   "match": true
+  },
+  {
+   "car": 1,
+   "delta": 2,
+   "seed": 0,
+   "orig": {
+    "score": 2,
+    "prev": 0,
+    "ddisp": 2,
+    "pclamp": 2,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     1,
+     2
+    ]
+   },
+   "reimpl": {
+    "score": 2,
+    "prev": 0,
+    "ddisp": 2,
+    "pclamp": 2,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     1,
+     2
+    ]
+   },
+   "match": true
+  },
+  {
+   "car": 1,
+   "delta": 2,
+   "seed": 3,
+   "orig": {
+    "score": 5,
+    "prev": 3,
+    "ddisp": 2,
+    "pclamp": 2,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     1,
+     2
+    ]
+   },
+   "reimpl": {
+    "score": 5,
+    "prev": 3,
+    "ddisp": 2,
+    "pclamp": 2,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     1,
+     2
+    ]
+   },
+   "match": true
+  },
+  {
+   "car": 1,
+   "delta": 2,
+   "seed": -4,
+   "orig": {
+    "score": 0,
+    "prev": -4,
+    "ddisp": 2,
+    "pclamp": 2,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     1,
+     2
+    ]
+   },
+   "reimpl": {
+    "score": 0,
+    "prev": -4,
+    "ddisp": 2,
+    "pclamp": 2,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     1,
+     2
+    ]
+   },
+   "match": true
+  },
+  {
+   "car": 1,
+   "delta": -2,
+   "seed": 0,
+   "orig": {
+    "score": 0,
+    "prev": 0,
+    "ddisp": -2,
+    "pclamp": -2,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     1,
+     -2
+    ]
+   },
+   "reimpl": {
+    "score": 0,
+    "prev": 0,
+    "ddisp": -2,
+    "pclamp": -2,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     1,
+     -2
+    ]
+   },
+   "match": true
+  },
+  {
+   "car": 1,
+   "delta": -2,
+   "seed": 3,
+   "orig": {
+    "score": 1,
+    "prev": 3,
+    "ddisp": -2,
+    "pclamp": -2,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     1,
+     -2
+    ]
+   },
+   "reimpl": {
+    "score": 1,
+    "prev": 3,
+    "ddisp": -2,
+    "pclamp": -2,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     1,
+     -2
+    ]
+   },
+   "match": true
+  },
+  {
+   "car": 1,
+   "delta": -2,
+   "seed": -4,
+   "orig": {
+    "score": 0,
+    "prev": -4,
+    "ddisp": -2,
+    "pclamp": -2,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     1,
+     -2
+    ]
+   },
+   "reimpl": {
+    "score": 0,
+    "prev": -4,
+    "ddisp": -2,
+    "pclamp": -2,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     1,
+     -2
+    ]
+   },
+   "match": true
+  },
+  {
+   "car": 1,
+   "delta": 0,
+   "seed": 0,
+   "orig": {
+    "score": 0,
+    "prev": 0,
+    "ddisp": 0,
+    "pclamp": 0,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     1,
+     0
+    ]
+   },
+   "reimpl": {
+    "score": 0,
+    "prev": 0,
+    "ddisp": 0,
+    "pclamp": 0,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     1,
+     0
+    ]
+   },
+   "match": true
+  },
+  {
+   "car": 1,
+   "delta": 0,
+   "seed": 3,
+   "orig": {
+    "score": 3,
+    "prev": 3,
+    "ddisp": 0,
+    "pclamp": 0,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     1,
+     0
+    ]
+   },
+   "reimpl": {
+    "score": 3,
+    "prev": 3,
+    "ddisp": 0,
+    "pclamp": 0,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     1,
+     0
+    ]
+   },
+   "match": true
+  },
+  {
+   "car": 1,
+   "delta": 0,
+   "seed": -4,
+   "orig": {
+    "score": 0,
+    "prev": -4,
+    "ddisp": 0,
+    "pclamp": 0,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     1,
+     0
+    ]
+   },
+   "reimpl": {
+    "score": 0,
+    "prev": -4,
+    "ddisp": 0,
+    "pclamp": 0,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     1,
+     0
+    ]
+   },
+   "match": true
+  },
+  {
+   "car": 1,
+   "delta": 5,
+   "seed": 0,
+   "orig": {
+    "score": 5,
+    "prev": 0,
+    "ddisp": 5,
+    "pclamp": 5,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     1,
+     5
+    ]
+   },
+   "reimpl": {
+    "score": 5,
+    "prev": 0,
+    "ddisp": 5,
+    "pclamp": 5,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     1,
+     5
+    ]
+   },
+   "match": true
+  },
+  {
+   "car": 1,
+   "delta": 5,
+   "seed": 3,
+   "orig": {
+    "score": 8,
+    "prev": 3,
+    "ddisp": 5,
+    "pclamp": 5,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     1,
+     5
+    ]
+   },
+   "reimpl": {
+    "score": 8,
+    "prev": 3,
+    "ddisp": 5,
+    "pclamp": 5,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     1,
+     5
+    ]
+   },
+   "match": true
+  },
+  {
+   "car": 1,
+   "delta": 5,
+   "seed": -4,
+   "orig": {
+    "score": 1,
+    "prev": -4,
+    "ddisp": 5,
+    "pclamp": 5,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     1,
+     5
+    ]
+   },
+   "reimpl": {
+    "score": 1,
+    "prev": -4,
+    "ddisp": 5,
+    "pclamp": 5,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     1,
+     5
+    ]
+   },
+   "match": true
+  },
+  {
+   "car": 1,
+   "delta": -100,
+   "seed": 0,
+   "orig": {
+    "score": 0,
+    "prev": 0,
+    "ddisp": -100,
+    "pclamp": -100,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     1,
+     -100
+    ]
+   },
+   "reimpl": {
+    "score": 0,
+    "prev": 0,
+    "ddisp": -100,
+    "pclamp": -100,
+    "timer": 6000,
+    "ringptr": 11,
+    "ring_slot": [
+     196353,
+     1,
+     -100
+    ]
+   },
+   "match": true
+  }
+ ]
+}

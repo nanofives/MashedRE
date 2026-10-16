@@ -1,0 +1,43 @@
+rva,export,name,install_ok,alive_throughout,qualifies_c4,canonical_scenario,notes
+0x00404e50,SaveLoad,SaveLoad,True,True,True,boot_main_menu_idle_15s,
+0x00404e80,DeserializeFromBuffer,DeserializeFromBuffer,True,True,True,boot_main_menu_idle_15s,
+0x00404ee0,SerializeToBuffer,SerializeToBuffer,True,True,True,boot_main_menu_idle_15s,
+0x00404f50,SaveWrite,SaveWrite,True,True,True,boot_main_menu_idle_15s,
+0x00404f80,SaveFileExists,SaveFileExists,True,True,True,boot_main_menu_idle_15s,
+0x004099a0,AutosaveTrigger,AutosaveTrigger,True,True,True,boot_main_menu_idle_15s,
+0x004099e0,SaveStatusClear,SaveStatusClear,True,True,True,boot_main_menu_idle_15s,
+0x0040dd60,GuardConcludedAndP1Won,GuardConcludedAndP1Won,True,True,True,boot_main_menu_idle_15s,
+0x0040de00,ThunkReplaySave,ThunkReplaySave,True,True,True,boot_main_menu_idle_15s,
+0x0042a920,PostTrophyEvent,PostTrophyEvent,True,True,True,boot_main_menu_idle_15s,
+0x00430290,ChampionshipComplete,ChampionshipComplete,True,True,True,boot_main_menu_idle_15s,
+0x004963e0,ConfigLogError,ConfigLogError,True,True,True,boot_main_menu_idle_15s,
+0x00496400,ConfigLogDebug,ConfigLogDebug,True,True,True,boot_main_menu_idle_15s,
+0x00498910,ConfigFilenameGet,ConfigFilenameGet,True,True,True,boot_main_menu_idle_15s,
+0x00498950,ConfigLoad,ConfigLoad,True,True,True,boot_main_menu_idle_15s,
+0x004989b0,ConfigSave,ConfigSave,True,True,True,boot_main_menu_idle_15s,
+0x00498d20,ReadModeFromCombo_j5,ReadModeFromCombo_j5,True,True,True,boot_main_menu_idle_15s,
+0x00498d60,PopulateModeCombo_s2,PopulateModeCombo_s2,True,True,True,boot_main_menu_idle_15s,
+0x00498f60,VideoDialogInit_i3,VideoDialogInit_i3,True,True,True,boot_main_menu_idle_15s,
+0x00499170,SubsystemSelectionChanged_i3,SubsystemSelectionChanged_i3,True,True,True,boot_main_menu_idle_15s,
+0x004991f0,VideoSettingsDlgProc_s2,VideoSettingsDlgProc_s2,True,True,True,boot_main_menu_idle_15s,
+0x00499740,SetControlTextFromResource_i3,SetControlTextFromResource_i3,True,True,True,boot_main_menu_idle_15s,
+0x004a4541,FsopenSafe,FsopenSafe,True,True,True,boot_main_menu_idle_15s,
+0x004b3b70,FileReadWrapper_i3,FileReadWrapper_i3,True,True,True,boot_main_menu_idle_15s,
+0x004b3bb0,FileWriteWrapper_i3,FileWriteWrapper_i3,True,True,True,boot_main_menu_idle_15s,
+0x004cbe80,RwStreamWrite_s2,RwStreamWrite_s2,True,True,True,boot_main_menu_idle_15s,
+0x00550b00,VfsFileExists,VfsFileExists,True,True,True,boot_main_menu_idle_15s,
+0x00550bc0,VfsStreamGetType,VfsStreamGetType,True,True,True,boot_main_menu_idle_15s,
+0x00550980,VfsStreamRead,VfsStreamRead,False,False,False,bypassed,"crash_isolation: fwrite callers pass (buf,1,count,fh) but reimpl expects (ctx,buf,element_size,count); causes AV"
+0x004a5984,CrtSehProlog,CrtSehProlog,False,False,False,bypassed,"crash_isolation: __SEH_prolog has non-standard compiler ABI; reimpl does push ebp/mov ebp,esp which corrupts caller's SEH frame setup mid-prolog; crashes any SEH-using function at main menu"
+0x004a59bf,CrtSehEpilog,CrtSehEpilog,False,False,False,bypassed,"crash_isolation: paired with CrtSehProlog; epilog unlinks SEH node installed by prolog; if prolog is wrong, epilog crashes"
+0x004c5890,RwTexDictionaryCreate,RwTexDictionaryCreate,False,False,False,bypassed,"demoted C3->C2 (integration RED, pointer-identity mismatch in heap allocator); RH_ScopedInstall left in source; still installed"
+0x0041e870,TrackNode_0x0041e870,TrackNode_0x0041e870,False,False,False,bypassed,NULL deref: DAT_0063d7e4 is NULL at quiescent main menu
+0x0041e8b0,TrackNode_0x0041e8b0,TrackNode_0x0041e8b0,False,False,False,bypassed,NULL deref: DAT_0063d7e4 is NULL at quiescent main menu
+0x0041e8c0,TrackNode_0x0041e8c0,TrackNode_0x0041e8c0,False,False,False,bypassed,NULL deref: DAT_0063d7e4 is NULL at quiescent main menu
+0x0041e8f0,TrackNode_0x0041e8f0,TrackNode_0x0041e8f0,False,False,False,bypassed,NULL deref: DAT_0063d7e4 is NULL at quiescent main menu
+0x0041e9b0,TrackNode_0x0041e9b0,TrackNode_0x0041e9b0,False,False,False,bypassed,NULL deref: DAT_0063d7e4 is NULL at quiescent main menu
+0x0041e980,TrackNode_0x0041e980,TrackNode_0x0041e980,False,False,False,bypassed,NULL deref: DAT_0063d7e4 is NULL at quiescent main menu
+0x0041e9d0,TrackNode_0x0041e9d0,TrackNode_0x0041e9d0,False,False,False,bypassed,NULL deref: DAT_0063d7e4 is NULL at quiescent main menu
+0x0041e9e0,TrackNode_0x0041e9e0,TrackNode_0x0041e9e0,False,False,False,bypassed,NULL deref: DAT_0063d7e4 is NULL at quiescent main menu
+0x0041e970,TrackNode_0x0041e970,TrackNode_0x0041e970,False,False,False,bypassed,NULL deref: DAT_0063d7e4 is NULL at quiescent main menu
+0x0041ea90,TrackNode_0x0041ea90,TrackNode_0x0041ea90,False,False,False,bypassed,NULL deref: DAT_0063d7e4 is NULL at quiescent main menu

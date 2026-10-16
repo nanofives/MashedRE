@@ -1,0 +1,2 @@
+rva	n_callers	callers_c2plus	callers_identified	callers	n_callees	callees_c2plus	callees_identified	callees	gate
+0056c8e0	1	1	0	0056caa0:C2:FUN_0056caa0	0	0	0		LEAF

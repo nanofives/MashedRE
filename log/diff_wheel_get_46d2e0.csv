@@ -1,0 +1,6 @@
+idx,input,original,reimpl,match
+0,0,0,3235774464|ret=1,3235774464|ret=1,True
+1,1,2,3235774722|ret=1,3235774722|ret=1,True
+2,15,3,3235778307|ret=1,3235778307|ret=1,True
+3,16,0,0|ret=0,0|ret=0,True
+4,5,4,0|ret=0,0|ret=0,True

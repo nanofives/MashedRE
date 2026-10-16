@@ -1,0 +1,81 @@
+ÄÄ delegate  Accenture  [OK]  repo=Mashed  cost=$5.9854  denials=0  model=opus
+
+All 70 functions analyzed. Below is the single TSV table.
+
+**Classification convention used** (stated for determinism): `SINGLE_REGION` = every write targets exactly one parameter's memory coverable by one contiguous byte span (interior vector/matrix "w-lane" holes allowed; `region_spec` gives the covering span). `MULTI_REGION` = writes hit 2+ distinct parameters, or one parameter at widely-scattered offsets, with no globals/indirect/unknown-callee writes. `GLOBAL_WRITES` = any DAT_/absolute-address write. `INDIRECT` = any write through a pointer first loaded from memory (double-deref). `CALLS_UNKNOWN` = a callee defined outside the file may write. Priority when several apply: GLOBAL_WRITES > INDIRECT > CALLS_UNKNOWN > MULTI_REGION > SINGLE_REGION (others noted). "Same file" callees are not treated as unknown. A callee taking only by-value scalars and returning a scalar (e.g. FastSqrt) cannot write caller memory and does not force CALLS_UNKNOWN (noted).
+
+```tsv
+rva	name	class	region_spec	writes	callees	notes
+0x00403050	PreRaceLoadingScreenDraw	CALLS_UNKNOWN		(no direct param/global writes in body; all writes occur inside callees)	FUN_00428760, FUN_00402fb0, vtable+0x20 fn-ptr (indirect, from *0x007d3ff8)	reads DAT_00771964 guard + vtable obj 0x007d3ff8; render-state set via indirect vtable slot
+0x0040cf40	ReleaseResourcePair	GLOBAL_WRITES		DAT_0063ba90=0 (cond), DAT_0063ba94=0 (cond)	FUN_004c5a60 (external dtor, may write)	each write gated on the global being non-null
+0x00423b00	FrontendInputDispatch	CALLS_UNKNOWN		(none direct)	FUN_00423040, FUN_00423270, FUN_00423320, FUN_00423670 (all external)	reads DAT_007f1a50 guard; all four callees are void(void) external
+0x0042bcb0	PlayerNameSpriteDraw	CALLS_UNKNOWN		writes only stack buffer local_14[16]; passes &param_4/&local_* to callee	FUN_004c5c00, FUN_004b5750 (external)	reads globals 0x005cd5a8/18c/560/724, table 0x007e96fc, collection 0x00636ac8, driver 0x007d3ff8; no param/global writes
+0x0047b9e0	Track_RenderQuadThunk_47b9e0	CALLS_UNKNOWN		(none direct)	FUN_00496c10 (external)	pure forward of both args
+0x0047e9c0	FUN_0047e9c0	CALLS_UNKNOWN		(none direct)	RwpSolverContextSet, FUN_0055fe50/fea0/ff90/ff70/561e60/561040/561e80/561390/561c50, FUN_0047d640, FUN_0047def0 (all external/other-ctx)	fixed 12-call driver; reads param_1+0x8c/+0x90
+0x00490f50	ByteQuadSet50	GLOBAL_WRITES		DAT_00616030,31,32,33 (4 bytes = a,b,c,d)	(none)	interleaved store order 30/31/33/32; a=30 b=31 c=32 d=33
+0x00490f80	ByteQuadSet80	GLOBAL_WRITES		DAT_00616034,35,36,37 (4 bytes)	(none)	twin of 0x00490f50
+0x004a2bf7	Tbl4a2bf7	GLOBAL_WRITES		0x006160d8/dc/e0/e4/e8/ec = 6 code-ptr constants	(none)	stores 0x4a5d92,0x4a5a0c,0x4a5a71,0x4a59d0,0x4a5a57,0x4a5d92
+0x004c51a0	FUN_004c51a0	GLOBAL_WRITES		main path: param_1[0..0xe] floats (0x0..0x3c incl flag RMW at +0xc); error path: abs addr 0x0000000c RMW	FUN_004d7ff0, FUN_004d8480 (external, error path only)	param_3âˆˆ{0,1,2} -> only param_1 writes; else error branch writes absolute 0xc + calls funnel
+0x004f8640	PluginFieldWriteA8	INDIRECT		*(*(0x007d73a8)+offset) = value	(none)	double-deref: base pointer read from global DAT_007d73a8
+0x004f8670	PluginFieldWriteAC	INDIRECT		*(*(0x007d73ac)+offset) = value	(none)	double-deref: base pointer from global DAT_007d73ac
+0x004c51a0-dup	(see above)	-		-	-	-
+0x00546bf0	FUN_00546bf0	SINGLE_REGION	param_1:0x10	param_1[0],[1],[2],[3] (4 floats)	FastSqrt/FUN_004c3b30 (scalar float->float, cannot write caller mem)	Shoemake X-branch
+0x00546c50	FUN_00546c50	SINGLE_REGION	param_1:0x10	param_1[0],[1],[2],[3]	FastSqrt/FUN_004c3b30 (scalar)	Shoemake Y-branch
+0x00546cb0	FUN_00546cb0	SINGLE_REGION	param_1:0x10	param_1[0],[1],[2],[3]	FastSqrt/FUN_004c3b30 (scalar)	Shoemake Z-branch
+0x0055b750	FUN_0055b750	SINGLE_REGION	param_3:0xc	*param_3, param_3[1], param_3[2]	(none)	reads param_1 via double-deref (reads only), param_2
+0x0055bd80	FUN_0055bd80	CALLS_UNKNOWN		writes only stack local_40 (via callee); no direct param/global write	FUN_004c4600 (external), indirect vol-fn *(*(param_1+0x5c)+0x10)	transformed frame feeds an indirect descriptor dispatch that may write
+0x0055c0f0	FUN_0055c0f0	INDIRECT		point array via *(int*)(param_1+0x14)+off (double-deref); param_1[0],[1],[2],[3] direct	(none)	loop transforms support points through pointer loaded at param_1+0x14
+0x0055c2d0	FUN_0055c2d0	CALLS_UNKNOWN		*param_4 (RMW), *param_5 (RMW); loc[4] on stack	indirect vol-fn *(*(param_1+0x5c)+0x20) (may write param_4/param_5)	direct writes are param_4/param_5 offsets; classification driven by indirect callee
+0x005601f0	FUN_005601f0	INDIRECT		rows via *(*param_1+off) (double-deref); param_1[1]=count direct	(none)	output base is *param_1
+0x00560260	FUN_00560260	GLOBAL_WRITES		global _DAT_00913284=0 then =1; extensive double-deref writes through param_1..param_9 pool pointers; param_3[..] direct	FUN_00567c00, FUN_0056efc0, FUN_00570090, FUN_0056f350, FUN_0056f020, FUN_0056e680, FUN_005675d0, FUN_0056d3f0, FUN_0056dd40, FUN_0056d070, FUN_005601f0, FUN_0056caa0, FUN_0056c580, FUN_0056c310, FUN_0056bdf0, param_11/param_13 (indirect KV cbs)	also INDIRECT + CALLS_UNKNOWN; huge orchestrator
+0x00563e70	FUN_00563e70	INDIRECT		param_1+0xc direct; hash-list nodes via *(param_1+8)+off (double-deref)	(none)	doubly-linked-list insert
+0x00563f60	FUN_00563f60	INDIRECT		param_1+0xc direct; list nodes via *(param_1+8)+off (double-deref)	(none)	bucket clear
+0x005646c0	FUN_005646c0	GLOBAL_WRITES		DAT_007dc8c8++ , DAT_007dc8cc++ ; stack node/box arrays	FUN_00563e70 (external, inserts pairs)	no param writes; only two global counters + stack; inserts via callee
+0x00565120	FUN_00565120	SINGLE_REGION	param_1+0x9820+((param_3&0xffff)+(param_2&0xffff)*10)*2:0x2	one ushort (low-10-bit merge) at that offset	(none)	single param_1-relative write, data-dependent offset
+0x00565160	FUN_00565160	MULTI_REGION		param_1+0x8820+(param_3&0xffff)*4 (ushort); *(param_1+iVar2*0x14) (uint) where iVar2=(param_2&0xffff)+0x79b	(none)	single param param_1, two discontiguous sites
+0x005651b0	FUN_005651b0	SINGLE_REGION	param_1+0x9820+((param_3&0xffff)+(param_2&0xffff)*10)*2:0x2	one ushort (+0x400, conditional)	(none)	single param_1-relative write, data-dependent offset
+0x00565200	FUN_00565200	SINGLE_REGION	param_3:0x1c	param_3[0],[1],[2],[4],[5],[6] (hole at +0xc)	(none)	reads param_1-relative box + scalar at +0xc014
+0x00565260	FUN_00565260	CALLS_UNKNOWN		many param_1-relative writes (offsets 0x8020/0x881e/0x881f/0x8820/0x981a/0x9820 & node arrays); stack local_8	FUN_00563f60 (external)	all writes param_1-relative (no double-deref); contains original degenerate recount loop
+0x00565ef0	FUN_00565ef0	SINGLE_REGION	param_1:0x1c	param_1[0],[1],[2],[4],[5],[6] (hole +0xc)	(none)	per-axis min/max merge
+0x00565fa0	FUN_00565fa0	SINGLE_REGION	param_1:0x1c	param_1[0],[1],[2],[4],[5],[6] (hole +0xc)	(none)	inflated AABB build
+0x00566200	FUN_00566200	SINGLE_REGION	param_1:0x1c	param_1[0],[1],[2],[4],[5],[6] (hole +0xc)	ABS=std::fabsf (intrinsic)	AABB matrix-transform refit
+0x00566830	FUN_00566830	SINGLE_REGION	param_1:0x10	param_1[0],[1],[2] then param_1[uVar2],[uVar3] (indices 0..3)	ABS=std::fabsf (intrinsic)	perpendicular-vector build; indices in [0,3]
+0x005675d0	FUN_005675d0	MULTI_REGION		param_2 offsets 0x08/0x14/0x20/0x2c/0x38/0x44/0x50/0x68/0x74/0x7c/0x80/0x84/0x8c/0x98; param_1+4; param_1+0x10	(none)	two params (param_1 & param_2)
+0x00567c00	FUN_00567c00	MULTI_REGION		param_1+0x11c=0, +0x110=0; param_2+0x40/0x4c/0x34/4/0x10=0	FUN_0056ef30 (same file â€” clears 26 param_1 fields)	two params; callee in-file
+0x00567c60	FUN_00567c60	INDIRECT		param_2+4=0; param_3[] zeroed; pool writes via *(param_1+0x10)/*(param_1+8) + piVar5 chains (double-deref)	FUN_00567f00 (same file)	partition finalize
+0x00567f00	FUN_00567f00	INDIRECT		param_2-relative set headers; union-find path-compression *piVarN through loaded set pointers (double-deref)	FUN_005684c0, FUN_00568560 (external K1), FUN_005685f0 (same file)	also CALLS_UNKNOWN (external K1 callees)
+0x005685f0	FUN_005685f0	INDIRECT		param_2[4..9] direct; splice writes via *(param_2[6]), *(puVar5[2]), *(puVar2[3]+8) etc (double-deref); *param_4,*param_5; param_1+4	(none)	disjoint-set list merge
+0x0056bb80	FUN_0056bb80	SINGLE_REGION	param_1:0x10	param_1[0],[1],[2],[3]	FastSqrt/FUN_004c3b30 (scalar); inline __asm writes only stack sinv/cosv	quaternion axis-angle rotate
+0x0056bce0	FUN_0056bce0	SINGLE_REGION	param_1:0x10	param_1[3],[0],[1],[2]	std::sqrtl (intrinsic)	quaternion integrate+renormalize
+0x0056bdf0	FUN_0056bdf0	MULTI_REGION		param_1 strided: (iVar2+param_1)+{0,4,8,0x10,0x14,0x18} per body	(none)	single param param_1; iVar2 from *param_4 (double-deref read only), loop over param_4[1] records (0x20 stride)
+0x0056be80	FUN_0056be80	INDIRECT		body transform pfVar8 = *(param_1)+param_2*0x40 (double-deref of *param_1); many +offset writes	FUN_0056bb80, FUN_0056bce0 (same file), FUN_004c45f0 (external RVA)	param_1 is int*; write base loaded from *param_1
+0x0056c0a0	FUN_0056c0a0	CALLS_UNKNOWN		param_1-relative pfVar9=param_1+iVar5*0x40 matrix/pos writes (strided over param_6[1])	FUN_0056bb80, FUN_0056bce0 (same file), FUN_004c45f0 (external)	param_1 is int base (no double-deref); passes iVar5*0x10+param_3 buffers to same-file callees
+0x0056c310	FUN_0056c310	CALLS_UNKNOWN		param_1-relative pfVar2=iVar5*0x40+param_1 matrix/pos writes (walked-source variant)	FUN_0056bb80, FUN_0056bce0 (same file), FUN_004c45f0 (external)	param_1 is int base; classification driven by external FUN_004c45f0
+0x0056c580	FUN_0056c580	MULTI_REGION		param_1 linear block (iVar13+param_1)+{0,4,8,0x10,0x14,0x18}; param_3 walked pfVar14[-2..4]	(none)	two params param_1 & param_3; iVar13 from *param_7 (read only)
+0x0056c8e0	FUN_0056c8e0	SINGLE_REGION	param_1+param_4*0x20:0x1c	(iVar15+param_1)+{0,4,8,0x10,0x14,0x18} (hole +0xc), iVar15=param_4*0x20	(none)	reads param_3 vec4; single param param_1
+0x0056caa0	FUN_0056caa0	INDIRECT		zero/accumulate writes via **(param_4..), *(iVar4+*param_5), pfVar5 from *param_3/*param_4/*param_5 (double-deref)	FUN_0056c8e0 (same file)	param_1-relative writes also present but classification is double-deref
+0x0056cf90	FUN_0056cf90	SINGLE_REGION	param_1:0x60	param_1[0..0x17] (24 dwords, contiguous)	(none)	pure integer bit-copy/transpose from param_2/param_3
+0x0056d070	FUN_0056d070	INDIRECT		histogram/scatter via *(param_1[0x10]+..), *(param_1[1]+..), *(piVar2[0xd]+..), *(piVar2[10]+..) etc (double-deref); param_1[0x16..0x18] direct	FUN_0056cf90 (same file)	index-build
+0x0056d350	FUN_0056d350	SINGLE_REGION	param_2:0x1c	param_2[0],[1],[2],[4],[5],[6] (hole +0xc)	(none)	reads b=*param_1+off (double-deref read only), param_3
+0x0056d3f0	FUN_0056d3f0	MULTI_REGION		writes through base-address stack params in_stack_00000014/_20/_38/_44 and param_1+0x2c chain (jacobian rows + bound arrays); stack local_84	FUN_0056d350 (same file)	no globals/double-deref; several parameter base addresses
+0x0056dd40	FUN_0056dd40	MULTI_REGION		writes through base params base20(=_20)/param_1+0x2c/in_stack_14/_2c/_38/_50/_5c/_44 (SSE normalize)	(none; rsqrt_nr inline intrinsic)	SSE2 twin of d3f0; multiple parameter bases
+0x0056e680	FUN_0056e680	INDIRECT		inertia block via (offset+*param_3), impulse via (iVar53+*param_4) (double-deref); param-relative via iVar49/iVar50	FUN_0056ed60 (same file)	writes through *param_3 and *param_4
+0x0056ed60	FUN_0056ed60	SINGLE_REGION	param_1:0x2c	param_1[0],[1],[2],[4],[5],[6],[8],[9],[10] (holes +0xc,+0x1c)	(none)	3x3 congruence transform; reads param_2,param_3
+0x0056ef30	FUN_0056ef30	MULTI_REGION		26 param_1-relative dwords cleared, offsets 0x4..0x108 (scattered)	(none)	single param param_1 but widely scattered fields
+0x0056efc0	FUN_0056efc0	INDIRECT		4 writes via *(param_1+0xe8/0xc4/0xdc/0xd0)+idx*4 (double-deref)	(none)	scatter into indexed SoA slots
+0x0056f020	FUN_0056f020	MULTI_REGION		param_1 RMW at +0x100,+0xf4,+0xec,+0xc8,+0xe0,+0xd4,+0xfc	(none)	single param param_1, scattered counters; +0xf4 accumulates a double-deref read (write target is param_1)
+0x0056f0a0	FUN_0056f0a0	INDIRECT		writes via *(param_1+0xb8/0xdc/0xd0)+.. and *piVar1=*(param_1+0xc4)+.. (double-deref); many param_1-relative counters direct	FUN_0056f1f0 (same file)	batch pad+advance
+0x0056f1f0	FUN_0056f1f0	INDIRECT		SoA scatter via param_1[10]/[7]/[0x19]/[4]/[0xd]/[0x10]/[0x13]/[0x16]/[0x22]/[0x25] +idx*4, and pool via *param_1+iVar5 (double-deref)	(none)	Jacobian-row emit
+0x0056f350	FUN_0056f350	INDIRECT		writes via *(param_1+0xb8)+.. and *(param_1+0xac)+.. (double-deref); param_1+0xbc direct; stack local_78 row	FUN_0055b750, FUN_0056fad0, FUN_0056f1f0, FUN_0056f0a0 (external, other files)	also CALLS_UNKNOWN; per-manifold constraint-row generator
+0x0056fad0	FUN_0056fad0	SINGLE_REGION	param_1:0x3c	param_1[0..2],[4..6] (gated param_5); param_1[8..10],[0xc..0xe] (gated param_6)	(none)	single param param_1; matrix-layout holes at +0xc/+0x1c/+0x2c
+0x0056fea0	FUN_0056fea0	MULTI_REGION		param_3[0..3] (0x10); param_4[0..0xb] (0x30)	(none)	two params param_3 & param_4
+0x00570090	FUN_00570090	INDIRECT		writes via *(param_1+0xb8)+.. and *(param_1+0xac)+.. (double-deref); param_1+0xbc direct; stack row0/row1/row2 buffers	FUN_0056fb90, FUN_0056fea0, FUN_005667c0, FUN_0056f1f0, FUN_0056f0a0 (external, other files)	also CALLS_UNKNOWN; the 6-DOF joint row generator
+0x005735f0	FUN_005735f0	SINGLE_REGION	param_4:0xc	param_4[0],[1],[2]	(none)	null-p1 path zeroes same 3 floats; reads param_1/2/3
+0x00579e50	FUN_00579e50	MULTI_REGION		param_1-relative gram slots at (iVar2+iVar7)*4 and (iVar6+0x18+iVar2)*4, iVar2=*(param_1+0x1a8)	(none)	single param param_1, data-dependent scattered offsets (index loaded from param_1, not a deref write)
+0x00579ee0	FUN_00579ee0	MULTI_REGION		param_1-relative gram matrix at +0xa0+.. (data-dependent) and tet row at +0x190/0x194/0x198/0x19c	(none)	single param param_1; all bases are param_1/iVar7 (no double-deref)
+0x00575b60	FUN_00575b60	CALLS_UNKNOWN		param_3[0],[1],[2] (+ negate); *(short*)param_4	FUN_0055c2d0 (external)	two params written; external callee writes stack out-floats
+0x00578d90	FUN_00578d90	CALLS_UNKNOWN		param_4[0],[1],[2]	FUN_005667c0, FUN_00566830 (external)	edge-edge axis; callees may re-write param_4
+```
+
+Notes on scope/coverage: all 70 rows were located and read in their listed source files (no `NOT_FOUND`). Several functions are transcribed as `_impl` bodies wrapped by a generated `ShadowAB::Run` shim (e.g. `FUN_004c51a0`, `FUN_00561390`, most K-cluster entries) â€” I analyzed the `_impl`/definition body as instructed. The `RwpSolverCore23.cpp` header lists `FUN_0047e9c0` as the file's K24 root; its body is the 12-call driver at lines 868-882.
+(raw JSON: C:\Users\maria\AppData\Local\Temp\fleet-delegate-04892fa8716c4dd1aef2a86c08b9aead.json)

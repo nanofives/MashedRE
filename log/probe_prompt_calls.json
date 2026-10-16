@@ -1,0 +1,110 @@
+[
+ {
+  "mode": 0,
+  "key": 1,
+  "cmp": 22,
+  "esi": "1afde4",
+  "idx": 1,
+  "ret": "43d79c",
+  "depth": 0
+ },
+ {
+  "MARK": "push1"
+ },
+ {
+  "mode": 0,
+  "key": 1,
+  "cmp": 1,
+  "esi": "3e7f28c",
+  "idx": 6,
+  "ret": "43d79c",
+  "depth": 1
+ },
+ {
+  "MARK": "reload1"
+ },
+ {
+  "mode": 2,
+  "key": -1,
+  "cmp": 1,
+  "esi": "3e7f28c",
+  "idx": 6,
+  "ret": "43d79c",
+  "depth": 2
+ },
+ {
+  "MARK": "push8"
+ },
+ {
+  "mode": 0,
+  "key": 2,
+  "cmp": 8,
+  "esi": "3e7f28c",
+  "idx": 6,
+  "ret": "43d79c",
+  "depth": 2
+ },
+ {
+  "MARK": "reload8"
+ },
+ {
+  "mode": 2,
+  "key": -1,
+  "cmp": 8,
+  "esi": "3e7f28c",
+  "idx": 6,
+  "ret": "43d79c",
+  "depth": 3
+ },
+ {
+  "MARK": "push19"
+ },
+ {
+  "mode": 0,
+  "key": 4,
+  "cmp": 19,
+  "esi": "3e7f28c",
+  "idx": 6,
+  "ret": "43d79c",
+  "depth": 3
+ },
+ {
+  "MARK": "pop_a"
+ },
+ {
+  "mode": 1,
+  "key": 2,
+  "cmp": 0,
+  "esi": "3e7f28c",
+  "idx": 6,
+  "ret": "43d79c",
+  "depth": 3
+ },
+ {
+  "MARK": "pop_b"
+ },
+ {
+  "mode": 1,
+  "key": 1,
+  "cmp": 0,
+  "esi": "3e7f28c",
+  "idx": 6,
+  "ret": "43d79c",
+  "depth": 2
+ },
+ {
+  "MARK": "pop_c"
+ },
+ {
+  "mode": 1,
+  "key": 1,
+  "cmp": 0,
+  "esi": "3e7f28c",
+  "idx": 6,
+  "ret": "43d79c",
+  "depth": 1
+ },
+ {
+  "MARK": "idle2s"
+ }
+]

@@ -1,0 +1,12 @@
+=== pix_encode_x8r8g8b8 on slot 0 ===
+hook: pix_encode_x8r8g8b8  rva=0x004df9e0  export=PixEncodeX8R8G8B8
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 5356
+  [agent] LUT ready  base=0x2be1bb8  offset=0x134  root=0x4960640  delta=0  attempts=7
+  [agent] .asi loaded  base=0x62c80000  PixEncodeX8R8G8B8@0x62c92530
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\log\diff_pix_encode_x8r8g8b8.csv
+  total cases: 10
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.

@@ -1,0 +1,26 @@
+=== verify_hook_install report (rw_engine_register_plugin) ===
+
+target address: 0x004c2d90  export: RwEngineRegisterPlugin
+PRE  bytes:     e9 eb 31 3d 6a 4c 24 0c
+asi base:       0x6a810000
+reimpl addr:    0x6a895f80
+POST bytes:     e9 eb 31 3d 6a 4c 24 0c
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x6a3d31eb  expected 0x6a3d31eb  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  3 / 3
+
+per-input results:
+  [OK] input={'scalars': [0, 4, 5079024, 5079024]}  got=24301  err=
+  [OK] input={'scalars': [286331153, 572662306, 858993459, 1145324612]}  got=24301  err=
+  [OK] input={'scalars': [1145324612, 858993459, 572662306, 286331153]}  got=24301  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 3x as expected
+  + all 3 calls returned without exception
+FAIL:
+  (none)

@@ -1,0 +1,12 @@
+=== pix_encode_1555 on slot 0 ===
+hook: pix_encode_1555  rva=0x004df8d0  export=PixEncode1555
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 6736
+  [agent] LUT ready  base=0x2c11bb8  offset=0x134  root=0x4960640  delta=0  attempts=5
+  [agent] .asi loaded  base=0x63690000  PixEncode1555@0x636a2450
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\log\diff_pix_encode_1555.csv
+  total cases: 10
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.

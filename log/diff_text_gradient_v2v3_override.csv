@@ -1,0 +1,11 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,"[0,416,640,64,2684354560]",4242311920,0xfcdc8af0,4242311920,0xfcdc8af0,True,system error,system error
+1,"[0,410,640,64,4278190080]",405782960,0x182fc1b0,405782960,0x182fc1b0,True,system error,system error
+2,"[0,0,640,64,0]",372583872,0x16352dc0,372583872,0x16352dc0,True,system error,system error
+3,"[0,0,640,64,2155905152]",908644288,0x3628cfc0,908644288,0x3628cfc0,True,system error,system error
+4,"[100,50,200,100,3238002687]",2419740852,0x903a50b4,2419740852,0x903a50b4,True,system error,
+5,"[0,0,1,1,4279312947]",2686445148,0xa01fe65c,2686445148,0xa01fe65c,True,access violation accessing 0x0,access violation accessing 0x0
+6,"[10,10,50,50,4279312947]",2358495104,0x8c93c780,2358495104,0x8c93c780,True,access violation accessing 0x0,access violation accessing 0x0
+7,"[10,10,50,50,2701066240]",1415637704,0x5460eac8,1415637704,0x5460eac8,True,access violation accessing 0x0,access violation accessing 0x0
+8,"[10,10,50,50,2147483903]",2465213128,0x92f02ac8,2465213128,0x92f02ac8,True,access violation accessing 0x0,access violation accessing 0x0
+9,"[10,10,50,50,3221290752]",2191316992,0x829cd800,2191316992,0x829cd800,True,access violation accessing 0x0,access violation accessing 0x0

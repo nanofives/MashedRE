@@ -1,0 +1,12 @@
+=== split_screen_track_assignment on slot 0 ===
+hook: split_screen_track_assignment  rva=0x00430830  export=SplitScreenTrackAssignment
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 29680
+  [agent] LUT ready  base=0x2b11b90  offset=0x134  root=0x4860640  delta=0  attempts=5
+  [agent] .asi loaded  base=0x72500000  SplitScreenTrackAssignment@0x72505f30
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\log\diff_split_screen_track_assignment.csv
+  total cases: 10
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.

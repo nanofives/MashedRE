@@ -1,0 +1,34 @@
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe (auto-hook disabled)
+  pid = 22576
+  monitoring for 45s (crash, or boot completes)
+  .asi loaded (LUT-ready after 7 attempts)
+  PIZ hooks patched in:
+    PizWin32Open  -> 0x6bf777f0
+    PizWin32Read  -> 0x6bf77860
+  survived 45s � killing
+
+=== mashed.log (8451 bytes) � tail informative lines ===
+  Calling RwEngineInit
+  Calling RtFSManagerOpen
+  Calling HardwareInstallFileSystem
+  Calling RenderwareAttachPlugins
+  Calling RwEngineOpen
+  Calling HardwareSetVideoMode
+  Number of subsystems: 3
+  Loading video cfg from videocfg.bin
+  Calling RwEngineStart
+  Calling AppInitialiseOnBootup
+  Setting up PIZ file system
+  	OK
+  Calling PCVS_Init
+  Calling HardwareShowIntroVideo
+  Opening piz file TOASTART\COMMON\FONT36.PIZ
+  	OK
+  Reading texture MashedNEWLogo.png
+  Reading texture bigE.bmp
+  Reading texture proLogicII.bmp
+  Reading texture DolbyDig.bmp
+  Searching piz for fgdc20.txd
+  Closing piz file TOASTART\COMMON\FONT36.PIZ
+
+RESULT: survived � piz hooks installed, no crash within 45s

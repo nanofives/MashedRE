@@ -1,0 +1,27 @@
+=== verify_hook_install report (rw_matrix_rotate) ===
+
+target address: 0x004c4d20  export: RwMatrixRotate
+PRE  bytes:     83 ec 0c d9 44 24 18 d8
+asi base:       0x713c0000
+reimpl addr:    0x713cba70
+POST bytes:     e9 4b 6d f0 70 24 18 d8
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x70f06d4b  expected 0x70f06d4b  -> OK
+bytes changed:  True
+
+interceptor entries (reimpl):  0 / 3
+
+per-input results:
+  [FAIL] input={'axis': [0, 0, 1], 'angle': 90, 'mode': 0}  got=None  err=bad argument count
+  [FAIL] input={'axis': [1, 0, 0], 'angle': 45, 'mode': 0}  got=None  err=bad argument count
+  [FAIL] input={'axis': [1, 1, 1], 'angle': 60, 'mode': 0}  got=None  err=bad argument count
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + first 8 bytes mutated by patcher
+FAIL:
+  - reimpl interceptor fired 0 times, expected 3
+  - call 0 (input={'axis': [0, 0, 1], 'angle': 90, 'mode': 0}) failed: bad argument count
+  - call 1 (input={'axis': [1, 0, 0], 'angle': 45, 'mode': 0}) failed: bad argument count
+  - call 2 (input={'axis': [1, 1, 1], 'angle': 60, 'mode': 0}) failed: bad argument count

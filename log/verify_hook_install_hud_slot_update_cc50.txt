@@ -1,0 +1,25 @@
+=== verify_hook_install report (hud_slot_update_cc50) ===
+
+target address: 0x0041cc50  export: HudSlotUpdateCc50
+PRE  bytes:     e9 5b 53 9b 72 00 e8 d5
+asi base:       0x72dc0000
+reimpl addr:    0x72dd1fb0
+POST bytes:     e9 5b 53 9b 72 00 e8 d5
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x729b535b  expected 0x729b535b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  2 / 2
+
+per-input results:
+  [OK] input={'scalars': []}  got=(void)  err=
+  [OK] input={'scalars': []}  got=(void)  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 2x as expected
+  + all 2 calls returned without exception
+FAIL:
+  (none)

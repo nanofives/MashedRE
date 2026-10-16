@@ -1,0 +1,25 @@
+{
+ "pass": true,
+ "asserts": {
+  "DAT_0066d704==1": {
+   "ok": true,
+   "got": 1
+  },
+  "DAT_0063ba78==DAT_0063ba7c": {
+   "ok": true,
+   "loaded": 3,
+   "selected": 3
+  }
+ },
+ "observations": {
+  "DAT_0063ba8c": 3
+ },
+ "run": {
+  "track": 3,
+  "mode": 10,
+  "cars": 1,
+  "hooks": "0x0040d020,0x0040d440,0x0047b9e0",
+  "pid": 10532,
+  "ts": "2026-09-01 14:52:27"
+ }
+}

@@ -1,0 +1,53 @@
+  [keep-awake] display-sleep suppressed + wake nudge sent
+=== scenario_launch  pid=22328  track=0 mode=10 cars=4 ===
+  attaching ASAP...
+  [agent] ready
+    phase=0  (waiting for menu (phase 1))
+    phase=1  (waiting for menu (phase 1))
+  [setup] set track=0 mode=10 cars=4 car=0 rule=0 team=0
+  [statediff] statediff armed (tick 0x004c1be0, car 1, rec@0x8822a4)
+  [statediff] aileaf-probe armed (0x414570 entry+leave; every ret=1 + every 20th call)
+  [launch] poke DAT_00771968 = 2 -> 1
+    phase=2  (waiting for race running (phase 3))
+    phase=3  (waiting for race running (phase 3))
+
+  *** RACE RUNNING (phase 3) ***
+  [ctrl-slots] ctrl slot table was [0,0,0,0] -> [0,1,2,3]
+  car spawn fired: 12   grounded=4  airflag=0
+  vel=[0, 0, 0]  fwd=[-8.742277657347586e-08, 0, -1]
+
+  VERDICT: launcher reached a running race and spawned a car. [OK]
+
+  racing 120s — pulsing control 4 (confirm/accel) to skip the start intro + continue rounds...
+  [rounds] +0.0s sub-state None -> 3  tick=1300 sdframe=28 node_63ba80=0
+    +  4s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]       +  9s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]     [rounds] +11.4s sub-state 3 -> 5  tick=35500 sdframe=712 node_63ba80=0
+  [rounds] +13.2s sub-state 5 -> 6  tick=40900 sdframe=820 node_63ba80=0
+    + 13s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[-71.5, -0.7, -1091.2]       + 18s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[-10.1, 0, -737.1]       + 23s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]     [rounds] +24.0s sub-state 6 -> 7  tick=71850 sdframe=1469 node_63ba80=7
+  [rounds] +25.8s sub-state 7 -> 5  tick=73550 sdframe=1577 node_63ba80=7
+  [rounds] +27.7s sub-state 5 -> 6  tick=78900 sdframe=1684 node_63ba80=7
+    + 28s  ph=3  spawnFired=16  p0.grounded=4 airflag=0  vel=[914.8, -0.1, 766.0]     [rounds] +30.1s sub-state 6 -> 7  tick=85200 sdframe=1828 node_63ba80=11
+  [rounds] +31.9s sub-state 7 -> 5  tick=86450 sdframe=1936 node_63ba80=11
+    + 33s  ph=3  spawnFired=20  p0.grounded=4 airflag=0  vel=[0, 0, 0]     [rounds] +33.7s sub-state 5 -> 6  tick=91800 sdframe=2044 node_63ba80=11
+  [rounds] +35.5s sub-state 6 -> 7  tick=96650 sdframe=2152 node_63ba80=14
+  [rounds] +37.9s sub-state 7 -> 5  tick=98350 sdframe=2296 node_63ba80=14
+    + 37s  ph=3  spawnFired=24  p0.grounded=4 airflag=0  vel=[0, 0, 0]     [rounds] +39.7s sub-state 5 -> 6  tick=103700 sdframe=2404 node_63ba80=14
+    + 42s  ph=3  spawnFired=24  p0.grounded=4 airflag=0  vel=[-10.9, 31.2, 727.3]     [rounds] +43.3s sub-state 6 -> 7  tick=113700 sdframe=2622 node_63ba80=21
+  [rounds] +45.1s sub-state 7 -> 5  tick=114900 sdframe=2730 node_63ba80=21
+  [rounds] +46.9s sub-state 5 -> 6  tick=120300 sdframe=2838 node_63ba80=21
+    + 47s  ph=3  spawnFired=28  p0.grounded=4 airflag=0  vel=[0, 0, 0]     [rounds] +49.9s sub-state 6 -> 7  tick=127800 sdframe=3018 node_63ba80=24
+  [rounds] +51.7s sub-state 7 -> 5  tick=129500 sdframe=3126 node_63ba80=24
+    + 52s  ph=3  spawnFired=32  p0.grounded=4 airflag=0  vel=[0, 0, 0]     [rounds] +53.5s sub-state 5 -> 6  tick=134900 sdframe=3234 node_63ba80=24
+  [rounds] +55.9s sub-state 6 -> 7  tick=141850 sdframe=3378 node_63ba80=28
+    + 57s  ph=3  spawnFired=32  p0.grounded=4 airflag=0  vel=[58.1, 19.5, -217.1]     [rounds] +58.3s sub-state 7 -> 5  tick=143550 sdframe=3522 node_63ba80=28
+  [rounds] +60.2s sub-state 5 -> 6  tick=148950 sdframe=3630 node_63ba80=28
+    + 61s  ph=3  spawnFired=36  p0.grounded=4 airflag=0  vel=[0, 0, 0]     [rounds] +62.6s sub-state 6 -> 7  tick=154550 sdframe=3774 node_63ba80=1
+  [rounds] +64.4s sub-state 7 -> 5  tick=156250 sdframe=3882 node_63ba80=1
+  [rounds] +66.2s sub-state 5 -> 6  tick=161700 sdframe=3991 node_63ba80=1
+    + 66s  ph=3  spawnFired=40  p0.grounded=4 airflag=0  vel=[419.2, -0.2, -1420.8]       + 71s  ph=3  spawnFired=40  p0.grounded=4 airflag=0  vel=[-33.1, -15.3, -474.9]     [rounds] +72.2s sub-state 6 -> 11  tick=179700 sdframe=4351 node_63ba80=1
+    + 76s  ph=3  spawnFired=40  p0.grounded=4 airflag=0  vel=[0, 0, 0]       + 81s  ph=3  spawnFired=40  p0.grounded=4 airflag=0  vel=[0, 0, 0]       + 86s  ph=3  spawnFired=40  p0.grounded=4 airflag=0  vel=[0, 0, 0]       + 90s  ph=3  spawnFired=40  p0.grounded=4 airflag=0  vel=[0, 0, 0]       + 95s  ph=3  spawnFired=40  p0.grounded=4 airflag=0  vel=[0, 0, 0]       +100s  ph=3  spawnFired=40  p0.grounded=4 airflag=0  vel=[0, 0, 0]       +105s  ph=3  spawnFired=40  p0.grounded=4 airflag=0  vel=[0, 0, 0]       +110s  ph=3  spawnFired=40  p0.grounded=4 airflag=0  vel=[0, 0, 0]       +114s  ph=3  spawnFired=40  p0.grounded=4 airflag=0  vel=[0, 0, 0]       +119s  ph=3  spawnFired=40  p0.grounded=4 airflag=0  vel=[0, 0, 0]   
+  [statediff] agent: {"armed":true,"frames":7231,"car":1,"err":null,"ai":false,"aiErr":null}
+  [statediff] 7231 frames -> verify\d3_bulk_20261011\aileaf\orig\o_rounds7b.msd  (distinct payloads=5798, nonzero=7231)
+  [statediff] pursuit: {"n":0,"noSpline":0,"lastErr":0,"maxAbsErr":0,"accelOff":0,"heldForGo":0,"boostPress":0}
+  [statediff] aileaf-probe agent: {"armed":true,"calls":11562,"ret1":0,"rows":578,"err":null}
+  [statediff] aileaf-probe 578 rows -> verify\d3_bulk_20261011\aileaf\orig\o_rounds7b.msd.aileaf.tsv
+  [statediff] provenance -> verify\d3_bulk_20261011\aileaf\orig\o_rounds7b.msd.provenance.json

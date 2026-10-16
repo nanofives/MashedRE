@@ -1,0 +1,46 @@
+=== observe_c4_sweep_20260517 batch B4 ===
+
+observe seconds: 10
+boot wait:       8.0
+hook count:      3
+
+asi module base: 0x6a5b0000  size: 192512
+
+per-hook install verification:
+  [OK] MenuAlphaGet                         rva=0x0042b930  reimpl=0x6a5b5760
+         PRE  bytes:  a1 b0 ec 67 00 c3 90 90
+         POST bytes:  e9 2b 9e 18 6a c3 90 90
+         opcode:      0xe9  expected 0xe9  -> OK
+         rel32:       0x6a189e2b  expected 0x6a189e2b  -> OK
+  [OK] RaceEndAltFlagIfEndMode              rva=0x0042fe50  reimpl=0x6a5b67f0
+         PRE  bytes:  e8 4b f8 ff ff 8b 0d 78
+         POST bytes:  e9 9b 69 18 6a 8b 0d 78
+         opcode:      0xe9  expected 0xe9  -> OK
+         rel32:       0x6a18699b  expected 0x6a18699b  -> OK
+  [OK] RaceEndFlagIfEndMode                 rva=0x0042fe30  reimpl=0x6a5b6810
+         PRE  bytes:  e8 6b f8 ff ff 83 f8 0b
+         POST bytes:  e9 db 69 18 6a 83 f8 0b
+         opcode:      0xe9  expected 0xe9  -> OK
+         rel32:       0x6a1869db  expected 0x6a1869db  -> OK
+
+alive throughout observation: True
+alive at end of observation:  True
+exit method:                  terminate_after_wm_close_timeout
+exit code:                    1
+
+final byte state (RPC poll after observation window):
+  [OK] MenuAlphaGet                         rva=0x0042b930  opcode=0xe9  bytes=e9 2b 9e 18 6a c3 90 90
+  [OK] RaceEndAltFlagIfEndMode              rva=0x0042fe50  opcode=0xe9  bytes=e9 9b 69 18 6a 8b 0d 78
+  [OK] RaceEndFlagIfEndMode                 rva=0x0042fe30  opcode=0xe9  bytes=e9 db 69 18 6a 83 f8 0b
+
+PASS:
+  + MenuAlphaGet installed cleanly (E9 + correct rel32)
+  + RaceEndAltFlagIfEndMode installed cleanly (E9 + correct rel32)
+  + RaceEndFlagIfEndMode installed cleanly (E9 + correct rel32)
+  + process alive throughout 10s observation window with 3 hooks installed
+  + shutdown via terminate_after_wm_close_timeout (TerminateProcess fallback documented)
+  + MenuAlphaGet bytes still patched at end of observation
+  + RaceEndAltFlagIfEndMode bytes still patched at end of observation
+  + RaceEndFlagIfEndMode bytes still patched at end of observation
+FAIL:
+  (none)

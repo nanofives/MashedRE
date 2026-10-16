@@ -1,0 +1,5 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,"{""seed"": [{""addr"": ""0x007d4f60"", ""val"": 3735879680}], ""args"": [0, 0, 287454020], ""obs"": [""0x007d4f60""]}",0x11223344,,0x11223344,,True,,
+1,"{""seed"": [{""addr"": ""0x007d4fa0"", ""val"": 3735879681}], ""args"": [1, 2, 1432778632], ""obs"": [""0x007d4fa0""]}",0x55667788,,0x55667788,,True,,
+2,"{""seed"": [{""addr"": ""0x007d4fe4"", ""val"": 3735879682}], ""args"": [2, 5, 3405691582], ""obs"": [""0x007d4fe4""]}",0xcafebabe,,0xcafebabe,,True,,
+3,"{""seed"": [{""addr"": ""0x007d4f60"", ""val"": 2575857510}], ""args"": [0, 0, 2575857510], ""obs"": [""0x007d4f60""]}",0x99887766,,0x99887766,,True,,

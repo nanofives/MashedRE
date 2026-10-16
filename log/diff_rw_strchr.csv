@@ -1,0 +1,10 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,"{""s"": ""hello,world"", ""c"": 108}",2,0x00000002,2,0x00000002,True,,
+1,"{""s"": ""hello,world"", ""c"": 111}",4,0x00000004,4,0x00000004,True,,
+2,"{""s"": ""hello,world"", ""c"": 122}",-1,0xffffffff,-1,0xffffffff,True,,
+3,"{""s"": ""hello,world"", ""c"": 104}",0,0x00000000,0,0x00000000,True,,
+4,"{""s"": ""hello,world"", ""c"": 100}",10,0x0000000a,10,0x0000000a,True,,
+5,"{""s"": ""hello,world"", ""c"": 0}",11,0x0000000b,11,0x0000000b,True,,
+6,"{""s"": ""aaa"", ""c"": 97}",0,0x00000000,0,0x00000000,True,,
+7,"{""s"": """", ""c"": 97}",-1,0xffffffff,-1,0xffffffff,True,,
+8,"{""s"": """", ""c"": 0}",0,0x00000000,0,0x00000000,True,,

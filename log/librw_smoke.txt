@@ -1,0 +1,3018 @@
+librw smoke -- E1' acceptance probe
+hwnd=00C8049A size=640x480 frames=600
+ok: Engine::init
+ok: plugins registered
+ok: Engine::open
+  subsystem[0] = NVIDIA GeForce RTX 5070 Ti
+  subsystem[1] = NVIDIA GeForce RTX 5070 Ti
+  subsystem[2] = NVIDIA GeForce RTX 5070 Ti
+ok: setSubSystem(2 of 3)
+ok: Engine::start -- D3D9 device created by librw
+ok: camera 640x480
+ok: presented 600 frames in 0.126 s = 4772.7 fps
+ok: backbuffer centre = 0x2080C0 == clear colour (librw really drew)
+ok: raster bridge hashed 64 textures -> log/librw_raster.txt
+ok: scene build self-test PASS -> log/librw_scene.txt
+ok: world rendered through librw -> verify/librw_world.bmp
+ok: teardown clean
+RESULT: PASS
+librw engine start (E2'b step 3, ADOPTED device 08D27BE0) 640x480
+ok: engine started on adopted device (d3ddevice=08D27BE0)
+librw engine start (E2'b step 3, ADOPTED device 08D31900) 640x480
+ok: engine started on adopted device (d3ddevice=08D31900)
+librw engine start (E2'b step 3, ADOPTED device 08CF0180) 640x480
+ok: engine started on adopted device (d3ddevice=08CF0180)
+librw engine start (E2'b step 3, ADOPTED device 08D23300) 640x480
+ok: engine started on adopted device (d3ddevice=08D23300)
+librw engine start (E2'b step 3, ADOPTED device 08D1C620) 640x480
+ok: engine started on adopted device (d3ddevice=08D1C620)
+librw engine start (E2'b step 3, ADOPTED device 08D1F1A0) 640x480
+ok: engine started on adopted device (d3ddevice=08D1F1A0)
+librw engine start (E2'b step 3, ADOPTED device 08D24BE0) 640x480
+ok: engine started on adopted device (d3ddevice=08D24BE0)
+librw engine start (E2'b step 3, ADOPTED device 08D87A60) 640x480
+ok: engine started on adopted device (d3ddevice=08D87A60)
+librw engine start (E2'b step 3, ADOPTED device 08D329C0) 640x480
+ok: engine started on adopted device (d3ddevice=08D329C0)
+librw engine start (E2'b step 3, ADOPTED device 08D3D1C0) 640x480
+ok: engine started on adopted device (d3ddevice=08D3D1C0)
+librw engine start (E2'b step 3, ADOPTED device 08AFE380) 640x480
+ok: engine started on adopted device (d3ddevice=08AFE380)
+librw engine start (E2'b step 3, ADOPTED device 089B8FE0) 640x480
+ok: engine started on adopted device (d3ddevice=089B8FE0)
+librw engine start (E2'b step 3, ADOPTED device 089B2C60) 640x480
+ok: engine started on adopted device (d3ddevice=089B2C60)
+librw engine start (E2'b step 3, ADOPTED device 089C95A0) 640x480
+ok: engine started on adopted device (d3ddevice=089C95A0)
+librw engine start (E2'b step 3, ADOPTED device 08A45000) 640x480
+ok: engine started on adopted device (d3ddevice=08A45000)
+librw engine start (E2'b step 3, ADOPTED device 08ADC1E0) 640x480
+ok: engine started on adopted device (d3ddevice=08ADC1E0)
+librw engine start (E2'b step 3, ADOPTED device 089A9480) 640x480
+ok: engine started on adopted device (d3ddevice=089A9480)
+librw engine start (E2'b step 3, ADOPTED device 08A1C820) 640x480
+ok: engine started on adopted device (d3ddevice=08A1C820)
+librw engine start (E2'b step 3, ADOPTED device 0898AAC0) 640x480
+ok: engine started on adopted device (d3ddevice=0898AAC0)
+librw engine start (E2'b step 3, ADOPTED device 089A6E20) 640x480
+ok: engine started on adopted device (d3ddevice=089A6E20)
+librw engine start (E2'b step 3, ADOPTED device 089B0F40) 640x480
+ok: engine started on adopted device (d3ddevice=089B0F40)
+librw engine start (E2'b step 3, ADOPTED device 08AC1AA0) 640x480
+ok: engine started on adopted device (d3ddevice=08AC1AA0)
+librw engine start (E2'b step 3, ADOPTED device 08A75B00) 640x480
+ok: engine started on adopted device (d3ddevice=08A75B00)
+librw engine start (E2'b step 3, ADOPTED device 08A5D320) 640x480
+ok: engine started on adopted device (d3ddevice=08A5D320)
+librw engine start (E2'b step 3, ADOPTED device 08A559C0) 640x480
+ok: engine started on adopted device (d3ddevice=08A559C0)
+librw engine start (E2'b step 3, ADOPTED device 08AAE000) 640x480
+ok: engine started on adopted device (d3ddevice=08AAE000)
+librw engine start (E2'b step 3, ADOPTED device 089C9C00) 640x480
+ok: engine started on adopted device (d3ddevice=089C9C00)
+librw engine start (E2'b step 3, ADOPTED device 08ADAD40) 640x480
+ok: engine started on adopted device (d3ddevice=08ADAD40)
+librw engine start (E2'b step 3, ADOPTED device 08A15100) 640x480
+ok: engine started on adopted device (d3ddevice=08A15100)
+librw engine start (E2'b step 3, ADOPTED device 08D342C0) 640x480
+ok: engine started on adopted device (d3ddevice=08D342C0)
+librw engine start (E2'b step 3, ADOPTED device 08D56080) 640x480
+ok: engine started on adopted device (d3ddevice=08D56080)
+librw engine start (E2'b step 3, ADOPTED device 08D3E1C0) 640x480
+ok: engine started on adopted device (d3ddevice=08D3E1C0)
+librw engine start (E2'b step 3, ADOPTED device 08D3C1A0) 640x480
+ok: engine started on adopted device (d3ddevice=08D3C1A0)
+librw engine start (E2'b step 3, ADOPTED device 08D33F60) 640x480
+ok: engine started on adopted device (d3ddevice=08D33F60)
+librw engine start (E2'b step 3, ADOPTED device 08DB6FE0) 640x480
+ok: engine started on adopted device (d3ddevice=08DB6FE0)
+librw engine start (E2'b step 3, ADOPTED device 08DAD160) 640x480
+ok: engine started on adopted device (d3ddevice=08DAD160)
+librw engine start (E2'b step 3, ADOPTED device 08D98840) 640x480
+ok: engine started on adopted device (d3ddevice=08D98840)
+librw engine start (E2'b step 3, ADOPTED device 08D64EE0) 640x480
+ok: engine started on adopted device (d3ddevice=08D64EE0)
+librw engine start (E2'b step 3, ADOPTED device 08D50C40) 640x480
+ok: engine started on adopted device (d3ddevice=08D50C40)
+librw engine start (E2'b step 3, ADOPTED device 08D80840) 640x480
+ok: engine started on adopted device (d3ddevice=08D80840)
+librw engine start (E2'b step 3, ADOPTED device 08A7E120) 640x480
+ok: engine started on adopted device (d3ddevice=08A7E120)
+librw engine start (E2'b step 3, ADOPTED device 08A556E0) 640x480
+ok: engine started on adopted device (d3ddevice=08A556E0)
+librw engine start (E2'b step 3, ADOPTED device 08A0B300) 640x480
+ok: engine started on adopted device (d3ddevice=08A0B300)
+librw engine start (E2'b step 3, ADOPTED device 08A02D20) 640x480
+ok: engine started on adopted device (d3ddevice=08A02D20)
+librw engine start (E2'b step 3, ADOPTED device 08A82420) 640x480
+ok: engine started on adopted device (d3ddevice=08A82420)
+librw engine start (E2'b step 3, ADOPTED device 089A4020) 640x480
+ok: engine started on adopted device (d3ddevice=089A4020)
+librw engine start (E2'b step 3, ADOPTED device 08ABC1E0) 640x480
+ok: engine started on adopted device (d3ddevice=08ABC1E0)
+librw engine start (E2'b step 3, ADOPTED device 08AAD960) 640x480
+ok: engine started on adopted device (d3ddevice=08AAD960)
+librw engine start (E2'b step 3, ADOPTED device 08A44560) 640x480
+ok: engine started on adopted device (d3ddevice=08A44560)
+librw engine start (E2'b step 3, ADOPTED device 08A0BF00) 640x480
+ok: engine started on adopted device (d3ddevice=08A0BF00)
+librw engine start (E2'b step 3, ADOPTED device 08A5F3A0) 640x480
+ok: engine started on adopted device (d3ddevice=08A5F3A0)
+librw engine start (E2'b step 3, ADOPTED device 089DD9C0) 640x480
+ok: engine started on adopted device (d3ddevice=089DD9C0)
+librw engine start (E2'b step 3, ADOPTED device 08A746A0) 640x480
+ok: engine started on adopted device (d3ddevice=08A746A0)
+librw engine start (E2'b step 3, ADOPTED device 089E57A0) 640x480
+ok: engine started on adopted device (d3ddevice=089E57A0)
+librw engine start (E2'b step 3, ADOPTED device 08A18700) 640x480
+ok: engine started on adopted device (d3ddevice=08A18700)
+librw engine start (E2'b step 3, ADOPTED device 08A194E0) 640x480
+ok: engine started on adopted device (d3ddevice=08A194E0)
+librw engine start (E2'b step 3, ADOPTED device 08999CA0) 640x480
+ok: engine started on adopted device (d3ddevice=08999CA0)
+librw engine start (E2'b step 3, ADOPTED device 089AA140) 640x480
+ok: engine started on adopted device (d3ddevice=089AA140)
+librw engine start (E2'b step 3, ADOPTED device 08982060) 640x480
+ok: engine started on adopted device (d3ddevice=08982060)
+librw engine start (E2'b step 3, ADOPTED device 08A1F300) 640x480
+ok: engine started on adopted device (d3ddevice=08A1F300)
+librw engine start (E2'b step 3, ADOPTED device 08A14260) 640x480
+ok: engine started on adopted device (d3ddevice=08A14260)
+librw engine start (E2'b step 3, ADOPTED device 08A05E40) 640x480
+ok: engine started on adopted device (d3ddevice=08A05E40)
+librw engine start (E2'b step 3, ADOPTED device 08AA0A00) 640x480
+ok: engine started on adopted device (d3ddevice=08AA0A00)
+librw engine start (E2'b step 3, ADOPTED device 08A15880) 640x480
+ok: engine started on adopted device (d3ddevice=08A15880)
+librw engine start (E2'b step 3, ADOPTED device 089D37E0) 640x480
+ok: engine started on adopted device (d3ddevice=089D37E0)
+librw engine start (E2'b step 3, ADOPTED device 08A8D740) 640x480
+ok: engine started on adopted device (d3ddevice=08A8D740)
+librw engine start (E2'b step 3, ADOPTED device 08A02420) 640x480
+ok: engine started on adopted device (d3ddevice=08A02420)
+librw engine start (E2'b step 3, ADOPTED device 08996B60) 640x480
+ok: engine started on adopted device (d3ddevice=08996B60)
+librw engine start (E2'b step 3, ADOPTED device 0899C0A0) 640x480
+ok: engine started on adopted device (d3ddevice=0899C0A0)
+librw engine start (E2'b step 3, ADOPTED device 0899C260) 640x480
+ok: engine started on adopted device (d3ddevice=0899C260)
+librw engine start (E2'b step 3, ADOPTED device 08982C40) 640x480
+ok: engine started on adopted device (d3ddevice=08982C40)
+librw engine start (E2'b step 3, ADOPTED device 08A52820) 640x480
+ok: engine started on adopted device (d3ddevice=08A52820)
+librw engine start (E2'b step 3, ADOPTED device 08A0B640) 640x480
+ok: engine started on adopted device (d3ddevice=08A0B640)
+librw engine start (E2'b step 3, ADOPTED device 08AFA6C0) 640x480
+ok: engine started on adopted device (d3ddevice=08AFA6C0)
+librw engine start (E2'b step 3, ADOPTED device 089A49E0) 640x480
+ok: engine started on adopted device (d3ddevice=089A49E0)
+librw engine start (E2'b step 3, ADOPTED device 089B13E0) 640x480
+ok: engine started on adopted device (d3ddevice=089B13E0)
+librw engine start (E2'b step 3, ADOPTED device 08A93D60) 640x480
+ok: engine started on adopted device (d3ddevice=08A93D60)
+librw engine start (E2'b step 3, ADOPTED device 089A2BA0) 640x480
+ok: engine started on adopted device (d3ddevice=089A2BA0)
+librw engine start (E2'b step 3, ADOPTED device 089A4060) 640x480
+ok: engine started on adopted device (d3ddevice=089A4060)
+librw engine start (E2'b step 3, ADOPTED device 08A8ECA0) 640x480
+ok: engine started on adopted device (d3ddevice=08A8ECA0)
+librw engine start (E2'b step 3, ADOPTED device 08A3B9E0) 640x480
+ok: engine started on adopted device (d3ddevice=08A3B9E0)
+librw engine start (E2'b step 3, ADOPTED device 08AACD20) 640x480
+ok: engine started on adopted device (d3ddevice=08AACD20)
+librw engine start (E2'b step 3, ADOPTED device 08AB3CA0) 640x480
+ok: engine started on adopted device (d3ddevice=08AB3CA0)
+librw engine start (E2'b step 3, ADOPTED device 08A242C0) 640x480
+ok: engine started on adopted device (d3ddevice=08A242C0)
+librw engine start (E2'b step 3, ADOPTED device 08A1E020) 640x480
+ok: engine started on adopted device (d3ddevice=08A1E020)
+librw engine start (E2'b step 3, ADOPTED device 08A98D80) 640x480
+ok: engine started on adopted device (d3ddevice=08A98D80)
+librw engine start (E2'b step 3, ADOPTED device 08A54E20) 640x480
+ok: engine started on adopted device (d3ddevice=08A54E20)
+librw engine start (E2'b step 3, ADOPTED device 08A957C0) 640x480
+ok: engine started on adopted device (d3ddevice=08A957C0)
+librw engine start (E2'b step 3, ADOPTED device 08A05760) 640x480
+ok: engine started on adopted device (d3ddevice=08A05760)
+librw engine start (E2'b step 3, ADOPTED device 08B29B20) 640x480
+ok: engine started on adopted device (d3ddevice=08B29B20)
+librw engine start (E2'b step 3, ADOPTED device 08AA0D40) 640x480
+ok: engine started on adopted device (d3ddevice=08AA0D40)
+librw engine start (E2'b step 3, ADOPTED device 089BD720) 640x480
+ok: engine started on adopted device (d3ddevice=089BD720)
+librw engine start (E2'b step 3, ADOPTED device 08A1EAA0) 640x480
+ok: engine started on adopted device (d3ddevice=08A1EAA0)
+librw engine start (E2'b step 3, ADOPTED device 0896A680) 640x480
+ok: engine started on adopted device (d3ddevice=0896A680)
+librw engine start (E2'b step 3, ADOPTED device 089FA520) 640x480
+ok: engine started on adopted device (d3ddevice=089FA520)
+librw engine start (E2'b step 3, ADOPTED device 08B212E0) 640x480
+ok: engine started on adopted device (d3ddevice=08B212E0)
+librw engine start (E2'b step 3, ADOPTED device 089C0880) 640x480
+ok: engine started on adopted device (d3ddevice=089C0880)
+librw engine start (E2'b step 3, ADOPTED device 089B0A80) 640x480
+ok: engine started on adopted device (d3ddevice=089B0A80)
+librw engine start (E2'b step 3, ADOPTED device 08A616A0) 640x480
+ok: engine started on adopted device (d3ddevice=08A616A0)
+librw engine start (E2'b step 3, ADOPTED device 089AB4A0) 640x480
+ok: engine started on adopted device (d3ddevice=089AB4A0)
+librw engine start (E2'b step 3, ADOPTED device 08B0ECA0) 640x480
+ok: engine started on adopted device (d3ddevice=08B0ECA0)
+librw engine start (E2'b step 3, ADOPTED device 089A8F60) 640x480
+ok: engine started on adopted device (d3ddevice=089A8F60)
+librw engine start (E2'b step 3, ADOPTED device 08A24BA0) 640x480
+ok: engine started on adopted device (d3ddevice=08A24BA0)
+librw engine start (E2'b step 3, ADOPTED device 08A0CBC0) 640x480
+ok: engine started on adopted device (d3ddevice=08A0CBC0)
+librw engine start (E2'b step 3, ADOPTED device 089D2D40) 640x480
+ok: engine started on adopted device (d3ddevice=089D2D40)
+librw engine start (E2'b step 3, ADOPTED device 089BDF00) 640x480
+ok: engine started on adopted device (d3ddevice=089BDF00)
+librw engine start (E2'b step 3, ADOPTED device 089B5BE0) 640x480
+ok: engine started on adopted device (d3ddevice=089B5BE0)
+librw engine start (E2'b step 3, ADOPTED device 089BE7C0) 640x480
+ok: engine started on adopted device (d3ddevice=089BE7C0)
+librw engine start (E2'b step 3, ADOPTED device 089FB940) 640x480
+ok: engine started on adopted device (d3ddevice=089FB940)
+librw engine start (E2'b step 3, ADOPTED device 0897B960) 640x480
+ok: engine started on adopted device (d3ddevice=0897B960)
+librw engine start (E2'b step 3, ADOPTED device 089592C0) 640x480
+ok: engine started on adopted device (d3ddevice=089592C0)
+librw engine start (E2'b step 3, ADOPTED device 08999240) 640x480
+ok: engine started on adopted device (d3ddevice=08999240)
+librw engine start (E2'b step 3, ADOPTED device 089CCAE0) 640x480
+ok: engine started on adopted device (d3ddevice=089CCAE0)
+librw engine start (E2'b step 3, ADOPTED device 08977340) 640x480
+ok: engine started on adopted device (d3ddevice=08977340)
+librw engine start (E2'b step 3, ADOPTED device 089F54C0) 640x480
+ok: engine started on adopted device (d3ddevice=089F54C0)
+librw engine start (E2'b step 3, ADOPTED device 089F77E0) 640x480
+ok: engine started on adopted device (d3ddevice=089F77E0)
+librw engine start (E2'b step 3, ADOPTED device 08D8BFA0) 640x480
+ok: engine started on adopted device (d3ddevice=08D8BFA0)
+librw engine start (E2'b step 3, ADOPTED device 089C9A20) 640x480
+ok: engine started on adopted device (d3ddevice=089C9A20)
+librw engine start (E2'b step 3, ADOPTED device 089ED760) 640x480
+ok: engine started on adopted device (d3ddevice=089ED760)
+librw engine start (E2'b step 3, ADOPTED device 08A1E9C0) 640x480
+ok: engine started on adopted device (d3ddevice=08A1E9C0)
+librw engine start (E2'b step 3, ADOPTED device 089FA240) 640x480
+ok: engine started on adopted device (d3ddevice=089FA240)
+librw engine start (E2'b step 3, ADOPTED device 08A1ECA0) 640x480
+ok: engine started on adopted device (d3ddevice=08A1ECA0)
+librw engine start (E2'b step 3, ADOPTED device 089F6840) 640x480
+ok: engine started on adopted device (d3ddevice=089F6840)
+librw engine start (E2'b step 3, ADOPTED device 089F5700) 640x480
+ok: engine started on adopted device (d3ddevice=089F5700)
+librw engine start (E2'b step 3, ADOPTED device 08A16CA0) 640x480
+ok: engine started on adopted device (d3ddevice=08A16CA0)
+librw engine start (E2'b step 3, ADOPTED device 08D2EE40) 640x480
+ok: engine started on adopted device (d3ddevice=08D2EE40)
+librw engine start (E2'b step 3, ADOPTED device 08AA29A0) 640x480
+ok: engine started on adopted device (d3ddevice=08AA29A0)
+librw engine start (E2'b step 3, ADOPTED device 08984C60) 640x480
+ok: engine started on adopted device (d3ddevice=08984C60)
+librw engine start (E2'b step 3, ADOPTED device 08947F00) 640x480
+ok: engine started on adopted device (d3ddevice=08947F00)
+librw engine start (E2'b step 3, ADOPTED device 089D4E00) 640x480
+ok: engine started on adopted device (d3ddevice=089D4E00)
+librw engine start (E2'b step 3, ADOPTED device 089CAFC0) 640x480
+ok: engine started on adopted device (d3ddevice=089CAFC0)
+librw engine start (E2'b step 3, ADOPTED device 08D4DC00) 640x480
+ok: engine started on adopted device (d3ddevice=08D4DC00)
+librw engine start (E2'b step 3, ADOPTED device 08D3ED20) 640x480
+ok: engine started on adopted device (d3ddevice=08D3ED20)
+librw engine start (E2'b step 3, ADOPTED device 08D4AA80) 640x480
+ok: engine started on adopted device (d3ddevice=08D4AA80)
+librw engine start (E2'b step 3, ADOPTED device 08D49300) 640x480
+ok: engine started on adopted device (d3ddevice=08D49300)
+librw engine start (E2'b step 3, ADOPTED device 08D488C0) 640x480
+ok: engine started on adopted device (d3ddevice=08D488C0)
+librw engine start (E2'b step 3, ADOPTED device 08D2CA00) 640x480
+ok: engine started on adopted device (d3ddevice=08D2CA00)
+librw engine start (E2'b step 3, ADOPTED device 08D46420) 640x480
+ok: engine started on adopted device (d3ddevice=08D46420)
+librw engine start (E2'b step 3, ADOPTED device 08D5BAA0) 640x480
+ok: engine started on adopted device (d3ddevice=08D5BAA0)
+librw engine start (E2'b step 3, ADOPTED device 08D5ED60) 640x480
+ok: engine started on adopted device (d3ddevice=08D5ED60)
+librw engine start (E2'b step 3, ADOPTED device 08D70120) 640x480
+ok: engine started on adopted device (d3ddevice=08D70120)
+librw engine start (E2'b step 3, ADOPTED device 08D627A0) 640x480
+ok: engine started on adopted device (d3ddevice=08D627A0)
+librw engine start (E2'b step 3, ADOPTED device 08D36960) 640x480
+ok: engine started on adopted device (d3ddevice=08D36960)
+librw engine start (E2'b step 3, ADOPTED device 08D837A0) 640x480
+ok: engine started on adopted device (d3ddevice=08D837A0)
+librw engine start (E2'b step 3, ADOPTED device 08D71160) 640x480
+ok: engine started on adopted device (d3ddevice=08D71160)
+librw engine start (E2'b step 3, ADOPTED device 08E06AA0) 640x480
+ok: engine started on adopted device (d3ddevice=08E06AA0)
+librw engine start (E2'b step 3, ADOPTED device 08DA64E0) 640x480
+ok: engine started on adopted device (d3ddevice=08DA64E0)
+librw engine start (E2'b step 3, ADOPTED device 08D70DA0) 640x480
+ok: engine started on adopted device (d3ddevice=08D70DA0)
+librw engine start (E2'b step 3, ADOPTED device 08B09900) 640x480
+ok: engine started on adopted device (d3ddevice=08B09900)
+librw engine start (E2'b step 3, ADOPTED device 08A6FF00) 640x480
+ok: engine started on adopted device (d3ddevice=08A6FF00)
+librw engine start (E2'b step 3, ADOPTED device 089E1AA0) 640x480
+ok: engine started on adopted device (d3ddevice=089E1AA0)
+librw engine start (E2'b step 3, ADOPTED device 0898DC00) 640x480
+ok: engine started on adopted device (d3ddevice=0898DC00)
+librw engine start (E2'b step 3, ADOPTED device 089B2940) 640x480
+ok: engine started on adopted device (d3ddevice=089B2940)
+librw engine start (E2'b step 3, ADOPTED device 08971700) 640x480
+ok: engine started on adopted device (d3ddevice=08971700)
+librw engine start (E2'b step 3, ADOPTED device 089EA160) 640x480
+ok: engine started on adopted device (d3ddevice=089EA160)
+librw engine start (E2'b step 3, ADOPTED device 089BE340) 640x480
+ok: engine started on adopted device (d3ddevice=089BE340)
+librw engine start (E2'b step 3, ADOPTED device 08997F40) 640x480
+ok: engine started on adopted device (d3ddevice=08997F40)
+librw engine start (E2'b step 3, ADOPTED device 08A827E0) 640x480
+ok: engine started on adopted device (d3ddevice=08A827E0)
+librw engine start (E2'b step 3, ADOPTED device 089ED9E0) 640x480
+ok: engine started on adopted device (d3ddevice=089ED9E0)
+librw engine start (E2'b step 3, ADOPTED device 08A6AC80) 640x480
+ok: engine started on adopted device (d3ddevice=08A6AC80)
+librw engine start (E2'b step 3, ADOPTED device 089E9160) 640x480
+ok: engine started on adopted device (d3ddevice=089E9160)
+librw engine start (E2'b step 3, ADOPTED device 089EBF00) 640x480
+ok: engine started on adopted device (d3ddevice=089EBF00)
+librw engine start (E2'b step 3, ADOPTED device 089F0600) 640x480
+ok: engine started on adopted device (d3ddevice=089F0600)
+librw engine start (E2'b step 3, ADOPTED device 089E8260) 640x480
+ok: engine started on adopted device (d3ddevice=089E8260)
+librw engine start (E2'b step 3, ADOPTED device 089FF340) 640x480
+ok: engine started on adopted device (d3ddevice=089FF340)
+librw engine start (E2'b step 3, ADOPTED device 08ADC940) 640x480
+ok: engine started on adopted device (d3ddevice=08ADC940)
+librw engine start (E2'b step 3, ADOPTED device 08A9DB20) 640x480
+ok: engine started on adopted device (d3ddevice=08A9DB20)
+librw engine start (E2'b step 3, ADOPTED device 08A55FC0) 640x480
+ok: engine started on adopted device (d3ddevice=08A55FC0)
+librw engine start (E2'b step 3, ADOPTED device 08A189E0) 640x480
+ok: engine started on adopted device (d3ddevice=08A189E0)
+librw engine start (E2'b step 3, ADOPTED device 08A62D60) 640x480
+ok: engine started on adopted device (d3ddevice=08A62D60)
+librw engine start (E2'b step 3, ADOPTED device 08A28F80) 640x480
+ok: engine started on adopted device (d3ddevice=08A28F80)
+librw engine start (E2'b step 3, ADOPTED device 089D5000) 640x480
+ok: engine started on adopted device (d3ddevice=089D5000)
+librw engine start (E2'b step 3, ADOPTED device 08B54E40) 640x480
+ok: engine started on adopted device (d3ddevice=08B54E40)
+librw engine start (E2'b step 3, ADOPTED device 089CDE80) 640x480
+ok: engine started on adopted device (d3ddevice=089CDE80)
+librw engine start (E2'b step 3, ADOPTED device 08A70F00) 640x480
+ok: engine started on adopted device (d3ddevice=08A70F00)
+librw engine start (E2'b step 3, ADOPTED device 08A8C3E0) 640x480
+ok: engine started on adopted device (d3ddevice=08A8C3E0)
+librw engine start (E2'b step 3, ADOPTED device 089C7140) 640x480
+ok: engine started on adopted device (d3ddevice=089C7140)
+librw engine start (E2'b step 3, ADOPTED device 08A2F040) 640x480
+ok: engine started on adopted device (d3ddevice=08A2F040)
+librw engine start (E2'b step 3, ADOPTED device 08A509E0) 640x480
+ok: engine started on adopted device (d3ddevice=08A509E0)
+librw engine start (E2'b step 3, ADOPTED device 08A06D00) 640x480
+ok: engine started on adopted device (d3ddevice=08A06D00)
+librw engine start (E2'b step 3, ADOPTED device 08A11240) 640x480
+ok: engine started on adopted device (d3ddevice=08A11240)
+librw engine start (E2'b step 3, ADOPTED device 08A37E60) 640x480
+ok: engine started on adopted device (d3ddevice=08A37E60)
+librw engine start (E2'b step 3, ADOPTED device 08A27340) 640x480
+ok: engine started on adopted device (d3ddevice=08A27340)
+librw engine start (E2'b step 3, ADOPTED device 08A39D80) 640x480
+ok: engine started on adopted device (d3ddevice=08A39D80)
+librw engine start (E2'b step 3, ADOPTED device 08A25500) 640x480
+ok: engine started on adopted device (d3ddevice=08A25500)
+librw engine start (E2'b step 3, ADOPTED device 08A47C60) 640x480
+ok: engine started on adopted device (d3ddevice=08A47C60)
+librw engine start (E2'b step 3, ADOPTED device 08ACC440) 640x480
+ok: engine started on adopted device (d3ddevice=08ACC440)
+librw engine start (E2'b step 3, ADOPTED device 08A62C80) 640x480
+ok: engine started on adopted device (d3ddevice=08A62C80)
+librw engine start (E2'b step 3, ADOPTED device 08A27BC0) 640x480
+ok: engine started on adopted device (d3ddevice=08A27BC0)
+librw engine start (E2'b step 3, ADOPTED device 08A45160) 640x480
+ok: engine started on adopted device (d3ddevice=08A45160)
+librw engine start (E2'b step 3, ADOPTED device 08A2CFE0) 640x480
+ok: engine started on adopted device (d3ddevice=08A2CFE0)
+librw engine start (E2'b step 3, ADOPTED device 089EAAE0) 640x480
+ok: engine started on adopted device (d3ddevice=089EAAE0)
+librw engine start (E2'b step 3, ADOPTED device 08A8AE20) 640x480
+ok: engine started on adopted device (d3ddevice=08A8AE20)
+librw engine start (E2'b step 3, ADOPTED device 08A5EC60) 640x480
+ok: engine started on adopted device (d3ddevice=08A5EC60)
+librw engine start (E2'b step 3, ADOPTED device 08A035C0) 640x480
+ok: engine started on adopted device (d3ddevice=08A035C0)
+librw engine start (E2'b step 3, ADOPTED device 08A9F7C0) 640x480
+ok: engine started on adopted device (d3ddevice=08A9F7C0)
+librw engine start (E2'b step 3, ADOPTED device 08A2ACA0) 640x480
+ok: engine started on adopted device (d3ddevice=08A2ACA0)
+librw engine start (E2'b step 3, ADOPTED device 08A6BD60) 640x480
+ok: engine started on adopted device (d3ddevice=08A6BD60)
+librw engine start (E2'b step 3, ADOPTED device 08A2F8E0) 640x480
+ok: engine started on adopted device (d3ddevice=08A2F8E0)
+librw engine start (E2'b step 3, ADOPTED device 08A323A0) 640x480
+ok: engine started on adopted device (d3ddevice=08A323A0)
+librw engine start (E2'b step 3, ADOPTED device 08A39080) 640x480
+ok: engine started on adopted device (d3ddevice=08A39080)
+librw engine start (E2'b step 3, ADOPTED device 089F3AE0) 640x480
+ok: engine started on adopted device (d3ddevice=089F3AE0)
+librw engine start (E2'b step 3, ADOPTED device 08A18F60) 640x480
+ok: engine started on adopted device (d3ddevice=08A18F60)
+librw engine start (E2'b step 3, ADOPTED device 08A2B2A0) 640x480
+ok: engine started on adopted device (d3ddevice=08A2B2A0)
+librw engine start (E2'b step 3, ADOPTED device 089F5EC0) 640x480
+ok: engine started on adopted device (d3ddevice=089F5EC0)
+librw engine start (E2'b step 3, ADOPTED device 08A29680) 640x480
+ok: engine started on adopted device (d3ddevice=08A29680)
+librw engine start (E2'b step 3, ADOPTED device 08AF2E00) 640x480
+ok: engine started on adopted device (d3ddevice=08AF2E00)
+librw engine start (E2'b step 3, ADOPTED device 089D0460) 640x480
+ok: engine started on adopted device (d3ddevice=089D0460)
+librw engine start (E2'b step 3, ADOPTED device 08AA2F60) 640x480
+ok: engine started on adopted device (d3ddevice=08AA2F60)
+librw engine start (E2'b step 3, ADOPTED device 08A2F100) 640x480
+ok: engine started on adopted device (d3ddevice=08A2F100)
+librw engine start (E2'b step 3, ADOPTED device 08A15460) 640x480
+ok: engine started on adopted device (d3ddevice=08A15460)
+librw engine start (E2'b step 3, ADOPTED device 08A28FC0) 640x480
+ok: engine started on adopted device (d3ddevice=08A28FC0)
+librw engine start (E2'b step 3, ADOPTED device 08AF1C60) 1024x768
+ok: engine started on adopted device (d3ddevice=08AF1C60)
+librw engine start (E2'b step 3, ADOPTED device 089FBBE0) 1024x768
+ok: engine started on adopted device (d3ddevice=089FBBE0)
+librw engine start (E2'b step 3, ADOPTED device 08A04980) 1024x768
+ok: engine started on adopted device (d3ddevice=08A04980)
+librw engine start (E2'b step 3, ADOPTED device 089BA340) 1024x768
+ok: engine started on adopted device (d3ddevice=089BA340)
+librw engine start (E2'b step 3, ADOPTED device 08A5F0A0) 1024x768
+ok: engine started on adopted device (d3ddevice=08A5F0A0)
+librw engine start (E2'b step 3, ADOPTED device 089E3D20) 1024x768
+ok: engine started on adopted device (d3ddevice=089E3D20)
+librw engine start (E2'b step 3, ADOPTED device 089C36E0) 1024x768
+ok: engine started on adopted device (d3ddevice=089C36E0)
+librw engine start (E2'b step 3, ADOPTED device 089DA580) 1024x768
+ok: engine started on adopted device (d3ddevice=089DA580)
+librw engine start (E2'b step 3, ADOPTED device 089EE6E0) 1024x768
+ok: engine started on adopted device (d3ddevice=089EE6E0)
+librw engine start (E2'b step 3, ADOPTED device 089D0700) 1024x768
+ok: engine started on adopted device (d3ddevice=089D0700)
+librw engine start (E2'b step 3, ADOPTED device 089E14C0) 1024x768
+ok: engine started on adopted device (d3ddevice=089E14C0)
+librw engine start (E2'b step 3, ADOPTED device 08A0C1C0) 1024x768
+ok: engine started on adopted device (d3ddevice=08A0C1C0)
+librw engine start (E2'b step 3, ADOPTED device 08B16CA0) 1024x768
+ok: engine started on adopted device (d3ddevice=08B16CA0)
+librw engine start (E2'b step 3, ADOPTED device 08A619C0) 1024x768
+ok: engine started on adopted device (d3ddevice=08A619C0)
+librw engine start (E2'b step 3, ADOPTED device 089CF360) 1024x768
+ok: engine started on adopted device (d3ddevice=089CF360)
+librw engine start (E2'b step 3, ADOPTED device 089D4720) 1024x768
+ok: engine started on adopted device (d3ddevice=089D4720)
+librw engine start (E2'b step 3, ADOPTED device 08961660) 1024x768
+ok: engine started on adopted device (d3ddevice=08961660)
+librw engine start (E2'b step 3, ADOPTED device 089D32A0) 1024x768
+ok: engine started on adopted device (d3ddevice=089D32A0)
+librw engine start (E2'b step 3, ADOPTED device 08AF5E20) 1024x768
+ok: engine started on adopted device (d3ddevice=08AF5E20)
+librw engine start (E2'b step 3, ADOPTED device 08AB87A0) 1024x768
+ok: engine started on adopted device (d3ddevice=08AB87A0)
+librw engine start (E2'b step 3, ADOPTED device 08B405E0) 1024x768
+ok: engine started on adopted device (d3ddevice=08B405E0)
+librw engine start (E2'b step 3, ADOPTED device 08A08DC0) 1024x768
+ok: engine started on adopted device (d3ddevice=08A08DC0)
+librw engine start (E2'b step 3, ADOPTED device 08A1FB80) 1024x768
+ok: engine started on adopted device (d3ddevice=08A1FB80)
+librw engine start (E2'b step 3, ADOPTED device 08ABFE40) 1024x768
+ok: engine started on adopted device (d3ddevice=08ABFE40)
+librw engine start (E2'b step 3, ADOPTED device 08AF4200) 1024x768
+ok: engine started on adopted device (d3ddevice=08AF4200)
+librw engine start (E2'b step 3, ADOPTED device 08B42740) 1024x768
+ok: engine started on adopted device (d3ddevice=08B42740)
+librw engine start (E2'b step 3, ADOPTED device 08A957C0) 1024x768
+ok: engine started on adopted device (d3ddevice=08A957C0)
+librw engine start (E2'b step 3, ADOPTED device 089D3BC0) 1024x768
+ok: engine started on adopted device (d3ddevice=089D3BC0)
+librw engine start (E2'b step 3, ADOPTED device 08A89EE0) 1024x768
+ok: engine started on adopted device (d3ddevice=08A89EE0)
+librw engine start (E2'b step 3, ADOPTED device 08A0AB80) 1024x768
+ok: engine started on adopted device (d3ddevice=08A0AB80)
+librw engine start (E2'b step 3, ADOPTED device 08A0F760) 1024x768
+ok: engine started on adopted device (d3ddevice=08A0F760)
+librw engine start (E2'b step 3, ADOPTED device 08D3A780) 1024x768
+ok: engine started on adopted device (d3ddevice=08D3A780)
+librw engine start (E2'b step 3, ADOPTED device 08DF4D80) 1024x768
+ok: engine started on adopted device (d3ddevice=08DF4D80)
+librw engine start (E2'b step 3, ADOPTED device 08DE3A60) 1024x768
+ok: engine started on adopted device (d3ddevice=08DE3A60)
+librw engine start (E2'b step 3, ADOPTED device 08DD09E0) 640x480
+ok: engine started on adopted device (d3ddevice=08DD09E0)
+librw engine start (E2'b step 3, ADOPTED device 08D55A80) 1024x768
+ok: engine started on adopted device (d3ddevice=08D55A80)
+librw engine start (E2'b step 3, ADOPTED device 08D3E5E0) 1024x768
+ok: engine started on adopted device (d3ddevice=08D3E5E0)
+librw engine start (E2'b step 3, ADOPTED device 08DC7560) 640x480
+ok: engine started on adopted device (d3ddevice=08DC7560)
+librw engine start (E2'b step 3, ADOPTED device 08DA9B40) 640x480
+ok: engine started on adopted device (d3ddevice=08DA9B40)
+librw engine start (E2'b step 3, ADOPTED device 08A259C0) 640x480
+ok: engine started on adopted device (d3ddevice=08A259C0)
+librw engine start (E2'b step 3, ADOPTED device 08A29DE0) 1024x768
+ok: engine started on adopted device (d3ddevice=08A29DE0)
+librw engine start (E2'b step 3, ADOPTED device 08A151C0) 1024x768
+ok: engine started on adopted device (d3ddevice=08A151C0)
+librw engine start (E2'b step 3, ADOPTED device 08ACEE20) 1024x768
+ok: engine started on adopted device (d3ddevice=08ACEE20)
+librw engine start (E2'b step 3, ADOPTED device 089E2E60) 1024x768
+ok: engine started on adopted device (d3ddevice=089E2E60)
+librw engine start (E2'b step 3, ADOPTED device 08A627E0) 1024x768
+ok: engine started on adopted device (d3ddevice=08A627E0)
+librw engine start (E2'b step 3, ADOPTED device 08AB7420) 1024x768
+ok: engine started on adopted device (d3ddevice=08AB7420)
+librw engine start (E2'b step 3, ADOPTED device 08A26760) 1024x768
+ok: engine started on adopted device (d3ddevice=08A26760)
+librw engine start (E2'b step 3, ADOPTED device 08AC3EA0) 1024x768
+ok: engine started on adopted device (d3ddevice=08AC3EA0)
+librw engine start (E2'b step 3, ADOPTED device 08A0FEC0) 1024x768
+ok: engine started on adopted device (d3ddevice=08A0FEC0)
+librw engine start (E2'b step 3, ADOPTED device 08B278E0) 1024x768
+ok: engine started on adopted device (d3ddevice=08B278E0)
+librw engine start (E2'b step 3, ADOPTED device 08A2B360) 1024x768
+ok: engine started on adopted device (d3ddevice=08A2B360)
+librw engine start (E2'b step 3, ADOPTED device 08A387C0) 1024x768
+ok: engine started on adopted device (d3ddevice=08A387C0)
+librw engine start (E2'b step 3, ADOPTED device 08A13E60) 640x480
+ok: engine started on adopted device (d3ddevice=08A13E60)
+librw engine start (E2'b step 3, ADOPTED device 08A4BFE0) 640x480
+ok: engine started on adopted device (d3ddevice=08A4BFE0)
+librw engine start (E2'b step 3, ADOPTED device 08A2FA60) 640x480
+ok: engine started on adopted device (d3ddevice=08A2FA60)
+librw engine start (E2'b step 3, ADOPTED device 08AA5AE0) 640x480
+ok: engine started on adopted device (d3ddevice=08AA5AE0)
+librw engine start (E2'b step 3, ADOPTED device 089DB900) 640x480
+ok: engine started on adopted device (d3ddevice=089DB900)
+librw engine start (E2'b step 3, ADOPTED device 08A49DA0) 640x480
+ok: engine started on adopted device (d3ddevice=08A49DA0)
+librw engine start (E2'b step 3, ADOPTED device 08A50AE0) 640x480
+ok: engine started on adopted device (d3ddevice=08A50AE0)
+librw engine start (E2'b step 3, ADOPTED device 08D7BCC0) 640x480
+ok: engine started on adopted device (d3ddevice=08D7BCC0)
+librw engine start (E2'b step 3, ADOPTED device 08D4C700) 640x480
+ok: engine started on adopted device (d3ddevice=08D4C700)
+librw engine start (E2'b step 3, ADOPTED device 08D6E880) 640x480
+ok: engine started on adopted device (d3ddevice=08D6E880)
+librw engine start (E2'b step 3, ADOPTED device 08D57C40) 640x480
+ok: engine started on adopted device (d3ddevice=08D57C40)
+librw engine start (E2'b step 3, ADOPTED device 08DE8AA0) 640x480
+ok: engine started on adopted device (d3ddevice=08DE8AA0)
+librw engine start (E2'b step 3, ADOPTED device 08D79740) 640x480
+ok: engine started on adopted device (d3ddevice=08D79740)
+librw engine start (E2'b step 3, ADOPTED device 08D69340) 640x480
+ok: engine started on adopted device (d3ddevice=08D69340)
+librw engine start (E2'b step 3, ADOPTED device 08D40180) 640x480
+ok: engine started on adopted device (d3ddevice=08D40180)
+librw engine start (E2'b step 3, ADOPTED device 08D5B7A0) 640x480
+ok: engine started on adopted device (d3ddevice=08D5B7A0)
+librw engine start (E2'b step 3, ADOPTED device 08D75C00) 640x480
+ok: engine started on adopted device (d3ddevice=08D75C00)
+librw engine start (E2'b step 3, ADOPTED device 08D46600) 640x480
+ok: engine started on adopted device (d3ddevice=08D46600)
+librw engine start (E2'b step 3, ADOPTED device 08DDA4A0) 640x480
+ok: engine started on adopted device (d3ddevice=08DDA4A0)
+librw engine start (E2'b step 3, ADOPTED device 08A44A00) 640x480
+ok: engine started on adopted device (d3ddevice=08A44A00)
+librw engine start (E2'b step 3, ADOPTED device 08B252E0) 640x480
+ok: engine started on adopted device (d3ddevice=08B252E0)
+librw engine start (E2'b step 3, ADOPTED device 08AF2E00) 640x480
+ok: engine started on adopted device (d3ddevice=08AF2E00)
+librw engine start (E2'b step 3, ADOPTED device 08AE42A0) 640x480
+ok: engine started on adopted device (d3ddevice=08AE42A0)
+librw engine start (E2'b step 3, ADOPTED device 08AE3D40) 640x480
+ok: engine started on adopted device (d3ddevice=08AE3D40)
+librw engine start (E2'b step 3, ADOPTED device 08AF3BC0) 640x480
+ok: engine started on adopted device (d3ddevice=08AF3BC0)
+librw engine start (E2'b step 3, ADOPTED device 08AB9660) 640x480
+ok: engine started on adopted device (d3ddevice=08AB9660)
+librw engine start (E2'b step 3, ADOPTED device 089E7700) 640x480
+ok: engine started on adopted device (d3ddevice=089E7700)
+librw engine start (E2'b step 3, ADOPTED device 08B120A0) 640x480
+ok: engine started on adopted device (d3ddevice=08B120A0)
+librw engine start (E2'b step 3, ADOPTED device 08B79F40) 640x480
+ok: engine started on adopted device (d3ddevice=08B79F40)
+librw engine start (E2'b step 3, ADOPTED device 08ADAA60) 640x480
+ok: engine started on adopted device (d3ddevice=08ADAA60)
+librw engine start (E2'b step 3, ADOPTED device 08A44E20) 640x480
+ok: engine started on adopted device (d3ddevice=08A44E20)
+librw engine start (E2'b step 3, ADOPTED device 08AC8A40) 640x480
+ok: engine started on adopted device (d3ddevice=08AC8A40)
+librw engine start (E2'b step 3, ADOPTED device 08B2FA20) 640x480
+ok: engine started on adopted device (d3ddevice=08B2FA20)
+librw engine start (E2'b step 3, ADOPTED device 089E4860) 640x480
+ok: engine started on adopted device (d3ddevice=089E4860)
+librw engine start (E2'b step 3, ADOPTED device 08AB4700) 640x480
+ok: engine started on adopted device (d3ddevice=08AB4700)
+librw engine start (E2'b step 3, ADOPTED device 08A01820) 640x480
+ok: engine started on adopted device (d3ddevice=08A01820)
+librw engine start (E2'b step 3, ADOPTED device 089E5200) 640x480
+ok: engine started on adopted device (d3ddevice=089E5200)
+librw engine start (E2'b step 3, ADOPTED device 08A4D220) 640x480
+ok: engine started on adopted device (d3ddevice=08A4D220)
+librw engine start (E2'b step 3, ADOPTED device 08ADF000) 640x480
+ok: engine started on adopted device (d3ddevice=08ADF000)
+librw engine start (E2'b step 3, ADOPTED device 08ACE4A0) 640x480
+ok: engine started on adopted device (d3ddevice=08ACE4A0)
+librw engine start (E2'b step 3, ADOPTED device 08A70600) 640x480
+ok: engine started on adopted device (d3ddevice=08A70600)
+librw engine start (E2'b step 3, ADOPTED device 08AB8720) 640x480
+ok: engine started on adopted device (d3ddevice=08AB8720)
+librw engine start (E2'b step 3, ADOPTED device 08A7C800) 640x480
+ok: engine started on adopted device (d3ddevice=08A7C800)
+librw engine start (E2'b step 3, ADOPTED device 08B0E120) 640x480
+ok: engine started on adopted device (d3ddevice=08B0E120)
+librw engine start (E2'b step 3, ADOPTED device 08AD5940) 640x480
+ok: engine started on adopted device (d3ddevice=08AD5940)
+librw engine start (E2'b step 3, ADOPTED device 089965A0) 640x480
+ok: engine started on adopted device (d3ddevice=089965A0)
+librw engine start (E2'b step 3, ADOPTED device 08A01B80) 640x480
+ok: engine started on adopted device (d3ddevice=08A01B80)
+librw engine start (E2'b step 3, ADOPTED device 0897EF00) 640x480
+ok: engine started on adopted device (d3ddevice=0897EF00)
+librw engine start (E2'b step 3, ADOPTED device 08AA49E0) 640x480
+ok: engine started on adopted device (d3ddevice=08AA49E0)
+librw engine start (E2'b step 3, ADOPTED device 08A21580) 640x480
+ok: engine started on adopted device (d3ddevice=08A21580)
+librw engine start (E2'b step 3, ADOPTED device 0898D680) 640x480
+ok: engine started on adopted device (d3ddevice=0898D680)
+librw engine start (E2'b step 3, ADOPTED device 08AAB0A0) 640x480
+ok: engine started on adopted device (d3ddevice=08AAB0A0)
+librw engine start (E2'b step 3, ADOPTED device 08A90CC0) 640x480
+ok: engine started on adopted device (d3ddevice=08A90CC0)
+librw engine start (E2'b step 3, ADOPTED device 089718C0) 640x480
+ok: engine started on adopted device (d3ddevice=089718C0)
+librw engine start (E2'b step 3, ADOPTED device 08ABEA40) 640x480
+ok: engine started on adopted device (d3ddevice=08ABEA40)
+librw engine start (E2'b step 3, ADOPTED device 08A839C0) 640x480
+ok: engine started on adopted device (d3ddevice=08A839C0)
+librw engine start (E2'b step 3, ADOPTED device 08B26960) 640x480
+ok: engine started on adopted device (d3ddevice=08B26960)
+librw engine start (E2'b step 3, ADOPTED device 089EEC40) 640x480
+ok: engine started on adopted device (d3ddevice=089EEC40)
+librw engine start (E2'b step 3, ADOPTED device 089E1600) 640x480
+ok: engine started on adopted device (d3ddevice=089E1600)
+librw engine start (E2'b step 3, ADOPTED device 08AAD080) 640x480
+ok: engine started on adopted device (d3ddevice=08AAD080)
+librw engine start (E2'b step 3, ADOPTED device 089D0000) 640x480
+ok: engine started on adopted device (d3ddevice=089D0000)
+librw engine start (E2'b step 3, ADOPTED device 08991B20) 640x480
+ok: engine started on adopted device (d3ddevice=08991B20)
+librw engine start (E2'b step 3, ADOPTED device 08B0F540) 640x480
+ok: engine started on adopted device (d3ddevice=08B0F540)
+librw engine start (E2'b step 3, ADOPTED device 08AA35C0) 640x480
+ok: engine started on adopted device (d3ddevice=08AA35C0)
+librw engine start (E2'b step 3, ADOPTED device 08994240) 640x480
+ok: engine started on adopted device (d3ddevice=08994240)
+librw engine start (E2'b step 3, ADOPTED device 08999B80) 640x480
+ok: engine started on adopted device (d3ddevice=08999B80)
+librw engine start (E2'b step 3, ADOPTED device 08A75100) 640x480
+ok: engine started on adopted device (d3ddevice=08A75100)
+librw engine start (E2'b step 3, ADOPTED device 08AB7B20) 640x480
+ok: engine started on adopted device (d3ddevice=08AB7B20)
+librw engine start (E2'b step 3, ADOPTED device 08B24640) 640x480
+ok: engine started on adopted device (d3ddevice=08B24640)
+librw engine start (E2'b step 3, ADOPTED device 08A8D560) 640x480
+ok: engine started on adopted device (d3ddevice=08A8D560)
+librw engine start (E2'b step 3, ADOPTED device 08974D80) 640x480
+ok: engine started on adopted device (d3ddevice=08974D80)
+librw engine start (E2'b step 3, ADOPTED device 08A97FC0) 640x480
+ok: engine started on adopted device (d3ddevice=08A97FC0)
+librw engine start (E2'b step 3, ADOPTED device 089692C0) 640x480
+ok: engine started on adopted device (d3ddevice=089692C0)
+librw engine start (E2'b step 3, ADOPTED device 08A13C00) 640x480
+ok: engine started on adopted device (d3ddevice=08A13C00)
+librw engine start (E2'b step 3, ADOPTED device 089A6D60) 640x480
+ok: engine started on adopted device (d3ddevice=089A6D60)
+librw engine start (E2'b step 3, ADOPTED device 0899F180) 640x480
+ok: engine started on adopted device (d3ddevice=0899F180)
+librw engine start (E2'b step 3, ADOPTED device 08B57960) 640x480
+ok: engine started on adopted device (d3ddevice=08B57960)
+librw engine start (E2'b step 3, ADOPTED device 08A7B3E0) 640x480
+ok: engine started on adopted device (d3ddevice=08A7B3E0)
+librw engine start (E2'b step 3, ADOPTED device 08ABF000) 640x480
+ok: engine started on adopted device (d3ddevice=08ABF000)
+librw engine start (E2'b step 3, ADOPTED device 08B12B40) 640x480
+ok: engine started on adopted device (d3ddevice=08B12B40)
+librw engine start (E2'b step 3, ADOPTED device 08A091A0) 640x480
+ok: engine started on adopted device (d3ddevice=08A091A0)
+librw engine start (E2'b step 3, ADOPTED device 08B09280) 640x480
+ok: engine started on adopted device (d3ddevice=08B09280)
+librw engine start (E2'b step 3, ADOPTED device 0899FB80) 640x480
+ok: engine started on adopted device (d3ddevice=0899FB80)
+librw engine start (E2'b step 3, ADOPTED device 089B2320) 640x480
+ok: engine started on adopted device (d3ddevice=089B2320)
+librw engine start (E2'b step 3, ADOPTED device 08A0F440) 640x480
+ok: engine started on adopted device (d3ddevice=08A0F440)
+librw engine start (E2'b step 3, ADOPTED device 08A3E9A0) 640x480
+ok: engine started on adopted device (d3ddevice=08A3E9A0)
+librw engine start (E2'b step 3, ADOPTED device 089F25A0) 640x480
+ok: engine started on adopted device (d3ddevice=089F25A0)
+librw engine start (E2'b step 3, ADOPTED device 08A11000) 640x480
+ok: engine started on adopted device (d3ddevice=08A11000)
+librw engine start (E2'b step 3, ADOPTED device 08A3DB20) 640x480
+ok: engine started on adopted device (d3ddevice=08A3DB20)
+librw engine start (E2'b step 3, ADOPTED device 08A984A0) 640x480
+ok: engine started on adopted device (d3ddevice=08A984A0)
+librw engine start (E2'b step 3, ADOPTED device 089D27C0) 640x480
+ok: engine started on adopted device (d3ddevice=089D27C0)
+librw engine start (E2'b step 3, ADOPTED device 08A34A80) 640x480
+ok: engine started on adopted device (d3ddevice=08A34A80)
+librw engine start (E2'b step 3, ADOPTED device 08A347A0) 640x480
+ok: engine started on adopted device (d3ddevice=08A347A0)
+librw engine start (E2'b step 3, ADOPTED device 08A1DAC0) 640x480
+ok: engine started on adopted device (d3ddevice=08A1DAC0)
+librw engine start (E2'b step 3, ADOPTED device 08A46960) 640x480
+ok: engine started on adopted device (d3ddevice=08A46960)
+librw engine start (E2'b step 3, ADOPTED device 08A0AF00) 640x480
+ok: engine started on adopted device (d3ddevice=08A0AF00)
+librw engine start (E2'b step 3, ADOPTED device 08A1C800) 640x480
+ok: engine started on adopted device (d3ddevice=08A1C800)
+librw engine start (E2'b step 3, ADOPTED device 08A3E9A0) 640x480
+ok: engine started on adopted device (d3ddevice=08A3E9A0)
+librw engine start (E2'b step 3, ADOPTED device 08A0F340) 640x480
+ok: engine started on adopted device (d3ddevice=08A0F340)
+librw engine start (E2'b step 3, ADOPTED device 08A44100) 640x480
+ok: engine started on adopted device (d3ddevice=08A44100)
+librw engine start (E2'b step 3, ADOPTED device 08AC4F20) 640x480
+ok: engine started on adopted device (d3ddevice=08AC4F20)
+librw engine start (E2'b step 3, ADOPTED device 08A3A460) 640x480
+ok: engine started on adopted device (d3ddevice=08A3A460)
+librw engine start (E2'b step 3, ADOPTED device 08A61720) 640x480
+ok: engine started on adopted device (d3ddevice=08A61720)
+librw engine start (E2'b step 3, ADOPTED device 08A9E600) 640x480
+ok: engine started on adopted device (d3ddevice=08A9E600)
+librw engine start (E2'b step 3, ADOPTED device 08A50F20) 640x480
+ok: engine started on adopted device (d3ddevice=08A50F20)
+librw engine start (E2'b step 3, ADOPTED device 089E6CE0) 640x480
+ok: engine started on adopted device (d3ddevice=089E6CE0)
+librw engine start (E2'b step 3, ADOPTED device 089C3820) 640x480
+ok: engine started on adopted device (d3ddevice=089C3820)
+librw engine start (E2'b step 3, ADOPTED device 08A664C0) 640x480
+ok: engine started on adopted device (d3ddevice=08A664C0)
+librw engine start (E2'b step 3, ADOPTED device 08AB4A80) 640x480
+ok: engine started on adopted device (d3ddevice=08AB4A80)
+librw engine start (E2'b step 3, ADOPTED device 08A224A0) 640x480
+ok: engine started on adopted device (d3ddevice=08A224A0)
+librw engine start (E2'b step 3, ADOPTED device 08A210A0) 640x480
+ok: engine started on adopted device (d3ddevice=08A210A0)
+librw engine start (E2'b step 3, ADOPTED device 089D9F20) 640x480
+ok: engine started on adopted device (d3ddevice=089D9F20)
+librw engine start (E2'b step 3, ADOPTED device 08A11C40) 640x480
+ok: engine started on adopted device (d3ddevice=08A11C40)
+librw engine start (E2'b step 3, ADOPTED device 08A37BE0) 640x480
+ok: engine started on adopted device (d3ddevice=08A37BE0)
+librw engine start (E2'b step 3, ADOPTED device 08A38CE0) 640x480
+ok: engine started on adopted device (d3ddevice=08A38CE0)
+librw engine start (E2'b step 3, ADOPTED device 08A35500) 640x480
+ok: engine started on adopted device (d3ddevice=08A35500)
+librw engine start (E2'b step 3, ADOPTED device 08A76E00) 640x480
+ok: engine started on adopted device (d3ddevice=08A76E00)
+librw engine start (E2'b step 3, ADOPTED device 08A41420) 640x480
+ok: engine started on adopted device (d3ddevice=08A41420)
+librw engine start (E2'b step 3, ADOPTED device 08A14000) 640x480
+ok: engine started on adopted device (d3ddevice=08A14000)
+librw engine start (E2'b step 3, ADOPTED device 08AF8520) 640x480
+ok: engine started on adopted device (d3ddevice=08AF8520)
+librw engine start (E2'b step 3, ADOPTED device 08A33300) 640x480
+ok: engine started on adopted device (d3ddevice=08A33300)
+librw engine start (E2'b step 3, ADOPTED device 089C6340) 640x480
+ok: engine started on adopted device (d3ddevice=089C6340)
+librw engine start (E2'b step 3, ADOPTED device 08A34620) 640x480
+ok: engine started on adopted device (d3ddevice=08A34620)
+librw engine start (E2'b step 3, ADOPTED device 08A0EA40) 640x480
+ok: engine started on adopted device (d3ddevice=08A0EA40)
+librw engine start (E2'b step 3, ADOPTED device 08A00980) 640x480
+ok: engine started on adopted device (d3ddevice=08A00980)
+librw engine start (E2'b step 3, ADOPTED device 08A471A0) 640x480
+ok: engine started on adopted device (d3ddevice=08A471A0)
+librw engine start (E2'b step 3, ADOPTED device 08ABB660) 640x480
+ok: engine started on adopted device (d3ddevice=08ABB660)
+librw engine start (E2'b step 3, ADOPTED device 089FA7C0) 640x480
+ok: engine started on adopted device (d3ddevice=089FA7C0)
+librw engine start (E2'b step 3, ADOPTED device 08A4CF60) 640x480
+ok: engine started on adopted device (d3ddevice=08A4CF60)
+librw engine start (E2'b step 3, ADOPTED device 08AB75C0) 640x480
+ok: engine started on adopted device (d3ddevice=08AB75C0)
+librw engine start (E2'b step 3, ADOPTED device 08992660) 640x480
+ok: engine started on adopted device (d3ddevice=08992660)
+librw engine start (E2'b step 3, ADOPTED device 08AA7900) 640x480
+ok: engine started on adopted device (d3ddevice=08AA7900)
+librw engine start (E2'b step 3, ADOPTED device 08AC5C20) 640x480
+ok: engine started on adopted device (d3ddevice=08AC5C20)
+librw engine start (E2'b step 3, ADOPTED device 08948CE0) 640x480
+ok: engine started on adopted device (d3ddevice=08948CE0)
+librw engine start (E2'b step 3, ADOPTED device 0895EB60) 640x480
+ok: engine started on adopted device (d3ddevice=0895EB60)
+librw engine start (E2'b step 3, ADOPTED device 08A16E80) 640x480
+ok: engine started on adopted device (d3ddevice=08A16E80)
+librw engine start (E2'b step 3, ADOPTED device 08A3C5A0) 640x480
+ok: engine started on adopted device (d3ddevice=08A3C5A0)
+librw engine start (E2'b step 3, ADOPTED device 08A47940) 640x480
+ok: engine started on adopted device (d3ddevice=08A47940)
+librw engine start (E2'b step 3, ADOPTED device 089A09C0) 640x480
+ok: engine started on adopted device (d3ddevice=089A09C0)
+librw engine start (E2'b step 3, ADOPTED device 08A88F00) 640x480
+ok: engine started on adopted device (d3ddevice=08A88F00)
+librw engine start (E2'b step 3, ADOPTED device 08A12A20) 640x480
+ok: engine started on adopted device (d3ddevice=08A12A20)
+librw engine start (E2'b step 3, ADOPTED device 08A6E860) 640x480
+ok: engine started on adopted device (d3ddevice=08A6E860)
+librw engine start (E2'b step 3, ADOPTED device 08A42D40) 640x480
+ok: engine started on adopted device (d3ddevice=08A42D40)
+librw engine start (E2'b step 3, ADOPTED device 08A196A0) 640x480
+ok: engine started on adopted device (d3ddevice=08A196A0)
+librw engine start (E2'b step 3, ADOPTED device 089D4720) 640x480
+ok: engine started on adopted device (d3ddevice=089D4720)
+librw engine start (E2'b step 3, ADOPTED device 08A37460) 800x600
+ok: engine started on adopted device (d3ddevice=08A37460)
+librw engine start (E2'b step 3, ADOPTED device 08A0E500) 800x600
+ok: engine started on adopted device (d3ddevice=08A0E500)
+librw engine start (E2'b step 3, ADOPTED device 08ADFE00) 800x600
+ok: engine started on adopted device (d3ddevice=08ADFE00)
+librw engine start (E2'b step 3, ADOPTED device 08AB2FA0) 800x600
+ok: engine started on adopted device (d3ddevice=08AB2FA0)
+librw engine start (E2'b step 3, ADOPTED device 08A40DA0) 800x600
+ok: engine started on adopted device (d3ddevice=08A40DA0)
+librw engine start (E2'b step 3, ADOPTED device 089F1800) 800x600
+ok: engine started on adopted device (d3ddevice=089F1800)
+librw engine start (E2'b step 3, ADOPTED device 08AAFA40) 800x600
+ok: engine started on adopted device (d3ddevice=08AAFA40)
+librw engine start (E2'b step 3, ADOPTED device 08A39FA0) 800x600
+ok: engine started on adopted device (d3ddevice=08A39FA0)
+librw engine start (E2'b step 3, ADOPTED device 08A62E40) 800x600
+ok: engine started on adopted device (d3ddevice=08A62E40)
+librw engine start (E2'b step 3, ADOPTED device 08ABCB80) 800x600
+ok: engine started on adopted device (d3ddevice=08ABCB80)
+librw engine start (E2'b step 3, ADOPTED device 08A0B2C0) 800x600
+ok: engine started on adopted device (d3ddevice=08A0B2C0)
+librw engine start (E2'b step 3, ADOPTED device 08A3BA60) 800x600
+ok: engine started on adopted device (d3ddevice=08A3BA60)
+librw engine start (E2'b step 3, ADOPTED device 089B5900) 800x600
+ok: engine started on adopted device (d3ddevice=089B5900)
+librw engine start (E2'b step 3, ADOPTED device 08A16F80) 800x600
+ok: engine started on adopted device (d3ddevice=08A16F80)
+librw engine start (E2'b step 3, ADOPTED device 089F0EA0) 800x600
+ok: engine started on adopted device (d3ddevice=089F0EA0)
+librw engine start (E2'b step 3, ADOPTED device 08A1B160) 800x600
+ok: engine started on adopted device (d3ddevice=08A1B160)
+librw engine start (E2'b step 3, ADOPTED device 08A19C00) 800x600
+ok: engine started on adopted device (d3ddevice=08A19C00)
+librw engine start (E2'b step 3, ADOPTED device 08A73740) 800x600
+ok: engine started on adopted device (d3ddevice=08A73740)
+librw engine start (E2'b step 3, ADOPTED device 08A81D60) 800x600
+ok: engine started on adopted device (d3ddevice=08A81D60)
+librw engine start (E2'b step 3, ADOPTED device 08AC3B60) 800x600
+ok: engine started on adopted device (d3ddevice=08AC3B60)
+librw engine start (E2'b step 3, ADOPTED device 08AA7D60) 800x600
+ok: engine started on adopted device (d3ddevice=08AA7D60)
+librw engine start (E2'b step 3, ADOPTED device 08A2C840) 800x600
+ok: engine started on adopted device (d3ddevice=08A2C840)
+librw engine start (E2'b step 3, ADOPTED device 089FE340) 800x600
+ok: engine started on adopted device (d3ddevice=089FE340)
+librw engine start (E2'b step 3, ADOPTED device 08A52A00) 800x600
+ok: engine started on adopted device (d3ddevice=08A52A00)
+librw engine start (E2'b step 3, ADOPTED device 08A40460) 800x600
+ok: engine started on adopted device (d3ddevice=08A40460)
+librw engine start (E2'b step 3, ADOPTED device 08A2C900) 800x600
+ok: engine started on adopted device (d3ddevice=08A2C900)
+librw engine start (E2'b step 3, ADOPTED device 08A3C240) 800x600
+ok: engine started on adopted device (d3ddevice=08A3C240)
+librw engine start (E2'b step 3, ADOPTED device 08A419C0) 800x600
+ok: engine started on adopted device (d3ddevice=08A419C0)
+librw engine start (E2'b step 3, ADOPTED device 08AAA8C0) 800x600
+ok: engine started on adopted device (d3ddevice=08AAA8C0)
+librw engine start (E2'b step 3, ADOPTED device 08A112A0) 800x600
+ok: engine started on adopted device (d3ddevice=08A112A0)
+librw engine start (E2'b step 3, ADOPTED device 08A7DD80) 800x600
+ok: engine started on adopted device (d3ddevice=08A7DD80)
+librw engine start (E2'b step 3, ADOPTED device 089FF540) 800x600
+ok: engine started on adopted device (d3ddevice=089FF540)
+librw engine start (E2'b step 3, ADOPTED device 08B09680) 800x600
+ok: engine started on adopted device (d3ddevice=08B09680)
+librw engine start (E2'b step 3, ADOPTED device 08A18900) 800x600
+ok: engine started on adopted device (d3ddevice=08A18900)
+librw engine start (E2'b step 3, ADOPTED device 089C9860) 800x600
+ok: engine started on adopted device (d3ddevice=089C9860)
+librw engine start (E2'b step 3, ADOPTED device 08AD10E0) 800x600
+ok: engine started on adopted device (d3ddevice=08AD10E0)
+librw engine start (E2'b step 3, ADOPTED device 0899B6E0) 800x600
+ok: engine started on adopted device (d3ddevice=0899B6E0)
+librw engine start (E2'b step 3, ADOPTED device 08A9FE40) 800x600
+ok: engine started on adopted device (d3ddevice=08A9FE40)
+librw engine start (E2'b step 3, ADOPTED device 089F4880) 800x600
+ok: engine started on adopted device (d3ddevice=089F4880)
+librw engine start (E2'b step 3, ADOPTED device 089F8900) 800x600
+ok: engine started on adopted device (d3ddevice=089F8900)
+librw engine start (E2'b step 3, ADOPTED device 08A67BE0) 640x480
+ok: engine started on adopted device (d3ddevice=08A67BE0)
+librw engine start (E2'b step 3, ADOPTED device 08A15BA0) 800x600
+ok: engine started on adopted device (d3ddevice=08A15BA0)
+librw engine start (E2'b step 3, ADOPTED device 089AAB00) 800x600
+ok: engine started on adopted device (d3ddevice=089AAB00)
+librw engine start (E2'b step 3, ADOPTED device 08A07BA0) 800x600
+ok: engine started on adopted device (d3ddevice=08A07BA0)
+librw engine start (E2'b step 3, ADOPTED device 08A03200) 800x600
+ok: engine started on adopted device (d3ddevice=08A03200)
+librw engine start (E2'b step 3, ADOPTED device 089776A0) 800x600
+ok: engine started on adopted device (d3ddevice=089776A0)
+librw engine start (E2'b step 3, ADOPTED device 08A02DE0) 800x600
+ok: engine started on adopted device (d3ddevice=08A02DE0)
+librw engine start (E2'b step 3, ADOPTED device 08A095E0) 800x600
+ok: engine started on adopted device (d3ddevice=08A095E0)
+librw engine start (E2'b step 3, ADOPTED device 08A39360) 800x600
+ok: engine started on adopted device (d3ddevice=08A39360)
+librw engine start (E2'b step 3, ADOPTED device 08A26EC0) 800x600
+ok: engine started on adopted device (d3ddevice=08A26EC0)
+librw engine start (E2'b step 3, ADOPTED device 08A37FE0) 800x600
+ok: engine started on adopted device (d3ddevice=08A37FE0)
+librw engine start (E2'b step 3, ADOPTED device 08D75C00) 800x600
+ok: engine started on adopted device (d3ddevice=08D75C00)
+librw engine start (E2'b step 3, ADOPTED device 08D4EC40) 800x600
+ok: engine started on adopted device (d3ddevice=08D4EC40)
+librw engine start (E2'b step 3, ADOPTED device 08ACB6A0) 800x600
+ok: engine started on adopted device (d3ddevice=08ACB6A0)
+librw engine start (E2'b step 3, ADOPTED device 08A277C0) 800x600
+ok: engine started on adopted device (d3ddevice=08A277C0)
+librw engine start (E2'b step 3, ADOPTED device 08A4D400) 800x600
+ok: engine started on adopted device (d3ddevice=08A4D400)
+librw engine start (E2'b step 3, ADOPTED device 08A23DE0) 800x600
+ok: engine started on adopted device (d3ddevice=08A23DE0)
+librw engine start (E2'b step 3, ADOPTED device 08AE97C0) 800x600
+ok: engine started on adopted device (d3ddevice=08AE97C0)
+librw engine start (E2'b step 3, ADOPTED device 08AAD5A0) 800x600
+ok: engine started on adopted device (d3ddevice=08AAD5A0)
+librw engine start (E2'b step 3, ADOPTED device 08A349E0) 800x600
+ok: engine started on adopted device (d3ddevice=08A349E0)
+librw engine start (E2'b step 3, ADOPTED device 089F9EC0) 800x600
+ok: engine started on adopted device (d3ddevice=089F9EC0)
+librw engine start (E2'b step 3, ADOPTED device 08A4E2A0) 800x600
+ok: engine started on adopted device (d3ddevice=08A4E2A0)
+librw engine start (E2'b step 3, ADOPTED device 08A2ED20) 800x600
+ok: engine started on adopted device (d3ddevice=08A2ED20)
+librw engine start (E2'b step 3, ADOPTED device 08A178C0) 800x600
+ok: engine started on adopted device (d3ddevice=08A178C0)
+librw engine start (E2'b step 3, ADOPTED device 08ACC640) 800x600
+ok: engine started on adopted device (d3ddevice=08ACC640)
+librw engine start (E2'b step 3, ADOPTED device 08ABCD20) 800x600
+ok: engine started on adopted device (d3ddevice=08ABCD20)
+librw engine start (E2'b step 3, ADOPTED device 08AD3440) 800x600
+ok: engine started on adopted device (d3ddevice=08AD3440)
+librw engine start (E2'b step 3, ADOPTED device 08A5AB40) 800x600
+ok: engine started on adopted device (d3ddevice=08A5AB40)
+librw engine start (E2'b step 3, ADOPTED device 08B6EA60) 800x600
+ok: engine started on adopted device (d3ddevice=08B6EA60)
+librw engine start (E2'b step 3, ADOPTED device 08A2C1E0) 640x480
+ok: engine started on adopted device (d3ddevice=08A2C1E0)
+librw engine start (E2'b step 3, ADOPTED device 08A1FEE0) 800x600
+ok: engine started on adopted device (d3ddevice=08A1FEE0)
+librw engine start (E2'b step 3, ADOPTED device 08AAA7A0) 800x600
+ok: engine started on adopted device (d3ddevice=08AAA7A0)
+librw engine start (E2'b step 3, ADOPTED device 089F2180) 800x600
+ok: engine started on adopted device (d3ddevice=089F2180)
+librw engine start (E2'b step 3, ADOPTED device 089A4BC0) 800x600
+ok: engine started on adopted device (d3ddevice=089A4BC0)
+librw engine start (E2'b step 3, ADOPTED device 08ADCDA0) 800x600
+ok: engine started on adopted device (d3ddevice=08ADCDA0)
+librw engine start (E2'b step 3, ADOPTED device 08A70C20) 800x600
+ok: engine started on adopted device (d3ddevice=08A70C20)
+librw engine start (E2'b step 3, ADOPTED device 08A278A0) 800x600
+ok: engine started on adopted device (d3ddevice=08A278A0)
+librw engine start (E2'b step 3, ADOPTED device 08A45FE0) 800x600
+ok: engine started on adopted device (d3ddevice=08A45FE0)
+librw engine start (E2'b step 3, ADOPTED device 08A3C8E0) 800x600
+ok: engine started on adopted device (d3ddevice=08A3C8E0)
+librw engine start (E2'b step 3, ADOPTED device 08A21420) 800x600
+ok: engine started on adopted device (d3ddevice=08A21420)
+librw engine start (E2'b step 3, ADOPTED device 08A14B00) 800x600
+ok: engine started on adopted device (d3ddevice=08A14B00)
+librw engine start (E2'b step 3, ADOPTED device 08A4A660) 800x600
+ok: engine started on adopted device (d3ddevice=08A4A660)
+librw engine start (E2'b step 3, ADOPTED device 089C3C80) 800x600
+ok: engine started on adopted device (d3ddevice=089C3C80)
+librw engine start (E2'b step 3, ADOPTED device 08A0D4E0) 800x600
+ok: engine started on adopted device (d3ddevice=08A0D4E0)
+librw engine start (E2'b step 3, ADOPTED device 08A32E20) 800x600
+ok: engine started on adopted device (d3ddevice=08A32E20)
+librw engine start (E2'b step 3, ADOPTED device 08B097A0) 800x600
+ok: engine started on adopted device (d3ddevice=08B097A0)
+librw engine start (E2'b step 3, ADOPTED device 08A3FBC0) 800x600
+ok: engine started on adopted device (d3ddevice=08A3FBC0)
+librw engine start (E2'b step 3, ADOPTED device 089F0C80) 800x600
+ok: engine started on adopted device (d3ddevice=089F0C80)
+librw engine start (E2'b step 3, ADOPTED device 08A0B3A0) 800x600
+ok: engine started on adopted device (d3ddevice=08A0B3A0)
+librw engine start (E2'b step 3, ADOPTED device 08B6ED40) 800x600
+ok: engine started on adopted device (d3ddevice=08B6ED40)
+librw engine start (E2'b step 3, ADOPTED device 08A932E0) 800x600
+ok: engine started on adopted device (d3ddevice=08A932E0)
+librw engine start (E2'b step 3, ADOPTED device 089FB6E0) 800x600
+ok: engine started on adopted device (d3ddevice=089FB6E0)
+librw engine start (E2'b step 3, ADOPTED device 08A0B640) 800x600
+ok: engine started on adopted device (d3ddevice=08A0B640)
+librw engine start (E2'b step 3, ADOPTED device 08A2C180) 800x600
+ok: engine started on adopted device (d3ddevice=08A2C180)
+librw engine start (E2'b step 3, ADOPTED device 08A194C0) 800x600
+ok: engine started on adopted device (d3ddevice=08A194C0)
+librw engine start (E2'b step 3, ADOPTED device 08A22500) 800x600
+ok: engine started on adopted device (d3ddevice=08A22500)
+librw engine start (E2'b step 3, ADOPTED device 08A35780) 800x600
+ok: engine started on adopted device (d3ddevice=08A35780)
+librw engine start (E2'b step 3, ADOPTED device 08A26D80) 800x600
+ok: engine started on adopted device (d3ddevice=08A26D80)
+librw engine start (E2'b step 3, ADOPTED device 08A4C3A0) 800x600
+ok: engine started on adopted device (d3ddevice=08A4C3A0)
+librw engine start (E2'b step 3, ADOPTED device 08A519E0) 800x600
+ok: engine started on adopted device (d3ddevice=08A519E0)
+librw engine start (E2'b step 3, ADOPTED device 08AB6100) 800x600
+ok: engine started on adopted device (d3ddevice=08AB6100)
+librw engine start (E2'b step 3, ADOPTED device 08A4BF80) 800x600
+ok: engine started on adopted device (d3ddevice=08A4BF80)
+librw engine start (E2'b step 3, ADOPTED device 08D4BE00) 800x600
+ok: engine started on adopted device (d3ddevice=08D4BE00)
+librw engine start (E2'b step 3, ADOPTED device 08AD7D80) 640x480
+ok: engine started on adopted device (d3ddevice=08AD7D80)
+librw engine start (E2'b step 3, ADOPTED device 08AB2020) 640x480
+ok: engine started on adopted device (d3ddevice=08AB2020)
+librw engine start (E2'b step 3, ADOPTED device 08AB9AE0) 640x480
+ok: engine started on adopted device (d3ddevice=08AB9AE0)
+librw engine start (E2'b step 3, ADOPTED device 08A54A20) 640x480
+ok: engine started on adopted device (d3ddevice=08A54A20)
+librw engine start (E2'b step 3, ADOPTED device 08A7ACE0) 640x480
+ok: engine started on adopted device (d3ddevice=08A7ACE0)
+librw engine start (E2'b step 3, ADOPTED device 08A3CF80) 640x480
+ok: engine started on adopted device (d3ddevice=08A3CF80)
+librw engine start (E2'b step 3, ADOPTED device 08A3CFC0) 640x480
+ok: engine started on adopted device (d3ddevice=08A3CFC0)
+librw engine start (E2'b step 3, ADOPTED device 089D6860) 640x480
+ok: engine started on adopted device (d3ddevice=089D6860)
+librw engine start (E2'b step 3, ADOPTED device 08A388E0) 640x480
+ok: engine started on adopted device (d3ddevice=08A388E0)
+librw engine start (E2'b step 3, ADOPTED device 089FE420) 640x480
+ok: engine started on adopted device (d3ddevice=089FE420)
+librw engine start (E2'b step 3, ADOPTED device 08A91920) 640x480
+ok: engine started on adopted device (d3ddevice=08A91920)
+librw engine start (E2'b step 3, ADOPTED device 089DC600) 640x480
+ok: engine started on adopted device (d3ddevice=089DC600)
+librw engine start (E2'b step 3, ADOPTED device 08A964E0) 640x480
+ok: engine started on adopted device (d3ddevice=08A964E0)
+librw engine start (E2'b step 3, ADOPTED device 08AE12E0) 640x480
+ok: engine started on adopted device (d3ddevice=08AE12E0)
+librw engine start (E2'b step 3, ADOPTED device 08A03260) 640x480
+ok: engine started on adopted device (d3ddevice=08A03260)
+librw engine start (E2'b step 3, ADOPTED device 08AA9CC0) 640x480
+ok: engine started on adopted device (d3ddevice=08AA9CC0)
+librw engine start (E2'b step 3, ADOPTED device 08A74B60) 640x480
+ok: engine started on adopted device (d3ddevice=08A74B60)
+librw engine start (E2'b step 3, ADOPTED device 08A131C0) 640x480
+ok: engine started on adopted device (d3ddevice=08A131C0)
+librw engine start (E2'b step 3, ADOPTED device 08ABE340) 640x480
+ok: engine started on adopted device (d3ddevice=08ABE340)
+librw engine start (E2'b step 3, ADOPTED device 08A28F20) 640x480
+ok: engine started on adopted device (d3ddevice=08A28F20)
+librw engine start (E2'b step 3, ADOPTED device 08B23700) 640x480
+ok: engine started on adopted device (d3ddevice=08B23700)
+librw engine start (E2'b step 3, ADOPTED device 08A1A960) 640x480
+ok: engine started on adopted device (d3ddevice=08A1A960)
+librw engine start (E2'b step 3, ADOPTED device 089EDD60) 640x480
+ok: engine started on adopted device (d3ddevice=089EDD60)
+librw engine start (E2'b step 3, ADOPTED device 08A7A220) 640x480
+ok: engine started on adopted device (d3ddevice=08A7A220)
+librw engine start (E2'b step 3, ADOPTED device 08A83820) 640x480
+ok: engine started on adopted device (d3ddevice=08A83820)
+librw engine start (E2'b step 3, ADOPTED device 08ABEDA0) 640x480
+ok: engine started on adopted device (d3ddevice=08ABEDA0)
+librw engine start (E2'b step 3, ADOPTED device 08B15420) 640x480
+ok: engine started on adopted device (d3ddevice=08B15420)
+librw engine start (E2'b step 3, ADOPTED device 08AC0AC0) 640x480
+ok: engine started on adopted device (d3ddevice=08AC0AC0)
+librw engine start (E2'b step 3, ADOPTED device 08B65000) 640x480
+ok: engine started on adopted device (d3ddevice=08B65000)
+librw engine start (E2'b step 3, ADOPTED device 08A65EA0) 640x480
+ok: engine started on adopted device (d3ddevice=08A65EA0)
+librw engine start (E2'b step 3, ADOPTED device 08ACDEE0) 640x480
+ok: engine started on adopted device (d3ddevice=08ACDEE0)
+librw engine start (E2'b step 3, ADOPTED device 08A79A00) 640x480
+ok: engine started on adopted device (d3ddevice=08A79A00)
+librw engine start (E2'b step 3, ADOPTED device 08A0F6A0) 640x480
+ok: engine started on adopted device (d3ddevice=08A0F6A0)
+librw engine start (E2'b step 3, ADOPTED device 08A6FF20) 640x480
+ok: engine started on adopted device (d3ddevice=08A6FF20)
+librw engine start (E2'b step 3, ADOPTED device 08E4ED00) 640x480
+ok: engine started on adopted device (d3ddevice=08E4ED00)
+librw engine start (E2'b step 3, ADOPTED device 08F01880) 640x480
+ok: engine started on adopted device (d3ddevice=08F01880)
+librw engine start (E2'b step 3, ADOPTED device 08E9F3C0) 640x480
+ok: engine started on adopted device (d3ddevice=08E9F3C0)
+librw engine start (E2'b step 3, ADOPTED device 08A60420) 640x480
+ok: engine started on adopted device (d3ddevice=08A60420)
+librw engine start (E2'b step 3, ADOPTED device 04A5BAE0) 640x480
+ok: engine started on adopted device (d3ddevice=04A5BAE0)
+librw engine start (E2'b step 3, ADOPTED device 08A8F1C0) 640x480
+ok: engine started on adopted device (d3ddevice=08A8F1C0)
+librw engine start (E2'b step 3, ADOPTED device 08A699C0) 640x480
+ok: engine started on adopted device (d3ddevice=08A699C0)
+librw engine start (E2'b step 3, ADOPTED device 08AA9A40) 640x480
+ok: engine started on adopted device (d3ddevice=08AA9A40)
+librw engine start (E2'b step 3, ADOPTED device 08AAAC80) 640x480
+ok: engine started on adopted device (d3ddevice=08AAAC80)
+librw engine start (E2'b step 3, ADOPTED device 08A4BD80) 640x480
+ok: engine started on adopted device (d3ddevice=08A4BD80)
+librw engine start (E2'b step 3, ADOPTED device 08A7BE00) 640x480
+ok: engine started on adopted device (d3ddevice=08A7BE00)
+librw engine start (E2'b step 3, ADOPTED device 08ACEFE0) 640x480
+ok: engine started on adopted device (d3ddevice=08ACEFE0)
+librw engine start (E2'b step 3, ADOPTED device 08A48940) 640x480
+ok: engine started on adopted device (d3ddevice=08A48940)
+librw engine start (E2'b step 3, ADOPTED device 08B33000) 640x480
+ok: engine started on adopted device (d3ddevice=08B33000)
+librw engine start (E2'b step 3, ADOPTED device 08A94800) 640x480
+ok: engine started on adopted device (d3ddevice=08A94800)
+librw engine start (E2'b step 3, ADOPTED device 08B2E460) 640x480
+ok: engine started on adopted device (d3ddevice=08B2E460)
+librw engine start (E2'b step 3, ADOPTED device 08B5DF60) 640x480
+ok: engine started on adopted device (d3ddevice=08B5DF60)
+librw engine start (E2'b step 3, ADOPTED device 04A2AD40) 640x480
+ok: engine started on adopted device (d3ddevice=04A2AD40)
+librw engine start (E2'b step 3, ADOPTED device 0496B280) 640x480
+ok: engine started on adopted device (d3ddevice=0496B280)
+librw engine start (E2'b step 3, ADOPTED device 04A49DC0) 640x480
+ok: engine started on adopted device (d3ddevice=04A49DC0)
+librw engine start (E2'b step 3, ADOPTED device 04A5B5C0) 640x480
+ok: engine started on adopted device (d3ddevice=04A5B5C0)
+librw engine start (E2'b step 3, ADOPTED device 04AC3840) 640x480
+ok: engine started on adopted device (d3ddevice=04AC3840)
+librw engine start (E2'b step 3, ADOPTED device 04B64B20) 640x480
+ok: engine started on adopted device (d3ddevice=04B64B20)
+librw engine start (E2'b step 3, ADOPTED device 04B399A0) 640x480
+ok: engine started on adopted device (d3ddevice=04B399A0)
+librw engine start (E2'b step 3, ADOPTED device 04A36D80) 640x480
+ok: engine started on adopted device (d3ddevice=04A36D80)
+librw engine start (E2'b step 3, ADOPTED device 04A3CBA0) 640x480
+ok: engine started on adopted device (d3ddevice=04A3CBA0)
+librw engine start (E2'b step 3, ADOPTED device 04A31420) 640x480
+ok: engine started on adopted device (d3ddevice=04A31420)
+librw engine start (E2'b step 3, ADOPTED device 04AB15C0) 640x480
+ok: engine started on adopted device (d3ddevice=04AB15C0)
+librw engine start (E2'b step 3, ADOPTED device 04A1AAE0) 640x480
+ok: engine started on adopted device (d3ddevice=04A1AAE0)
+librw engine start (E2'b step 3, ADOPTED device 04B9DE80) 640x480
+ok: engine started on adopted device (d3ddevice=04B9DE80)
+librw engine start (E2'b step 3, ADOPTED device 04A57920) 640x480
+ok: engine started on adopted device (d3ddevice=04A57920)
+librw engine start (E2'b step 3, ADOPTED device 04A3B400) 640x480
+ok: engine started on adopted device (d3ddevice=04A3B400)
+librw engine start (E2'b step 3, ADOPTED device 04A5CE40) 640x480
+ok: engine started on adopted device (d3ddevice=04A5CE40)
+librw engine start (E2'b step 3, ADOPTED device 04A59A20) 640x480
+ok: engine started on adopted device (d3ddevice=04A59A20)
+librw engine start (E2'b step 3, ADOPTED device 04A16440) 640x480
+ok: engine started on adopted device (d3ddevice=04A16440)
+librw engine start (E2'b step 3, ADOPTED device 04AB51A0) 640x480
+ok: engine started on adopted device (d3ddevice=04AB51A0)
+librw engine start (E2'b step 3, ADOPTED device 04A48900) 640x480
+ok: engine started on adopted device (d3ddevice=04A48900)
+librw engine start (E2'b step 3, ADOPTED device 04A2BC80) 640x480
+ok: engine started on adopted device (d3ddevice=04A2BC80)
+librw engine start (E2'b step 3, ADOPTED device 04B8D120) 640x480
+ok: engine started on adopted device (d3ddevice=04B8D120)
+librw engine start (E2'b step 3, ADOPTED device 04A05940) 640x480
+ok: engine started on adopted device (d3ddevice=04A05940)
+librw engine start (E2'b step 3, ADOPTED device 04A3C940) 640x480
+ok: engine started on adopted device (d3ddevice=04A3C940)
+librw engine start (E2'b step 3, ADOPTED device 04A5A0A0) 640x480
+ok: engine started on adopted device (d3ddevice=04A5A0A0)
+librw engine start (E2'b step 3, ADOPTED device 04B9C020) 640x480
+ok: engine started on adopted device (d3ddevice=04B9C020)
+librw engine start (E2'b step 3, ADOPTED device 04A59380) 640x480
+ok: engine started on adopted device (d3ddevice=04A59380)
+librw engine start (E2'b step 3, ADOPTED device 04AAE520) 640x480
+ok: engine started on adopted device (d3ddevice=04AAE520)
+librw engine start (E2'b step 3, ADOPTED device 04BAF880) 640x480
+ok: engine started on adopted device (d3ddevice=04BAF880)
+librw engine start (E2'b step 3, ADOPTED device 04A83E00) 640x480
+ok: engine started on adopted device (d3ddevice=04A83E00)
+librw engine start (E2'b step 3, ADOPTED device 04A53B60) 640x480
+ok: engine started on adopted device (d3ddevice=04A53B60)
+librw engine start (E2'b step 3, ADOPTED device 04B16320) 640x480
+ok: engine started on adopted device (d3ddevice=04B16320)
+librw engine start (E2'b step 3, ADOPTED device 04A906A0) 640x480
+ok: engine started on adopted device (d3ddevice=04A906A0)
+librw engine start (E2'b step 3, ADOPTED device 04A4F820) 640x480
+ok: engine started on adopted device (d3ddevice=04A4F820)
+librw engine start (E2'b step 3, ADOPTED device 04B05860) 640x480
+ok: engine started on adopted device (d3ddevice=04B05860)
+librw engine start (E2'b step 3, ADOPTED device 04ABCA00) 640x480
+ok: engine started on adopted device (d3ddevice=04ABCA00)
+librw engine start (E2'b step 3, ADOPTED device 04A46B80) 640x480
+ok: engine started on adopted device (d3ddevice=04A46B80)
+librw engine start (E2'b step 3, ADOPTED device 04A4CD00) 640x480
+ok: engine started on adopted device (d3ddevice=04A4CD00)
+librw engine start (E2'b step 3, ADOPTED device 04A198C0) 640x480
+ok: engine started on adopted device (d3ddevice=04A198C0)
+librw engine start (E2'b step 3, ADOPTED device 04B436A0) 640x480
+ok: engine started on adopted device (d3ddevice=04B436A0)
+librw engine start (E2'b step 3, ADOPTED device 04A476A0) 640x480
+ok: engine started on adopted device (d3ddevice=04A476A0)
+librw engine start (E2'b step 3, ADOPTED device 04A01940) 640x480
+ok: engine started on adopted device (d3ddevice=04A01940)
+librw engine start (E2'b step 3, ADOPTED device 04B85060) 640x480
+ok: engine started on adopted device (d3ddevice=04B85060)
+librw engine start (E2'b step 3, ADOPTED device 04A4ED20) 640x480
+ok: engine started on adopted device (d3ddevice=04A4ED20)
+librw engine start (E2'b step 3, ADOPTED device 049D9740) 640x480
+ok: engine started on adopted device (d3ddevice=049D9740)
+librw engine start (E2'b step 3, ADOPTED device 04A4DB40) 640x480
+ok: engine started on adopted device (d3ddevice=04A4DB40)
+librw engine start (E2'b step 3, ADOPTED device 04A3DC20) 640x480
+ok: engine started on adopted device (d3ddevice=04A3DC20)
+librw engine start (E2'b step 3, ADOPTED device 04A6DD40) 640x480
+ok: engine started on adopted device (d3ddevice=04A6DD40)
+librw engine start (E2'b step 3, ADOPTED device 04A7B0E0) 640x480
+ok: engine started on adopted device (d3ddevice=04A7B0E0)
+librw engine start (E2'b step 3, ADOPTED device 04A4A1A0) 640x480
+ok: engine started on adopted device (d3ddevice=04A4A1A0)
+librw engine start (E2'b step 3, ADOPTED device 049EEA60) 640x480
+ok: engine started on adopted device (d3ddevice=049EEA60)
+librw engine start (E2'b step 3, ADOPTED device 04A2CB40) 640x480
+ok: engine started on adopted device (d3ddevice=04A2CB40)
+librw engine start (E2'b step 3, ADOPTED device 04B87680) 640x480
+ok: engine started on adopted device (d3ddevice=04B87680)
+librw engine start (E2'b step 3, ADOPTED device 04B04960) 640x480
+ok: engine started on adopted device (d3ddevice=04B04960)
+librw engine start (E2'b step 3, ADOPTED device 049FE7C0) 640x480
+ok: engine started on adopted device (d3ddevice=049FE7C0)
+librw engine start (E2'b step 3, ADOPTED device 04A4BEC0) 640x480
+ok: engine started on adopted device (d3ddevice=04A4BEC0)
+librw engine start (E2'b step 3, ADOPTED device 04A5C400) 640x480
+ok: engine started on adopted device (d3ddevice=04A5C400)
+librw engine start (E2'b step 3, ADOPTED device 049C4540) 640x480
+ok: engine started on adopted device (d3ddevice=049C4540)
+librw engine start (E2'b step 3, ADOPTED device 04A684A0) 640x480
+ok: engine started on adopted device (d3ddevice=04A684A0)
+librw engine start (E2'b step 3, ADOPTED device 04A61CE0) 640x480
+ok: engine started on adopted device (d3ddevice=04A61CE0)
+librw engine start (E2'b step 3, ADOPTED device 049C8F00) 640x480
+ok: engine started on adopted device (d3ddevice=049C8F00)
+librw engine start (E2'b step 3, ADOPTED device 049F0D60) 640x480
+ok: engine started on adopted device (d3ddevice=049F0D60)
+librw engine start (E2'b step 3, ADOPTED device 04A7F280) 640x480
+ok: engine started on adopted device (d3ddevice=04A7F280)
+librw engine start (E2'b step 3, ADOPTED device 04A369E0) 640x480
+ok: engine started on adopted device (d3ddevice=04A369E0)
+librw engine start (E2'b step 3, ADOPTED device 04A1D9C0) 640x480
+ok: engine started on adopted device (d3ddevice=04A1D9C0)
+librw engine start (E2'b step 3, ADOPTED device 04B1B220) 640x480
+ok: engine started on adopted device (d3ddevice=04B1B220)
+librw engine start (E2'b step 3, ADOPTED device 04BF7EE0) 640x480
+ok: engine started on adopted device (d3ddevice=04BF7EE0)
+librw engine start (E2'b step 3, ADOPTED device 04AB79A0) 640x480
+ok: engine started on adopted device (d3ddevice=04AB79A0)
+librw engine start (E2'b step 3, ADOPTED device 04AC53C0) 640x480
+ok: engine started on adopted device (d3ddevice=04AC53C0)
+librw engine start (E2'b step 3, ADOPTED device 04BAD2A0) 640x480
+ok: engine started on adopted device (d3ddevice=04BAD2A0)
+librw engine start (E2'b step 3, ADOPTED device 04A88180) 640x480
+ok: engine started on adopted device (d3ddevice=04A88180)
+librw engine start (E2'b step 3, ADOPTED device 04A61CE0) 640x480
+ok: engine started on adopted device (d3ddevice=04A61CE0)
+librw engine start (E2'b step 3, ADOPTED device 04AA6920) 640x480
+ok: engine started on adopted device (d3ddevice=04AA6920)
+librw engine start (E2'b step 3, ADOPTED device 04AC53C0) 640x480
+ok: engine started on adopted device (d3ddevice=04AC53C0)
+librw engine start (E2'b step 3, ADOPTED device 04B7FB60) 640x480
+ok: engine started on adopted device (d3ddevice=04B7FB60)
+librw engine start (E2'b step 3, ADOPTED device 04AAAF00) 640x480
+ok: engine started on adopted device (d3ddevice=04AAAF00)
+librw engine start (E2'b step 3, ADOPTED device 04AD03C0) 640x480
+ok: engine started on adopted device (d3ddevice=04AD03C0)
+librw engine start (E2'b step 3, ADOPTED device 04A95420) 640x480
+ok: engine started on adopted device (d3ddevice=04A95420)
+librw engine start (E2'b step 3, ADOPTED device 049C4540) 640x480
+ok: engine started on adopted device (d3ddevice=049C4540)
+librw engine start (E2'b step 3, ADOPTED device 04B807A0) 640x480
+ok: engine started on adopted device (d3ddevice=04B807A0)
+librw engine start (E2'b step 3, ADOPTED device 04A51300) 640x480
+ok: engine started on adopted device (d3ddevice=04A51300)
+librw engine start (E2'b step 3, ADOPTED device 04A5BBC0) 640x480
+ok: engine started on adopted device (d3ddevice=04A5BBC0)
+librw engine start (E2'b step 3, ADOPTED device 04A5FFC0) 640x480
+ok: engine started on adopted device (d3ddevice=04A5FFC0)
+librw engine start (E2'b step 3, ADOPTED device 04B3E1C0) 640x480
+ok: engine started on adopted device (d3ddevice=04B3E1C0)
+librw engine start (E2'b step 3, ADOPTED device 04A8C7A0) 640x480
+ok: engine started on adopted device (d3ddevice=04A8C7A0)
+librw engine start (E2'b step 3, ADOPTED device 04A4A9C0) 640x480
+ok: engine started on adopted device (d3ddevice=04A4A9C0)
+librw engine start (E2'b step 3, ADOPTED device 04A57EC0) 640x480
+ok: engine started on adopted device (d3ddevice=04A57EC0)
+librw engine start (E2'b step 3, ADOPTED device 04A7BB20) 640x480
+ok: engine started on adopted device (d3ddevice=04A7BB20)
+librw engine start (E2'b step 3, ADOPTED device 04A67D20) 1280x960
+ok: engine started on adopted device (d3ddevice=04A67D20)
+librw engine start (E2'b step 3, ADOPTED device 04A5AE00) 640x480
+ok: engine started on adopted device (d3ddevice=04A5AE00)
+librw engine start (E2'b step 3, ADOPTED device 04AC0B80) 640x480
+ok: engine started on adopted device (d3ddevice=04AC0B80)
+librw engine start (E2'b step 3, ADOPTED device 04A9AB60) 640x480
+ok: engine started on adopted device (d3ddevice=04A9AB60)
+librw engine start (E2'b step 3, ADOPTED device 04A6B700) 640x480
+ok: engine started on adopted device (d3ddevice=04A6B700)
+librw engine start (E2'b step 3, ADOPTED device 04B63B40) 640x480
+ok: engine started on adopted device (d3ddevice=04B63B40)
+librw engine start (E2'b step 3, ADOPTED device 04AE1D60) 640x480
+ok: engine started on adopted device (d3ddevice=04AE1D60)
+librw engine start (E2'b step 3, ADOPTED device 04A5BA40) 640x480
+ok: engine started on adopted device (d3ddevice=04A5BA40)
+librw engine start (E2'b step 3, ADOPTED device 04AE73E0) 640x480
+ok: engine started on adopted device (d3ddevice=04AE73E0)
+librw engine start (E2'b step 3, ADOPTED device 04A785A0) 640x480
+ok: engine started on adopted device (d3ddevice=04A785A0)
+librw engine start (E2'b step 3, ADOPTED device 04A204C0) 640x480
+ok: engine started on adopted device (d3ddevice=04A204C0)
+librw engine start (E2'b step 3, ADOPTED device 04B9AAA0) 640x480
+ok: engine started on adopted device (d3ddevice=04B9AAA0)
+librw engine start (E2'b step 3, ADOPTED device 04B26180) 640x480
+ok: engine started on adopted device (d3ddevice=04B26180)
+librw engine start (E2'b step 3, ADOPTED device 04A7E720) 640x480
+ok: engine started on adopted device (d3ddevice=04A7E720)
+librw engine start (E2'b step 3, ADOPTED device 04C65BC0) 1280x960
+ok: engine started on adopted device (d3ddevice=04C65BC0)
+librw engine start (E2'b step 3, ADOPTED device 04B27460) 1280x960
+ok: engine started on adopted device (d3ddevice=04B27460)
+librw engine start (E2'b step 3, ADOPTED device 04B4F460) 1280x960
+ok: engine started on adopted device (d3ddevice=04B4F460)
+librw engine start (E2'b step 3, ADOPTED device 04B63580) 1280x960
+ok: engine started on adopted device (d3ddevice=04B63580)
+librw engine start (E2'b step 3, ADOPTED device 08E83360) 640x480
+ok: engine started on adopted device (d3ddevice=08E83360)
+librw engine start (E2'b step 3, ADOPTED device 08E0F040) 640x480
+ok: engine started on adopted device (d3ddevice=08E0F040)
+librw engine start (E2'b step 3, ADOPTED device 08E70EE0) 640x480
+ok: engine started on adopted device (d3ddevice=08E70EE0)
+librw engine start (E2'b step 3, ADOPTED device 08E12E20) 640x480
+ok: engine started on adopted device (d3ddevice=08E12E20)
+librw engine start (E2'b step 3, ADOPTED device 08DF7CC0) 640x480
+ok: engine started on adopted device (d3ddevice=08DF7CC0)
+librw engine start (E2'b step 3, ADOPTED device 08DF9B80) 640x480
+ok: engine started on adopted device (d3ddevice=08DF9B80)
+librw engine start (E2'b step 3, ADOPTED device 08E87FE0) 640x480
+ok: engine started on adopted device (d3ddevice=08E87FE0)
+librw engine start (E2'b step 3, ADOPTED device 08E69380) 640x480
+ok: engine started on adopted device (d3ddevice=08E69380)
+librw engine start (E2'b step 3, ADOPTED device 08E73960) 640x480
+ok: engine started on adopted device (d3ddevice=08E73960)
+librw engine start (E2'b step 3, ADOPTED device 08E82A80) 640x480
+ok: engine started on adopted device (d3ddevice=08E82A80)
+librw engine start (E2'b step 3, ADOPTED device 091824C0) 640x480
+ok: engine started on adopted device (d3ddevice=091824C0)
+librw engine start (E2'b step 3, ADOPTED device 08DF7B60) 640x480
+ok: engine started on adopted device (d3ddevice=08DF7B60)
+librw engine start (E2'b step 3, ADOPTED device 04A35100) 640x480
+ok: engine started on adopted device (d3ddevice=04A35100)
+librw engine start (E2'b step 3, ADOPTED device 04B97C20) 640x480
+ok: engine started on adopted device (d3ddevice=04B97C20)
+librw engine start (E2'b step 3, ADOPTED device 04A6E1C0) 640x480
+ok: engine started on adopted device (d3ddevice=04A6E1C0)
+librw engine start (E2'b step 3, ADOPTED device 04B5ABA0) 640x480
+ok: engine started on adopted device (d3ddevice=04B5ABA0)
+librw engine start (E2'b step 3, ADOPTED device 04A7CCE0) 640x480
+ok: engine started on adopted device (d3ddevice=04A7CCE0)
+librw engine start (E2'b step 3, ADOPTED device 04B22A00) 640x480
+ok: engine started on adopted device (d3ddevice=04B22A00)
+librw engine start (E2'b step 3, ADOPTED device 04A72740) 640x480
+ok: engine started on adopted device (d3ddevice=04A72740)
+librw engine start (E2'b step 3, ADOPTED device 04A4F620) 640x480
+ok: engine started on adopted device (d3ddevice=04A4F620)
+librw engine start (E2'b step 3, ADOPTED device 04AEE9E0) 640x480
+ok: engine started on adopted device (d3ddevice=04AEE9E0)
+librw engine start (E2'b step 3, ADOPTED device 04AE5240) 640x480
+ok: engine started on adopted device (d3ddevice=04AE5240)
+librw engine start (E2'b step 3, ADOPTED device 04AB7F60) 640x480
+ok: engine started on adopted device (d3ddevice=04AB7F60)
+librw engine start (E2'b step 3, ADOPTED device 04A6AEA0) 640x480
+ok: engine started on adopted device (d3ddevice=04A6AEA0)
+librw engine start (E2'b step 3, ADOPTED device 04ADDAE0) 640x480
+ok: engine started on adopted device (d3ddevice=04ADDAE0)
+librw engine start (E2'b step 3, ADOPTED device 04A5CA00) 640x480
+ok: engine started on adopted device (d3ddevice=04A5CA00)
+librw engine start (E2'b step 3, ADOPTED device 04C14D20) 640x480
+ok: engine started on adopted device (d3ddevice=04C14D20)
+librw engine start (E2'b step 3, ADOPTED device 04AF4680) 640x480
+ok: engine started on adopted device (d3ddevice=04AF4680)
+librw engine start (E2'b step 3, ADOPTED device 04A5D620) 640x480
+ok: engine started on adopted device (d3ddevice=04A5D620)
+librw engine start (E2'b step 3, ADOPTED device 04A42780) 640x480
+ok: engine started on adopted device (d3ddevice=04A42780)
+librw engine start (E2'b step 3, ADOPTED device 049AE400) 640x480
+ok: engine started on adopted device (d3ddevice=049AE400)
+librw engine start (E2'b step 3, ADOPTED device 04A4BE80) 640x480
+ok: engine started on adopted device (d3ddevice=04A4BE80)
+librw engine start (E2'b step 3, ADOPTED device 04A86060) 640x480
+ok: engine started on adopted device (d3ddevice=04A86060)
+librw engine start (E2'b step 3, ADOPTED device 04ACE500) 640x480
+ok: engine started on adopted device (d3ddevice=04ACE500)
+librw engine start (E2'b step 3, ADOPTED device 049FF2E0) 640x480
+ok: engine started on adopted device (d3ddevice=049FF2E0)
+librw engine start (E2'b step 3, ADOPTED device 04A352A0) 640x480
+ok: engine started on adopted device (d3ddevice=04A352A0)
+librw engine start (E2'b step 3, ADOPTED device 04A638A0) 640x480
+ok: engine started on adopted device (d3ddevice=04A638A0)
+librw engine start (E2'b step 3, ADOPTED device 049D9440) 640x480
+ok: engine started on adopted device (d3ddevice=049D9440)
+librw engine start (E2'b step 3, ADOPTED device 04A412A0) 640x480
+ok: engine started on adopted device (d3ddevice=04A412A0)
+librw engine start (E2'b step 3, ADOPTED device 04ABFCE0) 640x480
+ok: engine started on adopted device (d3ddevice=04ABFCE0)
+librw engine start (E2'b step 3, ADOPTED device 04A4D740) 640x480
+ok: engine started on adopted device (d3ddevice=04A4D740)
+librw engine start (E2'b step 3, ADOPTED device 04ABB580) 640x480
+ok: engine started on adopted device (d3ddevice=04ABB580)
+librw engine start (E2'b step 3, ADOPTED device 04A1DC00) 640x480
+ok: engine started on adopted device (d3ddevice=04A1DC00)
+librw engine start (E2'b step 3, ADOPTED device 04A459C0) 640x480
+ok: engine started on adopted device (d3ddevice=04A459C0)
+librw engine start (E2'b step 3, ADOPTED device 04A4E820) 640x480
+ok: engine started on adopted device (d3ddevice=04A4E820)
+librw engine start (E2'b step 3, ADOPTED device 049E6C80) 640x480
+ok: engine started on adopted device (d3ddevice=049E6C80)
+librw engine start (E2'b step 3, ADOPTED device 04A58120) 640x480
+ok: engine started on adopted device (d3ddevice=04A58120)
+librw engine start (E2'b step 3, ADOPTED device 049FDCA0) 640x480
+ok: engine started on adopted device (d3ddevice=049FDCA0)
+librw engine start (E2'b step 3, ADOPTED device 049D4600) 640x480
+ok: engine started on adopted device (d3ddevice=049D4600)
+librw engine start (E2'b step 3, ADOPTED device 04A31180) 640x480
+ok: engine started on adopted device (d3ddevice=04A31180)
+librw engine start (E2'b step 3, ADOPTED device 04B0EA20) 640x480
+ok: engine started on adopted device (d3ddevice=04B0EA20)
+librw engine start (E2'b step 3, ADOPTED device 04A7ECA0) 640x480
+ok: engine started on adopted device (d3ddevice=04A7ECA0)
+librw engine start (E2'b step 3, ADOPTED device 04AE2D80) 640x480
+ok: engine started on adopted device (d3ddevice=04AE2D80)
+librw engine start (E2'b step 3, ADOPTED device 04A60960) 640x480
+ok: engine started on adopted device (d3ddevice=04A60960)
+librw engine start (E2'b step 3, ADOPTED device 04A63100) 640x480
+ok: engine started on adopted device (d3ddevice=04A63100)
+librw engine start (E2'b step 3, ADOPTED device 04AD58C0) 640x480
+ok: engine started on adopted device (d3ddevice=04AD58C0)
+librw engine start (E2'b step 3, ADOPTED device 049C4D20) 640x480
+ok: engine started on adopted device (d3ddevice=049C4D20)
+librw engine start (E2'b step 3, ADOPTED device 04A3EC40) 640x480
+ok: engine started on adopted device (d3ddevice=04A3EC40)
+librw engine start (E2'b step 3, ADOPTED device 04ACE7A0) 640x480
+ok: engine started on adopted device (d3ddevice=04ACE7A0)
+librw engine start (E2'b step 3, ADOPTED device 049EDBE0) 640x480
+ok: engine started on adopted device (d3ddevice=049EDBE0)
+librw engine start (E2'b step 3, ADOPTED device 04A4F720) 640x480
+ok: engine started on adopted device (d3ddevice=04A4F720)
+librw engine start (E2'b step 3, ADOPTED device 04A6A820) 640x480
+ok: engine started on adopted device (d3ddevice=04A6A820)
+librw engine start (E2'b step 3, ADOPTED device 04A52D60) 640x480
+ok: engine started on adopted device (d3ddevice=04A52D60)
+librw engine start (E2'b step 3, ADOPTED device 04A51300) 640x480
+ok: engine started on adopted device (d3ddevice=04A51300)
+librw engine start (E2'b step 3, ADOPTED device 04A28B20) 640x480
+ok: engine started on adopted device (d3ddevice=04A28B20)
+librw engine start (E2'b step 3, ADOPTED device 04A31FC0) 640x480
+ok: engine started on adopted device (d3ddevice=04A31FC0)
+librw engine start (E2'b step 3, ADOPTED device 04A567A0) 640x480
+ok: engine started on adopted device (d3ddevice=04A567A0)
+librw engine start (E2'b step 3, ADOPTED device 04B27CA0) 640x480
+ok: engine started on adopted device (d3ddevice=04B27CA0)
+librw engine start (E2'b step 3, ADOPTED device 04A59180) 640x480
+ok: engine started on adopted device (d3ddevice=04A59180)
+librw engine start (E2'b step 3, ADOPTED device 049F0B00) 640x480
+ok: engine started on adopted device (d3ddevice=049F0B00)
+librw engine start (E2'b step 3, ADOPTED device 04B6AA60) 640x480
+ok: engine started on adopted device (d3ddevice=04B6AA60)
+librw engine start (E2'b step 3, ADOPTED device 04A6DC40) 640x480
+ok: engine started on adopted device (d3ddevice=04A6DC40)
+librw engine start (E2'b step 3, ADOPTED device 04AA4800) 640x480
+ok: engine started on adopted device (d3ddevice=04AA4800)
+librw engine start (E2'b step 3, ADOPTED device 04A392A0) 640x480
+ok: engine started on adopted device (d3ddevice=04A392A0)
+librw engine start (E2'b step 3, ADOPTED device 04A0EA60) 640x480
+ok: engine started on adopted device (d3ddevice=04A0EA60)
+librw engine start (E2'b step 3, ADOPTED device 04A48160) 640x480
+ok: engine started on adopted device (d3ddevice=04A48160)
+librw engine start (E2'b step 3, ADOPTED device 04ADC1E0) 640x480
+ok: engine started on adopted device (d3ddevice=04ADC1E0)
+librw engine start (E2'b step 3, ADOPTED device 049CD720) 640x480
+ok: engine started on adopted device (d3ddevice=049CD720)
+librw engine start (E2'b step 3, ADOPTED device 049DCEE0) 640x480
+ok: engine started on adopted device (d3ddevice=049DCEE0)
+librw engine start (E2'b step 3, ADOPTED device 04A4A6C0) 640x480
+ok: engine started on adopted device (d3ddevice=04A4A6C0)
+librw engine start (E2'b step 3, ADOPTED device 04B70AA0) 640x480
+ok: engine started on adopted device (d3ddevice=04B70AA0)
+librw engine start (E2'b step 3, ADOPTED device 04A12900) 640x480
+ok: engine started on adopted device (d3ddevice=04A12900)
+librw engine start (E2'b step 3, ADOPTED device 04BAE820) 640x480
+ok: engine started on adopted device (d3ddevice=04BAE820)
+librw engine start (E2'b step 3, ADOPTED device 049BE780) 640x480
+ok: engine started on adopted device (d3ddevice=049BE780)
+librw engine start (E2'b step 3, ADOPTED device 04A40660) 640x480
+ok: engine started on adopted device (d3ddevice=04A40660)
+librw engine start (E2'b step 3, ADOPTED device 04A8F180) 640x480
+ok: engine started on adopted device (d3ddevice=04A8F180)
+librw engine start (E2'b step 3, ADOPTED device 04A264E0) 640x480
+ok: engine started on adopted device (d3ddevice=04A264E0)
+librw engine start (E2'b step 3, ADOPTED device 04B01FE0) 640x480
+ok: engine started on adopted device (d3ddevice=04B01FE0)
+librw engine start (E2'b step 3, ADOPTED device 04A13060) 640x480
+ok: engine started on adopted device (d3ddevice=04A13060)
+librw engine start (E2'b step 3, ADOPTED device 04BD6BE0) 640x480
+ok: engine started on adopted device (d3ddevice=04BD6BE0)
+librw engine start (E2'b step 3, ADOPTED device 04A2F440) 640x480
+ok: engine started on adopted device (d3ddevice=04A2F440)
+librw engine start (E2'b step 3, ADOPTED device 04ABE3E0) 640x480
+ok: engine started on adopted device (d3ddevice=04ABE3E0)
+librw engine start (E2'b step 3, ADOPTED device 04B987E0) 640x480
+ok: engine started on adopted device (d3ddevice=04B987E0)
+librw engine start (E2'b step 3, ADOPTED device 04A584C0) 640x480
+ok: engine started on adopted device (d3ddevice=04A584C0)
+librw engine start (E2'b step 3, ADOPTED device 04A31A80) 640x480
+ok: engine started on adopted device (d3ddevice=04A31A80)
+librw engine start (E2'b step 3, ADOPTED device 04A8E860) 640x480
+ok: engine started on adopted device (d3ddevice=04A8E860)
+librw engine start (E2'b step 3, ADOPTED device 04A00CA0) 640x480
+ok: engine started on adopted device (d3ddevice=04A00CA0)
+librw engine start (E2'b step 3, ADOPTED device 04A444E0) 640x480
+ok: engine started on adopted device (d3ddevice=04A444E0)
+librw engine start (E2'b step 3, ADOPTED device 04BDC080) 640x480
+ok: engine started on adopted device (d3ddevice=04BDC080)
+librw engine start (E2'b step 3, ADOPTED device 04A3EB60) 640x480
+ok: engine started on adopted device (d3ddevice=04A3EB60)
+librw engine start (E2'b step 3, ADOPTED device 049F1C60) 640x480
+ok: engine started on adopted device (d3ddevice=049F1C60)
+librw engine start (E2'b step 3, ADOPTED device 04A92320) 640x480
+ok: engine started on adopted device (d3ddevice=04A92320)
+librw engine start (E2'b step 3, ADOPTED device 04AEC000) 640x480
+ok: engine started on adopted device (d3ddevice=04AEC000)
+librw engine start (E2'b step 3, ADOPTED device 04A4C8E0) 640x480
+ok: engine started on adopted device (d3ddevice=04A4C8E0)
+librw engine start (E2'b step 3, ADOPTED device 04A3E260) 640x480
+ok: engine started on adopted device (d3ddevice=04A3E260)
+librw engine start (E2'b step 3, ADOPTED device 04A8E520) 640x480
+ok: engine started on adopted device (d3ddevice=04A8E520)
+librw engine start (E2'b step 3, ADOPTED device 04A46520) 640x480
+ok: engine started on adopted device (d3ddevice=04A46520)
+librw engine start (E2'b step 3, ADOPTED device 04A94C60) 640x480
+ok: engine started on adopted device (d3ddevice=04A94C60)
+librw engine start (E2'b step 3, ADOPTED device 04A66060) 640x480
+ok: engine started on adopted device (d3ddevice=04A66060)
+librw engine start (E2'b step 3, ADOPTED device 04ACE8A0) 640x480
+ok: engine started on adopted device (d3ddevice=04ACE8A0)
+librw engine start (E2'b step 3, ADOPTED device 049FF980) 640x480
+ok: engine started on adopted device (d3ddevice=049FF980)
+librw engine start (E2'b step 3, ADOPTED device 04A256A0) 640x480
+ok: engine started on adopted device (d3ddevice=04A256A0)
+librw engine start (E2'b step 3, ADOPTED device 04B77400) 640x480
+ok: engine started on adopted device (d3ddevice=04B77400)
+librw engine start (E2'b step 3, ADOPTED device 04AA37E0) 640x480
+ok: engine started on adopted device (d3ddevice=04AA37E0)
+librw engine start (E2'b step 3, ADOPTED device 04A5DCA0) 640x480
+ok: engine started on adopted device (d3ddevice=04A5DCA0)
+librw engine start (E2'b step 3, ADOPTED device 04A36300) 640x480
+ok: engine started on adopted device (d3ddevice=04A36300)
+librw engine start (E2'b step 3, ADOPTED device 04BB00C0) 640x480
+ok: engine started on adopted device (d3ddevice=04BB00C0)
+librw engine start (E2'b step 3, ADOPTED device 04A657A0) 640x480
+ok: engine started on adopted device (d3ddevice=04A657A0)
+librw engine start (E2'b step 3, ADOPTED device 04AD98C0) 640x480
+ok: engine started on adopted device (d3ddevice=04AD98C0)
+librw engine start (E2'b step 3, ADOPTED device 04A7E560) 640x480
+ok: engine started on adopted device (d3ddevice=04A7E560)
+librw engine start (E2'b step 3, ADOPTED device 04A78440) 640x480
+ok: engine started on adopted device (d3ddevice=04A78440)
+librw engine start (E2'b step 3, ADOPTED device 04ACA6C0) 640x480
+ok: engine started on adopted device (d3ddevice=04ACA6C0)
+librw engine start (E2'b step 3, ADOPTED device 04A6F5A0) 640x480
+ok: engine started on adopted device (d3ddevice=04A6F5A0)
+librw engine start (E2'b step 3, ADOPTED device 04A57580) 640x480
+ok: engine started on adopted device (d3ddevice=04A57580)
+librw engine start (E2'b step 3, ADOPTED device 04AD0200) 640x480
+ok: engine started on adopted device (d3ddevice=04AD0200)
+librw engine start (E2'b step 3, ADOPTED device 04A22AA0) 640x480
+ok: engine started on adopted device (d3ddevice=04A22AA0)
+librw engine start (E2'b step 3, ADOPTED device 04A95FA0) 640x480
+ok: engine started on adopted device (d3ddevice=04A95FA0)
+librw engine start (E2'b step 3, ADOPTED device 04A6A0A0) 640x480
+ok: engine started on adopted device (d3ddevice=04A6A0A0)
+librw engine start (E2'b step 3, ADOPTED device 04B92D60) 640x480
+ok: engine started on adopted device (d3ddevice=04B92D60)
+librw engine start (E2'b step 3, ADOPTED device 04A03F80) 640x480
+ok: engine started on adopted device (d3ddevice=04A03F80)
+librw engine start (E2'b step 3, ADOPTED device 04AF61C0) 640x480
+ok: engine started on adopted device (d3ddevice=04AF61C0)
+librw engine start (E2'b step 3, ADOPTED device 04AA7C00) 640x480
+ok: engine started on adopted device (d3ddevice=04AA7C00)
+librw engine start (E2'b step 3, ADOPTED device 0497E820) 640x480
+ok: engine started on adopted device (d3ddevice=0497E820)
+librw engine start (E2'b step 3, ADOPTED device 04B45140) 640x480
+ok: engine started on adopted device (d3ddevice=04B45140)
+librw engine start (E2'b step 3, ADOPTED device 04A68680) 640x480
+ok: engine started on adopted device (d3ddevice=04A68680)
+librw engine start (E2'b step 3, ADOPTED device 04909760) 640x480
+ok: engine started on adopted device (d3ddevice=04909760)
+librw engine start (E2'b step 3, ADOPTED device 04BBB3A0) 640x480
+ok: engine started on adopted device (d3ddevice=04BBB3A0)
+librw engine start (E2'b step 3, ADOPTED device 049EA3C0) 640x480
+ok: engine started on adopted device (d3ddevice=049EA3C0)
+librw engine start (E2'b step 3, ADOPTED device 04A5ABC0) 640x480
+ok: engine started on adopted device (d3ddevice=04A5ABC0)
+librw engine start (E2'b step 3, ADOPTED device 049EFFC0) 640x480
+ok: engine started on adopted device (d3ddevice=049EFFC0)
+librw engine start (E2'b step 3, ADOPTED device 04A2C160) 640x480
+ok: engine started on adopted device (d3ddevice=04A2C160)
+librw engine start (E2'b step 3, ADOPTED device 04A8AEA0) 640x480
+ok: engine started on adopted device (d3ddevice=04A8AEA0)
+librw engine start (E2'b step 3, ADOPTED device 04A16540) 640x480
+ok: engine started on adopted device (d3ddevice=04A16540)
+librw engine start (E2'b step 3, ADOPTED device 04B19D60) 640x480
+ok: engine started on adopted device (d3ddevice=04B19D60)
+librw engine start (E2'b step 3, ADOPTED device 04B46A60) 640x480
+ok: engine started on adopted device (d3ddevice=04B46A60)
+librw engine start (E2'b step 3, ADOPTED device 049FFBA0) 640x480
+ok: engine started on adopted device (d3ddevice=049FFBA0)
+librw engine start (E2'b step 3, ADOPTED device 04A45C00) 640x480
+ok: engine started on adopted device (d3ddevice=04A45C00)
+librw engine start (E2'b step 3, ADOPTED device 04A10B60) 640x480
+ok: engine started on adopted device (d3ddevice=04A10B60)
+librw engine start (E2'b step 3, ADOPTED device 04A00140) 640x480
+ok: engine started on adopted device (d3ddevice=04A00140)
+librw engine start (E2'b step 3, ADOPTED device 04A12AE0) 640x480
+ok: engine started on adopted device (d3ddevice=04A12AE0)
+librw engine start (E2'b step 3, ADOPTED device 04A6FF80) 640x480
+ok: engine started on adopted device (d3ddevice=04A6FF80)
+librw engine start (E2'b step 3, ADOPTED device 04AF7220) 640x480
+ok: engine started on adopted device (d3ddevice=04AF7220)
+librw engine start (E2'b step 3, ADOPTED device 04ADC340) 640x480
+ok: engine started on adopted device (d3ddevice=04ADC340)
+librw engine start (E2'b step 3, ADOPTED device 04B95C40) 640x480
+ok: engine started on adopted device (d3ddevice=04B95C40)
+librw engine start (E2'b step 3, ADOPTED device 049FB740) 640x480
+ok: engine started on adopted device (d3ddevice=049FB740)
+librw engine start (E2'b step 3, ADOPTED device 04A2EA00) 640x480
+ok: engine started on adopted device (d3ddevice=04A2EA00)
+librw engine start (E2'b step 3, ADOPTED device 04AD2100) 640x480
+ok: engine started on adopted device (d3ddevice=04AD2100)
+librw engine start (E2'b step 3, ADOPTED device 04A363A0) 640x480
+ok: engine started on adopted device (d3ddevice=04A363A0)
+librw engine start (E2'b step 3, ADOPTED device 04ADD660) 640x480
+ok: engine started on adopted device (d3ddevice=04ADD660)
+librw engine start (E2'b step 3, ADOPTED device 04B7E040) 640x480
+ok: engine started on adopted device (d3ddevice=04B7E040)
+librw engine start (E2'b step 3, ADOPTED device 04A21BA0) 640x480
+ok: engine started on adopted device (d3ddevice=04A21BA0)
+librw engine start (E2'b step 3, ADOPTED device 04AA4F80) 640x480
+ok: engine started on adopted device (d3ddevice=04AA4F80)
+librw engine start (E2'b step 3, ADOPTED device 04AC65A0) 640x480
+ok: engine started on adopted device (d3ddevice=04AC65A0)
+librw engine start (E2'b step 3, ADOPTED device 04A45FE0) 640x480
+ok: engine started on adopted device (d3ddevice=04A45FE0)
+librw engine start (E2'b step 3, ADOPTED device 04BFFFC0) 640x480
+ok: engine started on adopted device (d3ddevice=04BFFFC0)
+librw engine start (E2'b step 3, ADOPTED device 04A1A9C0) 640x480
+ok: engine started on adopted device (d3ddevice=04A1A9C0)
+librw engine start (E2'b step 3, ADOPTED device 049ED140) 640x480
+ok: engine started on adopted device (d3ddevice=049ED140)
+librw engine start (E2'b step 3, ADOPTED device 04A51840) 640x480
+ok: engine started on adopted device (d3ddevice=04A51840)
+librw engine start (E2'b step 3, ADOPTED device 04A84120) 640x480
+ok: engine started on adopted device (d3ddevice=04A84120)
+librw engine start (E2'b step 3, ADOPTED device 04A692A0) 640x480
+ok: engine started on adopted device (d3ddevice=04A692A0)
+librw engine start (E2'b step 3, ADOPTED device 04AF3CA0) 640x480
+ok: engine started on adopted device (d3ddevice=04AF3CA0)
+librw engine start (E2'b step 3, ADOPTED device 04A5D720) 640x480
+ok: engine started on adopted device (d3ddevice=04A5D720)
+librw engine start (E2'b step 3, ADOPTED device 04A7E180) 640x480
+ok: engine started on adopted device (d3ddevice=04A7E180)
+librw engine start (E2'b step 3, ADOPTED device 04A493A0) 640x480
+ok: engine started on adopted device (d3ddevice=04A493A0)
+librw engine start (E2'b step 3, ADOPTED device 04A5B9E0) 640x480
+ok: engine started on adopted device (d3ddevice=04A5B9E0)
+librw engine start (E2'b step 3, ADOPTED device 04B7FCC0) 640x480
+ok: engine started on adopted device (d3ddevice=04B7FCC0)
+librw engine start (E2'b step 3, ADOPTED device 04A58900) 640x480
+ok: engine started on adopted device (d3ddevice=04A58900)
+librw engine start (E2'b step 3, ADOPTED device 04AC8EA0) 640x480
+ok: engine started on adopted device (d3ddevice=04AC8EA0)
+librw engine start (E2'b step 3, ADOPTED device 04A47740) 640x480
+ok: engine started on adopted device (d3ddevice=04A47740)
+librw engine start (E2'b step 3, ADOPTED device 04A90460) 640x480
+ok: engine started on adopted device (d3ddevice=04A90460)
+librw engine start (E2'b step 3, ADOPTED device 04A45260) 640x480
+ok: engine started on adopted device (d3ddevice=04A45260)
+librw engine start (E2'b step 3, ADOPTED device 04A2F540) 640x480
+ok: engine started on adopted device (d3ddevice=04A2F540)
+librw engine start (E2'b step 3, ADOPTED device 04BEFBC0) 640x480
+ok: engine started on adopted device (d3ddevice=04BEFBC0)
+librw engine start (E2'b step 3, ADOPTED device 04AD01A0) 640x480
+ok: engine started on adopted device (d3ddevice=04AD01A0)
+librw engine start (E2'b step 3, ADOPTED device 04A29EA0) 640x480
+ok: engine started on adopted device (d3ddevice=04A29EA0)
+librw engine start (E2'b step 3, ADOPTED device 04B4EE20) 640x480
+ok: engine started on adopted device (d3ddevice=04B4EE20)
+librw engine start (E2'b step 3, ADOPTED device 04A5D1E0) 640x480
+ok: engine started on adopted device (d3ddevice=04A5D1E0)
+librw engine start (E2'b step 3, ADOPTED device 04A5C2A0) 640x480
+ok: engine started on adopted device (d3ddevice=04A5C2A0)
+librw engine start (E2'b step 3, ADOPTED device 04B1DE80) 640x480
+ok: engine started on adopted device (d3ddevice=04B1DE80)
+librw engine start (E2'b step 3, ADOPTED device 04BBF440) 640x480
+ok: engine started on adopted device (d3ddevice=04BBF440)
+librw engine start (E2'b step 3, ADOPTED device 04B67920) 640x480
+ok: engine started on adopted device (d3ddevice=04B67920)
+librw engine start (E2'b step 3, ADOPTED device 04B8FC40) 640x480
+ok: engine started on adopted device (d3ddevice=04B8FC40)
+librw engine start (E2'b step 3, ADOPTED device 04B42560) 640x480
+ok: engine started on adopted device (d3ddevice=04B42560)
+librw engine start (E2'b step 3, ADOPTED device 04A78F40) 640x480
+ok: engine started on adopted device (d3ddevice=04A78F40)
+librw engine start (E2'b step 3, ADOPTED device 04B8BA20) 640x480
+ok: engine started on adopted device (d3ddevice=04B8BA20)
+librw engine start (E2'b step 3, ADOPTED device 04BCD060) 640x480
+ok: engine started on adopted device (d3ddevice=04BCD060)
+librw engine start (E2'b step 3, ADOPTED device 04B5DCA0) 640x480
+ok: engine started on adopted device (d3ddevice=04B5DCA0)
+librw engine start (E2'b step 3, ADOPTED device 04B5CB20) 640x480
+ok: engine started on adopted device (d3ddevice=04B5CB20)
+librw engine start (E2'b step 3, ADOPTED device 04C07C20) 640x480
+ok: engine started on adopted device (d3ddevice=04C07C20)
+librw engine start (E2'b step 3, ADOPTED device 04B78E80) 640x480
+ok: engine started on adopted device (d3ddevice=04B78E80)
+librw engine start (E2'b step 3, ADOPTED device 04A87FA0) 640x480
+ok: engine started on adopted device (d3ddevice=04A87FA0)
+librw engine start (E2'b step 3, ADOPTED device 04BBDA40) 640x480
+ok: engine started on adopted device (d3ddevice=04BBDA40)
+librw engine start (E2'b step 3, ADOPTED device 04B37560) 640x480
+ok: engine started on adopted device (d3ddevice=04B37560)
+librw engine start (E2'b step 3, ADOPTED device 04AD3F20) 640x480
+ok: engine started on adopted device (d3ddevice=04AD3F20)
+librw engine start (E2'b step 3, ADOPTED device 04A98F00) 640x480
+ok: engine started on adopted device (d3ddevice=04A98F00)
+librw engine start (E2'b step 3, ADOPTED device 04BCB740) 640x480
+ok: engine started on adopted device (d3ddevice=04BCB740)
+librw engine start (E2'b step 3, ADOPTED device 04B75DA0) 640x480
+ok: engine started on adopted device (d3ddevice=04B75DA0)
+librw engine start (E2'b step 3, ADOPTED device 04CE1600) 640x480
+ok: engine started on adopted device (d3ddevice=04CE1600)
+librw engine start (E2'b step 3, ADOPTED device 04BBAC00) 640x480
+ok: engine started on adopted device (d3ddevice=04BBAC00)
+librw engine start (E2'b step 3, ADOPTED device 04B68180) 640x480
+ok: engine started on adopted device (d3ddevice=04B68180)
+librw engine start (E2'b step 3, ADOPTED device 04BDC5C0) 640x480
+ok: engine started on adopted device (d3ddevice=04BDC5C0)
+librw engine start (E2'b step 3, ADOPTED device 04B80360) 640x480
+ok: engine started on adopted device (d3ddevice=04B80360)
+librw engine start (E2'b step 3, ADOPTED device 04BADF60) 640x480
+ok: engine started on adopted device (d3ddevice=04BADF60)
+librw engine start (E2'b step 3, ADOPTED device 04B72380) 640x480
+ok: engine started on adopted device (d3ddevice=04B72380)
+librw engine start (E2'b step 3, ADOPTED device 04BB1560) 640x480
+ok: engine started on adopted device (d3ddevice=04BB1560)
+librw engine start (E2'b step 3, ADOPTED device 04ADE340) 640x480
+ok: engine started on adopted device (d3ddevice=04ADE340)
+librw engine start (E2'b step 3, ADOPTED device 04B996A0) 640x480
+ok: engine started on adopted device (d3ddevice=04B996A0)
+librw engine start (E2'b step 3, ADOPTED device 04A0D940) 640x480
+ok: engine started on adopted device (d3ddevice=04A0D940)
+librw engine start (E2'b step 3, ADOPTED device 04A75CE0) 640x480
+ok: engine started on adopted device (d3ddevice=04A75CE0)
+librw engine start (E2'b step 3, ADOPTED device 04A58380) 640x480
+ok: engine started on adopted device (d3ddevice=04A58380)
+librw engine start (E2'b step 3, ADOPTED device 04B1A000) 640x480
+ok: engine started on adopted device (d3ddevice=04B1A000)
+librw engine start (E2'b step 3, ADOPTED device 04B5CFE0) 640x480
+ok: engine started on adopted device (d3ddevice=04B5CFE0)
+librw engine start (E2'b step 3, ADOPTED device 04BABEE0) 640x480
+ok: engine started on adopted device (d3ddevice=04BABEE0)
+librw engine start (E2'b step 3, ADOPTED device 04A60F20) 640x480
+ok: engine started on adopted device (d3ddevice=04A60F20)
+librw engine start (E2'b step 3, ADOPTED device 04B2D8C0) 640x480
+ok: engine started on adopted device (d3ddevice=04B2D8C0)
+librw engine start (E2'b step 3, ADOPTED device 04BCD380) 640x480
+ok: engine started on adopted device (d3ddevice=04BCD380)
+librw engine start (E2'b step 3, ADOPTED device 04B5AEA0) 640x480
+ok: engine started on adopted device (d3ddevice=04B5AEA0)
+librw engine start (E2'b step 3, ADOPTED device 04C21320) 640x480
+ok: engine started on adopted device (d3ddevice=04C21320)
+librw engine start (E2'b step 3, ADOPTED device 04BC5A00) 640x480
+ok: engine started on adopted device (d3ddevice=04BC5A00)
+librw engine start (E2'b step 3, ADOPTED device 04A8ADA0) 640x480
+ok: engine started on adopted device (d3ddevice=04A8ADA0)
+librw engine start (E2'b step 3, ADOPTED device 04B68960) 640x480
+ok: engine started on adopted device (d3ddevice=04B68960)
+librw engine start (E2'b step 3, ADOPTED device 04B77EC0) 640x480
+ok: engine started on adopted device (d3ddevice=04B77EC0)
+librw engine start (E2'b step 3, ADOPTED device 04BFBB00) 640x480
+ok: engine started on adopted device (d3ddevice=04BFBB00)
+librw engine start (E2'b step 3, ADOPTED device 04ADF700) 640x480
+ok: engine started on adopted device (d3ddevice=04ADF700)
+librw engine start (E2'b step 3, ADOPTED device 04B805A0) 640x480
+ok: engine started on adopted device (d3ddevice=04B805A0)
+librw engine start (E2'b step 3, ADOPTED device 04A27EE0) 640x480
+ok: engine started on adopted device (d3ddevice=04A27EE0)
+librw engine start (E2'b step 3, ADOPTED device 04B46480) 640x480
+ok: engine started on adopted device (d3ddevice=04B46480)
+librw engine start (E2'b step 3, ADOPTED device 04A989A0) 640x480
+ok: engine started on adopted device (d3ddevice=04A989A0)
+librw engine start (E2'b step 3, ADOPTED device 04B761C0) 640x480
+ok: engine started on adopted device (d3ddevice=04B761C0)
+librw engine start (E2'b step 3, ADOPTED device 04A5E3E0) 640x480
+ok: engine started on adopted device (d3ddevice=04A5E3E0)
+librw engine start (E2'b step 3, ADOPTED device 04BF2C00) 640x480
+ok: engine started on adopted device (d3ddevice=04BF2C00)
+librw engine start (E2'b step 3, ADOPTED device 04B99AA0) 640x480
+ok: engine started on adopted device (d3ddevice=04B99AA0)
+librw engine start (E2'b step 3, ADOPTED device 04B485A0) 640x480
+ok: engine started on adopted device (d3ddevice=04B485A0)
+librw engine start (E2'b step 3, ADOPTED device 04B66BC0) 640x480
+ok: engine started on adopted device (d3ddevice=04B66BC0)
+librw engine start (E2'b step 3, ADOPTED device 04ADF7A0) 640x480
+ok: engine started on adopted device (d3ddevice=04ADF7A0)
+librw engine start (E2'b step 3, ADOPTED device 04BA9B00) 640x480
+ok: engine started on adopted device (d3ddevice=04BA9B00)
+librw engine start (E2'b step 3, ADOPTED device 04A57BE0) 640x480
+ok: engine started on adopted device (d3ddevice=04A57BE0)
+librw engine start (E2'b step 3, ADOPTED device 04BE8EC0) 640x480
+ok: engine started on adopted device (d3ddevice=04BE8EC0)
+librw engine start (E2'b step 3, ADOPTED device 04B99E00) 640x480
+ok: engine started on adopted device (d3ddevice=04B99E00)
+librw engine start (E2'b step 3, ADOPTED device 04A5AA60) 640x480
+ok: engine started on adopted device (d3ddevice=04A5AA60)
+librw engine start (E2'b step 3, ADOPTED device 04A89EC0) 640x480
+ok: engine started on adopted device (d3ddevice=04A89EC0)
+librw engine start (E2'b step 3, ADOPTED device 04BA4FA0) 640x480
+ok: engine started on adopted device (d3ddevice=04BA4FA0)
+librw engine start (E2'b step 3, ADOPTED device 04A9F800) 640x480
+ok: engine started on adopted device (d3ddevice=04A9F800)
+librw engine start (E2'b step 3, ADOPTED device 04BF02A0) 640x480
+ok: engine started on adopted device (d3ddevice=04BF02A0)
+librw engine start (E2'b step 3, ADOPTED device 04B9E5A0) 640x480
+ok: engine started on adopted device (d3ddevice=04B9E5A0)
+librw engine start (E2'b step 3, ADOPTED device 04B02000) 640x480
+ok: engine started on adopted device (d3ddevice=04B02000)
+librw engine start (E2'b step 3, ADOPTED device 04B9CAE0) 640x480
+ok: engine started on adopted device (d3ddevice=04B9CAE0)
+librw engine start (E2'b step 3, ADOPTED device 04A68500) 640x480
+ok: engine started on adopted device (d3ddevice=04A68500)
+librw engine start (E2'b step 3, ADOPTED device 04C4B3A0) 640x480
+ok: engine started on adopted device (d3ddevice=04C4B3A0)
+librw engine start (E2'b step 3, ADOPTED device 04B7C7E0) 640x480
+ok: engine started on adopted device (d3ddevice=04B7C7E0)
+librw engine start (E2'b step 3, ADOPTED device 04AEFE40) 640x480
+ok: engine started on adopted device (d3ddevice=04AEFE40)
+librw engine start (E2'b step 3, ADOPTED device 04B76D20) 640x480
+ok: engine started on adopted device (d3ddevice=04B76D20)
+librw engine start (E2'b step 3, ADOPTED device 04AE1B20) 640x480
+ok: engine started on adopted device (d3ddevice=04AE1B20)
+librw engine start (E2'b step 3, ADOPTED device 04B73200) 640x480
+ok: engine started on adopted device (d3ddevice=04B73200)
+librw engine start (E2'b step 3, ADOPTED device 04A37EC0) 640x480
+ok: engine started on adopted device (d3ddevice=04A37EC0)
+librw engine start (E2'b step 3, ADOPTED device 04C667A0) 640x480
+ok: engine started on adopted device (d3ddevice=04C667A0)
+librw engine start (E2'b step 3, ADOPTED device 04B6CB20) 640x480
+ok: engine started on adopted device (d3ddevice=04B6CB20)
+librw engine start (E2'b step 3, ADOPTED device 04A3A520) 640x480
+ok: engine started on adopted device (d3ddevice=04A3A520)
+librw engine start (E2'b step 3, ADOPTED device 04C195A0) 640x480
+ok: engine started on adopted device (d3ddevice=04C195A0)
+librw engine start (E2'b step 3, ADOPTED device 04B8C8A0) 640x480
+ok: engine started on adopted device (d3ddevice=04B8C8A0)
+librw engine start (E2'b step 3, ADOPTED device 04B72220) 640x480
+ok: engine started on adopted device (d3ddevice=04B72220)
+librw engine start (E2'b step 3, ADOPTED device 04B5C440) 640x480
+ok: engine started on adopted device (d3ddevice=04B5C440)
+librw engine start (E2'b step 3, ADOPTED device 04BFD5A0) 640x480
+ok: engine started on adopted device (d3ddevice=04BFD5A0)
+librw engine start (E2'b step 3, ADOPTED device 04C777E0) 640x480
+ok: engine started on adopted device (d3ddevice=04C777E0)
+librw engine start (E2'b step 3, ADOPTED device 04B6E980) 640x480
+ok: engine started on adopted device (d3ddevice=04B6E980)
+librw engine start (E2'b step 3, ADOPTED device 04BFCF20) 640x480
+ok: engine started on adopted device (d3ddevice=04BFCF20)
+librw engine start (E2'b step 3, ADOPTED device 04C1E160) 640x480
+ok: engine started on adopted device (d3ddevice=04C1E160)
+librw engine start (E2'b step 3, ADOPTED device 04A9EF60) 640x480
+ok: engine started on adopted device (d3ddevice=04A9EF60)
+librw engine start (E2'b step 3, ADOPTED device 04C6BAE0) 640x480
+ok: engine started on adopted device (d3ddevice=04C6BAE0)
+librw engine start (E2'b step 3, ADOPTED device 04B672E0) 640x480
+ok: engine started on adopted device (d3ddevice=04B672E0)
+librw engine start (E2'b step 3, ADOPTED device 04B6A160) 640x480
+ok: engine started on adopted device (d3ddevice=04B6A160)
+librw engine start (E2'b step 3, ADOPTED device 04A77EE0) 640x480
+ok: engine started on adopted device (d3ddevice=04A77EE0)
+librw engine start (E2'b step 3, ADOPTED device 04B71DE0) 640x480
+ok: engine started on adopted device (d3ddevice=04B71DE0)
+librw engine start (E2'b step 3, ADOPTED device 04B4FFE0) 640x480
+ok: engine started on adopted device (d3ddevice=04B4FFE0)
+librw engine start (E2'b step 3, ADOPTED device 04B9F8E0) 640x480
+ok: engine started on adopted device (d3ddevice=04B9F8E0)
+librw engine start (E2'b step 3, ADOPTED device 04B86F40) 640x480
+ok: engine started on adopted device (d3ddevice=04B86F40)
+librw engine start (E2'b step 3, ADOPTED device 04A8A7E0) 640x480
+ok: engine started on adopted device (d3ddevice=04A8A7E0)
+librw engine start (E2'b step 3, ADOPTED device 04BAB420) 640x480
+ok: engine started on adopted device (d3ddevice=04BAB420)
+librw engine start (E2'b step 3, ADOPTED device 04A9BCE0) 640x480
+ok: engine started on adopted device (d3ddevice=04A9BCE0)
+librw engine start (E2'b step 3, ADOPTED device 04A77A40) 640x480
+ok: engine started on adopted device (d3ddevice=04A77A40)
+librw engine start (E2'b step 3, ADOPTED device 04B5A920) 640x480
+ok: engine started on adopted device (d3ddevice=04B5A920)
+librw engine start (E2'b step 3, ADOPTED device 04B98600) 640x480
+ok: engine started on adopted device (d3ddevice=04B98600)
+librw engine start (E2'b step 3, ADOPTED device 04B58660) 640x480
+ok: engine started on adopted device (d3ddevice=04B58660)
+librw engine start (E2'b step 3, ADOPTED device 04B86960) 640x480
+ok: engine started on adopted device (d3ddevice=04B86960)
+librw engine start (E2'b step 3, ADOPTED device 04B4EC40) 640x480
+ok: engine started on adopted device (d3ddevice=04B4EC40)
+librw engine start (E2'b step 3, ADOPTED device 04B74DA0) 640x480
+ok: engine started on adopted device (d3ddevice=04B74DA0)
+librw engine start (E2'b step 3, ADOPTED device 04B70F80) 640x480
+ok: engine started on adopted device (d3ddevice=04B70F80)
+librw engine start (E2'b step 3, ADOPTED device 04B52100) 640x480
+ok: engine started on adopted device (d3ddevice=04B52100)
+librw engine start (E2'b step 3, ADOPTED device 04B6A3A0) 640x480
+ok: engine started on adopted device (d3ddevice=04B6A3A0)
+librw engine start (E2'b step 3, ADOPTED device 04B51C20) 640x480
+ok: engine started on adopted device (d3ddevice=04B51C20)
+librw engine start (E2'b step 3, ADOPTED device 04B82160) 640x480
+ok: engine started on adopted device (d3ddevice=04B82160)
+librw engine start (E2'b step 3, ADOPTED device 04A4A1C0) 640x480
+ok: engine started on adopted device (d3ddevice=04A4A1C0)
+librw engine start (E2'b step 3, ADOPTED device 04AD2FA0) 640x480
+ok: engine started on adopted device (d3ddevice=04AD2FA0)
+librw engine start (E2'b step 3, ADOPTED device 04BA8700) 640x480
+ok: engine started on adopted device (d3ddevice=04BA8700)
+librw engine start (E2'b step 3, ADOPTED device 04A76480) 640x480
+ok: engine started on adopted device (d3ddevice=04A76480)
+librw engine start (E2'b step 3, ADOPTED device 04B93F00) 640x480
+ok: engine started on adopted device (d3ddevice=04B93F00)
+librw engine start (E2'b step 3, ADOPTED device 04A56EC0) 640x480
+ok: engine started on adopted device (d3ddevice=04A56EC0)
+librw engine start (E2'b step 3, ADOPTED device 04B7BFA0) 640x480
+ok: engine started on adopted device (d3ddevice=04B7BFA0)
+librw engine start (E2'b step 3, ADOPTED device 04BE7360) 640x480
+ok: engine started on adopted device (d3ddevice=04BE7360)
+librw engine start (E2'b step 3, ADOPTED device 04C1FBC0) 640x480
+ok: engine started on adopted device (d3ddevice=04C1FBC0)
+librw engine start (E2'b step 3, ADOPTED device 04B699E0) 640x480
+ok: engine started on adopted device (d3ddevice=04B699E0)
+librw engine start (E2'b step 3, ADOPTED device 04A74980) 640x480
+ok: engine started on adopted device (d3ddevice=04A74980)
+librw engine start (E2'b step 3, ADOPTED device 04B7BE00) 640x480
+ok: engine started on adopted device (d3ddevice=04B7BE00)
+librw engine start (E2'b step 3, ADOPTED device 04B75D40) 640x480
+ok: engine started on adopted device (d3ddevice=04B75D40)
+librw engine start (E2'b step 3, ADOPTED device 04C492C0) 640x480
+ok: engine started on adopted device (d3ddevice=04C492C0)
+librw engine start (E2'b step 3, ADOPTED device 04B96660) 640x480
+ok: engine started on adopted device (d3ddevice=04B96660)
+librw engine start (E2'b step 3, ADOPTED device 04B76840) 640x480
+ok: engine started on adopted device (d3ddevice=04B76840)
+librw engine start (E2'b step 3, ADOPTED device 04B89CA0) 640x480
+ok: engine started on adopted device (d3ddevice=04B89CA0)
+librw engine start (E2'b step 3, ADOPTED device 04B63BA0) 640x480
+ok: engine started on adopted device (d3ddevice=04B63BA0)
+librw engine start (E2'b step 3, ADOPTED device 04B7A620) 640x480
+ok: engine started on adopted device (d3ddevice=04B7A620)
+librw engine start (E2'b step 3, ADOPTED device 04B8CA00) 640x480
+ok: engine started on adopted device (d3ddevice=04B8CA00)
+librw engine start (E2'b step 3, ADOPTED device 04BDFAA0) 640x480
+ok: engine started on adopted device (d3ddevice=04BDFAA0)
+librw engine start (E2'b step 3, ADOPTED device 04A8D9A0) 640x480
+ok: engine started on adopted device (d3ddevice=04A8D9A0)
+librw engine start (E2'b step 3, ADOPTED device 04AC6CC0) 640x480
+ok: engine started on adopted device (d3ddevice=04AC6CC0)
+librw engine start (E2'b step 3, ADOPTED device 04C0EE40) 640x480
+ok: engine started on adopted device (d3ddevice=04C0EE40)
+librw engine start (E2'b step 3, ADOPTED device 04B48620) 640x480
+ok: engine started on adopted device (d3ddevice=04B48620)
+librw engine start (E2'b step 3, ADOPTED device 04A51BE0) 640x480
+ok: engine started on adopted device (d3ddevice=04A51BE0)
+librw engine start (E2'b step 3, ADOPTED device 04B9EF00) 640x480
+ok: engine started on adopted device (d3ddevice=04B9EF00)
+librw engine start (E2'b step 3, ADOPTED device 04A607C0) 640x480
+ok: engine started on adopted device (d3ddevice=04A607C0)
+librw engine start (E2'b step 3, ADOPTED device 04B7B8E0) 640x480
+ok: engine started on adopted device (d3ddevice=04B7B8E0)
+librw engine start (E2'b step 3, ADOPTED device 04B6BB40) 640x480
+ok: engine started on adopted device (d3ddevice=04B6BB40)
+librw engine start (E2'b step 3, ADOPTED device 04AAFD40) 640x480
+ok: engine started on adopted device (d3ddevice=04AAFD40)
+librw engine start (E2'b step 3, ADOPTED device 04B96F80) 640x480
+ok: engine started on adopted device (d3ddevice=04B96F80)
+librw engine start (E2'b step 3, ADOPTED device 04AC1A80) 640x480
+ok: engine started on adopted device (d3ddevice=04AC1A80)
+librw engine start (E2'b step 3, ADOPTED device 04B4E1C0) 640x480
+ok: engine started on adopted device (d3ddevice=04B4E1C0)
+librw engine start (E2'b step 3, ADOPTED device 04B49C20) 640x480
+ok: engine started on adopted device (d3ddevice=04B49C20)
+librw engine start (E2'b step 3, ADOPTED device 049D4200) 640x480
+ok: engine started on adopted device (d3ddevice=049D4200)
+librw engine start (E2'b step 3, ADOPTED device 04B8DFC0) 640x480
+ok: engine started on adopted device (d3ddevice=04B8DFC0)
+librw engine start (E2'b step 3, ADOPTED device 04BC8520) 640x480
+ok: engine started on adopted device (d3ddevice=04BC8520)
+librw engine start (E2'b step 3, ADOPTED device 04BA2460) 640x480
+ok: engine started on adopted device (d3ddevice=04BA2460)
+librw engine start (E2'b step 3, ADOPTED device 04B7E4A0) 640x480
+ok: engine started on adopted device (d3ddevice=04B7E4A0)
+librw engine start (E2'b step 3, ADOPTED device 04B4C480) 640x480
+ok: engine started on adopted device (d3ddevice=04B4C480)
+librw engine start (E2'b step 3, ADOPTED device 04B62FC0) 640x480
+ok: engine started on adopted device (d3ddevice=04B62FC0)
+librw engine start (E2'b step 3, ADOPTED device 04B68100) 640x480
+ok: engine started on adopted device (d3ddevice=04B68100)
+librw engine start (E2'b step 3, ADOPTED device 04B465A0) 640x480
+ok: engine started on adopted device (d3ddevice=04B465A0)
+librw engine start (E2'b step 3, ADOPTED device 04B4D8E0) 640x480
+ok: engine started on adopted device (d3ddevice=04B4D8E0)
+librw engine start (E2'b step 3, ADOPTED device 04B4B260) 640x480
+ok: engine started on adopted device (d3ddevice=04B4B260)
+librw engine start (E2'b step 3, ADOPTED device 04AC41E0) 640x480
+ok: engine started on adopted device (d3ddevice=04AC41E0)
+librw engine start (E2'b step 3, ADOPTED device 04B8AA80) 640x480
+ok: engine started on adopted device (d3ddevice=04B8AA80)
+librw engine start (E2'b step 3, ADOPTED device 04BE41A0) 640x480
+ok: engine started on adopted device (d3ddevice=04BE41A0)
+librw engine start (E2'b step 3, ADOPTED device 04B9AFE0) 640x480
+ok: engine started on adopted device (d3ddevice=04B9AFE0)
+librw engine start (E2'b step 3, ADOPTED device 04ACC420) 640x480
+ok: engine started on adopted device (d3ddevice=04ACC420)
+librw engine start (E2'b step 3, ADOPTED device 04B8A860) 640x480
+ok: engine started on adopted device (d3ddevice=04B8A860)
+librw engine start (E2'b step 3, ADOPTED device 04AE2C60) 640x480
+ok: engine started on adopted device (d3ddevice=04AE2C60)
+librw engine start (E2'b step 3, ADOPTED device 04B81100) 640x480
+ok: engine started on adopted device (d3ddevice=04B81100)
+librw engine start (E2'b step 3, ADOPTED device 04BAE740) 640x480
+ok: engine started on adopted device (d3ddevice=04BAE740)
+librw engine start (E2'b step 3, ADOPTED device 04A752A0) 640x480
+ok: engine started on adopted device (d3ddevice=04A752A0)
+librw engine start (E2'b step 3, ADOPTED device 04A4E7C0) 640x480
+ok: engine started on adopted device (d3ddevice=04A4E7C0)
+librw engine start (E2'b step 3, ADOPTED device 04B23800) 640x480
+ok: engine started on adopted device (d3ddevice=04B23800)
+librw engine start (E2'b step 3, ADOPTED device 04B60EE0) 640x480
+ok: engine started on adopted device (d3ddevice=04B60EE0)
+librw engine start (E2'b step 3, ADOPTED device 04BAB280) 640x480
+ok: engine started on adopted device (d3ddevice=04BAB280)
+librw engine start (E2'b step 3, ADOPTED device 04B63F40) 640x480
+ok: engine started on adopted device (d3ddevice=04B63F40)
+librw engine start (E2'b step 3, ADOPTED device 04B8D6A0) 640x480
+ok: engine started on adopted device (d3ddevice=04B8D6A0)
+librw engine start (E2'b step 3, ADOPTED device 04A83840) 640x480
+ok: engine started on adopted device (d3ddevice=04A83840)
+librw engine start (E2'b step 3, ADOPTED device 08E1BB60) 640x480
+ok: engine started on adopted device (d3ddevice=08E1BB60)
+librw engine start (E2'b step 3, ADOPTED device 08E06080) 640x480
+ok: engine started on adopted device (d3ddevice=08E06080)
+librw engine start (E2'b step 3, ADOPTED device 08E0ADA0) 640x480
+ok: engine started on adopted device (d3ddevice=08E0ADA0)
+librw engine start (E2'b step 3, ADOPTED device 08E89B40) 640x480
+ok: engine started on adopted device (d3ddevice=08E89B40)
+librw engine start (E2'b step 3, ADOPTED device 08E20E20) 640x480
+ok: engine started on adopted device (d3ddevice=08E20E20)
+librw engine start (E2'b step 3, ADOPTED device 08E11160) 640x480
+ok: engine started on adopted device (d3ddevice=08E11160)
+librw engine start (E2'b step 3, ADOPTED device 04C11D60) 640x480
+ok: engine started on adopted device (d3ddevice=04C11D60)
+librw engine start (E2'b step 3, ADOPTED device 04A79FE0) 640x480
+ok: engine started on adopted device (d3ddevice=04A79FE0)
+librw engine start (E2'b step 3, ADOPTED device 04A89020) 640x480
+ok: engine started on adopted device (d3ddevice=04A89020)
+librw engine start (E2'b step 3, ADOPTED device 04B72CA0) 640x480
+ok: engine started on adopted device (d3ddevice=04B72CA0)
+librw engine start (E2'b step 3, ADOPTED device 04AAEBC0) 640x480
+ok: engine started on adopted device (d3ddevice=04AAEBC0)
+librw engine start (E2'b step 3, ADOPTED device 049E3B40) 640x480
+ok: engine started on adopted device (d3ddevice=049E3B40)
+librw engine start (E2'b step 3, ADOPTED device 04A5A460) 640x480
+ok: engine started on adopted device (d3ddevice=04A5A460)
+librw engine start (E2'b step 3, ADOPTED device 049F77C0) 640x480
+ok: engine started on adopted device (d3ddevice=049F77C0)
+librw engine start (E2'b step 3, ADOPTED device 04AE0960) 640x480
+ok: engine started on adopted device (d3ddevice=04AE0960)
+librw engine start (E2'b step 3, ADOPTED device 04B8ABE0) 640x480
+ok: engine started on adopted device (d3ddevice=04B8ABE0)
+librw engine start (E2'b step 3, ADOPTED device 04A5F800) 640x480
+ok: engine started on adopted device (d3ddevice=04A5F800)
+librw engine start (E2'b step 3, ADOPTED device 04A3C3C0) 640x480
+ok: engine started on adopted device (d3ddevice=04A3C3C0)
+librw engine start (E2'b step 3, ADOPTED device 04A1A960) 640x480
+ok: engine started on adopted device (d3ddevice=04A1A960)
+librw engine start (E2'b step 3, ADOPTED device 04AB6BA0) 640x480
+ok: engine started on adopted device (d3ddevice=04AB6BA0)
+librw engine start (E2'b step 3, ADOPTED device 04A56C00) 640x480
+ok: engine started on adopted device (d3ddevice=04A56C00)
+librw engine start (E2'b step 3, ADOPTED device 04AD6AE0) 640x480
+ok: engine started on adopted device (d3ddevice=04AD6AE0)
+librw engine start (E2'b step 3, ADOPTED device 04B2D8C0) 640x480
+ok: engine started on adopted device (d3ddevice=04B2D8C0)
+librw engine start (E2'b step 3, ADOPTED device 049FD000) 640x480
+ok: engine started on adopted device (d3ddevice=049FD000)
+librw engine start (E2'b step 3, ADOPTED device 049E9B60) 640x480
+ok: engine started on adopted device (d3ddevice=049E9B60)
+librw engine start (E2'b step 3, ADOPTED device 04A12180) 640x480
+ok: engine started on adopted device (d3ddevice=04A12180)
+librw engine start (E2'b step 3, ADOPTED device 04B8D720) 640x480
+ok: engine started on adopted device (d3ddevice=04B8D720)
+librw engine start (E2'b step 3, ADOPTED device 04B95CC0) 640x480
+ok: engine started on adopted device (d3ddevice=04B95CC0)
+librw engine start (E2'b step 3, ADOPTED device 04AC27E0) 640x480
+ok: engine started on adopted device (d3ddevice=04AC27E0)
+librw engine start (E2'b step 3, ADOPTED device 04B813A0) 640x480
+ok: engine started on adopted device (d3ddevice=04B813A0)
+librw engine start (E2'b step 3, ADOPTED device 04B88440) 640x480
+ok: engine started on adopted device (d3ddevice=04B88440)
+librw engine start (E2'b step 3, ADOPTED device 04A3D660) 640x480
+ok: engine started on adopted device (d3ddevice=04A3D660)
+librw engine start (E2'b step 3, ADOPTED device 04ACABA0) 640x480
+ok: engine started on adopted device (d3ddevice=04ACABA0)
+librw engine start (E2'b step 3, ADOPTED device 04B5B780) 640x480
+ok: engine started on adopted device (d3ddevice=04B5B780)
+librw engine start (E2'b step 3, ADOPTED device 04B77680) 640x480
+ok: engine started on adopted device (d3ddevice=04B77680)
+librw engine start (E2'b step 3, ADOPTED device 04A31820) 640x480
+ok: engine started on adopted device (d3ddevice=04A31820)
+librw engine start (E2'b step 3, ADOPTED device 04A78EC0) 640x480
+ok: engine started on adopted device (d3ddevice=04A78EC0)
+librw engine start (E2'b step 3, ADOPTED device 04B66D40) 640x480
+ok: engine started on adopted device (d3ddevice=04B66D40)
+librw engine start (E2'b step 3, ADOPTED device 04AEBB60) 640x480
+ok: engine started on adopted device (d3ddevice=04AEBB60)
+librw engine start (E2'b step 3, ADOPTED device 04A65FC0) 640x480
+ok: engine started on adopted device (d3ddevice=04A65FC0)
+librw engine start (E2'b step 3, ADOPTED device 049E3CE0) 640x480
+ok: engine started on adopted device (d3ddevice=049E3CE0)
+librw engine start (E2'b step 3, ADOPTED device 04A681A0) 640x480
+ok: engine started on adopted device (d3ddevice=04A681A0)
+librw engine start (E2'b step 3, ADOPTED device 04A677E0) 640x480
+ok: engine started on adopted device (d3ddevice=04A677E0)
+librw engine start (E2'b step 3, ADOPTED device 04A153C0) 640x480
+ok: engine started on adopted device (d3ddevice=04A153C0)
+librw engine start (E2'b step 3, ADOPTED device 04A3A720) 640x480
+ok: engine started on adopted device (d3ddevice=04A3A720)
+librw engine start (E2'b step 3, ADOPTED device 04B76E20) 640x480
+ok: engine started on adopted device (d3ddevice=04B76E20)
+librw engine start (E2'b step 3, ADOPTED device 04A37260) 640x480
+ok: engine started on adopted device (d3ddevice=04A37260)
+librw engine start (E2'b step 3, ADOPTED device 04A539E0) 640x480
+ok: engine started on adopted device (d3ddevice=04A539E0)
+librw engine start (E2'b step 3, ADOPTED device 04B87B80) 640x480
+ok: engine started on adopted device (d3ddevice=04B87B80)
+librw engine start (E2'b step 3, ADOPTED device 04A55200) 640x480
+ok: engine started on adopted device (d3ddevice=04A55200)
+librw engine start (E2'b step 3, ADOPTED device 04A66540) 640x480
+ok: engine started on adopted device (d3ddevice=04A66540)
+librw engine start (E2'b step 3, ADOPTED device 04A6D800) 640x480
+ok: engine started on adopted device (d3ddevice=04A6D800)
+librw engine start (E2'b step 3, ADOPTED device 04A3A560) 640x480
+ok: engine started on adopted device (d3ddevice=04A3A560)
+librw engine start (E2'b step 3, ADOPTED device 04A64E00) 640x480
+ok: engine started on adopted device (d3ddevice=04A64E00)
+librw engine start (E2'b step 3, ADOPTED device 04A9A3C0) 640x480
+ok: engine started on adopted device (d3ddevice=04A9A3C0)
+librw engine start (E2'b step 3, ADOPTED device 04A3CAE0) 640x480
+ok: engine started on adopted device (d3ddevice=04A3CAE0)
+librw engine start (E2'b step 3, ADOPTED device 04A3A7A0) 640x480
+ok: engine started on adopted device (d3ddevice=04A3A7A0)
+librw engine start (E2'b step 3, ADOPTED device 04A531C0) 640x480
+ok: engine started on adopted device (d3ddevice=04A531C0)
+librw engine start (E2'b step 3, ADOPTED device 04A55480) 640x480
+ok: engine started on adopted device (d3ddevice=04A55480)
+librw engine start (E2'b step 3, ADOPTED device 04A08180) 640x480
+ok: engine started on adopted device (d3ddevice=04A08180)
+librw engine start (E2'b step 3, ADOPTED device 04AD8020) 640x480
+ok: engine started on adopted device (d3ddevice=04AD8020)
+librw engine start (E2'b step 3, ADOPTED device 04B5CCA0) 640x480
+ok: engine started on adopted device (d3ddevice=04B5CCA0)
+librw engine start (E2'b step 3, ADOPTED device 04AB8E80) 640x480
+ok: engine started on adopted device (d3ddevice=04AB8E80)
+librw engine start (E2'b step 3, ADOPTED device 04B48D20) 640x480
+ok: engine started on adopted device (d3ddevice=04B48D20)
+librw engine start (E2'b step 3, ADOPTED device 04BCDAC0) 640x480
+ok: engine started on adopted device (d3ddevice=04BCDAC0)
+librw engine start (E2'b step 3, ADOPTED device 04A81A60) 640x480
+ok: engine started on adopted device (d3ddevice=04A81A60)
+librw engine start (E2'b step 3, ADOPTED device 04A7E660) 640x480
+ok: engine started on adopted device (d3ddevice=04A7E660)
+librw engine start (E2'b step 3, ADOPTED device 04A9B8A0) 640x480
+ok: engine started on adopted device (d3ddevice=04A9B8A0)
+librw engine start (E2'b step 3, ADOPTED device 04AE0FE0) 640x480
+ok: engine started on adopted device (d3ddevice=04AE0FE0)
+librw engine start (E2'b step 3, ADOPTED device 04ACA920) 640x480
+ok: engine started on adopted device (d3ddevice=04ACA920)
+librw engine start (E2'b step 3, ADOPTED device 04A60580) 640x480
+ok: engine started on adopted device (d3ddevice=04A60580)
+librw engine start (E2'b step 3, ADOPTED device 04BBC4E0) 640x480
+ok: engine started on adopted device (d3ddevice=04BBC4E0)
+librw engine start (E2'b step 3, ADOPTED device 04B36C00) 640x480
+ok: engine started on adopted device (d3ddevice=04B36C00)
+librw engine start (E2'b step 3, ADOPTED device 04AB1EC0) 640x480
+ok: engine started on adopted device (d3ddevice=04AB1EC0)
+librw engine start (E2'b step 3, ADOPTED device 04A9B6C0) 640x480
+ok: engine started on adopted device (d3ddevice=04A9B6C0)
+librw engine start (E2'b step 3, ADOPTED device 04ACFF80) 640x480
+ok: engine started on adopted device (d3ddevice=04ACFF80)
+librw engine start (E2'b step 3, ADOPTED device 04AC0700) 640x480
+ok: engine started on adopted device (d3ddevice=04AC0700)
+librw engine start (E2'b step 3, ADOPTED device 04A6DBA0) 640x480
+ok: engine started on adopted device (d3ddevice=04A6DBA0)
+librw engine start (E2'b step 3, ADOPTED device 04A87CA0) 640x480
+ok: engine started on adopted device (d3ddevice=04A87CA0)
+librw engine start (E2'b step 3, ADOPTED device 04A7F280) 640x480
+ok: engine started on adopted device (d3ddevice=04A7F280)
+librw engine start (E2'b step 3, ADOPTED device 04BC04C0) 640x480
+ok: engine started on adopted device (d3ddevice=04BC04C0)
+librw engine start (E2'b step 3, ADOPTED device 04A26BA0) 640x480
+ok: engine started on adopted device (d3ddevice=04A26BA0)
+librw engine start (E2'b step 3, ADOPTED device 04A8A180) 640x480
+ok: engine started on adopted device (d3ddevice=04A8A180)
+librw engine start (E2'b step 3, ADOPTED device 04A58F40) 640x480
+ok: engine started on adopted device (d3ddevice=04A58F40)
+librw engine start (E2'b step 3, ADOPTED device 04AB7360) 640x480
+ok: engine started on adopted device (d3ddevice=04AB7360)
+librw engine start (E2'b step 3, ADOPTED device 04A6FA80) 640x480
+ok: engine started on adopted device (d3ddevice=04A6FA80)
+librw engine start (E2'b step 3, ADOPTED device 04BC0100) 640x480
+ok: engine started on adopted device (d3ddevice=04BC0100)
+librw engine start (E2'b step 3, ADOPTED device 04AA0140) 640x480
+ok: engine started on adopted device (d3ddevice=04AA0140)
+librw engine start (E2'b step 3, ADOPTED device 04AAB160) 640x480
+ok: engine started on adopted device (d3ddevice=04AAB160)
+librw engine start (E2'b step 3, ADOPTED device 04AAA8C0) 640x480
+ok: engine started on adopted device (d3ddevice=04AAA8C0)
+librw engine start (E2'b step 3, ADOPTED device 04B37840) 640x480
+ok: engine started on adopted device (d3ddevice=04B37840)
+librw engine start (E2'b step 3, ADOPTED device 04B31440) 640x480
+ok: engine started on adopted device (d3ddevice=04B31440)
+librw engine start (E2'b step 3, ADOPTED device 04A20C80) 640x480
+ok: engine started on adopted device (d3ddevice=04A20C80)
+librw engine start (E2'b step 3, ADOPTED device 04AA3D40) 640x480
+ok: engine started on adopted device (d3ddevice=04AA3D40)
+librw engine start (E2'b step 3, ADOPTED device 04A14620) 640x480
+ok: engine started on adopted device (d3ddevice=04A14620)
+librw engine start (E2'b step 3, ADOPTED device 04B23F20) 640x480
+ok: engine started on adopted device (d3ddevice=04B23F20)
+librw engine start (E2'b step 3, ADOPTED device 04A1AA20) 640x480
+ok: engine started on adopted device (d3ddevice=04A1AA20)
+librw engine start (E2'b step 3, ADOPTED device 04BE1B40) 640x480
+ok: engine started on adopted device (d3ddevice=04BE1B40)
+librw engine start (E2'b step 3, ADOPTED device 04A1D660) 640x480
+ok: engine started on adopted device (d3ddevice=04A1D660)
+librw engine start (E2'b step 3, ADOPTED device 04A68500) 640x480
+ok: engine started on adopted device (d3ddevice=04A68500)
+librw engine start (E2'b step 3, ADOPTED device 04AA02A0) 640x480
+ok: engine started on adopted device (d3ddevice=04AA02A0)
+librw engine start (E2'b step 3, ADOPTED device 04A328C0) 640x480
+ok: engine started on adopted device (d3ddevice=04A328C0)
+librw engine start (E2'b step 3, ADOPTED device 04C25060) 640x480
+ok: engine started on adopted device (d3ddevice=04C25060)
+librw engine start (E2'b step 3, ADOPTED device 04A2FA40) 640x480
+ok: engine started on adopted device (d3ddevice=04A2FA40)
+librw engine start (E2'b step 3, ADOPTED device 04A8C540) 640x480
+ok: engine started on adopted device (d3ddevice=04A8C540)
+librw engine start (E2'b step 3, ADOPTED device 04BFCEA0) 640x480
+ok: engine started on adopted device (d3ddevice=04BFCEA0)
+librw engine start (E2'b step 3, ADOPTED device 04A2AE60) 640x480
+ok: engine started on adopted device (d3ddevice=04A2AE60)
+librw engine start (E2'b step 3, ADOPTED device 04A467C0) 640x480
+ok: engine started on adopted device (d3ddevice=04A467C0)
+librw engine start (E2'b step 3, ADOPTED device 04A1EEE0) 640x480
+ok: engine started on adopted device (d3ddevice=04A1EEE0)
+librw engine start (E2'b step 3, ADOPTED device 04B65700) 640x480
+ok: engine started on adopted device (d3ddevice=04B65700)
+librw engine start (E2'b step 3, ADOPTED device 04B0F1A0) 640x480
+ok: engine started on adopted device (d3ddevice=04B0F1A0)
+librw engine start (E2'b step 3, ADOPTED device 04B39820) 640x480
+ok: engine started on adopted device (d3ddevice=04B39820)
+librw engine start (E2'b step 3, ADOPTED device 04D31EA0) 640x480
+ok: engine started on adopted device (d3ddevice=04D31EA0)
+librw engine start (E2'b step 3, ADOPTED device 04D03FA0) 640x480
+ok: engine started on adopted device (d3ddevice=04D03FA0)
+librw engine start (E2'b step 3, ADOPTED device 04B5FB20) 640x480
+ok: engine started on adopted device (d3ddevice=04B5FB20)
+librw engine start (E2'b step 3, ADOPTED device 04C15C20) 640x480
+ok: engine started on adopted device (d3ddevice=04C15C20)
+librw engine start (E2'b step 3, ADOPTED device 04B18220) 640x480
+ok: engine started on adopted device (d3ddevice=04B18220)
+librw engine start (E2'b step 3, ADOPTED device 04C784A0) 640x480
+ok: engine started on adopted device (d3ddevice=04C784A0)
+librw engine start (E2'b step 3, ADOPTED device 04B3C900) 640x480
+ok: engine started on adopted device (d3ddevice=04B3C900)
+librw engine start (E2'b step 3, ADOPTED device 08F6AC20) 640x480
+ok: engine started on adopted device (d3ddevice=08F6AC20)
+librw engine start (E2'b step 3, ADOPTED device 08F60480) 640x480
+ok: engine started on adopted device (d3ddevice=08F60480)
+librw engine start (E2'b step 3, ADOPTED device 08F75140) 640x480
+ok: engine started on adopted device (d3ddevice=08F75140)
+librw engine start (E2'b step 3, ADOPTED device 08F5E120) 640x480
+ok: engine started on adopted device (d3ddevice=08F5E120)
+librw engine start (E2'b step 3, ADOPTED device 08FC8F80) 640x480
+ok: engine started on adopted device (d3ddevice=08FC8F80)
+librw engine start (E2'b step 3, ADOPTED device 08F58C40) 640x480
+ok: engine started on adopted device (d3ddevice=08F58C40)
+librw engine start (E2'b step 3, ADOPTED device 04D697A0) 640x480
+ok: engine started on adopted device (d3ddevice=04D697A0)
+librw engine start (E2'b step 3, ADOPTED device 04B51340) 640x480
+ok: engine started on adopted device (d3ddevice=04B51340)
+librw engine start (E2'b step 3, ADOPTED device 04B8AFA0) 640x480
+ok: engine started on adopted device (d3ddevice=04B8AFA0)
+librw engine start (E2'b step 3, ADOPTED device 04CB6120) 640x480
+ok: engine started on adopted device (d3ddevice=04CB6120)
+librw engine start (E2'b step 3, ADOPTED device 04B84BC0) 640x480
+ok: engine started on adopted device (d3ddevice=04B84BC0)
+librw engine start (E2'b step 3, ADOPTED device 04BBA260) 640x480
+ok: engine started on adopted device (d3ddevice=04BBA260)
+librw engine start (E2'b step 3, ADOPTED device 04C2EF60) 640x480
+ok: engine started on adopted device (d3ddevice=04C2EF60)
+librw engine start (E2'b step 3, ADOPTED device 04B8CCE0) 640x480
+ok: engine started on adopted device (d3ddevice=04B8CCE0)
+librw engine start (E2'b step 3, ADOPTED device 04BB6BA0) 640x480
+ok: engine started on adopted device (d3ddevice=04BB6BA0)
+librw engine start (E2'b step 3, ADOPTED device 04B4D9A0) 640x480
+ok: engine started on adopted device (d3ddevice=04B4D9A0)
+librw engine start (E2'b step 3, ADOPTED device 04BDCA00) 640x480
+ok: engine started on adopted device (d3ddevice=04BDCA00)
+librw engine start (E2'b step 3, ADOPTED device 04BA0B20) 640x480
+ok: engine started on adopted device (d3ddevice=04BA0B20)
+librw engine start (E2'b step 3, ADOPTED device 04C1EEA0) 640x480
+ok: engine started on adopted device (d3ddevice=04C1EEA0)
+librw engine start (E2'b step 3, ADOPTED device 04BD68E0) 640x480
+ok: engine started on adopted device (d3ddevice=04BD68E0)
+librw engine start (E2'b step 3, ADOPTED device 04BCE860) 640x480
+ok: engine started on adopted device (d3ddevice=04BCE860)
+librw engine start (E2'b step 3, ADOPTED device 04BE2E00) 640x480
+ok: engine started on adopted device (d3ddevice=04BE2E00)
+librw engine start (E2'b step 3, ADOPTED device 04BC1D80) 640x480
+ok: engine started on adopted device (d3ddevice=04BC1D80)
+librw engine start (E2'b step 3, ADOPTED device 04ABD240) 640x480
+ok: engine started on adopted device (d3ddevice=04ABD240)
+librw engine start (E2'b step 3, ADOPTED device 04B07C20) 640x480
+ok: engine started on adopted device (d3ddevice=04B07C20)
+librw engine start (E2'b step 3, ADOPTED device 04BDC0C0) 640x480
+ok: engine started on adopted device (d3ddevice=04BDC0C0)
+librw engine start (E2'b step 3, ADOPTED device 04BC60C0) 640x480
+ok: engine started on adopted device (d3ddevice=04BC60C0)
+librw engine start (E2'b step 3, ADOPTED device 04B900A0) 640x480
+ok: engine started on adopted device (d3ddevice=04B900A0)
+librw engine start (E2'b step 3, ADOPTED device 04BA6DC0) 640x480
+ok: engine started on adopted device (d3ddevice=04BA6DC0)
+librw engine start (E2'b step 3, ADOPTED device 04BF9520) 640x480
+ok: engine started on adopted device (d3ddevice=04BF9520)
+librw engine start (E2'b step 3, ADOPTED device 04B6F520) 640x480
+ok: engine started on adopted device (d3ddevice=04B6F520)
+librw engine start (E2'b step 3, ADOPTED device 08E4BE00) 640x480
+ok: engine started on adopted device (d3ddevice=08E4BE00)
+librw engine start (E2'b step 3, ADOPTED device 08E53F60) 640x480
+ok: engine started on adopted device (d3ddevice=08E53F60)
+librw engine start (E2'b step 3, ADOPTED device 08E46660) 640x480
+ok: engine started on adopted device (d3ddevice=08E46660)
+librw engine start (E2'b step 3, ADOPTED device 08E4E400) 640x480
+ok: engine started on adopted device (d3ddevice=08E4E400)
+librw engine start (E2'b step 3, ADOPTED device 08E67400) 640x480
+ok: engine started on adopted device (d3ddevice=08E67400)
+librw engine start (E2'b step 3, ADOPTED device 08E5F200) 640x480
+ok: engine started on adopted device (d3ddevice=08E5F200)
+librw engine start (E2'b step 3, ADOPTED device 08E42680) 640x480
+ok: engine started on adopted device (d3ddevice=08E42680)
+librw engine start (E2'b step 3, ADOPTED device 04CC67E0) 640x480
+ok: engine started on adopted device (d3ddevice=04CC67E0)
+librw engine start (E2'b step 3, ADOPTED device 04D7DE40) 640x480
+ok: engine started on adopted device (d3ddevice=04D7DE40)
+librw engine start (E2'b step 3, ADOPTED device 04B96F40) 640x480
+ok: engine started on adopted device (d3ddevice=04B96F40)
+librw engine start (E2'b step 3, ADOPTED device 04C4AFC0) 640x480
+ok: engine started on adopted device (d3ddevice=04C4AFC0)
+librw engine start (E2'b step 3, ADOPTED device 04C1CEE0) 640x480
+ok: engine started on adopted device (d3ddevice=04C1CEE0)
+librw engine start (E2'b step 3, ADOPTED device 04B2D820) 640x480
+ok: engine started on adopted device (d3ddevice=04B2D820)
+librw engine start (E2'b step 3, ADOPTED device 04BA4220) 640x480
+ok: engine started on adopted device (d3ddevice=04BA4220)
+librw engine start (E2'b step 3, ADOPTED device 04C3A4A0) 640x480
+ok: engine started on adopted device (d3ddevice=04C3A4A0)
+librw engine start (E2'b step 3, ADOPTED device 04B72920) 640x480
+ok: engine started on adopted device (d3ddevice=04B72920)
+librw engine start (E2'b step 3, ADOPTED device 04C8CB00) 640x480
+ok: engine started on adopted device (d3ddevice=04C8CB00)
+librw engine start (E2'b step 3, ADOPTED device 04B19A00) 640x480
+ok: engine started on adopted device (d3ddevice=04B19A00)
+librw engine start (E2'b step 3, ADOPTED device 04C1E1C0) 640x480
+ok: engine started on adopted device (d3ddevice=04C1E1C0)
+librw engine start (E2'b step 3, ADOPTED device 04CD54A0) 640x480
+ok: engine started on adopted device (d3ddevice=04CD54A0)
+librw engine start (E2'b step 3, ADOPTED device 04BC2980) 640x480
+ok: engine started on adopted device (d3ddevice=04BC2980)
+librw engine start (E2'b step 3, ADOPTED device 04BD2240) 640x480
+ok: engine started on adopted device (d3ddevice=04BD2240)
+librw engine start (E2'b step 3, ADOPTED device 04B45DE0) 640x480
+ok: engine started on adopted device (d3ddevice=04B45DE0)
+librw engine start (E2'b step 3, ADOPTED device 04B9EAE0) 640x480
+ok: engine started on adopted device (d3ddevice=04B9EAE0)
+librw engine start (E2'b step 3, ADOPTED device 04B3A9E0) 640x480
+ok: engine started on adopted device (d3ddevice=04B3A9E0)
+librw engine start (E2'b step 3, ADOPTED device 04B7B5E0) 640x480
+ok: engine started on adopted device (d3ddevice=04B7B5E0)
+librw engine start (E2'b step 3, ADOPTED device 04C1CC20) 640x480
+ok: engine started on adopted device (d3ddevice=04C1CC20)
+librw engine start (E2'b step 3, ADOPTED device 04BB78A0) 640x480
+ok: engine started on adopted device (d3ddevice=04BB78A0)
+librw engine start (E2'b step 3, ADOPTED device 04B9AA60) 640x480
+ok: engine started on adopted device (d3ddevice=04B9AA60)
+librw engine start (E2'b step 3, ADOPTED device 04B5DC60) 640x480
+ok: engine started on adopted device (d3ddevice=04B5DC60)
+librw engine start (E2'b step 3, ADOPTED device 04B878E0) 640x480
+ok: engine started on adopted device (d3ddevice=04B878E0)
+librw engine start (E2'b step 3, ADOPTED device 04B2DD20) 640x480
+ok: engine started on adopted device (d3ddevice=04B2DD20)
+librw engine start (E2'b step 3, ADOPTED device 04B720A0) 640x480
+ok: engine started on adopted device (d3ddevice=04B720A0)
+librw engine start (E2'b step 3, ADOPTED device 04CCAB00) 640x480
+ok: engine started on adopted device (d3ddevice=04CCAB00)
+librw engine start (E2'b step 3, ADOPTED device 04BA0B60) 640x480
+ok: engine started on adopted device (d3ddevice=04BA0B60)
+librw engine start (E2'b step 3, ADOPTED device 04B82C20) 640x480
+ok: engine started on adopted device (d3ddevice=04B82C20)
+librw engine start (E2'b step 3, ADOPTED device 04B3FB20) 640x480
+ok: engine started on adopted device (d3ddevice=04B3FB20)
+librw engine start (E2'b step 3, ADOPTED device 04BB8AE0) 640x480
+ok: engine started on adopted device (d3ddevice=04BB8AE0)
+librw engine start (E2'b step 3, ADOPTED device 04BF6220) 640x480
+ok: engine started on adopted device (d3ddevice=04BF6220)
+librw engine start (E2'b step 3, ADOPTED device 04B90FC0) 640x480
+ok: engine started on adopted device (d3ddevice=04B90FC0)
+librw engine start (E2'b step 3, ADOPTED device 04BC7260) 640x480
+ok: engine started on adopted device (d3ddevice=04BC7260)
+librw engine start (E2'b step 3, ADOPTED device 04BBE7A0) 640x480
+ok: engine started on adopted device (d3ddevice=04BBE7A0)
+librw engine start (E2'b step 3, ADOPTED device 04BCF980) 640x480
+ok: engine started on adopted device (d3ddevice=04BCF980)
+librw engine start (E2'b step 3, ADOPTED device 04BBE120) 640x480
+ok: engine started on adopted device (d3ddevice=04BBE120)
+librw engine start (E2'b step 3, ADOPTED device 04B57E80) 640x480
+ok: engine started on adopted device (d3ddevice=04B57E80)
+librw engine start (E2'b step 3, ADOPTED device 04BA2E80) 640x480
+ok: engine started on adopted device (d3ddevice=04BA2E80)
+librw engine start (E2'b step 3, ADOPTED device 04BB61C0) 640x480
+ok: engine started on adopted device (d3ddevice=04BB61C0)
+librw engine start (E2'b step 3, ADOPTED device 04D4DEC0) 640x480
+ok: engine started on adopted device (d3ddevice=04D4DEC0)
+librw engine start (E2'b step 3, ADOPTED device 04BB3460) 640x480
+ok: engine started on adopted device (d3ddevice=04BB3460)
+librw engine start (E2'b step 3, ADOPTED device 04BD0E60) 640x480
+ok: engine started on adopted device (d3ddevice=04BD0E60)
+librw engine start (E2'b step 3, ADOPTED device 04D50400) 640x480
+ok: engine started on adopted device (d3ddevice=04D50400)
+librw engine start (E2'b step 3, ADOPTED device 04C2D4A0) 640x480
+ok: engine started on adopted device (d3ddevice=04C2D4A0)
+librw engine start (E2'b step 3, ADOPTED device 04BD72A0) 640x480
+ok: engine started on adopted device (d3ddevice=04BD72A0)
+librw engine start (E2'b step 3, ADOPTED device 04BEAFA0) 640x480
+ok: engine started on adopted device (d3ddevice=04BEAFA0)
+librw engine start (E2'b step 3, ADOPTED device 04C60600) 640x480
+ok: engine started on adopted device (d3ddevice=04C60600)
+librw engine start (E2'b step 3, ADOPTED device 04BBEB60) 640x480
+ok: engine started on adopted device (d3ddevice=04BBEB60)
+librw engine start (E2'b step 3, ADOPTED device 04BACF00) 640x480
+ok: engine started on adopted device (d3ddevice=04BACF00)
+librw engine start (E2'b step 3, ADOPTED device 04BB53E0) 640x480
+ok: engine started on adopted device (d3ddevice=04BB53E0)
+librw engine start (E2'b step 3, ADOPTED device 04B3E2E0) 640x480
+ok: engine started on adopted device (d3ddevice=04B3E2E0)
+librw engine start (E2'b step 3, ADOPTED device 04D18360) 640x480
+ok: engine started on adopted device (d3ddevice=04D18360)
+librw engine start (E2'b step 3, ADOPTED device 04B48FE0) 640x480
+ok: engine started on adopted device (d3ddevice=04B48FE0)
+librw engine start (E2'b step 3, ADOPTED device 04C37A40) 640x480
+ok: engine started on adopted device (d3ddevice=04C37A40)
+librw engine start (E2'b step 3, ADOPTED device 04BB8520) 640x480
+ok: engine started on adopted device (d3ddevice=04BB8520)
+librw engine start (E2'b step 3, ADOPTED device 04BB6E40) 640x480
+ok: engine started on adopted device (d3ddevice=04BB6E40)
+librw engine start (E2'b step 3, ADOPTED device 04B8DE60) 640x480
+ok: engine started on adopted device (d3ddevice=04B8DE60)
+librw engine start (E2'b step 3, ADOPTED device 04BE6320) 640x480
+ok: engine started on adopted device (d3ddevice=04BE6320)
+librw engine start (E2'b step 3, ADOPTED device 08F4E320) 640x480
+ok: engine started on adopted device (d3ddevice=08F4E320)
+librw engine start (E2'b step 3, ADOPTED device 08F55520) 640x480
+ok: engine started on adopted device (d3ddevice=08F55520)
+librw engine start (E2'b step 3, ADOPTED device 08F51F00) 640x480
+ok: engine started on adopted device (d3ddevice=08F51F00)
+librw engine start (E2'b step 3, ADOPTED device 08F47F60) 640x480
+ok: engine started on adopted device (d3ddevice=08F47F60)
+librw engine start (E2'b step 3, ADOPTED device 08F5D4A0) 640x480
+ok: engine started on adopted device (d3ddevice=08F5D4A0)
+librw engine start (E2'b step 3, ADOPTED device 08F54AA0) 640x480
+ok: engine started on adopted device (d3ddevice=08F54AA0)
+librw engine start (E2'b step 3, ADOPTED device 08FCB6E0) 640x480
+ok: engine started on adopted device (d3ddevice=08FCB6E0)
+librw engine start (E2'b step 3, ADOPTED device 08F58400) 640x480
+ok: engine started on adopted device (d3ddevice=08F58400)
+librw engine start (E2'b step 3, ADOPTED device 08F3C700) 640x480
+ok: engine started on adopted device (d3ddevice=08F3C700)
+librw engine start (E2'b step 3, ADOPTED device 08F4B400) 640x480
+ok: engine started on adopted device (d3ddevice=08F4B400)
+librw engine start (E2'b step 3, ADOPTED device 08F44F00) 640x480
+ok: engine started on adopted device (d3ddevice=08F44F00)
+librw engine start (E2'b step 3, ADOPTED device 08FF6A80) 640x480
+ok: engine started on adopted device (d3ddevice=08FF6A80)
+librw engine start (E2'b step 3, ADOPTED device 08F5C940) 640x480
+ok: engine started on adopted device (d3ddevice=08F5C940)
+librw engine start (E2'b step 3, ADOPTED device 08FDC7E0) 640x480
+ok: engine started on adopted device (d3ddevice=08FDC7E0)
+librw engine start (E2'b step 3, ADOPTED device 08FCAB60) 640x480
+ok: engine started on adopted device (d3ddevice=08FCAB60)
+librw engine start (E2'b step 3, ADOPTED device 08F64640) 640x480
+ok: engine started on adopted device (d3ddevice=08F64640)
+librw engine start (E2'b step 3, ADOPTED device 08F5E260) 640x480
+ok: engine started on adopted device (d3ddevice=08F5E260)
+librw engine start (E2'b step 3, ADOPTED device 04C9AF60) 640x480
+ok: engine started on adopted device (d3ddevice=04C9AF60)
+librw engine start (E2'b step 3, ADOPTED device 04B56C40) 640x480
+ok: engine started on adopted device (d3ddevice=04B56C40)
+librw engine start (E2'b step 3, ADOPTED device 04C3DD20) 640x480
+ok: engine started on adopted device (d3ddevice=04C3DD20)
+librw engine start (E2'b step 3, ADOPTED device 04C493A0) 640x480
+ok: engine started on adopted device (d3ddevice=04C493A0)
+librw engine start (E2'b step 3, ADOPTED device 04BB6BE0) 640x480
+ok: engine started on adopted device (d3ddevice=04BB6BE0)
+librw engine start (E2'b step 3, ADOPTED device 04BC6DE0) 640x480
+ok: engine started on adopted device (d3ddevice=04BC6DE0)
+librw engine start (E2'b step 3, ADOPTED device 04B7E060) 640x480
+ok: engine started on adopted device (d3ddevice=04B7E060)
+librw engine start (E2'b step 3, ADOPTED device 04CF89E0) 640x480
+ok: engine started on adopted device (d3ddevice=04CF89E0)
+librw engine start (E2'b step 3, ADOPTED device 04B8BC00) 640x480
+ok: engine started on adopted device (d3ddevice=04B8BC00)
+librw engine start (E2'b step 3, ADOPTED device 04BB12A0) 640x480
+ok: engine started on adopted device (d3ddevice=04BB12A0)
+librw engine start (E2'b step 3, ADOPTED device 04C2C380) 640x480
+ok: engine started on adopted device (d3ddevice=04C2C380)
+librw engine start (E2'b step 3, ADOPTED device 04B37660) 640x480
+ok: engine started on adopted device (d3ddevice=04B37660)
+librw engine start (E2'b step 3, ADOPTED device 04BBF9C0) 640x480
+ok: engine started on adopted device (d3ddevice=04BBF9C0)
+librw engine start (E2'b step 3, ADOPTED device 04D42E40) 640x480
+ok: engine started on adopted device (d3ddevice=04D42E40)
+librw engine start (E2'b step 3, ADOPTED device 04C34880) 640x480
+ok: engine started on adopted device (d3ddevice=04C34880)
+librw engine start (E2'b step 3, ADOPTED device 04B2DAA0) 640x480
+ok: engine started on adopted device (d3ddevice=04B2DAA0)
+librw engine start (E2'b step 3, ADOPTED device 04B27CA0) 640x480
+ok: engine started on adopted device (d3ddevice=04B27CA0)
+librw engine start (E2'b step 3, ADOPTED device 04ABEFA0) 640x480
+ok: engine started on adopted device (d3ddevice=04ABEFA0)
+librw engine start (E2'b step 3, ADOPTED device 04B837E0) 640x480
+ok: engine started on adopted device (d3ddevice=04B837E0)
+librw engine start (E2'b step 3, ADOPTED device 04B9A7A0) 640x480
+ok: engine started on adopted device (d3ddevice=04B9A7A0)
+librw engine start (E2'b step 3, ADOPTED device 04ACEEA0) 640x480
+ok: engine started on adopted device (d3ddevice=04ACEEA0)
+librw engine start (E2'b step 3, ADOPTED device 04B35E60) 640x480
+ok: engine started on adopted device (d3ddevice=04B35E60)
+librw engine start (E2'b step 3, ADOPTED device 04C42DC0) 640x480
+ok: engine started on adopted device (d3ddevice=04C42DC0)
+librw engine start (E2'b step 3, ADOPTED device 08E4AAA0) 640x480
+ok: engine started on adopted device (d3ddevice=08E4AAA0)
+librw engine start (E2'b step 3, ADOPTED device 08E6E1C0) 640x480
+ok: engine started on adopted device (d3ddevice=08E6E1C0)
+librw engine start (E2'b step 3, ADOPTED device 08E4ACE0) 640x480
+ok: engine started on adopted device (d3ddevice=08E4ACE0)
+librw engine start (E2'b step 3, ADOPTED device 08E4FA40) 640x480
+ok: engine started on adopted device (d3ddevice=08E4FA40)
+librw engine start (E2'b step 3, ADOPTED device 08F60920) 640x480
+ok: engine started on adopted device (d3ddevice=08F60920)
+librw engine start (E2'b step 3, ADOPTED device 08FF4E40) 640x480
+ok: engine started on adopted device (d3ddevice=08FF4E40)
+librw engine start (E2'b step 3, ADOPTED device 08EE51A0) 640x480
+ok: engine started on adopted device (d3ddevice=08EE51A0)
+librw engine start (E2'b step 3, ADOPTED device 08F84C00) 640x480
+ok: engine started on adopted device (d3ddevice=08F84C00)
+librw engine start (E2'b step 3, ADOPTED device 08F569E0) 640x480
+ok: engine started on adopted device (d3ddevice=08F569E0)
+librw engine start (E2'b step 3, ADOPTED device 08E6BDC0) 640x480
+ok: engine started on adopted device (d3ddevice=08E6BDC0)
+librw engine start (E2'b step 3, ADOPTED device 08FD05C0) 640x480
+ok: engine started on adopted device (d3ddevice=08FD05C0)
+librw engine start (E2'b step 3, ADOPTED device 08FD72A0) 640x480
+ok: engine started on adopted device (d3ddevice=08FD72A0)
+librw engine start (E2'b step 3, ADOPTED device 08FE5C40) 640x480
+ok: engine started on adopted device (d3ddevice=08FE5C40)
+librw engine start (E2'b step 3, ADOPTED device 08F69960) 640x480
+ok: engine started on adopted device (d3ddevice=08F69960)
+librw engine start (E2'b step 3, ADOPTED device 08F47440) 640x480
+ok: engine started on adopted device (d3ddevice=08F47440)
+librw engine start (E2'b step 3, ADOPTED device 08F7A5C0) 640x480
+ok: engine started on adopted device (d3ddevice=08F7A5C0)
+librw engine start (E2'b step 3, ADOPTED device 04B740A0) 640x480
+ok: engine started on adopted device (d3ddevice=04B740A0)
+librw engine start (E2'b step 3, ADOPTED device 04C70680) 640x480
+ok: engine started on adopted device (d3ddevice=04C70680)
+librw engine start (E2'b step 3, ADOPTED device 04BC1260) 640x480
+ok: engine started on adopted device (d3ddevice=04BC1260)
+librw engine start (E2'b step 3, ADOPTED device 04A6C6C0) 640x480
+ok: engine started on adopted device (d3ddevice=04A6C6C0)
+librw engine start (E2'b step 3, ADOPTED device 04B9D8A0) 640x480
+ok: engine started on adopted device (d3ddevice=04B9D8A0)
+librw engine start (E2'b step 3, ADOPTED device 04BE31C0) 640x480
+ok: engine started on adopted device (d3ddevice=04BE31C0)
+librw engine start (E2'b step 3, ADOPTED device 04D46CE0) 640x480
+ok: engine started on adopted device (d3ddevice=04D46CE0)
+librw engine start (E2'b step 3, ADOPTED device 04C31020) 640x480
+ok: engine started on adopted device (d3ddevice=04C31020)
+librw engine start (E2'b step 3, ADOPTED device 04B15820) 640x480
+ok: engine started on adopted device (d3ddevice=04B15820)
+librw engine start (E2'b step 3, ADOPTED device 04B41EC0) 640x480
+ok: engine started on adopted device (d3ddevice=04B41EC0)
+librw engine start (E2'b step 3, ADOPTED device 04B20740) 640x480
+ok: engine started on adopted device (d3ddevice=04B20740)
+librw engine start (E2'b step 3, ADOPTED device 04A5B640) 640x480
+ok: engine started on adopted device (d3ddevice=04A5B640)
+librw engine start (E2'b step 3, ADOPTED device 04AD2E20) 640x480
+ok: engine started on adopted device (d3ddevice=04AD2E20)
+librw engine start (E2'b step 3, ADOPTED device 04A76AC0) 640x480
+ok: engine started on adopted device (d3ddevice=04A76AC0)
+librw engine start (E2'b step 3, ADOPTED device 04A00A60) 640x480
+ok: engine started on adopted device (d3ddevice=04A00A60)
+librw engine start (E2'b step 3, ADOPTED device 04ABE660) 640x480
+ok: engine started on adopted device (d3ddevice=04ABE660)
+librw engine start (E2'b step 3, ADOPTED device 04AB8F40) 640x480
+ok: engine started on adopted device (d3ddevice=04AB8F40)
+librw engine start (E2'b step 3, ADOPTED device 04A8CE40) 640x480
+ok: engine started on adopted device (d3ddevice=04A8CE40)
+librw engine start (E2'b step 3, ADOPTED device 04B18640) 640x480
+ok: engine started on adopted device (d3ddevice=04B18640)
+librw engine start (E2'b step 3, ADOPTED device 04AA6480) 640x480
+ok: engine started on adopted device (d3ddevice=04AA6480)
+librw engine start (E2'b step 3, ADOPTED device 04A838C0) 640x480
+ok: engine started on adopted device (d3ddevice=04A838C0)
+librw engine start (E2'b step 3, ADOPTED device 04ABB500) 640x480
+ok: engine started on adopted device (d3ddevice=04ABB500)
+librw engine start (E2'b step 3, ADOPTED device 04B59820) 640x480
+ok: engine started on adopted device (d3ddevice=04B59820)
+librw engine start (E2'b step 3, ADOPTED device 04A99A60) 640x480
+ok: engine started on adopted device (d3ddevice=04A99A60)
+librw engine start (E2'b step 3, ADOPTED device 04B79DC0) 640x480
+ok: engine started on adopted device (d3ddevice=04B79DC0)
+librw engine start (E2'b step 3, ADOPTED device 04AC5AE0) 640x480
+ok: engine started on adopted device (d3ddevice=04AC5AE0)
+librw engine start (E2'b step 3, ADOPTED device 04AB75C0) 640x480
+ok: engine started on adopted device (d3ddevice=04AB75C0)
+librw engine start (E2'b step 3, ADOPTED device 04A9E940) 640x480
+ok: engine started on adopted device (d3ddevice=04A9E940)
+librw engine start (E2'b step 3, ADOPTED device 04B2F080) 640x480
+ok: engine started on adopted device (d3ddevice=04B2F080)
+librw engine start (E2'b step 3, ADOPTED device 04AB8880) 640x480
+ok: engine started on adopted device (d3ddevice=04AB8880)
+librw engine start (E2'b step 3, ADOPTED device 04A42780) 640x480
+ok: engine started on adopted device (d3ddevice=04A42780)
+librw engine start (E2'b step 3, ADOPTED device 04A98DA0) 640x480
+ok: engine started on adopted device (d3ddevice=04A98DA0)
+librw engine start (E2'b step 3, ADOPTED device 04AE7620) 640x480
+ok: engine started on adopted device (d3ddevice=04AE7620)
+librw engine start (E2'b step 3, ADOPTED device 04AA5AE0) 640x480
+ok: engine started on adopted device (d3ddevice=04AA5AE0)
+librw engine start (E2'b step 3, ADOPTED device 04AAC7E0) 640x480
+ok: engine started on adopted device (d3ddevice=04AAC7E0)
+librw engine start (E2'b step 3, ADOPTED device 04A43F40) 640x480
+ok: engine started on adopted device (d3ddevice=04A43F40)
+librw engine start (E2'b step 3, ADOPTED device 04AB8240) 640x480
+ok: engine started on adopted device (d3ddevice=04AB8240)
+librw engine start (E2'b step 3, ADOPTED device 04B2D4A0) 640x480
+ok: engine started on adopted device (d3ddevice=04B2D4A0)
+librw engine start (E2'b step 3, ADOPTED device 04A977A0) 640x480
+ok: engine started on adopted device (d3ddevice=04A977A0)
+librw engine start (E2'b step 3, ADOPTED device 04AA2880) 640x480
+ok: engine started on adopted device (d3ddevice=04AA2880)
+librw engine start (E2'b step 3, ADOPTED device 04AE4CC0) 640x480
+ok: engine started on adopted device (d3ddevice=04AE4CC0)
+librw engine start (E2'b step 3, ADOPTED device 04AB5220) 640x480
+ok: engine started on adopted device (d3ddevice=04AB5220)
+librw engine start (E2'b step 3, ADOPTED device 04AA9440) 640x480
+ok: engine started on adopted device (d3ddevice=04AA9440)
+librw engine start (E2'b step 3, ADOPTED device 04ABC960) 640x480
+ok: engine started on adopted device (d3ddevice=04ABC960)
+librw engine start (E2'b step 3, ADOPTED device 04ADB7C0) 640x480
+ok: engine started on adopted device (d3ddevice=04ADB7C0)
+librw engine start (E2'b step 3, ADOPTED device 04A897E0) 640x480
+ok: engine started on adopted device (d3ddevice=04A897E0)
+librw engine start (E2'b step 3, ADOPTED device 04AB4BA0) 640x480
+ok: engine started on adopted device (d3ddevice=04AB4BA0)
+librw engine start (E2'b step 3, ADOPTED device 04A76980) 640x480
+ok: engine started on adopted device (d3ddevice=04A76980)
+librw engine start (E2'b step 3, ADOPTED device 04AA1CE0) 640x480
+ok: engine started on adopted device (d3ddevice=04AA1CE0)
+librw engine start (E2'b step 3, ADOPTED device 04AB1540) 640x480
+ok: engine started on adopted device (d3ddevice=04AB1540)
+librw engine start (E2'b step 3, ADOPTED device 04AA1920) 640x480
+ok: engine started on adopted device (d3ddevice=04AA1920)
+librw engine start (E2'b step 3, ADOPTED device 04B233A0) 640x480
+ok: engine started on adopted device (d3ddevice=04B233A0)
+librw engine start (E2'b step 3, ADOPTED device 04A5E220) 640x480
+ok: engine started on adopted device (d3ddevice=04A5E220)
+librw engine start (E2'b step 3, ADOPTED device 04A925E0) 640x480
+ok: engine started on adopted device (d3ddevice=04A925E0)
+librw engine start (E2'b step 3, ADOPTED device 04AA0880) 640x480
+ok: engine started on adopted device (d3ddevice=04AA0880)
+librw engine start (E2'b step 3, ADOPTED device 04A6D0A0) 640x480
+ok: engine started on adopted device (d3ddevice=04A6D0A0)
+librw engine start (E2'b step 3, ADOPTED device 04AA60E0) 640x480
+ok: engine started on adopted device (d3ddevice=04AA60E0)
+librw engine start (E2'b step 3, ADOPTED device 04AD0120) 640x480
+ok: engine started on adopted device (d3ddevice=04AD0120)
+librw engine start (E2'b step 3, ADOPTED device 04B3C3A0) 640x480
+ok: engine started on adopted device (d3ddevice=04B3C3A0)
+librw engine start (E2'b step 3, ADOPTED device 04B6BAC0) 640x480
+ok: engine started on adopted device (d3ddevice=04B6BAC0)
+librw engine start (E2'b step 3, ADOPTED device 04AE3D00) 640x480
+ok: engine started on adopted device (d3ddevice=04AE3D00)
+librw engine start (E2'b step 3, ADOPTED device 04AAAD60) 640x480
+ok: engine started on adopted device (d3ddevice=04AAAD60)
+librw engine start (E2'b step 3, ADOPTED device 04A4AA80) 640x480
+ok: engine started on adopted device (d3ddevice=04A4AA80)
+librw engine start (E2'b step 3, ADOPTED device 04ABAAC0) 640x480
+ok: engine started on adopted device (d3ddevice=04ABAAC0)
+librw engine start (E2'b step 3, ADOPTED device 04B26300) 640x480
+ok: engine started on adopted device (d3ddevice=04B26300)
+librw engine start (E2'b step 3, ADOPTED device 04AB9A00) 640x480
+ok: engine started on adopted device (d3ddevice=04AB9A00)
+librw engine start (E2'b step 3, ADOPTED device 04A98A80) 640x480
+ok: engine started on adopted device (d3ddevice=04A98A80)
+librw engine start (E2'b step 3, ADOPTED device 04A913C0) 640x480
+ok: engine started on adopted device (d3ddevice=04A913C0)
+librw engine start (E2'b step 3, ADOPTED device 04A49800) 640x480
+ok: engine started on adopted device (d3ddevice=04A49800)
+librw engine start (E2'b step 3, ADOPTED device 04AFBAC0) 640x480
+ok: engine started on adopted device (d3ddevice=04AFBAC0)
+librw engine start (E2'b step 3, ADOPTED device 04A3B920) 640x480
+ok: engine started on adopted device (d3ddevice=04A3B920)
+librw engine start (E2'b step 3, ADOPTED device 04A21E60) 640x480
+ok: engine started on adopted device (d3ddevice=04A21E60)
+librw engine start (E2'b step 3, ADOPTED device 04BA2720) 640x480
+ok: engine started on adopted device (d3ddevice=04BA2720)
+librw engine start (E2'b step 3, ADOPTED device 04C6A7A0) 640x480
+ok: engine started on adopted device (d3ddevice=04C6A7A0)
+librw engine start (E2'b step 3, ADOPTED device 04BA6880) 640x480
+ok: engine started on adopted device (d3ddevice=04BA6880)
+librw engine start (E2'b step 3, ADOPTED device 04B39C00) 640x480
+ok: engine started on adopted device (d3ddevice=04B39C00)
+librw engine start (E2'b step 3, ADOPTED device 04C31660) 640x480
+ok: engine started on adopted device (d3ddevice=04C31660)
+librw engine start (E2'b step 3, ADOPTED device 04ADD4C0) 640x480
+ok: engine started on adopted device (d3ddevice=04ADD4C0)
+librw engine start (E2'b step 3, ADOPTED device 04ABFE80) 640x480
+ok: engine started on adopted device (d3ddevice=04ABFE80)
+librw engine start (E2'b step 3, ADOPTED device 04BBD8A0) 640x480
+ok: engine started on adopted device (d3ddevice=04BBD8A0)
+librw engine start (E2'b step 3, ADOPTED device 04B88B40) 640x480
+ok: engine started on adopted device (d3ddevice=04B88B40)
+librw engine start (E2'b step 3, ADOPTED device 04B30AC0) 640x480
+ok: engine started on adopted device (d3ddevice=04B30AC0)
+librw engine start (E2'b step 3, ADOPTED device 04BEDA80) 640x480
+ok: engine started on adopted device (d3ddevice=04BEDA80)
+librw engine start (E2'b step 3, ADOPTED device 04C3F120) 640x480
+ok: engine started on adopted device (d3ddevice=04C3F120)
+librw engine start (E2'b step 3, ADOPTED device 04AD4BC0) 640x480
+ok: engine started on adopted device (d3ddevice=04AD4BC0)
+librw engine start (E2'b step 3, ADOPTED device 04BDDFA0) 640x480
+ok: engine started on adopted device (d3ddevice=04BDDFA0)
+librw engine start (E2'b step 3, ADOPTED device 04B3E160) 640x480
+ok: engine started on adopted device (d3ddevice=04B3E160)
+librw engine start (E2'b step 3, ADOPTED device 04AD1220) 640x480
+ok: engine started on adopted device (d3ddevice=04AD1220)
+librw engine start (E2'b step 3, ADOPTED device 04AFF520) 640x480
+ok: engine started on adopted device (d3ddevice=04AFF520)
+librw engine start (E2'b step 3, ADOPTED device 04ACB380) 640x480
+ok: engine started on adopted device (d3ddevice=04ACB380)
+librw engine start (E2'b step 3, ADOPTED device 04A9B6E0) 640x480
+ok: engine started on adopted device (d3ddevice=04A9B6E0)
+librw engine start (E2'b step 3, ADOPTED device 04AEB060) 640x480
+ok: engine started on adopted device (d3ddevice=04AEB060)
+librw engine start (E2'b step 3, ADOPTED device 04BA54C0) 640x480
+ok: engine started on adopted device (d3ddevice=04BA54C0)
+librw engine start (E2'b step 3, ADOPTED device 04ACD120) 640x480
+ok: engine started on adopted device (d3ddevice=04ACD120)
+librw engine start (E2'b step 3, ADOPTED device 04BC3E40) 640x480
+ok: engine started on adopted device (d3ddevice=04BC3E40)
+librw engine start (E2'b step 3, ADOPTED device 04BEE9A0) 640x480
+ok: engine started on adopted device (d3ddevice=04BEE9A0)
+librw engine start (E2'b step 3, ADOPTED device 04BF9340) 640x480
+ok: engine started on adopted device (d3ddevice=04BF9340)
+librw engine start (E2'b step 3, ADOPTED device 04C4F160) 640x480
+ok: engine started on adopted device (d3ddevice=04C4F160)
+librw engine start (E2'b step 3, ADOPTED device 04C3AC00) 640x480
+ok: engine started on adopted device (d3ddevice=04C3AC00)
+librw engine start (E2'b step 3, ADOPTED device 04BAC060) 640x480
+ok: engine started on adopted device (d3ddevice=04BAC060)
+librw engine start (E2'b step 3, ADOPTED device 04B9AF60) 640x480
+ok: engine started on adopted device (d3ddevice=04B9AF60)
+librw engine start (E2'b step 3, ADOPTED device 04C309E0) 640x480
+ok: engine started on adopted device (d3ddevice=04C309E0)
+librw engine start (E2'b step 3, ADOPTED device 04C3E040) 640x480
+ok: engine started on adopted device (d3ddevice=04C3E040)
+librw engine start (E2'b step 3, ADOPTED device 08FA9AA0) 640x480
+ok: engine started on adopted device (d3ddevice=08FA9AA0)
+librw engine start (E2'b step 3, ADOPTED device 08F6EFC0) 640x480
+ok: engine started on adopted device (d3ddevice=08F6EFC0)
+librw engine start (E2'b step 3, ADOPTED device 08F59A20) 640x480
+ok: engine started on adopted device (d3ddevice=08F59A20)
+librw engine start (E2'b step 3, ADOPTED device 08F7AFC0) 640x480
+ok: engine started on adopted device (d3ddevice=08F7AFC0)
+librw engine start (E2'b step 3, ADOPTED device 08F54100) 640x480
+ok: engine started on adopted device (d3ddevice=08F54100)
+librw engine start (E2'b step 3, ADOPTED device 08E4F360) 640x480
+ok: engine started on adopted device (d3ddevice=08E4F360)
+librw engine start (E2'b step 3, ADOPTED device 08E74640) 640x480
+ok: engine started on adopted device (d3ddevice=08E74640)
+librw engine start (E2'b step 3, ADOPTED device 08E634A0) 640x480
+ok: engine started on adopted device (d3ddevice=08E634A0)
+librw engine start (E2'b step 3, ADOPTED device 08EF4FE0) 640x480
+ok: engine started on adopted device (d3ddevice=08EF4FE0)
+librw engine start (E2'b step 3, ADOPTED device 08E68E20) 640x480
+ok: engine started on adopted device (d3ddevice=08E68E20)
+librw engine start (E2'b step 3, ADOPTED device 08E69720) 640x480
+ok: engine started on adopted device (d3ddevice=08E69720)
+librw engine start (E2'b step 3, ADOPTED device 08E8E4C0) 640x480
+ok: engine started on adopted device (d3ddevice=08E8E4C0)
+librw engine start (E2'b step 3, ADOPTED device 08EDD960) 640x480
+ok: engine started on adopted device (d3ddevice=08EDD960)
+librw engine start (E2'b step 3, ADOPTED device 08ECA460) 640x480
+ok: engine started on adopted device (d3ddevice=08ECA460)
+librw engine start (E2'b step 3, ADOPTED device 04805E00) 640x480
+ok: engine started on adopted device (d3ddevice=04805E00)
+librw engine start (E2'b step 3, ADOPTED device 08E94E00) 640x480
+ok: engine started on adopted device (d3ddevice=08E94E00)
+librw engine start (E2'b step 3, ADOPTED device 08E3FC80) 640x480
+ok: engine started on adopted device (d3ddevice=08E3FC80)
+librw engine start (E2'b step 3, ADOPTED device 08E31C20) 640x480
+ok: engine started on adopted device (d3ddevice=08E31C20)
+librw engine start (E2'b step 3, ADOPTED device 08EA2820) 640x480
+ok: engine started on adopted device (d3ddevice=08EA2820)
+librw engine start (E2'b step 3, ADOPTED device 08E4CBE0) 640x480
+ok: engine started on adopted device (d3ddevice=08E4CBE0)
+librw engine start (E2'b step 3, ADOPTED device 04973E00) 640x480
+ok: engine started on adopted device (d3ddevice=04973E00)
+librw engine start (E2'b step 3, ADOPTED device 08E9EB00) 640x480
+ok: engine started on adopted device (d3ddevice=08E9EB00)
+librw engine start (E2'b step 3, ADOPTED device 08E3A4E0) 640x480
+ok: engine started on adopted device (d3ddevice=08E3A4E0)
+librw engine start (E2'b step 3, ADOPTED device 08E5CFA0) 640x480
+ok: engine started on adopted device (d3ddevice=08E5CFA0)
+librw engine start (E2'b step 3, ADOPTED device 08E92F80) 640x480
+ok: engine started on adopted device (d3ddevice=08E92F80)
+librw engine start (E2'b step 3, ADOPTED device 08E054A0) 640x480
+ok: engine started on adopted device (d3ddevice=08E054A0)
+librw engine start (E2'b step 3, ADOPTED device 0494B240) 640x480
+ok: engine started on adopted device (d3ddevice=0494B240)
+librw engine start (E2'b step 3, ADOPTED device 08E33BA0) 640x480
+ok: engine started on adopted device (d3ddevice=08E33BA0)
+librw engine start (E2'b step 3, ADOPTED device 08E92660) 640x480
+ok: engine started on adopted device (d3ddevice=08E92660)
+librw engine start (E2'b step 3, ADOPTED device 08EF8E40) 640x480
+ok: engine started on adopted device (d3ddevice=08EF8E40)
+librw engine start (E2'b step 3, ADOPTED device 08F047E0) 640x480
+ok: engine started on adopted device (d3ddevice=08F047E0)
+librw engine start (E2'b step 3, ADOPTED device 04982080) 640x480
+ok: engine started on adopted device (d3ddevice=04982080)
+librw engine start (E2'b step 3, ADOPTED device 08E90E80) 640x480
+ok: engine started on adopted device (d3ddevice=08E90E80)
+librw engine start (E2'b step 3, ADOPTED device 04A7AFC0) 640x480
+ok: engine started on adopted device (d3ddevice=04A7AFC0)
+librw engine start (E2'b step 3, ADOPTED device 04AAC6E0) 640x480
+ok: engine started on adopted device (d3ddevice=04AAC6E0)
+librw engine start (E2'b step 3, ADOPTED device 04BE4920) 640x480
+ok: engine started on adopted device (d3ddevice=04BE4920)
+librw engine start (E2'b step 3, ADOPTED device 04AEBD20) 640x480
+ok: engine started on adopted device (d3ddevice=04AEBD20)
+librw engine start (E2'b step 3, ADOPTED device 04A9CD20) 640x480
+ok: engine started on adopted device (d3ddevice=04A9CD20)
+librw engine start (E2'b step 3, ADOPTED device 04AD4280) 640x480
+ok: engine started on adopted device (d3ddevice=04AD4280)
+librw engine start (E2'b step 3, ADOPTED device 04AB4FA0) 640x480
+ok: engine started on adopted device (d3ddevice=04AB4FA0)
+librw engine start (E2'b step 3, ADOPTED device 04B40780) 640x480
+ok: engine started on adopted device (d3ddevice=04B40780)
+librw engine start (E2'b step 3, ADOPTED device 04B27A00) 640x480
+ok: engine started on adopted device (d3ddevice=04B27A00)
+librw engine start (E2'b step 3, ADOPTED device 04AACA80) 640x480
+ok: engine started on adopted device (d3ddevice=04AACA80)
+librw engine start (E2'b step 3, ADOPTED device 04B62020) 640x480
+ok: engine started on adopted device (d3ddevice=04B62020)
+librw engine start (E2'b step 3, ADOPTED device 04B20DC0) 640x480
+ok: engine started on adopted device (d3ddevice=04B20DC0)
+librw engine start (E2'b step 3, ADOPTED device 04B71340) 640x480
+ok: engine started on adopted device (d3ddevice=04B71340)
+librw engine start (E2'b step 3, ADOPTED device 04B78960) 640x480
+ok: engine started on adopted device (d3ddevice=04B78960)
+librw engine start (E2'b step 3, ADOPTED device 04C11F20) 640x480
+ok: engine started on adopted device (d3ddevice=04C11F20)
+librw engine start (E2'b step 3, ADOPTED device 04B40900) 640x480
+ok: engine started on adopted device (d3ddevice=04B40900)
+librw engine start (E2'b step 3, ADOPTED device 04BF9000) 640x480
+ok: engine started on adopted device (d3ddevice=04BF9000)
+librw engine start (E2'b step 3, ADOPTED device 04BDE880) 640x480
+ok: engine started on adopted device (d3ddevice=04BDE880)
+librw engine start (E2'b step 3, ADOPTED device 08F01F40) 640x480
+ok: engine started on adopted device (d3ddevice=08F01F40)
+librw engine start (E2'b step 3, ADOPTED device 08F984C0) 640x480
+ok: engine started on adopted device (d3ddevice=08F984C0)
+librw engine start (E2'b step 3, ADOPTED device 08FBFA00) 640x480
+ok: engine started on adopted device (d3ddevice=08FBFA00)
+librw engine start (E2'b step 3, ADOPTED device 08F8BFA0) 640x480
+ok: engine started on adopted device (d3ddevice=08F8BFA0)
+librw engine start (E2'b step 3, ADOPTED device 09010460) 640x480
+ok: engine started on adopted device (d3ddevice=09010460)
+librw engine start (E2'b step 3, ADOPTED device 08F9C1A0) 640x480
+ok: engine started on adopted device (d3ddevice=08F9C1A0)
+librw engine start (E2'b step 3, ADOPTED device 08FABDE0) 640x480
+ok: engine started on adopted device (d3ddevice=08FABDE0)
+librw engine start (E2'b step 3, ADOPTED device 08F90260) 640x480
+ok: engine started on adopted device (d3ddevice=08F90260)
+librw engine start (E2'b step 3, ADOPTED device 08FAED20) 640x480
+ok: engine started on adopted device (d3ddevice=08FAED20)
+librw engine start (E2'b step 3, ADOPTED device 08F70EA0) 640x480
+ok: engine started on adopted device (d3ddevice=08F70EA0)
+librw engine start (E2'b step 3, ADOPTED device 08F9F7C0) 640x480
+ok: engine started on adopted device (d3ddevice=08F9F7C0)
+librw engine start (E2'b step 3, ADOPTED device 0900FD20) 640x480
+ok: engine started on adopted device (d3ddevice=0900FD20)
+librw engine start (E2'b step 3, ADOPTED device 08F9EF80) 640x480
+ok: engine started on adopted device (d3ddevice=08F9EF80)
+librw engine start (E2'b step 3, ADOPTED device 08FAFEE0) 640x480
+ok: engine started on adopted device (d3ddevice=08FAFEE0)
+librw engine start (E2'b step 3, ADOPTED device 08FA5260) 640x480
+ok: engine started on adopted device (d3ddevice=08FA5260)
+librw engine start (E2'b step 3, ADOPTED device 08F8D940) 640x480
+ok: engine started on adopted device (d3ddevice=08F8D940)
+librw engine start (E2'b step 3, ADOPTED device 08F937C0) 640x480
+ok: engine started on adopted device (d3ddevice=08F937C0)
+librw engine start (E2'b step 3, ADOPTED device 08F3EB80) 640x480
+ok: engine started on adopted device (d3ddevice=08F3EB80)
+librw engine start (E2'b step 3, ADOPTED device 08F87980) 640x480
+ok: engine started on adopted device (d3ddevice=08F87980)
+librw engine start (E2'b step 3, ADOPTED device 08F8F1E0) 640x480
+ok: engine started on adopted device (d3ddevice=08F8F1E0)
+librw engine start (E2'b step 3, ADOPTED device 08F2FE40) 640x480
+ok: engine started on adopted device (d3ddevice=08F2FE40)
+librw engine start (E2'b step 3, ADOPTED device 08F95840) 640x480
+ok: engine started on adopted device (d3ddevice=08F95840)
+librw engine start (E2'b step 3, ADOPTED device 08F8BC40) 640x480
+ok: engine started on adopted device (d3ddevice=08F8BC40)
+librw engine start (E2'b step 3, ADOPTED device 08F9B340) 640x480
+ok: engine started on adopted device (d3ddevice=08F9B340)
+librw engine start (E2'b step 3, ADOPTED device 08F99E00) 640x480
+ok: engine started on adopted device (d3ddevice=08F99E00)
+librw engine start (E2'b step 3, ADOPTED device 08FBB580) 640x480
+ok: engine started on adopted device (d3ddevice=08FBB580)
+librw engine start (E2'b step 3, ADOPTED device 08FF7D20) 640x480
+ok: engine started on adopted device (d3ddevice=08FF7D20)
+librw engine start (E2'b step 3, ADOPTED device 08FA7D40) 640x480
+ok: engine started on adopted device (d3ddevice=08FA7D40)
+librw engine start (E2'b step 3, ADOPTED device 08F8E460) 640x480
+ok: engine started on adopted device (d3ddevice=08F8E460)
+librw engine start (E2'b step 3, ADOPTED device 08F96320) 640x480
+ok: engine started on adopted device (d3ddevice=08F96320)
+librw engine start (E2'b step 3, ADOPTED device 090183A0) 640x480
+ok: engine started on adopted device (d3ddevice=090183A0)
+librw engine start (E2'b step 3, ADOPTED device 08FA5FC0) 640x480
+ok: engine started on adopted device (d3ddevice=08FA5FC0)
+librw engine start (E2'b step 3, ADOPTED device 08F8F240) 640x480
+ok: engine started on adopted device (d3ddevice=08F8F240)
+librw engine start (E2'b step 3, ADOPTED device 04CC39A0) 640x480
+ok: engine started on adopted device (d3ddevice=04CC39A0)
+librw engine start (E2'b step 3, ADOPTED device 04B7CF40) 640x480
+ok: engine started on adopted device (d3ddevice=04B7CF40)
+librw engine start (E2'b step 3, ADOPTED device 08E5B640) 640x480
+ok: engine started on adopted device (d3ddevice=08E5B640)
+librw engine start (E2'b step 3, ADOPTED device 08E46FA0) 640x480
+ok: engine started on adopted device (d3ddevice=08E46FA0)
+librw engine start (E2'b step 3, ADOPTED device 08EB2CA0) 640x480
+ok: engine started on adopted device (d3ddevice=08EB2CA0)
+librw engine start (E2'b step 3, ADOPTED device 04813060) 640x480
+ok: engine started on adopted device (d3ddevice=04813060)
+librw engine start (E2'b step 3, ADOPTED device 04AF6A80) 640x480
+ok: engine started on adopted device (d3ddevice=04AF6A80)
+librw engine start (E2'b step 3, ADOPTED device 04AF5520) 640x480
+ok: engine started on adopted device (d3ddevice=04AF5520)

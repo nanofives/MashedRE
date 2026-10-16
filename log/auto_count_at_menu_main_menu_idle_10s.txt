@@ -1,0 +1,3 @@
+final counts after 10s at main menu:
+  SpriteLookupTableB  0
+  CarSlotInit1P       0

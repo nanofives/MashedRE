@@ -1,0 +1,5 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,"{""scalars"":[2863311530],""seed"":[{""buf"":0,""off"":20,""ptr_to"":1},{""buf"":1,""off"":0,""type"":""u32"",""value"":3735928559},{""buf"":1,""off"":12,""type"":""u32"",""value"":4277009102}]}",1+0=deadbeef|1+12=aaaaaaaa,,1+0=deadbeef|1+12=aaaaaaaa,,True,,
+1,"{""scalars"":[0],""seed"":[{""buf"":0,""off"":20,""ptr_to"":1},{""buf"":1,""off"":0,""type"":""u32"",""value"":3735928559},{""buf"":1,""off"":12,""type"":""u32"",""value"":4277009102}]}",1+0=deadbeef|1+12=0,,1+0=deadbeef|1+12=0,,True,,
+2,"{""scalars"":[4294967295],""seed"":[{""buf"":0,""off"":20,""ptr_to"":1},{""buf"":1,""off"":0,""type"":""u32"",""value"":3735928559},{""buf"":1,""off"":12,""type"":""u32"",""value"":4277009102}]}",1+0=deadbeef|1+12=ffffffff,,1+0=deadbeef|1+12=ffffffff,,True,,
+3,"{""scalars"":[305419896],""seed"":[{""buf"":0,""off"":20,""ptr_to"":1},{""buf"":1,""off"":0,""type"":""u32"",""value"":3735928559},{""buf"":1,""off"":12,""type"":""u32"",""value"":4277009102}]}",1+0=deadbeef|1+12=12345678,,1+0=deadbeef|1+12=12345678,,True,,

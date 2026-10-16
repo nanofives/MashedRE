@@ -1,0 +1,6 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,"{""seeds"":[{""off"":140,""type"":""u32"",""value"":0}]}",r=0,,r=0,,True,,
+1,"{""seeds"":[{""off"":140,""type"":""u32"",""value"":1}]}",r=1,,r=1,,True,,
+2,"{""seeds"":[{""off"":140,""type"":""u32"",""value"":3735928559}]}",r=3735928559,,r=3735928559,,True,,
+3,"{""seeds"":[{""off"":140,""type"":""u32"",""value"":2147483647}]}",r=2147483647,,r=2147483647,,True,,
+4,"{""seeds"":[{""off"":140,""type"":""u32"",""value"":4294967295}]}",r=4294967295,,r=4294967295,,True,,

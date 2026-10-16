@@ -1,0 +1,17 @@
+=== verify_hook_install report (get_race_end_trigger) ===
+
+target address: 0x005c9d00  export: GetRaceEndTrigger
+PRE  bytes:     33 c0 c3 90 90 90 90 90
+asi base:       0x72860000
+reimpl addr:    0x728623d0
+POST bytes:     e9 cb 86 29 72 90 90 90
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x722986cb  expected 0x722986cb  -> OK
+bytes changed:  True
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + first 8 bytes mutated by patcher
+FAIL:
+  - no results captured

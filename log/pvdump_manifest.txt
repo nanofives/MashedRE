@@ -1,0 +1,8 @@
+REG handle=0 dff=sky.dff d3d9_batches=1 m_batches=1 requested=1
+REG handle=1 dff=WhiteTyre.dff d3d9_batches=1 m_batches=1 requested=1
+REG handle=2 dff=RedTyre.dff d3d9_batches=1 m_batches=1 requested=1
+REG handle=3 dff=Crate02.dff d3d9_batches=1 m_batches=1 requested=1
+REG handle=4 dff=sea.dff d3d9_batches=1 m_batches=1 requested=1
+REG handle=5 dff=Freighter.dff d3d9_batches=1 m_batches=1 requested=1
+REG handle=6 dff=FishingBoat.dff d3d9_batches=1 m_batches=1 requested=1
+REG handle=7 dff=CamMan.dff d3d9_batches=1 m_batches=1 requested=1

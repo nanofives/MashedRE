@@ -1,0 +1,27 @@
+=== verify_hook_install report (sprite_lookup_table_a) ===
+
+target address: 0x0040bb70  export: SpriteLookupTableA
+PRE  bytes:     e9 2b b9 36 73 0d 00 b9
+asi base:       0x73770000
+reimpl addr:    0x737774a0
+POST bytes:     e9 2b b9 36 73 0d 00 b9
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x7336b92b  expected 0x7336b92b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  3 / 3
+
+per-input results:
+  [FAIL] input=6085244  got=None  err=access violation accessing 0x8
+  [FAIL] input=6079508  got=None  err=access violation accessing 0x8
+  [FAIL] input=6085244  got=None  err=access violation accessing 0x8
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + reimpl interceptor fired 3x as expected
+FAIL:
+  - bytes unchanged after Module.load
+  - call 0 (input=6085244) failed: access violation accessing 0x8
+  - call 1 (input=6079508) failed: access violation accessing 0x8
+  - call 2 (input=6085244) failed: access violation accessing 0x8

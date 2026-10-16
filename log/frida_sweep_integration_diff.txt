@@ -1,0 +1,7 @@
+running 1 hook(s) in parallel: vec3_is_valid_non_tiny
+pool: C:\Users\maria\Desktop\Proyectos\Mashed\scripts\frida_pool.sh
+
+=== parallel diff complete in 2.4s ===
+hook                      slot  rc  took   log
+--------------------------------------------------------------------------------
+vec3_is_valid_non_tiny       0   0    2.4s  log\parallel_diff_vec3_is_valid_non_tiny.log  [GREEN]

@@ -1,0 +1,5 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,0x0,0x7dd6c4,,0x7dd6c4,,True,,
+1,0x1,not-called,,not-called,,True,,
+2,0xff,not-called,,not-called,,True,,
+3,0xfe,0x7dd6c4,,0x7dd6c4,,True,,

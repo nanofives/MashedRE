@@ -1,0 +1,11 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,"[0, 0]",0,0x00000000,0,0x00000000,True,,
+1,"[0, 3735928559]",0,0x00000000,0,0x00000000,True,,
+2,"[1, 305419896]",0,0x00000000,0,0x00000000,True,,
+3,"[5, 3405691582]",0,0x00000000,0,0x00000000,True,,
+4,"[15, 4294967295]",0,0x00000000,0,0x00000000,True,,
+5,"[16, 0]",4294967295,0xffffffff,4294967295,0xffffffff,True,,
+6,"[17, 0]",4294967295,0xffffffff,4294967295,0xffffffff,True,,
+7,"[100, 0]",4294967295,0xffffffff,4294967295,0xffffffff,True,,
+8,"[255, 0]",4294967295,0xffffffff,4294967295,0xffffffff,True,,
+9,"[4294967295, 1]",4294967295,0xffffffff,4294967295,0xffffffff,True,,

@@ -1,0 +1,36 @@
+hook: frontend_player_slot_check  rva=0x0042ebe0  export=FrontendPlayerSlotCheck
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 39928
+  [agent] pre_snapshot
+  [agent] asi_loaded
+  [agent] post_snapshot
+  [agent] results
+
+=== verify_hook_install report (frontend_player_slot_check) ===
+
+target address: 0x0042ebe0  export: FrontendPlayerSlotCheck
+PRE  bytes:     8b 54 24 04 33 c9 b8 48
+asi base:       0x72620000
+reimpl addr:    0x72624910
+POST bytes:     e9 2b 5d 1f 72 c9 b8 48
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x721f5d2b  expected 0x721f5d2b  -> OK
+bytes changed:  True
+
+interceptor entries (reimpl):  3 / 3
+
+per-input results:
+  [OK] input=10  got=0  err=
+  [OK] input=11  got=0  err=
+  [OK] input=12  got=0  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + first 8 bytes mutated by patcher
+  + reimpl interceptor fired 3x as expected
+  + all 3 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\log\verify_hook_install_frontend_player_slot_check.txt

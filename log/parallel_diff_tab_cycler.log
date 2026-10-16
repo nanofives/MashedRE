@@ -1,0 +1,12 @@
+=== tab_cycler on slot 0 ===
+hook: tab_cycler  rva=0x00423270  export=TabCycler
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 26868
+  [agent] LUT ready  base=0x2c91b90  offset=0x134  root=0x4970640  delta=0  attempts=3
+  [agent] .asi loaded  base=0x65fd0000  TabCycler@0x65fdef00
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\log\diff_tab_cycler.csv
+  total cases: 10
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.
