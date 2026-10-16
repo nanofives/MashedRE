@@ -236,3 +236,17 @@ Recorded (exe `06642c53`; its full-reset path reproduces exe `90a55dc7`: `D_B-2`
 Registered runs that remain: `D2_BMIN_1` (A2.2) and `D2_BC_1..3` (fix C inside fix B, section 5). Added, REPORT only:
 `D2_P23C_1` = parts 2 + 3 + fix C (the D2-scorable variant without the seed), to see fix C inside the position model.
 No prediction for either.
+
+## Amendment 4 (2026-10-16, after rebasing onto `39ecd74d`; before any run on the rebased exe)
+
+Orchestrator notice 4: the base moved (u9683, u9685, dupinstall, rprops merged). The new default G-CTRL is
+`716cb2fd / 2a2afda1 / ba90ed88` (rprops `c8782a0a` re-measured it unchanged at the tip). This branch is rebased onto
+`39ecd74d` with no conflicts. The pre-rebase commits are kept as `work/d2posmodel-prerebase` (`2368cb3d`), and every
+number above this amendment is from them (exes `90a55dc7` / `06642c53`).
+Re-measured on the rebased exe, same recipes and gates. The RESULT's gate verdicts are re-taken from these:
+- no-op control + collateral floor: `H_DEF`, `H_DEF-2`, predicted `716cb2fd / 2a2afda1 / ba90ed88` both;
+- determinism + collateral: `H_B`, `H_B-2`;
+- G-SETTLE / G-SPAWNY / G-PROG: `D_B`, `D_BRG`, control `D_RG`;
+- D2 + recovery: `D2_DEF_1` (baseline from the new base), `D2_B_1..3`, `D2_P23_1`;
+- D3 (b): `B_DEF_K{0,1,26}`, `B_B_K{0,1,26}`.
+No new numeric prediction. The pre-rebase verdicts are the reference for "changed / unchanged".
