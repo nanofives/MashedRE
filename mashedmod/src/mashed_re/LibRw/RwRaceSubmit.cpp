@@ -1683,6 +1683,9 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
         // @ 0x0041ebb0 runs after the four car renders (FUN_00410b30, 0x00410bb9); here only when
         // no marker was queued.
         if (!fx_done) RaceFx_DrawCarFx(g_cam);
+        // [rfx2] FUN_0040bde0 @ 0x0040bde0 (the object shadows FUN_00487de0 first), which
+        // FUN_00410b30 calls after the copters (FUN_00425e40 at 0x00410c08, FUN_0040bde0 next)
+        RaceFx_DrawWorldFx(g_cam);
         rw_mashed_skip_empty_meshes = false;
         rw_mashed_keep_vertex_alpha = false;
     }

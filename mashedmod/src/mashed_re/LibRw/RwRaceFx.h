@@ -60,6 +60,7 @@ struct ObjShadowIn {
     float ltm[16];
     float bbox[6];
     float sphere[4];
+    bool  casts;     // false: the slot exists (index parity) but its shape is not ported
 };
 // The collision world the shadow ray reads (FUN_00538c80 on DAT_0080332c): xyz per vertex,
 // three vertex indices per triangle (RW order v0, v1, v2), and each triangle's material colour

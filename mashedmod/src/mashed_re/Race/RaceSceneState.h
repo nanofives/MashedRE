@@ -108,6 +108,13 @@ struct RaceSceneState {
     // 0x00479100 samples it under each car for the env coefficient (see car_gloss_).
     std::vector<std::uint32_t> col_prelit_;
     std::vector<std::uint8_t>  col_tri_pl_;
+    // [rfx2] per col_tris_ triple, the hit material's RwRGBA dword (r | g<<8 | b<<16 | a<<24),
+    // tested by FUN_0045c110 @ 0x0045c110 for the object shadows (LibRw/RwRaceFx.h)
+    std::vector<std::uint32_t> col_tri_rgba_;
+    // [rfx2] the course directional light's frame LTM (DAT_0065743c -> +4 -> +0x50; D3DMATRIX
+    // memory order), from LIGHTS.DFF or FUN_00479330's default light
+    float light_ltm_[16] = {};
+    bool  has_light_ltm_ = false;
     std::vector<float>         rend_verts_;
     std::vector<std::uint32_t> rend_tris_;
 

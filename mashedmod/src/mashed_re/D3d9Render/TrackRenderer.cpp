@@ -1027,6 +1027,76 @@ bool ParseLightsDffDirectional(const std::uint8_t* d, std::uint32_t len,
     return false;
 }
 
+// [rfx2] The course directional light's frame LTM (course +0x105e4 = DAT_0065743c, read by
+// FUN_004260b0), which FUN_00487280 reads whole (at = the shadow ray, up offsets the
+// projection, the inverse maps the object's bbox): FUN_00479330's DFF branch keeps the LAST light
+// with subtype byte 1 (0x00479a4b..), whose frame LTM is the streamed modelling matrices composed
+// up the parent chain (RW row vectors: LTM = M_self * LTM_parent). Witness: TRAINING's LTM equals
+// its (root) modelling matrix on the original (verify/rfx2_20261016, fx witness).
+static bool LightsDffDirectionalLtm(const std::uint8_t* d, std::uint32_t len, float out[16]) {
+    if (!d || len < 24) return false;
+    auto u32 = [&](std::size_t o) { std::uint32_t v; std::memcpy(&v, d + o, 4); return v; };
+    auto i32 = [&](std::size_t o) { std::int32_t v; std::memcpy(&v, d + o, 4); return v; };
+    auto f32 = [&](std::size_t o) { float v; std::memcpy(&v, d + o, 4); return v; };
+    if (u32(0) != 0x10) return false;
+    std::size_t end = 12 + u32(4);
+    if (end > len) end = len;
+    if (12 + 12 > end || u32(12) != 0x01) return false;
+    std::size_t o = 12 + 12 + u32(16);
+    struct Fr { float m[12]; std::int32_t parent; };
+    std::vector<Fr> frames;
+    if (o + 12 <= end && u32(o) == 0x0E) {
+        const std::size_t flb = o + 12, flsz = u32(o + 4);
+        if (flb + 12 <= end && u32(flb) == 0x01) {
+            const std::int32_t nf = i32(flb + 12);
+            std::size_t q = flb + 16;
+            for (std::int32_t i = 0; i < nf && q + 0x38 <= end; ++i) {
+                Fr f;
+                for (int k = 0; k < 12; ++k) f.m[k] = f32(q + k * 4u);
+                f.parent = i32(q + 48);
+                frames.push_back(f);
+                q += 0x38;
+            }
+        }
+        o = flb + flsz;
+    }
+    bool found = false;
+    std::int32_t pending_frame = -1;
+    for (; o + 12 <= end; ) {
+        const std::uint32_t t = u32(o), sz = u32(o + 4);
+        const std::size_t body = o + 12;
+        if (t == 0x01 && sz == 4) {
+            pending_frame = i32(body);
+        } else if (t == 0x12 && body + 12 <= end && u32(body) == 0x01) {
+            const std::size_t sb = body + 12;
+            if (sb + 24 <= end && (u32(sb + 20) >> 16) == 1 && pending_frame >= 0 &&
+                pending_frame < static_cast<std::int32_t>(frames.size())) {
+                float ltm[12];
+                std::memcpy(ltm, frames[static_cast<std::size_t>(pending_frame)].m, sizeof(ltm));
+                for (std::int32_t fi = frames[static_cast<std::size_t>(pending_frame)].parent, guard = 0;
+                     fi >= 0 && fi < static_cast<std::int32_t>(frames.size()) && guard < 64; ++guard) {
+                    const float* p = frames[static_cast<std::size_t>(fi)].m;
+                    float r[12];
+                    for (int row = 0; row < 4; ++row)
+                        for (int c = 0; c < 3; ++c)
+                            r[row * 3 + c] = ltm[row * 3 + 0] * p[0 + c] + ltm[row * 3 + 1] * p[3 + c] +
+                                             ltm[row * 3 + 2] * p[6 + c] + (row == 3 ? p[9 + c] : 0.f);
+                    std::memcpy(ltm, r, sizeof(ltm));
+                    fi = frames[static_cast<std::size_t>(fi)].parent;
+                }
+                for (int row = 0; row < 4; ++row) {
+                    for (int c = 0; c < 3; ++c) out[row * 4 + c] = ltm[row * 3 + c];
+                    out[row * 4 + 3] = 0.f;
+                }
+                found = true;
+            }
+            pending_frame = -1;
+        }
+        o = body + sz;
+    }
+    return found;
+}
+
 // WS-E vehicle lighting: faithful FUN_00479330 (0x00479330) DFF-branch light
 // extraction. The original collects EVERY clump light (RpClumpForAllLights
 // via FUN_004b4010; callback LAB_004b3f20 is 13 instructions with NO filter —
@@ -1390,6 +1460,15 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                         // so the wheel contact can reach record +0x1ec.
                         col_mat_.push_back(s.tris[ti * 4 + 0]);
                         col_tri_pl_.push_back(s.prelit.size() == snv ? 1 : 0);   // [rtex]
+                        // [rfx2] the hit material's RwRGBA dword (material +4), which
+                        // FUN_0045c110 @ 0x0045c110 tests for the object shadows
+                        std::uint32_t rgba = 0;
+                        const std::uint16_t mi = s.tris[ti * 4 + 0];
+                        if (mi < cw.materials.size()) {
+                            const std::uint8_t* c = cw.materials[mi].rgba;
+                            rgba = c[0] | (c[1] << 8) | (c[2] << 16) | (static_cast<std::uint32_t>(c[3]) << 24);
+                        }
+                        col_tri_rgba_.push_back(rgba);
                     }
                 }
             }
@@ -1513,6 +1592,19 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                 lights_db = piz.blob(j, &lights_dl);
                 break;
             }
+    // [rfx2] the directional light's whole frame LTM, for the object shadows (FUN_00487280)
+    has_light_ltm_ = false;
+    if (lights_db) {
+        has_light_ltm_ = LightsDffDirectionalLtm(lights_db, lights_dl, light_ltm_);
+    } else {
+        // FUN_00479330's default light: FUN_004c1520(frame, (1,0,0), 60.0 (0x42700000), REPLACE)
+        // (0x0047998e) on a fresh root frame: rows right (1,0,0), up (0,cos,sin), at (0,-sin,cos)
+        std::memset(light_ltm_, 0, sizeof(light_ltm_));
+        light_ltm_[0] = 1.f;
+        light_ltm_[5] = 0.5f;  light_ltm_[6] = 0.8660254f;
+        light_ltm_[9] = -0.8660254f; light_ltm_[10] = 0.5f;
+        has_light_ltm_ = true;
+    }
     if (!rp_light_on_) {
         // legacy path (pre-RpLight-subset behaviour, byte-identical)
         if (lights_db) {
@@ -1722,12 +1814,22 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
         // D1-residue R3 (2026-10-16).
         auto load_prop = [&](const char* dff_name, Prop* p,
                              bool d3d9_batches = false,
-                             bool bake_frames = true) -> bool {
+                             bool bake_frames = true,
+                             float* sphere_out = nullptr) -> bool {
             std::uint32_t dl = 0;
             const std::uint8_t* db = find_entry(dff_name, &dl);
             if (!db) return false;
             Track::DffModel m;
             if (!m.Parse(db, dl, bake_frames)) return false;
+            // [rfx2] the RWP object's atomic is FUN_004b3f90 @ 0x004b3f90's: RpClumpForAllAtomics
+            // with a callback that keeps the first atomic visited and stops (0x004b4070), i.e. the
+            // clump list head = the LAST streamed atomic (RpClumpAddAtomic head insertion). Its
+            // geometry-space bounding sphere is what RpAtomicGetWorldBoundingSphere transforms.
+            if (sphere_out) {
+                std::int32_t last = -1;
+                for (const auto& b : m.batches)
+                    if (b.atomic > last) { last = b.atomic; std::memcpy(sphere_out, b.sphere, 4 * sizeof(float)); }
+            }
             // [geomlight water-scope 2026-08-31] Parse() gets only a blob, so the
             // asset name has to be attached here -- this is the one place that
             // knows it. RwSceneBuild::BuildClump uses it to scope the ambient fold
@@ -1818,6 +1920,53 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
             char mts_names[16][64] = {};
             struct MtsPair { int clump; int mts; };
             std::vector<MtsPair> mts_pairs;
+            // [rfx2] the RWP_Object descriptors (0x110-byte records at 0x0086cac0, 32 of them) the
+            // object shadows need: the shape type the Lua handlers store at +0 (RWP_Object_Box
+            // FUN_0047ae80 -> 1, _Cylinder FUN_0047aef0 -> 2, _Sphere FUN_0047af50 -> 3, _Capsule
+            // FUN_0047afa0 -> 4; names 0x005cdd54 / 0x005cdd40 / 0x005cdd2c / 0x005cdd18, bound at
+            // [0x00440e06..0x00440e40]), their floats, and RWP_Object_Properties' first argument
+            // (FUN_0047b000 -> +0xfc, the box fatness). COURSE.LUA's arguments are numbers or the
+            // file's own `local NAME = number` constants (training.piz: NO_FATNESS = 0.0,
+            // GENERAL_FATNESS = 0.1 ...).
+            struct RwpDesc {
+                int   type = 0;
+                float f[3] = {};
+                float fat = 0.f;
+                bool  have = false;              // RWP_Object with a loaded DFF and MTS
+                float sphere[4] = {};
+                std::vector<D3DMATRIX> inst;
+            };
+            RwpDesc rwp[32];
+            std::vector<std::pair<std::string, float>> lua_locals;
+            auto lua_num = [&](std::string tok, float* out) -> bool {
+                while (!tok.empty() && (tok.front() == ' ' || tok.front() == '\t')) tok.erase(tok.begin());
+                while (!tok.empty() && (tok.back() == ' ' || tok.back() == '\t' || tok.back() == '\r')) tok.pop_back();
+                if (tok.empty()) return false;
+                char* e = nullptr;
+                const float v = std::strtof(tok.c_str(), &e);
+                if (e && *e == '\0') { *out = v; return true; }
+                for (const auto& kv : lua_locals) if (kv.first == tok) { *out = kv.second; return true; }
+                *out = 0.f;                       // Lua 4.0: an unset global converts to 0
+                return true;
+            };
+            auto lua_args = [](const std::string& ln, const char* name, std::vector<std::string>* args) -> bool {
+                std::size_t p = ln.find_first_not_of(" \t");
+                if (p == std::string::npos) return false;
+                const std::size_t nl = std::strlen(name);
+                if (ln.compare(p, nl, name) != 0) return false;
+                p += nl;
+                while (p < ln.size() && (ln[p] == ' ' || ln[p] == '\t')) ++p;
+                if (p >= ln.size() || ln[p] != '(') return false;
+                const std::size_t q = ln.find(')', p);
+                if (q == std::string::npos) return false;
+                args->clear();
+                std::string cur;
+                for (std::size_t k = p + 1; k < q; ++k) {
+                    if (ln[k] == ',') { args->push_back(cur); cur.clear(); } else cur += ln[k];
+                }
+                args->push_back(cur);
+                return true;
+            };
             while (pos < lua_len) {
                 std::size_t eol = pos;
                 while (eol < lua_len && s[eol] != '\n') ++eol;
@@ -1827,17 +1976,53 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                 if (cmt != std::string::npos) line.resize(cmt);
                 char a[64] = {}, b[64] = {};
                 int idx = -1, pm = -1;
+                std::vector<std::string> args;
+                {
+                    // [rfx2] `local NAME = number`, and the RWP shape / property commands
+                    char ln2[64] = {};
+                    float lv = 0.f;
+                    if (std::sscanf(line.c_str(), " local %63[A-Za-z0-9_] = %f", ln2, &lv) == 2)
+                        lua_locals.emplace_back(ln2, lv);
+                    float v[3] = {};
+                    int ri = -1;
+                    auto set_shape = [&](int type, int nf) {
+                        if (args.size() < static_cast<std::size_t>(nf + 1)) return;
+                        float fi = -1.f;
+                        lua_num(args[0], &fi);
+                        ri = static_cast<int>(fi);
+                        if (ri < 0 || ri >= 32) return;
+                        for (int k = 0; k < nf; ++k) lua_num(args[static_cast<std::size_t>(k + 1)], &v[k]);
+                        rwp[ri].type = type;
+                        for (int k = 0; k < nf; ++k) rwp[ri].f[k] = v[k];
+                    };
+                    if (lua_args(line, "RWP_Object_Box", &args)) set_shape(1, 3);
+                    else if (lua_args(line, "RWP_Object_Cylinder", &args)) set_shape(2, 2);
+                    else if (lua_args(line, "RWP_Object_Sphere", &args)) set_shape(3, 1);
+                    else if (lua_args(line, "RWP_Object_Capsule", &args)) set_shape(4, 2);
+                    else if (lua_args(line, "RWP_Object_Properties", &args) && args.size() >= 2) {
+                        float fi = -1.f;
+                        lua_num(args[0], &fi);
+                        ri = static_cast<int>(fi);
+                        if (ri >= 0 && ri < 32) lua_num(args[1], &rwp[ri].fat);
+                    }
+                }
                 if (std::sscanf(line.c_str(),
-                                " RWP_Object( %*d , \"%*[^\"]\" , \"%63[^\"]\" "
-                                ", \"%63[^\"]\" )", a, b) == 2 ||
+                                " RWP_Object( %d , \"%*[^\"]\" , \"%63[^\"]\" "
+                                ", \"%63[^\"]\" )", &idx, a, b) == 3 ||
                     std::sscanf(line.c_str(),
-                                " RWP_Object( %*d ,\"%*[^\"]\", \"%63[^\"]\", "
-                                "\"%63[^\"]\" )", a, b) == 2) {
+                                " RWP_Object( %d ,\"%*[^\"]\", \"%63[^\"]\", "
+                                "\"%63[^\"]\" )", &idx, a, b) == 3) {
                     Prop p;
                     std::uint32_t ml = 0;
                     const std::uint8_t* mb = find_entry(b, &ml);
-                    if (mb && ml >= 4 && load_prop(a, &p)) {
+                    float sph[4] = {};
+                    if (mb && ml >= 4 && load_prop(a, &p, false, true, sph)) {
                         read_mts(mb, ml, &p.instances);
+                        if (idx >= 0 && idx < 32) {
+                            rwp[idx].have = true;
+                            rwp[idx].inst = p.instances;
+                            std::memcpy(rwp[idx].sphere, sph, sizeof(sph));
+                        }
                         // [rstates] RWP_Object props are drawn by the original's world
                         // pass between sectors (Arctic Tyres after its first sector).
                         p.rw_kind = LibRw::kInstInWorld;
@@ -1944,6 +2129,63 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                         std::snprintf(gate_bsp_, sizeof(gate_bsp_), "%s", sk);
                     }
                 }
+            }
+            // [rfx2] the object shadows' inputs, in FUN_00480340 @ 0x00480340's creation order:
+            // descriptors 0..31 with a shape (piVar6[-0x43] != 0), each one's MTS records in file
+            // order (FUN_004b3f50). bbox = FUN_0055bd80 @ 0x0055bd80 on the shape with the identity
+            // matrix of FUN_00480100 @ 0x00480100 (local_80), stored sup.xyz, inf.xyz (0x004802a3..):
+            //   box (FUN_0047fc40: FUN_0055c810 dims * [0x5cc56c] 0.1 at +0x40, FUN_0055bab0 fatness
+            //     * 0.1 at +0x4c; bbox slot 0x0055cbf0 of table 0x005e4fe0): +-(dims + fat)
+            //   capsule (FUN_0047ff70: FUN_00562fd0 @ 0x00562fd0, +0x4c = arg1 * 0.1, +0x40 = arg2 *
+            //     0.1; bbox slot 0x00563090 of table 0x005e5338): +-(r, r, h + r)
+            // Witness (verify/rfx2_20261016, TRAINING): Sign02 box (0.4375, 0.164, 0.031), tyre capsule
+            // (0.125, 0.125, 0.17). [UNCERTAIN U-9710] cylinders and spheres (FUN_0047f940 /
+            // FUN_0047fe00) keep their slot (the index parity of FUN_00481a30) but cast no shadow
+            // here: their primitives' fatness default (FUN_0055c380) is not read. Warzone alone has one.
+            {
+                std::vector<LibRw::ObjShadowIn> objs;
+                for (int k = 0; k < 32; ++k) {
+                    const RwpDesc& d = rwp[k];
+                    if (d.type == 0 || !d.have) continue;
+                    for (const D3DMATRIX& mm : d.inst) {
+                        LibRw::ObjShadowIn o{};
+                        std::memcpy(o.ltm, &mm, sizeof(o.ltm));
+                        float h[3] = {0.f, 0.f, 0.f};
+                        bool shaped = true;
+                        if (d.type == 1) {
+                            const float fat = d.fat * 0.1f;
+                            for (int c = 0; c < 3; ++c) h[c] = d.f[c] * 0.1f + fat;
+                        } else if (d.type == 4) {
+                            const float r = d.f[0] * 0.1f, hh = d.f[1] * 0.1f;
+                            h[0] = r; h[1] = r; h[2] = hh + r;
+                        } else {
+                            shaped = false;
+                        }
+                        for (int c = 0; c < 3; ++c) { o.bbox[c] = h[c]; o.bbox[3 + c] = -h[c]; }
+                        o.casts = shaped;
+                        // RpAtomicGetWorldBoundingSphere: centre through the frame LTM, radius times
+                        // the LTM's largest axis length (the MTS frame flags are cleared, 0x004802a0)
+                        const float* g = d.sphere;
+                        o.sphere[0] = g[0] * mm._11 + g[1] * mm._21 + g[2] * mm._31 + mm._41;
+                        o.sphere[1] = g[0] * mm._12 + g[1] * mm._22 + g[2] * mm._32 + mm._42;
+                        o.sphere[2] = g[0] * mm._13 + g[1] * mm._23 + g[2] * mm._33 + mm._43;
+                        const float l0 = std::sqrt(mm._11 * mm._11 + mm._12 * mm._12 + mm._13 * mm._13);
+                        const float l1 = std::sqrt(mm._21 * mm._21 + mm._22 * mm._22 + mm._23 * mm._23);
+                        const float l2 = std::sqrt(mm._31 * mm._31 + mm._32 * mm._32 + mm._33 * mm._33);
+                        const float lm = l0 > l1 ? (l0 > l2 ? l0 : l2) : (l1 > l2 ? l1 : l2);
+                        o.sphere[3] = g[3] * lm;
+                        objs.push_back(o);
+                    }
+                }
+                LibRw::ObjShadowSoup soup;
+                soup.verts = col_verts_.data();
+                soup.tris = col_tris_.data();
+                soup.tri_rgba = col_tri_rgba_.size() == col_tris_.size() / 3 ? col_tri_rgba_.data() : nullptr;
+                soup.ntri = col_tris_.size() / 3;
+                if (has_light_ltm_)
+                    LibRw::RaceFx_SetObjShadows(objs.data(), static_cast<int>(objs.size()), light_ltm_, soup);
+                else
+                    LibRw::RaceFx_SetObjShadows(nullptr, 0, nullptr, soup);
             }
             // [U-9062 2026-08-31] Clump_Exclude_From_World does NOT mean "do not load".
             // DECODED from MASHED.exe (Ghidra, analyzeHeadless on Mashed_pool14):
@@ -6333,6 +6575,7 @@ struct CamReplay {
     int q_c[4][12];             // [librwrest] Q{i}_*: the car clump root's LTM
     bool has_q = false;
     int c_ba8c = -1;            // [rfx] the HUD replay reads the trace's ba8c / dtb columns
+    int c_f101c = -1;           // [rfx2] the object shadows' frame parity (DAT_007f101c)
 };
 // [d1r1] the consumed row's transplant values, read by Render under MASHED_CAM_REPLAY_BASIS /
 // MASHED_CAR_REPLAY (diagnostic knobs, default OFF)
@@ -6344,6 +6587,7 @@ bool  s_rep_car_ok = false;
 float s_rep_root[4][12];        // [librwrest] Q{i}_* (clump root LTM), same order; [rfx] the car
                                 // shadow's root (equal to R{i}_* for a root frame)
 bool  s_rep_root_ok = false;
+long long s_rep_f101c = -1;     // [rfx2] the consumed row's DAT_007f101c (-1: no replay)
 CamReplay& CamReplayState() {
     static CamReplay R = [] {
         CamReplay r;
@@ -6396,6 +6640,7 @@ CamReplay& CamReplayState() {
             r.c_vwy = col("rvwy");
             if (r.c_vwy < 0) r.has_m = false;
             r.c_ba8c = col("ba8c");
+            r.c_f101c = col("f101c");
         }
         while (ok && std::fgets(line, sizeof(line), f)) {
             split(line, f2);
@@ -6475,6 +6720,7 @@ void TrackRenderer::RaceCamUpdate(const Race::RaceCamCar* cc_in, bool reset) {
             // [rfx] the HUD replay input: this row's DAT_0063ba8c and DAT_007f100c
             if (R.c_ba8c >= 0)
                 LibRw::RaceFx_ReplayHudRow(static_cast<int>(at(R.c_ba8c)), dtb);
+            s_rep_f101c = R.c_f101c >= 0 ? static_cast<long long>(at(R.c_f101c)) : -1;   // [rfx2]
             cam_replay_row_ = static_cast<int>(R.next++);
         } else {
             cam_replay_row_ = -2;                             // trace exhausted: host inputs again
@@ -8047,6 +8293,8 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         // [rfx] the car shadow / beam pass runs here, after the car loop and before the copters
         // below (FUN_00410b30: FUN_0041ebb0 at 0x00410bb4, FUN_00425e40 at 0x00410c08)
         LibRw::RaceSubmit_AddCarFxMarker();
+        // [rfx2] the object shadows' DAT_007f101c (the replay's own column when it has one)
+        LibRw::RaceFx_SetObjShadowFrame(s_rep_f101c >= 0 ? static_cast<std::uint32_t>(s_rep_f101c) : gloss_frame_);
         ++gloss_frame_;   // [rtex] DAT_007f101c stand-in, +1 per race frame (0x004111c1)
     }
 

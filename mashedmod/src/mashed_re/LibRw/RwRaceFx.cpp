@@ -467,7 +467,7 @@ void XformPoint(const float* m16, const float* v, float* o) {
 }
 // RwMatrixInvert (FUN_004c4dc0 @ 0x004c4dc0) for a general affine LTM (the light frame's LTM flags
 // read 0 on the original: not identity, not orthonormal, so FUN_004c4eb0's general path).
-// [UNCERTAIN U-9707] FUN_004c4eb0 is not transcribed: cofactor inverse here (equal in exact arithmetic).
+// [UNCERTAIN U-9710] FUN_004c4eb0 is not transcribed: cofactor inverse here (equal in exact arithmetic).
 void InvertAffine(const float* a, float* o) {
     const float r[9] = {a[0], a[1], a[2], a[4], a[5], a[6], a[8], a[9], a[10]};
     const double c00 = (double)r[4] * r[8] - (double)r[5] * r[7], c01 = (double)r[5] * r[6] - (double)r[3] * r[8],
@@ -501,7 +501,7 @@ bool ObjShadowMatrix(const ObjShadowIn& in, const float* L, const float* Linv, c
     const float dl[3] = {2.0f * at[0], at[1] * 2.0f, at[2] * 2.0f};        // [0x5cf47c] 2.0
     const float end[3] = {dl[0] + start[0], start[1] + dl[1], start[2] + dl[2]};
     // ---- the world query, FUN_00538c80(DAT_0080332c, line, FUN_00487180, data) ----------------
-    // [UNCERTAIN U-9707] RW's BSP walk stops at the FIRST intersection its sector order finds
+    // [UNCERTAIN U-9710] RW's BSP walk stops at the FIRST intersection its sector order finds
     // (FUN_00487180 returns 0); the soup here takes the nearest, two-sided (CollisionPrelitSample's rule).
     const float dd[3] = {end[0] - start[0], end[1] - start[1], end[2] - start[2]};
     float best = 2.f;
@@ -528,7 +528,7 @@ bool ObjShadowMatrix(const ObjShadowIn& in, const float* L, const float* Linv, c
     }
     if (bi == static_cast<std::size_t>(-1)) return false;                  // local_88 == 0
     // FUN_0045c110 @ 0x0045c110 on the hit's material: colour 0xff010101 or 0xffff0080 -> 1 (no
-    // shadow). [UNCERTAIN U-9707] the 0xffNN3cff / 0xffNNffff codes read the runtime table
+    // shadow). [UNCERTAIN U-9710] the 0xffNN3cff / 0xffNNffff codes read the runtime table
     // DAT_00691508 (FUN_00472550); none of them is treated as blocking here.
     const std::uint32_t rgba = soup.tri_rgba ? soup.tri_rgba[bi] : 0u;
     if (rgba == 0xff010101u || rgba == 0xffff0080u) return false;
@@ -625,11 +625,19 @@ void RaceFx_SetObjShadows(const ObjShadowIn* objs, int n, const float light[16],
     for (int i = 0; i < n; ++i) {
         ObjShadow& o = g_objshad[static_cast<std::size_t>(i)];
         std::memcpy(o.sphere, objs[i].sphere, sizeof(o.sphere));
-        o.flag = ObjShadowMatrix(objs[i], light, Linv, soup, &o.m);
+        o.flag = objs[i].casts && ObjShadowMatrix(objs[i], light, Linv, soup, &o.m);
         nflag += o.flag ? 1 : 0;
     }
     if (std::FILE* f = std::fopen("log/librw_race.txt", "a")) {
         std::fprintf(f, "[rfx2] object shadows: %d objects, %d with a shadow (DAT_006cad50)\n", n, nflag);
+        // MASHED_DBG_OBJSHAD=1 (DIAGNOSTIC, default unset): one line per object
+        if (std::getenv("MASHED_DBG_OBJSHAD"))
+            for (int i = 0; i < n; ++i) {
+                const ObjShadow& o = g_objshad[static_cast<std::size_t>(i)];
+                std::fprintf(f, "  obj %d pos (%.4f,%.4f,%.4f) flag %d m.p (%.5f,%.5f,%.5f) r (%.5f,%.5f,%.5f)\n", i,
+                             objs[i].ltm[12], objs[i].ltm[13], objs[i].ltm[14], o.flag ? 1 : 0,
+                             o.m.p[0], o.m.p[1], o.m.p[2], o.m.r[0], o.m.r[1], o.m.r[2]);
+            }
         std::fclose(f);
     }
 }
@@ -641,12 +649,33 @@ void RaceFx_DrawWorldFx(void* rw_camera) {
     rw::Camera* cam = static_cast<rw::Camera*>(rw_camera);
     if (!cam || !cam->getFrame()) return;
     // ---- FUN_00481a30 @ 0x00481a30, per object i ---------------------------------------------
-    // [UNCERTAIN U-9707] the original runs this in the tick, against the camera frame's modelling
+    // [UNCERTAIN U-9710] the original runs this in the tick, against the camera frame's modelling
     // matrix (FUN_00467210(0)) and the frustum planes of the last RwCameraBeginUpdate; here both are
     // this frame's render camera. DAT_007f0fd0 == 5's branch (0x00481ab3) is not taken in the modes
     // the standalone runs; FUN_00484cf0 / FUN_004818d0 (physics registration, over-speed break) and
     // the per-frame recompute of a moving object are not modelled (the objects are static).
     const rw::Matrix& cm = cam->getFrame()->matrix;
+    // The tick's frustum is the last render's: FUN_0040fc00 @ 0x0040fc00 moves the camera frame
+    // (FUN_0040d470) before FUN_0040ce00 -> FUN_00481a30, but the camera's world planes
+    // (camera + 0x94, FUN_004c1b40) are only re-derived when the frame hierarchy syncs at the next
+    // RwCameraBeginUpdate. MASHED_OBJSHAD_PLANES=cur tests against this frame's planes instead.
+    static const bool s_cur_planes = [] {
+        const char* e = std::getenv("MASHED_OBJSHAD_PLANES");
+        return e && std::strcmp(e, "cur") == 0;
+    }();
+    static rw::FrustumPlane s_prev[6];
+    static bool s_have_prev = false;
+    const rw::FrustumPlane* planes = (s_have_prev && !s_cur_planes) ? s_prev : cam->frustumPlanes;
+    auto test = [&](const float* c, float r) -> int {    // FUN_004c1b40 @ 0x004c1b40
+        int res = 2;
+        for (int k = 0; k < 6; ++k) {
+            const rw::V3d& nn = planes[k].plane.normal;
+            const float dist = (nn.z * c[2] + nn.x * c[0] + nn.y * c[1]) - planes[k].plane.distance;
+            if (r < dist) return 0;
+            if (-r < dist) res = 1;
+        }
+        return res;
+    };
     std::vector<Particle> ps;
     for (std::size_t i = 0; i < g_objshad.size(); ++i) {
         ObjShadow& o = g_objshad[i];
@@ -656,12 +685,7 @@ void RaceFx_DrawWorldFx(void* rw_camera) {
         d2 = d2 + dy * dy;
         if (!(d2 < 2500.0f)) continue;                                   // [0x5cd098]
         o.prev = o.state;                                                // 0x00481ba8
-        if (par) {
-            rw::Sphere s;
-            s.center.x = o.sphere[0]; s.center.y = o.sphere[1]; s.center.z = o.sphere[2];
-            s.radius = o.sphere[3] * 10.0f;                              // [0x5cc55c]
-            o.state = cam->frustumTestSphere(&s);                        // FUN_004c1b40
-        }
+        if (par) o.state = test(o.sphere, o.sphere[3] * 10.0f);         // [0x5cc55c] 10.0
         if (o.state != 2 && o.state != 1) continue;
         if (!o.flag) continue;
         // the angle gate 0x00481d03..0x00481d24: acos(clamp(at . (0,1,0) [0x6146fc])) < [0x5cd07c]
@@ -679,6 +703,8 @@ void RaceFx_DrawWorldFx(void* rw_camera) {
         p.rgba[3] = FtolByte(al);
         ps.push_back(p);
     }
+    std::memcpy(s_prev, cam->frustumPlanes, sizeof(s_prev));
+    s_have_prev = true;
     if (ps.empty()) return;
     // ---- FUN_00487d70 @ 0x00487d70: cull NONE (RS 0x14 = 1), ZWRITE off, the batch's 5 / 6 blend
     // (FUN_00487150 -> FUN_00476cb0(&DAT_00703068, 5, 6)); fog is still off from FUN_00410b30
