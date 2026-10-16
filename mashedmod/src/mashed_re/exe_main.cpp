@@ -604,6 +604,7 @@ DWORD            g_splash_start_ms  = 0;   // set on first splash frame
 //   Load Game: 10 warn 0x215 (Yes/No) -> 11 'Load Successful.' 0x1bc (Continue)
 //   Save Game: 20 overwrite? 0x1ca (Yes/No) -> 21 'Saving game data.' 0x233
 //              (auto ~0.8s) -> 22 'Save successful.' 0x279 (Continue)
+int              g_modal_ok_body    = 0;     // body id for modal step 52
 int              g_modal_body_id    = 0;
 int              g_modal_button_id  = 0;
 int              g_modal_alpha      = 0;
@@ -1506,10 +1507,20 @@ bool RunNavKeysStep() {
     static int frame = -1, idx = 0, wait = 0;
     static int nkeys = -1;
     static char keys[64];
+    static int  holds[64];            // frames the key stays down after the press frame ("d*90")
+    static int  holdLeft = 0;
+    static unsigned char holdDik = 0;
     if (nkeys < 0) {
         nkeys = 0;
-        for (const char* c = g_nav_keys_list; *c && nkeys < 64; ++c)
-            if (*c != ',' && *c != ' ') keys[nkeys++] = *c;
+        for (const char* c = g_nav_keys_list; *c && nkeys < 64; ++c) {
+            if (*c == ',' || *c == ' ') continue;
+            keys[nkeys] = *c; holds[nkeys] = 0;
+            if (c[1] == '*') { c += 2; while (*c >= '0' && *c <= '9') holds[nkeys] = holds[nkeys] * 10 + (*c++ - '0'); --c; }
+            ++nkeys;
+        }
+    }
+    if (holdLeft > 0) {               // keep the key down: held, not a new edge
+        g_keys[holdDik] = 0x80; g_keys_prev[holdDik] = 0x80; --holdLeft;
     }
     if (frame < 0) {
         if (g_frontend_phase != 3 || g_modal_step != 0) return false;
@@ -1520,6 +1531,7 @@ bool RunNavKeysStep() {
     if (wait > 0) {
         --wait;
     } else if (idx < nkeys) {
+        const int hold = holds[idx];
         const char k = keys[idx++];
         unsigned char dik = 0;
         switch (k) {
@@ -1529,19 +1541,20 @@ bool RunNavKeysStep() {
             default: break;
         }
         if (dik) NavDemoTap(dik);
+        if (dik && hold > 0) { holdDik = dik; holdLeft = hold; }
         static char t[2]; t[0] = k; t[1] = 0; tap = t;
-        wait = g_nav_keys_gap;
+        wait = g_nav_keys_gap + hold;
     } else {
         return true;                     // script done, last gap elapsed
     }
     std::FILE* lf = std::fopen(kLogPath, "a");
     if (lf) {
-        std::fprintf(lf, "NAV_KEYS f=%d tap=%s depth=%d screen=%d cur=%d row=%d gm=%d sel=%d ea68=%d f1a4=%d flow=%d fph=%d\n",
+        std::fprintf(lf, "NAV_KEYS f=%d tap=%s depth=%d screen=%d cur=%d row=%d gm=%d sel=%d ea68=%d f1a4=%d flow=%d fph=%d opp=%d,%d,%d\n",
                      frame, tap, Nav_Depth(), Nav_ScreenId(), Nav_Cursor(),
                      Nav_ChallengeRow(), Nav_GameState().game_mode,
                      Nav_GameState().sel_f184, Nav_GameState().ea68, Nav_NavFlagF1a4(),
                      static_cast<int>(mashed_re::Race::GameFlow_Mode()),
-                     g_frontend_phase);
+                     g_frontend_phase, Nav_GameState().ea98, Nav_GameState().ea9c, Nav_GameState().eaa0);
         std::fclose(lf);
     }
     ++frame;
@@ -1976,6 +1989,7 @@ void AdjustSoundSetting(int row, int dir) {
 // the body text id (Font36.piz/USA.DAT) + button mode. Keeps the current fade
 // alpha so flow transitions don't re-fade.
 void ModalGo(int step) {
+    if (std::FILE* lf = std::fopen(kLogPath, "a")) { std::fprintf(lf, "MODAL step=%d ok_body=0x%x\n", step, g_modal_ok_body); std::fclose(lf); }
     g_modal_step     = step;
     g_modal_timer_ms = 0;
     g_modal_button_id = 0x2d;            // "Continue" (default)
@@ -2003,6 +2017,11 @@ void ModalGo(int step) {
         case 50: g_modal_body_id = 0x135; g_modal_yesno = false;
                  g_modal_button_id = 0x2d;                       break; // single Continue
         case 51: g_modal_body_id = 0x136; g_modal_yesno = true;  break; // two-choice Yes/No
+        // 52 = single-OK refusal popup, body id in g_modal_ok_body (FUN_0042bf30(id,0,1,0x2d,0,0)):
+        // 0x24f no opponents (0xff420000, harvest L954-L964), 0xd6..0xd9 team composition (0xff3c0000).
+        case 52: g_modal_body_id = g_modal_ok_body; g_modal_yesno = false;
+                 g_modal_button_id = 0x2d;
+                 break;                                              // single OK
         default: g_modal_body_id = 0; g_modal_step = 0; g_modal_yesno = false; break;
     }
 }
@@ -2274,8 +2293,33 @@ bool UpdateMenuSelection() {
         }
         return false;
     }
-    if (down_now && !down_prev) { Nav_MoveCursor(+1); mashed_re::Audio::SfxPlay("menu navigation", 0.7f); }
-    if (up_now   && !up_prev)   { Nav_MoveCursor(-1); mashed_re::Audio::SfxPlay("menu navigation", 0.7f); }
+    // Key repeat on hold, screens 6 and 7 only: FUN_0042aff0 (UP, 0x0042aff0) and FUN_0042b180 (DOWN,
+    // 0x0042b180) add the frame time [0x007f1004] to a per-direction timer ([0x0067f1b0] / [0x0067f1b4]) while
+    // the direction is held and the slot's screen id is 6 or 7 (0x0042b0ab.., 0x0042b25b..); above [0x005ccac0]
+    // = 0.4 (0x3ecccccd) the timer is set to 0.2 and the call returns 1, so the first repeat comes 0.4 s after
+    // the press and later ones every 0.2 s. With the direction released the timer is zeroed (0x0042b0b7 /
+    // 0x0042b247). The first move is the press edge, as on every other screen.
+    static DWORD s_repT = 0;
+    static float s_repUp = 0.f, s_repDn = 0.f;
+    const DWORD repNow = DetTicks();
+    const float repDt = s_repT ? static_cast<float>(repNow - s_repT) * 0.001f : 0.f;
+    s_repT = repNow;
+    const int repSid = Nav_ScreenId();
+    auto holdRepeat = [&](bool held, float& t) -> bool {
+        if (!held) { t = 0.f; return false; }
+        if (repSid < 6 || repSid > 7) return false;
+        t += repDt;
+        if (t > 0.4f) {
+            t = 0.2f;
+            if (g_nav_keys) if (std::FILE* lf = std::fopen(kLogPath, "a")) { std::fprintf(lf, "REPEAT ms=%lu dt=%.4f\n", static_cast<unsigned long>(repNow), repDt); std::fclose(lf); }
+            return true;
+        }
+        return false;
+    };
+    const bool repDown = holdRepeat(down_now, s_repDn);
+    const bool repUp   = holdRepeat(up_now,   s_repUp);
+    if ((down_now && !down_prev) || repDown) { Nav_MoveCursor(+1); mashed_re::Audio::SfxPlay("menu navigation", 0.7f); }
+    if ((up_now   && !up_prev)   || repUp)   { Nav_MoveCursor(-1); mashed_re::Audio::SfxPlay("menu navigation", 0.7f); }
     // [D-11054] Cup-tier selection on the challenge screens (sid 6/7):
     // LEFT/RIGHT cycles the mode selection through the ring sel 1<->2<->5,
     // i.e. game mode 3<->4<->5 via FUN_0042f6b0 — the verbatim screen-6/7
@@ -2449,8 +2493,10 @@ bool UpdateMenuSelection() {
             const MenuGameState& gs = Nav_GameState();
             const int opponents = (gs.ea98 != 0) + (gs.ea9c != 0) + (gs.eaa0 != 0);
             if (launchMode == 10 && opponents == 0) {
-                mashed_re::Audio::SfxPlay("menu navigation", 0.5f);
-                return false;                    // modal 0x24f in the original
+                // 0x0043f792.. harvest L954-L964: mode 10 with DAT_0067ea98 / ea9c / eaa0 all 0 opens
+                // FUN_0042bf30(0x24f, 0, 1, 0x2d, 0, 0) and does not launch.
+                g_modal_ok_body = 0x24f; ModalGo(52); g_modal_alpha = 0;
+                return false;
             }
             MenuLaunchRace(launchMode);
         } else {
@@ -2463,9 +2509,13 @@ bool UpdateMenuSelection() {
                     ModalGo(50); g_modal_alpha = 0; break;
                 case mashed_re::Frontend::kCupModalTwoChoice:
                     ModalGo(51); g_modal_alpha = 0; break;
+                default: {
+                    const int okId = mashed_re::Frontend::Nav_TakePendingOkModal();
+                    if (okId != 0) { g_modal_ok_body = okId; ModalGo(52); g_modal_alpha = 0; }
+                    break;
+                }
                 // kCupModalRestart38/A9 (ecdc!=0 restart-race confirm) are not
                 // opened here yet — see FABLE HAND-OFF (needs the restart flow).
-                default: break;
             }
         }
     }
@@ -2889,13 +2939,46 @@ float MeasureMashedString(const wchar_t* s, float height_px) {
     return total;
 }
 
-// [0x0067d830], the divisor FUN_004282a0 applies at 0x004282f1. Written by
-// FUN_004275d0 through FUN_00553cf0(.., &0x0067d828) (push 0x67d828 at
-// 0x004275f2), zeroed by the font init at 0x00427de4. MEASURED, not derived:
-// 0x3f7fffff on two original boots at screen 19
-// (verify/scr19_parity_20261012/arrow_fix/orig_measure_probe*.json). The
-// FUN_00553cf0 chain that produces it is not ported.
-static const std::uint32_t kMenuMeasureDivBits = 0x3f7fffffu;
+// [0x0067d830], the divisor FUN_004282a0 applies at 0x004282f1. DERIVED (U-9680,
+// verify/fe_residuals_20261016/u9680/): FUN_004275d0 calls FUN_00552a60(cam), FUN_00552d10,
+// FUN_00552750, FUN_00552920(path), FUN_00553cf0(path, &0x0067d828) (push 0x67d828 at
+// 0x004275f2); [0x0067d830] = bbox width (max x - min x, 0x00553dd.. in FUN_00553cf0), the
+// y twin [0x0067d834] = bbox height.
+//   0x00552a99/0x00552aca: DAT_00912b08/0c = view window x2 = 0.8f+0.8f = 0x3fcccccd
+//     (camera +0x68/+0x6c read 0x3f4ccccd on the original, rect_probe orig_rect_probe1.json).
+//   FUN_00552e40 builds DAT_00912b18 = diag(-m, m, 1), pos (b08*s*0.5, -(b0c*s*0.5), 0),
+//     m = min(b08,b0c), s = DAT_00912be0 = 1.0 (0x00552c48) or 1.0 for camera type 2;
+//     0.5 = [0x005cc32c]. Probed bits: bfcccccd,0,0,0,80000000,3fcccccd,0,0,80000000,0,
+//     3f800000,0,3f4ccccd,bf4ccccd,0,0. The flag word is 0, so FUN_004c4dc0 takes the
+//     cofactor path 0x004c4eb0 into DAT_00912b58 (probed bits: bf1fffff,0,80000000,0,0,
+//     3f1fffff,80000000,0,80000000,80000000,3f800000,0,3effffff,3effffff,80000000,0;
+//     the verbatim port RwMatrixInvert reproduces all 16 at PC_24).
+//   FUN_00552920: rect corners +-0.5 ([0x005cd50c]=-0.5, [0x005cc32c]=+0.5) * b08 * s,
+//     mapped through DAT_00912b58 (x' = x*m00 + m30). Width = x'(-0.8f) - x'(+0.8f)
+//     = 0x3f7fffff, 1 ulp below 1.0: 1/1.6f in the cofactor path is 0x3f1fffff, not 0.625.
+extern "C" void __cdecl RwMatrixInvert(void* out, void* in);   // 0x004c4eb0
+static float DeriveMenuMeasureDiv() {
+    const float vw   = 0.8f;                      // camera +0x68 / +0x6c = 0x3f4ccccd
+    const float W    = vw + vw;                   // DAT_00912b08 (0x00552a99)
+    const float H    = vw + vw;                   // DAT_00912b0c
+    const float s    = 1.0f;                      // DAT_00912be0 (0x00552c48)
+    const float half = 0.5f;                      // [0x005cc32c]
+    const float m    = (W < H) ? W : H;           // 0x00552ebc..0x00552ece
+    const std::uint32_t kPos0 = 0x00000000u, kNeg0 = 0x80000000u;
+    std::uint32_t b18[16] = { 0, kPos0, kPos0, kPos0, kNeg0, 0, kPos0, kPos0,
+                              kNeg0, kPos0, 0x3f800000u, kPos0, 0, 0, kPos0, kPos0 };
+    const float c[16] = { -m, 0.f, 0.f, 0.f, 0.f, m, 0.f, 0.f, 0.f, 0.f, 1.f, 0.f,
+                          W * s * half, -(H * s * half), 0.f, 0.f };
+    float in[16], inv[16] = {};
+    std::memcpy(in, b18, sizeof(in));
+    in[0] = c[0]; in[5] = c[5]; in[12] = c[12]; in[13] = c[13];
+    RwMatrixInvert(inv, in);                      // 0x004c4eb0 (flag word 0 -> cofactor path)
+    const float m00 = inv[0], m30 = inv[12];
+    const float x0 = (W * s) * (-half), x1 = (W * s) * half;   // 0x00552920 corners
+    const float a = x0 * m00 + m30, b = x1 * m00 + m30;        // FUN_004dc370 / 0x004c3d90
+    const float lo = (a < b) ? a : b, hi = (a < b) ? b : a;
+    return hi - lo;                               // FUN_00553cf0: max - min
+}
 
 // 0x004282a0  FUN_004282a0(id, scale) for the standalone: the message text
 // (FUN_00427780 + FUN_004277a0 remap = GetMenuMessage) measured by
@@ -2921,8 +3004,7 @@ float MeasureMenuMessage(int id, float scale) {
         if (g_font.Glyph(static_cast<unsigned char>(c), uv, &wf))
             sum = sum + (wf + trk);                       // 0x00555585..0x0055558b
     }
-    float div;
-    std::memcpy(&div, &kMenuMeasureDivBits, 4);
+    static const float div = DeriveMenuMeasureDiv();
     const float sf = scale * 0.0708f;                     // 0x004282d7
     return ((sum * sf) / div) * 640.0f;                   // 0x0055559f, 0x004282f1, 0x00428309
 }
