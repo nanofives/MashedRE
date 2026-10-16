@@ -20,6 +20,7 @@
 #include <vector>
 #include "D2SinkProbe.h"                     // [D2 attempt 19] diagnostic, default-OFF
 #include "PosModelKnobs.h"                   // [d2posmodel] fix B knobs, default-OFF
+#include "../Math/RwLutTables.h"             // [d2lateral] Math::LutLength (0x004c3ac0), knob-gated
 #include "../Race/SubStateCallees.h"         // [d2posmodel] VehiclePhysicsStateReset (0x0046baa0)
 #include <chrono>     // WS-A s3 perf profiler (steady_clock == QPC on MSVC)
 // #define MASHED_PHYS_DIAG 1   /* enable the steer-chain diag block (G2 drive debug) */
@@ -1206,6 +1207,17 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     }();
     static const bool s_fixLFrameMs = (std::getenv("MASHED_D2CHUNK_FRAMEMS") != nullptr);
     bool a4Skip = false;
+    // [d2lateral 2026-10-16] MASHED_D2LAT_REFRESH=1 (default OFF): the refresh below on EVERY
+    // frame, with 0x004c3ac0's own arithmetic (float (x*x + y*y) + z*z, then the RW LUT sqrt,
+    // Math::LutLength). Measured on the original's first Training wall impact: the fixup
+    // 0x0046ef70 reads +0x9e4 in its damp (ContactFixup.cpp:133-137), and there the original
+    // carries this refresh's LUT value (1832.4017, bit-exact) where the port carried A6a's
+    // pre-clamp |W1| (1835.50), a damp x1.081 and a post-impact car x1.077
+    // (verify/d2lateral_20261016/PREREG_d2lateral.md A2.1-A2.3).
+    static const bool s_d2latRefresh = [] {
+        const char* e = std::getenv("MASHED_D2LAT_REFRESH");
+        return e && e[0] == '1';
+    }();
 
     // [d2settle D0-a] slot 0's first 6 steps (settle included), DIAGNOSTIC ONLY, default-OFF.
     static const char* const s_settleDiag = std::getenv("MASHED_SETTLE_DIAG");
@@ -1248,8 +1260,13 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         g_a4Skip[slot] = false;
     }
     if (a4Skip) {
-        F(r, off::kSpeed) = Vec3Mag3(reinterpret_cast<const float*>(r + off::kVelocity)); // 0x004710c3/c8
-        F(r, 0x9e8)       = Vec3Mag3(reinterpret_cast<const float*>(r + 0x9bc));          // 0x004710d5/da
+        if (s_d2latRefresh) {
+            F(r, off::kSpeed) = Math::LutLength(reinterpret_cast<const float*>(r + off::kVelocity)); // 0x004710c3/c8
+            F(r, 0x9e8)       = Math::LutLength(reinterpret_cast<const float*>(r + 0x9bc));          // 0x004710d5/da
+        } else {
+            F(r, off::kSpeed) = Vec3Mag3(reinterpret_cast<const float*>(r + off::kVelocity)); // 0x004710c3/c8
+            F(r, 0x9e8)       = Vec3Mag3(reinterpret_cast<const float*>(r + 0x9bc));          // 0x004710d5/da
+        }
     }
     sdLine("preA4");
     // [d2settle fix C 2026-10-16] the original's per-frame speed refresh, now on EVERY frame.
@@ -1287,7 +1304,10 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         // writer. PREREG_d2engage.md 0.4. With the knob on, every remaining ReassertContacts call
         // reads the cache its own car's SolveWheelContacts set in the same call.
         if (!PosModelContacts()) ReassertContacts(r);
-        if (!s_noSpeedRefresh && !a4Skip && (I(r, 0x4) != 0 || I(r, 0x10) == 1)) {
+        if (s_d2latRefresh && !a4Skip && (I(r, 0x4) != 0 || I(r, 0x10) == 1)) {   // 0x004710b0..ba
+            F(r, off::kSpeed) = Math::LutLength(reinterpret_cast<const float*>(r + off::kVelocity)); // 0x004710c8
+            F(r, 0x9e8)       = Math::LutLength(reinterpret_cast<const float*>(r + 0x9bc));          // 0x004710da
+        } else if (!s_noSpeedRefresh && !a4Skip && (I(r, 0x4) != 0 || I(r, 0x10) == 1)) {
             F(r, off::kSpeed) = Vec3Mag3(reinterpret_cast<const float*>(r + off::kVelocity)); // 0x004710c8
             F(r, 0x9e8)       = Vec3Mag3(reinterpret_cast<const float*>(r + 0x9bc));          // 0x004710da
         }

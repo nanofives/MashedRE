@@ -77,5 +77,17 @@ float LutNormalize(float* out, const float* in) {
     return len;
 }
 
+// LUT form of RwV3dLength (the body is Race/RaceCamera.cpp's Vec3Mag, which keeps the exact
+// fallback; this helper is the arithmetic the original runs at 0x004c3ac0): 0x004c3ac4..0x004c3ada
+// form (x*x + y*y) + z*z in ST and store it
+// as a dword (0x004c3adc); zero returns 0 (0x004c3aec); otherwise the same LUT sqrt as 0x004c3b30
+// (0x004c3af2..0x004c3b17). PC_24 caller (the race loop), so float arithmetic is the original's.
+// [d2lateral 2026-10-16] bit-exact against the original's +0x9e4 refresh on two captured rows
+// (verify/d2lateral_20261016/PREREG_d2lateral.md A2.2).
+float LutLength(const float* v) {
+    const float mag2 = (v[0] * v[0] + v[1] * v[1]) + v[2] * v[2];
+    return LutSqrt(mag2);
+}
+
 }  // namespace Math
 }  // namespace mashed_re
