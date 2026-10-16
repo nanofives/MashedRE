@@ -144,7 +144,10 @@ int main(int argc, char** argv) {
 #undef COL
     }
 
-    std::printf("row,ppx,ppy,ppz,pdx,pdy,pdz,pzoom,pvw,ppairA,ppairB,mode,reset\n");
+    // [d1r2] + the Camera::Apply inputs (RaceCamera.cpp, 0x00447fc2..0x004481b6):
+    // aim +0x4c (pax..paz), yaw +0x38, pitch +0x34, roll +0x3c. %.9g round-trips a float.
+    std::printf("row,ppx,ppy,ppz,pdx,pdy,pdz,pzoom,pvw,ppairA,ppairB,mode,reset,"
+                "pax,pay,paz,pyaw,ppitch,proll,epx,epy,epz\n");
 
     long adapter_active_violations = 0, adapter_dead_violations = 0;
 
@@ -178,10 +181,14 @@ int main(int argc, char** argv) {
 
         const float* p = cam.pos();
         const float* g = cam.target();
-        std::printf("%zu,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%d,%d,%d,%d\n",
+        const float* a = cam.aim();
+        std::printf("%zu,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%d,%d,%d,%d,"
+                    "%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g\n",
                     r, p[0], p[1], p[2], g[0], g[1], g[2],
                     cam.required_zoom(), cam.view_window(), pa, pb,
-                    (int)v[i_mode], (int)v[i_rst]);
+                    (int)v[i_mode], (int)v[i_rst],
+                    a[0], a[1], a[2], cam.yaw_deg(), cam.pitch_deg(), cam.roll_deg(),
+                    p[0], p[1], p[2]);
     }
 
     if (adapter_active_violations)

@@ -75,6 +75,13 @@ public:
     const float* target() const { return tgt_out_; }
     float required_zoom() const { return required_zoom_; }   // cam[0x268]
     float view_window() const { return view_window_; }       // cam[0x16]
+    // [d1r2] the Camera::Apply inputs the director writes (0x00447fc2..0x004481b6):
+    // aim +0x4c (tgt - pos, a direction), yaw +0x38, pitch +0x34, roll +0x3c (= 0).
+    const float* aim() const { return aim_out_; }
+    float yaw_deg() const { return yaw_out_; }
+    float pitch_deg() const { return pitch_out_; }
+    float roll_deg() const { return roll_out_; }
+    bool  primed() const { return primed_; }   // Update has run since Reset()
     // [U-9201] diagnostic only: the fields citing DAT_00897fe0 +0x964..+0x9a0, in that order
     // (smooth_pos, spring_pos, smooth_tgt, spring_tgt [12 floats], blend, zoom) and +0x4c target.
     void DebugState(float out14[14], int* pa, int* pb, float tgt3[3]) const {
@@ -112,7 +119,11 @@ private:
     bool  primed_ = false;       // forces the snap path on first frame
 
     float pos_out_[3] = {};      // +0x40 (and [1..3])
-    float tgt_out_[3] = {};      // +0x4c (and [4..6])
+    float tgt_out_[3] = {};      // target POINT: +0x10..+0x18 (0x004481e5) and +0x97c
+    float aim_out_[3] = {};      // +0x4c..+0x54 = tgt - pos (0x00447fef..0x00448007)
+    float yaw_out_ = 0.f;        // +0x38 (0x004480b1)
+    float pitch_out_ = 0.f;      // +0x34 (0x0044819d)
+    float roll_out_ = 0.f;       // +0x3c (0x004481a3, always 0)
     float view_window_ = 0.6f;   // +0x58
     std::uint32_t prng_ = 0x12345678;  // jitter PRNG state (adapter; the
                                        // original uses FUN_00534870)

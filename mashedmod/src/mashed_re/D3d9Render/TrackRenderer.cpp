@@ -33,6 +33,7 @@
 #include "../Race/CarRegistrant.h"  // mode 7 M2b: car registrant FUN_0041f710 (MASHED_REG_CARS)
 #include "../Race/SubStateMachine.h"  // D-11073 leg 1b: FUN_0040dbd0 / FUN_004103a0 (MASHED_SUBSTATE)
 #include "../Race/CameraEntries.h"    // D-11073 leg 2: phase-3 camera entries (MASHED_SUBSTATE)
+#include "../Race/CameraApply.h"      // d1r2: the director tail's frame build (render camera)
 extern "C" void __cdecl VehicleSeedWritePair(std::uint32_t, std::uint32_t);   // 0x00448700
 extern "C" void __cdecl UtilZeroTable8964c0();                                // 0x004425d0
                                     // (MASHED_GATE_RIBBON_AI reverts it to the ribbon scaffold).
@@ -2320,6 +2321,26 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
             }
         }
     }
+    // [d1r2] MASHED_CAM_DUMP=<csv> also writes <csv>.nodes.txt: the camera-path ribbon
+    // in cam_driver's nodes.txt format (dir, c0, c3), plus course id and LED state, so
+    // a replay can be checked for running on the original's ribbon.
+    if (const char* e = std::getenv("MASHED_CAM_DUMP")) {
+        if (e[0]) {
+            const std::string np = std::string(e) + ".nodes.txt";
+            if (std::FILE* nf = std::fopen(np.c_str(), "w")) {
+                for (const auto& n : cam_nodes_)
+                    std::fprintf(nf, "%.9g %.9g %.9g %.9g %.9g %.9g %.9g %.9g %.9g\n",
+                                 n.dir[0], n.dir[1], n.dir[2], n.c0[0], n.c0[1], n.c0[2],
+                                 n.c3[0], n.c3[1], n.c3[2]);
+                std::fclose(nf);
+            }
+            if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
+                std::fprintf(lf, "[d1r2] camera nodes=%zu course_id=%d led=%d -> %s\n",
+                             cam_nodes_.size(), course_id_, (int)race_cam_.has_led(), np.c_str());
+                std::fclose(lf);
+            }
+        }
+    }
 
     // WS-AI-BRIDGE / Option B: load AI<course>.AI -> controller image so the faithful
     // racing-line lookahead (Ai_ComputeTarget) is available. Loaded by DEFAULT now (the
@@ -3369,6 +3390,22 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         if (countdown_ <= 0.f) {
             Audio::SfxPlay("go", 0.9f);                      // real "GO!" SFX
             Vehicle::LaunchRev_Release();
+        }
+        // [d1r2] The original runs the director on every pre-race frame (sub-states
+        // 3/4/5: FUN_0040fc00 -> FUN_0040d470 -> FUN_00446520, main block when cam[7]
+        // == 0), not from GO; MASHED_SUBSTATE does the same in SubStateCameraChain.
+        // So the stand-in countdown advances race_cam_ too, and the first frame of a
+        // round snaps (Reset() at round start). Render-side: race_cam_'s only sim
+        // reader is EliminationCheck on required_zoom_, which Update recomputes from
+        // the current cars (RaceCamera.cpp:359-362) and which runs only after GO.
+        // The frame that reaches GO skips this: UpdateRace below advances it once.
+        static const bool s_cd_cam_optout =
+            GetEnvironmentVariableA("MASHED_NO_RACE_CAM_BASIS", nullptr, 0) != 0;
+        if (countdown_ > 0.f && !s_cd_cam_optout) {
+            Race::RaceCamCar cc[kRaceCars] = {};
+            FillRaceCamCars(cc);
+            cam_ticks_ += static_cast<double>(in.dt) * 3000000.0;   // DAT_007f1030 rate
+            RaceCamUpdate(cc, false);
         }
         if (countdown_ > 0.f) return;
     }
@@ -5717,6 +5754,119 @@ void TrackRenderer::FillRaceCamCars(Race::RaceCamCar* cc) {
     }
 }
 
+// [d1r2 2026-10-16] MASHED_CAM_REPLAY=<csv>, DIAGNOSTIC ONLY, default OFF: each
+// race_cam_ update consumes the next row of an ORIGINAL-side trace
+// (re/frida/camera_probe.py, columns read by header like cam_driver.cpp) in place of
+// the host inputs: the four cars' pos/vel/alive/dead/deadt/prog/pct and the
+// ticks/dtb/jit/reset/overhead arguments. So the standalone's camera, and the frame
+// the renderer draws from it, can be compared with the original frame by frame.
+// The standalone's own race keeps running underneath; only the camera is fed.
+// Adapters as cam_driver.cpp: active = (alive != -1), dead_ms = the int tick count.
+namespace {
+struct CamReplay {
+    bool on = false;
+    std::vector<std::vector<double>> rows;
+    std::size_t next = 0;
+    int c_x[4], c_y[4], c_z[4], c_vx[4], c_vy[4], c_vz[4], c_al[4], c_de[4], c_dt[4], c_pr[4], c_pc[4];
+    int c_tk = -1, c_dtb = -1, c_jit = -1, c_rst = -1, c_oh = -1, c_tt = -1;
+};
+CamReplay& CamReplayState() {
+    static CamReplay R = [] {
+        CamReplay r;
+        const char* e = std::getenv("MASHED_CAM_REPLAY");
+        if (!e || !e[0]) return r;
+        std::FILE* f = std::fopen(e, "r");
+        if (!f) return r;
+        static char line[16384];
+        std::vector<std::string> hdr;
+        auto split = [](char* s, std::vector<char*>& out) {
+            out.clear(); out.push_back(s);
+            for (; *s; ++s) {
+                if (*s == '\r' || *s == '\n') { *s = 0; break; }
+                if (*s == ',') { *s = 0; out.push_back(s + 1); }
+            }
+        };
+        std::vector<char*> f2;
+        if (std::fgets(line, sizeof(line), f)) {
+            split(line, f2);
+            for (char* h : f2) hdr.emplace_back(h);
+        }
+        auto col = [&](const std::string& n) {
+            for (std::size_t i = 0; i < hdr.size(); ++i) if (hdr[i] == n) return static_cast<int>(i);
+            return -1;
+        };
+        bool ok = true;
+        auto need = [&](const std::string& n) { const int c = col(n); if (c < 0) ok = false; return c; };
+        for (int i = 0; i < 4; ++i) {
+            const std::string p = "c" + std::to_string(i);
+            r.c_x[i] = need(p + "x");   r.c_y[i] = need(p + "y");   r.c_z[i] = need(p + "z");
+            r.c_vx[i] = need(p + "vx"); r.c_vy[i] = need(p + "vy"); r.c_vz[i] = need(p + "vz");
+            r.c_al[i] = need(p + "alive"); r.c_de[i] = need(p + "dead"); r.c_dt[i] = need(p + "deadt");
+            r.c_pr[i] = need(p + "prog");  r.c_pc[i] = need(p + "pct");
+        }
+        r.c_tk = need("ticks"); r.c_dtb = need("dtb"); r.c_jit = need("jit");
+        r.c_rst = need("reset"); r.c_oh = need("overhead"); r.c_tt = need("track_type");
+        while (ok && std::fgets(line, sizeof(line), f)) {
+            split(line, f2);
+            if (f2.size() < hdr.size()) continue;
+            std::vector<double> v(f2.size());
+            for (std::size_t i = 0; i < f2.size(); ++i) v[i] = std::atof(f2[i]);
+            r.rows.push_back(std::move(v));
+        }
+        std::fclose(f);
+        r.on = ok && !r.rows.empty();
+        if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
+            std::fprintf(lf, "[d1r2] MASHED_CAM_REPLAY %s: %s, %zu rows, track_type %d\n", e,
+                         ok ? "columns OK" : "MISSING COLUMNS (replay off)", r.rows.size(),
+                         r.on ? static_cast<int>(r.rows[0][static_cast<std::size_t>(r.c_tt)]) : -1);
+            std::fclose(lf);
+        }
+        return r;
+    }();
+    return R;
+}
+}  // namespace
+
+void TrackRenderer::RaceCamUpdate(const Race::RaceCamCar* cc_in, bool reset) {
+    Race::RaceCamCar cc[kRaceCars];
+    for (int i = 0; i < kRaceCars; ++i) cc[i] = cc_in[i];
+    float dtb = 1.f / 60.f;                                   // DAT_007f100c live
+    float jit = 0.f;                                          // DAT_007f0fc8 live
+    bool overhead = false;                                    // DAT_007f0f38
+    std::uint32_t ticks = static_cast<std::uint32_t>(cam_ticks_);
+    CamReplay& R = CamReplayState();
+    if (R.on) {
+        if (R.next < R.rows.size()) {
+            const std::vector<double>& v = R.rows[R.next];
+            auto at = [&](int c) { return v[static_cast<std::size_t>(c)]; };
+            for (int i = 0; i < kRaceCars; ++i) {
+                cc[i].pos[0] = static_cast<float>(at(R.c_x[i]));
+                cc[i].pos[1] = static_cast<float>(at(R.c_y[i]));
+                cc[i].pos[2] = static_cast<float>(at(R.c_z[i]));
+                cc[i].vel[0] = static_cast<float>(at(R.c_vx[i]));
+                cc[i].vel[1] = static_cast<float>(at(R.c_vy[i]));
+                cc[i].vel[2] = static_cast<float>(at(R.c_vz[i]));
+                const int alive = static_cast<int>(at(R.c_al[i]));
+                cc[i].active    = (alive != -1);
+                cc[i].alive     = (alive == 1);
+                cc[i].dead_flag = (static_cast<int>(at(R.c_de[i])) != 0);
+                cc[i].dead_ms   = static_cast<float>(at(R.c_dt[i]));
+                cc[i].path_prog = static_cast<float>(at(R.c_pr[i]));
+                cc[i].race_pct  = static_cast<float>(at(R.c_pc[i]));
+            }
+            ticks = static_cast<std::uint32_t>(at(R.c_tk));
+            dtb = static_cast<float>(at(R.c_dtb));
+            jit = static_cast<float>(at(R.c_jit));
+            reset = static_cast<int>(at(R.c_rst)) != 0;
+            overhead = static_cast<int>(at(R.c_oh)) != 0;
+            cam_replay_row_ = static_cast<int>(R.next++);
+        } else {
+            cam_replay_row_ = -2;                             // trace exhausted: host inputs again
+        }
+    }
+    race_cam_.Update(cc, course_id_, dtb, ticks, jit, reset, overhead);
+}
+
 void TrackRenderer::UpdateRace(float dt) {
     if (gates_.empty()) return;
     const int n = static_cast<int>(gates_.size());
@@ -5924,9 +6074,7 @@ void TrackRenderer::UpdateRace(float dt) {
     Race::RaceCamCar cc[kRaceCars] = {};
     FillRaceCamCars(cc);
     cam_ticks_ += static_cast<double>(dt) * 3000000.0;   // DAT_007f1030 rate
-    race_cam_.Update(cc, course_id_, 1.f / 60.f /*DAT_007f100c live*/,
-                     static_cast<std::uint32_t>(cam_ticks_),
-                     0.f /*DAT_007f0fc8 live*/, false);
+    RaceCamUpdate(cc, false);   // race_cam_.Update; DAT_007f100c 1/60, DAT_007f0fc8 0 live
 
     for (int i = 0; i < kRaceCars; ++i)        // DAT_008a9510 decay
         if (delta_timer_[i] > 0.f) delta_timer_[i] -= dt * 1000.f;
@@ -6536,22 +6684,35 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
             &s_campose[8], &s_campose[9], &s_campose[10], &s_campose[11]);
         return s_campose_n == 6 || s_campose_n == 12;
     }();
-    // RACE-CAM RENDER (child-C, 2026-08-30): drive the in-race eye/target from
-    // the VERBATIM race-camera director (race_cam_, FUN_00446520 port) instead
-    // of the invented WS-E s3 chase rig below. race_cam_ is already advanced
-    // every frame in UpdateRace() (:3488) and its pos()/target() hold the
-    // most-recent director output (UpdateCar->UpdateRace runs before Render each
-    // frame, exe_main.cpp:2797/2810 -> :2921). Default ON so the render is
-    // measured against the ORIGINAL rather than against taste; MASHED_CHASE_RIG=1
-    // reverts to the old rig for A/B. NOTE: the port outputs a look-at PAIR only
-    // (RaceCamera.cpp:482-495 writes pos_out_/tgt_out_ and defers the frame build
-    // to a Y-up LookAt, roll=0). The original's Camera::Apply (0x00441760) applies
-    // a THIRD rotation about the forward axis by cam[+0x3c] (00441760.md l.22),
-    // i.e. it CAN carry roll; the port does not yet compute that angle, so this
-    // path publishes a roll-free basis. See the report for the roll gap.
-    static const bool s_chase_rig =
-        GetEnvironmentVariableA("MASHED_CHASE_RIG", nullptr, 0) != 0;
-    const bool use_race_cam = !s_chase_rig;
+    // RACE-CAM RENDER [d1r2 2026-10-16, D1-residue R2]. The in-race view is the
+    // original's frame, built the way the director's tail builds it
+    // (Race/CameraApply.cpp): Camera::Apply 0x00441760 from the angles the port
+    // writes at 0x00447fc2..0x004481b6 (yaw +0x38, pitch +0x34, roll +0x3c = 0,
+    // eye +0x40), or entry 0's matrix when the phase-3 hold flag is set
+    // (0x00442a20, MASHED_SUBSTATE only). The 12 floats are PUBLISHED, so librw
+    // and the legacy path draw from one basis. race_cam_ runs before Render every
+    // in-race frame, the default countdown included (UpdateCar). Evidence:
+    // verify/d1r2_20261016/. Supersedes child-C's look-at pair (2026-08-30),
+    // whose "roll gap" was measured in phase 3, where entry 0 renders: racing
+    // frames carry roll 0 (0x004481a3).
+    //
+    // MASHED_NO_RACE_CAM_BASIS=1: the pre-d1r2 resolution, byte for byte (Y-up
+    // look-at on pos/target, the WS-E chase-rig geometry on frames the director
+    // has not run, no countdown update). A/B only; goes with D1-residue R3.
+    static const bool s_basis_optout =
+        GetEnvironmentVariableA("MASHED_NO_RACE_CAM_BASIS", nullptr, 0) != 0;
+    {
+        static bool s_said = false;
+        if (s_basis_optout && !s_said) {
+            s_said = true;
+            if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
+                std::fprintf(lf, "[d1r2] MASHED_NO_RACE_CAM_BASIS: pre-d1r2 look-at camera\n");
+                std::fclose(lf);
+            }
+        }
+    }
+    bool race_basis = false;
+    Race::RaceRenderCamera rrc{};
     // Camera: auto-orbit by default; any movement input switches to free
     // mode (WASD/QE move relative to look direction, mouse/arrow look).
     float eye[3];
@@ -6592,14 +6753,27 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         at[0] = eye_[0] + std::cos(yaw_) * cp;
         at[1] = eye_[1] + sp;
         at[2] = eye_[2] + std::sin(yaw_) * cp;
-    } else if (car_ready_ && use_race_cam) {
-        // Verbatim race camera drives the render: eye = director pos, target =
-        // director look-at. These frame ALL FOUR cars exactly as the original's
-        // shared camera does (RaceCamera.cpp Update, FUN_00446520). No roll here
-        // (see the s_chase_rig comment above); the Y-up LookAt below builds the
-        // view from this pair. A degenerate {0,0,0} pos (director not yet run)
-        // falls through to the chase rig so a mis-timed first frame is never a
-        // camera-at-origin blank.
+    } else if (car_ready_ && !s_basis_optout && race_cam_.primed()) {
+        // The director tail 0x004481c1..0x00448208 (Race/CameraApply.cpp).
+        Race::ResolveRaceRenderCamera(race_cam_, &rrc);
+        for (int i = 0; i < 3; ++i) { eye[i] = rrc.pos[i]; at[i] = rrc.pos[i] + rrc.at[i]; }
+        race_basis = true;
+    } else if (car_ready_ && !s_basis_optout && race_cam_.node_count() > 0) {
+        // The first in-race Render comes before the first UpdateCar (measured: the
+        // race-demo dump's seq 1 has countdown 3.0 and no director output). Evaluate
+        // a COPY of the director on its snap path, which is what that first update
+        // runs, so this frame is the game camera too. race_cam_ itself is untouched.
+        Race::RaceCamera snap = race_cam_;
+        Race::RaceCamCar cc[kRaceCars] = {};
+        FillRaceCamCars(cc);
+        snap.Update(cc, course_id_, 1.f / 60.f, static_cast<std::uint32_t>(cam_ticks_), 0.f, true);
+        Race::ResolveRaceRenderCamera(snap, &rrc);   // nodes > 0, so Update ran (primes)
+        for (int i = 0; i < 3; ++i) { eye[i] = rrc.pos[i]; at[i] = rrc.pos[i] + rrc.at[i]; }
+        race_basis = true;
+    } else if (car_ready_ && s_basis_optout) {
+        // [opt-out] pre-d1r2 default: eye = director pos, target = director
+        // look-at, Y-up LookAt below; a {0,0,0} pos (director not yet run) takes
+        // the WS-E s3 chase-rig geometry.
         const float* rp = race_cam_.pos();
         const float* rt = race_cam_.target();
         const bool primed = (rp[0] != 0.f || rp[1] != 0.f || rp[2] != 0.f ||
@@ -6616,34 +6790,25 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
             at[1]  = car_pos_[1] + car_height_ * 0.5f;
             at[2]  = car_pos_[2] + fwd[2] * L * 1.5f;
         }
-    } else if (car_ready_) {
-        // WS-E s3 GROUND CHASE (2026-06-28): a behind-the-car chase rig — the
-        // distilled single-follow form of the RE'd shared race camera
-        // (re/analysis/race_camera/race_camera.md; director FUN_00446520 +
-        // Camera::Apply 0x00441760). The standalone's shared-pack race_cam_
-        // (race_cam_.pos()/target()) is built to frame ALL FOUR cars, so it sits
-        // in a high orbit looking down — wrong for the single-car standalone view
-        // and the reference Arctic frame (car bottom-centre, ground-level, looking
-        // down the road). Here we follow the player car directly: eye 4.75 behind
-        // + 3.3 above, look-at 0.15 above the car and ~2 units down-track
-        // (=> ~25 deg down-tilt). race_cam_ is still advanced in UpdateRace() for
-        // the elimination/zoom rule; only the RENDER eye/target is overridden.
-        // Distances scale with the car's loaded size (car_len_ ~0.7 units on the
-        // small-scale Arctic geometry): the original rig's absolute 4.75/3.3 would
-        // sit ~8 car-lengths back here and shrink the car to a speck. In car-length
-        // units the original chase is ~1.5 behind / ~1.0 above, look-at ~1.5 ahead
-        // and ~half a car-height up (=> ~15-20 deg down-tilt, car at bottom-centre).
-        const float fwd[3] = {std::cos(car_yaw_), 0.f, std::sin(car_yaw_)};
-        const float L = car_len_;
-        const float kBack = L * 1.5f, kUp = L * 1.0f, kAhead = L * 1.5f;
-        const float kAtY = car_height_ * 0.5f;
-        eye[0] = car_pos_[0] - fwd[0] * kBack;
-        eye[1] = car_pos_[1] + kUp;
-        eye[2] = car_pos_[2] - fwd[2] * kBack;
-        at[0]  = car_pos_[0] + fwd[0] * kAhead;
-        at[1]  = car_pos_[1] + kAtY;
-        at[2]  = car_pos_[2] + fwd[2] * kAhead;
     } else {
+        // [d1r2] The WS-E s3 "ground chase" rig that stood here (MASHED_CHASE_RIG,
+        // and the fallback on every frame the director had not run) is deleted:
+        // its premise, "the shared race camera sits in a high orbit", was refuted
+        // 2026-08-30 (re/analysis/race_camera/render_camera_child_c_20260830.md).
+        // With a car loaded this branch is reached only if the director has never
+        // run (no camera-path nodes), and then the track orbit is shown rather
+        // than an invented follow camera.
+        if (car_ready_ && !s_basis_optout) {
+            static bool s_said_unprimed = false;
+            if (!s_said_unprimed) {
+                s_said_unprimed = true;
+                if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
+                    std::fprintf(lf, "[d1r2] in race but the race camera has not run "
+                                     "(nodes=%d): track orbit view\n", race_cam_.node_count());
+                    std::fclose(lf);
+                }
+            }
+        }
         // Auto-orbit around the racing-line focus (gate centroid/extent), not
         // the bbox midpoint — keeps the track framed and at the surface Y. Eye
         // raised to ~1.1x extent for a clear, slightly-overhead vantage.
@@ -6660,6 +6825,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     // at-point -- collapsing would throw the roll away, which is the whole
     // reason the form exists.
     const bool campose_basis = (s_have_campose && s_campose_n == 12);
+    if (s_have_campose) race_basis = false;   // the parity transplant wins over the game camera
     if (s_have_campose && !campose_basis) {
         for (int i = 0; i < 3; ++i) { eye[i] = s_campose[i]; at[i] = s_campose[3 + i]; }
     } else if (campose_basis) {
@@ -6692,11 +6858,11 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
                 std::fprintf(f,
                     "f%d rcpos=(%.5f,%.5f,%.5f) rctgt=(%.5f,%.5f,%.5f) "
                     "eye=(%.5f,%.5f,%.5f) at=(%.5f,%.5f,%.5f) "
-                    "reqzoom=%.4f vw=%.4f car_ready=%d use_race_cam=%d\n",
+                    "reqzoom=%.4f vw=%.4f car_ready=%d race_basis=%d\n",
                     s_cam_frame, rp[0], rp[1], rp[2], rt[0], rt[1], rt[2],
                     eye[0], eye[1], eye[2], at[0], at[1], at[2],
                     race_cam_.required_zoom(), race_cam_.view_window(),
-                    (int)car_ready_, (int)use_race_cam);
+                    (int)car_ready_, (int)race_basis);
                 std::fclose(f);
             }
             ++s_cam_frame;
@@ -6705,19 +6871,30 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     // Publish the BASIS too, not just the lossy at-point. librw is the default
     // renderer and draws the static world from what it is handed; handing it the
     // pair silently dropped the roll for the world pass (RaceSceneState.h).
-    last_basis_valid_ = campose_basis;
+    last_basis_valid_ = campose_basis || race_basis;
     if (campose_basis) {
         for (int i = 0; i < 3; ++i) {
             last_right_[i] = s_campose[3 + i];
             last_up_[i]    = s_campose[6 + i];
             last_atdir_[i] = s_campose[9 + i];
         }
+    } else if (race_basis) {
+        // [d1r2] the game camera's frame, verbatim (eye was set to rrc.pos above)
+        for (int i = 0; i < 3; ++i) {
+            last_right_[i] = rrc.right[i];
+            last_up_[i]    = rrc.up[i];
+            last_atdir_[i] = rrc.at[i];
+        }
     }
+    last_cam_src_ = campose_basis ? 3 : (race_basis ? rrc.src : 0);
+    ++cam_pub_seq_;
 
     D3DMATRIX viewm, projm, worldm;
     if (campose_basis)
         MatViewFromBasis(&viewm, &s_campose[0], &s_campose[3],
                          &s_campose[6], &s_campose[9]);
+    else if (race_basis)
+        MatViewFromBasis(&viewm, rrc.pos, rrc.right, rrc.up, rrc.at);
     else
         MatLookAtLH(&viewm, eye, at);
     // E2'b step 3: publish the resolved frustum into RaceSceneState and build
@@ -6749,6 +6926,14 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     // MASHED_CAM_FOV=<degrees> still overrides, for A/B against a capture.
     static const float kViewWindowY = 0.45f;              // MEASURED half-extent
     last_fov_    = 2.f * std::atan(kViewWindowY);         // = 48.46 deg
+    // [d1r2] Game camera: SetupFOV 0x00441700's own arithmetic on the cam+0x58 the
+    // tail left (0.6 from 0x0044800d, or entry 0's +0xc0 via 0x00442a20):
+    // vw.y = DAT_005cc950 (0.75) * (+0x70 * +0x58), +0x70 = 1.0 measured
+    // (verify/d1_lens). vw.x / vw.y = 1 / +0x24 = 4:3, as last_aspect_.
+    if (race_basis) {
+        const float vwy = static_cast<float>(0.75 * static_cast<double>(1.0f * rrc.view_window));
+        last_fov_ = 2.f * std::atan(vwy);
+    }
     {
         static const float s_fov_override = [] {
             char b[32];
@@ -6757,6 +6942,35 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
             return (deg > 1.f && deg < 179.f) ? deg * 3.14159265f / 180.f : 0.f;
         }();
         if (s_fov_override > 0.f) last_fov_ = s_fov_override;
+    }
+    // [d1r2] MASHED_CAM_DUMP=<csv>: one row per published camera, DIAGNOSTIC ONLY,
+    // default OFF. %.9g round-trips a float, so the scorer can test bit equality.
+    // seq joins the librw-side readback (RwRaceSubmit.cpp, MASHED_CAM_DUMP_LIBRW);
+    // row = the MASHED_CAM_REPLAY row the latest race_cam_ update consumed (-1 none).
+    {
+        static std::FILE* s_cd = [] {
+            const char* e = std::getenv("MASHED_CAM_DUMP");
+            std::FILE* f = (e && e[0]) ? std::fopen(e, "w") : nullptr;
+            if (f) std::fprintf(f, "seq,row,src,valid,ex,ey,ez,rx,ry,rz,ux,uy,uz,ax,ay,az,"
+                                   "vw58,fov,cpx,cpy,cpz,yaw,pitch,roll,dx,dy,dz,flag,cd\n");
+            return f; }();
+        if (s_cd) {
+            const float* cp = race_cam_.pos();
+            const float* ad = race_cam_.aim();
+            std::fprintf(s_cd, "%u,%d,%d,%d,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,"
+                               "%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,"
+                               "%.9g,%.9g,%.9g,%d,%.9g\n",
+                         cam_pub_seq_, cam_replay_row_, last_cam_src_, (int)last_basis_valid_,
+                         last_eye_[0], last_eye_[1], last_eye_[2],
+                         last_right_[0], last_right_[1], last_right_[2],
+                         last_up_[0], last_up_[1], last_up_[2],
+                         last_atdir_[0], last_atdir_[1], last_atdir_[2],
+                         race_basis ? rrc.view_window : 0.6f, last_fov_,
+                         cp[0], cp[1], cp[2], race_cam_.yaw_deg(), race_cam_.pitch_deg(),
+                         race_cam_.roll_deg(), ad[0], ad[1], ad[2],
+                         *reinterpret_cast<const int*>(0x00897fe0u), countdown_);
+            std::fflush(s_cd);
+        }
     }
     last_aspect_ = 800.f / 600.f;
     last_near_   = 0.1f;      // MEASURED (RwCamera +0x80); was an invented 0.05

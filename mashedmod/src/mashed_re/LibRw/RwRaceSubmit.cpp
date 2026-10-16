@@ -496,6 +496,26 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
     }
     g_cam->setNearPlane(st.last_near_);
     g_cam->setFarPlane(st.last_far_);
+    // [d1r2] MASHED_CAM_DUMP_LIBRW=<csv>, DIAGNOSTIC ONLY: read back the camera frame
+    // and view window librw actually renders with, keyed by the publisher's seq
+    // (TrackRenderer MASHED_CAM_DUMP), so wiring is measured at the consumer.
+    {
+        static std::FILE* s_ld = [] {
+            const char* e = std::getenv("MASHED_CAM_DUMP_LIBRW");
+            std::FILE* f = (e && e[0]) ? std::fopen(e, "w") : nullptr;
+            if (f) std::fprintf(f, "seq,src,valid,rx,ry,rz,ux,uy,uz,ax,ay,az,px,py,pz,vwx,vwy\n");
+            return f; }();
+        if (s_ld) {
+            const rw::Matrix* m = &g_cam->getFrame()->matrix;
+            std::fprintf(s_ld, "%u,%d,%d,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,"
+                               "%.9g,%.9g,%.9g,%.9g,%.9g\n",
+                         st.cam_pub_seq_, st.last_cam_src_, (int)st.last_basis_valid_,
+                         m->right.x, m->right.y, m->right.z, m->up.x, m->up.y, m->up.z,
+                         m->at.x, m->at.y, m->at.z, m->pos.x, m->pos.y, m->pos.z,
+                         g_cam->viewWindow.x, g_cam->viewWindow.y);
+            std::fflush(s_ld);
+        }
+    }
 
     // ---- fog: values parsed by TrackRenderer from COURSE.LUA Setup_Fog ------
     // [I4-fog] fogPlane is the ramp's NEAR end and is honoured as-is. The FAR end
