@@ -1,0 +1,21 @@
+[
+ {
+  "name": "ab_AbAiPost_warzone_MUTANT",
+  "timeout": 700,
+  "cmd": [
+   "py",
+   "-3.12",
+   "verify/dualcopy3_20261016/ab_run.py",
+   "{OUT}/ab",
+   "warzone_mut",
+   "AbAiPost",
+   "ai_ab_poststep.log",
+   "--track",
+   "11",
+   "--cars",
+   "4",
+   "--hold",
+   "120"
+  ]
+ }
+]

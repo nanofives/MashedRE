@@ -1,0 +1,36 @@
+hook: ai_post_step_powerup_brake  rva=0x00417640  export=AiPostStepPowerupBrake
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 10924
+  [agent] pre_snapshot
+  [agent] asi_loaded
+  [agent] post_snapshot
+  [agent] results
+
+=== verify_hook_install report (ai_post_step_powerup_brake) ===
+
+target address: 0x00417640  export: AiPostStepPowerupBrake
+PRE  bytes:     e9 0b f8 72 61 f5 00 00
+asi base:       0x61b10000
+reimpl addr:    0x61b46e50
+POST bytes:     e9 0b f8 72 61 f5 00 00
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x6172f80b  expected 0x6172f80b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  2 / 2  (other threads: 0)
+
+per-input results:
+  [OK] input={'seed': [{'addr': '0x00644158', 'val': 33}, {'addr': '0x00684de0', 'val': 0}, {'addr': '0x0089a52c', 'val': 0}, {'addr': '0x0088ff50', 'val': 1}, {'addr': '0x00684dac', 'val': 8327168}, {'addr': '0x007f103c', 'val': 2863311530}, {'addr': '0x00881f84', 'val': 1125515264}, {'addr': '0x00881f50', 'val': 0}, {'addr': '0x00881f54', 'val': 0}, {'addr': '0x00881f58', 'val': 1065353216}, {'addr': '0x00881f74', 'val': 0}, {'addr': '0x00881f78', 'val': 0}, {'addr': '0x00881f7c', 'val': 1065353216}], 'args': [0, 8327224], 'obs': ['0x007f103c']}  got=0xaaaaff00  err=
+  [OK] input={'seed': [{'addr': '0x00644158', 'val': 33}, {'addr': '0x00684de0', 'val': 0}, {'addr': '0x0089a52c', 'val': 0}, {'addr': '0x0088ff50', 'val': 1}, {'addr': '0x00684dac', 'val': 8327168}, {'addr': '0x007f103c', 'val': 2863311530}, {'addr': '0x00881f84', 'val': 1112014848}, {'addr': '0x00881f50', 'val': 0}, {'addr': '0x00881f54', 'val': 0}, {'addr': '0x00881f58', 'val': 1065353216}, {'addr': '0x00881f74', 'val': 0}, {'addr': '0x00881f78', 'val': 0}, {'addr': '0x00881f7c', 'val': 1065353216}], 'args': [0, 8327224], 'obs': ['0x007f103c']}  got=0xaaaa0000  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 2x as expected
+  + all 2 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dualcopy3\log\verify_hook_install_ai_post_step_powerup_brake.txt
+

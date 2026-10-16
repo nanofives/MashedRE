@@ -1,0 +1,13 @@
+15:43:30 waiting: foreign MASHED.exe [24520]
+15:43:46 waiting: foreign MASHED.exe [24520]
+15:44:01 waiting: foreign MASHED.exe [24520]
+15:44:17 waiting: foreign MASHED.exe [24520]
+15:44:32 waiting: foreign MASHED.exe [22984]
+15:44:48 waiting: foreign MASHED.exe [22984]
+15:45:04 waiting: foreign MASHED.exe [22984]
+15:45:19 waiting: foreign MASHED.exe [22984]
+15:45:35 shared asi sha256 before = 270e036fad840e93  size=1153536
+15:45:35 deployed mutpost.asi sha256 = 707b9e0eee565b7b
+15:47:46 ab_AbAiPost_warzone_MUTANT                 rc=0 (131s)
+15:47:46 restore attempt 0: [WinError 32] El proceso no tiene acceso al archivo porque está siendo utilizado por otro proceso
+15:47:49 shared asi sha256 after restore = 270e036fad840e93  matches original: True

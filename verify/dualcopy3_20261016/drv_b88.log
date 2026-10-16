@@ -1,0 +1,15 @@
+gctrl
+bscore K 0
+bscore K 1
+bscore K 2
+bscore K 4
+bscore K 26
+bscore K 27
+bscore K 54
+bscore K 57
+warzone
+cam cam_dump.csv 1e7d2274 3000
+cam librw_dump.csv b33ca1b4 3000
+camN0 cam_dump.csv 1e7d2274 3000
+camN0 librw_dump.csv b33ca1b4 3000
+BASELINES DONE

@@ -2844,6 +2844,9 @@ Named D4 work items (added 2026-09-26, previously implicit):
   with `exe_file != file` is already C2. Next in line for the same recipe: `0x00417640` (three thunks: track
   index, rate, range), then `0x004177b0` once its inputs have producers;
   (4) everything else.
+  **Status 2026-10-16 (`verify/dualcopy3_20261016/RESULT_dualcopy3.md`):** allowlist **56 -> 39**; honest measure (hooks.csv C3/C4
+  rows with `exe_file != file`) **174 -> 172** (38 with a .cpp `file`, 134 with a plate path). `0x00417640` and `0x004a2c48` are one
+  body each and back at C3; item (4) cleared 18 call-through / prose false anchors; the remaining keys are listed there with reasons.
   **Each consolidation re-earns the row's C-level through the normal gates** — the exe copy has no
   evidence of its own, and a copy fixed by reading is a C2-grade statement (`re/CONFIDENCE.md`,
   "Which copy the evidence covers").

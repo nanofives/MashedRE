@@ -1,0 +1,8 @@
+=== base_gctrl exe=C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\ac86d2bf-66e1-4442-91bf-5ba376af04d1\scratchpad\base3\mashed_re_base.exe track=Training frames=14400 ring_skip=- knobs=[] ===
+    pid=18076
+    exit=0 self_exited=True
+    base_gctrl.step.csv lines=18664 sha8=716cb2fd
+    base_gctrl.gates.csv lines=56153 sha8=2a2afda1
+    base_gctrl.ptrace.log lines=28076 sha8=ba90ed88
+ARM DONE
+

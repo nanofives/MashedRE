@@ -1,0 +1,100 @@
+[
+ {
+  "name": "path1_ai_post_step_powerup_brake",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_diff.py",
+   "ai_post_step_powerup_brake"
+  ]
+ },
+ {
+  "name": "path2_ai_post_step_powerup_brake",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_verify_hook.py",
+   "ai_post_step_powerup_brake"
+  ],
+  "env": {
+   "MASHED_VERIFY_ASI": "{ASI}"
+  }
+ },
+ {
+  "name": "ab_AbAiPost_warzone",
+  "timeout": 700,
+  "cmd": [
+   "py",
+   "-3.12",
+   "verify/dualcopy3_20261016/ab_run.py",
+   "{OUT}/ab",
+   "warzone",
+   "AbAiPost",
+   "ai_ab_poststep.log",
+   "--track",
+   "11",
+   "--cars",
+   "4",
+   "--hold",
+   "120"
+  ]
+ },
+ {
+  "name": "ab_AbAiPost_track0",
+  "timeout": 700,
+  "cmd": [
+   "py",
+   "-3.12",
+   "verify/dualcopy3_20261016/ab_run.py",
+   "{OUT}/ab",
+   "track0",
+   "AbAiPost",
+   "ai_ab_poststep.log",
+   "--track",
+   "0",
+   "--cars",
+   "4",
+   "--hold",
+   "120"
+  ]
+ },
+ {
+  "name": "nav_probe_full_hookset",
+  "timeout": 240,
+  "cmd": [
+   "py",
+   "-3.12",
+   "verify/dupinstall2_20261016/nav_probe.py",
+   "fix_full"
+  ]
+ },
+ {
+  "name": "nav_probe_only_AiPostStepPowerupBrake",
+  "timeout": 240,
+  "cmd": [
+   "py",
+   "-3.12",
+   "verify/dupinstall2_20261016/nav_probe.py",
+   "--only",
+   "AiPostStepPowerupBrake",
+   "only_post"
+  ]
+ },
+ {
+  "name": "install_observe_all",
+  "timeout": 200,
+  "cmd": [
+   "py",
+   "-3.12",
+   "verify/dupinstall2_20261016/install_observe.py",
+   "ALL",
+   "--seconds",
+   "45"
+  ],
+  "env": {
+   "DUPINSTALL_OUT": "{OUT}/install_all"
+  }
+ }
+]

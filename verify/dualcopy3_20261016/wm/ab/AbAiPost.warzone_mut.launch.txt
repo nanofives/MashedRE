@@ -1,0 +1,44 @@
+  [keep-awake] display-sleep suppressed + wake nudge sent
+=== scenario_launch  pid=12728  track=11 mode=10 cars=4 ===
+  attaching ASAP...
+  [agent] ready
+    phase=0  (waiting for menu (phase 1))
+    phase=1  (waiting for menu (phase 1))
+  [setup] set track=11 mode=10 cars=4 car=0 rule=0 team=0
+  [launch] poke DAT_00771968 = 2 -> 1
+    phase=2  (waiting for race running (phase 3))
+    phase=3  (waiting for race running (phase 3))
+
+  *** RACE RUNNING (phase 3) ***
+  car spawn fired: 12   grounded=4  airflag=0
+  vel=[0, 0, 0]  fwd=[-0.9999873638153076, 0, 0.0043210843577980995]
+
+  VERDICT: launcher reached a running race and spawned a car. [OK]
+
+  racing 120s â€” pulsing control 4 (confirm/accel) to skip the start intro + continue rounds...
+
+    +  4s  ph=3  spawnFired=12  p0.grounded=4 airflag=1  vel=[-3827.4, 290.1, -18.8]   
+    +  9s  ph=3  spawnFired=12  p0.grounded=4 airflag=1  vel=[-133.3, 21.8, -10.9]   
+    + 13s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[-234.9, 16.8, 108.1]   
+    + 18s  ph=3  spawnFired=16  p0.grounded=4 airflag=1  vel=[-2663.1, 0, -438.8]   
+    + 23s  ph=3  spawnFired=16  p0.grounded=4 airflag=0  vel=[-818.3, -4.9, 33.2]   
+    + 28s  ph=3  spawnFired=20  p0.grounded=4 airflag=1  vel=[3020.6, -1.1, 110.1]   
+    + 33s  ph=3  spawnFired=20  p0.grounded=4 airflag=1  vel=[3361.1, -84.5, 464.5]   
+    + 38s  ph=3  spawnFired=20  p0.grounded=2 airflag=1  vel=[0, 0, 0]   
+    + 42s  ph=3  spawnFired=24  p0.grounded=4 airflag=1  vel=[971.0, -11.7, -189.1]   
+    + 47s  ph=3  spawnFired=24  p0.grounded=4 airflag=1  vel=[3353.8, -0.0, 1051.6]   
+    + 52s  ph=3  spawnFired=24  p0.grounded=4 airflag=1  vel=[995.0, 186.4, 2909.3]   
+    + 57s  ph=3  spawnFired=24  p0.grounded=4 airflag=1  vel=[0, 0, 0]   
+    + 62s  ph=5  spawnFired=24  p0.grounded=4 airflag=1  vel=[0, 0, 0]   
+    + 67s  ph=5  spawnFired=24  p0.grounded=4 airflag=1  vel=[0, 0, 0]   
+    + 71s  ph=5  spawnFired=24  p0.grounded=4 airflag=1  vel=[0, 0, 0]   
+    + 76s  ph=5  spawnFired=24  p0.grounded=4 airflag=1  vel=[0, 0, 0]   
+    + 81s  ph=5  spawnFired=24  p0.grounded=4 airflag=1  vel=[0, 0, 0]   
+    + 86s  ph=5  spawnFired=24  p0.grounded=4 airflag=1  vel=[0, 0, 0]   
+    + 91s  ph=5  spawnFired=24  p0.grounded=4 airflag=1  vel=[0, 0, 0]   
+    + 96s  ph=5  spawnFired=24  p0.grounded=4 airflag=1  vel=[0, 0, 0]   
+    +100s  ph=5  spawnFired=24  p0.grounded=4 airflag=1  vel=[0, 0, 0]   
+    +105s  ph=5  spawnFired=24  p0.grounded=4 airflag=1  vel=[0, 0, 0]   
+    +110s  ph=5  spawnFired=24  p0.grounded=4 airflag=1  vel=[0, 0, 0]   
+    +115s  ph=5  spawnFired=24  p0.grounded=4 airflag=1  vel=[0, 0, 0]   
+

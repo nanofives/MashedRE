@@ -1,0 +1,7 @@
+=== base_warzone exe=C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\ac86d2bf-66e1-4442-91bf-5ba376af04d1\scratchpad\base3\mashed_re_base.exe track=Warzone frames=3600 ring_skip=- knobs=[] ===
+    pid=14800
+    exit=0 self_exited=True
+    base_warzone.step.csv lines=7345 sha8=3516e016
+    base_warzone.gates.csv lines=12233 sha8=32848ec8
+ARM DONE
+

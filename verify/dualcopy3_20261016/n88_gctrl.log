@@ -1,0 +1,8 @@
+=== n88_gctrl exe=C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\ac86d2bf-66e1-4442-91bf-5ba376af04d1\scratchpad\base4\new.exe track=Training frames=14400 ring_skip=- knobs=[] ===
+    pid=15280
+    exit=0 self_exited=True
+    n88_gctrl.step.csv lines=18956 sha8=2b4d47bb
+    n88_gctrl.gates.csv lines=55433 sha8=356821c8
+    n88_gctrl.ptrace.log lines=27716 sha8=f7a155e1
+ARM DONE
+
