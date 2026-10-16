@@ -9,6 +9,7 @@
 #include <cstring>
 
 #include "../Piz/PizReader.h"
+#include "../Math/RwLutTables.h"   // Math::LutSqrt = FUN_004c3b30 with the real LUT
 
 namespace mashed_re {
 namespace Race {
@@ -487,12 +488,56 @@ void RaceCamera::Update(const RaceCamCar cars[4], int track_type,
         smooth_tgt_[i] = tgt[i];
         tgt_out_[i] = tgt[i];
     }
-    view_window_ = 0.6f;   // 0x3f19999a -> cam[0x16]
-    // (The original also derives cam[0xd]/[0xe] Euler angles from
-    // (target - pos) and rebuilds the RW frame via Camera::Apply 0x00441760
-    // — yaw about Y, pitch about right, roll 0, translate. A LookAt from
-    // pos/target with Y-up is the same rotation for roll = 0; the host
-    // builds the view matrix that way.)
+
+    // ---- angles for Camera::Apply (0x00447fc2..0x004481b6) ------------------
+    // [d1r2 2026-10-16] Transcribed in instruction order from
+    // re/analysis/race_camera/FUN_00446520.asm. Every `fstp dword` site rounds to
+    // float; values the bytes keep in ST are doubles. The host composes the frame
+    // from these (Race/CameraApply.cpp, 0x00441760), which is what the original
+    // renders on every frame where the hold flag cam[0] is clear.
+    //   aim +0x4c..+0x54 = tgt - pos      0x00447fc2..0x00448007 (fsub, fstp dword)
+    const float ax = tgt[0] - cam_pos[0];
+    const float ay = tgt[1] - cam_pos[1];
+    const float az = tgt[2] - cam_pos[2];
+    aim_out_[0] = ax; aim_out_[1] = ay; aim_out_[2] = az;
+    view_window_ = 0.6f;   // 0x0044800d: 0x3f19999a -> cam+0x58 (cam[0x16])
+    // yaw +0x38. 0x00448014: dz == 0 (fcomp 0x5d757c; test ah,0x44; jnp) -> the
+    // 270/90 arm at 0x00448082 (dx < 0 -> 0x43870000, else 0x42b40000).
+    // Otherwise fdiv -> CRT atan 0x004a3620 -> fmul qword 0x5ccae0 -> fchs ->
+    // fstp dword; fld 180 (0x5cd09c); fsub -> fstp dword; and dz > 0 (test
+    // ah,0x41; jne skips) adds 180 again (0x0044806e..0x0044807a).
+    float yaw;
+    if (az != 0.f) {
+        const float na = static_cast<float>(-(std::atan(static_cast<double>(ax) / az) * kRadToDeg));
+        yaw = static_cast<float>(180.0 - na);
+        if (az > 0.f) yaw = static_cast<float>(180.0 + yaw);
+    } else {
+        yaw = (ax < 0.f) ? 270.f : 90.f;
+    }
+    // pitch +0x34. 0x004480b4..0x004480d2: dx*dx -> fstp dword; dz*dz -> fst
+    // dword (ST kept); fadd dword dx2 -> fst dword s. s != 0 -> FastSqrt
+    // 0x004c3b30 (the RW LUT; Math::LutSqrt, not the exe's exact fallback).
+    // s != 0 -> the yaw law on dy/s; s == 0 -> 270 (dy < 0) / 90. Then
+    // 0x0044818e: fld 360 (0x5ccac4); fsub -> fstp dword +0x34.
+    const float ax2 = ax * ax;
+    const float s2 = static_cast<float>(static_cast<double>(az) * az + ax2);
+    float s = s2;
+    if (s != 0.f) s = Math::LutSqrt(s2);
+    float p;
+    if (s != 0.f) {
+        const float na = static_cast<float>(-(std::atan(static_cast<double>(ay) / s) * kRadToDeg));
+        p = static_cast<float>(180.0 - na);
+        if (s > 0.f) p = static_cast<float>(180.0 + p);
+    } else {
+        p = (ay < 0.f) ? 270.f : 90.f;
+    }
+    pitch_out_ = static_cast<float>(360.0 - p);
+    roll_out_ = 0.f;                       // 0x004481a3: +0x3c = 0
+    if (overhead) yaw = 0.f;               // 0x004481aa..0x004481b6 (DAT_007f0f38)
+    yaw_out_ = yaw;
+    // Camera::Apply 0x00441760 follows at 0x004481c1 (host side), then
+    // 0x004481c9..0x004481f9 copy +0x40 -> +4 and tgt -> +0x10, and only when
+    // cam[0] != 0 does 0x00442a20 replace the frame with entry 0's matrix.
 }
 
 // ---- 0x00410d10 standard path: the elimination rule ------------------------

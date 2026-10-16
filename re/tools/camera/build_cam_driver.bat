@@ -21,6 +21,7 @@ cl /nologo /EHsc /O2 /W3 /std:c++17 ^
    /Fo"%OUT%\\" /Fe"%OUT%\cam_driver.exe" ^
    "%~dp0cam_driver.cpp" ^
    "%ROOT%\mashedmod\src\mashed_re\Race\RaceCamera.cpp" ^
+   "%ROOT%\mashedmod\src\mashed_re\Math\RwLutTables.cpp" ^
    "%ROOT%\mashedmod\src\mashed_re\Piz\PizReader.cpp"
 if errorlevel 1 (
   echo === BUILD FAILED ===

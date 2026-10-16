@@ -4242,6 +4242,32 @@ bool RenderFrame() {
             DrawMashedString(L"[ENTER] Quit to Menu", 250.f, 336.f, 24.f, 0xffffc0c0u);
         }
         g_device->EndScene();
+        // [d1r2] MASHED_CAM_REPLAY_SHOTS=K1,K2,... (ascending): the backbuffer of the
+        // first frame whose race camera consumed MASHED_CAM_REPLAY row >= K, as
+        // <MASHED_VERIFY_OUT>/d1r2/stand_row_<K>.bmp. The frame's actual row is logged:
+        // the original-side twin (camera_probe.py --shots) dumps the Present after
+        // row K's director call, so the two show the same row's camera.
+        {
+            static std::vector<int> s_rs = [] {
+                std::vector<int> v; char b[512] = {};
+                if (GetEnvironmentVariableA("MASHED_CAM_REPLAY_SHOTS", b, sizeof(b)) > 0)
+                    for (char* p = std::strtok(b, ","); p; p = std::strtok(nullptr, ","))
+                        v.push_back(std::atoi(p));
+                return v; }();
+            static std::size_t s_ri = 0;
+            const int row = g_track.cam_replay_row();
+            if (s_ri < s_rs.size() && row >= s_rs[s_ri]) {
+                char pth[160];
+                std::snprintf(pth, sizeof(pth), "%s", VOut2("d1r2/stand_row_%05d.bmp", s_rs[s_ri]));
+                const bool ok = DumpBackbufferBMP(pth);
+                if (std::FILE* lf = std::fopen(kLogPath, "a")) {
+                    std::fprintf(lf, "[d1r2] replay shot K=%d actual_row=%d ok=%d %s\n",
+                                 s_rs[s_ri], row, (int)ok, pth);
+                    std::fclose(lf);
+                }
+                while (s_ri < s_rs.size() && row >= s_rs[s_ri]) ++s_ri;
+            }
+        }
         const bool car = g_track.car_ready();
         static bool s_shot[3] = {};
         if (!s_shot[0] && t >= 0.8f) {

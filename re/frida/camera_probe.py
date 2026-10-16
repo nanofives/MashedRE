@@ -16,7 +16,11 @@ from pathlib import Path
 import frida
 
 ROOT = Path(__file__).resolve().parent.parent.parent
-ORIG = ROOT / "original"; EXE = ORIG / "MASHED.exe"
+# A worktree has no original/ (never junctioned, WORKTREE-SYMLINK-WIPE): walk up to the
+# main repo's install, as race_draw_burst.py:find_original does.
+ORIG = next((p / "original" for p in (ROOT, *ROOT.parents)
+             if (p / "original" / "MASHED.exe").exists()), ROOT / "original")
+EXE = ORIG / "MASHED.exe"
 LOG = ROOT / "log"
 
 AGENT = r'''
@@ -27,8 +31,21 @@ const CAM=0x00897fe0, OVR=0x0063a5f0, NODES=0x00663658, NCOUNT=0x0066d6d8;
 const VEH_BASE=0x00881ec8, VEH_STRIDE=0xd04, REC_BASE=0x008815a0;
 let pressCtrl=-1, pressUntil=0;
 let camFires=0; let trace=[]; let tracing=false;
+// [d1r2 2026-10-16] --frame mode: also record what the RwCamera FRAME holds after the
+// director returns, so "which matrix renders" is measured, not inferred. maxRows caps
+// the trace (1200 = the v2 default). shotRows = trace rows at which the d3d9 shim's
+// MASHED_ORIG_BBDUMP_REQ request file is written FROM INSIDE onLeave, so the very next
+// Present dumps the frame this row's camera produced (d3d9_shim.cpp:526-527 polls the
+// request once per Present).
+let frameMode=false, maxRows=1200, shotRows={}, reqPath='', shotDir='';
 function abs(r){return ptr(r+DELTA);}
+function rd(p,n){ const o=[]; for(let i=0;i<n;i++) o.push(p.add(i*4).readFloat()); return o; }
+// RwMatrix rows right/up/at/pos at +0x00/+0x10/+0x20/+0x30 -> 12 floats (flags/pads dropped)
+function mat12(p){ const m=rd(p,16); return [m[0],m[1],m[2],m[4],m[5],m[6],m[8],m[9],m[10],m[12],m[13],m[14]]; }
 rpc.exports={
+  config:function(fm, mr, shots, rq, sd){ frameMode=!!fm; maxRows=mr; shotRows={};
+    for (const k of shots) shotRows[k]=1; reqPath=rq; shotDir=sd; return 1; },
+  tracelen:function(){ return trace.length; },
   init:function(){ const m=Process.findModuleByName('MASHED.exe')||Process.enumerateModules()[0];
     DELTA=m.base.toUInt32()-IMG;
     Interceptor.attach(abs(RVA_RES),{ onEnter(a){const sp=this.context.esp;this.p=sp.add(4).readS32();this.c=sp.add(8).readS32();},
@@ -140,8 +157,37 @@ rpc.exports={
           row.prog.push(abs(0x008a96e8 + i*0x30c).readFloat());
           row.pct.push(abs(0x008a96ec + i*0x30c).readFloat());
         }
+        if (frameMode) {
+          // Director tail (re/analysis/race_camera/FUN_00446520.asm): 0x004481a3 roll +0x3c = 0,
+          // 0x004481c1 Camera::Apply writes the frame, 0x004481ff..0x00448208 only when cam[0]
+          // != 0 does 0x00442a20 overwrite it with entry 0's matrix 0x0089650c. Read all of
+          // them here, at onLeave, so the trace says which one the frame actually holds.
+          row.camp = this.cam;
+          row.ba8c = abs(0x0063ba8c).readS32();      // render sub-state (FUN_0040e350)
+          row.flag = c.readS32();                    // cam[0], the phase-3 hold flag
+          row.c7 = c.add(0x1c).readS32();            // cam[7], FUN_004427c0 gate
+          row.roll = c.add(0x3c).readFloat();
+          row.vw58 = c.add(0x58).readFloat();
+          row.f101c = abs(0x007f101c).readU32();     // frame counter (entry roll phase)
+          row.ff4 = abs(0x007f0ff4).readU32();       // frame clock, 50/frame
+          const rwc = c.add(0x84).readPointer();     // RwCamera*
+          const fr = rwc.add(4).readPointer();       // its RwFrame
+          row.M = mat12(fr.add(0x10));               // modelling matrix (what Apply wrote)
+          row.L = mat12(fr.add(0x50));               // LTM (synced at render)
+          // RwCamera viewWindow x/y at +0x68/+0x6c (RwCameraSetViewWindow 0x004c1c80;
+          // race_draw_burst.py:129-146 reads the same pair)
+          row.rvw = [rwc.add(0x68).readFloat(), rwc.add(0x6c).readFloat()];
+          row.E = mat12(abs(0x0089650c));            // entry 0 + 0x4c
+          row.e0c0 = abs(0x00896580).readFloat();    // entry 0 + 0xc0
+          row.shot = 0;
+          if (shotRows[trace.length] && reqPath) {
+            const nm = shotDir + '\\orig_row_' + ('00000' + trace.length).slice(-5) + '.bmp';
+            const f = new File(reqPath, 'w'); f.write(nm + '\n'); f.close();
+            row.shot = 1;
+          }
+        }
         trace.push(row);
-        if (trace.length > 1200) tracing = false;
+        if (trace.length >= maxRows) tracing = false;
       }});
     return 1; },
   starttrace:function(){ trace=[]; tracing=true; return 1; },
@@ -176,13 +222,43 @@ send({kind:'ready'});
 
 
 def main():
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--out", default=str(LOG / "camera_trace_v2.csv"))
+    ap.add_argument("--static-out", default=str(LOG / "camera_probe_static.json"))
+    ap.add_argument("--rows", type=int, default=1200, help="trace length cap")
+    ap.add_argument("--frame", action="store_true",
+                    help="[d1r2] v3 columns: sub-state, hold flag, RwCamera frame "
+                         "modelling + LTM, viewWindow, entry 0 matrix")
+    ap.add_argument("--early", action="store_true",
+                    help="[d1r2] hook + trace from the first camera call (the phase-3 "
+                         "reset), instead of 2 s + 3 s into the race")
+    ap.add_argument("--shots", default="",
+                    help="[d1r2] comma list of trace rows to dump the backbuffer at "
+                         "(needs the d3d9 shim; implies --frame)")
+    args = ap.parse_args()
+    out_csv, out_static = Path(args.out), Path(args.static_out)
+    shots = [int(s) for s in args.shots.split(",") if s.strip()]
+    if shots: args.frame = True
     LOG.mkdir(exist_ok=True)
+    out_csv.parent.mkdir(parents=True, exist_ok=True)
     env = dict(os.environ); env["MASHED_RE_NO_AUTO_HOOK"] = "1"
+    env.setdefault("MASHED_WIN_POS", "primary-bl")
+    req = out_csv.parent / "orig_bbdump.req"
+    if shots:
+        if not (ORIG / "d3d9.dll").exists():
+            sys.exit(f"--shots needs the d3d9 shim at {ORIG / 'd3d9.dll'}")
+        try: req.unlink()
+        except OSError: pass
+        env["MASHED_ORIG_BBDUMP_REQ"] = str(req)
     dev = frida.get_local_device()
     pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
+    print(f"spawned pid={pid}")
     sess = dev.attach(pid)
     scr = sess.create_script(AGENT); scr.on("message", lambda m, d: None); scr.load()
     scr.exports_sync.init()
+    scr.exports_sync.config(args.frame, args.rows, shots, str(req) if shots else "",
+                            str(out_csv.parent.resolve()))
     dev.resume(pid)
     E = scr.exports_sync
 
@@ -212,17 +288,26 @@ def main():
     E.setsel(1); time.sleep(0.3)        # Quick Battle
     confirm_to(4, 4)
     confirm_to(5, 4)
+    if args.early:
+        # Trace from the very first director call, i.e. the FUN_0040d470(1) reset that
+        # opens phase 3, so a replay of these rows starts from the same state.
+        E.hookcam(); E.starttrace()
     press(4); time.sleep(1.5)
     for _ in range(5):
         if E.phase() != 3: break
         press(4); time.sleep(1.5)
     print(f"in race? phase={E.phase()}")
-    time.sleep(2.0)
-
-    E.hookcam()
-    time.sleep(3.0)
-    fires3s = E.fires()
-    print(f"FUN_00446520 fires in 3s: {fires3s}")
+    if args.early:
+        fires3s = -1
+        t0 = time.time()
+        while E.tracelen() < args.rows and time.time() - t0 < args.rows / 30.0 + 60:
+            time.sleep(1.0)
+    else:
+        time.sleep(2.0)
+        E.hookcam()
+        time.sleep(3.0)
+        fires3s = E.fires()
+        print(f"FUN_00446520 fires in 3s: {fires3s}")
 
     g = json.loads(E.globals())
     print("globals:", g)
@@ -232,20 +317,23 @@ def main():
     # which alone made an offline drive of the port impossible (RaceCamera::Update
     # early-returns without a ribbon, and wraps on node+1 against the live count).
     nodes = json.loads(E.nodes(nodecount or 8))
-    (LOG / "camera_probe_static.json").write_text(json.dumps(
+    out_static.write_text(json.dumps(
         {"fires_3s": fires3s, "globals": g, "override_table": ovr,
          "node_count": nodecount, "nodes": nodes}, indent=1))
     print(f"nodes captured: {len(nodes)} of {nodecount}")
     print(f"override entries (first {len(ovr)}): " +
           ", ".join(f"({a:.1f},{b:.1f},{c:.1f})" for a, b, c in ovr[:8]))
 
-    print("tracing 15s...")
-    E.starttrace()
-    t0 = time.time()
-    g2 = None
-    while time.time() - t0 < 15.0:
-        time.sleep(2.5)
-        g2 = json.loads(E.globals())
+    if args.early:
+        g2 = g
+    else:
+        print("tracing 15s...")
+        E.starttrace()
+        t0 = time.time()
+        g2 = None
+        while time.time() - t0 < 15.0:
+            time.sleep(2.5)
+            g2 = json.loads(E.globals())
     n = E.stoptrace()
     rows = json.loads(E.gettrace())
     print(f"trace rows: {n}; globals at end: {g2}")
@@ -260,7 +348,14 @@ def main():
         hdr += [f"c{i}x", f"c{i}y", f"c{i}z", f"c{i}vx", f"c{i}vy", f"c{i}vz",
                 f"c{i}vgate", f"c{i}act", f"c{i}alive", f"c{i}dead",
                 f"c{i}deadt", f"c{i}prog", f"c{i}pct"]
-    with open(LOG / "camera_trace_v2.csv", "w", newline="") as f:
+    # [d1r2] v3 = v2 + these columns (a superset: cam_driver reads by header name).
+    # M_* modelling matrix, L_* LTM, E_* entry 0 matrix; each right/up/at/pos.
+    m12 = [f"{a}{b}" for a in ("r", "u", "a", "p") for b in ("x", "y", "z")]
+    if args.frame:
+        hdr += ["camp", "ba8c", "flag", "c7", "roll", "vw58", "f101c", "ff4"]
+        hdr += [f"M_{k}" for k in m12] + [f"L_{k}" for k in m12]
+        hdr += ["rvwx", "rvwy"] + [f"E_{k}" for k in m12] + ["e0c0", "shot"]
+    with open(out_csv, "w", newline="") as f:
         w = csv.writer(f)
         w.writerow(hdr)
         for r in rows:
@@ -272,6 +367,10 @@ def main():
                 out += [*r["cars"][i], *r["vels"][i][:3], r["vels"][i][3],
                         r["act"][i], r["alive"][i], r["dead"][i],
                         r["deadt"][i], r["prog"][i], r["pct"][i]]
+            if args.frame:
+                out += [r["camp"], r["ba8c"], r["flag"], r["c7"], r["roll"], r["vw58"],
+                        r["f101c"], r["ff4"], *r["M"], *r["L"], *r["rvw"], *r["E"],
+                        r["e0c0"], r["shot"]]
             w.writerow(out)
 
     # SELF-CHECK. The whole point of this rewrite is that the previous capture
@@ -304,9 +403,15 @@ def main():
     else:
         print("capture self-check: OK (car Y plausible, selector in {0,1}, "
               "velocity gate all zero)")
+    if shots:
+        end = time.time() + 5.0
+        while req.exists() and time.time() < end: time.sleep(0.1)
+        for k in shots:
+            bmp = out_csv.parent / f"orig_row_{k:05d}.bmp"
+            print(f"shot row {k}: {'OK' if bmp.exists() else 'MISSING'} {bmp}")
     try: dev.kill(pid)
     except Exception: pass
-    print("done -> log/camera_trace_v2.csv, log/camera_probe_static.json")
+    print(f"done -> {out_csv}, {out_static}")
     return 0
 
 

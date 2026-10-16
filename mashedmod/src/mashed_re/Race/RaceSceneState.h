@@ -85,6 +85,11 @@ struct RaceSceneState {
     float last_up_[3]    = {};
     float last_atdir_[3] = {};
     bool  last_basis_valid_ = false;
+    // [d1r2] where the published camera came from: 0 look-at pair / orbit,
+    // 1 Camera::Apply (director), 2 entry 0 (0x00442a20), 3 MASHED_CAM_POSE basis.
+    int           last_cam_src_  = 0;
+    std::uint32_t cam_pub_seq_   = 0;    // +1 per publish (joins the librw readback)
+    int           cam_replay_row_ = -1;  // MASHED_CAM_REPLAY row of the latest update
 
     // ---- collision + render triangle soups ---------------------------------
     // Collision world (flat soup for the ground raycast) plus the render

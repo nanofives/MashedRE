@@ -186,6 +186,7 @@ private:
 
 public:
     float cam_required_zoom() const { return race_cam_.required_zoom(); }
+    int   cam_replay_row() const { return cam_replay_row_; }   // d1r2 MASHED_CAM_REPLAY
 private:
 
     // track props: RWP_Object DFF+MTS instanced sets + Clump_Filename DFFs
@@ -391,6 +392,8 @@ public:
     // [D-11073 leg 2] RaceCamCar adapter shared by UpdateRace and the MASHED_SUBSTATE pre-race
     // camera chain (FUN_0040d470 -> FUN_00446520: entry init, entry dispatch, camera update, copy).
     void  FillRaceCamCars(Race::RaceCamCar* cc);
+    // [d1r2] race_cam_.Update with the host inputs, or the MASHED_CAM_REPLAY row.
+    void  RaceCamUpdate(const Race::RaceCamCar* cc, bool reset);
     void  SubStateCameraChain(bool reset);
     int   sub_p3_frames_ = 0;   // phase-3 frames this round (leg-2 trace / measurement knob)
     int   round_winner() const { return round_winner_; }

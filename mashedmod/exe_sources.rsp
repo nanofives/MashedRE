@@ -74,6 +74,7 @@
 "Powerup\PowerupMortar.cpp"
 "Powerup\PowerupMissile.cpp"
 "Race\RaceCamera.cpp"
+"Race\CameraApply.cpp"
 "Race\RaceSession.cpp"
 "Race\GameFlow.cpp"
 "Race\RaceModes.cpp"
