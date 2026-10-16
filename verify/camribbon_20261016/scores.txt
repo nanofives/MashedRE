@@ -1,0 +1,209 @@
+# camribbon scores (generated; commands in RESULT_camribbon.md)
+
+## N0: two default runs, nodes sha8
+24992F1D  fix_training.nodes.txt
+24992F1D  fix_training_b.nodes.txt
+
+## C-OPTOUT: opt-out nodes file vs d1r2 baseline standalone_nodes.txt (sha8)
+84D906F8  optout_training.nodes.txt
+84D906F8  base_training.nodes.txt
+84D906F8  standalone_nodes.txt
+
+## G-C3-TRAIN / G-DIR-TRAIN: new default vs original live capture orig2_nodes.txt
+[orig2-vs-new] A nodes 30, B nodes 30
+  dir: equal 30/30  max|d| 0  first differing nodes []
+  c0: equal 30/30  max|d| 0  first differing nodes []
+  c3: equal 30/30  max|d| 0  first differing nodes []
+
+## G-C3-TRAIN: new default vs original course block o_course_t0.bin
+[original course block (30 nodes) vs fix_training.nodes.txt] A nodes 30, B nodes 30
+  dir: equal 30/30  max|d| 0  first differing nodes []
+  c0: equal 30/30  max|d| 0  first differing nodes []
+  c3: equal 30/30  max|d| 0  first differing nodes []
+
+## C-OPTOUT must fail: opt-out vs orig2_nodes.txt
+[orig2-vs-optout] A nodes 30, B nodes 30
+  dir: equal 0/30  max|d| 7.63535e-05  first differing nodes [0, 1, 2, 3, 4, 5, 6, 7]
+  c0: equal 30/30  max|d| 0  first differing nodes []
+  c3: equal 0/30  max|d| 1.49985  first differing nodes [0, 1, 2, 3, 4, 5, 6, 7]
+
+## G-NODE-ARCTIC: new default vs original course block o_course_t3.bin
+[original course block (94 nodes) vs scan_arctic.nodes.txt] A nodes 94, B nodes 94
+  dir: equal 94/94  max|d| 0  first differing nodes []
+  c0: equal 94/94  max|d| 0  first differing nodes []
+  c3: equal 94/94  max|d| 0  first differing nodes []
+
+## G-NODE-ARCTIC control: opt-out vs o_course_t3.bin
+[original course block (94 nodes) vs scanopt_arctic.nodes.txt] A nodes 94, B nodes 94
+  dir: equal 0/94  max|d| 6.00815e-05  first differing nodes [0, 1, 2, 3, 4, 5, 6, 7]
+  c0: equal 94/94  max|d| 0  first differing nodes []
+  c3: equal 0/94  max|d| 1.9998  first differing nodes [0, 1, 2, 3, 4, 5, 6, 7]
+
+## G-NODE-CITY: new default vs original live City ribbon (orig_city_nodes.txt)
+[orig-city-vs-new] A nodes 117, B nodes 117
+  dir: equal 117/117  max|d| 0  first differing nodes []
+  c0: equal 117/117  max|d| 0  first differing nodes []
+  c3: equal 117/117  max|d| 0  first differing nodes []
+
+## G-NODE-CITY control: opt-out
+[orig-city-vs-optout] A nodes 117, B nodes 117
+  dir: equal 0/117  max|d| 8.24332e-05  first differing nodes [0, 1, 2, 3, 4, 5, 6, 7]
+  c0: equal 117/117  max|d| 0  first differing nodes []
+  c3: equal 0/117  max|d| 2.6635  first differing nodes [0, 1, 2, 3, 4, 5, 6, 7]
+
+## G-NODE-CITY on the FINAL exe
+[orig-city-vs-final] A nodes 117, B nodes 117
+  dir: equal 117/117  max|d| 0  first differing nodes []
+  c0: equal 117/117  max|d| 0  first differing nodes []
+  c3: equal 117/117  max|d| 0  first differing nodes []
+
+## G-NODE-TRAIN on the FINAL exe
+[orig2-vs-final] A nodes 30, B nodes 30
+  dir: equal 30/30  max|d| 0  first differing nodes []
+  c0: equal 30/30  max|d| 0  first differing nodes []
+  c3: equal 30/30  max|d| 0  first differing nodes []
+
+## G-SCAN (13 tracks, new default vs opt-out)
+track     cid nodes  dir!=  c0!=  c3!= noLEDelev  no-LED nodes (first 12) / of which c3 changed
+Arctic      0    94     94     0    94         0  [] / c3 changed on 0
+City       26   117    117     0   117         3  [25, 26, 27] / c3 changed on 3
+dump       37   111    111     0   111         0  [] / c3 changed on 0
+Egypt       3    40     40     0    40         0  [] / c3 changed on 0
+Forest     34    81     81     0    81         0  [] / c3 changed on 0
+Highway    38   127    127     0   127         0  [] / c3 changed on 0
+Neustein   39    72     72     0    72         0  [] / c3 changed on 0
+rouabout    2    77     77     1    76         0  [] / c3 changed on 0
+sands      11    99     99     0    99         0  [] / c3 changed on 0
+Storm      36    54     54     0    54         0  [] / c3 changed on 0
+SuperG     25    81     81     0    81         0  [] / c3 changed on 0
+training   30    30     30     0    30         0  [] / c3 changed on 0
+Warzone    33   136    136     0   136         0  [] / c3 changed on 0
+
+## G-NOLED pose, capture orig_city_p255 arm=after
+Traceback (most recent call last):
+  File "C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\camribbon\verify\camribbon_20261016\score_camribbon.py", line 128, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\camribbon\verify\camribbon_20261016\score_camribbon.py", line 124, in main
+    return a.fn(a)
+           ^^^^^^^
+  File "C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\camribbon\verify\camribbon_20261016\score_camribbon.py", line 82, in c_pose
+    dump = S.load(args.dump)
+           ^^^^^^^^^^^^^^^^^
+  File "C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\camribbon\verify\d1r2_20261016\score_d1r2.py", line 22, in load
+    with open(path, newline="") as f:
+         ^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'log\\camribbon\\dump\\city_p255_after\\cam_dump.csv'
+
+## G-NOLED pose, capture orig_city_p255 arm=before
+Traceback (most recent call last):
+  File "C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\camribbon\verify\camribbon_20261016\score_camribbon.py", line 128, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\camribbon\verify\camribbon_20261016\score_camribbon.py", line 124, in main
+    return a.fn(a)
+           ^^^^^^^
+  File "C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\camribbon\verify\camribbon_20261016\score_camribbon.py", line 82, in c_pose
+    dump = S.load(args.dump)
+           ^^^^^^^^^^^^^^^^^
+  File "C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\camribbon\verify\d1r2_20261016\score_d1r2.py", line 22, in load
+    with open(path, newline="") as f:
+         ^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'log\\camribbon\\dump\\city_p255_before\\cam_dump.csv'
+
+## G-NOLED pose, capture orig_city_p265 arm=after
+trace rows in range 894, comparable racing rows joined 161
+pos: n=161 median=0.000308073 p95=0.00246373 max=0.00442815
+at: n=161 median=0.00116082 deg p95=0.00735661 deg max=0.0100172 deg
+right: n=161 median=0.000187165 deg p95=0.0323067 deg max=0.234113 deg
+G-POSE-TOLERANCE: PASS
+
+## G-NOLED pose, capture orig_city_p265 arm=before
+trace rows in range 894, comparable racing rows joined 161
+pos: n=161 median=2.49266 p95=2.64244 max=2.64611
+at: n=161 median=13.2184 deg p95=18.5927 deg max=18.7327 deg
+right: n=161 median=18.3142 deg p95=18.7844 deg max=29.3539 deg
+G-POSE-TOLERANCE: FAIL
+
+## G-NOLED pose, capture orig_city_p245 arm=after
+trace rows in range 904, comparable racing rows joined 161
+pos: n=161 median=0.000568749 p95=0.00227927 max=0.00473958
+at: n=161 median=0.00179721 deg p95=0.00676179 deg max=0.0101993 deg
+right: n=161 median=8.21932e-05 deg p95=0.00253759 deg max=0.00688671 deg
+G-POSE-TOLERANCE: PASS
+
+## G-NOLED pose, capture orig_city_p245 arm=before
+trace rows in range 904, comparable racing rows joined 161
+pos: n=161 median=1.31411 p95=1.43282 max=1.43394
+at: n=161 median=6.91924 deg p95=9.12657 deg max=9.17856 deg
+right: n=161 median=8.92605 deg p95=10.8262 deg max=11.8675 deg
+G-POSE-TOLERANCE: FAIL
+
+## G-NOLED pose, capture orig_city_p275 arm=after
+trace rows in range 888, comparable racing rows joined 161
+pos: n=161 median=0.000421406 p95=0.00245079 max=0.00454195
+at: n=161 median=0.00161834 deg p95=0.00608755 deg max=0.00999482 deg
+right: n=161 median=5.31195e-05 deg p95=0.00139284 deg max=0.00500244 deg
+G-POSE-TOLERANCE: PASS
+
+## G-NOLED pose, capture orig_city_p275 arm=before
+trace rows in range 888, comparable racing rows joined 161
+pos: n=161 median=1.29372 p95=1.38162 max=1.38392
+at: n=161 median=7.22442 deg p95=9.62043 deg max=9.65696 deg
+right: n=161 median=9.59265 deg p95=11.1575 deg max=11.8769 deg
+G-POSE-TOLERANCE: FAIL
+
+## G-NOLED pose, capture orig_train_p105 arm=after
+trace rows in range 1100, comparable racing rows joined 102
+pos: n=102 median=4.78809e-05 p95=0.000153408 max=0.000232204
+at: n=102 median=0.000200886 deg p95=0.000794958 deg max=0.00131371 deg
+right: n=102 median=0 deg p95=2.73208e-05 deg max=5.54624e-05 deg
+G-POSE-TOLERANCE: PASS
+
+## G-NOLED pose, capture orig_train_p105 arm=before
+trace rows in range 1100, comparable racing rows joined 102
+pos: n=102 median=4.78809e-05 p95=0.000153408 max=0.000232204
+at: n=102 median=0.000200886 deg p95=0.000794958 deg max=0.00131371 deg
+right: n=102 median=0 deg p95=2.73208e-05 deg max=5.54624e-05 deg
+G-POSE-TOLERANCE: PASS
+
+## G-NOLED pose, frame capture orig_city_p255f arm=after
+trace rows in range 941, comparable racing rows joined 161
+pos: n=161 median=0.000306353 p95=0.00202234 max=0.003768
+at: n=161 median=0.000978746 deg p95=0.00626759 deg max=0.0100318 deg
+right: n=161 median=5.80189e-05 deg p95=0.00377049 deg max=0.0281886 deg
+G-POSE-TOLERANCE: PASS
+
+## G-NOLED pose, frame capture orig_city_p255f arm=before
+trace rows in range 941, comparable racing rows joined 161
+pos: n=161 median=2.48529 p95=2.63239 max=2.6359
+at: n=161 median=13.0493 deg p95=18.2722 deg max=18.4132 deg
+right: n=161 median=18.3698 deg p95=18.4817 deg max=18.4859 deg
+G-POSE-TOLERANCE: FAIL
+
+## G-FRAME-AFTER / G-FRAME-BEFORE-WORSE (City, pin 25.5, rows 810 and 880)
+K=810: orig@K vs after@K 11.86  after@K-60 20.98  after@K+60 27.89  =>  sharp minimum: PASS
+       orig@K vs before@K 23.75  (after 11.86)  =>  before worse: PASS
+       side-by-side (original | before | after) -> verify\camribbon_20261016\frames\sbs3_row_00810.jpg
+K=880: orig@K vs after@K 11.04  after@K-60 22.37  after@K+60 19.52  =>  sharp minimum: PASS
+       orig@K vs before@K 21.89  (after 11.04)  =>  before worse: PASS
+       side-by-side (original | before | after) -> verify\camribbon_20261016\frames\sbs3_row_00880.jpg
+G-FRAME-AFTER: PASS   G-FRAME-BEFORE-WORSE: PASS
+
+## G-P1-REGRESS: course block (MASHED_PATHPROG_DUMP) baseline exe vs new exe
+training  baseline 0393688D  new 0393688D  identical=True
+arctic  baseline 38238DB4  new 38238DB4  identical=True
+
+## collateral
+demo_after rows 770 src counts {'1': 770}
+coll_pose rows 599 src counts {'3': 599}
+coll_substate rows 1199 src counts {'1': 567, '2': 632}
+
+## G-CTRL final exe
+=== G-CTRL arm=final_default knobs=[]  exe=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\camribbon\log\camribbon\final\mashed_re.exe
+    pid=18796
+    exit=0  self_exited=True
+    final_default.step.csv  lines=21403  sha8=991a5fff
+    final_default.gates.csv  lines=54713  sha8=be0d47ea
+    final_default.ptrace.log  lines=27356  sha8=bc75b405
+GCTRL DONE

@@ -1,0 +1,7 @@
+=== G-CTRL arm=fix_default knobs=[]  exe=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\camribbon\log\camribbon\fix1\mashed_re.exe
+    pid=19036
+    exit=0  self_exited=True
+    fix_default.step.csv  lines=21403  sha8=991a5fff
+    fix_default.gates.csv  lines=54713  sha8=be0d47ea
+    fix_default.ptrace.log  lines=27356  sha8=bc75b405
+GCTRL DONE

@@ -41,14 +41,31 @@ let frameMode=false, maxRows=1200, shotRows={}, reqPath='', shotDir='';
 // relShots: offsets from the FIRST DAT_0063ba8c == 6 row (racing), because phase 3's
 // length follows the QPC clock and differs per run (memory: phase-3 length is the QPC clock).
 let relShots={}, raceStart=-1;
+// [camribbon 2026-10-16] forceProg >= 0: for the duration of ONE director call (onEnter ->
+// onLeave) every car's per-car path progress float (0x008a96e8 + i*0x30c, what FUN_00408a50
+// returns) is pinned to forceProg and then restored, so the director samples a chosen node
+// pair (e.g. one with no LED elevation) while nothing else sees the pinned value. The trace's
+// c{i}prog column is read BEFORE the restore, so it records the pinned value the director used.
+let forceProg=-1;
+function restoreProg(saved){ if(!saved) return;
+  for (let i=0;i<4;i++) abs(0x008a96e8+i*0x30c).writeFloat(saved[i]); }
 function abs(r){return ptr(r+DELTA);}
 function rd(p,n){ const o=[]; for(let i=0;i<n;i++) o.push(p.add(i*4).readFloat()); return o; }
 // RwMatrix rows right/up/at/pos at +0x00/+0x10/+0x20/+0x30 -> 12 floats (flags/pads dropped)
 function mat12(p){ const m=rd(p,16); return [m[0],m[1],m[2],m[4],m[5],m[6],m[8],m[9],m[10],m[12],m[13],m[14]]; }
 rpc.exports={
-  config:function(fm, mr, shots, rq, sd, rel){ frameMode=!!fm; maxRows=mr; shotRows={};
+  config:function(fm, mr, shots, rq, sd, rel, fp){ frameMode=!!fm; maxRows=mr; shotRows={};
     for (const k of shots) shotRows[k]=1; reqPath=rq; shotDir=sd;
-    relShots={}; for (const k of (rel||[])) relShots[k]=1; raceStart=-1; return 1; },
+    relShots={}; for (const k of (rel||[])) relShots[k]=1; raceStart=-1;
+    forceProg=(fp===undefined||fp===null)?-1:fp; return 1; },
+  // [camribbon] engine track index (scenario_launch.py --track: 0=Training .. 12=City). Writing
+  // the menu globals mid-menu stalled the Quick Battle confirm (the race never loaded), so the
+  // override is applied at the load itself: onEnter of FUN_0040d440 (Course::LoadCurrent, which
+  // loads the course named by 0x0063ba7c, scenario_launch.py:42) writes 0x0063ba7c. The track
+  // that actually loaded is read back from the trace's track_type column (DAT_00644158).
+  settrack:function(v){
+    Interceptor.attach(abs(0x0040d440), { onEnter(){ abs(0x0063ba7c).writeS32(v); } });
+    return 1; },
   tracelen:function(){ return trace.length; },
   init:function(){ const m=Process.findModuleByName('MASHED.exe')||Process.enumerateModules()[0];
     DELTA=m.base.toUInt32()-IMG;
@@ -64,8 +81,13 @@ rpc.exports={
         // captured PER ROW: it selects the snap path over the spring path
         // (RaceCamera.cpp:335-367), so a reset frame the driver does not know about
         // would show up as a large spurious pose divergence.
-        this.reset = sp.add(8).readS32(); },
+        this.reset = sp.add(8).readS32();
+        if (forceProg >= 0) {
+          this.savedProg = [];
+          for (let i=0;i<4;i++){ const q=abs(0x008a96e8+i*0x30c); this.savedProg.push(q.readFloat()); q.writeFloat(forceProg); }
+        } },
       onLeave(r){
+       try {
         camFires++;
         if (!tracing) return;
         const c = ptr(this.cam);
@@ -194,6 +216,7 @@ rpc.exports={
         }
         trace.push(row);
         if (trace.length >= maxRows) tracing = false;
+       } finally { restoreProg(this.savedProg); }
       }});
     return 1; },
   starttrace:function(){ trace=[]; tracing=true; return 1; },
@@ -245,6 +268,16 @@ def main():
     ap.add_argument("--shots-race", default="",
                     help="[d1r2] comma list of offsets from the first DAT_0063ba8c == 6 "
                          "(racing) row to dump the backbuffer at")
+    ap.add_argument("--track", type=int, default=-1,
+                    help="[camribbon] engine track index to race instead of the Quick Battle "
+                         "default (0=Training 1=Egypt 2=Neustein 3=Arctic 4=Highway 5=Sands "
+                         "6=SuperG 7=Roundabout 8=Storm 9=Forest 10=Dump 11=Warzone 12=City)")
+    ap.add_argument("--nav-wait", type=float, default=2.0,
+                    help="[camribbon] seconds to wait for each menu depth change (default 2.0, "
+                         "the previous constant); raise it on a loaded machine")
+    ap.add_argument("--force-prog", type=float, default=-1.0,
+                    help="[camribbon] pin every car's path progress to this value for each "
+                         "director call (see AGENT forceProg); -1 = off")
     args = ap.parse_args()
     out_csv, out_static = Path(args.out), Path(args.static_out)
     shots = [int(s) for s in args.shots.split(",") if s.strip()]
@@ -268,7 +301,8 @@ def main():
     scr = sess.create_script(AGENT); scr.on("message", lambda m, d: None); scr.load()
     scr.exports_sync.init()
     scr.exports_sync.config(args.frame, args.rows, shots, str(req) if (shots or rel) else "",
-                            str(out_csv.parent.resolve()), rel)
+                            str(out_csv.parent.resolve()), rel,
+                            args.force_prog if args.force_prog >= 0 else -1)
     dev.resume(pid)
     E = scr.exports_sync
 
@@ -287,7 +321,8 @@ def main():
         for _ in range(tries):
             if E.depth() >= target: return True
             press(4)
-            if wait(lambda: E.depth() >= target, 2.0, f"d{target}"): return True
+            if wait(lambda: E.depth() >= target, args.nav_wait, f"d{target}"): return True
+            print(f"  [nav] target depth {target}: depth={E.depth()} phase={E.phase()}")
         return E.depth() >= target
 
     print("booting...")
@@ -298,6 +333,9 @@ def main():
     E.setsel(1); time.sleep(0.3)        # Quick Battle
     confirm_to(4, 4)
     confirm_to(5, 4)
+    if args.track >= 0:
+        E.settrack(args.track)
+        print(f"track index written: {args.track}")
     if args.early:
         # Trace from the very first director call, i.e. the FUN_0040d470(1) reset that
         # opens phase 3, so a replay of these rows starts from the same state.
@@ -328,7 +366,7 @@ def main():
 
     g = json.loads(E.globals())
     print("globals:", g)
-    nodecount = max(0, min(g.get("nodecount", 0), 200))
+    nodecount = max(0, min(g.get("nodecount", 0), 400))   # [camribbon] was 200; LED capacity is 384
     ovr = json.loads(E.ovrtable(min(nodecount or 32, 64)))
     # Capture the FULL ribbon. The previous version took only the first 8 of 30,
     # which alone made an offline drive of the port impossible (RaceCamera::Update

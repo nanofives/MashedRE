@@ -2187,6 +2187,13 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
     // per-frame HAnim transform (see LoadCopters + the Render copter pass).
     LoadCopters(dev, piz, piz_path, log);
 
+    // [camribbon] The camera-path ribbon (FUN_00426d00's node corners) comes from the original's
+    // node-record build by default (Race::PathNodes_CameraNodes = FUN_00478660 BuildNode, the
+    // sign classification at 0x0047897c). MASHED_NO_CAM_RIBBON_FIX=1 keeps the previous
+    // stream-order corners (the gate vertices sorted by index, c0 = first, c3 = fourth), for A/B only.
+    const bool ribbon_stream_order = (std::getenv("MASHED_NO_CAM_RIBBON_FIX") != nullptr);
+    cam_nodes_.clear();
+
     // ---- AI path gates (AI*.BSP — same world stream; 4-vert vertical quad
     // per gate; the material RED byte = gate index; LAPDATA's Lap_Line
     // numbers index these). Build ordered gate centers; gate 0 = start line.
@@ -2290,6 +2297,8 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                     for (int k = 0; k < 3; ++k)
                         g.dir[k] = (dot < 0.f) ? -n3[k] : n3[k];
                 }
+                if (!ribbon_stream_order)
+                    Race::PathNodes_CameraNodes(aw, cam_nodes_);   // [camribbon] dir / c0 / c3 per node
             }
             break;
         }
@@ -2297,15 +2306,19 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
 
     // RaceCamera wiring: gate ribbon -> camera-path nodes, plus the per-node
     // angle table from Common/LED.piz LE<Course_Id>.LED (see Race/RaceCamera).
-    cam_nodes_.clear();
-    for (const auto& g : gates_) {
-        Race::RaceCamNode n{};
-        for (int k = 0; k < 3; ++k) {
-            n.dir[k] = g.dir[k];
-            n.c0[k]  = g.c0[k];
-            n.c3[k]  = g.c3[k];
+    if (ribbon_stream_order) {
+        for (const auto& g : gates_) {
+            Race::RaceCamNode n{};
+            for (int k = 0; k < 3; ++k) {
+                n.dir[k] = g.dir[k];
+                n.c0[k]  = g.c0[k];
+                n.c3[k]  = g.c3[k];
+            }
+            cam_nodes_.push_back(n);
         }
-        cam_nodes_.push_back(n);
+        if (log)
+            std::fprintf(log, "  [camribbon] MASHED_NO_CAM_RIBBON_FIX: camera ribbon corners from the "
+                              "sorted gate vertices (previous behaviour), %zu nodes\n", cam_nodes_.size());
     }
     race_cam_.SetNodes(cam_nodes_.data(), static_cast<int>(cam_nodes_.size()));
     {
@@ -2334,9 +2347,27 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                                  n.c3[0], n.c3[1], n.c3[2]);
                 std::fclose(nf);
             }
+            // [camribbon] <csv>.ribbon.txt: which resolution built the ribbon, and per node whether
+            // the LED table has an elevation (1) or NodeDir takes the c0/c3 fallback (0).
+            int no_elev = 0;
+            const std::string rp = std::string(e) + ".ribbon.txt";
+            if (std::FILE* rf = std::fopen(rp.c_str(), "w")) {
+                std::fprintf(rf, "# resolution=%s course_id=%d led_loaded=%d nodes=%zu\n",
+                             ribbon_stream_order ? "stream-order(opt-out)" : "classified(FUN_00478660)",
+                             course_id_, (int)race_cam_.has_led(), cam_nodes_.size());
+                for (std::size_t i = 0; i < cam_nodes_.size(); ++i) {
+                    const bool has = race_cam_.has_led_elev(static_cast<int>(i));
+                    if (!has) ++no_elev;
+                    std::fprintf(rf, "%zu %d\n", i, has ? 1 : 0);
+                }
+                std::fclose(rf);
+            }
             if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
                 std::fprintf(lf, "[d1r2] camera nodes=%zu course_id=%d led=%d -> %s\n",
                              cam_nodes_.size(), course_id_, (int)race_cam_.has_led(), np.c_str());
+                std::fprintf(lf, "[camribbon] ribbon=%s nodes=%zu no_led_elev=%d -> %s\n",
+                             ribbon_stream_order ? "stream-order(opt-out)" : "classified",
+                             cam_nodes_.size(), no_elev, rp.c_str());
                 std::fclose(lf);
             }
         }

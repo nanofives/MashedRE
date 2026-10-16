@@ -1,0 +1,7 @@
+=== G-CTRL arm=fix_optout knobs=['MASHED_NO_CAM_RIBBON_FIX=1']  exe=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\camribbon\log\camribbon\fix1\mashed_re.exe
+    pid=3060
+    exit=0  self_exited=True
+    fix_optout.step.csv  lines=21403  sha8=991a5fff
+    fix_optout.gates.csv  lines=54713  sha8=be0d47ea
+    fix_optout.ptrace.log  lines=27356  sha8=bc75b405
+GCTRL DONE
