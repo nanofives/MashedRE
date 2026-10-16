@@ -26,6 +26,10 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-16  U-9698  filed  beam headlight flag: course_id / aib_alive stand-ins for FUN_0040da50 -> FUN_0041eeb0 (rfx)  verify/rfx_20261016/RESULT_rfx.md
+2026-10-16  U-9699  filed  FUN_0040dfc0 HUD branches not ported (non-team panels, mode HUDs) + start-light clock stand-in adapter (rfx)  verify/rfx_20261016/RESULT_rfx.md
+2026-10-16  U-9700  filed  C04/C09 draws not ported: RWObjShad, flatshad, Headlight, lensflare-fs8, VehicleIcons, scope per item (rfx)  verify/rfx_20261016/RESULT_rfx.md
+2026-10-16  U-9690  NOTE  also holds the ported car_shadow / Beam on Arctic at STATE CULL 2 vs 1 (rfx)  verify/rfx_20261016/RESULT_rfx.md
 2026-10-16  U-9697  filed  rtex residual uncertainties of the car dirt / env passes (pixels only)  verify/rtex_20261016/RESULT_rtex.md
 2026-10-16  U-9079  RESOLVED  part code = geometry rpUSERDATA 0.tv_part_id (FUN_004b5190 reads atomic+0x18 = geometry; FUN_00543d70 / FUN_00543df0); 71/71 live slots  verify/rtex_20261016/evidence/partid_check_training.txt
 2026-10-16  U-9693  NARROWED  car dirt (MatFX dual) ported default ON; env pass ported opt-in (fails rules 2/6 until car LOD selection, C02)  verify/rtex_20261016/RESULT_rtex.md

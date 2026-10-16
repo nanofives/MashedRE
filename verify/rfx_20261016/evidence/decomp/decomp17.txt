@@ -1,0 +1,56 @@
+// FUN_0040da50 @ 0x0040da50  size=265  (MASHED.exe)
+// undefined FUN_0040da50(void)
+
+/* [C1 2026-06-01] `void FUN_0040da50(undefined4 param_1)` — iterates the 4 cars (active-flag
+   table `&DAT_007f1a14`,… */
+
+void FUN_0040da50(undefined4 param_1)
+
+{
+  undefined4 *puVar1;
+  int iVar2;
+  undefined4 uVar3;
+  int *piVar4;
+  int iVar5;
+  bool bVar6;
+  undefined4 local_10 [4];
+  
+  bVar6 = false;
+  FUN_0045b350();
+  iVar5 = 0;
+  piVar4 = &DAT_007f1a14;
+  do {
+    puVar1 = local_10 + iVar5;
+    if (*(int *)(PTR_PTR_005f2770 + (0x34 - (int)local_10) + (int)puVar1) != 0) {
+      iVar2 = FUN_0046c7b0(iVar5);
+      if ((iVar2 == 1) || (iVar2 = FUN_0046c770(iVar5), iVar2 == 1)) {
+        FUN_0046d4a0(puVar1,iVar5);
+        FUN_00420870(iVar5,param_1,*puVar1);
+        FUN_0040d8f0(iVar5);
+        bVar6 = *(char *)((int)&DAT_007f103c + *piVar4 * 0x4c + 1) != '\0';
+        uVar3 = FUN_00426c00();
+        switch(uVar3) {
+        case 0:
+        case 0x1a:
+        case 0x21:
+        case 0x24:
+          (&DAT_0063bc44)[iVar5] = 1;
+          break;
+        default:
+          (&DAT_0063bc44)[iVar5] = 0;
+        }
+        uVar3 = FUN_00426080(iVar5);
+        FUN_00408610(*puVar1,uVar3);
+      }
+      else {
+        (&DAT_0063bc44)[iVar5] = 0;
+      }
+      FUN_0041eeb0(iVar5,(&DAT_0063bc44)[iVar5],(&DAT_0063bc44)[iVar5],bVar6);
+    }
+    piVar4 = piVar4 + 4;
+    iVar5 = iVar5 + 1;
+  } while ((int)piVar4 < 0x7f1a54);
+  return;
+}
+
+
