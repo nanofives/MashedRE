@@ -3,7 +3,7 @@
     py -3.12 verify/carlod_20261016/tracker_tx.py
 
 - UNCERTAINTIES.md: U-9693 narrowed (both car passes default ON), U-9079 consumer ported, U-9697 (c) / (g)
-  annotated, U-9698 filed after U-9697.
+  annotated, U-9699 filed after U-9697.
 - hooks.csv (cp1252): 004b5240 demoted C3 -> C2 (its body lacked the clear arm; re-diff needed), note added to
   the 00420870 row (standalone transcription, C-level unchanged).
 - re/analysis/CHANGELOG.md: entries inserted below the exact `<!-- ENTRIES -->` line.
@@ -46,8 +46,8 @@ u = sub_row(u, "U-9693",
     "coefficient is computed against the PREVIOUS row's camera (live value of 112 records reproduced exactly, "
     "`verify/carlod_20261016/evidence/env_lag_live.txt`), and Arctic's collision colours were unparsed (shade 1.0 "
     "against the original's ~0.25) until `Track/TrackWorld.cpp` read the world header's format flags. `" + R + "`. | "
-    "The residual inputs of the env pass are U-9697; the visibility inputs are U-9698. | "
-    "Nothing for the draw-list rows; see U-9697 / U-9698 for the pixel-level and input gaps. | "
+    "The residual inputs of the env pass are U-9697; the visibility inputs are U-9699. | "
+    "Nothing for the draw-list rows; see U-9697 / U-9699 for the pixel-level and input gaps. | "
     "none (C17 rows cited, none left on the 9 frames beyond the replaced STATE rows) |")
 
 u = sub_row(u, "U-9079",
@@ -76,7 +76,7 @@ u = replace_once(u, "keep the single-stage draw (`evidence/matfx_census.txt`). |
                  "Storm car (`verify/carlod_20261016/evidence/car_textures.txt`), so (g) stays unported. |")
 
 new_row = (
-    "| U-9698 | semantic | standalone inputs of `FUN_00420870`'s per-part visibility: record state S (+0x298) and flags F "
+    "| U-9699 | semantic | standalone inputs of `FUN_00420870`'s per-part visibility: record state S (+0x298) and flags F "
     "(+0x294) (`LibRw/RwCarFx.cpp` `CarLodState` / `CarVisFlags`) | "
     "(a) F bits 0x10 / 0x20 (`FUN_0041ede0`) and 0x400 (`FUN_0041ef80`) are always 0: the standalone has no damage or "
     "wreck state, so the parts they select (4..0xd, 0x25..0x2e, 0x65..0x67, 0x17, 0x32) show only their undamaged "
@@ -98,7 +98,7 @@ idx = u.index("| U-9697 |")
 line_end = u.index("\n", idx)
 eol = "\r\n" if u[line_end - 1] == "\r" else "\n"
 u = u[:line_end + 1] + new_row + eol + u[line_end + 1:]
-assert u.count("| U-9698 |") == 1
+assert u.count("| U-9699 |") == 1
 open(up, "w", encoding="utf-8", newline="").write(u)
 
 # ---- hooks.csv -------------------------------------------------------------------------
@@ -131,7 +131,7 @@ lines = c.split("\n")
 k = [i for i, ln in enumerate(lines) if ln.strip() == "<!-- ENTRIES -->"]
 assert len(k) == 1
 entries = [
-    f"{DATE}  U-9698  filed  standalone inputs of the car part visibility (damage / wreck / brake flags, slot-0 state modes, S timing)  {R}",
+    f"{DATE}  U-9699  filed  standalone inputs of the car part visibility (damage / wreck / brake flags, slot-0 state modes, S timing)  {R}",
     f"{DATE}  U-9697  ANNOTATED  (c) Arctic collision colours parsed (TrackWorld header flags), (g) Atmos / Storm not in any cited frame  {R}",
     f"{DATE}  U-9693  NARROWED  car dirt and env passes both default ON; env coefficient uses the previous row's camera (112 live records exact); Arctic shade fixed  {R}",
     f"{DATE}  U-9079  CONSUMER PORTED  FUN_00420870 per-part RENDER bits by part code (112 live car records reproduced) + FUN_00420050 glass pass; 27 C02 rows gone  {R}",

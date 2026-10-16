@@ -26,7 +26,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
-2026-10-16  U-9698  filed  standalone inputs of the car part visibility (damage / wreck / brake flags, slot-0 state modes, S timing)  verify/carlod_20261016/RESULT_carlod.md
+2026-10-16  U-9699  filed  standalone inputs of the car part visibility (damage / wreck / brake flags, slot-0 state modes, S timing)  verify/carlod_20261016/RESULT_carlod.md
 2026-10-16  U-9697  ANNOTATED  (c) Arctic collision colours parsed (TrackWorld header flags), (g) Atmos / Storm not in any cited frame  verify/carlod_20261016/RESULT_carlod.md
 2026-10-16  U-9693  NARROWED  car dirt and env passes both default ON; env coefficient uses the previous row's camera (112 live records exact); Arctic shade fixed  verify/carlod_20261016/RESULT_carlod.md
 2026-10-16  U-9079  CONSUMER PORTED  FUN_00420870 per-part RENDER bits by part code (112 live car records reproduced) + FUN_00420050 glass pass; 27 C02 rows gone  verify/carlod_20261016/RESULT_carlod.md

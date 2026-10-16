@@ -106,7 +106,7 @@ unmatched (rules 1 and 2 literally fail there) and Arctic 1051 +0.57 against `vi
    `mashed_re.log` are overwritten by other sessions' runs, so diagnostics here write their own files.
 6. `decomp_pc.py` still fails from a worktree (d1r1 note 5); the main checkout's copy was run for read-only decompilation.
 
-## 5. Gaps (U-9698, filed)
+## 5. Gaps (U-9699, filed)
 
 (a) F bits `0x10/0x20/0x400` stay 0 (no damage or wreck model). (b) `0x800` has no source for AI cars or for the player
 (`TrackRenderer.cpp` `io.input[5]` is not wired). (c) Slot 0's `S = 0` modes. (d) S timing against the camera. U-9697 (c)

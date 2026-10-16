@@ -194,7 +194,7 @@ other row appears and no matched draw is lost.
 
 Arms: `vis` (the build as is, no brake input, the failing record above), `visb` (same exe, brake input on),
 `visb_off` (`MASHED_CAR_VIS=0`, brake input on: rule 4 control). Rule 2 and 3 for F-VIS read `visb` against
-`base`. The default build still shows no brake lights on AI cars; that is U-9698's open half and is reported,
+`base`. The default build still shows no brake lights on AI cars; that is U-9699's open half and is reported,
 not closed.
 ### Amendment 5 (written after the `visb_env` arm was read, before any arm that uses the change; F-ENV input fix, rules unchanged)
 
@@ -215,7 +215,7 @@ whether the original draws env for each of the 36 car-frames of the 9 cited fram
 (City 801 car 3). rtex's "reproduces the live value to about 1e-4 on stationary rows" is this lag on rows where
 the camera barely moves. The same test on the LOD state (`state_lag_test.py`, observed state from the far-LOD
 draws) cannot discriminate: all 16 (camera row, car row) combinations predict the 36 car-frames with 0 errors,
-so the state rule stays on this frame's camera and the lag question for S is left open (U-9698).
+so the state rule stays on this frame's camera and the lag question for S is left open (U-9699).
 
 Change: `RaceSceneState::eye_prev_` (the previous Render's eye) feeds the coefficient's d2
 (`TrackRenderer` car block); `MASHED_CAR_ENV_PREVCAM=0` restores this frame's camera (no-op control).
