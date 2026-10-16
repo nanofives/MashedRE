@@ -912,7 +912,7 @@ std::FILE* WalkLog() {
 // (centre +- radius), walk the BSP taking the left child if inf < leftValue and the right if
 // sup > rightValue (left first, right pushed, 0x004e3d71..0x004e3db3), and insert each tie at
 // the HEAD of the sector's list (0x004e3d30..0x004e3d48). Instances are tied in queue order,
-// each DFF atomic in RW clump order (newest first). [UNCERTAIN U-9703] the original's tie
+// each DFF atomic in RW clump order (newest first). [UNCERTAIN U-9706] the original's tie
 // order comes from RW's frame-sync order, which is not decoded; this order is the one the
 // recorded frames are checked against (RESULT_rstates.md).
 void RenderWorldPass(const Frustum& fr, bool sticky) {

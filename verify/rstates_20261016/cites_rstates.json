@@ -29,6 +29,13 @@
  },
  {
   "id": "C03-UNTEXTURED",
+  "kind": "MOVED",
+  "tex": "^-$",
+  "detail": "A \\[0\\.00,0\\.00,0\\.00,512",
+  "note": "[rfx] Re-pairing, no new draw: once the two score-bar quads match (C08 ported), the original's full-screen no-op RwIm2D quad (C03 d, 0x00450c7a, SRCBLEND ZERO / DESTBLEND ONE) and an untextured 2-tri librw world-sector draw of the standalone (City, AABB 13.63..17.46 / 1.40..3.29 / 53.19..53.52, the draw d1r1's C08 MOVED row paired with the bar) pair by triangle count. Both draws were already cited before rfx."
+ },
+ {
+  "id": "C03-UNTEXTURED",
   "kind": "MISSING",
   "tex": "^-$",
   "note": "Untextured draws the standalone does not issue: (a) per car, a 44-tri untextured mesh drawn with depth test and write OFF immediately before the body (0x004ec3e1 <- 0x0041faa0 <- 0x004200c6, the car part path, U-9079); (b) start-display backings drawn depth-off (0x0041bc78 <- 0x0041c0cd); (c) a 20-line DrawPrimitiveUP line list from the particle builder (0x0049a081 <- 0x0048ad9c, FUN_00499d90); (d) a full-screen RwIm2D quad with SRCBLEND 1 ZERO / DESTBLEND 2 ONE (0x004dbc4d <- 0x004d78e5 <- 0x00450c7a), which leaves the frame buffer unchanged."
@@ -169,7 +176,7 @@
   "id": "C21-ORDER",
   "kind": "ORDER",
   "tex": ".*",
-  "note": "[rstates] World-sector and tied-prop order follows RenderWare since F2 (sector sequence equal to the original on 9/9 frames) and clump atomic order since F5. Surviving ORDER rows: car Glass vs body parts (U-9704), Arctic sky-pass World mesh drawn after the world by the port (U-9696), City post-world building copies (U-9695) and within-sector tie order (U-9703). d1r1 note: Draw order of blended draws against matched draws: the original renders world sectors in RW's traversal order with each sector's atomics, the standalone renders librw's one-clump world in sector-list order and then all instances. U-9694."
+  "note": "[rstates] World-sector and tied-prop order follows RenderWare since F2 (sector sequence equal to the original on 9/9 frames) and clump atomic order since F5. Surviving ORDER rows: car Glass vs body parts (U-9707), Arctic sky-pass World mesh drawn after the world by the port (U-9696), City post-world building copies (U-9695) and within-sector tie order (U-9706). d1r1 note: Draw order of blended draws against matched draws: the original renders world sectors in RW's traversal order with each sector's atomics, the standalone renders librw's one-clump world in sector-list order and then all instances. U-9694."
  },
  {
   "id": "C01b-CULL-AABB",

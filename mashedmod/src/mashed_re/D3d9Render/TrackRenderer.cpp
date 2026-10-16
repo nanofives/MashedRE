@@ -7051,7 +7051,7 @@ const AfterWorldOrder kAfterWorldOrder[] = {
 // Queue order for props_: the after-world props a track's slot 2 draws go as one group, in slot-2
 // order, where the first of them sits in clump order; every other prop keeps its place (in-world
 // props are drawn by the sector walk, so their queue order only seeds tie creation, unchanged).
-// [UNCERTAIN U-9705] where the excluded clumps slot 2 does not draw are rendered relative to the
+// [UNCERTAIN U-9708] where the excluded clumps slot 2 does not draw are rendered relative to the
 // group; they keep clump order. MASHED_LIBRW_AFTERWORLDORDER=0 keeps plain clump order.
 void TrackRenderer::BuildPropOrder(std::FILE* log) {
     prop_order_.clear();

@@ -40,7 +40,7 @@ PREREG committed before any measuring run (c823edc0 after the rebase, d0cb7014 b
   F3's sector handling is unaffected.
 - **d1r3** deleted the legacy D3D9 renderer: the prop/car queue sites and the track-load hook
   were re-applied to the librw-only code.
-- **U-ids** are renumbered at each rebase (d1r3 took U-9698, rprops U-9699..U-9702). This lane's rows are **U-9703** (tie order) and **U-9704**
+- **U-ids** are renumbered at each rebase (d1r3 took U-9698, rprops U-9699..U-9702). This lane's rows are **U-9706** (tie order) and **U-9707**
   (car glass order).
 
 ## 1. What the original does (cited to bytes; extracts in `evidence/dis_*.txt`)
@@ -132,11 +132,11 @@ Per-frame counts for every arm are in `scores.txt`, rebased and pre-rebase. In t
 
 - **Glass ORDER** (all tracks, 88 inversions per frame): the original draws each car's opaque
   parts, then each Glass part with its additive CarGloss pass. The standalone's car keeps stream
-  order, and F5 is not applied to cars. U-9704 (new).
+  order, and F5 is not applied to cars. U-9707 (new).
 - **Arctic first-sector meshes and WetRoad vs `World`; `World` vs sea**: the sky-pass
   `windows.dff` mesh is drawn after the world by the port. U-9696 (sky pass).
 - **City `Path2` 130, `railings` 79, `thickgirders` 14**: the building copies the original places
-  per instance (U-9695), and the order of tied atomics within a sector (U-9703, new). TRAINING
+  per instance (U-9695), and the order of tied atomics within a sector (U-9706, new). TRAINING
   sector 22: the original draws ROAD.DFF atomics 0, 17, 10, 16, 20, the port 0, 10, 16, 17, 20.
   The frame-sync order behind tie creation is not decoded.
 - Storm runs F4 (RainEnable), but no original capture of Storm exists. The 13-track smoke boots
