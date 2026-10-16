@@ -258,6 +258,63 @@ function carMats(){
   }
   return out;
 }
+// [rtex] car MatFX state (PREREG_rtex section 5): globals FUN_0041ecc0 / FUN_0041f360 /
+// FUN_00420290 read, and per car record (0x0063d9e0 + i*0x2ac) the env coefficient / texture
+// / frame (+0x274 / +0x278 / +0x27c) and every part atomic's materials with their MatFX data
+// (*(mat + DAT_007dc5dc): slots of 0x18 with the effect at +0x14, material effect at +0x30;
+// env {frame, texture, coef, fbAlpha}, dual {texture, src, dst}). RpGeometry: flags +0x08,
+// materials +0x20, count +0x24. RwTexture name +0x10.
+let matfxOn=false, matfxSnaps=[];
+function texName(t){ if (t.isNull()) return null; try { return t.add(0x10).readCString(32); } catch(e){ return '?'; } }
+// RwTexture filterAddressing +0x50 (FUN_004d6e70 reads param_1[0x14]); raster +0 -> width
+// +0xc, height +0x10, depth +0x14, cFormat +0x23 (d1r1 texalpha reader's offsets)
+function texInfo(t){ if (t.isNull()) return null;
+  try { const r=t.readPointer(); return {name: texName(t), fa: t.add(0x50).readU32(),
+    w: r.add(0xc).readS32(), h: r.add(0x10).readS32(), d: r.add(0x14).readS32(), cf: r.add(0x23).readU8()}; }
+  catch(e){ return {name: texName(t), err: ''+e}; } }
+function carMatfx(){
+  const off = abs(0x007dc5dc).readS32();
+  const g = { ad0: abs(0x00636ad0).readS32(), ad4: abs(0x00636ad4).readS32(),
+    gloss_35c: abs(0x0064435c).readFloat(), gloss_360: abs(0x00644360).readFloat(),
+    dirt_90: texInfo(abs(0x0063ba90).readPointer()), dirt_94: texInfo(abs(0x0063ba94).readPointer()),
+    track_7c: abs(0x0063ba7c).readS32(), cars: [] };
+  for (let i=0;i<4;i++){
+    const rec = abs(0x0063d9e0 + i*0x2ac);
+    const fr = rec.add(0x27c).readPointer();
+    const c = { coef: rec.add(0x274).readFloat(), env_tex: texInfo(rec.add(0x278).readPointer()),
+      pos258: rd(rec.add(0x258), 3), win200: rd(rec.add(0x200), 8), f288: rec.add(0x288).readFloat(),
+      env_frame: fr.toString(), f280: rec.add(0x280).readFloat(), f284: rec.add(0x284).readFloat(),
+      i290: rec.add(0x290).readS32(), flags: rec.add(0x294).readU32(),
+      p29c: rec.add(0x29c).readPointer().toString(), parts: [] };
+    // FUN_0041f120 @ 0x0041f120: *(*(rec+0x29c)+4) +0x40/+0x44/+0x48 is the point the
+    // coefficient's distance fade is measured from
+    try { const o=rec.add(0x29c).readPointer(); if (!o.isNull()) c.p29c_pos = rd(o.add(4).readPointer().add(0x40), 3); } catch(e) {}
+    if (!fr.isNull()) { try { c.env_ltm = mat12(fr.add(0x50)); c.env_m = mat12(fr.add(0x10)); } catch(e) {} }
+    for (let p=0;p<0x80;p++){
+      const at = rec.add(p*4).readPointer(); if (at.isNull()) continue;
+      const geo = at.add(0x18).readPointer(); if (geo.isNull()) continue;
+      const nm = geo.add(0x24).readS32(), mats = geo.add(0x20).readPointer();
+      const ms = [];
+      for (let m=0;m<nm && m<16;m++){
+        const mat = mats.add(m*4).readPointer();
+        const e = { tex: texName(mat.readPointer()) };
+        const fx = mat.add(off).readPointer();
+        if (!fx.isNull()) {
+          e.eff = fx.add(0x30).readU32();
+          for (let s=0;s<2;s++){ const b=fx.add(s*0x18), ty=b.add(0x14).readU32();
+            if (ty===2) e['env'+s]={frame:b.readPointer().toString(), tex:texName(b.add(4).readPointer()),
+                                     coef:b.add(8).readFloat(), fba:b.add(0xc).readS32()};
+            else if (ty===4) e['dual'+s]={tex:texInfo(b.readPointer()), src:b.add(4).readS32(), dst:b.add(8).readS32()};
+            else e['t'+s]=ty; }
+        }
+        ms.push(e);
+      }
+      c.parts.push({ p: p, gflags: geo.add(8).readU32(), rflags: at.add(2).readU8(), mats: ms });
+    }
+    g.cars.push(c);
+  }
+  return g;
+}
 function abs(r){return ptr(r+DELTA);}
 function rd(p,n){ const o=[]; for(let i=0;i<n;i++) o.push(p.add(i*4).readFloat()); return o; }
 // RwMatrix rows right/up/at/pos at +0x00/+0x10/+0x20/+0x30 -> 12 floats (flags/pads dropped)
@@ -278,6 +335,8 @@ rpc.exports={
     Interceptor.attach(abs(0x0040d440), { onEnter(){ abs(0x0063ba7c).writeS32(v); } });
     return 1; },
   tracelen:function(){ return trace.length; },
+  setmatfx:function(v){ matfxOn=!!v; return 1; },
+  getmatfx:function(){ return JSON.stringify(matfxSnaps); },
   getdraws:function(){ return JSON.stringify(drFrames); },
   // [d1r1] per named texture: the D3D9 raster extension's alpha byte (ext+8, the flag
   // FUN_004d6ce0 tests at 0x004d6d06 to switch ALPHABLEND/ALPHATEST for stage 0), and the
@@ -454,6 +513,9 @@ rpc.exports={
           }
           // [d1r1] car render roots (I-3) and the draw recorder's frame markers (I-1, I-FRAME)
           if (carFrames) row.cm = carMats();
+          if (matfxOn && trace.length % 100 === 0) {
+            try { matfxSnaps.push({row: trace.length, ba8c: row.ba8c, s: carMatfx()}); }
+            catch(e) { matfxSnaps.push({row: trace.length, err: '' + e}); } }
           if (drawRec) {
             const n = trace.length;
             if (drArmed) drEvents.push({e:'D', row:n, t:Date.now()});
@@ -536,6 +598,10 @@ def main():
     ap.add_argument("--carframes", action="store_true",
                     help="[d1r1] per-row car render-root matrices (R{i}_* modelling, "
                          "Q{i}_* LTM, F{i}_* the renderable's own frame LTM, S{i} root==frame)")
+    ap.add_argument("--matfx", action="store_true",
+                    help="[rtex] every 100 trace rows, snapshot the cars' MatFX state (env "
+                         "coefficient/texture/frame, per-part material effects) into "
+                         "<out>.matfx.json (PREREG_rtex section 5)")
     ap.add_argument("--drawrec-bt", default="",
                     help="[d1r1] regex on stage-0 texture names: record a return-address "
                          "backtrace (MASHED.exe VAs) for each matching draw")
@@ -565,6 +631,8 @@ def main():
                             str(out_csv.parent.resolve()), rel,
                             args.force_prog if args.force_prog >= 0 else -1,
                             args.drawrec, args.carframes, args.track, args.drawrec_bt)
+    if args.matfx:
+        scr.exports_sync.setmatfx(1)
     dev.resume(pid)
     E = scr.exports_sync
 
@@ -653,6 +721,10 @@ def main():
             g2 = json.loads(E.globals())
     n = E.stoptrace()
     rows = json.loads(E.gettrace())
+    if args.matfx:
+        mf = json.loads(E.getmatfx())
+        Path(str(out_csv) + ".matfx.json").write_text(json.dumps(mf, indent=1))
+        print(f"matfx snapshots: {len(mf)} -> {out_csv}.matfx.json")
     print(f"trace rows: {n}; globals at end: {g2}")
     # v2 schema. Written to a NEW filename on purpose: the 2026-06-10
     # camera_trace.csv has invalid c*x/c*y/c*z columns (missing the act*0x40

@@ -117,3 +117,36 @@ Live values the formulas need but static reads cannot give (coefficient inputs `
 `[0x00644360]`, car record `+0x284` / `+0x29c`, `DAT_00636ad0/ad4`, dirt indices) are read from
 the original with an added `camera_probe.py --matfx` reader and recorded here as an amendment
 before they are used.
+
+### Amendment 1 (after F-DUAL was measured, before any F-DIRT / F-ENV run)
+
+F-DUAL was measured first (rules 1-5 pass on 9/9 frames, `RESULT_rtex.md`). Then, with
+`camera_probe.py --matfx` (every 100 trace rows; `log/rtex/orig_matfx2_{training,arctic,city}`,
+summarised by `matfx_report.py` / `envframe_check.py`):
+
+- `DAT_00636ad0` = `DAT_00636ad4` = 0 on all three tracks (env and dirt on).
+- Dirt textures: TRAINING `DirtBody` / `DirtAdWheel`, Arctic and City `GrimeBody` /
+  `GrimeAdWheel`; each 128x128, depth 16, cFormat 0x3 (4444, no mip bit), filterAddressing
+  `0x1101`. The tables generated from `FUN_00404830`'s decompilation (`gen_dirt_tables.py`)
+  predicted the Arctic / City names before the capture was read.
+- Env coefficient range = COURSE.LUA `Vehicle_Shininess_Range` (TRAINING 0.7/1, Arctic
+  0.6/1.0, City 0.5/1.0), read live as `[0x0064435c]` / `[0x00644360]`; binding `0x0047ac80`
+  stores arg 1 / arg 2 at course `+0x204` / `+0x208`, defaults 0 / 1.0 at `0x0047a060` /
+  `0x0047a066`.
+- `FUN_00420290`'s formula with the live inputs reproduces the live coefficient to about 1e-4 on
+  stationary rows; the `rec+0x29c` object's frame position equals the trace camera position on
+  race rows; the env frame is a pure rotation of `rec+0x280` degrees with no parent.
+- Ported with stated gaps ([UNCERTAIN], pixel-level only): the shade sample `FUN_00479100` on the
+  collision soup (barycentrics replace `FUN_00559040`; flat soup instead of the BSP walk), the race
+  frame counter `DAT_007f101c` (incremented once per rendered race frame; the tick site
+  `0x004111c1`'s frequency is not read), the velocity units feeding the env-frame angle.
+
+### Amendment 2 (scoring of draws that newly match, before any F-DIRT / F-ENV run)
+
+F-ENV turns MISSING `CarGloss` draws into matched draws. librw's render-state defaults (cited
+C19: ALPHAREF 10, ALPHAFUNC 7, CULL NONE) then show as a STATE row on them, as they already do on
+every other matched car draw. Rule 2 therefore reads: a NEW STATE row whose differing fields are a
+subset of {AREF, AF, CULL}, on a texture whose MISSING row disappeared in the same frame, is the
+replacement of that MISSING row (cited C19), not a failure. Any other NEW row fails rule 2.
+Arms: `carfx` (default), `carfx_nodirt` (`MASHED_CAR_DIRT=0`), `carfx_noenv`
+(`MASHED_CAR_ENV=0`), `carfx_off` (both 0; rule 4 control: equals the F-DUAL arm's rows).

@@ -103,6 +103,11 @@ struct RaceSceneState {
     // to record +0x1ec via contact entry +0x30 (writer 0x0046d00b); it was
     // being discarded at the collision-soup boundary.
     std::vector<std::uint32_t> col_mat_;
+    // [rtex] the collision world's prelit (RGBA per col_verts_ vertex; 0 where the sector has
+    // none) and, per col_tris_ triple, whether its sector carries prelit. FUN_00479100 @
+    // 0x00479100 samples it under each car for the env coefficient (see car_gloss_).
+    std::vector<std::uint32_t> col_prelit_;
+    std::vector<std::uint8_t>  col_tri_pl_;
     std::vector<float>         rend_verts_;
     std::vector<std::uint32_t> rend_tris_;
 
@@ -224,6 +229,19 @@ struct RaceSceneState {
         int   prog_gate = -1;          // last observed race gate
     };
     std::vector<AiCar> ai_cars_;
+
+    // ---- [rtex] car env-map (gloss) state, per car slot (0 player, 1..3 ai_cars_) ----------
+    // The car record fields the original keeps for FUN_00420290 / FUN_0041f590 /
+    // FUN_00420870 (LibRw/RwCarFx.h): win = +0x200..+0x21c (8 shade samples), shade = +0x284,
+    // angle = +0x280 (env frame rotation, degrees).
+    struct CarGloss { float win[8] = {}; float shade = 0.f; float angle = 0.f; };
+    CarGloss      car_gloss_[4];
+    float         shine_lo_ = 0.f;          // COURSE.LUA Vehicle_Shininess_Range -> course +0x204
+    float         shine_hi_ = 1.f;          // ... +0x208 (defaults 0x0047a060 / 0x0047a066)
+    std::uint32_t gloss_frame_ = 0;         // stand-in for DAT_007f101c (race frame counter)
+    float         car_part19_[3] = {};      // part 0x13's frame origin, model space
+    bool          car_part19_ok_ = false;
+    bool          car_env_ok_ = false;      // SetupCarEnv bound env materials
 
     // ---- power-up effect state ----------------------------------------------
     float boost_timer_  = 0.f;     // no powerup sets it now (general hook)

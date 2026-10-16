@@ -5,6 +5,8 @@
 #include "RwRaceSubmit.h"
 
 #include "RwBridge.h"
+#include "RwCarFx.h"
+#include "RwRasterBridge.h"
 #include "RwSceneBuild.h"
 
 #define WITH_D3D
@@ -20,9 +22,20 @@
 #include "../Track/TrackWorld.h"
 #include "../Txd/TxdDecoder.h"
 
+// [rtex] librw P9 hook (d3d9matfx.cpp): the original's raster alpha flag for the MatFX env
+// single / two pass choice.
+namespace rw { namespace d3d9 { extern rw::int32 (*rw_mashed_rasteralpha)(rw::Raster*); } }
+
 namespace mashed_re {
 namespace LibRw {
 namespace {
+
+// RwRasterBridge's texel rule when it built the raster, librw's own flag otherwise.
+rw::int32 TexelAlphaHook(rw::Raster* r) {
+    const int v = RasterTexelAlpha(r);
+    if (v >= 0) return v;
+    return (r && r->platform == rw::PLATFORM_D3D9) ? GETD3DRASTEREXT(r)->hasAlpha : 0;
+}
 
 const char* const kRaceLog = "log/librw_race.txt";
 
@@ -52,9 +65,17 @@ IDirect3DStateBlock9* g_state_block = nullptr;  // D-S3-2 outbound fix
 
 // Registered instanced models (props / cars / copters) and this frame's queue.
 std::vector<rw::Clump*> g_models;
-struct Inst { int model; float m[16]; };
+// [rtex] per instance: the car's env coefficient and env frame matrix (FUN_00420340 @
+// 0x00420340 re-applies both per car each frame; one shared clump draws all four cars).
+struct Inst { int model; float m[16]; bool fx = false; float env_coef = 0.f; float env_m[16]; };
 std::vector<Inst>       g_insts;
 long long               g_inst_drawn = 0;
+// [rtex] per model, parallel to g_models: each atomic's part code (BuildClump
+// out_atomic_part) and the materials RaceSubmit_SetupCarEnv turned into ENVMAP, with the
+// env frame they share.
+std::vector<std::vector<std::int32_t>> g_model_parts;
+struct ModelEnv { std::vector<rw::Material*> mats; rw::Frame* frame = nullptr; };
+std::vector<ModelEnv>   g_model_env;
 
 // Build the camera once. frameBuffer is a plain Raster::CAMERA: on the D3D9
 // backend such a raster has natras->texture == nil, and setRenderSurfaces then
@@ -194,6 +215,7 @@ bool RaceSubmit_Init(HWND hwnd, IDirect3DDevice9* dev, int width, int height) {
     if (FAILED(dev->CreateStateBlock(D3DSBT_ALL, &g_state_block)))
         g_state_block = nullptr;   // non-fatal; D-S3-2 just stays open
     RLog("ok: state block %s", g_state_block ? "created" : "UNAVAILABLE");
+    rw::d3d9::rw_mashed_rasteralpha = &TexelAlphaHook;   // [rtex] MatFX env pass choice
     g_engine_up = true;
     RLog("ok: init (%dx%d)", width, height);
     return true;
@@ -380,6 +402,9 @@ void RaceSubmit_BeginTrackLoad() {
     g_insts.clear();
     g_uvanim.clear();
     g_uvanim_count = 0;
+    for (ModelEnv& e : g_model_env) if (e.frame) e.frame->destroy();
+    g_model_env.clear();
+    g_model_parts.clear();
 }
 
 int RaceSubmit_RegisterModel(const Track::DffModel& model,
@@ -389,12 +414,13 @@ int RaceSubmit_RegisterModel(const Track::DffModel& model,
     if (!g_engine_up) return -1;
     TextureSource ts{ dicts, (int)ndicts };
     std::vector<std::uint32_t> atomic_mat;
+    std::vector<std::int32_t>  atomic_part;   // [rtex]
     // [D-S3-PROP] Tell the builder which handle this model is about to get, so
     // MASHED_PROP_VDUMP can select it by the SAME id as MASHED_LIBRW_ONLYPROP.
     // g_models.size() is the handle this call will return on success.
     SceneBuild_SetRegisteringHandle((int)g_models.size());
     rw::Clump* c = static_cast<rw::Clump*>(
-        BuildClump(model, ts, ambient, &atomic_mat));
+        BuildClump(model, ts, ambient, &atomic_mat, &atomic_part));
     SceneBuild_SetRegisteringHandle(-1);
     if (!c) { RLog("WARN: BuildClump failed -- model stays on the D3D9 path"); return -1; }
     RegisterUvAnim(c, atomic_mat, uv_rates, nmats);
@@ -403,6 +429,8 @@ int RaceSubmit_RegisterModel(const Track::DffModel& model,
     // regardless of how many copies are actually placed this frame. Instanced
     // models are drawn explicitly below instead.
     g_models.push_back(c);
+    g_model_parts.push_back(std::move(atomic_part));
+    g_model_env.emplace_back();
     RLog("model[%d] registered: atomics=%d uvanim=%d", (int)g_models.size() - 1,
          (int)c->countAtomics(),
          g_uvanim.empty() ? 0 : (int)g_uvanim.back().size());
@@ -414,6 +442,109 @@ void RaceSubmit_AddInstance(int handle, const float* m44) {
     Inst i; i.model = handle;
     for (int k = 0; k < 16; ++k) i.m[k] = m44[k];
     g_insts.push_back(i);
+}
+
+// [rtex] as above, plus the car's env coefficient and env frame matrix for this copy.
+void RaceSubmit_AddInstanceEnv(int handle, const float* m44, float env_coef,
+                               const float* env_m44) {
+    if (handle < 0 || !m44 || (std::size_t)handle >= g_models.size()) return;
+    Inst i; i.model = handle;
+    for (int k = 0; k < 16; ++k) i.m[k] = m44[k];
+    if (env_m44 && (std::size_t)handle < g_model_env.size() &&
+        !g_model_env[(std::size_t)handle].mats.empty()) {
+        i.fx = true;
+        i.env_coef = env_coef;
+        for (int k = 0; k < 16; ++k) i.env_m[k] = env_m44[k];
+    }
+    g_insts.push_back(i);
+}
+
+// [rtex] FUN_0041ecc0 @ 0x0041ecc0: every material with MatFX effect 4 (DUAL) gets the
+// dirt texture -- parts 0..3 / 0x21..0x24 the wheel one, the rest the body one
+// (CarDirtIsWheelPart). The two textures are unnamed C4444 rasters built from dirt.piz.
+int RaceSubmit_BindCarDirt(int handle,
+                           const std::uint8_t* body_bgra, std::uint32_t bw, std::uint32_t bh,
+                           const std::uint8_t* wheel_bgra, std::uint32_t ww, std::uint32_t wh,
+                           std::uint32_t filter_addressing) {
+    if (handle < 0 || (std::size_t)handle >= g_models.size()) return 0;
+    rw::Texture* body = static_cast<rw::Texture*>(
+        TextureFromBgra4444(body_bgra, bw, bh, filter_addressing));
+    rw::Texture* wheel = static_cast<rw::Texture*>(
+        TextureFromBgra4444(wheel_bgra, ww, wh, filter_addressing));
+    if (!body || !wheel) {
+        RLog("WARN: car dirt textures not built (body=%p wheel=%p)", (void*)body, (void*)wheel);
+        if (body) body->destroy();
+        if (wheel) wheel->destroy();
+        return 0;
+    }
+    rw::Clump* c = g_models[(std::size_t)handle];
+    const std::vector<std::int32_t>& parts = g_model_parts[(std::size_t)handle];
+    int bound = 0, ai = 0, nbody = 0, nwheel = 0;
+    FORLIST(lnk, c->atomics) {
+        rw::Atomic* a = rw::Atomic::fromClump(lnk);
+        const int part = ai < (int)parts.size() ? parts[(std::size_t)ai] : -1;
+        ++ai;
+        rw::Geometry* g = a->geometry;
+        if (!g) continue;
+        for (rw::int32 mi = 0; mi < g->matList.numMaterials; ++mi) {
+            rw::Material* m = g->matList.materials[mi];
+            rw::MatFX* fx = m ? rw::MatFX::get(m) : nullptr;
+            if (!fx || fx->getEffectIndex(rw::MatFX::DUAL) < 0) continue;
+            const bool w = CarDirtIsWheelPart(part);
+            fx->setDualTexture(w ? wheel : body);
+            ++bound; w ? ++nwheel : ++nbody;
+        }
+    }
+    body->destroy();    // the materials hold their own references (setDualTexture addRef)
+    wheel->destroy();
+    RLog("model[%d] car dirt bound: %d dual materials (%d body, %d wheel)", handle, bound,
+         nbody, nwheel);
+    return bound;
+}
+
+// [rtex] FUN_00420420 @ 0x00420420: for each atomic whose part code FUN_0041f360 lists,
+// MatFX on the atomic (FUN_0053fb70) and every material set to ENVMAP (FUN_0053fbb0(mat, 2))
+// with the env texture, a per-car frame and fbAlpha 0 (FUN_0053fd30(mat, tex, frame, 0, coef)).
+// The texture is the vehicle TXD's entry named by the vehicle table's +0x30 (`cargloss`).
+int RaceSubmit_SetupCarEnv(int handle, const Txd::Dictionary* dicts, std::size_t ndicts,
+                           const char* env_tex_name) {
+    if (handle < 0 || (std::size_t)handle >= g_models.size()) return 0;
+    rw::Texture* env = nullptr;
+    for (std::size_t d = 0; d < ndicts && !env; ++d)
+        for (std::uint32_t i = 0; i < dicts[d].count(); ++i)
+            if (_stricmp(dicts[d].texture(i).name, env_tex_name) == 0) {
+                env = static_cast<rw::Texture*>(TextureFromTxdTexture(dicts[d].texture(i)));
+                break;
+            }
+    if (!env) { RLog("WARN: car env texture '%s' not in the vehicle TXD", env_tex_name); return 0; }
+    ModelEnv& me = g_model_env[(std::size_t)handle];
+    if (!me.frame) me.frame = rw::Frame::create();
+    rw::Clump* c = g_models[(std::size_t)handle];
+    const std::vector<std::int32_t>& parts = g_model_parts[(std::size_t)handle];
+    int ai = 0, n = 0;
+    FORLIST(lnk, c->atomics) {
+        rw::Atomic* a = rw::Atomic::fromClump(lnk);
+        const int part = ai < (int)parts.size() ? parts[(std::size_t)ai] : -1;
+        ++ai;
+        if (!CarEnvIsEnvPart(part) || !a->geometry) continue;
+        rw::MatFX::enableEffects(a);
+        rw::Geometry* g = a->geometry;
+        for (rw::int32 mi = 0; mi < g->matList.numMaterials; ++mi) {
+            rw::Material* m = g->matList.materials[mi];
+            if (!m) continue;
+            rw::MatFX::setEffects(m, rw::MatFX::ENVMAP);
+            rw::MatFX* fx = rw::MatFX::get(m);
+            fx->setEnvTexture(env);
+            fx->setEnvFrame(me.frame);
+            fx->setEnvFBAlpha(0);
+            fx->setEnvCoefficient(0.f);
+            me.mats.push_back(m);
+            ++n;
+        }
+    }
+    env->destroy();
+    RLog("model[%d] car env set up: %d materials, texture '%s'", handle, n, env_tex_name);
+    return n;
 }
 
 namespace {
@@ -854,6 +985,21 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
             for (int k = 0; k < 16; ++k) mm[k] = in.m[k];
             mm[13] += s_lift;
             SetClumpTransform(c, mm);
+            // [rtex] this car's env coefficient and frame (FUN_00420340 per car per frame)
+            if (in.fx) {
+                ModelEnv& me = g_model_env[(std::size_t)in.model];
+                for (rw::Material* m : me.mats)
+                    if (rw::MatFX* fx = rw::MatFX::get(m)) fx->setEnvCoefficient(in.env_coef);
+                if (me.frame) {
+                    rw::Matrix* d = &me.frame->matrix;
+                    d->right.x = in.env_m[0];  d->right.y = in.env_m[1];  d->right.z = in.env_m[2];
+                    d->up.x    = in.env_m[4];  d->up.y    = in.env_m[5];  d->up.z    = in.env_m[6];
+                    d->at.x    = in.env_m[8];  d->at.y    = in.env_m[9];  d->at.z    = in.env_m[10];
+                    d->pos.x   = in.env_m[12]; d->pos.y   = in.env_m[13]; d->pos.z   = in.env_m[14];
+                    d->update();
+                    me.frame->updateObjects();
+                }
+            }
             // D-S3-7: does the transform actually reach the atomics? uploadMatrices
             // uses atomic->getFrame()->getLTM() (d3d9render.cpp:154), so THAT is
             // the number that matters -- not what we wrote into clump->frame.

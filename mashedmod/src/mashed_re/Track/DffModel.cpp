@@ -362,6 +362,10 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len) {
                 b.modulate_mat = geo.modmat;          // WS-E s2
                 b.geo_flags    = geo.flags;           // geomlight class-scope
                 b.part_id      = geo.part_id;         // [rtex]
+                {
+                    const float origin[3] = {0.f, 0.f, 0.f};
+                    FrameXform(frames, fi, origin, b.frame_pos);   // [rtex]
+                }
                 std::memcpy(b.abox, abox, sizeof(abox));
                 for (std::size_t i = 0; i < geo.tris.size() / 4; ++i) {
                     if (geo.nmats && geo.tris[i * 4] != mi) continue;

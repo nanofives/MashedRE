@@ -582,8 +582,10 @@ static bool ModelIsWaterAsset(const char* name) {
 
 void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
                  std::uint32_t ambient,
-                 std::vector<std::uint32_t>* out_atomic_mat) {
+                 std::vector<std::uint32_t>* out_atomic_mat,
+                 std::vector<std::int32_t>* out_atomic_part) {
     if (out_atomic_mat) out_atomic_mat->clear();
+    if (out_atomic_part) out_atomic_part->clear();
     // [geomlight water-scope] Model-level half of the ambient-fold scope key.
     // Evaluated once here, not per batch -- it depends only on the asset name.
     const bool water_asset = ModelIsWaterAsset(model.source_name);
@@ -741,6 +743,7 @@ void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
             // batches that produced none (nv==0 || nt==0, skipped above) must not
             // shift the mapping.
             if (out_atomic_mat) out_atomic_mat->push_back(b.material);
+            if (out_atomic_part) out_atomic_part->push_back(b.part_id);   // [rtex]
         }
     }
     return clump;

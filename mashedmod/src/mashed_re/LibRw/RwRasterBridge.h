@@ -39,6 +39,15 @@ void* RasterFromTxdTexture(const Txd::Texture& tex);
 // applied. Returns an rw::Texture* as void*, or nullptr.
 void* TextureFromTxdTexture(const Txd::Texture& tex);
 
+// [rtex] The original's raster alpha-flag rule for a raster this bridge built (1 = a base-mip
+// texel has alpha < 255, 0 = none), or -1 when the raster did not come through here.
+int RasterTexelAlpha(const void* raster);
+
+// [rtex] An unnamed C4444 rw::Texture (D3DFMT_A4R4G4B4) from a top-down BGRA image (the
+// car dirt PNGs), with an RwTexture filterAddressing dword applied. rw::Texture* as void*.
+void* TextureFromBgra4444(const std::uint8_t* bgra, std::uint32_t w, std::uint32_t h,
+                          std::uint32_t filter_addressing);
+
 // FNV-1a 32 of the raster's pixels READ BACK through rw::Raster::lock, emitted
 // in canonical R,G,B,A order (so the value is independent of the backend's
 // internal BGRA layout). Reading back rather than hashing the source is the

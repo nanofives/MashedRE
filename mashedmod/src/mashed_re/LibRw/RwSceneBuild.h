@@ -70,9 +70,13 @@ bool DualEnabled();
 void SceneBuild_SetRegisteringHandle(int handle);
 int  PropVDumpHandle();
 
+// [rtex] `out_atomic_part`, when non-null, receives each created atomic's part code
+// (DffBatch::part_id, the geometry's "0.tv_part_id" user data; -1 when absent), in the
+// same order as `out_atomic_mat`. RwRaceSubmit keys the car dirt / env set-up on it.
 void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
                  std::uint32_t ambient = 0,
-                 std::vector<std::uint32_t>* out_atomic_mat = nullptr);
+                 std::vector<std::uint32_t>* out_atomic_mat = nullptr,
+                 std::vector<std::int32_t>* out_atomic_part = nullptr);
 
 // E2'b step 2: build the Arctic world, render it once through librw from a
 // DETERMINISTIC overview camera derived from the world bbox, and dump the

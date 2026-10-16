@@ -61,6 +61,10 @@ struct DffBatch {
     // ("0.tv_part_id" on vehicles), which FUN_004b5190 @ 0x004b5190 reads off
     // atomic+0x18 (the geometry). -1 when the geometry has no int user data.
     std::int32_t part_id = -1;
+    // [rtex] the owning atomic's frame origin in model space (the frame chain applied to
+    // (0,0,0)). FUN_00420870 @ 0x00420870 keeps part 0x13's frame LTM position at car record
+    // +0x258, the point the env coefficient's distance fade is measured from.
+    float frame_pos[3] = {0.f, 0.f, 0.f};
 };
 
 class DffModel {

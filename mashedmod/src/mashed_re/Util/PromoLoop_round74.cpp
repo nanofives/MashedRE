@@ -30,21 +30,9 @@ extern "C" __declspec(dllexport) void __cdecl Fill6870b4(void) {
 }
 RH_ScopedInstall(Fill6870b4, 0x00453f30);
 
-// 0x00404e00
-extern "C" __declspec(dllexport) std::uint32_t __cdecl IdxPtr404e00(std::uint32_t p1) {
-    std::int32_t idx = *reinterpret_cast<std::int32_t*>(0x00639cc8u + p1 * 4u);   // [EAX*4+0x639cc8]
-    if (idx == -1) return 0;                                                       // CMP -1 / JNZ ; XOR EAX,EAX
-    return *reinterpret_cast<std::uint32_t*>(0x005ea0b8u + static_cast<std::uint32_t>(idx) * 4u);  // [EAX*4+0x5ea0b8]
-}
-RH_ScopedInstall(IdxPtr404e00, 0x00404e00);
-
-// 0x00404e20
-extern "C" __declspec(dllexport) std::uint32_t __cdecl IdxPtr404e20(std::uint32_t p1, std::uint32_t p2) {
-    std::int32_t idx = *reinterpret_cast<std::int32_t*>(0x00636c08u + (p1 * 0x4eu + p2) * 4u);  // IMUL 0x4e ; ADD ; [EAX*4+0x636c08]
-    if (idx == -1) return 0;
-    return *reinterpret_cast<std::uint32_t*>(0x005ea0c8u + static_cast<std::uint32_t>(idx) * 4u);  // [EAX*4+0x5ea0c8]
-}
-RH_ScopedInstall(IdxPtr404e20, 0x00404e20);
+// [rtex 2026-10-16] IdxPtr404e00 (FUN_00404e00) and IdxPtr404e20 (FUN_00404e20) moved,
+// unchanged for the .asi, to Vehicle/CarMaterialTables.cpp, which both targets compile: the
+// standalone's car dirt set-up calls them, and an RVA keeps one body (build.bat rva-lint).
 
 // 0x0041ede0
 extern "C" __declspec(dllexport) void __cdecl Flag0041ede0(std::int32_t p1, std::int32_t p2, std::int32_t p3) {

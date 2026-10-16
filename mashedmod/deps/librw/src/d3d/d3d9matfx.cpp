@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <math.h>	// MASHED LOCAL PATCH (P9): lrintf
 
 #define WITH_D3D
 #include "../rwbase.h"
@@ -41,6 +42,13 @@ static void *matfx_dual_all_VS;
 static void *matfx_dual_tex_PS;
 static void *matfx_dual_tex_uv0_PS;
 static void *matfx_dual_PS;
+// MASHED LOCAL PATCH (P9, rtex) -- MatFX ENVMAP as FUN_005412d0 draws it (shaders/matfx_envrw_*)
+static void *matfx_envrw_amb_VS;
+static void *matfx_envrw_amb_dir_VS;
+static void *matfx_envrw_all_VS;
+static void *matfx_envrw_tex_PS;
+static void *matfx_envrw_PS;
+static void *matfx_envrw_pass2_PS;
 
 // MASHED LOCAL PATCH (P9) -- one recorded draw (rw_drawrec_* hooks are null unless the
 // mashed_re per-draw recorder is installed).
@@ -187,6 +195,119 @@ uploadEnvMatrix(Frame *frame)
 	d3ddevice->SetVertexShaderConstantF(VSLOC_texMat, (float*)&envMtx, 4);
 }
 
+// MASHED LOCAL PATCH (P9, rtex 2026-10-16) -- the raster alpha flag RenderWare's driver keeps
+// at raster-ext +8 (FUN_004cfee0 @ 0x004cfee0 returns it) decides FUN_005412d0's single vs two
+// pass. librw flags every C8888 raster alpha, so mashed_re's raster bridge answers with the
+// original's rule (a base-mip texel with alpha < 255, verify/d1r1_20261016/texalpha_rule.txt).
+// Null -> librw's own flag.
+int32 (*rw_mashed_rasteralpha)(Raster *raster) = nil;
+static bool
+rasterAlphaRW(Texture *t)
+{
+	if(t == nil || t->raster == nil)
+		return false;
+	if(rw_mashed_rasteralpha)
+		return rw_mashed_rasteralpha(t->raster) != 0;
+	return GETD3DRASTEREXT(t->raster)->hasAlpha != 0;
+}
+
+static void
+pickDefaultVS(int32 lightBits)
+{
+	if((lightBits & VSLIGHT_MASK) == 0)
+		setVertexShader(default_amb_VS);
+	else if((lightBits & VSLIGHT_MASK) == VSLIGHT_DIRECT)
+		setVertexShader(default_amb_dir_VS);
+	else
+		setVertexShader(default_all_VS);
+}
+
+static void
+pickEnvVS(int32 lightBits)
+{
+	if((lightBits & VSLIGHT_MASK) == 0)
+		setVertexShader(matfx_envrw_amb_VS);
+	else if((lightBits & VSLIGHT_MASK) == VSLIGHT_DIRECT)
+		setVertexShader(matfx_envrw_amb_dir_VS);
+	else
+		setVertexShader(matfx_envrw_all_VS);
+}
+
+void uploadEnvMatrix(Frame *frame);
+
+// MASHED LOCAL PATCH (P9, rtex 2026-10-16) -- MatFX ENVMAP, ported from RenderWare's D3D9 env
+// renderer FUN_005412d0 @ 0x005412d0 (MASHED.exe), dispatched by FUN_00543500 on effect 2:
+//   - coefficient byte = ROUND(coef * [0x005cd04c] = 255.0) & 0xff; byte 0 or no env texture
+//     draws plain (FUN_00540340 at 0x00541b31)
+//   - single pass when (fbAlpha || opaque base) and the env raster has no alpha
+//     (0x005413ba..0x005413da): base * diffuse on stage 0 (0x00541466..), env on stage 1 with
+//     MULTIPLYADD(CURRENT, TEXTURE, TFACTOR = coef byte) (0x005417b7..0x005417dd) or ADD at
+//     byte 255 (0x005417eb..0x005417fe), drawn at 0x00541874. DAT_007dc618 (the MULTIPLYADD
+//     cap) is nonzero on this hardware: the original's body draws carry stage-1 COLOROP 25.
+//   - otherwise two draws: the plain draw (0x0054150b), then the env texture on STAGE 0
+//     (FUN_00541b50 at 0x005418df) with SRCBLEND 5 / DESTBLEND 2 (0x0054191c / 0x00541923),
+//     MODULATE(TEXTURE, TFACTOR) or SELECTARG1 at 255 (0x00541944..0x005419ba), LIGHTING 0,
+//     ZWRITE 0, FOGCOLOR 0 (0x005419f0..0x00541a19), drawn at 0x00541a4b, states restored.
+//   - [UNCERTAIN U-9697] an env raster WITH alpha takes the DAT_007dc600 branch
+//     (0x005413da..) -- not ported; such a material draws two-pass here.
+// Env texture coordinates: FUN_00541b50 @ 0x00541b50 sets TCI CAMERASPACENORMAL, COUNT2 and
+// (camera LTM x inverse(env frame LTM)) with the right row negated, translation zeroed,
+// times [0x005e4848] = {0.5,0,0,0, 0,-0.5,0,0, 0,0,1,0, 0.5,0.5,0,0}. librw's uploadEnvMatrix
+// gives inverse(env frame LTM) x {0.5,0,0; 0,-0.5,0; 0,0,1; 0.5,0.5,0} applied to the WORLD
+// normal; the right-row negation cancels the D3D view's x flip, so the u,v agree.
+static void
+matfxRender_EnvRW(InstanceDataHeader *header, InstanceData *inst, int32 lightBits,
+                  MatFX::Env *env, uint32 geoFlags)
+{
+	Material *m = inst->material;
+	int32 cb = (int32)lrintf(env->coefficient * 255.0f) & 0xff;
+	if(cb == 0 || env->tex == nil){
+		matfxRender_Default(header, inst, lightBits);
+		return;
+	}
+	bool base = (geoFlags & (Geometry::TEXTURED | Geometry::TEXTURED2)) && m->texture;
+	bool opaque = !inst->vertexAlpha && m->color.alpha == 255 &&
+	              (!base || !rasterAlphaRW(m->texture));
+	bool single = (env->fbAlpha || opaque) && !rasterAlphaRW(env->tex);
+
+	float params[4] = { cb / 255.0f, 0.0f, 0.0f, 0.0f };
+	d3ddevice->SetPixelShaderConstantF(2, params, 1);
+	uploadEnvMatrix(env->frame);
+	SetRenderState(VERTEXALPHA, inst->vertexAlpha || m->color.alpha != 255);
+	if(base)
+		d3d::setTexture(0, m->texture);
+
+	if(single){
+		pickEnvVS(lightBits);
+		d3d::setTexture(1, env->tex);
+		setPixelShader(base ? matfx_envrw_tex_PS : matfx_envrw_PS);
+		drawInstRec(header, inst, curAtomic, base ? m->texture : nil, env->tex);
+		d3d::setTexture(1, nil);
+		return;
+	}
+
+	// pass 1: the plain draw
+	pickDefaultVS(lightBits);
+	setPixelShader(base ? default_tex_PS : default_PS);
+	drawInstRec(header, inst, curAtomic, base ? m->texture : nil, nil);
+
+	// pass 2: env on stage 0, additive by its alpha, no depth write
+	uint32 srcb = GetRenderState(SRCBLEND), dstb = GetRenderState(DESTBLEND);
+	uint32 zw = GetRenderState(ZWRITEENABLE);
+	pickEnvVS(lightBits);
+	d3d::setTexture(0, env->tex);
+	setPixelShader(matfx_envrw_pass2_PS);
+	SetRenderState(VERTEXALPHA, 1);
+	SetRenderState(SRCBLEND, BLENDSRCALPHA);
+	SetRenderState(DESTBLEND, BLENDONE);
+	SetRenderState(ZWRITEENABLE, 0);
+	drawInstRec(header, inst, curAtomic, env->tex, nil);
+	SetRenderState(ZWRITEENABLE, zw);
+	SetRenderState(SRCBLEND, srcb);
+	SetRenderState(DESTBLEND, dstb);
+	SetRenderState(VERTEXALPHA, inst->vertexAlpha || m->color.alpha != 255);
+}
+
 void
 matfxRender_EnvMap(InstanceDataHeader *header, InstanceData *inst, int32 lightBits, MatFX::Env *env)
 {
@@ -276,8 +397,9 @@ matfxRenderCB_Shader(Atomic *atomic, InstanceDataHeader *header)
 			matfxRender_Default(header, inst, vsBits);
 		else switch(matfx->type){
 		case MatFX::ENVMAP:
+			// MASHED LOCAL PATCH (P9) -- FUN_00543500 effect 2 -> FUN_005412d0
 			if(normals)
-				matfxRender_EnvMap(header, inst, vsBits, &matfx->fx[0].env);
+				matfxRender_EnvRW(header, inst, vsBits, &matfx->fx[0].env, flags);
 			else
 				matfxRender_Default(header, inst, vsBits);
 			break;
@@ -382,6 +504,43 @@ createMatFXShaders(void)
 		matfx_dual_PS = createPixelShader((void*)PS_NAME);
 		assert(matfx_dual_PS);
 	}
+	// MASHED LOCAL PATCH (P9, rtex) -- MatFX ENVMAP (FUN_005412d0) shaders
+	{
+		static
+#include "shaders/matfx_envrw_amb_VS.h"
+		matfx_envrw_amb_VS = createVertexShader((void*)VS_NAME);
+		assert(matfx_envrw_amb_VS);
+	}
+	{
+		static
+#include "shaders/matfx_envrw_amb_dir_VS.h"
+		matfx_envrw_amb_dir_VS = createVertexShader((void*)VS_NAME);
+		assert(matfx_envrw_amb_dir_VS);
+	}
+	{
+		static
+#include "shaders/matfx_envrw_all_VS.h"
+		matfx_envrw_all_VS = createVertexShader((void*)VS_NAME);
+		assert(matfx_envrw_all_VS);
+	}
+	{
+		static
+#include "shaders/matfx_envrw_tex_PS.h"
+		matfx_envrw_tex_PS = createPixelShader((void*)PS_NAME);
+		assert(matfx_envrw_tex_PS);
+	}
+	{
+		static
+#include "shaders/matfx_envrw_PS.h"
+		matfx_envrw_PS = createPixelShader((void*)PS_NAME);
+		assert(matfx_envrw_PS);
+	}
+	{
+		static
+#include "shaders/matfx_envrw_pass2_PS.h"
+		matfx_envrw_pass2_PS = createPixelShader((void*)PS_NAME);
+		assert(matfx_envrw_pass2_PS);
+	}
 }
 
 void
@@ -416,6 +575,18 @@ destroyMatFXShaders(void)
 	matfx_dual_tex_uv0_PS = nil;
 	destroyPixelShader(matfx_dual_PS);
 	matfx_dual_PS = nil;
+	destroyVertexShader(matfx_envrw_amb_VS);
+	matfx_envrw_amb_VS = nil;
+	destroyVertexShader(matfx_envrw_amb_dir_VS);
+	matfx_envrw_amb_dir_VS = nil;
+	destroyVertexShader(matfx_envrw_all_VS);
+	matfx_envrw_all_VS = nil;
+	destroyPixelShader(matfx_envrw_tex_PS);
+	matfx_envrw_tex_PS = nil;
+	destroyPixelShader(matfx_envrw_PS);
+	matfx_envrw_PS = nil;
+	destroyPixelShader(matfx_envrw_pass2_PS);
+	matfx_envrw_pass2_PS = nil;
 }
 
 #endif
