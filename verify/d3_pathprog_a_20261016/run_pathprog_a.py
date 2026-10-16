@@ -92,6 +92,9 @@ ARMS.append(dict(n="X7_PZ_H", recipe="h4", knobs=["%s=7" % PUB, "%s=0.0035" % PZ
 # PREREG amendment A6
 for _k in (1, 4, 27, 26, 54, 57):
     ARMS.append(dict(n="X7_PZ_K%02d" % _k, recipe="fk", k=_k, knobs=["%s=7" % PUB, "%s=0.0035" % PZ]))
+# final-binary G-CTRL (the measurement-only knobs compiled in, all unset): F_DEF must equal G_DEF, F_OPTOUT must equal G_OPTOUT
+ARMS.append(dict(n="F_DEF", recipe="h4", knobs=[]))
+ARMS.append(dict(n="F_OPTOUT", recipe="h4", knobs=[NO_RP]))
 # arms added per PREREG are appended below this line
 
 
