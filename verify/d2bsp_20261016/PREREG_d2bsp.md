@@ -219,3 +219,14 @@ decide L's default by the same gates. Output `verify/d2bsp_20261016/rb2/`, base 
   dropped: on `34ea5b71` it was byte-identical to `D2_W` at equal line counts.
 - `B_{BASE,DEF,W}_K{0,1,26}`; collateral `H_DEF`, `H_W` against `H_BASE`.
 If any of L's gates fails here, L goes back to default OFF before the lane ends.
+
+## Amendment 5 (2026-10-16, orchestrator request after amendment-4 results; before these runs)
+
+Report arms only, no gate, no default change. Fix B = d2engage's full stack, `MASHED_POS_SEED`, `_WHEELS`, `_TRANS`,
+`_MODEL`, `_ORDER`, `_CONTACTS` (`Vehicle/PosModelKnobs.h:31-36`), all set to 1. On this build L is default ON, so:
+- `D2_B_1..3` = L + fix B (control: fix B without the walk, on this lane's build).
+- `D2_WB_1..3` = L + W + fix B (the requested arm: the walk with the full fix B).
+Same D2 recipe, base `10c18c59`, new exe `39ed4b9a`, output `rb2/`, each arm alone, re-run under 1600 lines. Scored by
+`score_d2.py` (three metrics against `d81a8df6`) and `a8_launch.py` (H1, `+0xb14` engagement d). Part 3 sets the
+solver's ring `+0x30` translation, which is the walk's query centre (`WheelContactSolver.cpp:151`), so W and fix B
+interact on the query itself. No direction is predicted.

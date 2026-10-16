@@ -25,6 +25,9 @@ STACK = {'DEF': [], 'BASE': [],
          'L0': ['MASHED_D2CHUNK', 'MASHED_D2CHUNK_FRAMEMS'], 'K': ['MASHED_D2CLS'],
          'WK': ['MASHED_D2BSP', 'MASHED_D2CLS'],
          # after a default flip: the opt-outs
+         # amendment 5: d2engage's full fix B, without and with the walk
+         'B': ['MASHED_POS_SEED', 'MASHED_POS_WHEELS', 'MASHED_POS_TRANS', 'MASHED_POS_MODEL', 'MASHED_POS_ORDER', 'MASHED_POS_CONTACTS'],
+         'WB': ['MASHED_D2BSP', 'MASHED_POS_SEED', 'MASHED_POS_WHEELS', 'MASHED_POS_TRANS', 'MASHED_POS_MODEL', 'MASHED_POS_ORDER', 'MASHED_POS_CONTACTS'],
          'NOW': ['MASHED_NO_D2BSP'], 'NOL': ['MASHED_NO_D2CHUNK'], 'NOWL': ['MASHED_NO_D2BSP', 'MASHED_NO_D2CHUNK']}
 D2BASE = {'MASHED_REAL_PHYSICS': '1', 'MASHED_RACE_DEMO': '1', 'MASHED_PLAY_DEMO': '1', 'MASHED_GOTO': '6',
           'MASHED_TRACK_SEL': '12', 'MASHED_CAR_SEL': '0', 'MASHED_DRIVE_HOLD': '1', 'MASHED_WIN_POS': 'primary-bl',
