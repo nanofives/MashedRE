@@ -3606,12 +3606,19 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
     // second real-time-keyed input survives the sim-clock fix in exe_main.cpp. The A/B
     // recipe is one run per configuration plus re/tools/…/firstdiff on the two traces:
     // the first differing FIELD names the channel. Writes nothing when unset.
+    //
+    // [d1r2 2026-10-16] MASHED_PLAYERTRACE_OUT=<path> moves the file off the CWD. Every
+    // worktree run chdirs to the main repo (MASHED_ROOT), so concurrent sessions appended
+    // to ONE player_trace.log and the G-CTRL ptrace hash read 91d73bac on a default build
+    // (lines from three PIDs interleaved). Unset = the old path, byte for byte.
     {
         static const bool s_ptrace = (std::getenv("MASHED_PLAYERTRACE") != nullptr);
+        static const char* s_ptpath = [] { const char* e = std::getenv("MASHED_PLAYERTRACE_OUT");
+                                           return (e && e[0]) ? e : "player_trace.log"; }();
         static long s_pf = 0;
         if (s_ptrace) {
             ++s_pf;
-            if (std::FILE* pf = std::fopen("player_trace.log", "a")) {
+            if (std::FILE* pf = std::fopen(s_ptpath, "a")) {
                 // [U-9156 2026-09-30] a144/a148/a14c = the persistent angular
                 // accumulator ESI[0x51..0x53] that ContactFixup writes at
                 // 0x0046f552/558/55e and BodyOrientationIntegrate integrates
@@ -3666,8 +3673,10 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
     UpdateRace(in.dt);
     {
         static const bool s_ptrace2 = (std::getenv("MASHED_PLAYERTRACE") != nullptr);
+        static const char* s_ptpath2 = [] { const char* e = std::getenv("MASHED_PLAYERTRACE_OUT");
+                                            return (e && e[0]) ? e : "player_trace.log"; }();
         if (s_ptrace2) {
-            if (std::FILE* pf = std::fopen("player_trace.log", "a")) {
+            if (std::FILE* pf = std::fopen(s_ptpath2, "a")) {
                 const int gi = race_[0].gate;
                 const float* gc = gates_.empty() ? nullptr
                     : gates_[static_cast<std::size_t>(gi) % gates_.size()].center;
