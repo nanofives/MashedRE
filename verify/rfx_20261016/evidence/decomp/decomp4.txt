@@ -1,0 +1,565 @@
+// FUN_00476d00 @ 0x00476d00  size=238  (MASHED.exe)
+// undefined FUN_00476d00(void)
+// callees: (none)
+// callers: FUN_00413cb0@0x00413cb0, FUN_00418e70@0x00418e70, FUN_0041faf0@0x0041faf0, FUN_0041fcc0@0x0041fcc0, FUN_004212b0@0x004212b0, FUN_00454cd0@0x00454cd0, FUN_00456140@0x00456140, FUN_00457100@0x00457100, FUN_00458080@0x00458080, FUN_00459000@0x00459000, FUN_0045a190@0x0045a190, FUN_00475c10@0x00475c10, FUN_00475f90@0x00475f90, FUN_00486830@0x00486830, FUN_00487d00@0x00487d00, FUN_00489500@0x00489500, FUN_0048b440@0x0048b440, FUN_0048b7c0@0x0048b7c0, FUN_0048d140@0x0048d140, FUN_0048d360@0x0048d360, FUN_0048d540@0x0048d540, FUN_0048d720@0x0048d720, FUN_0048d900@0x0048d900, FUN_0048db20@0x0048db20, FUN_0048dd40@0x0048dd40, FUN_0048df60@0x0048df60, FUN_0048e180@0x0048e180, FUN_0048e360@0x0048e360, FUN_0048f8a0@0x0048f8a0, FUN_0048f9f0@0x0048f9f0, FUN_0048fb10@0x0048fb10, FUN_00490500@0x00490500
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C1 2026-05-02] Takes param_1 as a pointer to a pool-entry struct. */
+
+void FUN_00476d00(int param_1)
+
+{
+  int iVar1;
+  int iVar2;
+  undefined4 *puVar3;
+  undefined4 *puVar4;
+  
+  if (*(int *)(param_1 + 0xc) < *(int *)(param_1 + 8)) {
+    if (*(int *)(param_1 + 0x10) != 0) {
+      puVar3 = (undefined4 *)(*(int *)(param_1 + 0x10) + *(int *)(param_1 + 0xc) * 0xc);
+      *puVar3 = DAT_00692528;
+      puVar3[1] = DAT_0069252c;
+      puVar3[2] = DAT_00692530;
+    }
+    iVar2 = *(int *)(param_1 + 0x14);
+    if (iVar2 != 0) {
+      iVar1 = *(int *)(param_1 + 0xc);
+      *(undefined4 *)(iVar2 + iVar1 * 8) = DAT_006924dc;
+      *(undefined4 *)(iVar2 + 4 + iVar1 * 8) = DAT_006924e0;
+    }
+    if (*(int *)(param_1 + 0x18) != 0) {
+      *(undefined4 *)(*(int *)(param_1 + 0x18) + *(int *)(param_1 + 0xc) * 4) = DAT_00692554;
+    }
+    if (*(int *)(param_1 + 0x1c) != 0) {
+      puVar3 = &DAT_006924e8;
+      puVar4 = (undefined4 *)(*(int *)(param_1 + 0xc) * 0x40 + *(int *)(param_1 + 0x1c));
+      for (iVar2 = 0x10; iVar2 != 0; iVar2 = iVar2 + -1) {
+        *puVar4 = *puVar3;
+        puVar3 = puVar3 + 1;
+        puVar4 = puVar4 + 1;
+      }
+    }
+    if (*(int *)(param_1 + 0x20) != 0) {
+      *(undefined4 *)(*(int *)(param_1 + 0x20) + *(int *)(param_1 + 0xc) * 4) = _DAT_006924d8;
+    }
+    if (*(int *)(param_1 + 0x24) != 0) {
+      puVar3 = (undefined4 *)(*(int *)(param_1 + 0xc) * 0x10 + *(int *)(param_1 + 0x24));
+      *puVar3 = DAT_00692598;
+      puVar3[1] = DAT_0069259c;
+      puVar3[2] = DAT_006925a0;
+      puVar3[3] = DAT_006925a4;
+    }
+    if (*(int *)(param_1 + 0x28) != 0) {
+      puVar3 = &DAT_00692534;
+      puVar4 = (undefined4 *)(*(int *)(param_1 + 0xc) * 0x20 + *(int *)(param_1 + 0x28));
+      for (iVar2 = 8; iVar2 != 0; iVar2 = iVar2 + -1) {
+        *puVar4 = *puVar3;
+        puVar3 = puVar3 + 1;
+        puVar4 = puVar4 + 1;
+      }
+    }
+    *(int *)(param_1 + 0xc) = *(int *)(param_1 + 0xc) + 1;
+  }
+  return;
+}
+
+
+
+// FUN_004769f0 @ 0x004769f0  size=30  (MASHED.exe)
+// undefined FUN_004769f0(void)
+// callees: (none)
+// callers: FUN_00413cb0@0x00413cb0, FUN_00418e70@0x00418e70, FUN_0041faf0@0x0041faf0, FUN_0041fcc0@0x0041fcc0, FUN_004212b0@0x004212b0, FUN_00454cd0@0x00454cd0, FUN_00456140@0x00456140, FUN_00457100@0x00457100, FUN_00458080@0x00458080, FUN_00459000@0x00459000, FUN_0045a190@0x0045a190, FUN_00475c10@0x00475c10, FUN_00475f90@0x00475f90, FUN_00486830@0x00486830, FUN_00487d00@0x00487d00, FUN_00489500@0x00489500, FUN_0048b440@0x0048b440, FUN_0048b7c0@0x0048b7c0, FUN_0048d140@0x0048d140, FUN_0048d360@0x0048d360, FUN_0048d540@0x0048d540, FUN_0048d720@0x0048d720, FUN_0048d900@0x0048d900, FUN_0048db20@0x0048db20, FUN_0048dd40@0x0048dd40, FUN_0048df60@0x0048df60, FUN_0048e180@0x0048e180, FUN_0048e360@0x0048e360, FUN_0048f8a0@0x0048f8a0, FUN_0048f9f0@0x0048f9f0, FUN_0048fb10@0x0048fb10, FUN_00490500@0x00490500
+
+/* [C1 2026-05-02] If param_1 is NULL, writes DAT_00613290 into DAT_00692554 (default colour/alpha).
+    */
+
+void FUN_004769f0(undefined4 *param_1)
+
+{
+  if (param_1 == (undefined4 *)0x0) {
+    DAT_00692554 = DAT_00613290;
+    return;
+  }
+  DAT_00692554 = *param_1;
+  return;
+}
+
+
+
+// FUN_00476a10 @ 0x00476a10  size=30  (MASHED.exe)
+// undefined FUN_00476a10(void)
+// callees: (none)
+// callers: FUN_0041faf0@0x0041faf0, FUN_0041fcc0@0x0041fcc0, FUN_00457100@0x00457100, FUN_00475c10@0x00475c10, FUN_00486830@0x00486830, FUN_00487d00@0x00487d00, FUN_0048b7c0@0x0048b7c0
+
+/* [C1 2026-05-19] Copies 16 dwords (64 bytes) from `param_1` (default `&DAT_00692558` if null) into
+   `&DAT_006924e8`. */
+
+void FUN_00476a10(undefined4 *param_1)
+
+{
+  int iVar1;
+  undefined4 *puVar2;
+  
+  if (param_1 == (undefined4 *)0x0) {
+    param_1 = &DAT_00692558;
+  }
+  puVar2 = &DAT_006924e8;
+  for (iVar1 = 0x10; iVar1 != 0; iVar1 = iVar1 + -1) {
+    *puVar2 = *param_1;
+    param_1 = param_1 + 1;
+    puVar2 = puVar2 + 1;
+  }
+  return;
+}
+
+
+
+// FUN_004770c0 @ 0x004770c0  size=801  (MASHED.exe)
+// undefined FUN_004770c0(void)
+// callees: FUN_00474db0@0x00474db0, FUN_00476ae0@0x00476ae0, FUN_00476b30@0x00476b30, FUN_00476b90@0x00476b90, FUN_00476be0@0x00476be0, FUN_00476c10@0x00476c10, FUN_00476c60@0x00476c60, FUN_004b6520@0x004b6520, FUN_004c0b30@0x004c0b30, FUN_004e7e30@0x004e7e30, FUN_004e8090@0x004e8090, FUN_00534b60@0x00534b60
+// callers: FUN_00413b80@0x00413b80, FUN_00419ff0@0x00419ff0, FUN_0041a060@0x0041a060, FUN_0041eaa0@0x0041eaa0, FUN_004210b0@0x004210b0, FUN_00449b30@0x00449b30, FUN_00449bb0@0x00449bb0, FUN_00456760@0x00456760, FUN_004587a0@0x004587a0, FUN_00459290@0x00459290, FUN_00475a00@0x00475a00, FUN_00476390@0x00476390, FUN_004862d0@0x004862d0, FUN_00487150@0x00487150, FUN_004892c0@0x004892c0, FUN_0048ae00@0x0048ae00, FUN_0048cee0@0x0048cee0, FUN_0048eac0@0x0048eac0
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C2 2026-06-02] Particle/effect-system initializer. Args: `param_1` = effect struct (≥13
+   dwords), `param_2` = caller flags bitfield… */
+
+void FUN_004770c0(uint *param_1,uint param_2,uint param_3,undefined4 param_4)
+
+{
+  uint *puVar1;
+  undefined4 uVar2;
+  uint uVar3;
+  
+  uVar3 = 0x10000000;
+  if (param_2 == 0) {
+    param_2 = 0x807;
+  }
+  if ((param_2 & 1) != 0) {
+    uVar3 = 0x10000001;
+  }
+  if ((param_2 & 2) != 0) {
+    uVar3 = uVar3 | 4;
+  }
+  if ((param_2 & 4) != 0) {
+    uVar3 = uVar3 | 2;
+  }
+  if ((param_2 & 8) != 0) {
+    uVar3 = uVar3 | 8;
+  }
+  if ((param_2 & 0x10) != 0) {
+    uVar3 = uVar3 | 0x20;
+  }
+  if ((param_2 & 0x20) != 0) {
+    uVar3 = uVar3 | 0x80;
+  }
+  if ((param_2 & 0x40) != 0) {
+    uVar3 = uVar3 | 0x100;
+  }
+  if ((param_2 & 0x200) != 0) {
+    uVar3 = uVar3 | 0x8000;
+  }
+  if ((param_2 & 0x400) != 0) {
+    uVar3 = uVar3 | 0x20000;
+  }
+  if ((param_2 & 0x800) != 0) {
+    uVar3 = uVar3 | 0x80000;
+  }
+  if ((param_2 & 0x1000) != 0) {
+    uVar3 = uVar3 | 0x100000;
+  }
+  FUN_004b6520(param_1,0x40);
+  uVar3 = FUN_00534b60(param_3,uVar3,0);
+  param_1[1] = uVar3;
+  DAT_00692564 = DAT_00692564 | 0x20003;
+  _DAT_00692580 = 0x3f800000;
+  _DAT_0069256c = 0x3f800000;
+  DAT_00692558 = 0x3f800000;
+  _DAT_00692568 = 0;
+  _DAT_00692560 = 0;
+  DAT_0069255c = 0;
+  _DAT_0069257c = 0;
+  _DAT_00692578 = 0;
+  _DAT_00692570 = 0;
+  _DAT_00692590 = 0;
+  _DAT_0069258c = 0;
+  _DAT_00692588 = 0;
+  *param_1 = param_2;
+  if ((char)param_2 < '\0') {
+    FUN_00476ae0(param_1,0);
+  }
+  if ((param_2 & 0x100) != 0) {
+    FUN_00476b30(param_1,0);
+  }
+  if ((param_2 & 0x200) != 0) {
+    FUN_00476b90(param_1,0);
+  }
+  if ((param_2 & 0x400) != 0) {
+    FUN_00476be0(param_1,0);
+  }
+  if ((param_2 & 0x800) != 0) {
+    FUN_00476c10(param_1,0);
+  }
+  if ((param_2 & 0x1000) != 0) {
+    FUN_00476c60(param_1,0);
+  }
+  FUN_004e8090(**(undefined4 **)(*(int *)(param_1[1] + 0x18) + 0x20),param_4);
+  *(undefined4 *)(*(int *)(param_1[1] + DAT_007dc57c) + 0xac) = 1;
+  *(undefined4 *)(*(int *)(param_1[1] + DAT_007dc57c) + 0xa4) = DAT_006132c4;
+  *(undefined4 *)(*(int *)(param_1[1] + DAT_007dc57c) + 0xa8) = DAT_006132c8;
+  puVar1 = (uint *)(*(int *)(param_1[1] + DAT_007dc57c) + 0x40);
+  *puVar1 = *puVar1 | 0x10000000;
+  puVar1 = (uint *)(*(int *)(param_1[1] + DAT_007dc57c) + 0x40);
+  *puVar1 = *puVar1 | 0x800000;
+  *(undefined4 *)(*(int *)(param_1[1] + DAT_007dc57c) + 4) = 0;
+  uVar2 = FUN_004c0b30();
+  FUN_004e7e30(param_1[1],uVar2);
+  param_1[2] = param_3;
+  if ((param_2 & 1) != 0) {
+    uVar3 = FUN_00474db0(param_3,0xc);
+    param_1[4] = uVar3;
+  }
+  if ((param_2 & 2) != 0) {
+    uVar3 = FUN_00474db0(param_3,8);
+    param_1[5] = uVar3;
+  }
+  if ((param_2 & 4) != 0) {
+    uVar3 = FUN_00474db0(param_3,4);
+    param_1[6] = uVar3;
+  }
+  if ((param_2 & 8) != 0) {
+    uVar3 = FUN_00474db0(param_3,0x40);
+    param_1[7] = uVar3;
+  }
+  if ((param_2 & 0x10) != 0) {
+    uVar3 = FUN_00474db0(param_3,4);
+    param_1[8] = uVar3;
+  }
+  if ((param_2 & 0x20) != 0) {
+    uVar3 = FUN_00474db0(param_3 * 2,8);
+    param_1[9] = uVar3;
+  }
+  if ((param_2 & 0x40) != 0) {
+    uVar3 = FUN_00474db0(param_3 * 4,8);
+    param_1[10] = uVar3;
+  }
+  param_1[0xb] = 0;
+  param_1[0xc] = 0;
+  return;
+}
+
+
+
+// FUN_00476cb0 @ 0x00476cb0  size=68  (MASHED.exe)
+// undefined FUN_00476cb0(void)
+// callees: (none)
+// callers: FUN_00413b80@0x00413b80, FUN_0041eaa0@0x0041eaa0, FUN_00456760@0x00456760, FUN_00459290@0x00459290, FUN_00476390@0x00476390, FUN_004862d0@0x004862d0, FUN_00487150@0x00487150, FUN_004892c0@0x004892c0, FUN_004893a0@0x004893a0, FUN_0048cee0@0x0048cee0
+
+/* [C2 2026-06-02] Particle/effect-object two-field + flag setter (control-flow complete): */
+
+void FUN_00476cb0(int param_1,undefined4 param_2,undefined4 param_3)
+
+{
+  uint *puVar1;
+  
+  *(undefined4 *)(*(int *)(DAT_007dc57c + *(int *)(param_1 + 4)) + 0xa4) = param_2;
+  *(undefined4 *)(*(int *)(DAT_007dc57c + *(int *)(param_1 + 4)) + 0xa8) = param_3;
+  puVar1 = (uint *)(*(int *)(DAT_007dc57c + *(int *)(param_1 + 4)) + 0x40);
+  *puVar1 = *puVar1 | 0x10000000;
+  return;
+}
+
+
+
+// FUN_004768c0 @ 0x004768c0  size=211  (MASHED.exe)
+// undefined FUN_004768c0(void)
+// callees: FUN_004b6520@0x004b6520, FUN_004c0c20@0x004c0c20, FUN_004e6920@0x004e6920, FUN_004e7e30@0x004e7e30
+// callers: FUN_00413bb0@0x00413bb0, FUN_00418f40@0x00418f40, FUN_004196f0@0x004196f0, FUN_0041ffb0@0x0041ffb0, FUN_004210f0@0x004210f0, FUN_004568a0@0x004568a0, FUN_00458880@0x00458880, FUN_004593b0@0x004593b0, FUN_00475d90@0x00475d90, FUN_00475ea0@0x00475ea0, FUN_00485e10@0x00485e10, FUN_00486350@0x00486350, FUN_00487140@0x00487140, FUN_004898d0@0x004898d0, FUN_0048af70@0x0048af70, FUN_0048cf70@0x0048cf70, FUN_0048fdd0@0x0048fdd0
+
+/* [C1 2026-05-19] **Sprite-batch / particle-batch destroy** — releases all RW resources owned by
+   a 0x40-byte batch descriptor at… */
+
+void FUN_004768c0(int param_1)
+
+{
+  undefined4 uVar1;
+  
+  uVar1 = *(undefined4 *)(*(int *)(param_1 + 4) + 4);
+  FUN_004e7e30(*(int *)(param_1 + 4),0);
+  FUN_004c0c20(uVar1);
+  FUN_004e6920(*(undefined4 *)(param_1 + 4));
+  if (*(int *)(param_1 + 0x10) != 0) {
+    (**(code **)(DAT_007d3ff8 + 0x10c))(*(int *)(param_1 + 0x10));
+  }
+  if (*(int *)(param_1 + 0x14) != 0) {
+    (**(code **)(DAT_007d3ff8 + 0x10c))(*(int *)(param_1 + 0x14));
+  }
+  if (*(int *)(param_1 + 0x18) != 0) {
+    (**(code **)(DAT_007d3ff8 + 0x10c))(*(int *)(param_1 + 0x18));
+  }
+  if (*(int *)(param_1 + 0x1c) != 0) {
+    (**(code **)(DAT_007d3ff8 + 0x10c))(*(int *)(param_1 + 0x1c));
+  }
+  if (*(int *)(param_1 + 0x20) != 0) {
+    (**(code **)(DAT_007d3ff8 + 0x10c))(*(int *)(param_1 + 0x20));
+  }
+  if (*(int *)(param_1 + 0x24) != 0) {
+    (**(code **)(DAT_007d3ff8 + 0x10c))(*(int *)(param_1 + 0x24));
+  }
+  if (*(int *)(param_1 + 0x28) != 0) {
+    (**(code **)(DAT_007d3ff8 + 0x10c))(*(int *)(param_1 + 0x28));
+  }
+  FUN_004b6520(param_1,0x40);
+  return;
+}
+
+
+
+// FUN_00534b60 @ 0x00534b60  size=402  (MASHED.exe)
+// undefined FUN_00534b60(void)
+// callees: FUN_00534d00@0x00534d00
+// callers: FUN_004770c0@0x004770c0, FUN_004880a0@0x004880a0, FUN_004881d0@0x004881d0, FUN_00489dc0@0x00489dc0, FUN_00491c00@0x00491c00
+
+/* [C1 2026-05-06] Three explicit parameters: param_1 (undefined4), param_2 (uint flags), param_3
+   (undefined4). */
+
+void FUN_00534b60(undefined4 param_1,uint param_2,undefined4 param_3)
+
+{
+  byte bVar1;
+  uint uVar2;
+  uint uVar3;
+  uint uVar4;
+  uint uVar5;
+  uint uVar6;
+  bool bVar7;
+  bool bVar8;
+  bool bVar9;
+  
+  bVar1 = (byte)param_2;
+  bVar7 = (bVar1 & 1) == 1;
+  bVar8 = (bVar1 & 8) == 8;
+  bVar9 = (bVar1 & 0x20) == 0x20;
+  uVar2 = param_2 & 0x100;
+  uVar3 = param_2 & 0x20000;
+  uVar4 = param_2 & 0x40000;
+  uVar5 = param_2 & 0x80000;
+  uVar6 = param_2 & 0x100000;
+  if ((bVar8) && ((param_2 & 0x8000) == 0x8000)) {
+    param_2 = 0x8000;
+  }
+  if ((bVar9) && (uVar3 == 0x20000)) {
+    param_2 = param_2 & 0x20000;
+  }
+  if (((bVar1 & 0x40) == 0x40) && (uVar4 == 0x40000)) {
+    param_2 = param_2 & 0x40000;
+  }
+  if (((bVar1 & 0x80) == 0x80) && (uVar5 == 0x80000)) {
+    param_2 = param_2 & 0x80000;
+  }
+  if ((uVar2 == 0x100) && (uVar6 == 0x100000)) {
+    param_2 = param_2 & 0x100000;
+  }
+  if (bVar8) {
+    if (bVar7) {
+      param_2 = param_2 & 0xfffffffe;
+    }
+    if ((bVar1 & 4) == 4) {
+      param_2 = param_2 & 0xfffffffb;
+    }
+    if (bVar9) {
+      param_2 = param_2 & 0xffffffdf;
+    }
+  }
+  if ((!bVar8) && (!bVar7)) {
+    param_2 = param_2 | 1;
+  }
+  if ((param_2 & 0x30000000) == 0) {
+    param_2 = param_2 | 0x10000000;
+  }
+  FUN_00534d00(param_1,param_2,param_3,&DAT_00623c78);
+  return;
+}
+
+
+
+// 0x00536129: ERROR no function at or containing 0x00536129
+//   block: .text r-x
+//   at: undefined bytes (never disassembled)
+//   bytes: 8b 54 24 14 52 6a 09 e8 4b f3 f9 ff 8b 45 64 83
+//   xrefs: (none)
+
+// FUN_005c9d00 @ 0x005c9d00  size=3  (MASHED.exe)
+// undefined FUN_005c9d00(void)
+// callees: (none)
+// callers: FUN_00409a80@0x00409a80, FUN_00487d70@0x00487d70, FUN_00492370@0x00492370, FUN_004929d0@0x004929d0, FUN_00492d30@0x00492d30, FUN_00493710@0x00493710, FUN_0052e6c0@0x0052e6c0, FUN_00549970@0x00549970, FUN_0054a030@0x0054a030, FUN_0054a0f0@0x0054a0f0, FUN_005b66c0@0x005b66c0
+
+/* [C1 2026-05-02] Returns literal 0 (undefined4). No other operations. */
+
+undefined4 FUN_005c9d00(void)
+
+{
+  return 0;
+}
+
+
+
+// FUN_00420050 @ 0x00420050  size=474  (MASHED.exe)
+// undefined FUN_00420050(void)
+// callees: FUN_0041f8f0@0x0041f8f0, FUN_0041faf0@0x0041faf0, FUN_0041fcc0@0x0041fcc0, FUN_004228f0@0x004228f0, FUN_00426060@0x00426060, FUN_004260c0@0x004260c0, FUN_004c19f0@0x004c19f0, FUN_004c1a00@0x004c1a00, FUN_004c1b40@0x004c1b40, FUN_004e4320@0x004e4320, FUN_004e4350@0x004e4350, FUN_004e4900@0x004e4900, FUN_004e6680@0x004e6680
+// callers: FUN_00410b30@0x00410b30
+
+/* [C2 2026-05-17] Per-player full render dispatcher. Indexed into the per-player struct array at
+   `DAT_0063dc38` (stride… */
+
+void FUN_00420050(int param_1,undefined4 param_2)
+
+{
+  uint uVar1;
+  int iVar2;
+  undefined4 uVar3;
+  int iVar4;
+  float fStack_20;
+  float fStack_1c;
+  float fStack_18;
+  float fStack_14;
+  float fStack_10;
+  float fStack_c;
+  float fStack_8;
+  float fStack_4;
+  
+  iVar4 = param_1 * 0x2ac;
+  if (((&DAT_0063dc74)[iVar4] & 8) == 0) {
+    return;
+  }
+  iVar2 = FUN_004c1b40(param_2,&DAT_0063dc38 + iVar4);
+  if (iVar2 == 0) {
+    return;
+  }
+  *(undefined4 *)(&DAT_0063dc7c + iVar4) = param_2;
+  FUN_004c19f0(param_2);
+  uVar3 = FUN_00426060(param_2);
+  FUN_004e4350(uVar3);
+  if ((DAT_00636acc == 0) && (iVar2 = FUN_004260c0(), iVar2 != 0)) {
+    FUN_0041f8f0();
+  }
+  FUN_0041faf0(param_2);
+  FUN_0041fcc0(param_2);
+  uVar3 = FUN_00426060(param_2);
+  FUN_004e4320(uVar3);
+  FUN_004c1a00(param_2);
+  if (DAT_0063d850 != 0) {
+    fStack_20 = *(float *)(DAT_0063d850 + 0x18);
+    fStack_10 = fStack_20 * *(float *)(&DAT_0063dc64 + iVar4);
+    fStack_1c = *(float *)(DAT_0063d850 + 0x1c);
+    fStack_18 = *(float *)(DAT_0063d850 + 0x20);
+    fStack_14 = *(float *)(DAT_0063d850 + 0x24);
+    fStack_c = fStack_1c * *(float *)(&DAT_0063dc64 + iVar4);
+    fStack_8 = fStack_18 * *(float *)(&DAT_0063dc64 + iVar4);
+    fStack_4 = fStack_14 * *(float *)(&DAT_0063dc64 + iVar4);
+    FUN_004e4900(DAT_0063d850,&fStack_10);
+  }
+  FUN_004e6680(*(undefined4 *)(&DAT_0063dc4c + iVar4));
+  uVar1 = *(uint *)(&DAT_0063dc74 + iVar4);
+  if ((uVar1 & 0x400) != 0) goto LAB_004201d7;
+  if (((uVar1 & 0x10) == 0) && ((uVar1 & 0x1000) == 0)) {
+    if (*(int *)(&DAT_0063dc78 + iVar4) == 0) {
+      iVar2 = *(int *)(&DAT_0063da18 + iVar4);
+    }
+    else {
+      if (*(int *)(&DAT_0063dc78 + iVar4) != 1) goto LAB_004201a3;
+      iVar2 = *(int *)(&DAT_0063da9c + iVar4);
+    }
+    if (iVar2 != 0) {
+      (**(code **)(iVar2 + 0x48))(iVar2);
+    }
+  }
+LAB_004201a3:
+  if (((*(uint *)(&DAT_0063dc74 + iVar4) & 0x20) == 0) &&
+     ((*(uint *)(&DAT_0063dc74 + iVar4) & 0x2000) == 0)) {
+    if (*(int *)(&DAT_0063dc78 + iVar4) == 0) {
+      iVar4 = *(int *)(&DAT_0063da1c + iVar4);
+    }
+    else {
+      if (*(int *)(&DAT_0063dc78 + iVar4) != 1) goto LAB_004201d7;
+      iVar4 = *(int *)(&DAT_0063daa0 + iVar4);
+    }
+    if (iVar4 != 0) {
+      (**(code **)(iVar4 + 0x48))(iVar4);
+    }
+  }
+LAB_004201d7:
+  if (DAT_0063d850 != 0) {
+    FUN_004e4900(DAT_0063d850,&fStack_20);
+  }
+  if ((DAT_00636acc == 0) && (iVar4 = FUN_004260c0(), iVar4 != 0)) {
+    (**(code **)(DAT_007d3ff8 + 0x20))(8,0);
+    FUN_004228f0(param_1,param_2);
+    (**(code **)(DAT_007d3ff8 + 0x20))(8,1);
+  }
+  return;
+}
+
+
+
+// FUN_0040bb30 @ 0x0040bb30  size=21  (MASHED.exe)
+// undefined FUN_0040bb30(void)
+// callees: FUN_004c5c00@0x004c5c00
+// callers: FUN_00402750@0x00402750, FUN_00407800@0x00407800, FUN_0040bbb0@0x0040bbb0, FUN_0040cda0@0x0040cda0, FUN_00412890@0x00412890, FUN_00413b80@0x00413b80, FUN_00419ff0@0x00419ff0, FUN_0041a060@0x0041a060, FUN_0041eaa0@0x0041eaa0, FUN_004210b0@0x004210b0, FUN_00449b30@0x00449b30, FUN_00449bb0@0x00449bb0, FUN_00456760@0x00456760, FUN_004587a0@0x004587a0, FUN_00459290@0x00459290, FUN_00476390@0x00476390, FUN_00477e40@0x00477e40, FUN_00485d90@0x00485d90, FUN_004862d0@0x004862d0, FUN_0048ae00@0x0048ae00, FUN_0048cee0@0x0048cee0, FUN_0048eac0@0x0048eac0
+
+/* [C1 2026-05-02] Takes one `undefined4` argument `param_1`. */
+
+void FUN_0040bb30(undefined4 param_1)
+
+{
+  FUN_004c5c00(DAT_0063b8f8,param_1);
+  return;
+}
+
+
+
+// FUN_00476440 @ 0x00476440  size=147  (MASHED.exe)
+// undefined FUN_00476440(void)
+// callees: FUN_00475f90@0x00475f90, FUN_00476df0@0x00476df0
+// callers: FUN_0040ce00@0x0040ce00, FUN_0040fc00@0x0040fc00
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C1 2026-06-01] `void FUN_00476440(void)` — per-frame timed-effect update + buffer flush. Fully
+   read (146 bytes). */
+
+void FUN_00476440(void)
+
+{
+  float fVar1;
+  float *pfVar2;
+  undefined *puVar3;
+  
+  pfVar2 = (float *)&DAT_0069175c;
+  do {
+    if (pfVar2[2] != 0.0) {
+      if (*pfVar2 <= pfVar2[-1]) {
+        FUN_00475f90(pfVar2 + -0x31);
+        fVar1 = _DAT_007f100c + *pfVar2;
+        *pfVar2 = fVar1;
+        pfVar2[1] = fVar1 / pfVar2[-1];
+      }
+      else {
+        pfVar2[2] = 0.0;
+      }
+    }
+    pfVar2 = pfVar2 + 0x36;
+  } while ((int)pfVar2 < 0x6924dc);
+  puVar3 = &DAT_00691618;
+  do {
+    FUN_00476df0(puVar3);
+    puVar3 = puVar3 + 0x40;
+  } while ((int)puVar3 < 0x691698);
+  puVar3 = &DAT_00692418;
+  do {
+    FUN_00476df0(puVar3);
+    puVar3 = puVar3 + 0x40;
+  } while ((int)puVar3 < 0x692498);
+  FUN_00476df0(&DAT_00692498);
+  return;
+}
+
+

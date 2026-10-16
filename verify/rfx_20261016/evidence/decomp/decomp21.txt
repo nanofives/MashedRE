@@ -1,0 +1,142 @@
+// FUN_0040b8e0 @ 0x0040b8e0  size=66  (MASHED.exe)
+// undefined FUN_0040b8e0(void)
+
+/* [C2 2026-06-03] Body `0x0040b8e0..0x0040b921` (65 bytes). Signature `int FUN_0040b8e0(void)`.
+   Same structure as `FUN_0040b890` but the… */
+
+int FUN_0040b8e0(void)
+
+{
+  int iVar1;
+  int iVar2;
+  
+  iVar1 = FUN_0040e340();
+  iVar2 = (-(uint)(iVar1 != 4) & 0xfffffffd) + 10;
+  iVar1 = FUN_0042f500();
+  if (iVar1 != 0) {
+    iVar2 = 7;
+  }
+  if (DAT_007f0fd0 == 1) {
+    return 7;
+  }
+  iVar1 = 7;
+  if (DAT_007f0fd0 != 2) {
+    iVar1 = iVar2;
+  }
+  return iVar1;
+}
+
+
+
+// FUN_0040e340 @ 0x0040e340  size=6  (MASHED.exe)
+// undefined FUN_0040e340(void)
+
+/* [C2 2026-05-18] Body (0x0040e340..0x0040e345): */
+
+undefined4 FUN_0040e340(void)
+
+{
+  return DAT_008a94d0;
+}
+
+
+
+// FUN_0041b630 @ 0x0041b630  size=33  (MASHED.exe)
+// undefined FUN_0041b630(void)
+
+/* [C2 2026-05-11] No parameters, no return value. */
+
+void FUN_0041b630(void)
+
+{
+  undefined *puVar1;
+  
+  puVar1 = &DAT_0063c8d0;
+  do {
+    if (*(int *)(puVar1 + 0x6c) != 0) {
+      FUN_0041b340();
+    }
+    puVar1 = puVar1 + 0x74;
+  } while ((int)puVar1 < 0x63caa0);
+  return;
+}
+
+
+
+// FUN_0041b340 @ 0x0041b340  size=246  (MASHED.exe)
+// undefined FUN_0041b340(void)
+
+/* [C1 2026-05-03] void FUN_0041b340(void) */
+
+void FUN_0041b340(void)
+
+{
+  int *in_EAX;
+  int iVar1;
+  
+  (**(code **)(in_EAX[0x10] + 0x48))(in_EAX[0x10]);
+  (**(code **)(*in_EAX + 0x48))(*in_EAX);
+  if ((in_EAX[0x1a] & 0x800U) == 0) {
+    if ((in_EAX[0x1a] & 0x1000U) == 0) goto LAB_0041b39f;
+    (**(code **)(in_EAX[2] + 0x48))(in_EAX[2]);
+    (**(code **)(in_EAX[1] + 0x48))(in_EAX[1]);
+    if ((*(byte *)(in_EAX + 0x1a) & 0x40) == 0) goto LAB_0041b39f;
+    iVar1 = in_EAX[3];
+  }
+  else {
+    (**(code **)(in_EAX[5] + 0x48))(in_EAX[5]);
+    (**(code **)(in_EAX[4] + 0x48))(in_EAX[4]);
+    if ((*(byte *)(in_EAX + 0x1a) & 0x40) == 0) goto LAB_0041b39f;
+    iVar1 = in_EAX[6];
+  }
+  (**(code **)(iVar1 + 0x48))(iVar1);
+LAB_0041b39f:
+  if ((*(byte *)(in_EAX + 0x1a) & 1) != 0) {
+    (**(code **)(in_EAX[7] + 0x48))(in_EAX[7]);
+  }
+  if ((*(byte *)(in_EAX + 0x1a) & 2) != 0) {
+    (**(code **)(in_EAX[8] + 0x48))(in_EAX[8]);
+  }
+  if ((*(byte *)(in_EAX + 0x1a) & 4) != 0) {
+    (**(code **)(in_EAX[9] + 0x48))(in_EAX[9]);
+  }
+  if ((*(byte *)(in_EAX + 0x1a) & 8) != 0) {
+    (**(code **)(in_EAX[10] + 0x48))(in_EAX[10]);
+  }
+  if ((*(byte *)(in_EAX + 0x1a) & 0x10) != 0) {
+    (**(code **)(in_EAX[0xb] + 0x48))(in_EAX[0xb]);
+  }
+  if ((*(byte *)(in_EAX + 0x1a) & 0x20) != 0) {
+    (**(code **)(in_EAX[0xc] + 0x48))(in_EAX[0xc]);
+  }
+  if ((in_EAX[0x1a] & 0x2000U) != 0) {
+    (**(code **)(in_EAX[0xd] + 0x48))(in_EAX[0xd]);
+  }
+  if ((in_EAX[0x1a] & 0x4000U) != 0) {
+    (**(code **)(in_EAX[0xe] + 0x48))(in_EAX[0xe]);
+  }
+  if ((char)((uint)in_EAX[0x1a] >> 8) < '\0') {
+    (**(code **)(in_EAX[0xf] + 0x48))(in_EAX[0xf]);
+  }
+  return;
+}
+
+
+
+// FUN_004b52c0 @ 0x004b52c0  size=35  (MASHED.exe)
+// undefined FUN_004b52c0(void)
+
+/* [C1 2026-05-19] 3-param `(int param_1, uint param_2, int param_3)`. */
+
+void FUN_004b52c0(int param_1,uint param_2,int param_3)
+
+{
+  if (param_3 != 0) {
+    *(uint *)(param_1 + 8) = *(uint *)(param_1 + 8) | param_2;
+    return;
+  }
+  *(uint *)(param_1 + 8) = *(uint *)(param_1 + 8) & ~param_2;
+  return;
+}
+
+

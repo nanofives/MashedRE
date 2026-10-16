@@ -1,0 +1,278 @@
+// FUN_00537890 @ 0x00537890  size=289  (MASHED.exe)
+// NOTE: 0x00537890 is not a function entry; showing containing function
+// undefined FUN_00537890(void)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void FUN_00537890(undefined4 *param_1,undefined4 param_2,undefined4 param_3,int param_4,int param_5)
+
+{
+  float *pfVar1;
+  int iVar2;
+  int iVar3;
+  float fVar4;
+  float fVar5;
+  float fVar6;
+  float fVar7;
+  float fVar8;
+  float fVar9;
+  float *pfVar10;
+  float *pfVar11;
+  
+  pfVar10 = (float *)*param_1;
+  iVar2 = param_1[1];
+  iVar3 = *(int *)(param_5 + 0x10);
+  pfVar11 = *(float **)(param_5 + 0xc);
+  if (0 < param_4) {
+    do {
+      pfVar1 = pfVar11 + 0xc;
+      fVar7 = pfVar11[4] * _DAT_005cc32c + *pfVar11 * _DAT_005cc32c;
+      fVar8 = pfVar11[5] * _DAT_005cc32c + pfVar11[1] * _DAT_005cc32c;
+      fVar4 = pfVar11[6] * _DAT_005cc32c + pfVar11[2] * _DAT_005cc32c;
+      fVar6 = *pfVar11 * _DAT_005cc32c - pfVar11[4] * _DAT_005cc32c;
+      fVar9 = pfVar11[1] * _DAT_005cc32c - pfVar11[5] * _DAT_005cc32c;
+      fVar5 = pfVar11[2] * _DAT_005cc32c - pfVar11[6] * _DAT_005cc32c;
+      *pfVar10 = fVar6 + *pfVar1;
+      pfVar10[1] = pfVar11[0xd] + fVar9;
+      pfVar10[2] = pfVar11[0xe] + fVar5;
+      pfVar10 = (float *)((int)pfVar10 + iVar2);
+      *pfVar10 = *pfVar1 - fVar7;
+      pfVar10[1] = pfVar11[0xd] - fVar8;
+      pfVar10[2] = pfVar11[0xe] - fVar4;
+      pfVar10 = (float *)((int)pfVar10 + iVar2);
+      *pfVar10 = *pfVar1 - fVar6;
+      pfVar10[1] = pfVar11[0xd] - fVar9;
+      pfVar10[2] = pfVar11[0xe] - fVar5;
+      pfVar10 = (float *)((int)pfVar10 + iVar2);
+      *pfVar10 = fVar7 + *pfVar1;
+      pfVar10[1] = pfVar11[0xd] + fVar8;
+      pfVar10[2] = pfVar11[0xe] + fVar4;
+      pfVar10 = (float *)((int)pfVar10 + iVar2);
+      param_4 = param_4 + -1;
+      pfVar11 = (float *)((int)pfVar11 + iVar3);
+    } while (param_4 != 0);
+  }
+  return;
+}
+
+
+
+// FUN_00537b20 @ 0x00537b20  size=84  (MASHED.exe)
+// NOTE: 0x00537b20 is not a function entry; showing containing function
+// undefined FUN_00537b20(void)
+
+void FUN_00537b20(int *param_1,int param_2,int param_3)
+
+{
+  undefined1 *puVar1;
+  undefined1 *puVar2;
+  undefined1 *puVar3;
+  undefined1 uVar4;
+  int iVar5;
+  int iVar6;
+  undefined4 *puVar7;
+  undefined4 uVar8;
+  undefined1 *puVar9;
+  
+  puVar7 = (undefined4 *)*param_1;
+  iVar5 = param_1[1];
+  puVar9 = *(undefined1 **)(param_3 + 0x24);
+  iVar6 = *(int *)(param_3 + 0x28);
+  if (0 < param_2) {
+    do {
+      puVar1 = puVar9 + 3;
+      puVar2 = puVar9 + 1;
+      uVar4 = *puVar9;
+      puVar3 = puVar9 + 2;
+      puVar9 = puVar9 + iVar6;
+      uVar8 = CONCAT31(CONCAT21(CONCAT11(*puVar1,uVar4),*puVar2),*puVar3);
+      *puVar7 = uVar8;
+      *(undefined4 *)((int)puVar7 + iVar5) = uVar8;
+      puVar7 = (undefined4 *)((int)puVar7 + iVar5 + iVar5);
+      *puVar7 = uVar8;
+      puVar7 = (undefined4 *)((int)puVar7 + iVar5);
+      *puVar7 = uVar8;
+      puVar7 = (undefined4 *)((int)puVar7 + iVar5);
+      param_2 = param_2 + -1;
+    } while (param_2 != 0);
+  }
+  return;
+}
+
+
+
+// FUN_00537e60 @ 0x00537e60  size=105  (MASHED.exe)
+// NOTE: 0x00537e60 is not a function entry; showing containing function
+// undefined FUN_00537e60(void)
+
+void FUN_00537e60(undefined4 *param_1,int param_2,int param_3)
+
+{
+  int iVar1;
+  undefined4 *puVar2;
+  
+  puVar2 = (undefined4 *)*param_1;
+  iVar1 = param_1[1];
+  if (0 < param_2) {
+    do {
+      *puVar2 = *(undefined4 *)(param_3 + 0x90);
+      puVar2[1] = *(undefined4 *)(param_3 + 0x9c);
+      puVar2 = (undefined4 *)((int)puVar2 + iVar1);
+      *puVar2 = *(undefined4 *)(param_3 + 0x98);
+      puVar2[1] = *(undefined4 *)(param_3 + 0x9c);
+      puVar2 = (undefined4 *)((int)puVar2 + iVar1);
+      *puVar2 = *(undefined4 *)(param_3 + 0x98);
+      puVar2[1] = *(undefined4 *)(param_3 + 0x94);
+      puVar2 = (undefined4 *)((int)puVar2 + iVar1);
+      *puVar2 = *(undefined4 *)(param_3 + 0x90);
+      puVar2[1] = *(undefined4 *)(param_3 + 0x94);
+      puVar2 = (undefined4 *)((int)puVar2 + iVar1);
+      param_2 = param_2 + -1;
+    } while (param_2 != 0);
+  }
+  return;
+}
+
+
+
+// FUN_00537fb0 @ 0x00537fb0  size=844  (MASHED.exe)
+// NOTE: 0x00537fb0 is not a function entry; showing containing function
+// undefined FUN_00537fb0(void)
+
+void FUN_00537fb0(undefined4 *param_1,undefined4 *param_2,float param_3,undefined4 *param_4,
+                 float param_5)
+
+{
+  int *piVar1;
+  float fVar2;
+  float fVar3;
+  int iVar4;
+  int iVar5;
+  float fVar6;
+  float fVar7;
+  float fVar8;
+  float10 fVar9;
+  float fVar10;
+  float fVar11;
+  byte bVar12;
+  undefined4 *puVar13;
+  undefined4 *puVar14;
+  float *pfVar15;
+  undefined4 uVar16;
+  float fVar17;
+  float10 fVar18;
+  
+  fVar17 = param_5;
+  puVar13 = param_1;
+  iVar4 = param_2[6];
+  if (((uint)param_5 & 0x800000) == 0x800000) {
+    param_1 = *(undefined4 **)(iVar4 + 0x5c);
+    iVar5 = **(int **)(DAT_007dc57c + (int)param_2);
+    FUN_004e89e0(iVar4,2);
+    piVar1 = param_1 + 5;
+    if ((int)param_4 < iVar5) {
+      param_1 = (undefined4 *)(iVar5 - (int)param_4);
+      puVar14 = (undefined4 *)((int)param_4 * 0x30 + 0x18 + *piVar1);
+      do {
+        puVar14[-6] = 0xc4268000;
+        puVar14[-5] = 0xc4268000;
+        puVar14[-4] = 0xc4268000;
+        puVar14[-3] = 0xc4268000;
+        puVar14[-2] = 0xc4268000;
+        puVar14[-1] = 0xc4268000;
+        *puVar14 = 0xc4268000;
+        puVar14[1] = 0xc4268000;
+        puVar14[2] = 0xc4268000;
+        puVar14[3] = 0xc4268000;
+        puVar14[4] = 0xc4268000;
+        puVar14[5] = 0xc4268000;
+        param_1 = (undefined4 *)((int)param_1 + -1);
+        puVar14 = puVar14 + 0xc;
+      } while (param_1 != (undefined4 *)0x0);
+      param_1 = (undefined4 *)0x0;
+      fVar17 = param_5;
+    }
+  }
+  pfVar15 = (float *)FUN_004c0ed0(*(undefined4 *)(*DAT_007d3ff8 + 4));
+  if ((*(uint *)((int)param_3 + 0x58) & 0x8000) == 0x8000) {
+    puVar13[0xc] = *(undefined4 *)((int)param_3 + 0xb0);
+    puVar13[0xd] = *(undefined4 *)((int)param_3 + 0xb4);
+    puVar13[0xe] = *(undefined4 *)((int)param_3 + 0xb8);
+    puVar13[0xf] = *(undefined4 *)((int)param_3 + 0xc0);
+    puVar13[0x10] = *(undefined4 *)((int)param_3 + 0xc4);
+    puVar13[0x11] = *(undefined4 *)((int)param_3 + 200);
+  }
+  else {
+    fVar10 = -*pfVar15;
+    if ((*(uint *)((int)param_3 + 0x58) & 0x20000) == 0x20000) {
+      fVar2 = pfVar15[1];
+      fVar6 = pfVar15[4];
+      fVar3 = pfVar15[2];
+      fVar7 = pfVar15[5];
+      fVar8 = pfVar15[6];
+      param_2 = &param_5;
+      param_3 = *(float *)((int)param_3 + 0x78);
+      param_4 = &param_1;
+      fVar9 = (float10)fcos((float10)param_3);
+      fVar18 = (float10)fsin((float10)param_3);
+      param_5 = (float)fVar9;
+      param_1 = (undefined4 *)(float)fVar18;
+      fVar11 = -(float)param_1;
+      puVar13[0xc] = param_5 * fVar10 + fVar6 * fVar11;
+      puVar13[0xd] = param_5 * -fVar2 + fVar7 * fVar11;
+      puVar13[0xe] = param_5 * -fVar3 + fVar11 * fVar8;
+      puVar13[0xf] = (float)param_1 * fVar10 + param_5 * fVar6;
+      puVar13[0x10] = (float)param_1 * -fVar2 + param_5 * fVar7;
+      puVar13[0x11] = (float)param_1 * -fVar3 + param_5 * fVar8;
+    }
+    else {
+      puVar13[0xc] = fVar10;
+      puVar13[0xd] = -pfVar15[1];
+      puVar13[0xe] = -pfVar15[2];
+      puVar13[0xf] = pfVar15[4];
+      puVar13[0x10] = pfVar15[5];
+      puVar13[0x11] = pfVar15[6];
+    }
+  }
+  bVar12 = SUB41(fVar17,0);
+  if (((((bVar12 & 2) == 2) || (((uint)fVar17 & 0x2000) == 0x2000)) || ((bVar12 & 0x40) == 0x40)) ||
+     (((uint)fVar17 & 0x40000) == 0x40000)) {
+    uVar16 = 1;
+  }
+  else {
+    uVar16 = 0;
+  }
+  puVar13[2] = uVar16;
+  if ((((bVar12 & 0x80) == 0x80) || (((uint)fVar17 & 0x100) == 0x100)) ||
+     ((((uint)fVar17 & 0x80000) == 0x80000 || (((uint)fVar17 & 0x100000) == 0x100000)))) {
+    uVar16 = 1;
+  }
+  else {
+    uVar16 = 0;
+  }
+  puVar13[1] = uVar16;
+  *puVar13 = 1;
+  puVar13[3] = (uint)((bVar12 & 0x10) == 0x10);
+  iVar5 = *(int *)(iVar4 + 0x5c);
+  FUN_004e89e0(iVar4,2);
+  puVar13[4] = *(undefined4 *)(iVar5 + 0x14);
+  puVar13[5] = 0xc;
+  if (puVar13[2] != 0) {
+    FUN_004e89e0(iVar4,8);
+    puVar13[8] = *(undefined4 *)(iVar4 + 0x30);
+    puVar13[9] = 4;
+  }
+  if (puVar13[1] != 0) {
+    FUN_004e89e0(iVar4,0x10);
+    puVar13[6] = *(undefined4 *)(iVar4 + 0x34);
+    puVar13[7] = 8;
+  }
+  if (puVar13[3] != 0) {
+    FUN_004e89e0(iVar4,4);
+    puVar13[10] = *(undefined4 *)(iVar5 + 0x18);
+    puVar13[0xb] = 0xc;
+  }
+  return;
+}
+
+

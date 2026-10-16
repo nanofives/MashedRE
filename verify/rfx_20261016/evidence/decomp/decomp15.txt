@@ -1,0 +1,29 @@
+// FUN_0041f330 @ 0x0041f330  size=47  (MASHED.exe)
+// undefined FUN_0041f330(void)
+// callees: (none)
+
+/* [C2 2026-06-03] `char * FUN_0041f330(void)`. Body 0x0041f330..0x0041f35e. Input ID arrives in
+   `unaff_ESI` (register-passed… */
+
+char * FUN_0041f330(void)
+
+{
+  int iVar1;
+  int *piVar2;
+  int unaff_ESI;
+  
+  iVar1 = 0;
+  if (0 < DAT_005f5fe0) {
+    piVar2 = &DAT_005f3828;
+    do {
+      if (*piVar2 == unaff_ESI) {
+        return s_Shuriken_005f37a8 + iVar1 * 0x84;
+      }
+      iVar1 = iVar1 + 1;
+      piVar2 = piVar2 + 0x21;
+    } while (iVar1 < DAT_005f5fe0);
+  }
+  return (char *)0x0;
+}
+
+

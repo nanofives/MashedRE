@@ -1,0 +1,25 @@
+// FUN_00476c10 @ 0x00476c10  size=79  (MASHED.exe)
+// undefined FUN_00476c10(void)
+
+/* [C2 2026-06-02] Particle/effect-object 4-float vector setter (control-flow complete): */
+
+void FUN_00476c10(int param_1,undefined4 *param_2)
+
+{
+  uint *puVar1;
+  int iVar2;
+  
+  if (param_2 == (undefined4 *)0x0) {
+    param_2 = &DAT_00613294;
+  }
+  iVar2 = *(int *)(*(int *)(param_1 + 4) + DAT_007dc57c);
+  *(undefined4 *)(iVar2 + 0xd8) = *param_2;
+  *(undefined4 *)(iVar2 + 0xdc) = param_2[1];
+  *(undefined4 *)(iVar2 + 0xe0) = param_2[2];
+  *(undefined4 *)(iVar2 + 0xe4) = param_2[3];
+  puVar1 = (uint *)(*(int *)(*(int *)(param_1 + 4) + DAT_007dc57c) + 0x40);
+  *puVar1 = *puVar1 | 0x80000;
+  return;
+}
+
+
