@@ -5,9 +5,13 @@
 reports 81 to 157 divergence rows per frame against the original, and every one of them hits a
 citation (`cites_d1r1.json`, 24 entries): **0 RED**. No row is GREEN-by-fix on the default build:
 the one fix this lane produced (F1, RW D3D9 alpha/cull state) failed pre-registered rules 1-2 on
-Arctic and stays opt-in. The default build is unchanged; G-CTRL `991a5fff / be0d47ea / bc75b405`
-before and after. All numbers are in `scores.txt`; pre-registration `PREREG_d1r1.md` (b52a03f4,
-before the first measuring run) with amendments 1 and 2.
+Arctic and stays opt-in. The default build is unchanged: G-CTRL `991a5fff / be0d47ea / bc75b405`
+before and after on the 118fb99d base. After the rebase onto `98705947` (d2settle's A3 LUT sqrt,
+default ON, plus camribbon) the default gives `c2e4d60d / b50bd39b / ba90ed88`, the new default
+trio, and `MASHED_NO_A3_LUT=1` gives the old one. All 18 replays re-run on the rebased build give
+the same rows and verdicts (`scores.txt`). All numbers are in `scores.txt`; pre-registration
+`PREREG_d1r1.md` (committed before the first measuring run, now `6280d66e` after the rebase) with
+amendments 1 and 2. U-ids are U-9688..U-9696 after the rebase (camribbon filed U-9687).
 
 What "cited" means here is uneven, and the reader should weigh it. Some citations are
 architecture differences that rasterise nothing different: no culling (every such draw is

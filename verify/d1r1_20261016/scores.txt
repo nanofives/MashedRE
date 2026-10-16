@@ -44,3 +44,11 @@ city 836        12.10   12.11
 (PREREG rule 5: F1 does not raise any frame by more than 0.5.)
 
 G-CTRL: base 991a5fff / be0d47ea / bc75b405; final default 991a5fff / be0d47ea / bc75b405 (gctrl.txt).
+
+Rebase onto race/first-frame-parity 98705947 (d2settle A3 LUT sqrt default ON + camribbon):
+  G-CTRL default c2e4d60d / b50bd39b / ba90ed88 = the new default trio; MASHED_NO_A3_LUT=1 gives
+  991a5fff / be0d47ea / bc75b405. The 18 replays re-run on the rebased build give the same rows,
+  matched counts and verdicts as the table above (all CITED, 0 RED). Draw records equal the
+  pre-rebase ones except the '@gen:particle' draw (all 9 frames) and Arctic's '@gen:pickup' draw:
+  both come from the standalone's own simulation, which the A3 change moves.
+  Evidence cited diffs in evidence/ are the rebased ones (cited_stand_rb_*).
