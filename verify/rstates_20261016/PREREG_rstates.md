@@ -164,3 +164,26 @@ Predictions (not evidence): **Pr-6** City `Pathpattern` and `road2` rows go on 3
 `Path2` falls to the order of the 130 it had on 0020d521, before the trees were placed.
 **Pr-7** Arctic records equal T2 byte for byte (no slot-2 clump list). **Pr-8** TRAINING gains no
 row (its slot 2 moves clump 9 ahead of 3..8).
+
+### Amendment 2 (2026-10-16, before any F7 run): F7, mesh order within an atomic
+
+Reason: on 04dee0ed with F1-F6 (arm U2) City `Path2` keeps 502 inversions, against the building
+textures (`rooftop`, `shopfront04`, `Apart5windows NT`, `buildconc2`). In row 761 the original
+draws each STANDARD.DFF copy as brooklyn1, shops, buildconc2, residential02 NT, shopfront02,
+shopfront04, windows03 NT, Apart5windows NT, windows06 NT, rooftop, **Path2**. That is the
+geometry's BinMesh PLG (chunk 0x50E) mesh order, matIndex `[0,1,2,4,5,6,7,8,9,10,3]`
+(`binmesh_order.py`; BUILD04.DFF the same with Path2 last). The port draws material order
+(`Track/DffModel.cpp` batch loop), so Path2 comes fourth.
+
+**F7** (`MASHED_LIBRW_BINMESHORDER`, `=0` opts out): DffModel emits each atomic's batches in its
+geometry's BinMesh mesh order, and any material without a mesh follows in material order.
+World sectors are not touched: they are one librw geometry each, meshed by librw.
+The F3 sky rule "last mesh of DFF atomic 0" takes the last batch of atomic 0 in batch order,
+which is the highest material when F7 is off (unchanged).
+
+Rules: §3 rules 1-5 against **U2** (F1-F6 on 04dee0ed). Rule 1 target: City `Path2` inversions
+against building textures fall on 3/3 frames. Rule 3: G-CTRL unchanged. Rule 4: F7 `=0` equals
+U2 byte for byte on 9/9.
+
+Predictions (not evidence): **Pr-9** City `Path2` falls below 502 on 3/3. **Pr-10** the Glass rows
+are unchanged (car glass is separate atomics, U-9707). **Pr-11** no new row on TRAINING or Arctic.
