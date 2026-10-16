@@ -14,6 +14,13 @@ namespace Race {
 // Default-OFF knob MASHED_PATHPROG (env). Read once.
 bool PathProg_Enabled();
 
+// [U-9685] Arm R, verify/d3_u9685_20261016/PREREG_u9685.md: the original's race_pct writer on a private
+// shadow row, with only race_pct published (no live lap counter, no live node progress).
+// DEFAULT-ON 2026-10-16 (PREREG decision 1); opt-out MASHED_NO_RACEPCT_FUN408610. Read once. Builds the
+// course block like PathProg_Enabled() does. Active() = enabled and the block exists (track has an AI BSP).
+bool RacePctOrig_Enabled();
+bool RacePctOrig_Active();
+
 // Rebuilds the course block exactly as the original's track load does:
 //   FUN_0047a0f0  zero 0x16264 bytes at 0x00657498, run the LAPDATA.LUA handlers
 //   FUN_00478660  node records 0x00663658 + i*0x4c and count 0x0066d6d8 from the AI BSP

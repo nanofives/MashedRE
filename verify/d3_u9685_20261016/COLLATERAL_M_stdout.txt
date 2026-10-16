@@ -1,0 +1,25 @@
+# arm A: csv:C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\c1f3ef78-83d8-4379-bfa7-b8b44efc73ff\scratchpad\piv9685_M_DEF.csv(13498 frames)
+# arm B: csv:C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\c1f3ef78-83d8-4379-bfa7-b8b44efc73ff\scratchpad\piv9685_R_M.csv(13498 frames)
+# noise floor: 244 fields, from 13498 A-pair frames and 13498 B-pair frames
+# aligned frames 13498 [0..13497]   paired fields 244   A-only 0   B-only 0
+
+=== DIVERGENT FIELDS, ranked by first frame past the noise floor (181 of 244 paired) ===
+field                  scope       first      n |      med A      med B    med|A-B|      floor
+----------------------------------------------------------------------------------------------
+s.v3.ra_ec             outside          1   2158 |      19.34      47.02       43.85          0
+s.v2.ra_ec             outside          1  12605 |      53.14      41.93       30.93          0
+s.v1.ra_ec             outside          1    664 |      9.395      29.98       3.246          0
+s.v3.val_880           outside          1   2158 |     0.1934     0.4702      0.4385          0
+s.v2.val_880           outside          1  12605 |     0.5314     0.4193      0.3093          0
+s.v1.val_880           outside          1    664 |    0.09395     0.2998     0.03246          0
+s.v2.look_z            outside         16  12605 |      4.824     -2.228       18.37          0
+s.v2.look_x            outside         16  12605 |      7.949      6.074       7.764          0
+s.v2.hist_d8           outside         16  12605 |      358.5      358.6       2.123          0
+s.v2.hist_dc           outside         16  12605 |          0          0      0.1053          0
+s.v2.ai_mode           outside         16  12605 |          0          0           0          0
+s.v2.c0                outside         16  12605 |          0          0           0          0
+s.v2.c4                outside         16  12605 |        102        102           0          0
+s.v2.rec_9e4           outside         17  12605 |       3176       3266       356.6          0
+  ... 167 more (raise --top)
+
+=== WITHIN THE NOISE FLOOR on every aligned frame: 63 fields ===

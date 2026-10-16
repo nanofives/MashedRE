@@ -1952,7 +1952,7 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                 // [D-11072 P1] the original's course block (node records, route, tables)
                 // from this same AI BSP + LAPDATA.LUA; default-OFF MASHED_PATHPROG.
                 // PREREG verify/d3_modes37_20261009/PREREG_PATHPROG.md.
-                if (Race::PathProg_Enabled()) {
+                if (Race::PathProg_Enabled() || Race::RacePctOrig_Enabled()) {   // [U-9685] arm R needs the course block too
                     const std::uint8_t* lb = nullptr; std::uint32_t ll = 0;
                     for (std::uint32_t j = 0; j < piz.count(); ++j)
                         if (_strnicmp(piz.entry(j).name, "LAPDATA", 7) == 0) { lb = piz.blob(j, &ll); break; }
@@ -4100,6 +4100,9 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
     // every car's physics (player above, opponents in the block just closed) and after
     // PathProg_FrameTick (UpdateRace). Same coverage as the UpdateRace call it replaces:
     // UpdateRace returns before that call when gates_ is empty.
+    // [U-9685] arm R: FUN_0040da50's FUN_00408610 loop sits between the AI path (0x0040fc6c) and the producer
+    // path (0x0040fc7c) in FUN_0040fc00, so it runs here, before the producer call below.
+    if (Race::RacePctOrig_Enabled()) Race::PathProg_RacePctTick();
     if (RaceRefDistAfterAi() && !gates_.empty()) RaceComputeDistancesTick(1);
     yaww::Frame();   // U-9188 leg A/B per-frame emit; no-op unless MASHED_AI_YAWW
 
@@ -6208,7 +6211,8 @@ void TrackRenderer::UpdateRace(float dt) {
         static const bool s_racepctBridge =
             (std::getenv("MASHED_NO_RACEPCT_BRIDGE") == nullptr);   // DEFAULT-ON 2026-10-09 (verify/d3_b2flip_20261009); MASHED_RACEPCT_BRIDGE is now a no-op
         // With MASHED_PATHPROG the faithful producer FUN_00408610 owns 0x008a96ec; the bridge stands down.
-        if (s_racepctBridge && !Race::PathProg_Enabled() && total_len_ > 1e-3f) {
+        // [U-9685] arm R (MASHED_RACEPCT_FUN408610) publishes the verbatim step's race_pct at the end of UpdateCar.
+        if (s_racepctBridge && !Race::PathProg_Enabled() && !Race::RacePctOrig_Active() && total_len_ > 1e-3f) {
             for (int v = 0; v < kRaceCars; ++v) {
                 const float ap =
                     std::fmod(race_[v].arcprog, total_len_) / total_len_ * 100.f;
