@@ -157,3 +157,16 @@ D0-d: original capture `--wheelstate-probe-count` (rate gate) then `--wheelstate
 `--statediff-car 0 --hold 12`, output `verify/d2settle_20261016/o_ws1.msd`. Read the first rows: per-wheel
 state `+0x198`, fv `+0x194`, key `+0x1ec` at the player's first `0x0046f6c0` entries, against the exe's D0-c
 call-1 entry (states 0, fv as initialised). Names the input the port's settle call lacks; decides nothing alone.
+
+## Amendment 4 (2026-10-16, before D0-e; report only, NOT a gate)
+
+D0-d result (`o_ws1.msd.wheelstate.csv`, original player rows): the FIRST `0x0046f6c0` call of every frame enters
+with states (1,1,1,1) and fv (0,0,0,0) (`FUN_0046baa0`, the per-tick hold reset at `0x0041033e`, writes int 1 to
+`+0x198/+0x25c/+0x320/+0x3e4` at `0x0046bb23` and 0 to `+0x194/+0x258/+0x31c/+0x3e0`). Frame 1's second call
+enters with fv (0.009396, 0.009396, -0.009946, -0.009946), i.e. what call 1 computed. Arithmetic: all four
+latch, `bVar16 == 4` drops the most-loaded wheel (w2), mean of three = 0.0029486, correction -0.0029486 * n =
+(0, -0.0029472, +0.0000921); measured original move (0, -0.0029474, +0.0000921). Call 2 nets ~0 (fv
+0.006447 / -0.012895): equilibrium.
+D0-e (diag knob `MASHED_D2S_SEED1=1`, only inside the D0-c block): seed those 8 fields as `FUN_0046baa0`
+does before D0-c's call 1. PREDICTION, from D0-c's own call-1 classifier output (0.00940529443, 0.00938524026,
+-0.00993062556, -0.00996109098): call 1 drops w3 and corrects (0, -0.0029519, +0.0000922), 2e-6 per component.
