@@ -1,0 +1,82 @@
+// FUN_0049aa7a @ 0x0049aa7a  size=519  (MASHED.exe)
+// NOTE: 0x0049aa7a is not a function entry; showing containing function
+// undefined FUN_0049aa7a(void)
+
+void FUN_0049aa7a(void)
+
+{
+  int iVar1;
+  char unaff_BL;
+  int unaff_EBP;
+  undefined4 *unaff_EDI;
+  undefined4 uStack00000014;
+  undefined4 in_stack_0000004c;
+  undefined4 in_stack_00000054;
+  undefined4 in_stack_00000058;
+  undefined4 uVar2;
+  
+  while( true ) {
+    unaff_EBP = unaff_EBP + -1;
+    if (unaff_EBP == 0) break;
+    iVar1 = *(int *)unaff_EDI[3];
+    if (iVar1 != 0) {
+      if ((((*(char *)(iVar1 + 0x10) == 'W') && (*(char *)(iVar1 + 0x11) == unaff_BL)) &&
+          (*(char *)(iVar1 + 0x12) == 't')) ||
+         (((*(char *)(iVar1 + 0x10) == 'I' && (*(char *)(iVar1 + 0x11) == 'c')) &&
+          (*(char *)(iVar1 + 0x12) == unaff_BL)))) {
+        uStack00000014 = 0;
+        FUN_004d6e70();
+        FUN_004d54f0();
+        FUN_004d54f0(0,1);
+        FUN_004d54f0(0,4,1);
+        FUN_004d54f0(0,0x18,0);
+        FUN_004d5570(0,1,1);
+        uStack00000014 = 1;
+        FUN_004d5570();
+        FUN_004d6e70();
+        FUN_004d54f0(1,2);
+        FUN_004d54f0(1,1,2);
+        FUN_004d54f0(1,4,1);
+        FUN_004d54f0(1,0x18,0x100);
+        uStack00000014 = 3;
+        FUN_004d5570();
+        FUN_004d5570();
+        uVar2 = DAT_0077397c;
+      }
+      else {
+        uStack00000014 = 0;
+        FUN_004d6e70();
+        FUN_004d54f0();
+        FUN_004d54f0(0,1);
+        FUN_004d54f0(0,3,0);
+        FUN_004d54f0(0,4,1);
+        FUN_004d5570(0,6,2);
+        uStack00000014 = 2;
+        FUN_004d5570();
+        FUN_004d5570();
+        FUN_004d54f0(0,0x18,0);
+        FUN_004d5570(0,1,1);
+        FUN_004d5570(0,2,1);
+        FUN_004d6e70(0,1);
+        uStack00000014 = 1;
+        FUN_004d54f0();
+        FUN_004d54f0();
+        uVar2 = 0;
+      }
+      FUN_004cb0f0(uVar2);
+    }
+    uStack00000014 = unaff_EDI[9];
+    FUN_004cb2f0();
+    unaff_EDI = unaff_EDI + 9;
+  }
+  uStack00000014 = 0x49aa98;
+  FUN_004d54f0();
+  uStack00000014 = in_stack_0000004c;
+  FUN_004d54f0();
+  FUN_004d54f0();
+  FUN_004d5480(0x1c,in_stack_00000054);
+  FUN_004d5480(0x23,in_stack_00000058);
+  return;
+}
+
+

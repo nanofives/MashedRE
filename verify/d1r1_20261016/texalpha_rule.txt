@@ -1,0 +1,18 @@
+== training
+original textures 238, decoded 586, in both 232
+rule used_lt255  agree 230/232  orig1&rule0 1  orig0&rule1 1  first mismatches: ['oil(orig=0,d32,amin=2)', 'AirStrike(orig=1,d8,amin=255)']
+rule pal_lt255   agree 205/232  orig1&rule0 27  orig0&rule1 0  first mismatches: ['wispySmoke(orig=1,d32,amin=0)', 'RWObjShad(orig=1,d32,amin=0)', 'car_shadow(orig=1,d32,amin=0)', 'exp_flame(orig=1,d32,amin=0)', 'exp_flash(orig=1,d32,amin=0)', 'flash(orig=1,d32,amin=0)', 'Headlight(orig=1,d32,amin=0)', 'fireball(orig=1,d32,amin=0)']
+rule depth32     agree 140/232  orig1&rule0 87  orig0&rule1 5  first mismatches: ['FGDC20(orig=1,d8,amin=0)', 'BigSpark3(orig=0,d32,amin=255)', 'PUGlow(orig=1,d8,amin=0)', 'VehicleIcons(orig=1,d8,amin=0)', 'Beam(orig=0,d32,amin=255)', 'exp_cloud(orig=1,d8,amin=0)', 'flatshad(orig=1,d8,amin=0)', 'lensflare-fs8(orig=1,d8,amin=0)']
+rule any_lt255   agree 230/232  orig1&rule0 1  orig0&rule1 1  first mismatches: ['oil(orig=0,d32,amin=2)', 'AirStrike(orig=1,d8,amin=255)']
+== arctic
+original textures 193, decoded 586, in both 187
+rule used_lt255  agree 185/187  orig1&rule0 1  orig0&rule1 1  first mismatches: ['oil(orig=0,d32,amin=2)', 'AirStrike(orig=1,d8,amin=255)']
+rule pal_lt255   agree 160/187  orig1&rule0 27  orig0&rule1 0  first mismatches: ['wispySmoke(orig=1,d32,amin=0)', 'RWObjShad(orig=1,d32,amin=0)', 'car_shadow(orig=1,d32,amin=0)', 'exp_flame(orig=1,d32,amin=0)', 'exp_flash(orig=1,d32,amin=0)', 'flash(orig=1,d32,amin=0)', 'Headlight(orig=1,d32,amin=0)', 'fireball(orig=1,d32,amin=0)']
+rule depth32     agree 95/187  orig1&rule0 87  orig0&rule1 5  first mismatches: ['FGDC20(orig=1,d8,amin=0)', 'BigSpark3(orig=0,d32,amin=255)', 'PUGlow(orig=1,d8,amin=0)', 'VehicleIcons(orig=1,d8,amin=0)', 'Beam(orig=0,d32,amin=255)', 'exp_cloud(orig=1,d8,amin=0)', 'flatshad(orig=1,d8,amin=0)', 'lensflare-fs8(orig=1,d8,amin=0)']
+rule any_lt255   agree 185/187  orig1&rule0 1  orig0&rule1 1  first mismatches: ['oil(orig=0,d32,amin=2)', 'AirStrike(orig=1,d8,amin=255)']
+== city
+original textures 247, decoded 586, in both 241
+rule used_lt255  agree 239/241  orig1&rule0 1  orig0&rule1 1  first mismatches: ['oil(orig=0,d32,amin=2)', 'AirStrike(orig=1,d8,amin=255)']
+rule pal_lt255   agree 212/241  orig1&rule0 29  orig0&rule1 0  first mismatches: ['wispySmoke(orig=1,d32,amin=0)', 'RWObjShad(orig=1,d32,amin=0)', 'car_shadow(orig=1,d32,amin=0)', 'exp_flame(orig=1,d32,amin=0)', 'exp_flash(orig=1,d32,amin=0)', 'flash(orig=1,d32,amin=0)', 'Headlight(orig=1,d32,amin=0)', 'fireball(orig=1,d32,amin=0)']
+rule depth32     agree 143/241  orig1&rule0 90  orig0&rule1 8  first mismatches: ['FGDC20(orig=1,d8,amin=0)', 'BigSpark3(orig=0,d32,amin=255)', 'PUGlow(orig=1,d8,amin=0)', 'VehicleIcons(orig=1,d8,amin=0)', 'Beam(orig=0,d32,amin=255)', 'exp_cloud(orig=1,d8,amin=0)', 'flatshad(orig=1,d8,amin=0)', 'lensflare-fs8(orig=1,d8,amin=0)']
+rule any_lt255   agree 239/241  orig1&rule0 1  orig0&rule1 1  first mismatches: ['oil(orig=0,d32,amin=2)', 'AirStrike(orig=1,d8,amin=255)']

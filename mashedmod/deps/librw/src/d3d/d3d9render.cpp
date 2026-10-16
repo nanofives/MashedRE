@@ -13,6 +13,12 @@
 #include "rwd3d.h"
 #include "rwd3d9.h"
 
+// [mashed d1r1 2026-10-16] Diagnostic hooks for mashed_re's per-draw recorder
+// (src/mashed_re/D3d9Render/DrawRec.cpp, MASHED_DBG_D3DREC). Null unless the recorder is
+// installed, so the draw path is unchanged by default. See MASHED_PATCHES.md.
+void (*rw_drawrec_pre)(const char *texname, const float *ltm16) = nullptr;
+void (*rw_drawrec_post)(void) = nullptr;
+
 namespace rw {
 namespace d3d9 {
 using namespace d3d;
@@ -175,7 +181,12 @@ defaultRenderCB_Shader(Atomic *atomic, InstanceDataHeader *header)
 		}else
 			setPixelShader(default_PS);
 
+		if(rw_drawrec_pre)
+			rw_drawrec_pre(m->texture ? m->texture->name : nullptr,
+			               (const float*)atomic->getFrame()->getLTM());
 		drawInst(header, inst);
+		if(rw_drawrec_post)
+			rw_drawrec_post();
 		inst++;
 	}
 }

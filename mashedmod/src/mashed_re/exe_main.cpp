@@ -168,6 +168,7 @@
 #include "D3d9Render/MashedFont.h"          // B19: faithful FGDC20 glyph font
 #include "D3d9Render/MenuStringTable.h"     // menu id->glyph-string (sprite-by-id)
 #include "D3d9Render/DrawStreamDump.h"      // parity harness: MASHED_DBG_DRAWSTREAM
+#include "D3d9Render/DrawRec.h"             // d1r1: per-draw recorder, MASHED_DBG_D3DREC
 #include "LibRw/RwBridge.h"                 // M3-E1': vendored librw seam (MASHED_LIBRW_SMOKE)
 #include "LibRw/RwRaceSubmit.h"             // E2'b step 3: in-loop submit (MASHED_RENDER_LIBRW)
 #include "Compat/StandaloneRvaThunks.h"     // B16: standalone RVA-thunk installer
@@ -3306,6 +3307,10 @@ bool RenderFrame() {
         g_device->Clear(0, nullptr, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER,
                         g_track.fog_color(), 1.0f, 0);  // horizon = fog color
         g_device->BeginScene();
+        // [d1r1] per-draw recorder (MASHED_DBG_D3DREC; inert when unset): one frame's draws,
+        // written at the replay shot below.
+        mashed_re::DrawRec::Install(g_device);
+        mashed_re::DrawRec::BeginFrame(g_track.cam_replay_row());
         static DWORD s_t0 = DetTicks();
         static DWORD s_prev = 0;
         const DWORD now = DetTicks();
@@ -4346,6 +4351,12 @@ bool RenderFrame() {
                     std::fprintf(lf, "[d1r2] replay shot K=%d actual_row=%d ok=%d %s\n",
                                  s_rs[s_ri], row, (int)ok, pth);
                     std::fclose(lf);
+                }
+                if (mashed_re::DrawRec::Enabled()) {
+                    char dp[160];
+                    std::snprintf(dp, sizeof(dp), "%s",
+                                  VOut2("d1r2/stand_row_%05d.draws.json", s_rs[s_ri]));
+                    mashed_re::DrawRec::Write(dp, s_rs[s_ri], row);
                 }
                 while (s_ri < s_rs.size() && row >= s_rs[s_ri]) ++s_ri;
             }

@@ -289,6 +289,15 @@ def main():
                          "0x42e65a) removes the bogus MISMATCH(reordered) wrap")
     ap.add_argument("--json", dest="json_out", default=None)
     ap.add_argument("--max-rows", type=int, default=40)
+    # [d1r1] 3D mode (re/tools/drawlist3d.py), auto-selected when both inputs are per-draw
+    # D3D9 records (camera_probe.py --drawrec / MASHED_DBG_D3DREC)
+    ap.add_argument("--tol-bb", type=float, default=0.01,
+                    help="3D mode: world-AABB tolerance for the same geometry (+1e-4 x extent)")
+    ap.add_argument("--trace", default=None,
+                    help="3D mode: the original's camera_probe trace CSV; its row's camera "
+                         "frame classifies MISSING/EXTRA draws lying wholly off-screen")
+    ap.add_argument("--cite", default=None,
+                    help="3D mode: JSON list of row citations [{id,kind,tex,detail?,note}]")
     args = ap.parse_args()
 
     try:
@@ -297,6 +306,10 @@ def main():
     except (OSError, ValueError) as e:
         print(f"input error: {e}", file=sys.stderr)
         return 2
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import drawlist3d
+    if drawlist3d.is_draw3d_file(da) and drawlist3d.is_draw3d_file(db):
+        return drawlist3d.run(args.file_a, args.file_b, args)
 
     las = args.label_a or list(da.keys())
     lbs = args.label_b or list(db.keys())

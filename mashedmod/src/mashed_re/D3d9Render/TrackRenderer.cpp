@@ -21,6 +21,7 @@
 #include "RwWorldRender.h"          // WS-E1: RW world render path (behind MASHED_RW_RENDER)
 #include "../LibRw/RwRaceSubmit.h"  // E2'b step 3: in-loop librw submit (MASHED_RENDER_LIBRW)
 #include "DrawStreamDump.h"         // parity harness: MASHED_DBG_DRAWSTREAM3D race-3D summary
+#include "DrawRec.h"                // d1r1: per-draw recorder names (MASHED_DBG_D3DREC)
 #include "../Ai/AiStandalone.h"     // WS-C: racing-line target Ai_ComputeTarget is the DEFAULT
 #include "../Race/SubStateCallees.h"  // D-11073 leg 1a: FUN_0041d930 tail partial (MASHED_SUBSTATE)
 #include "../Race/PathNodes.h"    // D-11072 P1: course block (MASHED_PATHPROG)
@@ -811,6 +812,7 @@ IDirect3DTexture9* MakeTexture(IDirect3DDevice9* dev,
     if (FAILED(dev->CreateTexture(w0, h0, nlevels, 0, D3DFMT_A8R8G8B8,
                                   D3DPOOL_MANAGED, &out, nullptr)))
         return nullptr;
+    mashed_re::DrawRec::NameTexture(out, tex.name);   // d1r1 recorder; no-op by default
 
     std::vector<std::uint32_t> cur = std::move(lvl0);
     std::uint32_t cw = w0, ch = h0;
@@ -5800,7 +5802,21 @@ struct CamReplay {
     std::size_t next = 0;
     int c_x[4], c_y[4], c_z[4], c_vx[4], c_vy[4], c_vz[4], c_al[4], c_de[4], c_dt[4], c_pr[4], c_pc[4];
     int c_tk = -1, c_dtb = -1, c_jit = -1, c_rst = -1, c_oh = -1, c_tt = -1;
+    // [d1r1] optional pose-transplant columns (camera_probe.py --frame / --carframes):
+    // M_* = the RwCamera frame's modelling matrix at director onLeave (what renders, R2),
+    // rvwy = its view window y; F{i}_* = car i's renderable frame LTM (*(0x0063da18 +
+    // i*0x2ac) -> +4 -> +0x50), measured equal to that car's body draws' D3DTS_WORLD in the
+    // same frame (verify/d1r1_20261016). -1 when the trace lacks them.
+    int m_c[12], c_vwy = -1, f_c[4][12];
+    bool has_m = false, has_f = false;
 };
+// [d1r1] the consumed row's transplant values, read by Render under MASHED_CAM_REPLAY_BASIS /
+// MASHED_CAR_REPLAY (diagnostic knobs, default OFF)
+float s_rep_basis[12];          // px,py,pz, rx,ry,rz, ux,uy,uz, ax,ay,az (the MASHED_CAM_POSE order)
+float s_rep_vwy = 0.f;
+bool  s_rep_basis_ok = false;
+float s_rep_car[4][12];         // rx,ry,rz, ux,uy,uz, ax,ay,az, px,py,pz
+bool  s_rep_car_ok = false;
 CamReplay& CamReplayState() {
     static CamReplay R = [] {
         CamReplay r;
@@ -5837,6 +5853,20 @@ CamReplay& CamReplayState() {
         }
         r.c_tk = need("ticks"); r.c_dtb = need("dtb"); r.c_jit = need("jit");
         r.c_rst = need("reset"); r.c_oh = need("overhead"); r.c_tt = need("track_type");
+        {
+            static const char* kM12[12] = {"rx","ry","rz","ux","uy","uz","ax","ay","az","px","py","pz"};
+            r.has_m = true; r.has_f = true;
+            for (int k = 0; k < 12; ++k) {
+                r.m_c[k] = col(std::string("M_") + kM12[k]);
+                if (r.m_c[k] < 0) r.has_m = false;
+                for (int i = 0; i < 4; ++i) {
+                    r.f_c[i][k] = col("F" + std::to_string(i) + "_" + kM12[k]);
+                    if (r.f_c[i][k] < 0) r.has_f = false;
+                }
+            }
+            r.c_vwy = col("rvwy");
+            if (r.c_vwy < 0) r.has_m = false;
+        }
         while (ok && std::fgets(line, sizeof(line), f)) {
             split(line, f2);
             if (f2.size() < hdr.size()) continue;
@@ -5890,9 +5920,27 @@ void TrackRenderer::RaceCamUpdate(const Race::RaceCamCar* cc_in, bool reset) {
             jit = static_cast<float>(at(R.c_jit));
             reset = static_cast<int>(at(R.c_rst)) != 0;
             overhead = static_cast<int>(at(R.c_oh)) != 0;
+            // [d1r1] keep this row's transplant values for Render (knob-gated there)
+            s_rep_basis_ok = R.has_m;
+            if (R.has_m) {
+                // M_ order is right,up,at,pos; MASHED_CAM_POSE order is pos,right,up,at
+                for (int k = 0; k < 3; ++k) {
+                    s_rep_basis[k]     = static_cast<float>(at(R.m_c[9 + k]));
+                    s_rep_basis[3 + k] = static_cast<float>(at(R.m_c[k]));
+                    s_rep_basis[6 + k] = static_cast<float>(at(R.m_c[3 + k]));
+                    s_rep_basis[9 + k] = static_cast<float>(at(R.m_c[6 + k]));
+                }
+                s_rep_vwy = static_cast<float>(at(R.c_vwy));
+            }
+            s_rep_car_ok = R.has_f;
+            if (R.has_f)
+                for (int i = 0; i < 4; ++i)
+                    for (int k = 0; k < 12; ++k)
+                        s_rep_car[i][k] = static_cast<float>(at(R.f_c[i][k]));
             cam_replay_row_ = static_cast<int>(R.next++);
         } else {
             cam_replay_row_ = -2;                             // trace exhausted: host inputs again
+            s_rep_basis_ok = s_rep_car_ok = false;
         }
     }
     race_cam_.Update(cc, course_id_, dtb, ticks, jit, reset, overhead);
@@ -6877,8 +6925,18 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     // carries roll, so it is applied as a basis rather than collapsed into an
     // at-point -- collapsing would throw the roll away, which is the whole
     // reason the form exists.
-    const bool campose_basis = (s_have_campose && s_campose_n == 12);
-    if (s_have_campose) race_basis = false;   // the parity transplant wins over the game camera
+    // [d1r1] MASHED_CAM_REPLAY_BASIS=1 (with MASHED_CAM_REPLAY), DIAGNOSTIC ONLY, default OFF:
+    // the frame renders from the ORIGINAL's own camera frame for the trace row this frame's
+    // director update consumed (M_* = the RwCamera frame modelling matrix at onLeave of
+    // FUN_00446520, which R2 measured to be what renders), as a per-row MASHED_CAM_POSE. R1
+    // adjudicates rendering, so the director port is taken out of the comparison by
+    // construction (verify/d1r1_20261016/PREREG_d1r1.md I-3).
+    static const bool s_rep_basis_on =
+        GetEnvironmentVariableA("MASHED_CAM_REPLAY_BASIS", nullptr, 0) != 0;
+    const bool rep_basis = s_rep_basis_on && s_rep_basis_ok;
+    const float* cpb = rep_basis ? s_rep_basis : s_campose;
+    const bool campose_basis = (s_have_campose && s_campose_n == 12) || rep_basis;
+    if (s_have_campose || rep_basis) race_basis = false;   // the parity transplant wins over the game camera
     if (s_have_campose && !campose_basis) {
         for (int i = 0; i < 3; ++i) { eye[i] = s_campose[i]; at[i] = s_campose[3 + i]; }
     } else if (campose_basis) {
@@ -6887,8 +6945,8 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         // built from the basis, so the roll survives where it matters; only the
         // published at-point is the lossy summary.
         for (int i = 0; i < 3; ++i) {
-            eye[i] = s_campose[i];
-            at[i]  = s_campose[i] + s_campose[9 + i];
+            eye[i] = cpb[i];
+            at[i]  = cpb[i] + cpb[9 + i];
         }
     }
     for (int i = 0; i < 3; ++i) { last_eye_[i] = eye[i]; last_at_[i] = at[i]; }
@@ -6927,9 +6985,9 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     last_basis_valid_ = campose_basis || race_basis;
     if (campose_basis) {
         for (int i = 0; i < 3; ++i) {
-            last_right_[i] = s_campose[3 + i];
-            last_up_[i]    = s_campose[6 + i];
-            last_atdir_[i] = s_campose[9 + i];
+            last_right_[i] = cpb[3 + i];
+            last_up_[i]    = cpb[6 + i];
+            last_atdir_[i] = cpb[9 + i];
         }
     } else if (race_basis) {
         // [d1r2] the game camera's frame, verbatim (eye was set to rrc.pos above)
@@ -6939,13 +6997,12 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
             last_atdir_[i] = rrc.at[i];
         }
     }
-    last_cam_src_ = campose_basis ? 3 : (race_basis ? rrc.src : 0);
+    last_cam_src_ = rep_basis ? 4 : (campose_basis ? 3 : (race_basis ? rrc.src : 0));
     ++cam_pub_seq_;
 
     D3DMATRIX viewm, projm, worldm;
     if (campose_basis)
-        MatViewFromBasis(&viewm, &s_campose[0], &s_campose[3],
-                         &s_campose[6], &s_campose[9]);
+        MatViewFromBasis(&viewm, &cpb[0], &cpb[3], &cpb[6], &cpb[9]);
     else if (race_basis)
         MatViewFromBasis(&viewm, rrc.pos, rrc.right, rrc.up, rrc.at);
     else
@@ -6987,6 +7044,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         const float vwy = static_cast<float>(0.75 * static_cast<double>(1.0f * rrc.view_window));
         last_fov_ = 2.f * std::atan(vwy);
     }
+    if (rep_basis) last_fov_ = 2.f * std::atan(s_rep_vwy);   // [d1r1] the row's RwCamera viewWindow.y
     {
         static const float s_fov_override = [] {
             char b[32];
@@ -7475,10 +7533,27 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
             carm._11 = sy2;  carm._13 = -cy;
         }
         carm._41 = car_pos_[0]; carm._42 = car_pos_[1]; carm._43 = car_pos_[2];
+        // [d1r1] MASHED_CAR_REPLAY=1 (with MASHED_CAM_REPLAY), DIAGNOSTIC ONLY, default OFF:
+        // each car body renders under the ORIGINAL's matrix for the consumed trace row
+        // (F{i}_*, slot 0 = player, ai_cars_[k] = slot k+1), so the draw-list adjudication
+        // compares rendering at matched car poses (PREREG_d1r1.md I-3).
+        static const bool s_car_rep =
+            GetEnvironmentVariableA("MASHED_CAR_REPLAY", nullptr, 0) != 0;
+        auto rep_car = [&](int slot, D3DMATRIX* m) {
+            if (!s_car_rep || !s_rep_car_ok) return;
+            const float* f = s_rep_car[slot];
+            MatIdentity(m);
+            m->_11 = f[0]; m->_12 = f[1];  m->_13 = f[2];
+            m->_21 = f[3]; m->_22 = f[4];  m->_23 = f[5];
+            m->_31 = f[6]; m->_32 = f[7];  m->_33 = f[8];
+            m->_41 = f[9]; m->_42 = f[10]; m->_43 = f[11];
+        };
+        rep_car(0, &carm);
         LibRw::RaceSubmit_AddInstance(rw_car_model_, (const float*)&carm);
         // AI cars reuse the player body when they have no livery variant of their
         // own; those that do keep drawing through D3D9 (their variants are not
         // registered yet), which is the same incremental fallback as props.
+        int ai_slot = 1;
         for (const auto& a : ai_cars_) {
             D3DMATRIX am;
             MatIdentity(&am);
@@ -7491,6 +7566,8 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
                 am._11 = asy;  am._13 = -ay;
             }
             am._41 = a.pos[0]; am._42 = a.pos[1]; am._43 = a.pos[2];
+            if (ai_slot < 4) rep_car(ai_slot, &am);
+            ++ai_slot;
             LibRw::RaceSubmit_AddInstance(rw_car_model_, (const float*)&am);
         }
     } else if (relit_cars) {

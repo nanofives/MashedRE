@@ -1,0 +1,19 @@
+=== base_default  exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\d1r1\base\mashed_re.exe  knobs=[] ===
+    exit=0  self_exited=True
+    base_default.step.csv  lines=21403  sha8=991a5fff
+    base_default.gates.csv  lines=54713  sha8=be0d47ea
+    base_default.ptrace.log  lines=27356  sha8=bc75b405
+final_default (log/d1r1/mashed_re_final.exe, sha256 prefix 7700DF7FEF26):
+=== final_default  exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\d1r1\mashed_re_final.exe  knobs=[] ===
+    final_default.step.csv  lines=21403  sha8=991a5fff
+    final_default.gates.csv  lines=54713  sha8=be0d47ea
+    final_default.ptrace.log  lines=27356  sha8=bc75b405
+after rebase onto race/first-frame-parity 98705947 (log/d1r1/mashed_re_rebased.exe, sha256 prefix 56EDAA42E83E):
+=== rebased_default  exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\d1r1\mashed_re_rebased.exe  knobs=[] ===
+    rebased_default.step.csv  lines=18664  sha8=c2e4d60d
+    rebased_default.gates.csv  lines=56153  sha8=b50bd39b
+    rebased_default.ptrace.log  lines=28076  sha8=ba90ed88
+=== rebased_noa3lut  exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\d1r1\mashed_re_rebased.exe  knobs=[MASHED_NO_A3_LUT=1] ===
+    rebased_noa3lut.step.csv  lines=21403  sha8=991a5fff
+    rebased_noa3lut.gates.csv  lines=54713  sha8=be0d47ea
+    rebased_noa3lut.ptrace.log  lines=27356  sha8=bc75b405

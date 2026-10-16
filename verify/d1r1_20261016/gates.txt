@@ -1,0 +1,19 @@
+orig training  {"row": 884, "draws": 242, "shim": 242, "I-COVER": true, "pre": 0, "I-FRAME": true, "named": "229/233", "I-NAME": true, "unnamed": ["#256x256:21"], "geometry": "241/242", "gerr": 0}
+orig training  {"row": 924, "draws": 257, "shim": 257, "I-COVER": true, "pre": 0, "I-FRAME": true, "named": "244/248", "I-NAME": true, "unnamed": ["#256x256:21"], "geometry": "256/257", "gerr": 0}
+orig training  {"row": 959, "draws": 233, "shim": 233, "I-COVER": true, "pre": 0, "I-FRAME": true, "named": "221/225", "I-NAME": true, "unnamed": ["#256x256:21"], "geometry": "233/233", "gerr": 0}
+stand training {"row": 884, "actual_row": 884, "armed": 1, "draws": 469, "empty": 18083, "cam_src": ["4"], "cam_max_abs_dev": 2.9803466361499886e-09, "I-SYNC": true, "named": "468/468", "I-NAME": true, "unnamed": []}
+stand training {"row": 924, "actual_row": 924, "armed": 1, "draws": 469, "empty": 18083, "cam_src": ["4"], "cam_max_abs_dev": 4.900512884375985e-09, "I-SYNC": true, "named": "468/468", "I-NAME": true, "unnamed": []}
+stand training {"row": 959, "actual_row": 959, "armed": 1, "draws": 469, "empty": 18083, "cam_src": ["4"], "cam_max_abs_dev": 3.7152099174875275e-09, "I-SYNC": true, "named": "468/468", "I-NAME": true, "unnamed": []}
+orig arctic    {"row": 1051, "draws": 180, "shim": 180, "I-COVER": true, "pre": 0, "I-FRAME": true, "named": "176/176", "I-NAME": true, "unnamed": [], "geometry": "179/180", "gerr": 0}
+orig arctic    {"row": 1091, "draws": 177, "shim": 177, "I-COVER": true, "pre": 0, "I-FRAME": true, "named": "173/173", "I-NAME": true, "unnamed": [], "geometry": "176/177", "gerr": 0}
+orig arctic    {"row": 1126, "draws": 131, "shim": 131, "I-COVER": true, "pre": 0, "I-FRAME": true, "named": "127/127", "I-NAME": true, "unnamed": [], "geometry": "130/131", "gerr": 0}
+stand arctic   {"row": 1051, "actual_row": 1051, "armed": 1, "draws": 308, "empty": 12382, "cam_src": ["4"], "cam_max_abs_dev": 3.249511593139687e-08, "I-SYNC": true, "named": "307/307", "I-NAME": true, "unnamed": []}
+stand arctic   {"row": 1091, "actual_row": 1091, "armed": 1, "draws": 308, "empty": 12382, "cam_src": ["4"], "cam_max_abs_dev": 3.569335760289505e-08, "I-SYNC": true, "named": "307/307", "I-NAME": true, "unnamed": []}
+stand arctic   {"row": 1126, "actual_row": 1126, "armed": 1, "draws": 308, "empty": 12382, "cam_src": ["4"], "cam_max_abs_dev": 4.4909667096248995e-08, "I-SYNC": true, "named": "307/307", "I-NAME": true, "unnamed": []}
+orig city      {"row": 761, "draws": 512, "shim": 512, "I-COVER": true, "pre": 0, "I-FRAME": true, "named": "501/501", "I-NAME": true, "unnamed": [], "geometry": "511/512", "gerr": 0}
+orig city      {"row": 801, "draws": 496, "shim": 496, "I-COVER": true, "pre": 0, "I-FRAME": true, "named": "485/485", "I-NAME": true, "unnamed": [], "geometry": "495/496", "gerr": 0}
+orig city      {"row": 836, "draws": 444, "shim": 444, "I-COVER": true, "pre": 0, "I-FRAME": true, "named": "433/433", "I-NAME": true, "unnamed": [], "geometry": "443/444", "gerr": 0}
+stand city     {"row": 761, "actual_row": 761, "armed": 1, "draws": 643, "empty": 20027, "cam_src": ["4"], "cam_max_abs_dev": 3.7988279188994056e-08, "I-SYNC": true, "named": "635/635", "I-NAME": true, "unnamed": []}
+stand city     {"row": 801, "actual_row": 801, "armed": 1, "draws": 643, "empty": 20027, "cam_src": ["4"], "cam_max_abs_dev": 4.082031068719516e-08, "I-SYNC": true, "named": "635/635", "I-NAME": true, "unnamed": []}
+stand city     {"row": 836, "actual_row": 836, "armed": 1, "draws": 643, "empty": 20027, "cam_src": ["4"], "cam_max_abs_dev": 2.9492184694390744e-08, "I-SYNC": true, "named": "635/635", "I-NAME": true, "unnamed": []}
+INSTRUMENT GATES: PASS
