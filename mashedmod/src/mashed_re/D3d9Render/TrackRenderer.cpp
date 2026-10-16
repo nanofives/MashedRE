@@ -3887,6 +3887,10 @@ bool TrackRenderer::LoadCar(IDirect3DDevice9* dev, const char* piz_path,
             car_pos_[2] = g0[2];
             car_pos_[1] = gy + car_ground_off_;
             car_yaw_ = std::atan2(g1[2] - g0[2], g1[0] - g0[0]);
+            {   // [gridyaw] MASHED_GRID_DIR (default OFF): FUN_00408b00's yaw at node snap(0) replaces the gate stand-in
+                float gdA[3], gdL[2], gdD[2], gdY = 0.f; int gdN = -1;
+                if (Race::GridDir_Anchor(gdA, gdL, gdD, &gdY, &gdN)) car_yaw_ = gdY;
+            }
             if (const float* dy = D2LatSpawnYaw()) car_yaw_ = *dy;   // [d2lateral] diagnostic, default OFF
             car_speed_ = 0.f;
             // A8: re-seed the integrated body basis to the grid heading.
@@ -6137,11 +6141,23 @@ void TrackRenderer::StartRound() {
     // FUN_0040e590 -> FUN_00409290(&DAT_0063ba80) -> FUN_00408b00 anchor = node centre / dir / corner axis
     // (FIX_BRIEF.md section 4 A2/A3). Same formation table; only A, lat, dir change.
     float gA[3] = { g0[0], g0[1], g0[2] };
+    // [gridyaw 2026-10-16] MASHED_GRID_DIR (default OFF): FUN_00408b00's whole frame at the node the port grids at.
+    // Without MASHED_ROUND_GRID that node is snap(0) (the port grids every round at the start line, U-9686), and
+    // A / lat / dir come from its record as above; with it, the round-grid node. Either way the yaw is the
+    // original's law (LUT 2-D normalize, clamp, acos, RwMatrixRotate about Y), not atan2 of the raw direction,
+    // which is 0.11 deg off on Training (verify/gridyaw_20261016/PREREG_gridyaw.md A1.2).
+    float gdYaw = 0.f;
+    bool gdOn = false;
     {
         float A[3], L2[2], D2[2]; int nd = -1;
         if (Race::RoundGrid_Anchor(A, L2, D2, &nd)) {
             gA[0] = A[0]; gA[1] = A[1]; gA[2] = A[2];
             lat[0] = L2[0]; lat[1] = L2[1]; dir[0] = D2[0]; dir[1] = D2[1];
+            if (Race::GridDir_Enabled()) gdOn = Race::GridDir_YawAt(nd, &gdYaw);
+        } else if (Race::GridDir_Anchor(A, L2, D2, &gdYaw, &nd)) {
+            gA[0] = A[0]; gA[1] = A[1]; gA[2] = A[2];
+            lat[0] = L2[0]; lat[1] = L2[1]; dir[0] = D2[0]; dir[1] = D2[1];
+            gdOn = true;
         }
     }
     // slot == spawn order: player=0, ai0=1, ai1=2, ai2=3
@@ -6154,7 +6170,7 @@ void TrackRenderer::StartRound() {
         const float y = GroundHeight(x, z, &ok);
         pos[0] = x; pos[2] = z;
         pos[1] = (ok ? y : gA[1]) + car_ground_off_;
-        *yaw = std::atan2(dir[1], dir[0]);
+        *yaw = gdOn ? gdYaw : std::atan2(dir[1], dir[0]);
     };
     // [round grid Stage B] per-car formation slot (default-OFF MASHED_ROUND_GRID_ORDER): FUN_0040e590's slot value
     // & 3; otherwise slot == spawn order as before.

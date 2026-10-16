@@ -39,6 +39,19 @@ bool RoundGrid_SlotOrder(int slotValue[4]);
 void RoundGrid_AssignMode4(const int codes[4], int slotValue[4]);
 bool RoundGrid_OrderEnabled();
 
+// [gridyaw 2026-10-16] MASHED_GRID_DIR=1 (default OFF): the grid frame FUN_00408b00 builds, for the node the port
+// grids at (verify/gridyaw_20261016/PREREG_gridyaw.md section 2, A1.3).
+bool GridDir_Enabled();
+// FUN_00408b00's yaw law on a record direction (x, z) = FUN_00426cc0(node) +0 / +8, in the original's degrees.
+float GridDir_LawDeg(float lx, float lz);
+// The same, as the port's yaw (fwd = (cos, 0, sin)): RwMatrixRotate(Y, deg) at = (sin r, 0, cos r), yaw = atan2.
+float GridDir_PortYaw(float lx, float lz);
+// Node snap(0) (FUN_00409290 on DAT_0063ba80 = 0, the race-init value): A / lat / dir as RoundGrid_AnchorAt and the
+// law's port yaw. False (caller keeps the gate frame) when the knob is off or the course block has no nodes.
+bool GridDir_Anchor(float A[3], float lat[2], float dir[2], float* yawPort, int* node);
+// Port yaw from node n's record (the RoundGrid_Anchor path when both knobs are on). False if n has no record.
+bool GridDir_YawAt(int node, float* yawPort);
+
 // G-RG-SNAP: MASHED_ROUND_GRID_REPLAY=<rows.tsv> (re/tools/roundgrid_unicorn.py) replays FUN_00409290 rows;
 // report to MASHED_ROUND_GRID_REPLAY_OUT. Called once after the course block is built.
 void RoundGrid_MaybeReplay();

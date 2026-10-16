@@ -106,6 +106,72 @@ bool RoundGrid_Anchor(float A[3], float lat[2], float dir[2], int* node) {
     return ok;
 }
 
+// ---- [gridyaw 2026-10-16] MASHED_GRID_DIR: FUN_00408b00's grid frame at the node the port grids at ----
+bool GridDir_Enabled() {
+    static const bool s_on = [] {
+        const char* s = std::getenv("MASHED_GRID_DIR");
+        return s && s[0] && s[0] != '0';
+    }();
+    return s_on;
+}
+
+// FUN_00408b00 (verify/grid_orig_ts/FUN_00408b00_decomp.txt): local_68/local_64 = L.x / L.z; FUN_004c3c60 2-D
+// normalizes them in place (LUT); FUN_004726b0(&(0.0, 1.0), &local_68) = the 2-D dot, clamped to
+// [_DAT_005cc33c -1.0, _DAT_005cc320 1.0]; FUN_004a3384 (CRT acos) * _DAT_005cc98c (57.29578, 0x42652ee1); if the
+// normalized x < DAT_005d757c (0.0): _DAT_005ccac4 (360.0) - that. Stored to *param_5 as a float.
+float GridDir_LawDeg(float lx, float lz) {
+    const float in[2] = { lx, lz };
+    float n[2];
+    Math::LutNormalize2D(n, in);                                       // FUN_004c3c60
+    double d = 0.0 * static_cast<double>(n[0]) + 1.0 * static_cast<double>(n[1]);   // FUN_004726b0
+    if (d < -1.0) d = -1.0;
+    if (1.0 < d) d = 1.0;
+    double a = std::acos(d) * static_cast<double>(57.29578f);          // FUN_004a3384 * _DAT_005cc98c
+    if (n[0] < 0.0f) a = static_cast<double>(360.0f) - a;              // _DAT_005ccac4
+    return static_cast<float>(a);
+}
+
+// FUN_004704c0: RwMatrixRotate(m, &DAT_006146fc = (0, 1, 0), yaw, 1) on a translation-only matrix, so the car faces
+// R_y(yaw) (0, 0, 1) = (sin r, 0, cos r), r = yaw * 0x3c8efa35 rounded to float (the race loop runs at PC_24,
+// memory track-load-runs-at-pc24). The port's basis is built from yaw with fwd = (cos, 0, sin).
+float GridDir_PortYaw(float lx, float lz) {
+    const float deg = GridDir_LawDeg(lx, lz);
+    const float r = deg * 0.017453292f;                                // DAT_005cd7a8 = 0x3c8efa35
+    const float s = static_cast<float>(std::sin(static_cast<double>(r)));
+    const float c = static_cast<float>(std::cos(static_cast<double>(r)));
+    return static_cast<float>(std::atan2(static_cast<double>(c), static_cast<double>(s)));
+}
+
+namespace {
+void GridDirTrace(int node, float lx, float lz, float yaw) {
+    static std::FILE* f = nullptr; static bool init = false;
+    if (!init) { init = true; if (const char* p = std::getenv("MASHED_GRID_DIR_TRACE")) f = std::fopen(p, "w"); }
+    if (!f) return;
+    std::uint32_t bx, bz; std::memcpy(&bx, &lx, 4); std::memcpy(&bz, &lz, 4);
+    std::fprintf(f, "griddir node=%d L=(%.9g,%.9g) bits=%08x/%08x law_deg=%.9g port_yaw=%.9g\n", node, lx, lz,
+                 bx, bz, GridDir_LawDeg(lx, lz), yaw);
+    std::fflush(f);
+}
+}  // namespace
+
+bool GridDir_YawAt(int node, float* yawPort) {
+    const int count = I32(kNodeCount);
+    if (count <= 0 || node < 0 || node >= count) return false;
+    const float* d = FP(kRec + static_cast<std::uintptr_t>(node) * 0x4cu);   // FUN_00426cc0(node)
+    *yawPort = GridDir_PortYaw(d[0], d[2]);
+    GridDirTrace(node, d[0], d[2], *yawPort);
+    return true;
+}
+
+bool GridDir_Anchor(float A[3], float lat[2], float dir[2], float* yawPort, int* node) {
+    if (!GridDir_Enabled()) return false;
+    std::int32_t v = 0;                                                // DAT_0063ba80 at race init (0x0040fef0)
+    SnapNodeToSafeStartLines(&v);                                      // FUN_00409290
+    if (node) *node = v;
+    if (!RoundGrid_AnchorAt(v, A, lat, dir)) return false;
+    return GridDir_YawAt(v, yawPort);
+}
+
 bool RoundGrid_OrderEnabled() {
     static const bool s_on = [] {
         const char* s = std::getenv("MASHED_ROUND_GRID_ORDER");
