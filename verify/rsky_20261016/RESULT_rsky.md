@@ -19,12 +19,12 @@ G-CTRL is unchanged (`2b4d47bb / 356821c8 / f7a155e1`, baseline, first and final
 a. **Sky slots.** `Sky_Filename` handler `0x0047a1e0` files the name under `names + (slot+1)*0x40`; `Course::CreateFromDescription` (`0x00479330`) loads slots 0..3
    into `course + 0x100f0`; `FUN_00426d20` / `FUN_00426d90` place each at the camera position and `RpClumpRender` them in ascending slot order (Arctic and Roundabout's
    slot 3, `0x00449010`, is the same pair). The port keeps one `Prop` per slot, makes the slot argument optional (the one-argument form lands in slot 0:
-   `FUN_004b7090` returns `_DAT_005d1008` = 0.0 for a non-number, [UNCERTAIN U-9719]) and queues every loaded slot. `MASHED_NO_SKYSLOTS=1` = old parse.
+   `FUN_004b7090` returns `_DAT_005d1008` = 0.0 for a non-number, [UNCERTAIN U-9721]) and queues every loaded slot. `MASHED_NO_SKYSLOTS=1` = old parse.
 b. **Forest object BSP.** `Object_Bsp_Filename` (`0x0047a610`) names `Trees.bsp`, loaded as a second RpWorld (`course + 0x10040`). Forest's slot 2 (`0x0044df00`)
    renders clump 0 (`Water.dff`) and then `FUN_0044dce0`: camera to the object world, cull NONE, `RpWorldRender`, back. The port builds the object world exactly as the
    main world (`RaceSubmit_SetObjectWorld`), queues a marker after the after-world props, draws it with cull NONE, and walks its sectors **back-to-front**
    (the hook swaps the near side when `world+0xc == 2`, `0x004e394d`; the original's 6 visible sectors come in the reverse of our front-to-back order on 3 of 3 frames;
-   the writer of that 2 is not decoded, [UNCERTAIN U-9720]). `MASHED_NO_OBJBSP=1` = old Forest, `MASHED_OBJBSP_ORDER=f2b` = front-to-back (experiment).
+   the writer of that 2 is not decoded, [UNCERTAIN U-9722]). `MASHED_NO_OBJBSP=1` = old Forest, `MASHED_OBJBSP_ORDER=f2b` = front-to-back (experiment).
 c. **Sector mesh order (beyond the brief).** With the object world in, the sectors drew their five tree meshes as bark, Oak, Bush2, Tree'sBack, midtree; the original draws
    bark, Bush2, Tree'sBack, midtree, Oak. RenderWare draws a world sector's meshes in the order of its BinMesh PLG (chunk `0x50E`), and librw's `buildMeshes` gives list order.
    `Track::World` now reads each sector's BinMesh order and `BuildWorld` reorders the mesh structs (`bsp_binmesh.py` prints it; Trees.bsp sector 3 = `m5 m0 m2 m4 m1`).
@@ -94,7 +94,7 @@ r10 miss (73/77); the new sample is additional and replaces it for gate purposes
 
 1. The BinMesh sector order is default ON for all worlds (it removes rows on Forest, Sands, Dump, Warzone and City, shrinks ORDER counts on SuperG and Roundabout, and leaves the other 6 tracks identical). Keep it ON, or limit it to the object world (`MASHED_NO_SECTOR_BINMESH` is the opt-out)?
 2. Accept the new Neustein capture as the gate-clean sample for U-9702's footnote?
-3. U-9719 / U-9720 are the next free ids at the base; siblings may have taken them (renumber at merge).
+3. U-9721 / U-9722 are the next free ids at the base; siblings may have taken them (renumber at merge).
 
 ## 8. Reproduce
 

@@ -1033,7 +1033,7 @@ bool ParseLightsDffDirectional(const std::uint8_t* d, std::uint32_t len,
 // argument n (FUN_004b70d0 @ 0x004b70d0), and files the name under `names + (slot + 1) * 0x40`
 // (0x0047a248..0x0047a26a). The one-argument form `Sky_Filename("x.dff")` reads argument 0, a stack
 // cell that is not a number, and FUN_004b7090 then returns _DAT_005d1008 = 0.0 (file bytes at
-// 0x005d1008 are zero), so it lands in slot 0. [UNCERTAIN U-9719: the stack cell's tag is read from
+// 0x005d1008 are zero), so it lands in slot 0. [UNCERTAIN U-9721: the stack cell's tag is read from
 // past the arguments; Roundabout's original drawing `Sky3` / `Sky4` is the witness.] Slots 0..3
 // are loaded by CreateFromDescription (0x00479330, "Loading SkyDome [%s] into sky[%d]"); a slot
 // outside 0..3 would write other name-table entries and is not parsed.

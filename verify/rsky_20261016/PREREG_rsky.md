@@ -19,7 +19,7 @@ Does porting the original's behaviour turn those cited rows GREEN on the default
 - `Sky_Filename` handler `0x0047a1e0`: arg count `n` = `FUN_004b6fc0` (`(top - base) >> 4`, `0x004b6fc0`). For `n != 0` the slot is
   `ftol(FUN_004b7090(L, n-1))` and the name is `FUN_004b70d0(L, n)`; the name goes to `names + (slot+1)*0x40`
   (`0x0047a248`..). `FUN_004b7090` returns `_DAT_005d1008` for a non-number (0x005d1008 = 0.0, read from the file), so the one-argument form
-  lands in slot 0. [UNCERTAIN U-9719: index 0 is `top + 0`, a stack cell past the arguments; its tag is taken as non-number. Evidence for
+  lands in slot 0. [UNCERTAIN U-9721: index 0 is `top + 0`, a stack cell past the arguments; its tag is taken as non-number. Evidence for
   the claim: Roundabout's original draws `Sky3`/`Sky4`.]
 - `Course::CreateFromDescription` (`0x00479330`) loads sky slots 0..3 (`0x00479330` loop at the `"Loading SkyDome [%s] into sky[%d]"` string): name at
   `names + 0x40*(i+1)`, clump into `course + 0x100f0 + 4*i` (= `0x00656f48`..`0x00656f54`).
