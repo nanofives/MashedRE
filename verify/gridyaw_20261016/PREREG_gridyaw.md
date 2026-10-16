@@ -180,3 +180,19 @@ A3.4 **Default rule** (unchanged in substance). R or G goes default ON only if e
 default (L). An arm that puts all three D2 metrics in bounds with H1 is reported first, on either base. Its full
 gates (determinism, D3 (b), collateral, G-CTRL) are then run before anything is proposed. A knob that only works on
 top of W is reported as conditional on the W decision (`RESULT_d2bsp.md` section 8).
+
+## Amendment 4 (2026-10-16, user decision relayed by the orchestrator: W + K go default ON; before the runs below)
+
+A4.1 **New reference default = L + W + K** (`MASHED_D2BSP=1 MASHED_D2CLS=1` on this build, which predates d2close's
+wiring). Section 7's L + W arms ran without K. `RESULT_d2bsp.md` section 4 reports K byte-identical to W on the D2 arm
+(`D2_WK_1` = `D2_W_1`). That is not assumed here: the arms are re-run with K.
+
+A4.2 **Arms (`run_rb.py`, `rb/`), each alone:** `D2_WK_1` (the new default's control), `D2_WKR_1` (refresh),
+`D2_WKG_1` (grid), `D2_WKGR_1..3` (grid + refresh).
+
+A4.3 **Landing rule (orchestrator, fixed now).** A knob of this branch may land as a D2 residual improvement only
+if, on L + W + K, it pushes no D2 metric out of its `d81a8df6` bound (all three in, 3/3 for the GR pair) and H1
+passes. Otherwise it stays opt-in. Faithfulness gains are reported separately (the first-impact chain, the grid).
+
+A4.4 **Prediction.** `D2_WK_1` = `D2_W_1` (0.1890 / 0.2476 / 1912.01). The knob arms equal their section-7 W
+twins: R pins, G slips OUT, GR slip 2000-2600 0.2557 OUT. If so, nothing lands.

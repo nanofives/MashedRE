@@ -24,6 +24,10 @@ STACK = {'DEF': [], 'B': ['MASHED_POS_MODEL'],
          'R': ['MASHED_D2LAT_REFRESH'], 'GR': ['MASHED_GRID_DIR', 'MASHED_D2LAT_REFRESH'], 'W': ['MASHED_D2BSP'],
          'WR': ['MASHED_D2BSP', 'MASHED_D2LAT_REFRESH'], 'WG': ['MASHED_D2BSP', 'MASHED_GRID_DIR'],
          'WGR': ['MASHED_D2BSP', 'MASHED_GRID_DIR', 'MASHED_D2LAT_REFRESH'],
+         # amendment 4: W + K = the new default (user decision 2026-10-16)
+         'WK': ['MASHED_D2BSP', 'MASHED_D2CLS'], 'WKR': ['MASHED_D2BSP', 'MASHED_D2CLS', 'MASHED_D2LAT_REFRESH'],
+         'WKG': ['MASHED_D2BSP', 'MASHED_D2CLS', 'MASHED_GRID_DIR'],
+         'WKGR': ['MASHED_D2BSP', 'MASHED_D2CLS', 'MASHED_GRID_DIR', 'MASHED_D2LAT_REFRESH'],
          # gridyaw: G = the knob (+ its trace), GL = the knob + d2lateral's refresh knob
          'G': ['MASHED_GRID_DIR'], 'GL': ['MASHED_GRID_DIR', 'MASHED_D2LAT_REFRESH'], 'BG': ['MASHED_POS_MODEL', 'MASHED_GRID_DIR'], 'BGL': ['MASHED_POS_MODEL', 'MASHED_GRID_DIR', 'MASHED_D2LAT_REFRESH'],
          # amendment 2: L = the knob; C = d2settle's fix C (exact sqrt), report; BL = fix B + the knob, report
