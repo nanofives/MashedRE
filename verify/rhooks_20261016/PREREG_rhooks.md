@@ -53,3 +53,19 @@ behaviour.
 - Gate failures, piz-collision loads: re-run; a frame never passing a gate is left unscored (r10's rule).
 
 Defaults: ON with the opt-out if Pr-1, Pr-2 and Pr-5 hold; otherwise OFF with a recommendation.
+
+## Addendum 1 (written after arm A / arm B were scored, before any train measurement)
+
+Arm B results are in RESULT_rhooks.md. Added after them, decoded before measuring:
+
+- **Warzone craters (correction to the decode above).** Clumps 9..16 ARE drawn: switch-table entries 0..7, all ON, set by
+  FUN_00452620 @ 0x00452620 (`add edi,0x10134` 0x00452628, from slot 0 via 0x00452720 and from slots 6/7). The first linear
+  capstone sweep desynchronised and missed that instruction; the byte-anchored sweep (`dispref.py`) found it. Arm A hid the
+  craters (3 new C01c rows on Warzone); arm B draws them.
+- **Slot render states.** Arm B carries each slot's cull / zwrite (`RaceSubmit_AddInstanceStates`).
+- **Dump train (U-9717), arm C.** SetClumpAnim (handler FUN_0047ad40) records: clump = arg n-1, anim = arg n, type = arg 1
+  (LINEAR is not a global of the image, so nil -> 0 -> sampler FUN_004752f0, the copters' CopterAnimMatrix). Tick
+  FUN_00426700 (t += units * [0x005cc948], wrap at the duration) runs from FUN_0040fc00 at 0x0040fc94, before the copter tick
+  0x0040fcb9 with the same units. **Pr-6:** both Dump train rows (C28, rows 735 and 775) stop being MISSING: the train is
+  drawn either matched or as a MOVED row no further off than the copters' C14 MOVED rows (0.04 to 0.20); no other Dump row
+  changes; G-CTRL unchanged.
