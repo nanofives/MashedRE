@@ -139,3 +139,28 @@ F1 goes default ON only together with F2+F3+F4 passing 1-4 on all 9 frames.
 ## 5. Amendments
 
 Appended here with a timestamp and reason before the next affected run.
+
+### Amendment 1 (2026-10-16, before any F6 run): F6, the after-world clump order
+
+Reason: on base d074095d (rprops placed City's 27 TreeTrunk copies) the City ORDER rows `Path2`
+(2014 inversions), `Pathpattern` (108) and `road2` (162) are against `bark`/`Grass`. The original
+draws the excluded clumps from the per-track hook record's `+0x1c` slot (table `0x005f33f8`), in
+code order: City `0x0044b8f0` renders course clump slots 6, 7, 8, 9, 10, **12, 11**, 13
+(`0x0044b920..0x0044b97b`), so the trees (12) come before the road (11). The port queues them by
+clump index. `slot2_order.py` lists every track's slot-2 order and `excluded_vs_slot2.py` shows
+it is always a subset of COURSE.LUA's `Clump_Exclude_From_World` set (the whole set on TRAINING
+and City).
+
+**F6** (`MASHED_LIBRW_AFTERWORLDORDER`, `=0` opts out): the after-world props whose clump the
+track's slot 2 draws are queued as one group, in slot-2 order, at the queue position of the first
+of them. Every other prop keeps its place. Tracks whose slot 2 renders through an indexed loop
+(Dump) or renders no course clump slot (Arctic, Egypt) are unchanged.
+
+Rules: §3 rules 1-5 against **T2** (the final F1-F5 build on d074095d) instead of B0. Rule 1
+targets: City `Pathpattern` and `road2` ORDER rows gone; `Path2` inversions fall. Rule 4: F6 `=0`
+equals T2 byte for byte on 9/9 frames.
+
+Predictions (not evidence): **Pr-6** City `Pathpattern` and `road2` rows go on 3/3 frames and
+`Path2` falls to the order of the 130 it had on 0020d521, before the trees were placed.
+**Pr-7** Arctic records equal T2 byte for byte (no slot-2 clump list). **Pr-8** TRAINING gains no
+row (its slot 2 moves clump 9 ahead of 3..8).

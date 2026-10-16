@@ -1,0 +1,201 @@
+{
+ "training": {
+  "course_id": 30,
+  "slot2": "0x451460",
+  "clumps": [
+   9,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8
+  ],
+  "other": [],
+  "sites": [
+   "0x451470",
+   "0x451483",
+   "0x451496",
+   "0x4514a9",
+   "0x4514bc",
+   "0x4514cf",
+   "0x4514e2"
+  ]
+ },
+ "superg": {
+  "course_id": 25,
+  "slot2": "0x450fc0",
+  "clumps": [
+   0
+  ],
+  "other": [],
+  "sites": [
+   "0x450fcf"
+  ]
+ },
+ "arctic": {
+  "course_id": 0,
+  "slot2": "0x449030",
+  "clumps": [],
+  "other": [
+   "0x449043"
+  ],
+  "sites": [
+   "0x449043"
+  ]
+ },
+ "rouabout": {
+  "course_id": 2,
+  "slot2": "0x44d6f0",
+  "clumps": [
+   3,
+   0,
+   5,
+   11,
+   9,
+   8,
+   19,
+   17
+  ],
+  "other": [],
+  "sites": [
+   "0x44d76f",
+   "0x44d782",
+   "0x44d795",
+   "0x44d7a8",
+   "0x44d7bb",
+   "0x44d7ce",
+   "0x44d7e1",
+   "0x44d7f4"
+  ]
+ },
+ "sands": {
+  "course_id": 11,
+  "slot2": "0x450910",
+  "clumps": [
+   5,
+   1
+  ],
+  "other": [
+   "0x450925",
+   "0x4509d8",
+   "0x450a06"
+  ],
+  "sites": [
+   "0x450925",
+   "0x45093a",
+   "0x45094d",
+   "0x4509d8",
+   "0x450a06"
+  ]
+ },
+ "warzone": {
+  "course_id": 33,
+  "slot2": "0x452d10",
+  "clumps": [
+   19,
+   20,
+   0
+  ],
+  "other": [
+   "0x4524ac"
+  ],
+  "sites": [
+   "0x452d2f",
+   "0x452d42",
+   "0x452d74",
+   "0x4524ac"
+  ]
+ },
+ "forest": {
+  "course_id": 34,
+  "slot2": "0x44df00",
+  "clumps": [
+   0
+  ],
+  "other": [],
+  "sites": [
+   "0x44df10"
+  ]
+ },
+ "egypt": {
+  "course_id": 3,
+  "slot2": "0x449830",
+  "clumps": [],
+  "other": [],
+  "sites": []
+ },
+ "storm": {
+  "course_id": 36,
+  "slot2": "0x44db40",
+  "clumps": [
+   0,
+   1
+  ],
+  "other": [],
+  "sites": [
+   "0x44db50",
+   "0x44db8a"
+  ]
+ },
+ "dump": {
+  "course_id": 37,
+  "slot2": "0x449520",
+  "clumps": [],
+  "other": [
+   "0x449583 dword ptr [edi + eax*4 + 0x10110]"
+  ],
+  "sites": [
+   "0x449583"
+  ]
+ },
+ "highway": {
+  "course_id": 38,
+  "slot2": "0x44e470",
+  "clumps": [
+   43
+  ],
+  "other": [],
+  "sites": [
+   "0x44e546"
+  ]
+ },
+ "neustein": {
+  "course_id": 39,
+  "slot2": "0x44af10",
+  "clumps": [
+   5,
+   6
+  ],
+  "other": [],
+  "sites": [
+   "0x44af20",
+   "0x44af34"
+  ]
+ },
+ "city": {
+  "course_id": 26,
+  "slot2": "0x44b8f0",
+  "clumps": [
+   6,
+   7,
+   8,
+   9,
+   10,
+   12,
+   11,
+   13
+  ],
+  "other": [],
+  "sites": [
+   "0x44b927",
+   "0x44b933",
+   "0x44b93f",
+   "0x44b94b",
+   "0x44b957",
+   "0x44b963",
+   "0x44b96f",
+   "0x44b97b"
+  ]
+ }
+}
