@@ -218,6 +218,14 @@ private:
         int                             hook_zwrite = -1;  // HookDraw::zwrite (-1 = inherited)
     };
     std::vector<Prop> props_;
+    // [rhooks U-9717] COURSE.LUA SetClumpAnim (Lua handler FUN_0047ad40 @ 0x0047ad40): a course clump
+    // whose frame takes an .ANM matrix every update (FUN_00426ab0 -> FUN_00426700 @ 0x00426700 ->
+    // FUN_004756e0 @ 0x004756e0, RwFrameTransform REPLACE). `t` = the record's time accumulator
+    // (desc +0x74, zero at load), `type` = desc +0x78 (0 = FUN_004752f0, CopterAnimMatrix).
+    struct ClumpAnim { std::size_t prop = 0; Track::HAnim anim; float t = 0.f; int type = 0;
+                       int clump = -1; int anim_idx = -1; bool ticked = false; float m[16] = {}; };
+    std::vector<ClumpAnim> clump_anims_;
+    void ClumpAnimTick(int units);
     // [rstates F6] the order props_ are queued in each frame (BuildPropOrder).
     std::vector<std::size_t> prop_order_;
     void BuildPropOrder(std::FILE* log);

@@ -1961,6 +1961,8 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                 std::vector<D3DMATRIX> inst;
             };
             RwpDesc rwp[32];
+            std::string anim_names[16];   // [rhooks U-9717] General_Anim_Filename slots
+            clump_anims_.clear();
             std::vector<std::pair<std::string, float>> lua_locals;
             auto lua_num = [&](std::string tok, float* out) -> bool {
                 while (!tok.empty() && (tok.front() == ' ' || tok.front() == '\t')) tok.erase(tok.begin());
@@ -2036,6 +2038,31 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                         lua_num(args[1], &lb);
                         ri = static_cast<int>(fi);
                         if (ri >= 0 && ri < 32) rwp[ri].label = static_cast<int>(lb);
+                    } else if (lua_args(line, "SetClumpAnim", &args) &&
+                               (args.size() == 2 || args.size() == 3)) {
+                        // [rhooks U-9717] FUN_0047ad40 @ 0x0047ad40, record k at desc + 0x70 + 0xc*k:
+                        // +0x70 = arg n-1 (clump), +0x71 = arg n (anim), +0x78 = 0, then arg 1 when
+                        // n == 3 (each through __ftol 0x004a2c48). Dump's SetClumpAnim(LINEAR, 0, 3):
+                        // LINEAR is no global of the image, so Lua 4.0 hands nil -> 0 (lua_num).
+                        float v0 = 0.f, vc = 0.f, va = 0.f;
+                        const std::size_t n = args.size();
+                        lua_num(args[n - 2], &vc);
+                        lua_num(args[n - 1], &va);
+                        if (n == 3) lua_num(args[0], &v0);
+                        ClumpAnim ca;
+                        ca.clump = static_cast<int>(vc);
+                        ca.anim_idx = static_cast<int>(va);
+                        ca.type = n == 3 ? static_cast<int>(v0) : 0;
+                        clump_anims_.push_back(std::move(ca));
+                    } else if (lua_args(line, "General_Anim_Filename", &args) && args.size() == 2) {
+                        // the .ANM per course anim slot (course + 0x105b0 + 4*i)
+                        float fi = -1.f;
+                        lua_num(args[0], &fi);
+                        const int ai = static_cast<int>(fi);
+                        std::string nm = args[1];
+                        const std::size_t q0 = nm.find('"'), q1 = nm.rfind('"');
+                        if (ai >= 0 && ai < 16 && q0 != std::string::npos && q1 > q0)
+                            anim_names[ai] = nm.substr(q0 + 1, q1 - q0 - 1);
                     }
                 }
                 if (std::sscanf(line.c_str(),
@@ -2582,6 +2609,38 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                                           "range=%.1f site=0x%08x\n", course_id_, l.clump_h,
                                      props_[hi].instances.size(), l.clump_l, dffl, l.range, l.site);
                 }
+            }
+            // [rhooks U-9717] SetClumpAnim records: FUN_004756e0 runs only when both the course clump
+            // slot and the anim slot are non-null (`if (param_1 != 0 && param_2 != 0)`).
+            static const bool s_no_clumpanim = std::getenv("MASHED_NO_CLUMPANIM") != nullptr;
+            {
+                std::vector<ClumpAnim> keep;
+                for (auto& ca : clump_anims_) {
+                    std::size_t pi = props_.size();
+                    for (std::size_t j = 0; j < props_.size(); ++j)
+                        if (props_[j].clump_idx == ca.clump && !props_[j].hook_hidden) pi = j;
+                    const bool have_anim = ca.anim_idx >= 0 && ca.anim_idx < 16 &&
+                                           !anim_names[ca.anim_idx].empty();
+                    bool ok = false;
+                    if (!s_no_clumpanim && pi < props_.size() && have_anim &&
+                        props_[pi].instances.size() == 1) {
+                        std::uint32_t al = 0;
+                        const std::uint8_t* ab = find_entry(anim_names[ca.anim_idx].c_str(), &al);
+                        ok = ab && ca.anim.Parse(ab, al) && !ca.anim.frames.empty();
+                    }
+                    if (log)
+                        std::fprintf(log, "  CLUMPANIM course_id=%d clump=%d anim=%d (%s) type=%d prop=%d %s\n",
+                                     course_id_, ca.clump, ca.anim_idx,
+                                     have_anim ? anim_names[ca.anim_idx].c_str() : "-", ca.type,
+                                     pi < props_.size() ? static_cast<int>(pi) : -1,
+                                     ok ? (ca.type == 0 ? "animated FUN_004752f0" : "animated FUN_004b47e0")
+                                        : (s_no_clumpanim ? "off (MASHED_NO_CLUMPANIM)" : "not animated"));
+                    if (ok) {
+                        ca.prop = pi;
+                        keep.push_back(std::move(ca));
+                    }
+                }
+                clump_anims_ = std::move(keep);
             }
         }
     }
@@ -3869,13 +3928,72 @@ void CopterAnimMatrix(const Track::HAnim& an, float t, float* m) {
     m[12] = m[13] = m[14] = 0.f;
     FUN_004c51a0(m, pos, 2);
 }
+// [rhooks U-9717] FUN_004b47e0 @ 0x004b47e0, the SetClumpAnim type != 0 sampler: t <= 0 -> key 0,
+// t >= duration -> the last key, else the first key i with key[i+1].time >= t and FUN_00532b80 @
+// 0x00532b80 between keys i and i+1 (quaternion slerp + LINEAR translation), then FUN_00532a60.
+// FUN_00532b80 negates key i+1's quaternion IN PLACE when the dot is negative, so the anim is mutable.
+void LinearAnimMatrix(Track::HAnim& an, float t, float* m) {
+    std::vector<Track::HKeyFrame>& F = an.frames;
+    const int n = static_cast<int>(F.size());
+    if (n == 0) { for (int i = 0; i < 16; ++i) m[i] = (i % 5 == 0) ? 1.f : 0.f; return; }
+    if (t <= 0.0f) { AnimKeyMatrix(F[0], m); return; }
+    if (!(t < an.duration) || n < 2) { AnimKeyMatrix(F[n - 1], m); return; }
+    int k = 0;
+    while (k + 1 < n - 1 && F[k + 1].time < t) ++k;
+    Track::HKeyFrame& a = F[k];
+    Track::HKeyFrame& b = F[k + 1];
+    // dot (w1 w2 + z2 z1 + y1 y2 + x2 x1), u, the translation lerp
+    float dot = a.q[3] * b.q[3] + b.q[2] * a.q[2] + a.q[1] * b.q[1] + b.q[0] * a.q[0];
+    const float u = (t - a.time) / (b.time - a.time);
+    Track::HKeyFrame o{};
+    o.t[0] = (b.t[0] - a.t[0]) * u + a.t[0];
+    o.t[1] = (b.t[1] - a.t[1]) * u + a.t[1];
+    o.t[2] = (b.t[2] - a.t[2]) * u + a.t[2];
+    if (dot < 0.0f) {
+        dot = -dot;
+        for (int j = 0; j < 4; ++j) b.q[j] = -b.q[j];
+    }
+    float fa = 1.0f - u, fb = u;
+    if (dot < 0.999000013f) {                                        // [0x005cea88]
+        const float theta = AnimAcos(dot);
+        const float inv = 1.0f / AnimSinPoly(theta);
+        fa = AnimSinPoly(theta * fa) * inv;
+        fb = AnimSinPoly(theta * u) * inv;
+    }
+    o.q[0] = fa * a.q[0] + fb * b.q[0];
+    o.q[1] = fb * b.q[1] + fa * a.q[1];
+    o.q[2] = fa * a.q[2] + fb * b.q[2];
+    o.q[3] = fb * b.q[3] + fa * a.q[3];
+    AnimKeyMatrix(o, m);
+}
 }  // namespace
 
 // [librwrest] FUN_00425d50 @ 0x00425d50, from FUN_0040fc00 (0x0040fcb9) with the frame's
 // units: per copter, slot+0x40 += units * [0x005cc948], less the duration when past it; the
 // two rotors turn by units * [0x005cc9a0] (0.05) and units * [0x005cd054] (-0.05) degrees
 // (FUN_00425ca0 @ 0x00425ca0: about each rotor frame's own up vector, at its own position).
+// [rhooks U-9717] FUN_00426700 @ 0x00426700, from FUN_00426ab0 (called at 0x0040fc94, before the copter
+// tick at 0x0040fcb9 with the same units, no branch between): per SetClumpAnim record
+// t = units * [0x005cc948] + t, less the anim duration ([anim+0xc]) when past it (FUN_004756e0 @
+// 0x004756e0); the frame takes the sampler's matrix at that t (Render).
+void TrackRenderer::ClumpAnimTick(int units) {
+    std::uint32_t kb = 0x39aec33eu;                     // _DAT_005cc948 (1/3000)
+    float k3000;
+    std::memcpy(&k3000, &kb, sizeof k3000);
+    const float dt = static_cast<float>(units) * k3000;
+    for (auto& ca : clump_anims_) {
+        float t = dt + ca.t;
+        if (ca.anim.duration < t) t = t - ca.anim.duration;
+        // sampled every tick, as FUN_004756e0 does (FUN_00532b80 mutates the keys it brackets)
+        if (ca.type == 0) CopterAnimMatrix(ca.anim, t, ca.m);
+        else              LinearAnimMatrix(ca.anim, t, ca.m);
+        ca.t = t;
+        ca.ticked = true;
+    }
+}
+
 void TrackRenderer::CopterTick(int units) {
+    ClumpAnimTick(units);                               // [rhooks] FUN_0040fc00's 0x0040fc94 first
     std::uint32_t kb = 0x39aec33eu;                     // _DAT_005cc948 (1/3000)
     float k3000;
     std::memcpy(&k3000, &kb, sizeof k3000);
@@ -8207,6 +8325,18 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     }
 
     if (!prop_anims_.empty()) UpdatePropAnims();   // [rprops] Arctic ships, once per frame
+    // [rhooks U-9717] SetClumpAnim clumps: FUN_004756e0 sets the clump frame to FUN_004752f0's matrix
+    // at the record's time (FUN_004c1480 REPLACE); before the first tick the frame is the DFF's.
+    for (const auto& ca : clump_anims_) {
+        if (!ca.ticked || ca.prop >= props_.size() || props_[ca.prop].instances.empty()) continue;
+        const float* rm = ca.m;
+        D3DMATRIX& cm = props_[ca.prop].instances[0];
+        MatIdentity(&cm);
+        cm._11 = rm[0];  cm._12 = rm[1];  cm._13 = rm[2];
+        cm._21 = rm[4];  cm._22 = rm[5];  cm._23 = rm[6];
+        cm._31 = rm[8];  cm._32 = rm[9];  cm._33 = rm[10];
+        cm._41 = rm[12]; cm._42 = rm[13]; cm._43 = rm[14];
+    }
     // [rfx2] FUN_00488e70 builds the lensflare batches once (DAT_007030b4), on the tick that also runs
     // the first slot-1 update (the Arctic bob light then holds one tick's k: measured, the original's
     // small / big batch AABBs at Arctic 1051 equal the model with k = (sin(0.2) + 1) * 0.15)
