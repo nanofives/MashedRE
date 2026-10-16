@@ -82,6 +82,22 @@ floor). On the L build, replacing the stand-in by the walk moves it to 1912.04..
 +7.34..+10.14, with both slips inside. This is the first arm since D2 was parked with all three metrics inside
 `d81a8df6` on 3/3 runs, and it holds on both bases.
 
+### 4b. Report arms with d2engage's full fix B (amendment 5, `10c18c59`, `rb2/SCORE_D2_rb2_fixB.txt`, no gate)
+
+Fix B = `MASHED_POS_SEED`, `_WHEELS`, `_TRANS`, `_MODEL`, `_ORDER`, `_CONTACTS` = 1. L is default ON on this build.
+
+| arm | slip 1500-2000 | slip 2000-2600 | driving-median | H1 |
+|---|---|---|---|---|
+| L + fix B x3 | 0.1947 in | 0.2526 / 0.2533 / 0.2534 in | 1877.14, 1879.64, 1879.72 OUT (n 1321..1327) | 391/400, 1293.1 |
+| L + W + fix B x3 | **0.2005 OUT** | 0.2510 in | **1863.52 x3 OUT** (n 1217) | 390/400, 1293.0 |
+| (for reference) L + W x3 | 0.1890 in | 0.2476..0.2483 in | 1912.04..1914.84 in | 398/400, 1362.7 |
+
+All six runs 1630..1636 lines, `+0xb14` at d=15. The knobs took: every arm scores differently from `D2_DEF` / `D2_W`.
+On this arm the walk combined with fix B moves driving-median DOWN (1879.64 -> 1863.52 against L + fix B) and
+takes slip 1500-2000 out of its ceiling 0.19635, with 1217 driving samples against 1321..1327. Part 3
+(`MASHED_POS_TRANS`) sets the ring `+0x30` translation, which is the walk's query centre (`WheelContactSolver.cpp:151`),
+so under fix B the walk is asked about a different point. Which part of fix B carries the drop is not measured.
+
 ## 5. D3 (b), collateral, watch list (same on both bases)
 
 - D3 (b) (`score_regimes.py`): A 1/3, B 2/3, C 0/3 on BASE, DEF and W. No loss.
