@@ -12,6 +12,7 @@
 #include "VehicleStruct.h"
 #include "ForceIntegrator.h"                 // extern globals + VehicleWheelForceIntegrate
 #include "../Collision/ContactSolvers.h"     // WheelContactSolver (B4)
+#include "../Collision/CollisionWorld.h"     // [d2bsp] MASHED_BSP_REPLAY hook
 #include <cstdlib>
 #include <cstring>
 #include <cmath>
@@ -274,6 +275,7 @@ void VehiclePhysics_SetWorld(const float* verts, int vertCount,
     Collision::g_worldTris     = g_worldTriStore.empty() ? nullptr : g_worldTriStore.data();
     Collision::g_worldTriCount = static_cast<int>(g_worldTriStore.size());
     prof::g_triCount = Collision::g_worldTriCount;
+    Collision::CollWorld_RunReplayIfRequested();   // [d2bsp] MASHED_BSP_REPLAY, diag only
 }
 
 bool VehiclePhysics_Enabled() {
@@ -1184,26 +1186,25 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     // (opt-in MASHED_SPEED_REFRESH=1, it moves the D2 metrics out of bounds); by default
     // the non-skipped-frame +0x9e4 is still A6a's value. `MASHED_NO_A4_CONTACT_GATE=1` disables the gate.
     static const bool s_noA4Gate = (std::getenv("MASHED_NO_A4_CONTACT_GATE") != nullptr);
+    // [d2bsp] fix L (MASHED_D2CHUNK=1): the OUTER chunk loop of FUN_00470c70. The original runs
+    //     0x00470f50..0x00470f61  local_24 = min(remaining, 0x32)
+    //     per-vehicle +0xaec gate (-= local_24) and FUN_00470670(car, (float)local_24, ..) (0x0047105a fild)
+    //     0x004710a1..0x004710da  the +0x9e4 / +0x9e8 refresh loop
+    //     0x00471106..0x00471141  substeps over local_24
+    //     0x00471143..0x00471151  remaining -= local_24; if (remaining) goto 0x00470f50
+    // with remaining = param_1, which its only caller pushes as the constant 0x32 (0x0042c980 ->
+    // 0x00425a8d), so the loop makes one pass there. The port's budget is remI = (int)(dt*3000) = 50.
+    // Under fix L, A4 receives (float)local_24 = 50.0f as the original's does; without it the port
+    // keeps frameMs = 50.0000038f (one ulp above). MASHED_D2CHUNK_FRAMEMS=1 (diagnostic) runs the loop
+    // with frameMs kept for A4. Stated residual: the original interleaves all 16 cars per chunk, the
+    // port steps one car at a time; identical while remI <= 0x32. Default OFF (PREREG_d2bsp.md).
+    static const bool s_fixL = [] {
+        const char* e = std::getenv("MASHED_D2CHUNK");
+        const char* n = std::getenv("MASHED_NO_D2CHUNK");
+        return e && e[0] == '1' && !(n && n[0] == '1');
+    }();
+    static const bool s_fixLFrameMs = (std::getenv("MASHED_D2CHUNK_FRAMEMS") != nullptr);
     bool a4Skip = false;
-    if (!s_noA4Gate && !g_inSpawnSettle) {
-        const int gateChunk = ((int)frameMs < 0x32) ? (int)frameMs : 0x32;
-        if (slot == 0) {
-            for (int s = 0; s < 16; ++s) {
-                if (s >= g_participantCount) break;
-                g_a4Skip[s] = A4ContactGate(rec(s), gateChunk);
-                g_a4GateDone[s] = true;
-            }
-        } else if (!g_a4GateDone[slot]) {
-            g_a4Skip[slot] = A4ContactGate(r, gateChunk);
-            g_a4GateDone[slot] = true;
-        }
-        a4Skip = g_a4Skip[slot];
-        g_a4Skip[slot] = false;
-    }
-    if (a4Skip) {
-        F(r, off::kSpeed) = Vec3Mag3(reinterpret_cast<const float*>(r + off::kVelocity)); // 0x004710c3/c8
-        F(r, 0x9e8)       = Vec3Mag3(reinterpret_cast<const float*>(r + 0x9bc));          // 0x004710d5/da
-    }
 
     // [d2settle D0-a] slot 0's first 6 steps (settle included), DIAGNOSTIC ONLY, default-OFF.
     static const char* const s_settleDiag = std::getenv("MASHED_SETTLE_DIAG");
@@ -1224,6 +1225,31 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
             std::fclose(lf);
         }
     };
+
+    int chunkRem = (int)frameMs;                                          // param_1
+    for (bool chunkFirst = true; s_fixL ? (chunkRem != 0) : chunkFirst; chunkFirst = false) {
+    const int chunkL = (chunkRem < 0x32) ? chunkRem : 0x32;               // 0x00470f50..0x00470f61
+    const float a4Dt = (s_fixL && !s_fixLFrameMs) ? (float)chunkL : frameMs;   // 0x0047105a
+    a4Skip = false;
+    if (!s_noA4Gate && !g_inSpawnSettle) {
+        const int gateChunk = s_fixL ? chunkL : (((int)frameMs < 0x32) ? (int)frameMs : 0x32);
+        if (slot == 0) {
+            for (int s = 0; s < 16; ++s) {
+                if (s >= g_participantCount) break;
+                g_a4Skip[s] = A4ContactGate(rec(s), gateChunk);
+                g_a4GateDone[s] = true;
+            }
+        } else if (!g_a4GateDone[slot]) {
+            g_a4Skip[slot] = A4ContactGate(r, gateChunk);
+            g_a4GateDone[slot] = true;
+        }
+        a4Skip = g_a4Skip[slot];
+        g_a4Skip[slot] = false;
+    }
+    if (a4Skip) {
+        F(r, off::kSpeed) = Vec3Mag3(reinterpret_cast<const float*>(r + off::kVelocity)); // 0x004710c3/c8
+        F(r, 0x9e8)       = Vec3Mag3(reinterpret_cast<const float*>(r + 0x9bc));          // 0x004710d5/da
+    }
     sdLine("preA4");
     // [d2settle fix C 2026-10-16] the original's per-frame speed refresh, now on EVERY frame.
     // FUN_00470c70 runs it for all 16 cars after the A4 loop and before the substep loop
@@ -1249,7 +1275,7 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     if (s_a4First) {
         g_torqueRingPhase = (g_torqueRingPhase + 1) & 0xf;
         if (!a4Skip)   // 0x00471042 / 0x00471048: jge past the A4 call
-            VehicleControlIntegrate(reinterpret_cast<int*>(r), frameMs, input, basis, slot);
+            VehicleControlIntegrate(reinterpret_cast<int*>(r), a4Dt, input, basis, slot);
         // [d2engage 2026-10-16] fix B part 5 (MASHED_POS_CONTACTS): the original writes no wheel
         // state, contact normal or +0x9e0 between the A4 loop and the substep loop. FUN_00470c70
         // 0x0047109f..0x00471106 holds only the speed refresh (0x004710bc..0x004710da) and
@@ -1352,13 +1378,10 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     // with scenario_launch.py --wheelstate-probe-count: 4672 solver calls over 2321 frames
     // = 2.012/frame, histogram {2: 2308, 3: 24}.
     //
-    // STATED RESIDUAL, NOT ported: the original's OUTER chunk loop
-    // 0x00471143..0x00471151 (`remaining -= chunk; if (remaining) goto 0x470f50`), which
-    // re-runs A4 for all 16 vehicles per 50 ms chunk. At dt = 1/60 remI is 50, so
-    // chunkI == remI and that loop iterates exactly once -- it cannot be distinguished on
-    // this arm. [UNCERTAIN] for any dt that makes remI > 50.
+    // The original's OUTER chunk loop 0x00471143..0x00471151 is fix L above (default OFF);
+    // without it this block runs once with chunkI = min(remI, 0x32).
     const int remI   = (int)frameMs;                              // integer ms budget
-    int       chunkI = (remI < 0x32) ? remI : 0x32;               // 0x00470f50..0x00470f61
+    int       chunkI = s_fixL ? chunkL : ((remI < 0x32) ? remI : 0x32);   // 0x00470f50..0x00470f61
     int guard = 0;
     int d2sSub = 0;   // [D2 attempt 19] substep ordinal for the diagnostic only
     float remMs = (float)chunkI;   // reported on the diagnostic lines only
@@ -1624,11 +1647,13 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     if (!s_a4First) {   // [A8-ORDER] see the knob above the substep loop
         g_torqueRingPhase = (g_torqueRingPhase + 1) & 0xf;
         if (!a4Skip)    // [car2pickup] the +0xaec gate, see above the substep loop
-            VehicleControlIntegrate(reinterpret_cast<int*>(r), frameMs, input, basis, slot);
+            VehicleControlIntegrate(reinterpret_cast<int*>(r), a4Dt, input, basis, slot);
         // A6a's drive block can clear wheel states in some branches; re-assert from the
         // cached contact result (no re-broadphase) so the next frame stays engaged.
         ReassertContacts(r);
     }
+    chunkRem -= chunkL;                                                   // 0x00471143..0x00471151
+    }   // [d2bsp] fix L outer chunk loop
 
     // WS-A contacts telemetry: per-wheel contact NORMAL (+0x200) + LOAD (+0x20c, A5
     // Phase-5 weight-transfer slot) + STATE (+0x198), to prove they VARY with terrain

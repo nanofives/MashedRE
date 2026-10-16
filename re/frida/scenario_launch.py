@@ -1415,6 +1415,107 @@ function wheelStateProbeArm(recBaseHex, car, countOnly){
 function wheelStateProbeDrain(){ const r = WS.rows; WS.rows = []; return r; }
 // ---------------------------------------------------------------------------
 
+// --- BATCH probe (d2bsp, 2026-10-16) ---------------------------------------
+// [d2bsp] The ORIGINAL's terrain batch exactly as the wheel classifier receives it, so the
+// port's walk FUN_00538c80 + collector FUN_00468b80 can be replayed bit-for-bit on the same
+// query (verify/d2bsp_20261016/PREREG_d2bsp.md section 2). ENTRY hooks only (memory
+// `frida-interceptor-is-entry-only`).
+//   site Q = 0x0046cc40 entry. cdecl, pushed at 0x0046f81c/0x0046f821: args[0] = vehicle,
+//            args[1] = batch 0x00828320. Filtered on args[0] == rec. Row: the query (ring
+//            +0x30..+0x38 of rec+0x928+[rec+0x9ac]*0x40, and rec+0x4a4), [0x0088e60c], each
+//            entry's dwords 0..0xd, 0xf, 0x1b..0x23, the 4 wheel positions 0x0088e620..,
+//            rec+0x9c8..+0x9d0, per wheel +0x194 +0x1ec +0x1f0 +0x200..+0x208 (what the
+//            classifier starts from), the active history slots (+0xc7c flag != 0, key +0xbfc).
+//   site O = 0x0046f6c0 entry, EDI == rec: per wheel the same six dwords plus the four states
+//            = the previous call's classifier + state-machine output.
+//   site F = A6a 0x00467650 entry, ESI == rec: the frame marker.
+// COUNT-FIRST: countOnly arms the three hooks with counters only.
+const BQ_CLS = 0x0046cc40, BQ_WHEEL = 0x0046f6c0, BQ_A6A = 0x00467650;
+const BQ = { armed:false, countOnly:false, rows:[], nCls:0, nClsRec:0, nWh:0, nWhRec:0, nFrm:0,
+             maxCount:0, err:null, chk:[] };
+let BQ_REC = null, BQ_SEQ = 0;
+function bqX(u){ return ('00000000' + (u >>> 0).toString(16)).slice(-8); }
+function bqH(p){ return bqX(p.readU32()); }
+function bqWheels(r, withState){
+  const o = [];
+  for (let w = 0; w < 4; w++){
+    const B = w * 0xc4;
+    for (const off of [0x194, 0x1ec, 0x1f0, 0x200, 0x204, 0x208]) o.push(bqH(r.add(off + B)));
+  }
+  if (withState) for (let w = 0; w < 4; w++) o.push(String(r.add(0x198 + w * 0xc4).readS32()));
+  return o.join(';');
+}
+function bqQ(){
+  try {
+    const r = BQ_REC;
+    const ring = r.add(0x9ac).readS32();
+    const m = r.add(0x928 + ring * 0x40);
+    const cnt = ga(0x0088e60c).readS32();
+    if (cnt > BQ.maxCount) BQ.maxCount = cnt;
+    const base = ga(0x00828320);
+    const ents = [];
+    for (let i = 0; i < cnt && i < 4096; i++){
+      const e = base.add(i * 0x90);
+      const d = [];
+      for (let k = 0; k <= 0x23; k++){
+        if (!(k <= 0xd || k === 0xf || (k >= 0x1b && k <= 0x23))) continue;
+        d.push(bqH(e.add(k * 4)));
+      }
+      ents.push(d.join(';'));
+    }
+    const wpb = ga(0x0088e620);
+    const wp = []; for (let k = 0; k < 12; k++) wp.push(bqH(wpb.add(k * 4)));
+    const vel = [bqH(r.add(0x9c8)), bqH(r.add(0x9cc)), bqH(r.add(0x9d0))];
+    const hist = [];
+    for (let s = 0; s < 32; s++){
+      const f = r.add(0xc7c + s * 4).readU32();
+      if (f !== 0) hist.push(s + ':' + bqH(r.add(0xbfc + s * 4)) + ':' + bqX(f));
+    }
+    BQ.rows.push([BQ_SEQ++, BQ.nFrm, 'Q', bqH(m.add(0x30)), bqH(m.add(0x34)), bqH(m.add(0x38)),
+                  bqH(r.add(0x4a4)), cnt, ents.join('|'), wp.join(';'), vel.join(';'),
+                  bqWheels(r, false), hist.join(';')].join(','));
+  } catch(e){ if (!BQ.err) BQ.err = 'bqQ ' + e; }
+}
+function bqO(){
+  try { BQ.rows.push([BQ_SEQ++, BQ.nFrm, 'O', bqWheels(BQ_REC, true)].join(',')); }
+  catch(e){ if (!BQ.err) BQ.err = 'bqO ' + e; }
+}
+function batchProbeArm(recBaseHex, car, countOnly){
+  if (BQ.armed) return 'already armed';
+  try {
+    BQ_REC = ptr(parseInt(recBaseHex, 16) + car * 0xd04);
+    BQ.countOnly = !!countOnly;
+    Interceptor.attach(ga(BQ_CLS), { onEnter(args){
+      try {
+        BQ.nCls++;
+        if (BQ.chk.length < 6)
+          BQ.chk.push({a0:args[0].toString(), a1:args[1].toString(), rec:BQ_REC.toString()});
+        if (!args[0].equals(BQ_REC)) return;
+        BQ.nClsRec++;
+        if (!BQ.countOnly) bqQ();
+      } catch(e){ if (!BQ.err) BQ.err = 'bpCls ' + e; }
+    }});
+    Interceptor.attach(ga(BQ_WHEEL), { onEnter(){
+      try {
+        BQ.nWh++;
+        if (!this.context.edi.equals(BQ_REC)) return;
+        BQ.nWhRec++;
+        if (!BQ.countOnly) bqO();
+      } catch(e){ if (!BQ.err) BQ.err = 'bpWh ' + e; }
+    }});
+    Interceptor.attach(ga(BQ_A6A), { onEnter(){
+      try { if (!this.context.esi.equals(BQ_REC)) return; BQ.nFrm++; }
+      catch(e){ if (!BQ.err) BQ.err = 'bpA6a ' + e; }
+    }});
+    BQ.armed = true;
+    return 'batch-probe armed: classifier @0x' + BQ_CLS.toString(16) + ' + solver @0x' +
+           BQ_WHEEL.toString(16) + ' + A6a @0x' + BQ_A6A.toString(16) + ' rec=' + BQ_REC +
+           (BQ.countOnly ? ' COUNT-ONLY' : '');
+  } catch(e){ return 'ERR ' + e; }
+}
+function batchProbeDrain(n){ return BQ.rows.splice(0, n || 400); }
+// ---------------------------------------------------------------------------
+
 // --- RwV3dLength ARGUMENT probe (U-9156, D2 section 21.7) ------------------
 // [D2 section 21.7] Gets the ORIGINAL's `l_60 = sum ld4 * le4` (Integrate2.cpp:464) as a
 // MEASUREMENT instead of an inference. Section 21.5 closed every other route: clamp #6 is
@@ -3086,6 +3187,13 @@ rpc.exports = {
                                                      driveWyNz:AX.nDriveWyNz,
                                                      a6bEsiRec:AX.nA6bEsiRec,
                                                      pending:AX.rows.length, chk:AX.chk, err:AX.err}); },
+  batchProbeArm: function(recBaseHex, car, countOnly){ return batchProbeArm(recBaseHex, car, countOnly); },
+  batchProbeDrain: function(n){ return batchProbeDrain(n); },
+  batchProbeStats: function(){ return JSON.stringify({armed:BQ.armed, countOnly:BQ.countOnly,
+                                                      nCls:BQ.nCls, nClsRec:BQ.nClsRec, nWh:BQ.nWh,
+                                                      nWhRec:BQ.nWhRec, nFrm:BQ.nFrm,
+                                                      maxCount:BQ.maxCount, pending:BQ.rows.length,
+                                                      err:BQ.err, chk:BQ.chk}); },
   slideProbeArm: function(recBaseHex, car, cap){ return slideProbeArm(recBaseHex, car, cap); },
   slideProbeDrain: function(){ return slideProbeDrain(); },
   slideProbeStats: function(){ return JSON.stringify({armed:SL.armed, calls:SL.calls,
@@ -3681,6 +3789,15 @@ def main():
                          "record. Entry hooks only; the port's equivalent fires 211 times in "
                          "a 27 s race, so this is not a hot path. Writes <statediff-out>."
                          "fixupprobe.csv. Requires --statediff-out.")
+    ap.add_argument("--batch-probe", action="store_true",
+                    help="[d2bsp] entry hooks on the wheel classifier 0x0046cc40 (the terrain "
+                         "batch the walk FUN_00538c80 just filled, the query sphere, the wheel "
+                         "positions and the record inputs), the solver 0x0046f6c0 (per-wheel "
+                         "outputs of the previous call) and A6a (frame marker), player record "
+                         "only; writes <statediff-out>.batchprobe.csv. Requires --statediff-out.")
+    ap.add_argument("--batch-probe-count", action="store_true",
+                    help="count-first safety gate for --batch-probe: arm the three hooks with "
+                         "counters only")
     ap.add_argument("--wheelstate-probe", action="store_true",
                     help="[U-9179, D2 attempt 20] entry-hook-only per-wheel sample at "
                          "0x0046f6c0 (state +0x198, fv +0x194, key +0x1ec, stride 0xc4) "
@@ -3933,6 +4050,9 @@ def main():
                 print("  [statediff]", E.wheel_state_probe_arm(
                     "0x008815a0", args.statediff_car,
                     bool(args.wheelstate_probe_count)))
+            if args.batch_probe or args.batch_probe_count:
+                print("  [statediff]", E.batch_probe_arm(
+                    "0x008815a0", args.statediff_car, bool(args.batch_probe_count)))
             if args.mag_probe:
                 _sites = "" if args.mag_probe == "count" else args.mag_probe
                 print("  [statediff]", E.mag_probe_arm(_sites, args.mag_probe_limit,
@@ -4428,6 +4548,23 @@ def main():
                             f.write(",".join(repr(x) if isinstance(x, float) else str(x)
                                              for x in r) + chr(10))
                     print(f"  [statediff] wheelstate-probe {len(ws_rows)} samples -> {wsp}")
+                if args.batch_probe or args.batch_probe_count:
+                    # [d2bsp] stats BEFORE the rows; the CSV is written even when empty.
+                    try: print("  [statediff] batch-probe agent:", E.batch_probe_stats())
+                    except Exception as _e: print("  [statediff] batch-probe stats failed:", _e)
+                    bpp = outp.with_suffix(outp.suffix + ".batchprobe.csv")
+                    _nb = 0
+                    with open(bpp, "w", newline="") as f:
+                        f.write("seq,frame,kind,cx,cy,cz,r,count,entries,wpos,vel,wstart,hist"
+                                + chr(10))
+                        while True:
+                            try: _chunk = E.batch_probe_drain(400)
+                            except Exception as _e:
+                                print("  [statediff] batch-probe drain failed:", _e); break
+                            if not _chunk: break
+                            for _r in _chunk: f.write(_r + chr(10))
+                            _nb += len(_chunk)
+                    print(f"  [statediff] batch-probe {_nb} rows -> {bpp}")
                 if args.mag_probe:
                     # Counters BEFORE the rows, and the CSV is written even when empty:
                     # memory `absent-log-proves-nothing-run-a-control`.

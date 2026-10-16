@@ -33,6 +33,10 @@ void FillBatchEntry(ContactBatchEntry* e, const float* v0, const float* v1, cons
                     const float* faceNormal, int material, int surfaceKey);                 // LAB_00468b80
 int  ProduceTerrainBatch(const float* center, float radius,
                          const CollTriangle* tris, int triCount);                            // FUN_00538c80 stand-in
+// [d2bsp] fix W: FUN_00538c80 (case 3, CollisionWorld.cpp) with the collector FUN_00468b80 over
+// the COLLI*.BSP replica. Sets g_terrainBatch / g_terrainEntryCount like the stand-in.
+int  ProduceTerrainBatchBsp(const float* center, float radius);
+extern int g_bspBatchOverflow;   // entries the 2048-entry storage could not hold (diagnostic)
 
 // The standalone's COLLI*.BSP triangle list the wheel solver's broadphase walks
 // (the FUN_00538c80 query over the collision world). B4 wiring (or a self-test)

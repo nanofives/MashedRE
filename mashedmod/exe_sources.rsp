@@ -23,6 +23,7 @@
 "Vehicle\VehicleCouplingBridge.cpp"
 "Collision\ContactStubs.cpp"
 "Collision\ContactProducer.cpp"
+"Collision\CollisionWorld.cpp"
 "Collision\CarWorldContacts.cpp"
 "Collision\ContactFixup.cpp"
 "Collision\CarCarContacts.cpp"

@@ -111,3 +111,48 @@ No direction is predicted for D2, H1, D3 (b) or collateral under fix W. The boun
   at remI = 50, so it cannot fail a D2 gate.
 - Tracker changes are proposals for `re-classify`; nothing here promotes a C-level (the walk has no run_diff
   path in this lane, and fix W is exe-side).
+
+## Amendment 1 (2026-10-16, before any measuring run; only the base build exists)
+
+Disassembly of `FUN_0046f6c0` after the classifier call (`0x0046fc40..0x0046fd23`) shows the state machine
+copying fv (`+0x194`), key (`+0x1ec`) and the normal (`+0x200..+0x208`) from one wheel to its axle partner
+(0 <-> 1, 2 <-> 3) in some states. It never writes `+0x1f0`. So the site-1 value of the next solver entry is the
+classifier's output for `+0x1f0` always, and for fv / key / normal unless the partner copy ran. G-WHEEL is
+therefore scored in two parts, both registered now:
+- **G-WHEEL-K** (the gate): per wheel-call, the replayed classifier's `+0x1f0` equals the original's next-entry
+  `+0x1f0`. Threshold unchanged, >= 99 %.
+- **G-WHEEL-F** (the gate's second half): per wheel-call, the original's next-entry (fv, key, normal) equals the
+  replay's own output for that wheel OR its axle partner's. Threshold >= 99 %. Site 1 also records the four
+  states (`+0x198 + w*0xc4`) so a partner-copy case is visible in the data.
+Both are reported for fix W and for the stand-in. The default rule's "G-WHEEL >= 99 %" means both parts.
+
+## Amendment 2 (2026-10-16, after H_BASE x2, H_DEF, H_W, o_bpc, o_bp1, R_DEF; before any D2 / B / collateral run)
+
+Measured so far (scored in RESULT): no-op PASS, G-WALK PASS 4764/4764, G-WHEEL-K PASS 19052/19052,
+**G-WHEEL-F FAIL 76.61 %**. The decision stands: **fix W is not wired default ON in this lane** (section 4).
+D2, H1, D3 (b) and collateral still run for W, to inform the user decision.
+
+Correction of amendment 1, in writing. Amendment 1 said fv / key / normal at the next solver entry are the
+classifier's output "unless the partner copy ran". That sentence is wrong, in two ways the data shows:
+(a) during the countdown hold (frames 0..~880 of `o_bp1`) the first solver call of every frame enters with
+fv 0, key -1, normal (., 1, 0), state 1 (3540 wheel-calls, exactly one in two), the per-hold-tick reset
+`FUN_0046baa0` that `RESULT_d2settle.md` section 2 measured (D0-d), which runs between the classifier and the
+next entry; (b) after the hold, 916 wheel-calls differ in fv by 2..15 ulp (56 also in the normal) with a
+bit-identical batch. The original sums every classifier dot z-term first (`0x0046ccfd..0x0046ce13`), the port
+x-term first (`CarWorldContacts.cpp:137-157`). (b) is a port defect in `0x0046cc40`, not in the walk.
+
+New, all measured on the same replay and arms:
+- **Fix K, `MASHED_D2CLS=1`** (report only in this lane, no default decision): the original's summation order
+  for SAT 1-3, the depth and the approach dot. Prediction on `R_K` (replay with K): G-WHEEL-F on wheel-calls of
+  frames >= 1000 goes from (n - 916)/n to n/n; the hold-frame reset mismatches are unchanged. A D2 arm `D2_WK_1`
+  (W + K) is reported, no gate.
+- **Fix L, A4's dt.** At remI = 50 fix L changes A4's dt from `frameMs` = 50.0000038f to `(float)local_24` =
+  50.0f (`0x0047105a`), so it is not a pure structural port. G-CHUNK as registered (bit-identical to the base)
+  now applies to **L0** = `MASHED_D2CHUNK=1` + `MASHED_D2CHUNK_FRAMEMS=1` (the loop with frameMs kept).
+  Prediction PASS. **Fix L proper** has no hash prediction; it goes through D2 (3 runs), H1, D3 (b), collateral
+  and determinism, and is wired default ON (opt-out `MASHED_NO_D2CHUNK=1`) only if all of them pass by the
+  section-4 thresholds.
+- Stand-in comparison by triangle (vertex dwords 0..8 only, so key and normal rounding do not mask it): report.
+
+Arms: `H_L0`, `H_L`, `H_L-2`, `H_W-2`; `D2_BASE_1..3`, `D2_W_1..3`, `D2_L_1..3`, `D2_WK_1`;
+`B_{BASE,W,L}_K{0,1,26}`; collateral for `H_W` / `H_W-2` and `H_L` / `H_L-2` against `H_BASE` / `H_BASE-2`.

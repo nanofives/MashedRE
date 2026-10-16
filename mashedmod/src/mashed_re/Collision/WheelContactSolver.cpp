@@ -22,6 +22,7 @@
 #include "ContactConstants.h"
 #include "ContactDeps.h"
 #include "ContactSolvers.h"
+#include "CollisionWorld.h"           // [d2bsp] fix W
 #include <cstdlib>   // getenv (MASHED_RW_WHEELPOS A/B, see the query block below)
 #include "../Vehicle/D2SinkProbe.h"   // [D2 attempt 19] diagnostic, default-OFF
 #include "../Vehicle/PosModelKnobs.h" // [d2posmodel] fix B part 2 knob, default-OFF
@@ -150,7 +151,13 @@ void WheelContactSolver(int* self, void* world, int substep)
     float qc[3] = { vF(iVar12, 0xc), vF(iVar12, 0xd), vF(iVar12, 0xe) };    // iVar12+0x30/0x34/0x38
     float qradius = vF(self, 0x129);                                       // self+0x4a4
     g_terrainEntryCount = 0;
-    ProduceTerrainBatch(qc, qradius, g_worldTris, g_worldTriCount);        // FUN_00538c80 stand-in
+    // [d2bsp] fix W (MASHED_D2BSP=1): the original's walk FUN_00538c80 + collector FUN_00468b80 over
+    // the COLLI*.BSP replica (0x0046f7d3..0x0046f817). Without it, the port-only stand-in.
+    if (D2BspOn() && CollWorld_Ready())
+        ProduceTerrainBatchBsp(qc, qradius);                                // 0x0046f817
+    else
+        ProduceTerrainBatch(qc, qradius, g_worldTris, g_worldTriCount);    // FUN_00538c80 stand-in
+    CollWorld_DumpBatch(self, qc, qradius);                                // MASHED_BATCH_DUMP, diag only
     WheelTerrainContactClassifier(self, reinterpret_cast<float*>(g_terrainBatch));
     (void)world; (void)substep;
 

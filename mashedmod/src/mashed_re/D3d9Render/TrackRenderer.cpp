@@ -54,6 +54,7 @@ extern "C" void __cdecl SplineCubicBlend3(float t, float* out, float* p0, float*
                                     // [D3 2026-09-26] the ported TICK Ai_Standalone_Tick runs every
                                     // race frame and its ctrl bytes drive the opponents.
 #include "../Vehicle/VehiclePhysicsRun.h"  // WS-A8: ported physics chain (behind MASHED_REAL_PHYSICS)
+#include "../Collision/CollisionWorld.h"   // [d2bsp] COLLI*.BSP replica for the sphere walk FUN_00538c80
 #include "../Vehicle/ForceIntegrator.h"    // U-9174: LaunchRev_PreRaceTick / _Release
 #include "../Ai/AiState.h"          // WS-AI-BRIDGE: ctrl-block / slot-table / spline addrs
 #include "../Ai/AiData.h"           // WS-AI-BRIDGE: .AI loader (AiData_LoadInto)
@@ -1437,6 +1438,10 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
             const std::uint8_t* cb = piz.blob(i, &cl);
             Track::World cw;
             if (cb && cw.Parse(cb, cl)) {
+                // [d2bsp] the RW collision-world replica the original's sphere walk FUN_00538c80
+                // queries (plane sectors + 0x11D trees, Collision/CollisionWorld.h). Built always;
+                // only MASHED_D2BSP's wheel-solver path and MASHED_BSP_REPLAY read it.
+                Collision::CollWorld_Build(cb, cl, cw);
                 for (const auto& s : cw.sectors) {
                     const std::uint32_t vbase =
                         static_cast<std::uint32_t>(col_verts_.size() / 3);
