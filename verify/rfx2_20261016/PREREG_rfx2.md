@@ -75,3 +75,29 @@ original's (car poses and camera are transplanted; world objects and lights come
 standalone's own track load).
 P2 G-CTRL unchanged (render-only code; the clock adapter of U-9704 writes only HUD globals).
 P3 No new row keys outside the ported textures.
+
+## Amendment 1 (2026-10-16, written by the resuming session before the final measurement)
+
+1. **Base moved.** The lane was rebased twice: onto `34ea5b71` (carlod) and `f0f2d886` (rstates), then
+   onto `10c18c59` (d2engage, default unchanged) for the final measurement. Base arms are re-measured on
+   each frozen base exe (`log/rfx2/base3_exe` = `f0f2d886`, `log/rfx2/base4_exe` = `10c18c59`); the
+   `04dee0ed` base arms of the first session are history.
+2. **Cite file.** rstates updated the shared adjudication (d1r1 cites + rprops notes + rfx's C03 rule +
+   rstates' C15c); `cites_rfx2.json` is now `verify/rstates_20261016/cites_rstates.json` copied unchanged
+   plus one entry, `C09b-HEADLIGHT-BRAKE` (City 801: the original's cut frame has two brake-light sprites
+   with no brake plate drawn on any car; the instrument's brake input below has no brake there).
+3. **Instrument input.** Every arm (base and port) runs with `--brake`: carlod's matched-pose
+   `MASHED_CAR_BRAKE_ROWS` from `verify/carlod_20261016/brake_rows.json` (the controller's brake byte
+   `0x007f103c + ctrl*0x4c + 1`, which the brake-light sprites of `FUN_00412f30` also read).
+4. **Original-side witness (read-only).** `re/frida/camera_probe.py --fx-out` samples the object-shadow
+   arrays (`0x006c6eb0` list, bbox `0x006c9a88`, shadow matrix `0x006c3670`, triangle cache `0x006c74f8`),
+   the course light LTM (`DAT_0065743c`), the race camera (`DAT_006905b0` view matrix, window, clip
+   planes), the Headlight records / screen quads and the lensflare light list (`0x0086ae20`) on one race
+   per track (`log/rfx2/fxw_training`, `fxw2_city`, `fxw2_arctic`). They are used to check each port's
+   arithmetic offline before its arm, never as the arm's input.
+5. **Recorder.** `DrawRec::SetNextGeometry` takes a `screen` flag so a librw Im2D draw is recorded with
+   the `"screen"` key the original's XYZRHW draws carry (the 3D matcher groups by it).
+6. **Items as measured before this amendment** (HUD-replay arm, `--brake`, on `f0f2d886`): RWObjShad
+   7/7 GREEN, Headlight 5/6 (City 801 = item 2), lensflare-fs8 6/6. flatshad and VehicleIcons are not
+   ported (their inputs: the particle simulation, and the per-car `DAT_008989b0` with the icon fade
+   history `DAT_0063bc60`, have no standalone or trace source).
