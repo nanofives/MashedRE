@@ -7,7 +7,11 @@ are carried forward below and remain the unit of work; what changes is the **gat
 > **Naming, 2026-09-26.** In this file, D0–D5 are **phases**. The four user decisions of
 > 2026-07-31 in `RE_MASTER_PLAN_2026-07.md` §5 are **DEC-2/4/6/7**. Older text that says "Gate
 > D2 (2026-07-31)" means DEC-2 (librw ships), not phase D2 (default physics).
-> **State 2026-09-29 (supersedes the 2026-09-26 line below):** D0 ✓, D1 ✓ (default flip,
+> **State 2026-10-16 (supersedes the 2026-09-29 line below):** D0 ✓, D1 ✓ (default flip, residue R1-R2 open, R3 closed 2026-10-16),
+> **D2 ✓ CLOSED 2026-10-16** (user decision, Mariano; `verify/d2close_20261016/RESULT_d2close.md`; see §D2), D3 active (unblocked 2026-10-02), D4-D5 not
+> started.
+>
+> (Superseded 2026-10-16.) **State 2026-09-29 (supersedes the 2026-09-26 line below):** D0 ✓, D1 ✓ (default flip,
 > residue R1-R2 open, R3 closed 2026-10-16), **D2 REOPENED 2026-09-29** (user decision — the closing evidence
 > compared a three-opponent port run against a ONE-car original capture; see §D2), D3 active
 > but **blocked on D2 re-closing** — the modes 3/7 port does not start until then. D4-D5 not
@@ -573,6 +577,44 @@ reviewer real time for no new information.
 **The gate for in-race review** is therefore: the verbatim camera pose wired into the
 renderer, AND D1's default-renderer question settled. Until both hold, an in-race
 opinion is an opinion about the scaffold, not about the port.
+
+### D2 — Default physics — **CLOSED 2026-10-16 (user decision, Mariano).** The PARKED (2026-10-02) and REOPENED (2026-09-29) blocks below are kept as history.
+
+> **USER DECISION (Mariano, 2026-10-16): the terrain walk goes on by default and D2 is CLOSED.** Branch `work/d2close`, commits `b61e14a49` (flip) and `f3163e6a6` (stand-in deleted).
+> Full record: `verify/d2close_20261016/RESULT_d2close.md`.
+>
+> **What the default build runs now.** Fix W: the RenderWare BSP sphere walk `FUN_00538c80` case 3 (`FUN_00539ec0` + `FUN_00547450` + `FUN_004c3b90` verbatim, x87 PC_24) with the
+> collector `FUN_00468b80` and its material RGBA key, over a replica of the `COLLI*.BSP` world, is the ONLY terrain query. The port-only `ProduceTerrainBatch` stand-in is deleted,
+> so W has no opt-out (`b61e14a49` is the last commit with `MASHED_NO_D2BSP=1`). Fix K: the classifier `0x0046cc40` sums every dot z-term first, as the bytes do
+> (`0x0046ccfd..0x0046ce13`), opt-out `MASHED_NO_D2CLS=1`. Fix L (outer chunk loop `0x00470f50..0x00471151`) has been default since d2bsp, opt-out `MASHED_NO_D2CHUNK=1`.
+>
+> **The three metrics, plain default build, no knob, 3 runs, `d81a8df6` bounds UNCHANGED:**
+>
+> | metric | bound | run 1 | run 2 | run 3 |
+> |---|---|---|---|---|
+> | slip 1500-2000 | 0.18855 .. 0.19635 | 0.1890 | 0.1890 | 0.1890 |
+> | slip 2000-2600 | 0.24488 .. 0.25487 | 0.2483 | 0.2482 | 0.2482 |
+> | driving-median | 1904.70 .. 1982.44 | 1914.84 | 1914.84 | 1913.06 |
+>
+> Launch: best-fit lag L = 0 at 0.19 %, `+0xb14` engages at d=15 (as on the original). Recovery H1: 398/400 post-trough frames >= 100, median 1362.7 (original 398/400, 1333.9). The runs have
+> 1633..1635 lines (the D2 arms are wall-clock bound, floor 1600) and the driving-median samples are n = 1425 / 1424 / 1423. The smallest margin is driving-median +8.36 above its floor.
+> The same three arms before the rebase onto `f76ae153b` (base `07526b4ea`): 0.1890 x3 / 0.2482, 0.2480, 0.2483 / 1913.06, 1912.04, 1914.84 (margin +7.34).
+>
+> **Controls.** G-CTRL of the default build is `d3b90ee0 / 80f01f35 / 56d62ae7` (x2 identical, byte-identical before and after the stand-in deletion). Opt-out chain, measured on the `b61e14a49` build: `MASHED_NO_D2BSP=1` gives
+> `2b4d47bb / 356821c8 / f7a155e1` (the 2026-10-16 d2bsp default), adding `MASHED_NO_D2CHUNK=1` gives `716cb2fd / 2a2afda1 / ba90ed88`; `MASHED_NO_D2CLS=1` moves no G-CTRL hash. D3 (b) per regime is
+> A 1/3, B 2/3, C 0/3 (unchanged). Collateral is 39 of 94 paired fields over their floor (unchanged). The Training wall-pin signature is absent.
+>
+> **Accepted open at closure (user decision):** the G-WHEEL-F gate is not met. The countdown-hold wheel-calls (3540 of 19052 on the d2bsp replay) are the whole miss once K is on (81.42 %).
+> On those ticks the next solver entry of the original holds fv 0, normal (0, 1, 0), state 1 (d2bsp amendment 2 attributes it to the per-hold-tick reset `FUN_0046baa0`), and whether the port reproduces that is not measured: **U-9712, open.** The walk
+> is compared with the original on Training only (G-WALK 4764/4764 bit-identical); the other 12 tracks are checked for replica build and non-empty batches only (`verify/d2close_20261016/RESULT_d2close.md`).
+>
+> **D2 residual follow-ups (not blockers, knobs default OFF, default build unchanged by both):** d2lateral found the first diverging post-impact term: the original's `+0x9e4` / `+0x9e8`
+> refresh at the fixup (`0x004710c3..0x004710da`, U-9212), ported as `MASHED_D2LAT_REFRESH`. gridyaw ported the original's spawn yaw from `FUN_00408b00`'s grid frame as `MASHED_GRID_DIR`;
+> the port's slot-0 spawn yaw stand-in is U-9720 (renumbered from U-9713). Both were merged on `f76ae153b`; their results are in `verify/d2lateral_20261016/` and `verify/gridyaw_20261016/`.
+>
+> **Resolved by this closure:** `DEFERRED.md` D-11071 (all four residuals), U-9180 (driving-median), U-9181 (earlier, d2bsp). **D2 REOPEN trigger:** any later regression of one of the three metrics
+> against `d81a8df6`, or a finding that touches `+0x4a4`, the contact collector / `FUN_00538c80`, grip-clamp #6 (`0x004687f0..0x0046897b`), the substep/chunk loop (`0x00470c70`),
+> `ReassertContacts`, or player-car speed on Training, reported as a "D2 REOPEN CANDIDATE" row in the session RESULT.
 
 ### D2 — Default physics — **PARKED 2026-10-02 (user decision, Mariano). NOT closed, NOT abandoned — re-openable.**
 

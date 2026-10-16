@@ -1,0 +1,6 @@
+C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\76721d71-18eb-476b-a501-1567b00879d7\scratchpad\cut_o_p2b.csv: anchor frame 829, kept 600 frames, 108 columns
+C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\76721d71-18eb-476b-a501-1567b00879d7\scratchpad\cut_o_p0a.csv: anchor frame 866, kept 600 frames, 108 columns
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\d2close\verify\d2close_20261016\final\cut_H_DEF.csv: anchor frame 0, kept 600 frames, 243 columns
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\d2close\verify\d2close_20261016\final\cut_H_DEF-2.csv: anchor frame 0, kept 600 frames, 243 columns
+H_DEF: 39 of 94 paired fields exceed their floor
+

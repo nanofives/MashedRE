@@ -42,9 +42,9 @@ void CollWorld_ForAllIntersections(float* isect, CollWorldCb cb, void* data);
 // entry +0x34 (0x00468baa..0x00468bbc). 0 when the replica is not ready or out of range.
 std::uint32_t CollWorld_MaterialColour(int matIdx);
 
-// d2bsp knobs (read once). Fix W: MASHED_D2BSP=1 (opt-in in this lane); MASHED_D2BSP_KEY0=1
-// forces the key to 0 (diagnostic).
-bool D2BspOn();
+// d2bsp knob (read once). Fix W is the only terrain query since d2close (user decision 2026-10-16):
+// the port-only triangle-soup stand-in is deleted, so there is no opt-out. MASHED_D2BSP_KEY0=1
+// forces the batch key to 0 (diagnostic).
 bool D2BspKey0();
 
 // Diagnostic, default OFF: MASHED_BATCH_DUMP=<path>. The batch the classifier is about to read
@@ -52,8 +52,8 @@ bool D2BspKey0();
 void CollWorld_DumpBatch(const int* self, const float* qc, float r);
 
 // Diagnostic, default OFF: MASHED_BSP_REPLAY=<orig batch-probe csv> + MASHED_BSP_REPLAY_OUT=<path>.
-// Runs fix W, the stand-in and the port's classifier on every captured query. Called once the
-// stand-in triangle soup is set (VehiclePhysics_SetWorld); does nothing when unset.
+// Runs fix W and the port's classifier on every captured query (csv: seq,nW,entW,clsW). Called
+// from VehiclePhysics_SetWorld; does nothing when unset or when the replica is not ready.
 void CollWorld_RunReplayIfRequested();
 
 }  // namespace Collision

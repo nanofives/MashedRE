@@ -49,7 +49,6 @@ static const bool g_noContact = (std::getenv("MASHED_PHYS_NOCONTACT") != nullptr
 double    f_physMs   = 0.0;  // total time inside StepCar bodies this frame
 double    f_probeMs  = 0.0;  // total time inside SolveWheelContacts this frame
 long long f_triTests = 0;    // ProbeGround per-triangle tests this frame
-long long f_batchTests = 0;  // ProduceTerrainBatch per-triangle tests this frame
 int       f_substeps = 0;    // substep iterations this frame
 int       f_cars     = 0;    // cars stepped this frame
 float     f_wallMs   = 0.f;  // frame wall dt (the dt passed to slot 0)
@@ -61,21 +60,19 @@ void Flush() {
     static std::FILE* lf = nullptr;
     static bool opened = false;
     if (!opened) { lf = std::fopen("phys_prof.log", "w");
-                   if (lf) std::fprintf(lf, "frame,wall_ms,phys_ms,probe_ms,tri_tests,batch_tests,substeps,cars,tris\n");
+                   if (lf) std::fprintf(lf, "frame,wall_ms,phys_ms,probe_ms,tri_tests,substeps,cars,tris\n");
                    opened = true; }
     if (lf && g_frame < 6000) {
-        std::fprintf(lf, "%d,%.3f,%.3f,%.3f,%lld,%lld,%d,%d,%d\n",
-            g_frame, f_wallMs, f_physMs, f_probeMs, f_triTests, f_batchTests,
+        std::fprintf(lf, "%d,%.3f,%.3f,%.3f,%lld,%d,%d,%d\n",
+            g_frame, f_wallMs, f_physMs, f_probeMs, f_triTests,
             f_substeps, f_cars, g_triCount);
         std::fflush(lf);
     }
     ++g_frame;
-    f_physMs = f_probeMs = 0.0; f_triTests = f_batchTests = 0;
+    f_physMs = f_probeMs = 0.0; f_triTests = 0;
     f_substeps = 0; f_cars = 0;
 }
 }  // namespace prof
-// Exposed so the broadphase (ContactProducer.cpp) can add its per-tri test count.
-long long* PerfBatchTestCounter() { return prof::g_on ? &prof::f_batchTests : nullptr; }
 
 // Chain entry points (defined in their .cpp; declared here to avoid a header churn).
 int  VehicleInit(int slot, int trackType);                                       // A3 0x0046b540
@@ -190,8 +187,9 @@ bool          g_a4GateDone[16] = { false };
 const     float kPosDtK = [] { std::uint32_t b = 0x39aec33e; float f;
                                std::memcpy(&f, &b, 4); return f; }();  // _DAT_005cc948
 
-// Terrain contact soup (built from the track collision triangles) the B4 wheel
-// solver's broadphase walks via Collision::g_worldTris.
+// Terrain triangle soup (built from the track collision triangles) ProbeGround scans for the
+// wheel seat height. The wheel solver's broadphase no longer reads it (d2close: it walks the
+// COLLI*.BSP replica, CollisionWorld.cpp).
 std::vector<Collision::CollTriangle> g_worldTriStore;
 
 inline float& F(unsigned char* r, std::size_t o) { return *reinterpret_cast<float*>(r + o); }
@@ -244,9 +242,7 @@ void VehiclePhysics_SetWorld(const float* verts, int vertCount,
                              const unsigned* tris, int triCount,
                              const unsigned* mats) {
     g_worldTriStore.clear();
-    if (!verts || !tris || triCount <= 0) {
-        Collision::g_worldTris = nullptr; Collision::g_worldTriCount = 0; return;
-    }
+    if (!verts || !tris || triCount <= 0) return;
     g_worldTriStore.reserve(static_cast<std::size_t>(triCount));
     for (int t = 0; t < triCount; ++t) {
         const unsigned i0 = tris[t * 3 + 0], i1 = tris[t * 3 + 1], i2 = tris[t * 3 + 2];
@@ -273,9 +269,7 @@ void VehiclePhysics_SetWorld(const float* verts, int vertCount,
         ct.surfaceKey = 0;
         g_worldTriStore.push_back(ct);
     }
-    Collision::g_worldTris     = g_worldTriStore.empty() ? nullptr : g_worldTriStore.data();
-    Collision::g_worldTriCount = static_cast<int>(g_worldTriStore.size());
-    prof::g_triCount = Collision::g_worldTriCount;
+    prof::g_triCount = static_cast<int>(g_worldTriStore.size());
     Collision::CollWorld_RunReplayIfRequested();   // [d2bsp] MASHED_BSP_REPLAY, diag only
 }
 
@@ -622,7 +616,7 @@ static void SolveWheelContacts(unsigned char* r, PlayerCarIO& io, int substep,
 
     // 4. the real first-party solver: 3-state machine + broadphase + classifier +
     //    velocity-friction impulse + airborne drift + grounded count. `world` is unused
-    //    by the port (ProduceTerrainBatch reads Collision::g_worldTris directly).
+    //    by the port (the broadphase ProduceTerrainBatchBsp walks the COLLI*.BSP replica).
     //    The solver's reset loop overwrites the shared DAT_00881560 scratch with the
     //    wheel mounts, which A5 Phase 5 (FUN_0046ddb0) would then feed into its steer-
     //    feedback TriangleFaceNormal — perturbing the standalone's SEPARATELY-calibrated

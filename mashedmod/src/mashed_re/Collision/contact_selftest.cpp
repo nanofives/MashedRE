@@ -1,6 +1,6 @@
 // Mashed RE — WS-B2/B4 contact-source self-test.
 //
-// Behavioral check of the ported PRODUCER (ContactProducer / LAB_00468b80) +
+// Behavioral check of the ported batch-entry fill (FillBatchEntry / LAB_00468b80) +
 // CLASSIFIER (WheelTerrainContactClassifier, 0x0046cc40) on controlled geometry:
 // 4 wheels just above one ground triangle, inside its XZ projection, with an
 // approach vector into the surface -> the classifier must register 4 contacts
@@ -12,6 +12,8 @@
 // Build (standalone console; from mashedmod/src/mashed_re):
 //   cl /nologo /EHsc /Fe:..\..\build\contact_selftest.exe contact_selftest.cpp ^
 //      CarWorldContacts.cpp ContactStubs.cpp ContactProducer.cpp
+// (d2close: the batch is filled with FillBatchEntry directly. The old ProduceTerrainBatch
+// stand-in was deleted, and the real producer ProduceTerrainBatchBsp needs the COLLI*.BSP replica.)
 #include "ContactConstants.h"
 #include "ContactDeps.h"
 #include "ContactSolvers.h"
@@ -54,9 +56,12 @@ int main()
     for (int i = 0; i < 4; ++i) g_wheelSkipFlags[i] = 0;
     g_activeContactCount = 0;   // (FUN_0046f6c0 resets DAT_0088e650 each tick; we stand in)
 
-    // --- producer: fill the terrain batch from the triangle near the car centre ---
-    float center[3] = { -2.0f, 0.0f, -2.0f };
-    int produced = ProduceTerrainBatch(center, 5.0f, &tri, 1);
+    // --- producer: one batch entry for the triangle (what the collector callback writes) ---
+    static ContactBatchEntry batch[1];
+    FillBatchEntry(&batch[0], tri.v0, tri.v1, tri.v2, tri.normal, tri.material, tri.surfaceKey);
+    g_terrainBatch = reinterpret_cast<int*>(batch);
+    g_terrainEntryCount = 1;
+    int produced = g_terrainEntryCount;
 
     // --- classifier: consume the batch, fill per-wheel contacts ---
     WheelTerrainContactClassifier(veh, reinterpret_cast<float*>(g_terrainBatch));

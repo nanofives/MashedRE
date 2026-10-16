@@ -1,0 +1,10 @@
+=== D2_DEF_1 pid=19240 exe=d738362e
+    exit=0 self_exited=False secs=90
+    D2_DEF_1.motion_diag.log lines=1633 sha8=1c48c61b
+=== D2_DEF_2 pid=8300 exe=d738362e
+    exit=0 self_exited=False secs=90
+    D2_DEF_2.motion_diag.log lines=1631 sha8=a69b4ff3
+=== D2_DEF_3 pid=21508 exe=d738362e
+    exit=0 self_exited=False secs=90
+    D2_DEF_3.motion_diag.log lines=1635 sha8=2a8fdc4c
+DONE

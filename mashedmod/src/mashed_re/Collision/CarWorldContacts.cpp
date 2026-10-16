@@ -135,18 +135,19 @@ void WheelTerrainContactClassifier(int* param_1, float* param_2)
                 float fVar14 = local_8c[-1];       // wheel pos x
                 float fVar15 = local_8c[0];        // wheel pos y
                 float fVar16 = local_8c[1];        // wheel pos z
-                // [d2bsp] fix K (MASHED_D2CLS=1, default OFF): the ORIGINAL's summation order. Every
+                // [d2bsp] fix K (DEFAULT ON since d2close, user decision 2026-10-16; opt-out
+                // MASHED_NO_D2CLS=1): the ORIGINAL's summation order. Every
                 // dot below is evaluated z-term first, ((z*c + y*b) + x*a), in the bytes:
                 //   SAT 1 0x0046ccfd..0x0046cd24   SAT 2 0x0046cd37..0x0046cd5d
                 //   SAT 3 0x0046cd70..0x0046cda2   depth 0x0046cdb5..0x0046cdc9 (fst [esp+0x28])
                 //   approach 0x0046cdf3..0x0046ce13
                 // (stack slots from the prologue stores 0x0046cc79..0x0046cccb: v0 [esp+0x54/0x44/0x4c],
                 // v1 [0x40/0x5c/0x3c], v2 [0x48/0x50/0x58], n [0x30/0x34/0x38], wheel [0x1c/0x24/0x20]).
-                // This TU is SSE2, so each op rounds to float as x87 PC_24 does; the default order below
+                // This TU is SSE2, so each op rounds to float as x87 PC_24 does; the opt-out order below
                 // (x first) differs from the bytes by reassociation only. Measured on the d2bsp replay:
                 // 2..15 ulp on fv with a bit-identical batch (verify/d2bsp_20261016/RESULT_d2bsp.md).
-                static const bool s_clsOrder = [] { const char* e = std::getenv("MASHED_D2CLS");
-                                                    return e && e[0] == '1'; }();
+                static const bool s_clsOrder = [] { const char* e = std::getenv("MASHED_NO_D2CLS");
+                                                    return !(e && e[0] == '1'); }();
                 const float sat1 = s_clsOrder
                     ? ((fVar16 - fVar4) * param_2[0x1d] + (fVar15 - fVar3) * param_2[0x1c]) + (fVar14 - fVar2) * param_2[0x1b]
                     : (fVar14 - fVar2) * param_2[0x1b] + (fVar15 - fVar3) * param_2[0x1c] + (fVar16 - fVar4) * param_2[0x1d];

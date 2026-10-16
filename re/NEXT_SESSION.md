@@ -1,5 +1,22 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-16 d2close: **D2 is CLOSED** (user decision, Mariano). Next = D3.
+>
+> `verify/d2close_20261016/RESULT_d2close.md`, branch `work/d2close` (`b61e14a49` + `f3163e6a6`). Fixes W (BSP sphere walk `FUN_00538c80` + collector `FUN_00468b80`) and K (classifier z-first
+> summation) are default ON, the port-only `ProduceTerrainBatch` stand-in is deleted, L has been default since d2bsp. Plain default, 3 runs, unchanged `d81a8df6` bounds: slip 0.1890 x3 /
+> 0.2483 0.2482 0.2482, driving-median 1914.84 1914.84 1913.06, launch L=0 at 0.19 %, H1 398/400. **New default G-CTRL `d3b90ee0 / 80f01f35 / 56d62ae7`**; opt-outs in the RESULT
+> (`MASHED_NO_D2CHUNK`, `MASHED_NO_D2CLS`; W has none after `f3163e6a6`, `MASHED_NO_D2BSP=1` exists only in builds of `b61e14a49` and earlier). Any older trio needs these opt-outs on top of its own.
+> D3 (b) per regime on this default: **A 1/3, B 2/3, C 0/3**, unchanged by d2close. Collateral 39 of 94, unchanged.
+>
+> **What remains for D3** (nothing here is a D2 gate any more; a regression of the three D2 metrics reopens D2, ROADMAP.md §D2 CLOSED block):
+> 1. (b) is the open D3-AI criterion: regime A cars 1 and 3 (mutual contacts at steps 64 / 130 the original never has, U-9185 / U-9186), regime B car 2 (c1# / steer#), regime C 0/3
+>    (the 2026-10-13 and 2026-10-14 blocks below list the candidates: mutual contacts, the post-contact AI brake U-9684, car 2 refdist-0 entries U-9685 / U-9683).
+> 2. U-9684 stays blocked on the parked player at rest (progress `[0x008a96e8]` 0.0 in the exe, 29.999977 in the original; the first-step settle). It is a player-physics change (the 2026-10-14 block below
+>    asks for its own row), so re-score the three D2 metrics as its collateral.
+> 3. U-9712 (countdown-hold solver-entry wheel fields, port side not captured) is the one open item the closure accepted. Its path: a port-side dump beside `MASHED_BATCH_DUMP`, compare frames < 1000.
+> 4. The walk is compared with the original on Training only (G-WALK 4764/4764). A second-track `--batch-probe` capture of the original would extend that; only replica build and non-empty batches are
+>    checked on the other 12 tracks.
+
 > ## START HERE 2026-10-14 U-9684 (post-contact AI brake): producer found, kept default-OFF, **next = user decisions below.**
 >
 > `verify/d3_u9684_20261013/RESULT_U9684.md` (merged 88cacb0c, evidence only, no code change). The brake is FUN_00414a70
