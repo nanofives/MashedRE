@@ -18,7 +18,9 @@ EXE_NEW = os.environ.get('D2L_EXE', os.path.join(W, r'mashedmod\build\mashed_re.
 EXE_BASE = os.environ.get('D2L_BASE_EXE', os.path.join(SCR, r'exe_base\mashed_re.exe'))
 ROOT = os.environ.get('D2L_ROOT', os.path.join(SCR, 'root'))
 assert os.path.exists(os.path.join(ROOT, r'original\TOASTART\Common\Frontend.piz')), 'ROOT lacks original\\'
-STACK = {'DEF': [], 'B': ['MASHED_POS_MODEL']}
+STACK = {'DEF': [], 'B': ['MASHED_POS_MODEL'],
+         # amendment 2: L = the knob; C = d2settle's fix C (exact sqrt), report; BL = fix B + the knob, report
+         'L': ['MASHED_D2LAT_REFRESH'], 'C': ['MASHED_SPEED_REFRESH'], 'BL': ['MASHED_POS_MODEL', 'MASHED_D2LAT_REFRESH']}
 # DIAGNOSTIC stacks (report only): A6a's per-frame dump (act.* at A6a entry, clamp #6 l_60 / grip / k / arm), the
 # D2 sink phase marks (w1, a6a_out, a6b_out, a4_out, sub_top, sub_end, snap) and the world-contact fixup log.
 LX = ['MASHED_A6ADUMP=@OUT@\\{n}.a6a.log', 'MASHED_D2SINK=@OUT@\\{n}.sink.log',
@@ -26,7 +28,7 @@ LX = ['MASHED_A6ADUMP=@OUT@\\{n}.a6a.log', 'MASHED_D2SINK=@OUT@\\{n}.sink.log',
 for n, base in (('DLX', []), ('BLX', ['MASHED_POS_MODEL'])):
     STACK[n] = base + [k.replace('{n}', n) for k in LX]
 # Amendment 1: the same plus the fixup's own damp / torque log (ContactFixup.cpp:248-311).
-for n, base in (('DFX', []), ('BFX', ['MASHED_POS_MODEL'])):
+for n, base in (('DFX', []), ('BFX', ['MASHED_POS_MODEL']), ('LFX', ['MASHED_D2LAT_REFRESH'])):
     STACK[n] = base + [k.replace('{n}', n) for k in LX + ['MASHED_FIXUP_LOG=@OUT@\\{n}.fixup.log']]
 D2BASE = {'MASHED_REAL_PHYSICS': '1', 'MASHED_RACE_DEMO': '1', 'MASHED_PLAY_DEMO': '1', 'MASHED_GOTO': '6',
           'MASHED_TRACK_SEL': '12', 'MASHED_CAR_SEL': '0', 'MASHED_DRIVE_HOLD': '1', 'MASHED_WIN_POS': 'primary-bl',

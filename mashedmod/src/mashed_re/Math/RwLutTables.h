@@ -13,6 +13,7 @@ const std::uint32_t* RwLutInvSqrtTable();   // 0x1000 dwords, == the original's 
 
 float LutSqrt(float x);                     // FUN_004c3b30 with the real LUT
 float LutNormalize(float* out, const float* in);   // FUN_004c39b0 with the real LUT (no error report)
+float LutLength(const float* v);                   // FUN_004c3ac0 (RwV3dLength) with the real LUT, PC_24
 
 }  // namespace Math
 }  // namespace mashed_re
