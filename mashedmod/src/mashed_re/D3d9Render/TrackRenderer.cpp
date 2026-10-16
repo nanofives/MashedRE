@@ -8239,10 +8239,62 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         // root LTM Q{i}_*, equal to R{i}_* for a root frame), body = the frame the beam parts
         // hang off (F{i}_* under the replay; outside it the instance matrix, without the
         // librwrest body pose [UNCERTAIN U-9703]).
+        // [rfx2 U-9703] the frame the beam and light parts hang off is the renderable's (part 0xe), whose
+        // LTM is X * M(part 0x13 pose) * Y * Q (CarModel::body_X / body_Y, BuildCarPoses' FUN_0041f4f0
+        // pose, Q = the clump root). MASHED_FX_BODYPOSE=0 keeps the instance matrix outside the replay.
+        static const bool s_fx_bodypose = [] {
+            const char* e = std::getenv("MASHED_FX_BODYPOSE");
+            return !(e && e[0] == '0' && e[1] == '\0');
+        }();
+        auto fx_body = [&](int slot, const D3DMATRIX& root, float out12[12]) -> bool {
+            if (!CarPartsEnabled() || !car_parts_[slot].ok) return false;
+            const CarModel& cm = car_models_[static_cast<std::size_t>(car_slot_model_[slot])];
+            if (cm.body_frame < 0 || !cm.body_chain_ok) return false;
+            LibRw::FramePose ps[20];
+            const int np = BuildCarPoses(cm, car_parts_[slot], ps);
+            const float* mb = nullptr;
+            for (int k = 0; k < np; ++k) if (ps[k].frame == cm.body_frame) mb = ps[k].m;
+            if (!mb) return false;
+            const float Q[12] = {root._11, root._12, root._13, root._21, root._22, root._23,
+                                 root._31, root._32, root._33, root._41, root._42, root._43};
+            float t1[12], t2[12];
+            AffMul(cm.body_X, mb, t1);
+            AffMul(t1, cm.body_Y, t2);
+            AffMul(t2, Q, out12);
+            return true;
+        };
         auto fx_car = [&](int slot, const D3DMATRIX& body) {
             LibRw::CarFxInput in{};
             std::memcpy(in.body, &body, sizeof(in.body));
             std::memcpy(in.root, &body, sizeof(in.root));
+            {
+                float F[12];
+                if (s_fx_bodypose && fx_body(slot, body, F)) {
+                    if (!(s_car_rep && s_rep_car_ok)) {
+                        D3DMATRIX b;
+                        MatIdentity(&b);
+                        b._11 = F[0]; b._12 = F[1];  b._13 = F[2];
+                        b._21 = F[3]; b._22 = F[4];  b._23 = F[5];
+                        b._31 = F[6]; b._32 = F[7];  b._33 = F[8];
+                        b._41 = F[9]; b._42 = F[10]; b._43 = F[11];
+                        std::memcpy(in.body, &b, sizeof(in.body));
+                    } else {
+                        // the witness under the replay: this formula against the trace's F{i}_*
+                        static std::FILE* s_bw = [] {
+                            const char* e = std::getenv("MASHED_DBG_FXBODY");
+                            return (e && e[0]) ? std::fopen(e, "w") : nullptr;
+                        }();
+                        if (s_bw) {
+                            double mx = 0.0;
+                            for (int k = 0; k < 12; ++k) {
+                                const double dd = std::fabs(static_cast<double>(F[k]) - s_rep_car[slot][k]);
+                                if (dd > mx) mx = dd;
+                            }
+                            std::fprintf(s_bw, "%d,%d,%.7f\n", cam_replay_row_, slot, mx);
+                        }
+                    }
+                }
+            }
             if (s_car_rep && s_rep_car_ok) {
                 const float* f = s_rep_car[slot];
                 D3DMATRIX b;

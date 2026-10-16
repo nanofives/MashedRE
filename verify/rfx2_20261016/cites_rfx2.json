@@ -190,5 +190,12 @@
   "tex": ".*",
   "all_offscreen": true,
   "note": "[rstates] Since F2 (MASHED_LIBRW_SECTORWALK, default ON) the librw world sectors and the in-world props are culled by the ported RenderWare walk (camera sync list 0x004e38a0 over BSP cell boxes, tie lists 0x004e3c00, sphere test FUN_004c1b40, distance test FUN_004721e0). The rows left are draws outside that walk: the copters (D3D9 path, no culling) and after-world clumps the original does not issue. Every draw in the row lies wholly outside the trace row's view frustum (AABB test against the original's M_* frame and view window), so it rasterises nothing. d1r1 note: librw has no frustum culling (World::render -> Clump::render -> Atomic::render, librw world.cpp:134-139, clump.cpp:382-390; Camera::frustumTestSphere at camera.cpp:427 is never called; RwRaceSubmit.cpp draws every instance), the original's RenderWare does. Every draw in the row lies wholly outside the trace row's view frustum (AABB test against the original's M_* frame and view window), so it rasterises nothing."
+ },
+ {
+  "id": "C09b-HEADLIGHT-BRAKE",
+  "kind": "EXTRA",
+  "tex": "^Headlight$",
+  "detail": "B-only 1 draws 48 tri",
+  "note": "City 801 (rfx2): the original's cut frame holds 26 Headlight sprites (52 tri, FUN_00412f30 brake-light records 0x39 / 0x3a for one car) while no car draws its brake-light plate (part 0x11), so the matched-pose instrument's brake rows (verify/carlod_20261016/brake_rows.json, read from the plates) carry no brake there and the standalone draws the 24 head / tail sprites. The MISSING 52 / EXTRA 48 pair is one draw. U-9711."
  }
 ]
