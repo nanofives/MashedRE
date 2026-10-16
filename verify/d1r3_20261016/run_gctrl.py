@@ -94,6 +94,9 @@ def main():
         "MASHED_DETERMINISTIC": "1", "MASHED_DET_FRAMES": str(frames),
         "MASHED_PLAYERTRACE": "1",
         "MASHED_AI_STEPDUMP": str(step), "MASHED_U9186_GATES": str(gates),
+        # d1r2 e6498ad6: private ptrace path. Exes built before that commit ignore it and
+        # write the shared main-root player_trace.log instead (copied back below).
+        "MASHED_PLAYERTRACE_OUT": str(HERE / f"{name}.ptrace.log"),
     })
     print(f"=== {name} exe={exe}", flush=True)
     proc = subprocess.Popen([str(exe)], cwd=str(WT), env=env,
@@ -115,8 +118,9 @@ def main():
     print(f"    exit={rc} self_exited={self_exited} seconds={time.time() - t0:.0f}")
     if log.exists():
         shutil.copy2(log, HERE / f"{name}.log")
-    if pt.exists():
-        shutil.copy2(pt, HERE / f"{name}.ptrace.log")
+    priv = HERE / f"{name}.ptrace.log"
+    if not priv.exists() and pt.exists():   # pre-e6498ad6 exe: fall back to the shared file
+        shutil.copy2(pt, priv)
     for p in (step, gates, HERE / f"{name}.ptrace.log"):
         if p.exists():
             extra = ""
