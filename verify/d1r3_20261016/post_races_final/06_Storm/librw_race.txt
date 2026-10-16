@@ -1,0 +1,54 @@
+# librw in-loop submit (E2'b step 3): static world + instanced props and cars
+# sky, copters, particles, pickups and HUD come from the D3D9 path
+ok: state block created
+ok: init (640x480)
+model[0] registered: atomics=1 uvanim=1
+model[1] registered: atomics=1 uvanim=0
+model[2] registered: atomics=19 uvanim=0
+model[3] registered: atomics=1 uvanim=0
+model[4] registered: atomics=1 uvanim=0
+model[5] registered: atomics=1 uvanim=0
+ok: scene built — sectors=28 mats=31 tris=10346 verts=11430 (dicts=1)
+model[6] registered: atomics=44 uvanim=0
+f0      SURFACES depth d3d9=05139300 librw=05139300 SHARED | rt d3d9=05139800 librw=05139800 SHARED | client=640x480 raster=640x480
+f0      DEPTHPROBE p=(9.52,0.04,8.00)
+        d3d9  ndc=(0.000000000,-0.741602004,0.942687035) w=1.716570
+        librw ndc=(0.000000000,-0.741601825,0.942687035) w=1.716570
+        dz=0.000e+00 (ndc units)
+        MATCMP max|d3d9-librw|=9.537e-07 at elem 12 (row 3 col 0)  maxrel=2.224e-07
+        d3d9 col2 = 0.000000000 -0.263043970 0.965821326 -6.098517895
+        librw col2= 0.000000000 -0.263044000 0.965821445 -6.098518372
+f0      ZSTATE@draw zenable=1 zwrite=1 zfunc=4 cull=1 ablend=0
+f0      instances=9 models=7 | amb=(0.190,0.170,0.170) sun=(0.420,0.420,0.400) has_sun=1
+    model[0] atomics=1 render_flagged=1 instances=0 first_pos=(0.00,0.00,0.00)
+    model[1] atomics=1 render_flagged=1 instances=1 first_pos=(0.00,0.00,0.00)
+    model[2] atomics=19 render_flagged=19 instances=1 first_pos=(0.00,0.00,0.00)
+    model[3] atomics=1 render_flagged=1 instances=1 first_pos=(0.00,0.00,0.00)
+    model[4] atomics=1 render_flagged=1 instances=1 first_pos=(0.00,0.00,0.00)
+    model[5] atomics=1 render_flagged=1 instances=1 first_pos=(0.00,0.00,0.00)
+    model[6] atomics=44 render_flagged=44 instances=4 first_pos=(9.52,0.04,8.00)
+f0      ZSTATE@after zenable=1 zwrite=1 zfunc=4 ablend=1
+f0      in=(9.52,1.04,6.49) ltm=(9.52,1.04,6.49) devView.pos=(-1.00,0.96,-5.99)
+P7 fogcaps: RasterCaps=07732191 WFOG=1 ZFOG=1 FOGTABLE=1 FOGVERTEX=1 FOGRANGE=1
+P7 fogconst: start=20.000 end=100.000 range=-0.012500 disable=0.0
+P7 fogcolor: d3d9=000000 librw_ps=(0.0000,0.0000,0.0000) MATCH
+ok: first frame submitted — eye=(9.52,1.04,6.49) at=(9.52,0.22,9.51) fov=0.8457 aspect=1.3333 near=0.100 far=100.0 fog=1[20.0..100.0]
+f200    SURFACES depth d3d9=05139300 librw=05139300 SHARED | rt d3d9=05139800 librw=05139800 SHARED | client=640x480 raster=640x480
+f200    DEPTHPROBE p=(9.52,0.04,8.00)
+        d3d9  ndc=(0.152058989,-0.090086155,0.981620014) w=5.164872
+        librw ndc=(0.152058646,-0.090086147,0.981620014) w=5.164872
+        dz=0.000e+00 (ndc units)
+        MATCMP max|d3d9-librw|=1.907e-06 at elem 12 (row 3 col 0)  maxrel=2.096e-07
+        d3d9 col2 = -0.005044603 -0.326560706 0.946221769 -2.439561367
+        librw col2= -0.005044604 -0.326560736 0.946221828 -2.439561605
+f200    ZSTATE@draw zenable=1 zwrite=1 zfunc=4 cull=1 ablend=1
+f200    instances=9 models=7 | amb=(0.190,0.170,0.170) sun=(0.420,0.420,0.400) has_sun=1
+    model[0] atomics=1 render_flagged=1 instances=0 first_pos=(0.00,0.00,0.00)
+    model[1] atomics=1 render_flagged=1 instances=1 first_pos=(0.00,0.00,0.00)
+    model[2] atomics=19 render_flagged=19 instances=1 first_pos=(0.00,0.00,0.00)
+    model[3] atomics=1 render_flagged=1 instances=1 first_pos=(0.00,0.00,0.00)
+    model[4] atomics=1 render_flagged=1 instances=1 first_pos=(0.00,0.00,0.00)
+    model[5] atomics=1 render_flagged=1 instances=1 first_pos=(0.00,0.00,0.00)
+    model[6] atomics=44 render_flagged=44 instances=4 first_pos=(9.52,0.04,8.00)
+f200    ZSTATE@after zenable=1 zwrite=1 zfunc=4 ablend=1
+f200    in=(10.02,1.92,3.19) ltm=(10.02,1.92,3.19) devView.pos=(-1.00,0.95,-2.34)

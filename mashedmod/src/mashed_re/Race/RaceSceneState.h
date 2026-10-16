@@ -25,7 +25,7 @@
 // unchanged.)
 //
 // WHAT DELIBERATELY STAYED BEHIND in TrackRenderer:
-//   - anything typed on D3D9: the V/RelitSrc vertex structs and every
+//   - anything typed on D3D9: the V vertex struct and every
 //     std::vector<V> batch, IDirect3DTexture9*, and D3DMATRIX.
 //   - ParticleSystem parts_ / PickupField pickups_ / powerup_spawns_, whose own
 //     headers include <d3d9.h>.
@@ -140,11 +140,11 @@ struct RaceSceneState {
     // F4 LAPDATA.LUA: real lap lines, split sectors, safe-start ranges.
     Track::LapData lap_data_;
 
-    // F3 .UVA UV-anim: per-material scrolling-UV rate (units/sec). Sized to the
-    // renderer's batches_ (one entry per world material); zero = static.
+    // F3 .UVA UV-anim: per-material scrolling-UV rate (units/sec); zero = static.
+    // Used per prop/sky material (TrackRenderer::Prop::mat_scroll). The per-WORLD-
+    // material table that used to live here (mat_scroll_/uv_anim_) fed only the
+    // deleted D3D9 world loop; librw's world gets no scroll rates.
     struct MatScroll { float du = 0.f, dv = 0.f; };
-    std::vector<MatScroll> mat_scroll_;
-    bool uv_anim_ = false;          // any world material scrolls
 
     // ---- ported race camera + course wiring --------------------------------
     Race::RaceCamera            race_cam_;
@@ -197,7 +197,8 @@ struct RaceSceneState {
     // WS-E vehicle lighting (RpLight subset, env MASHED_RPLIGHT). Faithful
     // FUN_00479330 light acquisition: float-precision colours, default lights
     // when COURSE.LUA has no Lights_Filename, DFF lights keyed on the subtype
-    // byte alone. has_sun_dir_ gates the per-frame relight pass.
+    // byte alone. (The per-frame car relight pass that has_sun_dir_ used to gate
+    // was deleted with the D3D9 car path, D1-residue R3.)
     bool  rp_light_on_ = false;
     bool  has_sun_dir_ = false;
     float amb_f_[3]    = {0.f, 0.f, 0.f};   // ambient RGB, float
@@ -215,8 +216,6 @@ struct RaceSceneState {
     float car_len_        = 1.f;    // long-axis extent (chase-cam scale)
     float car_height_     = 0.5f;   // height extent (chase-cam scale)
     bool  car_long_is_x_  = true;   // nose axis: true=+X, false=+Z
-    float wheel_spin_     = 0.f;
-    float steer_vis_      = 0.f;
 
     // ---- AI cars ------------------------------------------------------------
     struct AiCar {

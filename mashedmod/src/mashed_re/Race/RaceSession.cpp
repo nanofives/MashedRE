@@ -29,8 +29,8 @@ void logf(const char* fmt, ...) {
 }
 
 // Vehicle catalogue: maps a car selection index -> {model piz, DFF base}. One
-// model piz holds a 6-livery group; LoadCarLiveries spawns the AI cars from the
-// same base (FUN_0040d110 selection shape). Index 0 = Advantage (the MASHED_CAR
+// model piz holds a 6-livery group (FUN_0040d110 selection shape; AI-car livery
+// variants are not loaded, see TrackRenderer.h). Index 0 = Advantage (the MASHED_CAR
 // default). TODO-RE: the real frontend car-select index -> vehicle table
 // (Player Colour/Car Select writes DAT_007f1a1c..); for now Begin uses the
 // config's car-0 carIndex into this list, defaulting to Advantage.
@@ -126,7 +126,6 @@ void RaceSession::Begin(const RaceConfig& cfg, D3d9Render::TrackRenderer* track,
         char dff0[64];
         std::snprintf(dff0, sizeof(dff0), "%s0.DFF", ve.dffBase);
         const bool car = track->LoadCar(dev, ve.piz, dff0, kLog);
-        const bool liv = track->LoadCarLiveries(dev, ve.piz, ve.dffBase, kLog);
         // Start the match: seed scores (FUN_0040b180), grid all 4 cars at the
         // start line and run the countdown. The match length follows from the
         // seed and FUN_00410510's per-rule target; SetRaceRule below re-seeds
@@ -150,10 +149,10 @@ void RaceSession::Begin(const RaceConfig& cfg, D3d9Render::TrackRenderer* track,
         track->SetAmbientParticles(ptype);
         track->InitPickups();        // place power-up orbs along the gate ribbon
         m_powerups.ready = true;
-        logf("Begin: track ready, vehicle=%s player_car=%d liveries=%d "
+        logf("Begin: track ready, vehicle=%s player_car=%d "
              "-> StartMatch particles=%d pickups=on gameMode=%d raceRule=%d "
              "mode=%s laps=%d [real sim active]",
-             ve.dffBase, (int)car, (int)liv, ptype, m_cfg.gameMode, m_cfg.raceRule,
+             ve.dffBase, (int)car, ptype, m_cfg.gameMode, m_cfg.raceRule,
              m_cfg.raceMode == 1 ? "laps" : "elim", m_cfg.laps);
     } else {
         logf("Begin: no track/device (logs-only race) ready=%d",

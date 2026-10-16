@@ -1,0 +1,5 @@
+{
+ "f60": {"mode": "InRace", "sky": {"batches": 1, "verts": 258, "textured": 1}, "world": {"batches": 0, "verts": 0, "textured": 0}, "props": {"batches": 0, "verts": 0, "textured": 0}, "copters": {"batches": 25, "verts": 5793, "textured": 25}},
+ "f61": {"mode": "InRace", "sky": {"batches": 1, "verts": 258, "textured": 1}, "world": {"batches": 0, "verts": 0, "textured": 0}, "props": {"batches": 0, "verts": 0, "textured": 0}, "copters": {"batches": 25, "verts": 5793, "textured": 25}},
+ "f62": {"mode": "InRace", "sky": {"batches": 1, "verts": 258, "textured": 1}, "world": {"batches": 0, "verts": 0, "textured": 0}, "props": {"batches": 0, "verts": 0, "textured": 0}, "copters": {"batches": 25, "verts": 5793, "textured": 25}}
+}

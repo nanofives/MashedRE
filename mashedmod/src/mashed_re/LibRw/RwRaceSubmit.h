@@ -21,10 +21,10 @@
 // working untouched. librw is therefore handed the exe's device via a documented
 // local patch — see mashedmod/deps/librw/MASHED_PATCHES.md.
 //
-// SCOPE, STATED UP FRONT. This submits the STATIC WORLD only. Cars, props,
-// particles, pickups, sky and the HUD still come from the D3D9 path. An imgdiff
-// against verify/librw_ref/ therefore shows large and LEGITIMATE deltas; they are
-// scope, not parity failures, and must not be reported as a parity number.
+// SCOPE, STATED UP FRONT. This submits the static world and the instanced props
+// and cars. Copters, particles, pickups, sky and the HUD still come from the D3D9
+// path in TrackRenderer::Render. There is no D3D9 world/prop/car draw to fall back
+// to: it was deleted in D1-residue R3 (2026-10-16).
 //
 // EXE-ONLY, like the rest of LibRw/: build.bat compiles this as an isolated TU
 // with the librw include path. Nothing in asi_sources.rsp may reference it.
@@ -46,16 +46,10 @@ namespace Txd { class Dictionary; }
 
 namespace LibRw {
 
-// D1 INVERTED (2026-08-18): librw is the DEFAULT renderer. Returns true unless
-// MASHED_RENDER_LIBRW=0, which reverts to the legacy D3D9 path for A/B. Unset or
-// any non-"0" value keeps librw. (Was: "true when MASHED_RENDER_LIBRW=1, default
-// OFF".) See RwRaceSubmit.cpp for the full rationale.
-bool RaceSubmit_Requested();
-
 // Bring librw up on the exe's already-created device+window. Call once, AFTER
 // InitD3D9() (the device must exist to be adopted) and before any track load.
 // Returns false and logs to log/librw_race.txt on the first failing step; the
-// caller must then carry on with the D3D9 path alone.
+// caller treats that as fatal (there is no D3D9 world to fall back to).
 bool RaceSubmit_Init(HWND hwnd, IDirect3DDevice9* dev, int width, int height);
 
 // Tear down. Does NOT release the adopted device — the exe owns that.
@@ -64,43 +58,30 @@ void RaceSubmit_Shutdown();
 // Build the librw scene from the SAME parsed data TrackRenderer just used.
 // Called from the tail of TrackRenderer::Load, where `world` and `dicts` are
 // still alive (they are locals there), so no asset is parsed twice.
-// No-op unless RaceSubmit_Init succeeded.
+// Returns false if RaceSubmit_Init did not succeed or the scene build fails;
+// TrackRenderer::Load then fails the track load.
 bool RaceSubmit_OnTrackLoaded(const Track::World& world,
                               const Txd::Dictionary* dicts, std::size_t ndicts);
 
-// ---- instanced models: props, cars, copters --------------------------------
+// ---- instanced models: props and cars --------------------------------------
 //
 // Every parsed Track::DffModel in TrackRenderer is a function LOCAL that dies as
-// soon as its batches are baked (load_prop's `m`, LoadCar's `model`,
-// LoadCarLiveries' per-livery `model`, LoadCopters' `model`). Nothing retains
+// soon as it is handed over (load_prop's `m`, LoadCar's `model`). Nothing retains
 // one. So a model must be handed over WHILE IT IS ALIVE, at load time, exactly as
 // the static world is -- re-parsing it later would be the second-copy-of-a-parser
-// failure mode again.
+// failure mode again. (Copters are not registered here: they are drawn through
+// D3D9 in TrackRenderer::Render.)
 //
 // Drop the previous track's registered models. MUST be called at the START of
 // TrackRenderer::Load: models are registered DURING the load (from the live
 // DffModel locals), so clearing them at the tail -- where the world is rebuilt --
 // would destroy the ones just handed over.
-// MASHED_LIBRW_INST: DEFAULT ON since 2026-08-02 (the earlier "STAGED, default
-// OFF, ground goes black" caveat is superseded -- the regression was missing UV
-// animation D-S3-SEA, not shading; see RwRaceSubmit.cpp). Instanced props/cars/
-// copters route through librw and land at the best-measured config (gating shots
-// 0.06-0.59). Before the D1 flag inversion this was unreachable on a clean env;
-// after it, librw is default so instancing is LIVE by default.
-// MASHED_LIBRW_INST=0 reverts to world-only.
-bool RaceSubmit_InstancesEnabled();
-
-// [D-S3-PROP] Per-model routing. Honours MASHED_LIBRW_ONLYPROP=<handle>: with it
-// set, only that model's instances go to librw and every other model falls through
-// to its D3D9 draw, so the untargeted models cancel against the
-// MASHED_LIBRW_INST=0 baseline and one model becomes attributable by counting.
-bool RaceSubmit_InstanceModelEnabled(int handle);
-
 void RaceSubmit_BeginTrackLoad();
 
 // Returns an opaque handle (>= 0) to keep in the owning struct, or -1 on failure.
-// A -1 handle simply means "keep drawing this one through D3D9", so the port is
-// incremental by construction and a single bad model cannot black out the scene.
+// A -1 handle means the model is NOT drawn (logged to log/librw_race.txt): there is
+// no D3D9 draw to fall back to, so one bad model drops out of the scene rather than
+// failing the track load.
 // `ambient` = RaceSceneState::amb_world_ (0x00RRGGBB), already parsed by
 // TrackRenderer before any prop loads. See BuildClump's note for why it matters.
 // `uv_rates`, when non-null, is 2 floats (du/dt, dv/dt) per MATERIAL, in

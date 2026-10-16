@@ -71,20 +71,9 @@ public:
     void Render(IDirect3DDevice9* dev, float t, const CamInput* in = nullptr);
 
     bool ready() const { return ready_; }
-    // Vertex layout shared by world/car/prop batches (public so file-scope
-    // builder helpers can use it).
+    // Vertex layout shared by the D3D9-drawn batches: sky dome and copters (public
+    // so file-scope builder helpers can use it).
     struct V { float x, y, z; D3DCOLOR c; float u, v; };
-    // WS-E vehicle lighting (RpLight subset): per-vertex relight source,
-    // parallel to a batch's V array. Lit vertices (rpGEOMETRYLIGHT + normals)
-    // get their diffuse recomputed per frame in world space:
-    //   c = clamp(base + sunmul * max(0, N_model . L_model)),
-    // where base = prelight + ambient (float, pre-clamp) and sunmul = sun
-    // colour, both already multiplied by materialRGB/255 where the geometry
-    // carries MODULATEMATERIALCOLOR. L_model = R * L_world per drawn instance
-    // (exact: instance rotations are orthonormal). relit==0 vertices keep the
-    // baked V colour. Public so file-scope builder helpers can fill it.
-    struct RelitSrc { float n[3]; float base[3]; float sunmul[3];
-                      std::uint32_t relit; };
     // Current camera eye/target (for HUD/debug and the car-mode chase cam).
     void camera(float eye[3], float at[3]) const;
     float world_center(int axis) const { return center_[axis]; }
@@ -97,13 +86,12 @@ public:
                  const char* dff_entry, const char* log_path);
     bool car_ready() const { return car_ready_; }
 
-    // PORTED car selection (FUN_0040d110, 0x0040d110): one model piz is
-    // shared by every player — vehicle id snaps to its 6-livery group
-    // ((id/6)*6) and each player's car = base + livery (DFF "<Base><n>").
-    // Loads liveries 1..3 for the AI cars (mode-0xb of the original assigns
-    // livery = player index; per-player DAT_007f1a1c defaults pending RE).
-    bool LoadCarLiveries(IDirect3DDevice9* dev, const char* piz_path,
-                         const char* dff_base, const char* log_path);
+    // AI-car liveries are NOT loaded: the default build draws every AI car with the
+    // player body (the per-livery D3D9 variants, LoadCarLiveries, were deleted in
+    // D1-residue R3, 2026-10-16). The original's selection is FUN_0040d110
+    // (0x0040d110): the vehicle id snaps to its 6-livery group ((id/6)*6) and each
+    // player's car = base + livery (DFF "<Base><n>"); mode 0xb assigns livery =
+    // player index.
 
     struct DriveInput {
         float accel = 0.f;   // +1 up-arrow / -1 down-arrow (reverse/brake)
@@ -146,8 +134,6 @@ public:
 private:
     static constexpr DWORD kFVF = D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_TEX1;
 
-    std::vector<std::vector<V>>      batches_;   // per material, tri lists
-    std::vector<IDirect3DTexture9*>  textures_;  // per material (may be null)
     bool   ready_     = false;
     ParticleSystem parts_;          // in-race weather/dust billboards
     // Collision/slide FX state, per car slot (0=player, 1..3 = ai_cars_):
@@ -194,10 +180,13 @@ private:
     // track props: RWP_Object DFF+MTS instanced sets + Clump_Filename DFFs
     // at identity (their frames carry placement; COURSE.LUA wiring).
     struct Prop {
+        // D3D9 bake: filled ONLY for the sky dome (sky_). Track props have no D3D9
+        // copy; they are drawn as librw instances.
         std::vector<std::vector<V>>     batches;   // per material
         std::vector<IDirect3DTexture9*> textures;
         std::vector<D3DMATRIX>          instances;
-        // E2'b step 3: librw clump handle for this model, or -1 = draw via D3D9.
+        // E2'b step 3: librw clump handle for this model, or -1 = not drawn
+        // (RaceSubmit_RegisterModel failed; logged to log/librw_race.txt).
         int                             rw_model = -1;
         // F3: per-material UV-scroll rate (units/sec) from the DFF material's
         // RW UVAnim extension -> the track .UVA dict (sea/sky props scroll).
@@ -243,43 +232,10 @@ private:
     // last-wins), Ambient_RGB override (DFF branch only, any component >
     // DAT_005d757c = 0.0f). has_sun_dir_ gates the per-frame relight pass.
 
-    // car model + state
-    std::vector<std::vector<V>>     car_batches_;
-    std::vector<IDirect3DTexture9*> car_textures_;
-    // WS-E vehicle lighting: relight sources parallel to car_batches_
-    // (empty inner vector = batch is not runtime-lit, draw static).
-    std::vector<std::vector<RelitSrc>> car_relit_;
-    // AI livery variants (index 0 = livery 1 = AI car 0, etc.); full models
-    // with wheels baked in — the spin overlay only applies to the player.
-    // E2'b step 3: librw clump handle for the player body, -1 = D3D9.
+    // car model + state. The car has no D3D9 copy: the player body and the AI cars
+    // are placed instances of one librw clump (RwRaceSubmit.h), registered by LoadCar.
+    // -1 = registration failed, no car is drawn.
     int rw_car_model_ = -1;
-    struct CarVariant {
-        std::vector<std::vector<V>>     batches;
-        std::vector<IDirect3DTexture9*> textures;
-        std::vector<std::vector<RelitSrc>> relit;   // parallel to batches
-    };
-    std::vector<CarVariant> car_variants_;
-
-    // visual wheels: split from the body by per-atomic bbox heuristic
-    // (disc-shaped, lateral-thin, at the 4 ground corners). Verts stored
-    // pivot-relative; spun around the lateral axle, front pair steered.
-    struct CarWheel {
-        std::vector<std::pair<std::uint32_t, std::vector<V>>> parts;
-        // WS-E vehicle lighting: relight sources parallel to parts (empty
-        // inner vector = part not runtime-lit).
-        std::vector<std::vector<RelitSrc>> parts_relit;
-        float pivot[3] = {};
-        float radius   = 0.3f;
-        bool  front    = false;
-        bool  lateral_is_x = true;   // axle along model X (else Z)
-    };
-    std::vector<CarWheel> wheels_;
-
-    // WS-E vehicle lighting: relit car/wheel/AI draw pass (replaces the
-    // static car section of Render when MASHED_RPLIGHT is on and the track
-    // has a directional light). Packs every relit batch of every instance
-    // into one dynamic-VB upload, then draws in the exact legacy order.
-    void RenderCarsRelit(IDirect3DDevice9* dev, const D3DMATRIX& worldm);
 
     // stretch: AI cars following the gate loop at fixed speed (share the
     // player's model batches; placeholder until the real AI port)

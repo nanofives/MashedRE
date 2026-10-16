@@ -27,7 +27,8 @@ namespace LibRw {
 //
 // NOTE: this used to be MASHED_RENDER_LIBRW. E2'b step 3 took that name for the
 // in-loop render path (LibRw/RwRaceSubmit.h), which instead ADOPTS the exe's
-// device. Default OFF for both keeps the shipping D3D9 path reachable.
+// device and is now the only race renderer (the MASHED_RENDER_LIBRW knob itself
+// was deleted in D1-residue R3, 2026-10-16). The smoke probe is default OFF.
 bool SmokeRequested();
 
 // E1' acceptance probe. Brings librw up on an already-created HWND
