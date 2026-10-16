@@ -1304,6 +1304,20 @@ function fpSample(site){
       for (let j = 0; j < 10; j++) base.push(q ? q[j] : '');
     }
     base.push(sl[1].map(function(q){ return q.join(':'); }).join('|'));
+    // [d2lateral 2026-10-16] every other input 0x0046ef70 reads, appended at the end so the
+    // older columns do not move: +0xcfc (floor-500 switch @0x0046f097), +0x5c (torque scale
+    // @0x0046f47d), the slide axis +0x9c8/+0x9cc/+0x9d0 (@0x0046f639..0x0046f650), slot 0's
+    // raw key +0x4ac (the -2 damp guard @0x0046f5ae), the four wheel states (cVar8
+    // @0x0046ef76..0x0046f009), +0x9b4 is already above; plus the angular velocity
+    // +0x9bc..+0x9c4 and the position +0x958..+0x960 so a slot's contact-point velocity can
+    // be rebuilt.
+    base.push(r.add(0xcfc).readS32(), r.add(0x5c).readFloat(),
+              r.add(0x9c8).readFloat(), r.add(0x9cc).readFloat(), r.add(0x9d0).readFloat(),
+              r.add(0x4ac).readS32(),
+              r.add(0x198).readS32(), r.add(0x25c).readS32(), r.add(0x320).readS32(), r.add(0x3e4).readS32(),
+              r.add(0x9bc).readFloat(), r.add(0x9c0).readFloat(), r.add(0x9c4).readFloat(),
+              r.add(0x958).readFloat(), r.add(0x95c).readFloat(), r.add(0x960).readFloat(),
+              r.add(0x9d8).readFloat());
     FP.rows.push(base);
   } catch(e){ if (!FP.err) FP.err = 'sample' + site + ' ' + e; }
 }
@@ -4534,7 +4548,8 @@ def main():
                     for _k in range(2):
                         _hdr += (",s%d_i,s%d_depth,s%d_nx,s%d_ny,s%d_nz,s%d_scale,"
                                  "s%d_armx,s%d_army,s%d_armz,s%d_mag") % tuple([_k] * 10)
-                    _hdr += ",slots_all"
+                    _hdr += (",slots_all,icfc,f5c,ax9c8,ax9cc,ax9d0,key0,st0,st1,st2,st3,"
+                             "avx,avy,avz,posx,posy,posz,fwdy")
                     with open(fpp, "w", newline="") as f:
                         f.write(_hdr + chr(10))
                         for r in fp_rows:
