@@ -77,3 +77,12 @@ texture) is the gate miss r10 reported on the original side: see "Neustein" belo
 ## Defaults
 
 A faithful port that passes A1 to A5 is default ON with an opt-out knob (`MASHED_NO_SKYSLOTS=1`, `MASHED_NO_OBJBSP=1`); otherwise OFF with a recommendation.
+
+## Amendment 1 (written after the first measurements, before the rebased ones)
+
+- The orchestrator moved `race/first-frame-parity` (dualcopy4: the race camera's `Vec3Norm` now uses `LutNormalize`, replay pose error down) and asked for a rebase and a baseline built from the new base.
+  The branch was rebased onto `f76ae153b` (the dualcopy4 merge `07526b4e` plus the gridyaw merge, "default build unchanged"); the baseline is a clean build of `f76ae153b` in a scratch worktree; all builds use `MASHED_NO_DEPLOY=1`.
+  Every number in RESULT_rsky.md is from the rebased tree. The pre-rebase run is kept only as a comparison (identical row sets on 39 of 39 baseline frames).
+- Two of my U-row ids (U-9719, U-9720) were taken by sibling lanes during the work; mine are U-9721 (one-argument sky slot) and U-9722 (object world render order).
+- Reading of A3 (rows added): a sky draw that was MISSING and is now matched shows up as a STATE row under the existing sky cites (C19 / C20). That is the expected form of the fix and is reported row by row, not counted as a new cause.
+- Added after the first results: the mesh-order change (`MASHED_NO_SECTOR_BINMESH`) and the new Neustein capture with the probe naming the car shadow render textures (the I-NAME retest of Neustein +105).

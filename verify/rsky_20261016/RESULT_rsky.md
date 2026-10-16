@@ -3,16 +3,20 @@
 **Verdict: both rows close on the default build, and the C23 / C23b cite groups are empty.** On the same 13 tracks x 3 frames
 (39 frames) with the same cites minus those two groups, the baseline has **32 RED rows (12 C23 + 20 C23b)** and the final build has
 **0 RED**; divergence rows fall **1211 -> 1147**. Forest matches **91.9 / 91.9 / 87.7 %** of the original's triangles (was 70.1 / 70.1 / 68.5 %).
-G-CTRL is unchanged (`2b4d47bb / 356821c8 / f7a155e1`, baseline, first and final build). One of r10's mapped causes was wrong
+G-CTRL is unchanged (`2b4d47bb / 356821c8 / f7a155e1` on the baseline and the final build, before and after the rebase). One of r10's mapped causes was wrong
 (C23b, section 3) and one change went further than the brief (the sector mesh order, section 1c), both reported below.
 
-- Base `1fa71b277` (race/first-frame-parity), branch `work/rsky`, worktree `.worktrees/rsky`. Pre-registration `PREREG_rsky.md`
-  (commit `0cf5522a5`; the file was written before the first measuring run, the commit followed one baseline smoke replay of Forest).
-- Executables (clean builds in this worktree): baseline `log/rsky/exe_base.exe` SHA-256 `77B96188EE89D1D020A866DD8565B7C9CBDC2E56E29A3B25E1DF088AAEF3187A`;
-  final `log/rsky/exe_after4.exe` `9EF5720624CE2B58697388964B63D0648BDBAC57EEE722DEDA79454F6BA84550`.
+- Base `f76ae153b` (race/first-frame-parity: the dualcopy4 merge `07526b4e` and the gridyaw merge on top), branch `work/rsky`, worktree `.worktrees/rsky`.
+  First measured on `1fa71b277`, then rebased on the orchestrator's notice (the camera `Vec3Norm` change) and **re-measured from scratch**: every number below is from the rebased tree.
+  Pre-registration `PREREG_rsky.md` (commit `3282716b3` after the rebase; the file was written before the first measuring run, the commit followed one baseline smoke replay of Forest).
+- Executables (clean builds, `MASHED_NO_DEPLOY=1`): baseline `log/rsky/exe_base2.exe` = `f76ae153b` built in a scratch worktree (removed with `diag.py wt-remove`),
+  SHA-256 `7276408817422D6E4433EF1A6C13BD4793D9586237CF35C4CE34286198A76D54`; final `log/rsky/exe_after5.exe` = this branch,
+  `48687BC9825ED151D425BC01FFB339D03A94E329A7C33560C5B6249CF44CE75C`. The pre-rebase pair (base `1fa71b277`: `77B96188..`, final `9EF57206..`) gave **identical row sets on 39 of 39 baseline frames**
+  (`evidence/compare_prerebase_base_vs_postrebase_base.txt`) and the same G-CTRL hashes, so the camera change does not move a replay row.
 - **Isolation.** Every replay and G-CTRL ran with `MASHED_ROOT` and the CWD = a private copy of `original\` (482 MB, `original\` inside it, checked
-  before the first run); the d1r1 / r10 drivers hard-code the main checkout. No foreign process was touched, no file was deployed to `original\`
-  (the build's `.asi` deploy went to this worktree's own `original\`). The original-side capture is the one place that uses the main install, as every capture does.
+  before the first run); the d1r1 / r10 drivers hard-code the main checkout. No foreign process was touched. The builds before the notice deployed the dev `.asi` only to this
+  worktree's own `original\` (never the shared install, whose `.asi` mtime was not mine); from the notice on every build set `MASHED_NO_DEPLOY=1`. The original-side capture is the one
+  place that uses the main install, as every capture does.
 
 ## 1. What changed (all default ON, each with an opt-out)
 
@@ -51,7 +55,7 @@ d. **Probe.** `re/frida/camera_probe.py` names the two car shadow render-to-text
 | Training | 63 -> 63 | 0 -> 0 | unchanged |
 | **all** | **1211 -> 1147** | **32 -> 0** | |
 
-Row-by-row (`evidence/compare_base_after4.txt`): 15 frames identical, 76 rows removed, 55 counts reduced (ORDER and FOG), **12 rows added: the C23 sky draws**. They were
+Row-by-row (`evidence/compare_base_after.txt`): 15 frames identical, 76 rows removed, 55 counts reduced (ORDER and FOG), **12 rows added: the C23 sky draws**. They were
 MISSING (uncited under these cites); now the draw matches in texture, triangles and AABB and shows as a STATE row under the existing sky cites (C19 / C20: librw's
 ZENABLE 1 / ZFUNC ALWAYS against the original's ZENABLE 0, the row TRAINING's, City's and Arctic's sky already carry). The sky is no longer missing; its state encoding is C20's and untouched here.
 **Opt-out control** (all three knobs on the final exe, 7 tracks, 21 frames): row identities and counts equal the baseline on 21 of 21 (`evidence/compare_base_ctl.txt`).
@@ -79,7 +83,7 @@ r10 miss (73/77); the new sample is additional and replaces it for gate purposes
 
 - **Pr-1** (only Neustein, Roundabout, Warzone move): **refuted**. Sands, Dump, City, SuperG and Forest also move, all by fewer rows, from the BinMesh order the brief did not ask for.
 - **Pr-2** (Forest >= 80 %): confirmed, 87.7 to 91.9 %. The residual ORDER rows I expected from the tie order did not appear: there are no ties in the object world.
-- **Pr-3** (G-CTRL unchanged): confirmed on the first and the final build.
+- **Pr-3** (G-CTRL unchanged): confirmed (baseline and final build, before and after the rebase: `evidence/gctrl_lines.txt`).
 - **Pr-4** (name the texture from its creator without a new capture): **false as written**; the name needed the probe change and a new capture. It passed.
 - Acceptance: A1 met (C23 MISSING 12 -> 0), A2 met (C23b 20 -> 0), A4 met, A5 met (0 RED on 39 frames), **A3 met with a caveat**: the only added row identities are the 12 STATE rows above, each under an existing cite.
 
@@ -94,15 +98,15 @@ r10 miss (73/77); the new sample is additional and replaces it for gate purposes
 
 1. The BinMesh sector order is default ON for all worlds (it removes rows on Forest, Sands, Dump, Warzone and City, shrinks ORDER counts on SuperG and Roundabout, and leaves the other 6 tracks identical). Keep it ON, or limit it to the object world (`MASHED_NO_SECTOR_BINMESH` is the opt-out)?
 2. Accept the new Neustein capture as the gate-clean sample for U-9702's footnote?
-3. U-9721 / U-9722 are the next free ids at the base; siblings may have taken them (renumber at merge).
+3. U-9721 / U-9722 are the next free ids at `f76ae153b` (my first ids U-9719 / U-9720 were taken by seek414f00 and gridyaw during the work and are renumbered); siblings may take them again, renumber at merge.
 
 ## 8. Reproduce
 
 ```
 robocopy <main>\original <root>\original /E            # private game root, original\ inside
-py -3.12 verify\rsky_20261016\run13.py run   --exe log\rsky\exe_base.exe   --root <root> --out log\rsky\base
-py -3.12 verify\rsky_20261016\run13.py run   --exe log\rsky\exe_after4.exe --root <root> --out log\rsky\after4
-py -3.12 verify\rsky_20261016\run13.py score --out log\rsky\after4 --cite verify\rsky_20261016\cites_rsky.json --prefix rs_
-py -3.12 verify\rsky_20261016\compare_rows.py log\rsky\base log\rsky\after4 --prefix rs_
-py -3.12 verify\rsky_20261016\run_gctrl_priv.py log\rsky\exe_after4.exe after4 --root <root> --out log\rsky\gctrl
+py -3.12 verify\rsky_20261016\run13.py run   --exe log\rsky\exe_base2.exe  --root <root> --out log\rsky\base2
+py -3.12 verify\rsky_20261016\run13.py run   --exe log\rsky\exe_after5.exe --root <root> --out log\rsky\after5
+py -3.12 verify\rsky_20261016\run13.py score --out log\rsky\after5 --cite verify\rsky_20261016\cites_rsky.json --prefix rs_
+py -3.12 verify\rsky_20261016\compare_rows.py log\rsky\base2 log\rsky\after5 --prefix rs_
+py -3.12 verify\rsky_20261016\run_gctrl_priv.py log\rsky\exe_after5.exe after5 --root <root> --out log\rsky\gctrl2
 ```

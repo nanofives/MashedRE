@@ -1,3 +1,4 @@
+## gctrl_run.txt
 === base exe=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\rsky\log\rsky\exe_base.exe knobs=[] 
     exit=0 self_exited=True
     base.step.csv lines=18956 sha8=2b4d47bb
@@ -8,6 +9,7 @@
     after3.step.csv lines=18956 sha8=2b4d47bb
     after3.gates.csv lines=55433 sha8=356821c8
     after3.ptrace.log lines=27716 sha8=f7a155e1
+## final_run.txt
 [20_NeusteinNamed] exit=0
 [20_NeusteinNamed] exit=0
 [01_Egypt] exit=0
@@ -35,3 +37,49 @@
     after4.step.csv lines=18956 sha8=2b4d47bb
     after4.gates.csv lines=55433 sha8=356821c8
     after4.ptrace.log lines=27716 sha8=f7a155e1
+## final2_run.txt
+[01_Egypt] exit=0
+[02_Neustein] exit=0
+[03_Arctic] exit=0
+[04_Highway] exit=0
+[05_Sands] exit=0
+[06_SuperG] exit=0
+[07_Roundabout] exit=0
+[08_Storm] exit=0
+[09_Forest] exit=0
+[10_Dump] exit=0
+[11_Warzone] exit=0
+[12_City] exit=0
+[13_Training] exit=0
+[20_NeusteinNamed] exit=0
+[20_NeusteinNamed] exit=0
+[01_Egypt] exit=0
+[02_Neustein] exit=0
+[03_Arctic] exit=0
+[04_Highway] exit=0
+[05_Sands] exit=0
+[06_SuperG] exit=0
+[07_Roundabout] exit=0
+[08_Storm] exit=0
+[09_Forest] exit=0
+[10_Dump] exit=0
+[11_Warzone] exit=0
+[12_City] exit=0
+[13_Training] exit=0
+[02_Neustein] exit=0
+[05_Sands] exit=0
+[07_Roundabout] exit=0
+[09_Forest] exit=0
+[10_Dump] exit=0
+[11_Warzone] exit=0
+[12_City] exit=0
+=== base2 exe=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\rsky\log\rsky\exe_base2.exe knobs=[] 
+    exit=0 self_exited=True
+    base2.step.csv lines=18956 sha8=2b4d47bb
+    base2.gates.csv lines=55433 sha8=356821c8
+    base2.ptrace.log lines=27716 sha8=f7a155e1
+=== after5 exe=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\rsky\log\rsky\exe_after5.exe knobs=[] 
+    exit=0 self_exited=True
+    after5.step.csv lines=18956 sha8=2b4d47bb
+    after5.gates.csv lines=55433 sha8=356821c8
+    after5.ptrace.log lines=27716 sha8=f7a155e1
