@@ -1,0 +1,14 @@
+# arm A: csv:C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\c1f3ef78-83d8-4379-bfa7-b8b44efc73ff\scratchpad\piv_R_M_OPTOUT.csv(13678 frames)
+# arm B: csv:C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\c1f3ef78-83d8-4379-bfa7-b8b44efc73ff\scratchpad\piv_R_M_DEF.csv(13498 frames)
+# noise floor: 244 fields, from 13678 A-pair frames and 13498 B-pair frames
+# aligned frames 13498 [0..13497]   paired fields 244   A-only 0   B-only 0
+
+=== DIVERGENT FIELDS, ranked by first frame past the noise floor (171 of 244 paired) ===
+field                  scope       first      n |      med A      med B    med|A-B|      floor
+----------------------------------------------------------------------------------------------
+s.v2.c1                outside        530  12972 |         21         20          47          0
+s.v2.curv              outside        530  12972 |      35.33      40.56        34.2          0
+s.v2.own_z             outside        530  12972 |    -0.5362       3.47       13.73          0
+s.v2.look_z            outside        530  12972 |     -1.367      3.092        13.2          0
+s.v2.look_x            outside        530  12972 |      7.697      8.222       4.941          0
+s.v2.own_x             outside        530  12972 |      7.151      9.611       4.816          0

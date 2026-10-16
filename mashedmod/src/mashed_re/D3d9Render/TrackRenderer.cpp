@@ -2852,6 +2852,12 @@ bool TrackRenderer::LoadCar(IDirect3DDevice9* dev, const char* piz_path,
     return true;
 }
 
+// [U-9683] Race/SpectatorDistances.cpp (declared again at the RaceComputeDistancesTick use in UpdateRace).
+extern "C" void __cdecl RaceComputeDistancesTick(int site);
+extern "C" int  __cdecl RaceRefDistAfterAi();
+extern "C" void __cdecl RaceRefDistTraceFrame();
+extern "C" void __cdecl RaceRefDistTraceAiEntry();
+
 void TrackRenderer::UpdateCar(const DriveInput& in) {
     if (!car_ready_ || in.dt <= 0.f) return;
     // R6 handling v2 — velocity-vector model whose STRUCT SHAPE follows
@@ -3050,6 +3056,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         if (countdown_ > 0.f) return;
     }
 
+    RaceRefDistTraceFrame();   // [U-9683] frame ordinal for MASHED_REFDIST_TRACE (measurement only)
     float accel = in.accel, steer = in.steer;
     if (round_mode_ && !human_drive_) {
         // exhibition round: the player car auto-follows the gate loop too
@@ -3396,6 +3403,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         // reachable ONLY through that revert flag.
         Ai::Ai_AdvanceClock(static_cast<int>(in.dt * 3000.0f + 0.5f));
         AiBridgeSnapshot();
+        RaceRefDistTraceAiEntry();   // [U-9683] the array as the consumers will read it (measurement only)
         Ai::Ai_Standalone_Tick();
         AiStepDump();
         U9186GateDump();   // [U-9186 G1] default-OFF measurement probe
@@ -3611,6 +3619,11 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         }
     }
     }
+    // [U-9683] default-ON (opt-out MASHED_NO_REFDIST_AFTER_AI): the producer's place in the original's frame order, after
+    // every car's physics (player above, opponents in the block just closed) and after
+    // PathProg_FrameTick (UpdateRace). Same coverage as the UpdateRace call it replaces:
+    // UpdateRace returns before that call when gates_ is empty.
+    if (RaceRefDistAfterAi() && !gates_.empty()) RaceComputeDistancesTick(1);
     yaww::Frame();   // U-9188 leg A/B per-frame emit; no-op unless MASHED_AI_YAWW
 
     // power-up pickups: collect orbs the player drives through (respawn loop).
@@ -3953,7 +3966,10 @@ extern "C" std::uint32_t __cdecl PtrCompute881ec8(std::uint32_t* out, std::uint3
 // extern "C" like its neighbours above: this TU is inside
 // namespace mashed_re::D3d9Render, so a `namespace mashed_re { namespace Race ...`
 // block here would declare mashed_re::D3d9Render::mashed_re::Race instead.
-extern "C" void __cdecl RaceComputeDistancesTick();
+extern "C" void __cdecl RaceComputeDistancesTick(int site);   // site 0 = UpdateRace, 1 = after the AI block [U-9683]
+extern "C" int  __cdecl RaceRefDistAfterAi();                 // [U-9683] MASHED_REFDIST_AFTER_AI
+extern "C" void __cdecl RaceRefDistTraceFrame();              // [U-9683] measurement-only, MASHED_REFDIST_TRACE
+extern "C" void __cdecl RaceRefDistTraceAiEntry();
 // [GATEFIRE GF1] FUN_004148b0's standalone arm (Ai/AiLeaderTimer.cpp, now a shared TU
 // rather than a second body at that RVA -- rva-lint's allowlist is a burn-down list).
 extern "C" int __cdecl AiLeaderTimerProbe(int* outXZ, int vehIdx);
@@ -5673,7 +5689,12 @@ void TrackRenderer::UpdateRace(float dt) {
     // in UpdateRace (:3423), which runs before Ai_Standalone_Tick (:3462), so a
     // consumer sees this frame's value — the same ordering the race_pct bridge
     // below relies on. PREREG: verify/d3_u9186_20261008/PREREG_H3.md
-    RaceComputeDistancesTick();
+    // [U-9683] The original runs the producer AFTER the AI tick, physics and progress of the
+    // frame (FUN_0040fc00: FUN_00425a40 0x0040fc6c, FUN_0040da50 0x0040fc75, FUN_0040d470
+    // 0x0040fc7c), so its consumer reads the previous frame's value. DEFAULT-ON 2026-10-16: the
+    // call is at the end of UpdateCar (after the opponent block); opt-out
+    // MASHED_NO_REFDIST_AFTER_AI restores this site. verify/d3_u9683_20261016.
+    if (!RaceRefDistAfterAi()) RaceComputeDistancesTick(0);
 
     // [D-11072 P2] FUN_0040da50's FUN_00408610 loop (per-car path progress 0x008a96e8 and
     // race_pct 0x008a96ec), before the AI tick like the bridge below. Default-OFF MASHED_PATHPROG.
