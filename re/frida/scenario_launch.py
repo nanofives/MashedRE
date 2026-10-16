@@ -4652,7 +4652,7 @@ def main():
                     except Exception as _e: print("  [statediff] watch-write drain failed:", _e)
                     wwp = outp.with_suffix(outp.suffix + ".watch.csv")
                     with open(wwp, "w", newline="") as f:
-                        f.write("seq,pc,ret0,ret1,ret2," + ",".join("w%d" % k for k in range(len(args.watch_write.split(",")[:2]))) + chr(10))
+                        f.write("seq,pc,ret0,ret1,ret2," + ",".join("w%d" % k for k in range(len(args.watch_write.split(",")[:2]))) + ",bt" + chr(10))
                         for r in ww_rows:
                             f.write(",".join(repr(x) if isinstance(x, float) else str(x) for x in r) + chr(10))
                     print(f"  [statediff] watch-write {len(ww_rows)} hits -> {wwp}")

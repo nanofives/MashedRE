@@ -3,9 +3,9 @@
 Branch `work/d3b`, base `race/first-frame-parity` `2cc15b2cf`. PREREG `PREREG_d3b.md` + amendments 1-5 (each committed
 before the runs it governs; amendment 2 discloses that LR_M5 re-ran a gate after a further fix). Model claude-opus-5-5,
 account3. Exes: base `68e037d7`, knob builds `1abe36ef` (LUT), `694f0dc3` (+ Catmull order), `eb5e1462` (+ heading assist).
-All port runs on private `MASHED_ROOT` copies, `MASHED_NO_DEPLOY=1`, every PID killed was this lane's own. Five
-original-side runs on the shared install (`o_lb1`, `o_ww1` aborted by a full disk then `o_ww2`, `o_pk1`, `o_rt1`), each with
-its own PID, no piz-collision AV.
+All port runs on private `MASHED_ROOT` copies, `MASHED_NO_DEPLOY=1`, every PID killed was this lane's own (one: the
+`H_L5-2` run stuck on the full disk). Six original-side launches on the shared install (`o_lb1`; `o_ww1` failed on the
+full disk and was re-run to completion; `o_ww2`, `o_pk1`, `o_rt1`), each with its own PID, no piz-collision AV.
 
 ## 0. Verdict
 
@@ -19,10 +19,12 @@ its own PID, no piz-collision AV.
    never runs it, so its AI cars keep turning on steer-0 frames where the original's turn back, the error falls under the
    1-degree deadband, and cars 1 / 3 drive with steer 0 for most of the window. Found by measurement, not inference (section 2).
 3. **Ported behind `MASHED_HEADING_ASSIST=1` (AI slots 1..3), default OFF.** It reproduces the original's measured jump at
-   car 1's first steer-0 frame to four digits (-0.23935 vs -0.2393 deg), but the registered sanity band G-ASSIST fails as
-   written (13 / 19 rows in band), so section 4 holds it OFF. (b) with it: per-regime counts unchanged (A 1/3, B 2/3,
-   C 0/3), and **no car that passes on the default turns to FAIL**; A car 1 `abs_steer~` 0 -> 6.0 (needs 7), C car 2 moves
-   toward the original on all four failing items. User decision needed (section 6).
+   car 1's first steer-0 frame to four digits (-0.23935 vs -0.2393 deg) and cuts car 1's heading residual from 1.033 to
+   0.402 deg (0.290 with the LUT mask), but two registered gates fail as written: G-ASSIST (13 / 19 rows in band) and
+   collateral (42 vs 39, +3 over +2). Section 4 therefore holds it OFF. (b) with it: per-regime counts unchanged (A 1/3,
+   B 2/3, C 0/3), **no car that passes on the default turns to FAIL**; A car 1 `abs_steer~` 0 -> 6.0 (needs 7) and its
+   steer-0 calls 131 -> 100 (original 102); C car 2 moves toward the original on all four failing items. User decision
+   needed (section 6).
 4. **The AI's RW-LUT arithmetic** (`MASHED_AI_LUT`, default OFF): the lookahead (FUN_00443dc0 + FUN_00443300 operand order,
    mask 5) is bit-exact against the original on **1384 / 1384** comparable (b)-window rows (exact sqrt: 559). It moves
    (b) items but not the counts, and its registered gate fails literally on regime B (probe-zero rows, section 3). OFF.
@@ -93,7 +95,29 @@ formula gives -(1952.5/6000) x 50/60 x (45 - 4 x 1.320496)/45 = -0.23935 deg; th
 | HAG, HA5G | + GRID_DIR | 0/3, 1/3 | 1/3 | 0/3 | worse |
 
 HA meets section 4's (b) rule (no default-passing car turns to FAIL); HA5 does not (A car 2).
-PENDING_HA_GCTRL
+
+Steer-0 calls in the regime-A window (220 calls, first 60 in brackets), the quantity behind `abs_steer~`:
+
+| | car 1 | car 2 | car 3 |
+|---|---|---|---|
+| original (`o_reg_r1`) | 102 (12) | 86 (9) | 77 (19) |
+| DEF | 131 (36) | 67 (9) | 138 (25) |
+| HA | **100 (13)** | 58 (6) | 116 (15) |
+| HA5 | 106 (13) | 70 (6) | 108 (15) |
+
+Car-1 body heading against the original's (`heading.py`, `o_rd3.msd` vs the K0 dump, median |delta| over window steps,
+the +-360 wrap rows excluded by the median; the port's dump row is one physics step behind the `.msd` row on both arms):
+DEF 1.033 deg (steps 1..119) / 4.228 (steps 60..119); **HA 0.402 / 2.318; HA5 0.290 / 0.579.** U-9191 recorded 0.9866 deg
+on the default. With the assist the port's car turns back on its own steer-0 frames as the original's does (k = 25 -> 26:
+-0.164 deg against the original's -0.161 at its first steer-0 frame).
+G-CTRL / determinism / collateral (exe `eb5e1462`):
+
+| arm | step | gates | ptrace | repeat | collateral (base 39 of 94) |
+|---|---|---|---|---|---|
+| `H_NOOP3` | d3b90ee0 | 80f01f35 | 56d62ae7 | = default | 39 (`H_DEF`) |
+| `H_HA` | 4c81db89 | aa03f7ae | 7d3af534 | x2 identical | **42 (+3, over the registered +2)** |
+| `H_HA5` | b5728d30 | dab4aa0a | 8ed07549 | x2 identical | PENDING_HA5_COLL |
+| `H_L3` / `H_L7` | 24a22f13 / 10027849 | d52b2d87 / 6f21011e | fbc731c9 / cc1cdbf5 | x2 identical | 38 / 40 |
 
 ## 5. Code (default OFF everywhere, G-NOOP measured)
 
@@ -110,9 +134,10 @@ PENDING_HA_GCTRL
 ## 6. User decisions needed
 
 1. **`MASHED_HEADING_ASSIST=1` default ON?** A faithful port of an unported default-path function, reproducing the original's
-   measured turn to four digits, no default-passing car lost in any regime, A car 1 closer, C car 2 closer on all items; but it
-   failed its own registered sanity band and moves no regime count. Recommendation: ON (it is the original's behaviour), with
-   the player form (slot 0, a D2 input) done in its own lane.
+   measured turn to four digits, no default-passing car lost in any regime, A car 1 closer (steer-0 calls 100 vs the
+   original's 102), C car 2 closer on all items, heading residual 1.03 -> 0.40 deg; but it failed its registered sanity
+   band and collateral by one field (+3 vs +2) and moves no regime count. Recommendation: ON (it is the original's
+   behaviour), with the player form (slot 0, a D2 input) done in its own lane.
 2. **`MASHED_AI_LUT=5` default ON?** Bit-exact lookahead, literal gate failed on probe-zero rows only. Alone it changes no count;
    with the assist it passes A car 3 and fails A car 2. Recommendation: keep OFF until the assist decision, then re-score
    HA5 against HA.
@@ -123,6 +148,9 @@ PENDING_HA_GCTRL
 - With HA, regime-A car 3 still holds steer 0 for most of its window and car 1 reads 6.0 vs 7: next instrument is the same
   heading split on car 3 (`--statediff-car 3`), and on car 1 after step 40.
 - `MASHED_GRID_DIR` costs regime A in every stack (gridyaw's finding) even with the assist: unexplained.
+- [UNCERTAIN] The assist switches to the neutral block 0x007f19b8 when `+0x9f0` or `+0x10` is non-zero (transcribed). The
+  port's `+0x10` reads 0 on every AI row of the HA dumps; its `+0x9f0` on AI cars is not logged, so whether that switch
+  matches the original's is unmeasured.
 - The CRT `acos` at PC_24 is not reproduced bit for bit ([UNCERTAIN] in HeadingAssist.cpp); FUN_004c4d20's `fsin/fcos`
   likewise.
 - Infrastructure: drive C: went to 0 bytes at about 19:05 (a SimGolf scratchpad held 74 GB) and the private roots lost their
