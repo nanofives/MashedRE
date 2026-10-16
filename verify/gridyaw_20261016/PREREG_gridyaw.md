@@ -96,3 +96,36 @@ decision). If driving-median enters its bound in any arm, that is reported first
 - 4.2 M0: no direction predicted between M0-A and M0-B. [UNCERTAIN] which; 0.3 holds two witnesses that disagree.
 - 4.3 If M0-A: knob-took PASS. Then D2 on `G` alone matches d2lateral's `D2_Y_1` (slips OUT, H1 pass), and on `GL` it
   matches `D2_YL_*` (slips in, driving-median about 1985).
+
+## Amendment 1 (2026-10-16, after `orig_grid1`; before any code change)
+
+A1.1 **M0 gates.** The grid-probe returns 2 rows, `err null` (frames 1 and 2, caller `0x0040ee56`, node 0, slot value 0,
+mode 1, rank codes -1000 x4). Known answer: slot-0 `*pos` = (0.50093675, 1.175, -1.99903715), and x/z equal the
+original player's frame-1 position bit-exactly (g_settle.py `O1`: 0.50093675, -1.99903715). Dumps:
+`DAT_0063ba80` = 0, node count 30, Safe_Start_Lines count 2, ranges (0..11), (14..29).
+
+A1.2 **M0-A holds.** `*yaw` = **180.0** on both rows, and the spawned fwd is (-8.742278e-08, 0, -1) = (sin 180, 0,
+cos 180) in float. The node-0 record direction is L = (0.00192259776, 0, -1.00007451) (bits 0x3afbffad / 0x00000000 /
+0xbf800271). 0.1's law reproduces 180.0 exactly (`orig_grid1` reduction, numpy float32 + the LUT tables of
+`Math/RwLutTables.cpp`), as follows:
+- `FUN_004c3c60`: m2 = L.z*L.z + L.x*L.x = 1.0001527, LUT inverse sqrt of it = **1.0** (the table bucket), so the
+  normalized pair stays (0.0019226, -1.0000745).
+- `FUN_004726b0`: the dot with (0, 1) = -1.0000745, **clamped to -1.0** by `_DAT_005cc33c`.
+- acos(-1) * 57.29578 = 180.0. x >= 0, so no mirror.
+- `RwMatrixRotate(Y, 180.0)` gives at = (-8.742278e-08, 0, -1): the measured fwd, bit-exact. Port yaw =
+  atan2(at.z, at.x) = **-1.5707964**.
+
+The raw `atan2(L.z, L.x)` = -1.5688739 is d2posmodel's `D_BRG` value: `RoundGrid`'s yaw (`*yaw = atan2(dir)` on the
+raw record direction) is **not** the original's law, and on Training it is 0.11 deg off. Witness (b) of 0.3 is
+explained.
+
+A1.3 **The knob, refined (replaces section 2's yaw sentence).** `MASHED_GRID_DIR=1` computes every slot's yaw with
+0.1's law, LUT 2-D normalize and clamp included, from the record direction of the node the grid is anchored at: the
+`RoundGrid_Anchor` node when that knob is active, else `SnapNodeToSafeStartLines(0)` with `RoundGrid_AnchorAt` (A,
+lat, dir) as section 2 says. A new helper `Math::LutNormalize2D` carries `FUN_004c3c60`'s arithmetic. The rotation
+runs in float: rad = deg * 0.017453292f, at = (sin, cos). The conversion to the port is `yaw = atan2(at.z, at.x)`.
+The R6 spawn uses the same node-0 yaw.
+
+A1.4 **Prediction (registered now).** Knob-took: the trace reads node 0, L bits 0x3afbffad / 0xbf800271, law 180.0,
+port yaw -1.5707964 on Training. On the D2 arm, slot 0's first-step heading equals `D2_Y_1`'s
+(`MASHED_D2LAT_SPAWN_YAW=-1.5707964`), and the position x/z equals `D_BRG`'s (0.50093675, -1.99903715) within 1e-6.
