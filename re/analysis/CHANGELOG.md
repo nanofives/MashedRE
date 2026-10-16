@@ -26,6 +26,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-16  004710b0  FUN_00470c70 speed tail (+0x9e4/+0x9e8 refresh)  no C change  d2lateral: first-impact lateral hold measured term by term; first diverging input = +0x9e4 at the fixup 0x0046ef70 (U-9212 MEASURED, LUT-exact port behind MASHED_D2LAT_REFRESH default OFF, fails D2/H1/D3 (b)); U-9156 / U-9180 narrowed; U-9713 filed (spawn-yaw stand-in vs FUN_00426cc0; U-9710/U-9711 taken by rfx2, U-9712 by d2bsp)  verify/d2lateral_20261016/RESULT_d2lateral.md
 2026-10-16  rfx2 (work/rfx2)  C04 / C08 / C09 rows 24 -> 7 on the 9 d1r1 frames (HUD replay, carlod brake rows), 0 RED: RWObjShad 7/7, lensflare-fs8 6/6, Headlight 5/6 GREEN, default ON with opt-outs; non-team panels FUN_0041b630 GREEN 3/3 on a Team-Play-off reference (camera_probe --teamplay 0), default ON; G-CTRL 716cb2fd / 2a2afda1 / ba90ed88 base and final; no-op 9/9  verify/rfx2_20261016/RESULT_rfx2.md
 2026-10-16  U-9711  filed  Headlight / lensflare-fs8 stand-ins (fade input, measured view matrix, brake byte from the instrument: City 801 pair, lensflare build tick) (rfx2)  verify/rfx2_20261016/RESULT_rfx2.md
 2026-10-16  U-9710  filed  RWObjShad stand-ins (nearest soup hit for the BSP first hit, inverse, material codes, tick camera, cylinders / spheres, static objects) (rfx2)  verify/rfx2_20261016/RESULT_rfx2.md

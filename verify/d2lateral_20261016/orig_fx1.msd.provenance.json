@@ -1,0 +1,54 @@
+{
+  "msd": "orig_fx1.msd",
+  "captured_utc": "2026-10-16T17:06:24Z",
+  "argv": [
+    "re\\frida\\scenario_launch.py",
+    "--statediff-out",
+    "verify/d2lateral_20261016/orig_fx1.msd",
+    "--statediff-drive",
+    "--statediff-drive-late",
+    "--statediff-steer",
+    "1",
+    "--hold",
+    "38",
+    "--poke-ctrl-slots",
+    "--fixup-probe"
+  ],
+  "cwd": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\d2lateral",
+  "git_head": "bc495ea27d6b5ba0942105d7af97bab50ccdd9dd",
+  "host": "LIVING-PC",
+  "statediff": {
+    "car": 0,
+    "base_va": "0x8815a0",
+    "rec_size": "0xd04",
+    "drive": true,
+    "drive_late": true,
+    "steer": 1,
+    "aictrl": false,
+    "aistep": false,
+    "steer_schedule": "",
+    "steer_schedule_applied": null,
+    "steer_schedule_t0_offset_s": null,
+    "noop_cook": false,
+    "hooks": ""
+  },
+  "capture": {
+    "frames": 2334,
+    "distinct_payloads": 1511,
+    "nonzero_frames": 2334
+  },
+  "descriptor_writes": {
+    "block_base": "0x007f1038",
+    "accel_byte": 4,
+    "steer_bytes": [
+      0,
+      1
+    ],
+    "legacy_steer_bytes": [
+      2,
+      3,
+      14,
+      15
+    ]
+  }
+}
