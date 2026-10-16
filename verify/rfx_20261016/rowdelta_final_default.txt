@@ -1,0 +1,31 @@
+arctic:01051     before  80 after  80  gone   2  NEW 2
+    gone MISSING Beam [C09-FX]
+    gone MISSING car_shadow [C04-SHADOW]
+    NEW  STATE Beam [C19-STATE-LIBRW]: 1 matched draws differ in CULL: A Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=1 | B Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=2
+    NEW  STATE car_shadow [C19-STATE-LIBRW]: 1 matched draws differ in CULL: A Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1 | B Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+arctic:01091     before  80 after  80  gone   2  NEW 2
+    gone MISSING Beam [C09-FX]
+    gone MISSING car_shadow [C04-SHADOW]
+    NEW  STATE Beam [C19-STATE-LIBRW]: 1 matched draws differ in CULL: A Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=1 | B Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=2
+    NEW  STATE car_shadow [C19-STATE-LIBRW]: 1 matched draws differ in CULL: A Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1 | B Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+arctic:01126     before  80 after  80  gone   2  NEW 2
+    gone MISSING Beam [C09-FX]
+    gone MISSING car_shadow [C04-SHADOW]
+    NEW  STATE Beam [C19-STATE-LIBRW]: 1 matched draws differ in CULL: A Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=1 | B Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=2
+    NEW  STATE car_shadow [C19-STATE-LIBRW]: 1 matched draws differ in CULL: A Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1 | B Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+city:00761       before 156 after 154  gone   2  NEW 0
+    gone MISSING Beam [C09-FX]
+    gone MISSING car_shadow [C04-SHADOW]
+city:00801       before 154 after 152  gone   2  NEW 0
+    gone MISSING Beam [C09-FX]
+    gone MISSING car_shadow [C04-SHADOW]
+city:00836       before 152 after 150  gone   2  NEW 0
+    gone MISSING Beam [C09-FX]
+    gone MISSING car_shadow [C04-SHADOW]
+training:00884   before  80 after  79  gone   1  NEW 0
+    gone MISSING car_shadow [C04-SHADOW]
+training:00924   before  79 after  78  gone   1  NEW 0
+    gone MISSING car_shadow [C04-SHADOW]
+training:00959   before  79 after  78  gone   1  NEW 0
+    gone MISSING car_shadow [C04-SHADOW]
+NEW ROWS TOTAL: 6
