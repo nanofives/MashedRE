@@ -94,6 +94,12 @@ void Ai_SetCarSlotState(int v, int state);
 // FUN_00414030(v): force vehicle v's next lookahead to take the true nearest point.
 void Ai_ResetVehicleIndex(int v);
 
+// [dualcopy3 2026-10-16] Host reads for the shared FUN_00417640 body (Ai/AiPostStepBrake.cpp), which both targets compile:
+// FUN_00426c00 (the bound Host::track_index) and FUN_0046d6d0 (the bound Host::veh_f32 at record +0x9e4). The .asi side of that
+// file calls the original instead; these exist so the exe side does not reach into this TU's anonymous namespace.
+int   Ai_HostTrackIndex();
+float Ai_HostVehF32(int v, int off);
+
 // [D3 2026-09-27] Last control-step stack locals for vehicle v, so MASHED_AI_STEPDUMP
 // can carry the SAME seven columns the original-side probe at 0x004165a5 reads out of
 // FUN_00416250's frame (see re/frida/scenario_launch.py STEP_LOCALS). Order:

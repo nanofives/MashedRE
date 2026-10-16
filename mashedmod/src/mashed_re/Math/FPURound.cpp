@@ -50,6 +50,7 @@
 //   (preserved in original\MASHED.exe.unpatched)
 
 #include "../Core/HookSystem.h"
+#include "FPURound.h"
 
 // ---------------------------------------------------------------------------
 // FUN_004a2c48 — naked implementation, transcribed instruction-for-instruction
@@ -113,3 +114,21 @@ __declspec(naked) void FPURound_4a2c48()
 // Inline-JMP hook at 0x004a2c48 -> FPURound_4a2c48 (registered on DLL load;
 // patched by HookSystem::InstallAll; runtime-toggleable for A/B via the harness).
 RH_ScopedInstall(FPURound_4a2c48, 0x004a2c48);
+
+// ---------------------------------------------------------------------------
+// FtolVerbatim  --  the C++-callable entry to the body above (dualcopy3, 2026-10-16).
+//
+// ST0 <- v, call FPURound_4a2c48 (which consumes ST0 and leaves the x87 stack as it found it, see the two trailing FSTPs on
+// the zero path and the FSTP of the residual on the others), return EAX. A plain cdecl float -> int, so a caller compiled
+// with SSE2 reaches the x87 body without an inline-asm block of its own. NOT a second body of 0x004a2c48: it is a thunk onto
+// it, and the hooks.csv evidence for the body covers every use. First consumer: Race/RaceCamera.cpp (the exe's camera path
+// index), which used `static_cast<int>` until now.
+// ---------------------------------------------------------------------------
+__declspec(naked) int __cdecl FtolVerbatim(float /*v*/)
+{
+    __asm {
+        fld     dword ptr [esp + 4]
+        call    FPURound_4a2c48
+        ret
+    }
+}

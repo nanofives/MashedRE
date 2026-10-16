@@ -23,14 +23,14 @@ namespace {
 constexpr std::uintptr_t kMgrPtr_6e71cc = 0x006e71ccu;  // -> manager struct; base at +0xc
 constexpr std::uintptr_t kMissFmt_5cf310 = 0x005cf310u; // original .rdata format string
 
-// 0x00485340  FUN_00485340  PhysicsObject_ValidateHandle — int __cdecl(uint id).
+// Call-through to the ORIGINAL FUN_00485340 (PhysicsObject_ValidateHandle, int __cdecl(uint id)); a thunk, not a body of it.
 __declspec(naked) int __cdecl ValidateHandle(unsigned int /*id*/) {
     __asm {
         push 0x00485340
         ret
     }
 }
-// 0x004987b0  FUN_004987b0  debug printf — variadic __cdecl. Tail-jump preserves varargs.
+// Call-through to the ORIGINAL FUN_004987b0 (debug printf, variadic __cdecl). Tail-jump preserves varargs; a thunk, not a body.
 __declspec(naked) void __cdecl GamePrintfDbg(const char* /*fmt*/, ...) {
     __asm {
         push 0x004987b0

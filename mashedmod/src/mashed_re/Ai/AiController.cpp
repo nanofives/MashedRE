@@ -4,7 +4,8 @@
 // opponent-AI cluster:
 //   0x00418860  AiTickLoop              per-frame 4-vehicle iterator
 //   0x00418560  AiVehicleStep           per-vehicle bank-select + dispatch + ctrl
-//   0x00417640  AiPostStepPowerupBrake  post-step powerup-brake override
+//   FUN_00417640 AiPostStepPowerupBrake MOVED 2026-10-16 (dualcopy3) to Ai/AiPostStepBrake.cpp, ONE body for both targets
+//                                       (this TU is .asi-only); AbAiPost's A/B evidence of it is the history here
 //
 // These reproduce the original control flow byte-for-byte. The float-heavy
 // decision functions they invoke — the primary control step (FUN_00416250),
@@ -51,10 +52,6 @@ typedef int   (__cdecl* fn_ii_t)(int);           // int  f(int)
 typedef void  (__cdecl* fn_vv_t)(void);          // void f(void)
 typedef void  (__cdecl* fn_vi_t)(int);           // void f(int)
 typedef void  (__cdecl* fn_vii_t)(int, int);     // void f(int,int)
-typedef float (__cdecl* fn_fv_t)(void);          // float f(void)
-typedef float (__cdecl* fn_ffp_t)(float*);       // float f(float*)
-typedef void  (__cdecl* fn_pii_t)(void*, int);   // void f(ptr,int)
-typedef std::uint8_t* (__cdecl* fn_pv_t)(void);  // ptr f(void)
 // control step: f(spline, vehicle, ctrl, arg4=0x42c80000)
 typedef void  (__cdecl* fn_step_t)(void*, int, std::uint8_t*, std::uint32_t);
 
@@ -70,13 +67,8 @@ inline int  call_0040e4a0() { return reinterpret_cast<fn_iv_t>(0x0040e4a0)(); } 
 inline void call_00417180(int v) { reinterpret_cast<fn_vi_t>(0x00417180)(v); } // bank switcher
 inline int  call_00426c00() { return reinterpret_cast<fn_iv_t>(0x00426c00)(); } // track index
 inline int  call_00407a40(int v) { return reinterpret_cast<fn_ii_t>(0x00407a40)(v); } // per-veh data
-inline float call_00452eb0() { return reinterpret_cast<fn_fv_t>(0x00452eb0)(); }
-inline int  call_00452ea0(int v) { return reinterpret_cast<fn_ii_t>(0x00452ea0)(v); }
-inline std::uint8_t* call_00452160() { return reinterpret_cast<fn_pv_t>(0x00452160)(); }
-inline void call_0046d6d0(float* o, int v) { reinterpret_cast<fn_pii_t>(0x0046d6d0)(o, v); }
-inline void call_0046d570(float* o, int v) { reinterpret_cast<fn_pii_t>(0x0046d570)(o, v); }
-inline void call_0046d4a0(int* o, int v) { reinterpret_cast<fn_pii_t>(0x0046d4a0)(o, v); }
-inline float call_004c3ac0(float* p) { return reinterpret_cast<fn_ffp_t>(0x004c3ac0)(p); }
+// (the FUN_00417640 call-throughs 0x00452eb0 / 0x00452ea0 / 0x00452160 / 0x0046d6d0 / 0x0046d570 / 0x0046d4a0 / 0x004c3ac0 went with
+//  that body to Ai/AiPostStepBrake.cpp, dualcopy3 2026-10-16)
 // control steps + per-vehicle step + post-step are called via their RVAs so a
 // per-function diff toggle (or a later port-hook) is honoured transparently.
 inline void call_00416a30(void* s, int v, std::uint8_t* c) {
@@ -107,47 +99,6 @@ inline std::uintptr_t st(std::uintptr_t field, int v) {
 }
 
 } // namespace
-
-// ===========================================================================
-// 0x00417640  AiPostStepPowerupBrake(vehicle, ctrl)
-//
-// On track 0x21 (FUN_00426c00), when the per-vehicle powerup predicate fires
-// (FUN_00452ea0) and the held-type float (FUN_00452eb0) is <= _DAT_005cc72c and
-// the committed mode (DAT_0089a52c[v]) is not 10, overrides accel/brake: full
-// brake when the rate/range floats clear the gate, else clears both.
-// Cited: 0x00417640 body (this session's decomp).
-// ===========================================================================
-extern "C" __declspec(dllexport)
-void __cdecl AiPostStepPowerupBrake(int param_1, std::uint8_t* param_2)
-{
-    if (call_00426c00() != 0x21) return;                                   // track gate
-    if (call_00452eb0() > F32(0x005cc72cu)) return;                        // held-type float gate
-    if (I32(st(0x0089a52cu, param_1)) == 10) return;                      // mode-10 skip
-    if (call_00452ea0(param_1) == 0) return;                              // powerup predicate
-
-    float* pfVar2 = reinterpret_cast<float*>(call_00452160());
-    float local_14, local_10;
-    int   local_18;
-    call_0046d6d0(&local_14, param_1);   // rate-like float
-    call_0046d570(&local_10, param_1);   // range-like float
-    call_0046d4a0(&local_18, param_1);   // own struct ptr
-
-    float local_c = pfVar2[0] - F32(static_cast<std::uintptr_t>(local_18) + 0x30u);
-    float local_8 = pfVar2[1] - F32(static_cast<std::uintptr_t>(local_18) + 0x34u);
-    float local_4 = pfVar2[2] - F32(static_cast<std::uintptr_t>(local_18) + 0x38u);
-    (void)local_8; (void)local_4;
-    call_004c3ac0(&local_c);             // length (return discarded, as in original)
-
-    if (F32(0x005cc568u) < local_14 && local_10 < F32(0x005ccad0u)) {
-        param_2[4] = 0;                  // accel off
-        param_2[5] = 0xff;               // full brake
-        return;
-    }
-    param_2[4] = 0;                      // accel off
-    param_2[5] = 0;                      // brake off
-}
-
-RH_ScopedInstall(AiPostStepPowerupBrake, 0x00417640);
 
 // ===========================================================================
 // 0x00418560  AiVehicleStep(vehicle [, type-unused])

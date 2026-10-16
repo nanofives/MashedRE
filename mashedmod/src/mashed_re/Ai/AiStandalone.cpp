@@ -41,6 +41,8 @@
 //                      function comment); rate operand pinned via the shared
 //                      [U-C-RATE1]=0 substitute so the brake branch is
 //                      currently unreachable (always coasts).
+//                      [dualcopy3 2026-10-16: that body is now Ai/AiPostStepBrake.cpp, shared with the
+//                      .asi, and the rate is no longer pinned (see the note where it stood).]
 //   DONE (P4b 2026-07-04): FUN_004177b0 pre-tick rubber-banding
 //                      (AiPreTickRubberBand) — race-metric/finish-order-slot
 //                      update + mode-9/mode-4 speed rubber-banding + powerup
@@ -108,6 +110,8 @@ extern "C" int g_tg3Ret[4]; extern "C" int g_tg3Los[4];
 extern "C" void __cdecl CarSlotStateSet(int, std::uint32_t);
 // FUN_00417180: the one body, Ai/AiBankSwitch.cpp (same reason for global scope).
 extern "C" void __cdecl AiBankSwitch(int);
+// FUN_00417640: the one body, Ai/AiPostStepBrake.cpp.
+extern "C" void __cdecl AiPostStepPowerupBrake(int, std::uint8_t*);
 
 namespace Ai {
 
@@ -592,8 +596,7 @@ const float kRate1Brake    = 2000.0f;    // _DAT_005cd0b8
 const float kMode9BrakeA   = 1750.0f;    // _DAT_005cd0dc
 const float kMode9BrakeB   = 1250.0f;    // _DAT_005cd0d8
 const float kZeroF         = 0.0f;       // DAT_005d757c
-// ---- FUN_00417640 (PostStepPowerupBrake) additional constant (memory_read pool14 2026-07-04) ----
-const float kPowerupBrakeRateGate = 100.0f; // _DAT_005cc568
+// (the FUN_00417640 brake-rate gate _DAT_005cc568 = 100.0f moved with that body to Ai/AiPostStepBrake.cpp)
 // ---- FUN_00417180 (BankSwitch) additional constant (memory_read pool14 2026-07-04) ----
 const float kBankRandGate  = 0.5f;       // _DAT_005cc32c
 // ---- ControlStep m==5/m==2 tail constants (memory_read Mashed_pool13, session
@@ -1428,40 +1431,13 @@ std::uintptr_t SelectSpline(int v)
 // ===========================================================================
 
 // ===========================================================================
-// FUN_00417640 — post-step powerup-brake override (hooks.csv:
-// AiPostStepPowerupBrake, C3 2026-07-02; re/analysis/ai_update/
-// 0x00417640.md). Gates: track_index()==0x21, PowerupRangeGet()<=30.0 (=
-// _DAT_005cc72c == kAccelErrLo above), behaviour-mode != 10,
-// Table88ff50Get(v)!=0. The active branch's displacement-to-target +
-// Vec3Magnitude computation (FUN_00452160/FUN_0046d4a0/FUN_004c3ac0) is
-// PROVABLY DEAD in the original — its C3-verified reference port
-// (AiController.cpp::AiPostStepPowerupBrake) computes it but the result is
-// never read afterward (discarded return, displacement floats never
-// consumed by the branch below) — so it is OMITTED here, the same
-// dead-artifact-elision precedent AiControlStep.cpp's own header documents
-// ("FST [ESP+0x18] of the mode-2 dot product... not mirrored"). The
-// rate-like float from FUN_0046d6d0 reuses ControlStep's [U-C-RATE1]=0.0f
-// substitute (the SAME callee, not a new uncertainty): since the brake gate
-// needs kPowerupBrakeRateGate (100.0, _DAT_005cc568) < rate and rate is
-// pinned 0, the gate is provably always false — this function always coasts
-// (ctrl[4]=0, ctrl[5]=0) once its predicate gates pass, pending
-// FUN_0046d6d0's port. FUN_0046d570 (local_10, C2, not one of the 4 ported
-// RVAs) is therefore a dead operand too and is not stubbed.
+// PostStepPowerupBrake (the original's FUN_00417640) lived here until 2026-10-16 (dualcopy3). Its one body is now
+// Ai/AiPostStepBrake.cpp, `AiPostStepPowerupBrake`, compiled into BOTH targets and installed in the .asi; VehicleStep
+// below calls it. What stood here PINNED `rate = 0.0f` ([U-C-RATE1]) so `100.0 < rate` could never hold and the brake
+// branch was unreachable: a port defect, not a substitute, since FUN_0046d6d0 is record +0x9e4 and Host::veh_f32 has
+// carried that field for FUN_00416250 since the D3 port. The shared body reads it through Ai_HostVehF32, reads
+// FUN_0046d570 through AiLeaf_46d570, and the track index through Ai_HostTrackIndex (all below).
 // ===========================================================================
-void PostStepPowerupBrake(int v, std::uint8_t* ctrl)
-{
-    if (s_host.track_index() != 0x21) return;                       // FUN_00426c00 gate
-    if (F32(0x00684de0u) > kAccelErrLo) return;                      // PowerupRangeGet > 30.0 -> skip
-    if (I32(a74(0x0089a52cu, v)) == 10) return;                      // mode-10 skip
-    if (I32(0x0088ff50u + static_cast<std::uintptr_t>(v) * 4u) == 0) return; // Table88ff50Get == 0 -> skip
-
-    const float rate = 0.0f;   // FUN_0046d6d0 [U-C-RATE1] (shared substitute w/ ControlStep)
-    if (kPowerupBrakeRateGate < rate) {   // local_10<90.0 term is dead (rate pinned 0)
-        ctrl[4] = 0; ctrl[5] = 0xff;
-        return;
-    }
-    ctrl[4] = 0; ctrl[5] = 0;
-}
 
 // ===========================================================================
 // CarSlotStateSet (original FUN_0040e480) — ONE BODY since 2026-10-16 (fwd494fd0): the exported
@@ -1773,7 +1749,7 @@ void VehicleStep(int v)
     } else {
         ControlStep(spline, v, ctrl);         // FUN_00416250 (bands real; targeting stubbed)
     }
-    PostStepPowerupBrake(v, ctrl);            // FUN_00417640
+    ::AiPostStepPowerupBrake(v, ctrl);        // FUN_00417640, Ai/AiPostStepBrake.cpp (the one body)
 
     // override-replay (+0x40..0x4c) -- FUN_00418560 tail (0x00418790..0x00418844,
     // decomp Mashed_pool13 session d643c6ce5d6446ac8121c86ef902b00b 2026-07-04).
@@ -1914,6 +1890,10 @@ void Ai_SetCarSlotState(int v, int state)
     if (v < 0 || v > 3) return;
     CarSlotStateSet(v, state);
 }
+
+// [dualcopy3 2026-10-16] the two Host reads the shared FUN_00417640 body takes in the exe (declared in AiStandalone.h).
+int   Ai_HostTrackIndex()                { return s_host.track_index(); }
+float Ai_HostVehF32(int v, int off)      { return s_host.veh_f32(v, off); }
 
 void Ai_ResetRace()
 {

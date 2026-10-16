@@ -10,13 +10,14 @@
 
 #include "../Piz/PizReader.h"
 #include "../Math/RwLutTables.h"   // Math::LutSqrt = FUN_004c3b30 with the real LUT
+#include "../Math/FPURound.h"      // FtolVerbatim = the verbatim __ftol body (0x004a2c48)
 
 namespace mashed_re {
 namespace Race {
 
 namespace {
 
-// 0x004a2c48 is `__ftol`, the MSVC float-to-long CRT helper — it TRUNCATES
+// The original's `__ftol` (address 0x004a2c48), the MSVC float-to-long CRT helper — it TRUNCATES
 // TOWARD ZERO. It is NOT banker's rounding, which is what this helper used to
 // do (`std::nearbyint`) and what the comment used to claim.
 //
@@ -38,11 +39,13 @@ namespace {
 //     A controlled path_prog sweep puts the discontinuity between 29.30 (fine)
 //     and 29.50 (broken), which is exactly where nearbyint and __ftol diverge.
 //
-// A plain C cast IS what __ftol implements, so this is faithful for every value
-// the camera can produce (prog >= 0, well inside int range). The naked port in
-// Math/FPURound.cpp remains the bit-exact reference for hook installation.
+// dualcopy3 2026-10-16: this is now a call into that verbatim body, `FtolVerbatim` (Math/FPURound.cpp, the C++ entry to
+// FPURound_4a2c48), instead of a plain C cast. The cast agreed with __ftol for every value the camera can produce
+// (prog >= 0, well inside int range) but it was a second implementation of the same RVA; out-of-int-range and NaN inputs
+// were never compared. One body now, and the exe's camera runs the instruction stream the hooks.csv evidence covers.
+// Witness that nothing moved: verify/dualcopy3_20261016 (d1r2's row-indexed replay, cam_dump.csv byte-identical).
 inline int Ftol_4a2c48(float v) {
-    return static_cast<int>(v);                   // truncate toward zero
+    return FtolVerbatim(v);                       // truncate toward zero, verbatim x87
 }
 
 // 0x004c3ac0 Vec3Magnitude (C4-verified RW primitive; here the plain
