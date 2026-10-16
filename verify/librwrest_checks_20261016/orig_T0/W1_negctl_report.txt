@@ -1,0 +1,12 @@
+carparts C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_T0\trace.csv.carparts.json
+  rows 175, records included 506, excluded 194
+    excluded: 4 x first row of window (A5)
+    excluded: 190 x rec+0x298 at row n-1 = 2 (A3/A7)
+  included records per (car, lod set): car 0 set 1: 152, car 1 set 1: 106, car 2 set 1: 132, car 3 set 1: 116
+  input coverage over included records: steer max |4.197| deg (412 wheel-steps over 0.5 deg), body-lean Z max 0.408 deg, X max 3.109 deg, spin max |5449|, largest per-row angle step 343.183 deg
+  rec+0x298 at row n-1 over all (row, car): 1: 506, 2: 190
+  units == ff4(n+1)-ff4(n): ok 174, bad 0, n/a 1
+  replay ERR lines: 0
+  W1-a angle: 2024 wheel steps, 1900 over 0.0001 deg, 124 bit-identical, worst 359 deg at (959, 3, 0, 0.298583984, 359.44989013671875)
+  W1-b matrices: 4554 frames compared, 4430 failing (missing 0); worst max|d| wheel 0.0287 (1007, 3, 4, 33), hub 0.000873 (1003, 2, 4, 33), body 0.00698 (1013, 3, 19)
+  W1 verdict: FAIL; first failure: W1-b H row 904 car 0 k 4 part 33: max|d| 0.000873 port [0.999999642, 0.0, -0.000872664503, 0.0, 1.0, 0.0, 0.000872664503, 0.0, 0.999999642, 0.168163687, 0.0904653966, 0.274999857] recorded [1, 0, 0, 0, 1, 0, 0, 0, 1, 0.16816368699073792, 0.09046539664268494, 0.27499985694885254]

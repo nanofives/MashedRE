@@ -31,7 +31,7 @@ ARMS = {
     "T2": (0, ["--livery-mode", "11"]),
 }
 ROWS = 2200
-SHOTS = "100,250,400"
+SHOTS = "60,120,180,240,300,360,420"
 
 
 def alive(pid):

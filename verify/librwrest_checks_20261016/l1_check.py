@@ -42,13 +42,18 @@ def check_arm(arm, cp_path, log_path, out):
     out.append(f"   poke={poke} mode word at read={mode_read} effective mode at FUN_0040d110={mode_eff}")
     st = stand_slots(Path(log_path)) if log_path else {}
     for i, c in enumerate(liv["cars"]):
+        # camera_probe's readCString(16) returns the 16 table bytes; keep the printable prefix
+        for fld in ("name", "dff", "txd", "env"):
+            if fld in c:
+                c[fld] = re.match(r"[\x20-\x7e]*", c[fld]).group(0)
         if "dff" not in c:
             out.append(f"   car {i}: no descriptor ({c})")
             ok_a = False
             continue
         want_liv = i if mode_eff == 0xb else c["colour"]
         idm = c["id"] % 6
-        m = re.match(r"^(.*?)(\d)\.dff$", c["dff"], re.I)
+        # the table entry holds the bare name (FUN_00420420 appends the extension, DAT_005cd29c)
+        m = re.match(r"^(.*?)(\d)$", c["dff"])
         base, digit = (m.group(1), int(m.group(2))) if m else (c["dff"], -1)
         a_ok = (idm == want_liv) and (digit == idm)
         ok_a &= a_ok
@@ -61,7 +66,7 @@ def check_arm(arm, cp_path, log_path, out):
                 line += "  L1-b FAIL (no standalone slot line)"
                 ok_b = False
             else:
-                b_ok = s[2].lower() == c["dff"].lower()
+                b_ok = s[2].lower() == (c["dff"] + ".dff").lower()
                 ok_b &= b_ok
                 line += f"  standalone slot {i}: colour={s[1]} mode={s[0]} -> {s[2]}  L1-b {'PASS' if b_ok else 'FAIL'}"
         out.append(line)

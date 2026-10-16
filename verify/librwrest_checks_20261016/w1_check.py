@@ -13,11 +13,16 @@ compare reads the standalone's poses and checks, per included record,
 Part codes in the probe JSON are decimal keys: parts 0..3, 0x21..0x24 = 33..36, 0x13 = 19.
 """
 import json
+import struct
 import sys
 from pathlib import Path
 
 TOL_ANG = 1e-4
 TOL_MAT = 1e-4
+
+
+def f32(x):
+    return struct.unpack("<f", struct.pack("<f", x))[0]
 
 
 def load(path):
@@ -50,13 +55,17 @@ def build_records(cp):
             continue
         for ci, c in enumerate(r["s"]["cars"]):
             pc = prev["s"]["cars"][ci]
-            if c["lod"] not in (0, 1):
-                exc.append({"row": r["row"], "car": ci, "why": f"rec+0x298 = {c['lod']} (A3)"})
+            # A7: the probe snapshot is taken after FUN_00420870 ran, so rec+0x298 at row n is the
+            # value AFTER this frame's update; FUN_0041f3d0 (first in that call) used the value
+            # the previous row recorded
+            lod_eff = pc["lod"]
+            if lod_eff not in (0, 1):
+                exc.append({"row": r["row"], "car": ci, "why": f"rec+0x298 at row n-1 = {lod_eff} (A3/A7)"})
                 continue
             if c["al"] != 1 and c["ang"] == pc["ang"]:
                 exc.append({"row": r["row"], "car": ci, "why": f"veh+4 = {c['al']} and angles unchanged (A4)"})
                 continue
-            inc.append({"row": r["row"], "car": ci, "lod": c["lod"], "units": r["s"]["units"],
+            inc.append({"row": r["row"], "car": ci, "lod": lod_eff, "units": r["s"]["units"],
                         "prev_ang": pc["ang"], "ang": c["ang"], "spin": c["spin"],
                         "steer": c["steer"], "va": c["va"], "vb": c["vb"]})
     return inc, exc, {"ff4_ok": ff4_ok, "ff4_bad": ff4_bad, "ff4_na": ff4_na, "rows": len(rows)}
@@ -119,7 +128,7 @@ def cmd_compare(cp_path, rec_path, out_path, rpt):
         rows = {x["row"]: x for x in rows_of(cp)}
         cs = rows[r["row"]]["s"]["cars"][r["car"]]
         for w in range(4):
-            d = abs(pa[w] - r["ang"][w])
+            d = abs(f32(pa[w]) - f32(r["ang"][w]))   # both are float32 in the original / port
             n_a += 1
             if d == 0.0:
                 n_a_exact += 1
@@ -177,6 +186,29 @@ def cmd_compare(cp_path, rec_path, out_path, rpt):
         why[e["why"]] = why.get(e["why"], 0) + 1
     for k, v in sorted(why.items()):
         lines.append(f"    excluded: {v} x {k}")
+    percar = {}
+    for r in inc:
+        percar[(r["car"], r["lod"])] = percar.get((r["car"], r["lod"]), 0) + 1
+    lines.append("  included records per (car, lod set): " + ", ".join(
+        f"car {c} set {l}: {n}" for (c, l), n in sorted(percar.items())))
+    # input coverage: a law check on near-zero inputs would pass trivially
+    st_max = max((abs(v) for r in inc for v in r["steer"]), default=0.0)
+    st_n = sum(1 for r in inc for v in r["steer"] if abs(v) > 0.5)
+    lean_z = max((abs((r["vb"][0] + r["va"][0]) * 40.0) for r in inc), default=0.0)
+    lean_x = max((abs((r["vb"][2] + r["va"][2]) * -100.0) for r in inc), default=0.0)
+    spin_max = max((abs(v) for r in inc for v in r["spin"]), default=0)
+    ang_span = max((abs(r["ang"][w] - r["prev_ang"][w]) for r in inc for w in range(4)), default=0.0)
+    lodh = {}
+    rows_by = {x["row"]: x for x in rows_of(cp)}
+    for row_n, x in rows_by.items():
+        pv = rows_by.get(row_n - 1)
+        if pv:
+            for ci in range(4):
+                lodh[pv["s"]["cars"][ci]["lod"]] = lodh.get(pv["s"]["cars"][ci]["lod"], 0) + 1
+    lines.append(f"  input coverage over included records: steer max |{st_max:.3f}| deg ({st_n} wheel-steps over 0.5 deg), "
+                 f"body-lean Z max {lean_z:.3f} deg, X max {lean_x:.3f} deg, spin max |{spin_max}|, "
+                 f"largest per-row angle step {ang_span:.3f} deg")
+    lines.append("  rec+0x298 at row n-1 over all (row, car): " + ", ".join(f"{k}: {v}" for k, v in sorted(lodh.items())))
     lines.append(f"  units == ff4(n+1)-ff4(n): ok {st['ff4_ok']}, bad {st['ff4_bad']}, n/a {st['ff4_na']}")
     lines.append(f"  replay ERR lines: {len(errs)}")
     lines.append(f"  W1-a angle: {n_a} wheel steps, {n_a_fail} over {TOL_ANG} deg, {n_a_exact} bit-identical, "

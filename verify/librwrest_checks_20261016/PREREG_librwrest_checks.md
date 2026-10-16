@@ -61,6 +61,24 @@ FTV (NVIDIA High Definition Audio), Status OK, 2026-10-16), so `MASHED.exe` boot
   falsified on T0 before the L1 check ran. The standalone side of a natural arm therefore runs
   with `MASHED_ROUND_COLOURS` = the colours that arm's original capture recorded.
 
+- **A7, which row's rec+0x298 gates the step (made after the T0a smoke compare, before any
+  reported gate number).** A probe row is read after `FUN_00420870` returned, and
+  `FUN_0041f3d0` (first thing it does per wheel, decomp `0x0041f3d0`: `rec+0x298` 0 -> rec[w],
+  1 -> rec[0x21+w], otherwise `return`) runs earlier in that call, so the value it used is the one
+  the PREVIOUS row recorded. Evidence from `orig_T0a`: car 0 at row 1191 records rec+0x298 = 1 but
+  its four angles equal row 1190's (rec+0x298 = 2 there) while spin = 952 and units = 50, i.e. the
+  step did not run. W1 therefore takes the LOD (A3 gate and set selection) from row n-1. The writer
+  of rec+0x298 between those two points is not identified here; the rule is an instrument-timing
+  statement and the compare itself tests it, since a wrong set would show as a matrix mismatch.
+
+- **A8, shot list again (before the arms below were captured for the result).** The second T0
+  capture (`--shots-race 100,250,400`) reached state 7 at row 1018 with the race start at row 843,
+  so the racing phase lasted 175 rows (556 in `orig_T0a`): the round ends at a variable time, and
+  only the +100 window existed. All arms use `--shots-race 60,120,180,240,300,360,420`, which
+  makes the 60-row windows one contiguous block from the race start to +420 (or to the end of
+  the race); windows past the race end do not exist and are not counted. `orig_T0a` stays as an
+  extra data set.
+
 ## 2. Pass definitions (fixed now)
 
 - **W1-a angle:** for every compared (row, car, wheel w) `|port angle - recorded angle| <= 1e-4`
