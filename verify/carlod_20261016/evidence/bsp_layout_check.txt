@@ -1,0 +1,41 @@
+Arctic      AI.BSP                 fmt=0x40000071 flags(n,p,uv)=(1, 0, 0) sectors=1 CHANGES on 1 of 1 sectors: solver->flags (0, 1, 0)->(1, 0, 0)
+Arctic      COLLISIONS.BSP         fmt=0x40000079 flags(n,p,uv)=(1, 1, 0) sectors=6 CHANGES on 5 of 6 sectors: solver->flags (0, 0, 1)->(1, 1, 0)
+Arctic      GRAPH.BSP              fmt=0x4001004d flags(n,p,uv)=(0, 1, 1) sectors=12 SAME
+City        AI1.BSP                fmt=0x40000041 flags(n,p,uv)=(0, 0, 0) sectors=1 SAME
+City        COLLIDE.BSP            fmt=0x40000049 flags(n,p,uv)=(0, 1, 0) sectors=6 SAME
+City        GRAPHICS.BSP           fmt=0x4001004d flags(n,p,uv)=(0, 1, 1) sectors=7 SAME
+dump        AI1.BSP                fmt=0x40000041 flags(n,p,uv)=(0, 0, 0) sectors=1 SAME
+dump        COLLIDE.BSP            fmt=0x40000049 flags(n,p,uv)=(0, 1, 0) sectors=5 SAME
+dump        GRAPHICS.BSP           fmt=0x4001004d flags(n,p,uv)=(0, 1, 1) sectors=25 SAME
+Egypt       COLLISIONS.BSP         fmt=0x40000049 flags(n,p,uv)=(0, 1, 0) sectors=4 SAME
+Egypt       GRAPHICS.BSP           fmt=0x4001004d flags(n,p,uv)=(0, 1, 1) sectors=10 SAME
+Egypt       LAP.BSP                fmt=0x40000041 flags(n,p,uv)=(0, 0, 0) sectors=1 SAME
+Forest      COLLISIONS.BSP         fmt=0x40000049 flags(n,p,uv)=(0, 1, 0) sectors=10 SAME
+Forest      GRAPHICS.BSP           fmt=0x4001000d flags(n,p,uv)=(0, 1, 1) sectors=28 SAME
+Forest      LAP.BSP                fmt=0x40000041 flags(n,p,uv)=(0, 0, 0) sectors=1 SAME
+Forest      TREES.BSP              fmt=0x4001000d flags(n,p,uv)=(0, 1, 1) sectors=91 SAME
+Highway     COLLISIONS.BSP         fmt=0x40000049 flags(n,p,uv)=(0, 1, 0) sectors=10 SAME
+Highway     GRAPHICS.BSP           fmt=0x4001004d flags(n,p,uv)=(0, 1, 1) sectors=16 SAME
+Highway     LAP.BSP                fmt=0x40000041 flags(n,p,uv)=(0, 0, 0) sectors=1 SAME
+Neustein    AI1.BSP                fmt=0x40000041 flags(n,p,uv)=(0, 0, 0) sectors=1 SAME
+Neustein    COLLIDE.BSP            fmt=0x40000049 flags(n,p,uv)=(0, 1, 0) sectors=10 SAME
+Neustein    GRAPHICS.BSP           fmt=0x4001004d flags(n,p,uv)=(0, 1, 1) sectors=10 SAME
+rouabout    AI.BSP                 fmt=0x40000041 flags(n,p,uv)=(0, 0, 0) sectors=1 SAME
+rouabout    COLL.BSP               fmt=0x40000049 flags(n,p,uv)=(0, 1, 0) sectors=9 SAME
+rouabout    GRAPH.BSP              fmt=0x40020089 flags(n,p,uv)=(0, 1, 2) sectors=12 SAME
+sands       AI1.BSP                fmt=0x40000041 flags(n,p,uv)=(0, 0, 0) sectors=1 SAME
+sands       COLLIDE.BSP            fmt=0x40000049 flags(n,p,uv)=(0, 1, 0) sectors=6 SAME
+sands       GRAPHICS.BSP           fmt=0x40020089 flags(n,p,uv)=(0, 1, 2) sectors=45 SAME
+Storm       COLLISIONS.BSP         fmt=0x40000049 flags(n,p,uv)=(0, 1, 0) sectors=3 SAME
+Storm       GRAPHICS.BSP           fmt=0x4001004d flags(n,p,uv)=(0, 1, 1) sectors=28 SAME
+Storm       LAP.BSP                fmt=0x40000041 flags(n,p,uv)=(0, 0, 0) sectors=1 SAME
+SuperG      COLLISIONS.BSP         fmt=0x40000049 flags(n,p,uv)=(0, 1, 0) sectors=4 SAME
+SuperG      GRAPHICS.BSP           fmt=0x4001000d flags(n,p,uv)=(0, 1, 1) sectors=32 SAME
+SuperG      LAP.BSP                fmt=0x40000041 flags(n,p,uv)=(0, 0, 0) sectors=1 SAME
+training    COLLISIONS.BSP         fmt=0x40000049 flags(n,p,uv)=(0, 1, 0) sectors=4 SAME
+training    GRAPH.BSP              fmt=0x400200c9 flags(n,p,uv)=(0, 1, 2) sectors=42 SAME
+training    LAP.BSP                fmt=0x40000041 flags(n,p,uv)=(0, 0, 0) sectors=1 SAME
+Warzone     AI1.BSP                fmt=0x40000041 flags(n,p,uv)=(0, 0, 0) sectors=1 SAME
+Warzone     COLLIDE.BSP            fmt=0x40000049 flags(n,p,uv)=(0, 1, 0) sectors=26 SAME
+Warzone     GRAPHICS.BSP           fmt=0x400200c9 flags(n,p,uv)=(0, 1, 2) sectors=16 SAME
+sectors 490, sectors whose layout the flags would change: 6

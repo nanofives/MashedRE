@@ -222,3 +222,30 @@ Change: `RaceSceneState::eye_prev_` (the previous Render's eye) feeds the coeffi
 Arms: `venv` (new exe, `MASHED_CAR_ENV=1`), `venv_nolag` (`MASHED_CAR_ENV=1 MASHED_CAR_ENV_PREVCAM=0`, must equal
 the `visb_env` arm). Rules 1-6 for F-ENV are unchanged and read `venv` against `visb`; the failing `visb_env`
 arm stays on record.
+### Amendment 6 (written after the `venv` arm was read, before the arms that use the change; reading of rule 6 and one input fix)
+
+Rule 6 reading. Section 3 rule 6 says "base arm vs each arm". For F-VIS the base arm is the arm without the fix;
+for F-ENV it is `visb` (F-VIS only), which is also how rtex's rule 6 compares ("both arms", the arm with and
+the arm without the fix). The stricter, incremental reading is the one used for the default decision; the
+literal one (against `base`) is reported beside it. `venv` (previous-camera coefficient, rtex's shade): rows and
+matches pass (City 801 now fully like the other frames), pixels against `visb` rise by +0.57 on Arctic 1051
+(10.74 -> 11.31, over 0.5) and by at most +0.37 elsewhere; against `base` the largest rise is +0.42.
+
+Cause of the Arctic rise, measured: the standalone's env shade (rec+0x284) on Arctic is 1.0 on all four cars
+(`log/carlod/vislog_arctic.csv`) while the original's live value is 0.21-0.28 (rtex captures, rows 400-1000),
+so the coefficient is about 0.87 at row 1051 against about 0.61. City matches (0.2926 vs 0.293), TRAINING varies
+per car in both. The sampler (`CollisionPrelitSample`, FUN_00479100 @ 0x00479100) returns 1.0 for a hit sector
+without colours, and `Track::World::Parse` read 5 of Arctic's 6 collision sectors as colourless: its size-only
+layout solver took COLLISIONS.BSP's 8 extra bytes per vertex as "1 UV set". The world header's `format` word
+(`0x40000079`: prelit + normals, 0 UV sets, STRUCT +0x24) with RenderWare's 4-byte sector normals
+(RpVertexNormal) gives 4 + 4 = 8 bytes per vertex, i.e. normals + prelit.
+`evidence/bsp_layout_check.txt` walks every BSP of all 13 track pizzes: the flags' layout, where it fits the
+size equation, differs from the solver on exactly 6 of 490 sectors (Arctic COLLISIONS.BSP x5, Arctic AI.BSP x1).
+
+Change: `Track/TrackWorld.cpp` uses the flags' layout when it fits and keeps the solver otherwise. It changes
+which colours a hit on those sectors returns, so the default build is affected only through the env pass
+(`MASHED_CAR_ENV`), and no sector of any GRAPH / COLL BSP of TRAINING, City or the other 11 tracks parses
+differently. Arms: `visb2` (new exe, defaults) must equal `visb` in rows (no-op for the default build) and
+`venv2` (`MASHED_CAR_ENV=1`) is the F-ENV arm, judged by rules 1-6 against `visb2` with rule 6 read
+incrementally. If it passes, F-ENV becomes default ON (`MASHED_CAR_ENV=0` opts out) in a `final` build whose
+rows must equal `venv2`'s.
