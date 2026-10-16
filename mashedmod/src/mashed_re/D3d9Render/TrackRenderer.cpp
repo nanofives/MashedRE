@@ -1739,7 +1739,8 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
             // [rstates] Vertex-alpha need of the mesh RpClumpRender (0x004e6680) draws
             // LAST for this model. RpClumpAddAtomic FUN_004e6f80 inserts at the list head,
             // so the walk is newest-first and ends on DFF atomic 0; within an atomic the
-            // meshes run in material order, so the last one is its highest material. The
+            // meshes run in BinMesh order (rstates F7), which DffModel's batches follow, so the
+            // last one is atomic 0's last batch (its highest material when F7 is off). The
             // need is the per-mesh rule of the default callback (0x004ec462..0x004ec491)
             // and FUN_00543500: material alpha != 0xff or vertex alpha in the mesh. The
             // prelit test covers this batch's vertices only (RW tests the mesh's vertex
@@ -1747,10 +1748,7 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
             {
                 std::ptrdiff_t last = -1;
                 for (std::size_t bi = 0; bi < m.batches.size(); ++bi)
-                    if (m.batches[bi].atomic == 0 &&
-                        (last < 0 || m.batches[bi].material >
-                                     m.batches[static_cast<std::size_t>(last)].material))
-                        last = static_cast<std::ptrdiff_t>(bi);
+                    if (m.batches[bi].atomic == 0) last = static_cast<std::ptrdiff_t>(bi);
                 p->last_mesh_va = false;
                 if (last >= 0) {
                     const Track::DffBatch& lb = m.batches[static_cast<std::size_t>(last)];
