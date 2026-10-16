@@ -1,0 +1,41 @@
+hook: plugin_data_dword_a  rva=0x004f8660  export=PluginDataDwordA
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 23980
+scenario='race': driving to a live race before running vectors
+  [save] reads pinned to gamesave.bin.refbak_20260830; writes -> C:\Users\maria\AppData\Local\Temp\run_diff_gamesave_23980.bin
+  [nav] booting to menu...
+  [nav] timeout: d3 depth=2 phase=3
+  [nav] timeout: d3 depth=2 phase=3
+  [nav] in race? phase=0 (YES)
+  [agent] pre_snapshot
+  [agent] asi_loaded
+  [agent] post_snapshot
+  [agent] results
+
+=== verify_hook_install report (plugin_data_dword_a) ===
+
+target address: 0x004f8660  export: PluginDataDwordA
+PRE  bytes:     e9 6b 45 d1 5c 0d a8 73
+asi base:       0x5d190000
+reimpl addr:    0x5d20cbd0
+POST bytes:     e9 6b 45 d1 5c 0d a8 73
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x5cd1456b  expected 0x5cd1456b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  1 / 1  (other threads: 0)
+
+per-input results:
+  [OK] input={'p2bufs': [512], 'p2args': [{'buf': 0}]}  got=0,4d7705c5  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 1x as expected
+  + all 1 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall2\log\verify_hook_install_plugin_data_dword_a.txt
+

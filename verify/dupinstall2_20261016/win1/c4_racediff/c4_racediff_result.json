@@ -1,0 +1,70 @@
+{
+  "4225568": {
+    "rva": "0x00407a20",
+    "verdict": "C4-CLEAN",
+    "why": [],
+    "installed": true,
+    "off_n": 1,
+    "on_n": 1,
+    "off": [
+      "eax=ffffffff"
+    ],
+    "on": [
+      "eax=ffffffff"
+    ]
+  },
+  "4233376": {
+    "rva": "0x004098a0",
+    "verdict": "C4-CLEAN",
+    "why": [],
+    "installed": true,
+    "off_n": 1,
+    "on_n": 1,
+    "off": [
+      "eax=63a5f0"
+    ],
+    "on": [
+      "eax=63a5f0"
+    ]
+  },
+  "4241824": {
+    "rva": "0x0040b9a0",
+    "verdict": "HOLD",
+    "why": [
+      "orig-not-observed",
+      "modded-not-observed"
+    ],
+    "installed": true,
+    "off_n": 0,
+    "on_n": 0,
+    "off": [],
+    "on": []
+  },
+  "4242016": {
+    "rva": "0x0040ba60",
+    "verdict": "HOLD",
+    "why": [
+      "orig-not-observed",
+      "modded-not-observed"
+    ],
+    "installed": true,
+    "off_n": 0,
+    "on_n": 0,
+    "off": [],
+    "on": []
+  },
+  "4639664": {
+    "rva": "0x0046cbb0",
+    "verdict": "C4-CLEAN",
+    "why": [],
+    "installed": true,
+    "off_n": 1,
+    "on_n": 1,
+    "off": [
+      "eax=1"
+    ],
+    "on": [
+      "eax=1"
+    ]
+  }
+}

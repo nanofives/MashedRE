@@ -1,0 +1,4 @@
+plugin_data_dword_a  PluginDataDwordA            INSTALL-OK     entries 1/1     calls-OK     
+plugin_data_dword_b  PluginDataDwordB            INSTALL-OK     entries 1/1     calls-OK     
+table_773030_get     Table773030Get              INSTALL-OK     entries 2/2     calls-OK     
+-- 3 reports, install-ok 3, calls-ok 3

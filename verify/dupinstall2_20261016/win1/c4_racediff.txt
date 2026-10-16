@@ -1,0 +1,22 @@
+  targets=['0x407a20', '0x4098a0', '0x40b9a0', '0x40ba60', '0x46cbb0']  frame-window=[300,1200]
+
+=== OFF race ===
+  [off] in race; waiting for frame window [300,1200] ...
+  [off] frame=1208
+=== ON race ===
+  [on] in race; waiting for frame window [300,1200] ...
+  [on] frame=1212
+
+=== VERDICT (in-race, frame-synced, indirect captured) ===
+  0x00407a20 -> C4-CLEAN    (off 1 sigs, on 1 sigs)
+  0x004098a0 -> C4-CLEAN    (off 1 sigs, on 1 sigs)
+  0x0040b9a0 -> HOLD  orig-not-observed,modded-not-observed  (off 0 sigs, on 0 sigs)
+        off=[]
+        on =[]
+  0x0040ba60 -> HOLD  orig-not-observed,modded-not-observed  (off 0 sigs, on 0 sigs)
+        off=[]
+        on =[]
+  0x0046cbb0 -> C4-CLEAN    (off 1 sigs, on 1 sigs)
+
+  3/5 C4-CLEAN  ->  log/c4_racediff_result.json
+

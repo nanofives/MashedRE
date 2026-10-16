@@ -1,0 +1,37 @@
+hook: slot_index_to_ptr  rva=0x00426cb0  export=SlotIndexToPtr
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 22188
+  [agent] pre_snapshot
+  [agent] asi_loaded
+  [agent] post_snapshot
+  [agent] results
+
+=== verify_hook_install report (slot_index_to_ptr) ===
+
+target address: 0x00426cb0  export: SlotIndexToPtr
+PRE  bytes:     e9 6b 7c 46 5d c0 4c 05
+asi base:       0x5d870000
+reimpl addr:    0x5d88e920
+POST bytes:     e9 6b 7c 46 5d c0 4c 05
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x5d467c6b  expected 0x5d467c6b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  3 / 3  (other threads: 0)
+
+per-input results:
+  [OK] input=0  got=0x663664  err=
+  [OK] input=1  got=0x6636b0  err=
+  [OK] input=5  got=0x6637e0  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 3x as expected
+  + all 3 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall2\log\verify_hook_install_slot_index_to_ptr.txt
+
