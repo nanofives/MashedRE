@@ -1963,6 +1963,10 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
             RwpDesc rwp[32];
             std::string anim_names[16];   // [rhooks U-9717] General_Anim_Filename slots
             clump_anims_.clear();
+            // [rhooks U-9716] Physics_Scenario_* : per scenario its RWP descriptors, the sequences
+            std::vector<std::vector<int>> scen_objs;
+            std::vector<std::vector<int>> scen_seqs;
+            int scen_fns = 0;
             std::vector<std::pair<std::string, float>> lua_locals;
             auto lua_num = [&](std::string tok, float* out) -> bool {
                 while (!tok.empty() && (tok.front() == ' ' || tok.front() == '\t')) tok.erase(tok.begin());
@@ -2009,6 +2013,41 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                     float lv = 0.f;
                     if (std::sscanf(line.c_str(), " local %63[A-Za-z0-9_] = %f", ln2, &lv) == 2)
                         lua_locals.emplace_back(ln2, lv);
+                    // [rhooks U-9716] `local X = Physics_Scenario_Create( "..." )` -> the scenario index
+                    // (FUN_0047b350 @ 0x0047b350 returns DAT_00691480 before its increment);
+                    // `local X = Physics_Scenario_Get_Function( "..." )` -> 2000 + the name's slot
+                    // (FUN_00471560 @ 0x00471560; the names are registered by hook slot 12, 0x00426ec5,
+                    // before the Lua runs): any value above 1999.
+                    {
+                        char ch = 0;
+                        if (std::sscanf(line.c_str(), " local %63[A-Za-z0-9_] = Physics_Scenario_Create %c",
+                                        ln2, &ch) == 2 && ch == '(') {
+                            lua_locals.emplace_back(ln2, static_cast<float>(scen_objs.size()));
+                            scen_objs.emplace_back();
+                        } else if (std::sscanf(line.c_str(),
+                                               " local %63[A-Za-z0-9_] = Physics_Scenario_Get_Function %c",
+                                               ln2, &ch) == 2 && ch == '(') {
+                            lua_locals.emplace_back(ln2, static_cast<float>(2000 + scen_fns++));
+                        }
+                    }
+                    if (lua_args(line, "Physics_Scenario_Add_Objects", &args) && args.size() >= 2) {
+                        // FUN_0047b420 @ 0x0047b420: scenario = arg n-1, RWP descriptor = arg n
+                        float fs = -1.f, fo = -1.f;
+                        lua_num(args[args.size() - 2], &fs);
+                        lua_num(args[args.size() - 1], &fo);
+                        const int si = static_cast<int>(fs);
+                        if (si >= 0 && si < static_cast<int>(scen_objs.size()))
+                            scen_objs[static_cast<std::size_t>(si)].push_back(static_cast<int>(fo));
+                    } else if (lua_args(line, "Physics_Scenario_Set_Sequence", &args)) {
+                        // FUN_0047b3c0 @ 0x0047b3c0: every argument through FUN_00471490
+                        std::vector<int> seq;
+                        for (const auto& a2 : args) {
+                            float fv = -1.f;
+                            lua_num(a2, &fv);
+                            seq.push_back(static_cast<int>(fv));
+                        }
+                        scen_seqs.push_back(std::move(seq));
+                    }
                     float v[3] = {};
                     int ri = -1;
                     auto set_shape = [&](int type, int nf) {
@@ -2085,6 +2124,7 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                         // [rstates] RWP_Object props are drawn by the original's world
                         // pass between sectors (Arctic Tyres after its first sector).
                         p.rw_kind = LibRw::kInstInWorld;
+                        p.rwp_idx = idx;   // [rhooks U-9716]
                         if (!p.instances.empty())
                             props_.push_back(std::move(p));
                     }
@@ -2189,6 +2229,40 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                     }
                 }
             }
+            // [rhooks U-9716] FUN_00471cf0 @ 0x00471cf0 (race reset, from FUN_004111c0): for every
+            // Set_Sequence list, every scenario in it (entries above 1999 are functions, FUN_00471490 @
+            // 0x00471490) sets each of its objects -- every instance of every descriptor it holds
+            // (FUN_004715a0 @ 0x004715a0) -- to (scenario == the list's first scenario):
+            // FUN_0047d080 (physics world membership) and FUN_0047d100 -> FUN_004b5240 (atomic RENDER
+            // bit). Later writes win. MASHED_NO_SCENARIOVIS=1 keeps every RWP object visible.
+            bool rwp_hidden[32] = {};
+            {
+                static const bool s_no_scen = std::getenv("MASHED_NO_SCENARIOVIS") != nullptr;
+                int vis[32];
+                for (int k = 0; k < 32; ++k) vis[k] = -1;
+                if (!s_no_scen)
+                    for (const auto& seq : scen_seqs) {
+                        std::vector<int> el;
+                        for (const int v : seq)
+                            if (v <= 1999) el.push_back(v);
+                        if (el.empty()) continue;
+                        for (const int s : el) {
+                            if (s < 0 || s >= static_cast<int>(scen_objs.size())) continue;
+                            for (const int o : scen_objs[static_cast<std::size_t>(s)])
+                                if (o >= 0 && o < 32) vis[o] = (s == el[0]) ? 1 : 0;
+                        }
+                    }
+                for (int k = 0; k < 32; ++k) rwp_hidden[k] = vis[k] == 0;
+                for (auto& p : props_)
+                    if (p.rwp_idx >= 0 && p.rwp_idx < 32 && rwp_hidden[p.rwp_idx]) p.scen_hidden = true;
+                if (log) {
+                    std::fprintf(log, "  SCENARIO course_id=%d scenarios=%zu sequences=%zu hidden RWP:",
+                                 course_id_, scen_objs.size(), scen_seqs.size());
+                    for (int k = 0; k < 32; ++k)
+                        if (rwp_hidden[k]) std::fprintf(log, " %d", k);
+                    std::fprintf(log, "%s\n", s_no_scen ? " (off: MASHED_NO_SCENARIOVIS)" : "");
+                }
+            }
             // [rfx2] the object shadows' inputs, in FUN_00480340 @ 0x00480340's creation order:
             // descriptors 0..31 with a shape (piVar6[-0x43] != 0), each one's MTS records in file
             // order (FUN_004b3f50). bbox = FUN_0055bd80 @ 0x0055bd80 on the shape with the identity
@@ -2221,7 +2295,9 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                             shaped = false;
                         }
                         for (int c = 0; c < 3; ++c) { o.bbox[c] = h[c]; o.bbox[3 + c] = -h[c]; }
-                        o.casts = shaped;
+                        // [rhooks U-9716] FUN_00481a30 skips an object whose atomic RENDER bit is clear
+                        // (`*(byte *)(atomic + 2) & 4`), as FUN_00471cf0 leaves a hidden scenario object
+                        o.casts = shaped && !rwp_hidden[k];
                         // RpAtomicGetWorldBoundingSphere: centre through the frame LTM, radius times
                         // the LTM's largest axis length (the MTS frame flags are cleared, 0x004802a0)
                         const float* g = d.sphere;
@@ -8382,8 +8458,9 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     for (std::size_t k = 0; k < props_.size(); ++k) {
         const auto& p = props_[prop_order_ok ? prop_order_[k] : k];
         if (p.rw_model < 0) continue;
-        // [rhooks] an LOD source is never drawn as itself; slot-10 groups go after the copters below
-        if (p.hook_hidden || p.hook_pass == mashed_re::Render::kHookPassSlot10) continue;
+        // [rhooks] an LOD source is never drawn as itself; slot-10 groups go after the copters below;
+        // a scenario object FUN_00471cf0 hid at race reset is not drawn (RENDER bit clear)
+        if (p.hook_hidden || p.scen_hidden || p.hook_pass == mashed_re::Render::kHookPassSlot10) continue;
         // [rfx2] City's slot 2 FUN_0044b8f0 @ 0x0044b8f0 draws the big lensflare batch first
         // (SkySecondaryDispatch, 0x0044b90a), then its clumps: a marker ahead of the group
         if (!lens_marked && course_id_ == 26 && p.rw_kind == LibRw::kInstAfterWorld) {

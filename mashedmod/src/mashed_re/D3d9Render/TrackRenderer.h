@@ -216,6 +216,10 @@ private:
         float                           lod_range = 0.f;
         int                             hook_cull = 0;     // HookDraw::cull (0 = inherited)
         int                             hook_zwrite = -1;  // HookDraw::zwrite (-1 = inherited)
+        // [rhooks U-9716] RWP_Object descriptor index (-1 = not an RWP prop), and hidden at race
+        // reset by the scenario sequences (FUN_00471cf0: RENDER flag clear, out of the physics world)
+        int                             rwp_idx = -1;
+        bool                            scen_hidden = false;
     };
     std::vector<Prop> props_;
     // [rhooks U-9717] COURSE.LUA SetClumpAnim (Lua handler FUN_0047ad40 @ 0x0047ad40): a course clump
