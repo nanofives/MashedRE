@@ -62,8 +62,13 @@ struct HudInputs {
     int   team[4]    = {-1, -1, -1, -1};   //          ... + 4
     int   colour[4]  = {0, 0, 0, 0};       //          ... + 8
     int   score[4]   = {0, 0, 0, 0};       // DAT_008a94e0[i] (FUN_0040b6d0)
+    int   minus[4]   = {0, 0, 0, 0};       // DAT_008a9500[i] (FUN_0040b420), the last score delta
+    int   alive[4]   = {1, 1, 1, 1};       // FUN_0046c7b0(i) (vehicle record +0x4)
     bool  world_up   = true;   // FUN_00426ba0 (DAT_0066d704)
 };
+// [rfx2] MASHED_HUD_NONTEAM=1 draws the non-team panels FUN_0041b630 (default OFF: no original
+// capture with Team Play off exists to adjudicate them, U-9704).
+bool RaceFx_HudNonTeamEnabled();
 void RaceFx_SetHud(const HudInputs& in);
 // Draw the HUD pass. Called by RaceSubmit_Render after the race camera's endUpdate, with the
 // backbuffer size for the HUD camera's rasters.

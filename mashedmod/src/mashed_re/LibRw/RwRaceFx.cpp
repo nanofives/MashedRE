@@ -406,6 +406,19 @@ struct Panel {                       // the 0x16c-byte record at 0x0063cab8 + p*
     std::uint32_t flags = 0;         // +0x168
 };
 Panel        g_panel[2];
+// [rfx2] the non-team panels: 4 records of 0x74 bytes at 0x0063c8d0 (FUN_0041b450 @ 0x0041b450)
+struct NtPanel {
+    rw::Atomic* atom[17] = {};       // +0x00..+0x40, slot = geometry part code (FUN_0041ad60)
+    float       pos[3] = {};         // +0x50
+    rw::Clump*  clump = nullptr;     // +0x5c (its frame = +0x60)
+    int         idx = 0;             // +0x64
+    std::uint32_t flags = 0;         // +0x68
+    int         active = 0;          // +0x6c
+    float       t70 = 0.f;           // +0x70
+};
+NtPanel      g_nt[4];
+int          g_nt_cab0 = 0;          // DAT_0063cab0 (FUN_0041b540 increments, FUN_0041b510 zeroes)
+int          g_nt_prev = -1;         // the HUD state of the previous frame
 rw::Clump*   g_lights = nullptr;     // 0x0063d57c
 rw::Atomic*  g_latom[12] = {};       // 0x0063d55c (FUN_0041d8b0 zeroes 0x30 bytes)
 rw::Camera*  g_hud_cam = nullptr;    // DAT_006905b4
@@ -499,6 +512,21 @@ void LoadHud(int width, int height) {
                              mt ? mt->color.blue : -1, mt ? mt->color.alpha : -1);
             }
             std::fclose(lf);
+        }
+    }
+    // [rfx2] FUN_0041b450 @ 0x0041b450: "panel0".."panel3" (strings 0x005cd1a8..0x005cd190, ".dff"
+    // appended by FUN_0042a5d0) into the records at 0x0063c8d0 (stride 0x74), idx = k (0x0041b4b6);
+    // FUN_0041ad60 files each of the 17 atomics at rec + 4 * part code (FUN_004b5190(atomic, 0, 0)).
+    static const char* const kNt[4] = {"PANEL0.DFF", "PANEL1.DFF", "PANEL2.DFF", "PANEL3.DFF"};
+    for (int k = 0; RaceFx_HudNonTeamEnabled() && k < 4; ++k) {
+        NtPanel& R = g_nt[k];
+        R.clump = ReadClump(panel, kNt[k]);
+        R.idx = k;
+        if (!R.clump) continue;
+        FORLIST(lnk, R.clump->atomics) {
+            rw::Atomic* a = rw::Atomic::fromClump(lnk);
+            const int part = PartCode(a);
+            if (part >= 0 && part < 17) R.atom[part] = a;
         }
     }
     // FUN_0041d8b0 @ 0x0041d8b0: "startlights.dff", atomics by part code into 0x0063d55c, and each
@@ -665,9 +693,143 @@ void RenderLights(float t) {
     }
 }
 
+// ---- [rfx2] the non-team panels ----------------------------------------------------------------
+// RwFrameScale(atomic frame, (s, s, 1), rwCOMBINEREPLACE) (FUN_004c13e0 with combine 0).
+void ScaleAtomFrame(rw::Atomic* a, float sx, float sy, float sz) {
+    if (!a || !a->getFrame()) return;
+    rw::V3d s = {sx, sy, sz};
+    a->getFrame()->scale(&s, rw::COMBINEREPLACE);
+}
+// FUN_0041ae60 @ 0x0041ae60: the six colour badges, slot 7 + b for flag bit 1 << b (0x0041ae60..0x0041aef0).
+void NtScaleBadges(const NtPanel& R, float s0, float s1) {
+    for (int b = 0; b < 6; ++b)
+        if (R.flags & (1u << b)) ScaleAtomFrame(R.atom[7 + b], s0, s1, 1.0f);
+}
+// FUN_0041af00 @ 0x0041af00: slots 13 / 14 / 15 for flag bits 0x2000 / 0x4000 / 0x8000.
+void NtScaleMinus(const NtPanel& R, float s0, float s1) {
+    static const std::uint32_t kBit[3] = {0x2000u, 0x4000u, 0x8000u};
+    for (int b = 0; b < 3; ++b)
+        if (R.flags & kBit[b]) ScaleAtomFrame(R.atom[13 + b], s0, s1, 1.0f);
+}
+// The position table DAT_005f3304 (12 bytes per idx, read from the anchored binary).
+const float kNtPos[4][3] = {{0.48f, 0.35f, 1.0f}, {-0.48f, 0.35f, 1.0f},     // 0x3ef5c28f, 0x3eb33333
+                            {0.48f, -0.35f, 1.0f}, {-0.48f, -0.35f, 1.0f}};  // 0xbef5c28f, 0xbeb33333
+
+// FUN_0041b4d0 @ 0x0041b4d0 (race state 1) -> FUN_0041adb0 @ 0x0041adb0 per record, and
+// FUN_0041b510 @ 0x0041b510 (DAT_0063cab0 = 0) on the same path of FUN_004111c0.
+void NtSetup(const HudInputs& in) {
+    for (NtPanel& R : g_nt) {
+        R.flags = 0; R.active = 0;                                         // 0x0041adb3 / 0x0041adba
+        // 1 << (byte)DAT_007f1a1c[idx * 4] (the slot table's colour), shift masked to 5 bits
+        R.flags = 1u << (static_cast<std::uint8_t>(in.colour[R.idx & 3]) & 0x1fu);
+        // FUN_004b5260(slot 5 / slot 2, 0xff323232): the two score bars' material colour
+        for (int s : {5, 2}) {
+            rw::Atomic* a = R.atom[s];
+            rw::Geometry* g = a ? a->geometry : nullptr;
+            for (int m = 0; g && m < g->matList.numMaterials; ++m) {
+                rw::Material* mt = g->matList.materials[m];
+                mt->color.red = mt->color.green = mt->color.blue = 0x32; mt->color.alpha = 0xff;
+            }
+        }
+        if (R.idx < in.n4d0) R.active = 1;                                 // DAT_0063c89c = FUN_0040e340()
+    }
+    g_nt_cab0 = 0;
+}
+// FUN_0040dbd0 (state 4) -> FUN_0041b520 @ 0x0041b520 -> FUN_0041ae20 @ 0x0041ae20 per record.
+void NtState4() {
+    for (NtPanel& R : g_nt) {
+        std::memcpy(R.pos, kNtPos[R.idx & 3], sizeof(R.pos));
+        R.t70 = 0.f;
+        R.pos[0] = R.pos[0] + R.pos[0];
+    }
+}
+// FUN_0040fc00 -> FUN_0041b540 @ 0x0041b540 (each race tick), FUN_0041af50 @ 0x0041af50 per active record.
+void NtTick(const HudInputs& in) {
+    int lead[4], top[4], low[4], zero[4], dead[4];
+    const int thr = LeaderThreshold(in);
+    for (int k = 0; k < 4; ++k) lead[k] = (thr <= in.score[k]) ? 1 : 0;     // FUN_0040b930
+    int mx = 0;                                                            // FUN_0040b9a0(.., 1)
+    for (int k = 0; k < 4; ++k) if (in.alive[k] != 0 && mx < in.score[k]) mx = in.score[k];
+    for (int k = 0; k < 4; ++k) top[k] = (in.score[k] == mx) ? 1 : 0;
+    int mn = 99;                                                           // FUN_0040ba00
+    for (int k = 0; k < 4; ++k) if (in.score[k] < mn) mn = in.score[k];
+    for (int k = 0; k < 4; ++k) low[k] = (in.score[k] == mn) ? 1 : 0;
+    for (int k = 0; k < 4; ++k) zero[k] = (in.score[k] == 0) ? 1 : 0;      // FUN_0040b970
+    for (int k = 0; k < 4; ++k) dead[k] = (in.alive[k] == 0) ? 1 : 0;      // FUN_0040ba60
+    const int all_top = top[0] && top[1] && top[2] && top[3];              // DAT_0063c8c8
+    const int all_low = low[0] && low[1] && low[2] && low[3];              // DAT_0063c8a0
+    const int target = ScoreTarget(in);                                    // FUN_0040b890
+    for (NtPanel& R : g_nt) {
+        if (!R.active || !R.clump) continue;
+        const int i = R.idx & 3;
+        std::uint32_t f = R.flags;
+        f = lead[i] ? (f | 0x40u) : (f & ~0x40u);
+        f = (top[i] && !all_top) ? (f | 0x80u) : (f & ~0x80u);
+        f = (low[i] && !all_low) ? (f | 0x100u) : (f & ~0x100u);
+        f = zero[i] ? (f | 0x200u) : (f & ~0x200u);
+        f = dead[i] ? (f | 0x400u) : (f & ~0x400u);
+        if ((f & 0x40u) && (f & 0x100u)) f &= ~0x100u;
+        if (f & 0x400u) f &= 0xfffffc3fu;
+        const std::uint32_t was = f;
+        f &= 0xffff1fffu;                                                  // 0x0041b056
+        if (was & 0x400u) {
+            const int v = in.minus[i];                                     // FUN_0040b420(idx)
+            if (v == -2) f |= 0x8000u; else if (v == -1) f |= 0x4000u; else if (v == 0) f |= 0x2000u;
+            R.t70 = R.t70 + 1.0f;                                          // [0x5cc320]
+        }
+        if (target == 8) f = (f & ~0x1000u) | 0x800u;
+        else if (target == 12) f = (f & ~0x800u) | 0x1000u;
+        R.flags = f;
+        if (std::fabs(kNtPos[i][0]) < std::fabs(R.pos[0]))               // slide in by [0x5cd11c] 0.015
+            R.pos[0] = (i & 1) == 0 ? R.pos[0] - 0.015f : R.pos[0] + 0.015f;
+        FrameReplace(R.clump->getFrame(), R.pos, 1.125f);                  // 0x0041b0e9..0x0041b175, [0x5cd118]
+        // the score bar: (fild score / fidiv target, 1, 1), combine 0, slot 5 (0x800) or slot 2 (0x1000)
+        const float bar = static_cast<float>(static_cast<double>(in.score[i]) / static_cast<double>(target));
+        if (f & 0x800u) ScaleAtomFrame(R.atom[5], bar, 1.f, 1.f);
+        else if (f & 0x1000u) ScaleAtomFrame(R.atom[2], bar, 1.f, 1.f);
+        // the badges: sin(DAT_0063cab0 * 0.2) * 0.2 + 1.0 ([0x5cc9c0], [0x5cc320]) when 0x80 && !0x40
+        float s = 1.0f;
+        if ((f & 0x80u) && !(f & 0x40u)) {
+            double c = static_cast<double>(g_nt_cab0);
+            if (g_nt_cab0 < 0) c += 4294967296.0;                          // [0x5cc94c]
+            s = static_cast<float>(std::sin(c * static_cast<double>(0.2f)) * static_cast<double>(0.2f) + 1.0);
+        }
+        NtScaleBadges(R, s, s);
+        if (f & 0x400u) {
+            // x87: product and difference in extended, one rounding at the float store
+            float a = static_cast<float>(1.0 - static_cast<double>(R.t70) * static_cast<double>(0.04f));  // [0x5cd18c]
+            if (a <= 0.0f) a = 0.0f;
+            NtScaleBadges(R, a, a);
+            float b = static_cast<float>((static_cast<double>(R.t70) - 25.0) * static_cast<double>(0.04f));  // [0x5cc9e0]
+            if (b > 1.0f) b = 1.0f; else if (b <= 0.0f) b = 0.0f;
+            NtScaleMinus(R, b, b);
+        }
+    }
+    ++g_nt_cab0;
+}
+// FUN_0041b630 @ 0x0041b630 -> FUN_0041b340 @ 0x0041b340 per record with +0x6c != 0, in this order.
+void RenderNonTeam() {
+    for (const NtPanel& R : g_nt) {
+        if (!R.active || !R.clump) continue;
+        const std::uint32_t f = R.flags;
+        RenderAtom(R.atom[16]);
+        RenderAtom(R.atom[0]);
+        if (f & 0x800u) { RenderAtom(R.atom[5]); RenderAtom(R.atom[4]); if (f & 0x40u) RenderAtom(R.atom[6]); }
+        else if (f & 0x1000u) { RenderAtom(R.atom[2]); RenderAtom(R.atom[1]); if (f & 0x40u) RenderAtom(R.atom[3]); }
+        for (int b = 0; b < 6; ++b) if (f & (1u << b)) RenderAtom(R.atom[7 + b]);
+        if (f & 0x2000u) RenderAtom(R.atom[13]);
+        if (f & 0x4000u) RenderAtom(R.atom[14]);
+        if (f & 0x8000u) RenderAtom(R.atom[15]);
+    }
+}
+
 }  // namespace
 
 bool RaceFx_HudEnabled() { static const bool on = !EnvOff("MASHED_HUD3D"); return on; }
+bool RaceFx_HudNonTeamEnabled() {
+    static const bool on = [] { const char* e = std::getenv("MASHED_HUD_NONTEAM"); return e && e[0] == '1'; }();
+    return on;
+}
 
 void RaceFx_SetHud(const HudInputs& in) { g_hud = in; g_hud_set = true; }
 
@@ -695,12 +857,9 @@ void RaceFx_RenderHud(int width, int height) {
         c.world_up = true;
         in = c;
     }
-    // FUN_0040dfc0 @ 0x0040dfc0: FUN_00426ba0() == 0 or DAT_0063ba8c < 5 returns; 7 is the
-    // standings branch (the standalone's 2D overlay); 5 / 6 below.
-    if (!in.world_up || in.state < 5 || in.state > 6) return;
-    LoadHud(width, height);
-    if (!g_hud_ok) return;
-    bool panels = false;
+    // FUN_0040dfc0 @ 0x0040dfc0's branch (jump tables 0x0040e12c / 0x0040e140 / 0x0040e14c): the
+    // team panels FUN_0041c0c0, the non-team panels FUN_0041b630, or a per-mode HUD.
+    bool panels = false, nonteam = false;
     switch (in.round_type) {
     case 2: break;                                   // FUN_0041e850 (not ported)
     case 3: case 4: case 5:
@@ -708,17 +867,39 @@ void RaceFx_RenderHud(int width, int height) {
             in.mode_fd0 == 8 || in.mode_fd0 == 10)
             break;                                   // FUN_0041ded0 / FUN_0041c300 / FUN_0041a3e0
         panels = in.team_play != 0;                  // default -> caseD_7
+        nonteam = in.team_play == 0;
         break;
     case 6: case 10:
         panels = in.team_play != 0 && in.mode_fd0 != 2;
+        nonteam = !panels;
         break;
     case 0xb: break;                                 // FUN_00403160 (not ported)
     default:
         panels = in.team_play != 0;
+        nonteam = in.team_play == 0;
         break;
     }
-    // [UNCERTAIN U-9704] the non-team panels FUN_0041b630 @ 0x0041b630 -> FUN_0041b340 and the
-    // per-mode HUDs above are not ported: nothing is drawn where the original draws them.
+    // [UNCERTAIN U-9704] the per-mode HUDs above are not ported: nothing is drawn where the
+    // original draws them.
+    // [rfx2] the non-team records' logic, ahead of the draw as FUN_004111c0's tick precedes
+    // FUN_00492e90: set-up at the round's first HUD frame (race state 1, FUN_0041b4d0 + FUN_0041b510),
+    // positions at the state-4 tick (FUN_0041b520; the stand-in countdown has no state 4, so its
+    // first state-5 frame after 3 stands for it), then FUN_0041b540 on every tick of states 3..11
+    // (FUN_0040fc00's callers in FUN_004111c0).
+    nonteam = nonteam && RaceFx_HudNonTeamEnabled();
+    if (nonteam) {
+        LoadHud(width, height);
+        const int prev = g_nt_prev;
+        if (prev < 0 || in.state < prev) NtSetup(in);
+        if (in.state == 4 || (in.state == 5 && prev == 3)) NtState4();
+        if (in.state >= 3 && in.state <= 11) NtTick(in);
+    }
+    g_nt_prev = in.state;
+    // FUN_0040dfc0 @ 0x0040dfc0: FUN_00426ba0() == 0 or DAT_0063ba8c < 5 returns; 7 is the
+    // standings branch (the standalone's 2D overlay); 5 / 6 below.
+    if (!in.world_up || in.state < 5 || in.state > 6) return;
+    LoadHud(width, height);
+    if (!g_hud_ok) return;
     const bool lights = in.round_type != 0xb;
     UpdatePanels(in);
     UpdateLights(in);
@@ -758,6 +939,7 @@ void RaceFx_RenderHud(int width, int height) {
     if (panels)
         for (const Panel& P : g_panel)                // FUN_0041c0c0: 0x0063cab8, then +0x16c
             if (P.clump) RenderPanel(P);
+    if (nonteam) RenderNonTeam();                     // FUN_0041b630, before the lights (0x0040e0ee)
     if (lights) RenderLights(in.timer);
     rw::SetRenderState(rw::ZTESTENABLE, sv_zt);
     rw::SetRenderState(rw::ZWRITEENABLE, sv_zw);

@@ -3846,23 +3846,33 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         return;
     }
 
-    // [rfx 2026-10-16] STAND-IN ADAPTER for the HUD's start-light clock (MASHED_SUBSTATE off;
-    // under it the ported FUN_0040dbd0 / FUN_0041d930 tail run instead). The original zeroes
-    // DAT_0063d588 at the state-4 entry (FUN_0040dbd0 -> FUN_0041d910 @ 0x0041d910), one state-4
-    // frame plus 112 state-5 frames before GO (FUN_004103a0 exits on the 112th call), and adds
-    // DAT_007f100c every frame from then on (FUN_0040fc00 -> FUN_0041d930 tail, 0x0041da76). This
-    // countdown has no state 4, so the zeroing is placed where 113 frames remain, and the frame dt
-    // is added on every later race frame, after GO too. Nothing else in the exe reads the two
-    // globals with MASHED_SUBSTATE off. Removed with the stand-in when MASHED_SUBSTATE becomes the
-    // default.
+    // [rfx 2026-10-16, rfx2] ADAPTER for the HUD's start-light clock (MASHED_SUBSTATE off; under
+    // it the ported FUN_0040dbd0 / FUN_0041d930 tail run instead). The clock arithmetic is the
+    // original's: the state-4 tick zeroes DAT_0063d584 / DAT_0063d588 (FUN_0040dbd0 ->
+    // FUN_0041d910 @ 0x0041d910) and the SAME tick's FUN_0040fc00 adds the step (FUN_0041d930
+    // tail, 0x0041da5f..0x0041da76), so the first rendered value is one step, not 0; every later
+    // tick adds it again, after GO too. The step is FUN_0040fc00's store at 0x0040fc57,
+    // (float)units * [0x005cc948] (0x39aec33e), units = the tick budget FUN_004111c0 pushes
+    // (0x32 at all three call sites) = this port's (int)(dt * 3000 + 0.5): 0x3c888888 at 60 Hz.
+    // [UNCERTAIN U-9704] Only the zeroing MOMENT is a stand-in: the original's is the state 3 -> 4
+    // transition of FUN_004102f0 (0x00410387: the cursor path FUN_00405460 has ended and
+    // DAT_00897fe0, cleared by FUN_00445aa0, is 0), which exists only under MASHED_SUBSTATE. Here
+    // it is placed 113 ticks before the stand-in GO (one state-4 tick + the 112 state-5 ticks
+    // FUN_004103a0 takes to reach 1.86 s, 0x004104e3). Nothing else in the exe reads the two
+    // globals with MASHED_SUBSTATE off.
     if (!SubState_Enabled() && LibRw::RaceFx_HudEnabled()) {
         const float lead = 113.0f / 60.0f;
         if (countdown_ > lead && countdown_ - in.dt <= lead) {
             *reinterpret_cast<std::uint32_t*>(0x0063d584u) = 0u;   // 0x0041d910
             *reinterpret_cast<std::uint32_t*>(0x0063d588u) = 0u;   // 0x0041d91a
-        } else if (countdown_ <= lead) {
-            *reinterpret_cast<std::uint32_t*>(0x0063d584u) += 1u;
-            *reinterpret_cast<float*>(0x0063d588u) += in.dt;
+        }
+        if (countdown_ - in.dt <= lead) {
+            std::uint32_t kbits = 0x39aec33eu;                     // _DAT_005cc948
+            float k;
+            std::memcpy(&k, &kbits, sizeof k);
+            const float step = static_cast<float>(static_cast<int>(in.dt * 3000.0f + 0.5f)) * k;  // 0x0040fc57
+            *reinterpret_cast<std::int32_t*>(0x0063d584u) += 1;                                 // 0x0041da71
+            *reinterpret_cast<float*>(0x0063d588u) = *reinterpret_cast<float*>(0x0063d588u) + step;  // 0x0041da76
         }
     }
     // Countdown freeze (3-2-1-GO): cars are held still until it elapses.
