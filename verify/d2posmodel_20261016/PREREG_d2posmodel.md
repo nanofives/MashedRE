@@ -215,3 +215,24 @@ A2.2 **`BMIN` (parts 2 + 3 + the minimal seed): measured, NOT eligible for defau
 decision. Same gate set as section 3: `D_BMIN` / `D_BMINRG` (G-SETTLE, G-PROG), `D2_BMIN_1..3`, recovery, and
 `H_BMIN` / `H_BMIN-2` collateral if the D2 arm scores at all. G-SETTLE prediction [UNCERTAIN]: with the minimal
 seed the settle's A6a may not take its parked full stop (`D_P1`'s vel 0 came with the whole reset).
+
+## Amendment 3 (2026-10-16, after the bisect; before `D2_BMIN_1`, `D2_BC_1..3`, `D2_P23C_1`)
+
+Recorded (exe `06642c53`; its full-reset path reproduces exe `90a55dc7`: `D_B-2` settle sha8 = `D_B` = `8a6efcb4`,
+`D2_P1_2` = `D2_P1_1` = 1338.62 n=54):
+- **Bisect A2.1:** `D2_P1MIN_1` 1338.62 n=54 (collapses). `D2_P1KG<g>_1` for g in 1, 2, 4, 5, 6, 7, 8: 1338.62 n=54
+  each. **`D2_P1KG3_1` (wheel block `+0x194..+0x458` restored): 0.1927 in / 0.2489 in / 1865.87 OUT** (n 376 / 562 /
+  1356). So the write that breaks the arm is the seed itself (states / fv of the wheel block), not the rest of
+  `FUN_0046baa0`.
+- **Launch (`a8_launch.py`):** `+0xb14` engages at d=15 on the original, `D2_DEF_1`, `D2_P23_1` and `D2_P1KG3_1`, and
+  at **d=14** under B; best-lag error 0.19 % (default, P23, P1KG3) vs **6.93 %** (B). Recovery H1: default 398/400,
+  median 1362.8; **B 11/400 (2.8 %), median 32.0, 3/3 = FAIL**; P23 = default.
+- **`D_BMIN` / `D_BMINRG`:** the same settle move as B (G-SETTLE FAIL on the default grid by the same margins, PASS on the
+  RG grid; G-PROG amended PASS). `H_BMIN` = `H_BMIN-2` = `H_B` = `b1b6f319 / 4ea8366f / e92bdf83`.
+- **D3 (b):** `B_DEF_K*` A 1/3, B 2/3, C 0/3 (= base); `B_B_K*` **A 0/3** (car 2 lost: `c1_distinct` 76, `steer_distinct`
+  105), B 2/3, C 0/3.
+- **Collateral:** `H_DEF` 39 / 94 (= base), `H_B` 40 / 94 (+1, `s.v1.c1` moved outside). Within the +2 rule.
+
+Registered runs that remain: `D2_BMIN_1` (A2.2) and `D2_BC_1..3` (fix C inside fix B, section 5). Added, REPORT only:
+`D2_P23C_1` = parts 2 + 3 + fix C (the D2-scorable variant without the seed), to see fix C inside the position model.
+No prediction for either.
