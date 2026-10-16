@@ -88,7 +88,13 @@ class DffModel {
 public:
     // Parse a .DFF clump blob. Validations mirror dff_dump.py (frame/geo/
     // atomic counts, index ranges); false + last_error() on violation.
-    bool Parse(const std::uint8_t* d, std::size_t len);
+    // [rprops U-9695/U-9696] bake_frames=false leaves every atomic's vertices and normals in its own
+    // geometry space (the frame parent chain is NOT applied). It is for clumps whose frames the game
+    // itself overwrites at run time: Clump_Mts_Pair clumps (the atomic frame := the Mts record, the
+    // clump frame translation := 0, 0x00479330) and the sky clumps (frame := identity, 0x004491e0 /
+    // 0x00426d20). Baking would keep a root-frame offset the original discards (City Standard.dff
+    // root y -0.957, Arctic SKY.DFF root y -0.155).
+    bool Parse(const std::uint8_t* d, std::size_t len, bool bake_frames = true);
     const char* last_error() const { return err_; }
 
     // [geomlight water-scope 2026-08-31] The asset name this model was parsed

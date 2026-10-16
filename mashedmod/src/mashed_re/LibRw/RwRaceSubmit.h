@@ -158,6 +158,10 @@ int  RaceSubmit_SetupCarEnv(int handle, const Txd::Dictionary* dicts, std::size_
 void RaceSubmit_AddInstanceEnv(int handle, const float* m44, float env_coef,
                                const float* env_m44);
 
+// [rprops U-9696] Queue one sky copy for this frame (same matrix convention as AddInstance). Sky copies
+// are drawn before the world with depth test, depth write and fog off, then the states are restored.
+void RaceSubmit_AddSky(int handle, const float* m44);
+
 // Per-frame submit. Reads eye/at + the projection quartet + fog + lights out of
 // `st`; draws the static world and then every queued instance. Issues no Clear
 // and no Begin/EndScene (the caller owns the frame). No-op until a track is built.
