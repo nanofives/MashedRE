@@ -82,6 +82,13 @@ ARMS.append(dict(n="X7_DMP2", recipe="fk", k=0, knobs=["%s=7" % PUB, DMP]))
 ARMS.append(dict(n="X7_RG_DMP2", recipe="fk", k=0, knobs=["%s=7" % PUB, RGK, DMP]))
 for _k in (1, 4, 27, 26, 54, 57):
     ARMS.append(dict(n="X7_BS_K%02d" % _k, recipe="fk", k=_k, knobs=["%s=7" % PUB, BS]))
+# PREREG amendment A5
+PZ = "MASHED_PP_PLAYERDZ"
+for _k in (0, 2):
+    ARMS.append(dict(n="X7_RG_PZ_K%02d" % _k, recipe="fk", k=_k, knobs=["%s=7" % PUB, RGK, "%s=0.0000921" % PZ]))
+    ARMS.append(dict(n="X7_PZ_K%02d" % _k, recipe="fk", k=_k, knobs=["%s=7" % PUB, "%s=0.0035" % PZ]))
+ARMS.append(dict(n="X7_RG_PZ_H", recipe="h4", knobs=["%s=7" % PUB, RGK, "%s=0.0000921" % PZ]))
+ARMS.append(dict(n="X7_PZ_H", recipe="h4", knobs=["%s=7" % PUB, "%s=0.0035" % PZ]))
 # arms added per PREREG are appended below this line
 
 

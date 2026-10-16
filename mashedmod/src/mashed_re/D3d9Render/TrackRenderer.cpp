@@ -5389,6 +5389,11 @@ void TrackRenderer::StartRound() {
         if (Race::RoundGrid_SlotOrder(sv)) for (int i = 0; i < 4; ++i) kSlot[i] = sv[i] & 3;
     }
     place(car_pos_, &car_yaw_, kSlot[0]);
+    {   // [PATHPROG split, PREREG amendment A5] MEASUREMENT ONLY: MASHED_PP_PLAYERDZ=<units> shifts the player's start z, to test
+        // the original's first-step settle (z +0.0000921) as the cause of the player's node on the start line. Default OFF.
+        static const float s_ppDz = [] { const char* e = std::getenv("MASHED_PP_PLAYERDZ"); return e ? static_cast<float>(std::atof(e)) : 0.f; }();
+        if (s_ppDz != 0.f) car_pos_[2] += s_ppDz;
+    }
     car_vel_[0] = car_vel_[1] = car_vel_[2] = 0.f;
     car_speed_ = 0.f;
     // [U-9145 2026-09-29] MASHED_MEASURE_SOLO: StartRound RE-CREATES the opponents, so

@@ -190,6 +190,30 @@ Prediction: a node-29 triangle at true distance <= 0.6 that the test rejects (60
 
 Also registered: the seeded-pair counterfactual on stage 2, `X7_BS_K` for K in 1, 4, 27, 26, 54, 57. Gate **G-BS-B/C**: control bytes of `X7_BS_K` equal `D_K` (only `val_880` / `lap_9648` may differ) and n/3 equal `D_K` (B 2/3, C 0/3). Prediction: equal (70 %): the boost pair is then the whole cost on B and C too.
 
+## 3e. AMENDMENT A5 (committed after the A4 arms were scored, before the arms below exist)
+
+Seen first (`X7_DMP2.sphere.txt`): the AI BSP "nodes" are vertical gate quads (two triangles each): node 0 at z about -2.0 (verts (2.2705 .4251 -1.9956), (-2.2287 .4251 -2.0043), ...), node 1 at z about -6, node 28 at about +6, node 29 at about +2.0
+(the gate behind the start line, true 3-D distance 4.04 from the player). So a car is resolved to a SEGMENT by which side of a gate plane it stands on. The plane of node 0 at the player's x (0.5009) is at z about -1.99902 (interpolated along the quad's near edge).
+The original's player: z -1.999037 at frame 1 (`o_p0a`, 1.5e-5 past the plane) and **-1.998945 from frame 2 on (7.7e-5 before the plane)**, the first-step settle of +0.0000921 (NEXT_SESSION U-9684: "the original's player settles +0.0000921 z on its first step, the exe's never moves"), hence progress 29.99998 / 30.0.
+The port's player: z -2.002471 (gate anchor, 0.0034 past the plane, progress 0.00086) or -1.999037 (round-grid anchor, on the plane, progress 0.0000) and it never moves.
+
+So the chain registered for test: live progress -> `Fi_UpdateBoostOrder` pair -> the player's progress rank -> the player is on the wrong side of the node-0 gate plane because the port has no first-step settle.
+Measurement-only knob (default OFF): `MASHED_PP_PLAYERDZ=<units>` adds to the player's start z (in `StartRound`, after placement).
+
+| arm | knobs | recipe | purpose |
+|---|---|---|---|
+| `X7_RG_PZ_K` | `MASHED_PP_PUBLISH=7` + `MASHED_ROUND_GRID` + `MASHED_PP_PLAYERDZ=0.0000921` | fk, K in 0, 2 | the original's settled z at the round-grid anchor |
+| `X7_PZ_K` | `MASHED_PP_PUBLISH=7` + `MASHED_PP_PLAYERDZ=0.0035` | fk, K in 0, 2 | the gate-anchor pose moved to just before the plane (z -1.99897) |
+| `X7_RG_PZ_H`, `X7_PZ_H` | as above | h4 | the player's published progress at the lights (gates) |
+
+| gate | statistic | pass rule | prediction |
+|---|---|---|---|
+| **G-PZ-PROG** | `X7_RG_PZ_H`, `X7_PZ_H` gates `prog_96e8` frame 1 car 0; two least | car 0 progress >= 29.99 and two least `[2, 3]` | PASS for both (80 %) |
+| **G-PZ-PAIR** | control bytes of cars 1 to 3 over the first 220 calls per car: `X7_RG_PZ_K` vs `X7_RG_BS_K` (seeded pair, same grid), and `X7_PZ_K` vs `X7_BS_K` | equal | equal (60 %): the pair is then the whole difference |
+| (b) | `X7_PZ_K`, `X7_RG_PZ_K` regime A n/3, K = 0, 2 | report against `D` (A 1/3) and `X7_RG` (A 0/3) | `X7_PZ` A 1/3 (50 %) |
+
+Decision 1 of section 3 stands: nothing here changes a default. These arms only test whether the missing player settle explains the regime A / B cost of the live row. If G-PZ-PAIR passes the report states the fix target: the original's player first-step settle (z +0.0000921, y about -0.0029), i.e. the player-at-rest row proposed in U-9684, after which the live row at the original's place (`X7`) is a candidate default to be re-measured on (b) A / B / C, closure, collateral and G-CTRL.
+
 ## 4. Not done here (registered)
 
 - No hooks.csv change (`FUN_00408610` is an EXE-ONLY naked transcription). No tracker is edited by hand. The memory index is not touched (orchestrator's).
