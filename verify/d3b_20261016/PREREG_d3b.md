@@ -134,3 +134,16 @@ matrices, +0x9a8/+0x9ac, +0x144..+0x14c and +0x1a8 appended to every sample). Ga
   per interval: [A6a entry -> A6b entry] (A6a), [A6b -> substep entry], [substep entry -> solver entry] (FUN_0046e9e0
   of substep 1), [solver -> next substep / next A6a]. Prediction: the -0.24 deg term sits outside
   [substep entry -> solver entry], i.e. FUN_0046e9e0's interval carries only the +k2*accum turn.
+
+## Amendment 4 (2026-10-16, after `o_lb1`, before `o_ww1`)
+
+`o_lb1` result (G-REPRO PASS: 220/220 c0/c1/c4/c5 rows equal to `o_rd3` on all three cars, regime A). G-SPLIT: inside
+each substep `FUN_0046e9e0` turns car 1's body by +0.039 to +0.045 deg (the +k2*accum term on steer-0 frames), the
+solver/contacts of substep 1 by 0.000. On the 9 listed steer-0 frames the live matrix jumps by -0.191 to -0.264 deg
+between the previous frame's last substep and the first A4 sample of the new frame (`lbjump.py ... list`,
+`LBSPLIT_o_lb1.txt`); the `.msd` snapshot is taken before the jump. Prediction of amendment 3 HELD (the term is
+outside `FUN_0046e9e0`'s interval).
+
+Capture `o_ww1`: the same argv + `--watch-write 948,988` (hardware write watchpoints on the at.x of both body-matrix
+buffers of car 1) with `--lat-bracket --lat-bracket-solver` for ordering. G-WRITER: name the instruction(s) (pc rva
+and return chain) that write at.x between the last substep and the next A4 on the jump frames. G-REPRO as before.

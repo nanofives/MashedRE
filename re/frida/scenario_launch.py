@@ -1041,6 +1041,48 @@ function latBracketArm(recBaseHex, car, solver){
   } catch(e){ return 'ERR ' + e; }
 }
 function latBracketDrain(){ const r = LB.rows; LB.rows = []; return r; }
+// --- WATCH-WRITE probe (d3b 2026-10-16) -------------------------------------
+// --watch-write <hexoff>[,<hexoff>]: hardware WRITE watchpoints (debug registers, slots 0/1) on the
+// chosen car's record at base + car*0xd04 + off, armed on every thread at the statediff arm. Each hit
+// logs [LB_SEQ (shared with lat-bracket, for ordering), slot, pc rva, three stack return addresses in
+// the image (rva), the dword after the write as float]. Data breakpoints trap AFTER the writing
+// instruction, so the logged pc is the instruction after the store. No Interceptor, no code patch.
+const WW = { armed:false, rows:[], n:0, err:null, addrs:[] };
+function wwRva(x){ return '0x' + ((x >>> 0) >>> 0).toString(16); }
+function watchWriteArm(recBaseHex, car, offsCsv){
+  if (WW.armed) return 'already armed';
+  try {
+    const base = parseInt(recBaseHex, 16) + car * 0xd04;
+    const offs = offsCsv.split(',').map(s => parseInt(s, 16)).slice(0, 2);
+    WW.addrs = offs.map(o => ptr(base + o));
+    Process.setExceptionHandler(function(d){
+      if (d.type !== 'single-step' && d.type !== 'breakpoint') return false;
+      try {
+        const c = d.context;
+        const bt = [];
+        for (let k = 0; k < 64 && bt.length < 3; k++) {
+          const x = c.esp.add(k * 4).readU32() >>> 0;
+          if (x >= 0x401000 && x < 0x5c0000) bt.push(wwRva(x));
+        }
+        const vals = WW.addrs.map(a => a.readFloat());
+        WW.n++;
+        if (WW.rows.length < 200000)
+          WW.rows.push([LB_SEQ, wwRva(c.pc.toUInt32()), bt[0] || '', bt[1] || '', bt[2] || ''].concat(vals));
+      } catch(e){ if (!WW.err) WW.err = 'hit ' + e; }
+      return true;
+    });
+    let n = 0;
+    Process.enumerateThreads().forEach(function(t){
+      for (let k = 0; k < WW.addrs.length; k++) {
+        try { t.setHardwareWatchpoint(k, WW.addrs[k], 4, 'w'); if (k === 0) n++; }
+        catch(e){ if (!WW.err) WW.err = 'arm tid ' + t.id + ' ' + e.message; }
+      }
+    });
+    WW.armed = true;
+    return 'watch-write armed on ' + n + ' threads: ' + WW.addrs.map(a => a.toString()).join(',');
+  } catch(e){ return 'ERR ' + e; }
+}
+function watchWriteDrain(){ const r = WW.rows; WW.rows = []; return r; }
 // ---------------------------------------------------------------------------
 
 // --- AXIS probe (U-9175, D2 attempt 16) ------------------------------------
@@ -3304,6 +3346,9 @@ rpc.exports = {
   aiStepDrain: function(){ return aiStepDrain(); },
   latBracketArm: function(recBaseHex, car, solver){ return latBracketArm(recBaseHex, car, solver); },
   latBracketDrain: function(){ return latBracketDrain(); },
+  watchWriteArm: function(recBaseHex, car, offs){ return watchWriteArm(recBaseHex, car, offs); },
+  watchWriteDrain: function(){ return watchWriteDrain(); },
+  watchWriteStats: function(){ return JSON.stringify({armed:WW.armed, n:WW.n, pending:WW.rows.length, err:WW.err}); },
   latBracketStats: function(){ return JSON.stringify({armed:LB.armed, a6a:LB.nA6a, a6b:LB.nA6b,
                                                       sub:LB.nSub, sol:(LB.nSol || 0), pending:LB.rows.length,
                                                       skipped:LB.skipped, err:LB.err}); },
@@ -3878,6 +3923,10 @@ def main():
                          "must STILL pass (no-regression) — that is how the load-dispatcher hooks "
                          "get their booted-race verification. Exits shortly after the assert "
                          "(no long hold needed); combine with --hold 0.")
+    ap.add_argument("--watch-write", default="",
+                    help="[d3b] comma list (max 2) of hex record offsets; hardware WRITE watchpoints on the "
+                         "--statediff-car record at base+car*0xd04+off, armed with the statediff arm. Writes "
+                         "<statediff-out>.watch.csv (lat-bracket seq, pc rva, 3 return rvas, watched floats).")
     ap.add_argument("--lat-bracket-solver", action="store_true",
                     help="[d3b] with --lat-bracket: also sample at the wheel-contact solver entry 0x0046f6c0 "
                          "(site 3, ESI-filtered), right after FUN_0046e9e0 in each substep.")
@@ -4183,6 +4232,8 @@ def main():
                 print("  [statediff]", E.ai_step_arm(os.environ.get("MASHED_AISTEP_LOCALS", "1") != "0"))
             if args.lat_bracket:
                 print("  [statediff]", E.lat_bracket_arm("0x008815a0", args.statediff_car, bool(args.lat_bracket_solver)))
+            if args.watch_write:
+                print("  [statediff]", E.watch_write_arm("0x008815a0", args.statediff_car, args.watch_write))
             if args.slide_probe:
                 print("  [statediff]", E.slide_probe_arm("0x008815a0", args.statediff_car,
                                                           args.slide_probe_limit))
@@ -4584,6 +4635,18 @@ def main():
                 # discipline as the .msd above: a ctrl trace whose bytes never move
                 # tells you the AI never commanded anything, which is a capture
                 # failure, not a measurement — so it is reported, not hidden.
+                if args.watch_write:
+                    try: print("  [statediff] watch-write agent:", E.watch_write_stats())
+                    except Exception as _e: print("  [statediff] watch-write stats failed:", _e)
+                    ww_rows = []
+                    try: ww_rows = E.watch_write_drain()
+                    except Exception as _e: print("  [statediff] watch-write drain failed:", _e)
+                    wwp = outp.with_suffix(outp.suffix + ".watch.csv")
+                    with open(wwp, "w", newline="") as f:
+                        f.write("seq,pc,ret0,ret1,ret2," + ",".join("w%d" % k for k in range(len(args.watch_write.split(",")[:2]))) + chr(10))
+                        for r in ww_rows:
+                            f.write(",".join(repr(x) if isinstance(x, float) else str(x) for x in r) + chr(10))
+                    print(f"  [statediff] watch-write {len(ww_rows)} hits -> {wwp}")
                 if args.lat_bracket:
                     # [U-9156 / D2 section 21.3] Report the counters BEFORE the rows, and
                     # report them even when the drain is empty: memory
