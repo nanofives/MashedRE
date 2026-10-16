@@ -82,7 +82,7 @@ The registered G-TOOK-R relation was wrong (A1). Decision 1 of the PREREG fired 
 
 ## 7. Decisions needed (user)
 
-1. Keep the default-ON arm on merge? It changes the default control trio to `716cb2fd / 2a2afda1 / ba90ed88` (step and gates print the array), the player trace is unchanged.
+1. **DECIDED 2026-10-16 (user): keep the default-ON arm.** It changes the default control trio to `716cb2fd / 2a2afda1 / ba90ed88` (step and gates print the array), the player trace is unchanged. No code change follows: the branch already has it default ON.
 2. The regime-A cost of `MASHED_PATHPROG` (A 0/3 vs 1/3) is the next question for any `MASHED_ROUND_GRID` default (it needs PATHPROG). Not started.
 
 ## 8. Raw
