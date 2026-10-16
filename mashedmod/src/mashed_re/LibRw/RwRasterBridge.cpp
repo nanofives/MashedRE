@@ -147,18 +147,20 @@ void* RasterFromTxdTexture(const Txd::Texture& tex) {
     // has alpha < 255" on every texture (verify/d1r1_20261016/texalpha_rule.py; the two
     // apparent misses are same-name textures in other pizzes). This bridge creates every
     // raster C8888, so librw marks ALL of them alpha and every textured race draw blends and
-    // alpha-tests. OPT-IN, default OFF: MASHED_LIBRW_RWSTATES=1 (with RwRaceSubmit.cpp's
-    // alpha-test/cull half). Held OFF by PREREG_d1r1.md section 4 rules 1-2: on Arctic it
-    // unmasks two original behaviours the port does not have yet -- one world sector's
-    // opaque-textured meshes blend without vertex alpha of their own [UNCERTAIN U-9689], and
-    // the weather pass's direct CULLMODE=1 at 0x0049a084 [U-9690] -- so rows that matched by
-    // accident stop matching (verify/d1r1_20261016/RESULT_d1r1.md section 4).
+    // alpha-tests. DEFAULT ON since rstates (2026-10-16), MASHED_LIBRW_RWSTATES=0 opts out
+    // (with RwRaceSubmit.cpp's alpha-test/cull half). d1r1 held it OFF because on Arctic it
+    // unmasked two original behaviours the port lacked: one world sector's opaque-textured
+    // meshes blending without vertex alpha of their own, and the line pass's direct
+    // CULLMODE=1 at 0x0049a084. rstates ported both: RenderWare's sticky vertex-alpha flag
+    // (U-9689: the Arctic sector callback 0x0049a750 never calls FUN_004d7100) and the
+    // rain-pass cull leak (U-9690). F1 passes PREREG_rstates.md section 3 together with them
+    // (verify/rstates_20261016/RESULT_rstates.md).
     // [UNCERTAIN U-9688] FUN_004d5340's own alpha predicate is not decompiled; pixel scan and
     // palette scan agree on every shipped texture, so the choice cannot change a draw here.
     {
         static const bool s_rwstates = [] {
             const char* e = std::getenv("MASHED_LIBRW_RWSTATES");
-            return e && e[0] == '1' && e[1] == '\0';
+            return !(e && e[0] == '0' && e[1] == '\0');
         }();
         if (s_rwstates && ras->platform == rw::PLATFORM_D3D9)
             GETD3DRASTEREXT(ras)->hasAlpha = (amin < 255);   // macro: rwd3d.h:307

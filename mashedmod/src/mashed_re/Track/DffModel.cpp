@@ -3,6 +3,7 @@
 
 #include "DffModel.h"
 
+#include <cmath>
 #include <cstring>
 
 namespace mashed_re {
@@ -107,7 +108,7 @@ void FrameXformNormal(const std::vector<Frame>& frames, int idx,
 }  // namespace
 
 bool DffModel::Parse(const std::uint8_t* data, std::size_t len, bool bake_frames) {
-    materials.clear(); batches.clear(); frames.clear();
+    materials.clear(); batches.clear(); frames.clear(); atomic_spheres.clear();
     total_tris = total_verts = 0;
     Rd r{data, len};
     Chunk clump;
@@ -337,6 +338,23 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len, bool bake_frames
             ++found_atomics;
             const Geo& geo = geos[static_cast<std::size_t>(gi)];
             const std::size_t nverts = geo.verts.size() / 3;
+            {
+                // [rstates] the atomic's sphere in model space (see DffModel.h).
+                AtomicSphere as2{};
+                FrameXform(frames, fi, geo.sphere, as2.c);
+                float scale2 = 0.f;
+                for (int ax = 0; ax < 3; ++ax) {
+                    const float e[3] = {ax == 0 ? 1.f : 0.f, ax == 1 ? 1.f : 0.f,
+                                        ax == 2 ? 1.f : 0.f};
+                    float o[3];
+                    FrameXformNormal(frames, fi, e, o);
+                    const float l2 = o[0] * o[0] + o[1] * o[1] + o[2] * o[2];
+                    if (l2 > scale2) scale2 = l2;
+                }
+                as2.r_obj = geo.sphere[3];
+                as2.r_world = geo.sphere[3] * std::sqrt(scale2);
+                atomic_spheres.push_back(as2);
+            }
             // transformed vertex positions for this atomic (+ its own bbox)
             float abox[6] = {1e9f, 1e9f, 1e9f, -1e9f, -1e9f, -1e9f};
             std::vector<float> w(nverts * 3);

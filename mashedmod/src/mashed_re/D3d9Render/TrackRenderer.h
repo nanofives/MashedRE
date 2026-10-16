@@ -191,6 +191,14 @@ private:
         // F3: per-material UV-scroll rate (units/sec) from the DFF material's
         // RW UVAnim extension -> the track .UVA dict (sea/sky props scroll).
         std::vector<MatScroll>          mat_scroll;
+        // [rstates] LibRw::kInst* kind the instances are queued with: in the RpWorld
+        // (RWP_Object, non-excluded Clump_Filename) or drawn after it (excluded
+        // clumps, the Arctic sea grid). See PREREG_rstates.md F2.
+        int                             rw_kind = 0;
+        // [rstates] RW vertex-alpha need of the mesh RpClumpRender draws LAST for this
+        // model (DFF atomic 0, highest material): material alpha != 255 or a prelit
+        // alpha != 255 in that batch (FUN_00543500 / default callback rule).
+        bool                            last_mesh_va = false;
     };
     std::vector<Prop> props_;
 

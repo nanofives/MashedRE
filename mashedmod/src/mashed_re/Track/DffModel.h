@@ -111,6 +111,14 @@ public:
     std::vector<DffMaterial> materials;
     std::vector<DffBatch>    batches;     // one per (atomic, material) pair
     std::vector<DffFrame>    frames;      // [librwrest] the clump's frame list, as streamed
+    // [rstates] Per atomic (index = DffBatch::atomic, stream order): morph target 0's
+    // bounding sphere, which RpAtomicSetGeometry copies to atomic+0x1c/+0x28. `c` is the
+    // centre moved into model space through the same frame chain the vertices are baked
+    // with; `r_world` is the radius scaled by that chain's largest axis length (what
+    // RpAtomicGetWorldBoundingSphere 0x004e6100 does for a non-orthonormal LTM);
+    // `r_obj` is the stream radius itself (FUN_004721e0 reads atomic+0x28 unscaled).
+    struct AtomicSphere { float c[3]; float r_world; float r_obj; };
+    std::vector<AtomicSphere> atomic_spheres;
     float                    bbox[6] = {};  // model-space min xyz, max xyz
     std::uint32_t            total_tris = 0, total_verts = 0;
 

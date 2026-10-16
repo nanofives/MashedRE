@@ -1330,6 +1330,7 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
     // E2'b step 3: same reload safety on the librw side -- see the header note on
     // why this cannot live at the tail alongside RaceSubmit_OnTrackLoaded.
     LibRw::RaceSubmit_BeginTrackLoad();
+    rain_enabled_ = false;    // [rstates] re-read from this track's COURSE.LUA below
     std::FILE* log = log_path ? std::fopen(log_path, "a") : nullptr;
     auto fail = [&](const char* why) {
         if (log) { std::fprintf(log, "R4 track load FAILED: %s\n", why); std::fclose(log); }
@@ -1735,6 +1736,29 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
             std::snprintf(m.source_name, sizeof(m.source_name), "%s", dff_name);
             if (d3d9_batches)
                 BuildDffBatches(dev, m, dicts, &p->batches, &p->textures);
+            // [rstates] Vertex-alpha need of the mesh RpClumpRender (0x004e6680) draws
+            // LAST for this model. RpClumpAddAtomic FUN_004e6f80 inserts at the list head,
+            // so the walk is newest-first and ends on DFF atomic 0; within an atomic the
+            // meshes run in material order, so the last one is its highest material. The
+            // need is the per-mesh rule of the default callback (0x004ec462..0x004ec491)
+            // and FUN_00543500: material alpha != 0xff or vertex alpha in the mesh. The
+            // prelit test covers this batch's vertices only (RW tests the mesh's vertex
+            // range; the two agree for a single-mesh atomic such as every track sky).
+            {
+                std::ptrdiff_t last = -1;
+                for (std::size_t bi = 0; bi < m.batches.size(); ++bi)
+                    if (m.batches[bi].atomic == 0 &&
+                        (last < 0 || m.batches[bi].material >
+                                     m.batches[static_cast<std::size_t>(last)].material))
+                        last = static_cast<std::ptrdiff_t>(bi);
+                p->last_mesh_va = false;
+                if (last >= 0) {
+                    const Track::DffBatch& lb = m.batches[static_cast<std::size_t>(last)];
+                    p->last_mesh_va = m.materials[lb.material].rgba[3] != 255;
+                    for (std::uint32_t c : lb.prelit)
+                        if ((c >> 24) != 0xFFu) { p->last_mesh_va = true; break; }
+                }
+            }
             // F3: bind each material's UVAnim-extension name to its .UVA rate.
             p->mat_scroll.assign(m.materials.size(), {});
             for (std::size_t mi = 0; mi < m.materials.size(); ++mi)
@@ -1816,9 +1840,18 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                     const std::uint8_t* mb = find_entry(b, &ml);
                     if (mb && ml >= 4 && load_prop(a, &p)) {
                         read_mts(mb, ml, &p.instances);
+                        // [rstates] RWP_Object props are drawn by the original's world
+                        // pass between sectors (Arctic Tyres after its first sector).
+                        p.rw_kind = LibRw::kInstInWorld;
                         if (!p.instances.empty())
                             props_.push_back(std::move(p));
                     }
+                } else if (line.find("RainEnable(") != std::string::npos) {
+                    // [rstates] Lua `RainEnable` (handler 0x004917a0, name 0x005cdb28)
+                    // sets DAT_00771534 (0x004917a5), which gates the line pass
+                    // FUN_004914b0 -> FUN_00499d90 and its direct cull write (U-9690).
+                    // Comments are already stripped from `line`.
+                    rain_enabled_ = true;
                 } else if (std::sscanf(line.c_str(),
                                        " Clump_Filename( %d , \"%63[^\"]\" )",
                                        &idx, a) == 2 ||
@@ -1997,7 +2030,14 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                     // mashedmod/exe_sources.rsp and asi_sources.rsp. The node's
                     // own translate loop and this renderer call the SAME
                     // ArcticSeaTileGrid; no second copy of the grid remains.
+                    // [rstates] World registration (0x00479da6/0x00479db3): only the
+                    // clumps Clump_Exclude_From_World does not flag join the RpWorld.
+                    p.rw_kind = excluded[c.idx] ? LibRw::kInstAfterWorld
+                                                : LibRw::kInstInWorld;
                     if (!s_no_sea_tile && course_id_ == 0 && c.idx == 2) {
+                        // The 25 tiles are drawn by Arctic slot 2 (0x00449030,
+                        // RpClumpRender per tile) after the world, not by the world pass.
+                        p.rw_kind = LibRw::kInstAfterWorld;
                         float grid[mashed_re::Render::kArcticSeaTileCount][3];
                         mashed_re::Render::ArcticSeaTileGrid(grid);
                         for (int k = 0; k < mashed_re::Render::kArcticSeaTileCount; ++k) {
@@ -2398,6 +2438,19 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
             std::fclose(ef);
         }
         return false;
+    }
+    {
+        // [rstates] the course facts RenderWare's world pass depends on
+        // (PREREG_rstates.md F3/F4). Arctic (Course_Id 0) is the one record whose slot 0
+        // installs the world-sector callback 0x0049a0c0 (0x00448951/0x00448963, the only
+        // callers), and that callback never sets the vertex-alpha flag. The draw before
+        // its first sector is the slot-3 sky (RpClumpRender of the Sky_Filename clumps,
+        // 0x00426d9d), so the flag the world starts with is that sky's last-mesh need.
+        LibRw::RaceCourseFacts facts;
+        facts.sector_keeps_vertex_alpha = (course_id_ == 0);
+        facts.sky_last_vertex_alpha     = sky_.last_mesh_va;
+        facts.rain                      = rain_enabled_;
+        LibRw::RaceSubmit_SetCourseFacts(facts);
     }
 
     ready_ = true;
@@ -7571,7 +7624,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     for (const auto& p : props_) {
         if (p.rw_model < 0) continue;
         for (const auto& inst : p.instances)
-            LibRw::RaceSubmit_AddInstance(p.rw_model, (const float*)&inst);
+            LibRw::RaceSubmit_AddInstance(p.rw_model, (const float*)&inst, p.rw_kind);
     }
 
     MARK(d_props);   // instanced track props
@@ -7807,7 +7860,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
                 fx_car(ai_slot, am);                                 // [rfx]
                 submit(ai_slot, am, a.vel);
             } else {
-                LibRw::RaceSubmit_AddInstance(rw_car_model_, (const float*)&am);
+                LibRw::RaceSubmit_AddInstance(rw_car_model_, (const float*)&am, LibRw::kInstCar);
             }
             ++ai_slot;
         }
@@ -7856,7 +7909,8 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         rotor(cm.rotA_frame, cm.rotA_bind, c.rotA);
         rotor(cm.rotB_frame, cm.rotB_bind, c.rotB);
         LibRw::RaceSubmit_AddInstancePosed(cm.rw_model, (const float*)&cmx, poses,
-                                           static_cast<std::size_t>(np), -1.f);
+                                           static_cast<std::size_t>(np), -1.f, 0.f, nullptr,
+                                           LibRw::kInstAfterWorld);   // [rstates] not in the world
     }
 
     dev->SetTexture(0, nullptr);

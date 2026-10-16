@@ -17,15 +17,21 @@
 #include <cstdarg>
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 #include <vector>
 
+#include "../Math/RwLutTables.h"
 #include "../Race/RaceSceneState.h"
+#include "../Track/DffModel.h"
 #include "../Track/TrackWorld.h"
 #include "../Txd/TxdDecoder.h"
 
 // [rtex] librw P9 hook (d3d9matfx.cpp): the original's raster alpha flag for the MatFX env
 // single / two pass choice.
 namespace rw { namespace d3d9 { extern rw::int32 (*rw_mashed_rasteralpha)(rw::Raster*); } }
+// [rstates] librw's opt-in sticky vertex-alpha switches (d3d9render.cpp, MASHED_PATCHES.md).
+extern bool rw_mashed_skip_empty_meshes;
+extern bool rw_mashed_keep_vertex_alpha;
 
 namespace mashed_re {
 namespace LibRw {
@@ -69,8 +75,10 @@ std::vector<rw::Clump*> g_models;
 // [rtex] per instance: the car's env coefficient and env frame matrix (FUN_00420340 @
 // 0x00420340 re-applies both per car each frame; one shared clump draws all four cars).
 constexpr int kCarFxMarker = -2;   // [rfx] RaceSubmit_AddCarFxMarker's queue entry
+// [rstates] `kind`: where RenderWare's world pass draws it (RwRaceSubmit.h kInst*).
 struct Inst { int model; float m[16]; bool fx = false; float env_coef = 0.f; float env_m[16];
-              std::vector<FramePose> poses; float sun_scale = -1.f; };   // [librwrest]
+              std::vector<FramePose> poses; float sun_scale = -1.f;   // [librwrest]
+              int kind = kInstAfterWorld; };
 std::vector<Inst>       g_insts;
 // [librwrest] per model, parallel to g_models: the FRAMELIST frames of a hierarchy model and
 // their streamed matrices (restored after each posed copy draws). Empty otherwise.
@@ -97,6 +105,25 @@ std::vector<ModelEnv>   g_model_env;
 // [rprops U-9696] sky copies queued this frame: drawn BEFORE the world with depth test, depth write
 // and fog off (the original's sky pass, FUN_004492b0 render states 8 and 6 = 0, 0x00427110..0x00427124).
 std::vector<Inst>       g_sky;
+
+// [rstates] RenderWare world-pass data (PREREG_rstates.md F2). Per registered model, the
+// owning DFF atomic of each rw::Atomic BuildClump made (one per batch), grouped per DFF
+// atomic in creation (= material) order, plus each DFF atomic's stream bounding sphere.
+struct ModelRw {
+    std::vector<std::vector<rw::Atomic*>>       by_dff;
+    std::vector<Track::DffModel::AtomicSphere>  spheres;
+};
+std::vector<ModelRw> g_model_rw;   // parallel to g_models
+
+struct WorldWalk {
+    std::vector<Track::PlaneNode> planes;
+    std::int32_t                  root = -1;
+    std::vector<float>            cell;      // 6 per sector: inf xyz, sup xyz (FUN_004e51e0)
+    std::vector<rw::Atomic*>      sector_atomic;
+    bool                          ok = false;
+};
+WorldWalk       g_walk;
+RaceCourseFacts g_facts;
 
 // Build the camera once. frameBuffer is a plain Raster::CAMERA: on the D3D9
 // backend such a raster has natras->texture == nil, and setRenderSurfaces then
@@ -236,7 +263,7 @@ void RaceSubmit_Shutdown() {
     if (g_state_block) { g_state_block->Release(); g_state_block = nullptr; }
     if (g_cam)   { g_cam->destroy();   g_cam   = nullptr; }
     for (rw::Clump* c : g_models) if (c) c->destroy();
-    g_models.clear(); g_insts.clear();
+    g_models.clear(); g_model_rw.clear(); g_insts.clear();
     if (g_world) { g_world->destroy(); g_world = nullptr; }
     g_amb = g_sun = nullptr;
     g_scene_up = false;
@@ -254,8 +281,57 @@ bool RaceSubmit_OnTrackLoaded(const Track::World& world,
     g_scene_up = false;
 
     TextureSource ts{ dicts, (int)ndicts };
-    g_world = static_cast<rw::World*>(BuildWorld(world, ts));
+    std::vector<void*> sector_atomics;
+    g_world = static_cast<rw::World*>(BuildWorld(world, ts, &sector_atomics));
     if (!g_world) { RLog("FAIL: BuildWorld"); return false; }
+
+    // [rstates] The BSP and each sector's CELL box, as MASHED.exe's FUN_004e51e0 builds
+    // it at world load: copy the world box (world+0x50), walk the tree, narrow the right
+    // child to inf[type] = rightValue (fld [edx+0x14] 0x004e5241 -> 0x004e5259) and the
+    // left child to sup[type] = leftValue (fld [edx+0x10] 0x004e525c -> 0x004e5262), and
+    // store the running box into every atomic sector (rep movsd to sector+0x48,
+    // 0x004e5219/0x004e5226). The frustum walk tests this box, not the stream box.
+    g_walk = WorldWalk{};
+    g_walk.planes = world.planes;
+    g_walk.root   = world.root;
+    g_walk.cell.assign(world.sectors.size() * 6, 0.f);
+    g_walk.sector_atomic.assign(world.sectors.size(), nullptr);
+    for (std::size_t i = 0; i < sector_atomics.size() && i < world.sectors.size(); ++i)
+        g_walk.sector_atomic[i] = static_cast<rw::Atomic*>(sector_atomics[i]);
+    {
+        struct Item { std::int32_t node; float inf[3], sup[3]; };
+        Item top{ world.root, {}, {} };
+        for (int k = 0; k < 3; ++k) {   // header box order is sup,inf; take it per component
+            top.inf[k] = std::fmin(world.bbox[k], world.bbox[k + 3]);
+            top.sup[k] = std::fmax(world.bbox[k], world.bbox[k + 3]);
+        }
+        std::vector<Item> stack{ top };
+        bool bad = world.root == -1 && world.sectors.empty();
+        while (!stack.empty() && !bad) {
+            Item it = stack.back(); stack.pop_back();
+            if (it.node < 0) {
+                const std::size_t s = static_cast<std::size_t>(-1 - it.node);
+                if (s >= world.sectors.size()) { bad = true; break; }
+                for (int k = 0; k < 3; ++k) {
+                    g_walk.cell[s * 6 + k]     = it.inf[k];
+                    g_walk.cell[s * 6 + 3 + k] = it.sup[k];
+                }
+                continue;
+            }
+            if ((std::size_t)it.node >= world.planes.size()) { bad = true; break; }
+            const Track::PlaneNode& p = world.planes[(std::size_t)it.node];
+            const int c = p.type / 4;
+            Item l = it, r = it;
+            l.node = p.left;  l.sup[c] = p.left_value;
+            r.node = p.right; r.inf[c] = p.right_value;
+            stack.push_back(r);
+            stack.push_back(l);
+        }
+        g_walk.ok = !bad && !world.planes.empty();
+        RLog("rstates: world walk %s planes=%zu sectors=%zu root=%d",
+             g_walk.ok ? "ready" : "UNAVAILABLE", world.planes.size(), world.sectors.size(),
+             (int)world.root);
+    }
 
     // Bind the camera to the world. This is what installs worldBeginUpdateCB,
     // which sets engine->currentWorld (camera.cpp:258-261) -- and any geometry
@@ -362,6 +438,7 @@ void RaceSubmit_BeginTrackLoad() {
     if (!g_engine_up) return;
     for (rw::Clump* c : g_models) if (c) c->destroy();
     g_models.clear();
+    g_model_rw.clear();
     g_insts.clear();
     g_sky.clear();
     g_uvanim.clear();
@@ -377,6 +454,13 @@ void RaceSubmit_BeginTrackLoad() {
     g_model_rwstates.clear();
 }
 
+void RaceSubmit_SetCourseFacts(const RaceCourseFacts& facts) {
+    g_facts = facts;
+    RLog("rstates: course facts sector_keeps_vertex_alpha=%d sky_last_vertex_alpha=%d rain=%d",
+         (int)facts.sector_keeps_vertex_alpha, (int)facts.sky_last_vertex_alpha,
+         (int)facts.rain);
+}
+
 int RaceSubmit_RegisterModel(const Track::DffModel& model,
                              const Txd::Dictionary* dicts, std::size_t ndicts,
                              std::uint32_t ambient,
@@ -387,11 +471,29 @@ int RaceSubmit_RegisterModel(const Track::DffModel& model,
     std::vector<std::int32_t>  atomic_part;   // [rtex]
     std::vector<void*>         frames;        // [librwrest]
     std::vector<std::int32_t>  atomic_frame;  // [librwrest]
+    std::vector<std::int32_t>  atomic_dff;    // [rstates]
     rw::Clump* c = static_cast<rw::Clump*>(
         BuildClump(model, ts, ambient, &atomic_mat, &atomic_part, hierarchy, &frames,
-                   &atomic_frame));
+                   &atomic_frame, &atomic_dff));
     if (!c) { RLog("WARN: BuildClump failed -- model is NOT drawn (no D3D9 fallback)"); return -1; }
     RegisterUvAnim(c, atomic_mat, uv_rates, nmats);
+    {
+        // [rstates] group the clump's rw::Atomics by owning DFF atomic (creation order).
+        ModelRw mr;
+        mr.spheres = model.atomic_spheres;
+        mr.by_dff.resize(model.atomic_spheres.size());
+        std::size_t ai = 0;
+        FORLIST(lnk, c->atomics) {
+            rw::Atomic* a = rw::Atomic::fromClump(lnk);
+            if (ai < atomic_dff.size() && atomic_dff[ai] >= 0) {
+                const std::size_t d = (std::size_t)atomic_dff[ai];
+                if (d >= mr.by_dff.size()) mr.by_dff.resize(d + 1);
+                mr.by_dff[d].push_back(a);
+            }
+            ++ai;
+        }
+        g_model_rw.push_back(std::move(mr));
+    }
     // Deliberately NOT added to the rw::World: World::render() walks the clump
     // list and would draw every registered model once, at its authored transform,
     // regardless of how many copies are actually placed this frame. Instanced
@@ -462,9 +564,9 @@ void RaceSubmit_SetModelRwStates(int handle) {
 
 void RaceSubmit_AddInstancePosed(int handle, const float* m44, const FramePose* poses,
                                  std::size_t npose, float sun_scale, float env_coef,
-                                 const float* env_m44) {
+                                 const float* env_m44, int kind) {
     if (handle < 0 || !m44 || (std::size_t)handle >= g_models.size()) return;
-    Inst i; i.model = handle;
+    Inst i; i.model = handle; i.kind = kind;
     for (int k = 0; k < 16; ++k) i.m[k] = m44[k];
     if (env_m44 && (std::size_t)handle < g_model_env.size() &&
         !g_model_env[(std::size_t)handle].mats.empty()) {
@@ -484,9 +586,9 @@ void RaceSubmit_AddCarFxMarker() {
     g_insts.push_back(std::move(i));
 }
 
-void RaceSubmit_AddInstance(int handle, const float* m44) {
+void RaceSubmit_AddInstance(int handle, const float* m44, int kind) {
     if (handle < 0 || !m44 || (std::size_t)handle >= g_models.size()) return;
-    Inst i; i.model = handle;
+    Inst i; i.model = handle; i.kind = kind;
     for (int k = 0; k < 16; ++k) i.m[k] = m44[k];
     g_insts.push_back(i);
 }
@@ -617,6 +719,275 @@ void SetClumpTransform(rw::Clump* c, const float* m) {
     d->update();
     f->updateObjects();
 }
+
+// ---------------------------------------------------------------------------
+// [rstates] RenderWare's world pass, ported (PREREG_rstates.md F2-F5). Every rule cites
+// MASHED.exe; the Python model verify/rstates_20261016/bsp_order.py of the same walk
+// reproduced the original's recorded sector sequence on 9/9 d1r1 frames.
+// ---------------------------------------------------------------------------
+
+// Knobs: unset -> the compiled default; "0" -> off; anything else -> on. All four are DEFAULT
+// ON since rstates (2026-10-16): they passed PREREG_rstates.md section 3 on the 9 d1r1 frames
+// (verify/rstates_20261016/RESULT_rstates.md); "=0" restores the d1r1 behaviour per fix.
+bool Knob(const char* name, bool def) {
+    const char* e = std::getenv(name);
+    if (!e || !*e) return def;
+    return !(e[0] == '0' && e[1] == '\0');
+}
+bool SectorWalkOn() { static const bool on = Knob("MASHED_LIBRW_SECTORWALK", true); return on; }
+bool StickyVaOn()   { static const bool on = Knob("MASHED_LIBRW_STICKYVA",   true); return on; }
+bool RainCullOn()   { static const bool on = Knob("MASHED_LIBRW_RAINCULL",   true); return on; }
+bool ClumpOrderOn() { static const bool on = Knob("MASHED_LIBRW_CLUMPORDER", true); return on; }
+
+// The camera's six frustum planes, outward normals, `n.p - d > 0` = outside, and the box of
+// its eight near/far corners. This is what the camera sync leaves at camera+0x94 (6 x 0x14:
+// normal, distance, closest-corner bytes) and +0x10c/+0x118 (frustumBoundBox sup/inf) before the
+// sync hook 0x004e38a0 reads them, for a perspective camera with a zero view offset.
+struct Frustum {
+    float n[6][3], d[6];
+    float inf[3], sup[3];
+    float eye[3];
+    float vwx;
+};
+
+void MakeFrustum(Frustum* f) {
+    const rw::Matrix* m = g_cam->getFrame()->getLTM();
+    const float r[3] = { m->right.x, m->right.y, m->right.z };
+    const float u[3] = { m->up.x, m->up.y, m->up.z };
+    const float a[3] = { m->at.x, m->at.y, m->at.z };
+    const float p[3] = { m->pos.x, m->pos.y, m->pos.z };
+    const float vx = g_cam->viewWindow.x, vy = g_cam->viewWindow.y;
+    const float zn = g_cam->nearPlane, zf = g_cam->farPlane;
+    auto dot = [](const float* x, const float* y) { return x[0]*y[0] + x[1]*y[1] + x[2]*y[2]; };
+    for (int k = 0; k < 3; ++k) { f->inf[k] = 1e30f; f->sup[k] = -1e30f; f->eye[k] = p[k]; }
+    for (int iz = 0; iz < 2; ++iz) {
+        const float z = iz ? zf : zn;
+        for (int sx = -1; sx <= 1; sx += 2)
+            for (int sy = -1; sy <= 1; sy += 2)
+                for (int k = 0; k < 3; ++k) {
+                    const float c = p[k] + a[k] * z + r[k] * (sx * vx * z) + u[k] * (sy * vy * z);
+                    if (c < f->inf[k]) f->inf[k] = c;
+                    if (c > f->sup[k]) f->sup[k] = c;
+                }
+    }
+    for (int k = 0; k < 3; ++k) { f->n[0][k] = -a[k]; f->n[1][k] = a[k]; }
+    f->d[0] = -(dot(a, p) + zn);
+    f->d[1] = dot(a, p) + zf;
+    int i = 2;
+    for (int s = -1; s <= 1; s += 2, ++i) {
+        float nn[3] = { s * r[0] - vx * a[0], s * r[1] - vx * a[1], s * r[2] - vx * a[2] };
+        const float l = std::sqrt(dot(nn, nn));
+        for (int k = 0; k < 3; ++k) f->n[i][k] = nn[k] / l;
+        f->d[i] = dot(f->n[i], p);
+    }
+    for (int s = -1; s <= 1; s += 2, ++i) {
+        float nn[3] = { s * u[0] - vy * a[0], s * u[1] - vy * a[1], s * u[2] - vy * a[2] };
+        const float l = std::sqrt(dot(nn, nn));
+        for (int k = 0; k < 3; ++k) f->n[i][k] = nn[k] / l;
+        f->d[i] = dot(f->n[i], p);
+    }
+    f->vwx = vx;
+}
+
+// RW's sign tests here are integer tests on the float bits (`test reg,reg`), so -0.0 is "< 0".
+inline bool Neg(float v) { return std::signbit(v); }
+
+// The frame's sector list, as the camera sync hook 0x004e38a0 builds it. Explicit-stack descent from the root; a plane whose
+// two sides the frustum box both reaches sends the camera's side first and pushes the other
+// (0x004e3a5e..0x004e3aa4, front-to-back since world+0xc != 2), otherwise the one side
+// reached is taken (0x004e3aa6..0x004e3ab3); an atomic sector is listed unless its cell box
+// lies wholly outside one of the six planes, tested at the plane's closest corner
+// (0x004e396b..0x004e3a2b).
+void WalkSectors(const Frustum& f, std::vector<int>* out) {
+    out->clear();
+    if (!g_walk.ok) return;
+    std::vector<std::int32_t> stack;
+    std::int32_t node = g_walk.root;
+    for (;;) {
+        if (node >= 0) {
+            const Track::PlaneNode& p = g_walk.planes[(std::size_t)node];
+            const int c = p.type / 4;
+            const float a = f.inf[c] - p.left_value;
+            const float b = p.right_value - f.sup[c];
+            if (Neg(a) && Neg(b)) {
+                const bool cam_right = f.eye[c] > p.value;
+                stack.push_back(cam_right ? p.left : p.right);
+                node = cam_right ? p.right : p.left;
+            } else {
+                node = !Neg(a) ? p.right : p.left;
+            }
+            continue;
+        }
+        const std::size_t s = (std::size_t)(-1 - node);
+        const float* box = &g_walk.cell[s * 6];
+        bool outside = false;
+        for (int i = 0; i < 6 && !outside; ++i) {
+            float v = -f.d[i];
+            for (int k = 0; k < 3; ++k)
+                v += f.n[i][k] * (f.n[i][k] >= 0.f ? box[k] : box[3 + k]);
+            outside = !Neg(v) && v != 0.f;    // `test edi,edi; setg cl`: bits > 0
+        }
+        if (!outside) out->push_back((int)s);
+        if (stack.empty()) break;
+        node = stack.back(); stack.pop_back();
+    }
+}
+
+// The world sphere of DFF atomic `d` of an instance: centre through the instance matrix, the
+// radius scaled by the matrix's largest axis (RpAtomicGetWorldBoundingSphere 0x004e6100:
+// centre via RwV3dTransformPoints 0x004c3d60; radius * sqrt(max |axis|^2) unless the LTM is
+// flagged orthonormal, where the scale is 1 anyway).
+void WorldSphere(const Inst& in, const Track::DffModel::AtomicSphere& s, float c[3], float* r) {
+    const float* m = in.m;
+    for (int k = 0; k < 3; ++k)
+        c[k] = s.c[0] * m[0 + k] + s.c[1] * m[4 + k] + s.c[2] * m[8 + k] + m[12 + k];
+    float mx = 0.f;
+    for (int ax = 0; ax < 3; ++ax) {
+        const float l2 = m[ax*4]*m[ax*4] + m[ax*4+1]*m[ax*4+1] + m[ax*4+2]*m[ax*4+2];
+        if (l2 > mx) mx = l2;
+    }
+    *r = s.r_world * std::sqrt(mx);
+}
+
+// Sphere test of FUN_004c1b40 (RwCameraFrustumTestSphere): outside when radius < n.c - d on any plane.
+bool SphereOutside(const Frustum& f, const float c[3], float r) {
+    for (int i = 0; i < 6; ++i) {
+        const float v = f.n[i][2] * c[2] + f.n[i][0] * c[0] + f.n[i][1] * c[1] - f.d[i];
+        if (r < v) return true;
+    }
+    return false;
+}
+
+// Distance test of FUN_004721e0, the render callback the atomic plugin ctor FUN_00472330 installs on every
+// atomic (FUN_004722e0): draw only if |camera - centre|^2 * viewWindow.x < (radius / k)^2,
+// k = RW's LUT sqrt (FUN_004c3b30) of the float 0x37826136, radius = atomic+0x28 (the
+// unscaled stream radius), camera = the camera frame's modelling position (+0x40).
+bool DistanceKeeps(const Frustum& f, const float c[3], float r_obj) {
+    static const float k = [] {
+        const std::uint32_t bits = 0x37826136u;
+        float x; std::memcpy(&x, &bits, 4);
+        return Math::LutSqrt(x);
+    }();
+    const double q = (double)r_obj / (double)k;
+    const float thr = (float)(q * q);
+    const float dx = f.eye[0] - c[0], dy = f.eye[1] - c[1], dz = f.eye[2] - c[2];
+    const float d2 = (dz * dz + dx * dx + dy * dy) * f.vwx;
+    return d2 < thr;
+}
+
+// Render one DFF atomic of an instance: every rw::Atomic built from its batches, in
+// material order, honouring the RENDER flag as Clump::render does (clump.cpp:386).
+int g_posed_inst = -1;
+void PoseInstance(int ii) {
+    if (g_posed_inst == ii) return;
+    const Inst& in = g_insts[(std::size_t)ii];
+    SetClumpTransform(g_models[(std::size_t)in.model], in.m);
+    g_posed_inst = ii;
+}
+void RenderDffAtomic(int ii, std::size_t d) {
+    const Inst& in = g_insts[(std::size_t)ii];
+    const ModelRw& mr = g_model_rw[(std::size_t)in.model];
+    if (d >= mr.by_dff.size()) return;
+    PoseInstance(ii);
+    for (rw::Atomic* a : mr.by_dff[d])
+        if (a->object.object.flags & rw::Atomic::RENDER) a->render();
+}
+
+// MASHED_LIBRW_WALKLOG=<path>, DIAGNOSTIC ONLY: per frame, the sector list and the tied
+// atomics drawn after each sector, so the walk can be checked against bsp_order.py.
+std::FILE* WalkLog() {
+    static std::FILE* f = [] {
+        const char* e = std::getenv("MASHED_LIBRW_WALKLOG");
+        return (e && *e) ? std::fopen(e, "w") : nullptr;
+    }();
+    return f;
+}
+
+// The world pass of RpWorldRender (0x004e5660 -> 0x004e47b0 over the camera's sector list,
+// per sector 0x004e5680): draw the sector (FUN_004f0900 -> the world's sector callback), then every atomic
+// on the sector's +0x38 tie list with the RENDER flag and renderFrame != now; it is stamped
+// with renderFrame whether or not it passes, and drawn if its world sphere is not outside
+// the frustum (FUN_004c1b40) -- through its own render callback, FUN_004721e0's distance
+// test. Ties are rebuilt per instance per frame with 0x004e3c00's rule: box the world sphere
+// (centre +- radius), walk the BSP taking the left child if inf < leftValue and the right if
+// sup > rightValue (left first, right pushed, 0x004e3d71..0x004e3db3), and insert each tie at
+// the HEAD of the sector's list (0x004e3d30..0x004e3d48). Instances are tied in queue order,
+// each DFF atomic in RW clump order (newest first). [UNCERTAIN U-9697] the original's tie
+// order comes from RW's frame-sync order, which is not decoded; this order is the one the
+// recorded frames are checked against (RESULT_rstates.md).
+void RenderWorldPass(const Frustum& fr, bool sticky) {
+    std::vector<int> vis;
+    WalkSectors(fr, &vis);
+    const std::size_t ns = g_walk.sector_atomic.size();
+    struct Tie { int inst; int dff; };
+    struct WS { float c[3]; float r; float r_obj; bool stamped; };
+    std::vector<std::vector<Tie>> ties(ns);
+    std::vector<std::vector<WS>>  ws(g_insts.size());
+    for (std::size_t ii = 0; ii < g_insts.size(); ++ii) {
+        const Inst& in = g_insts[ii];
+        if (in.kind != kInstInWorld || in.model < 0 ||
+            (std::size_t)in.model >= g_model_rw.size())
+            continue;
+        const ModelRw& mr = g_model_rw[(std::size_t)in.model];
+        const std::size_t nd = mr.spheres.size();
+        ws[ii].resize(nd);
+        for (std::size_t j = 0; j < nd; ++j) {
+            const std::size_t d = nd - 1 - j;          // RW clump order: newest first
+            WS& w = ws[ii][d];
+            WorldSphere(in, mr.spheres[d], w.c, &w.r);
+            w.r_obj = mr.spheres[d].r_obj;
+            w.stamped = false;
+            const float inf[3] = { w.c[0] - w.r, w.c[1] - w.r, w.c[2] - w.r };
+            const float sup[3] = { w.c[0] + w.r, w.c[1] + w.r, w.c[2] + w.r };
+            std::vector<std::int32_t> stack;
+            std::int32_t node = g_walk.root;
+            for (;;) {
+                if (node >= 0) {
+                    const Track::PlaneNode& p = g_walk.planes[(std::size_t)node];
+                    const int c = p.type / 4;
+                    const bool l = inf[c] < p.left_value;
+                    const bool r = sup[c] > p.right_value;
+                    if (l) {
+                        if (r) stack.push_back(p.right);
+                        node = p.left;
+                        continue;
+                    }
+                    if (r) { node = p.right; continue; }
+                } else {
+                    const std::size_t s = (std::size_t)(-1 - node);
+                    if (s < ns) ties[s].push_back({ (int)ii, (int)d });
+                }
+                if (stack.empty()) break;
+                node = stack.back(); stack.pop_back();
+            }
+        }
+    }
+    // F3 / U-9689: the world-sector callback of this course keeps the vertex-alpha flag, so
+    // the world starts with the one the slot-3 sky left.
+    const bool keep_va = sticky && g_facts.sector_keeps_vertex_alpha;
+    if (keep_va) rw::SetRenderState(rw::VERTEXALPHA, g_facts.sky_last_vertex_alpha ? 1 : 0);
+    std::FILE* lg = WalkLog();
+    if (lg) std::fprintf(lg, "f%lld vis", g_frames);
+    for (int s : vis) {
+        if (lg) std::fprintf(lg, " S%d", s);
+        if (rw::Atomic* a = g_walk.sector_atomic[(std::size_t)s]) {
+            rw_mashed_keep_vertex_alpha = keep_va;
+            a->render();
+            rw_mashed_keep_vertex_alpha = false;
+        }
+        const std::vector<Tie>& t = ties[(std::size_t)s];
+        for (auto it = t.rbegin(); it != t.rend(); ++it) {   // head insertion
+            WS& w = ws[(std::size_t)it->inst][(std::size_t)it->dff];
+            if (w.stamped) continue;
+            w.stamped = true;
+            if (SphereOutside(fr, w.c, w.r)) continue;
+            if (!DistanceKeeps(fr, w.c, w.r_obj)) continue;
+            if (lg) std::fprintf(lg, " [m%d.%d]", g_insts[(std::size_t)it->inst].model, it->dff);
+            RenderDffAtomic(it->inst, (std::size_t)it->dff);
+        }
+    }
+    if (lg) { std::fputc('\n', lg); std::fflush(lg); }
+}
 }  // namespace
 
 void RaceSubmit_Render(const Race::RaceSceneState& st) {
@@ -746,12 +1117,13 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
     // FUN_004d7c10 maps 1:1 through 0x005d8d18). Measured on the original's in-race draws
     // (verify/d1r1_20261016): every blended draw ALPHAREF 0 / ALPHAFUNC 5, the world and car
     // bodies CULLMODE 2 (the world pass FUN_004492b0 sets RW cull 2 before rendering it).
-    // OPT-IN, default OFF: MASHED_LIBRW_RWSTATES=1, together with the raster alpha flag in
-    // RwRasterBridge.cpp; held OFF for the reason given there (PREREG_d1r1.md section 4).
+    // DEFAULT ON since rstates (2026-10-16), MASHED_LIBRW_RWSTATES=0 opts out, together with
+    // the raster alpha flag in RwRasterBridge.cpp (see the reason there and
+    // verify/rstates_20261016/RESULT_rstates.md).
     {
         static const bool s_rwstates = [] {
             const char* e = std::getenv("MASHED_LIBRW_RWSTATES");
-            return e && e[0] == '1' && e[1] == '\0';
+            return !(e && e[0] == '0' && e[1] == '\0');
         }();
         if (s_rwstates) {
             rw::SetRenderState(rw::ALPHATESTFUNC, rw::ALPHAGREATER);
@@ -979,7 +1351,12 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
              g_frames, ze, zw, zf, cull, ab);
     }
 
+    // [rstates] RenderWare's world pass replaces the one-clump world render (F2).
+    const bool walk = SectorWalkOn() && g_walk.ok;
+    const bool sticky = StickyVaOn();
+    g_posed_inst = -1;
     if (!s_nodraw) {
+        if (sticky) rw_mashed_skip_empty_meshes = true;   // [rstates] F3
         // [rprops U-9696] The sky clump copies, before the world: depth test and write off, fog off
         // (FUN_004492b0 sets render states 8 and 6 to 0 around its sky RpClumpRender, and the generic
         // sky path 0x00427110..0x0042715b does the same). UVs first: the sky material scrolls, and
@@ -1000,7 +1377,7 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
             rw::SetRenderState(rw::ZWRITEENABLE, 1);
             rw::SetRenderState(rw::FOGENABLE, (st.fog_on_ && !s_no_fog) ? 1 : 0);
         }
-        g_world->render();
+        if (!walk) g_world->render();   // [rstates] F2 replaces it with the sector walk
         // Instanced models. Each registered clump is re-posed and re-drawn once
         // per placed copy, which is what the D3D9 path does too (one
         // SetTransform + draw per entry in Prop::instances).
@@ -1051,8 +1428,15 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
         // (worse) re-upload texcoords between draws of the same buffer.
         ApplyUvAnim();
 
+        Frustum fr{};
+        if (walk) {
+            MakeFrustum(&fr);
+            RenderWorldPass(fr, sticky);
+        }
+        bool car_seen = false;
         bool fx_done = false;
-        for (const Inst& in : g_insts) {
+        for (std::size_t ii = 0; ii < g_insts.size(); ++ii) {
+            const Inst& in = g_insts[ii];
             // [rfx] the car FX marker (RaceSubmit_AddCarFxMarker): FUN_0041ebb0 draws the car
             // shadow and beam right after the car loop (0x00410bb4), before the copters
             // (FUN_00425e40, 0x00410c08)
@@ -1064,6 +1448,51 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
             if (in.model < 0 || (std::size_t)in.model >= g_models.size()) continue;
             rw::Clump* c = g_models[(std::size_t)in.model];
             if (!c) continue;
+            if (walk && in.kind == kInstInWorld) continue;   // drawn by the sector walk
+            if (in.kind == kInstCar && !car_seen) {
+                car_seen = true;
+                // [rstates] F4 / U-9690: on RainEnable tracks FUN_004270f0 runs the line
+                // pass FUN_004914b0 -> FUN_00499d90 after the world and the sea, and that
+                // pass writes D3D CULLMODE NONE through the state queue
+                // (FUN_004d5480(0x16,1), 0x0049a084) without touching RW's cull cache
+                // DAT_007d6b18. Every car drawn after it renders with cull NONE while RW
+                // still believes CULLBACK. Same mechanism here: write the device directly,
+                // so librw's cache keeps CULLBACK and its later identical sets are no-ops.
+                if (RainCullOn() && g_facts.rain && rw::d3d::d3ddevice)
+                    rw::d3d::d3ddevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+            }
+            // [rstates] A plain RpClumpRender'ed copy: not a car, no per-frame poses, no env
+            // pass, no model draw order or per-model states (librwrest/rtex draw those below,
+            // with their own order and culling: the cars' FUN_00420870 path, the copters'
+            // FUN_00425e40).
+            const DrawOrder* od0 = (std::size_t)in.model < g_model_order.size()
+                                       ? &g_model_order[(std::size_t)in.model] : nullptr;
+            const bool plain = in.kind != kInstCar && in.poses.empty() && !in.fx &&
+                               !(od0 && (od0->cull || !od0->seq.empty())) &&
+                               !((std::size_t)in.model < g_model_rwstates.size() &&
+                                 g_model_rwstates[(std::size_t)in.model]);
+            if (plain && (walk || ClumpOrderOn())) {
+                // [rstates] per DFF atomic. RpClumpRender walks the clump list from the
+                // head (0x004e6680) and RpClumpAddAtomic inserts at the head
+                // (FUN_004e6f80), so RW draws the newest atomic first: the reverse of the
+                // stream order (F5). Every atomic also carries FUN_004721e0's distance test
+                // under the sector walk (F2).
+                const ModelRw& mr = g_model_rw[(std::size_t)in.model];
+                const std::size_t nd = mr.by_dff.size();
+                const bool rw_order = ClumpOrderOn();
+                for (std::size_t j = 0; j < nd; ++j) {
+                    const std::size_t d = rw_order ? nd - 1 - j : j;
+                    if (walk && d < mr.spheres.size()) {
+                        float cc[3], rr;
+                        WorldSphere(in, mr.spheres[d], cc, &rr);
+                        if (!DistanceKeeps(fr, cc, mr.spheres[d].r_obj)) continue;
+                    }
+                    RenderDffAtomic((int)ii, d);
+                }
+                ++g_inst_drawn;
+                continue;
+            }
+            g_posed_inst = -1;
             float mm[16];
             for (int k = 0; k < 16; ++k) mm[k] = in.m[k];
             mm[13] += s_lift;
@@ -1163,6 +1592,8 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
         // @ 0x0041ebb0 runs after the four car renders (FUN_00410b30, 0x00410bb9); here only when
         // no marker was queued.
         if (!fx_done) RaceFx_DrawCarFx(g_cam);
+        rw_mashed_skip_empty_meshes = false;
+        rw_mashed_keep_vertex_alpha = false;
     }
     g_insts.clear();
     g_sky.clear();

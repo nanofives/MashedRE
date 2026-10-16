@@ -22,6 +22,11 @@ void (*rw_drawrec_post)(void) = nullptr;
 // called before rw_drawrec_pre; rw_drawrec_post clears it. Null unless the recorder is on.
 void (*rw_drawrec_tex1)(const char *tex1name) = nullptr;
 
+// [mashed rstates 2026-10-16] RenderWare's sticky vertex-alpha flag, opt-in (both false by
+// default, set only by mashed_re's LibRw/RwRaceSubmit.cpp). See MASHED_PATCHES.md.
+bool rw_mashed_skip_empty_meshes = false;
+bool rw_mashed_keep_vertex_alpha = false;
+
 namespace rw {
 namespace d3d9 {
 using namespace d3d;
@@ -174,7 +179,12 @@ defaultRenderCB_Shader(Atomic *atomic, InstanceDataHeader *header)
 	for(uint32 i = 0; i < header->numMeshes; i++){
 		Material *m = inst->material;
 
-		SetRenderState(VERTEXALPHA, inst->vertexAlpha || m->color.alpha != 255);
+		if(rw_mashed_skip_empty_meshes && inst->numPrimitives == 0){
+			inst++;
+			continue;
+		}
+		if(!rw_mashed_keep_vertex_alpha)
+			SetRenderState(VERTEXALPHA, inst->vertexAlpha || m->color.alpha != 255);
 
 		setMaterial(flags, m->color, m->surfaceProps);
 

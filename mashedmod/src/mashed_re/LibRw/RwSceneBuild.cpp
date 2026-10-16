@@ -204,7 +204,9 @@ rw::Atomic* MakeAtomic(rw::Geometry* geo, rw::Frame* parent) {
 // (it used to sit between BuildWorld and BuildClump, which only the latter needed).
 namespace { void SLog(const char* fmt, ...); }
 
-void* BuildWorld(const Track::World& world, const TextureSource& tex) {
+void* BuildWorld(const Track::World& world, const TextureSource& tex,
+                 std::vector<void*>* sector_atomics) {
+    if (sector_atomics) sector_atomics->assign(world.sectors.size(), nullptr);
     std::vector<rw::Material*> mats;
     int w_named = 0, w_resolved = 0;
     BuildMaterials(world.materials, tex, mats, &w_named, &w_resolved);
@@ -241,7 +243,9 @@ void* BuildWorld(const Track::World& world, const TextureSource& tex) {
     rw::Frame* worldFrame = rw::Frame::create();
     sectors->setFrame(worldFrame);
 
+    std::size_t sector_index = static_cast<std::size_t>(-1);   // [rstates]
     for (const Track::Sector& s : world.sectors) {
+        ++sector_index;
         const std::int32_t nv = static_cast<std::int32_t>(s.verts.size() / 3);
         const std::int32_t nt = static_cast<std::int32_t>(s.tris.size() / 4);
         if (nv == 0 || nt == 0) continue;
@@ -279,6 +283,7 @@ void* BuildWorld(const Track::World& world, const TextureSource& tex) {
             // pipeline, as the original's sector draws through FUN_00543500.
             if (uses_dual) rw::MatFX::enableEffects(a);
             sectors->addAtomic(a);
+            if (sector_atomics) (*sector_atomics)[sector_index] = a;   // [rstates]
         }
     }
     // D-S3-BANK probe: per-material triangle totals across all sectors. The D3D9
@@ -411,11 +416,13 @@ void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
                  std::vector<std::int32_t>* out_atomic_part,
                  bool hierarchy,
                  std::vector<void*>* out_frames,
-                 std::vector<std::int32_t>* out_atomic_frame) {
+                 std::vector<std::int32_t>* out_atomic_frame,
+                 std::vector<std::int32_t>* out_atomic_dff) {
     if (out_atomic_mat) out_atomic_mat->clear();
     if (out_atomic_part) out_atomic_part->clear();
     if (out_frames) out_frames->clear();
     if (out_atomic_frame) out_atomic_frame->clear();
+    if (out_atomic_dff) out_atomic_dff->clear();
     if (model.frames.empty()) hierarchy = false;
     // [geomlight water-scope] Model-level half of the ambient-fold scope key.
     // Evaluated once here, not per batch -- it depends only on the asset name.
@@ -661,6 +668,7 @@ void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
             if (out_atomic_mat) out_atomic_mat->push_back(b.material);
             if (out_atomic_part) out_atomic_part->push_back(b.part_id);   // [rtex]
             if (out_atomic_frame) out_atomic_frame->push_back(own_frame ? b.frame : -1);
+            if (out_atomic_dff) out_atomic_dff->push_back(b.atomic);      // [rstates]
         }
     }
     return clump;

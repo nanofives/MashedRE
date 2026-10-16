@@ -150,6 +150,7 @@ struct RaceSceneState {
     Race::RaceCamera            race_cam_;
     std::vector<Race::RaceCamNode> cam_nodes_;
     int    course_id_   = -1;       // COURSE.LUA Course_Id(N) -> LE<N>.LED
+    bool   rain_enabled_ = false;   // [rstates] COURSE.LUA RainEnable() (DAT_00771534)
     char   gate_bsp_[64] = {};      // COURSE.LUA AI_Bsp_Filename (per-track)
     double cam_ticks_   = 0.0;      // DAT_007f1030 equivalent (~3.0 MHz live)
 
