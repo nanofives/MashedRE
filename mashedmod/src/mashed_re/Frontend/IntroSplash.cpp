@@ -65,7 +65,7 @@ static uint32 OrigRenderTargetHelper(uint32 a, uint32 b) {
     return reinterpret_cast<Fn>(static_cast<std::uintptr_t>(0x004c1be0u))(a, b);
 }
 
-// 0x00499710  FUN_00499710 — HWND getter: () -> uint32
+// Call-through to the ORIGINAL FUN_00499710 — HWND getter: () -> uint32 (not a body)
 static uint32 OrigHwndGet() {
     typedef uint32 (__cdecl* Fn)();
     return reinterpret_cast<Fn>(static_cast<std::uintptr_t>(0x00499710u))();
@@ -87,8 +87,8 @@ static void OrigQuadRender(uint32 a, uint32* b, uint32* c, int d, uint32 e) {
     reinterpret_cast<Fn>(static_cast<std::uintptr_t>(0x00493fd0u))(a, b, c, d, e);
 }
 
-// 0x004c19f0  RwVtableSlot07Call (C3): tail-call *(param_1+0x1c)
-// Already reimplemented in Boot/FrameDispatch.cpp — forward to orig RVA here.
+// Call-through to the ORIGINAL RwVtableSlot07Call (address 0x004c19f0, C3): tail-call *(param_1+0x1c)
+// Already reimplemented in Boot/FrameDispatch.cpp — forward to orig RVA here (not a body).
 static void OrigRwSlot07(int param) {
     typedef void (__cdecl* Fn)(int);
     reinterpret_cast<Fn>(static_cast<std::uintptr_t>(0x004c19f0u))(param);

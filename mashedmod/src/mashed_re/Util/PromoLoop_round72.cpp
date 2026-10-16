@@ -44,7 +44,7 @@ RH_ScopedInstall(AudioStateActive, 0x004627b0);
 // rename it to match the tracker without re-running that diff.
 //
 // Its gate DAT_0067eab0 doubles as the setup-screen input freeze that
-// 0x0042f7b0 (FrontendCursorUpdate) early-outs on -- one flag, two jobs.
+// FrontendCursorUpdate (address 0x0042f7b0) early-outs on -- one flag, two jobs.
 // See re/analysis/race_hud_capture_20260902.md Findings 29, 32 and 37.
 extern "C" __declspec(dllexport) void __cdecl Post0042bf30(std::uint32_t p1, std::uint32_t p2, std::uint32_t p3,
                                                            std::uint32_t p4, std::uint32_t p5, std::uint32_t p6) {

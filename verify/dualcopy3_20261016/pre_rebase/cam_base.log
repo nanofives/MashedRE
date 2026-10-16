@@ -1,0 +1,7 @@
+=== cam_base exe=C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\ac86d2bf-66e1-4442-91bf-5ba376af04d1\scratchpad\base3\mashed_re_base.exe trace=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dualcopy3\verify\d1r2_20261016\orig2_trace_v3.csv shots=- knobs=[]
+    pid=4856
+    exit=0
+    cam_dump.csv: 3000 lines
+    cam_dump.csv.nodes.txt: 30 lines
+    librw_dump.csv: 3000 lines
+

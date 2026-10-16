@@ -10204,6 +10204,133 @@ HOOKS = {
         ],
     },
 
+    # 0x00417640  AiPostStepPowerupBrake -- the ONE body Ai/AiPostStepBrake.cpp (dualcopy3 2026-10-16).
+    # void f(int v, uint8_t* ctrl): writes ctrl[4] (accel) and ctrl[5] (brake) ONLY, and only when FUN_00426c00() == 0x21,
+    # FUN_00452eb0() (= *(float*)0x00684de0) <= 30.0, DAT_0089a52c[v*0x74] != 10 and FUN_00452ea0(v) (= *(u32*)(0x0088ff50+v*4)) != 0.
+    # Then brake (ctrl[5] = 0xff) iff 100.0 < FUN_0046d6d0 (= *(float*)(0x00881f84 + v*0xd04)) && FUN_0046d570 < 90.0, else coast (0, 0).
+    # cache_setter_observe: seed the gate globals, pass the AI ctrl block 0x007f1038 (slot 0) as the ctrl pointer and observe the
+    # dword at 0x007f103c (bytes 4..7 = accel, brake, [6], [7]), pre-filled 0xaaaaaaaa so a no-write stays visible. Both sides
+    # (the original function, bypass mode, and the export) call the ORIGINAL callees, so any seeds are fair; they are chosen so BOTH
+    # write arms run: rate and the FUN_0046d570 inputs (record +0x9b0 heading at 0x00881f50, +0x9d4 vector at 0x00881f74) cover
+    # aligned (range small) vs opposed (range large) with rate above, on and below the 100.0 boundary. The dead displacement
+    # computation derefs *(u32*)0x00684dac + 0x30, so that pointer is seeded to a readable block.
+    # The A/B driver AbAiPost (live race, forced passes) is the stronger evidence; this key is the synthetic path1 + the path2 install.
+    'ai_post_step_powerup_brake': {
+        'rva':            0x00417640,
+        'export':         'AiPostStepPowerupBrake',
+        'signature':      {'ret': 'void', 'args': ['int32', 'uint32']},
+        'arg_type':       'cache_setter_observe',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            # --- the write arms (gates all open) ---
+            # rate 150 > 100, vectors aligned (angle 0): brake expected
+            {'seed': [{'addr': '0x00644158', 'val': 0x21}, {'addr': '0x00684de0', 'val': 0},
+                      {'addr': '0x0089a52c', 'val': 0}, {'addr': '0x0088ff50', 'val': 1}, {'addr': '0x00684dac', 'val': 0x007f1000},
+                      {'addr': '0x007f103c', 'val': 0xaaaaaaaa},
+                      {'addr': '0x00881f84', 'val': 0x43160000},
+                      {'addr': '0x00881f50', 'val': 0}, {'addr': '0x00881f54', 'val': 0}, {'addr': '0x00881f58', 'val': 0x3f800000},
+                      {'addr': '0x00881f74', 'val': 0}, {'addr': '0x00881f78', 'val': 0}, {'addr': '0x00881f7c', 'val': 0x3f800000}],
+             'args': [0, 0x007f1038], 'obs': ['0x007f103c']},
+            # rate 150, vectors opposed (angle 180): coast expected
+            {'seed': [{'addr': '0x00644158', 'val': 0x21}, {'addr': '0x00684de0', 'val': 0},
+                      {'addr': '0x0089a52c', 'val': 0}, {'addr': '0x0088ff50', 'val': 1}, {'addr': '0x00684dac', 'val': 0x007f1000},
+                      {'addr': '0x007f103c', 'val': 0xaaaaaaaa},
+                      {'addr': '0x00881f84', 'val': 0x43160000},
+                      {'addr': '0x00881f50', 'val': 0}, {'addr': '0x00881f54', 'val': 0}, {'addr': '0x00881f58', 'val': 0x3f800000},
+                      {'addr': '0x00881f74', 'val': 0}, {'addr': '0x00881f78', 'val': 0}, {'addr': '0x00881f7c', 'val': 0xbf800000}],
+             'args': [0, 0x007f1038], 'obs': ['0x007f103c']},
+            # rate 50 < 100, aligned: coast
+            {'seed': [{'addr': '0x00644158', 'val': 0x21}, {'addr': '0x00684de0', 'val': 0},
+                      {'addr': '0x0089a52c', 'val': 0}, {'addr': '0x0088ff50', 'val': 1}, {'addr': '0x00684dac', 'val': 0x007f1000},
+                      {'addr': '0x007f103c', 'val': 0xaaaaaaaa},
+                      {'addr': '0x00881f84', 'val': 0x42480000},
+                      {'addr': '0x00881f50', 'val': 0}, {'addr': '0x00881f54', 'val': 0}, {'addr': '0x00881f58', 'val': 0x3f800000},
+                      {'addr': '0x00881f74', 'val': 0}, {'addr': '0x00881f78', 'val': 0}, {'addr': '0x00881f7c', 'val': 0x3f800000}],
+             'args': [0, 0x007f1038], 'obs': ['0x007f103c']},
+            # rate exactly 100.0 (strict <): coast
+            {'seed': [{'addr': '0x00644158', 'val': 0x21}, {'addr': '0x00684de0', 'val': 0},
+                      {'addr': '0x0089a52c', 'val': 0}, {'addr': '0x0088ff50', 'val': 1}, {'addr': '0x00684dac', 'val': 0x007f1000},
+                      {'addr': '0x007f103c', 'val': 0xaaaaaaaa},
+                      {'addr': '0x00881f84', 'val': 0x42c80000},
+                      {'addr': '0x00881f50', 'val': 0}, {'addr': '0x00881f54', 'val': 0}, {'addr': '0x00881f58', 'val': 0x3f800000},
+                      {'addr': '0x00881f74', 'val': 0}, {'addr': '0x00881f78', 'val': 0}, {'addr': '0x00881f7c', 'val': 0x3f800000}],
+             'args': [0, 0x007f1038], 'obs': ['0x007f103c']},
+            # rate one ulp above 100.0, aligned: brake
+            {'seed': [{'addr': '0x00644158', 'val': 0x21}, {'addr': '0x00684de0', 'val': 0},
+                      {'addr': '0x0089a52c', 'val': 0}, {'addr': '0x0088ff50', 'val': 1}, {'addr': '0x00684dac', 'val': 0x007f1000},
+                      {'addr': '0x007f103c', 'val': 0xaaaaaaaa},
+                      {'addr': '0x00881f84', 'val': 0x42c80001},
+                      {'addr': '0x00881f50', 'val': 0}, {'addr': '0x00881f54', 'val': 0}, {'addr': '0x00881f58', 'val': 0x3f800000},
+                      {'addr': '0x00881f74', 'val': 0}, {'addr': '0x00881f78', 'val': 0}, {'addr': '0x00881f7c', 'val': 0x3f800000}],
+             'args': [0, 0x007f1038], 'obs': ['0x007f103c']},
+            # vehicle 1 (stride 0x74 mode, 4 predicate, 0xd04 record): rate 150 aligned: brake
+            {'seed': [{'addr': '0x00644158', 'val': 0x21}, {'addr': '0x00684de0', 'val': 0},
+                      {'addr': '0x0089a5a0', 'val': 0}, {'addr': '0x0088ff54', 'val': 1}, {'addr': '0x00684dac', 'val': 0x007f1000},
+                      {'addr': '0x007f103c', 'val': 0xaaaaaaaa},
+                      {'addr': '0x00882c88', 'val': 0x43160000},
+                      {'addr': '0x00882c54', 'val': 0}, {'addr': '0x00882c58', 'val': 0}, {'addr': '0x00882c5c', 'val': 0x3f800000},
+                      {'addr': '0x00882c78', 'val': 0}, {'addr': '0x00882c7c', 'val': 0}, {'addr': '0x00882c80', 'val': 0x3f800000}],
+             'args': [1, 0x007f1038], 'obs': ['0x007f103c']},
+            # --- the four gates, each closed in turn (no write: 0xaaaaaaaa stays) ---
+            # gate 1: DAT_00644158 = 0x20
+            {'seed': [{'addr': '0x00644158', 'val': 0x20}, {'addr': '0x00684de0', 'val': 0},
+                      {'addr': '0x0089a52c', 'val': 0}, {'addr': '0x0088ff50', 'val': 1}, {'addr': '0x00684dac', 'val': 0x007f1000},
+                      {'addr': '0x007f103c', 'val': 0xaaaaaaaa},
+                      {'addr': '0x00881f84', 'val': 0x43160000},
+                      {'addr': '0x00881f50', 'val': 0}, {'addr': '0x00881f54', 'val': 0}, {'addr': '0x00881f58', 'val': 0x3f800000},
+                      {'addr': '0x00881f74', 'val': 0}, {'addr': '0x00881f78', 'val': 0}, {'addr': '0x00881f7c', 'val': 0x3f800000}],
+             'args': [0, 0x007f1038], 'obs': ['0x007f103c']},
+            # gate 2: held float 31.0 > 30.0
+            {'seed': [{'addr': '0x00644158', 'val': 0x21}, {'addr': '0x00684de0', 'val': 0x41f80000},
+                      {'addr': '0x0089a52c', 'val': 0}, {'addr': '0x0088ff50', 'val': 1}, {'addr': '0x00684dac', 'val': 0x007f1000},
+                      {'addr': '0x007f103c', 'val': 0xaaaaaaaa},
+                      {'addr': '0x00881f84', 'val': 0x43160000},
+                      {'addr': '0x00881f50', 'val': 0}, {'addr': '0x00881f54', 'val': 0}, {'addr': '0x00881f58', 'val': 0x3f800000},
+                      {'addr': '0x00881f74', 'val': 0}, {'addr': '0x00881f78', 'val': 0}, {'addr': '0x00881f7c', 'val': 0x3f800000}],
+             'args': [0, 0x007f1038], 'obs': ['0x007f103c']},
+            # gate 2 boundary: held float exactly 30.0 passes (not >)
+            {'seed': [{'addr': '0x00644158', 'val': 0x21}, {'addr': '0x00684de0', 'val': 0x41f00000},
+                      {'addr': '0x0089a52c', 'val': 0}, {'addr': '0x0088ff50', 'val': 1}, {'addr': '0x00684dac', 'val': 0x007f1000},
+                      {'addr': '0x007f103c', 'val': 0xaaaaaaaa},
+                      {'addr': '0x00881f84', 'val': 0x43160000},
+                      {'addr': '0x00881f50', 'val': 0}, {'addr': '0x00881f54', 'val': 0}, {'addr': '0x00881f58', 'val': 0x3f800000},
+                      {'addr': '0x00881f74', 'val': 0}, {'addr': '0x00881f78', 'val': 0}, {'addr': '0x00881f7c', 'val': 0x3f800000}],
+             'args': [0, 0x007f1038], 'obs': ['0x007f103c']},
+            # gate 3: committed mode == 10
+            {'seed': [{'addr': '0x00644158', 'val': 0x21}, {'addr': '0x00684de0', 'val': 0},
+                      {'addr': '0x0089a52c', 'val': 10}, {'addr': '0x0088ff50', 'val': 1}, {'addr': '0x00684dac', 'val': 0x007f1000},
+                      {'addr': '0x007f103c', 'val': 0xaaaaaaaa},
+                      {'addr': '0x00881f84', 'val': 0x43160000},
+                      {'addr': '0x00881f50', 'val': 0}, {'addr': '0x00881f54', 'val': 0}, {'addr': '0x00881f58', 'val': 0x3f800000},
+                      {'addr': '0x00881f74', 'val': 0}, {'addr': '0x00881f78', 'val': 0}, {'addr': '0x00881f7c', 'val': 0x3f800000}],
+             'args': [0, 0x007f1038], 'obs': ['0x007f103c']},
+            # gate 4: predicate word 0
+            {'seed': [{'addr': '0x00644158', 'val': 0x21}, {'addr': '0x00684de0', 'val': 0},
+                      {'addr': '0x0089a52c', 'val': 0}, {'addr': '0x0088ff50', 'val': 0}, {'addr': '0x00684dac', 'val': 0x007f1000},
+                      {'addr': '0x007f103c', 'val': 0xaaaaaaaa},
+                      {'addr': '0x00881f84', 'val': 0x43160000},
+                      {'addr': '0x00881f50', 'val': 0}, {'addr': '0x00881f54', 'val': 0}, {'addr': '0x00881f58', 'val': 0x3f800000},
+                      {'addr': '0x00881f74', 'val': 0}, {'addr': '0x00881f78', 'val': 0}, {'addr': '0x00881f7c', 'val': 0x3f800000}],
+             'args': [0, 0x007f1038], 'obs': ['0x007f103c']},
+        ],
+        'path2_tests': [
+            {'seed': [{'addr': '0x00644158', 'val': 0x21}, {'addr': '0x00684de0', 'val': 0},
+                      {'addr': '0x0089a52c', 'val': 0}, {'addr': '0x0088ff50', 'val': 1}, {'addr': '0x00684dac', 'val': 0x007f1000},
+                      {'addr': '0x007f103c', 'val': 0xaaaaaaaa},
+                      {'addr': '0x00881f84', 'val': 0x43160000},
+                      {'addr': '0x00881f50', 'val': 0}, {'addr': '0x00881f54', 'val': 0}, {'addr': '0x00881f58', 'val': 0x3f800000},
+                      {'addr': '0x00881f74', 'val': 0}, {'addr': '0x00881f78', 'val': 0}, {'addr': '0x00881f7c', 'val': 0x3f800000}],
+             'args': [0, 0x007f1038], 'obs': ['0x007f103c']},
+            {'seed': [{'addr': '0x00644158', 'val': 0x21}, {'addr': '0x00684de0', 'val': 0},
+                      {'addr': '0x0089a52c', 'val': 0}, {'addr': '0x0088ff50', 'val': 1}, {'addr': '0x00684dac', 'val': 0x007f1000},
+                      {'addr': '0x007f103c', 'val': 0xaaaaaaaa},
+                      {'addr': '0x00881f84', 'val': 0x42480000},
+                      {'addr': '0x00881f50', 'val': 0}, {'addr': '0x00881f54', 'val': 0}, {'addr': '0x00881f58', 'val': 0x3f800000},
+                      {'addr': '0x00881f74', 'val': 0}, {'addr': '0x00881f78', 'val': 0}, {'addr': '0x00881f7c', 'val': 0x3f800000}],
+             'args': [0, 0x007f1038], 'obs': ['0x007f103c']},
+        ],
+    },
+
     # 0x0041e9d0  TrackNodeFnPtrGet14 â€” getter; returns *(DAT_0063d7e4+0x14)
     # void/uint32 (no args).
     # Strategy: track_record_deref â€” allocate fake 0x48B record buffer; write

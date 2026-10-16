@@ -46,7 +46,7 @@
 // game VA via push+ret.
 // ---------------------------------------------------------------------------
 
-// 0x004987b0  FUN_004987b0 — debug printf wrapper (variadic, __cdecl).
+// Call-through to the ORIGINAL FUN_004987b0 — debug printf wrapper (variadic, __cdecl); a thunk, not a body.
 __declspec(naked) static void __cdecl game_printf_dbg(const char* /*fmt*/, ...)
 {
     __asm {

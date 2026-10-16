@@ -10,6 +10,7 @@
 "Ai\AiStandalone.cpp"
 "Ai\CarSlotState.cpp"
 "Ai\AiBankSwitch.cpp"
+"Ai\AiPostStepBrake.cpp"
 "Vehicle\ForceIntegrator.cpp"
 "Vehicle\ForceIntegratorStubs.cpp"
 "Vehicle\VehicleControl.cpp"

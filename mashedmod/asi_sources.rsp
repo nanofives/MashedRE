@@ -238,6 +238,7 @@
 "Ai\AiStandalone.cpp"
 "Ai\CarSlotState.cpp"
 "Ai\AiBankSwitch.cpp"
+"Ai\AiPostStepBrake.cpp"
 "Vehicle\PromoLoop_round2.cpp"
 "Render\PromoLoop_round3.cpp"
 "Boot\PromoLoop_round6.cpp"

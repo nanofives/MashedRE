@@ -1,0 +1,8 @@
+[AbAiPost/warzone_mut] rc=0 131s  new log bytes=25502  summary lines=23  MISMATCH lines=400
+  last summary: [5633] calls=5633 mism=0 gate1pass=5633 wrote=0 forced=5633 fmism=0 fwrote=0 fskip=0 f2=5633 f2mism=5633 f2brake=2817 f2coast=2816 f2skip=0 
+   [1] F2-MISMATCH v=1 side=1 mine=(00,00) orig=(00,ff)
+   [2] F2-MISMATCH v=2 side=0 mine=(00,ff) orig=(00,00)
+   [3] F2-MISMATCH v=3 side=1 mine=(00,00) orig=(00,ff)
+   [4] F2-MISMATCH v=1 side=0 mine=(00,ff) orig=(00,00)
+   [5] F2-MISMATCH v=2 side=1 mine=(00,00) orig=(00,ff)
+

@@ -1,0 +1,6 @@
+original 0x004a2c48..0x004a2cbd (117 bytes): 558bec83ec2083e4f0d9c0d9542418df ... 2418d95c2418c9c3
+base.exe: 1 exact match(es)  file_off=0xf3960 rva=0xf4560  FtolVerbatim wrapper(s) calling this body: []
+new.exe: 1 exact match(es)  file_off=0xf3ac0 rva=0xf46c0  FtolVerbatim wrapper(s) calling this body: ['0xf4740']
+base.asi: 1 exact match(es)  file_off=0xcb80 rva=0xd780  FtolVerbatim wrapper(s) calling this body: []
+new.asi: 1 exact match(es)  file_off=0xcb80 rva=0xd780  FtolVerbatim wrapper(s) calling this body: []
+mut.exe: 1 exact match(es)  file_off=0xf3ac0 rva=0xf46c0  FtolVerbatim wrapper(s) calling this body: []

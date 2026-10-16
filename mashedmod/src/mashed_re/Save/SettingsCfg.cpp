@@ -52,11 +52,11 @@
 // __declspec(naked) + push+ret bypasses MSVC LTCG constant folding,
 // matching the convention from Save/SettingsConfig.cpp.
 //
-//   0x00498910  ConfigFilenameGet (game-internal) -> char*
-//   0x00496400  ConfigLogDebug    (game-internal) -> void (variadic)
-//   0x004a4541  _fsopen wrapper   (2-arg form at this call site)
-//   0x004a4b22  _fwrite
-//   0x004a4368  _fclose
+//   ConfigFilenameGet (game-internal, address 0x00498910) -> char*
+//   ConfigLogDebug    (game-internal, address 0x00496400) -> void (variadic)
+//   _fsopen wrapper   (address 0x004a4541, 2-arg form at this call site)
+//   _fwrite           (address 0x004a4b22)
+//   _fclose           (address 0x004a4368)
 // ---------------------------------------------------------------------------
 
 __declspec(naked) static char* __cdecl game_ConfigFilenameGet()

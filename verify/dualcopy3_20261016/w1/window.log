@@ -1,0 +1,28 @@
+15:32:11 waiting: foreign MASHED.exe [23544]
+15:32:27 waiting: foreign MASHED.exe [23544]
+15:32:42 waiting: foreign MASHED.exe [18464]
+15:32:58 waiting: foreign MASHED.exe [18464]
+15:33:13 waiting: foreign MASHED.exe [18464]
+15:33:29 waiting: foreign MASHED.exe [18464]
+15:33:45 waiting: foreign MASHED.exe [19216]
+15:34:00 waiting: foreign MASHED.exe [19216]
+15:34:16 waiting: foreign MASHED.exe [19216]
+15:34:31 waiting: foreign MASHED.exe [19216]
+15:34:47 waiting: foreign MASHED.exe [20912]
+15:35:02 waiting: foreign MASHED.exe [20912]
+15:35:18 waiting: foreign MASHED.exe [20912]
+15:35:33 waiting: foreign MASHED.exe [20912]
+15:35:49 waiting: foreign MASHED.exe [24784]
+15:36:04 waiting: foreign MASHED.exe [24784]
+15:36:20 waiting: foreign MASHED.exe [24784]
+15:36:35 waiting: foreign MASHED.exe [24784]
+15:36:51 shared asi sha256 before = 270e036fad840e93  size=1153536
+15:36:52 deployed new.asi sha256 = a8383a57964b33aa
+15:37:03 path1_ai_post_step_powerup_brake           rc=0 (11s)
+15:37:09 path2_ai_post_step_powerup_brake           rc=0 (6s)
+15:39:26 ab_AbAiPost_warzone                        rc=0 (138s)
+15:41:40 ab_AbAiPost_track0                         rc=0 (134s)
+15:42:10 nav_probe_full_hookset                     rc=0 (30s)
+15:42:40 nav_probe_only_AiPostStepPowerupBrake      rc=0 (31s)
+15:43:29 install_observe_all                        rc=0 (48s)
+15:43:29 shared asi sha256 after restore = 270e036fad840e93  matches original: True

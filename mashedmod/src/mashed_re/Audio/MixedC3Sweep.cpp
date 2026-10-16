@@ -22,7 +22,7 @@
 
 // ─── Trampolines to original RVAs for callees not yet reimplemented ──────────
 
-// 0x005ab380  FUN_005ab380 — read RWS chunk header
+// Trampoline to the ORIGINAL FUN_005ab380 — read RWS chunk header (not a body)
 // Reads chunk header fields into the three locals pointed to by param_2.
 // Ghidra layout at call sites: param_2 points to {local_14 (type), local_10 (size), local_c (version)}.
 static int Orig_ReadChunkHdr(int stream, uint32_t* out_hdr3, uint32_t streaming_flag) {
@@ -37,7 +37,7 @@ static void* Orig_RawAlloc(uint32_t size, uint32_t tag) {
     return reinterpret_cast<Fn>(static_cast<uintptr_t>(0x005aea00u))(size, tag);
 }
 
-// 0x004cbd30  FUN_004cbd30 — stream read: (stream, buf, size) -> bytes_read
+// Trampoline to the ORIGINAL FUN_004cbd30 — stream read: (stream, buf, size) -> bytes_read (not a body)
 static uint32_t Orig_StreamRead(int stream, void* buf, uint32_t size) {
     typedef uint32_t (__cdecl *Fn)(int, void*, uint32_t);
     return reinterpret_cast<Fn>(static_cast<uintptr_t>(0x004cbd30u))(stream, buf, size);
@@ -58,20 +58,20 @@ static int Orig_WaveNodeFactory(void* fmt_buf, uint32_t* param_2,
         fmt_buf, param_2, param_3, param_4, param_5);
 }
 
-// 0x005adf30  FUN_005adf30 — 16-byte format-key compare (AudioFmtKeyCompare, C3)
+// Trampoline to the ORIGINAL FUN_005adf30 — 16-byte format-key compare (AudioFmtKeyCompare, C3; not a body)
 // Returns 0 on match, non-zero on mismatch.
 static int Orig_FmtKeyCmp(const void* a, const void* b) {
     typedef int (__cdecl *Fn)(const void*, const void*);
     return reinterpret_cast<Fn>(static_cast<uintptr_t>(0x005adf30u))(a, b);
 }
 
-// 0x005aea10  FUN_005aea10 — alloc PCM read buffer (size, tag) -> void*
+// Trampoline to the ORIGINAL FUN_005aea10 — alloc PCM read buffer (size, tag) -> void* (not a body)
 static void* Orig_RawAlloc2(uint32_t size, uint32_t tag) {
     typedef void* (__cdecl *Fn)(uint32_t, uint32_t);
     return reinterpret_cast<Fn>(static_cast<uintptr_t>(0x005aea10u))(size, tag);
 }
 
-// 0x005aec30  FUN_005aec30 — byte-swap PCM block (buf, size, bytes_per_sample)
+// Trampoline to the ORIGINAL FUN_005aec30 — byte-swap PCM block (buf, size, bytes_per_sample) (not a body)
 static void Orig_Bswap(void* buf, uint32_t size, uint32_t bps) {
     typedef void (__cdecl *Fn)(void*, uint32_t, uint32_t);
     reinterpret_cast<Fn>(static_cast<uintptr_t>(0x005aec30u))(buf, size, bps);
@@ -83,13 +83,13 @@ static int Orig_FeedPcm(int node, uint32_t offset, void* buf, uint32_t size) {
     return reinterpret_cast<Fn>(static_cast<uintptr_t>(0x005abd30u))(node, offset, buf, size);
 }
 
-// 0x005abf80  FUN_005abf80 — drain/pump after each PCM feed; returns 1 while still pumping
+// Trampoline to the ORIGINAL FUN_005abf80 — drain/pump after each PCM feed; returns 1 while still pumping (not a body)
 static int Orig_DrainPump(int node) {
     typedef int (__cdecl *Fn)(int);
     return reinterpret_cast<Fn>(static_cast<uintptr_t>(0x005abf80u))(node);
 }
 
-// 0x005aea40  FUN_005aea40 — free PCM read buffer
+// Trampoline to the ORIGINAL FUN_005aea40 — free PCM read buffer (not a body)
 static void Orig_FreePcmBuf(void* ptr) {
     typedef void (__cdecl *Fn)(void*);
     reinterpret_cast<Fn>(static_cast<uintptr_t>(0x005aea40u))(ptr);

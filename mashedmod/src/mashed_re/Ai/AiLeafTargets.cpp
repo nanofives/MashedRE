@@ -404,6 +404,17 @@ int AiLeaf_415880(unsigned int spline, int v, const float look[2], float cand[2]
     return ret;
 }
 
+// FUN_0046d570(&out, v): the verbatim naked AL_46d570, run under the same x87 precision scope and record rebase as the two
+// leaves above. Called by the shared FUN_00417640 body (Ai/AiPostStepBrake.cpp) in the exe. 0.0f when the record array is not up
+// (no race physics yet), the value an unwritten out-slot would hold in the original's caller.
+float AiLeaf_46d570(int v) {
+    if (v < 0 || v > 3 || !Rec(0)) return 0.0f;
+    EnsureLut();
+    float out = 0.0f;
+    { PcScope pc; reinterpret_cast<d570_fn>(&AL_46d570)(&out, static_cast<std::uint32_t>(v)); }
+    return out;
+}
+
 void AiLeaf_CountAccept(int leaf, int committed) {
     if (leaf < 0 || leaf > 1) return;
     ++s_acc[leaf];

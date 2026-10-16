@@ -1,0 +1,12 @@
+hook: ai_post_step_powerup_brake  rva=0x00417640  export=AiPostStepPowerupBrake
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 20704
+  [agent] LUT ready  base=0x13da258  offset=0x134  root=0xdfc0048  delta=0  attempts=23
+  [agent] .asi loaded  base=0x61780000  AiPostStepPowerupBrake@0x617b6e50
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dualcopy3\log\diff_ai_post_step_powerup_brake.csv
+  total cases: 11
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.
+

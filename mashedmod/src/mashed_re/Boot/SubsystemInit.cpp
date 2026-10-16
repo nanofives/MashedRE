@@ -427,7 +427,7 @@ extern "C" __declspec(dllexport) void __cdecl SetDefaultViewWindow() {
 //
 // DEFERRED: DataZeroFill C3 promotion blocked by anti-island rule (5 of 6
 // depth-1 callees at C1: 0x00431ae0, 0x00431af0, 0x00431b00, 0x0045b350,
-// 0x00431b10). Only FUN_00431d00 is C2. Callee promotions required first.
+// and 0x00431b10). Only FUN_00431d00 is C2. Callee promotions required first.
 // Also blocked by [UNCERTAIN U-0009] inner-switch effective-address math.
 //
 // Harness-side unblocked by large_buffer_save_restore arg_type (added

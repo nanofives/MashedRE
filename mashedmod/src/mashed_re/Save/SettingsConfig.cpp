@@ -66,7 +66,7 @@ __declspec(naked) static int __cdecl game_vsprintf(char* /*buf*/, const char* /*
     }
 }
 
-// 0x004a4541  FUN_004a4541 _fsopen wrapper: _fsopen(path, mode, shflag) -> void*
+// Call-through to the ORIGINAL FUN_004a4541 _fsopen wrapper: _fsopen(path, mode, shflag) -> void* (a thunk, not a body)
 __declspec(naked) static void* __cdecl game_fsopen(const char* /*path*/, const char* /*mode*/, int /*shflag*/)
 {
     __asm {
@@ -84,7 +84,7 @@ __declspec(naked) static unsigned int __cdecl game_fread(void* /*buf*/, unsigned
     }
 }
 
-// 0x004a4368  _fclose(stream) -> int
+// Call-through to the ORIGINAL _fclose(stream) -> int (address 0x004a4368; a thunk, not a body)
 __declspec(naked) static int __cdecl game_fclose(void* /*stream*/)
 {
     __asm {

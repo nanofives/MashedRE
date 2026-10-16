@@ -14,6 +14,10 @@ int AiLeaf_414570(unsigned int spline, int v, const float look[2], float cand[2]
 // original-layout AI slot words 0x0089a508 / 0x0089a4dc / 0x0089a4e0 (+ v*0x74), as the original does.
 int AiLeaf_415880(unsigned int spline, int v, const float look[2], float cand[2]);
 
+// 0x0046d570 FUN_0046d570(&out, v) -> out (the "range" float FUN_00417640 compares against 90.0f). Verbatim naked body, 0.0f if the
+// record array is not up. Unlike the two leaves above it is NOT behind MASHED_AILEAF: its only caller is the shared brake override.
+float AiLeaf_46d570(int v);
+
 // Counters for the step dump / trace: calls and returns per leaf, mode-2 accepts not committed
 // because the exe has no FUN_00415d00 body.
 void AiLeaf_CountAccept(int leaf, int committed);
