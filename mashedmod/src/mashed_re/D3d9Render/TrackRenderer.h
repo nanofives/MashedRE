@@ -199,8 +199,14 @@ private:
         // model (DFF atomic 0, highest material): material alpha != 255 or a prelit
         // alpha != 255 in that batch (FUN_00543500 / default callback rule).
         bool                            last_mesh_va = false;
+        // [rstates F6] COURSE.LUA Clump_Filename index (the course clump slot), -1 = not a
+        // Clump_Filename prop (RWP_Object).
+        int                             clump_idx = -1;
     };
     std::vector<Prop> props_;
+    // [rstates F6] the order props_ are queued in each frame (BuildPropOrder).
+    std::vector<std::size_t> prop_order_;
+    void BuildPropOrder(std::FILE* log);
 
     // [rprops U-9695] Props whose placement the original re-poses every frame from its per-track
     // hook-table helpers (Arctic freighters 0x00448cb0, fishing boats 0x00448e20). Each entry is an

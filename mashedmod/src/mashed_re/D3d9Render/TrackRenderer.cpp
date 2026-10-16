@@ -2034,6 +2034,7 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                     // clumps Clump_Exclude_From_World does not flag join the RpWorld.
                     p.rw_kind = excluded[c.idx] ? LibRw::kInstAfterWorld
                                                 : LibRw::kInstInWorld;
+                    p.clump_idx = c.idx;
                     if (!s_no_sea_tile && course_id_ == 0 && c.idx == 2) {
                         // The 25 tiles are drawn by Arctic slot 2 (0x00449030,
                         // RpClumpRender per tile) after the world, not by the world pass.
@@ -2452,6 +2453,7 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
         facts.rain                      = rain_enabled_;
         LibRw::RaceSubmit_SetCourseFacts(facts);
     }
+    BuildPropOrder(log);
 
     ready_ = true;
     return true;
@@ -7026,6 +7028,65 @@ void TrackRenderer::UpdatePropAnims() {
     }
 }
 
+// [rstates F6] The excluded clumps are not in the RpWorld (0x00479da6), so the original draws them
+// from the per-track hook record's +0x1c slot (table 0x005f33f8, stride 0x48, Course_Id at +0x10),
+// one RpClumpRender (0x004e6680) per course clump slot [course + 0x10110 + 4*i], in code order.
+// Read from the bytes by verify/rstates_20261016/slot2_order.py; every list is a subset of the
+// track's Clump_Exclude_From_World set (excluded_vs_slot2.py), the whole set on TRAINING and City.
+// Dump (indexed loop at 0x00449583), Arctic and Egypt (no course clump slot) have no entry.
+struct AfterWorldOrder { int course_id; std::uint32_t fn; int n; int idx[8]; };
+const AfterWorldOrder kAfterWorldOrder[] = {
+    { 30, 0x00451460u, 7, { 9, 3, 4, 5, 6, 7, 8 } },          // training
+    { 25, 0x00450fc0u, 1, { 0 } },                            // superg
+    {  2, 0x0044d6f0u, 8, { 3, 0, 5, 11, 9, 8, 19, 17 } },    // rouabout
+    { 11, 0x00450910u, 2, { 5, 1 } },                         // sands
+    { 33, 0x00452d10u, 3, { 19, 20, 0 } },                    // warzone
+    { 34, 0x0044df00u, 1, { 0 } },                            // forest
+    { 36, 0x0044db40u, 2, { 0, 1 } },                         // storm
+    { 38, 0x0044e470u, 1, { 43 } },                           // highway
+    { 39, 0x0044af10u, 2, { 5, 6 } },                         // neustein
+    { 26, 0x0044b8f0u, 8, { 6, 7, 8, 9, 10, 12, 11, 13 } },   // city (0x0044b920..0x0044b97b)
+};
+
+// Queue order for props_: the after-world props a track's slot 2 draws go as one group, in slot-2
+// order, where the first of them sits in clump order; every other prop keeps its place (in-world
+// props are drawn by the sector walk, so their queue order only seeds tie creation, unchanged).
+// [UNCERTAIN U-9705] where the excluded clumps slot 2 does not draw are rendered relative to the
+// group; they keep clump order. MASHED_LIBRW_AFTERWORLDORDER=0 keeps plain clump order.
+void TrackRenderer::BuildPropOrder(std::FILE* log) {
+    prop_order_.clear();
+    const char* e = std::getenv("MASHED_LIBRW_AFTERWORLDORDER");
+    const bool on = !(e && e[0] == '0' && e[1] == '\0');
+    const AfterWorldOrder* aw = nullptr;
+    if (on)
+        for (const auto& a : kAfterWorldOrder)
+            if (a.course_id == course_id_) aw = &a;
+    auto rank = [&](std::size_t i) {
+        const Prop& p = props_[i];
+        if (!aw || p.rw_kind != LibRw::kInstAfterWorld || p.clump_idx < 0) return -1;
+        for (int k = 0; k < aw->n; ++k)
+            if (aw->idx[k] == p.clump_idx) return k;
+        return -1;
+    };
+    bool grouped = false;
+    for (std::size_t i = 0; i < props_.size(); ++i) {
+        if (rank(i) < 0) { prop_order_.push_back(i); continue; }
+        if (grouped) continue;
+        grouped = true;
+        for (int k = 0; k < aw->n; ++k)
+            for (std::size_t j = 0; j < props_.size(); ++j)
+                if (rank(j) == k) prop_order_.push_back(j);
+    }
+    if (log) {
+        std::fprintf(log, "  [rstates F6] after-world order course_id=%d slot2=0x%08x:", course_id_,
+                     aw ? aw->fn : 0u);
+        for (const std::size_t i : prop_order_)
+            if (props_[i].rw_kind == LibRw::kInstAfterWorld)
+                std::fprintf(log, " %d", props_[i].clump_idx);
+        std::fprintf(log, "\n");
+    }
+}
+
 void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     if (!ready_) return;
     // Parity 3D channel (MASHED_DBG_DRAWSTREAM3D) frame delimiter: Render() is
@@ -7621,7 +7682,9 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     // copies straight into the rw::Frame (RwRaceSubmit.cpp SetClumpTransform). A
     // model whose RaceSubmit_RegisterModel failed (rw_model < 0) is not drawn; the
     // failure is logged to log/librw_race.txt at load.
-    for (const auto& p : props_) {
+    const bool prop_order_ok = (prop_order_.size() == props_.size());
+    for (std::size_t k = 0; k < props_.size(); ++k) {
+        const auto& p = props_[prop_order_ok ? prop_order_[k] : k];
         if (p.rw_model < 0) continue;
         for (const auto& inst : p.instances)
             LibRw::RaceSubmit_AddInstance(p.rw_model, (const float*)&inst, p.rw_kind);
