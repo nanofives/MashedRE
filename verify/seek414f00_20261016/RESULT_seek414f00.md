@@ -72,7 +72,7 @@ For this to matter in the exe, the course-0x21 track object (`0x004527f0` init, 
 ## 6. Trackers (one transaction, `tracker_seek.py`)
 
 `hooks.csv`: `00414f00` -> `AiTrackObjSeek` C3, `file == exe_file`; notes on `00452160`, `00452ea0`, `00452eb0`.
-`UNCERTAINTIES.md`: resolved U-7574, U-0422, U-0423, U-0424; new **U-9713** (state 0 -> 1 trigger not decoded). CHANGELOG: one entry.
+`UNCERTAINTIES.md`: resolved U-7574, U-0422, U-0423, U-0424; new **U-9719** (state 0 -> 1 trigger not decoded). CHANGELOG: one entry.
 Plate `re/analysis/bucket_ai_00407a40_00415880/0x00414f00.md` has the corrected reading.
 
 ## 7. Hygiene

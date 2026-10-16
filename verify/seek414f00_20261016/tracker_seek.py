@@ -3,7 +3,7 @@
 
   hooks.csv          00414f00 -> AiTrackObjSeek, C3, file == exe_file = Ai/AiTrackObjSeek.cpp, evidence pointers;
                      a correction note on 00452160 / 00452ea0 / 00452eb0 (their "powerup" names claim more than the reads show)
-  UNCERTAINTIES.md   U-7574, U-0422, U-0423, U-0424 resolved inline; U-9713 added after U-9712
+  UNCERTAINTIES.md   U-7574, U-0422, U-0423, U-0424 resolved inline; U-9719 added after U-9712
   CHANGELOG.md       one entry under <!-- ENTRIES -->
 """
 import csv
@@ -51,7 +51,7 @@ for r in rows[1:]:
                           "DAT_0088ff50[v] (FUN_00451ad0 box test); not a powerup seek and not their producer. Gate 1 is 0.5 <= h <= 30.0, "
                           "NaN passes. One body in both targets (exe: record-mirror ring row, LutSqrt, Host::car_alive; MASHED_NO_SEEK414F00 "
                           "opt-out). path1 GREEN 53/53, path2 PASS (final .asi c13db8af). Live with the JMP: H1 177 committed mode-10 frames "
-                          "on car 3, all gate-consistent. U-7574 resolved (dead calls), U-9713 open (state 0->1 trigger). "
+                          "on car 3, all gate-consistent. U-7574 resolved (dead calls), U-9719 open (state 0->1 trigger). "
                           + EXE_LINE + " Evidence " + EV)
         done = True
     elif r[ix["rva"]] in ("00452160", "00452ea0", "00452eb0") and "seek414f00" not in r[ix["notes"]]:
@@ -97,7 +97,7 @@ for i, ln in enumerate(lines):
             cells[1] = text
             lines[i] = " | ".join(cells)
             n_res += 1
-NEW = ("| U-9713 | structural | 0x00451d80 / course-0x21 track object 0x00684d18 (producer of 0x0088ff50, 0x00684de0, 0x00684dac) | "
+NEW = ("| U-9719 | structural | 0x00451d80 / course-0x21 track object 0x00684d18 (producer of 0x0088ff50, 0x00684de0, 0x00684dac) | "
        "What moves the object from state 0 to 1 is not decoded. Measured: every observed cycle (O2 1, O3 2, H1 3) changed state "
        "0->1 INSIDE one FUN_00451d80 call (probe state_in 0, state_out 1), each time with a car's 0x0088ff50 word = 1 in that row. "
        "Case 0's callees that could write +0x48 are unread: FUN_00451820(obj, dt), FUN_00451ad0's callees FUN_0046bf50 / "
@@ -106,11 +106,11 @@ NEW = ("| U-9713 | structural | 0x00451d80 / course-0x21 track object 0x00684d18
        "decomp of FUN_00451820, 0x00452170, FUN_00451760 (init with course+0x10114 / +0x105b0) and FUN_00452140's callers | "
        "decompile the four; then capture obj+0x48/+0x4c/+0xc4 across a trigger with --seek-probe | porting the producer of "
        "0x0088ff50 / 0x00684de0 to the exe (without it 0x00414f00 and 0x00417640 cannot fire there). No C-level. |")
-if not any(ln.startswith("| U-9713 |") for ln in lines):
+if not any(ln.startswith("| U-9719 |") for ln in lines):
     at = next(i for i, ln in enumerate(lines) if ln.startswith("| U-9712 |"))
     lines.insert(at + 1, NEW)
 up.write_bytes(nl.join(lines).encode("utf-8"))
-print("UNCERTAINTIES.md: resolved", n_res, "added U-9713")
+print("UNCERTAINTIES.md: resolved", n_res, "added U-9719")
 
 # ---------------------------------------------------------------- CHANGELOG.md
 cp = WT / "re" / "analysis" / "CHANGELOG.md"
@@ -118,7 +118,7 @@ raw, nl = rw(cp)
 ENTRY = ("2026-10-16  00414f00  AiTrackObjSeek  C2->C3  One body Ai/AiTrackObjSeek.cpp (both targets). Reads the course-0x21 "
          "track object 0x00684d18 (+0xc8/+0x94) and DAT_0088ff50[v]; not a powerup seek, not their producer (FUN_00451d80 / "
          "FUN_00451ad0 are). path1 GREEN 53/53 incl. 29 natural ret=1 rows captured from the original on Warzone rule 8; path2 PASS; "
-         "live H1 with the JMP: 177 mode-10 frames, all gate-consistent. U-7574/U-0422/U-0423/U-0424 resolved, U-9713 opened. "
+         "live H1 with the JMP: 177 mode-10 frames, all gate-consistent. U-7574/U-0422/U-0423/U-0424 resolved, U-9719 opened. "
          + EXE_LINE + " Evidence " + EV + ".")
 if "00414f00  AiTrackObjSeek  C2->C3" in raw:
     raise SystemExit("changelog entry exists")
