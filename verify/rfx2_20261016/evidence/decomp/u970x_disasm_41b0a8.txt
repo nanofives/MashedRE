@@ -1,0 +1,15 @@
+0x0041b0a8: 83ff08                   cmp edi, 8
+0x0041b0ab: 7514                     jne 0x41b0c1
+0x0041b0ad: 8b4e68                   mov ecx, dword ptr [esi + 0x68]
+0x0041b0b0: 81e1ffefffff             and ecx, 0xffffefff
+0x0041b0b6: 81c900080000             or ecx, 0x800
+0x0041b0bc: 894e68                   mov dword ptr [esi + 0x68], ecx
+0x0041b0bf: eb17                     jmp 0x41b0d8
+0x0041b0c1: 83ff0c                   cmp edi, 0xc
+0x0041b0c4: 7512                     jne 0x41b0d8
+0x0041b0c6: 8b5668                   mov edx, dword ptr [esi + 0x68]
+0x0041b0c9: 81e2fff7ffff             and edx, 0xfffff7ff
+0x0041b0cf: 81ca00100000             or edx, 0x1000
+0x0041b0d5: 895668                   mov dword ptr [esi + 0x68], edx
+0x0041b0d8: 8b5664                   mov edx, dword ptr [esi + 0x64]
+0x0041b0db: d94650                   fld dword ptr [esi + 0x50]

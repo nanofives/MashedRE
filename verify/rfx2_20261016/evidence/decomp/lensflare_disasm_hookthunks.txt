@@ -1,0 +1,151 @@
+0x0041e870: 8b0da0375f00             mov ecx, dword ptr [0x5f37a0]
+0x0041e876: 85c9                     test ecx, ecx
+0x0041e878: c705e4d7630000000000     mov dword ptr [0x63d7e4], 0
+0x0041e882: 7e1c                     jle 0x41e8a0
+0x0041e884: 8b542404                 mov edx, dword ptr [esp + 4]
+0x0041e888: b8f8335f00               mov eax, 0x5f33f8
+0x0041e88d: 8d4900                   lea ecx, [ecx]
+0x0041e890: 395010                   cmp dword ptr [eax + 0x10], edx
+0x0041e893: 7505                     jne 0x41e89a
+0x0041e895: a3e4d76300               mov dword ptr [0x63d7e4], eax
+0x0041e89a: 83c048                   add eax, 0x48
+0x0041e89d: 49                       dec ecx
+0x0041e89e: 75f0                     jne 0x41e890
+0x0041e8a0: c3                       ret 
+0x0041e8a1: 90                       nop 
+0x0041e8a2: 90                       nop 
+0x0041e8a3: 90                       nop 
+0x0041e8a4: 90                       nop 
+0x0041e8a5: 90                       nop 
+0x0041e8a6: 90                       nop 
+0x0041e8a7: 90                       nop 
+0x0041e8a8: 90                       nop 
+0x0041e8a9: 90                       nop 
+0x0041e8aa: 90                       nop 
+0x0041e8ab: 90                       nop 
+0x0041e8ac: 90                       nop 
+0x0041e8ad: 90                       nop 
+0x0041e8ae: 90                       nop 
+0x0041e8af: 90                       nop 
+0x0041e8b0: 8b0de4d76300             mov ecx, dword ptr [0x63d7e4]
+0x0041e8b6: ff6114                   jmp dword ptr [ecx + 0x14]
+0x0041e8b9: 90                       nop 
+0x0041e8ba: 90                       nop 
+0x0041e8bb: 90                       nop 
+0x0041e8bc: 90                       nop 
+0x0041e8bd: 90                       nop 
+0x0041e8be: 90                       nop 
+0x0041e8bf: 90                       nop 
+0x0041e8c0: 8b15e4d76300             mov edx, dword ptr [0x63d7e4]
+0x0041e8c6: ff6218                   jmp dword ptr [edx + 0x18]
+0x0041e8c9: 90                       nop 
+0x0041e8ca: 90                       nop 
+0x0041e8cb: 90                       nop 
+0x0041e8cc: 90                       nop 
+0x0041e8cd: 90                       nop 
+0x0041e8ce: 90                       nop 
+0x0041e8cf: 90                       nop 
+0x0041e8d0: 8b0de4d76300             mov ecx, dword ptr [0x63d7e4]
+0x0041e8d6: ff611c                   jmp dword ptr [ecx + 0x1c]
+0x0041e8d9: 90                       nop 
+0x0041e8da: 90                       nop 
+0x0041e8db: 90                       nop 
+0x0041e8dc: 90                       nop 
+0x0041e8dd: 90                       nop 
+0x0041e8de: 90                       nop 
+0x0041e8df: 90                       nop 
+0x0041e8e0: 8b0de4d76300             mov ecx, dword ptr [0x63d7e4]
+0x0041e8e6: ff6120                   jmp dword ptr [ecx + 0x20]
+0x0041e8e9: 90                       nop 
+0x0041e8ea: 90                       nop 
+0x0041e8eb: 90                       nop 
+0x0041e8ec: 90                       nop 
+0x0041e8ed: 90                       nop 
+0x0041e8ee: 90                       nop 
+0x0041e8ef: 90                       nop 
+0x0041e8f0: 8b0de4d76300             mov ecx, dword ptr [0x63d7e4]
+0x0041e8f6: ff6124                   jmp dword ptr [ecx + 0x24]
+0x0041e8f9: 90                       nop 
+0x0041e8fa: 90                       nop 
+0x0041e8fb: 90                       nop 
+0x0041e8fc: 90                       nop 
+0x0041e8fd: 90                       nop 
+0x0041e8fe: 90                       nop 
+0x0041e8ff: 90                       nop 
+0x0041e900: 8b0de4d76300             mov ecx, dword ptr [0x63d7e4]
+0x0041e906: ff6128                   jmp dword ptr [ecx + 0x28]
+0x0041e909: 90                       nop 
+0x0041e90a: 90                       nop 
+0x0041e90b: 90                       nop 
+0x0041e90c: 90                       nop 
+0x0041e90d: 90                       nop 
+0x0041e90e: 90                       nop 
+0x0041e90f: 90                       nop 
+0x0041e910: 8b0de4d76300             mov ecx, dword ptr [0x63d7e4]
+0x0041e916: ff612c                   jmp dword ptr [ecx + 0x2c]
+0x0041e919: 90                       nop 
+0x0041e91a: 90                       nop 
+0x0041e91b: 90                       nop 
+0x0041e91c: 90                       nop 
+0x0041e91d: 90                       nop 
+0x0041e91e: 90                       nop 
+0x0041e91f: 90                       nop 
+0x0041e920: 8b0de4d76300             mov ecx, dword ptr [0x63d7e4]
+0x0041e926: ff6130                   jmp dword ptr [ecx + 0x30]
+0x0041e929: 90                       nop 
+0x0041e92a: 90                       nop 
+0x0041e92b: 90                       nop 
+0x0041e92c: 90                       nop 
+0x0041e92d: 90                       nop 
+0x0041e92e: 90                       nop 
+0x0041e92f: 90                       nop 
+0x0041e930: 8b0de4d76300             mov ecx, dword ptr [0x63d7e4]
+0x0041e936: ff6134                   jmp dword ptr [ecx + 0x34]
+0x0041e939: 90                       nop 
+0x0041e93a: 90                       nop 
+0x0041e93b: 90                       nop 
+0x0041e93c: 90                       nop 
+0x0041e93d: 90                       nop 
+0x0041e93e: 90                       nop 
+0x0041e93f: 90                       nop 
+0x0041e940: 8b0de4d76300             mov ecx, dword ptr [0x63d7e4]
+0x0041e946: ff6138                   jmp dword ptr [ecx + 0x38]
+0x0041e949: 90                       nop 
+0x0041e94a: 90                       nop 
+0x0041e94b: 90                       nop 
+0x0041e94c: 90                       nop 
+0x0041e94d: 90                       nop 
+0x0041e94e: 90                       nop 
+0x0041e94f: 90                       nop 
+0x0041e950: 8b0de4d76300             mov ecx, dword ptr [0x63d7e4]
+0x0041e956: ff613c                   jmp dword ptr [ecx + 0x3c]
+0x0041e959: 90                       nop 
+0x0041e95a: 90                       nop 
+0x0041e95b: 90                       nop 
+0x0041e95c: 90                       nop 
+0x0041e95d: 90                       nop 
+0x0041e95e: 90                       nop 
+0x0041e95f: 90                       nop 
+0x0041e960: 8b0de4d76300             mov ecx, dword ptr [0x63d7e4]
+0x0041e966: ff6140                   jmp dword ptr [ecx + 0x40]
+0x0041e969: 90                       nop 
+0x0041e96a: 90                       nop 
+0x0041e96b: 90                       nop 
+0x0041e96c: 90                       nop 
+0x0041e96d: 90                       nop 
+0x0041e96e: 90                       nop 
+0x0041e96f: 90                       nop 
+0x0041e970: 8b0de4d76300             mov ecx, dword ptr [0x63d7e4]
+0x0041e976: ff6144                   jmp dword ptr [ecx + 0x44]
+0x0041e979: 90                       nop 
+0x0041e97a: 90                       nop 
+0x0041e97b: 90                       nop 
+0x0041e97c: 90                       nop 
+0x0041e97d: 90                       nop 
+0x0041e97e: 90                       nop 
+0x0041e97f: 90                       nop 
+0x0041e980: 8b15a0375f00             mov edx, dword ptr [0x5f37a0]
+0x0041e986: 56                       push esi
+0x0041e987: 33c9                     xor ecx, ecx
+0x0041e989: 85d2                     test edx, edx
+0x0041e98b: 7e16                     jle 0x41e9a3

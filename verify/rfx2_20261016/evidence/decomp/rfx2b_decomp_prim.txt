@@ -1,0 +1,222 @@
+// FUN_0055c810 @ 0x0055c810  size=44  (MASHED.exe)
+// undefined FUN_0055c810(void)
+
+int FUN_0055c810(int param_1,undefined4 *param_2)
+
+{
+  FUN_0055c380(param_1,&DAT_005e4fe0);
+  *(undefined4 *)(param_1 + 0x40) = *param_2;
+  *(undefined4 *)(param_1 + 0x44) = param_2[1];
+  *(undefined4 *)(param_1 + 0x48) = param_2[2];
+  return param_1;
+}
+
+
+
+// FUN_0055e440 @ 0x0055e440  size=37  (MASHED.exe)
+// undefined FUN_0055e440(void)
+
+/* [C1 2026-05-19] 3-arg constructor for a struct at `param_1`. Calls `FUN_0055c380(param_1,
+   &DAT_005e51c8)` (likely vtable / base-class… */
+
+int FUN_0055e440(int param_1,undefined4 param_2,undefined4 param_3)
+
+{
+  FUN_0055c380(param_1,&DAT_005e51c8);
+  *(undefined4 *)(param_1 + 0x44) = param_2;
+  *(undefined4 *)(param_1 + 0x40) = param_3;
+  return param_1;
+}
+
+
+
+// FUN_0055bab0 @ 0x0055bab0  size=12  (MASHED.exe)
+// undefined FUN_0055bab0(void)
+
+void FUN_0055bab0(int param_1,undefined4 param_2)
+
+{
+  *(undefined4 *)(param_1 + 0x4c) = param_2;
+  return;
+}
+
+
+
+// FUN_0057c500 @ 0x0057c500  size=75  (MASHED.exe)
+// undefined FUN_0057c500(void)
+
+int FUN_0057c500(void)
+
+{
+  int iVar1;
+  undefined4 uVar2;
+  
+  iVar1 = (**(code **)(DAT_007d3ff8 + 0x108))(0x54,0x30900);
+  if (iVar1 != 0) {
+    *(undefined4 *)(iVar1 + 0x50) = 1;
+    uVar2 = FUN_00564130(0x60,0x10,0x30900);
+    *(undefined4 *)(iVar1 + 0x4c) = uVar2;
+    FUN_0055b860(iVar1,uVar2);
+    FUN_0057c1b0(*(undefined4 *)(iVar1 + 0x4c));
+  }
+  return iVar1;
+}
+
+
+
+// FUN_0057c300 @ 0x0057c300  size=102  (MASHED.exe)
+// undefined FUN_0057c300(void)
+
+undefined4 * FUN_0057c300(int param_1)
+
+{
+  undefined4 *puVar1;
+  
+  puVar1 = (undefined4 *)(**(code **)(DAT_007d3ff8 + 0x108))(0x34,0x30900);
+  *puVar1 = &DAT_0062403c;
+  FUN_0055ded0(puVar1,1,0);
+  if (puVar1[1] != 0) {
+    FUN_0057c550(puVar1[1]);
+  }
+  puVar1[1] = param_1;
+  if (param_1 != 0) {
+    *(int *)(param_1 + 0x50) = *(int *)(param_1 + 0x50) + 1;
+  }
+  *(undefined2 *)(puVar1 + 3) = 1;
+  puVar1[2] = 0xb;
+  *(undefined4 *)puVar1[4] = *(undefined4 *)(param_1 + 0x4c);
+  puVar1[0xc] = 0;
+  return puVar1;
+}
+
+
+
+// FUN_004770a0 @ 0x004770a0  size=31  (MASHED.exe)
+// undefined FUN_004770a0(void)
+
+/* [C1 2026-05-19] **Batch render dispatcher** — if `*(*(int*)(*(param_1+4)+DAT_007dc57c) + 4) !=
+   0` (i.e., plugin-data has non-empty… */
+
+void FUN_004770a0(int param_1)
+
+{
+  if (*(int *)(*(int *)(*(int *)(param_1 + 4) + DAT_007dc57c) + 4) != 0) {
+                    /* WARNING: Could not recover jumptable at 0x004770bb. Too many branches */
+                    /* WARNING: Treating indirect jump as call */
+    (**(code **)(*(int *)(param_1 + 4) + 0x48))();
+    return;
+  }
+  return;
+}
+
+
+
+// FUN_00476a10 @ 0x00476a10  size=30  (MASHED.exe)
+// undefined FUN_00476a10(void)
+
+/* [C1 2026-05-19] Copies 16 dwords (64 bytes) from `param_1` (default `&DAT_00692558` if null) into
+   `&DAT_006924e8`. */
+
+void FUN_00476a10(undefined4 *param_1)
+
+{
+  int iVar1;
+  undefined4 *puVar2;
+  
+  if (param_1 == (undefined4 *)0x0) {
+    param_1 = &DAT_00692558;
+  }
+  puVar2 = &DAT_006924e8;
+  for (iVar1 = 0x10; iVar1 != 0; iVar1 = iVar1 + -1) {
+    *puVar2 = *param_1;
+    param_1 = param_1 + 1;
+    puVar2 = puVar2 + 1;
+  }
+  return;
+}
+
+
+
+// FUN_004769f0 @ 0x004769f0  size=30  (MASHED.exe)
+// undefined FUN_004769f0(void)
+
+/* [C1 2026-05-02] If param_1 is NULL, writes DAT_00613290 into DAT_00692554 (default colour/alpha).
+    */
+
+void FUN_004769f0(undefined4 *param_1)
+
+{
+  if (param_1 == (undefined4 *)0x0) {
+    DAT_00692554 = DAT_00613290;
+    return;
+  }
+  DAT_00692554 = *param_1;
+  return;
+}
+
+
+
+// FUN_00476d00 @ 0x00476d00  size=238  (MASHED.exe)
+// undefined FUN_00476d00(void)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C1 2026-05-02] Takes param_1 as a pointer to a pool-entry struct. */
+
+void FUN_00476d00(int param_1)
+
+{
+  int iVar1;
+  int iVar2;
+  undefined4 *puVar3;
+  undefined4 *puVar4;
+  
+  if (*(int *)(param_1 + 0xc) < *(int *)(param_1 + 8)) {
+    if (*(int *)(param_1 + 0x10) != 0) {
+      puVar3 = (undefined4 *)(*(int *)(param_1 + 0x10) + *(int *)(param_1 + 0xc) * 0xc);
+      *puVar3 = DAT_00692528;
+      puVar3[1] = DAT_0069252c;
+      puVar3[2] = DAT_00692530;
+    }
+    iVar2 = *(int *)(param_1 + 0x14);
+    if (iVar2 != 0) {
+      iVar1 = *(int *)(param_1 + 0xc);
+      *(undefined4 *)(iVar2 + iVar1 * 8) = DAT_006924dc;
+      *(undefined4 *)(iVar2 + 4 + iVar1 * 8) = DAT_006924e0;
+    }
+    if (*(int *)(param_1 + 0x18) != 0) {
+      *(undefined4 *)(*(int *)(param_1 + 0x18) + *(int *)(param_1 + 0xc) * 4) = DAT_00692554;
+    }
+    if (*(int *)(param_1 + 0x1c) != 0) {
+      puVar3 = &DAT_006924e8;
+      puVar4 = (undefined4 *)(*(int *)(param_1 + 0xc) * 0x40 + *(int *)(param_1 + 0x1c));
+      for (iVar2 = 0x10; iVar2 != 0; iVar2 = iVar2 + -1) {
+        *puVar4 = *puVar3;
+        puVar3 = puVar3 + 1;
+        puVar4 = puVar4 + 1;
+      }
+    }
+    if (*(int *)(param_1 + 0x20) != 0) {
+      *(undefined4 *)(*(int *)(param_1 + 0x20) + *(int *)(param_1 + 0xc) * 4) = _DAT_006924d8;
+    }
+    if (*(int *)(param_1 + 0x24) != 0) {
+      puVar3 = (undefined4 *)(*(int *)(param_1 + 0xc) * 0x10 + *(int *)(param_1 + 0x24));
+      *puVar3 = DAT_00692598;
+      puVar3[1] = DAT_0069259c;
+      puVar3[2] = DAT_006925a0;
+      puVar3[3] = DAT_006925a4;
+    }
+    if (*(int *)(param_1 + 0x28) != 0) {
+      puVar3 = &DAT_00692534;
+      puVar4 = (undefined4 *)(*(int *)(param_1 + 0xc) * 0x20 + *(int *)(param_1 + 0x28));
+      for (iVar2 = 8; iVar2 != 0; iVar2 = iVar2 + -1) {
+        *puVar4 = *puVar3;
+        puVar3 = puVar3 + 1;
+        puVar4 = puVar4 + 1;
+      }
+    }
+    *(int *)(param_1 + 0xc) = *(int *)(param_1 + 0xc) + 1;
+  }
+  return;
+}
+
+

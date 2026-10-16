@@ -1,0 +1,21 @@
+0x00442c80: e8cbb6fcff               call 0x40e350
+0x00442c85: 83f806                   cmp eax, 6
+0x00442c88: 7532                     jne 0x442cbc
+0x00442c8a: a1d00f7f00               mov eax, dword ptr [0x7f0fd0]
+0x00442c8f: 83f804                   cmp eax, 4
+0x00442c92: 7428                     je 0x442cbc
+0x00442c94: 83f809                   cmp eax, 9
+0x00442c97: 7423                     je 0x442cbc
+0x00442c99: 83f808                   cmp eax, 8
+0x00442c9c: 741e                     je 0x442cbc
+0x00442c9e: 8b442404                 mov eax, dword ptr [esp + 4]
+0x00442ca2: d90485b0898900           fld dword ptr [eax*4 + 0x8989b0]
+0x00442ca9: d81db8c95c00             fcomp dword ptr [0x5cc9b8]
+0x00442caf: dfe0                     fnstsw ax
+0x00442cb1: f6c441                   test ah, 0x41
+0x00442cb4: 7506                     jne 0x442cbc
+0x00442cb6: b801000000               mov eax, 1
+0x00442cbb: c3                       ret 
+0x00442cbc: 33c0                     xor eax, eax
+0x00442cbe: c3                       ret 
+0x00442cbf: 90                       nop 

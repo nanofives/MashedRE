@@ -1,0 +1,28 @@
+// 0x005f29c0  DATA in .data
+//   type undefined4 len 4  value 00000001h
+//   3 reference(s) total
+//   WRITES (2):
+//     0x0040fc31 in FUN_0040fc00  [WRITE]  MOV dword ptr [0x005f29c0],0x1
+//     0x0040fc49 in FUN_0040fc00  [WRITE]  MOV dword ptr [0x005f29c0],0x0
+//   reads (1):
+//     0x0040fc5c in FUN_0040fc00  [READ]  MOV EAX,[0x005f29c0]
+//   other: (none)
+
+// 0x0063e4c0  DATA in .data
+//   type undefined4 len 4  value 00000000h
+//   2 reference(s) total
+//   WRITES (1):
+//     0x00420d5b in FUN_00420d40  [WRITE]  MOV dword ptr [ESI + -0x4],EDI
+//   reads: (none)
+//   other (1):
+//     0x00420dba in FUN_00420da0  [DATA]  MOV EAX,dword ptr [EAX + 0x8]
+
+// 0x0063e4c4  DATA in .data
+//   type undefined4 len 4  value 00000000h
+//   3 reference(s) total
+//   WRITES (1):
+//     0x00420d5e in FUN_00420d40  [WRITE]  MOV dword ptr [ESI],EDI
+//   reads: (none)
+//   other (2):
+//     0x00420d42 in FUN_00420d40  [DATA]  MOV ESI,0x63e4c4
+//     0x00420ddb in FUN_00420dc0  [DATA]  MOV EAX,dword ptr [EAX + 0xc]

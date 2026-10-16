@@ -1,0 +1,11 @@
+0x004215c0: 8b442408                 mov eax, dword ptr [esp + 8]
+0x004215c4: 8b4c240c                 mov ecx, dword ptr [esp + 0xc]
+0x004215c8: 50                       push eax
+0x004215c9: 8b442408                 mov eax, dword ptr [esp + 8]
+0x004215cd: 8d14c0                   lea edx, [eax + eax*8]
+0x004215d0: 8d1495b8e46300           lea edx, [edx*4 + 0x63e4b8]
+0x004215d7: e804f8ffff               call 0x420de0
+0x004215dc: 59                       pop ecx
+0x004215dd: c3                       ret 
+0x004215de: 90                       nop 
+0x004215df: 90                       nop 

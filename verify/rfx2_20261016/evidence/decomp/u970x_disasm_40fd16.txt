@@ -1,0 +1,55 @@
+0x0040fd16: a18cba6300               mov eax, dword ptr [0x63ba8c]
+0x0040fd1b: 83f807                   cmp eax, 7
+0x0040fd1e: 7416                     je 0x40fd36
+0x0040fd20: 83f809                   cmp eax, 9
+0x0040fd23: 7e05                     jle 0x40fd2a
+0x0040fd25: 83f80b                   cmp eax, 0xb
+0x0040fd28: 7e0c                     jle 0x40fd36
+0x0040fd2a: 6a01                     push 1
+0x0040fd2c: e81fb60400               call 0x45b350
+0x0040fd31: 83c404                   add esp, 4
+0x0040fd34: eb0f                     jmp 0x40fd45
+0x0040fd36: 6a00                     push 0
+0x0040fd38: e813b60400               call 0x45b350
+0x0040fd3d: 83c404                   add esp, 4
+0x0040fd40: e8db410000               call 0x413f20
+0x0040fd45: e856f90100               call 0x42f6a0
+0x0040fd4a: 83c0fe                   add eax, -2
+0x0040fd4d: 83f809                   cmp eax, 9
+0x0040fd50: 776d                     ja 0x40fdbf
+0x0040fd52: 0fb69084fe4000           movzx edx, byte ptr [eax + 0x40fe84]
+0x0040fd59: ff249570fe4000           jmp dword ptr [edx*4 + 0x40fe70]
+0x0040fd60: e85be90000               call 0x41e6c0
+0x0040fd65: eb77                     jmp 0x40fdde
+0x0040fd67: e894f70100               call 0x42f500
+0x0040fd6c: 85c0                     test eax, eax
+0x0040fd6e: 7464                     je 0x40fdd4
+0x0040fd70: 833dd00f7f0002           cmp dword ptr [0x7f0fd0], 2
+0x0040fd77: eb4d                     jmp 0x40fdc6
+0x0040fd79: a1d00f7f00               mov eax, dword ptr [0x7f0fd0]
+0x0040fd7e: 83c0fc                   add eax, -4
+0x0040fd81: 83f806                   cmp eax, 6
+0x0040fd84: 7739                     ja 0x40fdbf
+0x0040fd86: ff248590fe4000           jmp dword ptr [eax*4 + 0x40fe90]
+0x0040fd8d: e8eec30000               call 0x41c180
+0x0040fd92: eb4a                     jmp 0x40fdde
+0x0040fd94: e807df0000               call 0x41dca0
+0x0040fd99: eb43                     jmp 0x40fdde
+0x0040fd9b: e8b0a40000               call 0x41a250
+0x0040fda0: e8abe5ffff               call 0x40e350
+0x0040fda5: 83f806                   cmp eax, 6
+0x0040fda8: 7534                     jne 0x40fdde
+0x0040fdaa: e8413cffff               call 0x4039f0
+0x0040fdaf: eb2d                     jmp 0x40fdde
+0x0040fdb1: a104107f00               mov eax, dword ptr [0x7f1004]
+0x0040fdb6: 50                       push eax
+0x0040fdb7: e89434ffff               call 0x403250
+0x0040fdbc: 83c404                   add esp, 4
+0x0040fdbf: e83cf70100               call 0x42f500
+0x0040fdc4: 85c0                     test eax, eax
+0x0040fdc6: 740c                     je 0x40fdd4
+0x0040fdc8: e8c3c20000               call 0x41c090
+0x0040fdcd: e85eda0000               call 0x41d830
+0x0040fdd2: eb0a                     jmp 0x40fdde
+0x0040fdd4: e867b70000               call 0x41b540
+0x0040fdd9: e872ce0000               call 0x41cc50

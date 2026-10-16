@@ -1,0 +1,12 @@
+0x00442a60: 83ec3c                   sub esp, 0x3c
+0x00442a63: 33c0                     xor eax, eax
+0x00442a65: a3b0898900               mov dword ptr [0x8989b0], eax
+0x00442a6a: 8d4c2404                 lea ecx, [esp + 4]
+0x00442a6e: a3b4898900               mov dword ptr [0x8989b4], eax
+0x00442a73: 51                       push ecx
+0x00442a74: 8d542404                 lea edx, [esp + 4]
+0x00442a78: a3b8898900               mov dword ptr [0x8989b8], eax
+0x00442a7d: 52                       push edx
+0x00442a7e: a3bc898900               mov dword ptr [0x8989bc], eax
+0x00442a83: c744240804000000         mov dword ptr [esp + 8], 4
+0x00442a8b: e8f0b6fcff               call 0x40e180

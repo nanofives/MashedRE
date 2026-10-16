@@ -1,0 +1,87 @@
+// 0x0086cac0  DATA in .data
+//   type undefined4 len 4  value 00000000h
+//   19 reference(s) total
+//   WRITES (1):
+//     0x0047a0a0 in FUN_0047a020  [WRITE]  MOV dword ptr [EAX + 0xffffff1c],ESI
+//   reads (4):
+//     0x004803bd in FUN_00480340  [READ]  MOV EAX,dword ptr [EBX + 0xfffffef4]
+//     0x00480485 in FUN_00480340  [READ]  MOV EAX,dword ptr [EBX + 0xfffffef4]
+//     0x0048049e in FUN_00480340  [READ]  MOV ECX,dword ptr [EBX + 0xfffffef4]
+//     0x00480595 in FUN_00480340  [READ]  MOV EDX,dword ptr [EBX + 0xfffffef4]
+//   other (14):
+//     0x0047a05b in FUN_0047a020  [DATA]  PUSH 0x86cac0
+//     0x0047ae12 in FUN_0047ade0  [DATA]  ADD ESI,0x86cac0
+//     0x0047aeab in FUN_0047ae80  [DATA]  ADD ESI,0x86cac0
+//     0x0047aedd in FUN_0047ae80  [DATA]  MOV dword ptr [ESI],0x1
+//     0x0047af1b in FUN_0047aef0  [DATA]  ADD ESI,0x86cac0
+//     0x0047af3d in FUN_0047aef0  [DATA]  MOV dword ptr [ESI],0x2
+//     0x0047af78 in FUN_0047af50  [DATA]  ADD ESI,0x86cac0
+//     0x0047af8d in FUN_0047af50  [DATA]  MOV dword ptr [ESI],0x3
+//     0x0047afcb in FUN_0047afa0  [DATA]  ADD ESI,0x86cac0
+//     0x0047afed in FUN_0047afa0  [DATA]  MOV dword ptr [ESI],0x4
+//     0x0047b02b in FUN_0047b000  [DATA]  ADD ESI,0x86cac0
+//     0x0047b0cb in FUN_0047b0a0  [DATA]  ADD ESI,0x86cac0
+//     0x0047b138 in FUN_0047b110  [DATA]  ADD ESI,0x86cac0
+//     0x0047b188 in FUN_0047b160  [DATA]  ADD ESI,0x86cac0
+
+// 0x0086cb04  DATA in .data
+//   type: undefined bytes (Ghidra has no data definition here)
+//   8 reference(s) total
+//   WRITES: (none)
+//   reads: (none)
+//   other (8):
+//     0x004803fb in FUN_00480340  [DATA]  LEA EAX,[EBX + 0xffffff38]
+//     0x00480403 in FUN_00480340  [DATA]  PUSH EAX
+//     0x0048041e in FUN_00480340  [DATA]  LEA EAX,[EBX + 0xffffff38]
+//     0x00480426 in FUN_00480340  [DATA]  PUSH EAX
+//     0x0048054f in FUN_00480340  [DATA]  LEA EAX,[EBX + 0xffffff38]
+//     0x00480555 in FUN_00480340  [DATA]  PUSH EAX
+//     0x00480650 in FUN_00480340  [DATA]  LEA EAX,[EBX + 0xffffff38]
+//     0x00480656 in FUN_00480340  [DATA]  PUSH EAX
+
+// 0x0086cb44  DATA in .data
+//   type: undefined bytes (Ghidra has no data definition here)
+//   7 reference(s) total
+//   WRITES: (none)
+//   reads: (none)
+//   other (7):
+//     0x004803d3 in FUN_00480340  [DATA]  LEA EDI,[EBX + 0xffffff78]
+//     0x004803d9 in FUN_00480340  [DATA]  PUSH EDI
+//     0x004803f3 in FUN_00480340  [DATA]  PUSH EDI
+//     0x0048053d in FUN_00480340  [DATA]  LEA EAX,[EBX + 0xffffff78]
+//     0x00480543 in FUN_00480340  [DATA]  PUSH EAX
+//     0x0048063e in FUN_00480340  [DATA]  LEA EAX,[EBX + 0xffffff78]
+//     0x00480644 in FUN_00480340  [DATA]  PUSH EAX
+
+// 0x0086cba4  DATA in .data
+//   type undefined4 len 4  value 00000000h
+//   11 reference(s) total
+//   WRITES (1):
+//     0x0047a0a9 in FUN_0047a020  [WRITE]  MOV dword ptr [EAX],0x3f800000
+//   reads (2):
+//     0x004804c8 in FUN_00480340  [READ]  FLD float ptr [0x0086cba4]
+//     0x004805c9 in FUN_00480340  [READ]  FLD float ptr [0x0086cba4]
+//   other (8):
+//     0x0047a08c in FUN_0047a020  [DATA]  MOV EAX,0x86cba4
+//     0x0047b066 in FUN_0047b000  [DATA]  FSTP float ptr [ESI + 0xe4]
+//     0x0047e56b in FUN_0047def0  [DATA]  MOV EDX,dword ptr [EAX + 0x86cba4]
+//     0x0047e72c in FUN_0047def0  [DATA]  MOV EDX,dword ptr [EAX + 0x86cba4]
+//     0x0047f9b7 in FUN_0047f940  [DATA]  MOV EAX,dword ptr [EBX + 0x86cba4]
+//     0x0047fce1 in FUN_0047fc40  [DATA]  MOV ECX,dword ptr [EDI + 0x86cba4]
+//     0x0047fe61 in FUN_0047fe00  [DATA]  MOV EAX,dword ptr [EDI + 0x86cba4]
+//     0x0047ffe3 in FUN_0047ff70  [DATA]  MOV EAX,dword ptr [EDI + 0x86cba4]
+
+// 0x0086cbc4  DATA in .data
+//   type: undefined bytes (Ghidra has no data definition here)
+//   8 reference(s) total
+//   WRITES: (none)
+//   reads: (none)
+//   other (8):
+//     0x00471600 in FUN_004715a0  [DATA]  MOV EAX,dword ptr [EDI + 0x86cbc4]
+//     0x004716c0 in FUN_004715a0  [DATA]  MOV EAX,dword ptr [ESI + 0x86cbc4]
+//     0x0047b14c in FUN_0047b110  [DATA]  MOV dword ptr [ESI + 0x104],EAX
+//     0x0047b4c7 in FUN_0047b480  [DATA]  MOV ESI,dword ptr [EBX + 0x86cbc4]
+//     0x0047f9fb in FUN_0047f940  [DATA]  MOV EDX,dword ptr [EBX + 0x86cbc4]
+//     0x0047fd09 in FUN_0047fc40  [DATA]  MOV EDX,dword ptr [EDI + 0x86cbc4]
+//     0x0047fe89 in FUN_0047fe00  [DATA]  MOV ECX,dword ptr [EDI + 0x86cbc4]
+//     0x0048000b in FUN_0047ff70  [DATA]  MOV ECX,dword ptr [EDI + 0x86cbc4]

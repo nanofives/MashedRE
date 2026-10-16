@@ -1,0 +1,44 @@
+// FUN_0047aaa0 @ 0x0047aaa0  size=47  (MASHED.exe)
+// undefined FUN_0047aaa0(void)
+// callees: FUN_004b6fc0@0x004b6fc0, FUN_004b70d0@0x004b70d0
+
+/* [C1 2026-06-01] Script-VM dispatch handler (no direct callers). Pops an integer arg via */
+
+undefined4 FUN_0047aaa0(undefined4 param_1)
+
+{
+  char cVar1;
+  undefined4 uVar2;
+  char *pcVar3;
+  char *pcVar4;
+  
+  uVar2 = FUN_004b6fc0(param_1);
+  pcVar3 = (char *)FUN_004b70d0(param_1,uVar2);
+  pcVar4 = (char *)(DAT_006bf1c8 + 0x2640);
+  do {
+    cVar1 = *pcVar3;
+    pcVar3 = pcVar3 + 1;
+    *pcVar4 = cVar1;
+    pcVar4 = pcVar4 + 1;
+  } while (cVar1 != '\0');
+  return 0;
+}
+
+
+
+// FUN_0047b980 @ 0x0047b980  size=44  (MASHED.exe)
+// undefined FUN_0047b980(void)
+// callees: FUN_004b7250@0x004b7250, thunk_FUN_004b7fd0@0x004b7200
+
+/* [C2 2026-06-02] COURSE.LUA single-command registration primitive. Registers the named C function
+   `param_2` into the Lua command table… */
+
+void FUN_0047b980(undefined4 param_1,undefined4 param_2)
+
+{
+  thunk_FUN_004b7fd0(DAT_006bf1e0,param_2,0);
+  FUN_004b7250();
+  return;
+}
+
+

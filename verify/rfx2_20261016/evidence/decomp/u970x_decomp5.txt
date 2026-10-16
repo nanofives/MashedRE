@@ -1,0 +1,623 @@
+// FUN_0041ad60 @ 0x0041ad60  size=72  (MASHED.exe)
+// undefined FUN_0041ad60(void)
+// callers: FUN_0041b450@0x0041b450
+// strings: (none)
+
+/* [C2 2026-06-03] `void FUN_0041ad60(void)` — body 0x0041ad60..0x0041ada7. Constructor for the
+   **17-atomic ParticleEmitter (Class A)**… */
+
+void FUN_0041ad60(void)
+
+{
+  undefined4 uVar1;
+  int in_EAX;
+  int iVar2;
+  int unaff_EBX;
+  int iVar3;
+  undefined4 local_44 [17];
+  
+  FUN_004b3fc0();
+  *(int *)(unaff_EBX + 0x5c) = in_EAX;
+  *(undefined4 *)(unaff_EBX + 0x60) = *(undefined4 *)(in_EAX + 4);
+  FUN_004b6520();
+  iVar3 = 0;
+  do {
+    uVar1 = local_44[iVar3];
+    iVar2 = FUN_004b5190(uVar1,0,0);
+    iVar3 = iVar3 + 1;
+    *(undefined4 *)(unaff_EBX + iVar2 * 4) = uVar1;
+  } while (iVar3 < 0x11);
+  return;
+}
+
+
+
+// FUN_0041adb0 @ 0x0041adb0  size=102  (MASHED.exe)
+// undefined FUN_0041adb0(void)
+// callers: FUN_0041b4d0@0x0041b4d0
+// strings: (none)
+
+/* [C2 2026-06-03] `void FUN_0041adb0(void)` — body 0x0041adb0..0x0041ae15. Configures the
+   17-atomic emitter (`this` in ESI, `unaff_ESI`). */
+
+void FUN_0041adb0(void)
+
+{
+  int unaff_ESI;
+  undefined4 local_4;
+  
+  *(undefined4 *)(unaff_ESI + 0x68) = 0;
+  *(undefined4 *)(unaff_ESI + 0x6c) = 0;
+  local_4 = 0xff323232;
+  *(int *)(unaff_ESI + 0x68) = 1 << ((byte)(&DAT_007f1a1c)[*(int *)(unaff_ESI + 100) * 4] & 0x1f);
+  FUN_004b5260(*(undefined4 *)(unaff_ESI + 0x14),&local_4);
+  FUN_004b5260(*(undefined4 *)(unaff_ESI + 8),&local_4);
+  if (*(int *)(unaff_ESI + 100) < DAT_0063c89c) {
+    *(undefined4 *)(unaff_ESI + 0x6c) = 1;
+  }
+  return;
+}
+
+
+
+// FUN_0041af50 @ 0x0041af50  size=998  (MASHED.exe)
+// undefined FUN_0041af50(void)
+// callers: FUN_0041b540@0x0041b540
+// strings: (none)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C2 2026-06-03] `void FUN_0041af50(void)` — body 0x0041af50..0x0041b335. Per-frame update for
+   one 17-atomic emitter (Class A). `this`… */
+
+void FUN_0041af50(void)
+
+{
+  float *pfVar1;
+  float fVar2;
+  int in_EAX;
+  int iVar3;
+  int iVar4;
+  uint uVar5;
+  int iVar6;
+  float10 fVar7;
+  float local_4c;
+  float local_48;
+  float local_44;
+  undefined4 local_40;
+  undefined4 local_3c;
+  undefined4 local_38;
+  uint local_34;
+  undefined4 local_30;
+  undefined4 local_2c;
+  undefined4 local_28;
+  undefined4 local_20;
+  undefined4 local_1c;
+  undefined4 local_18;
+  undefined4 local_10;
+  undefined4 local_c;
+  undefined4 local_8;
+  
+  local_4c = 1.0;
+  local_48 = 1.0;
+  local_44 = 1.0;
+  iVar3 = FUN_0040b6d0(*(undefined4 *)(in_EAX + 100));
+  iVar4 = FUN_0040b890();
+  iVar6 = *(int *)(in_EAX + 100);
+  if (*(int *)(&DAT_0063c8a4 + iVar6 * 4) == 0) {
+    uVar5 = *(uint *)(in_EAX + 0x68) & 0xffffffbf;
+  }
+  else {
+    uVar5 = *(uint *)(in_EAX + 0x68) | 0x40;
+  }
+  *(uint *)(in_EAX + 0x68) = uVar5;
+  if (((&DAT_0063c8b4)[iVar6] == 0) || (DAT_0063c8c8 != 0)) {
+    uVar5 = *(uint *)(in_EAX + 0x68) & 0xffffff7f;
+  }
+  else {
+    uVar5 = *(uint *)(in_EAX + 0x68) | 0x80;
+  }
+  *(uint *)(in_EAX + 0x68) = uVar5;
+  if (((&DAT_0063c88c)[iVar6] == 0) || (DAT_0063c8a0 != 0)) {
+    uVar5 = *(uint *)(in_EAX + 0x68) & 0xfffffeff;
+  }
+  else {
+    uVar5 = *(uint *)(in_EAX + 0x68) | 0x100;
+  }
+  *(uint *)(in_EAX + 0x68) = uVar5;
+  if (*(int *)(&DAT_0063c878 + iVar6 * 4) == 0) {
+    uVar5 = *(uint *)(in_EAX + 0x68) & 0xfffffdff;
+  }
+  else {
+    uVar5 = *(uint *)(in_EAX + 0x68) | 0x200;
+  }
+  *(uint *)(in_EAX + 0x68) = uVar5;
+  if (*(int *)(&DAT_0063caa0 + iVar6 * 4) == 0) {
+    uVar5 = *(uint *)(in_EAX + 0x68) & 0xfffffbff;
+  }
+  else {
+    uVar5 = *(uint *)(in_EAX + 0x68) | 0x400;
+  }
+  *(uint *)(in_EAX + 0x68) = uVar5;
+  if (((uVar5 & 0x40) != 0) && ((uVar5 & 0x100) != 0)) {
+    *(uint *)(in_EAX + 0x68) = uVar5 & 0xfffffeff;
+  }
+  if ((*(uint *)(in_EAX + 0x68) & 0x400) != 0) {
+    *(uint *)(in_EAX + 0x68) = *(uint *)(in_EAX + 0x68) & 0xfffffc3f;
+  }
+  uVar5 = *(uint *)(in_EAX + 0x68);
+  *(uint *)(in_EAX + 0x68) = uVar5 & 0xffff1fff;
+  if ((uVar5 & 0x400) != 0) {
+    iVar6 = FUN_0040b420(iVar6);
+    if (iVar6 == -2) {
+      uVar5 = *(uint *)(in_EAX + 0x68) | 0x8000;
+LAB_0041b099:
+      *(uint *)(in_EAX + 0x68) = uVar5;
+    }
+    else {
+      if (iVar6 == -1) {
+        uVar5 = *(uint *)(in_EAX + 0x68) | 0x4000;
+        goto LAB_0041b099;
+      }
+      if (iVar6 == 0) {
+        uVar5 = *(uint *)(in_EAX + 0x68) | 0x2000;
+        goto LAB_0041b099;
+      }
+    }
+    *(float *)(in_EAX + 0x70) = *(float *)(in_EAX + 0x70) + _DAT_005cc320;
+  }
+  if (iVar4 == 8) {
+    *(uint *)(in_EAX + 0x68) = *(uint *)(in_EAX + 0x68) & 0xffffefff | 0x800;
+  }
+  else if (iVar4 == 0xc) {
+    *(uint *)(in_EAX + 0x68) = *(uint *)(in_EAX + 0x68) & 0xfffff7ff | 0x1000;
+  }
+  pfVar1 = (float *)(in_EAX + 0x50);
+  if (ABS(*(float *)(&DAT_005f3304 + *(uint *)(in_EAX + 100) * 0xc)) <
+      ABS(*(float *)(in_EAX + 0x50))) {
+    if ((*(uint *)(in_EAX + 100) & 1) == 0) {
+      fVar2 = *pfVar1 - _DAT_005cd11c;
+    }
+    else {
+      fVar2 = *pfVar1 + _DAT_005cd11c;
+    }
+    *pfVar1 = fVar2;
+  }
+  local_34 = local_34 | 0x20003;
+  local_18 = 0x3f800000;
+  local_2c = 0x3f800000;
+  local_40 = 0x3f800000;
+  local_30 = 0;
+  local_38 = 0;
+  local_3c = 0;
+  local_1c = 0;
+  local_20 = 0;
+  local_28 = 0;
+  local_8 = 0;
+  local_c = 0;
+  local_10 = 0;
+  FUN_004c51a0(&local_40,pfVar1,0);
+  FUN_004c1480(*(undefined4 *)(in_EAX + 0x60),&local_40,0);
+  local_4c = local_4c * _DAT_005cd118;
+  local_48 = local_48 * _DAT_005cd118;
+  local_44 = local_44 * _DAT_005cd118;
+  FUN_004c13e0(*(undefined4 *)(in_EAX + 0x60),&local_4c,1);
+  local_4c = (float)iVar3 / (float)iVar4;
+  local_44 = 1.0;
+  local_48 = 1.0;
+  if ((*(uint *)(in_EAX + 0x68) & 0x800) == 0) {
+    if ((*(uint *)(in_EAX + 0x68) & 0x1000) == 0) goto LAB_0041b21b;
+    iVar6 = *(int *)(in_EAX + 8);
+  }
+  else {
+    iVar6 = *(int *)(in_EAX + 0x14);
+  }
+  FUN_004c13e0(*(undefined4 *)(iVar6 + 4),&local_4c,0);
+LAB_0041b21b:
+  if (((char)*(uint *)(in_EAX + 0x68) < '\0') && ((*(uint *)(in_EAX + 0x68) & 0x40) == 0)) {
+    fVar7 = (float10)DAT_0063cab0;
+    if (DAT_0063cab0 < 0) {
+      fVar7 = fVar7 + (float10)_DAT_005cc94c;
+    }
+    fVar7 = (float10)fsin(fVar7 * (float10)_DAT_005cc9c0);
+    fVar7 = fVar7 * (float10)_DAT_005cc9c0 + (float10)_DAT_005cc320;
+    local_48 = (float)fVar7;
+    local_4c = (float)fVar7;
+  }
+  else {
+    local_48 = 1.0;
+    local_4c = 1.0;
+  }
+  local_44 = 1.0;
+  FUN_0041ae60();
+  if ((*(uint *)(in_EAX + 0x68) & 0x400) != 0) {
+    local_4c = _DAT_005cc320 - *(float *)(in_EAX + 0x70) * _DAT_005cd18c;
+    if (local_4c <= DAT_005d757c) {
+      local_4c = DAT_005d757c;
+    }
+    local_44 = 1.0;
+    local_48 = local_4c;
+    FUN_0041ae60();
+    fVar2 = (*(float *)(in_EAX + 0x70) - _DAT_005cc9e0) * _DAT_005cd18c;
+    if (((fVar2 <= DAT_005d757c) ||
+        (local_4c = _DAT_005cc320, _DAT_005cc320 < fVar2 == (_DAT_005cc320 == fVar2))) &&
+       (local_4c = fVar2, fVar2 <= DAT_005d757c)) {
+      local_4c = DAT_005d757c;
+    }
+    local_44 = 1.0;
+    local_48 = local_4c;
+    FUN_0041af00();
+  }
+  return;
+}
+
+
+
+// FUN_0041ae20 @ 0x0041ae20  size=52  (MASHED.exe)
+// undefined FUN_0041ae20(void)
+// callers: FUN_0041b520@0x0041b520
+// strings: (none)
+
+/* [C2 2026-06-03] `void __fastcall FUN_0041ae20(int param_1)` — body 0x0041ae20..0x0041ae53.
+   Per-frame reset of the 17-atomic emitter's… */
+
+void __fastcall FUN_0041ae20(int param_1)
+
+{
+  float *pfVar1;
+  int iVar2;
+  
+  pfVar1 = (float *)(param_1 + 0x50);
+  iVar2 = *(int *)(param_1 + 100) * 0xc;
+  *pfVar1 = *(float *)(&DAT_005f3304 + iVar2);
+  *(undefined4 *)(param_1 + 0x54) = *(undefined4 *)(&DAT_005f3308 + iVar2);
+  *(undefined4 *)(param_1 + 0x58) = *(undefined4 *)(&DAT_005f330c + iVar2);
+  *(undefined4 *)(param_1 + 0x70) = 0;
+  *pfVar1 = *pfVar1 + *pfVar1;
+  return;
+}
+
+
+
+// FUN_0041b440 @ 0x0041b440  size=11  (MASHED.exe)
+// undefined FUN_0041b440(void)
+// callers: FUN_0041b660@0x0041b660
+// strings: (none)
+
+/* [C2 2026-06-03] `void FUN_0041b440(void)` — body 0x0041b440..0x0041b44a. Tail-call destructor
+   for the 17-atomic emitter (`this` in… */
+
+void FUN_0041b440(void)
+
+{
+  int in_EAX;
+  
+  RpClumpDestroy(*(undefined4 *)(in_EAX + 0x5c));
+  return;
+}
+
+
+
+// FUN_0040b930 @ 0x0040b930  size=51  (MASHED.exe)
+// undefined FUN_0040b930(void)
+// callers: FUN_0041b540@0x0041b540, FUN_0041c090@0x0041c090, FUN_0041cc50@0x0041cc50, FUN_0041d830@0x0041d830
+// strings: (none)
+
+/* [C2 2026-06-03] Body `0x0040b930..0x0040b962` (50 bytes). Signature `void FUN_0040b930(undefined4
+   *param_1)` — writes a 4-DWORD output… */
+
+void FUN_0040b930(undefined4 *param_1)
+
+{
+  int iVar1;
+  int iVar2;
+  int iVar3;
+  
+  iVar3 = (int)&DAT_008a94e0 - (int)param_1;
+  iVar2 = 4;
+  do {
+    *param_1 = 0;
+    iVar1 = FUN_0040b8e0();
+    if (iVar1 <= *(int *)(iVar3 + (int)param_1)) {
+      *param_1 = 1;
+    }
+    param_1 = param_1 + 1;
+    iVar2 = iVar2 + -1;
+  } while (iVar2 != 0);
+  return;
+}
+
+
+
+// FUN_0040b9a0 @ 0x0040b9a0  size=92  (MASHED.exe)
+// undefined FUN_0040b9a0(void)
+// callers: FUN_0041b540@0x0041b540, FUN_0041cc50@0x0041cc50
+// strings: (none)
+
+/* [C2 2026-06-03] Body `0x0040b9a0..0x0040b9fe` (91 bytes). Signature `void FUN_0040b9a0(undefined4
+   *param_1, int param_2)`. */
+
+void FUN_0040b9a0(undefined4 *param_1,int param_2)
+
+{
+  int iVar1;
+  int iVar2;
+  int iVar3;
+  
+  iVar3 = 0;
+  iVar2 = 0;
+  do {
+    if (param_2 == 0) {
+LAB_0040b9c1:
+      if (iVar3 < (int)(&DAT_008a94e0)[iVar2]) {
+        iVar3 = (&DAT_008a94e0)[iVar2];
+      }
+    }
+    else {
+      iVar1 = FUN_0046c7b0(iVar2);
+      if (iVar1 != 0) goto LAB_0040b9c1;
+    }
+    iVar2 = iVar2 + 1;
+    if (3 < iVar2) {
+      iVar2 = (int)&DAT_008a94e0 - (int)param_1;
+      iVar1 = 4;
+      do {
+        *param_1 = 0;
+        if (*(int *)(iVar2 + (int)param_1) == iVar3) {
+          *param_1 = 1;
+        }
+        param_1 = param_1 + 1;
+        iVar1 = iVar1 + -1;
+      } while (iVar1 != 0);
+      return;
+    }
+  } while( true );
+}
+
+
+
+// FUN_0040ba00 @ 0x0040ba00  size=91  (MASHED.exe)
+// undefined FUN_0040ba00(void)
+// callers: FUN_0041b540@0x0041b540, FUN_0041cc50@0x0041cc50
+// strings: (none)
+
+/* [C2 2026-06-03] Body `0x0040ba00..0x0040ba5a` (90 bytes). Signature `void FUN_0040ba00(undefined4
+   *param_1)`. */
+
+void FUN_0040ba00(undefined4 *param_1)
+
+{
+  int iVar1;
+  int iVar2;
+  int iVar3;
+  
+  iVar1 = 99;
+  if (DAT_008a94e0 < 99) {
+    iVar1 = DAT_008a94e0;
+  }
+  if (DAT_008a94e4 < iVar1) {
+    iVar1 = DAT_008a94e4;
+  }
+  if (DAT_008a94e8 < iVar1) {
+    iVar1 = DAT_008a94e8;
+  }
+  if (DAT_008a94ec < iVar1) {
+    iVar1 = DAT_008a94ec;
+  }
+  iVar2 = (int)&DAT_008a94e0 - (int)param_1;
+  iVar3 = 4;
+  do {
+    *param_1 = 0;
+    if (*(int *)(iVar2 + (int)param_1) == iVar1) {
+      *param_1 = 1;
+    }
+    param_1 = param_1 + 1;
+    iVar3 = iVar3 + -1;
+  } while (iVar3 != 0);
+  return;
+}
+
+
+
+// FUN_0040b970 @ 0x0040b970  size=41  (MASHED.exe)
+// undefined FUN_0040b970(void)
+// callers: FUN_0041b540@0x0041b540, FUN_0041cc50@0x0041cc50
+// strings: (none)
+
+/* [C2 2026-06-03] Body `0x0040b970..0x0040b998` (40 bytes). Signature `void FUN_0040b970(undefined4
+   *param_1)`. */
+
+void FUN_0040b970(undefined4 *param_1)
+
+{
+  int iVar1;
+  int iVar2;
+  
+  iVar1 = (int)&DAT_008a94e0 - (int)param_1;
+  iVar2 = 4;
+  do {
+    *param_1 = 0;
+    if (*(int *)(iVar1 + (int)param_1) == 0) {
+      *param_1 = 1;
+    }
+    param_1 = param_1 + 1;
+    iVar2 = iVar2 + -1;
+  } while (iVar2 != 0);
+  return;
+}
+
+
+
+// FUN_0040ba60 @ 0x0040ba60  size=46  (MASHED.exe)
+// undefined FUN_0040ba60(void)
+// callers: FUN_0041b540@0x0041b540
+// strings: (none)
+
+/* [C2 2026-06-03] Body `0x0040ba60..0x0040ba93` (45 bytes). Signature `void FUN_0040ba60(int
+   param_1)` — `param_1` is the base of a… */
+
+void FUN_0040ba60(int param_1)
+
+{
+  int iVar1;
+  int iVar2;
+  
+  iVar2 = 0;
+  do {
+    *(undefined4 *)(param_1 + iVar2 * 4) = 0;
+    iVar1 = FUN_0046c7b0(iVar2);
+    if (iVar1 == 0) {
+      *(undefined4 *)(param_1 + iVar2 * 4) = 1;
+    }
+    iVar2 = iVar2 + 1;
+  } while (iVar2 < 4);
+  return;
+}
+
+
+
+// FUN_0040e340 @ 0x0040e340  size=6  (MASHED.exe)
+// undefined FUN_0040e340(void)
+// callers: FUN_004019d0@0x004019d0, FUN_00401f10@0x00401f10, FUN_0040b180@0x0040b180, FUN_0040b290@0x0040b290, FUN_0040b700@0x0040b700, FUN_0040b890@0x0040b890, FUN_0040b8e0@0x0040b8e0, FUN_00410510@0x00410510, FUN_00410d10@0x00410d10, FUN_004111c0@0x004111c0, FUN_00412f30@0x00412f30, FUN_0041b4d0@0x0041b4d0, FUN_0041cb80@0x0041cb80, FUN_00424270@0x00424270, FUN_00424b80@0x00424b80, FUN_00424eb0@0x00424eb0, FUN_0042c960@0x0042c960, FUN_00434720@0x00434720, FUN_00442ce0@0x00442ce0, FUN_00451820@0x00451820, FUN_00451ad0@0x00451ad0, FUN_00466b50@0x00466b50, FUN_00467650@0x00467650, FUN_004709a0@0x004709a0, FUN_00470c70@0x00470c70, FUN_0047eb30@0x0047eb30, FUN_004929d0@0x004929d0
+// strings: (none)
+
+/* [C2 2026-05-18] Body (0x0040e340..0x0040e345): */
+
+undefined4 FUN_0040e340(void)
+
+{
+  return DAT_008a94d0;
+}
+
+
+
+// FUN_0040b890 @ 0x0040b890  size=66  (MASHED.exe)
+// undefined FUN_0040b890(void)
+// callers: FUN_0041af50@0x0041af50, FUN_0041b4d0@0x0041b4d0, FUN_0041b7a0@0x0041b7a0, FUN_0041c410@0x0041c410, FUN_0041cb80@0x0041cb80, FUN_0041ce00@0x0041ce00
+// strings: (none)
+
+/* [C2 2026-06-03] Body `0x0040b890..0x0040b8d1` (65 bytes). Signature `int FUN_0040b890(void)`.
+   Returns either 8 or 12 (0xc). */
+
+int FUN_0040b890(void)
+
+{
+  int iVar1;
+  int iVar2;
+  
+  iVar1 = FUN_0040e340();
+  iVar2 = (-(uint)(iVar1 != 4) & 0xfffffffc) + 0xc;
+  iVar1 = FUN_0042f500();
+  if (iVar1 != 0) {
+    iVar2 = 8;
+  }
+  if (DAT_007f0fd0 == 1) {
+    return 8;
+  }
+  iVar1 = 8;
+  if (DAT_007f0fd0 != 2) {
+    iVar1 = iVar2;
+  }
+  return iVar1;
+}
+
+
+
+// FUN_004b5190 @ 0x004b5190  size=49  (MASHED.exe)
+// undefined FUN_004b5190(void)
+// callers: FUN_00407800@0x00407800, FUN_00419090@0x00419090, FUN_0041ad60@0x0041ad60, FUN_0041b690@0x0041b690, FUN_0041c320@0x0041c320, FUN_0041cd20@0x0041cd20, FUN_0041fe10@0x0041fe10, FUN_00420420@0x00420420, FUN_00421a90@0x00421a90, FUN_00426460@0x00426460, FUN_004548e0@0x004548e0, FUN_00456760@0x00456760, FUN_004b51d0@0x004b51d0
+// strings: (none)
+
+/* [C2 2026-06-02] `uVar1 = *(obj + 0x18)` @ 0x004b5193 — inner RW object ref. 2.
+   `FUN_00543d40(uVar1)` — op A on inner ref. 3. `uVar1 =… */
+
+void FUN_004b5190(int param_1,undefined4 param_2,undefined4 param_3)
+
+{
+  undefined4 uVar1;
+  
+  uVar1 = *(undefined4 *)(param_1 + 0x18);
+  FUN_00543d40(uVar1);
+  uVar1 = FUN_00543d70(uVar1,param_2);
+  FUN_0055deb0(uVar1);
+  FUN_00543df0(uVar1,param_3);
+  return;
+}
+
+
+
+// FUN_004b51d0 @ 0x004b51d0  size=95  (MASHED.exe)
+// undefined FUN_004b51d0(void)
+// callers: FUN_0041a1e0@0x0041a1e0, FUN_0041a400@0x0041a400, FUN_0041c100@0x0041c100, FUN_0041d8b0@0x0041d8b0, FUN_0041db90@0x0041db90, FUN_0041def0@0x0041def0
+// strings: (none)
+
+/* [C1 2026-05-19] 5-param `(param_1, param_2, param_3, param_4, param_5)`. */
+
+int FUN_004b51d0(undefined4 param_1,int param_2,undefined4 param_3,undefined4 param_4,
+                undefined4 param_5)
+
+{
+  undefined4 uVar1;
+  int iVar2;
+  int iVar3;
+  int iVar4;
+  undefined4 local_400 [256];
+  
+  iVar2 = FUN_004b3fc0(param_1,local_400);
+  iVar4 = 0;
+  if (0 < iVar2) {
+    do {
+      uVar1 = local_400[iVar4];
+      iVar3 = FUN_004b5190(uVar1,param_4,param_5);
+      iVar4 = iVar4 + 1;
+      *(undefined4 *)(param_2 + iVar3 * 4) = uVar1;
+    } while (iVar4 < iVar2);
+  }
+  return iVar2;
+}
+
+
+
+// FUN_004b52f0 @ 0x004b52f0  size=16  (MASHED.exe)
+// undefined FUN_004b52f0(void)
+// callers: FUN_0041a1e0@0x0041a1e0, FUN_0041a400@0x0041a400, FUN_0041d8b0@0x0041d8b0, FUN_0041db90@0x0041db90, FUN_0041def0@0x0041def0, FUN_0048ae00@0x0048ae00, FUN_004b5300@0x004b5300
+// strings: (none)
+
+/* [C1 2026-05-19] Thin trampoline that tail-calls `FUN_004b52c0()` with no visible args. */
+
+void FUN_004b52f0(void)
+
+{
+  FUN_004b52c0();
+  return;
+}
+
+
+
+// FUN_0042a5d0 @ 0x0042a5d0  size=103  (MASHED.exe)
+// undefined FUN_0042a5d0(void)
+// callers: FUN_004039c0@0x004039c0, FUN_0041a060@0x0041a060, FUN_0041a1e0@0x0041a1e0, FUN_0041a8d0@0x0041a8d0, FUN_0041b450@0x0041b450, FUN_0041bec0@0x0041bec0, FUN_0041c100@0x0041c100, FUN_0041cb10@0x0041cb10, FUN_0041d6e0@0x0041d6e0, FUN_0041d8b0@0x0041d8b0, FUN_0041db90@0x0041db90, FUN_0041def0@0x0041def0, FUN_00420420@0x00420420, FUN_004220d0@0x004220d0, FUN_004264d0@0x004264d0, FUN_004548e0@0x004548e0, FUN_00456760@0x00456760, FUN_004775b0@0x004775b0, FUN_00479330@0x00479330, FUN_0048ae00@0x0048ae00
+// strings: (none)
+
+/* [C1 2026-05-07] DFF clump file loader. Same pattern as 0042a640. */
+
+undefined4 FUN_0042a5d0(char *param_1)
+
+{
+  char *pcVar1;
+  int iVar2;
+  undefined4 uVar3;
+  
+  (**(code **)(DAT_007d3ff8 + 0xcc))(&DAT_0067e6a8,param_1);
+  pcVar1 = _strchr(param_1,0x2e);
+  if (pcVar1 == (char *)0x0) {
+    (**(code **)(DAT_007d3ff8 + 0xd4))(&DAT_0067e6a8,PTR_DAT_005f65b0);
+  }
+  iVar2 = FUN_0042a530(&DAT_0067d9a8,&DAT_0067e6a8);
+  if (iVar2 != 0) {
+    uVar3 = FUN_004b3bf0();
+    return uVar3;
+  }
+  return 0;
+}
+
+

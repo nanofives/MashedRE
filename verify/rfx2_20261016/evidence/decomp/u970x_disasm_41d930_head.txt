@@ -1,0 +1,40 @@
+0x0041d930: 83ec58                   sub esp, 0x58
+0x0041d933: d90588d56300             fld dword ptr [0x63d588]
+0x0041d939: 8b442424                 mov eax, dword ptr [esp + 0x24]
+0x0041d93d: d81d2cd25c00             fcomp dword ptr [0x5cd22c]
+0x0041d943: 0d03000200               or eax, 0x20003
+0x0041d948: 89442424                 mov dword ptr [esp + 0x24], eax
+0x0041d94c: c744240c00000000         mov dword ptr [esp + 0xc], 0
+0x0041d954: c74424103333b33e         mov dword ptr [esp + 0x10], 0x3eb33333
+0x0041d95c: dfe0                     fnstsw ax
+0x0041d95e: c74424140000803f         mov dword ptr [esp + 0x14], 0x3f800000
+0x0041d966: c74424000000803f         mov dword ptr [esp], 0x3f800000
+0x0041d96e: f6c441                   test ah, 0x41
+0x0041d971: c74424040000803f         mov dword ptr [esp + 4], 0x3f800000
+0x0041d979: c74424080000803f         mov dword ptr [esp + 8], 0x3f800000
+0x0041d981: c74424400000803f         mov dword ptr [esp + 0x40], 0x3f800000
+0x0041d989: c744242c0000803f         mov dword ptr [esp + 0x2c], 0x3f800000
+0x0041d991: c74424180000803f         mov dword ptr [esp + 0x18], 0x3f800000
+0x0041d999: c744242800000000         mov dword ptr [esp + 0x28], 0
+0x0041d9a1: c744242000000000         mov dword ptr [esp + 0x20], 0
+0x0041d9a9: c744241c00000000         mov dword ptr [esp + 0x1c], 0
+0x0041d9b1: c744243c00000000         mov dword ptr [esp + 0x3c], 0
+0x0041d9b9: c744243800000000         mov dword ptr [esp + 0x38], 0
+0x0041d9c1: c744243000000000         mov dword ptr [esp + 0x30], 0
+0x0041d9c9: c744245000000000         mov dword ptr [esp + 0x50], 0
+0x0041d9d1: c744244c00000000         mov dword ptr [esp + 0x4c], 0
+0x0041d9d9: c744244800000000         mov dword ptr [esp + 0x48], 0
+0x0041d9e1: 751c                     jne 0x41d9ff
+0x0041d9e3: d90588d56300             fld dword ptr [0x63d588]
+0x0041d9e9: d8252cd25c00             fsub dword ptr [0x5cd22c]
+0x0041d9ef: d80d64c55c00             fmul dword ptr [0x5cc564]
+0x0041d9f5: d80528d25c00             fadd dword ptr [0x5cd228]
+0x0041d9fb: d95c2410                 fstp dword ptr [esp + 0x10]
+0x0041d9ff: 6a00                     push 0
+0x0041da01: 8d442410                 lea eax, [esp + 0x10]
+0x0041da05: 50                       push eax
+0x0041da06: 8d4c2420                 lea ecx, [esp + 0x20]
+0x0041da0a: 51                       push ecx
+0x0041da0b: e890770a00               call 0x4c51a0
+0x0041da10: a180d56300               mov eax, dword ptr [0x63d580]
+0x0041da15: 6a00                     push 0

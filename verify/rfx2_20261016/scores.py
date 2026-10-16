@@ -13,7 +13,7 @@ GROUPS = ("C04", "C08", "C09")
 
 def main() -> int:
     arms = sys.argv[1:]
-    print("rows (red) [C04/C08/C09 rows] matched-draws, per arm; cites: verify/rfx_20261016/cites_rfx.json")
+    print("rows (red) [C04/C08/C09 rows] matched-draws, per arm; diffs adjudicated by run_arm.py with verify/rfx2_20261016/cites_rfx2.json")
     print("frame          " + "".join(f"{a:>26}" for a in arms))
     for tr, ks in FRAMES.items():
         for k in ks:

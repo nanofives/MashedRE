@@ -1,0 +1,29 @@
+arctic:01051     before  29 after  26  gone   3  NEW 0
+    gone MISSING Headlight [C09-FX]
+    gone MISSING lensflare-fs8 [C09-FX]
+    gone MISSING RWObjShad [C04-SHADOW]
+arctic:01091     before  29 after  26  gone   3  NEW 0
+    gone MISSING Headlight [C09-FX]
+    gone MISSING lensflare-fs8 [C09-FX]
+    gone MISSING RWObjShad [C04-SHADOW]
+arctic:01126     before  30 after  27  gone   3  NEW 0
+    gone MISSING Headlight [C09-FX]
+    gone MISSING lensflare-fs8 [C09-FX]
+    gone MISSING RWObjShad [C04-SHADOW]
+city:00761       before  17 after  14  gone   3  NEW 0
+    gone MISSING Headlight [C09-FX]
+    gone MISSING lensflare-fs8 [C09-FX]
+    gone MISSING RWObjShad [C04-SHADOW]
+city:00801       before  17 after  16  gone   2  NEW 1
+    gone MISSING lensflare-fs8 [C09-FX]
+    gone MISSING RWObjShad [C04-SHADOW]
+    NEW  EXTRA Headlight [C09b-HEADLIGHT-BRAKE]: B-only 1 draws 48 tri (0 offscreen); first k82 pt4 tri=48 tex=Headlight tex1=- bb=[282.08,168.19,0.98,409.53,443.53,0.99] src=rw Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=1
+city:00836       before  18 after  15  gone   3  NEW 0
+    gone MISSING Headlight [C09-FX]
+    gone MISSING lensflare-fs8 [C09-FX]
+    gone MISSING RWObjShad [C04-SHADOW]
+training:00884   before  16 after  15  gone   1  NEW 0
+    gone MISSING RWObjShad [C04-SHADOW]
+training:00924   before  15 after  15  gone   0  NEW 0
+training:00959   before  15 after  15  gone   0  NEW 0
+NEW ROWS TOTAL: 1

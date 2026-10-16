@@ -1,0 +1,439 @@
+// FUN_00479330 @ 0x00479330  size=2888  (MASHED.exe)
+// NOTE: 0x0047981d is not a function entry; showing containing function
+// undefined FUN_00479330(void)
+// callees: FID_conflict:_wprintf@0x004a2cbd, FUN_0042a5d0@0x0042a5d0, FUN_0042a640@0x0042a640, FUN_0042a6b0@0x0042a6b0, FUN_0042a740@0x0042a740, FUN_0042a7f0@0x0042a7f0, FUN_0042a860@0x0042a860, FUN_00474fd0@0x00474fd0, FUN_00478110@0x00478110, FUN_00478200@0x00478200, FUN_00478cc0@0x00478cc0, FUN_004790e0@0x004790e0, FUN_004850e0@0x004850e0, FUN_00485460@0x00485460, FUN_004987b0@0x004987b0, FUN_004b3f90@0x004b3f90, FUN_004b4000@0x004b4000, FUN_004b4010@0x004b4010, FUN_004b41f0@0x004b41f0, FUN_004b4280@0x004b4280, FUN_004c0740@0x004c0740, FUN_004c0b30@0x004c0b30, FUN_004c1040@0x004c1040, FUN_004c1340@0x004c1340, FUN_004c1480@0x004c1480, FUN_004c1520@0x004c1520, FUN_004c5c00@0x004c5c00, FUN_004c5c80@0x004c5c80, FUN_004e4900@0x004e4900, FUN_004e6650@0x004e6650, FUN_004e69a0@0x004e69a0, FUN_004e6f80@0x004e6f80, FUN_004e7e30@0x004e7e30, FUN_00538a80@0x00538a80, FUN_0053fbb0@0x0053fbb0, FUN_00558ca0@0x00558ca0, RpLightCreate@0x004e4dd0, RpWorldAddLight@0x004e4810, RwFrameAddChild@0x004e4450
+
+/* [C2 2026-06-02] `Course::CreateFromDescription` — the master course asset loader. Given the
+   course struct `param_1`, the filename table… */
+
+undefined4 FUN_00479330(int param_1,char *param_2,int *param_3)
+
+{
+  int iVar1;
+  undefined4 uVar2;
+  int iVar3;
+  int iVar4;
+  undefined4 *puVar5;
+  int *piVar6;
+  int *piVar7;
+  char *pcVar8;
+  char *pcVar9;
+  int *piStack_444;
+  int iStack_440;
+  int iStack_43c;
+  int iStack_438;
+  undefined4 uStack_434;
+  undefined4 uStack_430;
+  undefined4 uStack_42c;
+  undefined4 uStack_428;
+  undefined4 uStack_424;
+  int aiStack_420 [2];
+  undefined1 auStack_418 [24];
+  int aiStack_400 [256];
+  
+  FUN_004987b0("Creating course from description\n");
+  FUN_004987b0("\tResetting Course vars to zero\n");
+  FUN_00478cc0(param_1);
+  FUN_004987b0("\tLoading texdic [%s]\n",param_2);
+  iVar1 = FUN_0042a6b0(param_2,0,0);
+  *(int *)(param_1 + 0x105d0) = iVar1;
+  if (iVar1 == 0) {
+    pcVar9 = "failed to load texture dictionary\n";
+  }
+  else {
+    pcVar9 = "\tLoaded course texture dictionary successfully\n";
+  }
+  FUN_004987b0(pcVar9);
+  if ((DAT_005ea098 != 0) && (*(int *)(param_1 + 0x105d0) != 0)) {
+    iVar1 = FUN_004b4280(*(int *)(param_1 + 0x105d0),aiStack_400);
+    iVar4 = 0;
+    if (0 < iVar1) {
+      do {
+        if (*(char *)(aiStack_400[iVar4] + 0x50) == '\x04') {
+          *(undefined1 *)(aiStack_400[iVar4] + 0x50) = 6;
+        }
+        iVar4 = iVar4 + 1;
+      } while (iVar4 < iVar1);
+    }
+  }
+  if (*(int *)(param_1 + 0x105d0) != 0) {
+    FUN_004c5c80(*(int *)(param_1 + 0x105d0));
+  }
+  FUN_004987b0("\tLoading world [%s]\n",param_2 + 0x140);
+  iVar1 = FUN_0042a640(param_2 + 0x140,0,0);
+  *(int *)(param_1 + 0x105d4) = iVar1;
+  if (iVar1 == 0) {
+    pcVar9 = "failed to load bsp\n";
+  }
+  else {
+    pcVar9 = "\tLoaded bsp successfully\n";
+  }
+  FUN_004987b0(pcVar9);
+  if (*(int *)(param_1 + 0x105d4) == 0) {
+    FUN_004987b0("\nCOURSES ERROR: loading world\n");
+    FUN_00478200(0);
+  }
+  if (DAT_00636ad4 != 0) {
+    iVar1 = FUN_004b41f0(*(undefined4 *)(param_1 + 0x105d4),aiStack_400);
+    iVar4 = 0;
+    if (0 < iVar1) {
+      do {
+        FUN_0053fbb0(aiStack_400[iVar4],0);
+        iVar4 = iVar4 + 1;
+      } while (iVar4 < iVar1);
+    }
+  }
+  FUN_004987b0("\tloading %d collision bsps\n",param_3[7]);
+  iVar1 = 0;
+  if (0 < param_3[7]) {
+    piStack_444 = (int *)(param_1 + 0x10090);
+    pcVar9 = param_2 + 0x180;
+    do {
+      if (*pcVar9 == '\0') {
+        pcVar8 = "\nCOURSES ERROR: no name for invisible collision %d\n";
+LAB_00479504:
+        FUN_004987b0(pcVar8,iVar1);
+      }
+      else {
+        FUN_004987b0("\t\tLoading collision bsp [%s]\n",pcVar9);
+        iVar4 = FUN_0042a640(pcVar9,0,0);
+        *piStack_444 = iVar4;
+        if (iVar4 != 0) {
+          *(uint *)(iVar4 + 8) = *(uint *)(iVar4 + 8) & 0xffffffbf;
+          pcVar8 = "\t\tcollision %d loaded succsessfully\n";
+          goto LAB_00479504;
+        }
+        FUN_004987b0("failed to load collision %d\n",iVar1);
+        FUN_00478200(2);
+      }
+      iVar1 = iVar1 + 1;
+      piStack_444 = piStack_444 + 1;
+      pcVar9 = pcVar9 + 0x40;
+    } while (iVar1 < param_3[7]);
+  }
+  if (*(int *)(param_1 + 0x10094) == 0) {
+    *(undefined4 *)(param_1 + 0x10094) = *(undefined4 *)(param_1 + 0x10090);
+  }
+  if (*(int *)(param_1 + 0x10098) == 0) {
+    *(undefined4 *)(param_1 + 0x10098) = *(undefined4 *)(param_1 + 0x10090);
+  }
+  if (*(int *)(param_1 + 0x1009c) == 0) {
+    *(undefined4 *)(param_1 + 0x1009c) = *(undefined4 *)(param_1 + 0x10090);
+  }
+  iVar1 = 0;
+  if (0 < param_3[8]) {
+    piStack_444 = (int *)(param_1 + 0x100a0);
+    pcVar9 = param_2 + 0x280;
+    do {
+      if (*pcVar9 == '\0') {
+        FUN_004987b0("\nCOURSES ERROR: no name for hoppy collision %d\n",iVar1);
+      }
+      else {
+        uVar2 = FUN_0042a640(pcVar9,0,0);
+        *piStack_444 = uVar2;
+      }
+      iVar1 = iVar1 + 1;
+      piStack_444 = piStack_444 + 1;
+      pcVar9 = pcVar9 + 0x40;
+    } while (iVar1 < param_3[8]);
+  }
+  iStack_440 = 0;
+  if (0 < param_3[1]) {
+    puVar5 = (undefined4 *)(param_1 + 0x10330);
+    pcVar9 = param_2 + 0x380;
+    do {
+      if (*pcVar9 != '\0') {
+        iVar1 = FUN_0042a640(pcVar9,0,0);
+        puVar5[-0xbc] = iVar1;
+        if (iVar1 != 0) {
+          *puVar5 = 1;
+        }
+      }
+      iStack_440 = iStack_440 + 1;
+      pcVar9 = pcVar9 + 0x40;
+      puVar5 = puVar5 + 1;
+    } while (iStack_440 < param_3[1]);
+  }
+  iVar1 = 0;
+  if (0 < param_3[6]) {
+    piStack_444 = (int *)(param_1 + 0x10080);
+    pcVar9 = param_2 + 0x780;
+    do {
+      if (*pcVar9 == '\0') {
+        FUN_004987b0("COURSES ERROR: no aidata name for aidata %d\n",iVar1);
+      }
+      else {
+        iVar4 = FUN_0042a640(pcVar9,0,0);
+        *piStack_444 = iVar4;
+      }
+      if (*piStack_444 != 0) {
+        FUN_004987b0("Ai data %d loaded\n",iVar1);
+      }
+      iVar1 = iVar1 + 1;
+      piStack_444 = piStack_444 + 1;
+      pcVar9 = pcVar9 + 0x40;
+    } while (iVar1 < param_3[6]);
+  }
+  piVar6 = (int *)(param_1 + 0x10618);
+  pcVar9 = param_2 + 0x26c0;
+  iVar1 = 8;
+  do {
+    if (*pcVar9 != '\0') {
+      FID_conflict__wprintf("uva file exists\n");
+      iVar4 = FUN_0042a740(pcVar9,&uStack_424,&uStack_428);
+      *piVar6 = iVar4;
+      if (iVar4 != 0) {
+        FUN_00558ca0(&PTR_s_UVAnim_00623df0,iVar4);
+        FID_conflict__wprintf("Loaded uva dict length (%d), version (%d)\n",uStack_424,uStack_428);
+      }
+    }
+    pcVar9 = pcVar9 + 0x40;
+    piVar6 = piVar6 + 1;
+    iVar1 = iVar1 + -1;
+  } while (iVar1 != 0);
+  FUN_004987b0("Loading %d clumps for the world\n",param_3[2]);
+  iVar1 = 0;
+  puVar5 = (undefined4 *)(param_1 + 0x103b0);
+  pcVar9 = param_2 + 0x980;
+  do {
+    if (*pcVar9 != '\0') {
+      FUN_004987b0("LOADING Clump [%s] with index of [%d]\n",pcVar9,iVar1);
+      iVar4 = FUN_0042a5d0(pcVar9,0,0);
+      puVar5[-0xa8] = iVar4;
+      if (iVar4 == 0) {
+        FUN_004987b0("COURSES ERROR: Cannot load dff model %s\n",param_2 + (iVar1 + 0x26) * 0x40);
+        return 0;
+      }
+      *puVar5 = 1;
+      puVar5[0x40] = 0;
+    }
+    iVar1 = iVar1 + 1;
+    pcVar9 = pcVar9 + 0x40;
+    puVar5 = puVar5 + 1;
+  } while (iVar1 < 0x40);
+  if (param_2[0x1980] != '\0') {
+    uVar2 = FUN_0042a5d0(param_2 + 0x1980,0,0);
+    *(undefined4 *)(param_1 + 0x105d8) = uVar2;
+  }
+  if ((float)param_3[0x7b] != (float)param_3[0x7c]) {
+    *(int *)(param_1 + 0x105f8) = param_3[0x7b];
+    *(int *)(param_1 + 0x105fc) = param_3[0x7c];
+    *(int *)(param_1 + 0x105f4) = param_3[0x7a];
+  }
+  if ((float)param_3[0x7e] != (float)param_3[0x7f]) {
+    *(int *)(param_1 + 0x10604) = param_3[0x7e];
+    *(int *)(param_1 + 0x10608) = param_3[0x7f];
+    *(int *)(param_1 + 0x10600) = param_3[0x7d];
+  }
+  if (param_2[0x2640] == '\0') {
+    uStack_434 = 0x3f800000;
+    uStack_430 = 0;
+    uStack_42c = 0;
+    uVar2 = RpLightCreate(2);
+    *(undefined4 *)(param_1 + 0x105e0) = uVar2;
+    FUN_004e4900(uVar2,&DAT_006132dc);
+    *(undefined1 *)(*(int *)(param_1 + 0x105e0) + 2) = 1;
+    RpWorldAddLight(*(undefined4 *)(param_1 + 0x105d4),*(undefined4 *)(param_1 + 0x105e0));
+    uVar2 = RpLightCreate(1);
+    *(undefined4 *)(param_1 + 0x105e4) = uVar2;
+    FUN_004e4900(uVar2,&DAT_006132ec);
+    *(undefined1 *)(*(int *)(param_1 + 0x105e4) + 2) = 1;
+    uVar2 = FUN_004c0b30();
+    FUN_004c0740(*(undefined4 *)(param_1 + 0x105e4),uVar2);
+    FUN_004c1520(*(undefined4 *)(*(int *)(param_1 + 0x105e4) + 4),&uStack_434,0x42700000,0);
+    RpWorldAddLight(*(undefined4 *)(param_1 + 0x105d4),*(undefined4 *)(param_1 + 0x105e4));
+  }
+  else {
+    uVar2 = FUN_0042a5d0(param_2 + 0x2640,0,0);
+    *(undefined4 *)(param_1 + 0x105dc) = uVar2;
+    iVar1 = FUN_004e6650(uVar2);
+    FUN_004b4010(*(undefined4 *)(param_1 + 0x105dc),aiStack_420);
+    iVar4 = 0;
+    if (0 < iVar1) {
+      do {
+        iVar3 = aiStack_420[iVar4];
+        if (*(char *)(iVar3 + 1) == '\x01') {
+          *(int *)(param_1 + 0x105e4) = iVar3;
+        }
+        else if (*(char *)(iVar3 + 1) == '\x02') {
+          *(int *)(param_1 + 0x105e0) = iVar3;
+        }
+        *(undefined1 *)(iVar3 + 2) = 1;
+        RpWorldAddLight(*(undefined4 *)(param_1 + 0x105d4),iVar3);
+        iVar4 = iVar4 + 1;
+      } while (iVar4 < iVar1);
+    }
+    if (((DAT_005d757c < (float)param_3[0x76]) || (DAT_005d757c < (float)param_3[0x77])) ||
+       (DAT_005d757c < (float)param_3[0x78])) {
+      if (*(int *)(param_1 + 0x105e0) == 0) {
+        iVar1 = RpLightCreate(2);
+        *(int *)(param_1 + 0x105e0) = iVar1;
+        *(undefined1 *)(iVar1 + 2) = 1;
+        RpWorldAddLight(*(undefined4 *)(param_1 + 0x105d4),*(undefined4 *)(param_1 + 0x105e0));
+      }
+      FUN_004e4900(*(undefined4 *)(param_1 + 0x105e0),param_3 + 0x76);
+    }
+  }
+  iVar1 = 0;
+  piStack_444 = (int *)param_1;
+  puVar5 = (undefined4 *)(param_1 + 0x10000);
+  pcVar9 = param_2 + 0x19c0;
+  do {
+    if (*pcVar9 != '\0') {
+      FUN_004987b0("LOADING MTS [%s] with index of [%d]\n",pcVar9,iVar1);
+      uVar2 = FUN_00478110(pcVar9,piStack_444);
+      *puVar5 = uVar2;
+    }
+    iVar1 = iVar1 + 1;
+    piStack_444 = (int *)((int)piStack_444 + 0x1000);
+    pcVar9 = pcVar9 + 0x40;
+    puVar5 = puVar5 + 1;
+  } while (iVar1 < 0x10);
+  iVar1 = 0;
+  puVar5 = (undefined4 *)(param_1 + 0x10210);
+  pcVar9 = param_2;
+  do {
+    pcVar9 = pcVar9 + 0x40;
+    if (*pcVar9 != '\0') {
+      FUN_004987b0("Loading SkyDome [%s] into sky[%d]\n",pcVar9,iVar1);
+      uVar2 = FUN_0042a5d0(pcVar9,0,0);
+      puVar5[-0x48] = uVar2;
+      uVar2 = FUN_00474fd0(uVar2);
+      *puVar5 = uVar2;
+    }
+    iVar1 = iVar1 + 1;
+    puVar5 = puVar5 + 1;
+  } while (iVar1 < 4);
+  iVar1 = FUN_00538a80(*(undefined4 *)(param_1 + 0x105d4));
+  *(int *)(param_1 + 0x105ec) = iVar1;
+  if (iVar1 == 0) {
+    *(undefined4 *)(param_1 + 0x105e8) = 0;
+    FUN_004987b0("PVS not available\n");
+  }
+  else {
+    FUN_004987b0("PVS is available\n");
+    *(undefined4 *)(param_1 + 0x105e8) = 1;
+    FUN_004987b0("Using PVS\n");
+  }
+  iVar1 = 0;
+  pcVar9 = param_2 + 0x1e00;
+  piVar6 = (int *)(param_1 + 0x100b0);
+  do {
+    if (*pcVar9 != '\0') {
+      iVar4 = FUN_0042a7f0(pcVar9,0,0);
+      if (iVar4 == 0) {
+        FUN_004987b0("COURSES ERROR: Cannot load spline %s\n",param_2 + (iVar1 + 0x78) * 0x40);
+        param_3[4] = 0;
+        return 0;
+      }
+      *piVar6 = iVar4;
+      FUN_004987b0("Spline [%s] loaded into course spline %d, numsplines is %d\n",pcVar9,iVar1,
+                   param_3[4]);
+    }
+    iVar1 = iVar1 + 1;
+    piVar6 = piVar6 + 1;
+    pcVar9 = pcVar9 + 0x40;
+  } while (iVar1 < 0x10);
+  FUN_004987b0("Loading Camera path [%s]\n",param_2 + 0x2200);
+  iVar1 = FUN_0042a860(param_2 + 0x2200,0,0);
+  *(int *)(param_1 + 0x105f0) = iVar1;
+  if (iVar1 == 0) {
+    pcVar9 = "cant load camera path\n";
+  }
+  else {
+    pcVar9 = "Camera path loaded\n";
+  }
+  FUN_004987b0(pcVar9);
+  piVar6 = (int *)(param_1 + 0x105b0);
+  iVar1 = 0;
+  pcVar9 = param_2 + 0x2240;
+  do {
+    if (*pcVar9 != '\0') {
+      FUN_004987b0("\nLoading general anim [%s]\n",pcVar9);
+      iVar4 = FUN_0042a860(pcVar9,0,0);
+      *piVar6 = iVar4;
+      if (iVar4 == 0) {
+        pcVar8 = "cant load general anim %d\n";
+      }
+      else {
+        pcVar8 = "general anim %d loaded\n";
+      }
+      FUN_004987b0(pcVar8,iVar1);
+    }
+    iVar1 = iVar1 + 1;
+    pcVar9 = pcVar9 + 0x40;
+    piVar6 = piVar6 + 1;
+  } while (iVar1 < 8);
+  iStack_440 = 0;
+  if (0 < param_3[0x1b]) {
+    piStack_444 = (int *)((int)param_3 + 0x2d);
+    do {
+      iVar1 = *(int *)(param_1 + 0x10110 + *(char *)((int)piStack_444 + -1) * 4);
+      iVar3 = FUN_004b3f90(iVar1);
+      iVar4 = *(int *)(param_1 + 0x10000 + (char)*piStack_444 * 4);
+      iStack_438 = (char)*piStack_444 * 0x1000 + param_1;
+      uStack_434 = 0;
+      uStack_430 = 0;
+      uStack_42c = 0;
+      aiStack_420[0] = iVar4;
+      FUN_004b4000(iVar1);
+      FUN_004c1340(*(undefined4 *)(iVar1 + 4),&uStack_434,0);
+      iStack_43c = 0;
+      if (0 < iVar4) {
+        do {
+          uVar2 = *(undefined4 *)(iVar3 + 4);
+          iVar4 = iVar3;
+          if (iStack_43c != 0) {
+            iVar4 = FUN_004e69a0(iVar3);
+            uVar2 = FUN_004c0b30();
+            FUN_004e7e30(iVar4,uVar2);
+            FUN_004e6f80(iVar1,iVar4);
+            FUN_004c1040(*(undefined4 *)(iVar1 + 4),uVar2);
+          }
+          FUN_004c1480(uVar2,iStack_438,0);
+          if (*(short *)((int)piStack_444 + 1) != -1) {
+            FUN_00485460(iVar4,auStack_418);
+            FUN_004850e0(iVar4,&uStack_434,auStack_418,(int)*(short *)((int)piStack_444 + 1));
+          }
+          iStack_43c = iStack_43c + 1;
+          iStack_438 = iStack_438 + 0x40;
+        } while (iStack_43c < aiStack_420[0]);
+      }
+      iStack_440 = iStack_440 + 1;
+      piStack_444 = (int *)((int)piStack_444 + 4);
+    } while (iStack_440 < param_3[0x1b]);
+  }
+  piVar6 = (int *)(param_1 + 0x10110);
+  piVar7 = param_3 + 0x35;
+  iVar1 = 0x40;
+  do {
+    if (*piVar6 != 0) {
+      if (*piVar7 == 0) {
+        RwFrameAddChild(*(undefined4 *)(param_1 + 0x105d4),*piVar6);
+      }
+      iVar4 = FUN_00474fd0(*piVar6);
+      piVar6[0x48] = iVar4;
+    }
+    piVar7 = piVar7 + 1;
+    piVar6 = piVar6 + 1;
+    iVar1 = iVar1 + -1;
+  } while (iVar1 != 0);
+  if (param_2[0x2680] != '\0') {
+    uVar2 = FUN_004c5c00(*(undefined4 *)(param_1 + 0x105d0),param_2 + 0x2680);
+    *(undefined4 *)(param_1 + 0x10610) = uVar2;
+  }
+  if (param_2[0x26a0] != '\0') {
+    uVar2 = FUN_004c5c00(*(undefined4 *)(param_1 + 0x105d0),param_2 + 0x26a0);
+    *(undefined4 *)(param_1 + 0x10614) = uVar2;
+  }
+  FUN_004790e0();
+  iVar1 = *param_3;
+  if (((iVar1 != 0) && (iVar1 != 0x1a)) && (iVar1 != 0x24)) {
+    *(undefined4 *)(param_1 + 0x10638) = 1;
+    return 1;
+  }
+  *(undefined4 *)(param_1 + 0x10638) = 0;
+  return 1;
+}
+
+

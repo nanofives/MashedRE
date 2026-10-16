@@ -1,0 +1,43 @@
+=== training exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\rfx2\fin3_exe\mashed_re.exe track=Training trace=C:\Users\maria\Desktop\Proyectos\Mashed\log\d1r1\orig_training\trace.csv shots=884,924,959 basis=True cars=True knobs=['MASHED_HUD_REPLAY=C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\rfx2\\verify\\rfx_20261016\\hud_inputs.txt', 'MASHED_DBG_FXBODY=C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\log\\rfx2\\fxbody_witness.csv']
+    pid=19788
+    exit=0
+    stand_row_00884.bmp 921654
+    stand_row_00884.draws.json 73885
+    stand_row_00924.bmp 921654
+    stand_row_00924.draws.json 73366
+    stand_row_00959.bmp 921654
+    stand_row_00959.draws.json 72771
+=== arctic exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\rfx2\fin3_exe\mashed_re.exe track=Arctic trace=C:\Users\maria\Desktop\Proyectos\Mashed\log\d1r1\orig_arctic\trace.csv shots=1051,1091,1126 basis=True cars=True knobs=['MASHED_HUD_REPLAY=C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\rfx2\\verify\\rfx_20261016\\hud_inputs.txt', 'MASHED_DBG_FXBODY=C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\log\\rfx2\\fxbody_witness.csv', 'MASHED_CAR_BRAKE_ROWS=1091:8,1126:2']
+    pid=23312
+    exit=0
+    stand_row_01051.bmp 921654
+    stand_row_01051.draws.json 59774
+    stand_row_01091.bmp 921654
+    stand_row_01091.draws.json 58694
+    stand_row_01126.bmp 921654
+    stand_row_01126.draws.json 40518
+=== city exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\rfx2\fin3_exe\mashed_re.exe track=City trace=C:\Users\maria\Desktop\Proyectos\Mashed\log\d1r1\orig_city\trace.csv shots=761,801,836 basis=True cars=True knobs=['MASHED_HUD_REPLAY=C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\rfx2\\verify\\rfx_20261016\\hud_inputs.txt', 'MASHED_DBG_FXBODY=C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\log\\rfx2\\fxbody_witness.csv', 'MASHED_CAR_BRAKE_ROWS=836:6']
+    pid=24476
+    exit=0
+    stand_row_00761.bmp 921654
+    stand_row_00761.draws.json 164213
+    stand_row_00801.bmp 921654
+    stand_row_00801.draws.json 158076
+    stand_row_00836.bmp 921654
+    stand_row_00836.draws.json 137832
+training  884  rows  15  red 0  C04/08/09  0  matched 222
+training  924  rows  15  red 0  C04/08/09  0  matched 218
+training  959  rows  15  red 0  C04/08/09  0  matched 216
+arctic    1051  rows  26  red 0  C04/08/09  1  matched 172
+     C04-SHADOW     MISSING flatshad
+arctic    1091  rows  26  red 0  C04/08/09  1  matched 169
+     C04-SHADOW     MISSING flatshad
+arctic    1126  rows  27  red 0  C04/08/09  2  matched 124
+     C04-SHADOW     MISSING flatshad
+     C09-FX         MISSING VehicleIcons
+city      761  rows  14  red 0  C04/08/09  0  matched 501
+city      801  rows  16  red 0  C04/08/09  2  matched 484
+     C09-FX         MISSING Headlight
+     C09b-HEADLIGHT-BRAKE EXTRA   Headlight
+city      836  rows  15  red 0  C04/08/09  1  matched 434
+     C09-FX         MISSING VehicleIcons

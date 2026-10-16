@@ -1,0 +1,87 @@
+0x0040bbb0: 68e4cc5c00               push 0x5ccce4
+0x0040bbb5: c705f0b8630000000000     mov dword ptr [0x63b8f0], 0
+0x0040bbbf: e8bc960800               call 0x495280
+0x0040bbc4: 6a00                     push 0
+0x0040bbc6: 6a00                     push 0
+0x0040bbc8: 68dccc5c00               push 0x5cccdc
+0x0040bbcd: e8deea0100               call 0x42a6b0
+0x0040bbd2: a3f8b86300               mov dword ptr [0x63b8f8], eax
+0x0040bbd7: e804000800               call 0x48bbe0
+0x0040bbdc: 6a00                     push 0
+0x0040bbde: 6a00                     push 0
+0x0040bbe0: 68d0cc5c00               push 0x5cccd0
+0x0040bbe5: e8c6ea0100               call 0x42a6b0
+0x0040bbea: 6a00                     push 0
+0x0040bbec: 6a00                     push 0
+0x0040bbee: 68c0cc5c00               push 0x5cccc0
+0x0040bbf3: a3fcb86300               mov dword ptr [0x63b8fc], eax
+0x0040bbf8: e8b3ea0100               call 0x42a6b0
+0x0040bbfd: 6a00                     push 0
+0x0040bbff: 6a00                     push 0
+0x0040bc01: 68b0cc5c00               push 0x5cccb0
+0x0040bc06: a300b96300               mov dword ptr [0x63b900], eax
+0x0040bc0b: e8a0ea0100               call 0x42a6b0
+0x0040bc10: 6a00                     push 0
+0x0040bc12: 68a8cc5c00               push 0x5ccca8
+0x0040bc17: a304b96300               mov dword ptr [0x63b904], eax
+0x0040bc1c: e88fa00b00               call 0x4c5cb0
+0x0040bc21: 83c43c                   add esp, 0x3c
+0x0040bc24: 85c0                     test eax, eax
+0x0040bc26: 740f                     je 0x40bc37
+0x0040bc28: 50                       push eax
+0x0040bc29: a1f8b86300               mov eax, dword ptr [0x63b8f8]
+0x0040bc2e: 50                       push eax
+0x0040bc2f: e88c9f0b00               call 0x4c5bc0
+0x0040bc34: 83c408                   add esp, 8
+0x0040bc37: 6a00                     push 0
+0x0040bc39: e842a00b00               call 0x4c5c80
+0x0040bc3e: e8bd53ffff               call 0x401000
+0x0040bc43: e8d8420800               call 0x48ff20
+0x0040bc48: e863b90600               call 0x4775b0
+0x0040bc4d: e83ea70600               call 0x476390
+0x0040bc52: 6a02                     push 2
+0x0040bc54: e8579d0600               call 0x4759b0
+0x0040bc59: 68a0cc5c00               push 0x5ccca0
+0x0040bc5e: e8cdfeffff               call 0x40bb30
+0x0040bc63: 6a18                     push 0x18
+0x0040bc65: 50                       push eax
+0x0040bc66: e8959d0600               call 0x475a00
+0x0040bc6b: 6898cc5c00               push 0x5ccc98
+0x0040bc70: e8bbfeffff               call 0x40bb30
+0x0040bc75: 6a10                     push 0x10
+0x0040bc77: 50                       push eax
+0x0040bc78: e8839d0600               call 0x475a00
+0x0040bc7d: e8bec10600               call 0x477e40
+0x0040bc82: e8392e0800               call 0x48eac0
+0x0040bc87: e874f10700               call 0x48ae00
+0x0040bc8c: 6a00                     push 0
+0x0040bc8e: e89deb0700               call 0x48a830
+0x0040bc93: 83c424                   add esp, 0x24
+0x0040bc96: e855960800               call 0x4952f0
+0x0040bc9b: a1f8b86300               mov eax, dword ptr [0x63b8f8]
+0x0040bca0: 85c0                     test eax, eax
+0x0040bca2: 7514                     jne 0x40bcb8
+0x0040bca4: 6884cc5c00               push 0x5ccc84
+0x0040bca9: e80f700900               call 0x4a2cbd
+0x0040bcae: 83c404                   add esp, 4
+0x0040bcb1: 6a00                     push 0
+0x0040bcb3: e873760900               call 0x4a332b
+0x0040bcb8: e8d3d50700               call 0x489290
+0x0040bcbd: 6878cc5c00               push 0x5ccc78
+0x0040bcc2: e869feffff               call 0x40bb30
+0x0040bcc7: 50                       push eax
+0x0040bcc8: 6a32                     push 0x32
+0x0040bcca: e831c10700               call 0x487e00
+0x0040bccf: 6a20                     push 0x20
+0x0040bcd1: e84a2b0800               call 0x48e820
+0x0040bcd6: 83c410                   add esp, 0x10
+0x0040bcd9: e8b2a00700               call 0x485d90
+0x0040bcde: e8eda50700               call 0x4862d0
+0x0040bce3: e8987e0000               call 0x413b80
+0x0040bce8: e8c3530100               call 0x4210b0
+0x0040bced: e86ee70700               call 0x48a460
+0x0040bcf2: c705f4b8630001000000     mov dword ptr [0x63b8f4], 1
+0x0040bcfc: c3                       ret 
+0x0040bcfd: 90                       nop 
+0x0040bcfe: 90                       nop 
+0x0040bcff: 90                       nop 

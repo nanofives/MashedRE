@@ -1,0 +1,12 @@
+0x0046c5c0: 8b442404                 mov eax, dword ptr [esp + 4]
+0x0046c5c4: 83f810                   cmp eax, 0x10
+0x0046c5c7: 7203                     jb 0x46c5cc
+0x0046c5c9: 33c0                     xor eax, eax
+0x0046c5cb: c3                       ret 
+0x0046c5cc: 8b0d30107f00             mov ecx, dword ptr [0x7f1030]
+0x0046c5d2: 69c0040d0000             imul eax, eax, 0xd04
+0x0046c5d8: 05a0158800               add eax, 0x8815a0
+0x0046c5dd: c7400400000000           mov dword ptr [eax + 4], 0
+0x0046c5e4: 8988100b0000             mov dword ptr [eax + 0xb10], ecx
+0x0046c5ea: b801000000               mov eax, 1
+0x0046c5ef: c3                       ret 

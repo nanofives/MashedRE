@@ -1,0 +1,30 @@
+0x00410340: b705                     mov bh, 5
+0x00410342: 0083c40483c6             add byte ptr [ebx - 0x397cfb3c], al
+0x00410348: 0447                     add al, 0x47
+0x0041034a: 83fe44                   cmp esi, 0x44
+0x0041034d: 7cd5                     jl 0x410324
+0x0041034f: 8b3db8295f00             mov edi, dword ptr [0x5f29b8]
+0x00410355: 8bcb                     mov ecx, ebx
+0x00410357: 69c94c040000             imul ecx, ecx, 0x44c
+0x0041035d: b889888888               mov eax, 0x88888889
+0x00410362: f7e1                     mul ecx
+0x00410364: c1ea05                   shr edx, 5
+0x00410367: 2bfa                     sub edi, edx
+0x00410369: 53                       push ebx
+0x0041036a: 893db8295f00             mov dword ptr [0x5f29b8], edi
+0x00410370: e8eb50ffff               call 0x405460
+0x00410375: 83c404                   add esp, 4
+0x00410378: 85c0                     test eax, eax
+0x0041037a: 5f                       pop edi
+0x0041037b: 5e                       pop esi
+0x0041037c: 751d                     jne 0x41039b
+0x0041037e: e82d2d0300               call 0x4430b0
+0x00410383: 85c0                     test eax, eax
+0x00410385: 7514                     jne 0x41039b
+0x00410387: c7058cba630004000000     mov dword ptr [0x63ba8c], 4
+0x00410391: c705b8295f00e02e0000     mov dword ptr [0x5f29b8], 0x2ee0
+0x0041039b: c3                       ret 
+0x0041039c: 90                       nop 
+0x0041039d: 90                       nop 
+0x0041039e: 90                       nop 
+0x0041039f: 90                       nop 

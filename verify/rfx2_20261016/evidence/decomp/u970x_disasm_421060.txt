@@ -1,0 +1,61 @@
+0x00421060: 6a08                     push 8
+0x00421062: 56                       push esi
+0x00421063: e8b8540900               call 0x4b6520
+0x00421068: 33c0                     xor eax, eax
+0x0042106a: 83c408                   add esp, 8
+0x0042106d: 894608                   mov dword ptr [esi + 8], eax
+0x00421070: 89460c                   mov dword ptr [esi + 0xc], eax
+0x00421073: 894610                   mov dword ptr [esi + 0x10], eax
+0x00421076: 894614                   mov dword ptr [esi + 0x14], eax
+0x00421079: c3                       ret 
+0x0042107a: 90                       nop 
+0x0042107b: 90                       nop 
+0x0042107c: 90                       nop 
+0x0042107d: 90                       nop 
+0x0042107e: 90                       nop 
+0x0042107f: 90                       nop 
+0x00421080: b8a4e56300               mov eax, 0x63e5a4
+0x00421085: eb09                     jmp 0x421090
+0x00421087: 8da42400000000           lea esp, [esp]
+0x0042108e: 8bff                     mov edi, edi
+0x00421090: c700000080bf             mov dword ptr [eax], 0xbf800000
+0x00421096: 83c02c                   add eax, 0x2c
+0x00421099: 3da4fb6300               cmp eax, 0x63fba4
+0x0042109e: 7cf0                     jl 0x421090
+0x004210a0: c70588fb630000000000     mov dword ptr [0x63fb88], 0
+0x004210aa: c3                       ret 
+0x004210ab: 90                       nop 
+0x004210ac: 90                       nop 
+0x004210ad: 90                       nop 
+0x004210ae: 90                       nop 
+0x004210af: 90                       nop 
+0x004210b0: 6808ca5c00               push 0x5cca08
+0x004210b5: e876aafeff               call 0x40bb30
+0x004210ba: 50                       push eax
+0x004210bb: 6880000000               push 0x80
+0x004210c0: 6817080000               push 0x817
+0x004210c5: 6848e56300               push 0x63e548
+0x004210ca: e8f15f0500               call 0x4770c0
+0x004210cf: e8acffffff               call 0x421080
+0x004210d4: 6880000000               push 0x80
+0x004210d9: 68a8e46300               push 0x63e4a8
+0x004210de: e89d530900               call 0x4b6480
+0x004210e3: 83c41c                   add esp, 0x1c
+0x004210e6: c3                       ret 
+0x004210e7: 90                       nop 
+0x004210e8: 90                       nop 
+0x004210e9: 90                       nop 
+0x004210ea: 90                       nop 
+0x004210eb: 90                       nop 
+0x004210ec: 90                       nop 
+0x004210ed: 90                       nop 
+0x004210ee: 90                       nop 
+0x004210ef: 90                       nop 
+0x004210f0: 6848e56300               push 0x63e548
+0x004210f5: e8c6570500               call 0x4768c0
+0x004210fa: 59                       pop ecx
+0x004210fb: c3                       ret 
+0x004210fc: 90                       nop 
+0x004210fd: 90                       nop 
+0x004210fe: 90                       nop 
+0x004210ff: 90                       nop 

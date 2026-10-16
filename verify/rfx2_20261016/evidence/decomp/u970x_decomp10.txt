@@ -1,0 +1,103 @@
+// FUN_00492290 @ 0x00492290  size=70  (MASHED.exe)
+// undefined FUN_00492290(void)
+
+/* [C1 2026-05-16] Calls FUN_00492770 (0x00492770), no args. main loop while(exit==0 AND pump==0).
+    */
+
+undefined4 FUN_00492290(void)
+
+{
+  int iVar1;
+  
+  FUN_00492770();
+  while ((DAT_00828300 == 0 && (iVar1 = FUN_00499690(), iVar1 == 0))) {
+    FUN_004929d0();
+    FUN_00492d20();
+    FUN_00492d30();
+    FUN_00492e90();
+    FUN_004926c0();
+    FUN_00493480();
+  }
+  return 1;
+}
+
+
+
+// FUN_00492d30 @ 0x00492d30  size=266  (MASHED.exe)
+// undefined FUN_00492d30(void)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C2 2026-05-12] 7-case state machine tick. Dispatches on `DAT_00771968`. */
+
+undefined4 FUN_00492d30(void)
+
+{
+  int iVar1;
+  int iVar2;
+  undefined4 uVar3;
+  
+  iVar1 = FUN_004950b0();
+  FUN_0045b350();
+  FUN_005c9d00();
+  switch(DAT_00771968) {
+  case 1:
+    iVar2 = FUN_0042b930();
+    if (iVar2 == 0x21) {
+      FUN_004030d0();
+    }
+    break;
+  case 2:
+    goto switchD_00492d52_caseD_2;
+  case 3:
+    if (0 < DAT_007f1000) {
+      iVar2 = (DAT_007f1000 - 1U) / 0x32 + 1;
+      do {
+        FUN_004111c0(0x32);
+        iVar2 = iVar2 + -1;
+      } while (iVar2 != 0);
+    }
+    goto switchD_00492d52_caseD_2;
+  case 4:
+    FUN_0043dfd0();
+    iVar2 = FUN_0042b930();
+    if (iVar2 == 0x20) {
+      FUN_0045b350();
+    }
+    goto switchD_00492d52_caseD_7;
+  case 5:
+    break;
+  case 6:
+    if (0 < DAT_007f1000) {
+      iVar2 = (DAT_007f1000 - 1U) / 0x32 + 1;
+      do {
+        FUN_004111c0(0x32);
+        iVar2 = iVar2 + -1;
+      } while (iVar2 != 0);
+    }
+    break;
+  case 7:
+    goto switchD_00492d52_caseD_7;
+  default:
+    goto switchD_00492d52_default;
+  }
+  FUN_0043dfd0();
+switchD_00492d52_caseD_7:
+  FUN_0043d7c0();
+switchD_00492d52_caseD_2:
+switchD_00492d52_default:
+  iVar2 = FUN_00496920(5);
+  if ((iVar2 != 0) && (DAT_007719cc == 0)) {
+    uVar3 = FUN_004671a0(0);
+    FUN_00498860(uVar3);
+    DAT_007719cc = 1;
+    iVar2 = FUN_004950b0();
+    _DAT_007719a8 = iVar2 - iVar1;
+    return 1;
+  }
+  DAT_007719cc = 0;
+  iVar2 = FUN_004950b0();
+  _DAT_007719a8 = iVar2 - iVar1;
+  return 1;
+}
+
+

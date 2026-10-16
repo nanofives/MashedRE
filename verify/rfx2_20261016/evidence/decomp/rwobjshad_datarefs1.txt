@@ -1,0 +1,204 @@
+// 0x00703068  DATA in .data
+//   type: undefined bytes (Ghidra has no data definition here)
+//   6 reference(s) total
+//   WRITES: (none)
+//   reads: (none)
+//   other (6):
+//     0x00487140 in FUN_00487140  [DATA]  PUSH 0x703068
+//     0x0048715a in FUN_00487150  [DATA]  PUSH 0x703068
+//     0x00487168 in FUN_00487150  [DATA]  PUSH 0x703068
+//     0x00487d39 in FUN_00487d00  [DATA]  PUSH 0x703068
+//     0x00487d60 in FUN_00487d60  [DATA]  PUSH 0x703068
+//     0x00487dad in FUN_00487d70  [DATA]  PUSH 0x703068
+
+// 0x00703070  DATA in .data
+//   type undefined4 len 4  value 00000000h
+//   1 reference(s) total
+//   WRITES: (none)
+//   reads (1):
+//     0x00487d1d in FUN_00487d00  [READ]  CMP ECX,dword ptr [0x00703070]
+//   other: (none)
+
+// 0x00703058  DATA in .data
+//   type undefined4 len 4  value 00000000h
+//   5 reference(s) total
+//   WRITES (2):
+//     0x00487d4c in FUN_00487d00  [WRITE]  MOV [0x00703058],EAX
+//     0x00487df0 in FUN_00487df0  [WRITE]  MOV dword ptr [0x00703058],0x0
+//   reads (3):
+//     0x00487d01 in FUN_00487d00  [READ]  MOV ECX,dword ptr [0x00703058]
+//     0x00487d43 in FUN_00487d00  [READ]  MOV EAX,[0x00703058]
+//     0x00487d71 in FUN_00487d70  [READ]  MOV EAX,[0x00703058]
+//   other: (none)
+
+// 0x006c71d8  DATA in .data
+//   type undefined4 len 4  value 00000000h
+//   50 reference(s) total
+//   WRITES (2):
+//     0x0047f424 in FUN_0047f380  [WRITE]  MOV dword ptr [ESI + 0x6c71d8],EBX
+//     0x0047f879 in FUN_0047f840  [WRITE]  STOSD.REP ES:EDI
+//   reads (9):
+//     0x0047f3a0 in FUN_0047f380  [READ]  MOV EAX,dword ptr [ESI + 0x6c71d8]
+//     0x0047f3d5 in FUN_0047f380  [READ]  MOV ECX,dword ptr [ESI + 0x6c71d8]
+//     0x0047f3e8 in FUN_0047f380  [READ]  MOV EDX,dword ptr [ESI + 0x6c71d8]
+//     0x0047f3f8 in FUN_0047f380  [READ]  MOV EAX,dword ptr [ESI + 0x6c71d8]
+//     0x0047f415 in FUN_0047f380  [READ]  MOV EAX,dword ptr [ESI + 0x6c71d8]
+//     0x004801b2 in FUN_00480100  [READ]  CMP dword ptr [EBP*0x4 + 0x6c71d8],ESI
+//     0x004801d6 in FUN_00480100  [READ]  MOV EAX,dword ptr [EBP*0x4 + 0x6c71d8]
+//     0x00480233 in FUN_00480100  [READ]  MOV ECX,dword ptr [EBP*0x4 + 0x6c71d8]
+//     0x00481aa0 in FUN_00481a30  [READ]  MOV EBP,dword ptr [EDI*0x4 + 0x6c71d8]
+//   other (39):
+//     0x0047ceaf in FUN_0047cea0  [DATA]  MOV EAX,dword ptr [EAX*0x4 + 0x6c71d8]
+//     0x0047cf37 in FUN_0047cf20  [DATA]  MOV EAX,dword ptr [EAX*0x4 + 0x6c71d8]
+//     0x0047d08f in FUN_0047d080  [DATA]  MOV EAX,dword ptr [EAX*0x4 + 0x6c71d8]
+//     0x0047d10f in FUN_0047d100  [DATA]  MOV EAX,dword ptr [EAX*0x4 + 0x6c71d8]
+//     0x0047d142 in FUN_0047d130  [DATA]  MOV EAX,dword ptr [EAX*0x4 + 0x6c71d8]
+//     0x0047d162 in FUN_0047d150  [DATA]  MOV EAX,dword ptr [EAX*0x4 + 0x6c71d8]
+//     0x0047d188 in FUN_0047d180  [DATA]  MOV EAX,dword ptr [EBX*0x4 + 0x6c71d8]
+//     0x0047d1e3 in FUN_0047d180  [DATA]  MOV EDX,dword ptr [EBX*0x4 + 0x6c71d8]
+//     0x0047e534 in FUN_0047def0  [DATA]  MOV EDX,dword ptr [ESI*0x4 + 0x6c71d8]
+//     0x0047e6f5 in FUN_0047def0  [DATA]  MOV ECX,dword ptr [ESI*0x4 + 0x6c71d8]
+//     0x0047f2ba in FUN_0047f290  [DATA]  MOV EAX,dword ptr [EBX*0x4 + 0x6c71d8]
+//     0x0047f2f5 in FUN_0047f290  [DATA]  MOV ECX,dword ptr [EBX*0x4 + 0x6c71d8]
+//     0x0047f309 in FUN_0047f290  [DATA]  MOV EDX,dword ptr [EBX*0x4 + 0x6c71d8]
+//     0x0047f31a in FUN_0047f290  [DATA]  MOV EAX,dword ptr [EBX*0x4 + 0x6c71d8]
+//     0x0047f339 in FUN_0047f290  [DATA]  MOV EAX,dword ptr [EBX*0x4 + 0x6c71d8]
+//     0x0047f355 in FUN_0047f290  [DATA]  MOV dword ptr [EBX*0x4 + 0x6c71d8],0x0
+//     0x0047f86f in FUN_0047f840  [DATA]  MOV EDI,0x6c71d8
+//     0x0047fa01 in FUN_0047f940  [DATA]  MOV dword ptr [EDI + 0x6c71d8],EAX
+//     0x0047fa24 in FUN_0047f940  [DATA]  MOV EDX,dword ptr [ECX*0x4 + 0x6c71d8]
+//     0x0047fa37 in FUN_0047f940  [DATA]  MOV ECX,dword ptr [EAX*0x4 + 0x6c71d8]
+//     0x0047fa4b in FUN_0047f940  [DATA]  MOV EAX,dword ptr [EDX*0x4 + 0x6c71d8]
+//     0x0047fb9f in FUN_0047fad0  [DATA]  MOV dword ptr [ECX*0x4 + 0x6c71d8],EAX
+//     0x0047fbb2 in FUN_0047fad0  [DATA]  MOV EAX,dword ptr [EDX*0x4 + 0x6c71d8]
+//     0x0047fbc5 in FUN_0047fad0  [DATA]  MOV EDX,dword ptr [ECX*0x4 + 0x6c71d8]
+//     0x0047fbd8 in FUN_0047fad0  [DATA]  MOV ECX,dword ptr [EAX*0x4 + 0x6c71d8]
+//     0x0047fd45 in FUN_0047fc40  [DATA]  MOV dword ptr [ECX*0x4 + 0x6c71d8],EAX
+//     0x0047fd58 in FUN_0047fc40  [DATA]  MOV EAX,dword ptr [EDX*0x4 + 0x6c71d8]
+//     0x0047fd6b in FUN_0047fc40  [DATA]  MOV EDX,dword ptr [ECX*0x4 + 0x6c71d8]
+//     0x0047fd7e in FUN_0047fc40  [DATA]  MOV ECX,dword ptr [EAX*0x4 + 0x6c71d8]
+//     0x0047fec5 in FUN_0047fe00  [DATA]  MOV dword ptr [ECX*0x4 + 0x6c71d8],EAX
+//     0x0047fed8 in FUN_0047fe00  [DATA]  MOV EAX,dword ptr [EDX*0x4 + 0x6c71d8]
+//     0x0047feeb in FUN_0047fe00  [DATA]  MOV EDX,dword ptr [ECX*0x4 + 0x6c71d8]
+//     0x0047fefe in FUN_0047fe00  [DATA]  MOV ECX,dword ptr [EAX*0x4 + 0x6c71d8]
+//     0x00480047 in FUN_0047ff70  [DATA]  MOV dword ptr [ECX*0x4 + 0x6c71d8],EAX
+//     0x0048005a in FUN_0047ff70  [DATA]  MOV EAX,dword ptr [EDX*0x4 + 0x6c71d8]
+//     0x0048006d in FUN_0047ff70  [DATA]  MOV EDX,dword ptr [ECX*0x4 + 0x6c71d8]
+//     0x00480080 in FUN_0047ff70  [DATA]  MOV ECX,dword ptr [EAX*0x4 + 0x6c71d8]
+//     0x004818d9 in FUN_004818d0  [DATA]  MOV EDI,dword ptr [ESI*0x4 + 0x6c71d8]
+//     0x00481da0 in FUN_00481d90  [DATA]  MOV ESI,dword ptr [EAX*0x4 + 0x6c71d8]
+
+// 0x006c3670  DATA in .data
+//   type: undefined bytes (Ghidra has no data definition here)
+//   4 reference(s) total
+//   WRITES: (none)
+//   reads: (none)
+//   other (4):
+//     0x004802dc in FUN_00480100  [DATA]  LEA EDX,[EAX + 0x6c3670]
+//     0x00481a60 in FUN_00481a30  [DATA]  MOV dword ptr [ESP + 0x14],0x6c3670
+//     0x00481cd8 in FUN_00481a30  [DATA]  PUSH ECX
+//     0x00481d44 in FUN_00481a30  [DATA]  PUSH ESI
+
+// 0x006c6eb0  DATA in .data
+//   type undefined4 len 4  value 00000000h
+//   43 reference(s) total
+//   WRITES (7):
+//     0x0047f34f in FUN_0047f290  [WRITE]  MOV [0x006c6eb0],EAX
+//     0x0047fa9f in FUN_0047f940  [WRITE]  MOV [0x006c6eb0],EAX
+//     0x0047fc1d in FUN_0047fad0  [WRITE]  MOV [0x006c6eb0],EAX
+//     0x0047fdc7 in FUN_0047fc40  [WRITE]  MOV [0x006c6eb0],EAX
+//     0x0047ff47 in FUN_0047fe00  [WRITE]  MOV [0x006c6eb0],EAX
+//     0x004800c9 in FUN_0047ff70  [WRITE]  MOV [0x006c6eb0],EAX
+//     0x00480394 in FUN_00480340  [WRITE]  MOV dword ptr [0x006c6eb0],EBP
+//   reads (36):
+//     0x0047ce70 in FUN_0047ce70  [READ]  MOV EAX,[0x006c6eb0]
+//     0x0047e51d in FUN_0047def0  [READ]  MOV EAX,[0x006c6eb0]
+//     0x0047e6ae in FUN_0047def0  [READ]  MOV EAX,[0x006c6eb0]
+//     0x0047f346 in FUN_0047f290  [READ]  MOV EAX,[0x006c6eb0]
+//     0x0047f9ea in FUN_0047f940  [READ]  MOV EDI,dword ptr [0x006c6eb0]
+//     0x0047fa1e in FUN_0047f940  [READ]  MOV ECX,dword ptr [0x006c6eb0]
+//     0x0047fa32 in FUN_0047f940  [READ]  MOV EAX,[0x006c6eb0]
+//     0x0047fa45 in FUN_0047f940  [READ]  MOV EDX,dword ptr [0x006c6eb0]
+//     0x0047fa87 in FUN_0047f940  [READ]  MOV EAX,[0x006c6eb0]
+//     0x0047fb5b in FUN_0047fad0  [READ]  MOV EDI,dword ptr [0x006c6eb0]
+//     0x0047fb99 in FUN_0047fad0  [READ]  MOV ECX,dword ptr [0x006c6eb0]
+//     0x0047fbab in FUN_0047fad0  [READ]  MOV EDX,dword ptr [0x006c6eb0]
+//     0x0047fbbf in FUN_0047fad0  [READ]  MOV ECX,dword ptr [0x006c6eb0]
+//     0x0047fbd3 in FUN_0047fad0  [READ]  MOV EAX,[0x006c6eb0]
+//     0x0047fc14 in FUN_0047fad0  [READ]  MOV EAX,[0x006c6eb0]
+//     0x0047fd15 in FUN_0047fc40  [READ]  MOV EAX,[0x006c6eb0]
+//     0x0047fd3f in FUN_0047fc40  [READ]  MOV ECX,dword ptr [0x006c6eb0]
+//     0x0047fd51 in FUN_0047fc40  [READ]  MOV EDX,dword ptr [0x006c6eb0]
+//     0x0047fd65 in FUN_0047fc40  [READ]  MOV ECX,dword ptr [0x006c6eb0]
+//     0x0047fd79 in FUN_0047fc40  [READ]  MOV EAX,[0x006c6eb0]
+//     0x0047fdba in FUN_0047fc40  [READ]  MOV EAX,[0x006c6eb0]
+//     0x0047fe95 in FUN_0047fe00  [READ]  MOV EAX,[0x006c6eb0]
+//     0x0047febf in FUN_0047fe00  [READ]  MOV ECX,dword ptr [0x006c6eb0]
+//     0x0047fed1 in FUN_0047fe00  [READ]  MOV EDX,dword ptr [0x006c6eb0]
+//     0x0047fee5 in FUN_0047fe00  [READ]  MOV ECX,dword ptr [0x006c6eb0]
+//     0x0047fef9 in FUN_0047fe00  [READ]  MOV EAX,[0x006c6eb0]
+//     0x0047ff3a in FUN_0047fe00  [READ]  MOV EAX,[0x006c6eb0]
+//     0x00480017 in FUN_0047ff70  [READ]  MOV EAX,[0x006c6eb0]
+//     0x00480041 in FUN_0047ff70  [READ]  MOV ECX,dword ptr [0x006c6eb0]
+//     0x00480053 in FUN_0047ff70  [READ]  MOV EDX,dword ptr [0x006c6eb0]
+//     0x00480067 in FUN_0047ff70  [READ]  MOV ECX,dword ptr [0x006c6eb0]
+//     0x0048007b in FUN_0047ff70  [READ]  MOV EAX,[0x006c6eb0]
+//     0x004800bc in FUN_0047ff70  [READ]  MOV EAX,[0x006c6eb0]
+//     0x00480704 in FUN_00480340  [READ]  MOV ECX,dword ptr [0x006c6eb0]
+//     0x00481a4b in FUN_00481a30  [READ]  MOV EAX,[0x006c6eb0]
+//     0x00481d5d in FUN_00481a30  [READ]  MOV EAX,[0x006c6eb0]
+//   other: (none)
+
+// 0x006c9a88  DATA in .data
+//   type undefined4 len 4  value 00000000h
+//   6 reference(s) total
+//   WRITES (1):
+//     0x004802ba in FUN_00480100  [WRITE]  MOV dword ptr [EAX],ECX
+//   reads: (none)
+//   other (5):
+//     0x0047d3af in FUN_0047d330  [DATA]  CMP ESI,0x6c9a88
+//     0x00480180 in FUN_00480100  [DATA]  MOV dword ptr [ESP + 0x10],0x6c9a88
+//     0x004802e7 in FUN_00480100  [DATA]  PUSH EDX
+//     0x00481a68 in FUN_00481a30  [DATA]  MOV dword ptr [ESP + 0x18],0x6c9a88
+//     0x00481cdf in FUN_00481a30  [DATA]  PUSH EDX
+
+// 0x006cad50  DATA in .data
+//   type undefined4 len 4  value 00000000h
+//   2 reference(s) total
+//   WRITES (1):
+//     0x00481cea in FUN_00481a30  [WRITE]  MOV dword ptr [EDI*0x4 + 0x6cad50],EAX
+//   reads (1):
+//     0x00481cf1 in FUN_00481a30  [READ]  MOV EAX,dword ptr [EDI*0x4 + 0x6cad50]
+//   other: (none)
+
+// 0x006c3350  DATA in .data
+//   type undefined4 len 4  value 00000000h
+//   4 reference(s) total
+//   WRITES (2):
+//     0x004801a5 in FUN_00480100  [WRITE]  MOV dword ptr [EBP*0x4 + 0x6c3350],ESI
+//     0x00481bc9 in FUN_00481a30  [WRITE]  MOV dword ptr [EDI*0x4 + 0x6c3350],EAX
+//   reads (2):
+//     0x00481ba1 in FUN_00481a30  [READ]  MOV EAX,dword ptr [EDI*0x4 + 0x6c3350]
+//     0x00481bd0 in FUN_00481a30  [READ]  MOV EAX,dword ptr [EDI*0x4 + 0x6c3350]
+//   other: (none)
+
+// 0x006c6b90  DATA in .data
+//   type undefined4 len 4  value 00000000h
+//   14 reference(s) total
+//   WRITES (2):
+//     0x0047f42a in FUN_0047f380  [WRITE]  MOV dword ptr [ESI + 0x6c6b90],EBX
+//     0x0048039e in FUN_00480340  [WRITE]  STOSD.REP ES:EDI
+//   reads (3):
+//     0x0047ce50 in FUN_0047ce40  [READ]  CMP dword ptr [EAX*0x4 + 0x6c6b90],ECX
+//     0x00481ab8 in FUN_00481a30  [READ]  MOV ECX,dword ptr [EDI*0x4 + 0x6c6b90]
+//     0x00481c07 in FUN_00481a30  [READ]  MOV EAX,dword ptr [EDI*0x4 + 0x6c6b90]
+//   other (9):
+//     0x0047ce2f in FUN_0047ce20  [DATA]  MOV EAX,dword ptr [EAX*0x4 + 0x6c6b90]
+//     0x0047f360 in FUN_0047f290  [DATA]  MOV dword ptr [EBX*0x4 + 0x6c6b90],0x0
+//     0x0047fa0d in FUN_0047f940  [DATA]  MOV dword ptr [EDI + 0x6c6b90],EDX
+//     0x0047fb67 in FUN_0047fad0  [DATA]  MOV dword ptr [EDI*0x4 + 0x6c6b90],EAX
+//     0x0047fd1c in FUN_0047fc40  [DATA]  MOV dword ptr [EAX*0x4 + 0x6c6b90],EDX
+//     0x0047fe9c in FUN_0047fe00  [DATA]  MOV dword ptr [EAX*0x4 + 0x6c6b90],ECX
+//     0x0048001e in FUN_0047ff70  [DATA]  MOV dword ptr [EAX*0x4 + 0x6c6b90],ECX
+//     0x0048038f in FUN_00480340  [DATA]  MOV EDI,0x6c6b90
+//     0x004819b2 in FUN_004818d0  [DATA]  MOV EAX,dword ptr [ESI*0x4 + 0x6c6b90]

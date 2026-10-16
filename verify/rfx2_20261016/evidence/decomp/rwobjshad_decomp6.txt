@@ -1,0 +1,314 @@
+// FUN_0047a020 @ 0x0047a020  size=196  (MASHED.exe)
+// undefined FUN_0047a020(void)
+// xrefs (1):
+//   UNCONDITIONAL_CALL 0x00426f28 in FUN_00426e10
+// strings: (none)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C2 2026-06-02] Course/BSP-collision init ("CourseDescInit"). Single caller = track loader
+   FUN_00426e10, which invokes it as… */
+
+undefined4 FUN_0047a020(undefined4 param_1,undefined4 param_2,int param_3)
+
+{
+  undefined4 uVar1;
+  int iVar2;
+  undefined4 *puVar3;
+  
+  iVar2 = param_3;
+  uVar1 = param_2;
+  DAT_006bf1c8 = param_2;
+  DAT_006bf1cc = param_3;
+  _DAT_006bf1d0 = 0;
+  DAT_006bf1d4 = 0;
+  FUN_00478cb0(param_2);
+  FUN_004b6520(iVar2,0x21c);
+  *(undefined4 *)(iVar2 + 0x204) = 0;
+  *(undefined4 *)(iVar2 + 0x208) = 0x3f800000;
+  *(undefined4 *)(iVar2 + 0x20c) = 0x3f800000;
+  *(undefined4 *)(iVar2 + 0x210) = 0x3f800000;
+  FUN_004b6520(&DAT_0086cac0,0x2200);
+  puVar3 = &DAT_0086cba4;
+  do {
+    puVar3[-0x39] = 0;
+    puVar3[4] = 0x3f000000;
+    *puVar3 = 0x3f800000;
+    puVar3[1] = 0;
+    puVar3[2] = 0;
+    puVar3[3] = 0;
+    puVar3[5] = 0x3f000000;
+    puVar3[6] = 0x3c23d70a;
+    puVar3 = puVar3 + 0x44;
+  } while ((int)puVar3 < 0x86eda4);
+  FUN_0047b9b0(param_1,&param_2,FUN_00440bc0);
+  return uVar1;
+}
+
+
+
+// FUN_0047ade0 @ 0x0047ade0  size=145  (MASHED.exe)
+// undefined FUN_0047ade0(void)
+// xrefs (1):
+//   DATA 0x00440df7 in FUN_00440bc0
+// strings: (none)
+
+/* [C1 2026-06-01] Script-VM dispatch handler (no direct callers). Pops 4 args: index (iVar1-3) used
+    */
+
+undefined4 FUN_0047ade0(undefined4 param_1)
+
+{
+  int iVar1;
+  int iVar2;
+  undefined4 uVar3;
+  undefined4 *puVar4;
+  
+  iVar1 = FUN_004b6fc0(param_1);
+  FUN_004b7090(param_1,iVar1 + -3);
+  iVar2 = FUN_004a2c48();
+  iVar2 = iVar2 * 0x110;
+  puVar4 = (undefined4 *)(DAT_007d3ff8 + 0xcc);
+  uVar3 = FUN_004b70d0(param_1,iVar1 + -2);
+  (*(code *)*puVar4)(iVar2 + 0x86cac4,uVar3);
+  puVar4 = (undefined4 *)(DAT_007d3ff8 + 0xcc);
+  uVar3 = FUN_004b70d0(param_1,iVar1 + -1);
+  (*(code *)*puVar4)(&DAT_0086cb04 + iVar2,uVar3);
+  puVar4 = (undefined4 *)(DAT_007d3ff8 + 0xcc);
+  uVar3 = FUN_004b70d0(param_1,iVar1);
+  (*(code *)*puVar4)(&DAT_0086cb44 + iVar2,uVar3);
+  return 0;
+}
+
+
+
+// FUN_0047ae80 @ 0x0047ae80  size=104  (MASHED.exe)
+// undefined FUN_0047ae80(void)
+// xrefs (1):
+//   DATA 0x00440e06 in FUN_00440bc0
+// strings: (none)
+
+/* [C1 2026-06-01] Script-VM dispatch handler (no direct callers). Pops 4 args: slot-index (iVar1-3)
+    */
+
+undefined4 FUN_0047ae80(undefined4 param_1)
+
+{
+  int iVar1;
+  int iVar2;
+  float10 fVar3;
+  
+  iVar1 = FUN_004b6fc0(param_1);
+  FUN_004b7090(param_1,iVar1 + -3);
+  iVar2 = FUN_004a2c48();
+  fVar3 = (float10)FUN_004b7090(param_1,iVar1 + -2);
+  (&DAT_0086cb84)[iVar2 * 0x44] = (float)fVar3;
+  fVar3 = (float10)FUN_004b7090(param_1,iVar1 + -1);
+  (&DAT_0086cb88)[iVar2 * 0x44] = (float)fVar3;
+  fVar3 = (float10)FUN_004b7090(param_1,iVar1);
+  (&DAT_0086cb8c)[iVar2 * 0x44] = (float)fVar3;
+  (&DAT_0086cac0)[iVar2 * 0x44] = 1;
+  return 0;
+}
+
+
+
+// FUN_0047aef0 @ 0x0047aef0  size=88  (MASHED.exe)
+// undefined FUN_0047aef0(void)
+// xrefs (1):
+//   DATA 0x00440e15 in FUN_00440bc0
+// strings: (none)
+
+/* [C1 2026-05-19] **Script handler — set type=2 with 2 floats** at `0x86cb90..0x86cb94` of slot.
+    */
+
+undefined4 FUN_0047aef0(undefined4 param_1)
+
+{
+  int iVar1;
+  int iVar2;
+  float10 fVar3;
+  
+  iVar1 = FUN_004b6fc0(param_1);
+  FUN_004b7090(param_1,iVar1 + -2);
+  iVar2 = FUN_004a2c48();
+  fVar3 = (float10)FUN_004b7090(param_1,iVar1 + -1);
+  (&DAT_0086cb90)[iVar2 * 0x44] = (float)fVar3;
+  fVar3 = (float10)FUN_004b7090(param_1,iVar1);
+  (&DAT_0086cb94)[iVar2 * 0x44] = (float)fVar3;
+  (&DAT_0086cac0)[iVar2 * 0x44] = 2;
+  return 0;
+}
+
+
+
+// FUN_0047af50 @ 0x0047af50  size=72  (MASHED.exe)
+// undefined FUN_0047af50(void)
+// xrefs (1):
+//   DATA 0x00440e27 in FUN_00440bc0
+// strings: (none)
+
+/* [C1 2026-05-19] **Script handler — set type=3 with 1 float** at `0x86cba0` of slot. */
+
+undefined4 FUN_0047af50(undefined4 param_1)
+
+{
+  int iVar1;
+  int iVar2;
+  float10 fVar3;
+  
+  iVar1 = FUN_004b6fc0(param_1);
+  FUN_004b7090(param_1,iVar1 + -1);
+  iVar2 = FUN_004a2c48();
+  fVar3 = (float10)FUN_004b7090(param_1,iVar1);
+  *(float *)(&DAT_0086cba0 + iVar2 * 0x110) = (float)fVar3;
+  (&DAT_0086cac0)[iVar2 * 0x44] = 3;
+  return 0;
+}
+
+
+
+// FUN_0047afa0 @ 0x0047afa0  size=88  (MASHED.exe)
+// undefined FUN_0047afa0(void)
+// xrefs (1):
+//   DATA 0x00440e36 in FUN_00440bc0
+// strings: (none)
+
+/* [C1 2026-05-19] **Script handler — set type=4 with 2 floats** at `0x86cb98, 0x86cb9c` of slot.
+    */
+
+undefined4 FUN_0047afa0(undefined4 param_1)
+
+{
+  int iVar1;
+  int iVar2;
+  float10 fVar3;
+  
+  iVar1 = FUN_004b6fc0(param_1);
+  FUN_004b7090(param_1,iVar1 + -2);
+  iVar2 = FUN_004a2c48();
+  fVar3 = (float10)FUN_004b7090(param_1,iVar1 + -1);
+  *(float *)(&DAT_0086cb98 + iVar2 * 0x110) = (float)fVar3;
+  fVar3 = (float10)FUN_004b7090(param_1,iVar1);
+  *(float *)(&DAT_0086cb9c + iVar2 * 0x110) = (float)fVar3;
+  (&DAT_0086cac0)[iVar2 * 0x44] = 4;
+  return 0;
+}
+
+
+
+// FUN_0047b000 @ 0x0047b000  size=145  (MASHED.exe)
+// undefined FUN_0047b000(void)
+// xrefs (1):
+//   DATA 0x00440e45 in FUN_00440bc0
+// strings: (none)
+
+/* [C1 2026-05-19] **Script handler — multi-field write** (6 args): slot-id, then 5 sub-values. */
+
+undefined4 FUN_0047b000(undefined4 param_1)
+
+{
+  int iVar1;
+  int iVar2;
+  undefined4 uVar3;
+  float10 fVar4;
+  
+  iVar1 = FUN_004b6fc0(param_1);
+  FUN_004b7090(param_1,iVar1 + -5);
+  iVar2 = FUN_004a2c48();
+  fVar4 = (float10)FUN_004b7090(param_1,iVar1 + -4);
+  (&DAT_0086cbbc)[iVar2 * 0x44] = (float)fVar4;
+  fVar4 = (float10)FUN_004b7090(param_1,iVar1 + -3);
+  (&DAT_0086cbb4)[iVar2 * 0x44] = (float)fVar4;
+  fVar4 = (float10)FUN_004b7090(param_1,iVar1 + -2);
+  (&DAT_0086cbb8)[iVar2 * 0x44] = (float)fVar4;
+  fVar4 = (float10)FUN_004b7090(param_1,iVar1 + -1);
+  (&DAT_0086cba4)[iVar2 * 0x44] = (float)fVar4;
+  FUN_004b7090(param_1,iVar1);
+  uVar3 = FUN_004a2c48();
+  *(undefined4 *)(&DAT_0086cbc0 + iVar2 * 0x110) = uVar3;
+  *(undefined4 *)(&DAT_0086cbc8 + iVar2 * 0x110) = 0x41000000;
+  return 0;
+}
+
+
+
+// FUN_0047b0a0 @ 0x0047b0a0  size=98  (MASHED.exe)
+// undefined FUN_0047b0a0(void)
+// xrefs (1):
+//   DATA 0x00440e54 in FUN_00440bc0
+// strings: (none)
+
+/* [C1 2026-05-19] **Script handler — set Vec3** at `0x86cba8, 0x86cbac, 0x86cbb0` of slot. */
+
+undefined4 FUN_0047b0a0(undefined4 param_1)
+
+{
+  int iVar1;
+  int iVar2;
+  float10 fVar3;
+  
+  iVar1 = FUN_004b6fc0(param_1);
+  FUN_004b7090(param_1,iVar1 + -3);
+  iVar2 = FUN_004a2c48();
+  fVar3 = (float10)FUN_004b7090(param_1,iVar1 + -2);
+  (&DAT_0086cba8)[iVar2 * 0x44] = (float)fVar3;
+  fVar3 = (float10)FUN_004b7090(param_1,iVar1 + -1);
+  (&DAT_0086cbac)[iVar2 * 0x44] = (float)fVar3;
+  fVar3 = (float10)FUN_004b7090(param_1,iVar1);
+  (&DAT_0086cbb0)[iVar2 * 0x44] = (float)fVar3;
+  return 0;
+}
+
+
+
+// FUN_0047b110 @ 0x0047b110  size=71  (MASHED.exe)
+// undefined FUN_0047b110(void)
+// xrefs (1):
+//   DATA 0x00440e63 in FUN_00440bc0
+// strings: (none)
+
+/* [C1 2026-05-19] **Script handler — set single int** at `0x86cbc4` of slot (selected by slot-id
+   arg). */
+
+undefined4 FUN_0047b110(undefined4 param_1)
+
+{
+  int iVar1;
+  int iVar2;
+  undefined4 uVar3;
+  
+  iVar1 = FUN_004b6fc0(param_1);
+  FUN_004b7090(param_1,iVar1 + -1);
+  iVar2 = FUN_004a2c48();
+  FUN_004b7090(param_1,iVar1);
+  uVar3 = FUN_004a2c48();
+  *(undefined4 *)(&DAT_0086cbc4 + iVar2 * 0x110) = uVar3;
+  return 0;
+}
+
+
+
+// FUN_0047b160 @ 0x0047b160  size=66  (MASHED.exe)
+// undefined FUN_0047b160(void)
+// xrefs (1):
+//   DATA 0x00440e72 in FUN_00440bc0
+// strings: (none)
+
+/* [C1 2026-05-19] **Script handler — set single float** at `0x86cbc8` of slot. */
+
+undefined4 FUN_0047b160(undefined4 param_1)
+
+{
+  int iVar1;
+  int iVar2;
+  float10 fVar3;
+  
+  iVar1 = FUN_004b6fc0(param_1);
+  FUN_004b7090(param_1,iVar1 + -1);
+  iVar2 = FUN_004a2c48();
+  fVar3 = (float10)FUN_004b7090(param_1,iVar1);
+  *(float *)(&DAT_0086cbc8 + iVar2 * 0x110) = (float)fVar3;
+  return 0;
+}
+
+

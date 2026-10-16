@@ -1,0 +1,22 @@
+// FUN_00421630 @ 0x00421630  size=95  (MASHED.exe)
+// undefined FUN_00421630(void)
+// callers: FUN_00405ab0@0x00405ab0, FUN_00453c60@0x00453c60, FUN_0045a420@0x0045a420, FUN_0045b390@0x0045b390, FUN_00486630@0x00486630
+
+/* [C2 2026-06-03] `void FUN_00421630(undefined4 param_1, undefined4 param_2, undefined4 param_3)`.
+   Body 0x00421630..0x0042168e… */
+
+void FUN_00421630(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+
+{
+  undefined1 local_8c [12];
+  undefined1 local_80 [64];
+  undefined1 local_40 [64];
+  
+  FUN_0041f220(param_1,local_80);
+  FUN_004c4dc0(local_40,local_80);
+  FUN_004c3d90(local_8c,param_3,1,local_40);
+  FUN_004215e0(param_1,param_2,local_8c);
+  return;
+}
+
+

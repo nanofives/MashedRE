@@ -1,0 +1,84 @@
+0x0040dfc0: e8db8b0100               call 0x426ba0
+0x0040dfc5: 85c0                     test eax, eax
+0x0040dfc7: 746e                     je 0x40e037
+0x0040dfc9: a18cba6300               mov eax, dword ptr [0x63ba8c]
+0x0040dfce: 83f805                   cmp eax, 5
+0x0040dfd1: 7c64                     jl 0x40e037
+0x0040dfd3: 83f806                   cmp eax, 6
+0x0040dfd6: 7e7e                     jle 0x40e056
+0x0040dfd8: 83f807                   cmp eax, 7
+0x0040dfdb: 755a                     jne 0x40e037
+0x0040dfdd: e8be160200               call 0x42f6a0
+0x0040dfe2: 83c0fe                   add eax, -2
+0x0040dfe5: 83f808                   cmp eax, 8
+0x0040dfe8: 775e                     ja 0x40e048
+0x0040dfea: 0fb68004e14000           movzx eax, byte ptr [eax + 0x40e104]
+0x0040dff1: ff2485f4e04000           jmp dword ptr [eax*4 + 0x40e0f4]
+0x0040dff8: e953080100               jmp 0x41e850
+0x0040dffd: e8fe140200               call 0x42f500
+0x0040e002: 85c0                     test eax, eax
+0x0040e004: 7409                     je 0x40e00f
+0x0040e006: 833dd00f7f0002           cmp dword ptr [0x7f0fd0], 2
+0x0040e00d: 7542                     jne 0x40e051
+0x0040e00f: e9acec0000               jmp 0x41ccc0
+0x0040e014: a1d00f7f00               mov eax, dword ptr [0x7f0fd0]
+0x0040e019: 83c0fc                   add eax, -4
+0x0040e01c: 83f806                   cmp eax, 6
+0x0040e01f: 7727                     ja 0x40e048
+0x0040e021: ff248510e14000           jmp dword ptr [eax*4 + 0x40e110]
+0x0040e028: e9d3e20000               jmp 0x41c300
+0x0040e02d: 6a00                     push 0
+0x0040e02f: e89cfe0000               call 0x41ded0
+0x0040e034: 83c404                   add esp, 4
+0x0040e037: c3                       ret 
+0x0040e038: 6a01                     push 1
+0x0040e03a: e891fe0000               call 0x41ded0
+0x0040e03f: 83c404                   add esp, 4
+0x0040e042: c3                       ret 
+0x0040e043: e998c30000               jmp 0x41a3e0
+0x0040e048: e8b3140200               call 0x42f500
+0x0040e04d: 85c0                     test eax, eax
+0x0040e04f: 74be                     je 0x40e00f
+0x0040e051: e91af80000               jmp 0x41d870
+0x0040e056: e845160200               call 0x42f6a0
+0x0040e05b: 83c0fe                   add eax, -2
+0x0040e05e: 83f809                   cmp eax, 9
+0x0040e061: 7768                     ja 0x40e0cb
+0x0040e063: 0fb68840e14000           movzx ecx, byte ptr [eax + 0x40e140]
+0x0040e06a: ff248d2ce14000           jmp dword ptr [ecx*4 + 0x40e12c]
+0x0040e071: e8da070100               call 0x41e850
+0x0040e076: eb68                     jmp 0x40e0e0
+0x0040e078: e883140200               call 0x42f500
+0x0040e07d: 85c0                     test eax, eax
+0x0040e07f: 745a                     je 0x40e0db
+0x0040e081: 833dd00f7f0002           cmp dword ptr [0x7f0fd0], 2
+0x0040e088: eb48                     jmp 0x40e0d2
+0x0040e08a: a1d00f7f00               mov eax, dword ptr [0x7f0fd0]
+0x0040e08f: 83c0fc                   add eax, -4
+0x0040e092: 83f806                   cmp eax, 6
+0x0040e095: 7734                     ja 0x40e0cb
+0x0040e097: ff24854ce14000           jmp dword ptr [eax*4 + 0x40e14c]
+0x0040e09e: e85de20000               call 0x41c300
+0x0040e0a3: eb3b                     jmp 0x40e0e0
+0x0040e0a5: 6a01                     push 1
+0x0040e0a7: e824fe0000               call 0x41ded0
+0x0040e0ac: 83c404                   add esp, 4
+0x0040e0af: eb2f                     jmp 0x40e0e0
+0x0040e0b1: 6a00                     push 0
+0x0040e0b3: e818fe0000               call 0x41ded0
+0x0040e0b8: 83c404                   add esp, 4
+0x0040e0bb: eb23                     jmp 0x40e0e0
+0x0040e0bd: e81ec30000               call 0x41a3e0
+0x0040e0c2: eb1c                     jmp 0x40e0e0
+0x0040e0c4: e89750ffff               call 0x403160
+0x0040e0c9: eb15                     jmp 0x40e0e0
+0x0040e0cb: e830140200               call 0x42f500
+0x0040e0d0: 85c0                     test eax, eax
+0x0040e0d2: 7407                     je 0x40e0db
+0x0040e0d4: e8e7df0000               call 0x41c0c0
+0x0040e0d9: eb05                     jmp 0x40e0e0
+0x0040e0db: e850d50000               call 0x41b630
+0x0040e0e0: e8bb150200               call 0x42f6a0
+0x0040e0e5: 83f80b                   cmp eax, 0xb
+0x0040e0e8: 0f8449ffffff             je 0x40e037
+0x0040e0ee: e98dfa0000               jmp 0x41db80
