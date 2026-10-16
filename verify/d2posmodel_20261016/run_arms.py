@@ -23,6 +23,21 @@ STACK = {'DEF': [],
          'P23': ['MASHED_POS_WHEELS', 'MASHED_POS_TRANS'],
          'B': ['MASHED_POS_MODEL'], 'BC': ['MASHED_POS_MODEL', 'MASHED_SPEED_REFRESH'],
          'C': ['MASHED_SPEED_REFRESH'], 'RG': RG, 'BRG': ['MASHED_POS_MODEL'] + RG}
+# DIAGNOSTIC stacks (report only, never a gate arm): the D2 recipe plus the player trace, the
+# world-contact fixup log and the off-mesh recovery log, written into OUT under the arm's stack name.
+DX = ['MASHED_PLAYERTRACE', 'MASHED_PLAYERTRACE_OUT=@OUT@\\{n}.ptrace.log',
+      'MASHED_WORLD_CONTACT_LOG=@OUT@\\{n}.wc.log', 'MASHED_OFFMESH_LOG=@OUT@\\{n}.om.log']
+STACK['DX'] = [k.replace('{n}', 'DX') for k in DX]
+STACK['BX'] = ['MASHED_POS_MODEL'] + [k.replace('{n}', 'BX') for k in DX]
+# Amendment 2 bisect (DIAGNOSTIC, report only): part 1 alone with the minimal seed, or with one group of
+# FUN_0046baa0's record writes restored from before the reset (MASHED_POS_SEED_KEEP, hex [a, b)).
+KEEP = {'G1': '0-4', 'G2': '14-50', 'G3': '194-458', 'G4': '490-498', 'G5': '4ac-8f0',
+        'G6': '9b0-9f8', 'G7': 'ad0-b2c', 'G8': 'b2c-bf0'}
+STACK['P1MIN'] = ['MASHED_POS_SEED', 'MASHED_POS_SEED_MIN']
+for g, rng in KEEP.items():
+    STACK['P1K' + g] = ['MASHED_POS_SEED', 'MASHED_POS_SEED_KEEP=' + rng]
+STACK['BMIN'] = ['MASHED_POS_MODEL', 'MASHED_POS_SEED_MIN']
+STACK['BMINRG'] = STACK['BMIN'] + RG
 D2BASE = {'MASHED_REAL_PHYSICS': '1', 'MASHED_RACE_DEMO': '1', 'MASHED_PLAY_DEMO': '1', 'MASHED_GOTO': '6',
           'MASHED_TRACK_SEL': '12', 'MASHED_CAR_SEL': '0', 'MASHED_DRIVE_HOLD': '1', 'MASHED_WIN_POS': 'primary-bl',
           'MASHED_MOTION_DIAG': '1', 'MASHED_STEER_HOLD': '1', 'MASHED_STEER_HOLD_AFTER': '0', 'MASHED_MUTE': '1',

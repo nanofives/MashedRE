@@ -46,4 +46,12 @@ for arm in sys.argv[1:]:
         vals = sorted({v for _, v in v0})
         last = v0[-1] if v0 else None
         ok = last is not None and abs(last[1] - 29.999977) <= 1e-5
-        print(f'   G-PROG: v=0 distinct prog {vals[:8]} last frame {last} => {"PASS" if ok else "FAIL"}')
+        print(f'   G-PROG (as registered, last row): v=0 distinct prog {vals[:8]} last frame {last} => {"PASS" if ok else "FAIL"}')
+        # Amendment 1: rows before the first ptrace frame with nonzero velocity (pathprog frame k <-> ptrace f=k+1;
+        # both traces start at the first post-countdown frame and have the same frame count).
+        fm = next((int(m2.group(1)) for m2 in re.finditer(r'^f=(\d+) .*?vel=' + VEC, pt, re.M)
+                   if any(float(m2.group(i)) != 0.0 for i in (2, 3, 4))), None)
+        park = [v for fr, v in v0 if fm is None or fr + 1 < fm]
+        ok2 = bool(park) and all(abs(v - 29.999977) <= 1e-5 for v in park)
+        print(f'   G-PROG (amendment 1): first moving ptrace f={fm}, {len(park)} parked rows, distinct '
+              f'{sorted(set(park))} => {"PASS" if ok2 else "FAIL"}')

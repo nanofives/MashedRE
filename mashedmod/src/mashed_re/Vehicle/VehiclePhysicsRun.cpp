@@ -796,7 +796,34 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         // on EVERY hold tick and steps ~N of them; the exe steps one. The exe's round
         // restarts do not re-run any record reset (FUN_0040e590 per round), with or without
         // this knob.
-        if (PosModelSeed()) VehiclePhysicsStateReset(static_cast<std::uint32_t>(slot));
+        if (PosModelSeed()) {
+            // [d2posmodel amendment 2] DIAGNOSTIC ONLY, default OFF, for the D2 bisect of
+            // RESULT_d2posmodel.md: MASHED_POS_SEED_MIN=1 writes only the d2settle D0-e seed set
+            // (int 1 at the four states, 0 at the four fv) plus 4.0f at +0x9e0, instead of the
+            // whole FUN_0046baa0. MASHED_POS_SEED_KEEP=<a-b>[,<a-b>...] (hex record offsets,
+            // [a, b)) runs the whole reset, then restores those ranges from before it.
+            static const bool s_seedMin = PosModelEnvOn("MASHED_POS_SEED_MIN");
+            static const char* const s_seedKeep = std::getenv("MASHED_POS_SEED_KEEP");
+            if (s_seedMin) {
+                for (int w = 0; w < 4; ++w) {
+                    I(r, 0x198 + w * 0xc4) = 1;
+                    F(r, 0x194 + w * 0xc4) = 0.f;
+                }
+                I(r, 0x9e0) = 0x40800000;   // 4.0f, 0x0046bb57
+            } else {
+                static unsigned char s_snap[kRec];
+                if (s_seedKeep) std::memcpy(s_snap, r, kRec);
+                VehiclePhysicsStateReset(static_cast<std::uint32_t>(slot));
+                for (const char* p = s_seedKeep; p && *p; ) {
+                    char* e = nullptr;
+                    const unsigned long a = std::strtoul(p, &e, 16);
+                    if (!e || *e != '-') break;
+                    const unsigned long b = std::strtoul(e + 1, &e, 16);
+                    if (a < b && b <= kRec) std::memcpy(r + a, s_snap + a, b - a);
+                    p = (e && *e == ',') ? e + 1 : nullptr;
+                }
+            }
+        }
         g_inSpawnSettle = true;          // keep the START BOOST ARM out of this call
         VehiclePhysics_StepCar(slot, dt, s);
         g_inSpawnSettle = false;

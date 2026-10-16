@@ -184,3 +184,34 @@ Amended reading (governs the re-scored `D_BRG` and a new base control `D_RG`, bo
 **G-PROG** = the v=0 prog on every pathprog row before the frame at which the player's ptrace velocity first
 becomes nonzero, all equal to 29.999977 +- 1e-5; the control `D_RG` (no fix B) is predicted to read 0.000000 there.
 The registered G-SETTLE result above stands as the gate result; `D_BRG` is the report.
+
+## Amendment 2 (2026-10-16, after `D2_*` B / P1 / P2 / P23 / BX / DX and `H_DEF`, `H_DEF-2`, `H_B`; before the bisect)
+
+Recorded (`score_d2.py`, all runs on exe `90a55dc7`):
+- **D2 gate under B: FAIL 3/3.** `D2_B_1..3` identical: slip 1500-2000 and 2000-2600 UNSCORABLE (n=0),
+  driving-median 1338.62 (n=54). Same-build control `D2_DEF_1`: 0.1927 / 0.2489 / 1860.35 (n 376 / 562 / 1366) =
+  the recorded default.
+- **Isolation (report):** `D2_P1_1` (seed alone) = 1338.62 n=54, the same collapse. `D2_P2_1` 0.1927 / 0.2489 /
+  1860.27 (= default). `D2_P23_1` (wheels + translation, no seed) 0.1944 in / 0.2538 in / **1875.84** OUT (n 360 /
+  566 / 1338), driving-median +15.5 against the default.
+- **Diagnostic `D2_BX_1` vs `D2_DX_1`** (ptrace + world-contact + off-mesh logs): both cars hit the x = -2.04 wall
+  near f 95 with the same first fixup (vel (-1696, 0, 680) -> (189, -78, 143)). The default slides off it (31
+  fixups in the run, sp 1952 at f 300). Under B the car stays on it: 215 fixups, all slots s5 / s9, normal
+  (1, 0, 0), arm x -1.80, sp 10-50 for the rest of the run. 0 off-mesh recoveries in either.
+- **No-op control: PASS** (`H_DEF` = `H_DEF-2` = `c2e4d60d / b50bd39b / ba90ed88`). `H_B` `b1b6f319 / 4ea8366f / e92bdf83`.
+
+Fix B as registered therefore stays default OFF (section 5: D2 fails). Two further measurements, registered now:
+
+A2.1 **Bisect (DIAGNOSTIC, report only)** of which `FUN_0046baa0` write breaks the D2 arm. Diag knobs (default
+OFF): `MASHED_POS_SEED_MIN=1` writes only int 1 at the four states, 0 at the four fv and 4.0f at `+0x9e0` instead of
+the whole reset. `MASHED_POS_SEED_KEEP=<a-b>,...` runs the whole reset then restores those record byte ranges from
+before it. Arms `D2_P1MIN_1` and `D2_P1K<g>_1`, part 1 only, one group restored each: G1 `0-4`, G2 `14-50`, G3
+`194-458` (wheel block), G4 `490-498`, G5 `4ac-8f0` (18 contact keys), G6 `9b0-9f8`, G7 `ad0-b2c`, G8 `b2c-bf0`
+(the 16-entry -1.0 loop). A group whose restore brings driving-median back to about 1860 contains the write that
+breaks the arm. No prediction.
+
+A2.2 **`BMIN` (parts 2 + 3 + the minimal seed): measured, NOT eligible for default ON in this lane.** A partial
+`FUN_0046baa0` hides whatever downstream port defect the faithful reset exposes, so it can only inform the user
+decision. Same gate set as section 3: `D_BMIN` / `D_BMINRG` (G-SETTLE, G-PROG), `D2_BMIN_1..3`, recovery, and
+`H_BMIN` / `H_BMIN-2` collateral if the D2 arm scores at all. G-SETTLE prediction [UNCERTAIN]: with the minimal
+seed the settle's A6a may not take its parked full stop (`D_P1`'s vel 0 came with the whole reset).
