@@ -1,0 +1,65 @@
+G-CTRL default-build fingerprint (verify/carlod_20261016/run_gctrl.py, TRAINING default arm), 2026-10-16
+expected c2e4d60d / b50bd39b / ba90ed88 (step / gates / ptrace)
+
+=== gctrl_base  exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\carlod\exe_base\mashed_re.exe  knobs=[] ===
+    pid=23272
+    exit=0  self_exited=True
+    gctrl_base.step.csv  lines=18664  sha8=c2e4d60d
+    gctrl_base.gates.csv  lines=56153  sha8=b50bd39b
+    gctrl_base.ptrace.log  lines=28076  sha8=ba90ed88
+GCTRL DONE
+=== gctrl_final  exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\carlod\exe_final\mashed_re.exe  knobs=[] ===
+    pid=2308
+    exit=0  self_exited=True
+    gctrl_final.step.csv  lines=18664  sha8=c2e4d60d
+    gctrl_final.gates.csv  lines=56153  sha8=b50bd39b
+    gctrl_final.ptrace.log  lines=28076  sha8=ba90ed88
+GCTRL DONE
+G-CTRL rebased: base exe and final default exe both 716cb2fd / 2a2afda1 / ba90ed88
+
+=== gctrl_base2  exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\carlod\exe_base2\mashed_re.exe  knobs=[] ===
+    pid=21244
+    exit=0  self_exited=True
+    gctrl_base2.step.csv  lines=18664  sha8=716cb2fd
+    gctrl_base2.gates.csv  lines=56153  sha8=2a2afda1
+    gctrl_base2.ptrace.log  lines=28076  sha8=ba90ed88
+GCTRL DONE
+=== gctrl_final2  exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\carlod\exe_final2\mashed_re.exe  knobs=[] ===
+    pid=3412
+    exit=0  self_exited=True
+    gctrl_final2.step.csv  lines=18664  sha8=716cb2fd
+    gctrl_final2.gates.csv  lines=56153  sha8=2a2afda1
+    gctrl_final2.ptrace.log  lines=28076  sha8=ba90ed88
+GCTRL DONE
+G-CTRL merged tip: base3 and final3 both 716cb2fd / 2a2afda1 / ba90ed88
+
+=== gctrl_base3  exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\carlod\exe_base3\mashed_re.exe  knobs=[] ===
+    pid=360
+    exit=0  self_exited=True
+    gctrl_base3.step.csv  lines=18664  sha8=716cb2fd
+    gctrl_base3.gates.csv  lines=56153  sha8=2a2afda1
+    gctrl_base3.ptrace.log  lines=28076  sha8=ba90ed88
+GCTRL DONE
+=== gctrl_final3  exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\carlod\exe_final3\mashed_re.exe  knobs=[] ===
+    pid=16592
+    exit=0  self_exited=True
+    gctrl_final3.step.csv  lines=18664  sha8=716cb2fd
+    gctrl_final3.gates.csv  lines=56153  sha8=2a2afda1
+    gctrl_final3.ptrace.log  lines=28076  sha8=ba90ed88
+GCTRL DONE
+G-CTRL final tip (04dee0ed): base4 and final4 both 716cb2fd / 2a2afda1 / ba90ed88
+
+=== gctrl_base4  exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\carlod\exe_base4\mashed_re.exe  knobs=[] ===
+    pid=19828
+    exit=0  self_exited=True
+    gctrl_base4.step.csv  lines=18664  sha8=716cb2fd
+    gctrl_base4.gates.csv  lines=56153  sha8=2a2afda1
+    gctrl_base4.ptrace.log  lines=28076  sha8=ba90ed88
+GCTRL DONE
+=== gctrl_final4  exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\carlod\exe_final4\mashed_re.exe  knobs=[] ===
+    pid=14424
+    exit=0  self_exited=True
+    gctrl_final4.step.csv  lines=18664  sha8=716cb2fd
+    gctrl_final4.gates.csv  lines=56153  sha8=2a2afda1
+    gctrl_final4.ptrace.log  lines=28076  sha8=ba90ed88
+GCTRL DONE

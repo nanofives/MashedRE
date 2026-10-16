@@ -1,0 +1,14 @@
+0x004b5240  8b 44 24 08               mov eax, dword ptr [esp + 8]
+0x004b5244  85 c0                     test eax, eax
+0x004b5246  8b 44 24 04               mov eax, dword ptr [esp + 4]
+0x004b524a  8a 48 02                  mov cl, byte ptr [eax + 2]
+0x004b524d  74 07                     je 0x4b5256
+0x004b524f  80 c9 04                  or cl, 4
+0x004b5252  88 48 02                  mov byte ptr [eax + 2], cl
+0x004b5255  c3                        ret 
+0x004b5256  80 e1 fb                  and cl, 0xfb
+0x004b5259  88 48 02                  mov byte ptr [eax + 2], cl
+0x004b525c  c3                        ret 
+0x004b525d  90                        nop 
+0x004b525e  90                        nop 
+0x004b525f  90                        nop 

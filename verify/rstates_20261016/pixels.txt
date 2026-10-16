@@ -26,3 +26,13 @@ arctic V7 9.18 / 7.05 / 6.48
 arctic W8 9.18 / 7.05 / 6.48
 city V7 10.55 / 6.88 / 6.61
 city W8 10.55 / 6.88 / 6.61
+# 34ea5b71 arms (Z0 new-base build, Z9 merged default F1-F8, Z1 merged all knobs =0), imgdiff.py "all" mean abs diff vs orig_row_K.bmp:
+training Z0 14.15 / 9.97 / 8.65
+arctic Z0 9.27 / 7.03 / 6.48
+city Z0 10.44 / 6.87 / 6.59
+training Z9 12.04 / 8.60 / 7.30
+arctic Z9 9.22 / 7.02 / 6.46
+city Z9 10.44 / 6.83 / 6.57
+training Z1 14.15 / 9.97 / 8.65
+arctic Z1 9.27 / 7.03 / 6.48
+city Z1 10.44 / 6.87 / 6.59

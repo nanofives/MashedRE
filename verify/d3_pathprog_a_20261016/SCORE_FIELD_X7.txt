@@ -1,0 +1,14 @@
+original first published row (call 1): car 0 prog 30.0000 pct 100.000 lap -1, car 1 prog 29.7277 pct 99.092 lap -1, car 2 prog 29.4549 pct 98.183 lap -1, car 3 prog 29.1828 pct 97.276 lap -1
+   car 0: lap counter -1 until call 904 then 0 (crossing: pct 100.000 -> 0.045)
+   car 1: lap counter -1 until call 901 then 0 (crossing: pct 99.986 -> 0.052)
+   car 2: lap counter -1 until call 910 then 0 (crossing: pct 99.964 -> 0.004)
+   car 3: lap counter -1 until call 916 then 0 (crossing: pct 99.970 -> 0.073)
+== X7_H: live node progress (gates prog_96e8) at frame 1: car 0 0.0009, car 1 29.7277, car 2 29.4599, car 3 29.1849
+   descending order at frame 1: [1, 2, 3, 0] -> two least = [3, 0] (original: [0, 1, 2, 3] -> [2, 3])
+   car 1 frame-1 progress 29.7277 vs original 29.7277 (|d| 0.0000)
+   car 2 frame-1 progress 29.4599 vs original 29.4549 (|d| 0.0050)
+   car 3 frame-1 progress 29.1849 vs original 29.1828 (|d| 0.0021)
+   car 1: lap counter first != -1 at step frame 20; progress wraps at gates frame 20; first lap value 0
+   car 2: lap counter first != -1 at step frame 34; progress wraps at gates frame 34; first lap value 0
+   car 3: lap counter first != -1 at step frame 35; progress wraps at gates frame 35; first lap value 0
+   G-FIELD cars 1-3: PASS

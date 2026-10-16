@@ -1,0 +1,10 @@
+arctic_01051     before  75 after  75  gone   0  NEW 0
+arctic_01091     before  75 after  75  gone   0  NEW 0
+arctic_01126     before  76 after  76  gone   0  NEW 0
+city_00761       before 151 after 151  gone   0  NEW 0
+city_00801       before 149 after 149  gone   0  NEW 0
+city_00836       before 149 after 149  gone   0  NEW 0
+training_00884   before  75 after  75  gone   0  NEW 0
+training_00924   before  74 after  74  gone   0  NEW 0
+training_00959   before  74 after  74  gone   0  NEW 0
+NEW ROWS TOTAL: 0

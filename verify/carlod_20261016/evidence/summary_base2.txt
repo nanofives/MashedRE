@@ -1,0 +1,10 @@
+arm base2 exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\carlod\exe_base2\mashed_re.exe knobs=[] brake_rows=True
+training   884  rows  77  red  0  matched 196/242  tri 17022/18128  pix 14.33
+training   924  rows  76  red  0  matched 193/257  tri 16986/18358  pix 10.07
+training   959  rows  76  red  0  matched 193/233  tri 16986/18079  pix 8.71
+arctic    1051  rows  76  red  0  matched 138/180  tri 32143/35412  pix 10.35
+arctic    1091  rows  76  red  0  matched 138/177  tri 32083/35197  pix 6.84
+arctic    1126  rows  76  red  0  matched 101/131  tri 26823/29307  pix 6.34
+city       761  rows 153  red  0  matched 351/512  tri 34236/42182  pix 14.84
+city       801  rows 151  red  0  matched 339/496  tri 33776/41692  pix 12.11
+city       836  rows 149  red  0  matched 292/444  tri 26805/34493  pix 11.40

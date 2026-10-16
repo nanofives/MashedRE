@@ -1,0 +1,27 @@
+# standalone, MASHED_CAR_ENV=1, per car at the cited rows. city: exe before the previous-camera change
+# (coef uses this frame's camera); arctic: exe before the BSP layout fix (shade 1.0, original ~0.25).
+# d2raw / state are unaffected by either change.
+city      761 slot 0 d2raw=   12.270 state=1 shade=0.2926 coef=0.5670 byte=145
+city      761 slot 1 d2raw=   20.017 state=1 shade=0.2911 coef=0.5163 byte=132
+city      761 slot 2 d2raw=   13.029 state=1 shade=0.2933 coef=0.5624 byte=143
+city      761 slot 3 d2raw=    9.432 state=1 shade=0.2916 coef=0.5849 byte=149
+city      801 slot 0 d2raw=   53.047 state=1 shade=0.2926 coef=0.3035 byte=77
+city      801 slot 1 d2raw=  129.883 state=1 shade=0.2902 coef=0.0000 byte=0
+city      801 slot 2 d2raw=  108.039 state=1 shade=0.2910 coef=0.0000 byte=0
+city      801 slot 3 d2raw=  102.703 state=1 shade=0.2911 coef=0.0000 byte=0
+city      836 slot 0 d2raw=  188.843 state=2 shade=0.2926 coef=0.0000 byte=0
+city      836 slot 1 d2raw=  339.322 state=2 shade=0.2902 coef=0.0000 byte=0
+city      836 slot 2 d2raw=  311.205 state=2 shade=0.2902 coef=0.0000 byte=0
+city      836 slot 3 d2raw=  273.742 state=2 shade=0.2902 coef=0.0000 byte=0
+arctic   1051 slot 0 d2raw=   13.111 state=1 shade=1.0000 coef=0.8689 byte=222
+arctic   1051 slot 1 d2raw=   21.857 state=1 shade=1.0000 coef=0.7814 byte=199
+arctic   1051 slot 2 d2raw=   13.686 state=1 shade=1.0000 coef=0.8631 byte=220
+arctic   1051 slot 3 d2raw=   11.208 state=1 shade=1.0000 coef=0.8879 byte=226
+arctic   1091 slot 0 d2raw=   35.322 state=1 shade=1.0000 coef=0.6468 byte=165
+arctic   1091 slot 1 d2raw=  111.756 state=1 shade=1.0000 coef=0.0000 byte=0
+arctic   1091 slot 2 d2raw=   82.308 state=1 shade=1.0000 coef=0.1769 byte=45
+arctic   1091 slot 3 d2raw=   74.899 state=1 shade=1.0000 coef=0.2510 byte=64
+arctic   1126 slot 0 d2raw=  110.873 state=1 shade=1.0000 coef=0.0000 byte=0
+arctic   1126 slot 1 d2raw=  298.735 state=2 shade=1.0000 coef=0.0000 byte=0
+arctic   1126 slot 2 d2raw=  261.207 state=2 shade=1.0000 coef=0.0000 byte=0
+arctic   1126 slot 3 d2raw=  199.731 state=2 shade=1.0000 coef=0.0000 byte=0

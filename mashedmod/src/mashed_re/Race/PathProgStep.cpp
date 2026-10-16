@@ -19,6 +19,7 @@
 #include "../Math/RwLutTables.h"
 
 #include <float.h>
+#include <cmath>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
@@ -91,10 +92,23 @@ void* __cdecl PP_SphereQuery(void* world, float* sphere, void* /*cb*/, std::int3
     typedef int (__cdecl* tri_fn)(float*, const float*, const float*, const float*, float*, float*);
     const tri_fn test = reinterpret_cast<tri_fn>(&PP_547450);
     const int n = mashed_re::Race::PathNodes_TriCount();
+    // [PATHPROG split, PREREG amendment A3] MEASUREMENT ONLY: MASHED_PP_SPHERE_DUMP=<file> logs, for car 0 (the player) on its
+    // first 6 queries, every triangle the sphere hits (stream index, node id, sphere centre); MASHED_PP_SPHERE_FIRST makes
+    // the FIRST hit win instead of the last (FUN_00407a90 keeps the last). Both default OFF.
+    static const char* s_dumpPath = std::getenv("MASHED_PP_SPHERE_DUMP");
+    static const bool  s_first    = (std::getenv("MASHED_PP_SPHERE_FIRST") != nullptr);
+    static std::FILE*  s_dump     = (s_dumpPath && s_dumpPath[0]) ? std::fopen(s_dumpPath, "w") : nullptr;
+    static int         s_dumpCalls = 0;
+    const bool dumpThis = s_dump && v == 0 && s_dumpCalls < 6;
+    if (dumpThis) { std::fprintf(s_dump, "query %d centre %.6f %.6f %.6f r %.4f\n", s_dumpCalls, sphere[0], sphere[1], sphere[2], sphere[3]); ++s_dumpCalls; }
+    bool hit = false;
     for (int t = 0; t < n; ++t) {
         const float* tv = mashed_re::Race::PathNodes_Tri(t);
         float nrm[3], dist;
         if (test(sphere, tv, tv + 3, tv + 6, nrm, &dist) == 0) continue;
+        if (dumpThis) std::fprintf(s_dump, "  hit tri %d node %u dist %.6f\n", t, mashed_re::Race::PathNodes_TriNode(t), dist);
+        if (s_first && hit) continue;
+        hit = true;
         // FUN_00407a90: node id = ushort at RpMaterial+4 (colour red | green << 8), normal.
         const std::uintptr_t blk = 0x008a9620u + static_cast<std::uintptr_t>(v) * 0x30cu;
         *reinterpret_cast<std::uint32_t*>(blk + 0x20) = mashed_re::Race::PathNodes_TriNode(t);
@@ -102,6 +116,36 @@ void* __cdecl PP_SphereQuery(void* world, float* sphere, void* /*cb*/, std::int3
         *reinterpret_cast<float*>(blk + 0xc0) = nrm[1];
         *reinterpret_cast<float*>(blk + 0xc4) = nrm[2];
     }
+    if (dumpThis && s_dumpCalls == 1) {   // first query only: the triangles of the nodes around the line, hit or not, with the true 3-D distance
+        for (int t = 0; t < n; ++t) {
+            const unsigned node = mashed_re::Race::PathNodes_TriNode(t);
+            if (node != 0u && node != 1u && node != 28u && node != 29u) continue;
+            const float* tv = mashed_re::Race::PathNodes_Tri(t);
+            // closest point of triangle (a, b, c) to p (Ericson, Real-Time Collision Detection 5.1.5)
+            auto sub = [](const float* x, const float* y, float* o) { for (int i = 0; i < 3; ++i) o[i] = x[i] - y[i]; };
+            auto dot = [](const float* x, const float* y) { return x[0] * y[0] + x[1] * y[1] + x[2] * y[2]; };
+            const float *a = tv, *b = tv + 3, *c = tv + 6, *p = sphere;
+            float ab[3], ac[3], ap[3]; sub(b, a, ab); sub(c, a, ac); sub(p, a, ap);
+            float cp[3] = { a[0], a[1], a[2] };
+            const float d1 = dot(ab, ap), d2 = dot(ac, ap);
+            float bp[3]; sub(p, b, bp); const float d3 = dot(ab, bp), d4 = dot(ac, bp);
+            float cpp[3]; sub(p, c, cpp); const float d5 = dot(ab, cpp), d6 = dot(ac, cpp);
+            const float vc = d1 * d4 - d3 * d2, vb = d5 * d2 - d1 * d6, va = d3 * d6 - d5 * d4;
+            if (d1 <= 0 && d2 <= 0) { for (int i = 0; i < 3; ++i) cp[i] = a[i]; }
+            else if (d3 >= 0 && d4 <= d3) { for (int i = 0; i < 3; ++i) cp[i] = b[i]; }
+            else if (vc <= 0 && d1 >= 0 && d3 <= 0) { const float w = d1 / (d1 - d3); for (int i = 0; i < 3; ++i) cp[i] = a[i] + w * ab[i]; }
+            else if (d6 >= 0 && d5 <= d6) { for (int i = 0; i < 3; ++i) cp[i] = c[i]; }
+            else if (vb <= 0 && d2 >= 0 && d6 <= 0) { const float w = d2 / (d2 - d6); for (int i = 0; i < 3; ++i) cp[i] = a[i] + w * ac[i]; }
+            else if (va <= 0 && (d4 - d3) >= 0 && (d5 - d6) >= 0) { float bc[3]; sub(c, b, bc); const float w = (d4 - d3) / ((d4 - d3) + (d5 - d6)); for (int i = 0; i < 3; ++i) cp[i] = b[i] + w * bc[i]; }
+            else { const float dn = 1.0f / (va + vb + vc), v2 = vb * dn, w2 = vc * dn; for (int i = 0; i < 3; ++i) cp[i] = a[i] + ab[i] * v2 + ac[i] * w2; }
+            float dv[3]; sub(p, cp, dv);
+            float nrm[3], dist;
+            const int hit = test(sphere, tv, tv + 3, tv + 6, nrm, &dist);
+            std::fprintf(s_dump, "  near tri %d node %u test %d true3d %.6f verts (%.4f %.4f %.4f) (%.4f %.4f %.4f) (%.4f %.4f %.4f)\n", t, node, hit,
+                         std::sqrt(dot(dv, dv)), tv[0], tv[1], tv[2], tv[3], tv[4], tv[5], tv[6], tv[7], tv[8]);
+        }
+    }
+    if (dumpThis) std::fflush(s_dump);
     return world;
 }
 
@@ -160,11 +204,26 @@ namespace {
 std::uint8_t s_shadow[4][0xc3u * 4u];
 }  // namespace
 
+// [PATHPROG split, verify/d3_pathprog_a_20261016/PREREG_pathprog_a.md] MASHED_PP_PUBLISH=<mask> (hex, default 0 = the U-9685 default):
+// which fields of the shadow row the tick also writes into the real row, besides race_pct.
+//   0x1 lap counter +0x28   0x2 node progress +0xc8   0x4 the rest of the row   0x8 run in UpdateRace (before the AI tick)
+unsigned PathProg_PublishMask() {
+    static const unsigned s_mask = [] {
+        const char* e = std::getenv("MASHED_PP_PUBLISH");
+        return (e && e[0]) ? static_cast<unsigned>(std::strtoul(e, nullptr, 0)) : 0u;
+    }();
+    return s_mask;
+}
+
 void PathProg_RaceInit() {                               // FUN_00407a60
     if (RacePctOrig_Enabled() && !PathProg_Enabled()) {   // arm R: initialise the shadow rows the same way
+        const unsigned mask = PathProg_PublishMask();
         for (int v = 0; v < 4; ++v) {
             std::memset(s_shadow[v], 0, sizeof s_shadow[v]);
             *reinterpret_cast<std::int32_t*>(s_shadow[v] + 0x28) = -1;
+            const std::uintptr_t blk = 0x008a9620u + static_cast<std::uintptr_t>(v) * 0x30cu;
+            if (mask & 0x4u) std::memset(reinterpret_cast<void*>(blk), 0, sizeof s_shadow[v]);       // as the live init
+            if (mask & 0x1u) *reinterpret_cast<std::int32_t*>(blk + 0x28) = -1;
         }
         return;
     }
@@ -224,9 +283,17 @@ void PathProg_RacePctTick() {
         std::memcpy(blk, s_shadow[v], sizeof saved);          // the step's own persistent row
         Step()(reinterpret_cast<void*>(rec), nullptr, v);
         std::memcpy(s_shadow[v], blk, sizeof saved);
-        const std::uint32_t pct = *reinterpret_cast<const std::uint32_t*>(blk + 0xcc);   // +0xcc = 0x008a96ec: race_pct
+        std::uint8_t after[sizeof s_shadow[0]];
+        std::memcpy(after, blk, sizeof after);
         std::memcpy(blk, saved, sizeof saved);
-        *reinterpret_cast<std::uint32_t*>(blk + 0xcc) = pct;  // only race_pct is published
+        const unsigned mask = PathProg_PublishMask();
+        if (mask & 0x4u) {                                    // the rest of the row (everything but the three fields below)
+            for (std::size_t o = 0; o < sizeof after; ++o)
+                if (!((o >= 0x28 && o < 0x2c) || (o >= 0xc8 && o < 0xd0))) blk[o] = after[o];
+        }
+        if (mask & 0x1u) std::memcpy(blk + 0x28, after + 0x28, 4);   // lap counter
+        if (mask & 0x2u) std::memcpy(blk + 0xc8, after + 0xc8, 4);   // node progress (0x008a96e8)
+        std::memcpy(blk + 0xcc, after + 0xcc, 4);             // +0xcc = 0x008a96ec: race_pct, always published
     }
     static bool s_logged = false;
     if (!s_logged) {

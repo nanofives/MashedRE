@@ -4,6 +4,11 @@
 (`PREREG_rstates.md` §3 and amendments 1-3) on the 9 d1r1 frames: F1 (d1r1) and F2-F8 (new).
 Each fix has an opt-out knob.
 
+**Re-measured on `race/first-frame-parity` 34ea5b71 (section 7, carlod and pathprog_a merged in): same verdict.**
+Rows per frame, new-base build -> merged default build: TRAINING 72/71/71 -> 22/21/21, Arctic 73/73/74 -> 35/36/37,
+City 121/119/120 -> 23/23/25. 0 RED, world-sector sequence 9/9, G-CTRL `716cb2fd / 2a2afda1 / ba90ed88` unchanged,
+all-knobs-off byte-identical to the new-base build 9/9, smoke 13/13.
+
 Final base: `race/first-frame-parity` 04dee0ed (rprops, rfx, d2posmodel, librwrest_checks and
 dupinstall2 merged). Arms: U0 base, U2 F1-F6, V7 F1-F7, W8 final default F1-F8, and W0 final with
 all eight knobs at 0.
@@ -52,7 +57,7 @@ that fix's first run.
   in the instance loop, before the walk's kind checks. rfx left 6 Arctic CULL STATE rows on the
   shadow and beam cited to U-9690. Under F4 they are drawn with the leaked cull NONE (section 3).
 - **U-ids** are renumbered at each rebase (d1r3 took U-9698, rprops U-9699..U-9702, rfx
-  U-9703..U-9705). This lane's rows are **U-9706** (tie order), **U-9707** (car glass order) and
+  U-9703..U-9705). This lane's rows are **U-9709** (tie order), **U-9707** (car glass order) and
   **U-9708** (after-world clumps no slot-2 list draws, F6).
 
 ## 1. What the original does (cited to bytes; extracts in `evidence/dis_*.txt`)
@@ -208,7 +213,7 @@ the original's do.
   port. U-9696 (sky pass).
 - **City `Path2` 114, `railings` 66-75, `thickgirders` 14**: tied atomics within a sector, against
   `buildconc2`, `Camstand`, lamp posts. The original's tie order comes from RW's frame sync, which
-  is not decoded (U-9706). TRAINING sector 22: the original draws ROAD.DFF atomics 0, 17, 10, 16,
+  is not decoded (U-9709). TRAINING sector 22: the original draws ROAD.DFF atomics 0, 17, 10, 16,
   20, the port 0, 10, 16, 17, 20.
 - **Arctic's first `sky` draw has CULL NONE in the original** and CW in the port (cited C20). The
   sky clump `+0x100f0` renders at `0x0044938b`, before `RwRenderStateSet(0x14, 2)` at
@@ -232,3 +237,71 @@ py -3.12 verify\rstates_20261016\binmesh_order.py City [texture filter]
 ```
 
 Arms: `log/rstates/<arm>/` (not committed). The final arm's diffs are `evidence/<track>_W8_diff_<K>.json`.
+
+## 7. Rebase onto race/first-frame-parity 34ea5b71 (carlod, pathprog_a)
+
+work/rstates b2592dbd was merged with 34ea5b71 (merge base 05e8c4f0). `work/carlod` (car part visibility
+`FUN_00420870`, glass pass `FUN_00420050`, env gloss default ON, env coefficient from the previous row's
+camera) and `work/pathprog_a` landed after this lane's base. Four files conflicted; each kept both sides.
+
+- **Queue API** (`LibRw/RwRaceSubmit.h/.cpp`): `RaceSubmit_AddInstance(handle, m44, kind = kInstAfterWorld,
+  vis = nullptr)` and `RaceSubmit_AddInstancePosed(..., env_m44, kind = kInstCar, vis = nullptr)`. `Inst` holds
+  `kind` (rstates) and `vis`, `vis_state`, `vis_flags` (carlod). Call sites in `D3d9Render/TrackRenderer.cpp`: the
+  player and AI-slot 0..3 submit lambda passes `kInstCar, pv`; AI slots 4+ pass `kInstCar, carvis(...)`; the copters
+  keep `kInstAfterWorld` with no vis; props pass `p.rw_kind`.
+- **Render loop** merged without a manual edit: a car copy is not a `plain` copy, so it keeps the car path, where
+  carlod's per-part RENDER bits and glass pass run. Plain copies take rstates's per-atomic path. The two
+  features do not share a branch.
+- **TrackRenderer.cpp**: carlod's `eye_prev_` env coefficient and `carvis()` lines and rstates's `gloss_frame_`,
+  car-fx marker and F8 pair order are all present.
+- **UNCERTAINTIES.md**: U-9694 (RESOLVED, this lane) and U-9693 (carlod's text, which supersedes rtex's) kept;
+  carlod's U-9706 (visibility inputs) kept. This lane's tie-order row was U-9706 and is now **U-9709**
+  (also renamed in PREREG, section 0 and section 4 here, the `cites_rstates.json` note, the `RwRaceSubmit.cpp`
+  comment and CHANGELOG). U-9707 (car glass order) and U-9708 (after-world clumps) keep their ids. The U-9694 row's
+  residual list reads U-9709 (tie order), U-9707 (car glass).
+- Both targets build (`MASHED_NO_DEPLOY=1`, nothing written to `original\`): `Build OK`, rva-lint 0 NEW (56
+  allowlisted), asm-lint OK.
+
+Arms (`log/rstates/<arm>/`, not committed):
+- **Z0**: 34ea5b71 built clean from `git archive` (no rstates code).
+- **Z9**: the merged build, default (F1-F8 on).
+- **Z1**: the merged build with the eight `MASHED_LIBRW_*` knobs at 0.
+
+Rows per frame (`scores_Z.txt`, `drawlist_diff.py` 3D mode, `cites_rstates.json`):
+
+| track | Z0 new base | Z9 merged default | matched draws (Z0 = Z9) |
+|---|---|---|---|
+| TRAINING 884/924/959 | 72/71/71 | 22/21/21 | 206/203/201 |
+| Arctic 1051/1091/1126 | 73/73/74 | 35/36/37 | 153/149/104 |
+| City 761/801/836 | 121/119/120 | 23/23/25 | 482/466/413 |
+
+The same frames on 04dee0ed gave 77/76/76, 78/77/77, 126/124/122 (base) and 28/27/27, 41/41/40, 29/29/27 (final). The
+drop in both columns comes from carlod (parts, glass, env), not from this lane. 0 RED on all 9 frames in all three arms.
+
+| rule | result (34ea5b71) |
+|---|---|
+| 1 targets gone | PASS. Z0 -> Z9 on 3/3 frames of each track. World-sector EXTRA rows: TRAINING 25 -> 3, Arctic 13 -> 4, City 27 -> 2. Arctic STATE 31-32 -> 3. ORDER inversions (frame 1 of each track): TRAINING `Wet_Water00` 234 -> 0; Arctic first-sector meshes 27 -> 1 each, `WetRoad` 106 -> 4, `World` 108 -> 82; City `Path2` 3977 -> 114, `Pathpattern` 240 -> 0, `road2` 354 -> 0, `railings` 281 -> 75, `thickgirders` 100 -> 14. |
+| 2 no new row | PASS. Z0 -> Z9 has 15 new rows (`rowdelta_Z0_Z9.txt`): TRAINING `Sky` x3, Arctic `sky` x2 and `World` (C15c, U-9696) x3 each, City `sKYLINE` x3. These are the same cited STATE re-keys of sky draws as on 04dee0ed. RED 0 on 9/9. |
+| 3 G-CTRL | PASS. Z0 build and merged default both `716cb2fd / 2a2afda1 / ba90ed88` (`gctrl_34ea5b71.txt`). |
+| 4 no-op control | PASS. Z1 (eight knobs at 0) == Z0, byte for byte, 9/9 (`noop_Z.txt`). |
+| 5 pixels | PASS. No frame rises (`pixels.txt`): TRAINING 14.15/9.97/8.65 -> 12.04/8.60/7.30, Arctic 9.27/7.03/6.48 -> 9.22/7.02/6.46, City 10.44/6.87/6.59 -> 10.44/6.83/6.57. |
+| Pr-1 sector sequence | PASS: 9/9 frames equal the original's (`seqcheck_Z9.txt`). |
+| Smoke | 13/13 exit 0, sector walk logged on all 899 rendered frames of each track piz (`smoke_Z9.txt`). |
+
+Notes for the merge:
+- **U-9707 (car glass order) is closed in the data by carlod's glass pass.** No Glass ORDER row exists on any of the
+  9 frames in Z0 (new base without this lane) or Z9; on 04dee0ed it was 88 inversions per frame. The row in
+  `UNCERTAINTIES.md` is still open as written; closing it is a `re-classify` edit, not done in this leg.
+- The residuals in section 4 otherwise stand with the new counts: Arctic `World` vs sea 82, City `Path2` 114,
+  `railings` 75, `thickgirders` 14, Arctic first `sky` draw (cited C20), eleven tracks' excluded clumps outside a
+  slot-2 list (U-9708).
+
+Reproduce:
+
+```
+git archive 34ea5b71 -- . ':(exclude)verify' ':(exclude)log' ':(exclude)original' ':(exclude)re/analysis' | tar -x -C <scratch>
+MASHED_NO_DEPLOY=1 <scratch>\mashedmod\build.bat          # Z0 exe -> log\rstates\base6\
+py -3.12 verify\rstates_20261016\run9.py <exe> Z9|Z0 ; run9.py <exe> Z1 MASHED_LIBRW_{RWSTATES,SECTORWALK,STICKYVA,RAINCULL,CLUMPORDER,AFTERWORLDORDER,BINMESHORDER,PAIRORDER}=0
+py -3.12 verify\rstates_20261016\noop_check.py Z0 Z1 ; rowdelta2.py Z0 Z9 ; seqcheck.py Z9
+py -3.12 verify\rstates_20261016\run_gctrl.py <exe> <name> ; smoke_tracks.py <exe> <out_dir>
+```

@@ -1,0 +1,10 @@
+arm final3 exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\carlod\exe_final3\mashed_re.exe knobs=[] brake_rows=True
+training   884  rows  73  red  0  matched 205/242  tri 17263/18128  pix 14.26
+training   924  rows  72  red  0  matched 202/257  tri 17227/18358  pix 10.07
+training   959  rows  72  red  0  matched 200/233  tri 17211/18079  pix 8.70
+arctic    1051  rows  73  red  0  matched 151/180  tri 33004/35412  pix 9.28
+arctic    1091  rows  72  red  0  matched 148/177  tri 32751/35197  pix 7.00
+arctic    1126  rows  73  red  0  matched 103/131  tri 26995/29307  pix 6.45
+city       761  rows 123  red  0  matched 480/512  tri 38456/42182  pix 10.38
+city       801  rows 121  red  0  matched 464/496  tri 37964/41692  pix 6.84
+city       836  rows 121  red  0  matched 413/444  tri 30961/34493  pix 6.58

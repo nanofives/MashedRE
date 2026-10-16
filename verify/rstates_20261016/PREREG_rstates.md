@@ -200,7 +200,7 @@ with RpClumpAddAtomic `0x004e6f80` (`0x00479ce5`), which inserts at the head. Rp
 
 **F8** (`MASHED_LIBRW_PAIRORDER`, `=0` opts out): an after-world `Clump_Mts_Pair` prop queues its
 copies from the last Mts record to the first. In-world paired clumps are not touched: their
-draw order is the sector tie order (U-9706).
+draw order is the sector tie order (U-9709).
 
 Rules: §3 rules 1-5 against **V7** (F1-F7). Rule 1 target: City `Path2` inversions fall on 3/3.
 Rule 4: F8 `=0` equals V7 byte for byte on 9/9.
