@@ -202,6 +202,8 @@ private:
         // [rstates F6] COURSE.LUA Clump_Filename index (the course clump slot), -1 = not a
         // Clump_Filename prop (RWP_Object).
         int                             clump_idx = -1;
+        // [rstates F8] instances are a Clump_Mts_Pair's copies, one per Mts record.
+        bool                            mts_pair = false;
     };
     std::vector<Prop> props_;
     // [rstates F6] the order props_ are queued in each frame (BuildPropOrder).

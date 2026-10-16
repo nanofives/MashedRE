@@ -2094,6 +2094,7 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                             if (mb && ml >= 4) read_mts(mb, ml, &recs);
                             if (!recs.empty()) {
                                 p.instances = std::move(recs);
+                                p.mts_pair = true;   // [rstates F8]
                                 if (log)
                                     std::fprintf(log, "  PROP-PAIR course_id=%d clump=%d dff=%s mts=%d "
                                                  "(%s) instances=%zu\n", course_id_, c.idx, c.dff,
@@ -7680,10 +7681,23 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     // copies straight into the rw::Frame (RwRaceSubmit.cpp SetClumpTransform). A
     // model whose RaceSubmit_RegisterModel failed (rw_model < 0) is not drawn; the
     // failure is logged to log/librw_race.txt at load.
+    // [rstates F8] The course load's pair loop keeps the clump's own atomic for Mts record 0 and
+    // adds each later copy with RpClumpAddAtomic (0x00479ce5 -> FUN_004e6f80, head insertion),
+    // so RpClumpRender (0x004e6680) draws an after-world pair from the last record to record 0.
+    // MASHED_LIBRW_PAIRORDER=0 keeps record order.
+    static const bool s_pair_order = [] {
+        const char* e = std::getenv("MASHED_LIBRW_PAIRORDER");
+        return !(e && e[0] == '0' && e[1] == '\0');
+    }();
     const bool prop_order_ok = (prop_order_.size() == props_.size());
     for (std::size_t k = 0; k < props_.size(); ++k) {
         const auto& p = props_[prop_order_ok ? prop_order_[k] : k];
         if (p.rw_model < 0) continue;
+        if (s_pair_order && p.mts_pair && p.rw_kind == LibRw::kInstAfterWorld) {
+            for (auto it = p.instances.rbegin(); it != p.instances.rend(); ++it)
+                LibRw::RaceSubmit_AddInstance(p.rw_model, (const float*)&*it, p.rw_kind);
+            continue;
+        }
         for (const auto& inst : p.instances)
             LibRw::RaceSubmit_AddInstance(p.rw_model, (const float*)&inst, p.rw_kind);
     }
