@@ -87,6 +87,29 @@ void RaceFx_SetObjShadowFrame(std::uint32_t f101c);
 // Called by RaceSubmit_Render inside the camera update, after every instance (the copters).
 void RaceFx_DrawWorldFx(void* rw_camera);
 
+// ---- [rfx2] lensflare-fs8 (C09): the course light list's two RpPTank batches ----------------
+// FUN_00487e70 @ 0x00487e70 adds a light to the 128-entry list at 0x0086ae20 (stride 0x38: type,
+// position, element count, enabled, k, tables); FUN_00488e70 @ 0x00488e70 fills the small batch
+// DAT_007030a8 (one camera-facing particle per element) and FUN_004883b0 @ 0x004883b0 the big one
+// DAT_007030ac (16 particles per light, mirrored in y), ONCE (DAT_007030b4) after the list changes.
+// MASHED_LENSFLARE=0 turns both off (default ON).
+bool RaceFx_LensEnabled();
+struct LensLight { int type; float pos[3]; float k; };
+// The list in creation order (TrackRenderer: City's 0x0044b100, Arctic's 0x00448940); `bob` = the
+// index of the light whose k FUN_00448ef0 rewrites each tick (-1 none).
+// after_sky: the big batch goes right after the first sky copy (Arctic's FUN_004492b0), else at the
+// RaceSubmit_AddLensMarker queue point (City's slot 2).
+void RaceFx_SetLensLights(const LensLight* l, int n, int bob, bool after_sky);
+bool RaceFx_LensAfterSky();
+void RaceFx_SetLensLightK(int index, float k);      // FUN_00488390 @ 0x00488390
+void RaceFx_LensRequestBuild();                     // the tick whose FUN_00488e70 builds (b4 == 0)
+// SkySecondaryDispatch @ 0x00489240 (the big batch): mode 0 = Arctic's FUN_004492b0 (after the sky,
+// Z test off), mode 1 = City's slot 2 FUN_0044b8f0 (ZWRITE off, before its clumps).
+void RaceFx_DrawLensBig(void* rw_camera, int mode);
+// Called by RaceSubmit_Render at the start of the camera update: builds the batches on the
+// requested frame with this frame's camera (FUN_00488e70's param, FUN_00467210(0)).
+void RaceFx_BeginFrame(void* rw_camera);
+
 // ---- the in-race HUD (C08): team panels + start lights under the HUD camera -----------------
 // FUN_00492e90 @ 0x00492e90 (states 3/5/6/7) renders FUN_0040dfc0 @ 0x0040dfc0 with the HUD camera
 // DAT_006905b4 (a clone of the race camera, FUN_00467110: near 0.1, far 180), set up each frame by

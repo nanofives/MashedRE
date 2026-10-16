@@ -795,7 +795,250 @@ void DrawHeadlights(rw::Camera* cam) {
     rw::SetRenderState(rw::DESTBLEND, rw::BLENDINVSRCALPHA);
 }
 
+// ---- [rfx2] lensflare-fs8 ------------------------------------------------------------------
+// One camera-facing RpPTank particle (flags 0x10000087: position, 2D size, colour, 4-float uv).
+struct Bill { float p[3]; float sx, sy; std::uint8_t rgba[4]; float uv[4]; };
+struct LensEntry { int type; float pos[3]; float k; };
+std::vector<LensEntry> g_lens;
+int                    g_lens_bob = -1;
+bool                   g_lens_req = false;
+std::vector<Bill>      g_lens_small, g_lens_big;   // DAT_007030a8 / DAT_007030ac contents
+
+// FUN_00487e70 @ 0x00487e70's per-type element count (+0x10) and tables: sizes +0x20, colours +0x28,
+// uv indices +0x24 (0x007030b8 / 0x007030dc: BSS, read 0 on the original, witness). Values read from
+// the anchored binary: sizes 0x00614368 (2, 0.25, 0.4, 0.7, 0.95) and 0x0061442c (2, 0.25, 0.24, 0,
+// 0.9); colours (RwRGBA dwords) 0x00614388, 0x006143a8, 0x0061440c, 0x0061444c.
+struct LensType { int n; const float* sz; const std::uint32_t* col; };
+const float kLensSzA[5] = {2.0f, 0.25f, 0.4f, 0.7f, 0.95f};
+const float kLensSzB[5] = {2.0f, 0.25f, 0.24f, 0.0f, 0.9f};
+const std::uint32_t kLensCol2[1] = {0x301080ffu};
+const std::uint32_t kLensCol3[2] = {0x80ff8080u, 0xffffc8c8u};
+const std::uint32_t kLensCol7[3] = {0x804040ffu, 0x802020ffu, 0xc0ffffffu};
+const std::uint32_t kLensColC[2] = {0x401080ffu, 0xff1080ffu};
+bool LensTypeOf(int type, LensType* t) {
+    switch (type) {
+    case 2:   *t = {1, kLensSzA, kLensCol2}; return true;     // 0x00487efd
+    case 3:   *t = {2, kLensSzA, kLensCol3}; return true;     // 0x00487f23
+    case 7:   *t = {3, kLensSzB, kLensCol7}; return true;     // 0x00487fd9 -> 0x00488031
+    case 0xc: *t = {2, kLensSzB, kLensColC}; return true;     // 0x00488004
+    default:  return false;                                    // types not created on these tracks
+    }
+}
+// The uv table entry 0 at 0x00614260: (0, 0, 0.5, 1).
+const float kLensUv[4] = {0.0f, 0.0f, 0.5f, 1.0f};
+
+// FUN_00488e70 / FUN_004883b0 from this frame's camera frame modelling matrix (param_1).
+void LensBuild(const rw::Matrix& cm) {
+    g_lens_small.clear();
+    g_lens_big.clear();
+    // base = at * [0x5cc31c] 3.0 + pos (local_18..local_10 / local_24..local_1c)
+    const float base[3] = {cm.at.x * 3.0f + cm.pos.x, cm.at.y * 3.0f + cm.pos.y, cm.at.z * 3.0f + cm.pos.z};
+    for (std::size_t li = 0; li < g_lens.size(); ++li) {
+        const LensEntry& e = g_lens[li];
+        LensType t;
+        if (!LensTypeOf(e.type, &t)) continue;
+        // local_4c: 1.0 for a light without a frame (+0x2c == 0); FUN_00488320 @ 0x00488320 sets it
+        // to 1.0 again for type 0xc (0x00488331) and leaves types 2 / 3 / 7 alone; then * k, >= 0
+        float l = 1.0f * e.k;
+        if (l < 0.0f) l = 0.0f;
+        // ---- the small batch: every element at |d| * d/|d| + base (RwV3dNormalize, LUT) ----
+        {
+            const float d0[3] = {e.pos[0] - base[0], e.pos[1] - base[1], e.pos[2] - base[2]};
+            float dn[3];
+            const float len = Math::LutNormalize(dn, d0);
+            for (int i = 0; i < t.n; ++i) {
+                Bill b;
+                b.p[0] = len * dn[0] + base[0];
+                b.p[1] = len * dn[1] + base[1];
+                b.p[2] = len * dn[2] + base[2];
+                if (i == 4) {
+                    b.sx = (l * 10.0f + 2.0f) * t.sz[4] * l;           // [0x5cc55c] / [0x5cc574]
+                    b.sy = l * 0.5f * t.sz[4] * l;
+                } else {
+                    const float f = l + 1.0f;                          // [0x5cc320]
+                    b.sx = f * t.sz[i] * l;
+                    b.sy = f * t.sz[i] * l;
+                }
+                std::memcpy(b.rgba, &t.col[i], 4);                     // RwRGBA bytes r, g, b, a
+                std::memcpy(b.uv, kLensUv, sizeof(b.uv));
+                g_lens_small.push_back(b);
+            }
+        }
+        // ---- the big batch: the light mirrored in y (local_8 = -y), 16 particles stepping down by
+        // j * l * [0x5cc32c] 0.5, size (l + 0.5) * sz[0] * l, colour[0] with alpha (16 - j) * 8 ----
+        {
+            const float pm[3] = {e.pos[0], -e.pos[1], e.pos[2]};
+            const float d0[3] = {pm[0] - base[0], pm[1] - base[1], pm[2] - base[2]};
+            float dn[3];
+            const float len = Math::LutNormalize(dn, d0);
+            const float s = (l + 0.5f) * t.sz[0] * l;
+            std::uint8_t c[4];
+            std::memcpy(c, &t.col[0], 4);
+            for (int j = 0; j < 16; ++j) {
+                Bill b;
+                b.p[0] = len * dn[0] + base[0];
+                b.p[1] = static_cast<float>((static_cast<double>(len) * dn[1] + base[1]) -
+                                            static_cast<double>(j) * l * 0.5);
+                b.p[2] = len * dn[2] + base[2];
+                b.sx = s; b.sy = s;
+                b.rgba[0] = c[0]; b.rgba[1] = c[1]; b.rgba[2] = c[2];
+                b.rgba[3] = static_cast<std::uint8_t>((16 - j) * 8);
+                std::memcpy(b.uv, kLensUv, sizeof(b.uv));
+                g_lens_big.push_back(b);
+            }
+        }
+    }
+}
+
+// The RpPTank render of a camera-facing batch: FUN_00537fb0 @ 0x00537fb0 takes the current camera's
+// frame LTM, right' = -right, up' = up; FUN_00536e90 @ 0x00536e90 builds v0 = p - s.x/2 r' - s.y/2 u',
+// v1 = p + s.x/2 r' - s.y/2 u', v2 = p + s.x/2 r' + s.y/2 u', v3 = p - s.x/2 r' + s.y/2 u' (0.5 =
+// [0x5cc32c]); FUN_00537d70 @ 0x00537d70 the uv (u0,v1)(u1,v1)(u1,v0)(u0,v0); the colour on all four
+// (FUN_00537b20); indices (0,1,2)(0,2,3) (FUN_00536170); blend +0xa4 / +0xa8 = 5 / 2 (FUN_004881d0 /
+// FUN_004880a0), vertex alpha +0xac = 1.
+void DrawBills(const std::vector<Bill>& bs, rw::Camera* cam, rw::Texture* tex) {
+    if (bs.empty() || !tex || !cam || !cam->getFrame()) return;
+    const rw::Matrix* L = cam->getFrame()->getLTM();
+    const float R[3] = {-L->right.x, -L->right.y, -L->right.z};
+    const float U[3] = {L->up.x, L->up.y, L->up.z};
+    std::vector<rw::RWDEVICE::Im3DVertex> v(bs.size() * 4);
+    std::vector<rw::uint16> idx;
+    idx.reserve(bs.size() * 6);
+    // librw's im3d buffer holds up to NUMVERTICES; draw in chunks of 1024 particles (4096 vertices)
+    const std::size_t kChunk = 1024;
+    for (std::size_t i = 0; i < bs.size(); ++i) {
+        const Bill& b = bs[i];
+        const float hx = b.sx * 0.5f, hy = b.sy * 0.5f;
+        const float X[3] = {hx * R[0], hx * R[1], hx * R[2]};
+        const float Y[3] = {hy * U[0], hy * U[1], hy * U[2]};
+        const float P[4][3] = {
+            {(-X[0] - Y[0]) + b.p[0], (-X[1] - Y[1]) + b.p[1], (-X[2] - Y[2]) + b.p[2]},
+            {(X[0] - Y[0]) + b.p[0], (X[1] - Y[1]) + b.p[1], (X[2] - Y[2]) + b.p[2]},
+            {Y[0] + X[0] + b.p[0], Y[1] + X[1] + b.p[1], Y[2] + X[2] + b.p[2]},
+            {(Y[0] - X[0]) + b.p[0], (Y[1] - X[1]) + b.p[1], (Y[2] - X[2]) + b.p[2]}};
+        const float UVs[4][2] = {{b.uv[0], b.uv[3]}, {b.uv[2], b.uv[3]}, {b.uv[2], b.uv[1]}, {b.uv[0], b.uv[1]}};
+        for (int q = 0; q < 4; ++q) {
+            rw::RWDEVICE::Im3DVertex& o = v[i * 4 + q];
+            o.setX(P[q][0]); o.setY(P[q][1]); o.setZ(P[q][2]);
+            o.setNormalX(0.f); o.setNormalY(0.f); o.setNormalZ(0.f);
+            o.setColor(b.rgba[0], b.rgba[1], b.rgba[2], b.rgba[3]);
+            o.setU(UVs[q][0]); o.setV(UVs[q][1]);
+        }
+    }
+    rw::SetRenderStatePtr(rw::TEXTURERASTER, tex->raster);
+    rw::SetRenderState(rw::TEXTUREFILTER, rw::Texture::LINEAR);   // texture + 0x50 = 2 (0x004880fe)
+    rw::SetRenderState(rw::TEXTUREADDRESSU, tex->getAddressU());
+    rw::SetRenderState(rw::TEXTUREADDRESSV, tex->getAddressV());
+    rw::SetRenderState(rw::VERTEXALPHA, 1);
+    rw::SetRenderState(rw::SRCBLEND, rw::BLENDSRCALPHA);
+    rw::SetRenderState(rw::DESTBLEND, rw::BLENDONE);
+    static const float kIdent[16] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
+    // one draw for the whole batch (the original's single RpPTank render); librw's im3d buffer is
+    // sized for it when the batch fits (the big batch on City is 1104 particles = 4416 vertices)
+    (void)kChunk;
+    for (std::size_t i = 0; i < bs.size(); ++i) {
+        const rw::uint16 s = static_cast<rw::uint16>(i * 4);
+        const rw::uint16 tri[6] = {s, static_cast<rw::uint16>(s + 1), static_cast<rw::uint16>(s + 2),
+                                   s, static_cast<rw::uint16>(s + 2), static_cast<rw::uint16>(s + 3)};
+        for (int k = 0; k < 6; ++k) idx.push_back(tri[k]);
+    }
+    rw::im3d::Transform(v.data(), static_cast<rw::int32>(v.size()), nullptr, rw::im3d::VERTEXUV);
+    if (rw_drawrec_pre) {
+        DrawRec::SetNextGeometry(v.data(), sizeof(v[0]), idx.data(), static_cast<unsigned>(idx.size()));
+        rw_drawrec_pre(tex->name, kIdent);
+    }
+    rw::im3d::RenderIndexedPrimitive(rw::PRIMTYPETRILIST, idx.data(), static_cast<rw::int32>(idx.size()));
+    if (rw_drawrec_post) rw_drawrec_post();
+    rw::im3d::End();
+}
+
+// The small batch, FUN_004891f0 @ 0x004891f0 (FUN_00410b30, after FUN_0040bde0): ZWRITE off, Z test
+// on around the PTank render; cull NONE and fog off as recorded on the original at that point.
+void DrawLensSmall(rw::Camera* cam) {
+    if (!RaceFx_LensEnabled() || g_lens_small.empty()) return;
+    rw::int32 sv_cull = rw::GetRenderState(rw::CULLMODE);
+    rw::int32 sv_fog = rw::GetRenderState(rw::FOGENABLE);
+    rw::int32 sv_sb = rw::GetRenderState(rw::SRCBLEND), sv_db = rw::GetRenderState(rw::DESTBLEND);
+    rw::int32 sv_va = rw::GetRenderState(rw::VERTEXALPHA);
+    rw::SetRenderState(rw::ZWRITEENABLE, 0);
+    rw::SetRenderState(rw::ZTESTENABLE, 1);
+    rw::SetRenderState(rw::CULLMODE, rw::CULLNONE);
+    rw::SetRenderState(rw::FOGENABLE, 0);
+    DrawBills(g_lens_small, cam, SfxTexture("lensflare-fs8"));
+    rw::SetRenderState(rw::ZWRITEENABLE, 1);
+    rw::SetRenderState(rw::ZTESTENABLE, 1);
+    rw::SetRenderState(rw::CULLMODE, sv_cull);
+    rw::SetRenderState(rw::FOGENABLE, sv_fog);
+    rw::SetRenderState(rw::SRCBLEND, sv_sb);
+    rw::SetRenderState(rw::DESTBLEND, sv_db);
+    rw::SetRenderState(rw::VERTEXALPHA, sv_va);
+}
+
 }  // namespace
+
+bool RaceFx_LensEnabled() { static const bool on = !EnvOff("MASHED_LENSFLARE"); return on; }
+static bool g_lens_after_sky = false;
+bool RaceFx_LensAfterSky() { return g_lens_after_sky; }
+void RaceFx_SetLensLights(const LensLight* l, int n, int bob, bool after_sky) {
+    g_lens_after_sky = after_sky;
+    g_lens.clear();
+    g_lens_small.clear();
+    g_lens_big.clear();
+    g_lens_req = false;
+    for (int i = 0; l && i < n; ++i) g_lens.push_back({l[i].type, {l[i].pos[0], l[i].pos[1], l[i].pos[2]}, l[i].k});
+    g_lens_bob = bob;
+    if (std::FILE* f = std::fopen("log/librw_race.txt", "a")) {
+        int ne = 0;
+        for (const LensEntry& e : g_lens) { LensType t; if (LensTypeOf(e.type, &t)) ne += t.n; }
+        std::fprintf(f, "[rfx2] lensflare lights: %d, elements %d (bob %d)\n", n, ne, bob);
+        if (std::getenv("MASHED_DBG_LENS"))
+            for (int i = 0; i < n; ++i)
+                std::fprintf(f, "  lens %d type %d pos (%.4f,%.4f,%.4f) k %.4f\n", i, l[i].type, l[i].pos[0],
+                             l[i].pos[1], l[i].pos[2], l[i].k);
+        std::fclose(f);
+    }
+}
+void RaceFx_SetLensLightK(int index, float k) {
+    if (index >= 0 && static_cast<std::size_t>(index) < g_lens.size()) g_lens[static_cast<std::size_t>(index)].k = k;
+}
+void RaceFx_LensRequestBuild() { g_lens_req = true; }
+void RaceFx_BeginFrame(void* rw_camera) {
+    rw::Camera* cam = static_cast<rw::Camera*>(rw_camera);
+    if (g_lens_req && cam && cam->getFrame()) {
+        LensBuild(cam->getFrame()->matrix);
+        g_lens_req = false;
+    }
+}
+void RaceFx_DrawLensBig(void* rw_camera, int mode) {
+    if (!RaceFx_LensEnabled() || g_lens_big.empty()) return;
+    rw::Camera* cam = static_cast<rw::Camera*>(rw_camera);
+    rw::int32 sv_zt = rw::GetRenderState(rw::ZTESTENABLE), sv_zw = rw::GetRenderState(rw::ZWRITEENABLE);
+    rw::int32 sv_cull = rw::GetRenderState(rw::CULLMODE), sv_fog = rw::GetRenderState(rw::FOGENABLE);
+    rw::int32 sv_sb = rw::GetRenderState(rw::SRCBLEND), sv_db = rw::GetRenderState(rw::DESTBLEND);
+    rw::int32 sv_va = rw::GetRenderState(rw::VERTEXALPHA);
+    if (mode == 0) {
+        // FUN_004492b0 @ 0x004492b0: RS 0xc 0, blend 5 / 6, RS 6 (Z test) 0, RS 8 (ZWRITE) 0, then
+        // the sky clump +0x100f0 and SkySecondaryDispatch; cull NONE and fog off as recorded
+        rw::SetRenderState(rw::ZTESTENABLE, 0);
+        rw::SetRenderState(rw::ZWRITEENABLE, 0);
+        rw::SetRenderState(rw::CULLMODE, rw::CULLNONE);
+        rw::SetRenderState(rw::FOGENABLE, 0);
+    } else {
+        // FUN_0044b8f0 @ 0x0044b8f0: RS 8 (ZWRITE) 0, RS 6 (Z test) 1, SkySecondaryDispatch, RS 8 1;
+        // cull BACK and fog on from the world pass, as recorded
+        rw::SetRenderState(rw::ZWRITEENABLE, 0);
+        rw::SetRenderState(rw::ZTESTENABLE, 1);
+        rw::SetRenderState(rw::CULLMODE, rw::CULLBACK);
+    }
+    DrawBills(g_lens_big, cam, SfxTexture("lensflare-fs8"));
+    rw::SetRenderState(rw::ZTESTENABLE, sv_zt);
+    rw::SetRenderState(rw::ZWRITEENABLE, mode == 0 ? sv_zw : 1);
+    rw::SetRenderState(rw::CULLMODE, sv_cull);
+    rw::SetRenderState(rw::FOGENABLE, sv_fog);
+    rw::SetRenderState(rw::SRCBLEND, sv_sb);
+    rw::SetRenderState(rw::DESTBLEND, sv_db);
+    rw::SetRenderState(rw::VERTEXALPHA, sv_va);
+}
 
 bool RaceFx_HeadlightEnabled() { static const bool on = !EnvOff("MASHED_HEADLIGHT"); return on; }
 void RaceFx_SetCarLightParts(const float pos[8][3], const bool have[8]) {
@@ -928,6 +1171,7 @@ static void DrawObjShadows(rw::Camera* cam) {
 void RaceFx_DrawWorldFx(void* rw_camera) {
     rw::Camera* cam = static_cast<rw::Camera*>(rw_camera);
     DrawObjShadows(cam);     // FUN_0040bde0 -> FUN_00487de0 (first)
+    DrawLensSmall(cam);      // FUN_004891f0 (FUN_00410b30, after FUN_0040bde0)
     DrawHeadlights(cam);     // FUN_00413a00 / FUN_00413a40 (FUN_00410b30, after FUN_0040bde0)
 }
 

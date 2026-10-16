@@ -75,6 +75,7 @@ std::vector<rw::Clump*> g_models;
 // [rtex] per instance: the car's env coefficient and env frame matrix (FUN_00420340 @
 // 0x00420340 re-applies both per car each frame; one shared clump draws all four cars).
 constexpr int kCarFxMarker = -2;   // [rfx] RaceSubmit_AddCarFxMarker's queue entry
+constexpr int kLensMarker = -3;    // [rfx2] RaceSubmit_AddLensMarker's queue entry
 // [rstates] `kind`: where RenderWare's world pass draws it (RwRaceSubmit.h kInst*).
 // [carlod] and, for a car copy, its record state / flags (FUN_00420870's inputs).
 struct Inst { int model; float m[16]; bool fx = false; float env_coef = 0.f; float env_m[16];
@@ -621,6 +622,11 @@ void RaceSubmit_AddInstancePosed(int handle, const float* m44, const FramePose* 
 
 void RaceSubmit_AddCarFxMarker() {
     Inst i; i.model = kCarFxMarker;
+    g_insts.push_back(std::move(i));
+}
+
+void RaceSubmit_AddLensMarker() {
+    Inst i; i.model = kLensMarker;
     g_insts.push_back(std::move(i));
 }
 
@@ -1401,6 +1407,7 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
         // (FUN_004492b0 sets render states 8 and 6 to 0 around its sky RpClumpRender, and the generic
         // sky path 0x00427110..0x0042715b does the same). UVs first: the sky material scrolls, and
         // ApplyUvAnim is absolute in g_anim_t, so running it here and again below is idempotent.
+        RaceFx_BeginFrame(g_cam);   // [rfx2] the lensflare batches' one build (RwRaceFx.h)
         if (!g_sky.empty()) {
             ApplyUvAnim();
             rw::SetRenderState(rw::ZTESTENABLE, 0);
@@ -1412,6 +1419,13 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
                 if (!c) continue;
                 SetClumpTransform(c, in.m);
                 c->render();
+                // [rfx2] Arctic's FUN_004492b0 @ 0x004492b0: SkySecondaryDispatch after its sky copy
+                if (&in == &g_sky.front() && RaceFx_LensAfterSky()) {
+                    RaceFx_DrawLensBig(g_cam, 0);
+                    rw::SetRenderState(rw::ZTESTENABLE, 0);
+                    rw::SetRenderState(rw::ZWRITEENABLE, 0);
+                    rw::SetRenderState(rw::FOGENABLE, 0);
+                }
             }
             rw::SetRenderState(rw::ZTESTENABLE, 1);
             rw::SetRenderState(rw::ZWRITEENABLE, 1);
@@ -1483,6 +1497,11 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
             if (in.model == kCarFxMarker) {
                 if (!fx_done) RaceFx_DrawCarFx(g_cam);
                 fx_done = true;
+                continue;
+            }
+            // [rfx2] City's slot 2: the big lensflare batch ahead of its clumps (RwRaceFx.h)
+            if (in.model == kLensMarker) {
+                RaceFx_DrawLensBig(g_cam, 1);
                 continue;
             }
             if (in.model < 0 || (std::size_t)in.model >= g_models.size()) continue;

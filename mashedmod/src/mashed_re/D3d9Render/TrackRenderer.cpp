@@ -1930,6 +1930,7 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
             // GENERAL_FATNESS = 0.1 ...).
             struct RwpDesc {
                 int   type = 0;
+                int   label = 0;                 // [rfx2] RWP_Object_BaseLabel (lensflare lookups)
                 float f[3] = {};
                 float fat = 0.f;
                 bool  have = false;              // RWP_Object with a loaded DFF and MTS
@@ -2004,6 +2005,14 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                         lua_num(args[0], &fi);
                         ri = static_cast<int>(fi);
                         if (ri >= 0 && ri < 32) lua_num(args[1], &rwp[ri].fat);
+                    } else if (lua_args(line, "RWP_Object_BaseLabel", &args) && args.size() >= 2) {
+                        // FUN_0047b110 @ 0x0047b110: +0x104, the first object id; FUN_0047fc40 /
+                        // FUN_0047ff70 give object k the id label + k (DAT_006c6b90)
+                        float fi = -1.f, lb = 0.f;
+                        lua_num(args[0], &fi);
+                        lua_num(args[1], &lb);
+                        ri = static_cast<int>(fi);
+                        if (ri >= 0 && ri < 32) rwp[ri].label = static_cast<int>(lb);
                     }
                 }
                 if (std::sscanf(line.c_str(),
@@ -2186,6 +2195,80 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                     LibRw::RaceFx_SetObjShadows(objs.data(), static_cast<int>(objs.size()), light_ltm_, soup);
                 else
                     LibRw::RaceFx_SetObjShadows(nullptr, 0, nullptr, soup);
+            }
+            // [rfx2] the lensflare light list (FUN_00487e70 @ 0x00487e70 calls), as the two tracks'
+            // slot-0 node functions create it at load. Positions are Mts records (course + k*0x1000,
+            // +0x30 = the record's position, count course + 0x10000 + 4k) or an RWP object's matrix
+            // (FUN_0047ce40 @ 0x0047ce40: the object whose id DAT_006c6b90 equals the label; FUN_0047d150
+            // @ 0x0047d150: its body matrix = its Mts record at rest) times an offset (FUN_004c3d60:
+            // v.x r + v.y u + v.z a + p). k = FUN_00487e70's 0.5 (0x00488044) unless FUN_00488390 sets it.
+            {
+                std::vector<LibRw::LensLight> lens;
+                int bob = -1;
+                auto mts_slot = [&](int k) {
+                    std::vector<D3DMATRIX> v;
+                    if (k < 0 || k >= 16 || !mts_names[k][0]) return v;
+                    std::uint32_t ml = 0;
+                    const std::uint8_t* mb = find_entry(mts_names[k], &ml);
+                    if (mb && ml >= 4) read_mts(mb, ml, &v);
+                    return v;
+                };
+                auto object = [&](int id, D3DMATRIX* out) -> bool {
+                    for (int d = 0; d < 32; ++d) {
+                        const RwpDesc& r = rwp[d];
+                        if (r.type == 0 || !r.have || id < r.label) continue;
+                        const int k = id - r.label;
+                        if (k < static_cast<int>(r.inst.size())) { *out = r.inst[static_cast<std::size_t>(k)]; return true; }
+                    }
+                    return false;
+                };
+                auto add = [&](int type, const float* p, float k) {
+                    LibRw::LensLight l{};
+                    l.type = type; l.pos[0] = p[0]; l.pos[1] = p[1]; l.pos[2] = p[2]; l.k = k;
+                    lens.push_back(l);
+                };
+                auto xform = [](const D3DMATRIX& m, const float* o, float* r) {
+                    r[0] = o[0] * m._11 + o[1] * m._21 + o[2] * m._31 + m._41;
+                    r[1] = o[0] * m._12 + o[1] * m._22 + o[2] * m._32 + m._42;
+                    r[2] = o[0] * m._13 + o[1] * m._23 + o[2] * m._33 + m._43;
+                };
+                if (course_id_ == 26) {
+                    // City, 0x0044b100 (offsets read from the anchored binary, 0x005f96e8 ..)
+                    static const float kO1[3] = {0.6179f, -0.0047f, 1.0059f};   // 0x005f96e8
+                    static const float kO2[3] = {0.0f, 0.0f, 0.5882f};          // 0x005f96f4
+                    static const float kO5[3] = {0.0f, 0.6109f, 0.9537f};       // 0x005f9700
+                    static const float kO6a[3] = {0.639f, 0.0f, 0.9438f};       // 0x005f970c
+                    static const float kO6b[3] = {-0.6509f, 0.0f, 0.983f};      // 0x005f9718
+                    D3DMATRIX m;
+                    float p[3];
+                    for (int i = 0; i < 0x1a; ++i)                               // ids 0x3e8 + i
+                        if (object(1000 + i, &m)) { xform(m, kO1, p); add(2, p, 0.7f); }   // 0x3f333333
+                    for (int i = 0; i < 0xc; ++i)                                // ids 0x7d0 + i
+                        if (object(2000 + i, &m)) { xform(m, kO2, p); add(3, p, 0.4f); }   // 0x3ecccccd
+                    for (const D3DMATRIX& r : mts_slot(2)) { p[0] = r._41; p[1] = r._42; p[2] = r._43; add(2, p, 0.7f); }
+                    for (const D3DMATRIX& r : mts_slot(3)) { p[0] = r._41; p[1] = r._42; p[2] = r._43; add(3, p, 0.4f); }
+                    for (int i = 0; i < 3; ++i)                                  // ids 0x1388 + i
+                        if (object(5000 + i, &m)) { xform(m, kO5, p); add(3, p, 0.4f); }
+                    for (int i = 0; i < 4; ++i)                                  // ids 0x1770 + i
+                        if (object(6000 + i, &m)) {
+                            xform(m, kO6a, p); add(3, p, 0.4f);
+                            xform(m, kO6b, p); add(3, p, 0.4f);
+                        }
+                } else if (course_id_ == 0) {
+                    // Arctic, 0x00448940 (0x00448b20..0x00448c4e): Mts slots 1 / 2 / 3 as types 0xc /
+                    // 7 / 2, then one type 0xc at (-33.025, 2.27, -42.1) whose k FUN_00448ef0 bobs
+                    float p[3];
+                    for (const D3DMATRIX& r : mts_slot(1)) { p[0] = r._41; p[1] = r._42; p[2] = r._43; add(0xc, p, 0.5f); }
+                    for (const D3DMATRIX& r : mts_slot(2)) { p[0] = r._41; p[1] = r._42; p[2] = r._43; add(7, p, 0.5f); }
+                    for (const D3DMATRIX& r : mts_slot(3)) { p[0] = r._41; p[1] = r._42; p[2] = r._43; add(2, p, 0.5f); }
+                    const float fixed[3] = {-33.025f, 2.27f, -42.1f};
+                    bob = static_cast<int>(lens.size());
+                    add(0xc, fixed, 0.5f);
+                }
+                LibRw::RaceFx_SetLensLights(lens.data(), static_cast<int>(lens.size()), bob, course_id_ == 0);
+                lens_bob_ = bob;
+                lens_acc_ = 0.f;
+                lens_frames_ = 0;
             }
             // [U-9062 2026-08-31] Clump_Exclude_From_World does NOT mean "do not load".
             // DECODED from MASHED.exe (Ghidra, analyzeHeadless on Mashed_pool14):
@@ -7319,6 +7402,13 @@ void TrackRenderer::UpdatePropAnims() {
         for (int k = 0; k < 4; ++k)
             ShipMatrix(kBoatPos[k], kBoatYaw[k], prop_acc_, kBoatAmp, kBoatOff, &inst[k]);
     }
+    // [rfx2] then the lensflare bob (0x00448f0d..0x00448f47): acc = acc + [0x5cc9c0] 0.2,
+    // FUN_00488390(light, (sin(old + 0.2) + 1.0 [0x5cd0c8]) * 0.15000000596 [0x5ce200])
+    if (lens_bob_ >= 0) {
+        const double a0 = static_cast<double>(lens_acc_) + static_cast<double>(0.2f);
+        lens_acc_ = static_cast<float>(a0);
+        LibRw::RaceFx_SetLensLightK(lens_bob_, static_cast<float>((std::sin(a0) + 1.0) * 0.15000000596046448));
+    }
 }
 
 // [rstates F6] The excluded clumps are not in the RpWorld (0x00479da6), so the original draws them
@@ -7973,6 +8063,10 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     }
 
     if (!prop_anims_.empty()) UpdatePropAnims();   // [rprops] Arctic ships, once per frame
+    // [rfx2] FUN_00488e70 builds the lensflare batches once (DAT_007030b4), on the tick that also runs
+    // the first slot-1 update (the Arctic bob light then holds one tick's k: measured, the original's
+    // small / big batch AABBs at Arctic 1051 equal the model with k = (sin(0.2) + 1) * 0.15)
+    if (++lens_frames_ == 3) LibRw::RaceFx_LensRequestBuild();
     // R6: track props (tyre walls, crates, sea, freighter...), submitted to librw as
     // instanced models. The D3DMATRIX is each prop's MTS / identity world matrix; it
     // copies straight into the rw::Frame (RwRaceSubmit.cpp SetClumpTransform). A
@@ -7987,9 +8081,19 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         return !(e && e[0] == '0' && e[1] == '\0');
     }();
     const bool prop_order_ok = (prop_order_.size() == props_.size());
+    bool lens_marked = false;   // [rfx2]
     for (std::size_t k = 0; k < props_.size(); ++k) {
         const auto& p = props_[prop_order_ok ? prop_order_[k] : k];
         if (p.rw_model < 0) continue;
+        // [rfx2] City's slot 2 FUN_0044b8f0 @ 0x0044b8f0 draws the big lensflare batch first
+        // (SkySecondaryDispatch, 0x0044b90a), then its clumps: a marker ahead of the group
+        if (!lens_marked && course_id_ == 26 && p.rw_kind == LibRw::kInstAfterWorld) {
+            for (const auto& a : kAfterWorldOrder)
+                if (a.course_id == 26)
+                    for (int q = 0; q < a.n; ++q)
+                        if (a.idx[q] == p.clump_idx) lens_marked = true;
+            if (lens_marked) LibRw::RaceSubmit_AddLensMarker();
+        }
         if (s_pair_order && p.mts_pair && p.rw_kind == LibRw::kInstAfterWorld) {
             for (auto it = p.instances.rbegin(); it != p.instances.rend(); ++it)
                 LibRw::RaceSubmit_AddInstance(p.rw_model, (const float*)&*it, p.rw_kind);
