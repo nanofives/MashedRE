@@ -1,0 +1,129 @@
+# PREREG d2lateral: the post-impact lateral hold (U-9156 / U-9180), term by term through A6a
+
+Branch `work/d2lateral` from `race/first-frame-parity` `10c18c59`. Base exe built from that commit, unmodified source:
+sha8 `4d4a457a` (`exe_base\mashed_re.exe` in the session scratchpad). Model claude-opus-5-5, account3.
+Registered before the first measuring run of this lane.
+
+## 0. Facts read before any run (existing captures and the bytes only)
+
+0.1 **The symptom** (`verify/d2engage_20261016/CAUSE2.txt`, `RESULT_d2engage.md` section 3). From the first wall impact
+(snapshot after the drop = +0), lateral retention per frame is close on both sides for +1..+6 (orig 0.819 0.857 0.862
+0.867 0.874 0.880, port 0.819 0.824 0.860 0.865 0.871 0.878). At **+7..+10 the original holds lateral at 81.7..81.9
+(retention 0.998 0.999 1.001 1.003)**, while every port branch (B0X / DX / BX) keeps losing it (0.885, then 0.900 0.757
+0.495 0.265 on the LOW arm with k 0.194 -> 0.799). Forward speed grows ~+15.5 per frame on both sides through +7..+11.
+
+0.2 **What A6a `0x00467650` does to velocity, from the bytes** (`re/tools/disasm_va.py 0x467650 0x132c` on
+`MASHED.exe.unpatched`, 1236 instructions, this lane):
+- writes `+0x9b0..+0x9b8` at `0x00467aee..0x00467b08` (surface-id scale for `+0x1f0` = -1 / `0xffc8c8c8`), at
+  `0x00468688..0x0046869e` (W1, `v += linTerm*(ctrl + accum)`), and in clamp #6 (`0x00468840..`, `0x004688d4..`);
+- writes `+0x9bc..+0x9c4` at `0x0046858c..0x004685ac` (before W1) and in clamp #6;
+- writes **none** of `+0x9d4..+0x9dc` (forward axis) and **none** of `+0x9e0`. So the forward axis and the grounded
+  count read at A6a entry are the ones clamp #6 uses (`0x00468761 cmp [esi+0x9e0], 0x40800000`).
+- The W1 speed is `call 0x004c3ac0` (RwV3dLength) at `0x004686a4` with EDI = ESI+0x9b0 (`0x00468686 fadd [edi]`),
+  return `0x004686a9`. Its argument IS the post-W1, pre-clamp velocity.
+- Per wheel, `ld4` is RwV3dLength at `0x0046820a` (return `0x0046820f`), with EDI = the wheel block
+  (`0x004681d0 fmul [edi+0x80]`). It runs only inside the gate `kSpeedMin < le4 && +0x9e0 == 4.0`
+  (port `Integrate2.cpp:440`). So `+0x9e0 != 4.0` at A6a entry removes BOTH the per-wheel lateral force and clamp #6
+  in that frame.
+
+0.3 **Existing instruments** (no new hook site is added by this lane):
+- `scenario_launch.py --lat-bracket`: entry hooks A6a `0x00467650` (ESI-filtered), A6b `0x00468980`, substep
+  `0x004709a0`, rows `0,2,1,1` per frame.
+- `scenario_launch.py --mag-probe <sites>`: entry hook RwV3dLength `0x004c3ac0`, tagged by return address, hard
+  row limit with auto-detach. D2_REOPEN section 21.8/21.9 ran 9 A6a sites for a 38 s race (`err null`, KA 1424/1424).
+- Port: `MASHED_A6ADUMP` (act.* at A6a entry, clamp #6 `l60 / grip / kvel / arm / clamp`, per-wheel `fired`),
+  `MASHED_D2SINK` (`w1`, `a6a_out`, `a6b_out`, `a4_out`, `sub_top` sub 0/1, `sub_end`, `snap`).
+
+0.4 **Edits this lane makes to the instrument (diagnostic only, no game code):** `scenario_launch.py` appends columns
+(older reducers' indices do not move): to every lat-bracket row `+0x1f0 +0xd00 +0x2c +0x34 +0xb20 +0x9ec +0x9f0`, the
+four wheel states `+0x198` and `+0x1a0` (stride `0xc4`); to every mag-probe row the lat-bracket sequence counter
+`lbseq` (the frame marker shared by both probes: A6a's entry row is `lbseq-1`) and the caller's EDI/EBP/EBX.
+
+## 1. Question
+
+At which term does the original's first-impact lateral hold (+7..+10) part from the port: (a) clamp #6's gate
+(`+0x9e0` at A6a entry) and with it the per-wheel lateral force, (b) clamp #6's `k` (via `l_60` / G), (c) the
+per-wheel force integration before W1, or (d) a stage after A6a (A6b, the two contact substeps, the next frame's head)?
+
+## 2. Runs
+
+| run | what | role |
+|---|---|---|
+| `orig_lx1` (`_lx2`, `_lx3` only if needed, see 3 EV) | original, argv of `orig_solo3` (`--statediff-drive --statediff-drive-late --statediff-steer 1 --hold 38 --poke-ctrl-slots`) + `--lat-bracket` + `--mag-probe 00467673,00467685,004680fb,0046820f,00468343,004684c0,004684dc,004685bc,004686a9 --mag-probe-limit 40000`, `MASHED_MUTE=1`, own PID only | the measurement |
+| `D2_DLX_1` | port D2 recipe (d2engage's `D2BASE`) + A6ADUMP + D2SINK + world-contact log, default build | port side, default |
+| `D2_BLX_1` | the same with fix B (`MASHED_POS_MODEL`) | port side, B |
+| `BASE_H_DEF`, `H_DEF`, `H_DEF-2` | G-CTRL on the base exe and on this branch's build (no knob) | baseline / no-op |
+
+The original runs alone (no port run of this lane in parallel). A foreign MASHED loading a piz at the same moment
+can crash it (U-9677): a crash with either documented signature is re-run, not reported.
+
+## 3. Gates on the measurement (all must pass before section 4 is read)
+
+- **CV (coverage):** lat-bracket `err null`, the `0,2,1,1` pattern holds on every step from j0-2 to j0+16
+  (`d2lat.py` prints `!pattern`); mag-probe `err null`, exactly one `004686a9` row per step through j0+16 (the limit
+  of 40000 rows must not detach before j0+16).
+- **KA-1 (known answer):** on every step, the `004686a9` argument equals the record's own `+0x9b0` / `+0x9b8` read at
+  that call (bit-exact). Failure voids the run.
+- **KA-2 (frame marker):** every `004686a9` row's `lbseq` is its step's A6a-entry `seq + 1`. Failure voids the run.
+- **KA-3 (wheel tag):** `ld4` rows resolve to a wheel 0..3 from EDI on >= 99 % of rows; the rest are counted.
+- **EV (the event reproduces):** the probed run's impact step j0 (first step whose next A6a-entry horizontal speed is
+  below half of a > 500 speed) is followed by lateral retention >= 0.98 on at least three of steps j0+7..j0+10 (the
+  orig_solo3 signature). If not, the run is a different trajectory: re-run up to three times in total, and report
+  every run. If none shows it, section 4 is read on the run whose retention series is closest to orig_solo3's and the
+  difference is stated.
+- **Port KA:** `d2lat.py port` pairs A6ADUMP rows with D2SINK frames by `act.speed == |w1|` (both are A6a's own post-W1
+  |v|); `ka_miss` must be 0 over the window.
+
+## 4. Decision rules (fixed now)
+
+Per step j from j0+1 to j0+12 and per stage in the order gate (`gnd`, `nld`) -> `dInt` (E->W1) -> `dClamp` (W1->B,
+with `k_meas`) -> `dPost` (A6b + A4 tail) -> `dS1` -> `dS2` (+ next head):
+
+4.1 **First diverging term** = the first (step, stage) where the two sides differ categorically (gate value 4.0 vs
+not, clamp ran vs not, arm, number of `ld4` wheels) or numerically by more than `max(0.05*|lat_E(orig)|, 1.0)` in
+that stage's lateral change. Steps j0+1..j0+6 also print their differences so the drift before the hold is visible.
+
+4.2 **Branches.**
+- **H-GATE**: at the first diverging step the original's `gnd != 4.0` (then `nld = 0` and `k_meas = 0` exactly) while
+  the port's is 4.0 -> the term is A5's grounded count (`0x0046ddb0` zeroes `+0x9e0` at `0x0046ddd1` and rebuilds it
+  per wheel). Next: the per-wheel states at A6a entry name the wheel(s); their writer is read from the bytes and the
+  port's transcription compared there.
+- **H-K**: gate open on both, `k_meas(orig)` and the port's `k` differ by more than 0.05 -> the term is `l_60` / G;
+  per-wheel `ld4` / `le4` are compared next.
+- **H-INT**: gate and `k` agree, `dInt` differs -> the per-wheel force (block #4/#5) before W1.
+- **H-POST**: everything inside A6a agrees within 4.1's tolerance, `dPost`, `dS1` or `dS2` differs -> a stage after
+  A6a (A6b, contact substeps). The substep stages contain the terrain producer the sibling lane d2bsp is porting
+  (`FUN_00538c80`): if the term is there, no fix is authored here and it is reported.
+
+4.3 **Fix rule.** A fix is authored only when the diverging term's law is read from the bytes AND the port differs from
+the bytes at that law (a transcription defect or a missing input). It goes behind one knob (`MASHED_D2LAT_*`,
+default OFF), with an amendment to this file naming it and its predicted effect before its first run.
+
+## 5. Gates for a fix (scored as d2engage section 3, same tools)
+
+- **no-op:** `H_DEF` = `H_DEF-2` = `BASE_H_DEF` (step / gates / ptrace sha8; predicted `716cb2fd / 2a2afda1 /
+  ba90ed88`).
+- **knob-took:** the diag arm with the knob shows the changed term at the step 4.1 names.
+- **determinism:** `H_X` = `H_X-2`.
+- **D2 three metrics** (`verify/d2settle_20261016/score_d2.py`, bounds `d81a8df6` unchanged: slip 1500-2000
+  0.18855..0.19635, slip 2000-2600 0.24488..0.25487, driving-median 1904.70..1982.44) on `D2_X_1..3`, 3/3.
+- **recovery H1** (`a8_launch.py`): >= 50 % of the 400 post-trough frames >= 100 and median >= 900, 3/3.
+- **D3 (b)** per regime (`d3b_score.py`, `re/tools/b_envelopes.json`) on `B_X_K{0,1,26}`: not below the base's count
+  in any regime (base reference A 1/3, B 2/3, C 0/3, re-measured on `BASE_B_DEF_K*`).
+- **collateral** (`collateral_run.py`): `H_X` (floor `H_X-2`) at most 2 fields above `H_DEF` (floor `H_DEF-2`).
+
+**Default rule:** the knob goes default ON (opt-out `=0`) only if every gate of this section passes. Otherwise it
+stays OFF and the RESULT names the failed gate. If driving-median enters its bound in any arm, that is reported first.
+
+## 6. Predictions (registered now)
+
+6.1 CV, KA-1, KA-2 pass (the same hooks ran for 38 s at D2_REOPEN 21.9).
+6.2 The port arms reproduce CAUSE2: clamp on the LOW arm with k rising 0.19 -> 0.8 across j0+8..j0+11, `gnd` 4.0.
+6.3 No direction is predicted for the original. The bytes allow both H-GATE (the `ld4` and clamp gates share
+`+0x9e0`, and a retention of exactly ~1.0 is what removing both would give) and H-POST (a wall contact restoring
+lateral in the substeps). [UNCERTAIN] which; that is the measurement.
+
+## 7. D2 watch list (DEFERRED D-11071)
+
+This lane reads grip-clamp #6 and A6a's per-wheel force; it changes no game code before an amendment names a fix.
+Every touched watch item is reported in the RESULT.

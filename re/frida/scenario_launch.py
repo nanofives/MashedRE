@@ -973,7 +973,19 @@ function lbSample(site){
                   r.add(0x9b0).readFloat(), r.add(0x9b4).readFloat(), r.add(0x9b8).readFloat(),
                   r.add(0x9d4).readFloat(), r.add(0x9d8).readFloat(), r.add(0x9dc).readFloat(),
                   r.add(0x9e4).readFloat(), r.add(0x9e0).readFloat(),
-                  r.add(0x9bc).readFloat(), r.add(0x9c0).readFloat(), r.add(0x9c4).readFloat()]);
+                  r.add(0x9bc).readFloat(), r.add(0x9c0).readFloat(), r.add(0x9c4).readFloat(),
+                  // [d2lateral 2026-10-16] clamp-#6 / ld4 gate inputs, appended so the older
+                  // reducers' column indices do not move: surface id +0x1f0 and +0xd00 (the
+                  // grip literals 0x004686ad..), the grip multipliers +0x2c/+0x34, the
+                  // full-stop gate +0xb20, +0x9ec/+0x9f0, and per wheel (base 0x1a4 + w*0xc4)
+                  // the state +0x198 and +0x1a0.
+                  r.add(0x1f0).readS32(), r.add(0xd00).readS32(),
+                  r.add(0x2c).readS32(), r.add(0x34).readS32(), r.add(0xb20).readS32(),
+                  r.add(0x9ec).readS32(), r.add(0x9f0).readS32(),
+                  r.add(0x198).readS32(), r.add(0x198 + 0xc4).readS32(),
+                  r.add(0x198 + 0x188).readS32(), r.add(0x198 + 0x24c).readS32(),
+                  r.add(0x1a0).readS32(), r.add(0x1a0 + 0xc4).readS32(),
+                  r.add(0x1a0 + 0x188).readS32(), r.add(0x1a0 + 0x24c).readS32()]);
   } catch(e){ if (!LB.err) LB.err = 'sample' + site + ' ' + e; }
 }
 function latBracketArm(recBaseHex, car){
@@ -1571,7 +1583,13 @@ function magProbeArm(sitesCsv, limit, recBaseHex, car){
                       v.readFloat(), v.add(4).readFloat(), v.add(8).readFloat(),
                       r.add(0x9b0).readFloat(), r.add(0x9b8).readFloat(),
                       r.add(0x9e4).readFloat(), r.add(0x9e0).readFloat(),
-                      r.add(0x18c).readFloat()]);
+                      r.add(0x18c).readFloat(),
+                      // [d2lateral 2026-10-16] shared frame marker: the lat-bracket's
+                      // sequence counter at this call (A6a's entry row is LB_SEQ-1), plus
+                      // the caller's EDI/EBP/EBX so the wheel each le4/ld4 row belongs
+                      // to is read from the wheel pointer, not inferred from row order.
+                      LB_SEQ, this.context.edi.toUInt32(), this.context.ebp.toUInt32(),
+                      this.context.ebx.toUInt32()]);
         if (MP.limit && MP.rows.length >= MP.limit && MP_L && !MP.detached) {
           MP_L.detach(); MP_L = null; MP.detached = true;   // bound the exposure
         }
@@ -4450,8 +4468,9 @@ def main():
                     except Exception as _e: print("  [statediff] lat-bracket drain failed:", _e)
                     lbp = outp.with_suffix(outp.suffix + ".latbracket.csv")
                     with open(lbp, "w", newline="") as f:
-                        f.write("seq,site,velx,vely,velz,fwdx,fwdy,fwdz,speed,gnd,avx,avy,avz"
-                                + chr(10))
+                        f.write("seq,site,velx,vely,velz,fwdx,fwdy,fwdz,speed,gnd,avx,avy,avz,"
+                                "i1f0,id00,i2c,i34,ib20,i9ec,i9f0,st0,st1,st2,st3,"
+                                "pm0,pm1,pm2,pm3" + chr(10))
                         for r in lb_rows:
                             f.write(",".join(repr(x) if isinstance(x, float) else str(x)
                                              for x in r) + chr(10))
@@ -4575,8 +4594,8 @@ def main():
                     except Exception as _e: print("  [statediff] mag-probe drain failed:", _e)
                     mpp = outp.with_suffix(outp.suffix + ".magprobe.csv")
                     with open(mpp, "w", newline="") as f:
-                        f.write("seq,site,vx,vy,vz,rec_velx,rec_velz,rec_speed,gnd,rec_18c"
-                                + chr(10))
+                        f.write("seq,site,vx,vy,vz,rec_velx,rec_velz,rec_speed,gnd,rec_18c,"
+                                "lbseq,edi,ebp,ebx" + chr(10))
                         for r in mp_rows:
                             f.write(",".join(repr(x) if isinstance(x, float) else str(x)
                                              for x in r) + chr(10))
