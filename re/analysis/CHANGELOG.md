@@ -26,6 +26,12 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-16  00470c70  FUN_00470c70  (no ladder move)  outer chunk loop 0x00470f50..0x00471151 ported, default ON (opt-out MASHED_NO_D2CHUNK=1), A4 dt = (float)local_24 (0x0047105a); G-CTRL 716cb2fd/2a2afda1/ba90ed88 -> 2b4d47bb/356821c8/f7a155e1; D2 slips in, drvmed 1860.27 -> 1883.91; H1 / D3 (b) / collateral unchanged  verify/d2bsp_20261016/RESULT_d2bsp.md
+2026-10-16  00538c80  FUN_00538c80  (no ladder move)  case 3 ported opt-in (MASHED_D2BSP=1): FUN_00539ec0 / FUN_00547450 / FUN_004c3b90 verbatim naked asm + collector FUN_00468b80 with the material RGBA key; G-WALK 4764/4764 bit-identical vs the original on Training; G-WHEEL-F 76.61 % (FAIL), default OFF; with L all three D2 metrics in bounds 3/3  verify/d2bsp_20261016/RESULT_d2bsp.md
+2026-10-16  0046cc40  FUN_0046cc40  (no ladder move)  the port sums the SAT / depth / approach dots x-first, the original z-first (0x0046ccfd..0x0046ce13): 916 of 11044 post-hold wheel-calls 2..15 ulp off in fv; fix K (MASHED_D2CLS=1, opt-in, report only) makes 11044/11044 match  verify/d2bsp_20261016/RESULT_d2bsp.md
+2026-10-16  U-9181  resolved  port +0x4a4 = 0x3f2d93d1 on every live walk query = the original's (d2settle A3 LUT sqrt); the 692.302 was motion_diag susp=  verify/d2bsp_20261016/rb/G_KEY.txt
+2026-10-16  U-9180  updated  drvmed: default 1860.27, L 1883.91, W + L 1912.04..1913.06 in bound (d2bsp)  verify/d2bsp_20261016/RESULT_d2bsp.md
+2026-10-16  U-9712  filed  hold-tick reset of the solver-entry wheel fields, port side unmeasured; the whole G-WHEEL-F miss of W + K (d2bsp)  verify/d2bsp_20261016/RESULT_d2bsp.md
 2026-10-16  rfx2 (work/rfx2)  C04 / C08 / C09 rows 24 -> 7 on the 9 d1r1 frames (HUD replay, carlod brake rows), 0 RED: RWObjShad 7/7, lensflare-fs8 6/6, Headlight 5/6 GREEN, default ON with opt-outs; non-team panels FUN_0041b630 GREEN 3/3 on a Team-Play-off reference (camera_probe --teamplay 0), default ON; G-CTRL 716cb2fd / 2a2afda1 / ba90ed88 base and final; no-op 9/9  verify/rfx2_20261016/RESULT_rfx2.md
 2026-10-16  U-9711  filed  Headlight / lensflare-fs8 stand-ins (fade input, measured view matrix, brake byte from the instrument: City 801 pair, lensflare build tick) (rfx2)  verify/rfx2_20261016/RESULT_rfx2.md
 2026-10-16  U-9710  filed  RWObjShad stand-ins (nearest soup hit for the BSP first hit, inverse, material codes, tick camera, cylinders / spheres, static objects) (rfx2)  verify/rfx2_20261016/RESULT_rfx2.md

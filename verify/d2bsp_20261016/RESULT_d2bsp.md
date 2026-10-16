@@ -34,7 +34,7 @@ The G-WHEEL-F miss is two sets. (a) 3540 hold-tick wheel-calls: the original's n
 cites (`RESULT_d2settle.md` D0-d). Amendment 2 described its key as -1 and amendment 3's report filter copied that:
 3536 of the 3540 carry key `00000000`, 4 carry `ffffffff`, so the registered filter removes 4. (b) 916 wheel-calls
 with fv 2..15 ulp off from the port's x-first summation in `0x0046cc40` (`CarWorldContacts.cpp:137-157`). K removes
-all 916. Whether the port reproduces (a) on its own path is not measured (U-9707).
+all 916. Whether the port reproduces (a) on its own path is not measured (U-9710).
 
 G-KEY PASS (`P_W_1` / `P_DEF_1`, `g_key.py`): under W every live batch key is a Training collision colour
 (`ffc88080` 8466, `ffb48080` 5832, `ff008000` 4538, `ff010101` 116); without W all 28870 keys are 0. The live query
@@ -86,7 +86,7 @@ floor). On the L build, replacing the stand-in by the walk moves it to 1912.04..
   COLLI*.BSP and their stream layout checked (section 0), but their walk is not captured against the original.
 - L: the original interleaves all 16 cars per chunk, the port steps one car at a time. Identical while the port's
   `remI = (int)(dt*3000) <= 0x32` (50 at the fixed step).
-- The hold-tick reset (2a) on the port side: U-9707.
+- The hold-tick reset (2a) on the port side: U-9710.
 
 ## 7. Tracker changes (through `re-classify`, this branch)
 
@@ -94,7 +94,7 @@ floor). On the L build, replacing the stand-in by the walk moves it to 1912.04..
   puts all three D2 metrics in bounds 3/3; W's default waits on the user decision below.
 - `UNCERTAINTIES.md` U-9180: numbers of section 4. U-9181: RESOLVED, the port's `+0x4a4` is `0x3f2d93d1` on every live
   query (= the original's), fixed by d2settle's A3 LUT sqrt (`VehicleInit.cpp:28-40`). motion_diag's `susp=` still
-  prints 692.302 on the same runs, so `susp=` is not the radius the walk receives. New U-9707 (section 2 (a)).
+  prints 692.302 on the same runs, so `susp=` is not the radius the walk receives. New U-9710 (section 2 (a)).
 - No C-level moves (section 4: no run_diff path for the walk in this lane).
 
 ## 8. User decision needed
@@ -104,7 +104,7 @@ G-WHEEL-F (76.61 %), so it stays OFF here. Facts for the decision: the miss is (
 reference is reset between the classifier and the next entry, and (b) 916 ulp-level fv differences that K removes;
 with K and the hold pattern left out, 15512/15512 match (post-hoc). Every other gate passes, and W + L is the first
 arm with all three D2 metrics inside `d81a8df6` on 3/3. Before a default flip: a G-WALK capture on at least one more
-track, and U-9707.
+track, and U-9710.
 
 ## 9. Evidence
 
