@@ -30,6 +30,25 @@
 #include "../Core/HookSystem.h"
 #include <cstdint>
 
+// [librwrest 2026-10-16] mashed_re.exe blank-maps the original's data range, so the four
+// .rdata coefficients read 0 there (memory naked-asm-rdata-reads-zero-in-exe, RwMatrixInvert's
+// precedent). The exe arm loads the same values from TU constants; first exe caller: the copter
+// sampler (TrackRenderer.cpp CopterAnimMatrix, FUN_004752f0). Values read off the image:
+// [0x005cc358] = 0x40a00000 (5), [0x005cc35c] = 0x40800000 (4), [0x005cc31c] = 0x40400000 (3),
+// [0x005cc32c] = 0x3f000000 (0.5).
+#ifdef MASHED_STANDALONE
+static const float s_k5cc358 = 5.0f, s_k5cc35c = 4.0f, s_k5cc31c = 3.0f, s_k5cc32c = 0.5f;
+#define K_5CC358 s_k5cc358
+#define K_5CC35C s_k5cc35c
+#define K_5CC31C s_k5cc31c
+#define K_5CC32C s_k5cc32c
+#else
+#define K_5CC358 ds:[05CC358h]
+#define K_5CC35C ds:[05CC35Ch]
+#define K_5CC31C ds:[05CC31Ch]
+#define K_5CC32C ds:[05CC32Ch]
+#endif
+
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00482ae0  SplineCubicBlend3
 //   void SplineCubicBlend3(float t, float* out, float* p0..p3)
@@ -52,18 +71,18 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl SplineCubicBlend
         fadd st(0), st(0)
         mov  edi, dword ptr [esp+10h]            // out
         fld  dword ptr [ecx]                     // p1[0]
-        fmul dword ptr ds:[05CC358h]
+        fmul dword ptr K_5CC358
         fsubp st(1), st(0)
         fld  dword ptr [edx]                     // p2[0]
-        fmul dword ptr ds:[05CC35Ch]
+        fmul dword ptr K_5CC35C
         faddp st(1), st(0)
         fsub dword ptr [esi]                     // p3[0]
         fmul st(0), st(2)
         fld  dword ptr [ecx]                     // p1[0]
-        fmul dword ptr ds:[05CC31Ch]
+        fmul dword ptr K_5CC31C
         fsub dword ptr [eax]                     // p0[0]
         fld  dword ptr [edx]                     // p2[0]
-        fmul dword ptr ds:[05CC31Ch]
+        fmul dword ptr K_5CC31C
         fsubp st(1), st(0)
         fadd dword ptr [esi]                     // p3[0]
         fmul st(0), st(2)
@@ -75,24 +94,24 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl SplineCubicBlend
         fld  dword ptr [ecx]                     // p1[0]
         fadd st(0), st(0)
         faddp st(1), st(0)
-        fmul dword ptr ds:[05CC32Ch]
+        fmul dword ptr K_5CC32C
         fstp dword ptr [edi]                     // out[0]
 
         fld  dword ptr [eax+4]                   // p0[1]
         fadd st(0), st(0)
         fld  dword ptr [ecx+4]                   // p1[1]
-        fmul dword ptr ds:[05CC358h]
+        fmul dword ptr K_5CC358
         fsubp st(1), st(0)
         fld  dword ptr [edx+4]                   // p2[1]
-        fmul dword ptr ds:[05CC35Ch]
+        fmul dword ptr K_5CC35C
         faddp st(1), st(0)
         fsub dword ptr [esi+4]                   // p3[1]
         fmul st(0), st(2)
         fld  dword ptr [ecx+4]                   // p1[1]
-        fmul dword ptr ds:[05CC31Ch]
+        fmul dword ptr K_5CC31C
         fsub dword ptr [eax+4]                   // p0[1]
         fld  dword ptr [edx+4]                   // p2[1]
-        fmul dword ptr ds:[05CC31Ch]
+        fmul dword ptr K_5CC31C
         fsubp st(1), st(0)
         fadd dword ptr [esi+4]                   // p3[1]
         fmul st(0), st(2)
@@ -104,24 +123,24 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl SplineCubicBlend
         fld  dword ptr [ecx+4]                   // p1[1]
         fadd st(0), st(0)
         faddp st(1), st(0)
-        fmul dword ptr ds:[05CC32Ch]
+        fmul dword ptr K_5CC32C
         fstp dword ptr [edi+4]                   // out[1]
 
         fld  dword ptr [eax+8]                   // p0[2]
         fadd st(0), st(0)
         fld  dword ptr [ecx+8]                   // p1[2]
-        fmul dword ptr ds:[05CC358h]
+        fmul dword ptr K_5CC358
         fsubp st(1), st(0)
         fld  dword ptr [edx+8]                   // p2[2]
-        fmul dword ptr ds:[05CC35Ch]
+        fmul dword ptr K_5CC35C
         faddp st(1), st(0)
         fsub dword ptr [esi+8]                   // p3[2]
         fmul st(0), st(2)
         fld  dword ptr [ecx+8]                   // p1[2]
-        fmul dword ptr ds:[05CC31Ch]
+        fmul dword ptr K_5CC31C
         fsub dword ptr [eax+8]                   // p0[2]
         fld  dword ptr [edx+8]                   // p2[2]
-        fmul dword ptr ds:[05CC31Ch]
+        fmul dword ptr K_5CC31C
         fsubp st(1), st(0)
         fadd dword ptr [esi+8]                   // p3[2]
         fmul st(0), st(2)
@@ -133,7 +152,7 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl SplineCubicBlend
         fld  dword ptr [ecx+8]                   // p1[2]
         fadd st(0), st(0)
         faddp st(1), st(0)
-        fmul dword ptr ds:[05CC32Ch]
+        fmul dword ptr K_5CC32C
         fstp dword ptr [edi+8]                   // out[2]
 
         pop  edi

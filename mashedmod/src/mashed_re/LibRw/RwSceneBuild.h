@@ -64,19 +64,26 @@ bool DualEnabled();
 // mapping is not batch index -> atomic index, because batches with no vertices
 // or no triangles are skipped and produce no atomic. Deriving it by re-walking
 // model.batches would silently drift the moment that skip rule changes.
-// [D-S3-PROP] MASHED_PROP_VDUMP=<handle> support. RaceSubmit_RegisterModel must
-// announce the handle the model is about to receive before calling BuildClump, so
-// the dump selects the same model the handle names (D3D9-side half + ONLYPROP gone, R3). Pass -1 after.
-void SceneBuild_SetRegisteringHandle(int handle);
-int  PropVDumpHandle();
 
 // [rtex] `out_atomic_part`, when non-null, receives each created atomic's part code
 // (DffBatch::part_id, the geometry's "0.tv_part_id" user data; -1 when absent), in the
 // same order as `out_atomic_mat`. RwRaceSubmit keys the car dirt / env set-up on it.
+// [librwrest] `hierarchy`: build the clump with the DFF's own frame list instead of one
+// identity frame per atomic. Frame i gets FRAMELIST entry i's matrix and parent; the root
+// (entry 0) is the clump frame; each atomic hangs off its own frame (DffBatch::frame) and
+// its vertices/normals are taken back out of the frame bake (DffModel.h), so the atomic's
+// world matrix is its frame LTM, as in the RW clump the original streams
+// (FUN_0042a5d0 @ 0x0042a5d0). The parts the original poses per frame (FUN_0041f3d0 @
+// 0x0041f3d0, FUN_0041f4f0 @ 0x0041f4f0, FUN_00425ca0 @ 0x00425ca0) are frames, so they need
+// this. `out_frames` receives the rw::Frame* per FRAMELIST index; `out_atomic_frame` each
+// created atomic's FRAMELIST index (same order as `out_atomic_mat`).
 void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
                  std::uint32_t ambient = 0,
                  std::vector<std::uint32_t>* out_atomic_mat = nullptr,
-                 std::vector<std::int32_t>* out_atomic_part = nullptr);
+                 std::vector<std::int32_t>* out_atomic_part = nullptr,
+                 bool hierarchy = false,
+                 std::vector<void*>* out_frames = nullptr,
+                 std::vector<std::int32_t>* out_atomic_frame = nullptr);
 
 // E2'b step 2: build the Arctic world, render it once through librw from a
 // DETERMINISTIC overview camera derived from the world bbox, and dump the

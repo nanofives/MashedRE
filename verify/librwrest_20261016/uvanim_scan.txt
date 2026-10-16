@@ -1,0 +1,83 @@
+== Arctic.piz: world-BSP bindings=0 DFF bindings=2 UVA anims=2
+   SEA.DFF                  binding  1 ['bmp_Sea_M']
+   SKY.DFF                  binding  1 ['bmp_Sky_M']
+   SEA.UVA                  uvanim   449 bmp_Sea_M frames=2 dur=33.000
+   SEA.UVA                  uvanim   449 bmp_Sky_M frames=2 dur=33.000
+== City.piz: world-BSP bindings=0 DFF bindings=18 UVA anims=2
+   ANIMATIONS.DFF           binding  1 ['BMP_Arrows_M']
+   ANIMATIONS.DFF           binding  1 ['BMP_Arrows_M']
+   ANIMATIONS.DFF           binding  1 ['BMP_Arrows_M']
+   ANIMATIONS.DFF           binding  1 ['BMP_Arrows_M']
+   ANIMATIONS.DFF           binding  1 ['BMP_Arrows_M']
+   ANIMATIONS.DFF           binding  1 ['BMP_Arrows_M']
+   ANIMATIONS.DFF           binding  1 ['BMP_Arrows_M']
+   ANIMATIONS.DFF           binding  1 ['BMP_Arrows_M']
+   ANIMATIONS.DFF           binding  1 ['BMP_Arrows_M']
+   ANIMATIONS.DFF           binding  1 ['BMP_Arrows_M']
+   ANIMATIONS.DFF           binding  1 ['BMP_Arrows_M']
+   ANIMATIONS.DFF           binding  1 ['BMP_Arrows_M']
+   ANIMATIONS.DFF           binding  1 ['BMP_Arrows_M']
+   ANIMATIONS.DFF           binding  1 ['Fountain_M']
+   ANIMATIONS.DFF           binding  1 ['BMP_Arrows_M']
+   ANIMATIONS.DFF           binding  1 ['BMP_Arrows_M']
+   ANIMATIONS.DFF           binding  1 ['BMP_Arrows_M']
+   ANIMATIONS.DFF           binding  1 ['BMP_Arrows_M']
+   ANIMATIONS.UVA           uvanim   449 BMP_Arrows_M frames=3 dur=2.000
+   ANIMATIONS.UVA           uvanim   449 Fountain_M frames=2 dur=2.000
+== dump.piz: world-BSP bindings=0 DFF bindings=14 UVA anims=2
+   SKYDOME02.DFF            binding  1 ['skyDome3_M']
+   GARBAGEMOV.DFF           binding  1 ['conveyor_M']
+   ARROWS.DFF               binding  1 ['BMP_Arrows_M']
+   ARROWS.DFF               binding  1 ['BMP_Arrows_M']
+   ARROWS.DFF               binding  1 ['BMP_Arrows_M']
+   ARROWS.DFF               binding  1 ['BMP_Arrows_M']
+   ARROWS.DFF               binding  1 ['BMP_Arrows_M']
+   ARROWS.DFF               binding  1 ['BMP_Arrows_M']
+   ARROWS.DFF               binding  1 ['BMP_Arrows_M']
+   ARROWS.DFF               binding  1 ['BMP_Arrows_M']
+   ARROWS.DFF               binding  1 ['BMP_Arrows_M']
+   ARROWS.DFF               binding  1 ['BMP_Arrows_M']
+   ARROWS.DFF               binding  1 ['BMP_Arrows_M']
+   ARROWS.DFF               binding  1 ['BMP_Arrows_M']
+   GARBAGEMOV.UVA           uvanim   449 conveyor_M frames=3 dur=20.000
+   GARBAGEMOV.UVA           uvanim   449 BMP_Arrows_M frames=3 dur=20.000
+== Egypt.piz: world-BSP bindings=0 DFF bindings=0 UVA anims=0
+== Forest.piz: world-BSP bindings=0 DFF bindings=0 UVA anims=1
+   WATERFALL.UVA            uvanim   449 Waterfroth_M frames=2 dur=1.000
+== Highway.piz: world-BSP bindings=0 DFF bindings=4 UVA anims=1
+   ARROWS.DFF               binding  1 ['BMP_Arrows_M']
+   ARROWS.DFF               binding  1 ['BMP_Arrows_M']
+   ARROWS.DFF               binding  1 ['BMP_Arrows_M']
+   ARROWS.DFF               binding  1 ['BMP_Arrows_M']
+   ARROWS.UVA               uvanim   449 BMP_Arrows_M frames=2 dur=1.983
+== Neustein.piz: world-BSP bindings=0 DFF bindings=0 UVA anims=0
+== rouabout.piz: world-BSP bindings=0 DFF bindings=0 UVA anims=0
+== sands.piz: world-BSP bindings=0 DFF bindings=17 UVA anims=1
+   WATER.DFF                binding  1 ['Animated_Water_M']
+   WATER.DFF                binding  1 ['Animated_Water_M']
+   WATER.DFF                binding  1 ['Animated_Water_M']
+   WATER.DFF                binding  1 ['Animated_Water_M']
+   WATER.DFF                binding  1 ['Animated_Water_M']
+   WATER.DFF                binding  1 ['Animated_Water_M']
+   WATER.DFF                binding  1 ['Animated_Water_M']
+   WATER.DFF                binding  1 ['Animated_Water_M']
+   WATER.DFF                binding  1 ['Animated_Water_M']
+   WATER.DFF                binding  1 ['Animated_Water_M']
+   WATER.DFF                binding  1 ['Animated_Water_M']
+   WATER.DFF                binding  1 ['Animated_Water_M']
+   WATER.DFF                binding  1 ['Animated_Water_M']
+   WATER.DFF                binding  1 ['Animated_Water_M']
+   WATER.DFF                binding  1 ['Animated_Water_M']
+   WATER.DFF                binding  1 ['Animated_Water_M']
+   WATER.DFF                binding  1 ['Animated_Water_M']
+   WATER.UVA                uvanim   449 Animated_Water_M frames=2 dur=4.000
+== Storm.piz: world-BSP bindings=0 DFF bindings=2 UVA anims=2
+   WATER.DFF                binding  1 ['MUL_watertest_M']
+   SKY.DFF                  binding  1 ['BMP_Sky_M']
+   WATER.UVA                uvanim   449 MUL_watertest_M frames=6 dur=8.000
+   WATER.UVA                uvanim   449 BMP_Sky_M frames=2 dur=8.000
+== SuperG.piz: world-BSP bindings=0 DFF bindings=0 UVA anims=0
+== training.piz: world-BSP bindings=0 DFF bindings=1 UVA anims=1
+   LAKE.DFF                 binding  1 ['Animated_Water_M']
+   LAKE.UVA                 uvanim   449 Animated_Water_M frames=2 dur=4.000
+== Warzone.piz: world-BSP bindings=0 DFF bindings=0 UVA anims=0

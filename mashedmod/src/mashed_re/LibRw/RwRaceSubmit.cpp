@@ -67,8 +67,20 @@ IDirect3DStateBlock9* g_state_block = nullptr;  // D-S3-2 outbound fix
 std::vector<rw::Clump*> g_models;
 // [rtex] per instance: the car's env coefficient and env frame matrix (FUN_00420340 @
 // 0x00420340 re-applies both per car each frame; one shared clump draws all four cars).
-struct Inst { int model; float m[16]; bool fx = false; float env_coef = 0.f; float env_m[16]; };
+struct Inst { int model; float m[16]; bool fx = false; float env_coef = 0.f; float env_m[16];
+              std::vector<FramePose> poses; float sun_scale = -1.f; };   // [librwrest]
 std::vector<Inst>       g_insts;
+// [librwrest] per model, parallel to g_models: the FRAMELIST frames of a hierarchy model and
+// their streamed matrices (restored after each posed copy draws). Empty otherwise.
+std::vector<std::vector<rw::Frame*>>  g_model_frames;
+std::vector<std::vector<rw::Matrix>>  g_model_bind;
+// [librwrest] per model: each librw atomic's FRAMELIST frame (clump order), and the draw order /
+// cull frame RaceSubmit_SetModelDrawOrder sets (empty / -1 = clump order, no test).
+std::vector<std::vector<std::int32_t>> g_model_aframe;
+struct DrawOrder { std::vector<rw::Atomic*> seq; rw::Atomic* cull = nullptr; };
+std::vector<DrawOrder>                g_model_order;
+std::vector<bool>                     g_model_rwstates;   // RaceSubmit_SetModelRwStates
+long long g_culled = 0;
 long long               g_inst_drawn = 0;
 // [rtex] per model, parallel to g_models: each atomic's part code (BuildClump
 // out_atomic_part) and the materials RaceSubmit_SetupCarEnv turned into ENVMAP, with the
@@ -352,23 +364,26 @@ void RaceSubmit_BeginTrackLoad() {
     g_model_env.clear();
     g_model_parts.clear();
     g_model_amat.clear();
+    g_model_frames.clear();   // owned by their clumps, destroyed above
+    g_model_bind.clear();
+    g_model_aframe.clear();
+    g_model_order.clear();
+    g_model_rwstates.clear();
 }
 
 int RaceSubmit_RegisterModel(const Track::DffModel& model,
                              const Txd::Dictionary* dicts, std::size_t ndicts,
                              std::uint32_t ambient,
-                             const float* uv_rates, std::size_t nmats) {
+                             const float* uv_rates, std::size_t nmats, bool hierarchy) {
     if (!g_engine_up) return -1;
     TextureSource ts{ dicts, (int)ndicts };
     std::vector<std::uint32_t> atomic_mat;
     std::vector<std::int32_t>  atomic_part;   // [rtex]
-    // [D-S3-PROP] Tell the builder which handle this model is about to get, so
-    // MASHED_PROP_VDUMP can select it by the same handle id.
-    // g_models.size() is the handle this call will return on success.
-    SceneBuild_SetRegisteringHandle((int)g_models.size());
+    std::vector<void*>         frames;        // [librwrest]
+    std::vector<std::int32_t>  atomic_frame;  // [librwrest]
     rw::Clump* c = static_cast<rw::Clump*>(
-        BuildClump(model, ts, ambient, &atomic_mat, &atomic_part));
-    SceneBuild_SetRegisteringHandle(-1);
+        BuildClump(model, ts, ambient, &atomic_mat, &atomic_part, hierarchy, &frames,
+                   &atomic_frame));
     if (!c) { RLog("WARN: BuildClump failed -- model is NOT drawn (no D3D9 fallback)"); return -1; }
     RegisterUvAnim(c, atomic_mat, uv_rates, nmats);
     // Deliberately NOT added to the rw::World: World::render() walks the clump
@@ -379,10 +394,83 @@ int RaceSubmit_RegisterModel(const Track::DffModel& model,
     g_model_parts.push_back(std::move(atomic_part));
     g_model_amat.push_back(atomic_mat);
     g_model_env.emplace_back();
-    RLog("model[%d] registered: atomics=%d uvanim=%d", (int)g_models.size() - 1,
+    g_model_frames.emplace_back();
+    g_model_bind.emplace_back();
+    g_model_aframe.push_back(std::move(atomic_frame));
+    g_model_order.emplace_back();
+    g_model_rwstates.push_back(false);
+    for (void* f : frames) {
+        rw::Frame* rf = static_cast<rw::Frame*>(f);
+        g_model_frames.back().push_back(rf);
+        g_model_bind.back().push_back(rf ? rf->matrix : rw::Matrix{});
+    }
+    RLog("model[%d] registered: atomics=%d uvanim=%d frames=%d", (int)g_models.size() - 1,
          (int)c->countAtomics(),
-         g_uvanim.empty() ? 0 : (int)g_uvanim.back().size());
+         g_uvanim.empty() ? 0 : (int)g_uvanim.back().size(), (int)frames.size());
     return (int)g_models.size() - 1;
+}
+
+void RaceSubmit_SetModelDrawOrder(int handle, const std::int32_t* frames, std::size_t n,
+                                  std::int32_t cull_frame) {
+    if (handle < 0 || (std::size_t)handle >= g_models.size()) return;
+    rw::Clump* c = g_models[(std::size_t)handle];
+    const std::vector<std::int32_t>& af = g_model_aframe[(std::size_t)handle];
+    std::vector<rw::Atomic*> atoms;
+    FORLIST(lnk, c->atomics) atoms.push_back(rw::Atomic::fromClump(lnk));
+    DrawOrder& o = g_model_order[(std::size_t)handle];
+    o.seq.clear();
+    o.cull = nullptr;
+    std::vector<bool> used(atoms.size(), false);
+    for (std::size_t k = 0; k < n; ++k)
+        for (std::size_t i = 0; i < atoms.size() && i < af.size(); ++i)
+            if (!used[i] && af[i] == frames[k]) { o.seq.push_back(atoms[i]); used[i] = true; }
+    if (!o.seq.empty())
+        for (std::size_t i = 0; i < atoms.size(); ++i)
+            if (!used[i]) o.seq.push_back(atoms[i]);
+    for (std::size_t i = 0; i < atoms.size() && i < af.size(); ++i)
+        if (cull_frame >= 0 && af[i] == cull_frame) { o.cull = atoms[i]; break; }
+    RLog("model[%d] draw order: %zu atomics, cull=%s", handle, o.seq.size(),
+         o.cull ? "on" : "off");
+}
+
+void RaceSubmit_SetModelRwStates(int handle) {
+    if (handle < 0 || (std::size_t)handle >= g_models.size()) return;
+    g_model_rwstates[(std::size_t)handle] = true;
+    int nset = 0, nalpha = 0;
+    FORLIST(lnk, g_models[(std::size_t)handle]->atomics) {
+        rw::Atomic* a = rw::Atomic::fromClump(lnk);
+        rw::Geometry* g = a ? a->geometry : nullptr;
+        if (!g) continue;
+        for (rw::int32 i = 0; i < g->matList.numMaterials; ++i) {
+            rw::Material* m = g->matList.materials[i];
+            rw::Raster* r = (m && m->texture) ? m->texture->raster : nullptr;
+            if (!r || r->platform != rw::PLATFORM_D3D9) continue;
+            const int v = RasterTexelAlpha(r);
+            if (v < 0) continue;
+            GETD3DRASTEREXT(r)->hasAlpha = v;   // macro: rwd3d.h:307
+            ++nset; nalpha += v;
+        }
+    }
+    RLog("model[%d] RW driver states: %d raster flags set (%d alpha)", handle, nset, nalpha);
+}
+
+void RaceSubmit_AddInstancePosed(int handle, const float* m44, const FramePose* poses,
+                                 std::size_t npose, float sun_scale, float env_coef,
+                                 const float* env_m44) {
+    if (handle < 0 || !m44 || (std::size_t)handle >= g_models.size()) return;
+    Inst i; i.model = handle;
+    for (int k = 0; k < 16; ++k) i.m[k] = m44[k];
+    if (env_m44 && (std::size_t)handle < g_model_env.size() &&
+        !g_model_env[(std::size_t)handle].mats.empty()) {
+        i.fx = true;
+        i.env_coef = env_coef;
+        for (int k = 0; k < 16; ++k) i.env_m[k] = env_m44[k];
+    }
+    const std::size_t nf = g_model_frames[(std::size_t)handle].size();
+    for (std::size_t p = 0; p < npose; ++p)
+        if (poses[p].frame >= 0 && (std::size_t)poses[p].frame < nf) i.poses.push_back(poses[p]);
+    i.sun_scale = sun_scale;
+    g_insts.push_back(std::move(i));
 }
 
 void RaceSubmit_AddInstance(int handle, const float* m44) {
@@ -962,8 +1050,67 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
                      al ? al->pos.x : -999.f, al ? al->pos.y : -999.f,
                      al ? al->pos.z : -999.f);
             }
-            c->render();
-            ++g_inst_drawn;
+            // [librwrest] this copy's frame poses (FUN_0041f3d0 / FUN_0041f4f0 / FUN_00425ca0
+            // write the frames' modelling matrices; RW re-derives the LTMs at render)
+            std::vector<rw::Frame*>* mf = (std::size_t)in.model < g_model_frames.size()
+                                              ? &g_model_frames[(std::size_t)in.model] : nullptr;
+            for (const FramePose& p : in.poses) {
+                rw::Frame* f = (*mf)[(std::size_t)p.frame];
+                if (!f) continue;
+                rw::Matrix* d = &f->matrix;
+                d->right.x = p.m[0]; d->right.y = p.m[1];  d->right.z = p.m[2];
+                d->up.x    = p.m[3]; d->up.y    = p.m[4];  d->up.z    = p.m[5];
+                d->at.x    = p.m[6]; d->at.y    = p.m[7];  d->at.z    = p.m[8];
+                d->pos.x   = p.m[9]; d->pos.y   = p.m[10]; d->pos.z   = p.m[11];
+                d->update();
+                f->updateObjects();
+            }
+            // [librwrest] FUN_00420050 @ 0x00420050: the directional light's colour times
+            // rec+0x284 (all four components, 0x004200ea..0x00420149) for this car only
+            if (in.sun_scale >= 0.f && g_sun)
+                g_sun->setColor(st.sun_f_[0] * in.sun_scale, st.sun_f_[1] * in.sun_scale,
+                                st.sun_f_[2] * in.sun_scale);
+            // [librwrest] the model's draw order / frustum cull (RaceSubmit_SetModelDrawOrder)
+            const DrawOrder* od = (std::size_t)in.model < g_model_order.size()
+                                      ? &g_model_order[(std::size_t)in.model] : nullptr;
+            bool culled = false;
+            if (od && od->cull)
+                culled = g_cam->frustumTestSphere(od->cull->getWorldBoundingSphere()) ==
+                         rw::Camera::SPHEREOUTSIDE;
+            const bool rws = (std::size_t)in.model < g_model_rwstates.size() &&
+                             g_model_rwstates[(std::size_t)in.model];
+            rw::uint32 s_af = 0, s_ar = 0, s_cm = 0;
+            if (rws && !culled) {
+                s_af = rw::GetRenderState(rw::ALPHATESTFUNC);
+                s_ar = rw::GetRenderState(rw::ALPHATESTREF);
+                s_cm = rw::GetRenderState(rw::CULLMODE);
+                rw::SetRenderState(rw::ALPHATESTFUNC, rw::ALPHAGREATER);
+                rw::SetRenderState(rw::ALPHATESTREF, 0);
+                rw::SetRenderState(rw::CULLMODE, rw::CULLBACK);
+            }
+            if (culled) {
+                ++g_culled;
+            } else if (od && !od->seq.empty()) {
+                for (rw::Atomic* a : od->seq)
+                    if (a->object.object.flags & rw::Atomic::RENDER) a->render();
+                ++g_inst_drawn;
+            } else {
+                c->render();
+                ++g_inst_drawn;
+            }
+            if (rws && !culled) {
+                rw::SetRenderState(rw::ALPHATESTFUNC, s_af);
+                rw::SetRenderState(rw::ALPHATESTREF, s_ar);
+                rw::SetRenderState(rw::CULLMODE, s_cm);
+            }
+            if (in.sun_scale >= 0.f && g_sun)   // restored after the render (0x004201d7)
+                g_sun->setColor(st.sun_f_[0], st.sun_f_[1], st.sun_f_[2]);
+            for (const FramePose& p : in.poses) {   // back to the streamed matrices
+                rw::Frame* f = (*mf)[(std::size_t)p.frame];
+                if (!f) continue;
+                f->matrix = g_model_bind[(std::size_t)in.model][(std::size_t)p.frame];
+                f->updateObjects();
+            }
         }
     }
     g_insts.clear();

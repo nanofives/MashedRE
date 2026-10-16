@@ -204,135 +204,10 @@ rw::Atomic* MakeAtomic(rw::Geometry* geo, rw::Frame* parent) {
 // (it used to sit between BuildWorld and BuildClump, which only the latter needed).
 namespace { void SLog(const char* fmt, ...); }
 
-// D-S3-BANK: material-ID visualisation. With MASHED_WORLD_MATID=1 the world is
-// drawn as flat per-material colours instead of shaded texture, on BOTH paths
-// (TrackRenderer does the same via D3DRS_TEXTUREFACTOR), so the question "which
-// material owns these pixels" is read off the image rather than inferred. Colour
-// for material i is (20 + i*18, 200, 60) -- i is recoverable as (R-20)/18.
-bool WorldMatIdMode() {
-    static const bool on = [] {
-        const char* e = std::getenv("MASHED_WORLD_MATID");
-        return e && e[0] == '1' && e[1] == '\0';
-    }();
-    return on;
-}
-// MASHED_WORLD_ONLYMAT=N: keep only world material N's triangles, collapsing the
-// rest to degenerates (v0=v1=v2) so vertex indices, matIds and mesh structure
-// stay exactly as in the real build -- the probe then measures the real geometry
-// rather than a rebuilt one. BuildWorld logs the surviving non-degenerate count
-// per material; a run whose log does not show only material N is void.
-int WorldOnlyMat() {
-    static const int v = [] {
-        const char* e = std::getenv("MASHED_WORLD_ONLYMAT");
-        return (e && *e) ? std::atoi(e) : -1;
-    }();
-    return v;
-}
-// MASHED_WORLD_PRELITONLY=1: strip world material textures so the librw PS TEX
-// path is off and Color = interpolated prelit alone (matCol stays white; no
-// MODULATE). Paired with the D3D9 SELECTARG2 branch, this isolates vertex-colour
-// interpolation from texture/UV sampling in the D-S3-BANK diff.
-bool WorldPrelitOnly() {
-    static const bool on = [] {
-        const char* e = std::getenv("MASHED_WORLD_PRELITONLY");
-        return e && e[0] == '1' && e[1] == '\0';
-    }();
-    return on;
-}
-// [D-S3-BANK discriminator] MASHED_WORLD_FLATSNOW=1: force EVERY world vertex
-// colour to a single constant grey (180,180,180) on both paths. Meant to run WITH
-// MASHED_WORLD_ONLYMAT=4 so only Snow draws: with no colour gradient left to
-// interpolate, an FF-DIFFUSE-vs-VS-COLOR0 attribute-iteration difference (which
-// only shows across a gradient) must VANISH, while a transform/coverage difference
-// (which moves edge pixels regardless of colour) would survive as a thin edge.
-// Separates the two remaining FF-vs-shader candidates by OBSERVATION.
-// Returns the flat grey LEVEL (0..255) to force, or -1 when off. The value of the
-// env var IS the level, so a sweep (=32,=64,...,=250) fits the D3D9 FF output
-// transfer curve per channel. `=1` therefore means grey level 1, not "on".
-int WorldFlatSnowLevel() {
-    static const int lv = [] {
-        const char* e = std::getenv("MASHED_WORLD_FLATSNOW");
-        if (!e || !*e) return -1;
-        int v = std::atoi(e);
-        if (v < 0) v = 0; if (v > 255) v = 255;
-        return v;
-    }();
-    return lv;
-}
-bool WorldFlatSnow() { return WorldFlatSnowLevel() >= 0; }
-// MASHED_WORLD_VDUMP=1: dump every world triangle's 3 corners as
-// "matId x y z r g b" to log/vdump_librw.txt (the D3D9 path writes vdump_d3d9.txt
-// the same way). Lets a per-vertex prelit readback be matched by position across
-// the two paths -- the last open D-S3-BANK candidate (does the packed prelit that
-// reaches the rasterizer differ?). Run WITHOUT ONLYMAT so triangles are real.
-bool WorldVDump() {
-    static const bool on = [] {
-        const char* e = std::getenv("MASHED_WORLD_VDUMP");
-        return e && e[0] == '1' && e[1] == '\0';
-    }();
-    return on;
-}
-// [D-S3-PROP] MASHED_PROP_VDUMP=<handle>: which registered model to dump every
-// vertex colour for. Keyed on the librw model HANDLE (the value `Prop::rw_model` holds)
-// -- not on a clump counter, which would silently drift from the handle if any
-// BuildClump failed. (The D3D9-side half of this dump and MASHED_LIBRW_ONLYPROP were
-// deleted in D1-residue R3.)
-static int s_registering_handle = -1;
-
-int PropVDumpHandle() {
-    static const int h = [] {
-        const char* e = std::getenv("MASHED_PROP_VDUMP");
-        return (e && *e) ? std::atoi(e) : -1;
-    }();
-    return h;
-}
-
-void SceneBuild_SetRegisteringHandle(int h) {
-    s_registering_handle = h;
-    // Truncate at the start of the targeted model's build; the per-batch writes
-    // below append, so without this a re-registration would concatenate.
-    if (h >= 0 && h == PropVDumpHandle()) {
-        if (std::FILE* f = std::fopen("log/pvdump_librw.txt", "w")) std::fclose(f);
-    }
-}
-
-void WorldMatIdColour(std::size_t i, std::uint8_t* rgb) {
-    rgb[0] = static_cast<std::uint8_t>(20 + i * 18);
-    rgb[1] = 200;
-    rgb[2] = 60;
-}
-
 void* BuildWorld(const Track::World& world, const TextureSource& tex) {
     std::vector<rw::Material*> mats;
     int w_named = 0, w_resolved = 0;
     BuildMaterials(world.materials, tex, mats, &w_named, &w_resolved);
-    if (WorldMatIdMode()) {
-        // Strip the texture and paint the material its ID colour. Combined with
-        // the white vertex colours and the MODULATE flag set below, the shader
-        // reduces to Color = white * matCol = the ID colour, flat.
-        for (std::size_t i = 0; i < mats.size(); ++i) {
-            if (!mats[i]) continue;
-            mats[i]->setTexture(nullptr);
-            std::uint8_t c[3];
-            WorldMatIdColour(i, c);
-            mats[i]->color.red = c[0];
-            mats[i]->color.green = c[1];
-            mats[i]->color.blue = c[2];
-            mats[i]->color.alpha = 255;
-        }
-        SLog("world: MATID mode -- flat per-material colours, (20+i*18, 200, 60)");
-    }
-    if (WorldPrelitOnly()) {
-        // Strip every world material's texture; keep matCol white and PRELIT on.
-        // PS #ifdef TEX is then off, so Color == interpolated prelit vertex colour.
-        int stripped = 0;
-        for (std::size_t i = 0; i < mats.size(); ++i) {
-            if (!mats[i]) continue;
-            if (mats[i]->texture) ++stripped;
-            mats[i]->setTexture(nullptr);
-        }
-        SLog("world: PRELITONLY mode -- textures stripped from %d materials", stripped);
-    }
     // D-S3-BANK probe: the WORLD's texture resolution has never been logged --
     // BuildClump asks for these counts, BuildWorld did not. An unresolved world
     // material draws with flat material colour instead of its texture, which is
@@ -366,9 +241,6 @@ void* BuildWorld(const Track::World& world, const TextureSource& tex) {
     rw::Frame* worldFrame = rw::Frame::create();
     sectors->setFrame(worldFrame);
 
-    const int only_mat = WorldOnlyMat();
-    if (WorldVDump()) { if (std::FILE* f = std::fopen("log/vdump_librw.txt", "w")) std::fclose(f); }
-    std::vector<std::size_t> kept(world.materials.size(), 0);
     for (const Track::Sector& s : world.sectors) {
         const std::int32_t nv = static_cast<std::int32_t>(s.verts.size() / 3);
         const std::int32_t nt = static_cast<std::int32_t>(s.tris.size() / 4);
@@ -387,52 +259,17 @@ void* BuildWorld(const Track::World& world, const TextureSource& tex) {
         // Deliberately no NORMALS/LIGHT: the static world carries no vertex
         // normals, so its baked prelight IS the lighting -- same as D3D9 today.
 
-        // MATID: matCol only reaches the shader when the geometry carries
-        // MODULATE (rwd3d.h:321-328 hands setMaterial white otherwise), so the
-        // flag is required for the ID colour to show at all.
-        if (WorldMatIdMode()) flags |= rw::Geometry::MODULATE;
-
         rw::Geometry* geo = rw::Geometry::create(nv, nt, flags);
         if (!geo) continue;
         FillVertexData(geo, nv, s.verts, s.uvs, s.prelit, nullptr);
         if (two_sets) FillTexCoords1(geo, nv, s.uvs2);
-        if (WorldMatIdMode() && geo->colors)
-            for (std::int32_t i = 0; i < nv; ++i)
-                geo->colors[i] = rw::RGBA{255, 255, 255, 255};
-        if (WorldFlatSnow() && geo->colors) {
-            const auto g = static_cast<rw::uint8>(WorldFlatSnowLevel());
-            for (std::int32_t i = 0; i < nv; ++i)
-                geo->colors[i] = rw::RGBA{g, g, g, 255};
-        }
         for (std::int32_t i = 0; i < nt; ++i) {
             // Track::Sector::tris is (mat, v0, v1, v2) -- TrackWorld.h:30.
             const std::uint16_t tmat = s.tris[i * 4 + 0];
             geo->triangles[i].matId = tmat;
-            if (only_mat >= 0 && (int)tmat != only_mat) {
-                geo->triangles[i].v[0] = geo->triangles[i].v[1] =
-                    geo->triangles[i].v[2] = s.tris[i * 4 + 1];
-                continue;
-            }
-            if (tmat < kept.size()) ++kept[tmat];
             geo->triangles[i].v[0]  = s.tris[i * 4 + 1];
             geo->triangles[i].v[1]  = s.tris[i * 4 + 2];
             geo->triangles[i].v[2]  = s.tris[i * 4 + 3];
-        }
-        if (WorldVDump() && geo->colors && geo->morphTargets[0].vertices) {
-            if (std::FILE* f = std::fopen("log/vdump_librw.txt", "a")) {
-                const rw::V3d* vp = geo->morphTargets[0].vertices;
-                for (std::int32_t i = 0; i < nt; ++i) {
-                    if (s.tris[i * 4 + 0] != 4) continue;   // snow only
-                    for (int j = 0; j < 3; ++j) {
-                        const std::uint16_t vi = s.tris[i * 4 + 1 + j];
-                        const rw::RGBA& c = geo->colors[vi];
-                        std::fprintf(f, "4 %.3f %.3f %.3f %u %u %u\n",
-                                     vp[vi].x, vp[vi].y, vp[vi].z,
-                                     (unsigned)c.red, (unsigned)c.green, (unsigned)c.blue);
-                    }
-                }
-                std::fclose(f);
-            }
         }
         AppendMaterials(geo, mats);   // matId is a world-global index
         FinishGeometry(geo);
@@ -459,19 +296,6 @@ void* BuildWorld(const Track::World& world, const TextureSource& tex) {
         }
         for (std::size_t i = 0; i < per_mat.size(); ++i)
             SLog("  world.tris mat[%zu]=%zu", i, per_mat[i]);
-        // Liveness for ONLYMAT: what SURVIVED as drawable triangles. If
-        // onlymat=N and any material other than N shows a non-zero kept count,
-        // the filter did not take and the run must not be measured.
-        if (only_mat >= 0) {
-            char line[512];
-            int off = 0;
-            for (std::size_t i = 0; i < kept.size() && off < 400; ++i)
-                if (kept[i])
-                    off += std::snprintf(line + off, sizeof(line) - off,
-                                         " mat[%zu]=%zu", i, kept[i]);
-            if (off == 0) std::snprintf(line, sizeof(line), " (nothing)");
-            SLog("  world ONLYMAT=%d PROBE kept:%s", only_mat, line);
-        }
     }
     rww->addClump(sectors);
     return rww;
@@ -584,9 +408,15 @@ static bool ModelIsWaterAsset(const char* name) {
 void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
                  std::uint32_t ambient,
                  std::vector<std::uint32_t>* out_atomic_mat,
-                 std::vector<std::int32_t>* out_atomic_part) {
+                 std::vector<std::int32_t>* out_atomic_part,
+                 bool hierarchy,
+                 std::vector<void*>* out_frames,
+                 std::vector<std::int32_t>* out_atomic_frame) {
     if (out_atomic_mat) out_atomic_mat->clear();
     if (out_atomic_part) out_atomic_part->clear();
+    if (out_frames) out_frames->clear();
+    if (out_atomic_frame) out_atomic_frame->clear();
+    if (model.frames.empty()) hierarchy = false;
     // [geomlight water-scope] Model-level half of the ambient-fold scope key.
     // Evaluated once here, not per batch -- it depends only on the asset name.
     const bool water_asset = ModelIsWaterAsset(model.source_name);
@@ -631,15 +461,101 @@ void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
 
     rw::Clump* clump = rw::Clump::create();
     if (!clump) return nullptr;
-    rw::Frame* root = rw::Frame::create();
+    rw::Frame* root = nullptr;
+    // [librwrest] hierarchy mode: one rw::Frame per FRAMELIST entry, parented as streamed.
+    std::vector<rw::Frame*> dff_frames;
+    if (hierarchy) {
+        dff_frames.resize(model.frames.size(), nullptr);
+        for (std::size_t i = 0; i < model.frames.size(); ++i) {
+            const Track::DffFrame& df = model.frames[i];
+            rw::Frame* f = rw::Frame::create();
+            rw::Matrix* m = &f->matrix;
+            m->right.x = df.rot[0]; m->right.y = df.rot[1]; m->right.z = df.rot[2];
+            m->up.x    = df.rot[3]; m->up.y    = df.rot[4]; m->up.z    = df.rot[5];
+            m->at.x    = df.rot[6]; m->at.y    = df.rot[7]; m->at.z    = df.rot[8];
+            m->pos.x   = df.pos[0]; m->pos.y   = df.pos[1]; m->pos.z   = df.pos[2];
+            m->update();
+            if (df.parent >= 0 && static_cast<std::size_t>(df.parent) < i && dff_frames[df.parent])
+                dff_frames[df.parent]->addChild(f);
+            else if (!root)
+                root = f;
+            else
+                root->addChild(f);   // a second parentless entry hangs off the first root
+            dff_frames[i] = f;
+        }
+        if (out_frames)
+            for (rw::Frame* f : dff_frames) out_frames->push_back(f);
+    }
+    if (!root) root = rw::Frame::create();
     clump->setFrame(root);
 
+    // [librwrest] the bind-pose chain of FRAMELIST entry `fi` as a column-vector affine map
+    // (A, t): model = A * local + t, the composition DffModel.cpp FrameXform applies; and
+    // its inverse, to take a batch's baked vertices back to its frame's local space.
+    auto chain = [&](int fi, double A[9], double t[3]) {
+        for (int k = 0; k < 9; ++k) A[k] = (k % 4 == 0) ? 1.0 : 0.0;   // row-major 3x3
+        t[0] = t[1] = t[2] = 0.0;
+        for (int i = fi; i >= 0; i = model.frames[static_cast<std::size_t>(i)].parent) {
+            const Track::DffFrame& f = model.frames[static_cast<std::size_t>(i)];
+            // R (row-major) has columns right/up/at: R[r][c] = rot[c*3 + r]
+            double R[9];
+            for (int r = 0; r < 3; ++r)
+                for (int c = 0; c < 3; ++c) R[r * 3 + c] = f.rot[c * 3 + r];
+            double nA[9], nt[3];
+            for (int r = 0; r < 3; ++r) {
+                for (int c = 0; c < 3; ++c)
+                    nA[r * 3 + c] = R[r * 3 + 0] * A[0 * 3 + c] + R[r * 3 + 1] * A[1 * 3 + c] +
+                                    R[r * 3 + 2] * A[2 * 3 + c];
+                nt[r] = R[r * 3 + 0] * t[0] + R[r * 3 + 1] * t[1] + R[r * 3 + 2] * t[2] + f.pos[r];
+            }
+            for (int k = 0; k < 9; ++k) A[k] = nA[k];
+            for (int k = 0; k < 3; ++k) t[k] = nt[k];
+        }
+    };
+    auto invert3 = [](const double a[9], double o[9]) {
+        const double c00 = a[4] * a[8] - a[5] * a[7], c01 = a[5] * a[6] - a[3] * a[8],
+                     c02 = a[3] * a[7] - a[4] * a[6];
+        const double det = a[0] * c00 + a[1] * c01 + a[2] * c02;
+        const double id = (det != 0.0) ? 1.0 / det : 0.0;
+        o[0] = c00 * id; o[1] = (a[2] * a[7] - a[1] * a[8]) * id; o[2] = (a[1] * a[5] - a[2] * a[4]) * id;
+        o[3] = c01 * id; o[4] = (a[0] * a[8] - a[2] * a[6]) * id; o[5] = (a[2] * a[3] - a[0] * a[5]) * id;
+        o[6] = c02 * id; o[7] = (a[1] * a[6] - a[0] * a[7]) * id; o[8] = (a[0] * a[4] - a[1] * a[3]) * id;
+    };
+
     std::size_t bi = static_cast<std::size_t>(-1);
-    for (const Track::DffBatch& b : model.batches) {
+    for (const Track::DffBatch& b0 : model.batches) {
         ++bi;
-        const std::int32_t nv = static_cast<std::int32_t>(b.verts.size() / 3);
-        const std::int32_t nt = static_cast<std::int32_t>(b.tris.size() / 3);
+        const std::int32_t nv = static_cast<std::int32_t>(b0.verts.size() / 3);
+        const std::int32_t nt = static_cast<std::int32_t>(b0.tris.size() / 3);
         if (nv == 0 || nt == 0) continue;
+        // [librwrest] hierarchy mode: this batch's vertices/normals in its frame's space
+        const bool own_frame = hierarchy && b0.frame >= 0 &&
+                               static_cast<std::size_t>(b0.frame) < dff_frames.size();
+        Track::DffBatch local;
+        if (own_frame) {
+            double A[9], t[3], Ai[9];
+            chain(b0.frame, A, t);
+            invert3(A, Ai);
+            local.verts.resize(b0.verts.size());
+            for (std::int32_t i = 0; i < nv; ++i) {
+                const double d[3] = { b0.verts[i * 3 + 0] - t[0], b0.verts[i * 3 + 1] - t[1],
+                                      b0.verts[i * 3 + 2] - t[2] };
+                for (int r = 0; r < 3; ++r)
+                    local.verts[i * 3 + r] = static_cast<float>(
+                        Ai[r * 3 + 0] * d[0] + Ai[r * 3 + 1] * d[1] + Ai[r * 3 + 2] * d[2]);
+            }
+            local.normals.resize(b0.normals.size());
+            for (std::size_t i = 0; i + 2 < b0.normals.size(); i += 3)
+                for (int r = 0; r < 3; ++r)
+                    local.normals[i + r] = static_cast<float>(
+                        Ai[r * 3 + 0] * b0.normals[i] + Ai[r * 3 + 1] * b0.normals[i + 1] +
+                        Ai[r * 3 + 2] * b0.normals[i + 2]);
+        }
+        struct BatchView {
+            const Track::DffBatch& src; const std::vector<float>& verts;
+            const std::vector<float>& normals;
+        } bv{ b0, own_frame ? local.verts : b0.verts, own_frame ? local.normals : b0.normals };
+        const Track::DffBatch& b = bv.src;
 
         // [rtex] two texcoord sets when the geometry declares them and DUAL is on.
         const bool two_sets = DualEnabled() && !b.uvs2.empty();
@@ -705,27 +621,8 @@ void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
                  (unsigned)ambient, (unsigned)b.prelit[0],
                  (unsigned)(*prelit_src)[0]);
         }
-        FillVertexData(geo, nv, b.verts, b.uvs, *prelit_src, &b.normals);
+        FillVertexData(geo, nv, bv.verts, b.uvs, *prelit_src, &bv.normals);
         if (two_sets) FillTexCoords1(geo, nv, b.uvs2);
-        // [D-S3-PROP] MASHED_PROP_VDUMP=<handle>: the librw half of the pair. Dump
-        // every vertex this batch uploads as "batch x y z r g b" -- same columns
-        // and same order as the D3D9 side (both walk model.batches in order), so
-        // the two files can be diffed directly. Appends across batches; the caller
-        // truncates the file once per build. See the D3D9 side for why v0-only was
-        // not enough.
-        if (PropVDumpHandle() >= 0 && PropVDumpHandle() == s_registering_handle &&
-            geo->colors && geo->morphTargets[0].vertices) {
-            if (std::FILE* vf = std::fopen("log/pvdump_librw.txt", "a")) {
-                const rw::V3d* vp = geo->morphTargets[0].vertices;
-                for (std::int32_t i = 0; i < nv; ++i) {
-                    const rw::RGBA& c = geo->colors[i];
-                    std::fprintf(vf, "%zu %.3f %.3f %.3f %u %u %u\n", bi,
-                                 vp[i].x, vp[i].y, vp[i].z,
-                                 (unsigned)c.red, (unsigned)c.green, (unsigned)c.blue);
-                }
-                std::fclose(vf);
-            }
-        }
         for (std::int32_t i = 0; i < nt; ++i) {
             // DffBatch::tris is v0,v1,v2 -- material is per BATCH, not per tri.
             geo->triangles[i].matId =
@@ -736,8 +633,26 @@ void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
         }
         AppendMaterials(geo, mats);
         FinishGeometry(geo);
+        // [librwrest] hierarchy mode: the geometry keeps the sphere the DFF streams (its own
+        // space, like the un-baked vertices), as the RW geometry does
+        if (own_frame && b.sphere[3] > 0.f && geo->numMorphTargets > 0) {
+            geo->morphTargets[0].boundingSphere.center.x = b.sphere[0];
+            geo->morphTargets[0].boundingSphere.center.y = b.sphere[1];
+            geo->morphTargets[0].boundingSphere.center.z = b.sphere[2];
+            geo->morphTargets[0].boundingSphere.radius   = b.sphere[3];
+        }
 
-        if (rw::Atomic* a = MakeAtomic(geo, root)) {
+        rw::Atomic* a = nullptr;
+        if (own_frame) {   // [librwrest] the atomic's own DFF frame
+            a = rw::Atomic::create();
+            if (a) {
+                a->setFrame(dff_frames[static_cast<std::size_t>(b.frame)]);
+                a->setGeometry(geo, 0);
+            }
+        } else {
+            a = MakeAtomic(geo, root);
+        }
+        if (a) {
             if (uses_dual) rw::MatFX::enableEffects(a);   // [rtex] FUN_00543500 path
             clump->addAtomic(a);
             // Record the material HERE, where the atomic is actually created --
@@ -745,6 +660,7 @@ void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
             // shift the mapping.
             if (out_atomic_mat) out_atomic_mat->push_back(b.material);
             if (out_atomic_part) out_atomic_part->push_back(b.part_id);   // [rtex]
+            if (out_atomic_frame) out_atomic_frame->push_back(own_frame ? b.frame : -1);
         }
     }
     return clump;

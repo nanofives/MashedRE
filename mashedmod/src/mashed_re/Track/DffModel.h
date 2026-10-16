@@ -65,6 +65,23 @@ struct DffBatch {
     // (0,0,0)). FUN_00420870 @ 0x00420870 keeps part 0x13's frame LTM position at car record
     // +0x258, the point the env coefficient's distance fade is measured from.
     float frame_pos[3] = {0.f, 0.f, 0.f};
+    // [librwrest] the owning atomic's frame (index into DffModel::frames). verts/normals
+    // stay baked through that frame's chain; RwSceneBuild's hierarchy mode undoes the bake
+    // so the atomic hangs off its own frame, as in the RW clump.
+    std::int32_t frame = -1;
+    // [librwrest] the owning geometry's streamed bounding sphere (morph target 0: center
+    // xyz in the geometry's own space, radius), what RpAtomicGetWorldBoundingSphere
+    // (0x004e6100) transforms by the atomic's LTM.
+    float sphere[4] = {0.f, 0.f, 0.f, 0.f};
+};
+
+// [librwrest] one FRAMELIST entry (rwID_FRAMELIST struct, 0x38 bytes): RW frame matrix
+// rows right = rot[0..2], up = rot[3..5], at = rot[6..8], then pos, then the parent index
+// (-1 for the root). Parents precede children (Parse rejects otherwise).
+struct DffFrame {
+    float        rot[9];
+    float        pos[3];
+    std::int32_t parent;
 };
 
 class DffModel {
@@ -87,6 +104,7 @@ public:
 
     std::vector<DffMaterial> materials;
     std::vector<DffBatch>    batches;     // one per (atomic, material) pair
+    std::vector<DffFrame>    frames;      // [librwrest] the clump's frame list, as streamed
     float                    bbox[6] = {};  // model-space min xyz, max xyz
     std::uint32_t            total_tris = 0, total_verts = 0;
 

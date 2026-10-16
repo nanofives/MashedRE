@@ -7,7 +7,6 @@
 "Track\PowerupMarkers.cpp"
 "Track\TrackData.cpp"
 "D3d9Render\TrackRenderer.cpp"
-"D3d9Render\RwWorldRender.cpp"
 "Ai\AiStandalone.cpp"
 "Vehicle\ForceIntegrator.cpp"
 "Vehicle\ForceIntegratorStubs.cpp"

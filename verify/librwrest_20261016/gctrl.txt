@@ -1,0 +1,9 @@
+G-CTRL TRAINING default arm, verify/d1r2_20261016/run_gctrl.py, 14400 frames, private ptrace (log/d1r2/lrw_*)
+base  (log/librwrest/base/mashed_re_base_5d1e.exe, built from 5d1e2b0a)
+    lrw_base.step.csv  lines=18664  sha8=c2e4d60d
+    lrw_base.gates.csv  lines=56153  sha8=b50bd39b
+    lrw_base.ptrace.log  lines=28076  sha8=ba90ed88
+final (log/librwrest/final/mashed_re_final.exe, built from 745379aa)
+    lrw_final.step.csv  lines=18664  sha8=c2e4d60d
+    lrw_final.gates.csv  lines=56153  sha8=b50bd39b
+    lrw_final.ptrace.log  lines=28076  sha8=ba90ed88
