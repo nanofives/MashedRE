@@ -91,3 +91,25 @@ Predictions: with `L1G`, car 1's err at window steps 18..26 lies within 0.2 of t
 and A car 1 `abs_steer~` > 0. `MASHED_GRID_DIR` moves the PLAYER's spawn too, and gridyaw measured it out of the D2
 bounds on the W default (`WG` 0.2007 / 0.2634 / 1758.25), so any arm containing it is report-only for the default
 unless an AI-slot-only form is registered in a later amendment. Section 4's rule is unchanged.
+
+## Amendment 2 (2026-10-16, written after LR_M1 / LR_M5 ran, before any live arm with bit 0x4)
+
+New knob bit 0x4: `FUN_00443300` (Catmull-Rom) in the listing's operand order (`disasm.py 0x00443300`: t3 = t2*t,
+A = ((2P0 - 5P1) + 4P2) - P3, B = ((3P1 - P0) - 3P2) + P3, out = (((A t2 + B t3) + (P2 - P0) t) + 2P1) * 0.5). The port's
+`CatmullRom` sums the same terms in another order. Added after the amendment-1 residual analysis, so LR_M5 is a re-run
+of the section 3 gate on a further fidelity fix, not a blind test. Disclosed as such.
+
+G-REPLAY-LOOK on mask 5 (`LR_M5.look.csv`, `score_replay.py`):
+- as registered literally (every ai_mode-0 row of each file): A 5225 / 5269 = 99.2 %, B 5098 / 5434 = 93.8 %,
+  C 2597 / 2618 = 99.2 %. B fails the literal 99 %.
+- every miss but one per file is a row where the original's look is (0, 0) (A 43, B 335, C 20): the original left
+  `FUN_00416250` before the probe at 0x004165a5 wrote a look point, so there is nothing to compare. The other miss is
+  car 1's first captured row (frame 2), before which the original's index word was already set.
+- excluding the probe-zero rows: A 5225 / 5226, B 5098 / 5099, C 2597 / 2598 (>= 99.98 %). In the nine (b) windows
+  (220 calls, cars 1-3, three regimes): **1384 / 1384 bit-equal** (mask 1: 685; exact: 559).
+Verdict recorded: mask 5 reproduces the original's lookahead bit for bit on every comparable (b)-window row. The
+literal gate is reported as failed on B because of the probe-zero rows.
+
+New arms: `L5` (`MASHED_AI_LUT=5`), `L7` (=7), `L5G`, `L7G` (+ `MASHED_GRID_DIR`), `B_*_K{0,1,26}`; `H_L7`, `H_L7-2`.
+No new (b) prediction: the amendment-1 runs show the A failure is not decided by the look point alone (section 1 of
+amendment 1). Section 4's default rule is unchanged and applies to L5 / L7 (bit 0x4 is a no-op when unset).

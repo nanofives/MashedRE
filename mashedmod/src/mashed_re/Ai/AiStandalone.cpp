@@ -97,6 +97,7 @@
 #include "AiTargetClosest.h"            // [D-11072 P3] FUN_00414a70 (MASHED_TGT3)
 #include "AiLeafTargets.h"              // [D3 bulk G-AILEAF] FUN_00414570 / FUN_00415880 (MASHED_AILEAF)
 #include "AiTrackObjSeek.h"              // [seek414f00] FUN_00414f00, the mode-10 blocks
+#include "../Math/RwLutTables.h"        // [d3b] FUN_004c3c60 / 004c3bf0 / 004c39b0 with the real RW LUT
 extern "C" int g_tg3Ret[4]; extern "C" int g_tg3Los[4];
 #endif
 
@@ -105,6 +106,8 @@ extern "C" int g_tg3Ret[4]; extern "C" int g_tg3Los[4];
 #include <cstring>
 #include <cstdlib>   // std::getenv (G4 pure-pursuit toggle)
 #include <cstdio>    // [G4] env-gated AI nav trace
+#include <string>    // [d3b] look replay
+#include <vector>    // [d3b] look replay
 
 // FUN_0040e480: the one body, Ai/CarSlotState.cpp. Declared at global scope on purpose: an extern "C"
 // declaration inside the unnamed namespace below would name a different entity.
@@ -133,6 +136,25 @@ Host s_host = {
 };
 
 inline float bits_to_f(std::uint32_t b) { float f; std::memcpy(&f, &b, 4); return f; }
+
+// [d3b 2026-10-16] MASHED_AI_LUT=<mask> (exe only, unset = the exact-sqrt code).
+// 0x1: FUN_00443dc0 phase 6 normalizes with FUN_004c3c60 (both calls, decomp
+//      verify/d3b_20261016/decomp_00443dc0.txt) and phase 8 takes both lengths from FUN_004c3bf0.
+// 0x2: FUN_00415e20 normalizes its bearing and its forward vector with FUN_004c39b0.
+// All three are RW fast-sqrt LUT bodies in the original (verify/d3b_20261016/decomp_math.txt).
+// s_aiLutOverride >= 0 replaces the env mask (the look replay runs both modes in one process).
+int s_aiLutOverride = -1;
+inline int AiLutMask() {
+#ifdef MASHED_STANDALONE
+    static const int s_mask = [] {
+        const char* e = std::getenv("MASHED_AI_LUT");
+        return e ? std::atoi(e) : 0;
+    }();
+    return s_aiLutOverride >= 0 ? s_aiLutOverride : s_mask;
+#else
+    return 0;
+#endif
+}
 
 // [D3 2026-09-27] step-locals mirror, see AiStandalone.h / the 0x004165a5 probe.
 StepLocals s_step_locals[4] = {};
@@ -216,9 +238,20 @@ float SteerAngleError(int v, float targetX, float targetZ)
 float SteerAngleErrorFwd(int v, float targetX, float targetZ)
 {
     auto angOf = [](float x, float z) -> float {          // (x, 0, z) already z-negated
-        const float n = std::sqrt(x * x + z * z);          // FUN_004c39b0 normalize
-        const float nx = (n > 0.0f) ? x / n : x;
-        const float nz = (n > 0.0f) ? z / n : z;
+        float nx, nz;
+#ifdef MASHED_STANDALONE
+        if (AiLutMask() & 2) {                             // [d3b] FUN_004c39b0 with the real LUT
+            const float in[3] = { x, 0.0f, z };
+            float o[3];
+            mashed_re::Math::LutNormalize(o, in);
+            nx = o[0]; nz = o[2];
+        } else
+#endif
+        {
+            const float n = std::sqrt(x * x + z * z);      // FUN_004c39b0 normalize (exact-sqrt stand-in)
+            nx = (n > 0.0f) ? x / n : x;
+            nz = (n > 0.0f) ? z / n : z;
+        }
         float d = nx;                                      // z*0 + y*0 + x (DAT_005d757c = 0)
         if (d < kSteerThrLo) d = kSteerClampLo;
         if (kSteerThrHi < d) d = kSteerClampHi;
@@ -255,6 +288,30 @@ void CatmullRom(std::uintptr_t spline, int idx, float t, float* outX, float* out
     int i3 = i2 + 1;  if (i3 >= count) i3 -= count;   // P3
     float t0 = t; if (t0 > 1.0f) t0 = 1.0f; else if (t0 < 0.0f) t0 = 0.0f;
     const float t2 = t0 * t0;
+#ifdef MASHED_STANDALONE
+    if (AiLutMask() & 4) {
+        // [d3b 2026-10-16] MASHED_AI_LUT bit 0x4: the listing's operand order (0x00443373..0x004433cf,
+        // verify/d3b_20261016/disasm.py), PC_24 so each x87 op rounds to float:
+        //   t3 = t2*t; A = ((2*P0 - 5*P1) + 4*P2) - P3; B = ((3*P1 - P0) - 3*P2) + P3
+        //   out = (((A*t2 + B*t3) + (P2 - P0)*t) + 2*P1) * 0.5
+        const float t3 = t2 * t0;
+        auto compL = [&](std::uintptr_t o) -> float {
+            const float P0 = F32(spline + static_cast<std::uintptr_t>(i0) * 8 + o);
+            const float P1 = F32(spline + static_cast<std::uintptr_t>(i1) * 8 + o);
+            const float P2 = F32(spline + static_cast<std::uintptr_t>(i2) * 8 + o);
+            const float P3 = F32(spline + static_cast<std::uintptr_t>(i3) * 8 + o);
+            const float A = (((P0 + P0) - P1 * 5.0f) + P2 * 4.0f) - P3;   // 0x00443383..0x0044339b
+            const float B = ((P1 * 3.0f - P0) - P2 * 3.0f) + P3;          // 0x004433a0..0x004433b4
+            float s = A * t2 + B * t3;                                    // 0x0044339e / 0x004433b7 / 0x004433b9
+            s = s + (P2 - P0) * t0;                                       // 0x004433bb..0x004433c1
+            s = s + (P1 + P1);                                            // 0x004433c3..0x004433c7
+            return s * 0.5f;                                              // 0x004433c9 (0x005cc32c)
+        };
+        *outX = compL(0);
+        *outZ = compL(4);
+        return;
+    }
+#endif
     auto comp = [&](std::uintptr_t o) -> float {
         const float P0 = F32(spline + static_cast<std::uintptr_t>(i0) * 8 + o);
         const float P1 = F32(spline + static_cast<std::uintptr_t>(i1) * 8 + o);
@@ -270,9 +327,25 @@ void CatmullRom(std::uintptr_t spline, int idx, float t, float* outX, float* out
 
 // Normalize a 2-float (XZ) vector in place (standalone equiv of FUN_004c3c60,
 // which uses a fast-rsqrt LUT; std::sqrt is bit-equivalent for nav use).
+// [d3b 2026-10-16] The "bit-equivalent" claim does not hold: the LUT length of 16.011608 is
+// 4.0009765625 where sqrt gives 4.0014505 (memory exe-rw-sqrt-is-exact-not-lut). Kept as the
+// MASHED_AI_LUT-unset path; LookNormalize2 / LookLen2 below route to the LUT under the knob.
 inline void Normalize2(float* v) {
     const float m2 = v[0]*v[0] + v[1]*v[1];
     if (m2 > 0.0f) { const float inv = 1.0f / std::sqrt(m2); v[0] *= inv; v[1] *= inv; }
+}
+
+inline void LookNormalize2(float* v) {
+#ifdef MASHED_STANDALONE
+    if (AiLutMask() & 1) { mashed_re::Math::LutNormalize2D(v, v); return; }   // FUN_004c3c60
+#endif
+    Normalize2(v);
+}
+inline float LookLen2(float x, float z) {
+#ifdef MASHED_STANDALONE
+    if (AiLutMask() & 1) return mashed_re::Math::LutSqrt(z * z + x * x);       // FUN_004c3bf0: p[1]^2 + p[0]^2
+#endif
+    return std::sqrt(x * x + z * z);
 }
 
 // FUN_004233e0's rad->deg scale: DOUBLE at 0x005ccae0 = bytes 000000c0 dca54c40
@@ -389,8 +462,8 @@ void SplineLookahead(std::uintptr_t spline, float ownX, float ownZ, int v, float
         if (param > 1.0f) { param -= 1.0f; if (++seg == count) seg = 0; }
         float wx, wz;
         CatmullRom(spline, seg, param, &wx, &wz);
-        float seg2[2] = { wx - prevX, wz - prevZ };  Normalize2(seg2);
-        float bak[2]  = { prevX - ownX, prevZ - ownZ }; Normalize2(bak);
+        float seg2[2] = { wx - prevX, wz - prevZ };  LookNormalize2(seg2);   // FUN_004c3c60 [d3b knob 0x1]
+        float bak[2]  = { prevX - ownX, prevZ - ownZ }; LookNormalize2(bak);  // FUN_004c3c60 [d3b knob 0x1]
         float m = seg2[0]*bak[0] + seg2[1]*bak[1];
         if (m < 0.0f) m = -param;     // DAT_005d757c=0
         if (m > 1.0f) m = 1.0f;       // _DAT_005cc320=1.0
@@ -428,7 +501,7 @@ void SplineLookahead(std::uintptr_t spline, float ownX, float ownZ, int v, float
         int done = 0;     // local_194
         const float dx  = out[0] - ownX;
         const float dz  = out[1] - ownZ;
-        const float len = std::sqrt(dx * dx + dz * dz);           // FUN_004c3bf0 (2-D)
+        const float len = LookLen2(dx, dz);                        // FUN_004c3bf0 (2-D) [d3b knob 0x1]
         bool blocked = false;
         if (0.0f < len) {                                          // 0x004446d0..0x004446ef
             const float inv = 1.0f / len;
@@ -1796,6 +1869,121 @@ void VehicleStep(int v)
     I32(a74(kAiReplayB5, v)) = ctrl[5];
 }
 
+#ifdef MASHED_STANDALONE
+// [d3b 2026-10-16] Look replay (measurement only, PREREG_d3b.md G-REPLAY-LOOK).
+// MASHED_AI_LOOK_REPLAY=<original aistep csv>[;<csv>...], MASHED_AI_LOOK_REPLAY_OUT=<csv>.
+// Each recorded row's (spline, v, own_x, own_z) runs through SplineLookahead twice, mode 0 with
+// MASHED_AI_LUT bit 0x1 clear and mode 1 with it set. Each mode keeps its own FUN_00443dc0
+// index-continuity word (0x008032d4 + v*0x14), starting at 1000 per file (the FUN_00413fe0 reset
+// value). Every word the call writes (that index, FUN_00416230's 0x0089a500 + v*0x74, the
+// step-locals mirror) is restored afterwards, so the live run continues as if nothing ran.
+// Bit equality is decided in-process on the float bits of the parsed original value.
+void LookReplayOnce()
+{
+    static bool s_done = false;
+    if (s_done) return;
+    s_done = true;
+    const char* in = std::getenv("MASHED_AI_LOOK_REPLAY");
+    const char* outp = std::getenv("MASHED_AI_LOOK_REPLAY_OUT");
+    if (!in || !outp) return;
+    std::FILE* o = std::fopen(outp, "w");
+    if (!o) return;
+    const char* mk = std::getenv("MASHED_AI_LOOK_REPLAY_MASK");   // mode 1's MASHED_AI_LUT mask (default 1)
+    const int s_replayMask = mk ? std::atoi(mk) : 1;
+    std::fprintf(o, "file,n,frame,v,spline,ai_mode,c4,orig_x,orig_z,ex_x,ex_z,lut_x,lut_z,eq_ex,eq_lut,"
+                    "march_orig,march_ex,march_lut\n");
+    std::string files(in);
+    std::size_t p0 = 0;
+    while (p0 <= files.size()) {
+        std::size_t p1 = files.find(';', p0);
+        const std::string fn = files.substr(p0, p1 == std::string::npos ? std::string::npos : p1 - p0);
+        p0 = (p1 == std::string::npos) ? files.size() + 1 : p1 + 1;
+        if (fn.empty()) continue;
+        std::FILE* f = std::fopen(fn.c_str(), "r");
+        if (!f) { std::fprintf(o, "# cannot open %s\n", fn.c_str()); continue; }
+        int idxState[2][4] = { {1000, 1000, 1000, 1000}, {1000, 1000, 1000, 1000} };
+        std::vector<std::string> hdr;
+        int cV = -1, cS = -1, cOx = -1, cOz = -1, cLx = -1, cLz = -1, cM = -1, cF = -1, cC4 = -1, cMn = -1;
+        long n = 0, rows0 = 0, eqEx = 0, eqLut = 0, win0 = 0, winEx = 0, winLut = 0;
+        bool winStarted[4] = { false, false, false, false };
+        char buf[4096];
+        while (std::fgets(buf, sizeof buf, f)) {
+            std::vector<std::string> k;
+            {
+                std::string s(buf);
+                while (!s.empty() && (s.back() == '\n' || s.back() == '\r')) s.pop_back();
+                std::size_t a = 0;
+                for (;;) { std::size_t b = s.find(',', a); k.push_back(s.substr(a, b == std::string::npos ? std::string::npos : b - a));
+                           if (b == std::string::npos) break; a = b + 1; }
+            }
+            if (hdr.empty()) {
+                hdr = k;
+                for (int i = 0; i < static_cast<int>(k.size()); ++i) {
+                    const std::string& h = k[i];
+                    if (h == "v") cV = i; else if (h == "spline") cS = i; else if (h == "own_x") cOx = i;
+                    else if (h == "own_z") cOz = i; else if (h == "look_x") cLx = i; else if (h == "look_z") cLz = i;
+                    else if (h == "ai_mode") cM = i; else if (h == "frame") cF = i; else if (h == "c4") cC4 = i;
+                    else if (h == "march_n") cMn = i;
+                }
+                if (cV < 0 || cS < 0 || cOx < 0 || cOz < 0 || cLx < 0 || cLz < 0 || cM < 0) {
+                    std::fprintf(o, "# %s: missing column\n", fn.c_str()); break;
+                }
+                continue;
+            }
+            if (static_cast<int>(k.size()) < static_cast<int>(hdr.size())) continue;
+            const int v = std::atoi(k[cV].c_str());
+            if (v < 1 || v > 3) continue;
+            const std::uintptr_t spline = static_cast<std::uintptr_t>(std::strtoul(k[cS].c_str(), nullptr, 10));
+            const float ox = static_cast<float>(std::strtod(k[cOx].c_str(), nullptr));
+            const float oz = static_cast<float>(std::strtod(k[cOz].c_str(), nullptr));
+            const float lx = static_cast<float>(std::strtod(k[cLx].c_str(), nullptr));
+            const float lz = static_cast<float>(std::strtod(k[cLz].c_str(), nullptr));
+            const int mode = std::atoi(k[cM].c_str());
+            const int c4 = cC4 >= 0 ? std::atoi(k[cC4].c_str()) : 0;
+            if (c4 != 0) winStarted[v] = true;
+            ++n;
+            float res[2][2];
+            int march[2];
+            for (int m = 0; m < 2; ++m) {
+                const std::uintptr_t idxA = 0x008032d4u + static_cast<std::uintptr_t>(v) * 0x14u;
+                const std::uintptr_t flA  = 0x0089a500u + static_cast<std::uintptr_t>(v) * 0x74u;
+                const std::int32_t keepIdx = I32(idxA), keepFl = I32(flA);
+                const StepLocals keepSl = s_step_locals[v];
+                I32(idxA) = idxState[m][v];
+                s_aiLutOverride = (m == 1) ? s_replayMask : 0;
+                float out[2] = { ox, oz };
+                SplineLookahead(spline, ox, oz, v, out);
+                s_aiLutOverride = -1;
+                march[m] = s_step_locals[v].march_n;
+                idxState[m][v] = I32(idxA);
+                I32(idxA) = keepIdx; I32(flA) = keepFl;
+                s_step_locals[v] = keepSl;
+                res[m][0] = out[0]; res[m][1] = out[1];
+            }
+            std::uint32_t bo[2], b0[2], b1[2];
+            std::memcpy(&bo[0], &lx, 4); std::memcpy(&bo[1], &lz, 4);
+            std::memcpy(&b0[0], &res[0][0], 4); std::memcpy(&b0[1], &res[0][1], 4);
+            std::memcpy(&b1[0], &res[1][0], 4); std::memcpy(&b1[1], &res[1][1], 4);
+            const int e0 = (bo[0] == b0[0] && bo[1] == b0[1]) ? 1 : 0;
+            const int e1 = (bo[0] == b1[0] && bo[1] == b1[1]) ? 1 : 0;
+            if (mode == 0) {
+                ++rows0; eqEx += e0; eqLut += e1;
+                if (winStarted[v]) { ++win0; winEx += e0; winLut += e1; }
+            }
+            std::fprintf(o, "%s,%ld,%s,%d,%lu,%d,%d,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%d,%d,%s,%d,%d\n",
+                         fn.c_str(), n, cF >= 0 ? k[cF].c_str() : "", v, static_cast<unsigned long>(spline), mode, c4,
+                         lx, lz, res[0][0], res[0][1], res[1][0], res[1][1], e0, e1,
+                         cMn >= 0 ? k[cMn].c_str() : "", march[0], march[1]);
+        }
+        std::fclose(f);
+        std::fprintf(o, "# SUMMARY %s: mode 1 mask %d, rows %ld, ai_mode 0 rows %ld: exact %ld, lut %ld; window (from first "
+                        "c4 != 0) mode-0 rows %ld: exact %ld, lut %ld\n", fn.c_str(), s_replayMask, n, rows0, eqEx, eqLut,
+                     win0, winEx, winLut);
+    }
+    std::fclose(o);
+}
+#endif
+
 } // namespace
 
 // FUN_00472650 law (AiRand) for other exe TUs: Race/SubStateMachine.cpp's FUN_00414180.
@@ -1846,6 +2034,9 @@ void Ai_Standalone_Tick()
     TickTrace("enter", -1);
     if (I32(kSplineRaceCnt) <= 3) return;        // DAT_00801ca0 > 3 (splines loaded)
     TickTrace("splines-ok", I32(kSplineRaceCnt));
+#ifdef MASHED_STANDALONE
+    LookReplayOnce();                             // [d3b] measurement only, inert unless MASHED_AI_LOOK_REPLAY
+#endif
 
     int r = s_host.round_type();
     int fd0 = s_host.game_mode_fd0();
