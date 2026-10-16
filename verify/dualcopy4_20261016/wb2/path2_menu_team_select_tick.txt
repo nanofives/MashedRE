@@ -1,0 +1,36 @@
+hook: menu_team_select_tick  rva=0x0042fa00  export=MenuTeamSelectTick
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 24632
+  [agent] pre_snapshot
+  [agent] asi_loaded
+  [agent] post_snapshot
+  [agent] results
+
+=== verify_hook_install report (menu_team_select_tick) ===
+
+target address: 0x0042fa00  export: MenuTeamSelectTick
+PRE  bytes:     e9 0b d0 42 61 00 02 75
+asi base:       0x61830000
+reimpl addr:    0x61842360
+POST bytes:     e9 0b d0 42 61 00 02 75
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x6142d00b  expected 0x6141295b  -> FAIL
+bytes changed:  False
+
+interceptor entries (reimpl):  0 / 3  (other threads: 0)
+
+per-input results:
+  [OK] input={'seed': [{'addr': '0x007f1a14', 'val': 0}, {'addr': '0x007f1a24', 'val': 1}, {'addr': '0x007f1a34', 'val': 2}, {'addr': '0x007f1a44', 'val': 3}, {'addr': '0x0067e938', 'val': 0}, {'addr': '0x0067e944', 'val': 0}, {'addr': '0x0067e950', 'val': 1}, {'addr': '0x0067e95c', 'val': 2}, {'addr': '0x0067ea88', 'val': 0}, {'addr': '0x007f1044', 'val': 256}, {'addr': '0x007f1504', 'val': 0}, {'addr': '0x007f1090', 'val': 0}, {'addr': '0x007f1550', 'val': 0}, {'addr': '0x007f10dc', 'val': 0}, {'addr': '0x007f159c', 'val': 0}, {'addr': '0x007f1128', 'val': 0}, {'addr': '0x007f15e8', 'val': 0}], 'args': [], 'obs': ['0x0067e938', '0x0067e944', '0x0067e950', '0x0067e95c', '0x0067ea88']}  got=0x0000000100000000000000010000000200000000  err=
+  [OK] input={'seed': [{'addr': '0x007f1a14', 'val': 0}, {'addr': '0x007f1a24', 'val': 1}, {'addr': '0x007f1a34', 'val': 2}, {'addr': '0x007f1a44', 'val': 3}, {'addr': '0x0067e938', 'val': 1}, {'addr': '0x0067e944', 'val': 0}, {'addr': '0x0067e950', 'val': 1}, {'addr': '0x0067e95c', 'val': 2}, {'addr': '0x0067ea88', 'val': 0}, {'addr': '0x007f1044', 'val': 1}, {'addr': '0x007f1504', 'val': 0}, {'addr': '0x007f1090', 'val': 0}, {'addr': '0x007f1550', 'val': 0}, {'addr': '0x007f10dc', 'val': 0}, {'addr': '0x007f159c', 'val': 0}, {'addr': '0x007f1128', 'val': 0}, {'addr': '0x007f15e8', 'val': 0}], 'args': [], 'obs': ['0x0067e938', '0x0067e944', '0x0067e950', '0x0067e95c', '0x0067ea88']}  got=0x0000000000000000000000010000000200000000  err=
+  [OK] input={'seed': [{'addr': '0x007f1a14', 'val': 0}, {'addr': '0x007f1a24', 'val': 1}, {'addr': '0x007f1a34', 'val': 2}, {'addr': '0x007f1a44', 'val': 3}, {'addr': '0x0067e938', 'val': 4294967295}, {'addr': '0x0067e944', 'val': 0}, {'addr': '0x0067e950', 'val': 1}, {'addr': '0x0067e95c', 'val': 2}, {'addr': '0x0067ea88', 'val': 0}, {'addr': '0x007f1044', 'val': 1}, {'addr': '0x007f1504', 'val': 0}, {'addr': '0x007f1090', 'val': 0}, {'addr': '0x007f1550', 'val': 0}, {'addr': '0x007f10dc', 'val': 0}, {'addr': '0x007f159c', 'val': 0}, {'addr': '0x007f1128', 'val': 0}, {'addr': '0x007f15e8', 'val': 0}], 'args': [], 'obs': ['0x0067e938', '0x0067e944', '0x0067e950', '0x0067e95c', '0x0067ea88']}  got=0x0000000000000000000000010000000200000000  err=
+
+PASS:
+  + opcode == 0xE9
+  + all 3 calls returned without exception
+FAIL:
+  - rel32 mismatch
+  - bytes unchanged after Module.load and site holds no valid JMP
+  - reimpl interceptor fired 0 times, expected 3
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dualcopy4\log\verify_hook_install_menu_team_select_tick.txt
+

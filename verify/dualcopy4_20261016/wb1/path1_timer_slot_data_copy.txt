@@ -1,0 +1,14 @@
+hook: timer_slot_data_copy  rva=0x0041f000  export=TimerSlotDataCopy
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 12912
+  [agent] LUT ready  base=0x2c0a660  offset=0x134  root=0x4f00680  delta=0  attempts=14
+  [agent] .asi loaded  base=0x5efe0000  TimerSlotDataCopy@0x5efef860
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dualcopy4\log\diff_timer_slot_data_copy.csv
+  total cases: 10
+  mismatches:  0
+
+NOTE: all observations trivial; GREEN allowed by seeded arg_type 'int_copy_outbuf'.
+
+GREEN: every test value produced bit-identical output.
+

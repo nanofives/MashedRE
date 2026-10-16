@@ -1,0 +1,21 @@
+hook: timer_bit_field_set  rva=0x0041eda0  export=TimerBitFieldSet
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 21860
+  [agent] LUT ready  base=0x2cda660  offset=0x134  root=0x5030680  delta=0  attempts=15
+  [agent] .asi loaded  base=0x61340000  TimerBitFieldSet@0x6134f770
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dualcopy4\log\diff_timer_bit_field_set.csv
+  total cases: 10
+  mismatches:  10
+
+RED: at least one mismatch.
+  idx=0  input=[0, 1]  orig=4294967294  reimpl=4294967286
+  idx=1  input=[0, 0]  orig=4294967287  reimpl=4294967295
+  idx=2  input=[0, 1]  orig=4294967294  reimpl=4294967286
+  idx=3  input=[0, 0]  orig=4294967287  reimpl=4294967295
+  idx=4  input=[1, 1]  orig=4294967294  reimpl=4294967286
+  idx=5  input=[1, 0]  orig=4294967287  reimpl=4294967295
+  idx=6  input=[1, 1]  orig=4294967294  reimpl=4294967286
+  idx=7  input=[1, 0]  orig=4294967287  reimpl=4294967295
+  idx=8  input=[2, 1]  orig=4294967294  reimpl=4294967286
+  idx=9  input=[2, 0]  orig=4294967287  reimpl=4294967295

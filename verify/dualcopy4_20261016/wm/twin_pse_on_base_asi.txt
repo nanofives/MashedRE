@@ -1,0 +1,13 @@
+hook: mctrl_pse  rva=0x0042fa00  export=PlayerSlotEdgeAdjust
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 18200
+  [agent] LUT ready  base=0x2d1a660  offset=0x134  root=0x5060680  delta=0  attempts=9
+  [agent] .asi loaded  base=0x60c40000  PlayerSlotEdgeAdjust@0x60c6c9f0
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dualcopy4\log\diff_mctrl_pse.csv
+  total cases: 9
+  mismatches:  2
+
+RED: at least one mismatch.
+  idx=7  input={'seed': [{'addr': '0x007f1a14', 'val': 0}, {'addr': '0x007f1a24', 'val': 1}, {'addr': '0x007f1a34', 'val': 2}, {'addr': '0x007f1a44', 'val': 3}, {'addr': '0x0067e938', 'val': 4294967295}, {'addr': '0x0067e944', 'val': 0}, {'addr': '0x0067e950', 'val': 1}, {'addr': '0x0067e95c', 'val': 2}, {'addr': '0x0067ea88', 'val': 0}, {'addr': '0x007f1044', 'val': 1}, {'addr': '0x007f1504', 'val': 0}, {'addr': '0x007f1090', 'val': 0}, {'addr': '0x007f1550', 'val': 0}, {'addr': '0x007f10dc', 'val': 0}, {'addr': '0x007f159c', 'val': 0}, {'addr': '0x007f1128', 'val': 0}, {'addr': '0x007f15e8', 'val': 0}], 'args': [], 'obs': ['0x0067e938', '0x0067e944', '0x0067e950', '0x0067e95c', '0x0067ea88']}  orig=0xfffffffe00000000000000010000000200000000  reimpl=0x0000000000000000000000010000000200000000
+  idx=8  input={'seed': [{'addr': '0x007f1a14', 'val': 0}, {'addr': '0x007f1a24', 'val': 1}, {'addr': '0x007f1a34', 'val': 2}, {'addr': '0x007f1a44', 'val': 3}, {'addr': '0x0067e938', 'val': 3}, {'addr': '0x0067e944', 'val': 0}, {'addr': '0x0067e950', 'val': 1}, {'addr': '0x0067e95c', 'val': 2}, {'addr': '0x0067ea88', 'val': 0}, {'addr': '0x007f1044', 'val': 0}, {'addr': '0x007f1504', 'val': 0}, {'addr': '0x007f1090', 'val': 0}, {'addr': '0x007f1550', 'val': 0}, {'addr': '0x007f10dc', 'val': 0}, {'addr': '0x007f159c', 'val': 0}, {'addr': '0x007f1128', 'val': 0}, {'addr': '0x007f15e8', 'val': 0}], 'args': [], 'obs': ['0x0067e938', '0x0067e944', '0x0067e950', '0x0067e95c', '0x0067ea88']}  orig=0x0000000300000000000000010000000200000000  reimpl=0x0000000200000000000000010000000200000000

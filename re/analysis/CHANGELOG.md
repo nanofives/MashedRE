@@ -26,6 +26,18 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-16  0041eda0  TimerBitFieldSet  C3->C3 (RE-EARNED)  One body; TimerSlot.cpp SlotBitSet deleted; path1+path2+mutant control. Evidence verify/dualcopy4_20261016/RESULT_dualcopy4.md.
+2026-10-16  0041f000  TimerSlotDataCopy  C3->C3 (RE-EARNED)  One body; TimerSlot.cpp SlotDataCopy deleted; path1+path2. Evidence verify/dualcopy4_20261016/RESULT_dualcopy4.md.
+2026-10-16  00420d40  TimerStructArrayClear  C3->C3 (RE-EARNED)  One body; TimerSlot.cpp SlotArrayClear deleted; path1+path2. Evidence verify/dualcopy4_20261016/RESULT_dualcopy4.md.
+2026-10-16  00422120  TimerInitLoop  C3->C3 (RE-EARNED)  TimerSubarrayInit.cpp deleted; exe_file == file. Evidence verify/dualcopy4_20261016/RESULT_dualcopy4.md.
+2026-10-16  00431b70  MenuFlagDat007f0f10Get  C3->C3 (RE-EARNED)  One body; BucketMixed_t3.cpp copy deleted. Evidence verify/dualcopy4_20261016/RESULT_dualcopy4.md.
+2026-10-16  004c5c00  FUN_004c5c00  C3->C3 (RE-EARNED)  SpriteCluster.cpp LinkedListStringSearch deleted; one body Search4c5c00. Evidence verify/dualcopy4_20261016/RESULT_dualcopy4.md.
+2026-10-16  004b4650  FUN_004b4650  (no ladder move)  dead round22 copy deleted; exe PowerupContact copy remains the open split. Evidence verify/dualcopy4_20261016/RESULT_dualcopy4.md.
+2026-10-16  00420de0  FUN_00420de0  C3->C3 (RE-EARNED)  Dead C copy deleted; one body Accum420de0. Evidence verify/dualcopy4_20261016/RESULT_dualcopy4.md.
+2026-10-16  00405890  Pred405890  C4->C3 (DEMOTED)  C4->C3: one body CollectDone.h, three thin readers; path1+path2+mutant+M3 replay; C4 needs a mode-5 collect race. Evidence verify/dualcopy4_20261016/RESULT_dualcopy4.md.
+2026-10-16  0042f6b0  MenuModeSync  C3->C3 (RE-EARNED)  One table SelectionToGameMode.h; RaceModes.cpp wrapper; path1+path2+host tests. Evidence verify/dualcopy4_20261016/RESULT_dualcopy4.md.
+2026-10-16  0042ad90  FUN_0042ad90  C3->C3 (RE-EARNED)  One body KvFind.cpp; KvLookup calls it; early-window GREEN, 400k equivalence, host tests. Evidence verify/dualcopy4_20261016/RESULT_dualcopy4.md.
+2026-10-16  0042fa00  MenuTeamSelectTick  C2->C3 (RE-EARNED)  Faithful MenuTeamSelectTick installed, clamped asi twin deleted; path1 9/9 + path2 + twin control. Evidence verify/dualcopy4_20261016/RESULT_dualcopy4.md.
 2026-10-16  00417640  FUN_00417640  C2->C3 (RE-EARNED)  One body Ai/AiPostStepBrake.cpp, exe brake-rate pin removed. path1 GREEN 11/11 (cache_setter_observe, both write arms + the four gates closed in turn); warzone: >= 7937 calls mism=0 (natural gate1pass=7937 wrote=0), forced 7937 fmism=0, full-depth 7937 f2mism=0 (brake 3969 / coast 3968); G-CTRL 2b4d47bb/356821c8/f7a155e1 unchanged. Evidence verify/dualcopy3_20261016/RESULT_dualcopy3.md.
 2026-10-16  004a2c48  FUN_004a2c48  C2->C3 (RE-EARNED)  RaceCamera now calls the verbatim body (FtolVerbatim); byte-identical in both images; camera replay unchanged. Evidence verify/dualcopy3_20261016/RESULT_dualcopy3.md.
 2026-10-16  004987b0/00485340/00431b10  (exe_file)  (no ladder move)  exe_file cleared: call-through / prose false anchors re-anchored. Evidence verify/dualcopy3_20261016/RESULT_dualcopy3.md.

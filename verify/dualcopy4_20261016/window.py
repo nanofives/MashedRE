@@ -90,7 +90,15 @@ def main() -> int:
             say(f"ABORT: cannot overwrite the shared asi (a foreign MASHED has it mapped?): {e}")
             return 6
         say(f"deployed {build.name} sha256 = {sha(SHARED)[:16]}")
+        deployed_hash = sha(SHARED)
         for s in steps:
+            cur = sha(SHARED)
+            if cur != deployed_hash:
+                say(f"CONTAMINATED before {s['name']}: shared asi sha256 {cur[:16]} != deployed {deployed_hash[:16]}; re-deploying ours")
+                try:
+                    shutil.copy2(build, SHARED)
+                except OSError as e:
+                    say(f"   re-deploy failed: {e}")
             env = dict(os.environ)
             for k, v in (s.get("env") or {}).items():
                 env[k] = sub(v, out)
@@ -99,7 +107,7 @@ def main() -> int:
             try:
                 p = subprocess.run(cmd, cwd=str(WT), env=env, capture_output=True, text=True, timeout=int(s.get("timeout", 300)))
                 (out / f"{s['name']}.txt").write_text(p.stdout + "\n" + p.stderr, encoding="utf-8")
-                say(f"{s['name']:42s} rc={p.returncode} ({time.time()-t1:.0f}s)")
+                say(f"{s['name']:42s} rc={p.returncode} ({time.time()-t1:.0f}s) shared_asi_after={sha(SHARED)[:16]}")
             except subprocess.TimeoutExpired as e:
                 (out / f"{s['name']}.txt").write_text(str(e.stdout or "") + "\nTIMEOUT", encoding="utf-8")
                 say(f"{s['name']:42s} TIMEOUT ({time.time()-t1:.0f}s)")

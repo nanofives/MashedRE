@@ -1,0 +1,11 @@
+hook: menu_team_select_tick  rva=0x0042fa00  export=MenuTeamSelectTick
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 24780
+  [agent] LUT ready  base=0x2b7a660  offset=0x134  root=0x4ee0680  delta=0  attempts=12
+  [agent] .asi loaded  base=0x60280000  MenuTeamSelectTick@0x60292340
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dualcopy4\log\diff_menu_team_select_tick.csv
+  total cases: 9
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.
