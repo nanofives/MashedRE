@@ -11,20 +11,33 @@
 //
 // Anchored to MASHED.exe SHA-256 BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E.
 #include "ForceIntegrator.h"
+#include "../Math/RwLutTables.h"   // [d2settle U-9181] Math::LutSqrt = 0x004c3b30
 #include <cstdint>
 #include <cstddef>   // std::ptrdiff_t (exe build's stricter include set surfaces this)
 #include <cstring>
 #include <cmath>
 #include <cstdlib>   // [U-9147] std::getenv / std::atoi for MASHED_HANDLING_TYPE
+#include <cstdio>    // [d2settle] MASHED_A3_LOG
 
 namespace mashed_re {
 namespace Vehicle {
 
 extern int* g_vehicleArrayBase;   // DAT_008815a0 (16 × 0xd04 records)
 
-// FastSqrt FUN_004c3b30 (C4) — the init uses it for radii; std::sqrt is bit-equivalent
-// for the non-negative sums here (FastSqrt is an x87 fsqrt wrapper).
-static inline float FSqrt(float x) { return std::sqrt(x); }
+// FastSqrt FUN_004c3b30 (C4) — the init uses it for radii.
+// [d2settle U-9181 2026-10-16] CORRECTED. This said "std::sqrt is bit-equivalent ...
+// (FastSqrt is an x87 fsqrt wrapper)". It is not: 0x004c3b30 is RW's 4096-entry LUT sqrt
+// (Math/RwLutTables.cpp, tables verified 4096/4096 against the live original). Measured on
+// the original's own A3 inputs (o_p0a.msd frame 1, verify/d2settle_20261016/PREREG §0.2):
+// the LUT reproduces 24/24 of this function's sqrt outputs bit-exactly, std::sqrt 0/24.
+// The visible symptom was U-9181: +0x4a4 read 0x3f2d9196 (0.678003) on the exe against
+// the original's 0x3f2d93d1 (0.678037). `MASHED_NO_A3_LUT=1` restores std::sqrt and the
+// pre-fix operand order (A/B only).
+static bool A3LutOn() {
+    static const bool s_on = (std::getenv("MASHED_NO_A3_LUT") == nullptr);
+    return s_on;
+}
+static inline float FSqrt(float x) { return A3LutOn() ? Math::LutSqrt(x) : std::sqrt(x); }
 
 // raw-bitpattern / typed writers into the record
 static inline void WB(char* r, int off, std::uint32_t bits) { std::memcpy(r + off, &bits, 4); }
@@ -255,25 +268,51 @@ int VehicleInit(int slot, int trackType)
     WB(rec, 0x54,  0x3a83126f);                 // 0.001
 
     // loop1: per-wheel scaled radius -> max; wheel stride 0x31 floats (0xc4 bytes) from +0x170
+    // [d2settle U-9181] with A3LutOn() every sum below is in the ORIGINAL's operand order
+    // (each one is rounded to float before the sqrt call, `fstp dword ptr [esp]`), and
+    // this TU is SSE2 so every float op rounds as the original's PC_24 x87 does.
+    const bool lut = A3LutOn();
     float maxr = 0.0f;
     {
         char* w = rec + 0x170;
         for (int i = 0; i < 4; ++i, w += 0x31 * 4) {
             WF(w, 3 * 4, RF(w, 0));                       // pfVar9[3] = pfVar9[0]
-            double s = (double)RF(w, 0) * kRadiusK * RF(w, 0) * kRadiusK
-                     + (double)RF(w, 1 * 4) * kRadiusK * RF(w, 1 * 4) * kRadiusK
-                     + (double)RF(w, -1 * 4) * kRadiusK * RF(w, -1 * 4) * kRadiusK;
-            float r = (s != 0.0) ? FSqrt((float)s) : 0.0f;
-            if (maxr < r) maxr = r;
+            float r;
+            if (lut) {
+                // 0x0046b7f2..0x0046b821: A = m[+4]*K, B = m[0]*K, C = m[-4]*K,
+                // s = (C*C + A*A) + B*B; 0x0046b82b s == 0.0 skips the sqrt (r = 0).
+                const float A = RF(w, 1 * 4) * kRadiusK, B = RF(w, 0) * kRadiusK,
+                            C = RF(w, -1 * 4) * kRadiusK;
+                const float s = (C * C + A * A) + B * B;
+                r = (s != 0.0f) ? FSqrt(s) : 0.0f;        // 0x0046b83f call 0x004c3b30
+            } else {
+                double s = (double)RF(w, 0) * kRadiusK * RF(w, 0) * kRadiusK
+                         + (double)RF(w, 1 * 4) * kRadiusK * RF(w, 1 * 4) * kRadiusK
+                         + (double)RF(w, -1 * 4) * kRadiusK * RF(w, -1 * 4) * kRadiusK;
+                r = (s != 0.0) ? FSqrt((float)s) : 0.0f;
+            }
+            if (maxr < r) maxr = r;                       // 0x0046b847..0x0046b852
         }
     }
-    WF(rec, 0x4a0, maxr * kRadiusMul);
+    WF(rec, 0x4a0, maxr * kRadiusMul);                    // 0x0046b86b..0x0046b87a
     // loop2: pfVar8[2] = |wheel offset|
     {
         char* w = rec + 0x170;
-        for (int i = 0; i < 4; ++i, w += 0x31 * 4)
-            WF(w, 2 * 4, FSqrt(RF(w,1*4)*RF(w,1*4) + RF(w,0)*RF(w,0) + RF(w,-1*4)*RF(w,-1*4)));
+        for (int i = 0; i < 4; ++i, w += 0x31 * 4) {
+            if (lut) {
+                // 0x0046b880..0x0046b8a5: X = m[-4], Y = m[0], Z = m[+4]; (Z*Z + Y*Y) + X*X.
+                const float X = RF(w, -1 * 4), Y = RF(w, 0), Z = RF(w, 1 * 4);
+                WF(w, 2 * 4, FSqrt((Z * Z + Y * Y) + X * X));
+            } else {
+                WF(w, 2 * 4, FSqrt(RF(w,1*4)*RF(w,1*4) + RF(w,0)*RF(w,0) + RF(w,-1*4)*RF(w,-1*4)));
+            }
+        }
     }
+    // loops 3-5 (0x0046b8c1.., 0x0046b920.., 0x0046b9a0..): dx, dy, dz against the ref
+    // point, s = (dz*dz + dy*dy) + dx*dx (0x0046b93b..0x0046b949).
+    auto dist = [&](float dx, float dy, float dz) {
+        return lut ? FSqrt((dz * dz + dy * dy) + dx * dx) : FSqrt(dx*dx + dy*dy + dz*dz);
+    };
     // loop3: 4 attach points from +0x64, out at +0x4bc, OUTPUT STRIDE 0x40
     //
     // [U-9147 2026-09-29] The output stride was 0x10 here and in loops 4/5 below. SETTLED
@@ -293,7 +332,7 @@ int VehicleInit(int slot, int trackType)
         char* p = rec + 0x64; char* o = rec + 0x4bc;
         for (int i = 0; i < 4; ++i, p += 3 * 4, o += 0x40) {
             float dx = RF(p,-1*4) - RF(rec,0x15c), dy = RF(p,0) - RF(rec,0x160), dz = RF(p,1*4) - RF(rec,0x164);
-            WF(o, 0, FSqrt(dx*dx + dy*dy + dz*dz) * kDistMul);
+            WF(o, 0, dist(dx, dy, dz) * kDistMul);
         }
     }
     // loop4: 8 points from +0x94, out at +0x5bc; updates max
@@ -301,9 +340,9 @@ int VehicleInit(int slot, int trackType)
         char* p = rec + 0x94; char* o = rec + 0x5bc;
         for (int i = 0; i < 8; ++i, p += 3 * 4, o += 0x40) {   // stride: see loop3
             float dx = RF(p,-1*4) - RF(rec,0x15c), dy = RF(p,0) - RF(rec,0x160), dz = RF(p,1*4) - RF(rec,0x164);
-            float r = FSqrt(dx*dx + dy*dy + dz*dz);
+            float r = dist(dx, dy, dz);                        // 0x0046b954 / 0x0046b959
             WF(o, 0, r * kDistMul);
-            if (maxr < r) maxr = r;
+            if (maxr < r) maxr = r;                            // 0x0046b968..0x0046b97b
         }
     }
     // loop5: 6 points from +0xf4, out at +0x7bc
@@ -311,19 +350,41 @@ int VehicleInit(int slot, int trackType)
         char* p = rec + 0xf4; char* o = rec + 0x7bc;
         for (int i = 0; i < 6; ++i, p += 3 * 4, o += 0x40) {   // stride: see loop3
             float dx = RF(p,-1*4) - RF(rec,0x15c), dy = RF(p,0) - RF(rec,0x160), dz = RF(p,1*4) - RF(rec,0x164);
-            WF(o, 0, FSqrt(dx*dx + dy*dy + dz*dz) * kDistMul);
+            WF(o, 0, dist(dx, dy, dz) * kDistMul);
         }
     }
-    WF(rec, 0x4a4, maxr * kRadiusMul);
+    WF(rec, 0x4a4, maxr * kRadiusMul);                         // 0x0046b9ee..0x0046ba00
 
     // mass redistribution across the 4 spring values (+0x300/+0x3c4/+0x23c/+0x178)
     float f1 = RF(rec,0x300) + RF(rec,0x3c4) + RF(rec,0x23c) + RF(rec,0x178);
     float f2 = RF(rec,0x50) /
         (f1/RF(rec,0x300) + f1/RF(rec,0x3c4) + f1/RF(rec,0x23c) + f1/RF(rec,0x178));
-    f1 = (f1/RF(rec,0x178))*f2*RF(rec,0x178) + (f1/RF(rec,0x23c))*f2*RF(rec,0x23c)
-       + (f1/RF(rec,0x300))*f2*RF(rec,0x300) + (f1/RF(rec,0x3c4))*f2*RF(rec,0x3c4);
+    if (lut) {
+        // 0x0046ba49..0x0046ba79: ((t3c4 + t300) + t23c) + t178, each t = (q*f2)*a.
+        f1 = (((f1/RF(rec,0x3c4))*f2*RF(rec,0x3c4) + (f1/RF(rec,0x300))*f2*RF(rec,0x300))
+              + (f1/RF(rec,0x23c))*f2*RF(rec,0x23c)) + (f1/RF(rec,0x178))*f2*RF(rec,0x178);
+    } else {
+        f1 = (f1/RF(rec,0x178))*f2*RF(rec,0x178) + (f1/RF(rec,0x23c))*f2*RF(rec,0x23c)
+           + (f1/RF(rec,0x300))*f2*RF(rec,0x300) + (f1/RF(rec,0x3c4))*f2*RF(rec,0x3c4);
+    }
     WF(rec, 0x58, f1);
     WF(rec, 0x5c, kRecip1 / f1);
+
+    // [d2settle G-A3] MASHED_A3_LOG=<path>: one line per init, the 26 A3 outputs as raw
+    // bits, compared against the original's o_p0a.msd frame-1 record. DIAGNOSTIC ONLY,
+    // default-OFF, writes nothing when unset.
+    if (const char* a3log = std::getenv("MASHED_A3_LOG")) {
+        if (std::FILE* lf = std::fopen(a3log, "a")) {
+            auto B = [&](int off) { std::uint32_t b; std::memcpy(&b, rec + off, 4); return b; };
+            std::fprintf(lf, "slot=%d 4a0=%08x 178=%08x 23c=%08x 300=%08x 3c4=%08x", slot,
+                         B(0x4a0), B(0x178), B(0x23c), B(0x300), B(0x3c4));
+            for (int i = 0; i < 4; ++i)  std::fprintf(lf, " %x=%08x", 0x4bc + i * 0x40, B(0x4bc + i * 0x40));
+            for (int i = 0; i < 8; ++i)  std::fprintf(lf, " %x=%08x", 0x5bc + i * 0x40, B(0x5bc + i * 0x40));
+            for (int i = 0; i < 6; ++i)  std::fprintf(lf, " %x=%08x", 0x7bc + i * 0x40, B(0x7bc + i * 0x40));
+            std::fprintf(lf, " 4a4=%08x 58=%08x 5c=%08x\n", B(0x4a4), B(0x58), B(0x5c));
+            std::fclose(lf);
+        }
+    }
     return 1;
 }
 

@@ -458,6 +458,10 @@ static bool RingSlot0Enabled() {
     return s_on;
 }
 
+// [d2settle D0-a] MASHED_SETTLE_DIAG's solver channel: non-null only while StepCar's
+// diag window is open (slot 0, first 6 steps). DIAGNOSTIC ONLY.
+static const char* g_sdSolverLog = nullptr;
+
 static void SyncContactRingMatrix(unsigned char* r, const float* basis, const float* pos) {
     const int sel = I(r, 0x9ac);                    // self[0x26b]; the ring index
     if (sel < 0 || sel > 1) return;
@@ -596,8 +600,57 @@ static void SolveWheelContacts(unsigned char* r, const PlayerCarIO& io, int subs
     float savedScratch[12];
     std::memcpy(savedScratch, Collision::g_suspScratch, sizeof(savedScratch));
     unsigned char world[16] = { 0 };
+    // [d2settle D0-c] MASHED_D2S_RINGY=<y>: mechanism test, DIAGNOSTIC ONLY, default-OFF.
+    // On slot 0's first solver call: seat the ring translation y at <y>, run 0x0046f6c0
+    // twice keeping its own corrected translation, log both corrections. PREREG amendment 2.
+    static const char* const s_ringY = std::getenv("MASHED_D2S_RINGY");
+    static bool s_ringYDone = false;
+    if (s_ringY && !s_ringYDone && g_sdSolverLog && r == reinterpret_cast<unsigned char*>(g_vehicleArrayBase)) {
+        s_ringYDone = true;
+        // the ring's rotation rows are only published after the solver (SyncContactRingMatrix
+        // below the call site); publish the body basis now so the RW wheel transform is real.
+        if (bodyUp) SyncContactRingMatrix(r, bodyUp - 4, io.pos);
+        centre[1] = static_cast<float>(std::atof(s_ringY));
+        // [d2settle D0-e] MASHED_D2S_SEED1=1: the 8 wheel fields FUN_0046baa0 writes before
+        // the original's first solver call of a frame (0x0046bb23: int 1 to the four states;
+        // 0 to the four fv at +0x194/+0x258/+0x31c/+0x3e0). DIAGNOSTIC ONLY.
+        if (std::getenv("MASHED_D2S_SEED1")) {
+            for (int w = 0; w < 4; ++w) {
+                I(r, 0x198 + w * 0xc4) = 1;
+                F(r, 0x194 + w * 0xc4) = 0.f;
+            }
+        }
+        for (int call = 1; call <= 2; ++call) {
+            const float c0[3] = { centre[0], centre[1], centre[2] };
+            Collision::WheelContactSolver(self, world, substep);
+            std::memcpy(Collision::g_suspScratch, savedScratch, sizeof(savedScratch));
+            if (std::FILE* lf = std::fopen(g_sdSolverLog, "a")) {
+                std::fprintf(lf, "RINGY call=%d in=(%.9g,%.9g,%.9g) out=(%.9g,%.9g,%.9g) "
+                                 "corr=(%.9g,%.9g,%.9g) st=(%d,%d,%d,%d) fv=(%.9g,%.9g,%.9g,%.9g) gc=%g\n",
+                             call, c0[0], c0[1], c0[2], centre[0], centre[1], centre[2],
+                             centre[0] - c0[0], centre[1] - c0[1], centre[2] - c0[2],
+                             self[0x66], self[0x97], self[0xc8], self[0xf9],
+                             F(r, 0x194), F(r, 0x258), F(r, 0x31c), F(r, 0x3e0), F(r, 0x9e0));
+                std::fclose(lf);
+            }
+        }
+    }
+    const float sdC0[3] = { centre[0], centre[1], centre[2] };   // [d2settle D0-a] diag only
     Collision::WheelContactSolver(self, world, substep);
     std::memcpy(Collision::g_suspScratch, savedScratch, sizeof(savedScratch));
+    if (g_sdSolverLog) {   // [d2settle D0-a] the solver's own translation correction, diag only
+        if (std::FILE* lf = std::fopen(g_sdSolverLog, "a")) {
+            std::fprintf(lf, "SOLVER io.pos=(%.9g,%.9g,%.9g) centre_in=(%.9g,%.9g,%.9g) "
+                             "corr=(%.9g,%.9g,%.9g) nGY=%d gy=(%.9g) n0=(%.9g,%.9g,%.9g) "
+                             "st=(%d,%d,%d,%d) fv=(%.9g,%.9g,%.9g,%.9g) gc=%g\n",
+                         io.pos[0], io.pos[1], io.pos[2], sdC0[0], sdC0[1], sdC0[2],
+                         centre[0] - sdC0[0], centre[1] - sdC0[1], centre[2] - sdC0[2],
+                         nGY, nGY ? sumGY / nGY : 0.f, g_cNormal[0][0], g_cNormal[0][1], g_cNormal[0][2],
+                         self[0x66], self[0x97], self[0xc8], self[0xf9],
+                         F(r, 0x194), F(r, 0x258), F(r, 0x31c), F(r, 0x3e0), F(r, 0x9e0));
+            std::fclose(lf);
+        }
+    }
 
     // 5. apply the cached result (states + real per-wheel normals + grounded count).
     ReassertContacts(r);
@@ -686,6 +739,23 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         g_inSpawnSettle = true;          // keep the START BOOST ARM out of this call
         VehiclePhysics_StepCar(slot, dt, s);
         g_inSpawnSettle = false;
+        // [d2settle D0-a] MASHED_SETTLE_DIAG=<path>: what the settle step produced before it
+        // is discarded. DIAGNOSTIC ONLY, default-OFF, writes nothing when unset.
+        if (const char* sd = std::getenv("MASHED_SETTLE_DIAG")) {
+            if (std::FILE* lf = std::fopen(sd, "a")) {
+                std::fprintf(lf, "SETTLE slot=%d in.pos=(%.9g,%.9g,%.9g) dd=(%.9g,%.9g,%.9g) "
+                                 "s.pos=(%.9g,%.9g,%.9g) vel=(%.9g,%.9g,%.9g) v9e4=%.9g av=(%.9g,%.9g,%.9g) "
+                                 "loads=(%.9g,%.9g,%.9g,%.9g) gnd=%08x c9ec=%d\n",
+                             slot, io.pos[0], io.pos[1], io.pos[2],
+                             s.drive_delta[0], s.drive_delta[1], s.drive_delta[2],
+                             s.pos[0], s.pos[1], s.pos[2],
+                             F(r, off::kVelocity + 0), F(r, off::kVelocity + 4), F(r, off::kVelocity + 8),
+                             F(r, off::kSpeed), F(r, 0x9bc), F(r, 0x9c0), F(r, 0x9c4),
+                             F(r, 0x210), F(r, 0x2d4), F(r, 0x398), F(r, 0x45c),
+                             static_cast<unsigned>(I(r, 0x9e0)), I(r, 0x9ec));
+                std::fclose(lf);
+            }
+        }
         for (std::size_t o = 0; o < 12; o += 4) {
             F(r, off::kVelocity + o) = 0.f;   // +0x9b0..+0x9b8 linear
             F(r, 0x9bc + o)          = 0.f;   // +0x9bc..+0x9c4 angular
@@ -968,9 +1038,10 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     // refreshes +0x9e4 = |+0x9b0| and +0x9e8 = |+0x9bc| in the loop that follows the A4 loop
     // (0x004710a1..0x004710da, same +0x4 / +0x10 gate), and A6a, the port's only writer of
     // the two, does not run, so the refresh is made here on skipped frames.
-    // [UNCERTAIN] the original makes that refresh on EVERY frame, after A4; the port's
-    // +0x9e4 on non-skipped frames is still A6a's entry value |v before A6a|. Not changed
-    // here (it is D2-visible on every frame). `MASHED_NO_A4_CONTACT_GATE=1` disables the gate.
+    // [d2settle 2026-10-16] the original makes that refresh on EVERY frame, after A4
+    // (0x004710a1..0x004710da, disassembled). The port has it as fix C below, DEFAULT OFF
+    // (opt-in MASHED_SPEED_REFRESH=1, it moves the D2 metrics out of bounds); by default
+    // the non-skipped-frame +0x9e4 is still A6a's value. `MASHED_NO_A4_CONTACT_GATE=1` disables the gate.
     static const bool s_noA4Gate = (std::getenv("MASHED_NO_A4_CONTACT_GATE") != nullptr);
     bool a4Skip = false;
     if (!s_noA4Gate && !g_inSpawnSettle) {
@@ -993,12 +1064,58 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         F(r, 0x9e8)       = Vec3Mag3(reinterpret_cast<const float*>(r + 0x9bc));          // 0x004710d5/da
     }
 
+    // [d2settle D0-a] slot 0's first 6 steps (settle included), DIAGNOSTIC ONLY, default-OFF.
+    static const char* const s_settleDiag = std::getenv("MASHED_SETTLE_DIAG");
+    static int s_sdN = 0;
+    const bool sdOn = s_settleDiag && slot == 0 && s_sdN < 6;
+    if (sdOn) ++s_sdN;
+    g_sdSolverLog = sdOn ? s_settleDiag : nullptr;
+    auto sdLine = [&](const char* tag) {
+        if (!sdOn) return;
+        if (std::FILE* lf = std::fopen(s_settleDiag, "a")) {
+            std::fprintf(lf, "STEP n=%d settle=%d %s vel=(%.9g,%.9g,%.9g) v9e4=%.9g v9e8=%.9g "
+                             "loads=(%.9g,%.9g,%.9g,%.9g) gnd=%08x c9ec=%d b20=%d skip=%d\n",
+                         s_sdN, g_inSpawnSettle ? 1 : 0, tag,
+                         F(r, off::kVelocity + 0), F(r, off::kVelocity + 4), F(r, off::kVelocity + 8),
+                         F(r, off::kSpeed), F(r, 0x9e8),
+                         F(r, 0x210), F(r, 0x2d4), F(r, 0x398), F(r, 0x45c),
+                         static_cast<unsigned>(I(r, 0x9e0)), I(r, 0x9ec), I(r, 0xb20), a4Skip ? 1 : 0);
+            std::fclose(lf);
+        }
+    };
+    sdLine("preA4");
+    // [d2settle fix C 2026-10-16] the original's per-frame speed refresh, now on EVERY frame.
+    // FUN_00470c70 runs it for all 16 cars after the A4 loop and before the substep loop
+    // (disassembled from MASHED.exe.unpatched):
+    //     0x004710a1  mov esi,0x8815b0 (= rec + 0x10)   0x004710a6  mov ebx,0x10
+    //     0x004710b0  cmp [esi-0xc],0 / 0x004710b7 cmp [esi],1   ; rec+0x4 != 0 || rec+0x10 == 1
+    //     0x004710c3  call 0x4c3ac0(rec+0x9b0) / 0x004710c8  fstp [rec+0x9e4]
+    //     0x004710d5  call 0x4c3ac0(rec+0x9bc) / 0x004710da  fstp [rec+0x9e8]
+    // and the substep loop starts at 0x00471106. The port made this refresh only on
+    // A4-skipped frames (below), which closes the old [UNCERTAIN] note there. Without it
+    // +0x9e4 keeps A6a's |v| from BEFORE its parked full stop (Integrate2.cpp:643-646 then
+    // :755-758): the exe's parked player read 0.638 with vel (0,0,0) where the original
+    // reads 0.0 (verify/d2settle_20261016/D_DEF.settle.txt; o_p0a.msd). Vec3Mag3 is the
+    // exe's sqrt for 0x004c3ac0, as on the skipped-frame refresh.
+    // DEFAULT OFF, opt-in `MASHED_SPEED_REFRESH=1` (RESULT_d2settle.md): faithful and it
+    // passes G-9E4, but on the D2 arm it moves the first real step's +0x9e4 (0.65 -> 0.64)
+    // and the run lands in a different regime: slip 2000-2600 0.2654 (out of bounds) and
+    // driving-median 1666.43 (n 527 vs 1367). Pre-registered rule: not default ON.
+    static const bool s_noSpeedRefresh = [] {
+        const char* e = std::getenv("MASHED_SPEED_REFRESH");
+        return !(e && e[0] == '1');
+    }();
     if (s_a4First) {
         g_torqueRingPhase = (g_torqueRingPhase + 1) & 0xf;
         if (!a4Skip)   // 0x00471042 / 0x00471048: jge past the A4 call
             VehicleControlIntegrate(reinterpret_cast<int*>(r), frameMs, input, basis, slot);
         ReassertContacts(r);
+        if (!s_noSpeedRefresh && !a4Skip && (I(r, 0x4) != 0 || I(r, 0x10) == 1)) {
+            F(r, off::kSpeed) = Vec3Mag3(reinterpret_cast<const float*>(r + off::kVelocity)); // 0x004710c8
+            F(r, 0x9e8)       = Vec3Mag3(reinterpret_cast<const float*>(r + 0x9bc));          // 0x004710da
+        }
     }
+    sdLine("postA4");
 
     // [U-9154 2026-09-29] The car<->WORLD contact chain. The original's substep body
     // (FUN_004709a0, 0x00470ab0..0x00470b0b, disassembled from MASHED.exe.unpatched) is
@@ -1196,10 +1313,23 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         SyncContactRingMatrix(r, basis, io.pos);
         int* const wcSelf = reinterpret_cast<int*>(r);
         const int contacted = Collision::VehicleContactHistoryUpdate(wcSelf); // 0x00470ae8
+        auto sdSub = [&](const char* tag) {   // [d2settle D0-a] diagnostic only
+            if (!sdOn) return;
+            if (std::FILE* lf = std::fopen(s_settleDiag, "a")) {
+                std::fprintf(lf, "SUB n=%d %s pass=%d chunk=%g pd=(%.9g,%.9g,%.9g) vel=(%.9g,%.9g,%.9g) "
+                                 "c9ec=%d ret=%d loads=(%.9g,%.9g,%.9g,%.9g)\n",
+                             s_sdN, tag, pass, chunkMs, posDelta[0], posDelta[1], posDelta[2],
+                             F(r, off::kVelocity + 0), F(r, off::kVelocity + 4), F(r, off::kVelocity + 8),
+                             I(r, 0x9ec), contacted, F(r, 0x210), F(r, 0x2d4), F(r, 0x398), F(r, 0x45c));
+                std::fclose(lf);
+            }
+        };
+        sdSub("scan");
         if (I(r, 0x9ec) != 0) {                                              // 0x00470aef
             const float pv[3] = { F(r, off::kVelocity + 0), F(r, off::kVelocity + 4),
                                   F(r, off::kVelocity + 8) };
             Collision::VehicleContactFixup(wcSelf);                          // 0x00470afe
+            sdSub("fixup");
             ++svpFixups;   // [D2 section 22.3] fixups this substep, for the cadence count
             if (s_wcLog && s_wcLines < 4000) {
                 if (std::FILE* lf = std::fopen(s_wcLog, "a")) {
@@ -1662,6 +1792,15 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         }
     }
 #endif  /* TEMP diag */
+    sdLine("end");
+    if (sdOn) {
+        if (std::FILE* lf = std::fopen(s_settleDiag, "a")) {
+            std::fprintf(lf, "STEP n=%d dd=(%.9g,%.9g,%.9g) io.pos=(%.9g,%.9g,%.9g)\n", s_sdN,
+                         io.drive_delta[0], io.drive_delta[1], io.drive_delta[2],
+                         io.pos[0], io.pos[1], io.pos[2]);
+            std::fclose(lf);
+        }
+    }
     // --- adapter OUT: read back the chain's INTERNAL velocity (round-trips through
     // record +0x9b0 to seed next frame, and feeds car_vel_ consumers — the AI host).
     // The visible world motion is io.drive_delta (velocity vector) + io.yaw (the

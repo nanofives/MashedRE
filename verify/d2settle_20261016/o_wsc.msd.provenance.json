@@ -1,0 +1,61 @@
+{
+  "msd": "o_wsc.msd",
+  "captured_utc": "2026-10-16T05:14:00Z",
+  "argv": [
+    "re\\frida\\scenario_launch.py",
+    "--track",
+    "0",
+    "--mode",
+    "10",
+    "--cars",
+    "4",
+    "--car",
+    "0",
+    "--poke-ctrl-slots",
+    "--statediff-out",
+    "verify/d2settle_20261016/o_wsc.msd",
+    "--statediff-car",
+    "0",
+    "--wheelstate-probe",
+    "--wheelstate-probe-count",
+    "--hold",
+    "12"
+  ],
+  "cwd": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\d2settle",
+  "git_head": "919b3dc7f1f817c9c71f4c5c6478c2e2af4ad299",
+  "host": "LIVING-PC",
+  "statediff": {
+    "car": 0,
+    "base_va": "0x8815a0",
+    "rec_size": "0xd04",
+    "drive": false,
+    "drive_late": false,
+    "steer": 0,
+    "aictrl": false,
+    "aistep": false,
+    "steer_schedule": "",
+    "steer_schedule_applied": null,
+    "steer_schedule_t0_offset_s": null,
+    "noop_cook": false,
+    "hooks": ""
+  },
+  "capture": {
+    "frames": 752,
+    "distinct_payloads": 5,
+    "nonzero_frames": 752
+  },
+  "descriptor_writes": {
+    "block_base": "0x007f1038",
+    "accel_byte": 4,
+    "steer_bytes": [
+      0,
+      1
+    ],
+    "legacy_steer_bytes": [
+      2,
+      3,
+      14,
+      15
+    ]
+  }
+}
