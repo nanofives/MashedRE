@@ -1,0 +1,43 @@
+== D_B
+   pre(spawn)=[0.500918448, 0.47481969, -2.00247097]  settle.s.pos=[0.500918448, 0.471858948, -2.00237846]  ptrace f=1=[0.500918447971344, 0.471858948469162, -2.002378463745117]
+   goff=0.0375000015 physy0=0.437319696  (original frame-1 y 0.4374268054962158; diff -1.071e-04)
+   settle-step move  = (+0, -0.002960742, +9.251e-05)
+   first-StepCar move= (-2.86559665e-11, -0.00296074153, +9.25062549e-05)   original (0, -0.0029474455, +9.21487808e-05)
+   G-SETTLE: x bit-identical PASS | dz +3.575e-07 vs 2.4e-7 FAIL | dy -1.330e-05 vs 1e-5 FAIL => FAIL
+== D_BRG
+   pre(spawn)=[0.500936747, 0.474926978, -1.99903715]  settle.s.pos=[0.500936747, 0.471974939, -1.99894488]  ptrace f=1=[0.50093674659729, 0.4719749391078949, -1.998944878578186]
+   goff=0.0375000015 physy0=0.437426984  (original frame-1 y 0.4374268054962158; diff +1.785e-07)
+   settle-step move  = (+0, -0.002952039, +9.227e-05)
+   first-StepCar move= (-4.02709976e-10, -0.00295203889, +9.22714218e-05)   original (0, -0.0029474455, +9.21487808e-05)
+   G-SETTLE: x bit-identical PASS | dz +1.226e-07 vs 2.4e-7 PASS | dy -4.593e-06 vs 1e-5 PASS => PASS
+   G-PROG (as registered, last row): v=0 distinct prog [0.012529, 0.025082, 0.037636, 0.050191, 0.062746, 0.075302, 0.087859, 0.100417] last frame (117, 1.047202) => FAIL
+   G-PROG (amendment 1): first moving ptrace f=24, 23 parked rows, distinct [29.999977] => PASS
+== D_B0
+   pre(spawn)=[0.500918448, 0.47481969, -2.00247097]  settle.s.pos=[0.500918448, 0.471858948, -2.00237846]  ptrace f=1=[0.500918447971344, 0.471858948469162, -2.002378463745117]
+   goff=0.0375000015 physy0=0.437319696  (original frame-1 y 0.4374268054962158; diff -1.071e-04)
+   settle-step move  = (+0, -0.002960742, +9.251e-05)
+   first-StepCar move= (-2.86559665e-11, -0.00296074153, +9.25062549e-05)   original (0, -0.0029474455, +9.21487808e-05)
+   G-SETTLE: x bit-identical PASS | dz +3.575e-07 vs 2.4e-7 FAIL | dy -1.330e-05 vs 1e-5 FAIL => FAIL
+== D_B0RG
+   pre(spawn)=[0.500936747, 0.474926978, -1.99903715]  settle.s.pos=[0.500936747, 0.471974939, -1.99894488]  ptrace f=1=[0.50093674659729, 0.4719749391078949, -1.998944878578186]
+   goff=0.0375000015 physy0=0.437426984  (original frame-1 y 0.4374268054962158; diff +1.785e-07)
+   settle-step move  = (+0, -0.002952039, +9.227e-05)
+   first-StepCar move= (-4.02709976e-10, -0.00295203889, +9.22714218e-05)   original (0, -0.0029474455, +9.21487808e-05)
+   G-SETTLE: x bit-identical PASS | dz +1.226e-07 vs 2.4e-7 PASS | dy -4.593e-06 vs 1e-5 PASS => PASS
+   G-PROG (as registered, last row): v=0 distinct prog [0.012527, 0.025078, 0.03763, 0.050182, 0.062736, 0.07529, 0.087845, 0.100401] last frame (117, 1.04706) => FAIL
+   G-PROG (amendment 1): first moving ptrace f=24, 23 parked rows, distinct [29.999977] => PASS
+== D_RG
+   pre(spawn)=[0.500936747, 0.474926978, -1.99903715]  settle.s.pos=[0.500936747, 0.474926978, -1.99903715]  ptrace f=1=[0.50093674659729, 0.47492697834968567, -1.9990371465682983]
+   goff=0.0375000015 physy0=0.437426984  (original frame-1 y 0.4374268054962158; diff +1.785e-07)
+   settle-step move  = (+0, +0, +0)
+   first-StepCar move= (-4.02709976e-10, +3.49685669e-10, +3.43170159e-09)   original (0, -0.0029474455, +9.21487808e-05)
+   G-SETTLE: x bit-identical PASS | dz -9.215e-05 vs 2.4e-7 FAIL | dy +2.947e-03 vs 1e-5 FAIL => FAIL
+   G-PROG (as registered, last row): v=0 distinct prog [0.0, 0.009885, 0.018711, 0.027537, 0.036363, 0.045191, 0.054019, 0.062848] last frame (117, 0.768568) => FAIL
+   G-PROG (amendment 1): first moving ptrace f=28, 27 parked rows, distinct [0.0] => FAIL
+== D_DEF
+   pre(spawn)=[0.500918448, 0.47481969, -2.00247097]  settle.s.pos=[0.500918448, 0.47481969, -2.00247097]  ptrace f=1=[0.500918447971344, 0.47481968998908997, -2.0024709701538086]
+   goff=0.0375000015 physy0=0.437319696  (original frame-1 y 0.4374268054962158; diff -1.071e-04)
+   settle-step move  = (+0, +0, +0)
+   first-StepCar move= (-2.86559665e-11, -1.09100506e-11, -1.53808521e-10)   original (0, -0.0029474455, +9.21487808e-05)
+   G-SETTLE: x bit-identical PASS | dz -9.215e-05 vs 2.4e-7 FAIL | dy +2.947e-03 vs 1e-5 FAIL => FAIL
+

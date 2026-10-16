@@ -24,7 +24,8 @@ RG = PP + ['MASHED_ROUND_GRID', 'MASHED_ROUND_GRID_ORDER']
 B0 = ['MASHED_POS_SEED', 'MASHED_POS_WHEELS', 'MASHED_POS_TRANS']   # d2posmodel's fix B
 STACK = {'DEF': [], 'B0': B0, 'BO': B0 + ['MASHED_POS_ORDER'], 'BK': B0 + ['MASHED_POS_CONTACTS'],
          'B': ['MASHED_POS_MODEL'], 'K': ['MASHED_POS_CONTACTS'], 'O': ['MASHED_POS_ORDER'],
-         'RG': RG, 'BRG': ['MASHED_POS_MODEL'] + RG, 'B0RG': B0 + RG}
+         'RG': RG, 'BRG': ['MASHED_POS_MODEL'] + RG, 'B0RG': B0 + RG,
+         'BC': ['MASHED_POS_MODEL', 'MASHED_SPEED_REFRESH']}   # amendment 2, report only
 # DIAGNOSTIC stacks (report only): the D2 recipe plus the world-contact fixup log, the off-mesh log and
 # A6a's per-frame dump (clamp #6 grip / k), written into OUT under the arm's stack name.
 DX = ['MASHED_WORLD_CONTACT_LOG=@OUT@\\{n}.wc.log', 'MASHED_OFFMESH_LOG=@OUT@\\{n}.om.log',

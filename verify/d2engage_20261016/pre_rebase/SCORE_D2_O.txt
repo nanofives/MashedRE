@@ -1,0 +1,4 @@
+== D2_O_1
+   D2: slip1500=0.1931 in slip2000=0.2521 in drvmed=1878.6000 OUT  n=('336', '557', '1293')
+   recovery: 391/400 (97.8 %) median 1293.1  H1 PASS | +0xb14 engages d=15 | best lag L=0 at 0.13 %
+   order: marker line 0, release line 2, series[0] at line 1 (bf4=3000 bf8=0 st=[1,1,1,1]), series[1] at line 3 (bf4=2800 bf8=2 st=[1,1,1,1])
