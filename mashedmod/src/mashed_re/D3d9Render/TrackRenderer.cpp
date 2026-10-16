@@ -34,6 +34,7 @@ extern "C" void* __cdecl RwMatrixRotate(void* matrix, const float* axis, float a
 #include "../Ai/AiTargetClosest.h" // D-11072 P3: FUN_00414a70 (MASHED_TGT3)
 #include "../Ai/AiLeafTargets.h"   // D3 bulk G-AILEAF: FUN_00414570 / FUN_00415880 (MASHED_AILEAF)
 #include "../Race/RoundGrid.h"      // round-restart grid Stage A (MASHED_ROUND_GRID)
+#include "../Race/HeadingAssist.h"  // [d3b] FUN_0046c7d0 steer-0 heading assist (MASHED_HEADING_ASSIST)
 #include "../Vehicle/PosModelKnobs.h" // [d2posmodel] fix B knobs (default OFF)
 #include "../Race/WorldRegistry.h"  // mode 7 M1: world-object registry (MASHED_REGISTRY)
 #include "../Gameplay/PickupTick.h"  // mode 7 M2a: pickup tick FUN_00459000 (MASHED_PICKUPS_ORIG)
@@ -5061,6 +5062,10 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         Ai::Ai_Standalone_Tick();
         AiStepDump();
         U9186GateDump();   // [U-9186 G1] default-OFF measurement probe
+        // [d3b 2026-10-16] FUN_00424eb0's FUN_0046c7d0 loop: the steer-0 heading assist, after the AI
+        // tick (0x00425a73) and before the physics frame (0x00425a8d), AI slots only. Default OFF
+        // (MASHED_HEADING_ASSIST=1). Race/HeadingAssist.cpp, verify/d3b_20261016/PREREG_d3b.md.
+        Race::HeadingAssist_Frame(static_cast<int>(in.dt * 3000.0f + 0.5f));
         // [D-11073 leg 1a] FUN_0041d930's tail (0x0041da5f..0x0041da76): DAT_0063d584 += 1,
         // DAT_0063d588 += _DAT_007f100c. The original runs it once per frame from FUN_0040fc00
         // (call at 0x0040fd11), after the step store (0x0040fc57, Ai_AdvanceClock above) and

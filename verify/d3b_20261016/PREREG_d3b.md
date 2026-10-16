@@ -147,3 +147,28 @@ outside `FUN_0046e9e0`'s interval).
 Capture `o_ww1`: the same argv + `--watch-write 948,988` (hardware write watchpoints on the at.x of both body-matrix
 buffers of car 1) with `--lat-bracket --lat-bracket-solver` for ordering. G-WRITER: name the instruction(s) (pc rva
 and return chain) that write at.x between the last substep and the next A4 on the jump frames. G-REPRO as before.
+
+## Amendment 5 (2026-10-16, after o_ww1 / o_ww2 / o_pk1 / o_rt1, before any MASHED_HEADING_ASSIST run)
+
+G-WRITER result (`o_ww2`, G-REPRO 220/220 x3): the only runtime writers of car 1's at.x are FUN_0046e9e0's row write
+0x0046ef4e and its ortho 0x004c4a11 (inside the substeps), plus 0x004c4cf1 (FUN_004c4a50 under FUN_004c4d20) on 31
+frames, whose accurate backtrace ends at 0x0046cb15 = the call at 0x0046cb10 in **FUN_0046c7d0**. FUN_0046c7d0
+(C2 mapped, no port) is called by FUN_00424eb0 for cars 0..3 between the AI tick (0x00425a73) and the physics frame
+(0x00425a8d); when both steer bytes are 0 it rotates the live matrix about (0,1,0) by
+clamp(err, +-speed/6000 <= 2) * dt * (1/60) * _DAT_00613134 * (45 - min(|4*curv|, 45)) / 45, err = the car heading
+minus the mean heading of the next three track pieces (FUN_004093b0) folded to +-45. _DAT_00613134 reads 1.0 at
+runtime (`o_pk1`, control 0x00613108 = 105). The original's range table 0x0066ce58 on Training is {0, 29, -1} (`o_rt1`).
+
+Port: `Race/HeadingAssist.cpp`, knob `MASHED_HEADING_ASSIST=1` (AI slots 1..3 only; the player form changes D2 and
+is left to its own lane), trace `MASHED_HEADING_ASSIST_TRACE`. Exe `eb5e1462`.
+
+Gates:
+- G-NOOP: knob unset on `eb5e1462`: H trio `d3b90ee0 / 80f01f35 / 56d62ae7`, K0/K1/K26 `17d07c90 / 062a3c98 / b8124a63`.
+- G-TOOK: with the knob, the trace has non-zero angles on AI cars and the step dumps differ from G-NOOP.
+- G-ASSIST (sanity band, inputs not matched): on regime-A car 1 window rows with steer 0 and speed 1900..2500, the
+  port's assist angles lie in [-0.30, -0.15] deg (the original's measured jumps there: -0.19 .. -0.26).
+- (b): arms `HA` (assist), `HA5` (assist + LUT mask 5), `HAG` (assist + GRID_DIR), `HA5G`; K0 / K1 / K26.
+  Prediction: with `HA` or `HA5`, regime-A cars 1 and 3 `abs_steer~` rise above 0.
+- determinism + collateral (`H_HA`, `H_HA-2`, `H_HA5`, `H_HA5-2`), D2 x3 on the arm proposed as default (the D2
+  recipe runs solo, so the AI-only knob predicts no D2 change).
+Default rule: section 4 (G-ASSIST stands in for the replay gate for this site).

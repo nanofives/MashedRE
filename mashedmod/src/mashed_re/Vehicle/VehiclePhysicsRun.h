@@ -145,6 +145,8 @@ float VehiclePhysics_RecordF32(int slot, int off);
 // +0x9ec (the active-contact count the fixup divides by, `fild [edi+0x9ec]` at
 // 0x0046f3cd) is an INTEGER, so reading it as a float gives a denormal, not a count.
 int VehiclePhysics_RecordI32(int slot, int off);
+// [d3b] the live body basis (RwMatrix float[16]) of `slot`, or nullptr before it is seeded.
+float* VehiclePhysics_BodyBasis(int slot);
 
 }  // namespace Vehicle
 }  // namespace mashed_re

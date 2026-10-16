@@ -177,6 +177,7 @@
 "Race\CameraEntries.cpp"
 "Race\PathNodes.cpp"
 "Race\PathProgStep.cpp"
+"Race\HeadingAssist.cpp"
 "Ai\AiTargetClosest.cpp"
 "Ai\AiLeafTargets.cpp"
 "Race\RoundGridSnap.cpp"

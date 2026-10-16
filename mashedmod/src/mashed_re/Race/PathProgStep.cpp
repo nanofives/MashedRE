@@ -215,6 +215,20 @@ unsigned PathProg_PublishMask() {
     return s_mask;
 }
 
+// [d3b 2026-10-16] FUN_00408a50(v) as the steer-0 heading assist (Race/HeadingAssist.cpp, FUN_0046c7d0
+// 0x0046c997) reads it: the node progress +0xc8 of car v's row. With arm R (the default) the step keeps
+// its row on s_shadow, so that is the value the original's step would have left; with wholesale
+// MASHED_PATHPROG it is the real row. Neither publishes anything, so reading it changes no other path.
+float PathProg_NodeProgress(int v) {
+    if (v < 0 || v >= 4) return 0.0f;
+    float f = 0.0f;
+    if (RacePctOrig_Enabled() && !PathProg_Enabled())
+        std::memcpy(&f, s_shadow[v] + 0xc8, 4);
+    else
+        std::memcpy(&f, reinterpret_cast<const void*>(0x008a9620u + static_cast<std::uintptr_t>(v) * 0x30cu + 0xc8u), 4);
+    return f;
+}
+
 void PathProg_RaceInit() {                               // FUN_00407a60
     if (RacePctOrig_Enabled() && !PathProg_Enabled()) {   // arm R: initialise the shadow rows the same way
         const unsigned mask = PathProg_PublishMask();

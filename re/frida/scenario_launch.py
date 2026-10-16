@@ -1066,8 +1066,17 @@ function watchWriteArm(recBaseHex, car, offsCsv){
         }
         const vals = WW.addrs.map(a => a.readFloat());
         WW.n++;
+        // The heuristic scan above returns stale stack dwords too. For writers other than the two
+        // known substep ones (FUN_0046e9e0 row write 0x0046ef4e, its ortho 0x004c4a11), also log
+        // the ACCURATE backtrace (dbghelp stack walk) as '|'-joined rvas.
+        const pcr = (c.pc.toUInt32() >>> 0);
+        let acc = '';
+        if (pcr !== 0x0046ef4e && pcr !== 0x004c4a11) {
+          try { acc = Thread.backtrace(c, Backtracer.ACCURATE).slice(0, 14).map(p => wwRva(p.toUInt32())).join('|'); }
+          catch(e){ acc = 'bt-err'; }
+        }
         if (WW.rows.length < 200000)
-          WW.rows.push([LB_SEQ, wwRva(c.pc.toUInt32()), bt[0] || '', bt[1] || '', bt[2] || ''].concat(vals));
+          WW.rows.push([LB_SEQ, wwRva(c.pc.toUInt32()), bt[0] || '', bt[1] || '', bt[2] || ''].concat(vals).concat([acc]));
       } catch(e){ if (!WW.err) WW.err = 'hit ' + e; }
       return true;
     });
