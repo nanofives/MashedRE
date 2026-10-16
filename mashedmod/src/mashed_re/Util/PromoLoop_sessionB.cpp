@@ -1032,10 +1032,14 @@ extern "C" __declspec(dllexport) void __cdecl Or4b52c0(std::uint8_t* p, std::uin
 }
 RH_ScopedInstall(Or4b52c0, 0x004b52c0);
 
-// 0x004b5240 — void fn(p,flag): cl=p[2]; if(flag) p[2]=cl|4
+// 0x004b5240 — void fn(p,flag): cl=p[2]; if(flag) p[2]=cl|4 else p[2]=cl&0xfb
+// [carlod 2026-10-16] the else arm was missing: `je 0x4b5256` (0x004b524d) -> `and cl,0xfb;
+// mov [eax+2],cl` (0x004b5256..0x004b5259), verify/carlod_20261016/evidence/dis_004b5240.txt.
+// FUN_00420870 @ 0x00420870 clears each hidden part's rpATOMICRENDER through it every frame.
 extern "C" __declspec(dllexport) void __cdecl Or4b5240(std::uint8_t* p, std::uint32_t flag) {
     std::uint8_t cl = p[2];
     if (flag) p[2] = static_cast<std::uint8_t>(cl | 4);
+    else      p[2] = static_cast<std::uint8_t>(cl & 0xfb);
 }
 RH_ScopedInstall(Or4b5240, 0x004b5240);
 

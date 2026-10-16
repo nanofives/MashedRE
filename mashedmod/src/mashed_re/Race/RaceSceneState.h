@@ -238,6 +238,13 @@ struct RaceSceneState {
     float         shine_lo_ = 0.f;          // COURSE.LUA Vehicle_Shininess_Range -> course +0x204
     float         shine_hi_ = 1.f;          // ... +0x208 (defaults 0x0047a060 / 0x0047a066)
     std::uint32_t gloss_frame_ = 0;         // stand-in for DAT_007f101c (race frame counter)
+    // [carlod] the camera position the env coefficient's distance sees (FUN_00420290 ->
+    // FUN_0041f120 @ 0x0041f120 reads the camera object's frame at +0x40): the PREVIOUS frame's.
+    // Measured, not assumed: the live coefficient (rec+0x274) of 112 records on three tracks is
+    // reproduced exactly by trace row K-1's camera and off by up to 0.009 with row K's
+    // (verify/carlod_20261016/evidence/env_lag_live.txt).
+    float         eye_prev_[3] = {};
+    bool          eye_prev_ok_ = false;
     float         car_part19_[3] = {};      // part 0x13's frame origin, model space
     bool          car_part19_ok_ = false;
     bool          car_env_ok_ = false;      // SetupCarEnv bound env materials

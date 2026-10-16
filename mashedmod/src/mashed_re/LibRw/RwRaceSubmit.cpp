@@ -67,8 +67,10 @@ IDirect3DStateBlock9* g_state_block = nullptr;  // D-S3-2 outbound fix
 std::vector<rw::Clump*> g_models;
 // [rtex] per instance: the car's env coefficient and env frame matrix (FUN_00420340 @
 // 0x00420340 re-applies both per car each frame; one shared clump draws all four cars).
+// [carlod] and, for a car copy, its record state / flags (FUN_00420870's inputs).
 struct Inst { int model; float m[16]; bool fx = false; float env_coef = 0.f; float env_m[16];
-              std::vector<FramePose> poses; float sun_scale = -1.f; };   // [librwrest]
+              std::vector<FramePose> poses; float sun_scale = -1.f;   // [librwrest]
+              bool vis = false; int vis_state = 0; std::uint32_t vis_flags = 0; };
 std::vector<Inst>       g_insts;
 // [librwrest] per model, parallel to g_models: the FRAMELIST frames of a hierarchy model and
 // their streamed matrices (restored after each posed copy draws). Empty otherwise.
@@ -90,6 +92,12 @@ std::vector<std::vector<std::int32_t>> g_model_parts;
 // geometry carries the model's WHOLE material list (BuildClump AppendMaterials), so the
 // material an atomic draws is matList.materials[this], not the whole list.
 std::vector<std::vector<std::uint32_t>> g_model_amat;
+// [carlod] and each atomic's RENDER bit as BuildClump left it: a copy without a record state
+// draws exactly these, a car copy draws these AND what CarPartVisible gives its part code.
+std::vector<std::vector<std::uint8_t>> g_model_render0;
+// [carlod] 1 once a model has had a car copy: only those models need their RENDER bits
+// re-set for every copy (props never leave the BuildClump state, so they skip the loop).
+std::vector<std::uint8_t> g_model_vis_used;
 struct ModelEnv { std::vector<rw::Material*> mats; rw::Frame* frame = nullptr; };
 std::vector<ModelEnv>   g_model_env;
 
@@ -369,6 +377,8 @@ void RaceSubmit_BeginTrackLoad() {
     g_model_aframe.clear();
     g_model_order.clear();
     g_model_rwstates.clear();
+    g_model_render0.clear();
+    g_model_vis_used.clear();
 }
 
 int RaceSubmit_RegisterModel(const Track::DffModel& model,
@@ -393,6 +403,33 @@ int RaceSubmit_RegisterModel(const Track::DffModel& model,
     g_models.push_back(c);
     g_model_parts.push_back(std::move(atomic_part));
     g_model_amat.push_back(atomic_mat);
+    {
+        std::vector<std::uint8_t> r0;
+        FORLIST(lnk, c->atomics) {
+            rw::Atomic* a = rw::Atomic::fromClump(lnk);
+            r0.push_back((a->object.object.flags & rw::Atomic::RENDER) ? 1 : 0);
+        }
+        g_model_render0.push_back(std::move(r0));
+        g_model_vis_used.push_back(0);
+        // [carlod] a vehicle (part 0x13 present): list each atomic's part code, triangles and
+        // material count, for PREREG_carlod's part table (evidence only)
+        const std::vector<std::int32_t>& pc = g_model_parts.back();
+        bool is_car = false;
+        for (std::int32_t p : pc) if (p == 0x13) is_car = true;
+        if (is_car) {
+            int ai = 0;
+            FORLIST(lnk, c->atomics) {
+                rw::Atomic* a = rw::Atomic::fromClump(lnk);
+                RLog("[carlod] model[%d] atomic %d part %#x tris %d mats %d render0 %d",
+                     (int)g_models.size() - 1, ai,
+                     ai < (int)pc.size() ? pc[(std::size_t)ai] : -1,
+                     a->geometry ? (int)a->geometry->numTriangles : -1,
+                     a->geometry ? (int)a->geometry->matList.numMaterials : -1,
+                     (int)g_model_render0.back()[(std::size_t)ai]);
+                ++ai;
+            }
+        }
+    }
     g_model_env.emplace_back();
     g_model_frames.emplace_back();
     g_model_bind.emplace_back();
@@ -456,10 +493,11 @@ void RaceSubmit_SetModelRwStates(int handle) {
 
 void RaceSubmit_AddInstancePosed(int handle, const float* m44, const FramePose* poses,
                                  std::size_t npose, float sun_scale, float env_coef,
-                                 const float* env_m44) {
+                                 const float* env_m44, const CarVis* vis) {
     if (handle < 0 || !m44 || (std::size_t)handle >= g_models.size()) return;
     Inst i; i.model = handle;
     for (int k = 0; k < 16; ++k) i.m[k] = m44[k];
+    if (vis) { i.vis = true; i.vis_state = vis->state; i.vis_flags = vis->flags; }   // [carlod]
     if (env_m44 && (std::size_t)handle < g_model_env.size() &&
         !g_model_env[(std::size_t)handle].mats.empty()) {
         i.fx = true;
@@ -473,19 +511,21 @@ void RaceSubmit_AddInstancePosed(int handle, const float* m44, const FramePose* 
     g_insts.push_back(std::move(i));
 }
 
-void RaceSubmit_AddInstance(int handle, const float* m44) {
+void RaceSubmit_AddInstance(int handle, const float* m44, const CarVis* vis) {
     if (handle < 0 || !m44 || (std::size_t)handle >= g_models.size()) return;
     Inst i; i.model = handle;
     for (int k = 0; k < 16; ++k) i.m[k] = m44[k];
+    if (vis) { i.vis = true; i.vis_state = vis->state; i.vis_flags = vis->flags; }
     g_insts.push_back(i);
 }
 
 // [rtex] as above, plus the car's env coefficient and env frame matrix for this copy.
 void RaceSubmit_AddInstanceEnv(int handle, const float* m44, float env_coef,
-                               const float* env_m44) {
+                               const float* env_m44, const CarVis* vis) {
     if (handle < 0 || !m44 || (std::size_t)handle >= g_models.size()) return;
     Inst i; i.model = handle;
     for (int k = 0; k < 16; ++k) i.m[k] = m44[k];
+    if (vis) { i.vis = true; i.vis_state = vis->state; i.vis_flags = vis->flags; }
     if (env_m44 && (std::size_t)handle < g_model_env.size() &&
         !g_model_env[(std::size_t)handle].mats.empty()) {
         i.fx = true;
@@ -1036,6 +1076,39 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
                     me.frame->updateObjects();
                 }
             }
+            // [carlod] FUN_00420870 @ 0x00420870: every part atomic's RENDER bit (FUN_004b5240 @
+            // 0x004b5240 sets / clears bit 4 of the byte at atomic+2) from this car's state and
+            // flags, by part code. The clump is shared by all copies, so every copy sets all of
+            // them: a copy without a record state gets the bits BuildClump left.
+            if (in.vis) g_model_vis_used[(std::size_t)in.model] = 1;
+            if (g_model_vis_used[(std::size_t)in.model]) {
+                const std::vector<std::int32_t>& parts = g_model_parts[(std::size_t)in.model];
+                const std::vector<std::uint8_t>& r0 = g_model_render0[(std::size_t)in.model];
+                int ai = 0, nvis = 0;
+                FORLIST(lnk, c->atomics) {
+                    rw::Atomic* a = rw::Atomic::fromClump(lnk);
+                    bool on = ai < (int)r0.size() && r0[(std::size_t)ai] != 0;
+                    const int part = ai < (int)parts.size() ? parts[(std::size_t)ai] : -1;
+                    if (in.vis && part >= 0)
+                        on = on && CarPartVisible(in.vis_state, in.vis_flags, part);
+                    if (on) a->object.object.flags |= rw::Atomic::RENDER;
+                    else    a->object.object.flags &= ~rw::Atomic::RENDER;
+                    nvis += on ? 1 : 0;
+                    ++ai;
+                }
+                if (in.vis) {
+                    // one line per distinct (state, flags) pair seen, to the race log
+                    static std::vector<std::uint64_t> s_seen;
+                    const std::uint64_t key = ((std::uint64_t)(unsigned)in.vis_state << 32) | in.vis_flags;
+                    bool seen = false;
+                    for (std::uint64_t k : s_seen) if (k == key) { seen = true; break; }
+                    if (!seen) {
+                        s_seen.push_back(key);
+                        RLog("[carlod] car vis: state=%d flags=0x%x -> %d of %d atomics render (model[%d])",
+                             in.vis_state, in.vis_flags, nvis, ai, in.model);
+                    }
+                }
+            }
             // D-S3-7: does the transform actually reach the atomics? uploadMatrices
             // uses atomic->getFrame()->getLTM() (d3d9render.cpp:154), so THAT is
             // the number that matters -- not what we wrote into clump->frame.
@@ -1097,6 +1170,24 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
             } else {
                 c->render();
                 ++g_inst_drawn;
+            }
+            // [carlod] FUN_00420050 @ 0x00420050: then the glass atomics (RENDER bit clear above),
+            // each through its own render callback, the first then the second, inside the same
+            // light and render-state scope and only for a car that was not culled.
+            if (!culled && in.vis) {
+                const std::vector<std::int32_t>& gparts = g_model_parts[(std::size_t)in.model];
+                const std::vector<std::uint8_t>& gr0 = g_model_render0[(std::size_t)in.model];
+                for (int which = 0; which < 2; ++which) {
+                    const int gp = CarGlassPart(in.vis_state, in.vis_flags, which);
+                    if (gp < 0) continue;
+                    int gi = 0;
+                    FORLIST(glnk, c->atomics) {
+                        rw::Atomic* ga = rw::Atomic::fromClump(glnk);
+                        if (gi < (int)gparts.size() && gparts[(std::size_t)gi] == gp &&
+                            gi < (int)gr0.size() && gr0[(std::size_t)gi]) ga->render();
+                        ++gi;
+                    }
+                }
             }
             if (rws && !culled) {
                 rw::SetRenderState(rw::ALPHATESTFUNC, s_af);
