@@ -201,3 +201,21 @@ L's gates on the rebased arms: no-op, determinism, D2 slips in bounds 3/3 and dr
 Report only, no gate (registered now so it is not chosen after the data): G-WHEEL-F with the hold-tick wheel-calls
 left out of both numerator and denominator. A hold-tick wheel-call = query frame < 1000 and the original's
 next-entry O row holds, for that wheel, fv `00000000`, key `ffffffff`, `+0x204` `3f800000` and state 1.
+
+## Amendment 4 (2026-10-16, after every amendment-3 arm, before any run on the new base)
+
+`race/first-frame-parity` moved to `10c18c59` (rstates: render; d2engage: fix B parts 4 / 5, default OFF) while the
+amendment-3 arms ran. Both lanes state the default build unchanged. `work/d2bsp` is rebased onto `10c18c59`; the only
+code conflict is `VehiclePhysicsRun.cpp` after the A4 call, resolved as A4 receiving `a4Dt` (fix L) and
+`ReassertContacts` behind d2engage's `!PosModelContacts()`. U-9707 was taken by rstates, so this lane's new row is
+U-9710. The amendment-3 results stay as the `34ea5b71` record; the arms below on `10c18c59` are the final ones and
+decide L's default by the same gates. Output `verify/d2bsp_20261016/rb2/`, base exe = a build of `10c18c59`.
+
+- `H_BASE`, `H_BASE-2`. Prediction `716cb2fd / 2a2afda1 / ba90ed88`.
+- `H_NOL`, `H_NOL-2` = `H_BASE` (no-op gate). `H_DEF`, `H_DEF-2` (determinism gate; prediction `2b4d47bb / 356821c8 /
+  f7a155e1`). `H_W`, `H_W-2` (report; prediction `d3b90ee0 / 80f01f35 / 56d62ae7`).
+- `R_DEF`, `R_K`: prediction byte-identical to `e8d19d3f` / `7dee6f32`.
+- `D2_BASE_1..3`, `D2_DEF_1..3` (L's gate), `D2_W_1..3` (report), each alone, re-run under 1600 lines. `D2_WK` is
+  dropped: on `34ea5b71` it was byte-identical to `D2_W` at equal line counts.
+- `B_{BASE,DEF,W}_K{0,1,26}`; collateral `H_DEF`, `H_W` against `H_BASE`.
+If any of L's gates fails here, L goes back to default OFF before the lane ends.
