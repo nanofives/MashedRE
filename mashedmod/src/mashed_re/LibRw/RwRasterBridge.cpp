@@ -25,6 +25,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <unordered_map>
 #include <vector>
 
 #include "../Piz/PizReader.h"
@@ -32,6 +33,16 @@
 namespace mashed_re {
 namespace LibRw {
 namespace {
+
+// [rtex] the original's raster alpha flag rule (a base-mip texel with alpha < 255,
+// verify/d1r1_20261016/texalpha_rule.txt) per raster built here, independent of librw's own
+// flag (C8888 = always alpha). RwRaceSubmit hands it to librw's MatFX env pass choice
+// (rw_mashed_rasteralpha, d3d9matfx.cpp P9), which is FUN_005412d0's FUN_004cfee0 test.
+std::unordered_map<const void*, bool>& TexelAlphaMap() {
+    static std::unordered_map<const void*, bool> m;
+    return m;
+}
+void TexelAlphaRecord(const void* raster, bool alpha) { TexelAlphaMap()[raster] = alpha; }
 
 // TXD palette entries are RGBA bytes (same convention QuadRenderer's PAL8 path
 // and TrackRenderer::MakeTexture use).
@@ -152,6 +163,7 @@ void* RasterFromTxdTexture(const Txd::Texture& tex) {
         if (s_rwstates && ras->platform == rw::PLATFORM_D3D9)
             GETD3DRASTEREXT(ras)->hasAlpha = (amin < 255);   // macro: rwd3d.h:307
     }
+    TexelAlphaRecord(ras, amin < 255);   // [rtex] the same rule, for the MatFX env pass choice
 
     // MIP-FIX: box-filter level 0 down the allocated mip chain. lock/unlock are
     // self-contained (rasterUnlock restores width/height/stride), so each level
@@ -405,6 +417,53 @@ int RasterBridge_SelfTest() {
     }
     RLog("# hashed %d textures", total);
     return total;
+}
+
+int RasterTexelAlpha(const void* raster) {
+    auto it = TexelAlphaMap().find(raster);
+    return it == TexelAlphaMap().end() ? -1 : (it->second ? 1 : 0);
+}
+
+// [rtex 2026-10-16] Car dirt (MatFX dual) texture. The original reads the dirt.piz PNGs
+// through RwTextureRead (FUN_004c5cb0 in FUN_0040cea0 @ 0x0040cea0) and the D3D9 driver
+// stores them as D3DFMT_A4R4G4B4 128x128 (recorded "#128x128:26" on stage 1 of the car
+// body draws, verify/d1r1_20261016). The texture carries no recorder name on either side.
+// Channels are truncated to 4 bits. [UNCERTAIN U-9697] the original's 8->4 bit rule
+// (truncate or round) and mip chain are not read; they change texels, not the draw list.
+void* TextureFromBgra4444(const std::uint8_t* bgra, std::uint32_t w, std::uint32_t h,
+                          std::uint32_t filter_addressing) {
+    if (!bgra || !w || !h) return nullptr;
+    rw::Raster* ras = rw::Raster::create(static_cast<std::int32_t>(w),
+                                         static_cast<std::int32_t>(h), 16,
+                                         rw::Raster::C4444 | rw::Raster::TEXTURE);
+    if (!ras) return nullptr;
+    std::uint8_t* dst = ras->lock(0, rw::Raster::LOCKWRITE);
+    if (!dst) { ras->destroy(); return nullptr; }
+    unsigned amin = 255;
+    for (std::uint32_t y = 0; y < h; ++y) {
+        std::uint16_t* out = reinterpret_cast<std::uint16_t*>(
+            dst + static_cast<std::size_t>(y) * ras->stride);
+        const std::uint8_t* in = bgra + static_cast<std::size_t>(y) * w * 4;
+        for (std::uint32_t x = 0; x < w; ++x) {
+            const unsigned b = in[x * 4 + 0], g = in[x * 4 + 1], r = in[x * 4 + 2],
+                           a = in[x * 4 + 3];
+            out[x] = static_cast<std::uint16_t>(((a >> 4) << 12) | ((r >> 4) << 8) |
+                                                ((g >> 4) << 4) | (b >> 4));
+            if (a < amin) amin = a;
+        }
+    }
+    ras->unlock(0);
+    TexelAlphaRecord(ras, amin < 255);
+    rw::Texture* t = rw::Texture::create(ras);
+    if (!t) { ras->destroy(); return nullptr; }
+    t->name[0] = '\0';
+    t->mask[0] = '\0';
+    // RwTexture filterAddressing dword (+0x50): filter low byte, U bits 8-11, V bits 12-15
+    // (the layout FUN_004d6e70 @ 0x004d6e70 decodes), read live off the original's texture.
+    t->setFilter(static_cast<rw::Texture::FilterMode>(filter_addressing & 0xFF));
+    t->setAddressU(static_cast<rw::Texture::Addressing>((filter_addressing >> 8) & 0xF));
+    t->setAddressV(static_cast<rw::Texture::Addressing>((filter_addressing >> 12) & 0xF));
+    return t;
 }
 
 }  // namespace LibRw

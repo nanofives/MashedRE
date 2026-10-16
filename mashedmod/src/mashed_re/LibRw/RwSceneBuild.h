@@ -42,6 +42,11 @@ struct TextureSource {
 // baked prelight is the lighting, exactly as on the D3D9 path.
 void* BuildWorld(const Track::World& world, const TextureSource& tex);
 
+// [rtex] MatFX DUAL on (default) unless MASHED_LIBRW_DUAL=0: materials streamed with a
+// DUAL effect keep it, two-set geometry keeps texcoord set 1, and their atomics render
+// through librw's MatFX pipeline (FUN_005405c0 @ 0x005405c0 mapping). See RwSceneBuild.cpp.
+bool DualEnabled();
+
 // Track::DffModel -> rw::Clump* (returned as void*), one rw::Atomic per batch.
 // DffBatch verts are model-space and frame-baked (DffModel.h), so every atomic
 // gets an identity frame parented to the clump frame.
@@ -65,9 +70,13 @@ void* BuildWorld(const Track::World& world, const TextureSource& tex);
 void SceneBuild_SetRegisteringHandle(int handle);
 int  PropVDumpHandle();
 
+// [rtex] `out_atomic_part`, when non-null, receives each created atomic's part code
+// (DffBatch::part_id, the geometry's "0.tv_part_id" user data; -1 when absent), in the
+// same order as `out_atomic_mat`. RwRaceSubmit keys the car dirt / env set-up on it.
 void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
                  std::uint32_t ambient = 0,
-                 std::vector<std::uint32_t>* out_atomic_mat = nullptr);
+                 std::vector<std::uint32_t>* out_atomic_mat = nullptr,
+                 std::vector<std::int32_t>* out_atomic_part = nullptr);
 
 // E2'b step 2: build the Arctic world, render it once through librw from a
 // DETERMINISTIC overview camera derived from the world bbox, and dump the

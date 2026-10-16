@@ -128,6 +128,21 @@ void RaceSubmit_SetAnimTime(float t);
 // consumed and cleared by RaceSubmit_Render.
 void RaceSubmit_AddInstance(int handle, const float* m44);
 
+// [rtex 2026-10-16] Car MatFX passes (U-9693, LibRw/RwCarFx.h). BindCarDirt makes the two
+// dirt.piz images (top-down BGRA) the DUAL texture of every effect-4 material by part code
+// (FUN_0041ecc0 @ 0x0041ecc0); SetupCarEnv turns the env parts' materials into ENVMAP with
+// the vehicle TXD's `env_tex_name` (FUN_00420420 @ 0x00420420). Both return the number of
+// materials set. AddInstanceEnv queues a copy with its own env coefficient and env frame
+// matrix (D3DMATRIX layout, like m44), which FUN_00420340 @ 0x00420340 refreshes per car.
+int  RaceSubmit_BindCarDirt(int handle,
+                            const std::uint8_t* body_bgra, std::uint32_t bw, std::uint32_t bh,
+                            const std::uint8_t* wheel_bgra, std::uint32_t ww, std::uint32_t wh,
+                            std::uint32_t filter_addressing);
+int  RaceSubmit_SetupCarEnv(int handle, const Txd::Dictionary* dicts, std::size_t ndicts,
+                            const char* env_tex_name);
+void RaceSubmit_AddInstanceEnv(int handle, const float* m44, float env_coef,
+                               const float* env_m44);
+
 // Per-frame submit. Reads eye/at + the projection quartet + fog + lights out of
 // `st`; draws the static world and then every queued instance. Issues no Clear
 // and no Begin/EndScene (the caller owns the frame). No-op until a track is built.

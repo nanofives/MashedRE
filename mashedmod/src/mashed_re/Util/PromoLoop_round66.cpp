@@ -29,15 +29,6 @@ extern "C" __declspec(dllexport) void __cdecl FlagToggle63dc74(std::uint32_t idx
 }
 RH_ScopedInstall(FlagToggle63dc74, 0x0041ef80);
 
-// 0x0041f360
-extern "C" __declspec(dllexport) std::uint32_t __cdecl GatedSwitch636ad0(std::uint32_t a) {
-    if (*reinterpret_cast<std::int32_t*>(0x00636ad0u) == 0) {                           // gate
-        switch (a) {
-        case 4: case 5: case 8: case 10: case 0xb: case 0xe: case 0xf:
-        case 0x25: case 0x26: case 0x29: case 0x2b: case 0x2c: case 0x2f: case 0x30:
-            return 1;
-        }
-    }
-    return 0;
-}
-RH_ScopedInstall(GatedSwitch636ad0, 0x0041f360);
+// [rtex 2026-10-16] GatedSwitch636ad0 (FUN_0041f360) moved, unchanged for the .asi, to
+// Vehicle/CarMaterialTables.cpp, which both targets compile (the standalone's car env set-up
+// calls it; one body per RVA, build.bat rva-lint).

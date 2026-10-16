@@ -1,0 +1,252 @@
+== C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\5a3bdb56-12f1-46ea-b31e-f18965df031a\scratchpad\piz_adv\ADVANTAGE0.DFF (686687 bytes)
+    GEOMETRY flags=0x1000f numTexCoordSets=1 tris=24 verts=32
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Advantage' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x1000f numTexCoordSets=1 tris=2 verts=6
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Advantage' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x1000f numTexCoordSets=1 tris=4 verts=8
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Advantage' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x10037 numTexCoordSets=1 tris=624 verts=501
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='AdvantageSmall' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x10037 numTexCoordSets=1 tris=618 verts=475
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='AdvantageSmall' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x10037 numTexCoordSets=1 tris=651 verts=574
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='AdvantageSmall' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x10037 numTexCoordSets=1 tris=636 verts=711
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='AdvantageSmall' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x73 numTexCoordSets=0 tris=1 verts=3
+      MATLIST (geometry)
+    mat[0] rgba=(102, 102, 102, 255) surf=(1.0, 1.0, 1.0) tex=None mask=None filt=None addr=None
+    GEOMETRY flags=0x73 numTexCoordSets=0 tris=1 verts=3
+      MATLIST (geometry)
+    mat[0] rgba=(102, 102, 102, 255) surf=(1.0, 1.0, 1.0) tex=None mask=None filt=None addr=None
+    GEOMETRY flags=0x73 numTexCoordSets=0 tris=1 verts=3
+      MATLIST (geometry)
+    mat[0] rgba=(102, 102, 102, 255) surf=(1.0, 1.0, 1.0) tex=None mask=None filt=None addr=None
+    GEOMETRY flags=0x73 numTexCoordSets=0 tris=1 verts=3
+      MATLIST (geometry)
+    mat[0] rgba=(102, 102, 102, 255) surf=(1.0, 1.0, 1.0) tex=None mask=None filt=None addr=None
+    GEOMETRY flags=0x73 numTexCoordSets=0 tris=1 verts=3
+      MATLIST (geometry)
+    mat[0] rgba=(102, 102, 102, 255) surf=(1.0, 1.0, 1.0) tex=None mask=None filt=None addr=None
+    GEOMETRY flags=0x73 numTexCoordSets=0 tris=1 verts=3
+      MATLIST (geometry)
+    mat[0] rgba=(102, 102, 102, 255) surf=(1.0, 1.0, 1.0) tex=None mask=None filt=None addr=None
+    GEOMETRY flags=0x73 numTexCoordSets=0 tris=56 verts=30
+      MATLIST (geometry)
+    mat[0] rgba=(102, 102, 102, 255) surf=(1.0, 1.0, 1.0) tex=None mask=None filt=None addr=None
+    GEOMETRY flags=0x73 numTexCoordSets=0 tris=44 verts=26
+      MATLIST (geometry)
+    mat[0] rgba=(102, 102, 102, 255) surf=(1.0, 1.0, 1.0) tex=None mask=None filt=None addr=None
+    GEOMETRY flags=0x73 numTexCoordSets=0 tris=60 verts=34
+      MATLIST (geometry)
+    mat[0] rgba=(102, 102, 102, 255) surf=(1.0, 1.0, 1.0) tex=None mask=None filt=None addr=None
+    GEOMETRY flags=0x73 numTexCoordSets=0 tris=40 verts=22
+      MATLIST (geometry)
+    mat[0] rgba=(102, 102, 102, 255) surf=(1.0, 1.0, 1.0) tex=None mask=None filt=None addr=None
+    GEOMETRY flags=0x73 numTexCoordSets=0 tris=1 verts=3
+      MATLIST (geometry)
+    mat[0] rgba=(102, 102, 102, 255) surf=(1.0, 1.0, 1.0) tex=None mask=None filt=None addr=None
+    GEOMETRY flags=0x73 numTexCoordSets=0 tris=1 verts=3
+      MATLIST (geometry)
+    mat[0] rgba=(102, 102, 102, 255) surf=(1.0, 1.0, 1.0) tex=None mask=None filt=None addr=None
+    GEOMETRY flags=0x73 numTexCoordSets=0 tris=1 verts=3
+      MATLIST (geometry)
+    mat[0] rgba=(102, 102, 102, 255) surf=(1.0, 1.0, 1.0) tex=None mask=None filt=None addr=None
+    GEOMETRY flags=0x73 numTexCoordSets=0 tris=1 verts=3
+      MATLIST (geometry)
+    mat[0] rgba=(102, 102, 102, 255) surf=(1.0, 1.0, 1.0) tex=None mask=None filt=None addr=None
+    GEOMETRY flags=0x73 numTexCoordSets=0 tris=1 verts=3
+      MATLIST (geometry)
+    mat[0] rgba=(102, 102, 102, 255) surf=(1.0, 1.0, 1.0) tex=None mask=None filt=None addr=None
+    GEOMETRY flags=0x73 numTexCoordSets=0 tris=1 verts=3
+      MATLIST (geometry)
+    mat[0] rgba=(102, 102, 102, 255) surf=(1.0, 1.0, 1.0) tex=None mask=None filt=None addr=None
+    GEOMETRY flags=0x73 numTexCoordSets=0 tris=1 verts=3
+      MATLIST (geometry)
+    mat[0] rgba=(102, 102, 102, 255) surf=(1.0, 1.0, 1.0) tex=None mask=None filt=None addr=None
+    GEOMETRY flags=0x73 numTexCoordSets=0 tris=1 verts=3
+      MATLIST (geometry)
+    mat[0] rgba=(102, 102, 102, 255) surf=(1.0, 1.0, 1.0) tex=None mask=None filt=None addr=None
+    GEOMETRY flags=0x73 numTexCoordSets=0 tris=1 verts=3
+      MATLIST (geometry)
+    mat[0] rgba=(102, 102, 102, 255) surf=(1.0, 1.0, 1.0) tex=None mask=None filt=None addr=None
+    GEOMETRY flags=0x73 numTexCoordSets=0 tris=1 verts=3
+      MATLIST (geometry)
+    mat[0] rgba=(102, 102, 102, 255) surf=(1.0, 1.0, 1.0) tex=None mask=None filt=None addr=None
+    GEOMETRY flags=0x73 numTexCoordSets=0 tris=1 verts=3
+      MATLIST (geometry)
+    mat[0] rgba=(102, 102, 102, 255) surf=(1.0, 1.0, 1.0) tex=None mask=None filt=None addr=None
+    GEOMETRY flags=0x73 numTexCoordSets=0 tris=1 verts=3
+      MATLIST (geometry)
+    mat[0] rgba=(102, 102, 102, 255) surf=(1.0, 1.0, 1.0) tex=None mask=None filt=None addr=None
+    GEOMETRY flags=0x73 numTexCoordSets=0 tris=1 verts=3
+      MATLIST (geometry)
+    mat[0] rgba=(102, 102, 102, 255) surf=(1.0, 1.0, 1.0) tex=None mask=None filt=None addr=None
+    GEOMETRY flags=0x73 numTexCoordSets=0 tris=1 verts=3
+      MATLIST (geometry)
+    mat[0] rgba=(102, 102, 102, 255) surf=(1.0, 1.0, 1.0) tex=None mask=None filt=None addr=None
+    GEOMETRY flags=0x73 numTexCoordSets=0 tris=1 verts=3
+      MATLIST (geometry)
+    mat[0] rgba=(102, 102, 102, 255) surf=(1.0, 1.0, 1.0) tex=None mask=None filt=None addr=None
+    GEOMETRY flags=0x73 numTexCoordSets=0 tris=1 verts=3
+      MATLIST (geometry)
+    mat[0] rgba=(102, 102, 102, 255) surf=(1.0, 1.0, 1.0) tex=None mask=None filt=None addr=None
+    GEOMETRY flags=0x73 numTexCoordSets=0 tris=1 verts=3
+      MATLIST (geometry)
+    mat[0] rgba=(102, 102, 102, 255) surf=(1.0, 1.0, 1.0) tex=None mask=None filt=None addr=None
+    GEOMETRY flags=0x10037 numTexCoordSets=1 tris=830 verts=623
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Advantage' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x10037 numTexCoordSets=1 tris=6 verts=12
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Glass' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x10037 numTexCoordSets=1 tris=10 verts=20
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Glass' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x200b3 numTexCoordSets=2 tris=522 verts=423
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Advantage' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'CarDirt', 'mask': ''}}, {'eff': 0}]}
+    GEOMETRY flags=0x200b3 numTexCoordSets=2 tris=380 verts=362
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Advantage' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'CarDirt', 'mask': ''}}, {'eff': 0}]}
+    GEOMETRY flags=0x10037 numTexCoordSets=1 tris=28 verts=38
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Advantage' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x10037 numTexCoordSets=1 tris=84 verts=86
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Advantage' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x200b3 numTexCoordSets=2 tris=86 verts=104
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Advantage' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'CarDirt', 'mask': ''}}, {'eff': 0}]}
+    GEOMETRY flags=0x10037 numTexCoordSets=1 tris=190 verts=166
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Advantage' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x200b3 numTexCoordSets=2 tris=685 verts=553
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Advantage' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'CarDirt', 'mask': ''}}, {'eff': 0}]}
+    GEOMETRY flags=0x200b3 numTexCoordSets=2 tris=288 verts=267
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Advantage' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'CarDirt', 'mask': ''}}, {'eff': 0}]}
+    GEOMETRY flags=0x10037 numTexCoordSets=1 tris=18 verts=20
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Advantage' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x10037 numTexCoordSets=1 tris=98 verts=76
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Advantage' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x10037 numTexCoordSets=1 tris=232 verts=132
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Advantage' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x10037 numTexCoordSets=1 tris=1518 verts=1002
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Advantage' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x10037 numTexCoordSets=1 tris=8 verts=16
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Glass' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x10037 numTexCoordSets=1 tris=18 verts=38
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Glass' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x200b3 numTexCoordSets=2 tris=1028 verts=812
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Advantage' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'CarDirt', 'mask': ''}}, {'eff': 0}]}
+    GEOMETRY flags=0x200b3 numTexCoordSets=2 tris=746 verts=582
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Advantage' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'CarDirt', 'mask': ''}}, {'eff': 0}]}
+    GEOMETRY flags=0x10037 numTexCoordSets=1 tris=52 verts=53
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Advantage' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x10037 numTexCoordSets=1 tris=166 verts=135
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Advantage' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x200b3 numTexCoordSets=2 tris=144 verts=153
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Advantage' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'CarDirt', 'mask': ''}}, {'eff': 0}]}
+    GEOMETRY flags=0x10037 numTexCoordSets=1 tris=374 verts=281
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Advantage' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x200b3 numTexCoordSets=2 tris=1486 verts=1055
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Advantage' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'CarDirt', 'mask': ''}}, {'eff': 0}]}
+    GEOMETRY flags=0x200b3 numTexCoordSets=2 tris=664 verts=503
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Advantage' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'CarDirt', 'mask': ''}}, {'eff': 0}]}
+    GEOMETRY flags=0x10037 numTexCoordSets=1 tris=42 verts=37
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Advantage' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x10037 numTexCoordSets=1 tris=214 verts=155
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Advantage' mask='' filt=2 addr=(1, 1)
+    GEOMETRY flags=0x10037 numTexCoordSets=1 tris=1 verts=3
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Advantage' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'CarDirt', 'mask': ''}}, {'eff': 0}]}
+    GEOMETRY flags=0x200b3 numTexCoordSets=2 tris=96 verts=74
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Advantage' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'WheelDirt', 'mask': ''}}, {'eff': 0}]}
+    GEOMETRY flags=0x200b3 numTexCoordSets=2 tris=96 verts=74
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Advantage' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'WheelDirt', 'mask': ''}}, {'eff': 0}]}
+    GEOMETRY flags=0x200b3 numTexCoordSets=2 tris=96 verts=74
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Advantage' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'WheelDirt', 'mask': ''}}, {'eff': 0}]}
+    GEOMETRY flags=0x200b3 numTexCoordSets=2 tris=96 verts=74
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Advantage' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'WheelDirt', 'mask': ''}}, {'eff': 0}]}
+    GEOMETRY flags=0x200b3 numTexCoordSets=2 tris=352 verts=244
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Advantage' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'WheelDirt', 'mask': ''}}, {'eff': 0}]}
+    GEOMETRY flags=0x200b3 numTexCoordSets=2 tris=352 verts=244
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Advantage' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'WheelDirt', 'mask': ''}}, {'eff': 0}]}
+    GEOMETRY flags=0x200b3 numTexCoordSets=2 tris=352 verts=244
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Advantage' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'WheelDirt', 'mask': ''}}, {'eff': 0}]}
+    GEOMETRY flags=0x200b3 numTexCoordSets=2 tris=352 verts=244
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Advantage' mask='' filt=2 addr=(1, 1)
+      ext MATFX: {'type': 4, 'slots': [{'eff': 4, 'src': 5, 'dst': 6, 'tex': {'filter': 2, 'addrU': 1, 'addrV': 1, 'name': 'WheelDirt', 'mask': ''}}, {'eff': 0}]}
+    GEOMETRY flags=0x10037 numTexCoordSets=1 tris=866 verts=504
+      MATLIST (geometry)
+    mat[0] rgba=(255, 255, 255, 255) surf=(1.0, 1.0, 1.0) tex='Advantage' mask='' filt=2 addr=(1, 1)
+  ATOMIC MatFX enabled=1
+  ATOMIC MatFX enabled=1
+  ATOMIC MatFX enabled=1
+  ATOMIC MatFX enabled=1
+  ATOMIC MatFX enabled=1
+  ATOMIC MatFX enabled=1
+  ATOMIC MatFX enabled=1
+  ATOMIC MatFX enabled=1
+  ATOMIC MatFX enabled=1
+  ATOMIC MatFX enabled=1
+  ATOMIC MatFX enabled=1
+  ATOMIC MatFX enabled=1
+  ATOMIC MatFX enabled=1
+  ATOMIC MatFX enabled=1
+  ATOMIC MatFX enabled=1
+  ATOMIC MatFX enabled=1
+  ATOMIC MatFX enabled=1
+  ATOMIC MatFX enabled=1
+  ATOMIC MatFX enabled=1

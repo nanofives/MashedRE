@@ -163,6 +163,7 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len) {
         std::vector<float> verts;            // model-space AFTER atomic bake
         std::vector<float> normals;          // WS-E s2: per-vertex (empty if none)
         std::vector<float> uvs;
+        std::vector<float> uvs2;             // [rtex] texcoord set 1 (empty if one set)
         std::vector<std::uint32_t> prelit;
         std::vector<std::uint16_t> tris;     // mat,v0,v1,v2
         std::uint32_t mat_base = 0;          // into this->materials
@@ -170,6 +171,7 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len) {
         bool lit = false;                    // WS-E s2: rpGEOMETRYLIGHT (0x20)
         bool modmat = false;                 // WS-E s2: MODULATEMATERIALCOLOR(0x40)
         std::uint32_t flags = 0;             // geomlight class-scope: raw RW format dword
+        std::int32_t part_id = -1;           // [rtex] user data array 0 element 0
     };
     std::vector<Geo> geos;
     std::size_t q = gst.payload + gst.size;
@@ -200,6 +202,12 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len) {
                 geo.uvs.resize(static_cast<std::size_t>(nverts) * 2);
                 std::memcpy(geo.uvs.data(), data + p,
                             static_cast<std::size_t>(nverts) * 8);
+                if (nuv > 1) {   // [rtex] set 1 follows set 0
+                    geo.uvs2.resize(static_cast<std::size_t>(nverts) * 2);
+                    std::memcpy(geo.uvs2.data(),
+                                data + p + static_cast<std::size_t>(nverts) * 8,
+                                static_cast<std::size_t>(nverts) * 8);
+                }
                 p += static_cast<std::size_t>(nuv) * nverts * 8;
             }
             geo.tris.resize(static_cast<std::size_t>(ntris) * 4);
@@ -280,6 +288,7 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len) {
                         } else if (ch.id == 0x03) {   // F3: material EXTENSION
                             read_uvanim_ext(r, data, ch.payload, ch.size,
                                             out.uv_anim);
+                            ParseMatFxExt(data, len, ch.payload, ch.size, &out.fx);  // [rtex]
                         }
                         qq = ch.payload + ch.size;
                     }
@@ -288,6 +297,10 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len) {
                     mq = mat.payload + mat.size;
                 }
             }
+            // [rtex] geometry EXTENSION follows the MATLIST: rpUSERDATA part code
+            Chunk gx;
+            if (find_child(r, ml.payload + ml.size, g.payload + g.size, 0x03, &gx))
+                geo.part_id = ParseUserDataPartId(data, len, gx.payload, gx.size);
         }
         geos.push_back(std::move(geo));
         q = g.payload + g.size;
@@ -348,6 +361,11 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len) {
                 b.lit          = geo.lit && have_n;   // WS-E s2
                 b.modulate_mat = geo.modmat;          // WS-E s2
                 b.geo_flags    = geo.flags;           // geomlight class-scope
+                b.part_id      = geo.part_id;         // [rtex]
+                {
+                    const float origin[3] = {0.f, 0.f, 0.f};
+                    FrameXform(frames, fi, origin, b.frame_pos);   // [rtex]
+                }
                 std::memcpy(b.abox, abox, sizeof(abox));
                 for (std::size_t i = 0; i < geo.tris.size() / 4; ++i) {
                     if (geo.nmats && geo.tris[i * 4] != mi) continue;
@@ -360,6 +378,10 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len) {
                         b.verts.push_back(w[vi * 3 + 2]);
                         b.uvs.push_back(geo.uvs.empty() ? 0.f : geo.uvs[vi * 2 + 0]);
                         b.uvs.push_back(geo.uvs.empty() ? 0.f : geo.uvs[vi * 2 + 1]);
+                        if (!geo.uvs2.empty()) {   // [rtex]
+                            b.uvs2.push_back(geo.uvs2[vi * 2 + 0]);
+                            b.uvs2.push_back(geo.uvs2[vi * 2 + 1]);
+                        }
                         if (!geo.prelit.empty())
                             b.prelit.push_back(geo.prelit[vi]);
                         if (have_n) {

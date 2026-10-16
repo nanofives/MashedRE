@@ -1,0 +1,354 @@
+0x005405c8 test ebp, ebp
+0x005405ca je 0x5412ab
+0x005405d0 cmp dword ptr [ebp], 0
+0x005405d4 je 0x5412ab
+0x005405f8 cmp dword ptr [eax + 0x30], 6
+0x005405fc je 0x540604
+0x00540602 jmp 0x540611
+0x00540619 test al, 0x84
+0x0054061d je 0x54066f
+0x00540620 SetTex ['edi', '0', 'edi']
+0x0054062b TSS ['0', '1', '4']
+0x00540636 TSS ['0', '2', '2']
+0x00540641 TSS ['0', '3', '0']
+0x0054064c TSS ['0', '4', '4']
+0x00540657 TSS ['0', '5', '2']
+0x00540665 TSS ['0', '6', '0']
+0x0054066d jmp 0x5406a5
+0x00540671 SetTex ['0']
+0x0054067c TSS ['0', '1', '3']
+0x00540687 TSS ['0', '3', '0']
+0x00540692 TSS ['0', '4', '3']
+0x0054069d TSS ['0', '6', '0']
+0x005406a5 test esi, esi
+0x005406a7 je 0x540709
+0x005406af test esi, esi
+0x005406b1 je 0x540709
+0x005406b3 test dword ptr [esi + 0xc], 0x20000
+0x005406ba jne 0x540709
+0x005406c2 TSS ['0', '0x18', '2']
+0x00540701 SetTransform ['0x10', '0x623d38']
+0x00540709 test edi, edi
+0x0054070b je 0x54072b
+0x00540711 test byte ptr [eax + 0x23], cl
+0x00540714 je 0x54072b
+0x00540719 test byte ptr [eax + 0x23], cl
+0x0054071c je 0x54072b
+0x0054071e cmp edi, ebp
+0x00540720 je 0x54072b
+0x00540723 0x4d3b00 ['eax']
+0x00540730 test eax, eax
+0x00540732 je 0x540cc3
+0x0054073f cmp eax, 9
+0x00540742 jne 0x54074a
+0x00540744 cmp dword ptr [ecx + 8], 1
+0x00540748 je 0x540761
+0x0054074a cmp eax, 1
+0x00540752 jne 0x5408cf
+0x00540758 cmp dword ptr [ecx + 8], edx
+0x0054075b jne 0x5408cf
+0x00540761 test edi, edi
+0x00540763 je 0x540878
+0x0054076c SetTex ['ebp', '1']
+0x00540779 cmp eax, 3
+0x0054077c jne 0x540837
+0x00540788 TSS ['0', '1', '2']
+0x00540793 TSS ['0', '2', '2']
+0x0054079e TSS ['0', '4', '2']
+0x005407a9 TSS ['0', '5', '2']
+0x005407b4 TSS ['1', '1', '4']
+0x005407bf TSS ['1', '2', '2']
+0x005407cd TSS ['1', '3', '1']
+0x005407d8 TSS ['1', '4', '3']
+0x005407e3 TSS ['1', '6', '1']
+0x005407ee TSS ['2', '1', '4']
+0x005407f9 TSS ['2', '2', '0']
+0x00540804 TSS ['2', '3', '1']
+0x00540812 TSS ['2', '4', '4']
+0x0054081d TSS ['2', '5', '0']
+0x00540828 TSS ['2', '6', '1']
+0x00540832 jmp 0x540c48
+0x0054083d TSS ['1', '1', '4']
+0x00540848 TSS ['1', '2', '2']
+0x00540853 TSS ['1', '3', '1']
+0x0054085e TSS ['1', '4', '3']
+0x00540869 TSS ['1', '6', '1']
+0x00540873 jmp 0x540c48
+0x0054087b SetTex ['ebp', '0']
+0x00540886 TSS ['0', '1', '4']
+0x00540891 TSS ['0', '2', '2']
+0x0054089c TSS ['0', '3', '0']
+0x005408a7 TSS ['0', '4', '4']
+0x005408b2 TSS ['0', '5', '2']
+0x005408c0 TSS ['0', '6', '0']
+0x005408ca jmp 0x540c48
+0x005408cf cmp eax, 5
+0x005408d2 jne 0x540a4c
+0x005408d8 cmp dword ptr [ecx + 8], 6
+0x005408dc jne 0x540a4c
+0x005408e2 test edi, edi
+0x005408e4 je 0x5409be
+0x005408ea cmp dword ptr [0x7dc624], edx
+0x005408f0 jb 0x540cc3
+0x005408f9 SetTex ['ebp', '1']
+0x00540904 TSS ['0', '1', '2']
+0x0054090f TSS ['0', '2', '2']
+0x0054091a TSS ['0', '4', '2']
+0x00540925 TSS ['0', '5', '2']
+0x00540930 TSS ['1', '1', '0xd']
+0x0054093e TSS ['1', '2', '2']
+0x00540949 TSS ['1', '3', '1']
+0x00540954 TSS ['1', '4', '0xd']
+0x0054095f TSS ['1', '5', '2']
+0x0054096a TSS ['1', '6', '1']
+0x00540975 TSS ['2', '1', '4']
+0x00540983 TSS ['2', '2', '0']
+0x0054098e TSS ['2', '3', '1']
+0x00540999 TSS ['2', '4', '4']
+0x005409a4 TSS ['2', '5', '0']
+0x005409af TSS ['2', '6', '1']
+0x005409b9 jmp 0x540c48
+0x005409c2 RS ['0x3c', '-1']
+0x005409ca SetTex ['ebp', '0']
+0x005409d5 TSS ['0', '1', '0xd']
+0x005409e0 TSS ['0', '2', '2']
+0x005409eb TSS ['0', '3', '3']
+0x005409f6 TSS ['0', '4', '3']
+0x00540a04 TSS ['0', '5', '2']
+0x00540a0f TSS ['0', '6', '3']
+0x00540a1a TSS ['1', '1', '4']
+0x00540a25 TSS ['1', '2', '0']
+0x00540a30 TSS ['1', '3', '1']
+0x00540a3b TSS ['1', '4', '4']
+0x00540a47 jmp 0x540e0f
+0x00540a4c cmp eax, 9
+0x00540a4f jne 0x540d4f
+0x00540a55 cmp dword ptr [ecx + 8], edx
+0x00540a58 jne 0x540d4f
+0x00540a63 test eax, eax
+0x00540a65 je 0x540cc3
+0x00540a6b test edi, edi
+0x00540a6d je 0x540b54
+0x00540a76 SetTex ['ebp', '1', '5']
+0x00540a81 TSS ['1', '1', '5']
+0x00540a8c TSS ['1', '2', '2']
+0x00540a97 TSS ['1', '3', '1']
+0x00540aa4 cmp eax, 3
+0x00540aa7 jne 0x540b39
+0x00540ab3 TSS ['0', '1', '2']
+0x00540abe TSS ['0', '2', '2']
+0x00540ac9 TSS ['0', '4', '2']
+0x00540ad4 TSS ['0', '5', '2']
+0x00540adf TSS ['1', '4', '3']
+0x00540aea TSS ['1', '6', '1']
+0x00540af8 TSS ['2', '1', '4']
+0x00540b03 TSS ['2', '2', '0']
+0x00540b0e TSS ['2', '3', '1']
+0x00540b19 TSS ['2', '4', '4']
+0x00540b24 TSS ['2', '5', '0']
+0x00540b2f TSS ['2', '6', '1']
+0x00540b37 jmp 0x540b80
+0x00540b3f TSS ['1', '4', '3']
+0x00540b4a TSS ['1', '6', '1']
+0x00540b52 jmp 0x540b80
+0x00540b57 SetTex ['ebp', '0']
+0x00540b62 TSS ['0', '1', '5']
+0x00540b6d TSS ['0', '4', '3']
+0x00540b78 TSS ['0', '6', '0']
+0x00540b87 cmp eax, esi
+0x00540b89 je 0x540f9b
+0x00540b93 0x4d53b0 []
+0x00540ba5 dword ptr [ecx + 0x118] ['eax', 'edx']
+0x00540bab test eax, eax
+0x00540bad jl 0x540bbd
+0x00540baf cmp dword ptr [esp + 0x30], 1
+0x00540bb4 jne 0x540bbd
+0x00540bb8 jmp 0x540c3e
+0x00540bc5 SetTex ['edi', 'esi']
+0x00540bcf TSS ['esi', '1', '4']
+0x00540bd9 TSS ['esi', '2', '2']
+0x00540be2 TSS ['esi', '3', 'esi']
+0x00540bec TSS ['esi', '4', '4']
+0x00540bf6 TSS ['esi', '5', '2']
+0x00540c02 TSS ['esi', '6', 'esi']
+0x00540c0d TSS ['1', '1', '1']
+0x00540c18 TSS ['1', '4', '1']
+0x00540c23 TSS ['2', '1', '1']
+0x00540c2e TSS ['2', '4', '1']
+0x00540c36 SetTex ['esi', '1']
+0x00540c3e cmp ebx, esi
+0x00540c46 jne 0x540cc3
+0x00540c4c test al, al
+0x00540c4e js 0x540c5e
+0x00540c56 TSS ['1', '0xb', '0']
+0x00540c62 test eax, eax
+0x00540c64 je 0x540cc3
+0x00540c69 test esi, esi
+0x00540c6b je 0x540cc3
+0x00540c6d test dword ptr [esi + 0xc], 0x20000
+0x00540c74 jne 0x540cc3
+0x00540c7c TSS ['1', '0x18', '2']
+0x00540cbb SetTransform ['0x11', '0x623d38']
+0x00540cc8 test eax, eax
+0x00540cca je 0x540ce6
+0x00540ce0 dword ptr [ecx + 0x1ac] ['eax', '0']
+0x00540cf3 cmp edx, eax
+0x00540cf5 je 0x540d0e
+0x00540d08 dword ptr [edx + 0x170] ['eax', 'ecx']
+0x00540d15 test eax, eax
+0x00540d17 je 0x540fa2
+0x00540d1d 0x4d53b0 []
+0x00540d44 dword ptr [edx + 0x148] ['eax', 'ecx', 'ecx']
+0x00540d4a jmp 0x540fc5
+0x00540d4f cmp eax, 2
+0x00540d52 jne 0x540e2b
+0x00540d58 cmp dword ptr [ecx + 8], eax
+0x00540d5b jne 0x540e2b
+0x00540d61 test edi, edi
+0x00540d63 je 0x540dc9
+0x00540d6a test eax, eax
+0x00540d6c je 0x540cc3
+0x00540d75 SetTex ['ebp', '1']
+0x00540d80 TSS ['1', '1', '0x19']
+0x00540d8b TSS ['1', '0x1a', '1']
+0x00540d96 TSS ['1', '2', '2']
+0x00540da1 TSS ['1', '3', '0']
+0x00540dac TSS ['1', '4', '3']
+0x00540dba TSS ['1', '6', '1']
+0x00540dc4 jmp 0x540c48
+0x00540dcc SetTex ['ebp', '0']
+0x00540dd7 TSS ['0', '4', '3']
+0x00540de2 TSS ['0', '6', '0']
+0x00540ded TSS ['1', '1', '7']
+0x00540df8 TSS ['1', '2', '0']
+0x00540e03 TSS ['1', '3', '1']
+0x00540e11 TSS ['1', '4', '3']
+0x00540e1c TSS ['1', '6', '1']
+0x00540e26 jmp 0x540c48
+0x00540e2b cmp eax, 1
+0x00540e2e jne 0x540cc3
+0x00540e38 cmp dword ptr [eax + 8], 5
+0x00540e3c jne 0x540cc3
+0x00540e42 test edi, edi
+0x00540e44 je 0x540f59
+0x00540e4d SetTex ['ebp', '1']
+0x00540e5a cmp eax, 3
+0x00540e5d jne 0x540f18
+0x00540e69 TSS ['0', '1', '2']
+0x00540e74 TSS ['0', '2', '2']
+0x00540e7f TSS ['0', '4', '2']
+0x00540e8a TSS ['0', '5', '2']
+0x00540e95 TSS ['1', '1', '4']
+0x00540ea0 TSS ['1', '2', '0x22']
+0x00540eae TSS ['1', '3', '1']
+0x00540eb9 TSS ['1', '4', '3']
+0x00540ec4 TSS ['1', '6', '1']
+0x00540ecf TSS ['2', '1', '4']
+0x00540eda TSS ['2', '2', '0']
+0x00540ee5 TSS ['2', '3', '1']
+0x00540ef3 TSS ['2', '4', '4']
+0x00540efe TSS ['2', '5', '0']
+0x00540f09 TSS ['2', '6', '1']
+0x00540f13 jmp 0x540c48
+0x00540f1e TSS ['1', '1', '4']
+0x00540f29 TSS ['1', '2', '0x22']
+0x00540f34 TSS ['1', '3', '1']
+0x00540f3f TSS ['1', '4', '3']
+0x00540f4a TSS ['1', '6', '1']
+0x00540f54 jmp 0x540c48
+0x00540f5c SetTex ['ebp', '0']
+0x00540f67 TSS ['0', '1', '4']
+0x00540f72 TSS ['0', '2', '0x22']
+0x00540f7d TSS ['0', '3', '0']
+0x00540f88 TSS ['0', '4', '3']
+0x00540f93 TSS ['0', '6', '0']
+0x00540f9d jmp 0x540c48
+0x00540fa2 0x4d53b0 []
+0x00540fbf dword ptr [edx + 0x144] ['eax', 'ecx', 'ecx']
+0x00540fc5 test ebx, ebx
+0x00540fc7 je 0x5411ef
+0x00540fd0 SetTex ['ebp', '0']
+0x00540fdc test eax, eax
+0x00540fde je 0x54103f
+0x00540fe5 test esi, esi
+0x00540fe7 je 0x54103f
+0x00540fe9 test dword ptr [esi + 0xc], 0x20000
+0x00540ff0 jne 0x54103f
+0x00540ff8 TSS ['0', '0x18', '2']
+0x00541037 SetTransform ['0x10', '0x623d38']
+0x0054103f 0x4d71f0 []
+0x00541044 test eax, eax
+0x00541046 jne 0x541052
+0x0054104a VtxAlpha ['1']
+0x00541059 cmp eax, 9
+0x0054105c jne 0x541064
+0x0054105e cmp dword ptr [esi + 8], 1
+0x00541062 je 0x54107a
+0x00541064 cmp eax, 1
+0x00541067 jne 0x54106f
+0x00541069 cmp dword ptr [esi + 8], 3
+0x0054106d je 0x54107a
+0x0054106f cmp eax, 9
+0x00541072 jne 0x541086
+0x00541074 cmp dword ptr [esi + 8], 3
+0x00541078 jne 0x541086
+0x0054107e RS ['0xf', '0']
+0x00541093 dword ptr [ecx + 0x24] ['0xa', 'eax']
+0x005410a2 dword ptr [eax + 0x24] ['0xb', 'edx']
+0x005410a9 0x4d6c40 ['ecx']
+0x005410b2 0x4d6c90 ['edx']
+0x005410be GetRS ['0xe', 'eax']
+0x005410c7 RS ['0xe', '0']
+0x005410d3 GetRS ['0x1c', 'ecx']
+0x005410df test eax, eax
+0x005410e1 je 0x541115
+0x005410ea GetRS ['0x22', 'edx']
+0x005410f5 cmp eax, 2
+0x005410f8 jne 0x5410fe
+0x005410fc jmp 0x54110b
+0x005410fe cmp dword ptr [esi + 4], 9
+0x00541102 je 0x541109
+0x00541104 cmp eax, 3
+0x00541107 jne 0x541115
+0x0054110d RS ['0x22', '-1', '0']
+0x0054111f je 0x54112f
+0x00541127 TSS ['0', '0xb', '1']
+0x00541132 test eax, eax
+0x00541134 je 0x541165
+0x00541136 0x4d53b0 []
+0x0054115d dword ptr [edx + 0x148] ['eax', 'ecx', 'ecx']
+0x00541163 jmp 0x541188
+0x00541165 0x4d53b0 []
+0x00541182 dword ptr [edx + 0x144] ['eax', 'ecx', 'ecx']
+0x0054118f RS ['0xe', 'edx']
+0x0054119b test eax, eax
+0x0054119d je 0x5411ae
+0x005411a6 RS ['0x22', 'eax']
+0x005411ae test esi, esi
+0x005411b0 je 0x5411c0
+0x005411b8 TSS ['0', '0xb', '0']
+0x005411c2 VtxAlpha ['0']
+0x005411d4 dword ptr [edx + 0x20] ['0xa', 'ecx']
+0x005411e4 dword ptr [ecx + 0x20] ['0xb', 'eax']
+0x005411ea jmp 0x541282
+0x005411f3 SetTex ['0', '1']
+0x005411fe TSS ['0', '1', '4']
+0x00541209 TSS ['0', '2', '2']
+0x00541214 TSS ['0', '3', '0']
+0x0054121f TSS ['0', '4', '4']
+0x0054122a TSS ['0', '5', '2']
+0x00541238 TSS ['0', '6', '0']
+0x00541243 TSS ['1', '1', '1']
+0x0054124e TSS ['1', '4', '1']
+0x00541259 TSS ['2', '1', '1']
+0x00541264 TSS ['2', '4', '1']
+0x00541270 test al, al
+0x00541272 js 0x541282
+0x0054127a TSS ['1', '0xb', '1']
+0x00541289 test eax, eax
+0x0054128b je 0x5412c7
+0x00541293 TSS ['0', '0x18', '0']
+0x0054129e TSS ['1', '0x18', '0']
+0x005412aa ret 
+0x005412bf 0x540340 ['edx', 'ecx', 'eax']
+0x005412cb ret 

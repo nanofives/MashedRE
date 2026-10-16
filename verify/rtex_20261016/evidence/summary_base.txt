@@ -1,0 +1,7 @@
+arm base exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\rtex\base\mashed_re.exe knobs=[]
+arctic    1051  rows  81  red  0  matched 138/180  tri 32143/35412  pix 10.97
+arctic    1091  rows  81  red  0  matched 138/177  tri 32083/35197  pix 7.07
+arctic    1126  rows  81  red  0  matched 101/131  tri 26823/29307  pix 6.43
+city       761  rows 157  red  0  matched 351/512  tri 34236/42182  pix 16.91
+city       801  rows 155  red  0  matched 339/496  tri 33776/41692  pix 13.15
+city       836  rows 152  red  0  matched 292/444  tri 26805/34493  pix 12.10

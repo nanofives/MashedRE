@@ -85,6 +85,7 @@
 "D3d9Render\RwIm2DBridge.cpp"
 "D3d9Render\DrawStreamDump.cpp"
 "D3d9Render\DrawRec.cpp"
+"LibRw\RwCarFx.cpp"
 "D3d9Render\PngLoader.cpp"
 "D3d9Render\MpegVideoTexture.cpp"
 "D3d9Render\TextRenderer.cpp"
@@ -241,3 +242,4 @@
 "Save\GameSave.cpp"
 "Gameplay\PickupPoolSpawn.cpp"
 "Render\ArcticTrackNodeSlot0.cpp"
+"Vehicle\CarMaterialTables.cpp"

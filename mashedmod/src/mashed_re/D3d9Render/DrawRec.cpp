@@ -26,6 +26,7 @@
 // is not the mesh's, and a material without a texture leaves stage 0 holding the previous
 // texture (the setTexture call is skipped). The hooks hand over what librw is drawing.
 extern void (*rw_drawrec_pre)(const char* texname, const float* ltm16);
+extern void (*rw_drawrec_tex1)(const char* tex1name);   // [rtex] MatFX stage-1 name
 extern void (*rw_drawrec_post)(void);
 
 namespace mashed_re {
@@ -52,6 +53,8 @@ std::vector<std::string> s_events;
 // librw override for the draw in flight
 bool        s_ov = false;
 std::string s_ov_tex;
+bool        s_ov1 = false;   // [rtex] librw named the stage-1 texture for this draw
+std::string s_ov_tex1;
 float       s_ov_w[16];
 
 // The same render states, in the same order, as camera_probe.py RS_LIST:
@@ -303,6 +306,10 @@ void Record(IDirect3DDevice9* dev, int slot, const Call& call, std::initializer_
         if (t1) {
             auto it = s_names.find(t1);
             tex1 = (it != s_names.end()) ? it->second : TexDesc(t1);
+            // [rtex] librw textures are not in s_names; a MatFX draw names stage 1 itself.
+            // An unnamed texture (empty name) keeps its "#WxH:fmt" descriptor, as on the
+            // original side (camera_probe.py texDesc).
+            if (s_ov && s_ov1 && !s_ov_tex1.empty()) tex1 = s_ov_tex1;
             t1->Release();
         }
     }
@@ -364,7 +371,11 @@ void LibrwPre(const char* tex, const float* ltm) {
     s_ov_w[3] = s_ov_w[7] = s_ov_w[11] = 0.f;
     s_ov_w[15] = 1.f;
 }
-void LibrwPost() { s_ov = false; }
+void LibrwPost() { s_ov = false; s_ov1 = false; s_ov_tex1.clear(); }
+void LibrwTex1(const char* tex1) {   // [rtex] called before LibrwPre
+    s_ov1 = true;
+    s_ov_tex1 = tex1 ? tex1 : "";
+}
 
 void Patch(void** vt, int slot, void* thunk, void** save) {
     DWORD old = 0, tmp = 0;
@@ -395,6 +406,7 @@ void Install(IDirect3DDevice9* dev) {
     Patch(vt, 84, reinterpret_cast<void*>(&Rec_DIPUP), reinterpret_cast<void**>(&s_dipup));
     rw_drawrec_pre = &LibrwPre;
     rw_drawrec_post = &LibrwPost;
+    rw_drawrec_tex1 = &LibrwTex1;
     s_installed = (s_dp && s_dip && s_dpup && s_dipup);
 }
 

@@ -1,0 +1,7 @@
+arm carfx exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\rtex\carfx\mashed_re.exe knobs=[]
+arctic    1051  rows  81  red  1  matched 146/180  tri 32207/35412  pix 11.49
+arctic    1091  rows  81  red  1  matched 144/177  tri 32131/35197  pix 7.12
+arctic    1126  rows  80  red  0  matched 101/131  tri 26823/29307  pix 6.43
+city       761  rows 157  red  1  matched 359/512  tri 34300/42182  pix 16.70
+city       801  rows 157  red  1  matched 341/496  tri 33792/41692  pix 13.11
+city       836  rows 152  red  0  matched 292/444  tri 26805/34493  pix 12.09

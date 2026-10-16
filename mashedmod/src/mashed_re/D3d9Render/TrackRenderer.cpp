@@ -20,6 +20,10 @@
 #include "../Audio/AudioEngine.h"   // real SFX (permdict.rws) for countdown/powerups
 #include "RwWorldRender.h"          // WS-E1: RW world render path (behind MASHED_RW_RENDER)
 #include "../LibRw/RwRaceSubmit.h"  // E2'b step 3: in-loop librw submit (MASHED_RENDER_LIBRW)
+#include "../LibRw/RwCarFx.h"       // rtex: car dirt / env-map set-up tables (U-9693)
+#include "PngLoader.h"              // rtex: dirt.piz PNGs (WIC)
+// rtex: 0x004c4d20 RwMatrixRotate (Math/RwMatrixRotate.cpp), for RwFrameRotate's REPLACE build
+extern "C" void* __cdecl RwMatrixRotate(void* matrix, const float* axis, float angle_deg, int mode);
 #include "DrawStreamDump.h"         // parity harness: MASHED_DBG_DRAWSTREAM3D race-3D summary
 #include "DrawRec.h"                // d1r1: per-draw recorder names (MASHED_DBG_D3DREC)
 #include "../Ai/AiStandalone.h"     // WS-C: racing-line target Ai_ComputeTarget is the DEFAULT
@@ -1346,6 +1350,10 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
         if (log) { std::fprintf(log, "R4 track load FAILED: %s\n", why); std::fclose(log); }
         return false;
     };
+    // [rtex] the course struct is zeroed per load (0x0047a051) with +0x204 = 0 and
+    // +0x208 = 1.0 (0x0047a060 / 0x0047a066) before COURSE.LUA runs
+    shine_lo_ = 0.f;
+    shine_hi_ = 1.f;
 
     Piz::Archive piz;
     if (!piz.Load(piz_path)) return fail(piz.last_error());
@@ -1378,6 +1386,13 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                         static_cast<std::uint32_t>(col_verts_.size() / 3);
                     col_verts_.insert(col_verts_.end(), s.verts.begin(),
                                       s.verts.end());
+                    // [rtex] keep the sector prelit for the env-gloss shade sample
+                    // (FUN_00479100 reads the hit sector's colours, 0 when absent)
+                    const std::size_t snv = s.verts.size() / 3;
+                    if (s.prelit.size() == snv)
+                        col_prelit_.insert(col_prelit_.end(), s.prelit.begin(), s.prelit.end());
+                    else
+                        col_prelit_.insert(col_prelit_.end(), snv, 0u);
                     const std::size_t nt = s.tris.size() / 4;
                     for (std::size_t ti = 0; ti < nt; ++ti) {
                         col_tris_.push_back(vbase + s.tris[ti * 4 + 1]);
@@ -1387,6 +1402,7 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                         // space the render path uses at :1132/:1581) — keep it
                         // so the wheel contact can reach record +0x1ec.
                         col_mat_.push_back(s.tris[ti * 4 + 0]);
+                        col_tri_pl_.push_back(s.prelit.size() == snv ? 1 : 0);   // [rtex]
                     }
                 }
             }
@@ -2005,6 +2021,16 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                            std::sscanf(line.c_str(),
                                        " Course_Id(%d)", &idx) == 1) {
                     course_id_ = idx;   // -> Common/LED.piz LE<id>.LED
+                } else if (std::strstr(line.c_str(), "Vehicle_Shininess_Range")) {
+                    // [rtex] Lua binding 0x0047ac80: arg 1 -> course +0x204 (0x0047acb0),
+                    // arg 2 -> +0x208 (0x0047acb7); FUN_00426de0 / FUN_00426df0 read them
+                    // back as the env coefficient's lerp ends (FUN_00420290).
+                    float lo = 0.f, hi = 1.f;
+                    const char* p = std::strchr(line.c_str(), '(');
+                    if (p && std::sscanf(p + 1, " %f , %f", &lo, &hi) == 2) {
+                        shine_lo_ = lo;
+                        shine_hi_ = hi;
+                    }
                 } else {
                     // Setup_Fog(near, far, r, g, b) — track fog wiring. args 1/2
                     // are ABSOLUTE camera-space fog distances (near < far), NOT a
@@ -2792,6 +2818,56 @@ static void CarDropNonRenderAtomics(Track::DffModel& model, const char* tag,
                  total - model.batches.size(), untex);
 }
 
+// [rtex 2026-10-16] FUN_00479100 @ 0x00479100 (via FUN_00426dc0): the nearest collision-world
+// hit on segment a->b (FUN_004b4cd0 @ 0x004b4cd0; the same stand-in rule as
+// Powerup/PowerupContact.cpp SegmentQuery: two-sided Moller-Trumbore over the collision soup,
+// nearest t wins), then the hit triangle's prelit RED bytes (`& 0xff` of each RGBA dword,
+// 0x00479100 decomp) times 1/255 ([0x005ceb90]) weighted by the hit point's barycentric
+// coordinates, clamped to at most 1.0 ([0x005cc320]). A hit sector without colours gives
+// 1.0. Returns false on no hit (the caller keeps its previous sample).
+// [UNCERTAIN U-9697] FUN_00559040's weight matrix is not transcribed: it is replaced by the
+// Moller-Trumbore barycentrics, equal in exact arithmetic; and the candidate set is the flat
+// soup, not FUN_00538c80's BSP walk.
+static bool CollisionPrelitSample(const std::vector<float>& vtx, const std::vector<std::uint32_t>& tri,
+                                  const std::vector<std::uint32_t>& prelit,
+                                  const std::vector<std::uint8_t>& has_pl,
+                                  const float a[3], const float b[3], float* out) {
+    const float d[3] = { b[0] - a[0], b[1] - a[1], b[2] - a[2] };
+    float best = 2.f, bu = 0.f, bw = 0.f;
+    std::size_t bi = static_cast<std::size_t>(-1);
+    const std::size_t nt = tri.size() / 3;
+    for (std::size_t i = 0; i < nt; ++i) {
+        const float* v0 = &vtx[tri[i * 3 + 0] * 3];
+        const float* v1 = &vtx[tri[i * 3 + 1] * 3];
+        const float* v2 = &vtx[tri[i * 3 + 2] * 3];
+        const float e1[3] = { v1[0] - v0[0], v1[1] - v0[1], v1[2] - v0[2] };
+        const float e2[3] = { v2[0] - v0[0], v2[1] - v0[1], v2[2] - v0[2] };
+        const float p[3] = { d[1] * e2[2] - d[2] * e2[1], d[2] * e2[0] - d[0] * e2[2],
+                             d[0] * e2[1] - d[1] * e2[0] };
+        const float det = e1[0] * p[0] + e1[1] * p[1] + e1[2] * p[2];
+        if (det > -1e-12f && det < 1e-12f) continue;
+        const float inv = 1.0f / det;
+        const float s[3] = { a[0] - v0[0], a[1] - v0[1], a[2] - v0[2] };
+        const float u = (s[0] * p[0] + s[1] * p[1] + s[2] * p[2]) * inv;
+        if (u < 0.0f || u > 1.0f) continue;
+        const float q[3] = { s[1] * e1[2] - s[2] * e1[1], s[2] * e1[0] - s[0] * e1[2],
+                             s[0] * e1[1] - s[1] * e1[0] };
+        const float w = (d[0] * q[0] + d[1] * q[1] + d[2] * q[2]) * inv;
+        if (w < 0.0f || u + w > 1.0f) continue;
+        const float t = (e2[0] * q[0] + e2[1] * q[1] + e2[2] * q[2]) * inv;
+        if (t < 0.0f || t > 1.0f || t >= best) continue;
+        best = t; bu = u; bw = w; bi = i;
+    }
+    if (bi == static_cast<std::size_t>(-1)) return false;
+    if (bi >= has_pl.size() || !has_pl[bi]) { *out = 1.0f; return true; }
+    const float r0 = static_cast<float>(prelit[tri[bi * 3 + 0]] & 0xff) * (1.0f / 255.0f);
+    const float r1 = static_cast<float>(prelit[tri[bi * 3 + 1]] & 0xff) * (1.0f / 255.0f);
+    const float r2 = static_cast<float>(prelit[tri[bi * 3 + 2]] & 0xff) * (1.0f / 255.0f);
+    const float s = r0 * (1.0f - bu - bw) + r1 * bu + r2 * bw;
+    *out = (s < 1.0f) ? s : 1.0f;
+    return true;
+}
+
 bool TrackRenderer::LoadCar(IDirect3DDevice9* dev, const char* piz_path,
                             const char* dff_entry, const char* log_path) {
     std::FILE* log = log_path ? std::fopen(log_path, "a") : nullptr;
@@ -2881,6 +2957,71 @@ bool TrackRenderer::LoadCar(IDirect3DDevice9* dev, const char* piz_path,
     if (LibRw::RaceSubmit_Requested())
         rw_car_model_ = LibRw::RaceSubmit_RegisterModel(model, dicts.data(), dicts.size(),
                                                        amb_world_);
+    // [rtex 2026-10-16] the car material passes (U-9693, LibRw/RwCarFx.h). Part 0x13's
+    // frame origin first: the env coefficient fades with its distance to the camera.
+    car_part19_ok_ = false;
+    for (const auto& b : model.batches)
+        if (b.part_id == 0x13) {
+            std::memcpy(car_part19_, b.frame_pos, sizeof(car_part19_));
+            car_part19_ok_ = true;
+            break;
+        }
+    car_env_ok_ = false;
+    if (rw_car_model_ >= 0) {
+        char base[64] = {};
+        {
+            const char* s = std::strrchr(piz_path, '/');
+            const char* s2 = std::strrchr(piz_path, '\\');
+            if (s2 && (!s || s2 > s)) s = s2;
+            s = s ? s + 1 : piz_path;
+            std::size_t n = 0;
+            while (s[n] && s[n] != '.' && n + 1 < sizeof(base)) { base[n] = s[n]; ++n; }
+        }
+        const int veh = LibRw::CarVehicleGroupId(base);
+        // FUN_0040cea0 @ 0x0040cea0: dirt.piz, FUN_00404e00(course) / FUN_00404e20(course, veh)
+        const char* bn = LibRw::CarDirtBodyName(course_id_);
+        const char* wn = LibRw::CarDirtWheelName(course_id_, veh);
+        if (LibRw::CarDirtEnabled() && bn && wn) {
+            Piz::Archive dp;
+            std::uint8_t* bimg = nullptr;
+            std::uint8_t* wimg = nullptr;
+            std::uint32_t bw = 0, bh = 0, ww = 0, wh = 0;
+            if (dp.Load("original/TOASTART/VEHICLES/dirt.piz")) {
+                char want[48];
+                for (std::uint32_t i = 0; i < dp.count(); ++i) {
+                    const char* en = dp.entry(i).name;
+                    std::uint32_t bl = 0;
+                    std::snprintf(want, sizeof(want), "%s.PNG", bn);
+                    if (!bimg && _stricmp(en, want) == 0)
+                        if (const std::uint8_t* b = dp.blob(i, &bl))
+                            bimg = DecodeImageToBGRA(b, bl, &bw, &bh);
+                    std::snprintf(want, sizeof(want), "%s.PNG", wn);
+                    if (!wimg && _stricmp(en, want) == 0)
+                        if (const std::uint8_t* b = dp.blob(i, &bl))
+                            wimg = DecodeImageToBGRA(b, bl, &ww, &wh);
+                }
+            }
+            // filterAddressing 0x1101 (NEAREST, WRAP, WRAP) read live off both original
+            // dirt textures (+0x50), PREREG_rtex amendment 1
+            const int nb = (bimg && wimg)
+                ? LibRw::RaceSubmit_BindCarDirt(rw_car_model_, bimg, bw, bh, wimg, ww, wh, 0x1101u)
+                : 0;
+            if (log)
+                std::fprintf(log, "[rtex] car dirt: course=%d veh=%d body=%s wheel=%s bound=%d\n",
+                             course_id_, veh, bn, wn, nb);
+            std::free(bimg);
+            std::free(wimg);
+        }
+        // FUN_00420420 @ 0x00420420: env texture = the vehicle table's +0x30 name, `cargloss`
+        // for all 78 entries (0x005f37a8 + i*0x84 + 0x30)
+        if (LibRw::CarEnvEnabled()) {
+            const int ne = LibRw::RaceSubmit_SetupCarEnv(rw_car_model_, dicts.data(),
+                                                          dicts.size(), "cargloss");
+            car_env_ok_ = ne > 0 && car_part19_ok_;
+            if (log) std::fprintf(log, "[rtex] car env: %d materials, part19=%d\n", ne,
+                                  (int)car_part19_ok_);
+        }
+    }
     // WS-E s2: the track's atomic light set drives the car's directional shading
     // (RW lights the body panels — normals + rpGEOMETRYLIGHT — per LIGHTS.DFF).
     // WS-E vehicle lighting: under MASHED_RPLIGHT the directional term is NOT
@@ -5350,6 +5491,10 @@ bool RuleEngineEnabled() {
 void TrackRenderer::StartMatch() {
     match_winner_ = -1;
     round_no_ = 1;
+    // [rtex] the car records are zeroed at per-car init (FUN_00420420's memset of 0x2ac at
+    // 0x00420420) and the race frame counter at the race clock reset (0x0040ff17)
+    for (CarGloss& g : car_gloss_) g = CarGloss{};
+    gloss_frame_ = 0;
     Race::RoundGrid_RaceInit();   // [round grid Stage A] 0x0040fef0 DAT_0063ba80 = 0 (MASHED_ROUND_GRID)
     rule_engine_on_ = RuleEngineEnabled();
     for (int i = 0; i < kRaceCars; ++i) {
@@ -7549,7 +7694,50 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
             m->_41 = f[9]; m->_42 = f[10]; m->_43 = f[11];
         };
         rep_car(0, &carm);
-        LibRw::RaceSubmit_AddInstance(rw_car_model_, (const float*)&carm);
+        // [rtex 2026-10-16] per-car env-map state, in the order FUN_00420870 @ 0x00420870
+        // runs it each frame: env frame angle, shade window (FUN_0041f590), then the
+        // coefficient FUN_00420340 -> FUN_00420290 applies (LibRw/RwCarFx.h).
+        auto gloss = [&](int slot, const D3DMATRIX& m, const float* vel) {
+            CarGloss& g = car_gloss_[slot];
+            // 0x0041f5aa..0x0041f5ba: window shift w[k] = w[k-1], k = 7..1
+            for (int k = 7; k > 0; --k) g.win[k] = g.win[k - 1];
+            // 0x0041f5d1..0x0041f617: sample when (DAT_007f101c & 3) == rec+0x290; segment
+            // from the clump frame position +[0x005cd058] (0.0625) to -[0x005cd278] (0.9375) in y
+            if ((gloss_frame_ & 3u) == static_cast<std::uint32_t>(slot)) {
+                const float a[3] = { m._41, m._42 + 0.0625f, m._43 };
+                const float b[3] = { m._41, m._42 - 0.9375f, m._43 };
+                float s = 0.f;
+                if (CollisionPrelitSample(col_verts_, col_tris_, col_prelit_, col_tri_pl_, a, b, &s))
+                    g.win[0] = s;
+            }
+            // 0x0041f658..0x0041f6b5: rec+0x284 = sum(w) * [0x005cd050] (0.125), clamped to
+            // [0, 1] (0x0041f6bb..0x0041f700); x87 accumulates, so the sum is double here
+            double sum = 0.0;
+            for (int k = 0; k < 8; ++k) sum += g.win[k];
+            double sh = sum * 0.125;
+            if (sh > 1.0) sh = 1.0; else if (sh < 0.0) sh = 0.0;
+            g.shade = static_cast<float>(sh);
+            // 0x00420870 decomp: rec+0x280 -= (v.z + v.x) * [0x005cd2ac] (0.0003), v from
+            // FUN_0046cb30 (the body record's +0x9b0 velocity); then RwFrameRotate(env frame,
+            // clump frame right, rec+0x280, rwCOMBINEREPLACE) (FUN_004c1520)
+            g.angle = g.angle - (vel[2] + vel[0]) * 0.0003f;
+            // FUN_00420290 @ 0x00420290: coef = ((hi - lo) * rec+0x284 + lo)
+            //   * (1 - clamp(|part 0x13 LTM pos - camera frame pos|^2, 0, 100) * 0.01)
+            const float px = car_part19_[0] * m._11 + car_part19_[1] * m._21 + car_part19_[2] * m._31 + m._41;
+            const float py = car_part19_[0] * m._12 + car_part19_[1] * m._22 + car_part19_[2] * m._32 + m._42;
+            const float pz = car_part19_[0] * m._13 + car_part19_[1] * m._23 + car_part19_[2] * m._33 + m._43;
+            const double dx = px - last_eye_[0], dy = py - last_eye_[1], dz = pz - last_eye_[2];
+            double d2 = dz * dz + dx * dx + dy * dy;   // FUN_0041f120 @ 0x0041f120 order
+            if (!(d2 < 100.0)) d2 = 100.0; else if (d2 < 0.0) d2 = 0.0;
+            const double lerp = (static_cast<double>(shine_hi_) - shine_lo_) * g.shade + shine_lo_;
+            const float coef = static_cast<float>(lerp * (1.0 - d2 * 0.01));
+            float env[16] = { 1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1 };
+            const float axis[3] = { m._11, m._12, m._13 };
+            RwMatrixRotate(env, axis, g.angle, 0);
+            LibRw::RaceSubmit_AddInstanceEnv(rw_car_model_, (const float*)&m, coef, env);
+        };
+        if (car_env_ok_) gloss(0, carm, car_vel_);
+        else LibRw::RaceSubmit_AddInstance(rw_car_model_, (const float*)&carm);
         // AI cars reuse the player body when they have no livery variant of their
         // own; those that do keep drawing through D3D9 (their variants are not
         // registered yet), which is the same incremental fallback as props.
@@ -7567,9 +7755,11 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
             }
             am._41 = a.pos[0]; am._42 = a.pos[1]; am._43 = a.pos[2];
             if (ai_slot < 4) rep_car(ai_slot, &am);
+            if (car_env_ok_ && ai_slot < 4) gloss(ai_slot, am, a.vel);   // [rtex]
+            else LibRw::RaceSubmit_AddInstance(rw_car_model_, (const float*)&am);
             ++ai_slot;
-            LibRw::RaceSubmit_AddInstance(rw_car_model_, (const float*)&am);
         }
+        ++gloss_frame_;   // [rtex] DAT_007f101c stand-in, +1 per race frame (0x004111c1)
     } else if (relit_cars) {
         RenderCarsRelit(dev, worldm);   // emits its own "cars" Race3DCat tally
     } else if (car_ready_) {

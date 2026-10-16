@@ -1,0 +1,9 @@
+0x005e4848: [0.5, 0.0, 0.0, 0.0, 0.0, -0.5, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.5, 0.5, 0.0, 0.0]
+0x5cd04c 255.0 00007f43
+0x5cc320 1.0 0000803f
+0x5cc328 0.009999999776482582 0ad7233c
+0x5cc568 100.0 0000c842
+0x5d757c 0.0 00000000
+0x5cd2ac 0.0003000000142492354 52499d39
+0x5ea0b8 ['0x5cc8d4', '0x5cc8c8', '0x5cc8bc', '0x5cc8b0'] ['DirtBody', 'EarthBody', 'GrimeBody', 'SandBody']
+0x5ea0c8 ['0x5cc8a4', '0x5cc894', '0x5cc884', '0x5cc878', '0x5cc868', '0x5cc858', '0x5cc848', '0x5cc838'] ['DirtAdWheel', 'EarthAdWheel', 'GrimeAdWheel', 'SandAdWheel', 'DirtAtmWheel', 'EarthAtmWheel', 'GrimeAtmWheel', 'SandAtmWheel']

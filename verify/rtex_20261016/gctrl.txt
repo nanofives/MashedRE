@@ -1,0 +1,7 @@
+rtex G-CTRL (run_gctrl.py: TRAINING, MASHED_DETERMINISTIC, 14400 frames, private ptrace). sha8 of
+step.csv / gates.csv / ptrace.log. Expected default trio after the d1r1 rebase: c2e4d60d / b50bd39b / ba90ed88.
+
+base_default   log/rtex/base/mashed_re.exe  (ec3301f3)          c2e4d60d / b50bd39b / ba90ed88   lines 18664 / 56153 / 28076
+dual_default   log/rtex/dual/mashed_re.exe  (F-DUAL)            c2e4d60d / b50bd39b / ba90ed88
+final_default  log/rtex/final/mashed_re.exe (F-DUAL + F-DIRT)   c2e4d60d / b50bd39b / ba90ed88
+final_allon    final + MASHED_CAR_ENV=1     (+ F-ENV)           c2e4d60d / b50bd39b / ba90ed88
