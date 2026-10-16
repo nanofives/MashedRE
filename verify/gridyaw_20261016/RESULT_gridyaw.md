@@ -103,3 +103,37 @@ PID, `original\` read-only). Port runs on private roots, `MASHED_NO_DEPLOY=1`, P
   are not committed (binary). Their decode is in amendment 1.
 - Scorers: `score_arms.py` (D2 + H1), `g_settle.py`, `d3b_score.py`, `collateral_run.py`, `d2lat.py`.
 - Not committed (over 100 KB or `*.log`): step / gates / ptrace, motion_diag, a6a / sink / wc / fixup logs, carpos.
+
+## 7. Rebased onto `88a98a2f` (d2bsp merged; amendment 3, `rb/`)
+
+Build `8a5a9a8b`. **No-op:** `H_DEF` = `H_DEF-2` = `2b4d47bb / 356821c8 / f7a155e1`, the new default trio (PASS).
+Each D2 arm ran alone and in sequence (`rb/SCORE_D2_rb.txt`, `rb/RUNLOG.txt`). R = `MASHED_D2LAT_REFRESH`, G =
+`MASHED_GRID_DIR`, W = `MASHED_D2BSP`.
+
+| base | arm | slip 1500-2000 | slip 2000-2600 | driving-median | H1 |
+|---|---|---|---|---|---|
+| L (default) | DEF | 0.1905 in | 0.2521 in | 1883.91 OUT | 398/400 |
+| L | R x3 | 0.1939 in | 0.2637 OUT | 1681.00 / 1689.41 / 1689.41 OUT | **9/400** (pin) |
+| L | G x3 | 0.2007 OUT | 0.2627 OUT | 1759.10 OUT | 399/400 |
+| L | **GR x3** | 0.1926 in | **0.2569 / 0.2569 / 0.2572 OUT** | **1953.72 / 1953.72 / 1953.60 in** | 398/400 |
+| L + W | W | 0.1890 in | 0.2476 in | 1912.01 in | 398/400 |
+| L + W | WR x3 | 0.1955 in | 0.2549 OUT | 1812.98 OUT | **9/400** (pin) |
+| L + W | WG x3 | 0.2007 OUT | 0.2634 OUT | 1758.25 OUT | 399/400 |
+| L + W | **WGR x3** | 0.1917 in | **0.2557 OUT** | **1976.51 / 1979.13 / 1980.43 in** | 398/400 |
+
+No arm with a knob of this branch has all three metrics in bounds. GR and WGR put driving-median in, with slip
+2000-2600 over its 0.25487 ceiling by 0.0021 and 0.0008. Under A3.4 no further gates are run and no default moves.
+W alone (d2bsp) stays the only all-in arm. The diag twins are byte-identical to their scored arm for DFX and WGRFX.
+`D2_WFX_1` scores 0.1880 / 0.2500 / 1890.25, against `D2_W_1`'s 0.1890 / 0.2476 / 1912.01. Under W the
+diagnostic logs change the run, and n is 1387 against 1419.
+
+**A3.3: is the lateral loss what W fixes? NO.**
+- On `D2_WFX_1` (W, no knob of this branch) the first impact is the default's. Post-impact speed is 235.2 (L 235.0,
+  original 218.2).
+- The fixup has the same two slots, m -1671.9 / -1671.7, and `+0x9e4` = A6a's |W1| 1835.5022 (damp 0.2678). The +7
+  arm flips HIGH (G 33591), and the lateral collapses at +9..+11 as on L (`rb/TABLE_WFX.txt`, `rb/TABLE_DFX.txt`).
+- L and L+W are identical to 1e-6 in velocity up to the impact. They differ by 0.15 at impact+1 and stay within 1.0
+  until impact+310. W reaches its in-bound driving-median after this chain, not through it.
+- The chain is closed by **G + R**: on `D2_WGRFX_1` the impact reads 1801.9 -> 218.8 (original 218.2), and the
+  +7..+10 hold reproduces at retention 0.998 / 0.999 / 1.000 on the 0.1 floor (`rb/TABLE_WGRFX.txt`). The same holds
+  without W (`D2_GLFX_1`, section 2).
