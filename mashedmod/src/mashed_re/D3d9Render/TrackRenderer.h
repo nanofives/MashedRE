@@ -194,6 +194,16 @@ private:
     };
     std::vector<Prop> props_;
 
+    // [rprops U-9695] Props whose placement the original re-poses every frame from its per-track
+    // hook-table helpers (Arctic freighters 0x00448cb0, fishing boats 0x00448e20). Each entry is an
+    // index into props_ whose `instances` UpdatePropAnims() rewrites once per Render. prop_acc_ are
+    // the float accumulators 0x00683258 / 0x0068325c / 0x00683260 (BSS, zero at start).
+    struct PropAnim { int kind; std::size_t prop; };
+    std::vector<PropAnim> prop_anims_;
+    float prop_acc_[3] = {};
+    int   prop_tick_frames_ = 0;
+    void UpdatePropAnims();
+
     // ---- F2 .ANM animated copters (COURSE.LUA General_Anim_Filename + SetCopter;
     // KTCSCRIPT.LUA KTC_NewCopter). The flight paths are the track's .ANM
     // (Track::HAnim, rwID_HANIMANIMATION); the models are COPTER/JETRANGER/

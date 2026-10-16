@@ -265,6 +265,19 @@ const float* TableFor(int track) {
 }
 }
 
+// [rprops] Row accessor for the camera-man placement (TrackRenderer.cpp): the same table and the same
+// row layout CamEntriesInit442600 walks (`tbl + 1`, 12 floats per row, count = _ftol2(tbl[0]) at
+// 0x004426ac). Reads the table directly because the entry array is only built under MASHED_SUBSTATE.
+bool mashed_re::CamEntry::TableRow(int course_id, int k, float xyz[3], float* yaw)
+{
+    const float* tbl = TableFor(course_id);
+    if (!tbl || k < 0 || k >= static_cast<int>(tbl[0])) return false;
+    const float* row = tbl + 1 + k * 12;
+    xyz[0] = row[0]; xyz[1] = row[1]; xyz[2] = row[2];                       // CamEntryBuild441b30 xyz
+    if (yaw) *yaw = row[4];                                                  // r4 -> entry +0xb0
+    return true;
+}
+
 // 0x00442600
 extern "C" __declspec(dllexport) void __cdecl CamEntriesInit442600(void)
 {

@@ -739,7 +739,7 @@ def main():
             n_now = E.tracelen()
             if n_now != last_n:
                 last_n, last_t = n_now, time.time()
-            elif n_now > 100 and time.time() - last_t > 8.0:
+            elif n_now > 100 and time.time() - last_t > float(os.environ.get("PROBE_STALL_S", "8.0")):
                 print(f"trace stalled at {n_now} rows (director no longer called)")
                 break
     else:

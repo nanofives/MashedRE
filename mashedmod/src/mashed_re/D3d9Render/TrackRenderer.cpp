@@ -1228,6 +1228,98 @@ void QuatPosMatrix(const float q[4], const float p[3], D3DMATRIX* m) {
 
 }  // namespace
 
+// ---- [rprops U-9695] per-track prop placement ---------------------------------------------------
+// The ported RW leaves the original's frame ops go through (Math/RwMatrixRotate.cpp,
+// Collision/RwpSolverMath2.cpp), the same externs Race/CameraEntries.cpp binds.
+extern "C" void* __cdecl RwMatrixRotate(void* m, const float* axis, float deg, int mode);   // 0x004c4d20
+extern "C" void  __cdecl FUN_004c51a0(float* m, float* v, int mode);                        // 0x004c51a0 RwMatrixTranslate
+
+namespace {
+
+// Camera-man placement, one record per track whose COURSE.LUA loads CamMan.dff and whose per-frame
+// helper places it. `n` = the helper's loop bound (`mov ebp, N`), entries 1..N; `helper` = the helper's
+// first byte. The clump each creation helper clones is `course + 0x10110 + idx*4` = the CamMan.dff
+// index of that track's COURSE.LUA (read from the bytes by verify/rprops_20261016/find_camman_arrays.py,
+// 12 of 12). Each helper has exactly one caller, inside its own record's slot 1 (the per-frame node):
+// arctic 0x00448f02 (slot 1 0x00448ef0), rouabout 0x0044d3fc (0x0044d3f0), egypt 0x00449825 (0x00449820),
+// sands 0x00450901 (0x004507b0), superg 0x00450f85 (0x00450f80), training 0x004513ee (0x004513b0), warzone 0x00452b2c
+// (0x00452b20), forest 0x0044ded6 (0x0044ded0), storm 0x0044da49 (0x0044da40), dump 0x00449515
+// (0x00449510), highway 0x0044eebc (0x0044eeb0), neustein 0x0044aeff (0x0044aec0)
+// (verify/rprops_20261016/find_calls.py).
+struct CamManTrack { int course_id; int n; std::uint32_t helper; };
+const CamManTrack kCamMan[] = {
+    {  0,  5, 0x00448dc0u },   // arctic    array 0x00896460  clump 7  (+0x1012c)
+    {  2,  4, 0x0044cb00u },   // rouabout  array 0x00896230  clump 14 (+0x10148)
+    {  3,  6, 0x00449640u },   // egypt     array 0x00896260  clump 2  (+0x10118)
+    { 11,  6, 0x004502a0u },   // sands     array 0x0088ffc0  clump 17 (+0x10154)
+    { 25,  6, 0x00450ea0u },   // superg    array 0x0088ffa0  clump 2  (+0x10118)
+    { 30,  3, 0x00451220u },   // training  array 0x0088ff80  clump 1  (+0x10114)
+    { 33,  9, 0x00452790u },   // warzone   array 0x0088ff20  clump 6  (+0x10128)
+    { 34,  6, 0x0044de40u },   // forest    array 0x00895960  clump 7  (+0x1012c)
+    { 36,  6, 0x0044d8d0u },   // storm     array 0x00895fe0  clump 3  (+0x1011c)
+    { 37, 13, 0x004494a0u },   // dump      array 0x00896280  clump 13 (+0x10144)
+    { 38,  9, 0x0044e3b0u },   // highway   array 0x00894d60  clump 51 (+0x101dc)
+    { 39,  5, 0x0044ac10u },   // neustein  array 0x00896240  clump 7  (+0x1012c)
+};
+
+// Arctic ship tables (decomp 0x00448770 / 0x00448880 / 0x00448cb0 / 0x00448e20; floats read from the
+// image by verify/rprops_20261016/dump_ship_tables.py).
+const float kFreighterPos[2][3] = { { -15.0f, -4.0f, -66.0f }, { -20.5f, -4.0f, 81.0f } };  // 0x005f95d0
+const float kFreighterYaw[2]    = { 110.0f, 80.0f };                                       // 0x005f95e8
+const float kBoatPos[4][3] = { { 29.195f, -4.0f, 70.0f }, { -4.357f, -4.0f, 54.0f },       // 0x005f95f0
+                               { 45.9f, -4.0f, 8.8f },    { 50.0f, -4.0f, 23.05f } };
+const float kBoatYaw[4]    = { 120.0f, 60.0f, 0.0f, 30.0f };                               // 0x005f9620
+const double kShipRotDeg   = 5.0;    // qword 0x005cd030
+const double kFreighterAmp = 0.5;    // qword 0x005ce1d8
+const double kFreighterOff = 4.5;    // qword 0x005ce1f0
+const double kBoatAmp      = 0.25;   // qword 0x005ce1c8
+const double kBoatOff      = 4.0;    // qword 0x005ce1f8
+const float  kStepBob      = 0.02f;  // dword 0x005ce18c  -> 0x00683258
+const float  kStepRoll     = 0.04f;  // dword 0x005cd18c  -> 0x00683260
+const float  kStepPitch    = 0.01f;  // dword 0x005cc328  -> 0x0068325c
+const float  kAxisY[3]     = { 0.f, 1.f, 0.f };   // 0x006146fc
+
+void RwMatIdentity16(float m[16]) {            // RwFrameLoadIdentity 0x004c15c0
+    std::memset(m, 0, 16 * sizeof(float));
+    m[0] = m[5] = m[10] = 1.f;
+}
+void RwMatToD3D(const float m[16], D3DMATRIX* o) {   // RwMatrix rows right/up/at/pos
+    o->_11 = m[0];  o->_12 = m[1];  o->_13 = m[2];  o->_14 = 0.f;
+    o->_21 = m[4];  o->_22 = m[5];  o->_23 = m[6];  o->_24 = 0.f;
+    o->_31 = m[8];  o->_32 = m[9];  o->_33 = m[10]; o->_34 = 0.f;
+    o->_41 = m[12]; o->_42 = m[13]; o->_43 = m[14]; o->_44 = 1.f;
+}
+
+// A yaw-and-translate frame: load identity, RwFrameRotate(frame, (0,1,0), yaw, REPLACE),
+// RwFrameTranslate(frame, pos, POSTCONCAT). It is the camera-man helper loop body (e.g.
+// 0x00448dc0..0x00448e1f) and the ships' load-time placement (0x00448770 / 0x00448880).
+void PlaceMatrix(const float pos[3], float yaw, D3DMATRIX* out) {
+    float m[16]; RwMatIdentity16(m);
+    RwMatrixRotate(m, kAxisY, yaw, 0);
+    float p[3] = { pos[0], pos[1], pos[2] };
+    FUN_004c51a0(m, p, 2);
+    RwMatToD3D(m, out);
+}
+
+// One ship's frame, the loop body of 0x00448cb0 (freighters) / 0x00448e20 (boats): identity, rotate
+// about +Y by the table yaw (REPLACE), roll about the matrix `at` row by cos(acc260)*5 deg, pitch about
+// the matrix `right` row by sin(acc25c)*5 deg (both POSTCONCAT, axis = the matrix's own row, so it moves
+// with the rotation already applied), then translate by (x, sin(acc258)*amp - off, z) POSTCONCAT.
+void ShipMatrix(const float pos[3], float yaw, const float acc[3], double amp, double off, D3DMATRIX* out) {
+    float m[16]; RwMatIdentity16(m);
+    RwMatrixRotate(m, kAxisY, yaw, 0);                                      // 0x00448cf3 / 0x00448e63
+    RwMatrixRotate(m, m + 8, static_cast<float>(std::cos(static_cast<double>(acc[2])) * kShipRotDeg), 2);   // 0x00448d14
+    RwMatrixRotate(m, m + 0, static_cast<float>(std::sin(static_cast<double>(acc[1])) * kShipRotDeg), 2);   // 0x00448d35
+    float p[3] = { pos[0], static_cast<float>(std::sin(static_cast<double>(acc[0])) * amp - off), pos[2] };  // 0x00448d4b..57
+    FUN_004c51a0(m, p, 2);                                                  // 0x00448d5e
+    RwMatToD3D(m, out);
+}
+
+// Prop kinds for prop_anims_.
+enum { kAnimFreighter = 1, kAnimBoat = 2 };
+
+}  // namespace
+
 namespace { void InvalidateBatchCache(); }  // WS-A s3 PERF (defined before Render)
 
 bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
@@ -1626,12 +1718,13 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
         // backdrop. Track props have no D3D9 copy; the D3D9 prop draw was deleted in
         // D1-residue R3 (2026-10-16).
         auto load_prop = [&](const char* dff_name, Prop* p,
-                             bool d3d9_batches = false) -> bool {
+                             bool d3d9_batches = false,
+                             bool bake_frames = true) -> bool {
             std::uint32_t dl = 0;
             const std::uint8_t* db = find_entry(dff_name, &dl);
             if (!db) return false;
             Track::DffModel m;
-            if (!m.Parse(db, dl)) return false;
+            if (!m.Parse(db, dl, bake_frames)) return false;
             // [geomlight water-scope 2026-08-31] Parse() gets only a blob, so the
             // asset name has to be attached here -- this is the one place that
             // knows it. RwSceneBuild::BuildClump uses it to scope the ambient fold
@@ -1660,6 +1753,33 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                 rates.empty() ? nullptr : rates.data(), m.materials.size());
             return true;
         };
+        // An .MTS is u32 count + one RwMatrix chunk (0x0d) per instance, {STRUCT: 3x3 rotation +
+        // translation + u32} = 76 bytes each (FUN_00478110 -> RwMatrixStreamRead FUN_004cf2b0). One
+        // reader for RWP_Object and Clump_Mts_Pair, so the two cannot drift.
+        auto read_mts = [](const std::uint8_t* mb, std::uint32_t ml,
+                           std::vector<D3DMATRIX>* out) {
+            const std::uint32_t cnt = *reinterpret_cast<const std::uint32_t*>(mb);
+            std::size_t off = 4;
+            for (std::uint32_t k = 0; k < cnt && off + 24 + 48 <= ml; ++k) {
+                const std::uint32_t csz =
+                    *reinterpret_cast<const std::uint32_t*>(mb + off + 4);
+                const float* f = reinterpret_cast<const float*>(mb + off + 24);
+                D3DMATRIX m2;
+                MatIdentity(&m2);
+                m2._11 = f[0]; m2._12 = f[1]; m2._13 = f[2];
+                m2._21 = f[3]; m2._22 = f[4]; m2._23 = f[5];
+                m2._31 = f[6]; m2._32 = f[7]; m2._33 = f[8];
+                m2._41 = f[9]; m2._42 = f[10]; m2._43 = f[11];
+                out->push_back(m2);
+                off += 12 + csz;
+            }
+        };
+        // [rprops U-9695] MASHED_NO_PROPPLACE=1 keeps the pre-rprops placement (every Clump_Filename
+        // clump at identity) for A/B: Clump_Mts_Pair, the camera-men and the Arctic ships.
+        static const bool s_no_propplace = std::getenv("MASHED_NO_PROPPLACE") != nullptr;
+        prop_anims_.clear();
+        prop_acc_[0] = prop_acc_[1] = prop_acc_[2] = 0.f;
+        prop_tick_frames_ = 0;
         if (lua) {
             // line-scan the Lua text for the wiring calls (comments start
             // with "--"; skip them)
@@ -1668,6 +1788,12 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
             bool excluded[64] = {};
             struct ClumpRef { int idx; char dff[64]; };
             std::vector<ClumpRef> clumps;
+            // [rprops U-9695] Mts_Filename(i,"x.mts") (FUN_0047a280, slot i of the 16 Mts) and
+            // Clump_Mts_Pair(clump, mts) (FUN_0047a950): Course::CreateFromDescription 0x00479330
+            // replicates the clump's first atomic once per record of the paired Mts.
+            char mts_names[16][64] = {};
+            struct MtsPair { int clump; int mts; };
+            std::vector<MtsPair> mts_pairs;
             while (pos < lua_len) {
                 std::size_t eol = pos;
                 while (eol < lua_len && s[eol] != '\n') ++eol;
@@ -1676,7 +1802,7 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                 const std::size_t cmt = line.find("--");
                 if (cmt != std::string::npos) line.resize(cmt);
                 char a[64] = {}, b[64] = {};
-                int idx = -1;
+                int idx = -1, pm = -1;
                 if (std::sscanf(line.c_str(),
                                 " RWP_Object( %*d , \"%*[^\"]\" , \"%63[^\"]\" "
                                 ", \"%63[^\"]\" )", a, b) == 2 ||
@@ -1687,24 +1813,7 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                     std::uint32_t ml = 0;
                     const std::uint8_t* mb = find_entry(b, &ml);
                     if (mb && ml >= 4 && load_prop(a, &p)) {
-                        const std::uint32_t cnt =
-                            *reinterpret_cast<const std::uint32_t*>(mb);
-                        std::size_t off = 4;
-                        for (std::uint32_t k = 0; k < cnt &&
-                             off + 24 + 48 <= ml; ++k) {
-                            const std::uint32_t csz =
-                                *reinterpret_cast<const std::uint32_t*>(mb + off + 4);
-                            const float* f =
-                                reinterpret_cast<const float*>(mb + off + 24);
-                            D3DMATRIX m2;
-                            MatIdentity(&m2);
-                            m2._11 = f[0]; m2._12 = f[1]; m2._13 = f[2];
-                            m2._21 = f[3]; m2._22 = f[4]; m2._23 = f[5];
-                            m2._31 = f[6]; m2._32 = f[7]; m2._33 = f[8];
-                            m2._41 = f[9]; m2._42 = f[10]; m2._43 = f[11];
-                            p.instances.push_back(m2);
-                            off += 12 + csz;
-                        }
+                        read_mts(mb, ml, &p.instances);
                         if (!p.instances.empty())
                             props_.push_back(std::move(p));
                     }
@@ -1726,6 +1835,15 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                                        " Clump_Exclude_From_World(%d)",
                                        &idx) == 1) {
                     if (idx >= 0 && idx < 64) excluded[idx] = true;
+                } else if (std::sscanf(line.c_str(),
+                                       " Mts_Filename( %d , \"%63[^\"]\" )",
+                                       &idx, a) == 2) {
+                    if (idx >= 0 && idx < 16)
+                        std::snprintf(mts_names[idx], sizeof(mts_names[idx]), "%s", a);
+                } else if (std::sscanf(line.c_str(), " Clump_Mts_Pair( %d , %d )",
+                                       &idx, &pm) == 2) {
+                    if (idx >= 0 && idx < 64 && pm >= 0 && pm < 16)
+                        mts_pairs.push_back({ idx, pm });
                 } else if (std::sscanf(line.c_str(),
                                        " Course_Id( %d )", &idx) == 1 ||
                            std::sscanf(line.c_str(),
@@ -1777,7 +1895,12 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                                     sk) == 1) {
                         // sky clump: drawn first, z-write off, unfogged. The only
                         // prop that keeps a D3D9 bake (librw does not draw it).
-                        load_prop(sk, &sky_, /*d3d9_batches=*/true);
+                        // [rprops U-9696] the game
+                        // rebuilds the sky clump frame every frame (0x004491e0 / 0x00426d20), so
+                        // its root-frame offset (Arctic SKY.DFF y -0.155, City SKYDOME.DFF y -0.070)
+                        // must not be baked into the vertices.
+                        static const bool s_no_skyfix_ld = std::getenv("MASHED_NO_SKYFIX") != nullptr;
+                        load_prop(sk, &sky_, /*d3d9_batches=*/true, s_no_skyfix_ld);
                     } else if (std::sscanf(line.c_str(),
                                     " AI_Bsp_Filename( \"%63[^\"]\" )", sk) == 1 ||
                                std::sscanf(line.c_str(),
@@ -1833,7 +1956,14 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
             for (const auto& c : clumps) {
                 if (excluded[c.idx] && s_skip_excluded) continue;
                 Prop p;
-                if (load_prop(c.dff, &p)) {
+                // [rprops U-9695] a Clump_Mts_Pair clump's atomic frame is replaced by the Mts
+                // record and its clump-frame translation zeroed (0x00479330), so its vertices must
+                // stay in geometry space: City Standard.dff's root frame carries y -0.957, which
+                // the original discards and a baked parse would keep.
+                bool paired = false;
+                if (!s_no_propplace)
+                    for (const auto& mp : mts_pairs)
+                        if (mp.clump == c.idx && mts_names[mp.mts][0]) paired = true;                if (load_prop(c.dff, &p, false, !paired)) {
                     // [SEA-TILE 2026-09-29] Arctic's sea is NOT placed by its DFF
                     // (SEA.DFF frame[0].pos == (0,0,0), verts Y 0.000..0.904) and NOT
                     // by COURSE.LUA (no placement command exists in the 68-entry Lua
@@ -1904,7 +2034,75 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                                 "instances=1 (identity) sea_tile_instances=0\n",
                                 course_id_, c.idx, c.dff);
                     }
+                    // [rprops U-9695] per-track placement, each case from the original's code.
+                    int anim_kind = 0;
+                    if (!s_no_propplace) {
+                        int pair_mts = -1;
+                        for (const auto& mp : mts_pairs)
+                            if (mp.clump == c.idx) { pair_mts = mp.mts; break; }
+                        if (pair_mts >= 0 && mts_names[pair_mts][0]) {
+                            // Clump_Mts_Pair: the single atomic of the clump (all ten paired
+                            // clumps in the game have exactly one) is replaced by one copy per
+                            // Mts record, each frame set to the record matrix (0x00479330, the
+                            // pair loop after the sky load: FUN_004e69a0 clone, FUN_004c1480
+                            // RwFrameTransform(frame, record, REPLACE)). The record array is
+                            // course + mts*0x1000, count at course + 0x10000 + mts*4.
+                            std::uint32_t ml = 0;
+                            const std::uint8_t* mb = find_entry(mts_names[pair_mts], &ml);
+                            std::vector<D3DMATRIX> recs;
+                            if (mb && ml >= 4) read_mts(mb, ml, &recs);
+                            if (!recs.empty()) {
+                                p.instances = std::move(recs);
+                                if (log)
+                                    std::fprintf(log, "  PROP-PAIR course_id=%d clump=%d dff=%s mts=%d "
+                                                 "(%s) instances=%zu\n", course_id_, c.idx, c.dff,
+                                                 pair_mts, mts_names[pair_mts], p.instances.size());
+                            }
+                        } else if (_stricmp(c.dff, "CAMMAN.DFF") == 0) {
+                            // Camera-men: entries 1..N of the track's camera table, each placed by
+                            // the track's per-frame helper (kCamMan) at its row xyz with its yaw.
+                            for (const auto& ct : kCamMan) {
+                                if (ct.course_id != course_id_) continue;
+                                std::vector<D3DMATRIX> cm;
+                                for (int k = 1; k <= ct.n; ++k) {
+                                    float xyz[3], yaw = 0.f;
+                                    if (!CamEntry::TableRow(course_id_, k, xyz, &yaw)) { cm.clear(); break; }
+                                    D3DMATRIX m;
+                                    PlaceMatrix(xyz, yaw, &m);
+                                    cm.push_back(m);
+                                }
+                                if (!cm.empty()) {
+                                    p.instances = std::move(cm);
+                                    if (log)
+                                        std::fprintf(log, "  PROP-CAMMAN course_id=%d clump=%d helper=0x%08x "
+                                                     "instances=%zu\n", course_id_, c.idx, ct.helper,
+                                                     p.instances.size());
+                                }
+                                break;
+                            }
+                        } else if (course_id_ == 0 && _stricmp(c.dff, "FREIGHTER.DFF") == 0) {
+                            // Arctic freighters: the clump + one clone (0x00448770), yaw/position
+                            // from the 0x005f95d0 tables; UpdatePropAnims re-poses them per frame.
+                            p.instances.clear();
+                            for (int k = 0; k < 2; ++k) {
+                                D3DMATRIX m;
+                                PlaceMatrix(kFreighterPos[k], kFreighterYaw[k], &m);
+                                p.instances.push_back(m);
+                            }
+                            anim_kind = kAnimFreighter;
+                        } else if (course_id_ == 0 && _stricmp(c.dff, "FISHINGBOAT.DFF") == 0) {
+                            // Arctic fishing boats: the clump + three clones (0x00448880).
+                            p.instances.clear();
+                            for (int k = 0; k < 4; ++k) {
+                                D3DMATRIX m;
+                                PlaceMatrix(kBoatPos[k], kBoatYaw[k], &m);
+                                p.instances.push_back(m);
+                            }
+                            anim_kind = kAnimBoat;
+                        }
+                    }
                     props_.push_back(std::move(p));
+                    if (anim_kind) prop_anims_.push_back({ anim_kind, props_.size() - 1 });
                 }
             }
         }
@@ -6604,6 +6802,37 @@ void TrackRenderer::EmitCarFx(int slot, const float pos[3], const float vel_in[3
     fx_prev_speed_[slot] = speed;
 }
 
+// [rprops U-9695] The Arctic per-frame tick 0x00448ef0 for the props this port draws: 0x00448cb0 poses
+// the freighters from the accumulators, then advances all three (0x00448d78..0x00448db1: bob += 0.02,
+// roll += 0.04, pitch += 0.01, each a float add stored to the float global), then 0x00448e20 poses the
+// boats from the ADVANCED values. 0x00448dc0 (camera-men) rewrites constant table rows here, so the
+// camera-men are placed once at load. Called once per Render, which exe_main calls once per frame.
+void TrackRenderer::UpdatePropAnims() {
+    // The first two Render calls do not tick: measured against the recorded freighter y at rows 1044,
+    // 1051 and 1091 (y = sin(acc258)*0.5 - 4.5 gives acc258/0.02 = 1043.0, 1050.0, 1090.0 = K-1), the
+    // original's tick count at the frame that consumed row K is K, while this loop with no delay
+    // measured K+2. PREREG_rprops.md amendment 1; the gate that holds slot 1 off for the first two
+    // course updates in the original is not decoded (0x00426ac3..0x00426ae3 gates on 0x0041e9e0).
+    if (++prop_tick_frames_ <= 2) return;
+    for (const auto& a : prop_anims_) {
+        if (a.kind != kAnimFreighter || a.prop >= props_.size()) continue;
+        auto& inst = props_[a.prop].instances;
+        inst.resize(2);
+        for (int k = 0; k < 2; ++k)
+            ShipMatrix(kFreighterPos[k], kFreighterYaw[k], prop_acc_, kFreighterAmp, kFreighterOff, &inst[k]);
+    }
+    prop_acc_[0] = prop_acc_[0] + kStepBob;      // 0x00683258
+    prop_acc_[2] = prop_acc_[2] + kStepRoll;     // 0x00683260
+    prop_acc_[1] = prop_acc_[1] + kStepPitch;    // 0x0068325c
+    for (const auto& a : prop_anims_) {
+        if (a.kind != kAnimBoat || a.prop >= props_.size()) continue;
+        auto& inst = props_[a.prop].instances;
+        inst.resize(4);
+        for (int k = 0; k < 4; ++k)
+            ShipMatrix(kBoatPos[k], kBoatYaw[k], prop_acc_, kBoatAmp, kBoatOff, &inst[k]);
+    }
+}
+
 void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     if (!ready_) return;
     // Parity 3D channel (MASHED_DBG_DRAWSTREAM3D) frame delimiter: Render() is
@@ -7050,29 +7279,58 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         // black sky. Centre it on the camera eye so it surrounds the viewer.
         // Translate only (clouds keep world orientation as the camera turns);
         // z-write is off so every world surface draws over the dome.
-        D3DMATRIX skym; MatIdentity(&skym);
-        skym._41 = eye[0]; skym._42 = eye[1]; skym._43 = eye[2];
-        dev->SetTransform(D3DTS_WORLD, &skym);
-        for (std::size_t mi = 0; mi < sky_.batches.size(); ++mi) {
-            const auto& b = sky_.batches[mi];
-            if (b.empty()) continue;
-            dev->SetTexture(0, sky_.textures[mi]);
-            // F3: scroll the UV-animated sky material (SKY.DFF "bmp_Sky_M").
-            const bool scroll = !s_uvscroll_off && mi < sky_.mat_scroll.size() &&
-                (sky_.mat_scroll[mi].du != 0.f || sky_.mat_scroll[mi].dv != 0.f);
-            if (scroll) {
-                D3DMATRIX tm; MatIdentity(&tm);
-                tm._31 = std::fmod(sky_.mat_scroll[mi].du * t, 1.f);
-                tm._32 = std::fmod(sky_.mat_scroll[mi].dv * t, 1.f);
-                dev->SetTransform(D3DTS_TEXTURE0, &tm);
-                dev->SetTextureStageState(0, D3DTSS_TEXTURETRANSFORMFLAGS,
-                                          D3DTTFF_COUNT2);
+        // [rprops U-9696] The original draws the sky clump per frame with its frame rebuilt from
+        // the camera position, root-frame offset discarded (LoadIdentity), twice on Arctic:
+        //   A  0x004491e0 (called by the Arctic frame function 0x004492b0, the draw at 0x0044937d):
+        //      identity, rotate 180 deg about X then 180 deg about Y = diag(-1,-1,1), translate to the
+        //      camera frame position (`cam_frame + 0x40`);
+        //   B  0x00426d20 / 0x00426d90 (generic, the draw at 0x00426da2): identity, rotate about Y by
+        //      the global at 0x0066d720 (never written, 0), translate to the camera position.
+        // Arctic's recorded frame shows both (86-triangle `sky`, 0.265 apart in y); TRAINING and City
+        // show one. MASHED_NO_SKYFIX=1 keeps the single translate-only copy with the baked root offset.
+        static const bool s_no_skyfix = std::getenv("MASHED_NO_SKYFIX") != nullptr;
+        D3DMATRIX skym[2];
+        int nsky = 0;
+        if (!s_no_skyfix && course_id_ == 0) {          // A: Arctic only (slot 4 of record "arctic")
+            MatIdentity(&skym[nsky]);
+            skym[nsky]._11 = -1.f; skym[nsky]._22 = -1.f;
+            skym[nsky]._41 = eye[0]; skym[nsky]._42 = eye[1]; skym[nsky]._43 = eye[2];
+            ++nsky;
+        }
+        MatIdentity(&skym[nsky]);                        // B (and the pre-rprops single copy)
+        skym[nsky]._41 = eye[0]; skym[nsky]._42 = eye[1]; skym[nsky]._43 = eye[2];
+        ++nsky;
+        // MASHED_SKY_D3D9=1 keeps the sky on the legacy D3D9 draw (fixed matrices, old route);
+        // MASHED_NO_SKYFIX=1 restores the whole pre-rprops sky: that route, one translate-only copy.
+        static const bool s_sky_d3d9 = std::getenv("MASHED_SKY_D3D9") != nullptr;
+        if (!s_sky_d3d9 && !s_no_skyfix && LibRw::RaceSubmit_Active() && sky_.rw_model >= 0) {
+            // The librw path draws the sky before its world, depth and fog off (RwRaceSubmit.cpp).
+            for (int si = 0; si < nsky; ++si)
+                LibRw::RaceSubmit_AddSky(sky_.rw_model, reinterpret_cast<const float*>(&skym[si]));
+        } else
+        for (int si = 0; si < nsky; ++si) {
+            dev->SetTransform(D3DTS_WORLD, &skym[si]);
+            for (std::size_t mi = 0; mi < sky_.batches.size(); ++mi) {
+                const auto& b = sky_.batches[mi];
+                if (b.empty()) continue;
+                dev->SetTexture(0, sky_.textures[mi]);
+                // F3: scroll the UV-animated sky material (SKY.DFF "bmp_Sky_M").
+                const bool scroll = !s_uvscroll_off && mi < sky_.mat_scroll.size() &&
+                    (sky_.mat_scroll[mi].du != 0.f || sky_.mat_scroll[mi].dv != 0.f);
+                if (scroll) {
+                    D3DMATRIX tm; MatIdentity(&tm);
+                    tm._31 = std::fmod(sky_.mat_scroll[mi].du * t, 1.f);
+                    tm._32 = std::fmod(sky_.mat_scroll[mi].dv * t, 1.f);
+                    dev->SetTransform(D3DTS_TEXTURE0, &tm);
+                    dev->SetTextureStageState(0, D3DTSS_TEXTURETRANSFORMFLAGS,
+                                              D3DTTFF_COUNT2);
+                }
+                DrawBatch(dev, b);
+                ds_tally(b, sky_.textures[mi]);
+                if (scroll)
+                    dev->SetTextureStageState(0, D3DTSS_TEXTURETRANSFORMFLAGS,
+                                              D3DTTFF_DISABLE);
             }
-            DrawBatch(dev, b);
-            ds_tally(b, sky_.textures[mi]);
-            if (scroll)
-                dev->SetTextureStageState(0, D3DTSS_TEXTURETRANSFORMFLAGS,
-                                          D3DTTFF_DISABLE);
         }
         dev->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
         dev->SetTransform(D3DTS_WORLD, &worldm);  // restore identity for world
@@ -7164,6 +7422,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         }
     }
 
+    if (!prop_anims_.empty()) UpdatePropAnims();   // [rprops] Arctic ships, once per frame
     // R6: track props (tyre walls, crates, sea, freighter...), submitted to librw as
     // instanced models. The D3DMATRIX is each prop's MTS / identity world matrix; it
     // copies straight into the rw::Frame (RwRaceSubmit.cpp SetClumpTransform). A

@@ -1,0 +1,28 @@
+rouabout: exit=0 placement lines=5
+    PROP-PAIR course_id=2 clump=0 dff=Shrub01.dff mts=0 (Shrub01.mts) instances=31
+    PROP-PAIR course_id=2 clump=3 dff=FatTree.dff mts=2 (FatTree.mts) instances=9
+    PROP-CAMMAN course_id=2 clump=14 helper=0x0044cb00 instances=4
+    PROP-PAIR course_id=2 clump=17 dff=Pylon_H.dff mts=3 (Pylon.mts) instances=6
+    PROP-PAIR course_id=2 clump=19 dff=Frame_H.dff mts=4 (Frame.mts) instances=9
+Highway: exit=0 placement lines=2
+    PROP-PAIR course_id=38 clump=42 dff=Lampost.dff mts=0 (Lampost.mts) instances=14
+    PROP-CAMMAN course_id=38 clump=51 helper=0x0044e3b0 instances=9
+Warzone: exit=0 placement lines=2
+    PROP-CAMMAN course_id=33 clump=6 helper=0x00452790 instances=9
+    PROP-PAIR course_id=33 clump=20 dff=Pylon_H.dff mts=5 (Pylon.mts) instances=10
+sands: exit=0 placement lines=2
+    PROP-PAIR course_id=11 clump=5 dff=OakTrunk.dff mts=0 (trees.mts) instances=51
+    PROP-CAMMAN course_id=11 clump=17 helper=0x004502a0 instances=6
+Storm: exit=0 placement lines=2
+    PROP-CAMMAN course_id=36 clump=3 helper=0x0044d8d0 instances=6
+    PROP-PAIR course_id=36 clump=6 dff=Bush.dff mts=1 (Bush.mts) instances=18
+Egypt: exit=0 placement lines=1
+    PROP-CAMMAN course_id=3 clump=2 helper=0x00449640 instances=6
+dump: exit=0 placement lines=1
+    PROP-CAMMAN course_id=37 clump=13 helper=0x004494a0 instances=13
+Forest: exit=0 placement lines=1
+    PROP-CAMMAN course_id=34 clump=7 helper=0x0044de40 instances=6
+Neustein: exit=0 placement lines=1
+    PROP-CAMMAN course_id=39 clump=7 helper=0x0044ac10 instances=5
+SuperG: exit=0 placement lines=1
+    PROP-CAMMAN course_id=25 clump=2 helper=0x00450ea0 instances=6
