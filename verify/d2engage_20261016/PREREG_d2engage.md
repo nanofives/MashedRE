@@ -199,3 +199,26 @@ seed. If driving-median (U-9180) moves into its bound in any arm, that is report
 This lane changes `ReassertContacts` (watch item), the settle / release order and the release-tick reset (inputs
 of `0x0046f6c0` and of A6a's boost arm). It does not change `+0x4a4`, `ProduceTerrainBatch` / `FUN_00538c80`,
 grip-clamp #6 or the chunk loop. Every measured hit is reported in the RESULT.
+
+## Amendment 1 (2026-10-16, after the D arms, round-1 D2 (`D2_DEF_1`, `D2_B0_1`, `D2_BO_1`, `D2_BK_1`, `D2_B_1`) and `BASE_H_DEF`/`-2`; before `D2_B0X_1` and before reading any other arm)
+
+Recorded (exe `cf303269`, base exe `056295f9`; `SCORE_D2_ROUND1.txt`, `G_SETTLE.txt`, `RUNLOG.txt`):
+- Base G-CTRL `BASE_H_DEF` = `BASE_H_DEF-2` = `716cb2fd / 2a2afda1 / ba90ed88` (prediction 4.1's reference holds).
+- Knob-took part 5: PASS (`D_B` settle call 1 enters st (1,1,1,1) fv 0 gc 4, corr (0, -0.00296074, +0.0000925064);
+  `D_B0` reproduces d2posmodel's `D_B` sha8 `8a6efcb4 / 7df792b1`). Part 4(b) visible: the first real step enters
+  st (1,1,1,1) fv 0, corr 0. Prediction 4.3: end position bit-identical to `D_B0`. PASS.
+- G-SETTLE: `D_BRG` PASS (dz +1.226e-7, dy -4.593e-6, x bit-identical); `D_B` FAIL (dz +3.575e-7, dy -1.330e-5),
+  same margins as d2posmodel (default-grid spawn pose). G-PROG (amendment-1 reading of d2posmodel) `D_BRG` PASS
+  29.999977 x23, control `D_RG` 0.0 x27.
+- Knob-took part 4: PASS on `D2_BO_1` and `D2_B_1`. Marker at line 0, settle series line `bf4=3000 bf8=0`,
+  release next, d=0 line `bf4=2800 bf8=2`. `D2_B0_1`: settle `bf4=2800`, d=0 `2600`. Section 0.3's explanation of
+  cause 1 is confirmed by the witness.
+- G-LAUNCH: d=15 on `D2_BO_1` and `D2_B_1` (fit 0.13 %), d=14 on `D2_B0_1` and `D2_BK_1` (fit 6.93 %).
+- `D2_B_1`: 0.1953 in / 0.2500 in / 1865.19 OUT (n 368 / 526 / 1290); recovery 391/400, median 1293.1, H1 PASS.
+  `D2_BO_1` 0.1953 / 0.2500 / 1864.87. `D2_BK_1` = `D2_B0_1` = d2posmodel's B (NA / NA / 1338.62 n=54, 11/400).
+  `D2_DEF_1` 0.1927 / 0.2489 / 1860.27, 398/400.
+
+Added, REPORT ONLY (no gate): `D2_B0X_1` = stack B0 + the DX diagnostics (wc log, off-mesh log, `MASHED_A6ADUMP`).
+B no longer pins, so the pinned trajectory for the cause-2 attribution (4.6) is B0's. Prediction 4.6 applies to
+`D2_B0X_1` (pinned) against `D2_BX_1` / `D2_DX_1` (not pinned): on the pinned frames between re-contacts, clamp #6
+is on the LOW arm (`act.arm`) with `act.kvel` above 0.1. No numeric threshold.
