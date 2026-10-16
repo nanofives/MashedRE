@@ -232,7 +232,7 @@ void PathProg_RacePctTick() {
     if (!s_logged) {
         s_logged = true;
         if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {   // the game's own witness that arm R is live
-            std::fprintf(lf, "[U-9685] MASHED_RACEPCT_FUN408610: race_pct from the verbatim step on a shadow row\n");
+            std::fprintf(lf, "[U-9685] race_pct from the verbatim step on a shadow row (opt-out MASHED_NO_RACEPCT_FUN408610)\n");
             std::fclose(lf);
         }
     }
