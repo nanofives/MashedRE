@@ -38,12 +38,12 @@ def run_arm(exe, arm, knobs):
 
 def main():
     exe_base, exe_new = sys.argv[1], sys.argv[2]
-    which = sys.argv[3:] or ["base3", "final3", "visx3", "visoff3", "nolag3", "gctrl"]
-    plan = {"base3": (exe_base, []), "final3": (exe_new, []), "visx3": (exe_new, ["MASHED_CAR_ENV=0"]),
-            "visoff3": (exe_new, ["MASHED_CAR_VIS=0"]), "nolag3": (exe_new, ["MASHED_CAR_ENV_PREVCAM=0"])}
+    which = sys.argv[3:] or ["base4", "final4", "visx4", "visoff4", "nolag4", "gctrl"]
+    plan = {"base4": (exe_base, []), "final4": (exe_new, []), "visx4": (exe_new, ["MASHED_CAR_ENV=0"]),
+            "visoff4": (exe_new, ["MASHED_CAR_VIS=0"]), "nolag4": (exe_new, ["MASHED_CAR_ENV_PREVCAM=0"])}
     for a in which:
         if a == "gctrl":
-            for name, exe in (("gctrl_base3", exe_base), ("gctrl_final3", exe_new)):
+            for name, exe in (("gctrl_base4", exe_base), ("gctrl_final4", exe_new)):
                 with open(LOG / f"run_{name}.txt", "w") as f:
                     subprocess.run([PY, str(HERE / "run_gctrl.py"), exe, name], stdout=f, stderr=subprocess.STDOUT)
                 print((LOG / f"run_{name}.txt").read_text()[-400:], flush=True)
