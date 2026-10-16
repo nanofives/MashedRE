@@ -1,0 +1,22 @@
+G-CTRL (run_gctrl.py, TRAINING default arm)
+=== gctrl_base6  exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\carlod2\exe_base6\mashed_re.exe  knobs=[] ===
+    pid=26036
+    exit=0  self_exited=True
+    gctrl_base6.step.csv  lines=18956  sha8=2b4d47bb
+    gctrl_base6.gates.csv  lines=55433  sha8=356821c8
+    gctrl_base6.ptrace.log  lines=27716  sha8=f7a155e1
+GCTRL DONE
+=== gctrl_new6  exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\carlod2\exe_new6\mashed_re.exe  knobs=[] ===
+    pid=19108
+    exit=0  self_exited=True
+    gctrl_new6.step.csv  lines=18956  sha8=2b4d47bb
+    gctrl_new6.gates.csv  lines=55433  sha8=356821c8
+    gctrl_new6.ptrace.log  lines=27716  sha8=f7a155e1
+GCTRL DONE
+=== gctrl_final8  exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\carlod2\exe_final8\mashed_re.exe  knobs=[] ===
+    pid=6056
+    exit=0  self_exited=True
+    gctrl_final8.step.csv  lines=18956  sha8=2b4d47bb
+    gctrl_final8.gates.csv  lines=55433  sha8=356821c8
+    gctrl_final8.ptrace.log  lines=27716  sha8=f7a155e1
+GCTRL DONE

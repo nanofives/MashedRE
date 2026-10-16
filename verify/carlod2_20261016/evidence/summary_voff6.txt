@@ -1,0 +1,10 @@
+arm voff6 exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\carlod2\exe_new6\mashed_re.exe knobs=['MASHED_CAR_VIS=0'] brake_rows=False
+training   884  rows  27  red  0  matched 199/242  tri 17209/18128  pix 12.12
+training   924  rows  27  red  0  matched 195/257  tri 17171/18358  pix 8.61
+training   959  rows  27  red  0  matched 195/233  tri 17171/18079  pix 7.31
+arctic    1051  rows  38  red  0  matched 149/180  tri 34782/35412  pix 8.95
+arctic    1091  rows  40  red  1  matched 147/177  tri 34495/35197  pix 6.86
+arctic    1126  rows  39  red  1  matched 108/131  tri 28785/29307  pix 6.42
+city       761  rows  26  red  0  matched 478/512  tri 40900/42182  pix 10.44
+city       801  rows  28  red  1  matched 465/496  tri 40392/41692  pix 6.69
+city       836  rows  26  red  1  matched 418/444  tri 33411/34493  pix 6.58

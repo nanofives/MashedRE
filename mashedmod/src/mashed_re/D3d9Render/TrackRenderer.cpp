@@ -3562,6 +3562,8 @@ int TrackRenderer::RegisterCarModel(IDirect3DDevice9* dev, const char* dff_entry
         }
         if (b.part_id == 0x13 && cm.body_frame < 0) {
             cm.body_frame = b.frame;
+            std::memcpy(cm.part19, b.frame_pos, sizeof(cm.part19));   // [carlod2]
+            cm.part19_ok = true;
             std::memcpy(cm.body_pos, model.frames[static_cast<std::size_t>(b.frame)].pos,
                         sizeof(cm.body_pos));
         }
@@ -4629,6 +4631,10 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
     // and the opponents' steps.
     CarParts_FrameTick(static_cast<int>(in.dt * 3000.0f + 0.5f));
     CopterTick(static_cast<int>(in.dt * 3000.0f + 0.5f));   // FUN_0040fc00 -> FUN_00425d50 (0x0040fcb9)
+
+    // [carlod2] the player's controller brake byte [5] (the expression the physics step feeds
+    // StepPlayer below): what FUN_0040da50 @ 0x0040dae0 reads for flag 0x800 of slot 0
+    player_brake_byte_ = static_cast<std::uint8_t>((accel < 0.f ? -accel : 0.f) * 255.f);
 
     // WS-A8 (2026-06-17): when MASHED_REAL_PHYSICS is on, drive the player car
     // through the ported chain (A3 init -> A4 control -> A5 -> A6a -> A6b) instead
@@ -8568,10 +8574,16 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         // third output and operand order (z, x, y); part 0x13's frame origin x the car matrix.
         // Shared by the env coefficient's distance fade (gloss, below: against the PREVIOUS
         // frame's camera, eye_prev_) and the LOD state (this frame's camera, last_eye_).
-        auto part19_d2 = [&](const D3DMATRIX& m, const float* eye) -> double {
-            const float px = car_part19_[0] * m._11 + car_part19_[1] * m._21 + car_part19_[2] * m._31 + m._41;
-            const float py = car_part19_[0] * m._12 + car_part19_[1] * m._22 + car_part19_[2] * m._32 + m._42;
-            const float pz = car_part19_[0] * m._13 + car_part19_[1] * m._23 + car_part19_[2] * m._33 + m._43;
+        auto part19_d2 = [&](int slot, const D3DMATRIX& m, const float* eye) -> double {
+            // [carlod2] the slot's own livery model's part-0x13 origin when it has one
+            const float* p19 = car_part19_;
+            if (slot >= 0 && slot < 4 && !car_models_.empty()) {
+                const CarModel& pm = car_models_[static_cast<std::size_t>(car_slot_model_[slot])];
+                if (pm.part19_ok) p19 = pm.part19;
+            }
+            const float px = p19[0] * m._11 + p19[1] * m._21 + p19[2] * m._31 + m._41;
+            const float py = p19[0] * m._12 + p19[1] * m._22 + p19[2] * m._32 + m._42;
+            const float pz = p19[0] * m._13 + p19[1] * m._23 + p19[2] * m._33 + m._43;
             const double dx = px - eye[0], dy = py - eye[1], dz = pz - eye[2];
             return dz * dz + dx * dx + dy * dy;
         };
@@ -8601,13 +8613,47 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
             }
             return v;
         }();
+        // [carlod2] F & 0x800 = the controller's brake byte [5] != 0 (FUN_0040da50 @ 0x0040da50:
+        // `mov al, [ctrl*0x4c + 0x007f103d]` 0x0040dae0, `setne` 0x0040daed, FUN_0041eeb0's 4th
+        // argument 0x0040db3b..0x0040db3f). The ported AI tick writes those blocks every frame (slot
+        // table entry -> ctrl block, the same bytes StepCar reads), the player's byte is
+        // `player_brake_byte_`. FUN_00420870 tests the flags the PREVIOUS call set (FUN_00425a40 runs
+        // the AI tick at 0x0040fc6c, before FUN_0040da50 at 0x0040fc75), so the byte is delayed one
+        // frame. OPT-IN, MASHED_CAR_BRAKE=1 (default OFF: PREREG_carlod2 rules 1-2 fail because the standalone
+        // AI's brake output differs from the original's on 2 of the 3 plate frames and adds one on TRAINING 924,
+        // verify/carlod2_20261016/RESULT_carlod2.md); MASHED_CAR_BRAKE_ROWS overrides on its rows.
+        static const bool s_brake_wire = [] {
+            const char* e = std::getenv("MASHED_CAR_BRAKE");
+            return e && e[0] == '1' && e[1] == '\0';
+        }();
+        static std::FILE* s_blog = [] {
+            const char* e = std::getenv("MASHED_CAR_BRAKELOG");
+            std::FILE* f = (e && e[0]) ? std::fopen(e, "w") : nullptr;
+            if (f) std::fprintf(f, "row,slot,byte_now,used,rows,flags\n");
+            return f; }();
         auto carvis = [&](int slot, const D3DMATRIX& m, LibRw::CarVis* out) -> const LibRw::CarVis* {
             if (!LibRw::CarVisEnabled() || !car_part19_ok_) return nullptr;
+            std::uint8_t cur = 0;
+            if (s_brake_wire && slot >= 0 && slot < 4) {
+                if (slot == 0) cur = player_brake_byte_;
+                else if (g_aib.loaded && Vehicle::VehiclePhysics_Enabled()) {
+                    const int ctrl = Ai::I32(Ai::kSlotTableBase +
+                                             static_cast<std::uintptr_t>(slot) * Ai::kSlotTableStride);
+                    if (ctrl >= 0 && ctrl < 8)
+                        cur = *reinterpret_cast<const std::uint8_t*>(
+                            Ai::kCtrlBlockBase + static_cast<std::uintptr_t>(ctrl) * Ai::kCtrlBlockStride + 5);
+                }
+            }
             bool brake = false;
+            if (slot >= 0 && slot < 4) { brake = brake_prev_[slot]; brake_prev_[slot] = cur != 0; }
+            bool rows = false;
             for (const auto& br : s_brake_rows)
-                if (br.first == cam_replay_row_) brake = ((br.second >> slot) & 1u) != 0;
-            out->state = LibRw::CarLodState(part19_d2(m, last_eye_));
+                if (br.first == cam_replay_row_) { brake = ((br.second >> slot) & 1u) != 0; rows = true; }
+            out->state = LibRw::CarLodState(part19_d2(slot, m, last_eye_));
             out->flags = LibRw::CarVisFlags(course_id_, brake);
+            if (s_blog)
+                std::fprintf(s_blog, "%d,%d,%u,%d,%d,0x%x\n", cam_replay_row_, slot, static_cast<unsigned>(cur),
+                             brake ? 1 : 0, rows ? 1 : 0, out->flags);
             return out;
         };
         // [rfx 2026-10-16] car shadow / headlight beam inputs (LibRw/RwRaceFx.h), per car slot.
@@ -8781,7 +8827,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
                 // FUN_00420290 @ 0x00420290: coef = ((hi - lo) * rec+0x284 + lo)
                 //   * (1 - clamp(|part 0x13 LTM pos - camera frame pos|^2, 0, 100) * 0.01)
                 // [carlod] against the PREVIOUS frame's camera (RaceSceneState.h eye_prev_)
-                double d2 = part19_d2(m, s_env_prevcam ? eye_prev_ : last_eye_);   // FUN_0041f120 @ 0x0041f120 order
+                double d2 = part19_d2(slot, m, s_env_prevcam ? eye_prev_ : last_eye_);   // FUN_0041f120 @ 0x0041f120 order
                 if (!(d2 < 100.0)) d2 = 100.0; else if (d2 < 0.0) d2 = 0.0;
                 const double lerp = (static_cast<double>(shine_hi_) - shine_lo_) * g.shade + shine_lo_;
                 const float coef = static_cast<float>(lerp * (1.0 - d2 * 0.01));
@@ -8794,8 +8840,8 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
                     return f; }();
                 if (s_vlog)
                     std::fprintf(s_vlog, "%d,%d,%.6f,%d,%.6f,%.6f,%.6f,%d,%.4f,%.4f,%.4f\n", cam_replay_row_, slot,
-                                 part19_d2(m, s_env_prevcam ? eye_prev_ : last_eye_),
-                                 LibRw::CarLodState(part19_d2(m, last_eye_)), g.shade, lerp, coef,
+                                 part19_d2(slot, m, s_env_prevcam ? eye_prev_ : last_eye_),
+                                 LibRw::CarLodState(part19_d2(slot, m, last_eye_)), g.shade, lerp, coef,
                                  static_cast<int>(std::lrint(coef * 255.0f)) & 0xff,
                                  last_eye_[0], last_eye_[1], last_eye_[2]);
                 float env[16] = { 1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1 };

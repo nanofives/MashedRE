@@ -253,6 +253,11 @@ struct RaceSceneState {
     // (verify/carlod_20261016/evidence/env_lag_live.txt).
     float         eye_prev_[3] = {};
     bool          eye_prev_ok_ = false;
+    // [carlod2] the controller's brake byte [5] (FUN_0040da50 @ 0x0040dae0 reads
+    // 0x007f103d + ctrl*0x4c): the player's own `io.input[5]` of this frame, and last frame's
+    // byte per slot (FUN_00420870 tests the flags FUN_0041eeb0 set one frame earlier)
+    std::uint8_t  player_brake_byte_ = 0;
+    bool          brake_prev_[4] = {false, false, false, false};
     float         car_part19_[3] = {};      // part 0x13's frame origin, model space
     bool          car_part19_ok_ = false;
     bool          car_env_ok_ = false;      // SetupCarEnv bound env materials

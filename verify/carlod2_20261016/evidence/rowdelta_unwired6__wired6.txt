@@ -1,0 +1,12 @@
+arctic_01051     before  32 after  32  gone   0  NEW 0
+arctic_01091     before  35 after  34  gone   1  NEW 0
+    gone MISSING Advantage [C17-CAR-GLOSS]: A-only 1 draws 4 tri (0 offscreen); first k82 pt5 tri=4 tex=Advantage tex1=- bb=[-25.64,0.15,19.92,-25.28,0.19,19.94] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=
+arctic_01126     before  36 after  36  gone   0  NEW 0
+city_00761       before  20 after  20  gone   0  NEW 0
+city_00801       before  22 after  22  gone   0  NEW 0
+city_00836       before  24 after  24  gone   0  NEW 0
+training_00884   before  21 after  21  gone   0  NEW 0
+training_00924   before  21 after  22  gone   0  NEW 1
+    NEW  EXTRA Advantage [C02-CARLOD]: B-only 1 draws 4 tri (0 offscreen); first k82 pt4 tri=4 tex=Advantage tex1=- bb=[-1.38,0.47,-5.10,-1.02,0.52,-5.05] src=rw Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+training_00959   before  21 after  21  gone   0  NEW 0
+NEW ROWS TOTAL: 1

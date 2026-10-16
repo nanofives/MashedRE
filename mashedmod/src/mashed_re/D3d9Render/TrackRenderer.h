@@ -318,6 +318,10 @@ public:
         int   body_frame = -1;    // part 0x13's atomic frame (FUN_0041f4f0)
         float body_pos[3] = {};
         bool  env_ok = false;
+        // [carlod2] this livery's own part-0x13 frame origin (FUN_0041f120's operand); the
+        // env coefficient and the LOD state measure from it, not from the player's model
+        float part19[3] = {};
+        bool  part19_ok = false;
         // diagnostic replay only (MASHED_CAR_REPLAY): the streamed chains around the body
         // frame, X = part 0xe's frame up to the body frame (exclusive), Y = the body frame's
         // parent up to the root (exclusive); RW row-vector rows right/up/at/pos.
