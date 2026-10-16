@@ -18,6 +18,8 @@
 #include <cstdio>
 #include <vector>
 #include "D2SinkProbe.h"                     // [D2 attempt 19] diagnostic, default-OFF
+#include "PosModelKnobs.h"                   // [d2posmodel] fix B knobs, default-OFF
+#include "../Race/SubStateCallees.h"         // [d2posmodel] VehiclePhysicsStateReset (0x0046baa0)
 #include <chrono>     // WS-A s3 perf profiler (steady_clock == QPC on MSVC)
 // #define MASHED_PHYS_DIAG 1   /* enable the steer-chain diag block (G2 drive debug) */
 
@@ -159,6 +161,16 @@ bool          g_inSpawnSettle = false;
 float         g_outVel[16][3] = { { 0.f } };
 float         g_outSpeed[16]  = { 0.f };
 bool          g_outValid[16]  = { false };
+// [d2posmodel 2026-10-16] fix B part 3: each slot's PHYSICS position (the ring +0x30
+// translation, the original's world position) and the caller-convention position the
+// adapter OUT last handed back. Same keep rule as the velocity above: when the caller
+// round-trips the position bit for bit, the physics position is taken from here, so the
+// caller's y offset (pos[1] = physics y + ground_off) is never subtracted back in rounding.
+// A caller that teleports the car (spawn, round grid, off-mesh recovery) changes the
+// position and re-seeds it. Cleared by VehiclePhysics_Init. Unused with part 3 off.
+float         g_physPos[16][3] = { { 0.f } };
+float         g_outPos[16][3]  = { { 0.f } };
+bool          g_outPosValid[16] = { false };
 // [car2pickup 2026-10-13] the +0xaec A4 gate of FUN_00470c70 (0x0047101b..0x00471048),
 // evaluated once per frame for every car at the frame boundary. g_a4Skip = skip A4 this
 // frame; g_a4GateDone = this frame's gate already ran for the slot.
@@ -284,6 +296,7 @@ void VehiclePhysics_Init(int carCount, int trackType) {
     for (int s = 0; s < 16; ++s) g_settled[s] = false;       // U-D3-DRIVE spawn settle
     for (int s = 0; s < 16; ++s) g_startBoosted[s] = false;  // U-D3-DRIVE-FORCE start boost
     for (int s = 0; s < 16; ++s) { g_outValid[s] = false; g_a4Skip[s] = false; g_a4GateDone[s] = false; }
+    for (int s = 0; s < 16; ++s) g_outPosValid[s] = false;   // [d2posmodel] fix B part 3
     // DAT_008a94d0 stand-in for FUN_0040e340: the A6a start-boost 8e6 arm tests it == 4.
     g_participantCount = carCount;
     Fi_UpdateBoostOrder();                                   // seed DAT_0088e668/66c
@@ -481,7 +494,7 @@ static void SyncContactRingMatrix(unsigned char* r, const float* basis, const fl
 }
 
 // Run the ported FUN_0046f6c0 over the track tris (replaces SetGrounded).
-static void SolveWheelContacts(unsigned char* r, const PlayerCarIO& io, int substep,
+static void SolveWheelContacts(unsigned char* r, PlayerCarIO& io, int substep,
                                const float* bodyUp) {
     int* self = reinterpret_cast<int*>(r);
 
@@ -541,6 +554,22 @@ static void SolveWheelContacts(unsigned char* r, const PlayerCarIO& io, int subs
     centre[0] = io.pos[0];
     centre[1] = (nGY > 0) ? (sumGY / nGY) : io.pos[1];
     centre[2] = io.pos[2];
+    // [d2posmodel 2026-10-16] fix B part 3 (MASHED_POS_TRANS): the ring translation IS the
+    // car's position, so the solver starts from the physics position (io.pos is in physics
+    // convention inside StepCar with part 3 on), not from a ground-level seat. The original's
+    // 0x0046f6c0 reads the translation 0x0046e9e0 just wrote (iVar12 + 0x30..0x38).
+    if (PosModelTrans()) centre[1] = io.pos[1];
+    // [d2posmodel] fix B part 2 (MASHED_POS_WHEELS): the solver's second RW query
+    // (WheelContactSolver.cpp, &DAT_0088e620 <- the 4 suspension points through iVar12)
+    // needs the ring's rotation rows to be the CURRENT body basis. The port publishes them
+    // only after the solver (SyncContactRingMatrix in the substep), so the rows here would
+    // be one substep old; the D0-c / D0-e arms of d2settle published them first for the
+    // same reason (RINGY block below). Rows only: the translation is `centre` above.
+    if (PosModelWheels() && bodyUp) {
+        const float* basis = bodyUp - 4;   // bodyUp is basis + 4 (StepCar's call site)
+        float* m = reinterpret_cast<float*>(r + (std::size_t)sel * 0x40 + 0x928);
+        for (int i = 0; i < 12; ++i) m[i] = basis[i];
+    }
     // +0x9c8/+0x9cc/+0x9d0: the classifier's approach direction (FUN_0046cc40 gate
     // _DAT_005cc99c=0.3 < faceNormal . this) AND `BodyOrient_OmegaFromSteer`'s steer
     // ROTATION AXIS (it reads &Fb(rec,0x9c8)) AND the slide term in 0x0046ef70's tail
@@ -636,6 +665,10 @@ static void SolveWheelContacts(unsigned char* r, const PlayerCarIO& io, int subs
         }
     }
     const float sdC0[3] = { centre[0], centre[1], centre[2] };   // [d2settle D0-a] diag only
+    // [d2posmodel] the solver's ENTRY wheel states / fv / +0x9e0, diag only (part 1 knob-took)
+    const int   sdStIn[4] = { self[0x66], self[0x97], self[0xc8], self[0xf9] };
+    const float sdFvIn[4] = { F(r, 0x194), F(r, 0x258), F(r, 0x31c), F(r, 0x3e0) };
+    const float sdGcIn = F(r, 0x9e0);
     Collision::WheelContactSolver(self, world, substep);
     std::memcpy(Collision::g_suspScratch, savedScratch, sizeof(savedScratch));
     if (g_sdSolverLog) {   // [d2settle D0-a] the solver's own translation correction, diag only
@@ -648,9 +681,22 @@ static void SolveWheelContacts(unsigned char* r, const PlayerCarIO& io, int subs
                          nGY, nGY ? sumGY / nGY : 0.f, g_cNormal[0][0], g_cNormal[0][1], g_cNormal[0][2],
                          self[0x66], self[0x97], self[0xc8], self[0xf9],
                          F(r, 0x194), F(r, 0x258), F(r, 0x31c), F(r, 0x3e0), F(r, 0x9e0));
+            std::fprintf(lf, "SOLVER_IN st=(%d,%d,%d,%d) fv=(%.9g,%.9g,%.9g,%.9g) gc=%g "
+                             "wcp0=(%.9g,%.9g,%.9g) wcp2=(%.9g,%.9g,%.9g)\n",
+                         sdStIn[0], sdStIn[1], sdStIn[2], sdStIn[3],
+                         sdFvIn[0], sdFvIn[1], sdFvIn[2], sdFvIn[3], sdGcIn,
+                         Collision::g_wheelContactPos[0], Collision::g_wheelContactPos[1],
+                         Collision::g_wheelContactPos[2], Collision::g_wheelContactPos[6],
+                         Collision::g_wheelContactPos[7], Collision::g_wheelContactPos[8]);
             std::fclose(lf);
         }
     }
+    // [d2posmodel] fix B part 3: keep the solver's corrected translation as the position.
+    // 0x0046f6c0's `pos -= mean(fv * n)` over the grounded wheels (WheelContactSolver.cpp,
+    // the bVar16 block) is the original's only per-tick vertical position authority; the
+    // port used to discard it (SyncContactRingMatrix overwrote it with io.pos). All three
+    // axes: the correction is along the contact normal, so z moves on a sloped tri.
+    if (PosModelTrans()) { io.pos[0] = centre[0]; io.pos[1] = centre[1]; io.pos[2] = centre[2]; }
 
     // 5. apply the cached result (states + real per-wheel normals + grounded count).
     ReassertContacts(r);
@@ -736,6 +782,21 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         s.steer = 0.f; s.raw_steer = 1;  // raw_steer so the zero bytes are used verbatim
         s.vel[0] = s.vel[1] = s.vel[2] = 0.f;
         s.speed = 0.f;
+        // [d2posmodel 2026-10-16] fix B part 1 (MASHED_POS_SEED): FUN_0046baa0 before the
+        // first solver call. The original runs it at the tail of the spawn FUN_004704c0
+        // (after its own 0x0046f6c0(0) at 0x00470638), in the race-start loop of FUN_0040e590
+        // (0x0040ed6e), and on every pre-race hold tick (0x0041033e in FUN_004102f0 case 3,
+        // 0x0041043a in FUN_004103a0) before that frame's physics. Measured (d2settle D0-d,
+        // o_ws1.msd): the player's first 0x0046f6c0 call of every hold frame enters with
+        // states (1,1,1,1) and fv 0. Among its writes: int 1 to +0x198/+0x25c/+0x320/+0x3e4
+        // (0x0046bb23), 0 to +0x194/+0x258/+0x31c/+0x3e0, 4.0f to +0x9e0 (0x0046bb57), and
+        // 0 to the velocity +0x9b0..+0x9c4. The exe runs no physics during the countdown
+        // (TrackRenderer.cpp countdown branch returns first), so this settle step is its one
+        // pre-GO physics tick and the seed goes in front of it. STATED: the original seeds
+        // on EVERY hold tick and steps ~N of them; the exe steps one. The exe's round
+        // restarts do not re-run any record reset (FUN_0040e590 per round), with or without
+        // this knob.
+        if (PosModelSeed()) VehiclePhysicsStateReset(static_cast<std::uint32_t>(slot));
         g_inSpawnSettle = true;          // keep the START BOOST ARM out of this call
         VehiclePhysics_StepCar(slot, dt, s);
         g_inSpawnSettle = false;
@@ -745,17 +806,24 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
             if (std::FILE* lf = std::fopen(sd, "a")) {
                 std::fprintf(lf, "SETTLE slot=%d in.pos=(%.9g,%.9g,%.9g) dd=(%.9g,%.9g,%.9g) "
                                  "s.pos=(%.9g,%.9g,%.9g) vel=(%.9g,%.9g,%.9g) v9e4=%.9g av=(%.9g,%.9g,%.9g) "
-                                 "loads=(%.9g,%.9g,%.9g,%.9g) gnd=%08x c9ec=%d\n",
+                                 "loads=(%.9g,%.9g,%.9g,%.9g) gnd=%08x c9ec=%d goff=%.9g physy0=%.9g\n",
                              slot, io.pos[0], io.pos[1], io.pos[2],
                              s.drive_delta[0], s.drive_delta[1], s.drive_delta[2],
                              s.pos[0], s.pos[1], s.pos[2],
                              F(r, off::kVelocity + 0), F(r, off::kVelocity + 4), F(r, off::kVelocity + 8),
                              F(r, off::kSpeed), F(r, 0x9bc), F(r, 0x9c0), F(r, 0x9c4),
                              F(r, 0x210), F(r, 0x2d4), F(r, 0x398), F(r, 0x45c),
-                             static_cast<unsigned>(I(r, 0x9e0)), I(r, 0x9ec));
+                             static_cast<unsigned>(I(r, 0x9e0)), I(r, 0x9ec),
+                             // [d2posmodel] the caller's y offset and the physics spawn y the
+                             // part-3 adapter IN derives from it (same float op)
+                             io.ground_off, io.pos[1] - io.ground_off);
                 std::fclose(lf);
             }
         }
+        // [d2posmodel] fix B part 3: the settle step's MOTION is the original's first-tick
+        // move (the 0x0046f6c0 translation), so with part 3 on its position is kept. Its
+        // velocity is still discarded below, as before.
+        if (PosModelTrans()) { io.pos[0] = s.pos[0]; io.pos[1] = s.pos[1]; io.pos[2] = s.pos[2]; }
         for (std::size_t o = 0; o < 12; o += 4) {
             F(r, off::kVelocity + o) = 0.f;   // +0x9b0..+0x9b8 linear
             F(r, 0x9bc + o)          = 0.f;   // +0x9bc..+0x9c4 angular
@@ -767,6 +835,18 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         I(r, 0x494)       = 0;     // shift timer
     }
     // =====================================================================
+
+    // [d2posmodel 2026-10-16] fix B part 3 adapter IN (MASHED_POS_TRANS). Inside StepCar
+    // io.pos is the PHYSICS position from here to the adapter OUT. Taken from g_physPos when
+    // the caller round-tripped the last OUT bit for bit, else re-seeded from the caller
+    // (teleport): x, z as given, y = pos[1] - ground_off.
+    const bool posTrans = PosModelTrans();
+    if (posTrans) {
+        const bool posKept = g_outPosValid[slot] &&
+            std::memcmp(io.pos, g_outPos[slot], sizeof(g_outPos[slot])) == 0;
+        if (posKept) { io.pos[0] = g_physPos[slot][0]; io.pos[1] = g_physPos[slot][1]; io.pos[2] = g_physPos[slot][2]; }
+        else         { io.pos[1] -= io.ground_off; }
+    }
 
     // PERF (MASHED_PHYS_PROF): slot 0 == frame boundary (player steps first). Flush
     // the previous frame's accumulators, then time this car's whole physics body.
@@ -1265,6 +1345,10 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
             // re-seeds io.pos from its own car_pos_ every frame.
             io.pos[0] += k * F(r, off::kVelocity + 0);
             io.pos[2] += k * F(r, off::kVelocity + 8);
+            // [d2posmodel] fix B part 3: y too. The original stores all three components
+            // (0x0046ea5f / 0x0046ea69 / 0x0046ea73). Without part 3 the caller snaps y to
+            // the ground every frame.
+            if (posTrans) io.pos[1] += k * F(r, off::kVelocity + 4);
         }
 
         // ORIENTATION: omega from the wheel-force arm (record +0x10 == 0, which the
@@ -1812,6 +1896,14 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     std::memcpy(g_outVel[slot], io.vel, sizeof(g_outVel[slot]));   // [car2pickup] adapter IN
     g_outSpeed[slot] = io.speed;
     g_outValid[slot] = true;
+    // [d2posmodel] fix B part 3 adapter OUT: hand back the physics position in the caller's
+    // convention, and remember both for next frame's keep test (adapter IN above).
+    if (posTrans) {
+        std::memcpy(g_physPos[slot], io.pos, sizeof(g_physPos[slot]));
+        io.pos[1] += io.ground_off;
+        std::memcpy(g_outPos[slot], io.pos, sizeof(g_outPos[slot]));
+        g_outPosValid[slot] = true;
+    }
     g_a4GateDone[slot] = false;                                    // next frame's gate is due
 
     if (prof::g_on) prof::f_physMs += prof::NowMs() - t_phys0;   // PERF: whole-step cost
