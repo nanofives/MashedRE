@@ -1,0 +1,12 @@
+orig  01_Egypt       {"row": 740, "draws": 186, "shim": 186, "I-COVER": true, "pre": 0, "I-FRAME": true, "named": "175/179", "I-NAME": true, "unnamed": ["#256x256:21"], "geometry": "186/186", "gerr": 0}
+orig  01_Egypt       {"row": 780, "draws": 175, "shim": 175, "I-COVER": true, "pre": 0, "I-FRAME": true, "named": "164/168", "I-NAME": true, "unnamed": ["#256x256:21"], "geometry": "175/175", "gerr": 0}
+orig  01_Egypt       {"row": 815, "draws": 116, "shim": 116, "I-COVER": true, "pre": 0, "I-FRAME": true, "named": "105/109", "I-NAME": true, "unnamed": ["#256x256:21", "#64x64:21"], "geometry": "116/116", "gerr": 0}
+stand 01_Egypt       {"row": 740, "actual_row": 740, "armed": 1, "draws": 157, "empty": 0, "cam_src": ["4"], "cam_max_abs_dev": 3.215332000650051e-08, "I-SYNC": true, "named": "156/156", "I-NAME": true, "unnamed": []}
+stand 01_Egypt       {"row": 780, "actual_row": 780, "armed": 1, "draws": 146, "empty": 0, "cam_src": ["4"], "cam_max_abs_dev": 2.66357425005026e-08, "I-SYNC": true, "named": "145/145", "I-NAME": true, "unnamed": []}
+stand 01_Egypt       {"row": 815, "actual_row": 815, "armed": 1, "draws": 85, "empty": 0, "cam_src": ["4"], "cam_max_abs_dev": 3.4301756102195213e-08, "I-SYNC": true, "named": "84/84", "I-NAME": true, "unnamed": []}
+orig  02_Neustein    {"row": 1094, "draws": 258, "shim": 258, "I-COVER": true, "pre": 0, "I-FRAME": true, "named": "121/125", "I-NAME": true, "unnamed": ["#256x256:21"], "geometry": "258/258", "gerr": 0}
+orig  02_Neustein    {"row": 1134, "draws": 255, "shim": 255, "I-COVER": true, "pre": 0, "I-FRAME": true, "named": "118/122", "I-NAME": true, "unnamed": ["#256x256:21"], "geometry": "255/255", "gerr": 0}
+orig  02_Neustein    {"row": 1169, "draws": 210, "shim": 210, "I-COVER": true, "pre": 0, "I-FRAME": true, "named": "73/77", "I-NAME": false, "unnamed": ["#64x64:21"], "geometry": "210/210", "gerr": 0}
+stand 02_Neustein    {"row": 1094, "actual_row": 1094, "armed": 1, "draws": 112, "empty": 0, "cam_src": ["4"], "cam_max_abs_dev": 3.244628743459543e-08, "I-SYNC": true, "named": "108/108", "I-NAME": true, "unnamed": []}
+stand 02_Neustein    {"row": 1134, "actual_row": 1134, "armed": 1, "draws": 102, "empty": 0, "cam_src": ["4"], "cam_max_abs_dev": 3.7988282741707735e-08, "I-SYNC": true, "named": "98/98", "I-NAME": true, "unnamed": []}
+stand 02_Neustein    {"row": 1169, "actual_row": 1169, "armed": 1, "draws": 70, "empty": 0, "cam_src": ["4"], "cam_max_abs_dev": 4.282226484519924e-08, "I-SYNC": true, "named": "66/66", "I-NAME": true, "unnamed": []}

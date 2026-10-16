@@ -1,0 +1,9 @@
+track            row  orig  matched  orig tri   m.tri  m.tri% | rows cited  red verdict
+01_Egypt         740   186      150     21638   20039   92.6% |   22    22    0 CITED
+01_Egypt         780   175      143     20649   19803   95.9% |   20    20    0 CITED
+01_Egypt         815   116       81     13313   12312   92.5% |   25    25    0 CITED
+02_Neustein     1094   258      103     20628   16267   78.9% |   21    21    0 CITED
+02_Neustein     1134   255       99     20423   16233   79.5% |   21    21    0 CITED
+02_Neustein     1169   210       54     14148    9579   67.7% |   25    25    0 CITED
+
+INSTRUMENT GATES: FAIL

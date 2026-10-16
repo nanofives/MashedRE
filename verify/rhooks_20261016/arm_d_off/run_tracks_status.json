@@ -1,0 +1,12 @@
+{
+ "01_Egypt": {
+  "ok": true,
+  "attempts": 1,
+  "shots": [
+   740,
+   780,
+   815
+  ],
+  "frames": 1165
+ }
+}

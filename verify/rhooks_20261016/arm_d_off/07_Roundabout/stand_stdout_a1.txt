@@ -1,0 +1,11 @@
+=== stand exe=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\rhooks\verify\rhooks_20261016\arm_d_exe\mashed_re.exe track=rouabout trace=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\rhooks\verify\capfix_20261016\07_Roundabout\trace.csv shots=1091,1131,1166 basis=True cars=True knobs=['MASHED_NO_HOOKSLOTS', 'MASHED_NO_CLUMPANIM', 'MASHED_NO_SCENARIOVIS']
+    pid=20456
+    exit=0
+    stand_row_01091.bmp 921654
+    stand_row_01091.draws.json 117164
+    stand_row_01131.bmp 921654
+    stand_row_01131.draws.json 98633
+    stand_row_01166.bmp 921654
+    stand_row_01166.draws.json 71364
+
+--stderr--

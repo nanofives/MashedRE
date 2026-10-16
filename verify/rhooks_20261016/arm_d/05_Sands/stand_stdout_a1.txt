@@ -1,0 +1,11 @@
+=== stand exe=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\rhooks\verify\rhooks_20261016\arm_d_exe\mashed_re.exe track=sands trace=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\rhooks\verify\capfix_20261016\05_Sands\trace.csv shots=1084,1124,1159 basis=True cars=True knobs=[]
+    pid=26240
+    exit=0
+    stand_row_01084.bmp 921654
+    stand_row_01084.draws.json 107164
+    stand_row_01124.bmp 921654
+    stand_row_01124.draws.json 107201
+    stand_row_01159.bmp 921654
+    stand_row_01159.draws.json 82781
+
+--stderr--

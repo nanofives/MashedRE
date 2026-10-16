@@ -1,0 +1,6 @@
+orig  10_Dump        {"row": 735, "draws": 368, "shim": 368, "I-COVER": true, "pre": 0, "I-FRAME": true, "named": "352/356", "I-NAME": true, "unnamed": ["#256x256:21"], "geometry": "368/368", "gerr": 0}
+orig  10_Dump        {"row": 775, "draws": 345, "shim": 345, "I-COVER": true, "pre": 0, "I-FRAME": true, "named": "329/333", "I-NAME": true, "unnamed": ["#256x256:21"], "geometry": "345/345", "gerr": 0}
+orig  10_Dump        {"row": 810, "draws": 234, "shim": 234, "I-COVER": true, "pre": 0, "I-FRAME": true, "named": "219/223", "I-NAME": true, "unnamed": ["#256x256:21", "#64x64:21"], "geometry": "234/234", "gerr": 0}
+stand 10_Dump        {"row": 735, "actual_row": 735, "armed": 1, "draws": 341, "empty": 0, "cam_src": ["4"], "cam_max_abs_dev": 1.948242100979769e-08, "I-SYNC": true, "named": "337/337", "I-NAME": true, "unnamed": []}
+stand 10_Dump        {"row": 775, "actual_row": 775, "armed": 1, "draws": 318, "empty": 0, "cam_src": ["4"], "cam_max_abs_dev": 8.935543860388862e-09, "I-SYNC": true, "named": "314/314", "I-NAME": true, "unnamed": []}
+stand 10_Dump        {"row": 810, "actual_row": 810, "armed": 1, "draws": 206, "empty": 0, "cam_src": ["4"], "cam_max_abs_dev": 1.947021566195417e-08, "I-SYNC": true, "named": "203/203", "I-NAME": true, "unnamed": []}

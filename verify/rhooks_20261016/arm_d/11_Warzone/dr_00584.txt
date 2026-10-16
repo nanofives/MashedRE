@@ -1,0 +1,32 @@
+== 3D orig row 584 (364 draws, 25239 tri) vs stand row 584 (322 draws, 24132 tri)
+   matched 317 draws (23699 tri); rows 28 (28 cited); info {'empty_dropped': (0, 0), 'no_geometry': (0, 0)}
+  MISSING  CITED C10-RUNTIME-TEX #256x256:21            A-only 4 draws 43 tri (0 offscreen); first k81 pt4 tri=10 tex=#256x256:21 tex1=- bb=[36.82,-0.28,3.91,44.36,0.20,7.81] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+  MISSING  CITED C03-UNTEXTURED -                      A-only 9 draws 198 tri (2 offscreen); first k82 pt4 tri=8 tex=- tex1=- bb=[125.37,2.62,1.54,126.17,3.62,2.90] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+  MISSING  CITED C05-PARTICLE exp_cloud2             A-only 3 draws 384 tri (0 offscreen); first k82 pt4 tri=128 tex=exp_cloud2 tex1=- bb=[41.71,-0.27,6.75,42.14,-0.21,6.99] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=2
+  MISSING  CITED C01c-CULL-A flames3                A-only 4 draws 16 tri (4 offscreen); first k82 pt4 tri=4 tex=flames3 tex1=- bb=[127.02,0.02,0.17,127.85,3.23,3.59] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=2
+  MISSING  CITED C08-STARTDISP GreenStartLight        A-only 1 draws 6 tri (0 offscreen); first k82 pt5 tri=6 tex=GreenStartLight tex1=- bb=[-0.10,0.32,0.98,0.10,0.38,0.98] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+  MISSING  CITED C07-WEAPONS machinegun             A-only 1 draws 12 tri (1 offscreen); first k82 pt5 tri=12 tex=machinegun tex1=- bb=[28.94,1.31,-10.46,29.46,1.69,-9.94] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  MISSING  CITED C07-WEAPONS mine                   A-only 1 draws 12 tri (0 offscreen); first k82 pt5 tri=12 tex=mine tex1=- bb=[26.77,-0.06,8.20,27.30,0.32,8.73] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  MISSING  CITED C07-WEAPONS mortar                 A-only 1 draws 12 tri (1 offscreen); first k82 pt5 tri=12 tex=mortar tex1=- bb=[40.64,-0.18,0.94,41.16,0.19,1.46] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  MISSING  CITED C08-STARTDISP NFLBluejay             A-only 1 draws 2 tri (0 offscreen); first k82 pt5 tri=2 tex=NFLBluejay tex1=- bb=[-0.51,0.29,0.98,-0.43,0.37,0.98] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+  MISSING  CITED C08-STARTDISP NFLGold                A-only 1 draws 2 tri (0 offscreen); first k82 pt5 tri=2 tex=NFLGold tex1=- bb=[-0.47,0.29,0.98,-0.38,0.37,0.98] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+  MISSING  CITED C08-STARTDISP NFLMelon               A-only 1 draws 2 tri (0 offscreen); first k82 pt5 tri=2 tex=NFLMelon tex1=- bb=[-0.56,0.29,0.98,-0.47,0.37,0.98] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+  MISSING  CITED C08-STARTDISP NFLRed                 A-only 1 draws 2 tri (0 offscreen); first k82 pt5 tri=2 tex=NFLRed tex1=- bb=[0.38,0.29,0.98,0.47,0.37,0.98] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+  MISSING  CITED C01c-CULL-A OakTreeSprite          A-only 1 draws 376 tri (1 offscreen); first k82 pt4 tri=376 tex=OakTreeSprite tex1=- bb=[59.57,-4.86,-16.11,173.36,7.14,41.31] src=d3d Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+  MISSING  CITED C08-STARTDISP OrangeDisplay          A-only 8 draws 68 tri (0 offscreen); first k82 pt5 tri=10 tex=OrangeDisplay tex1=- bb=[-0.11,0.31,1.02,0.11,0.39,1.02] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+  MISSING  CITED C06-PICKUP PUGlow                 A-only 1 draws 28 tri (0 offscreen); first k82 pt4 tri=28 tex=PUGlow tex1=- bb=[11.59,-1.96,-11.08,161.41,2.93,90.51] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+  MISSING  CITED C23-SKY-SLOTS sky                    A-only 1 draws 24 tri (0 offscreen); first k82 pt5 tri=24 tex=sky tex1=- bb=[39.86,1.07,2.07,48.48,2.34,10.69] src=d3d Z=0 ZW=0 ZF=0 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  MISSING  CITED C05-PARTICLE smoke                  A-only 4 draws 16 tri (4 offscreen); first k82 pt4 tri=4 tex=smoke tex1=- bb=[127.46,1.16,1.15,127.68,2.02,1.99] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+  MISSING  CITED C11-WATER water02                A-only 2 draws 100 tri (2 offscreen); first k82 pt5 tri=16 tex=water02 tex1=- bb=[126.53,-2.45,-16.55,233.13,-2.45,45.36] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  MISSING  CITED C24-IM3D-TRACKFX wfall                  A-only 1 draws 60 tri (0 offscreen); first k82 pt4 tri=60 tex=wfall tex1=- bb=[39.71,-0.64,4.63,43.26,0.25,8.24] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+  EXTRA    CITED C05-PARTICLE @gen:particle          B-only 1 draws 130 tri (1 offscreen); first k83 pt4 tri=130 tex=@gen:particle tex1=- bb=[-8.53,14.67,-33.98,69.63,42.89,46.80] src=d3d Z=1 ZW=0 ZF=4 AT=0 AREF=0 AF=0 AB=1 SRC=5 DST=6 CULL=1
+  EXTRA    CITED C06-PICKUP @gen:pickup            B-only 1 draws 26 tri (0 offscreen); first k83 pt4 tri=26 tex=@gen:pickup tex1=- bb=[26.64,-2.12,-11.87,161.60,4.28,91.29] src=d3d Z=1 ZW=0 ZF=4 AT=0 AREF=0 AF=0 AB=1 SRC=5 DST=2 CULL=1
+  EXTRA    CITED C11-WATER water00                B-only 2 draws 100 tri (2 offscreen); first k82 pt4 tri=16 tex=water00 tex1=- bb=[126.53,-2.45,-16.55,233.13,-2.45,45.36] src=rw Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  STATE    CITED C19-STATE-LIBRW horizon                1 matched draws differ in Z,ZF: A Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=0 ZF=8 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+  FOG      CITED C18-FOG *                      312 matched draws, FOGENABLE A 1 | B 0, 38 textures: -, Advantage, All01, Camstand, CarGloss, Dozer02, Glass, NewConc
+  MOVED    CITED C13-PROPPLACE CamManHot              1 draws, same texture and triangle count, AABB moved by up to 0.223; first A [3.82,4.00,-2.19,4.30,4.31,-2.01] B [3.92,4.00,-2.27,4.08,4.31,-1.81]
+  ORDER    CITED C21-ORDER girders                9 order inversions vs matched draws, mostly: burntBildx1, buildconc2x1, roadx1, new_rubblex1
+  ORDER    CITED C21-ORDER rope                   9 order inversions vs matched draws, mostly: burntBildx1, buildconc2x1, roadx1, new_rubblex1
+  ORDER    CITED C21-ORDER ruin                   39 order inversions vs matched draws, mostly: tiles_grey2x5, endBildsx4, buildconc2x4, roadx3
+-> C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\rhooks\verify\rhooks_20261016\arm_d\11_Warzone\dr_00584.json
+VERDICT: CITED (matched=317 rows=28 red=0)

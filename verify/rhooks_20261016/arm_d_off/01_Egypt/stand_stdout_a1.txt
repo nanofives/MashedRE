@@ -1,0 +1,11 @@
+=== stand exe=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\rhooks\verify\rhooks_20261016\arm_d_exe\mashed_re.exe track=Egypt trace=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\rhooks\verify\capfix_20261016\01_Egypt\trace.csv shots=740,780,815 basis=True cars=True knobs=['MASHED_NO_HOOKSLOTS', 'MASHED_NO_CLUMPANIM', 'MASHED_NO_SCENARIOVIS']
+    pid=7564
+    exit=0
+    stand_row_00740.bmp 921654
+    stand_row_00740.draws.json 54127
+    stand_row_00780.bmp 921654
+    stand_row_00780.draws.json 49833
+    stand_row_00815.bmp 921654
+    stand_row_00815.draws.json 26735
+
+--stderr--
