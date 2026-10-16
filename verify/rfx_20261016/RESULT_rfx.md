@@ -7,7 +7,9 @@ Beam GREEN on City; on Arctic both become a STATE row (CULL 2 vs 1), the unporte
 device cull leak U-9690, cited. Not ported, with scope (section 6): RWObjShad, flatshad, Headlight,
 lensflare-fs8, VehicleIcons (24 rows). G-CTRL unchanged `c2e4d60d / b50bd39b / ba90ed88`. No-op
 control (all three knobs off) equals the base build's draw records on 9/9 frames. Pre-registration
-`PREREG_rfx.md` (`8a7f974e`, amendment 1 `44d8c595`), base `b26d9f3c`.
+`PREREG_rfx.md` (`8a7f974e`, amendment 1 `44d8c595`), base `b26d9f3c`. Sections 1-7 measure
+`work/rfx` on `b26d9f3c`; section 8 repeats every rule on `work/rfx-rb`, rebased onto `0020d521`:
+the same 96 -> 24, 0 RED, G-CTRL `716cb2fd / 2a2afda1 / ba90ed88` unchanged against that base.
 
 ## 1. What changed in the default build
 
@@ -132,3 +134,30 @@ py -3.12 verify\rfx_20261016\run_gctrl.py <exe> <name>
 py -3.12 re\frida\camera_probe.py --frame --early --hud-out <hud.json> --out <trace.csv> --static-out <static.json>
 py -3.12 verify\rfx_20261016\make_hud_inputs.py <hud.json> <trace.csv> verify\rfx_20261016\hud_inputs.txt
 ```
+
+## 8. Rebased onto `0020d521` (`work/rfx-rb`)
+
+Base arm `hb` = `0020d521` built unchanged; `rb2` = `work/rfx-rb` at `e9da6145`. The rebase
+carries one addition: since librwrest the copters are librw instances, so a pass that runs after
+every instance drew car_shadow after the copters (2 ORDER rows on TRAINING in the first rebased
+arm). `RaceSubmit_AddCarFxMarker` queues the car FX point after the AI car loop, where
+`FUN_00410b30` calls `FUN_0041ebb0` (`0x00410bb4`, before `FUN_00425e40` at `0x00410c08`). Outside
+the replay the beam's body frame is the stand-in car matrix, not the librwrest body pose (U-9699).
+
+| frame | hb | rb2, HUD replay | rb2, default |
+|---|---|---|---|
+| TRAINING 884 / 924 / 959 | 77 / 76 / 76 | 70 / 69 / 69 | 76 / 75 / 75 |
+| Arctic 1051 / 1091 / 1126 | 76 / 76 / 76 | 70 / 70 / 70 | 76 / 76 / 76 |
+| City 761 / 801 / 836 | 153 / 151 / 149 | 145 / 143 / 141 | 151 / 149 / 147 |
+
+`scores_rb.txt`, `rowdelta_rb_hud.txt`, `rowdelta_rb_default.txt`, `noop_rb.txt`, `pixels_rb.txt`.
+- **R1** as on `work/rfx`: C08 GREEN 9/9 with the HUD replay; car_shadow GREEN TRAINING + City,
+  Beam GREEN City; Arctic car_shadow / Beam STATE CULL 1 (original) vs 2 (standalone), U-9690.
+  C04 / C08 / C09 rows 96 -> 24 (HUD replay).
+- **R2** new row keys vs `hb`: the same 6 Arctic STATE rows (both arms), nothing else.
+- **R3** G-CTRL `716cb2fd / 2a2afda1 / ba90ed88` on `hb`, on the first rebased build and on `rb2`
+  (`evidence/gctrl_hb.txt`, `gctrl_rb.txt`, `gctrl_rb2.txt`).
+- **R4** no-op control == `hb` draw records 9/9 (`noop_rb.txt`).
+- **R5** pixels: default -0.09..+0.07; HUD replay -2.2..-4.0 (TRAINING 884 14.33 -> 10.36).
+- One Arctic HUD-replay run on the first rebased build came back without the car FX records
+  (U-9677 class); the sequential re-run was exact.
