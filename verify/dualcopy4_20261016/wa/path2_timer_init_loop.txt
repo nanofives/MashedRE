@@ -1,0 +1,35 @@
+hook: timer_init_loop  rva=0x00422120  export=TimerInitLoop
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 23060
+  [agent] pre_snapshot
+  [agent] asi_loaded
+  [agent] post_snapshot
+  [agent] results
+
+=== verify_hook_install report (timer_init_loop) ===
+
+target address: 0x00422120  export: TimerInitLoop
+PRE  bytes:     e9 2b d7 a1 60 00 8b c6
+asi base:       0x60e30000
+reimpl addr:    0x60e3f850
+POST bytes:     e9 2b d7 a1 60 00 8b c6
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x60a1d72b  expected 0x60a1d72b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  1 / 1  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [], 'seed': [{'addr': 6552480, 'val': 0}, {'addr': 6552504, 'val': 0}, {'addr': 6552528, 'val': 0}, {'addr': 6552552, 'val': 0}, {'addr': 6552576, 'val': 0}, {'addr': 6552600, 'val': 0}, {'addr': 6552624, 'val': 0}, {'addr': 6552648, 'val': 0}, {'addr': 6552672, 'val': 0}, {'addr': 6552696, 'val': 0}, {'addr': 6552736, 'val': 0}, {'addr': 6552760, 'val': 0}, {'addr': 6552784, 'val': 0}, {'addr': 6552808, 'val': 0}, {'addr': 6552832, 'val': 0}, {'addr': 6552856, 'val': 0}, {'addr': 6552880, 'val': 0}, {'addr': 6552904, 'val': 0}, {'addr': 6552928, 'val': 0}, {'addr': 6552952, 'val': 0}, {'addr': 6553000, 'val': 0}, {'addr': 6553024, 'val': 0}, {'addr': 6553048, 'val': 0}, {'addr': 6553072, 'val': 0}, {'addr': 6553096, 'val': 0}, {'addr': 6553120, 'val': 0}, {'addr': 6553144, 'val': 0}, {'addr': 6553168, 'val': 0}, {'addr': 6553192, 'val': 0}, {'addr': 6553216, 'val': 0}, {'addr': 6553256, 'val': 0}, {'addr': 6553280, 'val': 0}, {'addr': 6553304, 'val': 0}, {'addr': 6553328, 'val': 0}, {'addr': 6553352, 'val': 0}, {'addr': 6553376, 'val': 0}, {'addr': 6553400, 'val': 0}, {'addr': 6553424, 'val': 0}, {'addr': 6553448, 'val': 0}, {'addr': 6553472, 'val': 0}, {'addr': 6553520, 'val': 0}, {'addr': 6553544, 'val': 0}, {'addr': 6553568, 'val': 0}, {'addr': 6553592, 'val': 0}, {'addr': 6553616, 'val': 0}, {'addr': 6553640, 'val': 0}, {'addr': 6553664, 'val': 0}, {'addr': 6553688, 'val': 0}, {'addr': 6553712, 'val': 0}, {'addr': 6553736, 'val': 0}, {'addr': 6553776, 'val': 0}, {'addr': 6553800, 'val': 0}, {'addr': 6553824, 'val': 0}, {'addr': 6553848, 'val': 0}, {'addr': 6553872, 'val': 0}, {'addr': 6553896, 'val': 0}, {'addr': 6553920, 'val': 0}, {'addr': 6553944, 'val': 0}, {'addr': 6553968, 'val': 0}, {'addr': 6553992, 'val': 0}, {'addr': 6554040, 'val': 0}, {'addr': 6554064, 'val': 0}, {'addr': 6554088, 'val': 0}, {'addr': 6554112, 'val': 0}, {'addr': 6554136, 'val': 0}, {'addr': 6554160, 'val': 0}, {'addr': 6554184, 'val': 0}, {'addr': 6554208, 'val': 0}, {'addr': 6554232, 'val': 0}, {'addr': 6554256, 'val': 0}, {'addr': 6554296, 'val': 0}, {'addr': 6554320, 'val': 0}, {'addr': 6554344, 'val': 0}, {'addr': 6554368, 'val': 0}, {'addr': 6554392, 'val': 0}, {'addr': 6554416, 'val': 0}, {'addr': 6554440, 'val': 0}, {'addr': 6554464, 'val': 0}, {'addr': 6554488, 'val': 0}, {'addr': 6554512, 'val': 0}]}  got=dfde6ac5  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 1x as expected
+  + all 1 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dualcopy4\log\verify_hook_install_timer_init_loop.txt
+

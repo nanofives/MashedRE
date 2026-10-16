@@ -1,0 +1,64 @@
+[decomp_pc] slot=Mashed_pool11 modes=decomp n=1
+// FUN_0042d3e0 @ 0x0042d3e0  size=59  (MASHED.exe)
+// undefined FUN_0042d3e0(void)
+
+
+/* [C1 2026-05-11] Initialises `puVar7 = &DAT_00898ac4`. */
+
+
+
+void FUN_0042d3e0(void)
+
+
+
+{
+
+  undefined4 *puVar1;
+
+  
+
+  puVar1 = &DAT_00898ac4;
+
+  do {
+
+    puVar1[-1] = 0;
+
+    *puVar1 = 0;
+
+    puVar1[1] = 0;
+
+    *(undefined1 *)(puVar1 + 2) = 0;
+
+    *(undefined1 *)((int)puVar1 + 9) = 0;
+
+    *(undefined1 *)((int)puVar1 + 10) = 0;
+
+    *(undefined1 *)((int)puVar1 + 0xb) = 0;
+
+    puVar1[3] = 0;
+
+    puVar1[4] = 0;
+
+    puVar1[5] = 0;
+
+    puVar1[6] = 0;
+
+    puVar1[8] = 0;
+
+    puVar1[9] = 0;
+
+    puVar1[10] = 0;
+
+    puVar1 = puVar1 + 0xd;
+
+  } while ((int)puVar1 < 0x8990dc);
+
+  return;
+
+}
+
+
+
+
+
+

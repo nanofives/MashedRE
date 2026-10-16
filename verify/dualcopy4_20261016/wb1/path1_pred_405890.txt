@@ -1,0 +1,2 @@
+
+FATAL: arg_type 'two_global_predicate' (hook 'pred_405890') has no handler in diff_template.js â€” the diff would fall through to a default path and could pass without testing anything. Add the handler or fix the registry entry. Override (NOT for promotions): --allow-unknown-argtype.

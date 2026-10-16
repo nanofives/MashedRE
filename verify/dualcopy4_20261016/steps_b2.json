@@ -1,0 +1,183 @@
+[
+ {
+  "name": "path1_ew_search_4c5c00",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/early_window_leaf_diff.py",
+   "search_4c5c00"
+  ],
+  "env": {
+   "MASHED_EW_ASI": "{ASI}"
+  }
+ },
+ {
+  "name": "path2_timer_bit_field_set",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_verify_hook.py",
+   "timer_bit_field_set"
+  ],
+  "env": {
+   "MASHED_VERIFY_ASI": "{ASI}"
+  }
+ },
+ {
+  "name": "path2_timer_slot_data_copy",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_verify_hook.py",
+   "timer_slot_data_copy"
+  ],
+  "env": {
+   "MASHED_VERIFY_ASI": "{ASI}"
+  }
+ },
+ {
+  "name": "path2_timer_array_clear_d40",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_verify_hook.py",
+   "timer_array_clear_d40"
+  ],
+  "env": {
+   "MASHED_VERIFY_ASI": "{ASI}"
+  }
+ },
+ {
+  "name": "path2_timer_init_loop",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_verify_hook.py",
+   "timer_init_loop"
+  ],
+  "env": {
+   "MASHED_VERIFY_ASI": "{ASI}"
+  }
+ },
+ {
+  "name": "path2_menu_flag_dat_007f0f10_get",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_verify_hook.py",
+   "menu_flag_dat_007f0f10_get"
+  ],
+  "env": {
+   "MASHED_VERIFY_ASI": "{ASI}"
+  }
+ },
+ {
+  "name": "path2_accum_420de0",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_verify_hook.py",
+   "accum_420de0"
+  ],
+  "env": {
+   "MASHED_VERIFY_ASI": "{ASI}"
+  }
+ },
+ {
+  "name": "path2_pred_405890",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_verify_hook.py",
+   "pred_405890"
+  ],
+  "env": {
+   "MASHED_VERIFY_ASI": "{ASI}"
+  }
+ },
+ {
+  "name": "path2_menu_mode_sync",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_verify_hook.py",
+   "menu_mode_sync"
+  ],
+  "env": {
+   "MASHED_VERIFY_ASI": "{ASI}"
+  }
+ },
+ {
+  "name": "path2_find_42ad90",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_verify_hook.py",
+   "find_42ad90"
+  ],
+  "env": {
+   "MASHED_VERIFY_ASI": "{ASI}"
+  }
+ },
+ {
+  "name": "path2_menu_team_select_tick",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_verify_hook.py",
+   "menu_team_select_tick"
+  ],
+  "env": {
+   "MASHED_VERIFY_ASI": "{ASI}"
+  }
+ },
+ {
+  "name": "path2_search_4c5c00",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_verify_hook.py",
+   "search_4c5c00"
+  ],
+  "env": {
+   "MASHED_VERIFY_ASI": "{ASI}"
+  }
+ },
+ {
+  "name": "nav_probe_full_hookset",
+  "timeout": 240,
+  "cmd": [
+   "py",
+   "-3.12",
+   "verify/dupinstall2_20261016/nav_probe.py",
+   "fix_full"
+  ]
+ },
+ {
+  "name": "install_observe_all",
+  "timeout": 200,
+  "cmd": [
+   "py",
+   "-3.12",
+   "verify/dupinstall2_20261016/install_observe.py",
+   "ALL",
+   "--seconds",
+   "45"
+  ],
+  "env": {
+   "DUPINSTALL_OUT": "{OUT}/install_all"
+  }
+ }
+]

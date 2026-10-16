@@ -212,76 +212,16 @@ extern "C" __declspec(dllexport) void __cdecl FrontendStateSet(std::uint32_t par
 RH_ScopedInstall(FrontendStateSet, 0x00428390);
 
 // ───────────────────────────────────────────────────────────────────────────
-// 0x0042fa00  PlayerSlotEdgeAdjust
-//
-// Original: FUN_0042fa00 (162 bytes, 0x0042fa00..0x0042faa1)
-// Signature: void FUN_0042fa00(void)
-//
-// Body (pure leaf, no callees):
-//   iVar2 = DAT_007f1a44                // active slot id A
-//   iVar1 = DAT_007f1a14                // active slot id B
-//   if (DAT_0067ea88 == 2) DAT_0067ea88 = 0
-//   piVar5 = &DAT_0067e938              // slot-array, stride 3 dwords (12 bytes)
-//   pcVar3 = &DAT_007f1504              // input-state, stride 0x4c per slot
-//   for iVar4 = 0; pcVar3 < 0x7f1894; iVar4++, pcVar3 += 0x4c, piVar5 += 3:
-//     if iVar4 in {iVar1, iVar2, DAT_007f1a24, DAT_007f1a34}:
-//       // Left-edge: -0x4c0 back into prior-state row
-//       if (pcVar3[-0x4c0] != 0 && pcVar3[0] == 0 && *piVar5 > 0)
-//         (*piVar5)--
-//       // Right-edge: bytes[-0x4bf] + [+1]
-//       if (pcVar3[-0x4bf] != 0 && pcVar3[1] == 0 && *piVar5 < 2)
-//         (*piVar5)++
-//       // Clamp [0, 2]
-//       if (*piVar5 < 0) *piVar5 = 0
-//       if (*piVar5 > 2) *piVar5 = 2
-//
-// Constants cited:
-//   loop end exclusive: 0x7f1894    [0x0042fa00 body]
-//   input stride: 0x4c (76)         [stride per slot]
-//   slot stride dwords: 3 (12B)     [piVar5 stride]
-//   sentinel reset value: 2 -> 0    [DAT_0067ea88 reset]
-//
-// ref: re/analysis/frontend_unmapped_a/0x0042fa00.md
+// 0x0042fa00  PlayerSlotEdgeAdjust: DELETED (dualcopy4, 2026-10-16, ROADMAP D4)
 // ───────────────────────────────────────────────────────────────────────────
-// 0x0042fa00
-extern "C" __declspec(dllexport) void __cdecl PlayerSlotEdgeAdjust()
-{
-    const std::int32_t iVar2 = *reinterpret_cast<const std::int32_t*>(0x007f1a44u);
-    const std::int32_t iVar1 = *reinterpret_cast<const std::int32_t*>(0x007f1a14u);
-
-    // [DAT_0067ea88 reset]
-    if (*reinterpret_cast<const std::int32_t*>(0x0067ea88u) == 2) {
-        *reinterpret_cast<std::int32_t*>(0x0067ea88u) = 0;
-    }
-
-    const std::int32_t s3 = *reinterpret_cast<const std::int32_t*>(0x007f1a24u);
-    const std::int32_t s4 = *reinterpret_cast<const std::int32_t*>(0x007f1a34u);
-
-    std::int32_t* piVar5 = reinterpret_cast<std::int32_t*>(0x0067e938u);
-    auto*         pcVar3 = reinterpret_cast<std::int8_t*>(0x007f1504u);
-    const auto*   pcEnd  = reinterpret_cast<const std::int8_t*>(0x007f1894u);
-
-    std::int32_t iVar4 = 0;
-    while (pcVar3 < pcEnd) {
-        if (iVar4 == iVar1 || iVar4 == iVar2 || iVar4 == s3 || iVar4 == s4) {
-            // Left-edge: back-row byte != 0, current byte == 0, slot > 0.
-            if (pcVar3[-0x4c0] != 0 && pcVar3[0] == 0 && *piVar5 > 0) {
-                (*piVar5)--;
-            }
-            // Right-edge: back-row byte+1 != 0, current+1 == 0, slot < 2.
-            if (pcVar3[-0x4bf] != 0 && pcVar3[1] == 0 && *piVar5 < 2) {
-                (*piVar5)++;
-            }
-            // Clamp [0, 2].
-            if (*piVar5 < 0) *piVar5 = 0;
-            if (*piVar5 > 2) *piVar5 = 2;
-        }
-        iVar4++;
-        pcVar3 += 0x4c;
-        piVar5 += 3;
-    }
-}
-RH_ScopedInstall(PlayerSlotEdgeAdjust, 0x0042fa00);
+//
+// This was the .asi's installed body for FUN_0042fa00 (162/163 bytes, 0x0042fa00..0x0042faa2) and a second copy of
+// Frontend/MenuNav.cpp:MenuTeamSelectTick (both targets). The two differed from the original exactly where this copy added a
+// `*team > 0` guard and a trailing clamp `[0, 2]`: the decompiled original guards `*team != 0` and has no clamp (decomp_pc 0x0042fa00,
+// verify/dualcopy4_20261016/decomp_42fa00.txt: `if (pcVar3[-0x4c0] != 0 && *pcVar3 == 0 && *piVar5 != 0) *piVar5 -= 1`). They agree
+// for values already in [0, 2] and differ for any other value. MenuTeamSelectTick follows the original, is the one body for both
+// targets and now owns the install and the registry key menu_team_select_tick. The key player_slot_edge_adjust is retired.
+// ref: re/analysis/frontend_unmapped_a/0x0042fa00.md
 
 // ───────────────────────────────────────────────────────────────────────────
 // 0x00403050  PreRaceLoadingScreenDraw

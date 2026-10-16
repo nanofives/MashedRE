@@ -10,6 +10,7 @@
 //   (preserved in original\MASHED.exe.unpatched)
 
 #include "../Core/HookSystem.h"
+#include "MenuEntryZero.h"
 
 #include <cstdint>
 
@@ -50,58 +51,20 @@ RH_ScopedInstall(GetFrameCounterPlus73, 0x0042f0b0);  // re-enabled 2026-05-24 c
 // ---------------------------------------------------------------------------
 // MenuEntryArrayInit  --  0x0042d3e0
 //
-// Original: FUN_0042d3e0 (58 bytes, 0x0042d3e0..0x0042d41a)
-// Zeroes 30 entries of a 52-byte struct array starting at 0x00898ac0.
-// Loop: start at DAT_00898ac4 (= array_base + 4, i.e. entry[0]+4).
-//   Each iteration clears 14 selected dword-fields per entry (see below).
-//   Stride: puVar1 += 0xd (13 dwords = 52 bytes per entry).
-//   Termination: puVar1 >= 0x8990dc (exclusive end of 30-entry array).
+// Original: FUN_0042d3e0 (59 bytes, 0x0042d3e0..0x0042d41a). Clears 14 stores per entry over 30 entries of a 52-byte struct array at 0x00898ac0..0x008990dc.
+// The body is Frontend/MenuEntryZero.h:MenuEntryZeroBody, written from the disassembly (verify/dualcopy4_20261016/disasm_42d3e0.txt): dwords at
+// entry +0, +4, +8, bytes +12..+15, dwords +16, +20, +24, +28, +36, +40, +44; entry +32 and entry 30 onwards are NOT written.
 //
-// Zeroed offsets per entry (relative to entry base = puVar1 - 1 dword = -4):
-//   -4, 0, +4, +8, +9, +10, +11, +12, +16, +20, +24, +32, +36, +40
-// NOT zeroed: offsets +28 and any beyond +40.
-//
-// Implementation note: the loop pointer starts at entry[0]+4 (i.e. offset +4
-// past the array base 0x00898ac0), so the "entry base" for offset indexing is
-// puVar1 - 4.  The original iterates by adding 0xd uint32*'s (52 bytes) to
-// the loop pointer each step.  We reproduce this exactly — do NOT simplify to
-// memset, as +28 and any bytes beyond +40 must NOT be touched.
+// dualcopy4 (2026-10-16) CORRECTION. The body that stood here (C3 at 9b0248128) did not match those bytes: it wrote the dword before the entry,
+// bytes +9..+12 instead of +12..+15, +32 instead of +28 and +44 (host test verify/dualcopy4_20261016/maskcheck_42d3e0.txt). Its registry key
+// observed only the first dword of entry 0, which both bodies clear, so it could not see that. The exe's Frontend/MenuNavSM.cpp:RecordsZero
+// (memset of its own g_records) is now a call into the same body.
 // ref: re/analysis/promote_c2_frontend_menus/0x0042d3e0.md
 // ---------------------------------------------------------------------------
 
 // 0x0042d3e0
 extern "C" __declspec(dllexport) void __cdecl MenuEntryArrayInit() {
-    // Loop pointer starts at array_base + 4 (= DAT_00898ac4).
-    std::uint32_t* puVar1 = reinterpret_cast<std::uint32_t*>(0x00898ac4u);
-    // Exclusive end: 0x008990dc.
-    const std::uint32_t* const end = reinterpret_cast<const std::uint32_t*>(0x008990dcu);
-
-    while (puVar1 < end) {
-        // Entry base (byte pointer) = (char*)puVar1 - 4.
-        // All offsets are relative to entry base.
-        std::uint8_t* base = reinterpret_cast<std::uint8_t*>(puVar1) - 4;
-
-        // Zero the 14 selected offsets: -4, 0, +4, +8, +9, +10, +11, +12,
-        //                                +16, +20, +24, +32, +36, +40.
-        *reinterpret_cast<std::uint32_t*>(base - 4)  = 0u;  // offset -4
-        *reinterpret_cast<std::uint32_t*>(base +  0) = 0u;  // offset  0
-        *reinterpret_cast<std::uint32_t*>(base +  4) = 0u;  // offset +4
-        *reinterpret_cast<std::uint32_t*>(base +  8) = 0u;  // offset +8
-        *reinterpret_cast<std::uint8_t*> (base +  9) = 0u;  // offset +9  (byte)
-        *reinterpret_cast<std::uint8_t*> (base + 10) = 0u;  // offset +10 (byte)
-        *reinterpret_cast<std::uint8_t*> (base + 11) = 0u;  // offset +11 (byte)
-        *reinterpret_cast<std::uint8_t*> (base + 12) = 0u;  // offset +12 (byte)
-        *reinterpret_cast<std::uint32_t*>(base + 16) = 0u;  // offset +16
-        *reinterpret_cast<std::uint32_t*>(base + 20) = 0u;  // offset +20
-        *reinterpret_cast<std::uint32_t*>(base + 24) = 0u;  // offset +24
-        *reinterpret_cast<std::uint32_t*>(base + 32) = 0u;  // offset +32
-        *reinterpret_cast<std::uint32_t*>(base + 36) = 0u;  // offset +36
-        *reinterpret_cast<std::uint32_t*>(base + 40) = 0u;  // offset +40
-        // NOT zeroed: +28, and any offsets beyond +40.
-
-        // Advance by 0xd dwords = 52 bytes.
-        puVar1 += 0xd;
-    }
+    mashed_re::Frontend::MenuEntryZeroBody(reinterpret_cast<std::uint8_t*>(0x00898ac0u), 30);
 }
 
-RH_ScopedInstall(MenuEntryArrayInit, 0x0042d3e0);  // re-enabled 2026-05-24 c3-frontend-a
+RH_ScopedInstall(MenuEntryArrayInit, 0x0042d3e0);  // re-enabled 2026-05-24 c3-frontend-a; body corrected 2026-10-16 (dualcopy4)

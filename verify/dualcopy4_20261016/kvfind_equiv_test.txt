@@ -1,0 +1,7 @@
+"vswhere.exe" no se reconoce como un comando interno o externo,
+programa o archivo por lotes ejecutable.
+kvfind_equiv_test.cpp
+KvFind.cpp
+Generando código...
+   Creando biblioteca C:\Users\maria\AppData\Local\Temp\dc4kv\kvfind_equiv_test.lib y objeto C:\Users\maria\AppData\Local\Temp\dc4kv\kvfind_equiv_test.exp
+cases=400000 mismatches=0  (result -1: 379889, other: 20111)

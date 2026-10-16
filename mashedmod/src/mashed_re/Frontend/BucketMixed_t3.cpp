@@ -8,8 +8,7 @@
 // 2 promotions + 2 staged in this file:
 //   0x00431d90  FrontendPanelFlagAdvance  -- void(void); 19 panel-flag writes       [C3]
 //   0x00432ad0  MenuDimOverlayFadeStep    -- void(void); alpha-counter fade-out tick [C3]
-//   0x00431b70  GetDat007f0f10            -- pure-leaf uint32(void) global getter   [C2-staged,
-//                                            C3 caller-gate fails: sole caller C1]
+//   0x00431b70  (GetDat007f0f10 deleted, dualcopy4: MenuLeaves_af5.cpp owns this RVA)
 //   0x00472dc0  Im2DTriangleDraw          -- void(6f,uint32); 3-vertex Im2D fill     [C2-staged,
 //                                            live-Z field defeats synthetic diff; hook disabled]
 //
@@ -25,26 +24,13 @@
 #include <cstdint>
 
 // ---------------------------------------------------------------------------
-// 0x00431b70  GetDat007f0f10
-//
-// Original: FUN_00431b70 (6 bytes, 0x00431b70..0x00431b75)
-// Body: `MOV EAX, [0x007f0f10]; RET`  (single-instruction getter leaf).
-// Returns: DAT_007f0f10 as uint32. No callees, no writes.
+// 0x00431b70  (dualcopy4, 2026-10-16: the GetDat007f0f10 body that lived here was a
+// SECOND, never-installed copy of Frontend/MenuLeaves_af5.cpp:MenuFlagDat007f0f10Get,
+// which owns the install and the live registry key. Deleted; its STAGED registry key
+// get_dat_007f0f10 is retired. Original: FUN_00431b70, `MOV EAX, [0x007f0f10]; RET`.)
 // ref: re/analysis/bucket_0041dc30/0x00431b70.md
 //      re/analysis/frontend_c1_to_c2_followup_s1/FUN_00431b70.md
 // ---------------------------------------------------------------------------
-
-// 0x00431b70
-extern "C" __declspec(dllexport) std::uint32_t __cdecl GetDat007f0f10() {
-    return *reinterpret_cast<std::uint32_t*>(0x007f0f10u);
-}
-
-// RH_ScopedInstall(GetDat007f0f10, 0x00431b70);
-// STAGED at C2 (NOT promoted by c3-batch-t-s3 2026-05-26).
-// The reimpl is bit-identical (read_global Frida diff 10/10 GREEN) and the
-// decomp is a trivial getter leaf, BUT the C3 caller-AND-callee gate fails:
-// the sole caller FUN_0045d0e0 is C1 (confirmed via Ghidra function_callers),
-// and a leaf has no callee. Re-pickup: promote FUN_0045d0e0 to C2+.
 
 
 // ---------------------------------------------------------------------------

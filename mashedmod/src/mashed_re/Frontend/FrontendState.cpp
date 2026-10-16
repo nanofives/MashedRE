@@ -12,6 +12,7 @@
 // (which uses 'mscdecl' calling convention only). Filed as [UNCERTAIN U-3594].
 #include "../Core/HookSystem.h"
 #include "RowMovers.h"
+#include "../Race/SelectionToGameMode.h"
 #include <cstdint>
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -71,19 +72,10 @@ RH_ScopedInstall(MenuSlotCount, 0x00430b60);  // re-enabled 2026-05-24 c3-fronte
 extern "C" __declspec(dllexport) void __cdecl MenuModeSync() {
     // 0x0042f6b8
     const std::int32_t mode = *reinterpret_cast<const std::int32_t*>(0x0067f184);
-    std::int32_t& dest = *reinterpret_cast<std::int32_t*>(0x0067e9fc);
-    switch (mode) {
-        case 0:  dest = 2;  break;  // 0x0042f6bc
-        case 1:  dest = 3;  break;  // 0x0042f6c6
-        case 2:  dest = 4;  break;  // 0x0042f6d0
-        case 3:  dest = 6;  break;  // 0x0042f6da
-        case 5:  dest = 5;  break;  // 0x0042f6e4
-        case 8:  dest = 7;  break;  // 0x0042f6ee
-        case 9:  dest = 8;  break;  // 0x0042f6f8
-        case 10: dest = 9;  break;  // 0x0042f702
-        case 11: dest = 10; break;  // 0x0042f70c
-        default: break;             // no write — falls through
-    }
+    // dualcopy4 (2026-10-16): the case table is the ONE body Race/SelectionToGameMode.h:SelectionToGameModeBody (it was a second
+    // copy of Race/RaceModes.cpp:SelectionToGameMode, the exe's pure form). -1 = the original's default arm, no write.
+    const int m = mashed_re::Race::RaceModes::SelectionToGameModeBody(mode);
+    if (m >= 0) *reinterpret_cast<std::int32_t*>(0x0067e9fc) = m;
 }
 RH_ScopedInstall(MenuModeSync, 0x0042f6b0);  // re-enabled 2026-05-24 c3-frontend-b
 

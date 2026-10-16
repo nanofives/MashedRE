@@ -1,0 +1,35 @@
+hook: menu_entry_array_init  rva=0x0042d3e0  export=MenuEntryArrayInit
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 14424
+  [agent] pre_snapshot
+  [agent] asi_loaded
+  [agent] post_snapshot
+  [agent] results
+
+=== verify_hook_install report (menu_entry_array_init) ===
+
+target address: 0x0042d3e0  export: MenuEntryArrayInit
+PRE  bytes:     e9 4b 6f 02 60 33 c9 89
+asi base:       0x60440000
+reimpl addr:    0x60454330
+POST bytes:     e9 4b 6f 02 60 33 c9 89
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x60026f4b  expected 0x60026f4b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  1 / 1  (other threads: 0)
+
+per-input results:
+  [OK] input={'seed': [{'addr': '0x00898abc', 'val': 4294967295}, {'addr': '0x00898ac0', 'val': 4294967295}, {'addr': '0x00898ac4', 'val': 4294967295}, {'addr': '0x00898ac8', 'val': 4294967295}, {'addr': '0x00898acc', 'val': 4294967295}, {'addr': '0x00898ad0', 'val': 4294967295}, {'addr': '0x00898ad4', 'val': 4294967295}, {'addr': '0x00898ad8', 'val': 4294967295}, {'addr': '0x00898adc', 'val': 4294967295}, {'addr': '0x00898ae0', 'val': 4294967295}, {'addr': '0x00898ae4', 'val': 4294967295}, {'addr': '0x00898ae8', 'val': 4294967295}, {'addr': '0x00898aec', 'val': 4294967295}, {'addr': '0x00898af0', 'val': 4294967295}, {'addr': '0x00898af4', 'val': 4294967295}, {'addr': '0x00898af8', 'val': 4294967295}, {'addr': '0x00898afc', 'val': 4294967295}, {'addr': '0x00898b00', 'val': 4294967295}, {'addr': '0x00898b04', 'val': 4294967295}, {'addr': '0x00898b08', 'val': 4294967295}, {'addr': '0x00898b0c', 'val': 4294967295}, {'addr': '0x00898b10', 'val': 4294967295}, {'addr': '0x00898b14', 'val': 4294967295}, {'addr': '0x00898b18', 'val': 4294967295}, {'addr': '0x00898b1c', 'val': 4294967295}, {'addr': '0x00898b20', 'val': 4294967295}, {'addr': '0x00898b24', 'val': 4294967295}, {'addr': '0x00898b28', 'val': 4294967295}, {'addr': '0x00898b2c', 'val': 4294967295}, {'addr': '0x00898b30', 'val': 4294967295}, {'addr': '0x00898b34', 'val': 4294967295}, {'addr': '0x00898b38', 'val': 4294967295}, {'addr': '0x00898b3c', 'val': 4294967295}, {'addr': '0x00898b40', 'val': 4294967295}, {'addr': '0x00898b44', 'val': 4294967295}, {'addr': '0x00898b48', 'val': 4294967295}, {'addr': '0x00898b4c', 'val': 4294967295}, {'addr': '0x00898b50', 'val': 4294967295}, {'addr': '0x00898b54', 'val': 4294967295}, {'addr': '0x00898b58', 'val': 4294967295}, {'addr': '0x00899070', 'val': 4294967295}, {'addr': '0x00899074', 'val': 4294967295}, {'addr': '0x00899078', 'val': 4294967295}, {'addr': '0x0089907c', 'val': 4294967295}, {'addr': '0x00899080', 'val': 4294967295}, {'addr': '0x00899084', 'val': 4294967295}, {'addr': '0x00899088', 'val': 4294967295}, {'addr': '0x0089908c', 'val': 4294967295}, {'addr': '0x00899090', 'val': 4294967295}, {'addr': '0x00899094', 'val': 4294967295}, {'addr': '0x00899098', 'val': 4294967295}, {'addr': '0x0089909c', 'val': 4294967295}, {'addr': '0x008990a0', 'val': 4294967295}, {'addr': '0x008990a4', 'val': 4294967295}, {'addr': '0x008990a8', 'val': 4294967295}, {'addr': '0x008990ac', 'val': 4294967295}, {'addr': '0x008990b0', 'val': 4294967295}, {'addr': '0x008990b4', 'val': 4294967295}, {'addr': '0x008990b8', 'val': 4294967295}, {'addr': '0x008990bc', 'val': 4294967295}, {'addr': '0x008990c0', 'val': 4294967295}, {'addr': '0x008990c4', 'val': 4294967295}, {'addr': '0x008990c8', 'val': 4294967295}, {'addr': '0x008990cc', 'val': 4294967295}, {'addr': '0x008990d0', 'val': 4294967295}, {'addr': '0x008990d4', 'val': 4294967295}, {'addr': '0x008990d8', 'val': 4294967295}, {'addr': '0x008990dc', 'val': 4294967295}, {'addr': '0x008990e0', 'val': 4294967295}, {'addr': '0x008990e4', 'val': 4294967295}, {'addr': '0x008990e8', 'val': 4294967295}, {'addr': '0x008990ec', 'val': 4294967295}, {'addr': '0x008990f0', 'val': 4294967295}, {'addr': '0x008990f4', 'val': 4294967295}, {'addr': '0x008990f8', 'val': 4294967295}, {'addr': '0x008990fc', 'val': 4294967295}, {'addr': '0x00899100', 'val': 4294967295}, {'addr': '0x00899104', 'val': 4294967295}, {'addr': '0x00899108', 'val': 4294967295}], 'args': [], 'obs': ['0x00898abc', '0x00898ac0', '0x00898ac4', '0x00898ac8', '0x00898acc', '0x00898ad0', '0x00898ad4', '0x00898ad8', '0x00898adc', '0x00898ae0', '0x00898ae4', '0x00898ae8', '0x00898aec', '0x00898af0', '0x00898af4', '0x00898af8', '0x00898afc', '0x00898b00', '0x00898b04', '0x00898b08', '0x00898b0c', '0x00898b10', '0x00898b14', '0x00898b18', '0x00898b1c', '0x00898b20', '0x00898b24', '0x00898b28', '0x00898b2c', '0x00898b30', '0x00898b34', '0x00898b38', '0x00898b3c', '0x00898b40', '0x00898b44', '0x00898b48', '0x00898b4c', '0x00898b50', '0x00898b54', '0x00898b58', '0x00899070', '0x00899074', '0x00899078', '0x0089907c', '0x00899080', '0x00899084', '0x00899088', '0x0089908c', '0x00899090', '0x00899094', '0x00899098', '0x0089909c', '0x008990a0', '0x008990a4', '0x008990a8', '0x008990ac', '0x008990b0', '0x008990b4', '0x008990b8', '0x008990bc', '0x008990c0', '0x008990c4', '0x008990c8', '0x008990cc', '0x008990d0', '0x008990d4', '0x008990d8', '0x008990dc', '0x008990e0', '0x008990e4', '0x008990e8', '0x008990ec', '0x008990f0', '0x008990f4', '0x008990f8', '0x008990fc', '0x00899100', '0x00899104', '0x00899108']}  got=0xffffffff0000000000000000000000000000000000000000000000000000000000000000ffffffff000000000000000000000000ffffffff0000000000000000000000000000000000000000000000000000000000000000ffffffff000000000000000000000000ffffffff0000000000000000000000000000000000000000000000000000000000000000ffffffff000000000000000000000000ffffffff0000000000000000000000000000000000000000000000000000000000000000ffffffff000000000000000000000000ffffffff0000000000000000000000000000000000000000000000000000000000000000ffffffff000000000000000000000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 1x as expected
+  + all 1 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dualcopy4\log\verify_hook_install_menu_entry_array_init.txt
+

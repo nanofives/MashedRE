@@ -22,10 +22,17 @@
 
 #include "MenuNavSM.h"
 #include "MenuNav.h"            // MenuEntryWalk: the shared 0x0042ac90 body
-#include "../Race/RaceModes.h"  // SelectionToGameMode: the exe body of 0x0042f6b0
+#include "../Race/RaceModes.h"  // SelectionToGameMode: the host-side name of 0x0042f6b0's table (SelectionToGameMode.h)
 #include "RowMovers.h"          // challenge-row movers 0x004322c0 / 0x004323c0
+#include "MenuEntryZero.h"      // MenuEntryZeroBody: the one body of 0x0042d3e0
 
+#include <cstddef>
+#include <cstdint>
 #include <cstring>
+
+// Declaration of the kv-stream search (original FUN_0042ad90): the ONE body is Frontend/KvFind.cpp (both targets).
+// KvLookup below is its host-side name.
+extern "C" std::uint32_t __cdecl Find42ad90(std::uint8_t* arr, std::uint32_t key, std::uint32_t n);
 
 namespace mashed_re {
 namespace Frontend {
@@ -369,38 +376,33 @@ int        g_record_count = 0;
 int        g_last_dir = 0;                  // DAT_0067e844
 
 // --------------------------------------------------------------------------
-// FUN_0042ad90  kv-iterator. Verbatim transcription of the decomp:
-//   __fastcall(ECX unused, EDX=table); EBX=tag_key, EDI=occurrence.
-//   Walks the flat u32 stream; on the occurrence-th match of tag_key, returns
-//   the NEXT u32. Stops (returns -1) at 0xff070000.
-// 0x0042ad90
+// FUN_0042ad90  kv-iterator, host name. dualcopy4 (2026-10-16): the walk is the ONE body
+// Frontend/KvFind.cpp:Find42ad90 (the C body the .asi's naked EDX/EBX/EDI shim calls, registry key
+// find_42ad90); this transcription was a second copy that returned the same value for every input.
+//   EDX=table; EBX=tag_key, EDI=occurrence. On the occurrence-th match of tag_key returns the
+//   NEXT u32. Stops (returns -1) at 0xff070000.
 // --------------------------------------------------------------------------
+
 int KvLookup(const std::uint32_t* table, std::uint32_t tag_key, int occurrence) {
-    if (table == nullptr) {
-        return -1;
-    }
-    std::int32_t iVar1 = static_cast<std::int32_t>(table[0]);
-    int idx = 0;        // iVar2
-    int occ = 0;        // iVar3
-    for (;;) {
-        if (static_cast<std::uint32_t>(iVar1) == kTermVal) {
-            return -1;
-        }
-        if (static_cast<std::uint32_t>(iVar1) == tag_key) {
-            if (occurrence == occ) {
-                return static_cast<std::int32_t>(table[idx + 1]);
-            }
-            ++occ;
-        }
-        iVar1 = static_cast<std::int32_t>(table[idx + 1]);
-        ++idx;
-    }
+    // a negative occurrence never equals the non-negative match counter, so it is -1 in either body
+    if (occurrence < 0) return -1;
+    return static_cast<std::int32_t>(Find42ad90(
+        reinterpret_cast<std::uint8_t*>(const_cast<std::uint32_t*>(table)), tag_key,
+        static_cast<std::uint32_t>(occurrence)));
 }
 
-// FUN_0042d3e0 (MenuEntryArrayInit, C3) analogue - zero the whole record array.
+// FUN_0042d3e0 (MenuEntryArrayInit) analogue - zero the whole record array.
 // 0x0042d3e0
+// dualcopy4 (2026-10-16): the original's 14 stores per entry over 30 entries are the shared Frontend/MenuEntryZero.h:MenuEntryZeroBody (also
+// what the .asi's MenuEntryArrayInit runs). This host reset deliberately clears MORE than the original: pad20 (+0x20, which the original leaves
+// and which this state machine both writes, line "g_records[rec].pad20 = row", and reads as row20), pad30 (+0x30) and the whole of entry 30.
+// So the net effect is still the old memset; the difference from the original is now explicit instead of hidden in a memset. Making the
+// reset faithful (leave pad20 stale) would change which rows the draw loop sees, which only a frontend parity capture can judge: open.
+static_assert(offsetof(MenuRecord, pad20) == 0x20 && offsetof(MenuRecord, pad30) == 0x30 && sizeof(MenuRecord) == 0x34, "MenuRecord layout");
 void RecordsZero() {
-    std::memset(g_records, 0, sizeof(g_records));
+    MenuEntryZeroBody(reinterpret_cast<std::uint8_t*>(g_records), 30);
+    for (int i = 0; i < 30; ++i) { g_records[i].pad20 = 0; g_records[i].pad30 = 0; }
+    std::memset(&g_records[30], 0, sizeof(MenuRecord));
     g_record_count = 0;
 }
 

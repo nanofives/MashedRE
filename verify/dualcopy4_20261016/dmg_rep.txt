@@ -1,0 +1,10 @@
+// ============================================================================
+// 0x00420de0  VehicleDamageAccumulatorAdd: DELETED (dualcopy4, 2026-10-16, ROADMAP D4)
+// ============================================================================
+//
+// This was a SECOND body of FUN_00420de0 (never installed: MASS-DISABLED 2026-05-24; no caller). It was plain C float
+// (`float v = *slot + delta; if (v > 50.f) ...`), and the original compares the UNROUNDED 80-bit sum (fst stores f32 but st0
+// keeps the extended value, fcomp at 0x00420df1 reads st0), so the C form diverges at the boundary. The one body is the verbatim
+// naked x87 port Util/PromoLoop_sessionB.cpp:Accum420de0 (installed, registry key accum_420de0, C3 r173). Original: 30 bytes,
+// __fastcall(ECX=idx, EDX=base, [esp+4]=val), ceiling _DAT_005cd120 = 0x42480000 = 50.0f.
+// ref: re/analysis/vehicle_damage_d4/0x00420de0.md

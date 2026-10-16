@@ -15,6 +15,7 @@ call "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliar
 cl /nologo /EHsc /std:c++17 ^
    navsm_test.cpp ^
    ..\..\..\..\mashedmod\src\mashed_re\Frontend\MenuNavSM.cpp ^
+   ..\..\..\..\mashedmod\src\mashed_re\Frontend\KvFind.cpp ^
    ..\..\..\..\mashedmod\src\mashed_re\Frontend\MenuNav.cpp ^
    ..\..\..\..\mashedmod\src\mashed_re\Frontend\FrontendNav.cpp ^
    ..\..\..\..\mashedmod\src\mashed_re\Frontend\FrontendState.cpp ^

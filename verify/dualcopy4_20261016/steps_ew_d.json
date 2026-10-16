@@ -1,0 +1,54 @@
+[
+ {
+  "name": "ew_accum_420de0",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/early_window_leaf_diff.py",
+   "accum_420de0"
+  ],
+  "env": {
+   "MASHED_EW_ASI": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\dualcopy4\\verify\\dualcopy4_20261016\\images\\d.asi"
+  }
+ },
+ {
+  "name": "ew_pred_405890",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/early_window_leaf_diff.py",
+   "pred_405890"
+  ],
+  "env": {
+   "MASHED_EW_ASI": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\dualcopy4\\verify\\dualcopy4_20261016\\images\\d.asi"
+  }
+ },
+ {
+  "name": "ew_find_42ad90",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/early_window_leaf_diff.py",
+   "find_42ad90"
+  ],
+  "env": {
+   "MASHED_EW_ASI": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\dualcopy4\\verify\\dualcopy4_20261016\\images\\d.asi"
+  }
+ },
+ {
+  "name": "ew_search_4c5c00",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/early_window_leaf_diff.py",
+   "search_4c5c00"
+  ],
+  "env": {
+   "MASHED_EW_ASI": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\dualcopy4\\verify\\dualcopy4_20261016\\images\\d.asi"
+  }
+ }
+]

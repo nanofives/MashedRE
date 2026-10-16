@@ -1,0 +1,12 @@
+hook: menu_flag_dat_007f0f10_get  rva=0x00431b70  export=MenuFlagDat007f0f10Get
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 5484
+  [agent] LUT ready  base=0x2d6a660  offset=0x134  root=0x5040680  delta=0  attempts=12
+  [agent] .asi loaded  base=0x60e10000  MenuFlagDat007f0f10Get@0x60e3e6a0
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dualcopy4\log\diff_menu_flag_dat_007f0f10_get.csv
+  total cases: 10
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.
+

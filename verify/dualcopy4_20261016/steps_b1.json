@@ -1,0 +1,102 @@
+[
+ {
+  "name": "path1_timer_bit_field_set",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_diff.py",
+   "timer_bit_field_set"
+  ]
+ },
+ {
+  "name": "path1_timer_slot_data_copy",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_diff.py",
+   "timer_slot_data_copy"
+  ]
+ },
+ {
+  "name": "path1_timer_array_clear_d40",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_diff.py",
+   "timer_array_clear_d40"
+  ]
+ },
+ {
+  "name": "path1_timer_init_loop",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_diff.py",
+   "timer_init_loop"
+  ]
+ },
+ {
+  "name": "path1_menu_flag_dat_007f0f10_get",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_diff.py",
+   "menu_flag_dat_007f0f10_get"
+  ]
+ },
+ {
+  "name": "path1_accum_420de0",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_diff.py",
+   "accum_420de0"
+  ]
+ },
+ {
+  "name": "path1_pred_405890",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_diff.py",
+   "pred_405890"
+  ]
+ },
+ {
+  "name": "path1_menu_mode_sync",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_diff.py",
+   "menu_mode_sync"
+  ]
+ },
+ {
+  "name": "path1_find_42ad90",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_diff.py",
+   "find_42ad90"
+  ]
+ },
+ {
+  "name": "path1_menu_team_select_tick",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_diff.py",
+   "menu_team_select_tick"
+  ]
+ }
+]

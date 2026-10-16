@@ -1,0 +1,37 @@
+hook: menu_flag_dat_007f0f10_get  rva=0x00431b70  export=MenuFlagDat007f0f10Get
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 20068
+  [agent] pre_snapshot
+  [agent] asi_loaded
+  [agent] post_snapshot
+  [agent] results
+
+=== verify_hook_install report (menu_flag_dat_007f0f10_get) ===
+
+target address: 0x00431b70  export: MenuFlagDat007f0f10Get
+PRE  bytes:     e9 2b cb 03 60 c3 90 90
+asi base:       0x60440000
+reimpl addr:    0x6046e6a0
+POST bytes:     e9 2b cb 03 60 c3 90 90
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x6003cb2b  expected 0x6003cb2b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  3 / 3  (other threads: 0)
+
+per-input results:
+  [OK] input=0  got=2  err=
+  [OK] input=3735928559  got=2  err=
+  [OK] input=3405691582  got=2  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 3x as expected
+  + all 3 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dualcopy4\log\verify_hook_install_menu_flag_dat_007f0f10_get.txt
+

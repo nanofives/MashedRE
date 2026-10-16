@@ -1,0 +1,1 @@
+delegate.ps1: No se puede procesar la transformaci¢n del argumento del par metro "TimeoutSec". No se puede convertir el valor "Mashed" al tipo "System.Int32". Error: "The input string 'Mashed' was not in a correct format."

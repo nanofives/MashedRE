@@ -1,0 +1,13 @@
+walk_01_title.bmp                  ctl=5ecf6d37,423d21df new=abc60283,5ecf6d37  NOISY (controls differ)
+walk_02_mainmenu.bmp               ctl=e3e2e619,d05986cc new=b5bd1375,33418c60  NOISY (controls differ)
+walk_03_singleplayer.bmp           ctl=39b65971,1c88e4c6 new=24bffd69,20f51e02  NOISY (controls differ)
+walk_04_colourselect.bmp           ctl=ce725a77,e5da482e new=a974a211,902ee9a4  NOISY (controls differ)
+walk_05_abilityselect.bmp          ctl=1840e6ea,3d7ea866 new=97ae358b,795c8acc  NOISY (controls differ)
+walk_06_challengeselect.bmp        ctl=b2bd4b9e,f133281d new=f6ce39eb,3f791f0c  NOISY (controls differ)
+walk_07_back_mainmenu.bmp          ctl=4f40f58e,3bfe1c9e new=f792ebfb,9605e527  NOISY (controls differ)
+walk_08_options_highlighted.bmp    ctl=ba6c2d8a,458119f6 new=aec6be56,f9279dfe  NOISY (controls differ)
+walk_09_options.bmp                ctl=7ec0abf9,eaf728e0 new=a60959df,d34a56d1  NOISY (controls differ)
+walk_10_sound.bmp                  ctl=04cb382d,6e9176da new=cbb4e993,601d42e6  NOISY (controls differ)
+walk_11_sound_adjusted.bmp         ctl=e699808f,0c4deb26 new=75902b99,3a9ddc3c  NOISY (controls differ)
+walk_12_back_mainmenu2.bmp         ctl=95b80cce,de4e79dc new=2a9f3cbe,4dcc5c6b  NOISY (controls differ)
+screens=12 informative=0 (SAME 0, DIFF 0) noisy=12

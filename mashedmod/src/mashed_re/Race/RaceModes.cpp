@@ -2,6 +2,7 @@
 // → race-rule pipeline (WS-G1). RVA citations inline; full map in
 // re/analysis/game_mode_rules_REmap_20260616.md.
 #include "RaceModes.h"
+#include "SelectionToGameMode.h"
 
 namespace mashed_re {
 namespace Race {
@@ -25,20 +26,11 @@ const int kCupEvent[39] = {
 const int kCupTracks = 13;
 }  // namespace
 
-// 0x0042f6b0 — switch base 0x0042f6b8 (writes DAT_0067e9fc).
+// Host-side name of the original's menu-selection -> game-mode switch (FUN_0042f6b0, switch base 0x0042f6b8, writes DAT_0067e9fc).
+// The table itself is the one body in SelectionToGameMode.h (dualcopy4); Frontend/FrontendState.cpp:MenuModeSync is its
+// original-address reader/writer.
 int SelectionToGameMode(int sel) {
-    switch (sel) {
-        case 0:  return 2;   // 0x0042f6bc
-        case 1:  return 3;   // 0x0042f6c6
-        case 2:  return 4;   // 0x0042f6d0
-        case 3:  return 6;   // 0x0042f6da
-        case 5:  return 5;   // 0x0042f6e4
-        case 8:  return 7;   // 0x0042f6ee
-        case 9:  return 8;   // 0x0042f6f8
-        case 10: return 9;   // 0x0042f702
-        case 11: return 10;  // 0x0042f70c
-        default: return -1;  // sel 4,6,7,>11 -> original makes no write
-    }
+    return SelectionToGameModeBody(sel);
 }
 
 // 0x0043f3xx: iVar8 = (modeOff + track*3); high word of DAT_005f65c8[iVar8].

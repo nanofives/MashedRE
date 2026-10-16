@@ -1,0 +1,42 @@
+hook: search_4c5c00  rva=0x004c5c00  export=Search4c5c00
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 21856
+  [agent] pre_snapshot
+  [agent] asi_loaded
+  [agent] post_snapshot
+  [agent] results
+
+=== verify_hook_install report (search_4c5c00) ===
+
+target address: 0x004c5c00  export: Search4c5c00
+PRE  bytes:     e9 ab 5f 3a 61 83 c0 08
+asi base:       0x61830000
+reimpl addr:    0x6186bbb0
+POST bytes:     e9 ab 5f 3a 61 83 c0 08
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x613a5fab  expected 0x613a5fab  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  0 / 5  (other threads: 0)
+
+per-input results:
+  [FAIL] input=0  got=None  err=bad argument count
+  [FAIL] input=1  got=None  err=bad argument count
+  [FAIL] input=2  got=None  err=bad argument count
+  [FAIL] input=3  got=None  err=bad argument count
+  [FAIL] input=4  got=None  err=bad argument count
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+FAIL:
+  - reimpl interceptor fired 0 times, expected 5
+  - call 0 (input=0) failed: bad argument count
+  - call 1 (input=1) failed: bad argument count
+  - call 2 (input=2) failed: bad argument count
+  - call 3 (input=3) failed: bad argument count
+  - call 4 (input=4) failed: bad argument count
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dualcopy4\log\verify_hook_install_search_4c5c00.txt
+

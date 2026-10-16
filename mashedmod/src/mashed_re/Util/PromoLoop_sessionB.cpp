@@ -2163,18 +2163,10 @@ RH_ScopedInstall(Match47bc90_RegAbi, 0x0047bc90);  // ABI fixed 2026-07-26 (was 
 // The C body below KEEPS its stack ABI because re/frida/hooks_registry.py drives the
 // export `Find42ad90` with stack args (arg_type edx_ebx_edi_find sets the registers on
 // the ORIGINAL side only). The INSTALLED hook is the naked marshalling shim below it.
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Find42ad90(std::uint8_t* arr, std::uint32_t key, std::uint32_t n) {
-    if (arr == 0) return 0xffffffff;
-    std::uint32_t* a = reinterpret_cast<std::uint32_t*>(arr);
-    std::uint32_t ecx = 0, esi = 0, eax = a[0];
-    if (eax == 0xff070000) return 0xffffffff;
-    for (;;) {
-        if (eax == key) { if (n == esi) return a[ecx + 1]; esi++; }
-        eax = a[ecx + 1]; ecx++;
-        if (eax == 0xff070000) break;
-    }
-    return 0xffffffff;
-}
+// dualcopy4 (2026-10-16): the C body Find42ad90 (stack ABI, the export the registry key find_42ad90 drives) moved to
+// Frontend/KvFind.cpp, compiled into BOTH targets, so the exe's menu-table lookup (Frontend/MenuNavSM.cpp:KvLookup) runs the same
+// body the original-side evidence covers. The naked shim below still marshals EDX/EBX/EDI onto the stack and calls it.
+extern "C" std::uint32_t __cdecl Find42ad90(std::uint8_t* arr, std::uint32_t key, std::uint32_t n);
 
 // Register-ABI shim — this, NOT Find42ad90, is what gets installed at 0x0042ad90.
 // Marshals the original's EDX/EBX/EDI args onto the stack. EBX/ESI/EDI are callee-saved

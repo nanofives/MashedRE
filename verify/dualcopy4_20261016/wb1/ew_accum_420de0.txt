@@ -1,0 +1,5 @@
+hook: accum_420de0  (early-window pure-leaf diff â€” no menu boot required)
+  b0=0xd9 reim=0x5cb38990 cases=5 mismatches=0
+  evidence: C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dualcopy4\log\diff_accum_420de0.csv
+VERDICT: GREEN
+

@@ -1,0 +1,28 @@
+=== cam_cb (1e7d2274)
+shift=0  joined racing rows=175  exe src counts {1: 175}
+pos: n=175 median=0.000110527 p95=0.00102039 max=0.00256402
+at: n=175 median=0.000427128 deg p95=0.00351152 deg max=0.0095821 deg
+right: n=175 median=1.36069e-05 deg p95=6.70742e-05 deg max=9.65368e-05 deg
+vw58: n=175 median=0 p95=0 max=0
+G-POSE: PASS
+=== cam1 (1e7d2274)
+shift=0  joined racing rows=175  exe src counts {1: 175}
+pos: n=175 median=0.000110527 p95=0.00102039 max=0.00256402
+at: n=175 median=0.000427128 deg p95=0.00351152 deg max=0.0095821 deg
+right: n=175 median=1.36069e-05 deg p95=6.70742e-05 deg max=9.65368e-05 deg
+vw58: n=175 median=0 p95=0 max=0
+G-POSE: PASS
+=== cam2 (87078a7a)
+shift=0  joined racing rows=175  exe src counts {1: 175}
+pos: n=175 median=7.97135e-05 p95=0.000787615 max=0.00175759
+at: n=175 median=0.00039631 deg p95=0.00231958 deg max=0.00689778 deg
+right: n=175 median=1.70755e-06 deg p95=2.74273e-05 deg max=5.53835e-05 deg
+vw58: n=175 median=0 p95=0 max=0
+G-POSE: PASS
+=== cam_cd (87078a7a)
+shift=0  joined racing rows=175  exe src counts {1: 175}
+pos: n=175 median=7.97135e-05 p95=0.000787615 max=0.00175759
+at: n=175 median=0.00039631 deg p95=0.00231958 deg max=0.00689778 deg
+right: n=175 median=1.70755e-06 deg p95=2.74273e-05 deg max=5.53835e-05 deg
+vw58: n=175 median=0 p95=0 max=0
+G-POSE: PASS

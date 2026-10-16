@@ -1,0 +1,12 @@
+hook: timer_bit_field_set  rva=0x0041eda0  export=TimerBitFieldSet
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 1968
+  [agent] LUT ready  base=0x146a660  offset=0x134  root=0x5040680  delta=0  attempts=18
+  [agent] .asi loaded  base=0x60e10000  TimerBitFieldSet@0x60e1f770
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dualcopy4\log\diff_timer_bit_field_set.csv
+  total cases: 10
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.
+

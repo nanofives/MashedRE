@@ -10,7 +10,7 @@
 //   (preserved in original\MASHED.exe.unpatched)
 //
 // Covers (all C2->C3):
-//   0x004c5c00  LinkedListStringSearch — case-insensitive linked-list string search (pure leaf)
+//   0x004c5c00  (LinkedListStringSearch deleted, dualcopy4: Util/PromoLoop_sessionB.cpp:Search4c5c00 owns this RVA)
 //   0x0040bb50  SpriteLookupC          — forwarder: FUN_004c5c00(DAT_0063b8fc, param_1)
 //   0x00430b90  ProgressBarSetA        — per-player progress bar renderer set A (void)
 //   0x00439210  LobbySlotListRender    — network lobby / player-slot list renderer (void)
@@ -144,89 +144,21 @@ static FUN_00472dc0_t const s_FUN_00472dc0 =
     reinterpret_cast<FUN_00472dc0_t>(0x00472dc0u);
 
 // ============================================================================
-// 0x004c5c00 — LinkedListStringSearch
+// 0x004c5c00 — LinkedListStringSearch: DELETED (dualcopy4, 2026-10-16, ROADMAP D4)
 // ============================================================================
 //
-// Original: FUN_004c5c00 (114 bytes, 0x004c5c00..0x004c5c72)
-// Signature: void* __cdecl (int list_head_ptr, const char* key)
-//
-// A circular (ring-anchored) linked list of named nodes. Walks it for a node
-// whose INLINE name matches key case-insensitively; returns the node's struct
-// base (node - 8) on match, else NULL.
-//
-// RE-TRANSCRIBED VERBATIM 2026-09-06 (U-9085). The prior body was C3 but did
-// not match this RVA in two places — it read the list wrongly and yielded
-// garbage names when walked (found while writing re/frida/chal_icon_probe.py,
-// where the same layout had to be read live). Corrected against capstone over
-// MASHED.exe.unpatched:
-//   0x004c5c05  add eax,8          ; eax = list_head_ptr + 8 IS the sentinel
-//                                  ;   ADDRESS (a ring anchor), NOT *(head+8).
-//                                  ;   The old body did *(head+8) then *that.
-//   0x004c5c0b  mov ebx,[eax]      ; ebx = first node = *(list_head_ptr + 8)
-//   0x004c5c11  cmp ebx,eax / je   ; empty list (first == sentinel) -> NULL
-//   0x004c5c19  lea eax,[ebx-8]    ; struct base = node - 8 (return candidate)
-//   0x004c5c1c  lea ecx,[eax+0x10] ; name = base + 0x10 = node + 8, an INLINE
-//                                  ;   char array — the old body chased it as
-//                                  ;   a `char*`.
-//   0x004c5c27..60 case-insensitive full-string compare, folding a-z -> A-Z on
-//                                  ;   BOTH sides (signed byte cmp: bytes >=0x80
-//                                  ;   are not folded, which `char` reproduces).
-//   0x004c5c62  mov ebx,[ebx]      ; next = *node (forward link)
-//   0x004c5c68  cmp ebx,eax / jne  ; loop while node != sentinel
-//   0x004c5c6c  xor eax,eax        ; exhausted -> NULL
-// The char-compare loop below was already faithful and is unchanged.
-//
-// Constants: +8 = sentinel offset from head AND inline-name offset in node;
-//   node struct base is node-8; 0x20 folds a-z -> A-Z.
-// Pure leaf (callees_depth1: []); leaf-exemption applies for C3 (re/CONFIDENCE.md).
-// ref: re/analysis/sprite_gate_c3/0x004c5c00.md; U-9085,
-//   re/analysis/chalsel_icon_dictionary_20260905.md.
+// This was a SECOND body of FUN_004c5c00 (never installed: MASS-DISABLED 2026-05-24; its only caller was the
+// equally uninstalled SpriteLookupC below). The one body is the naked verbatim port
+// Util/PromoLoop_sessionB.cpp:Search4c5c00, which owns the RH_ScopedInstall and the registry key search_4c5c00
+// (path1 GREEN 5/5, path2 E9+rel32). hooks.csv 004c5c00 names that TU in `file`.
+// The traversal notes that stood here (U-9085, 2026-09-06) are in
+// re/analysis/chalsel_icon_dictionary_20260905.md and re/analysis/sprite_gate_c3/0x004c5c00.md.
+// Original: FUN_004c5c00 (114 bytes, 0x004c5c00..0x004c5c72), void* __cdecl (int list_head_ptr, const char* key).
+// ref: re/analysis/sprite_gate_c3/0x004c5c00.md
 
-// 0x004c5c00
-extern "C" __declspec(dllexport) void* __cdecl LinkedListStringSearch(
-    std::int32_t list_head_ptr, const char* key)
-{
-    // 0x004c5c05: the sentinel is the ADDRESS list_head_ptr + 8 (ring anchor).
-    const std::uintptr_t sentinel =
-        static_cast<std::uintptr_t>(list_head_ptr) + 8u;
-    // 0x004c5c0b: first node = *(list_head_ptr + 8).
-    std::int32_t node = *reinterpret_cast<const std::int32_t*>(sentinel);
-
-    // 0x004c5c11 / 0x004c5c68: loop while node != sentinel (empty list -> NULL).
-    while (static_cast<std::uintptr_t>(node) != sentinel) {
-        // 0x004c5c1c: the name is an INLINE char array at node + 8.
-        const char* n = reinterpret_cast<const char*>(
-            static_cast<std::uintptr_t>(node) + 8u);
-        const char* k = key;
-
-        // 0x004c5c27..0x004c5c60: case-insensitive full-string compare.
-        bool match = true;
-        while (true) {
-            char kc = *k;
-            char nc = *n;
-            if (kc >= 'a' && kc <= 'z') kc = static_cast<char>(kc - 0x20);
-            if (nc >= 'a' && nc <= 'z') nc = static_cast<char>(nc - 0x20);
-            if (kc != nc) { match = false; break; }
-            if (kc == '\0') break; // both '\0' and equal -> full match
-            ++k; ++n;
-        }
-
-        if (match) {
-            // 0x004c5c19 / 0x004c5c6e: return node - 8 (the struct base).
-            return reinterpret_cast<void*>(
-                static_cast<std::uintptr_t>(node) - 8u);
-        }
-
-        // 0x004c5c62: advance to next node (node = *node, the forward link).
-        node = *reinterpret_cast<const std::int32_t*>(
-            static_cast<std::uintptr_t>(node));
-    }
-
-    // 0x004c5c6c: not found — return NULL.
-    return nullptr;
-}
-
-// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(LinkedListStringSearch, 0x004c5c00);
+using FUN_004c5c00_t = void* (__cdecl*)(std::int32_t, const char*);
+// 0x004c5c00: in the asi this address holds the live E9 into Search4c5c00.
+static FUN_004c5c00_t const s_FUN_004c5c00 = reinterpret_cast<FUN_004c5c00_t>(0x004c5c00u);
 
 // ============================================================================
 // 0x0040bb50 — SpriteLookupC
@@ -242,7 +174,7 @@ extern "C" __declspec(dllexport) void* __cdecl LinkedListStringSearch(
 // Constants (cited at 0x0040bb50..0x0040bb64):
 //   0x0063b8fc: global sprite list head C.
 //
-// Callee 0x004c5c00 (LinkedListStringSearch) promoted to C3 in this session.
+// Callee 0x004c5c00 is Util/PromoLoop_sessionB.cpp:Search4c5c00 (C3), reached through the original address.
 //
 // ref: re/analysis/hud_frontend/0x0040bb50.md
 
@@ -252,7 +184,7 @@ extern "C" __declspec(dllexport) void* __cdecl SpriteLookupC(const char* key) {
     const std::int32_t tableC =
         *reinterpret_cast<const std::int32_t*>(0x0063b8fcu);
     // 0x0040bb5a: call FUN_004c5c00(tableC, key)
-    return LinkedListStringSearch(tableC, key);
+    return s_FUN_004c5c00(tableC, key);
 }
 
 // MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(SpriteLookupC, 0x0040bb50);

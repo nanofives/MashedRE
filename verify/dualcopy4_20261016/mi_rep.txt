@@ -1,0 +1,20 @@
+// ---------------------------------------------------------------------------
+// MenuEntryArrayInit  --  0x0042d3e0
+//
+// Original: FUN_0042d3e0 (59 bytes, 0x0042d3e0..0x0042d41a). Clears 14 stores per entry over 30 entries of a 52-byte struct array at 0x00898ac0..0x008990dc.
+// The body is Frontend/MenuEntryZero.h:MenuEntryZeroBody, written from the disassembly (verify/dualcopy4_20261016/disasm_42d3e0.txt): dwords at
+// entry +0, +4, +8, bytes +12..+15, dwords +16, +20, +24, +28, +36, +40, +44; entry +32 and entry 30 onwards are NOT written.
+//
+// dualcopy4 (2026-10-16) CORRECTION. The body that stood here (C3 at 9b0248128) did not match those bytes: it wrote the dword before the entry,
+// bytes +9..+12 instead of +12..+15, +32 instead of +28 and +44 (host test verify/dualcopy4_20261016/maskcheck_42d3e0.txt). Its registry key
+// observed only the first dword of entry 0, which both bodies clear, so it could not see that. The exe's Frontend/MenuNavSM.cpp:RecordsZero
+// (memset of its own g_records) is now a call into the same body.
+// ref: re/analysis/promote_c2_frontend_menus/0x0042d3e0.md
+// ---------------------------------------------------------------------------
+
+// 0x0042d3e0
+extern "C" __declspec(dllexport) void __cdecl MenuEntryArrayInit() {
+    mashed_re::Frontend::MenuEntryZeroBody(reinterpret_cast<std::uint8_t*>(0x00898ac0u), 30);
+}
+
+RH_ScopedInstall(MenuEntryArrayInit, 0x0042d3e0);  // re-enabled 2026-05-24 c3-frontend-a; body corrected 2026-10-16 (dualcopy4)

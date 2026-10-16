@@ -1,0 +1,5 @@
+hook: pred_405890  (early-window pure-leaf diff â€” no menu boot required)
+  b0=0xa1 reim=0x60d82df0 cases=10 mismatches=0
+  evidence: C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dualcopy4\log\diff_pred_405890.csv
+VERDICT: GREEN
+

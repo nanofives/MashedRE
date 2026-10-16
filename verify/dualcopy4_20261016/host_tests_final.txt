@@ -1,0 +1,365 @@
+"vswhere.exe" no se reconoce como un comando interno o externo,
+programa o archivo por lotes ejecutable.
+============ [1/5] navsm (menu state machine) ============
+"vswhere.exe" no se reconoce como un comando interno o externo,
+programa o archivo por lotes ejecutable.
+navsm_test.cpp
+MenuNavSM.cpp
+KvFind.cpp
+MenuNav.cpp
+FrontendNav.cpp
+FrontendState.cpp
+MenuScoreSort.cpp
+RaceModes.cpp
+Generando código...
+   Creando biblioteca navsm_test.lib y objeto navsm_test.exp
+=== RUN navsm_test ===
+MASHED data range 0x00500000..0x009fffff inside test-image arena 0x00036a00..0x00a369ff: OK
+== root (screen 0) : depth=0 screen=1 cursor=0 records=7 ==
+   rec[0] tag=ff000000 type=1 row=-1 prim_id=0x40 sec_id=-1
+   rec[1] tag=ff040000 type=1 row=0 prim_id=0x21 sec_id=-1
+   rec[2] tag=ff040000 type=1 row=1 prim_id=0x22 sec_id=-1
+   rec[3] tag=ff040000 type=1 row=2 prim_id=0x27 sec_id=-1
+   rec[4] tag=ff040000 type=1 row=3 prim_id=0x26b sec_id=-1
+   rec[5] tag=ff040000 type=1 row=4 prim_id=0x261 sec_id=-1
+   rec[6] tag=ff100000 type=1 row=0 prim_id=0xffffffff sec_id=66
+
+[after DOWN] root cursor=1
+[ENTER on root item 1] pushed=1 -> expect screen 8
+== child (expect screen 8) : depth=1 screen=3 cursor=0 records=4 ==
+   rec[0] tag=ff000000 type=0 row=-1 prim_id=0x22 sec_id=-1
+   rec[1] tag=ff040000 type=0 row=0 prim_id=0x13e sec_id=-1
+   rec[2] tag=ff040000 type=0 row=1 prim_id=0x140 sec_id=-1
+   rec[3] tag=ff100000 type=1 row=0 prim_id=0xffffffff sec_id=67
+
+[ENTER on screen8 item 0] pushed=1 -> expect screen 19
+== grandchild (expect screen 19) : depth=2 screen=4 cursor=0 records=3 ==
+   rec[0] tag=ff000000 type=0 row=-1 prim_id=0x130 sec_id=-1
+   rec[1] tag=ff040000 type=0 row=0 prim_id=0xffffffff sec_id=-1
+   rec[2] tag=ff100000 type=4096 row=0 prim_id=0xffffffff sec_id=67
+
+[ENTER on screen19 item 0] sel=1 -> 0xff450000 == pop, expect screen 8
+== after select-pop (expect screen 8) : depth=3 screen=15 cursor=0 records=3 ==
+   rec[0] tag=ff000000 type=0 row=-1 prim_id=0xcf sec_id=-1
+   rec[1] tag=ff040000 type=0 row=0 prim_id=0xffffffff sec_id=-1
+   rec[2] tag=ff100000 type=4096 row=0 prim_id=0xffffffff sec_id=67
+
+[ESC] back=1 -> expect root
+== back at root (screen 0) : depth=2 screen=4 cursor=0 records=3 ==
+   rec[0] tag=ff000000 type=0 row=-1 prim_id=0x130 sec_id=-1
+   rec[1] tag=ff040000 type=0 row=0 prim_id=0xffffffff sec_id=-1
+   rec[2] tag=ff100000 type=4096 row=0 prim_id=0xffffffff sec_id=67
+
+--- default-rule check: root cannot reach screen 1 directly,
+    so push screen 1 explicitly then select its first item ---
+== screen 1 (explicit push) : depth=3 screen=1 cursor=0 records=7 ==
+   rec[0] tag=ff000000 type=0 row=-1 prim_id=0x40 sec_id=-1
+   rec[1] tag=ff040000 type=0 row=0 prim_id=0x21 sec_id=-1
+   rec[2] tag=ff040000 type=0 row=1 prim_id=0x22 sec_id=-1
+   rec[3] tag=ff040000 type=0 row=2 prim_id=0x27 sec_id=-1
+   rec[4] tag=ff040000 type=0 row=3 prim_id=0x26b sec_id=-1
+   rec[5] tag=ff040000 type=0 row=4 prim_id=0x261 sec_id=-1
+   rec[6] tag=ff100000 type=0 row=0 prim_id=0x43 sec_id=66
+[ENTER on screen1 item 0 action=0x2] pushed=1 -> expect screen 2
+== expect screen 2 : depth=4 screen=2 cursor=0 records=5 ==
+   rec[0] tag=ff000000 type=0 row=-1 prim_id=0x21 sec_id=-1
+   rec[1] tag=ff040000 type=0 row=0 prim_id=0xe5 sec_id=-1
+   rec[2] tag=ff040000 type=0 row=1 prim_id=0xe6 sec_id=-1
+   rec[3] tag=ff040000 type=0 row=2 prim_id=0x24 sec_id=-1
+   rec[4] tag=ff100000 type=0 row=0 prim_id=0x42 sec_id=67
+
+=== Piece 1: state-gated SELECT routing (fresh-menu defaults) ===
+[screen1 cursor=3 action expect 0xff820000]
+  [0xff820000 (savedata) -> push 31] got screen=31 cursor unchanged? want=31 : OK
+  [screen5 depth=1 cursor=0 items=1 recs=3]
+  [0xff240000 fresh -> push 7] got screen=7 cursor unchanged? want=7 : OK
+  [0xff3c0000 fresh -> modal(no nav)] pushed=0 screen=16 (was 16) : OK
+  [0xff3c0000 2-slots, no team table -> still modal] pushed=0 screen=16 : OK
+  [0xff4c0000 fresh slot_kind=0 -> pop] back=1 depth 1->0 : OK
+
+=== Piece 2: faithful grey-out (fresh-menu defaults) ===
+  screen1 fresh (item3 should be greyed) (screen 1): items=5 avail=[11101] cursor=0
+    -> item3 enabled? 0 : OK (greyed)
+    [has_savedata=1] item3 enabled? 1 : OK (enabled)
+  screen8 fresh (items 2,3 = Load/Save, ENABLED) (screen 8): items=5 avail=[11111] cursor=0
+    -> item2=1 item3=1 : OK
+    -> cursor=0 enabled? OK
+  screen28 fresh (no players -> all greyed) (screen 28): items=4 avail=[0000] cursor=-1
+
+=== Piece 3: slide-animation tick (FUN_004325c0) ===
+  on push: rec1 slide=511 (expect 0x1ff=511)
+  settled after 17 frames=1 ; rec1 slide=0 (expect 0) : OK
+  re-push screen19: rec1 slide=511 (expect 0x1ff) : OK
+
+=== R2-2: save-driven game state (FUN_00404e80) ===
+  blank save refused: OK
+  blank save leaves live 0x007f0a50 untouched (0xa5a5a5a5): OK
+  written save loaded: OK
+  live span mirrored (a50=2 a58=1 ad4=1 f2c=1): OK
+  screen1 item3 enabled w/ savedata: OK
+  screen18 av1(track)=1 av6(car)=1 : OK
+
+=== R2-close: 34-screen reachability (BFS over push map) ===
+  reachable from roots {0,1}: 12/33 (null tables: 1)
+  reachable set: 0 1 2 3 4 6 8 15 19 30 31 32
+  UNREACHABLE via push map: 5 7 9 10 11 12 13 14 16 17 18 20 21 22 23 24 25 26 28 29 33 
+  build pass: 33/33 non-null tables build records OK
+
+=== Piece 4 (WS-G2): mode-select -> game_mode wiring ===
+  [ok] 0xff3d (Challenge Cup)     got=3 want=3 : OK
+  [ok] 0xff4d (Quick Race)        got=10 want=10 : OK
+  [ok] 0xff40 (Time Attack)       got=2 want=2 : OK
+  [ok] 0xff2c (Top Dog)           got=6 want=6 : OK
+  [ok] 0xff2e (Team Game)         got=6 want=6 : OK
+  [ok] 0xff50 (Options) no-op     got=0 want=0 : OK
+  [SP screen cursor=0 (expect 0 Challenge Cup)]
+  [ok] flow: SP item0 -> mode3    got=3 want=3 : OK
+  [after select -> screen=4 (expect 4 colour)]
+  [ok] flow: MP item0 -> mode6    got=6 want=6 : OK
+  Piece 4: GREEN (0 failures)
+
+=== Piece 5 (D-11057): continue-cup chain ===
+  [ok] fresh -> advance (returns true)          : OK
+  [ok] fresh -> screen 7                        : OK
+  [ok] fresh -> ea6c==5                         : OK
+  [ok] fresh -> no modal armed                  : OK
+  [ok] ed6c!=0 variant1 -> no advance           : OK
+  [ok] ed6c!=0 variant1 -> screen unchanged     : OK
+  [ok] ed6c!=0 variant1 -> single modal 0x135   : OK
+  [ok] ed6c!=0 variant1 -> ed6c=1               : OK
+  [ok] ed6c!=0 variant0 -> no advance           : OK
+  [ok] ed6c!=0 variant0 -> two-choice modal 0x136 : OK
+  [ok] ed6c!=0 variant0 -> ed6c=2               : OK
+  [ok] two-choice confirm -> screen 7           : OK
+  [ok] two-choice confirm -> e9fc(game_mode)=3  : OK
+  [ok] mode6 ea6c1 -> no advance                : OK
+  [ok] mode6 ea6c1 -> ea6c toggled to 2         : OK
+  [ok] mode2 ea6c4 -> advance push 7            : OK
+  [ok] ecdc!=0 ed4c0 -> restart modal 0x38      : OK
+  [ok] ecdc!=0 ed4c1 -> restart modal 0xa9      : OK
+  [ok] live t0 e10 -> single modal 0x135        : OK
+  [ok] live t0 e20 -> two-choice modal 0x136    : OK
+  [ok] live t7 e59 -> single modal 0x135        : OK
+  [ok] live t7 e60.5 -> two-choice modal 0x136  : OK
+  [ok] unset race -> settable default (single)  : OK
+  Piece 5: GREEN (0 failures)
+
+=== Piece 6 (D-11057): config wrap-edit primitive ===
+  [ok] s18 ea74 dec 0->2                        : OK
+  [ok] s24 ea74 inc 2->0                        : OK
+  [ok] s18 ea74 inc 1->2                        : OK
+  [ok] s18 ea80 dec 0->2                        : OK
+  [ok] s18 ea80 inc 2->0                        : OK
+  [ok] s18 ea7c dec 0->4                        : OK
+  [ok] s18 ea7c inc 4->0                        : OK
+  [ok] s18 ea94 dec 0->0xc                      : OK
+  [ok] s18 ea94 inc 0xc->0                      : OK
+  [ok] s18 ea78 dec toggle 0->1                 : OK
+  [ok] s18 ea78 inc toggle 1->0                 : OK
+  [ok] s18 ea88 dec toggle 0->1                 : OK
+  [ok] s18 ea88 inc toggle 1->0                 : OK
+  [ok] s24 ea90 dec 1->4                        : OK
+  [ok] s24 ea90 inc 4->1                        : OK
+  [ok] s24 ea90 inc 2->3                        : OK
+  [ok] s24 ea94 dec 0->0xc                      : OK
+  [ok] s24 ea98 dec 0->6                        : OK
+  [ok] s24 ea98 inc 6->0                        : OK
+  [ok] s24 ea9c dec 0->6                        : OK
+  [ok] s24 eaa0 dec 0->6                        : OK
+  [ok] s24 eaac dec toggle 0->1                 : OK
+  [ok] s24 eaac inc toggle 1->0                 : OK
+  [ok] unknown screen -> no change              : OK
+  [ok] unknown sel -> no change                 : OK
+  Piece 6: GREEN (0 failures)
+[navsm_test] GREEN - all assertions passed
+  navsm: GREEN
+============ [2/5] ruleengine_test (race rule engine) ============
+RuleEngine — FUN_00410d10 SegmentCheck per-rule pre-blocks
+  [ok]   rule 0 running -> continue                           got=0 want=0
+  [ok]   rule 0 runs elimination                              got=1 want=1
+  [ok]   result declared -> 0                                 got=0 want=0
+  [ok]   result declared skips elim                           got=0 want=0
+  [ok]   last man -> segment over                             got=1 want=1
+  [ok]   rule 5 nothing collected -> continue                 got=0 want=0
+  [ok]   rule 5 skips elimination                             got=0 want=0
+  [ok]   rule 5 all collected -> over                         got=1 want=1
+  [ok]   rule 5 player dead -> over                           got=1 want=1
+  [ok]   rule 7 running -> continue                           got=0 want=0
+  [ok]   rule 7 skips elimination                             got=0 want=0
+  [ok]   rule 7 car2 crossed 3.0 -> over                      got=1 want=1
+  [ok]   rule 7 all-but-one dead -> over                      got=1 want=1
+  [ok]   rule 7 player dead -> over                           got=1 want=1
+  [ok]   rule 4 running -> continue                           got=0 want=0
+  [ok]   rule 4 runs elimination                              got=1 want=1
+  [ok]   rule 4 metric0 at 3.0 -> over                        got=1 want=1
+  [ok]   rule 8 running -> continue                           got=0 want=0
+  [ok]   rule 8 motion0 -> over                               got=1 want=1
+  [ok]   rule 9 running -> continue                           got=0 want=0
+  [ok]   rule 9 metric1 crossed -> over                       got=1 want=1
+  [ok]   rule 9 snapshot1 -> over                             got=1 want=1
+  [ok]   rule 10 running -> continue                          got=0 want=0
+  [ok]   rule 10 timer expired -> over                        got=1 want=1
+  [ok]   rule 10 metric0 at 2.0 -> over                       got=1 want=1
+  [ok]   rule 10 timer exactly 0 -> over                      got=1 want=1
+RuleEngine — FUN_004177b0 finish-order fragment
+  [ok]   first finisher slot = car 2                          got=2.0000 want=2.0000
+  [ok]   slot 1 still empty                                   got=-1.0000 want=-1.0000
+  [ok]   no duplicate append                                  got=-1.0000 want=-1.0000
+  [ok]   second finisher slot = car 0                         got=0.0000 want=0.0000
+  [ok]   rule 0 records no finishers                          got=-1.0000 want=-1.0000
+RuleEngine — FUN_00410510 EvaluateResult
+  [ok]   rule 0 no target -> 0 (next round)                   got=0 want=0
+  [ok]   rule 0 score 12 -> winner car1 (2)                   got=2 want=2
+  [ok]   p0Won false                                          got=0 want=0
+  [ok]   rule 0 score 12 on car0 -> 1                         got=1 want=1
+  [ok]   p0Won true                                           got=1 want=1
+  [ok]   3 players score 8 -> winner car2 (3)                 got=3 want=3
+  [ok]   rule 2 score 8 -> winner car3 (4)                    got=4 want=4
+  [ok]   refinement prefers alive car2 (3)                    got=3 want=3
+  [ok]   time attack -> 0                                     got=0 want=0
+  [ok]   rule 5 player dead -> -1                             got=-1 want=-1
+  [ok]   rule 5 all collected -> car0 wins (1)                got=1 want=1
+  [ok]   rule 5 p0Won                                         got=1 want=1
+  [ok]   rule 5 not done -> 0                                 got=0 want=0
+  [ok]   rule 7 first crosser car2 (3)                        got=3 want=3
+  [ok]   rule 7 car0 preferred (1)                            got=1 want=1
+  [ok]   rule 7 p0Won                                         got=1 want=1
+  [ok]   rule 4 no finisher -> 0                              got=0 want=0
+  [ok]   rule 4 first finisher car1 (2)                       got=2 want=2
+  [ok]   rule 8 car0 first -> 1                               got=1 want=1
+  [ok]   rule 8 car2 first -> 3                               got=3 want=3
+  [ok]   rule 8 nobody finished -> -1                         got=-1 want=-1
+  [ok]   rule 9 close race -> car0 wins (1)                   got=1 want=1
+  [ok]   rule 9 p0Won                                         got=1 want=1
+  [ok]   rule 9 gap 1.0 -> -1                                 got=-1 want=-1
+  [ok]   rule 9 finisher listed -> -1                         got=-1 want=-1
+  [ok]   rule 9 motion0 -> -1                                 got=-1 want=-1
+  [ok]   rule 10 metric 2.0 -> car0 wins (1)                  got=1 want=1
+  [ok]   rule 10 timer running -> 0                           got=0 want=0
+  [ok]   rule 10 timer expired -> -1                          got=-1 want=-1
+RuleEngine — FUN_004046a0 rule-10 seeds
+  [ok]   default course seed 30.0                             got=30.0000 want=30.0000
+  [ok]   default course bonus 0                               got=0.0000 want=0.0000
+  [ok]   course 0xb seed 3+14.5                               got=17.5000 want=17.5000
+  [ok]   course 0xb bonus 0.5+4.15                            got=4.6500 want=4.6500
+  [ok]   course 0x1a seed 3+17                                got=20.0000 want=20.0000
+  [ok]   course 0x27 seed 3+16                                got=19.0000 want=19.0000
+  [ok]   course 0xb seed at difficulty 10                     got=14.5000 want=14.5000
+
+ALL PASS (0 failures)
+  ruleengine: GREEN
+============ [3/5] racemodes_test (mode->rule map) ============
+Step 1 — SelectionToGameMode (FUN_0042f6b0)
+  [ok]   sel 0                                          got=2 want=2
+  [ok]   sel 1                                          got=3 want=3
+  [ok]   sel 2                                          got=4 want=4
+  [ok]   sel 3                                          got=6 want=6
+  [ok]   sel 4                                          got=-1 want=-1
+  [ok]   sel 5                                          got=5 want=5
+  [ok]   sel 6                                          got=-1 want=-1
+  [ok]   sel 7                                          got=-1 want=-1
+  [ok]   sel 8                                          got=7 want=7
+  [ok]   sel 9                                          got=8 want=8
+  [ok]   sel 10                                         got=9 want=9
+  [ok]   sel 11                                         got=10 want=10
+
+Step 2/3 — RaceRule(mode, track) vs decoded cup table
+  [ok]   mode3 track0                                   got=0 want=0
+  [ok]   mode4 track0                                   got=4 want=4
+  [ok]   mode5 track0                                   got=0 want=0
+  [ok]   mode3 track1                                   got=0 want=0
+  [ok]   mode4 track1                                   got=0 want=0
+  [ok]   mode5 track1                                   got=4 want=4
+  [ok]   mode3 track2                                   got=0 want=0
+  [ok]   mode4 track2                                   got=10 want=10
+  [ok]   mode5 track2                                   got=9 want=9
+  [ok]   mode3 track3                                   got=4 want=4
+  [ok]   mode4 track3                                   got=0 want=0
+  [ok]   mode5 track3                                   got=5 want=5
+  [ok]   mode3 track4                                   got=0 want=0
+  [ok]   mode4 track4                                   got=4 want=4
+  [ok]   mode5 track4                                   got=9 want=9
+  [ok]   mode3 track5                                   got=0 want=0
+  [ok]   mode4 track5                                   got=0 want=0
+  [ok]   mode5 track5                                   got=10 want=10
+  [ok]   mode3 track6                                   got=0 want=0
+  [ok]   mode4 track6                                   got=8 want=8
+  [ok]   mode5 track6                                   got=0 want=0
+  [ok]   mode3 track7                                   got=0 want=0
+  [ok]   mode4 track7                                   got=4 want=4
+  [ok]   mode5 track7                                   got=5 want=5
+  [ok]   mode3 track8                                   got=4 want=4
+  [ok]   mode4 track8                                   got=0 want=0
+  [ok]   mode5 track8                                   got=0 want=0
+  [ok]   mode3 track9                                   got=0 want=0
+  [ok]   mode4 track9                                   got=0 want=0
+  [ok]   mode5 track9                                   got=9 want=9
+  [ok]   mode3 track10                                  got=4 want=4
+  [ok]   mode4 track10                                  got=9 want=9
+  [ok]   mode5 track10                                  got=0 want=0
+  [ok]   mode3 track11                                  got=0 want=0
+  [ok]   mode4 track11                                  got=0 want=0
+  [ok]   mode5 track11                                  got=8 want=8
+  [ok]   mode3 track12                                  got=0 want=0
+  [ok]   mode4 track12                                  got=10 want=10
+  [ok]   mode5 track12                                  got=5 want=5
+  [ok]   mode2 track0 -> rule0                          got=0 want=0
+  [ok]   mode6 track0 -> rule0                          got=0 want=0
+  [ok]   mode7 track0 -> rule0                          got=0 want=0
+  [ok]   mode8 track0 -> rule0                          got=0 want=0
+  [ok]   mode9 track0 -> rule0                          got=0 want=0
+  [ok]   mode10 track0 -> rule0                         got=0 want=0
+
+Step 2 — RaceRuleFromEvent
+  [ok]   ev 0x0                                         got=0 want=0
+  [ok]   ev 0x1                                         got=0 want=0
+  [ok]   ev 0x2                                         got=4 want=4
+  [ok]   ev 0x3                                         got=4 want=4
+  [ok]   ev 0x4                                         got=10 want=10
+  [ok]   ev 0x5                                         got=9 want=9
+  [ok]   ev 0x6                                         got=8 want=8
+  [ok]   ev 0x7                                         got=5 want=5
+  [ok]   ev 0x8                                         got=7 want=7
+  [ok]   ev 0x9                                         got=0 want=0
+  [ok]   ev 0xa                                         got=0 want=0
+  [ok]   ev 0xb                                         got=4 want=4
+  [ok]   ev 0xc                                         got=0 want=0
+
+Step 4 — IsEliminationRule / objective
+  [ok]   rule 0 elim
+  [ok]   rule 0 objective                               got=0 want=0
+  [ok]   rule 1 elim
+  [ok]   rule 1 objective                               got=0 want=0
+  [ok]   rule 2 elim
+  [ok]   rule 2 objective                               got=0 want=0
+  [ok]   rule 3 elim
+  [ok]   rule 3 objective                               got=0 want=0
+  [ok]   rule 4 elim
+  [ok]   rule 4 objective                               got=0 want=0
+  [ok]   rule 5 elim
+  [ok]   rule 5 objective                               got=1 want=1
+  [ok]   rule 6 elim
+  [ok]   rule 6 objective                               got=0 want=0
+  [ok]   rule 7 elim
+  [ok]   rule 7 objective                               got=1 want=1
+  [ok]   rule 8 elim
+  [ok]   rule 8 objective                               got=0 want=0
+  [ok]   rule 9 elim
+  [ok]   rule 9 objective                               got=0 want=0
+  [ok]   rule 10 elim
+  [ok]   rule 10 objective                              got=0 want=0
+
+End-to-end — the 3 non-elimination cup races (mode5, tracks 3/7/12)
+  [ok]   mode5 track3 rule=5 -> laps
+  [ok]   mode5 track7 rule=5 -> laps
+  [ok]   mode5 track12 rule=5 -> laps
+  [ok]   mode3 track0 -> rule0 -> elimination
+
+GREEN — 0 failures
+  racemodes: GREEN
+============ [4/5] menustr_test (USA.DAT text table; asset-dependent) ============
+  menustr: FAIL 
+============ [5/5] badges_test (BADGES.TXD decode; asset-dependent) ============
+  badges: FAIL 
+
+===== TESTS RED =====

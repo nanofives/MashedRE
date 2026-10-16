@@ -1,0 +1,5 @@
+hook: find_42ad90  (early-window pure-leaf diff â€” no menu boot required)
+  b0=0x85 reim=0x5cb3c430 cases=2 mismatches=0
+  evidence: C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dualcopy4\log\diff_find_42ad90.csv
+VERDICT: GREEN
+

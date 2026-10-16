@@ -1,0 +1,80 @@
+[decomp_pc] slot=Mashed_pool11 modes=decomp n=1
+// FUN_0042fa00 @ 0x0042fa00  size=163  (MASHED.exe)
+// undefined FUN_0042fa00(void)
+
+
+/* [C1 2026-05-11] Reads `DAT_007f1a44` → `iVar2` and `DAT_007f1a14` → `iVar1` (player slot
+
+   IDs). */
+
+
+
+void FUN_0042fa00(void)
+
+
+
+{
+
+  int iVar1;
+
+  int iVar2;
+
+  char *pcVar3;
+
+  int iVar4;
+
+  int *piVar5;
+
+  
+
+  iVar2 = DAT_007f1a44;
+
+  iVar1 = DAT_007f1a14;
+
+  if (DAT_0067ea88 == 2) {
+
+    DAT_0067ea88 = 0;
+
+  }
+
+  iVar4 = 0;
+
+  piVar5 = &DAT_0067e938;
+
+  pcVar3 = &DAT_007f1504;
+
+  do {
+
+    if ((iVar2 == iVar4) || (DAT_007f1a34 == iVar4 || (DAT_007f1a24 == iVar4 || iVar1 == iVar4))) {
+
+      if ((pcVar3[-0x4c0] != '\0') && ((*pcVar3 == '\0' && (*piVar5 != 0)))) {
+
+        *piVar5 = *piVar5 + -1;
+
+      }
+
+      if (((pcVar3[-0x4bf] != '\0') && (pcVar3[1] == '\0')) && (*piVar5 < 2)) {
+
+        *piVar5 = *piVar5 + 1;
+
+      }
+
+    }
+
+    pcVar3 = pcVar3 + 0x4c;
+
+    iVar4 = iVar4 + 1;
+
+    piVar5 = piVar5 + 3;
+
+  } while ((int)pcVar3 < 0x7f1894);
+
+  return;
+
+}
+
+
+
+
+
+

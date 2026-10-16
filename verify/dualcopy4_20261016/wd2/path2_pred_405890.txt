@@ -1,0 +1,37 @@
+hook: pred_405890  rva=0x00405890  export=Pred405890
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 18440
+  [agent] pre_snapshot
+  [agent] asi_loaded
+  [agent] post_snapshot
+  [agent] results
+
+=== verify_hook_install report (pred_405890) ===
+
+target address: 0x00405890  export: Pred405890
+PRE  bytes:     e9 5b d5 05 60 85 c0 75
+asi base:       0x60440000
+reimpl addr:    0x60462df0
+POST bytes:     e9 5b d5 05 60 85 c0 75
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x6005d55b  expected 0x6005d55b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  3 / 3  (other threads: 0)
+
+per-input results:
+  [OK] input=[5, 5]  got=0  err=
+  [OK] input=[5, 3]  got=0  err=
+  [OK] input=[0, 0]  got=0  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 3x as expected
+  + all 3 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dualcopy4\log\verify_hook_install_pred_405890.txt
+

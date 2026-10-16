@@ -1,0 +1,10 @@
+base live PC24: pid=24168 exit=0 self_exited=True  G-M3-REPLAY rows=6 exact=6 entry_bad=0 calls_bad=0 live_grants_during_replay=0 pc=24 in=C:\Users\maria\Desktop
+base live PC53: pid=19304 exit=0 self_exited=True  G-M3-REPLAY rows=6 exact=6 entry_bad=0 calls_bad=0 live_grants_during_replay=0 pc=53 in=C:\Users\maria\Desktop
+base synth PC24: pid=19044 exit=0 self_exited=True  G-M3-REPLAY rows=3888 exact=3888 entry_bad=0 calls_bad=0 live_grants_during_replay=0 pc=24 in=C:\Users\maria\D
+base synth PC53: pid=19984 exit=0 self_exited=True  G-M3-REPLAY rows=3888 exact=3888 entry_bad=0 calls_bad=0 live_grants_during_replay=0 pc=53 in=C:\Users\maria\D
+REPLAY GREEN
+new live PC24: pid=24856 exit=0 self_exited=True  G-M3-REPLAY rows=6 exact=6 entry_bad=0 calls_bad=0 live_grants_during_replay=0 pc=24 in=C:\Users\maria\Desktop
+new live PC53: pid=26376 exit=0 self_exited=True  G-M3-REPLAY rows=6 exact=6 entry_bad=0 calls_bad=0 live_grants_during_replay=0 pc=53 in=C:\Users\maria\Desktop
+new synth PC24: pid=26444 exit=0 self_exited=True  G-M3-REPLAY rows=3888 exact=3888 entry_bad=0 calls_bad=0 live_grants_during_replay=0 pc=24 in=C:\Users\maria\D
+new synth PC53: pid=13096 exit=0 self_exited=True  G-M3-REPLAY rows=3888 exact=3888 entry_bad=0 calls_bad=0 live_grants_during_replay=0 pc=53 in=C:\Users\maria\D
+REPLAY GREEN

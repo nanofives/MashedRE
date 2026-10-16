@@ -1,0 +1,12 @@
+hook: menu_entry_array_init  rva=0x0042d3e0  export=MenuEntryArrayInit
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 5404
+  [agent] LUT ready  base=0x2c5a660  offset=0x134  root=0x5040680  delta=0  attempts=19
+  [agent] .asi loaded  base=0x60d60000  MenuEntryArrayInit@0x60d74330
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dualcopy4\log\diff_menu_entry_array_init.csv
+  total cases: 2
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.
+

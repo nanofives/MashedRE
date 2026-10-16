@@ -4152,24 +4152,137 @@ HOOKS = {
         'path2_tests':    [0x00000001, 0x00000064, 0x00001000],
     },
 
-    # 0x0042d3e0  MenuEntryArrayInit
-    # 58-byte body. Zeroes 14 selected offsets per entry across 30 entries
-    # of a 52-byte struct array at 0x00898ac0..0x008990dc.
-    # void_write_observe: write sentinel to DAT_00898ac0 (array base, first
-    # dword of entry[0] = offset -4 relative to loop ptr start), call fn(),
-    # read back to verify sentinel was zeroed.
-    # ref: re/analysis/promote_c2_frontend_menus/0x0042d3e0.md
+    # 0x0042d3e0  MenuEntryArrayInit  (rewritten 2026-10-16, dualcopy4). The original makes 14 stores per entry over 30 entries (disasm_42d3e0.txt):
+    # dwords entry +0 +4 +8, bytes +12..+15, dwords +16 +20 +24 +28 +36 +40 +44; entry +32 and entry 30 are NOT written. The old key observed only the first
+    # dword of entry 0 (void_write_observe), which the old body also cleared, so it could not see that body writing entry-4, bytes +9..+12, +32 and missing
+    # +13..15, +28, +44. This key fills entries 0 1 2 28 29 30 and the dword before the array and observes every one of them.
     'menu_entry_array_init': {
         'rva':            0x0042d3e0,
         'export':         'MenuEntryArrayInit',
         'signature':      {'ret': 'void', 'args': []},
-        'arg_type':       'void_write_observe',
-        'target_global':  0x00898ac0,
+        'arg_type':       'cache_setter_observe',
         'lut_root_delta': 0,
-        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
-                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
-                           0x3F800000, 0xBEEFCAFE],
-        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],    },
+        'path1_tests': [
+            # all dwords 0xFFFFFFFF
+            {'seed': [{'addr': '0x00898abc', 'val': 0xFFFFFFFF}, {'addr': '0x00898ac0', 'val': 0xFFFFFFFF}, {'addr': '0x00898ac4', 'val': 0xFFFFFFFF},
+                      {'addr': '0x00898ac8', 'val': 0xFFFFFFFF}, {'addr': '0x00898acc', 'val': 0xFFFFFFFF}, {'addr': '0x00898ad0', 'val': 0xFFFFFFFF},
+                      {'addr': '0x00898ad4', 'val': 0xFFFFFFFF}, {'addr': '0x00898ad8', 'val': 0xFFFFFFFF}, {'addr': '0x00898adc', 'val': 0xFFFFFFFF},
+                      {'addr': '0x00898ae0', 'val': 0xFFFFFFFF}, {'addr': '0x00898ae4', 'val': 0xFFFFFFFF}, {'addr': '0x00898ae8', 'val': 0xFFFFFFFF},
+                      {'addr': '0x00898aec', 'val': 0xFFFFFFFF}, {'addr': '0x00898af0', 'val': 0xFFFFFFFF}, {'addr': '0x00898af4', 'val': 0xFFFFFFFF},
+                      {'addr': '0x00898af8', 'val': 0xFFFFFFFF}, {'addr': '0x00898afc', 'val': 0xFFFFFFFF}, {'addr': '0x00898b00', 'val': 0xFFFFFFFF},
+                      {'addr': '0x00898b04', 'val': 0xFFFFFFFF}, {'addr': '0x00898b08', 'val': 0xFFFFFFFF}, {'addr': '0x00898b0c', 'val': 0xFFFFFFFF},
+                      {'addr': '0x00898b10', 'val': 0xFFFFFFFF}, {'addr': '0x00898b14', 'val': 0xFFFFFFFF}, {'addr': '0x00898b18', 'val': 0xFFFFFFFF},
+                      {'addr': '0x00898b1c', 'val': 0xFFFFFFFF}, {'addr': '0x00898b20', 'val': 0xFFFFFFFF}, {'addr': '0x00898b24', 'val': 0xFFFFFFFF},
+                      {'addr': '0x00898b28', 'val': 0xFFFFFFFF}, {'addr': '0x00898b2c', 'val': 0xFFFFFFFF}, {'addr': '0x00898b30', 'val': 0xFFFFFFFF},
+                      {'addr': '0x00898b34', 'val': 0xFFFFFFFF}, {'addr': '0x00898b38', 'val': 0xFFFFFFFF}, {'addr': '0x00898b3c', 'val': 0xFFFFFFFF},
+                      {'addr': '0x00898b40', 'val': 0xFFFFFFFF}, {'addr': '0x00898b44', 'val': 0xFFFFFFFF}, {'addr': '0x00898b48', 'val': 0xFFFFFFFF},
+                      {'addr': '0x00898b4c', 'val': 0xFFFFFFFF}, {'addr': '0x00898b50', 'val': 0xFFFFFFFF}, {'addr': '0x00898b54', 'val': 0xFFFFFFFF},
+                      {'addr': '0x00898b58', 'val': 0xFFFFFFFF}, {'addr': '0x00899070', 'val': 0xFFFFFFFF}, {'addr': '0x00899074', 'val': 0xFFFFFFFF},
+                      {'addr': '0x00899078', 'val': 0xFFFFFFFF}, {'addr': '0x0089907c', 'val': 0xFFFFFFFF}, {'addr': '0x00899080', 'val': 0xFFFFFFFF},
+                      {'addr': '0x00899084', 'val': 0xFFFFFFFF}, {'addr': '0x00899088', 'val': 0xFFFFFFFF}, {'addr': '0x0089908c', 'val': 0xFFFFFFFF},
+                      {'addr': '0x00899090', 'val': 0xFFFFFFFF}, {'addr': '0x00899094', 'val': 0xFFFFFFFF}, {'addr': '0x00899098', 'val': 0xFFFFFFFF},
+                      {'addr': '0x0089909c', 'val': 0xFFFFFFFF}, {'addr': '0x008990a0', 'val': 0xFFFFFFFF}, {'addr': '0x008990a4', 'val': 0xFFFFFFFF},
+                      {'addr': '0x008990a8', 'val': 0xFFFFFFFF}, {'addr': '0x008990ac', 'val': 0xFFFFFFFF}, {'addr': '0x008990b0', 'val': 0xFFFFFFFF},
+                      {'addr': '0x008990b4', 'val': 0xFFFFFFFF}, {'addr': '0x008990b8', 'val': 0xFFFFFFFF}, {'addr': '0x008990bc', 'val': 0xFFFFFFFF},
+                      {'addr': '0x008990c0', 'val': 0xFFFFFFFF}, {'addr': '0x008990c4', 'val': 0xFFFFFFFF}, {'addr': '0x008990c8', 'val': 0xFFFFFFFF},
+                      {'addr': '0x008990cc', 'val': 0xFFFFFFFF}, {'addr': '0x008990d0', 'val': 0xFFFFFFFF}, {'addr': '0x008990d4', 'val': 0xFFFFFFFF},
+                      {'addr': '0x008990d8', 'val': 0xFFFFFFFF}, {'addr': '0x008990dc', 'val': 0xFFFFFFFF}, {'addr': '0x008990e0', 'val': 0xFFFFFFFF},
+                      {'addr': '0x008990e4', 'val': 0xFFFFFFFF}, {'addr': '0x008990e8', 'val': 0xFFFFFFFF}, {'addr': '0x008990ec', 'val': 0xFFFFFFFF},
+                      {'addr': '0x008990f0', 'val': 0xFFFFFFFF}, {'addr': '0x008990f4', 'val': 0xFFFFFFFF}, {'addr': '0x008990f8', 'val': 0xFFFFFFFF},
+                      {'addr': '0x008990fc', 'val': 0xFFFFFFFF}, {'addr': '0x00899100', 'val': 0xFFFFFFFF}, {'addr': '0x00899104', 'val': 0xFFFFFFFF},
+                      {'addr': '0x00899108', 'val': 0xFFFFFFFF}],
+             'args': [],
+             'obs':  ['0x00898abc', '0x00898ac0', '0x00898ac4', '0x00898ac8', '0x00898acc', '0x00898ad0', '0x00898ad4', '0x00898ad8',
+                     '0x00898adc', '0x00898ae0', '0x00898ae4', '0x00898ae8', '0x00898aec', '0x00898af0', '0x00898af4', '0x00898af8',
+                     '0x00898afc', '0x00898b00', '0x00898b04', '0x00898b08', '0x00898b0c', '0x00898b10', '0x00898b14', '0x00898b18',
+                     '0x00898b1c', '0x00898b20', '0x00898b24', '0x00898b28', '0x00898b2c', '0x00898b30', '0x00898b34', '0x00898b38',
+                     '0x00898b3c', '0x00898b40', '0x00898b44', '0x00898b48', '0x00898b4c', '0x00898b50', '0x00898b54', '0x00898b58',
+                     '0x00899070', '0x00899074', '0x00899078', '0x0089907c', '0x00899080', '0x00899084', '0x00899088', '0x0089908c',
+                     '0x00899090', '0x00899094', '0x00899098', '0x0089909c', '0x008990a0', '0x008990a4', '0x008990a8', '0x008990ac',
+                     '0x008990b0', '0x008990b4', '0x008990b8', '0x008990bc', '0x008990c0', '0x008990c4', '0x008990c8', '0x008990cc',
+                     '0x008990d0', '0x008990d4', '0x008990d8', '0x008990dc', '0x008990e0', '0x008990e4', '0x008990e8', '0x008990ec',
+                     '0x008990f0', '0x008990f4', '0x008990f8', '0x008990fc', '0x00899100', '0x00899104', '0x00899108']},
+            # a distinct non-zero byte per lane
+            {'seed': [{'addr': '0x00898abc', 'val': 0xAF6F0F3F}, {'addr': '0x00898ac0', 'val': 0xB1711121}, {'addr': '0x00898ac4', 'val': 0xB1711121},
+                      {'addr': '0x00898ac8', 'val': 0xB3731323}, {'addr': '0x00898acc', 'val': 0xB3731323}, {'addr': '0x00898ad0', 'val': 0xB5751525},
+                      {'addr': '0x00898ad4', 'val': 0xB5751525}, {'addr': '0x00898ad8', 'val': 0xB7771727}, {'addr': '0x00898adc', 'val': 0xB7771727},
+                      {'addr': '0x00898ae0', 'val': 0xB9791929}, {'addr': '0x00898ae4', 'val': 0xB9791929}, {'addr': '0x00898ae8', 'val': 0xBB7B1B2B},
+                      {'addr': '0x00898aec', 'val': 0xBB7B1B2B}, {'addr': '0x00898af0', 'val': 0xBD7D1D2D}, {'addr': '0x00898af4', 'val': 0xBD7D1D2D},
+                      {'addr': '0x00898af8', 'val': 0xBF7F1F2F}, {'addr': '0x00898afc', 'val': 0xBF7F1F2F}, {'addr': '0x00898b00', 'val': 0xC1016151},
+                      {'addr': '0x00898b04', 'val': 0xC1016151}, {'addr': '0x00898b08', 'val': 0xC3036353}, {'addr': '0x00898b0c', 'val': 0xC3036353},
+                      {'addr': '0x00898b10', 'val': 0xC5056555}, {'addr': '0x00898b14', 'val': 0xC5056555}, {'addr': '0x00898b18', 'val': 0xC7076757},
+                      {'addr': '0x00898b1c', 'val': 0xC7076757}, {'addr': '0x00898b20', 'val': 0xC9096959}, {'addr': '0x00898b24', 'val': 0xC9096959},
+                      {'addr': '0x00898b28', 'val': 0xCB0B6B5B}, {'addr': '0x00898b2c', 'val': 0xCB0B6B5B}, {'addr': '0x00898b30', 'val': 0xCD0D6D5D},
+                      {'addr': '0x00898b34', 'val': 0xCD0D6D5D}, {'addr': '0x00898b38', 'val': 0xCF0F6F5F}, {'addr': '0x00898b3c', 'val': 0xCF0F6F5F},
+                      {'addr': '0x00898b40', 'val': 0xD1117141}, {'addr': '0x00898b44', 'val': 0xD1117141}, {'addr': '0x00898b48', 'val': 0xD3137343},
+                      {'addr': '0x00898b4c', 'val': 0xD3137343}, {'addr': '0x00898b50', 'val': 0xD5157545}, {'addr': '0x00898b54', 'val': 0xD5157545},
+                      {'addr': '0x00898b58', 'val': 0xD7177747}, {'addr': '0x00899070', 'val': 0x9D5D3D0D}, {'addr': '0x00899074', 'val': 0x9D5D3D0D},
+                      {'addr': '0x00899078', 'val': 0x9F5F3F0F}, {'addr': '0x0089907c', 'val': 0x9F5F3F0F}, {'addr': '0x00899080', 'val': 0xA1610131},
+                      {'addr': '0x00899084', 'val': 0xA1610131}, {'addr': '0x00899088', 'val': 0xA3630333}, {'addr': '0x0089908c', 'val': 0xA3630333},
+                      {'addr': '0x00899090', 'val': 0xA5650535}, {'addr': '0x00899094', 'val': 0xA5650535}, {'addr': '0x00899098', 'val': 0xA7670737},
+                      {'addr': '0x0089909c', 'val': 0xA7670737}, {'addr': '0x008990a0', 'val': 0xA9690939}, {'addr': '0x008990a4', 'val': 0xA9690939},
+                      {'addr': '0x008990a8', 'val': 0xAB6B0B3B}, {'addr': '0x008990ac', 'val': 0xAB6B0B3B}, {'addr': '0x008990b0', 'val': 0xAD6D0D3D},
+                      {'addr': '0x008990b4', 'val': 0xAD6D0D3D}, {'addr': '0x008990b8', 'val': 0xAF6F0F3F}, {'addr': '0x008990bc', 'val': 0xAF6F0F3F},
+                      {'addr': '0x008990c0', 'val': 0xB1711121}, {'addr': '0x008990c4', 'val': 0xB1711121}, {'addr': '0x008990c8', 'val': 0xB3731323},
+                      {'addr': '0x008990cc', 'val': 0xB3731323}, {'addr': '0x008990d0', 'val': 0xB5751525}, {'addr': '0x008990d4', 'val': 0xB5751525},
+                      {'addr': '0x008990d8', 'val': 0xB7771727}, {'addr': '0x008990dc', 'val': 0xB7771727}, {'addr': '0x008990e0', 'val': 0xB9791929},
+                      {'addr': '0x008990e4', 'val': 0xB9791929}, {'addr': '0x008990e8', 'val': 0xBB7B1B2B}, {'addr': '0x008990ec', 'val': 0xBB7B1B2B},
+                      {'addr': '0x008990f0', 'val': 0xBD7D1D2D}, {'addr': '0x008990f4', 'val': 0xBD7D1D2D}, {'addr': '0x008990f8', 'val': 0xBF7F1F2F},
+                      {'addr': '0x008990fc', 'val': 0xBF7F1F2F}, {'addr': '0x00899100', 'val': 0xC1016151}, {'addr': '0x00899104', 'val': 0xC1016151},
+                      {'addr': '0x00899108', 'val': 0xC3036353}],
+             'args': [],
+             'obs':  ['0x00898abc', '0x00898ac0', '0x00898ac4', '0x00898ac8', '0x00898acc', '0x00898ad0', '0x00898ad4', '0x00898ad8',
+                     '0x00898adc', '0x00898ae0', '0x00898ae4', '0x00898ae8', '0x00898aec', '0x00898af0', '0x00898af4', '0x00898af8',
+                     '0x00898afc', '0x00898b00', '0x00898b04', '0x00898b08', '0x00898b0c', '0x00898b10', '0x00898b14', '0x00898b18',
+                     '0x00898b1c', '0x00898b20', '0x00898b24', '0x00898b28', '0x00898b2c', '0x00898b30', '0x00898b34', '0x00898b38',
+                     '0x00898b3c', '0x00898b40', '0x00898b44', '0x00898b48', '0x00898b4c', '0x00898b50', '0x00898b54', '0x00898b58',
+                     '0x00899070', '0x00899074', '0x00899078', '0x0089907c', '0x00899080', '0x00899084', '0x00899088', '0x0089908c',
+                     '0x00899090', '0x00899094', '0x00899098', '0x0089909c', '0x008990a0', '0x008990a4', '0x008990a8', '0x008990ac',
+                     '0x008990b0', '0x008990b4', '0x008990b8', '0x008990bc', '0x008990c0', '0x008990c4', '0x008990c8', '0x008990cc',
+                     '0x008990d0', '0x008990d4', '0x008990d8', '0x008990dc', '0x008990e0', '0x008990e4', '0x008990e8', '0x008990ec',
+                     '0x008990f0', '0x008990f4', '0x008990f8', '0x008990fc', '0x00899100', '0x00899104', '0x00899108']},
+        ],
+        'path2_tests': [
+            {'seed': [{'addr': '0x00898abc', 'val': 0xFFFFFFFF}, {'addr': '0x00898ac0', 'val': 0xFFFFFFFF}, {'addr': '0x00898ac4', 'val': 0xFFFFFFFF},
+                      {'addr': '0x00898ac8', 'val': 0xFFFFFFFF}, {'addr': '0x00898acc', 'val': 0xFFFFFFFF}, {'addr': '0x00898ad0', 'val': 0xFFFFFFFF},
+                      {'addr': '0x00898ad4', 'val': 0xFFFFFFFF}, {'addr': '0x00898ad8', 'val': 0xFFFFFFFF}, {'addr': '0x00898adc', 'val': 0xFFFFFFFF},
+                      {'addr': '0x00898ae0', 'val': 0xFFFFFFFF}, {'addr': '0x00898ae4', 'val': 0xFFFFFFFF}, {'addr': '0x00898ae8', 'val': 0xFFFFFFFF},
+                      {'addr': '0x00898aec', 'val': 0xFFFFFFFF}, {'addr': '0x00898af0', 'val': 0xFFFFFFFF}, {'addr': '0x00898af4', 'val': 0xFFFFFFFF},
+                      {'addr': '0x00898af8', 'val': 0xFFFFFFFF}, {'addr': '0x00898afc', 'val': 0xFFFFFFFF}, {'addr': '0x00898b00', 'val': 0xFFFFFFFF},
+                      {'addr': '0x00898b04', 'val': 0xFFFFFFFF}, {'addr': '0x00898b08', 'val': 0xFFFFFFFF}, {'addr': '0x00898b0c', 'val': 0xFFFFFFFF},
+                      {'addr': '0x00898b10', 'val': 0xFFFFFFFF}, {'addr': '0x00898b14', 'val': 0xFFFFFFFF}, {'addr': '0x00898b18', 'val': 0xFFFFFFFF},
+                      {'addr': '0x00898b1c', 'val': 0xFFFFFFFF}, {'addr': '0x00898b20', 'val': 0xFFFFFFFF}, {'addr': '0x00898b24', 'val': 0xFFFFFFFF},
+                      {'addr': '0x00898b28', 'val': 0xFFFFFFFF}, {'addr': '0x00898b2c', 'val': 0xFFFFFFFF}, {'addr': '0x00898b30', 'val': 0xFFFFFFFF},
+                      {'addr': '0x00898b34', 'val': 0xFFFFFFFF}, {'addr': '0x00898b38', 'val': 0xFFFFFFFF}, {'addr': '0x00898b3c', 'val': 0xFFFFFFFF},
+                      {'addr': '0x00898b40', 'val': 0xFFFFFFFF}, {'addr': '0x00898b44', 'val': 0xFFFFFFFF}, {'addr': '0x00898b48', 'val': 0xFFFFFFFF},
+                      {'addr': '0x00898b4c', 'val': 0xFFFFFFFF}, {'addr': '0x00898b50', 'val': 0xFFFFFFFF}, {'addr': '0x00898b54', 'val': 0xFFFFFFFF},
+                      {'addr': '0x00898b58', 'val': 0xFFFFFFFF}, {'addr': '0x00899070', 'val': 0xFFFFFFFF}, {'addr': '0x00899074', 'val': 0xFFFFFFFF},
+                      {'addr': '0x00899078', 'val': 0xFFFFFFFF}, {'addr': '0x0089907c', 'val': 0xFFFFFFFF}, {'addr': '0x00899080', 'val': 0xFFFFFFFF},
+                      {'addr': '0x00899084', 'val': 0xFFFFFFFF}, {'addr': '0x00899088', 'val': 0xFFFFFFFF}, {'addr': '0x0089908c', 'val': 0xFFFFFFFF},
+                      {'addr': '0x00899090', 'val': 0xFFFFFFFF}, {'addr': '0x00899094', 'val': 0xFFFFFFFF}, {'addr': '0x00899098', 'val': 0xFFFFFFFF},
+                      {'addr': '0x0089909c', 'val': 0xFFFFFFFF}, {'addr': '0x008990a0', 'val': 0xFFFFFFFF}, {'addr': '0x008990a4', 'val': 0xFFFFFFFF},
+                      {'addr': '0x008990a8', 'val': 0xFFFFFFFF}, {'addr': '0x008990ac', 'val': 0xFFFFFFFF}, {'addr': '0x008990b0', 'val': 0xFFFFFFFF},
+                      {'addr': '0x008990b4', 'val': 0xFFFFFFFF}, {'addr': '0x008990b8', 'val': 0xFFFFFFFF}, {'addr': '0x008990bc', 'val': 0xFFFFFFFF},
+                      {'addr': '0x008990c0', 'val': 0xFFFFFFFF}, {'addr': '0x008990c4', 'val': 0xFFFFFFFF}, {'addr': '0x008990c8', 'val': 0xFFFFFFFF},
+                      {'addr': '0x008990cc', 'val': 0xFFFFFFFF}, {'addr': '0x008990d0', 'val': 0xFFFFFFFF}, {'addr': '0x008990d4', 'val': 0xFFFFFFFF},
+                      {'addr': '0x008990d8', 'val': 0xFFFFFFFF}, {'addr': '0x008990dc', 'val': 0xFFFFFFFF}, {'addr': '0x008990e0', 'val': 0xFFFFFFFF},
+                      {'addr': '0x008990e4', 'val': 0xFFFFFFFF}, {'addr': '0x008990e8', 'val': 0xFFFFFFFF}, {'addr': '0x008990ec', 'val': 0xFFFFFFFF},
+                      {'addr': '0x008990f0', 'val': 0xFFFFFFFF}, {'addr': '0x008990f4', 'val': 0xFFFFFFFF}, {'addr': '0x008990f8', 'val': 0xFFFFFFFF},
+                      {'addr': '0x008990fc', 'val': 0xFFFFFFFF}, {'addr': '0x00899100', 'val': 0xFFFFFFFF}, {'addr': '0x00899104', 'val': 0xFFFFFFFF},
+                      {'addr': '0x00899108', 'val': 0xFFFFFFFF}],
+             'args': [],
+             'obs':  ['0x00898abc', '0x00898ac0', '0x00898ac4', '0x00898ac8', '0x00898acc', '0x00898ad0', '0x00898ad4', '0x00898ad8',
+                     '0x00898adc', '0x00898ae0', '0x00898ae4', '0x00898ae8', '0x00898aec', '0x00898af0', '0x00898af4', '0x00898af8',
+                     '0x00898afc', '0x00898b00', '0x00898b04', '0x00898b08', '0x00898b0c', '0x00898b10', '0x00898b14', '0x00898b18',
+                     '0x00898b1c', '0x00898b20', '0x00898b24', '0x00898b28', '0x00898b2c', '0x00898b30', '0x00898b34', '0x00898b38',
+                     '0x00898b3c', '0x00898b40', '0x00898b44', '0x00898b48', '0x00898b4c', '0x00898b50', '0x00898b54', '0x00898b58',
+                     '0x00899070', '0x00899074', '0x00899078', '0x0089907c', '0x00899080', '0x00899084', '0x00899088', '0x0089908c',
+                     '0x00899090', '0x00899094', '0x00899098', '0x0089909c', '0x008990a0', '0x008990a4', '0x008990a8', '0x008990ac',
+                     '0x008990b0', '0x008990b4', '0x008990b8', '0x008990bc', '0x008990c0', '0x008990c4', '0x008990c8', '0x008990cc',
+                     '0x008990d0', '0x008990d4', '0x008990d8', '0x008990dc', '0x008990e0', '0x008990e4', '0x008990e8', '0x008990ec',
+                     '0x008990f0', '0x008990f4', '0x008990f8', '0x008990fc', '0x00899100', '0x00899104', '0x00899108']},
+        ],
+    },
 
     # Session c3-batch-b-s4 â€” frontend_promote_menus_b (C2â†’C3, 3 of 6)
     # MenuScoreSort.cpp + MenuRaceEnd.cpp
@@ -5932,9 +6045,7 @@ HOOKS = {
             [1, 1],  [1, 0],  [1, 1],  [1, 0],
             [2, 1],  [2, 0],
         ],
-        'path2_tests': [
-            [0, 1], [0, 0], [1, 1],
-        ],
+        'path2_tests':    [{'p2bufs': [], 'p2args': [0, 1]}, {'p2bufs': [], 'p2args': [0, 0]}, {'p2bufs': [], 'p2args': [1, 1]}],
     },
 
     # 0x0041f000  TimerSlotDataCopy  void(int slot, int* dst)
@@ -5956,7 +6067,7 @@ HOOKS = {
         # Test vectors: slot indices 0..9 (same slot read multiple times is valid;
         # the source globals are stable at quiescent main-menu state).
         'path1_tests': [0, 1, 2, 3, 0, 1, 2, 3, 0, 1],
-        'path2_tests': [0, 1, 2],
+        'path2_tests':    [{'p2bufs': [0x40], 'p2args': [0, {'buf': 0}]}, {'p2bufs': [0x40], 'p2args': [1, {'buf': 0}]}, {'p2bufs': [0x40], 'p2args': [2, {'buf': 0}]}],
     },
 
     # 0x00420d40  TimerStructArrayClear  void(void)
@@ -6476,48 +6587,9 @@ HOOKS = {
     # SlotDataCopy was superseded by TimerSlotDataCopy (Util/TimerInit.cpp:78)
     # and no longer exists in the .asi. Use 'timer_slot_data_copy' instead.
 
-    # 0x0041eda0  SlotBitSet  void(int param_1, int param_2)
-    # target = 0x0063dc74 + param_1 * 0x2ac.
-    # if param_2 != 0: *target |= 0x8; else: *target &= ~0x8.
-    # arg_type='entity_field_set': fn(param_1, param_2), reads back
-    # target_global + param_1 * entity_byte_stride as observable uint32.
-    # Note: bit 3 of the target dword must survive; we read it back via
-    # entity_field_set (which reads CONFIG.target_global + p1*stride).
-    'slot_bit_set': {
-        'rva':            0x0041eda0,
-        'export':         'SlotBitSet',
-        'signature':      {'ret': 'void', 'args': ['int32', 'int32']},
-        'arg_type':       'entity_field_set',
-        'target_global':  0x0063dc74,
-        'entity_byte_stride': 0x2ac,
-        'lut_root_delta': 0,
-        'path1_tests': [
-            [0, 0],  [0, 1],  [1, 0],  [1, 1],
-            [2, 0],  [2, 1],  [3, 0],  [3, 1],
-            [0, 0xff], [1, 0],
-        ],
-        'path2_tests': [
-            [0, 0], [0, 1], [1, 0],
-        ],
-    },
+    # dualcopy4 2026-10-16: key 'slot_bit_set' (0x0041eda0, export SlotBitSet) RETIRED: it measured a second body of the same RVA; the one body is key 'timer_bit_field_set'.
 
-    # 0x00420d40  SlotArrayClear  void(void)
-    # 6-iter loop over [0x0063e4c4, 0x0063e554) stride 0x24.
-    # Per iter: memset(ptr-0xc, 0, 8); ptr[-1]=0; *ptr=0; ptr[1]=0; ptr[2]=0.
-    # arg_type='void_write_observe': write sentinel to 0x0063e4c4 (ptr[0]),
-    # call fn, read back â€” if fn works correctly it will write 0 there.
-    'slot_array_clear': {
-        'rva':            0x00420d40,
-        'export':         'SlotArrayClear',
-        'signature':      {'ret': 'void', 'args': []},
-        'arg_type':       'void_write_observe',
-        'target_global':  0x0063e4c4,
-        'lut_root_delta': 0,
-        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
-                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
-                           0x3F800000, 0xBEEFCAFE],
-        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
-    },
+    # dualcopy4 2026-10-16: key 'slot_array_clear' (0x00420d40, export SlotArrayClear) RETIRED: it measured a second body of the same RVA; the one body is key 'timer_array_clear_d40'.
     # 'timer_subarray_init' was a duplicate entry for 0x00422120 added by
     # c3_batch_h-s5 (flagged in frida-sweep-20260517-2121 release notes).
     # The canonical entry for that RVA is 'timer_init_loop' above
@@ -12387,23 +12459,7 @@ HOOKS = {
         'path2_tests':    [0, 3, 0xDEADBEEF],
     },
 
-    # 0x0042fa00  PlayerSlotEdgeAdjust  void(void)
-    # 162B pure leaf. Loops 12 slots; iff iVar4 matches one of 4 active-player
-    # slot ids, conditionally inc/dec/clamp slot property at DAT_0067e938.
-    # At quiescent main menu, active-slot ids are sentinels (-1 / unset) so loop
-    # body short-circuits â€” both sides do identical no-op.
-    # arg_type='none': void return, called 10Ã— at quiescent menu; both sides
-    # return undefined; identity check passes.
-    # ref: re/analysis/frontend_unmapped_a/0x0042fa00.md
-    'player_slot_edge_adjust': {
-        'rva':            0x0042fa00,
-        'export':         'PlayerSlotEdgeAdjust',
-        'signature':      {'ret': 'void', 'args': []},
-        'arg_type':       'none',
-        'lut_root_delta': 0,
-        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-        'path2_tests':    [0, 1, 2],
-    },
+    # dualcopy4 2026-10-16: key 'player_slot_edge_adjust' (0x0042fa00, export PlayerSlotEdgeAdjust) RETIRED: it measured a second body of the same RVA; the one body is key 'menu_team_select_tick'.
 
     # 0x00426020  GlobalDat00646e58Get
     # Signature: void* fn(void)
@@ -13030,23 +13086,7 @@ HOOKS = {
     # mashedmod/src/mashed_re/Frontend/BucketMixed_t3.cpp
     # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-    # 0x00431b70  GetDat007f0f10  â€” STAGED at C2 (NOT promoted; C3 caller-gate fails).
-    # Pure-leaf uint32(void) getter: returns DAT_007f0f10. read_global Frida diff
-    # is 10/10 GREEN and the reimpl is bit-identical, but the sole caller
-    # FUN_0045d0e0 is C1 (no callee â€” leaf), so the C3 caller-AND-callee gate is
-    # unmet. RH_ScopedInstall is commented out. Re-pickup: promote FUN_0045d0e0.
-    'get_dat_007f0f10': {
-        'rva':            0x00431b70,
-        'export':         'GetDat007f0f10',
-        'signature':      {'ret': 'uint32', 'args': []},
-        'arg_type':       'read_global',
-        'target_global':  0x007f0f10,
-        'lut_root_delta': 0,
-        'path1_tests':    [0x00000000, 0x00000001, 0xDEADBEEF, 0xCAFEBABE,
-                           0x12345678, 0xFFFFFFFF, 0x80000000, 0x55555555,
-                           0xAAAAAAAA, 0x00000000],
-        'path2_tests':    [0x00000000, 0xDEADBEEF, 0xFFFFFFFF],
-    },
+    # dualcopy4 2026-10-16: key 'get_dat_007f0f10' (0x00431b70, export GetDat007f0f10) RETIRED: it measured a second body of the same RVA; the one body is key 'menu_flag_dat_007f0f10_get'.
 
     # 0x00431d90  FrontendPanelFlagAdvance
     # void(void); writes 19 panel-flag globals. Per-flag rule:
@@ -22184,16 +22224,58 @@ HOOKS = {
                       {'addr': '0x007f1128', 'val': 0}, {'addr': '0x007f15e8', 'val': 0}],
              'args': [],
              'obs':  ['0x0067e938', '0x0067e944', '0x0067e950', '0x0067e95c', '0x0067ea88']},
+            # v7 dualcopy4: team -1 with UP pressed -> the original decrements (guard != 0); the retired clamped twin gave 0
+            {'seed': [{'addr': '0x007f1a14', 'val': 0}, {'addr': '0x007f1a24', 'val': 1}, {'addr': '0x007f1a34', 'val': 2}, {'addr': '0x007f1a44', 'val': 3},
+                      {'addr': '0x0067e938', 'val': 0xFFFFFFFF}, {'addr': '0x0067e944', 'val': 0}, {'addr': '0x0067e950', 'val': 1}, {'addr': '0x0067e95c', 'val': 2},
+                      {'addr': '0x0067ea88', 'val': 0},
+                      {'addr': '0x007f1044', 'val': 0x00000001}, {'addr': '0x007f1504', 'val': 0},
+                      {'addr': '0x007f1090', 'val': 0}, {'addr': '0x007f1550', 'val': 0},
+                      {'addr': '0x007f10dc', 'val': 0}, {'addr': '0x007f159c', 'val': 0},
+                      {'addr': '0x007f1128', 'val': 0}, {'addr': '0x007f15e8', 'val': 0}],
+             'args': [],
+             'obs':  ['0x0067e938', '0x0067e944', '0x0067e950', '0x0067e95c', '0x0067ea88']},
+            # v8 dualcopy4: team 3, no press -> the original leaves it; the retired clamped twin clamped to 2
+            {'seed': [{'addr': '0x007f1a14', 'val': 0}, {'addr': '0x007f1a24', 'val': 1}, {'addr': '0x007f1a34', 'val': 2}, {'addr': '0x007f1a44', 'val': 3},
+                      {'addr': '0x0067e938', 'val': 3}, {'addr': '0x0067e944', 'val': 0}, {'addr': '0x0067e950', 'val': 1}, {'addr': '0x0067e95c', 'val': 2},
+                      {'addr': '0x0067ea88', 'val': 0},
+                      {'addr': '0x007f1044', 'val': 0}, {'addr': '0x007f1504', 'val': 0},
+                      {'addr': '0x007f1090', 'val': 0}, {'addr': '0x007f1550', 'val': 0},
+                      {'addr': '0x007f10dc', 'val': 0}, {'addr': '0x007f159c', 'val': 0},
+                      {'addr': '0x007f1128', 'val': 0}, {'addr': '0x007f15e8', 'val': 0}],
+             'args': [],
+             'obs':  ['0x0067e938', '0x0067e944', '0x0067e950', '0x0067e95c', '0x0067ea88']},
         ],
-        # NO path2_tests ON PURPOSE. path2 asserts that the inline JMP at the
-        # RVA points at THIS export, and it does not: 0x0042fa00's installed
-        # hook is the .asi-side twin PlayerSlotEdgeAdjust
-        # (Frontend/SkeletonAndScatter_t6.cpp). MenuTeamSelectTick is the
-        # EXE-SIDE copy, registered nowhere by design, so a path2 run here
-        # would either FAIL or -- worse -- pass only because a duplicate
-        # install had displaced the established one. This entry is a path1
-        # bit-identity check of the exe-side copy against the original; the
-        # RVA's C3 rests on the installed twin, and nothing here promotes it.
+        # path2 (dualcopy4): MenuTeamSelectTick is now the INSTALLED body of 0x0042fa00 (MenuNav.cpp RH_ScopedInstall), so the
+        # JMP at the RVA points at this export. The entry had no path2_tests while the installed hook was the asi twin.
+        'path2_tests': [
+            {'seed': [{'addr': '0x007f1a14', 'val': 0}, {'addr': '0x007f1a24', 'val': 1}, {'addr': '0x007f1a34', 'val': 2}, {'addr': '0x007f1a44', 'val': 3},
+                      {'addr': '0x0067e938', 'val': 0}, {'addr': '0x0067e944', 'val': 0}, {'addr': '0x0067e950', 'val': 1}, {'addr': '0x0067e95c', 'val': 2},
+                      {'addr': '0x0067ea88', 'val': 0},
+                      {'addr': '0x007f1044', 'val': 0x00000100}, {'addr': '0x007f1504', 'val': 0},
+                      {'addr': '0x007f1090', 'val': 0}, {'addr': '0x007f1550', 'val': 0},
+                      {'addr': '0x007f10dc', 'val': 0}, {'addr': '0x007f159c', 'val': 0},
+                      {'addr': '0x007f1128', 'val': 0}, {'addr': '0x007f15e8', 'val': 0}],
+             'args': [],
+             'obs':  ['0x0067e938', '0x0067e944', '0x0067e950', '0x0067e95c', '0x0067ea88']},
+            {'seed': [{'addr': '0x007f1a14', 'val': 0}, {'addr': '0x007f1a24', 'val': 1}, {'addr': '0x007f1a34', 'val': 2}, {'addr': '0x007f1a44', 'val': 3},
+                      {'addr': '0x0067e938', 'val': 1}, {'addr': '0x0067e944', 'val': 0}, {'addr': '0x0067e950', 'val': 1}, {'addr': '0x0067e95c', 'val': 2},
+                      {'addr': '0x0067ea88', 'val': 0},
+                      {'addr': '0x007f1044', 'val': 0x00000001}, {'addr': '0x007f1504', 'val': 0},
+                      {'addr': '0x007f1090', 'val': 0}, {'addr': '0x007f1550', 'val': 0},
+                      {'addr': '0x007f10dc', 'val': 0}, {'addr': '0x007f159c', 'val': 0},
+                      {'addr': '0x007f1128', 'val': 0}, {'addr': '0x007f15e8', 'val': 0}],
+             'args': [],
+             'obs':  ['0x0067e938', '0x0067e944', '0x0067e950', '0x0067e95c', '0x0067ea88']},
+            {'seed': [{'addr': '0x007f1a14', 'val': 0}, {'addr': '0x007f1a24', 'val': 1}, {'addr': '0x007f1a34', 'val': 2}, {'addr': '0x007f1a44', 'val': 3},
+                      {'addr': '0x0067e938', 'val': 0xFFFFFFFF}, {'addr': '0x0067e944', 'val': 0}, {'addr': '0x0067e950', 'val': 1}, {'addr': '0x0067e95c', 'val': 2},
+                      {'addr': '0x0067ea88', 'val': 0},
+                      {'addr': '0x007f1044', 'val': 0x00000001}, {'addr': '0x007f1504', 'val': 0},
+                      {'addr': '0x007f1090', 'val': 0}, {'addr': '0x007f1550', 'val': 0},
+                      {'addr': '0x007f10dc', 'val': 0}, {'addr': '0x007f159c', 'val': 0},
+                      {'addr': '0x007f1128', 'val': 0}, {'addr': '0x007f15e8', 'val': 0}],
+             'args': [],
+             'obs':  ['0x0067e938', '0x0067e944', '0x0067e950', '0x0067e95c', '0x0067ea88']},
+        ],
     },
 
     # 0x0042f7b0  FrontendCursorUpdate -- ABILITY SELECT's per-frame input step

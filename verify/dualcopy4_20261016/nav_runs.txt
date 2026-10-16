@@ -1,0 +1,60 @@
+[base2] pid=18748
+[base2] exit=0 self_exited=True 9s  walk bmps=12
+  walk_01_title.bmp 423d21df
+  walk_02_mainmenu.bmp d05986cc
+  walk_03_singleplayer.bmp 1c88e4c6
+  walk_04_colourselect.bmp e5da482e
+  walk_05_abilityselect.bmp 3d7ea866
+  walk_06_challengeselect.bmp f133281d
+  walk_07_back_mainmenu.bmp 3bfe1c9e
+  walk_08_options_highlighted.bmp 458119f6
+  walk_09_options.bmp eaf728e0
+  walk_10_sound.bmp 6e9176da
+  walk_11_sound_adjusted.bmp 0c4deb26
+  walk_12_back_mainmenu2.bmp de4e79dc
+[base2] set sha8=404b89e5
+[new1] pid=2524
+[new1] exit=0 self_exited=True 10s  walk bmps=12
+  walk_01_title.bmp abc60283
+  walk_02_mainmenu.bmp b5bd1375
+  walk_03_singleplayer.bmp 24bffd69
+  walk_04_colourselect.bmp a974a211
+  walk_05_abilityselect.bmp 97ae358b
+  walk_06_challengeselect.bmp f6ce39eb
+  walk_07_back_mainmenu.bmp f792ebfb
+  walk_08_options_highlighted.bmp aec6be56
+  walk_09_options.bmp a60959df
+  walk_10_sound.bmp cbb4e993
+  walk_11_sound_adjusted.bmp 75902b99
+  walk_12_back_mainmenu2.bmp 2a9f3cbe
+[new1] set sha8=66c7257f
+[new2] pid=24652
+[new2] exit=0 self_exited=True 9s  walk bmps=12
+  walk_01_title.bmp 5ecf6d37
+  walk_02_mainmenu.bmp 33418c60
+  walk_03_singleplayer.bmp 20f51e02
+  walk_04_colourselect.bmp 902ee9a4
+  walk_05_abilityselect.bmp 795c8acc
+  walk_06_challengeselect.bmp 3f791f0c
+  walk_07_back_mainmenu.bmp 9605e527
+  walk_08_options_highlighted.bmp f9279dfe
+  walk_09_options.bmp d34a56d1
+  walk_10_sound.bmp 601d42e6
+  walk_11_sound_adjusted.bmp 3a9ddc3c
+  walk_12_back_mainmenu2.bmp 4dcc5c6b
+[new2] set sha8=e6530c8b
+[base] pid=17888
+[base] exit=0 self_exited=True 9s  walk bmps=12
+  walk_01_title.bmp 5ecf6d37
+  walk_02_mainmenu.bmp e3e2e619
+  walk_03_singleplayer.bmp 39b65971
+  walk_04_colourselect.bmp ce725a77
+  walk_05_abilityselect.bmp 1840e6ea
+  walk_06_challengeselect.bmp b2bd4b9e
+  walk_07_back_mainmenu.bmp 4f40f58e
+  walk_08_options_highlighted.bmp ba6c2d8a
+  walk_09_options.bmp 7ec0abf9
+  walk_10_sound.bmp 04cb382d
+  walk_11_sound_adjusted.bmp e699808f
+  walk_12_back_mainmenu2.bmp 95b80cce
+[base] set sha8=9fb9fc01

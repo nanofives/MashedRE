@@ -1,0 +1,29 @@
+spawning MASHED.exe  ONLY=[ALL]  watch=45s
+  pid=26112
+  resumed; booting...
+  asi base: 0x61920000
+
+=== RESULT ===
+  survived 45s, alive=None
+  manifest: 1331 hooks seen, 1290 installed
+    0	0x004325C0	1	MenuAnimTickTwin
+    1	0x00473EE0	1	LogoOverlayTwin
+    2	0x0043C5B0	1	MenuDrawLoopTwin
+    3	0x00432B30	1	PromptStripTwin
+    4	0x004C3AC0	1	Vec3Magnitude
+    5	0x004C3B90	1	FastInvSqrt
+    6	0x004C3B30	1	FastSqrt
+    7	0x00422440	1	CosineLerp
+    8	0x004A2C48	1	FPURound_4a2c48
+    9	0x004C0B10	1	RwAtomicDirtyFlagGet
+    10	0x0042C2D0	1	GetDat0067ecb4
+    11	0x0042C2E0	1	GetDat0067ecb8
+    12	0x0042F500	1	GetDat0067ea64
+    13	0x0046C7B0	1	VehicleSlotGetter
+    14	0x0046C770	1	VehicleDestructionStateGetter
+    15	0x0046C6D0	1	VehicleEntitySlotRead
+    16	0x0046DBE0	1	VehicleRacePositionGet
+    17	0x00468B40	1	VehicleContactHistoryLookup
+    18	0x0046D700	1	VehicleVec3At9C8Get
+    19	0x0046CBB0	1	VehicleCarStateRead
+

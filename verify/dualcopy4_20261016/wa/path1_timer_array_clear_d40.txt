@@ -1,0 +1,14 @@
+hook: timer_array_clear_d40  rva=0x00420d40  export=TimerStructArrayClear
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 13300
+  [agent] LUT ready  base=0x2b2a660  offset=0x134  root=0x4f00680  delta=0  attempts=15
+  [agent] .asi loaded  base=0x5d600000  TimerStructArrayClear@0x5d60f8c0
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dualcopy4\log\diff_timer_array_clear_d40.csv
+  total cases: 10
+  mismatches:  0
+
+NOTE: all observations trivial; GREEN allowed by seeded arg_type 'void_write_observe'.
+
+GREEN: every test value produced bit-identical output.
+

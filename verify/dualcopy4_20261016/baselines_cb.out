@@ -1,0 +1,5 @@
+cam cam_dump.csv 1e7d2274 3000
+cam librw_dump.csv b33ca1b4 3000
+camN0 cam_dump.csv 1e7d2274 3000
+camN0 librw_dump.csv b33ca1b4 3000
+BASELINES DONE
