@@ -1395,6 +1395,23 @@ enum { kAnimFreighter = 1, kAnimBoat = 2 };
 
 namespace { void InvalidateBatchCache(); }  // WS-A s3 PERF (defined before Render)
 
+namespace {
+// [d2lateral 2026-10-16] MASHED_D2LAT_SPAWN_YAW=<rad> - DIAGNOSTIC ONLY, default OFF, never a fix.
+// Replaces the slot-0 spawn yaw (the gate0 -> gate1 stand-in for the original's grid direction
+// L = FUN_00426cc0()) with a given heading, at both spawn sites, so the D2 impact chain can be
+// measured with the original's spawn heading (verify/d2lateral_20261016/PREREG_d2lateral.md A3.3).
+const float* D2LatSpawnYaw() {
+    static float s_v = 0.f;
+    static const bool s_on = [] {
+        const char* e = std::getenv("MASHED_D2LAT_SPAWN_YAW");
+        if (!e || !e[0]) return false;
+        s_v = static_cast<float>(std::atof(e));
+        return true;
+    }();
+    return s_on ? &s_v : nullptr;
+}
+}  // namespace
+
 bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                          const char* log_path) {
     InvalidateBatchCache();   // drop any prior track's cached VBs (reload safety)
@@ -3870,6 +3887,7 @@ bool TrackRenderer::LoadCar(IDirect3DDevice9* dev, const char* piz_path,
             car_pos_[2] = g0[2];
             car_pos_[1] = gy + car_ground_off_;
             car_yaw_ = std::atan2(g1[2] - g0[2], g1[0] - g0[0]);
+            if (const float* dy = D2LatSpawnYaw()) car_yaw_ = *dy;   // [d2lateral] diagnostic, default OFF
             car_speed_ = 0.f;
             // A8: re-seed the integrated body basis to the grid heading.
             Vehicle::VehiclePhysics_ResetOrientation(0, car_yaw_);
@@ -6146,6 +6164,10 @@ void TrackRenderer::StartRound() {
         if (Race::RoundGrid_SlotOrder(sv)) for (int i = 0; i < 4; ++i) kSlot[i] = sv[i] & 3;
     }
     place(car_pos_, &car_yaw_, kSlot[0]);
+    if (const float* dy = D2LatSpawnYaw()) {   // [d2lateral] diagnostic, default OFF
+        car_yaw_ = *dy;
+        Vehicle::VehiclePhysics_ResetOrientation(0, car_yaw_);
+    }
     {   // [PATHPROG split, PREREG amendment A5] MEASUREMENT ONLY: MASHED_PP_PLAYERDZ=<units> shifts the player's start z, to test
         // the original's first-step settle (z +0.0000921) as the cause of the player's node on the start line. Default OFF.
         static const float s_ppDz = [] { const char* e = std::getenv("MASHED_PP_PLAYERDZ"); return e ? static_cast<float>(std::atof(e)) : 0.f; }();
