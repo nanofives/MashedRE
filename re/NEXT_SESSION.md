@@ -83,10 +83,10 @@
 > - DONE 2026-10-13: screen-32 toggle arrow + value text ported from FUN_00431240 (widget GREEN at 0.01 px). The parity knob
 >   now pins autosave Off like the original. Left: scr32 value text 1 px low (y 240.0), L fixed at 356 (longer
 >   non-English labels would move it), and DECIDED (user 2026-10-13): the shipping autosave default stays On (only the parity knob pins Off).
-> - U-9680 (low): derive `[0x0067d830]` / `[0x0067d834]` instead of the measured 0x3f7fffff.
+> - DONE 2026-10-16: U-9680 derived (exe_main.cpp DeriveMenuMeasureDiv, verify/fe_residuals_20261016/u9680/).
 > - Fade alpha / early-out in the standalone widget (fix 3, not requested). The exit fade is uncaptured.
-> - `after_fix/sumdiff.py` keys checker noise on a fixed return address (0xb8202); key it on the map symbol.
-> - 0x00430b90 port text y 284 vs 285 (unchecked).
+> - DONE 2026-10-16: `after_fix/sumdiff.py --map` keys the checker on the LogoOverlayDraw map symbol.
+> - DONE 2026-10-16 (no code change): scr32 value text y 240.0 and scr19 insults value text y 285.0 match the original to 0.0000 px on all 71 / 103 glyphs, fresh original captures (verify/fe_residuals_20261016/text/). The earlier 1 px / 284-vs-285 notes predate the 2026-10-13 text-y anchor fix.
 
 > ## START HERE 2026-10-12c (triage B: 8 of 9 re-earned C3)
 >
