@@ -116,8 +116,10 @@ G-CTRL / determinism / collateral (exe `eb5e1462`):
 |---|---|---|---|---|---|
 | `H_NOOP3` | d3b90ee0 | 80f01f35 | 56d62ae7 | = default | 39 (`H_DEF`) |
 | `H_HA` | 4c81db89 | aa03f7ae | 7d3af534 | x2 identical | **42 (+3, over the registered +2)** |
-| `H_HA5` | b5728d30 | dab4aa0a | 8ed07549 | x2 identical | PENDING_HA5_COLL |
+| `H_HA5` | b5728d30 | dab4aa0a | 8ed07549 | x2 identical | 39 (+0) |
 | `H_L3` / `H_L7` | 24a22f13 / 10027849 | d52b2d87 / 6f21011e | fbc731c9 / cc1cdbf5 | x2 identical | 38 / 40 |
+
+**D2 with the assist** (`D2_HA_1..3`, `score_d2.py`, bounds `d81a8df6`): slip 1500-2000 0.1890 x3, slip 2000-2600 0.2482 / 0.2483 / 0.2483, driving-median 1914.84 / 1914.88 / 1914.84 (n 1424 / 1426 / 1425), H1 398/400 median 1362.7 on all three, 1634..1636 lines. `D2_HA_1` is byte-identical to d2close's `D2_DEF_2` (`0c02cb88`): the D2 recipe runs solo, so the AI-slot assist does not reach it (prediction held). D2 not moved.
 
 ## 5. Code (default OFF everywhere, G-NOOP measured)
 
