@@ -176,7 +176,8 @@ MenuGameState g_game_state = kFreshState;
 
 // [D-11057] continue-cup module state (standalone analogues of the FUN_0043dfd0
 // side effects that live outside MenuGameState).
-int g_pending_cup_modal    = 0;  // CupModal armed by Nav_ContinueCupBegin
+int g_pending_cup_modal    = 0;
+int g_pending_ok_modal     = 0;  // message id of a pending single-OK popup (FUN_0042bf30(id,0,1,0x2d,0,0))  // CupModal armed by Nav_ContinueCupBegin
 int g_cup_continue_variant = 1;  // FUN_004307a0 stand-in (1 = single 0x135;
                                  // 0 = two-choice 0x136). Default = single until
                                  // the DAT_00614718 threshold table is harvested.
@@ -1304,6 +1305,12 @@ bool Nav_ContinueCupBegin() {
     return false;
 }
 
+int Nav_TakePendingOkModal() {
+    const int id = g_pending_ok_modal;
+    g_pending_ok_modal = 0;
+    return id;
+}
+
 int Nav_TakePendingCupModal() {
     const int m = g_pending_cup_modal;
     g_pending_cup_modal = kCupModalNone;
@@ -1461,7 +1468,11 @@ bool Nav_Select() {
     // (faithful to FUN_0043dfd0, which writes DAT_0067e9fc inline in the action
     // handler, before the FUN_0043d2a0 child-screen push).
     ApplyActionGameMode(action);
-    const int target = ActionToScreen(action, s.slot_kind);
+    // DAT_0067ed3c[depth*0x40] is the screen id the slot was pushed with (original, 33/33 pushed screens:
+    // re/analysis/u9667_menu_tables/dump_push.json rec[1] == id), so the 0xff4c0000 test reads the id.
+    // slot_kind was never written, which made the `== 0x17` branch unreachable (screen 23 popped, the
+    // original pushes screen 1: verify/fe_residuals_20261016/u9672/).
+    const int target = ActionToScreen(action, s.screen_id);
     if (target == kActPop) {
         return Nav_Back();
     }
@@ -1470,6 +1481,13 @@ bool Nav_Select() {
         return true;
     }
     if (target == kActNone) {
+        // 0xff3c0000 (harvest L877-L902): FUN_0042bb60() verdict 0..3 opens the
+        // single-OK popup 0xd6..0xd9; -1 (fewer than two active slots) and
+        // everything else opens nothing.
+        if (action == 0xff3c0000u) {
+            const int v = Q_TeamComposition();
+            if (v >= 0 && v <= 3) g_pending_ok_modal = 0xd6 + v;
+        }
         return false; // modal dialog / pure side-effect / unmapped: no nav change
     }
     if (target < 0 || target >= kScreenTableCount || TableForScreen(target) == nullptr) {

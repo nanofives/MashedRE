@@ -604,6 +604,7 @@ DWORD            g_splash_start_ms  = 0;   // set on first splash frame
 //   Load Game: 10 warn 0x215 (Yes/No) -> 11 'Load Successful.' 0x1bc (Continue)
 //   Save Game: 20 overwrite? 0x1ca (Yes/No) -> 21 'Saving game data.' 0x233
 //              (auto ~0.8s) -> 22 'Save successful.' 0x279 (Continue)
+int              g_modal_ok_body    = 0;     // body id for modal step 52
 int              g_modal_body_id    = 0;
 int              g_modal_button_id  = 0;
 int              g_modal_alpha      = 0;
@@ -1506,10 +1507,20 @@ bool RunNavKeysStep() {
     static int frame = -1, idx = 0, wait = 0;
     static int nkeys = -1;
     static char keys[64];
+    static int  holds[64];            // frames the key stays down after the press frame ("d*90")
+    static int  holdLeft = 0;
+    static unsigned char holdDik = 0;
     if (nkeys < 0) {
         nkeys = 0;
-        for (const char* c = g_nav_keys_list; *c && nkeys < 64; ++c)
-            if (*c != ',' && *c != ' ') keys[nkeys++] = *c;
+        for (const char* c = g_nav_keys_list; *c && nkeys < 64; ++c) {
+            if (*c == ',' || *c == ' ') continue;
+            keys[nkeys] = *c; holds[nkeys] = 0;
+            if (c[1] == '*') { c += 2; while (*c >= '0' && *c <= '9') holds[nkeys] = holds[nkeys] * 10 + (*c++ - '0'); --c; }
+            ++nkeys;
+        }
+    }
+    if (holdLeft > 0) {               // keep the key down: held, not a new edge
+        g_keys[holdDik] = 0x80; g_keys_prev[holdDik] = 0x80; --holdLeft;
     }
     if (frame < 0) {
         if (g_frontend_phase != 3 || g_modal_step != 0) return false;
@@ -1520,6 +1531,7 @@ bool RunNavKeysStep() {
     if (wait > 0) {
         --wait;
     } else if (idx < nkeys) {
+        const int hold = holds[idx];
         const char k = keys[idx++];
         unsigned char dik = 0;
         switch (k) {
@@ -1529,19 +1541,20 @@ bool RunNavKeysStep() {
             default: break;
         }
         if (dik) NavDemoTap(dik);
+        if (dik && hold > 0) { holdDik = dik; holdLeft = hold; }
         static char t[2]; t[0] = k; t[1] = 0; tap = t;
-        wait = g_nav_keys_gap;
+        wait = g_nav_keys_gap + hold;
     } else {
         return true;                     // script done, last gap elapsed
     }
     std::FILE* lf = std::fopen(kLogPath, "a");
     if (lf) {
-        std::fprintf(lf, "NAV_KEYS f=%d tap=%s depth=%d screen=%d cur=%d row=%d gm=%d sel=%d ea68=%d f1a4=%d flow=%d fph=%d\n",
+        std::fprintf(lf, "NAV_KEYS f=%d tap=%s depth=%d screen=%d cur=%d row=%d gm=%d sel=%d ea68=%d f1a4=%d flow=%d fph=%d opp=%d,%d,%d\n",
                      frame, tap, Nav_Depth(), Nav_ScreenId(), Nav_Cursor(),
                      Nav_ChallengeRow(), Nav_GameState().game_mode,
                      Nav_GameState().sel_f184, Nav_GameState().ea68, Nav_NavFlagF1a4(),
                      static_cast<int>(mashed_re::Race::GameFlow_Mode()),
-                     g_frontend_phase);
+                     g_frontend_phase, Nav_GameState().ea98, Nav_GameState().ea9c, Nav_GameState().eaa0);
         std::fclose(lf);
     }
     ++frame;
@@ -1976,6 +1989,7 @@ void AdjustSoundSetting(int row, int dir) {
 // the body text id (Font36.piz/USA.DAT) + button mode. Keeps the current fade
 // alpha so flow transitions don't re-fade.
 void ModalGo(int step) {
+    if (std::FILE* lf = std::fopen(kLogPath, "a")) { std::fprintf(lf, "MODAL step=%d ok_body=0x%x\n", step, g_modal_ok_body); std::fclose(lf); }
     g_modal_step     = step;
     g_modal_timer_ms = 0;
     g_modal_button_id = 0x2d;            // "Continue" (default)
@@ -2003,6 +2017,11 @@ void ModalGo(int step) {
         case 50: g_modal_body_id = 0x135; g_modal_yesno = false;
                  g_modal_button_id = 0x2d;                       break; // single Continue
         case 51: g_modal_body_id = 0x136; g_modal_yesno = true;  break; // two-choice Yes/No
+        // 52 = single-OK refusal popup, body id in g_modal_ok_body (FUN_0042bf30(id,0,1,0x2d,0,0)):
+        // 0x24f no opponents (0xff420000, harvest L954-L964), 0xd6..0xd9 team composition (0xff3c0000).
+        case 52: g_modal_body_id = g_modal_ok_body; g_modal_yesno = false;
+                 g_modal_button_id = 0x2d;
+                 break;                                              // single OK
         default: g_modal_body_id = 0; g_modal_step = 0; g_modal_yesno = false; break;
     }
 }
@@ -2274,8 +2293,33 @@ bool UpdateMenuSelection() {
         }
         return false;
     }
-    if (down_now && !down_prev) { Nav_MoveCursor(+1); mashed_re::Audio::SfxPlay("menu navigation", 0.7f); }
-    if (up_now   && !up_prev)   { Nav_MoveCursor(-1); mashed_re::Audio::SfxPlay("menu navigation", 0.7f); }
+    // Key repeat on hold, screens 6 and 7 only: FUN_0042aff0 (UP, 0x0042aff0) and FUN_0042b180 (DOWN,
+    // 0x0042b180) add the frame time [0x007f1004] to a per-direction timer ([0x0067f1b0] / [0x0067f1b4]) while
+    // the direction is held and the slot's screen id is 6 or 7 (0x0042b0ab.., 0x0042b25b..); above [0x005ccac0]
+    // = 0.4 (0x3ecccccd) the timer is set to 0.2 and the call returns 1, so the first repeat comes 0.4 s after
+    // the press and later ones every 0.2 s. With the direction released the timer is zeroed (0x0042b0b7 /
+    // 0x0042b247). The first move is the press edge, as on every other screen.
+    static DWORD s_repT = 0;
+    static float s_repUp = 0.f, s_repDn = 0.f;
+    const DWORD repNow = DetTicks();
+    const float repDt = s_repT ? static_cast<float>(repNow - s_repT) * 0.001f : 0.f;
+    s_repT = repNow;
+    const int repSid = Nav_ScreenId();
+    auto holdRepeat = [&](bool held, float& t) -> bool {
+        if (!held) { t = 0.f; return false; }
+        if (repSid < 6 || repSid > 7) return false;
+        t += repDt;
+        if (t > 0.4f) {
+            t = 0.2f;
+            if (g_nav_keys) if (std::FILE* lf = std::fopen(kLogPath, "a")) { std::fprintf(lf, "REPEAT ms=%lu dt=%.4f\n", static_cast<unsigned long>(repNow), repDt); std::fclose(lf); }
+            return true;
+        }
+        return false;
+    };
+    const bool repDown = holdRepeat(down_now, s_repDn);
+    const bool repUp   = holdRepeat(up_now,   s_repUp);
+    if ((down_now && !down_prev) || repDown) { Nav_MoveCursor(+1); mashed_re::Audio::SfxPlay("menu navigation", 0.7f); }
+    if ((up_now   && !up_prev)   || repUp)   { Nav_MoveCursor(-1); mashed_re::Audio::SfxPlay("menu navigation", 0.7f); }
     // [D-11054] Cup-tier selection on the challenge screens (sid 6/7):
     // LEFT/RIGHT cycles the mode selection through the ring sel 1<->2<->5,
     // i.e. game mode 3<->4<->5 via FUN_0042f6b0 — the verbatim screen-6/7
@@ -2449,8 +2493,10 @@ bool UpdateMenuSelection() {
             const MenuGameState& gs = Nav_GameState();
             const int opponents = (gs.ea98 != 0) + (gs.ea9c != 0) + (gs.eaa0 != 0);
             if (launchMode == 10 && opponents == 0) {
-                mashed_re::Audio::SfxPlay("menu navigation", 0.5f);
-                return false;                    // modal 0x24f in the original
+                // 0x0043f792.. harvest L954-L964: mode 10 with DAT_0067ea98 / ea9c / eaa0 all 0 opens
+                // FUN_0042bf30(0x24f, 0, 1, 0x2d, 0, 0) and does not launch.
+                g_modal_ok_body = 0x24f; ModalGo(52); g_modal_alpha = 0;
+                return false;
             }
             MenuLaunchRace(launchMode);
         } else {
@@ -2463,9 +2509,13 @@ bool UpdateMenuSelection() {
                     ModalGo(50); g_modal_alpha = 0; break;
                 case mashed_re::Frontend::kCupModalTwoChoice:
                     ModalGo(51); g_modal_alpha = 0; break;
+                default: {
+                    const int okId = mashed_re::Frontend::Nav_TakePendingOkModal();
+                    if (okId != 0) { g_modal_ok_body = okId; ModalGo(52); g_modal_alpha = 0; }
+                    break;
+                }
                 // kCupModalRestart38/A9 (ecdc!=0 restart-race confirm) are not
                 // opened here yet — see FABLE HAND-OFF (needs the restart flow).
-                default: break;
             }
         }
     }

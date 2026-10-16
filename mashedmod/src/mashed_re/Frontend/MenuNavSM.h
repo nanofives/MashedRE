@@ -223,6 +223,12 @@ bool Nav_ContinueCupBegin();
 // Returns kCupModalNone when none is pending.
 int  Nav_TakePendingCupModal();
 
+// Single-button ("OK", button 0x2d) refusal popups the original opens with
+// FUN_0042bf30(msg, 0, 1, 0x2d, 0, 0). Returns the message id armed by the
+// last Nav_Select and clears it; 0 when none. Armed here: the 0xff3c0000
+// team-composition verdicts (0xd6..0xd9, harvest L877-L902).
+int  Nav_TakePendingOkModal();
+
 // Called when a continue-cup confirmation modal (single 0x135 / two-choice
 // 0x136) is CONFIRMED. Verbatim: FUN_0043d2a0(7,0); if (ed6c==2) e9fc=3.
 void Nav_ContinueCupConfirm();
