@@ -52,6 +52,15 @@ FTV (NVIDIA High Definition Audio), Status OK, 2026-10-16), so `MASHED.exe` boot
 - **A5, first row.** The first row of each 60-row window has no previous-row angle and is not
   compared (59 rows per window). Windows are consecutive trace rows (checked by row index).
 
+- **A6, shot list (made after one smoke capture, before any gate number was computed).** The
+  first T0 capture (kept as `orig_T0a`, 122 snapshots) used `--shots-race 100,400,800`: the race
+  reached state `DAT_0063ba8c == 7` at trace row 1406 (race start at row 850, so 556 racing rows),
+  so only the +100 and +400 windows exist. The remaining arms, and T0 again, use
+  `--shots-race 100,250,400`. `orig_T0a` stays in the evidence as an extra W1 data set. The same run
+  also showed non-zero NATURAL colours (0,3,1,2, ids 6,9,7,8), so Pr-L2's "colour 0 on T0, A0, C0" is
+  falsified on T0 before the L1 check ran. The standalone side of a natural arm therefore runs
+  with `MASHED_ROUND_COLOURS` = the colours that arm's original capture recorded.
+
 ## 2. Pass definitions (fixed now)
 
 - **W1-a angle:** for every compared (row, car, wheel w) `|port angle - recorded angle| <= 1e-4`
@@ -94,8 +103,8 @@ FTV (NVIDIA High Definition Audio), Status OK, 2026-10-16), so `MASHED.exe` boot
 
 ## 4. Arms
 
-Each original arm runs `camera_probe.py --frame --early --carparts --shots-race 100,400,800
---track N --rows R`; R is chosen so the trace covers raceStart + 800 + 1.
+Each original arm runs `camera_probe.py --frame --early --carparts --shots-race 100,250,400
+--track N --rows 2200` (A6; the first draft of this file said 100,400,800).
 
 | arm | track (index) | poke | standalone MASHED_ROUND_COLOURS |
 |---|---|---|---|
