@@ -1,0 +1,7 @@
+"vswhere.exe" no se reconoce como un comando interno o externo,
+programa o archivo por lotes ejecutable.
+maskcheck_42d3e0.cpp
+NEW MenuEntryZeroBody vs the 14 stores of the original: 0 differing bytes of 1680  -> PASS
+OLD MenuEntryArrayInit (9b0248128) vs the same: 570 differing bytes
+  cleared but the original keeps (entry-relative byte offsets): -4 -3 -2 -1 32 33 34 35 48 49 50 51
+  kept but the original clears: 13 14 15 28 29 30 31 44 45 46 47

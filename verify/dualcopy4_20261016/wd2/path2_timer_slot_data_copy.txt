@@ -1,0 +1,37 @@
+hook: timer_slot_data_copy  rva=0x0041f000  export=TimerSlotDataCopy
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 20664
+  [agent] pre_snapshot
+  [agent] asi_loaded
+  [agent] post_snapshot
+  [agent] results
+
+=== verify_hook_install report (timer_slot_data_copy) ===
+
+target address: 0x0041f000  export: TimerSlotDataCopy
+PRE  bytes:     e9 5b 08 03 60 c0 ac 02
+asi base:       0x60440000
+reimpl addr:    0x6044f860
+POST bytes:     e9 5b 08 03 60 c0 ac 02
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x6003085b  expected 0x6003085b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  3 / 3  (other threads: 0)
+
+per-input results:
+  [OK] input={'p2bufs': [64], 'p2args': [0, {'buf': 0}]}  got=dfde6ac5  err=
+  [OK] input={'p2bufs': [64], 'p2args': [1, {'buf': 0}]}  got=dfde6ac5  err=
+  [OK] input={'p2bufs': [64], 'p2args': [2, {'buf': 0}]}  got=dfde6ac5  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 3x as expected
+  + all 3 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dualcopy4\log\verify_hook_install_timer_slot_data_copy.txt
+

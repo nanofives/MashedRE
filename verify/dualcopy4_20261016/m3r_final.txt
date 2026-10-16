@@ -1,0 +1,5 @@
+final live PC24: pid=22044 exit=0 self_exited=True  G-M3-REPLAY rows=6 exact=6 entry_bad=0 calls_bad=0 live_grants_during_replay=0 pc=24 in=C:\Users\maria\Desktop
+final live PC53: pid=24500 exit=0 self_exited=True  G-M3-REPLAY rows=6 exact=6 entry_bad=0 calls_bad=0 live_grants_during_replay=0 pc=53 in=C:\Users\maria\Desktop
+final synth PC24: pid=20496 exit=0 self_exited=True  G-M3-REPLAY rows=3888 exact=3888 entry_bad=0 calls_bad=0 live_grants_during_replay=0 pc=24 in=C:\Users\maria\D
+final synth PC53: pid=9308 exit=0 self_exited=True  G-M3-REPLAY rows=3888 exact=3888 entry_bad=0 calls_bad=0 live_grants_during_replay=0 pc=53 in=C:\Users\maria\D
+REPLAY GREEN

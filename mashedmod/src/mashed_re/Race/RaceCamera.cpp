@@ -48,21 +48,22 @@ inline int Ftol_4a2c48(float v) {
     return FtolVerbatim(v);                       // truncate toward zero, verbatim x87
 }
 
-// 0x004c3ac0 Vec3Magnitude (C4-verified RW primitive; here the plain
-// sqrt form — the original's LUT fast-sqrt agrees to float precision on
-// this range; the C4 port in Math/Vec3.cpp is the bit-exact reference).
+// Host-side name of the shared Math/Vec3.cpp:Vec3Magnitude (original FUN_004c3ac0, C4). dualcopy4 (2026-10-16): this was a
+// second body, `std::sqrt(x*x + y*y + z*z)`; it is now a call into the shared one (the exe has no LUT, so that body takes its
+// exact-sqrt fallback, the same arithmetic).
+extern "C" float __cdecl Vec3Magnitude(const float* v);
 inline float Vec3Mag(const float v[3]) {
-    return std::sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+    return Vec3Magnitude(v);
 }
 
-// 0x004c39b0 RW normalize (in-place capable, dst/src form).
+// Host-side name of the RW normalize (original FUN_004c39b0), in-place capable, dst/src form. dualcopy4 (2026-10-16): this was a
+// second body (`dst = src / |src|`, a division by an exact sqrt); it is now Math::LutNormalize, the real-LUT body (`scale * src` with the
+// original's inverse-sqrt table, no error report) that Race/PathNodes.cpp already uses. Measured with d1r2's row-indexed replay
+// (verify/dualcopy4_20261016/cam*/, PREREG_dualcopy4_b3.md): pose position median 1.105e-4 -> 7.97e-5, p95 1.020e-3 -> 7.88e-4, max
+// 2.56e-3 -> 1.76e-3; at-axis p95 3.5e-3 deg -> 2.3e-3 deg; right-axis median 1.36e-5 deg -> 1.7e-6 deg. The global RwV3dNormalize keeps
+// its exact-sqrt fallback (a separate decision: it feeds D2 physics).
 inline void Vec3Norm(float dst[3], const float src[3]) {
-    const float m = Vec3Mag(src);
-    if (m > 0.f) {
-        dst[0] = src[0] / m; dst[1] = src[1] / m; dst[2] = src[2] / m;
-    } else {
-        dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
-    }
+    Math::LutNormalize(dst, src);
 }
 
 // 0x004c4d20 RwMatrix_SetRotAxisAngle + 0x004c3df0 transform, fused:

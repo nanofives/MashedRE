@@ -1,0 +1,35 @@
+hook: menu_mode_sync  rva=0x0042f6b0  export=MenuModeSync
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 5296
+  [agent] pre_snapshot
+  [agent] asi_loaded
+  [agent] post_snapshot
+  [agent] results
+
+=== verify_hook_install report (menu_mode_sync) ===
+
+target address: 0x0042f6b0  export: MenuModeSync
+PRE  bytes:     e9 cb 2c 02 60 83 f8 0b
+asi base:       0x60440000
+reimpl addr:    0x60452380
+POST bytes:     e9 cb 2c 02 60 83 f8 0b
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x60022ccb  expected 0x60022ccb  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  1 / 1  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [], 'seed': [{'addr': 6812036, 'val': 1}]}  got=9bc23426  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 1x as expected
+  + all 1 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dualcopy4\log\verify_hook_install_menu_mode_sync.txt
+
