@@ -26,6 +26,10 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-16  U-9699  filed  beam headlight flag: course_id / aib_alive stand-ins for FUN_0040da50 -> FUN_0041eeb0 (rfx)  verify/rfx_20261016/RESULT_rfx.md
+2026-10-16  U-9700  filed  FUN_0040dfc0 HUD branches not ported (non-team panels, mode HUDs) + start-light clock stand-in adapter (rfx)  verify/rfx_20261016/RESULT_rfx.md
+2026-10-16  U-9701  filed  C04/C09 draws not ported: RWObjShad, flatshad, Headlight, lensflare-fs8, VehicleIcons, scope per item (rfx)  verify/rfx_20261016/RESULT_rfx.md
+2026-10-16  U-9690  NOTE  also holds the ported car_shadow / Beam on Arctic at STATE CULL 2 vs 1 (rfx)  verify/rfx_20261016/RESULT_rfx.md
 2026-10-16  0x004e5680  RpWorldForAllAtomicsCallback  C2->C2  exe_file cleared: D3d9Render/RwWorldRender.cpp deleted (inert, no caller; librwrest, verify/librwrest_20261016/RESULT_librwrest.md)
 2026-10-16  0x004d40d0  FUN_004d40d0  C2->C2  exe_file cleared: D3d9Render/RwWorldRender.cpp deleted (inert, no caller; librwrest, verify/librwrest_20261016/RESULT_librwrest.md)
 2026-10-16  0x004e47b0  FUN_004e47b0  C2->C2  exe_file cleared: D3d9Render/RwWorldRender.cpp deleted (inert, no caller; librwrest, verify/librwrest_20261016/RESULT_librwrest.md)

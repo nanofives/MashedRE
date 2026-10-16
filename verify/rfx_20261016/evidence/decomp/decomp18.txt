@@ -1,0 +1,46 @@
+// FUN_00426c00 @ 0x00426c00  size=6  (MASHED.exe)
+// undefined FUN_00426c00(void)
+
+/* [C1 2026-05-23] No parameters. */
+
+undefined4 FUN_00426c00(void)
+
+{
+  return DAT_00644158;
+}
+
+
+
+// FUN_0046c7b0 @ 0x0046c7b0  size=26  (MASHED.exe)
+// undefined FUN_0046c7b0(void)
+
+/* [C2 2026-05-12] Bounds-checked vehicle slot getter. Returns the DWORD at `DAT_008815a4 + param_1
+   * 0x341` (vehicle… */
+
+undefined4 FUN_0046c7b0(uint param_1)
+
+{
+  if (0xf < param_1) {
+    return 0xffffffff;
+  }
+  return (&DAT_008815a4)[param_1 * 0x341];
+}
+
+
+
+// FUN_0046c770 @ 0x0046c770  size=26  (MASHED.exe)
+// undefined FUN_0046c770(void)
+
+/* [C1 2026-05-12] Signature: `undefined4 FUN_0046c770(uint param_1)` — param_1 = car index
+   (0–15). */
+
+undefined4 FUN_0046c770(uint param_1)
+
+{
+  if (0xf < param_1) {
+    return 0xffffffff;
+  }
+  return (&DAT_008815b0)[param_1 * 0x341];
+}
+
+

@@ -1,0 +1,333 @@
+// FUN_0041d8b0 @ 0x0041d8b0  size=96  (MASHED.exe)
+// undefined FUN_0041d8b0(void)
+// callees: FUN_0042a5d0@0x0042a5d0, FUN_004b51d0@0x004b51d0, FUN_004b52f0@0x004b52f0, FUN_004b6520@0x004b6520
+// callers: FUN_00402750@0x00402750
+// strings (1):
+//   0x005cd218: startlights.dff
+
+/* [C2 2026-05-16] Calls FUN_0042a5d0("startlights.dff", 0, 0) → iVar1. */
+
+void FUN_0041d8b0(void)
+
+{
+  int iVar1;
+  undefined4 *puVar2;
+  
+  iVar1 = FUN_0042a5d0("startlights.dff",0,0);
+  FUN_004b6520(&DAT_0063d55c,0x30);
+  DAT_0063d580 = *(undefined4 *)(iVar1 + 4);
+  DAT_0063d57c = iVar1;
+  FUN_004b51d0(iVar1,&DAT_0063d55c,8,0,0);
+  puVar2 = &DAT_0063d55c;
+  do {
+    FUN_004b52f0(*puVar2,0x40,1);
+    puVar2 = puVar2 + 1;
+  } while ((int)puVar2 < 0x63d574);
+  return;
+}
+
+
+
+// FUN_0041d910 @ 0x0041d910  size=21  (MASHED.exe)
+// undefined FUN_0041d910(void)
+// callees: (none)
+// callers: FUN_0040dbd0@0x0040dbd0
+// strings: (none)
+
+/* [C2 2026-06-03] `void FUN_0041d910(void)` — body 0x0041d910..0x0041d924. Clears two adjacent
+   globals: `DAT_0063d584 = 0; DAT_0063d588 =… */
+
+void FUN_0041d910(void)
+
+{
+  DAT_0063d584 = 0;
+  DAT_0063d588 = 0;
+  return;
+}
+
+
+
+// FUN_0041d930 @ 0x0041d930  size=336  (MASHED.exe)
+// undefined FUN_0041d930(void)
+// callees: FUN_004c13e0@0x004c13e0, FUN_004c1480@0x004c1480, FUN_004c51a0@0x004c51a0
+// callers: FUN_0040fc00@0x0040fc00
+// strings: (none)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C1 2026-06-01] RenderWare 2D billboard with a time-driven Y offset (sliding HUD element on
+   `DAT_0063d580`). */
+
+void FUN_0041d930(void)
+
+{
+  float local_58;
+  float local_54;
+  float local_50;
+  undefined4 local_4c;
+  float local_48;
+  undefined4 local_44;
+  undefined4 local_40;
+  undefined4 local_3c;
+  undefined4 local_38;
+  uint local_34;
+  undefined4 local_30;
+  undefined4 local_2c;
+  undefined4 local_28;
+  undefined4 local_20;
+  undefined4 local_1c;
+  undefined4 local_18;
+  undefined4 local_10;
+  undefined4 local_c;
+  undefined4 local_8;
+  
+  local_34 = local_34 | 0x20003;
+  local_4c = 0;
+  local_48 = 0.35;
+  local_44 = 0x3f800000;
+  local_58 = 1.0;
+  local_54 = 1.0;
+  local_50 = 1.0;
+  local_18 = 0x3f800000;
+  local_2c = 0x3f800000;
+  local_40 = 0x3f800000;
+  local_30 = 0;
+  local_38 = 0;
+  local_3c = 0;
+  local_1c = 0;
+  local_20 = 0;
+  local_28 = 0;
+  local_8 = 0;
+  local_c = 0;
+  local_10 = 0;
+  if (_DAT_005cd22c < DAT_0063d588) {
+    local_48 = (DAT_0063d588 - _DAT_005cd22c) * _DAT_005cc564 + _DAT_005cd228;
+  }
+  FUN_004c51a0(&local_40,&local_4c,0);
+  FUN_004c1480(DAT_0063d580,&local_40,0);
+  local_58 = local_58 * _DAT_005cd118;
+  local_54 = local_54 * _DAT_005cd118;
+  local_50 = local_50 * _DAT_005cd118;
+  FUN_004c13e0(DAT_0063d580,&local_58,1);
+  DAT_0063d584 = DAT_0063d584 + 1;
+  DAT_0063d588 = DAT_0063d588 + _DAT_007f100c;
+  return;
+}
+
+
+
+// FUN_0041db80 @ 0x0041db80  size=10  (MASHED.exe)
+// undefined FUN_0041db80(void)
+// callees: (none)
+// callers: FUN_0040dfc0@0x0040dfc0
+// strings: (none)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C2 2026-05-11] No parameters, no return value. */
+
+void FUN_0041db80(void)
+
+{
+  if (DAT_0063d588 < _DAT_005cc35c) {
+    (**(code **)(DAT_0063d55c + 0x48))(DAT_0063d55c);
+    (**(code **)(iRam0063d570 + 0x48))(iRam0063d570);
+  }
+  if (_DAT_005cd238 <= DAT_0063d588) {
+    if (_DAT_005cd234 <= DAT_0063d588) {
+      if (_DAT_005cd230 <= DAT_0063d588) {
+        if (DAT_0063d588 < _DAT_005ccdf4) {
+          (**(code **)(DAT_0063d560 + 0x48))(DAT_0063d560);
+          (**(code **)(iRam0063d564 + 0x48))(iRam0063d564);
+          (**(code **)(iRam0063d568 + 0x48))(iRam0063d568);
+        }
+      }
+      else {
+        (**(code **)(DAT_0063d560 + 0x48))(DAT_0063d560);
+        (**(code **)(iRam0063d564 + 0x48))(iRam0063d564);
+      }
+    }
+    else {
+      (**(code **)(DAT_0063d560 + 0x48))(DAT_0063d560);
+    }
+    if ((_DAT_005ccdf4 <= DAT_0063d588) && (DAT_0063d588 < _DAT_005cc35c)) {
+      (**(code **)(iRam0063d56c + 0x48))(iRam0063d56c);
+    }
+  }
+  return;
+}
+
+
+
+// FUN_0041bec0 @ 0x0041bec0  size=87  (MASHED.exe)
+// undefined FUN_0041bec0(void)
+// callees: FUN_0041b690@0x0041b690, FUN_0042a5d0@0x0042a5d0, FUN_004c5c80@0x004c5c80
+// callers: FUN_00402750@0x00402750
+// strings (2):
+//   0x005cd1bc: team1panel
+//   0x005cd1c8: team0panel
+
+/* [C1 2026-05-08] Builds 2-entry string array on stack: {"team0panel", "team1panel"}. */
+
+void FUN_0041bec0(void)
+
+{
+  undefined *puVar1;
+  int iVar2;
+  char *local_8 [2];
+  
+  local_8[0] = "team0panel";
+  local_8[1] = "team1panel";
+  FUN_004c5c80(0);
+  iVar2 = 0;
+  puVar1 = &DAT_0063cab8;
+  do {
+    FUN_0042a5d0(local_8[iVar2],0,0);
+    FUN_0041b690();
+    *(int *)(puVar1 + 0x164) = iVar2;
+    puVar1 = puVar1 + 0x16c;
+    iVar2 = iVar2 + 1;
+  } while ((int)puVar1 < 0x63cd90);
+  return;
+}
+
+
+
+// FUN_0041bf20 @ 0x0041bf20  size=226  (MASHED.exe)
+// undefined FUN_0041bf20(void)
+// callees: FUN_0041b720@0x0041b720, FUN_004b6520@0x004b6520
+// callers: FUN_004111c0@0x004111c0
+// strings: (none)
+
+/* [C1 2026-06-01] Zero-inits a 2-record table at `&DAT_0063cab8` (stride 0x16c), assigns up to 4
+   per-player entries, then… */
+
+void FUN_0041bf20(void)
+
+{
+  int iVar1;
+  undefined *puVar2;
+  
+  puVar2 = &DAT_0063cab8;
+  do {
+    FUN_004b6520(puVar2,0x10);
+    puVar2 = puVar2 + 0x16c;
+  } while ((int)puVar2 < 0x63cd90);
+  if ((DAT_007f1a14 != -1) && (DAT_007f1a18 != -1)) {
+    iVar1 = DAT_007f1a18 * 0x16c;
+    *(undefined4 *)(&DAT_0063cab8 + *(int *)(&DAT_0063cac4 + iVar1) * 4 + iVar1) = 0;
+    *(int *)(&DAT_0063cac4 + iVar1) = *(int *)(&DAT_0063cac4 + iVar1) + 1;
+  }
+  if ((DAT_007f1a24 != -1) && (DAT_007f1a28 != -1)) {
+    iVar1 = DAT_007f1a28 * 0x16c;
+    *(undefined4 *)(&DAT_0063cab8 + *(int *)(&DAT_0063cac4 + iVar1) * 4 + iVar1) = 1;
+    *(int *)(&DAT_0063cac4 + iVar1) = *(int *)(&DAT_0063cac4 + iVar1) + 1;
+  }
+  if ((DAT_007f1a34 != -1) && (DAT_007f1a38 != -1)) {
+    iVar1 = DAT_007f1a38 * 0x16c;
+    *(undefined4 *)(&DAT_0063cab8 + *(int *)(&DAT_0063cac4 + iVar1) * 4 + iVar1) = 2;
+    *(int *)(&DAT_0063cac4 + iVar1) = *(int *)(&DAT_0063cac4 + iVar1) + 1;
+  }
+  if ((DAT_007f1a44 != -1) && (DAT_007f1a48 != -1)) {
+    iVar1 = DAT_007f1a48 * 0x16c;
+    *(undefined4 *)(&DAT_0063cab8 + *(int *)(&DAT_0063cac4 + iVar1) * 4 + iVar1) = 3;
+    *(int *)(&DAT_0063cac4 + iVar1) = *(int *)(&DAT_0063cac4 + iVar1) + 1;
+  }
+  do {
+    iVar1 = FUN_0041b720();
+  } while (iVar1 + 0x16c < 0x63cd90);
+  return;
+}
+
+
+
+// FUN_0041c010 @ 0x0041c010  size=117  (MASHED.exe)
+// undefined FUN_0041c010(void)
+// callees: FUN_0041b770@0x0041b770
+// callers: FUN_004111c0@0x004111c0
+// strings: (none)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C1 2026-06-01] Copies a 24-byte (two float-triple) constant block into `&DAT_005f334c`, then
+   sweeps the 0x0063cab8… */
+
+void FUN_0041c010(void)
+
+{
+  int iVar1;
+  undefined4 *puVar2;
+  undefined *puVar3;
+  undefined4 *puVar4;
+  undefined4 local_18 [6];
+  
+  local_18[0] = 0x3ee66666;
+  local_18[1] = 0x3ea8f5c3;
+  local_18[2] = 0x3f800000;
+  local_18[3] = 0xbee66666;
+  local_18[4] = 0x3ea8f5c3;
+  local_18[5] = 0x3f800000;
+  puVar2 = local_18;
+  puVar4 = &DAT_005f334c;
+  for (iVar1 = 6; iVar1 != 0; iVar1 = iVar1 + -1) {
+    *puVar4 = *puVar2;
+    puVar2 = puVar2 + 1;
+    puVar4 = puVar4 + 1;
+  }
+  puVar3 = &DAT_0063cab8;
+  do {
+    FUN_0041b770();
+    puVar3 = puVar3 + 0x16c;
+  } while ((int)puVar3 < 0x63cd90);
+  _DAT_0063cda0 = 0;
+  return;
+}
+
+
+
+// FUN_0041c090 @ 0x0041c090  size=46  (MASHED.exe)
+// undefined FUN_0041c090(void)
+// callees: FUN_0040b930@0x0040b930, FUN_0041b7a0@0x0041b7a0
+// callers: FUN_0040fc00@0x0040fc00
+// strings: (none)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C1 2026-06-01] Ghost-branch counterpart to FUN_0041c010 (simpler). */
+
+void FUN_0041c090(void)
+
+{
+  undefined *puVar1;
+  
+  FUN_0040b930(&DAT_0063cd90);
+  puVar1 = &DAT_0063cab8;
+  do {
+    FUN_0041b7a0();
+    puVar1 = puVar1 + 0x16c;
+  } while ((int)puVar1 < 0x63cd90);
+  _DAT_0063cda0 = _DAT_0063cda0 + 1;
+  return;
+}
+
+
+
+// FUN_0041c0e0 @ 0x0041c0e0  size=29  (MASHED.exe)
+// undefined FUN_0041c0e0(void)
+// callees: FUN_0041beb0@0x0041beb0
+// callers: FUN_00402a40@0x00402a40
+// strings: (none)
+
+/* [C1 2026-05-08] Iterates an array starting at DAT_0063cab8, stride 0x16c bytes, while ptr <
+   0x0063cd90. */
+
+void FUN_0041c0e0(void)
+
+{
+  undefined *puVar1;
+  
+  puVar1 = &DAT_0063cab8;
+  do {
+    FUN_0041beb0();
+    puVar1 = puVar1 + 0x16c;
+  } while ((int)puVar1 < 0x63cd90);
+  return;
+}
+
+

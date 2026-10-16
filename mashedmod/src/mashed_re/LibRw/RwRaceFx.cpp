@@ -717,7 +717,7 @@ void RaceFx_RenderHud(int width, int height) {
         panels = in.team_play != 0;
         break;
     }
-    // [UNCERTAIN U-9699] the non-team panels FUN_0041b630 @ 0x0041b630 -> FUN_0041b340 and the
+    // [UNCERTAIN U-9700] the non-team panels FUN_0041b630 @ 0x0041b630 -> FUN_0041b340 and the
     // per-mode HUDs above are not ported: nothing is drawn where the original draws them.
     const bool lights = in.round_type != 0xb;
     UpdatePanels(in);
