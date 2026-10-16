@@ -6385,9 +6385,31 @@ void TrackRenderer::RenderCarsRelit(IDirect3DDevice9* dev,
 // chain the default, at which point vel[] becomes real and the slip term starts
 // carrying signal — these thresholds must be re-measured then, not assumed to carry
 // over. The `slip` branch below is retained precisely so it takes over when that lands.
-void TrackRenderer::EmitCarFx(int slot, const float pos[3], const float vel[3],
-                              float speed, float yaw, float dt) {
+void TrackRenderer::EmitCarFx(int slot, const float pos[3], const float vel_in[3],
+                              float speed_in, float yaw, float dt) {
     if (slot < 0 || slot > 3 || dt <= 0.f) return;
+    // UNITS (2026-10-16, ROADMAP follow-up #2 re-measure, verify/fe_residuals_20261016/fx/): under the default
+    // ported physics, `vel_in`/`speed_in` are the chain's INTERNAL units (player 0..3243, AI cur_speed ~3200 on
+    // Training, R 27.5) while R and `pos` are world units; position advances by io.drive_delta, which carries
+    // the internal->world factor (_DAT_005cc948 * _DAT_005cea80; measured |dpos|/dt / sp = 0.00257 over 3449
+    // moving frames). Every R-scaled threshold below therefore fired on nearly every moving frame and the
+    // 1200-slot pool peaked at 1200. The FX now reads the velocity from the position step itself, which is in
+    // world units for every car and needs no constant. MASHED_FX_RAWSPEED=1 keeps the old inputs for A/B.
+    static const bool s_raw = (std::getenv("MASHED_FX_RAWSPEED") != nullptr);
+    float wvel[3] = { vel_in[0], vel_in[1], vel_in[2] };
+    float speed = speed_in;
+    if (!s_raw) {
+        const float Rg = track_radius_ > 1.f ? track_radius_ : radius_;
+        bool ok = fx_have_prev_[slot];
+        float d[3] = { pos[0] - fx_prev_pos_[slot][0], 0.f, pos[2] - fx_prev_pos_[slot][2] };
+        // a teleport (respawn, reset) is not motion: skip the step and re-seed
+        if (ok && (d[0] * d[0] + d[2] * d[2]) > (Rg * 0.5f) * (Rg * 0.5f)) ok = false;
+        fx_prev_pos_[slot][0] = pos[0]; fx_prev_pos_[slot][1] = pos[1]; fx_prev_pos_[slot][2] = pos[2];
+        fx_have_prev_[slot] = true;
+        wvel[0] = ok ? d[0] / dt : 0.f; wvel[1] = 0.f; wvel[2] = ok ? d[2] / dt : 0.f;
+        speed = wvel[0] * std::cos(yaw) + wvel[2] * std::sin(yaw);   // signed forward component, as car_speed_ was
+    }
+    const float* vel = wvel;
     const float R  = track_radius_ > 1.f ? track_radius_ : radius_;
     const float fx = std::cos(yaw), fz = std::sin(yaw);
     const float vf = vel[0] * fx + vel[2] * fz;             // forward component
