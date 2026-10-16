@@ -1019,8 +1019,12 @@ void RaceFx_DrawLensBig(void* rw_camera, int mode) {
     if (mode == 0) {
         // FUN_004492b0 @ 0x004492b0: RS 0xc 0, blend 5 / 6, RS 6 (Z test) 0, RS 8 (ZWRITE) 0, then
         // the sky clump +0x100f0 and SkySecondaryDispatch; cull NONE and fog off as recorded
-        rw::SetRenderState(rw::ZTESTENABLE, 0);
+        // librw keeps ZENABLE on (ZFUNC ALWAYS) when the Z test goes off while ZWRITE is on, which
+        // is the state the sky copies leave; turning the test off with ZWRITE already off gives
+        // the device ZENABLE 0, what the original records here (d3ddevice.cpp setDepthTest)
+        rw::SetRenderState(rw::ZTESTENABLE, 1);
         rw::SetRenderState(rw::ZWRITEENABLE, 0);
+        rw::SetRenderState(rw::ZTESTENABLE, 0);
         rw::SetRenderState(rw::CULLMODE, rw::CULLNONE);
         rw::SetRenderState(rw::FOGENABLE, 0);
     } else {
@@ -1031,6 +1035,12 @@ void RaceFx_DrawLensBig(void* rw_camera, int mode) {
         rw::SetRenderState(rw::CULLMODE, rw::CULLBACK);
     }
     DrawBills(g_lens_big, cam, SfxTexture("lensflare-fs8"));
+    if (mode == 0) {
+        // back to the sky pass's device state (ZENABLE on, ZFUNC ALWAYS, ZWRITE off): ZWRITE on with
+        // the test off re-enables ZENABLE / ALWAYS, ZWRITE off then leaves it
+        rw::SetRenderState(rw::ZWRITEENABLE, 1);
+        rw::SetRenderState(rw::ZWRITEENABLE, 0);
+    }
     rw::SetRenderState(rw::ZTESTENABLE, sv_zt);
     rw::SetRenderState(rw::ZWRITEENABLE, mode == 0 ? sv_zw : 1);
     rw::SetRenderState(rw::CULLMODE, sv_cull);
@@ -1674,10 +1684,7 @@ void RenderNonTeam() {
 }  // namespace
 
 bool RaceFx_HudEnabled() { static const bool on = !EnvOff("MASHED_HUD3D"); return on; }
-bool RaceFx_HudNonTeamEnabled() {
-    static const bool on = [] { const char* e = std::getenv("MASHED_HUD_NONTEAM"); return e && e[0] == '1'; }();
-    return on;
-}
+bool RaceFx_HudNonTeamEnabled() { static const bool on = !EnvOff("MASHED_HUD_NONTEAM"); return on; }
 
 void RaceFx_SetHud(const HudInputs& in) { g_hud = in; g_hud_set = true; }
 

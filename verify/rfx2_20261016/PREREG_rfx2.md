@@ -101,3 +101,16 @@ P3 No new row keys outside the ported textures.
    7/7 GREEN, Headlight 5/6 (City 801 = item 2), lensflare-fs8 6/6. flatshad and VehicleIcons are not
    ported (their inputs: the particle simulation, and the per-car `DAT_008989b0` with the icon fade
    history `DAT_0063bc60`, have no standalone or trace source).
+
+## Amendment 2 (2026-10-16): a Team-Play-off reference for the non-team panels (U-9704)
+
+The d1r1 reference runs Quick Battle with Team Play on, so it cannot adjudicate `FUN_0041b630`. A second
+original-side reference was captured with the d1r1 recipe plus one input poke: `camera_probe.py --frame
+--early --shots-race 30,70,105 --drawrec --carframes --track 0 --teamplay 0 --hud-out` (Team Play word
+`DAT_0067ea64` written at the course-load entry `FUN_0040d440`, the same place `--track` writes its
+index). TRAINING, GO row 810, shots fired at rows 840 / 880 / 915 (`log/rfx2/nt_training`). The HUD
+inputs over GO+30..GO+105 are one set (`hud_inputs_nt.txt`: team play 0, round type 10, mode 0, four
+players, scores 6). Arms: `run_nt.py <exe> <arm>` (the d1r1 replay of that trace on the three rows,
+HUD replay from `hud_inputs_nt.txt`, cites `cites_rfx2.json`). Pass rule: R1 for the C08 textures on the
+three frames; R2 against the same build with `MASHED_HUD_NONTEAM` off. A non-team pass makes the panels
+default ON with `MASHED_HUD_NONTEAM=0` as the opt-out (section 3's default rule).

@@ -378,6 +378,11 @@ rpc.exports={
   settrack:function(v){
     Interceptor.attach(abs(0x0040d440), { onEnter(){ abs(0x0063ba7c).writeS32(v); } });
     return 1; },
+  // [rfx2] --teamplay N: the Team Play word DAT_0067ea64 (FUN_0042f500) written at the same course-load
+  // entry, so the race's HUD set-up (FUN_0041b4d0, race state 1) reads N. An INPUT poke like --colours.
+  setteamplay:function(v){
+    Interceptor.attach(abs(0x0040d440), { onEnter(){ abs(0x0067ea64).writeS32(v); } });
+    return 1; },
   tracelen:function(){ return trace.length; },
   setmatfx:function(v){ matfxOn=!!v; return 1; },
   getmatfx:function(){ return JSON.stringify(matfxSnaps); },
@@ -765,6 +770,9 @@ def main():
     ap.add_argument("--hud-out", default="",
                     help="[rfx] with --early: sample the in-race HUD inputs (hudglobals) 4x/s "
                          "into this JSON, each sample tagged with the trace row count")
+    ap.add_argument("--teamplay", type=int, default=-1,
+                    help="[rfx2] write this value to the Team Play word 0x0067ea64 at the course load "
+                         "(FUN_0040d440 entry), e.g. 0 for the non-team HUD panels; -1 = leave it")
     ap.add_argument("--fx-out", default="",
                     help="[rfx2] with --early: sample the FX witness (fxstate: object shadows, "
                          "course light, RWObjShad batch) every 0.5 s into this JSON")
@@ -839,6 +847,9 @@ def main():
     E.setsel(1); time.sleep(0.3)        # Quick Battle
     confirm_to(4, 4)
     confirm_to(5, 4)
+    if args.teamplay >= 0:
+        E.setteamplay(args.teamplay)
+        print(f"team play written at the course load: {args.teamplay}")
     if args.track >= 0:
         E.settrack(args.track)
         print(f"track index written: {args.track}")

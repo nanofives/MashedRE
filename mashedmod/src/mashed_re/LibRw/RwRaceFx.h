@@ -132,8 +132,8 @@ struct HudInputs {
     int   alive[4]   = {1, 1, 1, 1};       // FUN_0046c7b0(i) (vehicle record +0x4)
     bool  world_up   = true;   // FUN_00426ba0 (DAT_0066d704)
 };
-// [rfx2] MASHED_HUD_NONTEAM=1 draws the non-team panels FUN_0041b630 (default OFF: no original
-// capture with Team Play off exists to adjudicate them, U-9704).
+// [rfx2] the non-team panels FUN_0041b630 (Team Play off), default ON: GREEN 3/3 on the Team-Play-off
+// reference log/rfx2/nt_training (PREREG_rfx2.md amendment 2); MASHED_HUD_NONTEAM=0 turns them off.
 bool RaceFx_HudNonTeamEnabled();
 void RaceFx_SetHud(const HudInputs& in);
 // Draw the HUD pass. Called by RaceSubmit_Render after the race camera's endUpdate, with the
