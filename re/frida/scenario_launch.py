@@ -985,13 +985,35 @@ function lbSample(site){
                   r.add(0x198).readS32(), r.add(0x198 + 0xc4).readS32(),
                   r.add(0x198 + 0x188).readS32(), r.add(0x198 + 0x24c).readS32(),
                   r.add(0x1a0).readS32(), r.add(0x1a0 + 0xc4).readS32(),
-                  r.add(0x1a0 + 0x188).readS32(), r.add(0x1a0 + 0x24c).readS32()]);
+                  r.add(0x1a0 + 0x188).readS32(), r.add(0x1a0 + 0x24c).readS32(),
+                  // [d3b 2026-10-16] appended (older reducers keep their indices): the
+                  // double-buffer indices +0x9a8/+0x9ac, the at-row of both body matrices
+                  // (+0x928 + 0x20 and +0x968 + 0x20), the angular-velocity accumulator
+                  // +0x144/+0x148/+0x14c (U-9193), and the wheel-0 steer angle +0x1a8.
+                  r.add(0x9a8).readS32(), r.add(0x9ac).readS32(),
+                  r.add(0x948).readFloat(), r.add(0x94c).readFloat(), r.add(0x950).readFloat(),
+                  r.add(0x988).readFloat(), r.add(0x98c).readFloat(), r.add(0x990).readFloat(),
+                  r.add(0x144).readFloat(), r.add(0x148).readFloat(), r.add(0x14c).readFloat(),
+                  r.add(0x1a8).readFloat()]);
   } catch(e){ if (!LB.err) LB.err = 'sample' + site + ' ' + e; }
 }
-function latBracketArm(recBaseHex, car){
+function latBracketArm(recBaseHex, car, solver){
   if (LB.armed) return 'already armed';
   try {
     LB_REC = ptr(parseInt(recBaseHex, 16) + car * 0xd04);
+    // [d3b 2026-10-16] --lat-bracket-solver: site 3 = entry of the wheel-contact solver
+    // 0x0046f6c0, called at 0x00470ae0 right after FUN_0046e9e0 with ESI = EDI = the record
+    // (0x00470ade mov edi, esi). Filtered on ESI so only the chosen car's calls are kept.
+    // Two calls per car per frame (one per substep): ~8/frame unfiltered, inside the
+    // hot-path budget with the three sites above.
+    if (solver) {
+      Interceptor.attach(ga(0x0046f6c0), { onEnter(){
+        try {
+          if (!this.context.esi.equals(LB_REC)) return;
+          LB.nSol = (LB.nSol || 0) + 1; lbSample(3);
+        } catch(e){ if (!LB.err) LB.err = 'solEnter ' + e; }
+      }});
+    }
     Interceptor.attach(ga(LB_A6A), { onEnter(){
       try {
         // self=ESI; ignore any other vehicle's call so the series stays car-pure.
@@ -1019,6 +1041,57 @@ function latBracketArm(recBaseHex, car){
   } catch(e){ return 'ERR ' + e; }
 }
 function latBracketDrain(){ const r = LB.rows; LB.rows = []; return r; }
+// --- WATCH-WRITE probe (d3b 2026-10-16) -------------------------------------
+// --watch-write <hexoff>[,<hexoff>]: hardware WRITE watchpoints (debug registers, slots 0/1) on the
+// chosen car's record at base + car*0xd04 + off, armed on every thread at the statediff arm. Each hit
+// logs [LB_SEQ (shared with lat-bracket, for ordering), slot, pc rva, three stack return addresses in
+// the image (rva), the dword after the write as float]. Data breakpoints trap AFTER the writing
+// instruction, so the logged pc is the instruction after the store. No Interceptor, no code patch.
+const WW = { armed:false, rows:[], n:0, err:null, addrs:[] };
+function wwRva(x){ return '0x' + ((x >>> 0) >>> 0).toString(16); }
+function watchWriteArm(recBaseHex, car, offsCsv){
+  if (WW.armed) return 'already armed';
+  try {
+    const base = parseInt(recBaseHex, 16) + car * 0xd04;
+    const offs = offsCsv.split(',').map(s => parseInt(s, 16)).slice(0, 2);
+    WW.addrs = offs.map(o => ptr(base + o));
+    Process.setExceptionHandler(function(d){
+      if (d.type !== 'single-step' && d.type !== 'breakpoint') return false;
+      try {
+        const c = d.context;
+        const bt = [];
+        for (let k = 0; k < 64 && bt.length < 3; k++) {
+          const x = c.esp.add(k * 4).readU32() >>> 0;
+          if (x >= 0x401000 && x < 0x5c0000) bt.push(wwRva(x));
+        }
+        const vals = WW.addrs.map(a => a.readFloat());
+        WW.n++;
+        // The heuristic scan above returns stale stack dwords too. For writers other than the two
+        // known substep ones (FUN_0046e9e0 row write 0x0046ef4e, its ortho 0x004c4a11), also log
+        // the ACCURATE backtrace (dbghelp stack walk) as '|'-joined rvas.
+        const pcr = (c.pc.toUInt32() >>> 0);
+        let acc = '';
+        if (pcr !== 0x0046ef4e && pcr !== 0x004c4a11) {
+          try { acc = Thread.backtrace(c, Backtracer.ACCURATE).slice(0, 14).map(p => wwRva(p.toUInt32())).join('|'); }
+          catch(e){ acc = 'bt-err'; }
+        }
+        if (WW.rows.length < 200000)
+          WW.rows.push([LB_SEQ, wwRva(c.pc.toUInt32()), bt[0] || '', bt[1] || '', bt[2] || ''].concat(vals).concat([acc]));
+      } catch(e){ if (!WW.err) WW.err = 'hit ' + e; }
+      return true;
+    });
+    let n = 0;
+    Process.enumerateThreads().forEach(function(t){
+      for (let k = 0; k < WW.addrs.length; k++) {
+        try { t.setHardwareWatchpoint(k, WW.addrs[k], 4, 'w'); if (k === 0) n++; }
+        catch(e){ if (!WW.err) WW.err = 'arm tid ' + t.id + ' ' + e.message; }
+      }
+    });
+    WW.armed = true;
+    return 'watch-write armed on ' + n + ' threads: ' + WW.addrs.map(a => a.toString()).join(',');
+  } catch(e){ return 'ERR ' + e; }
+}
+function watchWriteDrain(){ const r = WW.rows; WW.rows = []; return r; }
 // ---------------------------------------------------------------------------
 
 // --- AXIS probe (U-9175, D2 attempt 16) ------------------------------------
@@ -3280,10 +3353,13 @@ rpc.exports = {
   },
   aiStepArm: function(withLocals){ return aiStepArm(withLocals); },
   aiStepDrain: function(){ return aiStepDrain(); },
-  latBracketArm: function(recBaseHex, car){ return latBracketArm(recBaseHex, car); },
+  latBracketArm: function(recBaseHex, car, solver){ return latBracketArm(recBaseHex, car, solver); },
   latBracketDrain: function(){ return latBracketDrain(); },
+  watchWriteArm: function(recBaseHex, car, offs){ return watchWriteArm(recBaseHex, car, offs); },
+  watchWriteDrain: function(){ return watchWriteDrain(); },
+  watchWriteStats: function(){ return JSON.stringify({armed:WW.armed, n:WW.n, pending:WW.rows.length, err:WW.err}); },
   latBracketStats: function(){ return JSON.stringify({armed:LB.armed, a6a:LB.nA6a, a6b:LB.nA6b,
-                                                      sub:LB.nSub, pending:LB.rows.length,
+                                                      sub:LB.nSub, sol:(LB.nSol || 0), pending:LB.rows.length,
                                                       skipped:LB.skipped, err:LB.err}); },
   axisProbeArm: function(recBaseHex, car){ return axisProbeArm(recBaseHex, car); },
   axisProbeDrain: function(){ return axisProbeDrain(); },
@@ -3856,6 +3932,13 @@ def main():
                          "must STILL pass (no-regression) — that is how the load-dispatcher hooks "
                          "get their booted-race verification. Exits shortly after the assert "
                          "(no long hold needed); combine with --hold 0.")
+    ap.add_argument("--watch-write", default="",
+                    help="[d3b] comma list (max 2) of hex record offsets; hardware WRITE watchpoints on the "
+                         "--statediff-car record at base+car*0xd04+off, armed with the statediff arm. Writes "
+                         "<statediff-out>.watch.csv (lat-bracket seq, pc rva, 3 return rvas, watched floats).")
+    ap.add_argument("--lat-bracket-solver", action="store_true",
+                    help="[d3b] with --lat-bracket: also sample at the wheel-contact solver entry 0x0046f6c0 "
+                         "(site 3, ESI-filtered), right after FUN_0046e9e0 in each substep.")
     ap.add_argument("--lat-bracket", action="store_true",
                     help="[U-9156 / D2 section 21.3] sample the player record's velocity, "
                          "forward axis and angular velocity at A6a ENTRY (0x00467650) and "
@@ -4157,7 +4240,9 @@ def main():
             if args.statediff_aistep:
                 print("  [statediff]", E.ai_step_arm(os.environ.get("MASHED_AISTEP_LOCALS", "1") != "0"))
             if args.lat_bracket:
-                print("  [statediff]", E.lat_bracket_arm("0x008815a0", args.statediff_car))
+                print("  [statediff]", E.lat_bracket_arm("0x008815a0", args.statediff_car, bool(args.lat_bracket_solver)))
+            if args.watch_write:
+                print("  [statediff]", E.watch_write_arm("0x008815a0", args.statediff_car, args.watch_write))
             if args.slide_probe:
                 print("  [statediff]", E.slide_probe_arm("0x008815a0", args.statediff_car,
                                                           args.slide_probe_limit))
@@ -4559,6 +4644,18 @@ def main():
                 # discipline as the .msd above: a ctrl trace whose bytes never move
                 # tells you the AI never commanded anything, which is a capture
                 # failure, not a measurement — so it is reported, not hidden.
+                if args.watch_write:
+                    try: print("  [statediff] watch-write agent:", E.watch_write_stats())
+                    except Exception as _e: print("  [statediff] watch-write stats failed:", _e)
+                    ww_rows = []
+                    try: ww_rows = E.watch_write_drain()
+                    except Exception as _e: print("  [statediff] watch-write drain failed:", _e)
+                    wwp = outp.with_suffix(outp.suffix + ".watch.csv")
+                    with open(wwp, "w", newline="") as f:
+                        f.write("seq,pc,ret0,ret1,ret2," + ",".join("w%d" % k for k in range(len(args.watch_write.split(",")[:2]))) + ",bt" + chr(10))
+                        for r in ww_rows:
+                            f.write(",".join(repr(x) if isinstance(x, float) else str(x) for x in r) + chr(10))
+                    print(f"  [statediff] watch-write {len(ww_rows)} hits -> {wwp}")
                 if args.lat_bracket:
                     # [U-9156 / D2 section 21.3] Report the counters BEFORE the rows, and
                     # report them even when the drain is empty: memory
@@ -4574,7 +4671,7 @@ def main():
                     with open(lbp, "w", newline="") as f:
                         f.write("seq,site,velx,vely,velz,fwdx,fwdy,fwdz,speed,gnd,avx,avy,avz,"
                                 "i1f0,id00,i2c,i34,ib20,i9ec,i9f0,st0,st1,st2,st3,"
-                                "pm0,pm1,pm2,pm3" + chr(10))
+                                "pm0,pm1,pm2,pm3,i9a8,i9ac,at0x,at0y,at0z,at1x,at1y,at1z,a144,a148,a14c,s1a8" + chr(10))
                         for r in lb_rows:
                             f.write(",".join(repr(x) if isinstance(x, float) else str(x)
                                              for x in r) + chr(10))
@@ -4582,7 +4679,7 @@ def main():
                     n1 = sum(1 for r in lb_rows if r[1] == 1)
                     n2 = sum(1 for r in lb_rows if r[1] == 2)
                     print(f"  [statediff] lat-bracket {len(lb_rows)} samples "
-                          f"(A6a {n0}, A6b {n2}, substep {n1}) -> {lbp}")
+                          f"(A6a {n0}, A6b {n2}, substep {n1}, solver {sum(1 for r in lb_rows if r[1] == 3)}) -> {lbp}")
                 if args.axis_probe:
                     # Counters + known-answer self-check BEFORE the rows, CSV written even
                     # when empty: memory `absent-log-proves-nothing-run-a-control`.

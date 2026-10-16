@@ -20,6 +20,8 @@ void PathProg_RacePctTick();
 // [PATHPROG split] MASHED_PP_PUBLISH=<mask> (default 0): 0x1 lap counter, 0x2 node progress, 0x4 the rest of the row are
 // also published from the shadow row; 0x8 runs the tick in UpdateRace (before the AI tick) instead of at the end of UpdateCar.
 unsigned PathProg_PublishMask();
+// [d3b] car v's node progress +0xc8 as FUN_00408a50 would read it (shadow row under arm R, else the real row).
+float PathProg_NodeProgress(int v);
 
 // G-P2-REPLAY: MASHED_PATHPROG_REPLAY=<pathprog.csv> replays the original's recorded calls
 // through the port step and writes a report to MASHED_PATHPROG_REPLAY_OUT. Called once after

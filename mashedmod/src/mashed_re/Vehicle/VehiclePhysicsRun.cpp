@@ -720,6 +720,15 @@ int VehiclePhysics_RecordI32(int slot, int off) {
     return I(rec(slot), static_cast<std::size_t>(off));
 }
 
+// [d3b 2026-10-16] The live body basis of `slot` (the port's stand-in for the +0x928/+0x968
+// double buffer at +0x9a8, see g_bodyBasis), for the steer-0 heading assist FUN_0046c7d0
+// (Race/HeadingAssist.cpp), which rotates that matrix between the AI tick and the physics.
+// nullptr before init or before the slot's basis is seeded.
+float* VehiclePhysics_BodyBasis(int slot) {
+    if (!g_inited || slot < 0 || slot >= 16 || !g_bodyBasisOk[slot]) return nullptr;
+    return g_bodyBasis[slot];
+}
+
 void VehiclePhysics_StepPlayer(float dt, PlayerCarIO& io) {
     VehiclePhysics_StepCar(0, dt, io);
 }
