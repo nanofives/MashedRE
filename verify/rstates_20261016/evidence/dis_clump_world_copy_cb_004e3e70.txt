@@ -1,0 +1,67 @@
+# world plugin registration (0x004e3470..0x004e34eb): atomic ext -> DAT_007d7170 (copy 0x004d7ff0 no-op), clump ext -> DAT_007d7174 (ctor 0x004e3e40, copy 0x004e3e70)
+0x004e3470  56                        push esi
+0x004e3471  68 90 37 4e 00            push 0x4e3790
+0x004e3476  68 a0 36 4e 00            push 0x4e36a0
+0x004e347b  68 09 05 00 00            push 0x509
+0x004e3480  6a 0c                     push 0xc
+0x004e3482  e8 09 f9 fd ff            call 0x4c2d90
+0x004e3487  68 30 3b 4e 00            push 0x4e3b30
+0x004e348c  68 80 3b 4e 00            push 0x4e3b80
+0x004e3491  68 00 38 4e 00            push 0x4e3800
+0x004e3496  68 09 05 00 00            push 0x509
+0x004e349b  6a 1c                     push 0x1c
+0x004e349d  8b f0                     mov esi, eax
+0x004e349f  e8 1c e8 fd ff            call 0x4c1cc0
+0x004e34a4  68 f0 7f 4d 00            push 0x4d7ff0
+0x004e34a9  68 c0 3d 4e 00            push 0x4e3dc0
+0x004e34ae  68 d0 3b 4e 00            push 0x4e3bd0
+0x004e34b3  68 09 05 00 00            push 0x509
+0x004e34b8  6a 08                     push 8
+0x004e34ba  a3 6c 71 7d 00            mov dword ptr [0x7d716c], eax
+0x004e34bf  0b f0                     or esi, eax
+0x004e34c1  e8 7a 48 00 00            call 0x4e7d40
+0x004e34c6  68 70 3e 4e 00            push 0x4e3e70
+0x004e34cb  68 f0 7f 4d 00            push 0x4d7ff0
+0x004e34d0  68 40 3e 4e 00            push 0x4e3e40
+0x004e34d5  68 09 05 00 00            push 0x509
+0x004e34da  6a 08                     push 8
+0x004e34dc  a3 70 71 7d 00            mov dword ptr [0x7d7170], eax
+0x004e34e1  0b f0                     or esi, eax
+0x004e34e3  e8 88 48 00 00            call 0x4e7d70
+0x004e34e8  83 c4 4c                  add esp, 0x4c
+# clump ctor 0x004e3e40 and copy callback 0x004e3e70 (calls 0x004e4450 = world add at 0x004e3e88)
+0x004e3e40  8b 44 24 04               mov eax, dword ptr [esp + 4]
+0x004e3e44  8b 0d 74 71 7d 00         mov ecx, dword ptr [0x7d7174]
+0x004e3e4a  03 c8                     add ecx, eax
+0x004e3e4c  56                        push esi
+0x004e3e4d  c7 01 00 00 00 00         mov dword ptr [ecx], 0
+0x004e3e53  8b 15 f8 3f 7d 00         mov edx, dword ptr [0x7d3ff8]
+0x004e3e59  8b 35 64 71 7d 00         mov esi, dword ptr [0x7d7164]
+0x004e3e5f  8b 54 16 08               mov edx, dword ptr [esi + edx + 8]
+0x004e3e63  5e                        pop esi
+0x004e3e64  89 51 04                  mov dword ptr [ecx + 4], edx
+0x004e3e67  c3                        ret 
+0x004e3e68  90                        nop 
+0x004e3e69  90                        nop 
+0x004e3e6a  90                        nop 
+0x004e3e6b  90                        nop 
+0x004e3e6c  90                        nop 
+0x004e3e6d  90                        nop 
+0x004e3e6e  90                        nop 
+0x004e3e6f  90                        nop 
+0x004e3e70  8b 44 24 08               mov eax, dword ptr [esp + 8]
+0x004e3e74  8b 0d 74 71 7d 00         mov ecx, dword ptr [0x7d7174]
+0x004e3e7a  8b 04 01                  mov eax, dword ptr [ecx + eax]
+0x004e3e7d  85 c0                     test eax, eax
+0x004e3e7f  74 13                     je 0x4e3e94
+0x004e3e81  56                        push esi
+0x004e3e82  8b 74 24 08               mov esi, dword ptr [esp + 8]
+0x004e3e86  56                        push esi
+0x004e3e87  50                        push eax
+0x004e3e88  e8 c3 05 00 00            call 0x4e4450
+0x004e3e8d  83 c4 08                  add esp, 8
+0x004e3e90  8b c6                     mov eax, esi
+0x004e3e92  5e                        pop esi
+0x004e3e93  c3                        ret 
+0x004e3e94  8b 44 24 04               mov eax, dword ptr [esp + 4]
+0x004e3e98  c3                        ret 
