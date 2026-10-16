@@ -6,7 +6,7 @@ usage: py -3.12 score_all.py d2 <suffix> <D2 arm> [...]       (arm = D2_W_1 -> D
 H1: >= 200 of the 400 post-trough frames >= 100 and median >= 900, per run."""
 import os, re, subprocess, sys
 W = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-OUT = os.path.join(W, r'verify\d2bsp_20261016')
+OUT = os.environ.get('D2B_OUT', os.path.join(W, r'verify\d2bsp_20261016'))
 M = r'C:\Users\maria\Desktop\Proyectos\Mashed'
 ORIG = os.path.join(M, r'verify\d2_reopen_20260929\orig_solo3.msd')
 PY = sys.executable

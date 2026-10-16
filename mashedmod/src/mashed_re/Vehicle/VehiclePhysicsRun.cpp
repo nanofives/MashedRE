@@ -1197,11 +1197,12 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     // Under fix L, A4 receives (float)local_24 = 50.0f as the original's does; without it the port
     // keeps frameMs = 50.0000038f (one ulp above). MASHED_D2CHUNK_FRAMEMS=1 (diagnostic) runs the loop
     // with frameMs kept for A4. Stated residual: the original interleaves all 16 cars per chunk, the
-    // port steps one car at a time; identical while remI <= 0x32. Default OFF (PREREG_d2bsp.md).
+    // port steps one car at a time; identical while remI <= 0x32. DEFAULT ON (PREREG_d2bsp.md
+    // amendment 3, RESULT_d2bsp.md), opt-out `MASHED_NO_D2CHUNK=1`; `MASHED_D2CHUNK` is still accepted
+    // and changes nothing.
     static const bool s_fixL = [] {
-        const char* e = std::getenv("MASHED_D2CHUNK");
         const char* n = std::getenv("MASHED_NO_D2CHUNK");
-        return e && e[0] == '1' && !(n && n[0] == '1');
+        return !(n && n[0] == '1');
     }();
     static const bool s_fixLFrameMs = (std::getenv("MASHED_D2CHUNK_FRAMEMS") != nullptr);
     bool a4Skip = false;

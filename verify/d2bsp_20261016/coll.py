@@ -5,7 +5,7 @@ usage: py -3.12 coll.py <arm> [<arm> ...]     (arm = H_W, reads H_W.step.csv and
 Prints '<arm>: <k> of <n> paired fields exceed their floor'."""
 import os, re, subprocess, sys
 W = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-OUT = os.path.join(W, r'verify\d2bsp_20261016')
+OUT = os.environ.get('D2B_OUT', os.path.join(W, r'verify\d2bsp_20261016'))
 SP = (r'C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed'
       r'\c82578f0-517f-437c-aaf3-0ccb31eed247\scratchpad')
 CUT = os.path.join(W, r'verify\d3_u9684_20261013\cut600.py')

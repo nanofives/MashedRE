@@ -12,11 +12,11 @@ Recipes are verify/d2posmodel_20261016/run_arms.py's; only the stacks, OUT, ROOT
 """
 import hashlib, os, shutil, subprocess, sys, time
 W = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-OUT = os.path.join(W, r'verify\d2bsp_20261016')
+OUT = os.environ.get('D2B_OUT', os.path.join(W, r'verify\d2bsp_20261016'))   # amendment 3: rb/ for the rebased arms
 SP = (r'C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed'
       r'\c82578f0-517f-437c-aaf3-0ccb31eed247\scratchpad')
 EXE_NEW = os.path.join(W, r'mashedmod\build\mashed_re.exe')
-EXE_BASE = os.path.join(SP, r'exe\base_9420dde2.exe')
+EXE_BASE = os.environ.get('D2B_EXE_BASE', os.path.join(SP, r'exe\base_9420dde2.exe'))
 ROOT = os.environ.get('D2B_ROOT', os.path.join(SP, 'root'))
 STACK = {'DEF': [], 'BASE': [],
          'W': ['MASHED_D2BSP'], 'WK0': ['MASHED_D2BSP', 'MASHED_D2BSP_KEY0'],
