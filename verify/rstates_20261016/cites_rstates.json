@@ -6,20 +6,20 @@
    "MOVED"
   ],
   "tex": "^(sky|World)$",
-  "note": "Arctic sky pass. The original's world-render function FUN_004492b0 sets RwRenderStateSet(ZTESTENABLE 0, ZWRITEENABLE 0, VERTEXALPHA 0, SRCBLEND 5, DESTBLEND 6) before rendering the sky clump (param+0x100f0) and SkySecondaryDispatch (decomp log/d1r1/decomp_sites.txt); the Arctic 'sky' (86 tri) and a 22-tri 'World' mesh are drawn there (draw backtrace 0x5404cf <- ... <- 0x0044937d / 0x004493b0). The standalone centres the dome on the same eye (sky world t == trace M_ pos, 6/6 frames) but its dome sits 0.11 higher and it draws the 22-tri mesh untextured in its world pass. U-9696."
+  "note": "Arctic sky. rprops F-SKY draws the 86-triangle sky mesh the way 0x004491e0 (rotated copy, Arctic only) and 0x00426d20 (unrotated copy) do, with the root-frame offset discarded, so the sky rows match. The remaining 'World' / '-' pair is NOT a sky-pass draw: the 22-triangle mesh is an ordinary world-sector draw (backtrace 0x0049aa7a, Z test and write on) that the standalone binds an unnamed 256x256 A8R8G8B8 texture to instead of the original's 'World' 256x256 R5G6B5. U-9696."
  },
  {
   "id": "C15-SKY",
   "kind": "EXTRA",
   "tex": "^-$",
   "detail": "22 tri",
-  "note": "Same 22 triangles as the original's Arctic 'World' sky-pass mesh (AABB equal), drawn untextured by the standalone. U-9696."
+  "note": "Same 22 triangles as the original's Arctic 'World' mesh (AABB equal): a world-sector draw the standalone textures with an unnamed 256x256 A8R8G8B8 raster. Not the sky pass. U-9696."
  },
  {
   "id": "C20-STATE-SKY",
   "kind": "STATE",
   "tex": "^Sky$",
-  "note": "Legacy D3D9 sky draw (TrackRenderer.cpp sky block) keeps depth test on and blending off. The original disables depth test/write before the sky clump (FUN_004492b0, above), blends per the raster alpha flag (FUN_004d6ce0 at 0x004d6d06) and its cull at that point is whatever state precedes the sky (2 on TRAINING, 1 on Arctic), so no constant reproduces it; not fixed (PREREG rule 1)."
+  "note": "Sky draw state. The original draws the sky with depth test and write off (FUN_004492b0, RwRenderStateSet 8 and 6 = 0), blend per the raster alpha flag, cull whatever precedes it. The librw sky pass expresses depth-test-off as ZENABLE 1 / ZFUNC ALWAYS / ZWRITE 0 (rw::ZTESTENABLE 0), the same visible behaviour in a different encoding; alpha test and cull are librw's defaults (C19)."
  },
  {
   "id": "C02-CARLOD",
@@ -113,7 +113,7 @@
   ],
   "tex": "^(bark|Grass|Apart5windows NT|brooklyn1|buildconc2|Path2|residential02 NT|rooftop|shopfront0[24]|shops|windows0[36] NT|oaktreesprite)$",
   "detail": "draws|moved",
-  "note": "City repeated props: the original draws 26 tree copies (bark/Grass) and 5 copies of a building block, placed per instance; the standalone draws one copy at another place. Same shape as Arctic's per-track placement (table 0x005f33f8, ArcticTrackNodeSlot0 0x00448940); the City record's hook is not ported. U-9695."
+  "note": "City repeated props. rprops F-PAIR places the 27 TreeTrunks.mts trunks and 6 Standard.mts buildings (Clump_Mts_Pair, Course::CreateFromDescription 0x00479330), so the bark/Grass and building rows match. What is left: (a) the 'oaktreesprite' leaf sprites (City record slot 0 0x0044b3c0 -> FUN_0047c330 / FUN_0047c560, OakLeaf.mts), not ported; (b) building copies wholly outside the view frustum, which the original culls and librw does not (counted as off-screen in the row). U-9695, U-9701."
  },
  {
   "id": "C13-PROPPLACE",
@@ -122,7 +122,7 @@
    "MISSING"
   ],
   "tex": "^(CamManHot|CamManCold|Vehicles)$",
-  "note": "Props the standalone draws at the world origin (standalone AABB around (0,0,0)) that the original places on the track: the camera-man (CAMMAN.DFF) and Arctic's parked vehicles. U-9695. [rstates] With the sector walk (F2) the standalone ties these origin-placed copies to the sectors around (0,0,0) and the faithful sphere test (FUN_004c1b40, called from 0x004e5680) culls them there, so the original's correctly placed draws show as MISSING instead of MOVED. Same cause; the standalone rasterised nothing at the origin before either."
+  "note": "Camera-men (entries 1..N of the track's camera table, helpers 0x00448dc0 etc.) and the Arctic freighter / fishing boats (0x00448770 / 0x00448880 placement, 0x00448cb0 / 0x00448e20 per-frame tick) are placed by rprops F-CAM / F-SHIPS. A row left here is yaw (the camera-man yaw is run-time state rewritten by 0x00441d40, U-9699) or ship tick phase (U-9700). [rstates] With the sector walk (F2) a copy the standalone still places wrong is tied to the sectors around its wrong position and the faithful sphere test (FUN_004c1b40, called from 0x004e5680) can cull it there, so the original draw shows as MISSING instead of MOVED. Same cause."
  },
  {
   "id": "C14-ANIM",
