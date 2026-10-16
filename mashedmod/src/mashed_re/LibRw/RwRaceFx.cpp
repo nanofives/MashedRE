@@ -215,7 +215,13 @@ void RaceFx_QueueCar(int slot, const CarFxInput& in) {
     g_have[slot] = true;
 }
 
+// [rfx2] this frame's car inputs, kept for the Headlight pass (RaceFx_DrawWorldFx), which runs
+// after DrawCarFx has consumed the queue
+static CarFxInput g_hl_cars[4];
+static bool       g_hl_have[4] = {};
+
 void RaceFx_DrawCarFx(void* rw_camera) {
+    for (int i = 0; i < 4; ++i) { g_hl_cars[i] = g_cars[i]; g_hl_have[i] = g_have[i]; }
     const bool want_shadow = RaceFx_CarShadowEnabled();
     const bool want_beam = RaceFx_BeamEnabled();
     bool any = false;
@@ -611,7 +617,191 @@ bool ObjShadowMatrix(const ObjShadowIn& in, const float* L, const float* Linv, c
     return true;
 }
 
+// ---- [rfx2] the Headlight sprites (C09) -------------------------------------------------------
+float g_lp[8][3] = {};
+bool  g_lp_have[8] = {};
+
+// RwV3dLength (FUN_004c3ac0 @ 0x004c3ac0): (z z + y y) + x x through the RW sqrt table.
+float LutLength(const float* v) {
+    float s = v[2] * v[2] + v[1] * v[1];
+    s = s + v[0] * v[0];
+    return Math::LutSqrt(s);
+}
+
+// One record of the 0x2c-byte list at 0x0089bea0 (FUN_00412cf0 @ 0x00412cf0).
+struct HlRec { float pos[3]; float size; std::uint8_t rgba[4]; };
+
+// FUN_00412cf0: pos = (part - cam) * fade + part, size = |part - cam| * [0x5cc9a4] 0.025 + [0x5cc9a0]
+// 0.05, alpha = ftol(v * v * [0x5cd04c] 255 * scale) with v = min(clamp(at . camera at), 0)
+// (0x00412d74..0x00412d86), colour rgb from the caller's 4-byte array.
+void HlRecord(std::vector<HlRec>& out, const float* ppos, const float* pat, const float* cam_pos,
+              const float* cam_at, float scale, float fade, const std::uint8_t* rgb) {
+    if (out.size() >= 0x7f) return;
+    const float d[3] = {ppos[0] - cam_pos[0], ppos[1] - cam_pos[1], ppos[2] - cam_pos[2]};
+    const float dist = LutLength(d);
+    float v = DotClamp(pat, cam_at);
+    if (!(v <= 0.0f)) v = 0.0f;
+    HlRec r;
+    r.pos[0] = d[0] * fade + ppos[0];
+    r.pos[1] = d[1] * fade + ppos[1];
+    r.pos[2] = d[2] * fade + ppos[2];
+    r.size = dist * 0.025f + 0.05f;
+    r.rgba[0] = rgb[0]; r.rgba[1] = rgb[1]; r.rgba[2] = rgb[2];
+    float a = v * v;
+    a = a * 255.0f;
+    a = a * scale;
+    r.rgba[3] = FtolByte(a);
+    out.push_back(r);
+}
+
+void DrawHeadlights(rw::Camera* cam) {
+    if (!RaceFx_HeadlightEnabled() || !cam || !cam->getFrame() || !cam->frameBuffer) return;
+    // the camera frame's modelling matrix (FUN_00467210(0): frame + 0x10); the race camera is a
+    // root frame, so this is its LTM too (witness: modelling == LTM)
+    const rw::Matrix& cm = cam->getFrame()->matrix;
+    const float cam_pos[3] = {cm.pos.x, cm.pos.y, cm.pos.z};
+    const float cam_at[3] = {cm.at.x, cm.at.y, cm.at.z};
+    static const std::uint8_t kWhite[3] = {0xff, 0xff, 0xff};    // local_78 (0x00412f62..)
+    static const std::uint8_t kRed[3] = {0xff, 0x00, 0x00};      // local_74 / local_30
+    std::vector<HlRec> recs;
+    // ---- FUN_00412f30 @ 0x00412f30, per car slot 0..DAT_008a94d0-1 (FUN_0040e340: 4 here) ----
+    for (int i = 0; i < 4; ++i) {
+        if (!g_hl_have[i]) continue;
+        const CarFxInput& c = g_hl_cars[i];
+        const M body = FromD3D(c.body);
+        // fade DAT_005f2a4c from the vehicle record position (FUN_0046d4a0 -> +0x30) to the camera:
+        // |d| * [0x5cc32c] 0.5 - [0x5cc320] 1.0, then -0.05 above [0x5cd054] -0.05, -1.0 below -1
+        // [UNCERTAIN U-9711] the vehicle record's +0x30 position is stood in by the car clump root
+        // (they differ by the render offsets; the fade is -0.05 whenever the car is 2+ units away).
+        const float dc[3] = {c.root[12] - cam_pos[0], c.root[13] - cam_pos[1], c.root[14] - cam_pos[2]};
+        float fade = LutLength(dc) * 0.5f - 1.0f;
+        if (fade <= -0.05f) { if (fade < -1.0f) fade = -1.0f; } else fade = -0.05f;
+        // flags rec+0x294 (DAT_0063dc74 + i*0x2ac): 0x10 / 0x20 / 0x400 are never set by the
+        // standalone (U-9706), so FUN_0041f090 / FUN_0041f0d0 read 0
+        auto part = [&](int k, bool neg, float scale, const std::uint8_t* rgb) {
+            if (!g_lp_have[k]) return;                                 // FUN_0041f1c0 == 0
+            const float* o = g_lp[k];
+            float p[3], a[3];
+            for (int q = 0; q < 3; ++q) {
+                p[q] = body.p[q] + o[0] * body.r[q] + o[1] * body.u[q] + o[2] * body.a[q];
+                a[q] = neg ? body.a[q] * -1.0f : body.a[q];           // [0x5cc33c] -1.0
+            }
+            HlRecord(recs, p, a, cam_pos, cam_at, scale, fade, rgb);
+        };
+        // the brake lights 0x39 / 0x3a when the controller's brake byte is set (0x00413035..)
+        if (c.brake) { part(6, true, 1.0f, kRed); part(7, true, 1.0f, kRed); }
+        // DAT_0063bc44[i] (rec+0x294 & 0x40): headlights 0x19, 0x1a, 0x1c, 0x1b, then the tail
+        // lights 0x37 / 0x38 at 0x3e800000 = 0.25
+        if (c.lights) {
+            for (int k = 0; k < 4; ++k) part(k, false, 1.0f, kWhite);
+            part(4, true, 0.25f, kRed); part(5, true, 0.25f, kRed);
+        }
+    }
+    if (recs.empty()) return;
+    // ---- FUN_00413a00 @ 0x00413a00 -> FUN_004128f0 @ 0x004128f0 (param 0x3fcccccd = 1.6) per record ----
+    // camera space = the record through the camera's viewMatrix (camera + 0x20): RW's view matrix
+    // is the inverse LTM with x' = -0.5 * recipViewWindow.x * x + 0.5 * z (y likewise) plus the view
+    // offset, z' = z. [UNCERTAIN U-9711] that relation is MEASURED (camera_probe --fx-out, City: the
+    // formula equals the original's viewMatrix to 5.7e-6), RW's camera sync is not transcribed.
+    float Linv[16];
+    {
+        float L[16];
+        const rw::Matrix* ltm = cam->getFrame()->getLTM();
+        L[0] = ltm->right.x; L[1] = ltm->right.y; L[2] = ltm->right.z; L[3] = 0.f;
+        L[4] = ltm->up.x;    L[5] = ltm->up.y;    L[6] = ltm->up.z;    L[7] = 0.f;
+        L[8] = ltm->at.x;    L[9] = ltm->at.y;    L[10] = ltm->at.z;   L[11] = 0.f;
+        L[12] = ltm->pos.x;  L[13] = ltm->pos.y;  L[14] = ltm->pos.z;  L[15] = 1.f;
+        InvertAffine(L, Linv);
+    }
+    const float rvx = 1.0f / cam->viewWindow.x, rvy = 1.0f / cam->viewWindow.y;
+    float V[16];
+    for (int r = 0; r < 4; ++r) {
+        const float x = Linv[r * 4 + 0], y = Linv[r * 4 + 1], z = Linv[r * 4 + 2];
+        V[r * 4 + 0] = -0.5f * rvx * x + 0.5f * z;
+        V[r * 4 + 1] = -0.5f * rvy * y + 0.5f * z;
+        V[r * 4 + 2] = z;
+        V[r * 4 + 3] = 0.f;
+    }
+    const float nearp = cam->nearPlane, farp = cam->farPlane;      // camera +0x80 / +0x84
+    const float zn = 0.0f, zf = 1.0f;                               // RwGlobals +0x18 / +0x1c (witness)
+    const float w = static_cast<float>(cam->frameBuffer->width);    // raster +0xc / +0x10
+    const float h = static_cast<float>(cam->frameBuffer->height);
+    std::vector<rw::RWDEVICE::Im2DVertex> vs;
+    std::vector<rw::uint16> idx;
+    for (const HlRec& r : recs) {
+        float c3[3];
+        for (int k = 0; k < 3; ++k) c3[k] = r.pos[0] * V[0 + k] + r.pos[1] * V[4 + k] + r.pos[2] * V[8 + k] + V[12 + k];
+        const float z = c3[2];
+        if (!(nearp < z && z < farp)) continue;
+        const float rz = 1.0f / z;                                  // [0x5cc320] / z
+        const float sx = rz * w * c3[0];
+        const float sy = rz * h * c3[1];
+        const float ip = 1.0f / 1.6f;
+        const float hw = (w / h) * w * ip * 0.8f * r.size * rz;      // [0x5cc9bc] 0.8
+        const float hh = ip * h * 0.8f * r.size * rz;
+        if (!(-hw < sx && sx < hw + w && -hh < sy && sy < hh + h)) continue;
+        float x0 = sx - hw, y0 = sy - hh, x1 = hw + sx, y1 = hh + sy;
+        // the clip to the raster with the uv pulled in: the record's uv +0x14..+0x20 are (1, 0, 1, 0)
+        // (FUN_00412cf0 0x00412dc7..0x00412ddb), so u0 = +0x18, u1 = +0x14, v0 = +0x20, v1 = +0x1c,
+        // and each clipped edge moves its coordinate by the clipped fraction of the full size
+        float u0 = 0.f, u1 = 1.f, v0 = 0.f, v1 = 1.f;
+        if (y0 < 0.0f) { v0 = 1.f - (1.f - 0.f) * (((hh + hh) - -y0) / (hh + hh)); y0 = 0.f; }
+        if (h < y1) { v1 = 1.f - (1.f - 0.f) * ((y1 - h) / (hh + hh)); y1 = h; }
+        if (w < x1) { u1 = 1.f - (1.f - 0.f) * ((x1 - w) / (hw + hw)); x1 = w; }
+        if (x0 < 0.0f) { u0 = 1.f - (1.f - 0.f) * (((hw + hw) - -x0) / (hw + hw)); x0 = 0.f; }
+        const float sz = (z - nearp) * (farp / z) * ((zf - zn) / (farp - nearp)) + zn;
+        const rw::uint16 b = static_cast<rw::uint16>(vs.size());
+        const float X[4] = {x0, x1, x0, x1}, Y[4] = {y0, y0, y1, y1};
+        const float U[4] = {u0, u1, u0, u1}, Vv[4] = {v0, v0, v1, v1};
+        for (int q = 0; q < 4; ++q) {
+            rw::RWDEVICE::Im2DVertex o;
+            o.setScreenX(X[q]); o.setScreenY(Y[q]); o.setScreenZ(sz);
+            o.setRecipCameraZ(rz);
+            o.setColor(r.rgba[0], r.rgba[1], r.rgba[2], r.rgba[3]);
+            o.setU(U[q], rz); o.setV(Vv[q], rz);
+            vs.push_back(o);
+        }
+        const rw::uint16 t[6] = {b, static_cast<rw::uint16>(b + 1), static_cast<rw::uint16>(b + 2),
+                                 static_cast<rw::uint16>(b + 2), static_cast<rw::uint16>(b + 1), static_cast<rw::uint16>(b + 3)};
+        for (int k = 0; k < 6; ++k) idx.push_back(t[k]);
+    }
+    if (vs.empty()) return;
+    rw::Texture* tex = SfxTexture("Headlight");
+    // ---- FUN_00413a40 @ 0x00413a40: raster DAT_0063bc54, filter 2, vertex alpha on, cull NONE, fog
+    // off, Z test on, ZWRITE off, blend 5 / 2; then ZWRITE on, cull and fog back, blend 5 / 6 ----
+    rw::int32 sv_cull = rw::GetRenderState(rw::CULLMODE);
+    rw::int32 sv_fog = rw::GetRenderState(rw::FOGENABLE);
+    rw::SetRenderStatePtr(rw::TEXTURERASTER, tex ? tex->raster : nullptr);
+    rw::SetRenderState(rw::TEXTUREFILTER, rw::Texture::LINEAR);
+    rw::SetRenderState(rw::VERTEXALPHA, 1);
+    rw::SetRenderState(rw::CULLMODE, rw::CULLNONE);
+    rw::SetRenderState(rw::FOGENABLE, 0);
+    rw::SetRenderState(rw::ZTESTENABLE, 1);
+    rw::SetRenderState(rw::ZWRITEENABLE, 0);
+    rw::SetRenderState(rw::SRCBLEND, rw::BLENDSRCALPHA);
+    rw::SetRenderState(rw::DESTBLEND, rw::BLENDONE);
+    static const float kIdent[16] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
+    if (rw_drawrec_pre) {
+        DrawRec::SetNextGeometry(vs.data(), sizeof(vs[0]), idx.data(), static_cast<unsigned>(idx.size()), true);
+        rw_drawrec_pre(tex ? tex->name : "Headlight", kIdent);
+    }
+    rw::im2d::RenderIndexedPrimitive(rw::PRIMTYPETRILIST, vs.data(), static_cast<rw::int32>(vs.size()),
+                                     idx.data(), static_cast<rw::int32>(idx.size()));
+    if (rw_drawrec_post) rw_drawrec_post();
+    rw::SetRenderState(rw::ZWRITEENABLE, 1);
+    rw::SetRenderState(rw::CULLMODE, sv_cull);
+    rw::SetRenderState(rw::FOGENABLE, sv_fog);
+    rw::SetRenderState(rw::SRCBLEND, rw::BLENDSRCALPHA);
+    rw::SetRenderState(rw::DESTBLEND, rw::BLENDINVSRCALPHA);
+}
+
 }  // namespace
+
+bool RaceFx_HeadlightEnabled() { static const bool on = !EnvOff("MASHED_HEADLIGHT"); return on; }
+void RaceFx_SetCarLightParts(const float pos[8][3], const bool have[8]) {
+    std::memcpy(g_lp, pos, sizeof(g_lp));
+    for (int k = 0; k < 8; ++k) g_lp_have[k] = have[k];
+}
 
 bool RaceFx_ObjShadowEnabled() { static const bool on = !EnvOff("MASHED_OBJ_SHADOW"); return on; }
 
@@ -644,9 +834,8 @@ void RaceFx_SetObjShadows(const ObjShadowIn* objs, int n, const float light[16],
 
 void RaceFx_SetObjShadowFrame(std::uint32_t f101c) { g_objshad_frame = f101c; }
 
-void RaceFx_DrawWorldFx(void* rw_camera) {
+static void DrawObjShadows(rw::Camera* cam) {
     if (g_objshad.empty() || !RaceFx_ObjShadowEnabled()) return;
-    rw::Camera* cam = static_cast<rw::Camera*>(rw_camera);
     if (!cam || !cam->getFrame()) return;
     // ---- FUN_00481a30 @ 0x00481a30, per object i ---------------------------------------------
     // [UNCERTAIN U-9710] the original runs this in the tick, against the camera frame's modelling
@@ -734,6 +923,12 @@ void RaceFx_DrawWorldFx(void* rw_camera) {
     rw::SetRenderState(rw::VERTEXALPHA, sv_va);
     rw::SetRenderState(rw::SRCBLEND, sv_sb);
     rw::SetRenderState(rw::DESTBLEND, sv_db);
+}
+
+void RaceFx_DrawWorldFx(void* rw_camera) {
+    rw::Camera* cam = static_cast<rw::Camera*>(rw_camera);
+    DrawObjShadows(cam);     // FUN_0040bde0 -> FUN_00487de0 (first)
+    DrawHeadlights(cam);     // FUN_00413a00 / FUN_00413a40 (FUN_00410b30, after FUN_0040bde0)
 }
 
 // =============================================================================================

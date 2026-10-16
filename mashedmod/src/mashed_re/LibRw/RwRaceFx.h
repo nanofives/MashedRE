@@ -34,7 +34,14 @@ struct CarFxInput {
     float body[16];
     float fade;      // rec+0x288
     bool  lights;    // rec+0x294 & 0x40
+    bool  brake;     // [rfx2] *(0x007f103c + slot*0x4c + 1), the controller's brake byte
 };
+// [rfx2] the light marker parts FUN_00412f30 @ 0x00412f30 reads (FUN_0041f1c0 / FUN_0041f1e0): 0x19,
+// 0x1a, 0x1c, 0x1b (headlights), 0x37, 0x38 (tail), 0x39, 0x3a (brake), in that slot order; their
+// frame origins in the body frame and whether the model has each one.
+void RaceFx_SetCarLightParts(const float pos[8][3], const bool have[8]);
+// MASHED_HEADLIGHT=0 turns the Headlight sprites (FUN_00413a00 / FUN_00413a40) off (default ON).
+bool RaceFx_HeadlightEnabled();
 // Per-model data, set at car load: the descriptor family and parts 25 / 28's frame origins.
 void RaceFx_SetCarModel(int family, const float part25[3], const float part28[3], bool parts_ok);
 // Queue car `slot` (0..3) for this frame; consumed and cleared by RaceFx_DrawCarFx.

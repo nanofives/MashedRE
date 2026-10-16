@@ -657,6 +657,33 @@ rpc.exports={
             o.prim_m=rd(pr,16); } } }catch(e){ o.err=''+e; }
       objs.push(o); }
     out.objs=objs;
+    // the race camera DAT_006905b0: viewMatrix +0x20, raster +0x60, viewWindow +0x68, recip +0x70,
+    // offset +0x78, near/far +0x80/+0x84, zScale/zShift +0x8c/+0x90; frame modelling / LTM; and
+    // RwGlobals DAT_007d3ff8 +0x18/+0x1c (FUN_004128f0's z range)
+    try{ const C=abs(0x006905b0).readPointer(); const fr=C.add(4).readPointer(); const ras=C.add(0x60).readPointer();
+      out.cam={view:rd(C.add(0x20),16), vw:rd(C.add(0x68),2), rvw:rd(C.add(0x70),2), off:rd(C.add(0x78),2),
+        nf:rd(C.add(0x80),2), zss:rd(C.add(0x8c),2), mod:rd(fr.add(0x10),16), ltm:rd(fr.add(0x50),16),
+        ras:[ras.add(0xc).readS32(), ras.add(0x10).readS32()]};
+      const G=abs(0x007d3ff8).readPointer(); out.zbuf=rd(G.add(0x18),2); }catch(e){ out.cam_err=''+e; }
+    // Headlight (FUN_00412f30 / FUN_00413a00): direct records 0x0089bea0 (count DAT_0063bc58, 0x2c
+    // each), reflections 0x0089a8a0 (DAT_0063bc5c), screen quads 0x00828320 (DAT_008a94a0, 0x70)
+    try{ const nd=r32(0x0063bc58), nr=r32(0x0063bc5c), nq=r32(0x008a94a0); out.hl={nd:nd, nr:nr, nq:nq, d:[], q:[]};
+      for(let j=0;j<Math.min(nd,127);j++){ const b=abs(0x0089bea0+j*0x2c); out.hl.d.push({f:rd(b,9), c:b.add(0x24).readU32(), fl:b.add(0x28).readFloat()}); }
+      for(let j=0;j<Math.min(nq,127);j++) out.hl.q.push(rd(abs(0x00828320+j*0x70),28));
+      const cars=[]; for(let i=0;i<4;i++){ const sl=r32(0x007f1a14+i*16); const parts={};
+        for(const p of [0x19,0x1a,0x1b,0x1c,0x2a,0x37,0x38,0x39,0x3a]){ const a=abs(0x0063d9e0+(i*0xab+p)*4).readPointer();
+          if(!a.isNull()){ const pf=a.add(4).readPointer(); parts[p]=pf.isNull()?null:rd(pf.add(0x50),16); } }
+        cars.push({hlflag:r32(0x0063bc44+i*4), flags:u32(0x0063dc74+i*0x2ac), slot:sl,
+          brake:(sl>=0&&sl<16)?abs(0x007f103c+sl*0x4c+1).readU8():-1, parts:parts}); }
+      out.hl.cars=cars; }catch(e){ out.hl_err=''+e; }
+    // lensflare-fs8 light list (FUN_00488e70): 128 entries of 0x38 at 0x0086ae24, enabled at +0x10
+    try{ const L=[]; for(let j=0;j<128;j++){ const b=abs(0x0086ae24+j*0x38); if(b.add(0x10).readS32()===0) continue;
+        const e={j:j, pos:rd(b,3), n:b.add(0xc).readS32(), k:b.add(0x14).readFloat(), w:[b.add(0x18).readS32(), b.add(0x1c).readS32(), b.add(0x20).readS32(), b.add(0x24).readS32(), b.add(0x28).readU32()]};
+        const fm=b.add(0x28).readPointer(); if(!fm.isNull()) e.m=rd(fm,16);
+        const nn=Math.min(e.n,8); const sz=b.add(0x1c).readPointer(), uv=b.add(0x20).readPointer(), co=b.add(0x24).readPointer();
+        if(!sz.isNull()) e.sz=rd(sz,Math.max(nn,5)); if(!uv.isNull()){ e.uv=[]; for(let k=0;k<nn;k++) e.uv.push(uv.add(k*4).readS32()); }
+        if(!co.isNull()){ e.co=[]; for(let k=0;k<nn;k++) e.co.push(co.add(k*4).readU32()); }
+        L.push(e); } out.lf=L; }catch(e){ out.lf_err=''+e; }
     try{ const k=r32(0x00703058); out.shad_n=k; out.shad_cap=r32(0x00703070);
       const mp=abs(0x00703084).readPointer(), cp=abs(0x00703080).readPointer(); const sh=[];
       for(let j=0;j<Math.min(k,64);j++) sh.push({m:mp.isNull()?null:rd(mp.add(j*0x40),16),

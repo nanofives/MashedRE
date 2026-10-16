@@ -29,6 +29,7 @@ def main() -> int:
     exe, arm = args[0], args[1]
     tracks = list(TRACKS)
     norun = False
+    brake = False      # [rfx2 amendment 1] carlod's MASHED_CAR_BRAKE_ROWS (verify/carlod_20261016/brake_rows.json)
     knobs = []
     i = 2
     while i < len(args):
@@ -37,19 +38,26 @@ def main() -> int:
             tracks = args[i + 1].split(","); i += 2; continue
         if a == "--rfx-cites":     # adjudicate with verify/rfx_20261016/cites_rfx.json
             i += 1; continue
+        if a == "--brake":
+            brake = True; i += 1; continue
         if a == "--no-run":
             norun = True; i += 1; continue
         knobs.append(a); i += 1
     out = ROOT / "log" / "rfx2" / arm
     summary = {"exe": exe, "knobs": knobs, "frames": {}}
+    brake_rows = json.loads((WT / "verify" / "carlod_20261016" / "brake_rows.json").read_text())
     for tr in tracks:
         view, shots = TRACKS[tr]
+        tk = list(knobs)
+        br = {k: v for k, v in brake_rows.get(tr, {}).items() if v}
+        if brake and br:
+            tk.append("MASHED_CAR_BRAKE_ROWS=" + ",".join(f"{k}:{v}" for k, v in br.items()))
         od = out / tr
         trace = ROOT / "log" / "d1r1" / f"orig_{tr}" / "trace.csv"
         if not norun:
             cmd = [sys.executable, str(WT / "verify" / "d1r1_20261016" / "run_replay3d.py"), exe, str(od),
                    "--trace", str(trace), "--shots", ",".join(map(str, shots)), "--track", view,
-                   "--frames", "1450", *knobs]
+                   "--frames", "1450", *tk]
             subprocess.run(cmd, check=False)
         for k in shots:
             a = ROOT / "log" / "d1r1" / f"orig_{tr}" / f"orig_row_{k:05d}.draws.json"

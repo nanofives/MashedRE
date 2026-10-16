@@ -3189,6 +3189,15 @@ int TrackRenderer::RegisterCarModel(IDirect3DDevice9* dev, const char* dff_entry
             if (b.part_id == 28 && !h28) { std::memcpy(car_part28_, b.frame_pos, sizeof(car_part28_)); h28 = true; }
         }
         car_beam_parts_ok_ = h25 && h28;
+        // [rfx2] the light marker parts FUN_00412f30 @ 0x00412f30 reads, slot order 0x19, 0x1a, 0x1c,
+        // 0x1b, 0x37, 0x38, 0x39, 0x3a (LibRw/RwRaceFx.h RaceFx_SetCarLightParts)
+        static const int kLight[8] = {0x19, 0x1a, 0x1c, 0x1b, 0x37, 0x38, 0x39, 0x3a};
+        float lp[8][3] = {};
+        bool lh[8] = {};
+        for (const auto& b : model.batches)
+            for (int k = 0; k < 8; ++k)
+                if (b.part_id == kLight[k] && !lh[k]) { std::memcpy(lp[k], b.frame_pos, sizeof(lp[k])); lh[k] = true; }
+        LibRw::RaceFx_SetCarLightParts(lp, lh);
     }
     CarDropNonRenderAtomics(model, dff_entry, log);
     std::vector<Txd::Dictionary> dicts(txds.size());
@@ -8169,6 +8178,12 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
             // rec+0x294 bits 0x10 / 0x400 (not set by the standalone) are not modelled.
             in.lights = (course_id_ == 0 || course_id_ == 0x1a || course_id_ == 0x21 ||
                          course_id_ == 0x24) && aib_alive(slot) == 1;
+            // [rfx2] the controller's brake byte (the brake lights of FUN_00412f30): the matched-pose
+            // instrument's MASHED_CAR_BRAKE_ROWS for the consumed row, as carvis above; none otherwise
+            // [UNCERTAIN U-9711] (the standalone keeps no per-controller brake byte for its cars)
+            in.brake = false;
+            for (const auto& br : s_brake_rows)
+                if (br.first == cam_replay_row_) in.brake = ((br.second >> slot) & 1u) != 0;
             LibRw::RaceFx_QueueCar(slot, in);
         };
         // [rtex 2026-10-16] per-car shade / env state, in the order FUN_00420870 @ 0x00420870
