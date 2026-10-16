@@ -1,7 +1,7 @@
 // Mashed RE — round-restart grid, Stage A. See RoundGrid.h and verify/d3_bulk_20261011/roundgrid/FIX_BRIEF.md.
 //
-// FUN_00409290 is verbatim naked x86 (re/tools/naked_specs/roundgrid_a.json -> RoundGrid_naked.inc); its callees
-// FUN_00426bc0 / FUN_00426bd0 bind to the exe's C3 exports GetDat0066d6e0 / GetTableEntry0066d658, which read the
+// FUN_00409290 is SnapNodeToSafeStartLines (Race/RoundGridSnap.cpp, a TU shared with the .asi, so one body per RVA);
+// its callees FUN_00426bc0 / FUN_00426bd0 are the C3 exports GetDat0066d6e0 / GetTableEntry0066d658, which read the
 // Safe_Start_Lines table PathNodes.cpp builds at 0x0066d658 / 0x0066d6e0 (PATHPROG P1).
 #include "RoundGrid.h"
 #include "PathNodes.h"
@@ -15,10 +15,7 @@
 #include <string>
 #include <vector>
 
-extern "C" std::uint32_t __cdecl GetDat0066d6e0();                                                  // 0x00426bc0
-extern "C" void __cdecl GetTableEntry0066d658(int i, std::uint16_t* lo, std::uint16_t* hi);        // 0x00426bd0
-
-#include "RoundGrid_naked.inc"
+extern "C" void __cdecl SnapNodeToSafeStartLines(std::int32_t* p);                                // 0x00409290
 
 namespace mashed_re {
 namespace Race {
@@ -29,9 +26,6 @@ constexpr std::uintptr_t kRec  = 0x00663658u;          // node records, stride 0
 constexpr std::uintptr_t kNodeCount = 0x0066d6d8u;
 inline std::int32_t& I32(std::uintptr_t a) { return *reinterpret_cast<std::int32_t*>(a); }
 inline const float*  FP(std::uintptr_t a)  { return reinterpret_cast<const float*>(a); }
-typedef void (__cdecl* snap_fn)(std::int32_t* p);
-inline snap_fn Snap() { return reinterpret_cast<snap_fn>(&RG2_409290); }
-
 std::FILE* Trace() {
     static std::FILE* f = nullptr; static bool init = false;
     if (!init) {
@@ -97,7 +91,7 @@ bool RoundGrid_AnchorAt(int n, float A[3], float lat[2], float dir[2]) {
 bool RoundGrid_Anchor(float A[3], float lat[2], float dir[2], int* node) {
     if (!RoundGrid_Enabled()) return false;
     std::int32_t v = I32(kNode);
-    Snap()(&v);                                                        // FUN_00409290(&DAT_0063ba80)
+    SnapNodeToSafeStartLines(&v);                                      // FUN_00409290(&DAT_0063ba80)
     I32(kNode) = v;
     if (node) *node = v;
     const bool ok = RoundGrid_AnchorAt(v, A, lat, dir);
@@ -205,7 +199,7 @@ void RoundGrid_MaybeReplay() {
         std::memcpy(reinterpret_cast<void*>(0x0066d658u), tab, 136);
         I32(0x0066d6e0u) = cnt;
         std::int32_t v = nodeIn;
-        Snap()(&v);
+        SnapNodeToSafeStartLines(&v);
         ++rows;
         if (v == outExp) ++exact;
         else if (++bad <= 20) std::fprintf(o, "MISMATCH n=%ld in=%d count=%d got=%d exp=%d\n", n, nodeIn, cnt, v, outExp);

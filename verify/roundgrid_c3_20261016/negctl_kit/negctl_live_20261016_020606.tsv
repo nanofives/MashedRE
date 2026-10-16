@@ -1,0 +1,8 @@
+hook	rva	arg_type	lane	mode	verdict	mismatches	total	stats	err
+snap_node_to_safe_start_lines	0x00409290	cache_setter_observe	warm	real	GREEN	0	30		
+snap_node_to_safe_start_lines	0x00409290	cache_setter_observe	warm	baseline	GREEN	0	30		
+snap_node_to_safe_start_lines	0x00409290	cache_setter_observe	warm	null	RED	21	30	calls=0 flips=0 changed=0 flip=0x00000000 noise=0 frozen=0	
+snap_node_to_safe_start_lines	0x00409290	cache_setter_observe	warm	ret	SKIP	0	0		void signature
+snap_node_to_safe_start_lines	0x00409290	cache_setter_observe	warm	field_none	CTRL-GREEN	0	30	calls=30 flips=0 changed=1 flip=0x00000000 noise=166 frozen=2	
+snap_node_to_safe_start_lines	0x00409290	cache_setter_observe	warm	field_first	RED	21	30	calls=30 flips=21 changed=1 flip=0x0063ba80 noise=167 frozen=2	
+snap_node_to_safe_start_lines	0x00409290	cache_setter_observe	warm	field_last	RED	21	30	calls=30 flips=21 changed=1 flip=0x0063ba80 noise=179 frozen=2	

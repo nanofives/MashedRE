@@ -1,0 +1,34 @@
+hook: snap_node_to_safe_start_lines  rva=0x00409290  export=SnapNodeToSafeStartLines
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 3316
+  [agent] LUT ready  base=0x2c2a6a0  offset=0x134  root=0x5020680  delta=0  attempts=9
+  [agent] {'type': 'log', 'msg': 'negctl: field_last forwarder 0x5aa6ab70 wraps 0x5aa6eb10'}
+  [agent] .asi loaded  base=0x5aa50000  SnapNodeToSafeStartLines@0x5aa6ab70
+  [agent] {'type': 'negctl', 'cls': 'field_last', 'stats': 'calls=30 flips=21 changed=1 flip=0x0063ba80 noise=169 frozen=1'}
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\roundgrid_c3\log\diff_snap_node_to_safe_start_lines_negctl_field_last.csv
+  total cases: 30
+  mismatches:  21
+
+RED: at least one mismatch.
+  idx=3  input={'seed': [{'addr': '0x0066d6e0', 'val': 3}, {'addr': '0x0063ba80', 'val': 0}, {'addr': '0x0066d658', 'val': 393219}, {'addr': '0x0066d65c', 'val': 917514}, {'addr': '0x0066d660', 'val': 1638420}], 'args': [6535808], 'obs': ['0x0063ba80']}  orig=0x00000003  reimpl=0x00000059
+  idx=4  input={'seed': [{'addr': '0x0066d6e0', 'val': 3}, {'addr': '0x0063ba80', 'val': 7}, {'addr': '0x0066d658', 'val': 393219}, {'addr': '0x0066d65c', 'val': 917514}, {'addr': '0x0066d660', 'val': 1638420}], 'args': [6535808], 'obs': ['0x0063ba80']}  orig=0x0000000a  reimpl=0x00000050
+  idx=5  input={'seed': [{'addr': '0x0066d6e0', 'val': 3}, {'addr': '0x0063ba80', 'val': 9}, {'addr': '0x0066d658', 'val': 393219}, {'addr': '0x0066d65c', 'val': 917514}, {'addr': '0x0066d660', 'val': 1638420}], 'args': [6535808], 'obs': ['0x0063ba80']}  orig=0x0000000a  reimpl=0x00000050
+  idx=8  input={'seed': [{'addr': '0x0066d6e0', 'val': 3}, {'addr': '0x0063ba80', 'val': 15}, {'addr': '0x0066d658', 'val': 393219}, {'addr': '0x0066d65c', 'val': 917514}, {'addr': '0x0066d660', 'val': 1638420}], 'args': [6535808], 'obs': ['0x0063ba80']}  orig=0x00000014  reimpl=0x0000004e
+  idx=10  input={'seed': [{'addr': '0x0066d6e0', 'val': 3}, {'addr': '0x0063ba80', 'val': 26}, {'addr': '0x0066d658', 'val': 393219}, {'addr': '0x0066d65c', 'val': 917514}, {'addr': '0x0066d660', 'val': 1638420}], 'args': [6535808], 'obs': ['0x0063ba80']}  orig=0x00000003  reimpl=0x00000059
+  idx=11  input={'seed': [{'addr': '0x0066d6e0', 'val': 3}, {'addr': '0x0063ba80', 'val': 29}, {'addr': '0x0066d658', 'val': 393219}, {'addr': '0x0066d65c', 'val': 917514}, {'addr': '0x0066d660', 'val': 1638420}], 'args': [6535808], 'obs': ['0x0063ba80']}  orig=0x00000003  reimpl=0x00000059
+  idx=12  input={'seed': [{'addr': '0x0066d6e0', 'val': 3}, {'addr': '0x0063ba80', 'val': 4294967295}, {'addr': '0x0066d658', 'val': 393219}, {'addr': '0x0066d65c', 'val': 917514}, {'addr': '0x0066d660', 'val': 1638420}], 'args': [6535808], 'obs': ['0x0063ba80']}  orig=0x00000003  reimpl=0x5a000003
+  idx=13  input={'seed': [{'addr': '0x0066d6e0', 'val': 3}, {'addr': '0x0063ba80', 'val': 2147483647}, {'addr': '0x0066d658', 'val': 393219}, {'addr': '0x0066d65c', 'val': 917514}, {'addr': '0x0066d660', 'val': 1638420}], 'args': [6535808], 'obs': ['0x0063ba80']}  orig=0x00000003  reimpl=0x5a000003
+  idx=14  input={'seed': [{'addr': '0x0066d6e0', 'val': 3}, {'addr': '0x0063ba80', 'val': 2147483648}, {'addr': '0x0066d658', 'val': 393219}, {'addr': '0x0066d65c', 'val': 917514}, {'addr': '0x0066d660', 'val': 1638420}], 'args': [6535808], 'obs': ['0x0063ba80']}  orig=0x00000003  reimpl=0x5a000003
+  idx=15  input={'seed': [{'addr': '0x0066d6e0', 'val': 3}, {'addr': '0x0063ba80', 'val': 65540}, {'addr': '0x0066d658', 'val': 393219}, {'addr': '0x0066d65c', 'val': 917514}, {'addr': '0x0066d660', 'val': 1638420}], 'args': [6535808], 'obs': ['0x0063ba80']}  orig=0x00000003  reimpl=0x005a0003
+  idx=17  input={'seed': [{'addr': '0x0066d6e0', 'val': 4294967295}, {'addr': '0x0063ba80', 'val': 7}, {'addr': '0x0066d658', 'val': 393219}, {'addr': '0x0066d65c', 'val': 917514}, {'addr': '0x0066d660', 'val': 1638420}], 'args': [6535808], 'obs': ['0x0063ba80']}  orig=0x00000000  reimpl=0x0000005a
+  idx=18  input={'seed': [{'addr': '0x0066d6e0', 'val': 2147483648}, {'addr': '0x0063ba80', 'val': 7}, {'addr': '0x0066d658', 'val': 393219}, {'addr': '0x0066d65c', 'val': 917514}, {'addr': '0x0066d660', 'val': 1638420}], 'args': [6535808], 'obs': ['0x0063ba80']}  orig=0x00000000  reimpl=0x0000005a
+  idx=19  input={'seed': [{'addr': '0x0066d6e0', 'val': 1}, {'addr': '0x0063ba80', 'val': 100}, {'addr': '0x0066d658', 'val': 393219}], 'args': [6535808], 'obs': ['0x0063ba80']}  orig=0x00000003  reimpl=0x00000059
+  idx=21  input={'seed': [{'addr': '0x0066d6e0', 'val': 2}, {'addr': '0x0063ba80', 'val': 4294967276}, {'addr': '0x0066d658', 'val': 4294508528}, {'addr': '0x0066d65c', 'val': 327682}], 'args': [6535808], 'obs': ['0x0063ba80']}  orig=0xfffffff0  reimpl=0xffffffaa
+  idx=22  input={'seed': [{'addr': '0x0066d6e0', 'val': 2}, {'addr': '0x0063ba80', 'val': 4294967291}, {'addr': '0x0066d658', 'val': 4294508528}, {'addr': '0x0066d65c', 'val': 327682}], 'args': [6535808], 'obs': ['0x0063ba80']}  orig=0x00000002  reimpl=0x5a000002
+  idx=23  input={'seed': [{'addr': '0x0066d6e0', 'val': 2}, {'addr': '0x0063ba80', 'val': 100}, {'addr': '0x0066d658', 'val': 4294508528}, {'addr': '0x0066d65c', 'val': 327682}], 'args': [6535808], 'obs': ['0x0063ba80']}  orig=0xfffffff0  reimpl=0xa5fffff0
+  idx=25  input={'seed': [{'addr': '0x0066d6e0', 'val': 1}, {'addr': '0x0063ba80', 'val': 4294927296}, {'addr': '0x0066d658', 'val': 2147450880}], 'args': [6535808], 'obs': ['0x0063ba80']}  orig=0xffff8000  reimpl=0xffffda00
+  idx=26  input={'seed': [{'addr': '0x0066d6e0', 'val': 2}, {'addr': '0x0063ba80', 'val': 7}, {'addr': '0x0066d658', 'val': 327690}, {'addr': '0x0066d65c', 'val': 1966100}], 'args': [6535808], 'obs': ['0x0063ba80']}  orig=0x0000000a  reimpl=0x00000050
+  idx=27  input={'seed': [{'addr': '0x0066d6e0', 'val': 2}, {'addr': '0x0063ba80', 'val': 12}, {'addr': '0x0066d658', 'val': 327690}, {'addr': '0x0066d65c', 'val': 1966100}], 'args': [6535808], 'obs': ['0x0063ba80']}  orig=0x00000014  reimpl=0x0000004e
+  idx=28  input={'seed': [{'addr': '0x0066d6e0', 'val': 2}, {'addr': '0x0063ba80', 'val': 10}, {'addr': '0x0066d658', 'val': 1966100}, {'addr': '0x0066d65c', 'val': 393219}], 'args': [6535808], 'obs': ['0x0063ba80']}  orig=0x00000014  reimpl=0x0000004e
+  idx=29  input={'seed': [{'addr': '0x0066d6e0', 'val': 2}, {'addr': '0x0063ba80', 'val': 40}, {'addr': '0x0066d658', 'val': 1966100}, {'addr': '0x0066d65c', 'val': 393219}], 'args': [6535808], 'obs': ['0x0063ba80']}  orig=0x00000014  reimpl=0x0000004e

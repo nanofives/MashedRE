@@ -1,0 +1,7 @@
+G-CTRL after, default build (every knob OFF), 2026-10-16, exe built in this worktree (base 1caf1a10 + roundgrid_c3), arm GC_B
+(recipe of verify/d3_gatefire_20261008/run_h4.ps1 arm RG_CTRL, MASHED_DET_FRAMES=14400):
+  GC_B.step.csv    lines=21403  sha8=991a5fff   (expected 991a5fff)
+  GC_B.gates.csv   lines=54713  sha8=be0d47ea   (expected be0d47ea)
+  GC_B.ptrace.log  lines=27356  sha8=bc75b405   (expected bc75b405; frame rows 13678, non-monotonic steps 0)
+Arm GC_A (same recipe, run while another session appended to the shared player_trace.log): step 991a5fff, gates be0d47ea,
+ptrace f04339b1 = VOID (interleaved frames). The raw files were removed; the three hashes above are the evidence.

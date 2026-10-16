@@ -22583,6 +22583,72 @@ HOOKS['phys_world_body_build'] = {
     'path2_tests': [_pwb(0x3f800000, 0x40a00000, 0x3e4ccccd, 0x3f19999a)],
 }
 
+# 0x00409290 SnapNodeToSafeStartLines(int* p)   (FUN_00409290; shared TU Race/RoundGridSnap.cpp, in BOTH targets)
+# *p is DAT_0063ba80 at its one live call (FUN_0040e590). Reads count = u32 [0x0066d6e0] (FUN_00426bc0) and, per range i,
+# lo = u16 [0x0066d658 + i*4], hi = u16 [0x0066d65a + i*4] (FUN_00426bd0). The only write is *p. Brief:
+# verify/d3_bulk_20261011/roundgrid/FIX_BRIEF.md section 6; plate re/analysis/game_state_d5_cont2/0x00409290.md.
+# arg_type cache_setter_observe (ARG_TYPES.md): seed the count, the table dwords and the node cell, pass the cell's
+# ABSOLUTE address as the arg (u32 in `args`), observe the cell. Every seeded or observed address is snapshotted and
+# restored by the handler. Every jcc side of the original is reached:
+#   0x004092a0 je (count 0)            -> v17           0x004092ac jle (count < 0)   -> v18, v19
+#   0x004092c9 jne (i != 0)            -> v5, v6, v9   0x004092d4 jl (below lo)     -> v4, v13, v22
+#   0x004092dd jle (inside, <= hi)     -> v1, v7, v10   0x004092e2 jl (next range)   -> v5, v9
+#   fall out of the loop, *p = first lo -> v11, v12, v14, v16, v24
+# Signed 16-bit lo/hi (movsx 0x004092cf / d6 / e4 / f1) -> v21..v26. *p stays a full 32-bit compare -> v16, v26.
+_SNAP_CELL, _SNAP_COUNT, _SNAP_TAB = 0x0063ba80, 0x0066d6e0, 0x0066d658
+def _snap(node, ranges, count=None):
+    n = len(ranges) if count is None else count
+    seed = [{'addr': '0x%08x' % _SNAP_COUNT, 'val': n & 0xffffffff},
+            {'addr': '0x%08x' % _SNAP_CELL, 'val': node & 0xffffffff}]
+    for i, (lo, hi) in enumerate(ranges):
+        seed.append({'addr': '0x%08x' % (_SNAP_TAB + 4 * i), 'val': ((hi & 0xffff) << 16) | (lo & 0xffff)})
+    return {'seed': seed, 'args': [_SNAP_CELL], 'obs': ['0x%08x' % _SNAP_CELL]}
+_SNAP_A = [(3, 6), (10, 14), (20, 25)]
+_SNAP_NEG = [(0xfff0, 0xfff8), (2, 5)]            # lo = -16, hi = -8; then (2, 5)
+HOOKS['snap_node_to_safe_start_lines'] = {
+    'rva': 0x00409290, 'export': 'SnapNodeToSafeStartLines',
+    'signature': {'ret': 'void', 'args': ['uint32']},
+    'arg_type': 'cache_setter_observe', 'lut_root_delta': 0,
+    'path1_tests': [
+        _snap(4, _SNAP_A),            # v1  inside range 0
+        _snap(3, _SNAP_A),            # v2  == lo
+        _snap(6, _SNAP_A),            # v3  == hi
+        _snap(0, _SNAP_A),            # v4  below the first lo -> 3
+        _snap(7, _SNAP_A),            # v5  between range 0 and 1 -> 10
+        _snap(9, _SNAP_A),            # v6  just below range 1 -> 10
+        _snap(12, _SNAP_A),           # v7  inside range 1
+        _snap(14, _SNAP_A),           # v8  == hi of range 1
+        _snap(15, _SNAP_A),           # v9  between range 1 and 2 -> 20
+        _snap(25, _SNAP_A),           # v10 == hi of the last range
+        _snap(26, _SNAP_A),           # v11 past the last range -> first lo 3
+        _snap(29, _SNAP_A),           # v12 -> 3
+        _snap(-1, _SNAP_A),           # v13 negative, below the first lo -> 3
+        _snap(0x7fffffff, _SNAP_A),   # v14 INT_MAX -> 3
+        _snap(0x80000000, _SNAP_A),   # v15 INT_MIN -> 3
+        _snap(0x00010004, _SNAP_A),   # v16 65540: a 16-bit compare would read 4 (inside range 0); the 32-bit compare gives 3
+        _snap(7, _SNAP_A, count=0),            # v17 count 0 -> untouched
+        _snap(7, _SNAP_A, count=0xffffffff),   # v18 count -1 -> 0
+        _snap(7, _SNAP_A, count=0x80000000),   # v19 count INT_MIN -> 0
+        _snap(100, [(3, 6)]),                  # v20 one range, past it -> 3
+        _snap(-10, _SNAP_NEG),                 # v21 inside the negative range (-16..-8)
+        _snap(-20, _SNAP_NEG),                 # v22 below it -> -16 (0xfffffff0)
+        _snap(-5, _SNAP_NEG),                  # v23 between -8 and 2 -> 2
+        _snap(100, _SNAP_NEG),                 # v24 past the last -> first lo -16
+        _snap(1000, [(0x8000, 0x7fff)]),       # v25 lo = -32768, hi = 32767: inside
+        _snap(-40000, [(0x8000, 0x7fff)]),     # v26 below -32768 -> 0xffff8000
+        _snap(7, [(10, 5), (20, 30)]),         # v27 lo > hi: 7 < 10 -> 10
+        _snap(12, [(10, 5), (20, 30)]),        # v28 12 > 5, next range, 12 < 20 -> 20
+        _snap(10, [(20, 30), (3, 6)]),         # v29 unordered: 10 < 20 -> 20
+        _snap(40, [(20, 30), (3, 6)]),         # v30 past both -> first lo 20
+    ],
+    'path2_tests': [
+        _snap(4, _SNAP_A),            # inside range 0
+        _snap(7, _SNAP_A),            # between ranges
+        _snap(26, _SNAP_A),           # past the last
+        _snap(7, _SNAP_A, count=0xffffffff),
+    ],
+}
+
 # ── negctl re-earn fixtures (2026-10-11) ─────────────────────────────────────────────────────────────────────
 # Each re/frida/negctl_fixtures/<batch>.py defines FIXES = {hook_key: {cfg_key: value}}, applied over the entries
 # above. A value of None deletes that key; {'__replace__': True, ...} replaces the whole entry (or adds a new one).

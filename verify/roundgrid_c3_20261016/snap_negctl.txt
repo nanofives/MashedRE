@@ -1,0 +1,4 @@
+MISMATCH n=8610 in=29 count=12 got=29 exp=30
+MISMATCH n=11277 in=83 count=34 got=83 exp=84
+MISMATCH n=12512 in=17 count=12 got=17 exp=18
+G-RG-SNAP rows=18504 exact=18501 bad=3 parse_bad=0
