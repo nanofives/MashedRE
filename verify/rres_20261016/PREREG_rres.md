@@ -65,3 +65,27 @@ Measured facts that replace guesses above. Baseline arm: **1047 rows, 0 RED, G-C
 - **Pr-7 (SuperG sticky VA).** Extending F3 to Course_Id 25 removes SuperG's AB-type C19 rows and moves nothing on Arctic. Measured before the port (arm S1, HUD replay on):
   SuperG 192 -> 164 rows, Arctic 85 -> 85.
 - **Pr-1 amended.** After the port a track's C10 and C03(a) rows are 0 where the collected triangle count and AABB match; a count mismatch leaves a MOVED / MISSING row that is cited.
+
+### Amendment 2 (written before the final arms f0 / f1 / fo and the G-CTRL run on the final exe were measured)
+
+Facts resolved while porting, each measured before it was coded:
+
+6. **Cache threshold is a double.** `FUN_00422570` compares the squared move distance with `fcom qword` at `0x005cd318` = **0.125** (Ghidra prints the double as float 0.0). The collect cache
+   is re-queried when the car moved more than sqrt(0.125) from the last query position. Under the matched-pose replay the standalone's pre-replay grid positions mis-anchor that chain, so
+   the cache is reset when the replay row counter is 0.
+7. **Alpha source.** `153.0` at `0x005cd320`, applied as `fmul` on `FUN_00422570`'s 4th stack argument (`rec+0x288 * rec+0x284`), truncated to a byte.
+8. **Hull frame.** The hull frames hang off the body frame, not the clump root: root x hull misses the original's hull AABB by 4e-3 on average (up to 1.2e-2 pitched), body x hull by 2e-4
+   (120 hulls, 13 tracks). The standalone bakes the hull batch into the hull parent's frame and draws it with the body LTM.
+9. **RT size by LOD state.** `rec+0x298 == 2` selects the 64x64 raster (`FUN_00446520` `push 1` / `push 2`, `0x00446965` / `0x00446975`). The state is taken from the previous frame's eye
+   (default). It removes the one boundary car at Neustein row 1169 (d2 148.7 previous eye / 142.9 this eye) and adds no row on 39 frames. `MASHED_CAR_LOD_EYE=last` restores this frame's eye.
+   Where the director reads the camera is not decoded: U-row.
+10. **UV.** The RT camera's `viewMatrix` is only re-synced at its BeginUpdate (librw `cameraSync`), after the collect; UV is computed in closed form `0.5 - (d . axis) / 1.5` from the
+    camera basis, matching the original's recorded vertices (291 of 291, error <= 2e-4).
+
+Pixel witness (not an acceptance gate, the draw list is): Neustein grid frame, original vs shadow-on vs shadow-off, 4x crop of the near car: the original's dark band under the
+rear and along the right wheel arch is reproduced by shadow-on and absent from shadow-off (`verify/rres_20261016/evidence/shadow_zoom_700.png`).
+
+Final predictions (stated before the final arms): **Pr-8** default build, no HUD replay: 1047 -> 1047 minus every C10 row (38) minus the C03 hull rows, plus 0 rows (any added row fails the
+lane); SuperG 210 -> about 180 (sticky VA). **Pr-9** `--hud` arm: 813 -> about 745 (the arm `s3h13` measured 745 on the pre-UV-fix exe, same draw geometry). **Pr-10** opt-out
+(`MASHED_CAR_SHADOW_RT=0 MASHED_LIBRW_SUPERG_VA=0 MASHED_CAR_LOD_EYE=last`) reproduces the 1047 baseline row for row on the 7 tracks it is run on. **Pr-11** G-CTRL stays
+`d3b90ee0 / 80f01f35 / 56d62ae7` (render-only change, no sim reads).
