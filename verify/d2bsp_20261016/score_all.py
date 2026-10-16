@@ -40,7 +40,7 @@ elif what == 'b':
     csvs = [os.path.join(OUT, f'B_{s}_K{k}.step.csv') for s in arms for k in (0, 1, 26)]
     lines.append(sh(os.path.join(W, r'verify\d3_regimes_20261013\score_regimes.py'), env, lab, *csvs))
 elif what == 'coll':
-    lines.append(sh(os.path.join(OUT, 'coll.py'), *arms))
+    lines.append(sh(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'coll.py'), *arms))
 txt = '\n'.join(lines)
 print(txt)
 open(os.path.join(OUT, f'SCORE_{what.upper()}_{suffix}.txt'), 'w').write(txt + '\n')

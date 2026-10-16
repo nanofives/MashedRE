@@ -34,6 +34,7 @@ st = collections.Counter()
 k_ok = {'W': 0, 'S': 0}; f_ok = {'W': 0, 'S': 0}; wc = 0
 k_ok_red = {'W': 0, 'S': 0}; wc_red = 0
 f_ok_post = {'W': 0, 'S': 0}; wc_post = 0
+f_ok_nh = {'W': 0, 'S': 0}; wc_nh = 0          # amendment 3: hold-tick wheel-calls left out (report only)
 first_bad = []
 cnt_hist_o, cnt_hist_s = collections.Counter(), collections.Counter()
 red_q = 0
@@ -76,6 +77,9 @@ for seq in sorted(Q):
     for w in range(4):
         wc += 1; wc_red += has_red; wc_post += post
         ow = out[w * 6:(w + 1) * 6]
+        hold = (int(q['frame']) < 1000 and ow[0] == '00000000' and ow[1] == 'ffffffff' and ow[4] == '3f800000'
+                and len(out) >= 28 and out[24 + w] == '1')
+        wc_nh += not hold
         for arm in ('W', 'S'):
             c = cls[arm]
             own = c[w * 6:(w + 1) * 6]; par = c[PART[w] * 6:(PART[w] + 1) * 6]
@@ -83,7 +87,7 @@ for seq in sorted(Q):
                 k_ok[arm] += 1; k_ok_red[arm] += has_red
             sel = [0, 1, 3, 4, 5]
             if [ow[k] for k in sel] in ([own[k] for k in sel], [par[k] for k in sel]):
-                f_ok[arm] += 1; f_ok_post[arm] += post
+                f_ok[arm] += 1; f_ok_post[arm] += post; f_ok_nh[arm] += not hold
 pct = lambda a, b: f'{a}/{b} = {100.0 * a / b:.2f} %' if b else f'{a}/0'
 print(f'queries replayed {n} (orig Q rows {len(Q)}, O rows {len(O)})')
 print(f'G-WALK   fix W bit-identical batch: {pct(walk_ok, n)}  -> {"PASS" if n and walk_ok == n else "FAIL"}')
@@ -99,5 +103,6 @@ print(f'count histogram standin {sorted(cnt_hist_s.items())}')
 for arm in ('W', 'S'):
     print(f'G-WHEEL-K {arm}: {pct(k_ok[arm], wc)}   (wheel-calls on ff010101 queries: {pct(k_ok_red[arm], wc_red)})')
     print(f'G-WHEEL-F {arm}: {pct(f_ok[arm], wc)}   (frames >= 1000, amendment 2: {pct(f_ok_post[arm], wc_post)})')
+    print(f'   report (amendment 3) G-WHEEL-F {arm} without hold-tick wheel-calls: {pct(f_ok_nh[arm], wc_nh)}')
 gk = wc and k_ok['W'] >= 0.99 * wc and f_ok['W'] >= 0.99 * wc
 print(f'G-WHEEL (fix W, both parts >= 99 %): {"PASS" if gk else "FAIL"}')
