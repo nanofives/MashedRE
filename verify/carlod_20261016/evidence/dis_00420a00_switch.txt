@@ -1,0 +1,163 @@
+0x00420a00  83 c4 10                  add esp, 0x10
+0x00420a03  e8 78 ee ff ff            call 0x41f880
+0x00420a08  e8 33 f9 ff ff            call 0x420340
+0x00420a0d  33 ed                     xor ebp, ebp
+0x00420a0f  bf 01 00 00 00            mov edi, 1
+0x00420a14  b3 20                     mov bl, 0x20
+0x00420a16  8b 0c ae                  mov ecx, dword ptr [esi + ebp*4]
+0x00420a19  33 c0                     xor eax, eax
+0x00420a1b  85 c9                     test ecx, ecx
+0x00420a1d  0f 84 fd 00 00 00         je 0x420b20
+0x00420a23  83 fd 67                  cmp ebp, 0x67
+0x00420a26  0f 87 cc 00 00 00         ja 0x420af8
+0x00420a2c  0f b6 95 94 0c 42 00      movzx edx, byte ptr [ebp + 0x420c94]
+0x00420a33  ff 24 95 3c 0c 42 00      jmp dword ptr [edx*4 + 0x420c3c]
+0x00420a3a  8b 96 98 02 00 00         mov edx, dword ptr [esi + 0x298]
+0x00420a40  33 c0                     xor eax, eax
+0x00420a42  85 d2                     test edx, edx
+0x00420a44  0f 94 c0                  sete al
+0x00420a47  e9 ac 00 00 00            jmp 0x420af8
+0x00420a4c  8b 96 98 02 00 00         mov edx, dword ptr [esi + 0x298]
+0x00420a52  33 c0                     xor eax, eax
+0x00420a54  3b d7                     cmp edx, edi
+0x00420a56  0f 94 c0                  sete al
+0x00420a59  e9 9a 00 00 00            jmp 0x420af8
+0x00420a5e  8b 96 98 02 00 00         mov edx, dword ptr [esi + 0x298]
+0x00420a64  33 c0                     xor eax, eax
+0x00420a66  85 d2                     test edx, edx
+0x00420a68  0f 94 c0                  sete al
+0x00420a6b  e9 92 00 00 00            jmp 0x420b02
+0x00420a70  8b 86 98 02 00 00         mov eax, dword ptr [esi + 0x298]
+0x00420a76  85 c0                     test eax, eax
+0x00420a78  75 09                     jne 0x420a83
+0x00420a7a  f6 86 94 02 00 00 10      test byte ptr [esi + 0x294], 0x10
+0x00420a81  74 73                     je 0x420af6
+0x00420a83  33 c0                     xor eax, eax
+0x00420a85  eb 71                     jmp 0x420af8
+0x00420a87  39 be 98 02 00 00         cmp dword ptr [esi + 0x298], edi
+0x00420a8d  75 f4                     jne 0x420a83
+0x00420a8f  f6 86 94 02 00 00 10      test byte ptr [esi + 0x294], 0x10
+0x00420a96  75 eb                     jne 0x420a83
+0x00420a98  eb 5c                     jmp 0x420af6
+0x00420a9a  8b 86 98 02 00 00         mov eax, dword ptr [esi + 0x298]
+0x00420aa0  85 c0                     test eax, eax
+0x00420aa2  75 df                     jne 0x420a83
+0x00420aa4  84 9e 94 02 00 00         test byte ptr [esi + 0x294], bl
+0x00420aaa  75 d7                     jne 0x420a83
+0x00420aac  eb 48                     jmp 0x420af6
+0x00420aae  39 be 98 02 00 00         cmp dword ptr [esi + 0x298], edi
+0x00420ab4  75 cd                     jne 0x420a83
+0x00420ab6  84 9e 94 02 00 00         test byte ptr [esi + 0x294], bl
+0x00420abc  75 c5                     jne 0x420a83
+0x00420abe  eb 36                     jmp 0x420af6
+0x00420ac0  8b 86 98 02 00 00         mov eax, dword ptr [esi + 0x298]
+0x00420ac6  85 c0                     test eax, eax
+0x00420ac8  75 b9                     jne 0x420a83
+0x00420aca  f6 86 94 02 00 00 10      test byte ptr [esi + 0x294], 0x10
+0x00420ad1  eb 21                     jmp 0x420af4
+0x00420ad3  39 be 98 02 00 00         cmp dword ptr [esi + 0x298], edi
+0x00420ad9  75 a8                     jne 0x420a83
+0x00420adb  f6 86 94 02 00 00 10      test byte ptr [esi + 0x294], 0x10
+0x00420ae2  eb 10                     jmp 0x420af4
+0x00420ae4  8b 86 98 02 00 00         mov eax, dword ptr [esi + 0x298]
+0x00420aea  85 c0                     test eax, eax
+0x00420aec  75 95                     jne 0x420a83
+0x00420aee  84 9e 94 02 00 00         test byte ptr [esi + 0x294], bl
+0x00420af4  74 8d                     je 0x420a83
+0x00420af6  8b c7                     mov eax, edi
+0x00420af8  83 fd 17                  cmp ebp, 0x17
+0x00420afb  74 19                     je 0x420b16
+0x00420afd  83 fd 32                  cmp ebp, 0x32
+0x00420b00  74 14                     je 0x420b16
+0x00420b02  8b 96 94 02 00 00         mov edx, dword ptr [esi + 0x294]
+0x00420b08  81 e2 00 04 00 00         and edx, 0x400
+0x00420b0e  f7 da                     neg edx
+0x00420b10  1b d2                     sbb edx, edx
+0x00420b12  f7 d2                     not edx
+0x00420b14  23 c2                     and eax, edx
+0x00420b16  50                        push eax
+0x00420b17  51                        push ecx
+0x00420b18  e8 23 47 09 00            call 0x4b5240
+0x00420b1d  83 c4 08                  add esp, 8
+0x00420b20  45                        inc ebp
+0x00420b21  81 fd 80 00 00 00         cmp ebp, 0x80
+0x00420b27  0f 8c e9 fe ff ff         jl 0x420a16
+0x00420b2d  8b 7c 24 10               mov edi, dword ptr [esp + 0x10]
+0x00420b31  8b 74 24 38               mov esi, dword ptr [esp + 0x38]
+0x00420b35  8d bf e0 d8 63 00         lea edi, [edi + 0x63d8e0]
+0x00420b3b  b9 10 00 00 00            mov ecx, 0x10
+0x00420b40  f3 a5                     rep movsd dword ptr es:[edi], dword ptr [esi]
+0x00420b42  5f                        pop edi
+0x00420b43  5e                        pop esi
+0x00420b44  5d                        pop ebp
+0x00420b45  5b                        pop ebx
+0x00420b46  83 c4 1c                  add esp, 0x1c
+0x00420b49  c3                        ret 
+0x00420b4a  39 be 98 02 00 00         cmp dword ptr [esi + 0x298], edi
+0x00420b50  eb 9a                     jmp 0x420aec
+0x00420b52  8b 96 98 02 00 00         mov edx, dword ptr [esi + 0x298]
+0x00420b58  33 c0                     xor eax, eax
+0x00420b5a  3b d7                     cmp edx, edi
+0x00420b5c  0f 94 c0                  sete al
+0x00420b5f  eb a1                     jmp 0x420b02
+0x00420b61  8b 86 94 02 00 00         mov eax, dword ptr [esi + 0x294]
+0x00420b67  a8 40                     test al, 0x40
+0x00420b69  74 0e                     je 0x420b79
+0x00420b6b  a8 10                     test al, 0x10
+0x00420b6d  eb 72                     jmp 0x420be1
+0x00420b6f  8b 86 94 02 00 00         mov eax, dword ptr [esi + 0x294]
+0x00420b75  84 c0                     test al, al
+0x00420b77  78 66                     js 0x420bdf
+0x00420b79  33 c0                     xor eax, eax
+0x00420b7b  eb 85                     jmp 0x420b02
+0x00420b7d  8b 86 94 02 00 00         mov eax, dword ptr [esi + 0x294]
+0x00420b83  f6 c4 08                  test ah, 8
+0x00420b86  eb 55                     jmp 0x420bdd
+0x00420b88  8b 86 98 02 00 00         mov eax, dword ptr [esi + 0x298]
+0x00420b8e  85 c0                     test eax, eax
+0x00420b90  eb 06                     jmp 0x420b98
+0x00420b92  39 be 98 02 00 00         cmp dword ptr [esi + 0x298], edi
+0x00420b98  75 12                     jne 0x420bac
+0x00420b9a  8b 86 94 02 00 00         mov eax, dword ptr [esi + 0x294]
+0x00420ba0  f6 c4 04                  test ah, 4
+0x00420ba3  74 07                     je 0x420bac
+0x00420ba5  8b c7                     mov eax, edi
+0x00420ba7  e9 6a ff ff ff            jmp 0x420b16
+0x00420bac  33 c0                     xor eax, eax
+0x00420bae  e9 63 ff ff ff            jmp 0x420b16
+0x00420bb3  83 be 98 02 00 00 02      cmp dword ptr [esi + 0x298], 2
+0x00420bba  75 bd                     jne 0x420b79
+0x00420bbc  f6 86 94 02 00 00 30      test byte ptr [esi + 0x294], 0x30
+0x00420bc3  75 b4                     jne 0x420b79
+0x00420bc5  8b c7                     mov eax, edi
+0x00420bc7  e9 36 ff ff ff            jmp 0x420b02
+0x00420bcc  83 be 98 02 00 00 02      cmp dword ptr [esi + 0x298], 2
+0x00420bd3  75 a4                     jne 0x420b79
+0x00420bd5  8b 86 94 02 00 00         mov eax, dword ptr [esi + 0x294]
+0x00420bdb  a8 10                     test al, 0x10
+0x00420bdd  74 9a                     je 0x420b79
+0x00420bdf  84 c3                     test bl, al
+0x00420be1  75 96                     jne 0x420b79
+0x00420be3  8b c7                     mov eax, edi
+0x00420be5  e9 18 ff ff ff            jmp 0x420b02
+0x00420bea  83 be 98 02 00 00 02      cmp dword ptr [esi + 0x298], 2
+0x00420bf1  75 86                     jne 0x420b79
+0x00420bf3  8b 86 94 02 00 00         mov eax, dword ptr [esi + 0x294]
+0x00420bf9  a8 10                     test al, 0x10
+0x00420bfb  0f 85 78 ff ff ff         jne 0x420b79
+0x00420c01  84 c3                     test bl, al
+0x00420c03  0f 84 70 ff ff ff         je 0x420b79
+0x00420c09  8b c7                     mov eax, edi
+0x00420c0b  e9 f2 fe ff ff            jmp 0x420b02
+0x00420c10  83 be 98 02 00 00 02      cmp dword ptr [esi + 0x298], 2
+0x00420c17  0f 85 5c ff ff ff         jne 0x420b79
+0x00420c1d  8b 86 94 02 00 00         mov eax, dword ptr [esi + 0x294]
+0x00420c23  a8 10                     test al, 0x10
+0x00420c25  0f 84 4e ff ff ff         je 0x420b79
+0x00420c2b  84 c3                     test bl, al
+0x00420c2d  0f 84 46 ff ff ff         je 0x420b79
+0x00420c33  8b c7                     mov eax, edi
+0x00420c35  e9 c8 fe ff ff            jmp 0x420b02
+0x00420c3a  8b ff                     mov edi, edi
+0x00420c3c  3a 0a                     cmp cl, byte ptr [edx]
+0x00420c3e  42                        inc edx

@@ -131,4 +131,42 @@ compares `vis` against `base`, for F-ENV `vis_env` against `vis`.
 
 ## 6. Amendments
 
-(none yet)
+(Amendment 3 below was written AFTER the first `vis` arm's result was read; it is labelled so.)
+
+### Amendment 1 (citation correction; written after the `base` arm and while the `vis` arm ran, before any
+`vis` result was read; no rule changes)
+
+Section 1 A cites `0x00420a2e` for "`bVar11` stays false". That address was not read from the binary and is
+wrong. The disassembly (`evidence/dis_00420a00_switch.txt`) gives: the per-part loop body starts `0x00420a16`
+(`mov ecx,[esi+ebp*4]`), the result is cleared by `xor eax,eax` at `0x00420a19`, a null atomic jumps to the
+next part at `0x00420a1d` (`je 0x420b20`), parts above 0x67 take the 0 to `0x00420af8` (`cmp ebp,0x67; ja`,
+`0x00420a23` / `0x00420a26`), the dispatch is `jmp [edx*4 + 0x420c3c]` at `0x00420a33` with the byte index
+at `0x00420c94`, the 0x400 mask is `0x00420b02..0x00420b14`, and `push eax; push ecx; call 0x4b5240` is
+`0x00420b16..0x00420b18`. Every other RVA in section 1 was checked against the same listing and the
+call-site listing (`evidence/dis_state_setter_callsites.txt`). The per-handler entry addresses cited in
+`LibRw/RwCarFx.cpp` come from that listing and match the table in 1 A by what each handler tests.
+
+### Amendment 2 (harness note, before any `vis` result was read)
+
+The first TRAINING launch of the `base` arm exited 0 and wrote no records (arctic and city, run right
+after it, wrote theirs). Re-running TRAINING alone produced rows 80 / 79 / 79, matched 194 / 191 / 191, which
+equal rtex's final numbers exactly. The `base` arm's TRAINING numbers are from that re-run
+(`log/carlod/run_base_training.txt`); the empty first launch is not evidence of anything about the exe.
+
+### Amendment 3 (written after the first `vis` arm was read; scope addition, rules unchanged)
+
+The first F-VIS build (arm `log/carlod/vis1_noglass`, section 2 as written: RENDER bits only) FAILED rules 2
+and 3 on TRAINING and City: the three C02 rows went on every frame it ran, but a NEW uncited MISSING `Glass`
+row appeared (original 8 Glass draws, 64 triangles, now unmatched) and matched draws fell 194 -> 186 /
+191 -> 183 / 191 -> 183 on TRAINING (City 351 -> 343, 339 -> 331). Cause, from the original: the Glass
+atomics (parts 0xe 0xf 0x2f 0x30) have no RENDER bit in the live capture (`vis_model_check.txt`
+and the part listing, `rflags` 0x1) because `FUN_00420870` hides them, and the original draws them anyway:
+`FUN_00420050` @ `0x00420050` renders the car clump (`call 0x4e6680`, `0x00420162`) and then calls
+`[atomic+0x48]` (the atomic's own render callback) on glass atomic A (`0x0042019d`) and B (`0x004201d1`),
+chosen by S (`[esi+0x38]` part 0xe or `[esi+0xbc]` part 0x2f; `[esi+0x3c]` part 0xf or `[esi+0xc0]` part
+0x30; none at S = 2), gated by F bits 0x400 (both), 0x10 / 0x1000 (A), 0x20 / 0x2000 (B)
+(`evidence/dis_00420140_glass_pass.txt`). F-VIS therefore includes that pass: after the clump render,
+`CarGlassPart(S, F, 0)` then `(S, F, 1)` atomics are rendered through `Atomic::render()`. The `vis` arm of
+section 4 is the build with the glass pass; `vis1_noglass` stays on record as the failed first attempt.
+Predictions and rules are unchanged: Pr-1 now reads "11 (TRAINING) / 13 (Arctic, City) opaque parts plus the
+2 glass atomics per car".
