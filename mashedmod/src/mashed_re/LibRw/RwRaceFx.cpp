@@ -1814,5 +1814,433 @@ void RaceFx_RenderHud(int width, int height) {
     g_hud_cam->endUpdate();
 }
 
+// =============================================================================================
+// [rres 2026-10-16] The car shadow render-to-texture (C10, U-9691; verify/rres_20261016/PREREG_rres.md
+// amendment 1). Every constant is cited to its address in the original.
+// =============================================================================================
+namespace {
+
+// FUN_0041eaa0 @ 0x0041eaa0: FUN_004b48e0(0x100, 0x100, &DAT_0063e490, &DAT_0063d854) makes the [0] camera
+// and texture (A8R8G8B8 camera raster 0x505, z raster, RwTextureCreate with filter byte 2); the camera is
+// parallel (FUN_004c1c10(cam, 2)) with view window 0.75 x 0.75 (FUN_004c1c80, local_8 = local_4 = 0x3f400000).
+// FUN_0041eaa0 makes both: [0] 256x256 (DAT_0063e490 / DAT_0063d854) and [1] 64x64 (DAT_0063e494 / DAT_0063d858,
+// FUN_004b48e0(0x40, 0x40, ...), same parallel projection and view window); FUN_0041f8f0 picks [rec+0x298 == 2], the far
+// level of detail (the car record's FUN_00420870 state), so a far car draws its shadow from the 64x64 texture.
+constexpr int   kShadowRtSize[2] = {256, 64};
+constexpr float kShadowWindow  = 0.75f;
+// FUN_0041f8f0: the camera sits at lightAt * _DAT_005cca00 + carpos (0x0041f981..0x0041f9ab), _DAT_005cca00 = -4.0.
+constexpr float kShadowLift    = -4.0f;
+// FUN_00422570: sphere radius local_107c = 0x3fc00000; the query keeps at most 0x40 (FUN_004b4ad0 arg 4).
+constexpr float kShadowRadius  = 1.5f;
+constexpr int   kShadowMaxTris = 0x40;
+constexpr float kShadowMinNormalY = 0.75f;   // _DAT_005cc950: `0.75 <= record.normal.y`
+constexpr float kShadowFrontMax   = 1.0f;    // _DAT_005cc320, plane class 0
+constexpr float kShadowBehindMax  = 0.1f;    // _DAT_005cc56c, plane class 2
+constexpr float kShadowBias       = 0.01f;   // DAT_00641324 = 0x3c23d70a, added to each vertex y
+// The three collision material colours FUN_00422570 skips as RwRGBA dwords (r | g << 8 | b << 16 | a << 24):
+// -0xfefeff = 0xff010101, -0xffff01 = 0xff0000ff, -0xff80 = 0xffff0080.
+constexpr std::uint32_t kShadowSkipRgba[3] = {0xff010101u, 0xff0000ffu, 0xffff0080u};
+// Vertex colour alpha byte (DAT_00641313): FUN_00422570 takes a 4th stack argument, the float product
+// DAT_00644368 * rec+0x288 * rec+0x284 that FUN_0041f8f0 stores for it (0x0041fa51..0x0041fa63), and does
+// `fld [esp+0x10a0]; fmul [0x005cd320]` (0x0042257a / 0x00422581, 0x005cd320 = 153.0f) then FUN_004a2c48
+// (__ftol): alpha = trunc(product * 153), low byte. DAT_00644368 = 1.0 on every track measured (3 of 3).
+constexpr double kShadowAlphaK = 153.0;
+// The re-query threshold: `fcom qword ptr [0x005cd318]` (0x00422624), the DOUBLE 0.125 (the float read of
+// the same address is 0.0, which is what the decompilation prints): the triangle set is kept until the car
+// has moved more than sqrt(0.125) = 0.354 from the position of the last query.
+constexpr double kShadowMoveD2 = 0.125;
+
+struct ShadowRt {
+    rw::Camera*  cam = nullptr;
+    rw::Raster*  ras = nullptr;
+    rw::Raster*  zb  = nullptr;
+    rw::Texture* tex = nullptr;
+    bool tried = false, ok = false;
+} g_srt[2];
+
+bool          g_shadow_gate = false;       // DAT_00657490
+ObjShadowSoup g_ssoup;
+float         g_slight[16] = {};
+bool          g_slight_ok = false;
+
+// The 0xf40-byte per-player record at 0x006403e8 + slot * 0xf40: the previous query position (0x006403b8),
+// the triangle count (0x00641318), vertices (entry dwords 0..8, y already biased), texture coordinates
+// (dwords 9..14) and the colour alpha byte (0x00641313).
+struct ShadowSlot {
+    float last[3] = {0.f, 0.f, 0.f};
+    int   n = 0;
+    int   rt = 0;            // the render texture this car's pass drew into this frame (0 = 256, 1 = 64)
+    bool  ran = false;       // the RT pass ran for this car this frame (FUN_00420050 got past its sphere test)
+    float v[kShadowMaxTris][9] = {};
+    float uv[kShadowMaxTris][6] = {};
+    std::uint8_t alpha = 0;
+};
+ShadowSlot g_sslot[4];
+float      g_ssun[4] = {1.f, 1.f, 1.f, 1.f};
+int        g_dbg_row = -1;
+
+// The recorder's name for the unnamed camera texture: "#WxH:format" (the original's recorder falls back to the
+// D3D descriptor, camera_probe.py texDesc, 21 = D3DFMT_A8R8G8B8); the newer captures name the two textures
+// "@shadowrt0" / "@shadowrt1" (MASHED_DBG_SHADOWRT_NAMED=1 selects those).
+const char* ShadowRtName(int rt) {
+    static const bool named = std::getenv("MASHED_DBG_SHADOWRT_NAMED") != nullptr;
+    if (named) return rt ? "@shadowrt1" : "@shadowrt0";
+    return rt ? "#64x64:21" : "#256x256:21";
+}
+
+bool ShadowRtBuild(int rt) {
+    ShadowRt& R = g_srt[rt];
+    if (R.tried) return R.ok;
+    R.tried = true;
+    const int sz = kShadowRtSize[rt];
+    R.ras = rw::Raster::create(sz, sz, 32, rw::Raster::CAMERATEXTURE | rw::Raster::C8888);
+    R.zb  = rw::Raster::create(sz, sz, 0, rw::Raster::ZBUFFER);
+    R.cam = rw::Camera::create();
+    if (R.ras && R.zb && R.cam) {
+        R.cam->setFrame(rw::Frame::create());
+        R.cam->frameBuffer = R.ras;
+        R.cam->zBuffer = R.zb;
+        R.cam->setProjection(rw::Camera::PARALLEL);
+        rw::V2d vw = {kShadowWindow, kShadowWindow};
+        R.cam->setViewWindow(&vw);
+        R.tex = rw::Texture::create(R.ras);
+        if (R.tex) {
+            R.tex->setFilter(rw::Texture::LINEAR);
+            R.tex->setAddressU(rw::Texture::CLAMP);
+            R.tex->setAddressV(rw::Texture::CLAMP);
+        }
+    }
+    R.ok = R.tex != nullptr;
+    if (std::FILE* f = std::fopen("log/librw_race.txt", "a")) {
+        std::fprintf(f, "[rres] shadow RT %dx%d camera texture: %s\n", sz, sz, R.ok ? "ok" : "FAILED");
+        std::fclose(f);
+    }
+    return R.ok;
+}
+
+// Squared distance from p to triangle abc (closest point, Ericson, Real-Time Collision Detection 5.1.5).
+double TriDist2(const double p[3], const double a[3], const double b[3], const double c[3]) {
+    auto sub = [](const double* x, const double* y, double* o) { for (int k = 0; k < 3; ++k) o[k] = x[k] - y[k]; };
+    auto dot = [](const double* x, const double* y) { return x[0] * y[0] + x[1] * y[1] + x[2] * y[2]; };
+    double ab[3], ac[3], ap[3];
+    sub(b, a, ab); sub(c, a, ac); sub(p, a, ap);
+    const double d1 = dot(ab, ap), d2 = dot(ac, ap);
+    double q[3];
+    auto done = [&](const double* r) { double d[3]; sub(p, r, d); return dot(d, d); };
+    if (d1 <= 0.0 && d2 <= 0.0) return done(a);
+    double bp[3]; sub(p, b, bp);
+    const double d3 = dot(ab, bp), d4 = dot(ac, bp);
+    if (d3 >= 0.0 && d4 <= d3) return done(b);
+    const double vc = d1 * d4 - d3 * d2;
+    if (vc <= 0.0 && d1 >= 0.0 && d3 <= 0.0) {
+        const double v = d1 / (d1 - d3);
+        for (int k = 0; k < 3; ++k) q[k] = a[k] + v * ab[k];
+        return done(q);
+    }
+    double cp[3]; sub(p, c, cp);
+    const double d5 = dot(ab, cp), d6 = dot(ac, cp);
+    if (d6 >= 0.0 && d5 <= d6) return done(c);
+    const double vb = d5 * d2 - d1 * d6;
+    if (vb <= 0.0 && d2 >= 0.0 && d6 <= 0.0) {
+        const double w = d2 / (d2 - d6);
+        for (int k = 0; k < 3; ++k) q[k] = a[k] + w * ac[k];
+        return done(q);
+    }
+    const double va = d3 * d6 - d5 * d4;
+    if (va <= 0.0 && (d4 - d3) >= 0.0 && (d5 - d6) >= 0.0) {
+        const double w = (d4 - d3) / ((d4 - d3) + (d5 - d6));
+        for (int k = 0; k < 3; ++k) q[k] = b[k] + w * (c[k] - b[k]);
+        return done(q);
+    }
+    const double denom = 1.0 / (va + vb + vc);
+    const double v = vb * denom, w = vc * denom;
+    for (int k = 0; k < 3; ++k) q[k] = a[k] + ab[k] * v + ac[k] * w;
+    return done(q);
+}
+
+// FUN_00422570 @ 0x00422570 for car `slot`, with the RT camera's frame already posed (its viewMatrix is the
+// texture-coordinate map). `pos` = the clump frame's modelling position (param_2 + 0x30..0x38).
+void ShadowCollect(int slot, const float pos[3], const double cp[3], const double r[3], const double u[3],
+                   std::uint8_t alpha) {
+    ShadowSlot& S = g_sslot[slot];
+    S.alpha = alpha;                                                        // 0x0042258d
+    const double dx = static_cast<double>(S.last[0]) - pos[0], dy = static_cast<double>(S.last[1]) - pos[1],
+                 dz = static_cast<double>(S.last[2]) - pos[2];
+    if (kShadowMoveD2 < dz * dz + dx * dx + dy * dy) {                      // the double at 0x005cd318
+        S.last[0] = pos[0]; S.last[1] = pos[1]; S.last[2] = pos[2];
+        S.n = 0;
+        if (!g_ssoup.verts || !g_ssoup.tris || g_ssoup.ntri == 0) return;
+        const double P[3] = {pos[0], pos[1], pos[2]};
+        const double r2 = static_cast<double>(kShadowRadius) * kShadowRadius;
+        std::vector<std::size_t> hits;
+        for (std::size_t t = 0; t < g_ssoup.ntri && hits.size() < static_cast<std::size_t>(kShadowMaxTris); ++t) {
+            const float* a = &g_ssoup.verts[g_ssoup.tris[t * 3 + 0] * 3];
+            const float* b = &g_ssoup.verts[g_ssoup.tris[t * 3 + 1] * 3];
+            const float* c = &g_ssoup.verts[g_ssoup.tris[t * 3 + 2] * 3];
+            bool out = false;                                               // cheap reject on the triangle's box
+            for (int k = 0; k < 3 && !out; ++k) {
+                const double lo = std::fmin(a[k], std::fmin(b[k], c[k])), hi = std::fmax(a[k], std::fmax(b[k], c[k]));
+                out = (P[k] + kShadowRadius < lo) || (P[k] - kShadowRadius > hi);
+            }
+            if (out) continue;
+            const double A[3] = {a[0], a[1], a[2]}, B[3] = {b[0], b[1], b[2]}, C[3] = {c[0], c[1], c[2]};
+            if (TriDist2(P, A, B, C) <= r2) hits.push_back(t);
+        }
+        // MASHED_DBG_SHADOWSEL=<csv>, DIAGNOSTIC ONLY (default unset): every sphere hit with its verdict
+        static std::FILE* s_sel = [] {
+            const char* e = std::getenv("MASHED_DBG_SHADOWSEL");
+            std::FILE* f = (e && e[0]) ? std::fopen(e, "w") : nullptr;
+            if (f) std::fprintf(f, "slot,px,py,pz,tri,rgba,ny,sd,verdict,v0x,v0y,v0z,v1x,v1y,v1z,v2x,v2y,v2z,row\n");
+            return f; }();
+        if (hits.empty()) {                                                 // the query returned 0: n stays 0
+            if (s_sel)
+                std::fprintf(s_sel, "%d,%.5f,%.5f,%.5f,-1,0,0,0,nohit,0,0,0,0,0,0,0,0,0,%d\n", slot, pos[0], pos[1], pos[2], g_dbg_row);
+            return;
+        }
+        for (std::size_t t : hits) {
+            const std::uint32_t rgba = g_ssoup.tri_rgba ? g_ssoup.tri_rgba[t] : 0u;
+            const float* v0 = &g_ssoup.verts[g_ssoup.tris[t * 3 + 0] * 3];
+            const float* v1 = &g_ssoup.verts[g_ssoup.tris[t * 3 + 1] * 3];
+            const float* v2 = &g_ssoup.verts[g_ssoup.tris[t * 3 + 2] * 3];
+            auto sel = [&](double ny, double sdv, const char* verdict) {
+                if (s_sel)
+                    std::fprintf(s_sel, "%d,%.5f,%.5f,%.5f,%zu,%08x,%.4f,%.4f,%s,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%d\n",
+                                 slot, pos[0], pos[1], pos[2], t, rgba, ny, sdv, verdict, v0[0], v0[1], v0[2],
+                                 v1[0], v1[1], v1[2], v2[0], v2[1], v2[2], g_dbg_row);
+            };
+            if (rgba == kShadowSkipRgba[0] || rgba == kShadowSkipRgba[1] || rgba == kShadowSkipRgba[2]) { sel(0, 0, "color"); continue; }
+            // FUN_00477e60's plane: n = (v2 - v1) x (v0 - v1), normalised; d = -(n . v0)
+            const double e1[3] = {static_cast<double>(v2[0]) - v1[0], static_cast<double>(v2[1]) - v1[1],
+                                  static_cast<double>(v2[2]) - v1[2]};
+            const double e0[3] = {static_cast<double>(v0[0]) - v1[0], static_cast<double>(v0[1]) - v1[1],
+                                  static_cast<double>(v0[2]) - v1[2]};
+            double n[3] = {e1[1] * e0[2] - e1[2] * e0[1], e1[2] * e0[0] - e1[0] * e0[2], e1[0] * e0[1] - e1[1] * e0[0]};
+            const double nl = std::sqrt(n[0] * n[0] + n[1] * n[1] + n[2] * n[2]);
+            if (nl <= 0.0) continue;
+            for (double& x : n) x /= nl;
+            if (!(static_cast<double>(kShadowMinNormalY) <= n[1])) { sel(n[1], 0, "normal"); continue; }
+            const double d = -(n[2] * v0[2] + n[0] * v0[0] + n[1] * v0[1]);
+            const double sd = n[2] * pos[2] + n[1] * pos[1] + n[0] * pos[0] + d;              // FUN_00477f50
+            const double dist = std::fabs(sd);
+            if (sd > 0.0) { if (!(dist <= kShadowFrontMax)) { sel(n[1], sd, "front"); continue; } }   // class 0
+            else if (sd < 0.0) { if (!(dist <= kShadowBehindMax)) { sel(n[1], sd, "behind"); continue; } }   // class 2
+            if (S.n >= kShadowMaxTris) break;
+            sel(n[1], sd, "keep");
+            float* o = S.v[S.n++];
+            for (int k = 0; k < 3; ++k) { o[k] = v0[k]; o[3 + k] = v1[k]; o[6 + k] = v2[k]; }
+            o[1] += kShadowBias; o[4] += kShadowBias; o[7] += kShadowBias;
+        }
+    }
+    // FUN_004c3d90 over every kept triangle with the RT camera's viewMatrix (camera + 0x20), x and y kept as the
+    // texture coordinates (entry dwords 9..14). RenderWare's camera sync builds that matrix as the inverse LTM with the
+    // x row negated times (right = 1/(2 vw.x), up = -1/(2 vw.y), pos = 0.5, 0.5) (librw camera.cpp cameraSync), so for
+    // a parallel camera u = 0.5 - (d . right) / (2 vw), v = 0.5 - (d . up) / (2 vw) with d = p - camera position
+    // (verified on 291 recorded vertices of the original, error <= 2e-4). Closed form here: the camera's own viewMatrix
+    // is only re-synced at its BeginUpdate, which runs after this.
+    const double k2 = 1.0 / (2.0 * static_cast<double>(kShadowWindow));
+    for (int i = 0; i < S.n; ++i)
+        for (int k = 0; k < 3; ++k) {
+            const float* p = &S.v[i][3 * k];
+            const double d0 = p[0] - cp[0], d1 = p[1] - cp[1], d2 = p[2] - cp[2];
+            S.uv[i][2 * k]     = static_cast<float>(0.5 - (d0 * r[0] + d1 * r[1] + d2 * r[2]) * k2);
+            S.uv[i][2 * k + 1] = static_cast<float>(0.5 - (d0 * u[0] + d1 * u[1] + d2 * u[2]) * k2);
+        }
+}
+
+}  // namespace
+
+bool RaceFx_ShadowRtEnabled() { static const bool on = !EnvOff("MASHED_CAR_SHADOW_RT"); return on; }
+
+void RaceFx_SetShadowCourse(int course_id) {
+    g_shadow_gate = !(course_id == 0 || course_id == 0x1a || course_id == 0x24);   // end of 0x00479330
+}
+
+void RaceFx_SetShadowWorld(const ObjShadowSoup& soup, const float light_ltm[16]) {
+    g_ssoup = soup;
+    g_slight_ok = light_ltm != nullptr;
+    if (light_ltm) std::memcpy(g_slight, light_ltm, sizeof(g_slight));
+}
+
+void RaceFx_SetDbgRow(int row) { g_dbg_row = row; }
+
+void RaceFx_ShadowResetCache() {
+    for (ShadowSlot& s : g_sslot) s = ShadowSlot();
+}
+
+void RaceFx_SetCarSun(int slot, float sun) {
+    if (slot >= 0 && slot < 4) g_ssun[slot] = sun;
+}
+
+bool RaceFx_ShadowActive(int slot) {
+    return slot >= 0 && slot < 4 && g_have[slot] && RaceFx_ShadowRtEnabled() && g_shadow_gate && g_slight_ok &&
+           g_cars[slot].hull_v && g_cars[slot].hull_t && g_cars[slot].hull_nt > 0;
+}
+
+void RaceFx_ShadowPass(int slot, void* main_cam, void (*rebegin)(), int lod_state) {
+    if (!RaceFx_ShadowActive(slot) || !main_cam) return;
+    const CarFxInput& c = g_cars[slot];
+    rw::Camera* mc = static_cast<rw::Camera*>(main_cam);
+    // FUN_00420050 0x00420081: the car's sphere against the race camera; outside returns before any draw
+    {
+        rw::Sphere sp;
+        sp.center.x = c.body[12]; sp.center.y = c.body[13]; sp.center.z = c.body[14];
+        const std::uint32_t rb = 0x3f088c2du;
+        std::memcpy(&sp.radius, &rb, sizeof(sp.radius));
+        if (mc->frustumTestSphere(&sp) == rw::Camera::SPHEREOUTSIDE) {
+            static std::FILE* s_out = [] {
+                const char* e = std::getenv("MASHED_DBG_SHADOWSEL");
+                return (e && e[0]) ? std::fopen((std::string(e) + ".outside").c_str(), "w") : nullptr; }();
+            if (s_out) std::fprintf(s_out, "%d,%d,%.4f,%.4f,%.4f\n", g_dbg_row, slot, sp.center.x, sp.center.y, sp.center.z);
+            g_sslot[slot].ran = false;      // the batch (count, vertices) stays, as in the record at 0x006403e8
+            return;
+        }
+    }
+    const int rt = (lod_state == 2) ? 1 : 0;                      // FUN_0041f8f0: (rec+0x298 == 2) indexes the pair
+    if (!ShadowRtBuild(rt)) return;
+    rw::Camera* rc = g_srt[rt].cam;
+    g_sslot[slot].rt = rt;
+    g_sslot[slot].ran = true;
+
+    // ---- FUN_0041f8f0: the RT camera frame --------------------------------------------------------------
+    // position = lightAt * -4 + rec+0x258; FUN_004b42c0: at = normalise(target - position), right =
+    // normalise(up x at) with up = DAT_006146fc = (0,1,0), up' = at x right (verified against the recorded
+    // camera LTM of the original, verify/rres_20261016).
+    const float* L = g_slight;                                    // D3D rows: right, up, at, pos
+    const double lat[3] = {L[8], L[9], L[10]};
+    const double tgt[3] = {c.body[12], c.body[13], c.body[14]};
+    const double cp[3] = {tgt[0] + lat[0] * kShadowLift, tgt[1] + lat[1] * kShadowLift, tgt[2] + lat[2] * kShadowLift};
+    double a[3] = {tgt[0] - cp[0], tgt[1] - cp[1], tgt[2] - cp[2]};
+    const double al = std::sqrt(a[0] * a[0] + a[1] * a[1] + a[2] * a[2]);
+    if (al < 1e-9) return;
+    for (double& x : a) x /= al;
+    double r[3] = {a[2], 0.0, -a[0]};                              // (0,1,0) x a
+    double rl = std::sqrt(r[0] * r[0] + r[1] * r[1] + r[2] * r[2]);
+    if (rl < 1e-9) { r[0] = 1.0; r[1] = r[2] = 0.0; rl = 1.0; }
+    for (double& x : r) x /= rl;
+    const double u[3] = {a[1] * r[2] - a[2] * r[1], a[2] * r[0] - a[0] * r[2], a[0] * r[1] - a[1] * r[0]};
+    {
+        rw::Frame* f = rc->getFrame();
+        rw::Matrix* m = &f->matrix;
+        m->right.x = static_cast<float>(r[0]); m->right.y = static_cast<float>(r[1]); m->right.z = static_cast<float>(r[2]);
+        m->up.x = static_cast<float>(u[0]); m->up.y = static_cast<float>(u[1]); m->up.z = static_cast<float>(u[2]);
+        m->at.x = static_cast<float>(a[0]); m->at.y = static_cast<float>(a[1]); m->at.z = static_cast<float>(a[2]);
+        m->pos.x = static_cast<float>(cp[0]); m->pos.y = static_cast<float>(cp[1]); m->pos.z = static_cast<float>(cp[2]);
+        m->update();
+        f->updateObjects();
+    }
+
+    // the vertex colour FUN_004228f0 builds from DAT_00641310..13: white, alpha as measured above
+    const std::uint8_t alpha = FtolByte(kShadowAlphaK * static_cast<double>(c.fade) * static_cast<double>(g_ssun[slot]));
+    const float pos[3] = {c.root[12], c.root[13], c.root[14]};     // param_2 + 0x30..0x38 of the clump frame
+    ShadowCollect(slot, pos, cp, r, u, alpha);
+
+    // ---- FUN_00420050: the race camera's EndUpdate, then FUN_0041f8f0: clear to (0,0,0,0) (FUN_004c1bb0 mode 1 =
+    // image), the RT camera's BeginUpdate, the hull, EndUpdate; then the race camera's BeginUpdate again ----------
+    rw::RGBA clear = {0, 0, 0, 0};
+    rc->clear(&clear, rw::Camera::CLEARIMAGE);
+    mc->endUpdate();
+    rc->beginUpdate();
+    {
+        // RS 8 (ZWRITE) = 0, RS 6 (ZTEST) = 0, the hull's render callback (atomic + 0x48), RS 6 = 1, RS 8 = 1.
+        // ZWRITE goes first: librw keeps ZENABLE on (ZFUNC ALWAYS) when the test goes off with ZWRITE still on.
+        rw::SetRenderState(rw::ZWRITEENABLE, 0);
+        rw::SetRenderState(rw::ZTESTENABLE, 0);
+        // the hull in the world: p' = p.x r + p.y u + p.z a + pos of the body frame (the hull frames' parent: `body`)
+        const M root = FromD3D(c.body);
+        std::vector<rw::RWDEVICE::Im3DVertex> v(static_cast<std::size_t>(c.hull_nv));
+        for (int i = 0; i < c.hull_nv; ++i) {
+            const float* p = &c.hull_v[3 * i];
+            rw::RWDEVICE::Im3DVertex& o = v[static_cast<std::size_t>(i)];
+            o.setX(p[0] * root.r[0] + p[1] * root.u[0] + p[2] * root.a[0] + root.p[0]);
+            o.setY(p[0] * root.r[1] + p[1] * root.u[1] + p[2] * root.a[1] + root.p[1]);
+            o.setZ(p[0] * root.r[2] + p[1] * root.u[2] + p[2] * root.a[2] + root.p[2]);
+            o.setNormalX(0.f); o.setNormalY(0.f); o.setNormalZ(0.f);
+            o.setColor(0, 0, 0, 255);                                  // FUN_00420420: the hull material colour 0xff000000
+            o.setU(0.f); o.setV(0.f);
+        }
+        std::vector<rw::uint16> idx(static_cast<std::size_t>(c.hull_nt) * 3);
+        for (int i = 0; i < c.hull_nt * 3; ++i) idx[static_cast<std::size_t>(i)] = c.hull_t[i];
+        rw::SetRenderStatePtr(rw::TEXTURERASTER, nullptr);
+        rw::SetRenderState(rw::VERTEXALPHA, 0);
+        rw::im3d::Transform(v.data(), c.hull_nv, nullptr, 0);
+        static const float kIdent[16] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
+        if (rw_drawrec_pre) {
+            DrawRec::SetNextGeometry(v.data(), sizeof(v[0]), idx.data(), static_cast<unsigned>(idx.size()));
+            rw_drawrec_pre("", kIdent);
+        }
+        rw::im3d::RenderIndexedPrimitive(rw::PRIMTYPETRILIST, idx.data(), static_cast<rw::int32>(idx.size()));
+        if (rw_drawrec_post) rw_drawrec_post();
+        rw::im3d::End();
+        rw::SetRenderState(rw::ZTESTENABLE, 1);
+        rw::SetRenderState(rw::ZWRITEENABLE, 1);
+    }
+    rc->endUpdate();
+    // MASHED_DBG_SHADOWRT_DUMP=<prefix>, DIAGNOSTIC ONLY (default unset): the render texture right after the hull pass, as
+    // <prefix>_<slot>_<n>.tga (BGRA), one per car for the first 8 passes of each car
+    {
+        static const char* s_dump = std::getenv("MASHED_DBG_SHADOWRT_DUMP");
+        static int s_n[4] = {0, 0, 0, 0};
+        if (s_dump && s_dump[0] && s_n[slot] < 8) {
+            const int sz = kShadowRtSize[rt];
+            if (rw::uint8* px = g_srt[rt].ras->lock(0, rw::Raster::LOCKREAD)) {
+                char name[512];
+                std::snprintf(name, sizeof(name), "%s_%d_%d.tga", s_dump, slot, s_n[slot]++);
+                if (std::FILE* f = std::fopen(name, "wb")) {
+                    unsigned char h[18] = {0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, static_cast<unsigned char>(sz & 255),
+                                           static_cast<unsigned char>(sz >> 8), static_cast<unsigned char>(sz & 255),
+                                           static_cast<unsigned char>(sz >> 8), 32, 0x28};
+                    std::fwrite(h, 1, 18, f);
+                    for (int y = 0; y < sz; ++y) std::fwrite(px + static_cast<std::size_t>(y) * g_srt[rt].ras->stride, 1, static_cast<std::size_t>(sz) * 4, f);
+                    std::fclose(f);
+                }
+                g_srt[rt].ras->unlock(0);
+            }
+        }
+    }
+    mc->beginUpdate();
+    if (rebegin) rebegin();
+}
+
+void RaceFx_ShadowQuads(int slot) {
+    if (!RaceFx_ShadowActive(slot)) return;
+    ShadowSlot& S = g_sslot[slot];
+    if (!g_srt[S.rt].ok) return;
+    if (!S.ran) return;
+    S.ran = false;
+    if (S.n <= 0) return;                                           // FUN_004228f0: count == 0 draws nothing
+    std::vector<rw::RWDEVICE::Im3DVertex> v(static_cast<std::size_t>(S.n) * 3);
+    std::vector<rw::uint16> idx(static_cast<std::size_t>(S.n) * 3);
+    for (int i = 0; i < S.n; ++i)
+        for (int k = 0; k < 3; ++k) {
+            rw::RWDEVICE::Im3DVertex& o = v[static_cast<std::size_t>(i * 3 + k)];
+            o.setX(S.v[i][3 * k]); o.setY(S.v[i][3 * k + 1]); o.setZ(S.v[i][3 * k + 2]);
+            o.setNormalX(0.f); o.setNormalY(0.f); o.setNormalZ(0.f);
+            o.setColor(0xff, 0xff, 0xff, S.alpha);                  // DAT_00641310..13: white (DAT_005f6154), alpha
+            o.setU(S.uv[i][2 * k]); o.setV(S.uv[i][2 * k + 1]);
+            idx[static_cast<std::size_t>(i * 3 + k)] = static_cast<rw::uint16>(i * 3 + k);
+        }
+    // FUN_00420050: RS 8 (ZWRITE) = 0 around FUN_004228f0; there RS 1 = the RT raster, RS 12 = 1, RS 2 = 3
+    // (clamp), the triangle list (FUN_004cd070 / FUN_004cd2d0 / FUN_004cd140), RS 12 = 0
+    rw::SetRenderState(rw::ZWRITEENABLE, 0);
+    rw::SetRenderStatePtr(rw::TEXTURERASTER, g_srt[S.rt].tex->raster);
+    rw::SetRenderState(rw::TEXTUREFILTER, g_srt[S.rt].tex->getFilter());
+    rw::SetRenderState(rw::TEXTUREADDRESSU, rw::Texture::CLAMP);
+    rw::SetRenderState(rw::TEXTUREADDRESSV, rw::Texture::CLAMP);
+    rw::SetRenderState(rw::VERTEXALPHA, 1);
+    rw::SetRenderState(rw::SRCBLEND, rw::BLENDSRCALPHA);
+    rw::SetRenderState(rw::DESTBLEND, rw::BLENDINVSRCALPHA);
+    rw::im3d::Transform(v.data(), S.n * 3, nullptr, rw::im3d::VERTEXUV);
+    static const float kIdent[16] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
+    if (rw_drawrec_pre) {
+        DrawRec::SetNextGeometry(v.data(), sizeof(v[0]), idx.data(), static_cast<unsigned>(idx.size()));
+        rw_drawrec_pre(ShadowRtName(S.rt), kIdent);
+    }
+    rw::im3d::RenderIndexedPrimitive(rw::PRIMTYPETRILIST, idx.data(), static_cast<rw::int32>(idx.size()));
+    if (rw_drawrec_post) rw_drawrec_post();
+    rw::im3d::End();
+    rw::SetRenderState(rw::VERTEXALPHA, 0);
+    rw::SetRenderState(rw::ZWRITEENABLE, 1);
+}
+
 }  // namespace LibRw
 }  // namespace mashed_re

@@ -83,7 +83,8 @@ struct Inst { int model; float m[16]; bool fx = false; float env_coef = 0.f; flo
               std::vector<FramePose> poses; float sun_scale = -1.f;   // [librwrest]
               int kind = kInstAfterWorld;
               bool vis = false; int vis_state = 0; std::uint32_t vis_flags = 0;
-              int cull = 0; int zwrite = -1; };   // [rhooks] RaceSubmit_AddInstanceStates
+              int cull = 0; int zwrite = -1;      // [rhooks] RaceSubmit_AddInstanceStates
+              int car_slot = -1; };               // [rres] RaceSubmit_AddInstancePosed's car slot
 std::vector<Inst>       g_insts;
 // [librwrest] per model, parallel to g_models: the FRAMELIST frames of a hierarchy model and
 // their streamed matrices (restored after each posed copy draws). Empty otherwise.
@@ -638,9 +639,10 @@ void RaceSubmit_SetModelRwStates(int handle) {
 
 void RaceSubmit_AddInstancePosed(int handle, const float* m44, const FramePose* poses,
                                  std::size_t npose, float sun_scale, float env_coef,
-                                 const float* env_m44, int kind, const CarVis* vis) {
+                                 const float* env_m44, int kind, const CarVis* vis, int car_slot) {
     if (handle < 0 || !m44 || (std::size_t)handle >= g_models.size()) return;
     Inst i; i.model = handle; i.kind = kind;
+    i.car_slot = car_slot;
     for (int k = 0; k < 16; ++k) i.m[k] = m44[k];
     if (vis) { i.vis = true; i.vis_state = vis->state; i.vis_flags = vis->flags; }   // [carlod]
     if (env_m44 && (std::size_t)handle < g_model_env.size() &&
@@ -1103,6 +1105,13 @@ void RenderObjWorld(const Frustum& fr, bool sticky) {
 }
 }  // namespace
 
+// [rres] FUN_00420050 ends and begins the race camera around a car's shadow RT pass (0x004200..); RenderWare
+// re-derives the camera's matrices at that begin, and the fog range is the one thing this TU overrides
+// after its begin (I4-fog), so the pass redoes it.
+static bool  g_refog_on = false;
+static float g_refog_start = 0.f, g_refog_end = 0.f;
+static void RebeginMainFixups() { if (g_refog_on) rw::d3d::setFogRange(g_refog_start, g_refog_end); }
+
 void RaceSubmit_Render(const Race::RaceSceneState& st) {
     if (!RaceSubmit_Active()) return;
 
@@ -1338,6 +1347,9 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
         const char* e = std::getenv("MASHED_LIBRW_FOGFIX");
         return !(e && e[0] == '0' && e[1] == '\0');
     }();
+    // [rres] what the shadow pass redoes after it begins the race camera again mid-frame
+    g_refog_on = st.fog_on_ && s_fogfix && !std::getenv("MASHED_NO_FOG");
+    g_refog_start = st.fog_start_; g_refog_end = st.fog_end_;
     if (st.fog_on_ && s_fogfix && !std::getenv("MASHED_NO_FOG"))
         rw::d3d::setFogRange(st.fog_start_, st.fog_end_);
 
@@ -1723,6 +1735,10 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
                 d->update();
                 f->updateObjects();
             }
+            // [rres] FUN_00420050 @ 0x00420050 ends the race camera's update, runs FUN_0041f8f0 (the car shadow
+            // render-to-texture) and begins it again, before the light scale and the car's own draw
+            if (in.kind == kInstCar && in.car_slot >= 0 && RaceFx_ShadowActive(in.car_slot))
+                RaceFx_ShadowPass(in.car_slot, g_cam, &RebeginMainFixups, in.vis ? in.vis_state : 1);
             // [librwrest] FUN_00420050 @ 0x00420050: the directional light's colour times
             // rec+0x284 (all four components, 0x004200ea..0x00420149) for this car only
             if (in.sun_scale >= 0.f && g_sun)
@@ -1781,6 +1797,9 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
             }
             if (in.sun_scale >= 0.f && g_sun)   // restored after the render (0x004201d7)
                 g_sun->setColor(st.sun_f_[0], st.sun_f_[1], st.sun_f_[2]);
+            // [rres] then, with ZWRITE off, FUN_004228f0: this car's ground triangles with the RT texture
+            if (in.kind == kInstCar && in.car_slot >= 0 && RaceFx_ShadowActive(in.car_slot))
+                RaceFx_ShadowQuads(in.car_slot);
             for (const FramePose& p : in.poses) {   // back to the streamed matrices
                 rw::Frame* f = (*mf)[(std::size_t)p.frame];
                 if (!f) continue;

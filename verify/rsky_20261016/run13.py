@@ -46,6 +46,9 @@ TRACKS = {
     # NOT in the default 13: the new Neustein capture taken with the probe that names the car shadow render textures
     # (capture_one.py --track 2 --out verify/rsky_20261016/cap_neustein), the I-NAME retest of Neustein +105
     20: ("20_NeusteinNamed", "Neustein", HERE / "cap_neustein", None, None),
+    # [rres] a new Neustein capture with the BMPs kept (capture_one.py --track 2 --shots 30,70,105), for pixel comparisons of the
+    # car shadow; its directory is verify/rres_20261016/cap_neustein_px or $RRES_CAP21
+    21: ("21_NeusteinPix", "Neustein", Path(os.environ.get("RRES_CAP21", str(WT / "verify" / "rres_20261016" / "cap_neustein_px"))), None, None),
 }
 DEFAULT_TRACKS = ",".join(str(t) for t in TRACKS if t < 20)
 
@@ -105,6 +108,8 @@ def cmd_run(a):
         print(f"REFUSED: {marker} missing. The private root needs original\\ INSIDE it "
               "(else the exe walks up to the shared main root).")
         return 2
+    if a.hud:
+        a.knobs = list(a.knobs) + ["MASHED_HUD_REPLAY=" + str(WT / "verify" / "rfx_20261016" / "hud_inputs.txt")]
     status = {}
     for t in [int(x) for x in a.tracks.split(",")]:
         ok = False
@@ -132,7 +137,7 @@ def cmd_score(a):
         d, view, cap, _, _ = TRACKS[t]
         sd = out / d / "stand"
         shots = shots_of(t)
-        tname = d.split("_", 1)[1].replace("Named", "")   # the track name the cites' "tracks" lists use
+        tname = d.split("_", 1)[1].replace("Named", "").replace("Pix", "")   # the track name the cites' "tracks" lists use
         mine = [c for c in all_cites if "tracks" not in c or tname in c["tracks"]]
         cf = out / d / f"cites_used_{a.prefix.strip('_')}.json"
         cf.write_text(json.dumps(mine, indent=1))
@@ -181,6 +186,9 @@ def main():
     r = sub.add_parser("run")
     r.add_argument("--exe", required=True); r.add_argument("--root", required=True); r.add_argument("--out", required=True)
     r.add_argument("--tracks", default=DEFAULT_TRACKS); r.add_argument("--attempts", type=int, default=3)
+    r.add_argument("--hud", action="store_true",
+                   help="[rres] also replay the HUD state (MASHED_HUD_REPLAY=verify/rfx_20261016/hud_inputs.txt): C08's 234 rows are the "
+                        "harness not replaying it (RESULT_rres.md)")
     r.add_argument("knobs", nargs="*")
     s = sub.add_parser("score")
     s.add_argument("--out", required=True); s.add_argument("--cite", required=True)

@@ -1,0 +1,15 @@
+{
+ "track": 2,
+ "attempt": 1,
+ "rows": 815,
+ "racing_rows": 145,
+ "race_start": 670,
+ "shot_rows": [
+  700,
+  740,
+  775
+ ],
+ "piz": [
+  "TOASTART\\TRACKS\\NEUSTEIN.PIZ"
+ ]
+}

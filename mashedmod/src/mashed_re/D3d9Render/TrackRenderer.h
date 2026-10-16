@@ -333,6 +333,10 @@ public:
         // parent up to the root (exclusive); RW row-vector rows right/up/at/pos.
         bool  body_chain_ok = false;
         float body_X[12] = {}, body_Y[12] = {};
+        // [rres] part 0x3b (the first of the four hulls FUN_00420420 files at rec[0x3b..0x3e]) in clump space:
+        // the shadow render-to-texture draws it (FUN_0041f8f0, rec+0x28c = 59 on every car measured)
+        std::vector<float>         hull_v;
+        std::vector<std::uint16_t> hull_t;
     };
     std::vector<CarModel> car_models_;
     int  car_slot_model_[4] = {0, 0, 0, 0};   // index into car_models_ per car slot

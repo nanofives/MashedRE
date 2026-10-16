@@ -161,7 +161,8 @@ void RaceSubmit_AddLensMarker();
 void RaceSubmit_AddInstancePosed(int handle, const float* m44, const FramePose* poses,
                                  std::size_t npose, float sun_scale, float env_coef = 0.f,
                                  const float* env_m44 = nullptr, int kind = kInstCar,
-                                 const CarVis* vis = nullptr);   // [rstates] kind, [carlod] vis
+                                 const CarVis* vis = nullptr,    // [rstates] kind, [carlod] vis
+                                 int car_slot = -1);             // [rres] the car's slot (0..3): its shadow RT pass
 
 // Set the UV-animation clock for this frame. MUST be the same `t` the D3D9 path
 // passes to TrackRenderer::Render, or the two renderers scroll to different
