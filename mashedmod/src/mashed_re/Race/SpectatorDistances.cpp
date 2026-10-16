@@ -321,21 +321,86 @@ void MaybeReplay() {
 }
 }  // namespace
 
-// Default-OFF entry point. Called once per race tick from TrackRenderer.
-// extern "C" with a flat name: the caller lives in mashed_re::D3d9Render and
-// cannot re-open mashed_re::Race from there.
-void ComputeDistancesTickImpl() {
+// [U-9683] Producer order vs the AI tick, verify/d3_u9683_20261016/PREREG_u9683.md.
+// MASHED_REFDIST_AFTER_AI moves the producer call from UpdateRace (before the AI tick of the
+// frame) to the end of UpdateCar (after every car's physics and the progress tick), which is the
+// producer's place in the original's per-frame order. MASHED_REFDIST_TRACE is a measurement-only
+// witness: one row per producer call (P) and per AI tick entry (T), no game state written.
+namespace {
+bool RefDistAfterAiOn() {
+    static const bool s_on = [] {
+        const char* e = std::getenv("MASHED_REFDIST_AFTER_AI");
+        return e && e[0] && e[0] != '0';
+    }();
+    return s_on;
+}
+
+long s_rdFrame = 0;   // bumped once per UpdateCar race frame, before player physics (no dependence on the order under test)
+
+std::FILE* RdTrace() {
+    static std::FILE* f = nullptr;
+    static bool init = false;
+    if (!init) {
+        init = true;
+        if (const char* p = std::getenv("MASHED_REFDIST_TRACE")) {
+            f = std::fopen(p, "w");
+            if (f) std::fprintf(f, "kind\tord\tsite\tba8c\tclk\trd\tref\tother\n");
+        }
+    }
+    return f;
+}
+
+void RdRow(char kind, int site) {
+    std::FILE* const f = RdTrace();
+    if (!f) return;
+    const std::uint32_t* const rd = reinterpret_cast<const std::uint32_t*>(0x008989b0u);
+    std::fprintf(f, "%c\t%ld\t%c\t%d\t%d\t%x;%x;%x;%x\t%d\t%d\n", kind, s_rdFrame, kind == 'T' ? '-' : (site ? 'A' : 'U'),
+                 *reinterpret_cast<const std::int32_t*>(0x0063ba8cu), *reinterpret_cast<const std::int32_t*>(0x007f0ff4u),
+                 rd[0], rd[1], rd[2], rd[3], *reinterpret_cast<const std::int32_t*>(0x008989a8u),
+                 *reinterpret_cast<const std::int32_t*>(0x008989c8u));
+    std::fflush(f);
+}
+}  // namespace
+
+// Default-ON entry point. Called once per race tick from TrackRenderer, at the site named by
+// `site` (0 = UpdateRace, 1 = after the AI block). extern "C" with a flat name: the caller lives
+// in mashed_re::D3d9Render and cannot re-open mashed_re::Race from there.
+void ComputeDistancesTickImpl(int site) {
     static bool s_replayed = false;
     if (!s_replayed) { s_replayed = true; MaybeReplay(); }   // [U-9219] env-gated, no state written
     static const bool s_on = (std::getenv("MASHED_NO_REFDIST") == nullptr);   // DEFAULT-ON 2026-10-09 (verify/d3_b2flip_20261009); MASHED_REFDIST is now a no-op
     if (!s_on) return;
     ComputeDistances();
+    RdRow('P', site);
 }
+
+bool RefDistAfterAi() {
+    static bool s_logged = false;
+    const bool on = RefDistAfterAiOn();
+    if (on && !s_logged) {
+        s_logged = true;
+        if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {   // the game's own witness that the knob took
+            std::fprintf(lf, "[U-9683] MASHED_REFDIST_AFTER_AI: refdist producer runs after the AI block\n");
+            std::fclose(lf);
+        }
+    }
+    return on;
+}
+
+void RefDistTraceFrame() { ++s_rdFrame; }
+
+void RefDistTraceAiEntry() { RdRow('T', 0); }
 
 }  // namespace Race
 }  // namespace mashed_re
 
-extern "C" void __cdecl RaceComputeDistancesTick() {
-    mashed_re::Race::ComputeDistancesTickImpl();
+extern "C" void __cdecl RaceComputeDistancesTick(int site) {
+    mashed_re::Race::ComputeDistancesTickImpl(site);
 }
+
+extern "C" int __cdecl RaceRefDistAfterAi() { return mashed_re::Race::RefDistAfterAi() ? 1 : 0; }
+
+extern "C" void __cdecl RaceRefDistTraceFrame() { mashed_re::Race::RefDistTraceFrame(); }
+
+extern "C" void __cdecl RaceRefDistTraceAiEntry() { mashed_re::Race::RefDistTraceAiEntry(); }
 
