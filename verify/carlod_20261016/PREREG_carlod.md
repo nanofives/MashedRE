@@ -196,3 +196,29 @@ Arms: `vis` (the build as is, no brake input, the failing record above), `visb` 
 `visb_off` (`MASHED_CAR_VIS=0`, brake input on: rule 4 control). Rule 2 and 3 for F-VIS read `visb` against
 `base`. The default build still shows no brake lights on AI cars; that is U-9698's open half and is reported,
 not closed.
+### Amendment 5 (written after the `visb_env` arm was read, before any arm that uses the change; F-ENV input fix, rules unchanged)
+
+`visb_env` (F-VIS plus `MASHED_CAR_ENV=1`, rtex's coefficient): 0 RED, matched draws and triangles up on 7
+frames, rule 4 control `visb_off` = base on 9/9, rule 2 clean on 8 of 9 frames (the NEW `STATE CarGloss` rows
+are rtex amendment 2's replacements of the MISSING rows that went). It fails rules 1 and 2 on City 801 only:
+the original gives env draws to cars 0 and 3 there, the standalone to car 0 (`evidence/env_cars.txt`), so the
+MISSING `CarGloss` and TEX1 rows only shrink and the new STATE row has no vanished MISSING row to belong to.
+Car 3's raw d2 is 102.70 in the standalone (`vislog_city.csv`) and FUN_00420290 clamps d2 to 100, so the
+standalone's coefficient byte is 0 (FUN_005412d0 draws plain at byte 0, `uVar8 == 0`).
+
+Finding: the original's coefficient is computed against the PREVIOUS row's camera. `env_lag_live.py` takes
+rtex's live captures (112 records, coefficient rec+0x274, shade rec+0x284, cached part-0x13 position, the
+formula of FUN_00420290) and the same run's trace: with camera row K-1 the formula reproduces the live
+coefficient with residual 0.00000 on every record with a nonzero coefficient; with row K it is off by up to
++0.009, with K-2 by up to -0.010 (`evidence/env_lag_live.txt`). `env_lag_test.py`: the camera row K-1 predicts
+whether the original draws env for each of the 36 car-frames of the 9 cited frames with 0 errors, row K with 1
+(City 801 car 3). rtex's "reproduces the live value to about 1e-4 on stationary rows" is this lag on rows where
+the camera barely moves. The same test on the LOD state (`state_lag_test.py`, observed state from the far-LOD
+draws) cannot discriminate: all 16 (camera row, car row) combinations predict the 36 car-frames with 0 errors,
+so the state rule stays on this frame's camera and the lag question for S is left open (U-9698).
+
+Change: `RaceSceneState::eye_prev_` (the previous Render's eye) feeds the coefficient's d2
+(`TrackRenderer` car block); `MASHED_CAR_ENV_PREVCAM=0` restores this frame's camera (no-op control).
+Arms: `venv` (new exe, `MASHED_CAR_ENV=1`), `venv_nolag` (`MASHED_CAR_ENV=1 MASHED_CAR_ENV_PREVCAM=0`, must equal
+the `visb_env` arm). Rules 1-6 for F-ENV are unchanged and read `venv` against `visb`; the failing `visb_env`
+arm stays on record.
