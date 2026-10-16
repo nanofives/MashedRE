@@ -1,0 +1,85 @@
+arctic:01051     before  78 after  72  gone   8  NEW 2
+    gone MISSING Beam [C09-FX]
+    gone MISSING car_shadow [C04-SHADOW]
+    gone MISSING GreenStartLight [C08-STARTDISP]
+    gone MISSING NFLBluejay [C08-STARTDISP]
+    gone MISSING NFLGold [C08-STARTDISP]
+    gone MISSING NFLMelon [C08-STARTDISP]
+    gone MISSING NFLRed [C08-STARTDISP]
+    gone MISSING OrangeDisplay [C08-STARTDISP]
+    NEW  STATE Beam [C19-STATE-LIBRW]: 1 matched draws differ in CULL: A Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=1 | B Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=2
+    NEW  STATE car_shadow [C19-STATE-LIBRW]: 1 matched draws differ in CULL: A Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1 | B Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+arctic:01091     before  77 after  71  gone   8  NEW 2
+    gone MISSING Beam [C09-FX]
+    gone MISSING car_shadow [C04-SHADOW]
+    gone MISSING GreenStartLight [C08-STARTDISP]
+    gone MISSING NFLBluejay [C08-STARTDISP]
+    gone MISSING NFLGold [C08-STARTDISP]
+    gone MISSING NFLMelon [C08-STARTDISP]
+    gone MISSING NFLRed [C08-STARTDISP]
+    gone MISSING OrangeDisplay [C08-STARTDISP]
+    NEW  STATE Beam [C19-STATE-LIBRW]: 1 matched draws differ in CULL: A Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=1 | B Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=2
+    NEW  STATE car_shadow [C19-STATE-LIBRW]: 1 matched draws differ in CULL: A Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1 | B Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+arctic:01126     before  77 after  71  gone   8  NEW 2
+    gone MISSING Beam [C09-FX]
+    gone MISSING car_shadow [C04-SHADOW]
+    gone MISSING GreenStartLight [C08-STARTDISP]
+    gone MISSING NFLBluejay [C08-STARTDISP]
+    gone MISSING NFLGold [C08-STARTDISP]
+    gone MISSING NFLMelon [C08-STARTDISP]
+    gone MISSING NFLRed [C08-STARTDISP]
+    gone MISSING OrangeDisplay [C08-STARTDISP]
+    NEW  STATE Beam [C19-STATE-LIBRW]: 1 matched draws differ in CULL: A Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=1 | B Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=2
+    NEW  STATE car_shadow [C19-STATE-LIBRW]: 1 matched draws differ in CULL: A Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1 | B Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+city:00761       before 128 after 120  gone   8  NEW 0
+    gone MISSING Beam [C09-FX]
+    gone MISSING car_shadow [C04-SHADOW]
+    gone MISSING GreenStartLight [C08-STARTDISP]
+    gone MISSING NFLBluejay [C08-STARTDISP]
+    gone MISSING NFLGold [C08-STARTDISP]
+    gone MISSING NFLMelon [C08-STARTDISP]
+    gone MISSING NFLRed [C08-STARTDISP]
+    gone MISSING OrangeDisplay [C08-STARTDISP]
+city:00801       before 126 after 118  gone   8  NEW 0
+    gone MISSING Beam [C09-FX]
+    gone MISSING car_shadow [C04-SHADOW]
+    gone MISSING GreenStartLight [C08-STARTDISP]
+    gone MISSING NFLBluejay [C08-STARTDISP]
+    gone MISSING NFLGold [C08-STARTDISP]
+    gone MISSING NFLMelon [C08-STARTDISP]
+    gone MISSING NFLRed [C08-STARTDISP]
+    gone MISSING OrangeDisplay [C08-STARTDISP]
+city:00836       before 124 after 116  gone   8  NEW 0
+    gone MISSING Beam [C09-FX]
+    gone MISSING car_shadow [C04-SHADOW]
+    gone MISSING GreenStartLight [C08-STARTDISP]
+    gone MISSING NFLBluejay [C08-STARTDISP]
+    gone MISSING NFLGold [C08-STARTDISP]
+    gone MISSING NFLMelon [C08-STARTDISP]
+    gone MISSING NFLRed [C08-STARTDISP]
+    gone MISSING OrangeDisplay [C08-STARTDISP]
+training:00884   before  78 after  71  gone   7  NEW 0
+    gone MISSING car_shadow [C04-SHADOW]
+    gone MISSING GreenStartLight [C08-STARTDISP]
+    gone MISSING NFLBluejay [C08-STARTDISP]
+    gone MISSING NFLGold [C08-STARTDISP]
+    gone MISSING NFLMelon [C08-STARTDISP]
+    gone MISSING NFLRed [C08-STARTDISP]
+    gone MISSING OrangeDisplay [C08-STARTDISP]
+training:00924   before  77 after  70  gone   7  NEW 0
+    gone MISSING car_shadow [C04-SHADOW]
+    gone MISSING GreenStartLight [C08-STARTDISP]
+    gone MISSING NFLBluejay [C08-STARTDISP]
+    gone MISSING NFLGold [C08-STARTDISP]
+    gone MISSING NFLMelon [C08-STARTDISP]
+    gone MISSING NFLRed [C08-STARTDISP]
+    gone MISSING OrangeDisplay [C08-STARTDISP]
+training:00959   before  77 after  70  gone   7  NEW 0
+    gone MISSING car_shadow [C04-SHADOW]
+    gone MISSING GreenStartLight [C08-STARTDISP]
+    gone MISSING NFLBluejay [C08-STARTDISP]
+    gone MISSING NFLGold [C08-STARTDISP]
+    gone MISSING NFLMelon [C08-STARTDISP]
+    gone MISSING NFLRed [C08-STARTDISP]
+    gone MISSING OrangeDisplay [C08-STARTDISP]
+NEW ROWS TOTAL: 6

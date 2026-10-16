@@ -1,0 +1,154 @@
+// FUN_0041eeb0 @ 0x0041eeb0  size=172  (MASHED.exe)
+// undefined FUN_0041eeb0(void)
+// callers: FUN_0040da50@0x0040da50
+
+/* [C2 2026-06-03] `void FUN_0041eeb0(int param_1, int param_2, int param_3, int param_4)` — body
+   0x0041eeb0..0x0041ef5b. Per-slot… */
+
+void FUN_0041eeb0(int param_1,int param_2,int param_3,int param_4)
+
+{
+  uint uVar1;
+  
+  param_1 = param_1 * 0x2ac;
+  if (param_2 == 0) {
+    uVar1 = *(uint *)(&DAT_0063dc74 + param_1) & 0xffffffbf;
+  }
+  else {
+    uVar1 = *(uint *)(&DAT_0063dc74 + param_1) | 0x40;
+  }
+  *(uint *)(&DAT_0063dc74 + param_1) = uVar1;
+  if (param_3 == 0) {
+    uVar1 = *(uint *)(&DAT_0063dc74 + param_1) & 0xffffff7f;
+  }
+  else {
+    uVar1 = *(uint *)(&DAT_0063dc74 + param_1) | 0x80;
+  }
+  *(uint *)(&DAT_0063dc74 + param_1) = uVar1;
+  if (param_4 == 0) {
+    uVar1 = *(uint *)(&DAT_0063dc74 + param_1) & 0xfffff7ff;
+  }
+  else {
+    uVar1 = *(uint *)(&DAT_0063dc74 + param_1) | 0x800;
+  }
+  *(uint *)(&DAT_0063dc74 + param_1) = uVar1;
+  if ((uVar1 & 0x400) != 0) {
+    *(uint *)(&DAT_0063dc74 + param_1) = uVar1 & 0xfffff73f;
+  }
+  if ((*(uint *)(&DAT_0063dc74 + param_1) & 0x10) != 0) {
+    *(uint *)(&DAT_0063dc74 + param_1) = *(uint *)(&DAT_0063dc74 + param_1) & 0xffffffbf;
+  }
+  if ((*(uint *)(&DAT_0063dc74 + param_1) & 0x20) != 0) {
+    *(uint *)(&DAT_0063dc74 + param_1) = *(uint *)(&DAT_0063dc74 + param_1) & 0xfffff77f;
+  }
+  return;
+}
+
+
+
+// FUN_0041ede0 @ 0x0041ede0  size=112  (MASHED.exe)
+// undefined FUN_0041ede0(void)
+// callers: FUN_0040be50@0x0040be50, FUN_0040e590@0x0040e590, FUN_00420e00@0x00420e00
+
+/* [C1 2026-06-01] Sets/clears two flag bits (and their cascade bits) in the per-player flags word
+   at `&DAT_0063dc74 +… */
+
+void FUN_0041ede0(int param_1,int param_2,int param_3)
+
+{
+  uint uVar1;
+  
+  param_1 = param_1 * 0x2ac;
+  if (param_2 == 0) {
+    uVar1 = *(uint *)(&DAT_0063dc74 + param_1) & 0xffffffef;
+  }
+  else {
+    uVar1 = *(uint *)(&DAT_0063dc74 + param_1) | 0x10;
+  }
+  *(uint *)(&DAT_0063dc74 + param_1) = uVar1;
+  if (param_3 == 0) {
+    uVar1 = *(uint *)(&DAT_0063dc74 + param_1) & 0xffffffdf;
+  }
+  else {
+    uVar1 = *(uint *)(&DAT_0063dc74 + param_1) | 0x20;
+  }
+  *(uint *)(&DAT_0063dc74 + param_1) = uVar1;
+  if ((uVar1 & 0x10) != 0) {
+    *(uint *)(&DAT_0063dc74 + param_1) = uVar1 | 0x1000;
+  }
+  if ((*(uint *)(&DAT_0063dc74 + param_1) & 0x20) != 0) {
+    *(uint *)(&DAT_0063dc74 + param_1) = *(uint *)(&DAT_0063dc74 + param_1) | 0x2000;
+  }
+  return;
+}
+
+
+
+// FUN_0041ee50 @ 0x0041ee50  size=89  (MASHED.exe)
+// undefined FUN_0041ee50(void)
+// callers: FUN_0040e590@0x0040e590, FUN_00420e00@0x00420e00
+
+/* [C1 2026-06-01] Directly sets/clears flag bits 0x1000 and 0x2000 in the per-player flags word at
+   `&DAT_0063dc74 +… */
+
+void FUN_0041ee50(int param_1,int param_2,int param_3)
+
+{
+  uint uVar1;
+  
+  param_1 = param_1 * 0x2ac;
+  if (param_2 == 0) {
+    uVar1 = *(uint *)(&DAT_0063dc74 + param_1) & 0xffffefff;
+  }
+  else {
+    uVar1 = *(uint *)(&DAT_0063dc74 + param_1) | 0x1000;
+  }
+  *(uint *)(&DAT_0063dc74 + param_1) = uVar1;
+  if (param_3 != 0) {
+    *(uint *)(&DAT_0063dc74 + param_1) = *(uint *)(&DAT_0063dc74 + param_1) | 0x2000;
+    return;
+  }
+  *(uint *)(&DAT_0063dc74 + param_1) = *(uint *)(&DAT_0063dc74 + param_1) & 0xffffdfff;
+  return;
+}
+
+
+
+// FUN_0041ef80 @ 0x0041ef80  size=55  (MASHED.exe)
+// undefined FUN_0041ef80(void)
+// callers: FUN_0040e590@0x0040e590
+
+/* [C1 2026-06-01] Sets/clears flag bit 0x400 in the per-player flags word at `&DAT_0063dc74 +
+   param_1*0x2ac`. */
+
+void FUN_0041ef80(int param_1,int param_2)
+
+{
+  param_1 = param_1 * 0x2ac;
+  if (param_2 != 0) {
+    *(uint *)(&DAT_0063dc74 + param_1) = *(uint *)(&DAT_0063dc74 + param_1) | 0x400;
+    return;
+  }
+  *(uint *)(&DAT_0063dc74 + param_1) = *(uint *)(&DAT_0063dc74 + param_1) & 0xfffffbff;
+  return;
+}
+
+
+
+// FUN_0041eda0 @ 0x0041eda0  size=49  (MASHED.exe)
+// undefined FUN_0041eda0(void)
+// callers: FUN_0040be50@0x0040be50, FUN_00410860@0x00410860, FUN_004111c0@0x004111c0, FUN_004704c0@0x004704c0
+
+void FUN_0041eda0(int param_1,int param_2)
+
+{
+  param_1 = param_1 * 0x2ac;
+  if (param_2 != 0) {
+    *(uint *)(&DAT_0063dc74 + param_1) = *(uint *)(&DAT_0063dc74 + param_1) | 8;
+    return;
+  }
+  *(uint *)(&DAT_0063dc74 + param_1) = *(uint *)(&DAT_0063dc74 + param_1) & 0xfffffff7;
+  return;
+}
+
+

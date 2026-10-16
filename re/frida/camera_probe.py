@@ -608,6 +608,25 @@ rpc.exports={
     phase_63ba8c: abs(0x0063ba8c).readS32(),
     nodecount: abs(NCOUNT).readS32(),
     elim_898980: abs(0x00898980).readFloat() }); },
+  // [rfx 2026-10-16] the in-race HUD's inputs and state (verify/rfx_20261016/PREREG_rfx.md
+  // amendment 1), read-only: team play DAT_0067ea64 (FUN_0042f500), the per-player slot table
+  // 0x007f1a14 (stride 0x10: +0 slot, +4 team, +8 colour), scores DAT_008a94e0[4] (FUN_0040b6d0),
+  // DAT_008a94d0 (FUN_0040e340), DAT_0067e9fc (FUN_0042f6a0), the leader flags DAT_0063cd90[4],
+  // the start-light timer DAT_0063d588, and both team-panel records 0x0063cab8 (stride 0x16c:
+  // members +0..+0xc, count +0xc, visibility +0x10..+0xac, position +0x150, flags +0x168).
+  hudglobals:function(){ const rd=(a)=>abs(a).readS32();
+    const slots=[]; for(let i=0;i<4;i++){ const b=0x007f1a14+i*16;
+      slots.push([rd(b), rd(b+4), rd(b+8), rd(b+12)]); }
+    const panels=[]; for(let p=0;p<2;p++){ const b=0x0063cab8+p*0x16c; const vis=[];
+      for(let k=0;k<40;k++) vis.push(rd(b+0x10+k*4));
+      panels.push({members:[rd(b),rd(b+4),rd(b+8)], count:rd(b+0xc), vis:vis,
+        pos:[abs(b+0x150).readFloat(),abs(b+0x154).readFloat(),abs(b+0x158).readFloat()],
+        idx:rd(b+0x164), flags:rd(b+0x168)>>>0}); }
+    return JSON.stringify({row: trace.length, ba8c: rd(0x0063ba8c), ea64: rd(0x0067ea64),
+      e9fc: rd(0x0067e9fc), fd0: rd(0x007f0fd0), n4d0: rd(0x008a94d0),
+      scores:[rd(0x008a94e0),rd(0x008a94e4),rd(0x008a94e8),rd(0x008a94ec)],
+      leaders:[rd(0x0063cd90),rd(0x0063cd94),rd(0x0063cd98),rd(0x0063cd9c)],
+      timer: abs(0x0063d588).readFloat(), slots: slots, panels: panels}); },
   ovrtable:function(n){ const out=[];
     for(let i=0;i<n;i++){ const e=abs(OVR+i*0xc);
       out.push([e.readFloat(), e.add(4).readFloat(), e.add(8).readFloat()]); }
@@ -681,6 +700,9 @@ def main():
                     help="[rtex] every 100 trace rows, snapshot the cars' MatFX state (env "
                          "coefficient/texture/frame, per-part material effects) into "
                          "<out>.matfx.json (PREREG_rtex section 5)")
+    ap.add_argument("--hud-out", default="",
+                    help="[rfx] with --early: sample the in-race HUD inputs (hudglobals) 4x/s "
+                         "into this JSON, each sample tagged with the trace row count")
     ap.add_argument("--drawrec-bt", default="",
                     help="[d1r1] regex on stage-0 texture names: record a return-address "
                          "backtrace (MASHED.exe VAs) for each matching draw")
@@ -768,8 +790,15 @@ def main():
         fires3s = -1
         t0 = time.time()
         last_n, last_t = 0, time.time()
+        hud = []
         while E.tracelen() < args.rows and time.time() - t0 < args.rows / 30.0 + 60:
-            time.sleep(1.0)
+            if args.hud_out:
+                # [rfx] sample the HUD inputs 4x per second, tagged with the trace row count
+                for _ in range(4):
+                    hud.append(json.loads(E.hudglobals()))
+                    time.sleep(0.25)
+            else:
+                time.sleep(1.0)
             n_now = E.tracelen()
             if n_now != last_n:
                 last_n, last_t = n_now, time.time()
@@ -783,6 +812,9 @@ def main():
         fires3s = E.fires()
         print(f"FUN_00446520 fires in 3s: {fires3s}")
 
+    if args.early and args.hud_out:
+        Path(args.hud_out).write_text(json.dumps(hud, indent=0))
+        print(f"[rfx] HUD samples: {len(hud)} -> {args.hud_out}")
     g = json.loads(E.globals())
     print("globals:", g)
     nodecount = max(0, min(g.get("nodecount", 0), 400))   # [camribbon] was 200; LED capacity is 384

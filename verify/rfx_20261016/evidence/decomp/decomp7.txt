@@ -1,0 +1,249 @@
+// FUN_00536780 @ 0x00536780  size=443  (MASHED.exe)
+// NOTE: 0x00536780 is not a function entry; showing containing function
+// undefined FUN_00536780(void)
+
+void FUN_00536780(int param_1)
+
+{
+  int iVar1;
+  uint uVar2;
+  byte bVar3;
+  
+  iVar1 = *(int *)(DAT_007dc57c + param_1);
+  *(undefined **)(iVar1 + 0x24) = &UNK_00537fb0;
+  uVar2 = *(uint *)(iVar1 + 0xa0);
+  bVar3 = (byte)uVar2;
+  if ((bVar3 & 8) == 8) {
+    if ((uVar2 & 0x1000000) == 0x1000000) {
+      *(undefined **)(iVar1 + 0x28) = &UNK_005379c0;
+    }
+    else {
+      *(undefined **)(iVar1 + 0x28) = &UNK_00537890;
+    }
+    goto LAB_00536865;
+  }
+  if ((uVar2 & 0x8000) != 0x8000) {
+    if ((bVar3 & 0x20) == 0x20) {
+      if ((bVar3 & 4) == 4) {
+        if ((uVar2 & 0x1000000) == 0x1000000) {
+          *(undefined **)(iVar1 + 0x28) = &UNK_00537610;
+        }
+        else {
+          *(undefined **)(iVar1 + 0x28) = &UNK_00536fe0;
+        }
+      }
+      else if ((uVar2 & 0x1000000) == 0x1000000) {
+        *(undefined **)(iVar1 + 0x28) = &UNK_005371f0;
+      }
+      else {
+        *(undefined **)(iVar1 + 0x28) = &UNK_00536c90;
+      }
+      goto LAB_00536865;
+    }
+    if ((bVar3 & 4) == 4) {
+      if ((uVar2 & 0x1000000) == 0x1000000) {
+        *(undefined **)(iVar1 + 0x28) = &UNK_00537460;
+      }
+      else {
+        *(undefined **)(iVar1 + 0x28) = &UNK_00536e90;
+      }
+      goto LAB_00536865;
+    }
+  }
+  if ((uVar2 & 0x1000000) == 0x1000000) {
+    *(undefined **)(iVar1 + 0x28) = &UNK_00536ad0;
+  }
+  else {
+    *(undefined **)(iVar1 + 0x28) = &UNK_00536940;
+  }
+LAB_00536865:
+  uVar2 = *(uint *)(iVar1 + 0xa0);
+  if (((byte)uVar2 & 0x80) == 0x80) {
+    *(undefined **)(iVar1 + 0x2c) = &UNK_00537d70;
+  }
+  else if ((uVar2 & 0x100) == 0x100) {
+    *(undefined **)(iVar1 + 0x2c) = &UNK_00537de0;
+  }
+  else if ((uVar2 & 0x80000) == 0x80000) {
+    *(undefined **)(iVar1 + 0x2c) = &UNK_00537e60;
+  }
+  else if ((uVar2 & 0x100000) == 0x100000) {
+    *(undefined **)(iVar1 + 0x2c) = &UNK_00537ed0;
+  }
+  else {
+    *(undefined4 *)(iVar1 + 0x2c) = 0;
+  }
+  bVar3 = (byte)*(uint *)(iVar1 + 0xa0);
+  if ((bVar3 & 2) == 2) {
+    *(undefined **)(iVar1 + 0x30) = &UNK_00537b20;
+  }
+  else if ((bVar3 & 0x40) == 0x40) {
+    *(undefined **)(iVar1 + 0x30) = &UNK_00537b80;
+  }
+  else if ((*(uint *)(iVar1 + 0xa0) & 0x40000) == 0x40000) {
+    *(undefined **)(iVar1 + 0x30) = &UNK_00537c40;
+  }
+  else {
+    *(undefined **)(iVar1 + 0x30) = &UNK_00537d20;
+  }
+  *(undefined **)(iVar1 + 0x38) = &UNK_00538300;
+  if (((byte)*(undefined4 *)(iVar1 + 0xa0) & 0x10) == 0x10) {
+    *(undefined **)(iVar1 + 0x34) = &UNK_00537f40;
+    return;
+  }
+  *(undefined4 *)(iVar1 + 0x34) = 0;
+  return;
+}
+
+
+
+// FUN_00535950 @ 0x00535950  size=640  (MASHED.exe)
+// NOTE: 0x00535950 is not a function entry; showing containing function
+// undefined FUN_00535950(void)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void FUN_00535950(int *param_1,undefined4 *param_2,undefined4 *param_3,float param_4)
+
+{
+  float10 fVar1;
+  float fVar2;
+  float fVar3;
+  int *piVar4;
+  uint uVar5;
+  float *pfVar6;
+  int iVar7;
+  int iVar8;
+  float10 fVar9;
+  int iStack_28;
+  float fStack_24;
+  int iStack_20;
+  uint uStack_1c;
+  float fStack_18;
+  float fStack_14;
+  float fStack_10;
+  float fStack_c;
+  float fStack_8;
+  float fStack_4;
+  
+  piVar4 = param_1;
+  iVar8 = param_2[6];
+  iStack_20 = (int)param_4 * 4;
+  iStack_28 = 0;
+  uVar5 = *(uint *)(iVar8 + 8);
+  if (*(int *)**(undefined4 **)(iVar8 + 0x20) == 0) {
+    if ((uVar5 & 4) == 0) goto LAB_00535997;
+    uVar5 = uVar5 & 0xfffffffb;
+  }
+  else {
+    if ((uVar5 & 4) != 0) goto LAB_00535997;
+    uVar5 = uVar5 | 4;
+  }
+  *(uint *)(iVar8 + 8) = uVar5;
+LAB_00535997:
+  pfVar6 = (float *)FUN_004c0ed0(*(undefined4 *)(*DAT_007d3ff8 + 4));
+  uVar5 = *(uint *)(iVar8 + 8);
+  iVar8 = 0xc;
+  *piVar4 = 1;
+  if ((uVar5 & 0x10) != 0) {
+    iVar8 = 0x18;
+    piVar4[3] = 1;
+  }
+  uStack_1c = uVar5 & 8;
+  if (uStack_1c != 0) {
+    iVar8 = iVar8 + 4;
+    piVar4[2] = 1;
+  }
+  if ((uVar5 & 4) != 0) {
+    iVar8 = iVar8 + 8;
+    piVar4[1] = 1;
+  }
+  if ((param_3[0x16] & 0x8000) == 0x8000) {
+    piVar4[0xc] = param_3[0x2c];
+    piVar4[0xd] = param_3[0x2d];
+    piVar4[0xe] = param_3[0x2e];
+    piVar4[0xf] = param_3[0x30];
+    piVar4[0x10] = param_3[0x31];
+    piVar4[0x11] = param_3[0x32];
+  }
+  else {
+    fVar2 = -*pfVar6;
+    if ((param_3[0x16] & 0x20000) == 0x20000) {
+      fStack_18 = pfVar6[4];
+      fStack_24 = (float)param_3[0x1e];
+      fStack_8 = -pfVar6[1];
+      fStack_14 = pfVar6[5];
+      fStack_10 = pfVar6[6];
+      param_2 = &param_1;
+      fStack_4 = -pfVar6[2];
+      param_3 = &param_4;
+      fVar1 = (float10)fcos((float10)fStack_24);
+      fVar9 = (float10)fsin((float10)fStack_24);
+      param_1 = (int *)(float)fVar1;
+      param_4 = (float)fVar9;
+      fVar3 = -param_4;
+      piVar4[0xc] = (int)((float)param_1 * fVar2 + fStack_18 * fVar3);
+      piVar4[0xd] = (int)((float)param_1 * fStack_8 + fStack_14 * fVar3);
+      piVar4[0xe] = (int)((float)param_1 * fStack_4 + fVar3 * fStack_10);
+      piVar4[0xf] = (int)(param_4 * fVar2 + (float)param_1 * fStack_18);
+      piVar4[0x10] = (int)(param_4 * fStack_8 + (float)param_1 * fStack_14);
+      piVar4[0x11] = (int)(param_4 * fStack_4 + (float)param_1 * fStack_10);
+      fStack_c = fVar2;
+    }
+    else {
+      piVar4[0xc] = (int)fVar2;
+      piVar4[0xd] = (int)-pfVar6[1];
+      piVar4[0xe] = (int)-pfVar6[2];
+      piVar4[0xf] = (int)pfVar6[4];
+      piVar4[0x10] = (int)pfVar6[5];
+      piVar4[0x11] = (int)pfVar6[6];
+    }
+  }
+  iVar7 = FUN_004dcbb0(iVar8,iStack_20,0x7dc58c,&iStack_28,0x7dc590);
+  if (iVar7 != 0) {
+    if (*piVar4 != 0) {
+      piVar4[4] = iStack_28;
+      piVar4[5] = iVar8;
+    }
+    iVar7 = 0xc;
+    if (piVar4[3] != 0) {
+      piVar4[0xb] = iVar8;
+      piVar4[10] = iStack_28 + 0xc;
+    }
+    if ((uVar5 & 0x10) != 0) {
+      iVar7 = 0x18;
+    }
+    if (piVar4[2] != 0) {
+      piVar4[9] = iVar8;
+      piVar4[8] = iVar7 + iStack_28;
+    }
+    if (uStack_1c != 0) {
+      iVar7 = iVar7 + 4;
+    }
+    if (piVar4[1] != 0) {
+      piVar4[7] = iVar8;
+      piVar4[6] = iVar7 + iStack_28;
+    }
+    _DAT_007dc598 = 0;
+    return;
+  }
+  _DAT_007dc598 = 0;
+  return;
+}
+
+
+
+// FUN_00535940 @ 0x00535940  size=13  (MASHED.exe)
+// NOTE: 0x00535940 is not a function entry; showing containing function
+// undefined FUN_00535940(void)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void FUN_00535940(void)
+
+{
+  FUN_004dcd30(_DAT_007dc58c);
+  return;
+}
+
+
