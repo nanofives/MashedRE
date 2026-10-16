@@ -1,0 +1,484 @@
+// FUN_0041ebb0 @ 0x0041ebb0  size=76  (MASHED.exe)
+// undefined FUN_0041ebb0(void)
+// callees: FUN_00476df0@0x00476df0, FUN_004770a0@0x004770a0
+// callers: FUN_00410b30@0x00410b30
+// strings: (none)
+
+/* [C2 2026-05-12] Sequence of 6 calls, in order: */
+
+void FUN_0041ebb0(void)
+
+{
+  FUN_00476df0(DAT_0063e49c);
+  FUN_00476df0(DAT_0063e4a0);
+  (**(code **)(DAT_007d3ff8 + 0x20))(8,0);
+  FUN_004770a0(DAT_0063e4a0);
+  FUN_004770a0(DAT_0063e49c);
+  (**(code **)(DAT_007d3ff8 + 0x20))(8,1);
+  return;
+}
+
+
+
+// FUN_00410b30 @ 0x00410b30  size=468  (MASHED.exe)
+// NOTE: 0x00410bb9 is not a function entry; showing containing function
+// undefined FUN_00410b30(void)
+// callees: FUN_00403910@0x00403910, FUN_00404650@0x00404650, FUN_004072e0@0x004072e0, FUN_0040bde0@0x0040bde0, FUN_0040e350@0x0040e350, FUN_00411ce0@0x00411ce0, FUN_00413a00@0x00413a00, FUN_00413a40@0x00413a40, FUN_004189c0@0x004189c0, FUN_0041ebb0@0x0041ebb0, FUN_00420050@0x00420050, FUN_004219c0@0x004219c0, FUN_00425e40@0x00425e40, FUN_00426640@0x00426640, FUN_00426ba0@0x00426ba0, FUN_004270f0@0x004270f0, FUN_00429e10@0x00429e10, FUN_00448730@0x00448730, FUN_0045b350@0x0045b350, FUN_0045b990@0x0045b990, FUN_004671a0@0x004671a0, FUN_004725c0@0x004725c0, FUN_00475d30@0x00475d30, FUN_00475e50@0x00475e50, FUN_00477810@0x00477810, FUN_00477a10@0x00477a10, FUN_0047b9e0@0x0047b9e0, FUN_004891f0@0x004891f0, FUN_0048fd70@0x0048fd70, FUN_00490490@0x00490490
+// callers: FUN_00492e90@0x00492e90
+// strings: (none)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C1 2026-05-07] InGameRenderDispatcher */
+
+void FUN_00410b30(void)
+
+{
+  undefined4 uVar1;
+  int iVar2;
+  
+  (*(code *)DAT_007d3ff8[8])(0x14,2);
+  FUN_004270f0(**(undefined4 **)(PTR_PTR_005f2770 + DAT_0063ba78 * 4));
+  (*(code *)DAT_007d3ff8[8])(0xe,1);
+  FUN_004725c0();
+  FUN_0045b350(*DAT_007d3ff8);
+  if (DAT_0063ba98 == 0) {
+    iVar2 = 0;
+    do {
+      FUN_00420050(iVar2,*DAT_007d3ff8);
+      iVar2 = iVar2 + 1;
+    } while (iVar2 < 4);
+  }
+  (*(code *)DAT_007d3ff8[8])(0xe,0);
+  FUN_00411ce0();
+  FUN_0041ebb0(*DAT_007d3ff8);
+  iVar2 = 0;
+  do {
+    FUN_0045b350(iVar2,*DAT_007d3ff8);
+    iVar2 = iVar2 + 1;
+  } while (iVar2 < 4);
+  (*(code *)DAT_007d3ff8[8])(6,1);
+  (*(code *)DAT_007d3ff8[8])(8,1);
+  FUN_004219c0();
+  if (DAT_007f0fd0 != 5) {
+    FUN_00425e40();
+  }
+  FUN_00426640(**(undefined4 **)(PTR_PTR_005f2770 + DAT_0063ba78 * 4));
+  FUN_0040bde0();
+  FUN_004891f0();
+  FUN_00475e50();
+  FUN_00475d30();
+  FUN_00477810();
+  FUN_00477a10();
+  FUN_004189c0();
+  FUN_0048fd70();
+  FUN_0045b990();
+  uVar1 = FUN_004671a0(0);
+  FUN_00413a00(uVar1);
+  FUN_00413a40();
+  FUN_004072e0();
+  FUN_00404650();
+  iVar2 = FUN_0040e350();
+  if ((iVar2 != 7) && (_DAT_0063b920 = 0xc0, DAT_007f0f3c != 0)) {
+    uVar1 = FUN_004671a0(0,0xc0,0);
+    FUN_0047b9e0(uVar1);
+  }
+  (*(code *)DAT_007d3ff8[8])(0x14,1);
+  (*(code *)DAT_007d3ff8[8])(10,5);
+  (*(code *)DAT_007d3ff8[8])(0xb,6);
+  FUN_00448730();
+  FUN_00490490();
+  if (((DAT_007f0f30 != 0) && (DAT_0063ba8c != 9)) && (DAT_0063ba8c != 10)) {
+    FUN_00403910();
+  }
+  iVar2 = FUN_00426ba0();
+  if (iVar2 != 0) {
+    FUN_00429e10();
+  }
+  FUN_0045b350();
+  return;
+}
+
+
+
+// FUN_00487d70 @ 0x00487d70  size=111  (MASHED.exe)
+// NOTE: 0x00487db7 is not a function entry; showing containing function
+// undefined FUN_00487d70(void)
+// callees: FUN_004770a0@0x004770a0, FUN_005c9d00@0x005c9d00
+// callers: FUN_00487de0@0x00487de0
+// strings: (none)
+
+/* [C1 2026-05-24] void FUN_00487d70(void)
+   // re/analysis/particle_promote_ac2/0x00487d70.md */
+
+void FUN_00487d70(void)
+
+{
+  undefined4 local_4;
+  
+  if (DAT_00703058 != 0) {
+    (**(code **)(DAT_007d3ff8 + 0x24))(0x14,&local_4);
+    (**(code **)(DAT_007d3ff8 + 0x20))(0x14,1);
+    (**(code **)(DAT_007d3ff8 + 0x20))(8,0);
+    FUN_005c9d00(0x3e99999a);
+    FUN_004770a0(&DAT_00703068);
+    (**(code **)(DAT_007d3ff8 + 0x20))(8,1);
+    (**(code **)(DAT_007d3ff8 + 0x20))(0x14,local_4);
+    FUN_005c9d00(0);
+  }
+  return;
+}
+
+
+
+// FUN_00487de0 @ 0x00487de0  size=12  (MASHED.exe)
+// NOTE: 0x00487dea is not a function entry; showing containing function
+// undefined FUN_00487de0(void)
+// callees: FUN_00487d70@0x00487d70
+// callers: FUN_0040bde0@0x0040bde0
+// strings: (none)
+
+/* [C1 2026-05-24] void FUN_00487de0(void)
+   // re/analysis/particle_promote_ac2/0x00487de0.md */
+
+void FUN_00487de0(void)
+
+{
+  FUN_00487d70(&DAT_00703050);
+  return;
+}
+
+
+
+// FUN_0048e7b0 @ 0x0048e7b0  size=97  (MASHED.exe)
+// NOTE: 0x0048e7f6 is not a function entry; showing containing function
+// undefined FUN_0048e7b0(void)
+// callees: FUN_004770a0@0x004770a0
+// callers: FUN_0040bde0@0x0040bde0
+// strings: (none)
+
+/* [C1 2026-05-24] Signature (observed): `void FUN_0048e7b0(void)` — no parameters.
+   // re/analysis/particle_promote_ac6/0x0048e7b0.md */
+
+void FUN_0048e7b0(void)
+
+{
+  int iVar1;
+  int *piVar2;
+  int *piVar3;
+  undefined *puVar4;
+  
+  (**(code **)(DAT_007d3ff8 + 0x20))(8,0);
+  puVar4 = &DAT_007228b0;
+  piVar3 = (int *)&DAT_00722470;
+  do {
+    piVar3 = piVar3 + -8;
+    puVar4 = puVar4 + -0x40;
+    iVar1 = 0;
+    piVar2 = piVar3;
+    do {
+      if (*piVar2 != 0) {
+        FUN_004770a0(puVar4);
+        break;
+      }
+      iVar1 = iVar1 + 1;
+      piVar2 = piVar2 + 1;
+    } while (iVar1 < 8);
+    if (piVar3 == (int *)&DAT_00722250) {
+      (**(code **)(DAT_007d3ff8 + 0x20))(8,1);
+      return;
+    }
+  } while( true );
+}
+
+
+
+// FUN_0040bde0 @ 0x0040bde0  size=110  (MASHED.exe)
+// NOTE: 0x0040bdf8 is not a function entry; showing containing function
+// undefined FUN_0040bde0(void)
+// callees: FUN_00412100@0x00412100, FUN_00413f50@0x00413f50, FUN_00421560@0x00421560, FUN_00457610@0x00457610, FUN_00475d30@0x00475d30, FUN_00475e50@0x00475e50, FUN_00477810@0x00477810, FUN_00486220@0x00486220, FUN_00486f50@0x00486f50, FUN_00487de0@0x00487de0, FUN_0048ad50@0x0048ad50, FUN_0048baf0@0x0048baf0, FUN_0048e7b0@0x0048e7b0, FUN_0048fce0@0x0048fce0, FUN_0048fd10@0x0048fd10, FUN_0048fd40@0x0048fd40, FUN_0048fd70@0x0048fd70, FUN_00490490@0x00490490
+// callers: FUN_00410b30@0x00410b30
+// strings: (none)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C2 2026-05-17] No args, void return. Single-guard fixed-sequence dispatcher: */
+
+void FUN_0040bde0(void)
+
+{
+  if (DAT_0063b8f4 != 0) {
+    FUN_0048ad50();
+    FUN_00487de0();
+    FUN_0048e7b0();
+    FUN_00457610();
+    FUN_00475d30();
+    FUN_00486f50();
+    FUN_00486220();
+    FUN_0048fce0();
+    FUN_0048fd40();
+    FUN_0048fd10();
+    FUN_00475e50();
+    FUN_00477810();
+    FUN_0048fd70();
+    FUN_00490490();
+    FUN_0048baf0();
+    FUN_00413f50();
+    FUN_00421560();
+    FUN_00412100();
+    _DAT_0063b8f0 = 0;
+  }
+  return;
+}
+
+
+
+// 0x0041dad0: ERROR no function at or containing 0x0041dad0
+//   block: .text r-x
+//   at: instruction (disassembled, but not inside any function)
+//   bytes: 83 c4 08 d9 46 2c d8 1d 38 d2 5c 00 df e0 f6 c4
+//   xrefs: (none)
+
+// 0x0041db75: ERROR no function at or containing 0x0041db75
+//   block: .text r-x
+//   at: instruction (disassembled, but not inside any function)
+//   bytes: 83 c4 04 5e c3 90 90 90 90 90 90 b8 5c d5 63 00
+//   xrefs: (none)
+
+// FUN_0041bc50 @ 0x0041bc50  size=603  (MASHED.exe)
+// NOTE: 0x0041bc78 is not a function entry; showing containing function
+// undefined FUN_0041bc50(void)
+// callees: (none)
+// callers: FUN_0041c0c0@0x0041c0c0
+// strings: (none)
+
+/* [C1 2026-05-03] Large function (body 0x0041bc50..0x0041beaa, 603 bytes). 29 guarded vtable
+   dispatches. */
+
+void FUN_0041bc50(void)
+
+{
+  int in_EAX;
+  
+  if (*(int *)(in_EAX + 0x1c) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0xbc) + 0x48))(*(int *)(in_EAX + 0xbc));
+  }
+  if (*(int *)(in_EAX + 0x18) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0xb8) + 0x48))(*(int *)(in_EAX + 0xb8));
+  }
+  if (*(int *)(in_EAX + 0x10) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0xb0) + 0x48))(*(int *)(in_EAX + 0xb0));
+  }
+  if (*(int *)(in_EAX + 0x14) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0xb4) + 0x48))(*(int *)(in_EAX + 0xb4));
+  }
+  if (*(int *)(in_EAX + 0x20) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0xc0) + 0x48))(*(int *)(in_EAX + 0xc0));
+  }
+  if (*(int *)(in_EAX + 0x80) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0x120) + 0x48))(*(int *)(in_EAX + 0x120));
+  }
+  if (*(int *)(in_EAX + 0x84) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0x124) + 0x48))(*(int *)(in_EAX + 0x124));
+  }
+  if (*(int *)(in_EAX + 0x88) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0x128) + 0x48))(*(int *)(in_EAX + 0x128));
+  }
+  if (*(int *)(in_EAX + 0x8c) != 0) {
+    (**(code **)(*(int *)(in_EAX + 300) + 0x48))(*(int *)(in_EAX + 300));
+  }
+  if (*(int *)(in_EAX + 0x90) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0x130) + 0x48))(*(int *)(in_EAX + 0x130));
+  }
+  if (*(int *)(in_EAX + 0x94) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0x134) + 0x48))(*(int *)(in_EAX + 0x134));
+  }
+  if (*(int *)(in_EAX + 0x68) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0x108) + 0x48))(*(int *)(in_EAX + 0x108));
+  }
+  if (*(int *)(in_EAX + 0x6c) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0x10c) + 0x48))(*(int *)(in_EAX + 0x10c));
+  }
+  if (*(int *)(in_EAX + 0x70) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0x110) + 0x48))(*(int *)(in_EAX + 0x110));
+  }
+  if (*(int *)(in_EAX + 0x74) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0x114) + 0x48))(*(int *)(in_EAX + 0x114));
+  }
+  if (*(int *)(in_EAX + 0x78) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0x118) + 0x48))(*(int *)(in_EAX + 0x118));
+  }
+  if (*(int *)(in_EAX + 0x7c) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0x11c) + 0x48))(*(int *)(in_EAX + 0x11c));
+  }
+  if (*(int *)(in_EAX + 0x3c) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0xdc) + 0x48))(*(int *)(in_EAX + 0xdc));
+  }
+  if (*(int *)(in_EAX + 0x40) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0xe0) + 0x48))(*(int *)(in_EAX + 0xe0));
+  }
+  if (*(int *)(in_EAX + 0x44) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0xe4) + 0x48))(*(int *)(in_EAX + 0xe4));
+  }
+  if (*(int *)(in_EAX + 0x48) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0xe8) + 0x48))(*(int *)(in_EAX + 0xe8));
+  }
+  if (*(int *)(in_EAX + 0x4c) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0xec) + 0x48))(*(int *)(in_EAX + 0xec));
+  }
+  if (*(int *)(in_EAX + 0x50) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0xf0) + 0x48))(*(int *)(in_EAX + 0xf0));
+  }
+  if (*(int *)(in_EAX + 0x24) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0xc4) + 0x48))(*(int *)(in_EAX + 0xc4));
+  }
+  if (*(int *)(in_EAX + 0x28) != 0) {
+    (**(code **)(*(int *)(in_EAX + 200) + 0x48))(*(int *)(in_EAX + 200));
+  }
+  if (*(int *)(in_EAX + 0x2c) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0xcc) + 0x48))(*(int *)(in_EAX + 0xcc));
+  }
+  if (*(int *)(in_EAX + 0x30) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0xd0) + 0x48))(*(int *)(in_EAX + 0xd0));
+  }
+  if (*(int *)(in_EAX + 0x34) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0xd4) + 0x48))(*(int *)(in_EAX + 0xd4));
+  }
+  if (*(int *)(in_EAX + 0x38) != 0) {
+    (**(code **)(*(int *)(in_EAX + 0xd8) + 0x48))(*(int *)(in_EAX + 0xd8));
+  }
+  return;
+}
+
+
+
+// FUN_0041c0c0 @ 0x0041c0c0  size=29  (MASHED.exe)
+// NOTE: 0x0041c0cd is not a function entry; showing containing function
+// undefined FUN_0041c0c0(void)
+// callees: FUN_0041bc50@0x0041bc50
+// callers: FUN_0040dfc0@0x0040dfc0
+// strings: (none)
+
+/* [C2 2026-05-11] No parameters, no return value. */
+
+void FUN_0041c0c0(void)
+
+{
+  undefined *puVar1;
+  
+  puVar1 = &DAT_0063cab8;
+  do {
+    FUN_0041bc50();
+    puVar1 = puVar1 + 0x16c;
+  } while ((int)puVar1 < 0x63cd90);
+  return;
+}
+
+
+
+// FUN_00413a40 @ 0x00413a40  size=310  (MASHED.exe)
+// undefined FUN_00413a40(void)
+// callees: (none)
+// callers: FUN_00410b30@0x00410b30
+// strings: (none)
+
+/* [C1 2026-05-12] Guards body on `DAT_008a94a0 != 0`; saves render states (IDs 0x14, 0xe), sets
+   states (1, 9, 0xc,… */
+
+void FUN_00413a40(void)
+
+{
+  undefined4 uStack_8;
+  undefined4 uStack_4;
+  
+  if (DAT_008a94a0 != 0) {
+    if (DAT_0063bc54 == (undefined4 *)0x0) {
+      (**(code **)(DAT_007d3ff8 + 0x20))(1,0);
+    }
+    else {
+      (**(code **)(DAT_007d3ff8 + 0x20))(1,*DAT_0063bc54);
+    }
+    (**(code **)(DAT_007d3ff8 + 0x20))(9,2);
+    (**(code **)(DAT_007d3ff8 + 0x20))(0xc,1);
+    (**(code **)(DAT_007d3ff8 + 0x24))(0x14,&uStack_8);
+    (**(code **)(DAT_007d3ff8 + 0x20))(0x14,1);
+    (**(code **)(DAT_007d3ff8 + 0x24))(0xe,&uStack_4);
+    (**(code **)(DAT_007d3ff8 + 0x20))(0xe,0);
+    (**(code **)(DAT_007d3ff8 + 0x20))(6,1);
+    (**(code **)(DAT_007d3ff8 + 0x20))(8,0);
+    (**(code **)(DAT_007d3ff8 + 0x20))(10,5);
+    (**(code **)(DAT_007d3ff8 + 0x20))(0xb,2);
+    (**(code **)(DAT_007d3ff8 + 0x34))
+              (3,&DAT_00828320,DAT_008a94a0 * 4,&DAT_0089d4a0,DAT_008a94a0 * 6);
+    (**(code **)(DAT_007d3ff8 + 0x20))(8,1);
+    (**(code **)(DAT_007d3ff8 + 0x20))(0x14,uStack_8);
+    (**(code **)(DAT_007d3ff8 + 0x20))(0xe,uStack_4);
+    (**(code **)(DAT_007d3ff8 + 0x20))(10,5);
+    (**(code **)(DAT_007d3ff8 + 0x20))(0xb,6);
+  }
+  return;
+}
+
+
+
+// FUN_004891f0 @ 0x004891f0  size=72  (MASHED.exe)
+// NOTE: 0x0048921b is not a function entry; showing containing function
+// undefined FUN_004891f0(void)
+// callees: (none)
+// callers: FUN_00410b30@0x00410b30
+// strings: (none)
+
+void FUN_004891f0(void)
+
+{
+  if (DAT_007030a8 != 0) {
+    (**(code **)(DAT_007d3ff8 + 0x20))(8,0);
+    (**(code **)(DAT_007d3ff8 + 0x20))(6,1);
+    (**(code **)(DAT_007030a8 + 0x48))(DAT_007030a8);
+    (**(code **)(DAT_007d3ff8 + 0x20))(8,1);
+    (**(code **)(DAT_007d3ff8 + 0x20))(6,1);
+  }
+  return;
+}
+
+
+
+// SkySecondaryDispatch @ 0x00489240  size=11  (MASHED.exe)
+// NOTE: 0x00489249 is not a function entry; showing containing function
+// undefined SkySecondaryDispatch(void)
+// callees: (none)
+// callers: FUN_004492b0@0x004492b0
+// strings: (none)
+
+/* [C2 2026-06-02] `void SkySecondaryDispatch(void)`. Body 0x00489240..0x0048924a (10 bytes).
+   Already renamed in the master Ghidra project… */
+
+void SkySecondaryDispatch(void)
+
+{
+  (**(code **)(DAT_007030ac + 0x48))(DAT_007030ac);
+  return;
+}
+
+
+
+// FUN_0041ebb0 @ 0x0041ebb0  size=76  (MASHED.exe)
+// NOTE: 0x0041ebeb is not a function entry; showing containing function
+// undefined FUN_0041ebb0(void)
+// callees: FUN_00476df0@0x00476df0, FUN_004770a0@0x004770a0
+// callers: FUN_00410b30@0x00410b30
+// strings: (none)
+
+/* [C2 2026-05-12] Sequence of 6 calls, in order: */
+
+void FUN_0041ebb0(void)
+
+{
+  FUN_00476df0(DAT_0063e49c);
+  FUN_00476df0(DAT_0063e4a0);
+  (**(code **)(DAT_007d3ff8 + 0x20))(8,0);
+  FUN_004770a0(DAT_0063e4a0);
+  FUN_004770a0(DAT_0063e49c);
+  (**(code **)(DAT_007d3ff8 + 0x20))(8,1);
+  return;
+}
+
+

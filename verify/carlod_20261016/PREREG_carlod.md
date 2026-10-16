@@ -194,7 +194,7 @@ other row appears and no matched draw is lost.
 
 Arms: `vis` (the build as is, no brake input, the failing record above), `visb` (same exe, brake input on),
 `visb_off` (`MASHED_CAR_VIS=0`, brake input on: rule 4 control). Rule 2 and 3 for F-VIS read `visb` against
-`base`. The default build still shows no brake lights on AI cars; that is U-9703's open half and is reported,
+`base`. The default build still shows no brake lights on AI cars; that is U-9706's open half and is reported,
 not closed.
 ### Amendment 5 (written after the `visb_env` arm was read, before any arm that uses the change; F-ENV input fix, rules unchanged)
 
@@ -215,7 +215,7 @@ whether the original draws env for each of the 36 car-frames of the 9 cited fram
 (City 801 car 3). rtex's "reproduces the live value to about 1e-4 on stationary rows" is this lag on rows where
 the camera barely moves. The same test on the LOD state (`state_lag_test.py`, observed state from the far-LOD
 draws) cannot discriminate: all 16 (camera row, car row) combinations predict the 36 car-frames with 0 errors,
-so the state rule stays on this frame's camera and the lag question for S is left open (U-9703).
+so the state rule stays on this frame's camera and the lag question for S is left open (U-9706).
 
 Change: `RaceSceneState::eye_prev_` (the previous Render's eye) feeds the coefficient's d2
 (`TrackRenderer` car block); `MASHED_CAR_ENV_PREVCAM=0` restores this frame's camera (no-op control).
@@ -279,7 +279,16 @@ rebased and every number that decides a default was re-measured on the rebased t
 While the rebased campaign was being written up, `race/first-frame-parity` moved again to `9420dde2` (rprops, rstates,
 rfx and d2posmodel merges; 331 files). Merging it into this branch changed no code of this lane: the merge only
 conflicted in `UNCERTAINTIES.md` and `re/analysis/CHANGELOG.md`, where upstream took U-9698..U-9702, so this lane's
-uncertainty row is **U-9703** (renumbered from U-9699 in this merge). The default-deciding arms were re-run on the merged
+uncertainty row moved from U-9698 to U-9699 and then to U-9703 (final id U-9706, see amendment 9). The default-deciding arms were re-run on the merged
 tip (`base3` = clean `9420dde2`, `final3`, `visx3`, `visoff3`, `nolag3`, G-CTRL on both). Results match the earlier ones in
 every rule: rows 78/77/77, 78/77/77, 128/126/124 -> 73/72/72, 73/72/73, 123/121/121, 0 RED, controls equal, G-CTRL
 `716cb2fd / 2a2afda1 / ba90ed88` unchanged. The earlier arms stay on record.
+
+### Amendment 9 (merge of `04dee0ed`; written before the final arms were read; no rule changes)
+
+`race/first-frame-parity` moved a third time, to `04dee0ed` (the rfx merge: car shadow, headlight beam, in-race HUD, which
+also took U-9703..U-9705). The merge conflicted in `RwRaceSubmit.cpp` (the car FX marker next to this lane's `CarVis`
+fields) and in `TrackRenderer.cpp` (rfx's `fx_car` lambda next to this lane's `carvis`); both sides were kept. rfx derives
+the headlight bit `in.lights` from the same course-id rule as `CarVisFlags` (`FUN_0041eeb0`, 0x40), which agrees. This lane's
+uncertainty row is now **U-9706**. The default-deciding arms were measured again on this tip (`base4` = clean `04dee0ed`,
+`final4`, `visx4`, `visoff4`, `nolag4`, G-CTRL on both); the arms of amendments 1-8 stay on record.

@@ -132,6 +132,11 @@ struct CarVis { int state; std::uint32_t flags; };
 // this copy draws, restored after (FUN_00420050 @ 0x00420050: RpLightSetColor on
 // DAT_0063d850 times rec+0x284 around the car's RpClumpRender); < 0 leaves it alone.
 // `env_m44` non-null adds the car env coefficient/frame as RaceSubmit_AddInstanceEnv does.
+// [rfx 2026-10-16] queue the point where the car shadow / headlight beam pass runs (LibRw/RwRaceFx.h):
+// FUN_00410b30 calls FUN_0041ebb0 right after the car loop (0x00410bb4) and before the copters
+// (FUN_00425e40, 0x00410c08). Without a marker the pass runs after every instance.
+void RaceSubmit_AddCarFxMarker();
+
 void RaceSubmit_AddInstancePosed(int handle, const float* m44, const FramePose* poses,
                                  std::size_t npose, float sun_scale, float env_coef = 0.f,
                                  const float* env_m44 = nullptr, const CarVis* vis = nullptr);

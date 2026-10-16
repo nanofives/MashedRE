@@ -1,0 +1,10 @@
+training  884  draws 462 / 462  EQUAL
+training  924  draws 462 / 462  EQUAL
+training  959  draws 462 / 462  EQUAL
+arctic    1051  draws 292 / 292  EQUAL
+arctic    1091  draws 292 / 292  EQUAL
+arctic    1126  draws 292 / 292  EQUAL
+city      761  draws 734 / 734  EQUAL
+city      801  draws 734 / 734  EQUAL
+city      836  draws 734 / 734  EQUAL
+NO-OP CONTROL: PASS 9/9

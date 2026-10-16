@@ -113,7 +113,7 @@ colours (shade 1.0 against the original's 0.25) fixed.
    into this worktree's `build\obj`. Removed with `scripts/diag.py wt-remove`; the base was rebuilt alone.
 7. `decomp_pc.py` still fails from a worktree (d1r1 note 5); the main checkout's copy was run for read-only decompilation.
 
-## 5. Gaps (U-9703, filed)
+## 5. Gaps (U-9706, filed)
 
 (a) F bits `0x10/0x20/0x400` stay 0 (no damage or wreck model). (b) `0x800` has no source for AI cars or for the player
 (`TrackRenderer.cpp` `io.input[5]` is not wired). (c) Slot 0's `S = 0` modes. (d) S timing against the camera. (e) Car

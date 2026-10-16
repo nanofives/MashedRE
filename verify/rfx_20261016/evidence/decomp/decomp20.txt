@@ -1,0 +1,27 @@
+// FUN_00467110 @ 0x00467110  size=133  (MASHED.exe)
+// undefined FUN_00467110(void)
+// callees: FUN_004670a0@0x004670a0, FUN_004c0740@0x004c0740, FUN_004c0b30@0x004c0b30, FUN_004c1a40@0x004c1a40, FUN_004c1b10@0x004c1b10, FUN_004c1c80@0x004c1c80, FUN_004c2bf0@0x004c2bf0
+// callers: FUN_004921d0@0x004921d0
+
+/* [C1 2026-05-16] Third sibling of camera-init triple (0x0042d560, 0x0042f660): operates on
+   DAT_006905b0/b4/b8 with extra clone-and-attach via FUN_004c2bf0/FUN_004c0740. */
+
+void FUN_00467110(void)
+
+{
+  undefined4 local_8;
+  undefined4 local_4;
+  
+  FUN_004670a0();
+  local_8 = 0x3f4ccccd;
+  local_4 = 0x3f4ccccd;
+  FUN_004c1c80(DAT_006905b0,&local_8);
+  FUN_004c1a40(DAT_006905b0,0x3dcccccd);
+  FUN_004c1b10(DAT_006905b0,0x43340000);
+  DAT_006905b4 = FUN_004c2bf0(DAT_006905b0);
+  DAT_006905b8 = FUN_004c0b30();
+  FUN_004c0740(DAT_006905b4,DAT_006905b8);
+  return;
+}
+
+

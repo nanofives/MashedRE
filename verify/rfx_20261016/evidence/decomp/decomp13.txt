@@ -1,0 +1,270 @@
+// FUN_004b3fc0 @ 0x004b3fc0  size=55  (MASHED.exe)
+// undefined FUN_004b3fc0(void)
+// callees: RpClumpForAllAtomics@0x004e66d0
+// callers: FUN_00407800@0x00407800, FUN_00419090@0x00419090, FUN_0041ad60@0x0041ad60, FUN_0041b690@0x0041b690, FUN_0041c320@0x0041c320, FUN_0041cd20@0x0041cd20, FUN_0041fe10@0x0041fe10, FUN_00420420@0x00420420, FUN_00421ba0@0x00421ba0, FUN_00426460@0x00426460, FUN_004548e0@0x004548e0, FUN_00456760@0x00456760, FUN_00478cf0@0x00478cf0, FUN_0047c0f0@0x0047c0f0, FUN_004b4000@0x004b4000, FUN_004b51d0@0x004b51d0
+
+undefined4 FUN_004b3fc0(undefined4 param_1,undefined4 param_2)
+
+{
+  undefined4 local_c;
+  undefined4 local_8;
+  undefined1 *local_4;
+  
+  local_4 = (undefined1 *)&local_c;
+  local_8 = param_2;
+  local_c = 0;
+  RpClumpForAllAtomics(param_1,FUN_004b3f20,&local_8);
+  return local_c;
+}
+
+
+
+// FUN_004b5190 @ 0x004b5190  size=49  (MASHED.exe)
+// undefined FUN_004b5190(void)
+// callees: FUN_00543d40@0x00543d40, FUN_00543d70@0x00543d70, FUN_00543df0@0x00543df0, FUN_0055deb0@0x0055deb0
+// callers: FUN_00407800@0x00407800, FUN_00419090@0x00419090, FUN_0041ad60@0x0041ad60, FUN_0041b690@0x0041b690, FUN_0041c320@0x0041c320, FUN_0041cd20@0x0041cd20, FUN_0041fe10@0x0041fe10, FUN_00420420@0x00420420, FUN_00421a90@0x00421a90, FUN_00426460@0x00426460, FUN_004548e0@0x004548e0, FUN_00456760@0x00456760, FUN_004b51d0@0x004b51d0
+
+/* [C2 2026-06-02] `uVar1 = *(obj + 0x18)` @ 0x004b5193 — inner RW object ref. 2.
+   `FUN_00543d40(uVar1)` — op A on inner ref. 3. `uVar1 =… */
+
+void FUN_004b5190(int param_1,undefined4 param_2,undefined4 param_3)
+
+{
+  undefined4 uVar1;
+  
+  uVar1 = *(undefined4 *)(param_1 + 0x18);
+  FUN_00543d40(uVar1);
+  uVar1 = FUN_00543d70(uVar1,param_2);
+  FUN_0055deb0(uVar1);
+  FUN_00543df0(uVar1,param_3);
+  return;
+}
+
+
+
+// FUN_004b5260 @ 0x004b5260  size=87  (MASHED.exe)
+// undefined FUN_004b5260(void)
+// callees: FUN_004b4130@0x004b4130, FUN_004b4140@0x004b4140
+// callers: FUN_00419100@0x00419100, FUN_0041a400@0x0041a400, FUN_0041adb0@0x0041adb0, FUN_0041b690@0x0041b690, FUN_0041cd20@0x0041cd20, FUN_004b5560@0x004b5560
+
+/* [C1 2026-05-19] 2-param `(param_1, *param_2)`. */
+
+void FUN_004b5260(undefined4 param_1,undefined4 *param_2)
+
+{
+  int *piVar1;
+  int iVar2;
+  int iVar3;
+  undefined1 local_44;
+  undefined1 uStack_43;
+  undefined1 uStack_42;
+  undefined1 uStack_41;
+  int local_40 [16];
+  
+  local_44 = 0xff;
+  uStack_43 = 0xff;
+  uStack_42 = 0xff;
+  uStack_41 = 0xff;
+  iVar2 = FUN_004b4140(param_1);
+  FUN_004b4130(param_1,local_40);
+  if (param_2 == (undefined4 *)0x0) {
+    param_2 = (undefined4 *)&local_44;
+  }
+  iVar3 = 0;
+  if (0 < iVar2) {
+    do {
+      piVar1 = local_40 + iVar3;
+      iVar3 = iVar3 + 1;
+      *(undefined4 *)(*piVar1 + 4) = *param_2;
+    } while (iVar3 < iVar2);
+  }
+  return;
+}
+
+
+
+// FUN_004b52f0 @ 0x004b52f0  size=16  (MASHED.exe)
+// undefined FUN_004b52f0(void)
+// callees: FUN_004b52c0@0x004b52c0
+// callers: FUN_0041a1e0@0x0041a1e0, FUN_0041a400@0x0041a400, FUN_0041d8b0@0x0041d8b0, FUN_0041db90@0x0041db90, FUN_0041def0@0x0041def0, FUN_0048ae00@0x0048ae00, FUN_004b5300@0x004b5300
+
+/* [C1 2026-05-19] Thin trampoline that tail-calls `FUN_004b52c0()` with no visible args. */
+
+void FUN_004b52f0(void)
+
+{
+  FUN_004b52c0();
+  return;
+}
+
+
+
+// FUN_004b51d0 @ 0x004b51d0  size=95  (MASHED.exe)
+// undefined FUN_004b51d0(void)
+// callees: FUN_004b3fc0@0x004b3fc0, FUN_004b5190@0x004b5190
+// callers: FUN_0041a1e0@0x0041a1e0, FUN_0041a400@0x0041a400, FUN_0041c100@0x0041c100, FUN_0041d8b0@0x0041d8b0, FUN_0041db90@0x0041db90, FUN_0041def0@0x0041def0
+
+/* [C1 2026-05-19] 5-param `(param_1, param_2, param_3, param_4, param_5)`. */
+
+int FUN_004b51d0(undefined4 param_1,int param_2,undefined4 param_3,undefined4 param_4,
+                undefined4 param_5)
+
+{
+  undefined4 uVar1;
+  int iVar2;
+  int iVar3;
+  int iVar4;
+  undefined4 local_400 [256];
+  
+  iVar2 = FUN_004b3fc0(param_1,local_400);
+  iVar4 = 0;
+  if (0 < iVar2) {
+    do {
+      uVar1 = local_400[iVar4];
+      iVar3 = FUN_004b5190(uVar1,param_4,param_5);
+      iVar4 = iVar4 + 1;
+      *(undefined4 *)(param_2 + iVar3 * 4) = uVar1;
+    } while (iVar4 < iVar2);
+  }
+  return iVar2;
+}
+
+
+
+// FUN_0040b6d0 @ 0x0040b6d0  size=12  (MASHED.exe)
+// undefined FUN_0040b6d0(void)
+// callees: (none)
+// callers: FUN_0040e500@0x0040e500, FUN_0040eee0@0x0040eee0, FUN_00410510@0x00410510, FUN_00410860@0x00410860, FUN_0041af50@0x0041af50, FUN_0041b7a0@0x0041b7a0, FUN_0041c410@0x0041c410, FUN_0041ce00@0x0041ce00, FUN_00424b80@0x00424b80, FUN_00434720@0x00434720, FUN_004929d0@0x004929d0
+
+/* [C1 2026-06-01] `undefined4 FUN_0040b6d0(int param_1 /*index*/)` — indexed getter: `return
+   (&DAT_008a94e0)[param_1];`.… */
+
+undefined4 FUN_0040b6d0(int param_1)
+
+{
+  return (&DAT_008a94e0)[param_1];
+}
+
+
+
+// FUN_0040b890 @ 0x0040b890  size=66  (MASHED.exe)
+// undefined FUN_0040b890(void)
+// callees: FUN_0040e340@0x0040e340, FUN_0042f500@0x0042f500
+// callers: FUN_0041af50@0x0041af50, FUN_0041b4d0@0x0041b4d0, FUN_0041b7a0@0x0041b7a0, FUN_0041c410@0x0041c410, FUN_0041cb80@0x0041cb80, FUN_0041ce00@0x0041ce00
+
+/* [C2 2026-06-03] Body `0x0040b890..0x0040b8d1` (65 bytes). Signature `int FUN_0040b890(void)`.
+   Returns either 8 or 12 (0xc). */
+
+int FUN_0040b890(void)
+
+{
+  int iVar1;
+  int iVar2;
+  
+  iVar1 = FUN_0040e340();
+  iVar2 = (-(uint)(iVar1 != 4) & 0xfffffffc) + 0xc;
+  iVar1 = FUN_0042f500();
+  if (iVar1 != 0) {
+    iVar2 = 8;
+  }
+  if (DAT_007f0fd0 == 1) {
+    return 8;
+  }
+  iVar1 = 8;
+  if (DAT_007f0fd0 != 2) {
+    iVar1 = iVar2;
+  }
+  return iVar1;
+}
+
+
+
+// FUN_0040b930 @ 0x0040b930  size=51  (MASHED.exe)
+// undefined FUN_0040b930(void)
+// callees: FUN_0040b8e0@0x0040b8e0
+// callers: FUN_0041b540@0x0041b540, FUN_0041c090@0x0041c090, FUN_0041cc50@0x0041cc50, FUN_0041d830@0x0041d830
+
+/* [C2 2026-06-03] Body `0x0040b930..0x0040b962` (50 bytes). Signature `void FUN_0040b930(undefined4
+   *param_1)` — writes a 4-DWORD output… */
+
+void FUN_0040b930(undefined4 *param_1)
+
+{
+  int iVar1;
+  int iVar2;
+  int iVar3;
+  
+  iVar3 = (int)&DAT_008a94e0 - (int)param_1;
+  iVar2 = 4;
+  do {
+    *param_1 = 0;
+    iVar1 = FUN_0040b8e0();
+    if (iVar1 <= *(int *)(iVar3 + (int)param_1)) {
+      *param_1 = 1;
+    }
+    param_1 = param_1 + 1;
+    iVar2 = iVar2 + -1;
+  } while (iVar2 != 0);
+  return;
+}
+
+
+
+// FUN_00426670 @ 0x00426670  size=59  (MASHED.exe)
+// undefined FUN_00426670(void)
+// callees: FUN_004e4320@0x004e4320
+// callers: FUN_0040de30@0x0040de30, FUN_00492e90@0x00492e90
+
+/* [C1 2026-05-07] WorldRenderDispatch_Begin */
+
+void FUN_00426670(undefined4 param_1)
+
+{
+  if (DAT_0066d704 != 0) {
+    if (DAT_0066d700 != 0) {
+      FUN_004e4320(DAT_00656ee8,param_1);
+      return;
+    }
+    FUN_004e4320(DAT_0065742c,param_1);
+  }
+  return;
+}
+
+
+
+// FUN_004266b0 @ 0x004266b0  size=59  (MASHED.exe)
+// undefined FUN_004266b0(void)
+// callees: FUN_004e4350@0x004e4350
+// callers: FUN_0040df20@0x0040df20, FUN_00492e90@0x00492e90
+
+/* [C1 2026-05-07] WorldRenderDispatch_End */
+
+void FUN_004266b0(undefined4 param_1)
+
+{
+  if (DAT_0066d704 != 0) {
+    if (DAT_0066d700 != 0) {
+      FUN_004e4350(DAT_00656ee8,param_1);
+      return;
+    }
+    FUN_004e4350(DAT_0065742c,param_1);
+  }
+  return;
+}
+
+
+
+// FUN_00426ba0 @ 0x00426ba0  size=6  (MASHED.exe)
+// undefined FUN_00426ba0(void)
+// callees: (none)
+// callers: FUN_00402a40@0x00402a40, FUN_0040d270@0x0040d270, FUN_0040dfc0@0x0040dfc0, FUN_00410b30@0x00410b30, FUN_004111c0@0x004111c0
+
+/* [C2 2026-05-11] No parameters, no side-effects, no calls. */
+
+undefined4 FUN_00426ba0(void)
+
+{
+  return DAT_0066d704;
+}
+
+
