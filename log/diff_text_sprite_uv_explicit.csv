@@ -1,0 +1,11 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,"[0,0,0,64,64,4294967295,0]",673270264,0x282149f8,673270264,0x282149f8,True,system error,system error
+1,"[0,100,100,100,50,2164260863,0]",4060753348,0xf20a2dc4,4060753348,0xf20a2dc4,True,system error,system error
+2,"[0,200,150,50,50,4294901760,1]",3809405220,0xe30ee924,3809405220,0xe30ee924,True,system error,system error
+3,"[0,0,0,1,1,0,0]",3122553856,0xba1e6400,3122553856,0xba1e6400,True,system error,system error
+4,"[0,320,240,160,120,3229646976,0]",2621838624,0x9c461520,2621838624,0x9c461520,True,system error,system error
+5,"[0,-50,-50,25,25,4279312947,1]",2070820696,0x7b6e3758,2070820696,0x7b6e3758,True,system error,system error
+6,"[0,10,10,50,50,4279312947,0]",2364732760,0x8cf2f558,2364732760,0x8cf2f558,True,system error,system error
+7,"[0,10,10,50,50,2701066240,0]",2657338048,0x9e63c2c0,2657338048,0x9e63c2c0,True,system error,system error
+8,"[0,10,10,50,50,2147483903,0]",2926038784,0xae67cf00,2926038784,0xae67cf00,True,system error,system error
+9,"[0,10,10,50,50,3221290752,0]",1608556160,0x5fe09e80,1608556160,0x5fe09e80,True,system error,system error

@@ -1,0 +1,50 @@
+{
+  "pid": 14668,
+  "settle": 2.0,
+  "dwell": 3.0,
+  "probes": [],
+  "baseline": {
+    "screen": 33,
+    "phase": 3
+  },
+  "control_no_press": {
+    "screen": 33,
+    "phase": 3
+  },
+  "a8": {
+    "player": 0,
+    "before": {
+      "gate_7f0f10": 2,
+      "f0c0": 1,
+      "aa2e0": 0,
+      "f680": 0,
+      "rec": 8973216,
+      "rec_0c": 0,
+      "desc_3f": 0
+    },
+    "after": {
+      "gate_7f0f10": 2,
+      "f0c0": 0,
+      "aa2e0": 1,
+      "f680": 6282560,
+      "rec": 8973216,
+      "rec_0c": 0,
+      "desc_3f": 0
+    },
+    "gate_ok": false,
+    "changed": {
+      "f0c0": [
+        1,
+        0
+      ],
+      "aa2e0": [
+        0,
+        1
+      ],
+      "f680": [
+        0,
+        6282560
+      ]
+    }
+  }
+}

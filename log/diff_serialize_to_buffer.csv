@@ -1,0 +1,11 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,0,3735928559,0xdeadbeef,3735928559,0xdeadbeef,True,,
+1,305419896,3735928559,0xdeadbeef,3735928559,0xdeadbeef,True,,
+2,3735928559,3735928559,0xdeadbeef,3735928559,0xdeadbeef,True,,
+3,3405691582,3735928559,0xdeadbeef,3735928559,0xdeadbeef,True,,
+4,4294967295,3735928559,0xdeadbeef,3735928559,0xdeadbeef,True,,
+5,2147483648,3735928559,0xdeadbeef,3735928559,0xdeadbeef,True,,
+6,1431655765,3735928559,0xdeadbeef,3735928559,0xdeadbeef,True,,
+7,2863311530,3735928559,0xdeadbeef,3735928559,0xdeadbeef,True,,
+8,1065353216,3735928559,0xdeadbeef,3735928559,0xdeadbeef,True,,
+9,1,3735928559,0xdeadbeef,3735928559,0xdeadbeef,True,,

@@ -1,0 +1,12 @@
+=== set_dat_00912a20 on slot 0 ===
+hook: set_dat_00912a20  rva=0x00556cc0  export=SetDat00912a20
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 36232
+  [agent] LUT ready  base=0x2c71bb8  offset=0x134  root=0x4970640  delta=0  attempts=5
+  [agent] .asi loaded  base=0x737d0000  SetDat00912a20@0x737e1cb0
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\log\diff_set_dat_00912a20.csv
+  total cases: 10
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.

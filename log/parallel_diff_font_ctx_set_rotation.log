@@ -1,0 +1,12 @@
+=== font_ctx_set_rotation on slot 0 ===
+hook: font_ctx_set_rotation  rva=0x00552840  export=FontCtx_SetRotation
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 32280
+  [agent] LUT ready  base=0x2d81bb8  offset=0x134  root=0x4950640  delta=0  attempts=6
+  [agent] .asi loaded  base=0x6c310000  FontCtx_SetRotation@0x6c321ea0
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\log\diff_font_ctx_set_rotation.csv
+  total cases: 10
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.

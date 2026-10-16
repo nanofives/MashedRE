@@ -1,0 +1,2 @@
+[0] fn=VehicleCouplingBridge dMtx=12 dLin=12 dAng=0 angMaxUlp=0  | c0 lin0 pre=00000000 o=d09d809a m=cf9ad5a3  mtxC pre=4e7c00f6 o=3f003d64 m=4e7c00f6
+[1] fn=VehicleCouplingBridge dMtx=12 dLin=12 dAng=0 angMaxUlp=0  | c0 lin0 pre=cf9ad5a3 o=d09d809a m=cf9ad5a3  mtxC pre=4e7c00f6 o=3f003d64 m=4e7c00f6

@@ -1,0 +1,19 @@
+00546bf0 FUN_00546bf0 VERIFIED param_1:0x10 
+00546c50 FUN_00546c50 VERIFIED param_1:0x10 
+00546cb0 FUN_00546cb0 VERIFIED param_1:0x10 
+0055b750 FUN_0055b750 VERIFIED param_3:0xc 
+00565120 FUN_00565120 COMPLEX-SPEC param_1+0x9820+((param_3&0xffff)+(param_2&0xffff)*10)*2:0x2 | writes: ['*(ushort *)(param_1 + 0x9820 + iVar1 * 2)']
+005651b0 FUN_005651b0 COMPLEX-SPEC param_1+0x9820+((param_3&0xffff)+(param_2&0xffff)*10)*2:0x2 | writes: ['*(ushort *)(param_1 + 0x9820 + iVar1 * 2)']
+00565200 FUN_00565200 VERIFIED param_3:0x1c 
+00565ef0 FUN_00565ef0 VERIFIED param_1:0x1c 
+00565fa0 FUN_00565fa0 VERIFIED param_1:0x1c 
+00566200 FUN_00566200 VERIFIED param_1:0x1c 
+00566830 FUN_00566830 REJECT param_1:0x10 | unexplained: param_1[uVar2]; param_1[uVar2]; param_1[uVar3]
+0056bb80 FUN_0056bb80 VERIFIED param_1:0x10 
+0056bce0 FUN_0056bce0 VERIFIED param_1:0x10 
+0056c8e0 FUN_0056c8e0 COMPLEX-SPEC param_1+param_4*0x20:0x1c | writes: ['*(float *)(iVar15 + param_1)', '*(float *)(iVar15 + 4 + param_1)', '*(float *)(iVar15 + 8 + param_1)', '*pfVar2', '*pfVar1', '*(float *)(iVar15 + 0x18 + param_1)']
+0056cf90 FUN_0056cf90 VERIFIED param_1:0x60 
+0056d350 FUN_0056d350 VERIFIED param_2:0x1c 
+0056ed60 FUN_0056ed60 VERIFIED param_1:0x2c 
+0056fad0 FUN_0056fad0 VERIFIED param_1:0x3c 
+005735f0 FUN_005735f0 VERIFIED param_4:0xc 

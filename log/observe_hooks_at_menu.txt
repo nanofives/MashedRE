@@ -1,0 +1,45 @@
+=== observe_hooks_at_menu report ===
+
+observe seconds: 20
+boot wait:       15.0
+
+asi module base: 0x71d70000  size: 131072
+
+per-hook install verification:
+  [OK] Vec3Magnitude    rva=0x004c3ac0  reimpl=0x71d72150
+         PRE  bytes:  8b 44 24 04 d9 40 04 d9
+         POST bytes:  e9 8b e6 8a 71 40 04 d9
+         opcode:      0xe9  expected 0xe9  -> OK
+         rel32:       0x718ae68b  expected 0x718ae68b  -> OK
+  [OK] FastSqrt         rva=0x004c3b30  reimpl=0x71d72210
+         PRE  bytes:  8b 44 24 04 89 44 24 04
+         POST bytes:  e9 db e6 8a 71 44 24 04
+         opcode:      0xe9  expected 0xe9  -> OK
+         rel32:       0x718ae6db  expected 0x718ae6db  -> OK
+  [OK] FastInvSqrt      rva=0x004c3b90  reimpl=0x71d721c0
+         PRE  bytes:  8b 44 24 04 89 44 24 04
+         POST bytes:  e9 2b e6 8a 71 44 24 04
+         opcode:      0xe9  expected 0xe9  -> OK
+         rel32:       0x718ae62b  expected 0x718ae62b  -> OK
+
+alive throughout observation: True
+alive at end of observation:  True
+exit method:                  wm_close
+exit code:                    0
+
+final byte state (RPC poll after observation window):
+  [OK] Vec3Magnitude    rva=0x004c3ac0  opcode=0xe9  bytes=e9 8b e6 8a 71 40 04 d9
+  [OK] FastSqrt         rva=0x004c3b30  opcode=0xe9  bytes=e9 db e6 8a 71 44 24 04
+  [OK] FastInvSqrt      rva=0x004c3b90  opcode=0xe9  bytes=e9 2b e6 8a 71 44 24 04
+
+PASS:
+  + Vec3Magnitude installed cleanly (E9 + correct rel32)
+  + FastSqrt installed cleanly (E9 + correct rel32)
+  + FastInvSqrt installed cleanly (E9 + correct rel32)
+  + process alive throughout 20s observation window with three hooks installed
+  + clean shutdown via PostMessage WM_CLOSE (exit code 0)
+  + Vec3Magnitude bytes still patched at end of observation
+  + FastSqrt bytes still patched at end of observation
+  + FastInvSqrt bytes still patched at end of observation
+FAIL:
+  (none)

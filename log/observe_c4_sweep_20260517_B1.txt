@@ -1,0 +1,86 @@
+=== observe_c4_sweep_20260517 batch B1 ===
+
+observe seconds: 10
+boot wait:       8.0
+hook count:      8
+
+asi module base: 0x6a4c0000  size: 192512
+
+per-hook install verification:
+  [OK] LoadingState1Enter                   rva=0x004098b0  reimpl=0x6a4c78b0
+         PRE  bytes:  b8 01 00 00 00 a3 84 95
+         POST bytes:  e9 fb df 0b 6a a3 84 95
+         opcode:      0xe9  expected 0xe9  -> OK
+         rel32:       0x6a0bdffb  expected 0x6a0bdffb  -> OK
+  [OK] LoadingState2Enter                   rva=0x00409900  reimpl=0x6a4c78e0
+         PRE  bytes:  68 28 cb 5c 00 e8 b3 93
+         POST bytes:  e9 db df 0b 6a e8 b3 93
+         opcode:      0xe9  expected 0xe9  -> OK
+         rel32:       0x6a0bdfdb  expected 0x6a0bdfdb  -> OK
+  [OK] LoadingState3Enter                   rva=0x00409930  reimpl=0x6a4c7910
+         PRE  bytes:  c7 05 84 95 8a 00 03 00
+         POST bytes:  e9 db df 0b 6a 00 03 00
+         opcode:      0xe9  expected 0xe9  -> OK
+         rel32:       0x6a0bdfdb  expected 0x6a0bdfdb  -> OK
+  [OK] TimerGetBasePtr                      rva=0x00413f90  reimpl=0x6a4c3360
+         PRE  bytes:  b8 10 2b 5f 00 c3 90 90
+         POST bytes:  e9 cb f3 0a 6a c3 90 90
+         opcode:      0xe9  expected 0xe9  -> OK
+         rel32:       0x6a0af3cb  expected 0x6a0af3cb  -> OK
+  [OK] TimerDispatch10                      rva=0x00426c10  reimpl=0x6a4c7940
+         PRE  bytes:  e8 2b 7e ff ff 85 c0 74
+         POST bytes:  e9 2b 0d 0a 6a 85 c0 74
+         opcode:      0xe9  expected 0xe9  -> OK
+         rel32:       0x6a0a0d2b  expected 0x6a0a0d2b  -> OK
+  [OK] TimerDispatch30                      rva=0x00426c30  reimpl=0x6a4c7970
+         PRE  bytes:  e8 fb 7d ff ff 85 c0 74
+         POST bytes:  e9 3b 0d 0a 6a 85 c0 74
+         opcode:      0xe9  expected 0xe9  -> OK
+         rel32:       0x6a0a0d3b  expected 0x6a0a0d3b  -> OK
+  [OK] TimerDispatch70                      rva=0x00426c70  reimpl=0x6a4c7990
+         PRE  bytes:  e8 db 7d ff ff 85 c0 74
+         POST bytes:  e9 1b 0d 0a 6a 85 c0 74
+         opcode:      0xe9  expected 0xe9  -> OK
+         rel32:       0x6a0a0d1b  expected 0x6a0a0d1b  -> OK
+  [OK] SetDat0067ecb8                       rva=0x0042c2f0  reimpl=0x6a4c7930
+         PRE  bytes:  8b 44 24 04 a3 b8 ec 67
+         POST bytes:  e9 3b b6 09 6a b8 ec 67
+         opcode:      0xe9  expected 0xe9  -> OK
+         rel32:       0x6a09b63b  expected 0x6a09b63b  -> OK
+
+alive throughout observation: True
+alive at end of observation:  True
+exit method:                  terminate_after_wm_close_timeout
+exit code:                    1
+
+final byte state (RPC poll after observation window):
+  [OK] LoadingState1Enter                   rva=0x004098b0  opcode=0xe9  bytes=e9 fb df 0b 6a a3 84 95
+  [OK] LoadingState2Enter                   rva=0x00409900  opcode=0xe9  bytes=e9 db df 0b 6a e8 b3 93
+  [OK] LoadingState3Enter                   rva=0x00409930  opcode=0xe9  bytes=e9 db df 0b 6a 00 03 00
+  [OK] TimerGetBasePtr                      rva=0x00413f90  opcode=0xe9  bytes=e9 cb f3 0a 6a c3 90 90
+  [OK] TimerDispatch10                      rva=0x00426c10  opcode=0xe9  bytes=e9 2b 0d 0a 6a 85 c0 74
+  [OK] TimerDispatch30                      rva=0x00426c30  opcode=0xe9  bytes=e9 3b 0d 0a 6a 85 c0 74
+  [OK] TimerDispatch70                      rva=0x00426c70  opcode=0xe9  bytes=e9 1b 0d 0a 6a 85 c0 74
+  [OK] SetDat0067ecb8                       rva=0x0042c2f0  opcode=0xe9  bytes=e9 3b b6 09 6a b8 ec 67
+
+PASS:
+  + LoadingState1Enter installed cleanly (E9 + correct rel32)
+  + LoadingState2Enter installed cleanly (E9 + correct rel32)
+  + LoadingState3Enter installed cleanly (E9 + correct rel32)
+  + TimerGetBasePtr installed cleanly (E9 + correct rel32)
+  + TimerDispatch10 installed cleanly (E9 + correct rel32)
+  + TimerDispatch30 installed cleanly (E9 + correct rel32)
+  + TimerDispatch70 installed cleanly (E9 + correct rel32)
+  + SetDat0067ecb8 installed cleanly (E9 + correct rel32)
+  + process alive throughout 10s observation window with 8 hooks installed
+  + shutdown via terminate_after_wm_close_timeout (TerminateProcess fallback documented)
+  + LoadingState1Enter bytes still patched at end of observation
+  + LoadingState2Enter bytes still patched at end of observation
+  + LoadingState3Enter bytes still patched at end of observation
+  + TimerGetBasePtr bytes still patched at end of observation
+  + TimerDispatch10 bytes still patched at end of observation
+  + TimerDispatch30 bytes still patched at end of observation
+  + TimerDispatch70 bytes still patched at end of observation
+  + SetDat0067ecb8 bytes still patched at end of observation
+FAIL:
+  (none)

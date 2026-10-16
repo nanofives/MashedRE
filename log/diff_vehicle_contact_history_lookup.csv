@@ -1,0 +1,8 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,"{""slot_contact_id"": 2882400001, ""slot_active"": 1, ""geom_contact_id"": 2882400001}",1,0x00000001,1,0x00000001,True,,
+1,"{""slot_contact_id"": 2882400001, ""slot_active"": 1, ""geom_contact_id"": 305419896}",0,0x00000000,0,0x00000000,True,,
+2,"{""slot_contact_id"": 2882400001, ""slot_active"": 0, ""geom_contact_id"": 2882400001}",0,0x00000000,0,0x00000000,True,,
+3,"{""slot_contact_id"": 0, ""slot_active"": 1, ""geom_contact_id"": 0}",1,0x00000001,1,0x00000001,True,,
+4,"{""slot_contact_id"": 4294967295, ""slot_active"": 1, ""geom_contact_id"": 4294967295}",1,0x00000001,1,0x00000001,True,,
+5,"{""slot_contact_id"": 3735928559, ""slot_active"": 1, ""geom_contact_id"": 3735928559}",1,0x00000001,1,0x00000001,True,,
+6,"{""slot_contact_id"": 1, ""slot_active"": 1, ""geom_contact_id"": 2}",0,0x00000000,0,0x00000000,True,,

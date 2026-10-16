@@ -1,0 +1,173 @@
+=== observe_frontend_full_30s — Frontend S-DoD Row 2 evidence (D-11001) ===
+
+observe seconds: 30
+boot wait:       8.0
+hook count:      131  (all C3+ frontend rows w/ registry entry)
+skipped:         5
+
+asi module base: 0x6b0c0000  size: 245760
+
+per-hook install verification:
+  [OK] MenuChromeShellA                         rva=0x0042e3a0  reimpl=0x6b0cd210
+  [OK] MenusBodyA                               rva=0x0042d5a0  reimpl=0x6b0cdb00
+  [OK] TextGradientV0V1Override                 rva=0x00472f40  reimpl=0x6b0ce070
+  [OK] TextGradientV2V3Override                 rva=0x004730b0  reimpl=0x6b0ce240
+  [FAIL] MenuChromeShellB                         rva=0x0042e5b0  reimpl=0x6b0cd3d0
+         PRE  bytes:  83 ec 5c 53 55 56 57 33
+         POST bytes:  83 ec 5c 53 55 56 57 33
+         opcode=0x83 expected 0xe9  rel32=0x55535cec expected=0x6ac9ee1b
+  [OK] MenuDimSet                               rva=0x0042aad0  reimpl=0x6b0c8d70
+  [OK] MenuIm2DQuad                             rva=0x0042aae0  reimpl=0x6b0c8c20
+  [OK] MenuAlphaGet                             rva=0x0042b930  reimpl=0x6b0c7660
+  [OK] ChromeBaseDraw                           rva=0x00472c60  reimpl=0x6b0cdcf0
+  [OK] IntroSplashFrameTickShim                 rva=0x00492d20  reimpl=0x6b0c9280
+  [OK] VideoStateFlagGet                        rva=0x00493f70  reimpl=0x6b0c9890
+  [OK] LangIndexSeedFromCli                     rva=0x004274d0  reimpl=0x6b0d14e0
+  [OK] IntroVideoDimGetter                      rva=0x00493f80  reimpl=0x6b0c94b0
+  [OK] AspectRatioGlobalGet                     rva=0x00493fc0  reimpl=0x6b0d12e0
+  [OK] RwVtableSlot07Call                       rva=0x004c19f0  reimpl=0x6b0cc9f0
+  [OK] IntroSplashVtableSlot6                   rva=0x004c1a00  reimpl=0x6b0c94a0
+  [OK] IntroSplashRenderState                   rva=0x004c1bb0  reimpl=0x6b0c9470
+  [OK] MenuSpriteDispatchA                      rva=0x0042f0c0  reimpl=0x6b0cd580
+  [OK] ProgressBarSetA                          rva=0x00430b90  reimpl=0x6b0cc2c0
+  [OK] MenuSpriteDispatchB                      rva=0x0042fb70  reimpl=0x6b0cd720
+  [OK] MenuSpriteDispatchC                      rva=0x0042fe90  reimpl=0x6b0cd8b0
+  [OK] IsMultiplayerMode                        rva=0x00430760  reimpl=0x6b0c82e0
+  [OK] MenuMenusBA                              rva=0x004282a0  reimpl=0x6b0c8db0
+  [OK] MenuMenusBB                              rva=0x00427ad0  reimpl=0x6b0c8e50
+  [FAIL] MenuMenusBC                              rva=0x0042f8d0  reimpl=0x6b0c8f70
+         PRE  bytes:  83 ec 0c 53 55 8b 6c 24
+         POST bytes:  83 ec 0c 53 55 8b 6c 24
+         opcode=0x83 expected 0xe9  rel32=0x55530cec expected=0x6ac9969b
+  [OK] MenuGroupCount                           rva=0x0042ac00  reimpl=0x6b0c76f0
+  [OK] TextSpriteUVExplicit                     rva=0x00473870  reimpl=0x6b0ce670
+  [OK] MenuTableSearch                          rva=0x0042a940  reimpl=0x6b0ccfd0
+  [OK] SplitScreenTrackAssignment               rva=0x00430830  reimpl=0x6b0c8640
+  [OK] SpriteLookupTableA                       rva=0x0040bb70  reimpl=0x6b0c7800
+  [OK] SpriteLookupTableB                       rva=0x0040bb90  reimpl=0x6b0c7820
+  [OK] MenuMenusBD                              rva=0x0040b460  reimpl=0x6b0c90e0
+  [OK] MenusLapTimeFmt                          rva=0x0042d290  reimpl=0x6b0cdc80
+  [OK] TimeDiffDecompose                        rva=0x0042d300  reimpl=0x6b0c8860
+  [OK] LapTimeALessThanB                        rva=0x00429870  reimpl=0x6b0c8340
+  [OK] MenuMenusBE                              rva=0x00429a30  reimpl=0x6b0c9240
+  [OK] LapLapsGetBySlot                         rva=0x00429a80  reimpl=0x6b0c8320
+  [OK] LapSecsGetBySlot                         rva=0x00429a90  reimpl=0x6b0c8330
+  [OK] LapFracGetBySlot                         rva=0x00429a70  reimpl=0x6b0c8310
+  [OK] HotkeyStringBaseGet                      rva=0x0040b7a0  reimpl=0x6b0c82d0
+  [OK] PlayerHotkeyTableGet                     rva=0x0040b7b0  reimpl=0x6b0c83d0
+  [OK] ModeScoreGetBySlot                       rva=0x0040b6b0  reimpl=0x6b0c83c0
+  [OK] FrontendArrayGet                         rva=0x0040b6c0  reimpl=0x6b0c7870
+  [OK] FrontendGlobalGet                        rva=0x0040ad20  reimpl=0x6b0c7880
+  [OK] LocalPlayerSlotCheck                     rva=0x00436810  reimpl=0x6b0c8a60
+  [OK] FrontendPlayerSlotCheck                  rva=0x0042ebe0  reimpl=0x6b0c8a00
+  [OK] FrontendModeDispatch                     rva=0x0042ee40  reimpl=0x6b0cbdf0
+  [OK] VehicleUnlockFlagGet                     rva=0x0042ef40  reimpl=0x6b0c8b60
+  [OK] HudSlotTypePlayer0                       rva=0x00430a10  reimpl=0x6b0c7730
+  [OK] HudSlotTypePlayer1                       rva=0x00430a60  reimpl=0x6b0c7780
+  [OK] HudSlotTypePlayer2                       rva=0x00430ab0  reimpl=0x6b0c77c0
+  [OK] SpriteSlotGate                           rva=0x0042ee00  reimpl=0x6b0c7840
+  [OK] PerCarRaceProgressGet                    rva=0x00408a50  reimpl=0x6b0ccfc0
+  [OK] FrontendC2RoundI                         rva=0x00408a70  reimpl=0x6b0cda10
+  [OK] RaceScoreFloatGetBySlot                  rva=0x00408ad0  reimpl=0x6b0ce9c0
+  [OK] FrontendRaceResultsDispatch              rva=0x00422fd0  reimpl=0x6b0cda90
+  [OK] TiebreakFlagGet                          rva=0x00431d80  reimpl=0x6b0d1340
+  [OK] EntityScoreFieldAdd                      rva=0x0046c700  reimpl=0x6b0d1310
+  [OK] MenuButtonDetectC                        rva=0x0042b310  reimpl=0x6b0c6fd0
+  [OK] MenuButtonDetectA                        rva=0x0042aff0  reimpl=0x6b0c6620
+  [OK] MenuButtonDetectB                        rva=0x0042b180  reimpl=0x6b0c6780
+  [OK] MenuTeamBalance                          rva=0x0042bb60  reimpl=0x6b0c6970
+  [OK] MenuButtonDetectE                        rva=0x0042b770  reimpl=0x6b0c7470
+  [OK] CarSlotAssign                            rva=0x0042b9e0  reimpl=0x6b0c6da0
+  [OK] MenuCursorBack                           rva=0x004323c0  reimpl=0x6b0c6c90
+  [OK] MenuReadinessCheckA                      rva=0x0042ae10  reimpl=0x6b0cbcc0
+  [OK] MenuReadinessCheckB                      rva=0x0042aeb0  reimpl=0x6b0cbd60
+  [OK] MenuReadinessCheckC                      rva=0x0042af50  reimpl=0x6b0c6480
+  [OK] MenuOptionSlotGet                        rva=0x00430910  reimpl=0x6b0c6b90
+  [FAIL] MenuCursorStep                           rva=0x0042aa00  reimpl=0x6b0c7670
+         PRE  bytes:  8b 0d f8 e9 67 00 55 8b
+         POST bytes:  8b 0d f8 e9 67 00 55 8b
+         opcode=0x8b expected 0xe9  rel32=0x67e9f80d expected=0x6ac9cc6b
+  [OK] TimerGlobalsReset                        rva=0x0040b810  reimpl=0x6b0c6540
+  [FAIL] MenuEntryGet                             rva=0x0042ac90  reimpl=0x6b0c68e0
+         PRE  bytes:  8b 0d f8 e9 67 00 c1 e1
+         POST bytes:  8b 0d f8 e9 67 00 c1 e1
+         opcode=0x8b expected 0xe9  rel32=0x67e9f80d expected=0x6ac9bc4b
+  [OK] CarSlotInit1P                            rva=0x0042b960  reimpl=0x6b0c6f50
+  [OK] MenuModeSync                             rva=0x0042f6b0  reimpl=0x6b0c6b00
+  [OK] ElapsedVsThresholdCheck                  rva=0x004307a0  reimpl=0x6b0ce810
+  [OK] FrontendModeIndex                        rva=0x004309b0  reimpl=0x6b0c7890
+  [OK] MenuSlotCount                            rva=0x00430b60  reimpl=0x6b0c6c40
+  [OK] CarSlotInit                              rva=0x00492340  reimpl=0x6b0c6d40
+  [OK] CopyTable005f2a70To0089a384              rva=0x00414120  reimpl=0x6b0ce930
+  [OK] TimerArrayClear                          rva=0x00422b30  reimpl=0x6b0c6520
+  [OK] EntityFieldSet                           rva=0x0046dc00  reimpl=0x6b0c6d80
+  [OK] CarSlotStateSet                          rva=0x0040e480  reimpl=0x6b0c8d90
+  [OK] FrontendPanelFlagAdvance                 rva=0x00431d90  reimpl=0x6b0cf350
+  [OK] FrontendStateSet                         rva=0x00428390  reimpl=0x6b0d14d0
+  [OK] SpriteAnimFrameThunk                     rva=0x0042e590  reimpl=0x6b0c87d0
+  [OK] DoubleDerefIndexedGetter                 rva=0x0040d250  reimpl=0x6b0ce970
+  [OK] GetFrameCounterPlus73                    rva=0x0042f0b0  reimpl=0x6b0c8540
+  [OK] EntryTableScanByKey                      rva=0x00401570  reimpl=0x6b0ce990
+  [OK] RaceResultIndexedStore                   rva=0x0045ba00  reimpl=0x6b0ce8c0
+  [OK] VehicleSlotInit                          rva=0x0046c5c0  reimpl=0x6b0ce8f0
+  [OK] VehicleSlotFieldSet                      rva=0x0046c790  reimpl=0x6b0ce8d0
+  [OK] ViewportOriginGetter                     rva=0x004c75e0  reimpl=0x6b0d1350
+  [OK] MenuEntryArrayInit                       rva=0x0042d3e0  reimpl=0x6b0c8560
+  [OK] MenusLapTimeCmp                          rva=0x0042ed70  reimpl=0x6b0cdbb0
+  [OK] FrontendCursorUpdate                     rva=0x0042f7b0  reimpl=0x6b0c88f0
+  [OK] PlayerSlotEdgeAdjust                     rva=0x0042fa00  reimpl=0x6b0d16d0
+  [OK] RaceEndFlagIfEndMode                     rva=0x0042fe30  reimpl=0x6b0c8710
+  [OK] RaceEndAltFlagIfEndMode                  rva=0x0042fe50  reimpl=0x6b0c86f0
+  [OK] GetRaceEndFlag                           rva=0x0042fe80  reimpl=0x6b0c8550
+  [OK] MenuButtonDetectD                        rva=0x0042b540  reimpl=0x6b0c7220
+  [OK] CarSlotStateGet                          rva=0x0040e470  reimpl=0x6b0c8d80
+  [OK] ScoreboardStateZeroInit                  rva=0x0041e080  reimpl=0x6b0ce9d0
+  [OK] SlotBlockZero                            rva=0x00422a80  reimpl=0x6b0cecf0
+  [OK] TabCycler                                rva=0x00423270  reimpl=0x6b0ced30
+  [OK] CursorMover                              rva=0x00423320  reimpl=0x6b0cea50
+  [OK] PlayerScoreAccA                          rva=0x00423b40  reimpl=0x6b0d0cf0
+  [OK] PlayerScoreAccB                          rva=0x00423b60  reimpl=0x6b0d0d10
+  [OK] PlayerScoreAccD                          rva=0x00423ba0  reimpl=0x6b0d0d30
+  [OK] PlayerScoreTeamAccC                      rva=0x00423bc0  reimpl=0x6b0d0de0
+  [OK] PlayerScoreTeamAccBase                   rva=0x00423c40  reimpl=0x6b0d0d50
+  [OK] PlayerScoreTeamAccGatedB                 rva=0x00423cc0  reimpl=0x6b0d11a0
+  [OK] PlayerScoreTeamAccBaseB                  rva=0x00423d50  reimpl=0x6b0d1080
+  [OK] PlayerScoreTeamAccGatedC                 rva=0x00423dd0  reimpl=0x6b0d1240
+  [OK] PlayerScoreTeamAccCumB                   rva=0x00423e60  reimpl=0x6b0d1110
+  [OK] PlayerBlock2Field00Get                   rva=0x00423ee0  reimpl=0x6b0cedd0
+  [OK] PlayerBlock2Field04Get                   rva=0x00423f60  reimpl=0x6b0cee50
+  [OK] PlayerBlock2Field50Get                   rva=0x00423ff0  reimpl=0x6b0cef70
+  [OK] PlayerBlock2Field08Get                   rva=0x00424070  reimpl=0x6b0ceee0
+  [OK] GetDat008994c0                           rva=0x004241b0  reimpl=0x6b0cedc0
+  [OK] EndOfRoundAccumulator                    rva=0x00424920  reimpl=0x6b0d0e70
+  [OK] SlotWordPtrGet                           rva=0x00425ee0  reimpl=0x6b0cf0c0
+  [OK] ActiveSlotCount                          rva=0x00425ef0  reimpl=0x6b0ceff0
+  [OK] GlobalDat00646e58Get                     rva=0x00426020  reimpl=0x6b0cf090
+  [OK] GlobalDat00656ed8Get                     rva=0x00426080  reimpl=0x6b0cf0a0
+  [OK] GlobalDat0066ce58Get                     rva=0x00426090  reimpl=0x6b0cf0b0
+  [OK] GetDat00657438                           rva=0x004260a0  reimpl=0x6b0cf0d0
+  [OK] GetDat0065743c                           rva=0x004260b0  reimpl=0x6b0cf0e0
+  [OK] GetDat0066d6e0                           rva=0x00426bc0  reimpl=0x6b0cf0f0
+  [OK] GetTableEntry0066d658                    rva=0x00426bd0  reimpl=0x6b0cf100
+  [OK] ConstantGetter22                         rva=0x0042b920  reimpl=0x6b0cf130
+  [OK] MenuDimOverlayFadeStep                   rva=0x00432ad0  reimpl=0x6b0cf670
+  install summary: 127/131 OK, 4 FAIL
+
+alive throughout observation: True
+alive at end of observation:  True
+exit method:                  terminate_after_wm_close_timeout
+exit code:                    1
+
+final byte state (RPC poll after observation window):
+  [FAIL] MenuChromeShellB                         rva=0x0042e5b0  opcode=0x83  bytes=83 ec 5c 53 55 56 57 33
+  [FAIL] MenuMenusBC                              rva=0x0042f8d0  opcode=0x83  bytes=83 ec 0c 53 55 8b 6c 24
+  [FAIL] MenuCursorStep                           rva=0x0042aa00  opcode=0x8b  bytes=8b 0d f8 e9 67 00 55 8b
+  [FAIL] MenuEntryGet                             rva=0x0042ac90  opcode=0x8b  bytes=8b 0d f8 e9 67 00 c1 e1
+  final poll summary: 127/131 still patched, 4 reverted
+
+PASS:
+  + process alive throughout 30s observation window with 131 frontend hooks installed
+  + shutdown via terminate_after_wm_close_timeout (TerminateProcess fallback documented)
+FAIL:
+  - 4 of 131 hooks failed install verification
+  - 4 hooks reverted during observation

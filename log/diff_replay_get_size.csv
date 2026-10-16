@@ -1,0 +1,11 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,"{""scalars"":[1,1]}","r=2572|calls[1]=0x5cf24c,0xa0c",,"r=2572|calls[1]=0x5cf24c,0xa0c",,True,,
+1,"{""scalars"":[1,2]}","r=1492|calls[1]=0x5cf24c,0x5d4",,"r=1492|calls[1]=0x5cf24c,0x5d4",,True,,
+2,"{""scalars"":[0.5,1]}","r=1492|calls[1]=0x5cf24c,0x5d4",,"r=1492|calls[1]=0x5cf24c,0x5d4",,True,,
+3,"{""scalars"":[10,3]}","r=7612|calls[1]=0x5cf24c,0x1dbc",,"r=7612|calls[1]=0x5cf24c,0x1dbc",,True,,
+4,"{""scalars"":[0,1]}","r=412|calls[1]=0x5cf24c,0x19c",,"r=412|calls[1]=0x5cf24c,0x19c",,True,,
+5,"{""scalars"":[2.5,4]}","r=1744|calls[1]=0x5cf24c,0x6d0",,"r=1744|calls[1]=0x5cf24c,0x6d0",,True,,
+6,"{""scalars"":[19853048,16777223]}","r=2968|calls[1]=0x5cf24c,0xb98",,"r=2968|calls[1]=0x5cf24c,0xb98",,True,,
+7,"{""scalars"":[1231447680,16777217]}","r=158920|calls[1]=0x5cf24c,0x26cc8",,"r=158920|calls[1]=0x5cf24c,0x26cc8",,True,,
+8,"{""scalars"":[-2.5,4]}","r=4294966376|calls[1]=0x5cf24c,0xfffffc68",,"r=4294966376|calls[1]=0x5cf24c,0xfffffc68",,True,,
+9,"{""scalars"":[2.5,-4]}","r=4294966376|calls[1]=0x5cf24c,0xfffffc68",,"r=4294966376|calls[1]=0x5cf24c,0xfffffc68",,True,,

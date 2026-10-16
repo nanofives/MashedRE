@@ -1,0 +1,5 @@
+idx,input,original,reimpl,match
+0,0,3c23d70a|111,3c23d70a|111,True
+1,1,40a00000|222,40a00000|222,True
+2,2,3c23d70a|333,3c23d70a|333,True
+3,3,c0400000|444,c0400000|444,True

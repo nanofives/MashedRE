@@ -1,0 +1,27 @@
+=== verify_hook_install report (get_race_end_flag) ===
+
+target address: 0x0042fe80  export: GetRaceEndFlag
+PRE  bytes:     e9 6b 83 34 73 c3 90 90
+asi base:       0x73770000
+reimpl addr:    0x737781f0
+POST bytes:     e9 6b 83 34 73 c3 90 90
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x7334836b  expected 0x7334836b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  0 / 3
+
+per-input results:
+  [FAIL] input=0  got=None  err=bad argument count
+  [FAIL] input=3735928559  got=None  err=bad argument count
+  [FAIL] input=3405691582  got=None  err=bad argument count
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+FAIL:
+  - bytes unchanged after Module.load
+  - reimpl interceptor fired 0 times, expected 3
+  - call 0 (input=0) failed: bad argument count
+  - call 1 (input=3735928559) failed: bad argument count
+  - call 2 (input=3405691582) failed: bad argument count

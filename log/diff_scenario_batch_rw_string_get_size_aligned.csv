@@ -1,0 +1,8 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,,4,0x00000004,4,0x00000004,True,,
+1,a,4,0x00000004,4,0x00000004,True,,
+2,abcd,8,0x00000008,8,0x00000008,True,,
+3,abcdefgh,12,0x0000000c,12,0x0000000c,True,,
+4,abcdefghijkl,16,0x00000010,16,0x00000010,True,,
+5,RwStringGetSizeAligned,24,0x00000018,24,0x00000018,True,,
+6,MASHED_RwStringGetSizeAligned,32,0x00000020,32,0x00000020,True,,

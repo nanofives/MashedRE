@@ -1,0 +1,11 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,0,00a40f02,,00a40f02,,True,,
+1,1,00a40f02,,00a40f02,,True,,
+2,2,00a40f02,,00a40f02,,True,,
+3,3,00a40f02,,00a40f02,,True,,
+4,4,00a40f02,,00a40f02,,True,,
+5,5,00a40f02,,00a40f02,,True,,
+6,6,00a40f02,,00a40f02,,True,,
+7,7,00a40f02,,00a40f02,,True,,
+8,8,00a40f02,,00a40f02,,True,,
+9,9,00a40f02,,00a40f02,,True,,

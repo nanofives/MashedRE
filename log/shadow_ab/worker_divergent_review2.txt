@@ -1,0 +1,70 @@
+�� delegate  Accenture  [OK]  repo=Mashed  cost=$2.413  denials=0  model=opus
+
+I have everything I need. All four use `ShadowAB::Run` (return-value compare), and the key harness fact is that **`Run()` does NOT snapshot/restore the pointed-to memory** — only `RunRegion()` does (`Core/ShadowAB.h:38-43`, `:222-274` vs `:279-303`). So the original call runs first on the real buffers (`ShadowAB.h:248`), then our port runs second on whatever the original left behind (`:262`). Any state the function writes through its pointers and later reads back therefore persists between the two calls.
+
+---
+
+## FUN_00575120_impl — RwpSolverCore16.cpp:90-122
+**Classification: NON_IDEMPOTENT** (contact-count `+0xac` and the contact slot are read then written).
+
+**(1) Returns / selector.** `return 0;` at `:101` (reject vs first contact) and `:110` (reject vs last contact); `return 1;` at `:121` (appended). Selector: `:96` `if ((uVar2 != 0) && (DAT_005d757c <= param_4))` guards a dedup test; `:100`/`:108` use Ghidra's `(a<b)!=(a==b)` idiom (= `fVar3 <= param_4`) — reject (return 0) when the L1 distance of the new point `param_1` to an existing contact is `<= param_4`; otherwise append and return 1.
+
+**(2) State read that it also writes.**
+- `*(uint*)(param_3 + 0xac)` (contact count): READ at `:95` (`uVar2 = …`), WRITTEN at `:120` (`… = … + 1`).
+- Contact slot at `param_3 + uVar2*0x28` (fields `+0xc,+0x10,+0x14,+0x18,+0x1c`): WRITTEN `:114-119`; on a later call READ as the "first" contact (`+0xc/+0x10/+0x14`, `:97-99`) and the "last" contact (`param_3 + count*0x28 - 0x14/-0x1c/-0x18`, `:105-106`).
+
+**(3) Callees.** `fabsf` only (CRT, pure). No same-directory callees.
+
+**(4) "orig 1, ours 0" fit — YES, exact.** First (original) call appends `param_1` at index `uVar2`, bumps count to `uVar2+1`, returns 1. Second (our) call now sees `count != 0`; the just-written contact is identical to `param_1`, so `fVar3 = 0 <= param_4` → `return 0` (`:110`, or `:101` when count went 0→1). This is the same mechanism the sibling `FUN_00574ad0` was already ruled NON_IDEMPOTENT for (`re/analysis/shadow_lane_20260910.md:39-41`). The 2 agreeing samples are calls the original itself rejected (returns 0, ours 0).
+
+---
+
+## FUN_00578ff0_impl — RwpSolverCore17.cpp:715-1184
+**Classification: NON_IDEMPOTENT** (the `+0xac` contact-count words of the `param_1[]` manifolds are zeroed by the merge loop, then summed to produce the return).
+
+**(1) Returns / selector.** `return 0;` at `:753,:756,:761,:1183`; `return 1;` at `:1180`; **`return local_a0;` at `:1169`** — the count of reduced contact-groups written to `param_4`. `local_a0` is incremented at `:939` once per surviving group. This is the value observed as `ours = orig − 1`.
+
+**(2) State read that it also writes** (manifold array `param_1`, stride `0x38` words / `0xe0` bytes):
+- `+0xac` contact count (word `0x2b`): WRITTEN to 0 at `:818` (`*(undefined4*)(uVar8+0xac)=0`), `:875`, and `puVar3[0x2b]=0`/`puVar12[0x2b]=0` at `:826,:882` (also overwritten as a bucket link at `:858`). READ at `:898` (`*piVar9`, `piVar9=param_1+0x2b`, the tally `iVar6 += *piVar9` at `:899`), `:907`, `:966`, `:978,:1013,:1059`. This read/write pair is the exact non-idempotency: the coplanar-merge loop (`:807-889`) zeros the count of any manifold it absorbs; the tally loop (`:895-904`) then sums `+0xac` over all `param_2` manifolds and picks the survivor, which drives the group build whose count is `local_a0`.
+- `+0xdc`/word `0x37` link fields: written `:777,:800,:858,:929-930` (the `:929-930` splice persists into `param_1`); buckets `local_40` are re-zeroed each call (`:771,:790-793,:849-851`).
+- `+0xa8` flag (word `0x2a`): READ at `:912`; no write to it seen in the body.
+
+**(3) Callees.**
+- `FUN_00579b50` (`0x00579b50`, same dir — RwpSolverCore16.cpp:240-257): reads `*(int*)(param_2+0xac)` (`:243`) and vec fields; returns 0/1; **no writes** — it is the gate whose nonzero result triggers this function's own `+0xac=0` write. Does NOT itself mutate state.
+- `FUN_005667c0` (`0x005667c0`, same dir — RwpSolverLeaves1.cpp:484-501): reads `param_2[0..2]`, writes `param_1[0..2]`; called as `FUN_005667c0(local_ac, local_ac)` (`:998`) on a **stack** vec3 local — does NOT touch the manifold array or any `+0xac`. Does NOT mutate cross-call state.
+- `fabsf` (CRT, pure).
+
+**(4) "ours = orig − 1" fit — YES.** The original call zeros one manifold's `+0xac` during coplanar merge; the second (our) call sums the already-zeroed counts, loses one contributor, and builds one fewer group → `local_a0` is 1 lower. Matches the log `o=2,n=1 / o=4,n=3 / o=3,n=2` (`re/parity/shadow_results.tsv:79`).
+
+---
+
+## FUN_00577be0_impl — RwpSolverCore14.cpp:39-64
+**Classification: body is IDEMPOTENT in isolation; the divergence requires caller output↔input aliasing → NON_IDEMPOTENT only at an aliasing call site (which this file does not show).** Not a UNKNOWN_CALLEE case (it is a leaf).
+
+**(1) Returns / selector.** `uVar3` returned at `:63`: `=1` at `:50`, `=0` at `:53` and `:58`. Selector: `:47` `if (fVar1*param_3 < fVar2)` then `:48` `(fVar1*param_4 < fVar2)==(fVar1*param_4==fVar2)` (= `fVar1*param_4 >= fVar2`) → 1, else 0; else 0. `fVar1 = |param_2|²` (`:44`), `fVar2 = dot(param_2, param_5-param_1)` (`:45-46`).
+
+**(2) State read that it also writes — NONE in the body.** Read-set = `param_1[0..2]`, `param_2[0..2]`, `param_5[0..2]`, `param_3`, `param_4`. Write-set = `param_6[0..2]` only (`:60-62`). `param_6` is never read, and the return depends solely on the read-set. So *within its own body it reads nothing it writes.*
+
+**(3) Callees.** None (leaf).
+
+**(4) "orig 1, ours 0" fit.** A second identical call can return a different value ONLY if the caller aliases `param_6` onto `param_1` (or `param_5`/`param_2`). Concretely, if `param_6 ≡ param_1`: the first call writes `param_1 ← param_1 + t·param_2` (`:60-62`); the second call then reads the projected point, `fVar2 = dot(param_2, param_5 − param_1')` collapses, and with the caller's `param_3 = 0` (as every in-repo caller passes) `fVar1*0 = 0 < fVar2` fails → `return 0`. That reproduces the exact pattern. **Caveat (NO-GUESSING):** the only in-repo caller, `FUN_00576880` (RwpSolverCore15.cpp:179 and :217), passes `param_6 = &gE`/`&gA` — **distinct stack vec3s** (declared RwpSolverCore15.cpp:119-125), so at that site there is no aliasing and be0 is idempotent there. The aliasing caller, if it exists, is outside these files. That said, the **fractional** divergence (38/48, the 10 agreeing = original-returns-0 samples) is consistent with output-aliases-input non-idempotency and is *not* the signature of a deterministic pure-function transcription bug (which would diverge on every reached sample); a rare input-boundary transcription bug is not fully excluded by the body alone.
+
+---
+
+## FUN_00577cb0_impl — RwpSolverCore14.cpp:71-134
+**Classification: same as be0 — body IDEMPOTENT in isolation; NON_IDEMPOTENT only under caller output↔input aliasing (unseen here). Its `1` return is be0's `1` propagated.**
+
+**(1) Returns / selector.** `return uVar7;` at `:122` (`uVar7 = FUN_00577be0(...)`, `:121`, so 0/1) and `return 2;` at `:133`. Selector: the loop `:93-113` writes the best edge index into `*param_6`; `:115` `if (uVar9 != param_2)` → clamp along that edge via be0 and return its value; otherwise fall through to the plane-projection (`:125-132`) and `return 2`. So a `1` can only come from be0.
+
+**(2) State read that it also writes — none across calls.** Reads `param_1[]` vertices, `param_2`, `param_3[0..2]`, `param_4[0..2]`. Writes `param_6` (`:89,:106`) and `param_5` (`:128-132`, and via the be0 call `:121`). `param_6` is unconditionally re-initialized at entry (`:89` `*param_6 = param_2`) before it is read (`:114`), so its prior value never affects the result — no cross-call dependence through `param_6`. `param_5` is output-only (never read). It never writes `param_1/param_3/param_4`.
+
+**(3) Callees.** `FUN_00577be0` (`0x00577be0`, same directory, analyzed above): reads `{its param_1, param_2, param_5}`, writes only its `param_6` (= cb0's `param_5`); reads nothing it writes. No other callees.
+
+**(4) "orig 1, ours 0" fit.** cb0 returns be0's value on the edge path, so cb0's `1→0` flip is be0's flip: it occurs iff the caller aliases cb0's `param_5` (be0's output) onto cb0's `param_4`/`param_1` (which be0 reads as `param_5`/`param_1`). The in-repo caller `FUN_00576880` (RwpSolverCore15.cpp:183, :221) passes cb0's `param_5 = &gE`/`&gA` — distinct stack buffers — so no aliasing at that site. As with be0, the fractional rate (24/48) is the output-aliases-input signature rather than a deterministic pure-function transcription defect; the body alone cannot confirm the aliasing.
+
+---
+
+### Bottom line
+- **FUN_00575120** and **FUN_00578ff0**: unambiguously **NON_IDEMPOTENT** from the code — they read a counter/count field (`+0xac`) and the record it indexes, then mutate it, and `Run()` does not restore it. The `orig=1/ours=0` and `ours=orig−1` shapes are the first-call-does-it / second-call-finds-it-done pattern exactly.
+- **FUN_00577be0** and **FUN_00577cb0**: their bodies read nothing they write (pure input→output leaves); the observed `orig=1/ours=0` requires the runtime caller to alias the output buffer over an input the return reads. The only caller visible in this tree (`FUN_00576880`) does **not** alias (distinct stack `gE`/`gA`), so from the source alone the aliasing caller is unproven — but the *fractional* divergence rate is the non-idempotency signature, not a deterministic transcription bug. Per NO-GUESSING I cannot upgrade these to a confirmed defect *or* to confirmed legitimate non-idempotency without the actual (unseen) call site; the honest verdict is **contingently NON_IDEMPOTENT (caller-aliasing-dependent), IDEMPOTENT in isolation** — a `RunRegion` over the output buffer, or the specific runtime caller's argument list, is what would settle it.
+(raw JSON: C:\Users\maria\AppData\Local\Temp\fleet-delegate-47ba07895c07499fa8574bd66488d538.json)

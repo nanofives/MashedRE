@@ -1,0 +1,19 @@
+WS-A2 follow-up: FUN_004c4a50 C2->C4 canonical install-observe — 2026-06-16 (build 26200)
+All 4 WS-A2 hooks installed together (RwMatrixRotate now routes through ported RwMatrixRotateInner).
+
+spawning MASHED.exe  ONLY=[0x004c4a50,0x004c4d20,0x004c39b0,0x004c3df0]  watch=25s
+  pid=40768
+  resumed; booting...
+  asi base: 0x73f60000
+
+=== RESULT ===
+  survived 25s, alive=True
+  0x004c4a50: JMP-LIVE(0xE9)
+  0x004c4d20: JMP-LIVE(0xE9)
+  0x004c39b0: JMP-LIVE(0xE9)
+  0x004c3df0: JMP-LIVE(0xE9)
+  manifest: 973 hooks seen, 4 installed
+    97	0x004C39B0	1	RwV3dNormalize
+    98	0x004C3DF0	1	RwV3dTransformPoints
+    99	0x004C4D20	1	RwMatrixRotate
+    100	0x004C4A50	1	RwMatrixRotateInner

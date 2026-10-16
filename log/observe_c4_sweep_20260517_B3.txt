@@ -1,0 +1,54 @@
+=== observe_c4_sweep_20260517 batch B3 ===
+
+observe seconds: 10
+boot wait:       8.0
+hook count:      4
+
+asi module base: 0x6a5b0000  size: 192512
+
+per-hook install verification:
+  [OK] Sub0041db80_HudThresholdDispatch     rva=0x0041db80  reimpl=0x6a5b62a0
+         PRE  bytes:  b8 5c d5 63 00 e9 26 ff
+         POST bytes:  e9 1b 87 19 6a e9 26 ff
+         opcode:      0xe9  expected 0xe9  -> OK
+         rel32:       0x6a19871b  expected 0x6a19871b  -> OK
+  [OK] Sub00403160_SubMode0BViewport        rva=0x00403160  reimpl=0x6a5b61b0
+         PRE  bytes:  83 ec 14 a1 38 60 61 00
+         POST bytes:  e9 4b 30 1b 6a 60 61 00
+         opcode:      0xe9  expected 0xe9  -> OK
+         rel32:       0x6a1b304b  expected 0x6a1b304b  -> OK
+  [OK] FontText_StringTableLookup           rva=0x00427780  reimpl=0x6a5b6160
+         PRE  bytes:  8b 44 24 04 8b 04 85 28
+         POST bytes:  e9 db e9 18 6a 04 85 28
+         opcode:      0xe9  expected 0xe9  -> OK
+         rel32:       0x6a18e9db  expected 0x6a18e9db  -> OK
+  [OK] FontText_UTF16WidenCopy              rva=0x00427840  reimpl=0x6a5b6180
+         PRE  bytes:  56 57 8b f8 a1 f8 3f 7d
+         POST bytes:  e9 3b e9 18 6a f8 3f 7d
+         opcode:      0xe9  expected 0xe9  -> OK
+         rel32:       0x6a18e93b  expected 0x6a18e93b  -> OK
+
+alive throughout observation: True
+alive at end of observation:  True
+exit method:                  terminate_after_wm_close_timeout
+exit code:                    1
+
+final byte state (RPC poll after observation window):
+  [OK] Sub0041db80_HudThresholdDispatch     rva=0x0041db80  opcode=0xe9  bytes=e9 1b 87 19 6a e9 26 ff
+  [OK] Sub00403160_SubMode0BViewport        rva=0x00403160  opcode=0xe9  bytes=e9 4b 30 1b 6a 60 61 00
+  [OK] FontText_StringTableLookup           rva=0x00427780  opcode=0xe9  bytes=e9 db e9 18 6a 04 85 28
+  [OK] FontText_UTF16WidenCopy              rva=0x00427840  opcode=0xe9  bytes=e9 3b e9 18 6a f8 3f 7d
+
+PASS:
+  + Sub0041db80_HudThresholdDispatch installed cleanly (E9 + correct rel32)
+  + Sub00403160_SubMode0BViewport installed cleanly (E9 + correct rel32)
+  + FontText_StringTableLookup installed cleanly (E9 + correct rel32)
+  + FontText_UTF16WidenCopy installed cleanly (E9 + correct rel32)
+  + process alive throughout 10s observation window with 4 hooks installed
+  + shutdown via terminate_after_wm_close_timeout (TerminateProcess fallback documented)
+  + Sub0041db80_HudThresholdDispatch bytes still patched at end of observation
+  + Sub00403160_SubMode0BViewport bytes still patched at end of observation
+  + FontText_StringTableLookup bytes still patched at end of observation
+  + FontText_UTF16WidenCopy bytes still patched at end of observation
+FAIL:
+  (none)

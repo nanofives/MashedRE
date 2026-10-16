@@ -1,0 +1,6 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,0,0x5f2b10,,0x5f2b10,,True,,
+1,0,0x5f2b10,,0x5f2b10,,True,,
+2,0,0x5f2b10,,0x5f2b10,,True,,
+3,0,0x5f2b10,,0x5f2b10,,True,,
+4,0,0x5f2b10,,0x5f2b10,,True,,

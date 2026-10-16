@@ -1,0 +1,97 @@
+{
+  "program": "MASHED.exe",
+  "functions": [
+    {
+      "requested": "0x00411870",
+      "exact_entry": true,
+      "name": "FUN_00411870",
+      "entry": "0x00411870",
+      "size": 623,
+      "signature": "undefined FUN_00411870(void)",
+      "callees": [
+        "FUN_00426c00@0x00426c00",
+        "FUN_0042f6a0@0x0042f6a0",
+        "FUN_0046d4a0@0x0046d4a0",
+        "FUN_00482860@0x00482860",
+        "FUN_004829d0@0x004829d0",
+        "FUN_00483a30@0x00483a30",
+        "FUN_004987b0@0x004987b0"
+      ],
+      "decomp": "\r\n/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */\r\n/* [C2 2026-05-18] Body (0x00411870..0x00411ade). Has security cookie wrapping. */\r\n\r\nvoid FUN_00411870(int param_1)\r\n\r\n{\r\n  int *piVar1;\r\n  float fVar2;\r\n  float fVar3;\r\n  bool bVar4;\r\n  int iVar5;\r\n  int *piVar6;\r\n  undefined4 local_14;\r\n  float fStack_10;\r\n  int iStack_c;\r\n  \r\n  iVar5 = FUN_0042f6a0();\r\n  if (iVar5 != 2) {\r\n    return;\r\n  }\r\n  if (DAT_0063bb20 != 0) {\r\n    return;\r\n  }\r\n  FUN_0046d4a0(&local_14,0);\r\n  FUN_004829d0(DAT_0063bb14,local_14,DAT_007f0ff4 - DAT_007f1008,0xffffffff);\r\n  FUN_004987b0();\r\n  if (DAT_005f29d0 != -1) {\r\n    piVar6 = &DAT_005f29d0;\r\n    do {\r\n      iVar5 = FUN_00426c00();\r\n      if (*piVar6 == iVar5) {\r\n        fStack_10 = (float)piVar6[1];\r\n      }\r\n      piVar1 = piVar6 + 2;\r\n      piVar6 = piVar6 + 2;\r\n    } while (*piVar1 != -1);\r\n  }\r\n  bVar4 = false;\r\n  if (DAT_0063bb10 != 0) {\r\n    iStack_c = *(int *)(DAT_0063bb10 + 0x174);\r\n    fVar2 = (float)iStack_c;\r\n    if (iStack_c < 0) {\r\n      fVar2 = fVar2 + _DAT_005cc94c;\r\n    }\r\n    fVar3 = (float)*(int *)(DAT_0063bb14 + 0x174);\r\n    if (*(int *)(DAT_0063bb14 + 0x174) < 0) {\r\n      fVar3 = fVar3 + _DAT_005cc94c;\r\n    }\r\n    FUN_004987b0(\"\\nReplay Time comparing %f to %f\\n\",(double)(fVar3 * _DAT_005cc948),\r\n                 (double)(fVar2 * _DAT_005cc948));\r\n    FUN_004987b0();\r\n    FUN_004987b0();\r\n    if (*(uint *)(DAT_0063bb10 + 0x174) <= *(uint *)(DAT_0063bb14 + 0x174)) goto LAB_00411a1a;\r\n  }\r\n  bVar4 = true;\r\nLAB_00411a1a:\r\n  fVar2 = (float)*(int *)(DAT_0063bb14 + 0x174);\r\n  if (*(int *)(DAT_0063bb14 + 0x174) < 0) {\r\n    fVar2 = fVar2 + _DAT_005cc94c;\r\n  }\r\n  if (fStack_10 <= fVar2 * _DAT_005cc948) {\r\n    FUN_004987b0();\r\n  }\r\n  else if (((bVar4) || (DAT_0063bb2c == 0)) && (param_1 != 0)) {\r\n    DAT_0063bb18 = DAT_0063bb18 - 1 & 1;\r\n    DAT_0063bb10 = DAT_0063bb14;\r\n    DAT_005f29c8 = 0;\r\n    DAT_0063bb14 = (&DAT_0063bb04)[DAT_0063bb18];\r\n  }\r\n  if (DAT_0063bb10 != 0) {\r\n    FUN_00483a30();\r\n  }\r\n  if (DAT_0063bb0c != 0) {\r\n    FUN_00483a30();\r\n  }\r\n  if (DAT_0063bb14 != 0) {\r\n    FUN_00482860();\r\n  }\r\n  DAT_0063bb2c = 1;\r\n  DAT_0063bb20 = 1;\r\n  DAT_0063bb1c = 0;\r\n  return;\r\n}\r\n\r\n"
+    },
+    {
+      "requested": "0x00411ae0",
+      "exact_entry": true,
+      "name": "FUN_00411ae0",
+      "entry": "0x00411ae0",
+      "size": 497,
+      "signature": "undefined FUN_00411ae0(void)",
+      "callees": [
+        "FUN_0041a9b0@0x0041a9b0",
+        "FUN_0041ad00@0x0041ad00",
+        "FUN_0042f6a0@0x0042f6a0",
+        "FUN_00482c10@0x00482c10"
+      ],
+      "decomp": "\r\n/* [C2 2026-05-18] Body (0x00411ae0..0x00411cd0). */\r\n\r\nvoid FUN_00411ae0(undefined4 param_1,uint param_2)\r\n\r\n{\r\n  int iVar1;\r\n  undefined4 *local_90;\r\n  undefined4 *local_8c;\r\n  undefined4 local_88;\r\n  undefined4 local_84;\r\n  undefined4 local_80;\r\n  undefined4 local_7c;\r\n  undefined4 local_78;\r\n  uint local_74;\r\n  undefined4 local_70;\r\n  undefined4 local_6c;\r\n  undefined4 local_68;\r\n  undefined4 local_60;\r\n  undefined4 local_5c;\r\n  undefined4 local_58;\r\n  undefined4 local_50;\r\n  undefined4 local_4c;\r\n  undefined4 local_48;\r\n  undefined4 local_40;\r\n  undefined4 local_3c;\r\n  undefined4 local_38;\r\n  uint local_34;\r\n  undefined4 local_30;\r\n  undefined4 local_2c;\r\n  undefined4 local_28;\r\n  undefined4 local_20;\r\n  undefined4 local_1c;\r\n  undefined4 local_18;\r\n  undefined4 local_10;\r\n  undefined4 local_c;\r\n  undefined4 local_8;\r\n  \r\n  if (DAT_0063bb24 != 0) {\r\n    param_2 = DAT_007f107a + DAT_0063bb1c +\r\n              ((DAT_007f1038._1_1_ / 10 - (byte)DAT_007f1038 / 10) - (uint)DAT_007f1079);\r\n  }\r\n  DAT_0063bb1c = param_2;\r\n  if ((DAT_0063bb10 != 0) && (DAT_0063bb1c = param_2, *(uint *)(DAT_0063bb10 + 0x174) < param_2)) {\r\n    DAT_0063bb1c = *(uint *)(DAT_0063bb10 + 0x174);\r\n  }\r\n  iVar1 = FUN_0042f6a0();\r\n  if (iVar1 == 2) {\r\n    local_8c = &local_80;\r\n    local_34 = local_34 | 0x20003;\r\n    local_74 = local_74 | 0x20003;\r\n    local_90 = &local_40;\r\n    local_88 = 1;\r\n    local_84 = 0;\r\n    local_18 = 0x3f800000;\r\n    local_2c = 0x3f800000;\r\n    local_40 = 0x3f800000;\r\n    local_30 = 0;\r\n    local_38 = 0;\r\n    local_3c = 0;\r\n    local_1c = 0;\r\n    local_20 = 0;\r\n    local_28 = 0;\r\n    local_8 = 0;\r\n    local_c = 0;\r\n    local_10 = 0;\r\n    local_58 = 0x3f800000;\r\n    local_6c = 0x3f800000;\r\n    local_80 = 0x3f800000;\r\n    local_70 = 0;\r\n    local_78 = 0;\r\n    local_7c = 0;\r\n    local_5c = 0;\r\n    local_60 = 0;\r\n    local_68 = 0;\r\n    local_48 = 0;\r\n    local_4c = 0;\r\n    local_50 = 0;\r\n    if (DAT_0063bb0c != 0) {\r\n      FUN_00482c10(DAT_0063bb0c,&local_80,DAT_0063bb1c);\r\n    }\r\n    if (DAT_0063bb10 != 0) {\r\n      FUN_00482c10(DAT_0063bb10,&local_40,DAT_0063bb1c);\r\n    }\r\n    FUN_0041a9b0(&local_88);\r\n    FUN_0041ad00(&local_90);\r\n  }\r\n  return;\r\n}\r\n\r\n"
+    },
+    {
+      "requested": "0x00411ce0",
+      "exact_entry": true,
+      "name": "FUN_00411ce0",
+      "entry": "0x00411ce0",
+      "size": 127,
+      "signature": "undefined FUN_00411ce0(void)",
+      "callees": [
+        "FUN_0041a960@0x0041a960",
+        "FUN_0042f6a0@0x0042f6a0",
+        "FUN_00483a70@0x00483a70"
+      ],
+      "decomp": "\r\n/* [C2 2026-05-18] Body (0x00411ce0..0x00411d5e): */\r\n\r\nvoid FUN_00411ce0(void)\r\n\r\n{\r\n  int iVar1;\r\n  \r\n  iVar1 = FUN_0042f6a0();\r\n  if (iVar1 == 2) {\r\n    (**(code **)(DAT_007d3ff8 + 0x20))(10,5);\r\n    (**(code **)(DAT_007d3ff8 + 0x20))(0xb,6);\r\n    (**(code **)(DAT_007d3ff8 + 0x20))(8,1);\r\n    (**(code **)(DAT_007d3ff8 + 0x20))(6,1);\r\n    (**(code **)(DAT_007d3ff8 + 0x20))(0x14,2);\r\n    if ((DAT_0063bb10 != 0) || (DAT_0063bb0c != 0)) {\r\n      FUN_0041a960();\r\n    }\r\n    if ((DAT_0063bb28 != 0) && (DAT_0063bb10 != 0)) {\r\n      FUN_00483a70(DAT_0063bb10);\r\n    }\r\n  }\r\n  return;\r\n}\r\n\r\n"
+    },
+    {
+      "requested": "0x00411d90",
+      "exact_entry": true,
+      "name": "FUN_00411d90",
+      "entry": "0x00411d90",
+      "size": 407,
+      "signature": "undefined FUN_00411d90(void)",
+      "callees": [
+        "FID_conflict:_wprintf@0x004a2cbd",
+        "FUN_00411350@0x00411350",
+        "FUN_00411750@0x00411750",
+        "FUN_00426c00@0x00426c00",
+        "FUN_004299d0@0x004299d0",
+        "FUN_0042f6a0@0x0042f6a0",
+        "FUN_00430820@0x00430820",
+        "FUN_00482900@0x00482900",
+        "FUN_00482930@0x00482930",
+        "FUN_00483d10@0x00483d10",
+        "FUN_004987b0@0x004987b0",
+        "__security_check_cookie@0x004a2be9"
+      ],
+      "decomp": "\r\n/* WARNING: Function: __security_check_cookie replaced with injection: security_check_cookie */\r\n/* [C2 2026-05-18] Body (0x00411d90..0x00411f29). Has security cookie wrapping. */\r\n\r\nvoid FUN_00411d90(int param_1)\r\n\r\n{\r\n  float fVar1;\r\n  int iVar2;\r\n  undefined4 uVar3;\r\n  undefined4 *puVar4;\r\n  uint unaff_retaddr;\r\n  float local_50;\r\n  undefined4 uStack_4c;\r\n  undefined4 uStack_48;\r\n  undefined1 local_44 [64];\r\n  uint local_4;\r\n  \r\n  local_4 = DAT_00616038 ^ unaff_retaddr;\r\n  local_50 = 0.0;\r\n  iVar2 = FUN_0042f6a0();\r\n  if (iVar2 == 2) {\r\n    if (DAT_005f29d0 != -1) {\r\n      puVar4 = &DAT_005f29d0;\r\n      iVar2 = DAT_005f29d0;\r\n      do {\r\n        if (iVar2 == param_1) {\r\n          local_50 = (float)puVar4[1];\r\n        }\r\n        iVar2 = puVar4[2];\r\n        puVar4 = puVar4 + 2;\r\n      } while (iVar2 != -1);\r\n    }\r\n    fVar1 = local_50;\r\n    uVar3 = FUN_00482900(local_50,10);\r\n    FID_conflict__wprintf(\"replay size will be %d bytes\\n\",uVar3);\r\n    FID_conflict__wprintf\r\n              (\"creating replay of length %f\\n\",SUB84((double)local_50,0),\r\n               (int)((ulonglong)(double)local_50 >> 0x20));\r\n    if (DAT_0063bb04 == 0) {\r\n      DAT_0063bb04 = FUN_00482930(fVar1,10,param_1);\r\n      DAT_0063bb14 = DAT_0063bb04;\r\n    }\r\n    if (DAT_0063bb08 == 0) {\r\n      puVar4 = (undefined4 *)(DAT_007d3ff8 + 0xc4);\r\n      uVar3 = FUN_00426c00();\r\n      (*(code *)*puVar4)(local_44,\"%sReplay%d.rep\",\"c:\\\\toast\\\\\",uVar3);\r\n      iVar2 = FUN_00430820();\r\n      if (iVar2 == 0) {\r\n        uVar3 = FUN_00426c00();\r\n        DAT_0063bb08 = FUN_00483d10(&DAT_008a94a8,uVar3);\r\n      }\r\n      if (DAT_0063bb08 == 0) {\r\n        DAT_0063bb2c = 0;\r\n        DAT_0063bb08 = FUN_00482930(fVar1,10,param_1);\r\n      }\r\n      else {\r\n        DAT_0063bb10 = DAT_0063bb08;\r\n        FUN_00411350(*(undefined4 *)(DAT_0063bb08 + 0x174),&local_50,&uStack_4c,&uStack_48);\r\n        FUN_004987b0(\"setting time attack record too %d:%d:%f\\n\",uStack_48,uStack_4c,\r\n                     (double)local_50);\r\n        DAT_0063bb2c = 1;\r\n        FUN_004299d0(local_50,uStack_4c,uStack_48);\r\n      }\r\n      DAT_0063bb18 = 0;\r\n    }\r\n  }\r\n  FUN_00411750();\r\n  return;\r\n}\r\n\r\n"
+    },
+    {
+      "requested": "0x0046d510",
+      "exact_entry": true,
+      "name": "FUN_0046d510",
+      "entry": "0x0046d510",
+      "size": 84,
+      "signature": "undefined FUN_0046d510(void)",
+      "callees": [
+        "FUN_004c3df0@0x004c3df0"
+      ],
+      "decomp": "\r\n/* [C2 2026-06-02] Two args `(undefined4 *param_1 out_vec3, uint param_2 vehicle index)`. Body\r\n   `0x0046d510..0x0046d563` (83 bytes)\u2026 */\r\n\r\nundefined4 FUN_0046d510(undefined4 *param_1,uint param_2)\r\n\r\n{\r\n  if (0xf < param_2) {\r\n    return 0;\r\n  }\r\n  FUN_004c3df0(&DAT_00881f74 + param_2 * 0x341,&DAT_00614708,1,&DAT_00881ec8 + param_2 * 0x341);\r\n  *param_1 = (&DAT_00881f74)[param_2 * 0x341];\r\n  param_1[1] = (&DAT_00881f78)[param_2 * 0x341];\r\n  param_1[2] = (&DAT_00881f7c)[param_2 * 0x341];\r\n  return 1;\r\n}\r\n\r\n"
+    },
+    {
+      "requested": "0x0046d4a0",
+      "exact_entry": true,
+      "name": "FUN_0046d4a0",
+      "entry": "0x0046d4a0",
+      "size": 46,
+      "signature": "undefined FUN_0046d4a0(void)",
+      "callees": [],
+      "decomp": "\r\n/* [C2 2026-06-02] Two args `(undefined4 *param_1 out, uint param_2 vehicle index)`. Body\r\n   `0x0046d4a0..0x0046d4cd` (45 bytes). Returns 1\u2026 */\r\n\r\nundefined4 FUN_0046d4a0(undefined4 *param_1,uint param_2)\r\n\r\n{\r\n  if (0xf < param_2) {\r\n    return 0;\r\n  }\r\n  *param_1 = &DAT_00881ec8 + (&DAT_00881f48)[param_2 * 0x341] * 0x10 + param_2 * 0x341;\r\n  return 1;\r\n}\r\n\r\n"
+    }
+  ]
+}

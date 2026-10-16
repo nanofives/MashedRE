@@ -1,0 +1,11 @@
+idx,input,original,reimpl,match
+0,0,0,0,True
+1,255,255,255,True
+2,127,127,127,True
+3,128,128,128,True
+4,1,1,1,True
+5,85,85,85,True
+6,170,170,170,True
+7,66,66,66,True
+8,0,0,0,True
+9,254,254,254,True

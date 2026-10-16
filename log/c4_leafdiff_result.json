@@ -1,0 +1,32 @@
+{
+  "0x0042ae10": {
+    "name": "MenuReadinessCheckA",
+    "kind": "ret_eax",
+    "off": [
+      "eax=0x0",
+      "eax=0x1"
+    ],
+    "on": [
+      "eax=0x0",
+      "eax=0x1"
+    ],
+    "installed": true,
+    "clean": true,
+    "verdict": "C4-CLEAN",
+    "why": []
+  },
+  "0x0042aeb0": {
+    "name": "MenuReadinessCheckB",
+    "kind": "ret_eax",
+    "off": [
+      "eax=0x0"
+    ],
+    "on": [
+      "eax=0x0"
+    ],
+    "installed": true,
+    "clean": true,
+    "verdict": "C4-CLEAN",
+    "why": []
+  }
+}

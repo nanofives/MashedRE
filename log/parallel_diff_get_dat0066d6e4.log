@@ -1,0 +1,12 @@
+=== get_dat0066d6e4 on slot 0 ===
+hook: get_dat0066d6e4  rva=0x00426cf0  export=GetDat0066d6e4
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 34032
+  [agent] LUT ready  base=0x2c51bb8  offset=0x134  root=0x4970640  delta=0  attempts=4
+  [agent] .asi loaded  base=0x737d0000  GetDat0066d6e4@0x737e1f40
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\log\diff_get_dat0066d6e4.csv
+  total cases: 10
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.

@@ -1,0 +1,4 @@
+idx,input,original,reimpl,match
+0,0,|R=0,|R=0,True
+1,1,|R=1,|R=1,True
+2,2,|R=0,|R=0,True

@@ -1,0 +1,47 @@
+{
+  "pid": 5868,
+  "screens": {
+    "5": {
+      "depth": 3,
+      "types": [
+        22,
+        1,
+        5,
+        0,
+        0
+      ],
+      "curscreen": 0,
+      "phase": 3,
+      "flag": 0,
+      "gate": 5,
+      "shot": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\verify\\screen_id\\screen_5.bmp",
+      "push_count": 1,
+      "err": null
+    }
+  },
+  "baseline": {
+    "depth": 1,
+    "types": [
+      22,
+      0,
+      0
+    ],
+    "curscreen": 33,
+    "phase": 3,
+    "flag": 0,
+    "gate": 22
+  },
+  "after_prefix": {
+    "depth": 2,
+    "types": [
+      22,
+      1,
+      0,
+      0
+    ],
+    "curscreen": 0,
+    "phase": 3,
+    "flag": 0,
+    "gate": 1
+  }
+}

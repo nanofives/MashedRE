@@ -1,0 +1,5 @@
+# callers of FUN_0046b1c0 @ 0046b1c0
+# site | caller function | caller entry | ref type
+0040ff86 | FUN_004111c0 | 004111c0 | UNCONDITIONAL_CALL
+0040ed62 | FUN_0040e590 | 0040e590 | UNCONDITIONAL_CALL
+# direct call/jump refs: 2   other refs (incl. table/ptr): 0

@@ -1,0 +1,9 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,"{""data"": [7, 3, 7, 9], ""key"": 7}",2,0x00000002,2,0x00000002,True,,
+1,"{""data"": [7, 3, 7, 9], ""key"": 9}",3,0x00000003,3,0x00000003,True,,
+2,"{""data"": [7, 3, 7, 9], ""key"": 5}",-1,0xffffffff,-1,0xffffffff,True,,
+3,"{""data"": [42], ""key"": 42}",0,0x00000000,0,0x00000000,True,,
+4,"{""data"": [], ""key"": 1}",-1,0xffffffff,-1,0xffffffff,True,,
+5,"{""data"": [1, 2, 3], ""count"": -3, ""key"": 1}",-4,0xfffffffc,-4,0xfffffffc,True,,
+6,"{""data"": [0, 0, 0], ""key"": 0}",2,0x00000002,2,0x00000002,True,,
+7,"{""data"": [-1, -2, -3], ""key"": -2}",1,0x00000001,1,0x00000001,True,,

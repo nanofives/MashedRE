@@ -1,0 +1,790 @@
+"vswhere.exe" no se reconoce como un comando interno o externo,
+programa o archivo por lotes ejecutable.
+QhullBridge.cpp
+QhullBridge.cpp
+=== Building mashed_re.exe (B9: frontend + HUD + math + vehicle clusters) ===
+exe_main.cpp
+exe_main.cpp(736): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(747): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(760): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(829): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(881): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(1074): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(1350): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(1357): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(1471): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(1585): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(1669): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(1721): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(1848): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(1862): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(1999): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(2055): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(2081): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(2920): warning C4984: "if constexpr" es una extensión del lenguaje C++17
+exe_main.cpp(4056): warning C4984: "if constexpr" es una extensión del lenguaje C++17
+exe_main.cpp(2445): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(2463): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(2497): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(2697): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(2710): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(2721): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(2736): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(2794): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(3199): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(4181): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(4231): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(4277): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(4289): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(4330): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(4377): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(4451): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(4564): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(4570): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(4604): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(4667): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(4740): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(4741): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(4791): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(4839): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(4905): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(4959): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(5016): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(5093): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(5184): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(5198): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(5243): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(5254): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(5284): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(5468): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(5483): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(5614): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(5659): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(5694): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(5748): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(5821): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(5828): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(5883): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(5898): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(5924): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+PizReader.cpp
+Piz\PizReader.cpp(40): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+RwsChunkWalker.cpp
+TxdDecoder.cpp
+TrackWorld.cpp
+DffModel.cpp
+TrackData.cpp
+TrackRenderer.cpp
+D3d9Render\TrackRenderer.cpp(142): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(243): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(789): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(952): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(954): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(961): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(1124): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(1149): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(1155): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(1158): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(1205): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(1208): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(1236): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(1239): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(1247): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(1250): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(1254): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(1256): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(1267): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(1270): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(1287): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(1290): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(1295): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(1297): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(1458): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(1578): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(1582): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(1588): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(1803): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(2132): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(2253): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(2501): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(2504): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(2954): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(2982): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(3014): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(3107): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(3133): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(3136): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(3625): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(3637): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(3822): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(3917): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(4100): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\TrackRenderer.cpp(4120): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+RwWorldRender.cpp
+D3d9Render\RwWorldRender.cpp(230): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\RwWorldRender.cpp(242): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+AiStandalone.cpp
+Ai\AiStandalone.cpp(141): warning C4244: 'inicializando': conversión de 'double' a 'float'; posible pérdida de datos
+Ai\AiStandalone.cpp(154): warning C4244: 'inicializando': conversión de 'double' a 'float'; posible pérdida de datos
+Ai\AiStandalone.cpp(439): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Ai\AiStandalone.cpp(489): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Ai\AiStandalone.cpp(502): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Ai\AiStandalone.cpp(505): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+ForceIntegrator.cpp
+ForceIntegratorStubs.cpp
+VehicleControl.cpp
+Integrate2.cpp
+Vehicle\Integrate2.cpp(294): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Vehicle\Integrate2.cpp(297): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+AeroStabilize.cpp
+VehicleInit.cpp
+VehiclePhysicsRun.cpp
+Vehicle\VehiclePhysicsRun.cpp(36): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Vehicle\VehiclePhysicsRun.cpp(37): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Vehicle\VehiclePhysicsRun.cpp(54): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Vehicle\VehiclePhysicsRun.cpp(155): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Vehicle\VehiclePhysicsRun.cpp(533): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Vehicle\VehiclePhysicsRun.cpp(541): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Vehicle\VehiclePhysicsRun.cpp(549): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Vehicle\VehiclePhysicsRun.cpp(577): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Vehicle\VehiclePhysicsRun.cpp(449): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Vehicle\VehiclePhysicsRun.cpp(453): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Vehicle\VehiclePhysicsRun.cpp(601): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Vehicle\VehiclePhysicsRun.cpp(606): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+VehicleCouplingBridge.cpp
+ContactStubs.cpp
+ContactProducer.cpp
+Generando código...
+Compilando...
+CarWorldContacts.cpp
+CarCarContacts.cpp
+WheelContactSolver.cpp
+RwpIntegrator.cpp
+RwpSolverLeaves1.cpp
+Collision\RwpSolverLeaves1.cpp(275): warning C4146: operador unario menos aplicado a un tipo unsigned; el resultado aún no tiene signo
+Collision\RwpSolverLeaves1.cpp(527): warning C4554: "|": compruebe la prioridad de operador para posibles errores; utilice paréntesis para indicar la prioridad
+Collision\RwpSolverLeaves1.cpp(527): warning C4554: "|": compruebe la prioridad de operador para posibles errores; utilice paréntesis para indicar la prioridad
+RwpSolverMath2.cpp
+RwpSolverBroadphase3.cpp
+RwpSolverCore4.cpp
+RwpSolverGlue5.cpp
+RwpSolverIntegrate6.cpp
+RwpSolverCore7.cpp
+RwpSolverCore8.cpp
+RwpSolverCore9.cpp
+RwpSolverCore10.cpp
+RwpSolverCore11.cpp
+RwpSolverCore12.cpp
+RwpSolverPartition13.cpp
+RwpSolverCore14.cpp
+RwpSolverCore15.cpp
+Collision\RwpSolverCore15.cpp(448): warning C4554: "|": compruebe la prioridad de operador para posibles errores; utilice paréntesis para indicar la prioridad
+Collision\RwpSolverCore15.cpp(449): warning C4554: "|": compruebe la prioridad de operador para posibles errores; utilice paréntesis para indicar la prioridad
+RwpSolverCore16.cpp
+Generando código...
+Compilando...
+RwpSolverCore17.cpp
+Collision\RwpSolverCore17.cpp(747): warning C4101: 'local_50': variable local sin referencia
+RwpSolverCore18.cpp
+RwpSolverCore19.cpp
+RwpSolverCore20.cpp
+RwpSolverCore21.cpp
+Collision\RwpSolverCore21.cpp(172): warning C4244: '=': conversión de 'mashed_re::Collision::float10' a 'float'; posible pérdida de datos
+Collision\RwpSolverCore21.cpp(411): warning C4244: '=': conversión de 'mashed_re::Collision::float10' a 'float'; posible pérdida de datos
+Collision\RwpSolverCore21.cpp(431): warning C4244: '=': conversión de 'mashed_re::Collision::float10' a 'float'; posible pérdida de datos
+Collision\RwpSolverCore21.cpp(490): warning C4244: '=': conversión de 'mashed_re::Collision::float10' a 'float'; posible pérdida de datos
+RwpSolverCore22.cpp
+RwpSolverCore23.cpp
+RwpVtableKV2.cpp
+RwpVtableKV1.cpp
+RwpBuildExterns.cpp
+CollisionBodyCreate.cpp
+PhysicsWorldBuild.cpp
+RwV3dTransformPointsCPU.cpp
+RwMatrixRotate.cpp
+RwMatrixRotateInner.cpp
+RwV3dNormalize.cpp
+Vec3.cpp
+RwWorldLoad.cpp
+RwWorldLoadStubs.cpp
+RwWorldStream.cpp
+Generando código...
+Compilando...
+ParticleSystem.cpp
+PickupField.cpp
+PowerupSystem.cpp
+PowerupEffects.cpp
+RaceCamera.cpp
+RaceSession.cpp
+Race\RaceSession.cpp(19): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Race\RaceSession.cpp(24): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+GameFlow.cpp
+Race\GameFlow.cpp(58): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Race\GameFlow.cpp(111): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Race\GameFlow.cpp(222): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+RaceModes.cpp
+RuleEngine.cpp
+RwsBank.cpp
+Audio\RwsBank.cpp(20): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Audio\RwsBank.cpp(85): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Audio\RwsBank.cpp(109): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Audio\RwsBank.cpp(159): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+AudioEngine.cpp
+Audio\AudioEngine.cpp(20): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+QuadRenderer.cpp
+RwIm2DBridge.cpp
+D3d9Render\RwIm2DBridge.cpp(133): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+DrawStreamDump.cpp
+D3d9Render\DrawStreamDump.cpp(60): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\DrawStreamDump.cpp(62): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\DrawStreamDump.cpp(86): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\DrawStreamDump.cpp(109): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\DrawStreamDump.cpp(145): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\DrawStreamDump.cpp(147): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\DrawStreamDump.cpp(169): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D3d9Render\DrawStreamDump.cpp(185): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+PngLoader.cpp
+MpegVideoTexture.cpp
+TextRenderer.cpp
+MashedFont.cpp
+MenuStringTable.cpp
+D3d9Render\MenuStringTable.cpp(44): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+StandaloneRvaThunks.cpp
+Generando código...
+Compilando...
+HookSystemNoOp.cpp
+MenuInit.cpp
+MenuButtonDetect.cpp
+FrontendState.cpp
+FrontendNav.cpp
+FrontendMode.cpp
+FrontendAccessors.cpp
+FrontendDispatch.cpp
+DrawQuadPrimitives.cpp
+MenuLeaves_af1.cpp
+MenuSpriteDispatch.cpp
+MenuGetters.cpp
+MenuChrome.cpp
+MenuHelpers.cpp
+MenuNav.cpp
+MenuNavSM.cpp
+MenuRaceEnd.cpp
+Frontend\MenuRaceEnd.cpp(72): warning C4146: operador unario menos aplicado a un tipo unsigned; el resultado aún no tiene signo
+MenuScoreGetters.cpp
+MenuScoreSort.cpp
+MenuStateMachine.cpp
+Generando código...
+Compilando...
+GameModeInit.cpp
+GameModeCarSelect.cpp
+TimerReset.cpp
+SpriteGate.cpp
+Leaves.cpp
+TextMeasure.cpp
+VehicleMeta.cpp
+MenuTime.cpp
+SmallLeaves_n2.cpp
+SmallLeaves_t1.cpp
+SlotZeroers_s1.cpp
+MenuLeaves_s3.cpp
+MenuLeaves_af4.cpp
+GlobalGetters_s4.cpp
+GlobalGetters_s5.cpp
+MenuNearLeaves_s6.cpp
+MenuStateWriters_u1.cpp
+MenuMiscLeaves_t2.cpp
+BucketMixed_t3.cpp
+MenuLeaves_af6.cpp
+Generando código...
+Compilando...
+Cluster_v3.cpp
+BatchAA_s4.cpp
+HudDispatch.cpp
+Cluster_v2.cpp
+ScenarioLeaves_sa1.cpp
+ScenarioLeaves_sa2.cpp
+ScenarioWriters_sa2s2.cpp
+ScenarioWriters_sa2s1.cpp
+GameStateCluster.cpp
+BootLowRvaCluster.cpp
+Window.cpp
+VideoConfig.cpp
+Teardown.cpp
+LaunchHandshake.cpp
+FrameDispatch.cpp
+SubsystemInit.cpp
+GameStateGetters.cpp
+EventTable.cpp
+TimerInit.cpp
+TimerState.cpp
+Generando código...
+Compilando...
+TimerSubarrayInit.cpp
+TimerSetters.cpp
+TimerSlot.cpp
+UtilLeaves.cpp
+SmallLeaves_o6.cpp
+UtilLeaves_ab6.cpp
+UtilLeaves_ac.cpp
+SineOscillators.cpp
+MatrixOrthoResidual.cpp
+VehicleState.cpp
+ShapeOwnerHandlePool.cpp
+VehicleSeed.cpp
+CameraPathPredicates.cpp
+VehicleVelocityWorldGet.cpp
+SmplFzxStateBlock.cpp
+SmallLeaves_o5.cpp
+SmallLeaves_q4.cpp
+MiscDamping.cpp
+StateAccessors.cpp
+RwSqrt.cpp
+Generando código...
+Compilando...
+FPURound.cpp
+RwV2d.cpp
+RwV3dTransform.cpp
+RwV3dTransformPoints.cpp
+RwMatrixScale.cpp
+Cluster_v1.cpp
+BatchAA_s1.cpp
+BatchAA_s3.cpp
+BatchAA_s6.cpp
+BatchAB_s1.cpp
+BatchAB_s3.cpp
+BatchAB_s6.cpp
+RenderLeaves_ae1.cpp
+PaletteQuantizer.cpp
+RenderLeaves_ae2.cpp
+RenderLeaves_ae3.cpp
+RenderStateSettersA.cpp
+FrontendLeaves_ad2.cpp
+MenuLeaves_af5.cpp
+CameraProjCoeffs.cpp
+Generando código...
+Compilando...
+Vec3NormalizeScale.cpp
+HeadingAtan2.cpp
+AudioVecLength.cpp
+Generando código...
+   Creando biblioteca C:\Users\maria\Desktop\Proyectos\Mashed\mashedmod\build\mashed_re.lib y objeto C:\Users\maria\Desktop\Proyectos\Mashed\mashedmod\build\mashed_re.exp
+=== Building mashed_re_dev.asi ===
+dll_main.cpp
+dll_main.cpp(22): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+HookSystem.cpp
+Core\HookSystem.cpp(175): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Core\HookSystem.cpp(176): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Core\HookSystem.cpp(180): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Core\HookSystem.cpp(181): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Core\HookSystem.cpp(182): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+MenuAnimTickTwin.cpp
+LogoOverlayTwin.cpp
+MenuDrawLoopTwin.cpp
+PromptStripTwin.cpp
+Vec3.cpp
+RwSqrt.cpp
+CosineLerp.cpp
+FPURound.cpp
+RwAtomicDirtyFlag.cpp
+StateAccessors.cpp
+VehicleState.cpp
+ShapeOwnerHandlePool.cpp
+VehicleSeed.cpp
+CameraPathPredicates.cpp
+VehicleVelocityWorldGet.cpp
+SmplFzxStateBlock.cpp
+MiscDamping.cpp
+Replay.cpp
+Generando código...
+Compilando...
+Damage.cpp
+Physics.cpp
+TimerState.cpp
+TimerSubarrayInit.cpp
+GameStateGetters.cpp
+EventTable.cpp
+TimerInit.cpp
+AudioMemory.cpp
+AudioCharacterBankPaths.cpp
+AudioRws.cpp
+AudioLeaves_ab2.cpp
+RwsStream.cpp
+RwsFmt.cpp
+AudioDSound.cpp
+AudioMusic.cpp
+AudioLeaves_ab4.cpp
+RwV3dTransform.cpp
+RwV3dNormalize.cpp
+RwV3dTransformPoints.cpp
+RwV3dTransformPointsCPU.cpp
+Generando código...
+Compilando...
+RwMatrixRotate.cpp
+RwMatrixRotateInner.cpp
+RwV2d.cpp
+RwMatrixScale.cpp
+TimerReset.cpp
+MenuNav.cpp
+FrontendState.cpp
+FrontendNav.cpp
+GameModeInit.cpp
+MenuButtonDetect.cpp
+GameModeCarSelect.cpp
+MenuGetters.cpp
+SpriteGate.cpp
+FrontendAccessors.cpp
+FrontendMode.cpp
+HudDispatch.cpp
+FontCtx.cpp
+HudBatch.cpp
+MenuScoreGetters.cpp
+MenuInit.cpp
+Generando código...
+Compilando...
+MenuScoreSort.cpp
+MenuRaceEnd.cpp
+Frontend\MenuRaceEnd.cpp(72): warning C4146: operador unario menos aplicado a un tipo unsigned; el resultado aún no tiene signo
+TextMeasure.cpp
+SpriteDispatch.cpp
+MenuTime.cpp
+MenuHelpers.cpp
+VehicleMeta.cpp
+MenuChrome.cpp
+RaceResults.cpp
+MenuMenusB.cpp
+IntroSplash.cpp
+GameSaveBuffer.cpp
+Race_Guard.cpp
+GameSaveVFS.cpp
+Save\GameSaveVFS.cpp(89): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+CrtCompilerSupport.cpp
+CrtInit.cpp
+Window.cpp
+RwEngineInit.cpp
+Teardown.cpp
+VideoConfig.cpp
+Generando código...
+C:\Users\maria\Desktop\Proyectos\Mashed\mashedmod\src\mashed_re\Boot\CrtCompilerSupport.cpp(162) : warning C4733: Inline asm que asigna a 'FS:0': el controlador no está registrado como controlador seguro
+C:\Users\maria\Desktop\Proyectos\Mashed\mashedmod\src\mashed_re\Boot\CrtCompilerSupport.cpp(135) : warning C4733: Inline asm que asigna a 'FS:0': el controlador no está registrado como controlador seguro
+Compilando...
+GameSave.cpp
+VfsStream.cpp
+FsOpen.cpp
+SettingsConfig.cpp
+SettingsAndIO.cpp
+SettingsCfg.cpp
+SettingsDialog.cpp
+RwStream.cpp
+CareerEvents.cpp
+ReplayThunk.cpp
+CrtStartup.cpp
+Boot\CrtStartup.cpp(378): warning C4996: 'GetVersionExA': se declaró desusado
+Boot.cpp
+SubsystemInit.cpp
+TimerSetters.cpp
+TimerSlot.cpp
+UtilBatch.cpp
+UtilMid.cpp
+MenuStateMachine.cpp
+FrontendDispatch.cpp
+SpriteCluster.cpp
+Generando código...
+Compilando...
+FrameDispatch.cpp
+GameStateCluster.cpp
+DirectInput.cpp
+DInput.cpp
+PizWin32Bypass.cpp
+IntroTextNullGuard.cpp
+StreamHandlerDispatchGuard.cpp
+HarnessStubs.cpp
+Leaves.cpp
+MenuMenusMixed.cpp
+UtilLeaves.cpp
+TextCluster.cpp
+MenuSpriteDispatch.cpp
+MenuMixed.cpp
+DrawQuadPrimitives.cpp
+MenuLeaves_af1.cpp
+SmallLeaves_n2.cpp
+SmallLeaves_t1.cpp
+SlotZeroers_s1.cpp
+MenuLeaves_s3.cpp
+Generando código...
+Compilando...
+MenuLeaves_af4.cpp
+GlobalGetters_s4.cpp
+GlobalGetters_s5.cpp
+MenuNearLeaves_s6.cpp
+MenuStateWriters_u1.cpp
+BucketMixed_t3.cpp
+HighAB3Helpers_p6.cpp
+TrackNodeLeaves_o1.cpp
+LowRvaSetters_o2.cpp
+RenderStateSettersB.cpp
+D3d9StateCache.cpp
+RwPluginHelpers_o3.cpp
+RwPluginHelpers_q1.cpp
+RenderSubmit_o4.cpp
+D3D9Helpers_p4.cpp
+ReplayCluster.cpp
+SmallLeaves_o5.cpp
+SmallLeaves_q4.cpp
+SmallLeaves_o6.cpp
+UtilLeaves_ab6.cpp
+Generando código...
+Compilando...
+UtilLeaves_ac.cpp
+SineOscillators.cpp
+MatrixOrthoResidual.cpp
+TrackLoaderMicros_p3.cpp
+FrameHelpers_q2.cpp
+LowRvaMixed_q3.cpp
+D3D9Helpers_q5.cpp
+TextureLoader_q6.cpp
+TextureLoaderCluster.cpp
+LaunchHandshake.cpp
+FrameWorldPasses.cpp
+PerModeRender.cpp
+RenderLeaves_ae2.cpp
+BootLowRvaCluster.cpp
+MixedC3Sweep.cpp
+AudioLeaves_ab1.cpp
+AudioLeaves_ab3.cpp
+SlotZeroers_s2.cpp
+MenuMiscLeaves_t2.cpp
+SplashGameMode_t5.cpp
+Generando código...
+Compilando...
+ScoringHooks.cpp
+CameraClusterHooks.cpp
+PhysicsChainHooks.cpp
+Vehicle\PhysicsChainHooks.cpp(359): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Vehicle\PhysicsChainHooks.cpp(859): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Vehicle\PhysicsChainHooks.cpp(2198): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Vehicle\PhysicsChainHooks.cpp(2612): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Vehicle\PhysicsChainHooks.cpp(3064): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+SkeletonAndScatter_t6.cpp
+Cluster_v1.cpp
+Cluster_v2.cpp
+ScenarioLeaves_sa1.cpp
+ScenarioLeaves_sa2.cpp
+ScenarioWriters_sa2s2.cpp
+ScenarioWriters_sa2s1.cpp
+Cluster_v3.cpp
+BatchAA_s1.cpp
+BatchAA_s2.cpp
+BatchAA_s3.cpp
+BatchAA_s4.cpp
+BatchAA_s5.cpp
+FrontendLeaves_ad1.cpp
+MenuLeaves_af6.cpp
+BatchAA_s6.cpp
+BatchAB_s1.cpp
+Generando código...
+Compilando...
+BatchAB_s3.cpp
+BatchAB_s6.cpp
+RenderLeaves_ae1.cpp
+PaletteQuantizer.cpp
+RenderLeaves_ae3.cpp
+RenderStateSettersA.cpp
+FrontendLeaves_ad2.cpp
+GameplayLeaves_ad3.cpp
+ParticleLeaves_ad4.cpp
+ParticleLeaves_ad5.cpp
+MenuLeaves_af5.cpp
+MemsetInline_ag1.cpp
+ReplayRewind_ag.cpp
+ViewportDimsSet_ag.cpp
+SparseGrid_ag.cpp
+TimeRecordWrite_ag.cpp
+AudioList_ag.cpp
+RangeTable_ah1.cpp
+ScoreMasks_ah3.cpp
+Thresholds_ah4.cpp
+Gameplay\Thresholds_ah4.cpp(39): warning C4146: operador unario menos aplicado a un tipo unsigned; el resultado aún no tiene signo
+Gameplay\Thresholds_ah4.cpp(55): warning C4146: operador unario menos aplicado a un tipo unsigned; el resultado aún no tiene signo
+Generando código...
+Compilando...
+PluginFields_ah4.cpp
+TimerGetters_ah5.cpp
+PromoLoop_round1.cpp
+AiController.cpp
+AiControllerAB.cpp
+Ai\AiControllerAB.cpp(781): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Ai\AiControllerAB.cpp(786): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+AiControlStep.cpp
+AiPreTick.cpp
+AiTargeting.cpp
+AiSplineHooks.cpp
+Ai\AiSplineHooks.cpp(286): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+AiNavHooks.cpp
+Ai\AiNavHooks.cpp(346): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+AiLineOfSight.cpp
+Ai\AiLineOfSight.cpp(108): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+AiWallLateral.cpp
+Ai\AiWallLateral.cpp(94): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+AiWallAhead.cpp
+Ai\AiWallAhead.cpp(107): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+AiLeaderTimer.cpp
+AiStandalone.cpp
+Ai\AiStandalone.cpp(141): warning C4244: 'inicializando': conversión de 'double' a 'float'; posible pérdida de datos
+Ai\AiStandalone.cpp(154): warning C4244: 'inicializando': conversión de 'double' a 'float'; posible pérdida de datos
+Ai\AiStandalone.cpp(439): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Ai\AiStandalone.cpp(489): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Ai\AiStandalone.cpp(502): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Ai\AiStandalone.cpp(505): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+PromoLoop_round2.cpp
+PromoLoop_round3.cpp
+PromoLoop_round6.cpp
+PromoLoop_round7.cpp
+PromoLoop_round8.cpp
+Generando código...
+Compilando...
+PromoLoop_round9.cpp
+PromoLoop_round10.cpp
+PromoLoop_round11.cpp
+PromoLoop_round12.cpp
+PromoLoop_round15.cpp
+PromoLoop_round16.cpp
+PromoLoop_round17.cpp
+PromoLoop_round18.cpp
+PromoLoop_round20.cpp
+PromoLoop_round21.cpp
+PromoLoop_round22.cpp
+PromoLoop_round24.cpp
+PromoLoop_round25.cpp
+PromoLoop_round26.cpp
+PromoLoop_round27.cpp
+PromoLoop_round28.cpp
+PromoLoop_round29.cpp
+PromoLoop_round30.cpp
+PromoLoop_round31.cpp
+PromoLoop_round32.cpp
+Generando código...
+Compilando...
+PromoLoop_round33.cpp
+PromoLoop_round34.cpp
+PromoLoop_round35.cpp
+PromoLoop_round37.cpp
+PromoLoop_round38.cpp
+PromoLoop_round39.cpp
+PromoLoop_round40.cpp
+PromoLoop_round41.cpp
+PromoLoop_round42.cpp
+PromoLoop_round43.cpp
+PromoLoop_round44.cpp
+PromoLoop_round45.cpp
+PromoLoop_round46.cpp
+PromoLoop_round47.cpp
+PromoLoop_round48.cpp
+PromoLoop_round49.cpp
+PromoLoop_round50.cpp
+PromoLoop_round51.cpp
+PromoLoop_round53.cpp
+PromoLoop_round54.cpp
+Generando código...
+Compilando...
+PromoLoop_round55.cpp
+PromoLoop_round56.cpp
+PromoLoop_round57.cpp
+PromoLoop_round58.cpp
+PromoLoop_round59.cpp
+PromoLoop_round60.cpp
+PromoLoop_round61.cpp
+PromoLoop_round62.cpp
+PromoLoop_round63.cpp
+PromoLoop_round64.cpp
+PromoLoop_round65.cpp
+PromoLoop_round66.cpp
+PromoLoop_round67.cpp
+PromoLoop_round68.cpp
+PromoLoop_round69.cpp
+PromoLoop_round70.cpp
+PromoLoop_round71.cpp
+PromoLoop_round72.cpp
+PromoLoop_round73.cpp
+PromoLoop_round74.cpp
+Generando código...
+Compilando...
+PromoLoop_round75.cpp
+PromoLoop_round76.cpp
+PromoLoop_round77.cpp
+PromoLoop_round78.cpp
+PromoLoop_sessionB.cpp
+RainCameraScale.cpp
+RainLineWidthRange.cpp
+AtomicExchangeStore.cpp
+RaceArmReset.cpp
+CameraEntryDispatch.cpp
+AudioVoiceQueueSet.cpp
+ElemArrayCopyAll.cpp
+RpMaterialNibble_wf1.cpp
+SkyElementRemove.cpp
+RtFSHandlerCancel.cpp
+PixPassthrough16.cpp
+RgbPackEncoder_wfb0f.cpp
+BgraReorder_wf.cpp
+PixReadU32_wf.cpp
+RtFSHandler.cpp
+Generando código...
+Compilando...
+PromoLoop_round80.cpp
+ParticleBurst_ac1.cpp
+RwStreamWriteBytes.cpp
+UtilRandIntRange_wfb0f.cpp
+AudioListSearch_wfb0f.cpp
+Vec3ValidateMixed_cfd622.cpp
+VehicleCouplingBridge.cpp
+RwpIntegrator.cpp
+RwpSolverLeaves1.cpp
+Collision\RwpSolverLeaves1.cpp(275): warning C4146: operador unario menos aplicado a un tipo unsigned; el resultado aún no tiene signo
+Collision\RwpSolverLeaves1.cpp(527): warning C4554: "|": compruebe la prioridad de operador para posibles errores; utilice paréntesis para indicar la prioridad
+Collision\RwpSolverLeaves1.cpp(527): warning C4554: "|": compruebe la prioridad de operador para posibles errores; utilice paréntesis para indicar la prioridad
+RwpSolverMath2.cpp
+RwpSolverBroadphase3.cpp
+RwpSolverCore4.cpp
+RwpSolverGlue5.cpp
+RwpSolverIntegrate6.cpp
+RwpSolverCore7.cpp
+RwpSolverCore8.cpp
+RwpSolverCore9.cpp
+RwpSolverCore10.cpp
+RwpSolverCore11.cpp
+RwpSolverCore12.cpp
+Generando código...
+Compilando...
+RwpSolverPartition13.cpp
+RwpSolverCore14.cpp
+RwpSolverCore15.cpp
+Collision\RwpSolverCore15.cpp(448): warning C4554: "|": compruebe la prioridad de operador para posibles errores; utilice paréntesis para indicar la prioridad
+Collision\RwpSolverCore15.cpp(449): warning C4554: "|": compruebe la prioridad de operador para posibles errores; utilice paréntesis para indicar la prioridad
+RwpSolverCore16.cpp
+RwpSolverCore17.cpp
+Collision\RwpSolverCore17.cpp(747): warning C4101: 'local_50': variable local sin referencia
+RwpSolverCore18.cpp
+RwpSolverCore19.cpp
+RwpSolverCore20.cpp
+RwpSolverCore21.cpp
+Collision\RwpSolverCore21.cpp(172): warning C4244: '=': conversión de 'mashed_re::Collision::float10' a 'float'; posible pérdida de datos
+Collision\RwpSolverCore21.cpp(411): warning C4244: '=': conversión de 'mashed_re::Collision::float10' a 'float'; posible pérdida de datos
+Collision\RwpSolverCore21.cpp(431): warning C4244: '=': conversión de 'mashed_re::Collision::float10' a 'float'; posible pérdida de datos
+Collision\RwpSolverCore21.cpp(490): warning C4244: '=': conversión de 'mashed_re::Collision::float10' a 'float'; posible pérdida de datos
+RwpSolverCore22.cpp
+RwpSolverCore23.cpp
+RwpVtableKV2.cpp
+RwpVtableKV1.cpp
+RwpBuildExterns.cpp
+CollisionBodyCreate.cpp
+PhysicsWorldBuild.cpp
+CameraProjCoeffs.cpp
+Vec3NormalizeScale.cpp
+HeadingAtan2.cpp
+AudioVecLength.cpp
+Generando código...
+   Creando biblioteca C:\Users\maria\Desktop\Proyectos\Mashed\mashedmod\build\mashed_re_dev.lib y objeto C:\Users\maria\Desktop\Proyectos\Mashed\mashedmod\build\mashed_re_dev.exp
+deployed mashed_re_dev.asi -> original\
+=== Build OK ===
+mashed_re.exe
+mashed_re_dev.asi

@@ -1,0 +1,25 @@
+=== verify_hook_install report (crown_flags_set) ===
+
+target address: 0x0040b930  export: PlayerScoreThresholdMask
+PRE  bytes:     e9 cb ba 9d 72 0c 57 bf
+asi base:       0x72dc0000
+reimpl addr:    0x72de7400
+POST bytes:     e9 cb ba 9d 72 0c 57 bf
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x729dbacb  expected 0x729dbacb  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  2 / 2
+
+per-input results:
+  [OK] input={'scalars': [6540776]}  got=(void)  err=
+  [OK] input={'scalars': [6540776]}  got=(void)  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 2x as expected
+  + all 2 calls returned without exception
+FAIL:
+  (none)

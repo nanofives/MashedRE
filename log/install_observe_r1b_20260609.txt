@@ -1,0 +1,29 @@
+R1-B install-observe canonical re-validation — 2026-06-09
+Tool: re/frida/canonical_install_observe.py (subset-install via MASHED_HOOK_ONLY)
+Binary: original/MASHED.exe (4-patch state), fresh mashed_re_dev.asi built+deployed
+2026-06-09 (build.bat, deployed automatically). dinput8 proxy + d3d9 shim in place.
+Protocol per re/analysis/C4_REVALIDATION.md: hook subset installed, MASHED booted
+to menu, watched 25s, first byte at each RVA read == 0xE9 (inline-JMP live),
+.asi-side manifest confirms installed flag, no crash handler hit.
+
+RESULT: 6/6 runs survived 25s; 85/85 hooks JMP-LIVE(0xE9) + manifest installed=1.
+
+batch 1 (save A, 14): 0x00404e50 0x00404e80 0x00404ee0 0x00404f50 0x00404f80
+  0x004099a0 0x004099e0 0x0040dd60 0x0040de00 0x0042a920 0x00430290 0x004963e0
+  0x00496400 0x00498910
+batch 2 (save B, 14): 0x00498950 0x004989b0 0x00498d20 0x00498d60 0x00498f60
+  0x00499170 0x004991f0 0x00499740 0x004a4541 0x004b3b70 0x004b3bb0 0x004cbe80
+  0x00550b00 0x00550bc0
+batch 3 (util, 19): 0x004098b0 0x00409900 0x00409930 0x00413f90 0x00426c10
+  0x00426c30 0x00426c70 0x004295a0 0x00429aa0 0x0042c2d0 0x0042c2f0 0x0042f500
+  0x0043c000 0x00442c80 0x00475a60 0x004997b0 0x004c3ac0 0x004c3b30 0x004c3b90
+  (incl. the Vec3 trio: Vec3Magnitude/FastSqrt/FastInvSqrt — Population C resolved)
+batch 4 (frontend, 17): 0x0040ad20 0x0040b6c0 0x0040b7a0 0x0040bb90 0x0042aff0
+  0x0042b180 0x0042b310 0x0042b770 0x0042e590 0x0042ebe0 0x0042ee00 0x0042fe30
+  0x0042fe50 0x0042fe80 0x00430a10 0x00430a60 0x00430ab0
+batch 5 (render+audio, 9): 0x00404320 0x004938c0 0x004c3730 0x004c3880 0x004c3bf0
+  0x004c3c60 0x004c5800 0x004c5820 0x005aee20
+batch 6 (hud+boot, 12): 0x00403160 0x0041db80 0x00427780 0x00427840 0x00428450
+  0x00552df0 0x00431ae0 0x00431af0 0x00431b00 0x004921d0 0x00492270 0x00492770
+
+Manifest cross-check: 531 hooks seen per run; installed count == batch size each run.

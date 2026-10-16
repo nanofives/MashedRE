@@ -1,0 +1,6 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,"{""sel"": 305419896, ""dir"": 0}",0x12345678ffffffffffffffffffffffff,,0x12345678ffffffffffffffffffffffff,,True,,
+1,"{""sel"": 3735928559, ""dir"": 0}",0xdeadbeefffffffffffffffffffffffff,,0xdeadbeefffffffffffffffffffffffff,,True,,
+2,"{""sel"": 2147483647, ""dir"": 0}",0x7fffffffffffffffffffffffffffffff,,0x7fffffffffffffffffffffffffffffff,,True,,
+3,"{""sel"": 195948557, ""dir"": 0}",0x0badf00dffffffffffffffffffffffff,,0x0badf00dffffffffffffffffffffffff,,True,,
+4,"{""sel"": 3405691582, ""dir"": 0}",0xcafebabeffffffffffffffffffffffff,,0xcafebabeffffffffffffffffffffffff,,True,,

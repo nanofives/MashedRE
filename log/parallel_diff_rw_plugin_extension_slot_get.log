@@ -1,0 +1,12 @@
+=== rw_plugin_extension_slot_get on slot 0 ===
+hook: rw_plugin_extension_slot_get  rva=0x004d7db0  export=RwPluginExtensionSlotGet
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 31784
+  [agent] LUT ready  base=0x2c11bb8  offset=0x134  root=0x4950640  delta=0  attempts=5
+  [agent] .asi loaded  base=0x73820000  RwPluginExtensionSlotGet@0x73832550
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\log\diff_rw_plugin_extension_slot_get.csv
+  total cases: 10
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.

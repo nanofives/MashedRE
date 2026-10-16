@@ -1,0 +1,6 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,"{""seeds"":[{""off"":348,""type"":""u32"",""value"":1000},{""off"":352,""type"":""u32"",""value"":300}]}",r=0|out0+0=3e8:0|out1+0=2bc:0,,r=0|out0+0=3e8:0|out1+0=2bc:0,,True,,
+1,"{""seeds"":[{""off"":348,""type"":""u32"",""value"":0},{""off"":352,""type"":""u32"",""value"":0}]}",r=0|out0+0=0:0|out1+0=0:0,,r=0|out0+0=0:0|out1+0=0:0,,True,,
+2,"{""seeds"":[{""off"":348,""type"":""u32"",""value"":5},{""off"":352,""type"":""u32"",""value"":10}]}",r=0|out0+0=5:0|out1+0=fffffffb:0,,r=0|out0+0=5:0|out1+0=fffffffb:0,,True,,
+3,"{""seeds"":[{""off"":348,""type"":""u32"",""value"":4294967295},{""off"":352,""type"":""u32"",""value"":1}]}",r=0|out0+0=ffffffff:0|out1+0=fffffffe:0,,r=0|out0+0=ffffffff:0|out1+0=fffffffe:0,,True,,
+4,"{""seeds"":[{""off"":348,""type"":""u32"",""value"":305419896},{""off"":352,""type"":""u32"",""value"":4096}]}",r=0|out0+0=12345678:0|out1+0=12344678:0,,r=0|out0+0=12345678:0|out1+0=12344678:0,,True,,

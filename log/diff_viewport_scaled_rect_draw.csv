@@ -1,0 +1,13 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,"[0,0,0,100,100,0,0]",2652113016,0x9e140878,2652113016,0x9e140878,True,system error,system error
+1,"[0,50,50,50,50,0,0]",2283745896,0x881f3268,2283745896,0x881f3268,True,system error,system error
+2,"[0,200,100,80,40,0,0]",1640903120,0x61ce31d0,1640903120,0x61ce31d0,True,system error,system error
+3,"[0,10,20,30,40,1,0]",1734466648,0x6761dc58,1734466648,0x6761dc58,True,system error,system error
+4,"[0,100,100,50,50,2,0]",1328804080,0x4f33f0f0,1328804080,0x4f33f0f0,True,system error,system error
+5,"[0,300,200,100,80,2,0]",3688313460,0xdbd73274,3688313460,0xdbd73274,True,system error,system error
+6,"[0,0,0,100,100,0,1]",1503197336,0x5998f898,1503197336,0x5998f898,True,system error,system error
+7,"[0,0,0,100,100,0,2]",3660222360,0xda2a8f98,3660222360,0xda2a8f98,True,system error,system error
+8,"[0,0,0,100,100,0,3]",1932407416,0x732e3278,1932407416,0x732e3278,True,system error,system error
+9,"[0,200,150,60,60,2,1]",4205100536,0xfaa4bdf8,4205100536,0xfaa4bdf8,True,system error,system error
+10,"[0,200,150,60,60,2,2]",1782068472,0x6a3834f8,1782068472,0x6a3834f8,True,system error,system error
+11,"[0,200,150,60,60,2,3]",984363240,0x3aac30e8,984363240,0x3aac30e8,True,system error,system error

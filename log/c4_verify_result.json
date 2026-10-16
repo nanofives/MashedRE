@@ -1,0 +1,74 @@
+{
+  "0x0042f510": {
+    "calls": 0,
+    "installed": true,
+    "survived": true,
+    "C4": false
+  },
+  "0x004671c0": {
+    "calls": 0,
+    "installed": true,
+    "survived": true,
+    "C4": false
+  },
+  "0x00494ef0": {
+    "calls": 8150,
+    "installed": true,
+    "survived": true,
+    "C4": true
+  },
+  "0x004cd060": {
+    "calls": 1,
+    "installed": true,
+    "survived": true,
+    "C4": true
+  },
+  "0x004d40c0": {
+    "calls": 0,
+    "installed": true,
+    "survived": true,
+    "C4": false
+  },
+  "0x0042b8d0": {
+    "calls": 2755,
+    "installed": true,
+    "survived": true,
+    "C4": true
+  },
+  "0x0042b8f0": {
+    "calls": 0,
+    "installed": true,
+    "survived": true,
+    "C4": false
+  },
+  "0x0042f6a0": {
+    "calls": 0,
+    "installed": true,
+    "survived": true,
+    "C4": false
+  },
+  "0x00430790": {
+    "calls": 0,
+    "installed": true,
+    "survived": true,
+    "C4": false
+  },
+  "0x00474e60": {
+    "calls": 0,
+    "installed": true,
+    "survived": true,
+    "C4": false
+  },
+  "0x00556cd0": {
+    "calls": 0,
+    "installed": true,
+    "survived": true,
+    "C4": false
+  },
+  "0x0040e340": {
+    "calls": 2755,
+    "installed": true,
+    "survived": true,
+    "C4": true
+  }
+}

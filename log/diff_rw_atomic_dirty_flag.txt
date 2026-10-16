@@ -1,0 +1,11 @@
+hook: rw_atomic_dirty_flag  rva=0x004c0b10  export=RwAtomicDirtyFlagGet
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 30536
+  [agent] LUT ready  base=0x2e39ed8  offset=0x134  root=0xd8e0048  delta=0  attempts=7
+  [agent] .asi loaded  base=0x736c0000  RwAtomicDirtyFlagGet@0x736ca4a0
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\log\diff_rw_atomic_dirty_flag.csv
+  total cases: 14
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.

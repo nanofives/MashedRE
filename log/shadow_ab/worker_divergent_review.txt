@@ -1,0 +1,159 @@
+�� delegate  Accenture  [OK]  repo=Mashed  cost=$2.3912  denials=0  model=opus
+
+I now have all six function bodies plus every same-directory callee needed. Here is the analysis. All line citations are to the `_impl` bodies and their in-directory callees.
+
+---
+
+## FUN_00564310 — `mashedmod/src/mashed_re/Collision/RwpSolverLeaves1.cpp:243`
+
+**Classification: NON_IDEMPOTENT** — CRT `rand()` state.
+
+1. **Return statements:**
+   - `RwpSolverLeaves1.cpp:268` — `return 0xffff;`
+   - `RwpSolverLeaves1.cpp:280` — `return uVar8;`
+
+2. **State read that is also written:**
+   - **CRT rand seed at `0x005c229b`.** Line 255 `uVar7 = s_rand_orig();` calls the static-linked CRT `rand`, which reads and advances the CRT RNG seed (a process global). `uVar7` is then folded into the return: line 270 `uVar8 = ~uVar9 & uVar8 | uVar7 & uVar9;` and returned at line 280. Whenever `uVar9` (the bitwise-AND of the two octant overlap codes, line 266) has any set bit, the returned `uVar8` carries `rand()` bits, so a second identical call returns a different value.
+   - Reads globals `_DAT_005e5418`, `_DAT_005cc318` (lines 256–261) — read-only config floats, not written. Writes `param_1[0..6]` (output AABB, lines 271–279) but never reads them.
+
+3. **Callees:** `s_rand_orig` (declared `RwpSolverLeaves1.cpp:47` as a thunk to `0x005c229b`, the CRT `rand`) — **not in this directory** (CRT); it mutates the RNG seed by definition.
+
+4. The `return 0xffff` path (line 268) returns a constant, but `rand()` was already consumed at line 255 and the `return uVar8` path (line 280) is rand-dependent. **NON_IDEMPOTENT via the CRT rand seed at `0x005c229b`.**
+
+---
+
+## FUN_005667c0 — `mashedmod/src/mashed_re/Collision/RwpSolverLeaves1.cpp:488`
+
+**Classification: IDEMPOTENT** — no mutable shared state; any mismatch is a precision (transcription) difference.
+
+**Return TYPE:** `float10`, typedef'd `typedef long double float10;` at `RwpSolverLeaves1.cpp:30`. The header comment (lines 36–38) states MSVC `long double` = 64-bit, whereas the original returns an x87 **80-bit** ST0 value — an accepted ≤1-ULP floor.
+
+1. **Return statements:**
+   - `RwpSolverLeaves1.cpp:499` — `return fVar1 * fVar2;`
+   - `RwpSolverLeaves1.cpp:504` — `return fVar2;`
+
+2. **Every arithmetic step (for precision judgement):**
+   - L492–493: `fVar2 = (float10)param_2[2]*(float10)param_2[2] + (float10)param_2[1]*(float10)param_2[1] + (float10)*param_2*(float10)*param_2;` — each `float` input promoted to `float10`, three products, summed as `((c2·c2)+(c1·c1))+(c0·c0)` in `float10`.
+   - L494: `if ((float10)(float)PTR_DAT_005ceabc < fVar2)` — `PTR_DAT_005ceabc` read as a `float` (`0x005ceabc` = bits `0x00800000` = FLT_MIN 1.17549435e-38, per `RwpSolverCore15.cpp:51`) then promoted to `float10` for the compare.
+   - L495: `fVar1 = (float10)_DAT_005cc320 / SQRT(fVar2);` — `_DAT_005cc320` (1.0f) promoted to `float10`; `SQRT` = `std::sqrtl` (`RwpSolverLeaves1.cpp:40`), i.e. a `float10` (64-bit) sqrt.
+   - L496–498: `*param_1 = (float)(fVar1 * *param_2);` etc. — product in `float10`, then truncated to 32-bit `float` on store.
+   - L499: `return fVar1 * fVar2;` — `float10 × float10`, returned as `float10`.
+   - Else branch L501–503: stores `0.0, 0.0, 1.0`; L504 returns `fVar2` unchanged.
+
+3. **State read that is also written:** none. Reads `param_2[0..2]` (input, read-only) and constants `_DAT_005cc320`, `PTR_DAT_005ceabc`. Writes `param_1[0..2]` (output; never read back).
+
+4. **Callees:** `SQRT`/`std::sqrtl` — pure math, **not in this directory**, no state.
+
+**Precision verdict:** the entire magnitude chain (sum-of-squares, the reciprocal divide, the sqrt, and the returned `fVar1*fVar2` / `fVar2`) is evaluated in `float10` = MSVC 64-bit `double`, while the original runs the same chain in x87 80-bit extended. That is the only divergence source; the computation is deterministic, so **a mismatch means the transcription (64-bit vs 80-bit precision) differs from the original — IDEMPOTENT.**
+
+---
+
+## FUN_00574ad0 — `mashedmod/src/mashed_re/Collision/RwpSolverCore18.cpp:214`
+
+**Classification: NON_IDEMPOTENT** — the caller-owned contact record (`param_6`) accumulates across calls via callee `FUN_00575120`.
+
+1. **Return statements:**
+   - `RwpSolverCore18.cpp:258` — `return uVar19;` (where `uVar19 = FUN_00575120(...)`, the `param_3==1` fast path)
+   - `RwpSolverCore18.cpp:286` — `return 1;`
+   - `RwpSolverCore18.cpp:441` — `return 1;`
+   - `RwpSolverCore18.cpp:451` — `return 1;`
+   - `RwpSolverCore18.cpp:462` — `return 1;`
+   - `RwpSolverCore18.cpp:465` — `return 1;`
+
+2. **State read that is also written:**
+   - **Contact count at `param_6 + 0xac`** and the appended contact coordinates in `param_6`. This function never zeroes `param_6+0xac` itself; it passes `param_6` straight to `FUN_00575120` (lines 248, 446, 458). `FUN_00575120` reads that count (`RwpSolverCore16.cpp:96`), dedup-tests against contacts already in the record (`:98–108`), and on success appends and increments it (`:114–121`). So a second call with the same non-empty `param_6` sees a larger count and previously-written points, changing both the dedup result and the write index.
+   - All the working buffers (`afStack_1c0`, `afStack_180`, `local_120`) are stack locals, reset each call.
+
+3. **Callees (both in this directory):**
+   - `FUN_00575120` (`RwpSolverCore16.cpp:91`) — **mutates** `*(param_3+0xac)` (read at :96, incremented at :121) and appends contact xyz/id into `param_3` (:115–120). Its return is `0` (deduped/rejected) or `1` (appended), and that return is forwarded verbatim at `RwpSolverCore18.cpp:258`.
+   - `FUN_005751f0` (`RwpSolverCore16.cpp:129`) — pure `float10` area formula over its three input points; no state mutation (idempotent, precision-only concern).
+
+4. On the `param_3==1` path (line 258) the return is `FUN_00575120`'s value, which depends on the persistent count/points at `param_6+0xac`; a duplicate point that the first call appended is rejected (`return 0`) on the second call. **NON_IDEMPOTENT via the contact record at `param_6+0xac` (read+incremented by `FUN_00575120`).** The five `return 1` paths are constant.
+
+---
+
+## FUN_005752b0 — `mashedmod/src/mashed_re/Collision/RwpSolverCore19.cpp:116`
+
+**Classification: NON_IDEMPOTENT** — the pair record's separating-axis field at `param_1+0x100` is read as input and overwritten by callee `FUN_00576880`.
+
+1. **Return statements:**
+   - `RwpSolverCore19.cpp:208` — `return 1;`
+   - `RwpSolverCore19.cpp:210` — `return 1;`
+   - `RwpSolverCore19.cpp:213` — `return 0;`
+   (all three are constants; no callee return is forwarded.)
+
+2. **State read that is also written:**
+   - **`param_1 + 0x100` (the separating-axis vec3).** Passed as `param_7` to `FUN_00576880` at line 148 (`(float *)(param_1 + 0x100)`). Inside `FUN_00576880` that buffer is read as the search/projection axis (e.g. `RwpSolverCore15.cpp:138`, `:334–345`, `:360–362`) **and then overwritten** with the normalized contact normal (`RwpSolverCore15.cpp:516–518`, conditional on the guard at :512–513). A second call reads the mutated normal instead of the original axis, so `iVar4` (the returned contact count) and `local_108` (separation) can change, flipping the `(local_108 - local_10c <= param_2) && (iVar4 != 0)` gate and hence the 1-vs-0 return.
+   - `param_3 + 0xac` (contact count) is explicitly zeroed at line 176 *before* `FUN_00574ad0` runs, so it does **not** carry over between calls — it is not a cross-call source here.
+   - `local_100[256]` is a stack local, fresh each call.
+
+3. **Callees (both in this directory):**
+   - `FUN_00576880` (`RwpSolverCore15.cpp:65`) — reads and overwrites its `param_7` (= `param_1+0x100`), as detailed above → non-idempotent; its return feeds `iVar4`.
+   - `FUN_00574ad0` (`RwpSolverCore18.cpp:214`) — non-idempotent in general, but here it writes into `param_3` whose `+0xac` count was pre-zeroed at line 176, so its contribution to *this* function's return (`*(param_3+0xac) != 0`, line 178) is deterministic per call.
+
+4. **NON_IDEMPOTENT via the separating-axis field `param_1+0x100`** (read as input by `FUN_00576880`, overwritten by it under the :512 guard).
+
+---
+
+## FUN_00575560 — `mashedmod/src/mashed_re/Collision/RwpSolverCore20.cpp:223`
+
+**Classification: NON_IDEMPOTENT** — the return depends on nested non-idempotent `FUN_005752b0`; additional mutated state exists but does not reach the return.
+
+1. **Return statements:**
+   - `RwpSolverCore20.cpp:307` — `return param_3;` (`param_3` = `FUN_00578ff0(...)` result, or `0` if `uVar7 == 0`)
+   - `RwpSolverCore20.cpp:338` — `return 0;`
+
+2. **State read that is also written:**
+   - **Return-affecting:** the per-pair records walked at `param_1` (`param_1`, `param_1+0x120`, …, line 263 `param_1 = param_1 + 0x120`). Each is fed to `FUN_005752b0` (line 257), whose result `iVar5` gates `uVar7` (the surviving-manifold count, line 259). Because `FUN_005752b0`→`FUN_00576880` reads+overwrites each pair's `+0x100` axis (see previous section), a second call reads mutated axes → different `iVar5`/`uVar7` → different `param_3 = FUN_00578ff0(..., uVar7, ...)` (line 268) → different return.
+   - **NOT return-affecting (but read+written across calls):**
+     - World contact-list count at `world+0x68` — read (lines 276, 290, 310, 324) and incremented (lines 280, 294, 313, 327).
+     - Body contact-list heads at `body+0x2c` — read into `piVar1[4]` (lines 285, 299, 319, 333) and overwritten (lines 286, 300, 320, 334).
+     These are mutated in the contact-threading loop (lines 271–306) which runs *after* `param_3` is finalized and never modifies `param_3`; they affect side effects, not the return value.
+
+3. **Callees:**
+   - `FUN_005752b0` (`RwpSolverCore19.cpp:116`, **this directory**) — non-idempotent (pair `+0x100` axis), as above; drives `uVar7`.
+   - `FUN_00578ff0` (`RwpSolverCore17.cpp:715`, **this directory**) — reduces the manifold pool at `param_4+0xe0` (rebuilt fresh each call by the `FUN_005752b0` loop) and clears merged records in place (e.g. `:818 *(uVar8+0xac)=0`); it reads no persistent global, so in isolation its return is deterministic given its pool input. It is only non-deterministic here because its input pool is built by the non-idempotent `FUN_005752b0`.
+
+4. **NON_IDEMPOTENT:** the return varies via the nested pair-record `+0x100` axis fields overwritten by `FUN_005752b0`/`FUN_00576880`. (World `+0x68` and body `+0x2c` are also read+written but do not feed the return.)
+
+---
+
+## FUN_00576880 — `mashedmod/src/mashed_re/Collision/RwpSolverCore15.cpp:65`
+
+**Classification: NON_IDEMPOTENT** — reads its `param_7` axis buffer as input and overwrites it with the output normal.
+
+1. **Return statements:**
+   - `RwpSolverCore15.cpp:147` — `return param_4;`
+   - `:165` — `return param_2;`
+   - `:186/192/224` — `return local_104;`
+   - `:373/374, :417/419/426/438/440, :477, :506` — `return local_104;` / `return uVar11;`
+   - `:461` — `return 0;`
+   - `:482` — `return 0;`
+   - `:573` — `return local_104;` (main exit)
+
+2. **State read that is also written:**
+   - **`param_7` (the separating-axis vec3, = pair `+0x100` at the call site).** It is read as the projection/sweep axis before any write: `:138`, `:156`, `:334–345`, `:360–362`, `:468`. It is then overwritten with the normalized contact normal at `:516–518` (`*param_7 = local_e0 * fVar1;` etc.), under the guard at `:512–513`, and re-read at `:520–521, :524, :528–530, :542–547`. Because it is read-before-write, a second call on the same `param_7` pointer projects onto the first call's *output* normal → different closest-feature search → different `local_104` and different written normal.
+   - `param_12` (contact array) and its count `local_104` (reset to `0` at line 130) are effectively a fresh local buffer per call at the call site; `param_8/9/10` outputs likewise. `param_11[0x1f]`/`param_11[0x3f]` flags (`:513`) are read-only (never written; the writes go to `param_11[0]..[3]`/`[0x20]..[0x23]`).
+
+3. **Callees:**
+   - `FUN_005667c0` (`RwpSolverLeaves1.cpp:488`) — pure normalize (idempotent, precision-only; called `:548`, `:570`).
+   - `FUN_00577be0` / `FUN_00577cb0` / `FUN_00577ec0` (`RwpSolverCore14.cpp`, this directory) — write to caller-provided out-params that are stack locals here (`gE/gA/local_fc/local_100/...`); no persistent-state mutation feeding a repeat call.
+   - `FUN_005784a0` (`RwpSolverCore14.cpp:294`, this directory) — appends into `param_12` using the count `*param_1` (= `&local_104`); since `local_104` is reset to 0 each call, this is per-call deterministic.
+
+4. **NON_IDEMPOTENT via `param_7`** (the axis buffer at pair `+0x100`), which the function reads as its input direction and overwrites with the normalized normal at `:516–518`. The degenerate early returns (`return param_4` / `return param_2`, `:147/:165`) do not reach the `param_7` write and are idempotent, but the main-path `return local_104` depends on the read-then-written axis.
+
+---
+
+### Summary table
+
+| Function | File:line | Classification | Cross-call state driving the return |
+|---|---|---|---|
+| FUN_00564310 | RwpSolverLeaves1.cpp:243 | NON_IDEMPOTENT | CRT `rand()` seed at `0x005c229b` (line 255 → 270 → 280) |
+| FUN_005667c0 | RwpSolverLeaves1.cpp:488 | IDEMPOTENT | none — mismatch = `float10` 64-bit vs original x87 80-bit precision |
+| FUN_00574ad0 | RwpSolverCore18.cpp:214 | NON_IDEMPOTENT | contact record `param_6+0xac` (read+incremented by `FUN_00575120`) |
+| FUN_005752b0 | RwpSolverCore19.cpp:116 | NON_IDEMPOTENT | axis field `param_1+0x100` (read+overwritten by `FUN_00576880`) |
+| FUN_00575560 | RwpSolverCore20.cpp:223 | NON_IDEMPOTENT | pair `+0x100` axes via `FUN_005752b0`→`FUN_00576880` (also world `+0x68`, body `+0x2c`, not return-affecting) |
+| FUN_00576880 | RwpSolverCore15.cpp:65 | NON_IDEMPOTENT | its own `param_7` axis buffer, read-before-write (line 138/334 → 516) |
+
+All same-directory callees were inspected: `FUN_00575120`/`FUN_005751f0` (RwpSolverCore16.cpp), `FUN_005784a0`/`FUN_00577be0`/`FUN_00577cb0`/`FUN_00577ec0` (RwpSolverCore14.cpp), `FUN_00578ff0` (RwpSolverCore17.cpp). No UNKNOWN_CALLEE remains — the only external callees are `std::sqrtl` and the CRT `rand`.
+(raw JSON: C:\Users\maria\AppData\Local\Temp\fleet-delegate-3130de32ac44436e8681836b34845ae4.json)

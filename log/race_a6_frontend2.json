@@ -1,0 +1,303 @@
+{
+  "pid": 24040,
+  "screens": {},
+  "baseline": {
+    "depth": 1,
+    "types": [
+      22,
+      0,
+      0
+    ],
+    "curscreen": 33,
+    "phase": 3,
+    "flag": 0,
+    "gate": 22,
+    "e7c8": 0,
+    "ea08": 0,
+    "ebc8": 0,
+    "eab0": 0,
+    "a8ab0": 0,
+    "sphase": 1,
+    "f0f10": 2,
+    "d6": 0,
+    "s6": 0
+  },
+  "after_prefix": {
+    "depth": 1,
+    "types": [
+      22,
+      0,
+      0
+    ],
+    "curscreen": 33,
+    "phase": 3,
+    "flag": 0,
+    "gate": 22,
+    "e7c8": 0,
+    "ea08": 0,
+    "ebc8": 0,
+    "eab0": 0,
+    "a8ab0": 0,
+    "sphase": 1,
+    "f0f10": 2,
+    "d6": 0,
+    "s6": 0
+  },
+  "path": [
+    {
+      "press": 0,
+      "depth": 1,
+      "types": [
+        22,
+        0,
+        0
+      ],
+      "curscreen": 33,
+      "phase": 3,
+      "sphase": 1,
+      "e7c8": 0
+    },
+    {
+      "press": 1,
+      "depth": 2,
+      "types": [
+        22,
+        1,
+        0,
+        0
+      ],
+      "curscreen": 0,
+      "phase": 3,
+      "sphase": 1,
+      "e7c8": 0
+    },
+    {
+      "press": 2,
+      "depth": 2,
+      "types": [
+        22,
+        1,
+        0,
+        0
+      ],
+      "curscreen": 0,
+      "phase": 3,
+      "sphase": 1,
+      "e7c8": 0
+    },
+    {
+      "press": 3,
+      "depth": 2,
+      "types": [
+        22,
+        1,
+        0,
+        0
+      ],
+      "curscreen": 0,
+      "phase": 3,
+      "sphase": 1,
+      "e7c8": 0
+    },
+    {
+      "press": 4,
+      "depth": 3,
+      "types": [
+        22,
+        1,
+        2,
+        0,
+        0
+      ],
+      "curscreen": 0,
+      "phase": 3,
+      "sphase": 1,
+      "e7c8": 0
+    },
+    {
+      "press": 5,
+      "depth": 4,
+      "types": [
+        22,
+        1,
+        2,
+        4,
+        0,
+        0
+      ],
+      "curscreen": 0,
+      "phase": 3,
+      "sphase": 1,
+      "e7c8": 0
+    },
+    {
+      "press": 6,
+      "depth": 5,
+      "types": [
+        22,
+        1,
+        2,
+        4,
+        6,
+        0,
+        0
+      ],
+      "curscreen": 0,
+      "phase": 3,
+      "sphase": 1,
+      "e7c8": 0
+    },
+    {
+      "press": 7,
+      "depth": 5,
+      "types": [
+        22,
+        1,
+        2,
+        4,
+        6,
+        0,
+        0
+      ],
+      "curscreen": 0,
+      "phase": 0,
+      "sphase": 2,
+      "e7c8": 0
+    },
+    {
+      "press": 8,
+      "depth": 5,
+      "types": [
+        22,
+        1,
+        2,
+        4,
+        6,
+        0,
+        0
+      ],
+      "curscreen": 0,
+      "phase": 0,
+      "sphase": 3,
+      "e7c8": 0
+    }
+  ],
+  "in_race": true,
+  "control": [
+    {
+      "depth": 5,
+      "types": [
+        22,
+        1,
+        2,
+        4,
+        6,
+        0,
+        0
+      ],
+      "curscreen": 0,
+      "phase": 0,
+      "flag": 0,
+      "gate": 6,
+      "e7c8": 0,
+      "ea08": 0,
+      "ebc8": 0,
+      "eab0": 0,
+      "a8ab0": 0,
+      "sphase": 3,
+      "f0f10": 2,
+      "d6": 0,
+      "s6": 0
+    }
+  ],
+  "after": [
+    {
+      "depth": 5,
+      "types": [
+        22,
+        1,
+        2,
+        4,
+        6,
+        0,
+        0
+      ],
+      "curscreen": 0,
+      "phase": 0,
+      "flag": 0,
+      "gate": 6,
+      "e7c8": 0,
+      "ea08": 0,
+      "ebc8": 0,
+      "eab0": 0,
+      "a8ab0": 0,
+      "sphase": 3,
+      "f0f10": 2,
+      "d6": 0,
+      "s6": 0
+    },
+    {
+      "depth": 0,
+      "types": [
+        0,
+        0
+      ],
+      "curscreen": 0,
+      "phase": 1,
+      "flag": 0,
+      "gate": 0,
+      "e7c8": 0,
+      "ea08": 0,
+      "ebc8": 0,
+      "eab0": 0,
+      "a8ab0": 0,
+      "sphase": 5,
+      "f0f10": 2,
+      "d6": 0,
+      "s6": 0
+    },
+    {
+      "depth": 1,
+      "types": [
+        0,
+        0,
+        0
+      ],
+      "curscreen": 0,
+      "phase": 2,
+      "flag": 0,
+      "gate": 0,
+      "e7c8": 0,
+      "ea08": 0,
+      "ebc8": 0,
+      "eab0": 0,
+      "a8ab0": 0,
+      "sphase": 4,
+      "f0f10": 2,
+      "d6": 0,
+      "s6": 0
+    },
+    {
+      "depth": 1,
+      "types": [
+        0,
+        0,
+        0
+      ],
+      "curscreen": 0,
+      "phase": 3,
+      "flag": 0,
+      "gate": 0,
+      "e7c8": 0,
+      "ea08": 0,
+      "ebc8": 0,
+      "eab0": 0,
+      "a8ab0": 0,
+      "sphase": 4,
+      "f0f10": 2,
+      "d6": 0,
+      "s6": 0
+    }
+  ],
+  "fired_delta": 1
+}

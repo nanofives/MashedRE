@@ -1,0 +1,208 @@
+{
+  "4811008": {
+    "rva": "0x00496900",
+    "verdict": "C4-CLEAN",
+    "why": [],
+    "installed": true,
+    "off_n": 2,
+    "on_n": 2,
+    "off": [
+      "eax=0",
+      "eax=1"
+    ],
+    "on": [
+      "eax=0",
+      "eax=1"
+    ]
+  },
+  "4639664": {
+    "rva": "0x0046cbb0",
+    "verdict": "C4-CLEAN",
+    "why": [],
+    "installed": true,
+    "off_n": 1,
+    "on_n": 1,
+    "off": [
+      "eax=1"
+    ],
+    "on": [
+      "eax=1"
+    ]
+  },
+  "4216976": {
+    "rva": "0x00405890",
+    "verdict": "C4-CLEAN",
+    "why": [],
+    "installed": true,
+    "off_n": 1,
+    "on_n": 1,
+    "off": [
+      "eax=0"
+    ],
+    "on": [
+      "eax=0"
+    ]
+  },
+  "4390512": {
+    "rva": "0x0042fe70",
+    "verdict": "C4-CLEAN",
+    "why": [],
+    "installed": true,
+    "off_n": 1,
+    "on_n": 1,
+    "off": [
+      "eax=0"
+    ],
+    "on": [
+      "eax=0"
+    ]
+  },
+  "4638640": {
+    "rva": "0x0046c7b0",
+    "verdict": "C4-CLEAN",
+    "why": [],
+    "installed": true,
+    "off_n": 1,
+    "on_n": 1,
+    "off": [
+      "eax=1"
+    ],
+    "on": [
+      "eax=1"
+    ]
+  },
+  "4739936": {
+    "rva": "0x00485360",
+    "verdict": "C4-CLEAN",
+    "why": [],
+    "installed": true,
+    "off_n": 1,
+    "on_n": 1,
+    "off": [
+      "eax=0"
+    ],
+    "on": [
+      "eax=0"
+    ]
+  },
+  "4739952": {
+    "rva": "0x00485370",
+    "verdict": "C4-CLEAN",
+    "why": [],
+    "installed": true,
+    "off_n": 1,
+    "on_n": 1,
+    "off": [
+      "eax=6e87b8"
+    ],
+    "on": [
+      "eax=6e87b8"
+    ]
+  },
+  "4353216": {
+    "rva": "0x00426cc0",
+    "verdict": "C4-CLEAN",
+    "why": [],
+    "installed": true,
+    "off_n": 2,
+    "on_n": 2,
+    "off": [
+      "eax=663658",
+      "eax=663ef4"
+    ],
+    "on": [
+      "eax=663658",
+      "eax=663ef4"
+    ]
+  },
+  "4643808": {
+    "rva": "0x0046dbe0",
+    "verdict": "C4-CLEAN",
+    "why": [],
+    "installed": true,
+    "off_n": 1,
+    "on_n": 1,
+    "off": [
+      "eax=1"
+    ],
+    "on": [
+      "eax=1"
+    ]
+  },
+  "4750592": {
+    "rva": "0x00487d00",
+    "verdict": "C4-CLEAN",
+    "why": [],
+    "installed": true,
+    "off_n": 6,
+    "on_n": 6,
+    "off": [
+      "[c476a10] [c4769f0] [c476d00] eax=1",
+      "[c476a10] [c4769f0] [c476d00] eax=2",
+      "[c476a10] [c4769f0] [c476d00] eax=3",
+      "[c476a10] [c4769f0] [c476d00] eax=4"
+    ],
+    "on": [
+      "[c476a10] [c4769f0] [c476d00] eax=1",
+      "[c476a10] [c4769f0] [c476d00] eax=2",
+      "[c476a10] [c4769f0] [c476d00] eax=3",
+      "[c476a10] [c4769f0] [c476d00] eax=4"
+    ]
+  },
+  "4750832": {
+    "rva": "0x00487df0",
+    "verdict": "C4-CLEAN",
+    "why": [],
+    "installed": true,
+    "off_n": 1,
+    "on_n": 1,
+    "off": [
+      "eax=1"
+    ],
+    "on": [
+      "eax=1"
+    ]
+  },
+  "4215856": {
+    "rva": "0x00405430",
+    "verdict": "C4-CLEAN",
+    "why": [],
+    "installed": true,
+    "off_n": 1,
+    "on_n": 1,
+    "off": [
+      "eax=0"
+    ],
+    "on": [
+      "eax=0"
+    ]
+  },
+  "4224416": {
+    "rva": "0x004075a0",
+    "verdict": "C4-CLEAN",
+    "why": [],
+    "installed": true,
+    "off_n": 1,
+    "on_n": 1,
+    "off": [
+      "eax=0"
+    ],
+    "on": [
+      "eax=0"
+    ]
+  },
+  "4225568": {
+    "rva": "0x00407a20",
+    "verdict": "C4-CLEAN",
+    "why": [],
+    "installed": true,
+    "off_n": 1,
+    "on_n": 1,
+    "off": [
+      "eax=ffffffff"
+    ],
+    "on": [
+      "eax=ffffffff"
+    ]
+  }
+}

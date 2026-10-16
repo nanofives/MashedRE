@@ -1,0 +1,66 @@
+{
+  "pid": 11512,
+  "screens": {
+    "5": {
+      "depth": 3,
+      "types": [
+        22,
+        1,
+        5,
+        0,
+        0
+      ],
+      "curscreen": 0,
+      "phase": 3,
+      "flag": 0,
+      "gate": 5,
+      "shot": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\verify\\screen_id\\screen_5.bmp",
+      "pre_page": 0,
+      "fired_before": 2,
+      "fired_after": 3,
+      "post_page": 0,
+      "post_stack": {
+        "depth": 3,
+        "types": [
+          22,
+          1,
+          5,
+          0,
+          0
+        ],
+        "curscreen": 0,
+        "phase": 3,
+        "flag": 0,
+        "gate": 5
+      },
+      "shot_after": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\verify\\screen_id\\screen_5_fire7.bmp",
+      "push_count": 1,
+      "err": null
+    }
+  },
+  "baseline": {
+    "depth": 1,
+    "types": [
+      22,
+      0,
+      0
+    ],
+    "curscreen": 33,
+    "phase": 3,
+    "flag": 0,
+    "gate": 22
+  },
+  "after_prefix": {
+    "depth": 2,
+    "types": [
+      22,
+      1,
+      0,
+      0
+    ],
+    "curscreen": 0,
+    "phase": 3,
+    "flag": 0,
+    "gate": 1
+  }
+}

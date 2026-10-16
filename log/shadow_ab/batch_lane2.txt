@@ -1,0 +1,12 @@
+sites=5 group=5 hold=60s max_boots=2
+
+[boot 1] 5 site(s): 005aeed0, 005af010, 005a6e10, 0045d3f0, 005ad2e0
+  -> RACE_OK in 74s   log=shadow_ab_20260910_023716_5x_005aeed0.log
+     NO_SAMPLES 005aeed0 L2_FUN_005aeed0                n=0 ndiff=0
+     CLEAN      005af010 L2_FUN_005af010                n=8 ndiff=0
+     NO_SAMPLES 005a6e10 L2_FUN_005a6e10                n=0 ndiff=0
+     CLEAN      0045d3f0 L2_FUN_0045d3f0                n=2 ndiff=0
+     NO_SAMPLES 005ad2e0 L2_FUN_005ad2e0                n=0 ndiff=0
+
+this run: 1 boot(s)  CLEAN=2  NO_SAMPLES=3
+results -> re\parity\shadow_results.tsv

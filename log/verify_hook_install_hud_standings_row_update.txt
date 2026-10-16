@@ -1,0 +1,25 @@
+=== verify_hook_install report (hud_standings_row_update) ===
+
+target address: 0x0041c410  export: HudStandingsRowUpdate
+PRE  bytes:     e9 6b 5c 8c 72 08 01 00
+asi base:       0x72cd0000
+reimpl addr:    0x72ce2080
+POST bytes:     e9 6b 5c 8c 72 08 01 00
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x728c5c6b  expected 0x728c5c6b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  2 / 2
+
+per-input results:
+  [FAIL] input={'scalars': []}  got=None  err=access violation accessing 0x56433240
+  [FAIL] input={'scalars': []}  got=None  err=access violation accessing 0x56433240
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 2x as expected
+FAIL:
+  - call 0 (input={'scalars': []}) failed: access violation accessing 0x56433240
+  - call 1 (input={'scalars': []}) failed: access violation accessing 0x56433240

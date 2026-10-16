@@ -1,0 +1,13 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,"{""field_vals"":[16,32,48],""key"":32}",32,0x00000020,32,0x00000020,True,,
+1,"{""field_vals"":[16,32,48],""key"":16}",16,0x00000010,16,0x00000010,True,,
+2,"{""field_vals"":[16,32,48],""key"":48}",48,0x00000030,48,0x00000030,True,,
+3,"{""field_vals"":[16,32,48],""key"":153}",-1,0xffffffff,-1,0xffffffff,True,,
+4,"{""field_vals"":[170],""key"":170}",170,0x000000aa,170,0x000000aa,True,,
+5,"{""field_vals"":[170],""key"":187}",-1,0xffffffff,-1,0xffffffff,True,,
+6,"{""field_vals"":[],""key"":1}",-1,0xffffffff,-1,0xffffffff,True,,
+7,"{""field_vals"":[1,2,3,4,5],""key"":4}",4,0x00000004,4,0x00000004,True,,
+8,"{""field_vals"":[1,2,3,4,5],""key"":6}",-1,0xffffffff,-1,0xffffffff,True,,
+9,"{""field_vals"":[2147483647,0,64],""key"":0}",0,0x00000000,0,0x00000000,True,,
+10,"{""field_vals"":[2147483647,0,64],""key"":64}",64,0x00000040,64,0x00000040,True,,
+11,"{""field_vals"":[100,200,300],""key"":200}",200,0x000000c8,200,0x000000c8,True,,

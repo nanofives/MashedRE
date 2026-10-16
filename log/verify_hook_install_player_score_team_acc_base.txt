@@ -1,0 +1,26 @@
+=== verify_hook_install report (player_score_team_acc_base) ===
+
+target address: 0x00423c40  export: PlayerScoreTeamAccBase
+PRE  bytes:     e9 ab bd 35 73 85 c0 8b
+asi base:       0x73770000
+reimpl addr:    0x7377f9f0
+POST bytes:     e9 ab bd 35 73 85 c0 8b
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x7335bdab  expected 0x7335bdab  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  4 / 4
+
+per-input results:
+  [OK] input=0  got=0  err=
+  [OK] input=1  got=0  err=
+  [OK] input=2  got=0  err=
+  [OK] input=3  got=0  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + reimpl interceptor fired 4x as expected
+  + all 4 calls returned without exception
+FAIL:
+  - bytes unchanged after Module.load

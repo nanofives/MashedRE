@@ -1,0 +1,633 @@
+{
+ "screen": 6,
+ "screen_id": 6,
+ "selected": 0,
+ "dicts": {
+  "badges_0063b8fc": {
+   "head": "0x46c1684",
+   "sentinel": "0x46c168c",
+   "count": 23,
+   "names": [
+    {
+     "node": "0x46a5668",
+     "name": "Tritex"
+    },
+    {
+     "node": "0x46a5608",
+     "name": "Button"
+    },
+    {
+     "node": "0x46a55a8",
+     "name": "Button2"
+    },
+    {
+     "node": "0x46a5548",
+     "name": "Box"
+    },
+    {
+     "node": "0x46a54e8",
+     "name": "Box2"
+    },
+    {
+     "node": "0x46a5488",
+     "name": "Arrow"
+    },
+    {
+     "node": "0x46a5428",
+     "name": "SemiC"
+    },
+    {
+     "node": "0x46a53c8",
+     "name": "SemiC2"
+    },
+    {
+     "node": "0x46a5368",
+     "name": "Star"
+    },
+    {
+     "node": "0x46a5308",
+     "name": "check"
+    },
+    {
+     "node": "0x46a52a8",
+     "name": "dot"
+    },
+    {
+     "node": "0x46a5248",
+     "name": "lock"
+    },
+    {
+     "node": "0x46a51e8",
+     "name": "flag"
+    },
+    {
+     "node": "0x46a5188",
+     "name": "cup"
+    },
+    {
+     "node": "0x46a5128",
+     "name": "boom"
+    },
+    {
+     "node": "0x46a50c8",
+     "name": "Stopwatch"
+    },
+    {
+     "node": "0x46a5068",
+     "name": "F1"
+    },
+    {
+     "node": "0x46a5008",
+     "name": "F2"
+    },
+    {
+     "node": "0x46a4fa8",
+     "name": "F3"
+    },
+    {
+     "node": "0x46a4f48",
+     "name": "S1"
+    },
+    {
+     "node": "0x46a4ee8",
+     "name": "S2"
+    },
+    {
+     "node": "0x46a4e88",
+     "name": "Sv"
+    },
+    {
+     "node": "0x46a4e28",
+     "name": "Air"
+    }
+   ]
+  },
+  "iface_0063b904": {
+   "head": "0x46c16b4",
+   "sentinel": "0x46c16bc",
+   "count": 30,
+   "names": [
+    {
+     "node": "0x4733ae0",
+     "name": "BronzeCup"
+    },
+    {
+     "node": "0x4733a80",
+     "name": "SilverCup"
+    },
+    {
+     "node": "0x4733a20",
+     "name": "GoldCup"
+    },
+    {
+     "node": "0x47339c0",
+     "name": "TimeTrial"
+    },
+    {
+     "node": "0x4733960",
+     "name": "QuickRace"
+    },
+    {
+     "node": "0x4733900",
+     "name": "MultiPlayer"
+    },
+    {
+     "node": "0x46a6e08",
+     "name": "Freestyle1"
+    },
+    {
+     "node": "0x46a6da8",
+     "name": "Freestyle2"
+    },
+    {
+     "node": "0x46a6d48",
+     "name": "Tick"
+    },
+    {
+     "node": "0x46a6ce8",
+     "name": "Star"
+    },
+    {
+     "node": "0x46a6c88",
+     "name": "Lock"
+    },
+    {
+     "node": "0x46a6c28",
+     "name": "NFLRed"
+    },
+    {
+     "node": "0x46a6bc8",
+     "name": "NFLBluejay"
+    },
+    {
+     "node": "0x46a6b68",
+     "name": "NFLMelon"
+    },
+    {
+     "node": "0x46a6b08",
+     "name": "NFLGold"
+    },
+    {
+     "node": "0x46a6aa8",
+     "name": "NFLPink"
+    },
+    {
+     "node": "0x46a6a48",
+     "name": "NFLShadow"
+    },
+    {
+     "node": "0x46a69e8",
+     "name": "NFLCopter"
+    },
+    {
+     "node": "0x46a6988",
+     "name": "NFLBomb"
+    },
+    {
+     "node": "0x46a6928",
+     "name": "PowerupShadow"
+    },
+    {
+     "node": "0x46a68c8",
+     "name": "Vs"
+    },
+    {
+     "node": "0x46a6868",
+     "name": "NFLFugitive"
+    },
+    {
+     "node": "0x46a6808",
+     "name": "NFLSurvival"
+    },
+    {
+     "node": "0x46a67a8",
+     "name": "BronzeMedal"
+    },
+    {
+     "node": "0x46a6748",
+     "name": "SilverMedal"
+    },
+    {
+     "node": "0x46a66e8",
+     "name": "GoldMedal"
+    },
+    {
+     "node": "0x46a6688",
+     "name": "question"
+    },
+    {
+     "node": "0x46a6628",
+     "name": "CupBump"
+    },
+    {
+     "node": "0x46a65c8",
+     "name": "Silver"
+    },
+    {
+     "node": "0x46a6568",
+     "name": "ENV"
+    }
+   ]
+  }
+ },
+ "matrix": [
+  {
+   "key": "check",
+   "badges": "0x46a5300",
+   "iface": "0x0"
+  },
+  {
+   "key": "lock",
+   "badges": "0x46a5240",
+   "iface": "0x46a6c80"
+  },
+  {
+   "key": "dot",
+   "badges": "0x46a52a0",
+   "iface": "0x0"
+  },
+  {
+   "key": "Lock",
+   "badges": "0x46a5240",
+   "iface": "0x46a6c80"
+  },
+  {
+   "key": "Star",
+   "badges": "0x46a5360",
+   "iface": "0x46a6ce0"
+  },
+  {
+   "key": "Tick",
+   "badges": "0x0",
+   "iface": "0x46a6d40"
+  },
+  {
+   "key": "tick",
+   "badges": "0x0",
+   "iface": "0x46a6d40"
+  },
+  {
+   "key": "Button",
+   "badges": "0x46a5600",
+   "iface": "0x0"
+  }
+ ],
+ "natural": {
+  "check -> 0x46a5300": 1921,
+  "lock -> 0x46a5240": 961,
+  "dot -> 0x46a52a0": 1,
+  "Lock -> 0x46a5240": 1,
+  "Star -> 0x46a5360": 1,
+  "Tick -> 0x0": 1,
+  "tick -> 0x0": 1,
+  "Button -> 0x46a5600": 1
+ },
+ "rows": {
+  "counts": {
+   "iface32 slot=2": 241,
+   "badges16 slot=2": 723
+  },
+  "total": 964
+ },
+ "cup_table": [
+  [
+   0,
+   1,
+   0,
+   2,
+   2,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   1
+  ],
+  [
+   0,
+   0,
+   0,
+   2,
+   2,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  [
+   0,
+   0,
+   0,
+   2,
+   2,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  [
+   0,
+   0,
+   0,
+   2,
+   2,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  [
+   0,
+   0,
+   0,
+   0,
+   2,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  [
+   0,
+   0,
+   0,
+   0,
+   2,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  [
+   0,
+   0,
+   0,
+   0,
+   2,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  [
+   0,
+   0,
+   0,
+   0,
+   2,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  [
+   0,
+   0,
+   0,
+   0,
+   2,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  [
+   0,
+   0,
+   0,
+   0,
+   2,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  [
+   0,
+   0,
+   0,
+   0,
+   2,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  [
+   0,
+   0,
+   0,
+   0,
+   2,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  [
+   0,
+   0,
+   0,
+   0,
+   2,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0
+  ]
+ ],
+ "draws": {
+  "counts": {
+   "x=520 w=24 gate=-": 723,
+   "x=199 w=63 gate=-": 4,
+   "x=220 w=22 gate=badges16": 723,
+   "x=200 w=62 gate=-": 7,
+   "x=201 w=60 gate=-": 6,
+   "x=202 w=58 gate=-": 6,
+   "x=203 w=56 gate=-": 6,
+   "x=204 w=54 gate=-": 7,
+   "x=205 w=52 gate=-": 7,
+   "x=206 w=50 gate=-": 8,
+   "x=207 w=49 gate=-": 5,
+   "x=207 w=47 gate=-": 5,
+   "x=208 w=46 gate=-": 12,
+   "x=208 w=45 gate=-": 8,
+   "x=209 w=44 gate=-": 24,
+   "x=199 w=64 gate=-": 9,
+   "x=198 w=65 gate=-": 6,
+   "x=198 w=66 gate=-": 10,
+   "x=197 w=67 gate=-": 9,
+   "x=197 w=68 gate=-": 21,
+   "x=198 w=67 gate=-": 7,
+   "x=199 w=65 gate=-": 3,
+   "x=200 w=61 gate=-": 4,
+   "x=201 w=59 gate=-": 4,
+   "x=202 w=57 gate=-": 4,
+   "x=203 w=55 gate=-": 4,
+   "x=207 w=48 gate=-": 8,
+   "x=208 w=47 gate=-": 5,
+   "x=209 w=45 gate=-": 8,
+   "x=206 w=49 gate=-": 4,
+   "x=206 w=51 gate=-": 3,
+   "x=205 w=53 gate=-": 4,
+   "x=204 w=55 gate=-": 3,
+   "x=203 w=57 gate=-": 3,
+   "x=202 w=59 gate=-": 3,
+   "x=201 w=61 gate=-": 4,
+   "x=200 w=63 gate=-": 4,
+   "x=205 w=51 gate=-": 3,
+   "x=204 w=53 gate=-": 3
+  },
+  "alpha": {
+   "0x3f000000": 723
+  },
+  "sample": [
+   {
+    "tex": "0x46a5300",
+    "x": 520,
+    "y": 320,
+    "w": 24,
+    "h": 24,
+    "argb": "0xffffffff",
+    "lastgate": null
+   },
+   {
+    "tex": "0x46a5240",
+    "x": 520,
+    "y": 336,
+    "w": 24,
+    "h": 24,
+    "argb": "0xffffffff",
+    "lastgate": null
+   },
+   {
+    "tex": "0x46a5240",
+    "x": 520,
+    "y": 352,
+    "w": 24,
+    "h": 24,
+    "argb": "0xffffffff",
+    "lastgate": null
+   },
+   {
+    "tex": "0x47338f8",
+    "x": 199.25494384765625,
+    "y": 116.25495147705078,
+    "w": 63.49009704589844,
+    "h": 63.49009704589844,
+    "argb": "0xffffffff",
+    "lastgate": null
+   },
+   {
+    "tex": "0x46a5300",
+    "x": 220,
+    "y": 159.00001525878906,
+    "w": 22,
+    "h": 22,
+    "argb": "0x3f000000",
+    "lastgate": "badges16"
+   },
+   {
+    "tex": "0x46a5300",
+    "x": 220,
+    "y": 181.00001525878906,
+    "w": 22,
+    "h": 22,
+    "argb": "0x3f000000",
+    "lastgate": "badges16"
+   },
+   {
+    "tex": "0x46a5300",
+    "x": 220,
+    "y": 203.00001525878906,
+    "w": 22,
+    "h": 22,
+    "argb": "0x3f000000",
+    "lastgate": "badges16"
+   },
+   {
+    "tex": "0x46a5300",
+    "x": 520,
+    "y": 320,
+    "w": 24,
+    "h": 24,
+    "argb": "0xffffffff",
+    "lastgate": null
+   },
+   {
+    "tex": "0x46a5240",
+    "x": 520,
+    "y": 336,
+    "w": 24,
+    "h": 24,
+    "argb": "0xffffffff",
+    "lastgate": null
+   },
+   {
+    "tex": "0x46a5240",
+    "x": 520,
+    "y": 352,
+    "w": 24,
+    "h": 24,
+    "argb": "0xffffffff",
+    "lastgate": null
+   },
+   {
+    "tex": "0x47338f8",
+    "x": 200.08453369140625,
+    "y": 117.08452606201172,
+    "w": 61.83094787597656,
+    "h": 61.83094787597656,
+    "argb": "0xffffffff",
+    "lastgate": null
+   },
+   {
+    "tex": "0x46a5300",
+    "x": 220,
+    "y": 159.00001525878906,
+    "w": 22,
+    "h": 22,
+    "argb": "0x3f000000",
+    "lastgate": "badges16"
+   }
+  ],
+  "total": 1687
+ }
+}

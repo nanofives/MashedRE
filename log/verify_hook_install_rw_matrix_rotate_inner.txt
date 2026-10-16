@@ -1,0 +1,25 @@
+=== verify_hook_install report (rw_matrix_rotate_inner) ===
+
+target address: 0x004c4a50  export: RwMatrixRotateInner
+PRE  bytes:     81 ec a4 00 00 00 8b 84
+asi base:       0x728f0000
+reimpl addr:    0x728fbd20
+POST bytes:     e9 cb 72 43 72 00 8b 84
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x724372cb  expected 0x724372cb  -> OK
+bytes changed:  True
+
+interceptor entries (reimpl):  0 / 2
+
+per-input results:
+  [FAIL] input={'matrix': [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1], 'axis': [0, 0, 1], 'omc': 1, 'sin': 1, 'mode': 0}  got=None  err=bad argument count
+  [FAIL] input={'matrix': [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1], 'axis': [1, 0, 0], 'omc': 0.5, 'sin': 0.8660254, 'mode': 0}  got=None  err=bad argument count
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + first 8 bytes mutated by patcher
+FAIL:
+  - reimpl interceptor fired 0 times, expected 2
+  - call 0 (input={'matrix': [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1], 'axis': [0, 0, 1], 'omc': 1, 'sin': 1, 'mode': 0}) failed: bad argument count
+  - call 1 (input={'matrix': [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1], 'axis': [1, 0, 0], 'omc': 0.5, 'sin': 0.8660254, 'mode': 0}) failed: bad argument count
