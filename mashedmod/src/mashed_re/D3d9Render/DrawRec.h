@@ -23,6 +23,12 @@ void Install(IDirect3DDevice9* dev);              // patch the four draw slots o
 void BeginFrame(int prev_row);
 // Write the current frame's records as JSON: {"side":"stand","row":row,"events":[...]}
 bool Write(const char* path, int row, int actual_row);
+// [rfx 2026-10-16] librw immediate mode streams through a DYNAMIC write-only vertex/index buffer
+// that a read-only lock cannot be trusted to read back, so the caller hands over the CPU-side copy
+// it just submitted: the next indexed draw takes its triangles and positions (first three floats
+// of each `stride`-byte vertex; the vertex colour is found through the bound declaration as for
+// every other librw draw) from here. One draw only; inert unless the recorder is armed.
+void SetNextGeometry(const void* verts, unsigned stride, const unsigned short* idx, unsigned nidx);
 
 }  // namespace DrawRec
 }  // namespace mashed_re

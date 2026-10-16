@@ -107,6 +107,10 @@ REM TUs compile without the librw include path). EXE-ONLY: never asi_sources.rsp
 cl /nologo /EHa /W3 /O2 /c /I "%LIBRWINC%" /I "%LIBRWINC%\src" /DRW_D3D9 ^
     /Fo"%OUT%\RwRaceSubmit_exe.obj" "%SRC%\LibRw\RwRaceSubmit.cpp"
 if errorlevel 1 (echo [ERROR] RwRaceSubmit exe-obj compile failed & exit /b 1)
+REM [rfx 2026-10-16] in-race car shadow / beam / HUD on librw (LibRw\RwRaceFx.h). Same isolation.
+cl /nologo /EHa /W3 /O2 /c /I "%LIBRWINC%" /I "%LIBRWINC%\src" /DRW_D3D9 ^
+    /Fo"%OUT%\RwRaceFx_exe.obj" "%SRC%\LibRw\RwRaceFx.cpp"
+if errorlevel 1 (echo [ERROR] RwRaceFx exe-obj compile failed & exit /b 1)
 
 REM ===========================================================================
 REM Phase C status (2026-05-25):
@@ -215,6 +219,7 @@ cl /nologo /EHa /W3 /O2 /DMASHED_STANDALONE /Fe"%OUT%\mashed_re.exe" @"%OUT%\obj
     "%OUT%\RwRasterBridge_exe.obj" ^
     "%OUT%\RwSceneBuild_exe.obj" ^
     "%OUT%\RwRaceSubmit_exe.obj" ^
+    "%OUT%\RwRaceFx_exe.obj" ^
     /link /SUBSYSTEM:WINDOWS /BASE:0x10000 /FIXED:NO /DYNAMICBASE:NO ^
     /MAP:"%OUT%\mashed_re.map" ^
     user32.lib d3d9.lib dsound.lib gdi32.lib "%QHULL_LIB%" "%LIBRW_LIB%"
