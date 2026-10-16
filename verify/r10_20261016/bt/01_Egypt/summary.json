@@ -1,0 +1,11 @@
+{
+ "name": "Egypt",
+ "rows": 810,
+ "racing_rows": 146,
+ "race_start": 664,
+ "shot_rows": [
+  694,
+  734,
+  769
+ ]
+}

@@ -1,0 +1,222 @@
+{
+ "Dump/Advantage": [],
+ "Dump/train": [
+  "clump0:Train.dff"
+ ],
+ "Forest/Bush2": [
+  "clump4:Bushes.dff[EXCL]",
+  "ObjectBsp:Trees.bsp"
+ ],
+ "Forest/OakTreeSprite3": [
+  "clump3:NearTree.dff[EXCL]",
+  "ObjectBsp:Trees.bsp"
+ ],
+ "Forest/Tree'sBack": [
+  "clump2:FarTree.dff[EXCL]",
+  "ObjectBsp:Trees.bsp"
+ ],
+ "Forest/ads": [
+  "WorldBsp:graphics.bsp",
+  "ObjectBsp:Trees.bsp"
+ ],
+ "Forest/midtree": [
+  "clump5:MidTree.dff[EXCL]",
+  "ObjectBsp:Trees.bsp"
+ ],
+ "Forest/wet_watercol00": [
+  "clump0:Water.dff[EXCL]",
+  "clump1:Waterfall.dff"
+ ],
+ "Highway/traffic3": [
+  "clump0:WhiteTruckHigh.dff[EXCL]",
+  "clump1:WhiteTruckMid.dff[EXCL]",
+  "clump2:WhiteTruckLow.dff[EXCL]",
+  "clump3:BlueTruckHigh.dff[EXCL]",
+  "clump4:BlueTruckMid.dff[EXCL]",
+  "clump5:BlueTruckLow.dff[EXCL]",
+  "clump6:GrayTruckHigh.dff[EXCL]",
+  "clump7:GrayTruckMid.dff[EXCL]",
+  "clump8:GrayTruckLow.dff[EXCL]",
+  "clump9:GreenTruckHigh.dff[EXCL]",
+  "clump10:GreenTruckMid.dff[EXCL]",
+  "clump11:GreenTruckLow.dff[EXCL]",
+  "clump12:RedTruckHigh.dff[EXCL]",
+  "clump13:RedTruckMid.dff[EXCL]",
+  "clump14:RedTruckLow.dff[EXCL]",
+  "clump15:YellowTruckHigh.dff[EXCL]",
+  "clump16:YellowTruckMid.dff[EXCL]",
+  "clump17:YellowTruckLow.dff[EXCL]",
+  "clump18:BlueLorryHigh.dff[EXCL]",
+  "clump19:BlueLorryMid.dff[EXCL]",
+  "clump20:BlueLorryLow.dff[EXCL]",
+  "clump21:GrayLorryHigh.dff[EXCL]",
+  "clump22:GrayLorryMid.dff[EXCL]",
+  "clump23:GrayLorryLow.dff[EXCL]",
+  "clump24:RedLorryHigh.dff[EXCL]",
+  "clump25:RedLorryMid.dff[EXCL]",
+  "clump26:RedLorryLow.dff[EXCL]",
+  "clump27:YellowLorryHigh.dff[EXCL]",
+  "clump28:YellowLorryMid.dff[EXCL]",
+  "clump29:YellowLorryLow.dff[EXCL]",
+  "clump30:WhiteArcticHigh.dff[EXCL]",
+  "clump31:WhiteArcticMid.dff[EXCL]",
+  "clump32:WhiteArcticLow.dff[EXCL]",
+  "clump33:GreenArcticHigh.dff[EXCL]",
+  "clump34:GreenArcticMid.dff[EXCL]",
+  "clump35:GreenArcticLow.dff[EXCL]",
+  "clump36:YellowArcticHigh.dff[EXCL]",
+  "clump37:YellowArcticMid.dff[EXCL]",
+  "clump38:YellowArcticLow.dff[EXCL]",
+  "clump44:Wheels.dff[EXCL]",
+  "WorldBsp:graphics.bsp"
+ ],
+ "Neustein/AdvantageSmall": [],
+ "Neustein/TreeSprite": [],
+ "Neustein/post": [
+  "RWP0:Post_1.dff"
+ ],
+ "Neustein/skyCylTop": [],
+ "Roundabout/Camstand": [
+  "clump19:Frame_H.dff[EXCL][PAIR]",
+  "WorldBsp:graph.bsp"
+ ],
+ "Roundabout/Sign02": [
+  "RWP4:Sign02.dff",
+  "RWP23:Sign02.dff"
+ ],
+ "Roundabout/Sky3": [],
+ "Roundabout/Sky4": [],
+ "Roundabout/Trucktyre": [
+  "RWP5:Trucktyre.dff"
+ ],
+ "Roundabout/barrel_shad": [],
+ "Roundabout/comp2": [
+  "clump1:crane.dff",
+  "clump2:railcar.dff[EXCL]",
+  "clump4:Gib.dff",
+  "clump15:RailTrack.dff",
+  "clump17:Pylon_H.dff[EXCL][PAIR]",
+  "WorldBsp:graph.bsp",
+  "RWP14:Bridge.dff"
+ ],
+ "Roundabout/crane_shad": [],
+ "Roundabout/depthcharge": [],
+ "Roundabout/girders": [
+  "clump1:crane.dff",
+  "clump5:Girders.dff[EXCL]",
+  "clump11:Girders02.dff[EXCL]",
+  "clump18:Pylon_L.dff[EXCL]",
+  "clump20:Frame_L.dff[EXCL]"
+ ],
+ "Roundabout/gravel2": [
+  "clump2:railcar.dff[EXCL]",
+  "WorldBsp:graph.bsp"
+ ],
+ "Roundabout/interactiveHut": [
+  "clump10:Hut01.dff[EXCL]",
+  "WorldBsp:graph.bsp",
+  "RWP7:Hut01.dff",
+  "RWP9:Wall01.dff",
+  "RWP10:Wall02.dff",
+  "RWP11:Wall03.dff",
+  "RWP12:Wall04.dff"
+ ],
+ "Roundabout/machinegun": [],
+ "Roundabout/rustycable": [
+  "clump1:crane.dff",
+  "clump4:Gib.dff",
+  "clump8:Handrail.dff[EXCL]",
+  "clump9:Hrail.dff[EXCL]"
+ ],
+ "Sands/camstand": [
+  "clump7:Jump.dff[EXCL]",
+  "clump10:Debris.dff[EXCL]",
+  "clump18:Bridgehafbroke.dff[EXCL]",
+  "clump19:BridgeBroke.dff[EXCL]",
+  "WorldBsp:Graphics.bsp"
+ ],
+ "Sands/concrete3": [
+  "clump4:Road.dff",
+  "clump10:Debris.dff[EXCL]",
+  "clump18:Bridgehafbroke.dff[EXCL]",
+  "clump19:BridgeBroke.dff[EXCL]",
+  "clump20:BridgeWhole.dff[EXCL]",
+  "WorldBsp:Graphics.bsp"
+ ],
+ "Sands/roadnew": [
+  "clump4:Road.dff",
+  "clump10:Debris.dff[EXCL]",
+  "clump18:Bridgehafbroke.dff[EXCL]",
+  "clump19:BridgeBroke.dff[EXCL]",
+  "clump20:BridgeWhole.dff[EXCL]",
+  "WorldBsp:Graphics.bsp"
+ ],
+ "Sands/shotgun": [],
+ "Sands/wet_watercol00": [
+  "clump1:Water.dff[EXCL]",
+  "WorldBsp:Graphics.bsp"
+ ],
+ "Storm/water": [
+  "clump0:Water.dff[EXCL]"
+ ],
+ "SuperG/Ice": [
+  "WorldBsp:graphics.bsp"
+ ],
+ "SuperG/IceRoad1": [
+  "WorldBsp:graphics.bsp"
+ ],
+ "SuperG/IceRoad2": [
+  "WorldBsp:graphics.bsp"
+ ],
+ "SuperG/machinegun": [],
+ "Warzone/Glass": [],
+ "Warzone/RWObjShad": [],
+ "Warzone/crater": [
+  "clump17:Chunk.dff[EXCL]",
+  "WorldBsp:Graphics.bsp"
+ ],
+ "Warzone/fence": [
+  "clump19:Fence_1.dff[EXCL]",
+  "clump22:Fence_2.dff[EXCL]"
+ ],
+ "Warzone/flames3": [],
+ "Warzone/girders": [
+  "clump21:Pylon_L.dff[EXCL]",
+  "WorldBsp:Graphics.bsp"
+ ],
+ "Warzone/interactiveHut": [
+  "WorldBsp:Graphics.bsp",
+  "RWP5:Hut01.dff",
+  "RWP6:Hut01.dff",
+  "RWP7:Hut01.dff",
+  "RWP8:Wall01.dff",
+  "RWP9:Wall02.dff",
+  "RWP10:Wall03.dff",
+  "RWP11:Wall04.dff",
+  "RWP12:Wall01.dff",
+  "RWP13:Wall02.dff",
+  "RWP14:Wall03.dff",
+  "RWP15:Wall04.dff",
+  "RWP16:Wall01.dff",
+  "RWP17:Wall02.dff",
+  "RWP18:Wall03.dff",
+  "RWP19:Wall04.dff"
+ ],
+ "Warzone/machinegun": [],
+ "Warzone/office-block_plain": [
+  "clump20:Pylon_H.dff[EXCL][PAIR]",
+  "WorldBsp:Graphics.bsp"
+ ],
+ "Warzone/road": [
+  "clump3:OakTrunk.dff[EXCL]",
+  "clump10:Crater_2.dff[EXCL]",
+  "clump12:Crater_4.dff[EXCL]",
+  "clump13:Crater_5.dff[EXCL]",
+  "clump16:Crater_8.dff[EXCL]",
+  "WorldBsp:Graphics.bsp"
+ ],
+ "Warzone/trunk": [
+  "clump2:CrossTree.dff[EXCL]"
+ ],
+ "Warzone/wfall": []
+}

@@ -1,0 +1,11 @@
+=== stand exe=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\r10\mashedmod\build\mashed_re.exe track=Warzone trace=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\r10\verify\r10_20261016\bt\11_Warzone\trace.csv shots=632,672,707 basis=True cars=True knobs=[]
+    pid=20856
+    exit=0
+    stand_row_00632.bmp 921654
+    stand_row_00632.draws.json 64458
+    stand_row_00672.bmp 921654
+    stand_row_00672.draws.json 64192
+    stand_row_00707.bmp 921654
+    stand_row_00707.draws.json 53718
+
+--stderr--

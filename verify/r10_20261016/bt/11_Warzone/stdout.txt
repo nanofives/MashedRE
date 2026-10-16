@@ -1,0 +1,508 @@
+	Using video mode 1 : 640x480
+At 10 bytes per pixel (16bit Z + 2*32bit FB) there is 4194304 - 3686400 = 1122304 bytes of video memory free
+Replay buffer will be 150076 bytes in size
+RtFSManagerRegister successful
+numpermwaves 43
+numpermvirtualvoices 139
+Waiting for boot status
+Waiting for boot status
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+!!!!!!!!!!!!!!!!!!!! Initialize CALLED !!!!!!!!!!!!!!!!!!!!!
+making box
+0 - type=1
+0 - boxdimensions=4.900000,2.045000,14.150000
+0 - mass=200.000000
+0 - COMoffset=0.000000,0.000000,0.000000
+0 - bouncefriction=0.000000
+0 - slidefriction=1.000000
+0 - fatness=0.100000
+0 - MTSname=Tower.mts
+0 - dffname=Tower.dff
+0 - number=1
+0 - matnum=0
+making box
+1 - type=1
+1 - boxdimensions=39.900002,0.900000,39.900002
+1 - mass=200.000000
+1 - COMoffset=0.000000,0.000000,0.000000
+1 - bouncefriction=0.000000
+1 - slidefriction=1.000000
+1 - fatness=0.100000
+1 - MTSname=Deck.mts
+1 - dffname=Deck.dff
+1 - number=1
+1 - matnum=1
+making box
+2 - type=1
+2 - boxdimensions=0.710000,1.540000,0.140000
+2 - mass=200.000000
+2 - COMoffset=0.000000,0.000000,0.000000
+2 - bouncefriction=0.000000
+2 - slidefriction=1.000000
+2 - fatness=0.050000
+2 - MTSname=Hstone.mts
+2 - dffname=Hstone.dff
+2 - number=7
+2 - matnum=2
+making box
+3 - type=1
+3 - boxdimensions=0.150000,1.350000,0.710000
+3 - mass=200.000000
+3 - COMoffset=0.000000,0.000000,0.000000
+3 - bouncefriction=0.000000
+3 - slidefriction=1.000000
+3 - fatness=0.050000
+3 - MTSname=Cross.mts
+3 - dffname=Cross.dff
+3 - number=7
+3 - matnum=9
+4 - number=6
+4 - matnum=16
+making box
+5 - type=1
+5 - boxdimensions=4.270000,3.360000,6.140000
+5 - mass=200.000000
+5 - COMoffset=0.000000,0.000000,0.000000
+5 - bouncefriction=0.000000
+5 - slidefriction=1.000000
+5 - fatness=0.100000
+5 - MTSname=Hut01_A.mts
+5 - dffname=Hut01.dff
+5 - number=1
+5 - matnum=22
+making box
+6 - type=1
+6 - boxdimensions=4.270000,3.360000,6.140000
+6 - mass=200.000000
+6 - COMoffset=0.000000,0.000000,0.000000
+6 - bouncefriction=0.000000
+6 - slidefriction=1.000000
+6 - fatness=0.100000
+6 - MTSname=Hut01_B.mts
+6 - dffname=Hut01.dff
+6 - number=1
+6 - matnum=23
+making box
+7 - type=1
+7 - boxdimensions=4.270000,3.360000,6.140000
+7 - mass=200.000000
+7 - COMoffset=0.000000,0.000000,0.000000
+7 - bouncefriction=0.000000
+7 - slidefriction=1.000000
+7 - fatness=0.100000
+7 - MTSname=Hut01_C.mts
+7 - dffname=Hut01.dff
+7 - number=1
+7 - matnum=24
+making box
+8 - type=1
+8 - boxdimensions=4.310000,2.750000,0.050000
+8 - mass=200.000000
+8 - COMoffset=0.000000,0.000000,0.000000
+8 - bouncefriction=0.000000
+8 - slidefriction=1.000000
+8 - fatness=0.050000
+8 - MTSname=Wall01_A.mts
+8 - dffname=Wall01.dff
+8 - number=1
+8 - matnum=25
+making box
+9 - type=1
+9 - boxdimensions=6.190000,2.750000,0.050000
+9 - mass=200.000000
+9 - COMoffset=0.000000,0.000000,0.000000
+9 - bouncefriction=0.000000
+9 - slidefriction=1.000000
+9 - fatness=0.050000
+9 - MTSname=Wall02_A.mts
+9 - dffname=Wall02.dff
+9 - number=1
+9 - matnum=26
+making box
+10 - type=1
+10 - boxdimensions=4.480000,2.750000,0.050000
+10 - mass=200.000000
+10 - COMoffset=0.000000,0.000000,0.000000
+10 - bouncefriction=0.000000
+10 - slidefriction=1.000000
+10 - fatness=0.000000
+10 - MTSname=Wall03_A.mts
+10 - dffname=Wall03.dff
+10 - number=1
+10 - matnum=27
+making box
+11 - type=1
+11 - boxdimensions=2.100000,2.350000,0.050000
+11 - mass=200.000000
+11 - COMoffset=0.000000,0.000000,0.000000
+11 - bouncefriction=0.000000
+11 - slidefriction=1.000000
+11 - fatness=0.050000
+11 - MTSname=Wall04_A.mts
+11 - dffname=Wall04.dff
+11 - number=1
+11 - matnum=28
+making box
+12 - type=1
+12 - boxdimensions=4.310000,2.750000,0.050000
+12 - mass=200.000000
+12 - COMoffset=0.000000,0.000000,0.000000
+12 - bouncefriction=0.000000
+12 - slidefriction=1.000000
+12 - fatness=0.050000
+12 - MTSname=Wall01_B.mts
+12 - dffname=Wall01.dff
+12 - number=1
+12 - matnum=29
+making box
+13 - type=1
+13 - boxdimensions=6.190000,2.750000,0.050000
+13 - mass=200.000000
+13 - COMoffset=0.000000,0.000000,0.000000
+13 - bouncefriction=0.000000
+13 - slidefriction=1.000000
+13 - fatness=0.050000
+13 - MTSname=Wall02_B.mts
+13 - dffname=Wall02.dff
+13 - number=1
+13 - matnum=30
+making box
+14 - type=1
+14 - boxdimensions=4.480000,2.750000,0.050000
+14 - mass=200.000000
+14 - COMoffset=0.000000,0.000000,0.000000
+14 - bouncefriction=0.000000
+14 - slidefriction=1.000000
+14 - fatness=0.050000
+14 - MTSname=Wall03_B.mts
+14 - dffname=Wall03.dff
+14 - number=1
+14 - matnum=31
+making box
+15 - type=1
+15 - boxdimensions=2.100000,2.350000,0.050000
+15 - mass=200.000000
+15 - COMoffset=0.000000,0.000000,0.000000
+15 - bouncefriction=0.000000
+15 - slidefriction=1.000000
+15 - fatness=0.050000
+15 - MTSname=Wall04_B.mts
+15 - dffname=Wall04.dff
+15 - number=1
+15 - matnum=32
+making box
+16 - type=1
+16 - boxdimensions=4.310000,2.750000,0.050000
+16 - mass=200.000000
+16 - COMoffset=0.000000,0.000000,0.000000
+16 - bouncefriction=0.000000
+16 - slidefriction=1.000000
+16 - fatness=0.050000
+16 - MTSname=Wall01_C.mts
+16 - dffname=Wall01.dff
+16 - number=1
+16 - matnum=33
+making box
+17 - type=1
+17 - boxdimensions=6.190000,2.750000,0.050000
+17 - mass=200.000000
+17 - COMoffset=0.000000,0.000000,0.000000
+17 - bouncefriction=0.000000
+17 - slidefriction=1.000000
+17 - fatness=0.050000
+17 - MTSname=Wall02_C.mts
+17 - dffname=Wall02.dff
+17 - number=1
+17 - matnum=34
+making box
+18 - type=1
+18 - boxdimensions=4.480000,2.750000,0.050000
+18 - mass=200.000000
+18 - COMoffset=0.000000,0.000000,0.000000
+18 - bouncefriction=0.000000
+18 - slidefriction=1.000000
+18 - fatness=0.050000
+18 - MTSname=Wall03_C.mts
+18 - dffname=Wall03.dff
+18 - number=1
+18 - matnum=35
+making box
+19 - type=1
+19 - boxdimensions=2.100000,2.350000,0.050000
+19 - mass=200.000000
+19 - COMoffset=0.000000,0.000000,0.000000
+19 - bouncefriction=0.000000
+19 - slidefriction=1.000000
+19 - fatness=0.050000
+19 - MTSname=Wall04_C.mts
+19 - dffname=Wall04.dff
+19 - number=1
+19 - matnum=36
+making cylinder
+20 - type=2
+20 - cylinderdimensions=1.020000,1.530000
+20 - mass=200.000000
+20 - COMoffset=0.000000,0.000000,0.000000
+20 - bouncefriction=0.500000
+20 - slidefriction=0.500000
+20 - fatness=0.010000
+20 - MTSname=RBarrel.mts
+20 - dffname=RBarrel.dff
+20 - number=6
+20 - matnum=37
+making box
+21 - type=1
+21 - boxdimensions=0.580000,1.850000,0.580000
+21 - mass=200.000000
+21 - COMoffset=0.000000,0.000000,0.000000
+21 - bouncefriction=0.000000
+21 - slidefriction=1.000000
+21 - fatness=0.050000
+21 - MTSname=Post_A.mts
+21 - dffname=Post_A.dff
+21 - number=4
+21 - matnum=43
+numscenePobjects=47
+loading course
+loading courseA
+loading courseA toastaudio\pc\audio\pcdics\warzone.rws
+loading courseB
+loading courseC
+loading courseD
+loading courseDA
+loading courseDB
+loading courseE
+loading courseF
+loading courseG
+Created 94 trees
+we have reset the pontoon
+Reset with matrix
+pos    (177.810181, -1.174666, 60.769089)
+at     (-0.829037, 0.000000, 0.559193)
+up     (0.000000, 1.000000, 0.000000)
+right  (0.559193, 0.000000, 0.829038)
+
+start of race
+\toast\Code\src\AppCode\AUDIO\soundengine.c: CreateStream
+CreateStream 0 Done
+CreateStream 1 Done
+CreateStream 2 Done
+CreateStream 3 Done
+\toast\Code\src\AppCode\AUDIO\soundengine.c: CreateStream Done
+put precisepos 0,0.000000
+put precisepos 1,0.000000
+put precisepos 2,0.000000
+put precisepos 3,0.000000
+we have reset the pontoon
+Reset with matrix
+pos    (177.810181, -1.174666, 60.769089)
+at     (-0.829037, 0.000000, 0.559193)
+up     (0.000000, 1.000000, 0.000000)
+right  (0.559193, 0.000000, 0.829038)
+
+put precisepos 0,0.000000
+put precisepos 1,0.000000
+put precisepos 2spawned pid=24784
+booting...
+timeout: d3 depth=2 phase=3
+  [nav] target depth 3: depth=2 phase=3
+timeout: d3 depth=2 phase=3
+  [nav] target depth 3: depth=2 phase=3
+track index written: 11
+in race? phase=0
+trace stalled at 734 rows (director fires 734 -> 734: no longer called)
+globals: {'t_7f1030': 473921441, 'jitter_7f0fc8': 0, 'blend_7f100c': 0.01666666567325592, 'mode_7f0fd0': 0, 'phase_63ba8c': 7, 'nodecount': 136, 'elim_898980': 10}
+nodes captured: 136 of 136
+override entries (first 64): (15.0,270.0,-1.0), (15.0,270.0,-1.0), (15.0,270.0,-1.0), (15.0,270.0,-1.0), (15.0,270.0,-1.0), (15.0,270.0,-1.0), (15.0,240.0,-1.0), (15.0,210.0,-1.0)
+trace rows: 734; globals at end: {'t_7f1030': 473921441, 'jitter_7f0fc8': 0, 'blend_7f100c': 0.01666666567325592, 'mode_7f0fd0': 0, 'phase_63ba8c': 7, 'nodecount': 136, 'elim_898980': 10}
+track_type [33]   overhead [0]   mode [0]
+capture self-check: OK (car Y plausible, selector in {0,1}, velocity gate all zero)
+shot rows requested: abs [] race-relative [30, 70, 105]; fired at [632, 672, 707]
+shot row 632 (ba8c=6): OK C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\r10\verify\r10_20261016\bt\11_Warzone\orig_row_00632.bmp
+shot row 672 (ba8c=6): OK C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\r10\verify\r10_20261016\bt\11_Warzone\orig_row_00672.bmp
+shot row 707 (ba8c=6): OK C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\r10\verify\r10_20261016\bt\11_Warzone\orig_row_00707.bmp
+[d1r1] track piz opened: ['TOASTART\\TRACKS\\WARZONE.PIZ']  (forced index 11)  textures named: 263
+[d1r1] drawrec row 632: 733 events, 728 draws -> C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\r10\verify\r10_20261016\bt\11_Warzone\orig_row_00632.draws.json
+[d1r1] drawrec row 672: 731 events, 726 draws -> C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\r10\verify\r10_20261016\bt\11_Warzone\orig_row_00672.draws.json
+[d1r1] drawrec row 707: 677 events, 672 draws -> C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\r10\verify\r10_20261016\bt\11_Warzone\orig_row_00707.draws.json
+done -> C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\r10\verify\r10_20261016\bt\11_Warzone\trace.csv, C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\r10\verify\r10_20261016\bt\11_Warzone\static.json

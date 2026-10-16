@@ -1,0 +1,102 @@
+{
+ "01_Egypt": {
+  "ok": true,
+  "attempts": 1,
+  "shots": [
+   694,
+   734,
+   769
+  ],
+  "frames": 1119
+ },
+ "02_Neustein": {
+  "ok": true,
+  "attempts": 1,
+  "shots": [
+   750,
+   790,
+   825
+  ],
+  "frames": 1175
+ },
+ "04_Highway": {
+  "ok": true,
+  "attempts": 1,
+  "shots": [
+   843,
+   883,
+   918
+  ],
+  "frames": 1268
+ },
+ "05_Sands": {
+  "ok": true,
+  "attempts": 1,
+  "shots": [
+   1099,
+   1139,
+   1174
+  ],
+  "frames": 1524
+ },
+ "06_SuperG": {
+  "ok": true,
+  "attempts": 1,
+  "shots": [
+   817,
+   857,
+   892
+  ],
+  "frames": 1242
+ },
+ "07_Roundabout": {
+  "ok": true,
+  "attempts": 1,
+  "shots": [
+   1108,
+   1148,
+   1183
+  ],
+  "frames": 1533
+ },
+ "08_Storm": {
+  "ok": true,
+  "attempts": 1,
+  "shots": [
+   966,
+   1006,
+   1041
+  ],
+  "frames": 1391
+ },
+ "09_Forest": {
+  "ok": true,
+  "attempts": 1,
+  "shots": [
+   799,
+   839,
+   874
+  ],
+  "frames": 1224
+ },
+ "10_Dump": {
+  "ok": true,
+  "attempts": 1,
+  "shots": [
+   717,
+   757,
+   792
+  ],
+  "frames": 1142
+ },
+ "11_Warzone": {
+  "ok": true,
+  "attempts": 1,
+  "shots": [
+   632,
+   672,
+   707
+  ],
+  "frames": 1057
+ }
+}

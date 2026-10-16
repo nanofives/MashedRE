@@ -1,0 +1,1 @@
+^(OakTreeSprite|OakTreeSprite3|wet_watercol00|water\d+|bark|Grass)$

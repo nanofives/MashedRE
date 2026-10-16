@@ -1,0 +1,116 @@
+RED                    EXTRA    -                              frames= 1 tracks=Egypt rows=1 draws=1 tri=6 off=0
+      B-only 1 draws 6 tri (0 offscreen); first k82 pt4 tri=6 tex=- tex1=- bb=[10.79,-0.25,1.68,11.99,0.01,3.00] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+RED                    EXTRA    Camstand                       frames= 2 tracks=Roundabout rows=2 draws=18 tri=3528 off=7
+      B-only 9 draws 1764 tri (0 offscreen); first k82 pt4 tri=196 tex=Camstand tex1=- bb=[-22.37,-0.46,6.82,-21.75,0.99,7.43] src=rw Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+RED                    EXTRA    RWObjShad                      frames= 1 tracks=Warzone rows=1 draws=1 tri=10 off=0
+      B-only 1 draws 10 tri (0 offscreen); first k82 pt4 tri=10 tex=RWObjShad tex1=- bb=[40.63,-0.41,0.14,43.40,-0.14,1.95] src=rw Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+RED                    EXTRA    Sign02                         frames= 1 tracks=Roundabout rows=1 draws=3 tri=144 off=0
+      B-only 3 draws 144 tri (0 offscreen); first k82 pt4 tri=48 tex=Sign02 tex1=- bb=[-12.81,-0.46,29.88,-12.36,-0.13,30.66] src=rw Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+RED                    EXTRA    camstand                       frames= 2 tracks=Sands rows=2 draws=8 tri=288 off=6
+      B-only 4 draws 144 tri (3 offscreen); first k82 pt4 tri=36 tex=camstand tex1=- bb=[-15.44,4.53,56.77,-14.56,4.96,58.08] src=rw Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+RED                    EXTRA    comp2                          frames= 1 tracks=Roundabout rows=1 draws=3 tri=1044 off=0
+      B-only 3 draws 1044 tri (0 offscreen); first k82 pt4 tri=288 tex=comp2 tex1=- bb=[-27.51,-0.23,22.66,-25.18,6.01,24.23] src=rw Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+RED                    EXTRA    concrete3                      frames= 2 tracks=Sands rows=2 draws=6 tri=272 off=4
+      B-only 3 draws 136 tri (2 offscreen); first k82 pt4 tri=52 tex=concrete3 tex1=- bb=[-15.08,4.53,55.78,-11.30,4.93,58.77] src=rw Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+RED                    EXTRA    crater                         frames= 2 tracks=Warzone rows=2 draws=2 tri=16 off=0
+      B-only 1 draws 8 tri (0 offscreen); first k82 pt4 tri=8 tex=crater tex1=- bb=[-0.07,-0.20,-0.07,0.09,0.14,0.12] src=rw Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+RED                    EXTRA    interactiveHut                 frames= 2 tracks=Roundabout,Warzone rows=2 draws=9 tri=410 off=0
+      B-only 5 draws 282 tri (0 offscreen); first k82 pt4 tri=28 tex=interactiveHut tex1=- bb=[-11.77,-0.42,31.42,-10.90,0.14,31.44] src=rw Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+RED                    EXTRA    office-block_plain             frames= 2 tracks=Warzone rows=2 draws=4 tri=1152 off=0
+      B-only 2 draws 576 tri (0 offscreen); first k82 pt4 tri=288 tex=office-block_plain tex1=- bb=[-0.16,0.48,12.42,1.76,6.72,14.91] src=rw Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+RED                    EXTRA    post                           frames= 1 tracks=Neustein rows=1 draws=5 tri=60 off=0
+      B-only 5 draws 60 tri (0 offscreen); first k82 pt4 tri=12 tex=post tex1=- bb=[41.67,8.24,-14.06,41.71,8.85,-14.02] src=rw Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+RED                    EXTRA    roadnew                        frames= 2 tracks=Sands rows=2 draws=6 tri=308 off=4
+      B-only 3 draws 154 tri (2 offscreen); first k82 pt4 tri=52 tex=roadnew tex1=shadow bb=[-15.08,4.53,55.78,-11.30,4.93,58.77] src=rw Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+RED                    EXTRA    rustycable                     frames= 1 tracks=Roundabout rows=1 draws=1 tri=16 off=0
+      B-only 1 draws 16 tri (0 offscreen); first k82 pt4 tri=16 tex=rustycable tex1=- bb=[-2.75,4.32,5.38,-2.63,8.32,5.50] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+RED                    EXTRA    wet_watercol00                 frames= 6 tracks=Forest,Sands rows=6 draws=54 tri=2172 off=29
+      B-only 17 draws 140 tri (8 offscreen); first k82 pt4 tri=2 tex=wet_watercol00 tex1=- bb=[-32.39,-1.23,-22.53,-4.45,-1.23,20.90] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+RED                    MISSING  #64x64:21                      frames= 9 tracks=Dump,Egypt,Forest,Highway,Neustein,Roundabout,Sands,SuperG,Warzone rows=9 draws=27 tri=155 off=0
+      A-only 3 draws 12 tri (0 offscreen); first k81 pt4 tri=6 tex=#64x64:21 tex1=- bb=[-16.00,-0.11,15.02,-8.00,0.13,23.00] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+RED                    MISSING  AdvantageSmall                 frames= 1 tracks=Neustein rows=1 draws=1 tri=624 off=0
+      A-only 1 draws 624 tri (0 offscreen); first k82 pt5 tri=624 tex=AdvantageSmall tex1=- bb=[35.65,7.05,14.42,36.55,7.42,15.38] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+RED                    MISSING  Bush2                          frames= 3 tracks=Forest rows=3 draws=12 tri=296 off=3
+      A-only 5 draws 120 tri (1 offscreen); first k82 pt5 tri=10 tex=Bush2 tex1=- bb=[-36.40,-0.65,-80.69,-34.82,0.03,-79.51] src=d3d Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+RED                    MISSING  Glass                          frames= 1 tracks=Warzone rows=1 draws=2 tri=16 off=0
+      A-only 2 draws 16 tri (0 offscreen); first k82 pt5 tri=10 tex=Glass tex1=- bb=[37.94,-0.13,4.77,38.36,-0.01,5.12] src=d3d Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+RED                    MISSING  OakTreeSprite3                 frames= 3 tracks=Forest rows=3 draws=15 tri=2158 off=2
+      A-only 6 draws 864 tri (0 offscreen); first k82 pt5 tri=175 tex=OakTreeSprite3 tex1=- bb=[-25.15,-1.67,-83.00,-11.41,2.11,-76.88] src=d3d Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+RED                    MISSING  Sky3                           frames= 3 tracks=Roundabout rows=3 draws=3 tri=90 off=0
+      A-only 1 draws 30 tri (0 offscreen); first k82 pt5 tri=30 tex=Sky3 tex1=- bb=[-17.66,-3.70,-24.97,-9.94,5.22,-20.76] src=d3d Z=0 ZW=0 ZF=0 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+RED                    MISSING  Sky4                           frames= 3 tracks=Roundabout rows=3 draws=3 tri=180 off=0
+      A-only 1 draws 60 tri (0 offscreen); first k82 pt5 tri=60 tex=Sky4 tex1=- bb=[-18.14,-3.70,-29.43,-9.36,5.22,-22.68] src=d3d Z=0 ZW=0 ZF=0 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+RED                    MISSING  Tree'sBack                     frames= 3 tracks=Forest rows=3 draws=7 tri=532 off=0
+      A-only 3 draws 196 tri (0 offscreen); first k82 pt5 tri=24 tex=Tree'sBack tex1=- bb=[-34.78,-3.86,-89.89,-25.04,-0.46,-84.30] src=d3d Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+RED                    MISSING  TreeSprite                     frames= 3 tracks=Neustein rows=3 draws=3 tri=2214 off=0
+      A-only 1 draws 738 tri (0 offscreen); first k82 pt4 tri=738 tex=TreeSprite tex1=- bb=[-76.55,1.67,0.36,61.29,17.42,75.42] src=d3d Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+RED                    MISSING  ads                            frames= 3 tracks=Forest rows=3 draws=3 tri=54 off=3
+      A-only 1 draws 18 tri (1 offscreen); first k82 pt5 tri=18 tex=ads tex1=- bb=[-47.62,1.11,-13.88,-47.37,1.25,-13.66] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=1
+RED                    MISSING  barrel_shad                    frames= 3 tracks=Roundabout rows=3 draws=3 tri=6 off=3
+      A-only 1 draws 2 tri (1 offscreen); first k81 pt5 tri=2 tex=barrel_shad tex1=- bb=[-2.86,3.52,-4.57,-2.20,3.52,-3.86] src=d3d Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+RED                    MISSING  comp2                          frames= 2 tracks=Roundabout rows=2 draws=3 tri=2148 off=0
+      A-only 2 draws 1432 tri (0 offscreen); first k82 pt5 tri=716 tex=comp2 tex1=- bb=[-18.17,-0.44,-18.12,-16.75,0.37,-16.26] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+RED                    MISSING  crane_shad                     frames= 3 tracks=Roundabout rows=3 draws=3 tri=6 off=2
+      A-only 1 draws 2 tri (0 offscreen); first k81 pt5 tri=2 tex=crane_shad tex1=- bb=[-3.93,3.51,-4.22,-2.15,3.51,-1.41] src=d3d Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+RED                    MISSING  depthcharge                    frames= 3 tracks=Roundabout rows=3 draws=3 tri=36 off=2
+      A-only 1 draws 12 tri (0 offscreen); first k82 pt5 tri=12 tex=depthcharge tex1=- bb=[-3.92,3.61,-2.92,-3.48,3.99,-2.48] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+RED                    MISSING  fence                          frames= 3 tracks=Warzone rows=3 draws=42 tri=168 off=42
+      A-only 14 draws 56 tri (14 offscreen); first k82 pt5 tri=4 tex=fence tex1=- bb=[106.04,-0.35,81.35,106.93,0.43,82.66] src=d3d Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+RED                    MISSING  flames3                        frames= 2 tracks=Warzone rows=2 draws=8 tri=48 off=8
+      A-only 4 draws 16 tri (4 offscreen); first k82 pt4 tri=4 tex=flames3 tex1=- bb=[127.02,0.02,0.17,127.85,3.23,3.59] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=2
+RED                    MISSING  girders                        frames= 6 tracks=Roundabout,Warzone rows=6 draws=30 tri=264 off=18
+      A-only 9 draws 76 tri (0 offscreen); first k82 pt5 tri=12 tex=girders tex1=- bb=[-25.72,-0.53,42.67,-23.36,5.71,44.25] src=d3d Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+RED                    MISSING  gravel2                        frames= 2 tracks=Roundabout rows=2 draws=3 tri=36 off=0
+      A-only 2 draws 24 tri (0 offscreen); first k82 pt5 tri=12 tex=gravel2 tex1=- bb=[-18.02,0.00,-17.89,-16.95,0.17,-16.56] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+RED                    MISSING  machinegun                     frames= 6 tracks=Roundabout,SuperG,Warzone rows=6 draws=6 tri=72 off=5
+      A-only 1 draws 12 tri (1 offscreen); first k82 pt5 tri=12 tex=machinegun tex1=- bb=[5.31,0.11,62.09,5.73,0.49,62.51] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+RED                    MISSING  midtree                        frames= 3 tracks=Forest rows=3 draws=7 tri=56 off=4
+      A-only 3 draws 22 tri (1 offscreen); first k82 pt5 tri=8 tex=midtree tex1=- bb=[-39.13,-2.20,-87.36,-26.36,1.39,-80.49] src=d3d Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+RED                    MISSING  road                           frames= 3 tracks=Warzone rows=3 draws=279 tri=3627 off=279
+      A-only 93 draws 1209 tri (93 offscreen); first k82 pt5 tri=13 tex=road tex1=- bb=[134.73,2.97,9.55,134.88,4.07,9.71] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+RED                    MISSING  shotgun                        frames= 1 tracks=Sands rows=1 draws=1 tri=12 off=1
+      A-only 1 draws 12 tri (1 offscreen); first k82 pt5 tri=12 tex=shotgun tex1=- bb=[-24.70,0.11,35.01,-24.26,0.49,35.45] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+RED                    MISSING  skyCylTop                      frames= 3 tracks=Neustein rows=3 draws=3 tri=36 off=0
+      A-only 1 draws 12 tri (0 offscreen); first k82 pt5 tri=12 tex=skyCylTop tex1=- bb=[33.44,8.55,15.47,36.25,8.88,18.28] src=d3d Z=0 ZW=0 ZF=0 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+RED                    MISSING  traffic3                       frames= 3 tracks=Highway rows=3 draws=28 tri=1899 off=3
+      A-only 7 draws 448 tri (2 offscreen); first k82 pt5 tri=64 tex=traffic3 tex1=- bb=[0.74,-0.00,122.88,1.26,0.24,123.13] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+RED                    MISSING  train                          frames= 3 tracks=Dump rows=3 draws=3 tri=6336 off=1
+      A-only 1 draws 2112 tri (0 offscreen); first k82 pt5 tri=2112 tex=train tex1=- bb=[-4.11,2.29,49.26,5.75,3.11,50.06] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+RED                    MISSING  trunk                          frames= 3 tracks=Warzone rows=3 draws=87 tri=1044 off=87
+      A-only 29 draws 348 tri (29 offscreen); first k82 pt5 tri=12 tex=trunk tex1=- bb=[97.54,0.80,78.85,98.85,3.06,80.21] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+RED                    MISSING  wfall                          frames= 3 tracks=Warzone rows=3 draws=3 tri=228 off=0
+      A-only 1 draws 60 tri (0 offscreen); first k82 pt4 tri=60 tex=wfall tex1=- bb=[39.71,-0.64,4.63,43.26,0.25,8.24] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+RED                    MOVED    -                              frames= 3 tracks=Neustein rows=3 draws=3 tri=0 off=0
+      1 draws, same texture and triangle count, AABB moved by up to 9.28; first A [7.70,2.67,9.23,7.77,5.13,9.32] B [-0.01,0.00,-0.05,0.06,2.46,0.04]
+RED                    MOVED    Advantage                      frames= 1 tracks=Dump rows=1 draws=2 tri=0 off=0
+      2 draws, same texture and triangle count, AABB moved by up to 0.0123; first A [-1.68,0.00,36.75,-1.56,0.18,36.94] B [-1.67,0.00,36.75,-1.57,0.18,36.94]
+RED                    MOVED    Tree'sBack                     frames= 3 tracks=Forest rows=3 draws=3 tri=0 off=0
+      1 draws, same texture and triangle count, AABB moved by up to 41.6; first A [-30.80,-0.60,-41.59,-27.01,2.58,-33.66] B [-4.26,-0.01,0.00,4.26,2.61,0.00]
+RED                    MOVED    Trucktyre                      frames= 2 tracks=Roundabout rows=2 draws=2 tri=0 off=0
+      1 draws, same texture and triangle count, AABB moved by up to 0.0115; first A [-12.62,-0.45,-21.06,-12.17,-0.31,-20.61] B [-12.63,-0.45,-21.06,-12.18,-0.31,-20.61]
+RED                    MOVED    comp2                          frames= 3 tracks=Roundabout rows=3 draws=4 tri=0 off=0
+      2 draws, same texture and triangle count, AABB moved by up to 15.8; first A [-16.05,-0.44,3.88,-15.48,0.37,5.85] B [-0.28,0.00,-0.99,0.28,0.80,0.99]
+RED                    MOVED    fence                          frames= 3 tracks=Warzone rows=3 draws=3 tri=0 off=0
+      1 draws, same texture and triangle count, AABB moved by up to 106; first A [105.29,-0.34,79.95,106.14,0.47,81.40] B [-0.07,-0.39,-0.75,0.08,0.39,0.75]
+RED                    MOVED    girders                        frames= 6 tracks=Roundabout,Warzone rows=6 draws=10 tri=0 off=0
+      3 draws, same texture and triangle count, AABB moved by up to 26.3; first A [-27.53,-0.23,22.66,-25.17,6.01,24.23] B [-1.18,-3.12,-0.79,1.18,3.12,0.79]
+RED                    MOVED    gravel2                        frames= 3 tracks=Roundabout rows=3 draws=3 tri=0 off=0
+      1 draws, same texture and triangle count, AABB moved by up to 15.8; first A [-16.01,0.00,4.13,-15.52,0.17,5.53] B [-0.25,0.44,-0.73,0.25,0.60,0.67]
+RED                    MOVED    midtree                        frames= 3 tracks=Forest rows=3 draws=3 tri=0 off=0
+      1 draws, same texture and triangle count, AABB moved by up to 83.1; first A [-14.95,-2.23,-83.11,-14.33,0.45,-81.50] B [-0.61,-0.01,0.00,0.61,2.61,0.00]
+RED                    MOVED    road                           frames= 3 tracks=Warzone rows=3 draws=3 tri=0 off=0
+      1 draws, same texture and triangle count, AABB moved by up to 59.7; first A [59.60,3.35,4.63,59.76,4.59,4.82] B [-0.08,0.00,-0.11,0.11,1.46,0.11]
+RED                    MOVED    rustycable                     frames= 1 tracks=Roundabout rows=1 draws=1 tri=0 off=0
+      1 draws, same texture and triangle count, AABB moved by up to 4.92; first A [-3.34,5.82,-4.57,-2.57,8.47,0.67] B [-2.79,5.82,0.34,-2.58,8.47,5.59]
+RED                    MOVED    traffic3                       frames= 3 tracks=Highway rows=3 draws=26 tri=0 off=0
+      7 draws, same texture and triangle count, AABB moved by up to 134; first A [-3.28,0.06,132.78,-2.72,0.94,135.39] B [-0.28,-0.41,-1.31,0.28,0.47,1.31]
+RED                    MOVED    trunk                          frames= 3 tracks=Warzone rows=3 draws=3 tri=0 off=0
+      1 draws, same texture and triangle count, AABB moved by up to 59.8; first A [59.10,-0.18,55.99,60.40,2.08,57.35] B [-0.71,-0.14,-0.72,0.59,2.11,0.64]
+RED                    TEX1     Ice                            frames= 3 tracks=SuperG rows=3 draws=3 tri=0 off=0
+      14 matched draws, stage-1 texture A #256x256:22 | B -
+RED                    TEX1     IceRoad1                       frames= 3 tracks=SuperG rows=3 draws=3 tri=0 off=0
+      7 matched draws, stage-1 texture A #256x256:22 | B -
+RED                    TEX1     IceRoad2                       frames= 3 tracks=SuperG rows=3 draws=3 tri=0 off=0
+      6 matched draws, stage-1 texture A #256x256:22 | B -
+RED                    TEX1     water                          frames= 3 tracks=Storm rows=3 draws=3 tri=0 off=0
+      1 matched draws, stage-1 texture A water2 | B -

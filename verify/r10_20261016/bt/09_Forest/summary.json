@@ -1,0 +1,11 @@
+{
+ "name": "Forest",
+ "rows": 910,
+ "racing_rows": 141,
+ "race_start": 769,
+ "shot_rows": [
+  799,
+  839,
+  874
+ ]
+}

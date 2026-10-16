@@ -1,0 +1,11 @@
+=== stand exe=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\r10\mashedmod\build\mashed_re.exe track=Forest trace=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\r10\verify\r10_20261016\bt\09_Forest\trace.csv shots=799,839,874 basis=True cars=True knobs=[]
+    pid=19360
+    exit=0
+    stand_row_00799.bmp 921654
+    stand_row_00799.draws.json 45735
+    stand_row_00839.bmp 921654
+    stand_row_00839.draws.json 42489
+    stand_row_00874.bmp 921654
+    stand_row_00874.draws.json 24699
+
+--stderr--

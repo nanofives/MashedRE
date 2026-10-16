@@ -1,0 +1,11 @@
+{
+ "name": "Storm",
+ "rows": 1092,
+ "racing_rows": 156,
+ "race_start": 936,
+ "shot_rows": [
+  966,
+  1006,
+  1041
+ ]
+}

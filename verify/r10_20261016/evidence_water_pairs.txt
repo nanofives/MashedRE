@@ -1,0 +1,7 @@
+05_Sands row 1084: A waterNN 17 draws 140 tri [-169.19,-1.23,-167.55,167.55,-1.23,169.19] | B wet_watercol00 17 draws 140 tri [-169.19,-1.23,-167.55,167.55,-1.23,169.19] | EQUAL
+05_Sands row 1124: A waterNN 17 draws 140 tri [-169.19,-1.23,-167.55,167.55,-1.23,169.19] | B wet_watercol00 17 draws 140 tri [-169.19,-1.23,-167.55,167.55,-1.23,169.19] | EQUAL
+05_Sands row 1159: A waterNN 17 draws 140 tri [-169.19,-1.23,-167.55,167.55,-1.23,169.19] | B wet_watercol00 17 draws 140 tri [-169.19,-1.23,-167.55,167.55,-1.23,169.19] | EQUAL
+09_Forest row 820: A waterNN 1 draws 584 tri [-46.11,-8.01,-105.26,25.34,-2.25,4.44] | B wet_watercol00 1 draws 584 tri [-46.11,-8.01,-105.26,25.34,-2.25,4.44] | EQUAL
+09_Forest row 860: A waterNN 1 draws 584 tri [-46.11,-8.01,-105.26,25.34,-2.25,4.44] | B wet_watercol00 1 draws 584 tri [-46.11,-8.01,-105.26,25.34,-2.25,4.44] | EQUAL
+09_Forest row 895: A waterNN 1 draws 584 tri [-46.11,-8.01,-105.26,25.34,-2.25,4.44] | B wet_watercol00 1 draws 584 tri [-46.11,-8.01,-105.26,25.34,-2.25,4.44] | EQUAL
+ALL EQUAL: True

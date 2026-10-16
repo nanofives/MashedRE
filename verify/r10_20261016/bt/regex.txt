@@ -1,0 +1,1 @@
+^(\#64x64:21|Advantage|AdvantageSmall|Bush2|Glass|Ice|IceRoad1|IceRoad2|OakTreeSprite3|Sky3|Sky4|Tree'sBack|TreeSprite|Trucktyre|ads|barrel_shad|comp2|crane_shad|depthcharge|fence|flames3|girders|gravel2|machinegun|midtree|road|rustycable|shotgun|skyCylTop|traffic3|train|trunk|water|wfall)$

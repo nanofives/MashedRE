@@ -36,6 +36,7 @@ def main() -> int:
     ap.add_argument("--attempts", type=int, default=3)
     ap.add_argument("--extra-frames", type=int, default=350)
     ap.add_argument("--out", default=str(HERE))
+    ap.add_argument("--cap", default=str(CAPFIX), help="capture root with <NN_Track>/trace.csv + summary.json")
     ap.add_argument("knobs", nargs="*")
     a = ap.parse_args()
     exe = str(Path(a.exe).resolve())
@@ -43,7 +44,7 @@ def main() -> int:
     status = {}
     for t in [int(x) for x in a.tracks.split(",")]:
         d, view = TRACKS[t]
-        cap = CAPFIX / d
+        cap = Path(a.cap).resolve() / d
         shots = json.loads((cap / "summary.json").read_text())["shot_rows"]
         sd = out_root / d / "stand"
         frames = max(shots) + a.extra_frames

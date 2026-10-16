@@ -1,0 +1,11 @@
+{
+ "name": "SuperG",
+ "rows": 1285,
+ "racing_rows": 498,
+ "race_start": 787,
+ "shot_rows": [
+  817,
+  857,
+  892
+ ]
+}

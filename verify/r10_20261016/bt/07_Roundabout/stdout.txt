@@ -1,0 +1,342 @@
+	Using video mode 1 : 640x480
+At 10 bytes per pixel (16bit Z + 2*32bit FB) there is 4194304 - 3686400 = 1122304 bytes of video memory free
+Replay buffer will be 150076 bytes in size
+RtFSManagerRegister successful
+numpermwaves 43
+numpermvirtualvoices 139
+Waiting for boot status
+Waiting for boot status
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+!!!!!!!!!!!!!!!!!!!! Initialize CALLED !!!!!!!!!!!!!!!!!!!!!
+0 - number=1
+0 - matnum=0
+1 - number=2
+1 - matnum=1
+making box
+2 - type=1
+2 - boxdimensions=1.400000,1.400000,1.400000
+2 - mass=0.500000
+2 - COMoffset=0.000000,0.000000,0.000000
+2 - bouncefriction=0.000000
+2 - slidefriction=1.000000
+2 - fatness=0.100000
+2 - MTSname=Crate01.mts
+2 - dffname=Crate01.dff
+2 - number=3
+2 - matnum=3
+making box
+3 - type=1
+3 - boxdimensions=2.010000,2.400000,0.060000
+3 - mass=0.500000
+3 - COMoffset=0.000000,0.000000,0.000000
+3 - bouncefriction=0.000000
+3 - slidefriction=1.000000
+3 - fatness=0.100000
+3 - MTSname=Sign01.mts
+3 - dffname=Sign01.dff
+3 - number=4
+3 - matnum=6
+making box
+4 - type=1
+4 - boxdimensions=4.275000,1.540000,0.210000
+4 - mass=0.500000
+4 - COMoffset=0.000000,0.000000,0.000000
+4 - bouncefriction=0.000000
+4 - slidefriction=1.000000
+4 - fatness=0.100000
+4 - MTSname=Sign02.mts
+4 - dffname=Sign02.dff
+4 - number=8
+4 - matnum=10
+making box
+5 - type=1
+5 - boxdimensions=2.020000,0.445000,2.020000
+5 - mass=0.500000
+5 - COMoffset=0.000000,0.000000,0.000000
+5 - bouncefriction=0.000000
+5 - slidefriction=1.000000
+5 - fatness=0.250000
+5 - MTSname=Trucktyre.mts
+5 - dffname=Trucktyre.dff
+5 - number=2
+5 - matnum=18
+making box
+7 - type=1
+7 - boxdimensions=4.270000,3.360000,6.140000
+7 - mass=0.500000
+7 - COMoffset=0.000000,0.000000,0.000000
+7 - bouncefriction=0.000000
+7 - slidefriction=1.000000
+7 - fatness=0.100000
+7 - MTSname=Hut01.mts
+7 - dffname=Hut01.dff
+7 - number=1
+7 - matnum=20
+making box
+9 - type=1
+9 - boxdimensions=4.310000,2.750000,0.050000
+9 - mass=0.500000
+9 - COMoffset=0.000000,0.000000,0.000000
+9 - bouncefriction=0.000000
+9 - slidefriction=1.000000
+9 - fatness=0.050000
+9 - MTSname=Wall01.mts
+9 - dffname=Wall01.dff
+9 - number=1
+9 - matnum=21
+making box
+10 - type=1
+10 - boxdimensions=6.190000,2.750000,0.050000
+10 - mass=0.500000
+10 - COMoffset=0.000000,0.000000,0.000000
+10 - bouncefriction=0.000000
+10 - slidefriction=1.000000
+10 - fatness=0.050000
+10 - MTSname=Wall02.mts
+10 - dffname=Wall02.dff
+10 - number=1
+10 - matnum=22
+making box
+11 - type=1
+11 - boxdimensions=4.480000,2.750000,0.050000
+11 - mass=0.500000
+11 - COMoffset=0.000000,0.000000,0.000000
+11 - bouncefriction=0.000000
+11 - slidefriction=1.000000
+11 - fatness=0.050000
+11 - MTSname=Wall03.mts
+11 - dffname=Wall03.dff
+11 - number=1
+11 - matnum=23
+making box
+12 - type=1
+12 - boxdimensions=2.100000,2.350000,0.050000
+12 - mass=0.500000
+12 - COMoffset=0.000000,0.000000,0.000000
+12 - bouncefriction=0.000000
+12 - slidefriction=1.000000
+12 - fatness=0.050000
+12 - MTSname=Wall04.mts
+12 - dffname=Wall04.dff
+12 - number=1
+12 - matnum=24
+making box
+14 - type=1
+14 - boxdimensions=3.160000,0.730000,5.070000
+14 - mass=0.500000
+14 - COMoffset=0.000000,0.000000,0.000000
+14 - bouncefriction=0.000000
+14 - slidefriction=1.000000
+14 - fatness=0.050000
+14 - MTSname=Bridge01.mts
+14 - dffname=Bridge.dff
+14 - number=8
+14 - matnum=25
+making box
+22 - type=1
+22 - boxdimensions=0.770000,1.280000,0.770000
+22 - mass=0.500000
+22spawned pid=23544
+booting...
+timeout: d3 depth=2 phase=3
+  [nav] target depth 3: depth=2 phase=3
+timeout: d3 depth=2 phase=3
+  [nav] target depth 3: depth=2 phase=3
+track index written: 7
+in race? phase=0
+trace stalled at 1233 rows (director fires 1233 -> 1233: no longer called)
+globals: {'t_7f1030': 4011572074, 'jitter_7f0fc8': 0, 'blend_7f100c': 0.01666666567325592, 'mode_7f0fd0': 0, 'phase_63ba8c': 7, 'nodecount': 77, 'elim_898980': 10}
+nodes captured: 77 of 77
+override entries (first 64): (15.0,0.0,-1.0), (15.0,0.0,-1.0), (15.0,0.0,-1.0), (15.0,0.0,-1.0), (15.0,0.0,-1.0), (15.0,0.0,-1.0), (15.0,0.0,-1.0), (15.0,0.0,-1.0)
+trace rows: 1233; globals at end: {'t_7f1030': 4011572074, 'jitter_7f0fc8': 0, 'blend_7f100c': 0.01666666567325592, 'mode_7f0fd0': 0, 'phase_63ba8c': 7, 'nodecount': 77, 'elim_898980': 10}
+track_type [2]   overhead [0]   mode [0]
+capture self-check: OK (car Y plausible, selector in {0,1}, velocity gate all zero)
+shot rows requested: abs [] race-relative [30, 70, 105]; fired at [1108, 1148, 1183]
+shot row 1108 (ba8c=6): OK C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\r10\verify\r10_20261016\bt\07_Roundabout\orig_row_01108.bmp
+shot row 1148 (ba8c=6): OK C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\r10\verify\r10_20261016\bt\07_Roundabout\orig_row_01148.bmp
+shot row 1183 (ba8c=6): OK C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\r10\verify\r10_20261016\bt\07_Roundabout\orig_row_01183.bmp
+[d1r1] track piz opened: ['TOASTART\\TRACKS\\ROUABOUT.PIZ']  (forced index 7)  textures named: 224
+[d1r1] drawrec row 1108: 727 events, 722 draws -> C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\r10\verify\r10_20261016\bt\07_Roundabout\orig_row_01108.draws.json
+[d1r1] drawrec row 1148: 656 events, 651 draws -> C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\r10\verify\r10_20261016\bt\07_Roundabout\orig_row_01148.draws.json
+[d1r1] drawrec row 1183: 453 events, 448 draws -> C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\r10\verify\r10_20261016\bt\07_Roundabout\orig_row_01183.draws.json
+done -> C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\r10\verify\r10_20261016\bt\07_Roundabout\trace.csv, C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\r10\verify\r10_20261016\bt\07_Roundabout\static.json

@@ -1,0 +1,11 @@
+{
+ "name": "Roundabout",
+ "rows": 1233,
+ "racing_rows": 155,
+ "race_start": 1078,
+ "shot_rows": [
+  1108,
+  1148,
+  1183
+ ]
+}

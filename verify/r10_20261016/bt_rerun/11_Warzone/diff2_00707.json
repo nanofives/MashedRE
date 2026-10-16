@@ -1,0 +1,1021 @@
+{
+ "a": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\r10\\verify\\r10_20261016\\bt\\11_Warzone\\orig_row_00707.draws.json",
+ "b": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\r10\\verify\\r10_20261016\\bt_rerun\\11_Warzone\\stand\\d1r2\\stand_row_00707.draws.json",
+ "matched": 146,
+ "na": 336,
+ "nb": 163,
+ "tri_a": 21858,
+ "tri_b": 19911,
+ "rows": [
+  {
+   "kind": "MISSING",
+   "tex": "#256x256:21",
+   "n": 2,
+   "offscreen": 0,
+   "detail": "A-only 2 draws 13 tri (0 offscreen); first k81 pt4 tri=3 tex=#256x256:21 tex1=- bb=[36.82,-0.28,4.71,40.61,-0.28,7.81] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2",
+   "a_idx": [
+    167,
+    145
+   ],
+   "b_idx": [],
+   "cite": "C10-RUNTIME-TEX"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "#64x64:21",
+   "n": 2,
+   "offscreen": 0,
+   "detail": "A-only 2 draws 15 tri (0 offscreen); first k81 pt4 tri=5 tex=#64x64:21 tex1=- bb=[29.44,-0.28,4.71,33.09,-0.28,9.34] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2",
+   "a_idx": [
+    150,
+    172
+   ],
+   "b_idx": [],
+   "cite": "C10-RUNTIME-TEX"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "-",
+   "n": 10,
+   "offscreen": 4,
+   "detail": "A-only 10 draws 198 tri (4 offscreen); first k83 pt2 tri=None tex=- tex1=- bb=- src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=1",
+   "a_idx": [
+    300,
+    2,
+    129,
+    146,
+    151,
+    168,
+    322,
+    327,
+    309,
+    315
+   ],
+   "b_idx": [],
+   "cite": "C03-UNTEXTURED"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "exp_cloud2",
+   "n": 2,
+   "offscreen": 0,
+   "detail": "A-only 2 draws 256 tri (0 offscreen); first k82 pt4 tri=128 tex=exp_cloud2 tex1=- bb=[33.92,-0.11,6.75,34.14,-0.05,7.00] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=2",
+   "a_idx": [
+    303,
+    304
+   ],
+   "b_idx": [],
+   "cite": "C05-PARTICLE"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "fence",
+   "n": 14,
+   "offscreen": 14,
+   "detail": "A-only 14 draws 56 tri (14 offscreen); first k82 pt5 tri=4 tex=fence tex1=- bb=[106.04,-0.35,81.35,106.93,0.43,82.66] src=d3d Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    96,
+    97,
+    98,
+    99,
+    100,
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109
+   ],
+   "b_idx": [],
+   "cite": "C01c-CULL-A"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "flames3",
+   "n": 4,
+   "offscreen": 4,
+   "detail": "A-only 4 draws 16 tri (4 offscreen); first k82 pt4 tri=4 tex=flames3 tex1=- bb=[127.19,1.10,1.07,128.23,2.03,2.39] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=2",
+   "a_idx": [
+    305,
+    307,
+    311,
+    313
+   ],
+   "b_idx": [],
+   "cite": "C01c-CULL-A"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "girders",
+   "n": 1,
+   "offscreen": 1,
+   "detail": "A-only 1 draws 12 tri (1 offscreen); first k82 pt5 tri=12 tex=girders tex1=- bb=[-0.16,0.48,12.41,1.76,6.72,14.92] src=d3d Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    93
+   ],
+   "b_idx": [],
+   "cite": "C01c-CULL-A"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "GreenStartLight",
+   "n": 1,
+   "offscreen": 1,
+   "detail": "A-only 1 draws 6 tri (1 offscreen); first k82 pt5 tri=6 tex=GreenStartLight tex1=- bb=[-0.10,0.62,0.98,0.10,0.69,0.98] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    335
+   ],
+   "b_idx": [],
+   "cite": "C08-STARTDISP"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "machinegun",
+   "n": 1,
+   "offscreen": 1,
+   "detail": "A-only 1 draws 12 tri (1 offscreen); first k82 pt5 tri=12 tex=machinegun tex1=- bb=[28.98,1.31,-10.42,29.42,1.69,-9.98] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2",
+   "a_idx": [
+    319
+   ],
+   "b_idx": [],
+   "cite": "C07-WEAPONS"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "mine",
+   "n": 1,
+   "offscreen": 0,
+   "detail": "A-only 1 draws 12 tri (0 offscreen); first k82 pt5 tri=12 tex=mine tex1=- bb=[26.81,-0.06,8.24,27.26,0.32,8.69] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2",
+   "a_idx": [
+    317
+   ],
+   "b_idx": [],
+   "cite": "C07-WEAPONS"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "mortar",
+   "n": 1,
+   "offscreen": 0,
+   "detail": "A-only 1 draws 12 tri (0 offscreen); first k82 pt5 tri=12 tex=mortar tex1=- bb=[40.68,-0.18,0.98,41.12,0.19,1.42] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2",
+   "a_idx": [
+    318
+   ],
+   "b_idx": [],
+   "cite": "C07-WEAPONS"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "NFLBluejay",
+   "n": 1,
+   "offscreen": 1,
+   "detail": "A-only 1 draws 2 tri (1 offscreen); first k82 pt5 tri=2 tex=NFLBluejay tex1=- bb=[-0.51,0.29,0.98,-0.43,0.37,0.98] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    331
+   ],
+   "b_idx": [],
+   "cite": "C08-STARTDISP"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "NFLGold",
+   "n": 1,
+   "offscreen": 1,
+   "detail": "A-only 1 draws 2 tri (1 offscreen); first k82 pt5 tri=2 tex=NFLGold tex1=- bb=[-0.47,0.29,0.98,-0.38,0.37,0.98] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    332
+   ],
+   "b_idx": [],
+   "cite": "C08-STARTDISP"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "NFLMelon",
+   "n": 1,
+   "offscreen": 1,
+   "detail": "A-only 1 draws 2 tri (1 offscreen); first k82 pt5 tri=2 tex=NFLMelon tex1=- bb=[-0.56,0.29,0.98,-0.47,0.37,0.98] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    330
+   ],
+   "b_idx": [],
+   "cite": "C08-STARTDISP"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "NFLRed",
+   "n": 1,
+   "offscreen": 1,
+   "detail": "A-only 1 draws 2 tri (1 offscreen); first k82 pt5 tri=2 tex=NFLRed tex1=- bb=[0.38,0.29,0.98,0.47,0.37,0.98] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    325
+   ],
+   "b_idx": [],
+   "cite": "C08-STARTDISP"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "OakTreeSprite",
+   "n": 1,
+   "offscreen": 1,
+   "detail": "A-only 1 draws 376 tri (1 offscreen); first k82 pt4 tri=376 tex=OakTreeSprite tex1=- bb=[59.26,-4.64,-16.11,173.86,6.93,41.31] src=d3d Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2",
+   "a_idx": [
+    299
+   ],
+   "b_idx": [],
+   "cite": "C01c-CULL-A"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "OrangeDisplay",
+   "n": 8,
+   "offscreen": 8,
+   "detail": "A-only 8 draws 68 tri (8 offscreen); first k82 pt5 tri=4 tex=OrangeDisplay tex1=- bb=[0.39,0.31,0.98,0.65,0.35,0.98] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    323,
+    328,
+    333,
+    321,
+    324,
+    326,
+    329,
+    334
+   ],
+   "b_idx": [],
+   "cite": "C08-STARTDISP"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "PUGlow",
+   "n": 1,
+   "offscreen": 0,
+   "detail": "A-only 1 draws 28 tri (0 offscreen); first k82 pt4 tri=28 tex=PUGlow tex1=- bb=[11.24,-1.60,-10.95,161.76,2.57,90.38] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2",
+   "a_idx": [
+    316
+   ],
+   "b_idx": [],
+   "cite": "C06-PICKUP"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "road",
+   "n": 93,
+   "offscreen": 93,
+   "detail": "A-only 93 draws 1209 tri (93 offscreen); first k82 pt5 tri=13 tex=road tex1=- bb=[134.73,2.97,9.55,134.88,4.07,9.71] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2",
+   "a_idx": [
+    175,
+    176,
+    177,
+    178,
+    179,
+    180,
+    181,
+    182,
+    183,
+    184,
+    185,
+    186,
+    187,
+    188,
+    189,
+    190,
+    191,
+    192,
+    193,
+    194,
+    195,
+    196,
+    197,
+    198,
+    199,
+    200,
+    201,
+    202,
+    203,
+    204,
+    205,
+    206,
+    207,
+    208,
+    209,
+    210,
+    211,
+    212,
+    213,
+    214,
+    215,
+    216,
+    217,
+    218,
+    219,
+    220,
+    221,
+    222,
+    223,
+    224,
+    225,
+    226,
+    227,
+    228,
+    229,
+    230,
+    231,
+    232,
+    233,
+    235,
+    236,
+    237,
+    238,
+    239,
+    240,
+    241,
+    242,
+    243,
+    244,
+    245,
+    246,
+    247,
+    248,
+    249,
+    250,
+    251,
+    252,
+    253,
+    254,
+    255,
+    256,
+    257,
+    258,
+    259,
+    260,
+    261,
+    262,
+    263,
+    264,
+    265,
+    266,
+    267,
+    268
+   ],
+   "b_idx": [],
+   "cite": "C01c-CULL-A"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "RWObjShad",
+   "n": 1,
+   "offscreen": 0,
+   "detail": "A-only 1 draws 6 tri (0 offscreen); first k82 pt4 tri=6 tex=RWObjShad tex1=- bb=[41.13,-0.27,0.14,43.40,-0.21,2.09] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    301
+   ],
+   "b_idx": [],
+   "cite": "C04-SHADOW"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "sky",
+   "n": 1,
+   "offscreen": 0,
+   "detail": "A-only 1 draws 24 tri (0 offscreen); first k82 pt5 tri=24 tex=sky tex1=- bb=[41.20,9.21,2.19,49.83,10.48,10.81] src=d3d Z=0 ZW=0 ZF=0 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2",
+   "a_idx": [
+    0
+   ],
+   "b_idx": [],
+   "cite": "C23-SKY-SLOTS"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "smoke",
+   "n": 4,
+   "offscreen": 4,
+   "detail": "A-only 4 draws 16 tri (4 offscreen); first k82 pt4 tri=4 tex=smoke tex1=- bb=[127.50,1.35,1.53,127.89,1.72,1.94] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2",
+   "a_idx": [
+    306,
+    308,
+    312,
+    314
+   ],
+   "b_idx": [],
+   "cite": "C05-PARTICLE"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "trunk",
+   "n": 29,
+   "offscreen": 29,
+   "detail": "A-only 29 draws 348 tri (29 offscreen); first k82 pt5 tri=12 tex=trunk tex1=- bb=[97.54,0.80,78.85,98.85,3.06,80.21] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2",
+   "a_idx": [
+    269,
+    270,
+    271,
+    272,
+    273,
+    274,
+    275,
+    276,
+    277,
+    278,
+    279,
+    280,
+    281,
+    282,
+    283,
+    284,
+    285,
+    286,
+    287,
+    288,
+    289,
+    290,
+    291,
+    292,
+    293,
+    295,
+    296,
+    297,
+    298
+   ],
+   "b_idx": [],
+   "cite": "C01c-CULL-A"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "VehicleIcons",
+   "n": 1,
+   "offscreen": 0,
+   "detail": "A-only 1 draws 2 tri (0 offscreen); first k82 pt4 tri=2 tex=VehicleIcons tex1=- bb=[40.39,-0.17,5.63,40.78,0.19,6.15] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    310
+   ],
+   "b_idx": [],
+   "cite": "C09-FX"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "water11",
+   "n": 2,
+   "offscreen": 2,
+   "detail": "A-only 2 draws 100 tri (2 offscreen); first k82 pt5 tri=16 tex=water11 tex1=- bb=[126.53,-2.45,-16.55,233.13,-2.45,45.36] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2",
+   "a_idx": [
+    114,
+    113
+   ],
+   "b_idx": [],
+   "cite": "C11-WATER"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "wfall",
+   "n": 1,
+   "offscreen": 0,
+   "detail": "A-only 1 draws 134 tri (0 offscreen); first k82 pt4 tri=134 tex=wfall tex1=- bb=[30.99,-0.47,4.00,39.55,0.18,8.50] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2",
+   "a_idx": [
+    302
+   ],
+   "b_idx": [],
+   "cite": "C24-IM3D-TRACKFX"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "@gen:particle",
+   "n": 1,
+   "offscreen": 0,
+   "detail": "B-only 1 draws 132 tri (0 offscreen); first k83 pt4 tri=132 tex=@gen:particle tex1=- bb=[-13.81,12.38,-38.61,71.54,49.24,46.79] src=d3d Z=1 ZW=0 ZF=4 AT=0 AREF=0 AF=0 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [],
+   "b_idx": [
+    0
+   ],
+   "cite": "C05-PARTICLE"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "@gen:pickup",
+   "n": 1,
+   "offscreen": 0,
+   "detail": "B-only 1 draws 26 tri (0 offscreen); first k83 pt4 tri=26 tex=@gen:pickup tex1=- bb=[25.79,-2.92,-11.87,162.44,2.48,91.30] src=d3d Z=1 ZW=0 ZF=4 AT=0 AREF=0 AF=0 AB=1 SRC=5 DST=2 CULL=1",
+   "a_idx": [],
+   "b_idx": [
+    1
+   ],
+   "cite": "C06-PICKUP"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "crater",
+   "n": 1,
+   "offscreen": 1,
+   "detail": "B-only 1 draws 8 tri (1 offscreen); first k82 pt4 tri=8 tex=crater tex1=- bb=[-0.07,-0.20,-0.07,0.09,0.14,0.12] src=rw Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2",
+   "a_idx": [],
+   "b_idx": [
+    120
+   ],
+   "cite": "C01-CULL"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "interactiveHut",
+   "n": 4,
+   "offscreen": 0,
+   "detail": "B-only 4 draws 128 tri (0 offscreen); first k82 pt4 tri=28 tex=interactiveHut tex1=- bb=[40.66,-0.25,0.77,40.68,0.31,1.64] src=rw Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2",
+   "a_idx": [],
+   "b_idx": [
+    36,
+    33,
+    35,
+    34
+   ],
+   "cite": "C26-RWP-OBJECTS"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "office-block_plain",
+   "n": 2,
+   "offscreen": 2,
+   "detail": "B-only 2 draws 576 tri (2 offscreen); first k82 pt4 tri=288 tex=office-block_plain tex1=- bb=[-0.16,0.48,12.42,1.76,6.72,14.91] src=rw Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2",
+   "a_idx": [],
+   "b_idx": [
+    97,
+    98
+   ],
+   "cite": "C01-CULL"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "RWObjShad",
+   "n": 1,
+   "offscreen": 0,
+   "detail": "B-only 1 draws 10 tri (0 offscreen); first k82 pt4 tri=10 tex=RWObjShad tex1=- bb=[40.63,-0.41,0.14,43.40,-0.14,1.95] src=rw Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [],
+   "b_idx": [
+    161
+   ],
+   "cite": "C04b-OBJSHAD"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "water00",
+   "n": 2,
+   "offscreen": 2,
+   "detail": "B-only 2 draws 100 tri (2 offscreen); first k82 pt4 tri=16 tex=water00 tex1=- bb=[126.53,-2.45,-16.55,233.13,-2.45,45.36] src=rw Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2",
+   "a_idx": [],
+   "b_idx": [
+    100,
+    99
+   ],
+   "cite": "C11-WATER"
+  },
+  {
+   "kind": "STATE",
+   "tex": "fence",
+   "n": 1,
+   "detail": "1 matched draws differ in CULL: A Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1 | B Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2",
+   "a_idx": [
+    84
+   ],
+   "b_idx": [
+    88
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "horizon",
+   "n": 1,
+   "detail": "1 matched draws differ in Z,ZF: A Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=0 ZF=8 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2",
+   "a_idx": [
+    1
+   ],
+   "b_idx": [
+    2
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "office-block_plain",
+   "n": 8,
+   "detail": "8 matched draws differ in CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=1 | B Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2",
+   "a_idx": [
+    91,
+    89,
+    92,
+    87,
+    90,
+    86,
+    88,
+    85
+   ],
+   "b_idx": [
+    95,
+    93,
+    96,
+    91,
+    94,
+    90,
+    92,
+    89
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "FOG",
+   "tex": "*",
+   "n": 142,
+   "detail": "142 matched draws, FOGENABLE A 1 | B 0, 38 textures: -, Advantage, AdvantageSmall, All01, BarrelRed, Camstand, Dozer02, Glass",
+   "a_idx": [
+    69,
+    54,
+    144,
+    166,
+    81,
+    7,
+    37,
+    125,
+    130,
+    131,
+    132,
+    133,
+    152,
+    153,
+    154,
+    155,
+    56,
+    111,
+    49,
+    67,
+    9,
+    23,
+    25,
+    39,
+    51,
+    4,
+    116,
+    82,
+    34,
+    18,
+    57,
+    148,
+    170,
+    163,
+    141,
+    19,
+    43,
+    64,
+    75,
+    6,
+    65,
+    122,
+    38,
+    127,
+    123,
+    156,
+    134,
+    47,
+    15,
+    28,
+    71,
+    76,
+    74,
+    44,
+    48,
+    42,
+    79,
+    21,
+    70,
+    126,
+    77,
+    169,
+    147,
+    5,
+    11,
+    135,
+    157,
+    83,
+    121,
+    14,
+    118,
+    27,
+    12,
+    45,
+    36,
+    20,
+    110,
+    72,
+    3,
+    61,
+    158,
+    136,
+    60,
+    138,
+    160,
+    46,
+    128,
+    124,
+    24,
+    66,
+    53,
+    62,
+    120,
+    117,
+    63,
+    137,
+    159,
+    140,
+    162,
+    41,
+    26,
+    31,
+    22,
+    50,
+    91,
+    89,
+    92,
+    87,
+    90,
+    86,
+    88,
+    85,
+    59,
+    52,
+    149,
+    142,
+    164,
+    171,
+    17,
+    143,
+    165,
+    161,
+    139,
+    13,
+    35,
+    73,
+    16,
+    10,
+    29,
+    55,
+    40,
+    68,
+    84,
+    8,
+    32,
+    33,
+    78,
+    58,
+    112,
+    80,
+    119,
+    115
+   ],
+   "b_idx": [
+    70,
+    61,
+    137,
+    155,
+    86,
+    8,
+    42,
+    116,
+    135,
+    134,
+    133,
+    132,
+    153,
+    152,
+    151,
+    150,
+    55,
+    102,
+    52,
+    75,
+    18,
+    26,
+    15,
+    46,
+    58,
+    5,
+    107,
+    87,
+    38,
+    17,
+    56,
+    139,
+    157,
+    142,
+    124,
+    22,
+    50,
+    73,
+    77,
+    10,
+    74,
+    113,
+    44,
+    118,
+    114,
+    149,
+    131,
+    47,
+    13,
+    19,
+    76,
+    81,
+    78,
+    51,
+    49,
+    53,
+    84,
+    24,
+    64,
+    117,
+    82,
+    158,
+    140,
+    9,
+    6,
+    130,
+    148,
+    67,
+    112,
+    21,
+    109,
+    29,
+    4,
+    54,
+    41,
+    23,
+    101,
+    79,
+    3,
+    69,
+    147,
+    129,
+    66,
+    127,
+    145,
+    45,
+    119,
+    115,
+    27,
+    63,
+    60,
+    71,
+    111,
+    108,
+    72,
+    128,
+    146,
+    125,
+    143,
+    40,
+    28,
+    37,
+    25,
+    57,
+    95,
+    93,
+    96,
+    91,
+    94,
+    90,
+    92,
+    89,
+    65,
+    59,
+    138,
+    123,
+    141,
+    156,
+    7,
+    136,
+    154,
+    144,
+    126,
+    12,
+    39,
+    80,
+    11,
+    16,
+    20,
+    62,
+    48,
+    68,
+    88,
+    14,
+    32,
+    31,
+    83,
+    43,
+    103,
+    85,
+    110,
+    106
+   ],
+   "cite": "C18-FOG"
+  },
+  {
+   "kind": "MOVED",
+   "tex": "CamManHot",
+   "n": 1,
+   "detail": "1 draws, same texture and triangle count, AABB moved by up to 0.117; first A [40.69,1.00,9.51,40.93,1.31,9.98] B [40.72,1.00,9.63,40.88,1.31,10.09]",
+   "a_idx": [
+    30
+   ],
+   "b_idx": [
+    30
+   ],
+   "cite": "C13-PROPPLACE"
+  },
+  {
+   "kind": "MOVED",
+   "tex": "fence",
+   "n": 1,
+   "detail": "1 draws, same texture and triangle count, AABB moved by up to 106; first A [105.29,-0.34,79.95,106.14,0.47,81.40] B [-0.07,-0.39,-0.75,0.08,0.39,0.75]",
+   "a_idx": [
+    95
+   ],
+   "b_idx": [
+    122
+   ],
+   "cite": "C22-SLOT-PLACEMENT"
+  },
+  {
+   "kind": "MOVED",
+   "tex": "girders",
+   "n": 1,
+   "detail": "1 draws, same texture and triangle count, AABB moved by up to 13; first A [-10.12,1.15,11.88,-8.80,6.06,13.78] B [-1.18,-3.12,-0.79,1.18,3.12,0.79]",
+   "a_idx": [
+    94
+   ],
+   "b_idx": [
+    121
+   ],
+   "cite": "C22-SLOT-PLACEMENT"
+  },
+  {
+   "kind": "MOVED",
+   "tex": "road",
+   "n": 1,
+   "detail": "1 draws, same texture and triangle count, AABB moved by up to 59.7; first A [59.60,3.35,4.63,59.76,4.59,4.82] B [-0.08,0.00,-0.11,0.11,1.46,0.11]",
+   "a_idx": [
+    234
+   ],
+   "b_idx": [
+    105
+   ],
+   "cite": "C22-SLOT-PLACEMENT"
+  },
+  {
+   "kind": "MOVED",
+   "tex": "trunk",
+   "n": 1,
+   "detail": "1 draws, same texture and triangle count, AABB moved by up to 59.8; first A [59.10,-0.18,55.99,60.40,2.08,57.35] B [-0.71,-0.14,-0.72,0.59,2.11,0.64]",
+   "a_idx": [
+    294
+   ],
+   "b_idx": [
+    104
+   ],
+   "cite": "C22-SLOT-PLACEMENT"
+  },
+  {
+   "kind": "ORDER",
+   "tex": "girders",
+   "n": 9,
+   "detail": "9 order inversions vs matched draws, mostly: burntBildx1, buildconc2x1, roadx1, new_rubblex1",
+   "a_idx": [],
+   "b_idx": [],
+   "cite": "C21-ORDER"
+  },
+  {
+   "kind": "ORDER",
+   "tex": "rope",
+   "n": 9,
+   "detail": "9 order inversions vs matched draws, mostly: burntBildx1, buildconc2x1, roadx1, new_rubblex1",
+   "a_idx": [],
+   "b_idx": [],
+   "cite": "C21-ORDER"
+  },
+  {
+   "kind": "ORDER",
+   "tex": "ruin",
+   "n": 39,
+   "detail": "39 order inversions vs matched draws, mostly: tiles_grey2x5, endBildsx4, buildconc2x4, roadx3",
+   "a_idx": [],
+   "b_idx": [],
+   "cite": "C21-ORDER"
+  }
+ ],
+ "info": {
+  "empty_dropped": [
+   0,
+   0
+  ],
+  "no_geometry": [
+   1,
+   0
+  ]
+ }
+}

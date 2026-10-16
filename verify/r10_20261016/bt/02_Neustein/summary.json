@@ -1,0 +1,11 @@
+{
+ "name": "Neustein",
+ "rows": 865,
+ "racing_rows": 145,
+ "race_start": 720,
+ "shot_rows": [
+  750,
+  790,
+  825
+ ]
+}

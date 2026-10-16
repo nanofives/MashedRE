@@ -1,0 +1,11 @@
+=== stand exe=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\r10\mashedmod\build\mashed_re.exe track=Neustein trace=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\r10\verify\r10_20261016\bt\02_Neustein\trace.csv shots=750,790,825 basis=True cars=True knobs=[]
+    pid=12064
+    exit=0
+    stand_row_00750.bmp 921654
+    stand_row_00750.draws.json 40178
+    stand_row_00790.bmp 921654
+    stand_row_00790.draws.json 36571
+    stand_row_00825.bmp 921654
+    stand_row_00825.draws.json 17869
+
+--stderr--

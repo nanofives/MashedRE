@@ -1,0 +1,58 @@
+=== Dump: clumps 17, excluded 8, Mts pairs {}, bsp [('World', 'Graphics.bsp'), ('AI', 'Ai1.bsp'), ('Collision', 'Collide.bsp')], RWP objects 3
+  Advantage          (no asset of the piz names it)
+  train              clump0:Train.dff
+=== Forest: clumps 7, excluded 5, Mts pairs {}, bsp [('AI', 'lap.bsp'), ('World', 'graphics.bsp'), ('Collision', 'collisions.bsp'), ('Object', 'Trees.bsp')], RWP objects 0
+  Bush2              clump4:Bushes.dff[EXCL] | ObjectBsp:Trees.bsp
+  OakTreeSprite3     clump3:NearTree.dff[EXCL] | ObjectBsp:Trees.bsp
+  Tree'sBack         clump2:FarTree.dff[EXCL] | ObjectBsp:Trees.bsp
+  ads                WorldBsp:graphics.bsp | ObjectBsp:Trees.bsp
+  midtree            clump5:MidTree.dff[EXCL] | ObjectBsp:Trees.bsp
+  wet_watercol00     clump0:Water.dff[EXCL] | clump1:Waterfall.dff
+=== Highway: clumps 48, excluded 45, Mts pairs {42: 0}, bsp [('AI', 'lap.bsp'), ('World', 'graphics.bsp'), ('Collision', 'collisions.bsp')], RWP objects 0
+  traffic3           clump0:WhiteTruckHigh.dff[EXCL] | clump1:WhiteTruckMid.dff[EXCL] | clump2:WhiteTruckLow.dff[EXCL] | clump3:BlueTruckHigh.dff[EXCL] | clump4:BlueTruckMid.dff[EXCL] | clump5:BlueTruckLow.dff[EXCL] | clump6:GrayTruckHigh.dff[EXCL] | clump7:GrayTruckMid.dff[EXCL] | clump8:GrayTruckLow.dff[EXCL] | clump9:GreenTruckHigh.dff[EXCL] | clump10:GreenTruckMid.dff[EXCL] | clump11:GreenTruckLow.dff[EXCL] | clump12:RedTruckHigh.dff[EXCL] | clump13:RedTruckMid.dff[EXCL] | clump14:RedTruckLow.dff[EXCL] | clump15:YellowTruckHigh.dff[EXCL] | clump16:YellowTruckMid.dff[EXCL] | clump17:YellowTruckLow.dff[EXCL] | clump18:BlueLorryHigh.dff[EXCL] | clump19:BlueLorryMid.dff[EXCL] | clump20:BlueLorryLow.dff[EXCL] | clump21:GrayLorryHigh.dff[EXCL] | clump22:GrayLorryMid.dff[EXCL] | clump23:GrayLorryLow.dff[EXCL] | clump24:RedLorryHigh.dff[EXCL] | clump25:RedLorryMid.dff[EXCL] | clump26:RedLorryLow.dff[EXCL] | clump27:YellowLorryHigh.dff[EXCL] | clump28:YellowLorryMid.dff[EXCL] | clump29:YellowLorryLow.dff[EXCL] | clump30:WhiteArcticHigh.dff[EXCL] | clump31:WhiteArcticMid.dff[EXCL] | clump32:WhiteArcticLow.dff[EXCL] | clump33:GreenArcticHigh.dff[EXCL] | clump34:GreenArcticMid.dff[EXCL] | clump35:GreenArcticLow.dff[EXCL] | clump36:YellowArcticHigh.dff[EXCL] | clump37:YellowArcticMid.dff[EXCL] | clump38:YellowArcticLow.dff[EXCL] | clump44:Wheels.dff[EXCL] | WorldBsp:graphics.bsp
+=== Neustein: clumps 6, excluded 3, Mts pairs {}, bsp [('World', 'Graphics.bsp'), ('AI', 'Ai1.bsp'), ('Collision', 'Collide.bsp')], RWP objects 3
+  AdvantageSmall     (no asset of the piz names it)
+  TreeSprite         (no asset of the piz names it)
+  post               RWP0:Post_1.dff
+  skyCylTop          (no asset of the piz names it)
+=== Roundabout: clumps 18, excluded 12, Mts pairs {0: 0, 3: 2, 17: 3, 19: 4}, bsp [('World', 'graph.bsp'), ('AI', 'ai.bsp'), ('Collision', 'coll.bsp')], RWP objects 14
+  Camstand           clump19:Frame_H.dff[EXCL][PAIR] | WorldBsp:graph.bsp
+  Sign02             RWP4:Sign02.dff | RWP23:Sign02.dff
+  Sky3               (no asset of the piz names it)
+  Sky4               (no asset of the piz names it)
+  Trucktyre          RWP5:Trucktyre.dff
+  barrel_shad        (no asset of the piz names it)
+  comp2              clump1:crane.dff | clump2:railcar.dff[EXCL] | clump4:Gib.dff | clump15:RailTrack.dff | clump17:Pylon_H.dff[EXCL][PAIR] | WorldBsp:graph.bsp | RWP14:Bridge.dff
+  crane_shad         (no asset of the piz names it)
+  depthcharge        (no asset of the piz names it)
+  girders            clump1:crane.dff | clump5:Girders.dff[EXCL] | clump11:Girders02.dff[EXCL] | clump18:Pylon_L.dff[EXCL] | clump20:Frame_L.dff[EXCL]
+  gravel2            clump2:railcar.dff[EXCL] | WorldBsp:graph.bsp
+  interactiveHut     clump10:Hut01.dff[EXCL] | WorldBsp:graph.bsp | RWP7:Hut01.dff | RWP9:Wall01.dff | RWP10:Wall02.dff | RWP11:Wall03.dff | RWP12:Wall04.dff
+  machinegun         (no asset of the piz names it)
+  rustycable         clump1:crane.dff | clump4:Gib.dff | clump8:Handrail.dff[EXCL] | clump9:Hrail.dff[EXCL]
+=== Sands: clumps 14, excluded 11, Mts pairs {5: 0}, bsp [('World', 'Graphics.bsp'), ('AI', 'Ai1.bsp'), ('Collision', 'Collide.bsp')], RWP objects 4
+  camstand           clump7:Jump.dff[EXCL] | clump10:Debris.dff[EXCL] | clump18:Bridgehafbroke.dff[EXCL] | clump19:BridgeBroke.dff[EXCL] | WorldBsp:Graphics.bsp
+  concrete3          clump4:Road.dff | clump10:Debris.dff[EXCL] | clump18:Bridgehafbroke.dff[EXCL] | clump19:BridgeBroke.dff[EXCL] | clump20:BridgeWhole.dff[EXCL] | WorldBsp:Graphics.bsp
+  roadnew            clump4:Road.dff | clump10:Debris.dff[EXCL] | clump18:Bridgehafbroke.dff[EXCL] | clump19:BridgeBroke.dff[EXCL] | clump20:BridgeWhole.dff[EXCL] | WorldBsp:Graphics.bsp
+  shotgun            (no asset of the piz names it)
+  wet_watercol00     clump1:Water.dff[EXCL] | WorldBsp:Graphics.bsp
+=== Storm: clumps 7, excluded 3, Mts pairs {6: 1}, bsp [('AI', 'lap.bsp'), ('World', 'graphics.bsp'), ('Collision', 'collisions.bsp')], RWP objects 0
+  water              clump0:Water.dff[EXCL]
+=== SuperG: clumps 3, excluded 2, Mts pairs {}, bsp [('AI', 'lap.bsp'), ('World', 'graphics.bsp'), ('Collision', 'collisions.bsp')], RWP objects 0
+  Ice                WorldBsp:graphics.bsp
+  IceRoad1           WorldBsp:graphics.bsp
+  IceRoad2           WorldBsp:graphics.bsp
+  machinegun         (no asset of the piz names it)
+=== Warzone: clumps 20, excluded 17, Mts pairs {20: 5}, bsp [('World', 'Graphics.bsp'), ('AI', 'Ai1.bsp'), ('Collision', 'Collide.bsp')], RWP objects 22
+  Glass              (no asset of the piz names it)
+  RWObjShad          (no asset of the piz names it)
+  crater             clump17:Chunk.dff[EXCL] | WorldBsp:Graphics.bsp
+  fence              clump19:Fence_1.dff[EXCL] | clump22:Fence_2.dff[EXCL]
+  flames3            (no asset of the piz names it)
+  girders            clump21:Pylon_L.dff[EXCL] | WorldBsp:Graphics.bsp
+  interactiveHut     WorldBsp:Graphics.bsp | RWP5:Hut01.dff | RWP6:Hut01.dff | RWP7:Hut01.dff | RWP8:Wall01.dff | RWP9:Wall02.dff | RWP10:Wall03.dff | RWP11:Wall04.dff | RWP12:Wall01.dff | RWP13:Wall02.dff | RWP14:Wall03.dff | RWP15:Wall04.dff | RWP16:Wall01.dff | RWP17:Wall02.dff | RWP18:Wall03.dff | RWP19:Wall04.dff
+  machinegun         (no asset of the piz names it)
+  office-block_plain clump20:Pylon_H.dff[EXCL][PAIR] | WorldBsp:Graphics.bsp
+  road               clump3:OakTrunk.dff[EXCL] | clump10:Crater_2.dff[EXCL] | clump12:Crater_4.dff[EXCL] | clump13:Crater_5.dff[EXCL] | clump16:Crater_8.dff[EXCL] | WorldBsp:Graphics.bsp
+  trunk              clump2:CrossTree.dff[EXCL]
+  wfall              (no asset of the piz names it)
