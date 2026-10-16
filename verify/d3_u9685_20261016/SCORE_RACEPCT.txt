@@ -1,0 +1,22 @@
+== G-TOOK-R (R_H frame f == PP_H frame f-1, cars 1-3, frames 2..14)
+  bit-equal 0 / 39 (0.0 %), max abs diff 0.235 -> FAIL   <- as registered (relation derived wrongly, see PREREG A1)
+== G-TOOK-R corrected (PREREG A1): R_H frame f vs PP_H frame f (both read the positions after physics f-1)
+  frame 1 first published values bit-equal on cars 1-3: True; frames 1..14 bit-equal 30 / 42, max abs diff 0.169 (the AI differs from PP once PP's live lap counter / progress reach it)
+  -> PASS
+== G-PRELINE (R_H array cars 1-3, frames 1..19 in [97,100]; vs the original at the crossing-aligned call, calls 5..18)
+  frames 1..19 all in [97, 100]: True
+  orig call  5 / gates frame  6: exe [99.238, 98.423, 97.506] orig [99.245, 98.416, 97.509]
+  orig call  6 / gates frame  7: exe [99.287, 98.496, 97.58] orig [99.294, 98.49, 97.583]
+  orig call  7 / gates frame  8: exe [99.338, 98.572, 97.655] orig [99.344, 98.565, 97.658]
+  orig call  8 / gates frame  9: exe [99.389, 98.648, 97.731] orig [99.396, 98.641, 97.734]
+  orig call  9 / gates frame 10: exe [99.443, 98.725, 97.809] orig [99.449, 98.718, 97.812]
+  orig call 10 / gates frame 11: exe [99.497, 98.803, 97.887] orig [99.503, 98.796, 97.89]
+  orig call 11 / gates frame 12: exe [99.553, 98.883, 97.967] orig [99.559, 98.876, 97.969]
+  orig call 12 / gates frame 13: exe [99.61, 98.963, 98.048] orig [99.616, 98.956, 98.05]
+  orig call 13 / gates frame 14: exe [99.669, 99.045, 98.129] orig [99.674, 99.038, 98.132]
+  orig call 14 / gates frame 15: exe [99.728, 99.128, 98.212] orig [99.734, 99.12, 98.215]
+  orig call 15 / gates frame 16: exe [99.789, 99.211, 98.296] orig [99.795, 99.203, 98.298]
+  orig call 16 / gates frame 17: exe [99.852, 99.296, 98.381] orig [99.857, 99.288, 98.383]
+  orig call 17 / gates frame 18: exe [99.915, 99.381, 98.467] orig [99.921, 99.373, 98.469]
+  orig call 18 / gates frame 19: exe [99.98, 99.467, 98.554] orig [99.986, 99.459, 98.556]
+  max |exe - orig| = 0.008 -> PASS

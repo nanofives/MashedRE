@@ -81,6 +81,20 @@ PRIVATE shadow row, with nothing else of the block published:
 4. If G-CTRL fails, nothing else is scored.
 5. Exe-side runs only. No original-side capture is taken (audio endpoint). The committed original captures are the references.
 
+## 3a. AMENDMENT A1 (committed after `R_H`, `R_H2` and `PP_H` were scored, before `M_DEF`, `R_M`, `R_M2`, `PP_M` and every `B_*` arm was scored)
+
+Seen first: `R_H` = `R_H2` (determinism, step `716cb2fd`, gates `2a2afda1`, ptrace `ba90ed88` = the default's ptrace, so the player trace did not move).
+Two of my registered statements were derived wrongly and are corrected here, with the registered form reported as it came out:
+
+- **G-TOOK-R as registered FAILS (0 / 39, max abs diff 0.235).** The relation I wrote (`R_H` frame f == `PP_H` frame f-1) is wrong: at the AI tick of frame f both arms
+  read a step value computed from the car positions after physics f-1 (`PP` in `UpdateRace` f, before the opponents move, and `R` at the end of f-1), so the
+  expected relation is the same frame, `R_H(f) == PP_H(f)`. Corrected witness: the first published values (frame 1, cars 1 to 3) are bit-equal and frames 1 to 14
+  stay within 0.25 (they cannot stay bit-equal, because `PP` also makes the lap counter and node progress live, which reaches the AI; that is the point of R). Result in `SCORE_RACEPCT.txt`.
+- **G-PRELINE alignment.** The same fact fixes the alignment to the original: original call c <-> gates frame c + 1 (the `PP` arm crosses the line at gates frame 20,
+  the original at call 19), not c + 2. The registered pass rule (all in [97, 100], max abs difference <= 0.25 over calls 5 to 18) is unchanged.
+
+No other gate, decision or prediction is touched. Nothing in the closure gate, (b) or the decisions depends on either correction.
+
 ## 4. Not done here (registered)
 
 - No hooks.csv change (`FUN_00408610` is an EXE-ONLY naked transcription, no `.asi` body). No tracker is edited by hand.
