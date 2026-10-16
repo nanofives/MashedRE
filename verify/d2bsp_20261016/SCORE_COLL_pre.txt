@@ -1,0 +1,8 @@
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\d2bsp\verify\d2bsp_20261016\cut_H_W.csv: anchor frame 0, kept 600 frames, 243 columns
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\d2bsp\verify\d2bsp_20261016\cut_H_W-2.csv: anchor frame 0, kept 600 frames, 243 columns
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\d2bsp\verify\d2bsp_20261016\cut_H_L.csv: anchor frame 0, kept 600 frames, 243 columns
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\d2bsp\verify\d2bsp_20261016\cut_H_L-2.csv: anchor frame 0, kept 600 frames, 243 columns
+H_BASE: 39 of 94 paired fields exceed their floor
+H_W: 39 of 94 paired fields exceed their floor
+H_L: 39 of 94 paired fields exceed their floor
+

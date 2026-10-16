@@ -156,3 +156,48 @@ New, all measured on the same replay and arms:
 
 Arms: `H_L0`, `H_L`, `H_L-2`, `H_W-2`; `D2_BASE_1..3`, `D2_W_1..3`, `D2_L_1..3`, `D2_WK_1`;
 `B_{BASE,W,L}_K{0,1,26}`; collateral for `H_W` / `H_W-2` and `H_L` / `H_L-2` against `H_BASE` / `H_BASE-2`.
+
+## Amendment 3 (2026-10-16, resumed session on account3; after every amendment-2 arm, before the rebase and before any run on it)
+
+**Amendment-2 arms, scored** (base `9420dde2` builds, `SCORE_{D2,B,COLL}_pre.txt`, replays re-scored by `g_walk.py`):
+G-WALK 4764/4764 PASS. G-WHEEL-K 19052/19052 PASS. G-WHEEL-F fix W 14596/19052 = 76.61 % FAIL; with K
+15512/19052 = 81.42 %, frames >= 1000 11044/11044 (amendment-2 prediction met), the remaining 3540 = the hold-tick
+wheel-calls. Stand-in: G-WHEEL-K 0.16 %, G-WHEEL-F 26.96 %. No-op (H_DEF = H_BASE) PASS, G-CHUNK (H_L0 = H_BASE)
+PASS, determinism (H_W = H_W-2, H_L = H_L-2) PASS. D2 (slip1500 / slip2000 / drvmed): BASE 0.1927 in / 0.2489 in /
+1860.27, 1860.35, 1863.83 (out, U-9180); **W** 0.1879 **OUT** x3 / in x3 / 1915.61, 1918.16, 1918.16 **in** x3;
+**L** in x3 / in x3 / 1883.91, 1883.91, 1911.93; WK (1 run) 0.1891 in / 0.2500 in / 1875.92. H1 398/400 median
+1362.7..1362.8 on every arm. D3 (b) A 1/3, B 2/3, C 0/3 on BASE, W and L (no loss). Collateral 39 of 94 on BASE, W
+and L.
+
+**Section-4 verdicts on these data.** Fix W: FAIL (G-WHEEL-F, and D2 slip1500 out 3/3), stays default OFF, the
+stand-in stays. Fix L proper: every amendment-2 gate passes (D2 slips in 3/3, drvmed not below the base minimum
+1860.27, H1 3/3, D3 (b) no loss, collateral 39 = 39, determinism).
+
+**D2 run hygiene (new, found in the data).** D2 arms stop on a 90 s wall clock. `D2_L_3` and `D2_WK_1` ran beside an
+H arm and stopped at 1411 / 1415 motion_diag lines against 1627..1636 for the others, which shortens the scored
+windows (n 1190 / 1206 against 1330..1413). From here every D2 arm runs with no other arm of this lane in flight,
+and a D2 run with fewer than 1600 motion_diag lines is re-run, never scored. `D2_L_3` is therefore not valid evidence
+for L; the rebased D2 arms below decide.
+
+**Rebase.** `work/d2bsp` is rebased onto `race/first-frame-parity` `34ea5b71` (or its tip at rebase time). On the
+rebased tip **fix L is wired default ON**, opt-out `MASHED_NO_D2CHUNK=1` (`MASHED_D2CHUNK` stays accepted, no effect),
+on the strength of the verdict above, **conditional on the rebased arms below passing the same gates**; if any fails,
+the flip is reverted to default OFF before the lane ends and RESULT says which. Fix W, fix K and the stand-in are
+unchanged (opt-in, opt-in, default path). Base exe = a build of the rebase target commit.
+
+Rebased arms (output under `verify/d2bsp_20261016/rb/`, same recipes):
+- `H_BASE`, `H_BASE-2` (base exe). Prediction: `716cb2fd / 2a2afda1 / ba90ed88`.
+- `H_NOL`, `H_NOL-2` (opt-out). **No-op gate:** = `H_BASE` bit-exactly.
+- `H_DEF`, `H_DEF-2` (new default = L). Determinism gate. Prediction (no gate): = the pre-rebase `H_L` hashes
+  `2b4d47bb / 356821c8 / f7a155e1`.
+- `H_W`, `H_W-2` (W on the new default), report + determinism.
+- `R_DEF`, `R_K` (replay of `o_bp1`): G-WALK / G-WHEEL re-scored on the rebased build. Prediction: the pre-rebase
+  numbers exactly.
+- `D2_BASE_1..3`, `D2_DEF_1..3` (gate for L), `D2_W_1..3` and `D2_WK_1..3` (report, for the user decision), each alone.
+- `B_{BASE,DEF,W}_K{0,1,26}`; collateral `H_DEF`, `H_W` against `H_BASE` (floor = each arm's own repeat).
+L's gates on the rebased arms: no-op, determinism, D2 slips in bounds 3/3 and drvmed not below the rebased
+`D2_BASE` minimum, H1 3/3, D3 (b) no loss against `B_BASE`, collateral <= `H_BASE` + 2.
+
+Report only, no gate (registered now so it is not chosen after the data): G-WHEEL-F with the hold-tick wheel-calls
+left out of both numerator and denominator. A hold-tick wheel-call = query frame < 1000 and the original's
+next-entry O row holds, for that wheel, fv `00000000`, key `ffffffff`, `+0x204` `3f800000` and state 1.
