@@ -5,6 +5,9 @@ onto `10c18c59` after rstates and d2engage merged, amendment 4). Pre-registratio
 amendments 1..4, each committed before the runs it governs). Model claude-opus-5-5. Started on account2 (sections
 0..2, amendments 1..2, the pre-rebase arms), finished on account3 (amendments 3..4, both rebases, rebased arms, this
 file). **The final arms are on `10c18c59` (`rb2/`)**; `rb/` holds the `34ea5b71` record, which they reproduce.
+**Carried to `f9cdbb94`** (rfx2 merged; amendment 6, `rb3/`, base exe `b7e6764f`, new `fd9dd020`): `H_BASE`, `H_NOL`,
+`H_DEF`, `H_W` and `R_DEF` reproduce their hashes, and `D2_DEF_1` / `D2_W_1` are byte-identical to `rb2/D2_DEF_4` /
+`rb2/D2_W_2` (`52795f6d`, `2a8fdc4c`). The branch now sits on `f9cdbb94`; this lane's row is U-9712.
 
 ## 1. Verdicts (section 4 rules, applied to the rebased arms)
 
