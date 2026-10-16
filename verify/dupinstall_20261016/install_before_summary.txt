@@ -1,0 +1,28 @@
+0x00407640  DUAL(1 refused)     [606]+FindCopterByKeyIndex  [841]-CopterFind639dc4
+0x004077E0  DUAL(1 refused)     [629]+GetSelectedCopterField60  [823]-FloatIdx639de0
+0x00407A20  DUAL(1 refused)     [615]+GetAiLapCounter  [782]-Table8a9648Get
+0x004098A0  DUAL(1 refused)     [607]+GetLedEntryArrayBase  [769]-Ret63a5f0
+0x0040B970  DUAL(1 refused)     [619]+PlayerScoreZeroTest  [836]-Bool0Out8a94e0
+0x0040B9A0  DUAL(1 refused)     [622]+PlayerScoreMaxTest  [1061]-MaxScoreFlags40b9a0
+0x0040BA00  DUAL(1 refused)     [620]+PlayerScoreMinTest  [837]-BoolMinOut8a94e0
+0x0040BA60  DUAL(1 refused)     [623]+PlayerScoreGateInvert  [1060]-Active4Slots40ba60
+0x00415D00  DUAL(1 refused)     [658]+AiWallAhead  [665]-AiWallAhead_Entry
+0x00416060  DUAL(1 refused)     [655]+AiLineOfSight  [663]-AiLos_Entry
+0x00426CB0  DUAL(1 refused)     [355]+SlotIndexToPtr  [582]-FrontendSlotTablePtr426cb0
+0x004298C0  DUAL(1 refused)     [594]+MenuQuadGlobalZero  [843]-Clear67d99c_x4
+0x0042AF50  DUAL(1 refused)     [126]+MenuReadinessCheck  [273]-MenuReadinessCheckC
+0x0042BDE0  DUAL(1 refused)     [357]+HudRectEmitter  [547]-HudRectEmitter5
+0x00431F30  DUAL(1 refused)     [528]+FrontendPageFlagSet  [557]-FrontendPageIdDispatch
+0x0046C730  OK-single           [506]+EntityDamageStateGet
+0x0046C750  OK-single           [505]+EntityVelocityCounterGet
+0x0046CBB0  DUAL(1 refused)     [19]+VehicleCarStateRead  [714]-CarStatePairGet
+0x0046CBE0  OK-single           [405]+VehicleCarStateSet
+0x004955B0  DUAL(1 refused)     [221]+DInputInitPredicate  [292]-CreateDInputObjectBool
+0x00496930  DUAL(1 refused)     [704]+TimerTable773030Get  [737]-Table773030Get
+0x00498BF0  DUAL(1 refused)     [225]+DisplayGetCursorGate  [280]-DisplayActiveFlagGet
+0x004F8660  DUAL(1 refused)     [631]+PluginFieldReadA8  [1245]-PluginDataDwordA
+0x004F8690  DUAL(1 refused)     [633]+PluginFieldReadAC  [1246]-PluginDataDwordB
+0x00556CC0  DUAL(1 refused)     [531]+FontAtlasSlotSet  [552]-SetDat00912a20
+0x00556CD0  DUAL(1 refused)     [530]+FontAtlasSlotGet  [558]-GetDat00912a20
+0x005B3580  DUAL(1 refused)     [92]+AudioListHeaderInit  [602]-AudioListInit
+-- 27 rvas, 3 single-install, 24 other

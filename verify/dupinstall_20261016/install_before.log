@@ -1,0 +1,55 @@
+spawning MASHED.exe  ONLY=[0x00407640,0x004077e0,0x00407a20,0x004098a0,0x0040b970,0x0040b9a0,0x0040ba00,0x0040ba60,0x00415d00,0x00416060,0x00426cb0,0x004298c0,0x0042af50,0x0042bde0,0x00431f30,0x0046c730,0x0046c750,0x0046cbb0,0x0046cbe0,0x004955b0,0x00496930,0x00498bf0,0x004f8660,0x004f8690,0x00556cc0,0x00556cd0,0x005b3580]  watch=30s
+  pid=17984
+  resumed; booting...
+  asi base: 0x5d7d0000
+
+=== RESULT ===
+  survived 30s, alive=None
+  0x00407640: JMP-LIVE(0xE9)
+  0x004077e0: JMP-LIVE(0xE9)
+  0x00407a20: JMP-LIVE(0xE9)
+  0x004098a0: JMP-LIVE(0xE9)
+  0x0040b970: JMP-LIVE(0xE9)
+  0x0040b9a0: JMP-LIVE(0xE9)
+  0x0040ba00: JMP-LIVE(0xE9)
+  0x0040ba60: JMP-LIVE(0xE9)
+  0x00415d00: JMP-LIVE(0xE9)
+  0x00416060: JMP-LIVE(0xE9)
+  0x00426cb0: JMP-LIVE(0xE9)
+  0x004298c0: JMP-LIVE(0xE9)
+  0x0042af50: JMP-LIVE(0xE9)
+  0x0042bde0: JMP-LIVE(0xE9)
+  0x00431f30: JMP-LIVE(0xE9)
+  0x0046c730: JMP-LIVE(0xE9)
+  0x0046c750: JMP-LIVE(0xE9)
+  0x0046cbb0: JMP-LIVE(0xE9)
+  0x0046cbe0: JMP-LIVE(0xE9)
+  0x004955b0: JMP-LIVE(0xE9)
+  0x00496930: JMP-LIVE(0xE9)
+  0x00498bf0: JMP-LIVE(0xE9)
+  0x004f8660: JMP-LIVE(0xE9)
+  0x004f8690: JMP-LIVE(0xE9)
+  0x00556cc0: JMP-LIVE(0xE9)
+  0x00556cd0: JMP-LIVE(0xE9)
+  0x005b3580: JMP-LIVE(0xE9)
+  manifest: 1354 hooks seen, 27 installed
+    19	0x0046CBB0	1	VehicleCarStateRead
+    92	0x005B3580	1	AudioListHeaderInit
+    126	0x0042AF50	1	MenuReadinessCheck
+    221	0x004955B0	1	DInputInitPredicate
+    225	0x00498BF0	1	DisplayGetCursorGate
+    355	0x00426CB0	1	SlotIndexToPtr
+    357	0x0042BDE0	1	HudRectEmitter
+    405	0x0046CBE0	1	VehicleCarStateSet
+    505	0x0046C750	1	EntityVelocityCounterGet
+    506	0x0046C730	1	EntityDamageStateGet
+    528	0x00431F30	1	FrontendPageFlagSet
+    530	0x00556CD0	1	FontAtlasSlotGet
+    531	0x00556CC0	1	FontAtlasSlotSet
+    594	0x004298C0	1	MenuQuadGlobalZero
+    606	0x00407640	1	FindCopterByKeyIndex
+    607	0x004098A0	1	GetLedEntryArrayBase
+    615	0x00407A20	1	GetAiLapCounter
+    619	0x0040B970	1	PlayerScoreZeroTest
+    620	0x0040BA00	1	PlayerScoreMinTest
+    622	0x0040B9A0	1	PlayerScoreMaxTest

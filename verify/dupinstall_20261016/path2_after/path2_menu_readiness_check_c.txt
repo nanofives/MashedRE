@@ -1,0 +1,34 @@
+hook: menu_readiness_check_c  rva=0x0042af50  export=MenuReadinessCheckC
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 11248
+  [agent] pre_snapshot
+  [agent] asi_loaded
+  [agent] post_snapshot
+  [agent] results
+
+=== verify_hook_install report (menu_readiness_check_c) ===
+
+target address: 0x0042af50  export: MenuReadinessCheckC
+PRE  bytes:     e9 7b de 6b 5e 00 02 74
+asi base:       0x5ead0000
+reimpl addr:    0x5eae8dd0
+POST bytes:     e9 7b de 6b 5e 00 02 74
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x5e6bde7b  expected 0x5e6bde7b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  1 / 1  (other threads: 0)
+
+per-input results:
+  [OK] input={'args': [], 'seed': [{'addr': 6810288, 'val': 2}, {'addr': 6809544, 'val': 0}, {'addr': 9013936, 'val': 1}, {'addr': 8329740, 'val': 4096}, {'addr': 8327233, 'val': 1, 'size': 1}, {'addr': 8328449, 'val': 0, 'size': 1}, {'addr': 8327309, 'val': 0, 'size': 1}, {'addr': 8328525, 'val': 0, 'size': 1}, {'addr': 8327385, 'val': 0, 'size': 1}, {'addr': 8328601, 'val': 0, 'size': 1}, {'addr': 8327461, 'val': 0, 'size': 1}, {'addr': 8328677, 'val': 0, 'size': 1}, {'addr': 8327537, 'val': 0, 'size': 1}, {'addr': 8328753, 'val': 0, 'size': 1}, {'addr': 8327613, 'val': 0, 'size': 1}, {'addr': 8328829, 'val': 0, 'size': 1}, {'addr': 8327689, 'val': 0, 'size': 1}, {'addr': 8328905, 'val': 0, 'size': 1}, {'addr': 8327765, 'val': 0, 'size': 1}, {'addr': 8328981, 'val': 0, 'size': 1}, {'addr': 8329748, 'val': 4294967295}, {'addr': 8329764, 'val': 4294967295}, {'addr': 8329780, 'val': 4294967295}, {'addr': 8329796, 'val': 4294967295}]}  got=1,811c9dc5  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 1x as expected
+  + all 1 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall\log\verify_hook_install_menu_readiness_check_c.txt

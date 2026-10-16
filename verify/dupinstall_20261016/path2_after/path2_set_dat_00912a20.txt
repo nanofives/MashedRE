@@ -1,0 +1,36 @@
+hook: set_dat_00912a20  rva=0x00556cc0  export=SetDat00912a20
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 20000
+  [agent] pre_snapshot
+  [agent] asi_loaded
+  [agent] post_snapshot
+  [agent] results
+
+=== verify_hook_install report (set_dat_00912a20) ===
+
+target address: 0x00556cc0  export: SetDat00912a20
+PRE  bytes:     e9 6b 6b 5a 5e 20 2a 91
+asi base:       0x5ead0000
+reimpl addr:    0x5eafd830
+POST bytes:     e9 6b 6b 5a 5e 20 2a 91
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x5e5a6b6b  expected 0x5e5a6b6b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  3 / 3  (other threads: 0)
+
+per-input results:
+  [OK] input=0  got=(void)  err=
+  [OK] input=3735928559  got=(void)  err=
+  [OK] input=4294967295  got=(void)  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 3x as expected
+  + all 3 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall\log\verify_hook_install_set_dat_00912a20.txt

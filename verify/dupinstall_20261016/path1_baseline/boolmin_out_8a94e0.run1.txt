@@ -1,0 +1,6 @@
+[harness: early_window_leaf_diff.py]
+hook: boolmin_out_8a94e0  (early-window pure-leaf diff â€” no menu boot required)
+  b0=0xa1 reim=0x5def8d20 cases=10 mismatches=0
+  evidence: C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall\log\diff_boolmin_out_8a94e0.csv
+VERDICT: GREEN
+

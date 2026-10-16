@@ -1,0 +1,12 @@
+hook: create_dinput_object_bool  rva=0x004955b0  export=CreateDInputObjectBool
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 22328
+  [agent] LUT ready  base=0x2a31ae0  offset=0x134  root=0xddf0048  delta=0  attempts=18
+  [agent] .asi loaded  base=0x5ef60000  CreateDInputObjectBool@0x5ef79f10
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall\log\diff_create_dinput_object_bool.csv
+  total cases: 7
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.
+

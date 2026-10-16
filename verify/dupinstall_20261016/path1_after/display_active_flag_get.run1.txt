@@ -1,0 +1,12 @@
+hook: display_active_flag_get  rva=0x00498bf0  export=DisplayActiveFlagGet
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 16344
+  [agent] LUT ready  base=0x2b61ae0  offset=0x134  root=0xdd90048  delta=0  attempts=17
+  [agent] .asi loaded  base=0x5dc50000  DisplayActiveFlagGet@0x5dc698d0
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall\log\diff_display_active_flag_get.csv
+  total cases: 10
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.
+

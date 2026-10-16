@@ -1,0 +1,12 @@
+hook: get_led_entry_array_base  rva=0x004098a0  export=GetLedEntryArrayBase
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 16396
+  [agent] LUT ready  base=0x2c21ae0  offset=0x134  root=0xdf30048  delta=0  attempts=6
+  [agent] .asi loaded  base=0x5dec0000  GetLedEntryArrayBase@0x5deef2c0
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall\log\diff_get_led_entry_array_base.csv
+  total cases: 12
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.
+

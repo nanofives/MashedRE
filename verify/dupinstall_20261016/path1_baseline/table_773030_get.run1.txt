@@ -1,0 +1,19 @@
+hook: table_773030_get  rva=0x00496930  export=Table773030Get
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 10708
+scenario='race': driving to a live race before running vectors
+  [save] reads pinned to gamesave.bin.refbak_20260830; writes -> C:\Users\maria\AppData\Local\Temp\run_diff_gamesave_10708.bin
+  [nav] booting to menu...
+  [nav] timeout: d3 depth=2 phase=3
+  [nav] timeout: d3 depth=2 phase=3
+  [nav] in race? phase=0 (YES)
+  [agent] LUT ready  base=0x2ba1ae0  offset=0x134  root=0xde90048  delta=0  attempts=0
+  [agent] .asi loaded  base=0x5cec0000  Table773030Get@0x5cef7b20
+  [agent] {'type': 'log', 'msg': 'x87 CW: thread 0x27f (arms run at it)'}
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall\log\diff_table_773030_get.csv
+  total cases: 6
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.
+

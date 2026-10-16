@@ -1,0 +1,13 @@
+hook: get_ai_lap_counter  rva=0x00407a20  export=GetAiLapCounter
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 19048
+  [agent] LUT ready  base=0x2871ae0  offset=0x134  root=0xddb0048  delta=0  attempts=18
+  [agent] .asi loaded  base=0x5dd70000  GetAiLapCounter@0x5dd9ee00
+  [agent] {'type': 'log', 'msg': 'x87 CW: thread 0x27f (arms run at it)'}
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall\log\diff_get_ai_lap_counter.csv
+  total cases: 8
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.
+

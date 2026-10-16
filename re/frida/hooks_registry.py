@@ -1303,15 +1303,6 @@ HOOKS = {
     # Both orig and reimpl see the same global state at boot; any divergence
     # in the return value would indicate a logic error in the reimpl.
     # 10 identical dummy-iteration calls confirm stable bit-identical output.
-    'menu_readiness_check': {
-        'rva':            0x0042af50,
-        'export':         'MenuReadinessCheck',
-        'signature':      {'ret': 'int32', 'args': []},
-        'arg_type':       'none',
-        'lut_root_delta': 0,
-        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-        'path2_tests':    [0, 1, 2],
-    },
 
     # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     # Session 88 â€” c3_vehicle_state  (C2â†’C3, 5 candidates)
@@ -2495,28 +2486,7 @@ HOOKS = {
     # getter returns a constant &DAT_0063a5f0. int_scalar = 1-arg cdecl; int_pair =
     # 2-arg cdecl; none = zero-arg getter.
 
-    # 0x00407640 FindCopterByKeyIndex(key) -> index | -1.
-    'find_copter_by_key_index': {
-        'rva':         0x00407640,
-        'export':      'FindCopterByKeyIndex',
-        'signature':   {'ret': 'int', 'args': ['uint32']},
-        'arg_type':    'int_scalar',
-        'lut_root_delta': 0,
-        'path1_tests': [0, 0xFFFFFFFF, 0x80000000, 0x7FFFFFFF, 0xAAAAAAAA, 0x55555555,
-                        1, 2, 0x12345678, 0xDEADBEEF, 0x100, 0x10],
-        'path2_tests': [0, 0x7FFFFFFF, 0xDEADBEEF],
-    },
 
-    # 0x004098a0 GetLedEntryArrayBase() -> &DAT_0063a5f0 (constant getter).
-    'get_led_entry_array_base': {
-        'rva':         0x004098a0,
-        'export':      'GetLedEntryArrayBase',
-        'signature':   {'ret': 'pointer', 'args': []},
-        'arg_type':    'none',
-        'lut_root_delta': 0,
-        'path1_tests': list(range(12)),
-        'path2_tests': [0, 1, 2],
-    },
 
     # 0x00409300 RangeTableFirstOfGroup(group) -> first int of group-th group.
     'range_table_first_of_group': {
@@ -6892,18 +6862,6 @@ HOOKS = {
     # MOV EAX, [0x00773204] / RET. FUN_004951f0 uses non-zero return to gate
     # ShowCursor(0). Same read_global strategy; 10 sentinels.
     # Analysis: re/analysis/promote_c2_video_display/00498bf0.md
-    'display_get_cursor_gate': {
-        'rva':            0x00498bf0,
-        'export':         'DisplayGetCursorGate',
-        'signature':      {'ret': 'uint32', 'args': []},
-        'arg_type':       'read_global',
-        'target_global':  0x00773204,
-        'lut_root_delta': 0,
-        'path1_tests':    [0x00000000, 0x00000001, 0xDEADBEEF, 0xCAFEBABE,
-                           0x12345678, 0xFFFFFFFF, 0x80000000, 0x55555555,
-                           0xAAAAAAAA, 0x00000000],
-        'path2_tests':    [0x00000000, 0x00000001, 0xFFFFFFFF],
-    },
 
     # 0x00495530  CreateDInputObject
     # Wrapper that calls dinput8!DirectInput8Create. 70 bytes.
@@ -6935,19 +6893,6 @@ HOOKS = {
     # 11-byte bool wrapper: returns FUN_00495530() != 0.
     # arg_type='none': same testing strategy as the inner function â€” bit-
     # identical return on both sides since both call the same target.
-    'create_dinput_object_bool': {
-        'rva':            0x004955b0,
-        'export':         'CreateDInputObjectBool',
-        'signature':      {'ret': 'uint32', 'args': []},
-        'arg_type':       'none',
-        # crash_equal_ok=True: this bool wrapper calls 0x00495530 which raises
-        # a structured exception when re-invoked against an already-initialized
-        # DirectInput state. Same reasoning as create_dinput_object above.
-        'crash_equal_ok': True,
-        'lut_root_delta': 0,
-        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-        'path2_tests':    [0, 1, 2],
-    },
 
     # 0x0045b350  RwInitNullStub
     # 1-byte bare RET (0xC3). 33 callers in binary; functions as null callback.
@@ -12340,31 +12285,6 @@ HOOKS = {
     # alpha values. param_1 shifts HUD row (fVar1 = param_1 - 13); param_2
     # controls colour blend (0..255).
     # ref: re/analysis/frontend_c1_to_c2_s6/FUN_0042bde0.md
-    'hud_rect_emitter': {
-        'rva':            0x0042bde0,
-        'export':         'HudRectEmitter',
-        'signature':      {'ret': 'void', 'args': ['int32', 'uint32']},
-        'arg_type':       'int_pair',
-        'lut_root_delta': 0,
-        # [param_1, param_2]: row-index, colour-byte
-        'path1_tests': [
-            [0,   0],
-            [1,   0],
-            [5,   0],
-            [10,  0],
-            [13,  0],
-            [0,   128],
-            [5,   255],
-            [10,  64],
-            [20,  200],
-            [0,   1],
-        ],
-        'path2_tests': [
-            [0,   0],
-            [5,   128],
-            [13,  255],
-        ],
-    },
 
     # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     # Harness-ext landed 2026-05-26: slot_block_zero + state_machine_observe.
@@ -13227,36 +13147,12 @@ HOOKS = {
     # MOV EAX, [0x00912a20]; RET. Data ref at 0x00556cd1.
     # Caller: FontText_HudShutdown (0x00427620, C2).
     # arg_type='read_global': write sentinel to 0x00912a20, call fn, compare return.
-    'font_atlas_slot_get': {
-        'rva':            0x00556cd0,
-        'export':         'FontAtlasSlotGet',
-        'signature':      {'ret': 'uint32', 'args': []},
-        'arg_type':       'read_global',
-        'target_global':  0x00912a20,
-        'lut_root_delta': 0,
-        'path1_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE, 0x12345678,
-                           0xFFFFFFFF, 0x80000000, 0x00000001, 0x55555555,
-                           0xAAAAAAAA, 0x00000000],
-        'path2_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE],
-    },
 
     # 0x00556cc0  FontAtlasSlotSet
     # void(uint32) â€” DAT_00912a20 = param_1 (9-byte pure-leaf setter).
     # MOV EAX,[ESP+4]; MOV [0x00912a20],EAX; RET. Data ref at 0x00556cc3.
     # Caller: FUN_00427ca0 (0x00427ca0, C2).
     # arg_type='void_setter_observe': call fn(value), read back 0x00912a20.
-    'font_atlas_slot_set': {
-        'rva':            0x00556cc0,
-        'export':         'FontAtlasSlotSet',
-        'signature':      {'ret': 'void', 'args': ['uint32']},
-        'arg_type':       'void_setter_observe',
-        'target_global':  0x00912a20,
-        'lut_root_delta': 0,
-        'path1_tests':    [0x00000000, 0x00000001, 0x00000002, 0x00000003,
-                           0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF, 0x80000000,
-                           0x55555555, 0xAAAAAAAA],
-        'path2_tests':    [0x00000000, 0x00000001, 0xDEADBEEF],
-    },
 
     # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     # Session c3-batch-v-s2 â€” HUD/Cluster_v2.cpp (1/3 promoted)
@@ -14274,28 +14170,6 @@ HOOKS = {
     # extra cdecl arg is caller-cleaned and harmless. The varied 'a' seeds are
     # overwritten by the init, confirming a full overwrite regardless of prior
     # contents. ref: re/analysis/bucket_audio_005b2220_005b8570/0x005b3580.md
-    'audio_list_header_init': {
-        'rva':            0x005b3580,
-        'export':         'AudioListHeaderInit',
-        'signature':      {'ret': 'void', 'args': ['pointer', 'pointer']},
-        'arg_type':       'fmt_desc_pair_compare',
-        'lut_root_delta': 0,
-        'path1_tests': [
-            { 'a': {},                                                'b': {} },
-            { 'a': {'f00': 0xFFFFFFFF},                               'b': {} },
-            { 'a': {'f00': 0x80000000, 'f04': 0x80000000, 'f08': 0x80000000}, 'b': {} },
-            { 'a': {'f00': 0xAAAAAAAA, 'f04': 0x55555555, 'f08': 0xAAAAAAAA}, 'b': {} },
-            { 'a': {'f00': 0xDEADBEEF},                               'b': {} },
-            { 'a': {'f04': 0xCAFEBABE},                               'b': {} },
-            { 'a': {'f08': 0x12345678},                               'b': {} },
-            { 'a': {'f00': 1, 'f04': 2, 'f08': 3},                    'b': {} },
-        ],
-        'path2_tests': [
-            { 'a': {},                  'b': {} },
-            { 'a': {'f00': 0xFFFFFFFF}, 'b': {} },
-            { 'a': {'f00': 0xDEADBEEF}, 'b': {} },
-        ],
-    },
 
     # 0x005b4060  AudioFmtConvertByteLength  int(int* fmtIn, uint* fmtOut)
     # Output byte length to convert fmtIn -> fmtOut. Reads (both descriptors):
@@ -14784,15 +14658,6 @@ HOOKS = {
     # Pure index-to-pointer slot helper (0x4c-byte stride table at 0x00663664).
     # int_scalar: pass index, compare returned pointer (EAX) as uint32.
     # ref: re/analysis/frontend_c1_to_c2_s4/FUN_00426cb0.md
-    'frontend_slot_table_ptr_426cb0': {
-        'rva':            0x00426cb0,
-        'export':         'FrontendSlotTablePtr426cb0',
-        'signature':      {'ret': 'uint32', 'args': ['uint32']},
-        'arg_type':       'int_scalar',
-        'lut_root_delta': 0,
-        'path1_tests':    [0, 1, 2, 3, 5, 10, 16, 100, 255, 0xffff, 0xffffffff],
-        'path2_tests':    [0, 1, 16],
-    },
 
     # 0x00426de0  FrontendFloatGet426de0
     # float10 FUN_00426de0(void) { return (float10)_DAT_0064435c; }
@@ -15193,15 +15058,6 @@ HOOKS = {
     # 10x; both orig and reimpl emit the identical store sequence (asm-equivalence
     # confirmed in the .cpp header against the disassembly).
     # ref: re/analysis/frontend_c1_to_c2_s6/FUN_004298c0.md
-    'menu_quad_global_zero': {
-        'rva':            0x004298c0,
-        'export':         'MenuQuadGlobalZero',
-        'signature':      {'ret': 'void', 'args': []},
-        'arg_type':       'none',
-        'lut_root_delta': 0,
-        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-        'path2_tests':    [0, 1, 2],
-    },
 
     # 0x00423b00  FrontendInputDispatch  void(void)
     # 29B per-frame menu-input dispatcher: guard DAT_007f1a50==1 then 4 void(void)
@@ -15539,18 +15395,6 @@ HOOKS = {
     # Copter record (&DAT_00639de0)[DAT_0063a5d8*0x3b]. Copter array @0x00639de0
     # (selected idx @0x0063a5d8) is unpopulated in Quick-Battle arena -> likely
     # DEFER. sentinel=0x00639de0.
-    'selected_copter_field60': {
-        'rva':            0x004077e0,
-        'export':         'GetSelectedCopterField60',
-        'signature':      {'ret': 'float', 'args': []},
-        'arg_type':       'none',
-        'zero_arg':       True,
-        'zero_arg_baseline': None,
-        'scenario_sentinel': 0x00639de0,
-        'lut_root_delta': 0,
-        'path1_tests':    [0],
-        'path2_tests':    [0],
-    },
 
     # ---- promote-round round 1 (L0: c3_batch_race1 session-1 set) ------------
     # All five run on the scenario:'race' lane (live Quick Battle state);
@@ -16345,16 +16189,6 @@ HOOKS = {
     # 0x00496930  TimerTable773030Get — uint32(int i). Complement table at
     # 0x00773030 + i*4 (caller uses indices 3/4). Same exit-5 -> race fix.
     # ref: re/analysis/timer_d2/0x00496930.md
-    'timer_table_773030_get': {
-        'rva':            0x00496930,
-        'export':         'TimerTable773030Get',
-        'signature':      {'ret': 'uint32', 'args': ['int32']},
-        'arg_type':       'int_scalar',
-        'lut_root_delta': 0,
-        'scenario':       'race',
-        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 3, 4],
-        'path2_tests':    [0, 3, 4],
-    },
 
     # 0x00485360  DynObjListGetCount — uint32() <- DAT_006fa0f8 (count sibling
     # of DynamicObjectListGetBase 0x00485370, round 11). read_global-seeded.
@@ -17228,7 +17062,6 @@ HOOKS = {
 
     # ---- promote-round round 42 (large-stride imul table getters) --
     'table_63dc6c_get': {'rva': 0x0041f300, 'export': 'Table63dc6cGet', 'signature': {'ret': 'uint32', 'args': ['int32']}, 'arg_type': 'int_scalar', 'seed_table': {'base': 0x0063dc6c, 'stride': 0x2ac, 'span': 4}, 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 3, 0, 1, 2, 3, 1, 2], 'path2_tests': [0, 1, 2]},
-    'table_8a9648_get': {'rva': 0x00407a20, 'export': 'Table8a9648Get', 'signature': {'ret': 'uint32', 'args': ['int32']}, 'arg_type': 'int_scalar', 'seed_table': {'base': 0x008a9648, 'stride': 0x30c, 'span': 4}, 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 3, 0, 1, 2, 3, 1, 2], 'path2_tests': [0, 1, 2]},
     'table_8a9640_get': {'rva': 0x00407a40, 'export': 'Table8a9640Get', 'signature': {'ret': 'uint32', 'args': ['int32']}, 'arg_type': 'int_scalar', 'seed_table': {'base': 0x008a9640, 'stride': 0x30c, 'span': 4}, 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 3, 0, 1, 2, 3, 1, 2], 'path2_tests': [0, 1, 2]},
 
     # ---- promote-round round 41 (global-field getter cluster @0x0063d7e4) --

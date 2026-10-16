@@ -86,14 +86,6 @@ extern "C" __declspec(dllexport) void __cdecl ReleaseResourcePair(void) {
 }
 RH_ScopedInstall(ReleaseResourcePair, 0x0040cf40);  // c3_batch_ah s4 (DEFER: no-op at menu)
 
-// 0x004077e0  FUN_004077e0  (17 bytes)  float10(void)
-// return (float10)(float)(&DAT_00639de0)[DAT_0063a5d8 * 0x3b];
-// Reads field +0x0 (a float) of the SELECTED Copter record in the array at
-// 0x00639de0; the selected index is DAT_0063a5d8 and records are 0x3b dwords
-// (0xEC bytes) apart. x87 ST0 (float10) return -> exposed to Frida as 'float'.
-extern "C" __declspec(dllexport) float __cdecl GetSelectedCopterField60(void) {
-    int idx = *reinterpret_cast<int*>(0x0063a5d8);
-    return reinterpret_cast<float*>(0x00639de0)[idx * 0x3b];
-}
-
-RH_ScopedInstall(GetSelectedCopterField60, 0x004077e0);  // harness/scenario-attach 2026-06-08
+// FUN_004077e0 (selected-Copter float getter) lives in Util/PromoLoop_round61.cpp
+// (FloatIdx639de0), the body hooks.csv's evidence cites. The duplicate that sat here
+// (GetSelectedCopterField60) was removed 2026-10-16 (dupinstall).

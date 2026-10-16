@@ -12,8 +12,9 @@
 //   0x004274e0  LocalizationFileLoad     — impl-only; live-PIZ open non-deterministic
 //                                          under Frida sandbox; no safe arg_type.
 //   0x0042bcb0  PlayerNameSpriteDraw     — impl-only; 5-arg complex frame, no arg_type.
-//   0x00431f30  FrontendPageFlagSet      — impl-only; calls mass-clear (destructive
-//                                          to 19 frontend flags) — unsafe to A/B.
+//   (0x00431f30 FrontendPageFlagSet was removed 2026-10-16, dupinstall: its one-body-per-RVA
+//    copy is FrontendPageIdDispatch in Frontend/MenuLeaves_af6.cpp, the body hooks.csv's
+//    evidence cites)
 //   0x00403050  PreRaceLoadingScreenDraw — RED: original AVs at quiescent menu
 //                                          (DAT_00771964 non-zero stale handle →
 //                                          live-state wall); impl matches decomp.
@@ -69,9 +70,6 @@ static auto* const s_FUN_004c5c00 = reinterpret_cast<
 // 0x004b5750  Im2D quad draw via vtable: (driver, &rect, &xfm, &param4, handle)
 static auto* const s_FUN_004b5750 = reinterpret_cast<
     void(__cdecl*)(std::uint32_t, const float*, const float*, const void*, std::uint32_t)>(0x004b5750);
-
-// 0x00431d90  Panel-flag mass-clear (no args).
-static auto* const s_FUN_00431d90 = reinterpret_cast<void(__cdecl*)()>(0x00431d90);
 
 // 0x00402fb0  Pulsing sprite spinner (no args).
 static auto* const s_FUN_00402fb0 = reinterpret_cast<void(__cdecl*)()>(0x00402fb0);
@@ -468,68 +466,9 @@ extern "C" __declspec(dllexport) void __cdecl PlayerNameSpriteDraw(int param_1, 
 RH_ScopedInstall(PlayerNameSpriteDraw, 0x0042bcb0);
 
 // ───────────────────────────────────────────────────────────────────────────
-// 0x00431f30  FrontendPageFlagSet
-//
-// Original: FUN_00431f30 (226 bytes, 0x00431f30..0x00432012)
-// Signature: void FUN_00431f30(int param_1)
-//
-// Body:
-//   FUN_00431d90()                                  // mass-clear 19 panel flags
-//   switch (param_1) {
-//     case 4:                  DAT_0067e7a8 = 1
-//     case 5:                  DAT_0067e7c8 = 1
-//     case 6: case 7:          DAT_0067e7b8 = 1
-//     case 8:                  DAT_0067e808 = 1; DAT_0067e828 = 1
-//     case 9: case 0x10:       DAT_0067e7e0 = 1
-//     case 10 (0xa):           DAT_0067e7b0 = 1
-//     case 0xc:                DAT_0067e7d0 = 1
-//     case 0xf:                DAT_0067e7d8 = 1
-//     case 0x11:               DAT_0067e7e8 = 1
-//     case 0x12: case 0x18:    DAT_0067e7f0 = 1
-//     case 0x13:               DAT_0067e7f8 = 1
-//     case 0x14:               DAT_0067e800 = 1
-//     case 0x1c:               DAT_0067e810 = 1
-//     case 0x1d:               DAT_0067e818 = 1
-//     case 0x1e:               DAT_0067e820 = 1
-//     case 0x1f: case 0x21:    DAT_0067e830 = 1
-//     case 0x20:               DAT_0067e838 = 1
-//     default:                 (no write)
-//   }
-//
+// FUN_00431f30 (page-id dispatch: FUN_00431d90 mass-clear, then one panel flag per page
+// id) was ported here first as FrontendPageFlagSet; its one-body-per-RVA copy is
+// FrontendPageIdDispatch in Frontend/MenuLeaves_af6.cpp (identical case set, targets and
+// values). The duplicate that sat here was removed 2026-10-16 (dupinstall).
 // ref: re/analysis/options_menu/0x00431f30.md
 // ───────────────────────────────────────────────────────────────────────────
-// 0x00431f30
-extern "C" __declspec(dllexport) void __cdecl FrontendPageFlagSet(int param_1)
-{
-    // Mass-clear 19 panel flags.
-    s_FUN_00431d90();
-
-    switch (param_1) {
-        case 4:    *reinterpret_cast<std::uint32_t*>(0x0067e7a8u) = 1u; break;
-        case 5:    *reinterpret_cast<std::uint32_t*>(0x0067e7c8u) = 1u; break;
-        case 6:
-        case 7:    *reinterpret_cast<std::uint32_t*>(0x0067e7b8u) = 1u; break;
-        case 8:
-            *reinterpret_cast<std::uint32_t*>(0x0067e808u) = 1u;
-            *reinterpret_cast<std::uint32_t*>(0x0067e828u) = 1u;
-            break;
-        case 9:
-        case 0x10: *reinterpret_cast<std::uint32_t*>(0x0067e7e0u) = 1u; break;
-        case 0xa:  *reinterpret_cast<std::uint32_t*>(0x0067e7b0u) = 1u; break;
-        case 0xc:  *reinterpret_cast<std::uint32_t*>(0x0067e7d0u) = 1u; break;
-        case 0xf:  *reinterpret_cast<std::uint32_t*>(0x0067e7d8u) = 1u; break;
-        case 0x11: *reinterpret_cast<std::uint32_t*>(0x0067e7e8u) = 1u; break;
-        case 0x12:
-        case 0x18: *reinterpret_cast<std::uint32_t*>(0x0067e7f0u) = 1u; break;
-        case 0x13: *reinterpret_cast<std::uint32_t*>(0x0067e7f8u) = 1u; break;
-        case 0x14: *reinterpret_cast<std::uint32_t*>(0x0067e800u) = 1u; break;
-        case 0x1c: *reinterpret_cast<std::uint32_t*>(0x0067e810u) = 1u; break;
-        case 0x1d: *reinterpret_cast<std::uint32_t*>(0x0067e818u) = 1u; break;
-        case 0x1e: *reinterpret_cast<std::uint32_t*>(0x0067e820u) = 1u; break;
-        case 0x1f:
-        case 0x21: *reinterpret_cast<std::uint32_t*>(0x0067e830u) = 1u; break;
-        case 0x20: *reinterpret_cast<std::uint32_t*>(0x0067e838u) = 1u; break;
-        default:   break;   // no write
-    }
-}
-RH_ScopedInstall(FrontendPageFlagSet, 0x00431f30);

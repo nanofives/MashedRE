@@ -4,7 +4,8 @@
 //                 (preserved in original\MASHED.exe.unpatched)
 //
 // Candidates promoted in this file (2 of the 6 session-2 candidates):
-//   0x005b3580  AudioListHeaderInit       — intrusive circular list header init
+//   (0x005b3580 AudioListHeaderInit removed 2026-10-16; the body is AudioListInit in
+//    Audio/AudioList_ag.cpp)
 //   0x005b4060  AudioFmtConvertByteLength — format-conversion output byte length
 //
 // The other four session-2 candidates were SKIPPED (not harness-expressible
@@ -33,26 +34,11 @@
 static inline int RoundNE(float x) { return _mm_cvtss_si32(_mm_set_ss(x)); }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 0x005b3580  FUN_005b3580  AudioListHeaderInit  (18 bytes, leaf)
-// Intrusive circular doubly-linked-list header initializer ([[U-6906]]).
-//
-// param_1 = list header. Layout: [0]=count, [1]=sentinel.next, [2]=sentinel.prev.
-//           The embedded sentinel node is the 8 bytes at header+4 (header[1..2]).
-//
-// Decomp (0x005b3580):
-//   puVar1 = param_1 + 1;     // &header[1] — address of the sentinel node
-//   *param_1   = 0;           // count = 0
-//   param_1[2] = puVar1;      // sentinel.prev = &sentinel  (empty circular list)
-//   *puVar1    = puVar1;      // sentinel.next = &sentinel
+// FUN_005b3580 (intrusive circular list header init, [[U-6906]]) was ported here first as
+// AudioListHeaderInit; its one-body-per-RVA copy is AudioListInit in Audio/AudioList_ag.cpp,
+// the body hooks.csv's evidence cites (diff_audio_list_init.csv, count_header_list_ring).
+// The duplicate that sat here was removed 2026-10-16 (dupinstall).
 // ─────────────────────────────────────────────────────────────────────────────
-extern "C" __declspec(dllexport) void __cdecl AudioListHeaderInit(std::uint32_t* param_1) {
-    std::uint32_t* puVar1 = param_1 + 1;                 // &header[1]
-    param_1[0] = 0u;                                     // count = 0
-    param_1[2] = static_cast<std::uint32_t>(reinterpret_cast<std::uintptr_t>(puVar1));  // prev = self
-    *puVar1    = static_cast<std::uint32_t>(reinterpret_cast<std::uintptr_t>(puVar1));  // next = self
-}
-
-RH_ScopedInstall(AudioListHeaderInit, 0x005b3580);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x005b4060  FUN_005b4060  AudioFmtConvertByteLength  (225 bytes, leaf)

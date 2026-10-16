@@ -2812,6 +2812,10 @@ Named D4 work items (added 2026-09-26, previously implicit):
   (2) the AI copies in `Ai/AiStandalone.cpp`, which D3 criterion (b) depends on;
   (3) the 27 `DUP-INSTALL` rows, where the fix is deleting one `RH_ScopedInstall` (six are C4; this
   is the U-9065 class and it is tracker hygiene, not behaviour);
+  **Item (3) status 2026-10-16 (`verify/dupinstall_20261016/RESULT_dupinstall.md`):** 26 of the 27
+  allowlist entries removed (23 consolidated by deleting the install and the dead body, 3 already
+  stale); `0x0046cbb0` is the one left (it needs an edit in `Vehicle/VehicleState.cpp`). The
+  `DUP-IN-TARGET` entries those RVAs also carried went with them (29 more lines);
   (4) everything else.
   **Each consolidation re-earns the row's C-level through the normal gates** — the exe copy has no
   evidence of its own, and a copy fixed by reading is a C2-grade statement (`re/CONFIDENCE.md`,

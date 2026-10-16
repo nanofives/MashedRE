@@ -1,0 +1,55 @@
+warm pool: 3 instance(s), 35 hook(s)
+  [slot 0] spawned pid=14052
+  [slot 1] spawned pid=9988
+  [slot 2] spawned pid=21136
+  [slot 2] selected_copter_field60: GREEN
+  [slot 2] table_8a9648_get: GREEN
+  [slot 2] bool0_out_8a94e0: RED 10/10 mismatch
+  [slot 2] active4slots_40ba60: RED 1/1 mismatch
+  [slot 2] menu_quad_global_zero: GREEN
+  [slot 2] menu_readiness_check_c: GREEN
+  [slot 2] frontend_page_id_dispatch: GREEN
+  [slot 2] timer_table_773030_get: GREEN
+  [slot 2] display_active_flag_get: GREEN
+  [slot 2] font_atlas_slot_set: GREEN
+  [slot 2] get_dat_00912a20: GREEN
+
+=== warm diff complete in 11.9s (3 spawns for 35 hooks) ===
+hook                         slot  status
+----------------------------------------------------------------------
+active4slots_40ba60             2  RED 1/1 mismatch
+audio_list_header_init          1  RED (EXC session is gone)
+audio_list_init                 0  RED (EXC session is gone)
+bool0_out_8a94e0                2  RED 10/10 mismatch
+boolmin_out_8a94e0              1  RED (EXC session is gone)
+clear_67d99c_x4                 0  RED (EXC session is gone)
+copter_find_639dc4              1  RED (EXC session is gone)
+create_dinput_object_bool       1  RED (EXC session is gone)
+dinput_init_predicate           0  RED (EXC session is gone)
+display_active_flag_get         2  GREEN
+display_get_cursor_gate         1  RED (EXC session is gone)
+find_copter_by_key_index        0  RED (EXC session is gone)
+float_idx_639de0                0  RED (EXC session is gone)
+font_atlas_slot_get             1  RED (EXC session is gone)
+font_atlas_slot_set             2  GREEN
+frontend_page_id_dispatch       2  GREEN
+frontend_slot_table_ptr_426cb0    1  RED (EXC session is gone)
+get_ai_lap_counter              1  RED (EXC session is gone)
+get_dat_00912a20                2  GREEN
+get_led_entry_array_base        0  RED (EXC session is gone)
+hud_rect_emitter                0  RED (EXC session is gone)
+hud_rect_emitter5               1  RED (EXC session is gone)
+maxscoreflags_40b9a0            0  RED (EXC session is gone)
+menu_quad_global_zero           2  GREEN
+menu_readiness_check            1  RED (EXC session is gone)
+menu_readiness_check_c          2  GREEN
+plugin_data_dword_a             0  RED (EXC session is gone)
+plugin_data_dword_b             1  RED (EXC session is gone)
+ret_63a5f0                      1  RED (EXC session is gone)
+selected_copter_field60         2  GREEN
+set_dat_00912a20                0  RED (EXC session is gone)
+slot_index_to_ptr               0  RED (EXC session is gone)
+table_773030_get                0  RED (EXC session is gone)
+table_8a9648_get                2  GREEN
+timer_table_773030_get          2  GREEN
+exit=1

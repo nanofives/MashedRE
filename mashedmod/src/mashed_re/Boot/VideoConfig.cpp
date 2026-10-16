@@ -4,7 +4,8 @@
 // Covers:
 //   0x00498bc0  VideoGetRenderWidth     — leaf getter for DAT_00616028 (render width)
 //   0x00498bd0  VideoGetRenderHeight    — leaf getter for DAT_0061602c (render height)
-//   0x00498bf0  DisplayGetCursorGate    — leaf getter for DAT_00773204 (cursor/display gate)
+//   (0x00498bf0 DisplayGetCursorGate removed 2026-10-16; the body is DisplayActiveFlagGet in
+//    Boot/FrameDispatch.cpp)
 //   0x00498b60  VideoModeArraysFree     — void teardown: frees 3 globals (driver-system clean-up)
 //   0x004c2f00  RwEngineGetCurrentMode  — wrapper for driver-system cmd 0x0a
 //
@@ -72,21 +73,12 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl VideoGetRenderHeight() {
 RH_ScopedInstall(VideoGetRenderHeight, 0x00498bd0);  // re-enabled 2026-05-24 c3-render-b
 
 // ---------------------------------------------------------------------------
-// DisplayGetCursorGate  --  0x00498bf0
-//
-// Original: FUN_00498bf0 (5 bytes, 0x00498bf0..0x00498bf4).
-// Asm: A1 04 32 77 00  MOV EAX, [0x00773204]  /  C3 RET
-// Returns DAT_00773204 — cursor-visibility / display-active gate flag.
-// Caller FUN_004951f0 calls ShowCursor(0) when this returns non-zero.
+// FUN_00498bf0 (A1 04 32 77 00 / C3: MOV EAX,[0x00773204]; RET -- cursor/display gate,
+// caller FUN_004951f0 calls ShowCursor(0) when non-zero) was ported here first as
+// DisplayGetCursorGate; its one-body-per-RVA copy is DisplayActiveFlagGet in
+// Boot/FrameDispatch.cpp, the body hooks.csv's C4 row names. The duplicate that sat here
+// was removed 2026-10-16 (dupinstall).
 // ---------------------------------------------------------------------------
-
-// 0x00498bf0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl DisplayGetCursorGate() {
-    // 0x00498bf0: MOV EAX, [DAT_00773204] — cursor/display gate
-    return *reinterpret_cast<const std::uint32_t*>(0x00773204u);
-}
-
-RH_ScopedInstall(DisplayGetCursorGate, 0x00498bf0);  // re-enabled 2026-05-24 c3-render-b
 
 // ---------------------------------------------------------------------------
 // VideoModeArraysFree  --  0x00498b60

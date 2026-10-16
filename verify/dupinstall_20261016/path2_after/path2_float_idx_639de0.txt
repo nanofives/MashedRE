@@ -1,0 +1,36 @@
+hook: float_idx_639de0  rva=0x004077e0  export=FloatIdx639de0
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 23096
+  [agent] pre_snapshot
+  [agent] asi_loaded
+  [agent] post_snapshot
+  [agent] results
+
+=== verify_hook_install report (float_idx_639de0) ===
+
+target address: 0x004077e0  export: FloatIdx639de0
+PRE  bytes:     e9 3b 09 40 5d 69 c0 ec
+asi base:       0x5d7d0000
+reimpl addr:    0x5d808120
+POST bytes:     e9 3b 09 40 5d 69 c0 ec
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x5d40093b  expected 0x5d40093b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  3 / 3  (other threads: 0)
+
+per-input results:
+  [OK] input=0  got=0  err=
+  [OK] input=3  got=0  err=
+  [OK] input=7  got=0  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 3x as expected
+  + all 3 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall\log\verify_hook_install_float_idx_639de0.txt

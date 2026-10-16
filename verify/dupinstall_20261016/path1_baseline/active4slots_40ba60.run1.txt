@@ -1,0 +1,6 @@
+[harness: early_window_leaf_diff.py]
+hook: active4slots_40ba60  (early-window pure-leaf diff â€” no menu boot required)
+  b0=0x56 reim=0x5def95d0 cases=1 mismatches=0
+  evidence: C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall\log\diff_active4slots_40ba60.csv
+VERDICT: GREEN
+

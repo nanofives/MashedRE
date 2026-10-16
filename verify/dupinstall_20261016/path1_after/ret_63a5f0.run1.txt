@@ -1,0 +1,6 @@
+[harness: early_window_leaf_diff.py]
+hook: ret_63a5f0  (early-window pure-leaf diff â€” no menu boot required)
+  b0=0xb8 reim=0x5dc87790 cases=5 mismatches=0
+  evidence: C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall\log\diff_ret_63a5f0.csv
+VERDICT: GREEN
+

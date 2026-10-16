@@ -44,13 +44,11 @@ extern "C" __declspec(dllexport) void __cdecl PluginFieldWriteA8(int offset, uin
 }
 RH_ScopedInstall(PluginFieldWriteA8, 0x004f8640);  // c3_batch_ah s4 (DEFER: arg-shape)
 
-// 0x004f8660  FUN_004f8660  (14 bytes)  u32(int offset)
-// return *(u32*)(*DAT_007d73a8 + offset);
-extern "C" __declspec(dllexport) uint32_t __cdecl PluginFieldReadA8(int offset) {
-    return *reinterpret_cast<uint32_t*>(*DAT_007d73a8 + offset);
-}
-
-RH_ScopedInstall(PluginFieldReadA8, 0x004f8660);  // c3_batch_ah s4 (DEFER: arg-shape)
+// FUN_004f8660 / FUN_004f8690 (the two plugin-field readers) were ported here first as
+// PluginFieldReadA8 / PluginFieldReadAC. Their one-body-per-RVA copies are PluginDataDwordA /
+// PluginDataDwordB in Render/StateBatchGetters.cpp (the same sum: *(u32*)(obj + plugin
+// offset), which that TU also compiles into mashed_re.exe) and are the bodies hooks.csv's
+// evidence cites. The two duplicates that sat here were removed 2026-10-16 (dupinstall).
 
 // 0x004f8670  FUN_004f8670  (18 bytes)  void(int offset, u32 value)
 // *(u32*)(*DAT_007d73ac + offset) = value;
@@ -70,14 +68,6 @@ extern "C" __declspec(dllexport) void __cdecl PluginFieldWriteAC(int offset, uin
     ShadowAB::RunTracked(ab, PluginFieldWriteAC_impl, SHADOW_STACK_WINDOW(), offset, value);
 }
 RH_ScopedInstall(PluginFieldWriteAC, 0x004f8670);  // c3_batch_ah s4 (DEFER: arg-shape)
-
-// 0x004f8690  FUN_004f8690  (14 bytes)  u32(int offset)
-// return *(u32*)(*DAT_007d73ac + offset);
-extern "C" __declspec(dllexport) uint32_t __cdecl PluginFieldReadAC(int offset) {
-    return *reinterpret_cast<uint32_t*>(*DAT_007d73ac + offset);
-}
-
-RH_ScopedInstall(PluginFieldReadAC, 0x004f8690);  // c3_batch_ah s4 (DEFER: arg-shape)
 
 // 0x004f5020  FUN_004f5020  (12 bytes)  u32(int idx)
 // return *(u32*)(&DAT_005dae40 + idx*4);  -> indexed read of the format-size table.

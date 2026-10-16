@@ -1,0 +1,12 @@
+hook: font_atlas_slot_get  rva=0x00556cd0  export=FontAtlasSlotGet
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 9964
+  [agent] LUT ready  base=0x1301ae0  offset=0x134  root=0xdf30048  delta=0  attempts=13
+  [agent] .asi loaded  base=0x5d660000  FontAtlasSlotGet@0x5d68d0f0
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall\log\diff_font_atlas_slot_get.csv
+  total cases: 10
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.
+

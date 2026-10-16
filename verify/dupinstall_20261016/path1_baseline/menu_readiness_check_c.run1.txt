@@ -1,0 +1,16 @@
+hook: menu_readiness_check_c  rva=0x0042af50  export=MenuReadinessCheckC
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 7392
+  [agent] LUT ready  base=0x2d11ae0  offset=0x134  root=0xdf50048  delta=0  attempts=8
+  [agent] .asi loaded  base=0x5ddb0000  MenuReadinessCheckC@0x5ddc2120
+  [agent] {'type': 'log', 'msg': 'x87 CW: thread 0x27f (arms run at it)'}
+AGENT ERROR: Error: freeze: first thread never stopped inside the safe-point modules Error: freeze: first thread never stopped inside the safe-point modules
+    at thread (/script1.js:575)
+    at runDiff (/script1.js:7605)
+    at pollLutThenRun (/script1.js:988)
+    at <anonymous> (/script1.js:1002)
+    at apply (native)
+    at <anonymous> (/frida/runtime/core.js:55)
+
+NO RESULTS â€” agent reported errors above.
+

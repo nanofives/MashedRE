@@ -1,0 +1,12 @@
+hook: audio_list_header_init  rva=0x005b3580  export=AudioListHeaderInit
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 5612
+  [agent] LUT ready  base=0x2c21ae0  offset=0x134  root=0xdf30048  delta=0  attempts=16
+  [agent] .asi loaded  base=0x5e190000  AudioListHeaderInit@0x5e1a0a10
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall\log\diff_audio_list_header_init.csv
+  total cases: 8
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.
+

@@ -1,0 +1,12 @@
+hook: display_get_cursor_gate  rva=0x00498bf0  export=DisplayGetCursorGate
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 23184
+  [agent] LUT ready  base=0x13a1ae0  offset=0x134  root=0xdf20048  delta=0  attempts=14
+  [agent] .asi loaded  base=0x5cec0000  DisplayGetCursorGate@0x5ced6750
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall\log\diff_display_get_cursor_gate.csv
+  total cases: 10
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.
+

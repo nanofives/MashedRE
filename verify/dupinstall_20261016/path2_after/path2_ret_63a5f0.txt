@@ -1,0 +1,35 @@
+hook: ret_63a5f0  rva=0x004098a0  export=Ret63a5f0
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 22568
+  [agent] pre_snapshot
+  [agent] asi_loaded
+  [agent] post_snapshot
+  [agent] results
+
+=== verify_hook_install report (ret_63a5f0) ===
+
+target address: 0x004098a0  export: Ret63a5f0
+PRE  bytes:     e9 eb de 6f 5e c3 90 90
+asi base:       0x5ead0000
+reimpl addr:    0x5eb07790
+POST bytes:     e9 eb de 6f 5e c3 90 90
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x5e6fdeeb  expected 0x5e6fdeeb  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  2 / 2  (other threads: 0)
+
+per-input results:
+  [OK] input=0  got=6530544  err=
+  [OK] input=0  got=6530544  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 2x as expected
+  + all 2 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall\log\verify_hook_install_ret_63a5f0.txt

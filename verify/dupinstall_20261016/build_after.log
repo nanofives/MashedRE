@@ -1,0 +1,9 @@
+[trimmed: 93 lines, 44 warning lines, 0 error lines; last 8 kept]
+Ai\AiTargeting.cpp(522): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+Ai\AiTargeting.cpp(654): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+   Creando biblioteca C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall\mashedmod\build\mashed_re_dev.lib y objeto C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall\mashedmod\build\mashed_re_dev.exp
+[skip] MASHED_NO_DEPLOY set: mashed_re_dev.asi NOT deployed to original\
+=== Build OK ===
+mashed_re.exe
+mashed_re_dev.asi
+exit=0
