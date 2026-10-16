@@ -1,0 +1,101 @@
+// FUN_00414f00 @ 0x00414f00  size=274  (MASHED.exe)
+// undefined FUN_00414f00(void)
+// callers: FUN_00416250@0x00416250, FUN_00417da0@0x00417da0
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C2 2026-06-02] Powerup-target seek. Body `0x00414f00..0x00415011` (0x111 = 273 bytes). */
+
+undefined4 FUN_00414f00(undefined4 param_1,undefined4 param_2,float *param_3,undefined4 param_4)
+
+{
+  int iVar1;
+  float *pfVar2;
+  float10 fVar3;
+  int local_18;
+  undefined1 local_14 [4];
+  undefined1 local_10 [4];
+  float local_c;
+  float local_8;
+  float local_4;
+  
+  fVar3 = (float10)FUN_00452eb0();
+  if ((float10)_DAT_005cc32c <= fVar3) {
+    fVar3 = (float10)FUN_00452eb0();
+    if (fVar3 <= (float10)_DAT_005cc72c) {
+      iVar1 = FUN_00452ea0(param_4);
+      if (iVar1 != 0) {
+        pfVar2 = (float *)FUN_00452160();
+        FUN_0046d6d0(local_14,param_4);
+        FUN_0046d570(local_10,param_4);
+        FUN_0046d4a0(&local_18,param_4);
+        local_c = *pfVar2 - *(float *)(local_18 + 0x30);
+        local_8 = pfVar2[1] - *(float *)(local_18 + 0x34);
+        local_4 = pfVar2[2] - *(float *)(local_18 + 0x38);
+        fVar3 = (float10)FUN_004c3ac0(&local_c);
+        if ((float10)_DAT_005cc348 < fVar3) {
+          *param_3 = *pfVar2;
+          param_3[1] = pfVar2[2];
+          return 1;
+        }
+        if ((float10)_DAT_005cc564 < fVar3) {
+          iVar1 = FUN_0046c7b0(0);
+          if (iVar1 != 0) {
+            FUN_0046d4a0(&local_18,0);
+            *param_3 = *(float *)(local_18 + 0x30);
+            param_3[1] = *(float *)(local_18 + 0x38);
+            return 1;
+          }
+        }
+      }
+      return 0;
+    }
+  }
+  return 0;
+}
+
+
+
+// FUN_00452ea0 @ 0x00452ea0  size=12  (MASHED.exe)
+// undefined FUN_00452ea0(void)
+// callers: FUN_00414f00@0x00414f00, FUN_00417640@0x00417640
+
+/* [C2 2026-06-02] Per-vehicle flag getter: returns `(&DAT_0088ff50)[param_1]` — the element at
+   index `param_1` of the array based at… */
+
+undefined4 FUN_00452ea0(int param_1)
+
+{
+  return (&DAT_0088ff50)[param_1];
+}
+
+
+
+// FUN_00452eb0 @ 0x00452eb0  size=7  (MASHED.exe)
+// undefined FUN_00452eb0(void)
+// callers: FUN_00414f00@0x00414f00, FUN_00417640@0x00417640
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C2 2026-06-02] No args; returns an x87 `float10`. Body `0x00452eb0..0x00452eb6` (6 bytes). */
+
+float10 FUN_00452eb0(void)
+
+{
+  return (float10)_DAT_00684de0;
+}
+
+
+
+// FUN_00452160 @ 0x00452160  size=9  (MASHED.exe)
+// undefined FUN_00452160(void)
+// callers: FUN_00414f00@0x00414f00, FUN_00417640@0x00417640, FUN_004661f0@0x004661f0
+
+/* [C2 2026-06-02] Pointer getter: returns `DAT_00684dac + 0x30` — i.e. the value of the global
+   pointer `DAT_00684dac` plus a fixed 0x30… */
+
+int FUN_00452160(void)
+
+{
+  return DAT_00684dac + 0x30;
+}
+
+
