@@ -69,3 +69,11 @@ Arm B results are in RESULT_rhooks.md. Added after them, decoded before measurin
   0x0040fcb9 with the same units. **Pr-6:** both Dump train rows (C28, rows 735 and 775) stop being MISSING: the train is
   drawn either matched or as a MOVED row no further off than the copters' C14 MOVED rows (0.04 to 0.20); no other Dump row
   changes; G-CTRL unchanged.
+
+## Addendum 2 (correction, before the train was scored)
+
+Addendum 1 was wrong about `LINEAR`: dump COURSE.LUA line 133 is `local LINEAR = 1`, so the record's type is 1 and
+FUN_004756e0 samples with FUN_004b47e0 @ 0x004b47e0 (key bracket, FUN_00532b80 @ 0x00532b80 quaternion slerp with the 0.999
+threshold [0x005cea88] and a LINEAR translation, FUN_00532a60), not FUN_004752f0. One run of the first build (type-1
+records left static) was made on Dump only and showed the train still MISSING; it is recorded, not counted. Pr-6 stands
+unchanged for the corrected build.
