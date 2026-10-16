@@ -122,3 +122,28 @@ Fix C (registered now, gate G-9E4 of section 3): port the every-frame refresh `0
 (`+0x9e4 = |+0x9b0|`, `+0x9e8 = |+0x9bc|` for cars with `+0x4 != 0 || +0x10 == 1`, after the A4 loop, before
 the substep loop at `0x00471110`). The port does it only on A4-skipped frames (`VehiclePhysicsRun.cpp:991-994`).
 Opt-out `MASHED_NO_SPEED_REFRESH=1`. Prediction: G-9E4 PASS (exe player `+0x9e4` = 0.0 at rest).
+
+## Amendment 2 (2026-10-16, before D0-c; D0-b and fix A/C short-arm results are report only)
+
+D0-b (`o_fx1.msd`, original, player): `0x0046ef70` fixup fired 0 times in 20 s; every sampled point of the
+first ticks (substep entry, A6a entry, wheel solver `0x0046f6c0`, scan `0x00469aa0`) has vel = 0. So the
+original's first-tick move is not a velocity integral. `0x0046f6c0` itself moves the active ring translation
+(`WheelContactSolver.cpp:255-260`, `pos -= mean(fv * n)` over the grounded wheels). The original's
+dz/dy = -0.0312615 equals the Training tri normal's n.z/n.y = -0.031250 (port probe n = (0, 0.999512076,
+-0.0312347524), `D_DEF2.settle.txt`), i.e. the move is -0.002949 * n.
+The port runs the same solver on a stand-in wheel geometry (every wheel at groundY - 0.05,
+`VehiclePhysicsRun.cpp:517-521`): fv = -0.0499756 on all four wheels, correction +0.0499512 * n (up) on EVERY
+call, discarded by `SyncContactRingMatrix` (`:1196`). The exe has no vertical position authority
+(`car_pos_[1] = GroundHeight + car_ground_off_` every frame, `TrackRenderer.cpp:3475`).
+Fix A short arm: G-A3 26/26 PASS (`D_DEF2.a3.txt`), 0/26 with `MASHED_NO_A3_LUT=1` (`D_OFF.a3.txt`).
+Fix C short arm: parked player `+0x9e4` = 0 after A4 from step 2 (`D_DEF2.settle.txt`).
+No-op control (short arm): `D_OFF` ptrace `97785f2e` = base `D_DEF` ptrace.
+
+D0-c (report only, NOT a gate, decides nothing by itself): diag knob `MASHED_D2S_RINGY=<y>` (default OFF) seats
+the slot-0 solver's ring translation at (x, y, z) = (io.pos.x, <y>, io.pos.z) on its FIRST call only, then runs
+`0x0046f6c0` twice back to back keeping the solver's own corrected translation, logging both corrections.
+Arm: `MASHED_ROUND_GRID` + `_ORDER` + `MASHED_PATHPROG` (x/z bit-exact to the original's frame 1),
+`MASHED_RW_WHEELPOS=1` (real suspension points through the ring matrix), `MASHED_D2S_RINGY=0.4374268054962158`
+(the original's frame-1 y, `0x3edff668`). PREDICTION (mechanism test): call 1 + call 2 correction =
+(0, -0.0029475, +0.0000921) within 2e-6 per component. A miss is reported as evidence against "the solver
+transcription alone carries the settle" and the y / geometry inputs are listed as the open terms.
