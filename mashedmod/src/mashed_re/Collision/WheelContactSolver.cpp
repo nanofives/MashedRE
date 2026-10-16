@@ -24,6 +24,7 @@
 #include "ContactSolvers.h"
 #include <cstdlib>   // getenv (MASHED_RW_WHEELPOS A/B, see the query block below)
 #include "../Vehicle/D2SinkProbe.h"   // [D2 attempt 19] diagnostic, default-OFF
+#include "../Vehicle/PosModelKnobs.h" // [d2posmodel] fix B part 2 knob, default-OFF
 
 namespace mashed_re {
 namespace Collision {
@@ -133,7 +134,11 @@ void WheelContactSolver(int* self, void* world, int substep)
     // RE-PICKUP: once the standalone's suspension travel feeds the real depth, drop
     // the scratch and write straight to g_wheelContactPos. `MASHED_RW_WHEELPOS=1`
     // runs that arm now, for measurement.
-    static const bool s_rwWheelPos = (std::getenv("MASHED_RW_WHEELPOS") != nullptr);
+    // [d2posmodel 2026-10-16] fix B part 2 (MASHED_POS_WHEELS / MASHED_POS_MODEL,
+    // PosModelKnobs.h) is this same arm. SolveWheelContacts publishes the current body basis
+    // into iVar12's rows before this call under that knob, so the transform is real.
+    static const bool s_rwWheelPos = (std::getenv("MASHED_RW_WHEELPOS") != nullptr) ||
+                                     mashed_re::Vehicle::PosModelWheels();
     float rwWheelPos[12];
     Rw_VtableDispatch(s_rwWheelPos ? g_wheelContactPos : rwWheelPos,
                       g_suspScratch, 4, iVar12);                           // &DAT_0088e620 <- transform susp pos

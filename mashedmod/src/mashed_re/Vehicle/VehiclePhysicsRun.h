@@ -101,6 +101,14 @@ struct PlayerCarIO {
     // them from `steer` (the player path). The original's A4 FUN_00470670 reads the
     // bytes directly (0x00470732 / 0x00470754), so for the AI this is the faithful feed.
     int raw_steer = 0;
+    // [d2posmodel 2026-10-16] fix B part 3 (MASHED_POS_TRANS, PosModelKnobs.h). The caller's
+    // pos[1] is its render/game y (TrackRenderer: ground + car_ground_off_); the physics y is
+    // pos[1] - ground_off, which at a spawn is the ground under the car centre, the original's
+    // FUN_004704c0 convention (decomp: local_8 = param_3 - FUN_0046d400(x, y, z, world), and
+    // FUN_0046d400 casts (x, y+3, z) -> (x, y-3, z), _DAT_005cc31c = 3.0). With part 3
+    // on, StepCar returns the solver-corrected position in pos (all three axes, caller's
+    // convention) and the caller takes it instead of pos + drive_delta. Unused with part 3 off.
+    float ground_off = 0.f;
 };
 
 bool VehiclePhysics_Enabled();                       // true unless MASHED_REAL_PHYSICS=0 (D2, 2026-09-14)

@@ -32,6 +32,7 @@ extern "C" void* __cdecl RwMatrixRotate(void* matrix, const float* axis, float a
 #include "../Ai/AiTargetClosest.h" // D-11072 P3: FUN_00414a70 (MASHED_TGT3)
 #include "../Ai/AiLeafTargets.h"   // D3 bulk G-AILEAF: FUN_00414570 / FUN_00415880 (MASHED_AILEAF)
 #include "../Race/RoundGrid.h"      // round-restart grid Stage A (MASHED_ROUND_GRID)
+#include "../Vehicle/PosModelKnobs.h" // [d2posmodel] fix B knobs (default OFF)
 #include "../Race/WorldRegistry.h"  // mode 7 M1: world-object registry (MASHED_REGISTRY)
 #include "../Gameplay/PickupTick.h"  // mode 7 M2a: pickup tick FUN_00459000 (MASHED_PICKUPS_ORIG)
 #include "../Race/CarRegistrant.h"  // mode 7 M2b: car registrant FUN_0041f710 (MASHED_REG_CARS)
@@ -3877,6 +3878,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         io.input[4] = static_cast<unsigned char>((accel > 0.f ? accel : 0.f) * 255.f);
         io.input[5] = static_cast<unsigned char>((accel < 0.f ? -accel : 0.f) * 255.f);
         io.steer    = steer;   // [-1,+1] -> descriptor steer bytes [0]/[1]
+        io.ground_off = car_ground_off_;   // [d2posmodel] fix B part 3: physics y = pos[1] - this
         // G2 DRIVE-STABILIZE (2026-06-18): ground from the car's CURRENT pos (is it on
         // the ground NOW?), not a probe-ahead with last frame's velocity — the
         // probe-ahead + a runaway velocity made `grounded` oscillate 1/0 each frame,
@@ -3910,11 +3912,18 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         // original's own internal->world factor _DAT_005cc948 * _DAT_005cea80.
         // REPLACES `pos += {cos,0,sin(car_yaw_)} * io.drive_speed * dt`, which
         // forced the path to follow the nose and so could not express a slide.
-        const float nx = car_pos_[0] + io.drive_delta[0];
-        const float nz = car_pos_[2] + io.drive_delta[2];
+        // [d2posmodel 2026-10-16] fix B part 3 (MASHED_POS_TRANS): the physics position is the
+        // car's position. StepCar returns it in io.pos (velocity integral per substep plus the
+        // 0x0046f6c0 contact-normal corrections, y included), in this file's convention
+        // (physics y + car_ground_off_), so y is no longer snapped to GroundHeight + offset.
+        // The off-mesh test and the recovery below are unchanged; a recovery re-seeds the
+        // physics y from the ground (StepCar's adapter IN), as the spawn does.
+        const bool posTrans = Vehicle::PosModelTrans();
+        const float nx = posTrans ? io.pos[0] : car_pos_[0] + io.drive_delta[0];
+        const float nz = posTrans ? io.pos[2] : car_pos_[2] + io.drive_delta[2];
         bool nok = false;
         const float ngy = GroundHeight(nx, nz, &nok);
-        if (nok) { car_pos_[0] = nx; car_pos_[2] = nz; car_pos_[1] = ngy + car_ground_off_; }
+        if (nok) { car_pos_[0] = nx; car_pos_[2] = nz; car_pos_[1] = posTrans ? io.pos[1] : ngy + car_ground_off_; }
         else {
             // [G4][U-A8-OFFTRACK] off-mesh recovery.
             //
@@ -4258,6 +4267,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             if (a.slow > 0.f) io.input[4] = static_cast<std::uint8_t>(io.input[4] * 0.35f);
             io.steer = 0.f;
             io.raw_steer = 1;
+            io.ground_off = car_ground_off_;   // [d2posmodel] fix B part 3, as the player
             bool gok = false;
             GroundHeight(a.pos[0], a.pos[2], &gok);
             io.grounded = gok ? 1 : 0;
@@ -4267,11 +4277,12 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             a.yaw = io.yaw;
             yaww::Hit(yaww::W_3334, v);        // A-COV: the mandatory coverage control
             yaww::Post(v, a.yaw);              // leg B, second program point
-            const float nx = a.pos[0] + io.drive_delta[0];
-            const float nz = a.pos[2] + io.drive_delta[2];
+            const bool posTrans = Vehicle::PosModelTrans();   // [d2posmodel] fix B part 3, as the player
+            const float nx = posTrans ? io.pos[0] : a.pos[0] + io.drive_delta[0];
+            const float nz = posTrans ? io.pos[2] : a.pos[2] + io.drive_delta[2];
             bool nok = false;
             const float ngy = GroundHeight(nx, nz, &nok);
-            if (nok) { a.pos[0] = nx; a.pos[2] = nz; a.pos[1] = ngy + car_ground_off_; }
+            if (nok) { a.pos[0] = nx; a.pos[2] = nz; a.pos[1] = posTrans ? io.pos[1] : ngy + car_ground_off_; }
             else {
                 // off-mesh: the same ring-probe relocation the player uses (RecoverOffMesh).
                 float ry; float rad = 0.f;

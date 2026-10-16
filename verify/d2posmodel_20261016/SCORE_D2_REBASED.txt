@@ -1,0 +1,5 @@
+d2posmodel_20261016 D2_DEF_1.motion_diag.log: slip1500=0.1927 in slip2000=0.2489 in drvmed=1860.2700 OUT  n=('376', '562', '1367')
+d2posmodel_20261016 D2_B_1.motion_diag.log: slip1500=NA slip2000=NA drvmed=1338.6200 OUT  n=('-', '-', '54')
+d2posmodel_20261016 D2_B_2.motion_diag.log: slip1500=NA slip2000=NA drvmed=1338.6200 OUT  n=('-', '-', '54')
+d2posmodel_20261016 D2_B_3.motion_diag.log: slip1500=NA slip2000=NA drvmed=1338.6200 OUT  n=('-', '-', '54')
+d2posmodel_20261016 D2_P23_1.motion_diag.log: slip1500=0.1944 in slip2000=0.2538 in drvmed=1872.3300 OUT  n=('360', '566', '1341')
