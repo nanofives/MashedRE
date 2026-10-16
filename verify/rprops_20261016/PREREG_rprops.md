@@ -98,3 +98,18 @@ Otherwise it stays default OFF with a recommendation in `RESULT_rprops.md`.
   sky draw (`0x0044937d`) to 0.01 on the three Arctic frames; the second sky draw (`0x00426da2`) stays
   MISSING until its caller is decoded.
 - **Pr-5** F-PAIR, F-CAM and F-SHIPS change no value the simulation reads, so G-CTRL is unchanged.
+
+## Amendment 1 (committed before the first post-fix run)
+
+- The G-CTRL ptrace line count in section 2 (27,356) was copied from the memory note that predates
+  d2settle's A3 LUT sqrt. The unchanged base build measures **28,076 lines**, step 18,664, gates 56,153,
+  sha8 `c2e4d60d / b50bd39b / ba90ed88` (`log/rprops/base_gctrl.txt`), the registered trio. The gate is
+  the trio plus those line counts.
+- Baseline arm re-run on the private game root reproduces d1r1's nine frames exactly (matched draws
+  194/191/191, 138/138/101, 351/339/292, rows 86/85/85, 81/81/81, 157/155/152; `scores_base.txt`). So
+  the instrument is deterministic across sessions, which is I-N0 for this lane.
+- Ship tick phase: from the recorded freighter y at rows 1044, 1051, 1091 (-4.043, -4.076, -4.395) and
+  the formula y = sin(acc258)*0.5 - 4.5 with acc258 advancing 0.02 per tick, the tick count at row K is
+  K - 2 to K - 3 (the sin branch x = 1.99, 2.14, 2.93 plus three periods gives n = 1041.6, 1048, 1089
+  for rows 1044, 1051, 1091). The standalone ticks once per Render. The offset between the two counts
+  is measured in the post-fix run and reported; it is not tuned.
