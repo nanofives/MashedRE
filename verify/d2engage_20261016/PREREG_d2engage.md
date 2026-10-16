@@ -222,3 +222,13 @@ Added, REPORT ONLY (no gate): `D2_B0X_1` = stack B0 + the DX diagnostics (wc log
 B no longer pins, so the pinned trajectory for the cause-2 attribution (4.6) is B0's. Prediction 4.6 applies to
 `D2_B0X_1` (pinned) against `D2_BX_1` / `D2_DX_1` (not pinned): on the pinned frames between re-contacts, clamp #6
 is on the LOW arm (`act.arm`) with `act.kvel` above 0.1. No numeric threshold.
+
+## Amendment 2 (2026-10-16, after `D2_B_2`, `D2_B_3`, `D2_K_1`; before `D2_BC_1`)
+
+Recorded (`SCORE_D2_ROUND2.txt`): `D2_B_2` 0.1953 / 0.2500 / 1864.87, `D2_B_3` 0.1953 / 0.2501 / 1864.87, both d=15,
+391/400. `D2_K_1` = the default (0.1927 / 0.2489 / 1860.27, n 1367, d=15, 398/400). This build's `H_DEF` =
+`716cb2fd / 2a2afda1 / ba90ed88` = the base exe's.
+
+Added, REPORT ONLY (no gate, no default consequence): `D2_BC_1` = B + fix C (`MASHED_SPEED_REFRESH=1`). d2posmodel's
+B + C was measured on the pinned d=14 trajectory. This re-measures fix C inside fix B on the original's
+engagement. No prediction.
