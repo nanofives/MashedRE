@@ -93,3 +93,32 @@ P2 Beam GREEN on City (3), Arctic STATE CULL as P1.
 P3 With the alpha test states the original's device uses (GREATER / 0, `FUN_004d5bc0`) set for these
 draws, no AREF/AF STATE rows on the new draws.
 P4 G-CTRL unchanged (render-only code).
+
+## Amendment 1 (2026-10-16, before part B's first measuring run)
+
+Part A measured (`log/rfx/a2`, base `log/rfx/base`): car_shadow GREEN on TRAINING and City, Beam
+GREEN on City; Arctic car_shadow and Beam are STATE CULL 2 vs 1 (P1/P2 as predicted, U-9690).
+
+**HUD inputs under the replay (I-C).** The team panels and start lights read game state the
+standalone's replay run does not share with the reference run. The d1r1 reference is a menu-driven
+Quick Battle on the original; the team panels it draws (`FUN_0041c0c0`, not `FUN_0041b630`)
+require Team Play `DAT_0067ea64 != 0`, which the standalone dev route (`MASHED_ROUND`) leaves 0.
+So under `MASHED_HUD_REPLAY=<json>` (diagnostic, default OFF) the HUD module takes:
+- the HUD state `DAT_0063ba8c` from the trace row's `ba8c` column, and the start-light timer
+  `DAT_0063d588` rebuilt from the trace: 0 at the row where `ba8c` becomes 4 (`FUN_0040dbd0` ->
+  `FUN_0041d910`), then `+= dtb` after each row (`FUN_0041d930` tail at `0x0041da76`), the frame
+  position for row K using the value before row K's increment (`0x0041d9ff..0x0041da5a` precede
+  the increment);
+- Team Play, the slot table (`0x007f1a14`, stride 0x10: slot, team, colour), the scores
+  `DAT_008a94e0[4]`, `DAT_008a94d0`, `DAT_0067e9fc` and `DAT_007f0fd0` from one probe run of the
+  original, `camera_probe.py --frame --early --hud-out` (new, read-only), at the sample nearest the
+  shot row. Panel membership, colours and the bar fraction are then COMPUTED by the ported code from
+  those inputs; the probe's own panel records (`vis`, `flags`) and the reference draw records are
+  the check, never the input.
+Without the knob, the default build feeds the same module from its own state (Team Play
+`0x0067ea64`, the slot table, the rule engine scores, `aib_game_sub_mode()`), and the timer from
+`DAT_0063d588`, which only `MASHED_SUBSTATE` advances today. A default-build HUD that differs from
+the reference because the standalone's own mode differs is reported as such, not as a rendering
+mismatch.
+
+**Rule R1 for C08** is judged on the replay with `MASHED_HUD_REPLAY` set; R2-R4 as before.
