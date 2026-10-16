@@ -1278,7 +1278,8 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                     col_verts_.insert(col_verts_.end(), s.verts.begin(),
                                       s.verts.end());
                     // [rtex] keep the sector prelit for the env-gloss shade sample
-                    // (FUN_00479100 reads the hit sector's colours, 0 when absent)
+                    // (FUN_00479100 reads the hit sector's colours (sector+0x30); with none it
+                    // returns 1.0, which CollisionPrelitSample keys on col_tri_pl_)
                     const std::size_t snv = s.verts.size() / 3;
                     if (s.prelit.size() == snv)
                         col_prelit_.insert(col_prelit_.end(), s.prelit.begin(), s.prelit.end());
@@ -2813,6 +2814,12 @@ int TrackRenderer::RegisterCarModel(IDirect3DDevice9* dev, const char* dff_entry
 void TrackRenderer::ResolveCarLiveries() {
     livery_dirty_ = false;
     if (car_models_.empty() || !car_dff_base_[0]) return;
+    // MASHED_CAR_LIVERY=0: every slot keeps slot 0's model (the pre-librwrest behaviour)
+    static const bool s_livery_off = [] {
+        const char* e = std::getenv("MASHED_CAR_LIVERY");
+        return e && e[0] == '0' && e[1] == '\0';
+    }();
+    if (s_livery_off) return;
     std::FILE* log = std::fopen("mashed_re.log", "a");
     const int mode = *reinterpret_cast<const int*>(0x0067e9fcu);   // FUN_0042f6a0
     for (int s = 0; s < 4; ++s) {
@@ -7229,6 +7236,19 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
             double sh = sum * 0.125;
             if (sh > 1.0) sh = 1.0; else if (sh < 0.0) sh = 0.0;
             g.shade = static_cast<float>(sh);
+            // [librwrest] MASHED_DBG_CARSHADE=<path>, DIAGNOSTIC ONLY, default OFF: per car per
+            // frame the root position and rec+0x284 (R1 witness, PREREG_librwrest.md)
+            {
+                static char s_shade_path[MAX_PATH] = {};
+                static const bool s_shade_log =
+                    GetEnvironmentVariableA("MASHED_DBG_CARSHADE", s_shade_path, MAX_PATH) != 0;
+                if (s_shade_log)
+                    if (std::FILE* sf = std::fopen(s_shade_path, "a")) {
+                        std::fprintf(sf, "%u,%d,%.5f,%.5f,%.5f,%.6f\n", gloss_frame_, slot,
+                                     m._41, m._42, m._43, g.shade);
+                        std::fclose(sf);
+                    }
+            }
             const CarModel& cm = car_models_[static_cast<std::size_t>(car_slot_model_[slot])];
             LibRw::FramePose poses[20];
             int np = 0;

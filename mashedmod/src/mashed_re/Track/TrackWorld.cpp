@@ -79,6 +79,8 @@ bool World::Parse(const std::uint8_t* data, std::size_t len) {
     const std::uint32_t hdr_verts  = r.u32(st.payload + 0x14);
     const std::uint32_t hdr_planes = r.u32(st.payload + 0x18);
     const std::uint32_t hdr_worlds = r.u32(st.payload + 0x1C);
+    // [librwrest] RpWorld format flags (+0x24): rpWORLDPRELIT 0x08, rpWORLDNORMALS 0x10
+    const std::uint32_t hdr_format = r.u32(st.payload + 0x24);
     for (int i = 0; i < 6; ++i) bbox[i] = r.f32(st.payload + 0x28 + i * 4);
     std::size_t p = st.payload + st.size;
 
@@ -165,6 +167,7 @@ bool World::Parse(const std::uint8_t* data, std::size_t len) {
         if (payload < base_need) { err_ = "sector payload too small"; return false; }
         const std::size_t rem = payload - base_need;
         bool have_n = false, have_p = false; int nuv = -1;
+        std::size_t n_stride = 12;   // [librwrest] bytes per normal, see below
         for (int normals = 0; normals < 2 && nuv < 0; ++normals)
             for (int prelit = 0; prelit < 2 && nuv < 0; ++prelit)
                 for (int uv = 0; uv < 3; ++uv)
@@ -174,6 +177,24 @@ bool World::Parse(const std::uint8_t* data, std::size_t len) {
                         have_n = normals != 0; have_p = prelit != 0; nuv = uv;
                         break;
                     }
+        // [librwrest] a world streamed with rpWORLDNORMALS carries RpVertexNormal per vertex,
+        // 4 bytes (3 signed bytes + pad), not 12 -- the solver above (12-byte normals) then
+        // reads Arctic COLLISIONS.BSP (format 0x79) as 'no normals, no prelit, one UV set' and
+        // drops the prelit FUN_00479100 @ 0x00479100 samples. With the flag set, normals and
+        // prelit come from the flags and only the UV count is solved (worlds without the flag
+        // keep the solver above unchanged).
+        if (hdr_format & 0x10u) {
+            const std::size_t nb = static_cast<std::size_t>(nv) * 4;
+            const std::size_t pb = (hdr_format & 0x08u) ? static_cast<std::size_t>(nv) * 4 : 0;
+            if (rem >= nb + pb) {
+                const std::size_t uvb = rem - nb - pb;
+                for (int uv = 0; uv < 3; ++uv)
+                    if (uvb == static_cast<std::size_t>(uv) * nv * 8) {
+                        have_n = true; have_p = pb != 0; nuv = uv; n_stride = 4;
+                        break;
+                    }
+            }
+        }
         if (nuv < 0) { err_ = "sector array layout unsolved"; return false; }
 
         Sector s;
@@ -181,7 +202,7 @@ bool World::Parse(const std::uint8_t* data, std::size_t len) {
         s.verts.resize(static_cast<std::size_t>(nv) * 3);
         std::memcpy(s.verts.data(), data + q, static_cast<std::size_t>(nv) * 12);
         q += static_cast<std::size_t>(nv) * 12;
-        if (have_n) q += static_cast<std::size_t>(nv) * 12;
+        if (have_n) q += static_cast<std::size_t>(nv) * n_stride;
         if (have_p) {
             s.prelit.resize(nv);
             std::memcpy(s.prelit.data(), data + q, static_cast<std::size_t>(nv) * 4);
