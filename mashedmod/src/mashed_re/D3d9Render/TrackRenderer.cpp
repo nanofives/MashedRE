@@ -2460,6 +2460,11 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                     LibRw::RaceFx_SetObjShadows(objs.data(), static_cast<int>(objs.size()), light_ltm_, soup);
                 else
                     LibRw::RaceFx_SetObjShadows(nullptr, 0, nullptr, soup);
+                // [rres] the car shadow render-to-texture: the same collision world (DAT_00656ee8 == DAT_0080332c,
+                // measured equal on Neustein / Storm / City) and the course light; the course gate
+                // DAT_00657490 (course+0x10638, end of 0x00479330) is Course_Id not in {0, 0x1a, 0x24}
+                LibRw::RaceFx_SetShadowCourse(course_id_);
+                LibRw::RaceFx_SetShadowWorld(soup, has_light_ltm_ ? light_ltm_ : nullptr);
             }
             // [rfx2] the lensflare light list (FUN_00487e70 @ 0x00487e70 calls), as the two tracks'
             // slot-0 node functions create it at load. Positions are Mts records (course + k*0x1000,
@@ -2665,6 +2670,23 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                         p.hook_pass = hook_pass;
                         p.hook_cull = hook->draws[hook_order].cull;
                         p.hook_zwrite = hook->draws[hook_order].zwrite;
+                    }
+                    // [rres U-9733] SuperG, record "superg" slot 4 FUN_00451090: clump 1 (Reflections.dff, excluded
+                    // from the world) is RpClumpRender'ed (`*(course + 0x10114)`) between its reflection camera's
+                    // update calls FUN_004c1a00 / FUN_004c19f0, the first draws of the recorded frame (81 draws, ahead
+                    // of FUN_004270f0's screen rectangle) and under the cull state the previous frame's HUD pass left
+                    // (CULL NONE). The standalone draws it into the main target ahead of the world with CULL NONE.
+                    // [UNCERTAIN U-9733] the reflection render target itself (FUN_00484000(0,0x100,0x100,0x600)) and
+                    // its consumers are not ported. MASHED_SUPERG_REFLECT_FIRST=0 keeps the after-world draw.
+                    {
+                        static const bool s_superg_refl_first = [] {
+                            const char* e = std::getenv("MASHED_SUPERG_REFLECT_FIRST");
+                            return !(e && e[0] == '0' && e[1] == '\0');
+                        }();
+                        if (s_superg_refl_first && course_id_ == 25 && c.idx == 1 && excluded[c.idx]) {
+                            p.rw_kind = LibRw::kInstPreWorld;
+                            p.hook_cull = 1;   // rwCULLMODECULLNONE
+                        }
                     }
                     if (!s_no_sea_tile && course_id_ == 0 && c.idx == 2) {
                         // The 25 tiles are drawn by Arctic slot 2 (0x00449030,
@@ -3196,10 +3218,20 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
         // its first sector is the slot-3 sky (RpClumpRender of the Sky_Filename clumps,
         // 0x00426d9d), so the flag the world starts with is that sky's last-mesh need.
         LibRw::RaceCourseFacts facts;
-        facts.sector_keeps_vertex_alpha = (course_id_ == 0);
+        // [rres] SuperG (Course_Id 25) is the other record that installs it: its slot 0 FUN_00450f00
+        // calls FUN_00496d00(&LAB_0049a0c0) at 0x00450f35 and FUN_00496d20 at 0x00450f43. A scan of every
+        // E8 rel32 in .text finds exactly two callers of FUN_00496d00, 0x00448951 (Arctic) and
+        // 0x00450f35 (SuperG). MASHED_LIBRW_SUPERG_VA=0 keeps the Arctic-only rule (A/B knob).
+        static const bool s_superg_va = [] { const char* e = std::getenv("MASHED_LIBRW_SUPERG_VA");
+                                             return !(e && e[0] == '0' && e[1] == '\0'); }();
+        facts.sector_keeps_vertex_alpha = (course_id_ == 0) || (s_superg_va && course_id_ == 25);
+        // [rres] the flag the world starts with when no sky is loaded: FUN_004270f0 opens the frame with
+        // the screen rect FUN_00450b10 (call 0x004271e8), which ends with RS 0xc (vertex alpha) = 1 and
+        // never clears it; SuperG's first sector is drawn right after it (rres capture, draw 83 of
+        // orig_row_00743: k81 fvf 0x144 512x512, then S27 with AB 1).
+        facts.sky_last_vertex_alpha     = true;
         // [rsky] the draw before the first sector is the LAST sky RpClumpRender'd: the highest
         // loaded slot (FUN_00426d90 walks slots 0..3 ascending, 0x00426d90).
-        facts.sky_last_vertex_alpha     = false;
         for (int si = 3; si >= 0; --si)
             if (skies_[si].rw_model >= 0 || !skies_[si].batches.empty()) {
                 facts.sky_last_vertex_alpha = skies_[si].last_mesh_va;
@@ -3720,6 +3752,51 @@ int TrackRenderer::RegisterCarModel(IDirect3DDevice9* dev, const char* dff_entry
                 if (b.part_id == kLight[k] && !lh[k]) { std::memcpy(lp[k], b.frame_pos, sizeof(lp[k])); lh[k] = true; }
         LibRw::RaceFx_SetCarLightParts(lp, lh);
     }
+    // [rres] the hull the shadow render-to-texture draws: part 0x3b, taken BEFORE CarDropNonRenderAtomics
+    std::vector<float> hull_v;
+    std::vector<std::uint16_t> hull_t;
+    for (const auto& b : model.batches)
+        if (b.part_id == 0x3b && hull_v.empty() && !b.verts.empty() && b.tris.size() >= 3) {
+            hull_v = b.verts;
+            hull_t = b.tris;
+            // The batch's vertices are baked through the hull atomic's whole frame chain. The shadow pass draws the
+            // hull with the LTM of the hull's PARENT frame (ADVANTAGE: the hull frames 34..37 hang off frame 22, whose
+            // LTM is the replay's F{i} and RaceFx's `body`): measured on 120 hulls of the 13 tracks, the original's hull AABB
+            // matches root * hull to 4e-3 on average (up to 1.2e-2 for a pitched car) and body * hull to 2e-4.
+            // So take the vertices into the parent frame's space: v * (chain from the parent up to, excluding, the root)^-1.
+            const int hf = b.frame, nfr0 = static_cast<int>(model.frames.size());
+            if (hf >= 0 && hf < nfr0) {
+                float P[12] = { 1,0,0, 0,1,0, 0,0,1, 0,0,0 };
+                for (int i = model.frames[static_cast<std::size_t>(hf)].parent;
+                     i >= 0 && i < nfr0 && model.frames[static_cast<std::size_t>(i)].parent >= 0;
+                     i = model.frames[static_cast<std::size_t>(i)].parent) {
+                    float M[12];
+                    AffFromFrame(model.frames[static_cast<std::size_t>(i)], M);
+                    AffMul(P, M, P);
+                }
+                float Pi[12];
+                AffInv(P, Pi);
+                for (std::size_t vi = 0; vi + 2 < hull_v.size(); vi += 3) {
+                    const float x = hull_v[vi], y = hull_v[vi + 1], z = hull_v[vi + 2];
+                    hull_v[vi]     = x * Pi[0] + y * Pi[3] + z * Pi[6] + Pi[9];
+                    hull_v[vi + 1] = x * Pi[1] + y * Pi[4] + z * Pi[7] + Pi[10];
+                    hull_v[vi + 2] = x * Pi[2] + y * Pi[5] + z * Pi[8] + Pi[11];
+                }
+            }
+        }
+    {   // MASHED_DBG_HULL=<csv>, DIAGNOSTIC ONLY: every hull-like batch (untextured, part 0x3b..0x3e) as loaded
+        const char* e = std::getenv("MASHED_DBG_HULL");
+        if (e && e[0]) {
+            if (std::FILE* hf = std::fopen(e, "a")) {
+                for (const auto& b : model.batches)
+                    if (b.part_id >= 0x3b && b.part_id <= 0x3e)
+                        for (std::size_t vi = 0; vi + 2 < b.verts.size(); vi += 3)
+                            std::fprintf(hf, "%s,%d,%d,%zu,%.7f,%.7f,%.7f\n", dff_entry, b.part_id, b.frame, vi / 3,
+                                         b.verts[vi], b.verts[vi + 1], b.verts[vi + 2]);
+                std::fclose(hf);
+            }
+        }
+    }
     CarDropNonRenderAtomics(model, dff_entry, log);
     std::vector<Txd::Dictionary> dicts(txds.size());
     for (std::size_t di = 0; di < txds.size(); ++di)
@@ -3727,6 +3804,8 @@ int TrackRenderer::RegisterCarModel(IDirect3DDevice9* dev, const char* dff_entry
 
     CarModel cm;
     std::snprintf(cm.dff, sizeof(cm.dff), "%s", dff_entry);
+    cm.hull_v = std::move(hull_v);
+    cm.hull_t = std::move(hull_t);
     cm.handle = LibRw::RaceSubmit_RegisterModel(model, dicts.data(), dicts.size(), amb_world_,
                                                 nullptr, 0, /*hierarchy=*/true);
     // FUN_0041f3d0 @ 0x0041f3d0: wheel w's atomic is rec[w] (parts 0..3, rec+0x298 == 0) or
@@ -7341,6 +7420,7 @@ void TrackRenderer::RaceCamUpdate(const Race::RaceCamCar* cc_in, bool reset) {
             if (R.c_ba8c >= 0)
                 LibRw::RaceFx_ReplayHudRow(static_cast<int>(at(R.c_ba8c)), dtb);
             s_rep_f101c = R.c_f101c >= 0 ? static_cast<long long>(at(R.c_f101c)) : -1;   // [rfx2]
+            if (R.next == 0) LibRw::RaceFx_ShadowResetCache();   // [rres] the shadow re-query chain restarts with the trace
             cam_replay_row_ = static_cast<int>(R.next++);
         } else {
             cam_replay_row_ = -2;                             // trace exhausted: host inputs again
@@ -8856,7 +8936,15 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
             bool rows = false;
             for (const auto& br : s_brake_rows)
                 if (br.first == cam_replay_row_) { brake = ((br.second >> slot) & 1u) != 0; rows = true; }
-            out->state = LibRw::CarLodState(part19_d2(slot, m, last_eye_));
+            // [rres] The record state (rec+0x298, FUN_00446520's `push 1` / `push 2`, 0x00446965 / 0x00446975) is measured
+            // against the PREVIOUS frame's camera, like the env coefficient above: on the 39 frames of the 13 tracks
+            // (verify/rres_20261016) it removes the Neustein 1169 car whose d2 = 148.7 (previous eye) / 142.9 (this eye) and
+            // so the AdvantageSmall / Glass / shadow-texture rows of the wrong state, and adds no row anywhere.
+            // [UNCERTAIN U-9732] where the director reads the camera is not decoded; MASHED_CAR_LOD_EYE=last restores the
+            // earlier rule (this frame's eye).
+            static const bool s_lod_prev = [] { const char* e = std::getenv("MASHED_CAR_LOD_EYE");
+                                                return !(e && e[0] == 'l'); }();
+            out->state = LibRw::CarLodState(part19_d2(slot, m, s_lod_prev ? eye_prev_ : last_eye_));
             out->flags = LibRw::CarVisFlags(course_id_, brake);
             if (s_blog)
                 std::fprintf(s_blog, "%d,%d,%u,%d,%d,0x%x\n", cam_replay_row_, slot, static_cast<unsigned>(cur),
@@ -8893,6 +8981,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
             return true;
         };
         auto fx_car = [&](int slot, const D3DMATRIX& body) {
+            LibRw::RaceFx_SetDbgRow(cam_replay_row_);   // [rres] tags MASHED_DBG_SHADOWSEL rows
             LibRw::CarFxInput in{};
             std::memcpy(in.body, &body, sizeof(in.body));
             std::memcpy(in.root, &body, sizeof(in.root));
@@ -8956,6 +9045,15 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
                 car_fade_[slot] = 1.0f - t;
             }
             in.fade = car_fade_[slot];
+            {   // [rres] the hull part 0x3b of this car's model (the shadow render-to-texture)
+                const CarModel& hm = car_models_[static_cast<std::size_t>(car_slot_model_[slot])];
+                if (!hm.hull_v.empty() && hm.hull_t.size() >= 3) {
+                    in.hull_v = hm.hull_v.data();
+                    in.hull_nv = static_cast<int>(hm.hull_v.size() / 3);
+                    in.hull_t = hm.hull_t.data();
+                    in.hull_nt = static_cast<int>(hm.hull_t.size() / 3);
+                }
+            }
             // rec+0x294 & 0x40 = DAT_0063bc44[car] (FUN_0040da50 -> FUN_0041eeb0, 0x0040db3d): set when
             // FUN_00426c00() = DAT_00644158 (= COURSE.LUA Course_Id, course_id_) is 0, 0x1a, 0x21 or
             // 0x24 and the car's vehicle slot is live (FUN_0046c7b0 / FUN_0046c770 == 1).
@@ -8996,6 +9094,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
             double sh = sum * 0.125;
             if (sh > 1.0) sh = 1.0; else if (sh < 0.0) sh = 0.0;
             g.shade = static_cast<float>(sh);
+            LibRw::RaceFx_SetCarSun(slot, g.shade);       // [rres] rec+0x284, the shadow alpha's second factor
             // [librwrest] MASHED_DBG_CARSHADE=<path>, DIAGNOSTIC ONLY, default OFF: per car per
             // frame the root position and rec+0x284 (R1 witness, PREREG_librwrest.md)
             {
@@ -9056,11 +9155,11 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
                 RwMatrixRotate(env, axis, g.angle, 0);
                 LibRw::RaceSubmit_AddInstancePosed(cm.handle, (const float*)&m, poses,
                                                    static_cast<std::size_t>(np), sun, coef, env,
-                                                   LibRw::kInstCar, pv);
+                                                   LibRw::kInstCar, pv, slot);
             } else {
                 LibRw::RaceSubmit_AddInstancePosed(cm.handle, (const float*)&m, poses,
                                                    static_cast<std::size_t>(np), sun, 0.f, nullptr,
-                                                   LibRw::kInstCar, pv);
+                                                   LibRw::kInstCar, pv, slot);
             }
         };
         rep_car(0, &carm);

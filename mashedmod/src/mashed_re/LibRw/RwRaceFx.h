@@ -35,6 +35,13 @@ struct CarFxInput {
     float fade;      // rec+0x288
     bool  lights;    // rec+0x294 & 0x40
     bool  brake;     // [rfx2] *(0x007f103c + slot*0x4c + 1), the controller's brake byte
+    // [rres] the shadow render-to-texture's input: the hull part 0x3b of the car DFF in clump space
+    // (rec[rec+0x28c], FUN_0041f8f0 0x0041fa9d): xyz per vertex, triangle triples. (rec+0x284 follows
+    // through RaceFx_SetCarSun.)
+    const float*         hull_v;
+    int                  hull_nv;
+    const std::uint16_t* hull_t;
+    int                  hull_nt;
 };
 // [rfx2] the light marker parts FUN_00412f30 @ 0x00412f30 reads (FUN_0041f1c0 / FUN_0041f1e0): 0x19,
 // 0x1a, 0x1c, 0x1b (headlights), 0x37, 0x38 (tail), 0x39, 0x3a (brake), in that slot order; their
@@ -143,6 +150,38 @@ void RaceFx_RenderHud(int width, int height);
 // start-light timer come from the consumed trace row (ba8c, dtb), the mode / slot / score inputs
 // from <file> (measured on the original, verify/rfx_20261016/hud_inputs.txt).
 void RaceFx_ReplayHudRow(int ba8c, float dtb);
+
+// ---- [rres 2026-10-16] the car shadow render-to-texture (C10, U-9691) ----------------------------
+// Per car, FUN_00420050 @ 0x00420050 (after its frustum test, 0x00420081) ends the race camera's update,
+// runs FUN_0041f8f0 @ 0x0041f8f0 (when DAT_00636acc == 0 and FUN_004260c0 = DAT_00657490 != 0), begins the
+// update again, draws the car, and then, with ZWRITE off, FUN_004228f0 @ 0x004228f0. FUN_0041f8f0 renders the
+// car's hull (part 0x3b) into a 256x256 A8R8G8B8 camera texture from `carpos + lightAt * -4` (parallel,
+// view window 0.75, cleared to 0,0,0,0) and FUN_00422570 @ 0x00422570 collects up to 0x40 collision triangles
+// around the car whose texture coordinates are the RT camera's view matrix x,y; FUN_004228f0 draws them.
+// MASHED_CAR_SHADOW_RT=0 turns the pass off (default ON).
+bool RaceFx_ShadowRtEnabled();
+// DAT_00657490 (course+0x10638), written at the end of Course::CreateFromDescription (0x00479330): 1 unless
+// Course_Id is 0, 0x1a or 0x24 (Arctic, City, Storm).
+void RaceFx_SetShadowCourse(int course_id);
+// The collision world FUN_00422570 queries (DAT_00656ee8 == DAT_0080332c, the object shadows' world) and
+// the course directional light's frame LTM (DAT_0063d850 -> +4, 16 floats; null = no light).
+void RaceFx_SetShadowWorld(const ObjShadowSoup& soup, const float light_ltm[16]);
+// rec+0x284 of car `slot` (FUN_0041f590 / FUN_00420870), after RaceFx_QueueCar.
+void RaceFx_SetCarSun(int slot, float sun);
+// The RT half, called by RaceSubmit_Render for car `slot` before its draw, and the quad half after it. The
+// first ends the race camera's update, renders, and begins it again; `rebegin` is what the submit TU does
+// after its own beginUpdate (the fog range).
+void RaceFx_ShadowPass(int slot, void* main_cam, void (*rebegin)(), int lod_state);
+void RaceFx_ShadowQuads(int slot);
+// True while the pass applies to `slot` this frame (queued, gate on, RT built or buildable).
+bool RaceFx_ShadowActive(int slot);
+// MASHED_DBG_SHADOWSEL=<csv>, DIAGNOSTIC ONLY: the replay row the selection dump is tagged with.
+void RaceFx_SetDbgRow(int row);
+// Zero the four per-player shadow records (FUN_004224d0 @ 0x004224d0 clears 0xf40 bytes at car creation,
+// FUN_00420420 0x0042044e). The matched-pose replay calls it when it consumes trace row 0 so the re-query
+// chain (FUN_00422570 re-queries once the car has moved 0.354 from the last query) starts where the
+// original's trace starts, not at the standalone's pre-replay grid positions.
+void RaceFx_ShadowResetCache();
 
 }  // namespace LibRw
 }  // namespace mashed_re

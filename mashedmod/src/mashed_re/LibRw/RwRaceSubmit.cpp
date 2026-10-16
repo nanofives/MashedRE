@@ -83,7 +83,8 @@ struct Inst { int model; float m[16]; bool fx = false; float env_coef = 0.f; flo
               std::vector<FramePose> poses; float sun_scale = -1.f;   // [librwrest]
               int kind = kInstAfterWorld;
               bool vis = false; int vis_state = 0; std::uint32_t vis_flags = 0;
-              int cull = 0; int zwrite = -1; };   // [rhooks] RaceSubmit_AddInstanceStates
+              int cull = 0; int zwrite = -1;      // [rhooks] RaceSubmit_AddInstanceStates
+              int car_slot = -1; };               // [rres] RaceSubmit_AddInstancePosed's car slot
 std::vector<Inst>       g_insts;
 // [librwrest] per model, parallel to g_models: the FRAMELIST frames of a hierarchy model and
 // their streamed matrices (restored after each posed copy draws). Empty otherwise.
@@ -638,9 +639,10 @@ void RaceSubmit_SetModelRwStates(int handle) {
 
 void RaceSubmit_AddInstancePosed(int handle, const float* m44, const FramePose* poses,
                                  std::size_t npose, float sun_scale, float env_coef,
-                                 const float* env_m44, int kind, const CarVis* vis) {
+                                 const float* env_m44, int kind, const CarVis* vis, int car_slot) {
     if (handle < 0 || !m44 || (std::size_t)handle >= g_models.size()) return;
     Inst i; i.model = handle; i.kind = kind;
+    i.car_slot = car_slot;
     for (int k = 0; k < 16; ++k) i.m[k] = m44[k];
     if (vis) { i.vis = true; i.vis_state = vis->state; i.vis_flags = vis->flags; }   // [carlod]
     if (env_m44 && (std::size_t)handle < g_model_env.size() &&
@@ -1103,6 +1105,13 @@ void RenderObjWorld(const Frustum& fr, bool sticky) {
 }
 }  // namespace
 
+// [rres] FUN_00420050 ends and begins the race camera around a car's shadow RT pass (0x004200..); RenderWare
+// re-derives the camera's matrices at that begin, and the fog range is the one thing this TU overrides
+// after its begin (I4-fog), so the pass redoes it.
+static bool  g_refog_on = false;
+static float g_refog_start = 0.f, g_refog_end = 0.f;
+static void RebeginMainFixups() { if (g_refog_on) rw::d3d::setFogRange(g_refog_start, g_refog_end); }
+
 void RaceSubmit_Render(const Race::RaceSceneState& st) {
     if (!RaceSubmit_Active()) return;
 
@@ -1338,6 +1347,9 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
         const char* e = std::getenv("MASHED_LIBRW_FOGFIX");
         return !(e && e[0] == '0' && e[1] == '\0');
     }();
+    // [rres] what the shadow pass redoes after it begins the race camera again mid-frame
+    g_refog_on = st.fog_on_ && s_fogfix && !std::getenv("MASHED_NO_FOG");
+    g_refog_start = st.fog_start_; g_refog_end = st.fog_end_;
     if (st.fog_on_ && s_fogfix && !std::getenv("MASHED_NO_FOG"))
         rw::d3d::setFogRange(st.fog_start_, st.fog_end_);
 
@@ -1551,6 +1563,53 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
 
         Frustum fr{};
         if (walk || g_objwalk.ok) MakeFrustum(&fr);
+        // [rhooks U-9713] the hook slot's own render states for a copy, restored after it
+        // (RaceSubmit_AddInstanceStates); covers the plain and the clump-render paths below
+        struct HookStates {
+            bool cull = false, zw = false;
+            rw::uint32 cm = 0, zwv = 0;
+            explicit HookStates(const Inst& i) {
+                if (i.cull > 0) {
+                    cull = true; cm = rw::GetRenderState(rw::CULLMODE);
+                    rw::SetRenderState(rw::CULLMODE, (rw::uint32)i.cull);
+                }
+                if (i.zwrite >= 0) {
+                    zw = true; zwv = rw::GetRenderState(rw::ZWRITEENABLE);
+                    rw::SetRenderState(rw::ZWRITEENABLE, (rw::uint32)i.zwrite);
+                }
+            }
+            ~HookStates() {
+                if (zw) rw::SetRenderState(rw::ZWRITEENABLE, zwv);
+                if (cull) rw::SetRenderState(rw::CULLMODE, cm);
+            }
+        };
+        // [rres] kInstPreWorld: SuperG's slot 4 FUN_00451090 draws clump 1 (Reflections.dff, RpClumpRender of
+        // `*(course + 0x10114)`) between its reflection camera's update calls FUN_004c1a00 / FUN_004c19f0, which is
+        // the first thing in the recorded frame, ahead of FUN_004270f0's screen rectangle (0x004271e8) and the
+        // world. The same plain per-atomic draw as the after-world clumps, ahead of the walk, with the cull state
+        // the hook entry carries.
+        const bool pre_world_on = walk || ClumpOrderOn();
+        if (pre_world_on) {
+            for (std::size_t ii = 0; ii < g_insts.size(); ++ii) {
+                const Inst& in = g_insts[ii];
+                if (in.kind != kInstPreWorld) continue;
+                if (in.model < 0 || (std::size_t)in.model >= g_models.size() || !g_models[(std::size_t)in.model]) continue;
+                HookStates hook_states(in);
+                const ModelRw& mr = g_model_rw[(std::size_t)in.model];
+                const std::size_t nd = mr.by_dff.size();
+                const bool rw_order = ClumpOrderOn();
+                for (std::size_t j = 0; j < nd; ++j) {
+                    const std::size_t d = rw_order ? nd - 1 - j : j;
+                    if (walk && d < mr.spheres.size()) {
+                        float cc[3], rr;
+                        WorldSphere(in, mr.spheres[d], cc, &rr);
+                        if (!DistanceKeeps(fr, cc, mr.spheres[d].r_obj)) continue;
+                    }
+                    RenderDffAtomic((int)ii, d);
+                }
+                ++g_inst_drawn;
+            }
+        }
         if (walk) RenderWalkPass(g_walk, kInstInWorld, fr, sticky, true);
         bool car_seen = false;
         bool fx_done = false;
@@ -1578,26 +1637,8 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
             rw::Clump* c = g_models[(std::size_t)in.model];
             if (!c) continue;
             if (walk && in.kind == kInstInWorld) continue;   // drawn by the sector walk
-            // [rhooks U-9713] the hook slot's own render states for this copy, restored after it
-            // (RaceSubmit_AddInstanceStates); covers the plain and the clump-render paths below
-            struct HookStates {
-                bool cull = false, zw = false;
-                rw::uint32 cm = 0, zwv = 0;
-                explicit HookStates(const Inst& i) {
-                    if (i.cull > 0) {
-                        cull = true; cm = rw::GetRenderState(rw::CULLMODE);
-                        rw::SetRenderState(rw::CULLMODE, (rw::uint32)i.cull);
-                    }
-                    if (i.zwrite >= 0) {
-                        zw = true; zwv = rw::GetRenderState(rw::ZWRITEENABLE);
-                        rw::SetRenderState(rw::ZWRITEENABLE, (rw::uint32)i.zwrite);
-                    }
-                }
-                ~HookStates() {
-                    if (zw) rw::SetRenderState(rw::ZWRITEENABLE, zwv);
-                    if (cull) rw::SetRenderState(rw::CULLMODE, cm);
-                }
-            } hook_states(in);
+            if (pre_world_on && in.kind == kInstPreWorld) continue;   // [rres] drawn ahead of the walk
+            HookStates hook_states(in);
             if (in.kind == kInstCar && !car_seen) {
                 car_seen = true;
                 // [rstates] F4 / U-9690: on RainEnable tracks FUN_004270f0 runs the line
@@ -1723,6 +1764,10 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
                 d->update();
                 f->updateObjects();
             }
+            // [rres] FUN_00420050 @ 0x00420050 ends the race camera's update, runs FUN_0041f8f0 (the car shadow
+            // render-to-texture) and begins it again, before the light scale and the car's own draw
+            if (in.kind == kInstCar && in.car_slot >= 0 && RaceFx_ShadowActive(in.car_slot))
+                RaceFx_ShadowPass(in.car_slot, g_cam, &RebeginMainFixups, in.vis ? in.vis_state : 1);
             // [librwrest] FUN_00420050 @ 0x00420050: the directional light's colour times
             // rec+0x284 (all four components, 0x004200ea..0x00420149) for this car only
             if (in.sun_scale >= 0.f && g_sun)
@@ -1781,6 +1826,9 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
             }
             if (in.sun_scale >= 0.f && g_sun)   // restored after the render (0x004201d7)
                 g_sun->setColor(st.sun_f_[0], st.sun_f_[1], st.sun_f_[2]);
+            // [rres] then, with ZWRITE off, FUN_004228f0: this car's ground triangles with the RT texture
+            if (in.kind == kInstCar && in.car_slot >= 0 && RaceFx_ShadowActive(in.car_slot))
+                RaceFx_ShadowQuads(in.car_slot);
             for (const FramePose& p : in.poses) {   // back to the streamed matrices
                 rw::Frame* f = (*mf)[(std::size_t)p.frame];
                 if (!f) continue;

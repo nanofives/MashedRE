@@ -1,0 +1,21 @@
+track            row  orig  matched  orig tri   m.tri  m.tri% | rows cited  red verdict
+01_Egypt         740   186      150     21638   20039   92.6% |   22    22    0 CITED
+01_Egypt         780   175      143     20649   19803   95.9% |   20    20    0 CITED
+01_Egypt         815   116       81     13313   12312   92.5% |   25    25    0 CITED
+03_Arctic       1051   180      157     35412   34846   98.4% |   32    32    0 CITED
+03_Arctic       1091   177      152     35197   34539   98.1% |   35    35    0 CITED
+03_Arctic       1126   131      107     29307   28781   98.2% |   36    36    0 CITED
+04_Highway       853   172      127     23561   21124   89.7% |   18    18    0 CITED
+04_Highway       893   164      118     23104   20570   89.0% |   18    18    0 CITED
+04_Highway       928   131       72     18291   15230   83.3% |   22    22    0 CITED
+06_SuperG        743   369      333     26410   24232   91.8% |   72    72    0 CITED
+06_SuperG        783   370      333     26417   24232   91.7% |   73    73    0 CITED
+06_SuperG        818   224      174     15002   13361   89.1% |   65    65    0 CITED
+08_Storm         928   252      227     18682   17760   95.1% |   21    21    0 CITED
+08_Storm         968   249      223     18284   17425   95.3% |   24    24    0 CITED
+08_Storm        1003   179      154     11362   10699   94.2% |   24    24    0 CITED
+13_Training      884   242      207     18128   17273   95.3% |   21    21    0 CITED
+13_Training      924   257      203     18358   17235   93.9% |   21    21    0 CITED
+13_Training      959   233      201     18079   17219   95.2% |   21    21    0 CITED
+
+INSTRUMENT GATES: PASS
