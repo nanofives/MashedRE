@@ -1,0 +1,6 @@
+=== H_DEF-2 pid=10340 exe=d738362e
+    exit=0 self_exited=True secs=162
+    H_DEF-2.step.csv lines=18671 sha8=d3b90ee0
+    H_DEF-2.gates.csv lines=55433 sha8=80f01f35
+    H_DEF-2.ptrace.log lines=27716 sha8=56d62ae7
+DONE

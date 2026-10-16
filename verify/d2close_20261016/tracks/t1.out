@@ -1,0 +1,14 @@
+sel= 0 pid=20024 rc=0 replica=BUILT 5/6/5/5 queries=3679 nonempty=3679 (100.0 %) median_count=5 max_count=5
+sel= 1 pid=20632 rc=0 replica=BUILT 3/4/3/5 queries=3270 nonempty=3270 (100.0 %) median_count=2.0 max_count=19
+sel= 2 pid=25952 rc=0 replica=BUILT 5/6/4/9 queries=3277 nonempty=3277 (100.0 %) median_count=3 max_count=11
+sel= 3 pid=10680 rc=0 replica=BUILT 9/10/6/8 queries=3476 nonempty=3476 (100.0 %) median_count=7.0 max_count=7
+sel= 4 pid=6800 rc=0 replica=BUILT 9/10/5/3 queries=3647 nonempty=3647 (100.0 %) median_count=5 max_count=5
+sel= 5 pid=26080 rc=0 replica=BUILT 9/10/6/8 queries=3450 nonempty=3450 (100.0 %) median_count=4.0 max_count=10
+sel= 6 pid=25356 rc=0 replica=BUILT 2/3/3/10 queries=3616 nonempty=3616 (100.0 %) median_count=4.0 max_count=4
+sel= 7 pid=24068 rc=0 replica=BUILT 3/4/2/6 queries=3455 nonempty=3455 (100.0 %) median_count=3 max_count=11
+sel= 8 pid=18532 rc=0 replica=BUILT 25/26/10/25 queries=3632 nonempty=3632 (100.0 %) median_count=8.0 max_count=11
+sel= 9 pid=10120 rc=0 replica=BUILT 8/9/5/16 queries=3260 nonempty=3260 (100.0 %) median_count=3.0 max_count=8
+sel=10 pid=23380 rc=0 replica=BUILT 5/6/4/12 queries=3597 nonempty=3597 (100.0 %) median_count=3 max_count=3
+sel=11 pid=25596 rc=0 replica=BUILT 4/5/3/5 queries=3610 nonempty=3610 (100.0 %) median_count=11.0 max_count=11
+sel=12 pid=352 rc=0 replica=BUILT 3/4/2/5 queries=3299 nonempty=3299 (100.0 %) median_count=5 max_count=18
+DONE
