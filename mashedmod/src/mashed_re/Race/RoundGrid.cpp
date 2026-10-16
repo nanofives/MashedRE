@@ -5,6 +5,7 @@
 // Safe_Start_Lines table PathNodes.cpp builds at 0x0066d658 / 0x0066d6e0 (PATHPROG P1).
 #include "RoundGrid.h"
 #include "PathNodes.h"
+#include "PathProgStep.h"   // PathProg_PublishMask
 #include "../Math/RwLutTables.h"
 
 #include <cmath>
@@ -41,7 +42,9 @@ bool RoundGrid_Enabled() {
         const char* s = std::getenv("MASHED_ROUND_GRID");
         return s && s[0] && s[0] != '0';
     }();
-    return s_on && PathProg_Enabled();
+    // [PATHPROG split] the progress it reads is live under wholesale MASHED_PATHPROG or under the shadow-row tick with
+    // MASHED_PP_PUBLISH bit 0x2 (node progress published); both build the course block.
+    return s_on && (PathProg_Enabled() || (RacePctOrig_Enabled() && (PathProg_PublishMask() & 0x2u)));
 }
 
 void RoundGrid_RaceInit() {

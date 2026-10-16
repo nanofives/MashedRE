@@ -78,6 +78,41 @@ plus a repeat `X7_H2` / `X7_M2` for determinism.
 3. The `MASHED_ROUND_GRID` answer is read from `X7` / `X15`: if the live row costs regime A, `MASHED_ROUND_GRID` (which needs the live progress) inherits that cost, and the report says so.
 4. If G-CTRL fails nothing else is scored. Exe-side runs only: the committed original captures (`o_pp1`, `o_rd3`, the (b) envelopes) are the references. No new original capture is planned.
 
+## 3a. AMENDMENT A1 (committed after the stage 1 ladder was scored, before any arm below exists)
+
+Seen first (`SCORE_S1.txt`, `analyze_why.py`, `run_s1.txt`; G-CTRL passed: `G_DEF` `716cb2fd / 2a2afda1 / ba90ed88`, `G_OPTOUT` `c2e4d60d / 603ab244 / ba90ed88`):
+
+- **G-NOOP passes**: `X0` = `D` (`774fadda` on K00, `5052df10` on K02).
+- **G-DECOMP passes**: `X15` = wholesale `PP` on both K (`42aebd91`, `bcfc5505`). The four-part split is exact.
+- **G-SPLIT**: regime A is 1/3 for `D`, `X0`, `X1`, `X4`, `X8` and 0/3 for `X2`, `X3`, `X7`, `X15`, `PP`, on both K. The mover is bit `0x2`, the live node progress `0x008a96e8`.
+  `X1` (lap counter) changes only `val_880` and `lap_9648` (no control byte, 0 of 1018 / 285 rows), `X4` (rest of the row) and `X8` (placement of the race_pct-only tick) are byte-equal to `D`.
+  `X3` = `X7` (same hash): the rest of the row adds nothing. `X7` != `X15`: the placement matters once progress is live (car 1 differs from row 214, car 3 from row 248).
+- **G-WHY, first look**: with `X2` car 2's `rec_9e4` already differs at step row 2 (frame 3), before any control byte (first control-byte difference car 2 frame 3, car 1 frame 103, car 3 frame 122).
+  That is a physics difference at the start, not a late AI drift.
+
+Hypothesis registered now, to be tested, not a result: the consumer is `Fi_UpdateBoostOrder` (`ForceIntegratorStubs.cpp:171`, the port of the `FUN_00470c70` descending sort by `FUN_00408a50`), which with progress
+all 0 keeps the seeded pair `{2, 3}` as the two cars on the 8e6 boost arm. The original's progress at the lights is 30.0 / 29.73 / 29.455 / 29.18 for cars 0 to 3 (`o_pp1`, call 1), so the two LEAST progressed cars are `{2, 3}`.
+The port's player sits just past the line (race_pct 0.003, progress about 0, `R_H` gates frame 1), so with live progress the two least are `{3, 0}`: car 2 loses the 8e6 arm and the player gains it.
+
+New arms (run_fk, K in 0, 2, except `X2_H`):
+
+| arm | knobs | purpose |
+|---|---|---|
+| `X0_BS`, `X2_BS`, `X7_BS` | `MASHED_PP_PUBLISH=0 / 2 / 7` + `MASHED_PP_BOOSTSEED=1` | mutant: the boost-order sort ignores progress (seeded `{2, 3}`), measurement-only. `X0_BS` is its no-op control (must equal `D`) |
+| `X2_H` | `MASHED_PP_PUBLISH=2`, run_h4 | read the published progress at the lights (`prog_96e8` in the gates dump) |
+| `X7_RG`, `PP_RG` | `MASHED_PP_PUBLISH=7` / `MASHED_PATHPROG`, + `MASHED_ROUND_GRID` | the `MASHED_ROUND_GRID` question: the grid anchor at the start node, which needs live progress (`RoundGrid_Enabled` now also accepts the shadow-row tick with bit `0x2`) |
+
+| gate | statistic | pass rule | prediction |
+|---|---|---|---|
+| **G-NOOP-BS** | `X0_BS` vs `D` step hash | equal on K = 0, 2 | PASS |
+| **G-MUTANT** | `X2_BS` vs `D`: control bytes (`c0 c1 c3 c4 c5`) of every car over the whole run, and regime A n/3 | control bytes equal and A 1/3 on both K => the boost order is the whole consumer of the live progress; anything else is reported with the first differing row | PASS (70 %) |
+| G-PROG-LIGHTS (report) | `X2_H` gates `prog_96e8` frames 1 to 5, cars 0 to 3 | report, against the original's 30.0 / 29.73 / 29.455 / 29.18 | player about 0, cars 1 to 3 within 0.05 of the original |
+| **G-RG** (report, the orchestrator's question) | regime A n/3 of `X7_RG`, `PP_RG` on K = 0, 2 | report against `D` (1/3) | `X7_RG` A 1/3 (40 %), 0/3 (45 %), other (15 %) |
+
+Decision 1 of section 3 stands unchanged: `X7` fails (b) (A 0/3), so it is NOT proposed as the default. Decision 2 applies: the part is the node progress, the consumer is the boost-order sort if G-MUTANT passes,
+and the fix is not the field but the input it reads (the player's grid pose relative to the line), which belongs to the grid arms (`MASHED_ROUND_GRID`), reported by G-RG.
+If G-MUTANT passes AND `X7_RG` or `PP_RG` restores regime A to >= 1/3 on both K, the next arms (regimes B / C, h4 collateral, closure) for that combination are pre-registered in a second amendment before they run.
+
 ## 4. Not done here (registered)
 
 - No hooks.csv change (`FUN_00408610` is an EXE-ONLY naked transcription). No tracker is edited by hand. The memory index is not touched (orchestrator's).

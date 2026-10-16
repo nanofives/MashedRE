@@ -18,8 +18,8 @@ from pathlib import Path
 MAIN = Path(r"C:\Users\maria\Desktop\Proyectos\Mashed")
 WT = MAIN / ".worktrees" / "pathprog_a"
 OUT = WT / "verify" / "d3_pathprog_a_20261016"
-ROOT = Path(r"C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed"
-            r"\c1f3ef78-83d8-4379-bfa7-b8b44efc73ff\scratchpad\gameroot")   # robocopy of MAIN/original
+ROOT = Path(os.environ.get("PPA_ROOT") or (r"C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed"
+            r"\c1f3ef78-83d8-4379-bfa7-b8b44efc73ff\scratchpad\gameroot"))   # robocopy of MAIN/original; PPA_ROOT = a second private root for a parallel driver
 NEW = WT / "mashedmod" / "build" / "mashed_re.exe"
 PA0 = WT / "mashedmod" / "build" / "mashed_re_pa0.exe"   # copy of the 0020d521 build (G-CTRL arms run it while the new build is made)
 WAIT_S = 900
@@ -53,6 +53,15 @@ ARMS += [
     dict(n="X7_M", recipe="h4", knobs=M7 + ["%s=7" % PUB]),
     dict(n="X7_M2", recipe="h4", knobs=M7 + ["%s=7" % PUB]),
 ]
+# PREREG amendment A1
+BS = "MASHED_PP_BOOSTSEED"
+RGK = "MASHED_ROUND_GRID"
+for _k in (0, 2):
+    for _m in (0, 2, 7):
+        ARMS.append(dict(n="X%d_BS_K%02d" % (_m, _k), recipe="fk", k=_k, knobs=["%s=%d" % (PUB, _m), BS]))
+    ARMS.append(dict(n="X7_RG_K%02d" % _k, recipe="fk", k=_k, knobs=["%s=7" % PUB, RGK]))
+    ARMS.append(dict(n="PP_RG_K%02d" % _k, recipe="fk", k=_k, knobs=[PP, RGK]))
+ARMS.append(dict(n="X2_H", recipe="h4", knobs=["%s=2" % PUB]))
 # arms added per PREREG are appended below this line
 
 
