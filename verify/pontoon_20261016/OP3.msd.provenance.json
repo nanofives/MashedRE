@@ -1,0 +1,58 @@
+{
+  "msd": "OP3.msd",
+  "captured_utc": "2026-10-16T22:48:24Z",
+  "argv": [
+    "D:\\MashedWT\\pontoon\\re\\frida\\scenario_launch.py",
+    "--mode",
+    "10",
+    "--cars",
+    "4",
+    "--hold",
+    "300",
+    "--statediff-out",
+    "D:\\MashedWT\\pontoon\\verify\\pontoon_20261016\\OP3.msd",
+    "--pontoon-probe",
+    "20000",
+    "--track",
+    "11",
+    "--rule",
+    "4"
+  ],
+  "cwd": "D:\\MashedWT\\pontoon",
+  "git_head": "cc6b6383fb36be00440cbf863d9c6c84177592da",
+  "host": "LIVING-PC",
+  "statediff": {
+    "car": 0,
+    "base_va": "0x8815a0",
+    "rec_size": "0xd04",
+    "drive": false,
+    "drive_late": false,
+    "steer": 0,
+    "aictrl": false,
+    "aistep": false,
+    "steer_schedule": "",
+    "steer_schedule_applied": null,
+    "steer_schedule_t0_offset_s": null,
+    "noop_cook": false,
+    "hooks": ""
+  },
+  "capture": {
+    "frames": 17759,
+    "distinct_payloads": 17659,
+    "nonzero_frames": 17759
+  },
+  "descriptor_writes": {
+    "block_base": "0x007f1038",
+    "accel_byte": 4,
+    "steer_bytes": [
+      0,
+      1
+    ],
+    "legacy_steer_bytes": [
+      2,
+      3,
+      14,
+      15
+    ]
+  }
+}

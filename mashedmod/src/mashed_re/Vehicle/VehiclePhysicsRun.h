@@ -145,6 +145,11 @@ float VehiclePhysics_RecordF32(int slot, int off);
 // +0x9ec (the active-contact count the fixup divides by, `fild [edi+0x9ec]` at
 // 0x0046f3cd) is an INTEGER, so reading it as a float gives a denormal, not a count.
 int VehiclePhysics_RecordI32(int slot, int off);
+// [pontoon 2026-10-16] the slot's record (nullptr before Init), and the Warzone platform's in-box carry: publish the
+// carried RwMatrix m to the ring's current half, the integrated basis and the adapter positions; returns the caller's
+// position (y + ground_off) and the basis heading.
+unsigned char* VehiclePhysics_RecordPtr(int slot);
+void VehiclePhysics_CarryTo(int slot, const float* m, float ground_off, float callerPos[3], float* yaw);
 
 }  // namespace Vehicle
 }  // namespace mashed_re

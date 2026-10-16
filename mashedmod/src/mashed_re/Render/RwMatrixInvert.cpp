@@ -202,12 +202,22 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl
 RwMatrixInvertEntry(void* /*out*/, void* /*in*/)
 {
     __asm {
+#ifdef MASHED_STANDALONE
+        // [pontoon 2026-10-16] exe arm: the RW device table (DAT_007d3ff8 / DAT_007d4028) is not mapped in the
+        // standalone (its pad reads 0, so [edx+ecx+4] would read address 4). The engine caps word is the measured
+        // [devBase+4] = 0x00020000 (Math/RwMatrixMultiplyCpu.cpp header, the 0x004c4622 literal).
+        push   esi
+        mov    esi, dword ptr [esp + 0xc]          // in (param_2)
+        mov    ecx, 0x00020000                     // [devBase+4], measured
+        mov    eax, dword ptr [esi + 0xc]          // in flag word (in[3])
+#else
         mov    ecx, dword ptr ds:[0x007d3ff8]      // DAT_007d3ff8 RW engine state
         mov    edx, dword ptr ds:[0x007d4028]      // DAT_007d4028 matrix-opt flags base
         push   esi
         mov    esi, dword ptr [esp + 0xc]          // in (param_2)
         mov    ecx, dword ptr [edx + ecx + 4]      // engine supported-opt flags
         mov    eax, dword ptr [esi + 0xc]          // in flag word (in[3])
+#endif
         and    ecx, eax
         test   ecx, 0x20000
         je     L_not_identity

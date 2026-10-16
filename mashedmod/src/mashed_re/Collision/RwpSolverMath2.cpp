@@ -42,6 +42,12 @@
 #include "../Core/ShadowTrack.h"
 #include "../Core/ShadowAB.h"
 
+#ifdef MASHED_STANDALONE
+namespace mashed_re { namespace Math {
+void __cdecl RwMatrixMultiplyCPU(float* out, const float* a, const float* b);   // 0x005cb2a0 (Math/RwMatrixMultiplyCpu.cpp)
+} }
+#endif
+
 namespace mashed_re {
 namespace Collision {
 
@@ -61,8 +67,20 @@ typedef long double    float10;     // x87 80-bit extended — MSVC = 64-bit dou
 // binding as the landed Math/RwMatrixRotateInner.cpp port (verified void there; a float10
 // return through a void fn-ptr would leak ST0 — feedback_x87_st0_float10_return_fnptr).
 typedef void (__cdecl *RwpMatMulFn)(void* out, void* a, void* b);
+#ifdef MASHED_STANDALONE
+// [pontoon 2026-10-16] exe arm: the RW device table is not mapped in the standalone (its pad reads 0). The caps word is
+// the measured [devBase+4] = 0x00020000 and the method slot [devBase+8] is 0x005cb2a0, ported verbatim as
+// Math::RwMatrixMultiplyCPU (Math/RwMatrixMultiplyCpu.cpp). Used by Track/WarzonePontoon.cpp (0x004c52f0).
+static void __cdecl RwpExeMatMul(void* out, void* a, void* b) {
+    mashed_re::Math::RwMatrixMultiplyCPU(static_cast<float*>(out), static_cast<const float*>(a),
+                                         static_cast<const float*>(b));
+}
+#define RWP_MATMUL   RwpExeMatMul
+#define RWP_IDENTW   (0x00020000u)
+#else
 #define RWP_MATMUL   (*(RwpMatMulFn*)(DAT_007d4028 + 8 + DAT_007d3ff8))
 #define RWP_IDENTW   (*(uint *)(DAT_007d4028 + 4 + DAT_007d3ff8))
+#endif
 
 // RW error funnel (same RVA-fn-ptr idiom as Math/RwMatrixRotateInner.cpp; both targets are
 // C3-ported and hooked, so under the .asi the call converges on the ported body).
