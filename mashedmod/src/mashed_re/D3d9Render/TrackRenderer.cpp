@@ -3793,6 +3793,23 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
 
     // Countdown freeze (3-2-1-GO): cars are held still until it elapses.
     if (countdown_ > 0.f) {
+        // [rfx 2026-10-16] STAND-IN ADAPTER for the HUD's start-light clock (MASHED_SUBSTATE off;
+        // under it the ported FUN_0040dbd0 / FUN_0041d930 tail run instead). The original zeroes
+        // DAT_0063d588 at the state-4 entry (FUN_0040dbd0 -> FUN_0041d910 @ 0x0041d910), one
+        // state-4 frame plus 112 state-5 frames before GO (FUN_004103a0 exits on the 112th call),
+        // and adds DAT_007f100c every frame (0x0041da76). This countdown has no state 4, so the
+        // zeroing is placed where 113 frames remain and the frame dt is added. Removed with the
+        // stand-in when MASHED_SUBSTATE becomes the default.
+        if (!SubState_Enabled() && LibRw::RaceFx_HudEnabled()) {
+            const float lead = 113.0f / 60.0f;
+            if (countdown_ > lead && countdown_ - in.dt <= lead) {
+                *reinterpret_cast<std::uint32_t*>(0x0063d584u) = 0u;   // 0x0041d910
+                *reinterpret_cast<std::uint32_t*>(0x0063d588u) = 0u;   // 0x0041d91a
+            } else if (countdown_ <= lead) {
+                *reinterpret_cast<std::uint32_t*>(0x0063d584u) += 1u;
+                *reinterpret_cast<float*>(0x0063d588u) += in.dt;
+            }
+        }
         countdown_ -= in.dt;
         car_speed_ = 0.f; car_vel_[0] = car_vel_[1] = car_vel_[2] = 0.f;
         for (auto& a : ai_cars_) a.cur_speed = 0.f;
@@ -4193,6 +4210,9 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         // The port has no handler yet (leg 1b). Default OFF; nothing in the exe reads either
         // global in leg 1a (PREREG_LEG1A.md section 2).
         if (SubState_Enabled()) HudSlideBillboardTimerTail();
+        // [rfx 2026-10-16] the HUD's start lights read this clock (LibRw/RwRaceFx.h); with the
+        // sub-state machine off nothing else reads DAT_0063d584 / DAT_0063d588 in the exe.
+        else if (LibRw::RaceFx_HudEnabled()) HudSlideBillboardTimerTail();
         const bool phys = Vehicle::VehiclePhysics_Enabled();
         yaww::Flags(faithful_nav, phys);   // A-REACH witnesses the branch, not prose
         // [U-9141 2026-09-29] MASHED_MEASURE_NOOPP=1 — MEASUREMENT HARNESS ONLY. Skips the
@@ -7548,6 +7568,29 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
 
 
     MARK(d_other);   // copters
+    // [rfx 2026-10-16] the in-race HUD's inputs, from this standalone's own state (LibRw/RwRaceFx.h).
+    // State: the real DAT_0063ba8c under MASHED_SUBSTATE; with the stand-in countdown, its first part
+    // stands for phase 3 (no HUD, FUN_0040dfc0 returns below 5), its last 113 frames for states 4/5
+    // (the adapter in Update), racing for 6.
+    {
+        LibRw::HudInputs h;
+        const int ba8c = *reinterpret_cast<const int*>(0x0063ba8cu);
+        if (SubState_Enabled() && ba8c != 0) h.state = ba8c;
+        else h.state = (countdown_ > 113.0f / 60.0f) ? 3 : (countdown_ > 0.f ? 5 : 6);
+        h.timer = *reinterpret_cast<const float*>(0x0063d588u);
+        h.team_play = *reinterpret_cast<const int*>(0x0067ea64u);
+        h.round_type = *reinterpret_cast<const int*>(0x0067e9fcu);
+        h.mode_fd0 = *reinterpret_cast<const int*>(0x007f0fd0u);
+        h.n4d0 = *reinterpret_cast<const int*>(0x008a94d0u);
+        for (int i = 0; i < 4; ++i) {
+            const std::uintptr_t b = 0x007f1a14u + static_cast<std::uintptr_t>(i) * 16u;
+            h.slot[i] = *reinterpret_cast<const int*>(b);
+            h.team[i] = *reinterpret_cast<const int*>(b + 4u);
+            h.colour[i] = *reinterpret_cast<const int*>(b + 8u);
+            h.score[i] = score(i);
+        }
+        LibRw::RaceFx_SetHud(h);
+    }
     // R5: the cars, submitted through librw. Car slot s is one placed instance of its livery's
     // model (car_models_[car_slot_model_[s]], FUN_0040d110 @ 0x0040d110), built with the DFF's
     // frame hierarchy; the placement is the same D3DMATRIX the removed D3D9 car path built

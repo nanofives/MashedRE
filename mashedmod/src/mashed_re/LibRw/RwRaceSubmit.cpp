@@ -1166,6 +1166,10 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
 
     g_cam->endUpdate();
 
+    // [rfx 2026-10-16] the in-race HUD (team panels + start lights): FUN_00492e90 @ 0x00492e90 renders
+    // FUN_0040dfc0 with the HUD camera after the race camera's update ends (LibRw/RwRaceFx.h).
+    if (!s_nodraw) RaceFx_RenderHud(g_width, g_height);
+
     // Hand the device back exactly as the D3D9 path left it.
     if (g_state_block) g_state_block->Apply();
 

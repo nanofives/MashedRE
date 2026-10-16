@@ -44,7 +44,33 @@ void RaceFx_QueueCar(int slot, const CarFxInput& in);
 // at 0x00420081) as void*.
 void RaceFx_DrawCarFx(void* rw_camera);
 
-// [part B] the HUD replay input for the consumed trace row (TrackRenderer CamReplay).
+// ---- the in-race HUD (C08): team panels + start lights under the HUD camera -----------------
+// FUN_00492e90 @ 0x00492e90 (states 3/5/6/7) renders FUN_0040dfc0 @ 0x0040dfc0 with the HUD camera
+// DAT_006905b4 (a clone of the race camera, FUN_00467110: near 0.1, far 180), set up each frame by
+// FUN_0040de30 @ 0x0040de30 (identity frame, view window 0.6 x 0.45, rwPARALLEL), with ZTEST and
+// ZWRITE off. MASHED_HUD3D=0 turns the pass off (default ON).
+bool RaceFx_HudEnabled();
+// The game state the HUD reads, per frame (TrackRenderer fills it from the standalone's state).
+struct HudInputs {
+    int   state      = 0;      // DAT_0063ba8c
+    float timer      = 0.f;    // DAT_0063d588 (start-light clock)
+    int   team_play  = 0;      // DAT_0067ea64 (FUN_0042f500)
+    int   round_type = 0;      // DAT_0067e9fc (FUN_0042f6a0)
+    int   mode_fd0   = 0;      // DAT_007f0fd0
+    int   n4d0       = 0;      // DAT_008a94d0 (FUN_0040e340)
+    int   slot[4]    = {-1, -1, -1, -1};   // 0x007f1a14 + i*0x10
+    int   team[4]    = {-1, -1, -1, -1};   //          ... + 4
+    int   colour[4]  = {0, 0, 0, 0};       //          ... + 8
+    int   score[4]   = {0, 0, 0, 0};       // DAT_008a94e0[i] (FUN_0040b6d0)
+    bool  world_up   = true;   // FUN_00426ba0 (DAT_0066d704)
+};
+void RaceFx_SetHud(const HudInputs& in);
+// Draw the HUD pass. Called by RaceSubmit_Render after the race camera's endUpdate, with the
+// backbuffer size for the HUD camera's rasters.
+void RaceFx_RenderHud(int width, int height);
+// MASHED_HUD_REPLAY=<file>, DIAGNOSTIC ONLY (PREREG_rfx.md amendment 1): the HUD state and
+// start-light timer come from the consumed trace row (ba8c, dtb), the mode / slot / score inputs
+// from <file> (measured on the original, verify/rfx_20261016/hud_inputs.txt).
 void RaceFx_ReplayHudRow(int ba8c, float dtb);
 
 }  // namespace LibRw
