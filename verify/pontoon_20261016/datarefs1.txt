@@ -1,0 +1,71 @@
+// 0x0088219c  DATA in .data
+//   type undefined4 len 4  value 00000000h
+//   2 reference(s) total
+//   WRITES: (none)
+//   reads (1):
+//     0x0047dd8a in FUN_0047d640  [READ]  CMP EBX,dword ptr [EAX]
+//   other (1):
+//     0x0046be35 in FUN_0046be10  [DATA]  MOV dword ptr [EAX + 0x88219c],EDX
+
+// 0x0088221c  DATA in .data
+//   type undefined4 len 4  value 00000000h
+//   2 reference(s) total
+//   WRITES: (none)
+//   reads (1):
+//     0x0047dd80 in FUN_0047d640  [READ]  MOV EDI,dword ptr [EAX + 0x80]
+//   other (1):
+//     0x0046be3b in FUN_0046be10  [DATA]  MOV dword ptr [EAX + 0x88221c],ECX
+
+// 0x005f9788  DATA in .data
+//   type: undefined bytes (Ghidra has no data definition here)
+//   3 reference(s) total
+//   WRITES: (none)
+//   reads: (none)
+//   other (3):
+//     0x00451885 in FUN_00451820  [DATA]  PUSH 0x5f9788
+//     0x00451b3d in FUN_00451ad0  [DATA]  PUSH 0x5f9788
+//     0x00451c90 in FUN_00451ad0  [DATA]  PUSH 0x5f9788
+
+// 0x00684d18  DATA in .data
+//   type: undefined bytes (Ghidra has no data definition here)
+//   3 reference(s) total
+//   WRITES: (none)
+//   reads: (none)
+//   other (3):
+//     0x0045214a in FUN_00452140  [DATA]  PUSH 0x684d18
+//     0x00452ad0 in (data)  [DATA]  PUSH 0x684d18
+//     0x00452af0 in (data)  [DATA]  PUSH 0x684d18
+
+// 0x00684d64  DATA in .data
+//   type: undefined bytes (Ghidra has no data definition here)
+//   0 reference(s) total
+//   WRITES: (none)
+//   reads: (none)
+//   other: (none)
+
+// 0x00684ddc  DATA in .data
+//   type: undefined bytes (Ghidra has no data definition here)
+//   0 reference(s) total
+//   WRITES: (none)
+//   reads: (none)
+//   other: (none)
+
+// 0x00684dcc  DATA in .data
+//   type: undefined bytes (Ghidra has no data definition here)
+//   0 reference(s) total
+//   WRITES: (none)
+//   reads: (none)
+//   other: (none)
+
+// 0x007f0fb4  DATA in .data
+//   type: undefined bytes (Ghidra has no data definition here)
+//   6 reference(s) total
+//   WRITES (6):
+//     0x00451e05 in (data)  [WRITE]  MOV dword ptr [0x007f0fb4],EDX
+//     0x00451e92 in (data)  [WRITE]  MOV dword ptr [0x007f0fb4],EDX
+//     0x00451f54 in (data)  [WRITE]  MOV dword ptr [0x007f0fb4],EDX
+//     0x00452005 in (data)  [WRITE]  MOV dword ptr [0x007f0fb4],EDX
+//     0x00452066 in (data)  [WRITE]  MOV dword ptr [0x007f0fb4],EDX
+//     0x0045210a in (data)  [WRITE]  MOV dword ptr [0x007f0fb4],EDX
+//   reads: (none)
+//   other: (none)
