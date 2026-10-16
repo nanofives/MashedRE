@@ -1,0 +1,67 @@
+# PREREG d3b: the AI's RW-LUT arithmetic (FUN_00443dc0 lookahead, FUN_00415e20 steer error) and D3 (b)
+
+Branch `work/d3b`, base `race/first-frame-parity` `2cc15b2cf`. Model claude-opus-5-5 (account3). Written after the
+re-score below and BEFORE any run of a new knob.
+
+## 0. Re-score of the default (done, no knob)
+
+Base exe `68e037d7` (built from `2cc15b2cf`, `MASHED_NO_DEPLOY=1`), private root, `run_arms.py`.
+- G-CTRL `H_DEF` = `d3b90ee0 / 80f01f35 / 56d62ae7` (the default trio).
+- (b) K0 / K1 / K26 step dumps `17d07c90` / `062a3c98` / `b8124a63`, byte-identical to d2close's.
+- (b) per regime, every item (`percar.py`, `SCORE_DEF_PERCAR.txt`): **A 1/3, B 2/3, C 0/3.** A: car 1 and car 3 fail
+  `abs_steer~` 0 (original car 1 = 7, car 3 = 23). B: car 2 fails `c1#` 60 / `steer#` 93 (bounds 17..46 / 29..84).
+  C: car 1 fails 6 items, car 2 4, car 3 5. The extra phases K2 (A), K4 / K27 (B), K54 / K57 (C) give the same verdicts.
+
+## 1. Observation that motivates the arms (from the committed dumps, no new run)
+
+Regime A, car 1, window steps 18..39 (`B_DEF_K0` vs `verify/d3_regimes_20261013/o_reg_r1`): speed (`rec_9e4`) and
+position agree within 0.2 and 0.005, but the look point does not. The original's `look_z` jumps between -7.46 and
+-10.12 from one step to the next and its steer follows those jumps (steer 0 exactly on the far picks). The port's
+`look_z` advances smoothly by about 0.1 per step and its steer decays to 0 from step 28 on. Over the 220-call window
+the port's car 1 / car 3 hold steer 0 on 131 / 138 calls, the original's on 102 / 77.
+
+The look point is the max of 16 alignment scores in `FUN_00443dc0` phase 6 (`decomp_00443dc0.txt`):
+`m = dot(norm(C(p_i) - C(p_{i-1})), norm(C(p_{i-1}) - own))`, `m > 1.0 -> 1.0` (`_DAT_005cc320`), strict `<`, first
+index wins. The original normalizes both vectors with `FUN_004c3c60` (RW fast-sqrt LUT, `decomp_math.txt`), the port
+(`Ai/AiStandalone.cpp` `Normalize2`) with `std::sqrt`. Phase 8's two lengths are `FUN_004c3bf0` (LUT) in the
+original and `std::sqrt` in the port. `FUN_00415e20` (the steer error) normalizes both its vectors with
+`FUN_004c39b0` (LUT, 3-D) in the original and `std::sqrt` in the port (`SteerAngleErrorFwd`).
+
+## 2. Hypothesis and knob
+
+H-LUT: the port's smooth look point and its long steer-0 runs come from computing those three sites exactly.
+Knob `MASHED_AI_LUT=<mask>` (exe only, default unset = current code): bit 0x1 = phase 6 normalize via
+`Math::LutNormalize2D` (`FUN_004c3c60`) and phase 8 lengths via `Math::LutSqrt(dz*dz + dx*dx)` (`FUN_004c3bf0`);
+bit 0x2 = `SteerAngleErrorFwd`'s two normalizations via `Math::LutNormalize` (`FUN_004c39b0`).
+Replay (measurement only): `MASHED_AI_LOOK_REPLAY=<original aistep csv>` + `MASHED_AI_LOOK_REPLAY_OUT=<csv>` feeds
+each recorded row's `spline`, `v`, `own_x`, `own_z` through the port's `SplineLookahead` twice (exact, LUT), each mode
+with its own index-continuity state starting at 1000, and writes both look points beside the original's.
+
+## 3. Gates (decision criteria fixed here)
+
+| gate | arm(s) | pass |
+|---|---|---|
+| G-NOOP | knob build, no knob: `H_NOOP`, `B_NOOP_K{0,1,26}` | trio `d3b90ee0 / 80f01f35 / 56d62ae7`, K dumps `17d07c90 / 062a3c98 / b8124a63` |
+| G-REPLAY-LOOK | `R_LOOK` on `o_reg_r1` (A), `o_reg_r13` (B), `o_reg_r19` (C), rows with `ai_mode` 0 | LUT mode: look point bit-equal to the original's on >= 99 % of rows on each file. Prediction: exact mode is bit-equal on fewer than 50 % of the window rows |
+| G-TOOK | `H_L1`, `H_L3` vs `H_NOOP` | step hash differs (the knob changes the run) |
+| determinism | `H_L3` = `H_L3-2` | identical trio |
+| (b) | `B_L{1,2,3}_K{0,1,26}` (+ K2/K4/K27/K54/K57 report) | per regime n/3 and per-car items vs section 0 |
+| collateral | `coll.py` on `H_L3` (floor `H_L3-2`) vs `H_NOOP` (floor `H_NOOP-2`) | at most +2 fields over the base's count |
+| D2 | `D2_L3_{1,2,3}` | three metrics inside the `d81a8df6` bounds (`score_d2.py`), H1 PASS. The D2 recipe is solo, so the prediction is byte-identical motion_diag to the default |
+
+Predictions for (b), written now: with bit 0x1, regime A car 1 and car 3 `abs_steer~` rise above 0 (the look
+jitter returns). No prediction is registered for B and C.
+
+## 4. Default decision (fixed here)
+
+An arm becomes the default (opt-out `MASHED_NO_AI_LUT=1`) only if all hold: G-NOOP, G-REPLAY-LOOK (for bit 0x1;
+bit 0x2 has no replay and needs (b) only), G-TOOK, determinism, D2 in bounds, collateral within +2, and (b) loses no
+car that passes on the default in any regime (per-regime n/3 >= section 0 and no passing car turns to FAIL).
+Otherwise the knob stays OFF and the result is reported with a recommendation. A faithful site that fails (b) stays
+OFF and is reported as a user decision.
+
+## 5. Report-only arms (no default change from these)
+
+The candidates on file, re-scored on this base and stacked with the winning LUT mask if one exists:
+`MASHED_TGT3=1 MASHED_PATHPROG=1` (U-9684 brake), the player first-step settle (U-9684 player-at-rest row; the
+pathprog_a section 6 "decision" is UNCONFIRMED, so measured as a report arm only, never default ON).

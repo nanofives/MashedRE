@@ -1,0 +1,172 @@
+// FUN_004c3bf0 @ 0x004c3bf0  size=101  (MASHED.exe)
+// undefined FUN_004c3bf0(void)
+
+/* [C1 2026-05-08] Takes float *param_1 — pointer to a 2-float vector [x, z] (or [x, y]). */
+
+float10 FUN_004c3bf0(float *param_1)
+
+{
+  param_1 = (float *)(param_1[1] * param_1[1] + *param_1 * *param_1);
+  if (param_1 != (float *)0x0) {
+    param_1 = (float *)(*(int *)(*(int *)(DAT_007d3ffc + DAT_007d3ff8) +
+                                ((int)param_1 + 0x800U >> 0xc & 0xfff) * 4) +
+                       ((int)param_1 + 0x800U >> 1 & 0x3fc00000));
+  }
+  return (float10)(float)param_1;
+}
+
+
+
+// FUN_004c3c60 @ 0x004c3c60  size=250  (MASHED.exe)
+// undefined FUN_004c3c60(void)
+
+/* [C1 2026-05-08] param_1: output float[2] (normalized vector). */
+
+float10 FUN_004c3c60(float *param_1,float *param_2)
+
+{
+  float fVar1;
+  float local_8;
+  undefined4 local_4;
+  
+  local_8 = param_2[1] * param_2[1] + *param_2 * *param_2;
+  fVar1 = 0.0;
+  if (local_8 != 0.0) {
+    fVar1 = (float)(*(int *)(*(int *)(DAT_007d3ffc + DAT_007d3ff8) +
+                            ((int)local_8 + 0x800U >> 0xc & 0xfff) * 4) +
+                   ((int)local_8 + 0x800U >> 1 & 0x3fc00000));
+    local_8 = (float)(*(int *)(*(int *)(DAT_007d3ffc + 4 + DAT_007d3ff8) +
+                              ((int)local_8 + 0x800U >> 0xc & 0xfff) * 4) +
+                     (~((int)local_8 + 0x800U) >> 1 & 0x3fc00000));
+  }
+  *param_1 = local_8 * *param_2;
+  param_1[1] = param_2[1] * local_8;
+  if (fVar1 < DAT_005d757c != (fVar1 == DAT_005d757c)) {
+    local_8 = 1.4013e-45;
+    local_4 = FUN_004d7ff0(0x19);
+    FUN_004d8480(&local_8);
+  }
+  return (float10)fVar1;
+}
+
+
+
+// FUN_00415e20 @ 0x00415e20  size=551  (MASHED.exe)
+// undefined FUN_00415e20(void)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C2 2026-06-02] Steering-angle calculator: returns (via x87 ST0) the signed angular error between
+   the bearing from the vehicle to… */
+
+void FUN_00415e20(undefined4 param_1,float param_2,float param_3)
+
+{
+  float fVar1;
+  float10 fVar2;
+  int local_10;
+  float local_c;
+  float local_8;
+  float local_4;
+  
+  FUN_0046d4a0(&local_10,param_1);
+  local_c = param_2 - *(float *)(local_10 + 0x30);
+  local_8 = 0.0;
+  local_4 = -(param_3 - *(float *)(local_10 + 0x38));
+  FUN_004c39b0(&local_c,&local_c);
+  fVar1 = local_4 * DAT_005d757c + local_8 * DAT_005d757c + local_c;
+  if (fVar1 < (float)_DAT_005cd0d0) {
+    fVar1 = _DAT_005cc33c;
+  }
+  if ((float)_DAT_005cd0c8 < fVar1) {
+    fVar1 = _DAT_005cc320;
+  }
+  fVar2 = (float10)FUN_004a3384((double)fVar1);
+  fVar2 = fVar2 * (float10)_DAT_005cc970;
+  if (local_4 - local_c * DAT_005d757c < DAT_005d757c) {
+    fVar2 = -fVar2;
+  }
+  if (fVar2 < (float10)DAT_005d757c != (fVar2 == (float10)DAT_005d757c)) {
+    do {
+      fVar2 = fVar2 + (float10)_DAT_005ccac4;
+    } while (fVar2 < (float10)DAT_005d757c != (fVar2 == (float10)DAT_005d757c));
+  }
+  param_2 = (float)fVar2;
+  FUN_0046d510(&local_c,param_1);
+  local_4 = -local_4;
+  local_8 = 0.0;
+  FUN_004c39b0(&local_c,&local_c);
+  fVar1 = local_4 * DAT_005d757c + local_8 * DAT_005d757c + local_c;
+  if (fVar1 < (float)_DAT_005cd0d0) {
+    fVar1 = _DAT_005cc33c;
+  }
+  if ((float)_DAT_005cd0c8 < fVar1) {
+    fVar1 = _DAT_005cc320;
+  }
+  fVar2 = (float10)FUN_004a3384((double)fVar1);
+  fVar2 = fVar2 * (float10)_DAT_005cc970;
+  if (local_4 - local_c * DAT_005d757c < DAT_005d757c) {
+    fVar2 = -fVar2;
+  }
+  if (fVar2 < (float10)DAT_005d757c != (fVar2 == (float10)DAT_005d757c)) {
+    do {
+      fVar2 = fVar2 + (float10)_DAT_005ccac4;
+    } while (fVar2 < (float10)DAT_005d757c != (fVar2 == (float10)DAT_005d757c));
+  }
+  fVar2 = (float10)param_2 - fVar2;
+  if (fVar2 < (float10)DAT_005d757c != (fVar2 == (float10)DAT_005d757c)) {
+    do {
+      fVar2 = fVar2 + (float10)_DAT_005ccac4;
+    } while (fVar2 < (float10)DAT_005d757c != (fVar2 == (float10)DAT_005d757c));
+  }
+  if (fVar2 < (float10)DAT_005d757c) {
+    do {
+      fVar2 = fVar2 + (float10)_DAT_005ccac4;
+    } while (fVar2 < (float10)DAT_005d757c);
+  }
+  if ((float10)_DAT_005ccac4 < fVar2) {
+    do {
+      fVar2 = fVar2 - (float10)_DAT_005ccac4;
+    } while ((float10)_DAT_005ccac4 < fVar2);
+  }
+  return;
+}
+
+
+
+// FUN_004c39b0 @ 0x004c39b0  size=271  (MASHED.exe)
+// undefined FUN_004c39b0(void)
+
+/* [C1 2026-05-13] `RwV3dNormalize(dst, src)` — normalizes a 3D vector in-place (or to a separate
+   output). */
+
+float10 FUN_004c39b0(float *param_1,float *param_2)
+
+{
+  float *pfVar1;
+  float fVar2;
+  undefined4 local_8;
+  undefined4 local_4;
+  
+  pfVar1 = param_2;
+  param_2 = (float *)(param_2[2] * param_2[2] + param_2[1] * param_2[1] + *param_2 * *param_2);
+  fVar2 = 0.0;
+  if (param_2 != (float *)0x0) {
+    fVar2 = (float)(*(int *)(*(int *)(DAT_007d3ffc + DAT_007d3ff8) +
+                            ((int)param_2 + 0x800U >> 0xc & 0xfff) * 4) +
+                   ((int)param_2 + 0x800U >> 1 & 0x3fc00000));
+    param_2 = (float *)(*(int *)(*(int *)(DAT_007d3ffc + 4 + DAT_007d3ff8) +
+                                ((int)param_2 + 0x800U >> 0xc & 0xfff) * 4) +
+                       (~((int)param_2 + 0x800U) >> 1 & 0x3fc00000));
+  }
+  *param_1 = (float)param_2 * *pfVar1;
+  param_1[1] = pfVar1[1] * (float)param_2;
+  param_1[2] = pfVar1[2] * (float)param_2;
+  if (fVar2 < DAT_005d757c != (fVar2 == DAT_005d757c)) {
+    local_8 = 1;
+    local_4 = FUN_004d7ff0(0x19);
+    FUN_004d8480(&local_8);
+  }
+  return (float10)fVar2;
+}
+
+
