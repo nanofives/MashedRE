@@ -1,0 +1,202 @@
+// FUN_004840d0 @ 0x004840d0  size=20  (MASHED.exe)
+// undefined FUN_004840d0(void)
+// callers: FUN_004491e0@0x004491e0, FUN_004492b0@0x004492b0, FUN_00451060@0x00451060
+
+/* [C2 2026-06-02] `undefined4 FUN_004840d0(uint param_1)` — getter for the joint-handle pool
+   (DAT_006ce81c). */
+
+undefined4 FUN_004840d0(uint param_1)
+
+{
+  if (3 < param_1) {
+    return 0;
+  }
+  return *(undefined4 *)(&DAT_006ce81c + param_1 * 4);
+}
+
+
+
+// FUN_00484000 @ 0x00484000  size=91  (MASHED.exe)
+// undefined FUN_00484000(void)
+// callers: (none)
+
+/* [C2 2026-06-02] `bool FUN_00484000(uint param_1, undefined4 param_2, undefined4 param_3,
+   undefined4 param_4)` — allocate a joint into… */
+
+bool FUN_00484000(uint param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+
+{
+  int *piVar1;
+  int iVar2;
+  
+  if (3 < param_1) {
+    return false;
+  }
+  if ((*(int *)(&DAT_006ce81c + param_1 * 4) == 0) &&
+     (piVar1 = (int *)(&DAT_006ce82c + param_1 * 4), *piVar1 == 0)) {
+    iVar2 = FUN_00483ed0(piVar1,param_2,param_3,param_4);
+    *(int *)(&DAT_006ce81c + param_1 * 4) = iVar2;
+    if (iVar2 != 0) {
+      return *piVar1 != 0;
+    }
+  }
+  return false;
+}
+
+
+
+// FUN_004840b0 @ 0x004840b0  size=20  (MASHED.exe)
+// undefined FUN_004840b0(void)
+// callers: (none)
+
+/* [C2 2026-06-02] `undefined4 FUN_004840b0(uint param_1)` — getter for the shape-owner handle
+   pool (DAT_006ce82c), the companion array to… */
+
+undefined4 FUN_004840b0(uint param_1)
+
+{
+  if (3 < param_1) {
+    return 0;
+  }
+  return *(undefined4 *)(&DAT_006ce82c + param_1 * 4);
+}
+
+
+
+// FUN_004491e0 @ 0x004491e0  size=205  (MASHED.exe)
+// undefined FUN_004491e0(void)
+// callers: FUN_004492b0@0x004492b0
+
+void FUN_004491e0(int param_1)
+
+{
+  undefined4 uVar1;
+  int iVar2;
+  int *piVar3;
+  int iVar4;
+  undefined4 local_24;
+  undefined4 local_20;
+  undefined4 local_1c;
+  undefined4 local_18;
+  undefined4 local_14;
+  undefined4 local_10;
+  undefined4 local_c;
+  undefined4 local_8;
+  undefined4 local_4;
+  
+  iVar2 = FUN_004840d0(0);
+  iVar2 = *(int *)(iVar2 + 4);
+  local_24 = 0;
+  local_20 = 0;
+  local_1c = 0;
+  local_18 = 0x3f800000;
+  local_14 = 0;
+  local_10 = 0;
+  local_c = 0;
+  local_8 = 0x3f800000;
+  local_4 = 0;
+  piVar3 = (int *)(param_1 + 0x100f0);
+  iVar4 = 4;
+  do {
+    if (*piVar3 != 0) {
+      uVar1 = *(undefined4 *)(*piVar3 + 4);
+      FUN_004c15c0(uVar1);
+      FUN_004c1340(uVar1,&local_24,0);
+      FUN_004c1520(uVar1,&local_18,0x43340000,1);
+      FUN_004c1520(uVar1,&local_c,0x43340000,2);
+      FUN_004c1340(uVar1,iVar2 + 0x40,2);
+    }
+    piVar3 = piVar3 + 1;
+    iVar4 = iVar4 + -1;
+  } while (iVar4 != 0);
+  return;
+}
+
+
+
+// FUN_004c1c80 @ 0x004c1c80  size=64  (MASHED.exe)
+// undefined FUN_004c1c80(void)
+// callers: FUN_00403160@0x00403160, FUN_00404320@0x00404320, FUN_00405460@0x00405460, FUN_0040de30@0x0040de30, FUN_0040df20@0x0040df20, FUN_00419530@0x00419530, FUN_0041eaa0@0x0041eaa0, FUN_00428d30@0x00428d30, FUN_00429e10@0x00429e10, FUN_0042d4a0@0x0042d4a0, FUN_004414b0@0x004414b0, FUN_00441700@0x00441700, FUN_004492b0@0x004492b0, FUN_00467110@0x00467110, FUN_00492e60@0x00492e60, FUN_00492e90@0x00492e90, FUN_005c4670@0x005c4670
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C1 2026-05-16] Viewport dims setter: stores at param_1+0x68 (dim X), +0x6c (dim Y), +0x70 (ratio
+   X), +0x74 (ratio Y). HUD. */
+
+int FUN_004c1c80(int param_1,undefined4 *param_2)
+
+{
+  float fVar1;
+  
+  fVar1 = _DAT_005cc320;
+  *(undefined4 *)(param_1 + 0x68) = *param_2;
+  *(undefined4 *)(param_1 + 0x6c) = param_2[1];
+  *(float *)(param_1 + 0x70) = fVar1 / *(float *)(param_1 + 0x68);
+  *(float *)(param_1 + 0x74) = _DAT_005cc320 / *(float *)(param_1 + 0x6c);
+  if (*(int *)(param_1 + 4) != 0) {
+    FUN_004c0e50(*(int *)(param_1 + 4));
+  }
+  return param_1;
+}
+
+
+
+// FUN_00426060 @ 0x00426060  size=6  (MASHED.exe)
+// undefined FUN_00426060(void)
+// callers: FUN_004013f0@0x004013f0, FUN_0041f8f0@0x0041f8f0, FUN_00420050@0x00420050, FUN_004492b0@0x004492b0, FUN_0047eb30@0x0047eb30, FUN_0047fad0@0x0047fad0, FUN_00480340@0x00480340
+
+undefined4 FUN_00426060(void)
+
+{
+  return DAT_0065742c;
+}
+
+
+
+// FUN_0049a0a0 @ 0x0049a0a0  size=32  (MASHED.exe)
+// undefined FUN_0049a0a0(void)
+// callers: (none)
+
+/* [C1 2026-05-18] 3-way dispatcher on `DAT_00773968`: */
+
+void FUN_0049a0a0(void)
+
+{
+  if (DAT_00773968 == 0) {
+    FUN_0045b350();
+    return;
+  }
+  if (DAT_00773968 != 1) {
+    if (DAT_00773968 == 2) {
+      FUN_0049a2e0();
+      return;
+    }
+    return;
+  }
+  FUN_0049a740();
+  return;
+}
+
+
+
+// FUN_00451060 @ 0x00451060  size=38  (MASHED.exe)
+// undefined FUN_00451060(void)
+// callers: FUN_004492b0@0x004492b0
+
+/* [C2 2026-06-03] `void FUN_00451060(void)`. Body 0x00451060..0x00451084. Master Ghidra carries a
+   prior `[C1 2026-05-07]` plate naming it… */
+
+void FUN_00451060(void)
+
+{
+  undefined4 uVar1;
+  int iVar2;
+  undefined4 uVar3;
+  
+  iVar2 = FUN_004840d0(0);
+  uVar1 = *(undefined4 *)(iVar2 + 4);
+  uVar3 = FUN_00467210(0,0);
+  FUN_004c1480(uVar1,uVar3);
+  return;
+}
+
+

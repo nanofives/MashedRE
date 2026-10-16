@@ -1,0 +1,19 @@
+// FUN_00466b50 @ 0x00466b50  size=1077  (MASHED.exe)
+// undefined FUN_00466b50(void)
+// callers: FUN_00429290@0x00429290, FUN_004926c0@0x004926c0
+
+// FUN_00492d30 @ 0x00492d30  size=266  (MASHED.exe)
+// undefined FUN_00492d30(void)
+// callers: FUN_00492290@0x00492290
+
+// FUN_0042c960 @ 0x0042c960  size=2286  (MASHED.exe)
+// undefined FUN_0042c960(void)
+// callers: FUN_0043c000@0x0043c000
+
+// FUN_00492370 @ 0x00492370  size=198  (MASHED.exe)
+// undefined FUN_00492370(void)
+// callers: entry@0x004a4bb7
+
+// FUN_00492290 @ 0x00492290  size=70  (MASHED.exe)
+// undefined FUN_00492290(void)
+// callers: FUN_00492370@0x00492370

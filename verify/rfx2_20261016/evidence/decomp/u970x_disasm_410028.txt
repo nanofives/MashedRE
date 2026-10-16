@@ -1,0 +1,50 @@
+0x00410028: e100                     loope 0x41002a
+0x0041002a: 0083c404e991             add byte ptr [ebx - 0x6e16fb3c], al
+0x00410030: 0000                     add byte ptr [eax], al
+0x00410032: 00e8                     add al, ch
+0x00410034: c8f40100                 enter 0x1f4, 0
+0x00410038: 85c0                     test eax, eax
+0x0041003a: 747e                     je 0x4100ba
+0x0041003c: 833dd00f7f0002           cmp dword ptr [0x7f0fd0], 2
+0x00410043: eb67                     jmp 0x4100ac
+0x00410045: a1d00f7f00               mov eax, dword ptr [0x7f0fd0]
+0x0041004a: 83c0fc                   add eax, -4
+0x0041004d: 83f806                   cmp eax, 6
+0x00410050: 7734                     ja 0x410086
+0x00410052: ff248508014100           jmp dword ptr [eax*4 + 0x410108]
+0x00410059: 6a01                     push 1
+0x0041005b: 53                       push ebx
+0x0041005c: e8ff960000               call 0x419760
+0x00410061: e89a6b0100               call 0x426c00
+0x00410066: 50                       push eax
+0x00410067: e80415ffff               call 0x401570
+0x0041006c: 83c40c                   add esp, 0xc
+0x0041006f: eb34                     jmp 0x4100a5
+0x00410071: e82a46ffff               call 0x4046a0
+0x00410076: e8856b0100               call 0x426c00
+0x0041007b: 50                       push eax
+0x0041007c: e8ef14ffff               call 0x401570
+0x00410081: 83c404                   add esp, 4
+0x00410084: eb1f                     jmp 0x4100a5
+0x00410086: e875f40100               call 0x42f500
+0x0041008b: 85c0                     test eax, eax
+0x0041008d: 740c                     je 0x41009b
+0x0041008f: e88cbe0000               call 0x41bf20
+0x00410094: e897d60000               call 0x41d730
+0x00410099: eb0a                     jmp 0x4100a5
+0x0041009b: e830b40000               call 0x41b4d0
+0x004100a0: e8dbca0000               call 0x41cb80
+0x004100a5: e856f40100               call 0x42f500
+0x004100aa: 85c0                     test eax, eax
+0x004100ac: 740c                     je 0x4100ba
+0x004100ae: e86dbe0000               call 0x41bf20
+0x004100b3: e878d60000               call 0x41d730
+0x004100b8: eb0a                     jmp 0x4100c4
+0x004100ba: e811b40000               call 0x41b4d0
+0x004100bf: e8bcca0000               call 0x41cb80
+0x004100c4: e8278b0400               call 0x458bf0
+0x004100c9: e89279ffff               call 0x407a60
+0x004100ce: e81d1c0600               call 0x471cf0
+0x004100d3: c705b8295f00a0860100     mov dword ptr [0x5f29b8], 0x186a0
+0x004100dd: c7058cba630002000000     mov dword ptr [0x63ba8c], 2
+0x004100e7: 5b                       pop ebx

@@ -1,0 +1,10 @@
+# measured on the original: C:\Users\maria\Desktop\Proyectos\Mashed\log\rfx2\nt_training\hud.json rows 840..915 after GO row 810
+team_play 0
+round_type 10
+mode_fd0 0
+n4d0 4
+score 6 6 6 6
+player 0 0 0 0
+player 1 6 1 3
+player 2 7 1 1
+player 3 8 1 2

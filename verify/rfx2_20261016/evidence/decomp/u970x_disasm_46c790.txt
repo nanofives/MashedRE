@@ -1,0 +1,10 @@
+0x0046c790: 8b442404                 mov eax, dword ptr [esp + 4]
+0x0046c794: 83f810                   cmp eax, 0x10
+0x0046c797: 7204                     jb 0x46c79d
+0x0046c799: 83c8ff                   or eax, 0xffffffff
+0x0046c79c: c3                       ret 
+0x0046c79d: 8b4c2408                 mov ecx, dword ptr [esp + 8]
+0x0046c7a1: 69c0040d0000             imul eax, eax, 0xd04
+0x0046c7a7: 8988b0158800             mov dword ptr [eax + 0x8815b0], ecx
+0x0046c7ad: 33c0                     xor eax, eax
+0x0046c7af: c3                       ret 

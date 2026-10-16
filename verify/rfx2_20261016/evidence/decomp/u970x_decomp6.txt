@@ -1,0 +1,379 @@
+// FUN_00420d00 @ 0x00420d00  size=59  (MASHED.exe)
+// NOTE: 0x00420d05 is not a function entry; showing containing function
+// undefined FUN_00420d00(void)
+// callers: FUN_00402750@0x00402750
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C2 2026-05-16] Calls FUN_004b6520(&DAT_0063e4b8, 0x90): clears 0x90 (144) bytes at DAT_0063e4b8.
+    */
+
+void FUN_00420d00(void)
+
+{
+  FUN_004b6520(&DAT_0063e4b8,0x90);
+  _DAT_0063e4d0 = 0;
+  _DAT_0063e4f4 = 1;
+  _DAT_0063e518 = 2;
+  _DAT_0063e53c = 3;
+  return;
+}
+
+
+
+// FUN_00420d40 @ 0x00420d40  size=55  (MASHED.exe)
+// NOTE: 0x00420d42 is not a function entry; showing containing function
+// undefined FUN_00420d40(void)
+// callers: FUN_004111c0@0x004111c0
+
+void FUN_00420d40(void)
+
+{
+  undefined4 *puVar1;
+  
+  puVar1 = &DAT_0063e4c4;
+  do {
+    FUN_004b6520(puVar1 + -3,8);
+    puVar1[-1] = 0;
+    *puVar1 = 0;
+    puVar1[1] = 0;
+    puVar1[2] = 0;
+    puVar1 = puVar1 + 9;
+  } while ((int)puVar1 < 0x63e554);
+  return;
+}
+
+
+
+// FUN_00420d80 @ 0x00420d80  size=25  (MASHED.exe)
+// NOTE: 0x00420d87 is not a function entry; showing containing function
+// undefined FUN_00420d80(void)
+// callers: FUN_00421100@0x00421100, FUN_00463640@0x00463640
+
+/* [C2 2026-06-03] `float10 FUN_00420d80(int param_1)`. Body 0x00420d80..0x00420d98. - `return
+   (float10)(float)(&DAT_0063e4b8)[param_1 *… */
+
+float10 FUN_00420d80(int param_1)
+
+{
+  return (float10)(float)(&DAT_0063e4b8)[param_1 * 9] + (float10)(float)(&DAT_0063e4bc)[param_1 * 9]
+  ;
+}
+
+
+
+// FUN_00420da0 @ 0x00420da0  size=30  (MASHED.exe)
+// NOTE: 0x00420dad is not a function entry; showing containing function
+// undefined FUN_00420da0(void)
+// callers: FUN_00422160@0x00422160
+
+/* [C2 2026-06-03] `undefined4 FUN_00420da0(int param_1, undefined4 *param_2)`. Body
+   0x00420da0..0x00420dbd. - `if (param_2 != NULL)… */
+
+undefined4 FUN_00420da0(int param_1,undefined4 *param_2)
+
+{
+  if (param_2 != (undefined4 *)0x0) {
+    *param_2 = (&DAT_0063e4b8)[param_1 * 9];
+  }
+  return (&DAT_0063e4c0)[param_1 * 9];
+}
+
+
+
+// FUN_00420dc0 @ 0x00420dc0  size=31  (MASHED.exe)
+// NOTE: 0x00420dcd is not a function entry; showing containing function
+// undefined FUN_00420dc0(void)
+// callers: FUN_00422160@0x00422160
+
+/* [C2 2026-06-03] `undefined4 FUN_00420dc0(int param_1, undefined4 *param_2)`. Body
+   0x00420dc0..0x00420dde. - `if (param_2 != NULL)… */
+
+undefined4 FUN_00420dc0(int param_1,undefined4 *param_2)
+
+{
+  if (param_2 != (undefined4 *)0x0) {
+    *param_2 = (&DAT_0063e4bc)[param_1 * 9];
+  }
+  return (&DAT_0063e4c4)[param_1 * 9];
+}
+
+
+
+// FUN_004212b0 @ 0x004212b0  size=685  (MASHED.exe)
+// undefined FUN_004212b0(void)
+// callers: FUN_0040ce00@0x0040ce00
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C2 2026-06-03] `void FUN_004212b0(void)`. Body 0x004212b0..0x0042155c. Per-frame smoke emitter +
+   updater + submit. Two loops… */
+
+void FUN_004212b0(void)
+
+{
+  byte bVar1;
+  float fVar2;
+  undefined1 uVar3;
+  int iVar4;
+  float *pfVar5;
+  int iVar6;
+  float *pfVar7;
+  float10 fVar8;
+  float10 extraout_ST0;
+  undefined4 local_30;
+  float local_2c;
+  uint local_28;
+  float local_24;
+  float local_20;
+  float local_1c;
+  float local_18;
+  float local_14;
+  float local_10;
+  undefined1 local_c [12];
+  
+  iVar6 = 0;
+  pfVar5 = (float *)&DAT_0063e4b8;
+  pfVar7 = (float *)&DAT_0063e4bc;
+  do {
+    FUN_0046cb30(local_c,iVar6);
+    FUN_004c3ac0(local_c);
+    local_30 = (*pfVar7 + *pfVar5) * _DAT_005cc328;
+    if (DAT_005d757c <= local_30) {
+      iVar4 = FUN_0040e370(iVar6);
+      if (iVar4 != 0) {
+        fVar8 = (float10)FUN_00472650(0,0x3f800000);
+        if (fVar8 < (float10)local_30 * (float10)_DAT_005cc32c) {
+          iVar4 = FUN_0041f290(iVar6,0x33);
+          local_24 = *(float *)(iVar4 + 0x30);
+          local_20 = *(float *)(iVar4 + 0x34);
+          local_1c = *(float *)(iVar4 + 0x38);
+          fVar8 = (float10)FUN_00472650(0xbd8f5c29,0x3d8f5c29);
+          local_24 = (float)(fVar8 + (float10)local_24);
+          fVar8 = (float10)FUN_00472650(0xbdcccccd,0x3dcccccd);
+          local_20 = (float)(fVar8 + (float10)local_20);
+          fVar8 = (float10)FUN_00472650(0xbd8f5c29,0x3d8f5c29);
+          local_1c = (float)(fVar8 + (float10)local_1c);
+          FUN_00421160(&local_24,iVar6);
+        }
+      }
+    }
+    pfVar7 = pfVar7 + 9;
+    iVar6 = iVar6 + 1;
+    pfVar5 = pfVar5 + 9;
+  } while ((int)pfVar7 < 0x63e54c);
+  iVar6 = 0;
+  pfVar5 = (float *)&DAT_0063e5a4;
+  do {
+    fVar2 = *pfVar5;
+    if ((_DAT_005cc320 <= fVar2) || (fVar2 < DAT_005d757c)) {
+      (&DAT_0063e4a8)[iVar6 >> 3] = (&DAT_0063e4a8)[iVar6 >> 3] & ~('\x01' << ((byte)iVar6 & 7));
+    }
+    else {
+      local_30 = pfVar5[2];
+      fVar8 = (float10)fsin((float10)fVar2 * (float10)_DAT_005cd2c0);
+      local_2c = (float)(fVar8 * (float10)_DAT_005cd2b8);
+      fcos((float10)fVar2 * (float10)_DAT_005cd2c0);
+      *pfVar5 = _DAT_007f100c + *pfVar5;
+      if (_DAT_005cc9c0 <= fVar2) {
+        bVar1 = *(byte *)((int)pfVar5 + 0xb);
+      }
+      else {
+        bVar1 = *(byte *)((int)pfVar5 + 0xb);
+      }
+      local_28 = (uint)bVar1;
+      uVar3 = FUN_004a2c48();
+      local_24 = pfVar5[-7] * pfVar5[1];
+      local_30 = (float)CONCAT13(uVar3,(undefined3)local_30);
+      local_20 = pfVar5[-6] * pfVar5[1];
+      pfVar5[-2] = pfVar5[-1] + pfVar5[-2];
+      local_14 = fVar2 * _DAT_005cc318 + pfVar5[-4];
+      if (pfVar5[-1] <= DAT_005d757c) {
+        local_18 = pfVar5[-5] - local_2c;
+        fVar8 = (float10)pfVar5[-3] - extraout_ST0;
+      }
+      else {
+        local_18 = local_2c + pfVar5[-5];
+        fVar8 = extraout_ST0 + (float10)pfVar5[-3];
+      }
+      local_10 = (float)fVar8;
+      FUN_00474de0(&local_18,&local_18,0x3d4ccccd);
+      FUN_004769a0(&local_18);
+      FUN_004769d0(&local_24);
+      FUN_00476a30(pfVar5[-2]);
+      FUN_004769f0(&local_30);
+      FUN_00476d00(&DAT_0063e548);
+    }
+    pfVar5 = pfVar5 + 0xb;
+    iVar6 = iVar6 + 1;
+  } while ((int)pfVar5 < 0x63fba4);
+  FUN_00476df0(&DAT_0063e548);
+  return;
+}
+
+
+
+// FUN_004215c0 @ 0x004215c0  size=30  (MASHED.exe)
+// undefined FUN_004215c0(void)
+// callers: FUN_004039f0@0x004039f0, FUN_0040be50@0x0040be50, FUN_00422fd0@0x00422fd0
+
+/* [C2 2026-05-20] Signature: `void FUN_004215c0(undefined4 param_1, undefined4 param_2)` — two
+   parameters, no return… */
+
+void FUN_004215c0(undefined4 param_1,undefined4 param_2)
+
+{
+  FUN_00420de0(param_2);
+  return;
+}
+
+
+
+// FUN_00421690 @ 0x00421690  size=22  (MASHED.exe)
+// NOTE: 0x00421698 is not a function entry; showing containing function
+// undefined FUN_00421690(void)
+// callers: FUN_00424eb0@0x00424eb0
+
+/* [C2 2026-06-03] `void FUN_00421690(void)`. Body 0x00421690..0x004216a5. Single-statement wrapper
+   that tail-calls `FUN_00421060()` (no… */
+
+void FUN_00421690(void)
+
+{
+  FUN_00421060();
+  return;
+}
+
+
+
+// FUN_00420340 @ 0x00420340  size=217  (MASHED.exe)
+// NOTE: 0x004203f0 is not a function entry; showing containing function
+// undefined FUN_00420340(void)
+// callers: FUN_00420870@0x00420870
+
+/* [C2 2026-06-03] `void FUN_00420340(void)`. Body 0x00420340..0x00420418. thiscall-shape:
+   `unaff_ESI = this` (per-slot record)… */
+
+void FUN_00420340(void)
+
+{
+  uint uVar1;
+  undefined4 uVar2;
+  int iVar3;
+  int extraout_ECX;
+  int iVar4;
+  int unaff_ESI;
+  
+  FUN_00420290(*(undefined4 *)(unaff_ESI + 0x290),*(undefined4 *)(unaff_ESI + 0x284));
+  uVar1 = *(uint *)(unaff_ESI + 0x294);
+  iVar4 = 0;
+  do {
+    if (*(int *)(unaff_ESI + iVar4 * 4) != 0) {
+      iVar3 = FUN_0041f360(iVar4);
+      if (iVar3 != 0) {
+        uVar2 = **(undefined4 **)(*(int *)(extraout_ECX + 0x18) + 0x20);
+        if ((uVar1 & 2) != 0) {
+          FUN_00540160(uVar2,*(undefined4 *)(unaff_ESI + 0x274));
+        }
+        if ((uVar1 & 4) != 0) {
+          FUN_00540100(uVar2,*(undefined4 *)(unaff_ESI + 0x27c));
+        }
+        if ((uVar1 & 1) != 0) {
+          FUN_00540080(uVar2,*(undefined4 *)(unaff_ESI + 0x278));
+        }
+      }
+    }
+    iVar4 = iVar4 + 1;
+  } while (iVar4 < 0x80);
+  if ((uVar1 & 2) != 0) {
+    *(uint *)(unaff_ESI + 0x294) = *(uint *)(unaff_ESI + 0x294) & 0xfffffffd;
+  }
+  if ((uVar1 & 4) != 0) {
+    *(uint *)(unaff_ESI + 0x294) = *(uint *)(unaff_ESI + 0x294) & 0xfffffffb;
+  }
+  if ((uVar1 & 1) != 0) {
+    *(uint *)(unaff_ESI + 0x294) = *(uint *)(unaff_ESI + 0x294) & 0xfffffffe;
+  }
+  return;
+}
+
+
+
+// FUN_0040b8e0 @ 0x0040b8e0  size=66  (MASHED.exe)
+// undefined FUN_0040b8e0(void)
+// callers: FUN_0040b930@0x0040b930
+
+/* [C2 2026-06-03] Body `0x0040b8e0..0x0040b921` (65 bytes). Signature `int FUN_0040b8e0(void)`.
+   Same structure as `FUN_0040b890` but the… */
+
+int FUN_0040b8e0(void)
+
+{
+  int iVar1;
+  int iVar2;
+  
+  iVar1 = FUN_0040e340();
+  iVar2 = (-(uint)(iVar1 != 4) & 0xfffffffd) + 10;
+  iVar1 = FUN_0042f500();
+  if (iVar1 != 0) {
+    iVar2 = 7;
+  }
+  if (DAT_007f0fd0 == 1) {
+    return 7;
+  }
+  iVar1 = 7;
+  if (DAT_007f0fd0 != 2) {
+    iVar1 = iVar2;
+  }
+  return iVar1;
+}
+
+
+
+// FUN_0040b420 @ 0x0040b420  size=12  (MASHED.exe)
+// undefined FUN_0040b420(void)
+// callers: FUN_0041af50@0x0041af50, FUN_0041c410@0x0041c410, FUN_0041ce00@0x0041ce00
+
+/* [C2 2026-06-03] Body `0x0040b420..0x0040b42b` (11 bytes). Signature `undefined4 FUN_0040b420(int
+   param_1)`. */
+
+undefined4 FUN_0040b420(int param_1)
+
+{
+  return *(undefined4 *)(&DAT_008a9500 + param_1 * 4);
+}
+
+
+
+// FUN_0041ded0 @ 0x0041ded0  size=30  (MASHED.exe)
+// undefined FUN_0041ded0(void)
+// callers: FUN_0040dfc0@0x0040dfc0
+
+/* [C2 2026-05-11] param_1: undefined4 (4 bytes); passed through unchanged to FUN_0041de80. */
+
+void FUN_0041ded0(undefined4 param_1)
+
+{
+  if (DAT_0063d5e8 != 0) {
+    FUN_0041de80(param_1);
+  }
+  return;
+}
+
+
+
+// FUN_0041c300 @ 0x0041c300  size=20  (MASHED.exe)
+// undefined FUN_0041c300(void)
+// callers: FUN_0040dfc0@0x0040dfc0
+
+/* [C2 2026-05-11] No parameters, no return value. */
+
+void FUN_0041c300(void)
+
+{
+  if (DAT_0063cdbc != 0) {
+    FUN_0041c2d0();
+    return;
+  }
+  return;
+}
+
+

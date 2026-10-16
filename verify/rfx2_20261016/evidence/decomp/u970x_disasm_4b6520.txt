@@ -1,0 +1,19 @@
+0x004b6520: 8b442408                 mov eax, dword ptr [esp + 8]
+0x004b6524: 8b4c2404                 mov ecx, dword ptr [esp + 4]
+0x004b6528: 50                       push eax
+0x004b6529: 6a00                     push 0
+0x004b652b: 51                       push ecx
+0x004b652c: e8afffffff               call 0x4b64e0
+0x004b6531: 83c40c                   add esp, 0xc
+0x004b6534: c3                       ret 
+0x004b6535: 90                       nop 
+0x004b6536: 90                       nop 
+0x004b6537: 90                       nop 
+0x004b6538: 90                       nop 
+0x004b6539: 90                       nop 
+0x004b653a: 90                       nop 
+0x004b653b: 90                       nop 
+0x004b653c: 90                       nop 
+0x004b653d: 90                       nop 
+0x004b653e: 90                       nop 
+0x004b653f: 90                       nop 

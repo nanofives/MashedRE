@@ -1,0 +1,51 @@
+// FUN_00563090 @ 0x00563090  size=169  (MASHED.exe)
+// NOTE: 0x00563090 is not a function entry; showing containing function
+// undefined FUN_00563090(void)
+
+void FUN_00563090(int param_1,int param_2,undefined4 param_3,float *param_4)
+
+{
+  float fVar1;
+  float fVar2;
+  float fVar3;
+  
+  if (param_2 != 0) {
+    fVar1 = *(float *)(param_1 + 0x40);
+    fVar3 = ABS(*(float *)(param_2 + 0x20)) * fVar1 + *(float *)(param_1 + 0x4c);
+    fVar2 = ABS(*(float *)(param_2 + 0x24)) * fVar1 + *(float *)(param_1 + 0x4c);
+    fVar1 = ABS(*(float *)(param_2 + 0x28)) * fVar1 + *(float *)(param_1 + 0x4c);
+    *param_4 = fVar3 + *(float *)(param_2 + 0x30);
+    param_4[1] = fVar2 + *(float *)(param_2 + 0x34);
+    param_4[2] = fVar1 + *(float *)(param_2 + 0x38);
+    param_4[4] = *(float *)(param_2 + 0x30) - fVar3;
+    param_4[5] = *(float *)(param_2 + 0x34) - fVar2;
+    param_4[6] = *(float *)(param_2 + 0x38) - fVar1;
+    return;
+  }
+  *param_4 = *(float *)(param_1 + 0x4c);
+  param_4[1] = *(float *)(param_1 + 0x4c);
+  param_4[2] = *(float *)(param_1 + 0x40) + *(float *)(param_1 + 0x4c);
+  param_4[4] = -*param_4;
+  param_4[5] = -param_4[1];
+  param_4[6] = -param_4[2];
+  return;
+}
+
+
+
+// FUN_0055e440 @ 0x0055e440  size=37  (MASHED.exe)
+// undefined FUN_0055e440(void)
+
+/* [C1 2026-05-19] 3-arg constructor for a struct at `param_1`. Calls `FUN_0055c380(param_1,
+   &DAT_005e51c8)` (likely vtable / base-class… */
+
+int FUN_0055e440(int param_1,undefined4 param_2,undefined4 param_3)
+
+{
+  FUN_0055c380(param_1,&DAT_005e51c8);
+  *(undefined4 *)(param_1 + 0x44) = param_2;
+  *(undefined4 *)(param_1 + 0x40) = param_3;
+  return param_1;
+}
+
+

@@ -1,0 +1,18 @@
+0x0042c960: a100107f00               mov eax, dword ptr [0x7f1000]
+0x0042c965: 83ec10                   sub esp, 0x10
+0x0042c968: 53                       push ebx
+0x0042c969: 33db                     xor ebx, ebx
+0x0042c96b: 3bc3                     cmp eax, ebx
+0x0042c96d: 56                       push esi
+0x0042c96e: 7e1d                     jle 0x42c98d
+0x0042c970: 8d48ff                   lea ecx, [eax - 1]
+0x0042c973: b81f85eb51               mov eax, 0x51eb851f
+0x0042c978: f7e1                     mul ecx
+0x0042c97a: 8bf2                     mov esi, edx
+0x0042c97c: c1ee04                   shr esi, 4
+0x0042c97f: 46                       inc esi
+0x0042c980: 6a32                     push 0x32
+0x0042c982: e83948feff               call 0x4111c0
+0x0042c987: 83c404                   add esp, 4
+0x0042c98a: 4e                       dec esi
+0x0042c98b: 75f3                     jne 0x42c980

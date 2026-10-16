@@ -1,0 +1,19 @@
+0x00445cd0: ddd8                     fstp st(0)
+0x00445cd2: d9057c755d00             fld dword ptr [0x5d757c]
+0x00445cd8: eb62                     jmp 0x445d3c
+0x00445cda: d9442464                 fld dword ptr [esp + 0x64]
+0x00445cde: d81d8ce15c00             fcomp dword ptr [0x5ce18c]
+0x00445ce4: dfe0                     fnstsw ax
+0x00445ce6: f6c405                   test ah, 5
+0x00445ce9: 7a09                     jp 0x445cf4
+0x00445ceb: 53                       push ebx
+0x00445cec: e8afd3ffff               call 0x4430a0
+0x00445cf1: 83c404                   add esp, 4
+0x00445cf4: b942107f00               mov ecx, 0x7f1042
+0x00445cf9: 8da42400000000           lea esp, [esp]
+0x00445d00: 3819                     cmp byte ptr [ecx], bl
+0x00445d02: 7409                     je 0x445d0d
+0x00445d04: 53                       push ebx
+0x00445d05: e896d3ffff               call 0x4430a0
+0x00445d0a: 83c404                   add esp, 4
+0x00445d0d: 83c14c                   add ecx, 0x4c

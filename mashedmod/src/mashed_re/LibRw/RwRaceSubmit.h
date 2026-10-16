@@ -145,6 +145,8 @@ struct CarVis { int state; std::uint32_t flags; };
 // FUN_00410b30 calls FUN_0041ebb0 right after the car loop (0x00410bb4) and before the copters
 // (FUN_00425e40, 0x00410c08). Without a marker the pass runs after every instance.
 void RaceSubmit_AddCarFxMarker();
+// [rfx2] the queue point of City's slot 2 (FUN_0044b8f0), where the big lensflare batch draws.
+void RaceSubmit_AddLensMarker();
 
 void RaceSubmit_AddInstancePosed(int handle, const float* m44, const FramePose* poses,
                                  std::size_t npose, float sun_scale, float env_coef = 0.f,

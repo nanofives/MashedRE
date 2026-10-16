@@ -108,6 +108,7 @@ UINT NIdx(int pt, UINT pc) { return pt == 4 ? 3 * pc : (pt == 5 || pt == 6) ? pc
 const std::uint8_t* s_pend_v = nullptr;
 UINT                s_pend_stride = 0;
 std::vector<UINT>   s_pend_idx;
+bool                s_pend_screen = false;   // [rfx2]
 
 void Tris(int pt, const std::vector<UINT>& idx, UINT pc, std::vector<UINT>& out3) {
     for (UINT k = 0; k < pc; ++k) {
@@ -125,7 +126,7 @@ void Tris(int pt, const std::vector<UINT>& idx, UINT pc, std::vector<UINT>& out3
 void Geometry(IDirect3DDevice9* dev, int slot, const Call& c, const float* w, DWORD fvf,
               std::string& r) {
     if (c.pt < 4 || c.pt > 6) return;
-    const bool screen = (fvf & 0xe) == D3DFVF_XYZRHW;
+    bool screen = (fvf & 0xe) == D3DFVF_XYZRHW;
     const UINT n = NIdx(c.pt, c.pc);
     std::vector<UINT> idx;
     bool by_pos = false;                       // non-indexed: degenerate = repeated position
@@ -141,6 +142,7 @@ void Geometry(IDirect3DDevice9* dev, int slot, const Call& c, const float* w, DW
         stride = s_pend_stride;
         base = c.base;
         s_pend_v = nullptr;
+        if (s_pend_screen) screen = true;   // [rfx2] librw Im2D
     } else if (slot == 82) {
         dev->GetIndices(&ib);
         if (!ib) return;
@@ -406,8 +408,10 @@ bool Enabled() {
     return on;
 }
 
-void SetNextGeometry(const void* verts, unsigned stride, const unsigned short* idx, unsigned nidx) {
+void SetNextGeometry(const void* verts, unsigned stride, const unsigned short* idx, unsigned nidx,
+                     bool screen) {
     if (!s_installed || !s_armed || !verts || !idx) return;
+    s_pend_screen = screen;
     s_pend_v = static_cast<const std::uint8_t*>(verts);
     s_pend_stride = stride;
     s_pend_idx.assign(idx, idx + nidx);

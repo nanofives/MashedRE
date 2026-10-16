@@ -1,0 +1,152 @@
+== log\rfx2\panel_dff\PANEL0.DFF: frames 20 geoms 17 atomics 17
+  frame  0 parent -1 pos (0.0500,0.0000,0.0750) name ''
+  frame  1 parent  0 pos (0.0000,0.0000,0.0000) name ''
+  frame  2 parent  1 pos (0.0150,-0.0000,-0.0216) name ''
+  frame  3 parent  1 pos (-0.0399,0.0000,-0.0099) name ''
+  frame  4 parent  1 pos (-0.2364,0.0000,-0.0216) name ''
+  frame  5 parent  1 pos (-0.0358,0.0000,0.0000) name ''
+  frame  6 parent  1 pos (-0.2363,0.0000,-0.0216) name ''
+  frame  7 parent  1 pos (-0.0358,0.0000,0.0000) name ''
+  frame  8 parent  1 pos (-0.0358,0.0002,0.0103) name ''
+  frame  9 parent  3 pos (0.0000,0.0000,0.0000) name ''
+  frame 10 parent  3 pos (0.0000,0.0000,0.0000) name ''
+  frame 11 parent  2 pos (0.0000,0.0000,-0.0051) name ''
+  frame 12 parent  2 pos (0.0000,0.0000,-0.0051) name ''
+  frame 13 parent  2 pos (0.0000,0.0000,-0.0051) name ''
+  frame 14 parent  2 pos (0.0000,-0.0000,0.0000) name ''
+  frame 15 parent  2 pos (0.0000,-0.0000,0.0000) name ''
+  frame 16 parent  2 pos (0.0000,0.0000,0.0000) name ''
+  frame 17 parent  2 pos (0.0000,-0.0000,0.0000) name ''
+  frame 18 parent  2 pos (0.0000,-0.0000,0.0000) name ''
+  frame 19 parent  2 pos (0.0000,-0.0000,0.0000) name ''
+  atomic  0 frame 11 geom  0 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[15]] mats [NewMinusTwo(255, 255, 255, 255)]
+  atomic  1 frame 12 geom  1 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[14]] mats [NewMinusOne(255, 255, 255, 255)]
+  atomic  2 frame 13 geom  2 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[13]] mats [NewMinusZero(255, 255, 255, 255)]
+  atomic  3 frame 14 geom  3 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[12]] mats [NFLShadow(255, 255, 255, 255)]
+  atomic  4 frame 15 geom  4 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[11]] mats [NFLPink(255, 255, 255, 255)]
+  atomic  5 frame 16 geom  5 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[10]] mats [NFLGold(255, 255, 255, 255)]
+  atomic  6 frame 17 geom  6 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[9]] mats [NFLMelon(255, 255, 255, 255)]
+  atomic  7 frame 18 geom  7 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[8]] mats [NFLBluejay(255, 255, 255, 255)]
+  atomic  8 frame 19 geom  8 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[7]] mats [NFLRed(255, 255, 255, 255)]
+  atomic  9 frame  9 geom  9 aflags 0x5 gflags 0x004b tris 2 ud [0.tv_part_id:[5]] mats [None(204, 204, 204, 255)]
+  atomic 10 frame 10 geom 10 aflags 0x5 gflags 0x004b tris 2 ud [0.tv_part_id:[2]] mats [None(204, 204, 204, 255)]
+  atomic 11 frame  4 geom 11 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[6]] mats [NewPanelCrown(255, 255, 255, 255)]
+  atomic 12 frame  5 geom 12 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[4]] mats [OrangeDisplay(255, 255, 255, 255)]
+  atomic 13 frame  6 geom 13 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[3]] mats [NewPanelCrown(255, 255, 255, 255)]
+  atomic 14 frame  7 geom 14 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[1]] mats [OrangeDisplay(255, 255, 255, 255)]
+  atomic 15 frame  8 geom 15 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[16]] mats [OrangeDisplay(255, 255, 255, 255)]
+  atomic 16 frame  1 geom 16 aflags 0x5 gflags 0x000f tris 4 ud [0.tv_part_id:[0]] mats [OrangeDisplay(255, 255, 255, 255)]
+== log\rfx2\panel_dff\PANEL1.DFF: frames 20 geoms 17 atomics 17
+  frame  0 parent -1 pos (-0.1788,0.0000,0.0750) name ''
+  frame  1 parent  0 pos (0.0000,0.0000,0.0000) name ''
+  frame  2 parent  1 pos (-0.0150,0.0000,-0.0216) name ''
+  frame  3 parent  1 pos (0.0421,-0.0000,-0.0099) name ''
+  frame  4 parent  1 pos (0.2364,-0.0000,-0.0216) name ''
+  frame  5 parent  1 pos (0.0358,-0.0000,0.0000) name ''
+  frame  6 parent  1 pos (0.2363,-0.0000,-0.0216) name ''
+  frame  7 parent  1 pos (0.0358,-0.0000,0.0000) name ''
+  frame  8 parent  1 pos (0.0358,-0.0002,0.0103) name ''
+  frame  9 parent  3 pos (0.0000,0.0000,0.0000) name ''
+  frame 10 parent  3 pos (0.0000,0.0000,0.0000) name ''
+  frame 11 parent  2 pos (0.0000,-0.0000,-0.0051) name ''
+  frame 12 parent  2 pos (0.0000,-0.0000,-0.0051) name ''
+  frame 13 parent  2 pos (0.0000,-0.0000,-0.0051) name ''
+  frame 14 parent  2 pos (0.0000,0.0000,0.0000) name ''
+  frame 15 parent  2 pos (0.0000,0.0000,0.0000) name ''
+  frame 16 parent  2 pos (0.0000,-0.0000,0.0000) name ''
+  frame 17 parent  2 pos (0.0000,0.0000,0.0000) name ''
+  frame 18 parent  2 pos (0.0000,0.0000,0.0000) name ''
+  frame 19 parent  2 pos (0.0000,0.0000,0.0000) name ''
+  atomic  0 frame 11 geom  0 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[15]] mats [NewMinusTwo(255, 255, 255, 255)]
+  atomic  1 frame 12 geom  1 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[14]] mats [NewMinusOne(255, 255, 255, 255)]
+  atomic  2 frame 13 geom  2 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[13]] mats [NewMinusZero(255, 255, 255, 255)]
+  atomic  3 frame 14 geom  3 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[12]] mats [NFLShadow(255, 255, 255, 255)]
+  atomic  4 frame 15 geom  4 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[11]] mats [NFLPink(255, 255, 255, 255)]
+  atomic  5 frame 16 geom  5 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[10]] mats [NFLGold(255, 255, 255, 255)]
+  atomic  6 frame 17 geom  6 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[9]] mats [NFLMelon(255, 255, 255, 255)]
+  atomic  7 frame 18 geom  7 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[8]] mats [NFLBluejay(255, 255, 255, 255)]
+  atomic  8 frame 19 geom  8 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[7]] mats [NFLRed(255, 255, 255, 255)]
+  atomic  9 frame  9 geom  9 aflags 0x5 gflags 0x004b tris 2 ud [0.tv_part_id:[5]] mats [None(204, 204, 204, 255)]
+  atomic 10 frame 10 geom 10 aflags 0x5 gflags 0x004b tris 2 ud [0.tv_part_id:[2]] mats [None(204, 204, 204, 255)]
+  atomic 11 frame  4 geom 11 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[6]] mats [NewPanelCrown(255, 255, 255, 255)]
+  atomic 12 frame  5 geom 12 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[4]] mats [OrangeDisplay(255, 255, 255, 255)]
+  atomic 13 frame  6 geom 13 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[3]] mats [NewPanelCrown(255, 255, 255, 255)]
+  atomic 14 frame  7 geom 14 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[1]] mats [OrangeDisplay(255, 255, 255, 255)]
+  atomic 15 frame  8 geom 15 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[16]] mats [OrangeDisplay(255, 255, 255, 255)]
+  atomic 16 frame  1 geom 16 aflags 0x5 gflags 0x000f tris 4 ud [0.tv_part_id:[0]] mats [OrangeDisplay(255, 255, 255, 255)]
+== log\rfx2\panel_dff\PANEL2.DFF: frames 20 geoms 17 atomics 17
+  frame  0 parent -1 pos (0.0500,0.0000,0.0750) name ''
+  frame  1 parent  0 pos (0.0000,0.0000,0.0000) name ''
+  frame  2 parent  1 pos (0.0150,-0.0000,-0.0216) name ''
+  frame  3 parent  1 pos (-0.0399,0.0000,-0.0099) name ''
+  frame  4 parent  1 pos (-0.2364,0.0000,-0.0216) name ''
+  frame  5 parent  1 pos (-0.0358,0.0000,0.0000) name ''
+  frame  6 parent  1 pos (-0.2363,0.0000,-0.0216) name ''
+  frame  7 parent  1 pos (-0.0358,0.0000,0.0000) name ''
+  frame  8 parent  1 pos (-0.0358,0.0002,0.0103) name ''
+  frame  9 parent  3 pos (0.0000,0.0000,0.0000) name ''
+  frame 10 parent  3 pos (0.0000,0.0000,0.0000) name ''
+  frame 11 parent  2 pos (0.0000,0.0000,-0.0051) name ''
+  frame 12 parent  2 pos (0.0000,0.0000,-0.0051) name ''
+  frame 13 parent  2 pos (0.0000,0.0000,-0.0051) name ''
+  frame 14 parent  2 pos (0.0000,-0.0000,0.0000) name ''
+  frame 15 parent  2 pos (0.0000,-0.0000,0.0000) name ''
+  frame 16 parent  2 pos (0.0000,0.0000,0.0000) name ''
+  frame 17 parent  2 pos (0.0000,-0.0000,0.0000) name ''
+  frame 18 parent  2 pos (0.0000,-0.0000,0.0000) name ''
+  frame 19 parent  2 pos (0.0000,-0.0000,0.0000) name ''
+  atomic  0 frame 11 geom  0 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[15]] mats [NewMinusTwo(255, 255, 255, 255)]
+  atomic  1 frame 12 geom  1 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[14]] mats [NewMinusOne(255, 255, 255, 255)]
+  atomic  2 frame 13 geom  2 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[13]] mats [NewMinusZero(255, 255, 255, 255)]
+  atomic  3 frame 14 geom  3 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[12]] mats [NFLShadow(255, 255, 255, 255)]
+  atomic  4 frame 15 geom  4 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[11]] mats [NFLPink(255, 255, 255, 255)]
+  atomic  5 frame 16 geom  5 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[10]] mats [NFLGold(255, 255, 255, 255)]
+  atomic  6 frame 17 geom  6 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[9]] mats [NFLMelon(255, 255, 255, 255)]
+  atomic  7 frame 18 geom  7 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[8]] mats [NFLBluejay(255, 255, 255, 255)]
+  atomic  8 frame 19 geom  8 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[7]] mats [NFLRed(255, 255, 255, 255)]
+  atomic  9 frame  9 geom  9 aflags 0x5 gflags 0x004b tris 2 ud [0.tv_part_id:[5]] mats [None(204, 204, 204, 255)]
+  atomic 10 frame 10 geom 10 aflags 0x5 gflags 0x004b tris 2 ud [0.tv_part_id:[2]] mats [None(204, 204, 204, 255)]
+  atomic 11 frame  4 geom 11 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[6]] mats [NewPanelCrown(255, 255, 255, 255)]
+  atomic 12 frame  5 geom 12 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[4]] mats [OrangeDisplay(255, 255, 255, 255)]
+  atomic 13 frame  6 geom 13 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[3]] mats [NewPanelCrown(255, 255, 255, 255)]
+  atomic 14 frame  7 geom 14 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[1]] mats [OrangeDisplay(255, 255, 255, 255)]
+  atomic 15 frame  8 geom 15 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[16]] mats [OrangeDisplay(255, 255, 255, 255)]
+  atomic 16 frame  1 geom 16 aflags 0x5 gflags 0x000f tris 4 ud [0.tv_part_id:[0]] mats [OrangeDisplay(255, 255, 255, 255)]
+== log\rfx2\panel_dff\PANEL3.DFF: frames 20 geoms 17 atomics 17
+  frame  0 parent -1 pos (-0.1788,0.0000,0.0750) name ''
+  frame  1 parent  0 pos (0.0000,0.0000,0.0000) name ''
+  frame  2 parent  1 pos (-0.0150,0.0000,-0.0216) name ''
+  frame  3 parent  1 pos (0.0418,-0.0000,-0.0099) name ''
+  frame  4 parent  1 pos (0.2364,-0.0000,-0.0216) name ''
+  frame  5 parent  1 pos (0.0358,-0.0000,0.0000) name ''
+  frame  6 parent  1 pos (0.2363,-0.0000,-0.0216) name ''
+  frame  7 parent  1 pos (0.0358,-0.0000,0.0000) name ''
+  frame  8 parent  1 pos (0.0358,-0.0002,0.0103) name ''
+  frame  9 parent  3 pos (0.0003,0.0000,0.0000) name ''
+  frame 10 parent  3 pos (0.0000,0.0000,0.0000) name ''
+  frame 11 parent  2 pos (0.0000,-0.0000,-0.0051) name ''
+  frame 12 parent  2 pos (0.0000,-0.0000,-0.0051) name ''
+  frame 13 parent  2 pos (0.0000,-0.0000,-0.0051) name ''
+  frame 14 parent  2 pos (0.0000,0.0000,0.0000) name ''
+  frame 15 parent  2 pos (0.0000,0.0000,0.0000) name ''
+  frame 16 parent  2 pos (0.0000,-0.0000,0.0000) name ''
+  frame 17 parent  2 pos (0.0000,0.0000,0.0000) name ''
+  frame 18 parent  2 pos (0.0000,0.0000,0.0000) name ''
+  frame 19 parent  2 pos (0.0000,0.0000,0.0000) name ''
+  atomic  0 frame 11 geom  0 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[15]] mats [NewMinusTwo(255, 255, 255, 255)]
+  atomic  1 frame 12 geom  1 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[14]] mats [NewMinusOne(255, 255, 255, 255)]
+  atomic  2 frame 13 geom  2 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[13]] mats [NewMinusZero(255, 255, 255, 255)]
+  atomic  3 frame 14 geom  3 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[12]] mats [NFLShadow(255, 255, 255, 255)]
+  atomic  4 frame 15 geom  4 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[11]] mats [NFLPink(255, 255, 255, 255)]
+  atomic  5 frame 16 geom  5 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[10]] mats [NFLGold(255, 255, 255, 255)]
+  atomic  6 frame 17 geom  6 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[9]] mats [NFLMelon(255, 255, 255, 255)]
+  atomic  7 frame 18 geom  7 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[8]] mats [NFLBluejay(255, 255, 255, 255)]
+  atomic  8 frame 19 geom  8 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[7]] mats [NFLRed(255, 255, 255, 255)]
+  atomic  9 frame  9 geom  9 aflags 0x5 gflags 0x004b tris 2 ud [0.tv_part_id:[5]] mats [None(204, 204, 204, 255)]
+  atomic 10 frame 10 geom 10 aflags 0x5 gflags 0x004b tris 2 ud [0.tv_part_id:[2]] mats [None(204, 204, 204, 255)]
+  atomic 11 frame  4 geom 11 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[6]] mats [NewPanelCrown(255, 255, 255, 255)]
+  atomic 12 frame  5 geom 12 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[4]] mats [OrangeDisplay(255, 255, 255, 255)]
+  atomic 13 frame  6 geom 13 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[3]] mats [NewPanelCrown(255, 255, 255, 255)]
+  atomic 14 frame  7 geom 14 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[1]] mats [OrangeDisplay(255, 255, 255, 255)]
+  atomic 15 frame  8 geom 15 aflags 0x5 gflags 0x000f tris 2 ud [0.tv_part_id:[16]] mats [OrangeDisplay(255, 255, 255, 255)]
+  atomic 16 frame  1 geom 16 aflags 0x5 gflags 0x000f tris 4 ud [0.tv_part_id:[0]] mats [OrangeDisplay(255, 255, 255, 255)]

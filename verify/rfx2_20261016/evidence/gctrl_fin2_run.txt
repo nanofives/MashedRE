@@ -1,0 +1,7 @@
+=== gctrl_fin2  exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\rfx2\fin2_exe\mashed_re.exe  knobs=[] ===
+    pid=13264
+    exit=0  self_exited=True
+    gctrl_fin2.step.csv  lines=18664  sha8=716cb2fd
+    gctrl_fin2.gates.csv  lines=56153  sha8=2a2afda1
+    gctrl_fin2.ptrace.log  lines=28076  sha8=ba90ed88
+GCTRL DONE

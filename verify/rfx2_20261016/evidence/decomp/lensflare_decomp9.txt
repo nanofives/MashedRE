@@ -1,0 +1,85 @@
+// FUN_00483ed0 @ 0x00483ed0  size=193  (MASHED.exe)
+// undefined FUN_00483ed0(void)
+
+/* [C2 2026-06-02] `int FUN_00483ed0(int *param_1, undefined4 param_2, undefined4 param_3, uint
+   param_4)` — creates a two-shape physics… */
+
+int FUN_00483ed0(int *param_1,undefined4 param_2,undefined4 param_3,uint param_4)
+
+{
+  int iVar1;
+  int iVar2;
+  int iVar3;
+  int iVar4;
+  
+  iVar1 = FUN_004c77c0(param_2,param_3,0,param_4 | 5);
+  if (iVar1 != 0) {
+    iVar2 = FUN_004c77c0(param_2,param_3,0,1);
+    if (iVar2 != 0) {
+      iVar3 = FUN_004c0b30();
+      if (iVar3 != 0) {
+        iVar4 = FUN_004c1d30();
+        if (iVar4 != 0) {
+          FUN_004c1c10(iVar4,1);
+          *(int *)(iVar4 + 0x60) = iVar1;
+          *(int *)(iVar4 + 100) = iVar2;
+          FUN_004c0740(iVar4,iVar3);
+          FUN_004c15c0(iVar3);
+          FUN_004c1a40(iVar4,0x3dcccccd);
+          FUN_004c1b10(iVar4,0x43960000);
+          iVar1 = FUN_004c5a00(iVar1);
+          *(undefined1 *)(iVar1 + 0x50) = 2;
+          *param_1 = iVar1;
+          return iVar4;
+        }
+        FUN_004c0c20(iVar3);
+      }
+      FUN_004c7650(iVar2);
+    }
+    FUN_004c7650(iVar1);
+  }
+  return 0;
+}
+
+
+
+// FUN_0049a740 @ 0x0049a740  size=10  (MASHED.exe)
+// undefined FUN_0049a740(void)
+
+/* [C1 2026-05-18] Setter: `DAT_00773978 = param_1`. Used by FUN_0049a0a0 mode==1 path. */
+
+void FUN_0049a740(undefined4 param_1)
+
+{
+  DAT_00773978 = param_1;
+  return;
+}
+
+
+
+// FUN_0049a2e0 @ 0x0049a2e0  size=10  (MASHED.exe)
+// undefined FUN_0049a2e0(void)
+
+/* [C1 2026-05-18] Setter: `DAT_0077396c = param_1`. Used by FUN_0049a0a0 mode==2 path. */
+
+void FUN_0049a2e0(undefined4 param_1)
+
+{
+  DAT_0077396c = param_1;
+  return;
+}
+
+
+
+// FUN_0041ea10 @ 0x0041ea10  size=9  (MASHED.exe)
+// undefined FUN_0041ea10(void)
+
+/* [C2 2026-05-12] Getter: returns the `undefined4` value stored at `*(DAT_0063d7e4 + 0x24)`. */
+
+undefined4 FUN_0041ea10(void)
+
+{
+  return *(undefined4 *)(DAT_0063d7e4 + 0x24);
+}
+
+

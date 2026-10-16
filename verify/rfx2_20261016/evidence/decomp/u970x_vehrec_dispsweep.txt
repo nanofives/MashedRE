@@ -1,0 +1,37 @@
+0x00467317  mov ecx, dword ptr [eax + 0x8815a4]                    slot=0 field=+0x4 MEM 
+0x0046b1de  add eax, 0x8815a0                                      slot=0 field=+0x0 IMM 
+0x0046b50f  add ecx, 0x8815a0                                      slot=0 field=+0x0 IMM 
+0x0046b5fa  add esi, 0x8815a0                                      slot=0 field=+0x0 IMM 
+0x0046bab4  add ecx, 0x8815a0                                      slot=0 field=+0x0 IMM 
+0x0046bdc1  add eax, 0x8815a0                                      slot=0 field=+0x0 IMM 
+0x0046bfe5  add esi, 0x8815a0                                      slot=0 field=+0x0 IMM 
+0x0046c57a  add eax, 0x8815a0                                      slot=0 field=+0x0 IMM 
+0x0046c5d8  add eax, 0x8815a0                                      slot=0 field=+0x0 IMM 
+0x0046c783  mov eax, dword ptr [eax + 0x8815b0]                    slot=0 field=+0x10 MEM 
+0x0046c7a7  mov dword ptr [eax + 0x8815b0], ecx                    slot=0 field=+0x10 MEM W?
+0x0046c7c3  mov eax, dword ptr [eax + 0x8815a4]                    slot=0 field=+0x4 MEM 
+0x0046c811  mov eax, dword ptr [edi + 0x8815b0]                    slot=0 field=+0x10 MEM 
+0x0046da90  add edi, 0x8815a0                                      slot=0 field=+0x0 IMM 
+0x0046df48  cmp dword ptr [esi + 0x8815a4], 1                      slot=0 field=+0x4 MEM 
+0x0046e0f3  mov ebx, dword ptr [0x8815a4]                          slot=0 field=+0x4 MEM 
+0x0046e111  mov ecx, dword ptr [0x8822a8]                          slot=1 field=+0x4 MEM 
+0x0046e127  mov ecx, dword ptr [0x882fac]                          slot=2 field=+0x4 MEM 
+0x0046e13d  mov ecx, dword ptr [0x883cb0]                          slot=3 field=+0x4 MEM 
+0x0046e1ac  mov ebx, dword ptr [0x8822a8]                          slot=1 field=+0x4 MEM 
+0x0046e1bc  mov esi, dword ptr [0x882fac]                          slot=2 field=+0x4 MEM 
+0x0046e1cc  mov edx, dword ptr [0x883cb0]                          slot=3 field=+0x4 MEM 
+0x0046e23f  mov ecx, dword ptr [0x8815a4]                          slot=0 field=+0x4 MEM 
+0x0046e250  mov ecx, dword ptr [0x8822a8]                          slot=1 field=+0x4 MEM 
+0x0046e25b  mov ecx, dword ptr [0x882fac]                          slot=2 field=+0x4 MEM 
+0x0046e266  mov ecx, dword ptr [0x883cb0]                          slot=3 field=+0x4 MEM 
+0x004704f8  add edi, 0x8815a0                                      slot=0 field=+0x0 IMM 
+0x00470a09  add esi, 0x8815a0                                      slot=0 field=+0x0 IMM 
+0x00470b2d  mov eax, dword ptr [edi + 0x8815a4]                    slot=0 field=+0x4 MEM 
+0x00470b37  cmp dword ptr [edi + 0x8815b0], 1                      slot=0 field=+0x10 MEM 
+0x00470bc5  lea eax, [edi + 0x8815a0]                              slot=0 field=+0x0 MEM 
+0x00470c73  mov eax, dword ptr [0x8815a4]                          slot=0 field=+0x4 MEM 
+0x004710a1  mov esi, 0x8815b0                                      slot=0 field=+0x10 IMM 
+0x00471765  cmp ebx, 0x8815a0                                      slot=0 field=+0x0 IMM 
+0x00471ea2  cmp edx, 0x8815a0                                      slot=0 field=+0x0 IMM 
+0x0047d735  mov eax, dword ptr [esi + 0x8815a4]                    slot=0 field=+0x4 MEM 
+0x0047d754  lea ecx, [esi + 0x8815a0]                              slot=0 field=+0x0 MEM 

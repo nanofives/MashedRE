@@ -1,0 +1,57 @@
+0x0041d890: 56                       push esi
+0x0041d891: be98d26300               mov esi, 0x63d298
+0x0041d896: 8bc6                     mov eax, esi
+0x0041d898: e833feffff               call 0x41d6d0
+0x0041d89d: 81c660010000             add esi, 0x160
+0x0041d8a3: 81fe58d56300             cmp esi, 0x63d558
+0x0041d8a9: 7ceb                     jl 0x41d896
+0x0041d8ab: 5e                       pop esi
+0x0041d8ac: c3                       ret 
+0x0041d8ad: 90                       nop 
+0x0041d8ae: 90                       nop 
+0x0041d8af: 90                       nop 
+0x0041d8b0: 56                       push esi
+0x0041d8b1: 6a00                     push 0
+0x0041d8b3: 6a00                     push 0
+0x0041d8b5: 6818d25c00               push 0x5cd218
+0x0041d8ba: e811cd0000               call 0x42a5d0
+0x0041d8bf: 6a30                     push 0x30
+0x0041d8c1: 685cd56300               push 0x63d55c
+0x0041d8c6: 8bf0                     mov esi, eax
+0x0041d8c8: e8538c0900               call 0x4b6520
+0x0041d8cd: 6a00                     push 0
+0x0041d8cf: 6a00                     push 0
+0x0041d8d1: 6a08                     push 8
+0x0041d8d3: 89357cd56300             mov dword ptr [0x63d57c], esi
+0x0041d8d9: 8b4604                   mov eax, dword ptr [esi + 4]
+0x0041d8dc: 685cd56300               push 0x63d55c
+0x0041d8e1: 56                       push esi
+0x0041d8e2: a380d56300               mov dword ptr [0x63d580], eax
+0x0041d8e7: e8e4780900               call 0x4b51d0
+0x0041d8ec: 83c428                   add esp, 0x28
+0x0041d8ef: be5cd56300               mov esi, 0x63d55c
+0x0041d8f4: 8b0e                     mov ecx, dword ptr [esi]
+0x0041d8f6: 6a01                     push 1
+0x0041d8f8: 6a40                     push 0x40
+0x0041d8fa: 51                       push ecx
+0x0041d8fb: e8f0790900               call 0x4b52f0
+0x0041d900: 83c604                   add esi, 4
+0x0041d903: 83c40c                   add esp, 0xc
+0x0041d906: 81fe74d56300             cmp esi, 0x63d574
+0x0041d90c: 7ce6                     jl 0x41d8f4
+0x0041d90e: 5e                       pop esi
+0x0041d90f: c3                       ret 
+0x0041d910: c70584d5630000000000     mov dword ptr [0x63d584], 0
+0x0041d91a: c70588d5630000000000     mov dword ptr [0x63d588], 0
+0x0041d924: c3                       ret 
+0x0041d925: 90                       nop 
+0x0041d926: 90                       nop 
+0x0041d927: 90                       nop 
+0x0041d928: 90                       nop 
+0x0041d929: 90                       nop 
+0x0041d92a: 90                       nop 
+0x0041d92b: 90                       nop 
+0x0041d92c: 90                       nop 
+0x0041d92d: 90                       nop 
+0x0041d92e: 90                       nop 
+0x0041d92f: 90                       nop 

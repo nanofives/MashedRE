@@ -1,0 +1,37 @@
+0x00440cd0: ac                       lodsb al, byte ptr [esi]
+0x00440cd1: ac                       lodsb al, byte ptr [esi]
+0x00440cd2: 0300                     add eax, dword ptr [eax]
+0x00440cd4: 68009d5c00               push 0x5c9d00
+0x00440cd9: 68b0de5c00               push 0x5cdeb0
+0x00440cde: e89dac0300               call 0x47b980
+0x00440ce3: 6820aa4700               push 0x47aa20
+0x00440ce8: 6894de5c00               push 0x5cde94
+0x00440ced: e88eac0300               call 0x47b980
+0x00440cf2: 6850aa4700               push 0x47aa50
+0x00440cf7: 6880de5c00               push 0x5cde80
+0x00440cfc: e87fac0300               call 0x47b980
+0x00440d01: 68a0aa4700               push 0x47aaa0
+0x00440d06: 6870de5c00               push 0x5cde70
+0x00440d0b: e870ac0300               call 0x47b980
+0x00440d10: 68d0aa4700               push 0x47aad0
+0x00440d15: 6864de5c00               push 0x5cde64
+0x00440d1a: e861ac0300               call 0x47b980
+0x00440d1f: 6830ab4700               push 0x47ab30
+0x00440d24: 6858de5c00               push 0x5cde58
+0x00440d29: e852ac0300               call 0x47b980
+0x00440d2e: 83c440                   add esp, 0x40
+0x00440d31: 68d0ab4700               push 0x47abd0
+0x00440d36: 684cde5c00               push 0x5cde4c
+0x00440d3b: e840ac0300               call 0x47b980
+0x00440d40: 6880ac4700               push 0x47ac80
+0x00440d45: 6834de5c00               push 0x5cde34
+0x00440d4a: e831ac0300               call 0x47b980
+0x00440d4f: 68d0ac4700               push 0x47acd0
+0x00440d54: 6828de5c00               push 0x5cde28
+0x00440d59: e822ac0300               call 0x47b980
+0x00440d5e: 6800ad4700               push 0x47ad00
+0x00440d63: 6818de5c00               push 0x5cde18
+0x00440d68: e813ac0300               call 0x47b980
+0x00440d6d: 6830ad4700               push 0x47ad30
+0x00440d72: 68fcdd5c00               push 0x5cddfc
+0x00440d77: e804ac0300               call 0x47b980

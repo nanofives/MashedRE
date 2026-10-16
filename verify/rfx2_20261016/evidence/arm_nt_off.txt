@@ -1,0 +1,28 @@
+=== training exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\rfx2\fin2_exe\mashed_re.exe track=Training trace=C:\Users\maria\Desktop\Proyectos\Mashed\log\rfx2\nt_training\trace.csv shots=840,880,915 basis=True cars=True knobs=['MASHED_HUD_REPLAY=C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\log\\rfx2\\nt_training\\hud_inputs_nt.txt']
+    pid=12440
+    exit=0
+    stand_row_00840.bmp 921654
+    stand_row_00840.draws.json 70109
+    stand_row_00880.bmp 921654
+    stand_row_00880.draws.json 69560
+    stand_row_00915.bmp 921654
+    stand_row_00915.draws.json 61917
+training  840  rows  20  red 0  C08 5  matched 210
+     C08-STARTDISP  MISSING NFLBluejay  A-only 1 draws 2 tri (1 offscreen); first k82 pt5 tri=2 tex=NFLBluejay tex1=- bb=[0.43,-0.
+     C08-STARTDISP  MISSING NFLGold  A-only 1 draws 2 tri (1 offscreen); first k82 pt5 tri=2 tex=NFLGold tex1=- bb=[-0.54,0.30,
+     C08-STARTDISP  MISSING NFLMelon  A-only 1 draws 2 tri (1 offscreen); first k82 pt5 tri=2 tex=NFLMelon tex1=- bb=[-0.54,-0.4
+     C08-STARTDISP  MISSING NFLRed  A-only 1 draws 2 tri (1 offscreen); first k82 pt5 tri=2 tex=NFLRed tex1=- bb=[0.43,0.30,0.
+     C08-STARTDISP  MISSING OrangeDisplay  A-only 12 draws 32 tri (12 offscreen); first k82 pt5 tri=2 tex=OrangeDisplay tex1=- bb=[0.
+training  880  rows  20  red 0  C08 5  matched 206
+     C08-STARTDISP  MISSING NFLBluejay  A-only 1 draws 2 tri (1 offscreen); first k82 pt5 tri=2 tex=NFLBluejay tex1=- bb=[0.43,-0.
+     C08-STARTDISP  MISSING NFLGold  A-only 1 draws 2 tri (1 offscreen); first k82 pt5 tri=2 tex=NFLGold tex1=- bb=[-0.54,0.30,
+     C08-STARTDISP  MISSING NFLMelon  A-only 1 draws 2 tri (1 offscreen); first k82 pt5 tri=2 tex=NFLMelon tex1=- bb=[-0.54,-0.4
+     C08-STARTDISP  MISSING NFLRed  A-only 1 draws 2 tri (1 offscreen); first k82 pt5 tri=2 tex=NFLRed tex1=- bb=[0.43,0.30,0.
+     C08-STARTDISP  MISSING OrangeDisplay  A-only 12 draws 32 tri (12 offscreen); first k82 pt5 tri=2 tex=OrangeDisplay tex1=- bb=[0.
+training  915  rows  22  red 1  C08 5  matched 187
+     RED MISSING #64x64:21: A-only 1 draws 7 tri (0 offscreen); first k81 pt4 tri=7 tex=#64x64:21 tex1=- bb=[-2.51,0.07,-14.00,2.00,0.20,-10.00] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1
+     C08-STARTDISP  MISSING NFLBluejay  A-only 1 draws 2 tri (1 offscreen); first k82 pt5 tri=2 tex=NFLBluejay tex1=- bb=[0.43,-0.
+     C08-STARTDISP  MISSING NFLGold  A-only 1 draws 2 tri (1 offscreen); first k82 pt5 tri=2 tex=NFLGold tex1=- bb=[-0.54,0.30,
+     C08-STARTDISP  MISSING NFLMelon  A-only 1 draws 2 tri (1 offscreen); first k82 pt5 tri=2 tex=NFLMelon tex1=- bb=[-0.54,-0.4
+     C08-STARTDISP  MISSING NFLRed  A-only 1 draws 2 tri (1 offscreen); first k82 pt5 tri=2 tex=NFLRed tex1=- bb=[0.43,0.30,0.
+     C08-STARTDISP  MISSING OrangeDisplay  A-only 12 draws 32 tri (12 offscreen); first k82 pt5 tri=2 tex=OrangeDisplay tex1=- bb=[0.

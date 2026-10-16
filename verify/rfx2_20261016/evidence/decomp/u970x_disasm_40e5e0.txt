@@ -1,0 +1,25 @@
+0x0040e5e0: 3c89                     cmp al, 0x89
+0x0040e5e2: 6c                       insb byte ptr es:[edi], dx
+0x0040e5e3: 2430                     and al, 0x30
+0x0040e5e5: 896c2434                 mov dword ptr [esp + 0x34], ebp
+0x0040e5e9: 896c2438                 mov dword ptr [esp + 0x38], ebp
+0x0040e5ed: 33c0                     xor eax, eax
+0x0040e5ef: 90                       nop 
+0x0040e5f0: 833bff                   cmp dword ptr [ebx], -1
+0x0040e5f3: 8946fc                   mov dword ptr [esi - 4], eax
+0x0040e5f6: 8906                     mov dword ptr [esi], eax
+0x0040e5f8: 894604                   mov dword ptr [esi + 4], eax
+0x0040e5fb: 7e21                     jle 0x40e61e
+0x0040e5fd: 6a00                     push 0
+0x0040e5ff: 57                       push edi
+0x0040e600: e87b090100               call 0x41ef80
+0x0040e605: 6a00                     push 0
+0x0040e607: 6a00                     push 0
+0x0040e609: 57                       push edi
+0x0040e60a: e8d1070100               call 0x41ede0
+0x0040e60f: 6a00                     push 0
+0x0040e611: 6a00                     push 0
+0x0040e613: 57                       push edi
+0x0040e614: e837080100               call 0x41ee50
+0x0040e619: 83c420                   add esp, 0x20
+0x0040e61c: 33c0                     xor eax, eax

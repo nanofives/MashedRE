@@ -1,0 +1,36 @@
+0x00411270: c404e9                   les eax, ptr [ecx + ebp*8]
+0x00411273: b9eeffff8b               mov ecx, 0x8bffffee
+0x00411278: 7424                     je 0x41129e
+0x0041127a: 0c53                     or al, 0x53
+0x0041127c: 8bde                     mov ebx, esi
+0x0041127e: c705c80f7f0000000000     mov dword ptr [0x7f0fc8], 0
+0x00411288: e863f0ffff               call 0x4102f0
+0x0041128d: e86ee9ffff               call 0x40fc00
+0x00411292: 5b                       pop ebx
+0x00411293: 5e                       pop esi
+0x00411294: 59                       pop ecx
+0x00411295: c3                       ret 
+0x00411296: 8b74240c                 mov esi, dword ptr [esp + 0xc]
+0x0041129a: 56                       push esi
+0x0041129b: c705c80f7f0000000000     mov dword ptr [0x7f0fc8], 0
+0x004112a5: e826c9ffff               call 0x40dbd0
+0x004112aa: 83c404                   add esp, 4
+0x004112ad: e84ee9ffff               call 0x40fc00
+0x004112b2: 5e                       pop esi
+0x004112b3: 59                       pop ecx
+0x004112b4: c3                       ret 
+0x004112b5: 8b74240c                 mov esi, dword ptr [esp + 0xc]
+0x004112b9: 8bc6                     mov eax, esi
+0x004112bb: e8e0f0ffff               call 0x4103a0
+0x004112c0: e83be9ffff               call 0x40fc00
+0x004112c5: 5e                       pop esi
+0x004112c6: 59                       pop ecx
+0x004112c7: c3                       ret 
+0x004112c8: 8b74240c                 mov esi, dword ptr [esp + 0xc]
+0x004112cc: 56                       push esi
+0x004112cd: e89efeffff               call 0x411170
+0x004112d2: 83c404                   add esp, 4
+0x004112d5: e826e9ffff               call 0x40fc00
+0x004112da: 5e                       pop esi
+0x004112db: 59                       pop ecx
+0x004112dc: c3                       ret 

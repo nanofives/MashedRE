@@ -1,0 +1,8 @@
+0x00492d78: 85eb                     test ebx, ebp
+0x00492d7a: 51                       push ecx
+0x00492d7b: f7e1                     mul ecx
+0x00492d7d: 8bf2                     mov esi, edx
+0x00492d7f: c1ee04                   shr esi, 4
+0x00492d82: 46                       inc esi
+0x00492d83: 6a32                     push 0x32
+0x00492d85: e836e4f7ff               call 0x4111c0

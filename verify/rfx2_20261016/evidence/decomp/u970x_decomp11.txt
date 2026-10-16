@@ -1,0 +1,46 @@
+// FUN_00492370 @ 0x00492370  size=198  (MASHED.exe)
+// undefined FUN_00492370(void)
+
+/* [C1 2026-05-16] Accepts four undefined4 parameters; 4-param 3-phase init+teardown sequence (entry
+   callee). */
+
+undefined4 FUN_00492370(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+
+{
+  int iVar1;
+  undefined4 uVar2;
+  
+  FUN_00499ba0(param_1,param_2,param_3,param_4);
+  FUN_00493900();
+  iVar1 = thunk_FUN_00495150(0,0);
+  if (iVar1 != 0) {
+    iVar1 = FUN_004924f0();
+    if (iVar1 != 0) {
+      iVar1 = FUN_00492270();
+      if (iVar1 != 0) {
+        FUN_005c9d00();
+        FUN_004996f0(param_4);
+        FUN_004963e0("Calling AppInitialiseOnBootup\n");
+        iVar1 = FUN_00402750();
+        if (iVar1 != 0) {
+          FUN_00492290();
+        }
+        FUN_004963e0("Calling AppDestroy\n");
+        FUN_00402a40();
+        if (DAT_0077195c != 0) {
+          FUN_004c5930(DAT_0077195c);
+          DAT_0077195c = 0;
+        }
+        FUN_004963e0("Calling SoftwareTidyUpBeforeExiting\n");
+        thunk_FUN_004938c0();
+        FUN_004963e0("Calling HardwareExitApplication\n");
+        thunk_FUN_004954f0();
+        uVar2 = FUN_00499cc0();
+        return uVar2;
+      }
+    }
+  }
+  return 0xffffffff;
+}
+
+

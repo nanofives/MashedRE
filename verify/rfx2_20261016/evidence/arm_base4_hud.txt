@@ -1,0 +1,60 @@
+=== training exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\rfx2\base4_exe\mashed_re.exe track=Training trace=C:\Users\maria\Desktop\Proyectos\Mashed\log\d1r1\orig_training\trace.csv shots=884,924,959 basis=True cars=True knobs=['MASHED_HUD_REPLAY=C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\rfx2\\verify\\rfx_20261016\\hud_inputs.txt']
+    pid=20664
+    exit=0
+    stand_row_00884.bmp 921654
+    stand_row_00884.draws.json 73591
+    stand_row_00924.bmp 921654
+    stand_row_00924.draws.json 73366
+    stand_row_00959.bmp 921654
+    stand_row_00959.draws.json 72771
+=== arctic exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\rfx2\base4_exe\mashed_re.exe track=Arctic trace=C:\Users\maria\Desktop\Proyectos\Mashed\log\d1r1\orig_arctic\trace.csv shots=1051,1091,1126 basis=True cars=True knobs=['MASHED_HUD_REPLAY=C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\rfx2\\verify\\rfx_20261016\\hud_inputs.txt', 'MASHED_CAR_BRAKE_ROWS=1091:8,1126:2']
+    pid=16016
+    exit=0
+    stand_row_01051.bmp 921654
+    stand_row_01051.draws.json 58545
+    stand_row_01091.bmp 921654
+    stand_row_01091.draws.json 57462
+    stand_row_01126.bmp 921654
+    stand_row_01126.draws.json 39287
+=== city exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\rfx2\base4_exe\mashed_re.exe track=City trace=C:\Users\maria\Desktop\Proyectos\Mashed\log\d1r1\orig_city\trace.csv shots=761,801,836 basis=True cars=True knobs=['MASHED_HUD_REPLAY=C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\rfx2\\verify\\rfx_20261016\\hud_inputs.txt', 'MASHED_CAR_BRAKE_ROWS=836:6']
+    pid=7236
+    exit=0
+    stand_row_00761.bmp 921654
+    stand_row_00761.draws.json 162990
+    stand_row_00801.bmp 921654
+    stand_row_00801.draws.json 156853
+    stand_row_00836.bmp 921654
+    stand_row_00836.draws.json 136606
+training  884  rows  16  red 0  C04/08/09  1  matched 221
+     C04-SHADOW     MISSING RWObjShad
+training  924  rows  15  red 0  C04/08/09  0  matched 218
+training  959  rows  15  red 0  C04/08/09  0  matched 216
+arctic    1051  rows  29  red 0  C04/08/09  4  matched 168
+     C04-SHADOW     MISSING flatshad
+     C09-FX         MISSING Headlight
+     C09-FX         MISSING lensflare-fs8
+     C04-SHADOW     MISSING RWObjShad
+arctic    1091  rows  29  red 0  C04/08/09  4  matched 165
+     C04-SHADOW     MISSING flatshad
+     C09-FX         MISSING Headlight
+     C09-FX         MISSING lensflare-fs8
+     C04-SHADOW     MISSING RWObjShad
+arctic    1126  rows  30  red 0  C04/08/09  5  matched 120
+     C04-SHADOW     MISSING flatshad
+     C09-FX         MISSING Headlight
+     C09-FX         MISSING lensflare-fs8
+     C04-SHADOW     MISSING RWObjShad
+     C09-FX         MISSING VehicleIcons
+city      761  rows  17  red 0  C04/08/09  3  matched 497
+     C09-FX         MISSING Headlight
+     C09-FX         MISSING lensflare-fs8
+     C04-SHADOW     MISSING RWObjShad
+city      801  rows  17  red 0  C04/08/09  3  matched 481
+     C09-FX         MISSING Headlight
+     C09-FX         MISSING lensflare-fs8
+     C04-SHADOW     MISSING RWObjShad
+city      836  rows  18  red 0  C04/08/09  4  matched 430
+     C09-FX         MISSING Headlight
+     C09-FX         MISSING lensflare-fs8
+     C04-SHADOW     MISSING RWObjShad
+     C09-FX         MISSING VehicleIcons

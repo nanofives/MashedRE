@@ -1,0 +1,29 @@
+0x0041d8c1  push 0x63d55c                                           slot=0 field=+0x0 IMM 
+0x0041d8d3  mov dword ptr [0x63d57c], esi                          slot=0 field=+0x20 MEM W?
+0x0041d8dc  push 0x63d55c                                           slot=0 field=+0x0 IMM 
+0x0041d8e2  mov dword ptr [0x63d580], eax                          slot=0 field=+0x24 MEM W?
+0x0041d8ef  mov esi, 0x63d55c                                      slot=0 field=+0x0 IMM 
+0x0041d906  cmp esi, 0x63d574                                      slot=0 field=+0x18 IMM 
+0x0041d910  mov dword ptr [0x63d584], 0                            slot=0 field=+0x28 MEM W?
+0x0041d91a  mov dword ptr [0x63d588], 0                            slot=0 field=+0x2c MEM W?
+0x0041d933  fld dword ptr [0x63d588]                               slot=0 field=+0x2c MEM W?
+0x0041d9e3  fld dword ptr [0x63d588]                               slot=0 field=+0x2c MEM W?
+0x0041da10  mov eax, dword ptr [0x63d580]                          slot=0 field=+0x24 MEM 
+0x0041da2c  mov edx, dword ptr [0x63d580]                          slot=0 field=+0x24 MEM 
+0x0041da5f  fld dword ptr [0x63d588]                               slot=0 field=+0x2c MEM W?
+0x0041da65  mov eax, dword ptr [0x63d584]                          slot=0 field=+0x28 MEM 
+0x0041da71  mov dword ptr [0x63d584], eax                          slot=0 field=+0x28 MEM W?
+0x0041da76  fstp dword ptr [0x63d588]                               slot=0 field=+0x2c MEM W?
+0x0041da80  mov eax, dword ptr [0x63d57c]                          slot=0 field=+0x20 MEM 
+0x0041da98  mov ecx, dword ptr [0x63d588]                          slot=0 field=+0x2c MEM 
+0x0041db80  mov eax, 0x63d55c                                      slot=0 field=+0x0 IMM 
+0x0041dba4  push 0x63d5a0                                           slot=0 field=+0x44 IMM 
+0x0041dbbf  push 0x63d5a0                                           slot=0 field=+0x44 IMM 
+0x0041dbe3  mov esi, dword ptr [edi*4 + 0x63d5a0]                  slot=0 field=+0x44 MEM 
+0x0041dc39  fstp dword ptr [esi*4 + 0x63d590]                       slot=0 field=+0x34 MEM W?
+0x0041dc49  mov eax, dword ptr [0x63d590]                          slot=0 field=+0x34 MEM 
+0x0041dc5b  fcomp dword ptr [0x63d594]                               slot=0 field=+0x38 MEM W?
+0x0041dc73  fcomp dword ptr [0x63d598]                               slot=0 field=+0x3c MEM W?
+0x0041dc86  fcomp dword ptr [0x63d59c]                               slot=0 field=+0x40 MEM W?
+0x0041dca4  mov edi, 0x63d5a0                                      slot=0 field=+0x44 IMM 
+0x0041dedf  mov esi, 0x63d5a0                                      slot=0 field=+0x44 IMM 

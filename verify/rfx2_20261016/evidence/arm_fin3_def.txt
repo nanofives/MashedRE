@@ -1,0 +1,97 @@
+=== training exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\rfx2\fin3_exe\mashed_re.exe track=Training trace=C:\Users\maria\Desktop\Proyectos\Mashed\log\d1r1\orig_training\trace.csv shots=884,924,959 basis=True cars=True knobs=[]
+    pid=20156
+    exit=0
+    stand_row_00884.bmp 921654
+    stand_row_00884.draws.json 69091
+    stand_row_00924.bmp 921654
+    stand_row_00924.draws.json 68568
+    stand_row_00959.bmp 921654
+    stand_row_00959.draws.json 67974
+=== arctic exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\rfx2\fin3_exe\mashed_re.exe track=Arctic trace=C:\Users\maria\Desktop\Proyectos\Mashed\log\d1r1\orig_arctic\trace.csv shots=1051,1091,1126 basis=True cars=True knobs=['MASHED_CAR_BRAKE_ROWS=1091:8,1126:2']
+    pid=23264
+    exit=0
+    stand_row_01051.bmp 921654
+    stand_row_01051.draws.json 54980
+    stand_row_01091.bmp 921654
+    stand_row_01091.draws.json 53896
+    stand_row_01126.bmp 921654
+    stand_row_01126.draws.json 35721
+=== city exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\rfx2\fin3_exe\mashed_re.exe track=City trace=C:\Users\maria\Desktop\Proyectos\Mashed\log\d1r1\orig_city\trace.csv shots=761,801,836 basis=True cars=True knobs=['MASHED_CAR_BRAKE_ROWS=836:6']
+    pid=24512
+    exit=0
+    stand_row_00761.bmp 921654
+    stand_row_00761.draws.json 159419
+    stand_row_00801.bmp 921654
+    stand_row_00801.draws.json 153278
+    stand_row_00836.bmp 921654
+    stand_row_00836.draws.json 133035
+training  884  rows  21  red 0  C04/08/09  6  matched 207
+     C08-STARTDISP  MISSING GreenStartLight
+     C08-STARTDISP  MISSING NFLBluejay
+     C08-STARTDISP  MISSING NFLGold
+     C08-STARTDISP  MISSING NFLMelon
+     C08-STARTDISP  MISSING NFLRed
+     C08-STARTDISP  MISSING OrangeDisplay
+training  924  rows  21  red 0  C04/08/09  6  matched 203
+     C08-STARTDISP  MISSING GreenStartLight
+     C08-STARTDISP  MISSING NFLBluejay
+     C08-STARTDISP  MISSING NFLGold
+     C08-STARTDISP  MISSING NFLMelon
+     C08-STARTDISP  MISSING NFLRed
+     C08-STARTDISP  MISSING OrangeDisplay
+training  959  rows  21  red 0  C04/08/09  6  matched 201
+     C08-STARTDISP  MISSING GreenStartLight
+     C08-STARTDISP  MISSING NFLBluejay
+     C08-STARTDISP  MISSING NFLGold
+     C08-STARTDISP  MISSING NFLMelon
+     C08-STARTDISP  MISSING NFLRed
+     C08-STARTDISP  MISSING OrangeDisplay
+arctic    1051  rows  32  red 0  C04/08/09  7  matched 157
+     C04-SHADOW     MISSING flatshad
+     C08-STARTDISP  MISSING GreenStartLight
+     C08-STARTDISP  MISSING NFLBluejay
+     C08-STARTDISP  MISSING NFLGold
+     C08-STARTDISP  MISSING NFLMelon
+     C08-STARTDISP  MISSING NFLRed
+     C08-STARTDISP  MISSING OrangeDisplay
+arctic    1091  rows  32  red 0  C04/08/09  7  matched 154
+     C04-SHADOW     MISSING flatshad
+     C08-STARTDISP  MISSING GreenStartLight
+     C08-STARTDISP  MISSING NFLBluejay
+     C08-STARTDISP  MISSING NFLGold
+     C08-STARTDISP  MISSING NFLMelon
+     C08-STARTDISP  MISSING NFLRed
+     C08-STARTDISP  MISSING OrangeDisplay
+arctic    1126  rows  33  red 0  C04/08/09  8  matched 109
+     C04-SHADOW     MISSING flatshad
+     C08-STARTDISP  MISSING GreenStartLight
+     C08-STARTDISP  MISSING NFLBluejay
+     C08-STARTDISP  MISSING NFLGold
+     C08-STARTDISP  MISSING NFLMelon
+     C08-STARTDISP  MISSING NFLRed
+     C08-STARTDISP  MISSING OrangeDisplay
+     C09-FX         MISSING VehicleIcons
+city      761  rows  20  red 0  C04/08/09  6  matched 486
+     C08-STARTDISP  MISSING GreenStartLight
+     C08-STARTDISP  MISSING NFLBluejay
+     C08-STARTDISP  MISSING NFLGold
+     C08-STARTDISP  MISSING NFLMelon
+     C08-STARTDISP  MISSING NFLRed
+     C08-STARTDISP  MISSING OrangeDisplay
+city      801  rows  22  red 0  C04/08/09  8  matched 469
+     C08-STARTDISP  MISSING GreenStartLight
+     C09-FX         MISSING Headlight
+     C08-STARTDISP  MISSING NFLBluejay
+     C08-STARTDISP  MISSING NFLGold
+     C08-STARTDISP  MISSING NFLMelon
+     C08-STARTDISP  MISSING NFLRed
+     C08-STARTDISP  MISSING OrangeDisplay
+     C09b-HEADLIGHT-BRAKE EXTRA   Headlight
+city      836  rows  21  red 0  C04/08/09  7  matched 419
+     C08-STARTDISP  MISSING GreenStartLight
+     C08-STARTDISP  MISSING NFLBluejay
+     C08-STARTDISP  MISSING NFLGold
+     C08-STARTDISP  MISSING NFLMelon
+     C08-STARTDISP  MISSING NFLRed
+     C08-STARTDISP  MISSING OrangeDisplay
+     C09-FX         MISSING VehicleIcons

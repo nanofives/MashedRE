@@ -28,7 +28,10 @@ bool Write(const char* path, int row, int actual_row);
 // it just submitted: the next indexed draw takes its triangles and positions (first three floats
 // of each `stride`-byte vertex; the vertex colour is found through the bound declaration as for
 // every other librw draw) from here. One draw only; inert unless the recorder is armed.
-void SetNextGeometry(const void* verts, unsigned stride, const unsigned short* idx, unsigned nidx);
+// [rfx2] screen = the vertices are pre-transformed screen positions (librw Im2D, the original's
+// XYZRHW), recorded with the "screen" flag the original side's FVF carries.
+void SetNextGeometry(const void* verts, unsigned stride, const unsigned short* idx, unsigned nidx,
+                     bool screen = false);
 
 }  // namespace DrawRec
 }  // namespace mashed_re

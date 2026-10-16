@@ -1,0 +1,13 @@
+=== training exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\rfx2\fin3_exe\mashed_re.exe track=Training trace=C:\Users\maria\Desktop\Proyectos\Mashed\log\rfx2\nt_training\trace.csv shots=840,880,915 basis=True cars=True knobs=['MASHED_HUD_REPLAY=C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\log\\rfx2\\nt_training\\hud_inputs_nt.txt']
+    pid=23264
+    exit=0
+    stand_row_00840.bmp 921654
+    stand_row_00840.draws.json 76773
+    stand_row_00880.bmp 921654
+    stand_row_00880.draws.json 76224
+    stand_row_00915.bmp 921654
+    stand_row_00915.draws.json 68581
+training  840  rows  15  red 0  C08 0  matched 230
+training  880  rows  15  red 0  C08 0  matched 226
+training  915  rows  17  red 1  C08 0  matched 207
+     RED MISSING #64x64:21: A-only 1 draws 7 tri (0 offscreen); first k81 pt4 tri=7 tex=#64x64:21 tex1=- bb=[-2.51,0.07,-14.00,2.00,0.20,-10.00] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1

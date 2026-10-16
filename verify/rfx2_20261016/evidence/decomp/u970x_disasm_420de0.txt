@@ -1,0 +1,10 @@
+0x00420de0: d9442404                 fld dword ptr [esp + 4]
+0x00420de4: d8048a                   fadd dword ptr [edx + ecx*4]
+0x00420de7: d9148a                   fst dword ptr [edx + ecx*4]
+0x00420dea: d81d20d15c00             fcomp dword ptr [0x5cd120]
+0x00420df0: dfe0                     fnstsw ax
+0x00420df2: f6c441                   test ah, 0x41
+0x00420df5: 7507                     jne 0x420dfe
+0x00420df7: c7048a00004842           mov dword ptr [edx + ecx*4], 0x42480000
+0x00420dfe: c3                       ret 
+0x00420dff: 90                       nop 

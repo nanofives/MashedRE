@@ -217,6 +217,11 @@ private:
     struct PropAnim { int kind; std::size_t prop; };
     std::vector<PropAnim> prop_anims_;
     float prop_acc_[3] = {};
+    // [rfx2] the lensflare light FUN_00448ef0 @ 0x00448ef0 bobs (Arctic): its index, the float
+    // accumulator 0x00683250, and the Render count that times the batches' one build
+    int   lens_bob_ = -1;
+    float lens_acc_ = 0.f;
+    int   lens_frames_ = 0;
     int   prop_tick_frames_ = 0;
     void UpdatePropAnims();
 

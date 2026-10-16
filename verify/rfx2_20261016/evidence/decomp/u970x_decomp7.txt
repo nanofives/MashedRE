@@ -1,0 +1,62 @@
+// FUN_00425a40 @ 0x00425a40  size=104  (MASHED.exe)
+// undefined FUN_00425a40(void)
+// callers: FUN_0040fc00@0x0040fc00
+
+/* [C1 2026-06-01] Per-frame physics/world update sequence, gated by an online-mode check. Returns 1
+   if it ran the update,… */
+
+undefined4 FUN_00425a40(undefined4 param_1)
+
+{
+  FUN_00423b00();
+  if (DAT_007f1a50 == 1) {
+    if ((DAT_007f1a54 != 4) || ((DAT_007f1a74 == 0 && (DAT_007f1a70 == 0)))) {
+      return 0;
+    }
+    DAT_007f1a78 = DAT_007f1a78 + 1;
+  }
+  FUN_00418860();
+  FUN_00424eb0(param_1,&DAT_00803324);
+  FUN_00470c70(param_1,&DAT_00803324);
+  FUN_00422ba0(param_1);
+  FUN_004252c0(param_1);
+  return 1;
+}
+
+
+
+// FUN_004215e0 @ 0x004215e0  size=65  (MASHED.exe)
+// NOTE: 0x00421609 is not a function entry; showing containing function
+// undefined FUN_004215e0(void)
+// callers: FUN_00421630@0x00421630
+
+/* [C2 2026-06-03] `void FUN_004215e0(undefined4 param_1, undefined4 param_2, int param_3)`. Body
+   0x004215e0..0x00421620. - Branch on… */
+
+void FUN_004215e0(undefined4 param_1,undefined4 param_2,int param_3)
+
+{
+  if (DAT_005d757c < *(float *)(param_3 + 8)) {
+    FUN_00420de0(param_2);
+    return;
+  }
+  FUN_00420de0(param_2);
+  return;
+}
+
+
+
+// FUN_00496930 @ 0x00496930  size=12  (MASHED.exe)
+// undefined FUN_00496930(void)
+// callers: FUN_0040fc00@0x0040fc00, FUN_004926c0@0x004926c0
+
+/* [C1 2026-06-01] `undefined4 FUN_00496930(int param_1)` — array element getter. `return
+   *(u32*)(&DAT_00773030 +… */
+
+undefined4 FUN_00496930(int param_1)
+
+{
+  return *(undefined4 *)(&DAT_00773030 + param_1 * 4);
+}
+
+

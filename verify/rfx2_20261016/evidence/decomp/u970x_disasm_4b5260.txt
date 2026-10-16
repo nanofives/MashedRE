@@ -1,0 +1,43 @@
+0x004b5260: 83ec44                   sub esp, 0x44
+0x004b5263: 56                       push esi
+0x004b5264: b0ff                     mov al, 0xff
+0x004b5266: 57                       push edi
+0x004b5267: 8b7c2450                 mov edi, dword ptr [esp + 0x50]
+0x004b526b: 57                       push edi
+0x004b526c: 8844240c                 mov byte ptr [esp + 0xc], al
+0x004b5270: 8844240d                 mov byte ptr [esp + 0xd], al
+0x004b5274: 8844240e                 mov byte ptr [esp + 0xe], al
+0x004b5278: 8844240f                 mov byte ptr [esp + 0xf], al
+0x004b527c: e8bfeeffff               call 0x4b4140
+0x004b5281: 8bf0                     mov esi, eax
+0x004b5283: 8d442410                 lea eax, [esp + 0x10]
+0x004b5287: 50                       push eax
+0x004b5288: 57                       push edi
+0x004b5289: e8a2eeffff               call 0x4b4130
+0x004b528e: 8b4c2460                 mov ecx, dword ptr [esp + 0x60]
+0x004b5292: 83c40c                   add esp, 0xc
+0x004b5295: 85c9                     test ecx, ecx
+0x004b5297: 7504                     jne 0x4b529d
+0x004b5299: 8d4c2408                 lea ecx, [esp + 8]
+0x004b529d: 33c0                     xor eax, eax
+0x004b529f: 85f6                     test esi, esi
+0x004b52a1: 7e0e                     jle 0x4b52b1
+0x004b52a3: 8b54840c                 mov edx, dword ptr [esp + eax*4 + 0xc]
+0x004b52a7: 8b39                     mov edi, dword ptr [ecx]
+0x004b52a9: 40                       inc eax
+0x004b52aa: 3bc6                     cmp eax, esi
+0x004b52ac: 897a04                   mov dword ptr [edx + 4], edi
+0x004b52af: 7cf2                     jl 0x4b52a3
+0x004b52b1: 5f                       pop edi
+0x004b52b2: 5e                       pop esi
+0x004b52b3: 83c444                   add esp, 0x44
+0x004b52b6: c3                       ret 
+0x004b52b7: 90                       nop 
+0x004b52b8: 90                       nop 
+0x004b52b9: 90                       nop 
+0x004b52ba: 90                       nop 
+0x004b52bb: 90                       nop 
+0x004b52bc: 90                       nop 
+0x004b52bd: 90                       nop 
+0x004b52be: 90                       nop 
+0x004b52bf: 90                       nop 

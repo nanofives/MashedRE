@@ -378,6 +378,11 @@ rpc.exports={
   settrack:function(v){
     Interceptor.attach(abs(0x0040d440), { onEnter(){ abs(0x0063ba7c).writeS32(v); } });
     return 1; },
+  // [rfx2] --teamplay N: the Team Play word DAT_0067ea64 (FUN_0042f500) written at the same course-load
+  // entry, so the race's HUD set-up (FUN_0041b4d0, race state 1) reads N. An INPUT poke like --colours.
+  setteamplay:function(v){
+    Interceptor.attach(abs(0x0040d440), { onEnter(){ abs(0x0067ea64).writeS32(v); } });
+    return 1; },
   tracelen:function(){ return trace.length; },
   setmatfx:function(v){ matfxOn=!!v; return 1; },
   getmatfx:function(){ return JSON.stringify(matfxSnaps); },
@@ -627,6 +632,68 @@ rpc.exports={
       scores:[rd(0x008a94e0),rd(0x008a94e4),rd(0x008a94e8),rd(0x008a94ec)],
       leaders:[rd(0x0063cd90),rd(0x0063cd94),rd(0x0063cd98),rd(0x0063cd9c)],
       timer: abs(0x0063d588).readFloat(), slots: slots, panels: panels}); },
+  // [rfx2] read-only witness of the in-race FX inputs (PREREG_rfx2.md): the dynamic-object shadow
+  // arrays of FUN_00481a30 @ 0x00481a30 (count DAT_006c6eb0, atomic 0x006c71d8, id 0x006c6b90,
+  // frustum state 0x006c3350 / previous 0x006c3030, shadow flag 0x006cad50, bbox 0x006c9a88 (0x18),
+  // shadow matrix 0x006c3670 (0x40), triangle cache 0x006c74f8 (0x28), reset matrix 0x006cb070),
+  // the course light DAT_0065743c (FUN_004260b0) and its frame LTM, and the RWObjShad batch
+  // DAT_00703068 (added this tick DAT_00703058; matrices [+0x1c], colours [+0x18]).
+  fxstate:function(){ const r32=(a)=>abs(a).readS32(); const u32=(a)=>abs(a).readU32();
+    const out={row: trace.length, f101c: r32(0x007f101c), n: r32(0x006c6eb0)};
+    try{ const L=abs(0x0065743c).readPointer(); out.light_ptr=L.toString();
+      if(!L.isNull()){ const fr=L.add(4).readPointer(); out.light_sub=L.add(1).readU8();
+        out.light_ltm=rd(fr.add(0x50),16); out.light_mod=rd(fr.add(0x10),16); } }catch(e){ out.light_err=''+e; }
+    const plug=u32(0x007dc8d8); const objs=[];
+    for(let i=0;i<Math.min(out.n,200);i++){ const o={i:i};
+      try{ const a=abs(0x006c71d8+i*4).readPointer(); o.atomic=a.toString();
+        o.id=r32(0x006c6b90+i*4); o.st=r32(0x006c3350+i*4); o.prev=r32(0x006c3030+i*4);
+        o.flag=r32(0x006cad50+i*4); o.f9438=r32(0x006c9438+i*4); o.slot=r32(0x006c9758+i*4);
+        o.bbox=rd(abs(0x006c9a88+i*0x18),6); o.shm=rd(abs(0x006c3670+i*0x40),16);
+        o.init=rd(abs(0x006cb070+i*0x40),16);
+        const cb=abs(0x006c74f8+i*0x28); o.cache=rd(cb,10); o.cache_i=[cb.add(0x18).readS32()];
+        const vp=[]; for(let k=7;k<10;k++){ const p=cb.add(k*4).readPointer();
+          vp.push(p.isNull()?null:rd(p,3)); } o.cache_v=vp;
+        if(!a.isNull()){ o.aflags=a.add(2).readU8(); const fr=a.add(4).readPointer();
+          if(!fr.isNull()) o.ltm=rd(fr.add(0x50),16);
+          const ph=a.add(plug).readPointer(); o.phys=ph.toString();
+          if(!ph.isNull()){ const p10=ph.add(0x10).readPointer();
+            o.p10_4=p10.add(4).readPointer().toString(); const pr=p10.readPointer();
+            o.prim_type=pr.add(0x5c).readPointer().toString(); o.prim_dims=rd(pr.add(0x40),4);
+            o.prim_m=rd(pr,16); } } }catch(e){ o.err=''+e; }
+      objs.push(o); }
+    out.objs=objs;
+    // the race camera DAT_006905b0: viewMatrix +0x20, raster +0x60, viewWindow +0x68, recip +0x70,
+    // offset +0x78, near/far +0x80/+0x84, zScale/zShift +0x8c/+0x90; frame modelling / LTM; and
+    // RwGlobals DAT_007d3ff8 +0x18/+0x1c (FUN_004128f0's z range)
+    try{ const C=abs(0x006905b0).readPointer(); const fr=C.add(4).readPointer(); const ras=C.add(0x60).readPointer();
+      out.cam={view:rd(C.add(0x20),16), vw:rd(C.add(0x68),2), rvw:rd(C.add(0x70),2), off:rd(C.add(0x78),2),
+        nf:rd(C.add(0x80),2), zss:rd(C.add(0x8c),2), mod:rd(fr.add(0x10),16), ltm:rd(fr.add(0x50),16),
+        ras:[ras.add(0xc).readS32(), ras.add(0x10).readS32()]};
+      const G=abs(0x007d3ff8).readPointer(); out.zbuf=rd(G.add(0x18),2); }catch(e){ out.cam_err=''+e; }
+    // Headlight (FUN_00412f30 / FUN_00413a00): direct records 0x0089bea0 (count DAT_0063bc58, 0x2c
+    // each), reflections 0x0089a8a0 (DAT_0063bc5c), screen quads 0x00828320 (DAT_008a94a0, 0x70)
+    try{ const nd=r32(0x0063bc58), nr=r32(0x0063bc5c), nq=r32(0x008a94a0); out.hl={nd:nd, nr:nr, nq:nq, d:[], q:[]};
+      for(let j=0;j<Math.min(nd,127);j++){ const b=abs(0x0089bea0+j*0x2c); out.hl.d.push({f:rd(b,9), c:b.add(0x24).readU32(), fl:b.add(0x28).readFloat()}); }
+      for(let j=0;j<Math.min(nq,127);j++) out.hl.q.push(rd(abs(0x00828320+j*0x70),28));
+      const cars=[]; for(let i=0;i<4;i++){ const sl=r32(0x007f1a14+i*16); const parts={};
+        for(const p of [0x19,0x1a,0x1b,0x1c,0x2a,0x37,0x38,0x39,0x3a]){ const a=abs(0x0063d9e0+(i*0xab+p)*4).readPointer();
+          if(!a.isNull()){ const pf=a.add(4).readPointer(); parts[p]=pf.isNull()?null:rd(pf.add(0x50),16); } }
+        cars.push({hlflag:r32(0x0063bc44+i*4), flags:u32(0x0063dc74+i*0x2ac), slot:sl,
+          brake:(sl>=0&&sl<16)?abs(0x007f103c+sl*0x4c+1).readU8():-1, parts:parts}); }
+      out.hl.cars=cars; }catch(e){ out.hl_err=''+e; }
+    // lensflare-fs8 light list (FUN_00488e70): 128 entries of 0x38 at 0x0086ae24, enabled at +0x10
+    try{ const L=[]; for(let j=0;j<128;j++){ const b=abs(0x0086ae24+j*0x38); if(b.add(0x10).readS32()===0) continue;
+        const e={j:j, pos:rd(b,3), n:b.add(0xc).readS32(), k:b.add(0x14).readFloat(), w:[b.add(0x18).readS32(), b.add(0x1c).readS32(), b.add(0x20).readS32(), b.add(0x24).readS32(), b.add(0x28).readU32()]};
+        const fm=b.add(0x28).readPointer(); if(!fm.isNull()) e.m=rd(fm,16);
+        const nn=Math.min(e.n,8); const sz=b.add(0x1c).readPointer(), uv=b.add(0x20).readPointer(), co=b.add(0x24).readPointer();
+        if(!sz.isNull()) e.sz=rd(sz,Math.max(nn,5)); if(!uv.isNull()){ e.uv=[]; for(let k=0;k<nn;k++) e.uv.push(uv.add(k*4).readS32()); }
+        if(!co.isNull()){ e.co=[]; for(let k=0;k<nn;k++) e.co.push(co.add(k*4).readU32()); }
+        L.push(e); } out.lf=L; }catch(e){ out.lf_err=''+e; }
+    try{ const k=r32(0x00703058); out.shad_n=k; out.shad_cap=r32(0x00703070);
+      const mp=abs(0x00703084).readPointer(), cp=abs(0x00703080).readPointer(); const sh=[];
+      for(let j=0;j<Math.min(k,64);j++) sh.push({m:mp.isNull()?null:rd(mp.add(j*0x40),16),
+        c:cp.isNull()?null:cp.add(j*4).readU32()}); out.shad=sh; }catch(e){ out.shad_err=''+e; }
+    return JSON.stringify(out); },
   ovrtable:function(n){ const out=[];
     for(let i=0;i<n;i++){ const e=abs(OVR+i*0xc);
       out.push([e.readFloat(), e.add(4).readFloat(), e.add(8).readFloat()]); }
@@ -703,6 +770,12 @@ def main():
     ap.add_argument("--hud-out", default="",
                     help="[rfx] with --early: sample the in-race HUD inputs (hudglobals) 4x/s "
                          "into this JSON, each sample tagged with the trace row count")
+    ap.add_argument("--teamplay", type=int, default=-1,
+                    help="[rfx2] write this value to the Team Play word 0x0067ea64 at the course load "
+                         "(FUN_0040d440 entry), e.g. 0 for the non-team HUD panels; -1 = leave it")
+    ap.add_argument("--fx-out", default="",
+                    help="[rfx2] with --early: sample the FX witness (fxstate: object shadows, "
+                         "course light, RWObjShad batch) every 0.5 s into this JSON")
     ap.add_argument("--drawrec-bt", default="",
                     help="[d1r1] regex on stage-0 texture names: record a return-address "
                          "backtrace (MASHED.exe VAs) for each matching draw")
@@ -774,6 +847,9 @@ def main():
     E.setsel(1); time.sleep(0.3)        # Quick Battle
     confirm_to(4, 4)
     confirm_to(5, 4)
+    if args.teamplay >= 0:
+        E.setteamplay(args.teamplay)
+        print(f"team play written at the course load: {args.teamplay}")
     if args.track >= 0:
         E.settrack(args.track)
         print(f"track index written: {args.track}")
@@ -791,12 +867,18 @@ def main():
         t0 = time.time()
         last_n, last_t = 0, time.time()
         hud = []
+        fx = []
         while E.tracelen() < args.rows and time.time() - t0 < args.rows / 30.0 + 60:
             if args.hud_out:
                 # [rfx] sample the HUD inputs 4x per second, tagged with the trace row count
                 for _ in range(4):
                     hud.append(json.loads(E.hudglobals()))
                     time.sleep(0.25)
+            elif args.fx_out:
+                # [rfx2] the FX witness twice per second, tagged with the trace row count
+                for _ in range(2):
+                    fx.append(json.loads(E.fxstate()))
+                    time.sleep(0.5)
             else:
                 time.sleep(1.0)
             n_now = E.tracelen()
@@ -815,6 +897,9 @@ def main():
     if args.early and args.hud_out:
         Path(args.hud_out).write_text(json.dumps(hud, indent=0))
         print(f"[rfx] HUD samples: {len(hud)} -> {args.hud_out}")
+    if args.early and args.fx_out:
+        Path(args.fx_out).write_text(json.dumps(fx))
+        print(f"[rfx2] FX samples: {len(fx)} -> {args.fx_out}")
     g = json.loads(E.globals())
     print("globals:", g)
     nodecount = max(0, min(g.get("nodecount", 0), 400))   # [camribbon] was 200; LED capacity is 384

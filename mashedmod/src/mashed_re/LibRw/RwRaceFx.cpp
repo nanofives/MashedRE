@@ -18,6 +18,7 @@
 #include <vector>
 
 #include "../D3d9Render/DrawRec.h"
+#include "../Math/RwLutTables.h"
 #include "../Piz/PizReader.h"
 #include "../Txd/TxdDecoder.h"
 
@@ -214,7 +215,13 @@ void RaceFx_QueueCar(int slot, const CarFxInput& in) {
     g_have[slot] = true;
 }
 
+// [rfx2] this frame's car inputs, kept for the Headlight pass (RaceFx_DrawWorldFx), which runs
+// after DrawCarFx has consumed the queue
+static CarFxInput g_hl_cars[4];
+static bool       g_hl_have[4] = {};
+
 void RaceFx_DrawCarFx(void* rw_camera) {
+    for (int i = 0; i < 4; ++i) { g_hl_cars[i] = g_cars[i]; g_hl_have[i] = g_have[i]; }
     const bool want_shadow = RaceFx_CarShadowEnabled();
     const bool want_beam = RaceFx_BeamEnabled();
     bool any = false;
@@ -328,6 +335,857 @@ void RaceFx_DrawCarFx(void* rw_camera) {
 }
 
 // =============================================================================================
+// [rfx2] The dynamic-object shadows (C04 "RWObjShad", verify/rfx2_20261016/PREREG_rfx2.md).
+// =============================================================================================
+namespace {
+
+// ---- SFX.piz textures by name (the FX passes' "RWObjShad" etc.; every TXD of the archive) ------
+std::vector<rw::Texture*> g_sfx_tex;
+bool                      g_sfx_tried = false;
+rw::Texture* SfxTexture(const char* name) {
+    if (!g_sfx_tried) {
+        g_sfx_tried = true;
+        Piz::Archive a;
+        if (a.Load("original/TOASTART/Common/SFX.piz")) {
+            for (std::uint32_t i = 0; i < a.count(); ++i) {
+                const char* n = a.entry(i).name;
+                const std::size_t ln = std::strlen(n);
+                if (ln < 4 || _stricmp(n + ln - 4, ".TXD") != 0) continue;
+                std::uint32_t len = 0;
+                const std::uint8_t* b = a.blob(i, &len);
+                Txd::Dictionary d;
+                if (!b || !d.Decode(b, len)) continue;
+                static const char* const kWant[] = {"RWObjShad", "flatshad", "Headlight",
+                                                    "lensflare-fs8", "VehicleIcons"};
+                for (std::uint32_t t = 0; t < d.count(); ++t)
+                    for (const char* w : kWant)
+                        if (_stricmp(d.texture(t).name, w) == 0) {
+                            bool have = false;
+                            for (rw::Texture* x : g_sfx_tex) have = have || _stricmp(x->name, w) == 0;
+                            if (!have)
+                                if (rw::Texture* x = static_cast<rw::Texture*>(TextureFromTxdTexture(d.texture(t))))
+                                    g_sfx_tex.push_back(x);
+                        }
+            }
+        }
+    }
+    for (rw::Texture* t : g_sfx_tex)
+        if (_stricmp(t->name, name) == 0) return t;
+    return nullptr;
+}
+
+// A batch of any size (RpPTank matrix + colour particles, constant UV): the DrawBatch recipe.
+void DrawParticles(const std::vector<Particle>& ps, rw::Texture* tex, int src, int dst) {
+    if (ps.empty() || !tex) return;
+    std::vector<rw::RWDEVICE::Im3DVertex> v(ps.size() * 4);
+    std::vector<rw::uint16> idx(ps.size() * 6);
+    for (std::size_t i = 0; i < ps.size(); ++i) {
+        const M& m = ps[i].m;
+        float A[3], B[3];
+        for (int k = 0; k < 3; ++k) {
+            A[k] = m.u[k] * 0.5f + m.r[k] * 0.5f;
+            B[k] = m.r[k] * 0.5f - m.u[k] * 0.5f;
+        }
+        const float P[4][3] = {
+            {m.p[0] + B[0], m.p[1] + B[1], m.p[2] + B[2]},
+            {m.p[0] - A[0], m.p[1] - A[1], m.p[2] - A[2]},
+            {m.p[0] - B[0], m.p[1] - B[1], m.p[2] - B[2]},
+            {m.p[0] + A[0], m.p[1] + A[1], m.p[2] + A[2]}};
+        const float UV[4][2] = {{0.f, 1.f}, {1.f, 1.f}, {1.f, 0.f}, {0.f, 0.f}};
+        for (int q = 0; q < 4; ++q) {
+            rw::RWDEVICE::Im3DVertex& o = v[i * 4 + q];
+            o.setX(P[q][0]); o.setY(P[q][1]); o.setZ(P[q][2]);
+            o.setNormalX(0.f); o.setNormalY(0.f); o.setNormalZ(0.f);
+            o.setColor(ps[i].rgba[0], ps[i].rgba[1], ps[i].rgba[2], ps[i].rgba[3]);
+            o.setU(UV[q][0]); o.setV(UV[q][1]);
+        }
+        const rw::uint16 s = static_cast<rw::uint16>(i * 4);
+        const rw::uint16 tri[6] = {s, static_cast<rw::uint16>(s + 1), static_cast<rw::uint16>(s + 2),
+                                   s, static_cast<rw::uint16>(s + 2), static_cast<rw::uint16>(s + 3)};
+        for (int k = 0; k < 6; ++k) idx[i * 6 + k] = tri[k];
+    }
+    rw::SetRenderStatePtr(rw::TEXTURERASTER, tex->raster);
+    rw::SetRenderState(rw::TEXTUREFILTER, tex->getFilter());
+    rw::SetRenderState(rw::TEXTUREADDRESSU, tex->getAddressU());
+    rw::SetRenderState(rw::TEXTUREADDRESSV, tex->getAddressV());
+    rw::SetRenderState(rw::VERTEXALPHA, 1);
+    rw::SetRenderState(rw::SRCBLEND, src);
+    rw::SetRenderState(rw::DESTBLEND, dst);
+    rw::im3d::Transform(v.data(), static_cast<rw::int32>(v.size()), nullptr, rw::im3d::VERTEXUV);
+    static const float kIdent[16] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
+    if (rw_drawrec_pre) {
+        DrawRec::SetNextGeometry(v.data(), sizeof(v[0]), idx.data(), static_cast<unsigned>(idx.size()));
+        rw_drawrec_pre(tex->name, kIdent);
+    }
+    rw::im3d::RenderIndexedPrimitive(rw::PRIMTYPETRILIST, idx.data(), static_cast<rw::int32>(idx.size()));
+    if (rw_drawrec_post) rw_drawrec_post();
+    rw::im3d::End();
+}
+
+struct ObjShadow {
+    float sphere[4] = {};   // the atomic's world bounding sphere
+    bool  flag = false;     // DAT_006cad50[i]
+    M     m{};              // DAT_006c3670[i] (the particle matrix)
+    int   state = 0;        // DAT_006c3350[i] (FUN_004c1b40: 0 out, 1 boundary, 2 in)
+    int   prev = 0;         // DAT_006c3030[i]
+};
+std::vector<ObjShadow> g_objshad;
+std::uint32_t          g_objshad_frame = 0;
+
+// FUN_004726f0 @ 0x004726f0: (p.z q.z + p.x q.x) + p.y q.y, clamped to [-1 ([0x5cc33c]), 1 ([0x5cc320])].
+float DotClamp(const float* p, const float* q) {
+    float v = p[2] * q[2] + p[0] * q[0];
+    v = v + p[1] * q[1];
+    if (v < -1.0f) return -1.0f;
+    if (1.0f < v) v = 1.0f;
+    return v;
+}
+// FUN_00547230 @ 0x00547230: one-sided ray / triangle (det > [0x5e4574] 1e-8, the bounds scaled by
+// det * [0x5cea1c] -1e-5); t / det on a hit.
+bool RayTri(const float* o, const float* d, const float* v0, const float* v1, const float* v2, float* t) {
+    const float e1[3] = {v1[0] - v0[0], v1[1] - v0[1], v1[2] - v0[2]};
+    const float e2[3] = {v2[0] - v0[0], v2[1] - v0[1], v2[2] - v0[2]};
+    const float p12 = d[1] * e2[2] - d[2] * e2[1];
+    const float p14 = d[2] * e2[0] - e2[2] * d[0];
+    const float p11 = e2[1] * d[0] - d[1] * e2[0];
+    const float det = p11 * e1[2] + p12 * e1[0] + p14 * e1[1];
+    if (!(1e-8f < det)) return false;
+    std::uint32_t kb = 0xb727c5acu;                   // _DAT_005cea1c
+    float k;
+    std::memcpy(&k, &kb, sizeof k);
+    const float lo = det * k, hi = det - lo;
+    const float s[3] = {o[0] - v0[0], o[1] - v0[1], o[2] - v0[2]};
+    const float u = s[2] * p11 + s[0] * p12 + s[1] * p14;
+    if (u < lo || hi < u) return false;
+    const float q11 = s[1] * e1[2] - s[2] * e1[1];
+    const float q3 = s[2] * e1[0] - s[0] * e1[2];
+    const float q1 = s[0] * e1[1] - s[1] * e1[0];
+    const float v = d[2] * q1 + q11 * d[0] + d[1] * q3;
+    if (!(lo <= v) || hi < u + v) return false;
+    const float tt = q1 * e2[2] + q11 * e2[0] + q3 * e2[1];
+    if (!(lo <= tt) || hi < tt) return false;
+    *t = tt / det;
+    return true;
+}
+// RW row-vector transform v * M (RwV3dTransformPoints, FUN_004c3df0 -> RwGlobals +0x14).
+void XformPoint(const float* m16, const float* v, float* o) {
+    for (int k = 0; k < 3; ++k) o[k] = v[0] * m16[0 + k] + v[1] * m16[4 + k] + v[2] * m16[8 + k] + m16[12 + k];
+}
+// RwMatrixInvert (FUN_004c4dc0 @ 0x004c4dc0) for a general affine LTM (the light frame's LTM flags
+// read 0 on the original: not identity, not orthonormal, so FUN_004c4eb0's general path).
+// [UNCERTAIN U-9710] FUN_004c4eb0 is not transcribed: cofactor inverse here (equal in exact arithmetic).
+void InvertAffine(const float* a, float* o) {
+    const float r[9] = {a[0], a[1], a[2], a[4], a[5], a[6], a[8], a[9], a[10]};
+    const double c00 = (double)r[4] * r[8] - (double)r[5] * r[7], c01 = (double)r[5] * r[6] - (double)r[3] * r[8],
+                 c02 = (double)r[3] * r[7] - (double)r[4] * r[6];
+    const double det = r[0] * c00 + r[1] * c01 + r[2] * c02;
+    const double id = det != 0.0 ? 1.0 / det : 0.0;
+    float ir[9];
+    ir[0] = (float)(c00 * id); ir[1] = (float)(((double)r[2] * r[7] - (double)r[1] * r[8]) * id);
+    ir[2] = (float)(((double)r[1] * r[5] - (double)r[2] * r[4]) * id);
+    ir[3] = (float)(c01 * id); ir[4] = (float)(((double)r[0] * r[8] - (double)r[2] * r[6]) * id);
+    ir[5] = (float)(((double)r[2] * r[3] - (double)r[0] * r[5]) * id);
+    ir[6] = (float)(c02 * id); ir[7] = (float)(((double)r[1] * r[6] - (double)r[0] * r[7]) * id);
+    ir[8] = (float)(((double)r[0] * r[4] - (double)r[1] * r[3]) * id);
+    for (int k = 0; k < 16; ++k) o[k] = 0.f;
+    o[0] = ir[0]; o[1] = ir[1]; o[2] = ir[2];
+    o[4] = ir[3]; o[5] = ir[4]; o[6] = ir[5];
+    o[8] = ir[6]; o[9] = ir[7]; o[10] = ir[8];
+    for (int k = 0; k < 3; ++k) o[12 + k] = -(a[12] * o[0 + k] + a[13] * o[4 + k] + a[14] * o[8 + k]);
+    o[15] = 1.f;
+}
+
+// FUN_00487280 @ 0x00487280 for one static object. The original runs it at the race reset
+// (FUN_00480100, triangle cache 0x006c74f8 + i*0x28 cleared, so through the world query) and again
+// when the object first turns visible on a parity frame (FUN_00481a30, cache filled, so through
+// FUN_00547230 on the cached triangle). Both runs see the same inputs here, so the drawn matrix is the
+// second run's. Returns DAT_006cad50[i].
+bool ObjShadowMatrix(const ObjShadowIn& in, const float* L, const float* Linv, const ObjShadowSoup& soup,
+                     M* out) {
+    const float* at = L + 8;
+    const float start[3] = {in.ltm[12], in.ltm[13], in.ltm[14]};            // param_2 + 0x30
+    const float dl[3] = {2.0f * at[0], at[1] * 2.0f, at[2] * 2.0f};        // [0x5cf47c] 2.0
+    const float end[3] = {dl[0] + start[0], start[1] + dl[1], start[2] + dl[2]};
+    // ---- the world query, FUN_00538c80(DAT_0080332c, line, FUN_00487180, data) ----------------
+    // [UNCERTAIN U-9710] RW's BSP walk stops at the FIRST intersection its sector order finds
+    // (FUN_00487180 returns 0); the soup here takes the nearest, two-sided (CollisionPrelitSample's rule).
+    const float dd[3] = {end[0] - start[0], end[1] - start[1], end[2] - start[2]};
+    float best = 2.f;
+    std::size_t bi = static_cast<std::size_t>(-1);
+    for (std::size_t i = 0; i < soup.ntri; ++i) {
+        const float* v0 = &soup.verts[soup.tris[i * 3 + 0] * 3];
+        const float* v1 = &soup.verts[soup.tris[i * 3 + 1] * 3];
+        const float* v2 = &soup.verts[soup.tris[i * 3 + 2] * 3];
+        const float e1[3] = {v1[0] - v0[0], v1[1] - v0[1], v1[2] - v0[2]};
+        const float e2[3] = {v2[0] - v0[0], v2[1] - v0[1], v2[2] - v0[2]};
+        const float p[3] = {dd[1] * e2[2] - dd[2] * e2[1], dd[2] * e2[0] - dd[0] * e2[2], dd[0] * e2[1] - dd[1] * e2[0]};
+        const float det = e1[0] * p[0] + e1[1] * p[1] + e1[2] * p[2];
+        if (det > -1e-12f && det < 1e-12f) continue;
+        const float inv = 1.0f / det;
+        const float s[3] = {start[0] - v0[0], start[1] - v0[1], start[2] - v0[2]};
+        const float u = (s[0] * p[0] + s[1] * p[1] + s[2] * p[2]) * inv;
+        if (u < 0.0f || u > 1.0f) continue;
+        const float q[3] = {s[1] * e1[2] - s[2] * e1[1], s[2] * e1[0] - s[0] * e1[2], s[0] * e1[1] - s[1] * e1[0]};
+        const float w = (dd[0] * q[0] + dd[1] * q[1] + dd[2] * q[2]) * inv;
+        if (w < 0.0f || u + w > 1.0f) continue;
+        const float t = (e2[0] * q[0] + e2[1] * q[1] + e2[2] * q[2]) * inv;
+        if (t < 0.0f || t > 1.0f || t >= best) continue;
+        best = t; bi = i;
+    }
+    if (bi == static_cast<std::size_t>(-1)) return false;                  // local_88 == 0
+    // FUN_0045c110 @ 0x0045c110 on the hit's material: colour 0xff010101 or 0xffff0080 -> 1 (no
+    // shadow). [UNCERTAIN U-9710] the 0xffNN3cff / 0xffNNffff codes read the runtime table
+    // DAT_00691508 (FUN_00472550); none of them is treated as blocking here.
+    const std::uint32_t rgba = soup.tri_rgba ? soup.tri_rgba[bi] : 0u;
+    if (rgba == 0xff010101u || rgba == 0xffff0080u) return false;
+    const float* v0 = &soup.verts[soup.tris[bi * 3 + 0] * 3];
+    const float* v1 = &soup.verts[soup.tris[bi * 3 + 1] * 3];
+    const float* v2 = &soup.verts[soup.tris[bi * 3 + 2] * 3];
+    // RpCollisionTriangle (FUN_00487180's param_3, copied to the cache): normal = the LUT-normalized
+    // (v1 - v0) x (v2 - v0), point = v0, vertices v0, v1, v2 (the witness verify/rfx2_20261016,
+    // 23/23 TRAINING caches)
+    float n[3];
+    {
+        const float e1[3] = {v1[0] - v0[0], v1[1] - v0[1], v1[2] - v0[2]};
+        const float e2[3] = {v2[0] - v0[0], v2[1] - v0[1], v2[2] - v0[2]};
+        const float c[3] = {e1[1] * e2[2] - e1[2] * e2[1], e1[2] * e2[0] - e1[0] * e2[2], e1[0] * e2[1] - e1[1] * e2[0]};
+        Math::LutNormalize(n, c);
+    }
+    // ---- the hit point (local_94 / local_90 / local_8c) ------------------------------------------
+    float hp[3];
+    float t2 = 0.f;
+    if (RayTri(start, dl, v0, v1, v2, &t2)) {
+        // the cached-triangle path, 0x004872f9.. (FUN_00547230 hit): (x * [0x5ce18c] 0.02 + d * t) + o,
+        // with [0x5cc328] 0.01 added in y
+        hp[0] = n[0] * 0.02f + (end[0] - start[0]) * t2 + start[0];
+        hp[1] = n[1] * 0.02f + 0.01f + (end[1] - start[1]) * t2 + start[1];
+        hp[2] = n[2] * 0.02f + (end[2] - start[2]) * t2 + start[2];
+    } else {
+        // FUN_00487180 @ 0x00487180: (end - start) * t + start, then + n * 0.02
+        for (int k = 0; k < 3; ++k) hp[k] = (end[k] - start[k]) * best + start[k];
+        for (int k = 0; k < 3; ++k) hp[k] = n[k] * 0.02f + hp[k];
+    }
+    // ---- LAB_0048761d: FUN_0045c030 @ 0x0045c030 (right = |v0 - v1|, up = |n x (v0 - v1)|, at = n) ----
+    M m{};
+    {
+        const float e[3] = {v0[0] - v1[0], v0[1] - v1[1], v0[2] - v1[2]};
+        const float c[3] = {e[2] * n[1] - e[1] * n[2], e[0] * n[2] - e[2] * n[0], e[1] * n[0] - e[0] * n[1]};
+        Math::LutNormalize(m.r, e);
+        Math::LutNormalize(m.u, c);
+        std::memcpy(m.a, n, sizeof(m.a));
+        m.p[0] = m.p[1] = m.p[2] = 0.f;                // FUN_004c51a0(m, (0,0,0), POSTCONCAT)
+    }
+    // P = light up + hit; ratio = clamp(n . (v0 - P)) / clamp(n . light at) (0 -> [0x5cc328] 0.01)
+    const float* lu = L + 4;
+    const float P[3] = {lu[0] + hp[0], lu[1] + hp[1], lu[2] + hp[2]};
+    const float w[3] = {v0[0] - P[0], v0[1] - P[1], v0[2] - P[2]};
+    const float r1 = DotClamp(n, w);
+    float r2 = DotClamp(n, at);
+    if (r2 == 0.0f) r2 = 0.01f;
+    const float ratio = r1 / r2;
+    const float Q[3] = {at[0] * ratio + P[0], ratio * at[1] + P[1], ratio * at[2] + P[2]};
+    const float D[3] = {Q[0] - hp[0], Q[1] - hp[1], Q[2] - hp[2]};
+    Math::LutNormalize(m.r, D);                         // FUN_004c39b0(param_4, &local_d0)
+    m.u[0] = m.a[1] * m.r[2] - m.r[1] * m.a[2];         // up = at x right (0x0048771b..)
+    m.u[1] = m.a[2] * m.r[0] - m.a[0] * m.r[2];
+    m.u[2] = m.a[0] * m.r[1] - m.a[1] * m.r[0];
+    // the eight bbox corners through the object LTM and the inverse light LTM (FUN_004c3df0 twice)
+    const float* b = in.bbox;
+    const float C[8][3] = {{b[3], b[4], b[5]}, {b[0], b[4], b[5]}, {b[0], b[1], b[5]}, {b[3], b[1], b[5]},
+                           {b[3], b[4], b[2]}, {b[0], b[4], b[2]}, {b[0], b[1], b[2]}, {b[3], b[1], b[2]}};
+    float maxy = -1000.f, miny = 1000.f, maxx = -1000.f, minx = 1000.f;   // [0x5cda84] / [0x5cc9fc]
+    for (int c = 0; c < 8; ++c) {
+        float wv[3], lv[3];
+        XformPoint(in.ltm, C[c], wv);
+        XformPoint(Linv, wv, lv);
+        if (maxy < lv[1]) maxy = lv[1];
+        if (lv[1] < miny) miny = lv[1];
+        if (maxx < lv[0]) maxx = lv[0];
+        if (lv[0] < minx) minx = lv[0];
+    }
+    // scale (span y / tan(acos(light at . right)), span x * [0x5cc9ac] 1.4, 1), rwCOMBINEPRECONCAT
+    float cosv = at[2] * m.r[2] + at[0] * m.r[0];
+    cosv = cosv + at[1] * m.r[1];
+    const float tn = static_cast<float>(std::tan(std::acos(static_cast<double>(cosv))));
+    const float sx = (maxy - miny) / tn;
+    const float sy = (maxx - minx) * 1.4f;
+    for (int k = 0; k < 3; ++k) { m.r[k] *= sx; m.u[k] *= sy; }
+    // translate (POSTCONCAT) by hit + (sx * [0x5cc56c] 0.1) * scaled right
+    const float k1 = sx * 0.1f;
+    for (int k = 0; k < 3; ++k) m.p[k] = hp[k] + k1 * m.r[k];
+    *out = m;
+    return true;
+}
+
+// ---- [rfx2] the Headlight sprites (C09) -------------------------------------------------------
+float g_lp[8][3] = {};
+bool  g_lp_have[8] = {};
+
+// RwV3dLength (FUN_004c3ac0 @ 0x004c3ac0): (z z + y y) + x x through the RW sqrt table.
+float LutLength(const float* v) {
+    float s = v[2] * v[2] + v[1] * v[1];
+    s = s + v[0] * v[0];
+    return Math::LutSqrt(s);
+}
+
+// One record of the 0x2c-byte list at 0x0089bea0 (FUN_00412cf0 @ 0x00412cf0).
+struct HlRec { float pos[3]; float size; std::uint8_t rgba[4]; };
+
+// FUN_00412cf0: pos = (part - cam) * fade + part, size = |part - cam| * [0x5cc9a4] 0.025 + [0x5cc9a0]
+// 0.05, alpha = ftol(v * v * [0x5cd04c] 255 * scale) with v = min(clamp(at . camera at), 0)
+// (0x00412d74..0x00412d86), colour rgb from the caller's 4-byte array.
+void HlRecord(std::vector<HlRec>& out, const float* ppos, const float* pat, const float* cam_pos,
+              const float* cam_at, float scale, float fade, const std::uint8_t* rgb) {
+    if (out.size() >= 0x7f) return;
+    const float d[3] = {ppos[0] - cam_pos[0], ppos[1] - cam_pos[1], ppos[2] - cam_pos[2]};
+    const float dist = LutLength(d);
+    float v = DotClamp(pat, cam_at);
+    if (!(v <= 0.0f)) v = 0.0f;
+    HlRec r;
+    r.pos[0] = d[0] * fade + ppos[0];
+    r.pos[1] = d[1] * fade + ppos[1];
+    r.pos[2] = d[2] * fade + ppos[2];
+    r.size = dist * 0.025f + 0.05f;
+    r.rgba[0] = rgb[0]; r.rgba[1] = rgb[1]; r.rgba[2] = rgb[2];
+    float a = v * v;
+    a = a * 255.0f;
+    a = a * scale;
+    r.rgba[3] = FtolByte(a);
+    out.push_back(r);
+}
+
+void DrawHeadlights(rw::Camera* cam) {
+    if (!RaceFx_HeadlightEnabled() || !cam || !cam->getFrame() || !cam->frameBuffer) return;
+    // the camera frame's modelling matrix (FUN_00467210(0): frame + 0x10); the race camera is a
+    // root frame, so this is its LTM too (witness: modelling == LTM)
+    const rw::Matrix& cm = cam->getFrame()->matrix;
+    const float cam_pos[3] = {cm.pos.x, cm.pos.y, cm.pos.z};
+    const float cam_at[3] = {cm.at.x, cm.at.y, cm.at.z};
+    static const std::uint8_t kWhite[3] = {0xff, 0xff, 0xff};    // local_78 (0x00412f62..)
+    static const std::uint8_t kRed[3] = {0xff, 0x00, 0x00};      // local_74 / local_30
+    std::vector<HlRec> recs;
+    // ---- FUN_00412f30 @ 0x00412f30, per car slot 0..DAT_008a94d0-1 (FUN_0040e340: 4 here) ----
+    for (int i = 0; i < 4; ++i) {
+        if (!g_hl_have[i]) continue;
+        const CarFxInput& c = g_hl_cars[i];
+        const M body = FromD3D(c.body);
+        // fade DAT_005f2a4c from the vehicle record position (FUN_0046d4a0 -> +0x30) to the camera:
+        // |d| * [0x5cc32c] 0.5 - [0x5cc320] 1.0, then -0.05 above [0x5cd054] -0.05, -1.0 below -1
+        // [UNCERTAIN U-9711] the vehicle record's +0x30 position is stood in by the car clump root
+        // (they differ by the render offsets; the fade is -0.05 whenever the car is 2+ units away).
+        const float dc[3] = {c.root[12] - cam_pos[0], c.root[13] - cam_pos[1], c.root[14] - cam_pos[2]};
+        float fade = LutLength(dc) * 0.5f - 1.0f;
+        if (fade <= -0.05f) { if (fade < -1.0f) fade = -1.0f; } else fade = -0.05f;
+        // flags rec+0x294 (DAT_0063dc74 + i*0x2ac): 0x10 / 0x20 / 0x400 are never set by the
+        // standalone (U-9706), so FUN_0041f090 / FUN_0041f0d0 read 0
+        auto part = [&](int k, bool neg, float scale, const std::uint8_t* rgb) {
+            if (!g_lp_have[k]) return;                                 // FUN_0041f1c0 == 0
+            const float* o = g_lp[k];
+            float p[3], a[3];
+            for (int q = 0; q < 3; ++q) {
+                p[q] = body.p[q] + o[0] * body.r[q] + o[1] * body.u[q] + o[2] * body.a[q];
+                a[q] = neg ? body.a[q] * -1.0f : body.a[q];           // [0x5cc33c] -1.0
+            }
+            HlRecord(recs, p, a, cam_pos, cam_at, scale, fade, rgb);
+        };
+        // the brake lights 0x39 / 0x3a when the controller's brake byte is set (0x00413035..)
+        if (c.brake) { part(6, true, 1.0f, kRed); part(7, true, 1.0f, kRed); }
+        // DAT_0063bc44[i] (rec+0x294 & 0x40): headlights 0x19, 0x1a, 0x1c, 0x1b, then the tail
+        // lights 0x37 / 0x38 at 0x3e800000 = 0.25
+        if (c.lights) {
+            for (int k = 0; k < 4; ++k) part(k, false, 1.0f, kWhite);
+            part(4, true, 0.25f, kRed); part(5, true, 0.25f, kRed);
+        }
+    }
+    if (recs.empty()) return;
+    // ---- FUN_00413a00 @ 0x00413a00 -> FUN_004128f0 @ 0x004128f0 (param 0x3fcccccd = 1.6) per record ----
+    // camera space = the record through the camera's viewMatrix (camera + 0x20): RW's view matrix
+    // is the inverse LTM with x' = -0.5 * recipViewWindow.x * x + 0.5 * z (y likewise) plus the view
+    // offset, z' = z. [UNCERTAIN U-9711] that relation is MEASURED (camera_probe --fx-out, City: the
+    // formula equals the original's viewMatrix to 5.7e-6), RW's camera sync is not transcribed.
+    float Linv[16];
+    {
+        float L[16];
+        const rw::Matrix* ltm = cam->getFrame()->getLTM();
+        L[0] = ltm->right.x; L[1] = ltm->right.y; L[2] = ltm->right.z; L[3] = 0.f;
+        L[4] = ltm->up.x;    L[5] = ltm->up.y;    L[6] = ltm->up.z;    L[7] = 0.f;
+        L[8] = ltm->at.x;    L[9] = ltm->at.y;    L[10] = ltm->at.z;   L[11] = 0.f;
+        L[12] = ltm->pos.x;  L[13] = ltm->pos.y;  L[14] = ltm->pos.z;  L[15] = 1.f;
+        InvertAffine(L, Linv);
+    }
+    const float rvx = 1.0f / cam->viewWindow.x, rvy = 1.0f / cam->viewWindow.y;
+    float V[16];
+    for (int r = 0; r < 4; ++r) {
+        const float x = Linv[r * 4 + 0], y = Linv[r * 4 + 1], z = Linv[r * 4 + 2];
+        V[r * 4 + 0] = -0.5f * rvx * x + 0.5f * z;
+        V[r * 4 + 1] = -0.5f * rvy * y + 0.5f * z;
+        V[r * 4 + 2] = z;
+        V[r * 4 + 3] = 0.f;
+    }
+    const float nearp = cam->nearPlane, farp = cam->farPlane;      // camera +0x80 / +0x84
+    const float zn = 0.0f, zf = 1.0f;                               // RwGlobals +0x18 / +0x1c (witness)
+    const float w = static_cast<float>(cam->frameBuffer->width);    // raster +0xc / +0x10
+    const float h = static_cast<float>(cam->frameBuffer->height);
+    std::vector<rw::RWDEVICE::Im2DVertex> vs;
+    std::vector<rw::uint16> idx;
+    for (const HlRec& r : recs) {
+        float c3[3];
+        for (int k = 0; k < 3; ++k) c3[k] = r.pos[0] * V[0 + k] + r.pos[1] * V[4 + k] + r.pos[2] * V[8 + k] + V[12 + k];
+        const float z = c3[2];
+        if (!(nearp < z && z < farp)) continue;
+        const float rz = 1.0f / z;                                  // [0x5cc320] / z
+        const float sx = rz * w * c3[0];
+        const float sy = rz * h * c3[1];
+        const float ip = 1.0f / 1.6f;
+        const float hw = (w / h) * w * ip * 0.8f * r.size * rz;      // [0x5cc9bc] 0.8
+        const float hh = ip * h * 0.8f * r.size * rz;
+        if (!(-hw < sx && sx < hw + w && -hh < sy && sy < hh + h)) continue;
+        float x0 = sx - hw, y0 = sy - hh, x1 = hw + sx, y1 = hh + sy;
+        // the clip to the raster with the uv pulled in: the record's uv +0x14..+0x20 are (1, 0, 1, 0)
+        // (FUN_00412cf0 0x00412dc7..0x00412ddb), so u0 = +0x18, u1 = +0x14, v0 = +0x20, v1 = +0x1c,
+        // and each clipped edge moves its coordinate by the clipped fraction of the full size
+        float u0 = 0.f, u1 = 1.f, v0 = 0.f, v1 = 1.f;
+        if (y0 < 0.0f) { v0 = 1.f - (1.f - 0.f) * (((hh + hh) - -y0) / (hh + hh)); y0 = 0.f; }
+        if (h < y1) { v1 = 1.f - (1.f - 0.f) * ((y1 - h) / (hh + hh)); y1 = h; }
+        if (w < x1) { u1 = 1.f - (1.f - 0.f) * ((x1 - w) / (hw + hw)); x1 = w; }
+        if (x0 < 0.0f) { u0 = 1.f - (1.f - 0.f) * (((hw + hw) - -x0) / (hw + hw)); x0 = 0.f; }
+        const float sz = (z - nearp) * (farp / z) * ((zf - zn) / (farp - nearp)) + zn;
+        const rw::uint16 b = static_cast<rw::uint16>(vs.size());
+        const float X[4] = {x0, x1, x0, x1}, Y[4] = {y0, y0, y1, y1};
+        const float U[4] = {u0, u1, u0, u1}, Vv[4] = {v0, v0, v1, v1};
+        for (int q = 0; q < 4; ++q) {
+            rw::RWDEVICE::Im2DVertex o;
+            o.setScreenX(X[q]); o.setScreenY(Y[q]); o.setScreenZ(sz);
+            o.setRecipCameraZ(rz);
+            o.setColor(r.rgba[0], r.rgba[1], r.rgba[2], r.rgba[3]);
+            o.setU(U[q], rz); o.setV(Vv[q], rz);
+            vs.push_back(o);
+        }
+        const rw::uint16 t[6] = {b, static_cast<rw::uint16>(b + 1), static_cast<rw::uint16>(b + 2),
+                                 static_cast<rw::uint16>(b + 2), static_cast<rw::uint16>(b + 1), static_cast<rw::uint16>(b + 3)};
+        for (int k = 0; k < 6; ++k) idx.push_back(t[k]);
+    }
+    if (vs.empty()) return;
+    rw::Texture* tex = SfxTexture("Headlight");
+    // ---- FUN_00413a40 @ 0x00413a40: raster DAT_0063bc54, filter 2, vertex alpha on, cull NONE, fog
+    // off, Z test on, ZWRITE off, blend 5 / 2; then ZWRITE on, cull and fog back, blend 5 / 6 ----
+    rw::int32 sv_cull = rw::GetRenderState(rw::CULLMODE);
+    rw::int32 sv_fog = rw::GetRenderState(rw::FOGENABLE);
+    rw::SetRenderStatePtr(rw::TEXTURERASTER, tex ? tex->raster : nullptr);
+    rw::SetRenderState(rw::TEXTUREFILTER, rw::Texture::LINEAR);
+    rw::SetRenderState(rw::VERTEXALPHA, 1);
+    rw::SetRenderState(rw::CULLMODE, rw::CULLNONE);
+    rw::SetRenderState(rw::FOGENABLE, 0);
+    rw::SetRenderState(rw::ZTESTENABLE, 1);
+    rw::SetRenderState(rw::ZWRITEENABLE, 0);
+    rw::SetRenderState(rw::SRCBLEND, rw::BLENDSRCALPHA);
+    rw::SetRenderState(rw::DESTBLEND, rw::BLENDONE);
+    static const float kIdent[16] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
+    if (rw_drawrec_pre) {
+        DrawRec::SetNextGeometry(vs.data(), sizeof(vs[0]), idx.data(), static_cast<unsigned>(idx.size()), true);
+        rw_drawrec_pre(tex ? tex->name : "Headlight", kIdent);
+    }
+    rw::im2d::RenderIndexedPrimitive(rw::PRIMTYPETRILIST, vs.data(), static_cast<rw::int32>(vs.size()),
+                                     idx.data(), static_cast<rw::int32>(idx.size()));
+    if (rw_drawrec_post) rw_drawrec_post();
+    rw::SetRenderState(rw::ZWRITEENABLE, 1);
+    rw::SetRenderState(rw::CULLMODE, sv_cull);
+    rw::SetRenderState(rw::FOGENABLE, sv_fog);
+    rw::SetRenderState(rw::SRCBLEND, rw::BLENDSRCALPHA);
+    rw::SetRenderState(rw::DESTBLEND, rw::BLENDINVSRCALPHA);
+}
+
+// ---- [rfx2] lensflare-fs8 ------------------------------------------------------------------
+// One camera-facing RpPTank particle (flags 0x10000087: position, 2D size, colour, 4-float uv).
+struct Bill { float p[3]; float sx, sy; std::uint8_t rgba[4]; float uv[4]; };
+struct LensEntry { int type; float pos[3]; float k; };
+std::vector<LensEntry> g_lens;
+int                    g_lens_bob = -1;
+bool                   g_lens_req = false;
+std::vector<Bill>      g_lens_small, g_lens_big;   // DAT_007030a8 / DAT_007030ac contents
+
+// FUN_00487e70 @ 0x00487e70's per-type element count (+0x10) and tables: sizes +0x20, colours +0x28,
+// uv indices +0x24 (0x007030b8 / 0x007030dc: BSS, read 0 on the original, witness). Values read from
+// the anchored binary: sizes 0x00614368 (2, 0.25, 0.4, 0.7, 0.95) and 0x0061442c (2, 0.25, 0.24, 0,
+// 0.9); colours (RwRGBA dwords) 0x00614388, 0x006143a8, 0x0061440c, 0x0061444c.
+struct LensType { int n; const float* sz; const std::uint32_t* col; };
+const float kLensSzA[5] = {2.0f, 0.25f, 0.4f, 0.7f, 0.95f};
+const float kLensSzB[5] = {2.0f, 0.25f, 0.24f, 0.0f, 0.9f};
+const std::uint32_t kLensCol2[1] = {0x301080ffu};
+const std::uint32_t kLensCol3[2] = {0x80ff8080u, 0xffffc8c8u};
+const std::uint32_t kLensCol7[3] = {0x804040ffu, 0x802020ffu, 0xc0ffffffu};
+const std::uint32_t kLensColC[2] = {0x401080ffu, 0xff1080ffu};
+bool LensTypeOf(int type, LensType* t) {
+    switch (type) {
+    case 2:   *t = {1, kLensSzA, kLensCol2}; return true;     // 0x00487efd
+    case 3:   *t = {2, kLensSzA, kLensCol3}; return true;     // 0x00487f23
+    case 7:   *t = {3, kLensSzB, kLensCol7}; return true;     // 0x00487fd9 -> 0x00488031
+    case 0xc: *t = {2, kLensSzB, kLensColC}; return true;     // 0x00488004
+    default:  return false;                                    // types not created on these tracks
+    }
+}
+// The uv table entry 0 at 0x00614260: (0, 0, 0.5, 1).
+const float kLensUv[4] = {0.0f, 0.0f, 0.5f, 1.0f};
+
+// FUN_00488e70 / FUN_004883b0 from this frame's camera frame modelling matrix (param_1).
+void LensBuild(const rw::Matrix& cm) {
+    g_lens_small.clear();
+    g_lens_big.clear();
+    // base = at * [0x5cc31c] 3.0 + pos (local_18..local_10 / local_24..local_1c)
+    const float base[3] = {cm.at.x * 3.0f + cm.pos.x, cm.at.y * 3.0f + cm.pos.y, cm.at.z * 3.0f + cm.pos.z};
+    for (std::size_t li = 0; li < g_lens.size(); ++li) {
+        const LensEntry& e = g_lens[li];
+        LensType t;
+        if (!LensTypeOf(e.type, &t)) continue;
+        // local_4c: 1.0 for a light without a frame (+0x2c == 0); FUN_00488320 @ 0x00488320 sets it
+        // to 1.0 again for type 0xc (0x00488331) and leaves types 2 / 3 / 7 alone; then * k, >= 0
+        float l = 1.0f * e.k;
+        if (l < 0.0f) l = 0.0f;
+        // ---- the small batch: every element at |d| * d/|d| + base (RwV3dNormalize, LUT) ----
+        {
+            const float d0[3] = {e.pos[0] - base[0], e.pos[1] - base[1], e.pos[2] - base[2]};
+            float dn[3];
+            const float len = Math::LutNormalize(dn, d0);
+            for (int i = 0; i < t.n; ++i) {
+                Bill b;
+                b.p[0] = len * dn[0] + base[0];
+                b.p[1] = len * dn[1] + base[1];
+                b.p[2] = len * dn[2] + base[2];
+                if (i == 4) {
+                    b.sx = (l * 10.0f + 2.0f) * t.sz[4] * l;           // [0x5cc55c] / [0x5cc574]
+                    b.sy = l * 0.5f * t.sz[4] * l;
+                } else {
+                    const float f = l + 1.0f;                          // [0x5cc320]
+                    b.sx = f * t.sz[i] * l;
+                    b.sy = f * t.sz[i] * l;
+                }
+                std::memcpy(b.rgba, &t.col[i], 4);                     // RwRGBA bytes r, g, b, a
+                std::memcpy(b.uv, kLensUv, sizeof(b.uv));
+                g_lens_small.push_back(b);
+            }
+        }
+        // ---- the big batch: the light mirrored in y (local_8 = -y), 16 particles stepping down by
+        // j * l * [0x5cc32c] 0.5, size (l + 0.5) * sz[0] * l, colour[0] with alpha (16 - j) * 8 ----
+        {
+            const float pm[3] = {e.pos[0], -e.pos[1], e.pos[2]};
+            const float d0[3] = {pm[0] - base[0], pm[1] - base[1], pm[2] - base[2]};
+            float dn[3];
+            const float len = Math::LutNormalize(dn, d0);
+            const float s = (l + 0.5f) * t.sz[0] * l;
+            std::uint8_t c[4];
+            std::memcpy(c, &t.col[0], 4);
+            for (int j = 0; j < 16; ++j) {
+                Bill b;
+                b.p[0] = len * dn[0] + base[0];
+                b.p[1] = static_cast<float>((static_cast<double>(len) * dn[1] + base[1]) -
+                                            static_cast<double>(j) * l * 0.5);
+                b.p[2] = len * dn[2] + base[2];
+                b.sx = s; b.sy = s;
+                b.rgba[0] = c[0]; b.rgba[1] = c[1]; b.rgba[2] = c[2];
+                b.rgba[3] = static_cast<std::uint8_t>((16 - j) * 8);
+                std::memcpy(b.uv, kLensUv, sizeof(b.uv));
+                g_lens_big.push_back(b);
+            }
+        }
+    }
+}
+
+// The RpPTank render of a camera-facing batch: FUN_00537fb0 @ 0x00537fb0 takes the current camera's
+// frame LTM, right' = -right, up' = up; FUN_00536e90 @ 0x00536e90 builds v0 = p - s.x/2 r' - s.y/2 u',
+// v1 = p + s.x/2 r' - s.y/2 u', v2 = p + s.x/2 r' + s.y/2 u', v3 = p - s.x/2 r' + s.y/2 u' (0.5 =
+// [0x5cc32c]); FUN_00537d70 @ 0x00537d70 the uv (u0,v1)(u1,v1)(u1,v0)(u0,v0); the colour on all four
+// (FUN_00537b20); indices (0,1,2)(0,2,3) (FUN_00536170); blend +0xa4 / +0xa8 = 5 / 2 (FUN_004881d0 /
+// FUN_004880a0), vertex alpha +0xac = 1.
+void DrawBills(const std::vector<Bill>& bs, rw::Camera* cam, rw::Texture* tex) {
+    if (bs.empty() || !tex || !cam || !cam->getFrame()) return;
+    const rw::Matrix* L = cam->getFrame()->getLTM();
+    const float R[3] = {-L->right.x, -L->right.y, -L->right.z};
+    const float U[3] = {L->up.x, L->up.y, L->up.z};
+    std::vector<rw::RWDEVICE::Im3DVertex> v(bs.size() * 4);
+    std::vector<rw::uint16> idx;
+    idx.reserve(bs.size() * 6);
+    // librw's im3d buffer holds up to NUMVERTICES; draw in chunks of 1024 particles (4096 vertices)
+    const std::size_t kChunk = 1024;
+    for (std::size_t i = 0; i < bs.size(); ++i) {
+        const Bill& b = bs[i];
+        const float hx = b.sx * 0.5f, hy = b.sy * 0.5f;
+        const float X[3] = {hx * R[0], hx * R[1], hx * R[2]};
+        const float Y[3] = {hy * U[0], hy * U[1], hy * U[2]};
+        const float P[4][3] = {
+            {(-X[0] - Y[0]) + b.p[0], (-X[1] - Y[1]) + b.p[1], (-X[2] - Y[2]) + b.p[2]},
+            {(X[0] - Y[0]) + b.p[0], (X[1] - Y[1]) + b.p[1], (X[2] - Y[2]) + b.p[2]},
+            {Y[0] + X[0] + b.p[0], Y[1] + X[1] + b.p[1], Y[2] + X[2] + b.p[2]},
+            {(Y[0] - X[0]) + b.p[0], (Y[1] - X[1]) + b.p[1], (Y[2] - X[2]) + b.p[2]}};
+        const float UVs[4][2] = {{b.uv[0], b.uv[3]}, {b.uv[2], b.uv[3]}, {b.uv[2], b.uv[1]}, {b.uv[0], b.uv[1]}};
+        for (int q = 0; q < 4; ++q) {
+            rw::RWDEVICE::Im3DVertex& o = v[i * 4 + q];
+            o.setX(P[q][0]); o.setY(P[q][1]); o.setZ(P[q][2]);
+            o.setNormalX(0.f); o.setNormalY(0.f); o.setNormalZ(0.f);
+            o.setColor(b.rgba[0], b.rgba[1], b.rgba[2], b.rgba[3]);
+            o.setU(UVs[q][0]); o.setV(UVs[q][1]);
+        }
+    }
+    rw::SetRenderStatePtr(rw::TEXTURERASTER, tex->raster);
+    rw::SetRenderState(rw::TEXTUREFILTER, rw::Texture::LINEAR);   // texture + 0x50 = 2 (0x004880fe)
+    rw::SetRenderState(rw::TEXTUREADDRESSU, tex->getAddressU());
+    rw::SetRenderState(rw::TEXTUREADDRESSV, tex->getAddressV());
+    rw::SetRenderState(rw::VERTEXALPHA, 1);
+    rw::SetRenderState(rw::SRCBLEND, rw::BLENDSRCALPHA);
+    rw::SetRenderState(rw::DESTBLEND, rw::BLENDONE);
+    static const float kIdent[16] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
+    // one draw for the whole batch (the original's single RpPTank render); librw's im3d buffer is
+    // sized for it when the batch fits (the big batch on City is 1104 particles = 4416 vertices)
+    (void)kChunk;
+    for (std::size_t i = 0; i < bs.size(); ++i) {
+        const rw::uint16 s = static_cast<rw::uint16>(i * 4);
+        const rw::uint16 tri[6] = {s, static_cast<rw::uint16>(s + 1), static_cast<rw::uint16>(s + 2),
+                                   s, static_cast<rw::uint16>(s + 2), static_cast<rw::uint16>(s + 3)};
+        for (int k = 0; k < 6; ++k) idx.push_back(tri[k]);
+    }
+    rw::im3d::Transform(v.data(), static_cast<rw::int32>(v.size()), nullptr, rw::im3d::VERTEXUV);
+    if (rw_drawrec_pre) {
+        DrawRec::SetNextGeometry(v.data(), sizeof(v[0]), idx.data(), static_cast<unsigned>(idx.size()));
+        rw_drawrec_pre(tex->name, kIdent);
+    }
+    rw::im3d::RenderIndexedPrimitive(rw::PRIMTYPETRILIST, idx.data(), static_cast<rw::int32>(idx.size()));
+    if (rw_drawrec_post) rw_drawrec_post();
+    rw::im3d::End();
+}
+
+// The small batch, FUN_004891f0 @ 0x004891f0 (FUN_00410b30, after FUN_0040bde0): ZWRITE off, Z test
+// on around the PTank render; cull NONE and fog off as recorded on the original at that point.
+void DrawLensSmall(rw::Camera* cam) {
+    if (!RaceFx_LensEnabled() || g_lens_small.empty()) return;
+    rw::int32 sv_cull = rw::GetRenderState(rw::CULLMODE);
+    rw::int32 sv_fog = rw::GetRenderState(rw::FOGENABLE);
+    rw::int32 sv_sb = rw::GetRenderState(rw::SRCBLEND), sv_db = rw::GetRenderState(rw::DESTBLEND);
+    rw::int32 sv_va = rw::GetRenderState(rw::VERTEXALPHA);
+    rw::SetRenderState(rw::ZWRITEENABLE, 0);
+    rw::SetRenderState(rw::ZTESTENABLE, 1);
+    rw::SetRenderState(rw::CULLMODE, rw::CULLNONE);
+    rw::SetRenderState(rw::FOGENABLE, 0);
+    DrawBills(g_lens_small, cam, SfxTexture("lensflare-fs8"));
+    rw::SetRenderState(rw::ZWRITEENABLE, 1);
+    rw::SetRenderState(rw::ZTESTENABLE, 1);
+    rw::SetRenderState(rw::CULLMODE, sv_cull);
+    rw::SetRenderState(rw::FOGENABLE, sv_fog);
+    rw::SetRenderState(rw::SRCBLEND, sv_sb);
+    rw::SetRenderState(rw::DESTBLEND, sv_db);
+    rw::SetRenderState(rw::VERTEXALPHA, sv_va);
+}
+
+}  // namespace
+
+bool RaceFx_LensEnabled() { static const bool on = !EnvOff("MASHED_LENSFLARE"); return on; }
+static bool g_lens_after_sky = false;
+bool RaceFx_LensAfterSky() { return g_lens_after_sky; }
+void RaceFx_SetLensLights(const LensLight* l, int n, int bob, bool after_sky) {
+    g_lens_after_sky = after_sky;
+    g_lens.clear();
+    g_lens_small.clear();
+    g_lens_big.clear();
+    g_lens_req = false;
+    for (int i = 0; l && i < n; ++i) g_lens.push_back({l[i].type, {l[i].pos[0], l[i].pos[1], l[i].pos[2]}, l[i].k});
+    g_lens_bob = bob;
+    if (std::FILE* f = std::fopen("log/librw_race.txt", "a")) {
+        int ne = 0;
+        for (const LensEntry& e : g_lens) { LensType t; if (LensTypeOf(e.type, &t)) ne += t.n; }
+        std::fprintf(f, "[rfx2] lensflare lights: %d, elements %d (bob %d)\n", n, ne, bob);
+        if (std::getenv("MASHED_DBG_LENS"))
+            for (int i = 0; i < n; ++i)
+                std::fprintf(f, "  lens %d type %d pos (%.4f,%.4f,%.4f) k %.4f\n", i, l[i].type, l[i].pos[0],
+                             l[i].pos[1], l[i].pos[2], l[i].k);
+        std::fclose(f);
+    }
+}
+void RaceFx_SetLensLightK(int index, float k) {
+    if (index >= 0 && static_cast<std::size_t>(index) < g_lens.size()) g_lens[static_cast<std::size_t>(index)].k = k;
+}
+void RaceFx_LensRequestBuild() { g_lens_req = true; }
+void RaceFx_BeginFrame(void* rw_camera) {
+    rw::Camera* cam = static_cast<rw::Camera*>(rw_camera);
+    if (g_lens_req && cam && cam->getFrame()) {
+        LensBuild(cam->getFrame()->matrix);
+        g_lens_req = false;
+    }
+}
+void RaceFx_DrawLensBig(void* rw_camera, int mode) {
+    if (!RaceFx_LensEnabled() || g_lens_big.empty()) return;
+    rw::Camera* cam = static_cast<rw::Camera*>(rw_camera);
+    rw::int32 sv_zt = rw::GetRenderState(rw::ZTESTENABLE), sv_zw = rw::GetRenderState(rw::ZWRITEENABLE);
+    rw::int32 sv_cull = rw::GetRenderState(rw::CULLMODE), sv_fog = rw::GetRenderState(rw::FOGENABLE);
+    rw::int32 sv_sb = rw::GetRenderState(rw::SRCBLEND), sv_db = rw::GetRenderState(rw::DESTBLEND);
+    rw::int32 sv_va = rw::GetRenderState(rw::VERTEXALPHA);
+    if (mode == 0) {
+        // FUN_004492b0 @ 0x004492b0: RS 0xc 0, blend 5 / 6, RS 6 (Z test) 0, RS 8 (ZWRITE) 0, then
+        // the sky clump +0x100f0 and SkySecondaryDispatch; cull NONE and fog off as recorded
+        // librw keeps ZENABLE on (ZFUNC ALWAYS) when the Z test goes off while ZWRITE is on, which
+        // is the state the sky copies leave; turning the test off with ZWRITE already off gives
+        // the device ZENABLE 0, what the original records here (d3ddevice.cpp setDepthTest)
+        rw::SetRenderState(rw::ZTESTENABLE, 1);
+        rw::SetRenderState(rw::ZWRITEENABLE, 0);
+        rw::SetRenderState(rw::ZTESTENABLE, 0);
+        rw::SetRenderState(rw::CULLMODE, rw::CULLNONE);
+        rw::SetRenderState(rw::FOGENABLE, 0);
+    } else {
+        // FUN_0044b8f0 @ 0x0044b8f0: RS 8 (ZWRITE) 0, RS 6 (Z test) 1, SkySecondaryDispatch, RS 8 1;
+        // cull BACK and fog on from the world pass, as recorded
+        rw::SetRenderState(rw::ZWRITEENABLE, 0);
+        rw::SetRenderState(rw::ZTESTENABLE, 1);
+        rw::SetRenderState(rw::CULLMODE, rw::CULLBACK);
+    }
+    DrawBills(g_lens_big, cam, SfxTexture("lensflare-fs8"));
+    if (mode == 0) {
+        // back to the sky pass's device state (ZENABLE on, ZFUNC ALWAYS, ZWRITE off): ZWRITE on with
+        // the test off re-enables ZENABLE / ALWAYS, ZWRITE off then leaves it
+        rw::SetRenderState(rw::ZWRITEENABLE, 1);
+        rw::SetRenderState(rw::ZWRITEENABLE, 0);
+    }
+    rw::SetRenderState(rw::ZTESTENABLE, sv_zt);
+    rw::SetRenderState(rw::ZWRITEENABLE, mode == 0 ? sv_zw : 1);
+    rw::SetRenderState(rw::CULLMODE, sv_cull);
+    rw::SetRenderState(rw::FOGENABLE, sv_fog);
+    rw::SetRenderState(rw::SRCBLEND, sv_sb);
+    rw::SetRenderState(rw::DESTBLEND, sv_db);
+    rw::SetRenderState(rw::VERTEXALPHA, sv_va);
+}
+
+bool RaceFx_HeadlightEnabled() { static const bool on = !EnvOff("MASHED_HEADLIGHT"); return on; }
+void RaceFx_SetCarLightParts(const float pos[8][3], const bool have[8]) {
+    std::memcpy(g_lp, pos, sizeof(g_lp));
+    for (int k = 0; k < 8; ++k) g_lp_have[k] = have[k];
+}
+
+bool RaceFx_ObjShadowEnabled() { static const bool on = !EnvOff("MASHED_OBJ_SHADOW"); return on; }
+
+void RaceFx_SetObjShadows(const ObjShadowIn* objs, int n, const float light[16], const ObjShadowSoup& soup) {
+    g_objshad.clear();
+    if (!RaceFx_ObjShadowEnabled() || !objs || n <= 0 || !light) return;
+    float Linv[16];
+    InvertAffine(light, Linv);
+    g_objshad.resize(static_cast<std::size_t>(n));
+    int nflag = 0;
+    for (int i = 0; i < n; ++i) {
+        ObjShadow& o = g_objshad[static_cast<std::size_t>(i)];
+        std::memcpy(o.sphere, objs[i].sphere, sizeof(o.sphere));
+        o.flag = objs[i].casts && ObjShadowMatrix(objs[i], light, Linv, soup, &o.m);
+        nflag += o.flag ? 1 : 0;
+    }
+    if (std::FILE* f = std::fopen("log/librw_race.txt", "a")) {
+        std::fprintf(f, "[rfx2] object shadows: %d objects, %d with a shadow (DAT_006cad50)\n", n, nflag);
+        // MASHED_DBG_OBJSHAD=1 (DIAGNOSTIC, default unset): one line per object
+        if (std::getenv("MASHED_DBG_OBJSHAD"))
+            for (int i = 0; i < n; ++i) {
+                const ObjShadow& o = g_objshad[static_cast<std::size_t>(i)];
+                std::fprintf(f, "  obj %d pos (%.4f,%.4f,%.4f) flag %d m.p (%.5f,%.5f,%.5f) r (%.5f,%.5f,%.5f)\n", i,
+                             objs[i].ltm[12], objs[i].ltm[13], objs[i].ltm[14], o.flag ? 1 : 0,
+                             o.m.p[0], o.m.p[1], o.m.p[2], o.m.r[0], o.m.r[1], o.m.r[2]);
+            }
+        std::fclose(f);
+    }
+}
+
+void RaceFx_SetObjShadowFrame(std::uint32_t f101c) { g_objshad_frame = f101c; }
+
+static void DrawObjShadows(rw::Camera* cam) {
+    if (g_objshad.empty() || !RaceFx_ObjShadowEnabled()) return;
+    if (!cam || !cam->getFrame()) return;
+    // ---- FUN_00481a30 @ 0x00481a30, per object i ---------------------------------------------
+    // [UNCERTAIN U-9710] the original runs this in the tick, against the camera frame's modelling
+    // matrix (FUN_00467210(0)) and the frustum planes of the last RwCameraBeginUpdate; here both are
+    // this frame's render camera. DAT_007f0fd0 == 5's branch (0x00481ab3) is not taken in the modes
+    // the standalone runs; FUN_00484cf0 / FUN_004818d0 (physics registration, over-speed break) and
+    // the per-frame recompute of a moving object are not modelled (the objects are static).
+    const rw::Matrix& cm = cam->getFrame()->matrix;
+    // The tick's frustum is the last render's: FUN_0040fc00 @ 0x0040fc00 moves the camera frame
+    // (FUN_0040d470) before FUN_0040ce00 -> FUN_00481a30, but the camera's world planes
+    // (camera + 0x94, FUN_004c1b40) are only re-derived when the frame hierarchy syncs at the next
+    // RwCameraBeginUpdate. MASHED_OBJSHAD_PLANES=cur tests against this frame's planes instead.
+    static const bool s_cur_planes = [] {
+        const char* e = std::getenv("MASHED_OBJSHAD_PLANES");
+        return e && std::strcmp(e, "cur") == 0;
+    }();
+    static rw::FrustumPlane s_prev[6];
+    static bool s_have_prev = false;
+    const rw::FrustumPlane* planes = (s_have_prev && !s_cur_planes) ? s_prev : cam->frustumPlanes;
+    auto test = [&](const float* c, float r) -> int {    // FUN_004c1b40 @ 0x004c1b40
+        int res = 2;
+        for (int k = 0; k < 6; ++k) {
+            const rw::V3d& nn = planes[k].plane.normal;
+            const float dist = (nn.z * c[2] + nn.x * c[0] + nn.y * c[1]) - planes[k].plane.distance;
+            if (r < dist) return 0;
+            if (-r < dist) res = 1;
+        }
+        return res;
+    };
+    std::vector<Particle> ps;
+    for (std::size_t i = 0; i < g_objshad.size(); ++i) {
+        ObjShadow& o = g_objshad[i];
+        const bool par = (static_cast<std::uint32_t>(i) & 1u) == (g_objshad_frame & 1u);   // 0x00481a80..
+        const float dx = o.sphere[0] - cm.pos.x, dy = o.sphere[1] - cm.pos.y, dz = o.sphere[2] - cm.pos.z;
+        float d2 = dz * dz + dx * dx;
+        d2 = d2 + dy * dy;
+        if (!(d2 < 2500.0f)) continue;                                   // [0x5cd098]
+        o.prev = o.state;                                                // 0x00481ba8
+        if (par) o.state = test(o.sphere, o.sphere[3] * 10.0f);         // [0x5cc55c] 10.0
+        if (o.state != 2 && o.state != 1) continue;
+        if (!o.flag) continue;
+        // the angle gate 0x00481d03..0x00481d24: acos(clamp(at . (0,1,0) [0x6146fc])) < [0x5cd07c]
+        const float up[3] = {0.f, 1.f, 0.f};
+        const float a = static_cast<float>(std::acos(static_cast<double>(DotClamp(o.m.a, up))));
+        if (!(a < 0.785398185f)) continue;
+        if (ps.size() >= 50) continue;                                   // DAT_00703070 (witness: 50)
+        // colour (0, 0, 0, ftol((1 - a * [0x5cf234]) + 1) * [0x5cd6d4] 64)), FUN_00487d00
+        float al = 1.0f - a * 1.27323949f;
+        al = al + 1.0f;
+        al = al * 64.0f;
+        Particle p;
+        p.m = o.m;
+        p.rgba[0] = p.rgba[1] = p.rgba[2] = 0;
+        p.rgba[3] = FtolByte(al);
+        ps.push_back(p);
+    }
+    std::memcpy(s_prev, cam->frustumPlanes, sizeof(s_prev));
+    s_have_prev = true;
+    if (ps.empty()) return;
+    // ---- FUN_00487d70 @ 0x00487d70: cull NONE (RS 0x14 = 1), ZWRITE off, the batch's 5 / 6 blend
+    // (FUN_00487150 -> FUN_00476cb0(&DAT_00703068, 5, 6)); fog is still off from FUN_00410b30
+    // (0x00410b9f) and the device alpha test is GREATER / 0 as for the car FX.
+    rw::int32 sv_zw = rw::GetRenderState(rw::ZWRITEENABLE);
+    rw::int32 sv_zt = rw::GetRenderState(rw::ZTESTENABLE);
+    rw::int32 sv_fog = rw::GetRenderState(rw::FOGENABLE);
+    rw::int32 sv_cull = rw::GetRenderState(rw::CULLMODE);
+    rw::int32 sv_af = rw::GetRenderState(rw::ALPHATESTFUNC);
+    rw::int32 sv_ar = rw::GetRenderState(rw::ALPHATESTREF);
+    rw::int32 sv_va = rw::GetRenderState(rw::VERTEXALPHA);
+    rw::int32 sv_sb = rw::GetRenderState(rw::SRCBLEND);
+    rw::int32 sv_db = rw::GetRenderState(rw::DESTBLEND);
+    rw::SetRenderState(rw::ZTESTENABLE, 1);
+    rw::SetRenderState(rw::ZWRITEENABLE, 0);
+    rw::SetRenderState(rw::FOGENABLE, 0);
+    rw::SetRenderState(rw::CULLMODE, rw::CULLNONE);
+    rw::SetRenderState(rw::ALPHATESTFUNC, rw::ALPHAGREATER);
+    rw::SetRenderState(rw::ALPHATESTREF, 0);
+    DrawParticles(ps, SfxTexture("RWObjShad"), rw::BLENDSRCALPHA, rw::BLENDINVSRCALPHA);
+    rw::SetRenderState(rw::ZWRITEENABLE, sv_zw);
+    rw::SetRenderState(rw::ZTESTENABLE, sv_zt);
+    rw::SetRenderState(rw::FOGENABLE, sv_fog);
+    rw::SetRenderState(rw::CULLMODE, sv_cull);
+    rw::SetRenderState(rw::ALPHATESTFUNC, sv_af);
+    rw::SetRenderState(rw::ALPHATESTREF, sv_ar);
+    rw::SetRenderState(rw::VERTEXALPHA, sv_va);
+    rw::SetRenderState(rw::SRCBLEND, sv_sb);
+    rw::SetRenderState(rw::DESTBLEND, sv_db);
+}
+
+void RaceFx_DrawWorldFx(void* rw_camera) {
+    rw::Camera* cam = static_cast<rw::Camera*>(rw_camera);
+    DrawObjShadows(cam);     // FUN_0040bde0 -> FUN_00487de0 (first)
+    DrawLensSmall(cam);      // FUN_004891f0 (FUN_00410b30, after FUN_0040bde0)
+    DrawHeadlights(cam);     // FUN_00413a00 / FUN_00413a40 (FUN_00410b30, after FUN_0040bde0)
+}
+
+// =============================================================================================
 // [rfx part B] The in-race HUD (C08): team panels + start lights under the HUD camera.
 // =============================================================================================
 namespace {
@@ -406,6 +1264,19 @@ struct Panel {                       // the 0x16c-byte record at 0x0063cab8 + p*
     std::uint32_t flags = 0;         // +0x168
 };
 Panel        g_panel[2];
+// [rfx2] the non-team panels: 4 records of 0x74 bytes at 0x0063c8d0 (FUN_0041b450 @ 0x0041b450)
+struct NtPanel {
+    rw::Atomic* atom[17] = {};       // +0x00..+0x40, slot = geometry part code (FUN_0041ad60)
+    float       pos[3] = {};         // +0x50
+    rw::Clump*  clump = nullptr;     // +0x5c (its frame = +0x60)
+    int         idx = 0;             // +0x64
+    std::uint32_t flags = 0;         // +0x68
+    int         active = 0;          // +0x6c
+    float       t70 = 0.f;           // +0x70
+};
+NtPanel      g_nt[4];
+int          g_nt_cab0 = 0;          // DAT_0063cab0 (FUN_0041b540 increments, FUN_0041b510 zeroes)
+int          g_nt_prev = -1;         // the HUD state of the previous frame
 rw::Clump*   g_lights = nullptr;     // 0x0063d57c
 rw::Atomic*  g_latom[12] = {};       // 0x0063d55c (FUN_0041d8b0 zeroes 0x30 bytes)
 rw::Camera*  g_hud_cam = nullptr;    // DAT_006905b4
@@ -499,6 +1370,21 @@ void LoadHud(int width, int height) {
                              mt ? mt->color.blue : -1, mt ? mt->color.alpha : -1);
             }
             std::fclose(lf);
+        }
+    }
+    // [rfx2] FUN_0041b450 @ 0x0041b450: "panel0".."panel3" (strings 0x005cd1a8..0x005cd190, ".dff"
+    // appended by FUN_0042a5d0) into the records at 0x0063c8d0 (stride 0x74), idx = k (0x0041b4b6);
+    // FUN_0041ad60 files each of the 17 atomics at rec + 4 * part code (FUN_004b5190(atomic, 0, 0)).
+    static const char* const kNt[4] = {"PANEL0.DFF", "PANEL1.DFF", "PANEL2.DFF", "PANEL3.DFF"};
+    for (int k = 0; RaceFx_HudNonTeamEnabled() && k < 4; ++k) {
+        NtPanel& R = g_nt[k];
+        R.clump = ReadClump(panel, kNt[k]);
+        R.idx = k;
+        if (!R.clump) continue;
+        FORLIST(lnk, R.clump->atomics) {
+            rw::Atomic* a = rw::Atomic::fromClump(lnk);
+            const int part = PartCode(a);
+            if (part >= 0 && part < 17) R.atom[part] = a;
         }
     }
     // FUN_0041d8b0 @ 0x0041d8b0: "startlights.dff", atomics by part code into 0x0063d55c, and each
@@ -665,9 +1551,140 @@ void RenderLights(float t) {
     }
 }
 
+// ---- [rfx2] the non-team panels ----------------------------------------------------------------
+// RwFrameScale(atomic frame, (s, s, 1), rwCOMBINEREPLACE) (FUN_004c13e0 with combine 0).
+void ScaleAtomFrame(rw::Atomic* a, float sx, float sy, float sz) {
+    if (!a || !a->getFrame()) return;
+    rw::V3d s = {sx, sy, sz};
+    a->getFrame()->scale(&s, rw::COMBINEREPLACE);
+}
+// FUN_0041ae60 @ 0x0041ae60: the six colour badges, slot 7 + b for flag bit 1 << b (0x0041ae60..0x0041aef0).
+void NtScaleBadges(const NtPanel& R, float s0, float s1) {
+    for (int b = 0; b < 6; ++b)
+        if (R.flags & (1u << b)) ScaleAtomFrame(R.atom[7 + b], s0, s1, 1.0f);
+}
+// FUN_0041af00 @ 0x0041af00: slots 13 / 14 / 15 for flag bits 0x2000 / 0x4000 / 0x8000.
+void NtScaleMinus(const NtPanel& R, float s0, float s1) {
+    static const std::uint32_t kBit[3] = {0x2000u, 0x4000u, 0x8000u};
+    for (int b = 0; b < 3; ++b)
+        if (R.flags & kBit[b]) ScaleAtomFrame(R.atom[13 + b], s0, s1, 1.0f);
+}
+// The position table DAT_005f3304 (12 bytes per idx, read from the anchored binary).
+const float kNtPos[4][3] = {{0.48f, 0.35f, 1.0f}, {-0.48f, 0.35f, 1.0f},     // 0x3ef5c28f, 0x3eb33333
+                            {0.48f, -0.35f, 1.0f}, {-0.48f, -0.35f, 1.0f}};  // 0xbef5c28f, 0xbeb33333
+
+// FUN_0041b4d0 @ 0x0041b4d0 (race state 1) -> FUN_0041adb0 @ 0x0041adb0 per record, and
+// FUN_0041b510 @ 0x0041b510 (DAT_0063cab0 = 0) on the same path of FUN_004111c0.
+void NtSetup(const HudInputs& in) {
+    for (NtPanel& R : g_nt) {
+        R.flags = 0; R.active = 0;                                         // 0x0041adb3 / 0x0041adba
+        // 1 << (byte)DAT_007f1a1c[idx * 4] (the slot table's colour), shift masked to 5 bits
+        R.flags = 1u << (static_cast<std::uint8_t>(in.colour[R.idx & 3]) & 0x1fu);
+        // FUN_004b5260(slot 5 / slot 2, 0xff323232): the two score bars' material colour
+        for (int s : {5, 2}) {
+            rw::Atomic* a = R.atom[s];
+            rw::Geometry* g = a ? a->geometry : nullptr;
+            for (int m = 0; g && m < g->matList.numMaterials; ++m) {
+                rw::Material* mt = g->matList.materials[m];
+                mt->color.red = mt->color.green = mt->color.blue = 0x32; mt->color.alpha = 0xff;
+            }
+        }
+        if (R.idx < in.n4d0) R.active = 1;                                 // DAT_0063c89c = FUN_0040e340()
+    }
+    g_nt_cab0 = 0;
+}
+// FUN_0040dbd0 (state 4) -> FUN_0041b520 @ 0x0041b520 -> FUN_0041ae20 @ 0x0041ae20 per record.
+void NtState4() {
+    for (NtPanel& R : g_nt) {
+        std::memcpy(R.pos, kNtPos[R.idx & 3], sizeof(R.pos));
+        R.t70 = 0.f;
+        R.pos[0] = R.pos[0] + R.pos[0];
+    }
+}
+// FUN_0040fc00 -> FUN_0041b540 @ 0x0041b540 (each race tick), FUN_0041af50 @ 0x0041af50 per active record.
+void NtTick(const HudInputs& in) {
+    int lead[4], top[4], low[4], zero[4], dead[4];
+    const int thr = LeaderThreshold(in);
+    for (int k = 0; k < 4; ++k) lead[k] = (thr <= in.score[k]) ? 1 : 0;     // FUN_0040b930
+    int mx = 0;                                                            // FUN_0040b9a0(.., 1)
+    for (int k = 0; k < 4; ++k) if (in.alive[k] != 0 && mx < in.score[k]) mx = in.score[k];
+    for (int k = 0; k < 4; ++k) top[k] = (in.score[k] == mx) ? 1 : 0;
+    int mn = 99;                                                           // FUN_0040ba00
+    for (int k = 0; k < 4; ++k) if (in.score[k] < mn) mn = in.score[k];
+    for (int k = 0; k < 4; ++k) low[k] = (in.score[k] == mn) ? 1 : 0;
+    for (int k = 0; k < 4; ++k) zero[k] = (in.score[k] == 0) ? 1 : 0;      // FUN_0040b970
+    for (int k = 0; k < 4; ++k) dead[k] = (in.alive[k] == 0) ? 1 : 0;      // FUN_0040ba60
+    const int all_top = top[0] && top[1] && top[2] && top[3];              // DAT_0063c8c8
+    const int all_low = low[0] && low[1] && low[2] && low[3];              // DAT_0063c8a0
+    const int target = ScoreTarget(in);                                    // FUN_0040b890
+    for (NtPanel& R : g_nt) {
+        if (!R.active || !R.clump) continue;
+        const int i = R.idx & 3;
+        std::uint32_t f = R.flags;
+        f = lead[i] ? (f | 0x40u) : (f & ~0x40u);
+        f = (top[i] && !all_top) ? (f | 0x80u) : (f & ~0x80u);
+        f = (low[i] && !all_low) ? (f | 0x100u) : (f & ~0x100u);
+        f = zero[i] ? (f | 0x200u) : (f & ~0x200u);
+        f = dead[i] ? (f | 0x400u) : (f & ~0x400u);
+        if ((f & 0x40u) && (f & 0x100u)) f &= ~0x100u;
+        if (f & 0x400u) f &= 0xfffffc3fu;
+        const std::uint32_t was = f;
+        f &= 0xffff1fffu;                                                  // 0x0041b056
+        if (was & 0x400u) {
+            const int v = in.minus[i];                                     // FUN_0040b420(idx)
+            if (v == -2) f |= 0x8000u; else if (v == -1) f |= 0x4000u; else if (v == 0) f |= 0x2000u;
+            R.t70 = R.t70 + 1.0f;                                          // [0x5cc320]
+        }
+        if (target == 8) f = (f & ~0x1000u) | 0x800u;
+        else if (target == 12) f = (f & ~0x800u) | 0x1000u;
+        R.flags = f;
+        if (std::fabs(kNtPos[i][0]) < std::fabs(R.pos[0]))               // slide in by [0x5cd11c] 0.015
+            R.pos[0] = (i & 1) == 0 ? R.pos[0] - 0.015f : R.pos[0] + 0.015f;
+        FrameReplace(R.clump->getFrame(), R.pos, 1.125f);                  // 0x0041b0e9..0x0041b175, [0x5cd118]
+        // the score bar: (fild score / fidiv target, 1, 1), combine 0, slot 5 (0x800) or slot 2 (0x1000)
+        const float bar = static_cast<float>(static_cast<double>(in.score[i]) / static_cast<double>(target));
+        if (f & 0x800u) ScaleAtomFrame(R.atom[5], bar, 1.f, 1.f);
+        else if (f & 0x1000u) ScaleAtomFrame(R.atom[2], bar, 1.f, 1.f);
+        // the badges: sin(DAT_0063cab0 * 0.2) * 0.2 + 1.0 ([0x5cc9c0], [0x5cc320]) when 0x80 && !0x40
+        float s = 1.0f;
+        if ((f & 0x80u) && !(f & 0x40u)) {
+            double c = static_cast<double>(g_nt_cab0);
+            if (g_nt_cab0 < 0) c += 4294967296.0;                          // [0x5cc94c]
+            s = static_cast<float>(std::sin(c * static_cast<double>(0.2f)) * static_cast<double>(0.2f) + 1.0);
+        }
+        NtScaleBadges(R, s, s);
+        if (f & 0x400u) {
+            // x87: product and difference in extended, one rounding at the float store
+            float a = static_cast<float>(1.0 - static_cast<double>(R.t70) * static_cast<double>(0.04f));  // [0x5cd18c]
+            if (a <= 0.0f) a = 0.0f;
+            NtScaleBadges(R, a, a);
+            float b = static_cast<float>((static_cast<double>(R.t70) - 25.0) * static_cast<double>(0.04f));  // [0x5cc9e0]
+            if (b > 1.0f) b = 1.0f; else if (b <= 0.0f) b = 0.0f;
+            NtScaleMinus(R, b, b);
+        }
+    }
+    ++g_nt_cab0;
+}
+// FUN_0041b630 @ 0x0041b630 -> FUN_0041b340 @ 0x0041b340 per record with +0x6c != 0, in this order.
+void RenderNonTeam() {
+    for (const NtPanel& R : g_nt) {
+        if (!R.active || !R.clump) continue;
+        const std::uint32_t f = R.flags;
+        RenderAtom(R.atom[16]);
+        RenderAtom(R.atom[0]);
+        if (f & 0x800u) { RenderAtom(R.atom[5]); RenderAtom(R.atom[4]); if (f & 0x40u) RenderAtom(R.atom[6]); }
+        else if (f & 0x1000u) { RenderAtom(R.atom[2]); RenderAtom(R.atom[1]); if (f & 0x40u) RenderAtom(R.atom[3]); }
+        for (int b = 0; b < 6; ++b) if (f & (1u << b)) RenderAtom(R.atom[7 + b]);
+        if (f & 0x2000u) RenderAtom(R.atom[13]);
+        if (f & 0x4000u) RenderAtom(R.atom[14]);
+        if (f & 0x8000u) RenderAtom(R.atom[15]);
+    }
+}
+
 }  // namespace
 
 bool RaceFx_HudEnabled() { static const bool on = !EnvOff("MASHED_HUD3D"); return on; }
+bool RaceFx_HudNonTeamEnabled() { static const bool on = !EnvOff("MASHED_HUD_NONTEAM"); return on; }
 
 void RaceFx_SetHud(const HudInputs& in) { g_hud = in; g_hud_set = true; }
 
@@ -695,12 +1712,9 @@ void RaceFx_RenderHud(int width, int height) {
         c.world_up = true;
         in = c;
     }
-    // FUN_0040dfc0 @ 0x0040dfc0: FUN_00426ba0() == 0 or DAT_0063ba8c < 5 returns; 7 is the
-    // standings branch (the standalone's 2D overlay); 5 / 6 below.
-    if (!in.world_up || in.state < 5 || in.state > 6) return;
-    LoadHud(width, height);
-    if (!g_hud_ok) return;
-    bool panels = false;
+    // FUN_0040dfc0 @ 0x0040dfc0's branch (jump tables 0x0040e12c / 0x0040e140 / 0x0040e14c): the
+    // team panels FUN_0041c0c0, the non-team panels FUN_0041b630, or a per-mode HUD.
+    bool panels = false, nonteam = false;
     switch (in.round_type) {
     case 2: break;                                   // FUN_0041e850 (not ported)
     case 3: case 4: case 5:
@@ -708,17 +1722,39 @@ void RaceFx_RenderHud(int width, int height) {
             in.mode_fd0 == 8 || in.mode_fd0 == 10)
             break;                                   // FUN_0041ded0 / FUN_0041c300 / FUN_0041a3e0
         panels = in.team_play != 0;                  // default -> caseD_7
+        nonteam = in.team_play == 0;
         break;
     case 6: case 10:
         panels = in.team_play != 0 && in.mode_fd0 != 2;
+        nonteam = !panels;
         break;
     case 0xb: break;                                 // FUN_00403160 (not ported)
     default:
         panels = in.team_play != 0;
+        nonteam = in.team_play == 0;
         break;
     }
-    // [UNCERTAIN U-9704] the non-team panels FUN_0041b630 @ 0x0041b630 -> FUN_0041b340 and the
-    // per-mode HUDs above are not ported: nothing is drawn where the original draws them.
+    // [UNCERTAIN U-9704] the per-mode HUDs above are not ported: nothing is drawn where the
+    // original draws them.
+    // [rfx2] the non-team records' logic, ahead of the draw as FUN_004111c0's tick precedes
+    // FUN_00492e90: set-up at the round's first HUD frame (race state 1, FUN_0041b4d0 + FUN_0041b510),
+    // positions at the state-4 tick (FUN_0041b520; the stand-in countdown has no state 4, so its
+    // first state-5 frame after 3 stands for it), then FUN_0041b540 on every tick of states 3..11
+    // (FUN_0040fc00's callers in FUN_004111c0).
+    nonteam = nonteam && RaceFx_HudNonTeamEnabled();
+    if (nonteam) {
+        LoadHud(width, height);
+        const int prev = g_nt_prev;
+        if (prev < 0 || in.state < prev) NtSetup(in);
+        if (in.state == 4 || (in.state == 5 && prev == 3)) NtState4();
+        if (in.state >= 3 && in.state <= 11) NtTick(in);
+    }
+    g_nt_prev = in.state;
+    // FUN_0040dfc0 @ 0x0040dfc0: FUN_00426ba0() == 0 or DAT_0063ba8c < 5 returns; 7 is the
+    // standings branch (the standalone's 2D overlay); 5 / 6 below.
+    if (!in.world_up || in.state < 5 || in.state > 6) return;
+    LoadHud(width, height);
+    if (!g_hud_ok) return;
     const bool lights = in.round_type != 0xb;
     UpdatePanels(in);
     UpdateLights(in);
@@ -758,6 +1794,7 @@ void RaceFx_RenderHud(int width, int height) {
     if (panels)
         for (const Panel& P : g_panel)                // FUN_0041c0c0: 0x0063cab8, then +0x16c
             if (P.clump) RenderPanel(P);
+    if (nonteam) RenderNonTeam();                     // FUN_0041b630, before the lights (0x0040e0ee)
     if (lights) RenderLights(in.timer);
     rw::SetRenderState(rw::ZTESTENABLE, sv_zt);
     rw::SetRenderState(rw::ZWRITEENABLE, sv_zw);
