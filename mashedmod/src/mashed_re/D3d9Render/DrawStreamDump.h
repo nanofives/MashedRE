@@ -42,6 +42,10 @@ void DrawStreamDump_OnDraw(const void* verts, int count, int tex_handle,
                            void* bridge_ret);
 
 // ── Race 3D geometry-presence summary (camera-independent) ────────────────
+// [D1-residue R3, 2026-10-16] Only the categories TrackRenderer still draws through
+// D3D9 report here: "sky" and "copters". World, props and cars are submitted to
+// librw and have no tally (the "world"/"props"/"cars" categories of the deleted
+// D3D9 draws are gone; on the default build they were absent or all-zero anyway).
 // MASHED_DBG_DRAWSTREAM3D=<N | N:M | 1> captures, for race-render frames N..M,
 // the loaded 3D geometry per category into log/drawstream3d_re.json
 // (MASHED_DBG_DRAWSTREAM3D_OUT overrides the path; `0` = off):

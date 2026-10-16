@@ -1,0 +1,5 @@
+{
+ "f60": {"mode": "InRace", "sky": {"batches": 1, "verts": 174, "textured": 0}, "copters": {"batches": 6, "verts": 1644, "textured": 6}},
+ "f61": {"mode": "InRace", "sky": {"batches": 1, "verts": 174, "textured": 0}, "copters": {"batches": 6, "verts": 1644, "textured": 6}},
+ "f62": {"mode": "InRace", "sky": {"batches": 1, "verts": 174, "textured": 0}, "copters": {"batches": 6, "verts": 1644, "textured": 6}}
+}

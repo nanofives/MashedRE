@@ -66,7 +66,7 @@ bool DualEnabled();
 // model.batches would silently drift the moment that skip rule changes.
 // [D-S3-PROP] MASHED_PROP_VDUMP=<handle> support. RaceSubmit_RegisterModel must
 // announce the handle the model is about to receive before calling BuildClump, so
-// the dump selects the same model MASHED_LIBRW_ONLYPROP names. Pass -1 after.
+// the dump selects the same model the handle names (D3D9-side half + ONLYPROP gone, R3). Pass -1 after.
 void SceneBuild_SetRegisteringHandle(int handle);
 int  PropVDumpHandle();
 

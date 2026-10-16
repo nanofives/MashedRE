@@ -82,9 +82,9 @@ bool PumpMessages() {
 }  // namespace
 
 // E2'b step 3 moved the E1' probe off MASHED_RENDER_LIBRW onto its own variable.
-// MASHED_RENDER_LIBRW now selects the IN-LOOP submit path (RwRaceSubmit.h), which
-// is what the design decision requires; the probe stays reachable because it is
-// still the only end-to-end check of engine bring-up in isolation.
+// The IN-LOOP submit path (RwRaceSubmit.h) is now unconditional (the knob was
+// deleted in D1-residue R3); the probe stays reachable because it is still the
+// only end-to-end check of engine bring-up in isolation.
 bool SmokeRequested() {
     const char* e = std::getenv("MASHED_LIBRW_SMOKE");
     return e && e[0] == '1' && e[1] == '\0';

@@ -170,7 +170,7 @@
 #include "D3d9Render/DrawStreamDump.h"      // parity harness: MASHED_DBG_DRAWSTREAM
 #include "D3d9Render/DrawRec.h"             // d1r1: per-draw recorder, MASHED_DBG_D3DREC
 #include "LibRw/RwBridge.h"                 // M3-E1': vendored librw seam (MASHED_LIBRW_SMOKE)
-#include "LibRw/RwRaceSubmit.h"             // E2'b step 3: in-loop submit (MASHED_RENDER_LIBRW)
+#include "LibRw/RwRaceSubmit.h"             // E2'b step 3: in-loop submit (the shipping race renderer)
 #include "Compat/StandaloneRvaThunks.h"     // B16: standalone RVA-thunk installer
 #include "Frontend/MenuNavSM.h"             // standalone menu nav state machine (FUN_0043d2a0 port)
 #include "Frontend/RowMovers.h"             // FrontendModeIndexFor: 0x004309b0 (challenge launch gate)
@@ -3640,14 +3640,14 @@ bool RenderFrame() {
         }
         LARGE_INTEGER rA, rB; if (s_fprof) QueryPerformanceCounter(&rA);
         g_track.Render(g_device, t, &ci);
-        // E2'b step 3: the librw submit path, in-loop and beside the D3D9 one.
+        // E2'b step 3: the librw submit path, in-loop and beside the D3D9 draws that
+        // librw does not take (sky, copters, particles, pickups). It draws the static
+        // world plus every queued prop/car instance.
         // AFTER Render(), not before, for two reasons: Render() is what resolves
         // this frame's camera and publishes it into RaceSceneState (last_eye_ /
         // last_at_ / the projection quartet), and it is where fog/light state is
-        // live -- so submitting first would draw last frame's camera. Both
-        // renderers therefore write the same backbuffer this frame; while only
-        // the static world is submitted, the overlap is deliberate and the deltas
-        // are scope (RwRaceSubmit.h). It issues no Clear and no Begin/EndScene.
+        // live -- so submitting first would draw last frame's camera. It issues no
+        // Clear and no Begin/EndScene.
         if (mashed_re::LibRw::RaceSubmit_Active())
             mashed_re::LibRw::RaceSubmit_Render(g_track);
         if (s_fprof) { QueryPerformanceCounter(&rB); msRender = QpcMs(rA, rB); }
@@ -9039,9 +9039,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     // lets librw call Direct3DCreate9 + CreateDevice + Present itself and own the
     // device outright. It runs and exits.
     //
-    // The in-loop render path (MASHED_RENDER_LIBRW, E2'b step 3) is different and
-    // is wired AFTER InitD3D9 below: it adopts our device instead of making one.
-    // Default OFF for both; the shipping D3D9 path is untouched when unset.
+    // The in-loop render path (E2'b step 3, the shipping race renderer) is different
+    // and is wired AFTER InitD3D9 below: it adopts our device instead of making one.
+    // The smoke probe is default OFF.
     // See re/analysis/LIBRW_SIZING_2026-08.md and LibRw/RwBridge.h.
     if (mashed_re::LibRw::SmokeRequested()) {
         const int rc = mashed_re::LibRw::RunSmoke(g_hwnd, kWidth, kHeight, 600);
@@ -9068,12 +9068,21 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     // E2'b step 3: bring librw up ADOPTING the device InitD3D9 just made, so the
     // world can be submitted inside our own frame. Must be after InitD3D9 (there
     // is no device to adopt before it) and before any track load (the scene is
-    // built from TrackRenderer::Load). A failure here is non-fatal: we log it and
-    // carry on with the D3D9 path alone rather than losing the run.
-    // (RaceSubmit_Init writes its own per-step failure detail to
-    // log/librw_race.txt, so there is nothing to log here.)
-    if (mashed_re::LibRw::RaceSubmit_Requested())
-        mashed_re::LibRw::RaceSubmit_Init(g_hwnd, g_device, kWidth, kHeight);
+    // built from TrackRenderer::Load). librw is the only race renderer for the
+    // world, props and cars (the D3D9 fallback and the MASHED_RENDER_LIBRW=0 revert
+    // were deleted in D1-residue R3, 2026-10-16), so a failure here is fatal, like
+    // InitD3D9 above. RaceSubmit_Init writes its own per-step failure detail to
+    // log/librw_race.txt.
+    if (!mashed_re::LibRw::RaceSubmit_Init(g_hwnd, g_device, kWidth, kHeight)) {
+        if (std::FILE* lf = std::fopen(kLogPath, "a")) {
+            std::fprintf(lf, "FATAL: librw race renderer failed to initialise "
+                             "(see log/librw_race.txt)\n");
+            std::fclose(lf);
+        }
+        DestroyWindow(g_hwnd);
+        UnregisterClassA(kClassName, hInstance);
+        return 4;
+    }
 
     // B7 (deferred to post-InitD3D9): wedge over whatever low-address
     // granules d3d9 didn't claim. Then verify + run boot chain.
@@ -9287,10 +9296,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
                     const char* cpiz = (cv[0] == '1' && cv[1] == '\0')
                         ? "original/TOASTART/VEHICLES/Advantag.piz" : cv;
                     g_track.LoadCar(g_device, cpiz, "ADVANTAGE0.DFF", kLogPath);
-                    // PORTED selection (FUN_0040d110): same piz, liveries
-                    // 1..3 for the AI cars.
-                    g_track.LoadCarLiveries(g_device, cpiz, "ADVANTAGE",
-                                            kLogPath);
                     // WS-E s3: enable track weather in the dev car view so the
                     // Arctic/Storm precipitation renders (the original Arctic has
                     // faint falling snow). Same mapping as RaceSession::Begin

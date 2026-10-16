@@ -273,10 +273,10 @@ bool WorldVDump() {
     return on;
 }
 // [D-S3-PROP] MASHED_PROP_VDUMP=<handle>: which registered model to dump every
-// vertex colour for. Keyed on the librw model HANDLE so it names exactly the same
-// model as MASHED_LIBRW_ONLYPROP and as the D3D9 side's `p->rw_model` -- not on a
-// clump counter, which would silently drift from the handle if any BuildClump
-// failed.
+// vertex colour for. Keyed on the librw model HANDLE (the value `Prop::rw_model` holds)
+// -- not on a clump counter, which would silently drift from the handle if any
+// BuildClump failed. (The D3D9-side half of this dump and MASHED_LIBRW_ONLYPROP were
+// deleted in D1-residue R3.)
 static int s_registering_handle = -1;
 
 int PropVDumpHandle() {

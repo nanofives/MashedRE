@@ -1,0 +1,14 @@
+exe=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\d1r3\log\post\mashed_re_final1.exe
+pid=22684
+rc=0
+seconds=5.3
+MASHED_DBG_DRAWSTREAM3D=60:62
+MASHED_DBG_DRAWSTREAM3D_OUT=C:/Users/maria/Desktop/Proyectos/Mashed/.worktrees/d1r3/verify/d1r3_20261016/post_races_final/11_dump/drawstream3d.json
+MASHED_DETERMINISTIC=1
+MASHED_GOTO=6
+MASHED_MUTE=1
+MASHED_RACE_DEMO=1
+MASHED_TITLE=d1r3 11=dump
+MASHED_TRACK_SEL=11
+MASHED_VERIFY_OUT=C:/Users/maria/Desktop/Proyectos/Mashed/.worktrees/d1r3/verify/d1r3_20261016/post_races_final/11_dump
+MASHED_WIN_POS=primary-bl

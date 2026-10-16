@@ -188,25 +188,13 @@ void SetCameraBasis(const float pos[3], const float right[3],
 
 }  // namespace
 
-// D1 (2026-08-18): the flag is INVERTED. librw is the DEFAULT renderer for the
-// standalone (ROADMAP phase D1 / gate D2 ratified 2026-07-31: librw SHIPS).
-// MASHED_RENDER_LIBRW=0 reverts to the legacy D3D9 path for A/B; unset or any
-// other value keeps librw. Same "=0 reverts to legacy" shape as MASHED_RULE_ENGINE
-// (TrackRenderer.cpp:3226) and the opposite polarity of the pre-inversion gate,
-// which was "=1 turns librw on".
-bool RaceSubmit_Requested() {
-    const char* e = std::getenv("MASHED_RENDER_LIBRW");
-    return !(e && e[0] == '0' && e[1] == '\0');
-}
-
 bool RaceSubmit_Active() { return g_engine_up && g_scene_up; }
 
 bool RaceSubmit_Init(HWND hwnd, IDirect3DDevice9* dev, int width, int height) {
     if (g_engine_up) return true;
     if (std::FILE* f = std::fopen(kRaceLog, "w")) std::fclose(f);
-    RLog("# librw in-loop submit (E2'b step 3) — STATIC WORLD ONLY");
-    RLog("# cars, props, particles, pickups, sky and HUD still come from the");
-    RLog("# D3D9 path, so imgdiff deltas against verify/librw_ref/ are SCOPE.");
+    RLog("# librw in-loop submit (E2'b step 3): static world + instanced props and cars");
+    RLog("# sky, copters, particles, pickups and HUD come from the D3D9 path");
 
     g_width  = width;
     g_height = height;
@@ -271,52 +259,6 @@ bool RaceSubmit_OnTrackLoaded(const Track::World& world,
     RLog("ok: scene built — sectors=%zu mats=%zu tris=%u verts=%u (dicts=%zu)",
          world.sectors.size(), world.materials.size(),
          world.total_tris, world.total_verts, ndicts);
-    return true;
-}
-
-// DEFAULT ON since 2026-08-02. It was staged off while the instanced path ran a
-// uniform ~1.5x bright on fogged surfaces; that turned out to be missing UV
-// ANIMATION (D-S3-SEA), not shading, and carrying the scroll over took the gating
-// shots from 0.06-7.12 to 0.06-0.59 -- at or below the world-only path.
-// COUPLING NOTE (D1, 2026-08-18): this only takes effect when the librw renderer
-// is on at all (RaceSubmit_Requested). Before the D1 flag inversion a clean env
-// ran the D3D9 path, so this default-ON was UNREACHABLE with no env set. After
-// inversion librw is the default, so on a clean env this is now LIVE: cars, props,
-// particles, pickups instance through librw (the best-measured config, gating
-// shots 0.06-0.59). MASHED_LIBRW_INST=0 still reverts to world-only.
-bool RaceSubmit_InstancesEnabled() {
-    static const bool on = [] {
-        const char* e = std::getenv("MASHED_LIBRW_INST");
-        return !(e && e[0] == '0' && e[1] == 0);
-    }();
-    return on;
-}
-
-// [D-S3-PROP] MASHED_LIBRW_ONLYPROP=<handle>: route ONLY this model's instances
-// through librw. Every other prop and both car sets fall through to the D3D9 draw
-// they would have taken anyway, so they render identically in the capture being
-// measured AND in the MASHED_LIBRW_INST=0 baseline -- i.e. they cancel, and the
-// remaining difference is attributable to one model by COUNTING rather than by
-// classifying pixels. Same instrument shape that closed the snow bank
-// (MASHED_WORLD_ONLYMAT); see the MATID retraction for why classifying fails.
-// -1 (unset) = normal behaviour.
-static int OnlyPropHandle() {
-    static const int h = [] {
-        const char* e = std::getenv("MASHED_LIBRW_ONLYPROP");
-        return (e && *e) ? std::atoi(e) : -1;
-    }();
-    return h;
-}
-
-bool RaceSubmit_InstanceModelEnabled(int handle) {
-    if (!RaceSubmit_InstancesEnabled()) return false;
-    const int only = OnlyPropHandle();
-    if (only < 0) return true;
-    if (handle != only) return false;
-    // Liveness: a gate that never fires and a gate whose effect is nil produce the
-    // same picture. Log the first time it actually passes something through.
-    static bool logged = false;
-    if (!logged) { logged = true; RLog("D-S3-PROP: ONLYPROP=%d ACTIVE", only); }
     return true;
 }
 
@@ -421,13 +363,13 @@ int RaceSubmit_RegisterModel(const Track::DffModel& model,
     std::vector<std::uint32_t> atomic_mat;
     std::vector<std::int32_t>  atomic_part;   // [rtex]
     // [D-S3-PROP] Tell the builder which handle this model is about to get, so
-    // MASHED_PROP_VDUMP can select it by the SAME id as MASHED_LIBRW_ONLYPROP.
+    // MASHED_PROP_VDUMP can select it by the same handle id.
     // g_models.size() is the handle this call will return on success.
     SceneBuild_SetRegisteringHandle((int)g_models.size());
     rw::Clump* c = static_cast<rw::Clump*>(
         BuildClump(model, ts, ambient, &atomic_mat, &atomic_part));
     SceneBuild_SetRegisteringHandle(-1);
-    if (!c) { RLog("WARN: BuildClump failed -- model stays on the D3D9 path"); return -1; }
+    if (!c) { RLog("WARN: BuildClump failed -- model is NOT drawn (no D3D9 fallback)"); return -1; }
     RegisterUvAnim(c, atomic_mat, uv_rates, nmats);
     // Deliberately NOT added to the rw::World: World::render() walks the clump
     // list and would draw every registered model once, at its authored transform,

@@ -18,7 +18,7 @@ real read.
 
 | Flag | Default | Meaning |
 |---|---|---|
-| `MASHED_RENDER_LIBRW` | ~~**OFF**~~ **ON since 2026-08-19** | librw vs hand-written D3D9 world renderer — INVERTED in `f4815877`; `=0` reverts to D3D9 for A/B (class B shape). Row left in place, corrected 2026-09-09 |
+| `MASHED_RENDER_LIBRW` | ~~**OFF**~~ ~~**ON since 2026-08-19**~~ **DELETED 2026-10-16** | librw vs hand-written D3D9 world renderer — INVERTED in `f4815877`; the `=0` revert and the D3D9 world/prop/car renderer behind it were deleted in D1-residue R3 (`verify/d1r3_20261016/RESULT_d1r3.md`). Row left in place, corrected 2026-10-16 |
 | `MASHED_REAL_PHYSICS` | **OFF** | ported RWP-3.7 chain vs kinematic scaffold — port is OFF by default |
 | `MASHED_RW_RENDER` | **OFF** | inert even when set (RwWorldRender.cpp:230) |
 
@@ -27,7 +27,7 @@ real read.
 | Flag | Meaning |
 |---|---|
 | `MASHED_RULE_ENGINE` | port is DEFAULT; flag turns it off for A/B |
-| `MASHED_LIBRW_INST` | port is DEFAULT; flag turns it off for A/B |
+| ~~`MASHED_LIBRW_INST`~~ | **DELETED 2026-10-16** (D1-residue R3): was "port is DEFAULT; flag turns it off for A/B", i.e. hands props and cars back to the D3D9 draw, which no longer exists. `MASHED_LIBRW_ONLYPROP` went with it |
 | `MASHED_GATE_RIBBON_AI` | port is DEFAULT; flag turns it off for A/B |
 
 ## Class C — DEAD flag names (referenced in comments, NO accessor anywhere)

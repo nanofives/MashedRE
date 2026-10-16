@@ -17,16 +17,17 @@
 # Usage:
 #   # compare two existing capture dirs
 #   py -3.12 re/tools/ab_report.py --a verify/run_1234 --b verify/run_5678 \
-#       --label-a d3d9 --label-b librw --out verify/d1_recheck
+#       --label-a before --label-b after --out verify/some_report
 #
-#   # capture both arms first, then compare. D1 (2026-08-18): librw is now the
-#   # DEFAULT renderer, so arm A (clean env) = librw-default and arm B forces the
-#   # legacy D3D9 path with MASHED_RENDER_LIBRW=0. Pre-inversion this arm added
-#   # MASHED_RENDER_LIBRW=1; that no longer selects anything (the flag is inverted).
-#   py -3.12 re/tools/ab_report.py --capture --out verify/d1_recheck
+#   # capture both arms, then compare. Two arms = two BUILDS (--exe-a / --exe-b),
+#   # same env. Since D1-residue R3 (2026-10-16) there is only one race renderer,
+#   # so the old "librw vs legacy D3D9" arm (MASHED_RENDER_LIBRW=0) no longer exists.
+#   py -3.12 re/tools/ab_report.py --capture --exe-a old.exe --exe-b new.exe \
+#       --label-a old --label-b new --out verify/some_report
 #
-#   # same-build control pair: capture twice with IDENTICAL env, expect 0.00%
-#   py -3.12 re/tools/ab_report.py --capture --control --out verify/d1_control
+#   # same-build control pair: omit --exe-b (both arms use --exe-a, default the
+#   # built exe) and expect 0.00%
+#   py -3.12 re/tools/ab_report.py --capture --out verify/some_control
 #
 # Outputs, all under --out:
 #   REPORT.md        the table, sorted by divergence descending
@@ -107,19 +108,15 @@ def compare(pa: Path, pb: Path, threshold: int):
     }
 
 
-def run_capture(out_dir: Path, force_legacy: bool, timeout: int) -> int:
-    """Spawn one capture arm. Returns exit code.
-
-    D1 (2026-08-18) — the MASHED_RENDER_LIBRW flag is INVERTED (librw is now the
-    default renderer). force_legacy=False leaves the env clean (= librw default);
-    force_legacy=True sets MASHED_RENDER_LIBRW=0 to force the legacy D3D9 path.
+def run_capture(out_dir: Path, exe: Path, timeout: int) -> int:
+    """Spawn one capture arm with `exe`. Returns exit code.
 
     PROCESS HYGIENE (CLAUDE.md): we track only the PID we spawn and never kill by
     name — a blanket kill has destroyed another session's capture before. On
     timeout we terminate THIS pid only.
     """
-    if not EXE.is_file():
-        sys.exit(f"missing {EXE} — build first with mashedmod\\build.bat")
+    if not exe.is_file():
+        sys.exit(f"missing {exe} — build first with mashedmod\\build.bat")
     env = dict(os.environ)
     env.update(CAPTURE_ENV)
     # The exe resolves MASHED_VERIFY_OUT against its own cwd (= REPO), so hand it
@@ -129,15 +126,11 @@ def run_capture(out_dir: Path, force_legacy: bool, timeout: int) -> int:
     except ValueError:
         sys.exit(f"--out must live under the repo ({REPO}), got {out_dir}")
     env["MASHED_VERIFY_OUT"] = str(rel).replace("\\", "/")
-    if force_legacy:
-        env["MASHED_RENDER_LIBRW"] = "0"   # D1: =0 reverts to legacy D3D9
-    else:
-        env.pop("MASHED_RENDER_LIBRW", None)  # clean env = librw default
 
-    arm = "d3d9-legacy" if force_legacy else "librw-default"
+    arm = exe.name
     print(f"[capture:{arm}] -> {out_dir}")
     t0 = time.time()
-    proc = subprocess.Popen([str(EXE)], cwd=str(REPO), env=env)
+    proc = subprocess.Popen([str(exe)], cwd=str(REPO), env=env)
     print(f"[capture:{arm}] pid {proc.pid}")
     try:
         # WaitForExit BEFORE reading the code: the boot AV reports 0xFFFFFFFF,
@@ -156,18 +149,20 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--a", type=Path, help="capture dir, arm A (reference)")
     ap.add_argument("--b", type=Path, help="capture dir, arm B (under test)")
-    ap.add_argument("--label-a", default="librw-default")
-    ap.add_argument("--label-b", default="d3d9-legacy")
+    ap.add_argument("--label-a", default="A")
+    ap.add_argument("--label-b", default="B")
     ap.add_argument("--out", type=Path, required=True, help="report output dir")
     ap.add_argument("--threshold", type=int, default=16,
                     help="per-pixel max-channel diff counted as different "
                          "(imgdiff.py default; the quoted verify/ figures use 16)")
     ap.add_argument("--capture", action="store_true",
-                    help="run both arms first: arm A = librw default (clean env), "
-                         "arm B = legacy D3D9 (MASHED_RENDER_LIBRW=0). D1-inverted.")
-    ap.add_argument("--control", action="store_true",
-                    help="with --capture, run arm B with IDENTICAL env — a "
-                         "same-build control pair, which must come back 0.00%%")
+                    help="run both arms first, same env, arm A with --exe-a and "
+                         "arm B with --exe-b")
+    ap.add_argument("--exe-a", type=Path, default=EXE,
+                    help="exe for arm A (default: the built mashed_re.exe)")
+    ap.add_argument("--exe-b", type=Path, default=None,
+                    help="exe for arm B (default: --exe-a, i.e. a same-build "
+                         "control pair, which must come back 0.00%%)")
     ap.add_argument("--timeout", type=int, default=300, help="per-arm seconds")
     ap.add_argument("--heat-min", type=float, default=0.5,
                     help="only emit heatmap/PNG for shots at or above this %%")
@@ -182,12 +177,10 @@ def main():
     if args.capture:
         dir_a = out / "arm_a"
         dir_b = out / "arm_b"
-        # arm A is always the librw default (clean env). arm B forces legacy D3D9
-        # for a real A/B; with --control it stays clean too, so both arms are the
-        # same default renderer and the pair must come back ~0.00% (noise floor).
-        if run_capture(dir_a, force_legacy=False, timeout=args.timeout) != 0:
+        exe_b = args.exe_b or args.exe_a
+        if run_capture(dir_a, args.exe_a, timeout=args.timeout) != 0:
             sys.exit("arm A capture failed")
-        if run_capture(dir_b, force_legacy=not args.control, timeout=args.timeout) != 0:
+        if run_capture(dir_b, exe_b, timeout=args.timeout) != 0:
             sys.exit("arm B capture failed")
     if not dir_a or not dir_b:
         sys.exit("need --a and --b, or --capture")
@@ -229,9 +222,9 @@ def main():
                  f"(diff% = pixels over threshold, the figure quoted in verify/)")
     lines.append(f"- **worst: `{worst[0]}` at {worst[1]['pct']:.2f}%**")
     lines.append(f"- at or under {args.heat_min}%: {n_par} of {len(rows)}")
-    if args.control:
+    if args.capture and (args.exe_b is None or args.exe_b == args.exe_a):
         lines.append("")
-        lines.append("**CONTROL PAIR** — identical env on both arms. Any nonzero "
+        lines.append("**CONTROL PAIR** — same exe, identical env on both arms. Any nonzero "
                      "figure here is harness noise, not a renderer difference, "
                      "and invalidates a same-session A/B until explained.")
     lines.append("")
