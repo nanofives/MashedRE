@@ -219,3 +219,40 @@ A2.5 **Predictions.**
 
 A2.6 **Default rule.** Section 5 unchanged: default ON only if every section-5 gate passes on `L`. Otherwise OFF, with
 the failed gate named.
+
+## Amendment 3 (2026-10-16, after `D2_LFX_1`, `D2_L_1..3`, `D2_DEF_1`, `D2_C_1`, `D2_BL_1`; before any spawn-yaw run)
+
+A3.1 **A2.5 results.** Knob-took: the impact fixup's `sp=` 1832.12231 equals `LutLength` of that substep's entry
+velocity (-1700.98755, 3.36854e-05, 680.836365) = 1832.122314 bit-exactly, and differs from |W1|. Impact: post-impact
+speed at the next A6a entry 224.5 against the original's 218.2 (+2.9 %, from +7.7 %), inside A2.5's 4 %. The +7 arm
+still flips: G 32788.6, 0.06 % over the 32768 knee (original 31227.9), then the LOW-arm collapse at +9..+11 as before.
+D2 (`score_arms.py`): `L` x3 slip 0.2038 OUT / 0.2639 OUT / driving-median 1736.20..1742.09 OUT (n 464..467),
+recovery 9/400 x3 = the wall-pin signature. `C` (exact sqrt) the same signature (0.2008 / 0.2627 / 1798.12, 9/400).
+`BL` 0.1967 OUT / 0.2523 in / 1862.13 OUT, 387/400. `DEF` 0.1927 in / 0.2489 in / 1863.55 OUT, 398/400. **The knob
+fails section 5 (D2 three metrics, H1) and stays default OFF** whatever the remaining gates give.
+
+A3.2 **Where the remaining impact difference comes from (`orig_lx1` vs `DLX` / `LFX`, aligned at the first step with
+speed > 0.5).** The velocity heading at the fixup differs by 0.32 deg at equal speed (21.82 vs 21.49 deg from -x), so
+n . v_c and with it |m| / +0x9e4 differ by 0.27 %, which is the damp's remaining x1.03. The earliest step where the
+two sides differ is the spawn itself: **body yaw differs by 0.2997 deg from launch step 0** (original fwd
+(-8.74e-8, 0, -1), port -89.6992 deg in the same convention), identically on `DLX` and `LFX`. The port's slot-0 yaw is
+`atan2(g1 - g0)` (the gate0 -> gate1 direction) at both spawn sites (`TrackRenderer.cpp` R6 :3533 and StartRound's
+`place`), a stand-in for the original's `L = FUN_00426cc0()` (StartRound comment, `verify/grid_orig_ts/`). This is the
+grid-pose question d2posmodel 5.2 left to the user. Later the port also lags (speed -11 % at launch +24) and turns
+about 2 deg less by +72..+84. Those are not attributed here.
+
+A3.3 **Diagnostic only (never a fix), default OFF: `MASHED_D2LAT_SPAWN_YAW=<rad>`.** At both slot-0 spawn sites,
+after the stand-in computes `car_yaw_`, it is replaced by the given value and the body basis re-seeded
+(`VehiclePhysics_ResetOrientation(0, car_yaw_)`). Value used: -1.5707964 (port convention `atan2(fz, fx)` of the
+original's spawn fwd (-8.742278e-08, 0, -1)). It answers one question: with the original's spawn heading, does the
+impact heading close, and do the +7 arm and the pin follow?
+
+A3.4 **Arms (report only).** `D2_YLFX_1` (knob L + yaw + the diag logs), `D2_Y_1` (yaw alone), `D2_YL_1..3`
+(yaw + knob L).
+
+A3.5 **Predictions.** Knob-took: body heading at launch step 0 equals the original's (-89.9989 deg) within 0.001 deg.
+No direction is predicted for the impact heading, the +7 arm or the pin. [UNCERTAIN] the launch lag and the turn
+deficit are independent of the spawn yaw, and may keep the impact heading apart.
+
+A3.6 **Decision.** None on defaults: the spawn yaw's faithful source (`FUN_00426cc0`) is the grid lane's port and
+d2posmodel 5.2's user decision. The result is reported with `n` and the per-step table.
