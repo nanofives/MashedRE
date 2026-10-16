@@ -113,3 +113,24 @@ literal gate is reported as failed on B because of the probe-zero rows.
 New arms: `L5` (`MASHED_AI_LUT=5`), `L7` (=7), `L5G`, `L7G` (+ `MASHED_GRID_DIR`), `B_*_K{0,1,26}`; `H_L7`, `H_L7-2`.
 No new (b) prediction: the amendment-1 runs show the A failure is not decided by the look point alone (section 1 of
 amendment 1). Section 4's default rule is unchanged and applies to L5 / L7 (bit 0x4 is a no-op when unset).
+
+## Amendment 3 (2026-10-16, before the original-side capture `o_lb1`)
+
+Finding from committed captures (no new run, `heading.py`, `o_rd3.msd` car 1, regime A): on car 1's steer-0 window
+steps (27, 28, 29, 34, 38) the original's body heading (atan2 of +0x9d4/+0x9dc) moves -0.161, -0.170, -0.179,
+-0.188, -0.198 deg per frame; with steer -8 / -10 it moves +0.080 / +0.100. On those frames +0x10 = 0 (driving arm),
++0x9e0 = 4.0, the wheel steer +0x1a8 = 0, and +0x148 decays by exactly damp^2 (0.014352 x 0.934444 = 0.013411, read
+0.013412), so `FUN_0046e9e0` saw no steer and added +k2*accum (predicted +0.077 deg per frame). The port shows
++0.0785 at its first steer-0 frame (its dump is one physics step behind the original's .msd row). So the original
+turns the body by about -0.24 deg per frame on steer-0 frames through something other than `FUN_0046e9e0`'s
+steer/accumulator terms, and the port has no such term.
+
+Capture (one original run, shared install per the 2026-10-12 re-run rule, own PID): the regime-A reference argv +
+`--statediff-car 1 --lat-bracket --lat-bracket-solver` (new opt-in site 3 = `0x0046f6c0` entry, ESI-filtered; the at-rows of both body
+matrices, +0x9a8/+0x9ac, +0x144..+0x14c and +0x1a8 appended to every sample). Gates:
+- G-REPRO: the run's car-1 window (aistep) equals `o_rd3`'s c0/c1/c4/c5 sequence over the 220 calls (else re-run;
+  a piz-collision AV = re-run).
+- G-SPLIT (report): on the steer-0 frames, the heading change of the live matrix between consecutive samples,
+  per interval: [A6a entry -> A6b entry] (A6a), [A6b -> substep entry], [substep entry -> solver entry] (FUN_0046e9e0
+  of substep 1), [solver -> next substep / next A6a]. Prediction: the -0.24 deg term sits outside
+  [substep entry -> solver entry], i.e. FUN_0046e9e0's interval carries only the +k2*accum turn.

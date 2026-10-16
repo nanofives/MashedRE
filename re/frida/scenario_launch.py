@@ -985,13 +985,35 @@ function lbSample(site){
                   r.add(0x198).readS32(), r.add(0x198 + 0xc4).readS32(),
                   r.add(0x198 + 0x188).readS32(), r.add(0x198 + 0x24c).readS32(),
                   r.add(0x1a0).readS32(), r.add(0x1a0 + 0xc4).readS32(),
-                  r.add(0x1a0 + 0x188).readS32(), r.add(0x1a0 + 0x24c).readS32()]);
+                  r.add(0x1a0 + 0x188).readS32(), r.add(0x1a0 + 0x24c).readS32(),
+                  // [d3b 2026-10-16] appended (older reducers keep their indices): the
+                  // double-buffer indices +0x9a8/+0x9ac, the at-row of both body matrices
+                  // (+0x928 + 0x20 and +0x968 + 0x20), the angular-velocity accumulator
+                  // +0x144/+0x148/+0x14c (U-9193), and the wheel-0 steer angle +0x1a8.
+                  r.add(0x9a8).readS32(), r.add(0x9ac).readS32(),
+                  r.add(0x948).readFloat(), r.add(0x94c).readFloat(), r.add(0x950).readFloat(),
+                  r.add(0x988).readFloat(), r.add(0x98c).readFloat(), r.add(0x990).readFloat(),
+                  r.add(0x144).readFloat(), r.add(0x148).readFloat(), r.add(0x14c).readFloat(),
+                  r.add(0x1a8).readFloat()]);
   } catch(e){ if (!LB.err) LB.err = 'sample' + site + ' ' + e; }
 }
-function latBracketArm(recBaseHex, car){
+function latBracketArm(recBaseHex, car, solver){
   if (LB.armed) return 'already armed';
   try {
     LB_REC = ptr(parseInt(recBaseHex, 16) + car * 0xd04);
+    // [d3b 2026-10-16] --lat-bracket-solver: site 3 = entry of the wheel-contact solver
+    // 0x0046f6c0, called at 0x00470ae0 right after FUN_0046e9e0 with ESI = EDI = the record
+    // (0x00470ade mov edi, esi). Filtered on ESI so only the chosen car's calls are kept.
+    // Two calls per car per frame (one per substep): ~8/frame unfiltered, inside the
+    // hot-path budget with the three sites above.
+    if (solver) {
+      Interceptor.attach(ga(0x0046f6c0), { onEnter(){
+        try {
+          if (!this.context.esi.equals(LB_REC)) return;
+          LB.nSol = (LB.nSol || 0) + 1; lbSample(3);
+        } catch(e){ if (!LB.err) LB.err = 'solEnter ' + e; }
+      }});
+    }
     Interceptor.attach(ga(LB_A6A), { onEnter(){
       try {
         // self=ESI; ignore any other vehicle's call so the series stays car-pure.
@@ -3280,10 +3302,10 @@ rpc.exports = {
   },
   aiStepArm: function(withLocals){ return aiStepArm(withLocals); },
   aiStepDrain: function(){ return aiStepDrain(); },
-  latBracketArm: function(recBaseHex, car){ return latBracketArm(recBaseHex, car); },
+  latBracketArm: function(recBaseHex, car, solver){ return latBracketArm(recBaseHex, car, solver); },
   latBracketDrain: function(){ return latBracketDrain(); },
   latBracketStats: function(){ return JSON.stringify({armed:LB.armed, a6a:LB.nA6a, a6b:LB.nA6b,
-                                                      sub:LB.nSub, pending:LB.rows.length,
+                                                      sub:LB.nSub, sol:(LB.nSol || 0), pending:LB.rows.length,
                                                       skipped:LB.skipped, err:LB.err}); },
   axisProbeArm: function(recBaseHex, car){ return axisProbeArm(recBaseHex, car); },
   axisProbeDrain: function(){ return axisProbeDrain(); },
@@ -3856,6 +3878,9 @@ def main():
                          "must STILL pass (no-regression) — that is how the load-dispatcher hooks "
                          "get their booted-race verification. Exits shortly after the assert "
                          "(no long hold needed); combine with --hold 0.")
+    ap.add_argument("--lat-bracket-solver", action="store_true",
+                    help="[d3b] with --lat-bracket: also sample at the wheel-contact solver entry 0x0046f6c0 "
+                         "(site 3, ESI-filtered), right after FUN_0046e9e0 in each substep.")
     ap.add_argument("--lat-bracket", action="store_true",
                     help="[U-9156 / D2 section 21.3] sample the player record's velocity, "
                          "forward axis and angular velocity at A6a ENTRY (0x00467650) and "
@@ -4157,7 +4182,7 @@ def main():
             if args.statediff_aistep:
                 print("  [statediff]", E.ai_step_arm(os.environ.get("MASHED_AISTEP_LOCALS", "1") != "0"))
             if args.lat_bracket:
-                print("  [statediff]", E.lat_bracket_arm("0x008815a0", args.statediff_car))
+                print("  [statediff]", E.lat_bracket_arm("0x008815a0", args.statediff_car, bool(args.lat_bracket_solver)))
             if args.slide_probe:
                 print("  [statediff]", E.slide_probe_arm("0x008815a0", args.statediff_car,
                                                           args.slide_probe_limit))
@@ -4574,7 +4599,7 @@ def main():
                     with open(lbp, "w", newline="") as f:
                         f.write("seq,site,velx,vely,velz,fwdx,fwdy,fwdz,speed,gnd,avx,avy,avz,"
                                 "i1f0,id00,i2c,i34,ib20,i9ec,i9f0,st0,st1,st2,st3,"
-                                "pm0,pm1,pm2,pm3" + chr(10))
+                                "pm0,pm1,pm2,pm3,i9a8,i9ac,at0x,at0y,at0z,at1x,at1y,at1z,a144,a148,a14c,s1a8" + chr(10))
                         for r in lb_rows:
                             f.write(",".join(repr(x) if isinstance(x, float) else str(x)
                                              for x in r) + chr(10))
@@ -4582,7 +4607,7 @@ def main():
                     n1 = sum(1 for r in lb_rows if r[1] == 1)
                     n2 = sum(1 for r in lb_rows if r[1] == 2)
                     print(f"  [statediff] lat-bracket {len(lb_rows)} samples "
-                          f"(A6a {n0}, A6b {n2}, substep {n1}) -> {lbp}")
+                          f"(A6a {n0}, A6b {n2}, substep {n1}, solver {sum(1 for r in lb_rows if r[1] == 3)}) -> {lbp}")
                 if args.axis_probe:
                     # Counters + known-answer self-check BEFORE the rows, CSV written even
                     # when empty: memory `absent-log-proves-nothing-run-a-control`.

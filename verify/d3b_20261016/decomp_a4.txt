@@ -1,0 +1,126 @@
+// FUN_00470670 @ 0x00470670  size=802  (MASHED.exe)
+// undefined FUN_00470670(void)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C2 2026-05-12] Per-vehicle control input integrator. Clears control output slots, computes
+   speed-normalized forward… */
+
+void FUN_00470670(undefined4 param_1,undefined4 param_2,byte *param_3,undefined4 param_4)
+
+{
+  int iVar1;
+  bool bVar2;
+  float fVar3;
+  float fVar4;
+  int in_EAX;
+  int iVar5;
+  undefined4 uVar6;
+  uint uVar7;
+  
+  iVar5 = FUN_0040e350();
+  bVar2 = *(float *)(in_EAX + 0x9e4) == DAT_005d757c;
+  iVar1 = *(int *)(in_EAX + 0x9a8) * 0x40 + 0x928 + in_EAX;
+  *(undefined4 *)(in_EAX + 0xb20) = 0;
+  *(undefined4 *)(in_EAX + 0xb1c) = 0;
+  *(undefined4 *)(in_EAX + 0xb18) = 0;
+  *(undefined4 *)(in_EAX + 0xb14) = 0;
+  *(undefined4 *)(in_EAX + 0x3f4) = 0;
+  *(undefined4 *)(in_EAX + 0x330) = 0;
+  *(undefined4 *)(in_EAX + 0x26c) = 0;
+  *(undefined4 *)(in_EAX + 0x1a8) = 0;
+  if (bVar2) {
+    *(undefined4 *)(in_EAX + 0xb0c) = 0;
+  }
+  else {
+    fVar3 = *(float *)(in_EAX + 0x9dc) * *(float *)(in_EAX + 0x9b8) +
+            *(float *)(in_EAX + 0x9d4) * *(float *)(in_EAX + 0x9b0) +
+            *(float *)(in_EAX + 0x9d8) * *(float *)(in_EAX + 0x9b4);
+    if (fVar3 < DAT_005d757c) {
+      fVar3 = -fVar3;
+    }
+    *(float *)(in_EAX + 0xb0c) =
+         (_DAT_005cc320 - fVar3 / *(float *)(in_EAX + 0x9e4)) * *(float *)(in_EAX + 0x9e4);
+  }
+  if (*param_3 == 0) {
+    *(undefined4 *)(in_EAX + 0xb24) = 0;
+  }
+  else {
+    uVar6 = FUN_004a2c48();
+    *(undefined4 *)(in_EAX + 0xb24) = uVar6;
+  }
+  if (param_3[1] == 0) {
+    *(undefined4 *)(in_EAX + 0xb28) = 0;
+  }
+  else {
+    uVar6 = FUN_004a2c48();
+    *(undefined4 *)(in_EAX + 0xb28) = uVar6;
+  }
+  uVar7 = DAT_007f101c & 0xf;
+  fVar3 = DAT_005d757c;
+  if (*param_3 != 0) {
+    if (_DAT_005cd6d4 < *(float *)(in_EAX + 0x9e4)) {
+      *(undefined4 *)(in_EAX + 0xb20) = 1;
+    }
+    fVar3 = (float)*param_3 * *(float *)(in_EAX + 400) * _DAT_005ceaa8;
+    if (iVar5 == 7) {
+      fVar3 = DAT_005d757c;
+    }
+    fVar3 = fVar3 * _DAT_005cc32c;
+    if (*(int *)(in_EAX + 0xbf0) != 0) {
+      fVar3 = fVar3 * _DAT_005cc950;
+    }
+    if ((float)param_3[5] <= _DAT_005cc9d0) {
+      fVar4 = (float)*(int *)(in_EAX + 0xb24);
+      if (_DAT_005ceaa4 < (float)*(int *)(in_EAX + 0xb24)) {
+        fVar4 = _DAT_005ceaa4;
+      }
+      fVar3 = (fVar4 + _DAT_005ceaa4) * fVar3 * _DAT_005cea58;
+    }
+    else {
+      fVar3 = fVar3 * _DAT_005cc348;
+    }
+    *(float *)(in_EAX + 0x1a8) = fVar3;
+    *(float *)(in_EAX + 0x26c) = fVar3;
+  }
+  *(float *)(in_EAX + 0x1ac + uVar7 * 4) = fVar3;
+  *(float *)(in_EAX + 0x270 + uVar7 * 4) = fVar3;
+  if (param_3[1] != 0) {
+    if (_DAT_005cd6d4 < *(float *)(in_EAX + 0x9e4)) {
+      *(undefined4 *)(in_EAX + 0xb20) = 1;
+    }
+    fVar3 = (float)param_3[1] * *(float *)(in_EAX + 400) * _DAT_005ceaa8;
+    if (iVar5 == 7) {
+      fVar3 = DAT_005d757c;
+    }
+    fVar3 = fVar3 * _DAT_005cc32c;
+    if (*(int *)(in_EAX + 0xbf0) != 0) {
+      fVar3 = fVar3 * _DAT_005cc950;
+    }
+    if ((float)param_3[5] <= _DAT_005cc9d0) {
+      fVar4 = (float)*(int *)(in_EAX + 0xb28);
+      if (_DAT_005ceaa4 < (float)*(int *)(in_EAX + 0xb28)) {
+        fVar4 = _DAT_005ceaa4;
+      }
+      fVar3 = (fVar4 + _DAT_005ceaa4) * fVar3 * _DAT_005cea58;
+    }
+    else {
+      fVar3 = fVar3 * _DAT_005cc348;
+    }
+    fVar3 = -fVar3;
+    *(float *)(in_EAX + 0x1a8) = fVar3;
+    *(float *)(in_EAX + 0x26c) = fVar3;
+    *(float *)(in_EAX + 0x1ac + uVar7 * 4) = fVar3;
+    *(float *)(in_EAX + 0x270 + uVar7 * 4) = fVar3;
+  }
+  FUN_0046ddb0(param_2,iVar1,param_4);
+  FUN_00467650(param_1,param_2,iVar1,param_3);
+  FUN_00468980(param_2,param_3);
+  if (*(int *)(in_EAX + 0x9f0) == 2) {
+    *(float *)(in_EAX + 0x9b0) = *(float *)(in_EAX + 0x9b0) * _DAT_005cc9c8;
+    *(float *)(in_EAX + 0x9b4) = *(float *)(in_EAX + 0x9b4) * _DAT_005cc9c8;
+    *(float *)(in_EAX + 0x9b8) = *(float *)(in_EAX + 0x9b8) * _DAT_005cc9c8;
+  }
+  return;
+}
+
+

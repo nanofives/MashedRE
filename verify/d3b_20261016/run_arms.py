@@ -17,11 +17,13 @@ SP = r'C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos
 EXE_NEW = os.environ.get('D3B_EXE', os.path.join(W, r'mashedmod\build\mashed_re.exe'))
 EXE_BASE = EXE_NEW
 ROOT = os.environ.get('D3B_ROOT', os.path.join(SP, 'root'))
-STACK = {'DEF': [], 'NOOP': [],
+STACK = {'DEF': [], 'NOOP': [], 'NOOP2': [],
          # d3b: MASHED_AI_LUT mask (PREREG_d3b.md section 2)
          'L1': ['MASHED_AI_LUT=1'], 'L2': ['MASHED_AI_LUT=2'], 'L3': ['MASHED_AI_LUT=3'],
          # amendment 1: gridyaw's MASHED_GRID_DIR alone and with the LUT masks
          'G': ['MASHED_GRID_DIR'], 'L1G': ['MASHED_AI_LUT=1', 'MASHED_GRID_DIR'], 'L3G': ['MASHED_AI_LUT=3', 'MASHED_GRID_DIR'],
+         # amendment 2: bit 0x4 (FUN_00443300 operand order)
+         'L5': ['MASHED_AI_LUT=5'], 'L7': ['MASHED_AI_LUT=7'], 'L5G': ['MASHED_AI_LUT=5', 'MASHED_GRID_DIR'], 'L7G': ['MASHED_AI_LUT=7', 'MASHED_GRID_DIR'],
          # opt-out chain (the default is W + K + L, all ON)
          'NOW': ['MASHED_NO_D2BSP'], 'NOK': ['MASHED_NO_D2CLS'], 'NOL': ['MASHED_NO_D2CHUNK'],
          'NOWK': ['MASHED_NO_D2BSP', 'MASHED_NO_D2CLS'],
