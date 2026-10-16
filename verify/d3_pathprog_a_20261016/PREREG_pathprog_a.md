@@ -178,6 +178,18 @@ Measurement-only knobs (default OFF): `MASHED_PP_SPHERE_DUMP=<file>` logs every 
 Decision 1 of section 3 stands. If G-FIRST passes, `X7` + first-hit-wins is a faithful-pair counterfactual, NOT a fix: the original's order inside a sector is not known, so the report names the open item (the original's BSP triangle visiting order for the node-29 / node-0 triangles at the start line, `U-9209`) and no default changes.
 If G-FIRST fails, the report states that the player's node is decided by something other than the hit order (pose y, sphere overlap), with the dump as the evidence.
 
+## 3d. AMENDMENT A4 (committed after the A3 arms were scored, before the arms below exist)
+
+Seen first (`X7_DMP.sphere.txt`, `X7_RG_DMP.sphere.txt`, `SCORE` of the A3 arms): **G-HITS**: at both poses the player's sphere hits exactly ONE triangle, stream index 0, node 0 (distance 0.003434 at the gate anchor z -2.002471, 0.000000 at the
+`MASHED_ROUND_GRID` pose z -1.999037). No node-29 triangle is hit. (Predicted: both nodes, node 0 last: wrong.) **G-SF-NOOP passes** (`X7_SFD` = `D`). **G-FIRST fails**: `X7_SF` is byte-identical to `X7` on both K and `X7_SF_H` equals `X7_H`
+(single hit, so first or last is the same). The hit ORDER is not the cause. What differs from the original is the hit SET: the original resolves the player on the line to node 29, the port finds only node 0.
+
+Registered now, diagnostic only, default OFF (extends `MASHED_PP_SPHERE_DUMP`): on the first query it also lists every triangle of nodes 0, 1, 28 and 29 with the verbatim sphere test result and the true 3-D point-to-triangle distance.
+Arms `X7_DMP2` and `X7_RG_DMP2` (= `X7_DMP` / `X7_RG_DMP`, K00). Gate **G-NEAR** (report): is there a node-29 triangle within the sphere radius (true 3-D distance <= 0.6) that the verbatim test rejects, or are none in the set?
+Prediction: a node-29 triangle at true distance <= 0.6 that the test rejects (60 %); otherwise none within 0.6 (40 %).
+
+Also registered: the seeded-pair counterfactual on stage 2, `X7_BS_K` for K in 1, 4, 27, 26, 54, 57. Gate **G-BS-B/C**: control bytes of `X7_BS_K` equal `D_K` (only `val_880` / `lap_9648` may differ) and n/3 equal `D_K` (B 2/3, C 0/3). Prediction: equal (70 %): the boost pair is then the whole cost on B and C too.
+
 ## 4. Not done here (registered)
 
 - No hooks.csv change (`FUN_00408610` is an EXE-ONLY naked transcription). No tracker is edited by hand. The memory index is not touched (orchestrator's).

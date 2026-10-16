@@ -19,6 +19,7 @@
 #include "../Math/RwLutTables.h"
 
 #include <float.h>
+#include <cmath>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
@@ -114,6 +115,35 @@ void* __cdecl PP_SphereQuery(void* world, float* sphere, void* /*cb*/, std::int3
         *reinterpret_cast<float*>(blk + 0xbc) = nrm[0];
         *reinterpret_cast<float*>(blk + 0xc0) = nrm[1];
         *reinterpret_cast<float*>(blk + 0xc4) = nrm[2];
+    }
+    if (dumpThis && s_dumpCalls == 1) {   // first query only: the triangles of the nodes around the line, hit or not, with the true 3-D distance
+        for (int t = 0; t < n; ++t) {
+            const unsigned node = mashed_re::Race::PathNodes_TriNode(t);
+            if (node != 0u && node != 1u && node != 28u && node != 29u) continue;
+            const float* tv = mashed_re::Race::PathNodes_Tri(t);
+            // closest point of triangle (a, b, c) to p (Ericson, Real-Time Collision Detection 5.1.5)
+            auto sub = [](const float* x, const float* y, float* o) { for (int i = 0; i < 3; ++i) o[i] = x[i] - y[i]; };
+            auto dot = [](const float* x, const float* y) { return x[0] * y[0] + x[1] * y[1] + x[2] * y[2]; };
+            const float *a = tv, *b = tv + 3, *c = tv + 6, *p = sphere;
+            float ab[3], ac[3], ap[3]; sub(b, a, ab); sub(c, a, ac); sub(p, a, ap);
+            float cp[3] = { a[0], a[1], a[2] };
+            const float d1 = dot(ab, ap), d2 = dot(ac, ap);
+            float bp[3]; sub(p, b, bp); const float d3 = dot(ab, bp), d4 = dot(ac, bp);
+            float cpp[3]; sub(p, c, cpp); const float d5 = dot(ab, cpp), d6 = dot(ac, cpp);
+            const float vc = d1 * d4 - d3 * d2, vb = d5 * d2 - d1 * d6, va = d3 * d6 - d5 * d4;
+            if (d1 <= 0 && d2 <= 0) { for (int i = 0; i < 3; ++i) cp[i] = a[i]; }
+            else if (d3 >= 0 && d4 <= d3) { for (int i = 0; i < 3; ++i) cp[i] = b[i]; }
+            else if (vc <= 0 && d1 >= 0 && d3 <= 0) { const float w = d1 / (d1 - d3); for (int i = 0; i < 3; ++i) cp[i] = a[i] + w * ab[i]; }
+            else if (d6 >= 0 && d5 <= d6) { for (int i = 0; i < 3; ++i) cp[i] = c[i]; }
+            else if (vb <= 0 && d2 >= 0 && d6 <= 0) { const float w = d2 / (d2 - d6); for (int i = 0; i < 3; ++i) cp[i] = a[i] + w * ac[i]; }
+            else if (va <= 0 && (d4 - d3) >= 0 && (d5 - d6) >= 0) { float bc[3]; sub(c, b, bc); const float w = (d4 - d3) / ((d4 - d3) + (d5 - d6)); for (int i = 0; i < 3; ++i) cp[i] = b[i] + w * bc[i]; }
+            else { const float dn = 1.0f / (va + vb + vc), v2 = vb * dn, w2 = vc * dn; for (int i = 0; i < 3; ++i) cp[i] = a[i] + ab[i] * v2 + ac[i] * w2; }
+            float dv[3]; sub(p, cp, dv);
+            float nrm[3], dist;
+            const int hit = test(sphere, tv, tv + 3, tv + 6, nrm, &dist);
+            std::fprintf(s_dump, "  near tri %d node %u test %d true3d %.6f verts (%.4f %.4f %.4f) (%.4f %.4f %.4f) (%.4f %.4f %.4f)\n", t, node, hit,
+                         std::sqrt(dot(dv, dv)), tv[0], tv[1], tv[2], tv[3], tv[4], tv[5], tv[6], tv[7], tv[8]);
+        }
     }
     if (dumpThis) std::fflush(s_dump);
     return world;
