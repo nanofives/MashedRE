@@ -184,10 +184,16 @@ The single place that records every recurring execution failure: its **signature
 - **Scope:** one site. Every other absolute operand in `mashedmod/src` (about 60 lines) is spelled `ds:[...]`, which
   assembles as a memory operand (probe `verify/dupinstall2_20261016/asm_probe/probe.cpp`: `[771A0Ch]` and
   `[0x771A0C]` give `be ...`, `ds:[771A0Ch]` and `ds:[0x771A0C]` give a memory load).
-- **Not fixed here:** the row is demoted C3 -> C2 in hooks.csv. Fix is one line, `mov esi, dword ptr ds:[771A0Ch]`;
-  then re-earn with a nav boot that has the hook installed.
-- **Workaround meanwhile:** `MASHED_HOOK_SKIP=Fwd494fd0_DoublePlusHalf` (honoured by `InstallAll`), used for the three
-  race-scenario path2 rows of the dupinstall lane.
+- **FIXED 2026-10-16 (fwd494fd0), entry closed:** `mov esi, dword ptr ds:[771A0Ch]` (built export now `3E 8B 35 0C 1A 77 00`).
+  Re-earn: path1 gained a register-input check (`stub_esi` / `stub_esi_seed` in `diff_template.js`, records ESI at the
+  stubbed callee, seeds `0x00771a0c` to a sentinel): **RED 8/8 on the unfixed build** (orig `esi=0xd1d0c0de` vs reimpl
+  `esi=0x771a0c`, stack args equal), GREEN 8/8 fixed; path2 PASS 2/2; nav boot to a race with the FULL hook set (1290
+  installed, no skip) alive and a 45 s full-set survival; the three race rows pass path2 without the skip. Row C2 -> C3.
+  Evidence `verify/fwd494fd0_20261016/`.
+- **Guard added:** `scripts/lint_inline_asm_abs.py` runs from `mashedmod/build.bat` and fails the build on any bare
+  `[0x...]` / `[NNNh]` operand in inline asm without a segment override (skip: `MASHED_SKIP_ASM_LINT=1`). On the
+  unfixed tree it reports exactly this line and nothing else; `--selftest` carries 12 positive/negative samples.
+- **Workaround no longer needed:** `MASHED_HOOK_SKIP=Fwd494fd0_DoublePlusHalf`.
 
 ## MASHED-BOOT-AV — original AVs ~4 s into boot
 - **Signature:** new `%LOCALAPPDATA%\CrashDumps\MASHED.exe.*.dmp`; Frida attach fails

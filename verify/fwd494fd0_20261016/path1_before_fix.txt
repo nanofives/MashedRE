@@ -1,0 +1,19 @@
+hook: input_axis_scale_bias_apply  rva=0x00495080  export=Fwd494fd0_DoublePlusHalf
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 20932
+  [agent] LUT ready  base=0x2e2a6d0  offset=0x134  root=0x5040680  delta=0  attempts=14
+  [agent] .asi loaded  base=0x5e320000  Fwd494fd0_DoublePlusHalf@0x5e3a86b0
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\fwd494fd0\log\diff_input_axis_scale_bias_apply.csv
+  total cases: 8
+  mismatches:  8
+
+RED: at least one mismatch.
+  idx=0  input={"scalars":[0,17]}  orig=calls[1]=0x3f000000,0x11,esi=0xd1d0c0de  reimpl=calls[1]=0x3f000000,0x11,esi=0x771a0c
+  idx=1  input={"scalars":[1,34]}  orig=calls[1]=0x40200000,0x22,esi=0xd1d0c0de  reimpl=calls[1]=0x40200000,0x22,esi=0x771a0c
+  idx=2  input={"scalars":[0.25,51]}  orig=calls[1]=0x3f800000,0x33,esi=0xd1d0c0de  reimpl=calls[1]=0x3f800000,0x33,esi=0x771a0c
+  idx=3  input={"scalars":[0.1,68]}  orig=calls[1]=0x3f333333,0x44,esi=0xd1d0c0de  reimpl=calls[1]=0x3f333333,0x44,esi=0x771a0c
+  idx=4  input={"scalars":[0.3,85]}  orig=calls[1]=0x3f8ccccd,0x55,esi=0xd1d0c0de  reimpl=calls[1]=0x3f8ccccd,0x55,esi=0x771a0c
+  idx=5  input={"scalars":[-1,102]}  orig=calls[1]=0xbfc00000,0x66,esi=0xd1d0c0de  reimpl=calls[1]=0xbfc00000,0x66,esi=0x771a0c
+  idx=6  input={"scalars":[10000000,119]}  orig=calls[1]=0x4b989680,0x77,esi=0xd1d0c0de  reimpl=calls[1]=0x4b989680,0x77,esi=0x771a0c
+  idx=7  input={"scalars":[-0.25,136]}  orig=calls[1]=0x0,0x88,esi=0xd1d0c0de  reimpl=calls[1]=0x0,0x88,esi=0x771a0c

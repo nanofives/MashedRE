@@ -36,6 +36,19 @@ if not "%MASHED_SKIP_RVA_LINT%"=="1" (
     if errorlevel 1 (echo [ERROR] rva-body lint failed ^(see above^) & exit /b 1)
 )
 
+REM ===========================================================================
+REM NO BARE ABSOLUTE OPERAND IN INLINE ASM (2026-10-16). MSVC's inline assembler reads
+REM `mov esi, dword ptr [771A0Ch]` as `mov esi, 0x771a0c` (an immediate); only `ds:[...]` is a
+REM memory access. One such line (0x00495080, Render/PromoLoop_round256.cpp) shipped as C3 and
+REM killed MASHED.exe at the nav boot-to-menu. The lint fails the build on any new one:
+REM re/diag/KNOWN_ISSUES.md AUTOHOOK-INLINE-ASM-IMMEDIATE. MASHED_SKIP_ASM_LINT=1 skips it
+REM (and then say so in whatever you commit).
+REM ===========================================================================
+if not "%MASHED_SKIP_ASM_LINT%"=="1" (
+    py -3.12 "%ROOT%..\scripts\lint_inline_asm_abs.py"
+    if errorlevel 1 (echo [ERROR] inline-asm absolute-operand lint failed ^(see above^) & exit /b 1)
+)
+
 REM Vendored qhull-2002.1 (RWP-3.7's embedded convex-hull lib; B5b). Build the
 REM static lib once (x87 /arch:IA32 for bit-identity with the original) if absent.
 REM Linked into both targets; only referenced once the RwpQHullWrapper bridge

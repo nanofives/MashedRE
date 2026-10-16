@@ -1,0 +1,6 @@
+[trimmed: 1394 lines, 594 warning lines, 0 error lines]
+[skip] MASHED_NO_DEPLOY set: mashed_re_dev.asi NOT deployed to original\
+=== Build OK ===
+mashed_re.exe
+mashed_re_dev.asi
+exit=0

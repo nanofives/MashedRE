@@ -1,0 +1,10 @@
+11:30:39 waiting: foreign MASHED.exe [17812]
+11:30:55 shared asi sha256 before = 270e036fad840e93  size=1153536
+11:30:56 deployed worktree build sha256 = 01606b4f012638d7
+11:31:53 nav_probe_full_hookset                     rc=0 (58s)
+11:32:20 path2_input_axis_scale_bias_apply          rc=0 (27s)
+11:33:05 path2_table_773030_get                     rc=0 (45s)
+11:33:42 path2_plugin_data_dword_a                  rc=0 (37s)
+11:34:17 path2_plugin_data_dword_b                  rc=0 (36s)
+11:35:14 install_observe_all                        rc=0 (57s)
+11:35:14 shared asi sha256 after restore = 270e036fad840e93  matches original: True

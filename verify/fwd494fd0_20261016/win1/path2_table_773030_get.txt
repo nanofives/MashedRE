@@ -1,0 +1,43 @@
+hook: table_773030_get  rva=0x00496930  export=Table773030Get
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 10664
+scenario='race': driving to a live race before running vectors
+  [save] reads pinned to gamesave.bin.refbak_20260830; writes -> C:\Users\maria\AppData\Local\Temp\run_diff_gamesave_10664.bin
+  [nav] booting to menu...
+  [nav] timeout: d3 depth=2 phase=3
+  [nav] timeout: d3 depth=2 phase=3
+  [nav] timeout: d3 depth=2 phase=3
+  [nav] in race? phase=0 (YES)
+  [agent] pre_snapshot
+  [agent] asi_loaded
+  [agent] post_snapshot
+  [agent] results
+
+=== verify_hook_install report (table_773030_get) ===
+
+target address: 0x00496930  export: Table773030Get
+PRE  bytes:     e9 2b 0c 04 5e 04 85 30
+asi base:       0x5e4a0000
+reimpl addr:    0x5e4d7560
+POST bytes:     e9 2b 0c 04 5e 04 85 30
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x5e040c2b  expected 0x5e040c2b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  2 / 2  (other threads: 32)
+
+per-input results:
+  [OK] input={'args': [0], 'seed': [{'addr': 7811120, 'val': 2952790016}]}  got=b0000000,811c9dc5  err=
+  [OK] input={'args': [1], 'seed': [{'addr': 7811124, 'val': 2952794385}]}  got=b0001111,811c9dc5  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 2x as expected
+  + all 2 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\fwd494fd0\log\verify_hook_install_table_773030_get.txt
+

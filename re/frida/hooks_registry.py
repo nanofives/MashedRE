@@ -20487,6 +20487,13 @@ HOOKS = {
         'arg_layout': [{'f32': True}, {'i32': True}],
         'stub_at': [0x00494fd0], 'stub_nargs': 2, 'stub_abi': 'mscdecl',
         'stub_ret': 0,
+        # REGISTER INPUT (fwd494fd0 2026-10-16): FUN_00494fd0 reads its DirectInput device pointer from ESI, which the
+        # original loads with `mov esi,[0x00771a0c]` (8B 35 0C 1A 77 00) just before the call. The stack-args recorder
+        # could not see it, and the port shipped `mov esi, 0x771a0c` (BE 0C 1A 77 00, MSVC inline asm reads a bare
+        # [imm] as the immediate) as C3. stub_esi records ESI at the stub; the seed makes the loaded value a sentinel
+        # that differs from the address. Negative control: the unfixed build reads RED, see
+        # verify/fwd494fd0_20261016/path1_before_fix.txt.
+        'stub_esi': True, 'stub_esi_seed': {'addr': 0x00771a0c, 'val': 0xD1D0C0DE},
         'observe': [], 'observe_ret': False, 'observe_calls': True,
         'path1_tests': [
             {'scalars': [0.0, 0x11]},

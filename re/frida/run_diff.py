@@ -522,7 +522,9 @@ def build_config(hook, asi_path=None):
     # neither observe_ret nor observe_calls can see. MUST be forwarded here —
     # this builder is a whitelist, and an unforwarded key is dropped SILENTLY,
     # leaving a fingerprint that still goes GREEN while proving nothing.
-    for _k in ('stub_nargs', 'stub_abi', 'stub_ret', 'observe_calls', 'observe_bufs'):
+    # stub_esi / stub_esi_seed (fwd494fd0 2026-10-16): record ESI at each stub_at entry (a register input the
+    # stack-args recorder cannot see) and seed the global it is loaded from. Same whitelist rule.
+    for _k in ('stub_nargs', 'stub_abi', 'stub_ret', 'observe_calls', 'observe_bufs', 'stub_esi', 'stub_esi_seed'):
         if _k in hook:
             config[_k] = hook[_k]
     # stub_at (orch-iter20): the same recorder, but planted at a callee reached

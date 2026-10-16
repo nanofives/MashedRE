@@ -1,0 +1,11 @@
+hook: input_axis_scale_bias_apply  rva=0x00495080  export=Fwd494fd0_DoublePlusHalf
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 17812
+  [agent] LUT ready  base=0x2c0a6d0  offset=0x134  root=0x4f00680  delta=0  attempts=11
+  [agent] .asi loaded  base=0x5e320000  Fwd494fd0_DoublePlusHalf@0x5e3a86b0
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\fwd494fd0\log\diff_input_axis_scale_bias_apply.csv
+  total cases: 8
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.
