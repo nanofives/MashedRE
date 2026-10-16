@@ -77,3 +77,19 @@ FUN_004756e0 samples with FUN_004b47e0 @ 0x004b47e0 (key bracket, FUN_00532b80 @
 threshold [0x005cea88] and a LINEAR translation, FUN_00532a60), not FUN_004752f0. One run of the first build (type-1
 records left static) was made on Dump only and showed the train still MISSING; it is recorded, not counted. Pr-6 stands
 unchanged for the corrected build.
+
+## Addendum 3 (scenario objects U-9716, arm D, before any arm-D measurement)
+
+Arm C (hook slots + slot states + Warzone craters + SetClumpAnim with the corrected LINEAR sampler) was replayed on the ten
+tracks before this addendum; G-CTRL 2b4d47bb / 356821c8 / f7a155e1 (unchanged). Arm D adds the race-reset scenario visibility:
+FUN_00471cf0 @ 0x00471cf0 (from FUN_004111c0) walks every Physics_Scenario_Set_Sequence list (FUN_0047b3c0: entries > 1999 are
+Get_Function ids, FUN_00471490) and, for each scenario of the list, sets each of its objects (every instance of every RWP
+descriptor Physics_Scenario_Add_Objects (FUN_0047b420) put in it, expanded by FUN_004715a0) to physics-world member and RENDER
+flag = (scenario == the list's first scenario), FUN_0047d080 / FUN_0047d100. A hidden object also casts no shadow (FUN_00481a30
+requires the atomic RENDER bit, atomic+2 & 4). Only rouabout and Warzone have active scenario objects (Egypt and dump comment
+theirs out).
+
+- **Pr-7:** the C26 rows Roundabout Sign02 EXTRA (Hut_Signs, descriptor 23) and interactiveHut EXTRA (walls 9..12), and Warzone
+  interactiveHut EXTRA (walls 8..19) disappear on every frame where they occur; Trucktyre MOVED and Neustein post stay. A
+  C04b RWObjShad row tied to a hidden wall may disappear; no new row on any track; G-CTRL unchanged (the standalone has no
+  scene-object physics).
