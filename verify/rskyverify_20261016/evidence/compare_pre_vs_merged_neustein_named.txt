@@ -1,0 +1,10 @@
+20_NeusteinNamed 730: rows 20->20 matched 226->227
+   REMOVED ('MISSING', 'skyCylTop', 'RED') n=1
+   ADDED   ('STATE', 'skyCylTop', 'C19-STATE-LIBRW') n=1
+20_NeusteinNamed 770: rows 20->20 matched 222->223
+   REMOVED ('MISSING', 'skyCylTop', 'RED') n=1
+   ADDED   ('STATE', 'skyCylTop', 'C19-STATE-LIBRW') n=1
+20_NeusteinNamed 805: rows 21->21 matched 178->179
+   REMOVED ('MISSING', 'skyCylTop', 'RED') n=1
+   ADDED   ('STATE', 'skyCylTop', 'C19-STATE-LIBRW') n=1
+{'removed': 3, 'added': 3}

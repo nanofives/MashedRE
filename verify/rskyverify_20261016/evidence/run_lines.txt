@@ -1,0 +1,40 @@
+[01_Egypt] exit=0
+[02_Neustein] exit=0
+[03_Arctic] exit=0
+[04_Highway] exit=0
+[05_Sands] exit=0
+[06_SuperG] exit=0
+[07_Roundabout] exit=0
+[08_Storm] exit=0
+[09_Forest] exit=0
+[10_Dump] exit=0
+[11_Warzone] exit=0
+[12_City] exit=0
+[13_Training] exit=0
+[20_NeusteinNamed] exit=0
+[01_Egypt] exit=0
+[02_Neustein] exit=0
+[03_Arctic] exit=0
+[04_Highway] exit=0
+[05_Sands] exit=0
+[06_SuperG] exit=0
+[07_Roundabout] exit=0
+[08_Storm] exit=0
+[09_Forest] exit=0
+[10_Dump] exit=0
+[11_Warzone] exit=0
+[12_City] exit=0
+[13_Training] exit=0
+[20_NeusteinNamed] exit=0
+[02_Neustein] exit=0
+[05_Sands] exit=0
+[07_Roundabout] exit=0
+[09_Forest] exit=0
+[10_Dump] exit=0
+[11_Warzone] exit=0
+[12_City] exit=0
+=== verify exe=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\rsky-verify\log\rsky\exe_verify.exe knobs=[] 
+    exit=0 self_exited=True
+    verify.step.csv lines=18956 sha8=2b4d47bb
+    verify.gates.csv lines=55433 sha8=356821c8
+    verify.ptrace.log lines=27716 sha8=f7a155e1
