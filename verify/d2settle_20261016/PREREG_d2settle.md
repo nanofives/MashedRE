@@ -147,3 +147,13 @@ Arm: `MASHED_ROUND_GRID` + `_ORDER` + `MASHED_PATHPROG` (x/z bit-exact to the or
 (the original's frame-1 y, `0x3edff668`). PREDICTION (mechanism test): call 1 + call 2 correction =
 (0, -0.0029475, +0.0000921) within 2e-6 per component. A miss is reported as evidence against "the solver
 transcription alone carries the settle" and the y / geometry inputs are listed as the open terms.
+
+## Amendment 3 (2026-10-16, before D0-d; report only, NOT a gate)
+
+Recorded so far (report): no-op control `H_OFF` = `991a5fff / be0d47ea / bc75b405` (base default, PASS).
+D0-c prediction MISSED (port solver on real wheel points at the original's frame-1 y: call 2 corrects
++0.00994 * n, original -0.002949 * n).
+D0-d: original capture `--wheelstate-probe-count` (rate gate) then `--wheelstate-probe`, same scenario as D0-b,
+`--statediff-car 0 --hold 12`, output `verify/d2settle_20261016/o_ws1.msd`. Read the first rows: per-wheel
+state `+0x198`, fv `+0x194`, key `+0x1ec` at the player's first `0x0046f6c0` entries, against the exe's D0-c
+call-1 entry (states 0, fv as initialised). Names the input the port's settle call lacks; decides nothing alone.
