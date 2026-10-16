@@ -1,0 +1,7 @@
+=== base  exe=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\rhooks\verify\rhooks_20261016\base_exe\mashed_re.exe  knobs=[] ===
+    pid=19308
+    exit=0  self_exited=True
+    base.step.csv  lines=18956  sha8=2b4d47bb
+    base.gates.csv  lines=55433  sha8=356821c8
+    base.ptrace.log  lines=27716  sha8=f7a155e1
+GCTRL DONE

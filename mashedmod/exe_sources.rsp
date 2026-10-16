@@ -247,4 +247,5 @@
 "Save\GameSave.cpp"
 "Gameplay\PickupPoolSpawn.cpp"
 "Render\ArcticTrackNodeSlot0.cpp"
+"Render\TrackHookSlots.cpp"
 "Vehicle\CarMaterialTables.cpp"

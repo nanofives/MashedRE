@@ -204,8 +204,32 @@ private:
         int                             clump_idx = -1;
         // [rstates F8] instances are a Clump_Mts_Pair's copies, one per Mts record.
         bool                            mts_pair = false;
+        // [rhooks U-9713] the hook-slot draw model of a covered track (Render/TrackHookSlots.h):
+        // hook_key = the prop's index in the track's HookTrack::draws (after-world queue order),
+        // hook_pass = that entry's pass (kHookPassSlot2 / Switch / Slot10), hook_hidden = loaded only
+        // as an RpLODAtomic L geometry (never drawn as itself), lod_prop / lod_range = the LOD hook
+        // FUN_004758d0 put on this clump's atomics (index into props_ of the L model, or -1).
+        int                             hook_key = -1;
+        int                             hook_pass = 0;
+        bool                            hook_hidden = false;
+        int                             lod_prop = -1;
+        float                           lod_range = 0.f;
+        int                             hook_cull = 0;     // HookDraw::cull (0 = inherited)
+        int                             hook_zwrite = -1;  // HookDraw::zwrite (-1 = inherited)
+        // [rhooks U-9716] RWP_Object descriptor index (-1 = not an RWP prop), and hidden at race
+        // reset by the scenario sequences (FUN_00471cf0: RENDER flag clear, out of the physics world)
+        int                             rwp_idx = -1;
+        bool                            scen_hidden = false;
     };
     std::vector<Prop> props_;
+    // [rhooks U-9717] COURSE.LUA SetClumpAnim (Lua handler FUN_0047ad40 @ 0x0047ad40): a course clump
+    // whose frame takes an .ANM matrix every update (FUN_00426ab0 -> FUN_00426700 @ 0x00426700 ->
+    // FUN_004756e0 @ 0x004756e0, RwFrameTransform REPLACE). `t` = the record's time accumulator
+    // (desc +0x74, zero at load), `type` = desc +0x78 (0 = FUN_004752f0, CopterAnimMatrix).
+    struct ClumpAnim { std::size_t prop = 0; Track::HAnim anim; float t = 0.f; int type = 0;
+                       int clump = -1; int anim_idx = -1; bool ticked = false; float m[16] = {}; };
+    std::vector<ClumpAnim> clump_anims_;
+    void ClumpAnimTick(int units);
     // [rstates F6] the order props_ are queued in each frame (BuildPropOrder).
     std::vector<std::size_t> prop_order_;
     void BuildPropOrder(std::FILE* log);

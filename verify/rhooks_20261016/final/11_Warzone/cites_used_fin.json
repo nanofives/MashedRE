@@ -1,0 +1,312 @@
+[
+ {
+  "id": "C20-STATE-SKY",
+  "kind": "STATE",
+  "tex": "^Sky$",
+  "note": "Sky draw state. The original draws the sky with depth test and write off (FUN_004492b0, RwRenderStateSet 8 and 6 = 0), blend per the raster alpha flag, cull whatever precedes it. The librw sky pass expresses depth-test-off as ZENABLE 1 / ZFUNC ALWAYS / ZWRITE 0 (rw::ZTESTENABLE 0), the same visible behaviour in a different encoding; alpha test and cull are librw's defaults (C19).",
+  "_from": "rfx2_20261016"
+ },
+ {
+  "id": "C02-CARLOD",
+  "kind": "EXTRA",
+  "tex": "^(Advantage|AdvantageSmall|Glass)$",
+  "note": "The standalone's car clump draws every non-hull atomic of ADVANTAGE0.DFF, including the duplicate LOD sets (CAR_GRAY_FIX_ACCEPTANCE O4). The original draws, per car, 11 Advantage + 2 Glass + 2 CarGloss through its per-part path (car draws from 0x0041faa0 <- 0x004200c6, per-part selection FUN_00420420, blocked on U-9079); all 44 Advantage / 8 Glass draws the original issues are matched by geometry.",
+  "_from": "rfx2_20261016"
+ },
+ {
+  "id": "C03-UNTEXTURED",
+  "kind": "MOVED",
+  "tex": "^-$",
+  "detail": "A \\[0\\.00,0\\.00,0\\.00,512",
+  "note": "[rfx] Re-pairing, no new draw: once the two score-bar quads match (C08 ported), the original's full-screen no-op RwIm2D quad (C03 d, 0x00450c7a, SRCBLEND ZERO / DESTBLEND ONE) and an untextured 2-tri librw world-sector draw of the standalone (City, AABB 13.63..17.46 / 1.40..3.29 / 53.19..53.52, the draw d1r1's C08 MOVED row paired with the bar) pair by triangle count. Both draws were already cited before rfx.",
+  "_from": "rfx2_20261016"
+ },
+ {
+  "id": "C03-UNTEXTURED",
+  "kind": "MISSING",
+  "tex": "^-$",
+  "note": "Untextured draws the standalone does not issue: (a) per car, a 44-tri untextured mesh drawn with depth test and write OFF immediately before the body (0x004ec3e1 <- 0x0041faa0 <- 0x004200c6, the car part path, U-9079); (b) start-display backings drawn depth-off (0x0041bc78 <- 0x0041c0cd); (c) a 20-line DrawPrimitiveUP line list from the particle builder (0x0049a081 <- 0x0048ad9c, FUN_00499d90); (d) a full-screen RwIm2D quad with SRCBLEND 1 ZERO / DESTBLEND 2 ONE (0x004dbc4d <- 0x004d78e5 <- 0x00450c7a), which leaves the frame buffer unchanged.",
+  "_from": "rfx2_20261016"
+ },
+ {
+  "id": "C04-SHADOW",
+  "kind": "MISSING",
+  "tex": "^(car_shadow|RWObjShad|flatshad)$",
+  "note": "Shadow decals drawn through RwIm3D (0x00536129 <- 0x005356d4) from game code: car_shadow 0x0041ebdf (FUN_0041ebb0 <- 0x00410bb9), RWObjShad 0x00487db7 <- 0x00487dea, flatshad 0x0048e7f6 <- 0x0040bdf8. The default standalone build draws no shadows (no draw site in D3d9Render/ or LibRw/).",
+  "_from": "rfx2_20261016"
+ },
+ {
+  "id": "C05-PARTICLE",
+  "kind": [
+   "MISSING",
+   "EXTRA",
+   "MOVED"
+  ],
+  "tex": "^(exp_cloud2|smoke|@gen:particle)$",
+  "note": "Particles. The standalone's ParticleSystem is a stand-in with a generated 32x32 sprite (ParticleSystem.cpp EnsureTexture, '@gen:particle'); the original draws textured RwIm3D particle batches (exp_cloud2 from 0x00489925 <- 0x00486252, smoke) and line-list weather (C03 c).",
+  "_from": "rfx2_20261016"
+ },
+ {
+  "id": "C06-PICKUP",
+  "kind": [
+   "MISSING",
+   "EXTRA",
+   "MOVED"
+  ],
+  "tex": "^(PUGlow|@gen:pickup)$",
+  "note": "Pickup glow LOOK, ROADMAP D1 stage 2 (not started). The original draws 'PUGlow' via RwIm3D from FUN_00458b10 (0x00458b3f <- 0x0045b99b) with SRCALPHA/INVSRCALPHA and alpha test GREATER 0; the standalone draws a generated sprite additively (PickupField.cpp, '@gen:pickup'). Triangle count agrees on every frame (14 or 10 = 2 per orb) and the AABBs differ by the sprite size.",
+  "_from": "rfx2_20261016"
+ },
+ {
+  "id": "C07-WEAPONS",
+  "kind": "MISSING",
+  "tex": "^(mine|oil|mortar|missile|PowerUpModelsFinal|machinegun|shotgun|depthcharge)$",
+  "note": "Deployed weapon / power-up model meshes present in the original's frame (AI-dropped mines and oil, mortar, missile, the held power-up model). The default standalone build renders none of them (D3 power-ups lane). [r10] machinegun / shotgun / depthcharge (weapon pickup models, Roundabout, SuperG, Warzone, Sands): chain ... <- 0x004e66ab <- 0x00458bd9 <- 0x0045b99b. 0x00458bd9 and the C06 PUGlow site 0x00458b3f are both inside FUN_00458b10 (0x00458b10, 219 bytes), so the pickup function draws the glow and the model. The standalone draws a pickup only as the generated '@gen:pickup' sprite.",
+  "_from": "rfx2_20261016",
+  "status": "MAPPED",
+  "evidence": "bt_summary.py, decomp_pc.py 0x00458bd9 0x00458b3f"
+ },
+ {
+  "id": "C08-STARTDISP",
+  "kind": [
+   "MISSING",
+   "EXTRA",
+   "MOVED"
+  ],
+  "tex": "^(GreenStartLight|NFL.*|OrangeDisplay)$",
+  "note": "Start-light / scoreboard display, drawn by the original with depth test off (atomic path 0x004ec6bb <- 0x0041dad0 <- 0x0041db75); the standalone does not draw it. Every one of these draws lies wholly outside the view frustum in all 9 adjudicated frames.",
+  "_from": "rfx2_20261016"
+ },
+ {
+  "id": "C08-STARTDISP",
+  "kind": "MOVED",
+  "tex": "^-$",
+  "detail": "A \\[0\\.31,0\\.32,0\\.99",
+  "note": "The original's start-display backing quad (0.31,0.32,0.99) paired with an unrelated 2-tri standalone quad by triangle count; both are C08 / C01 draws.",
+  "_from": "rfx2_20261016"
+ },
+ {
+  "id": "C09-FX",
+  "kind": "MISSING",
+  "tex": "^(Headlight|Beam|lensflare-fs8|VehicleIcons)$",
+  "note": "Screen and world FX the standalone does not draw: Headlight beams (0x004dc114 <- 0x00413b27, FUN_00413a40), light Beam (RwIm3D from 0x0041ebeb), lens flare (RwIm3D from 0x0048921b / 0x00489249), VehicleIcons.",
+  "_from": "rfx2_20261016"
+ },
+ {
+  "id": "C10-RUNTIME-TEX",
+  "kind": "MISSING",
+  "tex": "^#\\d+x\\d+:21$",
+  "note": "Ground-level strips along the grid on TRAINING with an unnamed runtime 256x256 A8R8G8B8 texture (no RwTextureSetName), drawn as DrawPrimitive lists through 0x004e11d9 <- 0x004cd3d7 <- 0x00422a5e. Identity of the texture and the function not established. U-9691. [r10] Same site on nine more tracks, original-side chain for '#64x64:21' (27 draws, Dump, Egypt, Forest, Highway, Neustein, Roundabout, Sands, SuperG, Warzone): 0x004e11d9 <- 0x004d4129 <- 0x004cd3d7 <- 0x00422a5e (bt/*/orig_row_*.draws.json, bt_summary.py). Texture size differs per track (256x256 TRAINING, 64x64 elsewhere), the call chain does not.",
+  "_from": "rfx2_20261016",
+  "status": "OPEN",
+  "evidence": "bt_summary.py"
+ },
+ {
+  "id": "C11-WATER",
+  "kind": [
+   "MISSING",
+   "EXTRA",
+   "MOVED"
+  ],
+  "tex": "^(water\\d+|Wet_Water00)$",
+  "note": "TRAINING lake (120-tri mesh, same AABB on both sides): the original binds an animated texture frame (water06, water15, water19, water22, water26, water31 seen across the captures); the standalone binds the material's own Wet_Water00. ORDER rows on Wet_Water00 are C21.",
+  "_from": "rfx2_20261016"
+ },
+ {
+  "id": "C13-PROPPLACE",
+  "kind": [
+   "MOVED",
+   "MISSING"
+  ],
+  "tex": "^(CamManHot|CamManCold|Vehicles)$",
+  "note": "Camera-men (entries 1..N of the track's camera table, helpers 0x00448dc0 etc.) and the Arctic freighter / fishing boats (0x00448770 / 0x00448880 placement, 0x00448cb0 / 0x00448e20 per-frame tick) are placed by rprops F-CAM / F-SHIPS. A row left here is yaw (the camera-man yaw is run-time state rewritten by 0x00441d40, U-9699) or ship tick phase (U-9700). [rstates] With the sector walk (F2) a copy the standalone still places wrong is tied to the sectors around its wrong position and the faithful sphere test (FUN_004c1b40, called from 0x004e5680) can cull it there, so the original draw shows as MISSING instead of MOVED. Same cause.",
+  "_from": "rfx2_20261016"
+ },
+ {
+  "id": "C14-ANIM",
+  "kind": "MOVED",
+  "tex": "^(Blads|JetRanger|Apache|sKYLINE)$",
+  "note": "Animated props, same geometry moved by up to 0.9 units: helicopter path and rotor phase (HELICOPTER0x.ANM / H_ANIM_*.ANM), City skyline. The standalone's animation clock is not the original's, and nothing in the trace replays it.",
+  "_from": "rfx2_20261016"
+ },
+ {
+  "id": "C16-TEX1-WORLD",
+  "kind": "TEX1",
+  "tex": "^(CliffEdge|CliffEdge_Small|Dirt|RoadTarmac|Wall|WetRoad|Ice|IceRoad1|IceRoad2|water)$",
+  "note": "The original draws these world meshes two-stage: FVF 0x242 (two UV sets), stage-1 texture NewShadow / NewShadow_Small with COLOROP 13 BLENDTEXTUREALPHA (TRAINING), and the wet/ice two-stage setup chosen by material name in the game's sector loop (0x0049aa7a region, names 'W?t' / 'Ic?') on Arctic WetRoad. librw's world draws stage 0 only. U-9692. [r10] SuperG Ice / IceRoad1 / IceRoad2: original chain 0x004cb321 <- 0x0049aa7a (the sector loop the note above names for the 'Ic?' materials), textures owned by graphics.bsp. Storm 'water' (stage-1 'water2'): chain 0x00540d4a <- 0x005436ca <- 0x004ea957 <- 0x004e568d, the MatFX DUAL pipeline of U-9692's TRAINING half (Water.dff, Clump_Exclude_From_World). The standalone binds stage 0 only on all four.",
+  "_from": "rfx2_20261016",
+  "status": "MAPPED",
+  "evidence": "bt_summary.py, tex_owner.py"
+ },
+ {
+  "id": "C17-CAR-GLOSS",
+  "kind": [
+   "TEX1",
+   "MISSING"
+  ],
+  "tex": "^(Advantage|CarGloss)$",
+  "detail": "stage-1|A-only",
+  "note": "Car body env/gloss: the original's car pipeline (0x00540d4a <- 0x005436b6, 0x0054187a / 0x00541a51 <- 0x0054369d) binds CarGloss or an unnamed 128x128 A4R4G4B4 texture on stage 1 and draws a separate additive CarGloss pass (SRCBLEND 5 / DESTBLEND 2, Z write off) per glass part; the standalone draws neither. U-9693.",
+  "_from": "rfx2_20261016"
+ },
+ {
+  "id": "C18-FOG",
+  "kind": "FOG",
+  "tex": ".*",
+  "note": "librw applies distance fog in its pixel shader (RwRaceSubmit.cpp P7/I4-fog), so D3DRS_FOGENABLE is 0 on its draws by construction; the original uses fixed-function fog (FOGENABLE 1). Fog parameters were matched in I4-fog/P7 and are not measured by this instrument.",
+  "_from": "rfx2_20261016"
+ },
+ {
+  "id": "C15c-SKY-DEPTH",
+  "kind": "STATE",
+  "tex": "^World$",
+  "detail": "differ in Z,ZW,ZF:",
+  "note": "[rstates] Arctic windows.dff (COURSE.LUA Clump_Filename 8, Clump_Exclude_From_World(8)) is the 68-tri World mesh the original draws in its sky pass: FUN_004492b0 renders clump +0x10130 (slot 8) with RwRenderStateSet(6,0)/(8,0) (depth test and write off) after (0x14,2), backtrace return 0x004493b0. The port draws it as an after-world instance with depth on. Only the depth states differ since F1. U-9696.",
+  "_from": "rfx2_20261016"
+ },
+ {
+  "id": "C19-STATE-LIBRW",
+  "kind": "STATE",
+  "tex": ".*",
+  "note": "librw defaults against RenderWare 3.7's D3D9 driver: every raster flagged alpha (RwRasterBridge creates C8888), ALPHAREF 10 / ALPHAFUNC GREATEREQUAL, CULLMODE NONE (librw d3ddevice.cpp:1787-1800). The original: alpha flag from the raster format (FUN_004d2980) chosen per image (FUN_0054f8d0 -> FUN_004d5340), blend and alpha test switched together (FUN_004d6ce0 at 0x004d6d06, FUN_004d7100), ALPHAFUNC 5 at 0x004d60ec/0x004d6103, ALPHAREF 0 at 0x004d611a/0x004d6123, CULLMODE 2 at 0x004d6157 and per frame in FUN_004492b0. Fix F1 (MASHED_LIBRW_RWSTATES=1) implements this; held default OFF by PREREG rules 1-2 on Arctic (U-9689 sector blending, U-9690 weather cull leak).",
+  "_from": "rfx2_20261016"
+ },
+ {
+  "id": "C21-ORDER",
+  "kind": "ORDER",
+  "tex": ".*",
+  "note": "[rstates] World-sector and tied-prop order follows RenderWare since F2 (sector sequence equal to the original on 9/9 frames), clump atomic order since F5, the after-world clump order since F6 (each track's hook slot +0x1c), mesh order within an atomic since F7 (BinMesh PLG) and the Mts pair copy order since F8. Surviving ORDER rows: car Glass vs body parts (U-9707), Arctic sky-pass World mesh drawn after the world by the port (U-9696), within-sector tie order (U-9709: City Path2 / railings / thickgirders). d1r1 note: Draw order of blended draws against matched draws: the original renders world sectors in RW's traversal order with each sector's atomics, the standalone renders librw's one-clump world in sector-list order and then all instances. U-9694.",
+  "_from": "rfx2_20261016"
+ },
+ {
+  "id": "C01b-CULL-AABB",
+  "kind": "EXTRA",
+  "tex": "^Cliff$",
+  "note": "TRAINING: 20 of the row's 21 draws lie wholly outside the view frustum; the remaining one (14 tri) has an AABB spanning x -54..156 that straddles it. The original culls that sector. The AABB test cannot show whether any of its triangles is inside the view volume. U-9694.",
+  "_from": "rfx2_20261016"
+ },
+ {
+  "id": "C01-CULL",
+  "kind": "EXTRA",
+  "tex": ".*",
+  "all_offscreen": true,
+  "note": "[rstates] Since F2 (MASHED_LIBRW_SECTORWALK, default ON) the librw world sectors and the in-world props are culled by the ported RenderWare walk (camera sync list 0x004e38a0 over BSP cell boxes, tie lists 0x004e3c00, sphere test FUN_004c1b40, distance test FUN_004721e0). The rows left are draws outside that walk: the copters (D3D9 path, no culling) and after-world clumps the original does not issue. Every draw in the row lies wholly outside the trace row's view frustum (AABB test against the original's M_* frame and view window), so it rasterises nothing. d1r1 note: librw has no frustum culling (World::render -> Clump::render -> Atomic::render, librw world.cpp:134-139, clump.cpp:382-390; Camera::frustumTestSphere at camera.cpp:427 is never called; RwRaceSubmit.cpp draws every instance), the original's RenderWare does. Every draw in the row lies wholly outside the trace row's view frustum (AABB test against the original's M_* frame and view window), so it rasterises nothing.",
+  "_from": "rfx2_20261016"
+ },
+ {
+  "id": "C09b-HEADLIGHT-BRAKE",
+  "kind": "EXTRA",
+  "tex": "^Headlight$",
+  "detail": "B-only 1 draws 48 tri",
+  "note": "City 801 (rfx2): the original's cut frame holds 26 Headlight sprites (52 tri, FUN_00412f30 brake-light records 0x39 / 0x3a for one car) while no car draws its brake-light plate (part 0x11), so the matched-pose instrument's brake rows (verify/carlod_20261016/brake_rows.json, read from the plates) carry no brake there and the standalone draws the 24 head / tail sprites. The MISSING 52 / EXTRA 48 pair is one draw. U-9711.",
+  "_from": "rfx2_20261016"
+ },
+ {
+  "id": "C13-PROPPLACE",
+  "kind": "MOVED",
+  "tex": "^(CamManHot|CamManCold|Vehicles)$",
+  "note": "Camera-men (entries 1..N of the track's camera table, helpers 0x00448dc0 etc.) and the Arctic freighter / fishing boats (0x00448770 / 0x00448880 placement, 0x00448cb0 / 0x00448e20 per-frame tick) are placed by rprops F-CAM / F-SHIPS. A row left here is yaw (the camera-man yaw is run-time state rewritten by 0x00441d40, U-9699) or ship tick phase (U-9700).",
+  "_from": "rprops_20261016"
+ },
+ {
+  "id": "C01c-CULL-A",
+  "kind": [
+   "MISSING",
+   "MOVED"
+  ],
+  "tex": ".*",
+  "all_offscreen": true,
+  "status": "MAPPED",
+  "evidence": "drawlist3d.Frustum",
+  "note": "The original submits draws that lie wholly outside the view frustum (row's every draw fails one plane, Frustum.outside); the standalone does not draw them. They rasterise nothing (A-side twin of C01)."
+ },
+ {
+  "id": "C23-SKY-SLOTS",
+  "kind": [
+   "MISSING"
+  ],
+  "tex": "^(skyCylTop|Sky3|Sky4|sky)$",
+  "tracks": [
+   "Neustein",
+   "Roundabout",
+   "Warzone"
+  ],
+  "status": "MAPPED",
+  "evidence": "tex_owner.py, TrackRenderer.cpp:2121-2135, 1882",
+  "note": "Sky_Filename handling. The standalone's COURSE.LUA parse calls load_prop(sk, &sky_, ...) once per 'Sky_Filename( %*d , \"x\" )' line into the single Prop sky_, and Prop::rw_model is assigned on every call (TrackRenderer.cpp:2121-2135, 1882), so with two sky slots only the last stays: Neustein draws skyCyl (SkyDome_01, slot 1) and the original also skyCylTop (SkyDome_02, slot 0); Warzone draws horizon (HorDome, slot 1) and the original also sky (SkyDome, slot 0). Roundabout's line is the one-argument form Sky_Filename(\"skydome.dff\"), which neither sscanf pattern matches, so the standalone draws no sky texture and the original draws Sky3 and Sky4 (skydome.dff). Original draw site: 0x004ec6bb ... <- 0x004c0ee7 <- 0x004e66ab <- 0x00426da2 (FUN_00426d90, the generic sky-slot draw of rprops item 6). U-9714."
+ },
+ {
+  "id": "C24-IM3D-TRACKFX",
+  "kind": [
+   "MISSING"
+  ],
+  "tex": "^(TreeSprite|OakTreeSprite|wfall|flames3|barrel_shad|crane_shad)$",
+  "status": "MAPPED",
+  "evidence": "bt_summary.py, bt_slots.py, decomp_pc.py",
+  "note": "RwIm3D / DrawPrimitive effects issued by game code that the standalone has no draw site for (C04, C09 family). TreeSprite and OakTreeSprite: 0x00536129 <- 0x005356d4 <- 0x0047cd47 <- slot 10 of the track's hook record (Neustein 0x0044af75, Sands 0x00450a4b, Warzone 0x00452dee; slot 10 entries 0x0044af70, 0x00450a20, 0x00452da0), the leaf-sprite renderer of U-9701. wfall: 0x00536129 <- 0x005356d4 <- 0x0048e7f6 (FUN_0048e7b0, the function that also draws 'flatshad', C04) <- 0x0040bdf8. flames3: ... <- 0x00475e66 / 0x00475e7a (FUN_00475e50) <- 0x0040be20 / 0x00410c2d. barrel_shad / crane_shad (2-triangle ground quads): 0x004e11d9 <- 0x004d4129 <- 0x004cd3d7 <- 0x0044be4f (FUN_0044bd50) / 0x0044bf7f (FUN_0044be70) <- 0x0044d806 / 0x0044d810, inside Roundabout slot 2 (0x0044d6f0). U-9701."
+ },
+ {
+  "id": "C22-SLOT-PLACEMENT",
+  "kind": [
+   "MISSING",
+   "EXTRA",
+   "MOVED"
+  ],
+  "tex": "^(trunk|fence|road|girders|crater|office-block_plain)$",
+  "tracks": [
+   "Warzone"
+  ],
+  "status": "PORTED",
+  "evidence": "tex_owner.py, texcompare.py, bt_slots.py, TrackRenderer.cpp:2278-2372",
+  "note": "[rhooks] Ported (Render/TrackHookSlots.cpp): Warzone slot 0 0x004527f0 groups, slot 2 0x00452d10, slot 10 0x00452da0, the crater switch entries (FUN_00452620), the Pylon LOD hook (0x00452aba). No row of this group remains on the 3 frames. Original note: Copies of Clump_Exclude_From_World clumps (CrossTree, Fence_1/2, OakTrunk, Crater_N, Chunk, Pylon_L/H) that the original instantiates and draws from its per-track hook-table slots (Warzone record 0x005f3560; 'road' chain ... <- 0x00479f96 <- 0x00452dc5 / 0x00452dd0, slot 10 entry 0x00452da0). The standalone keeps every such clump as one instance (rw_kind kInstAfterWorld, TrackRenderer.cpp:2362) and ports a track's slots only for Arctic (Render/ArcticTrackNodeSlot0.cpp) plus the Clump_Mts_Pair copies. Measured: trunk 30 original draws vs 1 standalone draw at the world origin, fence 16 vs 2, road 103 vs 10. Ownership of each texture by an excluded clump: tex_owner.py. The per-copy placement code of each slot is not decoded. U-9713."
+ },
+ {
+  "id": "C26-RWP-OBJECTS",
+  "kind": [
+   "MISSING",
+   "EXTRA",
+   "MOVED"
+  ],
+  "tex": "^(Sign02|Trucktyre|interactiveHut|post)$",
+  "tracks": [
+   "Roundabout",
+   "Warzone",
+   "Neustein"
+  ],
+  "status": "OPEN",
+  "evidence": "tex_owner.py, texcompare.py",
+  "note": "[rhooks] The race-reset scenario visibility FUN_00471cf0 is ported (TrackRenderer.cpp, MASHED_NO_SCENARIOVIS): the walls / Hut_Signs extras are gone. What remains: Roundabout Trucktyre AABB 0.0115 off, Neustein Post_1 (49 records, none drawn by the original, cause not decoded), U-9716. Original note: Physics objects (RWP_Object: Sign02, Trucktyre, Hut01 and Wall01-04, Post_1). The standalone has no reference to Physics_Scenario_Add_Objects / Physics_Scenario_Trigger_Add_Objects (0 hits in mashedmod/src) and places every RWP_Object Mts record; the original draws the objects the scenario added at their physics pose. [UNCERTAIN] which scenario the captured race ran and the pose source: not decoded. U-9716."
+ },
+ {
+  "id": "C25-CARLOD-MISSING",
+  "kind": [
+   "MISSING"
+  ],
+  "tex": "^(AdvantageSmall|Glass)$",
+  "status": "OPEN",
+  "evidence": "texcompare.py",
+  "note": "The original draws a car part that the standalone does not (AdvantageSmall 4 draws vs 3 on Neustein row 1169, Glass 4 vs 2 on Warzone row 659, Glass 2 vs 0 on Sands row 1174 of the re-capture). The standalone has no damage or wreck state and does not model every state input of FUN_00420870's per-part visibility (S +0x298, F +0x294): U-9706 (a), (c)."
+ },
+ {
+  "id": "C27-CAR-PART-OFFSET",
+  "kind": [
+   "MOVED"
+  ],
+  "tex": "^Advantage$",
+  "detail": "moved by up to 0\\.0[01]",
+  "status": "OPEN",
+  "evidence": "texcompare.py",
+  "note": "Car body parts whose AABB differs from the original's by 0.01 to 0.02 (tolerance 0.01 + 1e-4 * extent), 2 to 4 parts per row, on cars whose frame LTM is the transplanted one. The part poses come from the standalone's own wheel / suspension state. U-9718."
+ },
+ {
+  "id": "C04b-OBJSHAD",
+  "kind": [
+   "EXTRA",
+   "MOVED"
+  ],
+  "tex": "^RWObjShad$",
+  "status": "MAPPED",
+  "evidence": "U-9710",
+  "note": "Object-shadow stand-in (LibRw/RwRaceFx.cpp ObjShadowMatrix / DrawObjShadows) against FUN_00481a30's shadows: the same triangle count with an AABB offset of 0.0281 (Roundabout rows 1148, 1183), or a different shape (Warzone row 659, 10 triangles vs the original's 6; Warzone has the track's one RWP cylinder). U-9710 (b), (d), (e)."
+ }
+]

@@ -1,0 +1,11 @@
+=== stand exe=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\rhooks\verify\rhooks_20261016\arm_d_exe\mashed_re.exe track=Warzone trace=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\rhooks\verify\capfix_20261016\11_Warzone\trace.csv shots=584,624,659 basis=True cars=True knobs=['MASHED_NO_HOOKSLOTS', 'MASHED_NO_CLUMPANIM', 'MASHED_NO_SCENARIOVIS']
+    pid=20732
+    exit=0
+    stand_row_00584.bmp 921654
+    stand_row_00584.draws.json 64496
+    stand_row_00624.bmp 921654
+    stand_row_00624.draws.json 64152
+    stand_row_00659.bmp 921654
+    stand_row_00659.draws.json 48722
+
+--stderr--

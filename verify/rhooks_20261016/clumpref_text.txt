@@ -1,0 +1,162 @@
+0x00426758  clump[0]         mov eax, dword ptr [ebx + edx*4 + 0x10110] after-slot-fn 0x00000000 
+0x004267a0  clump[0]         lea esi, [ebx + 0x10110]                 after-slot-fn 0x00000000 
+0x00448777  clump[3]         mov eax, dword ptr [eax + 0x1011c]       after-slot-fn 0x00000000 
+0x00448824  clump[7]         mov eax, dword ptr [eax + 0x1012c]       after-slot-fn 0x00000000 
+0x00448887  clump[6]         mov eax, dword ptr [eax + 0x10128]       after-slot-fn 0x00000000 
+0x0044899d  clump[2]         mov ecx, dword ptr [esi + 0x10118]       after-slot-fn 0x00448940 arctic.s0
+0x004489ac  clump[2]         mov eax, dword ptr [esi + 0x10118]       after-slot-fn 0x00448940 arctic.s0
+0x00448b3e  mtscount[1]      mov eax, dword ptr [esi + 0x10004]       after-slot-fn 0x00448940 arctic.s0
+0x00448b76  mtscount[1]      mov eax, dword ptr [esi + 0x10004]       after-slot-fn 0x00448940 arctic.s0
+0x00448b84  mtscount[2]      mov eax, dword ptr [esi + 0x10008]       after-slot-fn 0x00448940 arctic.s0
+0x00448bb9  mtscount[2]      mov eax, dword ptr [esi + 0x10008]       after-slot-fn 0x00448940 arctic.s0
+0x00448bc7  mtscount[3]      mov eax, dword ptr [esi + 0x1000c]       after-slot-fn 0x00448940 arctic.s0
+0x00448c03  mtscount[3]      mov eax, dword ptr [esi + 0x1000c]       after-slot-fn 0x00448940 arctic.s0
+0x004493a4  clump[8]         mov ecx, dword ptr [esi + 0x10130]       after-slot-fn 0x004492b0 arctic.s4
+0x00449435  clump[13]        mov eax, dword ptr [esi + 0x10144]       after-slot-fn 0x004492b0 arctic.s4
+0x00449449  clump[0]         mov ecx, dword ptr [esi + 0x10110]       after-slot-fn 0x004492b0 arctic.s4
+0x00449577  clump[0]         mov eax, dword ptr [edi + eax*4 + 0x10110] after-slot-fn 0x00449520 dump.s2
+0x004495e4  clump[2]         mov eax, dword ptr [eax + 0x10118]       after-slot-fn 0x004495a0 dump.s5
+0x00449834  clump[0]         mov ecx, dword ptr [eax + 0x10110]       after-slot-fn 0x00449830 egypt.s2
+0x0044abb4  clump[7]         mov eax, dword ptr [eax + 0x1012c]       after-slot-fn 0x00449850 egypt.s5
+0x0044ad0a  mtscount[0]      mov eax, dword ptr [esi + 0x10000]       after-slot-fn 0x0044ac70 neustein.s0
+0x0044ad42  mtscount[1]      mov edx, dword ptr [esi + 0x10004]       after-slot-fn 0x0044ac70 neustein.s0
+0x0044ad62  mtscount[0]      mov eax, dword ptr [esi + 0x10000]       after-slot-fn 0x0044ac70 neustein.s0
+0x0044ad70  mtscount[2]      mov eax, dword ptr [esi + 0x10008]       after-slot-fn 0x0044ac70 neustein.s0
+0x0044ada8  mtscount[1]      mov edx, dword ptr [esi + 0x10004]       after-slot-fn 0x0044ac70 neustein.s0
+0x0044adc8  mtscount[2]      mov eax, dword ptr [esi + 0x10008]       after-slot-fn 0x0044ac70 neustein.s0
+0x0044add6  mtscount[5]      mov eax, dword ptr [esi + 0x10014]       after-slot-fn 0x0044ac70 neustein.s0
+0x0044ae13  mtscount[1]      mov edx, dword ptr [esi + 0x10004]       after-slot-fn 0x0044ac70 neustein.s0
+0x0044ae33  mtscount[5]      mov eax, dword ptr [esi + 0x10014]       after-slot-fn 0x0044ac70 neustein.s0
+0x0044ae41  clump[3]         mov ecx, dword ptr [esi + 0x1011c]       after-slot-fn 0x0044ac70 neustein.s0
+0x0044ae4d  mtscount[0]      mov edx, dword ptr [esi + 0x10000]       after-slot-fn 0x0044ac70 neustein.s0
+0x0044ae62  mtscount[2]      mov ecx, dword ptr [esi + 0x10008]       after-slot-fn 0x0044ac70 neustein.s0
+0x0044ae81  mtscount[5]      mov eax, dword ptr [esi + 0x10014]       after-slot-fn 0x0044ac70 neustein.s0
+0x0044af15  clump[5]         mov eax, dword ptr [esi + 0x10124]       after-slot-fn 0x0044af10 neustein.s2
+0x0044af28  clump[6]         mov eax, dword ptr [esi + 0x10128]       after-slot-fn 0x0044af10 neustein.s2
+0x0044b1cc  mtscount[2]      mov eax, dword ptr [ebx + 0x10008]       after-slot-fn 0x0044af90 neustein.s5
+0x0044b1fe  mtscount[2]      mov eax, dword ptr [ebx + 0x10008]       after-slot-fn 0x0044af90 neustein.s5
+0x0044b20f  mtscount[3]      mov eax, dword ptr [ebx + 0x1000c]       after-slot-fn 0x0044af90 neustein.s5
+0x0044b23f  mtscount[3]      mov eax, dword ptr [ebx + 0x1000c]       after-slot-fn 0x0044af90 neustein.s5
+0x0044b3d5  mtscount[1]      mov ebp, dword ptr [ebx + 0x10004]       after-slot-fn 0x0044b3c0 city.s0
+0x0044b3ec  mtscount[0]      mov eax, dword ptr [ebx + 0x10000]       after-slot-fn 0x0044b3c0 city.s0
+0x0044b43a  mtscount[0]      mov eax, dword ptr [ebx + 0x10000]       after-slot-fn 0x0044b3c0 city.s0
+0x0044b920  clump[6]         mov eax, dword ptr [esi + 0x10128]       after-slot-fn 0x0044b8f0 city.s2
+0x0044b92c  clump[7]         mov ecx, dword ptr [esi + 0x1012c]       after-slot-fn 0x0044b8f0 city.s2
+0x0044b938  clump[8]         mov edx, dword ptr [esi + 0x10130]       after-slot-fn 0x0044b8f0 city.s2
+0x0044b944  clump[9]         mov eax, dword ptr [esi + 0x10134]       after-slot-fn 0x0044b8f0 city.s2
+0x0044b950  clump[10]        mov ecx, dword ptr [esi + 0x10138]       after-slot-fn 0x0044b8f0 city.s2
+0x0044b95c  clump[12]        mov edx, dword ptr [esi + 0x10140]       after-slot-fn 0x0044b8f0 city.s2
+0x0044b968  clump[11]        mov eax, dword ptr [esi + 0x1013c]       after-slot-fn 0x0044b8f0 city.s2
+0x0044b974  clump[13]        mov ecx, dword ptr [esi + 0x10144]       after-slot-fn 0x0044b8f0 city.s2
+0x0044c8c0  clump[2]         mov eax, dword ptr [ebp + 0x10118]       after-slot-fn 0x0044b9e0 city.s5
+0x0044ca44  clump[10]        mov ecx, dword ptr [eax + 0x10138]       after-slot-fn 0x0044b9e0 city.s5
+0x0044caa4  clump[14]        mov eax, dword ptr [eax + 0x10148]       after-slot-fn 0x0044ca70 rouabout.s12
+0x0044cc2f  mtscount[1]      mov eax, dword ptr [esi + 0x10004]       after-slot-fn 0x0044cb60 rouabout.s0
+0x0044cc82  mtscount[1]      mov eax, dword ptr [esi + 0x10004]       after-slot-fn 0x0044cb60 rouabout.s0
+0x0044ccb0  clump[1]         mov ecx, dword ptr [esi + 0x10114]       after-slot-fn 0x0044cb60 rouabout.s0
+0x0044d307  clump[18]        mov edx, dword ptr [esi + 0x10158]       after-slot-fn 0x0044cb60 rouabout.s0
+0x0044d31e  clump[17]        mov eax, dword ptr [esi + 0x10154]       after-slot-fn 0x0044cb60 rouabout.s0
+0x0044d32a  clump[20]        mov ecx, dword ptr [esi + 0x10160]       after-slot-fn 0x0044cb60 rouabout.s0
+0x0044d340  clump[19]        mov edx, dword ptr [esi + 0x1015c]       after-slot-fn 0x0044cb60 rouabout.s0
+0x0044d761  clump[3]         mov eax, dword ptr [esi + 0x1011c]       after-slot-fn 0x0044d6f0 rouabout.s2
+0x0044d777  clump[0]         mov eax, dword ptr [esi + 0x10110]       after-slot-fn 0x0044d6f0 rouabout.s2
+0x0044d78a  clump[5]         mov eax, dword ptr [esi + 0x10124]       after-slot-fn 0x0044d6f0 rouabout.s2
+0x0044d79d  clump[11]        mov eax, dword ptr [esi + 0x1013c]       after-slot-fn 0x0044d6f0 rouabout.s2
+0x0044d7b0  clump[9]         mov eax, dword ptr [esi + 0x10134]       after-slot-fn 0x0044d6f0 rouabout.s2
+0x0044d7c3  clump[8]         mov eax, dword ptr [esi + 0x10130]       after-slot-fn 0x0044d6f0 rouabout.s2
+0x0044d7d6  clump[19]        mov eax, dword ptr [esi + 0x1015c]       after-slot-fn 0x0044d6f0 rouabout.s2
+0x0044d7e9  clump[17]        mov esi, dword ptr [esi + 0x10154]       after-slot-fn 0x0044d6f0 rouabout.s2
+0x0044d874  clump[3]         mov eax, dword ptr [eax + 0x1011c]       after-slot-fn 0x0044d830 rouabout.s5
+0x0044db45  clump[0]         mov eax, dword ptr [esi + 0x10110]       after-slot-fn 0x0044db40 storm.s2
+0x0044db83  clump[1]         mov eax, dword ptr [esi + 0x10114]       after-slot-fn 0x0044db40 storm.s2
+0x0044dc05  clump[2]         mov eax, dword ptr [esi + 0x10118]       after-slot-fn 0x0044dbd0 storm.s5
+0x0044dc12  mtscount[0]      mov ecx, dword ptr [esi + 0x10000]       after-slot-fn 0x0044dbd0 storm.s5
+0x0044dc20  clump[3]         mov edx, dword ptr [esi + 0x1011c]       after-slot-fn 0x0044dbd0 storm.s5
+0x0044dc31  mtscount[1]      mov ecx, dword ptr [esi + 0x10004]       after-slot-fn 0x0044dbd0 storm.s5
+0x0044dc52  mtscount[6]      mov eax, dword ptr [esi + 0x10018]       after-slot-fn 0x0044dbd0 storm.s5
+0x0044dc65  clump[4]         mov ecx, dword ptr [esi + 0x10120]       after-slot-fn 0x0044dbd0 storm.s5
+0x0044dc71  mtscount[4]      mov ecx, dword ptr [esi + 0x10010]       after-slot-fn 0x0044dbd0 storm.s5
+0x0044dc85  clump[5]         mov edx, dword ptr [esi + 0x10124]       after-slot-fn 0x0044dbd0 storm.s5
+0x0044dc96  mtscount[3]      mov ecx, dword ptr [esi + 0x1000c]       after-slot-fn 0x0044dbd0 storm.s5
+0x0044dcba  mtscount[5]      mov eax, dword ptr [esi + 0x10014]       after-slot-fn 0x0044dbd0 storm.s5
+0x0044dde4  clump[7]         mov eax, dword ptr [eax + 0x1012c]       after-slot-fn 0x0044dbd0 storm.s5
+0x0044deec  clump[0]         mov edx, dword ptr [esi + 0x10110]       after-slot-fn 0x0044ded0 forest.s1
+0x0044df05  clump[0]         mov eax, dword ptr [esi + 0x10110]       after-slot-fn 0x0044df00 forest.s2
+0x0044e354  clump[51]        mov eax, dword ptr [eax + 0x101dc]       after-slot-fn 0x0044df30 forest.s5
+0x0044e53f  clump[43]        mov ecx, dword ptr [eax + 0x101bc]       after-slot-fn 0x0044e470 highway.s2
+0x0044f707  clump[43]        mov edx, dword ptr [esi + 0x101bc]       after-slot-fn 0x0044eeb0 highway.s1
+0x0044f71d  clump[43]        mov ecx, dword ptr [esi + 0x101bc]       after-slot-fn 0x0044eeb0 highway.s1
+0x0044f738  clump[43]        mov eax, dword ptr [esi + 0x101bc]       after-slot-fn 0x0044eeb0 highway.s1
+0x0044f84a  clump[50]        mov ecx, dword ptr [eax + 0x101d8]       after-slot-fn 0x0044f7d0 highway.s11
+0x00450020  clump[0]         mov esi, dword ptr [eax + esi*4 + 0x10110] after-slot-fn 0x0044f970 highway.s0
+0x00450034  clump[0]         mov edi, dword ptr [esi + edi*4 + 0x10110] after-slot-fn 0x0044f970 highway.s0
+0x00450045  clump[0]         mov ebp, dword ptr [esi + ebp*4 + 0x10110] after-slot-fn 0x0044f970 highway.s0
+0x00450056  clump[44]        mov edi, dword ptr [esi + 0x101c0]       after-slot-fn 0x0044f970 highway.s0
+0x0045008c  clump[0]         mov esi, dword ptr [esi + ecx*4 + 0x10110] after-slot-fn 0x0044f970 highway.s0
+0x00450244  clump[17]        mov eax, dword ptr [eax + 0x10154]       after-slot-fn 0x0044f970 highway.s0
+0x00450403  clump[20]        mov eax, dword ptr [esi + 0x10160]       after-slot-fn 0x0044f970 highway.s0
+0x0045041a  clump[18]        mov ecx, dword ptr [esi + 0x10158]       after-slot-fn 0x0044f970 highway.s0
+0x00450431  clump[19]        mov edx, dword ptr [esi + 0x1015c]       after-slot-fn 0x0044f970 highway.s0
+0x00450448  clump[7]         mov eax, dword ptr [esi + 0x1012c]       after-slot-fn 0x0044f970 highway.s0
+0x004507cb  clump[1]         mov edx, dword ptr [ebp + 0x10114]       after-slot-fn 0x004507b0 sands.s1
+0x00450917  clump[14]        lea esi, [ebx + 0x10148]                 after-slot-fn 0x00450910 sands.s2
+0x00450933  clump[5]         mov ecx, dword ptr [ebx + 0x10124]       after-slot-fn 0x00450910 sands.s2
+0x0045093f  clump[1]         mov eax, dword ptr [ebx + 0x10114]       after-slot-fn 0x00450910 sands.s2
+0x00450d4c  mtscount[0]      mov eax, dword ptr [esi + 0x10000]       after-slot-fn 0x00450ca0 sands.s0
+0x00450d86  mtscount[1]      mov ecx, dword ptr [esi + 0x10004]       after-slot-fn 0x00450ca0 sands.s0
+0x00450d98  mtscount[0]      mov eax, dword ptr [esi + 0x10000]       after-slot-fn 0x00450ca0 sands.s0
+0x00450dab  clump[10]        mov eax, dword ptr [esi + 0x10138]       after-slot-fn 0x00450ca0 sands.s0
+0x00450dbc  clump[10]        mov ecx, dword ptr [esi + 0x10138]       after-slot-fn 0x00450ca0 sands.s0
+0x00450dcd  clump[10]        mov edx, dword ptr [esi + 0x10138]       after-slot-fn 0x00450ca0 sands.s0
+0x00450dde  clump[10]        mov eax, dword ptr [esi + 0x10138]       after-slot-fn 0x00450ca0 sands.s0
+0x00450def  clump[10]        mov ecx, dword ptr [esi + 0x10138]       after-slot-fn 0x00450ca0 sands.s0
+0x00450e00  clump[10]        mov edx, dword ptr [esi + 0x10138]       after-slot-fn 0x00450ca0 sands.s0
+0x00450e24  clump[4]         mov eax, dword ptr [esi + 0x10120]       after-slot-fn 0x00450ca0 sands.s0
+0x00450e44  clump[2]         mov eax, dword ptr [eax + 0x10118]       after-slot-fn 0x00450ca0 sands.s0
+0x00450fc4  clump[0]         mov eax, dword ptr [eax + 0x10110]       after-slot-fn 0x00450fc0 superg.s2
+0x0045114f  clump[1]         mov esi, dword ptr [esi + 0x10114]       after-slot-fn 0x00451090 superg.s4
+0x004511c4  clump[1]         mov eax, dword ptr [eax + 0x10114]       after-slot-fn 0x00451090 superg.s4
+0x00451307  mtscount[2]      mov eax, dword ptr [edi + 0x10008]       after-slot-fn 0x00451280 training.s0
+0x00451367  mtscount[2]      mov eax, dword ptr [edi + 0x10008]       after-slot-fn 0x00451280 training.s0
+0x00451398  clump[11]        mov edx, dword ptr [edi + 0x1013c]       after-slot-fn 0x00451280 training.s0
+0x004513e0  clump[9]         mov edx, dword ptr [esi + 0x10134]       after-slot-fn 0x004513b0 training.s1
+0x00451465  clump[9]         mov eax, dword ptr [esi + 0x10134]       after-slot-fn 0x00451460 training.s2
+0x00451478  clump[3]         mov eax, dword ptr [esi + 0x1011c]       after-slot-fn 0x00451460 training.s2
+0x0045148b  clump[4]         mov eax, dword ptr [esi + 0x10120]       after-slot-fn 0x00451460 training.s2
+0x0045149e  clump[5]         mov eax, dword ptr [esi + 0x10124]       after-slot-fn 0x00451460 training.s2
+0x004514b1  clump[6]         mov eax, dword ptr [esi + 0x10128]       after-slot-fn 0x00451460 training.s2
+0x004514c4  clump[7]         mov eax, dword ptr [esi + 0x1012c]       after-slot-fn 0x00451460 training.s2
+0x004514d7  clump[8]         mov esi, dword ptr [esi + 0x10130]       after-slot-fn 0x00451460 training.s2
+0x00452628  clump-imm[9]     add edi, 0x10134                         after-slot-fn 0x00451520 training.s5
+0x00452734  clump[6]         mov eax, dword ptr [eax + 0x10128]       after-slot-fn 0x00451520 training.s5
+0x004527f8  clump[3]         mov eax, dword ptr [ebx + 0x1011c]       after-slot-fn 0x004527f0 warzone.s0
+0x00452807  mtscount[2]      mov edx, dword ptr [ebx + 0x10008]       after-slot-fn 0x004527f0 warzone.s0
+0x00452822  mtscount[3]      mov ecx, dword ptr [ebx + 0x1000c]       after-slot-fn 0x004527f0 warzone.s0
+0x0045283b  clump[2]         mov edx, dword ptr [ebx + 0x10118]       after-slot-fn 0x004527f0 warzone.s0
+0x00452847  mtscount[0]      mov ecx, dword ptr [ebx + 0x10000]       after-slot-fn 0x004527f0 warzone.s0
+0x00452855  clump[22]        mov edx, dword ptr [ebx + 0x10168]       after-slot-fn 0x004527f0 warzone.s0
+0x00452866  mtscount[6]      mov edx, dword ptr [ebx + 0x10018]       after-slot-fn 0x004527f0 warzone.s0
+0x00452890  clump[17]        mov eax, dword ptr [ebx + 0x10154]       after-slot-fn 0x004527f0 warzone.s0
+0x004528ae  mtscount[4]      mov edx, dword ptr [ebx + 0x10010]       after-slot-fn 0x004527f0 warzone.s0
+0x00452908  mtscount[2]      mov eax, dword ptr [ebx + 0x10008]       after-slot-fn 0x004527f0 warzone.s0
+0x00452943  mtscount[1]      mov eax, dword ptr [ebx + 0x10004]       after-slot-fn 0x004527f0 warzone.s0
+0x00452963  mtscount[2]      mov eax, dword ptr [ebx + 0x10008]       after-slot-fn 0x004527f0 warzone.s0
+0x00452971  mtscount[3]      mov eax, dword ptr [ebx + 0x1000c]       after-slot-fn 0x004527f0 warzone.s0
+0x004529b0  mtscount[1]      mov eax, dword ptr [ebx + 0x10004]       after-slot-fn 0x004527f0 warzone.s0
+0x004529d0  mtscount[3]      mov eax, dword ptr [ebx + 0x1000c]       after-slot-fn 0x004527f0 warzone.s0
+0x00452a08  clump[1]         mov ecx, dword ptr [ebx + 0x10114]       after-slot-fn 0x004527f0 warzone.s0
+0x00452a94  clump[21]        mov ecx, dword ptr [ebx + 0x10164]       after-slot-fn 0x004527f0 warzone.s0
+0x00452ab2  clump[20]        mov edx, dword ptr [ebx + 0x10160]       after-slot-fn 0x004527f0 warzone.s0
+0x00452b57  mtscount[4]      mov eax, dword ptr [esi + 0x10010]       after-slot-fn 0x00452b20 warzone.s1
+0x00452cd3  clump[0]         mov edx, dword ptr [esi + 0x10110]       after-slot-fn 0x00452b20 warzone.s1
+0x00452d21  clump[19]        mov eax, dword ptr [esi + 0x1015c]       after-slot-fn 0x00452d10 warzone.s2
+0x00452d37  clump[20]        mov eax, dword ptr [esi + 0x10160]       after-slot-fn 0x00452d10 warzone.s2
+0x00452d6d  clump[0]         mov eax, dword ptr [esi + 0x10110]       after-slot-fn 0x00452d10 warzone.s2
+0x00478d1f  clump[0]         mov eax, dword ptr [ecx + eax*4 + 0x10110] after-slot-fn 0x00452e00 warzone.s5
+0x00478ec8  clump-imm[0]     add edi, 0x10110                         after-slot-fn 0x00452e00 warzone.s5
+0x00479a10  mtscount[0]      lea ebp, [esi + 0x10000]                 after-slot-fn 0x00452e00 warzone.s5
+0x00479c4f  clump[0]         mov ebp, dword ptr [esi + ecx*4 + 0x10110] after-slot-fn 0x00452e00 warzone.s5
+0x00479c61  mtscount[0]      mov edi, dword ptr [esi + eax*4 + 0x10000] after-slot-fn 0x00452e00 warzone.s5
+0x00479d8d  clump[0]         lea esi, [ebx + 0x10110]                 after-slot-fn 0x00452e00 warzone.s5
+0x004cc59b  mtscount[0]      lea edx, [eax + 0x10000]                 after-slot-fn 0x00452e00 warzone.s5
+0x005bb9ba  clump-imm[36]    mov ebx, 0x101a2                         after-slot-fn 0x00452e00 warzone.s5

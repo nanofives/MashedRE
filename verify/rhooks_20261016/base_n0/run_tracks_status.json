@@ -1,0 +1,22 @@
+{
+ "01_Egypt": {
+  "ok": true,
+  "attempts": 1,
+  "shots": [
+   740,
+   780,
+   815
+  ],
+  "frames": 1165
+ },
+ "02_Neustein": {
+  "ok": true,
+  "attempts": 1,
+  "shots": [
+   1094,
+   1134,
+   1169
+  ],
+  "frames": 1519
+ }
+}

@@ -15,6 +15,7 @@
 #include "../Track/DffModel.h"
 #include "../Track/PowerupMarkers.h"  // POWERUPS_GOLD.DFF placement (FUN_00426460)
 #include "../Render/ArcticTrackNodeSlot0.h"  // the real 0x00448940 body + its sea grid
+#include "../Render/TrackHookSlots.h"        // [rhooks U-9713] per-track hook-slot draw model
 #include "../Track/LapLogic.h"      // F4 lap-line crossing sequence (shared w/ test)
 #include "../Txd/TxdDecoder.h"
 #include "../Audio/AudioEngine.h"   // real SFX (permdict.rws) for countdown/powerups
@@ -1960,6 +1961,12 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                 std::vector<D3DMATRIX> inst;
             };
             RwpDesc rwp[32];
+            std::string anim_names[16];   // [rhooks U-9717] General_Anim_Filename slots
+            clump_anims_.clear();
+            // [rhooks U-9716] Physics_Scenario_* : per scenario its RWP descriptors, the sequences
+            std::vector<std::vector<int>> scen_objs;
+            std::vector<std::vector<int>> scen_seqs;
+            int scen_fns = 0;
             std::vector<std::pair<std::string, float>> lua_locals;
             auto lua_num = [&](std::string tok, float* out) -> bool {
                 while (!tok.empty() && (tok.front() == ' ' || tok.front() == '\t')) tok.erase(tok.begin());
@@ -2006,6 +2013,41 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                     float lv = 0.f;
                     if (std::sscanf(line.c_str(), " local %63[A-Za-z0-9_] = %f", ln2, &lv) == 2)
                         lua_locals.emplace_back(ln2, lv);
+                    // [rhooks U-9716] `local X = Physics_Scenario_Create( "..." )` -> the scenario index
+                    // (FUN_0047b350 @ 0x0047b350 returns DAT_00691480 before its increment);
+                    // `local X = Physics_Scenario_Get_Function( "..." )` -> 2000 + the name's slot
+                    // (FUN_00471560 @ 0x00471560; the names are registered by hook slot 12, 0x00426ec5,
+                    // before the Lua runs): any value above 1999.
+                    {
+                        char ch = 0;
+                        if (std::sscanf(line.c_str(), " local %63[A-Za-z0-9_] = Physics_Scenario_Create %c",
+                                        ln2, &ch) == 2 && ch == '(') {
+                            lua_locals.emplace_back(ln2, static_cast<float>(scen_objs.size()));
+                            scen_objs.emplace_back();
+                        } else if (std::sscanf(line.c_str(),
+                                               " local %63[A-Za-z0-9_] = Physics_Scenario_Get_Function %c",
+                                               ln2, &ch) == 2 && ch == '(') {
+                            lua_locals.emplace_back(ln2, static_cast<float>(2000 + scen_fns++));
+                        }
+                    }
+                    if (lua_args(line, "Physics_Scenario_Add_Objects", &args) && args.size() >= 2) {
+                        // FUN_0047b420 @ 0x0047b420: scenario = arg n-1, RWP descriptor = arg n
+                        float fs = -1.f, fo = -1.f;
+                        lua_num(args[args.size() - 2], &fs);
+                        lua_num(args[args.size() - 1], &fo);
+                        const int si = static_cast<int>(fs);
+                        if (si >= 0 && si < static_cast<int>(scen_objs.size()))
+                            scen_objs[static_cast<std::size_t>(si)].push_back(static_cast<int>(fo));
+                    } else if (lua_args(line, "Physics_Scenario_Set_Sequence", &args)) {
+                        // FUN_0047b3c0 @ 0x0047b3c0: every argument through FUN_00471490
+                        std::vector<int> seq;
+                        for (const auto& a2 : args) {
+                            float fv = -1.f;
+                            lua_num(a2, &fv);
+                            seq.push_back(static_cast<int>(fv));
+                        }
+                        scen_seqs.push_back(std::move(seq));
+                    }
                     float v[3] = {};
                     int ri = -1;
                     auto set_shape = [&](int type, int nf) {
@@ -2035,6 +2077,31 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                         lua_num(args[1], &lb);
                         ri = static_cast<int>(fi);
                         if (ri >= 0 && ri < 32) rwp[ri].label = static_cast<int>(lb);
+                    } else if (lua_args(line, "SetClumpAnim", &args) &&
+                               (args.size() == 2 || args.size() == 3)) {
+                        // [rhooks U-9717] FUN_0047ad40 @ 0x0047ad40, record k at desc + 0x70 + 0xc*k:
+                        // +0x70 = arg n-1 (clump), +0x71 = arg n (anim), +0x78 = 0, then arg 1 when
+                        // n == 3 (each through __ftol 0x004a2c48). Dump's SetClumpAnim(LINEAR, 0, 3):
+                        // LINEAR is no global of the image, so Lua 4.0 hands nil -> 0 (lua_num).
+                        float v0 = 0.f, vc = 0.f, va = 0.f;
+                        const std::size_t n = args.size();
+                        lua_num(args[n - 2], &vc);
+                        lua_num(args[n - 1], &va);
+                        if (n == 3) lua_num(args[0], &v0);
+                        ClumpAnim ca;
+                        ca.clump = static_cast<int>(vc);
+                        ca.anim_idx = static_cast<int>(va);
+                        ca.type = n == 3 ? static_cast<int>(v0) : 0;
+                        clump_anims_.push_back(std::move(ca));
+                    } else if (lua_args(line, "General_Anim_Filename", &args) && args.size() == 2) {
+                        // the .ANM per course anim slot (course + 0x105b0 + 4*i)
+                        float fi = -1.f;
+                        lua_num(args[0], &fi);
+                        const int ai = static_cast<int>(fi);
+                        std::string nm = args[1];
+                        const std::size_t q0 = nm.find('"'), q1 = nm.rfind('"');
+                        if (ai >= 0 && ai < 16 && q0 != std::string::npos && q1 > q0)
+                            anim_names[ai] = nm.substr(q0 + 1, q1 - q0 - 1);
                     }
                 }
                 if (std::sscanf(line.c_str(),
@@ -2057,6 +2124,7 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                         // [rstates] RWP_Object props are drawn by the original's world
                         // pass between sectors (Arctic Tyres after its first sector).
                         p.rw_kind = LibRw::kInstInWorld;
+                        p.rwp_idx = idx;   // [rhooks U-9716]
                         if (!p.instances.empty())
                             props_.push_back(std::move(p));
                     }
@@ -2161,6 +2229,40 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                     }
                 }
             }
+            // [rhooks U-9716] FUN_00471cf0 @ 0x00471cf0 (race reset, from FUN_004111c0): for every
+            // Set_Sequence list, every scenario in it (entries above 1999 are functions, FUN_00471490 @
+            // 0x00471490) sets each of its objects -- every instance of every descriptor it holds
+            // (FUN_004715a0 @ 0x004715a0) -- to (scenario == the list's first scenario):
+            // FUN_0047d080 (physics world membership) and FUN_0047d100 -> FUN_004b5240 (atomic RENDER
+            // bit). Later writes win. MASHED_NO_SCENARIOVIS=1 keeps every RWP object visible.
+            bool rwp_hidden[32] = {};
+            {
+                static const bool s_no_scen = std::getenv("MASHED_NO_SCENARIOVIS") != nullptr;
+                int vis[32];
+                for (int k = 0; k < 32; ++k) vis[k] = -1;
+                if (!s_no_scen)
+                    for (const auto& seq : scen_seqs) {
+                        std::vector<int> el;
+                        for (const int v : seq)
+                            if (v <= 1999) el.push_back(v);
+                        if (el.empty()) continue;
+                        for (const int s : el) {
+                            if (s < 0 || s >= static_cast<int>(scen_objs.size())) continue;
+                            for (const int o : scen_objs[static_cast<std::size_t>(s)])
+                                if (o >= 0 && o < 32) vis[o] = (s == el[0]) ? 1 : 0;
+                        }
+                    }
+                for (int k = 0; k < 32; ++k) rwp_hidden[k] = vis[k] == 0;
+                for (auto& p : props_)
+                    if (p.rwp_idx >= 0 && p.rwp_idx < 32 && rwp_hidden[p.rwp_idx]) p.scen_hidden = true;
+                if (log) {
+                    std::fprintf(log, "  SCENARIO course_id=%d scenarios=%zu sequences=%zu hidden RWP:",
+                                 course_id_, scen_objs.size(), scen_seqs.size());
+                    for (int k = 0; k < 32; ++k)
+                        if (rwp_hidden[k]) std::fprintf(log, " %d", k);
+                    std::fprintf(log, "%s\n", s_no_scen ? " (off: MASHED_NO_SCENARIOVIS)" : "");
+                }
+            }
             // [rfx2] the object shadows' inputs, in FUN_00480340 @ 0x00480340's creation order:
             // descriptors 0..31 with a shape (piVar6[-0x43] != 0), each one's MTS records in file
             // order (FUN_004b3f50). bbox = FUN_0055bd80 @ 0x0055bd80 on the shape with the identity
@@ -2193,7 +2295,9 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                             shaped = false;
                         }
                         for (int c = 0; c < 3; ++c) { o.bbox[c] = h[c]; o.bbox[3 + c] = -h[c]; }
-                        o.casts = shaped;
+                        // [rhooks U-9716] FUN_00481a30 skips an object whose atomic RENDER bit is clear
+                        // (`*(byte *)(atomic + 2) & 4`), as FUN_00471cf0 leaves a hidden scenario object
+                        o.casts = shaped && !rwp_hidden[k];
                         // RpAtomicGetWorldBoundingSphere: centre through the frame LTM, radius times
                         // the LTM's largest axis length (the MTS frame flags are cleared, 0x004802a0)
                         const float* g = d.sphere;
@@ -2333,8 +2437,24 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
             // measurement cannot see it, and none is claimed here.
             static const bool s_skip_excluded =
                 std::getenv("MASHED_TRACK_SKIP_EXCLUDED") != nullptr;
+            // [rhooks U-9713] On a covered track an excluded clump is drawn ONLY where the original's
+            // hook slots or the switch table draw it (Render/TrackHookSlots.cpp); one they never draw
+            // as itself is not a prop. Its Mts copy groups and LOD geometry are loaded below.
+            // MASHED_NO_HOOKSLOTS=1 keeps the pre-rhooks handling (HookTrackFor returns nullptr).
+            const mashed_re::Render::HookTrack* hook = mashed_re::Render::HookTrackFor(course_id_);
+            if (log)
+                std::fprintf(log, "  HOOKSLOT course_id=%d covered=%d (%s)\n", course_id_, hook ? 1 : 0,
+                             hook ? hook->name : "-");
             for (const auto& c : clumps) {
                 if (excluded[c.idx] && s_skip_excluded) continue;
+                int hook_pass = 0, hook_order = -1;
+                if (hook && excluded[c.idx] &&
+                    !mashed_re::Render::HookClumpDrawn(*hook, c.idx, &hook_pass, &hook_order)) {
+                    if (log)
+                        std::fprintf(log, "  HOOKSLOT course_id=%d clump=%d dff=%s not drawn "
+                                          "(excluded, no hook-slot draw site)\n", course_id_, c.idx, c.dff);
+                    continue;
+                }
                 Prop p;
                 // [rprops U-9695] a Clump_Mts_Pair clump's atomic frame is replaced by the Mts
                 // record and its clump-frame translation zeroed (0x00479330), so its vertices must
@@ -2380,6 +2500,12 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                     p.rw_kind = excluded[c.idx] ? LibRw::kInstAfterWorld
                                                 : LibRw::kInstInWorld;
                     p.clump_idx = c.idx;
+                    if (hook && excluded[c.idx]) {   // [rhooks] its HookTrack::draws entry
+                        p.hook_key = hook_order;
+                        p.hook_pass = hook_pass;
+                        p.hook_cull = hook->draws[hook_order].cull;
+                        p.hook_zwrite = hook->draws[hook_order].zwrite;
+                    }
                     if (!s_no_sea_tile && course_id_ == 0 && c.idx == 2) {
                         // The 25 tiles are drawn by Arctic slot 2 (0x00449030,
                         // RpClumpRender per tile) after the world, not by the world pass.
@@ -2493,6 +2619,104 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                     props_.push_back(std::move(p));
                     if (anim_kind) prop_anims_.push_back({ anim_kind, props_.size() - 1 });
                 }
+            }
+            if (hook) {
+                auto dff_of = [&](int idx) -> const char* {
+                    for (const auto& c : clumps)
+                        if (c.idx == idx) return c.dff;
+                    return nullptr;
+                };
+                // [rhooks U-9713] Mts copy groups (FUN_00479f30 @ 0x00479f30): a clone of the clump's
+                // first atomic per Mts record, each on a NEW unparented frame set to the record
+                // (FUN_00479e80 / FUN_00479f10), so the copies stay in geometry space (no frame bake).
+                // FUN_00479e80 makes no group above 0x30 copies.
+                for (int i = 0; i < hook->n_draws; ++i) {
+                    const mashed_re::Render::HookDraw& d = hook->draws[i];
+                    if (d.kind != mashed_re::Render::HookDrawKind::Group) continue;
+                    const char* dff = dff_of(d.clump);
+                    std::vector<D3DMATRIX> recs;
+                    if (dff && d.mts >= 0 && d.mts < 16 && mts_names[d.mts][0]) {
+                        std::uint32_t ml = 0;
+                        const std::uint8_t* mb = find_entry(mts_names[d.mts], &ml);
+                        if (mb && ml >= 4) read_mts(mb, ml, &recs);
+                    }
+                    Prop p;
+                    if (recs.empty() || recs.size() > 0x30 || !load_prop(dff, &p, false, false)) {
+                        if (log)
+                            std::fprintf(log, "  HOOKSLOT-GROUP course_id=%d clump=%d mts=%d FAILED "
+                                              "(dff=%s records=%zu)\n", course_id_, d.clump, d.mts,
+                                         dff ? dff : "-", recs.size());
+                        continue;
+                    }
+                    p.instances = std::move(recs);
+                    p.rw_kind = LibRw::kInstAfterWorld;
+                    p.hook_key = i;
+                    p.hook_pass = d.pass;
+                    p.hook_cull = d.cull;
+                    p.hook_zwrite = d.zwrite;
+                    if (log)
+                        std::fprintf(log, "  HOOKSLOT-GROUP course_id=%d clump=%d dff=%s mts=%d (%s) "
+                                          "copies=%zu pass=%d site=0x%08x\n", course_id_, d.clump, dff,
+                                     d.mts, mts_names[d.mts], p.instances.size(), d.pass, d.site);
+                    props_.push_back(std::move(p));
+                }
+                // [rhooks U-9713] RpLODAtomic hooks (FUN_004758d0 @ 0x004758d0): the L clump's first
+                // atomic's geometry, drawn in the H atomic's frame, so it is loaded in geometry space too.
+                for (int i = 0; i < hook->n_lods; ++i) {
+                    const mashed_re::Render::HookLod& l = hook->lods[i];
+                    std::size_t hi = props_.size();
+                    for (std::size_t j = 0; j < props_.size(); ++j)
+                        if (props_[j].clump_idx == l.clump_h && props_[j].hook_key >= 0) hi = j;
+                    const char* dffl = dff_of(l.clump_l);
+                    Prop p;
+                    if (hi == props_.size() || !dffl || !load_prop(dffl, &p, false, false)) {
+                        if (log)
+                            std::fprintf(log, "  HOOKSLOT-LOD course_id=%d h=%d l=%d FAILED\n", course_id_,
+                                         l.clump_h, l.clump_l);
+                        continue;
+                    }
+                    p.rw_kind = LibRw::kInstAfterWorld;
+                    p.hook_hidden = true;
+                    props_.push_back(std::move(p));
+                    props_[hi].lod_prop = static_cast<int>(props_.size() - 1);
+                    props_[hi].lod_range = l.range;
+                    if (log)
+                        std::fprintf(log, "  HOOKSLOT-LOD course_id=%d h=%d (%zu copies) l=%d dff=%s "
+                                          "range=%.1f site=0x%08x\n", course_id_, l.clump_h,
+                                     props_[hi].instances.size(), l.clump_l, dffl, l.range, l.site);
+                }
+            }
+            // [rhooks U-9717] SetClumpAnim records: FUN_004756e0 runs only when both the course clump
+            // slot and the anim slot are non-null (`if (param_1 != 0 && param_2 != 0)`).
+            static const bool s_no_clumpanim = std::getenv("MASHED_NO_CLUMPANIM") != nullptr;
+            {
+                std::vector<ClumpAnim> keep;
+                for (auto& ca : clump_anims_) {
+                    std::size_t pi = props_.size();
+                    for (std::size_t j = 0; j < props_.size(); ++j)
+                        if (props_[j].clump_idx == ca.clump && !props_[j].hook_hidden) pi = j;
+                    const bool have_anim = ca.anim_idx >= 0 && ca.anim_idx < 16 &&
+                                           !anim_names[ca.anim_idx].empty();
+                    bool ok = false;
+                    if (!s_no_clumpanim && pi < props_.size() && have_anim &&
+                        props_[pi].instances.size() == 1) {
+                        std::uint32_t al = 0;
+                        const std::uint8_t* ab = find_entry(anim_names[ca.anim_idx].c_str(), &al);
+                        ok = ab && ca.anim.Parse(ab, al) && !ca.anim.frames.empty();
+                    }
+                    if (log)
+                        std::fprintf(log, "  CLUMPANIM course_id=%d clump=%d anim=%d (%s) type=%d prop=%d %s\n",
+                                     course_id_, ca.clump, ca.anim_idx,
+                                     have_anim ? anim_names[ca.anim_idx].c_str() : "-", ca.type,
+                                     pi < props_.size() ? static_cast<int>(pi) : -1,
+                                     ok ? (ca.type == 0 ? "animated FUN_004752f0" : "animated FUN_004b47e0")
+                                        : (s_no_clumpanim ? "off (MASHED_NO_CLUMPANIM)" : "not animated"));
+                    if (ok) {
+                        ca.prop = pi;
+                        keep.push_back(std::move(ca));
+                    }
+                }
+                clump_anims_ = std::move(keep);
             }
         }
     }
@@ -3780,13 +4004,72 @@ void CopterAnimMatrix(const Track::HAnim& an, float t, float* m) {
     m[12] = m[13] = m[14] = 0.f;
     FUN_004c51a0(m, pos, 2);
 }
+// [rhooks U-9717] FUN_004b47e0 @ 0x004b47e0, the SetClumpAnim type != 0 sampler: t <= 0 -> key 0,
+// t >= duration -> the last key, else the first key i with key[i+1].time >= t and FUN_00532b80 @
+// 0x00532b80 between keys i and i+1 (quaternion slerp + LINEAR translation), then FUN_00532a60.
+// FUN_00532b80 negates key i+1's quaternion IN PLACE when the dot is negative, so the anim is mutable.
+void LinearAnimMatrix(Track::HAnim& an, float t, float* m) {
+    std::vector<Track::HKeyFrame>& F = an.frames;
+    const int n = static_cast<int>(F.size());
+    if (n == 0) { for (int i = 0; i < 16; ++i) m[i] = (i % 5 == 0) ? 1.f : 0.f; return; }
+    if (t <= 0.0f) { AnimKeyMatrix(F[0], m); return; }
+    if (!(t < an.duration) || n < 2) { AnimKeyMatrix(F[n - 1], m); return; }
+    int k = 0;
+    while (k + 1 < n - 1 && F[k + 1].time < t) ++k;
+    Track::HKeyFrame& a = F[k];
+    Track::HKeyFrame& b = F[k + 1];
+    // dot (w1 w2 + z2 z1 + y1 y2 + x2 x1), u, the translation lerp
+    float dot = a.q[3] * b.q[3] + b.q[2] * a.q[2] + a.q[1] * b.q[1] + b.q[0] * a.q[0];
+    const float u = (t - a.time) / (b.time - a.time);
+    Track::HKeyFrame o{};
+    o.t[0] = (b.t[0] - a.t[0]) * u + a.t[0];
+    o.t[1] = (b.t[1] - a.t[1]) * u + a.t[1];
+    o.t[2] = (b.t[2] - a.t[2]) * u + a.t[2];
+    if (dot < 0.0f) {
+        dot = -dot;
+        for (int j = 0; j < 4; ++j) b.q[j] = -b.q[j];
+    }
+    float fa = 1.0f - u, fb = u;
+    if (dot < 0.999000013f) {                                        // [0x005cea88]
+        const float theta = AnimAcos(dot);
+        const float inv = 1.0f / AnimSinPoly(theta);
+        fa = AnimSinPoly(theta * fa) * inv;
+        fb = AnimSinPoly(theta * u) * inv;
+    }
+    o.q[0] = fa * a.q[0] + fb * b.q[0];
+    o.q[1] = fb * b.q[1] + fa * a.q[1];
+    o.q[2] = fa * a.q[2] + fb * b.q[2];
+    o.q[3] = fb * b.q[3] + fa * a.q[3];
+    AnimKeyMatrix(o, m);
+}
 }  // namespace
 
 // [librwrest] FUN_00425d50 @ 0x00425d50, from FUN_0040fc00 (0x0040fcb9) with the frame's
 // units: per copter, slot+0x40 += units * [0x005cc948], less the duration when past it; the
 // two rotors turn by units * [0x005cc9a0] (0.05) and units * [0x005cd054] (-0.05) degrees
 // (FUN_00425ca0 @ 0x00425ca0: about each rotor frame's own up vector, at its own position).
+// [rhooks U-9717] FUN_00426700 @ 0x00426700, from FUN_00426ab0 (called at 0x0040fc94, before the copter
+// tick at 0x0040fcb9 with the same units, no branch between): per SetClumpAnim record
+// t = units * [0x005cc948] + t, less the anim duration ([anim+0xc]) when past it (FUN_004756e0 @
+// 0x004756e0); the frame takes the sampler's matrix at that t (Render).
+void TrackRenderer::ClumpAnimTick(int units) {
+    std::uint32_t kb = 0x39aec33eu;                     // _DAT_005cc948 (1/3000)
+    float k3000;
+    std::memcpy(&k3000, &kb, sizeof k3000);
+    const float dt = static_cast<float>(units) * k3000;
+    for (auto& ca : clump_anims_) {
+        float t = dt + ca.t;
+        if (ca.anim.duration < t) t = t - ca.anim.duration;
+        // sampled every tick, as FUN_004756e0 does (FUN_00532b80 mutates the keys it brackets)
+        if (ca.type == 0) CopterAnimMatrix(ca.anim, t, ca.m);
+        else              LinearAnimMatrix(ca.anim, t, ca.m);
+        ca.t = t;
+        ca.ticked = true;
+    }
+}
+
 void TrackRenderer::CopterTick(int units) {
+    ClumpAnimTick(units);                               // [rhooks] FUN_0040fc00's 0x0040fc94 first
     std::uint32_t kb = 0x39aec33eu;                     // _DAT_005cc948 (1/3000)
     float k3000;
     std::memcpy(&k3000, &kb, sizeof k3000);
@@ -7487,9 +7770,20 @@ void TrackRenderer::BuildPropOrder(std::FILE* log) {
     if (on)
         for (const auto& a : kAfterWorldOrder)
             if (a.course_id == course_id_) aw = &a;
+    // [rhooks U-9713] a covered track queues its slot-2 draws (clumps and Mts copy groups) and then
+    // its switch-table draws by their HookTrack::draws index (Render/TrackHookSlots.cpp); its slot-10
+    // groups are queued after the copters in Render.
+    const mashed_re::Render::HookTrack* hook = mashed_re::Render::HookTrackFor(course_id_);
+    const int nrank = hook ? hook->n_draws : (aw ? aw->n : 0);
     auto rank = [&](std::size_t i) {
         const Prop& p = props_[i];
-        if (!aw || p.rw_kind != LibRw::kInstAfterWorld || p.clump_idx < 0) return -1;
+        if (hook) {
+            if (p.rw_kind != LibRw::kInstAfterWorld || p.hook_key < 0 || p.hook_hidden ||
+                p.hook_pass == mashed_re::Render::kHookPassSlot10)
+                return -1;
+            return p.hook_key;
+        }
+        if (!on || !aw || p.rw_kind != LibRw::kInstAfterWorld || p.clump_idx < 0) return -1;
         for (int k = 0; k < aw->n; ++k)
             if (aw->idx[k] == p.clump_idx) return k;
         return -1;
@@ -7499,16 +7793,17 @@ void TrackRenderer::BuildPropOrder(std::FILE* log) {
         if (rank(i) < 0) { prop_order_.push_back(i); continue; }
         if (grouped) continue;
         grouped = true;
-        for (int k = 0; k < aw->n; ++k)
+        for (int k = 0; k < nrank; ++k)
             for (std::size_t j = 0; j < props_.size(); ++j)
                 if (rank(j) == k) prop_order_.push_back(j);
     }
     if (log) {
-        std::fprintf(log, "  [rstates F6] after-world order course_id=%d slot2=0x%08x:", course_id_,
-                     aw ? aw->fn : 0u);
+        std::fprintf(log, "  [rstates F6] after-world order course_id=%d slot2=0x%08x hook=%s:", course_id_,
+                     aw ? aw->fn : 0u, hook ? hook->name : "-");
         for (const std::size_t i : prop_order_)
-            if (props_[i].rw_kind == LibRw::kInstAfterWorld)
-                std::fprintf(log, " %d", props_[i].clump_idx);
+            if (props_[i].rw_kind == LibRw::kInstAfterWorld && !props_[i].hook_hidden)
+                std::fprintf(log, " %d%s", props_[i].clump_idx,
+                             props_[i].hook_pass == mashed_re::Render::kHookPassSlot10 ? "(s10)" : "");
         std::fprintf(log, "\n");
     }
 }
@@ -8106,6 +8401,18 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     }
 
     if (!prop_anims_.empty()) UpdatePropAnims();   // [rprops] Arctic ships, once per frame
+    // [rhooks U-9717] SetClumpAnim clumps: FUN_004756e0 sets the clump frame to FUN_004752f0's matrix
+    // at the record's time (FUN_004c1480 REPLACE); before the first tick the frame is the DFF's.
+    for (const auto& ca : clump_anims_) {
+        if (!ca.ticked || ca.prop >= props_.size() || props_[ca.prop].instances.empty()) continue;
+        const float* rm = ca.m;
+        D3DMATRIX& cm = props_[ca.prop].instances[0];
+        MatIdentity(&cm);
+        cm._11 = rm[0];  cm._12 = rm[1];  cm._13 = rm[2];
+        cm._21 = rm[4];  cm._22 = rm[5];  cm._23 = rm[6];
+        cm._31 = rm[8];  cm._32 = rm[9];  cm._33 = rm[10];
+        cm._41 = rm[12]; cm._42 = rm[13]; cm._43 = rm[14];
+    }
     // [rfx2] FUN_00488e70 builds the lensflare batches once (DAT_007030b4), on the tick that also runs
     // the first slot-1 update (the Arctic bob light then holds one tick's k: measured, the original's
     // small / big batch AABBs at Arctic 1051 equal the model with k = (sin(0.2) + 1) * 0.15)
@@ -8125,9 +8432,35 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     }();
     const bool prop_order_ok = (prop_order_.size() == props_.size());
     bool lens_marked = false;   // [rfx2]
+    // [rhooks U-9713] RpLODAtomic (FUN_004758d0): the copy's model this frame. FUN_00557b70 @ 0x00557b70
+    // draws LOD slot HookLodIndex() (FUN_00557a60) of the camera this frame renders from: slots 0..4 hold
+    // the H atomic's own geometry, 5..9 the L clump's first atomic's geometry (FUN_00475830 @ 0x00475830).
+    float lod_at[3] = { last_atdir_[0], last_atdir_[1], last_atdir_[2] };
+    if (!last_basis_valid_) {
+        const float d[3] = { last_at_[0] - last_eye_[0], last_at_[1] - last_eye_[1], last_at_[2] - last_eye_[2] };
+        const float n = std::sqrt(d[0] * d[0] + d[1] * d[1] + d[2] * d[2]);
+        for (int i = 0; i < 3; ++i) lod_at[i] = n > 0.f ? d[i] / n : 0.f;
+    }
+    auto lod_model = [&](const Prop& p, const D3DMATRIX& m) -> int {
+        if (p.lod_prop < 0 || static_cast<std::size_t>(p.lod_prop) >= props_.size()) return p.rw_model;
+        const int lm = props_[static_cast<std::size_t>(p.lod_prop)].rw_model;
+        const float pos[3] = { m._41, m._42, m._43 };
+        return (mashed_re::Render::HookLodIndex(pos, last_eye_, lod_at, p.lod_range) >= 5 && lm >= 0)
+                   ? lm : p.rw_model;
+    };
+    // [rhooks] a hook-slot draw carries the slot's own RW render states (HookDraw::cull / zwrite)
+    auto submit = [&](const Prop& p, int model, const D3DMATRIX& m, int kind) {
+        if (p.hook_cull > 0 || p.hook_zwrite >= 0)
+            LibRw::RaceSubmit_AddInstanceStates(model, (const float*)&m, kind, p.hook_cull, p.hook_zwrite);
+        else
+            LibRw::RaceSubmit_AddInstance(model, (const float*)&m, kind);
+    };
     for (std::size_t k = 0; k < props_.size(); ++k) {
         const auto& p = props_[prop_order_ok ? prop_order_[k] : k];
         if (p.rw_model < 0) continue;
+        // [rhooks] an LOD source is never drawn as itself; slot-10 groups go after the copters below;
+        // a scenario object FUN_00471cf0 hid at race reset is not drawn (RENDER bit clear)
+        if (p.hook_hidden || p.scen_hidden || p.hook_pass == mashed_re::Render::kHookPassSlot10) continue;
         // [rfx2] City's slot 2 FUN_0044b8f0 @ 0x0044b8f0 draws the big lensflare batch first
         // (SkySecondaryDispatch, 0x0044b90a), then its clumps: a marker ahead of the group
         if (!lens_marked && course_id_ == 26 && p.rw_kind == LibRw::kInstAfterWorld) {
@@ -8139,11 +8472,11 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         }
         if (s_pair_order && p.mts_pair && p.rw_kind == LibRw::kInstAfterWorld) {
             for (auto it = p.instances.rbegin(); it != p.instances.rend(); ++it)
-                LibRw::RaceSubmit_AddInstance(p.rw_model, (const float*)&*it, p.rw_kind);
+                submit(p, lod_model(p, *it), *it, p.rw_kind);
             continue;
         }
         for (const auto& inst : p.instances)
-            LibRw::RaceSubmit_AddInstance(p.rw_model, (const float*)&inst, p.rw_kind);
+            submit(p, lod_model(p, inst), inst, p.rw_kind);
     }
 
     MARK(d_props);   // instanced track props
@@ -8553,6 +8886,16 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         LibRw::RaceSubmit_AddInstancePosed(cm.rw_model, (const float*)&cmx, poses,
                                            static_cast<std::size_t>(np), -1.f, 0.f, nullptr,
                                            LibRw::kInstAfterWorld);   // [rstates] not in the world
+    }
+
+    // [rhooks U-9713] hook slot 10 (FUN_00426640 @ 0x00426640, called at 0x00410c19 after the copters
+    // FUN_00425e40 at 0x00410c03): its Mts copy groups in the slot's code order, each FUN_00479f70 @ 0x00479f70 over
+    // copies 0..n-1 (Render/TrackHookSlots.cpp, Warzone FUN_00452da0). props_ holds them in draws order.
+    for (const auto& p : props_) {
+        if (p.hook_pass != mashed_re::Render::kHookPassSlot10 || p.hook_hidden || p.rw_model < 0) continue;
+        for (const auto& inst : p.instances)
+            LibRw::RaceSubmit_AddInstanceStates(p.rw_model, (const float*)&inst, LibRw::kInstAfterWorld,
+                                                p.hook_cull, p.hook_zwrite);
     }
 
     dev->SetTexture(0, nullptr);

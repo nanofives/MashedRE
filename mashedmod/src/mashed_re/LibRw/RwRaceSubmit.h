@@ -169,6 +169,11 @@ void RaceSubmit_SetAnimTime(float t);
 void RaceSubmit_AddInstance(int handle, const float* m44, int kind = kInstAfterWorld,
                             const CarVis* vis = nullptr);
 
+// [rhooks U-9713] as RaceSubmit_AddInstance, drawn under the RW render states the original's hook
+// slot set before this draw: `cullmode` = rw::CULLNONE / CULLBACK (0 = leave the current one),
+// `zwrite` = 0 / 1 (-1 = leave). Both are restored after the copy (Render/TrackHookSlots.cpp).
+void RaceSubmit_AddInstanceStates(int handle, const float* m44, int kind, int cullmode, int zwrite);
+
 // [rstates] Per-course facts the world pass depends on, set once per track load.
 struct RaceCourseFacts {
     // the world-sector render callback keeps the vertex-alpha flag the previous draw left
