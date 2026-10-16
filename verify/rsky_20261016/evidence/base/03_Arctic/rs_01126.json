@@ -1,0 +1,634 @@
+{
+ "a": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\log\\d1r1\\orig_arctic\\orig_row_01126.draws.json",
+ "b": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\rsky\\log\\rsky\\base\\03_Arctic\\stand\\d1r2\\stand_row_01126.draws.json",
+ "matched": 107,
+ "na": 131,
+ "nb": 112,
+ "tri_a": 29307,
+ "tri_b": 29095,
+ "rows": [
+  {
+   "kind": "MISSING",
+   "tex": "-",
+   "n": 4,
+   "offscreen": 2,
+   "detail": "A-only 4 draws 6 tri (2 offscreen); first k81 pt5 tri=2 tex=- tex1=- bb=[0.00,0.00,0.00,640.00,480.00,0.00] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=1",
+   "a_idx": [
+    108,
+    117,
+    122,
+    80
+   ],
+   "b_idx": [],
+   "cite": "C03-UNTEXTURED"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "Advantage",
+   "n": 1,
+   "offscreen": 0,
+   "detail": "A-only 1 draws 4 tri (0 offscreen); first k82 pt5 tri=4 tex=Advantage tex1=- bb=[-25.75,0.16,26.49,-25.40,0.21,26.51] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=1",
+   "a_idx": [
+    97
+   ],
+   "b_idx": [],
+   "cite": "C17-CAR-GLOSS"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "exp_cloud2",
+   "n": 1,
+   "offscreen": 0,
+   "detail": "A-only 1 draws 128 tri (0 offscreen); first k82 pt4 tri=128 tex=exp_cloud2 tex1=- bb=[-25.71,0.20,26.16,-25.45,0.26,26.23] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=2",
+   "a_idx": [
+    111
+   ],
+   "b_idx": [],
+   "cite": "C05-PARTICLE"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "flatshad",
+   "n": 1,
+   "offscreen": 0,
+   "detail": "A-only 1 draws 216 tri (0 offscreen); first k82 pt4 tri=216 tex=flatshad tex1=- bb=[-28.13,-0.14,18.88,-24.21,0.74,27.26] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2",
+   "a_idx": [
+    110
+   ],
+   "b_idx": [],
+   "cite": "C04-SHADOW"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "GreenStartLight",
+   "n": 1,
+   "offscreen": 1,
+   "detail": "A-only 1 draws 6 tri (1 offscreen); first k82 pt5 tri=6 tex=GreenStartLight tex1=- bb=[-0.10,0.62,0.98,0.10,0.69,0.98] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    130
+   ],
+   "b_idx": [],
+   "cite": "C08-STARTDISP"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "Headlight",
+   "n": 1,
+   "offscreen": 0,
+   "detail": "A-only 1 draws 52 tri (0 offscreen); first k82 pt4 tri=52 tex=Headlight tex1=- bb=[273.72,54.23,0.99,371.92,402.07,1.00] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=1",
+   "a_idx": [
+    115
+   ],
+   "b_idx": [],
+   "cite": "C09-FX"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "NFLBluejay",
+   "n": 1,
+   "offscreen": 1,
+   "detail": "A-only 1 draws 2 tri (1 offscreen); first k82 pt5 tri=2 tex=NFLBluejay tex1=- bb=[-0.51,0.29,0.98,-0.43,0.37,0.98] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    126
+   ],
+   "b_idx": [],
+   "cite": "C08-STARTDISP"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "NFLGold",
+   "n": 1,
+   "offscreen": 1,
+   "detail": "A-only 1 draws 2 tri (1 offscreen); first k82 pt5 tri=2 tex=NFLGold tex1=- bb=[-0.47,0.29,0.98,-0.38,0.37,0.98] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    127
+   ],
+   "b_idx": [],
+   "cite": "C08-STARTDISP"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "NFLMelon",
+   "n": 1,
+   "offscreen": 1,
+   "detail": "A-only 1 draws 2 tri (1 offscreen); first k82 pt5 tri=2 tex=NFLMelon tex1=- bb=[-0.56,0.29,0.98,-0.47,0.37,0.98] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    125
+   ],
+   "b_idx": [],
+   "cite": "C08-STARTDISP"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "NFLRed",
+   "n": 1,
+   "offscreen": 1,
+   "detail": "A-only 1 draws 2 tri (1 offscreen); first k82 pt5 tri=2 tex=NFLRed tex1=- bb=[0.38,0.29,0.98,0.47,0.37,0.98] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    120
+   ],
+   "b_idx": [],
+   "cite": "C08-STARTDISP"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "OrangeDisplay",
+   "n": 8,
+   "offscreen": 8,
+   "detail": "A-only 8 draws 68 tri (8 offscreen); first k82 pt5 tri=42 tex=OrangeDisplay tex1=- bb=[-0.09,0.63,1.00,0.09,0.68,1.00] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    129,
+    116,
+    119,
+    121,
+    124,
+    118,
+    123,
+    128
+   ],
+   "b_idx": [],
+   "cite": "C08-STARTDISP"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "PUGlow",
+   "n": 1,
+   "offscreen": 0,
+   "detail": "A-only 1 draws 14 tri (0 offscreen); first k82 pt4 tri=14 tex=PUGlow tex1=- bb=[-36.68,-0.28,-41.25,27.96,0.82,45.34] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2",
+   "a_idx": [
+    114
+   ],
+   "b_idx": [],
+   "cite": "C06-PICKUP"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "VehicleIcons",
+   "n": 1,
+   "offscreen": 0,
+   "detail": "A-only 1 draws 2 tri (0 offscreen); first k82 pt4 tri=2 tex=VehicleIcons tex1=- bb=[-26.83,0.13,16.79,-26.30,0.47,17.21] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    112
+   ],
+   "b_idx": [],
+   "cite": "C09-FX"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "World",
+   "n": 1,
+   "offscreen": 1,
+   "detail": "A-only 1 draws 22 tri (1 offscreen); first k82 pt5 tri=22 tex=World tex1=- bb=[-31.00,0.56,34.19,-27.63,0.62,36.06] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2",
+   "a_idx": [
+    32
+   ],
+   "b_idx": [],
+   "cite": "C15-SKY"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "-",
+   "n": 1,
+   "offscreen": 1,
+   "detail": "B-only 1 draws 22 tri (1 offscreen); first k82 pt4 tri=22 tex=- tex1=- bb=[-31.00,0.56,34.19,-27.63,0.62,36.06] src=rw Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2",
+   "a_idx": [],
+   "b_idx": [
+    33
+   ],
+   "cite": "C15-SKY"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "@gen:particle",
+   "n": 1,
+   "offscreen": 0,
+   "detail": "B-only 1 draws 206 tri (0 offscreen); first k83 pt4 tri=206 tex=@gen:particle tex1=- bb=[-52.22,-14.28,-4.89,0.43,33.16,45.83] src=d3d Z=1 ZW=0 ZF=4 AT=0 AREF=0 AF=0 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [],
+   "b_idx": [
+    0
+   ],
+   "cite": "C05-PARTICLE"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "@gen:pickup",
+   "n": 1,
+   "offscreen": 0,
+   "detail": "B-only 1 draws 14 tri (0 offscreen); first k83 pt4 tri=14 tex=@gen:pickup tex1=- bb=[-36.82,-0.29,-41.37,28.09,0.96,45.45] src=d3d Z=1 ZW=0 ZF=4 AT=0 AREF=0 AF=0 AB=1 SRC=5 DST=2 CULL=1",
+   "a_idx": [],
+   "b_idx": [
+    1
+   ],
+   "cite": "C06-PICKUP"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "Headlight",
+   "n": 1,
+   "offscreen": 0,
+   "detail": "B-only 1 draws 48 tri (0 offscreen); first k82 pt4 tri=48 tex=Headlight tex1=- bb=[273.72,54.23,0.99,371.92,402.07,1.00] src=rw Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=1",
+   "a_idx": [],
+   "b_idx": [
+    111
+   ],
+   "cite": "C09b-HEADLIGHT-BRAKE"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "stormFog",
+   "n": 1,
+   "offscreen": 1,
+   "detail": "B-only 1 draws 24 tri (1 offscreen); first k82 pt4 tri=24 tex=stormFog tex1=- bb=[-0.20,-0.20,-0.20,0.20,0.20,0.20] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2",
+   "a_idx": [],
+   "b_idx": [
+    82
+   ],
+   "cite": "C01-CULL"
+  },
+  {
+   "kind": "STATE",
+   "tex": "sky",
+   "n": 1,
+   "detail": "1 matched draws differ in Z,ZF,CULL: A Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1 | B Z=1 ZW=0 ZF=8 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2",
+   "a_idx": [
+    0
+   ],
+   "b_idx": [
+    2
+   ],
+   "cite": "C20-STATE-SKY"
+  },
+  {
+   "kind": "STATE",
+   "tex": "sky",
+   "n": 1,
+   "detail": "1 matched draws differ in Z,ZF: A Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=0 ZF=8 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2",
+   "a_idx": [
+    3
+   ],
+   "b_idx": [
+    4
+   ],
+   "cite": "C20-STATE-SKY"
+  },
+  {
+   "kind": "STATE",
+   "tex": "World",
+   "n": 1,
+   "detail": "1 matched draws differ in Z,ZW,ZF: A Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2",
+   "a_idx": [
+    2
+   ],
+   "b_idx": [
+    81
+   ],
+   "cite": "C15c-SKY-DEPTH"
+  },
+  {
+   "kind": "TEX1",
+   "tex": "WetRoad",
+   "n": 4,
+   "detail": "4 matched draws, stage-1 texture A #128x128:22 | B -",
+   "a_idx": [
+    36,
+    28,
+    48,
+    17
+   ],
+   "b_idx": [
+    37,
+    29,
+    49,
+    18
+   ],
+   "cite": "C16-TEX1-WORLD"
+  },
+  {
+   "kind": "FOG",
+   "tex": "*",
+   "n": 99,
+   "detail": "99 matched draws, FOGENABLE A 1 | B 0, 16 textures: Ads, Advantage, AdvantageSmall, BrickWall, Camstand, Dozer, Glass, Pav",
+   "a_idx": [
+    87,
+    89,
+    45,
+    44,
+    88,
+    29,
+    94,
+    11,
+    40,
+    7,
+    52,
+    90,
+    49,
+    26,
+    15,
+    35,
+    95,
+    38,
+    50,
+    27,
+    18,
+    51,
+    41,
+    36,
+    54,
+    21,
+    47,
+    6,
+    10,
+    16,
+    30,
+    104,
+    92,
+    98,
+    101,
+    42,
+    4,
+    28,
+    34,
+    48,
+    25,
+    81,
+    82,
+    84,
+    83,
+    13,
+    72,
+    66,
+    67,
+    68,
+    71,
+    73,
+    76,
+    77,
+    78,
+    55,
+    56,
+    57,
+    58,
+    59,
+    60,
+    61,
+    62,
+    63,
+    64,
+    65,
+    69,
+    70,
+    74,
+    75,
+    79,
+    85,
+    53,
+    12,
+    24,
+    20,
+    33,
+    91,
+    14,
+    86,
+    23,
+    93,
+    99,
+    102,
+    105,
+    19,
+    46,
+    8,
+    9,
+    5,
+    17,
+    43,
+    22,
+    100,
+    96,
+    103,
+    31,
+    37,
+    39
+   ],
+   "b_idx": [
+    89,
+    87,
+    46,
+    43,
+    88,
+    30,
+    96,
+    12,
+    41,
+    8,
+    54,
+    86,
+    50,
+    27,
+    16,
+    36,
+    97,
+    39,
+    51,
+    28,
+    19,
+    52,
+    42,
+    37,
+    53,
+    22,
+    48,
+    7,
+    11,
+    17,
+    31,
+    105,
+    84,
+    99,
+    102,
+    44,
+    5,
+    29,
+    35,
+    49,
+    26,
+    95,
+    94,
+    92,
+    93,
+    14,
+    73,
+    67,
+    68,
+    69,
+    72,
+    74,
+    77,
+    78,
+    79,
+    56,
+    57,
+    58,
+    59,
+    60,
+    61,
+    62,
+    63,
+    64,
+    65,
+    66,
+    70,
+    71,
+    75,
+    76,
+    80,
+    91,
+    55,
+    13,
+    25,
+    21,
+    34,
+    85,
+    15,
+    90,
+    24,
+    83,
+    98,
+    101,
+    104,
+    20,
+    47,
+    9,
+    10,
+    6,
+    18,
+    45,
+    23,
+    103,
+    100,
+    106,
+    32,
+    38,
+    40
+   ],
+   "cite": "C18-FOG"
+  },
+  {
+   "kind": "ORDER",
+   "tex": "Ads",
+   "n": 1,
+   "detail": "1 order inversions vs matched draws, mostly: Worldx1",
+   "a_idx": [],
+   "b_idx": [],
+   "cite": "C21-ORDER"
+  },
+  {
+   "kind": "ORDER",
+   "tex": "BrickWall",
+   "n": 1,
+   "detail": "1 order inversions vs matched draws, mostly: Worldx1",
+   "a_idx": [],
+   "b_idx": [],
+   "cite": "C21-ORDER"
+  },
+  {
+   "kind": "ORDER",
+   "tex": "Camstand",
+   "n": 1,
+   "detail": "1 order inversions vs matched draws, mostly: Worldx1",
+   "a_idx": [],
+   "b_idx": [],
+   "cite": "C21-ORDER"
+  },
+  {
+   "kind": "ORDER",
+   "tex": "Dozer",
+   "n": 1,
+   "detail": "1 order inversions vs matched draws, mostly: Worldx1",
+   "a_idx": [],
+   "b_idx": [],
+   "cite": "C21-ORDER"
+  },
+  {
+   "kind": "ORDER",
+   "tex": "Pav",
+   "n": 1,
+   "detail": "1 order inversions vs matched draws, mostly: Worldx1",
+   "a_idx": [],
+   "b_idx": [],
+   "cite": "C21-ORDER"
+  },
+  {
+   "kind": "ORDER",
+   "tex": "Rock",
+   "n": 1,
+   "detail": "1 order inversions vs matched draws, mostly: Worldx1",
+   "a_idx": [],
+   "b_idx": [],
+   "cite": "C21-ORDER"
+  },
+  {
+   "kind": "ORDER",
+   "tex": "sky",
+   "n": 1,
+   "detail": "1 order inversions vs matched draws, mostly: Worldx1",
+   "a_idx": [],
+   "b_idx": [],
+   "cite": "C21-ORDER"
+  },
+  {
+   "kind": "ORDER",
+   "tex": "Snow",
+   "n": 1,
+   "detail": "1 order inversions vs matched draws, mostly: Worldx1",
+   "a_idx": [],
+   "b_idx": [],
+   "cite": "C21-ORDER"
+  },
+  {
+   "kind": "ORDER",
+   "tex": "Tyres",
+   "n": 1,
+   "detail": "1 order inversions vs matched draws, mostly: Worldx1",
+   "a_idx": [],
+   "b_idx": [],
+   "cite": "C21-ORDER"
+  },
+  {
+   "kind": "ORDER",
+   "tex": "Van",
+   "n": 1,
+   "detail": "1 order inversions vs matched draws, mostly: Worldx1",
+   "a_idx": [],
+   "b_idx": [],
+   "cite": "C21-ORDER"
+  },
+  {
+   "kind": "ORDER",
+   "tex": "WetRoad",
+   "n": 4,
+   "detail": "4 order inversions vs matched draws, mostly: Worldx4",
+   "a_idx": [],
+   "b_idx": [],
+   "cite": "C21-ORDER"
+  },
+  {
+   "kind": "ORDER",
+   "tex": "World",
+   "n": 77,
+   "detail": "77 order inversions vs matched draws, mostly: seax25, BrickWallx7, Rockx7, Snowx7",
+   "a_idx": [],
+   "b_idx": [],
+   "cite": "C21-ORDER"
+  }
+ ],
+ "info": {
+  "empty_dropped": [
+   0,
+   0
+  ],
+  "no_geometry": [
+   1,
+   0
+  ]
+ }
+}

@@ -1,0 +1,37 @@
+=== base exe=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\rsky\log\rsky\exe_base.exe knobs=[] 
+    exit=0 self_exited=True
+    base.step.csv lines=18956 sha8=2b4d47bb
+    base.gates.csv lines=55433 sha8=356821c8
+    base.ptrace.log lines=27716 sha8=f7a155e1
+=== after3 exe=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\rsky\log\rsky\exe_after3.exe knobs=[] 
+    exit=0 self_exited=True
+    after3.step.csv lines=18956 sha8=2b4d47bb
+    after3.gates.csv lines=55433 sha8=356821c8
+    after3.ptrace.log lines=27716 sha8=f7a155e1
+[20_NeusteinNamed] exit=0
+[20_NeusteinNamed] exit=0
+[01_Egypt] exit=0
+[02_Neustein] exit=0
+[03_Arctic] exit=0
+[04_Highway] exit=0
+[05_Sands] exit=0
+[06_SuperG] exit=0
+[07_Roundabout] exit=0
+[08_Storm] exit=0
+[09_Forest] exit=0
+[10_Dump] exit=0
+[11_Warzone] exit=0
+[12_City] exit=0
+[13_Training] exit=0
+[02_Neustein] exit=0
+[05_Sands] exit=0
+[07_Roundabout] exit=0
+[09_Forest] exit=0
+[10_Dump] exit=0
+[11_Warzone] exit=0
+[12_City] exit=0
+=== after4 exe=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\rsky\log\rsky\exe_after4.exe knobs=[] 
+    exit=0 self_exited=True
+    after4.step.csv lines=18956 sha8=2b4d47bb
+    after4.gates.csv lines=55433 sha8=356821c8
+    after4.ptrace.log lines=27716 sha8=f7a155e1

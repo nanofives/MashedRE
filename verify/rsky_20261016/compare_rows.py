@@ -31,7 +31,7 @@ def load(d: Path, name: str, prefix: str, k: int):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("base"); ap.add_argument("after")
-    ap.add_argument("--tracks", default=",".join(str(t) for t in TRACKS))
+    ap.add_argument("--tracks", default=",".join(str(t) for t in TRACKS if t < 20))
     ap.add_argument("--prefix", default="diff_")
     a = ap.parse_args()
     tot = Counter()

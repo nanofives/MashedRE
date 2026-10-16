@@ -43,7 +43,11 @@ TRACKS = {
     11: ("11_Warzone", "Warzone", CAPFIX / "11_Warzone", None, None),
     12: ("12_City", "City", D1 / "orig_city", [761, 801, 836], None),
     13: ("13_Training", "training", D1 / "orig_training", [884, 924, 959], None),
+    # NOT in the default 13: the new Neustein capture taken with the probe that names the car shadow render textures
+    # (capture_one.py --track 2 --out verify/rsky_20261016/cap_neustein), the I-NAME retest of Neustein +105
+    20: ("20_NeusteinNamed", "Neustein", HERE / "cap_neustein", None, None),
 }
+DEFAULT_TRACKS = ",".join(str(t) for t in TRACKS if t < 20)
 
 
 def shots_of(t):
@@ -128,7 +132,7 @@ def cmd_score(a):
         d, view, cap, _, _ = TRACKS[t]
         sd = out / d / "stand"
         shots = shots_of(t)
-        tname = d.split("_", 1)[1]
+        tname = d.split("_", 1)[1].replace("Named", "")   # the track name the cites' "tracks" lists use
         mine = [c for c in all_cites if "tracks" not in c or tname in c["tracks"]]
         cf = out / d / f"cites_used_{a.prefix.strip('_')}.json"
         cf.write_text(json.dumps(mine, indent=1))
@@ -176,11 +180,11 @@ def main():
     sub = ap.add_subparsers(dest="cmd", required=True)
     r = sub.add_parser("run")
     r.add_argument("--exe", required=True); r.add_argument("--root", required=True); r.add_argument("--out", required=True)
-    r.add_argument("--tracks", default=",".join(str(t) for t in TRACKS)); r.add_argument("--attempts", type=int, default=3)
+    r.add_argument("--tracks", default=DEFAULT_TRACKS); r.add_argument("--attempts", type=int, default=3)
     r.add_argument("knobs", nargs="*")
     s = sub.add_parser("score")
     s.add_argument("--out", required=True); s.add_argument("--cite", required=True)
-    s.add_argument("--tracks", default=",".join(str(t) for t in TRACKS)); s.add_argument("--prefix", default="diff_")
+    s.add_argument("--tracks", default=DEFAULT_TRACKS); s.add_argument("--prefix", default="diff_")
     a = ap.parse_args()
     return cmd_run(a) if a.cmd == "run" else cmd_score(a)
 

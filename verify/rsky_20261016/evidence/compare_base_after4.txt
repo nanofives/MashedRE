@@ -1,0 +1,168 @@
+02_Neustein 1094: rows 21->21 matched 103->104
+   REMOVED ('MISSING', 'skyCylTop', 'RED') n=1
+   ADDED   ('STATE', 'skyCylTop', 'C19-STATE-LIBRW') n=1
+02_Neustein 1134: rows 21->21 matched 99->100
+   REMOVED ('MISSING', 'skyCylTop', 'RED') n=1
+   ADDED   ('STATE', 'skyCylTop', 'C19-STATE-LIBRW') n=1
+02_Neustein 1169: rows 25->25 matched 54->55
+   REMOVED ('MISSING', 'skyCylTop', 'RED') n=1
+   ADDED   ('STATE', 'skyCylTop', 'C19-STATE-LIBRW') n=1
+05_Sands 1084: rows 28->27 matched 278->278
+   REMOVED ('ORDER', 'distanttrees', 'C21-ORDER') n=5
+05_Sands 1124: rows 30->29 matched 278->278
+   REMOVED ('ORDER', 'distanttrees', 'C21-ORDER') n=5
+05_Sands 1159: rows 30->29 matched 226->226
+   REMOVED ('ORDER', 'distanttrees', 'C21-ORDER') n=5
+06_SuperG 743: rows 72->72 matched 333->333
+   CHANGED ('ORDER', 'Ads', 'C21-ORDER') n 85->81
+   CHANGED ('ORDER', 'Box', 'C21-ORDER') n 673->648
+   CHANGED ('ORDER', 'Camstand', 'C21-ORDER') n 176->162
+   CHANGED ('ORDER', 'Cargo', 'C21-ORDER') n 587->567
+   CHANGED ('ORDER', 'Edge', 'C21-ORDER') n 415->405
+   CHANGED ('ORDER', 'FishPlant', 'C21-ORDER') n 413->405
+   CHANGED ('ORDER', 'Ice', 'C21-ORDER') n 579->567
+   CHANGED ('ORDER', 'IceRoad1', 'C21-ORDER') n 577->567
+   CHANGED ('ORDER', 'IceRoad2', 'C21-ORDER') n 500->486
+   CHANGED ('ORDER', 'LandingStageEdge', 'C21-ORDER') n 666->648
+   CHANGED ('ORDER', 'Pipe', 'C21-ORDER') n 168->162
+   CHANGED ('ORDER', 'Rust', 'C21-ORDER') n 506->486
+   CHANGED ('ORDER', 'RustySteel', 'C21-ORDER') n 672->648
+   CHANGED ('ORDER', 'Shipside', 'C21-ORDER') n 589->567
+   CHANGED ('ORDER', 'Snow', 'C21-ORDER') n 676->648
+   CHANGED ('ORDER', 'Wood', 'C21-ORDER') n 251->243
+   CHANGED ('ORDER', 'Yellow', 'C21-ORDER') n 673->648
+06_SuperG 783: rows 73->73 matched 333->333
+   CHANGED ('ORDER', 'Ads', 'C21-ORDER') n 85->81
+   CHANGED ('ORDER', 'Box', 'C21-ORDER') n 673->648
+   CHANGED ('ORDER', 'Camstand', 'C21-ORDER') n 176->162
+   CHANGED ('ORDER', 'Cargo', 'C21-ORDER') n 587->567
+   CHANGED ('ORDER', 'Edge', 'C21-ORDER') n 415->405
+   CHANGED ('ORDER', 'FishPlant', 'C21-ORDER') n 413->405
+   CHANGED ('ORDER', 'Ice', 'C21-ORDER') n 579->567
+   CHANGED ('ORDER', 'IceRoad1', 'C21-ORDER') n 577->567
+   CHANGED ('ORDER', 'IceRoad2', 'C21-ORDER') n 500->486
+   CHANGED ('ORDER', 'LandingStageEdge', 'C21-ORDER') n 666->648
+   CHANGED ('ORDER', 'Pipe', 'C21-ORDER') n 168->162
+   CHANGED ('ORDER', 'Rust', 'C21-ORDER') n 506->486
+   CHANGED ('ORDER', 'RustySteel', 'C21-ORDER') n 672->648
+   CHANGED ('ORDER', 'Shipside', 'C21-ORDER') n 589->567
+   CHANGED ('ORDER', 'Snow', 'C21-ORDER') n 676->648
+   CHANGED ('ORDER', 'Wood', 'C21-ORDER') n 251->243
+   CHANGED ('ORDER', 'Yellow', 'C21-ORDER') n 673->648
+06_SuperG 818: rows 65->65 matched 174->174
+   CHANGED ('ORDER', 'Box', 'C21-ORDER') n 248->243
+   CHANGED ('ORDER', 'Cargo', 'C21-ORDER') n 164->162
+   CHANGED ('ORDER', 'Edge', 'C21-ORDER') n 248->243
+   CHANGED ('ORDER', 'FishPlant', 'C21-ORDER') n 249->243
+   CHANGED ('ORDER', 'Ice', 'C21-ORDER') n 249->243
+   CHANGED ('ORDER', 'IceRoad1', 'C21-ORDER') n 332->324
+   CHANGED ('ORDER', 'IceRoad2', 'C21-ORDER') n 249->243
+   CHANGED ('ORDER', 'LandingStageEdge', 'C21-ORDER') n 254->243
+   CHANGED ('ORDER', 'Rust', 'C21-ORDER') n 164->162
+   CHANGED ('ORDER', 'RustySteel', 'C21-ORDER') n 248->243
+   CHANGED ('ORDER', 'Shipside', 'C21-ORDER') n 248->243
+   CHANGED ('ORDER', 'Snow', 'C21-ORDER') n 263->243
+   CHANGED ('ORDER', 'Wood', 'C21-ORDER') n 166->162
+   CHANGED ('ORDER', 'Yellow', 'C21-ORDER') n 246->243
+07_Roundabout 1091: rows 44->44 matched 295->297
+   REMOVED ('MISSING', 'Sky3', 'RED') n=1
+   REMOVED ('MISSING', 'Sky4', 'RED') n=1
+   ADDED   ('STATE', 'Sky3', 'C19-STATE-LIBRW') n=1
+   ADDED   ('STATE', 'Sky4', 'C19-STATE-LIBRW') n=1
+   CHANGED ('ORDER', 'grey_struts', 'C21-ORDER') n 12->4
+07_Roundabout 1131: rows 38->38 matched 272->274
+   REMOVED ('MISSING', 'Sky3', 'RED') n=1
+   REMOVED ('MISSING', 'Sky4', 'RED') n=1
+   ADDED   ('STATE', 'Sky3', 'C19-STATE-LIBRW') n=1
+   ADDED   ('STATE', 'Sky4', 'C19-STATE-LIBRW') n=1
+   CHANGED ('ORDER', 'grey_struts', 'C21-ORDER') n 13->5
+07_Roundabout 1166: rows 38->38 matched 197->199
+   REMOVED ('MISSING', 'Sky3', 'RED') n=1
+   REMOVED ('MISSING', 'Sky4', 'RED') n=1
+   ADDED   ('STATE', 'Sky3', 'C19-STATE-LIBRW') n=1
+   ADDED   ('STATE', 'Sky4', 'C19-STATE-LIBRW') n=1
+09_Forest 820: rows 31->18 matched 123->149
+   REMOVED ('EXTRA', 'Bush2', 'C01-CULL') n=1
+   REMOVED ('EXTRA', 'OakTreeSprite3', 'C01-CULL') n=1
+   REMOVED ('EXTRA', 'bark', 'C01-CULL') n=1
+   REMOVED ('MISSING', 'Bush2', 'RED') n=5
+   REMOVED ('MISSING', 'OakTreeSprite3', 'RED') n=6
+   REMOVED ('MISSING', "Tree'sBack", 'RED') n=3
+   REMOVED ('MISSING', 'ads', 'C01c-CULL-A') n=1
+   REMOVED ('MISSING', 'bark', 'RED') n=6
+   REMOVED ('MISSING', 'midtree', 'RED') n=3
+   REMOVED ('MOVED', "Tree'sBack", 'RED') n=1
+   REMOVED ('MOVED', 'midtree', 'RED') n=1
+   REMOVED ('ORDER', 'RockWall2', 'C21-ORDER') n=10
+   REMOVED ('ORDER', 'Rocks2', 'C21-ORDER') n=2
+   CHANGED ('FOG', '*', 'C18-FOG') n 121->147
+09_Forest 860: rows 31->18 matched 119->145
+   REMOVED ('EXTRA', 'Bush2', 'C01-CULL') n=1
+   REMOVED ('EXTRA', 'OakTreeSprite3', 'C01-CULL') n=1
+   REMOVED ('EXTRA', 'bark', 'C01-CULL') n=1
+   REMOVED ('MISSING', 'Bush2', 'RED') n=5
+   REMOVED ('MISSING', 'OakTreeSprite3', 'RED') n=6
+   REMOVED ('MISSING', "Tree'sBack", 'RED') n=3
+   REMOVED ('MISSING', 'ads', 'C01c-CULL-A') n=1
+   REMOVED ('MISSING', 'bark', 'RED') n=6
+   REMOVED ('MISSING', 'midtree', 'RED') n=3
+   REMOVED ('MOVED', "Tree'sBack", 'RED') n=1
+   REMOVED ('MOVED', 'midtree', 'RED') n=1
+   REMOVED ('ORDER', 'RockWall2', 'C21-ORDER') n=10
+   REMOVED ('ORDER', 'Rocks2', 'C21-ORDER') n=2
+   CHANGED ('FOG', '*', 'C18-FOG') n 117->143
+09_Forest 895: rows 34->21 matched 71->84
+   REMOVED ('EXTRA', 'Bush2', 'C01-CULL') n=1
+   REMOVED ('EXTRA', 'OakTreeSprite3', 'C01-CULL') n=1
+   REMOVED ('EXTRA', 'bark', 'C01-CULL') n=1
+   REMOVED ('MISSING', 'Bush2', 'RED') n=2
+   REMOVED ('MISSING', 'OakTreeSprite3', 'RED') n=3
+   REMOVED ('MISSING', "Tree'sBack", 'RED') n=1
+   REMOVED ('MISSING', 'ads', 'C01c-CULL-A') n=1
+   REMOVED ('MISSING', 'bark', 'RED') n=3
+   REMOVED ('MISSING', 'midtree', 'C01c-CULL-A') n=1
+   REMOVED ('MOVED', "Tree'sBack", 'RED') n=1
+   REMOVED ('MOVED', 'midtree', 'RED') n=1
+   REMOVED ('ORDER', 'RockWall2', 'C21-ORDER') n=10
+   REMOVED ('ORDER', 'Rocks2', 'C21-ORDER') n=2
+   CHANGED ('FOG', '*', 'C18-FOG') n 69->82
+10_Dump 735: rows 22->20 matched 330->330
+   REMOVED ('ORDER', 'WetEntrance', 'C21-ORDER') n=9
+   REMOVED ('ORDER', 'Wetroad', 'C21-ORDER') n=48
+10_Dump 775: rows 19->17 matched 313->313
+   REMOVED ('ORDER', 'WetEntrance', 'C21-ORDER') n=9
+   REMOVED ('ORDER', 'Wetroad', 'C21-ORDER') n=48
+10_Dump 810: rows 22->20 matched 202->202
+   REMOVED ('ORDER', 'WetEntrance', 'C21-ORDER') n=9
+   REMOVED ('ORDER', 'Wetroad', 'C21-ORDER') n=48
+11_Warzone 584: rows 42->39 matched 175->176
+   REMOVED ('MISSING', 'sky', 'RED') n=1
+   REMOVED ('ORDER', 'girders', 'C21-ORDER') n=9
+   REMOVED ('ORDER', 'rope', 'C21-ORDER') n=9
+   REMOVED ('ORDER', 'ruin', 'C21-ORDER') n=39
+   ADDED   ('STATE', 'sky', 'C20-STATE-SKY') n=1
+11_Warzone 624: rows 39->36 matched 175->176
+   REMOVED ('MISSING', 'sky', 'RED') n=1
+   REMOVED ('ORDER', 'girders', 'C21-ORDER') n=9
+   REMOVED ('ORDER', 'rope', 'C21-ORDER') n=9
+   REMOVED ('ORDER', 'ruin', 'C21-ORDER') n=39
+   ADDED   ('STATE', 'sky', 'C20-STATE-SKY') n=1
+11_Warzone 659: rows 48->45 matched 133->134
+   REMOVED ('MISSING', 'sky', 'RED') n=1
+   REMOVED ('ORDER', 'girders', 'C21-ORDER') n=9
+   REMOVED ('ORDER', 'rope', 'C21-ORDER') n=9
+   REMOVED ('ORDER', 'ruin', 'C21-ORDER') n=39
+   ADDED   ('STATE', 'sky', 'C20-STATE-SKY') n=1
+12_City 761: rows 20->18 matched 486->486
+   REMOVED ('ORDER', 'Path2', 'C21-ORDER') n=114
+   REMOVED ('ORDER', 'thickgirders', 'C21-ORDER') n=14
+   CHANGED ('ORDER', 'railings', 'C21-ORDER') n 75->9
+12_City 801: rows 22->20 matched 469->469
+   REMOVED ('ORDER', 'Path2', 'C21-ORDER') n=114
+   REMOVED ('ORDER', 'thickgirders', 'C21-ORDER') n=14
+   CHANGED ('ORDER', 'railings', 'C21-ORDER') n 69->3
+12_City 836: rows 24->21 matched 416->416
+   REMOVED ('ORDER', 'Path2', 'C21-ORDER') n=114
+   REMOVED ('ORDER', 'railings', 'C21-ORDER') n=66
+   REMOVED ('ORDER', 'thickgirders', 'C21-ORDER') n=14
+{'same': 15, 'removed': 76, 'added': 12, 'changed': 55}

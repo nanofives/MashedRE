@@ -244,6 +244,7 @@ void* BuildWorld(const Track::World& world, const TextureSource& tex,
     sectors->setFrame(worldFrame);
 
     std::size_t sector_index = static_cast<std::size_t>(-1);   // [rstates]
+    std::size_t binmesh_sectors = 0, binmesh_reordered = 0, drawn_sectors = 0;   // [rsky]
     for (const Track::Sector& s : world.sectors) {
         ++sector_index;
         const std::int32_t nv = static_cast<std::int32_t>(s.verts.size() / 3);
@@ -295,7 +296,13 @@ void* BuildWorld(const Track::World& world, const TextureSource& tex,
                 if (mi < nmesh && !taken[mi]) { ordered.push_back(mm[mi]); taken[mi] = 1; }
             for (std::size_t i = 0; i < nmesh; ++i)
                 if (!taken[i]) ordered.push_back(mm[i]);
-            for (std::size_t i = 0; i < nmesh; ++i) mm[i] = ordered[i];
+            bool moved = false;
+            for (std::size_t i = 0; i < nmesh; ++i) {
+                if (mm[i].material != ordered[i].material) moved = true;
+                mm[i] = ordered[i];
+            }
+            ++binmesh_sectors;
+            if (moved) ++binmesh_reordered;
         }
 
         if (rw::Atomic* a = MakeAtomic(geo, worldFrame)) {
@@ -304,8 +311,11 @@ void* BuildWorld(const Track::World& world, const TextureSource& tex,
             if (uses_dual) rw::MatFX::enableEffects(a);
             sectors->addAtomic(a);
             if (sector_atomics) (*sector_atomics)[sector_index] = a;   // [rstates]
+            ++drawn_sectors;
         }
     }
+    SLog("world: sectors with geometry=%zu, BinMesh mesh order applied=%zu (list order changed in %zu)",
+         drawn_sectors, binmesh_sectors, binmesh_reordered);
     // D-S3-BANK probe: per-material triangle totals across all sectors. The D3D9
     // path logs the same tally from batches_, so a material that gets a different
     // number of triangles on the two paths -- or none at all -- is visible as a
