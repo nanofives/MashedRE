@@ -233,9 +233,48 @@ private:
     // DAT_005d757c = 0.0f). has_sun_dir_ gates the per-frame relight pass.
 
     // car model + state. The car has no D3D9 copy: the player body and the AI cars
-    // are placed instances of one librw clump (RwRaceSubmit.h), registered by LoadCar.
+    // are placed instances of librw clumps (RwRaceSubmit.h), registered by LoadCar.
     // -1 = registration failed, no car is drawn.
-    int rw_car_model_ = -1;
+    int rw_car_model_ = -1;   // slot 0's livery as LoadCar was asked for it
+
+    // [librwrest] AI car liveries. FUN_0040d110 @ 0x0040d110 gives car i the vehicle id
+    // DAT_007f1a1c[i*4] + (id/6)*6 (mode 0xb: i + (id/6)*6), and FUN_00420420 @ 0x00420420
+    // loads that id's DFF from the table at 0x005f37a8 (+0x10). Every table entry's DFF is
+    // its name plus id % 6 (78 / 78, verify/librwrest_20261016), so car i draws
+    // "<base><livery>.DFF" from the same vehicle piz. One registered model per DFF used.
+    // Each is built with its frame hierarchy so the wheel / body frames can be posed.
+public:
+    struct CarModel {
+        int   handle = -1;
+        char  dff[32] = {};
+        int   wheel_frame[8];     // atomic frames of parts 0..3 then 0x21..0x24 (-1 = none)
+        int   hub_frame[8];       // their parent frames
+        float hub_pos[8][3];      // the parents' streamed positions (FUN_0041f3d0 keeps them)
+        int   body_frame = -1;    // part 0x13's atomic frame (FUN_0041f4f0)
+        float body_pos[3] = {};
+        bool  env_ok = false;
+        // diagnostic replay only (MASHED_CAR_REPLAY): the streamed chains around the body
+        // frame, X = part 0xe's frame up to the body frame (exclusive), Y = the body frame's
+        // parent up to the root (exclusive); RW row-vector rows right/up/at/pos.
+        bool  body_chain_ok = false;
+        float body_X[12] = {}, body_Y[12] = {};
+    };
+    std::vector<CarModel> car_models_;
+    int  car_slot_model_[4] = {0, 0, 0, 0};   // index into car_models_ per car slot
+    char car_piz_[260] = {};
+    char car_dff_base_[32] = {};
+    bool livery_dirty_ = false;
+    int  RegisterCarModel(IDirect3DDevice9* dev, const char* dff_entry, std::FILE* log);
+    void ResolveCarLiveries();
+    // [librwrest] FUN_00420870 @ 0x00420870's part inputs per car slot, refreshed by
+    // CarParts_FrameTick where FUN_0040fc00 calls FUN_0040da50 (0x0040fc75): the wheel spin
+    // angles (rec+0x220, FUN_0041f3d0), the per-wheel steer means (FUN_0046bda0) and the
+    // two body vectors (FUN_0046bce0 / FUN_0046bd20) FUN_0041f4f0 rotates part 0x13 by.
+    struct CarPartState { float ang[4] = {}; float steer[4] = {}; float va[3] = {}; float vb[3] = {};
+                          bool ok = false; };
+private:
+    CarPartState car_parts_[4];
+    void CarParts_FrameTick(int units);
 
     // stretch: AI cars following the gate loop at fixed speed (share the
     // player's model batches; placeholder until the real AI port)
@@ -333,7 +372,9 @@ public:
     // Per-car Player Colour 0..5 (DAT_007f1a1c mirror, Finding 16). Drives the
     // standings car badge. Default 0 (RED).
     int   car_colour(int car) const { return (car >= 0 && car < kRaceCars) ? colour_[car] : 0; }
-    void  SetCarColour(int car, int c) { if (car >= 0 && car < kRaceCars) colour_[car] = c; }
+    void  SetCarColour(int car, int c) {
+        if (car >= 0 && car < kRaceCars) { colour_[car] = c; livery_dirty_ = true; }   // [librwrest]
+    }
     int   score_delta(int car) const { return (car >= 0 && car < kRaceCars) ? score_delta_[car] : 0; }
     float delta_timer(int car) const { return (car >= 0 && car < kRaceCars) ? delta_timer_[car] : 0.f; }
     float countdown() const { return countdown_; }

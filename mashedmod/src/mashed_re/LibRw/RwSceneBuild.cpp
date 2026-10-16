@@ -584,9 +584,15 @@ static bool ModelIsWaterAsset(const char* name) {
 void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
                  std::uint32_t ambient,
                  std::vector<std::uint32_t>* out_atomic_mat,
-                 std::vector<std::int32_t>* out_atomic_part) {
+                 std::vector<std::int32_t>* out_atomic_part,
+                 bool hierarchy,
+                 std::vector<void*>* out_frames,
+                 std::vector<std::int32_t>* out_atomic_frame) {
     if (out_atomic_mat) out_atomic_mat->clear();
     if (out_atomic_part) out_atomic_part->clear();
+    if (out_frames) out_frames->clear();
+    if (out_atomic_frame) out_atomic_frame->clear();
+    if (model.frames.empty()) hierarchy = false;
     // [geomlight water-scope] Model-level half of the ambient-fold scope key.
     // Evaluated once here, not per batch -- it depends only on the asset name.
     const bool water_asset = ModelIsWaterAsset(model.source_name);
@@ -631,15 +637,101 @@ void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
 
     rw::Clump* clump = rw::Clump::create();
     if (!clump) return nullptr;
-    rw::Frame* root = rw::Frame::create();
+    rw::Frame* root = nullptr;
+    // [librwrest] hierarchy mode: one rw::Frame per FRAMELIST entry, parented as streamed.
+    std::vector<rw::Frame*> dff_frames;
+    if (hierarchy) {
+        dff_frames.resize(model.frames.size(), nullptr);
+        for (std::size_t i = 0; i < model.frames.size(); ++i) {
+            const Track::DffFrame& df = model.frames[i];
+            rw::Frame* f = rw::Frame::create();
+            rw::Matrix* m = &f->matrix;
+            m->right.x = df.rot[0]; m->right.y = df.rot[1]; m->right.z = df.rot[2];
+            m->up.x    = df.rot[3]; m->up.y    = df.rot[4]; m->up.z    = df.rot[5];
+            m->at.x    = df.rot[6]; m->at.y    = df.rot[7]; m->at.z    = df.rot[8];
+            m->pos.x   = df.pos[0]; m->pos.y   = df.pos[1]; m->pos.z   = df.pos[2];
+            m->update();
+            if (df.parent >= 0 && static_cast<std::size_t>(df.parent) < i && dff_frames[df.parent])
+                dff_frames[df.parent]->addChild(f);
+            else if (!root)
+                root = f;
+            else
+                root->addChild(f);   // a second parentless entry hangs off the first root
+            dff_frames[i] = f;
+        }
+        if (out_frames)
+            for (rw::Frame* f : dff_frames) out_frames->push_back(f);
+    }
+    if (!root) root = rw::Frame::create();
     clump->setFrame(root);
 
+    // [librwrest] the bind-pose chain of FRAMELIST entry `fi` as a column-vector affine map
+    // (A, t): model = A * local + t, the composition DffModel.cpp FrameXform applies; and
+    // its inverse, to take a batch's baked vertices back to its frame's local space.
+    auto chain = [&](int fi, double A[9], double t[3]) {
+        for (int k = 0; k < 9; ++k) A[k] = (k % 4 == 0) ? 1.0 : 0.0;   // row-major 3x3
+        t[0] = t[1] = t[2] = 0.0;
+        for (int i = fi; i >= 0; i = model.frames[static_cast<std::size_t>(i)].parent) {
+            const Track::DffFrame& f = model.frames[static_cast<std::size_t>(i)];
+            // R (row-major) has columns right/up/at: R[r][c] = rot[c*3 + r]
+            double R[9];
+            for (int r = 0; r < 3; ++r)
+                for (int c = 0; c < 3; ++c) R[r * 3 + c] = f.rot[c * 3 + r];
+            double nA[9], nt[3];
+            for (int r = 0; r < 3; ++r) {
+                for (int c = 0; c < 3; ++c)
+                    nA[r * 3 + c] = R[r * 3 + 0] * A[0 * 3 + c] + R[r * 3 + 1] * A[1 * 3 + c] +
+                                    R[r * 3 + 2] * A[2 * 3 + c];
+                nt[r] = R[r * 3 + 0] * t[0] + R[r * 3 + 1] * t[1] + R[r * 3 + 2] * t[2] + f.pos[r];
+            }
+            for (int k = 0; k < 9; ++k) A[k] = nA[k];
+            for (int k = 0; k < 3; ++k) t[k] = nt[k];
+        }
+    };
+    auto invert3 = [](const double a[9], double o[9]) {
+        const double c00 = a[4] * a[8] - a[5] * a[7], c01 = a[5] * a[6] - a[3] * a[8],
+                     c02 = a[3] * a[7] - a[4] * a[6];
+        const double det = a[0] * c00 + a[1] * c01 + a[2] * c02;
+        const double id = (det != 0.0) ? 1.0 / det : 0.0;
+        o[0] = c00 * id; o[1] = (a[2] * a[7] - a[1] * a[8]) * id; o[2] = (a[1] * a[5] - a[2] * a[4]) * id;
+        o[3] = c01 * id; o[4] = (a[0] * a[8] - a[2] * a[6]) * id; o[5] = (a[2] * a[3] - a[0] * a[5]) * id;
+        o[6] = c02 * id; o[7] = (a[1] * a[6] - a[0] * a[7]) * id; o[8] = (a[0] * a[4] - a[1] * a[3]) * id;
+    };
+
     std::size_t bi = static_cast<std::size_t>(-1);
-    for (const Track::DffBatch& b : model.batches) {
+    for (const Track::DffBatch& b0 : model.batches) {
         ++bi;
-        const std::int32_t nv = static_cast<std::int32_t>(b.verts.size() / 3);
-        const std::int32_t nt = static_cast<std::int32_t>(b.tris.size() / 3);
+        const std::int32_t nv = static_cast<std::int32_t>(b0.verts.size() / 3);
+        const std::int32_t nt = static_cast<std::int32_t>(b0.tris.size() / 3);
         if (nv == 0 || nt == 0) continue;
+        // [librwrest] hierarchy mode: this batch's vertices/normals in its frame's space
+        const bool own_frame = hierarchy && b0.frame >= 0 &&
+                               static_cast<std::size_t>(b0.frame) < dff_frames.size();
+        Track::DffBatch local;
+        if (own_frame) {
+            double A[9], t[3], Ai[9];
+            chain(b0.frame, A, t);
+            invert3(A, Ai);
+            local.verts.resize(b0.verts.size());
+            for (std::int32_t i = 0; i < nv; ++i) {
+                const double d[3] = { b0.verts[i * 3 + 0] - t[0], b0.verts[i * 3 + 1] - t[1],
+                                      b0.verts[i * 3 + 2] - t[2] };
+                for (int r = 0; r < 3; ++r)
+                    local.verts[i * 3 + r] = static_cast<float>(
+                        Ai[r * 3 + 0] * d[0] + Ai[r * 3 + 1] * d[1] + Ai[r * 3 + 2] * d[2]);
+            }
+            local.normals.resize(b0.normals.size());
+            for (std::size_t i = 0; i + 2 < b0.normals.size(); i += 3)
+                for (int r = 0; r < 3; ++r)
+                    local.normals[i + r] = static_cast<float>(
+                        Ai[r * 3 + 0] * b0.normals[i] + Ai[r * 3 + 1] * b0.normals[i + 1] +
+                        Ai[r * 3 + 2] * b0.normals[i + 2]);
+        }
+        struct BatchView {
+            const Track::DffBatch& src; const std::vector<float>& verts;
+            const std::vector<float>& normals;
+        } bv{ b0, own_frame ? local.verts : b0.verts, own_frame ? local.normals : b0.normals };
+        const Track::DffBatch& b = bv.src;
 
         // [rtex] two texcoord sets when the geometry declares them and DUAL is on.
         const bool two_sets = DualEnabled() && !b.uvs2.empty();
@@ -705,7 +797,7 @@ void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
                  (unsigned)ambient, (unsigned)b.prelit[0],
                  (unsigned)(*prelit_src)[0]);
         }
-        FillVertexData(geo, nv, b.verts, b.uvs, *prelit_src, &b.normals);
+        FillVertexData(geo, nv, bv.verts, b.uvs, *prelit_src, &bv.normals);
         if (two_sets) FillTexCoords1(geo, nv, b.uvs2);
         // [D-S3-PROP] MASHED_PROP_VDUMP=<handle>: the librw half of the pair. Dump
         // every vertex this batch uploads as "batch x y z r g b" -- same columns
@@ -737,7 +829,17 @@ void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
         AppendMaterials(geo, mats);
         FinishGeometry(geo);
 
-        if (rw::Atomic* a = MakeAtomic(geo, root)) {
+        rw::Atomic* a = nullptr;
+        if (own_frame) {   // [librwrest] the atomic's own DFF frame
+            a = rw::Atomic::create();
+            if (a) {
+                a->setFrame(dff_frames[static_cast<std::size_t>(b.frame)]);
+                a->setGeometry(geo, 0);
+            }
+        } else {
+            a = MakeAtomic(geo, root);
+        }
+        if (a) {
             if (uses_dual) rw::MatFX::enableEffects(a);   // [rtex] FUN_00543500 path
             clump->addAtomic(a);
             // Record the material HERE, where the atomic is actually created --
@@ -745,6 +847,7 @@ void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
             // shift the mapping.
             if (out_atomic_mat) out_atomic_mat->push_back(b.material);
             if (out_atomic_part) out_atomic_part->push_back(b.part_id);   // [rtex]
+            if (out_atomic_frame) out_atomic_frame->push_back(own_frame ? b.frame : -1);
         }
     }
     return clump;

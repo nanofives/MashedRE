@@ -107,7 +107,7 @@ void FrameXformNormal(const std::vector<Frame>& frames, int idx,
 }  // namespace
 
 bool DffModel::Parse(const std::uint8_t* data, std::size_t len) {
-    materials.clear(); batches.clear();
+    materials.clear(); batches.clear(); frames.clear();
     total_tris = total_verts = 0;
     Rd r{data, len};
     Chunk clump;
@@ -146,6 +146,12 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len) {
             if (f.parent >= i) { err_ = "frame parent out of order"; return false; }
             q += 0x38;
         }
+    }
+    this->frames.resize(frames.size());   // [librwrest]
+    for (std::size_t i = 0; i < frames.size(); ++i) {
+        std::memcpy(this->frames[i].rot, frames[i].rot, sizeof(frames[i].rot));
+        std::memcpy(this->frames[i].pos, frames[i].pos, sizeof(frames[i].pos));
+        this->frames[i].parent = frames[i].parent;
     }
 
     // GEOMETRYLIST
@@ -362,6 +368,7 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len) {
                 b.modulate_mat = geo.modmat;          // WS-E s2
                 b.geo_flags    = geo.flags;           // geomlight class-scope
                 b.part_id      = geo.part_id;         // [rtex]
+                b.frame        = fi;                  // [librwrest]
                 {
                     const float origin[3] = {0.f, 0.f, 0.f};
                     FrameXform(frames, fi, origin, b.frame_pos);   // [rtex]

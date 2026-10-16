@@ -40,6 +40,12 @@ extern "C" void* __cdecl RwMatrixRotate(void* matrix, const float* axis, float a
 #include "../Race/CameraApply.h"      // d1r2: the director tail's frame build (render camera)
 extern "C" void __cdecl VehicleSeedWritePair(std::uint32_t, std::uint32_t);   // 0x00448700
 extern "C" void __cdecl UtilZeroTable8964c0();                                // 0x004425d0
+// [librwrest] FUN_00420870's part poses: RwFrameTranslate's matrix half (0x004c51a0, ported in
+// Collision/RwpSolverMath2.cpp), and FUN_0040da50's per-car gate (CarRegistrant.cpp's pair).
+extern "C" void __cdecl FUN_004c51a0(float* mtx, float* vec, int combineOp);   // RwMatrixTranslate
+extern "C" std::uint32_t __cdecl IsCarSlotActive(int param_1);                 // 0x0040e370
+extern "C" std::uint32_t __cdecl VehicleSlotGetter(std::uint32_t vehicleIdx);   // 0x0046c7b0
+#include "../Vehicle/VehicleRecordBase.h"
                                     // (MASHED_GATE_RIBBON_AI reverts it to the ribbon scaffold).
                                     // [D3 2026-09-26] the ported TICK Ai_Standalone_Tick runs every
                                     // race frame and its ctrl bytes drive the opponents.
@@ -2574,16 +2580,53 @@ static bool CollisionPrelitSample(const std::vector<float>& vtx, const std::vect
     return true;
 }
 
-bool TrackRenderer::LoadCar(IDirect3DDevice9* dev, const char* piz_path,
-                            const char* dff_entry, const char* log_path) {
-    std::FILE* log = log_path ? std::fopen(log_path, "a") : nullptr;
-    auto fail = [&](const char* why) {
-        if (log) { std::fprintf(log, "R5 car load FAILED: %s\n", why); std::fclose(log); }
-        return false;
-    };
-    Piz::Archive piz;
-    if (!piz.Load(piz_path)) return fail(piz.last_error());
+namespace {
+// [librwrest] RW row-vector affine 4x3 (rows right, up, at, pos): v' = v * R + p.
+void AffMul(const float* a, const float* b, float* o) {   // a then b
+    float t[12];
+    for (int r = 0; r < 3; ++r)
+        for (int c = 0; c < 3; ++c)
+            t[r * 3 + c] = a[r * 3 + 0] * b[0 + c] + a[r * 3 + 1] * b[3 + c] + a[r * 3 + 2] * b[6 + c];
+    for (int c = 0; c < 3; ++c)
+        t[9 + c] = a[9] * b[0 + c] + a[10] * b[3 + c] + a[11] * b[6 + c] + b[9 + c];
+    std::memcpy(o, t, sizeof(t));
+}
+void AffInv(const float* a, float* o) {
+    const double c00 = (double)a[4] * a[8] - (double)a[5] * a[7], c01 = (double)a[5] * a[6] - (double)a[3] * a[8],
+                 c02 = (double)a[3] * a[7] - (double)a[4] * a[6];
+    const double det = a[0] * c00 + a[1] * c01 + a[2] * c02;
+    const double id = det != 0.0 ? 1.0 / det : 0.0;
+    float r[9];
+    r[0] = (float)(c00 * id); r[1] = (float)(((double)a[2] * a[7] - (double)a[1] * a[8]) * id);
+    r[2] = (float)(((double)a[1] * a[5] - (double)a[2] * a[4]) * id);
+    r[3] = (float)(c01 * id); r[4] = (float)(((double)a[0] * a[8] - (double)a[2] * a[6]) * id);
+    r[5] = (float)(((double)a[2] * a[3] - (double)a[0] * a[5]) * id);
+    r[6] = (float)(c02 * id); r[7] = (float)(((double)a[1] * a[6] - (double)a[0] * a[7]) * id);
+    r[8] = (float)(((double)a[0] * a[4] - (double)a[1] * a[3]) * id);
+    for (int c = 0; c < 3; ++c)
+        o[9 + c] = -(a[9] * r[0 + c] + a[10] * r[3 + c] + a[11] * r[6 + c]);
+    std::memcpy(o, r, sizeof(r));
+}
+void AffFromFrame(const Track::DffFrame& f, float* o) {
+    std::memcpy(o, f.rot, 9 * sizeof(float));
+    std::memcpy(o + 9, f.pos, 3 * sizeof(float));
+}
+}  // namespace
 
+// [librwrest] load `dff_entry` from car_piz_ (plus every TXD in it), register it with librw
+// with its frame hierarchy, bind the car dirt / env passes (rtex) to it, and record the frames
+// FUN_0041f3d0 / FUN_0041f4f0 pose. Returns the index into car_models_, or -1. `out_bbox`
+// (6 floats) receives the parsed model's bbox when non-null.
+int TrackRenderer::RegisterCarModel(IDirect3DDevice9* dev, const char* dff_entry, std::FILE* log) {
+    (void)dev;
+    for (std::size_t i = 0; i < car_models_.size(); ++i)
+        if (_stricmp(car_models_[i].dff, dff_entry) == 0) return static_cast<int>(i);
+    Piz::Archive piz;
+    if (!piz.Load(car_piz_)) {
+        if (log) std::fprintf(log, "[librwrest] car model %s: piz %s FAILED: %s\n", dff_entry,
+                              car_piz_, piz.last_error());
+        return -1;
+    }
     const std::uint8_t* dff = nullptr; std::uint32_t dff_len = 0;
     std::vector<std::pair<const std::uint8_t*, std::uint32_t>> txds;
     for (std::uint32_t i = 0; i < piz.count(); ++i) {
@@ -2597,46 +2640,93 @@ bool TrackRenderer::LoadCar(IDirect3DDevice9* dev, const char* piz_path,
             if (b) txds.emplace_back(b, bl);
         }
     }
-    if (!dff) return fail("DFF entry not found");
-
+    if (!dff) {
+        if (log) std::fprintf(log, "[librwrest] car model %s: DFF entry not found\n", dff_entry);
+        return -1;
+    }
     Track::DffModel model;
-    if (!model.Parse(dff, dff_len)) return fail(model.last_error());
-    // Before RaceSubmit_RegisterModel, so librw is handed the filtered `model`.
+    if (!model.Parse(dff, dff_len)) {
+        if (log) std::fprintf(log, "[librwrest] car model %s: %s\n", dff_entry, model.last_error());
+        return -1;
+    }
     CarDropNonRenderAtomics(model, dff_entry, log);
-
     std::vector<Txd::Dictionary> dicts(txds.size());
     for (std::size_t di = 0; di < txds.size(); ++di)
         dicts[di].Decode(txds[di].first, txds[di].second);
 
-    // The car's long (fwd/back) model axis, from its bbox. Feeds the placement matrix
-    // Render builds for the librw instance (car_long_is_x_) and the chase-camera scale.
-    const float cdx = model.bbox[3] - model.bbox[0];
-    const float cdz = model.bbox[5] - model.bbox[2];
-    const bool long_is_x = cdx >= cdz;     // car's long (fwd/back) model axis
-
-    // E2'b step 3: hand the model to librw while it is alive (same lifetime rule as
-    // props). There is no D3D9 copy of the car: the D3D9 car draw, its wheel
-    // identification, per-vertex relight and AI livery variants were deleted in
-    // D1-residue R3 (2026-10-16).
-    rw_car_model_ = LibRw::RaceSubmit_RegisterModel(model, dicts.data(), dicts.size(),
-                                                   amb_world_);
-    // [rtex 2026-10-16] the car material passes (U-9693, LibRw/RwCarFx.h). Part 0x13's
-    // frame origin first: the env coefficient fades with its distance to the camera.
-    car_part19_ok_ = false;
-    for (const auto& b : model.batches)
-        if (b.part_id == 0x13) {
-            std::memcpy(car_part19_, b.frame_pos, sizeof(car_part19_));
-            car_part19_ok_ = true;
-            break;
+    CarModel cm;
+    std::snprintf(cm.dff, sizeof(cm.dff), "%s", dff_entry);
+    cm.handle = LibRw::RaceSubmit_RegisterModel(model, dicts.data(), dicts.size(), amb_world_,
+                                                nullptr, 0, /*hierarchy=*/true);
+    // FUN_0041f3d0 @ 0x0041f3d0: wheel w's atomic is rec[w] (parts 0..3, rec+0x298 == 0) or
+    // rec[0x21 + w] (rec+0x298 == 1); it rotates the atomic's frame (atomic+4) and that
+    // frame's parent (frame+4), whose position it restores (0x0041f4a5..0x0041f4d6).
+    // FUN_0041f4f0 @ 0x0041f4f0: part 0x13's atomic frame (rec+0x4c -> +4), position restored.
+    for (int k = 0; k < 8; ++k) {
+        cm.wheel_frame[k] = cm.hub_frame[k] = -1;
+        cm.hub_pos[k][0] = cm.hub_pos[k][1] = cm.hub_pos[k][2] = 0.f;
+    }
+    const int nfr = static_cast<int>(model.frames.size());
+    for (const auto& b : model.batches) {
+        if (b.frame < 0 || b.frame >= nfr) continue;
+        int k = -1;
+        if (b.part_id >= 0 && b.part_id <= 3) k = b.part_id;
+        else if (b.part_id >= 0x21 && b.part_id <= 0x24) k = 4 + (b.part_id - 0x21);
+        if (k >= 0 && cm.wheel_frame[k] < 0) {
+            cm.wheel_frame[k] = b.frame;
+            const int par = model.frames[static_cast<std::size_t>(b.frame)].parent;
+            if (par >= 0) {
+                cm.hub_frame[k] = par;
+                std::memcpy(cm.hub_pos[k], model.frames[static_cast<std::size_t>(par)].pos,
+                            sizeof(cm.hub_pos[k]));
+            }
         }
-    car_env_ok_ = false;
-    if (rw_car_model_ >= 0) {
+        if (b.part_id == 0x13 && cm.body_frame < 0) {
+            cm.body_frame = b.frame;
+            std::memcpy(cm.body_pos, model.frames[static_cast<std::size_t>(b.frame)].pos,
+                        sizeof(cm.body_pos));
+        }
+    }
+    // diagnostic replay chains (TrackRenderer.h): part 0xe is the renderable whose frame LTM
+    // camera_probe.py --carframes records as F{i}_* (rec+0x38 = 0x0063da18 - 0x0063d9e0)
+    if (cm.body_frame >= 0) {
+        int fe = -1;
+        for (const auto& b : model.batches)
+            if (b.part_id == 0x0e && b.frame >= 0 && b.frame < nfr) { fe = b.frame; break; }
+        float X[12] = { 1,0,0, 0,1,0, 0,0,1, 0,0,0 }, Y[12] = { 1,0,0, 0,1,0, 0,0,1, 0,0,0 };
+        bool under = false;
+        for (int i = fe; i >= 0; i = model.frames[static_cast<std::size_t>(i)].parent) {
+            if (i == cm.body_frame) { under = true; break; }
+            float M[12];
+            AffFromFrame(model.frames[static_cast<std::size_t>(i)], M);
+            AffMul(X, M, X);
+        }
+        for (int i = model.frames[static_cast<std::size_t>(cm.body_frame)].parent;
+             i >= 0 && model.frames[static_cast<std::size_t>(i)].parent >= 0;
+             i = model.frames[static_cast<std::size_t>(i)].parent) {
+            float M[12];
+            AffFromFrame(model.frames[static_cast<std::size_t>(i)], M);
+            AffMul(Y, M, Y);
+        }
+        cm.body_chain_ok = under;
+        std::memcpy(cm.body_X, X, sizeof(X));
+        std::memcpy(cm.body_Y, Y, sizeof(Y));
+    }
+    if (log) {
+        std::fprintf(log, "[librwrest] car model %s: handle=%d frames=%d body_frame=%d wheels=",
+                     dff_entry, cm.handle, nfr, cm.body_frame);
+        for (int k = 0; k < 8; ++k) std::fprintf(log, "%d/%d ", cm.wheel_frame[k], cm.hub_frame[k]);
+        std::fprintf(log, "\n");
+    }
+    if (cm.handle < 0) return -1;
+    // [rtex 2026-10-16] the car material passes (U-9693, LibRw/RwCarFx.h), per model.
+    {
         char base[64] = {};
         {
-            const char* s = std::strrchr(piz_path, '/');
-            const char* s2 = std::strrchr(piz_path, '\\');
+            const char* s = std::strrchr(car_piz_, '/');
+            const char* s2 = std::strrchr(car_piz_, '\\');
             if (s2 && (!s || s2 > s)) s = s2;
-            s = s ? s + 1 : piz_path;
+            s = s ? s + 1 : car_piz_;
             std::size_t n = 0;
             while (s[n] && s[n] != '.' && n + 1 < sizeof(base)) { base[n] = s[n]; ++n; }
         }
@@ -2667,7 +2757,7 @@ bool TrackRenderer::LoadCar(IDirect3DDevice9* dev, const char* piz_path,
             // filterAddressing 0x1101 (NEAREST, WRAP, WRAP) read live off both original
             // dirt textures (+0x50), PREREG_rtex amendment 1
             const int nb = (bimg && wimg)
-                ? LibRw::RaceSubmit_BindCarDirt(rw_car_model_, bimg, bw, bh, wimg, ww, wh, 0x1101u)
+                ? LibRw::RaceSubmit_BindCarDirt(cm.handle, bimg, bw, bh, wimg, ww, wh, 0x1101u)
                 : 0;
             if (log)
                 std::fprintf(log, "[rtex] car dirt: course=%d veh=%d body=%s wheel=%s bound=%d\n",
@@ -2678,13 +2768,200 @@ bool TrackRenderer::LoadCar(IDirect3DDevice9* dev, const char* piz_path,
         // FUN_00420420 @ 0x00420420: env texture = the vehicle table's +0x30 name, `cargloss`
         // for all 78 entries (0x005f37a8 + i*0x84 + 0x30)
         if (LibRw::CarEnvEnabled()) {
-            const int ne = LibRw::RaceSubmit_SetupCarEnv(rw_car_model_, dicts.data(),
+            const int ne = LibRw::RaceSubmit_SetupCarEnv(cm.handle, dicts.data(),
                                                           dicts.size(), "cargloss");
-            car_env_ok_ = ne > 0 && car_part19_ok_;
-            if (log) std::fprintf(log, "[rtex] car env: %d materials, part19=%d\n", ne,
-                                  (int)car_part19_ok_);
+            cm.env_ok = ne > 0;
+            if (log) std::fprintf(log, "[rtex] car env: %d materials\n", ne);
         }
     }
+    car_models_.push_back(cm);
+    return static_cast<int>(car_models_.size()) - 1;
+}
+
+// [librwrest] FUN_0040d110 @ 0x0040d110 per car slot: livery = DAT_007f1a1c[i*4] (the
+// per-car colour this renderer mirrors as colour_), or i when FUN_0042f6a0 (DAT_0067e9fc)
+// == 0xb (0x0040d199..0x0040d1a6). The vehicle table entry's DFF is name + livery.
+void TrackRenderer::ResolveCarLiveries() {
+    livery_dirty_ = false;
+    if (car_models_.empty() || !car_dff_base_[0]) return;
+    std::FILE* log = std::fopen("mashed_re.log", "a");
+    const int mode = *reinterpret_cast<const int*>(0x0067e9fcu);   // FUN_0042f6a0
+    for (int s = 0; s < 4; ++s) {
+        int liv = (mode == 0xb) ? s : colour_[s];
+        if (liv < 0 || liv > 5) liv = 0;
+        char dff[48];
+        std::snprintf(dff, sizeof(dff), "%s%d.DFF", car_dff_base_, liv);
+        const int mi = RegisterCarModel(nullptr, dff, log);
+        car_slot_model_[s] = (mi >= 0) ? mi : 0;
+        if (log) std::fprintf(log, "[librwrest] livery: slot %d mode=%d colour=%d -> %s (model %d)\n",
+                              s, mode, colour_[s], dff, car_slot_model_[s]);
+    }
+    if (log) std::fclose(log);
+}
+
+// [librwrest] FUN_00420870 @ 0x00420870's part inputs, at FUN_0040fc00's call of FUN_0040da50
+// (0x0040fc75: before this frame's physics, 0x0040fc9b), for every car FUN_0040da50 updates.
+// MASHED_CAR_PARTS=0 skips it (the cars then draw in the streamed pose, as before).
+static bool CarPartsEnabled() {
+    static const bool on = [] {
+        const char* e = std::getenv("MASHED_CAR_PARTS");
+        return !(e && e[0] == '0' && e[1] == '\0');
+    }();
+    return on;
+}
+
+void TrackRenderer::CarParts_FrameTick(int units) {
+    if (!CarPartsEnabled()) return;
+    std::uint32_t kb = 0x39aec33eu;                     // _DAT_005cc948 (1/3000), .rdata
+    float k3000;
+    std::memcpy(&k3000, &kb, sizeof k3000);
+    for (int v = 0; v < 4; ++v) {
+        // FUN_0040da50 @ 0x0040da50: *(PTR_005f2770 + 0x34 + v*4) != 0, then FUN_0046c7b0(v) == 1
+        // (the FUN_0046c770(v) == 1 arm is not bound, as CarRegistrant.cpp, U-9210)
+        if (IsCarSlotActive(v) == 0) continue;
+        if (VehicleSlotGetter(static_cast<std::uint32_t>(v)) != 1u) continue;
+        const char* r = Vehicle::VehRecord(static_cast<std::uint32_t>(v));
+        if (!r) continue;
+        CarPartState& cp = car_parts_[v];
+        for (int w = 0; w < 4; ++w) {
+            const char* wb = r + 0x1a4 + w * 0xc4;    // FUN_0046bd60: 0x00881744 + (v*0x11 + w)*0xc4
+            std::int32_t spin;
+            std::memcpy(&spin, wb, 4);
+            // FUN_0041f3d0 0x0041f41e..0x0041f43e: fild units; fmul [0x005cc948]; fimul spin;
+            // fadd [angle]; fst (units >= 0, so no 2^32 fix-up). The race loop runs at x87
+            // PC_24, so each step rounds to single precision: float steps here.
+            float f = static_cast<float>(units) * k3000;
+            f = f * static_cast<float>(spin);
+            f = f + cp.ang[w];
+            cp.ang[w] = f;
+            if (f > 360.0f) cp.ang[w] = f - 360.0f;                 // 0x0041f440..0x0041f45b
+            if (cp.ang[w] < -360.0f) cp.ang[w] = cp.ang[w] + 360.0f; // 0x0041f45d..0x0041f474
+            // FUN_0046bda0: 16 floats from +0x1ac, summed in order from 0.0, times [0x005cd058]
+            float acc = 0.0f;
+            for (int k = 0; k < 16; ++k) {
+                float s;
+                std::memcpy(&s, wb + 8 + k * 4, 4);
+                acc += s;
+            }
+            cp.steer[w] = acc * 0.0625f;
+        }
+        std::memcpy(cp.va, r + 0xaf4, 12);   // FUN_0046bce0: 0x00882094 + v*0xd04
+        std::memcpy(cp.vb, r + 0xb00, 12);   // FUN_0046bd20: 0x008820a0 + v*0xd04
+        cp.ok = true;
+    }
+}
+
+namespace {
+// RwMatrix (16 floats: right, flags, up, pad, at, pad, pos, pad) -> FramePose rows
+void PoseFromRwMatrix(const float* m, int frame, LibRw::FramePose* out) {
+    out->frame = frame;
+    out->m[0] = m[0];  out->m[1] = m[1];  out->m[2] = m[2];
+    out->m[3] = m[4];  out->m[4] = m[5];  out->m[5] = m[6];
+    out->m[6] = m[8];  out->m[7] = m[9];  out->m[8] = m[10];
+    out->m[9] = m[12]; out->m[10] = m[13]; out->m[11] = m[14];
+}
+
+// The frame matrices FUN_00420870 writes for one car, from its part inputs. Both LOD sets
+// (parts 0..3 and 0x21..0x24) are posed: the original poses only the set rec+0x298 selects
+// and hides the other through FUN_004b5240 (the car LOD visibility, not ported here), so
+// posing both draws the same as posing the visible one. Returns the pose count.
+int BuildCarPoses(const TrackRenderer::CarModel& cm, const TrackRenderer::CarPartState& cp,
+                  LibRw::FramePose* out) {
+    static const float kX[3] = { 1.f, 0.f, 0.f };   // DAT_006146f0
+    static const float kY[3] = { 0.f, 1.f, 0.f };   // DAT_006146fc
+    static const float kZ[3] = { 0.f, 0.f, 1.f };   // DAT_00614708
+    int n = 0;
+    for (int k = 0; k < 8; ++k) {
+        const int w = k & 3;
+        float m[16];
+        if (cm.wheel_frame[k] >= 0) {
+            // 0x0041f487: RwFrameRotate(wheel frame, X, rec+0x220+w*4, rwCOMBINEREPLACE)
+            RwMatrixRotate(m, kX, cp.ang[w], 0);
+            PoseFromRwMatrix(m, cm.wheel_frame[k], &out[n++]);
+        }
+        if (cm.hub_frame[k] >= 0) {
+            // 0x0041f4b6: RwFrameRotate(parent, Y, FUN_0046bda0(v, w), REPLACE), then
+            // 0x0041f4c3: RwFrameTranslate(parent, its saved position, rwCOMBINEPOSTCONCAT)
+            RwMatrixRotate(m, kY, cp.steer[w], 0);
+            float p[3] = { cm.hub_pos[k][0], cm.hub_pos[k][1], cm.hub_pos[k][2] };
+            FUN_004c51a0(m, p, 2);
+            PoseFromRwMatrix(m, cm.hub_frame[k], &out[n++]);
+        }
+    }
+    if (cm.body_frame >= 0) {
+        // FUN_0041f4f0: RwFrameRotate(part 0x13 frame, Z, (b.x + a.x) * [0x005cd274] (40), REPLACE)
+        // (0x0041f54f), RwFrameRotate(.., X, (b.z + a.z) * [0x005cd038] (-100), POSTCONCAT)
+        // (0x0041f565), RwFrameTranslate(.., saved position, POSTCONCAT) (0x0041f572)
+        float m[16];
+        RwMatrixRotate(m, kZ, (cp.vb[0] + cp.va[0]) * 40.0f, 0);
+        RwMatrixRotate(m, kX, (cp.vb[2] + cp.va[2]) * -100.0f, 2);
+        float p[3] = { cm.body_pos[0], cm.body_pos[1], cm.body_pos[2] };
+        FUN_004c51a0(m, p, 2);
+        PoseFromRwMatrix(m, cm.body_frame, &out[n++]);
+    }
+    return n;
+}
+}  // namespace
+
+bool TrackRenderer::LoadCar(IDirect3DDevice9* dev, const char* piz_path,
+                            const char* dff_entry, const char* log_path) {
+    std::FILE* log = log_path ? std::fopen(log_path, "a") : nullptr;
+    auto fail = [&](const char* why) {
+        if (log) { std::fprintf(log, "R5 car load FAILED: %s\n", why); std::fclose(log); }
+        return false;
+    };
+    Piz::Archive piz;
+    if (!piz.Load(piz_path)) return fail(piz.last_error());
+
+    const std::uint8_t* dff = nullptr; std::uint32_t dff_len = 0;
+    for (std::uint32_t i = 0; i < piz.count(); ++i)
+        if (_stricmp(piz.entry(i).name, dff_entry) == 0) dff = piz.blob(i, &dff_len);
+    if (!dff) return fail("DFF entry not found");
+
+    // The car's metrics (this parse); the librw models are built by RegisterCarModel.
+    Track::DffModel model;
+    if (!model.Parse(dff, dff_len)) return fail(model.last_error());
+    CarDropNonRenderAtomics(model, dff_entry, nullptr);   // as the registered models (part 0x13 below)
+
+    // The car's long (fwd/back) model axis, from its bbox. Feeds the placement matrix
+    // Render builds for the librw instance (car_long_is_x_) and the chase-camera scale.
+    const float cdx = model.bbox[3] - model.bbox[0];
+    const float cdz = model.bbox[5] - model.bbox[2];
+    const bool long_is_x = cdx >= cdz;     // car's long (fwd/back) model axis
+
+    // [librwrest] the car models: slot 0's livery as asked (`dff_entry`), registered with its
+    // frame hierarchy by RegisterCarModel, which also binds rtex's dirt / env passes per model.
+    // The other slots' liveries resolve at the first render (ResolveCarLiveries), because the
+    // per-car colours are set after this load (RaceSession::Begin, MASHED_ROUND_COLOURS).
+    // There is no D3D9 copy of the car (deleted in D1-residue R3, 2026-10-16).
+    std::snprintf(car_piz_, sizeof(car_piz_), "%s", piz_path);
+    {
+        // "<base><livery>.DFF": strip the extension and the trailing livery digit
+        std::size_t n = 0;
+        while (dff_entry[n] && dff_entry[n] != '.' && n + 1 < sizeof(car_dff_base_)) {
+            car_dff_base_[n] = dff_entry[n]; ++n;
+        }
+        car_dff_base_[n] = 0;
+        if (n > 0 && car_dff_base_[n - 1] >= '0' && car_dff_base_[n - 1] <= '9') car_dff_base_[n - 1] = 0;
+    }
+    car_models_.clear();
+    const int cm0 = RegisterCarModel(dev, dff_entry, log);
+    rw_car_model_ = (cm0 >= 0) ? car_models_[static_cast<std::size_t>(cm0)].handle : -1;
+    for (int s = 0; s < 4; ++s) car_slot_model_[s] = (cm0 >= 0) ? cm0 : 0;
+    for (auto& cp : car_parts_) cp = CarPartState{};
+    livery_dirty_ = true;
+    // [rtex 2026-10-16] Part 0x13's frame origin: the env coefficient fades with its
+    // distance to the camera.
+    car_part19_ok_ = false;
+    for (const auto& b : model.batches)
+        if (b.part_id == 0x13) {
+            std::memcpy(car_part19_, b.frame_pos, sizeof(car_part19_));
+            car_part19_ok_ = true;
+            break;
+        }
+    car_env_ok_ = cm0 >= 0 && car_models_[static_cast<std::size_t>(cm0)].env_ok && car_part19_ok_;
+    if (log) std::fprintf(log, "[rtex] car env: part19=%d env_ok=%d\n", (int)car_part19_ok_,
+                          (int)car_env_ok_);
     car_ground_off_ = -model.bbox[1];   // lift so model min-Y sits on ground
     // WS-E s3: car model size -> chase-camera scale. The Arctic geometry loads at
     // a small unit scale (car ~0.7 units long), so the chase rig is derived from
@@ -3006,6 +3283,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         if (ba8c >= 3 && ba8c <= 5) SubStateCameraChain(false);   // FUN_0040fc00 -> FUN_0040d470(0) (L81-85)
         if (g_aib.loaded && (Ai::I32(Ai::kSplineRaceCnt) > 3))
             Ai::Ai_AdvanceClock(units);                    // FUN_0040fc00 0x0040fc57 / 0x0040fc63
+        CarParts_FrameTick(units);                         // [librwrest] FUN_0040fc00 -> 0x0040fc75
         HudSlideBillboardTimerTail();                      // FUN_0040fc00 -> 0x0040fd11
         if (ba8c == 6) {
             countdown_ = 0.f;
@@ -3093,6 +3371,11 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             accel = 1.0f;
         }
     }
+
+    // [librwrest] FUN_0040fc00 calls FUN_0040da50 (0x0040fc75) -> FUN_00420870 per car BEFORE
+    // this frame's physics (0x0040fc9b), so the part inputs are read here, ahead of StepPlayer
+    // and the opponents' steps.
+    CarParts_FrameTick(static_cast<int>(in.dt * 3000.0f + 0.5f));
 
     // WS-A8 (2026-06-17): when MASHED_REAL_PHYSICS is on, drive the player car
     // through the ported chain (A3 init -> A4 control -> A5 -> A6a -> A6b) instead
@@ -5411,6 +5694,8 @@ struct CamReplay {
     // same frame (verify/d1r1_20261016). -1 when the trace lacks them.
     int m_c[12], c_vwy = -1, f_c[4][12];
     bool has_m = false, has_f = false;
+    int q_c[4][12];             // [librwrest] Q{i}_*: the car clump root's LTM
+    bool has_q = false;
 };
 // [d1r1] the consumed row's transplant values, read by Render under MASHED_CAM_REPLAY_BASIS /
 // MASHED_CAR_REPLAY (diagnostic knobs, default OFF)
@@ -5419,6 +5704,8 @@ float s_rep_vwy = 0.f;
 bool  s_rep_basis_ok = false;
 float s_rep_car[4][12];         // rx,ry,rz, ux,uy,uz, ax,ay,az, px,py,pz
 bool  s_rep_car_ok = false;
+float s_rep_root[4][12];        // [librwrest] Q{i}_* (clump root LTM), same order
+bool  s_rep_root_ok = false;
 CamReplay& CamReplayState() {
     static CamReplay R = [] {
         CamReplay r;
@@ -5457,13 +5744,15 @@ CamReplay& CamReplayState() {
         r.c_rst = need("reset"); r.c_oh = need("overhead"); r.c_tt = need("track_type");
         {
             static const char* kM12[12] = {"rx","ry","rz","ux","uy","uz","ax","ay","az","px","py","pz"};
-            r.has_m = true; r.has_f = true;
+            r.has_m = true; r.has_f = true; r.has_q = true;
             for (int k = 0; k < 12; ++k) {
                 r.m_c[k] = col(std::string("M_") + kM12[k]);
                 if (r.m_c[k] < 0) r.has_m = false;
                 for (int i = 0; i < 4; ++i) {
                     r.f_c[i][k] = col("F" + std::to_string(i) + "_" + kM12[k]);
                     if (r.f_c[i][k] < 0) r.has_f = false;
+                    r.q_c[i][k] = col("Q" + std::to_string(i) + "_" + kM12[k]);
+                    if (r.q_c[i][k] < 0) r.has_q = false;
                 }
             }
             r.c_vwy = col("rvwy");
@@ -5539,10 +5828,15 @@ void TrackRenderer::RaceCamUpdate(const Race::RaceCamCar* cc_in, bool reset) {
                 for (int i = 0; i < 4; ++i)
                     for (int k = 0; k < 12; ++k)
                         s_rep_car[i][k] = static_cast<float>(at(R.f_c[i][k]));
+            s_rep_root_ok = R.has_q;
+            if (R.has_q)
+                for (int i = 0; i < 4; ++i)
+                    for (int k = 0; k < 12; ++k)
+                        s_rep_root[i][k] = static_cast<float>(at(R.q_c[i][k]));
             cam_replay_row_ = static_cast<int>(R.next++);
         } else {
             cam_replay_row_ = -2;                             // trace exhausted: host inputs again
-            s_rep_basis_ok = s_rep_car_ok = false;
+            s_rep_basis_ok = s_rep_car_ok = s_rep_root_ok = false;
         }
     }
     race_cam_.Update(cc, course_id_, dtb, ticks, jit, reset, overhead);
@@ -6695,17 +6989,20 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     ds_flush("copters");
 
     MARK(d_other);   // copters
-    // R5: the cars, submitted through librw. Every car is one placed instance of the
-    // single registered body model (rw_car_model_); the placement is the same
-    // D3DMATRIX the removed D3D9 car path built (long axis along the heading).
-    //
-    // [DELTA D-S3-5] librw draws the body with its baked prelight plus the
-    // rw::Light ambient/directional, not the per-vertex world-space N.L relight
-    // the removed D3D9 path (RenderCarsRelit) ran. AI cars reuse the player body
-    // (no per-livery variants), and wheel spin/steer are not applied. All three
-    // were already true of the default build before the D3D9 car path was deleted
-    // (D1-residue R3, 2026-10-16); the removed code is in git history.
+    // R5: the cars, submitted through librw. Car slot s is one placed instance of its livery's
+    // model (car_models_[car_slot_model_[s]], FUN_0040d110 @ 0x0040d110), built with the DFF's
+    // frame hierarchy; the placement is the same D3DMATRIX the removed D3D9 car path built
+    // (long axis along the heading) and goes to the clump root frame, as FUN_00420870's
+    // RwFrameTransform(clump frame, body matrix, REPLACE) (0x004208ae). Each copy carries the
+    // wheel / hub / body frame poses FUN_00420870 writes (BuildCarPoses, from the inputs
+    // CarParts_FrameTick read) and FUN_00420050's directional-light scale (rec+0x284).
+    // MASHED_CAR_PARTS=0 drops the poses, MASHED_CAR_RELIGHT=0 the light scale.
+    if (livery_dirty_) ResolveCarLiveries();
     if (car_ready_ && rw_car_model_ >= 0) {
+        static const bool s_relight = [] {
+            const char* e = std::getenv("MASHED_CAR_RELIGHT");
+            return !(e && e[0] == '0' && e[1] == '\0');
+        }();
         D3DMATRIX carm;
         MatIdentity(&carm);
         const float cy = std::cos(car_yaw_), sy2 = std::sin(car_yaw_);
@@ -6718,25 +7015,43 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         }
         carm._41 = car_pos_[0]; carm._42 = car_pos_[1]; carm._43 = car_pos_[2];
         // [d1r1] MASHED_CAR_REPLAY=1 (with MASHED_CAM_REPLAY), DIAGNOSTIC ONLY, default OFF:
-        // each car body renders under the ORIGINAL's matrix for the consumed trace row
-        // (F{i}_*, slot 0 = player, ai_cars_[k] = slot k+1), so the draw-list adjudication
-        // compares rendering at matched car poses (PREREG_d1r1.md I-3).
+        // each car renders under the ORIGINAL's matrices for the consumed trace row (slot 0 =
+        // player, ai_cars_[k] = slot k+1), so the draw-list adjudication compares rendering at
+        // matched car poses (PREREG_d1r1.md I-3). [librwrest] With the frame hierarchy the
+        // clump root takes the root LTM (Q{i}_*), and the body frame's pose is recovered from
+        // the renderable's frame LTM (F{i}_*, part 0xe): M(body) = X^-1 * F * (Y * Q)^-1
+        // (CarModel::body_X / body_Y). The wheel frames have no trace columns: they keep the
+        // standalone's own inputs.
         static const bool s_car_rep =
             GetEnvironmentVariableA("MASHED_CAR_REPLAY", nullptr, 0) != 0;
+        bool rep_body[4] = {false, false, false, false};
+        float rep_body_m[4][12];
         auto rep_car = [&](int slot, D3DMATRIX* m) {
             if (!s_car_rep || !s_rep_car_ok) return;
-            const float* f = s_rep_car[slot];
+            const CarModel& cm = car_models_[static_cast<std::size_t>(car_slot_model_[slot])];
+            const bool hier = CarPartsEnabled() && s_rep_root_ok && cm.body_chain_ok;
+            const float* f = hier ? s_rep_root[slot] : s_rep_car[slot];
             MatIdentity(m);
             m->_11 = f[0]; m->_12 = f[1];  m->_13 = f[2];
             m->_21 = f[3]; m->_22 = f[4];  m->_23 = f[5];
             m->_31 = f[6]; m->_32 = f[7];  m->_33 = f[8];
             m->_41 = f[9]; m->_42 = f[10]; m->_43 = f[11];
+            if (hier) {
+                float yq[12], yqi[12], xi[12], t[12];
+                AffMul(cm.body_Y, s_rep_root[slot], yq);
+                AffInv(yq, yqi);
+                AffInv(cm.body_X, xi);
+                AffMul(xi, s_rep_car[slot], t);
+                AffMul(t, yqi, rep_body_m[slot]);
+                rep_body[slot] = true;
+            }
         };
-        rep_car(0, &carm);
-        // [rtex 2026-10-16] per-car env-map state, in the order FUN_00420870 @ 0x00420870
+        // [rtex 2026-10-16] per-car shade / env state, in the order FUN_00420870 @ 0x00420870
         // runs it each frame: env frame angle, shade window (FUN_0041f590), then the
-        // coefficient FUN_00420340 -> FUN_00420290 applies (LibRw/RwCarFx.h).
-        auto gloss = [&](int slot, const D3DMATRIX& m, const float* vel) {
+        // coefficient FUN_00420340 -> FUN_00420290 applies (LibRw/RwCarFx.h). [librwrest] The
+        // shade window runs for every car (FUN_00420050 scales the directional light by it);
+        // the env coefficient only when the env pass is bound.
+        auto submit = [&](int slot, const D3DMATRIX& m, const float* vel) {
             CarGloss& g = car_gloss_[slot];
             // 0x0041f5aa..0x0041f5ba: window shift w[k] = w[k-1], k = 7..1
             for (int k = 7; k > 0; --k) g.win[k] = g.win[k - 1];
@@ -6756,27 +7071,47 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
             double sh = sum * 0.125;
             if (sh > 1.0) sh = 1.0; else if (sh < 0.0) sh = 0.0;
             g.shade = static_cast<float>(sh);
-            // 0x00420870 decomp: rec+0x280 -= (v.z + v.x) * [0x005cd2ac] (0.0003), v from
-            // FUN_0046cb30 (the body record's +0x9b0 velocity); then RwFrameRotate(env frame,
-            // clump frame right, rec+0x280, rwCOMBINEREPLACE) (FUN_004c1520)
-            g.angle = g.angle - (vel[2] + vel[0]) * 0.0003f;
-            // FUN_00420290 @ 0x00420290: coef = ((hi - lo) * rec+0x284 + lo)
-            //   * (1 - clamp(|part 0x13 LTM pos - camera frame pos|^2, 0, 100) * 0.01)
-            const float px = car_part19_[0] * m._11 + car_part19_[1] * m._21 + car_part19_[2] * m._31 + m._41;
-            const float py = car_part19_[0] * m._12 + car_part19_[1] * m._22 + car_part19_[2] * m._32 + m._42;
-            const float pz = car_part19_[0] * m._13 + car_part19_[1] * m._23 + car_part19_[2] * m._33 + m._43;
-            const double dx = px - last_eye_[0], dy = py - last_eye_[1], dz = pz - last_eye_[2];
-            double d2 = dz * dz + dx * dx + dy * dy;   // FUN_0041f120 @ 0x0041f120 order
-            if (!(d2 < 100.0)) d2 = 100.0; else if (d2 < 0.0) d2 = 0.0;
-            const double lerp = (static_cast<double>(shine_hi_) - shine_lo_) * g.shade + shine_lo_;
-            const float coef = static_cast<float>(lerp * (1.0 - d2 * 0.01));
-            float env[16] = { 1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1 };
-            const float axis[3] = { m._11, m._12, m._13 };
-            RwMatrixRotate(env, axis, g.angle, 0);
-            LibRw::RaceSubmit_AddInstanceEnv(rw_car_model_, (const float*)&m, coef, env);
+            const CarModel& cm = car_models_[static_cast<std::size_t>(car_slot_model_[slot])];
+            LibRw::FramePose poses[20];
+            int np = 0;
+            if (CarPartsEnabled() && car_parts_[slot].ok) np = BuildCarPoses(cm, car_parts_[slot], poses);
+            if (rep_body[slot] && cm.body_frame >= 0) {
+                int bi = -1;
+                for (int k = 0; k < np; ++k) if (poses[k].frame == cm.body_frame) bi = k;
+                if (bi < 0 && np < 20) bi = np++;
+                if (bi >= 0) {
+                    poses[bi].frame = cm.body_frame;
+                    std::memcpy(poses[bi].m, rep_body_m[slot], sizeof(poses[bi].m));
+                }
+            }
+            const float sun = s_relight ? g.shade : -1.f;
+            if (car_env_ok_ && cm.env_ok) {
+                // 0x00420870 decomp: rec+0x280 -= (v.z + v.x) * [0x005cd2ac] (0.0003), v from
+                // FUN_0046cb30 (the body record's +0x9b0 velocity); then RwFrameRotate(env frame,
+                // clump frame right, rec+0x280, rwCOMBINEREPLACE) (FUN_004c1520)
+                g.angle = g.angle - (vel[2] + vel[0]) * 0.0003f;
+                // FUN_00420290 @ 0x00420290: coef = ((hi - lo) * rec+0x284 + lo)
+                //   * (1 - clamp(|part 0x13 LTM pos - camera frame pos|^2, 0, 100) * 0.01)
+                const float px = car_part19_[0] * m._11 + car_part19_[1] * m._21 + car_part19_[2] * m._31 + m._41;
+                const float py = car_part19_[0] * m._12 + car_part19_[1] * m._22 + car_part19_[2] * m._32 + m._42;
+                const float pz = car_part19_[0] * m._13 + car_part19_[1] * m._23 + car_part19_[2] * m._33 + m._43;
+                const double dx = px - last_eye_[0], dy = py - last_eye_[1], dz = pz - last_eye_[2];
+                double d2 = dz * dz + dx * dx + dy * dy;   // FUN_0041f120 @ 0x0041f120 order
+                if (!(d2 < 100.0)) d2 = 100.0; else if (d2 < 0.0) d2 = 0.0;
+                const double lerp = (static_cast<double>(shine_hi_) - shine_lo_) * g.shade + shine_lo_;
+                const float coef = static_cast<float>(lerp * (1.0 - d2 * 0.01));
+                float env[16] = { 1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1 };
+                const float axis[3] = { m._11, m._12, m._13 };
+                RwMatrixRotate(env, axis, g.angle, 0);
+                LibRw::RaceSubmit_AddInstancePosed(cm.handle, (const float*)&m, poses,
+                                                   static_cast<std::size_t>(np), sun, coef, env);
+            } else {
+                LibRw::RaceSubmit_AddInstancePosed(cm.handle, (const float*)&m, poses,
+                                                   static_cast<std::size_t>(np), sun);
+            }
         };
-        if (car_env_ok_) gloss(0, carm, car_vel_);
-        else LibRw::RaceSubmit_AddInstance(rw_car_model_, (const float*)&carm);
+        rep_car(0, &carm);
+        submit(0, carm, car_vel_);
         int ai_slot = 1;
         for (const auto& a : ai_cars_) {
             D3DMATRIX am;
@@ -6790,9 +7125,12 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
                 am._11 = asy;  am._13 = -ay;
             }
             am._41 = a.pos[0]; am._42 = a.pos[1]; am._43 = a.pos[2];
-            if (ai_slot < 4) rep_car(ai_slot, &am);
-            if (car_env_ok_ && ai_slot < 4) gloss(ai_slot, am, a.vel);   // [rtex]
-            else LibRw::RaceSubmit_AddInstance(rw_car_model_, (const float*)&am);
+            if (ai_slot < 4) {
+                rep_car(ai_slot, &am);
+                submit(ai_slot, am, a.vel);
+            } else {
+                LibRw::RaceSubmit_AddInstance(rw_car_model_, (const float*)&am);
+            }
             ++ai_slot;
         }
         ++gloss_frame_;   // [rtex] DAT_007f101c stand-in, +1 per race frame (0x004111c1)

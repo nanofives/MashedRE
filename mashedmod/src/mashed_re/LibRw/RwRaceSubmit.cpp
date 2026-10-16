@@ -67,8 +67,13 @@ IDirect3DStateBlock9* g_state_block = nullptr;  // D-S3-2 outbound fix
 std::vector<rw::Clump*> g_models;
 // [rtex] per instance: the car's env coefficient and env frame matrix (FUN_00420340 @
 // 0x00420340 re-applies both per car each frame; one shared clump draws all four cars).
-struct Inst { int model; float m[16]; bool fx = false; float env_coef = 0.f; float env_m[16]; };
+struct Inst { int model; float m[16]; bool fx = false; float env_coef = 0.f; float env_m[16];
+              std::vector<FramePose> poses; float sun_scale = -1.f; };   // [librwrest]
 std::vector<Inst>       g_insts;
+// [librwrest] per model, parallel to g_models: the FRAMELIST frames of a hierarchy model and
+// their streamed matrices (restored after each posed copy draws). Empty otherwise.
+std::vector<std::vector<rw::Frame*>>  g_model_frames;
+std::vector<std::vector<rw::Matrix>>  g_model_bind;
 long long               g_inst_drawn = 0;
 // [rtex] per model, parallel to g_models: each atomic's part code (BuildClump
 // out_atomic_part) and the materials RaceSubmit_SetupCarEnv turned into ENVMAP, with the
@@ -352,22 +357,25 @@ void RaceSubmit_BeginTrackLoad() {
     g_model_env.clear();
     g_model_parts.clear();
     g_model_amat.clear();
+    g_model_frames.clear();   // owned by their clumps, destroyed above
+    g_model_bind.clear();
 }
 
 int RaceSubmit_RegisterModel(const Track::DffModel& model,
                              const Txd::Dictionary* dicts, std::size_t ndicts,
                              std::uint32_t ambient,
-                             const float* uv_rates, std::size_t nmats) {
+                             const float* uv_rates, std::size_t nmats, bool hierarchy) {
     if (!g_engine_up) return -1;
     TextureSource ts{ dicts, (int)ndicts };
     std::vector<std::uint32_t> atomic_mat;
     std::vector<std::int32_t>  atomic_part;   // [rtex]
+    std::vector<void*>         frames;        // [librwrest]
     // [D-S3-PROP] Tell the builder which handle this model is about to get, so
     // MASHED_PROP_VDUMP can select it by the same handle id.
     // g_models.size() is the handle this call will return on success.
     SceneBuild_SetRegisteringHandle((int)g_models.size());
     rw::Clump* c = static_cast<rw::Clump*>(
-        BuildClump(model, ts, ambient, &atomic_mat, &atomic_part));
+        BuildClump(model, ts, ambient, &atomic_mat, &atomic_part, hierarchy, &frames));
     SceneBuild_SetRegisteringHandle(-1);
     if (!c) { RLog("WARN: BuildClump failed -- model is NOT drawn (no D3D9 fallback)"); return -1; }
     RegisterUvAnim(c, atomic_mat, uv_rates, nmats);
@@ -379,10 +387,36 @@ int RaceSubmit_RegisterModel(const Track::DffModel& model,
     g_model_parts.push_back(std::move(atomic_part));
     g_model_amat.push_back(atomic_mat);
     g_model_env.emplace_back();
-    RLog("model[%d] registered: atomics=%d uvanim=%d", (int)g_models.size() - 1,
+    g_model_frames.emplace_back();
+    g_model_bind.emplace_back();
+    for (void* f : frames) {
+        rw::Frame* rf = static_cast<rw::Frame*>(f);
+        g_model_frames.back().push_back(rf);
+        g_model_bind.back().push_back(rf ? rf->matrix : rw::Matrix{});
+    }
+    RLog("model[%d] registered: atomics=%d uvanim=%d frames=%d", (int)g_models.size() - 1,
          (int)c->countAtomics(),
-         g_uvanim.empty() ? 0 : (int)g_uvanim.back().size());
+         g_uvanim.empty() ? 0 : (int)g_uvanim.back().size(), (int)frames.size());
     return (int)g_models.size() - 1;
+}
+
+void RaceSubmit_AddInstancePosed(int handle, const float* m44, const FramePose* poses,
+                                 std::size_t npose, float sun_scale, float env_coef,
+                                 const float* env_m44) {
+    if (handle < 0 || !m44 || (std::size_t)handle >= g_models.size()) return;
+    Inst i; i.model = handle;
+    for (int k = 0; k < 16; ++k) i.m[k] = m44[k];
+    if (env_m44 && (std::size_t)handle < g_model_env.size() &&
+        !g_model_env[(std::size_t)handle].mats.empty()) {
+        i.fx = true;
+        i.env_coef = env_coef;
+        for (int k = 0; k < 16; ++k) i.env_m[k] = env_m44[k];
+    }
+    const std::size_t nf = g_model_frames[(std::size_t)handle].size();
+    for (std::size_t p = 0; p < npose; ++p)
+        if (poses[p].frame >= 0 && (std::size_t)poses[p].frame < nf) i.poses.push_back(poses[p]);
+    i.sun_scale = sun_scale;
+    g_insts.push_back(std::move(i));
 }
 
 void RaceSubmit_AddInstance(int handle, const float* m44) {
@@ -962,8 +996,36 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
                      al ? al->pos.x : -999.f, al ? al->pos.y : -999.f,
                      al ? al->pos.z : -999.f);
             }
+            // [librwrest] this copy's frame poses (FUN_0041f3d0 / FUN_0041f4f0 / FUN_00425ca0
+            // write the frames' modelling matrices; RW re-derives the LTMs at render)
+            std::vector<rw::Frame*>* mf = (std::size_t)in.model < g_model_frames.size()
+                                              ? &g_model_frames[(std::size_t)in.model] : nullptr;
+            for (const FramePose& p : in.poses) {
+                rw::Frame* f = (*mf)[(std::size_t)p.frame];
+                if (!f) continue;
+                rw::Matrix* d = &f->matrix;
+                d->right.x = p.m[0]; d->right.y = p.m[1];  d->right.z = p.m[2];
+                d->up.x    = p.m[3]; d->up.y    = p.m[4];  d->up.z    = p.m[5];
+                d->at.x    = p.m[6]; d->at.y    = p.m[7];  d->at.z    = p.m[8];
+                d->pos.x   = p.m[9]; d->pos.y   = p.m[10]; d->pos.z   = p.m[11];
+                d->update();
+                f->updateObjects();
+            }
+            // [librwrest] FUN_00420050 @ 0x00420050: the directional light's colour times
+            // rec+0x284 (all four components, 0x004200ec..0x0042014f) for this car only
+            if (in.sun_scale >= 0.f && g_sun)
+                g_sun->setColor(st.sun_f_[0] * in.sun_scale, st.sun_f_[1] * in.sun_scale,
+                                st.sun_f_[2] * in.sun_scale);
             c->render();
             ++g_inst_drawn;
+            if (in.sun_scale >= 0.f && g_sun)   // restored after the render (0x004201d7)
+                g_sun->setColor(st.sun_f_[0], st.sun_f_[1], st.sun_f_[2]);
+            for (const FramePose& p : in.poses) {   // back to the streamed matrices
+                rw::Frame* f = (*mf)[(std::size_t)p.frame];
+                if (!f) continue;
+                f->matrix = g_model_bind[(std::size_t)in.model][(std::size_t)p.frame];
+                f->updateObjects();
+            }
         }
     }
     g_insts.clear();

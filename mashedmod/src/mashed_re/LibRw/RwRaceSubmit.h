@@ -90,11 +90,29 @@ void RaceSubmit_BeginTrackLoad();
 // has NO texture matrix (default_VS.hlsl passes input.TexCoord straight through)
 // and its UVAnim plugin is stream-only, so the scroll is applied by moving the
 // texture coordinates themselves -- see RaceSubmit_SetAnimTime.
+// [librwrest] `hierarchy`: build the clump with the DFF's own frame list (BuildClump), so
+// instances can pose individual frames (RaceSubmit_AddInstancePosed).
 int RaceSubmit_RegisterModel(const Track::DffModel& model,
                              const Txd::Dictionary* dicts, std::size_t ndicts,
                              std::uint32_t ambient,
                              const float* uv_rates = nullptr,
-                             std::size_t nmats = 0);
+                             std::size_t nmats = 0,
+                             bool hierarchy = false);
+
+// [librwrest] One frame's modelling matrix for one instance: FRAMELIST index `frame` of a
+// hierarchy model, rows right/up/at/pos (RwMatrix order, 12 floats). Frames not posed keep
+// the streamed (bind) matrix.
+struct FramePose { std::int32_t frame; float m[12]; };
+
+// [librwrest] Queue a copy of a hierarchy model with per-frame poses (FUN_0041f3d0 @
+// 0x0041f3d0 / FUN_0041f4f0 @ 0x0041f4f0 / FUN_00425ca0 @ 0x00425ca0 pose wheel, body and
+// rotor frames per object). `sun_scale` >= 0 scales the directional light's colour while
+// this copy draws, restored after (FUN_00420050 @ 0x00420050: RpLightSetColor on
+// DAT_0063d850 times rec+0x284 around the car's RpClumpRender); < 0 leaves it alone.
+// `env_m44` non-null adds the car env coefficient/frame as RaceSubmit_AddInstanceEnv does.
+void RaceSubmit_AddInstancePosed(int handle, const float* m44, const FramePose* poses,
+                                 std::size_t npose, float sun_scale, float env_coef = 0.f,
+                                 const float* env_m44 = nullptr);
 
 // Set the UV-animation clock for this frame. MUST be the same `t` the D3D9 path
 // passes to TrackRenderer::Render, or the two renderers scroll to different
