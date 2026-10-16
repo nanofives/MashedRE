@@ -172,7 +172,11 @@ void Fi_UpdateBoostOrder() {
     int   idx[4] = { 0, 1, 2, 3 };                       // 0x00470e2e
     float m[4]   = { 1000.0f, 1000.0f, 1000.0f, 1000.0f };
     const int n = (g_participantCount < 4) ? g_participantCount : 4;
-    for (int i = 0; i < n; ++i)                          // FUN_00408a50
+    // [PATHPROG split] MEASUREMENT ONLY (verify/d3_pathprog_a_20261016/PREREG_pathprog_a.md, amendment A1): with
+    // MASHED_PP_BOOSTSEED the sort ignores the progress floats, so the pair stays the seeded {2, 3} whatever the live
+    // progress says. Default OFF, writes nothing the game reads except through this one sort.
+    static const bool s_ppBoostSeed = (std::getenv("MASHED_PP_BOOSTSEED") != nullptr);
+    for (int i = 0; i < n && !s_ppBoostSeed; ++i)        // FUN_00408a50
         m[i] = *reinterpret_cast<const float*>(0x008a96e8u + static_cast<unsigned>(i) * 0x30cu);
     for (bool sw = true; sw; ) {                         // descending bubble sort
         sw = false;

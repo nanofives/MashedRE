@@ -4434,7 +4434,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
     // UpdateRace returns before that call when gates_ is empty.
     // [U-9685] arm R: FUN_0040da50's FUN_00408610 loop sits between the AI path (0x0040fc6c) and the producer
     // path (0x0040fc7c) in FUN_0040fc00, so it runs here, before the producer call below.
-    if (Race::RacePctOrig_Enabled()) Race::PathProg_RacePctTick();
+    if (Race::RacePctOrig_Enabled() && !(Race::PathProg_PublishMask() & 0x8u)) Race::PathProg_RacePctTick();
     if (RaceRefDistAfterAi() && !gates_.empty()) RaceComputeDistancesTick(1);
     yaww::Frame();   // U-9188 leg A/B per-frame emit; no-op unless MASHED_AI_YAWW
 
@@ -5721,6 +5721,11 @@ void TrackRenderer::StartRound() {
         if (Race::RoundGrid_SlotOrder(sv)) for (int i = 0; i < 4; ++i) kSlot[i] = sv[i] & 3;
     }
     place(car_pos_, &car_yaw_, kSlot[0]);
+    {   // [PATHPROG split, PREREG amendment A5] MEASUREMENT ONLY: MASHED_PP_PLAYERDZ=<units> shifts the player's start z, to test
+        // the original's first-step settle (z +0.0000921) as the cause of the player's node on the start line. Default OFF.
+        static const float s_ppDz = [] { const char* e = std::getenv("MASHED_PP_PLAYERDZ"); return e ? static_cast<float>(std::atof(e)) : 0.f; }();
+        if (s_ppDz != 0.f) car_pos_[2] += s_ppDz;
+    }
     car_vel_[0] = car_vel_[1] = car_vel_[2] = 0.f;
     car_speed_ = 0.f;
     // [U-9145 2026-09-29] MASHED_MEASURE_SOLO: StartRound RE-CREATES the opponents, so
@@ -6528,6 +6533,8 @@ void TrackRenderer::UpdateRace(float dt) {
     // [D-11072 P2] FUN_0040da50's FUN_00408610 loop (per-car path progress 0x008a96e8 and
     // race_pct 0x008a96ec), before the AI tick like the bridge below. Default-OFF MASHED_PATHPROG.
     Race::PathProg_FrameTick();
+    // [PATHPROG split] MASHED_PP_PUBLISH bit 0x8: the shadow-row tick at the wholesale knob's placement, before the AI tick.
+    if (Race::RacePctOrig_Enabled() && (Race::PathProg_PublishMask() & 0x8u)) Race::PathProg_RacePctTick();
 
     // [mode 7 M1] FUN_0040fc00's FUN_00485070 (0x0040fd07): pair pass + publish. No registrant
     // exists yet, so with MASHED_REGISTRY it publishes cc = 0 every frame. Position relative to the

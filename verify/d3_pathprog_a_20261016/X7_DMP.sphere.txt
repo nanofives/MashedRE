@@ -1,0 +1,12 @@
+query 0 centre 0.500918 0.474820 -2.002471 r 0.6000
+  hit tri 0 node 0 dist 0.003434
+query 1 centre 0.500918 0.474820 -2.002471 r 0.6000
+  hit tri 0 node 0 dist 0.003434
+query 2 centre 0.500918 0.474820 -2.002471 r 0.6000
+  hit tri 0 node 0 dist 0.003434
+query 3 centre 0.500918 0.474820 -2.002471 r 0.6000
+  hit tri 0 node 0 dist 0.003434
+query 4 centre 0.500918 0.474820 -2.002471 r 0.6000
+  hit tri 0 node 0 dist 0.003434
+query 5 centre 0.500918 0.474820 -2.002471 r 0.6000
+  hit tri 0 node 0 dist 0.003434
