@@ -1,0 +1,10 @@
+arm venv exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\carlod\exe_vis6\mashed_re.exe knobs=['MASHED_CAR_ENV=1'] brake_rows=True
+training   884  rows  75  red  0  matched 202/242  tri 16456/18128  pix 15.24
+training   924  rows  74  red  0  matched 199/257  tri 16420/18358  pix 10.91
+training   959  rows  74  red  0  matched 197/233  tri 16404/18079  pix 8.94
+arctic    1051  rows  75  red  0  matched 146/180  tri 32207/35412  pix 11.31
+arctic    1091  rows  75  red  0  matched 144/177  tri 32131/35197  pix 7.08
+arctic    1126  rows  76  red  0  matched 101/131  tri 26823/29307  pix 6.40
+city       761  rows 151  red  0  matched 359/512  tri 34300/42182  pix 16.36
+city       801  rows 149  red  0  matched 343/496  tri 33808/41692  pix 13.02
+city       836  rows 149  red  0  matched 292/444  tri 26805/34493  pix 12.02

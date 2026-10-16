@@ -120,6 +120,12 @@ void RaceSubmit_SetModelRwStates(int handle);
 // the streamed (bind) matrix.
 struct FramePose { std::int32_t frame; float m[12]; };
 
+// [carlod 2026-10-16] a car's record state S (+0x298) and flags F (+0x294): before a copy draws,
+// every atomic's RENDER bit is set to what FUN_00420870 @ 0x00420870 gives its part code
+// (RwCarFx.h CarPartVisible) and the glass atomics are then drawn as FUN_00420050 @ 0x00420050
+// does (CarGlassPart); restored for copies without one. Null `vis` = every atomic as built.
+struct CarVis { int state; std::uint32_t flags; };
+
 // [librwrest] Queue a copy of a hierarchy model with per-frame poses (FUN_0041f3d0 @
 // 0x0041f3d0 / FUN_0041f4f0 @ 0x0041f4f0 / FUN_00425ca0 @ 0x00425ca0 pose wheel, body and
 // rotor frames per object). `sun_scale` >= 0 scales the directional light's colour while
@@ -133,7 +139,7 @@ void RaceSubmit_AddCarFxMarker();
 
 void RaceSubmit_AddInstancePosed(int handle, const float* m44, const FramePose* poses,
                                  std::size_t npose, float sun_scale, float env_coef = 0.f,
-                                 const float* env_m44 = nullptr);
+                                 const float* env_m44 = nullptr, const CarVis* vis = nullptr);
 
 // Set the UV-animation clock for this frame. MUST be the same `t` the D3D9 path
 // passes to TrackRenderer::Render, or the two renderers scroll to different
@@ -146,7 +152,9 @@ void RaceSubmit_SetAnimTime(float t);
 // the SAME matrix the D3D9 path would pass to SetTransform(D3DTS_WORLD), so both
 // renderers place the object identically instead of re-deriving it. Instances are
 // consumed and cleared by RaceSubmit_Render.
-void RaceSubmit_AddInstance(int handle, const float* m44);
+//
+// [carlod 2026-10-16] `vis`: see CarVis above.
+void RaceSubmit_AddInstance(int handle, const float* m44, const CarVis* vis = nullptr);
 
 // [rtex 2026-10-16] Car MatFX passes (U-9693, LibRw/RwCarFx.h). BindCarDirt makes the two
 // dirt.piz images (top-down BGRA) the DUAL texture of every effect-4 material by part code
@@ -161,7 +169,7 @@ int  RaceSubmit_BindCarDirt(int handle,
 int  RaceSubmit_SetupCarEnv(int handle, const Txd::Dictionary* dicts, std::size_t ndicts,
                             const char* env_tex_name);
 void RaceSubmit_AddInstanceEnv(int handle, const float* m44, float env_coef,
-                               const float* env_m44);
+                               const float* env_m44, const CarVis* vis = nullptr);
 
 // [rprops U-9696] Queue one sky copy for this frame (same matrix convention as AddInstance). Sky copies
 // are drawn before the world with depth test, depth write and fog off, then the states are restored.

@@ -1,0 +1,56 @@
+0x00420140  00 d9                     add cl, bl
+0x00420142  5c                        pop esp
+0x00420143  24 2c                     and al, 0x2c
+0x00420145  d9 44 24 20               fld dword ptr [esp + 0x20]
+0x00420149  d8 8e 84 02 00 00         fmul dword ptr [esi + 0x284]
+0x0042014f  d9 5c 24 30               fstp dword ptr [esp + 0x30]
+0x00420153  e8 a8 47 0c 00            call 0x4e4900
+0x00420158  83 c4 08                  add esp, 8
+0x0042015b  8b 86 6c 02 00 00         mov eax, dword ptr [esi + 0x26c]
+0x00420161  50                        push eax
+0x00420162  e8 19 65 0c 00            call 0x4e6680
+0x00420167  8b 86 94 02 00 00         mov eax, dword ptr [esi + 0x294]
+0x0042016d  83 c4 04                  add esp, 4
+0x00420170  f6 c4 04                  test ah, 4
+0x00420173  75 62                     jne 0x4201d7
+0x00420175  a8 10                     test al, 0x10
+0x00420177  75 2a                     jne 0x4201a3
+0x00420179  f6 c4 10                  test ah, 0x10
+0x0042017c  75 25                     jne 0x4201a3
+0x0042017e  8b 86 98 02 00 00         mov eax, dword ptr [esi + 0x298]
+0x00420184  85 c0                     test eax, eax
+0x00420186  75 05                     jne 0x42018d
+0x00420188  8b 46 38                  mov eax, dword ptr [esi + 0x38]
+0x0042018b  eb 0b                     jmp 0x420198
+0x0042018d  83 f8 01                  cmp eax, 1
+0x00420190  75 11                     jne 0x4201a3
+0x00420192  8b 86 bc 00 00 00         mov eax, dword ptr [esi + 0xbc]
+0x00420198  85 c0                     test eax, eax
+0x0042019a  74 07                     je 0x4201a3
+0x0042019c  50                        push eax
+0x0042019d  ff 50 48                  call dword ptr [eax + 0x48]
+0x004201a0  83 c4 04                  add esp, 4
+0x004201a3  8b 86 94 02 00 00         mov eax, dword ptr [esi + 0x294]
+0x004201a9  a8 20                     test al, 0x20
+0x004201ab  75 2a                     jne 0x4201d7
+0x004201ad  f6 c4 20                  test ah, 0x20
+0x004201b0  75 25                     jne 0x4201d7
+0x004201b2  8b 86 98 02 00 00         mov eax, dword ptr [esi + 0x298]
+0x004201b8  85 c0                     test eax, eax
+0x004201ba  75 05                     jne 0x4201c1
+0x004201bc  8b 76 3c                  mov esi, dword ptr [esi + 0x3c]
+0x004201bf  eb 0b                     jmp 0x4201cc
+0x004201c1  83 f8 01                  cmp eax, 1
+0x004201c4  75 11                     jne 0x4201d7
+0x004201c6  8b b6 c0 00 00 00         mov esi, dword ptr [esi + 0xc0]
+0x004201cc  85 f6                     test esi, esi
+0x004201ce  74 07                     je 0x4201d7
+0x004201d0  56                        push esi
+0x004201d1  ff 56 48                  call dword ptr [esi + 0x48]
+0x004201d4  83 c4 04                  add esp, 4
+0x004201d7  a1 50 d8 63 00            mov eax, dword ptr [0x63d850]
+0x004201dc  85 c0                     test eax, eax
+0x004201de  74 0e                     je 0x4201ee
+0x004201e0  8d 4c 24 0c               lea ecx, [esp + 0xc]
+0x004201e4  51                        push ecx
+0x004201e5  50                        push eax

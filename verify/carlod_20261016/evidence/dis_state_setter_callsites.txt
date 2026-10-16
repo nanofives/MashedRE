@@ -1,0 +1,65 @@
+--- call 0x41ef60 at 0x446547
+  0x446530  jmp      0x44653b
+  0x446532  mov      eax, dword ptr [ebp - 0x54]
+  0x446535  add      eax, 1
+  0x446538  mov      dword ptr [ebp - 0x54], eax
+  0x44653b  cmp      dword ptr [ebp - 0x54], 4
+  0x44653f  jge      0x446551
+  0x446541  push     0
+  0x446543  mov      ecx, dword ptr [ebp - 0x54]
+  0x446546  push     ecx
+  0x446547  call     0x41ef60
+  0x44654c  add      esp, 8
+  0x44654f  jmp      0x446532
+--- call 0x41ef60 at 0x44696b
+  0x44694f  add      esp, 0xc
+  0x446952  fld      dword ptr [ebp - 0x1ac]
+  0x446958  fcomp    dword ptr [0x5ce1d0]
+  0x44695e  fnstsw   ax
+  0x446960  test     ah, 5
+  0x446963  jp       0x446975
+  0x446965  push     1
+  0x446967  mov      eax, dword ptr [ebp - 0x54]
+  0x44696a  push     eax
+  0x44696b  call     0x41ef60
+  0x446970  add      esp, 8
+  0x446973  jmp      0x446983
+--- call 0x41ef60 at 0x44697b
+  0x446965  push     1
+  0x446967  mov      eax, dword ptr [ebp - 0x54]
+  0x44696a  push     eax
+  0x44696b  call     0x41ef60
+  0x446970  add      esp, 8
+  0x446973  jmp      0x446983
+  0x446975  push     2
+  0x446977  mov      ecx, dword ptr [ebp - 0x54]
+  0x44697a  push     ecx
+  0x44697b  call     0x41ef60
+  0x446980  add      esp, 8
+  0x446983  jmp      0x446924
+--- call 0x41ef60 at 0x4469ae
+  0x44698d  je       0x4469aa
+  0x44698f  cmp      dword ptr [0x7f0fd0], 5
+  0x446996  je       0x4469aa
+  0x446998  cmp      dword ptr [0x7f0fd0], 0xa
+  0x44699f  je       0x4469aa
+  0x4469a1  cmp      dword ptr [0x7f0fd0], 9
+  0x4469a8  jne      0x4469b6
+  0x4469aa  push     0
+  0x4469ac  push     0
+  0x4469ae  call     0x41ef60
+  0x4469b3  add      esp, 8
+  0x4469b6  call     0x442a60
+--- call 0x41ef60 at 0x4486d9
+  0x4486be  mov      eax, dword ptr [esp + 0x70]
+  0x4486c2  mov      dword ptr [edx + 4], ecx
+  0x4486c5  mov      dword ptr [edx + 8], eax
+  0x4486c8  call     0x442e00
+  0x4486cd  add      esp, 0x24
+  0x4486d0  call     0x40e4a0
+  0x4486d5  xor      esi, esi
+  0x4486d7  push     ebx
+  0x4486d8  push     esi
+  0x4486d9  call     0x41ef60
+  0x4486de  add      esp, 8
+  0x4486e1  inc      esi

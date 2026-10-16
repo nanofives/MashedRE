@@ -1,0 +1,10 @@
+arm vis exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\carlod\exe_vis\mashed_re.exe knobs=[]
+training   884  rows  76  red  1  matched 186/242  tri 16328/18128  pix 15.22
+training   924  rows  75  red  1  matched 183/257  tri 16292/18358  pix 10.64
+training   959  rows  75  red  1  matched 183/233  tri 16292/18079  pix 8.85
+arctic    1051  MISSING standalone record C:\Users\maria\Desktop\Proyectos\Mashed\log\carlod\vis\arctic\d1r2\stand_row_01051.draws.json
+arctic    1091  MISSING standalone record C:\Users\maria\Desktop\Proyectos\Mashed\log\carlod\vis\arctic\d1r2\stand_row_01091.draws.json
+arctic    1126  MISSING standalone record C:\Users\maria\Desktop\Proyectos\Mashed\log\carlod\vis\arctic\d1r2\stand_row_01126.draws.json
+city       761  rows 152  red  1  matched 343/512  tri 34172/42182  pix 15.90
+city       801  rows 150  red  1  matched 331/496  tri 33712/41692  pix 12.90
+city       836  rows 150  red  0  matched 290/444  tri 26797/34493  pix 12.02

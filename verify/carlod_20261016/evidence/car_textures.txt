@@ -1,0 +1,9 @@
+training   884 {'advantage': 44, 'glass': 8}
+training   924 {'advantage': 44, 'glass': 8}
+training   959 {'advantage': 44, 'glass': 8}
+arctic    1051 {'advantage': 52, 'glass': 8}
+arctic    1091 {'advantage': 53, 'glass': 8}
+arctic    1126 {'advantage': 20, 'glass': 2, 'advantagesmall': 3}
+city       761 {'advantage': 52, 'glass': 8}
+city       801 {'advantage': 52, 'glass': 8}
+city       836 {'advantagesmall': 4, 'advantage': 10}

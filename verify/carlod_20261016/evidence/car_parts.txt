@@ -1,0 +1,50 @@
+# Advantage car model (model[10] on Arctic), atomic order = clump order, part code = geometry user data
+# "0.tv_part_id", triangles = RpGeometry numTriangles. Copied verbatim from the "[carlod] model[10]" lines
+# of log/librw_race.txt written by the `vis3_arctic` run (exe_vis3, 2026-10-16). The shared log is
+# overwritten by other sessions' runs, so this copy is the record. mats 71 on every atomic = the model's
+# whole material list (BuildClump AppendMaterials, rtex finding 2).
+atomic 0 part 0x15 tris 24 mats 71 render0 1
+atomic 1 part 0x18 tris 2 mats 71 render0 1
+atomic 2 part 0x11 tris 4 mats 71 render0 1
+atomic 3 part 0x64 tris 624 mats 71 render0 1
+atomic 4 part 0x65 tris 618 mats 71 render0 1
+atomic 5 part 0x66 tris 651 mats 71 render0 1
+atomic 6 part 0x67 tris 636 mats 71 render0 1
+atomic 7 part 0x31 tris 830 mats 71 render0 1
+atomic 8 part 0x30 tris 6 mats 71 render0 1
+atomic 9 part 0x2f tris 10 mats 71 render0 1
+atomic 10 part 0x2e tris 522 mats 71 render0 1
+atomic 11 part 0x2d tris 380 mats 71 render0 1
+atomic 12 part 0x2c tris 28 mats 71 render0 1
+atomic 13 part 0x2b tris 84 mats 71 render0 1
+atomic 14 part 0x2a tris 86 mats 71 render0 1
+atomic 15 part 0x29 tris 190 mats 71 render0 1
+atomic 16 part 0x28 tris 685 mats 71 render0 1
+atomic 17 part 0x27 tris 288 mats 71 render0 1
+atomic 18 part 0x26 tris 18 mats 71 render0 1
+atomic 19 part 0x25 tris 98 mats 71 render0 1
+atomic 20 part 0x14 tris 232 mats 71 render0 1
+atomic 21 part 0x10 tris 1518 mats 71 render0 1
+atomic 22 part 0xf tris 8 mats 71 render0 1
+atomic 23 part 0xe tris 18 mats 71 render0 1
+atomic 24 part 0xd tris 1028 mats 71 render0 1
+atomic 25 part 0xc tris 746 mats 71 render0 1
+atomic 26 part 0xb tris 52 mats 71 render0 1
+atomic 27 part 0xa tris 166 mats 71 render0 1
+atomic 28 part 0x9 tris 144 mats 71 render0 1
+atomic 29 part 0x8 tris 374 mats 71 render0 1
+atomic 30 part 0x7 tris 1486 mats 71 render0 1
+atomic 31 part 0x6 tris 664 mats 71 render0 1
+atomic 32 part 0x5 tris 42 mats 71 render0 1
+atomic 33 part 0x4 tris 214 mats 71 render0 1
+atomic 34 part 0x13 tris 1 mats 71 render0 1
+atomic 35 part 0x24 tris 96 mats 71 render0 1
+atomic 36 part 0x23 tris 96 mats 71 render0 1
+atomic 37 part 0x22 tris 96 mats 71 render0 1
+atomic 38 part 0x21 tris 96 mats 71 render0 1
+atomic 39 part 0x1 tris 352 mats 71 render0 1
+atomic 40 part 0 tris 352 mats 71 render0 1
+atomic 41 part 0x2 tris 352 mats 71 render0 1
+atomic 42 part 0x3 tris 352 mats 71 render0 1
+atomic 43 part 0x12 tris 866 mats 71 render0 1
+# same run: "car vis: state=1 flags=0xc8 -> 13 of 44 atomics render", "state=2 flags=0xc8 -> 3 of 44 atomics render"

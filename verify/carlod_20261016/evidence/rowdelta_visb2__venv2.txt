@@ -1,0 +1,31 @@
+arctic_01051     before  76 after  75  gone   2  NEW 1
+    gone MISSING CarGloss [C17-CAR-GLOSS]: A-only 8 draws 64 tri (0 offscreen); first k82 pt5 tri=10 tex=CarGloss tex1=- bb=[-26.74,0.15,17.00,-26.39,0.28,17.41] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF
+    gone TEX1 Advantage [C17-CAR-GLOSS]: 12 matched draws, stage-1 texture A CarGloss | B -
+    NEW  STATE CarGloss [C19-STATE-LIBRW]: 8 matched draws differ in AREF,AF: A Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=1 | B Z=1 ZW=0 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=2 CULL=1
+arctic_01091     before  76 after  75  gone   2  NEW 1
+    gone MISSING CarGloss [C17-CAR-GLOSS]: A-only 6 draws 48 tri (0 offscreen); first k82 pt5 tri=10 tex=CarGloss tex1=- bb=[-26.74,0.15,17.00,-26.39,0.28,17.41] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF
+    gone TEX1 Advantage [C17-CAR-GLOSS]: 9 matched draws, stage-1 texture A CarGloss | B -
+    NEW  STATE CarGloss [C19-STATE-LIBRW]: 6 matched draws differ in AREF,AF: A Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=1 | B Z=1 ZW=0 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=2 CULL=1
+arctic_01126     before  76 after  76  gone   0  NEW 0
+city_00761       before 152 after 151  gone   2  NEW 1
+    gone MISSING CarGloss [C17-CAR-GLOSS]: A-only 8 draws 64 tri (0 offscreen); first k82 pt5 tri=10 tex=CarGloss tex1=- bb=[54.20,0.15,-25.96,54.61,0.28,-25.61] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF
+    gone TEX1 Advantage [C17-CAR-GLOSS]: 12 matched draws, stage-1 texture A CarGloss | B -
+    NEW  STATE CarGloss [C19-STATE-LIBRW]: 8 matched draws differ in AREF,AF,CULL: A Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=2 | B Z=1 ZW=0 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=2 CULL=1
+city_00801       before 150 after 149  gone   2  NEW 1
+    gone MISSING CarGloss [C17-CAR-GLOSS]: A-only 4 draws 32 tri (0 offscreen); first k82 pt5 tri=10 tex=CarGloss tex1=- bb=[54.20,0.15,-25.96,54.61,0.28,-25.61] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF
+    gone TEX1 Advantage [C17-CAR-GLOSS]: 6 matched draws, stage-1 texture A CarGloss | B -
+    NEW  STATE CarGloss [C19-STATE-LIBRW]: 4 matched draws differ in AREF,AF,CULL: A Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=2 | B Z=1 ZW=0 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=2 CULL=1
+city_00836       before 149 after 149  gone   0  NEW 0
+training_00884   before  76 after  75  gone   2  NEW 1
+    gone MISSING CarGloss [C17-CAR-GLOSS]: A-only 8 draws 64 tri (0 offscreen); first k82 pt5 tri=10 tex=CarGloss tex1=- bb=[0.15,0.57,-2.85,0.50,0.70,-2.43] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 A
+    gone TEX1 Advantage [C17-CAR-GLOSS]: 12 matched draws, stage-1 texture A CarGloss | B -
+    NEW  STATE CarGloss [C19-STATE-LIBRW]: 8 matched draws differ in AREF,AF,CULL: A Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=2 | B Z=1 ZW=0 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=2 CULL=1
+training_00924   before  75 after  74  gone   2  NEW 1
+    gone MISSING CarGloss [C17-CAR-GLOSS]: A-only 8 draws 64 tri (0 offscreen); first k82 pt5 tri=10 tex=CarGloss tex1=- bb=[-0.21,0.51,-4.90,0.16,0.64,-4.47] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 
+    gone TEX1 Advantage [C17-CAR-GLOSS]: 12 matched draws, stage-1 texture A CarGloss | B -
+    NEW  STATE CarGloss [C19-STATE-LIBRW]: 8 matched draws differ in AREF,AF,CULL: A Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=2 | B Z=1 ZW=0 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=2 CULL=1
+training_00959   before  75 after  74  gone   2  NEW 1
+    gone MISSING CarGloss [C17-CAR-GLOSS]: A-only 6 draws 48 tri (0 offscreen); first k82 pt5 tri=10 tex=CarGloss tex1=- bb=[-0.42,0.45,-6.77,-0.06,0.58,-6.34] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0
+    gone TEX1 Advantage [C17-CAR-GLOSS]: 9 matched draws, stage-1 texture A CarGloss | B -
+    NEW  STATE CarGloss [C19-STATE-LIBRW]: 6 matched draws differ in AREF,AF,CULL: A Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=2 | B Z=1 ZW=0 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=2 CULL=1
+NEW ROWS TOTAL: 7

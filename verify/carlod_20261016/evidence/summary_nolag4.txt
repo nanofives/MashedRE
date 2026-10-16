@@ -1,0 +1,10 @@
+arm nolag4 exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\carlod\exe_final4\mashed_re.exe knobs=['MASHED_CAR_ENV_PREVCAM=0'] brake_rows=True
+training   884  rows  72  red  0  matched 206/242  tri 17271/18128  pix 14.16
+training   924  rows  71  red  0  matched 203/257  tri 17235/18358  pix 9.97
+training   959  rows  71  red  0  matched 201/233  tri 17219/18079  pix 8.65
+arctic    1051  rows  73  red  0  matched 153/180  tri 33020/35412  pix 9.28
+arctic    1091  rows  72  red  0  matched 150/177  tri 32767/35197  pix 7.03
+arctic    1126  rows  73  red  0  matched 105/131  tri 27011/29307  pix 6.48
+city       761  rows 121  red  0  matched 482/512  tri 38472/42182  pix 10.45
+city       801  rows 121  red  0  matched 464/496  tri 37964/41692  pix 6.87
+city       836  rows 119  red  0  matched 415/444  tri 30977/34493  pix 6.59
