@@ -9,21 +9,27 @@ disassembled with capstone and re-emitted as MSVC inline asm:
     reads 0, memory naked-asm-rdata-reads-zero-in-exe);
   * PATCH entries replace one instruction by address (used to point the RW sqrt LUT base at
     the in-process tables).
+  * "indirect_calls_ok": true lets `call <reg>` / `call dword ptr [reg + disp]` through verbatim
+    (a function-pointer argument, e.g. the RW collision callback FUN_00539ec0 calls at
+    0x0053a643). An indirect call through an ABSOLUTE address is still an error.
 Usage: py -3.12 re/tools/gen_naked_asm.py <spec.json> <out.inc>
 spec: {"funcs":[{"name","start","size"}], "calls":{"0x..":"sym"}, "consts":{"0x..":"sym"},
-       "patch":{"0x..":"replacement text"}}
+       "patch":{"0x..":"replacement text"}, "indirect_calls_ok": bool}
 """
 import json, re, sys
 import capstone, pefile
 
 EXE = "original/MASHED.exe.unpatched"
 X87_1OP = {"fadd", "fsub", "fsubr", "fmul", "fdiv", "fdivr"}
+INDIRECT_OK = False
 
 
 def conv_operands(mn, ops, consts, labels, calls, fstart, fend, addr):
     ops = ops.replace("xword ptr", "tbyte ptr")
     if mn.startswith("j") or mn == "call":
         m = re.fullmatch(r"0x([0-9a-f]+)", ops)
+        if not m and mn == "call" and INDIRECT_OK and not re.search(r"\[0x[0-9a-f]+\]", ops):
+            return ops
         if not m:
             raise SystemExit(f"{addr:#x}: indirect {mn} {ops}")
         t = int(m.group(1), 16)
@@ -53,6 +59,8 @@ def conv_operands(mn, ops, consts, labels, calls, fstart, fend, addr):
 
 
 def gen(spec):
+    global INDIRECT_OK
+    INDIRECT_OK = bool(spec.get("indirect_calls_ok", False))
     pe = pefile.PE(EXE)
     md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_32)
     calls = {k.lower(): v for k, v in spec["calls"].items()}

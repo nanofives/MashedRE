@@ -1,0 +1,18 @@
+D2_B_1: slip1500=0.1947 in slip2000=0.2526 in drvmed=1877.1400 OUT  n=('349', '565', '1321')
+    H1 391/400 median 1293.1 -> PASS
+    PORTframes 1628 R= 1 peak 1835.31 at d= 95 trough 82.42 at d= 106 post-trough n= 400 >=100: 391 ( 97.8 %) median 1293.1 max 2467.1 +0xb14 engages at d=15
+D2_B_2: slip1500=0.1947 in slip2000=0.2533 in drvmed=1879.6400 OUT  n=('349', '568', '1324')
+    H1 391/400 median 1293.1 -> PASS
+    PORTframes 1631 R= 1 peak 1835.31 at d= 95 trough 82.42 at d= 106 post-trough n= 400 >=100: 391 ( 97.8 %) median 1293.1 max 2467.1 +0xb14 engages at d=15
+D2_B_3: slip1500=0.1947 in slip2000=0.2534 in drvmed=1879.7200 OUT  n=('349', '571', '1327')
+    H1 391/400 median 1293.1 -> PASS
+    PORTframes 1634 R= 1 peak 1835.31 at d= 95 trough 82.42 at d= 106 post-trough n= 400 >=100: 391 ( 97.8 %) median 1293.1 max 2467.1 +0xb14 engages at d=15
+D2_WB_1: slip1500=0.2005 OUT slip2000=0.2510 in drvmed=1863.5200 OUT  n=('345', '496', '1217')
+    H1 390/400 median 1293.0 -> PASS
+    PORTframes 1631 R= 1 peak 1835.31 at d= 95 trough 82.49 at d= 106 post-trough n= 400 >=100: 390 ( 97.5 %) median 1293.0 max 2467.3 +0xb14 engages at d=15
+D2_WB_2: slip1500=0.2005 OUT slip2000=0.2510 in drvmed=1863.5200 OUT  n=('345', '496', '1217')
+    H1 390/400 median 1293.0 -> PASS
+    PORTframes 1629 R= 1 peak 1835.31 at d= 95 trough 82.49 at d= 106 post-trough n= 400 >=100: 390 ( 97.5 %) median 1293.0 max 2467.3 +0xb14 engages at d=15
+D2_WB_3: slip1500=0.2005 OUT slip2000=0.2510 in drvmed=1863.5200 OUT  n=('345', '496', '1217')
+    H1 390/400 median 1293.0 -> PASS
+    PORTframes 1633 R= 1 peak 1835.31 at d= 95 trough 82.49 at d= 106 post-trough n= 400 >=100: 390 ( 97.5 %) median 1293.0 max 2467.3 +0xb14 engages at d=15

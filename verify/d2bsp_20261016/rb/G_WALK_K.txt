@@ -1,0 +1,14 @@
+queries replayed 4764 (orig Q rows 4764, O rows 4764)
+G-WALK   fix W bit-identical batch: 4764/4764 = 100.00 %  -> PASS
+standin  same count 421/4764 = 8.84 %, same set 0/4764 = 0.00 %, same order 0/4764 = 0.00 %, orig set contained in standin set 0/4764 = 0.00 %
+standin by triangle (vertex dwords 0..8): same set 421/4764 = 8.84 %, same order 97/4764 = 2.04 %, orig triangles contained in standin 4764/4764 = 100.00 %
+queries whose original batch holds a ff010101 entry: 1/4764 = 0.02 %
+count histogram orig    [(1, 20), (2, 399), (3, 2510), (4, 187), (5, 359), (6, 268), (7, 60), (8, 61), (9, 169), (10, 227), (11, 289), (12, 30), (13, 10), (14, 11), (15, 162), (16, 1), (19, 1)]
+count histogram standin [(2, 231), (3, 133), (4, 2521), (5, 132), (7, 1), (8, 432), (9, 31), (10, 256), (11, 47), (12, 33), (13, 52), (15, 220), (16, 156), (17, 234), (18, 5), (19, 36), (20, 33), (21, 3), (24, 25), (27, 159), (29, 3), (31, 21)]
+G-WHEEL-K W: 19052/19052 = 100.00 %   (wheel-calls on ff010101 queries: 4/4 = 100.00 %)
+G-WHEEL-F W: 15512/19052 = 81.42 %   (frames >= 1000, amendment 2: 11044/11044 = 100.00 %)
+   report (amendment 3) G-WHEEL-F W without hold-tick wheel-calls: 15512/19048 = 81.44 %
+G-WHEEL-K S: 30/19052 = 0.16 %   (wheel-calls on ff010101 queries: 0/4 = 0.00 %)
+G-WHEEL-F S: 6053/19052 = 31.77 %   (frames >= 1000, amendment 2: 3641/11044 = 32.97 %)
+   report (amendment 3) G-WHEEL-F S without hold-tick wheel-calls: 6053/19048 = 31.78 %
+G-WHEEL (fix W, both parts >= 99 %): FAIL

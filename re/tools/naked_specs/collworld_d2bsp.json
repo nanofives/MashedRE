@@ -1,0 +1,22 @@
+{
+  "funcs": [
+    {"name": "BW_539ec0", "start": "0x00539ec0", "size": 2033},
+    {"name": "BW_547450", "start": "0x00547450", "size": 1951},
+    {"name": "BW_4c3b90", "start": "0x004c3b90", "size": 87}
+  ],
+  "calls": {
+    "0x00547450": "BW_547450",
+    "0x004c3b90": "BW_4c3b90"
+  },
+  "indirect_calls_ok": true,
+  "consts": {
+    "0x005cc320": "g_bw_c_5cc320",
+    "0x005e4578": "g_bw_c_5e4578",
+    "0x005d757c": "g_bw_c_5d757c",
+    "0x007dc5b4": "g_bw_collPluginOffset"
+  },
+  "patch": {
+    "0x004c3ba0": "lea ecx, g_bw_lutptrs",
+    "0x004c3ba6": "mov edx, 0"
+  }
+}

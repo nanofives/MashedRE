@@ -17,6 +17,8 @@
 #include "ContactConstants.h"
 #include "ContactDeps.h"
 #include "ContactSolvers.h"
+#include "CollisionWorld.h"   // [d2bsp] fix W
+#include <cstdint>
 #include <cstdlib>   // getenv (MASHED_D2_BATCHMODE A/B, see ProduceTerrainBatch)
 #include <cstring>   // strcmp
 
@@ -146,6 +148,49 @@ int ProduceTerrainBatch(const float* center, float radius,
     g_terrainPassCount = pass;     // uncapped admissions (diagnostic; == count when unsaturated)
     g_terrainEntryCount = count;   // DAT_0088e60c (collector increments per entry)
     return count;
+}
+
+// ---- [d2bsp] fix W: the original's walk + collector (verify/d2bsp_20261016/PREREG_d2bsp.md) ----------
+// The original's batch DAT_00828320 has no bound in the collector. This storage is sized far above any
+// count measured on the sphere walk; an entry past it is COUNTED (g_bspBatchOverflow), never written.
+static ContactBatchEntry s_bspBatchStorage[2048];
+int g_bspBatchOverflow = 0;
+
+// 0x00468b80 — the RW collision callback FUN_0046f6c0 hands to FUN_00538c80 (push 0x468b80 @0x0046f7e8).
+// (isect, sector, collTriangle {normal[3], point[3], int index, RwV3d* v[3]}, distance, batch base).
+static void* __cdecl TerrainCollector(void* /*isect*/, void* sector, float* collTri, float /*dist*/, void* data)
+{
+    const int count = g_terrainEntryCount;                                           // 0x00468b83
+    ContactBatchEntry* e = reinterpret_cast<ContactBatchEntry*>(data) + count;       // count*0x90 + data
+    const std::uint16_t* tris = *reinterpret_cast<std::uint16_t* const*>(
+        reinterpret_cast<const char*>(sector) + 4);                                  // 0x00468b93 sector+4
+    const int index = *reinterpret_cast<const int*>(&collTri[6]);                   // 0x00468ba2 tri+0x18
+    const int mat = tris[index * 4 + 3];                                             // 0x00468ba5 movzx [+6]
+    const int key = D2BspKey0() ? 0
+                  : static_cast<int>(CollWorld_MaterialColour(mat));                 // 0x00468baa..0x00468bbc
+    const float* v0 = *reinterpret_cast<float* const*>(&collTri[7]);                 // tri+0x1c
+    const float* v1 = *reinterpret_cast<float* const*>(&collTri[8]);                 // tri+0x20
+    const float* v2 = *reinterpret_cast<float* const*>(&collTri[9]);                 // tri+0x24
+    if (count < (int)(sizeof(s_bspBatchStorage) / sizeof(s_bspBatchStorage[0])))
+        FillBatchEntry(e, v0, v1, v2, collTri /*normal, tri+0*/, mat, key);
+    else
+        ++g_bspBatchOverflow;
+    g_terrainEntryCount = count + 1;                                                 // 0x00468d6c..0x00468d73
+    return collTri;                                                                  // EAX = tri (0x00468b99)
+}
+
+// The 0x0046f7d3..0x0046f817 sequence: sphere {centre, r} type 3, DAT_0088e60c = 0, then FUN_00538c80.
+int ProduceTerrainBatchBsp(const float* center, float radius)
+{
+    g_terrainBatch = reinterpret_cast<int*>(s_bspBatchStorage);
+    float isect[7] = { center[0], center[1], center[2], radius, 0.0f, 0.0f, 0.0f };
+    *reinterpret_cast<std::int32_t*>(&isect[6]) = 3;                                // local_74 = 3
+    g_terrainEntryCount = 0;                                                         // 0x0046f7fb
+    CollWorld_ForAllIntersections(isect, &TerrainCollector, s_bspBatchStorage);      // 0x0046f817
+    if (g_terrainEntryCount > (int)(sizeof(s_bspBatchStorage) / sizeof(s_bspBatchStorage[0])))
+        g_terrainEntryCount = (int)(sizeof(s_bspBatchStorage) / sizeof(s_bspBatchStorage[0]));
+    g_terrainPassCount = g_terrainEntryCount;
+    return g_terrainEntryCount;
 }
 
 }  // namespace Collision
