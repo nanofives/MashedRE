@@ -1,0 +1,15 @@
+=== OFF run (count calls during boot-to-menu; installs nothing) ===
+  OFF alive=True counts={'0x00498bf0': 955, '0x004098a0': 0, '0x0040b9a0': 0, '0x0040ba60': 0, '0x00407a20': 0}
+
+=== ON run (install ONLY candidates; confirm JMP-live + survive) ===
+  ON alive=True
+
+=== C4 VERDICT (exercised AND installed AND survived) ===
+  0x00498bf0: calls=955 installed=True survived=True -> C4-READY
+  0x004098a0: calls=0 installed=True survived=True -> HOLD
+  0x0040b9a0: calls=0 installed=True survived=True -> HOLD
+  0x0040ba60: calls=0 installed=True survived=True -> HOLD
+  0x00407a20: calls=0 installed=True survived=True -> HOLD
+
+  -> log/c4_verify_result.json
+

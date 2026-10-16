@@ -98,6 +98,38 @@ function callFn(fn, input, buf) {
     if (!_hasLayout && input && typeof input === 'object' && Array.isArray(input.scalars)) {
         return fn.apply(null, input.scalars);
     }
+    // {p2bufs: [size, ...], p2args: [{buf: i} | number, ...]} (dupinstall2 2026-10-16). Keyed off the TEST SHAPE like
+    // the `scalars` branch above, for functions whose path1 handler is early-window-only (global4_bool_out,
+    // near_leaf_seed_outbuf, count_header_list_ring...): path2 had no case for them, so a pointer argument reached
+    // the call as a bare number ("expected a pointer") or as 0x0/0x1 (AV before entry), or the argument list was
+    // short ("bad argument count"). Allocates zero-filled buffers, passes {buf: i} as a NativePointer (as a number
+    // where the signature declares a scalar, e.g. the 'uint32' out-pointer of Bool0Out8a94e0), calls the PATCHED
+    // entry and returns the return value plus an FNV-1a fingerprint of every buffer afterwards. path2 still proves
+    // install + entry + return only; the values are run_diff's business.
+    if (input && typeof input === 'object' && !Array.isArray(input) && Array.isArray(input.p2args)) {
+        const sizes = input.p2bufs || [];
+        const pb = sizes.map(function (n) {
+            const sz = Math.max(n | 0, 16), b = Memory.alloc(sz);
+            b.writeByteArray(new Uint8Array(sz).buffer);
+            verifyKeep.push(b);
+            return { p: b, n: sz };
+        });
+        const sig = (CONFIG.signature && CONFIG.signature.args) || [];
+        const pargs = input.p2args.map(function (a, ix) {
+            if (a !== null && typeof a === 'object' && a.buf !== undefined) {
+                return sig[ix] === 'pointer' ? pb[a.buf].p : (pb[a.buf].p.toUInt32() >>> 0);
+            }
+            return sig[ix] === 'pointer' ? ptr(a) : a;
+        });
+        const r = fn.apply(null, pargs);
+        let h = 0x811c9dc5 | 0;
+        pb.forEach(function (x) {
+            const ba = new Uint8Array(x.p.readByteArray(x.n));
+            for (let j = 0; j < ba.length; j++) h = Math.imul(h ^ ba[j], 0x01000193);
+        });
+        const rv = (r === undefined || r === null) ? '' : ((typeof r === 'object' ? parseInt(r.toString(), 16) : r) >>> 0).toString(16) + ',';
+        return (CONFIG.signature.ret === 'void' ? '' : rv) + (h >>> 0).toString(16);
+    }
     if (CONFIG.arg_type === 'scalars_to_scattered_globals' && input && typeof input === 'object'
         && !Array.isArray(input) && Array.isArray(input.args)) {
         // negctl race fixtures (2026-10-11) express path2 vectors as {args, seed}, with {scratch: off} addresses and
@@ -866,6 +898,15 @@ function runVerification() {
             return;
         }
     }
+    // freeze_main without call_log (dupinstall2 2026-10-16): the draw entries (HudRectEmitter5 -> ChromeBaseDraw) fault
+    // with "system error" when the agent thread calls them while the game thread runs; run_diff freezes the game's first
+    // thread around the calls (diff_template.js), path2 only did so for call_log `at` entries. Same __freeze, same flag.
+    let p2Froze = false;
+    if (CONFIG.freeze_main && CONFIG.arg_type !== 'standin_object_call'
+        && !(globalThis.__p2CallLog && globalThis.__p2CallLog.frozen)) {
+        try { __freeze.thread(); p2Froze = true; }
+        catch (e) { send({ type: 'log', msg: 'freeze_main requested, freeze failed: ' + e.message }); }
+    }
     for (let i = 0; i < CONFIG.tests.length && CONFIG.arg_type !== 'standin_object_call'; i++) {
         const t = CONFIG.tests[i];
         let got, err = null;
@@ -880,6 +921,7 @@ function runVerification() {
         }
         results.push({ idx: i, input: t, got: got, err: err });
     }
+    if (p2Froze) { try { __freeze.flush(); } catch (e) { send({ type: 'log', msg: 'freeze flush: ' + e.message }); } }
     if (SIp) SIp.uninstall();
     if (globalThis.__p2CallLog && globalThis.__p2CallLog.frozen) {
         globalThis.__p2CallLog.at.forEach(function (ce) { try { Interceptor.revert(ptr(ce.at)); } catch (e) {} });

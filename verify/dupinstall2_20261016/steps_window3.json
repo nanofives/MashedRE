@@ -1,0 +1,30 @@
+[
+ {
+  "name": "path2_plugin_data_dword_a",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_verify_hook.py",
+   "plugin_data_dword_a"
+  ],
+  "env": {
+   "MASHED_HOOK_SKIP": "Fwd494fd0_DoublePlusHalf",
+   "MASHED_VERIFY_ASI": "{ASI}"
+  }
+ },
+ {
+  "name": "path2_plugin_data_dword_b",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_verify_hook.py",
+   "plugin_data_dword_b"
+  ],
+  "env": {
+   "MASHED_HOOK_SKIP": "Fwd494fd0_DoublePlusHalf",
+   "MASHED_VERIFY_ASI": "{ASI}"
+  }
+ }
+]

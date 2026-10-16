@@ -1,0 +1,7 @@
+=== after  exe=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall2\mashedmod\build\mashed_re.exe  knobs=[] ===
+    pid=19152
+    exit=0  self_exited=True
+    after.step.csv  lines=18664  sha8=c2e4d60d
+    after.gates.csv  lines=56153  sha8=603ab244
+    after.ptrace.log  lines=28076  sha8=ba90ed88
+GCTRL DONE

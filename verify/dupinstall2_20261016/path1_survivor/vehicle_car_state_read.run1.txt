@@ -1,0 +1,12 @@
+hook: vehicle_car_state_read  rva=0x0046cbb0  export=VehicleCarStateRead
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 1672
+  [agent] LUT ready  base=0x2c81ae0  offset=0x134  root=0xded0048  delta=0  attempts=23
+  [agent] .asi loaded  base=0x5d290000  VehicleCarStateRead@0x5d29d850
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall2\log\diff_vehicle_car_state_read.csv
+  total cases: 9
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.
+

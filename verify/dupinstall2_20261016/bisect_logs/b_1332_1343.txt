@@ -1,0 +1,6 @@
+[b_1332_1343] pid=19956 detach=False only=None noauto=False
+  [save] reads pinned to gamesave.bin.refbak_20260830; writes -> C:\Users\maria\AppData\Local\Temp\run_diff_gamesave_19956.bin
+  [nav] booting to menu...
+[b_1332_1343] drive_to_race=False err=InvalidOperationError: script has been destroyed after 10s  proc.poll()=0xc0000005
+[b_1332_1343] frida detached events=[('process-terminated', 'None')]
+[b_1332_1343] CRASH {"kind": "crash", "type": "access-violation", "eip": "0x1", "addr": "0x1", "op": "read", "eax": "0x95487e0", "ecx": "0x1af6bc", "esp": "0x1af6b0", "stack": ["494ff4", "771a0c", "1af6bc", "f6eff00", "80000", "5", "1af6f0", "4df5c80", "1af6f0", "4df9890", "0", "1af900", "4df5c80", "4df9890", "4df9890", "0", "4df9890", "0", "1af900", "4df5c80", "0", "0", "0", "0"], "mods": [["MASHED.exe", "0x400000", 5853184], ["mashed_qol.asi", "0x60810000", 970752], ["mashed_re_dev.asi", "0x5dbf0000", 1867776]]}
