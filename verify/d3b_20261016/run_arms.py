@@ -17,7 +17,11 @@ SP = r'C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos
 EXE_NEW = os.environ.get('D3B_EXE', os.path.join(W, r'mashedmod\build\mashed_re.exe'))
 EXE_BASE = EXE_NEW
 ROOT = os.environ.get('D3B_ROOT', os.path.join(SP, 'root'))
-STACK = {'DEF': [], 'NOOP': [], 'NOOP2': [],
+STACK = {'DEF': [], 'NOOP': [], 'NOOP2': [], 'NOOP3': [],
+         # amendment 5: the FUN_0046c7d0 heading assist (AI slots)
+         'HA': ['MASHED_HEADING_ASSIST=1'], 'HAT': ['MASHED_HEADING_ASSIST=1', 'MASHED_HEADING_ASSIST_TRACE=@OUT@\\HA_trace_K0.csv'],
+         'HA5': ['MASHED_HEADING_ASSIST=1', 'MASHED_AI_LUT=5'], 'HAG': ['MASHED_HEADING_ASSIST=1', 'MASHED_GRID_DIR'],
+         'HA5G': ['MASHED_HEADING_ASSIST=1', 'MASHED_AI_LUT=5', 'MASHED_GRID_DIR'],
          # d3b: MASHED_AI_LUT mask (PREREG_d3b.md section 2)
          'L1': ['MASHED_AI_LUT=1'], 'L2': ['MASHED_AI_LUT=2'], 'L3': ['MASHED_AI_LUT=3'],
          # amendment 1: gridyaw's MASHED_GRID_DIR alone and with the LUT masks

@@ -1,0 +1,204 @@
+B_HA_K0.step.csv car 1 regime A @220: FAIL 1
+    c0_distinct       port      13  env [13,35]  orig car1      13  
+    c1_distinct       port      47  env [21,70]  orig car1      21  
+    steer_distinct    port      59  env [33,96]  orig car1      33  
+    c0_median         port     0.0  env [0.0,0.0]  orig car1     0.0  
+    c1_median         port     0.0  env [0.0,0.0]  orig car1     0.0  
+    abs_steer_median  port     6.0  env [7.0,23.0]  orig car1     7.0  <-- FAIL
+    accel_distinct    port       2  env [2,3]  orig car1       3  
+    accel_median      port   255.0  env [255.0,255.0]  orig car1   255.0  
+    brake_distinct    port       2  env [2,2]  orig car1       2  
+    brake_median      port     0.0  env [0.0,0.0]  orig car1     0.0  
+B_HA_K0.step.csv car 2 regime A @220: PASS
+    c0_distinct       port      34  env [13,35]  orig car2      35  
+    c1_distinct       port      63  env [21,70]  orig car2      50  
+    steer_distinct    port      96  env [33,96]  orig car2      85  
+    c0_median         port     0.0  env [0.0,0.0]  orig car2     0.0  
+    c1_median         port     0.0  env [0.0,0.0]  orig car2     0.0  
+    abs_steer_median  port    15.0  env [7.0,23.0]  orig car2    11.0  
+    accel_distinct    port       2  env [2,3]  orig car2       2  
+    accel_median      port   255.0  env [255.0,255.0]  orig car2   255.0  
+    brake_distinct    port       2  env [2,2]  orig car2       2  
+    brake_median      port     0.0  env [0.0,0.0]  orig car2     0.0  
+B_HA_K0.step.csv car 3 regime A @220: FAIL 1
+    c0_distinct       port      23  env [13,35]  orig car3      27  
+    c1_distinct       port      30  env [21,70]  orig car3      70  
+    steer_distinct    port      52  env [33,96]  orig car3      96  
+    c0_median         port     0.0  env [0.0,0.0]  orig car3     0.0  
+    c1_median         port     0.0  env [0.0,0.0]  orig car3     0.0  
+    abs_steer_median  port     0.0  env [7.0,23.0]  orig car3    23.0  <-- FAIL
+    accel_distinct    port       2  env [2,3]  orig car3       2  
+    accel_median      port   255.0  env [255.0,255.0]  orig car3   255.0  
+    brake_distinct    port       2  env [2,2]  orig car3       2  
+    brake_median      port     0.0  env [0.0,0.0]  orig car3     0.0  
+B_HA_K0.step.csv: 1/3
+B_HA_K1.step.csv car 1 regime B @220: PASS
+    c0_distinct       port      19  env [13,37]  orig car1      13  
+    c1_distinct       port      19  env [17,46]  orig car1      17  
+    steer_distinct    port      37  env [29,84]  orig car1      29  
+    c0_median         port     0.0  env [0.0,0.0]  orig car1     0.0  
+    c1_median         port     0.0  env [0.0,0.0]  orig car1     0.0  
+    abs_steer_median  port     0.0  env [0.0,16.0]  orig car1     0.0  
+    accel_distinct    port       3  env [3,4]  orig car1       4  
+    accel_median      port   102.0  env [25.0,102.0]  orig car1    25.0  
+    brake_distinct    port       2  env [2,2]  orig car1       2  
+    brake_median      port     0.0  env [0.0,0.0]  orig car1     0.0  
+B_HA_K1.step.csv car 2 regime B @220: FAIL 3
+    c0_distinct       port      40  env [13,37]  orig car2      37  <-- FAIL
+    c1_distinct       port      48  env [17,46]  orig car2      46  <-- FAIL
+    steer_distinct    port      87  env [29,84]  orig car2      84  <-- FAIL
+    c0_median         port     0.0  env [0.0,0.0]  orig car2     0.0  
+    c1_median         port     0.0  env [0.0,0.0]  orig car2     0.0  
+    abs_steer_median  port     9.5  env [0.0,16.0]  orig car2    16.0  
+    accel_distinct    port       3  env [3,4]  orig car2       3  
+    accel_median      port   102.0  env [25.0,102.0]  orig car2   102.0  
+    brake_distinct    port       2  env [2,2]  orig car2       2  
+    brake_median      port     0.0  env [0.0,0.0]  orig car2     0.0  
+B_HA_K1.step.csv car 3 regime B @220: PASS
+    c0_distinct       port      32  env [13,37]  orig car3      34  
+    c1_distinct       port      28  env [17,46]  orig car3      39  
+    steer_distinct    port      59  env [29,84]  orig car3      73  
+    c0_median         port     0.0  env [0.0,0.0]  orig car3     0.0  
+    c1_median         port     0.0  env [0.0,0.0]  orig car3     0.0  
+    abs_steer_median  port     0.0  env [0.0,16.0]  orig car3     8.0  
+    accel_distinct    port       3  env [3,4]  orig car3       3  
+    accel_median      port   102.0  env [25.0,102.0]  orig car3   102.0  
+    brake_distinct    port       2  env [2,2]  orig car3       2  
+    brake_median      port     0.0  env [0.0,0.0]  orig car3     0.0  
+B_HA_K1.step.csv: 2/3
+B_HA_K26.step.csv car 1 regime C @196: FAIL 6
+    c0_distinct       port      13  env [20,20]  orig car1      20  <-- FAIL
+    c1_distinct       port      70  env [18,18]  orig car1      18  <-- FAIL
+    steer_distinct    port      82  env [40,40]  orig car1      40  <-- FAIL
+    c0_median         port     0.0  env [0.0,0.0]  orig car1     0.0  
+    c1_median         port     0.0  env [0.0,0.0]  orig car1     0.0  
+    abs_steer_median  port    12.5  env [8.0,8.0]  orig car1     8.0  <-- FAIL
+    accel_distinct    port       1  env [3,3]  orig car1       3  <-- FAIL
+    accel_median      port   255.0  env [255.0,255.0]  orig car1   255.0  
+    brake_distinct    port       1  env [2,2]  orig car1       2  <-- FAIL
+    brake_median      port     0.0  env [0.0,0.0]  orig car1     0.0  
+B_HA_K26.step.csv car 2 regime C @196: FAIL 4
+    c0_distinct       port      34  env [32,32]  orig car2      32  <-- FAIL
+    c1_distinct       port      47  env [41,41]  orig car2      41  <-- FAIL
+    steer_distinct    port      80  env [73,73]  orig car2      73  <-- FAIL
+    c0_median         port     0.0  env [0.0,0.0]  orig car2     0.0  
+    c1_median         port     0.0  env [0.0,0.0]  orig car2     0.0  
+    abs_steer_median  port    10.0  env [9.0,9.0]  orig car2     9.0  <-- FAIL
+    accel_distinct    port       2  env [2,2]  orig car2       2  
+    accel_median      port   255.0  env [255.0,255.0]  orig car2   255.0  
+    brake_distinct    port       2  env [2,2]  orig car2       2  
+    brake_median      port     0.0  env [0.0,0.0]  orig car2     0.0  
+B_HA_K26.step.csv car 3 regime C @196: FAIL 5
+    c0_distinct       port      20  env [27,27]  orig car3      27  <-- FAIL
+    c1_distinct       port      65  env [79,79]  orig car3      79  <-- FAIL
+    steer_distinct    port      84  env [105,105]  orig car3     105  <-- FAIL
+    c0_median         port     0.0  env [0.0,0.0]  orig car3     0.0  
+    c1_median         port     0.0  env [23.5,23.5]  orig car3    23.5  <-- FAIL
+    abs_steer_median  port    16.0  env [28.0,28.0]  orig car3    28.0  <-- FAIL
+    accel_distinct    port       2  env [2,2]  orig car3       2  
+    accel_median      port   255.0  env [255.0,255.0]  orig car3   255.0  
+    brake_distinct    port       2  env [2,2]  orig car3       2  
+    brake_median      port     0.0  env [0.0,0.0]  orig car3     0.0  
+B_HA_K26.step.csv: 0/3
+B_HA5_K0.step.csv car 1 regime A @220: FAIL 1
+    c0_distinct       port      21  env [13,35]  orig car1      13  
+    c1_distinct       port      29  env [21,70]  orig car1      21  
+    steer_distinct    port      49  env [33,96]  orig car1      33  
+    c0_median         port     0.0  env [0.0,0.0]  orig car1     0.0  
+    c1_median         port     0.0  env [0.0,0.0]  orig car1     0.0  
+    abs_steer_median  port     5.5  env [7.0,23.0]  orig car1     7.0  <-- FAIL
+    accel_distinct    port       2  env [2,3]  orig car1       3  
+    accel_median      port   255.0  env [255.0,255.0]  orig car1   255.0  
+    brake_distinct    port       2  env [2,2]  orig car1       2  
+    brake_median      port     0.0  env [0.0,0.0]  orig car1     0.0  
+B_HA5_K0.step.csv car 2 regime A @220: FAIL 1
+    c0_distinct       port      41  env [13,35]  orig car2      35  <-- FAIL
+    c1_distinct       port      44  env [21,70]  orig car2      50  
+    steer_distinct    port      84  env [33,96]  orig car2      85  
+    c0_median         port     0.0  env [0.0,0.0]  orig car2     0.0  
+    c1_median         port     0.0  env [0.0,0.0]  orig car2     0.0  
+    abs_steer_median  port    10.0  env [7.0,23.0]  orig car2    11.0  
+    accel_distinct    port       2  env [2,3]  orig car2       2  
+    accel_median      port   255.0  env [255.0,255.0]  orig car2   255.0  
+    brake_distinct    port       2  env [2,2]  orig car2       2  
+    brake_median      port     0.0  env [0.0,0.0]  orig car2     0.0  
+B_HA5_K0.step.csv car 3 regime A @220: PASS
+    c0_distinct       port      21  env [13,35]  orig car3      27  
+    c1_distinct       port      37  env [21,70]  orig car3      70  
+    steer_distinct    port      57  env [33,96]  orig car3      96  
+    c0_median         port     0.0  env [0.0,0.0]  orig car3     0.0  
+    c1_median         port     0.0  env [0.0,0.0]  orig car3     0.0  
+    abs_steer_median  port     8.0  env [7.0,23.0]  orig car3    23.0  
+    accel_distinct    port       2  env [2,3]  orig car3       2  
+    accel_median      port   255.0  env [255.0,255.0]  orig car3   255.0  
+    brake_distinct    port       2  env [2,2]  orig car3       2  
+    brake_median      port     0.0  env [0.0,0.0]  orig car3     0.0  
+B_HA5_K0.step.csv: 1/3
+B_HA5_K1.step.csv car 1 regime B @220: PASS
+    c0_distinct       port      19  env [13,37]  orig car1      13  
+    c1_distinct       port      18  env [17,46]  orig car1      17  
+    steer_distinct    port      36  env [29,84]  orig car1      29  
+    c0_median         port     0.0  env [0.0,0.0]  orig car1     0.0  
+    c1_median         port     0.0  env [0.0,0.0]  orig car1     0.0  
+    abs_steer_median  port     0.0  env [0.0,16.0]  orig car1     0.0  
+    accel_distinct    port       3  env [3,4]  orig car1       4  
+    accel_median      port   102.0  env [25.0,102.0]  orig car1    25.0  
+    brake_distinct    port       2  env [2,2]  orig car1       2  
+    brake_median      port     0.0  env [0.0,0.0]  orig car1     0.0  
+B_HA5_K1.step.csv car 2 regime B @220: FAIL 3
+    c0_distinct       port      43  env [13,37]  orig car2      37  <-- FAIL
+    c1_distinct       port      52  env [17,46]  orig car2      46  <-- FAIL
+    steer_distinct    port      94  env [29,84]  orig car2      84  <-- FAIL
+    c0_median         port     0.0  env [0.0,0.0]  orig car2     0.0  
+    c1_median         port     0.0  env [0.0,0.0]  orig car2     0.0  
+    abs_steer_median  port    10.0  env [0.0,16.0]  orig car2    16.0  
+    accel_distinct    port       3  env [3,4]  orig car2       3  
+    accel_median      port   102.0  env [25.0,102.0]  orig car2   102.0  
+    brake_distinct    port       2  env [2,2]  orig car2       2  
+    brake_median      port     0.0  env [0.0,0.0]  orig car2     0.0  
+B_HA5_K1.step.csv car 3 regime B @220: PASS
+    c0_distinct       port      34  env [13,37]  orig car3      34  
+    c1_distinct       port      27  env [17,46]  orig car3      39  
+    steer_distinct    port      60  env [29,84]  orig car3      73  
+    c0_median         port     0.0  env [0.0,0.0]  orig car3     0.0  
+    c1_median         port     0.0  env [0.0,0.0]  orig car3     0.0  
+    abs_steer_median  port     0.0  env [0.0,16.0]  orig car3     8.0  
+    accel_distinct    port       3  env [3,4]  orig car3       3  
+    accel_median      port   102.0  env [25.0,102.0]  orig car3   102.0  
+    brake_distinct    port       2  env [2,2]  orig car3       2  
+    brake_median      port     0.0  env [0.0,0.0]  orig car3     0.0  
+B_HA5_K1.step.csv: 2/3
+B_HA5_K26.step.csv car 1 regime C @196: FAIL 7
+    c0_distinct       port      13  env [20,20]  orig car1      20  <-- FAIL
+    c1_distinct       port      76  env [18,18]  orig car1      18  <-- FAIL
+    steer_distinct    port      88  env [40,40]  orig car1      40  <-- FAIL
+    c0_median         port     0.0  env [0.0,0.0]  orig car1     0.0  
+    c1_median         port    16.0  env [0.0,0.0]  orig car1     0.0  <-- FAIL
+    abs_steer_median  port    23.5  env [8.0,8.0]  orig car1     8.0  <-- FAIL
+    accel_distinct    port       1  env [3,3]  orig car1       3  <-- FAIL
+    accel_median      port   255.0  env [255.0,255.0]  orig car1   255.0  
+    brake_distinct    port       1  env [2,2]  orig car1       2  <-- FAIL
+    brake_median      port     0.0  env [0.0,0.0]  orig car1     0.0  
+B_HA5_K26.step.csv car 2 regime C @196: FAIL 4
+    c0_distinct       port      34  env [32,32]  orig car2      32  <-- FAIL
+    c1_distinct       port      48  env [41,41]  orig car2      41  <-- FAIL
+    steer_distinct    port      81  env [73,73]  orig car2      73  <-- FAIL
+    c0_median         port     0.0  env [0.0,0.0]  orig car2     0.0  
+    c1_median         port     0.0  env [0.0,0.0]  orig car2     0.0  
+    abs_steer_median  port    10.0  env [9.0,9.0]  orig car2     9.0  <-- FAIL
+    accel_distinct    port       2  env [2,2]  orig car2       2  
+    accel_median      port   255.0  env [255.0,255.0]  orig car2   255.0  
+    brake_distinct    port       2  env [2,2]  orig car2       2  
+    brake_median      port     0.0  env [0.0,0.0]  orig car2     0.0  
+B_HA5_K26.step.csv car 3 regime C @196: FAIL 5
+    c0_distinct       port      19  env [27,27]  orig car3      27  <-- FAIL
+    c1_distinct       port      61  env [79,79]  orig car3      79  <-- FAIL
+    steer_distinct    port      79  env [105,105]  orig car3     105  <-- FAIL
+    c0_median         port     0.0  env [0.0,0.0]  orig car3     0.0  
+    c1_median         port     0.0  env [23.5,23.5]  orig car3    23.5  <-- FAIL
+    abs_steer_median  port    15.5  env [28.0,28.0]  orig car3    28.0  <-- FAIL
+    accel_distinct    port       2  env [2,2]  orig car3       2  
+    accel_median      port   255.0  env [255.0,255.0]  orig car3   255.0  
+    brake_distinct    port       2  env [2,2]  orig car3       2  
+    brake_median      port     0.0  env [0.0,0.0]  orig car3     0.0  
+B_HA5_K26.step.csv: 0/3
