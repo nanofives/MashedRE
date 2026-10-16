@@ -1,0 +1,6 @@
+track            row  orig  matched  orig tri   m.tri  m.tri% | rows cited  red verdict
+20_NeusteinNamed   730   258      227     20627   17999   87.3% |   20    20    0 CITED
+20_NeusteinNamed   770   255      223     20423   17967   88.0% |   20    20    0 CITED
+20_NeusteinNamed   805   210      179     14142   11937   84.4% |   21    21    0 CITED
+
+INSTRUMENT GATES: PASS

@@ -1,0 +1,6 @@
+orig  20_NeusteinNamed {"row": 730, "draws": 258, "shim": 258, "I-COVER": true, "pre": 0, "I-FRAME": true, "named": "125/125", "I-NAME": true, "unnamed": [], "geometry": "258/258", "gerr": 0}
+orig  20_NeusteinNamed {"row": 770, "draws": 255, "shim": 255, "I-COVER": true, "pre": 0, "I-FRAME": true, "named": "122/122", "I-NAME": true, "unnamed": [], "geometry": "255/255", "gerr": 0}
+orig  20_NeusteinNamed {"row": 805, "draws": 210, "shim": 210, "I-COVER": true, "pre": 0, "I-FRAME": true, "named": "77/77", "I-NAME": true, "unnamed": [], "geometry": "210/210", "gerr": 0}
+stand 20_NeusteinNamed {"row": 730, "actual_row": 730, "armed": 1, "draws": 234, "empty": 0, "cam_src": ["4"], "cam_max_abs_dev": 1.0913087322705906e-08, "I-SYNC": true, "named": "108/108", "I-NAME": true, "unnamed": []}
+stand 20_NeusteinNamed {"row": 770, "actual_row": 770, "armed": 1, "draws": 224, "empty": 0, "cam_src": ["4"], "cam_max_abs_dev": 3.8769528032389644e-08, "I-SYNC": true, "named": "98/98", "I-NAME": true, "unnamed": []}
+stand 20_NeusteinNamed {"row": 805, "actual_row": 805, "armed": 1, "draws": 180, "empty": 0, "cam_src": ["4"], "cam_max_abs_dev": 2.9150392322208063e-08, "I-SYNC": true, "named": "54/54", "I-NAME": true, "unnamed": []}
