@@ -82,14 +82,7 @@ const std::uint32_t kMarkerColour = 0xff804040u;   // DAT_005f9788 (contact-filt
 
 // ---- RW matrix leaves ------------------------------------------------------------------------------------------
 
-// 0x004c3b90 FUN_004c3b90: inverse square root through the RW LUT (the second table, [devBase+4]).
-float LutInvSqrt(float x) {
-    std::uint32_t u = BF(x);
-    if (u == 0) return x;                                      // 0x004c3b9e je -> fld [esp+4] (the 0.0)
-    u = u + 0x800u;                                            // 0x004c3bb4
-    const std::uint32_t r = Math::RwLutInvSqrtTable()[(u >> 12) & 0xfffu] + ((~u >> 1) & 0x3fc00000u);   // 0x004c3bc2..dc
-    return FB(r);
-}
+using Math::LutInvSqrt;   // FUN_004c3b90 with the real LUT (Math/RwLutTables.cpp)
 
 // Shared bodies (one per RVA per target, scripts/lint_rva_bodies.py): RwMatrixMultiply 0x004c4600 = the dispatcher in
 // Math/RwMatrixMultiplyCpu.cpp; RwMatrixCombine 0x004c52f0 = Collision/RwpSolverMath2.cpp (exe arm added by this lane);
@@ -508,7 +501,7 @@ void Coupling(Obj& o) {
                         vel[1] = o.mov[1] + vel[1];
                         vel[2] = o.mov[2] + vel[2];
                     }
-                    // [UNCERTAIN U-pontoon-rwp] +0x14 != 0 (FUN_00481780), the wheel impulses FUN_00481750 and the hand-off
+                    // [UNCERTAIN U-9738] +0x14 != 0 (FUN_00481780), the wheel impulses FUN_00481750 and the hand-off
                     // FUN_00480720 need the RWP car body the exe does not have.
                 }
             }
@@ -760,8 +753,9 @@ bool ParseBoat(const std::uint8_t* d, std::size_t len, State& s, float box[6]) {
         const bool ident = fr.model[0] == k1 && fr.model[5] == k1 && fr.model[10] == k1 && fr.model[1] == 0.f &&
                            fr.model[2] == 0.f && fr.model[4] == 0.f && fr.model[6] == 0.f && fr.model[8] == 0.f &&
                            fr.model[9] == 0.f && fr.model[12] == 0.f && fr.model[13] == 0.f && fr.model[14] == 0.f;
-        // [UNCERTAIN] the streamed frames' flag words are not captured; only frame 0's LTM is read (the hierarchy
-        // root's parent, 0x00533ec0), and with it identity the node-0 product equals the keyframe matrix either way.
+        // The streamed frames' flag words are not captured; only frame 0's LTM is read (the hierarchy root's parent,
+        // 0x00533ec0), and with it identity the node-0 product equals the keyframe matrix for either flag value (the
+        // replay's node matrices are bit-identical, verify/pontoon_20261016/RESULT_pontoon.md).
         Flags(fr.model) = ident ? 0x20003u : 3u;
         if (!fr.parent) std::memcpy(fr.ltm, fr.model, 64);
         else MatMul(fr.ltm, fr.model, fr.parent->ltm);

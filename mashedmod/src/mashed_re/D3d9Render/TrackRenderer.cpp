@@ -1991,6 +1991,13 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                     if (b.atomic == only_atomic) keep.push_back(std::move(b));
                 m.batches = std::move(keep);
                 if (m.batches.empty()) return false;
+                // unbaked vertices are placed by the instance matrix (the frame LTM), so the per-atomic sphere the
+                // librw walk tests (WorldSphere x instance, RwRaceSubmit.cpp) must be in geometry space too
+                if (!bake_frames)
+                    for (auto& s : m.atomic_spheres) {
+                        s.c[0] = s.c_geo[0]; s.c[1] = s.c_geo[1]; s.c[2] = s.c_geo[2];
+                        s.r_world = s.r_obj;
+                    }
             }
             // [rfx2] the RWP object's atomic is FUN_004b3f90 @ 0x004b3f90's: RpClumpForAllAtomics
             // with a callback that keeps the first atomic visited and stops (0x004b4070), i.e. the
@@ -2403,6 +2410,19 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                         }
                     }
                 for (int k = 0; k < 32; ++k) rwp_hidden[k] = vis[k] == 0;
+                // [pontoon 2026-10-16] Warzone slot 0 0x004527f0 (again in slot 6 0x00452af0 at race reset):
+                // FUN_0047d100(FUN_0047ce40(1000), 0) and FUN_0047d100(FUN_0047ce40(2000), 0) clear the RENDER bit
+                // (FUN_004b5240, atomic+2 bit 4) of the RWP objects labelled 1000 (Tower) and 2000 (Deck), so the
+                // original never draws them and they cast no shadow (FUN_00481a30 tests the bit). Their bodies stay
+                // (no exe consumer). Default ON; MASHED_NO_PONTOON_HIDE=1 keeps them drawn (pre-pontoon behaviour).
+                static const bool s_no_pn_hide = std::getenv("MASHED_NO_PONTOON_HIDE") != nullptr;
+                if (course_id_ == 33 && !s_no_pn_hide)
+                    for (int d = 0; d < 32; ++d)
+                        if (rwp[d].have && rwp[d].inst.size() == 1 && (rwp[d].label == 1000 || rwp[d].label == 2000)) {
+                            rwp_hidden[d] = true;
+                            if (log) std::fprintf(log, "  PONTOON-HIDE course_id=33 RWP %d label %d (slot 0 FUN_0047d100(.., 0))\n",
+                                                  d, rwp[d].label);
+                        }
                 for (auto& p : props_)
                     if (p.rwp_idx >= 0 && p.rwp_idx < 32 && rwp_hidden[p.rwp_idx]) p.scen_hidden = true;
                 if (log) {
@@ -2876,7 +2896,7 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                 };
                 ph.car_carried = [](int v, const float* m) { if (s_pontoonTr) s_pontoonTr->PontoonCarried(v, m); };
                 ph.car_record = [](int v) { return Vehicle::VehiclePhysics_RecordPtr(v); };
-                ph.sphere_visible = nullptr;   // [UNCERTAIN] state 5's frustum test is not bound (see RESULT_pontoon.md)
+                ph.sphere_visible = nullptr;   // [UNCERTAIN U-9740] state 5's frustum test is not bound
                 Track::Pontoon_SetHost(ph);
                 const bool ok = db && ab && tok && dok && Track::Pontoon_Init(db, dl, ab, al, tw, dk);
                 if (log) std::fprintf(log, "  PONTOON init course_id=33 boat=%s anim=%s tower=%d deck=%d ok=%d\n",

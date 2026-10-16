@@ -1,0 +1,7 @@
+# pontoon: MB-sized evidence, sha8 in MANIFEST_sha8.txt
+tracks/
+arms/*.step.csv
+arms/*.ptrace.log
+arms/*.motion_diag.log
+arms/*.gates.csv
+
