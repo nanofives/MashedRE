@@ -1,0 +1,25 @@
+BADGES.TXD len=0x2876c
+textures=23
+  [ 0] Air                  64x64 depth=8 mips=7 fmt=1
+  [ 1] Sv                   32x32 depth=4 mips=6 fmt=3
+  [ 2] S2                   32x32 depth=4 mips=6 fmt=3
+  [ 3] S1                   32x32 depth=4 mips=6 fmt=3
+  [ 4] F3                   32x32 depth=4 mips=6 fmt=3
+  [ 5] F2                   32x32 depth=4 mips=6 fmt=3
+  [ 6] F1                   32x32 depth=4 mips=6 fmt=3
+  [ 7] Stopwatch            32x32 depth=8 mips=6 fmt=1
+  [ 8] boom                 32x32 depth=8 mips=6 fmt=1
+  [ 9] cup                  32x32 depth=8 mips=6 fmt=1
+  [10] flag                 32x32 depth=8 mips=6 fmt=1
+  [11] lock                 16x16 depth=4 mips=5 fmt=3
+  [12] dot                  16x16 depth=4 mips=5 fmt=3
+  [13] check                16x16 depth=4 mips=5 fmt=3
+  [14] Star                 16x16 depth=8 mips=5 fmt=1
+  [15] SemiC2               128x64 depth=8 mips=8 fmt=1
+  [16] SemiC                128x256 depth=8 mips=9 fmt=1
+  [17] Arrow                16x16 depth=8 mips=5 fmt=1
+  [18] Box2                 32x8 depth=4 mips=6 fmt=3
+  [19] Box                  32x32 depth=32 mips=6 fmt=2
+  [20] Button2              16x32 depth=8 mips=6 fmt=1
+  [21] Button               16x32 depth=8 mips=6 fmt=1
+  [22] Tritex               8x8 depth=32 mips=4 fmt=2

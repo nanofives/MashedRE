@@ -1,0 +1,33 @@
+== MenuStringTable self-check ==
+USA.dat (raw FONT/): load=1 size=2796 id_count=449
+  [PASS] USA.dat loads
+  [PASS] USA.dat covers 449 ids (offtable 0x704/4)
+  [PASS] id 0 decodes to "English"
+  [PASS] id 0 offset == 0x704
+    id 0x0    resolve=1 off=0x704   len=7  "English"
+    id 0x13   resolve=1 off=0x78a   len=0  ""
+    id 0x18   resolve=1 off=0x794   len=0  ""
+    id 0x21   resolve=1 off=0x7a6   len=0  ""
+    id 0x22   resolve=1 off=0x7a8   len=0  ""
+    id 0x23   resolve=1 off=0x7aa   len=0  ""
+    id 0x27   resolve=1 off=0x7b2   len=0  ""
+    id 0x42   resolve=1 off=0x7e8   len=0  ""
+    id 0x43   resolve=1 off=0x7ea   len=0  ""
+    id 0x48   resolve=1 off=0x7f4   len=0  ""
+    id 0x150  resolve=1 off=0xa04   len=0  ""
+    id 0x224  resolve=0 off=0x0     len=0  ""
+  [PASS] id 0x224 is the unused/centered sentinel (off 0)
+  [PASS] id beyond table is rejected
+English.dat: load=1 size=20894 id_count=449
+  [PASS] English.dat loads
+    id 0x21   resolve=1 off=0x944   len=13 "Single Player"
+    id 0x22   resolve=1 off=0x960   len=12 "Multi Player"
+    id 0x23   resolve=1 off=0x97a   len=12 "Championship"
+    id 0x24   resolve=1 off=0x994   len=10 "Time Trial"
+    id 0x27   resolve=1 off=0x9da   len=7  "Options"
+  [PASS] at least one main-menu label (33/34/35/36/39) is non-empty
+Font36.piz/USA.DAT: load=1 size=33632 id_count=677
+  [PASS] Font36.piz/USA.DAT loads via .piz path
+  [PASS] control codes 8..0xe remap to 0x81/7f/81/8d/80/87/8f
+    remap out: 0081 007f 0081 008d 0080 0087 008f
+== ALL PASS (0 failures) ==

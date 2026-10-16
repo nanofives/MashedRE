@@ -1,16 +1,18 @@
 // RuleEngine — see RuleEngine.h for sources/citations. Transcriptions follow
 // the pool13 decomp literally; every branch cites its original address range.
 #include "RuleEngine.h"
+#include "CollectDone.h"
 
 namespace mashed_re {
 namespace Race {
 namespace RuleEngine {
 
-// 0x00405890: `if (DAT_0063a5d0 == 0) return false;
-//              return DAT_0063a5d4 == DAT_0063a5d0;`
+// FUN_00405890 over the host-side Persist struct (dualcopy4: the predicate itself is the one body,
+// CollectDone.h:CollectDoneBody405890, `if (DAT_0063a5d0 == 0) return false; return DAT_0063a5d4 == DAT_0063a5d0;`;
+// CollectDone.cpp:Pred405890 reads the two globals, this reads Persist).
 bool CollectAllDone(const Persist& p) {
-    if (p.collectTotal == 0) return false;
-    return p.collectDone == p.collectTotal;
+    return CollectDoneBody405890(static_cast<std::uint32_t>(p.collectTotal),
+                                 static_cast<std::uint32_t>(p.collectDone)) != 0u;
 }
 
 // 0x004177b0 finish-order fragment. Original loop (cars 0..3):

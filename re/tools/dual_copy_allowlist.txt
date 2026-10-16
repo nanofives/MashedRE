@@ -24,10 +24,8 @@
 # produced exactly such a line.
 
 DUP-IN-TARGET:00408ad0:D3d9Render/TrackRenderer.cpp,Frontend/SmallLeaves_t1.cpp   # audit=DIFFERS-BEHAVIOUR; [exe] two bodies: D3d9Render/TrackRenderer.cpp:4007 (TrackRenderer::RacePct), Frontend/SmallLeaves_t1.cpp:42 (RaceScoreFloatGetBySlot)
-DUP-IN-TARGET:00422120:Util/TimerInit.cpp,Util/TimerSubarrayInit.cpp   # audit=UNREVIEWED; [exe] two bodies: Util/TimerInit.cpp:163 (TimerInitLoop), Util/TimerSubarrayInit.cpp:34 (TimerSubarrayInit)
 DUP-IN-TARGET:0042d3e0:Frontend/MenuInit.cpp,Frontend/MenuNavSM.cpp   # audit=DIFFERS-BEHAVIOUR; [exe] two bodies: Frontend/MenuInit.cpp:73 (MenuEntryArrayInit), Frontend/MenuNavSM.cpp:386 (RecordsZero)
 DUP-IN-TARGET:0042f6b0:Frontend/FrontendState.cpp,Race/RaceModes.cpp   # audit=not-in-audit; [exe] two bodies: Frontend/FrontendState.cpp:70 (MenuModeSync), Race/RaceModes.cpp:29 (SelectionToGameMode)
-DUP-IN-TARGET:00431b70:Frontend/BucketMixed_t3.cpp,Frontend/MenuLeaves_af5.cpp   # audit=UNREVIEWED; [exe] two bodies: Frontend/BucketMixed_t3.cpp:38 (GetDat007f0f10), Frontend/MenuLeaves_af5.cpp:76 (MenuFlagDat007f0f10Get)
 DUP-IN-TARGET:00468b40:Collision/CarWorldContacts.cpp,Vehicle/VehicleState.cpp   # audit=IDENTICAL; [exe] two bodies: Collision/CarWorldContacts.cpp:73 (ContactHistoryLookup), Vehicle/VehicleState.cpp:95 (VehicleContactHistoryLookup)
 DUP-IN-TARGET:0046dbe0:Vehicle/ForceIntegrator.cpp,Vehicle/VehicleState.cpp   # audit=IDENTICAL; [exe] two bodies: Vehicle/ForceIntegrator.cpp:325 (CarContactCount), Vehicle/VehicleState.cpp:77 (VehicleRacePositionGet)
 DUP-IN-TARGET:004c39b0:Math/RwLutTables.cpp,Math/RwV3dNormalize.cpp,Race/RaceCamera.cpp   # 2026-10-09 +Math/RwLutTables.cpp:LutNormalize = the REAL-LUT body (tables fitted 4096/4096 vs the live original, verify/d3_modes37_20261009/o_rwlut.*.bin), used only by D-11072 P1 Race/PathNodes.cpp; the global RwV3dNormalize keeps its exact-sqrt fallback pending a user decision; audit=DIFFERS-BEHAVIOUR; [exe] two bodies: Math/RwV3dNormalize.cpp:60 (), Race/RaceCamera.cpp:55 (Vec3Norm)
@@ -35,11 +33,7 @@ DUP-IN-TARGET:004c4d20:Math/RwMatrixRotate.cpp,Race/RaceCamera.cpp   # audit=DIF
 DUP-IN-TARGET:0055dec0:Collision/RwpBuildExterns.cpp,Util/UtilLeaves_ab6.cpp   # audit=UNREVIEWED; [exe] two bodies: Collision/RwpBuildExterns.cpp:67 (FUN_0055dec0), Util/UtilLeaves_ab6.cpp:233 (UtilDeref55dec0)
 DUP-IN-TARGET:0055e200:Collision/RwpIntegrator.cpp,Collision/RwpSolverCore23.cpp   # audit=not-in-audit; [exe] two bodies: Collision/RwpIntegrator.cpp:422 (RwpSolverContextSet_impl), Collision/RwpSolverCore23.cpp:140 (RwpSolverContextSet)
 DUP-IN-TARGET:00420de0:Util/PromoLoop_sessionB.cpp,Vehicle/Damage.cpp   # audit=UNREVIEWED; [asi] two bodies: Util/PromoLoop_sessionB.cpp:2532 (Accum420de0), Vehicle/Damage.cpp:100 ()
-DUP-IN-TARGET:00422120:Util/TimerInit.cpp,Util/TimerSubarrayInit.cpp   # audit=UNREVIEWED; [asi] two bodies: Util/TimerInit.cpp:163 (TimerInitLoop), Util/TimerSubarrayInit.cpp:34 (TimerSubarrayInit)
 DUP-IN-TARGET:0042fa00:Frontend/MenuNav.cpp,Frontend/SkeletonAndScatter_t6.cpp   # audit=DIFFERS-BEHAVIOUR; [asi] two bodies: Frontend/MenuNav.cpp:230 (MenuTeamSelectTick), Frontend/SkeletonAndScatter_t6.cpp:249 (PlayerSlotEdgeAdjust)
-DUP-IN-TARGET:00431b70:Frontend/BucketMixed_t3.cpp,Frontend/MenuLeaves_af5.cpp   # audit=UNREVIEWED; [asi] two bodies: Frontend/BucketMixed_t3.cpp:38 (GetDat007f0f10), Frontend/MenuLeaves_af5.cpp:76 (MenuFlagDat007f0f10Get)
-DUP-IN-TARGET:004b4650:Render/PromoLoop_round22.cpp,Util/PromoLoop_sessionB.cpp   # audit=DIFFERS-BEHAVIOUR; [asi] two bodies: Render/PromoLoop_round22.cpp:38 (Vec3Lerp), Util/PromoLoop_sessionB.cpp:1432 (Lerp4b4650)
-DUP-IN-TARGET:004c5c00:Frontend/SpriteCluster.cpp,Util/PromoLoop_sessionB.cpp   # audit=UNREVIEWED; [asi] two bodies: Frontend/SpriteCluster.cpp:186 (LinkedListStringSearch), Util/PromoLoop_sessionB.cpp:2775 (Search4c5c00)
 DUP-IN-TARGET:0055dec0:Collision/RwpBuildExterns.cpp,Util/UtilLeaves_ab6.cpp   # audit=UNREVIEWED; [asi] two bodies: Collision/RwpBuildExterns.cpp:67 (FUN_0055dec0), Util/UtilLeaves_ab6.cpp:233 (UtilDeref55dec0)
 DUP-IN-TARGET:0055e200:Collision/RwpIntegrator.cpp,Collision/RwpSolverCore23.cpp   # audit=not-in-audit; [asi] two bodies: Collision/RwpIntegrator.cpp:422 (RwpSolverContextSet_impl), Collision/RwpSolverCore23.cpp:140 (RwpSolverContextSet)
 CROSS-TARGET:00405890:Race/RuleEngine.cpp,Util/PromoLoop_round78.cpp   # audit=IDENTICAL; exe-only Race/RuleEngine.cpp  vs  asi-only Util/PromoLoop_round78.cpp
@@ -58,13 +52,7 @@ CROSS-TARGET:0046b1c0:Vehicle/VehicleInit.cpp,Vehicle/VehicleSlotAabbExpand.cpp 
 # guard could not see before, i.e. the 0x0046b1c0 blind spot repeating. They are
 # audit=UNREVIEWED-U9156: STRUCTURAL CANDIDATES, nobody has compared them
 # body-to-body. Allowlisted so the guard stays live; burn-down is ROADMAP D4.
-DUP-IN-TARGET:0041eda0:Util/TimerInit.cpp,Util/TimerSlot.cpp   # audit=UNREVIEWED-U9156; [exe] two bodies: Util/TimerInit.cpp:55 (TimerBitFieldSet), Util/TimerSlot.cpp:72 (SlotBitSet)
-DUP-IN-TARGET:0041f000:Util/TimerInit.cpp,Util/TimerSlot.cpp   # audit=UNREVIEWED-U9156; [exe] two bodies: Util/TimerInit.cpp:78 (TimerSlotDataCopy), Util/TimerSlot.cpp:50 (SlotDataCopy)
-DUP-IN-TARGET:00420d40:Util/TimerInit.cpp,Util/TimerSlot.cpp   # audit=UNREVIEWED-U9156; [exe] two bodies: Util/TimerInit.cpp:110 (TimerStructArrayClear), Util/TimerSlot.cpp:96 (SlotArrayClear)
 DUP-IN-TARGET:0040e350:Ai/PromoLoop_round1.cpp,Vehicle/PhysicsChainHooks.cpp   # audit=UNREVIEWED-U9156; [asi] two bodies: Ai/PromoLoop_round1.cpp:153 (GetRenderSubMode), Vehicle/PhysicsChainHooks.cpp:113 (Fi_GameMode)
-DUP-IN-TARGET:0041eda0:Util/TimerInit.cpp,Util/TimerSlot.cpp   # audit=UNREVIEWED-U9156; [asi] two bodies: Util/TimerInit.cpp:55 (TimerBitFieldSet), Util/TimerSlot.cpp:72 (SlotBitSet)
-DUP-IN-TARGET:0041f000:Util/TimerInit.cpp,Util/TimerSlot.cpp   # audit=UNREVIEWED-U9156; [asi] two bodies: Util/TimerInit.cpp:78 (TimerSlotDataCopy), Util/TimerSlot.cpp:50 (SlotDataCopy)
-DUP-IN-TARGET:00420d40:Util/TimerInit.cpp,Util/TimerSlot.cpp   # audit=UNREVIEWED-U9156; [asi] two bodies: Util/TimerInit.cpp:110 (TimerStructArrayClear), Util/TimerSlot.cpp:96 (SlotArrayClear)
 CROSS-TARGET:00442c80:Util/UtilMid.cpp,Vehicle/ForceIntegrator.cpp   # audit=UNREVIEWED-U9156; exe-only Vehicle/ForceIntegrator.cpp  vs  asi-only Util/UtilMid.cpp
 
 # --- ADDED 2026-10-13 (scr19 arrow fix, work/scr19arrow)
@@ -79,3 +67,7 @@ CROSS-TARGET:004177b0:Ai/AiPreTick.cpp,Race/RuleEngine.cpp   # DELIBERATE until 
 
 # --- ADDED 2026-10-16 (dualcopy3, ROADMAP D4 item 4): keys narrowed after re-anchoring call-throughs
 CROSS-TARGET:004cbd30:D3d9Render/RwWorldStream.cpp,Render/TextureLoader_q6.cpp   # audit=DIFFERS-BEHAVIOUR; narrowed 2026-10-16 (dualcopy3): Audio/MixedC3Sweep.cpp:Orig_StreamRead was a trampoline INTO the original, not a body. Real pair: exe-only RwWorldStream.cpp:Rwl_StreamRead ports only the memory stream (type 3) and emits err 5 on a short read; asi-only TextureLoader_q6.cpp:RwStreamRead dispatches all four stream types. Merge = shared core for the memory path + per-target file/callback thunks. Render file, out of this lane.
+
+# --- dualcopy4 (2026-10-16, ROADMAP D4 group a): 12 lines gone, 39 -> 27. The Timer RVAs 0041eda0/0041f000/00420d40/00422120 (TimerSlot.cpp and
+# TimerSubarrayInit.cpp copies deleted, keys slot_bit_set/slot_array_clear retired), 00431b70 (BucketMixed_t3.cpp copy deleted, key get_dat_007f0f10 retired),
+# 004c5c00 (SpriteCluster.cpp LinkedListStringSearch deleted) and 004b4650 (dead Render/PromoLoop_round22.cpp deleted) each now have ONE body in the asi/exe lists.

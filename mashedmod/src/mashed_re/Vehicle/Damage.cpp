@@ -2,7 +2,7 @@
 //
 // Promoted candidates from Session 4 of c3_batch_j:
 //   0x00419760  VehicleEliminationSlotInit       (vehicle_damage_d4)
-//   0x00420de0  VehicleDamageAccumulatorAdd      (vehicle_damage_d4)
+//   0x00420de0  (VehicleDamageAccumulatorAdd deleted, dualcopy4: Util/PromoLoop_sessionB.cpp:Accum420de0 owns this RVA)
 //   0x00418de0  VehicleEliminationSlotPostInit   (vehicle_damage_d4, EAX-implicit)
 //   0x00467300  VehicleCollisionWinTrigger       (vehicle_promote_c2_b)
 //
@@ -73,45 +73,15 @@ static constexpr std::uintptr_t kDAT_007f0fdc  = 0x007f0fdcu; // collision count
 
 
 // ============================================================================
-// 0x00420de0  VehicleDamageAccumulatorAdd
-//
-// Original 30 bytes. __fastcall(ECX, EDX, stack):
-//   void __fastcall FUN_00420de0(int param_1, int param_2, float param_3);
-//   ECX = param_1 (index), EDX = param_2 (float array base), stack = delta.
-//
-// Body (Ghidra decomp, cited at 0x00420de0):
-//   float v = *(float*)(param_2 + param_1*4) + param_3;
-//   *(float*)(param_2 + param_1*4) = v;
-//   if (v > _DAT_005cd120) {  // _DAT_005cd120 = 0x42480000 = 50.0f
-//       *(float*)(param_2 + param_1*4) = 50.0f;
-//   }
-//
-// MSVC __fastcall passes args 1 and 2 in ECX/EDX. Subsequent args on stack.
-// MSVC decorates as @VehicleDamageAccumulatorAdd@N; we /export alias the
-// undecorated name for the Frida harness.
+// 0x00420de0  VehicleDamageAccumulatorAdd: DELETED (dualcopy4, 2026-10-16, ROADMAP D4)
 // ============================================================================
-
-// _DAT_005cd120: ceiling constant 50.0f (cited at 0x00420df1).
-static constexpr std::uintptr_t kCeilingFloatGlobal = 0x005cd120u;
-
-#pragma comment(linker, "/export:VehicleDamageAccumulatorAdd=@VehicleDamageAccumulatorAdd@12")
-
-// 0x00420de0
-extern "C" __declspec(dllexport)
-void __fastcall VehicleDamageAccumulatorAdd(int param_1, int param_2, float param_3)
-{
-    // Body cited at 0x00420de0..0x00420dfa.
-    float* slot = reinterpret_cast<float*>(param_2 + param_1 * 4);
-    float new_val = *slot + param_3;
-    *slot = new_val;
-    float ceiling = *reinterpret_cast<const float*>(kCeilingFloatGlobal);  // 0x42480000 = 50.0f
-    if (new_val > ceiling) {
-        // Cited at 0x00420df7: writes 0x42480000 (50.0f) back.
-        *slot = ceiling;
-    }
-}
-
-// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(VehicleDamageAccumulatorAdd, 0x00420de0);
+//
+// This was a SECOND body of FUN_00420de0 (never installed: MASS-DISABLED 2026-05-24; no caller). It was plain C float
+// (`float v = *slot + delta; if (v > 50.f) ...`), and the original compares the UNROUNDED 80-bit sum (fst stores f32 but st0
+// keeps the extended value, fcomp at 0x00420df1 reads st0), so the C form diverges at the boundary. The one body is the verbatim
+// naked x87 port Util/PromoLoop_sessionB.cpp:Accum420de0 (installed, registry key accum_420de0, C3 r173). Original: 30 bytes,
+// __fastcall(ECX=idx, EDX=base, [esp+4]=val), ceiling _DAT_005cd120 = 0x42480000 = 50.0f.
+// ref: re/analysis/vehicle_damage_d4/0x00420de0.md
 
 
 // ============================================================================

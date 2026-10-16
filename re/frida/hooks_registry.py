@@ -5932,9 +5932,7 @@ HOOKS = {
             [1, 1],  [1, 0],  [1, 1],  [1, 0],
             [2, 1],  [2, 0],
         ],
-        'path2_tests': [
-            [0, 1], [0, 0], [1, 1],
-        ],
+        'path2_tests':    [{'p2bufs': [], 'p2args': [0, 1]}, {'p2bufs': [], 'p2args': [0, 0]}, {'p2bufs': [], 'p2args': [1, 1]}],
     },
 
     # 0x0041f000  TimerSlotDataCopy  void(int slot, int* dst)
@@ -5956,7 +5954,7 @@ HOOKS = {
         # Test vectors: slot indices 0..9 (same slot read multiple times is valid;
         # the source globals are stable at quiescent main-menu state).
         'path1_tests': [0, 1, 2, 3, 0, 1, 2, 3, 0, 1],
-        'path2_tests': [0, 1, 2],
+        'path2_tests':    [{'p2bufs': [0x40], 'p2args': [0, {'buf': 0}]}, {'p2bufs': [0x40], 'p2args': [1, {'buf': 0}]}, {'p2bufs': [0x40], 'p2args': [2, {'buf': 0}]}],
     },
 
     # 0x00420d40  TimerStructArrayClear  void(void)
@@ -6476,48 +6474,9 @@ HOOKS = {
     # SlotDataCopy was superseded by TimerSlotDataCopy (Util/TimerInit.cpp:78)
     # and no longer exists in the .asi. Use 'timer_slot_data_copy' instead.
 
-    # 0x0041eda0  SlotBitSet  void(int param_1, int param_2)
-    # target = 0x0063dc74 + param_1 * 0x2ac.
-    # if param_2 != 0: *target |= 0x8; else: *target &= ~0x8.
-    # arg_type='entity_field_set': fn(param_1, param_2), reads back
-    # target_global + param_1 * entity_byte_stride as observable uint32.
-    # Note: bit 3 of the target dword must survive; we read it back via
-    # entity_field_set (which reads CONFIG.target_global + p1*stride).
-    'slot_bit_set': {
-        'rva':            0x0041eda0,
-        'export':         'SlotBitSet',
-        'signature':      {'ret': 'void', 'args': ['int32', 'int32']},
-        'arg_type':       'entity_field_set',
-        'target_global':  0x0063dc74,
-        'entity_byte_stride': 0x2ac,
-        'lut_root_delta': 0,
-        'path1_tests': [
-            [0, 0],  [0, 1],  [1, 0],  [1, 1],
-            [2, 0],  [2, 1],  [3, 0],  [3, 1],
-            [0, 0xff], [1, 0],
-        ],
-        'path2_tests': [
-            [0, 0], [0, 1], [1, 0],
-        ],
-    },
+    # dualcopy4 2026-10-16: key 'slot_bit_set' (0x0041eda0, export SlotBitSet) RETIRED: it measured a second body of the same RVA; the one body is key 'timer_bit_field_set'.
 
-    # 0x00420d40  SlotArrayClear  void(void)
-    # 6-iter loop over [0x0063e4c4, 0x0063e554) stride 0x24.
-    # Per iter: memset(ptr-0xc, 0, 8); ptr[-1]=0; *ptr=0; ptr[1]=0; ptr[2]=0.
-    # arg_type='void_write_observe': write sentinel to 0x0063e4c4 (ptr[0]),
-    # call fn, read back â€” if fn works correctly it will write 0 there.
-    'slot_array_clear': {
-        'rva':            0x00420d40,
-        'export':         'SlotArrayClear',
-        'signature':      {'ret': 'void', 'args': []},
-        'arg_type':       'void_write_observe',
-        'target_global':  0x0063e4c4,
-        'lut_root_delta': 0,
-        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
-                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
-                           0x3F800000, 0xBEEFCAFE],
-        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
-    },
+    # dualcopy4 2026-10-16: key 'slot_array_clear' (0x00420d40, export SlotArrayClear) RETIRED: it measured a second body of the same RVA; the one body is key 'timer_array_clear_d40'.
     # 'timer_subarray_init' was a duplicate entry for 0x00422120 added by
     # c3_batch_h-s5 (flagged in frida-sweep-20260517-2121 release notes).
     # The canonical entry for that RVA is 'timer_init_loop' above
@@ -12844,23 +12803,7 @@ HOOKS = {
     # mashedmod/src/mashed_re/Frontend/BucketMixed_t3.cpp
     # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-    # 0x00431b70  GetDat007f0f10  â€” STAGED at C2 (NOT promoted; C3 caller-gate fails).
-    # Pure-leaf uint32(void) getter: returns DAT_007f0f10. read_global Frida diff
-    # is 10/10 GREEN and the reimpl is bit-identical, but the sole caller
-    # FUN_0045d0e0 is C1 (no callee â€” leaf), so the C3 caller-AND-callee gate is
-    # unmet. RH_ScopedInstall is commented out. Re-pickup: promote FUN_0045d0e0.
-    'get_dat_007f0f10': {
-        'rva':            0x00431b70,
-        'export':         'GetDat007f0f10',
-        'signature':      {'ret': 'uint32', 'args': []},
-        'arg_type':       'read_global',
-        'target_global':  0x007f0f10,
-        'lut_root_delta': 0,
-        'path1_tests':    [0x00000000, 0x00000001, 0xDEADBEEF, 0xCAFEBABE,
-                           0x12345678, 0xFFFFFFFF, 0x80000000, 0x55555555,
-                           0xAAAAAAAA, 0x00000000],
-        'path2_tests':    [0x00000000, 0xDEADBEEF, 0xFFFFFFFF],
-    },
+    # dualcopy4 2026-10-16: key 'get_dat_007f0f10' (0x00431b70, export GetDat007f0f10) RETIRED: it measured a second body of the same RVA; the one body is key 'menu_flag_dat_007f0f10_get'.
 
     # 0x00431d90  FrontendPanelFlagAdvance
     # void(void); writes 19 panel-flag globals. Per-flag rule:

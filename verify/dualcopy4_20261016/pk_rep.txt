@@ -1,0 +1,2 @@
+// 0x00405890: PK_405890 DELETED (dualcopy4, 2026-10-16). It was a verbatim naked third copy of the rule-5 predicate; the one body is
+// Race/CollectDone.h:CollectDoneBody405890, read from the two original globals by Race/CollectDone.cpp:Pred405890, which PK_458920 now calls.

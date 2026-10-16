@@ -1,0 +1,178 @@
+── delegate → Accenture  [OK]  repo=Mashed  cost=$0.7706  denials=0  model=sonnet
+
+Survey is read-only and complete. Two things I did not check: whether `PickupTick.cpp:325` and `:400` are on live paths, and the hooks.csv notes text for 0x0042f6b0, 0x00410510, 0x0042fa00 and 0x00405890. Those rows came back as "[Omitted long matching line]", so I report file and confidence only for them. Line numbers are `file:line` under `mashedmod\src\mashed_re\`. Registry lines are in `re\frida\hooks_registry.py`.
+
+## 0x0042f6b0 (MenuModeSync / FUN_0042f6b0)
+- **(1) Bodies**
+  - `Frontend\FrontendState.cpp:71` `extern "C" void __cdecl MenuModeSync()`, installed at `:88`. It is in **both** rsp files (asi:57, exe:101).
+  - `Race\RaceModes.cpp:29` `int SelectionToGameMode(int sel)`, with no `RH_ScopedInstall`. It is **exe only** (exe:83).
+  - Other users: `Frontend\FrontendNav.cpp:180` `HookModeSync` calls the original at 0x0042f6b0 by VA (`:182`). That file is in both rsp files (asi:58, exe:102).
+- **(2) Mechanics**
+  - `MenuModeSync` reads the dword at 0x0067f184 and runs a switch. 0→2, 1→3, 2→4, 3→6, 5→5, 8→7, 9→8, 10→9, 11→10 are written to the dword at 0x0067e9fc (`FrontendState.cpp:73-85`). Other values write nothing and it returns void.
+  - `SelectionToGameMode` has the same switch table but returns the value, and returns -1 for the default (`RaceModes.cpp:30-41`). It touches no globals.
+- **(3) Differences**
+  - The case table is identical. One body writes the 0x0067e9fc global and the other returns the value (-1 means no write).
+  - The exe caller applies it to its own state (`MenuNavSM.cpp:1122-1123`: `if (m >= 0) g_game_state.game_mode = m`).
+- **(4) Callers**
+  - The `MenuModeSync` export has no caller by name. It is reachable only because the hook is installed and the original calls it.
+  - `FrontendNav.cpp:182` is the asi-side wrapper `HookModeSync`. It is passed to `RowMoveBack` as `io.modeSync` at `:194`, inside the installed hook `MenuCursorBack` (`:197`, 0x004323c0).
+  - `SelectionToGameMode` is called at `MenuNavSM.cpp:1122` by `RowModeSync` (`:1121`). A `racemodes_test.cpp:37` test also calls it.
+  - I did not trace who invokes `RowModeSync` in the exe.
+- **(5) Registry:** `menu_mode_sync` (`:1425`), export `MenuModeSync`, `arg_type: 'none'`, ret `uint32`, no args.
+- **(6) Blockers**
+  - `FrontendState.cpp` is already compiled into the exe (rsp:101), so there is no compile blocker.
+  - Absolute addresses are 0x0067f184 and 0x0067e9fc. The exe-side `SelectionToGameMode` has none.
+- **hooks.csv (row 728):** C3, impl, `Frontend/FrontendState.cpp`. The notes were omitted.
+
+## 0x0042ad90 (FUN_0042ad90, kv-iterator)
+- **(1) Bodies**
+  - `Util\PromoLoop_sessionB.cpp:2166` `uint32 __cdecl Find42ad90(uint8* arr, uint32 key, uint32 n)`.
+  - `PromoLoop_sessionB.cpp:2188` naked `Find42ad90_RegAbi`, installed at `:2200`. It is **asi only** (asi:310).
+  - `Frontend\MenuNavSM.cpp:378` `int KvLookup(const uint32* table, uint32 tag_key, int occurrence)`. It is **exe only** (exe:113) and registers no hook.
+- **(2) Mechanics**
+  - `Find42ad90` returns 0xffffffff if `arr` is null. Otherwise it walks `a[ecx+1]` until the 0xff070000 terminator. At the (n+1)-th element equal to `key` it returns `a[ecx+1]`, else 0xffffffff (`:2167-2176`).
+  - `Find42ad90_RegAbi` pushes `edx`, `edi`, `ebx`, `edx`, calls `Find42ad90`, then `add esp,0Ch` and `pop edx`. The original takes its arguments in EDX, EBX and EDI (`:2157-2161`).
+  - `KvLookup` has the same walk. A null table gives -1. It tests the terminator, then the match, with an `occ` counter starting at 0 and `table[idx+1]` as the next element (`MenuNavSM.cpp:379-397`). The terminator constant is `kTermVal = 0xff070000` (`:360`).
+- **(3) Differences**
+  - The first element is handled differently. `Find42ad90` checks the terminator once up front and tests `eax == key` before the terminator check each pass. `KvLookup` checks the terminator first on every pass.
+  - Both return the next element on the n-th match, so the logic reads as the same walk, but I did not run it.
+  - The return type is `uint32` against `int`, which is cosmetic.
+  - The asi side needs a register-ABI shim and the exe side does not.
+- **(4) Callers**
+  - `Find42ad90` is called by `Find42ad90_RegAbi` at `:2194`.
+  - `KvLookup` is called at `MenuNavSM.cpp:436, 606, 637, 954, 982, 989, 1002-1003, 1056, 1561`, and by `NavTest_KvLookup` at `:1530`.
+  - The first-pass grep for the RVA turned up no other call sites under `src/mashed_re`.
+- **(5) Registry:** `find_42ad90` (`:16633`), export `Find42ad90`, `arg_type: 'edx_ebx_edi_find'`, signature `(pointer, uint32, uint32)` returning `uint32`.
+- **(6) Blockers**
+  - The asi body needs `HookSystem`'s `RH_ScopedInstall` and the naked MSVC `__asm`. It uses no absolute addresses, only registers.
+  - The exe already has its own body (`KvLookup`).
+- **hooks.csv (row 4672):** C3, impl, `Frontend/MenuNavSM.cpp`, evidence `green-earlywindow-r162`. The notes say a sparse kv-table walk with sentinel 0xff070000 and implicit EBX/EDI keys. The reimplementation is named `Find42ad90`.
+
+## 0x0042fa00 (MenuTeamSelectTick / PlayerSlotEdgeAdjust)
+- **(1) Bodies**
+  - `Frontend\SkeletonAndScatter_t6.cpp:247` `void __cdecl PlayerSlotEdgeAdjust()`, installed at `:284`. It is **asi only** (asi:187).
+  - `Frontend\MenuNav.cpp:259` `void __cdecl MenuTeamSelectTick()`, deliberately **not installed** (`:286-297`). It is in **both** rsp files (asi:56, exe:112).
+- **(2) Mechanics**
+  - Both read the car-slot dwords at 0x007f1a14, 0x007f1a24, 0x007f1a34 and 0x007f1a44, and clear the dword at 0x0067ea88 if it equals 2. They loop over 12 profiles (`0x007f1504 + i*0x4c`, end 0x007f1894), with table entries at `0x0067e938 + i*12`.
+  - For a profile that is one of the four slots, each body does the following:
+    - Up edge: active byte [0] != 0, processed byte [0] == 0, then `*team -= 1`.
+    - Down edge: active byte [1] != 0, processed byte [1] == 0, `*team < 2`, then `*team += 1`.
+  - The MenuNav version reads active bytes at 0x007f1044 + i*0x4c (`MenuNav.cpp:254, 274-279`).
+  - The asi version reads the same bytes as `pcVar3[-0x4c0]` and `pcVar3[-0x4bf]` off the processed pointer.
+- **(3) Differences**
+  - The up guard is `*team != 0` in MenuNav (`:280`) and `*piVar5 > 0` in the asi copy (`:268`).
+  - The asi copy adds a trailing clamp, `if (<0) =0` and `if (>2) =2` (`:276-277`). MenuNav has none. `MenuNav.cpp:299-304` claims the exe copy matches the original and the asi copy does not.
+  - Both are equivalent for values already in [0,2].
+- **(4) Callers**
+  - `MenuTeamSelectTick` is called at `exe_main.cpp:5945` (declared at `:710`), under `if (team)`.
+  - `PlayerSlotEdgeAdjust` has no caller by name. The original's sole caller is FUN_0043c000 at 0x0043c44a (`MenuNav.cpp:221`), and `Util\UtilMid.cpp:735` lists the call-site pair 0x0043c425 / 0x0043c44a.
+- **(5) Registry**
+  - `player_slot_edge_adjust` (`:12212`), export `PlayerSlotEdgeAdjust`, `arg_type: 'none'`.
+  - `menu_team_select_tick` (`:21922`), export `MenuTeamSelectTick`, `arg_type: 'cache_setter_observe'`. A comment near `:22003` says the RVA points at this export while the live install is the other one.
+- **(6) Blockers**
+  - `MenuNav.cpp` is already in the exe build, so the copy there compiles standalone.
+  - `SkeletonAndScatter_t6.cpp` is not in the exe list. `MenuNav.cpp:289-292` says it is PIZ/Im2D-heavy.
+  - The absolute addresses above exist only in the original process image. In the standalone they are valid only because the exe maps those addresses itself.
+- **hooks.csv (row 1311):** C2, impl, `Frontend/SkeletonAndScatter_t6.cpp`. The notes were omitted. The audit csv row 55 lists it as C3.
+
+## 0x0042d3e0 (MenuEntryArrayInit / RecordsZero)
+- **(1) Bodies**
+  - `Frontend\MenuInit.cpp:73` `void __cdecl MenuEntryArrayInit()`, installed at `:107`. It is in **both** rsp files (asi:71, exe:99).
+  - `Frontend\MenuNavSM.cpp:402` `void RecordsZero()`. It is **exe only** (exe:113) and registers no hook.
+- **(2) Mechanics**
+  - `MenuEntryArrayInit` loops from the pointer 0x00898ac4 to 0x008990dc exclusive, advancing 13 dwords (52 bytes) per entry. In each entry it writes 14 selected offsets to zero: dwords at -4, 0, +4, +8, +16, +20, +24, +32, +36, +40, and bytes at +9 to +12 (`:75-103`). It leaves +28 untouched and returns void.
+  - `RecordsZero` does `memset(g_records, 0, sizeof(g_records))` and sets `g_record_count = 0` (`:403-404`).
+- **(3) Differences**
+  - They act on different memory. `MenuEntryArrayInit` writes the original's array at 0x00898ac0, partially. `RecordsZero` zeroes the standalone's own `g_records` and a counter.
+- **(4) Callers**
+  - `MenuEntryArrayInit` is called at `exe_main.cpp:8686` and `:8833`. Those are the Milestone B7 probe and step 5 of a bring-up routine. I did not check whether either is reachable in a normal run.
+  - `RecordsZero` is called at `MenuNavSM.cpp:599`.
+- **(5) Registry:** `menu_entry_array_init` (`:4162`), export `MenuEntryArrayInit`, `arg_type: 'void_write_observe'`, `target_global: 0x00898ac0`.
+- **(6) Blockers**
+  - `MenuInit.cpp` is already in the exe build.
+  - It uses the absolute range 0x00898ac4 to 0x008990dc.
+  - `exe_main.cpp:8431` comments that the exe must have fixed addresses available.
+- **hooks.csv (row 1303):** C3, impl, `Frontend/MenuInit.cpp`.
+
+## 0x00410510 (Race::EvaluateResult)
+- **(1) Bodies**
+  - `Race\ScoringHooks.cpp:515` `int __cdecl EvalResult_00410510(void)`, installed at `:617`. It is **asi only** (asi:180).
+  - `Race\RuleEngine.cpp:143` `int EvaluateResult(int rule, const Cars& c, const Persist& p, bool* p0Won)`, declared at `RuleEngine.h:131`. It is **exe only** (exe:84) and has no hook.
+- **(2) Mechanics**
+  - `EvalResult_00410510` reads and writes the original's globals and calls original functions by VA (`:89-98`):
+    - It clears the dword at 0x0063b90c and returns 0 if FUN_0042f6a0 gives 2. It then scans scores and checks the score target (8, or more than 11 with 4 participants).
+    - It switches on `GameMode()` for rules 4, 5, 7, 8, 9 and 10.
+    - On conclusion it calls FUN_0045bed0, FUN_0045bf30 and FUN_00458f80, and writes 0x0063ba8c = 0xb, 0x0063b90c = 1, 0x0063b910 = 0x442f0000, 0x0063b918, 0x0063b91c, 0x0063b914 and 0x007f0fcc (`:594-611`).
+    - It calls FUN_00448700, and calls FUN_0044df80 when FUN_00426c00 returns 0x26.
+    - It returns the winner (1-based), -1 or 0.
+  - `EvaluateResult` is pure. It takes `Cars` and `Persist` structs and an out-param `p0Won`, and returns the winner (`RuleEngine.cpp:143-227`). The comment at `:222-225` says the end-block side effects are left to the race layer.
+- **(3) Differences**
+  - Case 7 loop bound: `c.participants` (`RuleEngine.cpp:186`) against a re-read of FUN_0040e340 (`ScoringHooks.cpp:557, 562`).
+  - The exe version omits every end-block global write and callee.
+  - The exe version sets `*p0Won` with `won0 ||`, which `ScoringHooks.cpp:609` has no counterpart for. All three points match the audit csv row 27.
+  - The exe version handles rule 10 differently as well. It compares `p.timer` against 0 (`:210`) where the asi version compares the dword pair 0x007f0fe4 and 0x005d757c (`ScoringHooks.cpp:587`).
+- **(4) Callers**
+  - `RuleEngine.cpp:EvaluateResult` is called at `D3d9Render\TrackRenderer.cpp:7150` and from `Race\tests\ruleengine_test.cpp`.
+  - `Vehicle\Replay.cpp:372` calls the original by VA (`kFn_FUN_00410510`, `:65`) inside `TimeTrialRecordPlayback`, which is installed at `:379`. Replay.cpp is in the asi list (asi:26).
+  - The asi body `EvalResult_00410510` has no caller by name.
+- **(5) Registry:** NOT FOUND in `hooks_registry.py`. `re\frida\verify_scoring_hooks.py:34` maps `"0x00410510": "EvalResult_00410510"`.
+- **(6) Blockers**
+  - The asi body cannot move to the exe. It calls these originals by VA: 0x0042f6a0, 0x0040b6d0, 0x0042f500, 0x0046c7b0, 0x00417740, 0x00417730, 0x00405890, 0x0046cbb0, 0x0045bed0, 0x0045bf30, 0x00458f80, 0x00448700, 0x00426c00, 0x0044df80 and 0x0040e340.
+  - It also uses the absolute globals listed in (2) plus 0x005cc31c, 0x005cc9c8, 0x005cc574, 0x005d757c and 0x007f0fe4.
+- **hooks.csv (row 874):** C2, impl, `Race/ScoringHooks.cpp`, category `save`. The notes were omitted. The audit csv row 27 lists it as C3.
+
+## 0x00405890 (Pred405890 / CollectAllDone)
+- **(1) Bodies**
+  - `Util\PromoLoop_round78.cpp:17` `uint32 __cdecl Pred405890(void)`, installed at `:22`. It is **asi only** (asi:309).
+  - `Race\RuleEngine.cpp:11` `bool CollectAllDone(const Persist& p)`, declared at `RuleEngine.h:90`. It is **exe only** (exe:84).
+  - A third copy is not in the allowlist rows you gave me. `Gameplay\PickupCollect_naked.inc:205` is a naked `PK_405890`, included at `PickupTick.cpp:164`. PickupTick.cpp is **exe only** (exe:183) and the copy has no hook.
+- **(2) Mechanics**
+  - `Pred405890` reads the dword at 0x0063a5d0 and returns 0 if it is zero. Otherwise it returns 1 if the dword at 0x0063a5d4 equals it, else 0 (`:18-20`).
+  - `CollectAllDone` returns false if `p.collectTotal == 0`, else `collectDone == collectTotal` (`:12-13`).
+  - `PK_405890` is naked asm doing the same reads of 0x0063a5d0 and 0x0063a5d4 and the `sete cl` (`:207-217`).
+- **(3) Differences**
+  - None in logic. The asi and naked copies read the original's addresses and the exe version reads a struct. The audit csv row 3 calls it IDENTICAL, with bool against uint32 cosmetic.
+- **(4) Callers**
+  - `CollectAllDone` is called at `RuleEngine.cpp:81` and `:181`.
+  - `PK_405890` is called at `PickupCollect_naked.inc:25` inside `PK_458920`. `PK_458920` is called through a function pointer at `PickupTick.cpp:325` and `:400`. I did not trace whether those are live.
+  - `ScoringHooks.cpp:92` calls the original by VA (`FUN_00405890`), from `EvalResult_00410510` at `:555`.
+  - `Pred405890` has no caller by name.
+- **(5) Registry:** `pred_405890` (`:17043`), export `Pred405890`, `arg_type: 'two_global_predicate'`, gate 0x0063a5d0, `target_global` 0x0063a5d4.
+- **(6) Blockers**
+  - `Pred405890` needs only the two absolute addresses and `HookSystem.h`. It is trivial to link into the exe, provided that exe maps 0x0063a5d0 and 0x0063a5d4.
+  - The exe already has two substitutes.
+- **hooks.csv (row 942):** C4, impl, `Util/PromoLoop_round78.cpp`. The notes were omitted.
+
+## 0x00420de0 (FUN_00420de0, vehicle damage accumulate)
+- **(1) Bodies**
+  - `Util\PromoLoop_sessionB.cpp:2527` naked `void __cdecl Accum420de0(void)`, installed at `:2544`. It is **asi only** (asi:310).
+  - `Vehicle\Damage.cpp:101` `void __fastcall VehicleDamageAccumulatorAdd(int param_1, int param_2, float param_3)`. It is **asi only** (asi:27) and its install is commented out at `:114` ("MASS-DISABLED 2026-05-24").
+  - Neither is in the exe, so there is no exe-side body.
+- **(2) Mechanics**
+  - `Accum420de0` loads `val` from `[esp+0x0c]` and adds `[edx+ecx*4]`, with `edx = base` (`[esp+8]`) and `ecx = idx` (`[esp+4]`). It does `fst` back, `fcomp` against the dword at 0x005CD120, and writes 0x42480000 (50.0f) when the unrounded sum exceeds it (`:2530-2541`). The comment says the compare uses the 80-bit sum.
+  - `VehicleDamageAccumulatorAdd` computes `*slot = *slot + param_3` in C float, then reads the ceiling at 0x005cd120 and writes it back if `new_val > ceiling` (`:104-111`).
+- **(3) Differences**
+  - Naked x87 against compiled C. `Accum420de0` compares the 80-bit unrounded sum, so its comment says a plain-C version would differ at the boundary. This is the only claim in the sources on that point, and `Damage.cpp` does not address it.
+  - The ABI also differs. `Accum420de0` is `__cdecl` with stack arguments. `VehicleDamageAccumulatorAdd` is `__fastcall` with the first two in ECX/EDX.
+  - Only `Accum420de0` is installed. The audit csv row 40 marks both as UNREVIEWED.
+- **(4) Callers**
+  - Neither has a caller by name under `src/mashed_re`. `Accum420de0` is reachable only because it is installed and the original calls 0x00420de0.
+  - `VehicleDamageAccumulatorAdd` is dead, because its install is commented out and nothing calls it.
+- **(5) Registry:** `accum_420de0` (`:960`), export `Accum420de0`, `arg_type: 'fastcall_float_clamp'`, signature `(uint32, pointer, float)`. No key for `VehicleDamageAccumulatorAdd` was found in `re\frida`.
+- **(6) Blockers**
+  - The one absolute address is 0x005CD120, the 50.0f constant in the original's `.rdata`. It is read through `ds:[05CD120h]` in the naked version and as a pointer in `Damage.cpp:95`.
+  - There are no callee dependencies.
+  - The naked body needs MSVC inline asm.
+- **hooks.csv (row 1362):** C3, impl. The file column holds `re/analysis/vehicle_damage_d4/0x00420de0.md`, not a source file. The notes were omitted.
+
+## Allowlist lines (`re\tools\dual_copy_allowlist.txt`)
+- `:28` DUP-IN-TARGET 0042d3e0, audit=DIFFERS-BEHAVIOUR.
+- `:29` DUP-IN-TARGET 0042f6b0, not in audit.
+- `:37` DUP-IN-TARGET 00420de0, UNREVIEWED.
+- `:39` DUP-IN-TARGET 0042fa00, DIFFERS-BEHAVIOUR.
+- `:45` CROSS-TARGET 00405890, IDENTICAL.
+- `:47` CROSS-TARGET 00410510, DIFFERS-BEHAVIOUR.
+- `:48` CROSS-TARGET 0042ad90, not in audit.
+
+Two entries are out of step with the code. The allowlist's `DUP-IN-TARGET:00420de0` row says `[asi]` and names `PromoLoop_sessionB.cpp:2532` and `Damage.cpp:100`, while the install at `:2544` is on a different line from the body. The audit csv also cites `exe_main.cpp:8214/:8215` for `MenuEntryArrayInit`, but the calls are now at `:8686` and `:8833`, and `MenuNavSM.cpp:595` is now `:599`.
+(raw JSON: C:\Users\maria\AppData\Local\Temp\fleet-delegate-c41c05cf1ee24b1c99cc0ce18651d826.json)

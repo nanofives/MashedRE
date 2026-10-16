@@ -1,0 +1,4 @@
+// dualcopy4 (2026-10-16): the C body Find42ad90 (stack ABI, the export the registry key find_42ad90 drives) moved to
+// Frontend/KvFind.cpp, compiled into BOTH targets, so the exe's menu-table lookup (Frontend/MenuNavSM.cpp:KvLookup) runs the same
+// body the original-side evidence covers. The naked shim below still marshals EDX/EBX/EDI onto the stack and calls it.
+extern "C" std::uint32_t __cdecl Find42ad90(std::uint8_t* arr, std::uint32_t key, std::uint32_t n);
