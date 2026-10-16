@@ -1,0 +1,16 @@
+{
+ "track": 9,
+ "name": "Forest",
+ "attempt": 1,
+ "rows": 931,
+ "racing_rows": 141,
+ "race_start": 790,
+ "shot_rows": [
+  820,
+  860,
+  895
+ ],
+ "piz": [
+  "TOASTART\\TRACKS\\FOREST.PIZ"
+ ]
+}

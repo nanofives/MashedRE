@@ -1,0 +1,16 @@
+{
+ "track": 5,
+ "name": "Sands",
+ "attempt": 1,
+ "rows": 1219,
+ "racing_rows": 165,
+ "race_start": 1054,
+ "shot_rows": [
+  1084,
+  1124,
+  1159
+ ],
+ "piz": [
+  "TOASTART\\TRACKS\\SANDS.PIZ"
+ ]
+}
