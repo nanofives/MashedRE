@@ -1,0 +1,3427 @@
+{
+ "a": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\log\\d1r1\\orig_city\\orig_row_00801.draws.json",
+ "b": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\log\\rfx\\final_hud\\city\\d1r2\\stand_row_00801.draws.json",
+ "matched": 356,
+ "na": 496,
+ "nb": 660,
+ "tri_a": 41692,
+ "tri_b": 98097,
+ "rows": [
+  {
+   "kind": "MISSING",
+   "tex": "-",
+   "n": 1,
+   "offscreen": 0,
+   "detail": "A-only 1 draws 0 tri (0 offscreen); first k83 pt2 tri=None tex=- tex1=- bb=- src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=1",
+   "a_idx": [
+    472
+   ],
+   "b_idx": [],
+   "cite": "C03-UNTEXTURED"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "Apart5windows NT",
+   "n": 5,
+   "offscreen": 4,
+   "detail": "A-only 5 draws 720 tri (4 offscreen); first k82 pt5 tri=144 tex=Apart5windows NT tex1=- bb=[55.09,-8.22,55.86,67.57,8.48,64.91] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2",
+   "a_idx": [
+    220,
+    231,
+    242,
+    253,
+    264
+   ],
+   "b_idx": [],
+   "cite": "C12-CITYPLACE"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "bark",
+   "n": 26,
+   "offscreen": 26,
+   "detail": "A-only 26 draws 416 tri (26 offscreen); first k82 pt5 tri=16 tex=bark tex1=- bb=[54.34,0.01,-21.21,54.58,0.74,-20.98] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2",
+   "a_idx": [
+    281,
+    283,
+    285,
+    287,
+    289,
+    291,
+    293,
+    295,
+    297,
+    299,
+    301,
+    303,
+    305,
+    307,
+    309,
+    311,
+    313,
+    315,
+    317,
+    319,
+    321,
+    323,
+    325,
+    327,
+    329,
+    331
+   ],
+   "b_idx": [],
+   "cite": "C12-CITYPLACE"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "brooklyn1",
+   "n": 5,
+   "offscreen": 5,
+   "detail": "A-only 5 draws 60 tri (5 offscreen); first k82 pt5 tri=12 tex=brooklyn1 tex1=- bb=[62.67,3.46,38.08,67.48,3.54,42.43] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2",
+   "a_idx": [
+    213,
+    224,
+    235,
+    246,
+    257
+   ],
+   "b_idx": [],
+   "cite": "C12-CITYPLACE"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "buildconc2",
+   "n": 5,
+   "offscreen": 4,
+   "detail": "A-only 5 draws 320 tri (4 offscreen); first k82 pt5 tri=64 tex=buildconc2 tex1=- bb=[55.09,-1.12,47.27,67.57,6.87,64.91] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2",
+   "a_idx": [
+    215,
+    226,
+    237,
+    248,
+    259
+   ],
+   "b_idx": [],
+   "cite": "C12-CITYPLACE"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "CarGloss",
+   "n": 4,
+   "offscreen": 0,
+   "detail": "A-only 4 draws 32 tri (0 offscreen); first k82 pt5 tri=6 tex=CarGloss tex1=- bb=[53.78,0.22,-25.95,53.96,0.28,-25.65] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=2",
+   "a_idx": [
+    419,
+    466,
+    417,
+    464
+   ],
+   "b_idx": [],
+   "cite": "C17-CAR-GLOSS"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "exp_cloud2",
+   "n": 3,
+   "offscreen": 0,
+   "detail": "A-only 3 draws 384 tri (0 offscreen); first k82 pt4 tri=128 tex=exp_cloud2 tex1=- bb=[57.07,0.12,-26.73,57.56,0.16,-26.48] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=2",
+   "a_idx": [
+    475,
+    476,
+    477
+   ],
+   "b_idx": [],
+   "cite": "C05-PARTICLE"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "Grass",
+   "n": 26,
+   "offscreen": 26,
+   "detail": "A-only 26 draws 1300 tri (26 offscreen); first k82 pt5 tri=50 tex=Grass tex1=- bb=[54.39,0.74,-21.18,54.68,1.76,-20.74] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2",
+   "a_idx": [
+    282,
+    284,
+    286,
+    288,
+    290,
+    292,
+    294,
+    296,
+    298,
+    300,
+    302,
+    304,
+    306,
+    308,
+    310,
+    312,
+    314,
+    316,
+    318,
+    320,
+    322,
+    324,
+    326,
+    328,
+    330,
+    332
+   ],
+   "b_idx": [],
+   "cite": "C12-CITYPLACE"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "Headlight",
+   "n": 1,
+   "offscreen": 0,
+   "detail": "A-only 1 draws 52 tri (0 offscreen); first k82 pt4 tri=52 tex=Headlight tex1=- bb=[280.92,168.19,0.98,409.53,443.53,0.99] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=1",
+   "a_idx": [
+    480
+   ],
+   "b_idx": [],
+   "cite": "C09-FX"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "lensflare-fs8",
+   "n": 2,
+   "offscreen": 0,
+   "detail": "A-only 2 draws 2420 tri (0 offscreen); first k82 pt4 tri=2208 tex=lensflare-fs8 tex1=- bb=[-6.92,-8.09,-46.85,101.61,-0.96,79.26] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=2",
+   "a_idx": [
+    167,
+    478
+   ],
+   "b_idx": [],
+   "cite": "C09-FX"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "oaktreesprite",
+   "n": 1,
+   "offscreen": 0,
+   "detail": "A-only 1 draws 216 tri (0 offscreen); first k82 pt4 tri=216 tex=oaktreesprite tex1=- bb=[45.10,0.24,-23.12,105.45,3.22,64.24] src=d3d Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2",
+   "a_idx": [
+    402
+   ],
+   "b_idx": [],
+   "cite": "C12-CITYPLACE"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "Path2",
+   "n": 5,
+   "offscreen": 4,
+   "detail": "A-only 5 draws 130 tri (4 offscreen); first k82 pt5 tri=26 tex=Path2 tex1=- bb=[55.22,0.00,42.59,67.54,3.88,64.91] src=d3d Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2",
+   "a_idx": [
+    223,
+    234,
+    245,
+    256,
+    267
+   ],
+   "b_idx": [],
+   "cite": "C12-CITYPLACE"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "PUGlow",
+   "n": 1,
+   "offscreen": 0,
+   "detail": "A-only 1 draws 20 tri (0 offscreen); first k82 pt4 tri=20 tex=PUGlow tex1=- bb=[-4.87,-0.41,-46.64,98.31,3.08,63.68] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2",
+   "a_idx": [
+    479
+   ],
+   "b_idx": [],
+   "cite": "C06-PICKUP"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "residential02 NT",
+   "n": 5,
+   "offscreen": 4,
+   "detail": "A-only 5 draws 190 tri (4 offscreen); first k82 pt5 tri=38 tex=residential02 NT tex1=- bb=[62.59,-4.61,46.91,67.63,3.62,55.98] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2",
+   "a_idx": [
+    216,
+    227,
+    238,
+    249,
+    260
+   ],
+   "b_idx": [],
+   "cite": "C12-CITYPLACE"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "rooftop",
+   "n": 5,
+   "offscreen": 4,
+   "detail": "A-only 5 draws 125 tri (4 offscreen); first k82 pt5 tri=25 tex=rooftop tex1=- bb=[55.65,3.46,33.89,67.19,8.48,63.95] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2",
+   "a_idx": [
+    222,
+    233,
+    244,
+    255,
+    266
+   ],
+   "b_idx": [],
+   "cite": "C12-CITYPLACE"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "RWObjShad",
+   "n": 1,
+   "offscreen": 0,
+   "detail": "A-only 1 draws 24 tri (0 offscreen); first k82 pt4 tri=24 tex=RWObjShad tex1=- bb=[43.44,0.03,-28.54,96.02,0.03,2.54] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    473
+   ],
+   "b_idx": [],
+   "cite": "C04-SHADOW"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "shopfront02",
+   "n": 5,
+   "offscreen": 4,
+   "detail": "A-only 5 draws 60 tri (4 offscreen); first k82 pt5 tri=12 tex=shopfront02 tex1=- bb=[62.70,-1.12,37.99,67.69,0.66,46.96] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2",
+   "a_idx": [
+    217,
+    228,
+    239,
+    250,
+    261
+   ],
+   "b_idx": [],
+   "cite": "C12-CITYPLACE"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "shopfront04",
+   "n": 5,
+   "offscreen": 4,
+   "detail": "A-only 5 draws 30 tri (4 offscreen); first k82 pt5 tri=6 tex=shopfront04 tex1=- bb=[62.73,-1.12,33.54,67.72,0.66,38.05] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2",
+   "a_idx": [
+    218,
+    229,
+    240,
+    251,
+    262
+   ],
+   "b_idx": [],
+   "cite": "C12-CITYPLACE"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "shops",
+   "n": 5,
+   "offscreen": 4,
+   "detail": "A-only 5 draws 50 tri (4 offscreen); first k82 pt5 tri=10 tex=shops tex1=- bb=[62.67,-4.89,38.02,67.70,3.54,42.53] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2",
+   "a_idx": [
+    214,
+    225,
+    236,
+    247,
+    258
+   ],
+   "b_idx": [],
+   "cite": "C12-CITYPLACE"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "smoke",
+   "n": 1,
+   "offscreen": 0,
+   "detail": "A-only 1 draws 54 tri (0 offscreen); first k82 pt4 tri=54 tex=smoke tex1=- bb=[55.18,-0.21,-27.47,58.17,0.51,-24.19] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2",
+   "a_idx": [
+    474
+   ],
+   "b_idx": [],
+   "cite": "C05-PARTICLE"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "windows03 NT",
+   "n": 5,
+   "offscreen": 4,
+   "detail": "A-only 5 draws 160 tri (4 offscreen); first k82 pt5 tri=32 tex=windows03 NT tex1=- bb=[62.70,-7.30,33.54,67.72,7.42,38.11] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2",
+   "a_idx": [
+    219,
+    230,
+    241,
+    252,
+    263
+   ],
+   "b_idx": [],
+   "cite": "C12-CITYPLACE"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "windows06 NT",
+   "n": 5,
+   "offscreen": 4,
+   "detail": "A-only 5 draws 100 tri (4 offscreen); first k82 pt5 tri=20 tex=windows06 NT tex1=- bb=[62.64,-5.40,42.42,67.66,4.04,46.96] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2",
+   "a_idx": [
+    221,
+    232,
+    243,
+    254,
+    265
+   ],
+   "b_idx": [],
+   "cite": "C12-CITYPLACE"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "@gen:particle",
+   "n": 1,
+   "offscreen": 0,
+   "detail": "B-only 1 draws 150 tri (0 offscreen); first k83 pt4 tri=150 tex=@gen:particle tex1=- bb=[25.39,9.87,-64.58,93.27,40.54,7.94] src=d3d Z=1 ZW=0 ZF=4 AT=0 AREF=0 AF=0 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [],
+   "b_idx": [
+    20
+   ],
+   "cite": "C05-PARTICLE"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "@gen:pickup",
+   "n": 1,
+   "offscreen": 0,
+   "detail": "B-only 1 draws 20 tri (0 offscreen); first k83 pt4 tri=20 tex=@gen:pickup tex1=- bb=[-5.31,-0.36,-47.33,98.74,4.20,64.37] src=d3d Z=1 ZW=0 ZF=4 AT=0 AREF=0 AF=0 AB=1 SRC=5 DST=2 CULL=1",
+   "a_idx": [],
+   "b_idx": [
+    21
+   ],
+   "cite": "C06-PICKUP"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "ads",
+   "n": 2,
+   "offscreen": 2,
+   "detail": "B-only 2 draws 605 tri (2 offscreen); first k82 pt4 tri=377 tex=ads tex1=- bb=[12.87,1.76,-46.94,32.62,9.58,47.34] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [],
+   "b_idx": [
+    22,
+    327
+   ],
+   "cite": "C01-CULL"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "ads1",
+   "n": 1,
+   "offscreen": 1,
+   "detail": "B-only 1 draws 160 tri (1 offscreen); first k82 pt4 tri=160 tex=ads1 tex1=- bb=[26.70,1.84,19.50,29.23,3.95,20.66] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [],
+   "b_idx": [
+    43
+   ],
+   "cite": "C01-CULL"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "Advantage",
+   "n": 92,
+   "offscreen": 0,
+   "detail": "B-only 92 draws 40792 tri (0 offscreen); first k82 pt4 tri=144 tex=Advantage tex1=#128x128:26 bb=[54.02,0.04,-25.99,54.36,0.22,-25.59] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [],
+   "b_idx": [
+    495,
+    539,
+    583,
+    627,
+    494,
+    538,
+    582,
+    626,
+    491,
+    535,
+    579,
+    623,
+    506,
+    507,
+    508,
+    509,
+    550,
+    551,
+    552,
+    553,
+    594,
+    595,
+    596,
+    597,
+    638,
+    639,
+    640,
+    641,
+    493,
+    537,
+    581,
+    625,
+    483,
+    527,
+    571,
+    615,
+    497,
+    541,
+    585,
+    629,
+    496,
+    540,
+    584,
+    628,
+    487,
+    531,
+    575,
+    619,
+    499,
+    543,
+    587,
+    631,
+    479,
+    523,
+    567,
+    611,
+    501,
+    545,
+    589,
+    633,
+    500,
+    544,
+    588,
+    632,
+    477,
+    521,
+    565,
+    609,
+    488,
+    532,
+    576,
+    620,
+    492,
+    536,
+    580,
+    624,
+    469,
+    513,
+    557,
+    601,
+    510,
+    554,
+    598,
+    642,
+    498,
+    542,
+    586,
+    630,
+    485,
+    529,
+    573,
+    617
+   ],
+   "cite": "C02-CARLOD"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "AdvantageSmall",
+   "n": 16,
+   "offscreen": 0,
+   "detail": "B-only 16 draws 10116 tri (0 offscreen); first k82 pt4 tri=618 tex=AdvantageSmall tex1=- bb=[53.67,0.00,-26.02,54.65,0.31,-25.58] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [],
+   "b_idx": [
+    471,
+    515,
+    559,
+    603,
+    472,
+    516,
+    560,
+    604,
+    470,
+    514,
+    558,
+    602,
+    473,
+    517,
+    561,
+    605
+   ],
+   "cite": "C02-CARLOD"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "Apart2 NT",
+   "n": 1,
+   "offscreen": 1,
+   "detail": "B-only 1 draws 2 tri (1 offscreen); first k82 pt4 tri=2 tex=Apart2 NT tex1=- bb=[-6.64,6.95,-14.02,-6.64,7.10,-11.61] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [],
+   "b_idx": [
+    27
+   ],
+   "cite": "C01-CULL"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "Arrows",
+   "n": 17,
+   "offscreen": 17,
+   "detail": "B-only 17 draws 34 tri (17 offscreen); first k82 pt4 tri=2 tex=Arrows tex1=- bb=[36.14,2.18,-39.49,37.19,2.54,-39.49] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [],
+   "b_idx": [
+    292,
+    294,
+    296,
+    298,
+    300,
+    302,
+    304,
+    306,
+    308,
+    310,
+    312,
+    314,
+    316,
+    319,
+    321,
+    323,
+    325
+   ],
+   "cite": "C01-CULL"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "Bits",
+   "n": 17,
+   "offscreen": 17,
+   "detail": "B-only 17 draws 456 tri (17 offscreen); first k82 pt4 tri=10 tex=Bits tex1=- bb=[36.14,2.18,-39.51,37.19,2.54,-39.49] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [],
+   "b_idx": [
+    293,
+    295,
+    297,
+    299,
+    301,
+    303,
+    305,
+    307,
+    309,
+    311,
+    313,
+    315,
+    317,
+    320,
+    322,
+    324,
+    326
+   ],
+   "cite": "C01-CULL"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "Blads",
+   "n": 6,
+   "offscreen": 6,
+   "detail": "B-only 6 draws 24 tri (6 offscreen); first k81 pt4 tri=4 tex=Blads tex1=- bb=[71.57,3.37,53.32,72.23,4.22,54.36] src=d3d Z=1 ZW=1 ZF=4 AT=1 AREF=48 AF=5 AB=0 SRC=0 DST=0 CULL=1",
+   "a_idx": [],
+   "b_idx": [
+    1,
+    2,
+    7,
+    8,
+    17,
+    18
+   ],
+   "cite": "C01-CULL"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "BrickWall",
+   "n": 1,
+   "offscreen": 1,
+   "detail": "B-only 1 draws 162 tri (1 offscreen); first k82 pt4 tri=162 tex=BrickWall tex1=- bb=[10.25,-0.66,43.80,34.88,9.94,85.40] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [],
+   "b_idx": [
+    36
+   ],
+   "cite": "C01-CULL"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "BrickWallarrows",
+   "n": 1,
+   "offscreen": 1,
+   "detail": "B-only 1 draws 74 tri (1 offscreen); first k82 pt4 tri=74 tex=BrickWallarrows tex1=- bb=[23.05,0.23,56.05,32.50,2.12,69.08] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [],
+   "b_idx": [
+    35
+   ],
+   "cite": "C01-CULL"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "buildconc2",
+   "n": 2,
+   "offscreen": 2,
+   "detail": "B-only 2 draws 205 tri (2 offscreen); first k82 pt4 tri=48 tex=buildconc2 tex1=- bb=[-8.94,0.00,-48.61,-1.45,0.33,-21.37] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [],
+   "b_idx": [
+    329,
+    25
+   ],
+   "cite": "C12-CITYPLACE"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "Camstand",
+   "n": 8,
+   "offscreen": 8,
+   "detail": "B-only 8 draws 1300 tri (8 offscreen); first k82 pt4 tri=356 tex=Camstand tex1=- bb=[-7.44,1.13,-48.03,28.40,5.01,28.87] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [],
+   "b_idx": [
+    26,
+    328,
+    331,
+    241,
+    243,
+    245,
+    247,
+    31
+   ],
+   "cite": "C01-CULL"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "CityBuild_01",
+   "n": 1,
+   "offscreen": 1,
+   "detail": "B-only 1 draws 24 tri (1 offscreen); first k82 pt4 tri=24 tex=CityBuild_01 tex1=- bb=[-13.97,-0.13,-6.00,-6.45,8.86,1.59] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [],
+   "b_idx": [
+    30
+   ],
+   "cite": "C01-CULL"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "firehouse NT",
+   "n": 1,
+   "offscreen": 1,
+   "detail": "B-only 1 draws 4 tri (1 offscreen); first k82 pt4 tri=4 tex=firehouse NT tex1=- bb=[-6.57,-0.13,1.58,-6.46,3.84,4.28] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [],
+   "b_idx": [
+    29
+   ],
+   "cite": "C01-CULL"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "fountain",
+   "n": 1,
+   "offscreen": 1,
+   "detail": "B-only 1 draws 110 tri (1 offscreen); first k82 pt4 tri=110 tex=fountain tex1=- bb=[85.09,0.05,21.52,85.75,1.27,22.18] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [],
+   "b_idx": [
+    318
+   ],
+   "cite": "C01-CULL"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "Glass",
+   "n": 8,
+   "offscreen": 0,
+   "detail": "B-only 8 draws 104 tri (0 offscreen); first k82 pt4 tri=8 tex=Glass tex1=- bb=[53.78,0.22,-25.95,53.96,0.29,-25.65] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [],
+   "b_idx": [
+    489,
+    533,
+    577,
+    621,
+    490,
+    534,
+    578,
+    622
+   ],
+   "cite": "C02-CARLOD"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "JetRanger",
+   "n": 2,
+   "offscreen": 2,
+   "detail": "B-only 2 draws 1252 tri (2 offscreen); first k81 pt4 tri=626 tex=JetRanger tex1=- bb=[71.57,2.85,50.28,72.81,4.06,53.86] src=d3d Z=1 ZW=1 ZF=4 AT=1 AREF=48 AF=5 AB=0 SRC=0 DST=0 CULL=1",
+   "a_idx": [],
+   "b_idx": [
+    3,
+    9
+   ],
+   "cite": "C01-CULL"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "Miltcopters",
+   "n": 8,
+   "offscreen": 8,
+   "detail": "B-only 8 draws 733 tri (8 offscreen); first k81 pt4 tri=726 tex=Miltcopters tex1=- bb=[96.75,0.69,47.30,99.13,2.32,50.58] src=d3d Z=1 ZW=1 ZF=4 AT=1 AREF=48 AF=5 AB=0 SRC=0 DST=0 CULL=1",
+   "a_idx": [],
+   "b_idx": [
+    19,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16
+   ],
+   "cite": "C01-CULL"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "office NT",
+   "n": 1,
+   "offscreen": 1,
+   "detail": "B-only 1 draws 30 tri (1 offscreen); first k82 pt4 tri=30 tex=office NT tex1=- bb=[-20.04,-4.76,-57.54,-6.27,6.70,-47.11] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [],
+   "b_idx": [
+    37
+   ],
+   "cite": "C01-CULL"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "parking",
+   "n": 1,
+   "offscreen": 1,
+   "detail": "B-only 1 draws 20 tri (1 offscreen); first k82 pt4 tri=20 tex=parking tex1=- bb=[10.20,-0.66,44.21,34.68,6.24,85.43] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [],
+   "b_idx": [
+    42
+   ],
+   "cite": "C01-CULL"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "railings",
+   "n": 2,
+   "offscreen": 2,
+   "detail": "B-only 2 draws 32 tri (2 offscreen); first k82 pt4 tri=16 tex=railings tex1=- bb=[85.00,0.01,64.84,87.48,1.51,64.84] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [],
+   "b_idx": [
+    236,
+    237
+   ],
+   "cite": "C01-CULL"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "road",
+   "n": 1,
+   "offscreen": 1,
+   "detail": "B-only 1 draws 57 tri (1 offscreen); first k82 pt4 tri=57 tex=road tex1=- bb=[13.83,0.23,43.83,32.50,3.29,69.08] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [],
+   "b_idx": [
+    28
+   ],
+   "cite": "C01-CULL"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "RWLamposts",
+   "n": 43,
+   "offscreen": 43,
+   "detail": "B-only 43 draws 5907 tri (43 offscreen); first k82 pt4 tri=132 tex=RWLamposts tex1=- bb=[80.14,0.05,22.65,80.35,1.36,22.85] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [],
+   "b_idx": [
+    224,
+    225,
+    226,
+    227,
+    228,
+    229,
+    230,
+    231,
+    232,
+    233,
+    234,
+    235,
+    242,
+    244,
+    246,
+    248,
+    198,
+    199,
+    200,
+    201,
+    202,
+    203,
+    204,
+    205,
+    206,
+    210,
+    211,
+    212,
+    213,
+    214,
+    215,
+    216,
+    217,
+    218,
+    219,
+    220,
+    221,
+    222,
+    223,
+    330,
+    238,
+    239,
+    240
+   ],
+   "cite": "C01-CULL"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "shopfront03",
+   "n": 1,
+   "offscreen": 1,
+   "detail": "B-only 1 draws 10 tri (1 offscreen); first k82 pt4 tri=10 tex=shopfront03 tex1=- bb=[-1.01,-2.04,-52.20,4.01,1.37,-47.12] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [],
+   "b_idx": [
+    33
+   ],
+   "cite": "C01-CULL"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "shoptype01 NT",
+   "n": 1,
+   "offscreen": 1,
+   "detail": "B-only 1 draws 24 tri (1 offscreen); first k82 pt4 tri=24 tex=shoptype01 NT tex1=- bb=[-20.04,-1.35,-57.54,-6.27,1.35,-47.11] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [],
+   "b_idx": [
+    32
+   ],
+   "cite": "C01-CULL"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "thickgirders",
+   "n": 2,
+   "offscreen": 2,
+   "detail": "B-only 2 draws 130 tri (2 offscreen); first k82 pt4 tri=94 tex=thickgirders tex1=- bb=[22.74,1.12,20.01,32.28,1.42,43.46] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [],
+   "b_idx": [
+    39,
+    38
+   ],
+   "cite": "C01-CULL"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "thickgirders2",
+   "n": 1,
+   "offscreen": 1,
+   "detail": "B-only 1 draws 54 tri (1 offscreen); first k82 pt4 tri=54 tex=thickgirders2 tex1=- bb=[23.28,0.00,20.33,31.08,1.38,43.42] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [],
+   "b_idx": [
+    40
+   ],
+   "cite": "C01-CULL"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "track",
+   "n": 1,
+   "offscreen": 1,
+   "detail": "B-only 1 draws 25 tri (1 offscreen); first k82 pt4 tri=25 tex=track tex1=- bb=[7.11,1.69,17.84,33.76,1.69,43.16] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [],
+   "b_idx": [
+    41
+   ],
+   "cite": "C01-CULL"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "train2",
+   "n": 1,
+   "offscreen": 1,
+   "detail": "B-only 1 draws 550 tri (1 offscreen); first k82 pt4 tri=550 tex=train2 tex1=- bb=[20.45,1.69,40.29,24.54,2.68,42.72] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [],
+   "b_idx": [
+    24
+   ],
+   "cite": "C01-CULL"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "trainroof",
+   "n": 1,
+   "offscreen": 1,
+   "detail": "B-only 1 draws 16 tri (1 offscreen); first k82 pt4 tri=16 tex=trainroof tex1=- bb=[20.50,2.54,40.29,24.49,2.68,42.72] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [],
+   "b_idx": [
+    23
+   ],
+   "cite": "C01-CULL"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "windows",
+   "n": 43,
+   "offscreen": 43,
+   "detail": "B-only 43 draws 86 tri (43 offscreen); first k82 pt4 tri=2 tex=windows tex1=- bb=[40.14,1.68,27.74,40.15,2.53,28.01] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [],
+   "b_idx": [
+    249,
+    250,
+    251,
+    252,
+    253,
+    254,
+    255,
+    256,
+    257,
+    258,
+    259,
+    260,
+    261,
+    262,
+    263,
+    264,
+    265,
+    266,
+    267,
+    268,
+    269,
+    270,
+    271,
+    272,
+    273,
+    274,
+    275,
+    276,
+    277,
+    278,
+    279,
+    280,
+    281,
+    282,
+    283,
+    284,
+    285,
+    286,
+    287,
+    288,
+    289,
+    290,
+    291
+   ],
+   "cite": "C01-CULL"
+  },
+  {
+   "kind": "STATE",
+   "tex": "-",
+   "n": 7,
+   "detail": "7 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    142,
+    82,
+    210,
+    23,
+    151,
+    196,
+    61
+   ],
+   "b_idx": [
+    174,
+    100,
+    383,
+    141,
+    184,
+    369,
+    73
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "ads",
+   "n": 5,
+   "detail": "5 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    40,
+    4,
+    126,
+    50,
+    68
+   ],
+   "b_idx": [
+    332,
+    117,
+    152,
+    61,
+    79
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "ads1",
+   "n": 4,
+   "detail": "4 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    100,
+    34,
+    63,
+    152
+   ],
+   "b_idx": [
+    116,
+    151,
+    78,
+    185
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "Advantage",
+   "n": 52,
+   "detail": "52 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    427,
+    457,
+    442,
+    410,
+    425,
+    455,
+    408,
+    440,
+    439,
+    407,
+    424,
+    454,
+    446,
+    414,
+    431,
+    461,
+    432,
+    415,
+    447,
+    462,
+    445,
+    413,
+    430,
+    460,
+    406,
+    405,
+    403,
+    404,
+    438,
+    421,
+    436,
+    420,
+    423,
+    437,
+    450,
+    422,
+    435,
+    451,
+    452,
+    453,
+    444,
+    429,
+    459,
+    412,
+    456,
+    409,
+    426,
+    441,
+    443,
+    458,
+    428,
+    411
+   ],
+   "b_idx": [
+    525,
+    613,
+    569,
+    481,
+    528,
+    616,
+    484,
+    572,
+    574,
+    486,
+    530,
+    618,
+    556,
+    468,
+    512,
+    600,
+    511,
+    467,
+    555,
+    599,
+    562,
+    474,
+    518,
+    606,
+    502,
+    503,
+    505,
+    504,
+    590,
+    548,
+    592,
+    549,
+    546,
+    591,
+    637,
+    547,
+    593,
+    636,
+    635,
+    634,
+    566,
+    522,
+    610,
+    478,
+    614,
+    482,
+    526,
+    570,
+    568,
+    612,
+    524,
+    480
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "Apart2 NT",
+   "n": 3,
+   "detail": "3 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    104,
+    14,
+    127
+   ],
+   "b_idx": [
+    46,
+    126,
+    160
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "Apart3 NT",
+   "n": 3,
+   "detail": "3 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    168,
+    199,
+    128
+   ],
+   "b_idx": [
+    340,
+    371,
+    161
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "Apart4",
+   "n": 1,
+   "detail": "1 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    129
+   ],
+   "b_idx": [
+    162
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "Apart5",
+   "n": 1,
+   "detail": "1 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    184
+   ],
+   "b_idx": [
+    356
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "Apart5windows NT",
+   "n": 4,
+   "detail": "4 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    12,
+    117,
+    207,
+    123
+   ],
+   "b_idx": [
+    123,
+    44,
+    380,
+    157
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "Apart6windows",
+   "n": 4,
+   "detail": "4 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    175,
+    185,
+    15,
+    105
+   ],
+   "b_idx": [
+    347,
+    357,
+    135,
+    55
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "Base01",
+   "n": 2,
+   "detail": "2 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    130,
+    74
+   ],
+   "b_idx": [
+    163,
+    88
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "botapart",
+   "n": 5,
+   "detail": "5 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    6,
+    186,
+    70,
+    122,
+    176
+   ],
+   "b_idx": [
+    122,
+    358,
+    85,
+    156,
+    348
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "BrickWall",
+   "n": 3,
+   "detail": "3 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    138,
+    31,
+    95
+   ],
+   "b_idx": [
+    178,
+    145,
+    107
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "BrickWallarrows",
+   "n": 2,
+   "detail": "2 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    26,
+    94
+   ],
+   "b_idx": [
+    143,
+    103
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "brooklyn1",
+   "n": 4,
+   "detail": "4 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    84,
+    200,
+    136,
+    177
+   ],
+   "b_idx": [
+    102,
+    372,
+    175,
+    349
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "build",
+   "n": 4,
+   "detail": "4 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    19,
+    160,
+    140,
+    81
+   ],
+   "b_idx": [
+    138,
+    195,
+    173,
+    99
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "build6",
+   "n": 4,
+   "detail": "4 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    16,
+    78,
+    106,
+    187
+   ],
+   "b_idx": [
+    136,
+    97,
+    56,
+    359
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "build7beam",
+   "n": 4,
+   "detail": "4 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    22,
+    163,
+    208,
+    182
+   ],
+   "b_idx": [
+    140,
+    196,
+    381,
+    354
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "build9beam NT",
+   "n": 4,
+   "detail": "4 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    17,
+    107,
+    158,
+    188
+   ],
+   "b_idx": [
+    137,
+    57,
+    194,
+    360
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "buildconc2",
+   "n": 14,
+   "detail": "14 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    155,
+    137,
+    202,
+    7,
+    69,
+    114,
+    59,
+    45,
+    87,
+    178,
+    190,
+    27,
+    169,
+    124
+   ],
+   "b_idx": [
+    187,
+    177,
+    374,
+    124,
+    86,
+    45,
+    65,
+    338,
+    106,
+    350,
+    362,
+    144,
+    341,
+    158
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "Building_02NT",
+   "n": 6,
+   "detail": "6 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    147,
+    9,
+    170,
+    115,
+    79,
+    156
+   ],
+   "b_idx": [
+    166,
+    129,
+    342,
+    49,
+    92,
+    189
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "Camstand",
+   "n": 9,
+   "detail": "9 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    46,
+    62,
+    5,
+    91,
+    135,
+    125,
+    55,
+    41,
+    73
+   ],
+   "b_idx": [
+    339,
+    69,
+    125,
+    87,
+    171,
+    159,
+    66,
+    333,
+    94
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "CityBuild_01",
+   "n": 4,
+   "detail": "4 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    189,
+    108,
+    18,
+    51
+   ],
+   "b_idx": [
+    361,
+    53,
+    133,
+    68
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "comp2",
+   "n": 3,
+   "detail": "3 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    97,
+    49,
+    209
+   ],
+   "b_idx": [
+    82,
+    63,
+    382
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "firehouse NT",
+   "n": 4,
+   "detail": "4 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    109,
+    179,
+    71,
+    8
+   ],
+   "b_idx": [
+    48,
+    351,
+    91,
+    128
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "Glass",
+   "n": 8,
+   "detail": "8 matched draws differ in AREF,AF,CULL: A Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    465,
+    418,
+    449,
+    434,
+    448,
+    463,
+    416,
+    433
+   ],
+   "b_idx": [
+    607,
+    475,
+    563,
+    519,
+    564,
+    608,
+    476,
+    520
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "Grass",
+   "n": 2,
+   "detail": "2 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    88,
+    145
+   ],
+   "b_idx": [
+    109,
+    180
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "Hall",
+   "n": 3,
+   "detail": "3 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    67,
+    121,
+    3
+   ],
+   "b_idx": [
+    83,
+    154,
+    120
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "office-block",
+   "n": 4,
+   "detail": "4 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    25,
+    165,
+    83,
+    113
+   ],
+   "b_idx": [
+    142,
+    197,
+    101,
+    58
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "parking",
+   "n": 1,
+   "detail": "1 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    96
+   ],
+   "b_idx": [
+    113
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "Path2",
+   "n": 35,
+   "detail": "35 matched draws differ in AREF,AF,CULL: A Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    391,
+    198,
+    346,
+    343,
+    397,
+    370,
+    374,
+    340,
+    363,
+    102,
+    336,
+    389,
+    36,
+    212,
+    365,
+    337,
+    400,
+    367,
+    372,
+    361,
+    339,
+    344,
+    153,
+    333,
+    381,
+    359,
+    394,
+    387,
+    384,
+    349,
+    353,
+    64,
+    378,
+    355,
+    166
+   ],
+   "b_idx": [
+    403,
+    363,
+    448,
+    454,
+    397,
+    425,
+    419,
+    455,
+    432,
+    84,
+    461,
+    406,
+    121,
+    375,
+    430,
+    458,
+    396,
+    427,
+    423,
+    434,
+    457,
+    451,
+    155,
+    462,
+    413,
+    436,
+    400,
+    408,
+    410,
+    444,
+    442,
+    64,
+    416,
+    438,
+    186
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "Pathpattern",
+   "n": 2,
+   "detail": "2 matched draws differ in AREF,AF,CULL: A Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    342,
+    335
+   ],
+   "b_idx": [
+    453,
+    460
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "pavingbeigep",
+   "n": 1,
+   "detail": "1 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    86
+   ],
+   "b_idx": [
+    105
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "pavingbeigepath",
+   "n": 2,
+   "detail": "2 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    85,
+    143
+   ],
+   "b_idx": [
+    104,
+    176
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "railings",
+   "n": 3,
+   "detail": "3 matched draws differ in AREF,AF,CULL: A Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    47,
+    35,
+    101
+   ],
+   "b_idx": [
+    335,
+    118,
+    80
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "residential01 NT",
+   "n": 3,
+   "detail": "3 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    191,
+    33,
+    60
+   ],
+   "b_idx": [
+    364,
+    150,
+    77
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "residential02 NT",
+   "n": 4,
+   "detail": "4 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    180,
+    75,
+    11,
+    116
+   ],
+   "b_idx": [
+    352,
+    95,
+    134,
+    54
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "road",
+   "n": 27,
+   "detail": "27 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    371,
+    395,
+    388,
+    379,
+    65,
+    345,
+    154,
+    382,
+    385,
+    373,
+    357,
+    376,
+    360,
+    341,
+    351,
+    364,
+    390,
+    392,
+    347,
+    103,
+    362,
+    398,
+    354,
+    338,
+    366,
+    334,
+    368
+   ],
+   "b_idx": [
+    426,
+    401,
+    409,
+    417,
+    67,
+    452,
+    164,
+    414,
+    411,
+    424,
+    440,
+    421,
+    437,
+    456,
+    446,
+    433,
+    407,
+    404,
+    449,
+    89,
+    435,
+    398,
+    443,
+    459,
+    431,
+    463,
+    428
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "road2",
+   "n": 3,
+   "detail": "3 matched draws differ in AREF,AF,CULL: A Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    350,
+    356,
+    375
+   ],
+   "b_idx": [
+    445,
+    439,
+    420
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "Roadcross",
+   "n": 11,
+   "detail": "11 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    377,
+    369,
+    348,
+    352,
+    399,
+    396,
+    380,
+    358,
+    386,
+    393,
+    383
+   ],
+   "b_idx": [
+    422,
+    429,
+    450,
+    447,
+    399,
+    402,
+    418,
+    441,
+    412,
+    405,
+    415
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "rooftop",
+   "n": 8,
+   "detail": "8 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    174,
+    120,
+    183,
+    134,
+    164,
+    197,
+    211,
+    24
+   ],
+   "b_idx": [
+    346,
+    52,
+    355,
+    170,
+    192,
+    370,
+    384,
+    132
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "RWLamposts",
+   "n": 7,
+   "detail": "7 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    149,
+    39,
+    37,
+    38,
+    42,
+    66,
+    2
+   ],
+   "b_idx": [
+    153,
+    209,
+    207,
+    208,
+    334,
+    81,
+    119
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "sand",
+   "n": 2,
+   "detail": "2 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    90,
+    146
+   ],
+   "b_idx": [
+    110,
+    181
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "sandblends",
+   "n": 2,
+   "detail": "2 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    89,
+    144
+   ],
+   "b_idx": [
+    108,
+    179
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "shopfront02",
+   "n": 1,
+   "detail": "1 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    132
+   ],
+   "b_idx": [
+    168
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "shopfront03",
+   "n": 5,
+   "detail": "5 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    181,
+    171,
+    203,
+    52,
+    192
+   ],
+   "b_idx": [
+    353,
+    343,
+    376,
+    71,
+    365
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "shopfront04",
+   "n": 3,
+   "detail": "3 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    53,
+    80,
+    204
+   ],
+   "b_idx": [
+    72,
+    98,
+    377
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "shops",
+   "n": 4,
+   "detail": "4 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    201,
+    32,
+    99,
+    119
+   ],
+   "b_idx": [
+    373,
+    149,
+    115,
+    60
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "shoptype01 NT",
+   "n": 5,
+   "detail": "5 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    159,
+    193,
+    54,
+    76,
+    139
+   ],
+   "b_idx": [
+    193,
+    366,
+    70,
+    96,
+    172
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "shoptype02 NT",
+   "n": 3,
+   "detail": "3 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    194,
+    72,
+    141
+   ],
+   "b_idx": [
+    367,
+    93,
+    167
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "sKYLINE",
+   "n": 2,
+   "detail": "2 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    150,
+    118
+   ],
+   "b_idx": [
+    183,
+    59
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "subwaytile",
+   "n": 2,
+   "detail": "2 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    48,
+    205
+   ],
+   "b_idx": [
+    62,
+    378
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "taxi",
+   "n": 1,
+   "detail": "1 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    58
+   ],
+   "b_idx": [
+    76
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "thickgirders",
+   "n": 3,
+   "detail": "3 matched draws differ in AREF,AF,CULL: A Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    56,
+    92,
+    28
+   ],
+   "b_idx": [
+    74,
+    111,
+    146
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "thickgirders2",
+   "n": 3,
+   "detail": "3 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    93,
+    29,
+    57
+   ],
+   "b_idx": [
+    112,
+    147,
+    75
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "track",
+   "n": 1,
+   "detail": "1 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    30
+   ],
+   "b_idx": [
+    148
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "train2",
+   "n": 1,
+   "detail": "1 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    44
+   ],
+   "b_idx": [
+    337
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "trainroof",
+   "n": 1,
+   "detail": "1 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    43
+   ],
+   "b_idx": [
+    336
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "Trucktyre",
+   "n": 1,
+   "detail": "1 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    148
+   ],
+   "b_idx": [
+    182
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "Water00",
+   "n": 1,
+   "detail": "1 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    98
+   ],
+   "b_idx": [
+    114
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "Water00",
+   "n": 1,
+   "detail": "1 matched draws differ in AREF,AF,CULL: A Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    401
+   ],
+   "b_idx": [
+    466
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "windows02 NT",
+   "n": 6,
+   "detail": "6 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    20,
+    195,
+    206,
+    161,
+    133,
+    110
+   ],
+   "b_idx": [
+    131,
+    368,
+    379,
+    191,
+    169,
+    51
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "windows03 NT",
+   "n": 1,
+   "detail": "1 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    172
+   ],
+   "b_idx": [
+    344
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "windows04",
+   "n": 2,
+   "detail": "2 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    173,
+    21
+   ],
+   "b_idx": [
+    345,
+    139
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "windows06 NT",
+   "n": 3,
+   "detail": "3 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    111,
+    157,
+    10
+   ],
+   "b_idx": [
+    50,
+    190,
+    130
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "windows08NT",
+   "n": 5,
+   "detail": "5 matched draws differ in AT,AREF,AF,AB,SRC,DST,CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    162,
+    13,
+    131,
+    112,
+    77
+   ],
+   "b_idx": [
+    188,
+    127,
+    165,
+    47,
+    90
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "TEX1",
+   "tex": "Advantage",
+   "n": 6,
+   "detail": "6 matched draws, stage-1 texture A CarGloss | B -",
+   "a_idx": [
+    407,
+    454,
+    456,
+    409,
+    458,
+    411
+   ],
+   "b_idx": [
+    486,
+    618,
+    614,
+    482,
+    612,
+    480
+   ],
+   "cite": "C17-CAR-GLOSS"
+  },
+  {
+   "kind": "FOG",
+   "tex": "*",
+   "n": 339,
+   "detail": "339 matched draws, FOGENABLE A 1 | B 0, 65 textures: -, Advantage, Apart2 NT, Apart3 NT, Apart4, Apart5, Apart5windows NT, Apart6windows",
+   "a_idx": [
+    427,
+    457,
+    442,
+    410,
+    48,
+    20,
+    371,
+    395,
+    194,
+    147,
+    195,
+    425,
+    455,
+    408,
+    440,
+    168,
+    391,
+    47,
+    89,
+    17,
+    12,
+    117,
+    85,
+    388,
+    379,
+    9,
+    107,
+    40,
+    142,
+    4,
+    439,
+    407,
+    424,
+    454,
+    201,
+    65,
+    345,
+    154,
+    198,
+    346,
+    174,
+    120,
+    46,
+    93,
+    62,
+    382,
+    446,
+    414,
+    431,
+    461,
+    343,
+    144,
+    100,
+    5,
+    109,
+    385,
+    44,
+    138,
+    175,
+    155,
+    137,
+    67,
+    162,
+    13,
+    202,
+    6,
+    432,
+    415,
+    447,
+    462,
+    104,
+    130,
+    82,
+    206,
+    159,
+    143,
+    183,
+    210,
+    29,
+    26,
+    25,
+    397,
+    90,
+    7,
+    185,
+    16,
+    373,
+    370,
+    374,
+    56,
+    377,
+    369,
+    181,
+    22,
+    126,
+    340,
+    363,
+    97,
+    49,
+    53,
+    207,
+    69,
+    199,
+    191,
+    173,
+    128,
+    57,
+    209,
+    149,
+    186,
+    88,
+    342,
+    193,
+    179,
+    71,
+    357,
+    376,
+    360,
+    161,
+    102,
+    111,
+    92,
+    58,
+    335,
+    336,
+    389,
+    28,
+    78,
+    165,
+    145,
+    341,
+    36,
+    212,
+    39,
+    37,
+    38,
+    86,
+    184,
+    74,
+    19,
+    170,
+    115,
+    79,
+    150,
+    54,
+    365,
+    337,
+    148,
+    180,
+    43,
+    131,
+    32,
+    465,
+    418,
+    449,
+    434,
+    34,
+    83,
+    134,
+    112,
+    156,
+    350,
+    356,
+    375,
+    348,
+    352,
+    399,
+    396,
+    380,
+    358,
+    386,
+    393,
+    189,
+    99,
+    113,
+    164,
+    75,
+    11,
+    33,
+    80,
+    160,
+    23,
+    171,
+    94,
+    400,
+    114,
+    14,
+    158,
+    60,
+    72,
+    367,
+    372,
+    361,
+    84,
+    42,
+    339,
+    344,
+    59,
+    66,
+    45,
+    157,
+    10,
+    383,
+    76,
+    2,
+    351,
+    153,
+    364,
+    197,
+    63,
+    204,
+    121,
+    3,
+    127,
+    200,
+    91,
+    31,
+    135,
+    390,
+    87,
+    146,
+    445,
+    413,
+    430,
+    460,
+    203,
+    333,
+    211,
+    178,
+    406,
+    405,
+    403,
+    404,
+    438,
+    421,
+    436,
+    420,
+    423,
+    437,
+    450,
+    422,
+    435,
+    451,
+    452,
+    453,
+    129,
+    70,
+    163,
+    50,
+    132,
+    30,
+    125,
+    118,
+    205,
+    119,
+    116,
+    68,
+    106,
+    392,
+    77,
+    98,
+    139,
+    190,
+    136,
+    133,
+    187,
+    347,
+    103,
+    362,
+    177,
+    381,
+    359,
+    394,
+    140,
+    108,
+    110,
+    444,
+    429,
+    459,
+    412,
+    24,
+    96,
+    27,
+    35,
+    95,
+    387,
+    384,
+    349,
+    353,
+    8,
+    398,
+    55,
+    122,
+    41,
+    141,
+    151,
+    21,
+    73,
+    354,
+    338,
+    366,
+    334,
+    52,
+    368,
+    169,
+    18,
+    196,
+    448,
+    463,
+    416,
+    433,
+    456,
+    409,
+    426,
+    441,
+    176,
+    443,
+    458,
+    428,
+    411,
+    401,
+    152,
+    208,
+    192,
+    188,
+    182,
+    15,
+    123,
+    64,
+    378,
+    355,
+    124,
+    51,
+    61,
+    166,
+    101,
+    172,
+    81,
+    105
+   ],
+   "b_idx": [
+    525,
+    613,
+    569,
+    481,
+    62,
+    131,
+    426,
+    401,
+    367,
+    166,
+    368,
+    528,
+    616,
+    484,
+    572,
+    340,
+    403,
+    335,
+    108,
+    137,
+    123,
+    44,
+    104,
+    409,
+    417,
+    129,
+    57,
+    332,
+    174,
+    117,
+    574,
+    486,
+    530,
+    618,
+    373,
+    67,
+    452,
+    164,
+    363,
+    448,
+    346,
+    52,
+    339,
+    112,
+    69,
+    414,
+    556,
+    468,
+    512,
+    600,
+    454,
+    179,
+    116,
+    125,
+    48,
+    411,
+    337,
+    178,
+    347,
+    187,
+    177,
+    83,
+    188,
+    127,
+    374,
+    122,
+    511,
+    467,
+    555,
+    599,
+    46,
+    163,
+    100,
+    379,
+    193,
+    176,
+    355,
+    383,
+    147,
+    143,
+    142,
+    397,
+    110,
+    124,
+    357,
+    136,
+    424,
+    425,
+    419,
+    74,
+    422,
+    429,
+    353,
+    140,
+    152,
+    455,
+    432,
+    82,
+    63,
+    72,
+    380,
+    86,
+    371,
+    364,
+    345,
+    161,
+    75,
+    382,
+    153,
+    358,
+    109,
+    453,
+    366,
+    351,
+    91,
+    440,
+    421,
+    437,
+    191,
+    84,
+    50,
+    111,
+    76,
+    460,
+    461,
+    406,
+    146,
+    97,
+    197,
+    180,
+    456,
+    121,
+    375,
+    209,
+    207,
+    208,
+    105,
+    356,
+    88,
+    138,
+    342,
+    49,
+    92,
+    183,
+    70,
+    430,
+    458,
+    182,
+    352,
+    336,
+    165,
+    149,
+    607,
+    475,
+    563,
+    519,
+    151,
+    101,
+    170,
+    47,
+    189,
+    445,
+    439,
+    420,
+    450,
+    447,
+    399,
+    402,
+    418,
+    441,
+    412,
+    405,
+    361,
+    115,
+    58,
+    192,
+    95,
+    134,
+    150,
+    98,
+    195,
+    141,
+    343,
+    103,
+    396,
+    45,
+    126,
+    194,
+    77,
+    93,
+    427,
+    423,
+    434,
+    102,
+    334,
+    457,
+    451,
+    65,
+    81,
+    338,
+    190,
+    130,
+    415,
+    96,
+    119,
+    446,
+    155,
+    433,
+    370,
+    78,
+    377,
+    154,
+    120,
+    160,
+    372,
+    87,
+    145,
+    171,
+    407,
+    106,
+    181,
+    562,
+    474,
+    518,
+    606,
+    376,
+    462,
+    384,
+    350,
+    502,
+    503,
+    505,
+    504,
+    590,
+    548,
+    592,
+    549,
+    546,
+    591,
+    637,
+    547,
+    593,
+    636,
+    635,
+    634,
+    162,
+    85,
+    196,
+    61,
+    168,
+    148,
+    159,
+    59,
+    378,
+    60,
+    54,
+    79,
+    56,
+    404,
+    90,
+    114,
+    172,
+    362,
+    175,
+    169,
+    359,
+    449,
+    89,
+    435,
+    349,
+    413,
+    436,
+    400,
+    173,
+    53,
+    51,
+    566,
+    522,
+    610,
+    478,
+    132,
+    113,
+    144,
+    118,
+    107,
+    408,
+    410,
+    444,
+    442,
+    128,
+    398,
+    66,
+    156,
+    333,
+    167,
+    184,
+    139,
+    94,
+    443,
+    459,
+    431,
+    463,
+    71,
+    428,
+    341,
+    133,
+    369,
+    564,
+    608,
+    476,
+    520,
+    614,
+    482,
+    526,
+    570,
+    348,
+    568,
+    612,
+    524,
+    480,
+    466,
+    185,
+    381,
+    365,
+    360,
+    354,
+    135,
+    157,
+    64,
+    416,
+    438,
+    158,
+    68,
+    73,
+    186,
+    80,
+    344,
+    99,
+    55
+   ],
+   "cite": "C18-FOG"
+  },
+  {
+   "kind": "MOVED",
+   "tex": "-",
+   "n": 1,
+   "detail": "1 draws, same texture and triangle count, AABB moved by up to 509; first A [0.00,0.00,0.00,512.00,512.00,0.00] B [13.63,1.40,53.19,17.46,3.29,53.52]",
+   "a_idx": [
+    1
+   ],
+   "b_idx": [
+    34
+   ],
+   "cite": "C03-UNTEXTURED"
+  },
+  {
+   "kind": "MOVED",
+   "tex": "Apache",
+   "n": 1,
+   "detail": "1 draws, same texture and triangle count, AABB moved by up to 0.148; first A [61.61,1.13,-26.57,64.98,3.34,-25.26] B [61.46,1.13,-26.57,64.83,3.35,-25.26]",
+   "a_idx": [
+    469
+   ],
+   "b_idx": [
+    6
+   ],
+   "cite": "C14-ANIM"
+  },
+  {
+   "kind": "MOVED",
+   "tex": "Apart5windows NT",
+   "n": 1,
+   "detail": "1 draws, same texture and triangle count, AABB moved by up to 13.3; first A [-21.47,-8.31,-19.93,-8.99,8.39,-11.11] B [-31.32,-9.18,-12.56,-22.28,7.52,-0.08]",
+   "a_idx": [
+    275
+   ],
+   "b_idx": [
+    393
+   ],
+   "cite": "C12-CITYPLACE"
+  },
+  {
+   "kind": "MOVED",
+   "tex": "bark",
+   "n": 1,
+   "detail": "1 draws, same texture and triangle count, AABB moved by up to 45.6; first A [45.45,0.00,-21.40,45.68,0.73,-21.16] B [-0.16,0.00,-0.16,0.07,0.73,0.07]",
+   "a_idx": [
+    279
+   ],
+   "b_idx": [
+    464
+   ],
+   "cite": "C12-CITYPLACE"
+  },
+  {
+   "kind": "MOVED",
+   "tex": "Blads",
+   "n": 2,
+   "detail": "2 draws, same texture and triangle count, AABB moved by up to 0.582; first A [64.20,2.82,-25.93,64.89,3.52,-25.88] B [63.94,2.72,-25.92,64.85,3.63,-25.88]",
+   "a_idx": [
+    470,
+    471
+   ],
+   "b_idx": [
+    4,
+    5
+   ],
+   "cite": "C14-ANIM"
+  },
+  {
+   "kind": "MOVED",
+   "tex": "brooklyn1",
+   "n": 1,
+   "detail": "1 draws, same texture and triangle count, AABB moved by up to 32.9; first A [-13.88,3.37,-37.26,-9.07,3.45,-33.02] B [-8.85,2.50,-4.97,-4.50,2.59,-0.17]",
+   "a_idx": [
+    268
+   ],
+   "b_idx": [
+    385
+   ],
+   "cite": "C12-CITYPLACE"
+  },
+  {
+   "kind": "MOVED",
+   "tex": "buildconc2",
+   "n": 1,
+   "detail": "1 draws, same texture and triangle count, AABB moved by up to 15.7; first A [-21.47,-1.21,-28.30,-8.99,6.78,-11.11] B [-31.32,-2.08,-12.56,-13.69,5.91,-0.08]",
+   "a_idx": [
+    270
+   ],
+   "b_idx": [
+    387
+   ],
+   "cite": "C12-CITYPLACE"
+  },
+  {
+   "kind": "MOVED",
+   "tex": "Grass",
+   "n": 1,
+   "detail": "1 draws, same texture and triangle count, AABB moved by up to 45.6; first A [45.49,0.73,-21.36,45.79,1.75,-20.93] B [-0.12,0.73,-0.13,0.18,1.74,0.31]",
+   "a_idx": [
+    280
+   ],
+   "b_idx": [
+    465
+   ],
+   "cite": "C12-CITYPLACE"
+  },
+  {
+   "kind": "MOVED",
+   "tex": "Path2",
+   "n": 1,
+   "detail": "1 draws, same texture and triangle count, AABB moved by up to 20.4; first A [-21.34,-0.09,-32.86,-9.02,3.79,-11.11] B [-31.32,-0.96,-12.43,-9.01,2.92,-0.11]",
+   "a_idx": [
+    278
+   ],
+   "b_idx": [
+    388
+   ],
+   "cite": "C12-CITYPLACE"
+  },
+  {
+   "kind": "MOVED",
+   "tex": "residential02 NT",
+   "n": 1,
+   "detail": "1 draws, same texture and triangle count, AABB moved by up to 23.6; first A [-13.97,-4.70,-28.65,-8.93,3.53,-19.82] B [-22.39,-5.56,-5.06,-13.33,2.66,-0.02]",
+   "a_idx": [
+    271
+   ],
+   "b_idx": [
+    389
+   ],
+   "cite": "C12-CITYPLACE"
+  },
+  {
+   "kind": "MOVED",
+   "tex": "rooftop",
+   "n": 1,
+   "detail": "1 draws, same texture and triangle count, AABB moved by up to 29.3; first A [-20.90,3.37,-41.34,-9.36,8.39,-12.05] B [-30.36,2.50,-12.00,-0.30,7.52,-0.46]",
+   "a_idx": [
+    277
+   ],
+   "b_idx": [
+    395
+   ],
+   "cite": "C12-CITYPLACE"
+  },
+  {
+   "kind": "MOVED",
+   "tex": "shopfront02",
+   "n": 1,
+   "detail": "1 draws, same texture and triangle count, AABB moved by up to 32.4; first A [-13.85,-1.21,-37.35,-8.87,0.57,-28.60] B [-13.38,-2.08,-4.95,-4.40,-0.30,0.04]",
+   "a_idx": [
+    272
+   ],
+   "b_idx": [
+    390
+   ],
+   "cite": "C12-CITYPLACE"
+  },
+  {
+   "kind": "MOVED",
+   "tex": "shopfront04",
+   "n": 1,
+   "detail": "1 draws, same texture and triangle count, AABB moved by up to 37.4; first A [-13.82,-1.21,-41.68,-8.84,0.57,-37.29] B [-4.47,-2.08,-4.92,0.04,-0.30,0.07]",
+   "a_idx": [
+    273
+   ],
+   "b_idx": [
+    391
+   ],
+   "cite": "C12-CITYPLACE"
+  },
+  {
+   "kind": "MOVED",
+   "tex": "shops",
+   "n": 1,
+   "detail": "1 draws, same texture and triangle count, AABB moved by up to 33; first A [-13.88,-4.98,-37.32,-8.85,3.45,-32.93] B [-8.94,-5.85,-4.97,-4.44,2.59,0.05]",
+   "a_idx": [
+    269
+   ],
+   "b_idx": [
+    386
+   ],
+   "cite": "C12-CITYPLACE"
+  },
+  {
+   "kind": "MOVED",
+   "tex": "sKYLINE",
+   "n": 1,
+   "detail": "1 draws, same texture and triangle count, AABB moved by up to 0.0702; first A [49.67,5.85,-26.70,50.16,5.95,-26.23] B [49.67,5.78,-26.70,50.16,5.88,-26.23]",
+   "a_idx": [
+    0
+   ],
+   "b_idx": [
+    0
+   ],
+   "cite": "C14-ANIM"
+  },
+  {
+   "kind": "MOVED",
+   "tex": "windows03 NT",
+   "n": 1,
+   "detail": "1 draws, same texture and triangle count, AABB moved by up to 37.3; first A [-13.85,-7.39,-41.68,-8.84,7.33,-37.23] B [-4.53,-8.26,-4.94,0.04,6.46,0.07]",
+   "a_idx": [
+    274
+   ],
+   "b_idx": [
+    392
+   ],
+   "cite": "C12-CITYPLACE"
+  },
+  {
+   "kind": "MOVED",
+   "tex": "windows06 NT",
+   "n": 1,
+   "detail": "1 draws, same texture and triangle count, AABB moved by up to 28.6; first A [-13.91,-5.48,-33.03,-8.90,3.96,-28.60] B [-13.38,-6.35,-5.00,-8.83,3.09,0.01]",
+   "a_idx": [
+    276
+   ],
+   "b_idx": [
+    394
+   ],
+   "cite": "C12-CITYPLACE"
+  },
+  {
+   "kind": "ORDER",
+   "tex": "Glass",
+   "n": 88,
+   "detail": "88 order inversions vs matched draws, mostly: Advantagex80, Glassx8",
+   "a_idx": [],
+   "b_idx": [],
+   "cite": "C21-ORDER"
+  },
+  {
+   "kind": "ORDER",
+   "tex": "Path2",
+   "n": 2187,
+   "detail": "2187 order inversions vs matched draws, mostly: Path2x760, roadx650, Roadcrossx297, road2x81",
+   "a_idx": [],
+   "b_idx": [],
+   "cite": "C21-ORDER"
+  },
+  {
+   "kind": "ORDER",
+   "tex": "Pathpattern",
+   "n": 132,
+   "detail": "132 order inversions vs matched draws, mostly: Path2x54, roadx48, Roadcrossx22, road2x6",
+   "a_idx": [],
+   "b_idx": [],
+   "cite": "C21-ORDER"
+  },
+  {
+   "kind": "ORDER",
+   "tex": "railings",
+   "n": 325,
+   "detail": "325 order inversions vs matched draws, mostly: buildconc2x20, Camstandx17, RWLampostsx10, Building_02NTx10",
+   "a_idx": [],
+   "b_idx": [],
+   "cite": "C21-ORDER"
+  },
+  {
+   "kind": "ORDER",
+   "tex": "road2",
+   "n": 192,
+   "detail": "192 order inversions vs matched draws, mostly: Path2x81, roadx69, Roadcrossx30, Pathpatternx6",
+   "a_idx": [],
+   "b_idx": [],
+   "cite": "C21-ORDER"
+  },
+  {
+   "kind": "ORDER",
+   "tex": "thickgirders",
+   "n": 213,
+   "detail": "213 order inversions vs matched draws, mostly: buildconc2x13, Camstandx11, RWLampostsx11, railingsx7",
+   "a_idx": [],
+   "b_idx": [],
+   "cite": "C21-ORDER"
+  }
+ ],
+ "info": {
+  "empty_dropped": [
+   0,
+   20027
+  ],
+  "no_geometry": [
+   1,
+   0
+  ]
+ }
+}

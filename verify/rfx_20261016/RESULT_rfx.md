@@ -76,22 +76,30 @@ against the race camera; these draws use the parallel HUD camera and are on scre
 
 | frame | base | final, HUD replay | final, default |
 |---|---|---|---|
-| TRAINING 884 / 924 / 959 | 80 / 79 / 79 | 73 / 72 / 72 | FILL |
-| Arctic 1051 / 1091 / 1126 | 80 / 80 / 80 | 74 / 74 / 74 | FILL |
-| City 761 / 801 / 836 | 156 / 154 / 152 | 148 / 146 / 144 | FILL |
+| TRAINING 884 / 924 / 959 | 80 / 79 / 79 | 73 / 72 / 72 | 79 / 78 / 78 |
+| Arctic 1051 / 1091 / 1126 | 80 / 80 / 80 | 74 / 74 / 74 | 80 / 80 / 80 |
+| City 761 / 801 / 836 | 156 / 154 / 152 | 148 / 146 / 144 | 154 / 152 / 150 |
 
-All CITED, 0 RED. C04 / C08 / C09 rows per frame, base -> final: TRAINING 8/7/7 -> 1/0/0, Arctic
-12/12/13 -> 4/4/5, City 12/12/13 -> 3/3/4 (cites_rfx; d1r1's 96 rows -> 24).
+All CITED, 0 RED, on all three arms. C04 / C08 / C09 rows per frame, base -> final with HUD replay:
+TRAINING 8/7/7 -> 1/0/0, Arctic 12/12/13 -> 4/4/5, City 12/12/13 -> 3/3/4 (96 -> 24). The
+default arm (no HUD inputs) keeps the 6 C08 rows per frame: the dev route runs with Team Play off
+and the standalone's own clock is past 4 s at those rows, so the HUD draws nothing there, which is
+what `FUN_0040dfc0` does with those inputs minus the unported non-team panels (U-9699).
+Two arm runs lost SFX.piz textures to another session's original holding the piz (U-9677 class:
+NFL badges unbound on one City run, no Arctic records on one default run); both were re-run.
 
 Rules (PREREG section 4):
 - **R1** C08 GREEN 9/9 (HUD replay). car_shadow GREEN TRAINING 3/3 + City 3/3, Beam GREEN City 3/3;
   Arctic car_shadow / Beam STATE CULL 2 vs 1 (U-9690), CITED (P1 / P2 as predicted).
 - **R2** new row keys vs base: the 6 Arctic STATE rows above (cited C19 / U-9690); the City
   `MOVED -` row re-pairs (key present in base, cite added in cites_rfx). Nothing else.
-- **R3** G-CTRL FILL.
+- **R3** G-CTRL `c2e4d60d / b50bd39b / ba90ed88` on the base exe and on both final builds
+  (18664 / 56153 / 28076 lines, private ptrace; `evidence/gctrl_*.txt`).
 - **R4** no-op control (`MASHED_CAR_SHADOW=0 MASHED_CAR_BEAM=0 MASHED_HUD3D=0`) == base draw
-  records on 9/9 frames, field by field (`noop_cmp.py`) FILL.
-- **R5** pixels (`pixels.py`, mean abs diff vs the original's shot, all channels): FILL.
+  records on 9/9 frames, field by field (`noop_cmp.py`, `noop.txt`): PASS 9/9 (both final builds).
+- **R5** pixels (`pixels.py`, `pixels.txt`, mean abs diff vs the original's shot, all channels):
+  default build -0.10..+0.07 per frame (no rise above 0.5); with the HUD replay -2.3..-4.0
+  (TRAINING 884 15.31 -> 11.34, Arctic 1051 10.89 -> 7.83, City 761 16.47 -> 12.99).
 
 ## 5. Found on the way
 

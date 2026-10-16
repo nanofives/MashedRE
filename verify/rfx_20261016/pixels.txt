@@ -1,0 +1,10 @@
+frame                    basefinal_default2     final_hud
+training 884            15.31         15.22         11.34
+training 924            10.89         10.79          8.39
+training 959             8.94          8.90          6.49
+arctic   1051           10.89         10.90          7.83
+arctic   1091            7.07          7.09          4.61
+arctic   1126            6.43          6.45          4.00
+city     761            16.47         16.54         12.99
+city     801            13.09         13.12         10.88
+city     836            12.09         12.10          9.73
