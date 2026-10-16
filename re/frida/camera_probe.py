@@ -49,15 +49,207 @@ let relShots={}, raceStart=-1;
 let forceProg=-1;
 function restoreProg(saved){ if(!saved) return;
   for (let i=0;i<4;i++) abs(0x008a96e8+i*0x30c).writeFloat(saved[i]); }
+// [d1r1 2026-10-16] per-draw recorder (PREREG_d1r1.md I-1). Armed at the onLeave of the row
+// BEFORE a shot row, detached at the first Present after the shot row's onLeave, so it spans two
+// frames and the frame of row K is cut out offline between Present markers. Device COM pointer
+// DAT_007d4110: `mov eax,[0x7d4110]` at 0x004dbc31, `call [edx+0x144]` (DrawPrimitive) at
+// 0x004dbc47. Texture names from RwTextureSetName 0x004c5ae0 (strncpy to tex+0x10, 0x20 bytes,
+// at 0x004c5af6/0x004c5afa); raster -> IDirect3DTexture9* through the D3D9 raster extension
+// offset DAT_00911ae4 (`mov eax,[0x911ae4]` at 0x004d6ceb, `lea esi,[eax+edx]` at 0x004d6cf0).
+let drawRec=false, drArmed=false, drHooks=[], drEvents=[], drFrames={}, drShotRow=-1;
+let texByPtr={}, d3dName={}, d3dDesc={};
+let carFrames=false, forceTrack=-1, trackFiles=[];
+const RS_LIST=[7,14,23,15,24,25,27,19,20,22,28,137];   // ZENABLE ZWRITE ZFUNC ATEST AREF AFUNC ABLEND SRC DST CULL FOG LIGHTING
+const TSS_LIST=[[0,1],[0,4],[1,1]];                     // stage0 COLOROP, stage0 ALPHAOP, stage1 COLOROP
+let NF=null;
+function devfns(dev){
+  const vt=dev.readPointer();
+  const f=(slot,ret,args)=>new NativeFunction(vt.add(slot*4).readPointer(),ret,args,'stdcall');
+  return { vt:vt,
+    getTexture:f(64,'int',['pointer','uint32','pointer']),
+    getRS:f(58,'int',['pointer','uint32','pointer']),
+    getTSS:f(66,'int',['pointer','uint32','uint32','pointer']),
+    getTransform:f(45,'int',['pointer','uint32','pointer']),
+    getFVF:f(90,'int',['pointer','pointer']),
+    getVS:f(93,'int',['pointer','pointer']),
+    getStream:f(101,'int',['pointer','uint32','pointer','pointer','pointer']) };
+}
+function comRelease(p){ if(p.isNull()) return; new NativeFunction(p.readPointer().add(8).readPointer(),'uint32',['pointer'],'stdcall')(p); }
+function texDesc(t){
+  const k=t.toString(); if (d3dDesc[k]!==undefined) return d3dDesc[k];
+  let s='?';
+  try { const vt=t.readPointer();
+    const typ=new NativeFunction(vt.add(10*4).readPointer(),'int',['pointer'],'stdcall')(t);
+    if (typ===3) { const d=Memory.alloc(32);
+      new NativeFunction(vt.add(17*4).readPointer(),'int',['pointer','uint32','pointer'],'stdcall')(t,0,d);
+      s='#'+d.add(0x18).readU32()+'x'+d.add(0x1c).readU32()+':'+d.readU32(); }
+    else s='#type'+typ;
+  } catch(e) { s='#err'; }
+  d3dDesc[k]=s; return s;
+}
+function buildNameMap(){
+  d3dName={}; const extoff=abs(0x00911ae4).readU32(); let n=0, bad=0;
+  for (const k in texByPtr) {
+    try { const tex=ptr(k); const r=tex.readPointer(); if (r.isNull()) continue;
+      const d=r.add(extoff).readPointer(); if (d.isNull()) continue;
+      d3dName[d.toString()]={name:texByPtr[k], rw:r.add(0xc).readS32()+'x'+r.add(0x10).readS32()}; n++;
+    } catch(e) { bad++; } }
+  return [n,bad];
+}
+// [d1r1 amendment 1] geometry actually drawn: non-degenerate triangle count and the world-space
+// AABB of the vertices those triangles use, read from the bound index/vertex buffers (READONLY
+// lock; static RW buffers are managed) or the UP pointers. This is independent of how a mesh
+// is split into calls or of strip vs list topology, which differ by construction between RW's
+// D3D9 instancing (strips) and librw's (lists).
+function vfn(o,slot,ret,args){ return new NativeFunction(o.readPointer().add(slot*4).readPointer(),ret,args,'stdcall'); }
+function triIdx(pt, idx, pc){
+  const t=[];
+  if (pt===4) for (let k=0;k<pc;k++) t.push([idx[3*k],idx[3*k+1],idx[3*k+2]]);
+  else if (pt===5) for (let k=0;k<pc;k++) t.push([idx[k],idx[k+1],idx[k+2]]);
+  else if (pt===6) for (let k=0;k<pc;k++) t.push([idx[0],idx[k+1],idx[k+2]]);
+  return t;
+}
+function nIdx(pt, pc){ return pt===4 ? 3*pc : (pt===5||pt===6) ? pc+2 : 0; }
+function geomOf(rec, slot, a){
+  const pt=a[1]; if (pt<4 || pt>6) return;
+  const fvfpos = rec.fvf & 0xe;           // 2 = XYZ, 4 = XYZRHW (pre-transformed)
+  let idx=null, base=0, vbp=null, stride=0, vbo=0, lockedVB=null, lockedIB=null;
+  const pp=Memory.alloc(8), o=Memory.alloc(4), s=Memory.alloc(4);
+  try {
+    if (slot===82) {
+      const pc=a[6], n=nIdx(pt,pc); base=a[2]|0;
+      pp.writePointer(ptr(0)); vfn(ptr(a[0]),105,'int',['pointer','pointer'])(ptr(a[0]),pp);
+      const ib=pp.readPointer(); if (ib.isNull()) return;
+      const desc=Memory.alloc(24); vfn(ib,13,'int',['pointer','pointer'])(ib,desc);
+      const isz = desc.readU32()===102 ? 4 : 2;
+      const q=Memory.alloc(8);
+      const hr=vfn(ib,11,'int',['pointer','uint32','uint32','pointer','uint32'])(ib,a[5]*isz,n*isz,q,0x10);
+      if (hr===0) { const p=q.readPointer(); idx=[];
+        for (let k=0;k<n;k++) idx.push(isz===4 ? p.add(4*k).readU32() : p.add(2*k).readU16());
+        vfn(ib,12,'int',['pointer'])(ib); }
+      comRelease(ib);
+      if (idx===null) return;
+      rec.tri = 0;
+      const tris=triIdx(pt,idx,pc).filter(t=>t[0]!==t[1]&&t[1]!==t[2]&&t[0]!==t[2]);
+      rec.tri=tris.length;
+      const used={}; for (const t of tris) for (const v of t) used[v+base]=1;
+      pp.writePointer(ptr(0)); NF.getStream(ptr(a[0]),0,pp,o,s);
+      const vb=pp.readPointer(); if (vb.isNull()) return; stride=s.readU32(); vbo=o.readU32();
+      const q2=Memory.alloc(8);
+      const hr2=vfn(vb,11,'int',['pointer','uint32','uint32','pointer','uint32'])(vb,0,0,q2,0x10);
+      if (hr2===0) { const p=q2.readPointer(); bbox(rec, Object.keys(used).map(v=>p.add(vbo+(v|0)*stride)), fvfpos);
+        vfn(vb,12,'int',['pointer'])(vb); }
+      comRelease(vb);
+    } else if (slot===81) {
+      const pc=a[3], n=nIdx(pt,pc), sv=a[2];
+      pp.writePointer(ptr(0)); NF.getStream(ptr(a[0]),0,pp,o,s);
+      const vb=pp.readPointer(); if (vb.isNull()) return; stride=s.readU32(); vbo=o.readU32();
+      const q2=Memory.alloc(8);
+      const hr2=vfn(vb,11,'int',['pointer','uint32','uint32','pointer','uint32'])(vb,0,0,q2,0x10);
+      if (hr2===0) { const p=q2.readPointer(); const ptsA=[]; for (let k=0;k<n;k++) ptsA.push(p.add(vbo+(sv+k)*stride));
+        seqTris(rec, pt, pc, ptsA, fvfpos); vfn(vb,12,'int',['pointer'])(vb); }
+      comRelease(vb);
+    } else if (slot===83) {
+      const pc=a[2], n=nIdx(pt,pc), p=ptr(a[3]); stride=a[4]; const ptsA=[];
+      for (let k=0;k<n;k++) ptsA.push(p.add(k*stride));
+      seqTris(rec, pt, pc, ptsA, fvfpos);
+    } else if (slot===84) {
+      const pc=a[4], n=nIdx(pt,pc), ip=ptr(a[5]), isz = a[6]===102 ? 4 : 2, vp=ptr(a[7]); stride=a[8];
+      idx=[]; for (let k=0;k<n;k++) idx.push(isz===4 ? ip.add(4*k).readU32() : ip.add(2*k).readU16());
+      const tris=triIdx(pt,idx,pc).filter(t=>t[0]!==t[1]&&t[1]!==t[2]&&t[0]!==t[2]);
+      rec.tri=tris.length; const used={}; for (const t of tris) for (const v of t) used[v]=1;
+      bbox(rec, Object.keys(used).map(v=>vp.add((v|0)*stride)), fvfpos);
+    }
+  } catch(e) { rec.gerr=''+e; }
+}
+function seqTris(rec, pt, pc, pts, fvfpos){
+  const P=pts.map(p=>[p.readFloat(),p.add(4).readFloat(),p.add(8).readFloat()]);
+  const eq=(u,v)=>u[0]===v[0]&&u[1]===v[1]&&u[2]===v[2];
+  const idx=[]; for (let k=0;k<P.length;k++) idx.push(k);
+  const tris=triIdx(pt,idx,pc).filter(t=>!eq(P[t[0]],P[t[1]])&&!eq(P[t[1]],P[t[2]])&&!eq(P[t[0]],P[t[2]]));
+  rec.tri=tris.length; const used={}; for (const t of tris) for (const v of t) used[v]=1;
+  bbox(rec, Object.keys(used).map(v=>pts[v|0]), fvfpos);
+}
+function bbox(rec, pts, fvfpos){
+  const w=rec.w; let mn=[1e30,1e30,1e30], mx=[-1e30,-1e30,-1e30];
+  for (const p of pts) {
+    const x=p.readFloat(), y=p.add(4).readFloat(), z=p.add(8).readFloat();
+    let q=[x,y,z];
+    if (fvfpos!==4 && w) q=[x*w[0]+y*w[4]+z*w[8]+w[12], x*w[1]+y*w[5]+z*w[9]+w[13], x*w[2]+y*w[6]+z*w[10]+w[14]];
+    for (let i=0;i<3;i++){ if(q[i]<mn[i]) mn[i]=q[i]; if(q[i]>mx[i]) mx[i]=q[i]; }
+  }
+  if (pts.length) rec.bb=[...mn,...mx];
+  if (fvfpos===4) rec.screen=1;
+}
+function recDraw(slot, a){
+  const dev=ptr(a[0]); if (NF===null) NF=devfns(dev);
+  const b=Memory.alloc(64), b2=Memory.alloc(8), b3=Memory.alloc(8);
+  // n = comparable counts: [primCount] for the non-indexed calls (vertex count follows from the
+  // primitive type), [numVertices, primCount] for the indexed ones. o = buffer offsets, which
+  // depend on the allocator and are kept for debugging only.
+  const rec={e:'d', k:slot, pt:a[1]};
+  if (slot===81) { rec.n=[a[3]]; rec.o=[a[2]]; }                    // StartVertex, PrimitiveCount
+  else if (slot===82) { rec.n=[a[4],a[6]]; rec.o=[a[2],a[3],a[5]]; } // Base, Min, NumV, Start, Prims
+  else if (slot===83) { rec.n=[a[2]]; rec.o=[]; }                    // PrimitiveCount, data, stride
+  else { rec.n=[a[3],a[4]]; rec.o=[a[2]]; }                          // Min, NumV, Prims, idx, fmt, data, stride
+  NF.getTexture(dev,0,b); const t=b.readPointer();
+  if (t.isNull()) rec.tex='-';
+  else { const nm=d3dName[t.toString()]; rec.tex = nm ? nm.name : texDesc(t); rec.td=texDesc(t);
+    if (nm) rec.rw=nm.rw; comRelease(t); }
+  rec.rs=RS_LIST.map(s=>{ b.writeU32(0xdeadbeef); const hr=NF.getRS(dev,s,b); return hr===0 ? b.readU32() : -1; });
+  rec.tss=TSS_LIST.map(p=>{ b.writeU32(0xdeadbeef); const hr=NF.getTSS(dev,p[0],p[1],b); return hr===0 ? b.readU32() : -1; });
+  const hr=NF.getTransform(dev,256,b); rec.w = hr===0 ? rd(b,16) : null;
+  NF.getFVF(dev,b2); rec.fvf=b2.readU32();
+  b2.writePointer(ptr(0)); NF.getVS(dev,b2); const vs=b2.readPointer(); rec.vs = vs.isNull()?0:1; comRelease(vs);
+  if (slot===81 || slot===82) { b2.writePointer(ptr(0)); b3.writeU32(0); const o=Memory.alloc(4);
+    NF.getStream(dev,0,b2,o,b3); const vb=b2.readPointer(); rec.st=b3.readU32(); comRelease(vb); }
+  else rec.st = slot===83 ? a[4] : a[8];
+  // [d1r1 amendment 1] stage-1 texture: the original's world meshes are two-stage
+  // (FVF 0x242, stage-1 COLOROP 13 on the smoke capture)
+  NF.getTexture(dev,1,b); const t1=b.readPointer();
+  if (t1.isNull()) rec.tex1='-';
+  else { const nm1=d3dName[t1.toString()]; rec.tex1 = nm1 ? nm1.name : texDesc(t1); comRelease(t1); }
+  geomOf(rec, slot, a);
+  drEvents.push(rec);
+}
+function arm(){
+  if (drArmed) return; drArmed=true; drEvents=[{e:'arm', t:Date.now(), names:buildNameMap()}];
+  const dev=abs(0x007d4110).readPointer(); const vt=dev.readPointer();
+  const nargs={81:4, 82:7, 83:5, 84:9};
+  for (const s of [81,82,83,84]) {
+    const fn=vt.add(s*4).readPointer();
+    drHooks.push(Interceptor.attach(fn,{ onEnter(args){ if(!drArmed) return;
+      const a=[]; for(let i=0;i<nargs[s];i++) a.push(i===0? args[0] : args[i].toUInt32()); a[0]=args[0];
+      try { recDraw(s,a); } catch(e) { drEvents.push({e:'err', k:s, m:''+e}); } }}));
+  }
+  drHooks.push(Interceptor.attach(vt.add(17*4).readPointer(),{ onEnter(){ if(!drArmed) return;
+    drEvents.push({e:'P', t:Date.now()});
+    // disarm at the first Present after the shot row's director call
+    let seen=false; for (const ev of drEvents) if (ev.e==='D' && ev.row===drShotRow) seen=true;
+    if (seen) { drArmed=false; drFrames[drShotRow]=drEvents; drEvents=[];
+      setTimeout(()=>{ for (const h of drHooks) h.detach(); drHooks=[]; }, 0); } }}));
+}
+function carMats(){
+  const out=[];
+  for (let i=0;i<4;i++){
+    try { const rend=abs(0x0063da18+i*0x2ac).readPointer(); const fr=rend.add(4).readPointer();
+      let root=fr.add(0xa0).readPointer(); const same = root.isNull() || root.equals(fr) ? 1 : 0;
+      if (root.isNull()) root=fr;
+      out.push({same:same, M:mat12(root.add(0x10)), L:mat12(root.add(0x50)), FL:mat12(fr.add(0x50))});
+    } catch(e) { out.push({same:-1, M:new Array(12).fill(0), L:new Array(12).fill(0), FL:new Array(12).fill(0)}); }
+  }
+  return out;
+}
 function abs(r){return ptr(r+DELTA);}
 function rd(p,n){ const o=[]; for(let i=0;i<n;i++) o.push(p.add(i*4).readFloat()); return o; }
 // RwMatrix rows right/up/at/pos at +0x00/+0x10/+0x20/+0x30 -> 12 floats (flags/pads dropped)
 function mat12(p){ const m=rd(p,16); return [m[0],m[1],m[2],m[4],m[5],m[6],m[8],m[9],m[10],m[12],m[13],m[14]]; }
 rpc.exports={
-  config:function(fm, mr, shots, rq, sd, rel, fp){ frameMode=!!fm; maxRows=mr; shotRows={};
+  config:function(fm, mr, shots, rq, sd, rel, fp, dr, cf, tr){ frameMode=!!fm; maxRows=mr; shotRows={};
     for (const k of shots) shotRows[k]=1; reqPath=rq; shotDir=sd;
     relShots={}; for (const k of (rel||[])) relShots[k]=1; raceStart=-1;
-    forceProg=(fp===undefined||fp===null)?-1:fp; return 1; },
+    forceProg=(fp===undefined||fp===null)?-1:fp;
+    drawRec=!!dr; carFrames=!!cf; forceTrack=(tr===undefined||tr===null)?-1:tr; return 1; },
   // [camribbon] engine track index (scenario_launch.py --track: 0=Training .. 12=City). Writing
   // the menu globals mid-menu stalled the Quick Battle confirm (the race never loaded), so the
   // override is applied at the load itself: onEnter of FUN_0040d440 (Course::LoadCurrent, which
@@ -67,10 +259,30 @@ rpc.exports={
     Interceptor.attach(abs(0x0040d440), { onEnter(){ abs(0x0063ba7c).writeS32(v); } });
     return 1; },
   tracelen:function(){ return trace.length; },
+  getdraws:function(){ return JSON.stringify(drFrames); },
+  trackfiles:function(){ return JSON.stringify(trackFiles); },
+  texcount:function(){ return Object.keys(texByPtr).length; },
   init:function(){ const m=Process.findModuleByName('MASHED.exe')||Process.enumerateModules()[0];
     DELTA=m.base.toUInt32()-IMG;
     Interceptor.attach(abs(RVA_RES),{ onEnter(a){const sp=this.context.esp;this.p=sp.add(4).readS32();this.c=sp.add(8).readS32();},
       onLeave(ret){ if(this.p===0 && this.c===pressCtrl && Date.now()<pressUntil) ret.replace(ptr(0xff)); }});
+    // [d1r1] RwTextureSetName 0x004c5ae0 (texture at [esp+4]; the name lands at tex+0x10).
+    // Load-time only: one call per texture read.
+    Interceptor.attach(abs(0x004c5ae0),{ onEnter(){ this.t=this.context.esp.add(4).readPointer(); },
+      onLeave(){ try { texByPtr[this.t.toString()]=(this.t.add(0x10).readCString()||'').slice(0,31); } catch(e) {} }});
+    // [d1r1] --track N: FUN_0040d440 reads the engine track index at its first instruction
+    // (`mov eax,[0x63ba7c]` at 0x0040d440) and hands it to FUN_0040d270 at 0x0040d44d. Writing
+    // the index (and the menu-side copy 0x0067f17c, as scenario_launch.py:3290-3291 does) at
+    // onEnter makes the Quick Battle flow load track N. The piz actually opened is recorded below.
+    Interceptor.attach(abs(0x0040d440),{ onEnter(){ if (forceTrack < 0) return;
+      abs(0x0063ba7c).writeS32(forceTrack); abs(0x0067f17c).writeS32(forceTrack); }});
+    // Frida 17: no static Module.findExportByName (race_draw_burst.py:81-83 idiom)
+    const k32=Module.load('kernel32.dll');
+    for (const nm of ['CreateFileA','CreateFileW']) {
+      const f=k32.findExportByName(nm); if (!f || f.isNull()) continue;
+      Interceptor.attach(f,{ onEnter(a){ try { const s = nm.endsWith('W') ? a[0].readUtf16String() : a[0].readAnsiString();
+        if (s && /TRACKS[\\/]/i.test(s) && /\.piz$/i.test(s) && trackFiles.indexOf(s)<0) trackFiles.push(s); } catch(e) {} }});
+    }
     return DELTA; },
   press:function(c,ms){ pressCtrl=c; pressUntil=Date.now()+ms; return 1; },
   hookcam:function(){
@@ -213,6 +425,16 @@ rpc.exports={
             const f = new File(reqPath, 'w'); f.write(nm + '\n'); f.close();
             row.shot = 1;
           }
+          // [d1r1] car render roots (I-3) and the draw recorder's frame markers (I-1, I-FRAME)
+          if (carFrames) row.cm = carMats();
+          if (drawRec) {
+            const n = trace.length;
+            if (drArmed) drEvents.push({e:'D', row:n, t:Date.now()});
+            const nextShot = shotRows[n+1] || (raceStart >= 0 && relShots[n+1-raceStart]);
+            if (nextShot && !drArmed && drFrames[n+1] === undefined) {
+              drShotRow = n+1; arm(); drEvents.push({e:'D', row:n, t:Date.now()});
+            }
+          }
         }
         trace.push(row);
         if (trace.length >= maxRows) tracing = false;
@@ -271,18 +493,27 @@ def main():
     ap.add_argument("--track", type=int, default=-1,
                     help="[camribbon] engine track index to race instead of the Quick Battle "
                          "default (0=Training 1=Egypt 2=Neustein 3=Arctic 4=Highway 5=Sands "
-                         "6=SuperG 7=Roundabout 8=Storm 9=Forest 10=Dump 11=Warzone 12=City)")
+                         "6=SuperG 7=Roundabout 8=Storm 9=Forest 10=Dump 11=Warzone 12=City). "
+                         "[d1r1] the same index also goes to config(): init's FUN_0040d440 hook "
+                         "writes it to 0x0063ba7c and the menu copy 0x0067f17c "
+                         "(scenario_launch.py:3290-3291); the opened piz is recorded")
     ap.add_argument("--nav-wait", type=float, default=2.0,
                     help="[camribbon] seconds to wait for each menu depth change (default 2.0, "
                          "the previous constant); raise it on a loaded machine")
     ap.add_argument("--force-prog", type=float, default=-1.0,
                     help="[camribbon] pin every car's path progress to this value for each "
                          "director call (see AGENT forceProg); -1 = off")
+    ap.add_argument("--drawrec", action="store_true",
+                    help="[d1r1] record every D3D9 draw of each shot frame (PREREG_d1r1 I-1) "
+                         "into <out_dir>/orig_row_<K>.draws.json")
+    ap.add_argument("--carframes", action="store_true",
+                    help="[d1r1] per-row car render-root matrices (R{i}_* modelling, "
+                         "Q{i}_* LTM, F{i}_* the renderable's own frame LTM, S{i} root==frame)")
     args = ap.parse_args()
     out_csv, out_static = Path(args.out), Path(args.static_out)
     shots = [int(s) for s in args.shots.split(",") if s.strip()]
     rel = [int(s) for s in args.shots_race.split(",") if s.strip()]
-    if shots or rel: args.frame = True
+    if shots or rel or args.carframes: args.frame = True
     LOG.mkdir(exist_ok=True)
     out_csv.parent.mkdir(parents=True, exist_ok=True)
     env = dict(os.environ); env["MASHED_RE_NO_AUTO_HOOK"] = "1"
@@ -302,7 +533,8 @@ def main():
     scr.exports_sync.init()
     scr.exports_sync.config(args.frame, args.rows, shots, str(req) if (shots or rel) else "",
                             str(out_csv.parent.resolve()), rel,
-                            args.force_prog if args.force_prog >= 0 else -1)
+                            args.force_prog if args.force_prog >= 0 else -1,
+                            args.drawrec, args.carframes, args.track)
     dev.resume(pid)
     E = scr.exports_sync
 
@@ -410,6 +642,10 @@ def main():
         hdr += ["camp", "ba8c", "flag", "c7", "roll", "vw58", "f101c", "ff4"]
         hdr += [f"M_{k}" for k in m12] + [f"L_{k}" for k in m12]
         hdr += ["rvwx", "rvwy"] + [f"E_{k}" for k in m12] + ["e0c0", "shot"]
+    if args.carframes:
+        for i in range(4):
+            hdr += [f"S{i}"] + [f"R{i}_{k}" for k in m12] + [f"Q{i}_{k}" for k in m12] \
+                   + [f"F{i}_{k}" for k in m12]
     with open(out_csv, "w", newline="") as f:
         w = csv.writer(f)
         w.writerow(hdr)
@@ -426,6 +662,10 @@ def main():
                 out += [r["camp"], r["ba8c"], r["flag"], r["c7"], r["roll"], r["vw58"],
                         r["f101c"], r["ff4"], *r["M"], *r["L"], *r["rvw"], *r["E"],
                         r["e0c0"], r["shot"]]
+            if args.carframes:
+                for i in range(4):
+                    c = r["cm"][i]
+                    out += [c["same"], *c["M"], *c["L"], *c["FL"]]
             w.writerow(out)
 
     # SELF-CHECK. The whole point of this rewrite is that the previous capture
@@ -466,6 +706,16 @@ def main():
         for k in fired:
             bmp = out_csv.parent / f"orig_row_{k:05d}.bmp"
             print(f"shot row {k} (ba8c={rows[k]['ba8c']}): {'OK' if bmp.exists() else 'MISSING'} {bmp}")
+    tf = json.loads(E.trackfiles())
+    print(f"[d1r1] track piz opened: {tf}  (forced index {args.track})  textures named: {E.texcount()}")
+    (out_csv.parent / (out_csv.stem + ".tracks.json")).write_text(json.dumps(tf))
+    if args.drawrec:
+        frames = json.loads(E.getdraws())
+        for k, ev in sorted(frames.items(), key=lambda kv: int(kv[0])):
+            p = out_csv.parent / f"orig_row_{int(k):05d}.draws.json"
+            p.write_text(json.dumps({"side": "orig", "row": int(k), "events": ev}))
+            nd = sum(1 for e in ev if e.get("e") == "d")
+            print(f"[d1r1] drawrec row {k}: {len(ev)} events, {nd} draws -> {p}")
     try: dev.kill(pid)
     except Exception: pass
     print(f"done -> {out_csv}, {out_static}")

@@ -1,5 +1,6 @@
 // PickupField impl — see PickupField.h.
 #include "PickupField.h"
+#include "DrawRec.h"                       // d1r1 per-draw recorder label
 #include "../Gameplay/PickupPoolSpawn.h"   // the real 0x00458e00 body
 #include "../Gameplay/PickupTick.h"        // [mode 7 M3] stand-down under MASHED_REG_CALLBACKS
 #include <cmath>
@@ -104,6 +105,8 @@ bool PickupField::EnsureTexture(IDirect3DDevice9* dev) {
     if (FAILED(dev->CreateTexture(S, S, 1, 0, D3DFMT_A8R8G8B8,
                                   D3DPOOL_MANAGED, &tex_, nullptr)) || !tex_)
         return false;
+    // d1r1 recorder label (no-op by default): generated here, not read from a TXD
+    mashed_re::DrawRec::NameTexture(tex_, "@gen:pickup");
     D3DLOCKED_RECT lr{};
     if (SUCCEEDED(tex_->LockRect(0, &lr, nullptr, 0))) {
         for (UINT y = 0; y < S; ++y) {

@@ -1,5 +1,6 @@
 // ParticleSystem impl — see ParticleSystem.h.
 #include "ParticleSystem.h"
+#include "DrawRec.h"
 #include <cmath>
 #include <cstdlib>
 
@@ -32,6 +33,8 @@ bool ParticleSystem::EnsureTexture(IDirect3DDevice9* dev) {
     if (FAILED(dev->CreateTexture(S, S, 1, 0, D3DFMT_A8R8G8B8,
                                   D3DPOOL_MANAGED, &tex_, nullptr)) || !tex_)
         return false;
+    // d1r1 recorder label (no-op by default): generated here, not read from a TXD
+    mashed_re::DrawRec::NameTexture(tex_, "@gen:particle");
     D3DLOCKED_RECT lr{};
     if (SUCCEEDED(tex_->LockRect(0, &lr, nullptr, 0))) {
         for (UINT y = 0; y < S; ++y) {

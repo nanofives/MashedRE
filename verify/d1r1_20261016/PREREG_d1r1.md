@@ -135,3 +135,42 @@ anything this file predicts.
 
 Any change to the instrument or a gate after this commit is appended here with a timestamp and the
 reason, before the next adjudication run on the affected track.
+
+### Amendment 1 (2026-10-16 ~03:40, before any adjudication run)
+
+Two instrument smoke runs on TRAINING (`log/d1r1/smoke_t0`, `smoke_t1`; 4 original shots, 4
+standalone replays of them) showed that matching on call arguments cannot work, for structural
+reasons that are facts of the two renderers, not findings about faithfulness:
+- The original draws indexed **triangle strips** (`pt=5`, RW's D3D9 instancing). librw draws
+  **triangle lists** with unshared vertices (`pt=4`). Primitive and vertex counts never agree.
+- librw issues a DrawIndexedPrimitive for every **empty** material mesh (every sector and car
+  atomic carries the full material list): 18 083 zero-primitive calls in one TRAINING frame. A
+  zero-primitive call rasterises nothing.
+- librw draws through vertex/pixel shaders, so FVF, LIGHTING and the texture-stage ops are not
+  comparable with the original's fixed-function values.
+
+Changes, all made before any adjudication run:
+1. **Match on the geometry drawn.** Both recorders now also read, per draw, the non-degenerate
+   triangle count and the world-space AABB of the vertices those triangles use (READONLY lock of
+   the bound index/vertex buffers, or the UP pointers; positions transformed by the draw's world
+   matrix). A draw's identity is (stage-0 texture, triangle count, AABB within 0.01 + 1e-4 x
+   extent). The original recorder's lock path read 481 of 483 draws on `smoke_t1` with no error.
+2. **Zero-primitive draws are dropped** on both sides and counted (`info.empty_dropped`).
+3. **Stage-1 texture recorded** (`tex1`): the original's world meshes are two-stage (stage 1 =
+   `NewShadow` / `NewShadow_Small`, COLOROP 13), its car bodies carry `CarGloss` or an unnamed
+   128x128 texture there. A matched draw whose stage-1 texture differs is a TEX1 row.
+4. **Key render states** = ZENABLE ZWRITE ZFUNC ATEST AREF AFUNC ABLEND SRC DST CULL, with
+   don't-care fields zeroed (ZFUNC when Z is off, AREF/AFUNC when alpha test is off, SRC/DST when
+   blending is off). FOG is reported as info on matched draws. LIGHTING, TSS ops, FVF and VS are
+   recorded but not compared.
+5. **Off-screen evidence.** MISSING/EXTRA rows count how many of their draws lie wholly outside
+   the view frustum of the trace row (the original's `M_*` frame and `rvwx/rvwy`, near 0.1 / far
+   360 from `verify/d1_lens`). A draw wholly outside rasterises nothing.
+6. **Row kinds** are STATE, TEX1, MOVED, SPLIT, MISSING, EXTRA, ORDER (`re/tools/drawlist3d.py`
+   header). MATRIX is dropped: the AABB is already in world space.
+7. **I-MSHIFT restated**: the mutant must turn matched world/car geometry into MOVED/MISSING
+   rows, which a camera-only shift does not do to identity-matrix world sectors. So the mutant
+   pairs the original's row K with the standalone's row K+30 **including** the car transplant, and
+   must show car-body MOVED rows that the matched pair does not have.
+
+Gates I-COVER, I-FRAME, I-NAME, I-SYNC, I-N0, I-SELF and the §3/§4 rules are unchanged.

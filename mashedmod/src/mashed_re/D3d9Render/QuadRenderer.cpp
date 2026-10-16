@@ -28,6 +28,7 @@
 //   draw.
 
 #include "QuadRenderer.h"
+#include "DrawRec.h"   // d1r1 per-draw recorder names
 
 #include <cstring>
 
@@ -171,6 +172,7 @@ bool QuadRenderer::UploadIntoTextureSlot(std::uint32_t slot,
         m_last_error = "CreateTexture failed";
         return false;
     }
+    mashed_re::DrawRec::NameTexture(m_textures[slot], tex.name);   // d1r1; no-op by default
 
     for (std::uint32_t level = 0; level < tex.mip_count; ++level) {
         const auto& mip = tex.mips[level];

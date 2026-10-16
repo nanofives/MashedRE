@@ -146,6 +146,16 @@ fxc /nologo /T ps_2_0 [/DTEX]            /Vn g_ps20_main /Fh <out>.h <in>.hlsl
 `VS_NAME`/`PS_NAME`. Editing a shader header does **not** invalidate `librw_d3d9.lib`
 (the staleness check scans `src/**` mtimes only); delete the lib to force a relink.
 
+## d1r1 (2026-10-16): per-draw recorder hooks, diagnostic only
+
+`src/d3d/d3d9render.cpp` defines two null function pointers, `rw_drawrec_pre(texname, ltm16)`
+and `rw_drawrec_post()`, and `defaultRenderCB_Shader` calls them around each mesh's
+`drawInst` when they are set. Only mashed_re's `D3d9Render/DrawRec.cpp` sets them, and only
+when `MASHED_DBG_D3DREC` is set, so the draw path is unchanged by default. Reason: librw draws
+with shaders, so the device's `D3DTS_WORLD` is not the mesh's matrix, and an untextured
+material skips `setTexture`, leaving the previous texture bound. The hooks hand the recorder the
+material's texture name and the atomic's LTM instead (`verify/d1r1_20261016/PREREG_d1r1.md` I-2).
+
 ## What is NOT patched
 
 Render-state ownership beyond the above. librw's `d3drender.cpp` sets states through

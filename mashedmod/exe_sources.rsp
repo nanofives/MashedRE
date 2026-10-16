@@ -84,6 +84,7 @@
 "D3d9Render\QuadRenderer.cpp"
 "D3d9Render\RwIm2DBridge.cpp"
 "D3d9Render\DrawStreamDump.cpp"
+"D3d9Render\DrawRec.cpp"
 "D3d9Render\PngLoader.cpp"
 "D3d9Render\MpegVideoTexture.cpp"
 "D3d9Render\TextRenderer.cpp"
