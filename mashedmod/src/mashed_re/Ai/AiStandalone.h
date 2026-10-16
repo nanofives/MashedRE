@@ -99,6 +99,8 @@ void Ai_ResetVehicleIndex(int v);
 // file calls the original instead; these exist so the exe side does not reach into this TU's anonymous namespace.
 int   Ai_HostTrackIndex();
 float Ai_HostVehF32(int v, int off);
+// [seek414f00 2026-10-16] FUN_0046c7b0 (the bound Host::car_alive), for the shared FUN_00414f00 body (Ai/AiTrackObjSeek.cpp).
+int   Ai_HostCarAlive(int v);
 
 // [D3 2026-09-27] Last control-step stack locals for vehicle v, so MASHED_AI_STEPDUMP
 // can carry the SAME seven columns the original-side probe at 0x004165a5 reads out of

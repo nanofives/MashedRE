@@ -1,0 +1,8 @@
+[
+ {"name": "path1_ai_track_obj_seek", "timeout": 300,
+  "cmd": ["py", "-3.12", "re/frida/run_diff.py", "ai_track_obj_seek"],
+  "env": {"MASHED_ROOT": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed"}},
+ {"name": "path2_ai_track_obj_seek", "timeout": 300,
+  "cmd": ["py", "-3.12", "re/frida/run_verify_hook.py", "ai_track_obj_seek"],
+  "env": {"MASHED_VERIFY_ASI": "{ASI}", "MASHED_ROOT": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed"}}
+]

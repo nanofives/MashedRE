@@ -11,6 +11,7 @@
 "Ai\CarSlotState.cpp"
 "Ai\AiBankSwitch.cpp"
 "Ai\AiPostStepBrake.cpp"
+"Ai\AiTrackObjSeek.cpp"
 "Vehicle\ForceIntegrator.cpp"
 "Vehicle\ForceIntegratorStubs.cpp"
 "Vehicle\VehicleControl.cpp"

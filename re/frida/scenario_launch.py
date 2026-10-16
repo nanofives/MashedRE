@@ -1963,6 +1963,84 @@ function tgProbeArm(limit){
 }
 function tgProbeDrain(){ const r = TG.rows; TG.rows = []; return r; }
 
+// --- SEEK probe (seek414f00, 2026-10-16) ---------------------------------------
+// Two read-only entry+leave hooks, both <= 4 calls/frame:
+//  * FUN_00451d80(obj, dt) -- the Warzone track object's state machine, called once per frame
+//    from the course-0x21 per-track tick 0x00452b20 (call 0x00452ba2, obj = 0x00684d18). It is the
+//    only path into FUN_00451ad0, the only writer of DAT_0088ff50[v] (0x00451b47 = 1, 0x00451b5b = 0).
+//    Row: frame, dt, obj+0x48 state in/out, obj+0x4c, obj+0xc8 (= 0x00684de0) bits out,
+//    DAT_0088ff50[0..3] out, [obj+0x94] (= DAT_00684dac) and its +0x30/+0x34/+0x38 bits.
+//  * FUN_00414f00(spline, &look, &cand, v) -- the AI powerup seek (call 0x00416478). Records every
+//    input the body reads: DAT_00684de0 bits, DAT_0088ff50[v], DAT_00684dac, pfVar2[0..2] bits, own
+//    matrix +0x30/+0x34/+0x38 (FUN_0046d4a0: 0x00881ec8 + v*0xd04 + [0x00881f48 + v*0xd04]*0x40),
+//    DAT_008815a4[0] (FUN_0046c7b0(0)), car 0 matrix +0x30/+0x38, cand at entry; at leave EAX + cand.
+// A NEGATIVE limit arms the FUN_00451d80 hook only (obj-only), for runs where 0x00414f00 carries the .asi's inline JMP
+// (--hooks AiPowerupSeek): an Interceptor there would sit on the patch. Obj rows also carry the committed AI mode word
+// DAT_0089a52c + v*0x74 (v = 0..3, written at 0x00416590; 10 = the mode-10 block took FUN_00414f00's 1), and the probe
+// snaps the first dword at 0x00414f00 on arm and on drain (an E9 there = the hook is live).
+const SK = { armed:false, obj:[], seek:[], nObj:0, nSeek:0, limit:20000, err:null, objOnly:false, entryArm:null };
+function skMat(i){ const t = ga(0x00881f48).add(i*0xd04).readU32(); return ga(0x00881ec8).add(i*0xd04 + t*0x40); }
+function skProbeArm(limit){
+  if (SK.armed) return 'already armed';
+  try {
+    SK.objOnly = (limit < 0);
+    SK.limit = Math.abs(limit) || 20000;
+    SK.entryArm = ga(0x00414f00).readU32().toString(16);
+    Interceptor.attach(ga(0x00451d80), {
+      onEnter(args){
+        this.o = null;
+        try { this.o = args[0]; this.dt = args[1].toInt32(); this.s0 = this.o.add(0x48).readS32(); }
+        catch(e){ if (!SK.err) SK.err = 'objEnter ' + e; }
+      },
+      onLeave(ret){
+        try {
+          if (!this.o) return;
+          SK.nObj++;
+          if (SK.obj.length >= SK.limit) return;
+          const o = this.o, p = o.add(0x94).readPointer();
+          const row = [SK.nObj, ga(0x007f0ff4).readS32(), this.dt, this.s0, o.add(0x48).readS32(),
+                       o.add(0x4c).readS32(), o.add(0xc8).readU32(),
+                       ga(0x0088ff50).readU32(), ga(0x0088ff54).readU32(), ga(0x0088ff58).readU32(),
+                       ga(0x0088ff5c).readU32(), p.toUInt32()];
+          if (p.isNull()) row.push(0, 0, 0);
+          else row.push(p.add(0x30).readU32(), p.add(0x34).readU32(), p.add(0x38).readU32());
+          for (let v = 0; v < 4; v++) row.push(ga(0x0089a52c).add(v*0x74).readS32());
+          SK.obj.push(row);
+        } catch(e){ if (!SK.err) SK.err = 'objLeave ' + e; }
+      }});
+    if (SK.objOnly) { SK.armed = true; return 'seek-probe armed OBJ-ONLY (0x451d80); 0x414f00 dword=' + SK.entryArm; }
+    Interceptor.attach(ga(0x00414f00), {
+      onEnter(args){
+        this.row = null;
+        try {
+          SK.nSeek++;
+          if (SK.seek.length >= SK.limit) return;
+          const v = args[3].toInt32(), cand = args[2];
+          const dac = ga(0x00684dac).readU32();
+          const row = [SK.nSeek, ga(0x007f0ff4).readS32(), v, ga(0x00684de0).readU32(),
+                       ga(0x0088ff50).add(v*4).readU32(), dac];
+          if (dac === 0) row.push(0, 0, 0);
+          else { const q = ptr(dac).add(0x30); row.push(q.readU32(), q.add(4).readU32(), q.add(8).readU32()); }
+          const m = skMat(v), m0 = skMat(0);
+          row.push(m.add(0x30).readU32(), m.add(0x34).readU32(), m.add(0x38).readU32(),
+                   ga(0x008815a4).readU32(), m0.add(0x30).readU32(), m0.add(0x38).readU32(),
+                   cand.readU32(), cand.add(4).readU32());
+          this.row = row; this.cand = cand;
+        } catch(e){ if (!SK.err) SK.err = 'seekEnter ' + e; }
+      },
+      onLeave(ret){
+        try {
+          if (!this.row) return;
+          this.row.push(ret.toInt32(), this.cand.readU32(), this.cand.add(4).readU32());
+          SK.seek.push(this.row);
+        } catch(e){ if (!SK.err) SK.err = 'seekLeave ' + e; }
+      }});
+    SK.armed = true;
+    return 'seek-probe armed (entry+leave 0x451d80, 0x414f00)';
+  } catch(e){ return 'ERR ' + e; }
+}
+function skProbeDrain(){ const r = {obj:SK.obj, seek:SK.seek}; SK.obj = []; SK.seek = []; return r; }
+
 // --- REGISTRY probe (mode 7 leg M1, 2026-10-10) --------------------------------
 // FUN_004847d0 entry (grid build, <= 1/frame): c8 0x006e70c8, FUN_00467210(0)+0x20..+0x28 (called
 // through NativeFunction, read-only callee chain FUN_0042b930/FUN_0042f510), DAT_00897ff0..f8.
@@ -3232,6 +3310,11 @@ rpc.exports = {
   tgProbeArm: function(l){ return tgProbeArm(l); },
   tgProbeDrain: function(){ return tgProbeDrain(); },
   tgProbeStats: function(){ return JSON.stringify({armed:TG.armed, calls:TG.n, err:TG.err}); },
+  skProbeArm: function(l){ return skProbeArm(l); },
+  skProbeDrain: function(){ return skProbeDrain(); },
+  skProbeStats: function(){ return JSON.stringify({armed:SK.armed, obj_only:SK.objOnly, obj_calls:SK.nObj, seek_calls:SK.nSeek,
+                                                   entry_dword_arm:SK.entryArm,
+                                                   entry_dword_now:ga(0x00414f00).readU32().toString(16), err:SK.err}); },
   rgProbeArm: function(k){ return rgProbeArm(k); },
   cbProbeArm: function(){ return cbProbeArm(); },
   fhProbeArm: function(l, c){ return fhProbeArm(l, c); },
@@ -3889,6 +3972,11 @@ def main():
     ap.add_argument("--tgt-probe", type=int, default=0,
                     help="[D-11072 P3] N: entry+leave hook on FUN_00414a70, first N calls: every input "
                          "+ return + cand. Writes <out>.tgt.csv. Requires --statediff-out.")
+    ap.add_argument("--seek-probe", type=int, default=0,
+                    help="[seek414f00] N: entry+leave hooks on FUN_00451d80 (Warzone object state, the "
+                         "only path to the DAT_0088ff50 writer) and FUN_00414f00 (AI powerup seek), first "
+                         "N rows each. Writes <out>.seekobj.csv and <out>.seek.csv. Requires --statediff-out. "
+                         "Negative N: FUN_00451d80 only (use with --hooks AiPowerupSeek, whose JMP sits at 0x00414f00).")
     ap.add_argument("--wobj-probe", action="store_true",
                     help="[D3 modes 3/7 2026-10-09] ONE ENTRY HOOK on FUN_00414c30: logs each "
                          "call (frame, v, registry count 0x006e70d8) and dumps the world-object "
@@ -4070,6 +4158,8 @@ def main():
                 print("  [statediff]", E.path_prog_probe_arm(args.pathprog_probe))
             if args.tgt_probe:
                 print("  [statediff]", E.tg_probe_arm(args.tgt_probe))
+            if args.seek_probe:
+                print("  [statediff]", E.sk_probe_arm(args.seek_probe))
             if args.reg_probe:
                 print("  [statediff]", E.rg_probe_arm(args.reg_probe))
             if args.cb_probe:
@@ -4751,6 +4841,21 @@ def main():
                             for r in _tg: f.write(",".join(str(x) for x in r) + chr(10))
                         print(f"  [statediff] tgt-probe {len(_tg)} rows -> {_tf}")
                     except Exception as _e: print("  [statediff] tgt drain failed:", _e)
+                if args.seek_probe:
+                    try: print("  [statediff] seek-probe agent:", E.sk_probe_stats())
+                    except Exception as _e: print("  [statediff] seek stats failed:", _e)
+                    try:
+                        _sk = E.sk_probe_drain()
+                        _so = outp.with_suffix(outp.suffix + ".seekobj.csv")
+                        with open(_so, "w", newline="") as f:
+                            f.write("n,frame,dt,state_in,state_out,active,c8,ff50_0,ff50_1,ff50_2,ff50_3,mat,px,py,pz,mode0,mode1,mode2,mode3" + chr(10))
+                            for r in _sk["obj"]: f.write(",".join(str(x) for x in r) + chr(10))
+                        _ss = outp.with_suffix(outp.suffix + ".seek.csv")
+                        with open(_ss, "w", newline="") as f:
+                            f.write("n,frame,v,de0,ff50v,dac,tx,ty,tz,ox,oy,oz,alive0,x0,z0,cin_x,cin_z,ret,cout_x,cout_z" + chr(10))
+                            for r in _sk["seek"]: f.write(",".join(str(x) for x in r) + chr(10))
+                        print(f"  [statediff] seek-probe obj {len(_sk['obj'])} rows -> {_so}; seek {len(_sk['seek'])} rows -> {_ss}")
+                    except Exception as _e: print("  [statediff] seek drain failed:", _e)
                 if args.wobj_probe:
                     try: print("  [statediff] wobj-probe agent:", E.wobj_probe_stats())
                     except Exception as _e: print("  [statediff] wobj-probe stats failed:", _e)

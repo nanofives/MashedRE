@@ -1,0 +1,16 @@
+=== w1/H1  agent={"armed":true,"obj_only":true,"obj_calls":10410,"seek_calls":0,"entry_dword_arm":"54205be9","entry_dword_now":"54205be9","err":null}
+  obj rows 10410
+  state transitions: [('135800', '0', '1'), ('138850', '1', '2'), ('188550', '2', '3'), ('238300', '3', '0'), ('296500', '0', '1'), ('299550', '1', '2'), ('348500', '2', '3'), ('397500', '3', '0'), ('450250', '0', '1'), ('453300', '1', '2'), ('502450', '2', '3')]
+  car 0: ff50!=0 frames 0, committed mode 10 frames 0, of which gate-consistent 0
+  car 1: ff50!=0 frames 0, committed mode 10 frames 0, of which gate-consistent 0
+  car 2: ff50!=0 frames 0, committed mode 10 frames 0, of which gate-consistent 0
+  car 3: ff50!=0 frames 3142, committed mode 10 frames 177, of which gate-consistent 177
+  committed mode histogram (all cars x frames): {'0': 38174, '3': 3269, '10': 177, '1': 20}
+=== w1/H2  agent={"armed":true,"obj_only":true,"obj_calls":9502,"seek_calls":0,"entry_dword_arm":"54205be9","entry_dword_now":"54205be9","err":null}
+  obj rows 9502
+  state transitions: []
+  car 0: ff50!=0 frames 0, committed mode 10 frames 0, of which gate-consistent 0
+  car 1: ff50!=0 frames 0, committed mode 10 frames 0, of which gate-consistent 0
+  car 2: ff50!=0 frames 0, committed mode 10 frames 0, of which gate-consistent 0
+  car 3: ff50!=0 frames 0, committed mode 10 frames 0, of which gate-consistent 0
+  committed mode histogram (all cars x frames): {'0': 34714, '3': 2408, '5': 850, '1': 21, '2': 15}

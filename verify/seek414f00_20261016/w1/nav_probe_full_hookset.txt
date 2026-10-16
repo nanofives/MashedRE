@@ -1,0 +1,9 @@
+[seek_full] pid=25120 detach=False only=None noauto=False
+  [save] reads pinned to gamesave.bin.refbak_20260830; writes -> C:\Users\maria\AppData\Local\Temp\run_diff_gamesave_25120.bin
+  [nav] booting to menu...
+  [nav] timeout: d3 depth=2 phase=3
+  [nav] timeout: d3 depth=2 phase=3
+  [nav] in race? phase=0 (YES)
+[seek_full] drive_to_race=True err=None after 27s  proc.poll()=None
+[seek_full] frida detached events=[]
+

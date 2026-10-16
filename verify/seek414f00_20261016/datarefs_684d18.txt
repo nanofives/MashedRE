@@ -1,0 +1,24 @@
+// 0x00684d18  DATA in .data
+//   type: undefined bytes (Ghidra has no data definition here)
+//   3 reference(s) total
+//   WRITES: (none)
+//   reads: (none)
+//   other (3):
+//     0x0045214a in FUN_00452140  [DATA]  PUSH 0x684d18
+//     0x00452ad0 in (data)  [DATA]  PUSH 0x684d18
+//     0x00452af0 in (data)  [DATA]  PUSH 0x684d18
+
+// 0x00684dac  DATA in .data
+//   type undefined4 len 4  value 00000000h
+//   1 reference(s) total
+//   WRITES: (none)
+//   reads (1):
+//     0x00452160 in FUN_00452160  [READ]  MOV EAX,[0x00684dac]
+//   other: (none)
+
+// 0x00684de8  DATA in .data
+//   type: undefined bytes (Ghidra has no data definition here)
+//   0 reference(s) total
+//   WRITES: (none)
+//   reads: (none)
+//   other: (none)

@@ -1,0 +1,37 @@
+hook: ai_powerup_seek  rva=0x00414f00  export=AiPowerupSeek
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 23340
+  [agent] pre_snapshot
+  [agent] asi_loaded
+  [agent] post_snapshot
+  [agent] results
+
+=== verify_hook_install report (ai_powerup_seek) ===
+
+target address: 0x00414f00  export: AiPowerupSeek
+PRE  bytes:     e9 5b 20 1a 61 df 03 00
+asi base:       0x61580000
+reimpl addr:    0x615b6f60
+POST bytes:     e9 5b 20 1a 61 df 03 00
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x611a205b  expected 0x611a205b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  3 / 3  (other threads: 0)
+
+per-input results:
+  [OK] input={'seed': [{'addr': '0x00684de0', 'val': 1057514902}, {'addr': '0x0088ff5c', 'val': 1}, {'addr': '0x00684dac', 'val': 8327168}, {'addr': '0x007f1030', 'val': 1127070887}, {'addr': '0x007f1034', 'val': 3216442706}, {'addr': '0x007f1038', 'val': 1114322827}, {'addr': '0x00884654', 'val': 0}, {'addr': '0x00884604', 'val': 1126950834}, {'addr': '0x00884608', 'val': 3213800418}, {'addr': '0x0088460c', 'val': 1113533820}, {'addr': '0x008815a4', 'val': 0}, {'addr': '0x007f1040', 'val': 2863311530}, {'addr': '0x007f1044', 'val': 2863311530}, {'addr': '0x00881f48', 'val': 0}, {'addr': '0x00881ef8', 'val': 1113719632}, {'addr': '0x00881f00', 'val': 1094425339}], 'args': [0, 8327248, 8327232, 3], 'obs': ['0x007f1040', '0x007f1044']}  got=0x00000001432dbca7426b378b  err=
+  [OK] input={'seed': [{'addr': '0x00684de0', 'val': 1057514902}, {'addr': '0x0088ff54', 'val': 0}, {'addr': '0x00684dac', 'val': 8327168}, {'addr': '0x007f1030', 'val': 1127070887}, {'addr': '0x007f1034', 'val': 3216442706}, {'addr': '0x007f1038', 'val': 1114322827}, {'addr': '0x00882c4c', 'val': 0}, {'addr': '0x00882bfc', 'val': 1115712640}, {'addr': '0x00882c00', 'val': 3179797865}, {'addr': '0x00882c04', 'val': 1108586825}, {'addr': '0x008815a4', 'val': 0}, {'addr': '0x007f1040', 'val': 2863311530}, {'addr': '0x007f1044', 'val': 2863311530}, {'addr': '0x00881f48', 'val': 0}, {'addr': '0x00881ef8', 'val': 1113719632}, {'addr': '0x00881f00', 'val': 1094425339}], 'args': [0, 8327248, 8327232, 1], 'obs': ['0x007f1040', '0x007f1044']}  got=0x00000000aaaaaaaaaaaaaaaa  err=
+  [OK] input={'seed': [{'addr': '0x00684de0', 'val': 1065353216}, {'addr': '0x0088ff58', 'val': 1}, {'addr': '0x00684dac', 'val': 8327168}, {'addr': '0x007f1030', 'val': 1127070887}, {'addr': '0x007f1034', 'val': 3216442706}, {'addr': '0x007f1038', 'val': 1114322827}, {'addr': '0x00883950', 'val': 0}, {'addr': '0x00883900', 'val': 1127103655}, {'addr': '0x00883904', 'val': 3216442706}, {'addr': '0x00883908', 'val': 1114453899}, {'addr': '0x008815a4', 'val': 1}, {'addr': '0x007f1040', 'val': 2863311530}, {'addr': '0x007f1044', 'val': 2863311530}, {'addr': '0x00881f48', 'val': 0}, {'addr': '0x00881ef8', 'val': 1126595751}, {'addr': '0x00881f00', 'val': 1115240331}], 'args': [0, 8327248, 8327232, 2], 'obs': ['0x007f1040', '0x007f1044']}  got=0x0000000143267ca74279378b  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 3x as expected
+  + all 3 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\seek414f00\log\verify_hook_install_ai_powerup_seek.txt
+

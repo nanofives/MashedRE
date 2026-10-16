@@ -1,0 +1,26 @@
+// 0x0088ff50  DATA in .data
+//   type undefined4 len 4  value 00000000h
+//   4 reference(s) total
+//   WRITES (2):
+//     0x00451b47 in FUN_00451ad0  [WRITE]  MOV dword ptr [ESI*0x4 + 0x88ff50],0x1
+//     0x00451b5b in FUN_00451ad0  [WRITE]  MOV dword ptr [ESI*0x4 + 0x88ff50],0x0
+//   reads (1):
+//     0x00451ef9 in (data)  [READ]  MOV EAX,[0x0088ff50]
+//   other (1):
+//     0x00452ea4 in FUN_00452ea0  [DATA]  MOV EAX,dword ptr [EAX*0x4 + 0x88ff50]
+
+// 0x00684de0  DATA in .data
+//   type: undefined bytes (Ghidra has no data definition here)
+//   1 reference(s) total
+//   WRITES: (none)
+//   reads (1):
+//     0x00452eb0 in FUN_00452eb0  [READ]  FLD float ptr [0x00684de0]
+//   other: (none)
+
+// 0x00684dac  DATA in .data
+//   type undefined4 len 4  value 00000000h
+//   1 reference(s) total
+//   WRITES: (none)
+//   reads (1):
+//     0x00452160 in FUN_00452160  [READ]  MOV EAX,[0x00684dac]
+//   other: (none)
