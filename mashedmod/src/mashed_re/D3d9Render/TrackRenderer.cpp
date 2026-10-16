@@ -3979,7 +3979,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         }
     }
     }
-    // [U-9683] MASHED_REFDIST_AFTER_AI: the producer's place in the original's frame order, after
+    // [U-9683] default-ON (opt-out MASHED_NO_REFDIST_AFTER_AI): the producer's place in the original's frame order, after
     // every car's physics (player above, opponents in the block just closed) and after
     // PathProg_FrameTick (UpdateRace). Same coverage as the UpdateRace call it replaces:
     // UpdateRace returns before that call when gates_ is empty.
@@ -6010,8 +6010,9 @@ void TrackRenderer::UpdateRace(float dt) {
     // below relies on. PREREG: verify/d3_u9186_20261008/PREREG_H3.md
     // [U-9683] The original runs the producer AFTER the AI tick, physics and progress of the
     // frame (FUN_0040fc00: FUN_00425a40 0x0040fc6c, FUN_0040da50 0x0040fc75, FUN_0040d470
-    // 0x0040fc7c), so its consumer reads the previous frame's value. MASHED_REFDIST_AFTER_AI
-    // moves the call to the end of UpdateCar (after the opponent block); verify/d3_u9683_20261016.
+    // 0x0040fc7c), so its consumer reads the previous frame's value. DEFAULT-ON 2026-10-16: the
+    // call is at the end of UpdateCar (after the opponent block); opt-out
+    // MASHED_NO_REFDIST_AFTER_AI restores this site. verify/d3_u9683_20261016.
     if (!RaceRefDistAfterAi()) RaceComputeDistancesTick(0);
 
     // [D-11072 P2] FUN_0040da50's FUN_00408610 loop (per-car path progress 0x008a96e8 and

@@ -322,16 +322,15 @@ void MaybeReplay() {
 }  // namespace
 
 // [U-9683] Producer order vs the AI tick, verify/d3_u9683_20261016/PREREG_u9683.md.
-// MASHED_REFDIST_AFTER_AI moves the producer call from UpdateRace (before the AI tick of the
-// frame) to the end of UpdateCar (after every car's physics and the progress tick), which is the
-// producer's place in the original's per-frame order. MASHED_REFDIST_TRACE is a measurement-only
-// witness: one row per producer call (P) and per AI tick entry (T), no game state written.
+// DEFAULT-ON 2026-10-16: the producer call runs at the end of UpdateCar (after every car's physics
+// and the progress tick) instead of in UpdateRace (before the AI tick of the frame), which is the
+// producer's place in the original's per-frame order. Opt-out MASHED_NO_REFDIST_AFTER_AI (the
+// previous order); MASHED_REFDIST_AFTER_AI is now a no-op. MASHED_REFDIST_TRACE is a
+// measurement-only witness: one row per producer call (P) and per AI tick entry (T), no game
+// state written.
 namespace {
 bool RefDistAfterAiOn() {
-    static const bool s_on = [] {
-        const char* e = std::getenv("MASHED_REFDIST_AFTER_AI");
-        return e && e[0] && e[0] != '0';
-    }();
+    static const bool s_on = (std::getenv("MASHED_NO_REFDIST_AFTER_AI") == nullptr);
     return s_on;
 }
 
@@ -379,8 +378,8 @@ bool RefDistAfterAi() {
     const bool on = RefDistAfterAiOn();
     if (on && !s_logged) {
         s_logged = true;
-        if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {   // the game's own witness that the knob took
-            std::fprintf(lf, "[U-9683] MASHED_REFDIST_AFTER_AI: refdist producer runs after the AI block\n");
+        if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {   // the game's own witness of which order is live
+            std::fprintf(lf, "[U-9683] refdist producer runs after the AI block (opt-out MASHED_NO_REFDIST_AFTER_AI)\n");
             std::fclose(lf);
         }
     }

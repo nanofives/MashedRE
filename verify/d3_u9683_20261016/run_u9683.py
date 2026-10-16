@@ -37,6 +37,16 @@ ARMS = [
     dict(n="M_OFF", exe=NEW, recipe="h4", knobs=list(M7)),
     dict(n="M_ON", exe=NEW, recipe="h4", knobs=M7 + [AFT]),
 ]
+ARMS.append(dict(n="M_ON2", exe=NEW, recipe="h4", knobs=M7 + [AFT]))   # same-arm repeat = collateral floor of M_ON
+# PREREG decision 1, after the default flip (the knob arms above ran on the opt-in build, commit 96df7719; the same
+# source with the flip is the build these arms use, AFT is then a no-op and the opt-out is MASHED_NO_REFDIST_AFTER_AI)
+OPT = "MASHED_NO_REFDIST_AFTER_AI"
+ARMS.append(dict(n="H_DEF", exe=NEW, recipe="h4", knobs=[]))
+ARMS.append(dict(n="H_OPTOUT", exe=NEW, recipe="h4", knobs=[OPT]))
+ARMS.append(dict(n="M_DEF", exe=NEW, recipe="h4", knobs=list(M7)))
+ARMS.append(dict(n="M_OPTOUT", exe=NEW, recipe="h4", knobs=M7 + [OPT]))
+for k in (0, 1, 26):
+    ARMS.append(dict(n="B_DEF_K%02d" % k, exe=NEW, recipe="fk", k=k, knobs=[]))
 # PREREG amendment A1 (report-only causal probe): the faithful race_pct producer on the mode-7 stack
 ARMS.append(dict(n="M_PP", exe=NEW, recipe="h4", knobs=M7 + ["MASHED_PATHPROG"]))
 ARMS.append(dict(n="M_PP_ON", exe=NEW, recipe="h4", knobs=M7 + ["MASHED_PATHPROG", AFT]))
