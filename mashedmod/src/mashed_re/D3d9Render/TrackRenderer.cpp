@@ -7800,6 +7800,9 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
             }
             ++ai_slot;
         }
+        // [rfx] the car shadow / beam pass runs here, after the car loop and before the copters
+        // below (FUN_00410b30: FUN_0041ebb0 at 0x00410bb4, FUN_00425e40 at 0x00410c08)
+        LibRw::RaceSubmit_AddCarFxMarker();
         ++gloss_frame_;   // [rtex] DAT_007f101c stand-in, +1 per race frame (0x004111c1)
     }
 

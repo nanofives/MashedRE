@@ -68,6 +68,7 @@ IDirect3DStateBlock9* g_state_block = nullptr;  // D-S3-2 outbound fix
 std::vector<rw::Clump*> g_models;
 // [rtex] per instance: the car's env coefficient and env frame matrix (FUN_00420340 @
 // 0x00420340 re-applies both per car each frame; one shared clump draws all four cars).
+constexpr int kCarFxMarker = -2;   // [rfx] RaceSubmit_AddCarFxMarker's queue entry
 struct Inst { int model; float m[16]; bool fx = false; float env_coef = 0.f; float env_m[16];
               std::vector<FramePose> poses; float sun_scale = -1.f; };   // [librwrest]
 std::vector<Inst>       g_insts;
@@ -475,6 +476,11 @@ void RaceSubmit_AddInstancePosed(int handle, const float* m44, const FramePose* 
     for (std::size_t p = 0; p < npose; ++p)
         if (poses[p].frame >= 0 && (std::size_t)poses[p].frame < nf) i.poses.push_back(poses[p]);
     i.sun_scale = sun_scale;
+    g_insts.push_back(std::move(i));
+}
+
+void RaceSubmit_AddCarFxMarker() {
+    Inst i; i.model = kCarFxMarker;
     g_insts.push_back(std::move(i));
 }
 
@@ -1045,7 +1051,16 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
         // (worse) re-upload texcoords between draws of the same buffer.
         ApplyUvAnim();
 
+        bool fx_done = false;
         for (const Inst& in : g_insts) {
+            // [rfx] the car FX marker (RaceSubmit_AddCarFxMarker): FUN_0041ebb0 draws the car
+            // shadow and beam right after the car loop (0x00410bb4), before the copters
+            // (FUN_00425e40, 0x00410c08)
+            if (in.model == kCarFxMarker) {
+                if (!fx_done) RaceFx_DrawCarFx(g_cam);
+                fx_done = true;
+                continue;
+            }
             if (in.model < 0 || (std::size_t)in.model >= g_models.size()) continue;
             rw::Clump* c = g_models[(std::size_t)in.model];
             if (!c) continue;
@@ -1145,8 +1160,9 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
             }
         }
         // [rfx 2026-10-16] the car shadow and headlight beam (LibRw/RwRaceFx.h): FUN_0041ebb0
-        // @ 0x0041ebb0 runs after the four car renders (FUN_00410b30, 0x00410bb9).
-        RaceFx_DrawCarFx(g_cam);
+        // @ 0x0041ebb0 runs after the four car renders (FUN_00410b30, 0x00410bb9); here only when
+        // no marker was queued.
+        if (!fx_done) RaceFx_DrawCarFx(g_cam);
     }
     g_insts.clear();
     g_sky.clear();
