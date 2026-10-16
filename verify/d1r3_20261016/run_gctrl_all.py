@@ -4,7 +4,7 @@
 # private paths, so they are immune to the shared main-root log collisions that affect
 # player_trace.log.
 #
-# Usage: py -3.12 run_gctrl_all.py <exeA> <labelA> <exeB> <labelB> <out.md> [frames]
+# Usage: py -3.12 run_gctrl_all.py <exeA> <labelA> <exeB> <labelB> <out.md> [frames] [track,track,...]
 import subprocess, sys, re
 from pathlib import Path
 
@@ -26,8 +26,9 @@ def one(exe, name, track, frames):
 def main():
     exe_a, la, exe_b, lb, out = sys.argv[1:6]
     frames = int(sys.argv[6]) if len(sys.argv) > 6 else 4000
+    tracks = sys.argv[7].split(",") if len(sys.argv) > 7 else TRACKS
     rows = []
-    for t in TRACKS:
+    for t in tracks:
         a = one(exe_a, f"all_{la}_{t}", t, frames)
         b = one(exe_b, f"all_{lb}_{t}", t, frames)
         same = (a[0] == b[0] and a[1] == b[1] and a[0] != "MISSING")

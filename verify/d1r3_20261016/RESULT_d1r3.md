@@ -1,10 +1,10 @@
 # D1-residue R3: delete the legacy D3D9 race renderer and the `MASHED_RENDER_LIBRW=0` revert
 
-Branch `work/d1r3`. Rebased 2026-10-16 onto `race/first-frame-parity` `ec3301f3` (d1r1, d1r2,
-e6498ad6 private ptrace, d2settle A3 LUT sqrt merged); first written against `1caf1a10`.
-Model: claude-sonnet-5-5 (account2, no Ghidra MCP; nothing here needed it).
+Branch `work/d1r3`. Rebased 2026-10-16 onto `race/first-frame-parity` `b26d9f3c` (d1r1, d1r2,
+e6498ad6 private ptrace, d2settle A3 LUT sqrt, rtex MatFX dual world and car dirt merged); first
+written against `1caf1a10`. Model: claude-sonnet-5-5 (account2, no Ghidra MCP; nothing here needed it).
 
-**Verdict.** The deletion is done and both targets build. On the rebased base `ec3301f3`, against a
+**Verdict.** The deletion is done and both targets build. On the rebased base `b26d9f3c`, against a
 baseline exe built from that commit without my change:
 - G-CTRL TRAINING is unchanged on all three hashes: `c2e4d60d / b50bd39b / ba90ed88`, clean private
   ptrace (section 0).
@@ -16,20 +16,29 @@ baseline exe built from that commit without my change:
 On the old base `1caf1a10` the same sweep differed on 3 of 13 tracks (Highway, Storm, rouabout).
 No-op controls on that pure baseline changed rouabout and Storm too, so that difference came from
 code layout, not from the deleted paths. Sections 3 to 5 are those pre-rebase measurements; the
-layout sensitivity itself is still a standing hazard (section 5, mechanism `[UNCERTAIN]`).
+layout sensitivity itself is a standing hazard, filed as **U-9698** (section 5, mechanism
+`[UNCERTAIN]`).
 
-## 0. Rebased base `ec3301f3`: before/after
+## 0. Rebased base `b26d9f3c`: before/after
 
-Rebase: one conflict hunk in `TrackRenderer.cpp::Render` (d1r1's `ai_slot` replay lines sit in the
-librw-only car loop; kept `int ai_slot = 1;`, dropped the stale "keep drawing through D3D9" comment).
-Both targets build, `scripts/lint_rva_bodies.py` NEW=0. "before" = exe built from detached `ec3301f3`
-(`log/base/mashed_re_base_ec33.exe`), "after" = this branch (`log/post/mashed_re_rb1.exe`).
+Rebase history: onto `ec3301f3` one conflict hunk (d1r1's `ai_slot` replay lines in the librw-only car
+loop); onto `b26d9f3c` three hunks in `TrackRenderer.cpp` plus the include block, all resolved by keeping
+every rtex addition that sits on the librw path (the part-0x13 / car dirt / car env set-up in `LoadCar`,
+the `gloss` lambda with the env/non-env instance choice and `++gloss_frame_` in `Render`, the
+`RwCarFx.h` / `PngLoader.h` / `RwMatrixRotate` declarations) and dropping only the D3D9 car draw
+branches and the D3D9 batch/relight build they sat beside. No legacy symbol remains in the tree.
+Both targets build, `scripts/lint_rva_bodies.py` NEW=0.
+"before" = exe built from detached `b26d9f3c` (`log/base/mashed_re_base_b26.exe`), "after" = this
+branch (`log/post/mashed_re_rb2.exe`).
 
 | gate | before | after |
 |---|---|---|
-| G-CTRL TRAINING default, 14400 frames, `MASHED_PLAYERTRACE_OUT` private | `c2e4d60d / b50bd39b / ba90ed88` (18664 / 56153 / 28076 lines, clean) | identical hashes and line counts |
-| per-draw lists, `run_replay3d.py` + d1r1 traces, 9 shots | see `DRAWLIST_base_vs_post.md` | 9/9 identical draw lists, 9/9 identical BMPs |
-| sim sweep, 13 tracks, 4000 frames (`GCTRL_ALL_rebased_base_vs_post.md`) | per-track hashes in that file | 13/13 identical |
+| G-CTRL TRAINING default, 14400 frames, `MASHED_PLAYERTRACE_OUT` private (`rb2_base`, `rb2_post`) | `c2e4d60d / b50bd39b / ba90ed88` (18664 / 56153 / 28076 lines, clean) | identical hashes and line counts |
+| per-draw lists, `run_replay3d.py` + d1r1 traces, 9 shots (`DRAWLIST_rb2_base_vs_post.md`) | 308 / 643 / 469 draws per frame | 9/9 identical draw lists, 9/9 identical BMPs |
+| sim sweep, 13 tracks, 4000 frames (`GCTRL_ALL_rb2_part1.md` 7 tracks, `GCTRL_ALL_rb2_part2.md` 6 tracks; the first job was stopped at its background time limit and the rest re-run) | per-track hashes in those files | 13/13 identical |
+
+Earlier base `ec3301f3`, same three gates, same result (`DRAWLIST_base_vs_post.md`,
+`GCTRL_ALL_rebased_base_vs_post.md`).
 
 Shared deployed `.asi`: `build.bat` deployed `mashed_re_dev.asi` only into the worktree's own
 `original\` (a real directory). The shared `C:\...\Mashed\original\mashed_re_dev.asi` was not touched
@@ -173,6 +182,5 @@ Reproduce: build `mashedmod\build.bat` in PowerShell, then
 - Gaps that already existed on the default build and now have no D3D9 reference implementation in the
   tree: AI cars use the player body (no livery variants, `FUN_0040d110` selection documented in
   `TrackRenderer.h`), no wheel spin/steer, no per-frame car relight (D-S3-5), no world UV scroll.
-- Proposed tracker row, not applied (trackers move only through `re-classify`): UNCERTAINTIES, "sim
-  trajectory on Highway/Storm/rouabout changes with semantics-free code changes; mechanism unknown;
-  evidence `verify/d1r3_20261016/RESULT_d1r3.md` section 5".
+- Tracker: filed as **U-9698** in `UNCERTAINTIES.md` (structural; path to resolution: log `ContactFixup`
+  inputs at the first diverging frame for two builds that differ only in dead code). U-9697 is rtex's.
