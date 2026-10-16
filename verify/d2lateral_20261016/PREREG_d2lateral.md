@@ -170,3 +170,52 @@ A1.6 **Decision (fixed now), on the impact fixup.**
   by the producer from the contact-point velocity; it is compared against `v + w x arm` on both sides).
 - Slot sets, `m` and `+0x9e4` agree to 0.1 %, the output differs -> `0x0046ef70`'s transcription is the term; a fix
   goes behind `MASHED_D2LAT_FIXUP` (default OFF) after a further amendment.
+
+## Amendment 2 (2026-10-16, after `orig_fx1` and `D2_DFX_1`; before any build or run with a code change)
+
+A2.1 **A1.6 result.** Gates: fixup-probe `err null`, 55 fixups, self-check rows ESI = EDI = record. Known answer:
+on every non-contact substep around the impact the `0x0046f6c0` row's velocity equals the substep entry's (A9 writes
+no velocity), so the retry row after the impact fixup is its output. The impact fixup has the same slot set on both
+sides (2 live, slots 5 and 9, normals within 1e-3 of (1,0,0), depth sign equal), so the producer's slot set is not the
+term. **The port's transcription of `0x0046ef70` replayed on the original's own inputs (`fixup_replay.py`) gives
+|v| 231.477 against the measured 231.471 (max component error 5.4e-5 relative): the law is not the term.** The inputs
+differ: `+0x9e4` 1835.50244 (port, `DFX.fixup.log` `sp=`) vs 1832.40173 (original), m -1671.8 vs -1681.2. Damp
+0.26763 vs 0.24754 (x1.081), which is the whole post-impact gap (247.34 / 229.73 = x1.077).
+
+A2.2 **The first diverging term, from the bytes.** `+0x9e4` at the fixup. Its writer on the original is the per-frame
+refresh in `FUN_00470c70` after the A4 loop: `0x004710b0..0x004710ba` gate (`[rec+0x4] != 0 || [rec+0x10] == 1`),
+`0x004710c3 call 0x004c3ac0(rec+0x9b0)` / `0x004710c8 fstp [rec+0x9e4]`, `0x004710d5 call 0x004c3ac0(rec+0x9bc)` /
+`0x004710da fstp [rec+0x9e8]`. `0x004c3ac0` forms `(x*x + y*y) + z*z` and takes the RW LUT sqrt
+(`0x004c3af2 mov eax,[0x7d3ff8]`, `0x004c3af7 mov ecx,[0x7d3ffc]`, index `((b + 0x800) >> 12) & 0xfff`).
+`Math::LutSqrt` on the PC_24 float sum reproduces the original's `+0x9e4` **bit-exactly** on both rows checked
+(1832.4017 from (-1704.885, 0, 671.309) and 190.662 from (147.532, -57.480, 106.182); the exact sqrt gives 1832.2907
+and 190.6417). The port's default has no per-frame refresh (d2settle's fix C, `MASHED_SPEED_REFRESH`, default OFF,
+uses the exact sqrt), so its fixup reads A6a's pre-clamp |W1|.
+
+The residual after the refresh is `m` (-1671.8 vs -1681.2). Its inputs are the contact-point velocity (velocity +
+the angular term) and the slot normal. The pre-impact velocity differs by 0.37 deg of heading and 0.23 % of speed
+(port (-1696.48, 0, 680.60) vs original (-1704.89, 0, 671.31)), and the arm by 0.012 in z. That is the steady-state
+trajectory drift before the impact, outside this lane's term. Predicted share of the post-impact gap left after the
+refresh: about 3 % (the damp's `-3 * d(|m|/sp)` on the remaining 0.3 % of |m|/sp).
+
+A2.3 **The fix (one knob, default OFF): `MASHED_D2LAT_REFRESH=1`.** It sits at fix C's site
+(`VehiclePhysicsRun.cpp`, after `VehicleControlIntegrate`, same gate, the A4-skipped frame's refresh included), and
+writes `+0x9e4 = |+0x9b0|` and `+0x9e8 = |+0x9bc|` with `0x004c3ac0`'s arithmetic (`Math::LutLength`: float
+`(x*x + y*y) + z*z`, then `LutSqrt`, in the SSE2 TU `RwLutTables.cpp`). With the knob OFF the code path is the
+current default. `MASHED_SPEED_REFRESH=1` (exact sqrt) stays as it is and is run as a report arm.
+
+A2.4 **Arms.** No-op: `BASE_H_DEF`, `H_DEF`, `H_DEF-2`. Knob: `H_L`, `H_L-2` (determinism, collateral), `D2_L_1..3`,
+`B_L_K{0,1,26}` against `BASE_B_DEF_K{0,1,26}`, and `D2_LFX_1` (diag + knob: knob-took and the impact chain).
+Report: `D2_DEF_1` (same-build control), `D2_C_1` (fix C exact on today's base), `D2_BL_1` (fix B + knob).
+
+A2.5 **Predictions.**
+- No-op: `H_DEF` = `H_DEF-2` = `BASE_H_DEF` (`716cb2fd / 2a2afda1 / ba90ed88`).
+- Knob-took (`D2_LFX_1`): the impact fixup's `sp=` equals `LutLength` of that substep's entry velocity bit-exactly,
+  and differs from |W1|.
+- Impact: post-impact |v| at the next A6a entry within 4 % of the original's 229.73 (from 7.7 %).
+- The +7 arm and the D2 metrics: no direction predicted. G at +7 lands about 2 % under the knee if the residual is
+  as predicted, so the arm can go either way. [UNCERTAIN] whether the hold reproduces.
+- G-CTRL with the knob: changes (`+0x9e4` feeds A6a's next-frame reads and every fixup), no hash predicted.
+
+A2.6 **Default rule.** Section 5 unchanged: default ON only if every section-5 gate passes on `L`. Otherwise OFF, with
+the failed gate named.
