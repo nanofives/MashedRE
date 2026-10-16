@@ -1,0 +1,66 @@
+arctic_01051     before  76 after  71  gone   6  NEW 1
+    gone MISSING CarGloss [C17-CAR-GLOSS]: A-only 8 draws 64 tri (0 offscreen); first k82 pt5 tri=6 tex=CarGloss tex1=- bb=[-26.71,0.22,16.59,-26.41,0.28,16.77] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=
+    gone EXTRA Advantage [C02-CARLOD]: B-only 92 draws 40792 tri (0 offscreen); first k82 pt4 tri=1486 tex=Advantage tex1=#128x128:26 bb=[-26.76,0.04,17.11,-26.37,0.22,17.45] src=rw Z=1 ZW=
+    gone EXTRA AdvantageSmall [C02-CARLOD]: B-only 16 draws 10116 tri (0 offscreen); first k82 pt4 tri=618 tex=AdvantageSmall tex1=- bb=[-26.78,0.00,16.48,-26.35,0.31,17.45] src=rw Z=1 ZW=1 ZF=4
+    gone EXTRA Glass [C02-CARLOD]: B-only 8 draws 104 tri (0 offscreen); first k82 pt4 tri=18 tex=Glass tex1=- bb=[-26.74,0.15,17.00,-26.39,0.28,17.41] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=10
+    gone TEX1 Advantage [C17-CAR-GLOSS]: 12 matched draws, stage-1 texture A CarGloss | B -
+    gone ORDER Glass [C21-ORDER]: 88 order inversions vs matched draws, mostly: Advantagex80, Glassx8
+    NEW  STATE CarGloss [C19-STATE-LIBRW]: 8 matched draws differ in AREF,AF: A Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=1 | B Z=1 ZW=0 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=2 CULL=1
+arctic_01091     before  76 after  71  gone   6  NEW 1
+    gone MISSING CarGloss [C17-CAR-GLOSS]: A-only 6 draws 48 tri (0 offscreen); first k82 pt5 tri=10 tex=CarGloss tex1=- bb=[-26.74,0.15,17.00,-26.39,0.28,17.41] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF
+    gone EXTRA Advantage [C02-CARLOD]: B-only 91 draws 40788 tri (0 offscreen); first k82 pt4 tri=52 tex=Advantage tex1=- bb=[-26.76,0.20,16.56,-26.37,0.22,16.83] src=rw Z=1 ZW=1 ZF=4 AT=1 
+    gone EXTRA AdvantageSmall [C02-CARLOD]: B-only 16 draws 10116 tri (0 offscreen); first k82 pt4 tri=651 tex=AdvantageSmall tex1=- bb=[-26.78,0.00,16.48,-26.35,0.31,17.45] src=rw Z=1 ZW=1 ZF=4
+    gone EXTRA Glass [C02-CARLOD]: B-only 8 draws 104 tri (0 offscreen); first k82 pt4 tri=8 tex=Glass tex1=- bb=[-26.71,0.22,16.59,-26.41,0.29,16.77] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=10 
+    gone TEX1 Advantage [C17-CAR-GLOSS]: 9 matched draws, stage-1 texture A CarGloss | B -
+    gone ORDER Glass [C21-ORDER]: 88 order inversions vs matched draws, mostly: Advantagex80, Glassx8
+    NEW  STATE CarGloss [C19-STATE-LIBRW]: 6 matched draws differ in AREF,AF: A Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=1 | B Z=1 ZW=0 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=2 CULL=1
+arctic_01126     before  76 after  72  gone   4  NEW 0
+    gone EXTRA Advantage [C02-CARLOD]: B-only 124 draws 47808 tri (0 offscreen); first k82 pt4 tri=746 tex=Advantage tex1=#128x128:26 bb=[-26.78,0.04,16.48,-26.35,0.29,16.84] src=rw Z=1 ZW=
+    gone EXTRA AdvantageSmall [C02-CARLOD]: B-only 13 draws 8244 tri (0 offscreen); first k82 pt4 tri=618 tex=AdvantageSmall tex1=- bb=[-26.78,0.00,16.48,-26.35,0.31,17.45] src=rw Z=1 ZW=1 ZF=4 
+    gone EXTRA Glass [C02-CARLOD]: B-only 14 draws 152 tri (0 offscreen); first k82 pt4 tri=10 tex=Glass tex1=- bb=[-25.75,0.15,26.98,-25.41,0.28,27.39] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=1
+    gone ORDER Glass [C21-ORDER]: 22 order inversions vs matched draws, mostly: Advantagex20, Glassx2
+city_00761       before 153 after 148  gone   6  NEW 1
+    gone MISSING CarGloss [C17-CAR-GLOSS]: A-only 8 draws 64 tri (0 offscreen); first k82 pt5 tri=10 tex=CarGloss tex1=- bb=[54.20,0.15,-25.96,54.61,0.28,-25.61] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF
+    gone EXTRA Advantage [C02-CARLOD]: B-only 92 draws 40792 tri (0 offscreen); first k82 pt4 tri=214 tex=Advantage tex1=- bb=[54.30,0.12,-25.98,54.63,0.22,-25.59] src=rw Z=1 ZW=1 ZF=4 AT=1
+    gone EXTRA AdvantageSmall [C02-CARLOD]: B-only 16 draws 10116 tri (0 offscreen); first k82 pt4 tri=624 tex=AdvantageSmall tex1=- bb=[53.67,0.00,-26.02,54.65,0.31,-25.58] src=rw Z=1 ZW=1 ZF=4
+    gone EXTRA Glass [C02-CARLOD]: B-only 8 draws 104 tri (0 offscreen); first k82 pt4 tri=18 tex=Glass tex1=- bb=[54.20,0.15,-25.96,54.61,0.28,-25.61] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=10
+    gone TEX1 Advantage [C17-CAR-GLOSS]: 12 matched draws, stage-1 texture A CarGloss | B -
+    gone ORDER Glass [C21-ORDER]: 88 order inversions vs matched draws, mostly: Advantagex80, Glassx8
+    NEW  STATE CarGloss [C19-STATE-LIBRW]: 8 matched draws differ in AREF,AF,CULL: A Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=2 | B Z=1 ZW=0 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=2 CULL=1
+city_00801       before 151 after 146  gone   6  NEW 1
+    gone MISSING CarGloss [C17-CAR-GLOSS]: A-only 4 draws 32 tri (0 offscreen); first k82 pt5 tri=10 tex=CarGloss tex1=- bb=[54.20,0.15,-25.96,54.61,0.28,-25.61] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF
+    gone EXTRA Advantage [C02-CARLOD]: B-only 92 draws 40792 tri (0 offscreen); first k82 pt4 tri=18 tex=Advantage tex1=- bb=[54.30,0.20,-25.98,54.38,0.22,-25.59] src=rw Z=1 ZW=1 ZF=4 AT=1 
+    gone EXTRA AdvantageSmall [C02-CARLOD]: B-only 16 draws 10116 tri (0 offscreen); first k82 pt4 tri=636 tex=AdvantageSmall tex1=- bb=[53.67,0.00,-26.01,54.65,0.31,-25.58] src=rw Z=1 ZW=1 ZF=4
+    gone EXTRA Glass [C02-CARLOD]: B-only 8 draws 104 tri (0 offscreen); first k82 pt4 tri=18 tex=Glass tex1=- bb=[54.20,0.15,-25.96,54.61,0.28,-25.61] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=10
+    gone TEX1 Advantage [C17-CAR-GLOSS]: 6 matched draws, stage-1 texture A CarGloss | B -
+    gone ORDER Glass [C21-ORDER]: 88 order inversions vs matched draws, mostly: Advantagex80, Glassx8
+    NEW  STATE CarGloss [C19-STATE-LIBRW]: 4 matched draws differ in AREF,AF,CULL: A Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=2 | B Z=1 ZW=0 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=2 CULL=1
+city_00836       before 149 after 146  gone   3  NEW 0
+    gone EXTRA Advantage [C02-CARLOD]: B-only 134 draws 50144 tri (0 offscreen); first k82 pt4 tri=1028 tex=Advantage tex1=#128x128:26 bb=[53.67,0.03,-26.00,54.04,0.22,-25.59] src=rw Z=1 ZW
+    gone EXTRA AdvantageSmall [C02-CARLOD]: B-only 12 draws 7620 tri (0 offscreen); first k82 pt4 tri=636 tex=AdvantageSmall tex1=- bb=[53.67,0.00,-26.01,54.65,0.31,-25.58] src=rw Z=1 ZW=1 ZF=4 
+    gone EXTRA Glass [C02-CARLOD]: B-only 16 draws 168 tri (0 offscreen); first k82 pt4 tri=18 tex=Glass tex1=- bb=[54.20,0.15,-25.96,54.61,0.28,-25.61] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=1
+training_00884   before  77 after  72  gone   6  NEW 1
+    gone MISSING CarGloss [C17-CAR-GLOSS]: A-only 8 draws 64 tri (0 offscreen); first k82 pt5 tri=6 tex=CarGloss tex1=- bb=[0.21,0.64,-2.21,0.51,0.71,-2.02] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF
+    gone EXTRA Advantage [C02-CARLOD]: B-only 100 draws 40896 tri (0 offscreen); first k82 pt4 tri=166 tex=Advantage tex1=- bb=[0.15,0.61,-2.28,0.55,0.71,-1.91] src=rw Z=1 ZW=1 ZF=4 AT=1 AR
+    gone EXTRA AdvantageSmall [C02-CARLOD]: B-only 16 draws 10116 tri (0 offscreen); first k82 pt4 tri=618 tex=AdvantageSmall tex1=- bb=[0.12,0.42,-2.89,0.57,0.73,-1.91] src=rw Z=1 ZW=1 ZF=4 AT=
+    gone EXTRA Glass [C02-CARLOD]: B-only 8 draws 104 tri (0 offscreen); first k82 pt4 tri=18 tex=Glass tex1=- bb=[0.15,0.57,-2.85,0.50,0.70,-2.43] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF=
+    gone TEX1 Advantage [C17-CAR-GLOSS]: 12 matched draws, stage-1 texture A CarGloss | B -
+    gone ORDER Glass [C21-ORDER]: 88 order inversions vs matched draws, mostly: Advantagex80, Glassx8
+    NEW  STATE CarGloss [C19-STATE-LIBRW]: 8 matched draws differ in AREF,AF,CULL: A Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=2 | B Z=1 ZW=0 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=2 CULL=1
+training_00924   before  76 after  71  gone   6  NEW 1
+    gone MISSING CarGloss [C17-CAR-GLOSS]: A-only 8 draws 64 tri (0 offscreen); first k82 pt5 tri=6 tex=CarGloss tex1=- bb=[-0.10,0.58,-4.26,0.19,0.64,-4.05] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 A
+    gone EXTRA Advantage [C02-CARLOD]: B-only 100 draws 40896 tri (0 offscreen); first k82 pt4 tri=866 tex=Advantage tex1=- bb=[-0.11,0.49,-4.55,-0.00,0.57,-4.31] src=rw Z=1 ZW=1 ZF=4 AT=1 
+    gone EXTRA AdvantageSmall [C02-CARLOD]: B-only 16 draws 10116 tri (0 offscreen); first k82 pt4 tri=618 tex=AdvantageSmall tex1=- bb=[-0.23,0.36,-4.94,0.26,0.67,-3.95] src=rw Z=1 ZW=1 ZF=4 AT
+    gone EXTRA Glass [C02-CARLOD]: B-only 8 draws 104 tri (0 offscreen); first k82 pt4 tri=18 tex=Glass tex1=- bb=[-0.21,0.51,-4.90,0.16,0.64,-4.47] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=10 AF
+    gone TEX1 Advantage [C17-CAR-GLOSS]: 12 matched draws, stage-1 texture A CarGloss | B -
+    gone ORDER Glass [C21-ORDER]: 88 order inversions vs matched draws, mostly: Advantagex80, Glassx8
+    NEW  STATE CarGloss [C19-STATE-LIBRW]: 8 matched draws differ in AREF,AF,CULL: A Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=2 | B Z=1 ZW=0 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=2 CULL=1
+training_00959   before  76 after  71  gone   6  NEW 1
+    gone MISSING CarGloss [C17-CAR-GLOSS]: A-only 6 draws 48 tri (0 offscreen); first k82 pt5 tri=6 tex=CarGloss tex1=- bb=[-0.33,0.52,-6.13,-0.03,0.58,-5.93] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 
+    gone EXTRA Advantage [C02-CARLOD]: B-only 100 draws 40896 tri (0 offscreen); first k82 pt4 tri=664 tex=Advantage tex1=#128x128:26 bb=[-0.45,0.34,-6.81,-0.03,0.52,-6.44] src=rw Z=1 ZW=1 
+    gone EXTRA AdvantageSmall [C02-CARLOD]: B-only 16 draws 10116 tri (0 offscreen); first k82 pt4 tri=651 tex=AdvantageSmall tex1=- bb=[-0.45,0.30,-6.81,0.03,0.61,-5.82] src=rw Z=1 ZW=1 ZF=4 AT
+    gone EXTRA Glass [C02-CARLOD]: B-only 8 draws 104 tri (0 offscreen); first k82 pt4 tri=18 tex=Glass tex1=- bb=[-0.42,0.45,-6.77,-0.06,0.58,-6.34] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=10 A
+    gone TEX1 Advantage [C17-CAR-GLOSS]: 9 matched draws, stage-1 texture A CarGloss | B -
+    gone ORDER Glass [C21-ORDER]: 88 order inversions vs matched draws, mostly: Advantagex80, Glassx8
+    NEW  STATE CarGloss [C19-STATE-LIBRW]: 6 matched draws differ in AREF,AF,CULL: A Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=2 | B Z=1 ZW=0 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=2 CULL=1
+NEW ROWS TOTAL: 7

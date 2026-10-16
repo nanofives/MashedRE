@@ -15,3 +15,19 @@ GCTRL DONE
     gctrl_final.gates.csv  lines=56153  sha8=b50bd39b
     gctrl_final.ptrace.log  lines=28076  sha8=ba90ed88
 GCTRL DONE
+G-CTRL rebased: base exe and final default exe both 716cb2fd / 2a2afda1 / ba90ed88
+
+=== gctrl_base2  exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\carlod\exe_base2\mashed_re.exe  knobs=[] ===
+    pid=21244
+    exit=0  self_exited=True
+    gctrl_base2.step.csv  lines=18664  sha8=716cb2fd
+    gctrl_base2.gates.csv  lines=56153  sha8=2a2afda1
+    gctrl_base2.ptrace.log  lines=28076  sha8=ba90ed88
+GCTRL DONE
+=== gctrl_final2  exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\carlod\exe_final2\mashed_re.exe  knobs=[] ===
+    pid=3412
+    exit=0  self_exited=True
+    gctrl_final2.step.csv  lines=18664  sha8=716cb2fd
+    gctrl_final2.gates.csv  lines=56153  sha8=2a2afda1
+    gctrl_final2.ptrace.log  lines=28076  sha8=ba90ed88
+GCTRL DONE

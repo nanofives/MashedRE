@@ -249,3 +249,27 @@ differently. Arms: `visb2` (new exe, defaults) must equal `visb` in rows (no-op 
 `venv2` (`MASHED_CAR_ENV=1`) is the F-ENV arm, judged by rules 1-6 against `visb2` with rule 6 read
 incrementally. If it passes, F-ENV becomes default ON (`MASHED_CAR_ENV=0` opts out) in a `final` build whose
 rows must equal `venv2`'s.
+
+### Amendment 7 (rebase onto `0020d521`; written after the rebased arms were read; no rule changes)
+
+`race/first-frame-parity` moved from `b26d9f3c` to `0020d521` while this lane ran (31 commits, among them
+`librwrest`: car liveries per slot, wheel / hub / body poses through the DFF frame hierarchy
+(`RaceSubmit_AddInstancePosed`, per-model draw order and frustum cull), per-car relight). The branch was
+rebased and every number that decides a default was re-measured on the rebased tree. Pre-rebase results
+(sections above, arms on `b26d9f3c`, `scores.txt`) stay on record.
+
+- Merge: `RwRaceSubmit` / `TrackRenderer` keep `librwrest`'s structure. The per-part RENDER bits are set before
+  its pose and draw-order block (which already honours the RENDER flag per atomic) and the glass atomics are
+  drawn after the clump render inside the same light and render-state scope, only for a copy that was not
+  culled; `CarVis` is carried through `AddInstancePosed`. The state and flags use the car matrix and part 0x13's
+  frame origin of the player's model (`car_part19_`), as before.
+- `Track/TrackWorld.cpp`: `librwrest` fixed the same sector-layout bug independently (its `hdr_format & 0x10`
+  branch: 4-byte `RpVertexNormal`, prelit from the 0x08 flag, UV count solved). Its layout equals the flags'
+  layout of `evidence/bsp_layout_check.txt` on every sector where the two differ from the old solver (Arctic
+  COLLISIONS.BSP x5, AI.BSP x1), so carlod's change to that file was dropped in the rebase.
+- New baseline: arm `base2` (clean `0020d521`, `log/carlod/exe_base2`) and G-CTRL `716cb2fd / 2a2afda1 / ba90ed88`
+  (the new default, u9685). Arms on the rebased tree: `base2`, `visx` (`MASHED_CAR_ENV=0`: F-VIS only), `visoff`
+  (`MASHED_CAR_VIS=0`, rule 4), `nolagx` (`MASHED_CAR_ENV_PREVCAM=0`), `final2` (all defaults). Rules read as in
+  amendments 4-6: F-VIS `visx` against `base2`, F-ENV `final2` against `visx` with pixels read incrementally.
+- Measurement hygiene: two builds must not run at once (a nested worktree made the base build write into this
+  worktree's `build\obj`); the rebased campaign is `run_all.py`, one standalone run at a time.
