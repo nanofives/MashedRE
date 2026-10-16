@@ -1,0 +1,7 @@
+=== base3_default  exe=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\rprops\mashedmod\build\mashed_re_base3.exe  knobs=[] ===
+    pid=8228
+    exit=0  self_exited=True
+    base3_default.step.csv  lines=18664  sha8=716cb2fd
+    base3_default.gates.csv  lines=56153  sha8=2a2afda1
+    base3_default.ptrace.log  lines=28076  sha8=ba90ed88
+GCTRL DONE

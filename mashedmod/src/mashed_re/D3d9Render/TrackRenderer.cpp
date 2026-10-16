@@ -7303,8 +7303,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         // MASHED_SKY_D3D9=1 keeps the sky on the legacy D3D9 draw (fixed matrices, old route);
         // MASHED_NO_SKYFIX=1 restores the whole pre-rprops sky: that route, one translate-only copy.
         static const bool s_sky_d3d9 = std::getenv("MASHED_SKY_D3D9") != nullptr;
-        if (!s_sky_d3d9 && !s_no_skyfix && LibRw::RaceSubmit_Active() && sky_.rw_model >= 0 &&
-            LibRw::RaceSubmit_InstanceModelEnabled(sky_.rw_model)) {
+        if (!s_sky_d3d9 && !s_no_skyfix && LibRw::RaceSubmit_Active() && sky_.rw_model >= 0) {
             // The librw path draws the sky before its world, depth and fog off (RwRaceSubmit.cpp).
             for (int si = 0; si < nsky; ++si)
                 LibRw::RaceSubmit_AddSky(sky_.rw_model, reinterpret_cast<const float*>(&skym[si]));

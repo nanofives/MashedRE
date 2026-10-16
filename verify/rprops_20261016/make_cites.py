@@ -16,12 +16,12 @@ NOTES = {
         "(Clump_Mts_Pair, Course::CreateFromDescription 0x00479330), so the bark/Grass and building rows match. "
         "What is left: (a) the 'oaktreesprite' leaf sprites (City record slot 0 0x0044b3c0 -> FUN_0047c330 / "
         "FUN_0047c560, OakLeaf.mts), not ported; (b) building copies wholly outside the view frustum, which "
-        "the original culls and librw does not (counted as off-screen in the row). U-9695, U-9700.",
+        "the original culls and librw does not (counted as off-screen in the row). U-9695, U-9701.",
     "C13-PROPPLACE":
         "Camera-men (entries 1..N of the track's camera table, helpers 0x00448dc0 etc.) and the Arctic "
         "freighter / fishing boats (0x00448770 / 0x00448880 placement, 0x00448cb0 / 0x00448e20 per-frame tick) "
         "are placed by rprops F-CAM / F-SHIPS. A row left here is yaw (the camera-man yaw is run-time state "
-        "rewritten by 0x00441d40, U-9698) or ship tick phase (U-9699).",
+        "rewritten by 0x00441d40, U-9699) or ship tick phase (U-9700).",
     "C15-SKY":
         "Arctic sky. rprops F-SKY draws the 86-triangle sky mesh the way 0x004491e0 (rotated copy, Arctic "
         "only) and 0x00426d20 (unrotated copy) do, with the root-frame offset discarded, so the sky rows match. "

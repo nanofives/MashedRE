@@ -113,3 +113,15 @@ Otherwise it stays default OFF with a recommendation in `RESULT_rprops.md`.
   K - 2 to K - 3 (the sin branch x = 1.99, 2.14, 2.93 plus three periods gives n = 1041.6, 1048, 1089
   for rows 1044, 1051, 1091). The standalone ticks once per Render. The offset between the two counts
   is measured in the post-fix run and reported; it is not tuned.
+
+## Amendment 2 (after the rebases onto b26d9f3c and 0020d521, before the final run)
+
+- Base moved twice under this branch (rtex, then d1r3 / librwrest / u9685). Gates are re-stated against a
+  build of the unchanged base each time. The default G-CTRL trio is now `716cb2fd / 2a2afda1 / ba90ed88` (u9685's
+  race_pct, render unaffected, 18,664 / 56,153 / 28,076 lines); the registered gate is "identical to the
+  unchanged-base build", which holds, and equal to that trio.
+- d1r3 deleted the legacy D3D9 race renderer. The sky stays a D3D9 draw there (`load_prop(sk, &sky_, true)`),
+  so F-SKY's librw sky pass is still a change, now the only route that is not the D3D9 sky.
+  `MASHED_SKY_D3D9=1` / `MASHED_NO_SKYFIX=1` keep the D3D9 draw.
+- Original-side captures for the ten uncaptured tracks (U-9702) were attempted after the audio fix and did not
+  produce a valid capture (RESULT section 5); F-CAM and F-PAIR remain smoke-run only on those tracks.
