@@ -1,15 +1,39 @@
 # D1-residue R3: delete the legacy D3D9 race renderer and the `MASHED_RENDER_LIBRW=0` revert
 
-Branch `work/d1r3`, base `race/first-frame-parity` HEAD `1caf1a10`. Date 2026-10-16.
+Branch `work/d1r3`. Rebased 2026-10-16 onto `race/first-frame-parity` `ec3301f3` (d1r1, d1r2,
+e6498ad6 private ptrace, d2settle A3 LUT sqrt merged); first written against `1caf1a10`.
 Model: claude-sonnet-5-5 (account2, no Ghidra MCP; nothing here needed it).
 
-**Verdict.** The deletion is done and both targets build. G-CTRL on TRAINING is unchanged on all
-three hashes, all in-race frames and the `drawstream3d` sky/copter numbers are unchanged on 12 of 13
-tracks, and no legacy path is reached on the default build. **One finding needs a decision:** at the
-sim level (4000-frame G-CTRL recipe) the deletion changes the trajectory on 3 of 13 tracks (Highway,
-Storm, rouabout). No-op controls on the pure baseline (never-executed code only) change the same
-class of output on rouabout and Storm, so the difference is not attributable to the deleted code
-paths, but its mechanism is `[UNCERTAIN]` (section 5).
+**Verdict.** The deletion is done and both targets build. On the rebased base `ec3301f3`, against a
+baseline exe built from that commit without my change:
+- G-CTRL TRAINING is unchanged on all three hashes: `c2e4d60d / b50bd39b / ba90ed88`, clean private
+  ptrace (section 0).
+- The d1r1 matched-pose per-draw recorder gives byte-identical draw lists and backbuffers on 9 of 9
+  shots (Arctic, City, Training; 308, 643, 469 D3D9 draws per frame) (section 0).
+- The 4000-frame G-CTRL sim sweep is identical on 13 of 13 tracks (section 0).
+- No legacy path is reached on the default build (section 2).
+
+On the old base `1caf1a10` the same sweep differed on 3 of 13 tracks (Highway, Storm, rouabout).
+No-op controls on that pure baseline changed rouabout and Storm too, so that difference came from
+code layout, not from the deleted paths. Sections 3 to 5 are those pre-rebase measurements; the
+layout sensitivity itself is still a standing hazard (section 5, mechanism `[UNCERTAIN]`).
+
+## 0. Rebased base `ec3301f3`: before/after
+
+Rebase: one conflict hunk in `TrackRenderer.cpp::Render` (d1r1's `ai_slot` replay lines sit in the
+librw-only car loop; kept `int ai_slot = 1;`, dropped the stale "keep drawing through D3D9" comment).
+Both targets build, `scripts/lint_rva_bodies.py` NEW=0. "before" = exe built from detached `ec3301f3`
+(`log/base/mashed_re_base_ec33.exe`), "after" = this branch (`log/post/mashed_re_rb1.exe`).
+
+| gate | before | after |
+|---|---|---|
+| G-CTRL TRAINING default, 14400 frames, `MASHED_PLAYERTRACE_OUT` private | `c2e4d60d / b50bd39b / ba90ed88` (18664 / 56153 / 28076 lines, clean) | identical hashes and line counts |
+| per-draw lists, `run_replay3d.py` + d1r1 traces, 9 shots | see `DRAWLIST_base_vs_post.md` | 9/9 identical draw lists, 9/9 identical BMPs |
+| sim sweep, 13 tracks, 4000 frames (`GCTRL_ALL_rebased_base_vs_post.md`) | per-track hashes in that file | 13/13 identical |
+
+Shared deployed `.asi`: `build.bat` deployed `mashed_re_dev.asi` only into the worktree's own
+`original\` (a real directory). The shared `C:\...\Mashed\original\mashed_re_dev.asi` was not touched
+(last write 2026-10-13 20:39:06). No original-side run (path2, auto-hook) was started.
 
 ## 1. What was deleted
 
@@ -45,7 +69,7 @@ logs `WARN: BuildClump failed -- model is NOT drawn`.
 - Baseline `MASHED_DBG_DRAWSTREAM3D=60:62`: `world` and `props` are all-zero in 39 of 39 frame records
   (13 tracks x 3 frames), no `cars` record exists. The deleted code never drew on the default build.
 
-## 3. Default build unchanged: measured
+## 3. Default build unchanged: measured (pre-rebase, base `1caf1a10`; superseded by section 0 for the rebased tip)
 
 **G-CTRL, TRAINING default arm** (`run_gctrl.py`, 14400 frames, expected `991a5fff / be0d47ea / bc75b405`):
 
@@ -118,7 +142,8 @@ variant is itself reproducible (each hash above repeated on 2 to 6 runs), so the
 build, not on the run. Candidates not tested: a container ordered by function pointer, a read of code
 bytes as data, an address-dependent value inside the exe's `_g_b17_low_arena_pad` region.
 
-**Decision for the owner.** Accept the full-deletion commit: the differences appear on exactly the tracks
+**Decision for the owner (pre-rebase; moot on the rebased base, where the sweep is 13/13 identical,
+section 0).** Accept the full-deletion commit: the differences appear on exactly the tracks
 that no-op edits also move. Or keep `LoadCar`'s dead car-data build (about 240 lines kept, `keep-LoadCar` column): that does
 not remove the difference (Storm and rouabout still differ), so it is not worth the dead code.
 
