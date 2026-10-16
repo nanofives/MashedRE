@@ -1,0 +1,8 @@
+slot  17: live gflags 0x004f vs DFF 0x000f
+slot  21: live gflags 0x004f vs DFF 0x000f
+slot  24: live gflags 0x004f vs DFF 0x000f
+slot  59: live gflags 0x0053 vs DFF 0x0073
+slot  60: live gflags 0x0053 vs DFF 0x0073
+slot  61: live gflags 0x0053 vs DFF 0x0073
+slot  62: live gflags 0x0053 vs DFF 0x0073
+slots 71: flag match 64, mismatch 7, no geometry 0; DFF part ids 71

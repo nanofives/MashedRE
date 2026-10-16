@@ -30,7 +30,8 @@ bool CarEnvIsEnvPart(int part);
 // +0, id at +0x80; ids run car*6 + variant) for variant 0, or -1.
 int CarVehicleGroupId(const char* piz_base);
 
-// MASHED_CAR_DIRT=0 / MASHED_CAR_ENV=0 turn each half off (default on when built in).
+// MASHED_CAR_DIRT=0 turns the dirt half off (default ON). The env half is OPT-IN,
+// MASHED_CAR_ENV=1 (default OFF; RwCarFx.cpp says why).
 bool CarDirtEnabled();
 bool CarEnvEnabled();
 

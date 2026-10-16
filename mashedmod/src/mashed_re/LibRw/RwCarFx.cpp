@@ -62,8 +62,15 @@ bool CarDirtEnabled() {
     return on;
 }
 
+// OPT-IN (MASHED_CAR_ENV=1), default OFF: PREREG_rtex rule 2 fails while the standalone still
+// draws every car LOD (C02, U-9079) -- the env second pass then also runs on the duplicate
+// glass atomics the original never draws (an uncited EXTRA CarGloss row), and the newly
+// matched blended CarGloss draws add a C21 ORDER row. verify/rtex_20261016/RESULT_rtex.md.
 bool CarEnvEnabled() {
-    static const bool on = !EnvOff("MASHED_CAR_ENV");
+    static const bool on = [] {
+        const char* e = std::getenv("MASHED_CAR_ENV");
+        return e && e[0] == '1' && e[1] == '\0';
+    }();
     return on;
 }
 

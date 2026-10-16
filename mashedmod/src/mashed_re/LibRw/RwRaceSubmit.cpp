@@ -74,6 +74,10 @@ long long               g_inst_drawn = 0;
 // out_atomic_part) and the materials RaceSubmit_SetupCarEnv turned into ENVMAP, with the
 // env frame they share.
 std::vector<std::vector<std::int32_t>> g_model_parts;
+// [rtex] and each atomic's own material index (BuildClump out_atomic_mat). Every atomic's
+// geometry carries the model's WHOLE material list (BuildClump AppendMaterials), so the
+// material an atomic draws is matList.materials[this], not the whole list.
+std::vector<std::vector<std::uint32_t>> g_model_amat;
 struct ModelEnv { std::vector<rw::Material*> mats; rw::Frame* frame = nullptr; };
 std::vector<ModelEnv>   g_model_env;
 
@@ -405,6 +409,7 @@ void RaceSubmit_BeginTrackLoad() {
     for (ModelEnv& e : g_model_env) if (e.frame) e.frame->destroy();
     g_model_env.clear();
     g_model_parts.clear();
+    g_model_amat.clear();
 }
 
 int RaceSubmit_RegisterModel(const Track::DffModel& model,
@@ -430,6 +435,7 @@ int RaceSubmit_RegisterModel(const Track::DffModel& model,
     // models are drawn explicitly below instead.
     g_models.push_back(c);
     g_model_parts.push_back(std::move(atomic_part));
+    g_model_amat.push_back(atomic_mat);
     g_model_env.emplace_back();
     RLog("model[%d] registered: atomics=%d uvanim=%d", (int)g_models.size() - 1,
          (int)c->countAtomics(),
@@ -479,21 +485,21 @@ int RaceSubmit_BindCarDirt(int handle,
     }
     rw::Clump* c = g_models[(std::size_t)handle];
     const std::vector<std::int32_t>& parts = g_model_parts[(std::size_t)handle];
+    const std::vector<std::uint32_t>& amat = g_model_amat[(std::size_t)handle];
     int bound = 0, ai = 0, nbody = 0, nwheel = 0;
     FORLIST(lnk, c->atomics) {
         rw::Atomic* a = rw::Atomic::fromClump(lnk);
         const int part = ai < (int)parts.size() ? parts[(std::size_t)ai] : -1;
+        const std::uint32_t mi = ai < (int)amat.size() ? amat[(std::size_t)ai] : 0xffffffffu;
         ++ai;
         rw::Geometry* g = a->geometry;
-        if (!g) continue;
-        for (rw::int32 mi = 0; mi < g->matList.numMaterials; ++mi) {
-            rw::Material* m = g->matList.materials[mi];
-            rw::MatFX* fx = m ? rw::MatFX::get(m) : nullptr;
-            if (!fx || fx->getEffectIndex(rw::MatFX::DUAL) < 0) continue;
-            const bool w = CarDirtIsWheelPart(part);
-            fx->setDualTexture(w ? wheel : body);
-            ++bound; w ? ++nwheel : ++nbody;
-        }
+        if (!g || mi >= (std::uint32_t)g->matList.numMaterials) continue;
+        rw::Material* m = g->matList.materials[mi];
+        rw::MatFX* fx = m ? rw::MatFX::get(m) : nullptr;
+        if (!fx || fx->getEffectIndex(rw::MatFX::DUAL) < 0) continue;
+        const bool w = CarDirtIsWheelPart(part);
+        fx->setDualTexture(w ? wheel : body);
+        ++bound; w ? ++nwheel : ++nbody;
     }
     body->destroy();    // the materials hold their own references (setDualTexture addRef)
     wheel->destroy();
@@ -521,26 +527,26 @@ int RaceSubmit_SetupCarEnv(int handle, const Txd::Dictionary* dicts, std::size_t
     if (!me.frame) me.frame = rw::Frame::create();
     rw::Clump* c = g_models[(std::size_t)handle];
     const std::vector<std::int32_t>& parts = g_model_parts[(std::size_t)handle];
+    const std::vector<std::uint32_t>& amat = g_model_amat[(std::size_t)handle];
     int ai = 0, n = 0;
     FORLIST(lnk, c->atomics) {
         rw::Atomic* a = rw::Atomic::fromClump(lnk);
         const int part = ai < (int)parts.size() ? parts[(std::size_t)ai] : -1;
+        const std::uint32_t mi = ai < (int)amat.size() ? amat[(std::size_t)ai] : 0xffffffffu;
         ++ai;
-        if (!CarEnvIsEnvPart(part) || !a->geometry) continue;
-        rw::MatFX::enableEffects(a);
         rw::Geometry* g = a->geometry;
-        for (rw::int32 mi = 0; mi < g->matList.numMaterials; ++mi) {
-            rw::Material* m = g->matList.materials[mi];
-            if (!m) continue;
-            rw::MatFX::setEffects(m, rw::MatFX::ENVMAP);
-            rw::MatFX* fx = rw::MatFX::get(m);
-            fx->setEnvTexture(env);
-            fx->setEnvFrame(me.frame);
-            fx->setEnvFBAlpha(0);
-            fx->setEnvCoefficient(0.f);
-            me.mats.push_back(m);
-            ++n;
-        }
+        if (!CarEnvIsEnvPart(part) || !g || mi >= (std::uint32_t)g->matList.numMaterials) continue;
+        rw::Material* m = g->matList.materials[mi];
+        if (!m) continue;
+        rw::MatFX::enableEffects(a);
+        rw::MatFX::setEffects(m, rw::MatFX::ENVMAP);
+        rw::MatFX* fx = rw::MatFX::get(m);
+        fx->setEnvTexture(env);
+        fx->setEnvFrame(me.frame);
+        fx->setEnvFBAlpha(0);
+        fx->setEnvCoefficient(0.f);
+        me.mats.push_back(m);
+        ++n;
     }
     env->destroy();
     RLog("model[%d] car env set up: %d materials, texture '%s'", handle, n, env_tex_name);
