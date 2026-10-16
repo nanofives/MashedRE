@@ -1,0 +1,12 @@
+carparts orig_C1\trace.csv.carparts.json
+  rows 179, records included 345, excluded 371
+    excluded: 4 x first row of window (A5)
+    excluded: 367 x rec+0x298 at row n-1 = 2 (A3/A7)
+  included records per (car, lod set): car 0 set 1: 103, car 1 set 1: 76, car 2 set 1: 82, car 3 set 1: 84
+  input coverage over included records: steer max |7.993| deg (326 wheel-steps over 0.5 deg), body-lean Z max 0.441 deg, X max 3.097 deg, spin max |3850|, largest per-row angle step 330.800 deg
+  rec+0x298 at row n-1 over all (row, car): 1: 345, 2: 367
+  units == ff4(n+1)-ff4(n): ok 178, bad 0, n/a 1
+  replay ERR lines: 0
+  W1-a angle: 1380 wheel steps, 0 over 0.0001 deg, 1380 bit-identical, worst 0 deg at None
+  W1-b matrices: 3105 frames compared, 0 failing (missing 0); worst max|d| wheel 5e-10 (719, 3, 6, 35), hub 4.91e-10 (676, 1, 4, 33), body 5e-10 (674, 3, 19)
+  W1 verdict: PASS

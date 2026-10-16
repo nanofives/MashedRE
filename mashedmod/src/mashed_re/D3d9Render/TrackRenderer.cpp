@@ -3044,11 +3044,25 @@ static bool CarPartsEnabled() {
     return on;
 }
 
-void TrackRenderer::CarParts_FrameTick(int units) {
-    if (!CarPartsEnabled()) return;
+// FUN_0041f3d0 @ 0x0041f3d0's spin step for one wheel (0x0041f42e..0x0041f474): fild units;
+// fmul [0x005cc948] (1/3000); fimul spin (0x0041f434); fadd [angle]; fst; then the two folds. The
+// race loop runs at x87 PC_24, so each step rounds to single precision: float steps here.
+// Shared by CarParts_FrameTick and the W1 law replay (units >= 0, so no 2^32 fix-up).
+static float CarPartsSpinStep(float ang, int units, std::int32_t spin) {
     std::uint32_t kb = 0x39aec33eu;                     // _DAT_005cc948 (1/3000), .rdata
     float k3000;
     std::memcpy(&k3000, &kb, sizeof k3000);
+    float f = static_cast<float>(units) * k3000;
+    f = f * static_cast<float>(spin);
+    f = f + ang;
+    float a = f;
+    if (f > 360.0f) a = f - 360.0f;                     // 0x0041f440..0x0041f45b
+    if (a < -360.0f) a = a + 360.0f;                    // 0x0041f45d..0x0041f474
+    return a;
+}
+
+void TrackRenderer::CarParts_FrameTick(int units) {
+    if (!CarPartsEnabled()) return;
     for (int v = 0; v < 4; ++v) {
         // FUN_0040da50 @ 0x0040da50: *(PTR_005f2770 + 0x34 + v*4) != 0, then FUN_0046c7b0(v) == 1
         // (the FUN_0046c770(v) == 1 arm is not bound, as CarRegistrant.cpp, U-9210)
@@ -3061,15 +3075,7 @@ void TrackRenderer::CarParts_FrameTick(int units) {
             const char* wb = r + 0x1a4 + w * 0xc4;    // FUN_0046bd60: 0x00881744 + (v*0x11 + w)*0xc4
             std::int32_t spin;
             std::memcpy(&spin, wb, 4);
-            // FUN_0041f3d0 ..0x0041f43e: fild units; fmul [0x005cc948] (0x0041f42e); fimul spin (0x0041f434);
-            // fadd [angle]; fst (units >= 0, so no 2^32 fix-up). The race loop runs at x87
-            // PC_24, so each step rounds to single precision: float steps here.
-            float f = static_cast<float>(units) * k3000;
-            f = f * static_cast<float>(spin);
-            f = f + cp.ang[w];
-            cp.ang[w] = f;
-            if (f > 360.0f) cp.ang[w] = f - 360.0f;                 // 0x0041f440..0x0041f45b
-            if (cp.ang[w] < -360.0f) cp.ang[w] = cp.ang[w] + 360.0f; // 0x0041f45d..0x0041f474
+            cp.ang[w] = CarPartsSpinStep(cp.ang[w], units, spin);
             // FUN_0046bda0: 16 floats from +0x1ac, summed in order from 0.0, times [0x005cd058]
             float acc = 0.0f;
             for (int k = 0; k < 16; ++k) {
@@ -3136,6 +3142,83 @@ int BuildCarPoses(const TrackRenderer::CarModel& cm, const TrackRenderer::CarPar
     return n;
 }
 }  // namespace
+
+// [librwrest_checks] W1 law replay. Input, one record per line (whitespace separated):
+//   row car units a0 a1 a2 a3 spin0..3 steer0..3 va0 va1 va2 vb0 vb1 vb2
+// a0..a3 = the original's recorded angle at the previous row (rec+0x220 + w*4), spin = the ints
+// FUN_0046bd60 reads (veh+0x1a4 + w*0xc4), steer = FUN_0046bda0's mean, va / vb = veh+0xaf4 /
+// veh+0xb00. Output: "A row car ang0..3" (the angles CarPartsSpinStep returns), then one line per
+// pose BuildCarPoses writes for that car's livery model: "W|H row car k m0..m11" (wheel / hub
+// frame of part slot k, 0..3 = parts 0..3, 4..7 = parts 0x21..0x24) and "B row car m0..m11" (part
+// 0x13's frame). Matrices are the RwFrame modelling rows right, up, at, pos.
+void TrackRenderer::CarPartsLawReplay() {
+    static bool s_done = false;
+    if (s_done || car_models_.empty()) return;
+    char in_path[MAX_PATH] = {}, out_path[MAX_PATH] = {};
+    if (!GetEnvironmentVariableA("MASHED_CARPARTS_LAW", in_path, MAX_PATH) ||
+        !GetEnvironmentVariableA("MASHED_CARPARTS_LAW_OUT", out_path, MAX_PATH)) {
+        s_done = true;
+        return;
+    }
+    s_done = true;
+    std::FILE* fi = std::fopen(in_path, "r");
+    std::FILE* fo = std::fopen(out_path, "w");
+    if (!fi || !fo) {
+        if (fi) std::fclose(fi);
+        if (fo) std::fclose(fo);
+        return;
+    }
+    int nrec = 0;
+    char line[1024];
+    while (std::fgets(line, sizeof(line), fi)) {
+        int row = 0, car = 0, units = 0;
+        float a[4], t[4], va[3], vb[3];
+        int spin[4];
+        const int got = std::sscanf(line,
+            "%d %d %d %f %f %f %f %d %d %d %d %f %f %f %f %f %f %f %f %f %f",
+            &row, &car, &units, &a[0], &a[1], &a[2], &a[3], &spin[0], &spin[1], &spin[2], &spin[3],
+            &t[0], &t[1], &t[2], &t[3], &va[0], &va[1], &va[2], &vb[0], &vb[1], &vb[2]);
+        if (got != 21 || car < 0 || car > 3) continue;
+        const CarModel& cm = car_models_[static_cast<std::size_t>(car_slot_model_[car])];
+        CarPartState cp;
+        for (int w = 0; w < 4; ++w) {
+            cp.ang[w] = CarPartsSpinStep(a[w], units, spin[w]);
+            cp.steer[w] = t[w];
+        }
+        std::memcpy(cp.va, va, sizeof va);
+        std::memcpy(cp.vb, vb, sizeof vb);
+        cp.ok = true;
+        LibRw::FramePose poses[20];
+        const int np = BuildCarPoses(cm, cp, poses);
+        std::fprintf(fo, "A %d %d %.9g %.9g %.9g %.9g\n", row, car,
+                     cp.ang[0], cp.ang[1], cp.ang[2], cp.ang[3]);
+        // BuildCarPoses' own order: per k a wheel pose (wheel_frame[k] >= 0) then a hub pose
+        // (hub_frame[k] >= 0), then part 0x13's pose (body_frame >= 0)
+        int p = 0;
+        auto emit = [&](char kind, int k) {
+            if (p >= np) return;
+            if (kind == 'B') std::fprintf(fo, "B %d %d", row, car);
+            else std::fprintf(fo, "%c %d %d %d", kind, row, car, k);
+            for (int e = 0; e < 12; ++e) std::fprintf(fo, " %.9g", poses[p].m[e]);
+            std::fprintf(fo, "\n");
+            ++p;
+        };
+        for (int k = 0; k < 8; ++k) {
+            if (cm.wheel_frame[k] >= 0) emit('W', k);
+            if (cm.hub_frame[k] >= 0) emit('H', k);
+        }
+        if (cm.body_frame >= 0) emit('B', 0);
+        if (p != np) std::fprintf(fo, "ERR %d %d poses %d emitted %d\n", row, car, np, p);
+        ++nrec;
+    }
+    std::fclose(fi);
+    std::fclose(fo);
+    if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
+        std::fprintf(lf, "[librwrest_checks] MASHED_CARPARTS_LAW: %d records %s -> %s\n", nrec,
+                     in_path, out_path);
+        std::fclose(lf);
+    }
+}
 
 namespace {
 // [librwrest] sin by the polynomial FUN_004752f0 / FUN_00546e70 use: a + a^3 * (((((c908 a^2 -
@@ -7447,6 +7530,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     // CarParts_FrameTick read) and FUN_00420050's directional-light scale (rec+0x284).
     // MASHED_CAR_PARTS=0 drops the poses, MASHED_CAR_RELIGHT=0 the light scale.
     if (livery_dirty_) ResolveCarLiveries();
+    CarPartsLawReplay();   // [librwrest_checks] MASHED_CARPARTS_LAW, default OFF, one shot
     if (car_ready_ && rw_car_model_ >= 0) {
         static const bool s_relight = [] {
             const char* e = std::getenv("MASHED_CAR_RELIGHT");

@@ -1,0 +1,170 @@
+	Using video mode 1 : 640x480
+At 10 bytes per pixel (16bit Z + 2*32bit FB) there is 4194304 - 3686400 = 1122304 bytes of video memory free
+Replay buffer will be 150076 bytes in size
+RtFSManagerRegister successful
+numpermwaves 43
+numpermvirtualvoices 139
+Waiting for boot status
+Waiting for boot status
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for tispawned pid=21988
+livery poke: colours [1, 2, 3, 4] mode -1
+booting...
+timeout: d3 depth=2 phase=3
+  [nav] target depth 3: depth=2 phase=3
+timeout: d3 depth=2 phase=3
+  [nav] target depth 3: depth=2 phase=3
+track index written: 0
+in race? phase=0
+trace stalled at 952 rows (director no longer called)
+globals: {'t_7f1030': 1889144077, 'jitter_7f0fc8': 0, 'blend_7f100c': 0.01666666567325592, 'mode_7f0fd0': 0, 'phase_63ba8c': 7, 'nodecount': 30, 'elim_898980': 10}
+nodes captured: 30 of 30
+override entries (first 30): (15.0,180.0,-1.0), (15.0,180.0,-1.0), (15.0,180.0,-1.0), (15.0,157.0,-1.0), (15.0,135.0,-1.0), (15.0,112.0,-1.0), (15.0,67.0,-1.0), (15.0,22.0,-1.0)
+carparts: 175 rows, livery={'mode_word_0067e9fc': 10, 'cars': [{'colour': 1, 'desc': '0x5f3b44', 'name': 'Advantag��������', 'dff': 'Advantage1������', 'txd': 'Advantage�������', 'env': 'cargloss��������', 'id': 7}, {'colour': 2, 'desc': '0x5f3bc8', 'name': 'Advantag��������', 'dff': 'Advantage2������', 'txd': 'Advantage�������', 'env': 'cargloss��������', 'id': 8}, {'colour': 3, 'desc': '0x5f3c4c', 'name': 'Advantag��������', 'dff': 'Advantage3������', 'txd': 'Advantage�������', 'env': 'cargloss��������', 'id': 9}, {'colour': 4, 'desc': '0x5f3cd0', 'name': 'Advantag��������', 'dff': 'Advantage4������', 'txd': 'Advantage�������', 'env': 'cargloss��������', 'id': 10}]} -> C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_T1\trace.csv.carparts.json
+trace rows: 952; globals at end: {'t_7f1030': 1889144077, 'jitter_7f0fc8': 0, 'blend_7f100c': 0.01666666567325592, 'mode_7f0fd0': 0, 'phase_63ba8c': 7, 'nodecount': 30, 'elim_898980': 10}
+track_type [30]   overhead [0]   mode [0]
+capture self-check: OK (car Y plausible, selector in {0,1}, velocity gate all zero)
+shot rows requested: abs [] race-relative [60, 120, 180, 240, 300, 360, 420]; fired at [837, 897]
+shot row 837 (ba8c=6): OK C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_T1\orig_row_00837.bmp
+shot row 897 (ba8c=6): OK C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_T1\orig_row_00897.bmp
+[d1r1] track piz opened: ['TOASTART\\TRACKS\\TRAINING.PIZ']  (forced index 0)  textures named: 242
+done -> C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_T1\trace.csv, C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_T1\static.json

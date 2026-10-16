@@ -1,0 +1,207 @@
+// FUN_0040fc00 @ 0x0040fc00  size=621  (MASHED.exe)
+// undefined FUN_0040fc00(void)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C1 2026-06-01] Per-frame race tick. Reads frame delta from `unaff_ESI` (the caller leaves the
+   delta in ESI). */
+
+void FUN_0040fc00(void)
+
+{
+  float fVar1;
+  float fVar2;
+  int iVar3;
+  undefined4 uVar4;
+  int unaff_ESI;
+  bool bVar5;
+  
+  fVar1 = (float)unaff_ESI;
+  if (unaff_ESI < 0) {
+    fVar1 = fVar1 + _DAT_005cc94c;
+  }
+  fVar2 = fVar1 * _DAT_005cc948;
+  iVar3 = FUN_00496930(6);
+  if (iVar3 != 0) {
+    DAT_005f29c0 = 1;
+  }
+  iVar3 = FUN_00496930(5);
+  if (iVar3 != 0) {
+    DAT_005f29c0 = 0;
+  }
+  DAT_007f1008 = unaff_ESI;
+  _DAT_007f100c = fVar2;
+  if (DAT_005f29c0 != 0) {
+    FUN_00425a40();
+  }
+  FUN_0040da50();
+  FUN_0040d470(0);
+  FUN_00426ab0(**(undefined4 **)(PTR_PTR_005f2770 + DAT_0063ba78 * 4));
+  uVar4 = FUN_00467210(0);
+  FUN_00412f30(uVar4);
+  uVar4 = FUN_00467210(0);
+  FUN_00488e70(uVar4);
+  FUN_0040ce00();
+  FUN_00425d50();
+  if (DAT_007f0fd0 == 5) {
+    FUN_00406ce0();
+  }
+  FUN_0045bba0();
+  FUN_00475c10();
+  FUN_00476440();
+  FUN_004777d0();
+  FUN_00477920();
+  FUN_004189a0();
+  FUN_004215a0();
+  FUN_004222d0();
+  FUN_00490500();
+  FUN_00490380();
+  FUN_00429310();
+  FUN_00485070();
+  FUN_0040dba0();
+  FUN_0041d930();
+  if ((DAT_0063ba8c == 7) || ((9 < DAT_0063ba8c && (DAT_0063ba8c < 0xc)))) {
+    FUN_0045b350(0);
+    FUN_00413f20();
+  }
+  else {
+    FUN_0045b350(1);
+  }
+  uVar4 = FUN_0042f6a0();
+  switch(uVar4) {
+  case 2:
+    FUN_0041e6c0();
+    goto LAB_0040fdde;
+  case 3:
+  case 4:
+  case 5:
+    switch(DAT_007f0fd0) {
+    case 4:
+    case 7:
+    case 8:
+    case 9:
+      FUN_0041dca0();
+      break;
+    case 5:
+      FUN_0041c180();
+      break;
+    default:
+      goto switchD_0040fd59_caseD_7;
+    case 10:
+      FUN_0041a250();
+      iVar3 = FUN_0040e350();
+      if (iVar3 == 6) {
+        FUN_004039f0();
+      }
+    }
+    goto LAB_0040fdde;
+  case 6:
+  case 10:
+    iVar3 = FUN_0042f500();
+    if (iVar3 != 0) {
+      bVar5 = DAT_007f0fd0 == 2;
+      goto LAB_0040fdc6;
+    }
+    goto LAB_0040fdd4;
+  case 0xb:
+    FUN_00403250(DAT_007f1004);
+  }
+switchD_0040fd59_caseD_7:
+  iVar3 = FUN_0042f500();
+  bVar5 = iVar3 == 0;
+LAB_0040fdc6:
+  if (bVar5) {
+LAB_0040fdd4:
+    FUN_0041b540();
+    FUN_0041cc50();
+  }
+  else {
+    FUN_0041c090();
+    FUN_0041d830();
+  }
+LAB_0040fdde:
+  if (0x3c < DAT_007f1000) {
+    _DAT_007f1010 = fVar1 * _DAT_005cc948 + _DAT_007f1010;
+    DAT_007f1030 = FUN_004a2c48();
+  }
+  DAT_007f0fec = DAT_007f0fec + unaff_ESI;
+  if (0xf731400 < DAT_007f0fec) {
+    DAT_007f0fec = 0xf731400;
+  }
+  if (DAT_0063ba8c != 7) {
+    DAT_007f0ff4 = DAT_007f0ff4 + unaff_ESI;
+    DAT_007f0ff8 = DAT_007f0ff8 + unaff_ESI;
+  }
+  return;
+}
+
+
+
+// FUN_0040da50 @ 0x0040da50  size=265  (MASHED.exe)
+// undefined FUN_0040da50(void)
+
+/* [C1 2026-06-01] `void FUN_0040da50(undefined4 param_1)` — iterates the 4 cars (active-flag
+   table `&DAT_007f1a14`,… */
+
+void FUN_0040da50(undefined4 param_1)
+
+{
+  undefined4 *puVar1;
+  int iVar2;
+  undefined4 uVar3;
+  int *piVar4;
+  int iVar5;
+  bool bVar6;
+  undefined4 local_10 [4];
+  
+  bVar6 = false;
+  FUN_0045b350();
+  iVar5 = 0;
+  piVar4 = &DAT_007f1a14;
+  do {
+    puVar1 = local_10 + iVar5;
+    if (*(int *)(PTR_PTR_005f2770 + (0x34 - (int)local_10) + (int)puVar1) != 0) {
+      iVar2 = FUN_0046c7b0(iVar5);
+      if ((iVar2 == 1) || (iVar2 = FUN_0046c770(iVar5), iVar2 == 1)) {
+        FUN_0046d4a0(puVar1,iVar5);
+        FUN_00420870(iVar5,param_1,*puVar1);
+        FUN_0040d8f0(iVar5);
+        bVar6 = *(char *)((int)&DAT_007f103c + *piVar4 * 0x4c + 1) != '\0';
+        uVar3 = FUN_00426c00();
+        switch(uVar3) {
+        case 0:
+        case 0x1a:
+        case 0x21:
+        case 0x24:
+          (&DAT_0063bc44)[iVar5] = 1;
+          break;
+        default:
+          (&DAT_0063bc44)[iVar5] = 0;
+        }
+        uVar3 = FUN_00426080(iVar5);
+        FUN_00408610(*puVar1,uVar3);
+      }
+      else {
+        (&DAT_0063bc44)[iVar5] = 0;
+      }
+      FUN_0041eeb0(iVar5,(&DAT_0063bc44)[iVar5],(&DAT_0063bc44)[iVar5],bVar6);
+    }
+    piVar4 = piVar4 + 4;
+    iVar5 = iVar5 + 1;
+  } while ((int)piVar4 < 0x7f1a54);
+  return;
+}
+
+
+
+// FUN_0042f6a0 @ 0x0042f6a0  size=6  (MASHED.exe)
+// undefined FUN_0042f6a0(void)
+
+/* [C2 2026-05-11] No parameters, no side-effects, no calls. */
+
+undefined4 FUN_0042f6a0(void)
+
+{
+  return DAT_0067e9fc;
+}
+
+

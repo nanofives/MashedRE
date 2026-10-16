@@ -329,7 +329,7 @@ function carMatfx(){
 let carParts=false, cpRows={}, cpSnaps=[], cpLivery=null;
 const CP_PARTS=[0,1,2,3,0x21,0x22,0x23,0x24,0x12,0x13,0x14];
 function cpLiveryRead(){
-  const out={ mode_42f6a0_src: null, cars: [] };
+  const out={ mode_word_0067e9fc: abs(0x0067e9fc).readS32(), cars: [] };
   for (let i=0;i<4;i++){
     const rec=abs(0x0063d9e0+i*0x2ac); const c={ colour: abs(0x007f1a1c+i*16).readS32() };
     try { const d=rec.add(0x268).readPointer(); if (!d.isNull()) { c.desc=d.toString();
@@ -342,7 +342,9 @@ function carPartsRead(){
   let light=null; try { const l=abs(0x0063d850).readPointer(); if (!l.isNull()) light=rd(l.add(0x18),4); } catch(e) {}
   for (let i=0;i<4;i++){
     const rec=abs(0x0063d9e0+i*0x2ac), veh=abs(0x008815a0+i*0xd04);
+    // al: veh+4 = FUN_0046c7b0(i)'s word (the `== 1` gate FUN_0040da50 @ 0x0040da50 tests first)
     const c={ ang: rd(rec.add(0x220),4), lod: rec.add(0x298).readS32(), shade: rec.add(0x284).readFloat(),
+      al: veh.add(4).readS32(),
       flags: rec.add(0x294).readU32(), spin: [], steer: [], va: rd(veh.add(0xaf4),3), vb: rd(veh.add(0xb00),3), p: {} };
     for (let w=0;w<4;w++){ c.spin.push(veh.add(0x1a4+w*0xc4).readS32());
       let s=0; for (let k=0;k<16;k++) s+=veh.add(0x1ac+w*0xc4+k*4).readFloat(); c.steer.push(s*0.0625); }
@@ -352,7 +354,11 @@ function carPartsRead(){
         c.p[pc]={ m: mat12(fr.add(0x10)), l: mat12(fr.add(0x50)), pm: pa.isNull()?null:mat12(pa.add(0x10)),
                   vis: at.add(2).readU8() }; } catch(e) {} }
     cars.push(c); }
-  return { light: light, cars: cars }; }
+  // [librwrest_checks] units: DAT_007f1008, the 1/3000 s tick count FUN_0040fc00 @ 0x0040fc00 stores
+  // from ESI before it calls FUN_0040da50 (decomp: `DAT_007f1008 = unaff_ESI`; the ff4 clock
+  // DAT_007f0ff4 += ESI only at the end of the same function, so a row's ff4 is the value BEFORE
+  // this frame's increment)
+  return { light: light, units: abs(0x007f1008).readS32(), cars: cars }; }
 function abs(r){return ptr(r+DELTA);}
 function rd(p,n){ const o=[]; for(let i=0;i<n;i++) o.push(p.add(i*4).readFloat()); return o; }
 // RwMatrix rows right/up/at/pos at +0x00/+0x10/+0x20/+0x30 -> 12 floats (flags/pads dropped)
@@ -375,6 +381,18 @@ rpc.exports={
   tracelen:function(){ return trace.length; },
   setmatfx:function(v){ matfxOn=!!v; return 1; },
   getmatfx:function(){ return JSON.stringify(matfxSnaps); },
+  // [librwrest_checks] --colours / --livery-mode: FUN_0040d110 @ 0x0040d110 reads the per-car
+  // colour DAT_007f1a1c[i*4] (0x0040d110 loop, stride 0x10) and FUN_0042f6a0 (== 0xb) at the
+  // moment it picks each car's vehicle id. The poke writes those inputs at its entry (and puts
+  // the mode word back at its exit) so the ORIGINAL's own selection runs on non-zero colours.
+  // A colour < 0 leaves that car's value alone; mode < 0 leaves the mode word alone.
+  setliverypoke:function(cols, mode){
+    Interceptor.attach(abs(0x0040d110), {
+      onEnter(){ this.mode0 = abs(0x0067e9fc).readS32();
+        for (let i=0;i<4;i++) if (cols[i] >= 0) abs(0x007f1a1c+i*16).writeS32(cols[i]);
+        if (mode >= 0) abs(0x0067e9fc).writeS32(mode); },
+      onLeave(){ if (mode >= 0) abs(0x0067e9fc).writeS32(this.mode0); } });
+    return 1; },
   setcarparts:function(v){ carParts=!!v; return 1; },
   getcarparts:function(){ return JSON.stringify({livery: cpLivery, rows: cpSnaps}); },
   getdraws:function(){ return JSON.stringify(drFrames); },
@@ -651,6 +669,14 @@ def main():
                          "ending at each shot row, spin angles / steer / body vecs and the "
                          "part frames' modelling matrices into <out>.carparts.json "
                          "(PREREG_librwrest.md)")
+    ap.add_argument("--colours", default="",
+                    help="[librwrest_checks] comma list of 4 per-car colours (a number, or '-' to "
+                         "leave a car alone) written to DAT_007f1a1c[i*4] at FUN_0040d110's entry, "
+                         "so the original's livery selection runs on non-zero colours "
+                         "(PREREG_librwrest_checks.md)")
+    ap.add_argument("--livery-mode", type=int, default=-1,
+                    help="[librwrest_checks] write this value to the mode word 0x0067e9fc for the "
+                         "duration of FUN_0040d110 only (11 = the 0xb arm: livery = slot index)")
     ap.add_argument("--matfx", action="store_true",
                     help="[rtex] every 100 trace rows, snapshot the cars' MatFX state (env "
                          "coefficient/texture/frame, per-part material effects) into "
@@ -688,6 +714,14 @@ def main():
         scr.exports_sync.setmatfx(1)
     if args.carparts:
         scr.exports_sync.setcarparts(1)
+    poke_cols = [-1, -1, -1, -1]
+    if args.colours:
+        toks = [t.strip() for t in args.colours.split(",")]
+        poke_cols = [(-1 if t in ("-", "") else int(t)) for t in toks][:4]
+        poke_cols += [-1] * (4 - len(poke_cols))
+    if args.colours or args.livery_mode >= 0:
+        scr.exports_sync.setliverypoke(poke_cols, args.livery_mode)
+        print(f"livery poke: colours {poke_cols} mode {args.livery_mode}")
     dev.resume(pid)
     E = scr.exports_sync
 
@@ -778,6 +812,7 @@ def main():
     rows = json.loads(E.gettrace())
     if args.carparts:
         cp = json.loads(E.getcarparts())
+        cp["poke"] = {"colours": poke_cols, "mode": args.livery_mode}
         Path(str(out_csv) + ".carparts.json").write_text(json.dumps(cp))
         print(f"carparts: {len(cp.get('rows') or [])} rows, livery={cp.get('livery')} "
               f"-> {out_csv}.carparts.json")

@@ -1,0 +1,14 @@
+# local-only run artifacts (kept on disk, not committed): raw traces, backbuffer dumps, plain copies of
+# files committed as .gz, private game roots
+orig_*/trace.csv
+orig_*/*.bmp
+orig_*/*.draw3d.json
+orig_*/static.json
+orig_*/trace.tracks.json
+orig_*/trace.csv.carparts.json
+stand_*/law_out.txt
+stand_*/r5/
+stand_*/d1r2/
+stand_*/gameroot/
+stand_*/ptrace.log
+stand_*/*.bmp

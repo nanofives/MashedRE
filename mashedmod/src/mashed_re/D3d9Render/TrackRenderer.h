@@ -295,6 +295,11 @@ public:
 private:
     CarPartState car_parts_[4];
     void CarParts_FrameTick(int units);
+    // [librwrest_checks] MASHED_CARPARTS_LAW=<in> MASHED_CARPARTS_LAW_OUT=<out>, DIAGNOSTIC
+    // ONLY, default OFF, one shot: replays the original's recorded per-row part inputs
+    // (camera_probe.py --carparts) through the same spin step and BuildCarPoses the race
+    // uses, and writes the resulting frame poses for the W1 law check.
+    void CarPartsLawReplay();
 
     // stretch: AI cars following the gate loop at fixed speed (share the
     // player's model batches; placeholder until the real AI port)
