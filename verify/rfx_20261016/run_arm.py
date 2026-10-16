@@ -35,6 +35,8 @@ def main() -> int:
         a = args[i]
         if a == "--tracks":
             tracks = args[i + 1].split(","); i += 2; continue
+        if a == "--rfx-cites":     # adjudicate with verify/rfx_20261016/cites_rfx.json
+            i += 1; continue
         if a == "--no-run":
             norun = True; i += 1; continue
         knobs.append(a); i += 1
@@ -58,7 +60,7 @@ def main() -> int:
                 continue
             subprocess.run([sys.executable, str(WT / "re" / "tools" / "drawlist_diff.py"), str(a), str(b),
                             "--trace", str(trace), "--cite",
-                            str(WT / "verify" / "d1r1_20261016" / "cites_d1r1.json"), "--json", str(j)],
+                            str(WT / "verify" / ("rfx_20261016" if "--rfx-cites" in sys.argv else "d1r1_20261016") / ("cites_rfx.json" if "--rfx-cites" in sys.argv else "cites_d1r1.json")), "--json", str(j)],
                            check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             if not j.exists():
                 print(f"{tr} {k}: diff failed"); continue
