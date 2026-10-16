@@ -214,6 +214,16 @@ Measurement-only knob (default OFF): `MASHED_PP_PLAYERDZ=<units>` adds to the pl
 
 Decision 1 of section 3 stands: nothing here changes a default. These arms only test whether the missing player settle explains the regime A / B cost of the live row. If G-PZ-PAIR passes the report states the fix target: the original's player first-step settle (z +0.0000921, y about -0.0029), i.e. the player-at-rest row proposed in U-9684, after which the live row at the original's place (`X7`) is a candidate default to be re-measured on (b) A / B / C, closure, collateral and G-CTRL.
 
+## 3f. AMENDMENT A6 (committed after the A5 arms were scored, before the arms below exist)
+
+Seen first (`SCORE_A5.txt`, `X7_PZ_H`, `X7_RG_PZ_H`, `A4` stage 2): **G-BS-B/C passes**: `X7_BS` has the control bytes of `D` on K01 and K26 (only `val_880` / `lap_9648` differ) and n/3 equal to `D` on all of B (2/3) and C (0/3) while `X7` is 1/3 on B.
+**G-PZ-PROG passes**: with the player's start z moved to the original's settled value the live progress at frame 1 is 30.0000 / 29.73 / 29.46 / 29.18 and the two least are `[2, 3]`, as the original (both poses).
+**G-PZ-PAIR passes completely**: control bytes of `X7_PZ` = `X7_BS` and `X7_RG_PZ` = `X7_RG_BS` on every car over the whole run, K00 and K02. Regime A is 1/3 for `X7_PZ` and `X7_RG_PZ`, equal to `D`.
+So the live row at the original's place costs nothing once the player starts on the original's side of the node-0 plane.
+
+Registered now: the same player-settle counterfactual on regimes B and C, `X7_PZ_K` for K in 1, 4, 27, 26, 54, 57 (`MASHED_PP_PUBLISH=7` + `MASHED_PP_PLAYERDZ=0.0035`). Gate **G-PZ-B/C**: n/3 equal to `D_K` (B 2/3, C 0/3) and control bytes equal to `X7_BS_K` of the same K. Prediction: equal (75 %).
+This is a measurement of readiness, not a default change: `MASHED_PP_PLAYERDZ` is a harness knob, the faithful form is the original's first-step settle of the player (z +0.0000921, y about -0.0029, `o_p0a` frames 1 to 2), a player-physics change that belongs to the U-9684 player-at-rest row and the D2 watch list.
+
 ## 4. Not done here (registered)
 
 - No hooks.csv change (`FUN_00408610` is an EXE-ONLY naked transcription). No tracker is edited by hand. The memory index is not touched (orchestrator's).
