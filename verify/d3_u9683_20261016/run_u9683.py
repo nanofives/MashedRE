@@ -1,6 +1,7 @@
 """U-9683 driver (PREREG_u9683.md section 2). Recipes: run_h4 (14400 frames) and run_fk (1200 frames, ring skip K).
 
-Runs from the worktree (private mashed_re.log / player_trace.log, CWD-relative); MASHED_ROOT = the main repo for assets.
+MASHED_ROOT = a private copy of original/ (ROOT). The exe chdirs there, so mashed_re.log and the append-mode
+player_trace.log are private to this driver. Foreign games seen during a run are recorded (CPU contention only).
 MEASUREMENT ONLY. Spawns and stops ONLY its own PID. Every MASHED_* variable is cleared before each arm.
 
 usage: py -3.12 run_u9683.py [arm names...]      (no args = every arm)
@@ -15,6 +16,9 @@ from pathlib import Path
 
 MAIN = Path(r"C:\Users\maria\Desktop\Proyectos\Mashed")
 WT = MAIN / ".worktrees" / "u9683"
+# Private game root: a robocopy of MAIN/original (482 MB, 2026-10-16), so logs are not shared with other sessions.
+ROOT = Path(r"C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed"
+            r"\c1f3ef78-83d8-4379-bfa7-b8b44efc73ff\scratchpad\gameroot")
 OUT = WT / "verify" / "d3_u9683_20261016"
 NEW = WT / "mashedmod" / "build" / "mashed_re.exe"
 HEAD = WT / "mashedmod" / "build" / "mashed_re_head.exe"
@@ -33,6 +37,9 @@ ARMS = [
     dict(n="M_OFF", exe=NEW, recipe="h4", knobs=list(M7)),
     dict(n="M_ON", exe=NEW, recipe="h4", knobs=M7 + [AFT]),
 ]
+# PREREG amendment A1 (report-only causal probe): the faithful race_pct producer on the mode-7 stack
+ARMS.append(dict(n="M_PP", exe=NEW, recipe="h4", knobs=M7 + ["MASHED_PATHPROG"]))
+ARMS.append(dict(n="M_PP_ON", exe=NEW, recipe="h4", knobs=M7 + ["MASHED_PATHPROG", AFT]))
 for k in (0, 2, 1, 4, 27, 26, 54, 57):
     ARMS.append(dict(n="B_OFF_K%02d" % k, exe=NEW, recipe="fk", k=k, knobs=[]))
     ARMS.append(dict(n="B_ON_K%02d" % k, exe=NEW, recipe="fk", k=k, knobs=[AFT]))
@@ -40,6 +47,17 @@ for k in (0, 2, 1, 4, 27, 26, 54, 57):
 
 def sha8(p):
     return hashlib.sha256(Path(p).read_bytes()).hexdigest()[:8]
+
+
+def game_pids():
+    """PIDs of every running game process (any session). Read-only: tasklist, nothing is killed or attached."""
+    out = subprocess.run(["tasklist", "/FO", "CSV", "/NH"], capture_output=True, text=True).stdout
+    pids = {}
+    for line in out.splitlines():
+        f = [c.strip('"') for c in line.split('","')]
+        if len(f) > 1 and (f[0].lower().startswith("mashed_re") or f[0].lower() == "mashed.exe"):
+            pids[int(f[1])] = f[0]
+    return pids
 
 
 def nlines(p):
@@ -55,12 +73,15 @@ def main():
         raise SystemExit("unknown arms: %s" % unknown)
     for a in arms:
         env = {k: v for k, v in os.environ.items() if not k.startswith("MASHED_")}
-        log, pt = WT / "mashed_re.log", WT / "player_trace.log"
+        # The exe chdirs to MASHED_ROOT (exe_main.cpp:8769), so its CWD-relative logs land there. With MASHED_ROOT =
+        # the main repo they were shared with every other session (append-mode player_trace.log came back with
+        # foreign lines on 2 of 2 runs), so MASHED_ROOT is a private copy of original/ (mashed-root-asset-ab).
+        log, pt = ROOT / "mashed_re.log", ROOT / "player_trace.log"
         for f in (log, pt):
             if f.exists():
                 f.unlink()
         frames = 14400 if a["recipe"] == "h4" else 1200
-        env.update(MASHED_ROOT=str(MAIN), MASHED_MUTE="1", MASHED_TRACK_VIEW="Training", MASHED_CAR="1",
+        env.update(MASHED_ROOT=str(ROOT), MASHED_MUTE="1", MASHED_TRACK_VIEW="Training", MASHED_CAR="1",
                    MASHED_ROUND="1", MASHED_ROUND_RULE="4", MASHED_WIN_POS="primary-bl",
                    MASHED_DETERMINISTIC="1", MASHED_DET_FRAMES=str(frames))
         step, gates = OUT / (a["n"] + ".step.csv"), OUT / (a["n"] + ".gates.csv")
@@ -83,15 +104,21 @@ def main():
         print("=== %s exe=%s recipe=%s knobs=%s ===" % (a["n"], Path(a["exe"]).name, a["recipe"], a["knobs"]), flush=True)
         p = subprocess.Popen([str(a["exe"])], cwd=str(WT), env=env)
         print("    pid=%d" % p.pid, flush=True)
-        try:
-            p.wait(timeout=WAIT_S)
-            exited = True
-        except subprocess.TimeoutExpired:
-            exited = False
+        foreign = {}
+        exited = False
+        while time.time() - t0 < WAIT_S:
+            try:
+                p.wait(timeout=5)
+                exited = True
+                break
+            except subprocess.TimeoutExpired:
+                foreign.update({k: v for k, v in game_pids().items() if k != p.pid})
+        if not exited:
             print("    TIMEOUT - stopping pid %d ONLY" % p.pid, flush=True)
             p.kill()
             p.wait(timeout=15)
-        print("    exit=%s self_exited=%s wall=%.0fs" % (p.returncode, exited, time.time() - t0), flush=True)
+        print("    exit=%s self_exited=%s wall=%.0fs foreign_games_seen=%s%s" % (
+            p.returncode, exited, time.time() - t0, sorted(foreign.items()), "  CONTENDED" if foreign else ""), flush=True)
         if log.exists():
             shutil.copy2(log, OUT / (a["n"] + ".log"))
         if pt.exists():

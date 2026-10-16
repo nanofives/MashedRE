@@ -108,6 +108,29 @@ pooled, C 196 per car).
 5. If any run hits a piz-collision AV (`MASHED.exe+0x1509b4` / `+0xe66db`, original side only) it is re-run, not
    reported. The exe-side runs here do not touch the original.
 
+## 3a. AMENDMENT A1 (committed after the H_* and M_* arms were scored, before any M_PP arm exists)
+
+What was seen first (committed data: `H_*`, `M_*`, `SCORE_u9683.txt`, `REF_COMPARE.txt`):
+
+- G-CTRL-HEAD / -OFF pass (`991a5fff / be0d47ea / bc75b405`, HEAD and the new build with the knob OFF; the OFF ptrace had to be
+  re-taken in a private game root, see `RESULT_u9683.md` section 1). `M_OFF` = `fd498815 / 342b989b / c899c830`, the `M_FIX` hashes.
+- G-TOOK pass 13678 / 13678 on both arms. `H_ON` = `H_ON2` (G-ARM-DET pass). On the default stack `H_ON` step and ptrace equal
+  `H_OFF` (only the gates dump differs, it logs the array).
+- On the mode-7 stack the consumer's refdist is bit-identical between `M_OFF` and `M_ON` over the first 204 / 175 / 182 driving
+  calls, so car 2's two returns of 2 at driving calls 16 and 17 stay (U-9685 does not close by the order).
+- In `M_OFF.gates.csv`, `racepct_ec` (the array the producer reads, `0x008a96ec + v * 0x30c`) is 0 for all four cars until frame 20
+  (car 1 then 0.054). The original's race_pct at the same driving calls is 99.2 .. 100 (`o_rd3.msd.rd.tsv`). With all four equal the
+  producer's tie rule (`pa <= pb` -> reference = the outer index, `SpectatorDistances.cpp` ComputeDistancesCore) picks car 2 as the
+  reference at calls 16-20, so `refdist[2]` = 0. The original picks car 1 there (183 / 220 reference indices equal overall).
+
+Registered now, report-only, no default decision attached: two exploratory arms on the mode-7 stack with the faithful race_pct
+producer on (`MASHED_PATHPROG`, the D-11072 P2 `FUN_00408610` loop, default OFF, known to drop (b) to 0/3 on its own, so it is a
+causal probe and not a candidate default): `M_PP` = mode-7 stack + `MASHED_PATHPROG` + traces, `M_PP_ON` = the same + `MASHED_REFDIST_AFTER_AI`.
+Reported: reference index equal to the original's on N / 220 driving producer calls (`M_OFF` baseline 183 / 220), refdist-0 counts
+per car vs the original (164 / 4 / 29), car-2 in-window returns of 2 (`M_OFF` 2). **Prediction:** the reference index agrees on
+>= 200 / 220 and car 2's two in-window returns vanish (55 %), i.e. U-9685's cause is the race_pct input of the producer. If the
+returns stay, the cause is not race_pct and U-9685 keeps both its other candidates (grid pose, car-2 state at frames 16-17).
+
 ## 4. Not done here (registered)
 
 - No hooks.csv change (`0x00442a60` is an EXE-ONLY TU, no `.asi` body, no run_diff / path2 leg, no C-level moves).
