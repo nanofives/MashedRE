@@ -1,0 +1,7 @@
+track            row  orig  matched  orig tri   m.tri  m.tri% | rows cited  red verdict
+11_Warzone       584   364      318     25239   23723   94.0% |   25    25    0 CITED
+11_Warzone       624   353      318     24908   23723   95.2% |   22    22    0 CITED
+11_Warzone       659   336      275     21884   18047   82.5% |   32    32    0 CITED
+
+INSTRUMENT GATES: PASS
+

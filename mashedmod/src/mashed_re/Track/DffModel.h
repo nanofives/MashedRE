@@ -117,7 +117,9 @@ public:
     // with; `r_world` is the radius scaled by that chain's largest axis length (what
     // RpAtomicGetWorldBoundingSphere 0x004e6100 does for a non-orthonormal LTM);
     // `r_obj` is the stream radius itself (FUN_004721e0 reads atomic+0x28 unscaled).
-    struct AtomicSphere { float c[3]; float r_world; float r_obj; };
+    // c_geo: the geometry's own sphere centre (geometry space, before FrameXform), for a caller that keeps the
+    // vertices unbaked and places the atomic with its own matrix ([pontoon] Warzone boat parts).
+    struct AtomicSphere { float c[3]; float r_world; float r_obj; float c_geo[3]; };
     std::vector<AtomicSphere> atomic_spheres;
     float                    bbox[6] = {};  // model-space min xyz, max xyz
     std::uint32_t            total_tris = 0, total_verts = 0;

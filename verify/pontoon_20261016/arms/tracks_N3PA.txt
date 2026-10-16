@@ -1,0 +1,3 @@
+[11_Warzone] attempt 1: D:\MashedWT\pontoon_data\exe\N3\mashed_re.exe D:\MashedWT\pontoon\verify\pontoon_20261016\tracks\N3PA\11_Warzone\stand --trace D:\MashedWT\pontoon\verify\capfix_20261016\11_Warzone\trace.csv --shots 584,624,659 --track Warzone --frames 1009 MASHED_PONTOON_ANIM=1
+['    stand_row_00584.bmp 921654', '    stand_row_00584.draws.json 116658', '    stand_row_00624.bmp 921654', '    stand_row_00624.draws.json 116316', '    stand_row_00659.bmp 921654', '    stand_row_00659.draws.json 99515']
+[11_Warzone] OK after 1 attempt(s)

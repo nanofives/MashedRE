@@ -82,14 +82,7 @@ const std::uint32_t kMarkerColour = 0xff804040u;   // DAT_005f9788 (contact-filt
 
 // ---- RW matrix leaves ------------------------------------------------------------------------------------------
 
-// 0x004c3b90 FUN_004c3b90: inverse square root through the RW LUT (the second table, [devBase+4]).
-float LutInvSqrt(float x) {
-    std::uint32_t u = BF(x);
-    if (u == 0) return x;                                      // 0x004c3b9e je -> fld [esp+4] (the 0.0)
-    u = u + 0x800u;                                            // 0x004c3bb4
-    const std::uint32_t r = Math::RwLutInvSqrtTable()[(u >> 12) & 0xfffu] + ((~u >> 1) & 0x3fc00000u);   // 0x004c3bc2..dc
-    return FB(r);
-}
+using Math::LutInvSqrt;   // FUN_004c3b90 with the real LUT (Math/RwLutTables.cpp)
 
 // Shared bodies (one per RVA per target, scripts/lint_rva_bodies.py): RwMatrixMultiply 0x004c4600 = the dispatcher in
 // Math/RwMatrixMultiplyCpu.cpp; RwMatrixCombine 0x004c52f0 = Collision/RwpSolverMath2.cpp (exe arm added by this lane);
