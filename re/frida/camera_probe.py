@@ -315,6 +315,44 @@ function carMatfx(){
   }
   return g;
 }
+// [librwrest 2026-10-16] car part frames (PREREG_librwrest.md). Per car record
+// rec = 0x0063d9e0 + i*0x2ac (FUN_00420420 @ 0x00420420 scatters atomics by part code into
+// rec[part]): the spin angles FUN_0041f3d0 @ 0x0041f3d0 keeps at rec+0x220+w*4, LOD +0x298,
+// shade +0x284 (FUN_0041f590), descriptor +0x268 (FUN_00420420: DAT_0063dc48 + i*0x2ac); per
+// part atomic: its frame (atomic+4) modelling +0x10 and LTM +0x50, and the parent frame's
+// modelling (frame+4 = RwFrame parent; FUN_0041f3d0 rotates it about Y for steer). Vehicle
+// physics record veh = 0x008815a0 + i*0xd04: the per-wheel spin int FUN_0046bd60 @ 0x0046bd60
+// reads (+0x1a4 + w*0xc4), the 16-float steer window FUN_0046bda0 @ 0x0046bda0 averages
+// (+0x1ac + w*0xc4, x 0.0625), and the two vec3s FUN_0041f4f0 @ 0x0041f4f0 reads through
+// FUN_0046bce0 (+0xaf4) / FUN_0046bd20 (+0xb00). Light DAT_0063d850 (FUN_00420870 0x0042087c)
+// colour at +0x18 (FUN_00420050 scales it by rec+0x284 around each car's render).
+let carParts=false, cpRows={}, cpSnaps=[], cpLivery=null;
+const CP_PARTS=[0,1,2,3,0x21,0x22,0x23,0x24,0x12,0x13,0x14];
+function cpLiveryRead(){
+  const out={ mode_42f6a0_src: null, cars: [] };
+  for (let i=0;i<4;i++){
+    const rec=abs(0x0063d9e0+i*0x2ac); const c={ colour: abs(0x007f1a1c+i*16).readS32() };
+    try { const d=rec.add(0x268).readPointer(); if (!d.isNull()) { c.desc=d.toString();
+      c.name=d.readCString(16); c.dff=d.add(0x10).readCString(16); c.txd=d.add(0x20).readCString(16);
+      c.env=d.add(0x30).readCString(16); c.id=d.add(0x80).readS32(); } } catch(e) { c.err=''+e; }
+    out.cars.push(c); }
+  return out; }
+function carPartsRead(){
+  const cars=[];
+  let light=null; try { const l=abs(0x0063d850).readPointer(); if (!l.isNull()) light=rd(l.add(0x18),4); } catch(e) {}
+  for (let i=0;i<4;i++){
+    const rec=abs(0x0063d9e0+i*0x2ac), veh=abs(0x008815a0+i*0xd04);
+    const c={ ang: rd(rec.add(0x220),4), lod: rec.add(0x298).readS32(), shade: rec.add(0x284).readFloat(),
+      flags: rec.add(0x294).readU32(), spin: [], steer: [], va: rd(veh.add(0xaf4),3), vb: rd(veh.add(0xb00),3), p: {} };
+    for (let w=0;w<4;w++){ c.spin.push(veh.add(0x1a4+w*0xc4).readS32());
+      let s=0; for (let k=0;k<16;k++) s+=veh.add(0x1ac+w*0xc4+k*4).readFloat(); c.steer.push(s*0.0625); }
+    for (const pc of CP_PARTS){
+      try { const at=rec.add(pc*4).readPointer(); if (at.isNull()) continue;
+        const fr=at.add(4).readPointer(); const pa=fr.add(4).readPointer();
+        c.p[pc]={ m: mat12(fr.add(0x10)), l: mat12(fr.add(0x50)), pm: pa.isNull()?null:mat12(pa.add(0x10)),
+                  vis: at.add(2).readU8() }; } catch(e) {} }
+    cars.push(c); }
+  return { light: light, cars: cars }; }
 function abs(r){return ptr(r+DELTA);}
 function rd(p,n){ const o=[]; for(let i=0;i<n;i++) o.push(p.add(i*4).readFloat()); return o; }
 // RwMatrix rows right/up/at/pos at +0x00/+0x10/+0x20/+0x30 -> 12 floats (flags/pads dropped)
@@ -337,6 +375,8 @@ rpc.exports={
   tracelen:function(){ return trace.length; },
   setmatfx:function(v){ matfxOn=!!v; return 1; },
   getmatfx:function(){ return JSON.stringify(matfxSnaps); },
+  setcarparts:function(v){ carParts=!!v; return 1; },
+  getcarparts:function(){ return JSON.stringify({livery: cpLivery, rows: cpSnaps}); },
   getdraws:function(){ return JSON.stringify(drFrames); },
   // [d1r1] per named texture: the D3D9 raster extension's alpha byte (ext+8, the flag
   // FUN_004d6ce0 tests at 0x004d6d06 to switch ALPHABLEND/ALPHATEST for stage 0), and the
@@ -513,6 +553,14 @@ rpc.exports={
           }
           // [d1r1] car render roots (I-3) and the draw recorder's frame markers (I-1, I-FRAME)
           if (carFrames) row.cm = carMats();
+          if (carParts) {   // [librwrest] window of 60 rows ending at each shot row
+            const n = trace.length;
+            if (cpLivery === null && row.ba8c >= 3) { try { cpLivery = cpLiveryRead(); } catch(e) { cpLivery = {err: ''+e}; } }
+            let win = false;
+            for (const k in shotRows) if (n <= +k && n >= +k - 60) win = true;
+            if (raceStart >= 0) for (const k in relShots) { const a = raceStart + (+k); if (n <= a && n >= a - 60) win = true; }
+            if (win) { try { cpSnaps.push({row: n, ba8c: row.ba8c, ff4: row.ff4, s: carPartsRead()}); }
+                       catch(e) { cpSnaps.push({row: n, err: '' + e}); } } }
           if (matfxOn && trace.length % 100 === 0) {
             try { matfxSnaps.push({row: trace.length, ba8c: row.ba8c, s: carMatfx()}); }
             catch(e) { matfxSnaps.push({row: trace.length, err: '' + e}); } }
@@ -598,6 +646,11 @@ def main():
     ap.add_argument("--carframes", action="store_true",
                     help="[d1r1] per-row car render-root matrices (R{i}_* modelling, "
                          "Q{i}_* LTM, F{i}_* the renderable's own frame LTM, S{i} root==frame)")
+    ap.add_argument("--carparts", action="store_true",
+                    help="[librwrest] per-car livery descriptor (once) and, for the 60 rows "
+                         "ending at each shot row, spin angles / steer / body vecs and the "
+                         "part frames' modelling matrices into <out>.carparts.json "
+                         "(PREREG_librwrest.md)")
     ap.add_argument("--matfx", action="store_true",
                     help="[rtex] every 100 trace rows, snapshot the cars' MatFX state (env "
                          "coefficient/texture/frame, per-part material effects) into "
@@ -609,7 +662,7 @@ def main():
     out_csv, out_static = Path(args.out), Path(args.static_out)
     shots = [int(s) for s in args.shots.split(",") if s.strip()]
     rel = [int(s) for s in args.shots_race.split(",") if s.strip()]
-    if shots or rel or args.carframes: args.frame = True
+    if shots or rel or args.carframes or args.carparts: args.frame = True
     LOG.mkdir(exist_ok=True)
     out_csv.parent.mkdir(parents=True, exist_ok=True)
     env = dict(os.environ); env["MASHED_RE_NO_AUTO_HOOK"] = "1"
@@ -633,6 +686,8 @@ def main():
                             args.drawrec, args.carframes, args.track, args.drawrec_bt)
     if args.matfx:
         scr.exports_sync.setmatfx(1)
+    if args.carparts:
+        scr.exports_sync.setcarparts(1)
     dev.resume(pid)
     E = scr.exports_sync
 
@@ -721,6 +776,11 @@ def main():
             g2 = json.loads(E.globals())
     n = E.stoptrace()
     rows = json.loads(E.gettrace())
+    if args.carparts:
+        cp = json.loads(E.getcarparts())
+        Path(str(out_csv) + ".carparts.json").write_text(json.dumps(cp))
+        print(f"carparts: {len(cp.get('rows') or [])} rows, livery={cp.get('livery')} "
+              f"-> {out_csv}.carparts.json")
     if args.matfx:
         mf = json.loads(E.getmatfx())
         Path(str(out_csv) + ".matfx.json").write_text(json.dumps(mf, indent=1))
