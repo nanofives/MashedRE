@@ -1,0 +1,25 @@
+== 3D orig row 810 (234 draws, 26440 tri) vs stand row 810 (206 draws, 25853 tri)
+   matched 202 draws (23549 tri); rows 21 (20 cited); info {'empty_dropped': (0, 0), 'no_geometry': (0, 0)}
+  MISSING  CITED C10-RUNTIME-TEX #256x256:21            A-only 1 draws 4 tri (0 offscreen); first k81 pt4 tri=4 tex=#256x256:21 tex1=- bb=[-2.07,0.01,34.10,1.93,0.01,39.24] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+  MISSING  CITED C10-RUNTIME-TEX #64x64:21              A-only 3 draws 11 tri (0 offscreen); first k81 pt4 tri=3 tex=#64x64:21 tex1=- bb=[-2.07,0.01,41.82,1.93,0.01,46.96] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+  MISSING  CITED C03-UNTEXTURED -                      A-only 7 draws 182 tri (2 offscreen); first k82 pt5 tri=2 tex=- tex1=- bb=[0.31,0.32,0.99,0.38,0.34,0.99] src=d3d Z=0 ZW=0 ZF=0 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=1
+  MISSING  CITED C17-CAR-GLOSS Advantage              A-only 1 draws 4 tri (0 offscreen); first k82 pt5 tri=4 tex=Advantage tex1=- bb=[-0.44,0.16,46.07,-0.09,0.21,46.11] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  MISSING  CITED C05-PARTICLE exp_cloud2             A-only 1 draws 128 tri (0 offscreen); first k82 pt4 tri=128 tex=exp_cloud2 tex1=- bb=[-0.96,0.22,44.07,-0.66,0.26,44.44] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=2
+  MISSING  CITED C04-SHADOW flatshad               A-only 1 draws 308 tri (0 offscreen); first k82 pt4 tri=308 tex=flatshad tex1=- bb=[-2.70,-0.11,39.14,1.27,0.74,46.86] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+  MISSING  CITED C08-STARTDISP GreenStartLight        A-only 1 draws 6 tri (1 offscreen); first k82 pt5 tri=6 tex=GreenStartLight tex1=- bb=[-0.10,0.62,0.98,0.10,0.69,0.98] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+  MISSING  CITED C09-FX Headlight              A-only 1 draws 8 tri (0 offscreen); first k82 pt4 tri=8 tex=Headlight tex1=- bb=[300.19,81.27,0.99,354.45,148.53,0.99] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=1
+  MISSING  CITED C08-STARTDISP NFLBluejay             A-only 1 draws 2 tri (1 offscreen); first k82 pt5 tri=2 tex=NFLBluejay tex1=- bb=[-0.51,0.29,0.98,-0.43,0.37,0.98] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+  MISSING  CITED C08-STARTDISP NFLGold                A-only 1 draws 2 tri (1 offscreen); first k82 pt5 tri=2 tex=NFLGold tex1=- bb=[-0.47,0.29,0.98,-0.38,0.37,0.98] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+  MISSING  CITED C08-STARTDISP NFLMelon               A-only 1 draws 2 tri (1 offscreen); first k82 pt5 tri=2 tex=NFLMelon tex1=- bb=[-0.56,0.29,0.98,-0.47,0.37,0.98] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+  MISSING  CITED C08-STARTDISP NFLRed                 A-only 1 draws 2 tri (1 offscreen); first k82 pt5 tri=2 tex=NFLRed tex1=- bb=[0.38,0.29,0.98,0.47,0.37,0.98] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+  MISSING  CITED C08-STARTDISP OrangeDisplay          A-only 8 draws 68 tri (8 offscreen); first k82 pt5 tri=2 tex=OrangeDisplay tex1=- bb=[0.22,0.31,0.99,0.39,0.35,0.99] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+  MISSING  CITED C06-PICKUP PUGlow                 A-only 1 draws 18 tri (0 offscreen); first k82 pt4 tri=18 tex=PUGlow tex1=- bb=[-9.57,-6.48,2.27,63.39,1.61,127.57] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+  MISSING  CITED C09-FX VehicleIcons           A-only 1 draws 2 tri (0 offscreen); first k82 pt4 tri=2 tex=VehicleIcons tex1=- bb=[-0.84,0.12,36.46,-0.33,0.48,36.90] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+  EXTRA    CITED C05-PARTICLE @gen:particle          B-only 1 draws 144 tri (0 offscreen); first k83 pt4 tri=144 tex=@gen:particle tex1=- bb=[-37.52,8.30,0.93,36.46,47.53,82.20] src=d3d Z=1 ZW=0 ZF=4 AT=0 AREF=0 AF=0 AB=1 SRC=5 DST=6 CULL=1
+  EXTRA    CITED C06-PICKUP @gen:pickup            B-only 1 draws 16 tri (0 offscreen); first k83 pt4 tri=16 tex=@gen:pickup tex1=- bb=[-10.56,-6.47,1.43,64.38,2.69,128.41] src=d3d Z=1 ZW=0 ZF=4 AT=0 AREF=0 AF=0 AB=1 SRC=5 DST=2 CULL=1
+  STATE    CITED C20-STATE-SKY Sky                    1 matched draws differ in Z,ZF: A Z=0 ZW=0 ZF=0 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=0 ZF=8 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  FOG      CITED C18-FOG *                      199 matched draws, FOGENABLE A 1 | B 0, 43 textures: -, Ads, Advantage, AdvantageSmall, Barrier, Bits, CamStand, Dirtrubbish
+  MOVED    RED        -                      1 draws, same texture and triangle count, AABB moved by up to 0.0571; first A [0.20,2.92,49.20,10.00,3.09,50.00] B [0.26,2.92,49.19,10.06,3.09,50.00]
+  MOVED    CITED C28-ANIM-CLUMP train                  1 draws, same texture and triangle count, AABB moved by up to 0.0571; first A [0.17,2.26,49.19,10.03,3.09,50.00] B [0.22,2.26,49.19,10.08,3.09,50.00]
+-> C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\txdscope\log\txdscope\after\10_Dump\tx_00810.json
+VERDICT: RED (matched=202 rows=21 red=1)

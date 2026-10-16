@@ -1,0 +1,13 @@
+10_Dump 735: rows 21->21 matched 330->330
+   REMOVED ('EXTRA', 'trainroof', 'C30-TXD-SCOPE') n=1
+   ADDED   ('MOVED', '-', 'C30-TRAIN-ROOF-LEAD') n=1
+   CHANGED ('MISSING', '-', 'C03-UNTEXTURED') n 8->7
+10_Dump 775: rows 18->18 matched 313->313
+   REMOVED ('EXTRA', 'trainroof', 'C01-CULL') n=1
+   ADDED   ('MOVED', '-', 'C30-TRAIN-ROOF-LEAD') n=1
+   CHANGED ('MISSING', '-', 'C03-UNTEXTURED') n 8->7
+10_Dump 810: rows 21->21 matched 202->202
+   REMOVED ('EXTRA', 'trainroof', 'C01-CULL') n=1
+   ADDED   ('MOVED', '-', 'C30-TRAIN-ROOF-LEAD') n=1
+   CHANGED ('MISSING', '-', 'C03-UNTEXTURED') n 8->7
+{'same': 36, 'removed': 3, 'added': 3, 'changed': 3}

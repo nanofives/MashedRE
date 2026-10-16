@@ -1,0 +1,1 @@
+  TXDSCOPE texdic 'dump.txd' -> 1 of 2 TXD(s) of the piz

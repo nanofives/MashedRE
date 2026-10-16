@@ -1089,6 +1089,30 @@ static bool parse_sky_filename(const char* line, char* name, std::size_t name_ca
 static bool parse_object_bsp_filename(const char* line, char* name, std::size_t name_cap, int* slot) {
     return parse_slot_name_cmd(line, "Object_Bsp_Filename", 15, false, name, name_cap, slot);
 }
+// [txdscope U-9724] `Texture_Dictionary_Filename( "x.txd" )`, handler 0x0047a6f0 (registered at 0x00440c2e, string
+// 0x005cdf70): copies argument 0 over the course description base (+0x0), so the last call wins. One string argument,
+// no slot. CreateFromDescription (0x00479330) loads it with FUN_0042a6b0 (call 0x00479372; ".txd" appended when the
+// name has no '.') and, when the load returned non-null, makes it the current dictionary (FUN_004c5c80, call
+// 0x004793de) before it reads the world BSP, the clumps, the sky domes and the Mts.
+static bool parse_texdic_filename(const char* line, char* name, std::size_t name_cap) {
+    const char* p = line;
+    while (*p == ' ' || *p == '\t') ++p;
+    static const char key[] = "Texture_Dictionary_Filename";
+    if (std::strncmp(p, key, sizeof(key) - 1) != 0) return false;
+    p += sizeof(key) - 1;
+    while (*p == ' ' || *p == '\t') ++p;
+    if (*p != '(') return false;
+    ++p;
+    while (*p == ' ' || *p == '\t') ++p;
+    if (*p != '"') return false;
+    ++p;
+    std::size_t n = 0;
+    while (p[n] && p[n] != '"') ++n;
+    if (p[n] != '"' || n == 0 || n >= name_cap || n >= 64) return false;
+    std::memcpy(name, p, n);
+    name[n] = '\0';
+    return true;
+}
 
 // [rfx2] The course directional light's frame LTM (course +0x105e4 = DAT_0065743c, read by
 // FUN_004260b0), which FUN_00487280 reads whole (at = the shadow ray, up offsets the
@@ -1496,11 +1520,13 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
     Piz::Archive piz;
     if (!piz.Load(piz_path)) return fail(piz.last_error());
 
-    // GRAPH*.BSP (name varies: GRAPH.BSP / GRAPHICS.BSP). Textures: decode
-    // EVERY *.TXD in the piz (DUMP.TXD + CITY.TXD coexist; props reference
-    // secondary dictionaries) and resolve material names across all of them.
+    // GRAPH*.BSP (name varies: GRAPH.BSP / GRAPHICS.BSP). Textures: [txdscope U-9724] only the
+    // dictionary COURSE.LUA names (Texture_Dictionary_Filename) is decoded, as the original binds
+    // only that one for the whole track load (see the selection after this loop). The legacy
+    // every-TXD search (DUMP.TXD + CITY.TXD coexist in dump.piz) stays behind MASHED_NO_TXDSCOPE.
     const std::uint8_t* world_blob = nullptr; std::uint32_t world_len = 0;
     std::vector<std::pair<const std::uint8_t*, std::uint32_t>> txds;
+    std::vector<std::string> txd_names;   // piz entry name of txds[i]
     for (std::uint32_t i = 0; i < piz.count(); ++i) {
         const char* n = piz.entry(i).name;
         const std::size_t ln = std::strlen(n);
@@ -1561,7 +1587,54 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
         } else if (ln > 4 && std::strcmp(u + ln - 4, ".TXD") == 0) {
             std::uint32_t bl = 0;
             const std::uint8_t* b = piz.blob(i, &bl);
-            if (b) txds.emplace_back(b, bl);
+            if (b) { txds.emplace_back(b, bl); txd_names.emplace_back(n); }
+        }
+    }
+    // [txdscope U-9724] The original has exactly one dictionary current while it reads the world BSP,
+    // the clumps, the sky domes and the Mts (CreateFromDescription 0x00479330: FUN_0042a6b0 at 0x00479372
+    // loads the Texture_Dictionary_Filename file, FUN_004c5c80 at 0x004793de makes it current, nothing
+    // changes it afterwards), and a texture name is looked up in that dictionary only
+    // (FUN_004c5cb0 -> default find callback 0x004c7490; a miss returns 0 from FUN_004cf5a0 -- the track
+    // piz holds no image file the 0x004c61b0 read fallback could supply). Every shipped track holds one
+    // TXD except Dump (DUMP.TXD + CITY.TXD; 90 CITY names are not in DUMP.TXD, e.g. `trainroof`).
+    // Named file absent from the piz: no dictionary (FUN_0042a6b0 returns 0). No Texture_Dictionary_Filename
+    // call (none shipped): the legacy every-TXD behaviour. MASHED_NO_TXDSCOPE=1 restores it throughout.
+    {
+        static const bool s_all = std::getenv("MASHED_NO_TXDSCOPE") != nullptr;
+        char texdic[64] = {};
+        for (std::uint32_t i = 0; i < piz.count(); ++i) {
+            const char* n = piz.entry(i).name;
+            const std::size_t ln = std::strlen(n);
+            if (ln < 4 || _strnicmp(n, "COURSE", 6) != 0 || _stricmp(n + ln - 4, ".LUA") != 0) continue;
+            std::uint32_t cl = 0;
+            const std::uint8_t* cb = piz.blob(i, &cl);
+            if (!cb) break;
+            const char* cs = reinterpret_cast<const char*>(cb);
+            for (std::uint32_t pos = 0; pos < cl; ) {
+                std::uint32_t eol = pos;
+                while (eol < cl && cs[eol] != '\n') ++eol;
+                std::string line(cs + pos, eol - pos);
+                pos = eol + 1;
+                const std::size_t cmt = line.find("--");
+                if (cmt != std::string::npos) line.resize(cmt);
+                parse_texdic_filename(line.c_str(), texdic, sizeof(texdic));   // last call wins
+            }
+            break;
+        }
+        if (!s_all && texdic[0]) {
+            std::string want = texdic;
+            if (want.find('.') == std::string::npos) want += ".txd";
+            std::vector<std::pair<const std::uint8_t*, std::uint32_t>> named;
+            for (std::size_t k = 0; k < txds.size(); ++k)
+                if (_stricmp(txd_names[k].c_str(), want.c_str()) == 0) named.push_back(txds[k]);
+            if (log)
+                std::fprintf(log, "  TXDSCOPE texdic '%s' -> %zu of %zu TXD(s) of the piz%s\n", texdic,
+                             named.size(), txds.size(),
+                             named.empty() ? " (named file absent: no dictionary)" : "");
+            txds.swap(named);
+        } else if (log) {
+            std::fprintf(log, "  TXDSCOPE off (%s): every TXD of the piz, %zu\n",
+                         s_all ? "MASHED_NO_TXDSCOPE" : "no Texture_Dictionary_Filename call", txds.size());
         }
     }
     if (!world_blob) return fail("GRAPH*.BSP not found");
@@ -3599,12 +3672,19 @@ int TrackRenderer::RegisterCarModel(IDirect3DDevice9* dev, const char* dff_entry
     }
     const std::uint8_t* dff = nullptr; std::uint32_t dff_len = 0;
     std::vector<std::pair<const std::uint8_t*, std::uint32_t>> txds;
+    // [txdscope U-9724] FUN_00420420 (0x00420420) loads ONE dictionary for the vehicle, `<table +0x20>.txd`
+    // (FUN_0042a6b0 at 0x004204c0), makes it current for the DFF read (FUN_004c5c80 at 0x004204ce; DFF load
+    // FUN_0042a5d0 at 0x0042050f) and reads the env names from it (FUN_004c5c00 at 0x00420595). A car piz
+    // also holds a `PS2/<CAR>.TXD` (decodes to 0 textures); the
+    // PC dictionary is the entry without a path. MASHED_NO_TXDSCOPE=1 keeps every TXD of the piz.
+    static const bool s_all_txd = std::getenv("MASHED_NO_TXDSCOPE") != nullptr;
     for (std::uint32_t i = 0; i < piz.count(); ++i) {
         const char* n = piz.entry(i).name;
         const std::size_t ln = std::strlen(n);
         if (_stricmp(n, dff_entry) == 0) {
             dff = piz.blob(i, &dff_len);
-        } else if (ln > 4 && _stricmp(n + ln - 4, ".TXD") == 0) {
+        } else if (ln > 4 && _stricmp(n + ln - 4, ".TXD") == 0 &&
+                   (s_all_txd || std::strpbrk(n, "/\\") == nullptr)) {
             std::uint32_t bl = 0;
             const std::uint8_t* b = piz.blob(i, &bl);
             if (b) txds.emplace_back(b, bl);

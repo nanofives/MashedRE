@@ -1,0 +1,56 @@
+{
+ "02_Neustein": {
+  "ok": true,
+  "attempts": 1,
+  "shots": [
+   1094,
+   1134,
+   1169
+  ]
+ },
+ "05_Sands": {
+  "ok": true,
+  "attempts": 1,
+  "shots": [
+   1084,
+   1124,
+   1159
+  ]
+ },
+ "10_Dump": {
+  "ok": true,
+  "attempts": 1,
+  "shots": [
+   735,
+   775,
+   810
+  ]
+ },
+ "11_Warzone": {
+  "ok": true,
+  "attempts": 1,
+  "shots": [
+   584,
+   624,
+   659
+  ]
+ },
+ "12_City": {
+  "ok": true,
+  "attempts": 1,
+  "shots": [
+   761,
+   801,
+   836
+  ]
+ },
+ "13_Training": {
+  "ok": true,
+  "attempts": 1,
+  "shots": [
+   884,
+   924,
+   959
+  ]
+ }
+}
