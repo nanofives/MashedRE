@@ -1,0 +1,85 @@
+== 3D orig row 857 (365 draws, 25969 tri) vs stand row 857 (335 draws, 24394 tri)
+   matched 329 draws (23848 tri); rows 81 (80 cited); info {'empty_dropped': (0, 0), 'no_geometry': (0, 0)}
+  MISSING  CITED C10-RUNTIME-TEX #256x256:21            A-only 4 draws 23 tri (0 offscreen); first k81 pt4 tri=4 tex=#256x256:21 tex1=- bb=[1.43,0.01,44.00,5.25,0.01,52.00] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+  MISSING  CITED C03-UNTEXTURED -                      A-only 7 draws 182 tri (0 offscreen); first k81 pt5 tri=2 tex=- tex1=- bb=[0.00,0.00,0.00,512.00,512.00,0.00] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=1 DST=2 CULL=2
+  MISSING  CITED C05-PARTICLE exp_cloud2             A-only 3 draws 384 tri (0 offscreen); first k82 pt4 tri=128 tex=exp_cloud2 tex1=- bb=[2.87,0.07,48.99,3.11,0.09,49.45] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=2
+  MISSING  CITED C08-STARTDISP GreenStartLight        A-only 1 draws 6 tri (0 offscreen); first k82 pt5 tri=6 tex=GreenStartLight tex1=- bb=[-0.10,0.48,0.98,0.10,0.54,0.98] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+  MISSING  CITED C09-FX Headlight              A-only 1 draws 4 tri (0 offscreen); first k82 pt4 tri=4 tex=Headlight tex1=- bb=[386.87,240.02,0.98,443.72,258.16,0.98] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=1
+  MISSING  CITED C07-WEAPONS mine                   A-only 2 draws 24 tri (1 offscreen); first k82 pt5 tri=12 tex=mine tex1=- bb=[-5.55,0.11,38.82,-5.02,0.49,39.35] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  MISSING  CITED C08-STARTDISP NFLBluejay             A-only 1 draws 2 tri (0 offscreen); first k82 pt5 tri=2 tex=NFLBluejay tex1=- bb=[-0.51,0.29,0.98,-0.43,0.37,0.98] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+  MISSING  CITED C08-STARTDISP NFLGold                A-only 1 draws 2 tri (0 offscreen); first k82 pt5 tri=2 tex=NFLGold tex1=- bb=[-0.47,0.29,0.98,-0.38,0.37,0.98] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+  MISSING  CITED C08-STARTDISP NFLMelon               A-only 1 draws 2 tri (0 offscreen); first k82 pt5 tri=2 tex=NFLMelon tex1=- bb=[-0.56,0.29,0.98,-0.47,0.37,0.98] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+  MISSING  CITED C08-STARTDISP NFLRed                 A-only 1 draws 2 tri (0 offscreen); first k82 pt5 tri=2 tex=NFLRed tex1=- bb=[0.38,0.29,0.98,0.47,0.37,0.98] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+  MISSING  CITED C08-STARTDISP OrangeDisplay          A-only 8 draws 68 tri (0 offscreen); first k82 pt5 tri=10 tex=OrangeDisplay tex1=- bb=[-0.11,0.47,1.02,0.11,0.55,1.02] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+  MISSING  CITED C06-PICKUP PUGlow                 A-only 1 draws 14 tri (0 offscreen); first k82 pt4 tri=14 tex=PUGlow tex1=- bb=[-7.58,-0.51,-68.06,6.68,1.81,71.46] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+  MISSING  CITED C05-PARTICLE smoke                  A-only 1 draws 1024 tri (0 offscreen); first k82 pt4 tri=1024 tex=smoke tex1=- bb=[-3.14,-7.64,37.65,11.61,3.03,50.72] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+  EXTRA    CITED C05-PARTICLE @gen:particle          B-only 1 draws 150 tri (1 offscreen); first k83 pt4 tri=150 tex=@gen:particle tex1=- bb=[-30.21,6.15,13.38,37.56,31.77,76.63] src=d3d Z=1 ZW=0 ZF=4 AT=0 AREF=0 AF=0 AB=1 SRC=5 DST=6 CULL=1
+  EXTRA    CITED C06-PICKUP @gen:pickup            B-only 1 draws 12 tri (0 offscreen); first k83 pt4 tri=12 tex=@gen:pickup tex1=- bb=[-7.95,-1.14,-68.23,6.77,1.12,71.63] src=d3d Z=1 ZW=0 ZF=4 AT=0 AREF=0 AF=0 AB=1 SRC=5 DST=2 CULL=1
+  STATE    CITED C19-STATE-LIBRW Ads                    4 matched draws differ in AT,AF,AB,SRC,DST: A Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  STATE    CITED C19-STATE-LIBRW Ads                    1 matched draws differ in CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=1 | B Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  STATE    CITED C19-STATE-LIBRW Box                    19 matched draws differ in CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=1 | B Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  STATE    CITED C19-STATE-LIBRW Box                    14 matched draws differ in AT,AF,AB,SRC,DST: A Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  STATE    CITED C19-STATE-LIBRW Camstand               3 matched draws differ in AT,AF,AB,SRC,DST: A Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  STATE    CITED C19-STATE-LIBRW Cargo                  8 matched draws differ in CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=1 | B Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  STATE    CITED C19-STATE-LIBRW Cargo                  12 matched draws differ in AT,AF,AB,SRC,DST: A Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  STATE    CITED C19-STATE-LIBRW Conveyor               1 matched draws differ in CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=1 | B Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  STATE    CITED C19-STATE-LIBRW Conveyor               4 matched draws differ in AT,AF,AB,SRC,DST: A Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  STATE    CITED C19-STATE-LIBRW CraneStruts            4 matched draws differ in AT,AF,AB,SRC,DST: A Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  STATE    CITED C19-STATE-LIBRW CraneStruts            1 matched draws differ in CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=1 | B Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  STATE    CITED C19-STATE-LIBRW Edge                   2 matched draws differ in CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=1 | B Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  STATE    CITED C19-STATE-LIBRW Edge                   12 matched draws differ in AT,AF,AB,SRC,DST: A Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  STATE    CITED C19-STATE-LIBRW FishPlant              12 matched draws differ in AT,AF,AB,SRC,DST: A Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  STATE    CITED C19-STATE-LIBRW FishPlant              2 matched draws differ in CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=1 | B Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  STATE    CITED C19-STATE-LIBRW FishPlantDoors         5 matched draws differ in AT,AF,AB,SRC,DST: A Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  STATE    CITED C19-STATE-LIBRW FishPlantDoors         2 matched draws differ in CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=1 | B Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  STATE    CITED C19-STATE-LIBRW FishSign               1 matched draws differ in AT,AF,AB,SRC,DST: A Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  STATE    CITED C19-STATE-LIBRW FishSign               1 matched draws differ in CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=1 | B Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  STATE    CITED C19-STATE-LIBRW Ice                    14 matched draws differ in AT,AF,AB,SRC,DST: A Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  STATE    CITED C19-STATE-LIBRW LandingStageEdge       13 matched draws differ in AT,AF,AB,SRC,DST: A Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  STATE    CITED C19-STATE-LIBRW LandingStageEdge       6 matched draws differ in CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=1 | B Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  STATE    CITED C19-STATE-LIBRW Pipe                   9 matched draws differ in AT,AF,AB,SRC,DST: A Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  STATE    CITED C19-STATE-LIBRW Pipe                   2 matched draws differ in CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=1 | B Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  STATE    CITED C19-STATE-LIBRW Rust                   9 matched draws differ in AT,AF,AB,SRC,DST: A Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  STATE    CITED C19-STATE-LIBRW Rust                   6 matched draws differ in CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=1 | B Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  STATE    CITED C19-STATE-LIBRW RustyCorrugatG         6 matched draws differ in AT,AF,AB,SRC,DST: A Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  STATE    CITED C19-STATE-LIBRW RustyCorrugatG         2 matched draws differ in CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=1 | B Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  STATE    CITED C19-STATE-LIBRW RustySteel             12 matched draws differ in CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=1 | B Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  STATE    CITED C19-STATE-LIBRW RustySteel             15 matched draws differ in AT,AF,AB,SRC,DST: A Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  STATE    CITED C19-STATE-LIBRW Shipside               8 matched draws differ in AT,AF,AB,SRC,DST: A Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  STATE    CITED C19-STATE-LIBRW Shipside               2 matched draws differ in CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=1 | B Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  STATE    CITED C19-STATE-LIBRW Snow                   15 matched draws differ in AT,AF,AB,SRC,DST: A Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  STATE    CITED C19-STATE-LIBRW Snow                   8 matched draws differ in CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=1 | B Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  STATE    CITED C19-STATE-LIBRW Wood                   7 matched draws differ in AT,AF,AB,SRC,DST: A Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  STATE    CITED C19-STATE-LIBRW Wood                   1 matched draws differ in CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=1 | B Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  STATE    CITED C19-STATE-LIBRW Yellow                 10 matched draws differ in AT,AF,AB,SRC,DST: A Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  STATE    CITED C19-STATE-LIBRW Yellow                 5 matched draws differ in CULL: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=1 | B Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  TEX1     CITED C16-TEX1-WORLD Ice                    14 matched draws, stage-1 texture A #256x256:22 | B -
+  TEX1     CITED C16-TEX1-WORLD IceRoad1               7 matched draws, stage-1 texture A #256x256:22 | B -
+  TEX1     CITED C16-TEX1-WORLD IceRoad2               6 matched draws, stage-1 texture A #256x256:22 | B -
+  FOG      CITED C18-FOG *                      328 matched draws, FOGENABLE A 1 | B 0, 26 textures: Ads, Advantage, Box, Camstand, CarGloss, Cargo, Conveyor, CraneStruts
+  MOVED    RED        Advantage              4 draws, same texture and triangle count, AABB moved by up to 0.012; first A [3.54,0.00,46.80,3.70,0.18,46.98] B [3.55,0.00,46.80,3.69,0.18,46.99]
+  ORDER    CITED C21-ORDER Ads                    335 order inversions vs matched draws, mostly: Boxx77, RustySteelx50, Cargox33, Snowx32
+  ORDER    CITED C21-ORDER Box                    1191 order inversions vs matched draws, mostly: Boxx266, RustySteelx175, Cargox114, Snowx112
+  ORDER    CITED C21-ORDER Camstand               264 order inversions vs matched draws, mostly: Boxx60, RustySteelx39, Cargox27, Snowx25
+  ORDER    CITED C21-ORDER Cargo                  1019 order inversions vs matched draws, mostly: Boxx230, RustySteelx150, Snowx96, Cargox96
+  ORDER    CITED C21-ORDER Conveyor               338 order inversions vs matched draws, mostly: Boxx78, RustySteelx52, Cargox34, Snowx32
+  ORDER    CITED C21-ORDER CraneStruts            342 order inversions vs matched draws, mostly: Boxx80, RustySteelx52, Snowx33, Cargox33
+  ORDER    CITED C21-ORDER Edge                   1012 order inversions vs matched draws, mostly: Boxx229, RustySteelx151, Snowx102, Cargox97
+  ORDER    CITED C21-ORDER FishPlant              997 order inversions vs matched draws, mostly: Boxx228, RustySteelx144, Snowx102, Cargox96
+  ORDER    CITED C21-ORDER FishPlantDoors         433 order inversions vs matched draws, mostly: Boxx98, RustySteelx65, Cargox44, Snowx40
+  ORDER    CITED C21-ORDER FishSign               84 order inversions vs matched draws, mostly: Boxx20, RustySteelx13, Snowx8, Cargox8
+  ORDER    CITED C21-ORDER Ice                    1161 order inversions vs matched draws, mostly: Boxx266, RustySteelx168, Snowx124, Cargox112
+  ORDER    CITED C21-ORDER IceRoad1               577 order inversions vs matched draws, mostly: Boxx133, RustySteelx84, Snowx61, Cargox56
+  ORDER    CITED C21-ORDER IceRoad2               500 order inversions vs matched draws, mostly: Boxx114, RustySteelx72, Snowx54, Cargox48
+  ORDER    CITED C21-ORDER LandingStageEdge       1079 order inversions vs matched draws, mostly: Boxx247, RustySteelx156, Snowx104, Cargox104
+  ORDER    CITED C21-ORDER Pipe                   756 order inversions vs matched draws, mostly: Boxx176, RustySteelx111, Cargox75, Snowx72
+  ORDER    CITED C21-ORDER Rust                   769 order inversions vs matched draws, mostly: Boxx177, RustySteelx111, Cargox79, Snowx74
+  ORDER    CITED C21-ORDER RustyCorrugatG         514 order inversions vs matched draws, mostly: Boxx118, RustySteelx78, Cargox52, Snowx49
+  ORDER    CITED C21-ORDER RustySteel             1274 order inversions vs matched draws, mostly: Boxx292, RustySteelx180, Cargox126, Snowx123
+  ORDER    CITED C21-ORDER Shipside               678 order inversions vs matched draws, mostly: Boxx158, RustySteelx97, Cargox68, Snowx66
+  ORDER    CITED C21-ORDER Snow                   1260 order inversions vs matched draws, mostly: Boxx285, RustySteelx183, Snowx120, Cargox120
+  ORDER    CITED C21-ORDER Water                  81 order inversions vs matched draws, mostly: Boxx19, RustySteelx12, Snowx8, Cargox8
+  ORDER    CITED C21-ORDER Wood                   596 order inversions vs matched draws, mostly: Boxx137, RustySteelx86, Cargox58, Snowx56
+  ORDER    CITED C21-ORDER Yellow                 847 order inversions vs matched draws, mostly: Boxx198, RustySteelx122, Cargox87, Snowx80
+-> C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\r10\verify\r10_20261016\bt_rerun\06_SuperG\diff1_00857.json
+VERDICT: RED (matched=329 rows=81 red=1)

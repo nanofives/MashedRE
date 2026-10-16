@@ -1,0 +1,11 @@
+{
+ "name": "Highway",
+ "rows": 1011,
+ "racing_rows": 198,
+ "race_start": 813,
+ "shot_rows": [
+  843,
+  883,
+  918
+ ]
+}

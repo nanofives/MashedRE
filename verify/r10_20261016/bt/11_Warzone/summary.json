@@ -1,0 +1,11 @@
+{
+ "name": "Warzone",
+ "rows": 734,
+ "racing_rows": 132,
+ "race_start": 602,
+ "shot_rows": [
+  632,
+  672,
+  707
+ ]
+}

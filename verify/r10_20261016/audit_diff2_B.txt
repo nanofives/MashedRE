@@ -1,0 +1,34 @@
+cite                    status                     rows frames  kinds / tracks
+C01-CULL                MAPPED (sibling lane)        38     18  {'EXTRA': 38} / Egypt,Forest,Highway,Roundabout,Sands,Storm,Warzone
+C01c-CULL-A             MAPPED                       28     10  {'MISSING': 28} / Dump,Forest,Roundabout,Warzone
+C02-CARLOD              MAPPED (sibling lane)         2      2  {'EXTRA': 2} / Egypt,Sands
+C03-UNTEXTURED          MAPPED (sibling lane)        30     30  {'MISSING': 30} / Dump,Egypt,Forest,Highway,Neustein,Roundabout,Sands,Storm,SuperG,Warzo
+C04-SHADOW              MAPPED (sibling lane)        12     12  {'MISSING': 12} / Dump,Highway,Storm,Warzone
+C04b-OBJSHAD            MAPPED                        3      3  {'MOVED': 2, 'EXTRA': 1} / Roundabout,Warzone
+C05-PARTICLE            MAPPED (sibling lane)        82     30  {'MISSING': 52, 'EXTRA': 30} / Dump,Egypt,Forest,Highway,Neustein,Roundabout,Sands,Storm,SuperG,Warzo
+C06-PICKUP              MAPPED (sibling lane)        60     30  {'MISSING': 30, 'EXTRA': 30} / Dump,Egypt,Forest,Highway,Neustein,Roundabout,Sands,Storm,SuperG,Warzo
+C07-WEAPONS             MAPPED                       40     19  {'MISSING': 40} / Egypt,Highway,Roundabout,Sands,Storm,SuperG,Warzone
+C08-STARTDISP           MAPPED (sibling lane)       180     30  {'MISSING': 180} / Dump,Egypt,Forest,Highway,Neustein,Roundabout,Sands,Storm,SuperG,Warzo
+C09-FX                  MAPPED (sibling lane)        20     13  {'MISSING': 20} / Dump,Egypt,Forest,Highway,Neustein,Roundabout,Sands,Storm,SuperG,Warzo
+C09b-HEADLIGHT-BRAKE    MAPPED (sibling lane)         2      2  {'EXTRA': 2} / Storm
+C10-RUNTIME-TEX         OPEN                         34     27  {'MISSING': 34} / Dump,Egypt,Forest,Highway,Neustein,Roundabout,Sands,SuperG,Warzone
+C11-WATER               MAPPED (sibling lane)        10      8  {'MISSING': 8, 'EXTRA': 2} / Forest,Sands,Warzone
+C11b-WATER-STATIC       MAPPED                        6      6  {'EXTRA': 6} / Forest,Sands
+C13-PROPPLACE           MAPPED (sibling lane)        18     18  {'MOVED': 18} / Dump,Egypt,Forest,Highway,Neustein,Roundabout,Sands,Storm,SuperG,Warzo
+C14-ANIM                MAPPED (sibling lane)        13      6  {'MOVED': 13} / Dump,Egypt,Roundabout,Sands,SuperG
+C16-TEX1-WORLD          MAPPED                       12      6  {'TEX1': 12} / Storm,SuperG
+C17-CAR-GLOSS           MAPPED (sibling lane)        12     12  {'MISSING': 12} / Dump,Egypt,Forest,Highway,Neustein,Roundabout,Sands,Storm
+C18-FOG                 MAPPED (sibling lane)        30     30  {'FOG': 30} / Dump,Egypt,Forest,Highway,Neustein,Roundabout,Sands,Storm,SuperG,Warzo
+C19-STATE-LIBRW         MAPPED (sibling lane)       146     21  {'STATE': 146} / Forest,Highway,Neustein,Roundabout,Storm,SuperG,Warzone
+C20-STATE-SKY           MAPPED (sibling lane)        12     12  {'STATE': 12} / Dump,Egypt,Sands,Storm
+C21-ORDER               MAPPED (sibling lane)        85     17  {'ORDER': 85} / Dump,Forest,Roundabout,Sands,SuperG,Warzone
+C22-SLOT-PLACEMENT      OPEN                         46     11  {'MISSING': 10, 'MOVED': 25, 'EXTRA': 11} / Highway,Roundabout,Sands,Warzone
+C23-SKY-SLOTS           MAPPED                       12      9  {'MISSING': 12} / Neustein,Roundabout,Warzone
+C23b-OBJECT-BSP         OPEN                         20      3  {'MISSING': 14, 'MOVED': 6} / Forest
+C24-IM3D-TRACKFX        MAPPED                       11     10  {'MISSING': 11} / Neustein,Roundabout,Sands,Warzone
+C25-CARLOD-MISSING      OPEN                          1      1  {'MISSING': 1} / Sands
+C26-RWP-OBJECTS         OPEN                          7      5  {'EXTRA': 5, 'MOVED': 2} / Neustein,Roundabout,Warzone
+C27-CAR-PART-OFFSET     OPEN                          1      1  {'MOVED': 1} / SuperG
+C28-ANIM-CLUMP          OPEN                          1      1  {'MISSING': 1} / Dump
+C29-RESIDUAL            OPEN                          5      5  {'EXTRA': 2, 'MOVED': 3} / Egypt,Neustein
+SIGNATURE VIOLATIONS (C13/C14 moved > 0.25, C20 not Z,ZF): none
