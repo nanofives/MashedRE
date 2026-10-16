@@ -99,8 +99,8 @@ unmatched (rules 1 and 2 literally fail there) and Arctic 1051 +0.57 against `vi
 3. **The existing `.asi` hook `Or4b5240` (FUN_004b5240) only set the render bit.** The binary also clears it
    (`dis_004b5240.txt`). Under the `.asi`, `FUN_00420870` could never hide an atomic. Fixed from the disassembly, row
    demoted C3 -> C2 until a flag=0 / bit-set vector is diffed.
-4. Part 0x13 is a 1-triangle locator (vidence/car_parts.txt): the standalone's part-0x13 distance agrees with the car-origin
-   distance to the 0.1 the origin estimate resolves (vidence/env_cars.txt against vidence/vislog_cited_rows.txt).
+4. Part 0x13 is a 1-triangle locator (`evidence/car_parts.txt`): the standalone's part-0x13 distance agrees with the car-origin
+   distance to the 0.1 the origin estimate resolves (`evidence/env_cars.txt` against `evidence/vislog_cited_rows.txt`).
 5. First launches of an arm sometimes write no record and exit 0 (base TRAINING, `vis1_noglass` Arctic); a re-run of that
    track produced the expected numbers each time (PREREG amendment 2). The shared `log/librw_race.txt` and
    `mashed_re.log` are overwritten by other sessions' runs, so diagnostics here write their own files.
