@@ -22,7 +22,7 @@
 // local patch — see mashedmod/deps/librw/MASHED_PATCHES.md.
 //
 // SCOPE, STATED UP FRONT. This submits the static world and the instanced props
-// and cars. Copters, particles, pickups, sky and the HUD still come from the D3D9
+// and cars, and (librwrest) the copters. Particles, pickups, sky and the HUD still come from the D3D9
 // path in TrackRenderer::Render. There is no D3D9 world/prop/car draw to fall back
 // to: it was deleted in D1-residue R3 (2026-10-16).
 //
@@ -69,8 +69,8 @@ bool RaceSubmit_OnTrackLoaded(const Track::World& world,
 // soon as it is handed over (load_prop's `m`, LoadCar's `model`). Nothing retains
 // one. So a model must be handed over WHILE IT IS ALIVE, at load time, exactly as
 // the static world is -- re-parsing it later would be the second-copy-of-a-parser
-// failure mode again. (Copters are not registered here: they are drawn through
-// D3D9 in TrackRenderer::Render.)
+// failure mode again. (Copters are registered here too since librwrest, by
+// TrackRenderer::LoadCopters.)
 //
 // Drop the previous track's registered models. MUST be called at the START of
 // TrackRenderer::Load: models are registered DURING the load (from the live

@@ -3641,7 +3641,7 @@ bool RenderFrame() {
         LARGE_INTEGER rA, rB; if (s_fprof) QueryPerformanceCounter(&rA);
         g_track.Render(g_device, t, &ci);
         // E2'b step 3: the librw submit path, in-loop and beside the D3D9 draws that
-        // librw does not take (sky, copters, particles, pickups). It draws the static
+        // librw does not take (sky, particles, pickups). It draws the static
         // world plus every queued prop/car instance.
         // AFTER Render(), not before, for two reasons: Render() is what resolves
         // this frame's camera and publishes it into RaceSceneState (last_eye_ /

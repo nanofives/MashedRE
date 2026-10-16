@@ -783,7 +783,7 @@ IDirect3DTexture9* MakeTexture(IDirect3DDevice9* dev,
 
 // Build per-material vertex batches (+ textures) from a parsed DffModel,
 // resolving texture names across the given TXD dictionaries. Used by the sky dome
-// and the copters, the two models still drawn through D3D9.
+// the one model still drawn through D3D9 (the copters moved to librw in librwrest).
 //
 // WS-E s2 lighting: `lt` (or nullptr) is the track's atomic light set (ambient +
 // directional sun). When supplied, each vertex's diffuse is computed by the RW
@@ -6416,7 +6416,7 @@ namespace {
 //
 // DrawPrimitiveUP is the deprecated user-pointer path: every call re-uploads the
 // vertices into a driver scratch buffer and can stall the pipeline. The batches
-// drawn here (sky, copters) are STATIC (built at Load, never mutated during
+// drawn here (sky) are STATIC (built at Load, never mutated during
 // Render; only their WORLD matrix changes), so each is uploaded once into a
 // D3DPOOL_MANAGED vertex buffer and drawn with DrawPrimitive: same vertices, same
 // order, same textures, identical pixels, no per-frame re-upload.
@@ -6587,7 +6587,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     DrawStreamDump_Race3DBegin();
     // Per-category geometry tallies for the channel: summed beside every
     // DrawBatch submit below and flushed once per category via Race3DCat
-    // (sky/copters, the only categories still drawn through D3D9; world, props and
+    // (sky, the only category still drawn through D3D9 besides particles / pickups; world, props and
     // cars go to librw and have no tally). A few integer adds per frame;
     // Race3DBegin/Cat early-out on g_state3d when the channel is off.
     unsigned ds_b = 0, ds_v = 0, ds_t = 0;
@@ -7002,7 +7002,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
 
     // The static world, props and cars are submitted to librw (RaceSubmit_AddInstance
     // below, RaceSubmit_Render from exe_main after this returns). The D3D9 draws left
-    // in this function are the ones librw does not take: sky, copters, particles,
+    // in this function are the ones librw does not take: sky, particles,
     // pickups. The legacy D3D9 world / prop / car draws, and the MASHED_RENDER_LIBRW=0
     // revert that selected them, were deleted in D1-residue R3 (2026-10-16).
 

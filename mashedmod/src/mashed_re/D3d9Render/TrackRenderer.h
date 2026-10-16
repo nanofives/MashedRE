@@ -71,7 +71,7 @@ public:
     void Render(IDirect3DDevice9* dev, float t, const CamInput* in = nullptr);
 
     bool ready() const { return ready_; }
-    // Vertex layout shared by the D3D9-drawn batches: sky dome and copters (public
+    // Vertex layout of the D3D9-drawn batches: the sky dome (copters: librw since librwrest) (public
     // so file-scope builder helpers can use it).
     struct V { float x, y, z; D3DCOLOR c; float u, v; };
     // Current camera eye/target (for HUD/debug and the car-mode chase cam).
