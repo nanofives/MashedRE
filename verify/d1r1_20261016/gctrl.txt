@@ -1,0 +1,5 @@
+=== base_default  exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\d1r1\base\mashed_re.exe  knobs=[] ===
+    exit=0  self_exited=True
+    base_default.step.csv  lines=21403  sha8=991a5fff
+    base_default.gates.csv  lines=54713  sha8=be0d47ea
+    base_default.ptrace.log  lines=27356  sha8=bc75b405
