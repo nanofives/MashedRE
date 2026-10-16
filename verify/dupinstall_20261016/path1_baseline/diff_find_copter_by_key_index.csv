@@ -1,0 +1,13 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,0,-1,0xffffffff,-1,0xffffffff,True,,
+1,4294967295,-1,0xffffffff,-1,0xffffffff,True,,
+2,2147483648,-1,0xffffffff,-1,0xffffffff,True,,
+3,2147483647,-1,0xffffffff,-1,0xffffffff,True,,
+4,2863311530,-1,0xffffffff,-1,0xffffffff,True,,
+5,1431655765,-1,0xffffffff,-1,0xffffffff,True,,
+6,1,-1,0xffffffff,-1,0xffffffff,True,,
+7,2,-1,0xffffffff,-1,0xffffffff,True,,
+8,305419896,-1,0xffffffff,-1,0xffffffff,True,,
+9,3735928559,-1,0xffffffff,-1,0xffffffff,True,,
+10,256,-1,0xffffffff,-1,0xffffffff,True,,
+11,16,-1,0xffffffff,-1,0xffffffff,True,,

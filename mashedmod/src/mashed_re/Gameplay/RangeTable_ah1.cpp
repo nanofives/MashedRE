@@ -10,8 +10,11 @@
 //   hi == -2   : terminate the whole walk
 //   otherwise  : inclusive range [lo, hi]
 //
-// Two getters: FUN_00407640 (Copter key->index linear scan) and FUN_004098a0
-// (.LED entry array base getter).
+// FUN_00407640 (Copter key->index linear scan) and FUN_004098a0 (.LED entry array
+// base getter) were ported here first; their one-body-per-RVA copies live in
+// Util/PromoLoop_round69.cpp (CopterFind639dc4) and Util/PromoLoop_round40.cpp
+// (Ret63a5f0), the bodies hooks.csv's evidence cites. The duplicates that sat here
+// (FindCopterByKeyIndex, GetLedEntryArrayBase) were removed 2026-10-16 (dupinstall).
 //
 // Bit-faithful ports of the verified decomp (Mashed_pool13, 2026-06-08).
 #include "../Core/HookSystem.h"
@@ -23,40 +26,7 @@ namespace {
 inline int FUN_00426090() {
     return reinterpret_cast<int(*)()>(0x00426090u)();
 }
-// Copter-array globals read by FUN_00407640 (original-image fixed addresses).
-inline int& CopterCount() { return *reinterpret_cast<int*>(0x0063a5d0u); }     // DAT_0063a5d0
-inline int* CopterKey0()  { return  reinterpret_cast<int*>(0x00639dc4u); }     // DAT_00639dc4 (record[0]+0x44)
-// .LED entry array base returned by FUN_004098a0.
-inline int* LedEntryBase() { return reinterpret_cast<int*>(0x0063a5f0u); }     // DAT_0063a5f0
 }
-
-// ---------------------------------------------------------------------------
-// 0x00407640  FUN_00407640  (0x29 bytes)  int(int key)
-// Linear-scan "find Copter record index by key". Returns index of first record
-// whose +0x44 key field == key; -1 if none. Stride 0x3b dwords (236-byte record).
-extern "C" __declspec(dllexport) int __cdecl FindCopterByKeyIndex(int param_1) {
-    int iVar1 = 0;
-    if (0 < CopterCount()) {
-        int* piVar2 = CopterKey0();
-        do {
-            if (*piVar2 == param_1) {
-                return iVar1;
-            }
-            iVar1 = iVar1 + 1;
-            piVar2 = piVar2 + 0x3b;
-        } while (iVar1 < CopterCount());
-    }
-    return -1;
-}
-RH_ScopedInstall(FindCopterByKeyIndex, 0x00407640);  // c3_batch_ah s1
-
-// ---------------------------------------------------------------------------
-// 0x004098a0  FUN_004098a0  (0x5 bytes)  undefined4*(void)
-// Pure getter: returns &DAT_0063a5f0 (.LED entry array base).
-extern "C" __declspec(dllexport) uint32_t* __cdecl GetLedEntryArrayBase(void) {
-    return reinterpret_cast<uint32_t*>(LedEntryBase());
-}
-RH_ScopedInstall(GetLedEntryArrayBase, 0x004098a0);  // c3_batch_ah s1
 
 // ---------------------------------------------------------------------------
 // 0x00409300  FUN_00409300  (0x2f bytes)  int(int group)

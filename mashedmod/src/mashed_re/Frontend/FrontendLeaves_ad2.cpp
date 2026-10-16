@@ -14,23 +14,12 @@
 #include <cstdint>
 
 // ---------------------------------------------------------------------------
-// FrontendSlotTablePtr426cb0  --  0x00426cb0
-//
-// Original: FUN_00426cb0 (13 bytes, 0x00426cb0..0x00426cbc)
-//   undefined* FUN_00426cb0(int param_1)  { return &DAT_00663664 + param_1 * 0x4c; }
-// Pure index-to-pointer slot helper: maps a slot index to a pointer into a
-// 0x4c-byte-stride table rooted at 0x00663664. No callees, no branches.
-// Low 32 bits of (int)param_1*0x4c are identical signed/unsigned (two's
-// complement), so the unsigned form below reproduces EAX exactly.
+// FUN_00426cb0 (slot index -> pointer into the 0x4c-stride table at 0x00663664) was
+// ported here first as FrontendSlotTablePtr426cb0; its one-body-per-RVA copy is
+// SlotIndexToPtr in Frontend/MenuNearLeaves_s6.cpp. The duplicate that sat here was
+// removed 2026-10-16 (dupinstall).
 // ref: re/analysis/frontend_c1_to_c2_s4/FUN_00426cb0.md
 // ---------------------------------------------------------------------------
-
-// 0x00426cb0
-extern "C" __declspec(dllexport) std::uint32_t __cdecl FrontendSlotTablePtr426cb0(int param_1) {
-    return 0x00663664u + static_cast<std::uint32_t>(param_1) * 0x4Cu;
-}
-
-RH_ScopedInstall(FrontendSlotTablePtr426cb0, 0x00426cb0);
 
 // ---------------------------------------------------------------------------
 // FrontendFloatGet426de0  --  0x00426de0

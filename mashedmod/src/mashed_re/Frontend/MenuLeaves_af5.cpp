@@ -81,37 +81,12 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl MenuFlagDat007f0f10Get(vo
 RH_ScopedInstall(MenuFlagDat007f0f10Get, 0x00431b70);  // c3-batch-af-s5
 
 // ---------------------------------------------------------------------------
-// MenuQuadGlobalZero  --  0x004298c0
-//
-// Original: FUN_004298c0 (27 bytes, 0x004298c0..0x004298da)
-// Signature: void FUN_004298c0(void)
-// Body (verbatim decomp + disassembly):
-//   XOR EAX,EAX                              @ 0x004298c0
-//   MOV dword ptr [0x0067d99c],0x0           @ 0x004298c2  (_DAT_0067d99c = 0)
-//   MOV [0x0067d994],EAX                     @ 0x004298cc  (DAT_0067d994  = 0)
-//   MOV [0x0067d98c],EAX                     @ 0x004298d1  (DAT_0067d98c  = 0)
-//   MOV [0x008991bc],EAX                     @ 0x004298d6  (DAT_008991bc  = 0)
-//   RET                                      @ 0x004298db
-//
-// Pure leaf — no callees, no branches; four 32-bit zero stores in fixed order.
-//
-// Constants cited from 0x004298c0 body (all immediate 0):
-//   0x0067d99c, 0x0067d994, 0x0067d98c, 0x008991bc — zeroed globals.
-//
-// Verification: none (void leaf). Reimpl emits the identical four dword stores;
-// asm-equivalence confirmed against the disassembly above.
+// FUN_004298c0 (zeroes _DAT_0067d99c / DAT_0067d994 / DAT_0067d98c / DAT_008991bc) was
+// ported here first as MenuQuadGlobalZero; its one-body-per-RVA copy is Clear67d99c_x4 in
+// Util/PromoLoop_round70.cpp, the body hooks.csv's evidence cites. The duplicate that sat
+// here was removed 2026-10-16 (dupinstall).
 // ref: re/analysis/frontend_c1_to_c2_s6/FUN_004298c0.md
 // ---------------------------------------------------------------------------
-
-// 0x004298c0
-extern "C" __declspec(dllexport) void __cdecl MenuQuadGlobalZero(void) {
-    *reinterpret_cast<std::uint32_t*>(0x0067d99cu) = 0;  // _DAT_0067d99c [0x004298c2]
-    *reinterpret_cast<std::uint32_t*>(0x0067d994u) = 0;  // DAT_0067d994  [0x004298cc]
-    *reinterpret_cast<std::uint32_t*>(0x0067d98cu) = 0;  // DAT_0067d98c  [0x004298d1]
-    *reinterpret_cast<std::uint32_t*>(0x008991bcu) = 0;  // DAT_008991bc  [0x004298d6]
-}
-
-RH_ScopedInstall(MenuQuadGlobalZero, 0x004298c0);  // c3-batch-af-s5
 
 // ---------------------------------------------------------------------------
 // FrontendInputDispatch  --  0x00423b00

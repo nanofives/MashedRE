@@ -1,0 +1,11 @@
+idx,input,original,original_bits,reimpl,reimpl_bits,match,err_original,err_reimpl
+0,"[0, 0]",,,,,False,system error,system error
+1,"[1, 0]",,,,,False,system error,system error
+2,"[5, 0]",,,,,False,system error,system error
+3,"[10, 0]",,,,,False,system error,system error
+4,"[13, 0]",,,,,False,system error,system error
+5,"[0, 128]",,,,,False,system error,system error
+6,"[5, 255]",,,,,False,system error,system error
+7,"[10, 64]",,,,,False,system error,system error
+8,"[20, 200]",,,,,False,system error,system error
+9,"[0, 1]",,,,,False,system error,system error

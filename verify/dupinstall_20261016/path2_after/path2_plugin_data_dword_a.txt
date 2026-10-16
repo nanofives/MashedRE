@@ -1,0 +1,28 @@
+hook: plugin_data_dword_a  rva=0x004f8660  export=PluginDataDwordA
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 10056
+scenario='race': driving to a live race before running vectors
+  [save] reads pinned to gamesave.bin.refbak_20260830; writes -> C:\Users\maria\AppData\Local\Temp\run_diff_gamesave_10056.bin
+  [nav] booting to menu...
+Traceback (most recent call last):
+  File "C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall\re\frida\run_verify_hook.py", line 304, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall\re\frida\run_verify_hook.py", line 190, in main
+    if not drive_to_race(session) or not wait_race_sentinel(session, hook):
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall\re\frida\run_diff.py", line 137, in drive_to_race
+    if not wait(lambda: E.phase() == 3 and E.depth() >= 1, 25, 'title'):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall\re\frida\run_diff.py", line 117, in wait
+    if pred():
+       ^^^^^^
+  File "C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall\re\frida\run_diff.py", line 137, in <lambda>
+    if not wait(lambda: E.phase() == 3 and E.depth() >= 1, 25, 'title'):
+                        ^^^^^^^^^
+  File "C:\Users\maria\AppData\Local\Programs\Python\Python312\Lib\site-packages\frida\__init__.py", line 371, in method
+    return script._rpc_request(["call", js_name, params], data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\maria\AppData\Local\Programs\Python\Python312\Lib\site-packages\frida\__init__.py", line 1786, in _rpc_request
+    raise outcome["error"]
+frida.InvalidOperationError: script has been destroyed

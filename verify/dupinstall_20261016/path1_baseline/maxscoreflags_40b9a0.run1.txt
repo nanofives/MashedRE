@@ -1,0 +1,6 @@
+[harness: early_window_leaf_diff.py]
+hook: maxscoreflags_40b9a0  (early-window pure-leaf diff â€” no menu boot required)
+  b0=0x53 reim=0x5defb640 cases=2 mismatches=0
+  evidence: C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall\log\diff_maxscoreflags_40b9a0.csv
+VERDICT: GREEN
+

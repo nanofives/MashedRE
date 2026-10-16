@@ -1,12 +1,10 @@
 // Mashed RE — AI driver cluster: line-of-sight + spline-support leaves (WS-C2).
 //
 // Verbatim ports of clean, isolatable leaves of the FUN_00418860 AI cluster:
-//   0x00416060  AiLineOfSight       XZ ray-march tile LOS  (0=blocked, 1=clear)
 //   0x004161e0  AiSplineTargetInit  seed target point from own XZ -> FUN_00443dc0
 //   0x0046d510  AiVehicleVelocity3  per-vehicle velocity float3 getter
-//
-// AiLineOfSight is the C3a per-function-diff target named in ai_controller.md
-// §10: two float* in, an int flag out -> directly run_diff-able in isolation.
+// (FUN_00416060 AiLineOfSight and FUN_00415d00 AiWallAhead were also ported here first;
+// their one-body-per-RVA copies are Ai/AiLineOfSight.cpp and Ai/AiWallAhead.cpp, see below.)
 //
 // NOT ported (stays called-by-RVA): FUN_004150e0 (wall-lateral query) reads its
 // two args off the x87 FPU stack (void sig + __ftol(ST0) of caller values) — not
@@ -75,46 +73,12 @@ static constexpr std::uintptr_t kSubCellGrid = 0x007f9a9cu;
 } // namespace
 
 // ===========================================================================
-// 0x00416060  AiLineOfSight(posA_xz, posB_xz) -> 0 blocked / 1 clear
-//
-// Ray-marches A->B in 1/length steps (step _DAT_005cc564); at each sample with
-// a moved position, looks up the track tile (>0 && <0x200) and its sub-cell;
-// sub-cell type 0 or 3 = wall -> blocked. Cited: 0x00416060 body.
+// FUN_00416060 (AiLineOfSight) lives in Ai/AiLineOfSight.cpp: the in-process
+// original-vs-port A/B (MASHED_AI_LOS_SELFTEST) hooks.csv's C3 evidence cites. The
+// unverified float-chain copy that sat here (AiLineOfSight) was removed 2026-10-16
+// (dupinstall); it differs from the evidence body in rounding (this chain rounds to
+// f32 per operation, the verified body keeps the x87 single rounding in double).
 // ===========================================================================
-extern "C" __declspec(dllexport)
-std::uint32_t __cdecl AiLineOfSight(float* param_1, float* param_2)
-{
-    float local_8  = param_2[0] - param_1[0];   // dx
-    float local_18 = 0.0f;                       // t
-    float local_4  = param_2[1] - param_1[1];   // dz
-    float fVar1 = call_004c3bf0(&local_8);       // length(dx,dz)  [&local_8 = {dx,dz}]
-    if (F32(0x005d757cu) < fVar1) {              // length > 0
-        float fVar4 = F32(0x005cc320u) / fVar1;  // 1.0 / length
-        do {
-            float sampleX = fVar4 * local_8 * local_18 + param_1[0];
-            float sampleZ = fVar4 * local_4 * local_18 + param_1[1];
-            if (sampleX != param_1[0] && sampleZ != param_1[1]) {
-                int ix = static_cast<int>(sampleX);   // __ftol
-                int iz = static_cast<int>(sampleZ);   // __ftol
-                short tile = *reinterpret_cast<short*>(
-                    kTileGrid + static_cast<std::uintptr_t>(
-                        ((( ix + 0x1f0) >> 3) * 0x80 + ((iz + 0x1f0) >> 3)) * 2));
-                if (0 < tile && tile < 0x200) {
-                    char sub = *reinterpret_cast<char*>(
-                        kSubCellGrid + static_cast<std::uintptr_t>(
-                            ((iz & 7) + tile * 8) * 8 + (ix & 7)));
-                    if (sub == 0 || sub == 3) {
-                        return 0;
-                    }
-                }
-            }
-            local_18 = local_18 + F32(0x005cc564u);   // t += step
-        } while (local_18 < fVar1);
-    }
-    return 1;
-}
-
-RH_ScopedInstall(AiLineOfSight, 0x00416060);
 
 // ===========================================================================
 // 0x004161e0  AiSplineTargetInit(spline, outTargetIdx, vehicle)
@@ -483,47 +447,12 @@ __declspec(naked) void AiSteer_Entry() {
 RH_ScopedInstall(AiSteer_Entry, 0x00415e20);
 
 // ===========================================================================
-// 0x00415d00  AiWallAhead(vehicle) -> 1 wall ahead / 0 clear
-//
-// Extrapolates the vehicle's velocity 2x forward and ray-marches that segment
-// (1/length steps, step _DAT_005cc564) sampling the track tile via FUN_00443d10;
-// tile type 0 or 3 => wall => 1. Suppresses the mode-2 ram. Cited: 0x00415d00.
-// (local_c,local_8,local_4) and (local_1c,local_18) are stack-adjacent vectors
-// in the original — ported as explicit arrays.
+// FUN_00415d00 (AiWallAhead) lives in Ai/AiWallAhead.cpp: the in-process
+// original-vs-port A/B (MASHED_AI_WALLAHEAD_SELFTEST) hooks.csv's C3 evidence cites.
+// The unverified float-chain copy that sat here (AiWallAhead) was removed 2026-10-16
+// (dupinstall); it differs from the evidence body in rounding (this chain rounds to
+// f32 per operation, the verified body keeps the x87 single rounding in double).
 // ===========================================================================
-extern "C" __declspec(dllexport)
-std::uint32_t __cdecl AiWallAhead(int param_1)
-{
-    int local_28;
-    call_0046d4a0(&local_28, param_1);
-    float local_24 = F32(static_cast<std::uintptr_t>(local_28) + 0x30u);  // own X
-    float local_20 = F32(static_cast<std::uintptr_t>(local_28) + 0x38u);  // own Z
-    float vel[3];                                   // {local_c, local_8, local_4}
-    call_0046d510(reinterpret_cast<std::uint32_t*>(vel), param_1);
-    vel[0] = vel[0] + vel[0];                        // 2x velX
-    float local_34 = 0.0f;
-    vel[1] = vel[1] + vel[1];                        // 2x velY
-    vel[2] = vel[2] + vel[2];                        // 2x velZ
-    float seg[2];                                    // {local_1c, local_18}
-    seg[0] = (vel[0] + local_24) - local_24;
-    seg[1] = (vel[2] + local_20) - local_20;
-    float fVar1 = call_004c3bf0(seg);               // length(seg)
-    if (F32(0x005d757cu) < fVar1) {
-        float fVar2 = F32(0x005cc320u) / fVar1;
-        do {
-            float local_14 = fVar2 * seg[0] * local_34 + local_24;
-            float local_10 = fVar2 * seg[1] * local_34 + local_20;
-            char cVar3 = call_00443d10(local_14, local_10);
-            if (cVar3 == 0 || cVar3 == 3) {
-                return 1;
-            }
-            local_34 = local_34 + F32(0x005cc564u);
-        } while (local_34 < fVar1);
-    }
-    return 0;
-}
-
-RH_ScopedInstall(AiWallAhead, 0x00415d00);
 
 // ===========================================================================
 // 0x00415200  AiVehicle0ZeroProgressGuard() -> 1 if veh0 progress == 0.0f else 0

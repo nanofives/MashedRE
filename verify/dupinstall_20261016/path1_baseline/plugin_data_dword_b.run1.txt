@@ -1,0 +1,18 @@
+hook: plugin_data_dword_b  rva=0x004f8690  export=PluginDataDwordB
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 17544
+scenario='race': driving to a live race before running vectors
+  [save] reads pinned to gamesave.bin.refbak_20260830; writes -> C:\Users\maria\AppData\Local\Temp\run_diff_gamesave_17544.bin
+  [nav] booting to menu...
+  [nav] timeout: d3 depth=2 phase=3
+  [nav] timeout: d3 depth=2 phase=3
+  [nav] in race? phase=0 (YES)
+  [agent] LUT ready  base=0xc21ae0  offset=0x134  root=0xdd40048  delta=0  attempts=0
+  [agent] .asi loaded  base=0x5d7d0000  PluginDataDwordB@0x5d8006d0
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall\log\diff_plugin_data_dword_b.csv
+  total cases: 5
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.
+

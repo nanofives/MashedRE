@@ -1,0 +1,18 @@
+hook: menu_quad_global_zero  rva=0x004298c0  export=MenuQuadGlobalZero
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 18668
+  [agent] LUT ready  base=0x2a51ae0  offset=0x134  root=0xde30048  delta=0  attempts=7
+  [agent] .asi loaded  base=0x5dec0000  MenuQuadGlobalZero@0x5deeee00
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall\log\diff_menu_quad_global_zero.csv
+  total cases: 10
+  mismatches:  0
+
+INCONCLUSIVE-DEGENERATE: 0 mismatches, but every observed value
+on both sides is trivial (zero/empty/all-zero fingerprint). The
+diff had no discriminating power. Re-run at a state where the
+inputs are populated (scenario-attach), or â€” only if all-zero
+output is genuinely this function's behavior on every test
+vector â€” pass --allow-degenerate or set degenerate_ok=True in
+hooks_registry.py.
+

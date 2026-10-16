@@ -1,0 +1,18 @@
+hook: table_8a9648_get  rva=0x00407a20  export=Table8a9648Get
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 19720
+  [agent] LUT ready  base=0x1561ae0  offset=0x134  root=0xdf30048  delta=0  attempts=7
+  [agent] .asi loaded  base=0x5dec0000  Table8a9648Get@0x5deef2b0
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall\log\diff_table_8a9648_get.csv
+  total cases: 10
+  mismatches:  0
+
+INCONCLUSIVE-DEGENERATE: 0 mismatches, but every observed value
+on both sides is trivial (zero/empty/all-zero fingerprint). The
+diff had no discriminating power. Re-run at a state where the
+inputs are populated (scenario-attach), or â€” only if all-zero
+output is genuinely this function's behavior on every test
+vector â€” pass --allow-degenerate or set degenerate_ok=True in
+hooks_registry.py.
+

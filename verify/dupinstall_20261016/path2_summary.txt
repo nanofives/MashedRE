@@ -1,0 +1,22 @@
+active4slots_40ba60        Active4Slots40ba60          INSTALL-OK     entries 0/1     calls-FAIL   expected a pointer
+audio_list_init            AudioListInit               INSTALL-OK     entries 0/3     calls-FAIL   expected a pointer
+bool0_out_8a94e0           Bool0Out8a94e0              INSTALL-OK     entries 3/3     calls-FAIL   access violation accessing 0x0; access violation accessing 0x1; access violation accessing
+boolmin_out_8a94e0         BoolMinOut8a94e0            INSTALL-OK     entries 3/3     calls-FAIL   access violation accessing 0x0; access violation accessing 0x1; access violation accessing
+clear_67d99c_x4            Clear67d99c_x4              INSTALL-OK     entries 2/2     calls-OK     
+copter_find_639dc4         CopterFind639dc4            INSTALL-OK     entries 0/3     calls-FAIL   expected an unsigned integer
+dinput_init_predicate      DInputInitPredicate         INSTALL-OK     entries 2/2     calls-OK     
+display_active_flag_get    DisplayActiveFlagGet        INSTALL-OK     entries 3/3     calls-OK     
+float_idx_639de0           FloatIdx639de0              INSTALL-OK     entries 3/3     calls-OK     
+frontend_page_id_dispatch  FrontendPageIdDispatch      INSTALL-OK     entries 0/3     calls-FAIL   expected an integer
+get_ai_lap_counter         GetAiLapCounter             INSTALL-OK     entries 1/1     calls-OK     
+get_dat_00912a20           GetDat00912a20              INSTALL-OK     entries 3/3     calls-OK     
+hud_rect_emitter5          HudRectEmitter5             INSTALL-OK     entries 0/1     calls-FAIL   system error
+maxscoreflags_40b9a0       MaxScoreFlags40b9a0         INSTALL-OK     entries 0/2     calls-FAIL   bad argument count
+menu_readiness_check_c     MenuReadinessCheckC         INSTALL-OK     entries 1/1     calls-OK     
+plugin_data_dword_a        ?                           INSTALL-FAIL   entries ?       calls-FAIL   
+plugin_data_dword_b        ?                           INSTALL-FAIL   entries ?       calls-FAIL   
+ret_63a5f0                 Ret63a5f0                   INSTALL-OK     entries 2/2     calls-OK     
+set_dat_00912a20           SetDat00912a20              INSTALL-OK     entries 3/3     calls-OK     
+slot_index_to_ptr          SlotIndexToPtr              INSTALL-OK     entries 3/3     calls-OK     
+table_773030_get           ?                           INSTALL-FAIL   entries ?       calls-FAIL   
+-- 21 reports, install-ok 18, calls-ok 10

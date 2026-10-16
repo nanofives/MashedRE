@@ -1,0 +1,35 @@
+hook: maxscoreflags_40b9a0  rva=0x0040b9a0  export=MaxScoreFlags40b9a0
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 11860
+  [agent] pre_snapshot
+  [agent] asi_loaded
+  [agent] post_snapshot
+  [agent] results
+
+=== verify_hook_install report (maxscoreflags_40b9a0) ===
+
+target address: 0x0040b9a0  export: MaxScoreFlags40b9a0
+PRE  bytes:     e9 3b f4 6f 5e 56 57 33
+asi base:       0x5ead0000
+reimpl addr:    0x5eb0ade0
+POST bytes:     e9 3b f4 6f 5e 56 57 33
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x5e6ff43b  expected 0x5e6ff43b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  0 / 2  (other threads: 0)
+
+per-input results:
+  [FAIL] input=0  got=None  err=bad argument count
+  [FAIL] input=1  got=None  err=bad argument count
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+FAIL:
+  - reimpl interceptor fired 0 times, expected 2
+  - call 0 (input=0) failed: bad argument count
+  - call 1 (input=1) failed: bad argument count
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall\log\verify_hook_install_maxscoreflags_40b9a0.txt

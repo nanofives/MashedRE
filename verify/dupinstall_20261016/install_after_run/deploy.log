@@ -1,0 +1,4 @@
+09:56:37 shared asi sha256 before = 270e036fad840e93  size=1153536
+09:56:38 deployed worktree build sha256 = a4d8abb6b790e44b
+09:57:17 install_observe rc=0
+09:57:17 shared asi sha256 after restore = 270e036fad840e93  matches original: True

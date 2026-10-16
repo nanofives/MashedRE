@@ -1,0 +1,7 @@
+=== base  exe=C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\ac86d2bf-66e1-4442-91bf-5ba376af04d1\scratchpad\baseline_exe\mashed_re.exe  knobs=[] ===
+    pid=21884
+    exit=0  self_exited=True
+    base.step.csv  lines=18664  sha8=c2e4d60d
+    base.gates.csv  lines=56153  sha8=b50bd39b
+    base.ptrace.log  lines=28076  sha8=ba90ed88
+GCTRL DONE

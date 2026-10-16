@@ -72,95 +72,11 @@ extern "C" __declspec(dllexport) void __cdecl TimerGlobalsReset() {
 RH_ScopedInstall(TimerGlobalsReset, 0x0040b810);  // re-enabled 2026-05-24 c3-frontend-a
 
 
-// ─── 0x0042af50  MenuReadinessCheck ───────────────────────────────────────────
-// 156 bytes. Returns 1 if menu is "ready", 0 if not. Read-only; no writes.
-//
-// Guard (0x0042af50 entry):
-//   if (DAT_0067eab0 != 2) && (DAT_0067e7c8 == 0) && (DAT_00898ab0 != 0): return 0.
-//
-// Branch on DAT_007f1a0c == 0x1000:
-//   True path: scans char array B (base 0x007f1501, stride 0x4c), skipping
-//     entries where charA=='\0' OR charB!='\0'. Returns 1 if found within
-//     0x007f1501..0x007f1760, else 0.
-//   False path: scans int index array (base 0x007f1a14, stride 0x10), checking
-//     slot != -1, FUN_0040e470(iVar4)!=2, charA[slot*0x4c]!='\0', charB[slot*0x4c]=='\0'.
-//     Returns 1 if found within 0x007f1a14..0x007f1a53, else 0.
-//
-// All constants cited from 0x0042af50 body.
-
-// Callee: FUN_0040e470 — per-car state getter; called in false-path loop.
-// VA 0x0040e470 cited at 0x0042af50 false-path body.
-static auto* const s_FUN_0040e470 =
-    reinterpret_cast<int(__cdecl*)(int)>(0x0040e470);
-
-// Guard globals (0x0042af50 guard):
-static constexpr std::uintptr_t kGuard_0067eab0 = 0x0067eab0u;
-static constexpr std::uintptr_t kGuard_0067e7c8 = 0x0067e7c8u;
-static constexpr std::uintptr_t kGuard_00898ab0 = 0x00898ab0u;
-// Dispatch (0x0042af50 branch):
-static constexpr std::uintptr_t kDispatch_007f1a0c = 0x007f1a0cu;
-// True-path arrays (0x0042af50 true-path):
-//   charB = DAT_007f1501, element stride 0x4c; upper bound ptr 0x7f1760.
-//   charA = charB - 0x4c0 = DAT_007f1041.
-static constexpr std::uintptr_t kCharB_base     = 0x007f1501u; // DAT_007f1501
-static constexpr std::uintptr_t kTrueBound_ptr  = 0x7f1760u;   // upper bound (as int)
-static constexpr std::uint32_t  kCharStride     = 0x4cu;       // 76 bytes per slot
-// charA is 0x4c0 bytes before charB: DAT_007f1041 = DAT_007f1501 - 0x4c0.
-// Accessed via pcVar1 pointer offset in code below.
-// False-path index array (0x0042af50 false-path):
-//   piVar3 base = DAT_007f1a14, element stride 0x10 (int), upper bound 0x7f1a53.
-static constexpr std::uintptr_t kIdxArray_base  = 0x007f1a14u; // DAT_007f1a14
-static constexpr std::uint32_t  kIdxStride      = 0x10u;       // bytes between index entries
-static constexpr std::uintptr_t kFalseBound_ptr = 0x7f1a53u;   // upper bound (as int)
-
-// 0x0042af50
-extern "C" __declspec(dllexport) int __cdecl MenuReadinessCheck() {
-    const std::uint32_t guard_a = *reinterpret_cast<const std::uint32_t*>(kGuard_0067eab0);
-    const std::uint32_t guard_b = *reinterpret_cast<const std::uint32_t*>(kGuard_0067e7c8);
-    const std::uint32_t guard_c = *reinterpret_cast<const std::uint32_t*>(kGuard_00898ab0);
-
-    // Guard: if (DAT_0067eab0 != 2) && (DAT_0067e7c8 == 0) && (DAT_00898ab0 != 0): return 0.
-    if ((guard_a != 2u) && (guard_b == 0u) && (guard_c != 0u)) {
-        return 0;
-    }
-
-    const std::uint32_t dispatch = *reinterpret_cast<const std::uint32_t*>(kDispatch_007f1a0c);
-
-    if (dispatch == 0x1000u) {
-        // True path: scan char array B starting at 0x007f1501, stride 0x4c.
-        // Skip while: charA == '\0' OR charB != '\0'.
-        // charA is at (pcVar1 - 0x4c0).
-        const char* pcVar1 = reinterpret_cast<const char*>(kCharB_base);
-        // charA at (pcVar1 - 0x4c0) — same as DAT_007f1041 + same-slot offset.
-        while ((*(pcVar1 - 0x4c0) == '\0') || (*pcVar1 != '\0')) {
-            pcVar1 += kCharStride;
-            if (reinterpret_cast<std::uintptr_t>(pcVar1) > kTrueBound_ptr) {
-                return 0;
-            }
-        }
-        return 1;
-    } else {
-        // False path: scan int index array at 0x007f1a14, stride 0x10.
-        // Skip while: *piVar3 == -1 OR FUN_0040e470(iVar4)==2
-        //             OR charA[*piVar3 * 0x4c]=='\0' OR charB[*piVar3 * 0x4c]!='\0'.
-        // charA base = 0x007f1041 = kCharB_base - 0x4c0; computed as uintptr_t subtraction.
-        const char* charA = reinterpret_cast<const char*>(kCharB_base - 0x4c0u);
-        const char* charB = reinterpret_cast<const char*>(kCharB_base);
-        const std::int32_t* piVar3 = reinterpret_cast<const std::int32_t*>(kIdxArray_base);
-        int iVar4 = 0;
-        while ((*piVar3 == -1) ||
-               (s_FUN_0040e470(iVar4) == 2) ||
-               (charA[(*piVar3) * static_cast<int>(kCharStride)] == '\0') ||
-               (charB[(*piVar3) * static_cast<int>(kCharStride)] != '\0')) {
-            piVar3 = reinterpret_cast<const std::int32_t*>(
-                reinterpret_cast<const std::uint8_t*>(piVar3) + kIdxStride);
-            iVar4 += 1;
-            if (reinterpret_cast<std::uintptr_t>(piVar3) > kFalseBound_ptr) {
-                return 0;
-            }
-        }
-        return 1;
-    }
-}
-
-RH_ScopedInstall(MenuReadinessCheck, 0x0042af50);  // re-enabled 2026-05-24 c3-frontend-a
+// ---------------------------------------------------------------------------
+// FUN_0042af50 (menu readiness check) was ported here first as MenuReadinessCheck; its
+// one-body-per-RVA copy is MenuReadinessCheckC in Frontend/MenuStateMachine.cpp, the
+// body hooks.csv's evidence cites (diff_menu_readiness_check_c.csv). Both bodies read
+// identically on both paths (guard, 0x1000 dispatch, 0x007f1501/0x007f1041 char tables
+// at stride 0x4c, 0x007f1a14 index array, 0x0040e470 callee). The duplicate that sat
+// here was removed 2026-10-16 (dupinstall).
+// ---------------------------------------------------------------------------

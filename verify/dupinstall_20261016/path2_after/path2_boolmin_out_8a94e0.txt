@@ -1,0 +1,37 @@
+hook: boolmin_out_8a94e0  rva=0x0040ba00  export=BoolMinOut8a94e0
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 24096
+  [agent] pre_snapshot
+  [agent] asi_loaded
+  [agent] post_snapshot
+  [agent] results
+
+=== verify_hook_install report (boolmin_out_8a94e0) ===
+
+target address: 0x0040ba00  export: BoolMinOut8a94e0
+PRE  bytes:     e9 8b ca 6f 5e b9 63 00
+asi base:       0x5ead0000
+reimpl addr:    0x5eb08490
+POST bytes:     e9 8b ca 6f 5e b9 63 00
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x5e6fca8b  expected 0x5e6fca8b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  3 / 3  (other threads: 0)
+
+per-input results:
+  [FAIL] input=0  got=None  err=access violation accessing 0x0
+  [FAIL] input=1  got=None  err=access violation accessing 0x1
+  [FAIL] input=3  got=None  err=access violation accessing 0x3
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 3x as expected
+FAIL:
+  - call 0 (input=0) failed: access violation accessing 0x0
+  - call 1 (input=1) failed: access violation accessing 0x1
+  - call 2 (input=3) failed: access violation accessing 0x3
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall\log\verify_hook_install_boolmin_out_8a94e0.txt

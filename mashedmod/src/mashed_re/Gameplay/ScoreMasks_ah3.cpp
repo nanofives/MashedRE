@@ -6,10 +6,6 @@
 #include "../Core/HookSystem.h"
 #include <cstdint>
 
-// 0x0046c7b0 VehicleSlotGetter — C4 port in Vehicle/VehicleState.cpp; call it
-// directly instead of trampolining to the raw original RVA (account2 rewire).
-extern "C" std::uint32_t __cdecl VehicleSlotGetter(std::uint32_t vehicleIdx);
-
 // ── getters ────────────────────────────────────────────────────────────────
 
 // 0x0040dc70  FUN_0040dc70  (5 bytes)  undefined4(void)
@@ -42,40 +38,12 @@ RH_ScopedInstall(IndexedTableLookup, 0x0040b420);  // c3_batch_ah s3
 // DEFERRED for C3 verification (no harness arg_type seeds the score globals and
 // passes the out pointer as arg0 — int_outbuf4 is fn(idx,buf), wrong shape).
 
-// 0x0040b970  FUN_0040b970  (40 bytes)  void(undefined4* out)
-// For each of 4 players: out[i] = (score[i] == 0) ? 1 : 0.
-extern "C" __declspec(dllexport) void __cdecl PlayerScoreZeroTest(uint32_t* param_1) {
-    int iVar1 = reinterpret_cast<int>(&*reinterpret_cast<uint32_t*>(0x008a94e0)) - reinterpret_cast<int>(param_1);
-    int iVar2 = 4;
-    do {
-        *param_1 = 0;
-        if (*reinterpret_cast<int*>(iVar1 + reinterpret_cast<int>(param_1)) == 0) *param_1 = 1;
-        param_1 = param_1 + 1;
-        iVar2 = iVar2 + -1;
-    } while (iVar2 != 0);
-}
-
-RH_ScopedInstall(PlayerScoreZeroTest, 0x0040b970);  // c3_batch_ah s3
-
-// 0x0040ba00  FUN_0040ba00  (90 bytes)  void(undefined4* out)
-// min = min(99, score[0..3]); out[i] = (score[i] == min) ? 1 : 0.
-extern "C" __declspec(dllexport) void __cdecl PlayerScoreMinTest(uint32_t* param_1) {
-    int* score = reinterpret_cast<int*>(0x008a94e0);
-    int iVar1 = 99;
-    if (score[0] < iVar1) iVar1 = score[0];
-    if (score[1] < iVar1) iVar1 = score[1];
-    if (score[2] < iVar1) iVar1 = score[2];
-    if (score[3] < iVar1) iVar1 = score[3];
-    int base = reinterpret_cast<int>(score) - reinterpret_cast<int>(param_1);
-    int iVar2 = 4;
-    do {
-        *param_1 = (*reinterpret_cast<int*>(base + reinterpret_cast<int>(param_1)) == iVar1) ? 1 : 0;
-        param_1 = param_1 + 1;
-        iVar2 = iVar2 + -1;
-    } while (iVar2 != 0);
-}
-
-RH_ScopedInstall(PlayerScoreMinTest, 0x0040ba00);  // c3_batch_ah s3
+// FUN_0040b970 / FUN_0040ba00 / FUN_0040b9a0 / FUN_0040ba60 (the score-zero, score-min,
+// score-max and slot-gate-invert masks) were ported here first (PlayerScoreZeroTest /
+// PlayerScoreMinTest / PlayerScoreMaxTest / PlayerScoreGateInvert). Their one-body-per-RVA
+// copies are Util/PromoLoop_round67.cpp (Bool0Out8a94e0, BoolMinOut8a94e0) and
+// Util/PromoLoop_sessionB.cpp (MaxScoreFlags40b9a0, Active4Slots40ba60), the bodies
+// hooks.csv's evidence cites. The four duplicates were removed 2026-10-16 (dupinstall).
 
 // 0x0040b930  FUN_0040b930  (50 bytes)  void(undefined4* out)
 // out[i] = (FUN_0040b8e0() <= score[i]) ? 1 : 0; threshold re-evaluated per i.
@@ -93,46 +61,6 @@ extern "C" __declspec(dllexport) void __cdecl PlayerScoreThresholdMask(uint32_t*
 }
 
 RH_ScopedInstall(PlayerScoreThresholdMask, 0x0040b930);  // c3_batch_ah s3
-
-// 0x0040b9a0  FUN_0040b9a0  (91 bytes)  void(undefined4* out, int sel)
-// max over selected players (sel==0: all; else only FUN_0046c7b0(i)!=0);
-// out[i] = (score[i] == max) ? 1 : 0.
-extern "C" __declspec(dllexport) void __cdecl PlayerScoreMaxTest(uint32_t* param_1, int param_2) {
-    int* score = reinterpret_cast<int*>(0x008a94e0);
-    int iVar3 = 0;
-    for (int iVar2 = 0; iVar2 < 4; iVar2++) {
-        bool take;
-        if (param_2 == 0) {
-            take = true;
-        } else {
-            take = (VehicleSlotGetter(iVar2) != 0);
-        }
-        if (take && iVar3 < score[iVar2]) iVar3 = score[iVar2];
-    }
-    int base = reinterpret_cast<int>(score) - reinterpret_cast<int>(param_1);
-    int iVar2 = 4;
-    do {
-        *param_1 = (*reinterpret_cast<int*>(base + reinterpret_cast<int>(param_1)) == iVar3) ? 1 : 0;
-        param_1 = param_1 + 1;
-        iVar2 = iVar2 + -1;
-    } while (iVar2 != 0);
-}
-
-RH_ScopedInstall(PlayerScoreMaxTest, 0x0040b9a0);  // c3_batch_ah s3
-
-// 0x0040ba60  FUN_0040ba60  (45 bytes)  void(int out)
-// out[i] = (FUN_0046c7b0(i) == 0) ? 1 : 0  (complement of the b9a0 gate).
-extern "C" __declspec(dllexport) void __cdecl PlayerScoreGateInvert(int param_1) {
-    int iVar2 = 0;
-    do {
-        *reinterpret_cast<uint32_t*>(param_1 + iVar2 * 4) = 0;
-        std::uint32_t iVar1 = VehicleSlotGetter(iVar2);
-        if (iVar1 == 0) *reinterpret_cast<uint32_t*>(param_1 + iVar2 * 4) = 1;
-        iVar2 = iVar2 + 1;
-    } while (iVar2 < 4);
-}
-
-RH_ScopedInstall(PlayerScoreGateInvert, 0x0040ba60);  // c3_batch_ah s3
 
 // 0x0040cd90  thunk_FUN_00425ef0  ->  int FUN_00425ef0(void)
 // Counts how many of 8 record-pairs in the DAT_00899260 table have BOTH dwords

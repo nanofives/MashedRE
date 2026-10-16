@@ -55,33 +55,10 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl TimerTable772ffcGet(int p
 RH_ScopedInstall(TimerTable772ffcGet, 0x00496920);
 
 // ---------------------------------------------------------------------------
-// TimerTable773030Get  --  0x00496930   (subsystem: util)
-//
-// Original: FUN_00496930 (12 bytes, 0x00496930..0x0049693b)
-// Bytes: 8B 44 24 04 / 8B 04 85 30 30 77 00 / C3
-//   (mov eax,[esp+4]; mov eax,[eax*4 + 0x00773030]; ret)
-// Signature: undefined4 FUN_00496930(int param_1)
-//
-// Complement of TimerTable772ffcGet (base 0x34 bytes higher). No bounds check
-// (caller uses indices 3/4).
-//
-// Constants (cited from function body at 0x00496930):
-//   0x00773030 — indexed table base (4-byte elements)
-//
-// Caller: FUN_004926c0 (boot, C2).
-//
-// Uncertainties (non-blocking):
-//   U-1144: table element count / type (data-semantic).
+// FUN_00496930 (indexed dword table at 0x00773030, U-1144) lives in
+// Util/PromoLoop_round30.cpp as Table773030Get, the body hooks.csv's evidence cites.
+// The duplicate that sat here (TimerTable773030Get) was removed 2026-10-16 (dupinstall).
 // ---------------------------------------------------------------------------
-
-// 0x00496930
-extern "C" __declspec(dllexport) std::uint32_t __cdecl TimerTable773030Get(int param_1) {
-    // 0x00773030 base + *4 scaled index cited at 0x00496930 body.
-    return *reinterpret_cast<const std::uint32_t*>(
-        0x00773030u + static_cast<std::uint32_t>(param_1) * 4u);
-}
-
-RH_ScopedInstall(TimerTable773030Get, 0x00496930);
 
 // ---------------------------------------------------------------------------
 // DynObjListGetCount  --  0x00485360   (subsystem: vehicle)

@@ -1,0 +1,12 @@
+hook: frontend_slot_table_ptr_426cb0  rva=0x00426cb0  export=FrontendSlotTablePtr426cb0
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 216
+  [agent] LUT ready  base=0x2e51ae0  offset=0x134  root=0xdf30048  delta=0  attempts=7
+  [agent] .asi loaded  base=0x5dec0000  FrontendSlotTablePtr426cb0@0x5dededb0
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall\log\diff_frontend_slot_table_ptr_426cb0.csv
+  total cases: 11
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.
+

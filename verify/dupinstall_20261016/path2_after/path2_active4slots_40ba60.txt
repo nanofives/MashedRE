@@ -1,0 +1,33 @@
+hook: active4slots_40ba60  rva=0x0040ba60  export=Active4Slots40ba60
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 2244
+  [agent] pre_snapshot
+  [agent] asi_loaded
+  [agent] post_snapshot
+  [agent] results
+
+=== verify_hook_install report (active4slots_40ba60) ===
+
+target address: 0x0040ba60  export: Active4Slots40ba60
+PRE  bytes:     e9 0b d3 6f 5e 0c 33 f6
+asi base:       0x5ead0000
+reimpl addr:    0x5eb08d70
+POST bytes:     e9 0b d3 6f 5e 0c 33 f6
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x5e6fd30b  expected 0x5e6fd30b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  0 / 1  (other threads: 0)
+
+per-input results:
+  [FAIL] input=0  got=None  err=expected a pointer
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+FAIL:
+  - reimpl interceptor fired 0 times, expected 1
+  - call 0 (input=0) failed: expected a pointer
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall\log\verify_hook_install_active4slots_40ba60.txt

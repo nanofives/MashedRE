@@ -1,0 +1,6 @@
+[harness: early_window_leaf_diff.py]
+hook: copter_find_639dc4  (early-window pure-leaf diff â€” no menu boot required)
+  b0=0x8b reim=0x5def8ee0 cases=10 mismatches=0
+  evidence: C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall\log\diff_copter_find_639dc4.csv
+VERDICT: GREEN
+

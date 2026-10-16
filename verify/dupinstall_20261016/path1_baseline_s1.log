@@ -1,0 +1,58 @@
+warm pool: 1 instance(s), 35 hook(s)
+  [slot 0] spawned pid=19764
+  [slot 0] find_copter_by_key_index: GREEN
+  [slot 0] copter_find_639dc4: RED 10/10 mismatch
+  [slot 0] selected_copter_field60: GREEN
+  [slot 0] float_idx_639de0: RED 10/10 mismatch
+  [slot 0] get_ai_lap_counter: GREEN
+  [slot 0] table_8a9648_get: GREEN
+  [slot 0] get_led_entry_array_base: GREEN
+  [slot 0] ret_63a5f0: RED 5/5 mismatch
+  [slot 0] bool0_out_8a94e0: RED 10/10 mismatch
+  [slot 0] maxscoreflags_40b9a0: RED 2/2 mismatch
+  [slot 0] boolmin_out_8a94e0: RED 10/10 mismatch
+  [slot 0] active4slots_40ba60: RED 1/1 mismatch
+  [slot 0] slot_index_to_ptr: GREEN
+  [slot 0] frontend_slot_table_ptr_426cb0: GREEN
+  [slot 0] menu_quad_global_zero: GREEN
+  [slot 0] clear_67d99c_x4: GREEN
+
+=== warm diff complete in 23.0s (1 spawns for 35 hooks) ===
+hook                         slot  status
+----------------------------------------------------------------------
+active4slots_40ba60             0  RED 1/1 mismatch
+audio_list_header_init          0  RED (EXC session is gone)
+audio_list_init                 0  RED (EXC session is gone)
+bool0_out_8a94e0                0  RED 10/10 mismatch
+boolmin_out_8a94e0              0  RED 10/10 mismatch
+clear_67d99c_x4                 0  GREEN
+copter_find_639dc4              0  RED 10/10 mismatch
+create_dinput_object_bool       0  RED (EXC session is gone)
+dinput_init_predicate           0  RED (EXC session is gone)
+display_active_flag_get         0  RED (EXC session is gone)
+display_get_cursor_gate         0  RED (EXC session is gone)
+find_copter_by_key_index        0  GREEN
+float_idx_639de0                0  RED 10/10 mismatch
+font_atlas_slot_get             0  RED (EXC session is gone)
+font_atlas_slot_set             0  RED (EXC session is gone)
+frontend_page_id_dispatch       0  RED (EXC session is gone)
+frontend_slot_table_ptr_426cb0    0  GREEN
+get_ai_lap_counter              0  GREEN
+get_dat_00912a20                0  RED (EXC session is gone)
+get_led_entry_array_base        0  GREEN
+hud_rect_emitter                0  RED (EXC session is gone)
+hud_rect_emitter5               0  RED (EXC session is gone)
+maxscoreflags_40b9a0            0  RED 2/2 mismatch
+menu_quad_global_zero           0  GREEN
+menu_readiness_check            0  RED (Error: freeze: first thread never stopped inside the safe-point modules)
+menu_readiness_check_c          0  RED (EXC session is gone)
+plugin_data_dword_a             0  RED (EXC session is gone)
+plugin_data_dword_b             0  RED (EXC session is gone)
+ret_63a5f0                      0  RED 5/5 mismatch
+selected_copter_field60         0  GREEN
+set_dat_00912a20                0  RED (EXC session is gone)
+slot_index_to_ptr               0  GREEN
+table_773030_get                0  RED (EXC session is gone)
+table_8a9648_get                0  GREEN
+timer_table_773030_get          0  RED (EXC session is gone)
+exit=1

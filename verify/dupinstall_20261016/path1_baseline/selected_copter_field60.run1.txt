@@ -1,0 +1,18 @@
+hook: selected_copter_field60  rva=0x004077e0  export=GetSelectedCopterField60
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 1740
+  [agent] LUT ready  base=0x2c91ae0  offset=0x134  root=0xdf30048  delta=0  attempts=6
+  [agent] .asi loaded  base=0x5ddb0000  GetSelectedCopterField60@0x5dddf8e0
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall\log\diff_selected_copter_field60.csv
+  total cases: 1
+  mismatches:  0
+
+INCONCLUSIVE-DEGENERATE: 0 mismatches, but every observed value
+on both sides is trivial (zero/empty/all-zero fingerprint). The
+diff had no discriminating power. Re-run at a state where the
+inputs are populated (scenario-attach), or â€” only if all-zero
+output is genuinely this function's behavior on every test
+vector â€” pass --allow-degenerate or set degenerate_ok=True in
+hooks_registry.py.
+

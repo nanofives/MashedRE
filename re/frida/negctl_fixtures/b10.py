@@ -265,7 +265,7 @@ def _di(hr):
 
 
 _DI_TESTS = [_di(0), _di(-2147467259), _di(1), _di(-1), _di(0x7fffffff), _di(-2147483648)]
-for _k in ('create_dinput_object', 'create_dinput_object_bool', 'dinput_init_predicate'):
+for _k in ('create_dinput_object', 'dinput_init_predicate'):    # create_dinput_object_bool removed 2026-10-16 (dupinstall)
     FIXES[_k] = {
         'arg_type': 'stub_dispatch_observe', 'signature': {'ret': 'uint32', 'args': []},
         'num_bufs': 1, 'buf_size': 0x10, 'arg_layout': [], 'stub_at': _DI_STUBS, 'stub_nargs': 0,
@@ -283,6 +283,6 @@ def _dp(v):
 
 
 _DP_TESTS = [_dp(0), _dp(1), _dp(2), _dp(-1), _dp(-2147483648), _dp(0x100), _dp(0)]
-for _k in ('create_dinput_object_bool', 'dinput_init_predicate'):
+for _k in ('dinput_init_predicate',):
     FIXES[_k] = dict(FIXES[_k], stub_at=[{'addr': '0x00495530', 'nargs': 0, 'name': 'cdi'}],
                      path1_tests=_DP_TESTS, path2_tests=_DP_TESTS[:2])

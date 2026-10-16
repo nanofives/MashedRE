@@ -206,7 +206,8 @@ FIXES['menu_readiness_check_b'] = {
 }
 
 
-# ── 0x0042af50 MenuReadinessCheckC (two registry keys, one RVA) ─────────────────────────────────────────────────────
+# ── 0x0042af50 MenuReadinessCheckC (one registry key; the second body, MenuReadinessCheck in TimerReset.cpp, and its
+# `menu_readiness_check` key were removed 2026-10-16, dupinstall) ───────────────────────────────────────────────────
 # if (DAT_0067eab0 != 2 && DAT_0067e7c8 == 0 && DAT_00898ab0 != 0) return 0; col +1 (0x007f1041 / 0x007f1501).
 def _rdyc(eab0, e7c8, ab0, mode, held, prev, slots=(-1, -1, -1, -1)):
     s = [{'addr': 0x0067eab0, 'val': eab0}, {'addr': 0x0067e7c8, 'val': e7c8}, {'addr': 0x00898ab0, 'val': ab0},
@@ -214,7 +215,7 @@ def _rdyc(eab0, e7c8, ab0, mode, held, prev, slots=(-1, -1, -1, -1)):
     return {'args': [], 'seed': s}
 
 
-for _k in ('menu_readiness_check', 'menu_readiness_check_c'):
+for _k in ('menu_readiness_check_c',):
     FIXES[_k] = {
         'arg_type': _SCAL, 'signature': {'ret': 'uint32', 'args': []}, 'fold_ret': True, 'observe': [],
         'freeze_main': True, 'target_global': None, 'lut_root_delta': None,

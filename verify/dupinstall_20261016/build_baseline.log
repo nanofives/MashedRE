@@ -1,0 +1,9 @@
+[trimmed: 1390 lines, 593 warning lines, 0 error lines; last 8 kept]
+Collision\RwpSolverCore15.cpp(448): warning C4554: "|": compruebe la prioridad de operador para posibles errores; utilice paréntesis para indicar la prioridad
+Collision\RwpSolverCore15.cpp(449): warning C4554: "|": compruebe la prioridad de operador para posibles errores; utilice paréntesis para indicar la prioridad
+   Creando biblioteca C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall\mashedmod\build\mashed_re_dev.lib y objeto C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall\mashedmod\build\mashed_re_dev.exp
+[skip] MASHED_NO_DEPLOY set: mashed_re_dev.asi NOT deployed to original\
+=== Build OK ===
+mashed_re.exe
+mashed_re_dev.asi
+exit=0

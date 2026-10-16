@@ -1,0 +1,37 @@
+hook: audio_list_init  rva=0x005b3580  export=AudioListInit
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 22920
+  [agent] pre_snapshot
+  [agent] asi_loaded
+  [agent] post_snapshot
+  [agent] results
+
+=== verify_hook_install report (audio_list_init) ===
+
+target address: 0x005b3580  export: AudioListInit
+PRE  bytes:     e9 8b b7 54 5e 41 04 c7
+asi base:       0x5ead0000
+reimpl addr:    0x5eafed10
+POST bytes:     e9 8b b7 54 5e 41 04 c7
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x5e54b78b  expected 0x5e54b78b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  0 / 3  (other threads: 0)
+
+per-input results:
+  [FAIL] input=3735928559  got=None  err=expected a pointer
+  [FAIL] input=0  got=None  err=expected a pointer
+  [FAIL] input=4294967295  got=None  err=expected a pointer
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+FAIL:
+  - reimpl interceptor fired 0 times, expected 3
+  - call 0 (input=3735928559) failed: expected a pointer
+  - call 1 (input=0) failed: expected a pointer
+  - call 2 (input=4294967295) failed: expected a pointer
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall\log\verify_hook_install_audio_list_init.txt

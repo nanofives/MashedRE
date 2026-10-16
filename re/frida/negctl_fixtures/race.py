@@ -67,8 +67,7 @@ FIXES['joint_ptr_6ce81c_get'] = _s2('uint32', 1, [
 # ── 0x00496930 Table773030Get / TimerTable773030Get (one RVA, two port exports) ─────────────────────────────────────
 # return *(u32*)(0x00773030 + p*4), no bound. Table all zero in the race (DEGENERATE). Seed the slot each test reads.
 _t773 = [{'args': [p], 'seed': [{'addr': 0x00773030 + p * 4, 'val': 0xB0000000 + p * 0x1111}]} for p in (0, 1, 2, 5, 7, 12)]
-FIXES['table_773030_get'] = _s2('uint32', 1, _t773, [])
-FIXES['timer_table_773030_get'] = _s2('uint32', 1, _t773, [])
+FIXES['table_773030_get'] = _s2('uint32', 1, _t773, [])   # timer_table_773030_get removed 2026-10-16 (dupinstall)
 
 # ── 0x0041ea80 TrackDescField40Get() ─────────────────────────────────────────────────────────────────────────────────
 # return *(u32*)(DAT_0063d7e4 + 0x40). The live record's +0x40 reads 0 in the race (DEGENERATE). Point DAT_0063d7e4

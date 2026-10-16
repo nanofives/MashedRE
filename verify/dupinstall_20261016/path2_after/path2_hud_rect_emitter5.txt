@@ -1,0 +1,33 @@
+hook: hud_rect_emitter5  rva=0x0042bde0  export=HudRectEmitter5
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 4312
+  [agent] pre_snapshot
+  [agent] asi_loaded
+  [agent] post_snapshot
+  [agent] results
+
+=== verify_hook_install report (hud_rect_emitter5) ===
+
+target address: 0x0042bde0  export: HudRectEmitter5
+PRE  bytes:     e9 1b 18 6d 5e 24 1c 53
+asi base:       0x5ead0000
+reimpl addr:    0x5eafd600
+POST bytes:     e9 1b 18 6d 5e 24 1c 53
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x5e6d181b  expected 0x5e6d181b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  0 / 1  (other threads: 0)
+
+per-input results:
+  [FAIL] input=[100, 255]  got=None  err=system error
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+FAIL:
+  - reimpl interceptor fired 0 times, expected 1
+  - call 0 (input=[100, 255]) failed: system error
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall\log\verify_hook_install_hud_rect_emitter5.txt
