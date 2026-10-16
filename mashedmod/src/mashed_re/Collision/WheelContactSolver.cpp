@@ -30,9 +30,6 @@
 namespace mashed_re {
 namespace Collision {
 
-const CollTriangle* g_worldTris    = nullptr;
-int                 g_worldTriCount = 0;
-
 // [D2 section 22.2] DIAGNOSTIC counters for this function's three VELOCITY (+0x9b0,
 // dword index 0x26c) write sites. Three increments, no I/O, no branch on an env var.
 //
@@ -151,12 +148,11 @@ void WheelContactSolver(int* self, void* world, int substep)
     float qc[3] = { vF(iVar12, 0xc), vF(iVar12, 0xd), vF(iVar12, 0xe) };    // iVar12+0x30/0x34/0x38
     float qradius = vF(self, 0x129);                                       // self+0x4a4
     g_terrainEntryCount = 0;
-    // [d2bsp] fix W (MASHED_D2BSP=1): the original's walk FUN_00538c80 + collector FUN_00468b80 over
-    // the COLLI*.BSP replica (0x0046f7d3..0x0046f817). Without it, the port-only stand-in.
-    if (D2BspOn() && CollWorld_Ready())
-        ProduceTerrainBatchBsp(qc, qradius);                                // 0x0046f817
-    else
-        ProduceTerrainBatch(qc, qradius, g_worldTris, g_worldTriCount);    // FUN_00538c80 stand-in
+    // [d2bsp / d2close] the original's walk FUN_00538c80 + collector FUN_00468b80 over the COLLI*.BSP
+    // replica (0x0046f7d3..0x0046f817), the ONLY terrain query (default ON since d2close; the port-only
+    // triangle-soup stand-in is deleted). A track whose replica failed to build (logged
+    // "[d2bsp] collision replica FAILED") produces an empty batch.
+    ProduceTerrainBatchBsp(qc, qradius);                                    // 0x0046f817
     CollWorld_DumpBatch(self, qc, qradius);                                // MASHED_BATCH_DUMP, diag only
     WheelTerrainContactClassifier(self, reinterpret_cast<float*>(g_terrainBatch));
     (void)world; (void)substep;

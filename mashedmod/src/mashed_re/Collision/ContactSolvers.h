@@ -31,18 +31,11 @@ struct ContactBatchEntry;  // defined in ContactConstants.h
 struct CollTriangle { float v0[3], v1[3], v2[3]; float normal[3]; int material; int surfaceKey; };
 void FillBatchEntry(ContactBatchEntry* e, const float* v0, const float* v1, const float* v2,
                     const float* faceNormal, int material, int surfaceKey);                 // LAB_00468b80
-int  ProduceTerrainBatch(const float* center, float radius,
-                         const CollTriangle* tris, int triCount);                            // FUN_00538c80 stand-in
-// [d2bsp] fix W: FUN_00538c80 (case 3, CollisionWorld.cpp) with the collector FUN_00468b80 over
-// the COLLI*.BSP replica. Sets g_terrainBatch / g_terrainEntryCount like the stand-in.
+// [d2bsp / d2close] FUN_00538c80 (case 3, CollisionWorld.cpp) with the collector FUN_00468b80 over
+// the COLLI*.BSP replica: the ONLY terrain query (the port-only triangle-soup stand-in was deleted
+// by d2close). Sets g_terrainBatch / g_terrainEntryCount.
 int  ProduceTerrainBatchBsp(const float* center, float radius);
 extern int g_bspBatchOverflow;   // entries the 2048-entry storage could not hold (diagnostic)
-
-// The standalone's COLLI*.BSP triangle list the wheel solver's broadphase walks
-// (the FUN_00538c80 query over the collision world). B4 wiring (or a self-test)
-// points these at the loaded track collision triangles.
-extern const CollTriangle* g_worldTris;
-extern int                 g_worldTriCount;
 
 // [D2 section 22.2] DIAGNOSTIC counters for WheelContactSolver's three VELOCITY
 // (+0x9b0) write sites: [0] kFricVel, [1] kFricImp, [2] airborne lateral drift.

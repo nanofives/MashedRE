@@ -14,9 +14,10 @@
 // STATUS: PENDING runtime-smoke (MAIN tree) + C4. WS-A8-GAPS (2026-06-17) status:
 //   - [U-A8-SUBSTEP] CLOSED: StepPlayer subdivides the frame into <=50 fixed ~1ms
 //     substeps (the FUN_00470c70 chunk granularity, local_24 = min(remaining,0x32)).
-//   - terrain contacts CLOSED: VehiclePhysics_SetWorld() builds the contact soup
+//   - terrain contacts CLOSED: VehiclePhysics_SetWorld() builds the ground soup
 //     from the track collision tris -> WheelContactSolver reports grounded wheels
-//     -> A5 suspension force is live (caller must SetWorld at track load).
+//     -> A5 suspension force is live (caller must SetWorld at track load). Since d2close
+//     the wheel solver's terrain query is the COLLI*.BSP replica walk, not this soup.
 //   - [U-A8-GRAVITY] RESOLVED as VESTIGIAL: ref-to(0x00803338) -> the ONLY writer
 //     is FUN_00470c70's frame-end zeroing (0x004713fc, =0) and the only reader is
 //     A5 (0x0046e316). So g_gravX/Y/Z are ALWAYS 0 in the original; our stub=0 is
@@ -113,8 +114,9 @@ struct PlayerCarIO {
 
 bool VehiclePhysics_Enabled();                       // true unless MASHED_REAL_PHYSICS=0 (D2, 2026-09-14)
 void VehiclePhysics_Init(int carCount, int trackType);
-// Feed the track collision triangles (TrackRenderer col_verts_/col_tris_) to the
-// wheel solver's broadphase (Collision::g_worldTris). Call once at track load.
+// Feed the track collision triangles (TrackRenderer col_verts_/col_tris_) to ProbeGround's
+// triangle soup (wheel seat height). The wheel solver's broadphase walks the COLLI*.BSP replica
+// instead (Collision/CollisionWorld.cpp, d2close). Call once at track load.
 // mats = per-triangle material index (col_mat_, triCount entries) or nullptr;
 // it reaches record +0x1ec through contact entry +0x30 (original 0x0046d00b).
 void VehiclePhysics_SetWorld(const float* verts, int vertCount,

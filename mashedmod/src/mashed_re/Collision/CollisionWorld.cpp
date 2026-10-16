@@ -231,8 +231,6 @@ static_assert(offsetof(mashed_re::Collision::RwSectorRep, coll) == 0x10, "plugin
 namespace mashed_re {
 namespace Collision {
 
-// DEFAULT ON since d2close (user decision, Mariano, 2026-10-16); opt-out MASHED_NO_D2BSP=1.
-bool D2BspOn()   { static const bool s = !Env("MASHED_NO_D2BSP"); return s; }
 bool D2BspKey0() { static const bool s = Env("MASHED_D2BSP_KEY0"); return s; }
 
 bool CollWorld_Ready() { return g_rep.ready; }
@@ -390,12 +388,12 @@ void CollWorld_RunReplayIfRequested() {
     static bool s_done = false;
     const char* in = std::getenv("MASHED_BSP_REPLAY");
     const char* outp = std::getenv("MASHED_BSP_REPLAY_OUT");
-    if (s_done || !in || !outp || !g_rep.ready || !g_worldTris) return;
+    if (s_done || !in || !outp || !g_rep.ready) return;
     s_done = true;
     std::FILE* fi = std::fopen(in, "rb");
     std::FILE* fo = std::fopen(outp, "wb");
     if (!fi || !fo) { if (fi) std::fclose(fi); if (fo) std::fclose(fo); return; }
-    std::fprintf(fo, "seq,nW,entW,clsW,nS,entS,clsS\n");
+    std::fprintf(fo, "seq,nW,entW,clsW\n");
     std::vector<char> line(1 << 20);
     int rows = 0;
     while (std::fgets(line.data(), (int)line.size(), fi)) {
@@ -417,13 +415,6 @@ void CollWorld_RunReplayIfRequested() {
         PutEntries(o, wcopy.data(), nW);
         o += ',';
         Classify(wcopy.data(), nW, wpos, vel, wstart, hist, o);
-        const int nS = ProduceTerrainBatch(c, r, g_worldTris, g_worldTriCount);
-        static std::vector<float> scopy; scopy.assign(reinterpret_cast<float*>(g_terrainBatch),
-                                                      reinterpret_cast<float*>(g_terrainBatch) + nS * 0x24);
-        o += ',' + std::to_string(nS) + ',';
-        PutEntries(o, scopy.data(), nS);
-        o += ',';
-        Classify(scopy.data(), nS, wpos, vel, wstart, hist, o);
         o += '\n';
         std::fputs(o.c_str(), fo);
         ++rows;
