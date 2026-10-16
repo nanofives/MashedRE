@@ -204,6 +204,18 @@ private:
         int                             clump_idx = -1;
         // [rstates F8] instances are a Clump_Mts_Pair's copies, one per Mts record.
         bool                            mts_pair = false;
+        // [rhooks U-9713] the hook-slot draw model of a covered track (Render/TrackHookSlots.h):
+        // hook_key = the prop's index in the track's HookTrack::draws (after-world queue order),
+        // hook_pass = that entry's pass (kHookPassSlot2 / Switch / Slot10), hook_hidden = loaded only
+        // as an RpLODAtomic L geometry (never drawn as itself), lod_prop / lod_range = the LOD hook
+        // FUN_004758d0 put on this clump's atomics (index into props_ of the L model, or -1).
+        int                             hook_key = -1;
+        int                             hook_pass = 0;
+        bool                            hook_hidden = false;
+        int                             lod_prop = -1;
+        float                           lod_range = 0.f;
+        int                             hook_cull = 0;     // HookDraw::cull (0 = inherited)
+        int                             hook_zwrite = -1;  // HookDraw::zwrite (-1 = inherited)
     };
     std::vector<Prop> props_;
     // [rstates F6] the order props_ are queued in each frame (BuildPropOrder).

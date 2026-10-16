@@ -81,7 +81,8 @@ constexpr int kLensMarker = -3;    // [rfx2] RaceSubmit_AddLensMarker's queue en
 struct Inst { int model; float m[16]; bool fx = false; float env_coef = 0.f; float env_m[16];
               std::vector<FramePose> poses; float sun_scale = -1.f;   // [librwrest]
               int kind = kInstAfterWorld;
-              bool vis = false; int vis_state = 0; std::uint32_t vis_flags = 0; };
+              bool vis = false; int vis_state = 0; std::uint32_t vis_flags = 0;
+              int cull = 0; int zwrite = -1; };   // [rhooks] RaceSubmit_AddInstanceStates
 std::vector<Inst>       g_insts;
 // [librwrest] per model, parallel to g_models: the FRAMELIST frames of a hierarchy model and
 // their streamed matrices (restored after each posed copy draws). Empty otherwise.
@@ -635,6 +636,15 @@ void RaceSubmit_AddInstance(int handle, const float* m44, int kind, const CarVis
     Inst i; i.model = handle; i.kind = kind;
     for (int k = 0; k < 16; ++k) i.m[k] = m44[k];
     if (vis) { i.vis = true; i.vis_state = vis->state; i.vis_flags = vis->flags; }
+    g_insts.push_back(i);
+}
+
+void RaceSubmit_AddInstanceStates(int handle, const float* m44, int kind, int cullmode, int zwrite) {
+    if (handle < 0 || !m44 || (std::size_t)handle >= g_models.size()) return;
+    Inst i; i.model = handle; i.kind = kind;
+    for (int k = 0; k < 16; ++k) i.m[k] = m44[k];
+    i.cull = cullmode;
+    i.zwrite = zwrite;
     g_insts.push_back(i);
 }
 
@@ -1508,6 +1518,26 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
             rw::Clump* c = g_models[(std::size_t)in.model];
             if (!c) continue;
             if (walk && in.kind == kInstInWorld) continue;   // drawn by the sector walk
+            // [rhooks U-9713] the hook slot's own render states for this copy, restored after it
+            // (RaceSubmit_AddInstanceStates); covers the plain and the clump-render paths below
+            struct HookStates {
+                bool cull = false, zw = false;
+                rw::uint32 cm = 0, zwv = 0;
+                explicit HookStates(const Inst& i) {
+                    if (i.cull > 0) {
+                        cull = true; cm = rw::GetRenderState(rw::CULLMODE);
+                        rw::SetRenderState(rw::CULLMODE, (rw::uint32)i.cull);
+                    }
+                    if (i.zwrite >= 0) {
+                        zw = true; zwv = rw::GetRenderState(rw::ZWRITEENABLE);
+                        rw::SetRenderState(rw::ZWRITEENABLE, (rw::uint32)i.zwrite);
+                    }
+                }
+                ~HookStates() {
+                    if (zw) rw::SetRenderState(rw::ZWRITEENABLE, zwv);
+                    if (cull) rw::SetRenderState(rw::CULLMODE, cm);
+                }
+            } hook_states(in);
             if (in.kind == kInstCar && !car_seen) {
                 car_seen = true;
                 // [rstates] F4 / U-9690: on RainEnable tracks FUN_004270f0 runs the line
