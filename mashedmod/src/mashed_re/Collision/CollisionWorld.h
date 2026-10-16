@@ -42,8 +42,8 @@ void CollWorld_ForAllIntersections(float* isect, CollWorldCb cb, void* data);
 // entry +0x34 (0x00468baa..0x00468bbc). 0 when the replica is not ready or out of range.
 std::uint32_t CollWorld_MaterialColour(int matIdx);
 
-// d2bsp knobs (read once). Fix W: MASHED_D2BSP=1 (opt-in in this lane); MASHED_D2BSP_KEY0=1
-// forces the key to 0 (diagnostic).
+// d2bsp knobs (read once). Fix W is DEFAULT ON (d2close, user decision 2026-10-16), opt-out
+// MASHED_NO_D2BSP=1; MASHED_D2BSP_KEY0=1 forces the key to 0 (diagnostic).
 bool D2BspOn();
 bool D2BspKey0();
 

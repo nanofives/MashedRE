@@ -231,7 +231,8 @@ static_assert(offsetof(mashed_re::Collision::RwSectorRep, coll) == 0x10, "plugin
 namespace mashed_re {
 namespace Collision {
 
-bool D2BspOn()   { static const bool s = Env("MASHED_D2BSP") && !Env("MASHED_NO_D2BSP"); return s; }
+// DEFAULT ON since d2close (user decision, Mariano, 2026-10-16); opt-out MASHED_NO_D2BSP=1.
+bool D2BspOn()   { static const bool s = !Env("MASHED_NO_D2BSP"); return s; }
 bool D2BspKey0() { static const bool s = Env("MASHED_D2BSP_KEY0"); return s; }
 
 bool CollWorld_Ready() { return g_rep.ready; }
