@@ -1,0 +1,14 @@
+# d1r2 G-CTRL (run_gctrl.py = run_h4.ps1 default-arm recipe: Training, MASHED_CAR 1, ROUND 1,
+# ROUND_RULE 4, DETERMINISTIC 14400 frames, PLAYERTRACE). Expected default: 991a5fff / be0d47ea / bc75b405.
+# exe sha256 prefixes: base 2172FB50 (race/first-frame-parity 1caf1a10), new1 62275AA9 (f19e82c7 minus the
+# nodes dump), new2 (f19e82c7), new3 8B9C8465 (b71e597a, final).
+
+BASE_DEF  base  step 991a5fff  gates be0d47ea  ptrace 91d73bac  <- ptrace CONTAMINATED: the base exe has no
+          MASHED_PLAYERTRACE_OUT, and the shared main-root player_trace.log interleaved lines from three
+          PIDs (first lines f=7382 then f=2459). step/gates are private files and match.
+NEW_DEF   new1  step 991a5fff  gates be0d47ea  ptrace bc75b405
+NEW_OPT   new1  MASHED_NO_RACE_CAM_BASIS  step 991a5fff  gates be0d47ea  ptrace bc75b405
+NEW2_DEF  new2  step 991a5fff  gates be0d47ea  ptrace bc75b405
+NEW3_DEF  new3  step 991a5fff  gates be0d47ea  ptrace bc75b405
+NEW3_OPT  new3  MASHED_NO_RACE_CAM_BASIS  step 991a5fff  gates be0d47ea  ptrace bc75b405
+(all runs: lines step 21403 / gates 54713 / private ptrace 27356, exit 0, self-exited)

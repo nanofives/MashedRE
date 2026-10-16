@@ -1,0 +1,74 @@
+# d1r2 scorer outputs (score_d1r2.py). Inputs in log/d1r2/; the trace-2 input is committed as orig2_trace_v3.csv.
+# Exes: new3 = final (b71e597a, sha256 8B9C8465), new2 = f19e82c7, new1 = f19e82c7 minus the nodes dump (62275AA9).
+# rep1 ran on new2, rep3 on new3, wire1 on new2. new2 and new3 differ only in the first in-race frame (snap fix).
+## G-SRC trace 1
+rows=1054  by DAT_0063ba8c: {3: 766, 4: 1, 5: 112, 6: 175}
+cam pointers: ['0x897fe0']
+racing rows (ba8c==6, cam==0x00897fe0): 175, trace rows 879..1053
+(a) flag==0 175/175, roll==0 175/175: PASS
+(b) modelling == Camera::Apply(+0x38,+0x34,+0x3c,+0x40) within 1e-4: 175/175  maxdiff: n=175 median=8.72639e-08 p95=1.31333e-07 max=1.63387e-07: PASS
+(c) LTM(r+1) == modelling(r) within 1e-6: 174/174  maxdiff: n=174 median=0 p95=0 max=0: PASS
+(d) RwCamera viewWindow == (0.6,0.45): 175/175  values [(0.6000000238418579, 0.45000001788139343)]: PASS
+report: flag!=0 rows 765, by ba8c [3], modelling vs entry0 maxdiff: n=765 median=0 p95=0 max=0; e0c0 values [0.6]
+report: flag==0 rows outside ba8c 6: 114 (ba8c [3, 4, 5]), modelling vs Apply maxdiff: n=114 median=7.55779e-08 p95=1.13955e-07 max=1.19458e-07
+G-SRC: PASS
+## G-SRC trace 2
+rows=1029  by DAT_0063ba8c: {3: 741, 4: 1, 5: 112, 6: 175}
+cam pointers: ['0x897fe0']
+racing rows (ba8c==6, cam==0x00897fe0): 175, trace rows 854..1028
+(a) flag==0 175/175, roll==0 175/175: PASS
+(b) modelling == Camera::Apply(+0x38,+0x34,+0x3c,+0x40) within 1e-4: 175/175  maxdiff: n=175 median=7.96171e-08 p95=1.24051e-07 max=1.58471e-07: PASS
+(c) LTM(r+1) == modelling(r) within 1e-6: 174/174  maxdiff: n=174 median=0 p95=0 max=0: PASS
+(d) RwCamera viewWindow == (0.6,0.45): 175/175  values [(0.6000000238418579, 0.45000001788139343)]: PASS
+report: flag!=0 rows 740, by ba8c [3], modelling vs entry0 maxdiff: n=740 median=0 p95=0 max=0; e0c0 values [0.6]
+report: flag==0 rows outside ba8c 6: 114 (ba8c [3, 4, 5]), modelling vs Apply maxdiff: n=114 median=6.86135e-08 p95=1.06562e-07 max=1.17109e-07
+G-SRC: PASS
+## G-ANGLE trace 1
+eye: n=1054 median=0.000133926 p95=0.000507952 max=5.91269
+yaw: n=1054 median=1.49648e-05 deg p95=9.17949e-05 deg max=0.345505 deg
+pitch: n=1054 median=0.000885052 deg p95=0.0030518 deg max=13.3661 deg
+aim: n=1054 median=0.000676282 deg p95=0.00143191 deg max=13.3686 deg
+G-ANGLE: PASS
+## G-ANGLE trace 2
+eye: n=1029 median=0.000136227 p95=0.000546568 max=5.75612
+yaw: n=1029 median=1.48809e-05 deg p95=4.62676e-05 deg max=0.807602 deg
+pitch: n=1029 median=0.00091549 deg p95=0.00354006 deg max=13.183 deg
+aim: n=1029 median=0.000664737 deg p95=0.00149951 deg max=13.2047 deg
+G-ANGLE: PASS
+## G-POSE trace 1 (rep1, new2)
+shift=0  joined racing rows=175  exe src counts {1: 175}
+pos: n=175 median=0.00011177 p95=0.00102289 max=0.00257296
+at: n=175 median=0.00048642 deg p95=0.00378218 deg max=0.00836651 deg
+right: n=175 median=2.45376e-05 deg p95=0.000149939 deg max=0.000328422 deg
+vw58: n=175 median=0 p95=0 max=0
+G-POSE: PASS
+## G-POSE trace 2 (rep3, new3)
+shift=0  joined racing rows=175  exe src counts {1: 175}
+pos: n=175 median=0.000110527 p95=0.00102039 max=0.00256402
+at: n=175 median=0.000427128 deg p95=0.00351152 deg max=0.0095821 deg
+right: n=175 median=1.36069e-05 deg p95=6.70742e-05 deg max=9.65368e-05 deg
+vw58: n=175 median=0 p95=0 max=0
+G-POSE: PASS
+## M-SHIFT trace 2 (rep3, +30 rows) -- must FAIL
+shift=30  joined racing rows=145  exe src counts {1: 145}
+pos: n=145 median=3.66445 p95=5.08736 max=5.21673
+at: n=145 median=10.7885 deg p95=17.1815 deg max=17.5507 deg
+right: n=145 median=6.12617 deg p95=12.458 deg max=12.8118 deg
+vw58: n=145 median=0 p95=0 max=0
+G-POSE: FAIL
+## N0
+rep1 cam_dump sha8 1E216EE8 / rep1b 1E216EE8
+## G-WIRE replay (rep3, new3)
+librw rows joined with a valid published basis: 1299, src counts {1: 1299}, not bit-equal 0, worst |d| 0
+G-WIRE: PASS
+## G-WIRE own race (wire1, new2)
+librw rows joined with a valid published basis: 1498, src counts {1: 1498}, not bit-equal 0, worst |d| 0
+G-WIRE: PASS
+## G-FRAME (rep3, new3; controls K+-60)
+K=884: mean-abs(orig@K, stand@K)=27.77 (50.2% over 16)  stand@K-60=43.63  stand@K+60=46.81: PASS
+K=924: mean-abs(orig@K, stand@K)=21.94 (40.0% over 16)  stand@K-60=40.66  stand@K+60=42.64: PASS
+K=959: mean-abs(orig@K, stand@K)=15.75 (25.9% over 16)  stand@K-60=46.00  stand@K+60=38.76: PASS
+G-FRAME: PASS
+## camera-path ribbon: original vs standalone
+original nodes 30, standalone nodes 30
+max |d| dir 7.64e-05  c0 0  c3 1.5
