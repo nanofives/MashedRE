@@ -201,16 +201,26 @@ private:
     // flies its bound path, looped on the race clock — drawn under the per-frame
     // HAnim transform (props otherwise draw under a static matrix). See
     // re/analysis/formats/track_anim_data.md F2.
+    // [librwrest] drawn through librw (D1-residue follow-up): the model is registered with
+    // its frame hierarchy. FUN_00425b90 @ 0x00425b90 hands RpClumpForAllAtomics' atomics, in
+    // the clump's order (the reverse of the stream order: RW adds each streamed atomic at the
+    // list head), to FUN_004516d0 @ 0x004516d0, which stores the 1st at slot+4 (body), the 2nd
+    // at slot+8 and the 3rd at slot+0xc (the two rotors FUN_00425d50 spins).
     struct CopterModel {
-        std::vector<std::vector<V>>     batches;
-        std::vector<IDirect3DTexture9*> textures;
+        int   rw_model = -1;
+        int   body_frame = -1, rotA_frame = -1, rotB_frame = -1;   // slot+4 / +8 / +0xc frames
+        float rotA_bind[12] = {}, rotB_bind[12] = {};               // their streamed modelling
     };
     std::vector<CopterModel> copter_models_;
     // gameplay=true: bound via KTCSCRIPT.LUA KTC_NewCopter (rule-5 collectible
     // feed, D-11056/U-8997); done=true once it has completed one traversal of
     // its flight path this round (UpdateRace -> OnCollect()).
-    struct AnimCopter { int model = -1; Track::HAnim anim; bool gameplay = false; bool done = false; };
+    // [librwrest] elapsed = slot+0x40 (FUN_00425d50's anim clock), rotA / rotB = the rotor
+    // angles FUN_00425ca0 has added to slot+8 / slot+0xc's frames, degrees.
+    struct AnimCopter { int model = -1; Track::HAnim anim; bool gameplay = false; bool done = false;
+                        float elapsed = 0.f, rotA = 0.f, rotB = 0.f; };
     std::vector<AnimCopter>  copters_;
+    void CopterTick(int units);
     // Parse the copter wiring from the track piz's COURSE.LUA + KTCSCRIPT.LUA,
     // load the bound .ANM paths (track piz) and model DFFs (Common/Perm.piz).
     void LoadCopters(IDirect3DDevice9* dev, Piz::Archive& piz,

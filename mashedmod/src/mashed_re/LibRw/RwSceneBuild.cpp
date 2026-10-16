@@ -828,6 +828,14 @@ void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
         }
         AppendMaterials(geo, mats);
         FinishGeometry(geo);
+        // [librwrest] hierarchy mode: the geometry keeps the sphere the DFF streams (its own
+        // space, like the un-baked vertices), as the RW geometry does
+        if (own_frame && b.sphere[3] > 0.f && geo->numMorphTargets > 0) {
+            geo->morphTargets[0].boundingSphere.center.x = b.sphere[0];
+            geo->morphTargets[0].boundingSphere.center.y = b.sphere[1];
+            geo->morphTargets[0].boundingSphere.center.z = b.sphere[2];
+            geo->morphTargets[0].boundingSphere.radius   = b.sphere[3];
+        }
 
         rw::Atomic* a = nullptr;
         if (own_frame) {   // [librwrest] the atomic's own DFF frame

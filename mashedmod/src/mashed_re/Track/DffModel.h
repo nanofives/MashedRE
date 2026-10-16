@@ -69,6 +69,10 @@ struct DffBatch {
     // stay baked through that frame's chain; RwSceneBuild's hierarchy mode undoes the bake
     // so the atomic hangs off its own frame, as in the RW clump.
     std::int32_t frame = -1;
+    // [librwrest] the owning geometry's streamed bounding sphere (morph target 0: center
+    // xyz in the geometry's own space, radius), what RpAtomicGetWorldBoundingSphere
+    // (0x004e6100) transforms by the atomic's LTM.
+    float sphere[4] = {0.f, 0.f, 0.f, 0.f};
 };
 
 // [librwrest] one FRAMELIST entry (rwID_FRAMELIST struct, 0x38 bytes): RW frame matrix

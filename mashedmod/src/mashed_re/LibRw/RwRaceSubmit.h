@@ -99,6 +99,22 @@ int RaceSubmit_RegisterModel(const Track::DffModel& model,
                              std::size_t nmats = 0,
                              bool hierarchy = false);
 
+// [librwrest] Per hierarchy model, how a copy is drawn (FUN_00425e40 @ 0x00425e40 for the
+// copters): skip the whole copy when the world bounding sphere of the atomic on FRAMELIST frame
+// `cull_frame` lies outside the camera frustum (FUN_004c1b40 @ 0x004c1b40 on
+// RpAtomicGetWorldBoundingSphere @ 0x004e6100; librw Camera::frustumTestSphere ==
+// SPHEREOUTSIDE), otherwise render the atomics on `frames[0..n)` in that order, then any other
+// atomic in clump order. cull_frame -1 = no test; n 0 = clump order.
+void RaceSubmit_SetModelDrawOrder(int handle, const std::int32_t* frames, std::size_t n,
+                                  std::int32_t cull_frame);
+
+// [librwrest] The model draws with the RenderWare D3D9 driver's states (the d1r1 F1 rule,
+// verify/d1r1_20261016/RESULT_d1r1.md section 4): each of its rasters' alpha flag from its texels
+// (FUN_004d2980 / the texel rule RwRasterBridge records), ALPHAFUNC GREATER / ALPHAREF 0 (device
+// init FUN_004d5bc0) and CULLMODE 2 while it draws, restored after. F1 stays opt-in for the
+// world (U-9689 / U-9690); this applies it to one model only.
+void RaceSubmit_SetModelRwStates(int handle);
+
 // [librwrest] One frame's modelling matrix for one instance: FRAMELIST index `frame` of a
 // hierarchy model, rows right/up/at/pos (RwMatrix order, 12 floats). Frames not posed keep
 // the streamed (bind) matrix.

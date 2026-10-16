@@ -45,6 +45,8 @@ extern "C" void __cdecl UtilZeroTable8964c0();                                //
 extern "C" void __cdecl FUN_004c51a0(float* mtx, float* vec, int combineOp);   // RwMatrixTranslate
 extern "C" std::uint32_t __cdecl IsCarSlotActive(int param_1);                 // 0x0040e370
 extern "C" std::uint32_t __cdecl VehicleSlotGetter(std::uint32_t vehicleIdx);   // 0x0046c7b0
+extern "C" void __cdecl SplineCubicBlend3(float t, float* out, float* p0, float* p1, float* p2,
+                                          float* p3);                           // 0x00482ae0
 #include "../Vehicle/VehicleRecordBase.h"
                                     // (MASHED_GATE_RIBBON_AI reverts it to the ribbon scaffold).
                                     // [D3 2026-09-26] the ported TICK Ai_Standalone_Tick runs every
@@ -2311,13 +2313,40 @@ void TrackRenderer::LoadCopters(IDirect3DDevice9* dev, Piz::Archive& piz,
         if (!db) return -1;
         Track::DffModel m;
         if (!m.Parse(db, dl)) return -1;
+        std::snprintf(m.source_name, sizeof(m.source_name), "%s", want);
         CopterModel cm;
-        // WS-E s2: copters are lit atomics (normals + rpGEOMETRYLIGHT) — light
-        // them with the track's directional sun + ambient like the props/cars.
-        const AtomicLight copter_light = rp_light_on_
-            ? MakeAtomicLightF(amb_f_, sun_f_, has_sun_dir_, sun_L_)
-            : MakeAtomicLight(amb_world_, sun_color_, sun_dir_);
-        BuildDffBatches(dev, m, dicts, &cm.batches, &cm.textures, &copter_light);
+        // [librwrest] librw with the frame hierarchy (lit atomics: rpGEOMETRYLIGHT + normals
+        // reach librw's ambient / directional lights, as the original's draws run with
+        // D3DRS_LIGHTING 1, verify/d1r1_20261016 copter draw records).
+        cm.rw_model = LibRw::RaceSubmit_RegisterModel(m, dicts.data(), dicts.size(), amb_world_,
+                                                      nullptr, 0, /*hierarchy=*/true);
+        int natom = 0;
+        for (const auto& b : m.batches) if (b.atomic + 1 > natom) natom = b.atomic + 1;
+        auto atom_frame = [&](int stream_idx) {
+            for (const auto& b : m.batches) if (b.atomic == stream_idx) return b.frame;
+            return -1;
+        };
+        // RW clump order index i = stream atomic natom-1-i (FUN_004516d0 slots i = 0, 1, 2)
+        cm.body_frame = atom_frame(natom - 1);
+        cm.rotA_frame = atom_frame(natom - 2);
+        cm.rotB_frame = atom_frame(natom - 3);
+        auto bind12 = [&](int fi, float* o) {
+            if (fi < 0 || fi >= static_cast<int>(m.frames.size())) return;
+            std::memcpy(o, m.frames[static_cast<std::size_t>(fi)].rot, 9 * sizeof(float));
+            std::memcpy(o + 9, m.frames[static_cast<std::size_t>(fi)].pos, 3 * sizeof(float));
+        };
+        bind12(cm.rotA_frame, cm.rotA_bind);
+        bind12(cm.rotB_frame, cm.rotB_bind);
+        // FUN_00425e40 @ 0x00425e40: frustum test (FUN_004c1b40) on the body (slot+4) atomic's world
+        // sphere, then render slot+4, slot+0xc, slot+8 (d1r1 backtraces: returns 0x00425e78 / 7f / 86)
+        const std::int32_t order[3] = { cm.body_frame, cm.rotB_frame, cm.rotA_frame };
+        LibRw::RaceSubmit_SetModelDrawOrder(cm.rw_model, order, 3, cm.body_frame);
+        // the original's copter draws run with the RW driver's states (d1r1 records: body
+        // AT 0 / AB 0, blades AT 1 / AB 1 by texel alpha, AREF 0, AF 5, CULL 2)
+        LibRw::RaceSubmit_SetModelRwStates(cm.rw_model);
+        if (log) std::fprintf(log, "  [librwrest] copter %s: handle=%d atomics=%d frames body=%d "
+                                   "rotA=%d rotB=%d\n", want, cm.rw_model, natom, cm.body_frame,
+                              cm.rotA_frame, cm.rotB_frame);
         copter_models_.push_back(std::move(cm));
         model_names.emplace_back(want);
         return static_cast<int>(copter_models_.size()) - 1;
@@ -2660,7 +2689,7 @@ int TrackRenderer::RegisterCarModel(IDirect3DDevice9* dev, const char* dff_entry
                                                 nullptr, 0, /*hierarchy=*/true);
     // FUN_0041f3d0 @ 0x0041f3d0: wheel w's atomic is rec[w] (parts 0..3, rec+0x298 == 0) or
     // rec[0x21 + w] (rec+0x298 == 1); it rotates the atomic's frame (atomic+4) and that
-    // frame's parent (frame+4), whose position it restores (0x0041f4a5..0x0041f4d6).
+    // frame's parent (frame+4), whose position it restores.
     // FUN_0041f4f0 @ 0x0041f4f0: part 0x13's atomic frame (rec+0x4c -> +4), position restored.
     for (int k = 0; k < 8; ++k) {
         cm.wheel_frame[k] = cm.hub_frame[k] = -1;
@@ -2827,7 +2856,7 @@ void TrackRenderer::CarParts_FrameTick(int units) {
             const char* wb = r + 0x1a4 + w * 0xc4;    // FUN_0046bd60: 0x00881744 + (v*0x11 + w)*0xc4
             std::int32_t spin;
             std::memcpy(&spin, wb, 4);
-            // FUN_0041f3d0 0x0041f41e..0x0041f43e: fild units; fmul [0x005cc948]; fimul spin;
+            // FUN_0041f3d0 ..0x0041f43e: fild units; fmul [0x005cc948] (0x0041f42e); fimul spin (0x0041f434);
             // fadd [angle]; fst (units >= 0, so no 2^32 fix-up). The race loop runs at x87
             // PC_24, so each step rounds to single precision: float steps here.
             float f = static_cast<float>(units) * k3000;
@@ -2875,13 +2904,13 @@ int BuildCarPoses(const TrackRenderer::CarModel& cm, const TrackRenderer::CarPar
         const int w = k & 3;
         float m[16];
         if (cm.wheel_frame[k] >= 0) {
-            // 0x0041f487: RwFrameRotate(wheel frame, X, rec+0x220+w*4, rwCOMBINEREPLACE)
+            // FUN_0041f3d0: RwFrameRotate(wheel frame, X, rec+0x220+w*4, rwCOMBINEREPLACE)
             RwMatrixRotate(m, kX, cp.ang[w], 0);
             PoseFromRwMatrix(m, cm.wheel_frame[k], &out[n++]);
         }
         if (cm.hub_frame[k] >= 0) {
-            // 0x0041f4b6: RwFrameRotate(parent, Y, FUN_0046bda0(v, w), REPLACE), then
-            // 0x0041f4c3: RwFrameTranslate(parent, its saved position, rwCOMBINEPOSTCONCAT)
+            // FUN_0041f3d0: RwFrameRotate(parent, Y, FUN_0046bda0(v, w), REPLACE), then
+            // RwFrameTranslate(parent, its saved position, rwCOMBINEPOSTCONCAT)
             RwMatrixRotate(m, kY, cp.steer[w], 0);
             float p[3] = { cm.hub_pos[k][0], cm.hub_pos[k][1], cm.hub_pos[k][2] };
             FUN_004c51a0(m, p, 2);
@@ -2889,9 +2918,9 @@ int BuildCarPoses(const TrackRenderer::CarModel& cm, const TrackRenderer::CarPar
         }
     }
     if (cm.body_frame >= 0) {
-        // FUN_0041f4f0: RwFrameRotate(part 0x13 frame, Z, (b.x + a.x) * [0x005cd274] (40), REPLACE)
-        // (0x0041f54f), RwFrameRotate(.., X, (b.z + a.z) * [0x005cd038] (-100), POSTCONCAT)
-        // (0x0041f565), RwFrameTranslate(.., saved position, POSTCONCAT) (0x0041f572)
+        // FUN_0041f4f0: RwFrameRotate(part 0x13 frame, Z, (b.x + a.x) * [0x005cd274] (40), REPLACE),
+        // RwFrameRotate(.., X, (b.z + a.z) * [0x005cd038] (-100), POSTCONCAT),
+        // RwFrameTranslate(.., saved position, POSTCONCAT)
         float m[16];
         RwMatrixRotate(m, kZ, (cp.vb[0] + cp.va[0]) * 40.0f, 0);
         RwMatrixRotate(m, kX, (cp.vb[2] + cp.va[2]) * -100.0f, 2);
@@ -2902,6 +2931,160 @@ int BuildCarPoses(const TrackRenderer::CarModel& cm, const TrackRenderer::CarPar
     return n;
 }
 }  // namespace
+
+namespace {
+// [librwrest] sin by the polynomial FUN_004752f0 / FUN_00546e70 use: a + a^3 * (((((c908 a^2 -
+// c904) a^2 + c900) a^2 - c8fc) a^2 + c8f8) a^2 - c8f4), constants [0x005cc8f4..0x005cc908].
+float AnimSinPoly(float a) {
+    const float a2 = a * a;
+    return a2 * a * (((((1.58969102e-10f * a2 - 2.50507597e-08f) * a2 + 2.75573143e-06f) * a2 -
+                       0.000198412701f) * a2 + 0.00833333377f) * a2 - 0.166666672f) + a;
+}
+// FUN_00546e70 @ 0x00546e70's acos of the (non-negative) quaternion dot: the rational form with
+// the constants at 0x005d8dc4..0x005d8dec (pio2_hi / pio2_lo, pS0..pS5, qS1..qS4).
+float AnimAcos(float x) {
+    auto P = [](float z) {
+        return (((((3.47933092e-05f * z + 0.000791535014f) * z - 0.0400555357f) * z +
+                  0.201212525f) * z - 0.325565815f) * z + 0.166666672f) * z;
+    };
+    auto Q = [](float z) {
+        return (((z * 0.077038154f - 0.68828398f) * z + 2.02094579f) * z - 2.40339494f) * z + 1.0f;
+    };
+    std::uint32_t xb;
+    std::memcpy(&xb, &x, 4);
+    xb &= 0x7fffffffu;
+    if (xb >= 0x3f800000u) return 0.0f;                         // |x| >= 1 (x >= 0 here): 0.0
+    if (xb < 0x3f000000u) {                                     // |x| < 0.5
+        if (xb < 0x23000001u) return 1.5707964f;
+        const float z = x * x;
+        return 1.57079625f - (x - (7.54978942e-08f - P(z) / Q(z) * x));
+    }
+    const float z = (1.0f - x) * 0.5f;                          // x > 0.5
+    const float s = std::sqrt(z);                                // FUN_004c3b30
+    float df = s;
+    std::uint32_t db;
+    std::memcpy(&db, &df, 4);
+    db &= 0xfffff000u;
+    std::memcpy(&df, &db, 4);
+    const float w = (z - df * df) / (df + s) + P(z) / Q(z) * s + df;
+    return w + w;
+}
+
+// FUN_00532a60 @ 0x00532a60: keyframe quaternion (x, y, z, w) and translation -> RwMatrix.
+void AnimKeyMatrix(const Track::HKeyFrame& k, float* m) {
+    const float x = k.q[0], y = k.q[1], z = k.q[2], w = k.q[3];
+    float t;
+    t = z * z + y * y; m[0] = 1.0f - (t + t);
+    t = y * x + w * z; m[1] = t + t;
+    t = z * x - w * y; m[2] = t + t;
+    t = y * x - w * z; m[4] = t + t;
+    t = z * z + x * x; m[5] = 1.0f - (t + t);
+    t = w * x + z * y; m[6] = t + t;
+    t = w * y + z * x; m[8] = t + t;
+    t = z * y - w * x; m[9] = t + t;
+    t = y * y + x * x; m[10] = 1.0f - (t + t);
+    std::uint32_t fl = 3u;                                      // matrix flags = 3
+    std::memcpy(&m[3], &fl, 4);
+    m[7] = m[11] = m[15] = 0.f;
+    m[12] = k.t[0]; m[13] = k.t[1]; m[14] = k.t[2];
+}
+
+// FUN_004752f0 @ 0x004752f0: the HAnim matrix at time t (keyframe search, slerp of the
+// bracketing quaternions with FUN_00546e70's set-up, the cubic position blend of FUN_00482ae0
+// over the neighbouring keys, wrapping to the last / first key at the ends).
+// The race loop runs at x87 PC_24: single-precision steps throughout.
+void CopterAnimMatrix(const Track::HAnim& an, float t, float* m) {
+    const std::vector<Track::HKeyFrame>& F = an.frames;
+    const int n = static_cast<int>(F.size());
+    if (n == 0) { for (int i = 0; i < 16; ++i) m[i] = (i % 5 == 0) ? 1.f : 0.f; return; }
+    if (t <= 0.0f) { AnimKeyMatrix(F[0], m); return; }                // first key
+    if (!(t < an.duration) || n < 2) { AnimKeyMatrix(F[n - 1], m); return; }   // last key
+    int k = 0;
+    while (k + 1 < n - 1 && F[k + 1].time < t) ++k;                   // first k with key k+1 >= t
+    const Track::HKeyFrame& p1 = F[k];
+    const Track::HKeyFrame& p2 = F[k + 1];
+    const Track::HKeyFrame& p0 = (k + 1 < 2) ? F[n - 1] : F[k - 1];
+    const Track::HKeyFrame& p3 = (k + 1 < n - 2) ? F[k + 2] : F[0];
+    const float u = (t - p1.time) / (p2.time - p1.time);
+    // FUN_00546e70: slerp set-up (hemisphere, theta, 1/sin(theta) pre-scale)
+    float a[4] = { p1.q[0], p1.q[1], p1.q[2], p1.q[3] }, b[4];
+    float dot = p1.q[3] * p2.q[3] + p1.q[2] * p2.q[2] + p1.q[0] * p2.q[0] + p1.q[1] * p2.q[1];
+    if (dot >= 0.0f) {
+        if (dot > 1.0f) dot = 1.0f;
+        for (int j = 0; j < 4; ++j) b[j] = p2.q[j];
+    } else {
+        dot = (dot >= -1.0f) ? -dot : 1.0f;
+        for (int j = 0; j < 4; ++j) b[j] = -p2.q[j];
+    }
+    const float theta = AnimAcos(dot);
+    const bool lerp = 0.999989986f <= dot;                            // [0x005e4888]
+    if (!lerp) {
+        const float s = 1.0f / AnimSinPoly(theta);
+        for (int j = 0; j < 4; ++j) { a[j] *= s; b[j] *= s; }
+    }
+    float q[4];
+    if (u > 0.0f) {
+        if (u < 1.0f) {
+            float fa = 1.0f - u, fb = u;
+            if (!lerp) { fa = AnimSinPoly(fa * theta); fb = AnimSinPoly(theta * u); }
+            q[0] = b[0] * fb + a[0] * fa;
+            q[1] = b[1] * fb + a[1] * fa;
+            q[2] = b[2] * fb + a[2] * fa;
+            q[3] = a[3] * fa + b[3] * fb;
+        } else {
+            for (int j = 0; j < 4; ++j) q[j] = p2.q[j];
+        }
+    } else {
+        for (int j = 0; j < 4; ++j) q[j] = p1.q[j];
+    }
+    // FUN_00482ae0 (Vehicle/SplineCubicBlend.cpp, verbatim) on the four keys' translations
+    float pos[3];
+    SplineCubicBlend3(u, pos, const_cast<float*>(p0.t), const_cast<float*>(p1.t),
+                      const_cast<float*>(p2.t), const_cast<float*>(p3.t));
+    // matrix from q scaled by [0x005cc574] (2) / |q|^2, then RwMatrixTranslate (0x004c51a0)(pos,
+    // rwCOMBINEPOSTCONCAT) onto a zero translation
+    const float s = 2.0f / (q[3] * q[3] + q[2] * q[2] + q[0] * q[0] + q[1] * q[1]);
+    const float sx = q[0] * s, sy = s * q[1], sz = s * q[2];
+    m[0] = 1.0f - (q[2] * sz + sy * q[1]);
+    m[1] = q[3] * sz + sy * q[0];
+    m[2] = sx * q[2] - sy * q[3];
+    std::uint32_t fl = 3u;
+    std::memcpy(&m[3], &fl, 4);
+    m[4] = sy * q[0] - q[3] * sz;
+    m[5] = 1.0f - (q[2] * sz + sx * q[0]);
+    m[6] = sz * q[1] + sx * q[3];
+    m[8] = sx * q[2] + sy * q[3];
+    m[9] = sz * q[1] - sx * q[3];
+    m[10] = 1.0f - (sy * q[1] + sx * q[0]);
+    m[7] = m[11] = m[15] = 0.f;
+    m[12] = m[13] = m[14] = 0.f;
+    FUN_004c51a0(m, pos, 2);
+}
+}  // namespace
+
+// [librwrest] FUN_00425d50 @ 0x00425d50, from FUN_0040fc00 (0x0040fcb9) with the frame's
+// units: per copter, slot+0x40 += units * [0x005cc948], less the duration when past it; the
+// two rotors turn by units * [0x005cc9a0] (0.05) and units * [0x005cd054] (-0.05) degrees
+// (FUN_00425ca0 @ 0x00425ca0: about each rotor frame's own up vector, at its own position).
+void TrackRenderer::CopterTick(int units) {
+    std::uint32_t kb = 0x39aec33eu;                     // _DAT_005cc948 (1/3000)
+    float k3000;
+    std::memcpy(&k3000, &kb, sizeof k3000);
+    const float fu = static_cast<float>(units);
+    const float dt = fu * k3000;
+    for (auto& c : copters_) {
+        if (c.anim.frames.empty()) continue;
+        const float e = dt + c.elapsed;
+        c.elapsed = e;
+        if (c.anim.duration < e) c.elapsed = e - c.anim.duration;
+        // accumulated angle; the original post-multiplies the frame matrix every call, which is the
+        // same rotation about the unchanged up axis (kept within +-360 here for float range)
+        c.rotA += fu * 0.0500000007f;
+        c.rotB += fu * -0.0500000007f;
+        if (c.rotA > 360.f) c.rotA -= 360.f;
+        if (c.rotB < -360.f) c.rotB += 360.f;
+    }
+}
 
 bool TrackRenderer::LoadCar(IDirect3DDevice9* dev, const char* piz_path,
                             const char* dff_entry, const char* log_path) {
@@ -3284,6 +3467,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         if (g_aib.loaded && (Ai::I32(Ai::kSplineRaceCnt) > 3))
             Ai::Ai_AdvanceClock(units);                    // FUN_0040fc00 0x0040fc57 / 0x0040fc63
         CarParts_FrameTick(units);                         // [librwrest] FUN_0040fc00 -> 0x0040fc75
+        CopterTick(units);                                 // [librwrest] FUN_0040fc00 -> 0x0040fcb9
         HudSlideBillboardTimerTail();                      // FUN_0040fc00 -> 0x0040fd11
         if (ba8c == 6) {
             countdown_ = 0.f;
@@ -3325,7 +3509,9 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             cam_ticks_ += static_cast<double>(in.dt) * 3000000.0;   // DAT_007f1030 rate
             RaceCamUpdate(cc, false);
         }
-        if (countdown_ > 0.f) return;
+        // [librwrest] the original runs FUN_0040fc00 (so FUN_00425d50's copter clock) in the
+        // pre-race sub-states too; the GO frame ticks once, below
+        if (countdown_ > 0.f) { CopterTick(static_cast<int>(in.dt * 3000.0f + 0.5f)); return; }
     }
 
     float accel = in.accel, steer = in.steer;
@@ -3376,6 +3562,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
     // this frame's physics (0x0040fc9b), so the part inputs are read here, ahead of StepPlayer
     // and the opponents' steps.
     CarParts_FrameTick(static_cast<int>(in.dt * 3000.0f + 0.5f));
+    CopterTick(static_cast<int>(in.dt * 3000.0f + 0.5f));   // FUN_0040fc00 -> FUN_00425d50 (0x0040fcb9)
 
     // WS-A8 (2026-06-17): when MASHED_REAL_PHYSICS is on, drive the player car
     // through the ported chain (A3 init -> A4 control -> A5 -> A6a -> A6b) instead
@@ -6957,36 +7144,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     }
 
     MARK(d_props);   // instanced track props
-    // F2: animated copters — the model DFF under the per-frame HAnim transform
-    // (COURSE.LUA SetCopter / KTCSCRIPT.LUA KTC_NewCopter; flight path = the
-    // bound .ANM). Looped on the race clock t (the .ANM durations are seconds).
-    // MASHED_NO_COPTERS suppresses the pass (A/B verification toggle).
-    static const bool s_copters_off = std::getenv("MASHED_NO_COPTERS") != nullptr;
-    if (!s_copters_off)
-    for (const auto& c : copters_) {
-        if (c.model < 0 || c.model >= static_cast<int>(copter_models_.size()) ||
-            c.anim.frames.empty())
-            continue;
-        float cp[3], cq[4];
-        c.anim.Sample(t, cp, cq);
-        D3DMATRIX cm;
-        QuatPosMatrix(cq, cp, &cm);
-        dev->SetTransform(D3DTS_WORLD, &cm);
-        const CopterModel& m = copter_models_[c.model];
-        for (std::size_t mi = 0; mi < m.batches.size(); ++mi) {
-            const auto& b = m.batches[mi];
-            if (b.empty()) continue;
-            dev->SetTexture(0, m.textures[mi]);
-            if (!m.textures[mi])
-                dev->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG2);
-            DrawBatch(dev, b);
-            ds_tally(b, m.textures[mi]);
-            if (!m.textures[mi])
-                dev->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
-        }
-    }
-    dev->SetTransform(D3DTS_WORLD, &worldm);
-    ds_flush("copters");
+
 
     MARK(d_other);   // copters
     // R5: the cars, submitted through librw. Car slot s is one placed instance of its livery's
@@ -7134,6 +7292,48 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
             ++ai_slot;
         }
         ++gloss_frame_;   // [rtex] DAT_007f101c stand-in, +1 per race frame (0x004111c1)
+    }
+
+    // F2 / [librwrest] animated copters, through librw, after the cars as FUN_00410b30 orders
+    // them (the car loop, then FUN_00425e40 @ 0x00425e40 from 0x00410c08). The clump root takes
+    // FUN_004752f0's matrix at the copter's own clock (FUN_00425d50: FUN_004c1480(clump frame,
+    // matrix, REPLACE)); the rotor frames carry the angles FUN_00425ca0 has added (CopterTick).
+    // The model's draw order and frustum cull are FUN_00425e40's (RaceSubmit_SetModelDrawOrder).
+    // MASHED_NO_COPTERS suppresses the pass (A/B verification toggle).
+    static const bool s_copters_off = std::getenv("MASHED_NO_COPTERS") != nullptr;
+    if (!s_copters_off)
+    for (const auto& c : copters_) {
+        if (c.model < 0 || c.model >= static_cast<int>(copter_models_.size()) ||
+            c.anim.frames.empty())
+            continue;
+        const CopterModel& cm = copter_models_[static_cast<std::size_t>(c.model)];
+        if (cm.rw_model < 0) continue;
+        float rm[16];
+        CopterAnimMatrix(c.anim, c.elapsed, rm);
+        D3DMATRIX cmx;
+        MatIdentity(&cmx);
+        cmx._11 = rm[0];  cmx._12 = rm[1];  cmx._13 = rm[2];
+        cmx._21 = rm[4];  cmx._22 = rm[5];  cmx._23 = rm[6];
+        cmx._31 = rm[8];  cmx._32 = rm[9];  cmx._33 = rm[10];
+        cmx._41 = rm[12]; cmx._42 = rm[13]; cmx._43 = rm[14];
+        LibRw::FramePose poses[2];
+        int np = 0;
+        auto rotor = [&](int frame, const float* bind, float angle) {
+            if (frame < 0) return;
+            // FUN_00425ca0: translate by -pos, rotate about the frame's up vector (frame+0x20),
+            // translate back, each rwCOMBINEPOSTCONCAT
+            float mm[16] = { bind[0], bind[1], bind[2], 0.f, bind[3], bind[4], bind[5], 0.f,
+                             bind[6], bind[7], bind[8], 0.f, 0.f, 0.f, 0.f, 0.f };
+            const float up[3] = { bind[3], bind[4], bind[5] };
+            RwMatrixRotate(mm, up, angle, 2);
+            float p[3] = { bind[9], bind[10], bind[11] };
+            FUN_004c51a0(mm, p, 2);
+            PoseFromRwMatrix(mm, frame, &poses[np++]);
+        };
+        rotor(cm.rotA_frame, cm.rotA_bind, c.rotA);
+        rotor(cm.rotB_frame, cm.rotB_bind, c.rotB);
+        LibRw::RaceSubmit_AddInstancePosed(cm.rw_model, (const float*)&cmx, poses,
+                                           static_cast<std::size_t>(np), -1.f);
     }
 
     dev->SetTexture(0, nullptr);

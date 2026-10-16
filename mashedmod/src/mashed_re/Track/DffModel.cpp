@@ -178,6 +178,7 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len) {
         bool modmat = false;                 // WS-E s2: MODULATEMATERIALCOLOR(0x40)
         std::uint32_t flags = 0;             // geomlight class-scope: raw RW format dword
         std::int32_t part_id = -1;           // [rtex] user data array 0 element 0
+        float sphere[4] = {0.f, 0.f, 0.f, 0.f};  // [librwrest] morph target 0's streamed sphere
     };
     std::vector<Geo> geos;
     std::size_t q = gst.payload + gst.size;
@@ -232,6 +233,8 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len) {
                 geo.tris[static_cast<std::size_t>(i) * 4 + 3] = v2;
             }
             for (std::int32_t mt = 0; mt < nmorph; ++mt) {
+                if (mt == 0)   // [librwrest] RpMorphTarget boundingSphere (center xyz, radius)
+                    for (int k = 0; k < 4; ++k) geo.sphere[k] = r.f32(p + 4u * k);
                 p += 16;  // bounding sphere
                 const std::int32_t hv = r.i32(p), hn = r.i32(p + 4); p += 8;
                 if (hv) {
@@ -369,6 +372,7 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len) {
                 b.geo_flags    = geo.flags;           // geomlight class-scope
                 b.part_id      = geo.part_id;         // [rtex]
                 b.frame        = fi;                  // [librwrest]
+                std::memcpy(b.sphere, geo.sphere, sizeof(b.sphere));   // [librwrest]
                 {
                     const float origin[3] = {0.f, 0.f, 0.f};
                     FrameXform(frames, fi, origin, b.frame_pos);   // [rtex]
