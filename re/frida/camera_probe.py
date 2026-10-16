@@ -58,7 +58,7 @@ function restoreProg(saved){ if(!saved) return;
 // offset DAT_00911ae4 (`mov eax,[0x911ae4]` at 0x004d6ceb, `lea esi,[eax+edx]` at 0x004d6cf0).
 let drawRec=false, drArmed=false, drHooks=[], drEvents=[], drFrames={}, drShotRow=-1;
 let texByPtr={}, d3dName={}, d3dDesc={};
-let carFrames=false, forceTrack=-1, trackFiles=[];
+let carFrames=false, forceTrack=-1, trackFiles=[], btRe=null, drCtx=null;
 const RS_LIST=[7,14,23,15,24,25,27,19,20,22,28,137];   // ZENABLE ZWRITE ZFUNC ATEST AREF AFUNC ABLEND SRC DST CULL FOG LIGHTING
 const TSS_LIST=[[0,1],[0,4],[1,1]];                     // stage0 COLOROP, stage0 ALPHAOP, stage1 COLOROP
 let NF=null;
@@ -172,6 +172,13 @@ function seqTris(rec, pt, pc, pts, fvfpos){
 }
 function bbox(rec, pts, fvfpos){
   const w=rec.w; let mn=[1e30,1e30,1e30], mx=[-1e30,-1e30,-1e30];
+  // [d1r1] vertex alpha: D3DFVF_DIFFUSE (0x40) follows the position (12 XYZ / 16 XYZRHW) and
+  // the normal (0x10, 12 bytes); va = used vertices whose diffuse alpha byte is < 255
+  if (rec.fvf & 0x40) {
+    let off = (fvfpos===4 ? 16 : 12) + ((rec.fvf & 0x10) ? 12 : 0);
+    let va=0; for (const p of pts) { if (p.add(off+3).readU8() < 255) va++; }
+    rec.va=va; rec.vn=pts.length;
+  }
   for (const p of pts) {
     const x=p.readFloat(), y=p.add(4).readFloat(), z=p.add(8).readFloat();
     let q=[x,y,z];
@@ -210,6 +217,15 @@ function recDraw(slot, a){
   if (t1.isNull()) rec.tex1='-';
   else { const nm1=d3dName[t1.toString()]; rec.tex1 = nm1 ? nm1.name : texDesc(t1); comRelease(t1); }
   geomOf(rec, slot, a);
+  // [d1r1] --drawrec-bt REGEX: return-address chain (module-relative to MASHED.exe image base
+  // 0x400000) for draws whose stage-0 texture matches, to cite each category's render site
+  if (btRe && btRe.test(rec.tex) && drCtx) {
+    try { rec.bt = Thread.backtrace(drCtx, Backtracer.ACCURATE).slice(0, 12).map(p => {
+      const m = Process.findModuleByAddress(p);
+      return m && m.name.toLowerCase() === 'mashed.exe' ? '0x' + (p.sub(m.base).toUInt32() + IMG).toString(16)
+                                                      : (m ? m.name + '+0x' + p.sub(m.base).toString(16) : p.toString()); }); }
+    catch(e) { rec.bt = ['err ' + e]; }
+  }
   drEvents.push(rec);
 }
 function arm(){
@@ -220,7 +236,9 @@ function arm(){
     const fn=vt.add(s*4).readPointer();
     drHooks.push(Interceptor.attach(fn,{ onEnter(args){ if(!drArmed) return;
       const a=[]; for(let i=0;i<nargs[s];i++) a.push(i===0? args[0] : args[i].toUInt32()); a[0]=args[0];
-      try { recDraw(s,a); } catch(e) { drEvents.push({e:'err', k:s, m:''+e}); } }}));
+      drCtx=this.context;
+      try { recDraw(s,a); } catch(e) { drEvents.push({e:'err', k:s, m:''+e}); }
+      drCtx=null; }}));
   }
   drHooks.push(Interceptor.attach(vt.add(17*4).readPointer(),{ onEnter(){ if(!drArmed) return;
     drEvents.push({e:'P', t:Date.now()});
@@ -245,11 +263,12 @@ function rd(p,n){ const o=[]; for(let i=0;i<n;i++) o.push(p.add(i*4).readFloat()
 // RwMatrix rows right/up/at/pos at +0x00/+0x10/+0x20/+0x30 -> 12 floats (flags/pads dropped)
 function mat12(p){ const m=rd(p,16); return [m[0],m[1],m[2],m[4],m[5],m[6],m[8],m[9],m[10],m[12],m[13],m[14]]; }
 rpc.exports={
-  config:function(fm, mr, shots, rq, sd, rel, fp, dr, cf, tr){ frameMode=!!fm; maxRows=mr; shotRows={};
+  config:function(fm, mr, shots, rq, sd, rel, fp, dr, cf, tr, bt){ frameMode=!!fm; maxRows=mr; shotRows={};
     for (const k of shots) shotRows[k]=1; reqPath=rq; shotDir=sd;
     relShots={}; for (const k of (rel||[])) relShots[k]=1; raceStart=-1;
     forceProg=(fp===undefined||fp===null)?-1:fp;
-    drawRec=!!dr; carFrames=!!cf; forceTrack=(tr===undefined||tr===null)?-1:tr; return 1; },
+    drawRec=!!dr; carFrames=!!cf; forceTrack=(tr===undefined||tr===null)?-1:tr;
+    btRe = bt ? new RegExp(bt, 'i') : null; return 1; },
   // [camribbon] engine track index (scenario_launch.py --track: 0=Training .. 12=City). Writing
   // the menu globals mid-menu stalled the Quick Battle confirm (the race never loaded), so the
   // override is applied at the load itself: onEnter of FUN_0040d440 (Course::LoadCurrent, which
@@ -260,6 +279,14 @@ rpc.exports={
     return 1; },
   tracelen:function(){ return trace.length; },
   getdraws:function(){ return JSON.stringify(drFrames); },
+  // [d1r1] per named texture: the D3D9 raster extension's alpha byte (ext+8, the flag
+  // FUN_004d6ce0 tests at 0x004d6d06 to switch ALPHABLEND/ALPHATEST for stage 0), and the
+  // raster's width/height/depth (+0xc/+0x10/+0x14) and cFormat byte (+0x23)
+  texalpha:function(){ const ext=abs(0x00911ae4).readU32(); const out={};
+    for (const k in texByPtr) { try { const r=ptr(k).readPointer(); if (r.isNull()) continue;
+      const nm=texByPtr[k];
+      out[nm]=[r.add(ext+8).readU8(), r.add(0xc).readS32(), r.add(0x10).readS32(), r.add(0x14).readS32(), r.add(0x23).readU8()];
+    } catch(e) {} } return JSON.stringify(out); },
   trackfiles:function(){ return JSON.stringify(trackFiles); },
   texcount:function(){ return Object.keys(texByPtr).length; },
   init:function(){ const m=Process.findModuleByName('MASHED.exe')||Process.enumerateModules()[0];
@@ -509,6 +536,9 @@ def main():
     ap.add_argument("--carframes", action="store_true",
                     help="[d1r1] per-row car render-root matrices (R{i}_* modelling, "
                          "Q{i}_* LTM, F{i}_* the renderable's own frame LTM, S{i} root==frame)")
+    ap.add_argument("--drawrec-bt", default="",
+                    help="[d1r1] regex on stage-0 texture names: record a return-address "
+                         "backtrace (MASHED.exe VAs) for each matching draw")
     args = ap.parse_args()
     out_csv, out_static = Path(args.out), Path(args.static_out)
     shots = [int(s) for s in args.shots.split(",") if s.strip()]
@@ -534,7 +564,7 @@ def main():
     scr.exports_sync.config(args.frame, args.rows, shots, str(req) if (shots or rel) else "",
                             str(out_csv.parent.resolve()), rel,
                             args.force_prog if args.force_prog >= 0 else -1,
-                            args.drawrec, args.carframes, args.track)
+                            args.drawrec, args.carframes, args.track, args.drawrec_bt)
     dev.resume(pid)
     E = scr.exports_sync
 
@@ -709,6 +739,8 @@ def main():
     tf = json.loads(E.trackfiles())
     print(f"[d1r1] track piz opened: {tf}  (forced index {args.track})  textures named: {E.texcount()}")
     (out_csv.parent / (out_csv.stem + ".tracks.json")).write_text(json.dumps(tf))
+    if args.drawrec:
+        (out_csv.parent / (out_csv.stem + ".texalpha.json")).write_text(E.texalpha())
     if args.drawrec:
         frames = json.loads(E.getdraws())
         for k, ev in sorted(frames.items(), key=lambda kv: int(kv[0])):

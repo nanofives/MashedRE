@@ -1,0 +1,185 @@
+// FUN_004492b0 @ 0x004492b0  size=379  (MASHED.exe)
+// NOTE: 0x0044937d is not a function entry; showing containing function
+// undefined FUN_004492b0(void)
+
+/* [C2 2026-06-03] NO function object in pool1 (`function_at` null); instruction stream present from
+   0x004492b0 to RET at 0x0044942a (read… */
+
+void FUN_004492b0(int param_1)
+
+{
+  int iVar1;
+  undefined4 uVar2;
+  undefined4 uStack_4;
+  
+  uStack_4 = 0xff605850;
+  iVar1 = FUN_004671a0(0);
+  uVar2 = FUN_004840d0(0,iVar1 + 0x68);
+  FUN_004c1c80(uVar2);
+  FUN_00451060(0);
+  uVar2 = FUN_004840d0(0,&uStack_4,1);
+  FUN_004c1bb0(uVar2);
+  uVar2 = FUN_004840d0(0);
+  uVar2 = FUN_00426060(uVar2);
+  FUN_004e4320(uVar2);
+  FUN_004491e0(param_1);
+  uVar2 = FUN_004840d0(0);
+  iVar1 = FUN_004c1a00(uVar2);
+  if (iVar1 != 0) {
+    (**(code **)(DAT_007d3ff8 + 0x20))(0xc,0);
+    (**(code **)(DAT_007d3ff8 + 0x20))(10,5);
+    (**(code **)(DAT_007d3ff8 + 0x20))(0xb,6);
+    (**(code **)(DAT_007d3ff8 + 0x20))(6,0);
+    (**(code **)(DAT_007d3ff8 + 0x20))(8,0);
+    if (*(int *)(param_1 + 0x100f0) != 0) {
+      FUN_004e6680(*(int *)(param_1 + 0x100f0));
+    }
+    SkySecondaryDispatch();
+    (**(code **)(DAT_007d3ff8 + 0x20))(0x14,2);
+    FUN_004e6680(*(undefined4 *)(param_1 + 0x10130));
+    (**(code **)(DAT_007d3ff8 + 0x20))(0x14,1);
+    (**(code **)(DAT_007d3ff8 + 0x20))(10,5);
+    (**(code **)(DAT_007d3ff8 + 0x20))(0xb,6);
+    (**(code **)(DAT_007d3ff8 + 0x20))(0xc,0);
+    (**(code **)(DAT_007d3ff8 + 0x20))(6,1);
+    (**(code **)(DAT_007d3ff8 + 0x20))(8,1);
+    uVar2 = FUN_004840d0(0);
+    FUN_004c19f0(uVar2);
+  }
+  uVar2 = FUN_004840d0(0);
+  uVar2 = FUN_00426060(uVar2);
+  FUN_004e4350(uVar2);
+  return;
+}
+
+
+
+// FUN_0041ebb0 @ 0x0041ebb0  size=76  (MASHED.exe)
+// NOTE: 0x0041ebdf is not a function entry; showing containing function
+// undefined FUN_0041ebb0(void)
+
+/* [C2 2026-05-12] Sequence of 6 calls, in order: */
+
+void FUN_0041ebb0(void)
+
+{
+  FUN_00476df0(DAT_0063e49c);
+  FUN_00476df0(DAT_0063e4a0);
+  (**(code **)(DAT_007d3ff8 + 0x20))(8,0);
+  FUN_004770a0(DAT_0063e4a0);
+  FUN_004770a0(DAT_0063e49c);
+  (**(code **)(DAT_007d3ff8 + 0x20))(8,1);
+  return;
+}
+
+
+
+// FUN_00458b10 @ 0x00458b10  size=219  (MASHED.exe)
+// NOTE: 0x00458b3f is not a function entry; showing containing function
+// undefined FUN_00458b10(void)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C2 2026-06-03] `void FUN_00458b10(void)` — body 0x00458b10..0x00458bea. Pickup-pool
+   **post-frame proximity submit + render-state… */
+
+void FUN_00458b10(void)
+
+{
+  int iVar1;
+  float fVar2;
+  float fVar3;
+  float fVar4;
+  float *pfVar5;
+  int iVar6;
+  
+  iVar6 = DAT_0068b9a8;
+  iVar1 = *(int *)(*DAT_007d3ff8 + 4);
+  (*(code *)DAT_007d3ff8[8])(8,0);
+  (*(code *)DAT_007d3ff8[8])(6,1);
+  FUN_004770a0(&DAT_0068b968);
+  (*(code *)DAT_007d3ff8[8])(8,1);
+  (*(code *)DAT_007d3ff8[8])(6,1);
+  if (iVar6 != 0) {
+    pfVar5 = (float *)(&DAT_0068b1d0 + iVar6 * 0x50);
+    do {
+      if (pfVar5[-0x1a] == 1.4013e-45) {
+        fVar2 = pfVar5[-0x14] - *(float *)(iVar1 + 0x40);
+        fVar4 = pfVar5[-0x13] - *(float *)(iVar1 + 0x44);
+        fVar3 = pfVar5[-0x12] - *(float *)(iVar1 + 0x48);
+        if ((DAT_005d757c <
+             *(float *)(iVar1 + 0x38) * fVar3 +
+             fVar2 * *(float *)(iVar1 + 0x30) + *(float *)(iVar1 + 0x34) * fVar4) &&
+           (fVar3 * fVar3 + fVar2 * fVar2 + fVar4 * fVar4 < _DAT_005ce5d4)) {
+          FUN_004e6680(pfVar5[-0x22]);
+        }
+      }
+      iVar6 = iVar6 + -1;
+      pfVar5 = pfVar5 + -0x14;
+    } while (iVar6 != 0);
+  }
+  return;
+}
+
+
+
+// FUN_004721e0 @ 0x004721e0  size=256  (MASHED.exe)
+// NOTE: 0x004722c7 is not a function entry; showing containing function
+// undefined FUN_004721e0(void)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+int FUN_004721e0(int param_1)
+
+{
+  float *pfVar1;
+  int iVar2;
+  int iVar3;
+  float fVar4;
+  float fVar5;
+  float fVar6;
+  float *pfVar7;
+  float10 fVar8;
+  float fStack_c;
+  float fStack_8;
+  float fStack_4;
+  
+  iVar2 = *DAT_007d3ff8;
+  pfVar7 = (float *)RpAtomicGetWorldBoundingSphere(param_1);
+  pfVar1 = (float *)(DAT_0086ecd4 + param_1);
+  if (*pfVar1 == -1.0) {
+    if ((*(byte *)(param_1 + 0x4c) & 2) != 0) {
+      FUN_004e5fc0(param_1);
+    }
+    fVar8 = (float10)FUN_004c3b30(0x37826136);
+    fVar8 = (float10)*(float *)(param_1 + 0x28) / fVar8;
+    *pfVar1 = (float)(fVar8 * fVar8);
+  }
+  iVar3 = *(int *)(iVar2 + 4);
+  fVar4 = *(float *)(iVar3 + 0x40) - *pfVar7;
+  fVar6 = *(float *)(iVar3 + 0x44) - pfVar7[1];
+  fVar5 = *(float *)(iVar3 + 0x48) - pfVar7[2];
+  fStack_c = (fVar5 * fVar5 + fVar4 * fVar4 + fVar6 * fVar6) * *(float *)(iVar2 + 0x68);
+  if (pfVar1[2] != 0.0) {
+    FUN_004e68a0(param_1,*(undefined4 *)((int)pfVar1[2] + 0x18),1);
+    (*DAT_0086ecd0)(param_1);
+    return param_1;
+  }
+  if (fStack_c < *pfVar1) {
+    if (pfVar1[1] != 0.0) {
+      fStack_4 = *pfVar1 * _DAT_005cc32c;
+      fStack_8 = *pfVar1;
+      FUN_004721b0(param_1,&fStack_c);
+    }
+    (*DAT_0086ecd0)(param_1);
+    return param_1;
+  }
+  return param_1;
+}
+
+
+
+// 0x0041dad0: ERROR no function at or containing 0x0041dad0
+//   block: .text r-x
+//   at: instruction (disassembled, but not inside any function)
+//   bytes: 83 c4 08 d9 46 2c d8 1d 38 d2 5c 00 df e0 f6 c4
+//   xrefs: (none)

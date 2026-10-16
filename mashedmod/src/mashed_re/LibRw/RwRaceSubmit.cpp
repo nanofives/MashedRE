@@ -550,6 +550,31 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
         rw::SetRenderState(rw::FOGENABLE, 0);
     }
 
+    // ---- [d1r1 fix F1b] the original driver's alpha-test and cull state ------
+    // librw initialises ALPHAFUNC GREATEREQUAL / ALPHAREF 10 / CULLMODE NONE
+    // (d3ddevice.cpp:1787-1800). RenderWare 3.7's D3D9 driver in MASHED.exe programs, at
+    // device-state init FUN_004d5bc0: ALPHAFUNC 5 = D3DCMP_GREATER (`mov edx,5` 0x004d60ec,
+    // `push edx; push 0x19` 0x004d6102/0x004d6103 -- FUN_004d5480 touches only EAX/ECX, so
+    // EDX still holds 5), ALPHAREF 0 (`xor esi,esi` 0x004d611a, `push esi; push 0x18`
+    // 0x004d6122/0x004d6123), CULLMODE 2 = D3DCULL_CW (`push 2; push 0x16`
+    // 0x004d6157/0x004d6159, cached in DAT_007d6b18 = RW cull mode 2, CULLBACK, which
+    // FUN_004d7c10 maps 1:1 through 0x005d8d18). Measured on the original's in-race draws
+    // (verify/d1r1_20261016): every blended draw ALPHAREF 0 / ALPHAFUNC 5, the world and car
+    // bodies CULLMODE 2 (the world pass FUN_004492b0 sets RW cull 2 before rendering it).
+    // OPT-IN, default OFF: MASHED_LIBRW_RWSTATES=1, together with the raster alpha flag in
+    // RwRasterBridge.cpp; held OFF for the reason given there (PREREG_d1r1.md section 4).
+    {
+        static const bool s_rwstates = [] {
+            const char* e = std::getenv("MASHED_LIBRW_RWSTATES");
+            return e && e[0] == '1' && e[1] == '\0';
+        }();
+        if (s_rwstates) {
+            rw::SetRenderState(rw::ALPHATESTFUNC, rw::ALPHAGREATER);
+            rw::SetRenderState(rw::ALPHATESTREF, 0);
+            rw::SetRenderState(rw::CULLMODE, rw::CULLBACK);
+        }
+    }
+
     // ---- lights: float-precision values TrackRenderer already parsed --------
     // [DELTA I4-light] The static world carries baked prelight and NO vertex
     // normals (TrackRenderer's own note at the amb_world_ declaration), so the

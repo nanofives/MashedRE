@@ -194,7 +194,8 @@ static uint32 stencilFuncMap[] = {
 static uint32 alphafuncMap[] = {
 	D3DCMP_ALWAYS,
 	D3DCMP_GREATEREQUAL,
-	D3DCMP_LESS
+	D3DCMP_LESS,
+	D3DCMP_GREATER		// [mashed d1r1] ALPHAGREATER, see rwrender.h
 };
 
 static uint32 cullmodeMap[] = {

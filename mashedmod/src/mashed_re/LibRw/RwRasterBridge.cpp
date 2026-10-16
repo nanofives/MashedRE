@@ -104,6 +104,7 @@ void* RasterFromTxdTexture(const Txd::Texture& tex) {
     // raster->pixels = lr.pBits and raster->stride = lr.Pitch), so for C8888 ==
     // D3DFMT_A8R8G8B8 we must write ARGB dwords, i.e. B,G,R,A byte order.
     // ras->stride is the destination pitch and is NOT width*4 in general.
+    unsigned amin = 255;   // [d1r1] lowest alpha the base mip uses (raster alpha flag below)
     for (std::int32_t y = 0; y < h; ++y) {
         std::uint32_t* out = reinterpret_cast<std::uint32_t*>(
             dst + static_cast<std::size_t>(y) * ras->stride);
@@ -119,9 +120,38 @@ void* RasterFromTxdTexture(const Txd::Texture& tex) {
                      (static_cast<std::uint32_t>(c.r) << 16) |
                      (static_cast<std::uint32_t>(c.g) << 8) |
                       static_cast<std::uint32_t>(c.b);
+            if (c.a < amin) amin = c.a;
         }
     }
     ras->unlock(0);
+
+    // [d1r1 2026-10-16, D1-residue R1, fix F1a] The raster's alpha flag decides, on stage 0,
+    // whether the draw blends and alpha-tests (librw d3ddevice.cpp:465-492 couples the two
+    // exactly as the original's FUN_004d6ce0 does from raster-ext +8 at 0x004d6d06, and
+    // FUN_004d7100 from vertex alpha). The original sets that byte from the raster FORMAT
+    // (FUN_004d2980: ext+8 = DAT_005d8bf5[(fmt & 0xf) * 8]), and its TXD reader FUN_0054f8d0
+    // lets FUN_004d5340 pick the format from the image before RwRasterCreate (FUN_004c77c0):
+    // measured live on TRAINING/Arctic/City, all 678 named rasters are 16-bit, 565 (flag 0)
+    // for 316 and 4444/1555 (flag 1) for 362, and the flag equals "a texel of the base mip
+    // has alpha < 255" on every texture (verify/d1r1_20261016/texalpha_rule.py; the two
+    // apparent misses are same-name textures in other pizzes). This bridge creates every
+    // raster C8888, so librw marks ALL of them alpha and every textured race draw blends and
+    // alpha-tests. OPT-IN, default OFF: MASHED_LIBRW_RWSTATES=1 (with RwRaceSubmit.cpp's
+    // alpha-test/cull half). Held OFF by PREREG_d1r1.md section 4 rules 1-2: on Arctic it
+    // unmasks two original behaviours the port does not have yet -- one world sector's
+    // opaque-textured meshes blend without vertex alpha of their own [UNCERTAIN U-9689], and
+    // the weather pass's direct CULLMODE=1 at 0x0049a084 [U-9690] -- so rows that matched by
+    // accident stop matching (verify/d1r1_20261016/RESULT_d1r1.md section 4).
+    // [UNCERTAIN U-9688] FUN_004d5340's own alpha predicate is not decompiled; pixel scan and
+    // palette scan agree on every shipped texture, so the choice cannot change a draw here.
+    {
+        static const bool s_rwstates = [] {
+            const char* e = std::getenv("MASHED_LIBRW_RWSTATES");
+            return e && e[0] == '1' && e[1] == '\0';
+        }();
+        if (s_rwstates && ras->platform == rw::PLATFORM_D3D9)
+            GETD3DRASTEREXT(ras)->hasAlpha = (amin < 255);   // macro: rwd3d.h:307
+    }
 
     // MIP-FIX: box-filter level 0 down the allocated mip chain. lock/unlock are
     // self-contained (rasterUnlock restores width/height/stride), so each level

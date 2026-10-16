@@ -279,7 +279,8 @@ def desc(d):
 def apply_cites(rows, cites):
     for r in rows:
         for c in cites:
-            if c.get("kind", "*") not in ("*", r["kind"]):
+            k = c.get("kind", "*")
+            if k != "*" and r["kind"] not in (k if isinstance(k, list) else [k]):
                 continue
             if not re.search(c.get("tex", ".*"), r["tex"], re.I):
                 continue

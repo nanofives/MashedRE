@@ -12,6 +12,7 @@
 #include <windows.h>
 #include <d3d9.h>
 
+#include <algorithm>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
@@ -158,11 +159,29 @@ void Geometry(IDirect3DDevice9* dev, int slot, const Call& c, const float* w, DW
         stride = c.up_stride;
     }
     auto P = [&](UINT v) { return reinterpret_cast<const float*>(vbase + static_cast<std::size_t>(v + base) * stride); };
+    // [d1r1] vertex alpha, as camera_probe.py's bbox(): D3DCOLOR offset from the FVF, or from
+    // the bound declaration's stream-0 COLOR0 element (librw's shader path)
+    int coff = -1;
+    if (fvf & D3DFVF_DIFFUSE) {
+        coff = (screen ? 16 : 12) + ((fvf & D3DFVF_NORMAL) ? 12 : 0);
+    } else if (fvf == 0) {
+        IDirect3DVertexDeclaration9* decl = nullptr;
+        dev->GetVertexDeclaration(&decl);
+        if (decl) {
+            D3DVERTEXELEMENT9 el[MAXD3DDECLLENGTH + 1]; UINT ne = MAXD3DDECLLENGTH + 1;
+            if (SUCCEEDED(decl->GetDeclaration(el, &ne)))
+                for (UINT i = 0; i < ne && el[i].Stream != 0xFF; ++i)
+                    if (el[i].Stream == 0 && el[i].Usage == D3DDECLUSAGE_COLOR &&
+                        el[i].UsageIndex == 0 && el[i].Type == D3DDECLTYPE_D3DCOLOR)
+                        coff = el[i].Offset;
+            decl->Release();
+        }
+    }
     std::vector<UINT> t3;
     Tris(c.pt, idx, c.pc, t3);
     int tri = 0;
     float mn[3] = {1e30f, 1e30f, 1e30f}, mx[3] = {-1e30f, -1e30f, -1e30f};
-    std::vector<char> seen;
+    std::vector<UINT> used;
     for (std::size_t k = 0; k + 2 < t3.size(); k += 3) {
         const UINT a = t3[k], b = t3[k + 1], cc = t3[k + 2];
         bool degen;
@@ -175,6 +194,7 @@ void Geometry(IDirect3DDevice9* dev, int slot, const Call& c, const float* w, DW
         }
         if (degen) continue;
         ++tri;
+        used.push_back(a); used.push_back(b); used.push_back(cc);
         for (UINT v : {a, b, cc}) {
             const float* q = P(v);
             float o[3] = {q[0], q[1], q[2]};
@@ -185,6 +205,14 @@ void Geometry(IDirect3DDevice9* dev, int slot, const Call& c, const float* w, DW
             }
             for (int i = 0; i < 3; ++i) { if (o[i] < mn[i]) mn[i] = o[i]; if (o[i] > mx[i]) mx[i] = o[i]; }
         }
+    }
+    if (coff >= 0 && !used.empty()) {
+        std::sort(used.begin(), used.end());
+        used.erase(std::unique(used.begin(), used.end()), used.end());
+        int va = 0;
+        for (UINT v : used)
+            if (vbase[static_cast<std::size_t>(v + base) * stride + coff + 3] < 255) ++va;
+        r += ",\"va\":" + std::to_string(va) + ",\"vn\":" + std::to_string(used.size());
     }
     if (vb) { vb->Unlock(); vb->Release(); }
     r += ",\"tri\":" + std::to_string(tri);

@@ -44,7 +44,10 @@ enum AlphaTestFunc
 {
 	ALPHAALWAYS,
 	ALPHAGREATEREQUAL,
-	ALPHALESS
+	ALPHALESS,
+	// [mashed d1r1] D3DCMP_GREATER, what RenderWare 3.7's D3D9 driver programs in MASHED.exe
+	// (FUN_004d5bc0: `mov edx,5` 0x004d60ec, `push edx; push 0x19` 0x004d6102). d3d only.
+	ALPHAGREATER
 };
 
 enum StencilOp

@@ -3,3 +3,8 @@
     base_default.step.csv  lines=21403  sha8=991a5fff
     base_default.gates.csv  lines=54713  sha8=be0d47ea
     base_default.ptrace.log  lines=27356  sha8=bc75b405
+final_default (log/d1r1/mashed_re_final.exe, sha256 prefix 7700DF7FEF26):
+=== final_default  exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\d1r1\mashed_re_final.exe  knobs=[] ===
+    final_default.step.csv  lines=21403  sha8=991a5fff
+    final_default.gates.csv  lines=54713  sha8=be0d47ea
+    final_default.ptrace.log  lines=27356  sha8=bc75b405
