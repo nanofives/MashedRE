@@ -1563,6 +1563,53 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
 
         Frustum fr{};
         if (walk || g_objwalk.ok) MakeFrustum(&fr);
+        // [rhooks U-9713] the hook slot's own render states for a copy, restored after it
+        // (RaceSubmit_AddInstanceStates); covers the plain and the clump-render paths below
+        struct HookStates {
+            bool cull = false, zw = false;
+            rw::uint32 cm = 0, zwv = 0;
+            explicit HookStates(const Inst& i) {
+                if (i.cull > 0) {
+                    cull = true; cm = rw::GetRenderState(rw::CULLMODE);
+                    rw::SetRenderState(rw::CULLMODE, (rw::uint32)i.cull);
+                }
+                if (i.zwrite >= 0) {
+                    zw = true; zwv = rw::GetRenderState(rw::ZWRITEENABLE);
+                    rw::SetRenderState(rw::ZWRITEENABLE, (rw::uint32)i.zwrite);
+                }
+            }
+            ~HookStates() {
+                if (zw) rw::SetRenderState(rw::ZWRITEENABLE, zwv);
+                if (cull) rw::SetRenderState(rw::CULLMODE, cm);
+            }
+        };
+        // [rres] kInstPreWorld: SuperG's slot 4 FUN_00451090 draws clump 1 (Reflections.dff, RpClumpRender of
+        // `*(course + 0x10114)`) between its reflection camera's update calls FUN_004c1a00 / FUN_004c19f0, which is
+        // the first thing in the recorded frame, ahead of FUN_004270f0's screen rectangle (0x004271e8) and the
+        // world. The same plain per-atomic draw as the after-world clumps, ahead of the walk, with the cull state
+        // the hook entry carries.
+        const bool pre_world_on = walk || ClumpOrderOn();
+        if (pre_world_on) {
+            for (std::size_t ii = 0; ii < g_insts.size(); ++ii) {
+                const Inst& in = g_insts[ii];
+                if (in.kind != kInstPreWorld) continue;
+                if (in.model < 0 || (std::size_t)in.model >= g_models.size() || !g_models[(std::size_t)in.model]) continue;
+                HookStates hook_states(in);
+                const ModelRw& mr = g_model_rw[(std::size_t)in.model];
+                const std::size_t nd = mr.by_dff.size();
+                const bool rw_order = ClumpOrderOn();
+                for (std::size_t j = 0; j < nd; ++j) {
+                    const std::size_t d = rw_order ? nd - 1 - j : j;
+                    if (walk && d < mr.spheres.size()) {
+                        float cc[3], rr;
+                        WorldSphere(in, mr.spheres[d], cc, &rr);
+                        if (!DistanceKeeps(fr, cc, mr.spheres[d].r_obj)) continue;
+                    }
+                    RenderDffAtomic((int)ii, d);
+                }
+                ++g_inst_drawn;
+            }
+        }
         if (walk) RenderWalkPass(g_walk, kInstInWorld, fr, sticky, true);
         bool car_seen = false;
         bool fx_done = false;
@@ -1590,26 +1637,8 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
             rw::Clump* c = g_models[(std::size_t)in.model];
             if (!c) continue;
             if (walk && in.kind == kInstInWorld) continue;   // drawn by the sector walk
-            // [rhooks U-9713] the hook slot's own render states for this copy, restored after it
-            // (RaceSubmit_AddInstanceStates); covers the plain and the clump-render paths below
-            struct HookStates {
-                bool cull = false, zw = false;
-                rw::uint32 cm = 0, zwv = 0;
-                explicit HookStates(const Inst& i) {
-                    if (i.cull > 0) {
-                        cull = true; cm = rw::GetRenderState(rw::CULLMODE);
-                        rw::SetRenderState(rw::CULLMODE, (rw::uint32)i.cull);
-                    }
-                    if (i.zwrite >= 0) {
-                        zw = true; zwv = rw::GetRenderState(rw::ZWRITEENABLE);
-                        rw::SetRenderState(rw::ZWRITEENABLE, (rw::uint32)i.zwrite);
-                    }
-                }
-                ~HookStates() {
-                    if (zw) rw::SetRenderState(rw::ZWRITEENABLE, zwv);
-                    if (cull) rw::SetRenderState(rw::CULLMODE, cm);
-                }
-            } hook_states(in);
+            if (pre_world_on && in.kind == kInstPreWorld) continue;   // [rres] drawn ahead of the walk
+            HookStates hook_states(in);
             if (in.kind == kInstCar && !car_seen) {
                 car_seen = true;
                 // [rstates] F4 / U-9690: on RainEnable tracks FUN_004270f0 runs the line

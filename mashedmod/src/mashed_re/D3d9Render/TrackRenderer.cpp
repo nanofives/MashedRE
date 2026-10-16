@@ -2671,6 +2671,23 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                         p.hook_cull = hook->draws[hook_order].cull;
                         p.hook_zwrite = hook->draws[hook_order].zwrite;
                     }
+                    // [rres U-9733] SuperG, record "superg" slot 4 FUN_00451090: clump 1 (Reflections.dff, excluded
+                    // from the world) is RpClumpRender'ed (`*(course + 0x10114)`) between its reflection camera's
+                    // update calls FUN_004c1a00 / FUN_004c19f0, the first draws of the recorded frame (81 draws, ahead
+                    // of FUN_004270f0's screen rectangle) and under the cull state the previous frame's HUD pass left
+                    // (CULL NONE). The standalone draws it into the main target ahead of the world with CULL NONE.
+                    // [UNCERTAIN U-9733] the reflection render target itself (FUN_00484000(0,0x100,0x100,0x600)) and
+                    // its consumers are not ported. MASHED_SUPERG_REFLECT_FIRST=0 keeps the after-world draw.
+                    {
+                        static const bool s_superg_refl_first = [] {
+                            const char* e = std::getenv("MASHED_SUPERG_REFLECT_FIRST");
+                            return !(e && e[0] == '0' && e[1] == '\0');
+                        }();
+                        if (s_superg_refl_first && course_id_ == 25 && c.idx == 1 && excluded[c.idx]) {
+                            p.rw_kind = LibRw::kInstPreWorld;
+                            p.hook_cull = 1;   // rwCULLMODECULLNONE
+                        }
+                    }
                     if (!s_no_sea_tile && course_id_ == 0 && c.idx == 2) {
                         // The 25 tiles are drawn by Arctic slot 2 (0x00449030,
                         // RpClumpRender per tile) after the world, not by the world pass.
@@ -8923,7 +8940,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
             // against the PREVIOUS frame's camera, like the env coefficient above: on the 39 frames of the 13 tracks
             // (verify/rres_20261016) it removes the Neustein 1169 car whose d2 = 148.7 (previous eye) / 142.9 (this eye) and
             // so the AdvantageSmall / Glass / shadow-texture rows of the wrong state, and adds no row anywhere.
-            // [UNCERTAIN U-9731] where the director reads the camera is not decoded; MASHED_CAR_LOD_EYE=last restores the
+            // [UNCERTAIN U-9732] where the director reads the camera is not decoded; MASHED_CAR_LOD_EYE=last restores the
             // earlier rule (this frame's eye).
             static const bool s_lod_prev = [] { const char* e = std::getenv("MASHED_CAR_LOD_EYE");
                                                 return !(e && e[0] == 'l'); }();
