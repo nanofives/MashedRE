@@ -174,3 +174,16 @@ Changes, all made before any adjudication run:
    must show car-body MOVED rows that the matched pair does not have.
 
 Gates I-COVER, I-FRAME, I-NAME, I-SYNC, I-N0, I-SELF and the §3/§4 rules are unchanged.
+
+### Amendment 2 (2026-10-16 ~04:20, after the baseline diff, before any fix)
+
+The first adjudication pass (`log/d1r1/orig_*/diff0_*.json`, raw records unchanged) surfaced two
+instrument problems, both of which make the differ stricter or correct, not looser:
+1. **I-SELF failed by one row** (orig-vs-orig, TRAINING): the frame's one line-list draw (`pt=2`,
+   20 lines through DrawPrimitiveUP) has no triangles, hence no AABB, and could not match itself.
+   Non-triangle draws now key on (texture, primitive type, primitive count). I-SELF re-run: GREEN
+   on all 9 original frames.
+2. **FOG becomes a row**, not info: every matched world/car draw has FOGENABLE 1 on the original
+   and 0 on the standalone. That is a visual difference, so it is a row (kind FOG, one per A/B
+   value pair per frame) that must be fixed or cited like any other.
+All verdicts reported in RESULT come from the amended differ.

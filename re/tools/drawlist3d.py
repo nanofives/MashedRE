@@ -22,6 +22,8 @@
 #   MISSING  triangles of a texture the original draws and the standalone does not
 #   EXTRA    triangles of a texture the standalone draws and the original does not
 #   ORDER    a blended matched draw's order against other matched draws differs
+#   FOG      matched draws whose FOGENABLE differs (one row per A/B value pair)
+# Non-triangle draws (line lists) have no AABB; their identity is (texture, type, primitives).
 # MISSING / EXTRA rows say how many of their draws lie wholly OUTSIDE the view frustum of the
 # trace row (they rasterise nothing). A --cite JSON list [{"id","kind","tex" (regex),
 # "detail"? (regex),"note"}] marks rows CITED. Verdict: GREEN (no rows), CITED (every row cited)
@@ -98,6 +100,8 @@ def states_str(ks):
 
 
 def bb_close(a, b, tol):
+    if a is None and b is None:
+        return True        # non-triangle draws (line lists): identity is (texture, pt, prims)
     if a is None or b is None:
         return False
     ext = max(max(a[3] - a[0], a[4] - a[1], a[5] - a[2]), 1.0)
@@ -152,8 +156,10 @@ def diff3d(da, db, tol_bb=0.01, frustum=None):
 
     # level 1: same texture, same triangle count, AABB within tolerance
     ga, gb = defaultdict(list), defaultdict(list)
-    for d in A: ga[(d["texl"], d["tri"], d["screen"])].append(d["i"])
-    for d in B: gb[(d["texl"], d["tri"], d["screen"])].append(d["i"])
+    gk = lambda d: (d["texl"], d["tri"], d["screen"]) if d["tri"] is not None \
+        else (d["texl"], "pt", d["pt"], d["np"])
+    for d in A: ga[gk(d)].append(d["i"])
+    for d in B: gb[gk(d)].append(d["i"])
     pairs, la, lb = [], [], []
     for s in set(ga) | set(gb):
         xa, yb = ga.get(s, []), gb.get(s, [])
@@ -247,11 +253,17 @@ def diff3d(da, db, tol_bb=0.01, frustum=None):
                                + ", ".join(f"{t}x{c}" for t, c in top),
                      "a_idx": [], "b_idx": []})
     info = {"empty_dropped": empty, "no_geometry": nogeo}
-    fog = defaultdict(int)
+    # FOG (amendment 2): one row per (A, B) fog-enable pair over matched draws
+    fog = defaultdict(list)
     for x, y in pairs:
         if A[x]["fog"] != B[y]["fog"]:
-            fog[(A[x]["fog"], B[y]["fog"])] += 1
-    info["fog_differs"] = {f"A{a}/B{b}": n for (a, b), n in fog.items()}
+            fog[(A[x]["fog"], B[y]["fog"])].append((x, y))
+    for (fa_, fb_), lst in fog.items():
+        texs = sorted({A[x]["tex"] for x, _ in lst})
+        rows.append({"kind": "FOG", "tex": "*", "n": len(lst),
+                     "detail": f"{len(lst)} matched draws, FOGENABLE A {fa_} | B {fb_}, "
+                               f"{len(texs)} textures: {', '.join(texs[:8])}",
+                     "a_idx": [p[0] for p in lst], "b_idx": [p[1] for p in lst]})
     return A, B, pairs, rows, info
 
 
@@ -289,7 +301,8 @@ def run(path_a, path_b, args):
     A, B, pairs, rows, info = diff3d(da, db, getattr(args, "tol_bb", 0.01), fr)
     cites = json.loads(Path(args.cite).read_text()) if args.cite else []
     apply_cites(rows, cites)
-    order = {"MISSING": 0, "EXTRA": 1, "STATE": 2, "TEX1": 3, "MOVED": 4, "SPLIT": 5, "ORDER": 6}
+    order = {"MISSING": 0, "EXTRA": 1, "STATE": 2, "TEX1": 3, "FOG": 4, "MOVED": 5, "SPLIT": 6,
+             "ORDER": 7}
     rows.sort(key=lambda r: (order[r["kind"]], r["tex"].lower()))
     ta = sum(d["tri"] or 0 for d in A); tb = sum(d["tri"] or 0 for d in B)
     mta = sum(A[x]["tri"] or 0 for x, _ in pairs)
