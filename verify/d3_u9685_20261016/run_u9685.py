@@ -47,6 +47,17 @@ for _k in (0, 2, 1, 4, 27, 26, 54, 57):
     ARMS.append(dict(n="B_DEF_K%02d" % _k, recipe="fk", k=_k, knobs=[]))
     ARMS.append(dict(n="B_R_K%02d" % _k, recipe="fk", k=_k, knobs=[RP]))
     ARMS.append(dict(n="B_PP_K%02d" % _k, recipe="fk", k=_k, knobs=[PP]))
+# PREREG decision 1, after the default flip (the R arms above ran on the opt-in build, commit 2cedd9c5; with the flip
+# MASHED_RACEPCT_FUN408610 is a no-op and the opt-out is MASHED_NO_RACEPCT_FUN408610). Expected: F_DEF = R_H, F_OPTOUT = G_DEF,
+# F_MDEF = R_M, F_B_K00/01/26 = B_R_K00/01/26 (step hashes).
+NO_RP = "MASHED_NO_RACEPCT_FUN408610"
+ARMS += [
+    dict(n="F_DEF", recipe="h4", knobs=[]),
+    dict(n="F_OPTOUT", recipe="h4", knobs=[NO_RP]),
+    dict(n="F_MDEF", recipe="h4", knobs=list(M7)),
+]
+for _k in (0, 1, 26):
+    ARMS.append(dict(n="F_B_K%02d" % _k, recipe="fk", k=_k, knobs=[]))
 # arms added per PREREG amendments are appended below this line
 
 
