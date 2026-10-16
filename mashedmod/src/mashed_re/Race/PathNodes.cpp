@@ -385,5 +385,25 @@ void PathNodes_Build(const Track::World& ai, const char* lap, std::size_t lapLen
     }
 }
 
+// [camribbon] See PathNodes.h. The record is a local 0x4c-byte (19 float) block, zeroed as
+// FUN_0047a0f0 zeroes the course block (FUN_004b6520, 0x16264 bytes), so a corner the sign
+// classification at 0x0047897c does not reach stays 0, exactly as in the original.
+void PathNodes_CameraNodes(const Track::World& ai, std::vector<RaceCamNode>& out) {
+    const int count = static_cast<int>(ai.materials.size());       // world+0x14 (numMaterials)
+    out.assign(static_cast<std::size_t>(count), RaceCamNode{});
+    unsigned int oldcw = 0;
+    _controlfp_s(&oldcw, 0, 0);          // PC_24 for the build, as PathNodes_Build (G-P1)
+    { unsigned int t; _controlfp_s(&t, _PC_24, _MCW_PC); }
+    for (int i = 0; i < count; ++i) {
+        float rec[0x4c / sizeof(float)] = {};
+        BuildNode(ai, i, rec);
+        RaceCamNode& n = out[static_cast<std::size_t>(i)];
+        std::memcpy(n.dir, rec + 0x00 / sizeof(float), sizeof(n.dir));   // +0x00  FUN_00426cc0
+        std::memcpy(n.c0,  rec + 0x18 / sizeof(float), sizeof(n.c0));    // +0x18  FUN_00426d00(n,0)
+        std::memcpy(n.c3,  rec + 0x3c / sizeof(float), sizeof(n.c3));    // +0x3c  FUN_00426d00(n,3)
+    }
+    { unsigned int tmp; _controlfp_s(&tmp, oldcw & _MCW_PC, _MCW_PC); }
+}
+
 }  // namespace Race
 }  // namespace mashed_re

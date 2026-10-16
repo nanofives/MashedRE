@@ -109,9 +109,11 @@ struct RaceSceneState {
     // ---- AI path gates -----------------------------------------------------
     // AI*.BSP: 94-ish vertical quads; material RED byte = the gate index
     // LAPDATA's Lap_Line numbers refer to. gate 0 = start line. c0/c3 =
-    // first/fourth vertex in stream order (the original's node corners j=0/j=3,
-    // FUN_00426d00); dir = unit race direction (the original's node +0x00,
-    // FUN_00426cc0) — feeds the RaceCamera port.
+    // first/fourth vertex of the sorted vertex indices. These are NOT the original's node corners
+    // j=0/j=3 (FUN_00426d00 = 0x00478660's sign classification, 0x0047897c); the camera ribbon
+    // takes those from Race::PathNodes_CameraNodes ([camribbon]). Only the opt-out
+    // MASHED_NO_CAM_RIBBON_FIX=1 still feeds c0/c3/dir from here. dir = unit race direction,
+    // oriented toward the next gate.
     struct Gate {
         float center[3];
         float c0[3], c3[3];

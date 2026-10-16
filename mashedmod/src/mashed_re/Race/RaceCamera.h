@@ -91,6 +91,11 @@ public:
         out14[12] = pair_blend_; out14[13] = required_zoom_; *pa = pair_a_; *pb = pair_b_;
     }
     bool  has_led() const { return led_loaded_; }
+    // [camribbon] diagnostic: the LED elevation (FUN_00441820 `cmp [esi], 0xbf800000`) is set for
+    // this node, i.e. NodeDir takes the table branch instead of the c0/c3 fallback.
+    bool  has_led_elev(int node) const {
+        return node >= 0 && node < kMaxNodes && led_[node].elev != -1.f;
+    }
     int   node_count() const { return node_count_; }
 
 private:
