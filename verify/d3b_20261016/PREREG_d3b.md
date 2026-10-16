@@ -65,3 +65,29 @@ OFF and is reported as a user decision.
 The candidates on file, re-scored on this base and stacked with the winning LUT mask if one exists:
 `MASHED_TGT3=1 MASHED_PATHPROG=1` (U-9684 brake), the player first-step settle (U-9684 player-at-rest row; the
 pathprog_a section 6 "decision" is UNCONFIRMED, so measured as a report arm only, never default ON).
+
+## Amendment 1 (2026-10-16, after LR_LOOK, H/B arms of section 3; before any G arm)
+
+Results so far, scored as registered:
+- G-NOOP **PASS** (B side): `B_NOOP_K0/K1/K26` = `17d07c90 / 062a3c98 / b8124a63` on the knob exe `1abe36ef`.
+- G-REPLAY-LOOK **FAIL as registered** (`LR_LOOK.look.csv`): LUT mode bit-equal on 232 / 3037 (A), 330 / 3184 (B),
+  245 / 524 (C) window rows, exact mode 189 / 285 / 202. Under 1e-5 the LUT mode agrees on 98 % of the 220-call window
+  rows of cars 1-2, and on the rows where the two modes pick different points (> 1e-4 apart) the LUT matches the
+  original on 225 of 237, the exact mode on 0. The last-ulp residual and car 3's 44 / 53 / 15 rows off in both modes are
+  not explained (open). So bit 0x1 is the original's look-point arithmetic, and the registered bit gate fails on a
+  residual outside it.
+- (b) prediction of section 3 **missed**: `B_L1/L2/L3`: A **0/3** on every mask (cars 1 and 3 still `abs_steer~` 0,
+  car 2 now fails `c1#` 74-77 / `steer#` 97-102), B 2/3, C 0/3.
+
+Diagnosis that motivates the new arms (no new run): `hist_dc` is the steer error itself (`0x008032dc + v*0x14`,
+`AiStandalone.cpp` 0x004165f7). Under L1 the look point jumps like the original's but car 1's err decays to 0.25-0.9
+from step 25 while the original's stays 0.85-1.7, so steer falls under the deadband. Same look point, smaller error =
+the port's car-1 heading is turned further toward the target. The default spawns AI cars at yaw -1.5760 rad, the
+original's grid law (`FUN_00408b00`, gridyaw) gives -1.5708 (verify/gridyaw_20261016 P_DEF / P_G carpos), and car 1 at
+x -1.0933 vs -1.1012.
+
+New arms: `G` = `MASHED_GRID_DIR` (gridyaw, all slots), `L1G`, `L3G`; `B_*_K{0,1,26}`, `H_*` pairs, D2 x3.
+Predictions: with `L1G`, car 1's err at window steps 18..26 lies within 0.2 of the original's on at least 7 of 9 steps,
+and A car 1 `abs_steer~` > 0. `MASHED_GRID_DIR` moves the PLAYER's spawn too, and gridyaw measured it out of the D2
+bounds on the W default (`WG` 0.2007 / 0.2634 / 1758.25), so any arm containing it is report-only for the default
+unless an AI-slot-only form is registered in a later amendment. Section 4's rule is unchanged.

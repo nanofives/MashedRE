@@ -17,7 +17,9 @@ SP = r'C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos
 EXE_NEW = os.environ.get('D3B_EXE', os.path.join(W, r'mashedmod\build\mashed_re.exe'))
 EXE_BASE = EXE_NEW
 ROOT = os.environ.get('D3B_ROOT', os.path.join(SP, 'root'))
-STACK = {'DEF': [],
+STACK = {'DEF': [], 'NOOP': [],
+         # d3b: MASHED_AI_LUT mask (PREREG_d3b.md section 2)
+         'L1': ['MASHED_AI_LUT=1'], 'L2': ['MASHED_AI_LUT=2'], 'L3': ['MASHED_AI_LUT=3'],
          # opt-out chain (the default is W + K + L, all ON)
          'NOW': ['MASHED_NO_D2BSP'], 'NOK': ['MASHED_NO_D2CLS'], 'NOL': ['MASHED_NO_D2CHUNK'],
          'NOWK': ['MASHED_NO_D2BSP', 'MASHED_NO_D2CLS'],
@@ -119,6 +121,12 @@ for name in sys.argv[1:]:
         if name.startswith('P_'):
             e['MASHED_BATCH_DUMP'] = os.path.join(OUT, name + '.batch.csv'); files.append(e['MASHED_BATCH_DUMP'])
         run(name, e, files, 0, exe_for(tag), wall=90)
+    elif name.startswith('LR_'):
+        # d3b look replay (PREREG G-REPLAY-LOOK): the original's aistep rows through SplineLookahead, exact and LUT
+        e = base_env(1200)
+        e['MASHED_AI_LOOK_REPLAY'] = ';'.join(os.path.join(W, 'verify', 'd3_regimes_20261013', f'{r}.msd.aistep.csv') for r in ('o_reg_r1', 'o_reg_r13', 'o_reg_r19'))
+        e['MASHED_AI_LOOK_REPLAY_OUT'] = os.path.join(OUT, name + '.look.csv')
+        run(name, e, [e['MASHED_AI_LOOK_REPLAY_OUT']], 300, exe_for('DEF'))
     elif name.startswith('R_'):
         tag = tag_of(name[2:])
         e = base_env(120)
