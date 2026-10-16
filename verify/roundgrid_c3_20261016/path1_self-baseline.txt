@@ -1,0 +1,12 @@
+hook: snap_node_to_safe_start_lines  rva=0x00409290  export=SnapNodeToSafeStartLines
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 532
+  [agent] LUT ready  base=0x2aaa680  offset=0x134  root=0x5040680  delta=0  attempts=10
+  [agent] .asi loaded  base=0x5aa50000  SnapNodeToSafeStartLines@0x5aa6eb10
+  [agent] {'type': 'log', 'msg': 'self_baseline: reimpl arm bound to the original 0x409290'}
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\roundgrid_c3\log\diff_snap_node_to_safe_start_lines_selfbaseline.csv
+  total cases: 30
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.

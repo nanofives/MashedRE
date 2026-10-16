@@ -19,7 +19,8 @@ void RoundGrid_RoundEnd(const bool alive[4], int exeWinner, const int codes[4]);
 // codes = the round's per-car score deltas (the exe's score_delta_, = the original's DAT_008a9520 written by
 // FUN_0040b290 0x0040b360), kept for Stage B until the next round start.
 
-// Round start: snap DAT_0063ba80 in place with the verbatim FUN_00409290, then read the node record:
+// Round start: snap DAT_0063ba80 in place with FUN_00409290 (SnapNodeToSafeStartLines, Race/RoundGridSnap.cpp,
+// the body shared with the .asi), then read the node record:
 //   A = centre (FUN_00426cb0: 0x00663664 + n*0x4c), dir = record +0 (FUN_00426cc0: 0x00663658 + n*0x4c),
 //   lat = normalize(corner0 - corner3) (FUN_00426d00(n,0/3): 0x00663670 + n*0x4c + k*12; FUN_004c39b0 LUT).
 // lat = x/z of the normalized 3-D corner axis; dir = x/z of the RAW record direction (FUN_00408b00 scales both as

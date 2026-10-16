@@ -171,6 +171,7 @@
 "Race\PathProgStep.cpp"
 "Ai\AiTargetClosest.cpp"
 "Ai\AiLeafTargets.cpp"
+"Race\RoundGridSnap.cpp"
 "Race\RoundGrid.cpp"
 "Race\WorldRegistry.cpp"
 "Gameplay\PickupTick.cpp"
