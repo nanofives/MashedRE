@@ -232,3 +232,38 @@ Recorded (`SCORE_D2_ROUND2.txt`): `D2_B_2` 0.1953 / 0.2500 / 1864.87, `D2_B_3` 0
 Added, REPORT ONLY (no gate, no default consequence): `D2_BC_1` = B + fix C (`MASHED_SPEED_REFRESH=1`). d2posmodel's
 B + C was measured on the pinned d=14 trajectory. This re-measures fix C inside fix B on the original's
 engagement. No prediction.
+
+## Amendment 3 (2026-10-16, resumed session, claude-opus-5-5 on account3; after the rebase, before any run on the rebased build)
+
+**Rebase.** `work/d2engage` rebased onto `race/first-frame-parity` `34ea5b71` with no conflict (branch tip `4507b887`).
+Base exe built from `34ea5b71` in this worktree: sha8 `81959000`. Rebased branch exe: sha8 `7da5de6b`. Both built with
+`MASHED_NO_DEPLOY=1` (no write to `original\`). Pre-rebase evidence moved to `pre_rebase/` (commit `1f689277`).
+
+**Recorded from the pre-rebase build (`cf303269`, base `056295f9`), not re-read after this point:**
+- `H_K` (part 5 alone) = `716cb2fd / 2a2afda1 / ba90ed88` = the base exe's. Part 5 is inert on G-CTRL.
+- `H_O` (part 4 alone) = `d0bb3784 / 93240bfd / fa35321e`. Part 4 alone changes the default.
+- `H_B` = `H_B-2` = `27b385de / ca0ba0a1 / 72ecde47` (determinism PASS).
+- Collateral (`collateral_run.py`, 40 = fields over floor): `H_B` 40, `H_DEF` 39. +1, within +2.
+- D3 (b) (`d3b_score.py`): `B_DEF_K*` A 1/3, B 2/3, C 0/3; `B_B_K*` A 0/3, B 1/3, C 0/3. Every C car reads
+  `NOT SCORED regime C car N has no envelope` on both stacks (scorer-side, the base's C 0/3 is the same reading).
+- Cause-2 table (`pre_rebase/CAUSE2.txt`, from `cause2.py`): `D2_B0X_1` (pinned) and `D2_DX_1` / `D2_BX_1` (escape)
+  agree to < 1 % in sp / fwd / lat for the 18 frames after the first impact (B0X one frame earlier, the d=14 shift).
+  The second contact lands at first-impact +18 frames on B0X (sp 174.28 -> 136.55) and at +19 frames on DX / BX
+  (sp 192.5 -> 149.8). After that B0X spends 491 frames in the 0-50 speed band, 491/491 on clamp #6's LOW arm,
+  median `k` 0.9285, median lateral retention 0.1114 per frame.
+
+**Standing rule from the orchestrator brief (2026-10-16), overriding section 5 for this lane:** no default is flipped on
+this branch. Section 5's rule is still evaluated and its verdict reported (including part 5's independent eligibility),
+but every knob stays default OFF until the user confirms the pathprog_a section 6 decision.
+
+**Final arms on the rebased build (gates and scorers of section 3 unchanged, D3 (b) via `d3b_score.py`):**
+- G-CTRL: `BASE_H_DEF` (base exe `81959000`), `H_DEF`, `H_DEF-2`, `H_B`, `H_B-2`, `H_K`, `H_O`.
+- Settle / progress: `D_DEF`, `D_B0`, `D_B`, `D_BRG`, `D_RG`, `D_B0RG`.
+- D2: `D2_DEF_1`, `D2_B_1..3`, `D2_K_1`, `D2_O_1`, `D2_BO_1`, `D2_B0_1`, plus `D2_BC_1` (amendment 2, report).
+- Cause-2 diagnostics (report): `D2_B0X_1`, `D2_BX_1`, `D2_DX_1`.
+- D3 (b): `B_DEF_K{0,1,26}`, `B_B_K{0,1,26}`.
+
+**Predictions.** (P1) `BASE_H_DEF` = `716cb2fd / 2a2afda1 / ba90ed88`: the commits between `9420dde2` and
+`34ea5b71` are render (carlod), default-OFF PATHPROG knobs (pathprog_a) and a C-level fix (fwd494fd0). (P2) no-op
+`H_DEF` = `H_DEF-2` = `BASE_H_DEF`. (P3) every pre-rebase verdict of amendments 1-2 and of the list above is
+unchanged (pass / fail per gate, d=15 vs d=14, `H_K` inert). No direction is predicted for the numbers.
