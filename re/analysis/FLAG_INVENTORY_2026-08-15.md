@@ -20,7 +20,7 @@ real read.
 |---|---|---|
 | `MASHED_RENDER_LIBRW` | ~~**OFF**~~ ~~**ON since 2026-08-19**~~ **DELETED 2026-10-16** | librw vs hand-written D3D9 world renderer — INVERTED in `f4815877`; the `=0` revert and the D3D9 world/prop/car renderer behind it were deleted in D1-residue R3 (`verify/d1r3_20261016/RESULT_d1r3.md`). Row left in place, corrected 2026-10-16 |
 | `MASHED_REAL_PHYSICS` | **OFF** | ported RWP-3.7 chain vs kinematic scaffold — port is OFF by default |
-| `MASHED_RW_RENDER` | **OFF** | inert even when set (RwWorldRender.cpp:230) |
+| `MASHED_RW_RENDER` | **OFF** | DELETED 2026-10-16 (librwrest) with D3d9Render/RwWorldRender.{h,cpp}; it was inert even when set |
 
 ## Class B — ALREADY INVERTED (the model to copy)
 
@@ -143,7 +143,7 @@ implement the flag.
 - `MASHED_PHYS_PROF` — mashed_re/Vehicle/VehiclePhysicsRun.cpp
 - `MASHED_PLAYTHROUGH` — mashed_re/exe_main.cpp
 - `MASHED_PLAY_DEMO` — mashed_re/exe_main.cpp
-- `MASHED_PROP_VDUMP` — mashed_re/D3d9Render/TrackRenderer.cpp
+- `MASHED_PROP_VDUMP` — mashed_re/D3d9Render/TrackRenderer.cpp -- DELETED 2026-10-16 (librwrest): the librw half went too, no harness used it
 - `MASHED_QHULL_OPT` — mashed_re/Collision/b5b_qhull_selftest.cpp
 - `MASHED_QHULL_PC` — mashed_re/Collision/b5b_qhull_selftest.cpp
 - `MASHED_RACE_DEMO` — mashed_re/exe_main.cpp
@@ -160,12 +160,12 @@ implement the flag.
 - `MASHED_TRACK_VIEW` — mashed_re/exe_main.cpp
 - `MASHED_VERIFY_OUT` — mashed_re/exe_main.cpp
 - `MASHED_WORLDVEL` — mashed_re/D3d9Render/TrackRenderer.cpp
-- `MASHED_WORLD_FLATSNOW` — mashed_re/D3d9Render/TrackRenderer.cpp
-- `MASHED_WORLD_MATID` — mashed_re/D3d9Render/TrackRenderer.cpp
-- `MASHED_WORLD_ONLYMAT` — mashed_re/D3d9Render/TrackRenderer.cpp
-- `MASHED_WORLD_PRELITONLY` — mashed_re/D3d9Render/TrackRenderer.cpp
+- `MASHED_WORLD_FLATSNOW` — mashed_re/D3d9Render/TrackRenderer.cpp -- DELETED 2026-10-16 (librwrest): the librw half went too, no harness used it
+- `MASHED_WORLD_MATID` — mashed_re/D3d9Render/TrackRenderer.cpp -- DELETED 2026-10-16 (librwrest): the librw half went too, no harness used it
+- `MASHED_WORLD_ONLYMAT` — mashed_re/D3d9Render/TrackRenderer.cpp -- DELETED 2026-10-16 (librwrest): the librw half went too, no harness used it
+- `MASHED_WORLD_PRELITONLY` — mashed_re/D3d9Render/TrackRenderer.cpp -- DELETED 2026-10-16 (librwrest): the librw half went too, no harness used it
 - `MASHED_WORLD_REVORDER` — mashed_re/D3d9Render/TrackRenderer.cpp
-- `MASHED_WORLD_VDUMP` — mashed_re/D3d9Render/TrackRenderer.cpp
+- `MASHED_WORLD_VDUMP` — mashed_re/D3d9Render/TrackRenderer.cpp -- DELETED 2026-10-16 (librwrest): the librw half went too, no harness used it
 
 ### `d3d9_shim` (12)
 

@@ -1,8 +1,8 @@
 // Mashed RE — WS-E2: BSP -> RpWorld world-stream loader (verbatim port).
 //
-// The world SOURCE for the WS-E1 traversal layer (RwWorldRender.cpp): builds the
-// RpWorld + RpWorldSector/RpPlaneSector tree from a track's rwID_WORLD chunk so
-// RwWorldRender_SetEngine() can be fed a real world. Verbatim of the §9 loader
+// The world SOURCE for the WS-E1 traversal layer (RwWorldRender.cpp, deleted 2026-10-16 in
+// librwrest: inert, never called once the race renders through librw): builds the
+// RpWorld + RpWorldSector/RpPlaneSector tree from a track's rwID_WORLD chunk. Verbatim of the §9 loader
 // chain in re/analysis/render_world_path_E2_prep_2026-06-16.md:
 //   FUN_004e99b0 RpWorldStreamRead   (this file: RwWorldLoad_StreamRead)
 //   FUN_004e9e40 RpWorldSectorRead   (WorldSectorRead — rwID_ATOMICSECTOR 9 leaf)

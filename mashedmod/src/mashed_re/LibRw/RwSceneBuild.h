@@ -64,11 +64,6 @@ bool DualEnabled();
 // mapping is not batch index -> atomic index, because batches with no vertices
 // or no triangles are skipped and produce no atomic. Deriving it by re-walking
 // model.batches would silently drift the moment that skip rule changes.
-// [D-S3-PROP] MASHED_PROP_VDUMP=<handle> support. RaceSubmit_RegisterModel must
-// announce the handle the model is about to receive before calling BuildClump, so
-// the dump selects the same model the handle names (D3D9-side half + ONLYPROP gone, R3). Pass -1 after.
-void SceneBuild_SetRegisteringHandle(int handle);
-int  PropVDumpHandle();
 
 // [rtex] `out_atomic_part`, when non-null, receives each created atomic's part code
 // (DffBatch::part_id, the geometry's "0.tv_part_id" user data; -1 when absent), in the

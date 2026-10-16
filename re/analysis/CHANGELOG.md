@@ -26,6 +26,14 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-16  0x004e5680  RpWorldForAllAtomicsCallback  C2->C2  exe_file cleared: D3d9Render/RwWorldRender.cpp deleted (inert, no caller; librwrest, verify/librwrest_20261016/RESULT_librwrest.md)
+2026-10-16  0x004d40d0  FUN_004d40d0  C2->C2  exe_file cleared: D3d9Render/RwWorldRender.cpp deleted (inert, no caller; librwrest, verify/librwrest_20261016/RESULT_librwrest.md)
+2026-10-16  0x004e47b0  FUN_004e47b0  C2->C2  exe_file cleared: D3d9Render/RwWorldRender.cpp deleted (inert, no caller; librwrest, verify/librwrest_20261016/RESULT_librwrest.md)
+2026-10-16  0x004e5190  FUN_004e5190  C2->C2  exe_file cleared: D3d9Render/RwWorldRender.cpp deleted (inert, no caller; librwrest, verify/librwrest_20261016/RESULT_librwrest.md)
+2026-10-16  0x004e5660  RwEngineForAllPlugins  C2->C2  exe_file cleared: D3d9Render/RwWorldRender.cpp deleted (inert, no caller; librwrest, verify/librwrest_20261016/RESULT_librwrest.md)
+2026-10-16  0x004e5f90  FUN_004e5f90  C2->C2  exe_file cleared: D3d9Render/RwWorldRender.cpp deleted (inert, no caller; librwrest, verify/librwrest_20261016/RESULT_librwrest.md)
+2026-10-16  0x004f0900  FUN_004f0900  C2->C2  exe_file cleared: D3d9Render/RwWorldRender.cpp deleted (inert, no caller; librwrest, verify/librwrest_20261016/RESULT_librwrest.md)
+2026-10-16  0x004c1b40  FUN_004c1b40  C2->C2  exe_file cleared: D3d9Render/RwWorldRender.cpp deleted (inert, no caller; librwrest, verify/librwrest_20261016/RESULT_librwrest.md)
 2026-10-16  U-9697  filed  rtex residual uncertainties of the car dirt / env passes (pixels only)  verify/rtex_20261016/RESULT_rtex.md
 2026-10-16  U-9079  RESOLVED  part code = geometry rpUSERDATA 0.tv_part_id (FUN_004b5190 reads atomic+0x18 = geometry; FUN_00543d70 / FUN_00543df0); 71/71 live slots  verify/rtex_20261016/evidence/partid_check_training.txt
 2026-10-16  U-9693  NARROWED  car dirt (MatFX dual) ported default ON; env pass ported opt-in (fails rules 2/6 until car LOD selection, C02)  verify/rtex_20261016/RESULT_rtex.md

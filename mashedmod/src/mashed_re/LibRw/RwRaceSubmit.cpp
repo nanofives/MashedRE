@@ -381,14 +381,9 @@ int RaceSubmit_RegisterModel(const Track::DffModel& model,
     std::vector<std::int32_t>  atomic_part;   // [rtex]
     std::vector<void*>         frames;        // [librwrest]
     std::vector<std::int32_t>  atomic_frame;  // [librwrest]
-    // [D-S3-PROP] Tell the builder which handle this model is about to get, so
-    // MASHED_PROP_VDUMP can select it by the same handle id.
-    // g_models.size() is the handle this call will return on success.
-    SceneBuild_SetRegisteringHandle((int)g_models.size());
     rw::Clump* c = static_cast<rw::Clump*>(
         BuildClump(model, ts, ambient, &atomic_mat, &atomic_part, hierarchy, &frames,
                    &atomic_frame));
-    SceneBuild_SetRegisteringHandle(-1);
     if (!c) { RLog("WARN: BuildClump failed -- model is NOT drawn (no D3D9 fallback)"); return -1; }
     RegisterUvAnim(c, atomic_mat, uv_rates, nmats);
     // Deliberately NOT added to the rw::World: World::render() walks the clump
