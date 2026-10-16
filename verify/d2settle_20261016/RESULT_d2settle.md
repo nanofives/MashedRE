@@ -224,3 +224,17 @@ Data: `D_*.settle.txt`, `D_*.a3.txt`, `D_*.pathprog.csv`, `H_{FDEF,FOFF,DEF,NOSR
 Force-added (gitignored, cited): `D_*.ptrace.log`, `H_FDEF.ptrace.log`, `H_DEF.ptrace.log`,
 `D2_{OFF,NOSR}_{1,2,3}.motion_diag.log`, `D2_DEF_1.motion_diag.log`, `D2_NOA3_1.motion_diag.log`.
 Not committed: `.msd` binaries (gitignored), the remaining duplicate-hash `H_*` arms (hashes in 4.1).
+
+## 8. Evidence hygiene (orchestrator notices 1 and 2, 2026-10-16)
+
+- **ptrace contamination: not affected.** Every exe run in this lane used `MASHED_ROOT` = a private copy of
+  `original/` in this session's scratchpad (`run_arms.py` `ROOT`), so `player_trace.log` was written there, never to
+  the shared main-root file. Check: each `H_*.ptrace.log` holds exactly one `f=1` line and a strictly +1 step
+  sequence (13,678 steps for `H_OFF/H_FOFF/H_DEF/H_DEF2`, 14,038 for `H_NOSR/H_NOSR2/H_FDEF`), and three
+  independent runs agree (`ba90ed88` x3, `bc75b405` x2 = the recorded base). The ptrace hashes in 4.1 stand.
+- **Shared `.asi`: never deployed.** The first build (`5dbc656e` era, before `MASHED_NO_DEPLOY=1`) copied
+  `mashed_re_dev.asi` into the worktree's own `original\` (a plain directory, not a junction). Every later build
+  used `MASHED_NO_DEPLOY=1`. The shared `original\mashed_re_dev.asi` still reads 13/10/2026 20:39:06, 1,153,536
+  bytes, the timestamp it had before this lane started. No original-side run here loaded an `.asi` from this branch.
+- **Renumbering:** the U rows proposed in section 6 have no IDs. They take U-9687+ at merge (U-9686 taken, base moved
+  to `4b751ff3`).
