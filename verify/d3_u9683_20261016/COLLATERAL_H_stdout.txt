@@ -1,0 +1,13 @@
+# arm A: csv:C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\c1f3ef78-83d8-4379-bfa7-b8b44efc73ff\scratchpad\piv_H_OFF.csv(13678 frames)
+# arm B: csv:C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\c1f3ef78-83d8-4379-bfa7-b8b44efc73ff\scratchpad\piv_H_ON.csv(13678 frames)
+# noise floor: 244 fields, from 13678 A-pair frames and 13678 B-pair frames
+# aligned frames 13678 [0..13677]   paired fields 244   A-only 0   B-only 0
+
+=== DIVERGENT FIELDS, ranked by first frame past the noise floor (0 of 244 paired) ===
+field                  scope       first      n |      med A      med B    med|A-B|      floor
+----------------------------------------------------------------------------------------------
+
+=== WITHIN THE NOISE FLOOR on every aligned frame: 244 fields ===
+  frame  s.v1.ai_mode  s.v1.ai_override  s.v1.ai_spline_idx  s.v1.ai_type  s.v1.arclaps  s.v1.arcpct  s.v1.arcprog  s.v1.b2_los  s.v1.b2_ret  s.v1.block  s.v1.c0  s.v1.c1  s.v1.c3  s.v1.c4  s.v1.c4_in  s.v1.c5  s.v1.c5_in  s.v1.c7  s.v1.clk_0ff4  s.v1.curv  s.v1.diff_a360  s.v1.flag_a368  s.v1.gate ...
+
+csv -> verify\d3_u9683_20261016\COLLATERAL_H.csv

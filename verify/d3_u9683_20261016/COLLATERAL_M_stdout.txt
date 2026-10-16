@@ -1,0 +1,39 @@
+# arm A: csv:C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\c1f3ef78-83d8-4379-bfa7-b8b44efc73ff\scratchpad\piv_M_OFF.csv(13678 frames)
+# arm B: csv:C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\c1f3ef78-83d8-4379-bfa7-b8b44efc73ff\scratchpad\piv_M_ON.csv(13678 frames)
+# noise floor: 244 fields, from 13678 A-pair frames and 13678 B-pair frames
+# aligned frames 13678 [0..13677]   paired fields 244   A-only 0   B-only 0
+
+=== DIVERGENT FIELDS, ranked by first frame past the noise floor (169 of 244 paired) ===
+field                  scope       first      n |      med A      med B    med|A-B|      floor
+----------------------------------------------------------------------------------------------
+s.v2.c1                outside        530  13479 |         19         23          47          0
+s.v2.curv              outside        530  13479 |      35.33      34.24       32.63          0
+s.v2.look_z            outside        530  13479 |     -1.656      -3.07        14.4          0
+s.v2.own_z             outside        530  13479 |    -0.3993     -1.365       14.29          0
+s.v2.look_x            outside        530  13479 |      6.585      5.769       5.826          0
+s.v2.own_x             outside        530  13479 |      6.193      5.206       5.702          0
+s.v2.hist_d8           outside        530  13479 |      358.7      358.6       1.776          0
+s.v1.curv              outside        530   1123 |      27.56      67.67       1.354          0
+s.v1.own_z             outside        530   1123 |     -7.949     -14.07      0.7929          0
+s.v1.look_z            outside        530   1123 |      -12.2     -18.88      0.4426          0
+s.v1.own_x             outside        530   1123 |     0.1177     -0.274      0.1115          0
+s.v2.hist_dc           outside        530  13479 |          0          0     0.06206          0
+s.v1.look_x            outside        530   1123 |    -0.4436     0.1857    0.007892          0
+s.v1.b2_los            outside        530   1123 |         -1         -1           0          0
+s.v1.b2_ret            outside        530   1123 |          0          0           0          0
+s.v1.c1                outside        530   1123 |          0          0           0          0
+s.v1.c4                outside        530   1123 |        102        102           0          0
+s.v1.hist_d8           outside        530   1123 |        360        360           0          0
+s.v2.b2_los            outside        530  13479 |         -1         -1           0          0
+s.v2.b2_ret            outside        530  13479 |          0          0           0          0
+s.v2.c4                outside        530  13479 |        102        102           0          0
+s.v2.rec_9e4           outside        531  13479 |       3253       3280       149.7          0
+s.v1.rec_9e4           outside        531   1123 |       2137       1166       83.16          0
+s.v2.racepct           outside        531  13479 |         43      42.61       23.42          0
+s.v2.prog              outside        531  13479 |      164.8        141       14.99          0
+  ... 144 more (raise --top)
+
+=== WITHIN THE NOISE FLOOR on every aligned frame: 75 fields ===
+  frame  s.v1.ai_override  s.v1.ai_spline_idx  s.v1.ai_type  s.v1.arclaps  s.v1.block  s.v1.c3  s.v1.c4_in  s.v1.c5_in  s.v1.clk_0ff4  s.v1.diff_a360  s.v1.flag_a368  s.v1.lap  s.v1.lap_9648  s.v1.look_blk  s.v1.march_idx0  s.v1.march_n  s.v1.rec_10  s.v1.rec_4a4  s.v1.rtick  s.v1.sel_9a8  s.v1.sel_9ac  s.v1.spline  s.v1.ss_base ...
+
+csv -> verify\d3_u9683_20261016\COLLATERAL_M.csv
