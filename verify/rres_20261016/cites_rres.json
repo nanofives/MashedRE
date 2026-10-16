@@ -425,17 +425,18 @@
   "note": "Object-shadow stand-in (LibRw/RwRaceFx.cpp ObjShadowMatrix / DrawObjShadows) against FUN_00481a30's shadows: the same triangle count with an AABB offset of 0.0281 (Roundabout rows 1148, 1183), or a different shape (Warzone row 659, 10 triangles vs the original's 6; Warzone has the track's one RWP cylinder). U-9710 (b), (d), (e)."
  },
  {
-  "id": "C30-TXD-SCOPE",
+  "id": "C30-TRAIN-ROOF-LEAD",
   "kind": [
-   "EXTRA"
+   "MOVED"
   ],
-  "tex": "^trainroof$",
+  "tex": "^-$",
   "tracks": [
    "Dump"
   ],
+  "detail": "moved by up to 0\\.0571",
   "status": "MAPPED",
-  "evidence": "piz contents (TRAINROOF only in CITY.TXD of dump.piz), dump COURSE.LUA line 52, TrackRenderer.cpp:1419-1421",
-  "note": "Once the train is drawn (C28), its roof material: the original draws those 32 triangles UNTEXTURED (the matched-AABB A-side draw sits in C03-UNTEXTURED), the standalone with 'trainroof'. The texture exists only in CITY.TXD inside dump.piz; COURSE.LUA names Texture_Dictionary_Filename(\"dump.txd\"); the standalone resolves materials across every TXD in the piz (TrackRenderer.cpp:1419-1421). U-9724."
+  "evidence": "verify/txdscope_20261016/RESULT_txdscope.md section 4; base vs after Dump rows (compare_rows_base_vs_after.txt): the old EXTRA trainroof box equals the new MOVED box on all three frames",
+  "note": "[txdscope] The train roof (Train.dff, 32 triangles, material `trainroof`) is untextured on both sides now: the original binds only dump.txd (CreateFromDescription 0x00479330, FUN_004c5c80 at 0x004793de) and `trainroof` exists only in CITY.TXD of dump.piz, so FUN_004c5cb0 returns 0 for it; the standalone looks only in the named dictionary (U-9724 resolved). The roof then pairs with the original's untextured roof draw and moves by the same 0.0571 in x as the cited train body (C28): the one-tick phase of SetClumpAnim, U-9725. Replaces C30-TXD-SCOPE."
  },
  {
   "id": "C31-SPLIT-PAIR",

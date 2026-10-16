@@ -1,0 +1,7 @@
+=== fin2 exe=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\rres\log\rres\exe_s5.exe knobs=[] root=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\rres\log\rres\gameroot ===
+    pid=7160
+    exit=0 self_exited=True
+    fin2.step.csv lines=18671 sha8=d3b90ee0
+    fin2.gates.csv lines=55433 sha8=80f01f35
+    fin2.ptrace.log lines=27716 sha8=56d62ae7
+GCTRL DONE

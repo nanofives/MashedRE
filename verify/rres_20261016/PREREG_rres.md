@@ -89,3 +89,12 @@ Final predictions (stated before the final arms): **Pr-8** default build, no HUD
 lane); SuperG 210 -> about 180 (sticky VA). **Pr-9** `--hud` arm: 813 -> about 745 (the arm `s3h13` measured 745 on the pre-UV-fix exe, same draw geometry). **Pr-10** opt-out
 (`MASHED_CAR_SHADOW_RT=0 MASHED_LIBRW_SUPERG_VA=0 MASHED_CAR_LOD_EYE=last`) reproduces the 1047 baseline row for row on the 7 tracks it is run on. **Pr-11** G-CTRL stays
 `d3b90ee0 / 80f01f35 / 56d62ae7` (render-only change, no sim reads).
+
+### Amendment 3 (after the final arms of amendment 2 and the rebase onto 7f5f2ed30, before the SuperG pre-world lane was measured)
+
+11. **SuperG's first 81 draws are `Reflections.dff`.** The recorded frame opens with 81 draws (Box, RustySteel, Snow, Cargo, LandingStageEdge, Rust, Yellow) with CULL NONE, AB 0, ahead of FUN_004270f0's screen
+    rectangle (draw 81). SuperG's COURSE.LUA has no Sky_Filename (the sky array `DAT_00656f48` is empty, `FUN_00426d90` draws nothing), and `FUN_00451090` (slot 4) renders `*(course + 0x10114)`, clump 1 = `Reflections.dff`,
+    between `FUN_004c1a00` / `FUN_004c19f0`. The standalone draws the same 81 draws after the world (B draws 195..287) with CULL BACK, which is the whole of SuperG's C21-ORDER (51 rows) and C19 CULL (54 rows).
+    **Pr-12 (stated before the arm):** drawing clump 1 ahead of the world walk with CULL NONE removes both groups and adds no row. This lane was not in the predictions of amendment 2.
+12. The tip baseline is built from 7f5f2ed30 itself (arms t0 / t1) and the final arms are measured on the rebased tree; the pre-rebase arms (base, f0, f1, fo, fo2 on 2cc15b2c) stay as evidence of the same lanes.
+    **Pr-13:** default 1047 -> about 870 (C10 -38, C19 -82, C21 -51, small), HUD arm 813 -> about 635, opt-out equal to the tip baseline, G-CTRL unchanged.

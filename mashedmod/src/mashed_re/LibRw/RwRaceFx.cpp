@@ -1960,6 +1960,7 @@ double TriDist2(const double p[3], const double a[3], const double b[3], const d
 
 // FUN_00422570 @ 0x00422570 for car `slot`, with the RT camera's frame already posed (its viewMatrix is the
 // texture-coordinate map). `pos` = the clump frame's modelling position (param_2 + 0x30..0x38).
+// [UNCERTAIN U-9734] the switch-table colour exclusion (FUN_00472500) of the original's collect loop is not modelled.
 void ShadowCollect(int slot, const float pos[3], const double cp[3], const double r[3], const double u[3],
                    std::uint8_t alpha) {
     ShadowSlot& S = g_sslot[slot];
@@ -2063,6 +2064,7 @@ void RaceFx_SetShadowWorld(const ObjShadowSoup& soup, const float light_ltm[16])
 
 void RaceFx_SetDbgRow(int row) { g_dbg_row = row; }
 
+// [UNCERTAIN U-9735] the original's initial per-car last-query position is not read; the chain restarts with the trace.
 void RaceFx_ShadowResetCache() {
     for (ShadowSlot& s : g_sslot) s = ShadowSlot();
 }
