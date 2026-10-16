@@ -18,7 +18,7 @@
 #include "../Track/LapLogic.h"      // F4 lap-line crossing sequence (shared w/ test)
 #include "../Txd/TxdDecoder.h"
 #include "../Audio/AudioEngine.h"   // real SFX (permdict.rws) for countdown/powerups
-#include "../LibRw/RwRaceSubmit.h"  // E2'b step 3: in-loop librw submit (MASHED_RENDER_LIBRW)
+#include "../LibRw/RwRaceSubmit.h"  // E2'b step 3: in-loop librw submit (the shipping race renderer)
 #include "../LibRw/RwCarFx.h"       // rtex: car dirt / env-map set-up tables (U-9693)
 #include "PngLoader.h"              // rtex: dirt.piz PNGs (WIC)
 // rtex: 0x004c4d20 RwMatrixRotate (Math/RwMatrixRotate.cpp), for RwFrameRotate's REPLACE build
