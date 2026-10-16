@@ -1,0 +1,29 @@
+rtex scores (2026-10-16). d1r1's 9 matched-pose frames, original side = d1r1's records
+(log/d1r1/orig_*), differ re/tools/drawlist_diff.py 3D mode --trace --cite cites_d1r1.json,
+pixels re/tools/imgdiff.py all-channel mean abs diff vs the original BMP. Raw: log/rtex/<arm>/.
+
+arms
+  base         log/rtex/base/mashed_re.exe   ec3301f3 build (sha256 F71DB13418DB...)
+  dual         F-DUAL build                  (0EBCD735EBC9...)
+  dualoff      dual + MASHED_LIBRW_DUAL=0
+  carfx_noenv  car build + MASHED_CAR_ENV=0  (F-DUAL + F-DIRT)
+  carfx        car build, env default ON at that build (F-DUAL + F-DIRT + F-ENV)
+  carfx_off    car build + MASHED_CAR_ENV=0 MASHED_CAR_DIRT=0
+  final        final default build (FC83B69A7E39...), env opt-in
+
+rows / red / matched draws / matched tri / pixels
+frame           base                 dual                 carfx_noenv = final  carfx (F-ENV on)
+training  884   86 0 194 16392 28.52  81 0 194 16392 15.83  80 0 194 16392 15.31  81 1 202 16456 15.71
+training  924   85 0 191 16356 21.30  80 0 191 16356 11.13  79 0 191 16356 10.89  80 1 199 16420 11.32
+training  959   85 0 191 16356 15.76  80 0 191 16356  9.02  79 0 191 16356  8.94  80 1 197 16404  9.07
+arctic   1051   81 0 138 32143 10.97  81 0 138 32143 10.97  80 0 138 32143 10.89  81 1 146 32207 11.49
+arctic   1091   81 0 138 32083  7.07  81 0 138 32083  7.07  80 0 138 32083  7.07  81 1 144 32131  7.12
+arctic   1126   81 0 101 26823  6.43  81 0 101 26823  6.43  80 0 101 26823  6.43  80 0 101 26823  6.43
+city      761  157 0 351 34236 16.91 157 0 351 34236 16.91 156 0 351 34236 16.47 157 1 359 34300 16.70
+city      801  155 0 339 33776 13.15 155 0 339 33776 13.15 154 0 339 33776 13.09 157 1 341 33792 13.11
+city      836  152 0 292 26805 12.10 152 0 292 26805 12.10 152 0 292 26805 12.09 152 0 292 26805 12.09
+
+controls (rule 4): dualoff == base on 9/9 (rows and pixels); carfx_off == dual on 9/9.
+final == carfx_noenv on 9/9 (rows and pixels).
+row deltas: evidence/rowdelta.txt. Orig draws per frame and matched triangles of the original: see
+verify/d1r1_20261016/scores.txt (unchanged original side).

@@ -110,8 +110,10 @@ matfxRender_Default(InstanceDataHeader *header, InstanceData *inst, int32 lightB
 //     coordinates are texcoord set 1 when the geometry has rpGEOMETRYTEXTURED2, else set 0
 //     (TEXCOORDINDEX 0 at 0x00540c56); stage 1 is unbound after the draw (0x005411f3)
 //   - base texture absent: dual on stage 0 (0x005409ca)
-//   - any other blend pair: [UNCERTAIN] not ported (no shipped asset uses one,
-//     verify/rtex_20261016/evidence/matfx_census.txt); drawn plain
+//   - any other blend pair: [UNCERTAIN U-9697] not ported, drawn plain. Shipped assets carry
+//     1518 SRCALPHA/INVSRCALPHA dual materials and 48 ZERO/ONE ones, all on the Atmos vehicle
+//     (verify/rtex_20261016/evidence/matfx_census.txt); FUN_005405c0 sends 1/2 to its generic
+//     path at 0x00540cc3.
 // Blending follows stage 0 only, as FUN_004d6ce0 does (stage != 0 skips the alpha rule at
 // 0x004d6d00), which is what setRasterStage already does.
 static void

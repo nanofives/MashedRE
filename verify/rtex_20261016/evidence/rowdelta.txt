@@ -1,0 +1,152 @@
+rtex row deltas (rowdelta.py, d1r1's row key), 2026-10-16
+
+### F-DUAL: base -> dual
+arctic_01051     before  81 after  81  gone   0  NEW 0
+arctic_01091     before  81 after  81  gone   0  NEW 0
+arctic_01126     before  81 after  81  gone   0  NEW 0
+city_00761       before 157 after 157  gone   0  NEW 0
+city_00801       before 155 after 155  gone   0  NEW 0
+city_00836       before 152 after 152  gone   0  NEW 0
+training_00884   before  86 after  81  gone   5  NEW 0
+    gone TEX1 CliffEdge [C16-TEX1-WORLD]: 9 matched draws, stage-1 texture A NewShadow_Small | B -
+    gone TEX1 CliffEdge_Small [C16-TEX1-WORLD]: 2 matched draws, stage-1 texture A NewShadow_Small | B -
+    gone TEX1 Dirt [C16-TEX1-WORLD]: 10 matched draws, stage-1 texture A NewShadow | B -
+    gone TEX1 RoadTarmac [C16-TEX1-WORLD]: 9 matched draws, stage-1 texture A NewShadow | B -
+    gone TEX1 Wall [C16-TEX1-WORLD]: 5 matched draws, stage-1 texture A NewShadow | B -
+training_00924   before  85 after  80  gone   5  NEW 0
+    gone TEX1 CliffEdge [C16-TEX1-WORLD]: 8 matched draws, stage-1 texture A NewShadow_Small | B -
+    gone TEX1 CliffEdge_Small [C16-TEX1-WORLD]: 2 matched draws, stage-1 texture A NewShadow_Small | B -
+    gone TEX1 Dirt [C16-TEX1-WORLD]: 9 matched draws, stage-1 texture A NewShadow | B -
+    gone TEX1 RoadTarmac [C16-TEX1-WORLD]: 8 matched draws, stage-1 texture A NewShadow | B -
+    gone TEX1 Wall [C16-TEX1-WORLD]: 5 matched draws, stage-1 texture A NewShadow | B -
+training_00959   before  85 after  80  gone   5  NEW 0
+    gone TEX1 CliffEdge [C16-TEX1-WORLD]: 8 matched draws, stage-1 texture A NewShadow_Small | B -
+    gone TEX1 CliffEdge_Small [C16-TEX1-WORLD]: 2 matched draws, stage-1 texture A NewShadow_Small | B -
+    gone TEX1 Dirt [C16-TEX1-WORLD]: 9 matched draws, stage-1 texture A NewShadow | B -
+    gone TEX1 RoadTarmac [C16-TEX1-WORLD]: 8 matched draws, stage-1 texture A NewShadow | B -
+    gone TEX1 Wall [C16-TEX1-WORLD]: 5 matched draws, stage-1 texture A NewShadow | B -
+NEW ROWS TOTAL: 0
+
+### F-DUAL knob off (rule 4): base -> dualoff
+arctic_01051     before  81 after  81  gone   0  NEW 0
+arctic_01091     before  81 after  81  gone   0  NEW 0
+arctic_01126     before  81 after  81  gone   0  NEW 0
+city_00761       before 157 after 157  gone   0  NEW 0
+city_00801       before 155 after 155  gone   0  NEW 0
+city_00836       before 152 after 152  gone   0  NEW 0
+training_00884   before  86 after  86  gone   0  NEW 0
+training_00924   before  85 after  85  gone   0  NEW 0
+training_00959   before  85 after  85  gone   0  NEW 0
+NEW ROWS TOTAL: 0
+
+### F-DIRT: dual -> carfx_noenv
+arctic_01051     before  81 after  80  gone   1  NEW 0
+    gone TEX1 Advantage [C17-CAR-GLOSS]: 28 matched draws, stage-1 texture A #128x128:26 | B -
+arctic_01091     before  81 after  80  gone   1  NEW 0
+    gone TEX1 Advantage [C17-CAR-GLOSS]: 28 matched draws, stage-1 texture A #128x128:26 | B -
+arctic_01126     before  81 after  80  gone   1  NEW 0
+    gone TEX1 Advantage [C17-CAR-GLOSS]: 7 matched draws, stage-1 texture A #128x128:26 | B -
+city_00761       before 157 after 156  gone   1  NEW 0
+    gone TEX1 Advantage [C17-CAR-GLOSS]: 28 matched draws, stage-1 texture A #128x128:26 | B -
+city_00801       before 155 after 154  gone   1  NEW 0
+    gone TEX1 Advantage [C17-CAR-GLOSS]: 28 matched draws, stage-1 texture A #128x128:26 | B -
+city_00836       before 152 after 152  gone   0  NEW 0
+training_00884   before  81 after  80  gone   1  NEW 0
+    gone TEX1 Advantage [C17-CAR-GLOSS]: 28 matched draws, stage-1 texture A #128x128:26 | B -
+training_00924   before  80 after  79  gone   1  NEW 0
+    gone TEX1 Advantage [C17-CAR-GLOSS]: 28 matched draws, stage-1 texture A #128x128:26 | B -
+training_00959   before  80 after  79  gone   1  NEW 0
+    gone TEX1 Advantage [C17-CAR-GLOSS]: 28 matched draws, stage-1 texture A #128x128:26 | B -
+NEW ROWS TOTAL: 0
+
+### F-ENV (opt-in): carfx_noenv -> carfx
+arctic_01051     before  80 after  81  gone   2  NEW 3
+    gone MISSING CarGloss [C17-CAR-GLOSS]: A-only 8 draws 64 tri (0 offscreen); first k82 pt5 tri=6 tex=CarGloss tex1=- bb=[-26.71,0.22,16.59,-26.41,0.28,16.77] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=
+    gone TEX1 Advantage [C17-CAR-GLOSS]: 12 matched draws, stage-1 texture A CarGloss | B -
+    NEW  EXTRA CarGloss [None]: B-only 8 draws 104 tri (0 offscreen); first k82 pt4 tri=18 tex=CarGloss tex1=- bb=[-26.74,0.15,17.00,-26.39,0.28,17.41] src=rw Z=1 ZW=0 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=2 CULL=1
+    NEW  STATE CarGloss [C19-STATE-LIBRW]: 8 matched draws differ in AREF,AF: A Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=1 | B Z=1 ZW=0 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=2 CULL=1
+    NEW  ORDER CarGloss [C21-ORDER]: 96 order inversions vs matched draws, mostly: Advantagex80, Glassx8, CarGlossx8
+arctic_01091     before  80 after  81  gone   2  NEW 3
+    gone MISSING CarGloss [C17-CAR-GLOSS]: A-only 6 draws 48 tri (0 offscreen); first k82 pt5 tri=6 tex=CarGloss tex1=- bb=[-26.71,0.22,16.59,-26.41,0.28,16.77] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=
+    gone TEX1 Advantage [C17-CAR-GLOSS]: 9 matched draws, stage-1 texture A CarGloss | B -
+    NEW  EXTRA CarGloss [None]: B-only 6 draws 78 tri (0 offscreen); first k82 pt4 tri=18 tex=CarGloss tex1=- bb=[-26.74,0.15,17.00,-26.39,0.28,17.41] src=rw Z=1 ZW=0 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=2 CULL=1
+    NEW  STATE CarGloss [C19-STATE-LIBRW]: 6 matched draws differ in AREF,AF: A Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=1 | B Z=1 ZW=0 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=2 CULL=1
+    NEW  ORDER CarGloss [C21-ORDER]: 72 order inversions vs matched draws, mostly: Advantagex60, Glassx6, CarGlossx6
+arctic_01126     before  80 after  80  gone   0  NEW 0
+city_00761       before 156 after 157  gone   2  NEW 3
+    gone MISSING CarGloss [C17-CAR-GLOSS]: A-only 8 draws 64 tri (0 offscreen); first k82 pt5 tri=10 tex=CarGloss tex1=- bb=[54.20,0.15,-25.96,54.61,0.28,-25.61] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF
+    gone TEX1 Advantage [C17-CAR-GLOSS]: 12 matched draws, stage-1 texture A CarGloss | B -
+    NEW  EXTRA CarGloss [None]: B-only 8 draws 104 tri (0 offscreen); first k82 pt4 tri=18 tex=CarGloss tex1=- bb=[54.20,0.15,-25.96,54.61,0.28,-25.61] src=rw Z=1 ZW=0 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=2 CULL=1
+    NEW  STATE CarGloss [C19-STATE-LIBRW]: 8 matched draws differ in AREF,AF,CULL: A Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=2 | B Z=1 ZW=0 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=2 CULL=1
+    NEW  ORDER CarGloss [C21-ORDER]: 96 order inversions vs matched draws, mostly: Advantagex80, Glassx8, CarGlossx8
+city_00801       before 154 after 157  gone   0  NEW 3
+    NEW  EXTRA CarGloss [None]: B-only 2 draws 26 tri (0 offscreen); first k82 pt4 tri=18 tex=CarGloss tex1=- bb=[54.20,0.15,-25.96,54.61,0.28,-25.61] src=rw Z=1 ZW=0 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=2 CULL=1
+    NEW  STATE CarGloss [C19-STATE-LIBRW]: 2 matched draws differ in AREF,AF,CULL: A Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=2 | B Z=1 ZW=0 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=2 CULL=1
+    NEW  ORDER CarGloss [C21-ORDER]: 24 order inversions vs matched draws, mostly: Advantagex20, Glassx2, CarGlossx2
+city_00836       before 152 after 152  gone   0  NEW 0
+training_00884   before  80 after  81  gone   2  NEW 3
+    gone MISSING CarGloss [C17-CAR-GLOSS]: A-only 8 draws 64 tri (0 offscreen); first k82 pt5 tri=10 tex=CarGloss tex1=- bb=[0.15,0.57,-2.85,0.50,0.70,-2.43] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 A
+    gone TEX1 Advantage [C17-CAR-GLOSS]: 12 matched draws, stage-1 texture A CarGloss | B -
+    NEW  EXTRA CarGloss [None]: B-only 8 draws 104 tri (0 offscreen); first k82 pt4 tri=8 tex=CarGloss tex1=- bb=[0.21,0.64,-2.21,0.51,0.71,-2.02] src=rw Z=1 ZW=0 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=2 CULL=1
+    NEW  STATE CarGloss [C19-STATE-LIBRW]: 8 matched draws differ in AREF,AF,CULL: A Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=2 | B Z=1 ZW=0 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=2 CULL=1
+    NEW  ORDER CarGloss [C21-ORDER]: 96 order inversions vs matched draws, mostly: Advantagex80, Glassx8, CarGlossx8
+training_00924   before  79 after  80  gone   2  NEW 3
+    gone MISSING CarGloss [C17-CAR-GLOSS]: A-only 8 draws 64 tri (0 offscreen); first k82 pt5 tri=10 tex=CarGloss tex1=- bb=[-0.21,0.51,-4.90,0.16,0.64,-4.47] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 
+    gone TEX1 Advantage [C17-CAR-GLOSS]: 12 matched draws, stage-1 texture A CarGloss | B -
+    NEW  EXTRA CarGloss [None]: B-only 8 draws 104 tri (0 offscreen); first k82 pt4 tri=18 tex=CarGloss tex1=- bb=[-0.21,0.51,-4.90,0.16,0.64,-4.47] src=rw Z=1 ZW=0 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=2 CULL=1
+    NEW  STATE CarGloss [C19-STATE-LIBRW]: 8 matched draws differ in AREF,AF,CULL: A Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=2 | B Z=1 ZW=0 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=2 CULL=1
+    NEW  ORDER CarGloss [C21-ORDER]: 96 order inversions vs matched draws, mostly: Advantagex80, Glassx8, CarGlossx8
+training_00959   before  79 after  80  gone   2  NEW 3
+    gone MISSING CarGloss [C17-CAR-GLOSS]: A-only 6 draws 48 tri (0 offscreen); first k82 pt5 tri=10 tex=CarGloss tex1=- bb=[-0.42,0.45,-6.77,-0.06,0.58,-6.34] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0
+    gone TEX1 Advantage [C17-CAR-GLOSS]: 9 matched draws, stage-1 texture A CarGloss | B -
+    NEW  EXTRA CarGloss [None]: B-only 6 draws 78 tri (0 offscreen); first k82 pt4 tri=18 tex=CarGloss tex1=- bb=[-0.42,0.45,-6.77,-0.06,0.58,-6.34] src=rw Z=1 ZW=0 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=2 CULL=1
+    NEW  STATE CarGloss [C19-STATE-LIBRW]: 6 matched draws differ in AREF,AF,CULL: A Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=2 | B Z=1 ZW=0 ZF=4 AT=1 AREF=10 AF=7 AB=1 SRC=5 DST=2 CULL=1
+    NEW  ORDER CarGloss [C21-ORDER]: 72 order inversions vs matched draws, mostly: Advantagex60, Glassx6, CarGlossx6
+NEW ROWS TOTAL: 21
+
+### car knobs off (rule 4): dual -> carfx_off
+arctic_01051     before  81 after  81  gone   0  NEW 0
+arctic_01091     before  81 after  81  gone   0  NEW 0
+arctic_01126     before  81 after  81  gone   0  NEW 0
+city_00761       before 157 after 157  gone   0  NEW 0
+city_00801       before 155 after 155  gone   0  NEW 0
+city_00836       before 152 after 152  gone   0  NEW 0
+training_00884   before  81 after  81  gone   0  NEW 0
+training_00924   before  80 after  80  gone   0  NEW 0
+training_00959   before  80 after  80  gone   0  NEW 0
+NEW ROWS TOTAL: 0
+
+### final default vs base: base -> final
+arctic_01051     before  81 after  80  gone   1  NEW 0
+    gone TEX1 Advantage [C17-CAR-GLOSS]: 28 matched draws, stage-1 texture A #128x128:26 | B -
+arctic_01091     before  81 after  80  gone   1  NEW 0
+    gone TEX1 Advantage [C17-CAR-GLOSS]: 28 matched draws, stage-1 texture A #128x128:26 | B -
+arctic_01126     before  81 after  80  gone   1  NEW 0
+    gone TEX1 Advantage [C17-CAR-GLOSS]: 7 matched draws, stage-1 texture A #128x128:26 | B -
+city_00761       before 157 after 156  gone   1  NEW 0
+    gone TEX1 Advantage [C17-CAR-GLOSS]: 28 matched draws, stage-1 texture A #128x128:26 | B -
+city_00801       before 155 after 154  gone   1  NEW 0
+    gone TEX1 Advantage [C17-CAR-GLOSS]: 28 matched draws, stage-1 texture A #128x128:26 | B -
+city_00836       before 152 after 152  gone   0  NEW 0
+training_00884   before  86 after  80  gone   6  NEW 0
+    gone TEX1 Advantage [C17-CAR-GLOSS]: 28 matched draws, stage-1 texture A #128x128:26 | B -
+    gone TEX1 CliffEdge [C16-TEX1-WORLD]: 9 matched draws, stage-1 texture A NewShadow_Small | B -
+    gone TEX1 CliffEdge_Small [C16-TEX1-WORLD]: 2 matched draws, stage-1 texture A NewShadow_Small | B -
+    gone TEX1 Dirt [C16-TEX1-WORLD]: 10 matched draws, stage-1 texture A NewShadow | B -
+    gone TEX1 RoadTarmac [C16-TEX1-WORLD]: 9 matched draws, stage-1 texture A NewShadow | B -
+    gone TEX1 Wall [C16-TEX1-WORLD]: 5 matched draws, stage-1 texture A NewShadow | B -
+training_00924   before  85 after  79  gone   6  NEW 0
+    gone TEX1 Advantage [C17-CAR-GLOSS]: 28 matched draws, stage-1 texture A #128x128:26 | B -
+    gone TEX1 CliffEdge [C16-TEX1-WORLD]: 8 matched draws, stage-1 texture A NewShadow_Small | B -
+    gone TEX1 CliffEdge_Small [C16-TEX1-WORLD]: 2 matched draws, stage-1 texture A NewShadow_Small | B -
+    gone TEX1 Dirt [C16-TEX1-WORLD]: 9 matched draws, stage-1 texture A NewShadow | B -
+    gone TEX1 RoadTarmac [C16-TEX1-WORLD]: 8 matched draws, stage-1 texture A NewShadow | B -
+    gone TEX1 Wall [C16-TEX1-WORLD]: 5 matched draws, stage-1 texture A NewShadow | B -
+training_00959   before  85 after  79  gone   6  NEW 0
+    gone TEX1 Advantage [C17-CAR-GLOSS]: 28 matched draws, stage-1 texture A #128x128:26 | B -
+    gone TEX1 CliffEdge [C16-TEX1-WORLD]: 8 matched draws, stage-1 texture A NewShadow_Small | B -
+    gone TEX1 CliffEdge_Small [C16-TEX1-WORLD]: 2 matched draws, stage-1 texture A NewShadow_Small | B -
+    gone TEX1 Dirt [C16-TEX1-WORLD]: 9 matched draws, stage-1 texture A NewShadow | B -
+    gone TEX1 RoadTarmac [C16-TEX1-WORLD]: 8 matched draws, stage-1 texture A NewShadow | B -
+    gone TEX1 Wall [C16-TEX1-WORLD]: 5 matched draws, stage-1 texture A NewShadow | B -
+NEW ROWS TOTAL: 0

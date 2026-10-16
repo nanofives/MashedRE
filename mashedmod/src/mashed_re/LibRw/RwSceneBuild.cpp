@@ -55,7 +55,8 @@ namespace {
 
 // Does this parsed material carry a MatFX DUAL slot the port renders? Effect 4 only:
 // 6 (DUALUVTRANSFORM) adds the UV-transform matrices FUN_005405c0 uploads at 0x00540701 /
-// 0x00540cbb, which are not ported; no shipped asset uses it (evidence/matfx_census.txt).
+// 0x00540cbb, which are not ported [UNCERTAIN U-9697]; one shipped material uses it (Storm
+// WATER.DFF, verify/rtex_20261016/evidence/matfx_census.txt), which keeps its single-stage draw.
 template <typename MatT>
 bool IsDualMaterial(const MatT& m) {
     return DualEnabled() && m.fx.has_dual && m.fx.type == rw::MatFX::DUAL;

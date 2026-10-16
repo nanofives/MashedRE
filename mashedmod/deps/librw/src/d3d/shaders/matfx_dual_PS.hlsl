@@ -1,6 +1,7 @@
 // MASHED LOCAL PATCH (P9, rtex 2026-10-16) -- MatFX DUAL pixel shader, the fixed-function
 // stage cascade RenderWare's D3D9 MatFX sets up in FUN_005405c0 @ 0x005405c0 for a dual
-// texture with srcBlend SRCALPHA / dstBlend INVSRCALPHA (the only pair Mashed ships):
+// texture with srcBlend SRCALPHA / dstBlend INVSRCALPHA (1518 of the 1566 shipped dual
+// materials; the 48 ZERO/ONE ones on the Atmos vehicle are not ported, evidence/matfx_census.txt):
 //
 //   base texture present (0x005408f9..0x005409af):
 //     stage 0  COLOROP/ALPHAOP SELECTARG1, ARG1 TEXTURE              -> T0

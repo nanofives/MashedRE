@@ -10,9 +10,11 @@
 //     2 ENV  : f32 coef, i32 fbAlpha, i32 hasTex [TEXTURE]
 //     4 DUAL : i32 srcBlend, i32 dstBlend, i32 hasTex [TEXTURE]
 //     5 UVX  : (nothing)
-// Shipped Mashed assets use DUAL with srcBlend 5 / dstBlend 6 (SRCALPHA / INVSRCALPHA):
-// TRAINING ROAD.DFF + GRAPH.BSP material 0, and the vehicle DFFs (CarDirt / WheelDirt),
-// verify/rtex_20261016/evidence/matfx_*.txt. The original renders it in FUN_005405c0.
+// Shipped assets (verify/rtex_20261016/evidence/matfx_census.txt, every DFF/BSP): DUAL with
+// srcBlend 5 / dstBlend 6 (SRCALPHA / INVSRCALPHA) on 1518 materials -- TRAINING ROAD.DFF +
+// GRAPH.BSP material 0, the vehicle DFFs (CarDirt / WheelDirt) -- and 1 / 2 on 48 (Atmos);
+// plus UVTRANSFORM (57), ENVMAP (7, dump REFLECTIONS.DFF), BUMPENVMAP (1, SFX CUP.DFF) and
+// DUALUVTRANSFORM (1, Storm WATER.DFF). The original renders DUAL in FUN_005405c0.
 //
 // User data: rpUSERDATA chunk 0x11F inside a geometry EXTENSION. i32 numArrays, then
 // per array: i32 nameLen + name, i32 format (1 int, 2 real, 3 string), i32 count,
