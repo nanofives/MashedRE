@@ -230,3 +230,14 @@ Same D2 recipe, base `10c18c59`, new exe `39ed4b9a`, output `rb2/`, each arm alo
 `score_d2.py` (three metrics against `d81a8df6`) and `a8_launch.py` (H1, `+0xb14` engagement d). Part 3 sets the
 solver's ring `+0x30` translation, which is the walk's query centre (`WheelContactSolver.cpp:151`), so W and fix B
 interact on the query itself. No direction is predicted.
+
+## Amendment 6 (2026-10-16, after the amendment-5 runs, before any run on f9cdbb94)
+
+`race/first-frame-parity` moved to `f9cdbb94` (rfx2: render passes default ON; it filed U-9710 and U-9711).
+`work/d2bsp` is rebased onto it. Code merged without conflict; `UNCERTAINTIES.md` / `CHANGELOG.md` conflicted on the
+row id, so this lane's row is now **U-9712**. Check arms (output `rb3/`, base exe = a build of `f9cdbb94`): `H_BASE`,
+`H_NOL`, `H_DEF`, `H_W`, `R_DEF`, then `D2_DEF_1`, `D2_W_1` alone. **Rule:** if `H_BASE` = `716cb2fd / 2a2afda1 /
+ba90ed88`, `H_NOL` = `H_BASE`, `H_DEF` = `2b4d47bb / 356821c8 / f7a155e1`, `H_W` = `d3b90ee0 / 80f01f35 / 56d62ae7`,
+`R_DEF` = `e8d19d3f`, and the two D2 arms score as on `10c18c59` (L 0.1905 / 0.2521 / 1883.91; W in bounds on all
+three) with >= 1600 lines, the `10c18c59` results (amendments 4 and 5) stand for `f9cdbb94`. If any differs, every
+amendment-4 arm is re-run on `f9cdbb94` before the lane ends.
