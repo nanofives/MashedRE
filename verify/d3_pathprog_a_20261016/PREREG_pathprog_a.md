@@ -113,6 +113,38 @@ Decision 1 of section 3 stands unchanged: `X7` fails (b) (A 0/3), so it is NOT p
 and the fix is not the field but the input it reads (the player's grid pose relative to the line), which belongs to the grid arms (`MASHED_ROUND_GRID`), reported by G-RG.
 If G-MUTANT passes AND `X7_RG` or `PP_RG` restores regime A to >= 1/3 on both K, the next arms (regimes B / C, h4 collateral, closure) for that combination are pre-registered in a second amendment before they run.
 
+## 3b. AMENDMENT A2 (committed after the A1 arms were scored, before any arm below exists)
+
+Seen first (`SCORE_A1.txt`, `X2_H`):
+
+- **G-NOOP-BS passes** (`X0_BS` = `D`). **G-MUTANT passes, completely**: `X2_BS` is byte-identical to `D` on both K (`774fadda`, `5052df10`, A 1/3). `X7_BS` differs from `D` only in `val_880` / `lap_9648` (A 1/3).
+  With the boost-order sort ignoring progress, the live node progress and the whole live row change no control byte: `Fi_UpdateBoostOrder` is the sole consumer in this recipe.
+- **G-PROG-LIGHTS** (`X2_H` gates): frame 1 live progress cars 0 to 3 = 0.00086 / 29.728 / 29.460 / 29.185, descending order [1, 2, 3, 0], two least = [3, 0]. The original has 30.0 / 29.73 / 29.455 / 29.18 (two least = [2, 3]).
+- The original player's world position at frame 1 (`o_p0a.msd`, `+0x958 / +0x960`) is x 0.500937, z **-1.999037**; the port's gate anchor puts it at z **-2.00247** (0.0034 beyond, 0.00086 nodes past the line). The `MASHED_ROUND_GRID` node-0 anchor
+  (`RESULT_KNOB_ON.md`: z -1.99904) is the original's pose.
+- **G-RG**: `X7_RG` and `PP_RG` are A 0/3 on both K, so the pose fix alone does not give A back. Car 2 fails `steer#` (110 / 102 vs <= 96), the same car and item family as `PP`, further out. The original's car 2 has `c1#` 50, `steer#` 85; the port's `D` has 67 / 95 (passing by 3 and 1 against the envelope maxima 70 / 96).
+
+Hypothesis registered now, to be tested, not a result: under `MASHED_ROUND_GRID` the player is before the line, the boost pair is already `{2, 3}`, and the remaining regime-A failure is not the live progress but the port's car-2 command distinctness against the envelope.
+
+New arms:
+
+| arm | knobs | recipe | purpose |
+|---|---|---|---|
+| `X7_RG_BS_K` | `MASHED_PP_PUBLISH=7` + `MASHED_ROUND_GRID` + `MASHED_PP_BOOSTSEED` | fk, K in 0, 2 | mutant under the faithful pose: if the pair is already `{2, 3}` this equals `X7_RG` on every control byte |
+| `X7_RG_H` | `MASHED_PP_PUBLISH=7` + `MASHED_ROUND_GRID` | h4 | progress at the lights under the pose fix (gates `prog_96e8`) |
+| `X7_H` | `MASHED_PP_PUBLISH=7` | h4 | G-FIELD: the published lap counter (`lap_9648`) and progress against the original's `o_pp1` timeline |
+| `D_K`, `X7_K` | none / `MASHED_PP_PUBLISH=7` | fk, K in 1, 4, 27, 26, 54, 57 | stage 2: regimes B and C |
+
+| gate | statistic | pass rule | prediction |
+|---|---|---|---|
+| **G-MUTANT-RG** | `X7_RG_BS` vs `X7_RG`: control bytes of every car over the whole run, K = 0, 2 | equal => under the pose fix the pair is already `{2, 3}` and the boost order is not what fails A there | equal (75 %) |
+| G-PROG-RG (report) | `X7_RG_H` gates `prog_96e8` frames 1 to 5, cars 0 to 3 | report; the player should be above the three AI cars' progress (30.0-like) | player highest |
+| **G-FIELD** | `X7_H`: lap counter `lap_9648` and progress per car vs `o_pp1`, crossing-aligned | lap counter -1 until the car's crossing and 0 after for cars 1 to 3; progress pre-line within 0.05 of the original's for cars 1 to 3; the player's progress is reported (expected to differ, 0.00086 vs 30.0) | PASS for cars 1 to 3 |
+| (b) stage 2 | `score_regimes.py` n/3, `X7_K` vs `D_K`, K in 1, 4, 27 (B) and 26, 54, 57 (C) | report (default B 2/3, C 0/3) | equal to `D` (70 %) |
+
+Decision 1 of section 3 is unchanged and `X7` is not proposed as default if A 0/3. If G-MUTANT-RG passes, the report states the chain: live progress -> `Fi_UpdateBoostOrder` pair -> the player's pose relative to the line; the fix of the input is the grid anchor
+(`MASHED_ROUND_GRID`, a user decision), and the live row then needs a second (b) look because regime A is 0/3 for a different reason (car 2's command distinctness).
+
 ## 4. Not done here (registered)
 
 - No hooks.csv change (`FUN_00408610` is an EXE-ONLY naked transcription). No tracker is edited by hand. The memory index is not touched (orchestrator's).

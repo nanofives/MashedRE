@@ -62,6 +62,11 @@ for _k in (0, 2):
     ARMS.append(dict(n="X7_RG_K%02d" % _k, recipe="fk", k=_k, knobs=["%s=7" % PUB, RGK]))
     ARMS.append(dict(n="PP_RG_K%02d" % _k, recipe="fk", k=_k, knobs=[PP, RGK]))
 ARMS.append(dict(n="X2_H", recipe="h4", knobs=["%s=2" % PUB]))
+# PREREG amendment A2
+for _k in (0, 2):
+    ARMS.append(dict(n="X7_RG_BS_K%02d" % _k, recipe="fk", k=_k, knobs=["%s=7" % PUB, RGK, BS]))
+ARMS.append(dict(n="X7_RG_H", recipe="h4", knobs=["%s=7" % PUB, RGK]))
+# (X7_H, D_K and X7_K already exist above)
 # arms added per PREREG are appended below this line
 
 
