@@ -147,3 +147,36 @@ Section 3's default rule now reads "G-SETTLE on `D_BG`".
 
 A2.3 **Prediction.** `D_BG` passes G-SETTLE like d2posmodel's `D_BRG` (dz +1.2e-7, dy -4.6e-6), since its spawn x / z /
 yaw are the original's. `D_B` repeats d2engage's FAIL.
+
+## Amendment 3 (2026-10-16, after the rebase onto `88a98a2f`; before any build or run on it)
+
+A3.1 **Rebase.** `work/gridyaw` (d2lateral's commits + this lane's) now sits on `race/first-frame-parity` `88a98a2f`
+(d2bsp merged: fix L = the outer chunk loop, DEFAULT ON; fix W = the RW BSP walk `FUN_00538c80` + collector,
+opt-in `MASHED_D2BSP=1`). The one code conflict is `VehiclePhysicsRun.cpp`: d2bsp moved the A4 gate and the
+skipped-frame refresh inside the chunk loop. The refresh knob now acts per chunk at both refresh sites inside the
+loop, which is where the original's `0x004710a1..0x004710da` sits (`0x00470f50..0x00471151`). Tracker conflicts
+were resolved by taking the base's files and re-applying this branch's edits by script (commit `b2d9bffd`).
+New default G-CTRL (parent notice, `RESULT_d2bsp.md` section 3): `2b4d47bb / 356821c8 / f7a155e1`.
+
+A3.2 **Arms (`run_rb.py`, OUT `rb/`), each D2 arm alone, sequential.** R = `MASHED_D2LAT_REFRESH`, G =
+`MASHED_GRID_DIR`, W = `MASHED_D2BSP`.
+- default (L): `D2_DEF_1` (control, d2bsp 1883.91), `D2_R_1..3`, `D2_G_1..3`, `D2_GR_1..3`;
+- L + W: `D2_W_1` (control, d2bsp 1912.04..1914.84), `D2_WR_1..3`, `D2_WG_1..3`, `D2_WGR_1..3`;
+- diagnostic: `D2_DFX_1` (default L), `D2_WFX_1`, `D2_WGRFX_1` (A6ADUMP + D2SINK + world-contact + fixup logs);
+- no-op on this build: `H_DEF`, `H_DEF-2` = `2b4d47bb / 356821c8 / f7a155e1`.
+
+A3.3 **"Is the lateral loss what W fixes?" (fixed now).** On `D2_WFX_1` against `orig_lx1` (`d2lat.py`, steps from
+the first impact):
+- **YES** if the original's hold reproduces without any knob of this branch (retention >= 0.98 on at least 3 of
+  j0+7..j0+10, and the LOW arm at the 0.1 floor on those steps);
+- **PARTLY** if the impact's post-contact speed moves toward the original's 218.2 (by more than half of the 235.0 -> 218.2
+  gap) while the hold does not reproduce;
+- **NO** otherwise.
+
+The impact fixup's `+0x9e4` and `m` on `D2_WFX_1` are reported next to the knob arms', so the share of each input is
+read, not assumed.
+
+A3.4 **Default rule** (unchanged in substance). R or G goes default ON only if every gate of its lane passes on the new
+default (L). An arm that puts all three D2 metrics in bounds with H1 is reported first, on either base. Its full
+gates (determinism, D3 (b), collateral, G-CTRL) are then run before anything is proposed. A knob that only works on
+top of W is reported as conditional on the W decision (`RESULT_d2bsp.md` section 8).
