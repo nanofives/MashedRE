@@ -93,7 +93,7 @@ def load_results() -> dict:
         ent = re.search(r"interceptor entries \(reimpl\):\s+(\d+) / (\d+)", t)
         tail = t.split("\nFAIL:", 1)[-1] if "\nFAIL:" in t else ""
         if not (op and rel):
-            p2[k] = "not reached (race-scenario drive dies on the unmodified .asi too)"
+            p2[k] = "QUEUED (race-scenario nav drive lost its Frida session, also on the unmodified .asi; cause not established, orchestrator reports the PC has no usable audio endpoint)"
         elif op.group(1) == "OK" and rel.group(1) == "OK" and "(none)" in tail.split("report written")[0]:
             p2[k] = f"PASS (E9 + rel32 to the survivor, {ent.group(1)}/{ent.group(2)} entries)"
         elif op.group(1) == "OK" and rel.group(1) == "OK":

@@ -85,7 +85,7 @@ All under `verify/dupinstall_20261016/`.
 | path1 after (21 survivors, rebuilt .asi) | **21/21 GREEN** | `path1_after/`, `path1_after_driver.log` |
 | Install manifest before (deployed .asi, 27 RVAs) | 24 dual (1 refused), 3 single | `install_before_summary.txt` |
 | Install manifest after (rebuilt .asi, 27 RVAs) | **26 single**, 1 dual (the skipped pair); all 27 first bytes `0xE9`, 30 s boot survived | `install_after_summary.txt`, `path2_after/install_after.log` |
-| path2 `run_verify_hook`, 21 survivor keys | **install proven on 18/21** (opcode 0xE9 and rel32 equal the survivor's export), 3 not reached | `path2_summary.txt`, `path2_after/` |
+| path2 `run_verify_hook`, 21 survivor keys | **install proven on 18/21** (opcode 0xE9 and rel32 equal the survivor's export), 3 race-scenario rows not reached (QUEUED, see below) | `path2_summary.txt`, `path2_after/` |
 
 path2 detail, because the numbers mean different things:
 
@@ -97,10 +97,14 @@ path2 detail, because the numbers mean different things:
   `frontend_page_id_dispatch` ("expected an integer"), `hud_rect_emitter5` ("system error" at the menu, its path1 draw
   observation is GREEN). These are arg_types with an early-window-only handler, which the path2 template cannot drive;
   not edited (the hard rule forbids touching `diff_template.js`).
-- Not reached: `plugin_data_dword_a`, `plugin_data_dword_b`, `table_773030_get`. All three are `scenario='race'` and the
-  nav drive loses its Frida session during "booting to menu". **The same failure reproduces against the unmodified
-  shared .asi** (`path2_race_baseline_asi_plugin_a.txt`), so it is the full auto-hook boot under this harness, not this
-  change. For those three the proof is path1 GREEN (race scenario, hooks off) plus the install manifest.
+- Not reached, **QUEUED**: `plugin_data_dword_a`, `plugin_data_dword_b`, `table_773030_get`. All three are
+  `scenario='race'` and the nav drive loses its Frida session during "booting to menu" (`frida.InvalidOperationError:
+  script has been destroyed`). The same failure reproduces against the unmodified shared .asi
+  (`path2_race_baseline_asi_plugin_a.txt`), so it is not caused by this change. The cause is NOT established: the
+  menu-scenario runs and the install observations before and after it (09:52-09:57) booted fine, and the orchestrator
+  later reported the PC has no usable audio endpoint (`FUN_005baf40` AV at boot). Treated as environmental, nothing
+  demoted or recorded as a crash. For those three rows the proof today is path1 GREEN (race scenario, hooks off) plus
+  the install manifest (single install, survivor named, `0xE9`).
 - The two AI rows have no registry key and no exported entry point (anonymous namespace), so path1 and path2 do not
   apply; their proof is the install manifest (`AiWallAhead_Entry`, `AiLos_Entry`, single, `0xE9`) and the unchanged,
   already-verified A/B body.
@@ -118,6 +122,22 @@ path2 detail, because the numbers mean different things:
   this is the first recorded run of that class on either body. If a stricter reading of "C4 needs a canonical-scenario
   run with the hook installed" is wanted, these four are the ones to challenge; none has an in-race run on either body.
 - AI rows: C3 stays. The A/B evidence is on a body that is unchanged. What changed is which body installs.
+
+## Queued runs (need a working audio endpoint; shared-.asi window rules apply)
+
+1. path2 for the three race rows, from the worktree root, with the rebuilt `.asi` already in `mashedmod/build/`
+   (the runner deploys it, runs, restores in a `finally`, and aborts if a MASHED.exe is running):
+
+       py -3.12 verify\dupinstall_20261016\run_path2_deployed.py verify\dupinstall_20261016\path2_queued ^
+           verify\dupinstall_20261016\rvas27.txt plugin_data_dword_a plugin_data_dword_b table_773030_get
+
+   Expected: opcode 0xE9 and rel32 equal to `PluginDataDwordA` / `PluginDataDwordB` / `Table773030Get`. Afterwards
+   replace the three `path2 QUEUED ...` phrases in hooks.csv (rows 0x004f8660, 0x004f8690, 0x00496930) and the three
+   matching CHANGELOG lines with the result. Do not re-run `tracker_edit.py` (it appends notes).
+2. Optional: path2 with an in-race run for the four C4 rows named under "C-level statements", if the strict reading of
+   C4 is wanted.
+
+Nothing else in this lane waits on audio: build, lint, G-CTRL, path1 (21/21) and both install observations are done.
 
 ## Skipped
 
