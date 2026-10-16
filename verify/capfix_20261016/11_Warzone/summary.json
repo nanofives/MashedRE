@@ -1,0 +1,16 @@
+{
+ "track": 11,
+ "name": "Warzone",
+ "attempt": 1,
+ "rows": 686,
+ "racing_rows": 132,
+ "race_start": 554,
+ "shot_rows": [
+  584,
+  624,
+  659
+ ],
+ "piz": [
+  "TOASTART\\TRACKS\\WARZONE.PIZ"
+ ]
+}

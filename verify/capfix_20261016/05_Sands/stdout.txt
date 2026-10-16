@@ -1,0 +1,174 @@
+	Using video mode 1 : 640x480
+At 10 bytes per pixel (16bit Z + 2*32bit FB) there is 4194304 - 3686400 = 1122304 bytes of video memory free
+Replay buffer will be 150076 bytes in size
+RtFSManagerRegister successful
+numpermwaves 43
+numpermvirtualvoices 139
+Waiting for boot status
+Waiting for boot status
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for time to elapse
+Waiting for tispawned pid=17928
+booting...
+timeout: d3 depth=2 phase=3
+  [nav] target depth 3: depth=2 phase=3
+timeout: d3 depth=2 phase=3
+  [nav] target depth 3: depth=2 phase=3
+timeout: d3 depth=2 phase=3
+  [nav] target depth 3: depth=2 phase=3
+track index written: 5
+in race? phase=0
+trace stalled at 1219 rows (director fires 1219 -> 1219: no longer called)
+globals: {'t_7f1030': 949750048, 'jitter_7f0fc8': 0, 'blend_7f100c': 0.01666666567325592, 'mode_7f0fd0': 0, 'phase_63ba8c': 7, 'nodecount': 99, 'elim_898980': 10}
+nodes captured: 99 of 99
+override entries (first 64): (15.0,180.0,-1.0), (15.0,180.0,-1.0), (15.0,180.0,-1.0), (15.0,180.0,-1.0), (15.0,180.0,-1.0), (15.0,180.0,-1.0), (15.0,180.0,-1.0), (15.0,180.0,-1.0)
+trace rows: 1219; globals at end: {'t_7f1030': 949750048, 'jitter_7f0fc8': 0, 'blend_7f100c': 0.01666666567325592, 'mode_7f0fd0': 0, 'phase_63ba8c': 7, 'nodecount': 99, 'elim_898980': 10}
+track_type [11]   overhead [0]   mode [0]
+capture self-check: OK (car Y plausible, selector in {0,1}, velocity gate all zero)
+shot rows requested: abs [] race-relative [30, 70, 105]; fired at [1084, 1124, 1159]
+shot row 1084 (ba8c=6): OK C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\capfix\verify\capfix_20261016\05_Sands\orig_row_01084.bmp
+shot row 1124 (ba8c=6): OK C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\capfix\verify\capfix_20261016\05_Sands\orig_row_01124.bmp
+shot row 1159 (ba8c=6): OK C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\capfix\verify\capfix_20261016\05_Sands\orig_row_01159.bmp
+[d1r1] track piz opened: ['TOASTART\\TRACKS\\SANDS.PIZ']  (forced index 5)  textures named: 249
+[d1r1] drawrec row 1084: 673 events, 668 draws -> C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\capfix\verify\capfix_20261016\05_Sands\orig_row_01084.draws.json
+[d1r1] drawrec row 1124: 679 events, 674 draws -> C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\capfix\verify\capfix_20261016\05_Sands\orig_row_01124.draws.json
+[d1r1] drawrec row 1159: 616 events, 611 draws -> C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\capfix\verify\capfix_20261016\05_Sands\orig_row_01159.draws.json
+done -> C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\capfix\verify\capfix_20261016\05_Sands\trace.csv, C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\capfix\verify\capfix_20261016\05_Sands\static.json

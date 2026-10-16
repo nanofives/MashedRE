@@ -1,0 +1,16 @@
+{
+ "track": 6,
+ "name": "SuperG",
+ "attempt": 1,
+ "rows": 1211,
+ "racing_rows": 498,
+ "race_start": 713,
+ "shot_rows": [
+  743,
+  783,
+  818
+ ],
+ "piz": [
+  "TOASTART\\TRACKS\\SUPERG.PIZ"
+ ]
+}

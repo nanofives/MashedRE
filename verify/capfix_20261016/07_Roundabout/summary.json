@@ -1,0 +1,16 @@
+{
+ "track": 7,
+ "name": "Roundabout",
+ "attempt": 1,
+ "rows": 1220,
+ "racing_rows": 159,
+ "race_start": 1061,
+ "shot_rows": [
+  1091,
+  1131,
+  1166
+ ],
+ "piz": [
+  "TOASTART\\TRACKS\\ROUABOUT.PIZ"
+ ]
+}

@@ -40,7 +40,7 @@ let camFires=0; let trace=[]; let tracing=false;
 let frameMode=false, maxRows=1200, shotRows={}, reqPath='', shotDir='';
 // relShots: offsets from the FIRST DAT_0063ba8c == 6 row (racing), because phase 3's
 // length follows the QPC clock and differs per run (memory: phase-3 length is the QPC clock).
-let relShots={}, raceStart=-1;
+let relShots={}, raceStart=-1, shotErrs=[];
 // [camribbon 2026-10-16] forceProg >= 0: for the duration of ONE director call (onEnter ->
 // onLeave) every car's per-car path progress float (0x008a96e8 + i*0x30c, what FUN_00408a50
 // returns) is pinned to forceProg and then restored, so the director samples a chosen node
@@ -548,8 +548,13 @@ rpc.exports={
           const relHit = raceStart >= 0 && relShots[trace.length - raceStart];
           if ((shotRows[trace.length] || relHit) && reqPath) {
             const nm = shotDir + '\\orig_row_' + ('00000' + trace.length).slice(-5) + '.bmp';
-            const f = new File(reqPath, 'w'); f.write(nm + '\n'); f.close();
-            row.shot = 1;
+            // [capfix] reqPath must be ABSOLUTE: the game's CWD is original\, so a relative path
+            // made this throw ENOENT at the first shot row. The throw skipped trace.push, the trace
+            // froze at that row on every later director call (looking like "the director stopped"),
+            // and no shot fired. A failed request now marks the row (shot = -1) instead of
+            // dropping it.
+            try { const f = new File(reqPath, 'w'); f.write(nm + '\n'); f.close(); row.shot = 1; }
+            catch(e) { row.shot = -1; shotErrs.push(trace.length + ': ' + e); }
           }
           // [d1r1] car render roots (I-3) and the draw recorder's frame markers (I-1, I-FRAME)
           if (carFrames) row.cm = carMats();
@@ -582,6 +587,7 @@ rpc.exports={
   stoptrace:function(){ tracing=false; return trace.length; },
   gettrace:function(){ return JSON.stringify(trace); },
   fires:function(){ return camFires; },
+  shoterrs:function(){ return JSON.stringify(shotErrs); },
   globals:function(){ return JSON.stringify({
     t_7f1030: abs(0x007f1030).readU32(),
     jitter_7f0fc8: abs(0x007f0fc8).readFloat(),
@@ -637,6 +643,9 @@ def main():
     ap.add_argument("--nav-wait", type=float, default=2.0,
                     help="[camribbon] seconds to wait for each menu depth change (default 2.0, "
                          "the previous constant); raise it on a loaded machine")
+    ap.add_argument("--boot-wait", type=float, default=60.0,
+                    help="[capfix] seconds to wait for the title screen (was a fixed 20 s; a loaded "
+                         "machine boots slower than that and every later nav step then times out)")
     ap.add_argument("--force-prog", type=float, default=-1.0,
                     help="[camribbon] pin every car's path progress to this value for each "
                          "director call (see AGENT forceProg); -1 = off")
@@ -667,7 +676,9 @@ def main():
     out_csv.parent.mkdir(parents=True, exist_ok=True)
     env = dict(os.environ); env["MASHED_RE_NO_AUTO_HOOK"] = "1"
     env.setdefault("MASHED_WIN_POS", "primary-bl")
-    req = out_csv.parent / "orig_bbdump.req"
+    # [capfix] absolute: the game runs with CWD = original\, and both the agent's File() and the
+    # d3d9 shim's fopen/GetFileAttributes resolve this string against THAT directory
+    req = (out_csv.parent / "orig_bbdump.req").resolve()
     if shots or rel:
         if not (ORIG / "d3d9.dll").exists():
             sys.exit(f"--shots needs the d3d9 shim at {ORIG / 'd3d9.dll'}")
@@ -678,7 +689,15 @@ def main():
     pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
     print(f"spawned pid={pid}")
     sess = dev.attach(pid)
-    scr = sess.create_script(AGENT); scr.on("message", lambda m, d: None); scr.load()
+    # [capfix] script errors are collected and printed: onLeave exceptions were swallowed here, so
+    # a throwing callback looked like "the director is no longer called" (the trace just stops growing)
+    agent_errors = []
+    def on_msg(m, d):
+        if m.get("type") == "error":
+            agent_errors.append(m)
+            if len(agent_errors) <= 5:
+                print(f"[agent error] {m.get('description')} @ {m.get('fileName')}:{m.get('lineNumber')}")
+    scr = sess.create_script(AGENT); scr.on("message", on_msg); scr.load()
     scr.exports_sync.init()
     scr.exports_sync.config(args.frame, args.rows, shots, str(req) if (shots or rel) else "",
                             str(out_csv.parent.resolve()), rel,
@@ -711,7 +730,7 @@ def main():
         return E.depth() >= target
 
     print("booting...")
-    wait(lambda: E.phase() == 3 and E.depth() >= 1, 20, "title")
+    wait(lambda: E.phase() == 3 and E.depth() >= 1, args.boot_wait, "title")
     time.sleep(1.0)
     confirm_to(2); time.sleep(0.4); press(4); time.sleep(0.8)
     confirm_to(3)
@@ -733,14 +752,19 @@ def main():
     if args.early:
         fires3s = -1
         t0 = time.time()
-        last_n, last_t = 0, time.time()
+        last_n, last_t, last_f = 0, time.time(), E.fires()
         while E.tracelen() < args.rows and time.time() - t0 < args.rows / 30.0 + 60:
             time.sleep(1.0)
             n_now = E.tracelen()
             if n_now != last_n:
-                last_n, last_t = n_now, time.time()
+                last_n, last_t, last_f = n_now, time.time(), E.fires()
             elif n_now > 100 and time.time() - last_t > float(os.environ.get("PROBE_STALL_S", "8.0")):
-                print(f"trace stalled at {n_now} rows (director no longer called)")
+                # [capfix] say which kind of stall: the director's fire counter still advancing
+                # while no rows are added means the agent's onLeave is throwing, not that the game
+                # stopped calling the director
+                f_now = E.fires()
+                print(f"trace stalled at {n_now} rows (director fires {last_f} -> {f_now}: "
+                      f"{'STILL CALLED, the agent callback is failing' if f_now != last_f else 'no longer called'})")
                 break
     else:
         time.sleep(2.0)
@@ -860,14 +884,26 @@ def main():
     else:
         print("capture self-check: OK (car Y plausible, selector in {0,1}, "
               "velocity gate all zero)")
+    shot_fail = False
     if shots or rel:
         end = time.time() + 5.0
         while req.exists() and time.time() < end: time.sleep(0.1)
-        fired = [i for i, r in enumerate(rows) if r.get("shot")]
+        fired = [i for i, r in enumerate(rows) if r.get("shot") == 1]
         print(f"shot rows requested: abs {shots} race-relative {rel}; fired at {fired}")
         for k in fired:
             bmp = out_csv.parent / f"orig_row_{k:05d}.bmp"
-            print(f"shot row {k} (ba8c={rows[k]['ba8c']}): {'OK' if bmp.exists() else 'MISSING'} {bmp}")
+            ok = bmp.exists()
+            print(f"shot row {k} (ba8c={rows[k]['ba8c']}): {'OK' if ok else 'MISSING'} {bmp}")
+            if not ok: shot_fail = True
+        # [capfix] a requested shot that did not fire must fail the run, not pass silently
+        if len(fired) != len(shots) + len(rel):
+            shot_fail = True
+            print(f"\n*** SHOT CAPTURE FAILED: {len(shots) + len(rel)} requested, {len(fired)} fired "
+                  f"(trace has {len(rows)} rows) ***")
+        se = json.loads(E.shoterrs())
+        if se: print(f"[agent] shot request errors: {se[:3]}")
+    if agent_errors:
+        print(f"[agent] {len(agent_errors)} script error(s); first: {agent_errors[0].get('description')}")
     tf = json.loads(E.trackfiles())
     print(f"[d1r1] track piz opened: {tf}  (forced index {args.track})  textures named: {E.texcount()}")
     (out_csv.parent / (out_csv.stem + ".tracks.json")).write_text(json.dumps(tf))
@@ -883,7 +919,7 @@ def main():
     try: dev.kill(pid)
     except Exception: pass
     print(f"done -> {out_csv}, {out_static}")
-    return 0
+    return 2 if shot_fail else 0
 
 
 if __name__ == "__main__":

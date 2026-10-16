@@ -1,0 +1,16 @@
+{
+ "track": 4,
+ "name": "Highway",
+ "attempt": 1,
+ "rows": 1021,
+ "racing_rows": 198,
+ "race_start": 823,
+ "shot_rows": [
+  853,
+  893,
+  928
+ ],
+ "piz": [
+  "TOASTART\\TRACKS\\HIGHWAY.PIZ"
+ ]
+}

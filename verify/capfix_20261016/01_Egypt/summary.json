@@ -1,0 +1,16 @@
+{
+ "track": 1,
+ "name": "Egypt",
+ "attempt": 1,
+ "rows": 856,
+ "racing_rows": 146,
+ "race_start": 710,
+ "shot_rows": [
+  740,
+  780,
+  815
+ ],
+ "piz": [
+  "TOASTART\\TRACKS\\EGYPT.PIZ"
+ ]
+}

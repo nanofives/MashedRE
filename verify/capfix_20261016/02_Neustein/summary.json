@@ -1,0 +1,16 @@
+{
+ "track": 2,
+ "name": "Neustein",
+ "attempt": 1,
+ "rows": 1208,
+ "racing_rows": 144,
+ "race_start": 1064,
+ "shot_rows": [
+  1094,
+  1134,
+  1169
+ ],
+ "piz": [
+  "TOASTART\\TRACKS\\NEUSTEIN.PIZ"
+ ]
+}

@@ -1,0 +1,16 @@
+{
+ "track": 10,
+ "name": "Dump",
+ "attempt": 1,
+ "rows": 872,
+ "racing_rows": 167,
+ "race_start": 705,
+ "shot_rows": [
+  735,
+  775,
+  810
+ ],
+ "piz": [
+  "TOASTART\\TRACKS\\DUMP.PIZ"
+ ]
+}
