@@ -35,6 +35,32 @@ rw::Texture* ResolveTexture(const char* name, const TextureSource& src) {
     return nullptr;
 }
 
+}  // namespace
+
+// [rtex 2026-10-16] MatFX DUAL (U-9692). The original renders a material whose MatFX
+// effect is DUAL through FUN_005405c0 @ 0x005405c0 (dispatched by the MatFX atomic
+// callback FUN_00543500 @ 0x00543500 on effect 4): stage-1 dual texture,
+// BLENDTEXTUREALPHA, then MODULATE by diffuse -- librw's d3d9matfx.cpp matfxRender_Dual
+// (MASHED LOCAL PATCH P9). MASHED_LIBRW_DUAL=0 builds every material without the effect,
+// i.e. the pre-rtex single-stage draw.
+bool DualEnabled() {
+    static const bool on = [] {
+        const char* e = std::getenv("MASHED_LIBRW_DUAL");
+        return !(e && e[0] == '0' && e[1] == '\0');
+    }();
+    return on;
+}
+
+namespace {
+
+// Does this parsed material carry a MatFX DUAL slot the port renders? Effect 4 only:
+// 6 (DUALUVTRANSFORM) adds the UV-transform matrices FUN_005405c0 uploads at 0x00540701 /
+// 0x00540cbb, which are not ported; no shipped asset uses it (evidence/matfx_census.txt).
+template <typename MatT>
+bool IsDualMaterial(const MatT& m) {
+    return DualEnabled() && m.fx.has_dual && m.fx.type == rw::MatFX::DUAL;
+}
+
 // Build one rw::Material per parsed material, binding textures where named.
 // `resolved`/`named` are counted so the self-test can assert the bindings
 // actually happened rather than silently rendering untextured.
@@ -57,8 +83,38 @@ void BuildMaterials(const std::vector<MatT>& src, const TextureSource& tex,
                 if (resolved) ++*resolved;
             }
         }
+        // [rtex] MatFX DUAL, as streamed (MatFxExt.h). A dual texture the dictionaries
+        // do not hold stays null, as RW's MatFX reader leaves it when the texture is not
+        // found; FUN_005405c0 then draws the plain path (`*param_5 == 0` at 0x005405d0).
+        // The vehicles' CarDirt / WheelDirt are such names: the game binds dirt.piz
+        // textures later (FUN_0041ecc0 @ 0x0041ecc0 -> FUN_005401d0).
+        if (IsDualMaterial(m)) {
+            rw::MatFX::setEffects(mat, m.fx.type);
+            if (rw::MatFX* fx = rw::MatFX::get(mat)) {
+                fx->setDualTexture(ResolveTexture(m.fx.dual_tex, tex));
+                fx->setDualSrcBlend(m.fx.dual_src);
+                fx->setDualDestBlend(m.fx.dual_dst);
+            }
+        }
         out.push_back(mat);
     }
+}
+
+// Fill texcoord set 1 (stage-1 coordinates of MatFX DUAL).
+void FillTexCoords1(rw::Geometry* geo, std::int32_t nv, const std::vector<float>& uvs2) {
+    if (geo->numTexCoordSets < 2 || !geo->texCoords[1] || uvs2.empty()) return;
+    for (std::int32_t i = 0; i < nv; ++i) {
+        geo->texCoords[1][i].u = uvs2[i * 2 + 0];
+        geo->texCoords[1][i].v = uvs2[i * 2 + 1];
+    }
+}
+
+// Geometry format flags for a mesh with `nsets` texcoord sets: RW writes rpGEOMETRY
+// TEXTURED2 (0x80) without TEXTURED for two sets (ROAD.DFF 0x2008b), and the matfx
+// callback keys the stage-1 TEXCOORDINDEX on that bit (0x00540c4c).
+std::uint32_t TexFlags(std::size_t nsets) {
+    if (nsets >= 2) return rw::Geometry::TEXTURED2 | (2u << 16);
+    return nsets ? static_cast<std::uint32_t>(rw::Geometry::TEXTURED) : 0u;
 }
 
 void AppendMaterials(rw::Geometry* geo, const std::vector<rw::Material*>& mats) {
@@ -317,8 +373,15 @@ void* BuildWorld(const Track::World& world, const TextureSource& tex) {
         const std::int32_t nt = static_cast<std::int32_t>(s.tris.size() / 4);
         if (nv == 0 || nt == 0) continue;
 
+        // [rtex] two texcoord sets when the world declares them and DUAL is on.
+        const bool two_sets = DualEnabled() && !s.uvs2.empty();
+        bool uses_dual = false;
+        for (std::size_t i = 0; i < s.tris.size() / 4 && !uses_dual; ++i) {
+            const std::uint16_t m = s.tris[i * 4 + 0];
+            uses_dual = m < world.materials.size() && IsDualMaterial(world.materials[m]);
+        }
         std::uint32_t flags = rw::Geometry::POSITIONS;
-        if (!s.uvs.empty())    flags |= rw::Geometry::TEXTURED;
+        if (!s.uvs.empty())    flags |= TexFlags(two_sets ? 2 : 1);
         if (!s.prelit.empty()) flags |= rw::Geometry::PRELIT;
         // Deliberately no NORMALS/LIGHT: the static world carries no vertex
         // normals, so its baked prelight IS the lighting -- same as D3D9 today.
@@ -331,6 +394,7 @@ void* BuildWorld(const Track::World& world, const TextureSource& tex) {
         rw::Geometry* geo = rw::Geometry::create(nv, nt, flags);
         if (!geo) continue;
         FillVertexData(geo, nv, s.verts, s.uvs, s.prelit, nullptr);
+        if (two_sets) FillTexCoords1(geo, nv, s.uvs2);
         if (WorldMatIdMode() && geo->colors)
             for (std::int32_t i = 0; i < nv; ++i)
                 geo->colors[i] = rw::RGBA{255, 255, 255, 255};
@@ -372,8 +436,12 @@ void* BuildWorld(const Track::World& world, const TextureSource& tex) {
         AppendMaterials(geo, mats);   // matId is a world-global index
         FinishGeometry(geo);
 
-        if (rw::Atomic* a = MakeAtomic(geo, worldFrame))
+        if (rw::Atomic* a = MakeAtomic(geo, worldFrame)) {
+            // [rtex] a sector holding a DUAL material renders through the MatFX
+            // pipeline, as the original's sector draws through FUN_00543500.
+            if (uses_dual) rw::MatFX::enableEffects(a);
             sectors->addAtomic(a);
+        }
     }
     // D-S3-BANK probe: per-material triangle totals across all sectors. The D3D9
     // path logs the same tally from batches_, so a material that gets a different
@@ -570,8 +638,12 @@ void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
         const std::int32_t nt = static_cast<std::int32_t>(b.tris.size() / 3);
         if (nv == 0 || nt == 0) continue;
 
+        // [rtex] two texcoord sets when the geometry declares them and DUAL is on.
+        const bool two_sets = DualEnabled() && !b.uvs2.empty();
+        const bool uses_dual = b.material < model.materials.size() &&
+                               IsDualMaterial(model.materials[b.material]);
         std::uint32_t flags = rw::Geometry::POSITIONS;
-        if (!b.uvs.empty())     flags |= rw::Geometry::TEXTURED;
+        if (!b.uvs.empty())     flags |= TexFlags(two_sets ? 2 : 1);
         if (!b.prelit.empty())  flags |= rw::Geometry::PRELIT;
         if (!b.normals.empty()) flags |= rw::Geometry::NORMALS;
         // I5: these two map 1:1 onto RW's own geometry flags, which is why the
@@ -631,6 +703,7 @@ void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
                  (unsigned)(*prelit_src)[0]);
         }
         FillVertexData(geo, nv, b.verts, b.uvs, *prelit_src, &b.normals);
+        if (two_sets) FillTexCoords1(geo, nv, b.uvs2);
         // [D-S3-PROP] MASHED_PROP_VDUMP=<handle>: the librw half of the pair. Dump
         // every vertex this batch uploads as "batch x y z r g b" -- same columns
         // and same order as the D3D9 side (both walk model.batches in order), so
@@ -662,6 +735,7 @@ void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
         FinishGeometry(geo);
 
         if (rw::Atomic* a = MakeAtomic(geo, root)) {
+            if (uses_dual) rw::MatFX::enableEffects(a);   // [rtex] FUN_00543500 path
             clump->addAtomic(a);
             // Record the material HERE, where the atomic is actually created --
             // batches that produced none (nv==0 || nt==0, skipped above) must not

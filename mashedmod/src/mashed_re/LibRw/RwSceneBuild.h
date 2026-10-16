@@ -42,6 +42,11 @@ struct TextureSource {
 // baked prelight is the lighting, exactly as on the D3D9 path.
 void* BuildWorld(const Track::World& world, const TextureSource& tex);
 
+// [rtex] MatFX DUAL on (default) unless MASHED_LIBRW_DUAL=0: materials streamed with a
+// DUAL effect keep it, two-set geometry keeps texcoord set 1, and their atomics render
+// through librw's MatFX pipeline (FUN_005405c0 @ 0x005405c0 mapping). See RwSceneBuild.cpp.
+bool DualEnabled();
+
 // Track::DffModel -> rw::Clump* (returned as void*), one rw::Atomic per batch.
 // DffBatch verts are model-space and frame-baked (DffModel.h), so every atomic
 // gets an identity frame parented to the clump frame.

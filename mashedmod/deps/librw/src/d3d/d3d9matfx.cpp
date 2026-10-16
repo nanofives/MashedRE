@@ -16,6 +16,11 @@
 #include "rwd3d.h"
 #include "rwd3d9.h"
 
+// [mashed] d1r1 / rtex per-draw recorder hooks (d3d9render.cpp); null by default.
+extern void (*rw_drawrec_pre)(const char *texname, const float *ltm16);
+extern void (*rw_drawrec_post)(void);
+extern void (*rw_drawrec_tex1)(const char *tex1name);
+
 namespace rw {
 namespace d3d9 {
 using namespace d3d;
@@ -29,6 +34,30 @@ static void *matfx_env_amb_dir_VS;
 static void *matfx_env_all_VS;
 static void *matfx_env_PS;
 static void *matfx_env_tex_PS;
+// MASHED LOCAL PATCH (P9, rtex) -- MatFX DUAL shaders (shaders/matfx_dual_*.hlsl)
+static void *matfx_dual_amb_VS;
+static void *matfx_dual_amb_dir_VS;
+static void *matfx_dual_all_VS;
+static void *matfx_dual_tex_PS;
+static void *matfx_dual_tex_uv0_PS;
+static void *matfx_dual_PS;
+
+// MASHED LOCAL PATCH (P9) -- one recorded draw (rw_drawrec_* hooks are null unless the
+// mashed_re per-draw recorder is installed).
+static void
+drawInstRec(InstanceDataHeader *header, InstanceData *inst, Atomic *atomic,
+            Texture *tex0, Texture *tex1)
+{
+	if(rw_drawrec_tex1)
+		rw_drawrec_tex1(tex1 ? tex1->name : nil);
+	if(rw_drawrec_pre)
+		rw_drawrec_pre(tex0 ? tex0->name : nil, (const float*)atomic->getFrame()->getLTM());
+	drawInst(header, inst);
+	if(rw_drawrec_post)
+		rw_drawrec_post();
+}
+
+static Atomic *curAtomic;	// the atomic matfxRenderCB_Shader is drawing
 
 enum
 {
@@ -60,7 +89,70 @@ matfxRender_Default(InstanceDataHeader *header, InstanceData *inst, int32 lightB
 	}else
 		setPixelShader(default_PS);
 
-	drawInst(header, inst);
+	drawInstRec(header, inst, curAtomic, m->texture, nil);	// MASHED LOCAL PATCH (P9)
+}
+
+// MASHED LOCAL PATCH (P9, rtex 2026-10-16) -- MatFX DUAL, ported from RenderWare's D3D9
+// MatFX dual renderer FUN_005405c0 @ 0x005405c0 (MASHED.exe), branch srcBlend SRCALPHA /
+// dstBlend INVSRCALPHA with DAT_007dc614 != 0 and DAT_007dc624 >= 3 (the single-pass,
+// three-stage path the original takes on this hardware: stage-1 COLOROP 13 recorded in
+// verify/d1r1_20261016). The stage cascade is in shaders/matfx_dual_PS.hlsl.
+//   - null dual texture: plain draw (FUN_00540340 via the test at 0x005405d0)
+//   - base texture present: base on stage 0, dual on stage 1 (0x005408f9); stage-1
+//     coordinates are texcoord set 1 when the geometry has rpGEOMETRYTEXTURED2, else set 0
+//     (TEXCOORDINDEX 0 at 0x00540c56); stage 1 is unbound after the draw (0x005411f3)
+//   - base texture absent: dual on stage 0 (0x005409ca)
+//   - any other blend pair: [UNCERTAIN] not ported (no shipped asset uses one,
+//     verify/rtex_20261016/evidence/matfx_census.txt); drawn plain
+// Blending follows stage 0 only, as FUN_004d6ce0 does (stage != 0 skips the alpha rule at
+// 0x004d6d00), which is what setRasterStage already does.
+static void
+matfxRender_Dual(InstanceDataHeader *header, InstanceData *inst, int32 lightBits,
+                 MatFX::Dual *dual, uint32 geoFlags)
+{
+	Material *m = inst->material;
+	if(dual->tex == nil ||
+	   dual->srcBlend != BLENDSRCALPHA || dual->dstBlend != BLENDINVSRCALPHA){
+		matfxRender_Default(header, inst, lightBits);
+		return;
+	}
+
+	SetRenderState(VERTEXALPHA, inst->vertexAlpha || m->color.alpha != 255);
+
+	if(m->texture){
+		bool two = (geoFlags & Geometry::TEXTURED2) != 0;
+		if(two){
+			if((lightBits & VSLIGHT_MASK) == 0)
+				setVertexShader(matfx_dual_amb_VS);
+			else if((lightBits & VSLIGHT_MASK) == VSLIGHT_DIRECT)
+				setVertexShader(matfx_dual_amb_dir_VS);
+			else
+				setVertexShader(matfx_dual_all_VS);
+			setPixelShader(matfx_dual_tex_PS);
+		}else{
+			if((lightBits & VSLIGHT_MASK) == 0)
+				setVertexShader(default_amb_VS);
+			else if((lightBits & VSLIGHT_MASK) == VSLIGHT_DIRECT)
+				setVertexShader(default_amb_dir_VS);
+			else
+				setVertexShader(default_all_VS);
+			setPixelShader(matfx_dual_tex_uv0_PS);
+		}
+		d3d::setTexture(0, m->texture);
+		d3d::setTexture(1, dual->tex);
+		drawInstRec(header, inst, curAtomic, m->texture, dual->tex);
+		d3d::setTexture(1, nil);
+	}else{
+		if((lightBits & VSLIGHT_MASK) == 0)
+			setVertexShader(default_amb_VS);
+		else if((lightBits & VSLIGHT_MASK) == VSLIGHT_DIRECT)
+			setVertexShader(default_amb_dir_VS);
+		else
+			setVertexShader(default_all_VS);
+		setPixelShader(matfx_dual_PS);
+		d3d::setTexture(0, dual->tex);
+		drawInstRec(header, inst, curAtomic, dual->tex, nil);
+	}
 }
 
 static Frame *lastEnvFrame;
@@ -166,6 +258,7 @@ matfxRenderCB_Shader(Atomic *atomic, InstanceDataHeader *header)
 	setVertexDeclaration((IDirect3DVertexDeclaration9*)header->vertexDeclaration);
 
 	lastEnvFrame = nil;
+	curAtomic = atomic;	// MASHED LOCAL PATCH (P9)
 
 	vsBits = lightingCB_Shader(atomic);
 	uploadMatrices(atomic->getFrame()->getLTM());
@@ -188,15 +281,24 @@ matfxRenderCB_Shader(Atomic *atomic, InstanceDataHeader *header)
 			else
 				matfxRender_Default(header, inst, vsBits);
 			break;
+		case MatFX::DUAL:
+			// MASHED LOCAL PATCH (P9) -- FUN_00543500 effect 4 -> FUN_005405c0
+			{
+				int32 di = matfx->getEffectIndex(MatFX::DUAL);
+				if(di >= 0)
+					matfxRender_Dual(header, inst, vsBits, &matfx->fx[di].dual, flags);
+				else
+					matfxRender_Default(header, inst, vsBits);
+			}
+			break;
 		case MatFX::NOTHING:
 		case MatFX::BUMPMAP:
 		case MatFX::BUMPENVMAP:
-		case MatFX::DUAL:
 		case MatFX::UVTRANSFORM:
 		case MatFX::DUALUVTRANSFORM:
 			// not supported yet
 			matfxRender_Default(header, inst, vsBits);
-			break;			
+			break;
 		}
 
 		inst++;
@@ -243,6 +345,43 @@ createMatFXShaders(void)
 		assert(matfx_env_tex_PS);
 	}
 
+	// MASHED LOCAL PATCH (P9, rtex) -- MatFX DUAL shaders
+	{
+		static
+#include "shaders/matfx_dual_amb_VS.h"
+		matfx_dual_amb_VS = createVertexShader((void*)VS_NAME);
+		assert(matfx_dual_amb_VS);
+	}
+	{
+		static
+#include "shaders/matfx_dual_amb_dir_VS.h"
+		matfx_dual_amb_dir_VS = createVertexShader((void*)VS_NAME);
+		assert(matfx_dual_amb_dir_VS);
+	}
+	{
+		static
+#include "shaders/matfx_dual_all_VS.h"
+		matfx_dual_all_VS = createVertexShader((void*)VS_NAME);
+		assert(matfx_dual_all_VS);
+	}
+	{
+		static
+#include "shaders/matfx_dual_tex_PS.h"
+		matfx_dual_tex_PS = createPixelShader((void*)PS_NAME);
+		assert(matfx_dual_tex_PS);
+	}
+	{
+		static
+#include "shaders/matfx_dual_tex_uv0_PS.h"
+		matfx_dual_tex_uv0_PS = createPixelShader((void*)PS_NAME);
+		assert(matfx_dual_tex_uv0_PS);
+	}
+	{
+		static
+#include "shaders/matfx_dual_PS.h"
+		matfx_dual_PS = createPixelShader((void*)PS_NAME);
+		assert(matfx_dual_PS);
+	}
 }
 
 void
@@ -263,6 +402,20 @@ destroyMatFXShaders(void)
 
 	destroyPixelShader(matfx_env_tex_PS);
 	matfx_env_tex_PS = nil;
+
+	// MASHED LOCAL PATCH (P9, rtex)
+	destroyVertexShader(matfx_dual_amb_VS);
+	matfx_dual_amb_VS = nil;
+	destroyVertexShader(matfx_dual_amb_dir_VS);
+	matfx_dual_amb_dir_VS = nil;
+	destroyVertexShader(matfx_dual_all_VS);
+	matfx_dual_all_VS = nil;
+	destroyPixelShader(matfx_dual_tex_PS);
+	matfx_dual_tex_PS = nil;
+	destroyPixelShader(matfx_dual_tex_uv0_PS);
+	matfx_dual_tex_uv0_PS = nil;
+	destroyPixelShader(matfx_dual_PS);
+	matfx_dual_PS = nil;
 }
 
 #endif

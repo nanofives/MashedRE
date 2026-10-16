@@ -11,6 +11,8 @@
 #include <cstdint>
 #include <vector>
 
+#include "MatFxExt.h"
+
 namespace mashed_re {
 namespace Track {
 
@@ -21,6 +23,9 @@ struct DffMaterial {
     // material extension (rwID_UVANIMPLUGIN 0x135), e.g. "bmp_Sea_M". Empty if
     // the material carries no UV-anim binding. See track_anim_data.md F3.
     char         uv_anim[33];
+    // [rtex] MatFX material extension (0x120): TRAINING ROAD.DFF and the vehicle
+    // DFFs carry DUAL src 5 / dst 6 (MatFxExt.h).
+    MatFx        fx;
 };
 
 // One renderable batch: model-space triangles for one material.
@@ -49,6 +54,13 @@ struct DffBatch {
     // water LAKE/WATER0x.DFF=0x1000f (numTexCoordSets 1). numTexCoordSets = bits
     // 16-23. Lets RwSceneBuild fold ambient into the water prelit only.
     std::uint32_t geo_flags = 0;
+    // [rtex] second texcoord set, parallel to uvs; empty unless the geometry
+    // declares two sets (ROAD.DFF 0x2008b, vehicle dual parts 0x200b3).
+    std::vector<float> uvs2;
+    // [rtex] the owning geometry's part code: rpUSERDATA (0x11F) array 0 element 0
+    // ("0.tv_part_id" on vehicles), which FUN_004b5190 @ 0x004b5190 reads off
+    // atomic+0x18 (the geometry). -1 when the geometry has no int user data.
+    std::int32_t part_id = -1;
 };
 
 class DffModel {

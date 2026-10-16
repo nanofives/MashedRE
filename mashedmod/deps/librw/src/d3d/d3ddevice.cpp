@@ -477,7 +477,12 @@ setRasterStage(uint32 stage, Raster *raster)
 			d3ddevice->SetTexture(stage, (IDirect3DTexture9*)d3draster->texture);
 			alpha = d3draster->hasAlpha;
 		}else{
-			d3ddevice->SetTexture(stage, whiteTex);
+			// MASHED LOCAL PATCH (P9, rtex 2026-10-16) -- stages >= 1 unbind to NULL, as
+			// RenderWare's D3D9 driver does after a MatFX dual / env draw
+			// (FUN_004d6e70(0, 1) @ 0x005411f3 -> SetTexture(1, NULL) via vtable 0x104).
+			// Only the MatFX shaders sample s1, and they always bind it first. Stage 0
+			// keeps upstream's white texture (the default shaders sample s0 always).
+			d3ddevice->SetTexture(stage, stage == 0 ? whiteTex : nil);
 			alpha = 0;
 		}
 		if(stage == 0){

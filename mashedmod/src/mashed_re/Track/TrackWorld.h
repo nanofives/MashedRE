@@ -12,6 +12,8 @@
 #include <cstdint>
 #include <vector>
 
+#include "MatFxExt.h"
+
 namespace mashed_re {
 namespace Track {
 
@@ -21,12 +23,17 @@ struct Material {
     // F3: UVAnim dict entry bound via the RW UVAnim material extension
     // (rwID_UVANIMPLUGIN 0x135); empty if none. See track_anim_data.md F3.
     char          uv_anim[33];
+    // [rtex] MatFX material extension (0x120); TRAINING material 0 is DUAL.
+    MatFx         fx;
 };
 
 struct Sector {
     std::vector<float>         verts;   // x,y,z per vertex
     std::vector<std::uint32_t> prelit;  // RGBA per vertex (empty if absent)
     std::vector<float>         uvs;     // u,v per vertex (empty if absent)
+    // [rtex] second texcoord set (u,v per vertex) when the world format declares
+    // two (TRAINING 0x400200c9); empty otherwise. Stage 1 of MatFX DUAL reads it.
+    std::vector<float>         uvs2;
     // mat,v0,v1,v2 per triangle (mat already includes matListWindowBase)
     std::vector<std::uint16_t> tris;
 };

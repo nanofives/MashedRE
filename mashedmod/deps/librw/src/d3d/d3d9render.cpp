@@ -18,6 +18,9 @@
 // installed, so the draw path is unchanged by default. See MASHED_PATCHES.md.
 void (*rw_drawrec_pre)(const char *texname, const float *ltm16) = nullptr;
 void (*rw_drawrec_post)(void) = nullptr;
+// [mashed rtex 2026-10-16] stage-1 texture name for the next draw (MatFX dual / env),
+// called before rw_drawrec_pre; rw_drawrec_post clears it. Null unless the recorder is on.
+void (*rw_drawrec_tex1)(const char *tex1name) = nullptr;
 
 namespace rw {
 namespace d3d9 {

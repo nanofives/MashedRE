@@ -115,6 +115,7 @@ bool World::Parse(const std::uint8_t* data, std::size_t len) {
                     }
                 } else if (ch.id == 0x03) {   // F3: material EXTENSION (UVAnim)
                     read_uvanim_ext(r, data, ch.payload, ch.size, out.uv_anim);
+                    ParseMatFxExt(data, len, ch.payload, ch.size, &out.fx);   // [rtex]
                 }
                 qq = ch.payload + ch.size;
             }
@@ -189,6 +190,11 @@ bool World::Parse(const std::uint8_t* data, std::size_t len) {
         if (nuv > 0) {
             s.uvs.resize(static_cast<std::size_t>(nv) * 2);
             std::memcpy(s.uvs.data(), data + q, static_cast<std::size_t>(nv) * 8);
+            if (nuv > 1) {   // [rtex] set 1 follows set 0
+                s.uvs2.resize(static_cast<std::size_t>(nv) * 2);
+                std::memcpy(s.uvs2.data(), data + q + static_cast<std::size_t>(nv) * 8,
+                            static_cast<std::size_t>(nv) * 8);
+            }
             q += static_cast<std::size_t>(nuv) * nv * 8;
         }
         s.tris.resize(static_cast<std::size_t>(nt) * 4);
