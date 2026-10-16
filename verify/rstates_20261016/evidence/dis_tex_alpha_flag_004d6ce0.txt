@@ -1,0 +1,105 @@
+0x004d6ce0  8b 54 24 04               mov edx, dword ptr [esp + 4]
+0x004d6ce4  55                        push ebp
+0x004d6ce5  56                        push esi
+0x004d6ce6  57                        push edi
+0x004d6ce7  85 d2                     test edx, edx
+0x004d6ce9  74 0a                     je 0x4d6cf5
+0x004d6ceb  a1 e4 1a 91 00            mov eax, dword ptr [0x911ae4]
+0x004d6cf0  8d 34 10                  lea esi, [eax + edx]
+0x004d6cf3  eb 02                     jmp 0x4d6cf7
+0x004d6cf5  33 f6                     xor esi, esi
+0x004d6cf7  8b 4c 24 14               mov ecx, dword ptr [esp + 0x14]
+0x004d6cfb  bf 01 00 00 00            mov edi, 1
+0x004d6d00  85 c9                     test ecx, ecx
+0x004d6d02  0f 85 f3 00 00 00         jne 0x4d6dfb
+0x004d6d08  85 d2                     test edx, edx
+0x004d6d0a  74 6c                     je 0x4d6d78
+0x004d6d0c  8a 46 08                  mov al, byte ptr [esi + 8]
+0x004d6d0f  84 c0                     test al, al
+0x004d6d11  74 65                     je 0x4d6d78
+0x004d6d13  a1 14 6b 7d 00            mov eax, dword ptr [0x7d6b14]
+0x004d6d18  85 c0                     test eax, eax
+0x004d6d1a  0f 85 db 00 00 00         jne 0x4d6dfb
+0x004d6d20  a1 10 6b 7d 00            mov eax, dword ptr [0x7d6b10]
+0x004d6d25  89 3d 14 6b 7d 00         mov dword ptr [0x7d6b14], edi
+0x004d6d2b  85 c0                     test eax, eax
+0x004d6d2d  0f 85 c8 00 00 00         jne 0x4d6dfb
+0x004d6d33  a1 d4 58 7d 00            mov eax, dword ptr [0x7d58d4]
+0x004d6d38  89 3d d0 58 7d 00         mov dword ptr [0x7d58d0], edi
+0x004d6d3e  85 c0                     test eax, eax
+0x004d6d40  75 1c                     jne 0x4d6d5e
+0x004d6d42  a1 14 6c 7d 00            mov eax, dword ptr [0x7d6c14]
+0x004d6d47  89 3d d4 58 7d 00         mov dword ptr [0x7d58d4], edi
+0x004d6d4d  c7 04 85 68 51 7d 00 1b 00 00 00  mov dword ptr [eax*4 + 0x7d5168], 0x1b
+0x004d6d58  40                        inc eax
+0x004d6d59  a3 14 6c 7d 00            mov dword ptr [0x7d6c14], eax
+0x004d6d5e  a1 fc 6b 7d 00            mov eax, dword ptr [0x7d6bfc]
+0x004d6d63  8b 2d 70 58 7d 00         mov ebp, dword ptr [0x7d5870]
+0x004d6d69  3b e8                     cmp ebp, eax
+0x004d6d6b  0f 84 8a 00 00 00         je 0x4d6dfb
+0x004d6d71  a3 70 58 7d 00            mov dword ptr [0x7d5870], eax
+0x004d6d76  eb 5e                     jmp 0x4d6dd6
+0x004d6d78  a1 14 6b 7d 00            mov eax, dword ptr [0x7d6b14]
+0x004d6d7d  85 c0                     test eax, eax
+0x004d6d7f  74 7a                     je 0x4d6dfb
+0x004d6d81  a1 10 6b 7d 00            mov eax, dword ptr [0x7d6b10]
+0x004d6d86  c7 05 14 6b 7d 00 00 00 00 00  mov dword ptr [0x7d6b14], 0
+0x004d6d90  85 c0                     test eax, eax
+0x004d6d92  75 67                     jne 0x4d6dfb
+0x004d6d94  a1 d4 58 7d 00            mov eax, dword ptr [0x7d58d4]
+0x004d6d99  c7 05 d0 58 7d 00 00 00 00 00  mov dword ptr [0x7d58d0], 0
+0x004d6da3  85 c0                     test eax, eax
+0x004d6da5  75 1c                     jne 0x4d6dc3
+0x004d6da7  a1 14 6c 7d 00            mov eax, dword ptr [0x7d6c14]
+0x004d6dac  89 3d d4 58 7d 00         mov dword ptr [0x7d58d4], edi
+0x004d6db2  c7 04 85 68 51 7d 00 1b 00 00 00  mov dword ptr [eax*4 + 0x7d5168], 0x1b
+0x004d6dbd  40                        inc eax
+0x004d6dbe  a3 14 6c 7d 00            mov dword ptr [0x7d6c14], eax
+0x004d6dc3  a1 70 58 7d 00            mov eax, dword ptr [0x7d5870]
+0x004d6dc8  85 c0                     test eax, eax
+0x004d6dca  74 2f                     je 0x4d6dfb
+0x004d6dcc  c7 05 70 58 7d 00 00 00 00 00  mov dword ptr [0x7d5870], 0
+0x004d6dd6  a1 74 58 7d 00            mov eax, dword ptr [0x7d5874]
+0x004d6ddb  85 c0                     test eax, eax
+0x004d6ddd  75 1c                     jne 0x4d6dfb
+0x004d6ddf  a1 14 6c 7d 00            mov eax, dword ptr [0x7d6c14]
+0x004d6de4  89 3d 74 58 7d 00         mov dword ptr [0x7d5874], edi
+0x004d6dea  c7 04 85 68 51 7d 00 0f 00 00 00  mov dword ptr [eax*4 + 0x7d5168], 0xf
+0x004d6df5  40                        inc eax
+0x004d6df6  a3 14 6c 7d 00            mov dword ptr [0x7d6c14], eax
+0x004d6dfb  8d 04 49                  lea eax, [ecx + ecx*2]
+0x004d6dfe  3b 14 c5 30 6b 7d 00      cmp edx, dword ptr [eax*8 + 0x7d6b30]
+0x004d6e05  74 4a                     je 0x4d6e51
+0x004d6e07  89 14 c5 30 6b 7d 00      mov dword ptr [eax*8 + 0x7d6b30], edx
+0x004d6e0e  a1 10 41 7d 00            mov eax, dword ptr [0x7d4110]
+0x004d6e13  85 d2                     test edx, edx
+0x004d6e15  8b 10                     mov edx, dword ptr [eax]
+0x004d6e17  74 2e                     je 0x4d6e47
+0x004d6e19  8b 2e                     mov ebp, dword ptr [esi]
+0x004d6e1b  55                        push ebp
+0x004d6e1c  51                        push ecx
+0x004d6e1d  50                        push eax
+0x004d6e1e  ff 92 04 01 00 00         call dword ptr [edx + 0x104]
+0x004d6e24  8b 46 04                  mov eax, dword ptr [esi + 4]
+0x004d6e27  85 c0                     test eax, eax
+0x004d6e29  74 26                     je 0x4d6e51
+0x004d6e2b  8b 0d 10 41 7d 00         mov ecx, dword ptr [0x7d4110]
+0x004d6e31  8b 80 00 04 00 00         mov eax, dword ptr [eax + 0x400]
+0x004d6e37  50                        push eax
+0x004d6e38  51                        push ecx
+0x004d6e39  8b 11                     mov edx, dword ptr [ecx]
+0x004d6e3b  ff 92 24 01 00 00         call dword ptr [edx + 0x124]
+0x004d6e41  8b c7                     mov eax, edi
+0x004d6e43  5f                        pop edi
+0x004d6e44  5e                        pop esi
+0x004d6e45  5d                        pop ebp
+0x004d6e46  c3                        ret 
+0x004d6e47  6a 00                     push 0
+0x004d6e49  51                        push ecx
+0x004d6e4a  50                        push eax
+0x004d6e4b  ff 92 04 01 00 00         call dword ptr [edx + 0x104]
+0x004d6e51  8b c7                     mov eax, edi
+0x004d6e53  5f                        pop edi
+0x004d6e54  5e                        pop esi
+0x004d6e55  5d                        pop ebp
+0x004d6e56  c3                        ret 

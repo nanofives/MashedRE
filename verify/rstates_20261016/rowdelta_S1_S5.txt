@@ -1,0 +1,10 @@
+training:884    before  39 after  39  gone   0  NEW 0  RED 0
+training:924    before  38 after  38  gone   0  NEW 0  RED 0
+training:959    before  38 after  38  gone   0  NEW 0  RED 0
+arctic:1051   before  49 after  49  gone   0  NEW 0  RED 0
+arctic:1091   before  48 after  48  gone   0  NEW 0  RED 0
+arctic:1126   before  46 after  46  gone   0  NEW 0  RED 0
+city:761    before  63 after  61  gone   2  NEW 0  RED 0
+city:801    before  63 after  61  gone   2  NEW 0  RED 0
+city:836    before  60 after  58  gone   2  NEW 0  RED 0
+NEW ROWS TOTAL: 0   RED TOTAL: 0

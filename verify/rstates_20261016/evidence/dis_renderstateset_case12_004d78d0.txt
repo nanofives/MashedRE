@@ -1,0 +1,13 @@
+0x004d78d0  e8 eb 02 00 00            call 0x4d7bc0
+0x004d78d5  83 c4 04                  add esp, 4
+0x004d78d8  5f                        pop edi
+0x004d78d9  5b                        pop ebx
+0x004d78da  c3                        ret 
+0x004d78db  8b 44 24 10               mov eax, dword ptr [esp + 0x10]
+0x004d78df  50                        push eax
+0x004d78e0  e8 1b f8 ff ff            call 0x4d7100
+0x004d78e5  83 c4 04                  add esp, 4
+0x004d78e8  5f                        pop edi
+0x004d78e9  5b                        pop ebx
+0x004d78ea  c3                        ret 
+0x004d78eb  8b 44 24 10               mov eax, dword ptr [esp + 0x10]

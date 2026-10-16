@@ -1,0 +1,38 @@
+# race init: course load 0x00479330 (world registration at 0x00479db3) is called at 0x00426f3c; the per-track slot 0 thunk 0x0041e8b0 (jmp [rec+0x14]) at 0x0042709f
+0x00426f3c  e8 ef 23 05 00            call 0x479330
+0x00427091  e8 3a 79 ff ff            call 0x41e9d0
+0x00427096  85 c0                     test eax, eax
+0x00427098  74 0d                     je 0x4270a7
+0x0042709a  68 58 6e 64 00            push 0x646e58
+0x0042709f  e8 0c 78 ff ff            call 0x41e8b0
+0x0041e8b0  8b 0d e4 d7 63 00         mov ecx, dword ptr [0x63d7e4]
+0x0041e8b6  ff 61 14                  jmp dword ptr [ecx + 0x14]
+# TRAINING camera-man clones 0x004511c0 (RpClumpClone 0x004e6ab0 of clump +0x10114 into 0x0088ff84..0x0088ff88)
+0x004511c0  8b 44 24 04               mov eax, dword ptr [esp + 4]
+0x004511c4  8b 80 14 01 01 00         mov eax, dword ptr [eax + 0x10114]
+0x004511ca  a3 80 ff 88 00            mov dword ptr [0x88ff80], eax
+0x004511cf  8b 48 04                  mov ecx, dword ptr [eax + 4]
+0x004511d2  56                        push esi
+0x004511d3  51                        push ecx
+0x004511d4  e8 e7 03 07 00            call 0x4c15c0
+0x004511d9  83 c4 04                  add esp, 4
+0x004511dc  be 84 ff 88 00            mov esi, 0x88ff84
+0x004511e1  8b 15 80 ff 88 00         mov edx, dword ptr [0x88ff80]
+0x004511e7  52                        push edx
+0x004511e8  e8 c3 58 09 00            call 0x4e6ab0
+0x004511ed  89 06                     mov dword ptr [esi], eax
+0x004511ef  83 c6 04                  add esi, 4
+0x004511f2  83 c4 04                  add esp, 4
+0x004511f5  81 fe 8c ff 88 00         cmp esi, 0x88ff8c
+0x004511fb  7c e4                     jl 0x4511e1
+0x004511fd  be 80 ff 88 00            mov esi, 0x88ff80
+0x00451202  8b 06                     mov eax, dword ptr [esi]
+0x00451204  8b 48 04                  mov ecx, dword ptr [eax + 4]
+0x00451207  51                        push ecx
+0x00451208  e8 b3 03 07 00            call 0x4c15c0
+0x0045120d  83 c6 04                  add esi, 4
+0x00451210  83 c4 04                  add esp, 4
+0x00451213  81 fe 8c ff 88 00         cmp esi, 0x88ff8c
+0x00451219  7c e7                     jl 0x451202
+0x0045121b  5e                        pop esi
+0x0045121c  c3                        ret 

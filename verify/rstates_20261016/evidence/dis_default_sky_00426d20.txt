@@ -1,0 +1,47 @@
+0x00426d20  83 ec 0c                  sub esp, 0xc
+0x00426d23  53                        push ebx
+0x00426d24  8b 5c 24 14               mov ebx, dword ptr [esp + 0x14]
+0x00426d28  56                        push esi
+0x00426d29  57                        push edi
+0x00426d2a  c7 44 24 0c 00 00 00 00   mov dword ptr [esp + 0xc], 0
+0x00426d32  c7 44 24 10 00 00 80 3f   mov dword ptr [esp + 0x10], 0x3f800000
+0x00426d3a  c7 44 24 14 00 00 00 00   mov dword ptr [esp + 0x14], 0
+0x00426d42  bf 48 6f 65 00            mov edi, 0x656f48
+0x00426d47  8b 07                     mov eax, dword ptr [edi]
+0x00426d49  85 c0                     test eax, eax
+0x00426d4b  74 2b                     je 0x426d78
+0x00426d4d  8b 70 04                  mov esi, dword ptr [eax + 4]
+0x00426d50  56                        push esi
+0x00426d51  e8 6a a8 09 00            call 0x4c15c0
+0x00426d56  a1 20 d7 66 00            mov eax, dword ptr [0x66d720]
+0x00426d5b  6a 00                     push 0
+0x00426d5d  50                        push eax
+0x00426d5e  8d 4c 24 18               lea ecx, [esp + 0x18]
+0x00426d62  51                        push ecx
+0x00426d63  56                        push esi
+0x00426d64  e8 b7 a7 09 00            call 0x4c1520
+0x00426d69  6a 02                     push 2
+0x00426d6b  8d 53 30                  lea edx, [ebx + 0x30]
+0x00426d6e  52                        push edx
+0x00426d6f  56                        push esi
+0x00426d70  e8 cb a5 09 00            call 0x4c1340
+0x00426d75  83 c4 20                  add esp, 0x20
+0x00426d78  83 c7 04                  add edi, 4
+0x00426d7b  81 ff 58 6f 65 00         cmp edi, 0x656f58
+0x00426d81  7c c4                     jl 0x426d47
+0x00426d83  5f                        pop edi
+0x00426d84  5e                        pop esi
+0x00426d85  5b                        pop ebx
+0x00426d86  83 c4 0c                  add esp, 0xc
+0x00426d89  c3                        ret 
+0x00426d90  56                        push esi
+0x00426d91  be 48 6f 65 00            mov esi, 0x656f48
+0x00426d96  8b 06                     mov eax, dword ptr [esi]
+0x00426d98  85 c0                     test eax, eax
+0x00426d9a  74 09                     je 0x426da5
+0x00426d9c  50                        push eax
+0x00426d9d  e8 de f8 0b 00            call 0x4e6680
+0x00426da2  83 c4 04                  add esp, 4
+0x00426da5  83 c6 04                  add esi, 4
+0x00426da8  81 fe 58 6f 65 00         cmp esi, 0x656f58
+0x00426dae  7c e6                     jl 0x426d96

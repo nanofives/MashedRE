@@ -1,0 +1,8 @@
+# G-CTRL default-build fingerprint (run_gctrl.py, step / gates / ptrace sha8), 34ea5b71 round 8
+# base6 = 34ea5b71 build (race/first-frame-parity, carlod + pathprog_a merged), exe9 = work/rstates merged into it, final default F1-F8
+base6 base6.step.csv sha8=716cb2fd
+base6 base6.gates.csv sha8=2a2afda1
+base6 base6.ptrace.log sha8=ba90ed88
+exe9 exe9.step.csv sha8=716cb2fd
+exe9 exe9.gates.csv sha8=2a2afda1
+exe9 exe9.ptrace.log sha8=ba90ed88

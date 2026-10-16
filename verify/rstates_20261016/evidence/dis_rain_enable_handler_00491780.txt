@@ -1,0 +1,12 @@
+0x00491780  a1 34 15 77 00            mov eax, dword ptr [0x771534]
+0x00491785  85 c0                     test eax, eax
+0x00491787  75 03                     jne 0x49178c
+0x00491789  33 c0                     xor eax, eax
+0x0049178b  c3                        ret 
+0x0049178c  e8 ff fd ff ff            call 0x491590
+0x00491791  b8 01 00 00 00            mov eax, 1
+0x00491796  c3                        ret 
+0x004917a0  e8 cb f6 ff ff            call 0x490e70
+0x004917a5  c7 05 34 15 77 00 01 00 00 00  mov dword ptr [0x771534], 1
+0x004917af  33 c0                     xor eax, eax
+0x004917b1  c3                        ret 

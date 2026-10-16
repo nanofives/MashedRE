@@ -36,6 +36,21 @@ struct Sector {
     std::vector<float>         uvs2;
     // mat,v0,v1,v2 per triangle (mat already includes matListWindowBase)
     std::vector<std::uint16_t> tris;
+    // [rstates] the atomic-sector STRUCT's own box (+0x0C, 6 floats, stream order).
+    // RW keeps it as the tight box (sector+0x60/+0x6c, 0x004e9eee..0x004e9f18); the
+    // frustum walk tests the BSP CELL box instead (World::planes, FUN_004e51e0).
+    float                      box[6] = {};
+};
+
+// [rstates] One PLANESECTOR (0x0A) of the world BSP, STRUCT order {type, value,
+// leftIsAtomic, rightIsAtomic, leftValue, rightValue}. `type` is the RW byte offset of
+// the split axis (0/4/8 = x/y/z). Children are encoded: >= 0 indexes `planes`, < 0 is
+// the atomic sector -1 - child (index into `sectors`, which are numbered in the stream's
+// depth-first, left-first order -- the same order Parse() fills `sectors`).
+struct PlaneNode {
+    std::int32_t type = 0;
+    float        value = 0.f, left_value = 0.f, right_value = 0.f;
+    std::int32_t left = 0, right = 0;
 };
 
 class World {
@@ -49,6 +64,8 @@ public:
 
     std::vector<Material> materials;
     std::vector<Sector>   sectors;
+    std::vector<PlaneNode> planes;        // [rstates] BSP plane sectors
+    std::int32_t          root = -1;      // [rstates] encoded like PlaneNode children
     float                 bbox[6] = {};   // sup.xyz, inf.xyz (header order)
     std::uint32_t         total_tris  = 0;
     std::uint32_t         total_verts = 0;

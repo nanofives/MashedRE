@@ -1,0 +1,21 @@
+=== base_default  exe=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\rstates\log\rstates\base\mashed_re.exe  knobs=[] ===
+    pid=21616
+    exit=0  self_exited=True
+    base_default.step.csv  lines=18664  sha8=c2e4d60d
+    base_default.gates.csv  lines=56153  sha8=b50bd39b
+    base_default.ptrace.log  lines=28076  sha8=ba90ed88
+GCTRL DONE
+=== exe1_default  exe=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\rstates\log\rstates\exe1\mashed_re.exe  knobs=[] ===
+    pid=5356
+    exit=0  self_exited=True
+    exe1_default.step.csv  lines=18664  sha8=c2e4d60d
+    exe1_default.gates.csv  lines=56153  sha8=b50bd39b
+    exe1_default.ptrace.log  lines=28076  sha8=ba90ed88
+GCTRL DONE
+=== exe2_default  exe=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\rstates\log\rstates\exe2\mashed_re.exe  knobs=[] ===
+    pid=18036
+    exit=0  self_exited=True
+    exe2_default.step.csv  lines=18664  sha8=c2e4d60d
+    exe2_default.gates.csv  lines=56153  sha8=b50bd39b
+    exe2_default.ptrace.log  lines=28076  sha8=ba90ed88
+GCTRL DONE

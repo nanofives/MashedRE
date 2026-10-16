@@ -158,6 +158,22 @@ with shaders, so the device's `D3DTS_WORLD` is not the mesh's matrix, and an unt
 material skips `setTexture`, leaving the previous texture bound. The hooks hand the recorder the
 material's texture name and the atomic's LTM instead (`verify/d1r1_20261016/PREREG_d1r1.md` I-2).
 
+## rstates (2026-10-16): RenderWare's sticky vertex-alpha flag, opt-in
+
+`src/d3d/d3d9render.cpp` defines two `bool`s, both `false` by default, read by
+`defaultRenderCB_Shader`:
+- `rw_mashed_skip_empty_meshes`: a mesh with `numPrimitives == 0` is skipped entirely: no
+  state set, no draw. RenderWare builds no mesh for a material a geometry does not use. Every
+  mashed_re geometry carries the full material list, so without this the vertex-alpha and
+  texture-alpha state left after an atomic comes from its last material, used or not. The same
+  skip sits in `d3d9matfx.cpp` `matfxRenderCB_Shader` (rtex's P9 MatFX path).
+- `rw_mashed_keep_vertex_alpha`: the per-mesh `SetRenderState(VERTEXALPHA, ...)` is skipped,
+  so the mesh inherits the flag the previous draw left. This is what MASHED.exe's Arctic
+  world-sector callback `0x0049a750` does: it never calls the vertex-alpha setter
+  `FUN_004d7100`.
+Only `LibRw/RwRaceSubmit.cpp` sets them, behind `MASHED_LIBRW_STICKYVA`
+(`verify/rstates_20261016/PREREG_rstates.md` F3).
+
 ## What is NOT patched
 
 Render-state ownership beyond the above. librw's `d3drender.cpp` sets states through

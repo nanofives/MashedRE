@@ -61,7 +61,7 @@ void read_uvanim_ext(const Rd& r, const std::uint8_t* data,
 }  // namespace
 
 bool World::Parse(const std::uint8_t* data, std::size_t len) {
-    materials.clear(); sectors.clear();
+    materials.clear(); sectors.clear(); planes.clear(); root = -1;
     total_tris = total_verts = 0;
     Rd r{data, len};
     Chunk world;
@@ -129,12 +129,21 @@ bool World::Parse(const std::uint8_t* data, std::size_t len) {
 
     // ---- sector tree (iterative stack; PLANESECTOR 0x0A inner, 0x09 leaf) ----
     std::uint32_t plane_count = 0;
-    // explicit recursion via a small lambda-less stack of offsets
-    struct Frame { std::size_t off; };
-    std::vector<std::size_t> stack;
-    stack.push_back(p);
+    planes.clear(); root = -1;
+    // explicit recursion via a stack of (offset, parent plane, which side). The left
+    // child is pushed last so it pops first: sectors are numbered depth-first,
+    // left-first, matching the stream order.
+    struct Pending { std::size_t off; std::int32_t parent; bool right; };
+    std::vector<Pending> stack;
+    stack.push_back({p, -1, false});
+    auto link = [&](const Pending& at, std::int32_t encoded) {
+        if (at.parent < 0) root = encoded;
+        else if (at.right) planes[static_cast<std::size_t>(at.parent)].right = encoded;
+        else planes[static_cast<std::size_t>(at.parent)].left = encoded;
+    };
     while (!stack.empty()) {
-        const std::size_t off = stack.back(); stack.pop_back();
+        const Pending at = stack.back(); stack.pop_back();
+        const std::size_t off = at.off;
         Chunk c;
         if (!read_chunk(r, off, &c)) { err_ = "sector chunk truncated"; return false; }
         if (c.id == 0x0A) {
@@ -143,12 +152,23 @@ bool World::Parse(const std::uint8_t* data, std::size_t len) {
             if (!read_chunk(r, c.payload, &ps) || ps.id != 0x01 || ps.size != 0x18) {
                 err_ = "plane sector struct"; return false;
             }
+            PlaneNode pn;
+            pn.type        = static_cast<std::int32_t>(r.u32(ps.payload + 0x00));
+            pn.value       = r.f32(ps.payload + 0x04);
+            pn.left_value  = r.f32(ps.payload + 0x10);
+            pn.right_value = r.f32(ps.payload + 0x14);
+            if (pn.type != 0 && pn.type != 4 && pn.type != 8) {
+                err_ = "plane sector type"; return false;
+            }
+            const std::int32_t me = static_cast<std::int32_t>(planes.size());
+            planes.push_back(pn);
+            link(at, me);
             const std::size_t left = ps.payload + ps.size;
             Chunk lc;
             if (!read_chunk(r, left, &lc)) { err_ = "left child truncated"; return false; }
             const std::size_t right = lc.payload + lc.size;
-            stack.push_back(right);
-            stack.push_back(left);
+            stack.push_back({right, me, true});
+            stack.push_back({left, me, false});
             continue;
         }
         if (c.id != 0x09) { err_ = "unexpected sector chunk id"; return false; }
@@ -198,6 +218,8 @@ bool World::Parse(const std::uint8_t* data, std::size_t len) {
         if (nuv < 0) { err_ = "sector array layout unsolved"; return false; }
 
         Sector s;
+        for (int k = 0; k < 6; ++k) s.box[k] = r.f32(as.payload + 0x0C + k * 4);
+        link(at, -1 - static_cast<std::int32_t>(sectors.size()));
         std::size_t q = as.payload + kFixed;
         s.verts.resize(static_cast<std::size_t>(nv) * 3);
         std::memcpy(s.verts.data(), data + q, static_cast<std::size_t>(nv) * 12);

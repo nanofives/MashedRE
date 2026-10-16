@@ -99,6 +99,15 @@ int RaceSubmit_RegisterModel(const Track::DffModel& model,
                              std::size_t nmats = 0,
                              bool hierarchy = false);
 
+// [rstates] Where RenderWare draws an instance (PREREG_rstates.md F2), passed by every queue call:
+//   kInstAfterWorld  after the world, in queue order (excluded clumps, the Arctic sea grid, the
+//                    copters; and every instance while the sector walk is off);
+//   kInstInWorld     registered into the RpWorld (0x004e4450): tied to the sectors its world
+//                    bounding sphere's box reaches (0x004e3c00) and drawn by the sector walk
+//                    after the first listed sector it is tied to (0x004e5680);
+//   kInstCar         the car bodies: after the world, after the rain line pass (F4).
+enum : int { kInstAfterWorld = 0, kInstInWorld = 1, kInstCar = 2 };
+
 // [librwrest] Per hierarchy model, how a copy is drawn (FUN_00425e40 @ 0x00425e40 for the
 // copters): skip the whole copy when the world bounding sphere of the atomic on FRAMELIST frame
 // `cull_frame` lies outside the camera frustum (FUN_004c1b40 @ 0x004c1b40 on
@@ -111,8 +120,8 @@ void RaceSubmit_SetModelDrawOrder(int handle, const std::int32_t* frames, std::s
 // [librwrest] The model draws with the RenderWare D3D9 driver's states (the d1r1 F1 rule,
 // verify/d1r1_20261016/RESULT_d1r1.md section 4): each of its rasters' alpha flag from its texels
 // (FUN_004d2980 / the texel rule RwRasterBridge records), ALPHAFUNC GREATER / ALPHAREF 0 (device
-// init FUN_004d5bc0) and CULLMODE 2 while it draws, restored after. F1 stays opt-in for the
-// world (U-9689 / U-9690); this applies it to one model only.
+// init FUN_004d5bc0) and CULLMODE 2 while it draws, restored after. [rstates] F1 is default ON for the whole scene since
+// U-9689 / U-9690 were ported (verify/rstates_20261016/RESULT_rstates.md); this stays the per-model form.
 void RaceSubmit_SetModelRwStates(int handle);
 
 // [librwrest] One frame's modelling matrix for one instance: FRAMELIST index `frame` of a
@@ -139,7 +148,8 @@ void RaceSubmit_AddCarFxMarker();
 
 void RaceSubmit_AddInstancePosed(int handle, const float* m44, const FramePose* poses,
                                  std::size_t npose, float sun_scale, float env_coef = 0.f,
-                                 const float* env_m44 = nullptr, const CarVis* vis = nullptr);
+                                 const float* env_m44 = nullptr, int kind = kInstCar,
+                                 const CarVis* vis = nullptr);   // [rstates] kind, [carlod] vis
 
 // Set the UV-animation clock for this frame. MUST be the same `t` the D3D9 path
 // passes to TrackRenderer::Render, or the two renderers scroll to different
@@ -152,9 +162,23 @@ void RaceSubmit_SetAnimTime(float t);
 // the SAME matrix the D3D9 path would pass to SetTransform(D3DTS_WORLD), so both
 // renderers place the object identically instead of re-deriving it. Instances are
 // consumed and cleared by RaceSubmit_Render.
-//
+// [rstates] `kind`: see kInst* above.
 // [carlod 2026-10-16] `vis`: see CarVis above.
-void RaceSubmit_AddInstance(int handle, const float* m44, const CarVis* vis = nullptr);
+void RaceSubmit_AddInstance(int handle, const float* m44, int kind = kInstAfterWorld,
+                            const CarVis* vis = nullptr);
+
+// [rstates] Per-course facts the world pass depends on, set once per track load.
+struct RaceCourseFacts {
+    // the world-sector render callback keeps the vertex-alpha flag the previous draw left
+    // (Arctic: 0x0049a0c0 -> 0x0049a750 never calls FUN_004d7100)
+    bool sector_keeps_vertex_alpha = false;
+    // the flag the slot-3 sky's last mesh leaves (RpClumpRender of the Sky_Filename clumps)
+    bool sky_last_vertex_alpha = false;
+    // COURSE.LUA RainEnable(): FUN_004914b0 runs the line pass FUN_00499d90 after the world,
+    // which writes D3D cull NONE past RW's cull cache (0x0049a084)
+    bool rain = false;
+};
+void RaceSubmit_SetCourseFacts(const RaceCourseFacts& facts);
 
 // [rtex 2026-10-16] Car MatFX passes (U-9693, LibRw/RwCarFx.h). BindCarDirt makes the two
 // dirt.piz images (top-down BGRA) the DUAL texture of every effect-4 material by part code

@@ -1,0 +1,6 @@
+# G-CTRL default-build fingerprint (run_gctrl.py, step / gates / ptrace sha8)
+# base3 = d074095d base, exe4 = d074095d F1-F5, base4 = 04dee0ed base, exe7 = 04dee0ed final F1-F8
+base3  (round3.txt) 716cb2fd / 2a2afda1 / ba90ed88
+exe4   (round3.txt) 716cb2fd / 2a2afda1 / ba90ed88
+base4  (round4.txt) 716cb2fd / 2a2afda1 / ba90ed88
+exe7   (round6.txt) 716cb2fd / 2a2afda1 / ba90ed88

@@ -1,0 +1,14 @@
+Training   pid=21548 exit=0 walk_frames=899 last=f898 vis S41 [m12.2] [m12.3] [m12.4] [m12.5] [m12.7] [m12.18] S40 [m12.1] S37 [m12.0] [m12
+SuperG     pid=19464 exit=0 walk_frames=899 last=f898 vis S5 S4 S6 S7 S8 S1 S2 S3 S0 S9 S11 S10
+Arctic     pid=23720 exit=0 walk_frames=899 last=f898 vis S10 [m6.0] [m5.0] S9 [m1.0] S8 S5 S4
+rouabout   pid=19452 exit=0 walk_frames=899 last=f898 vis S7 [m20.0] S6 [m1.0] [m1.0] [m0.0] S11 S10 [m4.0] [m4.0] [m3.0]
+sands      pid=22608 exit=0 walk_frames=899 last=f898 vis S3 [m6.0] [m6.11] [m6.12] S2 S0 S24 [m6.5] [m6.6] [m6.13] S22 S23 S20 S21 S28 [m6
+Warzone    pid=14156 exit=0 walk_frames=899 last=f898 vis S3 [m12.0] [m7.0] S2 [m28.0] S1 S0
+Forest     pid=22380 exit=0 walk_frames=899 last=f898 vis S17 S14 S11 S10 S13 S18 S19 S21 S22 S23 S24 S25 S26 S27
+Egypt      pid=6504 exit=0 walk_frames=899 last=f898 vis S4 [m10.0] S3 S6 S2 S1 S9 S0
+Storm      pid=24028 exit=0 walk_frames=899 last=f898 vis S19 S21 S12 S13 S17 S4 [m5.0] [m3.0] S5 S3 S2 S1 S6 S0 S9 S8 S10 S7 S11
+dump       pid=16092 exit=0 walk_frames=899 last=f898 vis S24 [m12.0] S22 S20 S19 S18 S4 S2 S1 S23
+Highway    pid=23920 exit=0 walk_frames=899 last=f898 vis S13 S12 S10 S8 S7 S9 S6 S11 S5 S4 S14 S0
+Neustein   pid=18092 exit=0 walk_frames=899 last=f898 vis S9 [m2.0] [m2.0] [m2.0] [m2.0] [m2.0] [m2.0] [m2.0] [m2.0] [m2.0] [m2.0] [m2.0] [
+City       pid=4356 exit=0 walk_frames=899 last=f898 vis S6 S4 [m8.13] [m8.16] [m2.0] [m2.0] [m2.0] [m2.0] [m1.0] S3 S1 S5 S0
+tracks failing: 0/13

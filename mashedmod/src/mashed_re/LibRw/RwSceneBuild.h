@@ -40,7 +40,12 @@ struct TextureSource {
 // The static world carries no vertex normals (confirmed by the parser's output
 // and by TrackRenderer's lighting notes), so NORMALS/LIGHT are not set — the
 // baked prelight is the lighting, exactly as on the D3D9 path.
-void* BuildWorld(const Track::World& world, const TextureSource& tex);
+// `sector_atomics`, when non-null, receives one entry per world.sectors index: the
+// rw::Atomic* (as void*) built for that sector, or nullptr for a sector that has no
+// vertices or no triangles (those get no atomic). [rstates] RaceSubmit draws sectors
+// one by one in RenderWare's walk order and needs the index -> atomic map for it.
+void* BuildWorld(const Track::World& world, const TextureSource& tex,
+                 std::vector<void*>* sector_atomics = nullptr);
 
 // [rtex] MatFX DUAL on (default) unless MASHED_LIBRW_DUAL=0: materials streamed with a
 // DUAL effect keep it, two-set geometry keeps texcoord set 1, and their atomics render
@@ -77,13 +82,17 @@ bool DualEnabled();
 // 0x0041f3d0, FUN_0041f4f0 @ 0x0041f4f0, FUN_00425ca0 @ 0x00425ca0) are frames, so they need
 // this. `out_frames` receives the rw::Frame* per FRAMELIST index; `out_atomic_frame` each
 // created atomic's FRAMELIST index (same order as `out_atomic_mat`).
+// [rstates] `out_atomic_dff`, when non-null, receives, parallel to out_atomic_mat, the owning
+// DFF atomic of each created rw::Atomic (DffBatch::atomic). RenderWare ties, culls and
+// orders per DFF atomic, while one rw::Atomic is built per batch.
 void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
                  std::uint32_t ambient = 0,
                  std::vector<std::uint32_t>* out_atomic_mat = nullptr,
                  std::vector<std::int32_t>* out_atomic_part = nullptr,
                  bool hierarchy = false,
                  std::vector<void*>* out_frames = nullptr,
-                 std::vector<std::int32_t>* out_atomic_frame = nullptr);
+                 std::vector<std::int32_t>* out_atomic_frame = nullptr,
+                 std::vector<std::int32_t>* out_atomic_dff = nullptr);
 
 // E2'b step 2: build the Arctic world, render it once through librw from a
 // DETERMINISTIC overview camera derived from the world bbox, and dump the

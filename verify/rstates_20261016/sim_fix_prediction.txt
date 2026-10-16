@@ -1,0 +1,11 @@
+training:884 F1 61 -> sim 46 ORDER 2->2 STATE 1->1 EXTRA 29->14 new(kind,tex) []
+training:924 F1 60 -> sim 45 ORDER 2->2 STATE 1->1 EXTRA 29->14 new(kind,tex) []
+training:959 F1 60 -> sim 45 ORDER 2->2 STATE 1->1 EXTRA 29->14 new(kind,tex) []
+arctic:1051 F1 68 -> sim 51 ORDER 12->12 STATE 13->1 EXTRA 18->13 new(kind,tex) []
+arctic:1091 F1 68 -> sim 51 ORDER 12->12 STATE 13->1 EXTRA 19->14 new(kind,tex) []
+arctic:1126 F1 68 -> sim 50 ORDER 12->12 STATE 14->1 EXTRA 20->15 new(kind,tex) []
+city:761 F1 89 -> sim 73 ORDER 6->6 STATE 0->0 EXTRA 33->17 new(kind,tex) []
+city:801 F1 89 -> sim 73 ORDER 6->6 STATE 0->0 EXTRA 33->17 new(kind,tex) []
+city:836 F1 86 -> sim 70 ORDER 5->5 STATE 0->0 EXTRA 33->17 new(kind,tex) []
+TOTAL F1 {'STATE': 43, 'TEX1': 33, 'MOVED': 66, 'MISSING': 196, 'EXTRA': 243, 'ORDER': 59, 'FOG': 9} 
+TOTAL sim {'STATE': 6, 'TEX1': 33, 'MOVED': 66, 'MISSING': 196, 'EXTRA': 135, 'ORDER': 59, 'FOG': 9}

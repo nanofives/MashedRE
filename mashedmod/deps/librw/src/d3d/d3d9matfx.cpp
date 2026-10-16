@@ -21,6 +21,8 @@
 extern void (*rw_drawrec_pre)(const char *texname, const float *ltm16);
 extern void (*rw_drawrec_post)(void);
 extern void (*rw_drawrec_tex1)(const char *tex1name);
+// [mashed rstates] empty-mesh skip (d3d9render.cpp), false by default.
+extern bool rw_mashed_skip_empty_meshes;
 
 namespace rw {
 namespace d3d9 {
@@ -391,6 +393,13 @@ matfxRenderCB_Shader(Atomic *atomic, InstanceDataHeader *header)
 	InstanceData *inst = header->inst;
 	for(uint32 i = 0; i < header->numMeshes; i++){
 		Material *m = inst->material;
+
+		// [mashed rstates] see d3d9render.cpp / MASHED_PATCHES.md: no state, no draw for a
+		// material the geometry does not use (RenderWare builds no mesh for it).
+		if(rw_mashed_skip_empty_meshes && inst->numPrimitives == 0){
+			inst++;
+			continue;
+		}
 
 		setMaterial(flags, m->color, m->surfaceProps);
 

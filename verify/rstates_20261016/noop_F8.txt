@@ -1,0 +1,10 @@
+training:884 bytes-identical
+training:924 bytes-identical
+training:959 bytes-identical
+arctic:1051 bytes-identical
+arctic:1091 bytes-identical
+arctic:1126 bytes-identical
+city:761 bytes-identical
+city:801 bytes-identical
+city:836 bytes-identical
+identical (excl t): 9/9

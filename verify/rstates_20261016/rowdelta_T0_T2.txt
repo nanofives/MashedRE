@@ -1,0 +1,25 @@
+training:884    before  78 after  29  gone  50  NEW 1  RED 0
+    NEW STATE Sky [C20-STATE-SKY]: 1 matched draws differ in Z,ZF: A Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=0 ZF=8 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+training:924    before  77 after  28  gone  50  NEW 1  RED 0
+    NEW STATE Sky [C20-STATE-SKY]: 1 matched draws differ in Z,ZF: A Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=0 ZF=8 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+training:959    before  77 after  28  gone  50  NEW 1  RED 0
+    NEW STATE Sky [C20-STATE-SKY]: 1 matched draws differ in Z,ZF: A Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=0 ZF=8 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+arctic:1051   before  78 after  43  gone  38  NEW 3  RED 0
+    NEW STATE sky [C20-STATE-SKY]: 1 matched draws differ in Z,ZF,CULL: A Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1 | B Z=1 ZW=0 ZF=8 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+    NEW STATE sky [C20-STATE-SKY]: 1 matched draws differ in Z,ZF: A Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=0 ZF=8 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+    NEW STATE World [C15c-SKY-DEPTH]: 1 matched draws differ in Z,ZW,ZF: A Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+arctic:1091   before  77 after  43  gone  37  NEW 3  RED 0
+    NEW STATE sky [C20-STATE-SKY]: 1 matched draws differ in Z,ZF,CULL: A Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1 | B Z=1 ZW=0 ZF=8 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+    NEW STATE sky [C20-STATE-SKY]: 1 matched draws differ in Z,ZF: A Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=0 ZF=8 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+    NEW STATE World [C15c-SKY-DEPTH]: 1 matched draws differ in Z,ZW,ZF: A Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+arctic:1126   before  77 after  42  gone  38  NEW 3  RED 0
+    NEW STATE sky [C20-STATE-SKY]: 1 matched draws differ in Z,ZF,CULL: A Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1 | B Z=1 ZW=0 ZF=8 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+    NEW STATE sky [C20-STATE-SKY]: 1 matched draws differ in Z,ZF: A Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=0 ZF=8 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+    NEW STATE World [C15c-SKY-DEPTH]: 1 matched draws differ in Z,ZW,ZF: A Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+city:761    before 128 after  33  gone  96  NEW 1  RED 0
+    NEW STATE sKYLINE [C19-STATE-LIBRW]: 1 matched draws differ in Z,ZF: A Z=0 ZW=0 ZF=0 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=0 ZF=8 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+city:801    before 126 after  33  gone  94  NEW 1  RED 0
+    NEW STATE sKYLINE [C19-STATE-LIBRW]: 1 matched draws differ in Z,ZF: A Z=0 ZW=0 ZF=0 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=0 ZF=8 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+city:836    before 124 after  31  gone  94  NEW 1  RED 0
+    NEW STATE sKYLINE [C19-STATE-LIBRW]: 1 matched draws differ in Z,ZF: A Z=0 ZW=0 ZF=0 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=0 ZF=8 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+NEW ROWS TOTAL: 15   RED TOTAL: 0

@@ -3,6 +3,9 @@
 
 #include "DffModel.h"
 
+#include <algorithm>
+#include <cmath>
+#include <cstdlib>
 #include <cstring>
 
 namespace mashed_re {
@@ -107,7 +110,7 @@ void FrameXformNormal(const std::vector<Frame>& frames, int idx,
 }  // namespace
 
 bool DffModel::Parse(const std::uint8_t* data, std::size_t len, bool bake_frames) {
-    materials.clear(); batches.clear(); frames.clear();
+    materials.clear(); batches.clear(); frames.clear(); atomic_spheres.clear();
     total_tris = total_verts = 0;
     Rd r{data, len};
     Chunk clump;
@@ -179,6 +182,7 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len, bool bake_frames
         std::uint32_t flags = 0;             // geomlight class-scope: raw RW format dword
         std::int32_t part_id = -1;           // [rtex] user data array 0 element 0
         float sphere[4] = {0.f, 0.f, 0.f, 0.f};  // [librwrest] morph target 0's streamed sphere
+        std::vector<std::uint32_t> mesh_order;    // [rstates F7] BinMesh PLG matIndex order
     };
     std::vector<Geo> geos;
     std::size_t q = gst.payload + gst.size;
@@ -308,8 +312,23 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len, bool bake_frames
             }
             // [rtex] geometry EXTENSION follows the MATLIST: rpUSERDATA part code
             Chunk gx;
-            if (find_child(r, ml.payload + ml.size, g.payload + g.size, 0x03, &gx))
+            if (find_child(r, ml.payload + ml.size, g.payload + g.size, 0x03, &gx)) {
                 geo.part_id = ParseUserDataPartId(data, len, gx.payload, gx.size);
+                // [rstates F7] BinMesh PLG (0x50E): u32 flags, u32 numMeshes, u32 numIndices,
+                // then per mesh u32 numIndices, u32 matIndex and (stream form) u32 indices.
+                // RenderWare draws an atomic's meshes in this order, not in material order.
+                Chunk bm;
+                if (find_child(r, gx.payload, gx.payload + gx.size, 0x50E, &bm) && bm.size >= 12) {
+                    const std::uint32_t nmesh = r.u32(bm.payload + 4);
+                    std::size_t mp = bm.payload + 12;
+                    const std::size_t me = bm.payload + bm.size;
+                    for (std::uint32_t k = 0; k < nmesh && mp + 8 <= me; ++k) {
+                        const std::uint32_t ni = r.u32(mp), mi = r.u32(mp + 4);
+                        geo.mesh_order.push_back(mi);
+                        mp += 8 + static_cast<std::size_t>(ni) * 4u;
+                    }
+                }
+            }
         }
         geos.push_back(std::move(geo));
         q = g.payload + g.size;
@@ -337,6 +356,23 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len, bool bake_frames
             ++found_atomics;
             const Geo& geo = geos[static_cast<std::size_t>(gi)];
             const std::size_t nverts = geo.verts.size() / 3;
+            {
+                // [rstates] the atomic's sphere in model space (see DffModel.h).
+                AtomicSphere as2{};
+                FrameXform(frames, fi, geo.sphere, as2.c);
+                float scale2 = 0.f;
+                for (int ax = 0; ax < 3; ++ax) {
+                    const float e[3] = {ax == 0 ? 1.f : 0.f, ax == 1 ? 1.f : 0.f,
+                                        ax == 2 ? 1.f : 0.f};
+                    float o[3];
+                    FrameXformNormal(frames, fi, e, o);
+                    const float l2 = o[0] * o[0] + o[1] * o[1] + o[2] * o[2];
+                    if (l2 > scale2) scale2 = l2;
+                }
+                as2.r_obj = geo.sphere[3];
+                as2.r_world = geo.sphere[3] * std::sqrt(scale2);
+                atomic_spheres.push_back(as2);
+            }
             // transformed vertex positions for this atomic (+ its own bbox)
             float abox[6] = {1e9f, 1e9f, 1e9f, -1e9f, -1e9f, -1e9f};
             std::vector<float> w(nverts * 3);
@@ -364,8 +400,27 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len, bool bake_frames
             }
             total_verts += static_cast<std::uint32_t>(nverts);
             total_tris  += static_cast<std::uint32_t>(geo.tris.size() / 4);
-            // split into per-material batches
-            for (std::uint32_t mi = 0; mi < geo.nmats || mi == 0; ++mi) {
+            // split into per-material batches, in the geometry's BinMesh order when it is a
+            // valid list of this geometry's materials ([rstates F7]; MASHED_LIBRW_BINMESHORDER=0
+            // keeps material order); materials it does not list follow in material order
+            std::vector<std::uint32_t> mat_seq;
+            {
+                static const bool s_binmesh_order = [] {
+                    const char* e = std::getenv("MASHED_LIBRW_BINMESHORDER");
+                    return !(e && e[0] == '0' && e[1] == '\0');
+                }();
+                std::vector<bool> used(geo.nmats ? geo.nmats : 1u, false);
+                bool ok = s_binmesh_order && geo.nmats > 0 && !geo.mesh_order.empty();
+                for (const std::uint32_t mo : geo.mesh_order)
+                    if (!ok || mo >= geo.nmats || used[mo]) { ok = false; break; } else used[mo] = true;
+                if (ok) mat_seq = geo.mesh_order;
+                else std::fill(used.begin(), used.end(), false);
+                for (std::uint32_t mi = 0; mi < geo.nmats || mi == 0; ++mi) {
+                    if (!used[mi]) mat_seq.push_back(mi);
+                    if (geo.nmats == 0) break;
+                }
+            }
+            for (const std::uint32_t mi : mat_seq) {
                 DffBatch b;
                 b.material = geo.mat_base + (geo.nmats ? mi : 0);
                 b.atomic = found_atomics - 1;
@@ -405,7 +460,6 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len, bool bake_frames
                     }
                 }
                 if (!b.tris.empty()) batches.push_back(std::move(b));
-                if (geo.nmats == 0) break;
             }
         }
         a = c.payload + c.size;
