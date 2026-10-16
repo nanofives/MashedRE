@@ -5724,7 +5724,7 @@ void TrackRenderer::UpdateRace(float dt) {
             (std::getenv("MASHED_NO_RACEPCT_BRIDGE") == nullptr);   // DEFAULT-ON 2026-10-09 (verify/d3_b2flip_20261009); MASHED_RACEPCT_BRIDGE is now a no-op
         // With MASHED_PATHPROG the faithful producer FUN_00408610 owns 0x008a96ec; the bridge stands down.
         // [U-9685] arm R (MASHED_RACEPCT_FUN408610) publishes the verbatim step's race_pct at the end of UpdateCar.
-        if (s_racepctBridge && !Race::PathProg_Enabled() && !Race::RacePctOrig_Enabled() && total_len_ > 1e-3f) {
+        if (s_racepctBridge && !Race::PathProg_Enabled() && !Race::RacePctOrig_Active() && total_len_ > 1e-3f) {
             for (int v = 0; v < kRaceCars; ++v) {
                 const float ap =
                     std::fmod(race_[v].arcprog, total_len_) / total_len_ * 100.f;

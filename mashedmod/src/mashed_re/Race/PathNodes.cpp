@@ -344,11 +344,14 @@ bool PathProg_Enabled() {
 }
 
 bool RacePctOrig_Enabled() {
-    static const bool s_on = [] {
-        const char* e = std::getenv("MASHED_RACEPCT_FUN408610");
-        return e && e[0] && e[0] != '0';
-    }();
+    static const bool s_on = (std::getenv("MASHED_NO_RACEPCT_FUN408610") == nullptr);   // DEFAULT-ON 2026-10-16 (verify/d3_u9685_20261016); MASHED_RACEPCT_FUN408610 is now a no-op
     return s_on;
+}
+
+// [U-9685] True only when the course block was actually built (a track with an AI BSP), so the bridge is not
+// stood down on a track where the step has nothing to walk.
+bool RacePctOrig_Active() {
+    return RacePctOrig_Enabled() && !s_triNode.empty();
 }
 
 void PathNodes_Build(const Track::World& ai, const char* lap, std::size_t lapLen) {
