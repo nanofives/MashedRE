@@ -25,6 +25,9 @@ LX = ['MASHED_A6ADUMP=@OUT@\\{n}.a6a.log', 'MASHED_D2SINK=@OUT@\\{n}.sink.log',
       'MASHED_WORLD_CONTACT_LOG=@OUT@\\{n}.wc.log']
 for n, base in (('DLX', []), ('BLX', ['MASHED_POS_MODEL'])):
     STACK[n] = base + [k.replace('{n}', n) for k in LX]
+# Amendment 1: the same plus the fixup's own damp / torque log (ContactFixup.cpp:248-311).
+for n, base in (('DFX', []), ('BFX', ['MASHED_POS_MODEL'])):
+    STACK[n] = base + [k.replace('{n}', n) for k in LX + ['MASHED_FIXUP_LOG=@OUT@\\{n}.fixup.log']]
 D2BASE = {'MASHED_REAL_PHYSICS': '1', 'MASHED_RACE_DEMO': '1', 'MASHED_PLAY_DEMO': '1', 'MASHED_GOTO': '6',
           'MASHED_TRACK_SEL': '12', 'MASHED_CAR_SEL': '0', 'MASHED_DRIVE_HOLD': '1', 'MASHED_WIN_POS': 'primary-bl',
           'MASHED_MOTION_DIAG': '1', 'MASHED_STEER_HOLD': '1', 'MASHED_STEER_HOLD_AFTER': '0', 'MASHED_MUTE': '1',

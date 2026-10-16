@@ -127,3 +127,46 @@ lateral in the substeps). [UNCERTAIN] which; that is the measurement.
 
 This lane reads grip-clamp #6 and A6a's per-wheel force; it changes no game code before an amendment names a fix.
 Every touched watch item is reported in the RESULT.
+
+## Amendment 1 (2026-10-16, after `orig_lx1`, `D2_DLX_1`, `D2_BLX_1`; before `orig_fx1` and `D2_DFX_1`)
+
+A1.1 **Section 3 gates on `orig_lx1`:** CV pass (pattern 0 bad of 2292 steps, `err null` on both probes, mag-probe
+covered 2265 steps), KA-1 2265/2265, KA-2 by construction of the pairing (one `004686a9` row per step on every step
+it covers), KA-3 0 unresolved `ld4` rows, EV pass (retention 0.998 / 0.999 / 1.001 / 1.003 at j0+7..j0+10, the
+orig_solo3 series). Port KA: `ka_miss` 0 on both arms.
+
+A1.2 **Section 4 result.** H-GATE refuted: the original's `+0x9e0` is 4.0, states `1111`, four `ld4` wheels on every
+step j0-2..j0+14. Rule 4.1 names **step j0+7, clamp #6 arm** (categorical): original G 31227.9 < 32768 (LOW, k on its
+0.1 floor), port G 33555.7 (HIGH, k 0.1993). |W1| is equal (97.78 vs 97.59), so the factor is `l_60` (319.36 vs
+343.85). H-K fires. The reconstructed original `k` equals the inverted `k_meas` to 4 decimals on every step (resid 0).
+
+A1.3 **Per-wheel split (`d2lat_wheels.py`).** j0-1 and j0: `ld4` and `le4` equal to 4-5 digits on all four wheels.
+j0+1: `le4` is 6-11 % higher on every port wheel, `ld4` equal except w2 (0.750 vs 0.777). So the `l_60` excess from
+j0+1 on is carried by the post-impact speed. Upstream of it: S2 of step j0 (the last pre-contact sample) is equal
+(|v| 1832.29 vs 1827.91), and the next A6a entry is (175.14, -71.75, 130.20) vs (187.56, -77.07, 141.63), a near
+uniform x1.077 at the same direction. The stage that creates the difference is **step j0's contact substep**, which
+4.1's window (from j0+1) did not include. The trace is extended upstream into step j0 here, before measuring it.
+
+A1.4 **What the bytes say about that stage.** `FUN_004709a0` runs `0x0046e9e0` -> `0x0046f6c0` -> `0x00469aa0` ->
+(if `+0x9ec` != 0) `0x0046ef70` and re-runs the chain while `0x00469aa0` returns nonzero (`0x00470ab0..0x00470b0b`).
+`0x0046ef70` ends with `vel = (vel + local_54) * min(3 * local_74, 0.9)`, `local_74 = 1 - min(1, |m| / +0x9e4)` from
+the slot loop (port `ContactFixup.cpp:133-137, 292-315`). On the port's impact (`DLX.wc.log` line 1: slots s5/s9,
+n (1,0,0), m -1671.8, depth -0.0269) |m| / +0x9e4 is about 0.915, so the damp is about 0.26 and `d(damp) / d(|m|/sp)
+= -3`: a 0.7 % difference in |m| / +0x9e4 is a 7.7 % difference in output speed.
+
+A1.5 **Measurement.** `orig_fx1`: the original, `orig_solo3`'s argv + `--fixup-probe` (existing entry hooks
+`0x0046ef70` / `0x004709a0` / `0x00467650` / `0x0046f6c0` / `0x00469aa0`, one sequence, live 18-slot set), with this
+amendment's appended columns (`+0xcfc +0x5c +0x9c8..+0x9d0`, slot 0's raw key, four wheel states, angular velocity,
+position, fwd.y). Port `D2_DFX_1`: D2 recipe + `MASHED_FIXUP_LOG` + `MASHED_D2SINK` (`fx_bounce`, `fx_damp`, `fx_slide`,
+`sub_orient`, `sub_wheel`) + the world-contact log + A6ADUMP. Gates: `err null`; the impact fixup (first fixup with
+|vel| > 500) is present on both sides; known answer: on the original's non-contact substeps the velocity at the
+`0x0046f6c0` entry equals the substep entry's (A9 writes no velocity), so a retry's `0x0046f6c0` row after a fixup is
+that fixup's output.
+
+A1.6 **Decision (fixed now), on the impact fixup.**
+- Slot sets differ (live count, slot indices, normals to 1e-3, depth sign) -> the contact producer
+  (`0x00469aa0` / the BSP walk). Report, no fix here (sibling d2bsp's lane).
+- Slot sets agree, the slot magnitudes `m` or `+0x9e4` differ by more than 0.1 % -> trace that input (`m` is written
+  by the producer from the contact-point velocity; it is compared against `v + w x arm` on both sides).
+- Slot sets, `m` and `+0x9e4` agree to 0.1 %, the output differs -> `0x0046ef70`'s transcription is the term; a fix
+  goes behind `MASHED_D2LAT_FIXUP` (default OFF) after a further amendment.
