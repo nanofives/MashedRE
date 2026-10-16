@@ -1,0 +1,66 @@
+[
+ {
+  "name": "nav_probe_full_hookset",
+  "timeout": 200,
+  "cmd": [
+   "py",
+   "-3.12",
+   "verify/dupinstall2_20261016/nav_probe.py",
+   "w2_full"
+  ]
+ },
+ {
+  "name": "nav_probe_skip_fwd494fd0",
+  "timeout": 200,
+  "cmd": [
+   "py",
+   "-3.12",
+   "verify/dupinstall2_20261016/nav_probe.py",
+   "--env",
+   "MASHED_HOOK_SKIP=Fwd494fd0_DoublePlusHalf",
+   "w2_skip"
+  ]
+ },
+ {
+  "name": "path2_table_773030_get",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_verify_hook.py",
+   "table_773030_get"
+  ],
+  "env": {
+   "MASHED_HOOK_SKIP": "Fwd494fd0_DoublePlusHalf",
+   "MASHED_VERIFY_ASI": "{ASI}"
+  }
+ },
+ {
+  "name": "path2_plugin_data_dword_a",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_verify_hook.py",
+   "plugin_data_dword_a"
+  ],
+  "env": {
+   "MASHED_HOOK_SKIP": "Fwd494fd0_DoublePlusHalf",
+   "MASHED_VERIFY_ASI": "{ASI}"
+  }
+ },
+ {
+  "name": "path2_plugin_data_dword_b",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_verify_hook.py",
+   "plugin_data_dword_b"
+  ],
+  "env": {
+   "MASHED_HOOK_SKIP": "Fwd494fd0_DoublePlusHalf",
+   "MASHED_VERIFY_ASI": "{ASI}"
+  }
+ }
+]

@@ -100,6 +100,9 @@ std::vector<std::vector<std::uint8_t>> g_model_render0;
 std::vector<std::uint8_t> g_model_vis_used;
 struct ModelEnv { std::vector<rw::Material*> mats; rw::Frame* frame = nullptr; };
 std::vector<ModelEnv>   g_model_env;
+// [rprops U-9696] sky copies queued this frame: drawn BEFORE the world with depth test, depth write
+// and fog off (the original's sky pass, FUN_004492b0 render states 8 and 6 = 0, 0x00427110..0x00427124).
+std::vector<Inst>       g_sky;
 
 // Build the camera once. frameBuffer is a plain Raster::CAMERA: on the D3D9
 // backend such a raster has natras->texture == nil, and setRenderSurfaces then
@@ -366,6 +369,7 @@ void RaceSubmit_BeginTrackLoad() {
     for (rw::Clump* c : g_models) if (c) c->destroy();
     g_models.clear();
     g_insts.clear();
+    g_sky.clear();
     g_uvanim.clear();
     g_uvanim_count = 0;
     for (ModelEnv& e : g_model_env) if (e.frame) e.frame->destroy();
@@ -621,6 +625,13 @@ int RaceSubmit_SetupCarEnv(int handle, const Txd::Dictionary* dicts, std::size_t
     env->destroy();
     RLog("model[%d] car env set up: %d materials, texture '%s'", handle, n, env_tex_name);
     return n;
+}
+
+void RaceSubmit_AddSky(int handle, const float* m44) {
+    if (handle < 0 || !m44 || (std::size_t)handle >= g_models.size()) return;
+    Inst i; i.model = handle;
+    for (int k = 0; k < 16; ++k) i.m[k] = m44[k];
+    g_sky.push_back(i);
 }
 
 namespace {
@@ -1002,6 +1013,26 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
     }
 
     if (!s_nodraw) {
+        // [rprops U-9696] The sky clump copies, before the world: depth test and write off, fog off
+        // (FUN_004492b0 sets render states 8 and 6 to 0 around its sky RpClumpRender, and the generic
+        // sky path 0x00427110..0x0042715b does the same). UVs first: the sky material scrolls, and
+        // ApplyUvAnim is absolute in g_anim_t, so running it here and again below is idempotent.
+        if (!g_sky.empty()) {
+            ApplyUvAnim();
+            rw::SetRenderState(rw::ZTESTENABLE, 0);
+            rw::SetRenderState(rw::ZWRITEENABLE, 0);
+            rw::SetRenderState(rw::FOGENABLE, 0);
+            for (const Inst& in : g_sky) {
+                if (in.model < 0 || (std::size_t)in.model >= g_models.size()) continue;
+                rw::Clump* c = g_models[(std::size_t)in.model];
+                if (!c) continue;
+                SetClumpTransform(c, in.m);
+                c->render();
+            }
+            rw::SetRenderState(rw::ZTESTENABLE, 1);
+            rw::SetRenderState(rw::ZWRITEENABLE, 1);
+            rw::SetRenderState(rw::FOGENABLE, (st.fog_on_ && !s_no_fog) ? 1 : 0);
+        }
         g_world->render();
         // Instanced models. Each registered clump is re-posed and re-drawn once
         // per placed copy, which is what the D3D9 path does too (one
@@ -1205,6 +1236,7 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
         }
     }
     g_insts.clear();
+    g_sky.clear();
 
     // ...and what the pipeline LEFT set, which is a proxy for what it used during
     // the draw. The pre-draw reading above is not enough: librw's default atomic

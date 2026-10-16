@@ -1,0 +1,23 @@
+active4slots_40ba60        Active4Slots40ba60          INSTALL-OK     entries 1/1     calls-OK     
+audio_list_init            AudioListInit               INSTALL-OK     entries 3/3     calls-OK     
+bool0_out_8a94e0           Bool0Out8a94e0              INSTALL-OK     entries 3/3     calls-OK     
+boolmin_out_8a94e0         BoolMinOut8a94e0            INSTALL-OK     entries 3/3     calls-OK     
+clear_67d99c_x4            Clear67d99c_x4              INSTALL-OK     entries 2/2     calls-OK     
+copter_find_639dc4         CopterFind639dc4            INSTALL-OK     entries 3/3     calls-OK     
+dinput_init_predicate      DInputInitPredicate         INSTALL-OK     entries 2/2     calls-OK     
+display_active_flag_get    DisplayActiveFlagGet        INSTALL-OK     entries 3/3     calls-OK     
+float_idx_639de0           FloatIdx639de0              INSTALL-OK     entries 3/3     calls-OK     
+frontend_page_id_dispatch  FrontendPageIdDispatch      INSTALL-OK     entries 3/3     calls-OK     
+get_ai_lap_counter         GetAiLapCounter             INSTALL-OK     entries 1/1     calls-OK     
+get_dat_00912a20           GetDat00912a20              INSTALL-OK     entries 3/3     calls-OK     
+hud_rect_emitter5          HudRectEmitter5             INSTALL-OK     entries 1/1     calls-OK     
+maxscoreflags_40b9a0       MaxScoreFlags40b9a0         INSTALL-OK     entries 2/2     calls-OK     
+menu_readiness_check_c     MenuReadinessCheckC         INSTALL-OK     entries 1/1     calls-OK     
+plugin_data_dword_a        ?                           INSTALL-FAIL   entries ?       calls-FAIL   
+plugin_data_dword_b        ?                           INSTALL-FAIL   entries ?       calls-FAIL   
+ret_63a5f0                 Ret63a5f0                   INSTALL-OK     entries 2/2     calls-OK     
+set_dat_00912a20           SetDat00912a20              INSTALL-OK     entries 3/3     calls-OK     
+slot_index_to_ptr          SlotIndexToPtr              INSTALL-OK     entries 3/3     calls-OK     
+table_773030_get           ?                           INSTALL-FAIL   entries ?       calls-FAIL   
+vehicle_car_state_read     VehicleCarStateRead         INSTALL-OK     entries 4/4     calls-OK     
+-- 22 reports, install-ok 19, calls-ok 19

@@ -1,0 +1,151 @@
+// FUN_0041f770 @ 0x0041f770  size=257  (MASHED.exe)
+// undefined FUN_0041f770(void)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C2 2026-06-03] `void FUN_0041f770(float param_1)`. Body 0x0041f770..0x0041f870. thiscall-shape:
+   `in_EAX = this` (per-slot record)… */
+
+void FUN_0041f770(float param_1)
+
+{
+  undefined4 uVar1;
+  float fVar2;
+  int in_EAX;
+  float10 fVar3;
+  float local_8;
+  float local_4;
+  
+  if (*(int *)(in_EAX + 0x298) == 0) {
+    FUN_0046bda0(&local_8,*(undefined4 *)(in_EAX + 0x290),0);
+    local_8 = local_8 * _DAT_005cc9a0;
+    fVar2 = _DAT_005cc320;
+    if ((_DAT_005cc320 < local_8 == (_DAT_005cc320 == local_8)) &&
+       (fVar2 = local_8, local_8 < _DAT_005cc33c)) {
+      fVar2 = _DAT_005cc33c;
+    }
+    local_8 = fVar2 * _DAT_005cc32c;
+    FUN_00544bf0(*(undefined4 *)(in_EAX + 0x48),local_8 + _DAT_005cc32c);
+    uVar1 = *(undefined4 *)(*(int *)(in_EAX + 0x50) + 4);
+    fVar3 = (float10)FUN_00422470(DAT_0063e4a4,0xff);
+    local_4 = (float)(fVar3 - (float10)_DAT_005cc32c);
+    FUN_004c1520(uVar1,&DAT_006146fc,local_4 * _DAT_005cc72c,0);
+    FUN_004c1520(uVar1,&DAT_006146f0,local_4 * _DAT_005cc9b0,1);
+    DAT_0063e4a4 = param_1 * _DAT_005cd058 + DAT_0063e4a4;
+  }
+  return;
+}
+
+
+
+// FUN_0041f710 @ 0x0041f710  size=88  (MASHED.exe)
+// undefined FUN_0041f710(void)
+
+/* [C2 2026-06-03] `void FUN_0041f710(void)`. Body 0x0041f710..0x0041f767. thiscall-shape: `in_EAX =
+   this` (per-slot record). - Builds an… */
+
+void FUN_0041f710(void)
+
+{
+  int in_EAX;
+  undefined4 local_8c;
+  undefined4 local_88;
+  undefined4 local_84;
+  undefined4 local_80;
+  int local_7c;
+  undefined4 local_78;
+  undefined4 local_74;
+  undefined4 local_70;
+  
+  local_8c = *(undefined4 *)(in_EAX + 600);
+  local_88 = *(undefined4 *)(in_EAX + 0x25c);
+  local_84 = *(undefined4 *)(in_EAX + 0x260);
+  local_80 = *(undefined4 *)(in_EAX + 0x264);
+  local_7c = *(int *)(in_EAX + 0x290) + 0xff00;
+  local_78 = 0;
+  local_74 = 0;
+  local_70 = 0;
+  FUN_00484cf0(&local_8c);
+  return;
+}
+
+
+
+// FUN_0041f880 @ 0x0041f880  size=112  (MASHED.exe)
+// undefined FUN_0041f880(void)
+
+/* [C1 2026-05-19] thiscall-shape (`unaff_EDI = this`). */
+
+void FUN_0041f880(void)
+
+{
+  uint uVar1;
+  undefined4 uVar2;
+  undefined4 uVar3;
+  int unaff_EDI;
+  
+  uVar1 = *(uint *)(unaff_EDI + 0x294);
+  uVar3 = 0;
+  uVar2 = 0x3b;
+  if ((uVar1 & 0x400) == 0) {
+    if (((uVar1 & 0x10) == 0) || ((uVar1 & 0x20) == 0)) {
+      if ((uVar1 & 0x10) == 0) {
+        if ((uVar1 & 0x20) != 0) {
+          uVar3 = 2;
+          uVar2 = 0x3d;
+        }
+      }
+      else {
+        uVar3 = 1;
+        uVar2 = 0x3c;
+      }
+    }
+    else {
+      uVar3 = 3;
+      uVar2 = 0x3e;
+    }
+  }
+  else {
+    uVar2 = 0x40;
+  }
+  *(undefined4 *)(unaff_EDI + 0x28c) = uVar2;
+  if (DAT_00636acc == 0) {
+    FUN_00422aa0(*(undefined4 *)(unaff_EDI + 0x290),uVar3);
+  }
+  return;
+}
+
+
+
+// FUN_0046c7b0 @ 0x0046c7b0  size=26  (MASHED.exe)
+// undefined FUN_0046c7b0(void)
+
+/* [C2 2026-05-12] Bounds-checked vehicle slot getter. Returns the DWORD at `DAT_008815a4 + param_1
+   * 0x341` (vehicle… */
+
+undefined4 FUN_0046c7b0(uint param_1)
+
+{
+  if (0xf < param_1) {
+    return 0xffffffff;
+  }
+  return (&DAT_008815a4)[param_1 * 0x341];
+}
+
+
+
+// FUN_0046c770 @ 0x0046c770  size=26  (MASHED.exe)
+// undefined FUN_0046c770(void)
+
+/* [C1 2026-05-12] Signature: `undefined4 FUN_0046c770(uint param_1)` — param_1 = car index
+   (0–15). */
+
+undefined4 FUN_0046c770(uint param_1)
+
+{
+  if (0xf < param_1) {
+    return 0xffffffff;
+  }
+  return (&DAT_008815b0)[param_1 * 0x341];
+}
+
+

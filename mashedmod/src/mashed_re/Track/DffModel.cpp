@@ -106,7 +106,7 @@ void FrameXformNormal(const std::vector<Frame>& frames, int idx,
 
 }  // namespace
 
-bool DffModel::Parse(const std::uint8_t* data, std::size_t len) {
+bool DffModel::Parse(const std::uint8_t* data, std::size_t len, bool bake_frames) {
     materials.clear(); batches.clear(); frames.clear();
     total_tris = total_verts = 0;
     Rd r{data, len};
@@ -346,7 +346,8 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len) {
             std::vector<float> wn(have_n ? nverts * 3 : 0);
             for (std::size_t v = 0; v < nverts; ++v) {
                 float out[3];
-                FrameXform(frames, fi, &geo.verts[v * 3], out);
+                if (bake_frames) FrameXform(frames, fi, &geo.verts[v * 3], out);
+                else { out[0] = geo.verts[v * 3 + 0]; out[1] = geo.verts[v * 3 + 1]; out[2] = geo.verts[v * 3 + 2]; }
                 w[v * 3 + 0] = out[0]; w[v * 3 + 1] = out[1]; w[v * 3 + 2] = out[2];
                 for (int k = 0; k < 3; ++k) {
                     if (out[k] < bbox[k])     bbox[k] = out[k];
@@ -356,7 +357,8 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len) {
                 }
                 if (have_n) {
                     float no[3];
-                    FrameXformNormal(frames, fi, &geo.normals[v * 3], no);
+                    if (bake_frames) FrameXformNormal(frames, fi, &geo.normals[v * 3], no);
+                    else { no[0] = geo.normals[v * 3 + 0]; no[1] = geo.normals[v * 3 + 1]; no[2] = geo.normals[v * 3 + 2]; }
                     wn[v * 3 + 0] = no[0]; wn[v * 3 + 1] = no[1]; wn[v * 3 + 2] = no[2];
                 }
             }

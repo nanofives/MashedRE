@@ -1,0 +1,5 @@
+11:06:02 shared asi sha256 before = 270e036fad840e93  size=1153536
+11:06:03 deployed worktree build sha256 = c758de816ae57853
+11:06:35 path2_plugin_data_dword_a                  rc=0 (32s)
+11:07:09 path2_plugin_data_dword_b                  rc=0 (34s)
+11:07:09 shared asi sha256 after restore = 270e036fad840e93  matches original: True

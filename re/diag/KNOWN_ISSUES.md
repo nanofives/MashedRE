@@ -168,6 +168,27 @@ The single place that records every recurring execution failure: its **signature
   again (`bounded_table_signclamp_46d7f0`, `update_41b520`). `MASHED_HOOK_ALLOW_BOOTPATCH=1` disables the
   guard. If the boot-patch set changes, re-diff and update the table.
 
+## AUTOHOOK-INLINE-ASM-IMMEDIATE — full hook set kills MASHED.exe during the nav boot-to-menu (found 2026-10-16)
+- **Signature:** `run_verify_hook.py` of a `scenario='race'` row (and `run_diff`-style nav drives with the .asi
+  auto-hook ON) prints `[nav] booting to menu...` then `frida.InvalidOperationError: script has been destroyed`;
+  the process exit code is `0xC0000005`, access violation read at **EIP 0x1** (stack top `0x00494ff4`,
+  then `0x00771a0c`). `MASHED_HOOK_ONLY=__none__` drives to the race fine; menu-only path2 runs (no nav) are fine.
+- **Root cause (bisected by registry index with `MASHED_HOOK_LO/HI`, 20 boots, `verify/dupinstall2_20261016/bisect_nav.py`):**
+  index 1335 of 1354, `Fwd494fd0_DoublePlusHalf` (`0x00495080`, `Render/PromoLoop_round256.cpp:172`). The naked body
+  writes `mov esi, dword ptr [771A0Ch]`; **MSVC inline asm assembles a bare `[imm]` as the immediate**, so the built
+  export is `be 0c 1a 77 00  mov esi, 0x771a0c`, not `8b 35 0c 1a 77 00  mov esi,[0x771a0c]`
+  (`verify/dupinstall2_20261016/disasm_asi_export.py`). `FUN_00494fd0` takes its DirectInput device pointer in ESI
+  (`mov eax,[esi]` / `call [eax+0x1c]` at `0x00494fee..0x00494ff1`), so the vtable read lands in the object and the
+  call goes to `0x1`. Its sole caller is `FUN_0043dfd0` (hooks.csv); the AV comes during the nav drive's `booting to menu` step.
+- **Why nothing saw it:** the C3 A/B stubs the callee and records stack args only; ESI is a register input.
+- **Scope:** one site. Every other absolute operand in `mashedmod/src` (about 60 lines) is spelled `ds:[...]`, which
+  assembles as a memory operand (probe `verify/dupinstall2_20261016/asm_probe/probe.cpp`: `[771A0Ch]` and
+  `[0x771A0C]` give `be ...`, `ds:[771A0Ch]` and `ds:[0x771A0C]` give a memory load).
+- **Not fixed here:** the row is demoted C3 -> C2 in hooks.csv. Fix is one line, `mov esi, dword ptr ds:[771A0Ch]`;
+  then re-earn with a nav boot that has the hook installed.
+- **Workaround meanwhile:** `MASHED_HOOK_SKIP=Fwd494fd0_DoublePlusHalf` (honoured by `InstallAll`), used for the three
+  race-scenario path2 rows of the dupinstall lane.
+
 ## MASHED-BOOT-AV — original AVs ~4 s into boot
 - **Signature:** new `%LOCALAPPDATA%\CrashDumps\MASHED.exe.*.dmp`; Frida attach fails
   `VirtualAllocEx 0x5`.

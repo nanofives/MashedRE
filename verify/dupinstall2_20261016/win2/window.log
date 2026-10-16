@@ -1,0 +1,38 @@
+10:53:37 waiting: foreign MASHED.exe [20664]
+10:53:53 waiting: foreign MASHED.exe [21788]
+10:54:08 waiting: foreign MASHED.exe [21788]
+10:54:24 waiting: foreign MASHED.exe [21788, 5252]
+10:54:39 waiting: foreign MASHED.exe [5252]
+10:54:55 waiting: foreign MASHED.exe [5252, 18564]
+10:55:11 waiting: foreign MASHED.exe [5252, 18564]
+10:55:27 waiting: foreign MASHED.exe [18564, 20808]
+10:55:42 waiting: foreign MASHED.exe [20808]
+10:55:58 waiting: foreign MASHED.exe [20808]
+10:56:15 waiting: foreign MASHED.exe [20808]
+10:56:31 waiting: foreign MASHED.exe [9912]
+10:56:50 waiting: foreign MASHED.exe [9912]
+10:57:11 waiting: foreign MASHED.exe [9912]
+10:57:27 waiting: foreign MASHED.exe [6604, 21988]
+10:57:42 waiting: foreign MASHED.exe [6604, 21988]
+10:57:58 waiting: foreign MASHED.exe [6604, 21988]
+10:58:20 waiting: foreign MASHED.exe [6604, 21988]
+10:58:42 waiting: foreign MASHED.exe [6604, 4696]
+10:59:05 waiting: foreign MASHED.exe [6604, 4696]
+10:59:22 waiting: foreign MASHED.exe [4696]
+10:59:42 waiting: foreign MASHED.exe [22076]
+11:00:00 waiting: foreign MASHED.exe [22076]
+11:00:18 waiting: foreign MASHED.exe [22076]
+11:00:35 waiting: foreign MASHED.exe [22076, 16480]
+11:00:51 waiting: foreign MASHED.exe [16480]
+11:01:07 waiting: foreign MASHED.exe [16480, 8332]
+11:01:25 waiting: foreign MASHED.exe [16480, 8332]
+11:01:42 waiting: foreign MASHED.exe [8332]
+11:02:00 waiting: foreign MASHED.exe []
+11:02:16 shared asi sha256 before = 270e036fad840e93  size=1153536
+11:02:17 deployed worktree build sha256 = c758de816ae57853
+11:02:46 nav_probe_full_hookset                     rc=0 (29s)
+11:03:33 nav_probe_skip_fwd494fd0                   rc=0 (47s)
+11:04:07 path2_table_773030_get                     rc=0 (34s)
+11:04:38 path2_plugin_data_dword_a                  rc=1 (32s)
+11:05:14 path2_plugin_data_dword_b                  rc=1 (36s)
+11:05:15 shared asi sha256 after restore = 270e036fad840e93  matches original: True

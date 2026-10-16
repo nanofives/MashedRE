@@ -1,0 +1,37 @@
+hook: frontend_page_id_dispatch  rva=0x00431f30  export=FrontendPageIdDispatch
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 22084
+  [agent] pre_snapshot
+  [agent] asi_loaded
+  [agent] post_snapshot
+  [agent] results
+
+=== verify_hook_install report (frontend_page_id_dispatch) ===
+
+target address: 0x00431f30  export: FrontendPageIdDispatch
+PRE  bytes:     e9 cb ba 46 5d 8b 44 24
+asi base:       0x5d870000
+reimpl addr:    0x5d89da00
+POST bytes:     e9 cb ba 46 5d 8b 44 24
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x5d46bacb  expected 0x5d46bacb  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  3 / 3  (other threads: 0)
+
+per-input results:
+  [OK] input=8  got=(void)  err=
+  [OK] input=30  got=(void)  err=
+  [OK] input=99  got=(void)  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 3x as expected
+  + all 3 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall2\log\verify_hook_install_frontend_page_id_dispatch.txt
+

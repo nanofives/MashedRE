@@ -1,0 +1,40 @@
+== D2_DEF_1
+ORIGINAL         frames  2333  R=  886  peak  1832.40 at d=  95  trough   85.45 at d= 101
+post-trough n= 400  >=100:  398 ( 99.5 %)  median   1333.9  max   2478.3
++0xb14 engages at d=15
+PORT             frames  1634  R=    1  peak  1835.50 at d=  95  trough   83.43 at d= 106
+post-trough n= 400  >=100:  398 ( 99.5 %)  median   1362.8  max   2374.0
++0xb14 engages at d=15
+BEST L = 0  at 0.19 %
+== D2_B_1
+ORIGINAL         frames  2333  R=  886  peak  1832.40 at d=  95  trough   85.45 at d= 101
+post-trough n= 400  >=100:  398 ( 99.5 %)  median   1333.9  max   2478.3
++0xb14 engages at d=15
+PORT             frames  1633  R=    1  peak  1836.99 at d=  94  trough   84.31 at d= 105
+post-trough n= 400  >=100:   11 (  2.8 %)  median     32.0  max    194.7
++0xb14 engages at d=14
+BEST L = 0  at 6.93 %
+== D2_B_2
+ORIGINAL         frames  2333  R=  886  peak  1832.40 at d=  95  trough   85.45 at d= 101
+post-trough n= 400  >=100:  398 ( 99.5 %)  median   1333.9  max   2478.3
++0xb14 engages at d=15
+PORT             frames  1634  R=    1  peak  1836.99 at d=  94  trough   84.31 at d= 105
+post-trough n= 400  >=100:   11 (  2.8 %)  median     32.0  max    194.7
++0xb14 engages at d=14
+BEST L = 0  at 6.93 %
+== D2_B_3
+ORIGINAL         frames  2333  R=  886  peak  1832.40 at d=  95  trough   85.45 at d= 101
+post-trough n= 400  >=100:  398 ( 99.5 %)  median   1333.9  max   2478.3
++0xb14 engages at d=15
+PORT             frames  1635  R=    1  peak  1836.99 at d=  94  trough   84.31 at d= 105
+post-trough n= 400  >=100:   11 (  2.8 %)  median     32.0  max    194.7
++0xb14 engages at d=14
+BEST L = 0  at 6.93 %
+== D2_P23_1
+ORIGINAL         frames  2333  R=  886  peak  1832.40 at d=  95  trough   85.45 at d= 101
+post-trough n= 400  >=100:  398 ( 99.5 %)  median   1333.9  max   2478.3
++0xb14 engages at d=15
+PORT             frames  1634  R=    1  peak  1835.50 at d=  95  trough   83.43 at d= 106
+post-trough n= 400  >=100:  398 ( 99.5 %)  median   1362.8  max   2374.0
++0xb14 engages at d=15
+BEST L = 0  at 0.19 %

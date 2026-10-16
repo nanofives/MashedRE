@@ -2820,8 +2820,11 @@ Named D4 work items (added 2026-09-26, previously implicit):
   is the U-9065 class and it is tracker hygiene, not behaviour);
   **Item (3) status 2026-10-16 (`verify/dupinstall_20261016/RESULT_dupinstall.md`):** 26 of the 27
   allowlist entries removed (23 consolidated by deleting the install and the dead body, 3 already
-  stale); `0x0046cbb0` is the one left (it needs an edit in `Vehicle/VehicleState.cpp`). The
-  `DUP-IN-TARGET` entries those RVAs also carried went with them (29 more lines);
+  stale); `0x0046cbb0` was left for a second pass and **closed 2026-10-16
+  (`verify/dupinstall2_20261016/RESULT_dupinstall2.md`)**: no `Vehicle/` edit was needed, the
+  survivor is `VehicleCarStateRead` and `CarStatePairGet` in `Util/PromoLoop_round25.cpp` was the one
+  deleted. **Item (3) is done: 0 `DUP-INSTALL` entries, 0 findings.** The `DUP-IN-TARGET` entries
+  those RVAs also carried went with them (29 + 1 lines, plus 4 stale ones for other RVAs);
   (4) everything else.
   **Each consolidation re-earns the row's C-level through the normal gates** — the exe copy has no
   evidence of its own, and a copy fixed by reading is a C2-grade statement (`re/CONFIDENCE.md`,

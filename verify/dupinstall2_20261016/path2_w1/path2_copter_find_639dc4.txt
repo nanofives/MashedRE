@@ -1,0 +1,37 @@
+hook: copter_find_639dc4  rva=0x00407640  export=CopterFind639dc4
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 3132
+  [agent] pre_snapshot
+  [agent] asi_loaded
+  [agent] post_snapshot
+  [agent] results
+
+=== verify_hook_install report (copter_find_639dc4) ===
+
+target address: 0x00407640  export: CopterFind639dc4
+PRE  bytes:     e9 3b 0f 7d 5c 00 56 33
+asi base:       0x5cba0000
+reimpl addr:    0x5cbd8580
+POST bytes:     e9 3b 0f 7d 5c 00 56 33
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x5c7d0f3b  expected 0x5c7d0f3b  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  3 / 3  (other threads: 0)
+
+per-input results:
+  [OK] input=2868903937  got=-1  err=
+  [OK] input=2868903938  got=-1  err=
+  [OK] input=57005  got=-1  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 3x as expected
+  + all 3 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall2\log\verify_hook_install_copter_find_639dc4.txt
+

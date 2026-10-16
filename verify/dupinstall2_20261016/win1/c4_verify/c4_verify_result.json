@@ -1,0 +1,32 @@
+{
+  "0x00498bf0": {
+    "calls": 955,
+    "installed": true,
+    "survived": true,
+    "C4": true
+  },
+  "0x004098a0": {
+    "calls": 0,
+    "installed": true,
+    "survived": true,
+    "C4": false
+  },
+  "0x0040b9a0": {
+    "calls": 0,
+    "installed": true,
+    "survived": true,
+    "C4": false
+  },
+  "0x0040ba60": {
+    "calls": 0,
+    "installed": true,
+    "survived": true,
+    "C4": false
+  },
+  "0x00407a20": {
+    "calls": 0,
+    "installed": true,
+    "survived": true,
+    "C4": false
+  }
+}

@@ -1,0 +1,37 @@
+hook: dinput_init_predicate  rva=0x004955b0  export=DInputInitPredicate
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (auto-hook ENABLED)
+  pid = 24116
+  [agent] pre_snapshot
+  [agent] asi_loaded
+  [agent] post_snapshot
+  [agent] {'type': 'log', 'msg': 'stubbed callee 0x495530'}
+  [agent] results
+
+=== verify_hook_install report (dinput_init_predicate) ===
+
+target address: 0x004955b0  export: DInputInitPredicate
+PRE  bytes:     e9 bb 0d 3f 5d f7 d8 1b
+asi base:       0x5d870000
+reimpl addr:    0x5d886370
+POST bytes:     e9 bb 0d 3f 5d f7 d8 1b
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x5d3f0dbb  expected 0x5d3f0dbb  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  2 / 2  (other threads: 0)
+
+per-input results:
+  [OK] input={'scalars': [], 'stub_rets': {'cdi': 0}}  got=0  err=
+  [OK] input={'scalars': [], 'stub_rets': {'cdi': 1}}  got=0  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 2x as expected
+  + all 2 calls returned without exception
+FAIL:
+  (none)
+
+report written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\dupinstall2\log\verify_hook_install_dinput_init_predicate.txt
+

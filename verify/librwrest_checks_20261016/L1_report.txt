@@ -1,0 +1,50 @@
+== T0: orig_T0/trace.csv.carparts.json
+   poke={'colours': [-1, -1, -1, -1], 'mode': -1} mode word at read=10 effective mode at FUN_0040d110=10
+   car 0: colour=0 id=6 (id%6=0) name=Advantag dff=Advantage0 txd=Advantage env=cargloss  expected livery 0  L1-a PASS  standalone slot 0: colour=0 mode=0 -> ADVANTAGE0.DFF  L1-b PASS
+   car 1: colour=3 id=9 (id%6=3) name=Advantag dff=Advantage3 txd=Advantage env=cargloss  expected livery 3  L1-a PASS  standalone slot 1: colour=3 mode=0 -> ADVANTAGE3.DFF  L1-b PASS
+   car 2: colour=1 id=7 (id%6=1) name=Advantag dff=Advantage1 txd=Advantage env=cargloss  expected livery 1  L1-a PASS  standalone slot 2: colour=1 mode=0 -> ADVANTAGE1.DFF  L1-b PASS
+   car 3: colour=2 id=8 (id%6=2) name=Advantag dff=Advantage2 txd=Advantage env=cargloss  expected livery 2  L1-a PASS  standalone slot 3: colour=2 mode=0 -> ADVANTAGE2.DFF  L1-b PASS
+   arm verdict: L1-a PASS, L1-b PASS
+== A0: orig_A0/trace.csv.carparts.json
+   poke={'colours': [-1, -1, -1, -1], 'mode': -1} mode word at read=10 effective mode at FUN_0040d110=10
+   car 0: colour=0 id=6 (id%6=0) name=Advantag dff=Advantage0 txd=Advantage env=cargloss  expected livery 0  L1-a PASS  standalone slot 0: colour=0 mode=0 -> ADVANTAGE0.DFF  L1-b PASS
+   car 1: colour=3 id=9 (id%6=3) name=Advantag dff=Advantage3 txd=Advantage env=cargloss  expected livery 3  L1-a PASS  standalone slot 1: colour=3 mode=0 -> ADVANTAGE3.DFF  L1-b PASS
+   car 2: colour=1 id=7 (id%6=1) name=Advantag dff=Advantage1 txd=Advantage env=cargloss  expected livery 1  L1-a PASS  standalone slot 2: colour=1 mode=0 -> ADVANTAGE1.DFF  L1-b PASS
+   car 3: colour=2 id=8 (id%6=2) name=Advantag dff=Advantage2 txd=Advantage env=cargloss  expected livery 2  L1-a PASS  standalone slot 3: colour=2 mode=0 -> ADVANTAGE2.DFF  L1-b PASS
+   arm verdict: L1-a PASS, L1-b PASS
+== C0: orig_C0/trace.csv.carparts.json
+   poke={'colours': [-1, -1, -1, -1], 'mode': -1} mode word at read=10 effective mode at FUN_0040d110=10
+   car 0: colour=0 id=6 (id%6=0) name=Advantag dff=Advantage0 txd=Advantage env=cargloss  expected livery 0  L1-a PASS  standalone slot 0: colour=0 mode=0 -> ADVANTAGE0.DFF  L1-b PASS
+   car 1: colour=3 id=9 (id%6=3) name=Advantag dff=Advantage3 txd=Advantage env=cargloss  expected livery 3  L1-a PASS  standalone slot 1: colour=3 mode=0 -> ADVANTAGE3.DFF  L1-b PASS
+   car 2: colour=1 id=7 (id%6=1) name=Advantag dff=Advantage1 txd=Advantage env=cargloss  expected livery 1  L1-a PASS  standalone slot 2: colour=1 mode=0 -> ADVANTAGE1.DFF  L1-b PASS
+   car 3: colour=2 id=8 (id%6=2) name=Advantag dff=Advantage2 txd=Advantage env=cargloss  expected livery 2  L1-a PASS  standalone slot 3: colour=2 mode=0 -> ADVANTAGE2.DFF  L1-b PASS
+   arm verdict: L1-a PASS, L1-b PASS
+== T1: orig_T1/trace.csv.carparts.json
+   poke={'colours': [1, 2, 3, 4], 'mode': -1} mode word at read=10 effective mode at FUN_0040d110=10
+   car 0: colour=1 id=7 (id%6=1) name=Advantag dff=Advantage1 txd=Advantage env=cargloss  expected livery 1  L1-a PASS  standalone slot 0: colour=1 mode=0 -> ADVANTAGE1.DFF  L1-b PASS
+   car 1: colour=2 id=8 (id%6=2) name=Advantag dff=Advantage2 txd=Advantage env=cargloss  expected livery 2  L1-a PASS  standalone slot 1: colour=2 mode=0 -> ADVANTAGE2.DFF  L1-b PASS
+   car 2: colour=3 id=9 (id%6=3) name=Advantag dff=Advantage3 txd=Advantage env=cargloss  expected livery 3  L1-a PASS  standalone slot 2: colour=3 mode=0 -> ADVANTAGE3.DFF  L1-b PASS
+   car 3: colour=4 id=10 (id%6=4) name=Advantag dff=Advantage4 txd=Advantage env=cargloss  expected livery 4  L1-a PASS  standalone slot 3: colour=4 mode=0 -> ADVANTAGE4.DFF  L1-b PASS
+   arm verdict: L1-a PASS, L1-b PASS
+== A1: orig_A1/trace.csv.carparts.json
+   poke={'colours': [5, 4, 3, 2], 'mode': -1} mode word at read=10 effective mode at FUN_0040d110=10
+   car 0: colour=5 id=11 (id%6=5) name=Advantag dff=Advantage5 txd=Advantage env=cargloss  expected livery 5  L1-a PASS  standalone slot 0: colour=5 mode=0 -> ADVANTAGE5.DFF  L1-b PASS
+   car 1: colour=4 id=10 (id%6=4) name=Advantag dff=Advantage4 txd=Advantage env=cargloss  expected livery 4  L1-a PASS  standalone slot 1: colour=4 mode=0 -> ADVANTAGE4.DFF  L1-b PASS
+   car 2: colour=3 id=9 (id%6=3) name=Advantag dff=Advantage3 txd=Advantage env=cargloss  expected livery 3  L1-a PASS  standalone slot 2: colour=3 mode=0 -> ADVANTAGE3.DFF  L1-b PASS
+   car 3: colour=2 id=8 (id%6=2) name=Advantag dff=Advantage2 txd=Advantage env=cargloss  expected livery 2  L1-a PASS  standalone slot 3: colour=2 mode=0 -> ADVANTAGE2.DFF  L1-b PASS
+   arm verdict: L1-a PASS, L1-b PASS
+== C1: orig_C1/trace.csv.carparts.json
+   poke={'colours': [3, 0, 5, 1], 'mode': -1} mode word at read=10 effective mode at FUN_0040d110=10
+   car 0: colour=3 id=9 (id%6=3) name=Advantag dff=Advantage3 txd=Advantage env=cargloss  expected livery 3  L1-a PASS  standalone slot 0: colour=3 mode=0 -> ADVANTAGE3.DFF  L1-b PASS
+   car 1: colour=0 id=6 (id%6=0) name=Advantag dff=Advantage0 txd=Advantage env=cargloss  expected livery 0  L1-a PASS  standalone slot 1: colour=0 mode=0 -> ADVANTAGE0.DFF  L1-b PASS
+   car 2: colour=5 id=11 (id%6=5) name=Advantag dff=Advantage5 txd=Advantage env=cargloss  expected livery 5  L1-a PASS  standalone slot 2: colour=5 mode=0 -> ADVANTAGE5.DFF  L1-b PASS
+   car 3: colour=1 id=7 (id%6=1) name=Advantag dff=Advantage1 txd=Advantage env=cargloss  expected livery 1  L1-a PASS  standalone slot 3: colour=1 mode=0 -> ADVANTAGE1.DFF  L1-b PASS
+   arm verdict: L1-a PASS, L1-b PASS
+== T2: orig_T2/trace.csv.carparts.json
+   poke={'colours': [-1, -1, -1, -1], 'mode': 11} mode word at read=10 effective mode at FUN_0040d110=11
+   car 0: colour=0 id=6 (id%6=0) name=Advantag dff=Advantage0 txd=Advantage env=cargloss  expected livery 0  L1-a PASS
+   car 1: colour=3 id=7 (id%6=1) name=Advantag dff=Advantage1 txd=Advantage env=cargloss  expected livery 1  L1-a PASS
+   car 2: colour=1 id=8 (id%6=2) name=Advantag dff=Advantage2 txd=Advantage env=cargloss  expected livery 2  L1-a PASS
+   car 3: colour=2 id=9 (id%6=3) name=Advantag dff=Advantage3 txd=Advantage env=cargloss  expected livery 3  L1-a PASS
+   arm verdict: L1-a PASS, L1-b n/a (no standalone side)
+L1 OVERALL: L1-a PASS, L1-b PASS

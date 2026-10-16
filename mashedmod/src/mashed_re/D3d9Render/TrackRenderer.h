@@ -194,6 +194,16 @@ private:
     };
     std::vector<Prop> props_;
 
+    // [rprops U-9695] Props whose placement the original re-poses every frame from its per-track
+    // hook-table helpers (Arctic freighters 0x00448cb0, fishing boats 0x00448e20). Each entry is an
+    // index into props_ whose `instances` UpdatePropAnims() rewrites once per Render. prop_acc_ are
+    // the float accumulators 0x00683258 / 0x0068325c / 0x00683260 (BSS, zero at start).
+    struct PropAnim { int kind; std::size_t prop; };
+    std::vector<PropAnim> prop_anims_;
+    float prop_acc_[3] = {};
+    int   prop_tick_frames_ = 0;
+    void UpdatePropAnims();
+
     // ---- F2 .ANM animated copters (COURSE.LUA General_Anim_Filename + SetCopter;
     // KTCSCRIPT.LUA KTC_NewCopter). The flight paths are the track's .ANM
     // (Track::HAnim, rwID_HANIMANIMATION); the models are COPTER/JETRANGER/
@@ -285,6 +295,11 @@ public:
 private:
     CarPartState car_parts_[4];
     void CarParts_FrameTick(int units);
+    // [librwrest_checks] MASHED_CARPARTS_LAW=<in> MASHED_CARPARTS_LAW_OUT=<out>, DIAGNOSTIC
+    // ONLY, default OFF, one shot: replays the original's recorded per-row part inputs
+    // (camera_probe.py --carparts) through the same spin step and BuildCarPoses the race
+    // uses, and writes the resulting frame poses for the W1 law check.
+    void CarPartsLawReplay();
 
     // stretch: AI cars following the gate loop at fixed speed (share the
     // player's model batches; placeholder until the real AI port)

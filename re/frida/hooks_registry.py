@@ -129,7 +129,7 @@ HOOKS = {
         'seed_sets': [
             {'seeds': [[0x8815a4, 0], [0x8822a8, 0x55], [0x882fac, 0], [0x883cb0, 0x77]], 'args': []},
         ],
-        'path1_tests': [0], 'path2_tests': [0]},
+        'path1_tests': [0], 'path2_tests': [{'p2bufs': [0x20], 'p2args': [{'buf': 0}]}]},
 
     # 0x0040b9a0 MaxScoreFlags40b9a0 (gameplay) - NEAR-LEAF void f(int* out, int mode):
     #   m=max over DAT_008a94e0[0..3] (mode!=0 => only slots i with VehicleSlotGetter(i)!=0
@@ -146,7 +146,7 @@ HOOKS = {
             {'seeds': [[0x8a94e0, 100], [0x8a94e4, 30], [0x8a94e8, 20], [0x8a94ec, 5],
                        [0x8815a4, 0], [0x8822a8, 1], [0x882fac, 1], [0x883cb0, 0]], 'args': [1]},
         ],
-        'path1_tests': [0, 1], 'path2_tests': [0, 1]},
+        'path1_tests': [0, 1], 'path2_tests': [{'p2bufs': [0x20], 'p2args': [{'buf': 0}, 0]}, {'p2bufs': [0x20], 'p2args': [{'buf': 0}, 1]}]},
 
     # 0x0045cab0 SlotAliveState45cab0 (gameplay) - NEAR-LEAF int f(uint idx):
     #   CarStatePairGet(idx,&state,&sec): state=(&DAT_00881f90)[idx*0x341] @ 0x00881f90+idx*0xD04;
@@ -2392,7 +2392,7 @@ HOOKS = {
         'lut_root_delta': 0,
         'path1_tests': [0xDEADBEEF, 0xCAFEBABE, 0x11111111, 0x22222222, 0, 0xFFFFFFFF,
                         0x80000000, 0x55555555, 0xAAAAAAAA, 0x12345678, 1, 0x7FFFFFFF],
-        'path2_tests': [0xDEADBEEF, 0, 0xFFFFFFFF],
+        'path2_tests': [{'p2bufs': [0x40], 'p2args': [{'buf': 0}]}, {'p2bufs': [0x40], 'p2args': [{'buf': 0}]}, {'p2bufs': [0x40], 'p2args': [{'buf': 0}]}],
     },
 
     # 0x005b35a0 AudioListPushBack(hdr,obj). Build list from `pre` via ORIGINAL
@@ -15104,9 +15104,7 @@ HOOKS = {
             [4], [5], [6], [7], [8], [9], [10], [0xc], [0xf], [0x11],
             [0x14], [0x1e], [0x20], [0x21], [0x63],
         ],
-        'path2_tests': [
-            [8], [0x1e], [0x63],
-        ],
+        'path2_tests': [8, 0x1e, 0x63],
     },
 
     # 0x00424270  RankSortDispatcher — NOT PROMOTED (c3-batch-af-s6 2026-06-04).
@@ -16951,15 +16949,15 @@ HOOKS = {
 
     # ---- promote-round round 69 (60-dword contiguous zero-fill + Copter linear-scan find) --
     'zerofill60_63bc60': {'rva': 0x00413f20, 'export': 'ZeroFill60_63bc60', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'range_init', 'target_global': 0x0063bc60, 'len': 0xf0, 'lut_root_delta': 0, 'path1_tests': [0, 0], 'path2_tests': [0]},
-    'copter_find_639dc4': {'rva': 0x00407640, 'export': 'CopterFind639dc4', 'signature': {'ret': 'int32', 'args': ['uint32']}, 'arg_type': 'linear_scan_find', 'target_global': 0x00639dc4, 'stride': 0xec, 'gate': 0x0063a5d0, 'count': 8, 'lut_root_delta': 0, 'path1_tests': [[0xABCD0001, 0], [0xABCD0002, 3], [0xABCD0003, 7], [0xABCD0004, 1], [0xDEAD, 99], [0xABCD0005, 5], [0xABCD0006, 0], [0xBEEF, 50], [0xABCD0007, 6], [0xABCD0008, 2]], 'path2_tests': [[0xABCD0001, 0], [0xABCD0002, 3], [0xDEAD, 99]]},
+    'copter_find_639dc4': {'rva': 0x00407640, 'export': 'CopterFind639dc4', 'signature': {'ret': 'int32', 'args': ['uint32']}, 'arg_type': 'linear_scan_find', 'target_global': 0x00639dc4, 'stride': 0xec, 'gate': 0x0063a5d0, 'count': 8, 'lut_root_delta': 0, 'path1_tests': [[0xABCD0001, 0], [0xABCD0002, 3], [0xABCD0003, 7], [0xABCD0004, 1], [0xDEAD, 99], [0xABCD0005, 5], [0xABCD0006, 0], [0xBEEF, 50], [0xABCD0007, 6], [0xABCD0008, 2]], 'path2_tests': [0xAB000001, 0xAB000002, 0xDEAD]},
 
     # ---- promote-round round 68 (strided 30-global zero-init + 64-dword constant fill) --
     'clear10x3_63a494': {'rva': 0x00406370, 'export': 'Clear10x3_63a494', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'range_init', 'target_global': 0x0063a494, 'len': 0x12c, 'lut_root_delta': 0, 'path1_tests': [0, 0], 'path2_tests': [0]},
     'fill64_63c508': {'rva': 0x00418e50, 'export': 'Fill64_63c508', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'range_init', 'target_global': 0x0063c508, 'len': 0x100, 'lut_root_delta': 0, 'path1_tests': [0, 0], 'path2_tests': [0]},
 
     # ---- promote-round round 67 (two global-array-to-bool-out helpers) --
-    'bool0_out_8a94e0': {'rva': 0x0040b970, 'export': 'Bool0Out8a94e0', 'signature': {'ret': 'void', 'args': ['uint32']}, 'arg_type': 'global4_bool_out', 'target_global': 0x008a94e0, 'span': 4, 'seedvecs': [[0, 1, 0, 2], [5, 0, 0, 7], [0, 0, 3, 0], [9, 8, 7, 0], [0, 0, 0, 0], [1, 1, 1, 1], [0, 5, 0, 0], [3, 0, 9, 0], [0, 1, 2, 0], [7, 0, 0, 0]], 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 'path2_tests': [0, 1, 3]},
-    'boolmin_out_8a94e0': {'rva': 0x0040ba00, 'export': 'BoolMinOut8a94e0', 'signature': {'ret': 'void', 'args': ['uint32']}, 'arg_type': 'global4_bool_out', 'target_global': 0x008a94e0, 'span': 4, 'seedvecs': [[3, 5, 3, 9], [100, 2, 2, 50], [1, 1, 1, 1], [50, 40, 40, 99], [99, 99, 99, 99], [200, 200, 200, 200], [7, 8, 9, 7], [4, 4, 5, 6], [10, 20, 10, 30], [0, 0, 1, 2]], 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 'path2_tests': [0, 1, 3]},
+    'bool0_out_8a94e0': {'rva': 0x0040b970, 'export': 'Bool0Out8a94e0', 'signature': {'ret': 'void', 'args': ['uint32']}, 'arg_type': 'global4_bool_out', 'target_global': 0x008a94e0, 'span': 4, 'seedvecs': [[0, 1, 0, 2], [5, 0, 0, 7], [0, 0, 3, 0], [9, 8, 7, 0], [0, 0, 0, 0], [1, 1, 1, 1], [0, 5, 0, 0], [3, 0, 9, 0], [0, 1, 2, 0], [7, 0, 0, 0]], 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 'path2_tests': [{'p2bufs': [16], 'p2args': [{'buf': 0}]}, {'p2bufs': [16], 'p2args': [{'buf': 0}]}, {'p2bufs': [16], 'p2args': [{'buf': 0}]}]},
+    'boolmin_out_8a94e0': {'rva': 0x0040ba00, 'export': 'BoolMinOut8a94e0', 'signature': {'ret': 'void', 'args': ['uint32']}, 'arg_type': 'global4_bool_out', 'target_global': 0x008a94e0, 'span': 4, 'seedvecs': [[3, 5, 3, 9], [100, 2, 2, 50], [1, 1, 1, 1], [50, 40, 40, 99], [99, 99, 99, 99], [200, 200, 200, 200], [7, 8, 9, 7], [4, 4, 5, 6], [10, 20, 10, 30], [0, 0, 1, 2]], 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 'path2_tests': [{'p2bufs': [16], 'p2args': [{'buf': 0}]}, {'p2bufs': [16], 'p2args': [{'buf': 0}]}, {'p2bufs': [16], 'p2args': [{'buf': 0}]}]},
 
     # ---- promote-round round 66 (per-player flag-bit toggle + gated switch predicate) --
     'flag_toggle_63dc74': {'rva': 0x0041ef80, 'export': 'FlagToggle63dc74', 'signature': {'ret': 'void', 'args': ['uint32', 'int32']}, 'arg_type': 'indexed_bit_toggle', 'target_global': 0x0063dc74, 'stride': 0x2ac, 'field_off': 0, 'bit': 0x400, 'lut_root_delta': 0, 'path1_tests': [[0, 1, 0x12345000], [0, 0, 0x12345400], [1, 1, 0], [1, 0, 0x400], [2, 1, 0xfffffbff], [2, 0, 0xffffffff], [3, 1, 0x100], [3, 0, 0x500], [0, 1, 0], [1, 0, 0xfff]], 'path2_tests': [[0, 1, 0x12345000], [0, 0, 0x12345400], [1, 0, 0x400]]},
@@ -18072,23 +18070,6 @@ HOOKS = {
         'arg_type': 'read_global', 'target_global': 0x00897ffc, 'lut_root_delta': 0,
         'path1_tests': [0, 1, 0xDEADBEEF, 0xFFFFFFFF, 0x12345678, 0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 2, 0x55555555],
         'path2_tests': [0, 1, 0xDEADBEEF],
-    },
-
-    # ---- promote-round round 25 (L5 int2out: two-out-ptr getter) --------------
-    # 0x0046cbb0  CarStatePairGet — uint32(uint idx, uint32* out_a, uint32* out_b):
-    # idx>=0x10 -> ret 0; else *out_a = per-car state (0x00881f90+idx*0xd04),
-    # *out_b = secondary (+4), ret 1. NEW arg_type int2out (SWEEP-CRITICAL).
-    # Race lane (per-car struct populated in a live race); in-bounds 0..3 + OOB.
-    # ref: re/analysis/vehicle_damage_d2/0x0046cbb0.md
-    'car_state_pair_get': {
-        'rva':            0x0046cbb0,
-        'export':         'CarStatePairGet',
-        'signature':      {'ret': 'uint32', 'args': ['int32', 'pointer', 'pointer']},
-        'arg_type':       'int2out',
-        'lut_root_delta': 0,
-        'scenario':       'race',
-        'path1_tests':    [0, 1, 2, 3, 16, 100, 0, 1, 2, 3],
-        'path2_tests':    [0, 1, 16],
     },
 
     # ---- promote-round round 24 (resume; existing handlers) -------------------
@@ -19556,10 +19537,7 @@ HOOKS = {
                        for o in range(0, 0x200, 4)]}
             for b in (0x11, 0x22, 0x33, 0x44, 0x55)
         ],
-        'path2_tests': [
-            {'seeds': [{'off': o, 'type': 'u32', 'value': 0x66666666}
-                       for o in range(0, 0x200, 4)]},
-        ],
+        'path2_tests': [{'p2bufs': [0x200], 'p2args': [{'buf': 0}]}],
     },
 
     # 0x004f8690  PluginDataDwordB(obj*) — twin of 0x004f8660 with plugin
@@ -19578,10 +19556,7 @@ HOOKS = {
                        for o in range(0, 0x200, 4)]}
             for b in (0x11, 0x22, 0x33, 0x44, 0x55)
         ],
-        'path2_tests': [
-            {'seeds': [{'off': o, 'type': 'u32', 'value': 0x66666666}
-                       for o in range(0, 0x200, 4)]},
-        ],
+        'path2_tests': [{'p2bufs': [0x200], 'p2args': [{'buf': 0}]}],
     },
 
     # 0x004cfee0  RasterPluginByteGet(int* obj) — null-guarded byte read at

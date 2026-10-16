@@ -137,7 +137,7 @@ int CarLodState(double d2) {
 // standalone has no damage or wreck state. 0x800 is FUN_0041eeb0's fourth argument,
 // `*(char*)(0x007f103c + ctrl*0x4c + 1) != 0` (FUN_0040da50, the controller's brake byte `[5]`);
 // the standalone's default AI cars produce no such byte, so `brake` is false for them unless the
-// matched-pose instrument supplies it (TrackRenderer MASHED_CAR_BRAKE_ROWS). [UNCERTAIN U-9699]
+// matched-pose instrument supplies it (TrackRenderer MASHED_CAR_BRAKE_ROWS). [UNCERTAIN U-9703]
 std::uint32_t CarVisFlags(int course_id, bool brake) {
     const bool lit = course_id == 0 || course_id == 0x1a || course_id == 0x21 || course_id == 0x24;
     return 0x8u | (lit ? 0xc0u : 0u) | (brake ? 0x800u : 0u);

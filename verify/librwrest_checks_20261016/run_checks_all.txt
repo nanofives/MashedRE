@@ -1,0 +1,184 @@
+$ py -3.12 w1_check.py prep C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_T0\trace.csv.carparts.json C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_T0\law_in.txt C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_T0\law_rec.json
+prep: 506 included, 194 excluded, rows 175, units==ff4(n+1)-ff4(n): ok 174 bad 0 n/a 1
+$ py -3.12 run_stand.py C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\mashedmod\build\mashed_re.exe C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\stand_T0 --track Training --colours 0,3,1,2 --law C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_T0\law_in.txt --frames 90 --gameroot C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\7b179c5d-b5b2-40c1-b5d7-30c054413c17\scratchpad\gameroot
+=== stand_T0 exe=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\mashedmod\build\mashed_re.exe track=Training colours=0,3,1,2 law=True knobs=[]
+    pid=22996
+    exit=0
+    mashed_re.log copied (10 [librwrest] lines)
+    law_out: present
+$ py -3.12 w1_check.py compare C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_T0\trace.csv.carparts.json C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_T0\law_rec.json C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\stand_T0\law_out.txt -o C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_T0\W1_report.txt
+carparts C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_T0\trace.csv.carparts.json
+  rows 175, records included 506, excluded 194
+    excluded: 4 x first row of window (A5)
+    excluded: 190 x rec+0x298 at row n-1 = 2 (A3/A7)
+  included records per (car, lod set): car 0 set 1: 152, car 1 set 1: 106, car 2 set 1: 132, car 3 set 1: 116
+  units == ff4(n+1)-ff4(n): ok 174, bad 0, n/a 1
+  replay ERR lines: 0
+  W1-a angle: 2024 wheel steps, 0 over 0.0001 deg, 2024 bit-identical, worst 0 deg at None
+  W1-b matrices: 4554 frames compared, 0 failing (missing 0); worst max|d| wheel 5e-10 (914, 3, 4, 33), hub 4.93e-10 (931, 1, 4, 33), body 5e-10 (909, 2, 19)
+  W1 verdict: PASS
+$ py -3.12 w1_check.py prep C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_A0\trace.csv.carparts.json C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_A0\law_in.txt C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_A0\law_rec.json
+prep: 353 included, 123 excluded, rows 119, units==ff4(n+1)-ff4(n): ok 118 bad 0 n/a 1
+$ py -3.12 run_stand.py C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\mashedmod\build\mashed_re.exe C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\stand_A0 --track Arctic --colours 0,3,1,2 --law C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_A0\law_in.txt --frames 90 --gameroot C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\7b179c5d-b5b2-40c1-b5d7-30c054413c17\scratchpad\gameroot
+=== stand_A0 exe=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\mashedmod\build\mashed_re.exe track=Arctic colours=0,3,1,2 law=True knobs=[]
+    pid=7140
+    exit=0
+    mashed_re.log copied (11 [librwrest] lines)
+    law_out: present
+$ py -3.12 w1_check.py compare C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_A0\trace.csv.carparts.json C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_A0\law_rec.json C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\stand_A0\law_out.txt -o C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_A0\W1_report.txt
+carparts C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_A0\trace.csv.carparts.json
+  rows 119, records included 353, excluded 123
+    excluded: 4 x first row of window (A5)
+    excluded: 119 x rec+0x298 at row n-1 = 2 (A3/A7)
+  included records per (car, lod set): car 0 set 1: 108, car 1 set 1: 75, car 2 set 1: 82, car 3 set 1: 88
+  units == ff4(n+1)-ff4(n): ok 118, bad 0, n/a 1
+  replay ERR lines: 0
+  W1-a angle: 1412 wheel steps, 0 over 0.0001 deg, 1412 bit-identical, worst 0 deg at None
+  W1-b matrices: 3177 frames compared, 0 failing (missing 0); worst max|d| wheel 5e-10 (1042, 2, 4, 33), hub 4.98e-10 (989, 1, 4, 33), body 5e-10 (978, 3, 19)
+  W1 verdict: PASS
+$ py -3.12 w1_check.py prep C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_C0\trace.csv.carparts.json C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_C0\law_in.txt C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_C0\law_rec.json
+prep: 332 included, 312 excluded, rows 161, units==ff4(n+1)-ff4(n): ok 160 bad 0 n/a 1
+$ py -3.12 run_stand.py C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\mashedmod\build\mashed_re.exe C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\stand_C0 --track City --colours 0,3,1,2 --law C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_C0\law_in.txt --frames 90 --gameroot C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\7b179c5d-b5b2-40c1-b5d7-30c054413c17\scratchpad\gameroot
+=== stand_C0 exe=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\mashedmod\build\mashed_re.exe track=City colours=0,3,1,2 law=True knobs=[]
+    pid=360
+    exit=0
+    mashed_re.log copied (11 [librwrest] lines)
+    law_out: present
+$ py -3.12 w1_check.py compare C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_C0\trace.csv.carparts.json C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_C0\law_rec.json C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\stand_C0\law_out.txt -o C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_C0\W1_report.txt
+carparts C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_C0\trace.csv.carparts.json
+  rows 161, records included 332, excluded 312
+    excluded: 4 x first row of window (A5)
+    excluded: 308 x rec+0x298 at row n-1 = 2 (A3/A7)
+  included records per (car, lod set): car 0 set 1: 95, car 1 set 1: 75, car 2 set 1: 80, car 3 set 1: 82
+  units == ff4(n+1)-ff4(n): ok 160, bad 0, n/a 1
+  replay ERR lines: 0
+  W1-a angle: 1328 wheel steps, 0 over 0.0001 deg, 1328 bit-identical, worst 0 deg at None
+  W1-b matrices: 2988 frames compared, 0 failing (missing 0); worst max|d| wheel 5e-10 (809, 3, 6, 35), hub 4.94e-10 (832, 3, 4, 33), body 5e-10 (764, 3, 19)
+  W1 verdict: PASS
+$ py -3.12 w1_check.py prep C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_T1\trace.csv.carparts.json C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_T1\law_in.txt C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_T1\law_rec.json
+prep: 505 included, 195 excluded, rows 175, units==ff4(n+1)-ff4(n): ok 174 bad 0 n/a 1
+$ py -3.12 run_stand.py C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\mashedmod\build\mashed_re.exe C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\stand_T1 --track Training --colours 1,2,3,4 --law C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_T1\law_in.txt --frames 90 --gameroot C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\7b179c5d-b5b2-40c1-b5d7-30c054413c17\scratchpad\gameroot
+=== stand_T1 exe=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\mashedmod\build\mashed_re.exe track=Training colours=1,2,3,4 law=True knobs=[]
+    pid=19136
+    exit=0
+    mashed_re.log copied (11 [librwrest] lines)
+    law_out: present
+$ py -3.12 w1_check.py compare C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_T1\trace.csv.carparts.json C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_T1\law_rec.json C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\stand_T1\law_out.txt -o C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_T1\W1_report.txt
+carparts C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_T1\trace.csv.carparts.json
+  rows 175, records included 505, excluded 195
+    excluded: 4 x first row of window (A5)
+    excluded: 191 x rec+0x298 at row n-1 = 2 (A3/A7)
+  included records per (car, lod set): car 0 set 1: 153, car 1 set 1: 105, car 2 set 1: 132, car 3 set 1: 115
+  units == ff4(n+1)-ff4(n): ok 174, bad 0, n/a 1
+  replay ERR lines: 0
+  W1-a angle: 2020 wheel steps, 0 over 0.0001 deg, 2020 bit-identical, worst 0 deg at None
+  W1-b matrices: 4545 frames compared, 0 failing (missing 0); worst max|d| wheel 5e-10 (788, 3, 4, 33), hub 4.93e-10 (805, 1, 4, 33), body 5e-10 (783, 2, 19)
+  W1 verdict: PASS
+$ py -3.12 w1_check.py prep C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_A1\trace.csv.carparts.json C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_A1\law_in.txt C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_A1\law_rec.json
+prep: 367 included, 217 excluded, rows 146, units==ff4(n+1)-ff4(n): ok 145 bad 0 n/a 1
+$ py -3.12 run_stand.py C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\mashedmod\build\mashed_re.exe C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\stand_A1 --track Arctic --colours 5,4,3,2 --law C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_A1\law_in.txt --frames 90 --gameroot C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\7b179c5d-b5b2-40c1-b5d7-30c054413c17\scratchpad\gameroot
+=== stand_A1 exe=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\mashedmod\build\mashed_re.exe track=Arctic colours=5,4,3,2 law=True knobs=[]
+    pid=22100
+    exit=0
+    mashed_re.log copied (12 [librwrest] lines)
+    law_out: present
+$ py -3.12 w1_check.py compare C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_A1\trace.csv.carparts.json C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_A1\law_rec.json C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\stand_A1\law_out.txt -o C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_A1\W1_report.txt
+carparts C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_A1\trace.csv.carparts.json
+  rows 146, records included 367, excluded 217
+    excluded: 4 x first row of window (A5)
+    excluded: 213 x rec+0x298 at row n-1 = 2 (A3/A7)
+  included records per (car, lod set): car 0 set 1: 120, car 1 set 1: 75, car 2 set 1: 83, car 3 set 1: 89
+  units == ff4(n+1)-ff4(n): ok 145, bad 0, n/a 1
+  replay ERR lines: 0
+  W1-a angle: 1468 wheel steps, 0 over 0.0001 deg, 1468 bit-identical, worst 0 deg at None
+  W1-b matrices: 3303 frames compared, 0 failing (missing 0); worst max|d| wheel 5e-10 (1064, 2, 4, 33), hub 4.98e-10 (1011, 1, 4, 33), body 5e-10 (1000, 3, 19)
+  W1 verdict: PASS
+$ py -3.12 w1_check.py prep C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_C1\trace.csv.carparts.json C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_C1\law_in.txt C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_C1\law_rec.json
+prep: 345 included, 371 excluded, rows 179, units==ff4(n+1)-ff4(n): ok 178 bad 0 n/a 1
+$ py -3.12 run_stand.py C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\mashedmod\build\mashed_re.exe C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\stand_C1 --track City --colours 3,0,5,1 --law C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_C1\law_in.txt --frames 90 --gameroot C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\7b179c5d-b5b2-40c1-b5d7-30c054413c17\scratchpad\gameroot
+=== stand_C1 exe=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\mashedmod\build\mashed_re.exe track=City colours=3,0,5,1 law=True knobs=[]
+    pid=18440
+    exit=0
+    mashed_re.log copied (11 [librwrest] lines)
+    law_out: present
+$ py -3.12 w1_check.py compare C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_C1\trace.csv.carparts.json C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_C1\law_rec.json C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\stand_C1\law_out.txt -o C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_C1\W1_report.txt
+carparts C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_C1\trace.csv.carparts.json
+  rows 179, records included 345, excluded 371
+    excluded: 4 x first row of window (A5)
+    excluded: 367 x rec+0x298 at row n-1 = 2 (A3/A7)
+  included records per (car, lod set): car 0 set 1: 103, car 1 set 1: 76, car 2 set 1: 82, car 3 set 1: 84
+  units == ff4(n+1)-ff4(n): ok 178, bad 0, n/a 1
+  replay ERR lines: 0
+  W1-a angle: 1380 wheel steps, 0 over 0.0001 deg, 1380 bit-identical, worst 0 deg at None
+  W1-b matrices: 3105 frames compared, 0 failing (missing 0); worst max|d| wheel 5e-10 (719, 3, 6, 35), hub 4.91e-10 (676, 1, 4, 33), body 5e-10 (674, 3, 19)
+  W1 verdict: PASS
+$ py -3.12 w1_check.py prep C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_T2\trace.csv.carparts.json C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_T2\law_in.txt C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_T2\law_rec.json
+prep: 508 included, 192 excluded, rows 175, units==ff4(n+1)-ff4(n): ok 174 bad 0 n/a 1
+$ py -3.12 run_stand.py C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\mashedmod\build\mashed_re.exe C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\stand_T2 --track Training --colours 0,3,1,2 --law C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_T2\law_in.txt --frames 90 --gameroot C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\7b179c5d-b5b2-40c1-b5d7-30c054413c17\scratchpad\gameroot
+=== stand_T2 exe=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\mashedmod\build\mashed_re.exe track=Training colours=0,3,1,2 law=True knobs=[]
+    pid=23380
+    exit=0
+    mashed_re.log copied (10 [librwrest] lines)
+    law_out: present
+$ py -3.12 w1_check.py compare C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_T2\trace.csv.carparts.json C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_T2\law_rec.json C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\stand_T2\law_out.txt -o C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_T2\W1_report.txt
+carparts C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\orig_T2\trace.csv.carparts.json
+  rows 175, records included 508, excluded 192
+    excluded: 4 x first row of window (A5)
+    excluded: 188 x rec+0x298 at row n-1 = 2 (A3/A7)
+  included records per (car, lod set): car 0 set 1: 154, car 1 set 1: 105, car 2 set 1: 133, car 3 set 1: 116
+  units == ff4(n+1)-ff4(n): ok 174, bad 0, n/a 1
+  replay ERR lines: 0
+  W1-a angle: 2032 wheel steps, 0 over 0.0001 deg, 2032 bit-identical, worst 0 deg at None
+  W1-b matrices: 4572 frames compared, 0 failing (missing 0); worst max|d| wheel 5e-10 (830, 3, 4, 33), hub 4.93e-10 (847, 1, 4, 33), body 5e-10 (825, 2, 19)
+  W1 verdict: PASS
+$ py -3.12 l1_check.py T0=orig_T0/trace.csv.carparts.json,stand_T0/mashed_re.log A0=orig_A0/trace.csv.carparts.json,stand_A0/mashed_re.log C0=orig_C0/trace.csv.carparts.json,stand_C0/mashed_re.log T1=orig_T1/trace.csv.carparts.json,stand_T1/mashed_re.log A1=orig_A1/trace.csv.carparts.json,stand_A1/mashed_re.log C1=orig_C1/trace.csv.carparts.json,stand_C1/mashed_re.log T2=orig_T2/trace.csv.carparts.json -o C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\librwrest_checks\verify\librwrest_checks_20261016\L1_report.txt
+== T0: orig_T0/trace.csv.carparts.json
+   poke={'colours': [-1, -1, -1, -1], 'mode': -1} mode word at read=10 effective mode at FUN_0040d110=10
+   car 0: colour=0 id=6 (id%6=0) name=Advantag dff=Advantage0 txd=Advantage env=cargloss  expected livery 0  L1-a PASS  standalone slot 0: colour=0 mode=0 -> ADVANTAGE0.DFF  L1-b PASS
+   car 1: colour=3 id=9 (id%6=3) name=Advantag dff=Advantage3 txd=Advantage env=cargloss  expected livery 3  L1-a PASS  standalone slot 1: colour=3 mode=0 -> ADVANTAGE3.DFF  L1-b PASS
+   car 2: colour=1 id=7 (id%6=1) name=Advantag dff=Advantage1 txd=Advantage env=cargloss  expected livery 1  L1-a PASS  standalone slot 2: colour=1 mode=0 -> ADVANTAGE1.DFF  L1-b PASS
+   car 3: colour=2 id=8 (id%6=2) name=Advantag dff=Advantage2 txd=Advantage env=cargloss  expected livery 2  L1-a PASS  standalone slot 3: colour=2 mode=0 -> ADVANTAGE2.DFF  L1-b PASS
+   arm verdict: L1-a PASS, L1-b PASS
+== A0: orig_A0/trace.csv.carparts.json
+   poke={'colours': [-1, -1, -1, -1], 'mode': -1} mode word at read=10 effective mode at FUN_0040d110=10
+   car 0: colour=0 id=6 (id%6=0) name=Advantag dff=Advantage0 txd=Advantage env=cargloss  expected livery 0  L1-a PASS  standalone slot 0: colour=0 mode=0 -> ADVANTAGE0.DFF  L1-b PASS
+   car 1: colour=3 id=9 (id%6=3) name=Advantag dff=Advantage3 txd=Advantage env=cargloss  expected livery 3  L1-a PASS  standalone slot 1: colour=3 mode=0 -> ADVANTAGE3.DFF  L1-b PASS
+   car 2: colour=1 id=7 (id%6=1) name=Advantag dff=Advantage1 txd=Advantage env=cargloss  expected livery 1  L1-a PASS  standalone slot 2: colour=1 mode=0 -> ADVANTAGE1.DFF  L1-b PASS
+   car 3: colour=2 id=8 (id%6=2) name=Advantag dff=Advantage2 txd=Advantage env=cargloss  expected livery 2  L1-a PASS  standalone slot 3: colour=2 mode=0 -> ADVANTAGE2.DFF  L1-b PASS
+   arm verdict: L1-a PASS, L1-b PASS
+== C0: orig_C0/trace.csv.carparts.json
+   poke={'colours': [-1, -1, -1, -1], 'mode': -1} mode word at read=10 effective mode at FUN_0040d110=10
+   car 0: colour=0 id=6 (id%6=0) name=Advantag dff=Advantage0 txd=Advantage env=cargloss  expected livery 0  L1-a PASS  standalone slot 0: colour=0 mode=0 -> ADVANTAGE0.DFF  L1-b PASS
+   car 1: colour=3 id=9 (id%6=3) name=Advantag dff=Advantage3 txd=Advantage env=cargloss  expected livery 3  L1-a PASS  standalone slot 1: colour=3 mode=0 -> ADVANTAGE3.DFF  L1-b PASS
+   car 2: colour=1 id=7 (id%6=1) name=Advantag dff=Advantage1 txd=Advantage env=cargloss  expected livery 1  L1-a PASS  standalone slot 2: colour=1 mode=0 -> ADVANTAGE1.DFF  L1-b PASS
+   car 3: colour=2 id=8 (id%6=2) name=Advantag dff=Advantage2 txd=Advantage env=cargloss  expected livery 2  L1-a PASS  standalone slot 3: colour=2 mode=0 -> ADVANTAGE2.DFF  L1-b PASS
+   arm verdict: L1-a PASS, L1-b PASS
+== T1: orig_T1/trace.csv.carparts.json
+   poke={'colours': [1, 2, 3, 4], 'mode': -1} mode word at read=10 effective mode at FUN_0040d110=10
+   car 0: colour=1 id=7 (id%6=1) name=Advantag dff=Advantage1 txd=Advantage env=cargloss  expected livery 1  L1-a PASS  standalone slot 0: colour=1 mode=0 -> ADVANTAGE1.DFF  L1-b PASS
+   car 1: colour=2 id=8 (id%6=2) name=Advantag dff=Advantage2 txd=Advantage env=cargloss  expected livery 2  L1-a PASS  standalone slot 1: colour=2 mode=0 -> ADVANTAGE2.DFF  L1-b PASS
+   car 2: colour=3 id=9 (id%6=3) name=Advantag dff=Advantage3 txd=Advantage env=cargloss  expected livery 3  L1-a PASS  standalone slot 2: colour=3 mode=0 -> ADVANTAGE3.DFF  L1-b PASS
+   car 3: colour=4 id=10 (id%6=4) name=Advantag dff=Advantage4 txd=Advantage env=cargloss  expected livery 4  L1-a PASS  standalone slot 3: colour=4 mode=0 -> ADVANTAGE4.DFF  L1-b PASS
+   arm verdict: L1-a PASS, L1-b PASS
+== A1: orig_A1/trace.csv.carparts.json
+   poke={'colours': [5, 4, 3, 2], 'mode': -1} mode word at read=10 effective mode at FUN_0040d110=10
+   car 0: colour=5 id=11 (id%6=5) name=Advantag dff=Advantage5 txd=Advantage env=cargloss  expected livery 5  L1-a PASS  standalone slot 0: colour=5 mode=0 -> ADVANTAGE5.DFF  L1-b PASS
+   car 1: colour=4 id=10 (id%6=4) name=Advantag dff=Advantage4 txd=Advantage env=cargloss  expected livery 4  L1-a PASS  standalone slot 1: colour=4 mode=0 -> ADVANTAGE4.DFF  L1-b PASS
+   car 2: colour=3 id=9 (id%6=3) name=Advantag dff=Advantage3 txd=Advantage env=cargloss  expected livery 3  L1-a PASS  standalone slot 2: colour=3 mode=0 -> ADVANTAGE3.DFF  L1-b PASS
+   car 3: colour=2 id=8 (id%6=2) name=Advantag dff=Advantage2 txd=Advantage env=cargloss  expected livery 2  L1-a PASS  standalone slot 3: colour=2 mode=0 -> ADVANTAGE2.DFF  L1-b PASS
+   arm verdict: L1-a PASS, L1-b PASS
+== C1: orig_C1/trace.csv.carparts.json
+   poke={'colours': [3, 0, 5, 1], 'mode': -1} mode word at read=10 effective mode at FUN_0040d110=10
+   car 0: colour=3 id=9 (id%6=3) name=Advantag dff=Advantage3 txd=Advantage env=cargloss  expected livery 3  L1-a PASS  standalone slot 0: colour=3 mode=0 -> ADVANTAGE3.DFF  L1-b PASS
+   car 1: colour=0 id=6 (id%6=0) name=Advantag dff=Advantage0 txd=Advantage env=cargloss  expected livery 0  L1-a PASS  standalone slot 1: colour=0 mode=0 -> ADVANTAGE0.DFF  L1-b PASS
+   car 2: colour=5 id=11 (id%6=5) name=Advantag dff=Advantage5 txd=Advantage env=cargloss  expected livery 5  L1-a PASS  standalone slot 2: colour=5 mode=0 -> ADVANTAGE5.DFF  L1-b PASS
+   car 3: colour=1 id=7 (id%6=1) name=Advantag dff=Advantage1 txd=Advantage env=cargloss  expected livery 1  L1-a PASS  standalone slot 3: colour=1 mode=0 -> ADVANTAGE1.DFF  L1-b PASS
+   arm verdict: L1-a PASS, L1-b PASS
+== T2: orig_T2/trace.csv.carparts.json
+   poke={'colours': [-1, -1, -1, -1], 'mode': 11} mode word at read=10 effective mode at FUN_0040d110=11
+   car 0: colour=0 id=6 (id%6=0) name=Advantag dff=Advantage0 txd=Advantage env=cargloss  expected livery 0  L1-a PASS
+   car 1: colour=3 id=7 (id%6=1) name=Advantag dff=Advantage1 txd=Advantage env=cargloss  expected livery 1  L1-a PASS
+   car 2: colour=1 id=8 (id%6=2) name=Advantag dff=Advantage2 txd=Advantage env=cargloss  expected livery 2  L1-a PASS
+   car 3: colour=2 id=9 (id%6=3) name=Advantag dff=Advantage3 txd=Advantage env=cargloss  expected livery 3  L1-a PASS
+   arm verdict: L1-a PASS, L1-b n/a (no standalone side)
+L1 OVERALL: L1-a PASS, L1-b PASS

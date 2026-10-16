@@ -1,0 +1,332 @@
+[
+ {
+  "name": "install_after",
+  "timeout": 120,
+  "cmd": [
+   "py",
+   "-3.12",
+   "verify/dupinstall2_20261016/install_observe.py",
+   "0x00407640,0x004077e0,0x00407a20,0x004098a0,0x0040b970,0x0040b9a0,0x0040ba00,0x0040ba60,0x00415d00,0x00416060,0x00426cb0,0x004298c0,0x0042af50,0x0042bde0,0x00431f30,0x0046c730,0x0046c750,0x0046cbb0,0x0046cbe0,0x004955b0,0x00496930,0x00498bf0,0x004f8660,0x004f8690,0x00556cc0,0x00556cd0,0x005b3580",
+   "--seconds",
+   "30"
+  ],
+  "env": {
+   "DUPINSTALL_OUT": "{OUT}/install_after"
+  }
+ },
+ {
+  "name": "path2_copter_find_639dc4",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_verify_hook.py",
+   "copter_find_639dc4"
+  ],
+  "env": {
+   "MASHED_VERIFY_ASI": "{ASI}"
+  }
+ },
+ {
+  "name": "path2_float_idx_639de0",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_verify_hook.py",
+   "float_idx_639de0"
+  ],
+  "env": {
+   "MASHED_VERIFY_ASI": "{ASI}"
+  }
+ },
+ {
+  "name": "path2_get_ai_lap_counter",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_verify_hook.py",
+   "get_ai_lap_counter"
+  ],
+  "env": {
+   "MASHED_VERIFY_ASI": "{ASI}"
+  }
+ },
+ {
+  "name": "path2_ret_63a5f0",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_verify_hook.py",
+   "ret_63a5f0"
+  ],
+  "env": {
+   "MASHED_VERIFY_ASI": "{ASI}"
+  }
+ },
+ {
+  "name": "path2_bool0_out_8a94e0",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_verify_hook.py",
+   "bool0_out_8a94e0"
+  ],
+  "env": {
+   "MASHED_VERIFY_ASI": "{ASI}"
+  }
+ },
+ {
+  "name": "path2_maxscoreflags_40b9a0",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_verify_hook.py",
+   "maxscoreflags_40b9a0"
+  ],
+  "env": {
+   "MASHED_VERIFY_ASI": "{ASI}"
+  }
+ },
+ {
+  "name": "path2_boolmin_out_8a94e0",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_verify_hook.py",
+   "boolmin_out_8a94e0"
+  ],
+  "env": {
+   "MASHED_VERIFY_ASI": "{ASI}"
+  }
+ },
+ {
+  "name": "path2_active4slots_40ba60",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_verify_hook.py",
+   "active4slots_40ba60"
+  ],
+  "env": {
+   "MASHED_VERIFY_ASI": "{ASI}"
+  }
+ },
+ {
+  "name": "path2_slot_index_to_ptr",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_verify_hook.py",
+   "slot_index_to_ptr"
+  ],
+  "env": {
+   "MASHED_VERIFY_ASI": "{ASI}"
+  }
+ },
+ {
+  "name": "path2_clear_67d99c_x4",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_verify_hook.py",
+   "clear_67d99c_x4"
+  ],
+  "env": {
+   "MASHED_VERIFY_ASI": "{ASI}"
+  }
+ },
+ {
+  "name": "path2_menu_readiness_check_c",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_verify_hook.py",
+   "menu_readiness_check_c"
+  ],
+  "env": {
+   "MASHED_VERIFY_ASI": "{ASI}"
+  }
+ },
+ {
+  "name": "path2_hud_rect_emitter5",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_verify_hook.py",
+   "hud_rect_emitter5"
+  ],
+  "env": {
+   "MASHED_VERIFY_ASI": "{ASI}"
+  }
+ },
+ {
+  "name": "path2_frontend_page_id_dispatch",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_verify_hook.py",
+   "frontend_page_id_dispatch"
+  ],
+  "env": {
+   "MASHED_VERIFY_ASI": "{ASI}"
+  }
+ },
+ {
+  "name": "path2_dinput_init_predicate",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_verify_hook.py",
+   "dinput_init_predicate"
+  ],
+  "env": {
+   "MASHED_VERIFY_ASI": "{ASI}"
+  }
+ },
+ {
+  "name": "path2_display_active_flag_get",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_verify_hook.py",
+   "display_active_flag_get"
+  ],
+  "env": {
+   "MASHED_VERIFY_ASI": "{ASI}"
+  }
+ },
+ {
+  "name": "path2_set_dat_00912a20",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_verify_hook.py",
+   "set_dat_00912a20"
+  ],
+  "env": {
+   "MASHED_VERIFY_ASI": "{ASI}"
+  }
+ },
+ {
+  "name": "path2_get_dat_00912a20",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_verify_hook.py",
+   "get_dat_00912a20"
+  ],
+  "env": {
+   "MASHED_VERIFY_ASI": "{ASI}"
+  }
+ },
+ {
+  "name": "path2_audio_list_init",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_verify_hook.py",
+   "audio_list_init"
+  ],
+  "env": {
+   "MASHED_VERIFY_ASI": "{ASI}"
+  }
+ },
+ {
+  "name": "path2_table_773030_get",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_verify_hook.py",
+   "table_773030_get"
+  ],
+  "env": {
+   "MASHED_VERIFY_ASI": "{ASI}"
+  }
+ },
+ {
+  "name": "path2_plugin_data_dword_a",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_verify_hook.py",
+   "plugin_data_dword_a"
+  ],
+  "env": {
+   "MASHED_VERIFY_ASI": "{ASI}"
+  }
+ },
+ {
+  "name": "path2_plugin_data_dword_b",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_verify_hook.py",
+   "plugin_data_dword_b"
+  ],
+  "env": {
+   "MASHED_VERIFY_ASI": "{ASI}"
+  }
+ },
+ {
+  "name": "path2_vehicle_car_state_read",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_verify_hook.py",
+   "vehicle_car_state_read"
+  ],
+  "env": {
+   "MASHED_VERIFY_ASI": "{ASI}"
+  }
+ },
+ {
+  "name": "c4_verify",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "verify/dupinstall2_20261016/c4_verify.py",
+   "0x00498bf0,0x004098a0,0x0040b9a0,0x0040ba60,0x00407a20",
+   "--seconds",
+   "25"
+  ],
+  "env": {
+   "DUPINSTALL_OUT": "{OUT}/c4_verify"
+  }
+ },
+ {
+  "name": "c4_racediff",
+  "timeout": 900,
+  "cmd": [
+   "py",
+   "-3.12",
+   "verify/dupinstall2_20261016/c4_racediff.py",
+   "--rvas",
+   "0x00407a20,0x004098a0,0x0040b9a0,0x0040ba60,0x0046cbb0"
+  ],
+  "env": {
+   "DUPINSTALL_OUT": "{OUT}/c4_racediff"
+  }
+ }
+]
