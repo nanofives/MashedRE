@@ -6,6 +6,14 @@ and SetClumpAnim are ported, all default ON with opt-outs.** On the ten capfix t
 matched triangles **86.6 -> 88.2 %**. C22 rows **50 -> 14**, C26 **6 -> 3**. G-CTRL unchanged on every arm
 (**2b4d47bb / 356821c8 / f7a155e1**, base identical). No sim code changed.
 
+**Final measurement, rebased (authoritative):** branch rebased onto `f76ae153b` (includes `07526b4e`); base2 = clean build of
+`f76ae153b` (SHA-256 `ee479d133a86e908...`), final = `acb71f4db` (`633f49332129a9d2...`), both built with `MASHED_NO_DEPLOY=1`.
+Ten tracks x 3 frames, 27 of 27 replays first attempt (`base2/`, `final/`, `final_off/`): **979 -> 879 rows, 0 RED, matched draws
+5578 -> 6405 of 7691, triangles 86.6 -> 88.2 %**, row delta 108 gone / 8 new, every per-frame number equal to arm D on the old base
+(`tables_final.md`). G-CTRL base2 = final = **2b4d47bb / 356821c8 / f7a155e1**. Opt-out (all three knobs) on the final exe: **21 of 21
+draw files byte-identical to base2** (Egypt, Neustein, Highway, Sands, Roundabout, Dump, Warzone); Egypt, SuperG, Storm, Forest
+default-ON files byte-identical to base2. Sections 1-6 below are the arm history on the old base `1fa71b277`.
+
 Base `1fa71b277` (`race/first-frame-parity`), branch `work/rhooks`, worktree `.worktrees/rhooks`. Pre-registration
 `PREREG_rhooks.md` (committed `0a5fd1a51` before the first port measurement) with three addenda, each committed before the
 arm it predicts (`4eca933dc`, `00377be2f`, `328584f3f`).
@@ -101,10 +109,10 @@ Corrections made on the way, each recorded in an addendum before the affected me
   rows 0 gone / 0 new.
 - **Determinism (`base_n0/`).** The base exe replayed again on Egypt and Neustein: 6 of 6 draw files byte-identical to
   the first base replay.
-- **Egypt.** Arms A..D give Egypt draw files that differ from base in the standalone's own particle batch (136 vs 144
+- **Egypt (old-base arms only).** Arms A..D give Egypt draw files that differ from base in the standalone's own particle batch (136 vs 144
   triangles) and car-wheel AABBs (under 0.003), with no row change. The arm D exe with all three opt-outs reproduces arm
   D's Egypt files, not base's, so the difference comes with the build, not with the hook logic (memory
-  `sim-trajectory-is-code-layout-sensitive`). SuperG, Storm, Forest: byte-identical to base on arms A, B, C, D; Dump on arms A and B (C and D draw the train).
+  `sim-trajectory-is-code-layout-sensitive`). On the rebased final pair Egypt is byte-identical to base2. SuperG, Storm, Forest: byte-identical to base on arms A, B, C, D; Dump on arms A and B (C and D draw the train).
 - **Instrument gates** as in r10: every frame passes except Neustein +105 I-NAME (94.8 %), unchanged on every arm.
 
 ## 7. Found on the way
@@ -127,6 +135,33 @@ not draw); U-9723 Highway traffic (array `0x00890060`, slots 0 / 1 / 2) and the 
 U-9725 SetClumpAnim one-tick lead on the replay rows; U-9726 hook-slot state that changes after the race starts (Sands bridge
 stages and Debris, Warzone crater switch-off `0x0045260b`, boat `BoatAnim`, chunk flags). Leaf sprites (RpPTank
 `FUN_00534b60(0x800, 0x87, 0)` at `0x0047c330`, per-frame `FUN_0047cbb0`, draw `FUN_0047cd30`) extend U-9701.
+
+## 8b. The Warzone pontoon (track object 0x00684d18, orchestrator request; decoded, NOT ported)
+
+seek414f00 ported the AI reader `0x00414f00` of this object and filed its 0 -> 1 trigger as U-9719. The object belongs to the
+Warzone hook record: slot 0 `0x004527f0` builds it (`FUN_00451760(&DAT_00684d18, clump 1 Boat.dff, anim table +0x105b0)`, an
+RpHAnim hierarchy, `FUN_004b4790`), slot 1 `0x00452b20` ticks it (`FUN_00451d80` at `0x00452ba2`), slot 2 draws it
+(`FUN_00452130`, `0x00452d68`; this lane draws it at its rest pose, which matches the original on the 3 Warzone frames), slots
+6 / 7 reset it (`FUN_00451cc0`).
+
+- **Trigger (answers U-9719's question):** case 0 calls `FUN_00451820` @ 0x00451820: per car, car matrix x inverse(object
+  matrix `[obj+0x94]`) (`FUN_004c4dc0`, `FUN_004c52f0` combine 2); x in (`[obj+0x20]`, `[obj+0x14]`) and z in
+  (`[obj+0x28]`, `[obj+0x1c]`) sets `[obj+0x48] = 1`.
+- **States:** 1 counts `[obj+0xa4]` from 1.0 down by units x `[0x005ce388]`, then 2; 2 adds units x `[0x005ce384]` to the
+  anim time `[obj+0xc8]` (`FUN_004b47c0`) and goes to 3 once no car word `0x0088ff50..5c` is set and the time exceeds 2.0
+  `[0x005cc574]`; 3 plays back to 0 (`FUN_0052df70`), then `FUN_00451cc0`; 4 holds; 5 waits for the object to leave the
+  frustum. Every case copies `[obj+0x94]` to `obj+0x54` and calls `FUN_00451ad0`.
+- **Car coupling:** `FUN_00451ad0` writes `0x0088ff50[v]` from the box test `FUN_00451990`; a car that has just left the box
+  gets the object's movement `[obj+0xa8..0xb0]` (`FUN_0046bf50`) and a four-wheel test (`FUN_0041f1e0`, `FUN_00481750`,
+  `FUN_00480720`). Slot 0 hides the Tower (label 1000) and Deck (label 2000) RWP objects' RENDER bit; the Deck stays a physics
+  body the cars ride, its matrix reset by the callback `0x00452170` (`FUN_0047d180`).
+
+**Why not ported here:** the producer of `0x0088ff50` / `0x00684de0` / `0x00684dac` is coupled to the car physics
+(`FUN_0046bf50`, the wheel test) and to the Deck physics body, and the standalone has no scene-object physics. Writing only the
+words would let the ported AI reader seek a pontoon the standalone's cars cannot ride, a sim change with no faithful
+counterpart. It needs its own lane: RpHAnim hierarchy update (`FUN_00533ec0`) for Boat.dff / BoatAnim, the state machine, the
+car coupling, a Deck collision body, then the Warzone exe AI measurement seek414f00 set up (`run_exe_arms.py`, mode-10 rows)
+and D2 / D3. User decision listed in the final report.
 
 ## 9. Reproduce
 

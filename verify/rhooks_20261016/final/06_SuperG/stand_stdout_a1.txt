@@ -1,0 +1,11 @@
+=== stand exe=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\rhooks\verify\rhooks_20261016\final_exe\mashed_re.exe track=SuperG trace=C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\rhooks\verify\capfix_20261016\06_SuperG\trace.csv shots=743,783,818 basis=True cars=True knobs=[]
+    pid=19108
+    exit=0
+    stand_row_00743.bmp 921654
+    stand_row_00743.draws.json 106380
+    stand_row_00783.bmp 921654
+    stand_row_00783.draws.json 106394
+    stand_row_00818.bmp 921654
+    stand_row_00818.draws.json 52659
+
+--stderr--
