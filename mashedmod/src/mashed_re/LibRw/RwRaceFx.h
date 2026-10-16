@@ -10,6 +10,7 @@
 // No rw types cross this header (EXE-ONLY TU, built in isolation by build.bat like RwRaceSubmit).
 #pragma once
 
+#include <cstddef>
 #include <cstdint>
 
 namespace mashed_re {
@@ -43,6 +44,40 @@ void RaceFx_QueueCar(int slot, const CarFxInput& in);
 // instanced models (the cars), with its rw::Camera* (for the per-car frustum test, FUN_004c1b40
 // at 0x00420081) as void*.
 void RaceFx_DrawCarFx(void* rw_camera);
+
+// ---- [rfx2] the dynamic-object shadows (C04 "RWObjShad") ------------------------------------
+// FUN_00481a30 @ 0x00481a30 (tick, from FUN_0040ce00) walks the DAT_006c6eb0 RWP objects and adds
+// one RpPTank matrix particle per shadowed visible object to DAT_00703068 (FUN_00487d00); the
+// shadow matrix is FUN_00487280 @ 0x00487280's (a ray along the course light's at-vector into the
+// collision world); FUN_00487d70 @ 0x00487d70 draws the batch with cull off and ZWRITE off, first in
+// FUN_0040bde0 (after the copters, FUN_00410b30). MASHED_OBJ_SHADOW=0 turns it off (default ON).
+bool RaceFx_ObjShadowEnabled();
+// One object at track load, in the original's creation order (FUN_00480340 @ 0x00480340: the
+// RWP_Object descriptors by index, then each one's MTS records). ltm = the frame LTM (D3DMATRIX
+// memory order: rows right, up, at, pos), bbox = DAT_006c9a88's six floats (sup.xyz, inf.xyz),
+// sphere = RpAtomicGetWorldBoundingSphere (centre xyz, radius).
+struct ObjShadowIn {
+    float ltm[16];
+    float bbox[6];
+    float sphere[4];
+};
+// The collision world the shadow ray reads (FUN_00538c80 on DAT_0080332c): xyz per vertex,
+// three vertex indices per triangle (RW order v0, v1, v2), and each triangle's material colour
+// as the RwRGBA dword (r | g<<8 | b<<16 | a<<24) FUN_0045c110 @ 0x0045c110 tests.
+struct ObjShadowSoup {
+    const float*         verts = nullptr;
+    const std::uint32_t* tris = nullptr;
+    const std::uint32_t* tri_rgba = nullptr;
+    std::size_t          ntri = 0;
+};
+// Compute every object's shadow once (the objects are static in the standalone): `light` = the
+// course directional light's frame LTM (DAT_0065743c -> +4 -> +0x50), 16 floats.
+void RaceFx_SetObjShadows(const ObjShadowIn* objs, int n, const float light[16], const ObjShadowSoup& soup);
+// This tick's DAT_007f101c (the parity of the alternate-frame frustum refresh, 0x00481a80).
+void RaceFx_SetObjShadowFrame(std::uint32_t f101c);
+// Gate and draw this frame's object shadows (and, from rfx2 on, the other FUN_0040bde0 passes).
+// Called by RaceSubmit_Render inside the camera update, after every instance (the copters).
+void RaceFx_DrawWorldFx(void* rw_camera);
 
 // ---- the in-race HUD (C08): team panels + start lights under the HUD camera -----------------
 // FUN_00492e90 @ 0x00492e90 (states 3/5/6/7) renders FUN_0040dfc0 @ 0x0040dfc0 with the HUD camera

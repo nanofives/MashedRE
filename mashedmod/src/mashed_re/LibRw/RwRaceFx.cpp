@@ -18,6 +18,7 @@
 #include <vector>
 
 #include "../D3d9Render/DrawRec.h"
+#include "../Math/RwLutTables.h"
 #include "../Piz/PizReader.h"
 #include "../Txd/TxdDecoder.h"
 
@@ -316,6 +317,388 @@ void RaceFx_DrawCarFx(void* rw_camera) {
     // car_shadow: FUN_004770c0 blend default DAT_006132c4 / c8 = 5 / 6; beam: FUN_00476cb0(b, 5, 2)
     DrawBatch(shadow, g_tex_shadow, rw::BLENDSRCALPHA, rw::BLENDINVSRCALPHA);
     DrawBatch(beam, g_tex_beam, rw::BLENDSRCALPHA, rw::BLENDONE);
+    rw::SetRenderState(rw::ZWRITEENABLE, sv_zw);
+    rw::SetRenderState(rw::ZTESTENABLE, sv_zt);
+    rw::SetRenderState(rw::FOGENABLE, sv_fog);
+    rw::SetRenderState(rw::CULLMODE, sv_cull);
+    rw::SetRenderState(rw::ALPHATESTFUNC, sv_af);
+    rw::SetRenderState(rw::ALPHATESTREF, sv_ar);
+    rw::SetRenderState(rw::VERTEXALPHA, sv_va);
+    rw::SetRenderState(rw::SRCBLEND, sv_sb);
+    rw::SetRenderState(rw::DESTBLEND, sv_db);
+}
+
+// =============================================================================================
+// [rfx2] The dynamic-object shadows (C04 "RWObjShad", verify/rfx2_20261016/PREREG_rfx2.md).
+// =============================================================================================
+namespace {
+
+// ---- SFX.piz textures by name (the FX passes' "RWObjShad" etc.; every TXD of the archive) ------
+std::vector<rw::Texture*> g_sfx_tex;
+bool                      g_sfx_tried = false;
+rw::Texture* SfxTexture(const char* name) {
+    if (!g_sfx_tried) {
+        g_sfx_tried = true;
+        Piz::Archive a;
+        if (a.Load("original/TOASTART/Common/SFX.piz")) {
+            for (std::uint32_t i = 0; i < a.count(); ++i) {
+                const char* n = a.entry(i).name;
+                const std::size_t ln = std::strlen(n);
+                if (ln < 4 || _stricmp(n + ln - 4, ".TXD") != 0) continue;
+                std::uint32_t len = 0;
+                const std::uint8_t* b = a.blob(i, &len);
+                Txd::Dictionary d;
+                if (!b || !d.Decode(b, len)) continue;
+                static const char* const kWant[] = {"RWObjShad", "flatshad", "Headlight",
+                                                    "lensflare-fs8", "VehicleIcons"};
+                for (std::uint32_t t = 0; t < d.count(); ++t)
+                    for (const char* w : kWant)
+                        if (_stricmp(d.texture(t).name, w) == 0) {
+                            bool have = false;
+                            for (rw::Texture* x : g_sfx_tex) have = have || _stricmp(x->name, w) == 0;
+                            if (!have)
+                                if (rw::Texture* x = static_cast<rw::Texture*>(TextureFromTxdTexture(d.texture(t))))
+                                    g_sfx_tex.push_back(x);
+                        }
+            }
+        }
+    }
+    for (rw::Texture* t : g_sfx_tex)
+        if (_stricmp(t->name, name) == 0) return t;
+    return nullptr;
+}
+
+// A batch of any size (RpPTank matrix + colour particles, constant UV): the DrawBatch recipe.
+void DrawParticles(const std::vector<Particle>& ps, rw::Texture* tex, int src, int dst) {
+    if (ps.empty() || !tex) return;
+    std::vector<rw::RWDEVICE::Im3DVertex> v(ps.size() * 4);
+    std::vector<rw::uint16> idx(ps.size() * 6);
+    for (std::size_t i = 0; i < ps.size(); ++i) {
+        const M& m = ps[i].m;
+        float A[3], B[3];
+        for (int k = 0; k < 3; ++k) {
+            A[k] = m.u[k] * 0.5f + m.r[k] * 0.5f;
+            B[k] = m.r[k] * 0.5f - m.u[k] * 0.5f;
+        }
+        const float P[4][3] = {
+            {m.p[0] + B[0], m.p[1] + B[1], m.p[2] + B[2]},
+            {m.p[0] - A[0], m.p[1] - A[1], m.p[2] - A[2]},
+            {m.p[0] - B[0], m.p[1] - B[1], m.p[2] - B[2]},
+            {m.p[0] + A[0], m.p[1] + A[1], m.p[2] + A[2]}};
+        const float UV[4][2] = {{0.f, 1.f}, {1.f, 1.f}, {1.f, 0.f}, {0.f, 0.f}};
+        for (int q = 0; q < 4; ++q) {
+            rw::RWDEVICE::Im3DVertex& o = v[i * 4 + q];
+            o.setX(P[q][0]); o.setY(P[q][1]); o.setZ(P[q][2]);
+            o.setNormalX(0.f); o.setNormalY(0.f); o.setNormalZ(0.f);
+            o.setColor(ps[i].rgba[0], ps[i].rgba[1], ps[i].rgba[2], ps[i].rgba[3]);
+            o.setU(UV[q][0]); o.setV(UV[q][1]);
+        }
+        const rw::uint16 s = static_cast<rw::uint16>(i * 4);
+        const rw::uint16 tri[6] = {s, static_cast<rw::uint16>(s + 1), static_cast<rw::uint16>(s + 2),
+                                   s, static_cast<rw::uint16>(s + 2), static_cast<rw::uint16>(s + 3)};
+        for (int k = 0; k < 6; ++k) idx[i * 6 + k] = tri[k];
+    }
+    rw::SetRenderStatePtr(rw::TEXTURERASTER, tex->raster);
+    rw::SetRenderState(rw::TEXTUREFILTER, tex->getFilter());
+    rw::SetRenderState(rw::TEXTUREADDRESSU, tex->getAddressU());
+    rw::SetRenderState(rw::TEXTUREADDRESSV, tex->getAddressV());
+    rw::SetRenderState(rw::VERTEXALPHA, 1);
+    rw::SetRenderState(rw::SRCBLEND, src);
+    rw::SetRenderState(rw::DESTBLEND, dst);
+    rw::im3d::Transform(v.data(), static_cast<rw::int32>(v.size()), nullptr, rw::im3d::VERTEXUV);
+    static const float kIdent[16] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
+    if (rw_drawrec_pre) {
+        DrawRec::SetNextGeometry(v.data(), sizeof(v[0]), idx.data(), static_cast<unsigned>(idx.size()));
+        rw_drawrec_pre(tex->name, kIdent);
+    }
+    rw::im3d::RenderIndexedPrimitive(rw::PRIMTYPETRILIST, idx.data(), static_cast<rw::int32>(idx.size()));
+    if (rw_drawrec_post) rw_drawrec_post();
+    rw::im3d::End();
+}
+
+struct ObjShadow {
+    float sphere[4] = {};   // the atomic's world bounding sphere
+    bool  flag = false;     // DAT_006cad50[i]
+    M     m{};              // DAT_006c3670[i] (the particle matrix)
+    int   state = 0;        // DAT_006c3350[i] (FUN_004c1b40: 0 out, 1 boundary, 2 in)
+    int   prev = 0;         // DAT_006c3030[i]
+};
+std::vector<ObjShadow> g_objshad;
+std::uint32_t          g_objshad_frame = 0;
+
+// FUN_004726f0 @ 0x004726f0: (p.z q.z + p.x q.x) + p.y q.y, clamped to [-1 ([0x5cc33c]), 1 ([0x5cc320])].
+float DotClamp(const float* p, const float* q) {
+    float v = p[2] * q[2] + p[0] * q[0];
+    v = v + p[1] * q[1];
+    if (v < -1.0f) return -1.0f;
+    if (1.0f < v) v = 1.0f;
+    return v;
+}
+// FUN_00547230 @ 0x00547230: one-sided ray / triangle (det > [0x5e4574] 1e-8, the bounds scaled by
+// det * [0x5cea1c] -1e-5); t / det on a hit.
+bool RayTri(const float* o, const float* d, const float* v0, const float* v1, const float* v2, float* t) {
+    const float e1[3] = {v1[0] - v0[0], v1[1] - v0[1], v1[2] - v0[2]};
+    const float e2[3] = {v2[0] - v0[0], v2[1] - v0[1], v2[2] - v0[2]};
+    const float p12 = d[1] * e2[2] - d[2] * e2[1];
+    const float p14 = d[2] * e2[0] - e2[2] * d[0];
+    const float p11 = e2[1] * d[0] - d[1] * e2[0];
+    const float det = p11 * e1[2] + p12 * e1[0] + p14 * e1[1];
+    if (!(1e-8f < det)) return false;
+    std::uint32_t kb = 0xb727c5acu;                   // _DAT_005cea1c
+    float k;
+    std::memcpy(&k, &kb, sizeof k);
+    const float lo = det * k, hi = det - lo;
+    const float s[3] = {o[0] - v0[0], o[1] - v0[1], o[2] - v0[2]};
+    const float u = s[2] * p11 + s[0] * p12 + s[1] * p14;
+    if (u < lo || hi < u) return false;
+    const float q11 = s[1] * e1[2] - s[2] * e1[1];
+    const float q3 = s[2] * e1[0] - s[0] * e1[2];
+    const float q1 = s[0] * e1[1] - s[1] * e1[0];
+    const float v = d[2] * q1 + q11 * d[0] + d[1] * q3;
+    if (!(lo <= v) || hi < u + v) return false;
+    const float tt = q1 * e2[2] + q11 * e2[0] + q3 * e2[1];
+    if (!(lo <= tt) || hi < tt) return false;
+    *t = tt / det;
+    return true;
+}
+// RW row-vector transform v * M (RwV3dTransformPoints, FUN_004c3df0 -> RwGlobals +0x14).
+void XformPoint(const float* m16, const float* v, float* o) {
+    for (int k = 0; k < 3; ++k) o[k] = v[0] * m16[0 + k] + v[1] * m16[4 + k] + v[2] * m16[8 + k] + m16[12 + k];
+}
+// RwMatrixInvert (FUN_004c4dc0 @ 0x004c4dc0) for a general affine LTM (the light frame's LTM flags
+// read 0 on the original: not identity, not orthonormal, so FUN_004c4eb0's general path).
+// [UNCERTAIN U-9707] FUN_004c4eb0 is not transcribed: cofactor inverse here (equal in exact arithmetic).
+void InvertAffine(const float* a, float* o) {
+    const float r[9] = {a[0], a[1], a[2], a[4], a[5], a[6], a[8], a[9], a[10]};
+    const double c00 = (double)r[4] * r[8] - (double)r[5] * r[7], c01 = (double)r[5] * r[6] - (double)r[3] * r[8],
+                 c02 = (double)r[3] * r[7] - (double)r[4] * r[6];
+    const double det = r[0] * c00 + r[1] * c01 + r[2] * c02;
+    const double id = det != 0.0 ? 1.0 / det : 0.0;
+    float ir[9];
+    ir[0] = (float)(c00 * id); ir[1] = (float)(((double)r[2] * r[7] - (double)r[1] * r[8]) * id);
+    ir[2] = (float)(((double)r[1] * r[5] - (double)r[2] * r[4]) * id);
+    ir[3] = (float)(c01 * id); ir[4] = (float)(((double)r[0] * r[8] - (double)r[2] * r[6]) * id);
+    ir[5] = (float)(((double)r[2] * r[3] - (double)r[0] * r[5]) * id);
+    ir[6] = (float)(c02 * id); ir[7] = (float)(((double)r[1] * r[6] - (double)r[0] * r[7]) * id);
+    ir[8] = (float)(((double)r[0] * r[4] - (double)r[1] * r[3]) * id);
+    for (int k = 0; k < 16; ++k) o[k] = 0.f;
+    o[0] = ir[0]; o[1] = ir[1]; o[2] = ir[2];
+    o[4] = ir[3]; o[5] = ir[4]; o[6] = ir[5];
+    o[8] = ir[6]; o[9] = ir[7]; o[10] = ir[8];
+    for (int k = 0; k < 3; ++k) o[12 + k] = -(a[12] * o[0 + k] + a[13] * o[4 + k] + a[14] * o[8 + k]);
+    o[15] = 1.f;
+}
+
+// FUN_00487280 @ 0x00487280 for one static object. The original runs it at the race reset
+// (FUN_00480100, triangle cache 0x006c74f8 + i*0x28 cleared, so through the world query) and again
+// when the object first turns visible on a parity frame (FUN_00481a30, cache filled, so through
+// FUN_00547230 on the cached triangle). Both runs see the same inputs here, so the drawn matrix is the
+// second run's. Returns DAT_006cad50[i].
+bool ObjShadowMatrix(const ObjShadowIn& in, const float* L, const float* Linv, const ObjShadowSoup& soup,
+                     M* out) {
+    const float* at = L + 8;
+    const float start[3] = {in.ltm[12], in.ltm[13], in.ltm[14]};            // param_2 + 0x30
+    const float dl[3] = {2.0f * at[0], at[1] * 2.0f, at[2] * 2.0f};        // [0x5cf47c] 2.0
+    const float end[3] = {dl[0] + start[0], start[1] + dl[1], start[2] + dl[2]};
+    // ---- the world query, FUN_00538c80(DAT_0080332c, line, FUN_00487180, data) ----------------
+    // [UNCERTAIN U-9707] RW's BSP walk stops at the FIRST intersection its sector order finds
+    // (FUN_00487180 returns 0); the soup here takes the nearest, two-sided (CollisionPrelitSample's rule).
+    const float dd[3] = {end[0] - start[0], end[1] - start[1], end[2] - start[2]};
+    float best = 2.f;
+    std::size_t bi = static_cast<std::size_t>(-1);
+    for (std::size_t i = 0; i < soup.ntri; ++i) {
+        const float* v0 = &soup.verts[soup.tris[i * 3 + 0] * 3];
+        const float* v1 = &soup.verts[soup.tris[i * 3 + 1] * 3];
+        const float* v2 = &soup.verts[soup.tris[i * 3 + 2] * 3];
+        const float e1[3] = {v1[0] - v0[0], v1[1] - v0[1], v1[2] - v0[2]};
+        const float e2[3] = {v2[0] - v0[0], v2[1] - v0[1], v2[2] - v0[2]};
+        const float p[3] = {dd[1] * e2[2] - dd[2] * e2[1], dd[2] * e2[0] - dd[0] * e2[2], dd[0] * e2[1] - dd[1] * e2[0]};
+        const float det = e1[0] * p[0] + e1[1] * p[1] + e1[2] * p[2];
+        if (det > -1e-12f && det < 1e-12f) continue;
+        const float inv = 1.0f / det;
+        const float s[3] = {start[0] - v0[0], start[1] - v0[1], start[2] - v0[2]};
+        const float u = (s[0] * p[0] + s[1] * p[1] + s[2] * p[2]) * inv;
+        if (u < 0.0f || u > 1.0f) continue;
+        const float q[3] = {s[1] * e1[2] - s[2] * e1[1], s[2] * e1[0] - s[0] * e1[2], s[0] * e1[1] - s[1] * e1[0]};
+        const float w = (dd[0] * q[0] + dd[1] * q[1] + dd[2] * q[2]) * inv;
+        if (w < 0.0f || u + w > 1.0f) continue;
+        const float t = (e2[0] * q[0] + e2[1] * q[1] + e2[2] * q[2]) * inv;
+        if (t < 0.0f || t > 1.0f || t >= best) continue;
+        best = t; bi = i;
+    }
+    if (bi == static_cast<std::size_t>(-1)) return false;                  // local_88 == 0
+    // FUN_0045c110 @ 0x0045c110 on the hit's material: colour 0xff010101 or 0xffff0080 -> 1 (no
+    // shadow). [UNCERTAIN U-9707] the 0xffNN3cff / 0xffNNffff codes read the runtime table
+    // DAT_00691508 (FUN_00472550); none of them is treated as blocking here.
+    const std::uint32_t rgba = soup.tri_rgba ? soup.tri_rgba[bi] : 0u;
+    if (rgba == 0xff010101u || rgba == 0xffff0080u) return false;
+    const float* v0 = &soup.verts[soup.tris[bi * 3 + 0] * 3];
+    const float* v1 = &soup.verts[soup.tris[bi * 3 + 1] * 3];
+    const float* v2 = &soup.verts[soup.tris[bi * 3 + 2] * 3];
+    // RpCollisionTriangle (FUN_00487180's param_3, copied to the cache): normal = the LUT-normalized
+    // (v1 - v0) x (v2 - v0), point = v0, vertices v0, v1, v2 (the witness verify/rfx2_20261016,
+    // 23/23 TRAINING caches)
+    float n[3];
+    {
+        const float e1[3] = {v1[0] - v0[0], v1[1] - v0[1], v1[2] - v0[2]};
+        const float e2[3] = {v2[0] - v0[0], v2[1] - v0[1], v2[2] - v0[2]};
+        const float c[3] = {e1[1] * e2[2] - e1[2] * e2[1], e1[2] * e2[0] - e1[0] * e2[2], e1[0] * e2[1] - e1[1] * e2[0]};
+        Math::LutNormalize(n, c);
+    }
+    // ---- the hit point (local_94 / local_90 / local_8c) ------------------------------------------
+    float hp[3];
+    float t2 = 0.f;
+    if (RayTri(start, dl, v0, v1, v2, &t2)) {
+        // the cached-triangle path, 0x004872f9.. (FUN_00547230 hit): (x * [0x5ce18c] 0.02 + d * t) + o,
+        // with [0x5cc328] 0.01 added in y
+        hp[0] = n[0] * 0.02f + (end[0] - start[0]) * t2 + start[0];
+        hp[1] = n[1] * 0.02f + 0.01f + (end[1] - start[1]) * t2 + start[1];
+        hp[2] = n[2] * 0.02f + (end[2] - start[2]) * t2 + start[2];
+    } else {
+        // FUN_00487180 @ 0x00487180: (end - start) * t + start, then + n * 0.02
+        for (int k = 0; k < 3; ++k) hp[k] = (end[k] - start[k]) * best + start[k];
+        for (int k = 0; k < 3; ++k) hp[k] = n[k] * 0.02f + hp[k];
+    }
+    // ---- LAB_0048761d: FUN_0045c030 @ 0x0045c030 (right = |v0 - v1|, up = |n x (v0 - v1)|, at = n) ----
+    M m{};
+    {
+        const float e[3] = {v0[0] - v1[0], v0[1] - v1[1], v0[2] - v1[2]};
+        const float c[3] = {e[2] * n[1] - e[1] * n[2], e[0] * n[2] - e[2] * n[0], e[1] * n[0] - e[0] * n[1]};
+        Math::LutNormalize(m.r, e);
+        Math::LutNormalize(m.u, c);
+        std::memcpy(m.a, n, sizeof(m.a));
+        m.p[0] = m.p[1] = m.p[2] = 0.f;                // FUN_004c51a0(m, (0,0,0), POSTCONCAT)
+    }
+    // P = light up + hit; ratio = clamp(n . (v0 - P)) / clamp(n . light at) (0 -> [0x5cc328] 0.01)
+    const float* lu = L + 4;
+    const float P[3] = {lu[0] + hp[0], lu[1] + hp[1], lu[2] + hp[2]};
+    const float w[3] = {v0[0] - P[0], v0[1] - P[1], v0[2] - P[2]};
+    const float r1 = DotClamp(n, w);
+    float r2 = DotClamp(n, at);
+    if (r2 == 0.0f) r2 = 0.01f;
+    const float ratio = r1 / r2;
+    const float Q[3] = {at[0] * ratio + P[0], ratio * at[1] + P[1], ratio * at[2] + P[2]};
+    const float D[3] = {Q[0] - hp[0], Q[1] - hp[1], Q[2] - hp[2]};
+    Math::LutNormalize(m.r, D);                         // FUN_004c39b0(param_4, &local_d0)
+    m.u[0] = m.a[1] * m.r[2] - m.r[1] * m.a[2];         // up = at x right (0x0048771b..)
+    m.u[1] = m.a[2] * m.r[0] - m.a[0] * m.r[2];
+    m.u[2] = m.a[0] * m.r[1] - m.a[1] * m.r[0];
+    // the eight bbox corners through the object LTM and the inverse light LTM (FUN_004c3df0 twice)
+    const float* b = in.bbox;
+    const float C[8][3] = {{b[3], b[4], b[5]}, {b[0], b[4], b[5]}, {b[0], b[1], b[5]}, {b[3], b[1], b[5]},
+                           {b[3], b[4], b[2]}, {b[0], b[4], b[2]}, {b[0], b[1], b[2]}, {b[3], b[1], b[2]}};
+    float maxy = -1000.f, miny = 1000.f, maxx = -1000.f, minx = 1000.f;   // [0x5cda84] / [0x5cc9fc]
+    for (int c = 0; c < 8; ++c) {
+        float wv[3], lv[3];
+        XformPoint(in.ltm, C[c], wv);
+        XformPoint(Linv, wv, lv);
+        if (maxy < lv[1]) maxy = lv[1];
+        if (lv[1] < miny) miny = lv[1];
+        if (maxx < lv[0]) maxx = lv[0];
+        if (lv[0] < minx) minx = lv[0];
+    }
+    // scale (span y / tan(acos(light at . right)), span x * [0x5cc9ac] 1.4, 1), rwCOMBINEPRECONCAT
+    float cosv = at[2] * m.r[2] + at[0] * m.r[0];
+    cosv = cosv + at[1] * m.r[1];
+    const float tn = static_cast<float>(std::tan(std::acos(static_cast<double>(cosv))));
+    const float sx = (maxy - miny) / tn;
+    const float sy = (maxx - minx) * 1.4f;
+    for (int k = 0; k < 3; ++k) { m.r[k] *= sx; m.u[k] *= sy; }
+    // translate (POSTCONCAT) by hit + (sx * [0x5cc56c] 0.1) * scaled right
+    const float k1 = sx * 0.1f;
+    for (int k = 0; k < 3; ++k) m.p[k] = hp[k] + k1 * m.r[k];
+    *out = m;
+    return true;
+}
+
+}  // namespace
+
+bool RaceFx_ObjShadowEnabled() { static const bool on = !EnvOff("MASHED_OBJ_SHADOW"); return on; }
+
+void RaceFx_SetObjShadows(const ObjShadowIn* objs, int n, const float light[16], const ObjShadowSoup& soup) {
+    g_objshad.clear();
+    if (!RaceFx_ObjShadowEnabled() || !objs || n <= 0 || !light) return;
+    float Linv[16];
+    InvertAffine(light, Linv);
+    g_objshad.resize(static_cast<std::size_t>(n));
+    int nflag = 0;
+    for (int i = 0; i < n; ++i) {
+        ObjShadow& o = g_objshad[static_cast<std::size_t>(i)];
+        std::memcpy(o.sphere, objs[i].sphere, sizeof(o.sphere));
+        o.flag = ObjShadowMatrix(objs[i], light, Linv, soup, &o.m);
+        nflag += o.flag ? 1 : 0;
+    }
+    if (std::FILE* f = std::fopen("log/librw_race.txt", "a")) {
+        std::fprintf(f, "[rfx2] object shadows: %d objects, %d with a shadow (DAT_006cad50)\n", n, nflag);
+        std::fclose(f);
+    }
+}
+
+void RaceFx_SetObjShadowFrame(std::uint32_t f101c) { g_objshad_frame = f101c; }
+
+void RaceFx_DrawWorldFx(void* rw_camera) {
+    if (g_objshad.empty() || !RaceFx_ObjShadowEnabled()) return;
+    rw::Camera* cam = static_cast<rw::Camera*>(rw_camera);
+    if (!cam || !cam->getFrame()) return;
+    // ---- FUN_00481a30 @ 0x00481a30, per object i ---------------------------------------------
+    // [UNCERTAIN U-9707] the original runs this in the tick, against the camera frame's modelling
+    // matrix (FUN_00467210(0)) and the frustum planes of the last RwCameraBeginUpdate; here both are
+    // this frame's render camera. DAT_007f0fd0 == 5's branch (0x00481ab3) is not taken in the modes
+    // the standalone runs; FUN_00484cf0 / FUN_004818d0 (physics registration, over-speed break) and
+    // the per-frame recompute of a moving object are not modelled (the objects are static).
+    const rw::Matrix& cm = cam->getFrame()->matrix;
+    std::vector<Particle> ps;
+    for (std::size_t i = 0; i < g_objshad.size(); ++i) {
+        ObjShadow& o = g_objshad[i];
+        const bool par = (static_cast<std::uint32_t>(i) & 1u) == (g_objshad_frame & 1u);   // 0x00481a80..
+        const float dx = o.sphere[0] - cm.pos.x, dy = o.sphere[1] - cm.pos.y, dz = o.sphere[2] - cm.pos.z;
+        float d2 = dz * dz + dx * dx;
+        d2 = d2 + dy * dy;
+        if (!(d2 < 2500.0f)) continue;                                   // [0x5cd098]
+        o.prev = o.state;                                                // 0x00481ba8
+        if (par) {
+            rw::Sphere s;
+            s.center.x = o.sphere[0]; s.center.y = o.sphere[1]; s.center.z = o.sphere[2];
+            s.radius = o.sphere[3] * 10.0f;                              // [0x5cc55c]
+            o.state = cam->frustumTestSphere(&s);                        // FUN_004c1b40
+        }
+        if (o.state != 2 && o.state != 1) continue;
+        if (!o.flag) continue;
+        // the angle gate 0x00481d03..0x00481d24: acos(clamp(at . (0,1,0) [0x6146fc])) < [0x5cd07c]
+        const float up[3] = {0.f, 1.f, 0.f};
+        const float a = static_cast<float>(std::acos(static_cast<double>(DotClamp(o.m.a, up))));
+        if (!(a < 0.785398185f)) continue;
+        if (ps.size() >= 50) continue;                                   // DAT_00703070 (witness: 50)
+        // colour (0, 0, 0, ftol((1 - a * [0x5cf234]) + 1) * [0x5cd6d4] 64)), FUN_00487d00
+        float al = 1.0f - a * 1.27323949f;
+        al = al + 1.0f;
+        al = al * 64.0f;
+        Particle p;
+        p.m = o.m;
+        p.rgba[0] = p.rgba[1] = p.rgba[2] = 0;
+        p.rgba[3] = FtolByte(al);
+        ps.push_back(p);
+    }
+    if (ps.empty()) return;
+    // ---- FUN_00487d70 @ 0x00487d70: cull NONE (RS 0x14 = 1), ZWRITE off, the batch's 5 / 6 blend
+    // (FUN_00487150 -> FUN_00476cb0(&DAT_00703068, 5, 6)); fog is still off from FUN_00410b30
+    // (0x00410b9f) and the device alpha test is GREATER / 0 as for the car FX.
+    rw::int32 sv_zw = rw::GetRenderState(rw::ZWRITEENABLE);
+    rw::int32 sv_zt = rw::GetRenderState(rw::ZTESTENABLE);
+    rw::int32 sv_fog = rw::GetRenderState(rw::FOGENABLE);
+    rw::int32 sv_cull = rw::GetRenderState(rw::CULLMODE);
+    rw::int32 sv_af = rw::GetRenderState(rw::ALPHATESTFUNC);
+    rw::int32 sv_ar = rw::GetRenderState(rw::ALPHATESTREF);
+    rw::int32 sv_va = rw::GetRenderState(rw::VERTEXALPHA);
+    rw::int32 sv_sb = rw::GetRenderState(rw::SRCBLEND);
+    rw::int32 sv_db = rw::GetRenderState(rw::DESTBLEND);
+    rw::SetRenderState(rw::ZTESTENABLE, 1);
+    rw::SetRenderState(rw::ZWRITEENABLE, 0);
+    rw::SetRenderState(rw::FOGENABLE, 0);
+    rw::SetRenderState(rw::CULLMODE, rw::CULLNONE);
+    rw::SetRenderState(rw::ALPHATESTFUNC, rw::ALPHAGREATER);
+    rw::SetRenderState(rw::ALPHATESTREF, 0);
+    DrawParticles(ps, SfxTexture("RWObjShad"), rw::BLENDSRCALPHA, rw::BLENDINVSRCALPHA);
     rw::SetRenderState(rw::ZWRITEENABLE, sv_zw);
     rw::SetRenderState(rw::ZTESTENABLE, sv_zt);
     rw::SetRenderState(rw::FOGENABLE, sv_fog);
