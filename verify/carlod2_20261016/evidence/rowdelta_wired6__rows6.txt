@@ -1,0 +1,18 @@
+arctic_01051     before  32 after  32  gone   0  NEW 0
+arctic_01091     before  34 after  32  gone   2  NEW 0
+    gone MISSING Headlight [C09-FX]: A-only 1 draws 52 tri (0 offscreen); first k82 pt4 tri=52 tex=Headlight tex1=- bb=[260.34,142.95,0.98,407.04,412.30,0.99] src=d3d Z=1 ZW=0 ZF=4 AT=1 A
+    gone EXTRA Headlight [None]: B-only 1 draws 48 tri (0 offscreen); first k82 pt4 tri=48 tex=Headlight tex1=- bb=[260.33,142.95,0.98,407.04,412.30,0.99] src=rw Z=1 ZW=0 ZF=4 AT=1 AR
+arctic_01126     before  36 after  33  gone   3  NEW 0
+    gone MISSING Advantage [C17-CAR-GLOSS]: A-only 1 draws 4 tri (0 offscreen); first k82 pt5 tri=4 tex=Advantage tex1=- bb=[-25.75,0.16,26.49,-25.40,0.21,26.51] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=
+    gone MISSING Headlight [C09-FX]: A-only 1 draws 52 tri (0 offscreen); first k82 pt4 tri=52 tex=Headlight tex1=- bb=[273.72,54.23,0.99,371.92,402.07,1.00] src=d3d Z=1 ZW=0 ZF=4 AT=1 AR
+    gone EXTRA Headlight [None]: B-only 1 draws 48 tri (0 offscreen); first k82 pt4 tri=48 tex=Headlight tex1=- bb=[273.72,54.23,0.99,371.92,402.07,1.00] src=rw Z=1 ZW=0 ZF=4 AT=1 ARE
+city_00761       before  20 after  20  gone   0  NEW 0
+city_00801       before  22 after  22  gone   0  NEW 0
+city_00836       before  24 after  21  gone   3  NEW 0
+    gone MISSING Advantage [C17-CAR-GLOSS]: A-only 2 draws 8 tri (0 offscreen); first k82 pt5 tri=4 tex=Advantage tex1=- bb=[63.64,0.16,-26.39,63.66,0.21,-26.03] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=
+    gone MISSING Headlight [C09-FX]: A-only 1 draws 56 tri (0 offscreen); first k82 pt4 tri=56 tex=Headlight tex1=- bb=[295.18,83.44,0.99,352.60,435.69,0.99] src=d3d Z=1 ZW=0 ZF=4 AT=1 AR
+    gone EXTRA Headlight [None]: B-only 1 draws 48 tri (0 offscreen); first k82 pt4 tri=48 tex=Headlight tex1=- bb=[295.18,83.44,0.99,352.60,435.69,0.99] src=rw Z=1 ZW=0 ZF=4 AT=1 ARE
+training_00884   before  21 after  21  gone   0  NEW 0
+training_00924   before  22 after  22  gone   0  NEW 0
+training_00959   before  21 after  21  gone   0  NEW 0
+NEW ROWS TOTAL: 0

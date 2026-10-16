@@ -17090,7 +17090,7 @@ HOOKS = {
     # and `and cl,0xfb` otherwise (0x004b5256), on the byte at p+2. seed_byte 0xF9 has bit 2 clear, so flag=0 changed nothing on
     # either side and could not tell a body that clears from one that does not. 0xFF has it set: flag=0 must turn p[2] into 0xFB
     # (observed through the dword at offset 0), flag=1 must leave 0xFF. A body without the clear arm is RED on [0].
-    'or_4b5240_set': {'rva': 0x004b5240, 'export': 'Or4b5240', 'signature': {'ret': 'void', 'args': ['pointer','uint32']}, 'arg_type': 'deref_struct_set', 'nscalar': 1, 'seed_byte': 0xFF, 'observe': [{'off': 0x0}], 'lut_root_delta': 0, 'path1_tests': [[0],[1]], 'path2_tests': [[0]]},
+    'or_4b5240_set': {'rva': 0x004b5240, 'export': 'Or4b5240', 'signature': {'ret': 'void', 'args': ['pointer','uint32']}, 'arg_type': 'deref_struct_set', 'nscalar': 1, 'seed_byte': 0xFF, 'observe': [{'off': 0x0}], 'lut_root_delta': 0, 'path1_tests': [[0],[1]], 'path2_tests': [{'p2bufs': [16], 'p2args': [{'buf': 0}, 0]}]},
 
     # ---- promote-round round 114 (EAX struct-ptr + stack out-ptr, pure compute) --
     'time_41e150': {'rva': 0x0041e150, 'export': 'Time41e150', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'eax_struct_stack_out', 'eax_seed': [{'off': 0x0, 'val': 2}, {'off': 0x4, 'val': 30}, {'off': 0x8, 'val': 5}], 'out_observe': [0x0], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},

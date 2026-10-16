@@ -1,0 +1,10 @@
+arctic_01051     before  32 after  32  gone   0  NEW 0
+arctic_01091     before  34 after  34  gone   0  NEW 0
+arctic_01126     before  36 after  36  gone   0  NEW 0
+city_00761       before  20 after  20  gone   0  NEW 0
+city_00801       before  22 after  22  gone   0  NEW 0
+city_00836       before  24 after  24  gone   0  NEW 0
+training_00884   before  21 after  21  gone   0  NEW 0
+training_00924   before  22 after  22  gone   0  NEW 0
+training_00959   before  21 after  21  gone   0  NEW 0
+NEW ROWS TOTAL: 0

@@ -1,0 +1,24 @@
+=== verify_hook_install report (or_4b5240_set) ===
+
+target address: 0x004b5240  export: Or4b5240
+PRE  bytes:     e9 fb 5b 08 5d c0 8b 44
+asi base:       0x5d500000
+reimpl addr:    0x5d53ae40
+POST bytes:     e9 fb 5b 08 5d c0 8b 44
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x5d085bfb  expected 0x5d085bfb  -> OK
+bytes changed:  False
+
+interceptor entries (reimpl):  1 / 1  (other threads: 0)
+
+per-input results:
+  [OK] input={'p2bufs': [16], 'p2args': [{'buf': 0}, 0]}  got=69691905  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + JMP already installed pre-load (dinput8 autoload); site verified
+  + reimpl interceptor fired 1x as expected
+  + all 1 calls returned without exception
+FAIL:
+  (none)

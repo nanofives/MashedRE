@@ -86,3 +86,18 @@ comparison). Base exe: `exe_base5` (clean `e825a58c`), arm `base5` with `--rows`
 ## 6. Amendments
 
 (none yet)
+
+### Amendment 1 (written after the arms on 07526b4e were read; no rule changes)
+
+- Base moved: rebased onto `07526b4e` (clean rebase); baseline `exe_base6` built from a clean `07526b4e` scratch worktree, alone.
+  Arms renamed with suffix 6 (`base6`, `voff6`, `unwired6`, `wired6`, `rows6`); G-CTRL is `2b4d47bb / 356821c8 / f7a155e1`.
+- Pre-existing RED rows: `base6` already has 1 uncited EXTRA `Headlight` (48 triangles, screen-space) on Arctic 1091 / 1126 and City
+  801 / 836, identical in `voff6`; they belong to rfx's beam, not this lane, and rule 2 is read as "no row beyond those".
+- Harness for FUN_004b5240: its arg_type `deref_struct_set` has no handler in `diff_template.js` (never had), so path1 is
+  `re/frida/early_window_leaf_diff.py` (the harness that earned r115) with `MASHED_EW_ASI` pointing at the build under test, not
+  `run_diff.py`. path2 (`run_verify_hook.py`) needs the pointer test shape `{p2bufs, p2args}`; the entry's `path2_tests` uses it.
+  path2 runs inside `asi_window.py` (backup, refuse on any running MASHED, deploy, restore in finally, SHA-256 at every step) and is
+  checked with `verify/dualcopy4_20261016/check_asi_identity.py` (orchestrator rule of 2026-10-16).
+- F-BRAKE default: the decisive arm `wired6` fails rules 1 and 2 (section 3) because the standalone AI's brake output differs from the
+  original's at the cited rows (Pr-2 outcomes (b) and (c)), so by section 3 the wiring ships OPT-IN (`MASHED_CAR_BRAKE=1`), and the
+  final exe's default arm `final8` must equal `base6` in rows.

@@ -8248,10 +8248,12 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         // table entry -> ctrl block, the same bytes StepCar reads), the player's byte is
         // `player_brake_byte_`. FUN_00420870 tests the flags the PREVIOUS call set (FUN_00425a40 runs
         // the AI tick at 0x0040fc6c, before FUN_0040da50 at 0x0040fc75), so the byte is delayed one
-        // frame. MASHED_CAR_BRAKE=0 restores carlod's 0; MASHED_CAR_BRAKE_ROWS overrides on its rows.
+        // frame. OPT-IN, MASHED_CAR_BRAKE=1 (default OFF: PREREG_carlod2 rules 1-2 fail because the standalone
+        // AI's brake output differs from the original's on 2 of the 3 plate frames and adds one on TRAINING 924,
+        // verify/carlod2_20261016/RESULT_carlod2.md); MASHED_CAR_BRAKE_ROWS overrides on its rows.
         static const bool s_brake_wire = [] {
             const char* e = std::getenv("MASHED_CAR_BRAKE");
-            return !(e && e[0] == '0' && e[1] == '\0');
+            return e && e[0] == '1' && e[1] == '\0';
         }();
         static std::FILE* s_blog = [] {
             const char* e = std::getenv("MASHED_CAR_BRAKELOG");

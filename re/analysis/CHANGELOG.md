@@ -26,6 +26,8 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-16  U-9706  NARROWED  (b) brake byte wired behind flag 0x800, opt-in MASHED_CAR_BRAKE=1 (standalone AI brake output differs at 3 of 4 cited events); (e) per-livery part-0x13 origin done  verify/carlod2_20261016/RESULT_carlod2.md
+2026-10-16  004b5240  C2->C3  or_4b5240_set (seed 0xFF) early_window GREEN non-degenerate, pre-fix body RED, path2 PASS in a deploy window with asi identity OK  verify/carlod2_20261016/RESULT_carlod2.md
 2026-10-16  00414f00  AiTrackObjSeek  C2->C3  One body Ai/AiTrackObjSeek.cpp (both targets). Reads the course-0x21 track object 0x00684d18 (+0xc8/+0x94) and DAT_0088ff50[v]; not a powerup seek, not their producer (FUN_00451d80 / FUN_00451ad0 are). path1 GREEN 53/53 incl. 29 natural ret=1 rows captured from the original on Warzone rule 8; path2 PASS; live H1 with the JMP: 177 mode-10 frames, all gate-consistent. U-7574/U-0422/U-0423/U-0424 resolved, U-9719 opened. Exe: default build byte-identical to base and to N0 (MASHED_NO_SEEK414F00=1) on G-CTRL 2b4d47bb/356821c8/f7a155e1, all 8 D3 (b) K dumps (A 1/3, B 2/3, C 0/3) and Warzone b726286f/b6360eef; on Warzone the exe calls the port and it returns 0 at gate 1 (no exe writer of 0x00684de0 yet). Evidence verify/seek414f00_20261016/RESULT_seek414f00.md.
 2026-10-16  0041eda0  TimerBitFieldSet  C3->C3 (RE-EARNED)  One body; TimerSlot.cpp SlotBitSet deleted; path1+path2+mutant control. Evidence verify/dualcopy4_20261016/RESULT_dualcopy4.md.
 2026-10-16  0041f000  TimerSlotDataCopy  C3->C3 (RE-EARNED)  One body; TimerSlot.cpp SlotDataCopy deleted; path1+path2. Evidence verify/dualcopy4_20261016/RESULT_dualcopy4.md.
