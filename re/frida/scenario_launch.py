@@ -1974,12 +1974,18 @@ function tgProbeDrain(){ const r = TG.rows; TG.rows = []; return r; }
 //    input the body reads: DAT_00684de0 bits, DAT_0088ff50[v], DAT_00684dac, pfVar2[0..2] bits, own
 //    matrix +0x30/+0x34/+0x38 (FUN_0046d4a0: 0x00881ec8 + v*0xd04 + [0x00881f48 + v*0xd04]*0x40),
 //    DAT_008815a4[0] (FUN_0046c7b0(0)), car 0 matrix +0x30/+0x38, cand at entry; at leave EAX + cand.
-const SK = { armed:false, obj:[], seek:[], nObj:0, nSeek:0, limit:20000, err:null };
+// A NEGATIVE limit arms the FUN_00451d80 hook only (obj-only), for runs where 0x00414f00 carries the .asi's inline JMP
+// (--hooks AiPowerupSeek): an Interceptor there would sit on the patch. Obj rows also carry the committed AI mode word
+// DAT_0089a52c + v*0x74 (v = 0..3, written at 0x00416590; 10 = the mode-10 block took FUN_00414f00's 1), and the probe
+// snaps the first dword at 0x00414f00 on arm and on drain (an E9 there = the hook is live).
+const SK = { armed:false, obj:[], seek:[], nObj:0, nSeek:0, limit:20000, err:null, objOnly:false, entryArm:null };
 function skMat(i){ const t = ga(0x00881f48).add(i*0xd04).readU32(); return ga(0x00881ec8).add(i*0xd04 + t*0x40); }
 function skProbeArm(limit){
   if (SK.armed) return 'already armed';
   try {
-    SK.limit = limit || 20000;
+    SK.objOnly = (limit < 0);
+    SK.limit = Math.abs(limit) || 20000;
+    SK.entryArm = ga(0x00414f00).readU32().toString(16);
     Interceptor.attach(ga(0x00451d80), {
       onEnter(args){
         this.o = null;
@@ -1998,9 +2004,11 @@ function skProbeArm(limit){
                        ga(0x0088ff5c).readU32(), p.toUInt32()];
           if (p.isNull()) row.push(0, 0, 0);
           else row.push(p.add(0x30).readU32(), p.add(0x34).readU32(), p.add(0x38).readU32());
+          for (let v = 0; v < 4; v++) row.push(ga(0x0089a52c).add(v*0x74).readS32());
           SK.obj.push(row);
         } catch(e){ if (!SK.err) SK.err = 'objLeave ' + e; }
       }});
+    if (SK.objOnly) { SK.armed = true; return 'seek-probe armed OBJ-ONLY (0x451d80); 0x414f00 dword=' + SK.entryArm; }
     Interceptor.attach(ga(0x00414f00), {
       onEnter(args){
         this.row = null;
@@ -3304,7 +3312,9 @@ rpc.exports = {
   tgProbeStats: function(){ return JSON.stringify({armed:TG.armed, calls:TG.n, err:TG.err}); },
   skProbeArm: function(l){ return skProbeArm(l); },
   skProbeDrain: function(){ return skProbeDrain(); },
-  skProbeStats: function(){ return JSON.stringify({armed:SK.armed, obj_calls:SK.nObj, seek_calls:SK.nSeek, err:SK.err}); },
+  skProbeStats: function(){ return JSON.stringify({armed:SK.armed, obj_only:SK.objOnly, obj_calls:SK.nObj, seek_calls:SK.nSeek,
+                                                   entry_dword_arm:SK.entryArm,
+                                                   entry_dword_now:ga(0x00414f00).readU32().toString(16), err:SK.err}); },
   rgProbeArm: function(k){ return rgProbeArm(k); },
   cbProbeArm: function(){ return cbProbeArm(); },
   fhProbeArm: function(l, c){ return fhProbeArm(l, c); },
@@ -3965,7 +3975,8 @@ def main():
     ap.add_argument("--seek-probe", type=int, default=0,
                     help="[seek414f00] N: entry+leave hooks on FUN_00451d80 (Warzone object state, the "
                          "only path to the DAT_0088ff50 writer) and FUN_00414f00 (AI powerup seek), first "
-                         "N rows each. Writes <out>.seekobj.csv and <out>.seek.csv. Requires --statediff-out.")
+                         "N rows each. Writes <out>.seekobj.csv and <out>.seek.csv. Requires --statediff-out. "
+                         "Negative N: FUN_00451d80 only (use with --hooks AiPowerupSeek, whose JMP sits at 0x00414f00).")
     ap.add_argument("--wobj-probe", action="store_true",
                     help="[D3 modes 3/7 2026-10-09] ONE ENTRY HOOK on FUN_00414c30: logs each "
                          "call (frame, v, registry count 0x006e70d8) and dumps the world-object "
@@ -4837,7 +4848,7 @@ def main():
                         _sk = E.sk_probe_drain()
                         _so = outp.with_suffix(outp.suffix + ".seekobj.csv")
                         with open(_so, "w", newline="") as f:
-                            f.write("n,frame,dt,state_in,state_out,active,c8,ff50_0,ff50_1,ff50_2,ff50_3,mat,px,py,pz" + chr(10))
+                            f.write("n,frame,dt,state_in,state_out,active,c8,ff50_0,ff50_1,ff50_2,ff50_3,mat,px,py,pz,mode0,mode1,mode2,mode3" + chr(10))
                             for r in _sk["obj"]: f.write(",".join(str(x) for x in r) + chr(10))
                         _ss = outp.with_suffix(outp.suffix + ".seek.csv")
                         with open(_ss, "w", newline="") as f:

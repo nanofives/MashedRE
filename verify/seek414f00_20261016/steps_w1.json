@@ -1,0 +1,20 @@
+[
+ {"name": "path2_ai_powerup_seek", "timeout": 300,
+  "cmd": ["py", "-3.12", "re/frida/run_verify_hook.py", "ai_powerup_seek"],
+  "env": {"MASHED_VERIFY_ASI": "{ASI}", "MASHED_ROOT": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed"}},
+ {"name": "nav_probe_full_hookset", "timeout": 240,
+  "cmd": ["py", "-3.12", "verify/dupinstall2_20261016/nav_probe.py", "seek_full"]},
+ {"name": "nav_probe_only_AiPowerupSeek", "timeout": 240,
+  "cmd": ["py", "-3.12", "verify/dupinstall2_20261016/nav_probe.py", "--only", "AiPowerupSeek", "seek_only"]},
+ {"name": "install_observe_all", "timeout": 200,
+  "cmd": ["py", "-3.12", "verify/dupinstall2_20261016/install_observe.py", "ALL", "--seconds", "45"],
+  "env": {"DUPINSTALL_OUT": "{OUT}/install_all"}},
+ {"name": "H1_warzone_rule8_hooked", "timeout": 600,
+  "cmd": ["py", "-3.12", "re/frida/scenario_launch.py", "--track", "11", "--rule", "8", "--mode", "10", "--cars", "4",
+          "--hold", "180", "--hooks", "0x00414f00", "--statediff-out", "{OUT}/H1.msd", "--seek-probe", "-20000"],
+  "env": {"MASHED_ROOT": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed"}},
+ {"name": "H2_warzone_rule8_hooked", "timeout": 600,
+  "cmd": ["py", "-3.12", "re/frida/scenario_launch.py", "--track", "11", "--rule", "8", "--mode", "10", "--cars", "4",
+          "--hold", "180", "--hooks", "0x00414f00", "--statediff-out", "{OUT}/H2.msd", "--seek-probe", "-20000"],
+  "env": {"MASHED_ROOT": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed"}}
+]

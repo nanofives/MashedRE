@@ -1,0 +1,11 @@
+hook: ai_powerup_seek  rva=0x00414f00  export=AiPowerupSeek
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 26208
+  [agent] LUT ready  base=0x2d4a6c8  offset=0x134  root=0x4d90680  delta=0  attempts=11
+  [agent] .asi loaded  base=0x5f8f0000  AiPowerupSeek@0x5f926f60
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\seek414f00\log\diff_ai_powerup_seek.csv
+  total cases: 53
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.

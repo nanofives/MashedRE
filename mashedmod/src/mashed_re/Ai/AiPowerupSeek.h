@@ -4,7 +4,7 @@
 #include <cstdint>
 
 // 0x00414f00: the shared body (both targets; RH_ScopedInstall in the .asi). param_1 / param_2 are not read.
-extern "C" int __cdecl AiPowerupSeek(void* param_1, void* param_2, std::uint32_t* param_3, int param_4);
+extern "C" __declspec(dllexport) int __cdecl AiPowerupSeek(void* param_1, void* param_2, std::uint32_t* param_3, int param_4);
 
 #ifdef MASHED_STANDALONE
 namespace Ai {
