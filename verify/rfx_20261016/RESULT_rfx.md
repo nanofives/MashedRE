@@ -21,9 +21,9 @@ the same 96 -> 24, 0 RED, G-CTRL `716cb2fd / 2a2afda1 / ba90ed88` unchanged agai
 
 The HUD reads the game state the original reads. In the default dev route (`MASHED_ROUND`) Team
 Play `DAT_0067ea64` is 0, and the original then draws the non-team panels `FUN_0041b630`, which is
-not ported (U-9700), so only the start lights show. With `MASHED_SUBSTATE` off the start-light
+not ported (U-9704), so only the start lights show. With `MASHED_SUBSTATE` off the start-light
 clock `DAT_0063d588` is driven by a labelled stand-in adapter tied to the stand-in countdown
-(zeroed 113 frames before its GO, then `+= dt`; TrackRenderer countdown block, U-9700). Under
+(zeroed 113 frames before its GO, then `+= dt`; TrackRenderer countdown block, U-9704). Under
 `MASHED_SUBSTATE` the ported `FUN_0040dbd0` / `FUN_0041d930` tail drive it.
 
 ## 2. What the original does (static decode, `evidence/decomp/`)
@@ -86,7 +86,7 @@ All CITED, 0 RED, on all three arms. C04 / C08 / C09 rows per frame, base -> fin
 TRAINING 8/7/7 -> 1/0/0, Arctic 12/12/13 -> 4/4/5, City 12/12/13 -> 3/3/4 (96 -> 24). The
 default arm (no HUD inputs) keeps the 6 C08 rows per frame: the dev route runs with Team Play off
 and the standalone's own clock is past 4 s at those rows, so the HUD draws nothing there, which is
-what `FUN_0040dfc0` does with those inputs minus the unported non-team panels (U-9700).
+what `FUN_0040dfc0` does with those inputs minus the unported non-team panels (U-9704).
 Two arm runs lost SFX.piz textures to another session's original holding the piz (U-9677 class:
 NFL badges unbound on one City run, no Arctic records on one default run); both were re-run.
 
@@ -114,7 +114,7 @@ Rules (PREREG section 4):
    it back, or the next frame's world pass inherits it (seen in arm b1: every C19 tuple moved).
 4. The d1r1 Quick Battle reference runs with Team Play on (`DAT_0067ea64` = 1).
 
-## 6. Not ported (U-9701), with scope
+## 6. Not ported (U-9705), with scope
 
 | texture | rows (T/A/C) | original | needs on the standalone |
 |---|---|---|---|
@@ -142,7 +142,7 @@ carries one addition: since librwrest the copters are librw instances, so a pass
 every instance drew car_shadow after the copters (2 ORDER rows on TRAINING in the first rebased
 arm). `RaceSubmit_AddCarFxMarker` queues the car FX point after the AI car loop, where
 `FUN_00410b30` calls `FUN_0041ebb0` (`0x00410bb4`, before `FUN_00425e40` at `0x00410c08`). Outside
-the replay the beam's body frame is the stand-in car matrix, not the librwrest body pose (U-9699).
+the replay the beam's body frame is the stand-in car matrix, not the librwrest body pose (U-9703).
 
 | frame | hb | rb2, HUD replay | rb2, default |
 |---|---|---|---|

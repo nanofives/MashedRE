@@ -7652,7 +7652,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         // root = the clump frame (the car instance matrix; under MASHED_CAR_REPLAY the trace's
         // root LTM Q{i}_*, equal to R{i}_* for a root frame), body = the frame the beam parts
         // hang off (F{i}_* under the replay; outside it the instance matrix, without the
-        // librwrest body pose [UNCERTAIN U-9699]).
+        // librwrest body pose [UNCERTAIN U-9703]).
         auto fx_car = [&](int slot, const D3DMATRIX& body) {
             LibRw::CarFxInput in{};
             std::memcpy(in.body, &body, sizeof(in.body));
@@ -7692,7 +7692,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
             // rec+0x294 & 0x40 = DAT_0063bc44[car] (FUN_0040da50 -> FUN_0041eeb0, 0x0040db3d): set when
             // FUN_00426c00() = DAT_00644158 (= COURSE.LUA Course_Id, course_id_) is 0, 0x1a, 0x21 or
             // 0x24 and the car's vehicle slot is live (FUN_0046c7b0 / FUN_0046c770 == 1).
-            // [UNCERTAIN U-9699] liveness is aib_alive(slot) here; FUN_0041eeb0's clears of 0x40 under
+            // [UNCERTAIN U-9703] liveness is aib_alive(slot) here; FUN_0041eeb0's clears of 0x40 under
             // rec+0x294 bits 0x10 / 0x400 (not set by the standalone) are not modelled.
             in.lights = (course_id_ == 0 || course_id_ == 0x1a || course_id_ == 0x21 ||
                          course_id_ == 0x24) && aib_alive(slot) == 1;
