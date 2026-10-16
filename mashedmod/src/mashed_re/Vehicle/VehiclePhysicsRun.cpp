@@ -611,6 +611,15 @@ static void SolveWheelContacts(unsigned char* r, const PlayerCarIO& io, int subs
         // below the call site); publish the body basis now so the RW wheel transform is real.
         if (bodyUp) SyncContactRingMatrix(r, bodyUp - 4, io.pos);
         centre[1] = static_cast<float>(std::atof(s_ringY));
+        // [d2settle D0-e] MASHED_D2S_SEED1=1: the 8 wheel fields FUN_0046baa0 writes before
+        // the original's first solver call of a frame (0x0046bb23: int 1 to the four states;
+        // 0 to the four fv at +0x194/+0x258/+0x31c/+0x3e0). DIAGNOSTIC ONLY.
+        if (std::getenv("MASHED_D2S_SEED1")) {
+            for (int w = 0; w < 4; ++w) {
+                I(r, 0x198 + w * 0xc4) = 1;
+                F(r, 0x194 + w * 0xc4) = 0.f;
+            }
+        }
         for (int call = 1; call <= 2; ++call) {
             const float c0[3] = { centre[0], centre[1], centre[2] };
             Collision::WheelContactSolver(self, world, substep);
@@ -1029,9 +1038,10 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     // refreshes +0x9e4 = |+0x9b0| and +0x9e8 = |+0x9bc| in the loop that follows the A4 loop
     // (0x004710a1..0x004710da, same +0x4 / +0x10 gate), and A6a, the port's only writer of
     // the two, does not run, so the refresh is made here on skipped frames.
-    // [UNCERTAIN] the original makes that refresh on EVERY frame, after A4; the port's
-    // +0x9e4 on non-skipped frames is still A6a's entry value |v before A6a|. Not changed
-    // here (it is D2-visible on every frame). `MASHED_NO_A4_CONTACT_GATE=1` disables the gate.
+    // [d2settle 2026-10-16] the original makes that refresh on EVERY frame, after A4
+    // (0x004710a1..0x004710da, disassembled). The port has it as fix C below, DEFAULT OFF
+    // (opt-in MASHED_SPEED_REFRESH=1, it moves the D2 metrics out of bounds); by default
+    // the non-skipped-frame +0x9e4 is still A6a's value. `MASHED_NO_A4_CONTACT_GATE=1` disables the gate.
     static const bool s_noA4Gate = (std::getenv("MASHED_NO_A4_CONTACT_GATE") != nullptr);
     bool a4Skip = false;
     if (!s_noA4Gate && !g_inSpawnSettle) {
@@ -1086,9 +1096,15 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     // +0x9e4 keeps A6a's |v| from BEFORE its parked full stop (Integrate2.cpp:643-646 then
     // :755-758): the exe's parked player read 0.638 with vel (0,0,0) where the original
     // reads 0.0 (verify/d2settle_20261016/D_DEF.settle.txt; o_p0a.msd). Vec3Mag3 is the
-    // exe's sqrt for 0x004c3ac0, as on the skipped-frame refresh. `MASHED_NO_SPEED_REFRESH=1`
-    // restores the skipped-frame-only refresh (A/B).
-    static const bool s_noSpeedRefresh = (std::getenv("MASHED_NO_SPEED_REFRESH") != nullptr);
+    // exe's sqrt for 0x004c3ac0, as on the skipped-frame refresh.
+    // DEFAULT OFF, opt-in `MASHED_SPEED_REFRESH=1` (RESULT_d2settle.md): faithful and it
+    // passes G-9E4, but on the D2 arm it moves the first real step's +0x9e4 (0.65 -> 0.64)
+    // and the run lands in a different regime: slip 2000-2600 0.2654 (out of bounds) and
+    // driving-median 1666.43 (n 527 vs 1367). Pre-registered rule: not default ON.
+    static const bool s_noSpeedRefresh = [] {
+        const char* e = std::getenv("MASHED_SPEED_REFRESH");
+        return !(e && e[0] == '1');
+    }();
     if (s_a4First) {
         g_torqueRingPhase = (g_torqueRingPhase + 1) & 0xf;
         if (!a4Skip)   // 0x00471042 / 0x00471048: jge past the A4 call

@@ -19,7 +19,12 @@ OFF = ['MASHED_NO_A3_LUT', 'MASHED_NO_SETTLE_MOVE', 'MASHED_NO_SPEED_REFRESH']
 STACK = {'DEF': [], 'PP': PP, 'RG': RG, 'OFF': OFF, 'OFFRG': OFF + RG,
          'NOA3': ['MASHED_NO_A3_LUT'], 'NOMV': ['MASHED_NO_SETTLE_MOVE'], 'NOSR': ['MASHED_NO_SPEED_REFRESH'],
          # D0-c mechanism test (PREREG amendment 2): real wheel points at the original's frame-1 y
-         'RGX': RG + ['MASHED_RW_WHEELPOS', 'MASHED_D2S_RINGY=0.4374268054962158']}
+         'RGX': RG + ['MASHED_RW_WHEELPOS', 'MASHED_D2S_RINGY=0.4374268054962158'],
+         # FINAL build (after 2026-10-16 rebuild): fix C is opt-in MASHED_SPEED_REFRESH=1, so
+         # 'FDEF' = shipped default (fix A only), 'FOFF' = fix A opted out (= base), 'FC' = A + C.
+         'FDEF': [], 'FOFF': ['MASHED_NO_A3_LUT'], 'FC': ['MASHED_SPEED_REFRESH'],
+         # D0-e (PREREG amendment 4): D0-c + FUN_0046baa0's wheel seeds before call 1
+         'RGXS': RG + ['MASHED_RW_WHEELPOS', 'MASHED_D2S_RINGY=0.4374268054962158', 'MASHED_D2S_SEED1']}
 D2BASE = {'MASHED_REAL_PHYSICS': '1', 'MASHED_RACE_DEMO': '1', 'MASHED_PLAY_DEMO': '1', 'MASHED_GOTO': '6',
           'MASHED_TRACK_SEL': '12', 'MASHED_CAR_SEL': '0', 'MASHED_DRIVE_HOLD': '1', 'MASHED_WIN_POS': 'primary-bl',
           'MASHED_MOTION_DIAG': '1', 'MASHED_STEER_HOLD': '1', 'MASHED_STEER_HOLD_AFTER': '0', 'MASHED_MUTE': '1',
