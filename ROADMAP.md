@@ -608,6 +608,10 @@ opinion is an opinion about the scaffold, not about the port.
 > On those ticks the next solver entry of the original holds fv 0, normal (0, 1, 0), state 1 (d2bsp amendment 2 attributes it to the per-hold-tick reset `FUN_0046baa0`), and whether the port reproduces that is not measured: **U-9712, open.** The walk
 > is compared with the original on Training only (G-WALK 4764/4764 bit-identical); the other 12 tracks are checked for replica build and non-empty batches only (`verify/d2close_20261016/RESULT_d2close.md`).
 >
+> **D2 residual follow-ups (not blockers, knobs default OFF, default build unchanged by both):** d2lateral found the first diverging post-impact term: the original's `+0x9e4` / `+0x9e8`
+> refresh at the fixup (`0x004710c3..0x004710da`, U-9212), ported as `MASHED_D2LAT_REFRESH`. gridyaw ported the original's spawn yaw from `FUN_00408b00`'s grid frame as `MASHED_GRID_DIR`;
+> the port's slot-0 spawn yaw stand-in is U-9720 (renumbered from U-9713). Both were merged on `f76ae153b`; their results are in `verify/d2lateral_20261016/` and `verify/gridyaw_20261016/`.
+>
 > **Resolved by this closure:** `DEFERRED.md` D-11071 (all four residuals), U-9180 (driving-median), U-9181 (earlier, d2bsp). **D2 REOPEN trigger:** any later regression of one of the three metrics
 > against `d81a8df6`, or a finding that touches `+0x4a4`, the contact collector / `FUN_00538c80`, grip-clamp #6 (`0x004687f0..0x0046897b`), the substep/chunk loop (`0x00470c70`),
 > `ReassertContacts`, or player-car speed on Training, reported as a "D2 REOPEN CANDIDATE" row in the session RESULT.
