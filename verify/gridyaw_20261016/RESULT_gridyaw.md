@@ -123,7 +123,7 @@ Each D2 arm ran alone and in sequence (`rb/SCORE_D2_rb.txt`, `rb/RUNLOG.txt`). R
 
 No arm with a knob of this branch has all three metrics in bounds. GR and WGR put driving-median in, with slip
 2000-2600 over its 0.25487 ceiling by 0.0021 and 0.0008. Under A3.4 no further gates are run and no default moves.
-W alone (d2bsp) stays the only all-in arm. The diag twins are byte-identical to their scored arm for DFX and WGRFX.
+W alone (d2bsp) stays the only all-in arm. The diag twins score identically to their arm for DFX (= DEF) and WGRFX (= WGR_2).
 `D2_WFX_1` scores 0.1880 / 0.2500 / 1890.25, against `D2_W_1`'s 0.1890 / 0.2476 / 1912.01. Under W the
 diagnostic logs change the run, and n is 1387 against 1419.
 
