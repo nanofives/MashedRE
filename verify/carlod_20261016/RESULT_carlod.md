@@ -1,8 +1,8 @@
 # RESULT carlod: per-part car visibility (FUN_00420870), the glass pass (FUN_00420050) and the env gloss pass (U-9079, U-9693)
 
 **Verdict.** Both fixes ship default ON and pass every pre-registered rule on the 9 matched-pose frames, re-measured on
-the rebased tree (`race/first-frame-parity` `0020d521`, which carries `librwrest`'s poses and per-slot liveries), with
-one instrument input stated below. The 27 C02-CARLOD rows are gone, the 14 C17-CAR-GLOSS rows are gone, no row appears
+the merged tip (`race/first-frame-parity` `9420dde2` merged into this branch: `librwrest`'s poses and per-slot liveries,
+rprops placement, rstates, rfx), with one instrument input stated below. The 27 C02-CARLOD rows are gone, the 14 C17-CAR-GLOSS rows are gone, no row appears
 that is not an allowed replacement, matched draws and triangles never drop, and G-CTRL is unchanged.
 
 | fix | what | default | rows gone (9 frames) | new rows | pixels vs original |
@@ -11,13 +11,14 @@ that is not an allowed replacement, matched draws and triangles never drop, and 
 | F-ENV | car env gloss (rtex) with the previous row's camera for the coefficient | **ON** with F-VIS (`MASHED_CAR_ENV=0` off) | 14 C17 (7 frames x 2) | 7 STATE CarGloss, rtex amendment 2's replacements of the vanished MISSING rows | vs F-VIS arm +0.16 at most; vs base +0.04 at most |
 | follow-up 3 | Atmos ZERO/ONE duals, Storm dual-UV-transform | not ported | -- | -- | no cited frame contains either model |
 
-Default build rows, base `0020d521` -> final: TRAINING 77/76/76 -> 72/71/71, Arctic 76/76/76 -> 71/71/72, City
-153/151/149 -> 148/146/146; 0 RED on 9/9 before and after; matched draws 196/193/193 -> 204/201/199, 138/138/101 ->
-146/144/101, 351/339/292 -> 359/343/292; matched triangles up or equal on 9/9. G-CTRL `716cb2fd / 2a2afda1 / ba90ed88`
-(the new default) on the rebased base exe and on the final default exe (`gctrl.txt`). Pre-registration `PREREG_carlod.md`
-(before the first measuring run) with amendments 1-7, each labelled with when it was written. Scores: `scores_rebased.txt`
-(and `scores.txt` for the arms measured on the old base `b26d9f3c`), per-arm summaries `evidence/summary_*.txt`, row
-deltas `evidence/rowdelta_*.txt`, final cited diffs `evidence/final_diffs_rebased/`.
+Default build rows, base `9420dde2` -> final: TRAINING 78/77/77 -> 73/72/72, Arctic 78/77/77 -> 73/72/73, City
+128/126/124 -> 123/121/121; 0 RED on 9/9 before and after; matched draws 197/194/194 -> 205/202/200, 143/142/103 ->
+151/148/103, 472/460/413 -> 480/464/413; matched triangles up or equal on 9/9. G-CTRL `716cb2fd / 2a2afda1 / ba90ed88`
+(the default) on the base exe and on the final default exe (`gctrl.txt`). Pre-registration `PREREG_carlod.md`
+(before the first measuring run) with amendments 1-8, each labelled with when it was written. Scores: `scores_final.txt`
+(the merged tip; `scores_rebased.txt` for the arms on `0020d521` and `scores.txt` for the arms on the old base `b26d9f3c`),
+per-arm summaries `evidence/summary_*.txt`, row deltas `evidence/rowdelta_*.txt`, final cited diffs
+`evidence/final_diffs_final/`.
 
 **The instrument input.** The standalone's default AI cars produce no controller brake byte, and flag `0x800` (which
 lights the 4-triangle brake plate, part 0x11) is that byte. The base build matched those plates by accident because it
@@ -72,16 +73,16 @@ the default build never lights a brake plate**; before this branch it lit every 
   independently (4-byte sector normals); `evidence/bsp_layout_check.txt` (all 490 sectors of the 13 track pizzes: the header
   flags' layout differs from the old size-only solver on exactly 6, Arctic COLLISIONS.BSP x5 and AI.BSP x1) agrees with it.
 
-## 3. Rules (PREREG section 3), on the rebased tree
+## 3. Rules (PREREG section 3), on the merged tip
 
-| rule | F-VIS (`visx` vs `base2`) | F-ENV (`final2` vs `visx`) |
+| rule | F-VIS (`visx3` vs `base3`) | F-ENV (`final3` vs `visx3`) |
 |---|---|---|
 | 1 targets gone | PASS 27/27 C02 (+8 C21 Glass ORDER) | PASS 14/14 C17 on the 7 frames that had them (TRAINING 3, Arctic 1051/1091, City 761/801) |
 | 2 no new rows | PASS 0 on 9/9 | PASS: 7 STATE CarGloss rows with differing fields inside {AREF, AF, CULL}, each on a frame where its MISSING row vanished (amendment 2); nothing else new |
 | 3 matched do not drop | PASS equal to base on 9/9 (draws and triangles) | PASS up: +8 +8 +6, +8 +6 0, +8 +4 0 |
-| 4 no-op control | PASS 9/9 (`visoff` = `base2`, rows, matches and pixels) | PASS: `nolagx` (`MASHED_CAR_ENV_PREVCAM=0`) differs from `final2` only at City 801 (2 rows, matched 341 vs 343), the frame the previous-camera change was made for |
+| 4 no-op control | PASS 9/9 (`visoff3` = `base3`, rows, matches and pixels) | PASS: `nolag3` (`MASHED_CAR_ENV_PREVCAM=0`) differs from `final3` only at City 801 (2 rows, matched 462 vs 464), the frame the previous-camera change was made for |
 | 5 G-CTRL | PASS `716cb2fd / 2a2afda1 / ba90ed88` | PASS (final default exe, same trio) |
-| 6 pixels | PASS: `base2` -> `visx` -0.12 -0.14 -0.06 / -0.12 -0.03 -0.02 / -0.19 -0.06 -0.05 | PASS: `visx` -> `final2` +0.05 +0.14 +0.05 / +0.16 0.00 0.00 / +0.08 +0.01 0.00 (max +0.16 < 0.5); against `base2` the largest is +0.04 |
+| 6 pixels | PASS: `base3` -> `visx3` -0.12 -0.14 -0.06 / -0.12 -0.02 -0.02 / -0.19 -0.06 -0.04 | PASS: `visx3` -> `final3` +0.05 +0.14 +0.05 / +0.16 0.00 0.00 / +0.08 +0.01 0.00 (max +0.16 < 0.5); against `base3` the largest is +0.04 |
 
 Measured before the rebase and kept on record (arms on `b26d9f3c`, `scores.txt`): `vis1_noglass` (RENDER bits only) lost the
 original's Glass draws (new MISSING Glass row, matched 194 -> 186); `vis` (with the glass pass, no brake input) fails rules
@@ -123,13 +124,14 @@ flat-soup sampler; (g) Atmos / Storm stays unported (no cited row).
 
 ```
 mashedmod\build.bat          (set MASHED_NO_DEPLOY=1; one build at a time)
-py -3.12 verify\carlod_20261016\run_all.py <exe_base> <exe_new>      (the rebased campaign: base2, final2, visx, visoff, nolagx, G-CTRL)
+py -3.12 verify\carlod_20261016\run_all.py <exe_base> <exe_new>      (the campaign: base3, final3, visx3, visoff3, nolag3, G-CTRL)
 py -3.12 verify\carlod_20261016\run_arm.py <exe> <arm> [--tracks training,arctic,city] [--no-brake] [KNOB=V ...]
 py -3.12 verify\carlod_20261016\rowdelta.py <before arm> <after arm>
 py -3.12 verify\carlod_20261016\vis_check.py ; env_lag_live.py ; env_lag_test.py ; state_lag_test.py ; bsp_layout_check.py
 py -3.12 verify\carlod_20261016\brake_from_draws.py ; collect_evidence.py
 ```
 
-Arms on `0020d521`: `base2`, `visx`, `visoff`, `nolagx`, `final2` (all defaults). Arms on `b26d9f3c`: `base`, `vis1_noglass`, `vis`,
+Arms on the merged tip (base `9420dde2`): `base3`, `visx3`, `visoff3`, `nolag3`, `final3` (all defaults). Arms on `0020d521`:
+`base2`, `visx`, `visoff`, `nolagx`, `final2` (same results, same G-CTRL). Arms on `b26d9f3c`: `base`, `vis1_noglass`, `vis`,
 `visb`, `visb_off`, `visb_env`, `venv`, `venv_nolag`, `visb2`, `venv2`, `final`. Raw runs, BMPs and the frozen exes are under
 `log/carlod/` (not committed).

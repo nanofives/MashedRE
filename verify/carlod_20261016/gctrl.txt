@@ -31,3 +31,19 @@ GCTRL DONE
     gctrl_final2.gates.csv  lines=56153  sha8=2a2afda1
     gctrl_final2.ptrace.log  lines=28076  sha8=ba90ed88
 GCTRL DONE
+G-CTRL merged tip: base3 and final3 both 716cb2fd / 2a2afda1 / ba90ed88
+
+=== gctrl_base3  exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\carlod\exe_base3\mashed_re.exe  knobs=[] ===
+    pid=360
+    exit=0  self_exited=True
+    gctrl_base3.step.csv  lines=18664  sha8=716cb2fd
+    gctrl_base3.gates.csv  lines=56153  sha8=2a2afda1
+    gctrl_base3.ptrace.log  lines=28076  sha8=ba90ed88
+GCTRL DONE
+=== gctrl_final3  exe=C:\Users\maria\Desktop\Proyectos\Mashed\log\carlod\exe_final3\mashed_re.exe  knobs=[] ===
+    pid=16592
+    exit=0  self_exited=True
+    gctrl_final3.step.csv  lines=18664  sha8=716cb2fd
+    gctrl_final3.gates.csv  lines=56153  sha8=2a2afda1
+    gctrl_final3.ptrace.log  lines=28076  sha8=ba90ed88
+GCTRL DONE

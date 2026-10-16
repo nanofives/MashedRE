@@ -273,3 +273,13 @@ rebased and every number that decides a default was re-measured on the rebased t
   amendments 4-6: F-VIS `visx` against `base2`, F-ENV `final2` against `visx` with pixels read incrementally.
 - Measurement hygiene: two builds must not run at once (a nested worktree made the base build write into this
   worktree's `build\obj`); the rebased campaign is `run_all.py`, one standalone run at a time.
+
+### Amendment 8 (merge of `9420dde2`; written after the merged-tip arms were read; no rule changes)
+
+While the rebased campaign was being written up, `race/first-frame-parity` moved again to `9420dde2` (rprops, rstates,
+rfx and d2posmodel merges; 331 files). Merging it into this branch changed no code of this lane: the merge only
+conflicted in `UNCERTAINTIES.md` and `re/analysis/CHANGELOG.md`, where upstream took U-9698..U-9702, so this lane's
+uncertainty row is **U-9703** (renumbered from U-9699 in this merge). The default-deciding arms were re-run on the merged
+tip (`base3` = clean `9420dde2`, `final3`, `visx3`, `visoff3`, `nolag3`, G-CTRL on both). Results match the earlier ones in
+every rule: rows 78/77/77, 78/77/77, 128/126/124 -> 73/72/72, 73/72/73, 123/121/121, 0 RED, controls equal, G-CTRL
+`716cb2fd / 2a2afda1 / ba90ed88` unchanged. The earlier arms stay on record.

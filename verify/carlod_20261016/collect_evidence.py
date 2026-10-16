@@ -19,8 +19,9 @@ HERE = Path(__file__).resolve().parent
 LOG = Path(r"C:\Users\maria\Desktop\Proyectos\Mashed\log\carlod")
 EV = HERE / "evidence"
 ARMS = ["base", "vis1_noglass", "vis", "visb", "visb_off", "visb_env", "venv", "venv_nolag", "visb2", "venv2", "final"]   # on b26d9f3c (pre-rebase)
+ARMS3 = ["base3", "visx3", "visoff3", "nolag3", "final3"]                                                          # on 9420dde2 (merged tip)
 ARMS2 = ["base2", "visx", "visoff", "nolagx", "final2"]                                                            # on 0020d521 (rebased)
-PAIRS = [("base2", "visx"), ("base2", "visoff"), ("visx", "final2"), ("final2", "nolagx"), ("base2", "final2"), ("base", "visb"), ("base", "visb_off"), ("visb", "visb_env"), ("visb", "venv"), ("visb", "visb2"),
+PAIRS = [("base3", "visx3"), ("base3", "visoff3"), ("visx3", "final3"), ("final3", "nolag3"), ("base3", "final3"), ("base2", "visx"), ("base2", "visoff"), ("visx", "final2"), ("final2", "nolagx"), ("base2", "final2"), ("base", "visb"), ("base", "visb_off"), ("visb", "visb_env"), ("visb", "venv"), ("visb", "visb2"),
          ("visb2", "venv2"), ("venv2", "final"), ("visb_env", "venv_nolag"), ("base", "final")]
 FRAMES = [("training", 884), ("training", 924), ("training", 959), ("arctic", 1051), ("arctic", 1091), ("arctic", 1126),
           ("city", 761), ("city", 801), ("city", 836)]
@@ -28,7 +29,7 @@ FRAMES = [("training", 884), ("training", 924), ("training", 959), ("arctic", 10
 
 def main():
     EV.mkdir(exist_ok=True)
-    for a in ARMS + ARMS2:
+    for a in ARMS + ARMS2 + ARMS3:
         s = LOG / a / "summary.txt"
         if s.exists():
             shutil.copy2(s, EV / f"summary_{a}.txt")
@@ -44,6 +45,10 @@ def main():
     fd2.mkdir(exist_ok=True)
     for j in sorted((LOG / "final2").glob("diff_*.json")):
         shutil.copy2(j, fd2 / j.name)
+    fd3 = EV / "final_diffs_final"
+    fd3.mkdir(exist_ok=True)
+    for j in sorted((LOG / "final3").glob("diff_*.json")):
+        shutil.copy2(j, fd3 / j.name)
     # scores table
     import re
     pat = re.compile(r"^(\w+)\s+(\d+)\s+rows\s+(\d+)\s+red\s+(\d+).*?pix\s+([\d.]+)")
@@ -75,6 +80,17 @@ def main():
     for t_, k_ in FRAMES:
         out2.append(f"{t_ + '_' + str(k_):<14}" + "".join(f"{table.get((a, t_, k_), '-'):>14}" for a in cols2))
     (HERE / "scores_rebased.txt").write_text("\n".join(out2) + "\n")
+    cols3 = [a for a in ARMS3 if (LOG / a / "summary.txt").exists()]
+    for a in cols3:
+        for ln in (LOG / a / "summary.txt").read_text().splitlines():
+            m = pat.match(ln)
+            if m:
+                table[(a, m.group(1), int(m.group(2)))] = f"{m.group(3)}({m.group(4)})/{m.group(5)}"
+    out3 = ["merged tip (base 9420dde2): rows (red) / pixel mean abs diff vs the original", ""]
+    out3.append(f"{'frame':<14}" + "".join(f"{a:>14}" for a in cols3))
+    for t_, k_ in FRAMES:
+        out3.append(f"{t_ + '_' + str(k_):<14}" + "".join(f"{table.get((a, t_, k_), '-'):>14}" for a in cols3))
+    (HERE / "scores_final.txt").write_text("\n".join(out3) + "\n")
     if (LOG / "base" / "summary_arctic_city.txt").exists():
         shutil.copy2(LOG / "base" / "summary_arctic_city.txt", EV / "summary_base_arctic_city.txt")    # vislog extract
     rows = []
