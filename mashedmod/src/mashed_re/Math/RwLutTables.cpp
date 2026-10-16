@@ -77,5 +77,37 @@ float LutNormalize(float* out, const float* in) {
     return len;
 }
 
+// LUT form of RwV3dLength (the body is Race/RaceCamera.cpp's Vec3Mag, which keeps the exact
+// fallback; this helper is the arithmetic the original runs at 0x004c3ac0): 0x004c3ac4..0x004c3ada
+// form (x*x + y*y) + z*z in ST and store it
+// as a dword (0x004c3adc); zero returns 0 (0x004c3aec); otherwise the same LUT sqrt as 0x004c3b30
+// (0x004c3af2..0x004c3b17). PC_24 caller (the race loop), so float arithmetic is the original's.
+// [d2lateral 2026-10-16] bit-exact against the original's +0x9e4 refresh on two captured rows
+// (verify/d2lateral_20261016/PREREG_d2lateral.md A2.2).
+float LutLength(const float* v) {
+    const float mag2 = (v[0] * v[0] + v[1] * v[1]) + v[2] * v[2];
+    return LutSqrt(mag2);
+}
+
+// The 2-D normalize the original runs at 0x004c3c60 (decomp: local_8 = p[1]*p[1] + p[0]*p[0] stored as a
+// float; both LUTs indexed by (bits + 0x800) >> 12; out = (scale * p[0], p[1] * scale)); the degenerate-length
+// error report (FUN_004d7ff0 / FUN_004d8480) changes no output and is omitted. Returns the length.
+// [gridyaw 2026-10-16] FUN_00408b00's grid yaw runs its record direction through this: on Training's node 0 the
+// LUT inverse sqrt of 1.0001527 is exactly 1.0, which is what lets the dot clamp to -1 and the yaw be 180.0
+// (verify/gridyaw_20261016/PREREG_gridyaw.md A1.2).
+float LutNormalize2D(float* out, const float* in) {
+    const float mag2 = in[1] * in[1] + in[0] * in[0];
+    float len = 0.0f, scale = 0.0f;
+    const std::uint32_t b = Bits(mag2);
+    if (b != 0u) {
+        const std::uint32_t biased = b + 0x800u;
+        len   = FromBits(T().sqrt_[(biased >> 12) & 0xfffu] + ((biased >> 1) & 0x3fc00000u));
+        scale = FromBits(T().inv_[(biased >> 12) & 0xfffu] + ((~biased >> 1) & 0x3fc00000u));
+    }
+    out[0] = scale * in[0];
+    out[1] = in[1] * scale;
+    return len;
+}
+
 }  // namespace Math
 }  // namespace mashed_re

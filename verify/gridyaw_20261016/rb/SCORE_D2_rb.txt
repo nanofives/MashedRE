@@ -1,0 +1,92 @@
+== D2_DEF_1
+   D2: slip1500=0.1905 in slip2000=0.2521 in drvmed=1883.9100 OUT  n=('346', '573', '1330')
+   recovery: 398/400 (99.5 %) median 1362.8  H1 PASS | +0xb14 engages d=15 | best lag L=0 at 0.19 %
+   order: marker line None, release line 0, series[0] at line 1 (bf4=3000 bf8=2 st=[1,1,1,1]), series[1] at line 2 (bf4=2800 bf8=2 st=[1,1,1,1])
+== D2_DFX_1
+   D2: slip1500=0.1905 in slip2000=0.2521 in drvmed=1883.9100 OUT  n=('346', '573', '1330')
+   recovery: 398/400 (99.5 %) median 1362.8  H1 PASS | +0xb14 engages d=15 | best lag L=0 at 0.19 %
+   order: marker line None, release line 0, series[0] at line 1 (bf4=3000 bf8=2 st=[1,1,1,1]), series[1] at line 2 (bf4=2800 bf8=2 st=[1,1,1,1])
+== D2_R_1
+   D2: slip1500=0.1939 in slip2000=0.2637 OUT drvmed=1681.0000 OUT  n=('154', '177', '545')
+   recovery: 9/400 (2.2 %) median 21.6  H1 FAIL | +0xb14 engages d=15 | best lag L=0 at 0.04 %
+   order: marker line None, release line 0, series[0] at line 1 (bf4=3000 bf8=2 st=[1,1,1,1]), series[1] at line 2 (bf4=2800 bf8=2 st=[1,1,1,1])
+== D2_R_2
+   D2: slip1500=0.1939 in slip2000=0.2637 OUT drvmed=1689.4100 OUT  n=('157', '178', '549')
+   recovery: 9/400 (2.2 %) median 21.6  H1 FAIL | +0xb14 engages d=15 | best lag L=0 at 0.04 %
+   order: marker line None, release line 0, series[0] at line 1 (bf4=3000 bf8=2 st=[1,1,1,1]), series[1] at line 2 (bf4=2800 bf8=2 st=[1,1,1,1])
+== D2_R_3
+   D2: slip1500=0.1939 in slip2000=0.2637 OUT drvmed=1689.4100 OUT  n=('157', '178', '549')
+   recovery: 9/400 (2.2 %) median 21.6  H1 FAIL | +0xb14 engages d=15 | best lag L=0 at 0.04 %
+   order: marker line None, release line 0, series[0] at line 1 (bf4=3000 bf8=2 st=[1,1,1,1]), series[1] at line 2 (bf4=2800 bf8=2 st=[1,1,1,1])
+== D2_G_1
+   D2: slip1500=0.2007 OUT slip2000=0.2627 OUT drvmed=1759.1000 OUT  n=('121', '176', '457')
+   recovery: 399/400 (99.8 %) median 1521.5  H1 PASS | +0xb14 engages d=15 | best lag L=0 at 0.20 %
+   order: marker line None, release line 0, series[0] at line 1 (bf4=3000 bf8=2 st=[1,1,1,1]), series[1] at line 2 (bf4=2800 bf8=2 st=[1,1,1,1])
+== D2_G_2
+   D2: slip1500=0.2007 OUT slip2000=0.2627 OUT drvmed=1759.1000 OUT  n=('121', '176', '457')
+   recovery: 399/400 (99.8 %) median 1521.5  H1 PASS | +0xb14 engages d=15 | best lag L=0 at 0.20 %
+   order: marker line None, release line 0, series[0] at line 1 (bf4=3000 bf8=2 st=[1,1,1,1]), series[1] at line 2 (bf4=2800 bf8=2 st=[1,1,1,1])
+== D2_G_3
+   D2: slip1500=0.2007 OUT slip2000=0.2627 OUT drvmed=1759.1000 OUT  n=('121', '176', '457')
+   recovery: 399/400 (99.8 %) median 1521.5  H1 PASS | +0xb14 engages d=15 | best lag L=0 at 0.20 %
+   order: marker line None, release line 0, series[0] at line 1 (bf4=3000 bf8=2 st=[1,1,1,1]), series[1] at line 2 (bf4=2800 bf8=2 st=[1,1,1,1])
+== D2_GR_1
+   D2: slip1500=0.1926 in slip2000=0.2569 OUT drvmed=1953.7200 in  n=('308', '622', '1317')
+   recovery: 398/400 (99.5 %) median 1352.3  H1 PASS | +0xb14 engages d=15 | best lag L=0 at 0.05 %
+   order: marker line None, release line 0, series[0] at line 1 (bf4=3000 bf8=2 st=[1,1,1,1]), series[1] at line 2 (bf4=2800 bf8=2 st=[1,1,1,1])
+== D2_GR_2
+   D2: slip1500=0.1926 in slip2000=0.2569 OUT drvmed=1953.7200 in  n=('308', '622', '1317')
+   recovery: 398/400 (99.5 %) median 1352.3  H1 PASS | +0xb14 engages d=15 | best lag L=0 at 0.05 %
+   order: marker line None, release line 0, series[0] at line 1 (bf4=3000 bf8=2 st=[1,1,1,1]), series[1] at line 2 (bf4=2800 bf8=2 st=[1,1,1,1])
+== D2_GR_3
+   D2: slip1500=0.1926 in slip2000=0.2572 OUT drvmed=1953.6000 in  n=('308', '619', '1314')
+   recovery: 398/400 (99.5 %) median 1352.3  H1 PASS | +0xb14 engages d=15 | best lag L=0 at 0.05 %
+   order: marker line None, release line 0, series[0] at line 1 (bf4=3000 bf8=2 st=[1,1,1,1]), series[1] at line 2 (bf4=2800 bf8=2 st=[1,1,1,1])
+== D2_W_1
+   D2: slip1500=0.1890 in slip2000=0.2476 in drvmed=1912.0100 in  n=('363', '638', '1419')
+   recovery: 398/400 (99.5 %) median 1362.7  H1 PASS | +0xb14 engages d=15 | best lag L=0 at 0.19 %
+   order: marker line None, release line 0, series[0] at line 1 (bf4=3000 bf8=2 st=[1,1,1,1]), series[1] at line 2 (bf4=2800 bf8=2 st=[1,1,1,1])
+== D2_WFX_1
+   D2: slip1500=0.1880 OUT slip2000=0.2500 in drvmed=1890.2500 OUT  n=('355', '614', '1387')
+   recovery: 398/400 (99.5 %) median 1362.7  H1 PASS | +0xb14 engages d=15 | best lag L=0 at 0.19 %
+   order: marker line None, release line 0, series[0] at line 1 (bf4=3000 bf8=2 st=[1,1,1,1]), series[1] at line 2 (bf4=2800 bf8=2 st=[1,1,1,1])
+== D2_WR_1
+   D2: slip1500=0.1955 in slip2000=0.2549 OUT drvmed=1812.9800 OUT  n=('114', '182', '448')
+   recovery: 9/400 (2.2 %) median 28.4  H1 FAIL | +0xb14 engages d=15 | best lag L=0 at 0.04 %
+   order: marker line None, release line 0, series[0] at line 1 (bf4=3000 bf8=2 st=[1,1,1,1]), series[1] at line 2 (bf4=2800 bf8=2 st=[1,1,1,1])
+== D2_WR_2
+   D2: slip1500=0.1955 in slip2000=0.2549 OUT drvmed=1812.9800 OUT  n=('114', '182', '448')
+   recovery: 9/400 (2.2 %) median 28.4  H1 FAIL | +0xb14 engages d=15 | best lag L=0 at 0.04 %
+   order: marker line None, release line 0, series[0] at line 1 (bf4=3000 bf8=2 st=[1,1,1,1]), series[1] at line 2 (bf4=2800 bf8=2 st=[1,1,1,1])
+== D2_WR_3
+   D2: slip1500=0.1955 in slip2000=0.2549 OUT drvmed=1812.9800 OUT  n=('114', '182', '448')
+   recovery: 9/400 (2.2 %) median 28.4  H1 FAIL | +0xb14 engages d=15 | best lag L=0 at 0.04 %
+   order: marker line None, release line 0, series[0] at line 1 (bf4=3000 bf8=2 st=[1,1,1,1]), series[1] at line 2 (bf4=2800 bf8=2 st=[1,1,1,1])
+== D2_WG_1
+   D2: slip1500=0.2007 OUT slip2000=0.2634 OUT drvmed=1758.2500 OUT  n=('121', '175', '459')
+   recovery: 399/400 (99.8 %) median 1485.2  H1 PASS | +0xb14 engages d=15 | best lag L=0 at 0.20 %
+   order: marker line None, release line 0, series[0] at line 1 (bf4=3000 bf8=2 st=[1,1,1,1]), series[1] at line 2 (bf4=2800 bf8=2 st=[1,1,1,1])
+== D2_WG_2
+   D2: slip1500=0.2007 OUT slip2000=0.2634 OUT drvmed=1758.2500 OUT  n=('121', '175', '459')
+   recovery: 399/400 (99.8 %) median 1485.2  H1 PASS | +0xb14 engages d=15 | best lag L=0 at 0.20 %
+   order: marker line None, release line 0, series[0] at line 1 (bf4=3000 bf8=2 st=[1,1,1,1]), series[1] at line 2 (bf4=2800 bf8=2 st=[1,1,1,1])
+== D2_WG_3
+   D2: slip1500=0.2007 OUT slip2000=0.2634 OUT drvmed=1758.2500 OUT  n=('121', '175', '459')
+   recovery: 399/400 (99.8 %) median 1485.2  H1 PASS | +0xb14 engages d=15 | best lag L=0 at 0.20 %
+   order: marker line None, release line 0, series[0] at line 1 (bf4=3000 bf8=2 st=[1,1,1,1]), series[1] at line 2 (bf4=2800 bf8=2 st=[1,1,1,1])
+== D2_WGR_1
+   D2: slip1500=0.1917 in slip2000=0.2557 OUT drvmed=1976.5100 in  n=('302', '655', '1342')
+   recovery: 398/400 (99.5 %) median 1351.6  H1 PASS | +0xb14 engages d=15 | best lag L=0 at 0.05 %
+   order: marker line None, release line 0, series[0] at line 1 (bf4=3000 bf8=2 st=[1,1,1,1]), series[1] at line 2 (bf4=2800 bf8=2 st=[1,1,1,1])
+== D2_WGR_2
+   D2: slip1500=0.1917 in slip2000=0.2557 OUT drvmed=1979.1300 in  n=('302', '655', '1339')
+   recovery: 398/400 (99.5 %) median 1351.6  H1 PASS | +0xb14 engages d=15 | best lag L=0 at 0.05 %
+   order: marker line None, release line 0, series[0] at line 1 (bf4=3000 bf8=2 st=[1,1,1,1]), series[1] at line 2 (bf4=2800 bf8=2 st=[1,1,1,1])
+== D2_WGR_3
+   D2: slip1500=0.1917 in slip2000=0.2557 OUT drvmed=1980.4300 in  n=('302', '655', '1338')
+   recovery: 398/400 (99.5 %) median 1351.6  H1 PASS | +0xb14 engages d=15 | best lag L=0 at 0.05 %
+   order: marker line None, release line 0, series[0] at line 1 (bf4=3000 bf8=2 st=[1,1,1,1]), series[1] at line 2 (bf4=2800 bf8=2 st=[1,1,1,1])
+== D2_WGRFX_1
+   D2: slip1500=0.1917 in slip2000=0.2557 OUT drvmed=1979.1300 in  n=('302', '655', '1339')
+   recovery: 398/400 (99.5 %) median 1351.6  H1 PASS | +0xb14 engages d=15 | best lag L=0 at 0.05 %
+   order: marker line None, release line 0, series[0] at line 1 (bf4=3000 bf8=2 st=[1,1,1,1]), series[1] at line 2 (bf4=2800 bf8=2 st=[1,1,1,1])
