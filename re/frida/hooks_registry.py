@@ -10195,9 +10195,12 @@ HOOKS = {
             [0, 0xDEADBEEF],
             [0, 0],
         ],
+        # {'scalars': [...]} shape: verify_hook_install_template.js callFn applies input.scalars; a bare [0, 1]
+        # fell through to fn(input) and died "bad argument count" before the function was entered
+        # (fwd494fd0 2026-10-16, found re-earning this row on the consolidated body).
         'path2_tests': [
-            [0, 1],
-            [0, 0],
+            {'scalars': [0, 1]},
+            {'scalars': [0, 0]},
         ],
     },
 

@@ -193,8 +193,8 @@ static void ManifestLine(const char* path, std::size_t idx,
 //                                    match — names case-sensitive, RVA tokens
 //                                    case-insensitive; substring matching removed
 //                                    2026-07-03 after "AiPreTick" inside
-//                                    "AbAiPreTick" co-installed two hooks at
-//                                    0x004177b0). This is how a C4 batch installs
+//                                    "AbAiPreTick" co-installed two hooks at the
+//                                    address 0x004177b0). This is how a C4 batch installs
 //                                    just its candidate set live (inline-JMP)
 //                                    while every other function stays original ->
 //                                    a clean per-hook "modded vs original"

@@ -1,0 +1,9 @@
+[only_slotstate] pid=4388 detach=False only=CarSlotStateSet noauto=False
+  [save] reads pinned to gamesave.bin.refbak_20260830; writes -> C:\Users\maria\AppData\Local\Temp\run_diff_gamesave_4388.bin
+  [nav] booting to menu...
+  [nav] timeout: d3 depth=2 phase=3
+  [nav] timeout: d3 depth=2 phase=3
+  [nav] in race? phase=0 (YES)
+[only_slotstate] drive_to_race=True err=None after 26s  proc.poll()=None
+[only_slotstate] frida detached events=[]
+

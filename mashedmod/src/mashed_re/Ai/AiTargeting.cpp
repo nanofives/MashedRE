@@ -2,9 +2,9 @@
 //
 // Verbatim ports of clean, isolatable leaves of the FUN_00418860 AI cluster:
 //   0x004161e0  AiSplineTargetInit  seed target point from own XZ -> FUN_00443dc0
-//   0x0046d510  AiVehicleVelocity3  per-vehicle velocity float3 getter
 // (FUN_00416060 AiLineOfSight and FUN_00415d00 AiWallAhead were also ported here first;
-// their one-body-per-RVA copies are Ai/AiLineOfSight.cpp and Ai/AiWallAhead.cpp, see below.)
+// their one-body-per-RVA copies are Ai/AiLineOfSight.cpp and Ai/AiWallAhead.cpp, see below.
+// The FUN_0046d510 velocity getter that was ported here too is Ai/VehicleVelocityWorldGet.cpp now.)
 //
 // NOT ported (stays called-by-RVA): FUN_004150e0 (wall-lateral query) reads its
 // two args off the x87 FPU stack (void sig + __ftol(ST0) of caller values) — not
@@ -58,11 +58,6 @@ inline void call_0046d4a0(int* out, int v) { reinterpret_cast<fn_ptrget_t>(0x004
 typedef void (__cdecl* fn_443dc0_t)(void*, float*, void*, int, int, int);
 inline void call_00443dc0(void* spline, float* xz, void* outIdx, int v) {
     reinterpret_cast<fn_443dc0_t>(0x00443dc0)(spline, xz, outIdx, v, 1, 0);
-}
-// RW transform-points (0x004c3df0): f(dst, src, 1, matrix).
-typedef void (__cdecl* fn_4c3df0_t)(void*, void*, int, void*);
-inline void call_004c3df0(void* dst, void* src, void* mtx) {
-    reinterpret_cast<fn_4c3df0_t>(0x004c3df0)(dst, src, 1, mtx);
 }
 
 // Track tile grid (cited at 0x00416060 / 0x004150e0): 128x128 shorts at 0x007f1a9c,
@@ -234,43 +229,21 @@ __declspec(naked) void AiSplineTarget_Entry() {
 RH_ScopedInstall(AiSplineTarget_Entry, 0x004161e0);
 
 // ===========================================================================
-// 0x0046d510  AiVehicleVelocity3(outVec3, vehicleIdx) -> 1 ok / 0 OOB
+// AiVehicleVelocity3 (the FUN_0046d510 velocity getter) lived here until 2026-10-16. Its one body
+// is Ai/VehicleVelocityWorldGet.cpp (VehicleVelocityWorldGet), the only installer, in BOTH
+// build targets (this TU is .asi-only), hooks.csv's C3 row and hooks_registry's
+// vehicle_velocity_world_get both point there.
 //
-// Transforms the per-vehicle velocity (0x00881ec8 + v*0xd04) by 0x00614708 into
-// 0x00881f74 + v*0xd04, then copies that float3 out. Cited: 0x0046d510 body.
-//   0x00881f74 stride 0x341 dwords (= 0xd04 bytes); 0x0f index bound.
+// History: it had TWO RH_ScopedInstall calls (this one and VehicleVelocityWorldGet), so whichever ran
+// last silently won the site (U-9065 class, found 2026-09-01 by area/vehicle r5's pre-queue grep, installer
+// removed then). The two bodies were FUNCTIONALLY IDENTICAL: this one's helper
+// call_004c3df0(dst, src, mtx) forwarded (dst, src, 1, mtx) and was called as
+// (vel, 0x00614708, 0x00881ec8+off), i.e. (vel, matrix, 1, struct), which is exactly what
+// VehicleVelocityWorldGet passes. It had no callers (grep over mashedmod/, re/frida, re/tools, scripts/: only
+// comments and the generated scripts/ghidra/*.json inventory dumps name it), so the dead body and its
+// helper were deleted (fwd494fd0, allowlist DUP-IN-TARGET 0046d510 removed).
+// The call-through further down (call_0046d510) goes to the original VA, which the .asi has hooked.
 // ===========================================================================
-extern "C" __declspec(dllexport)
-std::uint32_t __cdecl AiVehicleVelocity3(std::uint32_t* param_1, std::uint32_t param_2)
-{
-    if (0xf < param_2) return 0;
-    std::uintptr_t off = static_cast<std::uintptr_t>(param_2) * 0xd04u;
-    call_004c3df0(reinterpret_cast<void*>(0x00881f74u + off),
-                  reinterpret_cast<void*>(0x00614708u),
-                  reinterpret_cast<void*>(0x00881ec8u + off));
-    param_1[0] = U32(0x00881f74u + off);
-    param_1[1] = U32(0x00881f78u + off);
-    param_1[2] = U32(0x00881f7cu + off);
-    return 1;
-}
-
-// INSTALLER REMOVED 2026-09-01 (U-9065 class, found by area/vehicle r5's pre-queue grep).
-// 0x0046d510 had TWO RH_ScopedInstall calls: this one and VehicleVelocityWorldGet
-// (Ai/VehicleVelocityWorldGet.cpp:54). Whichever ran last silently won the site, which is
-// exactly the defect that left 0x004277a0 bit-identical and never installed.
-// VehicleVelocityWorldGet is the keeper on three independent grounds: hooks.csv points its
-// C3 row at that file, hooks_registry's vehicle_velocity_world_get maps the RVA to that
-// export, and its TU is in BOTH build.bat and asi_sources.rsp (this one is .asi-only), so it
-// is the body that reaches the standalone exe.
-// The two bodies are FUNCTIONALLY IDENTICAL - verified, not assumed. This one's helper
-// call_004c3df0(dst, src, mtx) forwards (dst, src, 1, mtx) and is called here as
-// (vel, 0x00614708, 0x00881ec8+off), yielding (vel, matrix, 1, struct); VehicleVelocityWorldGet
-// passes (vel, matrix, 1, struct) directly. Same call, so removing this installer changes no
-// behaviour. NOTE the helper's parameter NAMES at line 53 are misleading - its second
-// parameter receives the matrix and its third the source - which is what made the two look
-// divergent at a glance.
-// AiVehicleVelocity3 has no internal callers and is left defined but uninstalled.
-// RH_ScopedInstall(AiVehicleVelocity3, 0x0046d510);  // <- do not re-enable
 
 // ---------------------------------------------------------------------------
 // More call-throughs for the steering + wall-ahead leaves.

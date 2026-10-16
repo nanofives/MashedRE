@@ -1,0 +1,15 @@
+[
+ {
+  "name": "path2_car_slot_state_set",
+  "timeout": 300,
+  "cmd": [
+   "py",
+   "-3.12",
+   "re/frida/run_verify_hook.py",
+   "car_slot_state_set"
+  ],
+  "env": {
+   "MASHED_VERIFY_ASI": "{ASI}"
+  }
+ }
+]

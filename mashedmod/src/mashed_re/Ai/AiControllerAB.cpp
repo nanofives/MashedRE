@@ -68,7 +68,8 @@
 #include <cstdlib>
 #include <cstring>
 
-// Ported functions under test (AiController.cpp, AiControlStep.cpp, AiPreTick.cpp).
+// Ported functions under test (AiController.cpp, AiControlStep.cpp, AiPreTick.cpp, and AiBankSwitch.cpp,
+// the ONE body of FUN_00417180 that both targets compile since 2026-10-16: MINE here is the very body the exe runs).
 extern "C" {
 void __cdecl AiPostStepPowerupBrake(int param_1, std::uint8_t* param_2);
 void __cdecl AiVehicleStep(int param_1);
@@ -243,7 +244,7 @@ void LayoutLogOnce(const char* path, long* onceFlag) {
     AbLog(path, "\r\n");
 }
 
-// ── 0x00417640 AbAiPost ─────────────────────────────────────────────────────
+// ── AbAiPost (A/B driver installed AT 0x00417640; harness, not a port body) ─────
 // Write surface of FUN_00417640 = param_2[4], param_2[5] ONLY (plate
 // re/analysis/ai_update/0x00417640.md; port AiController.cpp). Gate coverage
 // counted via the same pure getter the function calls (FUN_00426c00==0x21).
@@ -393,7 +394,7 @@ void __cdecl AbAiPost(int v, std::uint8_t* ctrl) {
     }
 }
 
-// ── 0x00418560 AbAiVehStep ──────────────────────────────────────────────────
+// ── AbAiVehStep (A/B driver installed AT 0x00418560; harness, not a port body) ───
 // On a first-attempt diff the pair is RETRIED once from the same restored
 // pre-call state: a genuine transcription bug reproduces deterministically
 // (identical inputs incl. restored RNG ring); a cross-thread RNG race inside
@@ -464,7 +465,7 @@ void __cdecl AbAiVehStep(int v) {
     }
 }
 
-// ── 0x00418860 AbAiTick ─────────────────────────────────────────────────────
+// ── AbAiTick (A/B driver installed AT 0x00418860; harness, not a port body) ──────
 // Same retry-once discipline as AbAiVehStep (see comment there).
 const char* kTickLog = "ai_ab_tick.log";
 long g_tickCalls = 0, g_tickMism = 0, g_tickRawMism = 0, g_tickLayoutOnce = 0;
@@ -528,9 +529,9 @@ void __cdecl AbAiTick(void) {
 // Same snapshot windows (BuildSegs(false) + W8) and retry-once discipline as
 // AbAiVehStep. Prologue bytes verified against original\MASHED.exe.unpatched
 // this session:
-//   0x00416250 / 0x00416a30 / 0x00417da0:  55 8b ec 83 e4 f8
-//   0x00417180:  53 55 56 8b 74 24 10
-//   0x004177b0:  83 ec 08 53 55 56
+//   FUN_00416250 / FUN_00416a30 / FUN_00417da0 prologue:  55 8b ec 83 e4 f8
+//   FUN_00417180 prologue:  53 55 56 8b 74 24 10
+//   FUN_004177b0 prologue:  83 ec 08 53 55 56
 // ════════════════════════════════════════════════════════════════════════════
 
 void* g_orig_416256 = reinterpret_cast<void*>(0x00416256);
@@ -646,7 +647,7 @@ void __cdecl AbAiCtlMain(void* s, int v, std::uint8_t* c) { CtlAB(g_ctlMain, &Ai
 void __cdecl AbAiCtl49 (void* s, int v, std::uint8_t* c) { CtlAB(g_ctl49,   &AiControlStepM49, &OrigCtl49,   false, s, v, c); }
 void __cdecl AbAiCtl8  (void* s, int v, std::uint8_t* c) { CtlAB(g_ctl8,    &AiControlStepM8,  &OrigCtl8,    true,  s, v, c); }
 
-// ── 0x00417180 AbAiBank ─────────────────────────────────────────────────────
+// ── AbAiBank (A/B driver installed AT 0x00417180; harness, not a port body) ──────
 const char* kBankLog = "ai_ab_bank.log";
 long g_bankCalls = 0, g_bankMism = 0, g_bankRawMism = 0, g_bankLayoutOnce = 0;
 // Coverage: switch-request branch (0x0089a500+v*0x74 != 0), timer-running
@@ -703,7 +704,7 @@ void __cdecl AbAiBank(int v) {
     }
 }
 
-// ── 0x004177b0 AbAiPreTick ──────────────────────────────────────────────────
+// ── AbAiPreTick (A/B driver installed AT 0x004177b0; harness, not a port body) ───
 const char* kPreLog = "ai_ab_pretick.log";
 long g_preCalls = 0, g_preMism = 0, g_preRawMism = 0, g_preLayoutOnce = 0;
 // Coverage: fd0 histogram cells for the mode-9/mode-4 scaling branches, the
@@ -715,7 +716,7 @@ long g_preFd4 = 0, g_preFd9 = 0, g_preFd8 = 0, g_preFdElse = 0,
 // NAME NOTE: registered as "AbAiPre7b0", NOT "AbAiPreTick" — MASHED_HOOK_ONLY
 // USED TO match by substring, and "AbAiPreTick" CONTAINS the port hook's name
 // "AiPreTick", which made a HOOK_ONLY=AbAiPreTick run install BOTH at
-// 0x004177b0 (the port clobbered the driver; caught 2026-07-02 when the run
+// the address 0x004177b0 (the port clobbered the driver; caught 2026-07-02 when the run
 // produced no log). HookSystem matching is exact-token since 2026-07-03; the
 // name stays "AbAiPre7b0" so existing run recipes keep working.
 void __cdecl AbAiPreTick(void) {

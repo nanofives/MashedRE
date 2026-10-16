@@ -33,19 +33,18 @@
 //               int_scalar derefs an arbitrary int -> AV. Needs a NEW arg_type
 //               that passes a valid in-race entity pointer (e.g. deref a static
 //               vehicle-0 global). Queued.
-//   0x00418860  AiPerFrameTick             — void f(void) AI dispatcher; all
-//               side-effects are inside callees that write DYNAMIC heap state
-//               (FUN_0040e480 writes *(PTR_PTR_005f2770 + idx*4 + 0x34)). No
-//               static global observable exists for void_write_observe /
-//               state_machine_observe (which only snapshot fixed addresses).
-//               Needs a heap-snapshot harness. Queued.
+//
+// REMOVED 2026-10-16 (fwd494fd0, dual-copy burn-down): the verbatim transcription of FUN_00418860
+// AiPerFrameTick that stood here. It was never installed, had no callers, and compiled into BOTH
+// targets as dead code that called original VAs (garbage in mashed_re.exe). Its one body is
+// Ai/AiController.cpp AiTickLoop (installed, A/B-verified by AbAiTick); the exe's tick is
+// Ai/AiStandalone.cpp Ai_Standalone_Tick.
 //
 // Analysis notes:
 //   re/analysis/bucket_util_0040e4b0_0042f790/0x0041c010.md
 //   re/analysis/bucket_util_0040e4b0_0042f790/0x0041d930.md
 //   re/analysis/ai_path_following/0x00423480.md
 //   re/analysis/bucket_powerups_camera_particle_0044d5e0_004b4140/0x0047c160.md
-//   re/analysis/ai_path_following/0x00418860.md
 
 #include "../Core/HookSystem.h"
 #include "../Race/SubStateCallees.h"
@@ -93,27 +92,6 @@ static auto* const s_F004c1b40 =
 // 0x0047bb10  FUN_0047bb10 — per-node compute writing the two output cursors.
 static auto* const s_F0047bb10 =
     reinterpret_cast<void(__cdecl*)(void*, int, void*, void*)>(0x0047bb10);
-// 0x0042f6a0  FUN_0042f6a0 — game-mode/round-type getter (int). [C3]
-static auto* const s_F0042f6a0 =
-    reinterpret_cast<int(__cdecl*)(void)>(0x0042f6a0);
-// 0x0046c7b0  FUN_0046c7b0 — entity alive/present flag getter (idx -> int). [C3]
-static auto* const s_F0046c7b0 =
-    reinterpret_cast<int(__cdecl*)(int)>(0x0046c7b0);
-// 0x0040e480  FUN_0040e480 — entity state-setter (idx, state). [C3]
-static auto* const s_F0040e480 =
-    reinterpret_cast<void(__cdecl*)(int, int)>(0x0040e480);
-// 0x004177b0  FUN_004177b0 — AI pre-tick (race-angle update + rubber-banding). [C2]
-static auto* const s_F004177b0 =
-    reinterpret_cast<void(__cdecl*)(void)>(0x004177b0);
-// 0x0040e470  FUN_0040e470 — vehicle type getter (idx -> int). [C3]
-static auto* const s_F0040e470 =
-    reinterpret_cast<int(__cdecl*)(int)>(0x0040e470);
-// 0x00443080  FUN_00443080 — mode flag getter (int). [C3]
-static auto* const s_F00443080 =
-    reinterpret_cast<int(__cdecl*)(void)>(0x00443080);
-// 0x00418560  FUN_00418560 — per-vehicle AI step (idx, type). [C2]
-static auto* const s_F00418560 =
-    reinterpret_cast<void(__cdecl*)(int, int)>(0x00418560);
 
 // ---------------------------------------------------------------------------
 // Global addresses (cited from the decompilation)
@@ -151,10 +129,6 @@ static const std::uintptr_t k_006c2fe8 = 0x006c2fe8u; // node count
 static const std::uintptr_t k_006c1228 = 0x006c1228u; // node records (stride 0x56 dwords)
 static const std::uintptr_t k_006c27a8 = 0x006c27a8u; // per-node output A
 static const std::uintptr_t k_006c2fa8 = 0x006c2fa8u; // per-node output B/flag
-
-// 0x00801ca0 / 0x007f0fd0 — AI tick guards (NOT-INSTALLED transcription).
-static const std::uintptr_t k_00801ca0 = 0x00801ca0u; // race-lines count guard (>3)
-static const std::uintptr_t k_007f0fd0 = 0x007f0fd0u; // game mode selector
 
 // ---------------------------------------------------------------------------
 // HudConstTableInitAndSweep  --  0x0041c010
@@ -416,61 +390,3 @@ extern "C" __declspec(dllexport) void __cdecl CameraPathNodeContainTest(int para
 
 // NOT installed — verification-blocked (needs a valid-entity-pointer arg_type).
 // RH_ScopedInstall(CameraPathNodeContainTest, 0x0047c160);
-
-// ---------------------------------------------------------------------------
-// AiPerFrameTick  --  0x00418860   (NOT INSTALLED — see header)
-//
-// Original: FUN_00418860 (0x00418860..0x00418977)  void FUN_00418860(void)
-//
-// Verbatim transcription of the per-frame AI dispatcher. Guards on
-// DAT_00801ca0 > 3; gates a vehicle-1..3 state-set block on the game mode
-// (FUN_0042f6a0 in {3,4,5,10}) or DAT_007f0fd0 in {4,9,8,10}; runs the AI
-// pre-tick (FUN_004177b0); then steps each AI vehicle (FUN_00418560).
-//
-// Verification-blocked: a void(void) dispatcher with no direct global write.
-// Its side-effects are entirely inside callees that write DYNAMIC heap state
-// (e.g. FUN_0040e480 writes *(PTR_PTR_005f2770 + idx*4 + 0x34)). There is no
-// static-address observable for void_write_observe, and state_machine_observe
-// only snapshots fixed addresses. Needs a heap-snapshot A/B harness. Queued.
-//
-// ref: re/analysis/ai_path_following/0x00418860.md
-// ---------------------------------------------------------------------------
-
-// 0x00418860
-extern "C" __declspec(dllexport) void __cdecl AiPerFrameTick(void)
-{
-    if (3 < *reinterpret_cast<std::int32_t*>(k_00801ca0)) {
-        int iVar1 = s_F0042f6a0();
-        if ((((iVar1 == 3) || (iVar1 = s_F0042f6a0(), iVar1 == 4)) ||
-             (iVar1 = s_F0042f6a0(), iVar1 == 5)) ||
-            (((iVar1 = s_F0042f6a0(), iVar1 == 10) ||
-              (*reinterpret_cast<std::int32_t*>(k_007f0fd0) == 4)) ||
-             ((*reinterpret_cast<std::int32_t*>(k_007f0fd0) == 9) ||
-              ((*reinterpret_cast<std::int32_t*>(k_007f0fd0) == 8) ||
-               (*reinterpret_cast<std::int32_t*>(k_007f0fd0) == 10))))) {
-            if (s_F0046c7b0(1) == 1) { s_F0040e480(1, 2); }
-            if (s_F0046c7b0(2) == 1) { s_F0040e480(2, 2); }
-            if (s_F0046c7b0(3) == 1) { s_F0040e480(3, 2); }
-        }
-        s_F004177b0();
-        int idx = 0;
-        do {
-            int iVar2 = s_F0040e470(idx);
-            if (((iVar2 != 0) && (iVar2 != 1)) || (s_F00443080() == 1)) {
-                if (s_F0046c7b0(idx) == 1) {
-                    s_F00418560(idx, iVar2);
-                }
-                int iVar3 = s_F0042f6a0();
-                if ((((iVar3 == 3) || (iVar3 = s_F0042f6a0(), iVar3 == 4)) ||
-                     (iVar3 = s_F0042f6a0(), iVar3 == 5)) &&
-                    (*reinterpret_cast<std::int32_t*>(k_007f0fd0) == 7)) {
-                    s_F00418560(0, iVar2);
-                }
-            }
-            idx = idx + 1;
-        } while (idx < 4);
-    }
-}
-
-// NOT installed — verification-blocked (needs a heap-snapshot harness).
-// RH_ScopedInstall(AiPerFrameTick, 0x00418860);

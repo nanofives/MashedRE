@@ -1,0 +1,12 @@
+hook: car_slot_state_set  rva=0x0040e480  export=CarSlotStateSet
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 4576
+  [agent] LUT ready  base=0x2d6a6d0  offset=0x134  root=0x5040680  delta=0  attempts=12
+  [agent] .asi loaded  base=0x5ca50000  CarSlotStateSet@0x5ca86cb0
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\fwd494fd0\log\diff_car_slot_state_set.csv
+  total cases: 10
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.
+

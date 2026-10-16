@@ -2825,6 +2825,24 @@ Named D4 work items (added 2026-09-26, previously implicit):
   survivor is `VehicleCarStateRead` and `CarStatePairGet` in `Util/PromoLoop_round25.cpp` was the one
   deleted. **Item (3) is done: 0 `DUP-INSTALL` entries, 0 findings.** The `DUP-IN-TARGET` entries
   those RVAs also carried went with them (29 + 1 lines, plus 4 stale ones for other RVAs);
+  **Item (2) status 2026-10-16 (`verify/fwd494fd0_20261016/RESULT_fwd494fd0.md` section C):** allowlist
+  **64 -> 56**. The 12 keys that touched the AI area became 4: 8 gone, 3 narrowed to the real pair, and
+  `0x0040e350` skipped (`Vehicle/`). Most of what the scanner counted was not a body: the `AbAi*` A/B drivers,
+  a `push 0x004a2c48 / ret` thunk into the original, a typedef comment and a prose comment were re-anchored
+  (comment edits, no exemption); two dead copies (`AiVehicleVelocity3`, `AiPerFrameTick`) were deleted. Two real
+  pairs were consolidated into one shared TU each, the AiBankSwitch recipe (keep the text the C3 evidence cites,
+  put the calls that differ by target behind `#ifdef MASHED_STANDALONE` thunks, list the TU in BOTH rsp files):
+  `0x0040e480` -> `Ai/CarSlotState.cpp` and `0x00417180` -> `Ai/AiBankSwitch.cpp`, both C3 re-earned on the
+  shared body (path1, path2, the in-process `AbAiBank` driver in a live race, nav boots with the full hook set
+  and with only that hook live), exe G-CTRL `716cb2fd` / `2a2afda1` / `ba90ed88` unchanged. Three stay,
+  none a mechanical merge: `0x00417640` (the exe pins the brake rate to 0.0f and omits `FUN_0046d570`),
+  `0x004177b0` (the exe's whole-function copy `AiPreTickRubberBand` reads race-angle inputs no exe TU
+  writes, an input problem for the race-metric lane), `0x004a2c48` (`static_cast` in `RaceCamera.cpp` against the
+  verbatim x87 body). **The lint under-counts this item**: `AiStandalone.cpp` has no RVA comment above its
+  copies, so the honest measure is `hooks.csv` C3/C4 rows with `exe_file != file`. For the AI area that was 3
+  rows (`0x0040e350`, `0x00417180`, `0x0040e480`); two are closed, `0x0040e350` is `Vehicle/`'s. Every other AI row
+  with `exe_file != file` is already C2. Next in line for the same recipe: `0x00417640` (three thunks: track
+  index, rate, range), then `0x004177b0` once its inputs have producers;
   (4) everything else.
   **Each consolidation re-earns the row's C-level through the normal gates** — the exe copy has no
   evidence of its own, and a copy fixed by reading is a C2-grade statement (`re/CONFIDENCE.md`,

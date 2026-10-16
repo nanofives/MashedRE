@@ -8,6 +8,8 @@
 "Track\TrackData.cpp"
 "D3d9Render\TrackRenderer.cpp"
 "Ai\AiStandalone.cpp"
+"Ai\CarSlotState.cpp"
+"Ai\AiBankSwitch.cpp"
 "Vehicle\ForceIntegrator.cpp"
 "Vehicle\ForceIntegratorStubs.cpp"
 "Vehicle\VehicleControl.cpp"

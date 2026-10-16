@@ -1,0 +1,7 @@
+=== after_a  exe=C:\Users\maria\AppData\Local\Temp\claude\C--Users-maria-Desktop-Proyectos-Mashed\ac86d2bf-66e1-4442-91bf-5ba376af04d1\scratchpad\baseline\mashed_re_after.exe  knobs=[] ===
+    pid=19380
+    exit=0  self_exited=True
+    after_a.step.csv  lines=18664  sha8=716cb2fd
+    after_a.gates.csv  lines=56153  sha8=2a2afda1
+    after_a.ptrace.log  lines=28076  sha8=ba90ed88
+GCTRL DONE
