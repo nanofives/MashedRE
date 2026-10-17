@@ -4970,16 +4970,17 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
                 if (Vehicle::PosModelTrans()) { car_pos_[0] = sio.pos[0]; car_pos_[1] = sio.pos[1]; car_pos_[2] = sio.pos[2]; }
             }
             Vehicle::LaunchRev_Release();
-            // [d3bB2] MASHED_AI_TICK_FIRST: the AI tick of this (GO) frame now runs before UpdateRace, so it would
-            // read path progress from before the settle above. The original runs FUN_0040da50's FUN_00408610 loop
-            // from FUN_0040fc00 (0x0040fc75) on every pre-GO tick, so its first racing AI tick reads the settled
-            // value (o_tg1: player 29.999977 from frame 50). Run the producer once here; every car is still at
-            // rest on this frame, and UpdateRace runs it again below as on every frame.
-            {
-                static const bool s_tickFirstPP = [] { const char* e = std::getenv("MASHED_AI_TICK_FIRST");
-                                                       return e && e[0] == '1'; }();
-                if (s_tickFirstPP) Race::PathProg_FrameTick();
-            }
+        }
+        // [d3bB2] MASHED_AI_TICK_FIRST: the GO frame's AI tick now runs before UpdateRace, so it reads the path
+        // progress the producer left before it. The original runs FUN_0040da50's FUN_00408610 loop from
+        // FUN_0040fc00 (0x0040fc75) on every pre-GO tick, so its first racing AI tick reads converged values
+        // (o_tg1 at rest: 29.999977 / 29.73 / 29.457 / 29.18). Run it on every countdown frame (the GO frame after
+        // the settle and the release above). Measured: run only from the GO frame, the exe's AI rows read 0.0,
+        // then 29.507563 for all three cars, and converge on the third call (verify/d3bB2_20261017 B_SLP_K1).
+        {
+            static const bool s_tickFirstPP = [] { const char* e = std::getenv("MASHED_AI_TICK_FIRST");
+                                                   return e && e[0] == '1'; }();
+            if (s_tickFirstPP) Race::PathProg_FrameTick();
         }
         // [d1r2] The original runs the director on every pre-race frame (sub-states
         // 3/4/5: FUN_0040fc00 -> FUN_0040d470 -> FUN_00446520, main block when cam[7]

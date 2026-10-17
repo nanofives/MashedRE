@@ -145,3 +145,20 @@ Two defects of the lane's own changes, found reading those runs, fixed before an
 Predictions for the re-runs (exe: this amendment's commit, sha8 in RUNLOG): G-NOOP2 / G-NOOP2b as before; G-ORDER under `S`
 car 2's first return 1 at call 23; G-COAST as amendment 1; under `S` car 2's dumped `c1` on k = 23..38 is 255 wherever its
 `ai_mode` is 3 and err is in (180, 330), so the dumped series is comparable with the original's again. (b) report only.
+
+## Amendment 3 (after amendment 2's re-runs, before the final gate suite)
+
+Amendment 2's re-runs (`arms/k3`, exe `04122573`): G-NOOP2 / G-NOOP2b PASS again; determinism PASS (`361fb408` x2);
+G-EVT PASS; **G-COAST PASS** (car 2 heading +0.146 deg per frame on k = 23..31 under `S`, original +0.1475; `S-E` -1.92);
+under `S` car 2's commands equal the original's on every call k = 0..38 except k = 1. **G-ORDER FAILED again**: car 2 still
+returns 1 from `FUN_00414a70` at call 1. Cause, measured with `MASHED_PATHPROG_TRACE` (`B_SLP_K1`): on the first producer
+call the AI rows read 0.0, on the next all three read 29.507563, and they reach the original's at-rest values (29.73 / 29.457 /
+29.18, `o_tg1`) only on the third. Running the producer on every countdown frame under tick-first (this amendment's code) does
+not change it: the exe skips the AI cars in `PathProg_FrameTick` through the whole countdown (`VehicleSlotGetter`, 0x0046c7b0,
+is not 1 for them before their first racing step). That is an exe initialization gap, recorded, not fixed here.
+
+Final gate suite on this amendment's build (no new predictions beyond section 2 and amendment 1; the rule of section 3 decides):
+`H_DEF` x2 (G-CTRL `4c81db89 / aa03f7ae / 7d3af534`), `H_CC` x2, `H_CCET`; D2 x3 alone for `CC` and `CCET` (in the
+`d81a8df6` bounds, H1 >= 398/400); 13 tracks for the default, `CC` and `CCET` (870 rows, 0 RED expected for the default; the
+knob arms report rows and REDs); (b) on every ring phase for `CC` (done on `f0ee223b`, code unchanged since), and on K0 / K1 /
+K26 for `E`, `T`, `CCE`, `CCET`, `S`, `S-E`, `S-T`.
