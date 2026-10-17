@@ -807,9 +807,15 @@ void RunReplay(const char* path);
 
 }  // namespace
 
-bool Pontoon_CarryOn() { static const bool on = Env("MASHED_PONTOON_CARRY"); return on; }
-bool Pontoon_StateOn() { static const bool on = Pontoon_CarryOn() || Env("MASHED_PONTOON_STATE"); return on; }
-bool Pontoon_AnimOn()  { static const bool on = Pontoon_StateOn() || Env("MASHED_PONTOON_ANIM"); return on; }
+// [dflip 2026-10-17] default ON; an opt-out also turns off every knob that implies it.
+namespace {
+bool NoAnim()  { return Env("MASHED_NO_PONTOON_ANIM"); }
+bool NoState() { return NoAnim() || Env("MASHED_NO_PONTOON_STATE"); }
+bool NoCarry() { return NoState() || Env("MASHED_NO_PONTOON_CARRY"); }
+}  // namespace
+bool Pontoon_CarryOn() { static const bool on = Env("MASHED_PONTOON_CARRY") || !NoCarry(); return on; }
+bool Pontoon_StateOn() { static const bool on = Pontoon_CarryOn() || Env("MASHED_PONTOON_STATE") || !NoState(); return on; }
+bool Pontoon_AnimOn()  { static const bool on = Pontoon_StateOn() || Env("MASHED_PONTOON_ANIM") || !NoAnim(); return on; }
 
 void Pontoon_SetHost(const PontoonHost& h) { S().host = h; }
 bool Pontoon_Active() { return S().active; }

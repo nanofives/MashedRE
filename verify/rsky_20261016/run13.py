@@ -142,11 +142,11 @@ def cmd_score(a):
         cf = out / d / f"cites_used_{a.prefix.strip('_')}.json"
         cf.write_text(json.dumps(mine, indent=1))
         trace = cap / "trace.csv"
-        for g in cg.orig_gates(cap):
+        for g in cg.orig_gates(cap, sd / "d1r2"):   # [dflip] peer for the I-NAME render-texture rule
             if g["row"] in shots:
                 gate_lines.append(f"orig  {d:<14} {json.dumps(g)}")
                 ok_all &= g["I-COVER"] and g["I-FRAME"] and g["I-NAME"]
-        sg, _ = cg.stand_gates(sd, trace) if (sd / "d1r2").exists() else ([], 0)
+        sg, _ = cg.stand_gates(sd, trace, cap) if (sd / "d1r2").exists() else ([], 0)
         for g in sg:
             gate_lines.append(f"stand {d:<14} {json.dumps(g)}")
             ok_all &= g["I-SYNC"] and g["I-NAME"]
