@@ -823,6 +823,44 @@ void VehiclePhysics_A4Pre(int slot, float dt, PlayerCarIO io) {   // io by value
     }
 }
 
+// [u9749 2026-10-17] Record dump in the MSD1 format of re/tools/statediff/FORMAT.md (diagnostic, default OFF), so a
+// port record can be read with msd_fields.py / statediff.py next to an original capture. One slot
+// (MASHED_RECDUMP_SLOT, default 0), base_va field 0 (port). MASHED_RECDUMP=<path>: once per race frame after every car's
+// physics (VehiclePhysics_RecDumpFrame, the analogue of the original capture's render-tick sample, FUN_004c1be0).
+// MASHED_RECDUMP_A4=<path>: the record as it enters the A4 site of that slot's StepCar (before the gate verdict is
+// applied), every step; frame_idx = the race-frame counter of MASHED_RECDUMP.
+namespace {
+int g_recDumpFrame = 0;
+int RecDumpSlot() {
+    static const int s = [] { const char* e = std::getenv("MASHED_RECDUMP_SLOT"); return e ? std::atoi(e) : 0; }();
+    return s;
+}
+void RecDumpWrite(const char* env, std::FILE*& f, bool& tried, int slot) {
+    if (!tried) {
+        tried = true;
+        const char* p = std::getenv(env);
+        if (p && *p && (f = std::fopen(p, "wb")) != nullptr) {
+            const std::uint32_t hdr[3] = { static_cast<std::uint32_t>(kRec), 0u, 0u };
+            std::fwrite("MSD1", 1, 4, f);
+            std::fwrite(hdr, 4, 3, f);
+        }
+    }
+    if (!f || slot < 0 || slot >= 16) return;
+    const std::uint32_t fi = static_cast<std::uint32_t>(g_recDumpFrame);
+    std::fwrite(&fi, 4, 1, f);
+    std::fwrite(rec(slot), 1, kRec, f);
+    std::fflush(f);
+}
+std::FILE* g_recDumpF = nullptr;   bool g_recDumpTried = false;
+std::FILE* g_recDumpA4F = nullptr; bool g_recDumpA4Tried = false;
+}  // namespace
+
+void VehiclePhysics_RecDumpFrame() {
+    if (!g_inited) return;
+    RecDumpWrite("MASHED_RECDUMP", g_recDumpF, g_recDumpTried, RecDumpSlot());
+    ++g_recDumpFrame;
+}
+
 void VehiclePhysics_A4PreEnd() {
     g_torqueRingPhase = g_a4PreBase;   // the real StepCar calls advance it as in the per-car order
 }
@@ -1413,6 +1451,8 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
                     }
             }
         }
+        if (slot == RecDumpSlot() && !preDone && !g_inSpawnSettle)   // [u9749] MASHED_RECDUMP_A4 (diagnostic)
+            RecDumpWrite("MASHED_RECDUMP_A4", g_recDumpA4F, g_recDumpA4Tried, slot);
         if (!a4Skip && !preDone)   // 0x00471042 / 0x00471048: jge past the A4 call
             VehicleControlIntegrate(reinterpret_cast<int*>(r), a4Dt, input, basis, slot);
         // [d2engage 2026-10-16] fix B part 5 (MASHED_POS_CONTACTS): the original writes no wheel

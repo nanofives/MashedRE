@@ -139,6 +139,9 @@ bool VehiclePhysics_A4OrderEnabled();
 void VehiclePhysics_A4PreBegin();
 void VehiclePhysics_A4Pre(int slot, float dt, PlayerCarIO io);
 void VehiclePhysics_A4PreEnd();
+// [u9749] MASHED_RECDUMP=<path> (diagnostic, default OFF): one MSD1 record of slot MASHED_RECDUMP_SLOT (default 0) per
+// call; call once per race frame after every car's physics. Also advances the frame index MASHED_RECDUMP_A4 uses.
+void VehiclePhysics_RecDumpFrame();
 // A8 (2026-08-25): (re)seed a slot's integrated body-orientation basis from a yaw.
 // The body basis is now persistent state inside the physics module (the original
 // keeps it in the record's +0x928 double buffer; see BodyOrientationIntegrate.cpp

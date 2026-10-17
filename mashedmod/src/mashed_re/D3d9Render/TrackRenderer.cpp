@@ -5178,6 +5178,22 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             }
             Vehicle::VehiclePhysics_A4PreEnd();
         }
+        // [u9749 2026-10-17] FUN_00424eb0's FUN_0046c7d0 for car 0 (MASHED_HEADING_ASSIST_PLAYER=1, default OFF; U-9743 /
+        // U-9749): before the player's physics, with the steer bytes StepCar derives from io.steer (VehiclePhysicsRun.cpp
+        // WS-A8-STEER map), or the raw bytes when the caller set raw_steer.
+        if (Race::HeadingAssist_Mask() & 0x2u) {
+            std::uint8_t s0 = io.input[0], s1 = io.input[1];
+            if (!io.raw_steer) {
+                float st = io.steer;
+                if (st >  1.0f) st =  1.0f;
+                if (st < -1.0f) st = -1.0f;
+                const int mag = static_cast<int>((st < 0.f ? -st : st) * 255.f + 0.5f);
+                const std::uint8_t m = static_cast<std::uint8_t>(mag > 255 ? 255 : mag);
+                s0 = (st > 0.f) ? m : 0;
+                s1 = (st < 0.f) ? m : 0;
+            }
+            Race::HeadingAssist_Player(static_cast<int>(in.dt * 3000.0f + 0.5f), s0, s1);
+        }
         Vehicle::VehiclePhysics_StepPlayer(in.dt, io);
         car_vel_[0] = io.vel[0]; car_vel_[1] = io.vel[1]; car_vel_[2] = io.vel[2];
         car_speed_  = io.speed;
@@ -5566,6 +5582,8 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         // [d3bB2 2026-10-17] FUN_00425a40 runs FUN_00422ba0 (the event drain) after FUN_00470c70, the physics of
         // every car: here, after the player's step (above) and the opponents'. Default OFF (MASHED_AI_CONTACT_EVENT).
         if (Ai::Ai_ContactEventEnabled()) Ai::Ai_ContactEventDrain();
+        // [u9749] MASHED_RECDUMP (diagnostic, default OFF): one record per race frame after every car's physics
+        if (phys) Vehicle::VehiclePhysics_RecDumpFrame();
         // diagnostic (env MASHED_AI_DIAG -> mashed_re.log, ~every 30 frames): pos/yaw/speed
         // so a stalled car's trajectory is visible. Read-only (does NOT call
         // Ai_ComputeTarget, which would double-update the continuity index this frame).

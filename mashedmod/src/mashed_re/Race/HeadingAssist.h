@@ -15,5 +15,9 @@ unsigned HeadingAssist_Mask();
 // value the port hands Ai_AdvanceClock.
 void HeadingAssist_Frame(int dtUnits);
 
+// [u9749 2026-10-17] Mask 0x2 (MASHED_HEADING_ASSIST_PLAYER=1, default OFF; U-9743 / U-9749): the same law for car 0,
+// with the player's steer bytes of this frame. Call before the player's physics step.
+void HeadingAssist_Player(int dtUnits, unsigned char steer0, unsigned char steer1);
+
 }  // namespace Race
 }  // namespace mashed_re
