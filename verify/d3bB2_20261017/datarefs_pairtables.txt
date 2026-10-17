@@ -1,0 +1,74 @@
+[decomp_pc] slot=Mashed_pool10 modes=datarefs n=6
+// 0x008995ec  DATA in .data
+//   type undefined4 len 4  value 00000000h
+//   8 reference(s) total
+//   WRITES (1):
+//     0x00425927 in FUN_004252c0  [WRITE]  MOV dword ptr [ESI],0x0
+//   reads (3):
+//     0x0042586a in FUN_004252c0  [READ]  CMP dword ptr [ESI],0x3e8
+//     0x004258c5 in FUN_004252c0  [READ]  MOV EAX,dword ptr [ESI]
+//     0x0042590b in FUN_004252c0  [READ]  MOV EAX,dword ptr [ESI]
+//   other (4):
+//     0x00422e27 in FUN_00422ba0  [DATA]  MOV dword ptr [EBP + 0x8995ec],EDX
+//     0x00422e3f in FUN_00422ba0  [DATA]  MOV dword ptr [ECX + 0x8995ec],EDX
+//     0x00423b2a in FUN_00423b20  [DATA]  MOV EAX,dword ptr [EAX + 0x8995ec]
+//     0x004257bc in FUN_004252c0  [DATA]  MOV ESI,0x8995ec
+
+// 0x008995f0  DATA in .data
+//   type undefined4 len 4  value 00000000h
+//   4 reference(s) total
+//   WRITES (1):
+//     0x00424bd5 in FUN_00424b80  [WRITE]  MOV dword ptr [ESI + 0x124],EBX
+//   reads (1):
+//     0x0042587c in FUN_004252c0  [READ]  SUB EDX,dword ptr [ESI + 0x4]
+//   other (2):
+//     0x00422e2d in FUN_00422ba0  [DATA]  MOV dword ptr [EBP + 0x8995f0],EAX
+//     0x00422e33 in FUN_00422ba0  [DATA]  MOV dword ptr [ECX + 0x8995f0],EAX
+
+// 0x008995cc  DATA in .data
+//   type undefined4 len 4  value 00000000h
+//   7 reference(s) total
+//   WRITES (1):
+//     0x00424bc9 in FUN_00424b80  [WRITE]  MOV dword ptr [ECX],EAX
+//   reads (1):
+//     0x00425541 in FUN_004252c0  [READ]  MOV ECX,dword ptr [EAX]
+//   other (5):
+//     0x00422e4a in FUN_00422ba0  [DATA]  MOV dword ptr [ESI + 0x8995cc],EAX
+//     0x00422e53 in FUN_00422ba0  [DATA]  MOV dword ptr [EDI + 0x8995cc],EAX
+//     0x00424bc3 in FUN_00424b80  [DATA]  LEA ECX,[ESI + 0x100]
+//     0x004254f9 in FUN_004252c0  [DATA]  LEA EDX,[ESI + 0x8]
+//     0x00425503 in FUN_004252c0  [DATA]  MOV dword ptr [ESP + 0x14],EDX
+
+// 0x008995dc  DATA in .data
+//   type: undefined bytes (Ghidra has no data definition here)
+//   2 reference(s) total
+//   WRITES: (none)
+//   reads: (none)
+//   other (2):
+//     0x00422e94 in FUN_00422ba0  [DATA]  FST float ptr [ESI + 0x8995dc]
+//     0x00422e9a in FUN_00422ba0  [DATA]  FSTP float ptr [EDI + 0x8995dc]
+
+// 0x008995f4  DATA in .data
+//   type undefined4 len 4  value 00000000h
+//   4 reference(s) total
+//   WRITES (1):
+//     0x00424bdb in FUN_00424b80  [WRITE]  MOV dword ptr [ESI + 0x128],EBX
+//   reads (1):
+//     0x00425563 in FUN_004252c0  [READ]  CMP dword ptr [ESI + 0x30],0x1
+//   other (2):
+//     0x00422eae in FUN_00422ba0  [DATA]  MOV dword ptr [EBP + 0x8995f4],0x0
+//     0x00422eb9 in FUN_00422ba0  [DATA]  MOV dword ptr [ECX + 0x8995f4],EDX
+
+// 0x008995b0  DATA in .data
+//   type undefined4 len 4  value 00000000h
+//   6 reference(s) total
+//   WRITES: (none)
+//   reads (3):
+//     0x004248dc in FUN_004248b0  [READ]  MOV EDX,dword ptr [EAX + 0x8995b0]
+//     0x00424cf8 in FUN_00424b80  [READ]  FILD dword ptr [0x008995b0]
+//     0x00424d90 in FUN_00424b80  [READ]  CMP dword ptr [0x008995b0],EBX
+//   other (3):
+//     0x00422f35 in FUN_00422ba0  [DATA]  MOV EDI,dword ptr [EDX + 0x8995b0]
+//     0x00422f3b in FUN_00422ba0  [DATA]  LEA EAX,[EDX + 0x8995b0]
+//     0x00422f42 in FUN_00422ba0  [DATA]  MOV dword ptr [EAX],EDI
+

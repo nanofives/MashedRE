@@ -22,6 +22,7 @@
 #include "PosModelKnobs.h"                   // [d2posmodel] fix B knobs, default-OFF
 #include "../Math/RwLutTables.h"             // [d2lateral] Math::LutLength (0x004c3ac0), knob-gated
 #include "../Race/SubStateCallees.h"         // [d2posmodel] VehiclePhysicsStateReset (0x0046baa0)
+#include "../Ai/AiStandalone.h"              // [d3bB2] Ai_ContactEventPush (MASHED_AI_CONTACT_EVENT)
 #include <chrono>     // WS-A s3 perf profiler (steady_clock == QPC on MSVC)
 // #define MASHED_PHYS_DIAG 1   /* enable the steer-chain diag block (G2 drive debug) */
 
@@ -1641,6 +1642,10 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
                 int* const recJ = reinterpret_cast<int*>(rj);  // in_EAX (other)
                 int* const recI = reinterpret_cast<int*>(r);   // param_1 (self)
                 const bool ret = Collision::VehicleCarCarContact(recJ, recI, ccPass); // 0x00469df0
+                // [d3bB2] the type-4 ring push at the tail of 0x00469df0 (default OFF, MASHED_AI_CONTACT_EVENT):
+                // every contact, unless FUN_0040e350() is 1..5 (0x0046ae97..0x0046aec3 / 0x0046b04c..0x0046b078)
+                if (Collision::g_ccLastContact && Ai::Ai_ContactEventEnabled() && !(mode >= 1 && mode <= 5))
+                    Ai::Ai_ContactEventPush(j, slot);   // pair (vehA = other j, vehB = self i)
                 if (s_ccLog && s_ccLines < 8000) {
                     if (std::FILE* lf = std::fopen(s_ccLog, "a")) {
                         std::fprintf(lf,

@@ -4933,6 +4933,10 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         countdown_ -= in.dt;
         car_speed_ = 0.f; car_vel_[0] = car_vel_[1] = car_vel_[2] = 0.f;
         for (auto& a : ai_cars_) a.cur_speed = 0.f;
+        // [d3bB2 2026-10-17] FUN_0040fc00's clock add on the pre-GO ticks (0x0040fe5e), default OFF
+        // (MASHED_AI_COUNTDOWN_CLOCK=1). Same gate as the race-frame Ai_AdvanceClock below.
+        if (Ai::Ai_CountdownClockEnabled() && g_aib.loaded && (Ai::I32(Ai::kSplineRaceCnt) > 3))
+            Ai::Ai_AdvanceCountdownClock(static_cast<int>(in.dt * 3000.0f + 0.5f));
         // [U-9174, D2 attempt 15] START-LINE LAUNCH REV-CHARGE. The original runs
         // FUN_0046d7f0(car, 50) per active car on every pre-race state-tick
         // (0x00410441) and FUN_0046d780(car) once when the 1.86 s timer elapses
@@ -4966,6 +4970,17 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
                 if (Vehicle::PosModelTrans()) { car_pos_[0] = sio.pos[0]; car_pos_[1] = sio.pos[1]; car_pos_[2] = sio.pos[2]; }
             }
             Vehicle::LaunchRev_Release();
+        }
+        // [d3bB2] MASHED_AI_TICK_FIRST: the GO frame's AI tick now runs before UpdateRace, so it reads the path
+        // progress the producer left before it. The original runs FUN_0040da50's FUN_00408610 loop from
+        // FUN_0040fc00 (0x0040fc75) on every pre-GO tick, so its first racing AI tick reads converged values
+        // (o_tg1 at rest: 29.999977 / 29.73 / 29.457 / 29.18). Run it on every countdown frame (the GO frame after
+        // the settle and the release above). Measured: run only from the GO frame, the exe's AI rows read 0.0,
+        // then 29.507563 for all three cars, and converge on the third call (verify/d3bB2_20261017 B_SLP_K1).
+        {
+            static const bool s_tickFirstPP = [] { const char* e = std::getenv("MASHED_AI_TICK_FIRST");
+                                                   return e && e[0] == '1'; }();
+            if (s_tickFirstPP) Race::PathProg_FrameTick();
         }
         // [d1r2] The original runs the director on every pre-race frame (sub-states
         // 3/4/5: FUN_0040fc00 -> FUN_0040d470 -> FUN_00446520, main block when cam[7]
@@ -5043,6 +5058,61 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
     // StepPlayer below): what FUN_0040da50 @ 0x0040dae0 reads for flag 0x800 of slot 0
     player_brake_byte_ = static_cast<std::uint8_t>((accel < 0.f ? -accel : 0.f) * 255.f);
 
+    // [d3bB2 2026-10-17] The AI tick phase as one unit, so MASHED_AI_TICK_FIRST=1 (default OFF) can run it
+    // before the player's physics. The original's FUN_00425a40 runs FUN_00418860 (the AI tick, 0x00425a73) and
+    // FUN_00424eb0 (0x00425a82) BEFORE FUN_00470c70 (0x00425a8d), the physics of every car, player first
+    // (FUN_004709a0 slot 0..15). The exe steps the player here, before the AI tick, so on a frame where the
+    // player's step makes a car<->car contact the AI tick already reads the impulse, one tick before the
+    // original's (d3bB2: FUN_00414a70 returns 1 for car 2 at window call 22, the original's at 23). Knob OFF:
+    // the phase runs where it always ran, below.
+    bool ai_tick_ran = false;
+    auto ai_tick_phase = [&]() {
+        ai_tick_ran = true;
+        g_aiTrack = this;   // bind the AI host (held_powerup reads pw_ through it)
+            {   // [mode 7 M3] FUN_00458920's bound callees (only used under MASHED_REG_CALLBACKS)
+                g_pkcbTrack = this;
+                Gameplay::PickupCbHost h{};
+                h.slot_empty = pkcb_slot_empty; h.grant = pkcb_grant; h.sub_mode = pkcb_sub_mode;
+                h.held_code = aib_held_powerup;
+                Gameplay::Pickups_SetCbHost(h);
+                Ai::ModeSeven_SetHost(aib_game_sub_mode, aib_held_powerup);   // [mode 7 M4] FUN_0040e350 + held word
+            }
+            // [D3 2026-09-26] The PORTED tick spine FUN_00418860 (Ai_Standalone_Tick) runs
+            // every race frame and its ctrl bytes DRIVE the opponents through the ported
+            // physics chain, exactly as the player's bytes drive the player. The
+            // MASHED_AI_TICK gate (default OFF, 2026-09-14) is DELETED, not inverted, and
+            // the Option B motion model (turn-rate + velocity-shaped speed toward
+            // Ai_ComputeTarget) that stood here is gone from the default build.
+            //   clock: the original advances DAT_007f1008/0ff4/0ff8 by its 50-unit frame
+            //   budget before the AI reads them (0x0040fc63 / 0x0040fe5e); units = dt*3000.
+            //   feed:  StepCar with raw_steer=1, input[] = the car's ctrl block, i.e. the
+            //   bytes A4 FUN_00470670 reads (0x00470732 / 0x00470754) and A6a reads ([4]/[5]).
+            // MASHED_REAL_PHYSICS=0 (the D2 A/B revert) has no chain to feed, so on that
+            // revert the opponents fall back to the pre-D3 Option B motion model below; it is
+            // reachable ONLY through that revert flag.
+            Ai::Ai_AdvanceClock(static_cast<int>(in.dt * 3000.0f + 0.5f));
+            AiBridgeSnapshot();
+            RaceRefDistTraceAiEntry();   // [U-9683] the array as the consumers will read it (measurement only)
+            Ai::Ai_Standalone_Tick();
+            AiStepDump();
+            U9186GateDump();   // [U-9186 G1] default-OFF measurement probe
+            // [d3b 2026-10-16] FUN_00424eb0's FUN_0046c7d0 loop: the steer-0 heading assist, after the AI
+            // tick (0x00425a73) and before the physics frame (0x00425a8d), AI slots only. Default ON since
+            // dflip 2026-10-17 (MASHED_NO_HEADING_ASSIST=1 opts out). Race/HeadingAssist.cpp, verify/d3b_20261016/PREREG_d3b.md.
+            Race::HeadingAssist_Frame(static_cast<int>(in.dt * 3000.0f + 0.5f));
+            // [D-11073 leg 1a] FUN_0041d930's tail (0x0041da5f..0x0041da76): DAT_0063d584 += 1,
+            // DAT_0063d588 += _DAT_007f100c. The original runs it once per frame from FUN_0040fc00
+            // (call at 0x0040fd11), after the step store (0x0040fc57, Ai_AdvanceClock above) and
+            // after the AI tick, and FUN_004111c0 runs FUN_0040fc00 after the sub-state handler.
+            // The port has no handler yet (leg 1b). Default OFF; nothing in the exe reads either
+            // global in leg 1a (PREREG_LEG1A.md section 2).
+            if (SubState_Enabled()) HudSlideBillboardTimerTail();
+    };
+    {
+        static const bool s_aiTickFirst = [] { const char* e = std::getenv("MASHED_AI_TICK_FIRST");
+                                               return e && e[0] == '1'; }();
+        if (s_aiTickFirst && g_aib.loaded && (Ai::I32(Ai::kSplineRaceCnt) > 3)) ai_tick_phase();
+    }
     // WS-A8 (2026-06-17): when MASHED_REAL_PHYSICS is on, drive the player car
     // through the ported chain (A3 init -> A4 control -> A5 -> A6a -> A6b) instead
     // of the kinematic scaffold. PENDING runtime-smoke + C4 (WS-A-VERIFY-3).
@@ -5329,45 +5399,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
     const int ng = static_cast<int>(gates_.size());
     const bool faithful_nav = g_aib.loaded && (Ai::I32(Ai::kSplineRaceCnt) > 3);
     if (faithful_nav) {
-        g_aiTrack = this;   // bind the AI host (held_powerup reads pw_ through it)
-        {   // [mode 7 M3] FUN_00458920's bound callees (only used under MASHED_REG_CALLBACKS)
-            g_pkcbTrack = this;
-            Gameplay::PickupCbHost h{};
-            h.slot_empty = pkcb_slot_empty; h.grant = pkcb_grant; h.sub_mode = pkcb_sub_mode;
-            h.held_code = aib_held_powerup;
-            Gameplay::Pickups_SetCbHost(h);
-            Ai::ModeSeven_SetHost(aib_game_sub_mode, aib_held_powerup);   // [mode 7 M4] FUN_0040e350 + held word
-        }
-        // [D3 2026-09-26] The PORTED tick spine FUN_00418860 (Ai_Standalone_Tick) runs
-        // every race frame and its ctrl bytes DRIVE the opponents through the ported
-        // physics chain, exactly as the player's bytes drive the player. The
-        // MASHED_AI_TICK gate (default OFF, 2026-09-14) is DELETED, not inverted, and
-        // the Option B motion model (turn-rate + velocity-shaped speed toward
-        // Ai_ComputeTarget) that stood here is gone from the default build.
-        //   clock: the original advances DAT_007f1008/0ff4/0ff8 by its 50-unit frame
-        //   budget before the AI reads them (0x0040fc63 / 0x0040fe5e); units = dt*3000.
-        //   feed:  StepCar with raw_steer=1, input[] = the car's ctrl block, i.e. the
-        //   bytes A4 FUN_00470670 reads (0x00470732 / 0x00470754) and A6a reads ([4]/[5]).
-        // MASHED_REAL_PHYSICS=0 (the D2 A/B revert) has no chain to feed, so on that
-        // revert the opponents fall back to the pre-D3 Option B motion model below; it is
-        // reachable ONLY through that revert flag.
-        Ai::Ai_AdvanceClock(static_cast<int>(in.dt * 3000.0f + 0.5f));
-        AiBridgeSnapshot();
-        RaceRefDistTraceAiEntry();   // [U-9683] the array as the consumers will read it (measurement only)
-        Ai::Ai_Standalone_Tick();
-        AiStepDump();
-        U9186GateDump();   // [U-9186 G1] default-OFF measurement probe
-        // [d3b 2026-10-16] FUN_00424eb0's FUN_0046c7d0 loop: the steer-0 heading assist, after the AI
-        // tick (0x00425a73) and before the physics frame (0x00425a8d), AI slots only. Default ON since
-        // dflip 2026-10-17 (MASHED_NO_HEADING_ASSIST=1 opts out). Race/HeadingAssist.cpp, verify/d3b_20261016/PREREG_d3b.md.
-        Race::HeadingAssist_Frame(static_cast<int>(in.dt * 3000.0f + 0.5f));
-        // [D-11073 leg 1a] FUN_0041d930's tail (0x0041da5f..0x0041da76): DAT_0063d584 += 1,
-        // DAT_0063d588 += _DAT_007f100c. The original runs it once per frame from FUN_0040fc00
-        // (call at 0x0040fd11), after the step store (0x0040fc57, Ai_AdvanceClock above) and
-        // after the AI tick, and FUN_004111c0 runs FUN_0040fc00 after the sub-state handler.
-        // The port has no handler yet (leg 1b). Default OFF; nothing in the exe reads either
-        // global in leg 1a (PREREG_LEG1A.md section 2).
-        if (SubState_Enabled()) HudSlideBillboardTimerTail();
+        if (!ai_tick_ran) ai_tick_phase();   // [d3bB2] MASHED_AI_TICK_FIRST runs it before StepPlayer instead
         const bool phys = Vehicle::VehiclePhysics_Enabled();
         yaww::Flags(faithful_nav, phys);   // A-REACH witnesses the branch, not prose
         // [U-9141 2026-09-29] MASHED_MEASURE_NOOPP=1 — MEASUREMENT HARNESS ONLY. Skips the
@@ -5493,6 +5525,9 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
                 }
             }
         }
+        // [d3bB2 2026-10-17] FUN_00425a40 runs FUN_00422ba0 (the event drain) after FUN_00470c70, the physics of
+        // every car: here, after the player's step (above) and the opponents'. Default OFF (MASHED_AI_CONTACT_EVENT).
+        if (Ai::Ai_ContactEventEnabled()) Ai::Ai_ContactEventDrain();
         // diagnostic (env MASHED_AI_DIAG -> mashed_re.log, ~every 30 frames): pos/yaw/speed
         // so a stalled car's trajectory is visible. Read-only (does NOT call
         // Ai_ComputeTarget, which would double-update the continuity index this frame).
@@ -6408,6 +6443,8 @@ void TrackRenderer::AiStepDump() {
             static_cast<std::uintptr_t>(v) * Ai::kAiStateDwords * 4u;
         // [D3 2026-09-26] same trailing input columns as scenario_launch.py --statediff-aistep
         const Ai::StepLocals& sl = Ai::Ai_LastStepLocals(v);
+        // [d3bB2] under MASHED_AI_CONTACT_EVENT the block holds the replayed bytes; dump FUN_00416250's output instead
+        const std::uint8_t* so = Ai::Ai_ContactEventEnabled() ? Ai::Ai_StepOutCtrl(v) : nullptr;
         std::fprintf(lf, "%d,%ld,%d,%lu,0,%u,%u,%u,%u,%u,%d,%d,%d,%d,%d,%d,%g,%d,%d,%d,%.9g,%.9g,%u,"
                          "%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%d,%d,%d,%d,%d,"
                          "%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,"
@@ -6426,8 +6463,8 @@ void TrackRenderer::AiStepDump() {
                          // [GF1-CALLWISE] b2_ret, b2_los; [W-SHAPE] c4_in, c5_in
                          "%d,%d,%d,%d",
                      frame, seq++, v, static_cast<unsigned long>(blk),
-                     Ai::U8(blk + 0), Ai::U8(blk + 1), Ai::U8(blk + 3),
-                     Ai::U8(blk + 4), Ai::U8(blk + 5),
+                     so ? so[0] : Ai::U8(blk + 0), so ? so[1] : Ai::U8(blk + 1), so ? so[3] : Ai::U8(blk + 3),
+                     so ? so[4] : Ai::U8(blk + 4), so ? so[5] : Ai::U8(blk + 5),
                      Ai::I32(ai + 0x00), Ai::I32(ai + 0x04),
                      Ai::I32(ai + 0x30), Ai::I32(ai + 0x60),
                      Ai::I32(0x007f0ff4u), Ai::I32(0x007f1008u),

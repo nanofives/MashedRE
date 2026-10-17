@@ -1,0 +1,1219 @@
+00469df0  sub      esp, 0x164
+00469df6  fld      dword ptr [0x5d757c]
+00469dfc  push     ebx
+00469dfd  fld      dword ptr [0x5d757c]
+00469e03  push     ebp
+00469e04  fld      dword ptr [0x5d757c]
+00469e0a  push     esi
+00469e0b  mov      esi, ecx
+00469e0d  push     edi
+00469e0e  mov      edi, eax
+00469e10  mov      ecx, dword ptr [edi + 0x9a8]
+00469e16  mov      eax, dword ptr [esi + 0x9a8]
+00469e1c  shl      ecx, 6
+00469e1f  lea      edx, [ecx + edi + 0x958]
+00469e26  xor      ecx, ecx
+00469e28  shl      eax, 6
+00469e2b  mov      dword ptr [esp + 0xcc], edx
+00469e32  lea      ebp, [eax + esi + 0x958]
+00469e39  xor      edx, edx
+00469e3b  mov      dword ptr [esp + 0xc8], ecx
+00469e42  mov      dword ptr [esp + 0xc4], ecx
+00469e49  lea      esp, [esp]
+00469e50  test     ecx, ecx
+00469e52  mov      eax, edi
+00469e54  je       0x469e58
+00469e56  mov      eax, esi
+00469e58  mov      ebx, dword ptr [eax + 0xa28]
+00469e5e  fld      dword ptr [eax + 0x9c8]
+00469e64  fld      dword ptr [eax + 0x9cc]
+00469e6a  mov      dword ptr [esp + 0x9c], ebx
+00469e71  mov      ebx, dword ptr [eax + 0xa2c]
+00469e77  fld      dword ptr [eax + 0x9d0]
+00469e7d  mov      dword ptr [esp + 0x94], ebx
+00469e84  mov      ebx, dword ptr [eax + 0xa30]
+00469e8a  mov      dword ptr [esp + 0xa8], ebx
+00469e91  mov      ebx, dword ptr [eax + 0xa34]
+00469e97  mov      dword ptr [esp + 0x84], ebx
+00469e9e  fld      dword ptr [esp + 0x84]
+00469ea5  mov      ebx, dword ptr [eax + 0xa38]
+00469eab  fsub     dword ptr [esp + 0x9c]
+00469eb2  mov      dword ptr [esp + 0x88], ebx
+00469eb9  mov      ebx, dword ptr [eax + 0xa3c]
+00469ebf  mov      dword ptr [esp + 0x90], ebx
+00469ec6  fstp     dword ptr [esp + 0x10]
+00469eca  mov      ebx, dword ptr [eax + 0xa4c]
+00469ed0  fld      dword ptr [esp + 0x88]
+00469ed7  mov      dword ptr [esp + 0x98], ebx
+00469ede  fsub     dword ptr [esp + 0x94]
+00469ee5  mov      ebx, dword ptr [eax + 0xa50]
+00469eeb  mov      dword ptr [esp + 0xa4], ebx
+00469ef2  mov      ebx, dword ptr [eax + 0xa54]
+00469ef8  fstp     dword ptr [esp + 0x2c]
+00469efc  mov      dword ptr [esp + 0xa0], ebx
+00469f03  fld      dword ptr [esp + 0x90]
+00469f0a  mov      ebx, dword ptr [eax + 0xa40]
+00469f10  fsub     dword ptr [esp + 0xa8]
+00469f17  mov      dword ptr [esp + 0x8c], ebx
+00469f1e  mov      ebx, dword ptr [eax + 0xa44]
+00469f24  mov      eax, dword ptr [eax + 0xa48]
+00469f2a  fst      dword ptr [esp + 0x34]
+00469f2e  mov      dword ptr [esp + 0x80], ebx
+00469f35  fmul     st(2)
+00469f37  mov      dword ptr [esp + 0x30], eax
+00469f3b  fld      dword ptr [esp + 0x2c]
+00469f3f  fmul     st(2)
+00469f41  fsubp    st(1)
+00469f43  fstp     dword ptr [esp + 0x38]
+00469f47  fld      dword ptr [esp + 0x10]
+00469f4b  fmul     st(1)
+00469f4d  fld      dword ptr [esp + 0x34]
+00469f51  fmul     st(4)
+00469f53  fsubp    st(1)
+00469f55  fstp     dword ptr [esp + 0x3c]
+00469f59  fld      dword ptr [esp + 0x2c]
+00469f5d  fmul     st(3)
+00469f5f  fld      dword ptr [esp + 0x10]
+00469f63  fmul     st(3)
+00469f65  fsubp    st(1)
+00469f67  fstp     dword ptr [esp + 0x40]
+00469f6b  fld      dword ptr [esp + 0x98]
+00469f72  fsub     dword ptr [esp + 0x84]
+00469f79  fstp     dword ptr [esp + 0x10]
+00469f7d  fld      dword ptr [esp + 0xa4]
+00469f84  fsub     dword ptr [esp + 0x88]
+00469f8b  fstp     dword ptr [esp + 0x2c]
+00469f8f  fld      dword ptr [esp + 0xa0]
+00469f96  fsub     dword ptr [esp + 0x90]
+00469f9d  fst      dword ptr [esp + 0x34]
+00469fa1  fmul     st(2)
+00469fa3  fld      dword ptr [esp + 0x2c]
+00469fa7  fmul     st(2)
+00469fa9  fsubp    st(1)
+00469fab  fstp     dword ptr [esp + 0x44]
+00469faf  fld      dword ptr [esp + 0x10]
+00469fb3  fmul     st(1)
+00469fb5  fld      dword ptr [esp + 0x34]
+00469fb9  fmul     st(4)
+00469fbb  test     ecx, ecx
+00469fbd  fsubp    st(1)
+00469fbf  mov      ebx, esi
+00469fc1  fstp     dword ptr [esp + 0x48]
+00469fc5  fld      dword ptr [esp + 0x2c]
+00469fc9  fmul     st(3)
+00469fcb  fld      dword ptr [esp + 0x10]
+00469fcf  fmul     st(3)
+00469fd1  fsubp    st(1)
+00469fd3  fstp     dword ptr [esp + 0x4c]
+00469fd7  fld      dword ptr [esp + 0x8c]
+00469fde  fsub     dword ptr [esp + 0x98]
+00469fe5  fstp     dword ptr [esp + 0x10]
+00469fe9  fld      dword ptr [esp + 0x80]
+00469ff0  fsub     dword ptr [esp + 0xa4]
+00469ff7  fstp     dword ptr [esp + 0x2c]
+00469ffb  fld      dword ptr [esp + 0x30]
+00469fff  fsub     dword ptr [esp + 0xa0]
+0046a006  fst      dword ptr [esp + 0x34]
+0046a00a  fmul     st(2)
+0046a00c  fld      dword ptr [esp + 0x2c]
+0046a010  fmul     st(2)
+0046a012  fsubp    st(1)
+0046a014  fstp     dword ptr [esp + 0x5c]
+0046a018  fld      dword ptr [esp + 0x10]
+0046a01c  fmul     st(1)
+0046a01e  fld      dword ptr [esp + 0x34]
+0046a022  fmul     st(4)
+0046a024  fsubp    st(1)
+0046a026  fstp     dword ptr [esp + 0x60]
+0046a02a  fld      dword ptr [esp + 0x2c]
+0046a02e  fmul     st(3)
+0046a030  fld      dword ptr [esp + 0x10]
+0046a034  fmul     st(3)
+0046a036  fsubp    st(1)
+0046a038  fstp     dword ptr [esp + 0x64]
+0046a03c  fld      dword ptr [esp + 0x9c]
+0046a043  fsub     dword ptr [esp + 0x8c]
+0046a04a  fstp     dword ptr [esp + 0x10]
+0046a04e  fld      dword ptr [esp + 0x94]
+0046a055  fsub     dword ptr [esp + 0x80]
+0046a05c  fstp     dword ptr [esp + 0x2c]
+0046a060  fld      dword ptr [esp + 0xa8]
+0046a067  fsub     dword ptr [esp + 0x30]
+0046a06b  fst      dword ptr [esp + 0x34]
+0046a06f  fmul     st(2)
+0046a071  fld      dword ptr [esp + 0x2c]
+0046a075  fmul     st(2)
+0046a077  fsubp    st(1)
+0046a079  fstp     dword ptr [esp + 0x50]
+0046a07d  fld      dword ptr [esp + 0x10]
+0046a081  fmul     st(1)
+0046a083  fld      dword ptr [esp + 0x34]
+0046a087  fmul     st(4)
+0046a089  fsubp    st(1)
+0046a08b  fstp     dword ptr [esp + 0x54]
+0046a08f  fstp     st(0)
+0046a091  fld      dword ptr [esp + 0x2c]
+0046a095  fmul     st(2)
+0046a097  fld      dword ptr [esp + 0x10]
+0046a09b  fmul     st(2)
+0046a09d  fsubp    st(1)
+0046a09f  fstp     dword ptr [esp + 0x58]
+0046a0a3  fstp     st(0)
+0046a0a5  fstp     st(0)
+0046a0a7  je       0x46a0ab
+0046a0a9  mov      ebx, edi
+0046a0ab  mov      eax, dword ptr [ebx + 0xa28]
+0046a0b1  mov      dword ptr [esp + 0x14], eax
+0046a0b5  fld      dword ptr [esp + 0x14]
+0046a0b9  fsub     dword ptr [esp + 0x9c]
+0046a0c0  mov      eax, dword ptr [ebx + 0xa2c]
+0046a0c6  mov      dword ptr [esp + 0x18], eax
+0046a0ca  fld      dword ptr [esp + 0x18]
+0046a0ce  fsub     dword ptr [esp + 0x94]
+0046a0d5  mov      eax, dword ptr [ebx + 0xa30]
+0046a0db  mov      dword ptr [esp + 0x1c], eax
+0046a0df  fld      dword ptr [esp + 0x1c]
+0046a0e3  fsub     dword ptr [esp + 0xa8]
+0046a0ea  fld      dword ptr [esp + 0x40]
+0046a0ee  fmul     st(1)
+0046a0f0  fxch     st(2)
+0046a0f2  fmul     dword ptr [esp + 0x3c]
+0046a0f6  faddp    st(2)
+0046a0f8  fxch     st(2)
+0046a0fa  fmul     dword ptr [esp + 0x38]
+0046a0fe  faddp    st(1)
+0046a100  fcomp    dword ptr [0x5d757c]
+0046a106  fnstsw   ax
+0046a108  fstp     st(0)
+0046a10a  test     ah, 5
+0046a10d  jp       0x46a206
+0046a113  fld      dword ptr [esp + 0x14]
+0046a117  fsub     dword ptr [esp + 0x84]
+0046a11e  fld      dword ptr [esp + 0x18]
+0046a122  fsub     dword ptr [esp + 0x88]
+0046a129  fld      dword ptr [esp + 0x1c]
+0046a12d  fsub     dword ptr [esp + 0x90]
+0046a134  fld      dword ptr [esp + 0x4c]
+0046a138  fmul     st(1)
+0046a13a  fxch     st(2)
+0046a13c  fmul     dword ptr [esp + 0x48]
+0046a140  faddp    st(2)
+0046a142  fxch     st(2)
+0046a144  fmul     dword ptr [esp + 0x44]
+0046a148  faddp    st(1)
+0046a14a  fcomp    dword ptr [0x5d757c]
+0046a150  fnstsw   ax
+0046a152  fstp     st(0)
+0046a154  test     ah, 5
+0046a157  jp       0x46a206
+0046a15d  fld      dword ptr [esp + 0x14]
+0046a161  fsub     dword ptr [esp + 0x98]
+0046a168  fld      dword ptr [esp + 0x18]
+0046a16c  fsub     dword ptr [esp + 0xa4]
+0046a173  fld      dword ptr [esp + 0x1c]
+0046a177  fsub     dword ptr [esp + 0xa0]
+0046a17e  fld      dword ptr [esp + 0x64]
+0046a182  fmul     st(1)
+0046a184  fxch     st(2)
+0046a186  fmul     dword ptr [esp + 0x60]
+0046a18a  faddp    st(2)
+0046a18c  fxch     st(2)
+0046a18e  fmul     dword ptr [esp + 0x5c]
+0046a192  faddp    st(1)
+0046a194  fcomp    dword ptr [0x5d757c]
+0046a19a  fnstsw   ax
+0046a19c  fstp     st(0)
+0046a19e  test     ah, 5
+0046a1a1  jp       0x46a206
+0046a1a3  fld      dword ptr [esp + 0x14]
+0046a1a7  fsub     dword ptr [esp + 0x8c]
+0046a1ae  fld      dword ptr [esp + 0x18]
+0046a1b2  fsub     dword ptr [esp + 0x80]
+0046a1b9  fld      dword ptr [esp + 0x1c]
+0046a1bd  fsub     dword ptr [esp + 0x30]
+0046a1c1  fld      dword ptr [esp + 0x58]
+0046a1c5  fmul     st(1)
+0046a1c7  fxch     st(2)
+0046a1c9  fmul     dword ptr [esp + 0x54]
+0046a1cd  faddp    st(2)
+0046a1cf  fxch     st(2)
+0046a1d1  fmul     dword ptr [esp + 0x50]
+0046a1d5  faddp    st(1)
+0046a1d7  fcomp    dword ptr [0x5d757c]
+0046a1dd  fnstsw   ax
+0046a1df  fstp     st(0)
+0046a1e1  test     ah, 5
+0046a1e4  jp       0x46a206
+0046a1e6  fadd     dword ptr [esp + 0x14]
+0046a1ea  mov      eax, dword ptr [esp + ecx*4 + 0xc4]
+0046a1f1  fld      dword ptr [esp + 0x18]
+0046a1f5  inc      edx
+0046a1f6  faddp    st(2)
+0046a1f8  inc      eax
+0046a1f9  fld      dword ptr [esp + 0x1c]
+0046a1fd  mov      dword ptr [esp + ecx*4 + 0xc4], eax
+0046a204  faddp    st(3)
+0046a206  mov      eax, dword ptr [ebx + 0xa34]
+0046a20c  mov      dword ptr [esp + 0x14], eax
+0046a210  fld      dword ptr [esp + 0x14]
+0046a214  fsub     dword ptr [esp + 0x9c]
+0046a21b  mov      eax, dword ptr [ebx + 0xa38]
+0046a221  mov      dword ptr [esp + 0x18], eax
+0046a225  fld      dword ptr [esp + 0x18]
+0046a229  fsub     dword ptr [esp + 0x94]
+0046a230  mov      eax, dword ptr [ebx + 0xa3c]
+0046a236  mov      dword ptr [esp + 0x1c], eax
+0046a23a  fld      dword ptr [esp + 0x1c]
+0046a23e  fsub     dword ptr [esp + 0xa8]
+0046a245  fld      dword ptr [esp + 0x40]
+0046a249  fmul     st(1)
+0046a24b  fxch     st(2)
+0046a24d  fmul     dword ptr [esp + 0x3c]
+0046a251  faddp    st(2)
+0046a253  fxch     st(2)
+0046a255  fmul     dword ptr [esp + 0x38]
+0046a259  faddp    st(1)
+0046a25b  fcomp    dword ptr [0x5d757c]
+0046a261  fnstsw   ax
+0046a263  fstp     st(0)
+0046a265  test     ah, 5
+0046a268  jp       0x46a361
+0046a26e  fld      dword ptr [esp + 0x14]
+0046a272  fsub     dword ptr [esp + 0x84]
+0046a279  fld      dword ptr [esp + 0x18]
+0046a27d  fsub     dword ptr [esp + 0x88]
+0046a284  fld      dword ptr [esp + 0x1c]
+0046a288  fsub     dword ptr [esp + 0x90]
+0046a28f  fld      dword ptr [esp + 0x4c]
+0046a293  fmul     st(1)
+0046a295  fxch     st(2)
+0046a297  fmul     dword ptr [esp + 0x48]
+0046a29b  faddp    st(2)
+0046a29d  fxch     st(2)
+0046a29f  fmul     dword ptr [esp + 0x44]
+0046a2a3  faddp    st(1)
+0046a2a5  fcomp    dword ptr [0x5d757c]
+0046a2ab  fnstsw   ax
+0046a2ad  fstp     st(0)
+0046a2af  test     ah, 5
+0046a2b2  jp       0x46a361
+0046a2b8  fld      dword ptr [esp + 0x14]
+0046a2bc  fsub     dword ptr [esp + 0x98]
+0046a2c3  fld      dword ptr [esp + 0x18]
+0046a2c7  fsub     dword ptr [esp + 0xa4]
+0046a2ce  fld      dword ptr [esp + 0x1c]
+0046a2d2  fsub     dword ptr [esp + 0xa0]
+0046a2d9  fld      dword ptr [esp + 0x64]
+0046a2dd  fmul     st(1)
+0046a2df  fxch     st(2)
+0046a2e1  fmul     dword ptr [esp + 0x60]
+0046a2e5  faddp    st(2)
+0046a2e7  fxch     st(2)
+0046a2e9  fmul     dword ptr [esp + 0x5c]
+0046a2ed  faddp    st(1)
+0046a2ef  fcomp    dword ptr [0x5d757c]
+0046a2f5  fnstsw   ax
+0046a2f7  fstp     st(0)
+0046a2f9  test     ah, 5
+0046a2fc  jp       0x46a361
+0046a2fe  fld      dword ptr [esp + 0x14]
+0046a302  fsub     dword ptr [esp + 0x8c]
+0046a309  fld      dword ptr [esp + 0x18]
+0046a30d  fsub     dword ptr [esp + 0x80]
+0046a314  fld      dword ptr [esp + 0x1c]
+0046a318  fsub     dword ptr [esp + 0x30]
+0046a31c  fld      dword ptr [esp + 0x58]
+0046a320  fmul     st(1)
+0046a322  fxch     st(2)
+0046a324  fmul     dword ptr [esp + 0x54]
+0046a328  faddp    st(2)
+0046a32a  fxch     st(2)
+0046a32c  fmul     dword ptr [esp + 0x50]
+0046a330  faddp    st(1)
+0046a332  fcomp    dword ptr [0x5d757c]
+0046a338  fnstsw   ax
+0046a33a  fstp     st(0)
+0046a33c  test     ah, 5
+0046a33f  jp       0x46a361
+0046a341  fadd     dword ptr [esp + 0x14]
+0046a345  mov      eax, dword ptr [esp + ecx*4 + 0xc4]
+0046a34c  fld      dword ptr [esp + 0x18]
+0046a350  inc      edx
+0046a351  faddp    st(2)
+0046a353  inc      eax
+0046a354  fld      dword ptr [esp + 0x1c]
+0046a358  mov      dword ptr [esp + ecx*4 + 0xc4], eax
+0046a35f  faddp    st(3)
+0046a361  mov      eax, dword ptr [ebx + 0xa40]
+0046a367  mov      dword ptr [esp + 0x14], eax
+0046a36b  fld      dword ptr [esp + 0x14]
+0046a36f  fsub     dword ptr [esp + 0x9c]
+0046a376  mov      eax, dword ptr [ebx + 0xa44]
+0046a37c  mov      dword ptr [esp + 0x18], eax
+0046a380  fld      dword ptr [esp + 0x18]
+0046a384  fsub     dword ptr [esp + 0x94]
+0046a38b  mov      eax, dword ptr [ebx + 0xa48]
+0046a391  mov      dword ptr [esp + 0x1c], eax
+0046a395  fld      dword ptr [esp + 0x1c]
+0046a399  fsub     dword ptr [esp + 0xa8]
+0046a3a0  fld      dword ptr [esp + 0x40]
+0046a3a4  fmul     st(1)
+0046a3a6  fxch     st(2)
+0046a3a8  fmul     dword ptr [esp + 0x3c]
+0046a3ac  faddp    st(2)
+0046a3ae  fxch     st(2)
+0046a3b0  fmul     dword ptr [esp + 0x38]
+0046a3b4  faddp    st(1)
+0046a3b6  fcomp    dword ptr [0x5d757c]
+0046a3bc  fnstsw   ax
+0046a3be  fstp     st(0)
+0046a3c0  test     ah, 5
+0046a3c3  jp       0x46a4ad
+0046a3c9  fld      dword ptr [esp + 0x14]
+0046a3cd  fsub     dword ptr [esp + 0x84]
+0046a3d4  fld      dword ptr [esp + 0x18]
+0046a3d8  fsub     dword ptr [esp + 0x88]
+0046a3df  fld      dword ptr [esp + 0x1c]
+0046a3e3  fsub     dword ptr [esp + 0x90]
+0046a3ea  fld      dword ptr [esp + 0x4c]
+0046a3ee  fmul     st(1)
+0046a3f0  fxch     st(2)
+0046a3f2  fmul     dword ptr [esp + 0x48]
+0046a3f6  faddp    st(2)
+0046a3f8  fxch     st(2)
+0046a3fa  fmul     dword ptr [esp + 0x44]
+0046a3fe  faddp    st(1)
+0046a400  fcomp    dword ptr [0x5d757c]
+0046a406  fnstsw   ax
+0046a408  fstp     st(0)
+0046a40a  test     ah, 5
+0046a40d  jp       0x46a4ad
+0046a413  fld      dword ptr [esp + 0x14]
+0046a417  fsub     dword ptr [esp + 0x98]
+0046a41e  fld      dword ptr [esp + 0x18]
+0046a422  fsub     dword ptr [esp + 0xa4]
+0046a429  fld      dword ptr [esp + 0x1c]
+0046a42d  fsub     dword ptr [esp + 0xa0]
+0046a434  fld      dword ptr [esp + 0x64]
+0046a438  fmul     st(1)
+0046a43a  fxch     st(2)
+0046a43c  fmul     dword ptr [esp + 0x60]
+0046a440  faddp    st(2)
+0046a442  fxch     st(2)
+0046a444  fmul     dword ptr [esp + 0x5c]
+0046a448  faddp    st(1)
+0046a44a  fcomp    dword ptr [0x5d757c]
+0046a450  fnstsw   ax
+0046a452  fstp     st(0)
+0046a454  test     ah, 5
+0046a457  jp       0x46a4ad
+0046a459  fld      dword ptr [esp + 0x14]
+0046a45d  fsub     dword ptr [esp + 0x8c]
+0046a464  fld      dword ptr [esp + 0x18]
+0046a468  fsub     dword ptr [esp + 0x80]
+0046a46f  fld      dword ptr [esp + 0x1c]
+0046a473  fsub     dword ptr [esp + 0x30]
+0046a477  fld      dword ptr [esp + 0x58]
+0046a47b  fmul     st(1)
+0046a47d  fxch     st(2)
+0046a47f  fmul     dword ptr [esp + 0x54]
+0046a483  faddp    st(2)
+0046a485  fxch     st(2)
+0046a487  fmul     dword ptr [esp + 0x50]
+0046a48b  faddp    st(1)
+0046a48d  fcomp    dword ptr [0x5d757c]
+0046a493  fnstsw   ax
+0046a495  fstp     st(0)
+0046a497  test     ah, 5
+0046a49a  jp       0x46a4ad
+0046a49c  fadd     dword ptr [esp + 0x14]
+0046a4a0  inc      edx
+0046a4a1  fld      dword ptr [esp + 0x18]
+0046a4a5  faddp    st(2)
+0046a4a7  fld      dword ptr [esp + 0x1c]
+0046a4ab  faddp    st(3)
+0046a4ad  mov      eax, dword ptr [ebx + 0xa4c]
+0046a4b3  mov      dword ptr [esp + 0x14], eax
+0046a4b7  fld      dword ptr [esp + 0x14]
+0046a4bb  fsub     dword ptr [esp + 0x9c]
+0046a4c2  mov      eax, dword ptr [ebx + 0xa50]
+0046a4c8  mov      dword ptr [esp + 0x18], eax
+0046a4cc  fld      dword ptr [esp + 0x18]
+0046a4d0  fsub     dword ptr [esp + 0x94]
+0046a4d7  mov      eax, dword ptr [ebx + 0xa54]
+0046a4dd  mov      dword ptr [esp + 0x1c], eax
+0046a4e1  fld      dword ptr [esp + 0x1c]
+0046a4e5  fsub     dword ptr [esp + 0xa8]
+0046a4ec  fld      dword ptr [esp + 0x40]
+0046a4f0  fmul     st(1)
+0046a4f2  fxch     st(2)
+0046a4f4  fmul     dword ptr [esp + 0x3c]
+0046a4f8  faddp    st(2)
+0046a4fa  fxch     st(2)
+0046a4fc  fmul     dword ptr [esp + 0x38]
+0046a500  faddp    st(1)
+0046a502  fcomp    dword ptr [0x5d757c]
+0046a508  fnstsw   ax
+0046a50a  fstp     st(0)
+0046a50c  test     ah, 5
+0046a50f  jp       0x46a5f9
+0046a515  fld      dword ptr [esp + 0x14]
+0046a519  fsub     dword ptr [esp + 0x84]
+0046a520  fld      dword ptr [esp + 0x18]
+0046a524  fsub     dword ptr [esp + 0x88]
+0046a52b  fld      dword ptr [esp + 0x1c]
+0046a52f  fsub     dword ptr [esp + 0x90]
+0046a536  fld      dword ptr [esp + 0x4c]
+0046a53a  fmul     st(1)
+0046a53c  fxch     st(2)
+0046a53e  fmul     dword ptr [esp + 0x48]
+0046a542  faddp    st(2)
+0046a544  fxch     st(2)
+0046a546  fmul     dword ptr [esp + 0x44]
+0046a54a  faddp    st(1)
+0046a54c  fcomp    dword ptr [0x5d757c]
+0046a552  fnstsw   ax
+0046a554  fstp     st(0)
+0046a556  test     ah, 5
+0046a559  jp       0x46a5f9
+0046a55f  fld      dword ptr [esp + 0x14]
+0046a563  fsub     dword ptr [esp + 0x98]
+0046a56a  fld      dword ptr [esp + 0x18]
+0046a56e  fsub     dword ptr [esp + 0xa4]
+0046a575  fld      dword ptr [esp + 0x1c]
+0046a579  fsub     dword ptr [esp + 0xa0]
+0046a580  fld      dword ptr [esp + 0x64]
+0046a584  fmul     st(1)
+0046a586  fxch     st(2)
+0046a588  fmul     dword ptr [esp + 0x60]
+0046a58c  faddp    st(2)
+0046a58e  fxch     st(2)
+0046a590  fmul     dword ptr [esp + 0x5c]
+0046a594  faddp    st(1)
+0046a596  fcomp    dword ptr [0x5d757c]
+0046a59c  fnstsw   ax
+0046a59e  fstp     st(0)
+0046a5a0  test     ah, 5
+0046a5a3  jp       0x46a5f9
+0046a5a5  fld      dword ptr [esp + 0x14]
+0046a5a9  fsub     dword ptr [esp + 0x8c]
+0046a5b0  fld      dword ptr [esp + 0x18]
+0046a5b4  fsub     dword ptr [esp + 0x80]
+0046a5bb  fld      dword ptr [esp + 0x1c]
+0046a5bf  fsub     dword ptr [esp + 0x30]
+0046a5c3  fld      dword ptr [esp + 0x58]
+0046a5c7  fmul     st(1)
+0046a5c9  fxch     st(2)
+0046a5cb  fmul     dword ptr [esp + 0x54]
+0046a5cf  faddp    st(2)
+0046a5d1  fxch     st(2)
+0046a5d3  fmul     dword ptr [esp + 0x50]
+0046a5d7  faddp    st(1)
+0046a5d9  fcomp    dword ptr [0x5d757c]
+0046a5df  fnstsw   ax
+0046a5e1  fstp     st(0)
+0046a5e3  test     ah, 5
+0046a5e6  jp       0x46a5f9
+0046a5e8  fadd     dword ptr [esp + 0x14]
+0046a5ec  inc      edx
+0046a5ed  fld      dword ptr [esp + 0x18]
+0046a5f1  faddp    st(2)
+0046a5f3  fld      dword ptr [esp + 0x1c]
+0046a5f7  faddp    st(3)
+0046a5f9  inc      ecx
+0046a5fa  cmp      ecx, 2
+0046a5fd  jb       0x469e50
+0046a603  test     edx, edx
+0046a605  je       0x46b1a4
+0046a60b  mov      dword ptr [esp + 0x30], edx
+0046a60f  fild     dword ptr [esp + 0x30]
+0046a613  jge      0x46a61b
+0046a615  fadd     dword ptr [0x5cc94c]
+0046a61b  fdivr    dword ptr [0x5cc320]
+0046a621  fst      dword ptr [esp + 0x30]
+0046a625  fmul     st(1)
+0046a627  fstp     dword ptr [esp + 0x50]
+0046a62b  fstp     st(0)
+0046a62d  fld      dword ptr [esp + 0x30]
+0046a631  fmul     st(1)
+0046a633  fstp     dword ptr [esp + 0x54]
+0046a637  fstp     st(0)
+0046a639  fld      dword ptr [esp + 0x30]
+0046a63d  fmul     st(1)
+0046a63f  fstp     dword ptr [esp + 0x58]
+0046a643  fstp     st(0)
+0046a645  fld      dword ptr [esp + 0x50]
+0046a649  fsub     dword ptr [ebp]
+0046a64c  fstp     dword ptr [esp + 0x14]
+0046a650  mov      ecx, dword ptr [esp + 0x14]
+0046a654  fld      dword ptr [esp + 0x54]
+0046a658  fsub     dword ptr [ebp + 4]
+0046a65b  fstp     dword ptr [esp + 0x18]
+0046a65f  mov      edx, dword ptr [esp + 0x18]
+0046a663  fld      dword ptr [esp + 0x58]
+0046a667  fsub     dword ptr [ebp + 8]
+0046a66a  mov      dword ptr [esp + 0xd4], ecx
+0046a671  lea      ecx, [esp + 0x14]
+0046a675  mov      dword ptr [esp + 0xd8], edx
+0046a67c  fstp     dword ptr [esp + 0x1c]
+0046a680  mov      eax, dword ptr [esp + 0x1c]
+0046a684  push     ecx
+0046a685  lea      edx, [esp + 0x18]
+0046a689  push     edx
+0046a68a  mov      dword ptr [esp + 0xe4], eax
+0046a691  call     0x4c39b0
+0046a696  fstp     st(0)
+0046a698  mov      eax, dword ptr [esp + 0xd4]
+0046a69f  fld      dword ptr [esp + 0x58]
+0046a6a3  fsub     dword ptr [eax]
+0046a6a5  fstp     dword ptr [esp + 0x28]
+0046a6a9  fld      dword ptr [esp + 0x5c]
+0046a6ad  fsub     dword ptr [eax + 4]
+0046a6b0  fstp     dword ptr [esp + 0x2c]
+0046a6b4  mov      ecx, dword ptr [esp + 0x2c]
+0046a6b8  fld      dword ptr [esp + 0x60]
+0046a6bc  fsub     dword ptr [eax + 8]
+0046a6bf  mov      eax, dword ptr [esp + 0x28]
+0046a6c3  mov      dword ptr [esp + 0xe8], eax
+0046a6ca  lea      eax, [esp + 0x28]
+0046a6ce  mov      dword ptr [esp + 0xec], ecx
+0046a6d5  fstp     dword ptr [esp + 0x30]
+0046a6d9  mov      edx, dword ptr [esp + 0x30]
+0046a6dd  push     eax
+0046a6de  lea      ecx, [esp + 0x2c]
+0046a6e2  push     ecx
+0046a6e3  mov      dword ptr [esp + 0xf8], edx
+0046a6ea  call     0x4c39b0
+0046a6ef  fstp     st(0)
+0046a6f1  fld      dword ptr [esi + 0x9b0]
+0046a6f7  mov      edx, dword ptr [esi + 0x9b8]
+0046a6fd  fld      dword ptr [esi + 0x9b4]
+0046a703  mov      eax, dword ptr [edi + 0x9b0]
+0046a709  fld      dword ptr [esi + 0x144]
+0046a70f  mov      ecx, dword ptr [edi + 0x9b4]
+0046a715  lea      ebx, [esi + 0x9b0]
+0046a71b  fmul     dword ptr [0x5cea50]
+0046a721  lea      ebp, [edi + 0x9b0]
+0046a727  mov      dword ptr [esp + 0xc4], edx
+0046a72e  mov      edx, dword ptr [edi + 0x9b8]
+0046a734  fadd     st(2)
+0046a736  mov      dword ptr [esp + 0x8c], 0
+0046a741  mov      dword ptr [esp + 0x88], 0
+0046a74c  fstp     dword ptr [esp + 0xbc]
+0046a753  mov      dword ptr [esp + 0x84], 0
+0046a75e  fld      dword ptr [esi + 0x148]
+0046a764  mov      dword ptr [esp + 0x80], 0
+0046a76f  mov      dword ptr [esp + 0x7c], 0
+0046a777  mov      dword ptr [esp + 0x78], 0
+0046a77f  mov      dword ptr [esp + 0xc8], eax
+0046a786  mov      dword ptr [esp + 0xcc], ecx
+0046a78d  mov      dword ptr [esp + 0xd0], edx
+0046a794  fmul     dword ptr [0x5cea50]
+0046a79a  lea      eax, [esp + 0xbc]
+0046a7a1  push     eax
+0046a7a2  fadd     st(1)
+0046a7a4  fstp     dword ptr [esp + 0xc4]
+0046a7ab  fstp     st(0)
+0046a7ad  fstp     st(0)
+0046a7af  fld      dword ptr [esi + 0x14c]
+0046a7b5  fmul     dword ptr [0x5cea50]
+0046a7bb  fadd     dword ptr [esp + 0xc8]
+0046a7c2  fstp     dword ptr [esp + 0xc8]
+0046a7c9  fld      dword ptr [edi + 0x144]
+0046a7cf  fmul     dword ptr [0x5cea50]
+0046a7d5  fadd     dword ptr [esp + 0xcc]
+0046a7dc  fstp     dword ptr [esp + 0xcc]
+0046a7e3  fld      dword ptr [edi + 0x148]
+0046a7e9  fmul     dword ptr [0x5cea50]
+0046a7ef  fadd     dword ptr [esp + 0xd0]
+0046a7f6  fstp     dword ptr [esp + 0xd0]
+0046a7fd  fld      dword ptr [edi + 0x14c]
+0046a803  fmul     dword ptr [0x5cea50]
+0046a809  fadd     dword ptr [esp + 0xd4]
+0046a810  fstp     dword ptr [esp + 0xd4]
+0046a817  call     0x4c3ac0
+0046a81c  lea      ecx, [esp + 0xcc]
+0046a823  fstp     dword ptr [esp + 0xe0]
+0046a82a  push     ecx
+0046a82b  call     0x4c3ac0
+0046a830  fld      dword ptr [esp + 0xd4]
+0046a837  fmul     dword ptr [esp + 0xc8]
+0046a83e  add      esp, 0x18
+0046a841  fld      dword ptr [esp + 0xb8]
+0046a848  fmul     dword ptr [esp + 0xac]
+0046a84f  faddp    st(1)
+0046a851  fld      dword ptr [esp + 0xc0]
+0046a858  fmul     dword ptr [esp + 0xb4]
+0046a85f  faddp    st(1)
+0046a861  fstp     dword ptr [esp + 0x30]
+0046a865  fld      dword ptr [esp + 0xcc]
+0046a86c  fcomp    dword ptr [0x5d757c]
+0046a872  fnstsw   ax
+0046a874  test     ah, 0x44
+0046a877  jnp      0x46a92c
+0046a87d  fld      dword ptr [0x5cc320]
+0046a883  fdiv     dword ptr [esp + 0xcc]
+0046a88a  fld      dword ptr [esp + 0x30]
+0046a88e  fmul     st(1)
+0046a890  fld      st(2)
+0046a892  fcomp    dword ptr [0x5d757c]
+0046a898  fnstsw   ax
+0046a89a  test     ah, 0x44
+0046a89d  jnp      0x46a8a1
+0046a89f  fdiv     st(2)
+0046a8a1  fxch     st(1)
+0046a8a3  fmul     st(2)
+0046a8a5  fmul     st(1)
+0046a8a7  fchs     
+0046a8a9  fstp     st(1)
+0046a8ab  fcom     dword ptr [0x5d757c]
+0046a8b1  fnstsw   ax
+0046a8b3  test     ah, 0x41
+0046a8b6  jne      0x46a8c2
+0046a8b8  fstp     st(0)
+0046a8ba  fld      dword ptr [0x5d757c]
+0046a8c0  jmp      0x46a8d7
+0046a8c2  fcom     dword ptr [0x5cc33c]
+0046a8c8  fnstsw   ax
+0046a8ca  test     ah, 5
+0046a8cd  jp       0x46a8d7
+0046a8cf  fstp     st(0)
+0046a8d1  fld      dword ptr [0x5cc33c]
+0046a8d7  fadd     dword ptr [0x5cc320]
+0046a8dd  fld      dword ptr [esp + 0xac]
+0046a8e4  fmul     st(1)
+0046a8e6  fld      st(1)
+0046a8e8  fmul     dword ptr [esp + 0xb0]
+0046a8ef  fst      dword ptr [esp + 0x60]
+0046a8f3  fxch     st(2)
+0046a8f5  fmul     dword ptr [esp + 0xb4]
+0046a8fc  fst      dword ptr [esp + 0x64]
+0046a900  fld      st(1)
+0046a902  fstp     dword ptr [esp + 0x74]
+0046a906  fxch     st(2)
+0046a908  fstp     dword ptr [esp + 0x78]
+0046a90c  fxch     st(1)
+0046a90e  fstp     dword ptr [esp + 0x7c]
+0046a912  fchs     
+0046a914  fstp     dword ptr [esp + 0x68]
+0046a918  fld      dword ptr [esp + 0x60]
+0046a91c  fchs     
+0046a91e  fstp     dword ptr [esp + 0x6c]
+0046a922  fld      dword ptr [esp + 0x64]
+0046a926  fchs     
+0046a928  fstp     dword ptr [esp + 0x70]
+0046a92c  fcom     dword ptr [0x5d757c]
+0046a932  fnstsw   ax
+0046a934  test     ah, 0x44
+0046a937  jnp      0x46aa10
+0046a93d  fdivr    dword ptr [0x5cc320]
+0046a943  fld      dword ptr [esp + 0x30]
+0046a947  fmul     st(1)
+0046a949  fld      dword ptr [esp + 0xcc]
+0046a950  fcomp    dword ptr [0x5d757c]
+0046a956  fnstsw   ax
+0046a958  test     ah, 0x44
+0046a95b  jnp      0x46a964
+0046a95d  fdiv     dword ptr [esp + 0xcc]
+0046a964  fxch     st(1)
+0046a966  fmul     dword ptr [esp + 0xcc]
+0046a96d  fmul     st(1)
+0046a96f  fchs     
+0046a971  fstp     st(1)
+0046a973  fcom     dword ptr [0x5d757c]
+0046a979  fnstsw   ax
+0046a97b  test     ah, 0x41
+0046a97e  jne      0x46a98a
+0046a980  fstp     st(0)
+0046a982  fld      dword ptr [0x5d757c]
+0046a988  jmp      0x46a99f
+0046a98a  fcom     dword ptr [0x5cc33c]
+0046a990  fnstsw   ax
+0046a992  test     ah, 5
+0046a995  jp       0x46a99f
+0046a997  fstp     st(0)
+0046a999  fld      dword ptr [0x5cc33c]
+0046a99f  fadd     dword ptr [0x5cc320]
+0046a9a5  fld      dword ptr [esp + 0xb8]
+0046a9ac  fmul     st(1)
+0046a9ae  fld      st(1)
+0046a9b0  fmul     dword ptr [esp + 0xbc]
+0046a9b7  fstp     dword ptr [esp + 0x60]
+0046a9bb  fxch     st(1)
+0046a9bd  fmul     dword ptr [esp + 0xc0]
+0046a9c4  fstp     dword ptr [esp + 0x64]
+0046a9c8  fld      dword ptr [esp + 0x68]
+0046a9cc  fadd     st(1)
+0046a9ce  fstp     dword ptr [esp + 0x68]
+0046a9d2  fld      dword ptr [esp + 0x6c]
+0046a9d6  fadd     dword ptr [esp + 0x60]
+0046a9da  fstp     dword ptr [esp + 0x6c]
+0046a9de  fld      dword ptr [esp + 0x70]
+0046a9e2  fadd     dword ptr [esp + 0x64]
+0046a9e6  fstp     dword ptr [esp + 0x70]
+0046a9ea  fld      dword ptr [esp + 0x74]
+0046a9ee  fsub     st(1)
+0046a9f0  fstp     dword ptr [esp + 0x74]
+0046a9f4  fstp     st(0)
+0046a9f6  fld      dword ptr [esp + 0x78]
+0046a9fa  fsub     dword ptr [esp + 0x60]
+0046a9fe  fstp     dword ptr [esp + 0x78]
+0046aa02  fld      dword ptr [esp + 0x7c]
+0046aa06  fsub     dword ptr [esp + 0x64]
+0046aa0a  fstp     dword ptr [esp + 0x7c]
+0046aa0e  jmp      0x46aa12
+0046aa10  fstp     st(0)
+0046aa12  fld      dword ptr [esp + 0x68]
+0046aa16  lea      edx, [esp + 0x68]
+0046aa1a  fmul     dword ptr [0x5cc32c]
+0046aa20  push     edx
+0046aa21  fadd     dword ptr [ebx]
+0046aa23  fstp     dword ptr [ebx]
+0046aa25  fld      dword ptr [esp + 0x70]
+0046aa29  fmul     dword ptr [0x5cc32c]
+0046aa2f  fadd     dword ptr [esi + 0x9b4]
+0046aa35  fstp     dword ptr [esi + 0x9b4]
+0046aa3b  fld      dword ptr [esp + 0x74]
+0046aa3f  fmul     dword ptr [0x5cc32c]
+0046aa45  fadd     dword ptr [esi + 0x9b8]
+0046aa4b  fstp     dword ptr [esi + 0x9b8]
+0046aa51  fld      dword ptr [esp + 0x78]
+0046aa55  fmul     dword ptr [0x5cc32c]
+0046aa5b  fadd     dword ptr [ebp]
+0046aa5e  fstp     dword ptr [ebp]
+0046aa61  fld      dword ptr [esp + 0x7c]
+0046aa65  fmul     dword ptr [0x5cc32c]
+0046aa6b  fadd     dword ptr [edi + 0x9b4]
+0046aa71  fstp     dword ptr [edi + 0x9b4]
+0046aa77  fld      dword ptr [esp + 0x80]
+0046aa7e  fmul     dword ptr [0x5cc32c]
+0046aa84  fadd     dword ptr [edi + 0x9b8]
+0046aa8a  fstp     dword ptr [edi + 0x9b8]
+0046aa90  call     0x4c3ac0
+0046aa95  lea      eax, [esp + 0x78]
+0046aa99  fstp     dword ptr [esp + 0x14]
+0046aa9d  push     eax
+0046aa9e  call     0x4c3ac0
+0046aaa3  mov      eax, dword ptr [0x803320]
+0046aaa8  fadd     dword ptr [esp + 0x18]
+0046aaac  add      esp, 8
+0046aaaf  cmp      eax, 2
+0046aab2  fstp     dword ptr [esp + 0x2c]
+0046aab6  jg       0x46aac0
+0046aab8  fld      dword ptr [0x5cc568]
+0046aabe  jmp      0x46aac4
+0046aac0  fld      dword ptr [esp + 0x10]
+0046aac4  cmp      eax, 3
+0046aac7  je       0x46aace
+0046aac9  cmp      eax, 4
+0046aacc  jne      0x46aad6
+0046aace  fstp     st(0)
+0046aad0  fld      dword ptr [0x5ce194]
+0046aad6  fld      dword ptr [esp + 0x2c]
+0046aada  fmul     dword ptr [0x5cea4c]
+0046aae0  fcom     dword ptr [0x5cc320]
+0046aae6  fnstsw   ax
+0046aae8  test     ah, 0x41
+0046aaeb  jne      0x46aaf5
+0046aaed  fstp     st(0)
+0046aaef  fld      dword ptr [0x5cc320]
+0046aaf5  fmulp    st(1)
+0046aaf7  fst      dword ptr [esp + 0x10]
+0046aafb  fcomp    dword ptr [0x5ce194]
+0046ab01  fnstsw   ax
+0046ab03  test     ah, 5
+0046ab06  jp       0x46ab10
+0046ab08  mov      dword ptr [esp + 0x10], 0x43480000
+0046ab10  lea      ecx, [esp + 0x38]
+0046ab14  push     ebx
+0046ab15  push     ecx
+0046ab16  call     0x4c39b0
+0046ab1b  fstp     st(0)
+0046ab1d  lea      edx, [esp + 0x4c]
+0046ab21  push     ebp
+0046ab22  push     edx
+0046ab23  call     0x4c39b0
+0046ab28  fstp     st(0)
+0046ab2a  fld      dword ptr [esp + 0x48]
+0046ab2e  lea      eax, [esp + 0x48]
+0046ab32  fsub     dword ptr [esp + 0x24]
+0046ab36  push     eax
+0046ab37  lea      ecx, [esp + 0x4c]
+0046ab3b  push     ecx
+0046ab3c  fstp     dword ptr [esp + 0x50]
+0046ab40  fld      dword ptr [esp + 0x54]
+0046ab44  fsub     dword ptr [esp + 0x30]
+0046ab48  fstp     dword ptr [esp + 0x54]
+0046ab4c  fld      dword ptr [esp + 0x58]
+0046ab50  fsub     dword ptr [esp + 0x34]
+0046ab54  fstp     dword ptr [esp + 0x58]
+0046ab58  fld      dword ptr [esp + 0x5c]
+0046ab5c  fsub     dword ptr [esp + 0x38]
+0046ab60  fstp     dword ptr [esp + 0x5c]
+0046ab64  fld      dword ptr [esp + 0x60]
+0046ab68  fsub     dword ptr [esp + 0x3c]
+0046ab6c  fstp     dword ptr [esp + 0x60]
+0046ab70  fld      dword ptr [esp + 0x64]
+0046ab74  fsub     dword ptr [esp + 0x40]
+0046ab78  fstp     dword ptr [esp + 0x64]
+0046ab7c  call     0x4c39b0
+0046ab81  fstp     st(0)
+0046ab83  lea      edx, [esp + 0x5c]
+0046ab87  push     edx
+0046ab88  lea      eax, [esp + 0x60]
+0046ab8c  push     eax
+0046ab8d  call     0x4c39b0
+0046ab92  fstp     st(0)
+0046ab94  fld      dword ptr [esp + 0x30]
+0046ab98  add      esp, 0x20
+0046ab9b  fmul     dword ptr [0x5cd50c]
+0046aba1  fld      dword ptr [esp + 0x38]
+0046aba5  fmul     st(1)
+0046aba7  fsubr    dword ptr [ebx]
+0046aba9  fstp     dword ptr [ebx]
+0046abab  fld      dword ptr [esp + 0x3c]
+0046abaf  fmul     st(1)
+0046abb1  fsubr    dword ptr [esi + 0x9b4]
+0046abb7  fstp     dword ptr [esi + 0x9b4]
+0046abbd  fld      dword ptr [esp + 0x40]
+0046abc1  fmul     st(1)
+0046abc3  fsubr    dword ptr [esi + 0x9b8]
+0046abc9  fstp     dword ptr [esi + 0x9b8]
+0046abcf  fld      dword ptr [esp + 0x44]
+0046abd3  fmul     st(1)
+0046abd5  fsubr    dword ptr [ebp]
+0046abd8  fstp     dword ptr [ebp]
+0046abdb  fld      dword ptr [esp + 0x48]
+0046abdf  fmul     st(1)
+0046abe1  fsubr    dword ptr [edi + 0x9b4]
+0046abe7  fstp     dword ptr [edi + 0x9b4]
+0046abed  fmul     dword ptr [esp + 0x4c]
+0046abf1  fsubr    dword ptr [edi + 0x9b8]
+0046abf7  fstp     dword ptr [edi + 0x9b8]
+0046abfd  fld      dword ptr [esp + 0x14]
+0046ac01  fmul     dword ptr [esp + 0x10]
+0046ac05  fsubr    dword ptr [ebx]
+0046ac07  mov      eax, 0x1e0
+0046ac0c  fstp     dword ptr [ebx]
+0046ac0e  fld      dword ptr [esp + 0x18]
+0046ac12  fmul     dword ptr [esp + 0x10]
+0046ac16  fsubr    dword ptr [esi + 0x9b4]
+0046ac1c  fstp     dword ptr [esi + 0x9b4]
+0046ac22  fld      dword ptr [esp + 0x1c]
+0046ac26  fmul     dword ptr [esp + 0x10]
+0046ac2a  fsubr    dword ptr [esi + 0x9b8]
+0046ac30  fstp     dword ptr [esi + 0x9b8]
+0046ac36  fld      dword ptr [esp + 0x20]
+0046ac3a  fmul     dword ptr [esp + 0x10]
+0046ac3e  fsubr    dword ptr [ebp]
+0046ac41  fstp     dword ptr [ebp]
+0046ac44  fld      dword ptr [esp + 0x24]
+0046ac48  fmul     dword ptr [esp + 0x10]
+0046ac4c  fsubr    dword ptr [edi + 0x9b4]
+0046ac52  fstp     dword ptr [edi + 0x9b4]
+0046ac58  fld      dword ptr [esp + 0x28]
+0046ac5c  fmul     dword ptr [esp + 0x10]
+0046ac60  fsubr    dword ptr [edi + 0x9b8]
+0046ac66  fstp     dword ptr [edi + 0x9b8]
+0046ac6c  mov      ecx, dword ptr [esi + 0xaec]
+0046ac72  test     ecx, ecx
+0046ac74  jne      0x46ac7c
+0046ac76  mov      dword ptr [esi + 0xaec], eax
+0046ac7c  mov      ecx, dword ptr [edi + 0xaec]
+0046ac82  xor      ebx, ebx
+0046ac84  cmp      ecx, ebx
+0046ac86  jne      0x46ac8e
+0046ac88  mov      dword ptr [edi + 0xaec], eax
+0046ac8e  mov      ecx, dword ptr [esi + 0x9ac]
+0046ac94  shl      ecx, 6
+0046ac97  lea      edx, [ecx + esi + 0x928]
+0046ac9e  push     edx
+0046ac9f  lea      eax, [esp + 0x138]
+0046aca6  push     eax
+0046aca7  call     0x4c4dc0
+0046acac  lea      ecx, [esp + 0x13c]
+0046acb3  push     ecx
+0046acb4  push     1
+0046acb6  lea      edx, [esp + 0xe4]
+0046acbd  push     edx
+0046acbe  lea      eax, [esp + 0x28]
+0046acc2  push     eax
+0046acc3  call     0x4c3df0
+0046acc8  mov      ecx, dword ptr [edi + 0x9ac]
+0046acce  shl      ecx, 6
+0046acd1  lea      edx, [ecx + edi + 0x928]
+0046acd8  push     edx
+0046acd9  lea      eax, [esp + 0x150]
+0046ace0  push     eax
+0046ace1  call     0x4c4dc0
+0046ace6  lea      ecx, [esp + 0x154]
+0046aced  push     ecx
+0046acee  push     1
+0046acf0  lea      edx, [esp + 0x108]
+0046acf7  push     edx
+0046acf8  lea      eax, [esp + 0x4c]
+0046acfc  push     eax
+0046acfd  call     0x4c3df0
+0046ad02  fld      dword ptr [esp + 0x40]
+0046ad06  fst      dword ptr [esp + 0x5c]
+0046ad0a  add      esp, 0x30
+0046ad0d  fld      dword ptr [esp + 0x14]
+0046ad11  fcomp    dword ptr [0x5d757c]
+0046ad17  fld      dword ptr [esp + 0x1c]
+0046ad1b  fnstsw   ax
+0046ad1d  fcomp    dword ptr [0x5d757c]
+0046ad23  test     ah, 5
+0046ad26  fnstsw   ax
+0046ad28  jp       0x46ad31
+0046ad2a  test     ah, 5
+0046ad2d  jp       0x46ad38
+0046ad2f  jmp      0x46ad36
+0046ad31  test     ah, 0x41
+0046ad34  jne      0x46ad38
+0046ad36  fchs     
+0046ad38  cmp      dword ptr [esi + 0x10], ebx
+0046ad3b  je       0x46ad57
+0046ad3d  fmul     dword ptr [0x5cc328]
+0046ad43  mov      dword ptr [esi + 0x9bc], ebx
+0046ad49  mov      dword ptr [esi + 0x9c4], ebx
+0046ad4f  fstp     dword ptr [esi + 0x9c0]
+0046ad55  jmp      0x46ad69
+0046ad57  fmul     dword ptr [0x5ce268]
+0046ad5d  fadd     dword ptr [esi + 0x148]
+0046ad63  fstp     dword ptr [esi + 0x148]
+0046ad69  fld      dword ptr [esp + 0x2c]
+0046ad6d  fld      dword ptr [esp + 0x20]
+0046ad71  fcomp    dword ptr [0x5d757c]
+0046ad77  fld      dword ptr [esp + 0x28]
+0046ad7b  fnstsw   ax
+0046ad7d  fcomp    dword ptr [0x5d757c]
+0046ad83  test     ah, 5
+0046ad86  fnstsw   ax
+0046ad88  jp       0x46ad91
+0046ad8a  test     ah, 5
+0046ad8d  jp       0x46ad9e
+0046ad8f  jmp      0x46ad96
+0046ad91  test     ah, 0x41
+0046ad94  jne      0x46ad9e
+0046ad96  fstp     st(0)
+0046ad98  fld      dword ptr [esp + 0x2c]
+0046ad9c  fchs     
+0046ad9e  cmp      dword ptr [edi + 0x10], ebx
+0046ada1  je       0x46adbd
+0046ada3  fmul     dword ptr [0x5cc328]
+0046ada9  mov      dword ptr [edi + 0x9bc], ebx
+0046adaf  mov      dword ptr [edi + 0x9c4], ebx
+0046adb5  fstp     dword ptr [edi + 0x9c0]
+0046adbb  jmp      0x46adcf
+0046adbd  fmul     dword ptr [0x5ce268]
+0046adc3  fadd     dword ptr [edi + 0x148]
+0046adc9  fstp     dword ptr [edi + 0x148]
+0046adcf  mov      ecx, dword ptr [esp + 0x50]
+0046add3  mov      eax, dword ptr [esp + 0x58]
+0046add7  mov      edx, dword ptr [esp + 0x54]
+0046addb  mov      dword ptr [esp + 0xf4], ecx
+0046ade2  mov      ecx, dword ptr [esp + 0xc8]
+0046ade9  mov      dword ptr [esp + 0xf8], edx
+0046adf0  xor      edx, edx
+0046adf2  mov      dword ptr [esp + 0xfc], eax
+0046adf9  mov      eax, dword ptr [esp + 0xc4]
+0046ae00  cmp      eax, ecx
+0046ae02  setne    dl
+0046ae05  cmp      eax, ecx
+0046ae07  mov      ebp, edx
+0046ae09  jl       0x46afc4
+0046ae0f  mov      eax, dword ptr [esp + 0x14]
+0046ae13  mov      ecx, dword ptr [esp + 0x18]
+0046ae17  mov      edx, dword ptr [esp + 0x1c]
+0046ae1b  mov      ebx, dword ptr [esi]
+0046ae1d  mov      edi, dword ptr [edi]
+0046ae1f  mov      dword ptr [esp + 0x100], eax
+0046ae26  mov      eax, dword ptr [esp + 0x68]
+0046ae2a  mov      dword ptr [esp + 0x104], ecx
+0046ae31  mov      ecx, dword ptr [esp + 0x6c]
+0046ae35  mov      dword ptr [esp + 0x108], edx
+0046ae3c  mov      edx, dword ptr [esp + 0x70]
+0046ae40  mov      dword ptr [esp + 0x118], eax
+0046ae47  mov      eax, dword ptr [esp + 0x20]
+0046ae4b  mov      dword ptr [esp + 0x11c], ecx
+0046ae52  mov      ecx, dword ptr [esp + 0x24]
+0046ae56  mov      dword ptr [esp + 0x120], edx
+0046ae5d  mov      edx, dword ptr [esp + 0x28]
+0046ae61  mov      dword ptr [esp + 0x10c], eax
+0046ae68  mov      eax, dword ptr [esp + 0x74]
+0046ae6c  mov      dword ptr [esp + 0x110], ecx
+0046ae73  mov      ecx, dword ptr [esp + 0x78]
+0046ae77  mov      dword ptr [esp + 0x114], edx
+0046ae7e  mov      edx, dword ptr [esp + 0x7c]
+0046ae82  mov      dword ptr [esp + 0x124], eax
+0046ae89  mov      dword ptr [esp + 0x128], ecx
+0046ae90  mov      dword ptr [esp + 0x12c], edx
+0046ae97  call     0x40e350
+0046ae9c  cmp      eax, 1
+0046ae9f  je       0x46b18b
+0046aea5  cmp      eax, 2
+0046aea8  je       0x46b18b
+0046aeae  cmp      eax, 3
+0046aeb1  je       0x46b18b
+0046aeb7  cmp      eax, 4
+0046aeba  je       0x46b18b
+0046aec0  cmp      eax, 5
+0046aec3  je       0x46b18b
+0046aec9  mov      eax, dword ptr [0x7e9de0]
+0046aece  mov      edx, dword ptr [0x7f1030]
+0046aed4  mov      dword ptr [eax*4 + 0x7e9de4], 4
+0046aedf  mov      ecx, dword ptr [0x7e9de0]
+0046aee5  mov      dword ptr [ecx*4 + 0x7ea1e4], edx
+0046aeec  mov      eax, dword ptr [esi]
+0046aeee  mov      ecx, dword ptr [0x7e9de0]
+0046aef4  add      eax, 0xff00
+0046aef9  mov      dword ptr [ecx*4 + 0x7ea5e4], eax
+0046af00  mov      edx, dword ptr [0x7e9de0]
+0046af06  shl      edx, 5
+0046af09  mov      dword ptr [edx + 0x7ea9e4], ebx
+0046af0f  mov      eax, dword ptr [0x7e9de0]
+0046af14  shl      eax, 5
+0046af17  mov      dword ptr [eax + 0x7ea9e8], edi
+0046af1d  mov      ecx, dword ptr [0x7e9de0]
+0046af23  mov      eax, dword ptr [esp + 0xe0]
+0046af2a  shl      ecx, 5
+0046af2d  mov      dword ptr [ecx + 0x7ea9ec], ebp
+0046af33  mov      edx, dword ptr [0x7e9de0]
+0046af39  shl      edx, 5
+0046af3c  mov      dword ptr [edx + 0x7ea9f0], eax
+0046af42  mov      ecx, dword ptr [0x7e9de0]
+0046af48  mov      edx, dword ptr [esp + 0xe4]
+0046af4f  shl      ecx, 5
+0046af52  mov      dword ptr [ecx + 0x7ea9f4], edx
+0046af58  mov      eax, dword ptr [0x7e9de0]
+0046af5d  mov      ecx, dword ptr [esp + 0xe8]
+0046af64  shl      eax, 5
+0046af67  mov      dword ptr [eax + 0x7ea9f8], ecx
+0046af6d  mov      edx, dword ptr [0x7e9de0]
+0046af73  mov      eax, dword ptr [esp + 0xec]
+0046af7a  shl      edx, 5
+0046af7d  mov      dword ptr [edx + 0x7ea9fc], eax
+0046af83  mov      ecx, dword ptr [0x7e9de0]
+0046af89  mov      edx, dword ptr [esp + 0xf0]
+0046af90  shl      ecx, 5
+0046af93  mov      dword ptr [ecx + 0x7eaa00], edx
+0046af99  xor      eax, eax
+0046af9b  jmp      0x46afa0
+0046af9d  lea      ecx, [ecx]
+0046afa0  mov      ecx, dword ptr [0x7e9de0]
+0046afa6  mov      edx, dword ptr [esp + eax*4 + 0xf4]
+0046afad  shl      ecx, 4
+0046afb0  add      ecx, eax
+0046afb2  inc      eax
+0046afb3  cmp      eax, 0x10
+0046afb6  mov      dword ptr [ecx*4 + 0x7ec9e4], edx
+0046afbd  jl       0x46afa0
+0046afbf  jmp      0x46b16f
+0046afc4  mov      eax, dword ptr [esp + 0x20]
+0046afc8  mov      ecx, dword ptr [esp + 0x24]
+0046afcc  mov      edx, dword ptr [esp + 0x28]
+0046afd0  mov      ebx, dword ptr [edi]
+0046afd2  mov      esi, dword ptr [esi]
+0046afd4  mov      dword ptr [esp + 0x100], eax
+0046afdb  mov      eax, dword ptr [esp + 0x74]
+0046afdf  mov      dword ptr [esp + 0x104], ecx
+0046afe6  mov      ecx, dword ptr [esp + 0x78]
+0046afea  mov      dword ptr [esp + 0x108], edx
+0046aff1  mov      edx, dword ptr [esp + 0x7c]
+0046aff5  mov      dword ptr [esp + 0x118], eax
+0046affc  mov      eax, dword ptr [esp + 0x14]
+0046b000  mov      dword ptr [esp + 0x11c], ecx
+0046b007  mov      ecx, dword ptr [esp + 0x18]
+0046b00b  mov      dword ptr [esp + 0x120], edx
+0046b012  mov      edx, dword ptr [esp + 0x1c]
+0046b016  mov      dword ptr [esp + 0x10c], eax
+0046b01d  mov      eax, dword ptr [esp + 0x68]
+0046b021  mov      dword ptr [esp + 0x110], ecx
+0046b028  mov      ecx, dword ptr [esp + 0x6c]
+0046b02c  mov      dword ptr [esp + 0x114], edx
+0046b033  mov      edx, dword ptr [esp + 0x70]
+0046b037  mov      dword ptr [esp + 0x124], eax
+0046b03e  mov      dword ptr [esp + 0x128], ecx
+0046b045  mov      dword ptr [esp + 0x12c], edx
+0046b04c  call     0x40e350
+0046b051  cmp      eax, 1
+0046b054  je       0x46b18b
+0046b05a  cmp      eax, 2
+0046b05d  je       0x46b18b
+0046b063  cmp      eax, 3
+0046b066  je       0x46b18b
+0046b06c  cmp      eax, 4
+0046b06f  je       0x46b18b
+0046b075  cmp      eax, 5
+0046b078  je       0x46b18b
+0046b07e  mov      eax, dword ptr [0x7e9de0]
+0046b083  mov      edx, dword ptr [0x7f1030]
+0046b089  mov      dword ptr [eax*4 + 0x7e9de4], 4
+0046b094  mov      ecx, dword ptr [0x7e9de0]
+0046b09a  mov      dword ptr [ecx*4 + 0x7ea1e4], edx
+0046b0a1  mov      eax, dword ptr [edi]
+0046b0a3  mov      ecx, dword ptr [0x7e9de0]
+0046b0a9  add      eax, 0xff00
+0046b0ae  mov      dword ptr [ecx*4 + 0x7ea5e4], eax
+0046b0b5  mov      edx, dword ptr [0x7e9de0]
+0046b0bb  shl      edx, 5
+0046b0be  mov      dword ptr [edx + 0x7ea9e4], ebx
+0046b0c4  mov      eax, dword ptr [0x7e9de0]
+0046b0c9  shl      eax, 5
+0046b0cc  mov      dword ptr [eax + 0x7ea9e8], esi
+0046b0d2  mov      ecx, dword ptr [0x7e9de0]
+0046b0d8  mov      eax, dword ptr [esp + 0xe0]
+0046b0df  shl      ecx, 5
+0046b0e2  mov      dword ptr [ecx + 0x7ea9ec], ebp
+0046b0e8  mov      edx, dword ptr [0x7e9de0]
+0046b0ee  shl      edx, 5
+0046b0f1  mov      dword ptr [edx + 0x7ea9f0], eax
+0046b0f7  mov      ecx, dword ptr [0x7e9de0]
+0046b0fd  mov      edx, dword ptr [esp + 0xe4]
+0046b104  shl      ecx, 5
+0046b107  mov      dword ptr [ecx + 0x7ea9f4], edx
+0046b10d  mov      eax, dword ptr [0x7e9de0]
+0046b112  mov      ecx, dword ptr [esp + 0xe8]
+0046b119  shl      eax, 5
+0046b11c  mov      dword ptr [eax + 0x7ea9f8], ecx
+0046b122  mov      edx, dword ptr [0x7e9de0]
+0046b128  mov      eax, dword ptr [esp + 0xec]
+0046b12f  shl      edx, 5
+0046b132  mov      dword ptr [edx + 0x7ea9fc], eax
+0046b138  mov      ecx, dword ptr [0x7e9de0]
+0046b13e  mov      edx, dword ptr [esp + 0xf0]
+0046b145  shl      ecx, 5
+0046b148  mov      dword ptr [ecx + 0x7eaa00], edx
+0046b14e  xor      eax, eax
+0046b150  mov      ecx, dword ptr [0x7e9de0]
+0046b156  mov      edx, dword ptr [esp + eax*4 + 0xf4]
+0046b15d  shl      ecx, 4
+0046b160  add      ecx, eax
+0046b162  inc      eax
+0046b163  cmp      eax, 0x10
+0046b166  mov      dword ptr [ecx*4 + 0x7ec9e4], edx
+0046b16d  jl       0x46b150
+0046b16f  mov      eax, dword ptr [0x7e9de0]
+0046b174  inc      eax
+0046b175  cmp      eax, 0x100
+0046b17a  mov      dword ptr [0x7e9de0], eax
+0046b17f  jb       0x46b18b
+0046b181  mov      dword ptr [0x7e9de0], 0
+0046b18b  mov      ecx, dword ptr [esp + 0x17c]
+0046b192  pop      edi
+0046b193  pop      esi
+0046b194  xor      eax, eax
+0046b196  test     ecx, ecx
+0046b198  pop      ebp
+0046b199  sete     al
+0046b19c  pop      ebx
+0046b19d  add      esp, 0x164
+0046b1a3  ret      
+0046b1a4  pop      edi
+0046b1a5  fstp     st(0)
+0046b1a7  pop      esi
+0046b1a8  fstp     st(0)
+0046b1aa  pop      ebp
+0046b1ab  fstp     st(0)
+0046b1ad  xor      eax, eax
+0046b1af  pop      ebx

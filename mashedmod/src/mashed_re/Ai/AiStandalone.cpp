@@ -1845,6 +1845,7 @@ void VehicleStep(int v)
     } else {
         ControlStep(spline, v, ctrl);         // FUN_00416250 (bands real; targeting stubbed)
     }
+    Ai_RecordStepOut(v, ctrl);                // [d3bB2] the bytes FUN_00416250 returns (the original probe's sample point)
     ::AiPostStepPowerupBrake(v, ctrl);        // FUN_00417640, Ai/AiPostStepBrake.cpp (the one body)
 
     // override-replay (+0x40..0x4c) -- FUN_00418560 tail (0x00418790..0x00418844,
@@ -2090,6 +2091,128 @@ void Ai_AdvanceClock(int units)
     // MASHED_SUBSTATE (default OFF). Its only consumer in the exe is the FUN_0041d930 tail
     // partial (TrackRenderer.cpp), behind the same knob.
     SubState_StoreStep(units);
+}
+
+// [d3bB2 2026-10-17] The AI clock on the countdown stand-in frames (MASHED_AI_COUNTDOWN_CLOCK=1,
+// default OFF). FUN_0040fc00 adds its tick budget to DAT_007f0ff4 on every tick except race
+// sub-state 7 (0x0040fe46 cmp [0x0063ba8c],7 / 0x0040fe4f..0x0040fe5e), so the original's clock runs
+// through phase 3 and states 4 / 5 before GO: on all 31 labelled original captures it starts at 0 on
+// the first probed FUN_00416250 call, counts 50 per call, and reads 38850..46400 at the first racing
+// call (o_reg_r13: 37450 at the state-4 call, 43100 at GO, 113 x 50 later). The exe's default
+// countdown runs no AI tick and advanced no clock, so it reached GO at 0 and its first racing calls
+// read 50 / 100 / 150. FUN_00416250's fresh-steer arm needs [0x0089a4ec + v*0x74] == 1 or
+// DAT_007f0ff4 - [0x0089a4f0 + v*0x74] >= 0xc8 (0x00416608..0x00416621 / 0x0041671d..0x00416736);
+// with the stamps at 0 (FUN_00413fe0) the exe took the decay arm on calls 1-2 and wrote c0 = 0 where
+// the original wrote err * speed * _DAT_005cd0e8 (car 2 of o_reg_r13: 11, 23).
+// Only DAT_007f0ff4 is advanced. DAT_007f0ff8 is also added at 0x0040fe64, but FUN_00418560's
+// mode-5 branch zeroes it on every state-5 tick (0x00418598) and this stand-in runs no AI tick, so
+// it is left as it was. Every other reader of DAT_007f0ff4 on the race path takes a difference with
+// a stored stamp; the two absolute readers are off this path (0x00470df2 runs only when
+// [0x007f0fd0] is 1 or 2, 0x00470dd2..0x00470dde; 0x00429424 formats a string for 0x004987b0).
+bool Ai_CountdownClockEnabled()
+{
+    static const bool s = [] { const char* e = std::getenv("MASHED_AI_COUNTDOWN_CLOCK");
+                               return e && e[0] == '1'; }();
+    return s;
+}
+
+void Ai_AdvanceCountdownClock(int units)
+{
+    I32(0x007f0ff4u) += units;           // 0x0040fe5e
+}
+
+// [d3bB2 2026-10-17] The car<->car type-4 event and its AI override (MASHED_AI_CONTACT_EVENT=1, default OFF).
+//
+// Original chain, from the bytes and a hardware watchpoint on the original (verify/d3bB2_20261017/o_ov1):
+//   FUN_00469df0 tail (0x0046ae0f.. / 0x0046afc4..): on every contact, unless FUN_0040e350() is 1..5, push a
+//     type-4 entry {frame stamp DAT_007f1030, pair (0x007ea9e4, 0x007ea9e8), flag, vectors} into the ring
+//     0x007e9de0 (head) / 0x007e9de4 (type).
+//   FUN_00425a40: FUN_00418860 (AI tick) -> FUN_00424eb0 -> FUN_00470c70 (physics, the pushes) -> FUN_00422ba0
+//     (drain, this frame's stamp only, newest first) -> FUN_004252c0.
+//   FUN_00422ba0 type 4 (decomp lines 108-145): FUN_004922e0(a/b, 1, 2, 0xff) (CarEventTrigger, hit sound /
+//     particles), then only if FUN_0046cbb0's first word is 0 for BOTH cars: the pair tables 0x008995b0..
+//     (stride 0x4e) and, for each car with FUN_0040e470(car) != 1, FUN_00417370(car).
+//   FUN_00417370 (0x00417370..0x0041739b): [0x0089a4fc + v*0x74] = 0xb4 - 0xb4 * __ftol([0x0089a360] - 10.0)
+//     (_DAT_005cc55c = 0x41200000 = 10.0, read from MASHED.exe.unpatched; __ftol 0x004a2c48 truncates).
+//     Watched: 1440 on car 2 at seq 5922, one seq after FUN_00469df0 set +0xaec = 480 (0x0046ac8e); then
+//     FUN_00418560's tail (0x004187ee) counts it down by DAT_007f1008 per AI tick (29 ticks) and replays the
+//     stored ctrl bytes c0/c1/c4/c5 on each of them.
+// Ported here: the push (one entry per contact) and the FUN_00417370 effect with its two gates. NOT ported,
+// named: FUN_004922e0 (no AI or physics effect) and the pair tables, whose readers (FUN_00423b20, FUN_004248b0,
+// FUN_00424b80, FUN_004252c0; datarefs_pairtables.txt) have no exe caller on the race path. The ring layout
+// is not reproduced: the exe-side queue holds this frame's pairs and is emptied by the drain.
+extern "C" int __cdecl VehicleCarStateRead(std::uint32_t carIdx, std::uint32_t* a, std::uint32_t* b); // 0x0046cbb0, Vehicle/VehicleState.cpp
+namespace {
+struct ContactEvent { int a, b; };
+ContactEvent s_ccEvents[0x100];          // the original ring is 0x100 entries (0x0046b175 cmp eax,0x100)
+int          s_ccEventN = 0;
+
+int SlotStateE470(int i)                 // FUN_0040e470: *(*(int**)0x005f2770 + 0x34 + i*4)
+{
+    const std::uintptr_t p = *reinterpret_cast<std::uintptr_t*>(0x005f2770u);
+    if (!p) return 0;
+    return *reinterpret_cast<int*>(p + 0x34u + static_cast<std::uintptr_t>(i) * 4u);
+}
+
+void AiOverrideTimerSet(int v)           // FUN_00417370
+{
+    const double d = static_cast<double>(F32(0x0089a360u)) - 10.0;   // fld [0x0089a360]; fsub [0x005cc55c]
+    const int t = static_cast<int>(d);                                // __ftol, truncating
+    I32(0x0089a4fcu + static_cast<std::uintptr_t>(v) * 0x74u) = 0xb4 - t * 0xb4;   // 0x00417381..0x00417395
+}
+}  // namespace
+
+// [d3bB2] the ctrl bytes as FUN_00416250 / FUN_00416a30 / FUN_00417da0 return them, before FUN_00417640 and the
+// FUN_00418560 override-replay tail. scenario_launch.py --statediff-aistep reads the original's at FUN_00416250's
+// exit, so the step dump takes these under MASHED_AI_CONTACT_EVENT (the only knob that arms the replay).
+namespace { std::uint8_t s_stepOut[4][8] = {}; }
+void Ai_RecordStepOut(int v, const std::uint8_t* ctrl)
+{
+    if (v < 0 || v > 3) return;
+    for (int k = 0; k < 8; ++k) s_stepOut[v][k] = ctrl[k];
+}
+const std::uint8_t* Ai_StepOutCtrl(int v) { return (v >= 0 && v <= 3) ? s_stepOut[v] : nullptr; }
+
+bool Ai_ContactEventEnabled()
+{
+    static const bool s = [] { const char* e = std::getenv("MASHED_AI_CONTACT_EVENT");
+                               return e && e[0] == '1'; }();
+    return s;
+}
+
+void Ai_ContactEventPush(int a, int b)
+{
+    if (s_ccEventN >= 0x100) return;
+    s_ccEvents[s_ccEventN++] = ContactEvent{ a, b };
+}
+
+void Ai_ContactEventDrain()
+{
+    static const char* const s_trace = std::getenv("MASHED_AI_CONTACT_EVENT_TRACE");
+    if (s_ccEventN == 0) return;
+    std::uint32_t st[4] = { 0, 0, 0, 0 }, st2[4] = { 0, 0, 0, 0 };
+    for (int i = 0; i < 4; ++i) VehicleCarStateRead(static_cast<std::uint32_t>(i), &st[i], &st2[i]);   // 0x00422bb0 loop
+    for (int n = s_ccEventN - 1; n >= 0; --n) {                       // newest first, as the backward walk
+        const ContactEvent& e = s_ccEvents[n];
+        const bool gate = (e.a >= 0 && e.a < 4 && e.b >= 0 && e.b < 4 && st[e.a] == 0 && st[e.b] == 0);
+        int setA = 0, setB = 0;
+        if (gate) {
+            if (SlotStateE470(e.a) != 1) { AiOverrideTimerSet(e.a); setA = 1; }   // 0x00422e8.. FUN_00417370
+            if (SlotStateE470(e.b) != 1) { AiOverrideTimerSet(e.b); setB = 1; }
+        }
+        if (s_trace) {
+            if (std::FILE* f = std::fopen(s_trace, "a")) {
+                std::fprintf(f, "clk=%d a=%d b=%d stA=%u stB=%u e470A=%d e470B=%d gate=%d setA=%d setB=%d tA=%d tB=%d\n",
+                             I32(0x007f0ff4u), e.a, e.b, (e.a >= 0 && e.a < 4) ? st[e.a] : 99u,
+                             (e.b >= 0 && e.b < 4) ? st[e.b] : 99u, SlotStateE470(e.a), SlotStateE470(e.b),
+                             gate ? 1 : 0, setA, setB,
+                             (e.a >= 0 && e.a < 4) ? I32(0x0089a4fcu + static_cast<std::uintptr_t>(e.a) * 0x74u) : 0,
+                             (e.b >= 0 && e.b < 4) ? I32(0x0089a4fcu + static_cast<std::uintptr_t>(e.b) * 0x74u) : 0);
+                std::fclose(f);
+            }
+        }
+    }
+    s_ccEventN = 0;
 }
 
 // FUN_00413fe0 — per-vehicle AI-state reset (decomp pool0 2026-09-26): DAT_0089a36c = 0;

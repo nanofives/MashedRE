@@ -1,0 +1,39 @@
+[decomp_pc] slot=Mashed_pool10 modes=decomp+callers n=2
+// FUN_00417370 @ 0x00417370  size=44  (MASHED.exe)
+// undefined FUN_00417370(void)
+// callers: FUN_00422ba0@0x00422ba0
+
+/* [C2 2026-06-03] Per-player init writing a randomized signed integer into the player-state record.
+   (control-flow complete) */
+
+void FUN_00417370(int param_1)
+
+{
+  int iVar1;
+  
+  iVar1 = FUN_004a2c48();
+  *(int *)(&DAT_0089a4fc + param_1 * 0x74) = iVar1 * -0xb4 + 0xb4;
+  return;
+}
+
+
+
+// FUN_004173b0 @ 0x004173b0  size=41  (MASHED.exe)
+// undefined FUN_004173b0(void)
+// callers: (none)
+
+/* [C2 2026-06-03] Per-player init twin of `FUN_00417370`, differing only in scale. (control-flow
+   complete) */
+
+void FUN_004173b0(int param_1)
+
+{
+  int iVar1;
+  
+  iVar1 = FUN_004a2c48();
+  *(int *)(&DAT_0089a4fc + param_1 * 0x74) = iVar1 * -0x78 + 0x78;
+  return;
+}
+
+
+

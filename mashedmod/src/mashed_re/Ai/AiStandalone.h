@@ -83,6 +83,19 @@ bool Ai_ComputeTarget(int v, float ownX, float ownZ, float* outTx, float* outTz)
 // DAT_007f0ff4 += units, DAT_007f0ff8 += units (original 0x0040fc63 / 0x0040fe5e).
 // The original's budget is 50 per 1/60 s frame. Call once per race frame before the tick.
 void Ai_AdvanceClock(int units);
+// [d3bB2 2026-10-17] MASHED_AI_COUNTDOWN_CLOCK=1 (default OFF): DAT_007f0ff4 += units on every
+// countdown stand-in frame, as FUN_0040fc00 does on the original's pre-GO ticks (0x0040fe4f..0x0040fe5e).
+bool Ai_CountdownClockEnabled();
+void Ai_AdvanceCountdownClock(int units);
+// [d3bB2 2026-10-17] MASHED_AI_CONTACT_EVENT=1 (default OFF): the car<->car type-4 event. Push = the tail of
+// FUN_00469df0 (one event per contact, the pair a / b); drain = FUN_00422ba0's type-4 arm, its FUN_00417370
+// calls only (the AI override timer 0x0089a4fc + v*0x74 that FUN_00418560's tail replays). Drain once per
+// frame after all physics, as FUN_00425a40 runs FUN_00422ba0 after FUN_00470c70.
+bool Ai_ContactEventEnabled();
+void Ai_ContactEventPush(int a, int b);
+void Ai_ContactEventDrain();
+void Ai_RecordStepOut(int v, const std::uint8_t* ctrl);   // [d3bB2] FUN_00416250's output, pre-tail
+const std::uint8_t* Ai_StepOutCtrl(int v);
 // FUN_00413fe0 per-vehicle AI-state reset + race-clock zeroing. Call at race start.
 void Ai_ResetRace();
 

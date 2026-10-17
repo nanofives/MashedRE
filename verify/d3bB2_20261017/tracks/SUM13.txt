@@ -1,0 +1,3 @@
+tracks/cc_scores_diff.txt: frames 39 rows 867 cited 867 RED 0 CITED-frames 39
+tracks/ccet_scores_diff.txt: frames 39 rows 867 cited 867 RED 0 CITED-frames 39
+tracks/def_scores_diff.txt: frames 39 rows 870 cited 870 RED 0 CITED-frames 39
