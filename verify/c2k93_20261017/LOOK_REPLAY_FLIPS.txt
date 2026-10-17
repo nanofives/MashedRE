@@ -1,0 +1,9 @@
+o_reg_r1 car1: flips(>0.01) lut 97 [47, 100, 101, 102, 103, 104] | ex 141 | max non-flip |d| lut 8.37e-03
+o_reg_r1 car2: flips(>0.01) lut 49 [23, 24, 25, 26, 27, 28] | ex 53 | max non-flip |d| lut 2.00e-06
+o_reg_r1 car3: flips(>0.01) lut 68 [39, 40, 41, 44, 45, 46] | ex 98 | max non-flip |d| lut 1.96e-06
+o_reg_r13 car1: flips(>0.01) lut 116 [47, 105, 106, 107, 108, 109] | ex 153 | max non-flip |d| lut 1.01e-06
+o_reg_r13 car2: flips(>0.01) lut 48 [23, 24, 25, 26, 27, 28] | ex 68 | max non-flip |d| lut 2.01e-06
+o_reg_r13 car3: flips(>0.01) lut 66 [39, 40, 41, 44, 45, 46] | ex 79 | max non-flip |d| lut 1.90e-06
+o_reg_r19 car1: flips(>0.01) lut 52 [47, 100, 101, 102, 103, 104] | ex 97 | max non-flip |d| lut 5.54e-03
+o_reg_r19 car2: flips(>0.01) lut 24 [23, 24, 25, 26, 27, 28] | ex 27 | max non-flip |d| lut 3.80e-06
+o_reg_r19 car3: flips(>0.01) lut 40 [39, 40, 41, 44, 45, 46] | ex 69 | max non-flip |d| lut 3.80e-06

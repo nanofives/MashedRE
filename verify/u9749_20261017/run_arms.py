@@ -67,6 +67,13 @@ _HP = ['MASHED_HEADING_ASSIST_PLAYER']
 STACK['NOHP'] = ['MASHED_NO_HEADING_ASSIST_PLAYER']
 # u9745ov: the clock add at the end of the frame
 STACK['CL'] = ['MASHED_AI_CLOCK_LATE']; STACK['SACL'] = STACK['SA'] + ['MASHED_AI_CLOCK_LATE']
+# c2k93: the FUN_00470c70 speed refresh 0x004710a1..0x004710da (LUT form / exact form) on top of SACL
+STACK['SACLR'] = STACK['SACL'] + ['MASHED_D2LAT_REFRESH']; STACK['SACLS'] = STACK['SACL'] + ['MASHED_SPEED_REFRESH']
+STACK['SACL5'] = STACK['SACL'] + ['MASHED_AI_LUT=5']
+STACK['SACLR5'] = STACK['SACLR'] + ['MASHED_AI_LUT=5']
+STACK['CLR'] = STACK['CL'] + ['MASHED_D2LAT_REFRESH']; STACK['CL5'] = STACK['CL'] + ['MASHED_AI_LUT=5']
+STACK['CLR5'] = STACK['CLR'] + ['MASHED_AI_LUT=5']
+STACK['SACLR2'] =STACK['SACLR'] + ['MASHED_RECDUMP=@OUT@\\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=2']
 # u9745ov (after the flip: the player assist is default): SA + the slot-2 record dumps
 STACK['SAR2F'] = STACK['SA'] + ['MASHED_RECDUMP=@OUT@\\@NAME@.rec.msd', 'MASHED_RECDUMP_A4=@OUT@\\@NAME@.a4rec.msd', 'MASHED_RECDUMP_SLOT=2']   # after the flip: the opt-out (= the pre-flip default)
 STACK['P'] = _HP; STACK['AHP'] = STACK['A'] + _HP; STACK['SAH'] = STACK['SA'] + _HP
