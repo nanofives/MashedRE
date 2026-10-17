@@ -204,6 +204,19 @@ private:
     int   prop_tick_frames_ = 0;
     void UpdatePropAnims();
 
+    // [rprops2 U-9699] The camera-men are entries 1..N of the track's camera table. The original steps those
+    // type-1 entries every frame (0x00441d40) and the track's per-frame helper (0x00448dc0 etc.) re-poses the
+    // CamMan clump from entry +0xb0 (yaw) and +0x3c (position), so the yaw is run-time state. The default
+    // build has no entry array (CamEntriesInit442600 runs only under MASHED_SUBSTATE), so it keeps private
+    // copies built by CamEntryBuild441b30 from the table rows and steps them in CamManStep, once per race
+    // camera update, from the same cars the camera reads. UpdateCamMen re-poses the instances each Render.
+    struct CamManEntry { alignas(16) std::uint8_t b[0xd8]; };
+    std::vector<CamManEntry> camman_entries_;
+    std::size_t camman_prop_ = 0;                 // index into props_
+    bool        camman_on_ = false;
+    void CamManStep(const Race::RaceCamCar* cc);
+    void UpdateCamMen();
+
     // ---- F2 .ANM animated copters (COURSE.LUA General_Anim_Filename + SetCopter;
     // KTCSCRIPT.LUA KTC_NewCopter). The flight paths are the track's .ANM
     // (Track::HAnim, rwID_HANIMANIMATION); the models are COPTER/JETRANGER/

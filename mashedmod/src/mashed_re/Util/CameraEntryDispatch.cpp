@@ -114,7 +114,10 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl CameraEntryDispatchAll(st
         // 0x004464d7..0x004464e5  type 0 -> CALL 0x00445aa0
         if (*reinterpret_cast<std::uint32_t*>(esi + 0x4u) == 0u)
             CamEntryType0Step445aa0(esi, reinterpret_cast<std::int32_t*>(param_1));
-        // 0x004464e8 / 0x004464f8: types 1 (0x00441d40) and 2 (0x00442440) have no exe body; see header.
+        // 0x004464e8 / 0x004464f8: type 2 (0x00442440) has no exe body; see header. Type 1 (0x00441d40) has one
+        // since rprops2 (Race/CameraEntries.cpp CamEntryType1Step441d40) but this arm does not call it: the
+        // default build drives the camera-man entries itself (TrackRenderer::CamManStep), and calling it here
+        // would change the MASHED_SUBSTATE entry state other lanes measure. Named gap, U-9699.
         count = *reinterpret_cast<std::int32_t*>(0x00898994u);           // 0x00446508
         ebx++;                                                         // 0x0044650d
         esi += 0xd8u;                                                  // 0x0044650e

@@ -51,6 +51,9 @@ extern "C" float __cdecl FastSqrt(float x);                                  // 
 extern "C" void  __cdecl FUN_004c51a0(float* m, float* v, int mode);         // 0x004c51a0
 extern "C" void* __cdecl RwMatrixRotate(void* m, const float* axis, float deg, int mode); // 0x004c4d20
 extern "C" std::uint32_t __cdecl PtrCompute881ec8(std::uint32_t* out, std::uint32_t idx); // 0x0046d4a0
+namespace mashed_re { namespace Math {
+void RwV3dTransformVectorsCPU(float* dst, const float* src, int count, const float* m);   // 0x004c3df0 body
+} }
 #endif
 
 namespace {
@@ -94,6 +97,14 @@ const float k360      = AsF(0x43b40000u);   // 0x005ccac4
 const float k50_3     = AsF(0x41855555u);   // 0x005ce180
 const float kSin2     = AsF(0x3bc90e56u);   // 0x005ce17c
 const float k30       = AsF(0x41f00000u);   // 0x005cc72c
+const float k1000     = AsF(0x447a0000u);   // 0x005cc9fc  [rprops2] type-1 step
+const float k45       = AsF(0x42340000u);   // 0x005ccacc
+const float k25       = AsF(0x41c80000u);   // 0x005cc9e0
+const float k16       = AsF(0x41800000u);   // 0x005cc750
+const float k7_5      = AsF(0x40f00000u);   // 0x005cd9fc
+const float k100      = AsF(0x42c80000u);   // imm32 at 0x004421d8
+const float kHeadY    = AsF(0x3e324745u);   // imm32 at 0x004423b7 (0.1741)
+const float kHeadZ    = AsF(0x3e8ae7d5u);   // imm32 at 0x004423bf (0.2713)
 const double kDeg     = 57.295799255371094; // 0x005ccae0 (qword)
 const std::uint32_t kAxisY[3] = { 0x00000000u, 0x3f800000u, 0x00000000u };   // 0x006146fc (0, 1, 0)
 
@@ -137,6 +148,8 @@ inline void  MostSep(int* a, int* b)            { if (s_camHost.most_separated) 
 inline std::uint32_t VehPtr(std::uint32_t* o, std::uint32_t i) { return PtrCompute881ec8(o, i); }
 inline double RandRange(float lo, float hi)     { return ::Ai::Ai_RandRange(lo, hi); }
 inline const float* AxisY()                     { return reinterpret_cast<const float*>(kAxisY); }
+inline double PathProg(int i)                   { return s_camHost.path_progress ? s_camHost.path_progress(i) : 0.0; }   // FUN_00408a50
+inline void  V3Xform(float* d, const float* s, int n, const float* m) { mashed_re::Math::RwV3dTransformVectorsCPU(d, s, n, m); }   // FUN_004c3df0
 #else
 inline double V2Len(const float* v)            { return reinterpret_cast<double(__cdecl*)(const float*)>(0x004c3bf0u)(v); }
 inline double V2Norm(float* o, const float* i) { return reinterpret_cast<double(__cdecl*)(float*, const float*)>(0x004c3c60u)(o, i); }
@@ -150,6 +163,8 @@ inline void  MostSep(int* a, int* b)          { reinterpret_cast<void(__cdecl*)(
 inline std::uint32_t VehPtr(std::uint32_t* o, std::uint32_t i) { return reinterpret_cast<std::uint32_t(__cdecl*)(std::uint32_t*, std::uint32_t)>(0x0046d4a0u)(o, i); }
 inline double RandRange(float lo, float hi)    { return reinterpret_cast<double(__cdecl*)(float, float)>(0x00472650u)(lo, hi); }
 inline const float* AxisY()                   { return reinterpret_cast<const float*>(0x006146fcu); }
+inline double PathProg(int i)                 { return reinterpret_cast<double(__cdecl*)(int)>(0x00408a50u)(i); }
+inline void  V3Xform(float* d, const float* s, int n, const float* m) { reinterpret_cast<void(__cdecl*)(float*, const float*, int, const float*)>(0x004c3df0u)(d, s, n, m); }
 #endif
 
 } // namespace
@@ -203,6 +218,16 @@ RH_ScopedInstall(CamEntryBuild441b30, 0x00441b30);
 // exe: a failed PtrCompute881ec8 (records not allocated) leaves out at 0 (named; never fails on
 // the original for idx < 16).
 // ===========================================================================
+// The tail of 0x00441c80 (0x00441ce2..0x00441d2c) on its own: out = a - (a - b) * 0.5. Shared with
+// CamEntryType1StepWith (the default build has no vehicle-record host, TrackRenderer passes positions).
+static inline void MidArith(float ax, float ay, float az, const float* pb, float* out)
+{
+    const float dx = ax - pb[0], dy = ay - pb[1], dz = az - pb[2];           // 0x00441ce2..0x00441cf8
+    out[0] = ax - dx * k0_5;                                                 // 0x00441d05..0f
+    out[1] = ay - dy * k0_5;                                                 // 0x00441d11..1b
+    out[2] = az - dz * k0_5;                                                 // 0x00441d22..2c
+}
+
 // 0x00441c80
 extern "C" __declspec(dllexport) void __cdecl CamCarMidpoint441c80(float* out, const std::int32_t* cam)
 {
@@ -223,10 +248,7 @@ extern "C" __declspec(dllexport) void __cdecl CamCarMidpoint441c80(float* out, c
     VehPtr(&p, static_cast<std::uint32_t>(b));                               // 0x00441cdd
 #endif
     const float* pb = reinterpret_cast<const float*>(p + 0x30u);
-    const float dx = ax - pb[0], dy = ay - pb[1], dz = az - pb[2];           // 0x00441ce2..0x00441cf8
-    out[0] = ax - dx * k0_5;                                                 // 0x00441d05..0f
-    out[1] = ay - dy * k0_5;                                                 // 0x00441d11..1b
-    out[2] = az - dz * k0_5;                                                 // 0x00441d22..2c
+    MidArith(ax, ay, az, pb, out);                                           // 0x00441ce2..0x00441d2c
 }
 RH_ScopedInstall(CamCarMidpoint441c80, 0x00441c80);
 
@@ -276,6 +298,14 @@ bool mashed_re::CamEntry::TableRow(int course_id, int k, float xyz[3], float* ya
     xyz[0] = row[0]; xyz[1] = row[1]; xyz[2] = row[2];                       // CamEntryBuild441b30 xyz
     if (yaw) *yaw = row[4];                                                  // r4 -> entry +0xb0
     return true;
+}
+
+// [rprops2] The whole 12-float row (CamEntryBuild441b30's input). Null when k is out of range.
+const float* mashed_re::CamEntry::Row(int course_id, int k)
+{
+    const float* tbl = TableFor(course_id);
+    if (!tbl || k < 0 || k >= static_cast<int>(tbl[0])) return nullptr;
+    return tbl + 1 + k * 12;
 }
 
 // 0x00442600
@@ -530,3 +560,152 @@ extern "C" __declspec(dllexport) void __cdecl CamEntryType0Step445aa0(std::uint8
     MatTranslate(reinterpret_cast<float*>(e + 0x4c), reinterpret_cast<float*>(e + 0x3c), 2);   // 0x004464a3
 }
 RH_ScopedInstall(CamEntryType0Step445aa0, 0x00445aa0);
+
+// ===========================================================================
+// [rprops2 U-9699] 0x00441d40  CamEntryType1Step441d40(entry, cam), 1730 bytes. Transcribed from the bytes
+// (verify/rprops2_20261016/disasm_range.py 0x00441d40 0x00442402), instruction order, same conventions as
+// the type-0 step above: a value the bytes keep in ST is a `double`, only an `fst/fstp dword` rounds.
+// Stack slots (esp0 = esp after `sub esp,0x84; push esi; push edi`): dt [esp0+0x14], target T [+0x24..+0x2c],
+// P (entry +0x3c..+0x44) [+0x18..+0x20], dx [+0x34], dy [+0x38], dz then the horizontal length [+0x0c],
+// reverse displacement [+0x40..+0x48], window w [+8], accel then 100.0 [+0x30], d4f [+0x3c].
+// It rewrites yaw +0xb0 / yaw rate +0xbc / pitch +0xac / pitch rate +0xb8 (a servo toward the aim at the
+// car-pair midpoint, degrees, guard entry+8 != 1), the range weight +0xc8, +0xc0, and the entry matrix
+// +0x4c..+0x8c (yaw, pitch, roll about its own rows, then the translation +0x3c plus the rotated head
+// offset (0, 0.1741, 0.2713) when entry+8 != 1). The camera-men helpers (0x00448dc0 and 11 more) read +0xb0.
+// Named: the second matrix's pad dword `[esp0+0x58]` is uninitialised stack OR 0x20003; it is 0x20003 here.
+// ===========================================================================
+namespace {
+void Type1Core(std::uint8_t* e, const float* T, double prog)
+{
+    const float dt = static_cast<float>(static_cast<double>(I32(0x007f1008u)) * k1_3000);   // 0x00441d46..0x00441d61 fstp [0x14]
+    float P[3];
+    std::memcpy(P, e + 0x3c, 12);                                            // 0x00441d75..0x00441d8c raw dwords
+    const float dxf = static_cast<float>(static_cast<double>(T[0]) - P[0]);  // 0x00441d6a..0x00441d90 fstp [0x3c]
+    const float dyf = static_cast<float>(static_cast<double>(T[1]) - P[1]);  // 0x00441d98..0x00441da1 fstp [0x44]
+    const float dzf = static_cast<float>(static_cast<double>(T[2]) - P[2]);  // 0x00441da5..0x00441dad fstp [0x18]
+    float r[3] = { static_cast<float>(static_cast<double>(P[0]) - T[0]),
+                   static_cast<float>(static_cast<double>(P[1]) - T[1]),
+                   static_cast<float>(static_cast<double>(P[2]) - T[2]) };   // 0x00441db1..0x00441dd1
+    const double mag = V3Mag(r);                                             // 0x00441dd5 (ST0)
+    const float c4 = Fe(e, 0xc4);
+    double limd;                                                             // ST0 into fstp [esi+0xc0]
+    if (c4 <= k1000) {                                                       // 0x00441de0..0x00441dee
+        limd = static_cast<double>(k45) - mag;                               // 0x00441e00 fsubr [0x5ccacc]
+        if (limd < k7) limd = k7;                                            // 0x00441e06..0x00441e15
+        limd = limd / c4;                                                    // 0x00441e1b fdiv [esi+0xc4]
+    } else {
+        limd = static_cast<double>(c4) - k1000;                              // 0x00441df2..0x00441dfe
+    }
+    Fe(e, 0xc0) = static_cast<float>(limd);                                  // 0x00441e21
+    const double wd = static_cast<double>(Fe(e, 0xc0)) * k25;                // 0x00441e27..0x00441e2d (ST)
+    float wf = static_cast<float>(wd);                                       // 0x00441e33 fst [8]
+    if (wd > k1) wf = k1;                                                    // 0x00441e37..0x00441e44
+
+    double Y;                                                                // aim yaw (ST0 at 0x00441eab)
+    if (dzf != k0) {                                                         // 0x00441e4c..0x00441e5f
+        Y = AtanDeg180(static_cast<double>(dxf) / dzf);                      // 0x00441e61..0x00441e77
+        if (dzf > k0) Y = Y + k180;                                          // 0x00441e7b..0x00441e8e
+    } else {
+        Y = (dxf < k0) ? k270 : k90;                                         // 0x00441e90..0x00441ea5
+    }
+    const float acc = static_cast<float>(static_cast<double>(dt) * k7_5);    // 0x00441eaf..0x00441eb5 fstp [0x30]
+
+    // The servo shared by yaw (rate +0xbc) and pitch (rate +0xb8), 0x00441eb9..0x00441fe2 / 0x004420b5..0x004421d2.
+    auto servo = [&](double err, std::uint32_t ro) {
+        if (!(err < k360)) { do { err = err - k360; } while (!(err < k360)); }   // 0x00441ec7..0x00441ef1
+        if (err < k0) { do { err = err + k360; } while (err < k0); }             // 0x00441ef3..0x00441f11
+        if (err > k180) err = -(static_cast<double>(k360) - err);                // 0x00441f13..0x00441f26
+        if (err > k0) {                                                          // 0x00441f28..0x00441f35
+            if (err <= wf)                                                       // 0x00441f35..0x00441f3e
+                Fe(e, ro) = static_cast<float>((static_cast<double>(k1) - static_cast<double>(dt) * k16) * Fe(e, ro)
+                            - (static_cast<double>(k1) - (static_cast<double>(wf) - err) / wf) * acc);   // 0x00441f4c..0x00441f78
+            else
+                Fe(e, ro) = static_cast<float>(static_cast<double>(Fe(e, ro)) - acc);   // 0x00441f40..0x00441f78
+        }
+        if (err < k0) {                                                          // 0x00441f7e..0x00441f89
+            if (err < -static_cast<double>(wf))                                  // 0x00441f8b..0x00441f9a fcompp
+                Fe(e, ro) = static_cast<float>(static_cast<double>(acc) + Fe(e, ro));   // 0x00441f9e..0x00441fa8
+            else
+                Fe(e, ro) = static_cast<float>((static_cast<double>(k1) - (static_cast<double>(wf) + err) / wf) * acc
+                            + (static_cast<double>(k1) - static_cast<double>(dt) * k16) * Fe(e, ro));   // 0x00441fb0..0x00441fdc
+        }
+    };
+    servo(static_cast<double>(Fe(e, 0xb0)) - Y, 0xbc);                       // 0x00441ebd fsubr [esi+0xb0]
+    if (Ie(e, 0x08) != 1) Fe(e, 0xb0) = static_cast<float>(static_cast<double>(Fe(e, 0xbc)) + Fe(e, 0xb0));   // 0x00441fe4..0x00441ff6
+    const double d4d = static_cast<double>(k1) - static_cast<double>(dt) * k4;   // 0x00441ffc..0x00442006 (ST)
+    const float  d4f = static_cast<float>(d4d);                              // 0x0044200c fst [0x3c]
+    Fe(e, 0xbc) = static_cast<float>(d4d * Fe(e, 0xbc));                     // 0x00442010..0x00442016
+
+    const double sd = static_cast<double>(dzf) * dzf + static_cast<double>(dxf) * dxf;   // 0x0044201c..0x0044202c
+    const float  sf = static_cast<float>(sd);                                // 0x0044202e fst [0xc]
+    double Pt = 0.0;
+    bool special = (sd == k0);                                               // 0x00442032..0x0044203d
+    if (!special) {
+        const double hd = FSqrt(sf);                                         // 0x00442044 (float arg)
+        const float  hf = static_cast<float>(hd);                            // 0x00442049 fst [0xc]
+        if (hd == k0) special = true;                                        // 0x0044204d..0x0044205b
+        else {
+            Pt = AtanDeg180(static_cast<double>(dyf) / hf);                  // 0x0044205d..0x00442071
+            if (hf > k0) Pt = Pt + k180;                                     // 0x00442077..0x0044208e
+        }
+    }
+    if (special) Pt = (dyf < k0) ? k270 : k90;                               // 0x00442090..0x004420a9
+    servo(static_cast<double>(Fe(e, 0xac)) - (static_cast<double>(k360) - Pt), 0xb8);   // 0x004420af / 0x004420bd
+
+    // Range weight (+0xc8): 100.0 outside the [+0xd0, +0xd4] window of the progress FUN_00408a50(cam[8]),
+    // 0.0 inside it (wrapped window when +0xd0 > +0xd4). 0x004421d4..0x00442247.
+    const float d0 = Fe(e, 0xd0), d4 = Fe(e, 0xd4);
+    double wgt;
+    if (d0 <= d4) {                                                          // 0x004421fc..0x00442201 jne 0x00442227
+        if (prog < d0) wgt = k100;                                           // 0x00442227..0x00442241
+        else           wgt = (prog < d4) ? 0.0 : k100;                       // 0x0044222c..0x0044223f / 0x00442243
+    } else {
+        if (!(prog < d0)) wgt = 0.0;                                         // 0x00442203..0x0044221f
+        else              wgt = (prog < d4) ? 0.0 : k100;                    // 0x00442208..0x00442243
+    }
+    if (Ie(e, 0x08) != 1) Fe(e, 0xac) = static_cast<float>(static_cast<double>(Fe(e, 0xb8)) + Fe(e, 0xac));   // 0x00442247..0x00442259
+    Fe(e, 0xb8) = static_cast<float>(static_cast<double>(d4f) * Fe(e, 0xb8));   // 0x0044225f..0x00442269 ([0x3c], the float copy)
+    if (wgt < k0) wgt = -wgt;                                                // 0x0044226f..0x0044227c
+    Fe(e, 0xc8) = static_cast<float>(wgt);                                   // 0x00442281
+
+    Ie(e, 0x58) = Ie(e, 0x58) | 0x20003;                                     // 0x0044227e..0x0044228e
+    Ie(e, 0x74) = 0x3f800000; Ie(e, 0x60) = 0x3f800000; Ie(e, 0x4c) = 0x3f800000;   // 0x004422a2..0x004422a8
+    Ie(e, 0x5c) = 0; Ie(e, 0x54) = 0; Ie(e, 0x50) = 0; Ie(e, 0x70) = 0;      // 0x004422b5..0x004422be
+    Ie(e, 0x6c) = 0; Ie(e, 0x64) = 0; Ie(e, 0x84) = 0; Ie(e, 0x80) = 0; Ie(e, 0x7c) = 0;   // 0x004422c1..0x004422d2
+    MatRotate(e + 0x4c, AxisY(), Fe(e, 0xb0), 2);                            // 0x004422d5
+    MatRotate(e + 0x4c, reinterpret_cast<const float*>(e + 0x4c), Fe(e, 0xac), 2);   // 0x004422e5
+    MatRotate(e + 0x4c, reinterpret_cast<const float*>(e + 0x6c), Fe(e, 0xb4), 2);   // 0x004422f5
+    if (Ie(e, 0x08) != 1) {                                                  // 0x004422fa..0x00442304
+        float m2[16] = {};                                                   // 0x00442326..0x0044238a
+        m2[0] = m2[5] = m2[10] = 1.0f;                                       // 0x00442326 / 0x00442331 / 0x00442339
+        std::uint32_t fl = 0x20003u;                                         // pad [esp0+0x58] | 0x20003, 0x0044231b / 0x00442395
+        std::memcpy(&m2[3], &fl, 4);
+        MatRotate(m2, AxisY(), Fe(e, 0xb0), 2);                              // 0x00442399
+        float v[3] = { 0.0f, kHeadY, kHeadZ };                               // 0x004423af..0x004423c7
+        V3Xform(v, v, 1, m2);                                                // 0x004423c7 FUN_004c3df0
+        P[0] = static_cast<float>(static_cast<double>(P[0]) + v[0]);         // 0x004423cc..0x004423d7
+        P[1] = static_cast<float>(static_cast<double>(P[1]) + v[1]);         // 0x004423db..0x004423e3
+        P[2] = static_cast<float>(static_cast<double>(P[2]) + v[2]);         // 0x004423e7..0x004423ef
+    }
+    MatTranslate(reinterpret_cast<float*>(e + 0x4c), P, 2);                  // 0x004423fb
+}
+}  // namespace
+
+// 0x00441d40
+extern "C" __declspec(dllexport) void __cdecl CamEntryType1Step441d40(std::uint8_t* e, std::int32_t* cam)
+{
+    float t[3];
+    CamCarMidpoint441c80(t, cam);                                            // 0x00441d65
+    Type1Core(e, t, PathProg(cam[8]));                                       // 0x004421e0 FUN_00408a50(cam + 0x20)
+}
+RH_ScopedInstall(CamEntryType1Step441d40, 0x00441d40);
+
+// [rprops2] The same body with the aim target (the two cars' positions) and the progress passed in. The
+// default build keeps no vehicle-record host, so TrackRenderer::CamManStep calls this from the cars it
+// already hands the race camera.
+void CamEntryType1StepWith(std::uint8_t* e, const float* pa, const float* pb, double prog)
+{
+    float t[3];
+    MidArith(pa[0], pa[1], pa[2], pb, t);                                    // 0x00441ce2..0x00441d2c
+    Type1Core(e, t, prog);
+}

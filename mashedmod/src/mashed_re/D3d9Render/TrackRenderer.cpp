@@ -1779,7 +1779,12 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
         // [rprops U-9695] MASHED_NO_PROPPLACE=1 keeps the pre-rprops placement (every Clump_Filename
         // clump at identity) for A/B: Clump_Mts_Pair, the camera-men and the Arctic ships.
         static const bool s_no_propplace = std::getenv("MASHED_NO_PROPPLACE") != nullptr;
+        // [rprops2 U-9699] WIP, UNSCORED, default OFF: MASHED_CAMMANYAW=1 steps the camera-men entries
+        // (0x00441d40). Without it the camera-men stay at their table yaw (rprops). HANDOFF_rprops2.md.
+        static const bool s_no_cammanyaw = std::getenv("MASHED_CAMMANYAW") == nullptr;
         prop_anims_.clear();
+        camman_entries_.clear();
+        camman_on_ = false;
         prop_acc_[0] = prop_acc_[1] = prop_acc_[2] = 0.f;
         prop_tick_frames_ = 0;
         if (lua) {
@@ -2066,19 +2071,34 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                             for (const auto& ct : kCamMan) {
                                 if (ct.course_id != course_id_) continue;
                                 std::vector<D3DMATRIX> cm;
+                                std::vector<CamManEntry> ents;
+                                bool all_type1 = true;
                                 for (int k = 1; k <= ct.n; ++k) {
                                     float xyz[3], yaw = 0.f;
-                                    if (!CamEntry::TableRow(course_id_, k, xyz, &yaw)) { cm.clear(); break; }
+                                    const float* row = CamEntry::Row(course_id_, k);
+                                    if (!row || !CamEntry::TableRow(course_id_, k, xyz, &yaw)) { cm.clear(); ents.clear(); break; }
                                     D3DMATRIX m;
                                     PlaceMatrix(xyz, yaw, &m);
                                     cm.push_back(m);
+                                    // The entry the helper reads (+0x3c xyz, +0xb0 yaw), built as the original
+                                    // builds it (0x00441b30); all 12 tracks' rows 1..N are type 1
+                                    // (verify/rprops2_20261016/dump_camtypes.py), the 0x00441d40 step.
+                                    CamManEntry ent{};
+                                    CamEntryBuild441b30(ent.b, row);
+                                    if (*reinterpret_cast<const std::int32_t*>(ent.b + 0x04) != 1) all_type1 = false;   // no step law ported
+                                    ents.push_back(ent);
                                 }
                                 if (!cm.empty()) {
                                     p.instances = std::move(cm);
+                                    if (!s_no_propplace && !s_no_cammanyaw && all_type1 && ents.size() == p.instances.size()) {
+                                        camman_entries_ = std::move(ents);
+                                        camman_prop_ = props_.size();             // p is pushed next
+                                        camman_on_ = true;
+                                    }
                                     if (log)
                                         std::fprintf(log, "  PROP-CAMMAN course_id=%d clump=%d helper=0x%08x "
-                                                     "instances=%zu\n", course_id_, c.idx, ct.helper,
-                                                     p.instances.size());
+                                                     "instances=%zu yaw_step=%d\n", course_id_, c.idx, ct.helper,
+                                                     p.instances.size(), camman_on_ ? 1 : 0);
                                 }
                                 break;
                             }
@@ -6334,6 +6354,12 @@ void TrackRenderer::RaceCamUpdate(const Race::RaceCamCar* cc_in, bool reset) {
     float jit = 0.f;                                          // DAT_007f0fc8 live
     bool overhead = false;                                    // DAT_007f0f38
     std::uint32_t ticks = static_cast<std::uint32_t>(cam_ticks_);
+    // [rprops2 U-9699] The camera-men entries are stepped only on a pre-race frame (DAT_0063ba8c 3, 4, 5:
+    // FUN_00446520 -> FUN_004464c0, 0x004468f9). The original's TRAINING camera-man holds one yaw (4.398 deg)
+    // over rows 884 / 924 / 959, 30 to 105 rows into state 6, so no step runs while racing. This build's
+    // pre-race frames are the stand-in countdown (countdown_ > 0); MASHED_CAM_REPLAY supplies the row's real
+    // DAT_0063ba8c instead.
+    bool prerace = countdown_ > 0.f;
     CamReplay& R = CamReplayState();
     if (R.on) {
         if (R.next < R.rows.size()) {
@@ -6382,8 +6408,11 @@ void TrackRenderer::RaceCamUpdate(const Race::RaceCamCar* cc_in, bool reset) {
                     for (int k = 0; k < 12; ++k)
                         s_rep_root[i][k] = static_cast<float>(at(R.q_c[i][k]));
             // [rfx] the HUD replay input: this row's DAT_0063ba8c and DAT_007f100c
-            if (R.c_ba8c >= 0)
+            if (R.c_ba8c >= 0) {
                 LibRw::RaceFx_ReplayHudRow(static_cast<int>(at(R.c_ba8c)), dtb);
+                const int ba = static_cast<int>(at(R.c_ba8c));
+                prerace = (ba >= 3 && ba <= 5);                   // [rprops2] the row's own race state
+            }
             cam_replay_row_ = static_cast<int>(R.next++);
         } else {
             cam_replay_row_ = -2;                             // trace exhausted: host inputs again
@@ -6391,6 +6420,7 @@ void TrackRenderer::RaceCamUpdate(const Race::RaceCamCar* cc_in, bool reset) {
         }
     }
     race_cam_.Update(cc, course_id_, dtb, ticks, jit, reset, overhead);
+    if (prerace) CamManStep(cc);                              // [rprops2 U-9699]
 }
 
 void TrackRenderer::UpdateRace(float dt) {
@@ -6970,6 +7000,35 @@ void TrackRenderer::UpdatePropAnims() {
         inst.resize(4);
         for (int k = 0; k < 4; ++k)
             ShipMatrix(kBoatPos[k], kBoatYaw[k], prop_acc_, kBoatAmp, kBoatOff, &inst[k]);
+    }
+}
+
+// [rprops2 U-9699] One step of every camera-man entry (type 1, 0x00441d40), once per race camera update.
+// The original's FUN_00441c80 aims at the midpoint of the most-separated car pair (FUN_0040e180, cam[7] == 0)
+// read from the vehicle records' +0x30; this passes the same two positions from the cars RaceCamUpdate hands
+// the camera, so the MASHED_CAM_REPLAY rows drive it exactly as they drive the camera. Progress (the range
+// weight +0xc8, which nothing here reads) is car 0's.
+void TrackRenderer::CamManStep(const Race::RaceCamCar* cc) {
+    if (!camman_on_) return;
+    int a = 0, b = 0;
+    Race::RaceCamera::MostSeparatedPair(cc, &a, &b);   // FUN_0040e180, as CamEntryHost::most_separated
+    if (a < 0) a = 0;
+    if (b < 0) b = 0;
+    for (auto& ent : camman_entries_)
+        CamEntryType1StepWith(ent.b, cc[a].pos, cc[b].pos, cc[0].path_prog);
+}
+
+// [rprops2 U-9699] The camera-man helper's loop body (0x00448dc0 and 11 more): identity, rotate about +Y by
+// FUN_00442420(i) (entry +0xb0), translate by FUN_00442410(i) (entry +0x3c), for entries 1..N.
+void TrackRenderer::UpdateCamMen() {
+    if (!camman_on_ || camman_prop_ >= props_.size()) return;
+    auto& inst = props_[camman_prop_].instances;
+    inst.resize(camman_entries_.size());
+    for (std::size_t k = 0; k < camman_entries_.size(); ++k) {
+        const std::uint8_t* e = camman_entries_[k].b;
+        const float* pos = reinterpret_cast<const float*>(e + 0x3c);
+        const float  yaw = *reinterpret_cast<const float*>(e + 0xb0);
+        PlaceMatrix(pos, yaw, &inst[k]);
     }
 }
 
@@ -7563,6 +7622,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     }
 
     if (!prop_anims_.empty()) UpdatePropAnims();   // [rprops] Arctic ships, once per frame
+    UpdateCamMen();                                // [rprops2] camera-men from their stepped entries
     // R6: track props (tyre walls, crates, sea, freighter...), submitted to librw as
     // instanced models. The D3DMATRIX is each prop's MTS / identity world matrix; it
     // copies straight into the rw::Frame (RwRaceSubmit.cpp SetClumpTransform). A
