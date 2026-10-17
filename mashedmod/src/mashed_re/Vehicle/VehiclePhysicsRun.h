@@ -130,6 +130,15 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io);
 // [d2engage 2026-10-16] fix B part 4 (MASHED_POS_ORDER): run only slot's one-shot spawn-settle step
 // (no-op once it has run). With part 3 on, io.pos returns the settled position, as from StepCar.
 void VehiclePhysics_SpawnSettle(int slot, float dt, PlayerCarIO& io);
+// [a4order 2026-10-17] MASHED_A4_ORDER=1 (default OFF, U-9746): FUN_00470c70's order, every car's gate + A4
+// (0x00470f80..0x00471099) and refresh (0x004710a1..0x004710da) before any substep (0x00471137). Per frame, before
+// the player's StepCar: A4PreBegin(), A4Pre(slot, dt, io) for each AI car with the io its StepCar will get, then
+// A4PreEnd(). The car's StepCar later runs its substeps without the gate and A4. A car's first step, a frame
+// budget over 0x32 and MASHED_A8_A4_FIRST=0 keep the per-car order.
+bool VehiclePhysics_A4OrderEnabled();
+void VehiclePhysics_A4PreBegin();
+void VehiclePhysics_A4Pre(int slot, float dt, PlayerCarIO io);
+void VehiclePhysics_A4PreEnd();
 // A8 (2026-08-25): (re)seed a slot's integrated body-orientation basis from a yaw.
 // The body basis is now persistent state inside the physics module (the original
 // keeps it in the record's +0x928 double buffer; see BodyOrientationIntegrate.cpp

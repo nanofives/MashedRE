@@ -176,6 +176,21 @@ bool          g_outPosValid[16] = { false };
 // frame; g_a4GateDone = this frame's gate already ran for the slot.
 bool          g_a4Skip[16]     = { false };
 bool          g_a4GateDone[16] = { false };
+// [a4order 2026-10-17] MASHED_A4_ORDER=1 (default OFF, U-9746): FUN_00470c70 runs the gate + A4 loop for EVERY car
+// (0x00470f80..0x00471099, FUN_00470670 at 0x00471076) and the refresh loop (0x004710a1..0x004710da) before the
+// first substep call (FUN_004709a0 at 0x00471137). The port steps the cars one at a time, so the AI cars' gate + A4
+// are run by VehiclePhysics_A4Pre before the player's StepCar, and their own StepCar later skips them.
+// g_a4PreOnly = StepCar call mode (return after the A4 block); g_a4PreDone = this frame's gate + A4 ran in the
+// pre-phase; g_a4PreSkip = its gate verdict; g_a4PreIo = the vel / speed the pre-phase's adapter IN saw;
+// g_a4PrePhase = the torque ring phase its A4 used; g_a4PreFrame = Fi_UpdateBoostOrder ran in the pre-phase.
+bool          g_a4PreOnly         = false;
+bool          g_a4PreDone[16]     = { false };
+bool          g_a4PreSkip[16]     = { false };
+float         g_a4PreIo[16][4]    = { { 0.f } };
+int           g_a4PrePhase[16]    = { 0 };
+bool          g_a4PreFrame        = false;
+int           g_a4PreBase         = 0;
+int           g_a4PreK            = 1;
 
 // A8 position law constants (re/analysis/data/A8_position_law_20260825.md).
 // FUN_0046e9e0 builds the per-substep position increment as
@@ -772,12 +787,59 @@ void VehiclePhysics_SpawnSettle(int slot, float dt, PlayerCarIO& io) {
     g_settleOnly = false;
 }
 
+// [a4order 2026-10-17] MASHED_A4_ORDER=1, default OFF (U-9746). See g_a4PreOnly above.
+bool VehiclePhysics_A4OrderEnabled() {
+    static const bool s = [] { const char* e = std::getenv("MASHED_A4_ORDER"); return e && e[0] == '1'; }();
+    return s;
+}
+
+// Frame boundary of the pre-phase. The player (slot 0) steps first and takes ring phase base + 1 in its own StepCar,
+// so the pre-phase gives the AI cars base + 2, + 3, ... in slot order: the phases the per-car order gives them.
+void VehiclePhysics_A4PreBegin() {
+    for (int s = 0; s < 16; ++s) { g_a4PreDone[s] = false; g_a4PreSkip[s] = false; }
+    g_a4PreFrame = false;
+    g_a4PreBase = g_torqueRingPhase;
+    g_a4PreK = 2;
+}
+
+void VehiclePhysics_A4Pre(int slot, float dt, PlayerCarIO io) {   // io by value: the pre-phase's copy is discarded
+    if (!g_inited || slot <= 0 || slot >= 16) return;
+    if (!g_a4PreFrame) {   // FUN_00470c70 refreshes the order before the A4 loop (0x00470e2e..0x00470f16)
+        Fi_UpdateBoostOrder();
+        g_a4PreFrame = true;
+    }
+    g_a4PreOnly = true;
+    VehiclePhysics_StepCar(slot, dt, io);
+    g_a4PreOnly = false;
+    // MASHED_A4_ORDER_TRACE=<path> (diagnostic, default OFF): one line per pre-phase car. done 0 = the car keeps the
+    // per-car order this frame (first step, budget over 0x32, MASHED_A8_A4_FIRST=0).
+    static const char* const s_tr = std::getenv("MASHED_A4_ORDER_TRACE");
+    if (s_tr) if (std::FILE* lf = std::fopen(s_tr, "a")) {
+        unsigned char* r = rec(slot);
+        std::fprintf(lf, "slot=%d done=%d skip=%d phase=%d aec=%d v9e4=%.6f vel=(%.6f,%.6f,%.6f)\n", slot,
+                     g_a4PreDone[slot] ? 1 : 0, g_a4PreSkip[slot] ? 1 : 0, g_a4PrePhase[slot], I(r, 0xaec),
+                     F(r, off::kSpeed), F(r, off::kVelocity), F(r, off::kVelocity + 4), F(r, off::kVelocity + 8));
+        std::fclose(lf);
+    }
+}
+
+void VehiclePhysics_A4PreEnd() {
+    g_torqueRingPhase = g_a4PreBase;   // the real StepCar calls advance it as in the per-car order
+}
+
 void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     const bool settleOnly = g_settleOnly;   // [d2engage] consumed here: the settle's inner step runs normally
     g_settleOnly = false;
+    const bool preOnly = g_a4PreOnly;       // [a4order] consumed here, as settleOnly
+    g_a4PreOnly = false;
     if (!g_inited) VehiclePhysics_Init(4, 0);
     if (dt <= 0.f) return;
     if (slot < 0 || slot >= 16) return;
+    // [a4order] one chunk only: with remaining > 0x32 the original interleaves A4 and substeps per chunk
+    // (0x00471143..0x00471151); the pre-phase is not used there and the car steps in the per-car order.
+    if (preOnly && static_cast<int>(dt * 3000.0f) > 0x32) return;
+    // [a4order] this frame's gate + A4 already ran in the pre-phase (the spawn settle's inner step never has one)
+    const bool preDone = !preOnly && g_a4PreDone[slot] && !g_inSpawnSettle;
     unsigned char* r = rec(slot);
 
     // =====================================================================
@@ -822,6 +884,8 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     // re/analysis/D3_DRIVE_2026-09-28.md section 4.3), so the two arms have to stay
     // measurable against each other until that is adjudicated.
     static const bool s_noSettle = (std::getenv("MASHED_NO_SPAWN_SETTLE") != nullptr);
+    // [a4order] a car's first step (the settle hands io back to the caller) runs in the per-car order
+    if (preOnly && !g_settled[slot] && !s_noSettle) return;
     if (!g_settled[slot] && !s_noSettle) {
         g_settled[slot] = true;          // set BEFORE the call: the inner step must not re-enter
         PlayerCarIO s = io;
@@ -966,7 +1030,13 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     const bool callerKept = !s_noVelKeep && g_outValid[slot] &&
         std::memcmp(io.vel, g_outVel[slot], sizeof(g_outVel[slot])) == 0 &&
         std::memcmp(&io.speed, &g_outSpeed[slot], sizeof(float)) == 0;
-    if (!callerKept) {
+    // [a4order] the pre-phase already made this frame's re-seed decision and its A4 has written the record since;
+    // the record is re-seeded again only when the caller changed vel / speed after the pre-phase (relocation).
+    const bool preSameIo = preDone &&
+        std::memcmp(io.vel, g_a4PreIo[slot], sizeof(io.vel)) == 0 &&
+        std::memcmp(&io.speed, &g_a4PreIo[slot][3], sizeof(float)) == 0;
+    if (preOnly) { std::memcpy(g_a4PreIo[slot], io.vel, sizeof(io.vel)); g_a4PreIo[slot][3] = io.speed; }
+    if (!callerKept && !preSameIo) {
         F(r, off::kVelocity + 0) = io.vel[0];
         F(r, off::kVelocity + 4) = io.vel[1];
         F(r, off::kVelocity + 8) = io.vel[2];
@@ -1061,7 +1131,11 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     }
     // Refresh DAT_0088e668/66c once per frame, as FUN_00470c70 does before its
     // per-vehicle A4 loop (slot 0 steps first, so slot 0 is the frame boundary).
-    if (slot == 0 && !g_inSpawnSettle) Fi_UpdateBoostOrder();
+    // [a4order] once per frame: VehiclePhysics_A4Pre made it before the AI cars' A4 when the pre-phase ran.
+    if (slot == 0 && !g_inSpawnSettle) {
+        if (!g_a4PreFrame) Fi_UpdateBoostOrder();
+        g_a4PreFrame = false;
+    }
     // =====================================================================
 
     // The chain works in the ORIGINAL's millisecond time base: FUN_00470c70 passes
@@ -1274,11 +1348,14 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     const int chunkL = (chunkRem < 0x32) ? chunkRem : 0x32;               // 0x00470f50..0x00470f61
     const float a4Dt = (s_fixL && !s_fixLFrameMs) ? (float)chunkL : frameMs;   // 0x0047105a
     a4Skip = false;
-    if (!s_noA4Gate && !g_inSpawnSettle) {
+    if (preDone) {
+        a4Skip = g_a4PreSkip[slot];   // [a4order] the gate (and a skipped frame's refresh) ran in the pre-phase
+    } else if (!s_noA4Gate && !g_inSpawnSettle) {
         const int gateChunk = s_fixL ? chunkL : (((int)frameMs < 0x32) ? (int)frameMs : 0x32);
         if (slot == 0) {
             for (int s = 0; s < 16; ++s) {
                 if (s >= g_participantCount) break;
+                if (g_a4PreDone[s]) continue;   // [a4order] gated in the pre-phase this frame
                 g_a4Skip[s] = A4ContactGate(rec(s), gateChunk);
                 g_a4GateDone[s] = true;
             }
@@ -1289,7 +1366,7 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         a4Skip = g_a4Skip[slot];
         g_a4Skip[slot] = false;
     }
-    if (a4Skip) {
+    if (a4Skip && !preDone) {
         if (s_d2latRefresh) {
             F(r, off::kSpeed) = Math::LutLength(reinterpret_cast<const float*>(r + off::kVelocity)); // 0x004710c3/c8
             F(r, 0x9e8)       = Math::LutLength(reinterpret_cast<const float*>(r + 0x9bc));          // 0x004710d5/da
@@ -1321,8 +1398,22 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         return !(e && e[0] == '1');
     }();
     if (s_a4First) {
-        g_torqueRingPhase = (g_torqueRingPhase + 1) & 0xf;
-        if (!a4Skip)   // 0x00471042 / 0x00471048: jge past the A4 call
+        if (preOnly) {   // [a4order] the phase this car's A4 takes in the per-car order (VehiclePhysics_A4PreBegin)
+            g_torqueRingPhase = (g_a4PreBase + g_a4PreK++) & 0xf;
+            g_a4PrePhase[slot] = g_torqueRingPhase;
+        } else {
+            g_torqueRingPhase = (g_torqueRingPhase + 1) & 0xf;
+            if (preDone && g_torqueRingPhase != g_a4PrePhase[slot]) {   // diagnostic: the pre-phase's phase guess
+                static int s_phaseMiss = 0;
+                if (s_phaseMiss++ < 8)
+                    if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
+                        std::fprintf(lf, "[a4order] slot %d ring phase %d, pre-phase used %d\n",
+                                     slot, g_torqueRingPhase, g_a4PrePhase[slot]);
+                        std::fclose(lf);
+                    }
+            }
+        }
+        if (!a4Skip && !preDone)   // 0x00471042 / 0x00471048: jge past the A4 call
             VehicleControlIntegrate(reinterpret_cast<int*>(r), a4Dt, input, basis, slot);
         // [d2engage 2026-10-16] fix B part 5 (MASHED_POS_CONTACTS): the original writes no wheel
         // state, contact normal or +0x9e0 between the A4 loop and the substep loop. FUN_00470c70
@@ -1333,8 +1424,12 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         // The port's A6a writes no wheel state, so the "A6a can clear states" reason below has no
         // writer. PREREG_d2engage.md 0.4. With the knob on, every remaining ReassertContacts call
         // reads the cache its own car's SolveWheelContacts set in the same call.
-        if (!PosModelContacts()) ReassertContacts(r);
-        if (s_d2latRefresh && !a4Skip && (I(r, 0x4) != 0 || I(r, 0x10) == 1)) {   // 0x004710b0..ba
+        // [a4order] port-only (it reads the solver cache of the car that stepped last), so it stays next to this
+        // car's substeps: not in the pre-phase, still in the real step.
+        if (!PosModelContacts() && !preOnly) ReassertContacts(r);
+        if (preDone) {
+            // [a4order] the refresh below belongs to the frame boundary (0x004710a1..0x004710da); made in the pre-phase
+        } else if (s_d2latRefresh && !a4Skip && (I(r, 0x4) != 0 || I(r, 0x10) == 1)) {   // 0x004710b0..ba
             F(r, off::kSpeed) = Math::LutLength(reinterpret_cast<const float*>(r + off::kVelocity)); // 0x004710c8
             F(r, 0x9e8)       = Math::LutLength(reinterpret_cast<const float*>(r + 0x9bc));          // 0x004710da
         } else if (!s_noSpeedRefresh && !a4Skip && (I(r, 0x4) != 0 || I(r, 0x10) == 1)) {
@@ -1343,6 +1438,10 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         }
     }
     sdLine("postA4");
+    if (preOnly) {   // [a4order] the pre-phase ends here; this car's substeps run in its own StepCar
+        if (s_a4First) { g_a4PreDone[slot] = true; g_a4PreSkip[slot] = a4Skip; }
+        return;
+    }
 
     // [U-9154 2026-09-29] The car<->WORLD contact chain. The original's substep body
     // (FUN_004709a0, 0x00470ab0..0x00470b0b, disassembled from MASHED.exe.unpatched) is
@@ -2061,6 +2160,7 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         g_outPosValid[slot] = true;
     }
     g_a4GateDone[slot] = false;                                    // next frame's gate is due
+    if (preDone) g_a4PreDone[slot] = false;                        // [a4order] consumed
 
     if (prof::g_on) prof::f_physMs += prof::NowMs() - t_phys0;   // PERF: whole-step cost
 }
