@@ -112,6 +112,16 @@ so no AI car reaches the pre-phase and the player's order is unchanged.
   d3bB2's CCET rows (G-CTRL `33b5eab2 / 2b13c757 / f3e8e2f9`, (b) "identical to CCE", D2) are CCE with traces. Here TE (= what CCET
   meant) scores the same (b) verdicts as d3bB2's CCE. The loop in this copy no longer overwrites a defined tag.
 
+### 6.1 Knob audit of this lane's RUNLOGs (orchestrator request)
+
+Every RUNLOG line read back for `MASHED_AI_TICK_FIRST=1`, `MASHED_A4_ORDER=1` and `MASHED_AI_CONTACT_EVENT=1`:
+`T`, `TE`, `S`, `SA`, `SAP` carry `MASHED_AI_TICK_FIRST=1`; `A`, `AE`, `SA`, `SAP`, `H_A`, `D2_A_*` carry `MASHED_A4_ORDER=1`;
+`AE`, `TE`, `S`, `SA`, `SAP` carry the event knob; `DEF`, `H_DEF-*`, `H_NOCC-1` carry none of the three. `A` / `AE` do not set
+`MASHED_AI_TICK_FIRST` in the env: the knob turns it on in code (`s_aiTickFirst = env || VehiclePhysics_A4OrderEnabled()`).
+That it took effect is shown by the trace: the pre-phase runs only when `ai_tick_ran` is already true before the player's step
+(`TrackRenderer.cpp`), and every `A` / `AE` run has `done=1` pre-phase lines for slots 1..3 (`B_A_K1.a4.txt` 2147 of 2150).
+So d3bB2's CCET rows should be read as CCE + traces (section 6); this lane's T-stacked arms are what their tags say.
+
 ## 7. Tracker transaction (re-classify, no C-level change; `apply_trackers_p2.py`)
 
 New U-9748, U-9749 (U-9747 was the highest id on `3e23c80b1` and on `race/first-frame-parity` at `d9b8bfb45`); U-9746 note;
