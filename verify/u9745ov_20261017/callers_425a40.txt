@@ -1,0 +1,7 @@
+// FUN_00425a40 @ 0x00425a40  size=104  (MASHED.exe)
+// undefined FUN_00425a40(void)
+// callers: FUN_0040fc00@0x0040fc00
+
+// FUN_0040fc00 @ 0x0040fc00  size=621  (MASHED.exe)
+// undefined FUN_0040fc00(void)
+// callers: FUN_004111c0@0x004111c0
