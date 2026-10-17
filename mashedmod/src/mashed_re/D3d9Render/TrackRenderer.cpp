@@ -2349,7 +2349,12 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
         // [rprops U-9695] MASHED_NO_PROPPLACE=1 keeps the pre-rprops placement (every Clump_Filename
         // clump at identity) for A/B: Clump_Mts_Pair, the camera-men and the Arctic ships.
         static const bool s_no_propplace = std::getenv("MASHED_NO_PROPPLACE") != nullptr;
+        // [D4-WIP-CAMMANYAW U-9699] default OFF: MASHED_CAMMANYAW=1 poses the camera-men from the stepped
+        // entry array (0x00441d40 via CameraEntryDispatchAll). Without it they keep the table yaw (rprops).
+        const bool s_cammanyaw = CamEntry::CamManYawOn();
         prop_anims_.clear();
+        camman_on_ = false;
+        camman_n_ = 0;
         prop_acc_[0] = prop_acc_[1] = prop_acc_[2] = 0.f;
         prop_tick_frames_ = 0;
         if (lua) {
@@ -3063,10 +3068,18 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                                 }
                                 if (!cm.empty()) {
                                     p.instances = std::move(cm);
+                                    // [D4-WIP-CAMMANYAW U-9699] knob ON: UpdateCamMen re-poses these from the entry
+                                    // array (entries 1..N; all 12 tracks' rows 1..N are type 1,
+                                    // verify/rprops2_20261016/dump_camtypes.py).
+                                    if (!s_no_propplace && s_cammanyaw) {
+                                        camman_prop_ = props_.size();             // p is pushed next
+                                        camman_n_ = static_cast<int>(p.instances.size());
+                                        camman_on_ = true;
+                                    }
                                     if (log)
                                         std::fprintf(log, "  PROP-CAMMAN course_id=%d clump=%d helper=0x%08x "
-                                                     "instances=%zu\n", course_id_, c.idx, ct.helper,
-                                                     p.instances.size());
+                                                     "instances=%zu%s\n", course_id_, c.idx, ct.helper,
+                                                     p.instances.size(), camman_on_ ? " yaw_step=1" : "");
                                 }
                                 break;
                             }
@@ -9545,6 +9558,26 @@ void TrackRenderer::BuildPropOrder(std::FILE* log) {
     }
 }
 
+// [D4-WIP-CAMMANYAW U-9699] The camera-man helper's loop body (0x00448dc0 and 11 more): for i = 1..N
+// (0x00448dc5 esi = 1), frame identity (0x00448dda FUN_004c15c0), rotate about +Y (0x006146fc) by
+// FUN_00442420(i) = entry i +0xb0 (0x00448de0, 0x0044242a fld [i*0xd8 + 0x896570]), translate by
+// FUN_00442410(i) = entry i +0x3c (0x00448dfc, 0x0044241a i*0xd8 + 0x8964fc). Knob ON only. Port-side
+// guard (named): the table pose stays until FUN_00442600 has built the array (its guard DAT_0089898c
+// == 1) with more than N entries (DAT_00898994).
+void TrackRenderer::UpdateCamMen() {
+    if (!camman_on_ || camman_prop_ >= props_.size()) return;
+    if (*reinterpret_cast<const std::int32_t*>(0x0089898cu) != 1) return;
+    if (*reinterpret_cast<const std::int32_t*>(0x00898994u) <= camman_n_) return;
+    auto& inst = props_[camman_prop_].instances;
+    if (static_cast<int>(inst.size()) != camman_n_) return;
+    for (int i = 1; i <= camman_n_; ++i) {
+        const std::uint8_t* e = reinterpret_cast<const std::uint8_t*>(0x008964c0u + static_cast<std::uintptr_t>(i) * 0xd8u);
+        const float* pos = reinterpret_cast<const float*>(e + 0x3c);
+        const float  yaw = *reinterpret_cast<const float*>(e + 0xb0);
+        PlaceMatrix(pos, yaw, &inst[static_cast<std::size_t>(i - 1)]);
+    }
+}
+
 void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     if (!ready_) return;
     // Parity 3D channel (MASHED_DBG_DRAWSTREAM3D) frame delimiter: Render() is
@@ -10166,6 +10199,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     // the first slot-1 update (the Arctic bob light then holds one tick's k: measured, the original's
     // small / big batch AABBs at Arctic 1051 equal the model with k = (sin(0.2) + 1) * 0.15)
     if (++lens_frames_ == 3) LibRw::RaceFx_LensRequestBuild();
+    UpdateCamMen();                                // [rprops2] camera-men from their stepped entries
     // R6: track props (tyre walls, crates, sea, freighter...), submitted to librw as
     // instanced models. The D3DMATRIX is each prop's MTS / identity world matrix; it
     // copies straight into the rw::Frame (RwRaceSubmit.cpp SetClumpTransform). A
