@@ -1,0 +1,51 @@
+0040fc25  call 0x496930
+0040fc3d  call 0x496930
+0040fc63  mov dword ptr [0x7f1008], esi
+0040fc6c  call 0x425a40
+0040fc75  call 0x40da50
+0040fc7c  call 0x40d470
+0040fc94  call 0x426ab0
+0040fc9b  call 0x467210
+0040fca1  call 0x412f30
+0040fca8  call 0x467210
+0040fcae  call 0x488e70
+0040fcb3  call 0x40ce00
+0040fcb9  call 0x425d50
+0040fccb  call 0x406ce0
+0040fcd0  call 0x45bba0
+0040fcd5  call 0x475c10
+0040fcda  call 0x476440
+0040fcdf  call 0x4777d0
+0040fce4  call 0x477920
+0040fce9  call 0x4189a0
+0040fcee  call 0x4215a0
+0040fcf3  call 0x4222d0
+0040fcf8  call 0x490500
+0040fcfd  call 0x490380
+0040fd02  call 0x429310
+0040fd07  call 0x485070
+0040fd0c  call 0x40dba0
+0040fd11  call 0x41d930
+0040fd2c  call 0x45b350
+0040fd38  call 0x45b350
+0040fd40  call 0x413f20
+0040fd45  call 0x42f6a0
+0040fd60  call 0x41e6c0
+0040fd67  call 0x42f500
+0040fd8d  call 0x41c180
+0040fd94  call 0x41dca0
+0040fd9b  call 0x41a250
+0040fda0  call 0x40e350
+0040fdaa  call 0x4039f0
+0040fdb7  call 0x403250
+0040fdbf  call 0x42f500
+0040fdc8  call 0x41c090
+0040fdcd  call 0x41d830
+0040fdd4  call 0x41b540
+0040fdd9  call 0x41cc50
+0040fe1f  call 0x4a2c48
+0040fe4f  mov ecx, dword ptr [0x7f0ff4]
+0040fe55  mov eax, dword ptr [0x7f0ff8]
+0040fe5e  mov dword ptr [0x7f0ff4], ecx
+0040fe64  mov dword ptr [0x7f0ff8], eax
+0040fe6c  ret 

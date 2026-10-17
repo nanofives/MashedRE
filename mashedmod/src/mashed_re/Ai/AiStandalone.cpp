@@ -2081,11 +2081,33 @@ void Ai_Standalone_Tick()
 // and DAT_007f0ff4 advances by 50 per frame (verify/d3_ai_20260926/o_inputs). Before
 // this, nothing in mashed_re.exe wrote these three, so the FUN_00416250 steer timer
 // (el = DAT_007f0ff4 - start, fresh steer when el >= 200) never issued a fresh steer.
+// [u9745ov 2026-10-17] MASHED_AI_CLOCK_LATE=1 (default OFF): the original's order inside FUN_0040fc00 is the 0x0040fc63
+// store, then FUN_00425a40 (0x0040fc6c: AI tick, every car's physics, the event drain), then the rest of the frame, and
+// only at the end the DAT_007f0ff4 / DAT_007f0ff8 add (0x0040fe4f..0x0040fe64, before RET at 0x0040fe6c). So every reader
+// in a frame sees the value before that frame's add. Measured (verify/u9745ov_20261017): the FUN_004177b0 band-0 roll reads
+// DAT_007f0ff8 * (1/3000) > 1.0 and fires at window call 61 on the original (o_reg_r13, r15, r18, r19, r20) and at call
+// 60 on the port; car 2's commands after it ran one call ahead of o_reg_r13. Under the knob Ai_AdvanceClock stores only
+// DAT_007f1008 and Ai_AdvanceClockLate makes the add at the end of the race frame.
+bool Ai_ClockLateEnabled()
+{
+    static const bool s = [] { const char* e = std::getenv("MASHED_AI_CLOCK_LATE"); return e && e[0] == '1'; }();
+    return s;
+}
+
+void Ai_AdvanceClockLate(int units)
+{
+    if (!Ai_ClockLateEnabled()) return;
+    I32(0x007f0ff4u) += units;           // 0x0040fe5e
+    I32(kFrame0ff8)  += units;           // 0x0040fe64
+}
+
 void Ai_AdvanceClock(int units)
 {
     I32(kOverrideStep) = units;          // DAT_007f1008
-    I32(0x007f0ff4u) += units;           // 0x0040fe5e
-    I32(kFrame0ff8)  += units;
+    if (!Ai_ClockLateEnabled()) {        // [u9745ov] knob off: the add stays here, before the tick
+        I32(0x007f0ff4u) += units;       // 0x0040fe5e
+        I32(kFrame0ff8)  += units;
+    }
     // [D-11073 leg 1a] _DAT_007f100c = (float)units * _DAT_005cc948, stored at 0x0040fc57,
     // i.e. just BEFORE the 0x0040fc63 store above in the original. No-op unless
     // MASHED_SUBSTATE (default OFF). Its only consumer in the exe is the FUN_0041d930 tail
