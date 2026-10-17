@@ -87,6 +87,13 @@ U-9749 RESOLVED; notes on U-9743 (ported behind the knob, measured) and U-9745 (
 1. `MASHED_HEADING_ASSIST_PLAYER` default: recommended ON (opt-out to be added at the flip). It is the original's behaviour
    (`FUN_00424eb0` covers car 0), it passes the default-ON rule, and D2 stays in bounds.
 
+### 8.1 Flipped (user decision 2026-10-17)
+
+Mask 0x2 is default ON; `MASHED_NO_HEADING_ASSIST_PLAYER=1` opts out (`MASHED_NO_HEADING_ASSIST=1` still drops both bits,
+`MASHED_HEADING_ASSIST=<mask>` still overrides). Exe `2ca9a02b`, `arms/flip/RUNLOG.txt`: G-CTRL default
+`a34714b4 / 0f8ef6df / 852a255d` x2 (= `H_P` above), opt-out `490c4b2d / 1fdd0ea6 / 46088ac4` (= the previous default). The (b),
+D2 and 13-track numbers of sections 4-5 are the knob-alone arm, i.e. the new default. U-9743 RESOLVED (`apply_trackers_flip.py`).
+
 ## 9. Follow-ups
 
 - After the flip: the override-timer phase and the steer drift during the second override (section 6, U-9745).

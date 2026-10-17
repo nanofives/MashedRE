@@ -5178,7 +5178,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             }
             Vehicle::VehiclePhysics_A4PreEnd();
         }
-        // [u9749 2026-10-17] FUN_00424eb0's FUN_0046c7d0 for car 0 (MASHED_HEADING_ASSIST_PLAYER=1, default OFF; U-9743 /
+        // [u9749 2026-10-17] FUN_00424eb0's FUN_0046c7d0 for car 0 (default ON since 2026-10-17, MASHED_NO_HEADING_ASSIST_PLAYER=1 opts out; U-9743 /
         // U-9749): before the player's physics, with the steer bytes StepCar derives from io.steer (VehiclePhysicsRun.cpp
         // WS-A8-STEER map), or the raw bytes when the caller set raw_steer.
         if (Race::HeadingAssist_Mask() & 0x2u) {

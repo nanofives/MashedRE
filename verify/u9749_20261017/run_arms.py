@@ -64,6 +64,7 @@ STACK['SA'] = _S + _A4                                         # S + the A4 orde
 STACK['SAP'] = STACK['SA'] + ['MASHED_PLAYERTRACE']            # + the player trace (G-COAST2 cause)
 # u9749: record dumps (MSD1) of slot 0 / slot 2, end of frame and at the A4 site
 _HP = ['MASHED_HEADING_ASSIST_PLAYER']
+STACK['NOHP'] = ['MASHED_NO_HEADING_ASSIST_PLAYER']   # after the flip: the opt-out (= the pre-flip default)
 STACK['P'] = _HP; STACK['AHP'] = STACK['A'] + _HP; STACK['SAH'] = STACK['SA'] + _HP
 STACK['SAHR0'] = STACK['SAH'] + ['MASHED_RECDUMP=@OUT@\\@NAME@.rec.msd', 'MASHED_RECDUMP_A4=@OUT@\\@NAME@.a4rec.msd', 'MASHED_RECDUMP_SLOT=0']
 for _s in (0, 2):

@@ -212,15 +212,16 @@ unsigned HeadingAssist_Mask() {
         const char* no = std::getenv("MASHED_NO_HEADING_ASSIST");
         if (no && no[0] && no[0] != '0') return 0u;                          // [dflip] opt-out
         const char* e = std::getenv("MASHED_HEADING_ASSIST");
-        unsigned m = (e && e[0]) ? static_cast<unsigned>(std::strtoul(e, nullptr, 0)) : 1u;   // [dflip] default 0x1
-        const char* p = std::getenv("MASHED_HEADING_ASSIST_PLAYER");                          // [u9749] default OFF
-        if (p && p[0] == '1') m |= 0x2u;
-        return m;
+        if (e && e[0]) return static_cast<unsigned>(std::strtoul(e, nullptr, 0));        // explicit mask wins
+        // [dflip] 0x1 (AI slots) default ON. [u9749] 0x2 (car 0) default ON since 2026-10-17 (user decision);
+        // MASHED_NO_HEADING_ASSIST_PLAYER=1 opts out (MASHED_HEADING_ASSIST_PLAYER=1 is still accepted, a no-op now).
+        const char* np = std::getenv("MASHED_NO_HEADING_ASSIST_PLAYER");
+        return (np && np[0] && np[0] != '0') ? 0x1u : 0x3u;
     }();
     return s_mask;
 }
 
-// [u9749 2026-10-17] Player form (mask 0x2, U-9743 / U-9749): FUN_00424eb0's loop covers car 0 too (cars 0..3, the same
+// [u9749 2026-10-17] Player form (mask 0x2, default ON since 2026-10-17, MASHED_NO_HEADING_ASSIST_PLAYER=1 opts out; U-9743 / U-9749): FUN_00424eb0's loop covers car 0 too (cars 0..3, the same
 // FUN_0040e370 / FUN_0046c7b0 gates), between the AI tick (0x00425a73) and the physics frame (0x00425a8d). The steer bytes
 // are the player's this frame (`steer0` / `steer1`, the bytes StepCar maps io.steer to). Measured cause (u9749, B_SAR0_K1
 // against o_pw1): on the player's 9 coast frames after its first car<->car contact the original turns 0.00264 per frame
