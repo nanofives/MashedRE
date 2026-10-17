@@ -1,0 +1,121 @@
+[decomp_pc] slot=Mashed_pool10 modes=decomp n=2
+// FUN_004709a0 @ 0x004709a0  size=705  (MASHED.exe)
+// NOTE: 0x00470ad3 is not a function entry; showing containing function
+// undefined FUN_004709a0(void)
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C2 2026-05-12] Outer per-vehicle physics update loop. For each of 16 vehicle slots, runs up to 2
+   rigid-body substeps… */
+
+void FUN_004709a0(undefined4 param_1)
+
+{
+  float *pfVar1;
+  float *pfVar2;
+  float fVar3;
+  bool bVar4;
+  int iVar5;
+  int iVar6;
+  int iVar7;
+  int iVar8;
+  int iVar9;
+  int iVar10;
+  int iVar11;
+  undefined4 *local_1c;
+  int local_18;
+  
+  iVar5 = FUN_0040e350();
+  iVar6 = FUN_0040e340();
+  if ((DAT_007f0fdc != 0) && (DAT_007f0fdc = FUN_004a2c48(), DAT_007f0fdc < 0)) {
+    DAT_007f0fdc = 0;
+  }
+  local_18 = 0;
+  do {
+    local_1c = &DAT_007f1038 + (&DAT_007f1a14)[local_18 * 4] * 0x13;
+    if ((&DAT_00881f90)[local_18 * 0x341] != 0) {
+      local_1c = (undefined4 *)&DAT_007f19b8;
+    }
+    if ((&DAT_008815b0)[local_18 * 0x341] != 0) {
+      local_1c = (undefined4 *)&DAT_007f19b8;
+    }
+    iVar7 = FUN_0040e350();
+    if (((iVar7 != 6) && (iVar7 = FUN_0040e350(), iVar7 != 0xb)) &&
+       (iVar7 = FUN_0040e350(), iVar7 != 10)) {
+      local_1c = (undefined4 *)&DAT_007f19b8;
+    }
+    if (((&DAT_008815b4)[local_18 * 0x341] == 0) &&
+       (((&DAT_008815a4)[local_18 * 0x341] != 0 || ((&DAT_008815b0)[local_18 * 0x341] == 1)))) {
+      iVar7 = (&DAT_00881f4c)[local_18 * 0x341];
+      iVar10 = 0;
+      if ((&DAT_00881f90)[local_18 * 0x341] != 0xff) {
+        do {
+          while( true ) {
+            if (1 < iVar10) goto LAB_00470c47;
+            bVar4 = true;
+            FUN_0046e9e0(param_1,local_1c);
+            FUN_0046f6c0(1);
+            iVar8 = FUN_00469aa0();
+            if (((&DAT_00881f8c)[local_18 * 0x341] == 0) ||
+               (FUN_0046ef70(&DAT_008815a0 + local_18 * 0x341 + iVar7 * 0x10 + 0x24a), iVar8 == 0))
+            break;
+            iVar10 = iVar10 + 1;
+          }
+          iVar8 = local_18 + 1;
+          if (0xf < iVar8) break;
+          iVar11 = iVar8 * 0xd04;
+          do {
+            if ((iVar8 < iVar6) &&
+               ((*(int *)((int)&DAT_008815a4 + iVar11) != 0 ||
+                (*(int *)((int)&DAT_008815b0 + iVar11) == 1)))) {
+              pfVar1 = (float *)(&DAT_008815a0 +
+                                local_18 * 0x341 + (&DAT_00881f48)[local_18 * 0x341] * 0x10 + 0x256)
+              ;
+              pfVar2 = (float *)(&DAT_00881ef8 +
+                                iVar11 + *(int *)((int)&DAT_00881f48 + iVar11) * 0x40);
+              fVar3 = (*(float *)((int)&DAT_00881a44 + iVar11) +
+                      (float)(&DAT_00881a44)[local_18 * 0x341]) * _DAT_005cc950;
+              if (((*pfVar1 - *pfVar2) * (*pfVar1 - *pfVar2) +
+                   (pfVar1[1] - pfVar2[1]) * (pfVar1[1] - pfVar2[1]) +
+                   (pfVar1[2] - pfVar2[2]) * (pfVar1[2] - pfVar2[2]) < fVar3 * fVar3) &&
+                 (((((iVar5 == 6 || (iVar5 == 7)) || (iVar5 == 10)) || (iVar5 == 0xb)) &&
+                  (iVar9 = FUN_00469df0(iVar8,iVar10), iVar9 != 0)))) {
+                iVar10 = iVar10 + 1;
+                bVar4 = false;
+                if (((DAT_007f0fd0 == 1) && (DAT_007f0fdc == 0)) &&
+                   ((iVar9 = iVar8, local_18 == DAT_007f0fd4 ||
+                    (iVar9 = local_18, iVar8 == DAT_007f0fd4)))) {
+                  FUN_00467300(iVar9);
+                }
+              }
+            }
+            iVar11 = iVar11 + 0xd04;
+            iVar8 = iVar8 + 1;
+          } while (iVar11 < 0xd040);
+        } while (!bVar4);
+        (&DAT_00881f4c)[local_18 * 0x341] = (&DAT_00881f48)[local_18 * 0x341];
+        (&DAT_00881f48)[local_18 * 0x341] = (&DAT_00881f48)[local_18 * 0x341] - 1 & 1;
+      }
+    }
+LAB_00470c47:
+    local_18 = local_18 + 1;
+    if (0xf < local_18) {
+      return;
+    }
+  } while( true );
+}
+
+
+
+// FUN_0040e350 @ 0x0040e350  size=6  (MASHED.exe)
+// undefined FUN_0040e350(void)
+
+/* [C2 2026-05-18] Body (0x0040e350..0x0040e355): */
+
+undefined4 FUN_0040e350(void)
+
+{
+  return DAT_0063ba8c;
+}
+
+
+

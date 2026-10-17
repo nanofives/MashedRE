@@ -1,0 +1,34 @@
+[decomp_pc] slot=Mashed_pool10 modes=datarefs n=1
+// 0x007f0ff4  DATA in .data
+//   type undefined4 len 4  value 00000000h
+//   26 reference(s) total
+//   WRITES (3):
+//     0x0040fe5e in FUN_0040fc00  [WRITE]  MOV dword ptr [0x007f0ff4],ECX
+//     0x0040ff1d in FUN_004111c0  [WRITE]  MOV dword ptr [0x007f0ff4],EBX
+//     0x00411d7d in FUN_00411d60  [WRITE]  MOV dword ptr [0x007f0ff4],0x0
+//   reads (23):
+//     0x0040fe4f in FUN_0040fc00  [READ]  MOV ECX,dword ptr [0x007f0ff4]
+//     0x0041016c in FUN_004111c0  [READ]  MOV ECX,dword ptr [0x007f0ff4]
+//     0x004103d5 in FUN_004103a0  [READ]  MOV ECX,dword ptr [0x007f0ff4]
+//     0x00410860 in FUN_00410860  [READ]  MOV ECX,dword ptr [0x007f0ff4]
+//     0x00411170 in FUN_00411170  [READ]  MOV EAX,[0x007f0ff4]
+//     0x0041117b in FUN_00411170  [READ]  MOV ECX,dword ptr [0x007f0ff4]
+//     0x0041161e in FUN_00411600  [READ]  MOV ECX,dword ptr [0x007f0ff4]
+//     0x004118a9 in FUN_00411870  [READ]  MOV ECX,dword ptr [0x007f0ff4]
+//     0x00416611 in FUN_00416250  [READ]  MOV EAX,[0x007f0ff4]
+//     0x0041669e in FUN_00416250  [READ]  MOV EDX,dword ptr [0x007f0ff4]
+//     0x00416726 in FUN_00416250  [READ]  MOV EAX,[0x007f0ff4]
+//     0x004167b9 in FUN_00416250  [READ]  MOV EDX,dword ptr [0x007f0ff4]
+//     0x00416d57 in FUN_00416a30  [READ]  MOV EAX,[0x007f0ff4]
+//     0x00416de4 in FUN_00416a30  [READ]  MOV EDX,dword ptr [0x007f0ff4]
+//     0x00416e71 in FUN_00416a30  [READ]  MOV EAX,[0x007f0ff4]
+//     0x00416f04 in FUN_00416a30  [READ]  MOV EDX,dword ptr [0x007f0ff4]
+//     0x00418161 in FUN_00417da0  [READ]  MOV EAX,[0x007f0ff4]
+//     0x004181ee in FUN_00417da0  [READ]  MOV EDX,dword ptr [0x007f0ff4]
+//     0x00418276 in FUN_00417da0  [READ]  MOV EAX,[0x007f0ff4]
+//     0x00418309 in FUN_00417da0  [READ]  MOV EDX,dword ptr [0x007f0ff4]
+//     0x00429424 in FUN_00429310  [READ]  FILD dword ptr [0x007f0ff4]
+//     0x0042954a in FUN_00429310  [READ]  MOV ECX,dword ptr [0x007f0ff4]
+//     0x00470df2 in FUN_00470c70  [READ]  FILD dword ptr [0x007f0ff4]
+//   other: (none)
+

@@ -83,6 +83,10 @@ bool Ai_ComputeTarget(int v, float ownX, float ownZ, float* outTx, float* outTz)
 // DAT_007f0ff4 += units, DAT_007f0ff8 += units (original 0x0040fc63 / 0x0040fe5e).
 // The original's budget is 50 per 1/60 s frame. Call once per race frame before the tick.
 void Ai_AdvanceClock(int units);
+// [d3bB2 2026-10-17] MASHED_AI_COUNTDOWN_CLOCK=1 (default OFF): DAT_007f0ff4 += units on every
+// countdown stand-in frame, as FUN_0040fc00 does on the original's pre-GO ticks (0x0040fe4f..0x0040fe5e).
+bool Ai_CountdownClockEnabled();
+void Ai_AdvanceCountdownClock(int units);
 // FUN_00413fe0 per-vehicle AI-state reset + race-clock zeroing. Call at race start.
 void Ai_ResetRace();
 

@@ -4933,6 +4933,10 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         countdown_ -= in.dt;
         car_speed_ = 0.f; car_vel_[0] = car_vel_[1] = car_vel_[2] = 0.f;
         for (auto& a : ai_cars_) a.cur_speed = 0.f;
+        // [d3bB2 2026-10-17] FUN_0040fc00's clock add on the pre-GO ticks (0x0040fe5e), default OFF
+        // (MASHED_AI_COUNTDOWN_CLOCK=1). Same gate as the race-frame Ai_AdvanceClock below.
+        if (Ai::Ai_CountdownClockEnabled() && g_aib.loaded && (Ai::I32(Ai::kSplineRaceCnt) > 3))
+            Ai::Ai_AdvanceCountdownClock(static_cast<int>(in.dt * 3000.0f + 0.5f));
         // [U-9174, D2 attempt 15] START-LINE LAUNCH REV-CHARGE. The original runs
         // FUN_0046d7f0(car, 50) per active car on every pre-race state-tick
         // (0x00410441) and FUN_0046d780(car) once when the 1.86 s timer elapses

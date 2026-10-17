@@ -2092,6 +2092,34 @@ void Ai_AdvanceClock(int units)
     SubState_StoreStep(units);
 }
 
+// [d3bB2 2026-10-17] The AI clock on the countdown stand-in frames (MASHED_AI_COUNTDOWN_CLOCK=1,
+// default OFF). FUN_0040fc00 adds its tick budget to DAT_007f0ff4 on every tick except race
+// sub-state 7 (0x0040fe46 cmp [0x0063ba8c],7 / 0x0040fe4f..0x0040fe5e), so the original's clock runs
+// through phase 3 and states 4 / 5 before GO: on all 31 labelled original captures it starts at 0 on
+// the first probed FUN_00416250 call, counts 50 per call, and reads 38850..46400 at the first racing
+// call (o_reg_r13: 37450 at the state-4 call, 43100 at GO, 113 x 50 later). The exe's default
+// countdown runs no AI tick and advanced no clock, so it reached GO at 0 and its first racing calls
+// read 50 / 100 / 150. FUN_00416250's fresh-steer arm needs [0x0089a4ec + v*0x74] == 1 or
+// DAT_007f0ff4 - [0x0089a4f0 + v*0x74] >= 0xc8 (0x00416608..0x00416621 / 0x0041671d..0x00416736);
+// with the stamps at 0 (FUN_00413fe0) the exe took the decay arm on calls 1-2 and wrote c0 = 0 where
+// the original wrote err * speed * _DAT_005cd0e8 (car 2 of o_reg_r13: 11, 23).
+// Only DAT_007f0ff4 is advanced. DAT_007f0ff8 is also added at 0x0040fe64, but FUN_00418560's
+// mode-5 branch zeroes it on every state-5 tick (0x00418598) and this stand-in runs no AI tick, so
+// it is left as it was. Every other reader of DAT_007f0ff4 on the race path takes a difference with
+// a stored stamp; the two absolute readers are off this path (0x00470df2 runs only when
+// [0x007f0fd0] is 1 or 2, 0x00470dd2..0x00470dde; 0x00429424 formats a string for 0x004987b0).
+bool Ai_CountdownClockEnabled()
+{
+    static const bool s = [] { const char* e = std::getenv("MASHED_AI_COUNTDOWN_CLOCK");
+                               return e && e[0] == '1'; }();
+    return s;
+}
+
+void Ai_AdvanceCountdownClock(int units)
+{
+    I32(0x007f0ff4u) += units;           // 0x0040fe5e
+}
+
 // FUN_00413fe0 — per-vehicle AI-state reset (decomp pool0 2026-09-26): DAT_0089a36c = 0;
 // for v = 0..3 (stride 0x74 from 0x0089a4f0): +0x4ec/+0x4f0/+0x4f4, +0x4c4/+0x4c8/+0x4cc/
 // +0x4d0, +0x508, +0x51c/+0x520/+0x524/+0x528 = 0; DAT_008032d4[v*5] = 1000. Plus the race
