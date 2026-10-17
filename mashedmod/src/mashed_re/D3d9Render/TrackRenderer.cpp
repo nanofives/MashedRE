@@ -2833,7 +2833,7 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                     // [pontoon 2026-10-16] Warzone's boat (clump 1, the 0x00684d18 object's clump): the original draws
                     // its three atomics one by one at their frame LTMs (slot 2 FUN_00452130 @ 0x00452130, clump list order
                     // = DFF atomics 2, 1, 0), which the ported RpHAnim update moves (Track/WarzonePontoon.cpp). Behind
-                    // MASHED_PONTOON_ANIM (default OFF): one unbaked model per atomic, same hook entry, queued 2, 1, 0.
+                    // MASHED_PONTOON_ANIM (default ON since dflip, MASHED_NO_PONTOON_ANIM=1 opts out): one unbaked model per atomic, same hook entry, queued 2, 1, 0.
                     if (course_id_ == 33 && c.idx == 1 && Track::Pontoon_AnimOn()) {
                         bool split = true;
                         Prop parts[3];
@@ -2863,7 +2863,7 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
             }
             // [pontoon 2026-10-16] slot 0 0x004527f0's object part: FUN_0047ce40(1000) / (2000) are the RWP objects
             // with BaseLabel 1000 (Tower) / 2000 (Deck), their body matrices the first Mts record (flags 0, captured);
-            // FUN_00451760(&obj, clump 1, General_Anim 0). Default OFF (MASHED_PONTOON_ANIM / _STATE / _CARRY).
+            // FUN_00451760(&obj, clump 1, General_Anim 0). Default ON since dflip (opt-outs MASHED_NO_PONTOON_ANIM / _STATE / _CARRY).
             Track::Pontoon_Shutdown();
             if (course_id_ == 33 && Track::Pontoon_AnimOn()) {
                 const char* boat = nullptr;
@@ -4476,7 +4476,7 @@ void TrackRenderer::PontoonCarried(int v, const float* m) {
 
 void TrackRenderer::CopterTick(int units) {
     // [pontoon 2026-10-16] FUN_0040fc00 -> FUN_00426ab0 (0x0040fc94) runs the course's slot 1 at 0x00426ae3 before the
-    // clump anims (FUN_00426700): Warzone's 0x00452b20 -> FUN_00451d80. Inactive unless MASHED_PONTOON_* is set.
+    // clump anims (FUN_00426700): Warzone's 0x00452b20 -> FUN_00451d80. Inactive with MASHED_NO_PONTOON_ANIM=1.
     if (course_id_ == 33) Track::Pontoon_Tick(units);
     ClumpAnimTick(units);                               // [rhooks] FUN_0040fc00's 0x0040fc94 first
     std::uint32_t kb = 0x39aec33eu;                     // _DAT_005cc948 (1/3000)
@@ -5358,8 +5358,8 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         AiStepDump();
         U9186GateDump();   // [U-9186 G1] default-OFF measurement probe
         // [d3b 2026-10-16] FUN_00424eb0's FUN_0046c7d0 loop: the steer-0 heading assist, after the AI
-        // tick (0x00425a73) and before the physics frame (0x00425a8d), AI slots only. Default OFF
-        // (MASHED_HEADING_ASSIST=1). Race/HeadingAssist.cpp, verify/d3b_20261016/PREREG_d3b.md.
+        // tick (0x00425a73) and before the physics frame (0x00425a8d), AI slots only. Default ON since
+        // dflip 2026-10-17 (MASHED_NO_HEADING_ASSIST=1 opts out). Race/HeadingAssist.cpp, verify/d3b_20261016/PREREG_d3b.md.
         Race::HeadingAssist_Frame(static_cast<int>(in.dt * 3000.0f + 0.5f));
         // [D-11073 leg 1a] FUN_0041d930's tail (0x0041da5f..0x0041da76): DAT_0063d584 += 1,
         // DAT_0063d588 += _DAT_007f100c. The original runs it once per frame from FUN_0040fc00

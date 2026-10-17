@@ -5,7 +5,8 @@
 namespace mashed_re {
 namespace Race {
 
-// MASHED_HEADING_ASSIST=<mask> (default 0 = off). 0x1: AI slots 1..3. The player (slot 0) is not
+// Default ON (mask 0x1, user decision 2026-10-17, verify/dflip_20261017). MASHED_NO_HEADING_ASSIST=1 opts out;
+// MASHED_HEADING_ASSIST=<mask> overrides the mask (0 = off). 0x1: AI slots 1..3. The player (slot 0) is not
 // covered here: the original applies the assist to it too, which changes the D2 player run.
 unsigned HeadingAssist_Mask();
 

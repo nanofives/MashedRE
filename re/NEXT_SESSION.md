@@ -1,5 +1,14 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-17 dflip: three user-decided defaults are ON. `verify/dflip_20261017/RESULT_dflip.md`, branch `work/dflip`.
+>
+> Steer-0 heading assist FUN_0046c7d0 (AI slots) default ON (`MASHED_NO_HEADING_ASSIST=1`), Warzone pontoon CARRY+STATE+ANIM default ON
+> (`MASHED_NO_PONTOON_CARRY` / `_STATE` / `_ANIM`), draw-list I-NAME counts a `#WxH:<fmt>` raster drawn on both sides of a row as named.
+> **New default G-CTRL `4c81db89 / aa03f7ae / 7d3af534`**; `MASHED_NO_HEADING_ASSIST=1` gives `d3b90ee0 / 80f01f35 / 56d62ae7`.
+> 13 tracks 870 rows / 0 RED / I-NAME PASS (+3 C27 car-part rows from the assist's AI wheel state). D2 3/3 in bounds. D3 (b) A 1/3, B 2/3,
+> C 0/3, no passing car lost. `MASHED_AI_LUT=5` stays OFF (it fails A car 2). Open: U-9743 (the assist's player form, a D2 input),
+> D-11078 (U-9730) and D-11079 (U-9741) deferred by the user.
+
 > ## START HERE 2026-10-16 d2close: **D2 is CLOSED** (user decision, Mariano). Next = D3.
 >
 > `verify/d2close_20261016/RESULT_d2close.md`, branch `work/d2close` (`b61e14a49` + `f3163e6a6`). Fixes W (BSP sphere walk `FUN_00538c80` + collector `FUN_00468b80`) and K (classifier z-first

@@ -1,4 +1,4 @@
-// Mashed RE - steer-0 heading assist (exe only, default OFF behind MASHED_HEADING_ASSIST).
+// Mashed RE - steer-0 heading assist (exe only, default ON since dflip 2026-10-17; MASHED_NO_HEADING_ASSIST=1 opts out).
 //
 // 0x0046c7d0  FUN_0046c7d0  (852 b)  per car: when both steer bytes of the car's input block are 0,
 //             rotate the car's live body matrix about (0,1,0) toward the heading of the three track
@@ -207,8 +207,10 @@ float AssistCar(int v, int dtUnits) {
 
 unsigned HeadingAssist_Mask() {
     static const unsigned s_mask = [] {
+        const char* no = std::getenv("MASHED_NO_HEADING_ASSIST");
+        if (no && no[0] && no[0] != '0') return 0u;                          // [dflip] opt-out
         const char* e = std::getenv("MASHED_HEADING_ASSIST");
-        return (e && e[0]) ? static_cast<unsigned>(std::strtoul(e, nullptr, 0)) : 0u;
+        return (e && e[0]) ? static_cast<unsigned>(std::strtoul(e, nullptr, 0)) : 1u;   // [dflip] default 0x1
     }();
     return s_mask;
 }

@@ -1,0 +1,10 @@
+[07_Roundabout] attempt 1 pid=16452 frames=1516 shots=[1091, 1131, 1166]
+[07_Roundabout] exit=0
+[07_Roundabout] OK after 1 attempt(s)
+[10_Dump] attempt 1 pid=20364 frames=1160 shots=[735, 775, 810]
+[10_Dump] exit=0
+[10_Dump] OK after 1 attempt(s)
+[13_Training] attempt 1 pid=19608 frames=1309 shots=[884, 924, 959]
+[13_Training] exit=0
+[13_Training] OK after 1 attempt(s)
+private root log: D:\MashedWT\dflip_root13\mashed_re.log exists=True
