@@ -1,0 +1,5 @@
+=== R5 exe=D:\MashedWT\pontoon_data\exe\N4\mashed_re.exe track=Warzone frames=300 ring_skip=- knobs=['MASHED_PONTOON_ANIM=1', 'MASHED_PONTOON_REPLAY=D:\\MashedWT\\pontoon\\verify\\pontoon_20261016\\OP3.msd.pontoon.csv', 'MASHED_PONTOON_REPLAY_OUT=D:\\MashedWT\\pontoon\\verify\\pontoon_20261016\\arms\\R5_replay.csv'] ===
+    pid=11112
+    exit=0 self_exited=True
+    R5.step.csv lines=355 sha8=b70ef5fb
+ARM DONE

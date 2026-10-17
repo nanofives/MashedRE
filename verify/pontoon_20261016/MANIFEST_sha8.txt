@@ -135,3 +135,103 @@ f84119ef  arms/W_PC2.step.csv  (not committed)
 f84119ef  arms/W_PC3.step.csv  (not committed)
 872cf716  arms/W_PS1.step.csv  (not committed)
 872cf716  arms/W_PS2.step.csv  (not committed)
+# rebased onto d328adb19
+b7c08894  tracks13/B2/01_Egypt/stand/d1r2/stand_row_00740.draws.json
+78c7024a  tracks13/B2/01_Egypt/stand/d1r2/stand_row_00780.draws.json
+ac3d5704  tracks13/B2/01_Egypt/stand/d1r2/stand_row_00815.draws.json
+9601ef54  tracks13/B2/02_Neustein/stand/d1r2/stand_row_01094.draws.json
+bfe06f23  tracks13/B2/02_Neustein/stand/d1r2/stand_row_01134.draws.json
+18e5e980  tracks13/B2/02_Neustein/stand/d1r2/stand_row_01169.draws.json
+70147c92  tracks13/B2/03_Arctic/stand/d1r2/stand_row_01051.draws.json
+3d364d43  tracks13/B2/03_Arctic/stand/d1r2/stand_row_01091.draws.json
+f375ea5b  tracks13/B2/03_Arctic/stand/d1r2/stand_row_01126.draws.json
+9b7f191c  tracks13/B2/04_Highway/stand/d1r2/stand_row_00853.draws.json
+845cc821  tracks13/B2/04_Highway/stand/d1r2/stand_row_00893.draws.json
+9c490fd8  tracks13/B2/04_Highway/stand/d1r2/stand_row_00928.draws.json
+6fcda8e9  tracks13/B2/05_Sands/stand/d1r2/stand_row_01084.draws.json
+c046b182  tracks13/B2/05_Sands/stand/d1r2/stand_row_01124.draws.json
+dd7f5b8e  tracks13/B2/05_Sands/stand/d1r2/stand_row_01159.draws.json
+d2242bdf  tracks13/B2/06_SuperG/stand/d1r2/stand_row_00743.draws.json
+79145e0b  tracks13/B2/06_SuperG/stand/d1r2/stand_row_00783.draws.json
+4d394037  tracks13/B2/06_SuperG/stand/d1r2/stand_row_00818.draws.json
+64b24eec  tracks13/B2/07_Roundabout/stand/d1r2/stand_row_01091.draws.json
+6493ae22  tracks13/B2/07_Roundabout/stand/d1r2/stand_row_01131.draws.json
+7898876b  tracks13/B2/07_Roundabout/stand/d1r2/stand_row_01166.draws.json
+1ab11868  tracks13/B2/08_Storm/stand/d1r2/stand_row_00928.draws.json
+caaacd20  tracks13/B2/08_Storm/stand/d1r2/stand_row_00968.draws.json
+138d6d6f  tracks13/B2/08_Storm/stand/d1r2/stand_row_01003.draws.json
+686a78ea  tracks13/B2/09_Forest/stand/d1r2/stand_row_00820.draws.json
+76cbad54  tracks13/B2/09_Forest/stand/d1r2/stand_row_00860.draws.json
+9dd46542  tracks13/B2/09_Forest/stand/d1r2/stand_row_00895.draws.json
+9fbb8646  tracks13/B2/10_Dump/stand/d1r2/stand_row_00735.draws.json
+53dd2d0c  tracks13/B2/10_Dump/stand/d1r2/stand_row_00775.draws.json
+8b7a58ed  tracks13/B2/10_Dump/stand/d1r2/stand_row_00810.draws.json
+b8e5c4ca  tracks13/B2/11_Warzone/stand/d1r2/stand_row_00584.draws.json
+798b224b  tracks13/B2/11_Warzone/stand/d1r2/stand_row_00624.draws.json
+d98d1a5e  tracks13/B2/11_Warzone/stand/d1r2/stand_row_00659.draws.json
+35bbd535  tracks13/B2/12_City/stand/d1r2/stand_row_00761.draws.json
+646ac789  tracks13/B2/12_City/stand/d1r2/stand_row_00801.draws.json
+53cf9cd6  tracks13/B2/12_City/stand/d1r2/stand_row_00836.draws.json
+35d7da18  tracks13/B2/13_Training/stand/d1r2/stand_row_00884.draws.json
+12b16f73  tracks13/B2/13_Training/stand/d1r2/stand_row_00924.draws.json
+50de70b4  tracks13/B2/13_Training/stand/d1r2/stand_row_00959.draws.json
+89476bb9  tracks13/N4PC/11_Warzone/stand/d1r2/stand_row_00584.draws.json
+63ae7215  tracks13/N4PC/11_Warzone/stand/d1r2/stand_row_00624.draws.json
+46412470  tracks13/N4PC/11_Warzone/stand/d1r2/stand_row_00659.draws.json
+b7c08894  tracks13/N4/01_Egypt/stand/d1r2/stand_row_00740.draws.json
+78c7024a  tracks13/N4/01_Egypt/stand/d1r2/stand_row_00780.draws.json
+ac3d5704  tracks13/N4/01_Egypt/stand/d1r2/stand_row_00815.draws.json
+9601ef54  tracks13/N4/02_Neustein/stand/d1r2/stand_row_01094.draws.json
+bfe06f23  tracks13/N4/02_Neustein/stand/d1r2/stand_row_01134.draws.json
+18e5e980  tracks13/N4/02_Neustein/stand/d1r2/stand_row_01169.draws.json
+70147c92  tracks13/N4/03_Arctic/stand/d1r2/stand_row_01051.draws.json
+3d364d43  tracks13/N4/03_Arctic/stand/d1r2/stand_row_01091.draws.json
+f375ea5b  tracks13/N4/03_Arctic/stand/d1r2/stand_row_01126.draws.json
+9b7f191c  tracks13/N4/04_Highway/stand/d1r2/stand_row_00853.draws.json
+845cc821  tracks13/N4/04_Highway/stand/d1r2/stand_row_00893.draws.json
+9c490fd8  tracks13/N4/04_Highway/stand/d1r2/stand_row_00928.draws.json
+6fcda8e9  tracks13/N4/05_Sands/stand/d1r2/stand_row_01084.draws.json
+c046b182  tracks13/N4/05_Sands/stand/d1r2/stand_row_01124.draws.json
+dd7f5b8e  tracks13/N4/05_Sands/stand/d1r2/stand_row_01159.draws.json
+d2242bdf  tracks13/N4/06_SuperG/stand/d1r2/stand_row_00743.draws.json
+79145e0b  tracks13/N4/06_SuperG/stand/d1r2/stand_row_00783.draws.json
+4d394037  tracks13/N4/06_SuperG/stand/d1r2/stand_row_00818.draws.json
+64b24eec  tracks13/N4/07_Roundabout/stand/d1r2/stand_row_01091.draws.json
+6493ae22  tracks13/N4/07_Roundabout/stand/d1r2/stand_row_01131.draws.json
+7898876b  tracks13/N4/07_Roundabout/stand/d1r2/stand_row_01166.draws.json
+1ab11868  tracks13/N4/08_Storm/stand/d1r2/stand_row_00928.draws.json
+caaacd20  tracks13/N4/08_Storm/stand/d1r2/stand_row_00968.draws.json
+138d6d6f  tracks13/N4/08_Storm/stand/d1r2/stand_row_01003.draws.json
+686a78ea  tracks13/N4/09_Forest/stand/d1r2/stand_row_00820.draws.json
+76cbad54  tracks13/N4/09_Forest/stand/d1r2/stand_row_00860.draws.json
+9dd46542  tracks13/N4/09_Forest/stand/d1r2/stand_row_00895.draws.json
+9fbb8646  tracks13/N4/10_Dump/stand/d1r2/stand_row_00735.draws.json
+53dd2d0c  tracks13/N4/10_Dump/stand/d1r2/stand_row_00775.draws.json
+8b7a58ed  tracks13/N4/10_Dump/stand/d1r2/stand_row_00810.draws.json
+b8e5c4ca  tracks13/N4/11_Warzone/stand/d1r2/stand_row_00584.draws.json
+798b224b  tracks13/N4/11_Warzone/stand/d1r2/stand_row_00624.draws.json
+d98d1a5e  tracks13/N4/11_Warzone/stand/d1r2/stand_row_00659.draws.json
+35bbd535  tracks13/N4/12_City/stand/d1r2/stand_row_00761.draws.json
+646ac789  tracks13/N4/12_City/stand/d1r2/stand_row_00801.draws.json
+53cf9cd6  tracks13/N4/12_City/stand/d1r2/stand_row_00836.draws.json
+35d7da18  tracks13/N4/13_Training/stand/d1r2/stand_row_00884.draws.json
+12b16f73  tracks13/N4/13_Training/stand/d1r2/stand_row_00924.draws.json
+50de70b4  tracks13/N4/13_Training/stand/d1r2/stand_row_00959.draws.json
+1c48c61b  arms/D2_DEF_20.motion_diag.log  (not committed)
+a69b4ff3  arms/D2_DEF_21.motion_diag.log  (not committed)
+f37ab4e4  arms/D2_DEF_22.motion_diag.log  (not committed)
+d036622d  arms/D2_PC_21.motion_diag.log  (not committed)
+80f01f35  arms/H_DEF20.gates.csv  (not committed)
+56d62ae7  arms/H_DEF20.ptrace.log  (not committed)
+d3b90ee0  arms/H_DEF20.step.csv  (not committed)
+80f01f35  arms/H_DEF21.gates.csv  (not committed)
+56d62ae7  arms/H_DEF21.ptrace.log  (not committed)
+d3b90ee0  arms/H_DEF21.step.csv  (not committed)
+80f01f35  arms/H_PC21.gates.csv  (not committed)
+56d62ae7  arms/H_PC21.ptrace.log  (not committed)
+d3b90ee0  arms/H_PC21.step.csv  (not committed)
+b70ef5fb  arms/R5.step.csv  (not committed)
+ea4b8425  arms/W_DEF20.step.csv  (not committed)
+ea4b8425  arms/W_DEF21.step.csv  (not committed)
+f84119ef  arms/W_PC21.step.csv  (not committed)
+872cf716  arms/W_PS21.step.csv  (not committed)

@@ -5,3 +5,4 @@ arms/*.ptrace.log
 arms/*.motion_diag.log
 arms/*.gates.csv
 
+tracks13/

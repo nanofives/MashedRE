@@ -1,0 +1,14 @@
+exe D:\MashedWT\pontoon_data\exe\B2\mashed_re.exe sha8 2744e47e
+=== H_DEF20 exe=D:\MashedWT\pontoon_data\exe\B2\mashed_re.exe pid=25932
+    exit=0 self_exited=True secs=125
+    H_DEF20.step.csv lines=18671 sha8=d3b90ee0
+    H_DEF20.gates.csv lines=55433 sha8=80f01f35
+    H_DEF20.ptrace.log lines=27716 sha8=56d62ae7
+=== W_DEF20 exe=D:\MashedWT\pontoon_data\exe\B2\mashed_re.exe pid=21440
+    exit=0 self_exited=True secs=32
+    W_DEF20.step.csv lines=4366 sha8=ea4b8425
+    W_DEF20.seek.txt lines=8 sha8=e0fc7578
+=== D2_DEF_20 exe=D:\MashedWT\pontoon_data\exe\B2\mashed_re.exe pid=10700
+    exit=0 self_exited=False secs=90
+    D2_DEF_20.motion_diag.log lines=1633 sha8=1c48c61b
+DONE

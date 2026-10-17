@@ -107,6 +107,21 @@ for it (the boat is fully matched). A first knobs-on build dropped the 52-triang
 clump space even unbaked, so the librw walk's `WorldSphere` x instance sent it to (355, ...) and `DistanceKeeps` culled it. Fixed
 (`AtomicSphere::c_geo`, used only by the split path); every number above is from the fixed build N3 `F9E4BCB0A5CAD47A`.
 
+### Rebased onto d328adb19 (txdscope + d3b + rres): authoritative
+
+The branch was rebuilt on `d328adb19` (cherry-picks; conflict in VehiclePhysicsRun.{h,cpp} resolved keep-both with d3b's
+`VehiclePhysics_BodyBasis`; tracker files taken from upstream and the transaction re-applied with the U-ids renumbered to
+U-9738..U-9742). B2 = clean `d328adb19` `2744E47ED9FC4447`, N4 = this branch `84695779B3105189`, both `MASHED_NO_DEPLOY=1`.
+
+| gate | B2 | N4 |
+|---|---|---|
+| replay OP3 | - | **1073 / 1073** (`arms/R5_replay.csv`) |
+| G-CTRL TRAINING | d3b90ee0 / 80f01f35 / 56d62ae7 | default and all knobs: **d3b90ee0 / 80f01f35 / 56d62ae7** |
+| D2 | 0.1890 / 0.2482 / 1913.06 | default x2 0.1890 / 0.2480-0.2483 / 1912.04-1914.88; CARRY 0.1890 / 0.2476 / 1912.01; all in (`arms/SCORE_D2_rebased.txt`) |
+| 13-track replay (`verify/rsky_20261016/run13.py`, `cites_rres.json`) | 867 rows, 0 RED, 39 frames; Warzone 24 / 21 / 27 = 72 | **39 of 39 draw files byte-identical to B2**, 867 rows, 0 RED; gate files hash-identical (the pre-existing FAIL) |
+| Warzone with CARRY (N4) | - | **24 / 21 / 27 = 72 rows, matched 326 / 326 / 296 = B2's**; the three boat atomics at B2's AABBs |
+| Warzone live | W_DEF20 `ea4b8425` | default `ea4b8425`; STATE and CARRY hashes equal the pre-rebase ones |
+
 ## 5. Not ported (filed)
 
 - **U-9738** exit hand-off (`FUN_00480720`, `FUN_00481780`, `FUN_00481750` x4): no per-car RWP rigid-body mode in the exe.

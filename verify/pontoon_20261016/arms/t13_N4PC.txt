@@ -1,0 +1,4 @@
+[11_Warzone] attempt 1 pid=5996 frames=1009 shots=[584, 624, 659]
+[11_Warzone] exit=0
+[11_Warzone] OK after 1 attempt(s)
+private root log: D:\MashedWT\pontoon_root\mashed_re.log exists=True
