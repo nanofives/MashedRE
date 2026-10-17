@@ -1,0 +1,13 @@
+[decomp_pc] slot=Mashed_pool10 modes=datarefs n=1
+// 0x0089a4fc  DATA in .data
+//   type: undefined bytes (Ghidra has no data definition here)
+//   5 reference(s) total
+//   WRITES: (none)
+//   reads: (none)
+//   other (5):
+//     0x00417395 in FUN_00417370  [DATA]  MOV dword ptr [EDX + 0x89a4fc],ECX
+//     0x004173d2 in FUN_004173b0  [DATA]  MOV dword ptr [EDX + 0x89a4fc],ECX
+//     0x004187d5 in FUN_00418560  [DATA]  MOV EAX,dword ptr [ESI + 0x89a4fc]
+//     0x004187e8 in FUN_00418560  [DATA]  MOV dword ptr [ESI + 0x89a4fc],EAX
+//     0x004187f0 in FUN_00418560  [DATA]  MOV dword ptr [ESI + 0x89a4fc],EBX
+

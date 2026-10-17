@@ -2120,6 +2120,89 @@ void Ai_AdvanceCountdownClock(int units)
     I32(0x007f0ff4u) += units;           // 0x0040fe5e
 }
 
+// [d3bB2 2026-10-17] The car<->car type-4 event and its AI override (MASHED_AI_CONTACT_EVENT=1, default OFF).
+//
+// Original chain, from the bytes and a hardware watchpoint on the original (verify/d3bB2_20261017/o_ov1):
+//   FUN_00469df0 tail (0x0046ae0f.. / 0x0046afc4..): on every contact, unless FUN_0040e350() is 1..5, push a
+//     type-4 entry {frame stamp DAT_007f1030, pair (0x007ea9e4, 0x007ea9e8), flag, vectors} into the ring
+//     0x007e9de0 (head) / 0x007e9de4 (type).
+//   FUN_00425a40: FUN_00418860 (AI tick) -> FUN_00424eb0 -> FUN_00470c70 (physics, the pushes) -> FUN_00422ba0
+//     (drain, this frame's stamp only, newest first) -> FUN_004252c0.
+//   FUN_00422ba0 type 4 (decomp lines 108-145): FUN_004922e0(a/b, 1, 2, 0xff) (CarEventTrigger, hit sound /
+//     particles), then only if FUN_0046cbb0's first word is 0 for BOTH cars: the pair tables 0x008995b0..
+//     (stride 0x4e) and, for each car with FUN_0040e470(car) != 1, FUN_00417370(car).
+//   FUN_00417370 (0x00417370..0x0041739b): [0x0089a4fc + v*0x74] = 0xb4 - 0xb4 * __ftol([0x0089a360] - 10.0)
+//     (_DAT_005cc55c = 0x41200000 = 10.0, read from MASHED.exe.unpatched; __ftol 0x004a2c48 truncates).
+//     Watched: 1440 on car 2 at seq 5922, one seq after FUN_00469df0 set +0xaec = 480 (0x0046ac8e); then
+//     FUN_00418560's tail (0x004187ee) counts it down by DAT_007f1008 per AI tick (29 ticks) and replays the
+//     stored ctrl bytes c0/c1/c4/c5 on each of them.
+// Ported here: the push (one entry per contact) and the FUN_00417370 effect with its two gates. NOT ported,
+// named: FUN_004922e0 (no AI or physics effect) and the pair tables, whose readers (FUN_00423b20, FUN_004248b0,
+// FUN_00424b80, FUN_004252c0; datarefs_pairtables.txt) have no exe caller on the race path. The ring layout
+// is not reproduced: the exe-side queue holds this frame's pairs and is emptied by the drain.
+extern "C" int __cdecl VehicleCarStateRead(std::uint32_t carIdx, std::uint32_t* a, std::uint32_t* b); // 0x0046cbb0, Vehicle/VehicleState.cpp
+namespace {
+struct ContactEvent { int a, b; };
+ContactEvent s_ccEvents[0x100];          // the original ring is 0x100 entries (0x0046b175 cmp eax,0x100)
+int          s_ccEventN = 0;
+
+int SlotStateE470(int i)                 // FUN_0040e470: *(*(int**)0x005f2770 + 0x34 + i*4)
+{
+    const std::uintptr_t p = *reinterpret_cast<std::uintptr_t*>(0x005f2770u);
+    if (!p) return 0;
+    return *reinterpret_cast<int*>(p + 0x34u + static_cast<std::uintptr_t>(i) * 4u);
+}
+
+void AiOverrideTimerSet(int v)           // FUN_00417370
+{
+    const double d = static_cast<double>(F32(0x0089a360u)) - 10.0;   // fld [0x0089a360]; fsub [0x005cc55c]
+    const int t = static_cast<int>(d);                                // __ftol, truncating
+    I32(0x0089a4fcu + static_cast<std::uintptr_t>(v) * 0x74u) = 0xb4 - t * 0xb4;   // 0x00417381..0x00417395
+}
+}  // namespace
+
+bool Ai_ContactEventEnabled()
+{
+    static const bool s = [] { const char* e = std::getenv("MASHED_AI_CONTACT_EVENT");
+                               return e && e[0] == '1'; }();
+    return s;
+}
+
+void Ai_ContactEventPush(int a, int b)
+{
+    if (s_ccEventN >= 0x100) return;
+    s_ccEvents[s_ccEventN++] = ContactEvent{ a, b };
+}
+
+void Ai_ContactEventDrain()
+{
+    static const char* const s_trace = std::getenv("MASHED_AI_CONTACT_EVENT_TRACE");
+    if (s_ccEventN == 0) return;
+    std::uint32_t st[4] = { 0, 0, 0, 0 }, st2[4] = { 0, 0, 0, 0 };
+    for (int i = 0; i < 4; ++i) VehicleCarStateRead(static_cast<std::uint32_t>(i), &st[i], &st2[i]);   // 0x00422bb0 loop
+    for (int n = s_ccEventN - 1; n >= 0; --n) {                       // newest first, as the backward walk
+        const ContactEvent& e = s_ccEvents[n];
+        const bool gate = (e.a >= 0 && e.a < 4 && e.b >= 0 && e.b < 4 && st[e.a] == 0 && st[e.b] == 0);
+        int setA = 0, setB = 0;
+        if (gate) {
+            if (SlotStateE470(e.a) != 1) { AiOverrideTimerSet(e.a); setA = 1; }   // 0x00422e8.. FUN_00417370
+            if (SlotStateE470(e.b) != 1) { AiOverrideTimerSet(e.b); setB = 1; }
+        }
+        if (s_trace) {
+            if (std::FILE* f = std::fopen(s_trace, "a")) {
+                std::fprintf(f, "clk=%d a=%d b=%d stA=%u stB=%u e470A=%d e470B=%d gate=%d setA=%d setB=%d tA=%d tB=%d\n",
+                             I32(0x007f0ff4u), e.a, e.b, (e.a >= 0 && e.a < 4) ? st[e.a] : 99u,
+                             (e.b >= 0 && e.b < 4) ? st[e.b] : 99u, SlotStateE470(e.a), SlotStateE470(e.b),
+                             gate ? 1 : 0, setA, setB,
+                             (e.a >= 0 && e.a < 4) ? I32(0x0089a4fcu + static_cast<std::uintptr_t>(e.a) * 0x74u) : 0,
+                             (e.b >= 0 && e.b < 4) ? I32(0x0089a4fcu + static_cast<std::uintptr_t>(e.b) * 0x74u) : 0);
+                std::fclose(f);
+            }
+        }
+    }
+    s_ccEventN = 0;
+}
+
 // FUN_00413fe0 — per-vehicle AI-state reset (decomp pool0 2026-09-26): DAT_0089a36c = 0;
 // for v = 0..3 (stride 0x74 from 0x0089a4f0): +0x4ec/+0x4f0/+0x4f4, +0x4c4/+0x4c8/+0x4cc/
 // +0x4d0, +0x508, +0x51c/+0x520/+0x524/+0x528 = 0; DAT_008032d4[v*5] = 1000. Plus the race

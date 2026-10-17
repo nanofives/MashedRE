@@ -72,3 +72,56 @@ Recommend `MASHED_AI_COUNTDOWN_CLOCK` default ON only if all hold: G-NOOP, G-TOO
 default (A car 2, B cars 1 and 3) turns to FAIL in any phase; 13 tracks 0 RED; D2 3/3 in bounds with H1 >= 398/400. If B car 2
 does not pass, the knob can still be recommended on those terms as a fidelity fix, with B car 2's remaining items named. No
 default is flipped in this lane (orchestrator rule): the result is a recommendation.
+
+## Amendment 1 (written before any arm of the two knobs below; the arms of section 2 had run, results in RESULT)
+
+### A1.0 Measured since section 2 (evidence, not gates)
+
+- Section 2's knob passed G-NOOP, G-TOOK (first-row clock 9100 = 50 x 182) and G-RAMP exactly (k = 1, 2 equal to the
+  original on all 9 car-regime pairs). Its (b): A 1/3 (car 3 passes, car 2 fails `c0#` 41 [13, 35]), B 2/3 (car 2 `c0#` 39,
+  `c1#` 49, `steer#` 87), C 0/3. So the section 3 rule fails (A car 2).
+- With the knob on the full U-9684 chain plus `MASHED_GRID_DIR` (FUN_00408b00's spawn-yaw law; without it car 2 spawns
+  0.1101 deg off and drifts 0.0022 in x by k = 21), car 2 matches the original to 0.001 through k = 22 and its contact with
+  the parked player lands in the original's physics frame. The offline SAT on the original's own records decides that frame
+  by a 3e-4 margin (`sat.py`, frame 836: one vertex inside, test value -0.0003).
+- Two remaining differences, both from the bytes and the watchpoint capture `o_ov1`:
+  1. **The type-4 contact event.** `FUN_00469df0` pushes a type-4 ring entry on every contact unless `FUN_0040e350()` is 1..5
+     (`0x0046ae97..0x0046aec3`, `0x0046b04c..0x0046b078`). `FUN_00425a40` drains it with `FUN_00422ba0` right after the physics
+     (`FUN_00470c70`), and the type-4 arm calls `FUN_00417370(car)` for each car with `FUN_0040e470(car) != 1`, gated by
+     `FUN_0046cbb0`'s first word being 0 for both cars. `FUN_00417370` writes `[0x0089a4fc + v*0x74] = 0xb4 - 0xb4 *
+     __ftol([0x0089a360] - 10.0)` = 1440 on Training. Watched on car 2: `0x0046ac8e` (+0xaec = 480), then `0x0041739b` (timer
+     1440), then `0x004187ee` counting it down by 50 per AI tick to 0 at `0x004187f6`, 29 ticks. During them `FUN_00418560`'s
+     tail replays the stored ctrl bytes. The original's car 2 heading moves +0.147 deg per frame through the coast (c0 = 21
+     frozen at grip 0.7), the port's -3.65 (c1 = 255 live). The port omitted the push as "dev-viz only".
+  2. **Frame order.** `FUN_00425a40` runs the AI tick (`0x00425a73`) before the physics of every car, player first. The exe
+     steps the player before the AI tick (`TrackRenderer.cpp` StepPlayer, then the AI tick), so the tick of the contact frame
+     already sees the impulse: the port's car 2 returns 1 from `FUN_00414a70` at window call 22, the original's at 23.
+
+### A1.1 Two knobs (default OFF)
+
+- `MASHED_AI_CONTACT_EVENT=1`: the push (one event per contact, from `g_ccLastContact` at the `0x00470bcd` call site, mode gate
+  1..5) and the drain after all physics of the frame, porting the type-4 arm's `FUN_00417370` effect with both gates. Not
+  ported: `FUN_004922e0` (hit sound / particles) and the pair tables `0x008995b0..` (no exe reader). Trace:
+  `MASHED_AI_CONTACT_EVENT_TRACE=<path>`.
+- `MASHED_AI_TICK_FIRST=1`: the AI tick phase (clock, `AiBridgeSnapshot`, `Ai_Standalone_Tick`, step dump, gates dump, heading
+  assist, sub-state tail) runs before the player's physics instead of after it.
+
+Exe: the build of this amendment's commit (sha8 recorded in RUNLOG at the first run).
+
+### A1.2 Gates and predictions
+
+Stack `S` = `MASHED_AI_COUNTDOWN_CLOCK` + `MASHED_POS_MODEL` + `MASHED_PATHPROG` + `MASHED_ROUND_GRID` + `_ORDER` + `MASHED_TGT3` +
+`MASHED_GRID_DIR` + both new knobs. `S-E` = `S` without `MASHED_AI_CONTACT_EVENT`, `S-T` = `S` without `MASHED_AI_TICK_FIRST`.
+
+| gate | arm | prediction |
+|---|---|---|
+| G-NOOP2 | new exe, no knob: `B_DEF_K{0,1,26}`, `H_DEF` | K0 `a89ff9ef`, K1 `80bce410`, K26 `54da2e83`; G-CTRL `4c81db89 / aa03f7ae / 7d3af534` |
+| G-NOOP2b | new exe, section 2's knob alone: `B_CC_K1` | `5257c915` (= the section 2 exe) |
+| G-EVT | `S` K1 with the trace | car 2 gets timer 1440 at its first contact with the player; the trace's first car-2 event follows the first `i=0 j=2 ret=1` |
+| G-ORDER | `S` vs `S-T`, K1 | car 2's first `ret14a70 == 1` at window call 23 under `S`, at 22 under `S-T` |
+| G-COAST | `S` K1 | car 2's heading change per frame over window calls 23..31 (dump rows) within +0.147 +- 0.03 deg (original +0.1475) |
+| (b) | `S`, `S-E`, `S-T` on K0 / K1 / K26 | report per car. No pass is predicted for B car 2 |
+| determinism | `S` K1 twice | identical |
+
+Decision rule: unchanged from section 3, applied to each new knob and to the stack. A stack that loses a passing car is not
+recommended for default ON. Every knob here stays default OFF in this lane.

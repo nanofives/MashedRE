@@ -44,9 +44,16 @@
 namespace mashed_re {
 namespace Collision {
 
+// [d3bB2 2026-10-17] 1 when the last call found a contact (iVar15 != 0), i.e. reached the type-4 ring
+// push at its tail (0x0046ae0f.. / 0x0046afc4..). The caller pushes the exe-side event
+// (Ai_ContactEventPush, MASHED_AI_CONTACT_EVENT) from it, because the exe's record +0x0 does not hold the
+// car index the original's push reads ([edi] / [esi] at 0x0046ae1b / 0x0046ae1d).
+int g_ccLastContact = 0;
+
 // 0x00469df0
 bool VehicleCarCarContact(int* vehA, int* vehB, int pass)
 {
+    g_ccLastContact = 0;
     float* slotA = vFP(vehA, vehA[0x26a] * 0x10 + 0x256);   // local_a8 (vehA active slot)
     float* pfVar2 = vFP(vehB, vehB[0x26a] * 0x10 + 0x256);  // vehB active slot
     int iVar15 = 0;
@@ -97,6 +104,7 @@ bool VehicleCarCarContact(int* vehA, int* vehB, int pass)
     }
 
     if (iVar15 == 0) return false;
+    g_ccLastContact = 1;
 
     float inv = (float)iVar15;
     if (iVar15 < 0) inv = inv + kCC_UIntFixup;
@@ -233,9 +241,16 @@ bool VehicleCarCarContact(int* vehA, int* vehB, int pass)
         vF(vehA, 0x270) = local_164b;
     }
 
-    // [0x0046b0.. debug-event ring (type 4) — dev-viz only; gated by game-mode
-    //  and the contact-count asymmetry flag (local_b0[0] != local_b0[1]); omitted]
-    (void)local_b0;   // consumed only by the omitted debug payload
+    // [0x0046ae0f..0x0046b18b] type-4 event ring push (head 0x007e9de0, type 0x007e9de4, frame stamp
+    // 0x007ea1e4, car field 0x007ea5e4, pair 0x007ea9e4 / 0x007ea9e8, flag 0x007ea9ec, vectors 0x007ea9f0..
+    // and 0x007ec9e4..). CORRECTED 2026-10-17 (d3bB2): it is NOT dev-viz only and NOT gated by the count
+    // asymmetry. Both arms push type 4 whenever FUN_0040e350() is not 1..5 (0x0046ae97..0x0046aec3 and
+    // 0x0046b04c..0x0046b078); local_b0[0] != local_b0[1] (0x0046adf9..0x0046ae09) only orders the pair and
+    // sets the flag. FUN_00422ba0 drains it after the physics frame and its type-4 arm sets the AI override
+    // timer through FUN_00417370 (watched on the original: o_ov1, 0x0041739b). The ring itself is not
+    // written here; the exe-side event is pushed by the caller from g_ccLastContact (MASHED_AI_CONTACT_EVENT,
+    // Ai/AiStandalone.cpp Ai_ContactEventPush / Ai_ContactEventDrain).
+    (void)local_b0;   // consumed only by the ring payload (flag 0x007ea9ec), which no exe reader takes
 
     return pass == 0;
 }

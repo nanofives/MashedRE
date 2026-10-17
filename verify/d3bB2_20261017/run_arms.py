@@ -33,6 +33,12 @@ STACK = {'DEF': [],
 STACK['CC'] = ['MASHED_AI_COUNTDOWN_CLOCK']           # d3bB2 PREREG section 1
 STACK['CCB'] = ['MASHED_AI_COUNTDOWN_CLOCK', 'MASHED_POS_MODEL', 'MASHED_PATHPROG', 'MASHED_ROUND_GRID',
                 'MASHED_ROUND_GRID_ORDER', 'MASHED_TGT3']   # report: the knob on the full U-9684 chain
+STACK['CCBL'] = STACK['CCB'] + ['MASHED_CARCAR_LOG=@OUT@\\@NAME@.cc.txt']   # + the port's car-car pair log
+STACK['CCBL5'] = STACK['CCBL'] + ['MASHED_AI_LUT=5']                          # + the d3b AI RW-LUT lookahead
+STACK['CC5'] = STACK['CC'] + ['MASHED_AI_LUT=5']
+STACK['CCBD'] = STACK['CCB'] + ['MASHED_GRID_DIR']                            # + FUN_00408b00's spawn-yaw law (gridyaw)
+STACK['CCBDL'] = STACK['CCBD'] + ['MASHED_CARCAR_LOG=@OUT@\\@NAME@.cc.txt']
+STACK['CCD'] = STACK['CC'] + ['MASHED_GRID_DIR']
 STACK['B'] = ['MASHED_POS_MODEL']
 STACK['BRG'] = STACK['B'] + STACK['RG']
 STACK['BPP'] = STACK['B'] + STACK['PP']

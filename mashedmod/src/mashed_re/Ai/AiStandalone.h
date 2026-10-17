@@ -87,6 +87,13 @@ void Ai_AdvanceClock(int units);
 // countdown stand-in frame, as FUN_0040fc00 does on the original's pre-GO ticks (0x0040fe4f..0x0040fe5e).
 bool Ai_CountdownClockEnabled();
 void Ai_AdvanceCountdownClock(int units);
+// [d3bB2 2026-10-17] MASHED_AI_CONTACT_EVENT=1 (default OFF): the car<->car type-4 event. Push = the tail of
+// FUN_00469df0 (one event per contact, the pair a / b); drain = FUN_00422ba0's type-4 arm, its FUN_00417370
+// calls only (the AI override timer 0x0089a4fc + v*0x74 that FUN_00418560's tail replays). Drain once per
+// frame after all physics, as FUN_00425a40 runs FUN_00422ba0 after FUN_00470c70.
+bool Ai_ContactEventEnabled();
+void Ai_ContactEventPush(int a, int b);
+void Ai_ContactEventDrain();
 // FUN_00413fe0 per-vehicle AI-state reset + race-clock zeroing. Call at race start.
 void Ai_ResetRace();
 
