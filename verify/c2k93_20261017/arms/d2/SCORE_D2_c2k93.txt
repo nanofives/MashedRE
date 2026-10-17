@@ -1,0 +1,24 @@
+D2_CLR_1: slip1500=0.1955 in slip2000=0.2549 OUT drvmed=1812.9800 OUT  n=('114', '182', '448')
+    H1 9/400 median 28.4 -> FAIL
+    launch BEST L = 0 at 0.04 %
+    PORTframes 1626 R= 1 peak 1832.12 at d= 95 trough 82.85 at d= 102 post-trough n= 400 >=100: 9 ( 2.2 %) median 28.4 max 194.8 +0xb14 engages at d=15
+D2_CLR_2: slip1500=0.1955 in slip2000=0.2549 OUT drvmed=1812.9800 OUT  n=('114', '182', '448')
+    H1 9/400 median 28.4 -> FAIL
+    launch BEST L = 0 at 0.04 %
+    PORTframes 1629 R= 1 peak 1832.12 at d= 95 trough 82.85 at d= 102 post-trough n= 400 >=100: 9 ( 2.2 %) median 28.4 max 194.8 +0xb14 engages at d=15
+D2_CLR_3: slip1500=0.1955 in slip2000=0.2549 OUT drvmed=1812.9800 OUT  n=('114', '182', '448')
+    H1 9/400 median 28.4 -> FAIL
+    launch BEST L = 0 at 0.04 %
+    PORTframes 1633 R= 1 peak 1832.12 at d= 95 trough 82.85 at d= 102 post-trough n= 400 >=100: 9 ( 2.2 %) median 28.4 max 194.8 +0xb14 engages at d=15
+D2_CLR5_1: slip1500=0.1955 in slip2000=0.2549 OUT drvmed=1812.9800 OUT  n=('114', '182', '448')
+    H1 9/400 median 28.4 -> FAIL
+    launch BEST L = 0 at 0.04 %
+    PORTframes 1634 R= 1 peak 1832.12 at d= 95 trough 82.85 at d= 102 post-trough n= 400 >=100: 9 ( 2.2 %) median 28.4 max 194.8 +0xb14 engages at d=15
+D2_CLR5_2: slip1500=0.1955 in slip2000=0.2549 OUT drvmed=1812.9800 OUT  n=('114', '182', '448')
+    H1 9/400 median 28.4 -> FAIL
+    launch BEST L = 0 at 0.04 %
+    PORTframes 1630 R= 1 peak 1832.12 at d= 95 trough 82.85 at d= 102 post-trough n= 400 >=100: 9 ( 2.2 %) median 28.4 max 194.8 +0xb14 engages at d=15
+D2_CLR5_3: slip1500=0.1955 in slip2000=0.2549 OUT drvmed=1812.9800 OUT  n=('114', '182', '448')
+    H1 9/400 median 28.4 -> FAIL
+    launch BEST L = 0 at 0.04 %
+    PORTframes 1626 R= 1 peak 1832.12 at d= 95 trough 82.85 at d= 102 post-trough n= 400 >=100: 9 ( 2.2 %) median 28.4 max 194.8 +0xb14 engages at d=15
