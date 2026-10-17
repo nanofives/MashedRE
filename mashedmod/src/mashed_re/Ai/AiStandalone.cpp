@@ -2093,8 +2093,8 @@ void Ai_AdvanceClock(int units)
     SubState_StoreStep(units);
 }
 
-// [d3bB2 2026-10-17] The AI clock on the countdown stand-in frames (MASHED_AI_COUNTDOWN_CLOCK=1,
-// default OFF). FUN_0040fc00 adds its tick budget to DAT_007f0ff4 on every tick except race
+// [d3bB2 2026-10-17] The AI clock on the countdown stand-in frames. Default ON since a4order 2026-10-17
+// (user decision, U-9744); MASHED_NO_AI_COUNTDOWN_CLOCK=1 opts out. FUN_0040fc00 adds its tick budget to DAT_007f0ff4 on every tick except race
 // sub-state 7 (0x0040fe46 cmp [0x0063ba8c],7 / 0x0040fe4f..0x0040fe5e), so the original's clock runs
 // through phase 3 and states 4 / 5 before GO: on all 31 labelled original captures it starts at 0 on
 // the first probed FUN_00416250 call, counts 50 per call, and reads 38850..46400 at the first racing
@@ -2111,8 +2111,8 @@ void Ai_AdvanceClock(int units)
 // [0x007f0fd0] is 1 or 2, 0x00470dd2..0x00470dde; 0x00429424 formats a string for 0x004987b0).
 bool Ai_CountdownClockEnabled()
 {
-    static const bool s = [] { const char* e = std::getenv("MASHED_AI_COUNTDOWN_CLOCK");
-                               return e && e[0] == '1'; }();
+    static const bool s = [] { const char* no = std::getenv("MASHED_NO_AI_COUNTDOWN_CLOCK");
+                               return !(no && no[0] && no[0] != '0'); }();   // [a4order] default ON
     return s;
 }
 
