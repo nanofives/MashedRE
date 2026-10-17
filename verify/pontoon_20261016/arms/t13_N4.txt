@@ -1,0 +1,40 @@
+[01_Egypt] attempt 1 pid=9300 frames=1165 shots=[740, 780, 815]
+[01_Egypt] exit=0
+[01_Egypt] OK after 1 attempt(s)
+[02_Neustein] attempt 1 pid=8428 frames=1519 shots=[1094, 1134, 1169]
+[02_Neustein] exit=0
+[02_Neustein] OK after 1 attempt(s)
+[03_Arctic] attempt 1 pid=13264 frames=1450 shots=[1051, 1091, 1126]
+[03_Arctic] exit=0
+[03_Arctic] OK after 1 attempt(s)
+[04_Highway] attempt 1 pid=19356 frames=1278 shots=[853, 893, 928]
+[04_Highway] exit=0
+[04_Highway] OK after 1 attempt(s)
+[05_Sands] attempt 1 pid=21708 frames=1509 shots=[1084, 1124, 1159]
+[05_Sands] exit=0
+[05_Sands] OK after 1 attempt(s)
+[06_SuperG] attempt 1 pid=25580 frames=1168 shots=[743, 783, 818]
+[06_SuperG] exit=0
+[06_SuperG] OK after 1 attempt(s)
+[07_Roundabout] attempt 1 pid=20748 frames=1516 shots=[1091, 1131, 1166]
+[07_Roundabout] exit=0
+[07_Roundabout] OK after 1 attempt(s)
+[08_Storm] attempt 1 pid=26204 frames=1353 shots=[928, 968, 1003]
+[08_Storm] exit=0
+[08_Storm] OK after 1 attempt(s)
+[09_Forest] attempt 1 pid=26140 frames=1245 shots=[820, 860, 895]
+[09_Forest] exit=0
+[09_Forest] OK after 1 attempt(s)
+[10_Dump] attempt 1 pid=14040 frames=1160 shots=[735, 775, 810]
+[10_Dump] exit=0
+[10_Dump] OK after 1 attempt(s)
+[11_Warzone] attempt 1 pid=26056 frames=1009 shots=[584, 624, 659]
+[11_Warzone] exit=0
+[11_Warzone] OK after 1 attempt(s)
+[12_City] attempt 1 pid=4656 frames=1186 shots=[761, 801, 836]
+[12_City] exit=0
+[12_City] OK after 1 attempt(s)
+[13_Training] attempt 1 pid=20944 frames=1309 shots=[884, 924, 959]
+[13_Training] exit=0
+[13_Training] OK after 1 attempt(s)
+private root log: D:\MashedWT\pontoon_root\mashed_re.log exists=True

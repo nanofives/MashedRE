@@ -70,3 +70,6 @@ MenuMenusBB
 # (0x004286ad..0x004286c1). Measured by run_diff at the harness CW and at 0x007f; see
 # re/analysis/negctl/session_20261012b/bnormalise_RESULT.md.
 ViewportScaledRectDraw
+# pontoon (2026-10-16): the Warzone track object 0x00684d18 (RtAnim/RpHAnim/RW matrix leaves transcribed from the
+# listings, run at PC_24 by Pontoon_Tick). verify/pontoon_20261016/PREREG_pontoon.md.
+WarzonePontoon

@@ -12,6 +12,7 @@ const std::uint32_t* RwLutSqrtTable();      // 0x1000 dwords, == the original's 
 const std::uint32_t* RwLutInvSqrtTable();   // 0x1000 dwords, == the original's (root delta 4)
 
 float LutSqrt(float x);                     // FUN_004c3b30 with the real LUT
+float LutInvSqrt(float x);                  // FUN_004c3b90 with the real LUT (pontoon 2026-10-16)
 float LutNormalize(float* out, const float* in);   // FUN_004c39b0 with the real LUT (no error report)
 float LutLength(const float* v);                   // FUN_004c3ac0 (RwV3dLength) with the real LUT, PC_24
 float LutNormalize2D(float* out, const float* in);  // FUN_004c3c60 (2-D normalize) with the real LUT, PC_24

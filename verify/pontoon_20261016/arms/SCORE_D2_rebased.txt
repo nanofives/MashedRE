@@ -1,0 +1,4 @@
+D2_DEF_20.motion_diag.log D2_DEF_20.motion_diag.log: slip1500=0.1890 in slip2000=0.2482 in drvmed=1913.0600 in  n=('363', '642', '1423')
+D2_DEF_21.motion_diag.log D2_DEF_21.motion_diag.log: slip1500=0.1890 in slip2000=0.2480 in drvmed=1912.0400 in  n=('363', '640', '1421')
+D2_DEF_22.motion_diag.log D2_DEF_22.motion_diag.log: slip1500=0.1890 in slip2000=0.2483 in drvmed=1914.8800 in  n=('363', '645', '1426')
+D2_PC_21.motion_diag.log D2_PC_21.motion_diag.log: slip1500=0.1890 in slip2000=0.2476 in drvmed=1912.0100 in  n=('363', '638', '1419')

@@ -729,6 +729,32 @@ float* VehiclePhysics_BodyBasis(int slot) {
     return g_bodyBasis[slot];
 }
 
+// [pontoon 2026-10-16] the record itself, for the Warzone track object (Track/WarzonePontoon.cpp): FUN_0046bf50's
+// +0x14 / +0x9b0 and FUN_0046be10's +0xbfc / +0xc7c. nullptr before VehiclePhysics_Init.
+unsigned char* VehiclePhysics_RecordPtr(int slot) {
+    if (!g_inited || slot < 0 || slot >= 16) return nullptr;
+    return rec(slot);
+}
+
+// [pontoon 2026-10-16] FUN_00451ad0 @ 0x00451b26 rewrites the car's current ring matrix in place (the car rides the
+// platform). The port's pose lives in g_bodyBasis (rotation) and the caller's position (adapter IN/OUT), so the carried
+// matrix is published to all three: the ring's current half, the basis rows, and g_physPos / g_outPos so the next
+// StepCar keeps the carried physics position (posKept). Returns the caller-convention position and the basis heading.
+void VehiclePhysics_CarryTo(int slot, const float* m, float ground_off, float callerPos[3], float* yaw) {
+    if (!g_inited || slot < 0 || slot >= 16) return;
+    unsigned char* r = rec(slot);
+    const int sel = I(r, 0x9a8);
+    std::memcpy(r + 0x928 + sel * 0x40, m, 0x40);
+    float* basis = g_bodyBasis[slot];
+    for (int k = 0; k < 3; ++k) { basis[k] = m[k]; basis[4 + k] = m[4 + k]; basis[8 + k] = m[8 + k]; }
+    g_bodyBasisOk[slot] = true;
+    callerPos[0] = m[12]; callerPos[1] = m[13] + ground_off; callerPos[2] = m[14];
+    std::memcpy(g_physPos[slot], m + 12, sizeof(g_physPos[slot]));
+    std::memcpy(g_outPos[slot], callerPos, sizeof(g_outPos[slot]));
+    g_outPosValid[slot] = true;
+    if (yaw) *yaw = BodyOrient_Heading(basis);
+}
+
 void VehiclePhysics_StepPlayer(float dt, PlayerCarIO& io) {
     VehiclePhysics_StepCar(0, dt, io);
 }

@@ -248,6 +248,10 @@ private:
     int   lens_frames_ = 0;
     int   prop_tick_frames_ = 0;
     void UpdatePropAnims();
+    // [pontoon 2026-10-16] Warzone's boat (clump 1) as three per-atomic props (DFF stream atomics 0..2 -> props_ index),
+    // posed every Render from the ported RpHAnim hierarchy (Track/WarzonePontoon.cpp). -1 = not split (knob off).
+    int   pontoon_parts_[3] = { -1, -1, -1 };
+    void UpdatePontoonParts();
 
     // ---- F2 .ANM animated copters (COURSE.LUA General_Anim_Filename + SetCopter;
     // KTCSCRIPT.LUA KTC_NewCopter). The flight paths are the track's .ANM
@@ -449,6 +453,9 @@ public:
     // 0x0040ff40..0x0040ffb6 loop over *(PTR_005f2770+0x34+i*4)); the same
     // predicate UpdateRace uses for RuleEngine::Cars::active.
     int   ParticipantCount() const;
+    // [pontoon 2026-10-16] host callback of the Warzone platform's in-box carry (FUN_00451ad0 @ 0x00451b26): car v's
+    // matrix became m; moves the car's position / heading state and the physics pose with it.
+    void  PontoonCarried(int v, const float* m);
     void  NextRoundOrEnd();          // check match win, start next round
     int   match_winner() const { return match_winner_; }
     int   round_no() const { return round_no_; }

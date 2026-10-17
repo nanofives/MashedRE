@@ -1,0 +1,6 @@
+W_DEF1: no pontoon trace (knob off or object inactive) | seek last: calls=4201 gate1=0 ret1=0; ret=1 lines 0 (ret=1 without the word: 0)
+W_DEF2: no pontoon trace (knob off or object inactive) | seek last: calls=4201 gate1=0 ret1=0; ret=1 lines 0 (ret=1 without the word: 0)
+W_PS1: init=True rows=300 state_rows={'0': 7, '1': 61, '2': 116, '3': 116} word_rows=177 max_c8=3.8628 transitions=1839:0->1(ff0010,c8=0.0) 1900:1->2(ff0010,c8=0.0) 2016:2->3(ff0000,c8=3.8628) 2132:3->0(ff0000,c8=0.0) | seek last: calls=4201 gate1=201 ret1=45; ret=1 lines 45 (ret=1 without the word: 0)
+W_PC1: init=True rows=1764 state_rows={'0': 4, '1': 61, '2': 970, '3': 729} word_rows=1031 max_c8=32.3013 transitions=1839:0->1(ff0010,c8=0.0) 1900:1->2(ff0010,c8=0.0) 2870:2->3(ff0000,c8=32.3013) | seek last: calls=4201 gate1=1380 ret1=885; ret=1 lines 885 (ret=1 without the word: 0)
+W_DEF3: no pontoon trace (knob off or object inactive) | seek last: calls=4201 gate1=0 ret1=0; ret=1 lines 0 (ret=1 without the word: 0)
+W_PC2: init=True rows=1764 state_rows={'0': 4, '1': 61, '2': 970, '3': 729} word_rows=1031 max_c8=32.3013 transitions=1839:0->1(ff0010,c8=0.0) 1900:1->2(ff0010,c8=0.0) 2870:2->3(ff0000,c8=32.3013) | seek last: calls=4201 gate1=1380 ret1=885; ret=1 lines 885 (ret=1 without the word: 0)

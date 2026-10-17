@@ -6,6 +6,7 @@
 "Track\DffModel.cpp"
 "Track\PowerupMarkers.cpp"
 "Track\TrackData.cpp"
+"Track\WarzonePontoon.cpp"
 "D3d9Render\TrackRenderer.cpp"
 "Ai\AiStandalone.cpp"
 "Ai\CarSlotState.cpp"

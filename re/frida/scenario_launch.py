@@ -2146,6 +2146,89 @@ function skProbeArm(limit){
 }
 function skProbeDrain(){ const r = {obj:SK.obj, seek:SK.seek}; SK.obj = []; SK.seek = []; return r; }
 
+// --- PONTOON probe (pontoon, 2026-10-16) ----------------------------------------
+// Entry+leave of FUN_00451d80(obj = 0x00684d18, units), the course-0x21 track object's state machine (one call per frame
+// from 0x00452ba2). Every input and output of the object, its RpHAnim hierarchy and the four cars, as RAW dwords, so a port
+// can be replayed against it bit for bit (verify/pontoon_20261016/PREREG_pontoon.md section 2, arm OP). Row = 'E' block
+// (entry) + 'L' block (leave). Car v's matrix is FUN_0046d4a0's: record 0x008815a0 + v*0xd04, +0x928 + [+0x9a8]*0x40.
+// Full rows for the first 8 calls; after that a 30-row look-back ring is flushed around any row whose state (in or out),
+// word 0x0088ff50[v] or obj+0xb4[v] flag is non-zero, and 30 rows after it are kept too. Read-only.
+const PN = { armed:false, rows:[], ring:[], post:0, n:0, kept:0, limit:20000, err:null };
+function pnU(p, off, n, out){ for (let i = 0; i < n; i++) out.push(p.add(off + 4*i).readU32()); }
+function pnCars(out){
+  for (let v = 0; v < 4; v++){
+    const r = ga(0x008815a0).add(v*0xd04), t = r.add(0x9a8).readU32();
+    out.push(t);
+    pnU(r, 0x928 + t*0x40, 16, out);            // FUN_0046d4a0 matrix
+    pnU(r, 0x14, 2, out);                        // RWP-mode flag, timer (FUN_00480720)
+    pnU(r, 0x9b0, 6, out);                       // velocity + angular (FUN_0046bf50 / FUN_00480720)
+    out.push(r.add(0xbfc).readU32(), r.add(0xc7c).readU32());   // marker slot 0 (FUN_0046be10)
+  }
+}
+function pnObj(o, out){
+  out.push(o.add(0x48).readS32());
+  pnU(o, 0x10, 7, out);                          // +0x10 frame, +0x14..+0x2c box
+  pnU(o, 0x38, 4, out);                          // +0x38..+0x40 node-1 pos, +0x44
+  pnU(o, 0x4c, 1, out);
+  pnU(o, 0x54, 16, out);                         // previous matrix copy
+  const p = o.add(0x94).readPointer(); out.push(p.toUInt32());
+  if (p.isNull()) for (let i = 0; i < 16; i++) out.push(0); else pnU(p, 0, 16, out);
+  pnU(o, 0xa4, 1, out); pnU(o, 0xa8, 3, out); pnU(o, 0xb4, 4, out); pnU(o, 0xc4, 2, out);   // +0xc4 cb, +0xc8 time
+  pnU(ga(0x0088ff50), 0, 4, out);
+}
+function pnHier(o, out){
+  const h = o.add(0x50).readPointer();
+  if (h.isNull()) { for (let i = 0; i < 4 + 64 + 3; i++) out.push(0); return; }
+  out.push(h.readU32(), h.add(4).readU32());     // flags, numNodes
+  const m = h.add(8).readPointer();
+  for (let k = 0; k < 4; k++) pnU(m, k*0x40, 16, out);
+  const ip = h.add(0x20).readPointer(), an = ip.readPointer();
+  out.push(ip.add(4).readU32(), ip.add(8).readU32(), an.isNull() ? 0 : an.add(0x10).readU32(), ip.add(0x14).readU32());
+  for (const a of [4, 8, 0xc]){                  // atomics +4/+8/+0xc: render flag byte, frame LTM
+    const at = o.add(a).readPointer();
+    out.push(at.add(2).readU8());
+    pnU(at.add(4).readPointer(), 0x50, 16, out);
+  }
+}
+function pnProbeArm(limit){
+  if (PN.armed) return 'already armed';
+  try {
+    PN.limit = limit || 20000;
+    Interceptor.attach(ga(0x00451d80), {
+      onEnter(args){
+        this.row = null;
+        try {
+          const o = args[0], row = [PN.n, ga(0x007f0ff4).readS32(), args[1].toInt32(), ga(0x008a94d0).readS32(), 'E'];
+          pnObj(o, row); pnCars(row);
+          pnU(ga(0x00684cd8), 0, 16, row); pnU(ga(0x00684c98), 0, 16, row);   // Tower / Deck tracked (previous slot 1)
+          if (PN.n < 8) { pnU(ga(0x00684de8), 0, 16, row); pnU(ga(0x00684c58), 0, 16, row); }
+          this.o = o; this.row = row;
+        } catch(e){ if (!PN.err) PN.err = 'pnEnter ' + e; }
+      },
+      onLeave(ret){
+        try {
+          if (!this.row) return;
+          const o = this.o, row = this.row;
+          row.push('L'); pnObj(o, row); pnCars(row); pnHier(o, row);
+          const n = PN.n++;
+          const s0 = row[5], s1 = o.add(0x48).readS32();
+          let hot = (s0 !== 0 || s1 !== 0);
+          for (let v = 0; v < 4 && !hot; v++)
+            if (ga(0x0088ff50).add(4*v).readU32() !== 0 || o.add(0xb4 + 4*v).readU32() !== 0) hot = true;
+          if (PN.rows.length >= PN.limit) return;
+          if (n < 8 || hot) {
+            for (const r of PN.ring) PN.rows.push(r);
+            PN.ring = []; PN.rows.push(row); PN.post = 30; PN.kept++;
+          } else if (PN.post > 0) { PN.rows.push(row); PN.post--; }
+          else { PN.ring.push(row); if (PN.ring.length > 30) PN.ring.shift(); }
+        } catch(e){ if (!PN.err) PN.err = 'pnLeave ' + e; }
+      }});
+    PN.armed = true;
+    return 'pontoon-probe armed (entry+leave 0x451d80)';
+  } catch(e){ return 'ERR ' + e; }
+}
+function pnProbeDrain(){ const r = PN.rows; PN.rows = []; return r; }
+
 // --- REGISTRY probe (mode 7 leg M1, 2026-10-10) --------------------------------
 // FUN_004847d0 entry (grid build, <= 1/frame): c8 0x006e70c8, FUN_00467210(0)+0x20..+0x28 (called
 // through NativeFunction, read-only callee chain FUN_0042b930/FUN_0042f510), DAT_00897ff0..f8.
@@ -3418,6 +3501,9 @@ rpc.exports = {
   tgProbeArm: function(l){ return tgProbeArm(l); },
   tgProbeDrain: function(){ return tgProbeDrain(); },
   tgProbeStats: function(){ return JSON.stringify({armed:TG.armed, calls:TG.n, err:TG.err}); },
+  pnProbeArm: function(l){ return pnProbeArm(l); },
+  pnProbeDrain: function(){ return pnProbeDrain(); },
+  pnProbeStats: function(){ return JSON.stringify({armed:PN.armed, calls:PN.n, hot:PN.kept, rows:PN.rows.length, err:PN.err}); },
   skProbeArm: function(l){ return skProbeArm(l); },
   skProbeDrain: function(){ return skProbeDrain(); },
   skProbeStats: function(){ return JSON.stringify({armed:SK.armed, obj_only:SK.objOnly, obj_calls:SK.nObj, seek_calls:SK.nSeek,
@@ -4087,6 +4173,11 @@ def main():
     ap.add_argument("--tgt-probe", type=int, default=0,
                     help="[D-11072 P3] N: entry+leave hook on FUN_00414a70, first N calls: every input "
                          "+ return + cand. Writes <out>.tgt.csv. Requires --statediff-out.")
+    ap.add_argument("--pontoon-probe", type=int, default=0,
+                    help="[pontoon] N: entry+leave hook on FUN_00451d80 (Warzone track object 0x00684d18): object, "
+                         "RpHAnim hierarchy, the four cars and Tower/Deck as raw dwords, first 8 calls plus a 30-row "
+                         "ring around every non-zero state/word/flag row, at most N rows. Writes <out>.pontoon.csv. "
+                         "Requires --statediff-out.")
     ap.add_argument("--seek-probe", type=int, default=0,
                     help="[seek414f00] N: entry+leave hooks on FUN_00451d80 (Warzone object state, the "
                          "only path to the DAT_0088ff50 writer) and FUN_00414f00 (AI powerup seek), first "
@@ -4275,6 +4366,8 @@ def main():
                 print("  [statediff]", E.path_prog_probe_arm(args.pathprog_probe))
             if args.tgt_probe:
                 print("  [statediff]", E.tg_probe_arm(args.tgt_probe))
+            if args.pontoon_probe:
+                print("  [statediff]", E.pn_probe_arm(args.pontoon_probe))
             if args.seek_probe:
                 print("  [statediff]", E.sk_probe_arm(args.seek_probe))
             if args.reg_probe:
@@ -4972,6 +5065,16 @@ def main():
                             for r in _tg: f.write(",".join(str(x) for x in r) + chr(10))
                         print(f"  [statediff] tgt-probe {len(_tg)} rows -> {_tf}")
                     except Exception as _e: print("  [statediff] tgt drain failed:", _e)
+                if args.pontoon_probe:
+                    try: print("  [statediff] pontoon-probe agent:", E.pn_probe_stats())
+                    except Exception as _e: print("  [statediff] pontoon stats failed:", _e)
+                    try:
+                        _pn = E.pn_probe_drain()
+                        _pf = outp.with_suffix(outp.suffix + ".pontoon.csv")
+                        with open(_pf, "w", newline="") as f:
+                            for r in _pn: f.write(",".join(str(x) for x in r) + chr(10))
+                        print(f"  [statediff] pontoon-probe {len(_pn)} rows -> {_pf}")
+                    except Exception as _e: print("  [statediff] pontoon drain failed:", _e)
                 if args.seek_probe:
                     try: print("  [statediff] seek-probe agent:", E.sk_probe_stats())
                     except Exception as _e: print("  [statediff] seek stats failed:", _e)

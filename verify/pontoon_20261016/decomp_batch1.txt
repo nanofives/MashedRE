@@ -1,0 +1,1664 @@
+// FUN_00451760 @ 0x00451760  size=191  (MASHED.exe)
+// NOTE: 0x00451760 is not a function entry; showing containing function
+// undefined FUN_00451760(void)
+// callees: FUN_00451730@0x00451730, FUN_0052e2c0@0x0052e2c0, FUN_00533ec0@0x00533ec0, FUN_00550bc0@0x00550bc0, RpClumpForAllAtomics@0x004e66d0
+
+void FUN_00451760(undefined4 *param_1,undefined4 param_2,undefined4 param_3)
+
+{
+  int iVar1;
+  int iVar2;
+  undefined4 *puVar3;
+  undefined4 *puVar4;
+  undefined4 uStack_8;
+  undefined4 *puStack_4;
+  
+  *param_1 = param_2;
+  param_1[0x13] = param_3;
+  param_1[0x11] = 0;
+  iVar1 = func_0x004b4790(param_2,param_3);
+  param_1[0x14] = iVar1;
+  param_1[0x12] = 0;
+  func_0x0052df20(*(undefined4 *)(iVar1 + 0x20),&UNK_00451690,param_1);
+  uStack_8 = 0;
+  puStack_4 = param_1;
+  RpClumpForAllAtomics(*param_1,FUN_004516d0,&uStack_8);
+  param_1[4] = *(undefined4 *)(param_1[2] + 4);
+  FUN_00451730(param_1 + 5,param_1[2]);
+  FUN_0052e2c0(*(undefined4 *)(param_1[0x14] + 0x20),0);
+  FUN_00533ec0(param_1[0x14]);
+  iVar1 = FUN_00550bc0(param_1[0x14]);
+  param_1[0xe] = *(undefined4 *)(iVar1 + 0x70);
+  param_1[0xf] = *(undefined4 *)(iVar1 + 0x74);
+  param_1[0x10] = *(undefined4 *)(iVar1 + 0x78);
+  param_1[0x25] = (undefined4 *)(iVar1 + 0x40);
+  puVar3 = (undefined4 *)(iVar1 + 0x40);
+  puVar4 = param_1 + 0x15;
+  for (iVar2 = 0x10; iVar2 != 0; iVar2 = iVar2 + -1) {
+    *puVar4 = *puVar3;
+    puVar3 = puVar3 + 1;
+    puVar4 = puVar4 + 1;
+  }
+  param_1[0x31] = 0;
+  return;
+}
+
+
+
+// FUN_00451680 @ 0x00451680  size=15  (MASHED.exe)
+// NOTE: 0x00451680 is not a function entry; showing containing function
+// undefined FUN_00451680(void)
+// callees: (none)
+
+void FUN_00451680(int param_1,undefined4 param_2)
+
+{
+  *(undefined4 *)(param_1 + 0xc4) = param_2;
+  return;
+}
+
+
+
+// FUN_00452170 @ 0x00452170  size=104  (MASHED.exe)
+// NOTE: 0x00452170 is not a function entry; showing containing function
+// undefined FUN_00452170(void)
+// callees: FID_conflict:_wprintf@0x004a2cbd, FUN_0047d180@0x0047d180
+
+undefined4 FUN_00452170(undefined4 param_1)
+
+{
+  undefined4 uVar1;
+  int iVar2;
+  undefined4 *puVar3;
+  undefined4 *puVar4;
+  
+  uVar1 = DAT_005f978c;
+  puVar3 = (undefined4 *)0x684de8;
+  puVar4 = (undefined4 *)0x684cd8;
+  for (iVar2 = 0x10; iVar2 != 0; iVar2 = iVar2 + -1) {
+    *puVar4 = *puVar3;
+    puVar3 = puVar3 + 1;
+    puVar4 = puVar4 + 1;
+  }
+  puVar3 = (undefined4 *)0x684c58;
+  puVar4 = (undefined4 *)0x684c98;
+  for (iVar2 = 0x10; iVar2 != 0; iVar2 = iVar2 + -1) {
+    *puVar4 = *puVar3;
+    puVar3 = puVar3 + 1;
+    puVar4 = puVar4 + 1;
+  }
+  FUN_0047d180(uVar1,0x684de8);
+  FID_conflict__wprintf("we have reset the pontoon\n");
+  func_0x004518f0("Reset with matrix",0x684de8);
+  FUN_0047d180(DAT_005f9790,0x684c58);
+  return param_1;
+}
+
+
+
+// FUN_00451a50 @ 0x00451a50  size=128  (MASHED.exe)
+// NOTE: 0x00451a50 is not a function entry; showing containing function
+// undefined FUN_00451a50(void)
+// callees: FUN_004c4dc0@0x004c4dc0, FUN_004c52f0@0x004c52f0, thunk_FUN_004c4680@0x004c4670
+
+void FUN_00451a50(int param_1,undefined4 *param_2,undefined4 *param_3)
+
+{
+  int iVar1;
+  undefined4 *puVar2;
+  undefined4 auStack_80 [16];
+  undefined1 auStack_40 [64];
+  
+  puVar2 = auStack_80;
+  for (iVar1 = 0x10; iVar1 != 0; iVar1 = iVar1 + -1) {
+    *puVar2 = *param_2;
+    param_2 = param_2 + 1;
+    puVar2 = puVar2 + 1;
+  }
+  FUN_004c4dc0(auStack_40,param_1 + 0x54);
+  FUN_004c52f0(auStack_80,auStack_40,2);
+  FUN_004c52f0(auStack_80,*(undefined4 *)(param_1 + 0x94),2);
+  thunk_FUN_004c4680(auStack_80,auStack_80);
+  puVar2 = auStack_80;
+  for (iVar1 = 0x10; iVar1 != 0; iVar1 = iVar1 + -1) {
+    *param_3 = *puVar2;
+    puVar2 = puVar2 + 1;
+    param_3 = param_3 + 1;
+  }
+  return;
+}
+
+
+
+// FUN_00452130 @ 0x00452130  size=15  (MASHED.exe)
+// NOTE: 0x00452130 is not a function entry; showing containing function
+// undefined FUN_00452130(void)
+// callees: (none)
+
+int FUN_00452130(int *param_1)
+
+{
+  undefined4 *puVar1;
+  undefined4 *puVar2;
+  int iVar3;
+  int iVar4;
+  
+  iVar4 = *param_1;
+  puVar1 = (undefined4 *)(iVar4 + 8);
+  for (puVar2 = *(undefined4 **)(iVar4 + 8); puVar2 != puVar1; puVar2 = (undefined4 *)*puVar2) {
+    if ((*(byte *)((int)puVar2 + -0x3e) & 4) != 0) {
+      FUN_004c0ed0(puVar2[-0xf]);
+      iVar3 = (*(code *)puVar2[2])(puVar2 + -0x10);
+      if (iVar3 == 0) {
+        iVar4 = 0;
+      }
+    }
+  }
+  return iVar4;
+}
+
+
+
+// FUN_00452140 @ 0x00452140  size=24  (MASHED.exe)
+// undefined FUN_00452140(void)
+// callees: FUN_00451990@0x00451990
+
+/* [C2 2026-06-03] `void FUN_00452140(undefined4 param_1, undefined4 param_2)`. Body
+   0x00452140..0x00452156. Static-singleton wrapper… */
+
+void FUN_00452140(undefined4 param_1,undefined4 param_2)
+
+{
+  FUN_00451990(&DAT_00684d18,param_1,param_2);
+  return;
+}
+
+
+
+// FUN_00451640 @ 0x00451640  size=59  (MASHED.exe)
+// NOTE: 0x00451640 is not a function entry; showing containing function
+// undefined FUN_00451640(void)
+// callees: (none)
+
+void FUN_00451640(float param_1)
+
+{
+  if ((DAT_005d757c < DAT_007f0fc8) &&
+     (DAT_007f0fc8 = DAT_007f0fc8 - param_1, DAT_007f0fc8 < DAT_005d757c)) {
+    DAT_007f0fc8 = 0.0;
+  }
+  return;
+}
+
+
+
+// FUN_00452790 @ 0x00452790  size=95  (MASHED.exe)
+// NOTE: 0x00452790 is not a function entry; showing containing function
+// undefined FUN_00452790(void)
+// callees: FUN_00442410@0x00442410, FUN_00442420@0x00442420, FUN_004c1340@0x004c1340, FUN_004c1520@0x004c1520, FUN_004c15c0@0x004c15c0
+
+void FUN_00452790(void)
+
+{
+  undefined4 uVar1;
+  int iVar2;
+  int iVar3;
+  int *piVar4;
+  float10 fVar5;
+  
+  iVar3 = 1;
+  piVar4 = (int *)0x88ff20;
+  iVar2 = 9;
+  do {
+    uVar1 = *(undefined4 *)(*piVar4 + 4);
+    FUN_004c15c0(uVar1);
+    fVar5 = (float10)FUN_00442420(iVar3);
+    FUN_004c1520(uVar1,&DAT_006146fc,(float)fVar5,0);
+    uVar1 = FUN_00442410(iVar3);
+    FUN_004c1340(*(undefined4 *)(*piVar4 + 4),uVar1,2);
+    iVar3 = iVar3 + 1;
+    piVar4 = piVar4 + 1;
+    iVar2 = iVar2 + -1;
+  } while (iVar2 != 0);
+  return;
+}
+
+
+
+// FUN_00452d10 @ 0x00452d10  size=137  (MASHED.exe)
+// NOTE: 0x00452d10 is not a function entry; showing containing function
+// undefined FUN_00452d10(void)
+// callees: FUN_00452130@0x00452130, FUN_004e6680@0x004e6680
+
+void FUN_00452d10(int param_1)
+
+{
+  undefined4 *puVar1;
+  
+  (**(code **)(DAT_007d3ff8 + 0x20))(0x14,1);
+  if (*(int *)(param_1 + 0x1015c) != 0) {
+    FUN_004e6680(*(int *)(param_1 + 0x1015c));
+  }
+  if (*(int *)(param_1 + 0x10160) != 0) {
+    FUN_004e6680(*(int *)(param_1 + 0x10160));
+  }
+  func_0x00479f70(DAT_00684e34);
+  (**(code **)(DAT_007d3ff8 + 0x20))(0x14,2);
+  FUN_00452130(&DAT_00684d18);
+  FUN_004e6680(*(undefined4 *)(param_1 + 0x10110));
+  puVar1 = &DAT_0088ff60;
+  do {
+    func_0x00452490(*puVar1);
+    puVar1 = puVar1 + 1;
+  } while ((int)puVar1 < 0x88ff80);
+  return;
+}
+
+
+
+// FUN_00452af0 @ 0x00452af0  size=116  (MASHED.exe)
+// NOTE: 0x00452af0 is not a function entry; showing containing function
+// undefined FUN_00452af0(void)
+// callees: FUN_00451cc0@0x00451cc0, FUN_00472520@0x00472520, FUN_00472560@0x00472560, FUN_0047d100@0x0047d100
+
+void FUN_00452af0(int param_1)
+
+{
+  int iVar1;
+  undefined4 *puVar2;
+  
+  FUN_00451cc0(&DAT_00684d18);
+  FUN_0047d100(DAT_005f978c,0);
+  FUN_0047d100(DAT_005f9790,0);
+  iVar1 = 0;
+  puVar2 = (undefined4 *)(param_1 + 0x10134);
+  do {
+    FUN_00472520(iVar1,*puVar2);
+    FUN_00472560(iVar1,1);
+    iVar1 = iVar1 + 1;
+    puVar2 = puVar2 + 1;
+  } while (iVar1 < 8);
+  puVar2 = &DAT_005f97a0;
+  do {
+    *puVar2 = 0;
+    puVar2 = puVar2 + 3;
+  } while ((int)puVar2 < 0x5f9800);
+  return;
+}
+
+
+
+// FUN_00452ad0 @ 0x00452ad0  size=18  (MASHED.exe)
+// NOTE: 0x00452ad0 is not a function entry; showing containing function
+// undefined FUN_00452ad0(void)
+// callees: FUN_00451cc0@0x00451cc0
+
+void FUN_00452ad0(int param_1)
+
+{
+  int iVar1;
+  undefined4 *puVar2;
+  
+  FUN_00451cc0(&DAT_00684d18);
+  iVar1 = 0;
+  puVar2 = (undefined4 *)(param_1 + 0x10134);
+  do {
+    FUN_00472520(iVar1,*puVar2);
+    FUN_00472560(iVar1,1);
+    iVar1 = iVar1 + 1;
+    puVar2 = puVar2 + 1;
+  } while (iVar1 < 8);
+  puVar2 = &DAT_005f97a0;
+  do {
+    *puVar2 = 0;
+    puVar2 = puVar2 + 3;
+  } while ((int)puVar2 < 0x5f9800);
+  return;
+}
+
+
+
+// FUN_00452e00 @ 0x00452e00  size=152  (MASHED.exe)
+// NOTE: 0x00452e00 is not a function entry; showing containing function
+// undefined FUN_00452e00(void)
+// callees: FUN_00426060@0x00426060, FUN_004522d0@0x004522d0, FUN_004523f0@0x004523f0, FUN_00475180@0x00475180, FUN_00479fb0@0x00479fb0, FUN_0047ccb0@0x0047ccb0, RpClumpDestroy@0x004e6e00, RwFrameRemoveChild@0x004e45b0
+
+void FUN_00452e00(void)
+
+{
+  undefined4 uVar1;
+  undefined4 *puVar2;
+  
+  puVar2 = &DAT_0088ff24;
+  do {
+    uVar1 = FUN_00426060(*puVar2);
+    RwFrameRemoveChild(uVar1);
+    RpClumpDestroy(*puVar2);
+    puVar2 = puVar2 + 1;
+  } while ((int)puVar2 < 0x88ff44);
+  puVar2 = &DAT_0088ff60;
+  do {
+    FUN_004523f0(*puVar2);
+    puVar2 = puVar2 + 1;
+  } while ((int)puVar2 < 0x88ff80);
+  FUN_0047ccb0();
+  FUN_004522d0(DAT_0088ff44);
+  FUN_00475180(DAT_00684c50);
+  FUN_00479fb0(DAT_00684e28);
+  FUN_00479fb0(DAT_00684e2c);
+  FUN_00479fb0(DAT_00684e30);
+  FUN_00479fb0();
+  return;
+}
+
+
+
+// FUN_00452da0 @ 0x00452da0  size=94  (MASHED.exe)
+// NOTE: 0x00452da0 is not a function entry; showing containing function
+// undefined FUN_00452da0(void)
+// callees: (none)
+
+void FUN_00452da0(void)
+
+{
+  (**(code **)(DAT_007d3ff8 + 0x20))(0xe,1);
+  (**(code **)(DAT_007d3ff8 + 0x20))(8,0);
+  func_0x00479f70(DAT_00684e28);
+  func_0x00479f70(DAT_00684e2c);
+  func_0x00479f70(DAT_00684e30);
+  (**(code **)(DAT_007d3ff8 + 0x20))(8,1);
+  func_0x0047cd30();
+  (**(code **)(DAT_007d3ff8 + 0x20))(0xe,0);
+  return;
+}
+
+
+
+// FUN_00533ec0 @ 0x00533ec0  size=2467  (MASHED.exe)
+// undefined FUN_00533ec0(void)
+// callees: FUN_004c0b10@0x004c0b10, FUN_004c0e50@0x004c0e50, FUN_004c0ed0@0x004c0ed0, FUN_004c4600@0x004c4600
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C1 2026-05-20] Per-frame matrix-palette assembly for the skin atomic. */
+
+undefined4 FUN_00533ec0(uint *param_1)
+
+{
+  byte *pbVar1;
+  float fVar2;
+  float fVar3;
+  uint uVar4;
+  code *pcVar5;
+  float fVar6;
+  float fVar7;
+  float fVar8;
+  int iVar9;
+  uint *puVar10;
+  uint uVar11;
+  int iVar12;
+  int iVar13;
+  uint uVar14;
+  float *pfVar15;
+  uint *puVar16;
+  float *pfVar17;
+  uint *puVar18;
+  uint *local_a14;
+  uint *local_a10;
+  uint *local_a0c;
+  uint *local_a04;
+  int local_a00;
+  int local_9d8;
+  float local_9d0 [5];
+  float local_9bc;
+  float local_9b8;
+  float local_9b0;
+  float local_9ac;
+  float local_9a8;
+  undefined4 local_9a0;
+  undefined4 local_99c;
+  undefined4 local_998;
+  int local_990;
+  float local_98c;
+  uint local_980 [4];
+  undefined4 local_970;
+  undefined4 local_96c;
+  undefined4 local_968;
+  undefined4 local_960;
+  undefined4 local_95c;
+  undefined4 local_958;
+  undefined4 local_950;
+  undefined4 local_94c;
+  undefined4 local_948;
+  uint local_940 [4];
+  undefined4 local_930;
+  undefined4 local_92c;
+  undefined4 local_928;
+  undefined4 local_920;
+  undefined4 local_91c;
+  undefined4 local_918;
+  undefined4 local_910;
+  undefined4 local_90c;
+  undefined4 local_908;
+  uint local_900;
+  undefined4 local_8fc;
+  undefined4 local_8f8;
+  uint local_8f4;
+  undefined4 local_8f0;
+  undefined4 local_8ec;
+  undefined4 local_8e8;
+  undefined4 local_8e0;
+  undefined4 local_8dc;
+  undefined4 local_8d8;
+  undefined4 local_8d0;
+  undefined4 local_8cc;
+  undefined4 local_8c8;
+  uint local_8c0 [16];
+  uint local_880 [48];
+  uint local_7c0 [496];
+  
+  uVar4 = *param_1;
+  if ((uVar4 & 2) != 0) {
+    iVar12 = *(int *)(param_1[5] + 4);
+    if (iVar12 == 0) {
+      local_958 = 0x3f800000;
+      local_980[3] = local_980[3] | 0x20003;
+      local_96c = 0x3f800000;
+      local_980[0] = 0x3f800000;
+      local_970 = 0;
+      local_980[2] = 0;
+      local_980[1] = 0;
+      local_95c = 0;
+      local_960 = 0;
+      local_968 = 0;
+      local_948 = 0;
+      local_94c = 0;
+      local_950 = 0;
+    }
+    else {
+      iVar9 = FUN_004c0b10(iVar12);
+      if (iVar9 == 0) {
+        puVar10 = (uint *)FUN_004c0ed0(iVar12);
+        puVar16 = local_980;
+        for (iVar12 = 0x10; iVar12 != 0; iVar12 = iVar12 + -1) {
+          *puVar16 = *puVar10;
+          puVar10 = puVar10 + 1;
+          puVar16 = puVar16 + 1;
+        }
+      }
+      else {
+        puVar10 = (uint *)(iVar12 + 0x10);
+        puVar16 = local_980;
+        for (iVar9 = 0x10; iVar9 != 0; iVar9 = iVar9 + -1) {
+          *puVar16 = *puVar10;
+          puVar10 = puVar10 + 1;
+          puVar16 = puVar16 + 1;
+        }
+        for (iVar12 = *(int *)(iVar12 + 4); iVar12 != 0; iVar12 = *(int *)(iVar12 + 4)) {
+          puVar10 = local_980;
+          puVar16 = local_880;
+          for (iVar9 = 0x10; iVar9 != 0; iVar9 = iVar9 + -1) {
+            *puVar16 = *puVar10;
+            puVar10 = puVar10 + 1;
+            puVar16 = puVar16 + 1;
+          }
+          FUN_004c4600(local_980,local_880,iVar12 + 0x10);
+        }
+      }
+    }
+    uVar14 = uVar4 & 0x2000;
+    if ((uVar14 != 0) && ((*(byte *)(*(int *)(param_1[5] + 0xa0) + 3) & 3) == 0)) {
+      *(undefined4 *)(*(int *)(param_1[5] + 0xa0) + 8) = *(undefined4 *)(DAT_007d3ff8 + 0xbc);
+      *(int *)(*(int *)(param_1[5] + 0xa0) + 0xc) = DAT_007d3ff8 + 0xbc;
+      *(int *)(*(int *)(DAT_007d3ff8 + 0xbc) + 4) = *(int *)(param_1[5] + 0xa0) + 8;
+      *(int *)(DAT_007d3ff8 + 0xbc) = *(int *)(param_1[5] + 0xa0) + 8;
+      pbVar1 = (byte *)(*(int *)(param_1[5] + 0xa0) + 3);
+      *pbVar1 = *pbVar1 | 2;
+    }
+    uVar11 = param_1[8];
+    local_a00 = 0;
+    iVar9 = *(int *)(uVar11 + 0x24);
+    pcVar5 = *(code **)(uVar11 + 0x3c);
+    iVar12 = uVar11 + 0x4c;
+    local_a10 = local_7c0;
+    if ((int)param_1[1] < 1) {
+      return 1;
+    }
+    local_a0c = (uint *)(param_1[4] + 8);
+    do {
+      if (pcVar5 == FUN_00532a60) {
+        fVar2 = *(float *)(iVar12 + 8);
+        fVar3 = *(float *)(iVar12 + 0xc);
+        fVar6 = *(float *)(iVar12 + 0x10);
+        fVar7 = *(float *)(iVar12 + 0x14);
+        local_98c = fVar7 * fVar2;
+        fVar8 = fVar6 * fVar6 + fVar3 * fVar3;
+        local_9d0[0] = _DAT_005cc320 - (fVar8 + fVar8);
+        local_9d0[1] = fVar3 * fVar2 + fVar7 * fVar6;
+        local_9d0[1] = local_9d0[1] + local_9d0[1];
+        local_9d0[2] = fVar6 * fVar2 - fVar7 * fVar3;
+        local_9d0[2] = local_9d0[2] + local_9d0[2];
+        local_9d0[4] = fVar3 * fVar2 - fVar7 * fVar6;
+        local_9d0[4] = local_9d0[4] + local_9d0[4];
+        fVar8 = fVar6 * fVar6 + fVar2 * fVar2;
+        local_9bc = _DAT_005cc320 - (fVar8 + fVar8);
+        local_9b8 = local_98c + fVar6 * fVar3;
+        local_9b8 = local_9b8 + local_9b8;
+        local_9b0 = fVar7 * fVar3 + fVar6 * fVar2;
+        local_9b0 = local_9b0 + local_9b0;
+        local_9ac = fVar6 * fVar3 - local_98c;
+        local_9ac = local_9ac + local_9ac;
+        fVar2 = fVar3 * fVar3 + fVar2 * fVar2;
+        local_9a8 = _DAT_005cc320 - (fVar2 + fVar2);
+        local_9a0 = *(undefined4 *)(iVar12 + 0x18);
+        local_99c = *(undefined4 *)(iVar12 + 0x1c);
+        local_998 = *(undefined4 *)(iVar12 + 0x20);
+        local_9d0[3] = 4.2039e-45;
+      }
+      else {
+        (*pcVar5)(local_9d0,iVar12);
+      }
+      FUN_004c4600(local_8c0,local_9d0,local_980);
+      uVar11 = local_a0c[1];
+      if (uVar11 != 0) {
+        if ((uVar4 & 0x1000) == 0) {
+          if (uVar14 != 0) goto LAB_0053426d;
+        }
+        else {
+          pfVar15 = local_9d0;
+          pfVar17 = (float *)(uVar11 + 0x10);
+          for (iVar13 = 0x10; iVar13 != 0; iVar13 = iVar13 + -1) {
+            *pfVar17 = *pfVar15;
+            pfVar15 = pfVar15 + 1;
+            pfVar17 = pfVar17 + 1;
+          }
+          if (uVar14 == 0) {
+            FUN_004c0e50(uVar11);
+          }
+          else {
+LAB_0053426d:
+            puVar10 = local_8c0;
+            puVar16 = (uint *)(uVar11 + 0x50);
+            for (iVar13 = 0x10; iVar13 != 0; iVar13 = iVar13 + -1) {
+              *puVar16 = *puVar10;
+              puVar10 = puVar10 + 1;
+              puVar16 = puVar16 + 1;
+            }
+            *(byte *)(uVar11 + 3) = *(byte *)(uVar11 + 3) & 0xfb | 8;
+          }
+        }
+      }
+      uVar11 = *local_a0c & 3;
+      if (uVar11 == 0) {
+LAB_005342bb:
+        puVar10 = local_8c0;
+LAB_005342c2:
+        puVar16 = local_980;
+        for (iVar13 = 0x10; iVar13 != 0; iVar13 = iVar13 + -1) {
+          *puVar16 = *puVar10;
+          puVar10 = puVar10 + 1;
+          puVar16 = puVar16 + 1;
+        }
+      }
+      else {
+        if (uVar11 == 1) {
+          puVar10 = local_a10 + -0x10;
+          local_a10 = puVar10;
+          goto LAB_005342c2;
+        }
+        if (uVar11 == 2) {
+          puVar18 = local_a10 + 0x10;
+          puVar10 = local_980;
+          puVar16 = local_a10;
+          for (iVar13 = 0x10; local_a10 = puVar18, iVar13 != 0; iVar13 = iVar13 + -1) {
+            *puVar16 = *puVar10;
+            puVar10 = puVar10 + 1;
+            puVar16 = puVar16 + 1;
+          }
+          goto LAB_005342bb;
+        }
+      }
+      iVar12 = iVar12 + iVar9;
+      local_a0c = local_a0c + 4;
+      local_a00 = local_a00 + 1;
+      if ((int)param_1[1] <= local_a00) {
+        return 1;
+      }
+    } while( true );
+  }
+  if (((uVar4 & 1) == 0) || (param_1[7] == 0xffffffff)) {
+    if ((uVar4 & 0x4000) == 0) {
+      local_a14 = local_940;
+    }
+    else {
+      local_a14 = &local_900;
+      local_8f4 = local_8f4 | 0x20003;
+      local_8d8 = 0x3f800000;
+      local_8ec = 0x3f800000;
+      local_900 = 0x3f800000;
+      local_8f0 = 0;
+      local_8f8 = 0;
+      local_8fc = 0;
+      local_8dc = 0;
+      local_8e0 = 0;
+      local_8e8 = 0;
+      local_8c8 = 0;
+      local_8cc = 0;
+      local_8d0 = 0;
+      if ((uVar4 & 0x2000) == 0) goto LAB_00534449;
+    }
+    uVar14 = param_1[5];
+  }
+  else {
+    local_a14 = (uint *)(param_1[7] * 0x40 + *(int *)(param_1[6] + 8));
+    if (((uVar4 & 0x2000) == 0) || ((uVar4 & 0x4000) == 0)) goto LAB_00534449;
+    uVar14 = *(uint *)(param_1[6] + 0x14);
+  }
+  if ((uVar14 == 0) || (iVar12 = *(int *)(uVar14 + 4), iVar12 == 0)) {
+    local_918 = 0x3f800000;
+    local_940[3] = local_940[3] | 0x20003;
+    local_92c = 0x3f800000;
+    local_940[0] = 0x3f800000;
+    local_930 = 0;
+    local_940[2] = 0;
+    local_940[1] = 0;
+    local_91c = 0;
+    local_920 = 0;
+    local_928 = 0;
+    local_908 = 0;
+    local_90c = 0;
+    local_910 = 0;
+  }
+  else {
+    iVar9 = FUN_004c0b10(iVar12);
+    if (iVar9 == 0) {
+      puVar10 = (uint *)FUN_004c0ed0(iVar12);
+      puVar16 = local_940;
+      for (iVar12 = 0x10; iVar12 != 0; iVar12 = iVar12 + -1) {
+        *puVar16 = *puVar10;
+        puVar10 = puVar10 + 1;
+        puVar16 = puVar16 + 1;
+      }
+    }
+    else {
+      puVar10 = (uint *)(iVar12 + 0x10);
+      puVar16 = local_940;
+      for (iVar9 = 0x10; iVar9 != 0; iVar9 = iVar9 + -1) {
+        *puVar16 = *puVar10;
+        puVar10 = puVar10 + 1;
+        puVar16 = puVar16 + 1;
+      }
+      for (iVar12 = *(int *)(iVar12 + 4); iVar12 != 0; iVar12 = *(int *)(iVar12 + 4)) {
+        puVar10 = local_940;
+        puVar16 = local_880;
+        for (iVar9 = 0x10; iVar9 != 0; iVar9 = iVar9 + -1) {
+          *puVar16 = *puVar10;
+          puVar10 = puVar10 + 1;
+          puVar16 = puVar16 + 1;
+        }
+        FUN_004c4600(local_940,local_880,iVar12 + 0x10);
+      }
+    }
+  }
+LAB_00534449:
+  uVar14 = uVar4 & 0x2000;
+  if ((uVar14 != 0) && ((*(byte *)(*(int *)(param_1[5] + 0xa0) + 3) & 3) == 0)) {
+    *(undefined4 *)(*(int *)(param_1[5] + 0xa0) + 8) = *(undefined4 *)(DAT_007d3ff8 + 0xbc);
+    *(int *)(*(int *)(param_1[5] + 0xa0) + 0xc) = DAT_007d3ff8 + 0xbc;
+    *(int *)(*(int *)(DAT_007d3ff8 + 0xbc) + 4) = *(int *)(param_1[5] + 0xa0) + 8;
+    *(int *)(DAT_007d3ff8 + 0xbc) = *(int *)(param_1[5] + 0xa0) + 8;
+    pbVar1 = (byte *)(*(int *)(param_1[5] + 0xa0) + 3);
+    *pbVar1 = *pbVar1 | 2;
+  }
+  uVar11 = param_1[8];
+  puVar10 = (uint *)param_1[2];
+  local_9d8 = 0;
+  local_990 = *(int *)(uVar11 + 0x24);
+  pcVar5 = *(code **)(uVar11 + 0x3c);
+  iVar12 = uVar11 + 0x4c;
+  local_a0c = local_880 + 1;
+  if (0 < (int)param_1[1]) {
+    local_a04 = (uint *)(param_1[4] + 8);
+    do {
+      if (pcVar5 == FUN_00532a60) {
+        fVar2 = *(float *)(iVar12 + 8);
+        fVar3 = *(float *)(iVar12 + 0xc);
+        fVar6 = *(float *)(iVar12 + 0x10);
+        fVar7 = *(float *)(iVar12 + 0x14);
+        local_98c = fVar7 * fVar2;
+        fVar8 = fVar6 * fVar6 + fVar3 * fVar3;
+        local_9d0[0] = _DAT_005cc320 - (fVar8 + fVar8);
+        local_9d0[1] = fVar3 * fVar2 + fVar7 * fVar6;
+        local_9d0[1] = local_9d0[1] + local_9d0[1];
+        local_9d0[2] = fVar6 * fVar2 - fVar7 * fVar3;
+        local_9d0[2] = local_9d0[2] + local_9d0[2];
+        local_9d0[4] = fVar3 * fVar2 - fVar7 * fVar6;
+        local_9d0[4] = local_9d0[4] + local_9d0[4];
+        fVar8 = fVar6 * fVar6 + fVar2 * fVar2;
+        local_9bc = _DAT_005cc320 - (fVar8 + fVar8);
+        local_9b8 = local_98c + fVar6 * fVar3;
+        local_9b8 = local_9b8 + local_9b8;
+        local_9b0 = fVar7 * fVar3 + fVar6 * fVar2;
+        local_9b0 = local_9b0 + local_9b0;
+        local_9ac = fVar6 * fVar3 - local_98c;
+        local_9ac = local_9ac + local_9ac;
+        fVar2 = fVar3 * fVar3 + fVar2 * fVar2;
+        local_9a8 = _DAT_005cc320 - (fVar2 + fVar2);
+        local_9a0 = *(undefined4 *)(iVar12 + 0x18);
+        local_99c = *(undefined4 *)(iVar12 + 0x1c);
+        local_998 = *(undefined4 *)(iVar12 + 0x20);
+        local_9d0[3] = 4.2039e-45;
+      }
+      else {
+        (*pcVar5)(local_9d0,iVar12);
+      }
+      FUN_004c4600(puVar10,local_9d0,local_a14);
+      uVar11 = local_a04[1];
+      if (uVar11 != 0) {
+        if ((uVar4 & 0x1000) == 0) {
+          if (uVar14 != 0) goto LAB_005347aa;
+        }
+        else {
+          pfVar15 = local_9d0;
+          pfVar17 = (float *)(uVar11 + 0x10);
+          for (iVar9 = 0x10; iVar9 != 0; iVar9 = iVar9 + -1) {
+            *pfVar17 = *pfVar15;
+            pfVar15 = pfVar15 + 1;
+            pfVar17 = pfVar17 + 1;
+          }
+          if (uVar14 == 0) {
+            FUN_004c0e50(uVar11);
+          }
+          else {
+LAB_005347aa:
+            if ((uVar4 & 0x4000) == 0) {
+              puVar16 = puVar10;
+              puVar18 = (uint *)(uVar11 + 0x50);
+              for (iVar9 = 0x10; iVar9 != 0; iVar9 = iVar9 + -1) {
+                *puVar18 = *puVar16;
+                puVar16 = puVar16 + 1;
+                puVar18 = puVar18 + 1;
+              }
+            }
+            else {
+              FUN_004c4600(uVar11 + 0x50,puVar10,local_940);
+            }
+            *(byte *)(uVar11 + 3) = *(byte *)(uVar11 + 3) & 0xfb | 8;
+          }
+        }
+      }
+      uVar11 = *local_a04 & 3;
+      puVar16 = puVar10;
+      if (uVar11 != 0) {
+        if (uVar11 == 1) {
+          local_a0c = local_a0c + -1;
+          puVar16 = (uint *)*local_a0c;
+        }
+        else {
+          puVar16 = local_a14;
+          if (uVar11 == 2) {
+            *local_a0c = (uint)local_a14;
+            local_a0c = local_a0c + 1;
+            puVar16 = puVar10;
+          }
+        }
+      }
+      local_a14 = puVar16;
+      iVar12 = iVar12 + local_990;
+      puVar10 = puVar10 + 0x10;
+      local_a04 = local_a04 + 4;
+      local_9d8 = local_9d8 + 1;
+    } while (local_9d8 < (int)param_1[1]);
+  }
+  return 1;
+}
+
+
+
+// FUN_0052e2c0 @ 0x0052e2c0  size=73  (MASHED.exe)
+// undefined FUN_0052e2c0(void)
+// callees: FUN_0052df70@0x0052df70, FUN_0052e0e0@0x0052e0e0
+
+/* [C1 2026-05-20] Dispatcher: computes `param_2 = param_2 - *(float*)(param_1+4)`. */
+
+undefined4 FUN_0052e2c0(int param_1,float param_2)
+
+{
+  param_2 = param_2 - *(float *)(param_1 + 4);
+  if (param_2 < DAT_005d757c) {
+    FUN_0052df70(param_1,-param_2);
+    return 1;
+  }
+  FUN_0052e0e0(param_1,param_2);
+  return 1;
+}
+
+
+
+// FUN_004b47c0 @ 0x004b47c0  size=30  (MASHED.exe)
+// undefined FUN_004b47c0(void)
+// callees: FUN_0052e0e0@0x0052e0e0, FUN_00533ec0@0x00533ec0
+
+/* [C1 2026-05-20] 2-step setter on a compound owner object at `param_1`: */
+
+void FUN_004b47c0(int param_1,undefined4 param_2)
+
+{
+  FUN_0052e0e0(*(undefined4 *)(param_1 + 0x20),param_2);
+  FUN_00533ec0(param_1);
+  return;
+}
+
+
+
+// FUN_0052df70 @ 0x0052df70  size=356  (MASHED.exe)
+// undefined FUN_0052df70(void)
+// callees: FUN_0052de60@0x0052de60, FUN_0052e0e0@0x0052e0e0
+
+/* [C1 2026-05-20] Time-driven update on a struct at param_1 (animation/effect controller).
+   `param_2` = negative tick… */
+
+undefined4 FUN_0052df70(int *param_1,float param_2)
+
+{
+  float fVar1;
+  int iVar2;
+  bool bVar3;
+  bool bVar4;
+  int iVar5;
+  int *piVar6;
+  
+  bVar4 = false;
+  if (((float)param_1[1] <= (float)param_1[5]) ||
+     ((float)param_1[1] - param_2 < (float)param_1[5] ==
+      ((float)param_1[1] - param_2 == (float)param_1[5]))) {
+    bVar3 = false;
+  }
+  else {
+    bVar3 = true;
+  }
+  fVar1 = (float)param_1[1];
+  param_1[1] = (int)(fVar1 - param_2);
+  if (DAT_005d757c <= fVar1 - param_2) {
+    piVar6 = param_1 + 0x13;
+    for (iVar5 = param_1[0xb]; iVar5 != 0; iVar5 = iVar5 + -1) {
+      if ((float)param_1[1] < *(float *)(*piVar6 + 4)) {
+        do {
+          piVar6[1] = *piVar6;
+          iVar2 = *(int *)*piVar6;
+          *piVar6 = iVar2;
+        } while ((float)param_1[1] < *(float *)(iVar2 + 4));
+      }
+      (*(code *)param_1[0x11])(piVar6,*piVar6,piVar6[1],param_1[1],*(undefined4 *)(*param_1 + 0x14))
+      ;
+      piVar6 = (int *)((int)piVar6 + param_1[9]);
+    }
+    param_1[2] = 0;
+  }
+  else {
+    fVar1 = (float)param_1[1];
+    do {
+      fVar1 = fVar1 + *(float *)(*param_1 + 0xc);
+    } while (fVar1 < DAT_005d757c);
+    param_1[1] = (int)fVar1;
+    FUN_0052de60(param_1,*param_1);
+    FUN_0052e0e0(param_1,fVar1);
+    if ((float)param_1[5] <= (float)param_1[1]) {
+      bVar4 = true;
+    }
+    else {
+      bVar3 = true;
+      bVar4 = true;
+    }
+  }
+  if (((bVar3) && ((code *)param_1[3] != (code *)0x0)) &&
+     (iVar5 = (*(code *)param_1[3])(param_1,param_1[4]), iVar5 == 0)) {
+    param_1[3] = 0;
+  }
+  if ((bVar4) && ((code *)param_1[6] != (code *)0x0)) {
+    iVar5 = (*(code *)param_1[6])(param_1,param_1[7]);
+    if (iVar5 == 0) {
+      param_1[6] = 0;
+      return 1;
+    }
+  }
+  return 1;
+}
+
+
+
+// FUN_00550bc0 @ 0x00550bc0  size=8  (MASHED.exe)
+// undefined FUN_00550bc0(void)
+// callees: (none)
+
+/* [C1 2026-05-11] 8-byte leaf function (3 instructions + C3 RET, padded with NOPs) */
+
+undefined4 FUN_00550bc0(int param_1)
+
+{
+  return *(undefined4 *)(param_1 + 8);
+}
+
+
+
+// FUN_004b4790 @ 0x004b4790  size=40  (MASHED.exe)
+// NOTE: 0x004b4790 is not a function entry; showing containing function
+// undefined FUN_004b4790(void)
+// callees: FUN_0052de60@0x0052de60, FUN_00533ec0@0x00533ec0
+
+int FUN_004b4790(undefined4 param_1,undefined4 param_2)
+
+{
+  int iVar1;
+  
+  iVar1 = func_0x004b4760(param_1);
+  FUN_0052de60(*(undefined4 *)(iVar1 + 0x20),param_2);
+  FUN_00533ec0(iVar1);
+  return iVar1;
+}
+
+
+
+// FUN_004b3f90 @ 0x004b3f90  size=40  (MASHED.exe)
+// undefined FUN_004b3f90(void)
+// callees: RpClumpForAllAtomics@0x004e66d0
+
+undefined4 FUN_004b3f90(int param_1)
+
+{
+  undefined4 uVar1;
+  undefined4 local_4;
+  
+  local_4 = 0;
+  uVar1 = 0;
+  if (param_1 != 0) {
+    RpClumpForAllAtomics(param_1,FUN_004b4070,&local_4);
+    uVar1 = local_4;
+  }
+  return uVar1;
+}
+
+
+
+// FUN_0046d4a0 @ 0x0046d4a0  size=46  (MASHED.exe)
+// undefined FUN_0046d4a0(void)
+// callees: (none)
+
+/* [C2 2026-06-02] Two args `(undefined4 *param_1 out, uint param_2 vehicle index)`. Body
+   `0x0046d4a0..0x0046d4cd` (45 bytes). Returns 1… */
+
+undefined4 FUN_0046d4a0(undefined4 *param_1,uint param_2)
+
+{
+  if (0xf < param_2) {
+    return 0;
+  }
+  *param_1 = &DAT_00881ec8 + (&DAT_00881f48)[param_2 * 0x341] * 0x10 + param_2 * 0x341;
+  return 1;
+}
+
+
+
+// FUN_0046be10 @ 0x0046be10  size=55  (MASHED.exe)
+// undefined FUN_0046be10(void)
+// callees: (none)
+
+/* [C2 2026-06-03] Params: `param_1` (`undefined4*` → 1 value), `param_2` (uint vehicle),
+   `param_3` (int offset into the per-vehicle… */
+
+undefined4 FUN_0046be10(undefined4 *param_1,uint param_2,int param_3,undefined4 param_4)
+
+{
+  if (0xf < param_2) {
+    return 0;
+  }
+  param_3 = param_2 * 0x341 + param_3;
+  (&DAT_0088219c)[param_3] = *param_1;
+  (&DAT_0088221c)[param_3] = param_4;
+  return 1;
+}
+
+
+
+// FUN_0046bf50 @ 0x0046bf50  size=104  (MASHED.exe)
+// undefined FUN_0046bf50(void)
+// callees: FUN_00481780@0x00481780
+
+/* [C2 2026-06-03] Params: `param_1` (float* → vec3), `param_2` (uint vehicle). - Bounds: `if (0xf
+   < param_2) return 0;`. - Branch on… */
+
+undefined4 FUN_0046bf50(float *param_1,uint param_2)
+
+{
+  if (0xf < param_2) {
+    return 0;
+  }
+  if ((&DAT_008815b4)[param_2 * 0x341] != 0) {
+    FUN_00481780(param_1,param_2);
+    return 1;
+  }
+  (&DAT_00881f50)[param_2 * 0x341] = (float)(&DAT_00881f50)[param_2 * 0x341] + *param_1;
+  (&DAT_00881f54)[param_2 * 0x341] = param_1[1] + (float)(&DAT_00881f54)[param_2 * 0x341];
+  (&DAT_00881f58)[param_2 * 0x341] = param_1[2] + (float)(&DAT_00881f58)[param_2 * 0x341];
+  return 1;
+}
+
+
+
+// FUN_0041f1e0 @ 0x0041f1e0  size=51  (MASHED.exe)
+// undefined FUN_0041f1e0(void)
+// callees: FUN_004c0ed0@0x004c0ed0
+
+/* [C2 2026-05-12] Reads the event record at (player, event_id) and copies 16 floats (a 4×4 matrix)
+   out to param_3. */
+
+void FUN_0041f1e0(int param_1,int param_2,undefined4 *param_3)
+
+{
+  undefined4 *puVar1;
+  int iVar2;
+  
+  puVar1 = (undefined4 *)
+           FUN_004c0ed0(*(undefined4 *)
+                         (*(int *)(&DAT_0063d9e0 + (param_1 * 0xab + param_2) * 4) + 4));
+  for (iVar2 = 0x10; iVar2 != 0; iVar2 = iVar2 + -1) {
+    *param_3 = *puVar1;
+    puVar1 = puVar1 + 1;
+    param_3 = param_3 + 1;
+  }
+  return;
+}
+
+
+
+// FUN_00481750 @ 0x00481750  size=40  (MASHED.exe)
+// undefined FUN_00481750(void)
+// callees: FUN_0055b650@0x0055b650, FUN_0057c210@0x0057c210
+
+/* [C2 2026-06-02] Guarded vehicle impulse wrapper (control-flow complete, whole function): `void
+   FUN_00481750(int param_1)` — param_1 =… */
+
+void FUN_00481750(int param_1)
+
+{
+  int iVar1;
+  
+  iVar1 = FUN_0057c210((&DAT_006c9a78)[param_1]);
+  if (*(int *)(*(int *)(iVar1 + 0x10) + 4) != 0) {
+    FUN_0055b650();
+    return;
+  }
+  return;
+}
+
+
+
+// FUN_00480720 @ 0x00480720  size=703  (MASHED.exe)
+// undefined FUN_00480720(void)
+// callees: FID_conflict:_wprintf@0x004a2cbd, FUN_0046d4a0@0x0046d4a0, FUN_004c0e50@0x004c0e50, FUN_004c3ac0@0x004c3ac0, FUN_004c3df0@0x004c3df0, FUN_004c45f0@0x004c45f0, FUN_0055ac00@0x0055ac00, FUN_0055ad30@0x0055ad30, FUN_0055ae70@0x0055ae70, FUN_0055dff0@0x0055dff0, FUN_0057c210@0x0057c210
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C1 2026-05-08] Called from FUN_00470c70 final-substep loop as FUN_00480720(iVar6) when respawn
+   countdown is 0 and… */
+
+undefined4 FUN_00480720(int param_1)
+
+{
+  undefined4 *puVar1;
+  int *piVar2;
+  float fVar3;
+  int iVar4;
+  float *pfVar5;
+  int iVar6;
+  int iVar7;
+  undefined4 *puVar8;
+  float10 fVar9;
+  float10 fVar10;
+  undefined4 uVar11;
+  undefined8 uVar12;
+  undefined4 *local_20;
+  int local_1c;
+  float local_18;
+  float local_14;
+  float local_10;
+  float local_c;
+  float local_8;
+  float local_4;
+  
+  if (0xf < param_1) {
+    return 0;
+  }
+  iVar7 = param_1 * 0xd04;
+  if ((&DAT_008815b4)[param_1 * 0x341] == 0) {
+    FUN_0046d4a0(&local_20,param_1);
+    iVar4 = FUN_0057c210();
+    iVar6 = *(int *)(iVar4 + 0x24);
+    local_1c = iVar4;
+    if ((iVar6 == 0) ||
+       ((1 << ((byte)*(ushort *)(iVar4 + 0x20) & 0x1f) &
+        *(uint *)(*(int *)(iVar6 + 0x60) + (uint)(*(ushort *)(iVar4 + 0x20) >> 5) * 4)) == 0)) {
+      FUN_0055ad30(iVar6,iVar4);
+      FUN_0055ac00(*(undefined4 *)(iVar4 + 0x24),iVar4,1);
+    }
+    uVar11 = *(undefined4 *)(iVar4 + 0x24);
+    uVar12 = CONCAT44(param_1 + 2,iVar4);
+    FUN_0055ae70();
+    piVar2 = *(int **)(*(int *)(iVar4 + 0x10) + 4);
+    puVar1 = (undefined4 *)(*(int *)(*(int *)(*piVar2 + 0x10) + 8) + 0x10 + piVar2[1] * 0x20);
+    *puVar1 = 0;
+    puVar1[1] = 0;
+    puVar1[2] = 0;
+    pfVar5 = (float *)(*(int *)(*(int *)(*piVar2 + 0x10) + 8) + piVar2[1] * 0x20);
+    local_18 = *pfVar5;
+    local_14 = pfVar5[1];
+    local_10 = pfVar5[2];
+    fVar9 = (float10)FUN_004c3ac0(&local_18,uVar11,uVar12);
+    fVar10 = (float10)FUN_004c3ac0(&DAT_00881f50 + param_1 * 0x341);
+    fVar3 = (float)fVar9 * _DAT_005cd8fc;
+    if (_DAT_005ce9b0 < fVar3) {
+      local_18 = (float)(&DAT_00881f50)[param_1 * 0x341] * _DAT_005cea6c;
+      local_14 = (float)(&DAT_00881f54)[param_1 * 0x341] * _DAT_005cea6c;
+      local_10 = (float)(&DAT_00881f58)[param_1 * 0x341] * _DAT_005cea6c;
+      pfVar5 = (float *)(*(int *)(*(int *)(*piVar2 + 0x10) + 8) + piVar2[1] * 0x20);
+      *pfVar5 = local_18;
+      pfVar5[1] = local_14;
+      pfVar5[2] = local_10;
+      FID_conflict__wprintf("RWP speed=%f (%f)\n",(double)(float)fVar9,(double)fVar3);
+      FID_conflict__wprintf("PW car speed=%f\n",(double)(float)fVar10);
+      FID_conflict__wprintf("SPEED ADJUSTMENT OCCURRED!\n");
+    }
+    puVar1 = *(undefined4 **)(*(int *)(iVar4 + 0x10) + 8);
+    local_18 = (float)puVar1[0xc];
+    local_14 = (float)puVar1[0xd];
+    local_10 = (float)puVar1[0xe];
+    puVar8 = puVar1;
+    for (iVar6 = 0x10; iVar6 != 0; iVar6 = iVar6 + -1) {
+      *puVar8 = *local_20;
+      local_20 = local_20 + 1;
+      puVar8 = puVar8 + 1;
+    }
+    local_c = (float)(&DAT_008816d8)[param_1 * 0x341];
+    local_8 = (float)(&DAT_008816dc)[param_1 * 0x341];
+    local_4 = (float)(&DAT_008816e0)[param_1 * 0x341];
+    FUN_004c3df0(&local_c,&local_c,1,puVar1);
+    puVar1[0xc] = (float)puVar1[0xc] - local_c;
+    puVar1[0xd] = (float)puVar1[0xd] - local_8;
+    puVar1[0xe] = (float)puVar1[0xe] - local_4;
+    FUN_004c45f0(puVar1);
+    FUN_004c0e50(*(undefined4 *)((&DAT_006c9a78)[param_1] + 4));
+    iVar6 = local_1c;
+    FUN_0055dff0(local_1c,0);
+    FUN_0055ac00(*(undefined4 *)(iVar6 + 0x24),iVar6,1);
+    *(undefined4 *)(&DAT_00881f64 + iVar7) = 0;
+    *(undefined4 *)(&DAT_00881f60 + iVar7) = 0;
+    *(undefined4 *)(&DAT_00881f5c + iVar7) = 0;
+    (&DAT_00881f58)[param_1 * 0x341] = 0;
+    (&DAT_00881f54)[param_1 * 0x341] = 0;
+    (&DAT_00881f50)[param_1 * 0x341] = 0;
+    (&DAT_008815b4)[param_1 * 0x341] = 1;
+    (&DAT_008815b8)[param_1 * 0x341] = 600;
+    return 1;
+  }
+  return 0;
+}
+
+
+
+// FUN_004c4dc0 @ 0x004c4dc0  size=225  (MASHED.exe)
+// undefined FUN_004c4dc0(void)
+// callees: FUN_004c4eb0@0x004c4eb0
+
+/* [C1 2026-06-01] `float * FUN_004c4dc0(float *param_1 /*out*/, float *param_2 /*in*/)` —
+   RwMatrixInvert with two fast… */
+
+float * FUN_004c4dc0(float *param_1,float *param_2)
+
+{
+  float fVar1;
+  float fVar2;
+  float fVar3;
+  float fVar4;
+  float fVar5;
+  float fVar6;
+  int iVar7;
+  float *pfVar8;
+  
+  if ((*(uint *)(DAT_007d4028 + 4 + DAT_007d3ff8) & (uint)param_2[3] & 0x20000) != 0) {
+    pfVar8 = param_1;
+    for (iVar7 = 0x10; iVar7 != 0; iVar7 = iVar7 + -1) {
+      *pfVar8 = *param_2;
+      param_2 = param_2 + 1;
+      pfVar8 = pfVar8 + 1;
+    }
+    return param_1;
+  }
+  if ((SUB41(param_2[3],0) & 3) == 3) {
+    *param_1 = *param_2;
+    param_1[1] = param_2[4];
+    param_1[2] = param_2[8];
+    param_1[4] = param_2[1];
+    param_1[5] = param_2[5];
+    param_1[6] = param_2[9];
+    param_1[8] = param_2[2];
+    param_1[9] = param_2[6];
+    param_1[10] = param_2[10];
+    param_1[0xc] = -(param_2[2] * param_2[0xe] + param_2[0xc] * *param_2 + param_2[0xd] * param_2[1]
+                    );
+    param_1[0xd] = -(param_2[0xe] * param_2[6] +
+                    param_2[0xd] * param_2[5] + param_2[0xc] * param_2[4]);
+    fVar1 = param_2[8];
+    fVar2 = param_2[0xc];
+    fVar3 = param_2[0xd];
+    fVar4 = param_2[9];
+    fVar5 = param_2[10];
+    fVar6 = param_2[0xe];
+    param_1[3] = 4.2039e-45;
+    param_1[0xe] = -(fVar5 * fVar6 + fVar3 * fVar4 + fVar1 * fVar2);
+    return param_1;
+  }
+  FUN_004c4eb0(param_1,param_2);
+  return param_1;
+}
+
+
+
+// FUN_004c52f0 @ 0x004c52f0  size=378  (MASHED.exe)
+// undefined FUN_004c52f0(void)
+// callees: FUN_004d7ff0@0x004d7ff0, FUN_004d8480@0x004d8480
+
+/* [C1 2026-05-13] Ghidra comment confirms: `RwMatrixCombine(dst, src, combineOp)` — combines two
+   RW 4×4 matrices. */
+
+uint * FUN_004c52f0(uint *param_1,uint *param_2,int param_3)
+
+{
+  uint uVar1;
+  int iVar2;
+  uint uVar3;
+  uint *puVar4;
+  uint *puVar5;
+  uint uVar6;
+  undefined4 local_48;
+  undefined4 local_44;
+  uint local_40 [16];
+  
+  if (param_3 == 0) {
+    puVar4 = param_1;
+    for (iVar2 = 0x10; iVar2 != 0; iVar2 = iVar2 + -1) {
+      *puVar4 = *param_2;
+      param_2 = param_2 + 1;
+      puVar4 = puVar4 + 1;
+    }
+    return param_1;
+  }
+  if (param_3 == 1) {
+    uVar3 = param_2[3];
+    uVar6 = param_1[3];
+    uVar1 = *(uint *)(DAT_007d4028 + 4 + DAT_007d3ff8) & 0x20000;
+    if ((uVar3 & uVar1) != 0) {
+      puVar4 = param_1;
+      puVar5 = local_40;
+      for (iVar2 = 0x10; iVar2 != 0; iVar2 = iVar2 + -1) {
+        *puVar5 = *puVar4;
+        puVar4 = puVar4 + 1;
+        puVar5 = puVar5 + 1;
+      }
+      puVar4 = local_40;
+      puVar5 = param_1;
+      for (iVar2 = 0x10; iVar2 != 0; iVar2 = iVar2 + -1) {
+        *puVar5 = *puVar4;
+        puVar4 = puVar4 + 1;
+        puVar5 = puVar5 + 1;
+      }
+      return param_1;
+    }
+    puVar4 = param_2;
+    puVar5 = param_1;
+    if ((uVar6 & uVar1) != 0) {
+      puVar4 = local_40;
+      for (iVar2 = 0x10; iVar2 != 0; iVar2 = iVar2 + -1) {
+        *puVar4 = *param_2;
+        param_2 = param_2 + 1;
+        puVar4 = puVar4 + 1;
+      }
+      puVar4 = local_40;
+      for (iVar2 = 0x10; iVar2 != 0; iVar2 = iVar2 + -1) {
+        *puVar5 = *puVar4;
+        puVar4 = puVar4 + 1;
+        puVar5 = puVar5 + 1;
+      }
+      return param_1;
+    }
+  }
+  else {
+    if (param_3 != 2) {
+      local_48 = 1;
+      local_44 = FUN_004d7ff0(0x80000003,s_Invalid_combination_type_0061811c);
+      FUN_004d8480(&local_48);
+      return (uint *)0x0;
+    }
+    uVar3 = param_1[3];
+    uVar6 = param_2[3];
+    uVar1 = *(uint *)(DAT_007d4028 + 4 + DAT_007d3ff8) & 0x20000;
+    if ((uVar3 & uVar1) != 0) {
+      puVar4 = local_40;
+      for (iVar2 = 0x10; iVar2 != 0; iVar2 = iVar2 + -1) {
+        *puVar4 = *param_2;
+        param_2 = param_2 + 1;
+        puVar4 = puVar4 + 1;
+      }
+      puVar4 = local_40;
+      puVar5 = param_1;
+      for (iVar2 = 0x10; iVar2 != 0; iVar2 = iVar2 + -1) {
+        *puVar5 = *puVar4;
+        puVar4 = puVar4 + 1;
+        puVar5 = puVar5 + 1;
+      }
+      return param_1;
+    }
+    puVar4 = param_1;
+    puVar5 = param_2;
+    if ((uVar6 & uVar1) != 0) {
+      puVar5 = local_40;
+      for (iVar2 = 0x10; iVar2 != 0; iVar2 = iVar2 + -1) {
+        *puVar5 = *puVar4;
+        puVar4 = puVar4 + 1;
+        puVar5 = puVar5 + 1;
+      }
+      puVar4 = local_40;
+      puVar5 = param_1;
+      for (iVar2 = 0x10; iVar2 != 0; iVar2 = iVar2 + -1) {
+        *puVar5 = *puVar4;
+        puVar4 = puVar4 + 1;
+        puVar5 = puVar5 + 1;
+      }
+      return param_1;
+    }
+  }
+  (**(code **)(DAT_007d4028 + 8 + DAT_007d3ff8))(local_40,puVar4,puVar5);
+  local_40[3] = uVar6 & uVar3;
+  puVar4 = local_40;
+  puVar5 = param_1;
+  for (iVar2 = 0x10; iVar2 != 0; iVar2 = iVar2 + -1) {
+    *puVar5 = *puVar4;
+    puVar4 = puVar4 + 1;
+    puVar5 = puVar5 + 1;
+  }
+  return param_1;
+}
+
+
+
+// FUN_0047ce40 @ 0x0047ce40  size=37  (MASHED.exe)
+// undefined FUN_0047ce40(void)
+// callees: (none)
+
+/* [C2 2026-06-02] If `param_1 <= 0` → return `-1` (guard at 0x0047ce40 entry). 2. Linear scan
+   `iVar1 = 0 .. 199`: if… */
+
+int FUN_0047ce40(int param_1)
+
+{
+  int iVar1;
+  
+  iVar1 = 0;
+  if (0 < param_1) {
+    do {
+      if ((&DAT_006c6b90)[iVar1] == param_1) {
+        return iVar1;
+      }
+      iVar1 = iVar1 + 1;
+    } while (iVar1 < 200);
+  }
+  return -1;
+}
+
+
+
+// FUN_0047d100 @ 0x0047d100  size=36  (MASHED.exe)
+// undefined FUN_0047d100(void)
+// callees: FUN_004b5240@0x004b5240
+
+/* [C2 2026-06-02] Guard: `-1 < param_1 && param_1 < 200 && (&DAT_006c71d8)[param_1] != 0`. If not
+   satisfied, return. 2. When satisfied… */
+
+void FUN_0047d100(int param_1)
+
+{
+  if (((-1 < param_1) && (param_1 < 200)) && ((&DAT_006c71d8)[param_1] != 0)) {
+    FUN_004b5240();
+    return;
+  }
+  return;
+}
+
+
+
+// FUN_0047d150 @ 0x0047d150  size=41  (MASHED.exe)
+// undefined FUN_0047d150(void)
+// callees: FUN_0057c210@0x0057c210
+
+/* [C2 2026-06-03] `undefined4 FUN_0047d150(int param_1)` — body 0x0047d150..0x0047d178. **Get a
+   scenery- actor's RW render object… */
+
+undefined4 FUN_0047d150(int param_1)
+
+{
+  int iVar1;
+  
+  if ((-1 < param_1) && (param_1 < 200)) {
+    iVar1 = FUN_0057c210((&DAT_006c71d8)[param_1]);
+    return *(undefined4 *)(*(int *)(iVar1 + 0x10) + 8);
+  }
+  return 0;
+}
+
+
+
+// FUN_0047d180 @ 0x0047d180  size=177  (MASHED.exe)
+// undefined FUN_0047d180(void)
+// callees: FUN_004c0e50@0x004c0e50, FUN_004c45f0@0x004c45f0, FUN_004c52f0@0x004c52f0, FUN_0055ab30@0x0055ab30, FUN_0055ac00@0x0055ac00, FUN_0055ade0@0x0055ade0, FUN_0055dff0@0x0055dff0, FUN_0057c210@0x0057c210, FUN_0057c420@0x0057c420
+
+/* [C2 2026-06-03] `void FUN_0047d180(int param_1, undefined4 param_2)` — body
+   0x0047d180..0x0047d230. **Reposition / re-transform a… */
+
+void FUN_0047d180(int param_1,undefined4 param_2)
+
+{
+  int iVar1;
+  int iVar2;
+  undefined4 uVar3;
+  undefined1 local_20 [32];
+  
+  iVar2 = FUN_0057c210((&DAT_006c71d8)[param_1]);
+  iVar1 = *(int *)(iVar2 + 0x24);
+  if ((iVar1 != 0) &&
+     ((*(uint *)(*(int *)(iVar1 + 0x60) + (uint)(*(ushort *)(iVar2 + 0x20) >> 5) * 4) &
+      1 << ((byte)*(ushort *)(iVar2 + 0x20) & 0x1f)) != 0)) {
+    FUN_0055ade0(iVar1,iVar2);
+  }
+  uVar3 = *(undefined4 *)(*(int *)(iVar2 + 0x10) + 8);
+  FUN_004c52f0(uVar3,param_2,0);
+  FUN_004c45f0(uVar3);
+  FUN_004c0e50(*(undefined4 *)((&DAT_006c71d8)[param_1] + 4));
+  FUN_0055dff0(iVar2,0);
+  if (*(int *)(iVar2 + 0x24) != 0) {
+    uVar3 = FUN_0057c420(iVar2,local_20);
+    FUN_0055ab30(*(undefined4 *)(iVar2 + 0x24),iVar2,uVar3);
+    FUN_0055ac00(*(undefined4 *)(iVar2 + 0x24),iVar2,0);
+  }
+  return;
+}
+
+
+
+// FUN_0047d130 @ 0x0047d130  size=26  (MASHED.exe)
+// undefined FUN_0047d130(void)
+// callees: (none)
+
+/* [C2 2026-06-03] `undefined4 FUN_0047d130(int param_1)` — body 0x0047d130..0x0047d149.
+   **Bounds-checked getter for the scenery-actor… */
+
+undefined4 FUN_0047d130(int param_1)
+
+{
+  if ((-1 < param_1) && (param_1 < 200)) {
+    return (&DAT_006c71d8)[param_1];
+  }
+  return 0;
+}
+
+
+
+// FUN_0057c210 @ 0x0057c210  size=14  (MASHED.exe)
+// undefined FUN_0057c210(void)
+// callees: (none)
+
+/* [C1 2026-05-13] Takes `param_1` (int): byte offset into the animation table. */
+
+undefined4 FUN_0057c210(int param_1)
+
+{
+  return *(undefined4 *)(DAT_007dc8d8 + param_1);
+}
+
+
+
+// FUN_004e5fc0 @ 0x004e5fc0  size=318  (MASHED.exe)
+// undefined FUN_004e5fc0(void)
+// callees: (none)
+
+/* [C1 2026-05-12] param_1 is an atomic-like struct (same type as the argument to FUN_004e6100). */
+
+void FUN_004e5fc0(int param_1)
+
+{
+  int iVar1;
+  undefined4 *puVar2;
+  short sVar3;
+  short sVar4;
+  int iVar5;
+  int iVar6;
+  float fVar7;
+  float fVar8;
+  float fVar9;
+  int iVar10;
+  
+  iVar5 = *(int *)(param_1 + 0x18);
+  if (iVar5 == 0) {
+    return;
+  }
+  sVar3 = *(short *)(param_1 + 0x52);
+  sVar4 = *(short *)(param_1 + 0x50);
+  if (sVar4 != sVar3) {
+    if (((int)sVar4 < *(int *)(iVar5 + 0x18)) &&
+       (iVar10 = (int)sVar3, iVar10 < *(int *)(iVar5 + 0x18))) {
+      iVar6 = *(int *)(iVar5 + 0x5c);
+      fVar7 = *(float *)(param_1 + 0x5c) * *(float *)(param_1 + 0x58);
+      iVar5 = iVar6 + sVar4 * 0x1c;
+      iVar1 = iVar6 + iVar10 * 0x1c;
+      *(float *)(param_1 + 0x28) =
+           (*(float *)(iVar6 + 0x10 + iVar10 * 0x1c) - *(float *)(iVar5 + 0x10)) * fVar7 +
+           *(float *)(iVar5 + 0x10);
+      *(float *)(param_1 + 0x1c) = *(float *)(iVar1 + 4) - *(float *)(iVar5 + 4);
+      *(float *)(param_1 + 0x20) = *(float *)(iVar1 + 8) - *(float *)(iVar5 + 8);
+      *(float *)(param_1 + 0x24) = *(float *)(iVar1 + 0xc) - *(float *)(iVar5 + 0xc);
+      fVar8 = *(float *)(param_1 + 0x1c) * fVar7;
+      *(float *)(param_1 + 0x1c) = fVar8;
+      fVar9 = *(float *)(param_1 + 0x20) * fVar7;
+      *(float *)(param_1 + 0x20) = fVar9;
+      fVar7 = *(float *)(param_1 + 0x24) * fVar7;
+      *(float *)(param_1 + 0x24) = fVar7;
+      *(float *)(param_1 + 0x1c) = *(float *)(iVar5 + 4) + fVar8;
+      *(float *)(param_1 + 0x20) = *(float *)(iVar5 + 8) + fVar9;
+      *(float *)(param_1 + 0x24) = *(float *)(iVar5 + 0xc) + fVar7;
+      goto LAB_004e60e6;
+    }
+  }
+  if (((int)sVar4 < *(int *)(iVar5 + 0x18)) && ((int)sVar3 < *(int *)(iVar5 + 0x18))) {
+    puVar2 = (undefined4 *)(*(int *)(iVar5 + 0x5c) + 4 + sVar4 * 0x1c);
+    *(undefined4 *)(param_1 + 0x1c) = *puVar2;
+    *(undefined4 *)(param_1 + 0x20) = puVar2[1];
+    *(undefined4 *)(param_1 + 0x24) = puVar2[2];
+    *(undefined4 *)(param_1 + 0x28) = puVar2[3];
+  }
+  else {
+    iVar5 = *(int *)(iVar5 + 0x5c);
+    *(undefined4 *)(param_1 + 0x1c) = *(undefined4 *)(iVar5 + 4);
+    *(undefined4 *)(param_1 + 0x20) = *(undefined4 *)(iVar5 + 8);
+    *(undefined4 *)(param_1 + 0x24) = *(undefined4 *)(iVar5 + 0xc);
+    *(undefined4 *)(param_1 + 0x28) = *(undefined4 *)(iVar5 + 0x10);
+  }
+LAB_004e60e6:
+  *(uint *)(param_1 + 0x4c) = *(uint *)(param_1 + 0x4c) & 0xfffffffd;
+  *(byte *)(param_1 + 3) = *(byte *)(param_1 + 3) | 1;
+  return;
+}
+
+
+
+// FUN_004671a0 @ 0x004671a0  size=28  (MASHED.exe)
+// undefined FUN_004671a0(void)
+// callees: FUN_0042b930@0x0042b930, FUN_0042f510@0x0042f510
+
+/* [C2 2026-05-16] Takes one `int param_1`. Returns `undefined4`. */
+
+undefined4 FUN_004671a0(int param_1)
+
+{
+  int iVar1;
+  undefined4 uVar2;
+  
+  iVar1 = FUN_0042b930();
+  if ((iVar1 == 3) && (param_1 != -1)) {
+    uVar2 = FUN_0042f510();
+    return uVar2;
+  }
+  return DAT_006905b0;
+}
+
+
+
+// FUN_004c1b40 @ 0x004c1b40  size=104  (MASHED.exe)
+// undefined FUN_004c1b40(void)
+// callees: (none)
+
+undefined4 FUN_004c1b40(int param_1,float *param_2)
+
+{
+  float fVar1;
+  float *pfVar2;
+  int iVar3;
+  undefined4 uVar4;
+  
+  uVar4 = 2;
+  pfVar2 = (float *)(param_1 + 0x94);
+  iVar3 = 6;
+  do {
+    iVar3 = iVar3 + -1;
+    fVar1 = (pfVar2[2] * param_2[2] + *pfVar2 * *param_2 + pfVar2[1] * param_2[1]) - pfVar2[3];
+    if (param_2[3] < fVar1) {
+      return 0;
+    }
+    if (-param_2[3] < fVar1) {
+      uVar4 = 1;
+    }
+    pfVar2 = pfVar2 + 5;
+  } while (iVar3 != 0);
+  return uVar4;
+}
+
+
+
+// FUN_0040e340 @ 0x0040e340  size=6  (MASHED.exe)
+// undefined FUN_0040e340(void)
+// callees: (none)
+
+/* [C2 2026-05-18] Body (0x0040e340..0x0040e345): */
+
+undefined4 FUN_0040e340(void)
+
+{
+  return DAT_008a94d0;
+}
+
+

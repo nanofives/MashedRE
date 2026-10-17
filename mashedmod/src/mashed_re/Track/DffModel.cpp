@@ -360,6 +360,7 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len, bool bake_frames
                 // [rstates] the atomic's sphere in model space (see DffModel.h).
                 AtomicSphere as2{};
                 FrameXform(frames, fi, geo.sphere, as2.c);
+                as2.c_geo[0] = geo.sphere[0]; as2.c_geo[1] = geo.sphere[1]; as2.c_geo[2] = geo.sphere[2];
                 float scale2 = 0.f;
                 for (int ax = 0; ax < 3; ++ax) {
                     const float e[3] = {ax == 0 ? 1.f : 0.f, ax == 1 ? 1.f : 0.f,
