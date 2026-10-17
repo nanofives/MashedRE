@@ -144,4 +144,6 @@ U-9738..U-9742). B2 = clean `d328adb19` `2744E47ED9FC4447`, N4 = this branch `84
 
 C: went to 0 bytes during setup; the C: worktree (mine, empty) was removed with `diag.py wt-remove` and recreated on D:; the parent was
 told. Only PIDs this lane spawned were stopped. MB-sized step dumps / traces were deleted before the commits (sha8 lines in the
-batch logs). Base worktree `D:\MashedWT\pontoon_base` (detached at 2cc15b2cf) holds the B build.
+batch logs). The base builds came from detached worktrees `D:\MashedWT\pontoon_base` (2cc15b2cf) and `pontoon_base2`
+(d328adb19), removed with `diag.py wt-remove` after use; the exe snapshots stay in `D:\MashedWT\pontoon_data\exe\`. The pre-rebase
+history is kept as branch `work/pontoon-pre-rebase` (0543fb493).
