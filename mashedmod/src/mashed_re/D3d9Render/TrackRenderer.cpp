@@ -4979,7 +4979,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         // then 29.507563 for all three cars, and converge on the third call (verify/d3bB2_20261017 B_SLP_K1).
         {
             static const bool s_tickFirstPP = [] { const char* e = std::getenv("MASHED_AI_TICK_FIRST");
-                                                   return e && e[0] == '1'; }();
+                                                   return (e && e[0] == '1') || Vehicle::VehiclePhysics_A4OrderEnabled(); }();   // [a4order] implies it
             if (s_tickFirstPP) Race::PathProg_FrameTick();
         }
         // [d1r2] The original runs the director on every pre-race frame (sub-states
@@ -5109,8 +5109,10 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             if (SubState_Enabled()) HudSlideBillboardTimerTail();
     };
     {
+        // [a4order 2026-10-17] MASHED_A4_ORDER=1 implies this order: the A4 loop of FUN_00470c70 reads the commands the
+        // AI tick wrote this frame (0x00425a73 before 0x00425a8d), and the AI cars' A4 now runs before the player's step.
         static const bool s_aiTickFirst = [] { const char* e = std::getenv("MASHED_AI_TICK_FIRST");
-                                               return e && e[0] == '1'; }();
+                                               return (e && e[0] == '1') || Vehicle::VehiclePhysics_A4OrderEnabled(); }();
         if (s_aiTickFirst && g_aib.loaded && (Ai::I32(Ai::kSplineRaceCnt) > 3)) ai_tick_phase();
     }
     // WS-A8 (2026-06-17): when MASHED_REAL_PHYSICS is on, drive the player car
@@ -5140,6 +5142,58 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         bool gok = false;
         GroundHeight(car_pos_[0], car_pos_[2], &gok);
         io.grounded = gok ? 1 : 0;
+        // [a4order 2026-10-17] MASHED_A4_ORDER=1 (default OFF, U-9746). FUN_00470c70 runs the gate + A4 of EVERY car
+        // (0x00470f80..0x00471099, FUN_00470670 at 0x00471076) and the refresh (0x004710a1..0x004710da) before the
+        // first FUN_004709a0 (0x00471137), so a car<->car impulse from the player's substeps (0x00470bcd) reaches an AI
+        // car after that car's A4. Here: the AI cars' gate + A4, with the io the opponent loop below builds for
+        // them (same skips, same shock throttle), before the player's step; their StepCar then runs only the substeps.
+        if (Vehicle::VehiclePhysics_A4OrderEnabled()) {
+            Vehicle::VehiclePhysics_A4PreBegin();
+            static const bool s_noOppA4 = (std::getenv("MASHED_MEASURE_NOOPP") != nullptr);
+            if (ai_tick_ran && !s_noOppA4) {
+                for (int ci = 0; ci < static_cast<int>(ai_cars_.size()); ++ci) {
+                    const AiCar& a = ai_cars_[static_cast<std::size_t>(ci)];
+                    const int v = ci + 1;
+                    if (round_mode_ && !race_[ci + 1].alive) continue;   // the opponent loop's skips
+                    if (a.spin > 0.f) continue;
+                    const std::uint8_t* blk = reinterpret_cast<const std::uint8_t*>(
+                        Ai::kCtrlBlockBase + static_cast<std::uintptr_t>(
+                            Ai::I32(Ai::kSlotTableBase + static_cast<std::uintptr_t>(v) * Ai::kSlotTableStride))
+                        * Ai::kCtrlBlockStride);
+                    Vehicle::PlayerCarIO aio;
+                    aio.pos[0] = a.pos[0]; aio.pos[1] = a.pos[1]; aio.pos[2] = a.pos[2];
+                    aio.vel[0] = a.vel[0]; aio.vel[1] = a.vel[1]; aio.vel[2] = a.vel[2];
+                    aio.yaw = a.yaw; aio.speed = a.cur_speed;
+                    for (int k = 0; k < 8; ++k) aio.input[k] = blk[k];
+                    const float slow = (a.slow > 0.f) ? a.slow - in.dt : a.slow;   // the loop decrements first
+                    if (slow > 0.f) aio.input[4] = static_cast<std::uint8_t>(aio.input[4] * 0.35f);
+                    aio.steer = 0.f;
+                    aio.raw_steer = 1;
+                    aio.ground_off = car_ground_off_;
+                    bool aok = false;
+                    GroundHeight(a.pos[0], a.pos[2], &aok);
+                    aio.grounded = aok ? 1 : 0;
+                    Vehicle::VehiclePhysics_A4Pre(v, in.dt, aio);
+                }
+            }
+            Vehicle::VehiclePhysics_A4PreEnd();
+        }
+        // [u9749 2026-10-17] FUN_00424eb0's FUN_0046c7d0 for car 0 (default ON since 2026-10-17, MASHED_NO_HEADING_ASSIST_PLAYER=1 opts out; U-9743 /
+        // U-9749): before the player's physics, with the steer bytes StepCar derives from io.steer (VehiclePhysicsRun.cpp
+        // WS-A8-STEER map), or the raw bytes when the caller set raw_steer.
+        if (Race::HeadingAssist_Mask() & 0x2u) {
+            std::uint8_t s0 = io.input[0], s1 = io.input[1];
+            if (!io.raw_steer) {
+                float st = io.steer;
+                if (st >  1.0f) st =  1.0f;
+                if (st < -1.0f) st = -1.0f;
+                const int mag = static_cast<int>((st < 0.f ? -st : st) * 255.f + 0.5f);
+                const std::uint8_t m = static_cast<std::uint8_t>(mag > 255 ? 255 : mag);
+                s0 = (st > 0.f) ? m : 0;
+                s1 = (st < 0.f) ? m : 0;
+            }
+            Race::HeadingAssist_Player(static_cast<int>(in.dt * 3000.0f + 0.5f), s0, s1);
+        }
         Vehicle::VehiclePhysics_StepPlayer(in.dt, io);
         car_vel_[0] = io.vel[0]; car_vel_[1] = io.vel[1]; car_vel_[2] = io.vel[2];
         car_speed_  = io.speed;
@@ -5528,6 +5582,8 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         // [d3bB2 2026-10-17] FUN_00425a40 runs FUN_00422ba0 (the event drain) after FUN_00470c70, the physics of
         // every car: here, after the player's step (above) and the opponents'. Default OFF (MASHED_AI_CONTACT_EVENT).
         if (Ai::Ai_ContactEventEnabled()) Ai::Ai_ContactEventDrain();
+        // [u9749] MASHED_RECDUMP (diagnostic, default OFF): one record per race frame after every car's physics
+        if (phys) Vehicle::VehiclePhysics_RecDumpFrame();
         // diagnostic (env MASHED_AI_DIAG -> mashed_re.log, ~every 30 frames): pos/yaw/speed
         // so a stalled car's trajectory is visible. Read-only (does NOT call
         // Ai_ComputeTarget, which would double-update the continuity index this frame).

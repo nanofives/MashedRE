@@ -146,10 +146,12 @@ std::FILE* TraceFile() {
     return s_f;
 }
 
-// FUN_0046c7d0(v, dt). Returns the applied angle (0 when nothing rotated).
-float AssistCar(int v, int dtUnits) {
+// FUN_0046c7d0(v, dt). Returns the applied angle (0 when nothing rotated). `own` (player form, u9749): the car's
+// input block when the exe does not keep it in the ctrl block table (slot 0's steer bytes come from the player's
+// input, not from FUN_00496530's cooked block), nullptr = the slot table's block as for the AI slots.
+float AssistCar(int v, int dtUnits, const std::uint8_t* own = nullptr) {
     using namespace mashed_re::Vehicle;
-    const std::uint8_t* blk = reinterpret_cast<const std::uint8_t*>(
+    const std::uint8_t* blk = own ? own : reinterpret_cast<const std::uint8_t*>(
         ::Ai::kCtrlBlockBase + static_cast<std::uintptr_t>(
             ::Ai::I32(::Ai::kSlotTableBase + static_cast<std::uintptr_t>(v) * ::Ai::kSlotTableStride)) * ::Ai::kCtrlBlockStride);
     if (VehiclePhysics_RecordI32(v, 0x9f0) != 0) blk = reinterpret_cast<const std::uint8_t*>(kNeutralBlock);   // DAT_00881f90
@@ -210,9 +212,27 @@ unsigned HeadingAssist_Mask() {
         const char* no = std::getenv("MASHED_NO_HEADING_ASSIST");
         if (no && no[0] && no[0] != '0') return 0u;                          // [dflip] opt-out
         const char* e = std::getenv("MASHED_HEADING_ASSIST");
-        return (e && e[0]) ? static_cast<unsigned>(std::strtoul(e, nullptr, 0)) : 1u;   // [dflip] default 0x1
+        if (e && e[0]) return static_cast<unsigned>(std::strtoul(e, nullptr, 0));        // explicit mask wins
+        // [dflip] 0x1 (AI slots) default ON. [u9749] 0x2 (car 0) default ON since 2026-10-17 (user decision);
+        // MASHED_NO_HEADING_ASSIST_PLAYER=1 opts out (MASHED_HEADING_ASSIST_PLAYER=1 is still accepted, a no-op now).
+        const char* np = std::getenv("MASHED_NO_HEADING_ASSIST_PLAYER");
+        return (np && np[0] && np[0] != '0') ? 0x1u : 0x3u;
     }();
     return s_mask;
+}
+
+// [u9749 2026-10-17] Player form (mask 0x2, default ON since 2026-10-17, MASHED_NO_HEADING_ASSIST_PLAYER=1 opts out; U-9743 / U-9749): FUN_00424eb0's loop covers car 0 too (cars 0..3, the same
+// FUN_0040e370 / FUN_0046c7b0 gates), between the AI tick (0x00425a73) and the physics frame (0x00425a8d). The steer bytes
+// are the player's this frame (`steer0` / `steer1`, the bytes StepCar maps io.steer to). Measured cause (u9749, B_SAR0_K1
+// against o_pw1): on the player's 9 coast frames after its first car<->car contact the original turns 0.00264 per frame
+// (forward x) more than the port while the yaw rate +0x148 is bit-identical, i.e. a constant-rate rotation the port did
+// not apply.
+void HeadingAssist_Player(int dtUnits, unsigned char steer0, unsigned char steer1) {
+    if ((HeadingAssist_Mask() & 0x2u) == 0u) return;
+    if (IsCarSlotActive(0) == 0) return;                                     // FUN_0040e370
+    if (VehicleSlotGetter(0u) != 1u) return;                                 // FUN_0046c7b0
+    const std::uint8_t blk[2] = { steer0, steer1 };
+    AssistCar(0, dtUnits, blk);
 }
 
 void HeadingAssist_Frame(int dtUnits) {
