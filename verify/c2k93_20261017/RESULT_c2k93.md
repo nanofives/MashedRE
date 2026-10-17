@@ -54,6 +54,14 @@ still pinned); one CHANGELOG line.
 1. `MASHED_AI_LUT=5` default: recommended ON, with or after `MASHED_AI_CLOCK_LATE` (that is the base it was scored on).
 2. `MASHED_AI_CLOCK_LATE` default (from u9745ov): recommended ON.
 
+### 4.1 Flipped (user decision 2026-10-17)
+
+Both default ON: `MASHED_AI_CLOCK_LATE` (opt-out `MASHED_NO_AI_CLOCK_LATE=1`) and `MASHED_AI_LUT=5` (opt-out `MASHED_NO_AI_LUT=1`;
+`MASHED_AI_LUT=<mask>` still overrides). Exe `c832e81d`, `arms/flip/RUNLOG.txt`: G-CTRL default `262504cc / 39fc6210 / 6797ffe5` x2
+(= `H_CL5`); default B dumps K0 / K1 / K26 `f410560e / f9a1f85c / cdfe437f` (= `B_CL5_*`); both opt-outs `a34714b4 / 0f8ef6df /
+852a255d` (the previous default); `MASHED_NO_AI_LUT=1` alone `dd822489 / 35f5fea0 / da12bbe0` (= `H_CL`). The (b), D2 and 13-track
+numbers of the CL5 row of section 2 are the new default's. U-9750 and U-9752 RESOLVED (`apply_trackers_flip.py`).
+
 ## 5. Follow-ups
 
 - U-9212's D2 chain (refresh + spawn yaw) is what stands between the port and car 2's position tracking past call 93.

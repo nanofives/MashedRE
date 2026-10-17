@@ -73,6 +73,8 @@ STACK['SACL5'] = STACK['SACL'] + ['MASHED_AI_LUT=5']
 STACK['SACLR5'] = STACK['SACLR'] + ['MASHED_AI_LUT=5']
 STACK['CLR'] = STACK['CL'] + ['MASHED_D2LAT_REFRESH']; STACK['CL5'] = STACK['CL'] + ['MASHED_AI_LUT=5']
 STACK['CLR5'] = STACK['CLR'] + ['MASHED_AI_LUT=5']
+# c2k93 flip: opt-outs (both -> the previous default; LUT only -> the CL arm)
+STACK['NOCL5'] = ['MASHED_NO_AI_CLOCK_LATE', 'MASHED_NO_AI_LUT']; STACK['NOL5'] = ['MASHED_NO_AI_LUT']
 STACK['SACLR2'] =STACK['SACLR'] + ['MASHED_RECDUMP=@OUT@\\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=2']
 # u9745ov (after the flip: the player assist is default): SA + the slot-2 record dumps
 STACK['SAR2F'] = STACK['SA'] + ['MASHED_RECDUMP=@OUT@\\@NAME@.rec.msd', 'MASHED_RECDUMP_A4=@OUT@\\@NAME@.a4rec.msd', 'MASHED_RECDUMP_SLOT=2']   # after the flip: the opt-out (= the pre-flip default)
