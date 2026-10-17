@@ -1,0 +1,29 @@
+{
+ "07_Roundabout": {
+  "ok": true,
+  "attempts": 1,
+  "shots": [
+   1091,
+   1131,
+   1166
+  ]
+ },
+ "10_Dump": {
+  "ok": true,
+  "attempts": 1,
+  "shots": [
+   735,
+   775,
+   810
+  ]
+ },
+ "13_Training": {
+  "ok": true,
+  "attempts": 1,
+  "shots": [
+   884,
+   924,
+   959
+  ]
+ }
+}

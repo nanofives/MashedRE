@@ -1,0 +1,12 @@
+track            row  orig  matched  orig tri   m.tri  m.tri% | rows cited  red verdict
+07_Roundabout   1091   359      316     32100   27118   84.5% |   33    33    0 CITED
+07_Roundabout   1131   324      293     28532   26083   91.4% |   25    25    0 CITED
+07_Roundabout   1166   250      218     19243   17448   90.7% |   26    26    0 CITED
+10_Dump          735   368      338     42007   38135   90.8% |   20    20    0 CITED
+10_Dump          775   345      321     41093   38194   92.9% |   17    17    0 CITED
+10_Dump          810   234      210     26440   23740   89.8% |   19    19    0 CITED
+13_Training      884   242      215     18128   17478   96.4% |   20    20    0 CITED
+13_Training      924   257      211     18358   17440   95.0% |   20    20    0 CITED
+13_Training      959   233      209     18079   17423   96.4% |   20    20    0 CITED
+
+INSTRUMENT GATES: PASS
