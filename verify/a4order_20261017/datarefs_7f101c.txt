@@ -1,0 +1,27 @@
+// 0x007f101c  DATA in .data
+//   type undefined4 len 4  value 00000000h
+//   21 reference(s) total
+//   WRITES (3):
+//     0x0040ff17 in FUN_004111c0  [WRITE]  MOV dword ptr [0x007f101c],EBX
+//     0x004111c1 in FUN_004111c0  [READ_WRITE]  INC dword ptr [0x007f101c]
+//     0x00492784 in FUN_00492770  [WRITE]  MOV dword ptr [0x007f101c],ESI
+//   reads (18):
+//     0x0040cb67 in FUN_0040ca00  [READ]  MOV EAX,[0x007f101c]
+//     0x0040cccd in FUN_0040ca00  [READ]  MOV EDX,dword ptr [0x007f101c]
+//     0x0040d9b0 in FUN_0040d8f0  [READ]  TEST byte ptr [0x007f101c],0x2
+//     0x0041280e in FUN_00412620  [READ]  FILD dword ptr [0x007f101c]
+//     0x00412f89 in FUN_00412f30  [READ]  MOV EAX,[0x007f101c]
+//     0x00413df4 in FUN_00413cb0  [READ]  FILD dword ptr [0x007f101c]
+//     0x0041ddfb in FUN_0041dca0  [READ]  TEST byte ptr [0x007f101c],0x10
+//     0x0041f5d1 in FUN_0041f590  [READ]  MOV EDX,dword ptr [0x007f101c]
+//     0x00442e93 in FUN_00442e00  [READ]  FILD dword ptr [0x007f101c]
+//     0x00442fc4 in FUN_00442e00  [READ]  FILD dword ptr [0x007f101c]
+//     0x0044300d in FUN_00442e00  [READ]  FILD dword ptr [0x007f101c]
+//     0x0044303c in FUN_00442e00  [READ]  FIADD dword ptr [0x007f101c]
+//     0x00445f1a in FUN_00445aa0  [READ]  MOV EAX,[0x007f101c]
+//     0x004463bd in FUN_00445aa0  [READ]  MOV EDX,dword ptr [0x007f101c]
+//     0x00455d83 in (data)  [READ]  MOV ECX,dword ptr [0x007f101c]
+//     0x00470776 in FUN_00470670  [READ]  MOV ECX,dword ptr [0x007f101c]
+//     0x00481a80 in FUN_00481a30  [READ]  MOV EAX,[0x007f101c]
+//     0x00486763 in FUN_00486630  [READ]  MOV EAX,[0x007f101c]
+//   other: (none)

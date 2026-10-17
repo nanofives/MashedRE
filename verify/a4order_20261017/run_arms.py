@@ -61,6 +61,7 @@ STACK['A'] = _A4
 STACK['AE'] = _A4 + ['MASHED_AI_CONTACT_EVENT']
 STACK['TE'] = ['MASHED_AI_TICK_FIRST', 'MASHED_AI_CONTACT_EVENT']
 STACK['SA'] = _S + _A4                                         # S + the A4 order
+STACK['SAP'] = STACK['SA'] + ['MASHED_PLAYERTRACE']            # + the player trace (G-COAST2 cause)
 STACK['BRG'] = STACK['B'] + STACK['RG']
 STACK['BPP'] = STACK['B'] + STACK['PP']
 STACK['BTGT'] = STACK['B'] + STACK['TGT']
