@@ -125,3 +125,23 @@ Stack `S` = `MASHED_AI_COUNTDOWN_CLOCK` + `MASHED_POS_MODEL` + `MASHED_PATHPROG`
 
 Decision rule: unchanged from section 3, applied to each new knob and to the stack. A stack that loses a passing car is not
 recommended for default ON. Every knob here stays default OFF in this lane.
+
+## Amendment 2 (after amendment 1's first runs, before the re-runs it governs)
+
+Amendment 1's runs (`arms/k2`, exe `06373470`): G-NOOP2 and G-NOOP2b PASS (`a89ff9ef / 80bce410 / 54da2e83`, `5257c915`),
+determinism PASS (`B_SL_K1` `a7403be1` twice), G-EVT PASS (car 2 timer 1440 at its first player contact, the player's slot
+state is 1 so it gets none). **G-ORDER FAILED:** under `S` car 2's first `ret14a70 == 1` is at call 1 (`S-T`: 22 as predicted).
+Two defects of the lane's own changes, found reading those runs, fixed before any re-run:
+
+1. **Instrument.** Under `MASHED_AI_CONTACT_EVENT` the step dump read the ctrl block after `FUN_00418560`'s replay tail (c0 / c1
+   21 / 0 on k = 23..45), while the original's `--statediff-aistep` rows are `FUN_00416250`'s output at its exit
+   (`scenario_launch.py:717`). The dump now takes the bytes recorded right after `ControlStep*` (`Ai_RecordStepOut`) when that
+   knob is on. With the knob off the dump is unchanged (the tail only stores when no timer runs).
+2. **GO-frame progress under `MASHED_AI_TICK_FIRST`.** The GO frame's AI tick now runs before `UpdateRace`, so it read the
+   player's path progress from before fix B's settle (0.0), which makes `FUN_00414a70` return 1 for car 2 at call 1, the
+   U-9684 failure mode. The original runs `FUN_0040da50`'s `FUN_00408610` loop on every pre-GO tick (`0x0040fc75`). Under
+   tick-first, `PathProg_FrameTick` now also runs once on the GO frame, after the settle and the release.
+
+Predictions for the re-runs (exe: this amendment's commit, sha8 in RUNLOG): G-NOOP2 / G-NOOP2b as before; G-ORDER under `S`
+car 2's first return 1 at call 23; G-COAST as amendment 1; under `S` car 2's dumped `c1` on k = 23..38 is 255 wherever its
+`ai_mode` is 3 and err is in (180, 330), so the dumped series is comparable with the original's again. (b) report only.

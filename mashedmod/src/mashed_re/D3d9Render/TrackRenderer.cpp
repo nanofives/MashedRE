@@ -4970,6 +4970,16 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
                 if (Vehicle::PosModelTrans()) { car_pos_[0] = sio.pos[0]; car_pos_[1] = sio.pos[1]; car_pos_[2] = sio.pos[2]; }
             }
             Vehicle::LaunchRev_Release();
+            // [d3bB2] MASHED_AI_TICK_FIRST: the AI tick of this (GO) frame now runs before UpdateRace, so it would
+            // read path progress from before the settle above. The original runs FUN_0040da50's FUN_00408610 loop
+            // from FUN_0040fc00 (0x0040fc75) on every pre-GO tick, so its first racing AI tick reads the settled
+            // value (o_tg1: player 29.999977 from frame 50). Run the producer once here; every car is still at
+            // rest on this frame, and UpdateRace runs it again below as on every frame.
+            {
+                static const bool s_tickFirstPP = [] { const char* e = std::getenv("MASHED_AI_TICK_FIRST");
+                                                       return e && e[0] == '1'; }();
+                if (s_tickFirstPP) Race::PathProg_FrameTick();
+            }
         }
         // [d1r2] The original runs the director on every pre-race frame (sub-states
         // 3/4/5: FUN_0040fc00 -> FUN_0040d470 -> FUN_00446520, main block when cam[7]
@@ -6432,6 +6442,8 @@ void TrackRenderer::AiStepDump() {
             static_cast<std::uintptr_t>(v) * Ai::kAiStateDwords * 4u;
         // [D3 2026-09-26] same trailing input columns as scenario_launch.py --statediff-aistep
         const Ai::StepLocals& sl = Ai::Ai_LastStepLocals(v);
+        // [d3bB2] under MASHED_AI_CONTACT_EVENT the block holds the replayed bytes; dump FUN_00416250's output instead
+        const std::uint8_t* so = Ai::Ai_ContactEventEnabled() ? Ai::Ai_StepOutCtrl(v) : nullptr;
         std::fprintf(lf, "%d,%ld,%d,%lu,0,%u,%u,%u,%u,%u,%d,%d,%d,%d,%d,%d,%g,%d,%d,%d,%.9g,%.9g,%u,"
                          "%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%d,%d,%d,%d,%d,"
                          "%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,"
@@ -6450,8 +6462,8 @@ void TrackRenderer::AiStepDump() {
                          // [GF1-CALLWISE] b2_ret, b2_los; [W-SHAPE] c4_in, c5_in
                          "%d,%d,%d,%d",
                      frame, seq++, v, static_cast<unsigned long>(blk),
-                     Ai::U8(blk + 0), Ai::U8(blk + 1), Ai::U8(blk + 3),
-                     Ai::U8(blk + 4), Ai::U8(blk + 5),
+                     so ? so[0] : Ai::U8(blk + 0), so ? so[1] : Ai::U8(blk + 1), so ? so[3] : Ai::U8(blk + 3),
+                     so ? so[4] : Ai::U8(blk + 4), so ? so[5] : Ai::U8(blk + 5),
                      Ai::I32(ai + 0x00), Ai::I32(ai + 0x04),
                      Ai::I32(ai + 0x30), Ai::I32(ai + 0x60),
                      Ai::I32(0x007f0ff4u), Ai::I32(0x007f1008u),

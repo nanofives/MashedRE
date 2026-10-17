@@ -94,6 +94,8 @@ void Ai_AdvanceCountdownClock(int units);
 bool Ai_ContactEventEnabled();
 void Ai_ContactEventPush(int a, int b);
 void Ai_ContactEventDrain();
+void Ai_RecordStepOut(int v, const std::uint8_t* ctrl);   // [d3bB2] FUN_00416250's output, pre-tail
+const std::uint8_t* Ai_StepOutCtrl(int v);
 // FUN_00413fe0 per-vehicle AI-state reset + race-clock zeroing. Call at race start.
 void Ai_ResetRace();
 

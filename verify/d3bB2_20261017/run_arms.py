@@ -39,6 +39,16 @@ STACK['CC5'] = STACK['CC'] + ['MASHED_AI_LUT=5']
 STACK['CCBD'] = STACK['CCB'] + ['MASHED_GRID_DIR']                            # + FUN_00408b00's spawn-yaw law (gridyaw)
 STACK['CCBDL'] = STACK['CCBD'] + ['MASHED_CARCAR_LOG=@OUT@\\@NAME@.cc.txt']
 STACK['CCD'] = STACK['CC'] + ['MASHED_GRID_DIR']
+# PREREG amendment 1: S = the knob + the U-9684 chain + GRID_DIR + both new knobs; SmE / SmT drop one of them
+_S = STACK['CCBD'] + ['MASHED_AI_CONTACT_EVENT', 'MASHED_AI_TICK_FIRST']
+STACK['S'] = _S
+STACK['SmE'] = [k for k in _S if k != 'MASHED_AI_CONTACT_EVENT']
+STACK['SmT'] = [k for k in _S if k != 'MASHED_AI_TICK_FIRST']
+for _t in ('S', 'SmE', 'SmT'):
+    STACK[_t + 'L'] = STACK[_t] + ['MASHED_CARCAR_LOG=@OUT@\\@NAME@.cc.txt', 'MASHED_AI_CONTACT_EVENT_TRACE=@OUT@\\@NAME@.ev.txt',
+                                   'MASHED_TGT3_TRACE=@OUT@\\@NAME@.tgt3.csv']
+STACK['E'] = ['MASHED_AI_CONTACT_EVENT']; STACK['T'] = ['MASHED_AI_TICK_FIRST']; STACK['CCE'] = ['MASHED_AI_COUNTDOWN_CLOCK', 'MASHED_AI_CONTACT_EVENT']
+STACK['CCET'] = STACK['CCE'] + ['MASHED_AI_TICK_FIRST']
 STACK['B'] = ['MASHED_POS_MODEL']
 STACK['BRG'] = STACK['B'] + STACK['RG']
 STACK['BPP'] = STACK['B'] + STACK['PP']

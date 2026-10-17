@@ -1845,6 +1845,7 @@ void VehicleStep(int v)
     } else {
         ControlStep(spline, v, ctrl);         // FUN_00416250 (bands real; targeting stubbed)
     }
+    Ai_RecordStepOut(v, ctrl);                // [d3bB2] the bytes FUN_00416250 returns (the original probe's sample point)
     ::AiPostStepPowerupBrake(v, ctrl);        // FUN_00417640, Ai/AiPostStepBrake.cpp (the one body)
 
     // override-replay (+0x40..0x4c) -- FUN_00418560 tail (0x00418790..0x00418844,
@@ -2160,6 +2161,17 @@ void AiOverrideTimerSet(int v)           // FUN_00417370
     I32(0x0089a4fcu + static_cast<std::uintptr_t>(v) * 0x74u) = 0xb4 - t * 0xb4;   // 0x00417381..0x00417395
 }
 }  // namespace
+
+// [d3bB2] the ctrl bytes as FUN_00416250 / FUN_00416a30 / FUN_00417da0 return them, before FUN_00417640 and the
+// FUN_00418560 override-replay tail. scenario_launch.py --statediff-aistep reads the original's at FUN_00416250's
+// exit, so the step dump takes these under MASHED_AI_CONTACT_EVENT (the only knob that arms the replay).
+namespace { std::uint8_t s_stepOut[4][8] = {}; }
+void Ai_RecordStepOut(int v, const std::uint8_t* ctrl)
+{
+    if (v < 0 || v > 3) return;
+    for (int k = 0; k < 8; ++k) s_stepOut[v][k] = ctrl[k];
+}
+const std::uint8_t* Ai_StepOutCtrl(int v) { return (v >= 0 && v <= 3) ? s_stepOut[v] : nullptr; }
 
 bool Ai_ContactEventEnabled()
 {
