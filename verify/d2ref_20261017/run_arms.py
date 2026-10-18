@@ -80,6 +80,7 @@ STACK['RGB'] = STACK['RG'] + ['MASHED_POS_MODEL']
 # d2ref amendment 1: U-9751 (A5 race timer) alone and on the two refresh pairs, with the timer log
 _T = ['MASHED_A5_RACE_TIMER', 'MASHED_A5_RACE_TIMER_LOG']
 STACK['T5'] = _T; STACK['RGT'] = STACK['RG'] + _T; STACK['RYT'] = STACK['RY'] + _T
+STACK['RGX'] = STACK['RG'] + ['MASHED_A5_RACE_TIMER']   # RGT without the diagnostic log: the (b) / G-CTRL arms
 # c2k93 flip: opt-outs (both -> the previous default; LUT only -> the CL arm)
 STACK['NOCL5'] = ['MASHED_NO_AI_CLOCK_LATE', 'MASHED_NO_AI_LUT']; STACK['NOL5'] = ['MASHED_NO_AI_LUT']
 STACK['SACLR2'] =STACK['SACLR'] + ['MASHED_RECDUMP=@OUT@\\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=2']

@@ -1,0 +1,36 @@
+D2_T5_1: slip1500=0.1864 OUT slip2000=0.2470 in drvmed=1931.3400 in  n=('359', '653', '1422')
+    H1 398/400 median 1362.7 -> PASS
+    launch BEST L = 0 at 0.19 %
+    PORTframes 1631 R= 1 peak 1835.50 at d= 95 trough 83.51 at d= 106 post-trough n= 400 >=100: 398 ( 99.5 %) median 1362.7 max 2374.3 +0xb14 engages at d=15
+D2_T5_2: slip1500=0.1864 OUT slip2000=0.2470 in drvmed=1931.3200 in  n=('361', '653', '1424')
+    H1 398/400 median 1362.7 -> PASS
+    launch BEST L = 0 at 0.19 %
+    PORTframes 1633 R= 1 peak 1835.50 at d= 95 trough 83.51 at d= 106 post-trough n= 400 >=100: 398 ( 99.5 %) median 1362.7 max 2374.3 +0xb14 engages at d=15
+D2_T5_3: slip1500=0.1864 OUT slip2000=0.2470 in drvmed=1931.3200 in  n=('361', '653', '1424')
+    H1 398/400 median 1362.7 -> PASS
+    launch BEST L = 0 at 0.19 %
+    PORTframes 1633 R= 1 peak 1835.50 at d= 95 trough 83.51 at d= 106 post-trough n= 400 >=100: 398 ( 99.5 %) median 1362.7 max 2374.3 +0xb14 engages at d=15
+D2_RGT_1: slip1500=0.1939 in slip2000=0.2545 in drvmed=1960.3100 in  n=('320', '649', '1360')
+    H1 398/400 median 1351.6 -> PASS
+    launch BEST L = 0 at 0.05 %
+    PORTframes 1632 R= 1 peak 1832.40 at d= 95 trough 85.78 at d= 101 post-trough n= 400 >=100: 398 ( 99.5 %) median 1351.6 max 2376.6 +0xb14 engages at d=15
+D2_RGT_2: slip1500=0.1942 in slip2000=0.2545 in drvmed=1963.2700 in  n=('316', '649', '1356')
+    H1 398/400 median 1351.6 -> PASS
+    launch BEST L = 0 at 0.05 %
+    PORTframes 1628 R= 1 peak 1832.40 at d= 95 trough 85.78 at d= 101 post-trough n= 400 >=100: 398 ( 99.5 %) median 1351.6 max 2376.6 +0xb14 engages at d=15
+D2_RGT_3: slip1500=0.1941 in slip2000=0.2545 in drvmed=1962.6200 in  n=('317', '649', '1357')
+    H1 398/400 median 1351.6 -> PASS
+    launch BEST L = 0 at 0.05 %
+    PORTframes 1629 R= 1 peak 1832.40 at d= 95 trough 85.78 at d= 101 post-trough n= 400 >=100: 398 ( 99.5 %) median 1351.6 max 2376.6 +0xb14 engages at d=15
+D2_RYT_1: slip1500=0.1956 in slip2000=0.2552 OUT drvmed=1931.9100 in  n=('328', '618', '1341')
+    H1 398/400 median 1351.6 -> PASS
+    launch BEST L = 0 at 0.05 %
+    PORTframes 1628 R= 1 peak 1832.40 at d= 95 trough 85.78 at d= 101 post-trough n= 400 >=100: 398 ( 99.5 %) median 1351.6 max 2376.6 +0xb14 engages at d=15
+D2_RYT_2: slip1500=0.1956 in slip2000=0.2550 OUT drvmed=1936.0500 in  n=('328', '623', '1346')
+    H1 398/400 median 1351.6 -> PASS
+    launch BEST L = 0 at 0.05 %
+    PORTframes 1633 R= 1 peak 1832.40 at d= 95 trough 85.78 at d= 101 post-trough n= 400 >=100: 398 ( 99.5 %) median 1351.6 max 2376.6 +0xb14 engages at d=15
+D2_RYT_3: slip1500=0.1956 in slip2000=0.2550 OUT drvmed=1936.0500 in  n=('328', '623', '1346')
+    H1 398/400 median 1351.6 -> PASS
+    launch BEST L = 0 at 0.05 %
+    PORTframes 1633 R= 1 peak 1832.40 at d= 95 trough 85.78 at d= 101 post-trough n= 400 >=100: 398 ( 99.5 %) median 1351.6 max 2376.6 +0xb14 engages at d=15
