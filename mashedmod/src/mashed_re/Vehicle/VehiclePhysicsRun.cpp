@@ -771,7 +771,7 @@ void VehiclePhysics_CarryTo(int slot, const float* m, float ground_off, float ca
     if (yaw) *yaw = BodyOrient_Heading(basis);
 }
 
-// [u9747 2026-10-18] The spawn pose in the record (MASHED_COUNTDOWN_SPAWN, default OFF, U-9747). FUN_004704c0 writes both
+// [u9747 2026-10-18] The spawn pose in the record (MASHED_COUNTDOWN_SPAWN, default ON since the u9747 flip, U-9747). FUN_004704c0 writes both
 // state matrices at race start (DAT_00881ec8 = +0x928 and DAT_00881f08 = +0x968: FUN_004c51a0 translation at 0x004705fe /
 // 0x0047060a, FUN_004c4d20 Y rotation at 0x0047061c / 0x0047062e), so a car's record carries its grid pose through the
 // countdown. The port wrote the record only at a car's first StepCar, so every record read (0,0,0) before GO, and the

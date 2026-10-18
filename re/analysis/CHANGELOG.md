@@ -26,6 +26,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-18  00418860  u9747 flip  MASHED_COUNTDOWN_SPAWN default ON (user decision; opt-out MASHED_NO_COUNTDOWN_SPAWN=1), no C-level change. G-CTRL default b1f49e7a/b1be0054/d3a20f4c x2, opt-out 1fbc77ae/29a08810/d3a20f4c; (b) A 2/3 B 2/3 C 0/3, D2 3/3, 869 rows 0 RED (verify/u9747_20261018/RESULT_u9747.md).
 2026-10-18  00418860  u9747  U-9747 RESOLVED: countdown slot state (FUN_00418860 alive-poke) + spawn pose (FUN_004704c0 matrices) behind MASHED_COUNTDOWN_SPAWN (default OFF); AI progress at GO = the original's; G-ORDER passes under S. Alone: (b) unchanged pass set, D2 3/3, 13 tracks 869 rows 0 RED (identical score file). No C-level change. verify/u9747_20261018/RESULT_u9747.md
 2026-10-17  0046ddb0  d2ref flip  MASHED_D2LAT_REFRESH + MASHED_GRID_DIR + MASHED_A5_RACE_TIMER default ON (user decision, accepting the regime-B car 3 / car 2 trade); opt-outs MASHED_NO_*; no C-level change; U-9212 / U-9720 / U-9751 RESOLVED. G-CTRL default 1fbc77ae/29a08810/d3a20f4c x2, opt-outs 262504cc/39fc6210/6797ffe5; D2 3/3, 869 rows 0 RED (verify/d2ref_20261017/RESULT_d2ref.md).
 2026-10-17  0046ddb0  d2ref  U-9212 chain: refresh + grid frame + A5 race timer (new MASHED_A5_RACE_TIMER, default OFF, U-9751) passes D2 3/3 for the first time and 13 tracks 869 rows 0 RED; (b) trades regime-B car 3 for car 2. All default OFF, no C-level change. verify/d2ref_20261017/RESULT_d2ref.md

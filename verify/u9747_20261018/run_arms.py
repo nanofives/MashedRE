@@ -84,6 +84,7 @@ STACK['SR3'] = STACK['S'] + ['MASHED_RECDUMP=@OUT@\\@NAME@.rec.msd', 'MASHED_REC
 STACK['TPPT'] = ['MASHED_AI_TICK_FIRST', 'MASHED_PATHPROG', 'MASHED_PATHPROG_TRACE=@OUT@\\@NAME@.pathprog.csv',
                  'MASHED_TGT3_TRACE=@OUT@\\@NAME@.tgt3.csv']   # u9747: tick first + path progress, traced
 STACK['TPPG'] = STACK['TPPT'] + ['MASHED_PATHPROG_GATE_LOG=@OUT@\\@NAME@.gate.txt']
+STACK['NOCS'] = ['MASHED_NO_COUNTDOWN_SPAWN']   # after the flip: the opt-out (= the 438566c88 default)
 STACK['CS'] = ['MASHED_COUNTDOWN_SPAWN']; STACK['TCS'] = ['MASHED_AI_TICK_FIRST', 'MASHED_COUNTDOWN_SPAWN']
 STACK['TPPGC'] = STACK['TPPG'] + ['MASHED_COUNTDOWN_SPAWN']; STACK['SCS'] = STACK['S'] + ['MASHED_COUNTDOWN_SPAWN']
 STACK['RGX'] = STACK['RG'] + ['MASHED_A5_RACE_TIMER']   # RGT without the diagnostic log: the (b) / G-CTRL arms

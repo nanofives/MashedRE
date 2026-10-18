@@ -62,6 +62,13 @@ U-9747 RESOLVED; hooks.csv notes on `00418860`, `004704c0`; one CHANGELOG line.
 
 1. `MASHED_COUNTDOWN_SPAWN` default ON (opt-out at the flip)? Faithful pre-GO state; no gate moves except G-CTRL's AI rows.
 
+### 5.1 Flipped (user decision 2026-10-18)
+
+Default ON; `MASHED_NO_COUNTDOWN_SPAWN=1` opts out. Exe `d22f979e`, `arms/flip/RUNLOG.txt`: G-CTRL default `b1f49e7a / b1be0054 /
+d3a20f4c` x2 (= `H_CS`); default B dumps K0 / K1 / K26 `e332af0c / 01ad5975 / 772f9fb7` (= `B_CS_*`); opt-out `1fbc77ae / 29a08810 /
+d3a20f4c` (the previous default). The player trace is byte-identical with and without the knob, so section 2's D2 (`D2_CS_1..3`,
+3/3) and 13-track numbers stand for the new default.
+
 ## 6. Follow-ups
 
 - With this in, `MASHED_AI_TICK_FIRST` no longer starts from unconverged progress; its own (b) is unchanged (T = TCS = DEF pass

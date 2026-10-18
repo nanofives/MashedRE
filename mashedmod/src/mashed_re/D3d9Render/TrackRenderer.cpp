@@ -4945,7 +4945,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         // at veh+0xbf4, which A6a reads after GO. Confirmed on the running original,
         // two boots: verify/d2_writer_20261001/RESULT_STEP1.md.
         Vehicle::LaunchRev_PreRaceTick(in.dt, in.accel);
-        // [u9747 2026-10-18] MASHED_COUNTDOWN_SPAWN=1 (default OFF, U-9747). Two pieces of the original's pre-GO state the
+        // [u9747 2026-10-18] MASHED_COUNTDOWN_SPAWN (default ON since the u9747 flip; MASHED_NO_COUNTDOWN_SPAWN=1 opts out; U-9747). Two pieces of the original's pre-GO state the
         // countdown stand-in did not have, both read by FUN_0040da50's path-progress loop (PathProg_FrameTick, which
         // MASHED_AI_TICK_FIRST runs on countdown frames):
         //  - the AI tick's alive-poke: FUN_00418860 (0x004188ae..0x004188db) sets slot state 2 (FUN_0040e480) for each AI
@@ -4955,7 +4955,9 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         // Measured without it (verify/u9747_20261018 gate log): cars 1..3 inactive through the countdown, every record at
         // (0,0,0), countdown progress 29.507563 for the player and 0 for the AI rows.
         {
-            static const bool s_cdSpawn = [] { const char* e = std::getenv("MASHED_COUNTDOWN_SPAWN"); return e && e[0] == '1'; }();
+            // [u9747 flip 2026-10-18] default ON (user decision); MASHED_NO_COUNTDOWN_SPAWN=1 opts out
+            static const bool s_cdSpawn = [] { const char* no = std::getenv("MASHED_NO_COUNTDOWN_SPAWN");
+                                               return !(no && no[0] && no[0] != '0'); }();
             if (s_cdSpawn && Vehicle::VehiclePhysics_Enabled()) {
                 if (g_aib.loaded && (Ai::I32(Ai::kSplineRaceCnt) > 3)) Ai::Ai_CountdownAlivePoke();
                 Vehicle::VehiclePhysics_SeedSpawnPose(0, car_pos_, car_yaw_, car_ground_off_);
