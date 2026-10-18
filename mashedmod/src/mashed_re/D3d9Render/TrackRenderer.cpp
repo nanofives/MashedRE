@@ -6992,11 +6992,11 @@ void TrackRenderer::StartRound() {
             gdNode = nd;
         }
     }
-    // [u9755] MASHED_SPAWN_Y_LINE=1 (default OFF, verify/u9755_20261018/PREREG_u9755.md): FUN_004704c0's spawn y,
-    // (float)(param_3 - FUN_0046d400(x, param_3, z, world)) with param_3 = FUN_00408b00's grid-point y, instead of
-    // GroundHeight. The caller convention carries y + car_ground_off_; the stored value is the float whose difference
-    // with car_ground_off_ is that y exactly (SeedSpawnPose / StepCar subtract it again).
-    static const bool s_spawnYLine = [] { const char* e = std::getenv("MASHED_SPAWN_Y_LINE"); return e && e[0] == '1'; }();
+    // [u9755] FUN_004704c0's spawn pose (verify/u9755_20261018/RESULT_u9755.md): x / z = FUN_00408b00's grid point in its
+    // operation order, y = (float)(param_3 - FUN_0046d400(x, param_3, z, world)) with param_3 = that point's y, instead of
+    // GroundHeight. The exact y goes to the countdown SeedSpawnPose (s_spawnY) rather than through + car_ground_off_.
+    // Default ON since the syflip (user decision 2026-10-18); MASHED_NO_SPAWN_Y_LINE=1 opts out.
+    static const bool s_spawnYLine = [] { const char* e = std::getenv("MASHED_NO_SPAWN_Y_LINE"); return !(e && e[0] == '1'); }();
     // slot == spawn order: player=0, ai0=1, ai1=2, ai2=3
     static const float kLatMul[4] = { 0.48f, -1.12f, 1.12f, -0.48f };
     static const float kDirMul[4] = { 0.00f,  1.10f, 2.20f,  3.30f };

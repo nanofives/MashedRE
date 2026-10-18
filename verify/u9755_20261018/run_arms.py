@@ -106,6 +106,7 @@ STACK['SPLSBKNSYR1'] = STACK['SPLSBKNSY'] + ['MASHED_RECDUMP=@OUT@\\@NAME@.rec.m
 STACK['SYL'] = STACK['SY'] + ['MASHED_SPAWN_Y_LOG=@OUT@\\@NAME@.sy.txt']   # u9755 diagnostic log
 STACK['SPLSBKNSYD'] = STACK['SPLSBKNSY'] + ['MASHED_SETTLE_DIAG=@OUT@\\@NAME@.settle.txt']   # u9755 diagnostic
 STACK['SPLSBKND'] = STACK['SPLSBKN'] + ['MASHED_SETTLE_DIAG=@OUT@\\@NAME@.settle.txt']   # u9755 diagnostic (knob off)
+STACK['NOSY'] = ['MASHED_NO_SPAWN_Y_LINE']   # syflip opt-out (= the 5d9f197be default)
 STACK['SPLR1'] = STACK['SPL'] + ['MASHED_RECDUMP=@OUT@\\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=1']   # lk21
 STACK['KT'] = STACK['TGT'] + ['MASHED_AI_TICK_FIRST']; STACK['KTE'] = STACK['KT'] + ['MASHED_AI_CONTACT_EVENT']   # cev amendment 1
 STACK['KTEL'] = STACK['KTE'] + ['MASHED_CARCAR_LOG=@OUT@\\@NAME@.cc.txt', 'MASHED_AI_CONTACT_EVENT_TRACE=@OUT@\\@NAME@.ev.txt']
