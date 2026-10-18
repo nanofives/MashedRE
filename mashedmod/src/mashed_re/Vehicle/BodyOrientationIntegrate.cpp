@@ -72,6 +72,7 @@
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
+#include <cstdlib>
 #include <cstring>
 
 namespace mashed_re {
@@ -178,8 +179,38 @@ void MatrixOrthoNormalize(float* m) {
 // The arithmetic below is unaffected; only the storage location differs. Moving
 // it into +0x928 is a follow-up that requires reconciling the contact-ring
 // buffer semantics first.
+// [lk21 2026-10-18] MASHED_SPAWN_BASIS_RW=1 (default OFF, verify/lk21_20261018/PREREG_lk21.md). FUN_004704c0 seeds both
+// matrices with FUN_004c4d20(m, &DAT_006146fc = (0,1,0), deg, 1) (0x0047061c / 0x0047062e): r = deg * _DAT_005cd7a8 as a float,
+// then FUN_004c4a50(m, axis, 1 - cos r, sin r, 1) writes right = (1 - omc, 0, -s), up = (0, 1, 0), at = (s, 0, 1 - omc).
+// The grid law (Race/RoundGrid.cpp GridDir_PortYaw) has those two floats but hands back one float yaw (atan2), and
+// cos / sin of that rounded yaw lose the bits (car 1: at.x -4.37113883e-08 against the original's -8.74227766e-08).
+// GridDir_PortYaw notes (yaw bits -> at.x, at.z) here; Init uses them when it is given one of those yaws.
+namespace {
+struct ExactBasis { std::uint32_t yawBits; float atX, atZ; };
+ExactBasis s_exact[8];
+int s_exactN = 0;
+bool SpawnBasisRw() {
+    static const bool s_on = [] { const char* e = std::getenv("MASHED_SPAWN_BASIS_RW"); return e && e[0] == '1'; }();
+    return s_on;
+}
+}  // namespace
+
+void BodyOrient_NoteExactBasis(float yaw, float atX, float atZ) {
+    if (!SpawnBasisRw()) return;
+    std::uint32_t b; std::memcpy(&b, &yaw, 4);
+    for (int i = 0; i < s_exactN; ++i)
+        if (s_exact[i].yawBits == b) { s_exact[i].atX = atX; s_exact[i].atZ = atZ; return; }
+    ExactBasis& e = s_exact[s_exactN < 8 ? s_exactN++ : 7];
+    e.yawBits = b; e.atX = atX; e.atZ = atZ;
+}
+
 void BodyOrient_Init(float* m, float yaw) {
-    const float c = std::cos(yaw), s = std::sin(yaw);
+    float c = std::cos(yaw), s = std::sin(yaw);
+    if (SpawnBasisRw()) {
+        std::uint32_t b; std::memcpy(&b, &yaw, 4);
+        for (int i = 0; i < s_exactN; ++i)
+            if (s_exact[i].yawBits == b) { c = s_exact[i].atX; s = s_exact[i].atZ; break; }
+    }
     m[0]  =  s;  m[1]  = 0.f; m[2]  = -c;  m[3]  = 0.f;   // right
     m[4]  = 0.f; m[5]  = 1.f; m[6]  = 0.f; m[7]  = 0.f;   // up
     m[8]  =  c;  m[9]  = 0.f; m[10] =  s;  m[11] = 0.f;   // at (forward)
