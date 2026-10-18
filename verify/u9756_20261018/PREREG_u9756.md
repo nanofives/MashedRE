@@ -48,3 +48,13 @@ Arms (1200 frames, K0 / K1 / K26): `F60` (default + 60), `F44` (default + 44), `
 | G-DRIFT | `SPLSBKNF60` K1 car 1 x/z gap at call 21 < 1e-5 (now 1.2e-4); else the next first-differing field |
 | G-B | (b) on `F60`, `F44`, `F6044`: no car that passes on the default turns to FAIL |
 | G-D2 / G-13 | for any default proposal: D2 3/3, 13 tracks 0 RED, G-CTRL reported |
+
+## Amendment 1 (2026-10-18, after the section-2 arms, before any D2 / 13-track arm)
+
+Results on `c35c47d0`: G-NOOP PASS. G-WCP PASS (car 1 / car 0 wheel-0 x -1.26823068 / 0.33392337). G-PASS PASS (depth
+0.00939599983, y out 0.468762934). G-Y0 PASS (`+0x95c` at call 0 equal to o_wobj2). G-DRIFT FAIL (call 4 2.4e-7, call 21
+1.2e-4); next first-differing fields: the `+0x968` half (`+0x99c` 0.468632549 / 0.468502462 at call 0, `+0x970` 2.17e-5 /
+4.33e-5 at call 1), which the original keeps one substep behind and the port sets to the current pose (U-9152 deviation);
+the solver reads that half (`+0x9ac` = 1). G-B: `F60` B dumps equal the default's; `F44` A 2/3 B 2/3 C 0/3 (the default's set).
+`H_F60` `b40b47bc / fb690fb1 / d3a20f4c`. Default candidate: `F6044` (both constants): D2 `D2_F6044_1..3`, 13 tracks with both
+knobs, G-CTRL `H_F6044`.
