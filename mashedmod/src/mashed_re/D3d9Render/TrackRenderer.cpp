@@ -4945,6 +4945,27 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         // at veh+0xbf4, which A6a reads after GO. Confirmed on the running original,
         // two boots: verify/d2_writer_20261001/RESULT_STEP1.md.
         Vehicle::LaunchRev_PreRaceTick(in.dt, in.accel);
+        // [u9747 2026-10-18] MASHED_COUNTDOWN_SPAWN (default ON since the u9747 flip; MASHED_NO_COUNTDOWN_SPAWN=1 opts out; U-9747). Two pieces of the original's pre-GO state the
+        // countdown stand-in did not have, both read by FUN_0040da50's path-progress loop (PathProg_FrameTick, which
+        // MASHED_AI_TICK_FIRST runs on countdown frames):
+        //  - the AI tick's alive-poke: FUN_00418860 (0x004188ae..0x004188db) sets slot state 2 (FUN_0040e480) for each AI
+        //    car with FUN_0046c7b0 == 1 in an AI round; the original's AI tick runs on its pre-GO ticks (749 probe calls
+        //    before the window on o_reg_r13), the port's first on GO, so IsCarSlotActive (0x0040e370) read 0 for cars 1..3;
+        //  - each car's grid pose in its record (FUN_004704c0's two state matrices, VehiclePhysics_SeedSpawnPose).
+        // Measured without it (verify/u9747_20261018 gate log): cars 1..3 inactive through the countdown, every record at
+        // (0,0,0), countdown progress 29.507563 for the player and 0 for the AI rows.
+        {
+            // [u9747 flip 2026-10-18] default ON (user decision); MASHED_NO_COUNTDOWN_SPAWN=1 opts out
+            static const bool s_cdSpawn = [] { const char* no = std::getenv("MASHED_NO_COUNTDOWN_SPAWN");
+                                               return !(no && no[0] && no[0] != '0'); }();
+            if (s_cdSpawn && Vehicle::VehiclePhysics_Enabled()) {
+                if (g_aib.loaded && (Ai::I32(Ai::kSplineRaceCnt) > 3)) Ai::Ai_CountdownAlivePoke();
+                Vehicle::VehiclePhysics_SeedSpawnPose(0, car_pos_, car_yaw_, car_ground_off_);
+                for (int ci = 0; ci < static_cast<int>(ai_cars_.size()); ++ci)
+                    Vehicle::VehiclePhysics_SeedSpawnPose(ci + 1, ai_cars_[static_cast<std::size_t>(ci)].pos,
+                                                          ai_cars_[static_cast<std::size_t>(ci)].yaw, car_ground_off_);
+            }
+        }
         if (countdown_ <= 0.f) {
             Audio::SfxPlay("go", 0.9f);                      // real "GO!" SFX
             // [d2engage 2026-10-16] fix B part 4 (MASHED_POS_ORDER, default OFF): the player's

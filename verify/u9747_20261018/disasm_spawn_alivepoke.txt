@@ -1,0 +1,47 @@
+00470512  call 0x46d400
+004705fe  call 0x4c51a0
+0047060a  call 0x4c51a0
+0047061c  call 0x4c4d20
+0047062e  call 0x4c4d20
+00470638  call 0x46f6c0
+00470643  call 0x47ea60
+0047064e  call 0x41eda0
+00470656  call 0x46baa0
+--
+00418860  cmp dword ptr [0x801ca0], 4
+0041886d  call 0x42f6a0
+00418872  cmp eax, 3
+00418875  je 0x4188ae
+00418877  call 0x42f6a0
+0041887c  cmp eax, 4
+0041887f  je 0x4188ae
+00418881  call 0x42f6a0
+00418886  cmp eax, 5
+00418889  je 0x4188ae
+0041888b  call 0x42f6a0
+00418890  cmp eax, 0xa
+00418893  je 0x4188ae
+00418895  mov eax, dword ptr [0x7f0fd0]
+0041889a  cmp eax, 4
+0041889d  je 0x4188ae
+0041889f  cmp eax, 9
+004188a2  je 0x4188ae
+004188a4  cmp eax, 8
+004188a7  je 0x4188ae
+004188a9  cmp eax, 0xa
+004188ac  jne 0x4188fe
+004188ae  push 1
+004188b0  call 0x46c7b0
+004188b8  cmp eax, 1
+004188bb  jne 0x4188c8
+004188bd  push 2
+004188bf  push eax
+004188c0  call 0x40e480
+004188c8  push 2
+004188ca  call 0x46c7b0
+004188d2  cmp eax, 1
+004188d5  jne 0x4188e3
+004188d7  push 2
+004188d9  push 2
+004188db  call 0x40e480
+--

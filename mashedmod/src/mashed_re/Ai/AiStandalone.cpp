@@ -112,6 +112,7 @@ extern "C" int g_tg3Ret[4]; extern "C" int g_tg3Los[4];
 // FUN_0040e480: the one body, Ai/CarSlotState.cpp. Declared at global scope on purpose: an extern "C"
 // declaration inside the unnamed namespace below would name a different entity.
 extern "C" void __cdecl CarSlotStateSet(int, std::uint32_t);
+extern "C" std::uint32_t __cdecl VehicleSlotGetter(std::uint32_t vehicleIdx);   // 0x0046c7b0 (u9747 countdown poke)
 // FUN_00417180: the one body, Ai/AiBankSwitch.cpp (same reason for global scope).
 extern "C" void __cdecl AiBankSwitch(int);
 // FUN_00417640: the one body, Ai/AiPostStepBrake.cpp.
@@ -2032,6 +2033,22 @@ static void TickTrace(const char* stage, int v)
     if (!lf) { lf = std::fopen(s_p, "w"); if (!lf) return; }
     std::fprintf(lf, "%s v=%d\n", stage, v);
     std::fflush(lf);
+}
+
+// [u9747 2026-10-18] FUN_00418860's alive-poke alone (0x00418860..0x004188db: the AI-round test, then FUN_0040e480(v, 2)
+// for v = 1..3 with FUN_0046c7b0(v) == 1), for the countdown frames, where the original runs its AI tick and the port's
+// stand-in does not (MASHED_COUNTDOWN_SPAWN, TrackRenderer.cpp). Same body as the block in Ai_Standalone_Tick below.
+void Ai_CountdownAlivePoke()
+{
+    if (I32(kSplineRaceCnt) <= 3) return;        // 0x00418860 cmp [0x801ca0],4 (the same test as Ai_Standalone_Tick)
+    const int r = s_host.round_type();
+    const int fd0 = s_host.game_mode_fd0();
+    const bool aiRound = (r == 3 || r == 4 || r == 5 || r == 10 || fd0 == 4 || fd0 == 9 || fd0 == 8 || fd0 == 10);
+    if (!aiRound) return;                        // 0x004188ac jne 0x4188fe
+    // FUN_0046c7b0 itself (the record's +0x4): the host's car_alive reads g_aib.alive, which AiBridgeSnapshot fills on racing
+    // frames only, so it is 0 through the countdown (measured: the poke never fired with it).
+    for (int v = 1; v <= 3; ++v)
+        if (::VehicleSlotGetter(static_cast<std::uint32_t>(v)) == 1u) CarSlotStateSet(v, 2);   // 0x004188b0 / 0x004188c0 ...
 }
 
 void Ai_Standalone_Tick()
