@@ -81,6 +81,8 @@ STACK['RGB'] = STACK['RG'] + ['MASHED_POS_MODEL']
 _T = ['MASHED_A5_RACE_TIMER', 'MASHED_A5_RACE_TIMER_LOG']
 STACK['T5'] = _T; STACK['RGT'] = STACK['RG'] + _T; STACK['RYT'] = STACK['RY'] + _T
 STACK['RGX'] = STACK['RG'] + ['MASHED_A5_RACE_TIMER']   # RGT without the diagnostic log: the (b) / G-CTRL arms
+# d2ref flip: the three opt-outs (-> the 6242c84b6 default)
+STACK['NOD2'] = ['MASHED_NO_D2LAT_REFRESH', 'MASHED_NO_GRID_DIR', 'MASHED_NO_A5_RACE_TIMER']
 # c2k93 flip: opt-outs (both -> the previous default; LUT only -> the CL arm)
 STACK['NOCL5'] = ['MASHED_NO_AI_CLOCK_LATE', 'MASHED_NO_AI_LUT']; STACK['NOL5'] = ['MASHED_NO_AI_LUT']
 STACK['SACLR2'] =STACK['SACLR'] + ['MASHED_RECDUMP=@OUT@\\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=2']

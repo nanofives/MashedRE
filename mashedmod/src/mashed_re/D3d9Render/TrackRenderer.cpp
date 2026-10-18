@@ -4579,7 +4579,7 @@ bool TrackRenderer::LoadCar(IDirect3DDevice9* dev, const char* piz_path,
             car_pos_[2] = g0[2];
             car_pos_[1] = gy + car_ground_off_;
             car_yaw_ = std::atan2(g1[2] - g0[2], g1[0] - g0[0]);
-            {   // [gridyaw] MASHED_GRID_DIR (default OFF): FUN_00408b00's yaw at node snap(0) replaces the gate stand-in
+            {   // [gridyaw] MASHED_GRID_DIR (default ON since d2ref 2026-10-17, MASHED_NO_GRID_DIR=1 opts out): FUN_00408b00's yaw at node snap(0) replaces the gate stand-in
                 float gdA[3], gdL[2], gdD[2], gdY = 0.f; int gdN = -1;
                 if (Race::GridDir_Anchor(gdA, gdL, gdD, &gdY, &gdN)) car_yaw_ = gdY;
             }
@@ -6940,7 +6940,7 @@ void TrackRenderer::StartRound() {
     // FUN_0040e590 -> FUN_00409290(&DAT_0063ba80) -> FUN_00408b00 anchor = node centre / dir / corner axis
     // (FIX_BRIEF.md section 4 A2/A3). Same formation table; only A, lat, dir change.
     float gA[3] = { g0[0], g0[1], g0[2] };
-    // [gridyaw 2026-10-16] MASHED_GRID_DIR (default OFF): FUN_00408b00's whole frame at the node the port grids at.
+    // [gridyaw 2026-10-16] MASHED_GRID_DIR (default ON since d2ref 2026-10-17, MASHED_NO_GRID_DIR=1 opts out): FUN_00408b00's whole frame at the node the port grids at.
     // Without MASHED_ROUND_GRID that node is snap(0) (the port grids every round at the start line, U-9686), and
     // A / lat / dir come from its record as above; with it, the round-grid node. Either way the yaw is the
     // original's law (LUT 2-D normalize, clamp, acos, RwMatrixRotate about Y), not atan2 of the raw direction,

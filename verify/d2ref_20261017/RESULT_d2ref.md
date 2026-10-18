@@ -58,6 +58,14 @@ line. No new U-id.
    all three counts, passes D2 and the 13 tracks, and brings regime-B car 2 into its envelope, but regime-B car 3 leaves its
    envelope (one item, `c1#` 52 against 46). The rule says OFF.
 
+### 5.1 Flipped (user decision 2026-10-17, accepting the regime-B car 3 / car 2 trade)
+
+All three default ON: opt-outs `MASHED_NO_D2LAT_REFRESH=1`, `MASHED_NO_GRID_DIR=1`, `MASHED_NO_A5_RACE_TIMER=1`. Exe `42ab816a`,
+`arms/flip/RUNLOG.txt`: G-CTRL default `1fbc77ae / 29a08810 / d3a20f4c` x2 (= `H_RGX`); default B dumps K0 / K1 / K26
+`f070c4c9 / d78355d9 / 5fe532c5` (= `B_RGX_*`); the three opt-outs `262504cc / 39fc6210 / 6797ffe5` (the previous default). D2 on
+the new default, 3 runs each alone (`arms/flip/SCORE_D2_flip.txt`): slip 0.1944 / 0.1942 / 0.1942, 0.2545 x3, driving-median
+1963.42 / 1963.27 / 1963.27, H1 398/400 x3, 1627..1629 lines: 3/3. U-9212, U-9720, U-9751 RESOLVED (`apply_trackers_flip.py`).
+
 ## 6. Follow-ups
 
 - Regime-B car 3 under the stack: U-9753 (car 3's lookahead state from call 44) is the open item on that car.
