@@ -43,3 +43,11 @@ three normal writes. Arms (1200 frames, K0 / K1 / K26), on lk21's `SPL` (`S` + `
 | G-D2 / G-13 | only for a default proposal: D2 3/3, 13 tracks 0 RED (the knob touches the player too) |
 
 If G-SEED passes and G-DRIFT fails, report the next first-differing record field (`newdiff.py`), no default proposal.
+
+## Amendment 1 (2026-10-18, after the section-2 arms, before these)
+
+Section-2 result (exe `eb8c3e44`): G-NOOP PASS. G-SEED PASS (`SPLKNR1` car 1 call 0: (0, 0.999462068, -0.0312347524) on
+all four wheels, refresh at 15 / 22 as the original). At call 1 `+0x210` is now exact and `+0x21c` 0.0078 off (lk21:
+0.126); the call-1 words at half the original's value (`+0x39c`, `+0x460`, `+0xad4`) trace to the spawn-basis words
+`+0x220 / +0x2e4 / +0x3a8 / +0x46c` (8.74e-8 / 4.37e-8), which lk21's `MASHED_SPAWN_BASIS_RW` fixes. New arms, same gates:
+`SPLSBKN` (`SPL` + `MASHED_SPAWN_BASIS_RW` + this knob), `SPLSBKNR1` (+ car-1 record), `SBKN` (default + both knobs).
