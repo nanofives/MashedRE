@@ -1,0 +1,267 @@
+[decomp_pc] slot=Mashed_pool10 modes=decomp n=1
+// FUN_004c4a50 @ 0x004c4a50  size=717  (MASHED.exe)
+// undefined FUN_004c4a50(void)
+
+
+/* WARNING: Removing unreachable block (ram,0x004c4c2a) */
+
+/* WARNING: Removing unreachable block (ram,0x004c4c37) */
+
+/* WARNING: Removing unreachable block (ram,0x004c4c39) */
+
+/* WARNING: Removing unreachable block (ram,0x004c4c44) */
+
+/* WARNING: Removing unreachable block (ram,0x004c4c46) */
+
+/* WARNING: Removing unreachable block (ram,0x004c4c7b) */
+
+/* WARNING: Removing unreachable block (ram,0x004c4c88) */
+
+/* WARNING: Removing unreachable block (ram,0x004c4c8a) */
+
+/* WARNING: Removing unreachable block (ram,0x004c4c95) */
+
+/* WARNING: Removing unreachable block (ram,0x004c4c97) */
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+/* [C1 2026-05-07] RwMatrixRotate (axis-angle worker) */
+
+
+
+float * FUN_004c4a50(float *param_1,float *param_2,float param_3,float param_4,int param_5)
+
+
+
+{
+
+  int iVar1;
+
+  float *pfVar2;
+
+  float fVar3;
+
+  float *pfVar4;
+
+  float local_a4;
+
+  float local_a0;
+
+  float local_98;
+
+  float local_90;
+
+  float local_8c;
+
+  float local_84;
+
+  float local_80 [5];
+
+  float local_6c;
+
+  float local_68;
+
+  float local_60;
+
+  float local_5c;
+
+  float local_58;
+
+  undefined4 local_50;
+
+  undefined4 local_4c;
+
+  undefined4 local_48;
+
+  float local_40 [3];
+
+  uint uStack_34;
+
+  
+
+  local_84 = _DAT_005cc320 - param_2[2] * param_2[2];
+
+  local_8c = (_DAT_005cc320 - *param_2 * *param_2) * param_3;
+
+  local_90 = param_2[1] * *param_2;
+
+  local_98 = param_2[1] * param_2[2] * param_3;
+
+  fVar3 = param_2[2] * *param_2 * param_3;
+
+  local_a4 = param_4 * *param_2;
+
+  local_a0 = param_2[1] * param_4;
+
+  local_80[0] = _DAT_005cc320 - local_8c;
+
+  local_80[1] = param_2[2] * param_4 + local_90 * param_3;
+
+  local_50 = 0;
+
+  local_4c = 0;
+
+  local_80[2] = fVar3 - local_a0;
+
+  local_48 = 0;
+
+  local_80[3] = 4.2039e-45;
+
+  local_80[4] = local_90 * param_3 - param_2[2] * param_4;
+
+  local_6c = _DAT_005cc320 - (_DAT_005cc320 - param_2[1] * param_2[1]) * param_3;
+
+  local_68 = local_a4 + local_98;
+
+  local_60 = local_a0 + fVar3;
+
+  local_5c = local_98 - local_a4;
+
+  local_58 = _DAT_005cc320 - local_84 * param_3;
+
+  if (param_5 == 0) {
+
+    pfVar2 = local_80;
+
+    pfVar4 = param_1;
+
+    for (iVar1 = 0x10; iVar1 != 0; iVar1 = iVar1 + -1) {
+
+      *pfVar4 = *pfVar2;
+
+      pfVar2 = pfVar2 + 1;
+
+      pfVar4 = pfVar4 + 1;
+
+    }
+
+    return param_1;
+
+  }
+
+  if (param_5 == 1) {
+
+    fVar3 = param_1[3];
+
+    if (((uint)fVar3 & *(uint *)(DAT_007d4028 + 4 + DAT_007d3ff8) & 0x20000) != 0) {
+
+      pfVar2 = local_80;
+
+      pfVar4 = local_40;
+
+      for (iVar1 = 0x10; iVar1 != 0; iVar1 = iVar1 + -1) {
+
+        *pfVar4 = *pfVar2;
+
+        pfVar2 = pfVar2 + 1;
+
+        pfVar4 = pfVar4 + 1;
+
+      }
+
+      pfVar2 = local_40;
+
+      pfVar4 = param_1;
+
+      for (iVar1 = 0x10; iVar1 != 0; iVar1 = iVar1 + -1) {
+
+        *pfVar4 = *pfVar2;
+
+        pfVar2 = pfVar2 + 1;
+
+        pfVar4 = pfVar4 + 1;
+
+      }
+
+      return param_1;
+
+    }
+
+    pfVar2 = local_80;
+
+    pfVar4 = param_1;
+
+  }
+
+  else {
+
+    if (param_5 != 2) {
+
+      local_a4 = 1.4013e-45;
+
+      local_a0 = (float)FUN_004d7ff0(0x80000003,s_Invalid_combination_type_0061811c);
+
+      FUN_004d8480(&local_a4);
+
+      return (float *)0x0;
+
+    }
+
+    fVar3 = param_1[3];
+
+    if (((uint)fVar3 & *(uint *)(DAT_007d4028 + 4 + DAT_007d3ff8) & 0x20000) != 0) {
+
+      pfVar2 = local_80;
+
+      pfVar4 = local_40;
+
+      for (iVar1 = 0x10; iVar1 != 0; iVar1 = iVar1 + -1) {
+
+        *pfVar4 = *pfVar2;
+
+        pfVar2 = pfVar2 + 1;
+
+        pfVar4 = pfVar4 + 1;
+
+      }
+
+      pfVar2 = local_40;
+
+      pfVar4 = param_1;
+
+      for (iVar1 = 0x10; iVar1 != 0; iVar1 = iVar1 + -1) {
+
+        *pfVar4 = *pfVar2;
+
+        pfVar2 = pfVar2 + 1;
+
+        pfVar4 = pfVar4 + 1;
+
+      }
+
+      return param_1;
+
+    }
+
+    pfVar2 = param_1;
+
+    pfVar4 = local_80;
+
+  }
+
+  (**(code **)(DAT_007d4028 + 8 + DAT_007d3ff8))(local_40,pfVar2,pfVar4);
+
+  uStack_34 = (uint)fVar3 & 3;
+
+  pfVar2 = local_40;
+
+  pfVar4 = param_1;
+
+  for (iVar1 = 0x10; iVar1 != 0; iVar1 = iVar1 + -1) {
+
+    *pfVar4 = *pfVar2;
+
+    pfVar2 = pfVar2 + 1;
+
+    pfVar4 = pfVar4 + 1;
+
+  }
+
+  return param_1;
+
+}
+
+
+
+
+
