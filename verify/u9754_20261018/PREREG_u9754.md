@@ -51,3 +51,12 @@ all four wheels, refresh at 15 / 22 as the original). At call 1 `+0x210` is now 
 0.126); the call-1 words at half the original's value (`+0x39c`, `+0x460`, `+0xad4`) trace to the spawn-basis words
 `+0x220 / +0x2e4 / +0x3a8 / +0x46c` (8.74e-8 / 4.37e-8), which lk21's `MASHED_SPAWN_BASIS_RW` fixes. New arms, same gates:
 `SPLSBKN` (`SPL` + `MASHED_SPAWN_BASIS_RW` + this knob), `SPLSBKNR1` (+ car-1 record), `SBKN` (default + both knobs).
+
+## Amendment 2 (2026-10-18, after the amendment-1 arms, before any D2 / 13-track arm)
+
+Amendment-1 result: `SPLSBKN` G-DRIFT FAIL (call 4 2.4e-7, call 21 1.2e-4); next call-0 candidate the spawn y `+0x95c`
+(7 ulp, `FUN_0046d400`) and the port's single-pose `+0x968` half. G-B: `KN` alone fails B car 1 (`c1#` 16 [17, 46]), so
+it is not a default candidate; `SBKN` (both knobs) keeps the default's pass set (A cars 2, 3; B cars 1, 2; C 0/3). The
+default candidate is `SBKN`: D2 `D2_SBKN_1..3` (each alone, bounds of d2close / d2ref: slip 1500-2000 [0.18855, 0.19635],
+2000-2600 [0.24488, 0.25487], driving-median [1904.70, 1982.44], H1 >= 200/400, >= 1600 motion_diag lines) and the 13
+tracks (`run13.py`, 0 RED against `cites_rres.json`), then G-CTRL `H_SBKN`.
