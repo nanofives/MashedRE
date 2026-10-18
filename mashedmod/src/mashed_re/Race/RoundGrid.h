@@ -29,6 +29,8 @@ void RoundGrid_RoundEnd(const bool alive[4], int exeWinner, const int codes[4]);
 bool RoundGrid_Anchor(float A[3], float lat[2], float dir[2], int* node);
 // Same, at an explicit node and without the snap (G-RG-GRID check).
 bool RoundGrid_AnchorAt(int node, float A[3], float lat[2], float dir[2]);
+// [u9755] FUN_00408b00's grid-point y for slot 0..3 at `node` (FUN_004704c0's param_3). False if the node is unavailable.
+bool RoundGrid_GridPointY(int node, int slot, float* y);
 
 // Stage B (MASHED_ROUND_GRID_ORDER, default OFF, needs MASHED_ROUND_GRID): FUN_0040e590's per-car grid slot value
 // (mode DAT_008a94d0 = 4, rule 0, DAT_0067ea64 = 0: sections C/D/E + `local_44 ? i + 4 : local_2c[i]`) from the

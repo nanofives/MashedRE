@@ -92,6 +92,31 @@ bool RoundGrid_AnchorAt(int n, float A[3], float lat[2], float dir[2]) {
     return true;
 }
 
+// [u9755] FUN_00408b00's grid-point y for slot 0..3 (param_2 < 4 block, verify/grid_orig_ts/FUN_00408b00_decomp.txt):
+// fStack_50 = fn.y * _DAT_005cc9bc (0.8), local_5c = (fn.y * _DAT_005ccac0 (0.4)) * 0.8, rank term = d.y * 1.1 / 2.2 / 3.3
+// (_DAT_005ccabc / b8 / b4), evaluated in the decomp's order. The port's place() never needed it (it grounds y with
+// GroundHeight); FUN_004704c0 passes it as param_3 to FUN_0046d400 (MASHED_SPAWN_Y_LINE).
+bool RoundGrid_GridPointY(int n, int slot, float* y) {
+    const int count = I32(kNodeCount);
+    if (count <= 0 || n < 0 || n >= count || slot < 0 || slot > 3) return false;
+    const std::uintptr_t r = kRec + static_cast<std::uintptr_t>(n) * 0x4cu;
+    const float a = FP(r + 0x0c)[1];                                   // FUN_00426cb0 -> local_44
+    const float dy = FP(r + 0x00)[1];                                  // FUN_00426cc0 -> local_2c
+    const float* k0 = FP(r + 0x18);
+    const float* k3 = FP(r + 0x18 + 3 * 12);
+    float f3[3] = { k0[0] - k3[0], k0[1] - k3[1], k0[2] - k3[2] }, fn[3];
+    Math::LutNormalize(fn, f3);                                        // FUN_004c39b0(&fStack_54, &fStack_54)
+    const float s50 = fn[1] * 0.8f;                                    // fStack_50 * _DAT_005cc9bc
+    const float l5c = (fn[1] * 0.4f) * 0.8f;                           // fStack_38 = fStack_50 * 0.4; * 0.8
+    switch (slot) {
+    case 0: *y = (a + s50) - l5c; break;
+    case 1: *y = ((a - s50) - l5c) - dy * 1.1f; break;                 // fStack_14
+    case 2: *y = ((a + s50) + l5c) - dy * 2.2f; break;                 // fStack_20
+    default: *y = ((a - s50) + l5c) - dy * 3.3f; break;                // fStack_8
+    }
+    return true;
+}
+
 bool RoundGrid_Anchor(float A[3], float lat[2], float dir[2], int* node) {
     if (!RoundGrid_Enabled()) return false;
     std::int32_t v = I32(kNode);

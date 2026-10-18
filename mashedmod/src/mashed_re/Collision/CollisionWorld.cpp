@@ -221,12 +221,17 @@ const std::uint32_t g_bw_c_5cc320 = 0x3f800000u;   // 1.0   (_DAT_005cc320)
 const std::uint32_t g_bw_c_5e4578 = 0x3f11eb85u;   // 0.57  (_DAT_005e4578)
 const std::uint32_t g_bw_c_5d757c = 0x00000000u;   // 0.0   (DAT_005d757c)
 std::uint32_t g_bw_collPluginOffset = 0x10u;       // [0x007dc5b4] = offsetof(RwSectorRep, coll)
+// [u9755] the line walk BW_538d60's three further .rdata reads (re/tools/naked_specs/collworld_line_u9755.json)
+const std::uint32_t g_bw_c_5ce54c = 0x358637bdu;   // 1e-6  (_DAT_005ce54c)
+const std::uint32_t g_bw_c_5cea1c = 0xb727c5acu;   // -1e-5 (_DAT_005cea1c)
+const std::uint32_t g_bw_c_5e4574 = 0x322bcc77u;   // 1e-8  (_DAT_005e4574)
 // [*(0x007d3ff8) + *(0x007d3ffc)] = sqrt table root, [.. + 4] = inv-sqrt table root (FUN_004c3b90)
 struct { const std::uint32_t* sqrt_; const std::uint32_t* inv_; } g_bw_lutptrs = { nullptr, nullptr };
 }
 static_assert(offsetof(mashed_re::Collision::RwSectorRep, coll) == 0x10, "plugin offset");
 
 #include "CollisionWorld_naked.inc"
+#include "CollisionWorldLine_naked.inc"   // [u9755] 0x00538d60, FUN_00538c80 case 1
 
 namespace mashed_re {
 namespace Collision {
@@ -285,13 +290,50 @@ std::uint32_t CollWorld_MaterialColour(int matIdx) {
 void CollWorld_ForAllIntersections(float* isect, CollWorldCb cb, void* data) {
     if (!g_rep.ready) return;
     const std::int32_t type = *reinterpret_cast<const std::int32_t*>(isect + 6);   // +0x18
-    if (type != 3) return;   // cases 1, 4, 5 keep their existing callers; out of this lane's scope
+    if (type != 3 && type != 1) return;   // cases 4, 5 keep their existing callers; out of scope
     typedef void (__cdecl* walk_fn)(void*, float*, float*, CollWorldCb, void*);
+    typedef void (__cdecl* line_fn)(void*, float*, CollWorldCb, void*);
     unsigned int cw = 0, tmp = 0;
     _controlfp_s(&cw, 0, 0);
     _controlfp_s(&tmp, _PC_24, _MCW_PC);
-    reinterpret_cast<walk_fn>(&BW_539ec0)(&g_rep.world, isect, isect, cb, data);
+    if (type == 3)
+        reinterpret_cast<walk_fn>(&BW_539ec0)(&g_rep.world, isect, isect, cb, data);
+    else   // [u9755] FUN_00538c80 case 1: FUN_00538d60(world, isect, cb, data)
+        reinterpret_cast<line_fn>(&BW_538d60)(&g_rep.world, isect, cb, data);
     _controlfp_s(&tmp, cw & _MCW_PC, _MCW_PC);
+}
+
+// ---- [u9755] FUN_0046d400 + its callback FUN_0046d3a0 (verify/u9755_20261018/PREREG_u9755.md) -----------------
+namespace {
+// 0x0046d3a0: keep dist * 6.0 (_DAT_005cd0a0) when smaller, unless the triangle's material colour is 0xff0000ff or
+// 0xff010101 (the material lookup FUN_00468b80 uses: sector+4 tris[index*4+3] -> materials[m]+4).
+void* __cdecl SpawnDropCb(void* /*isect*/, void* sector, float* collTri, float dist, void* data)
+{
+    float* best = static_cast<float*>(data);
+    const float d6 = dist * 6.0f;                                                   // param_4 * _DAT_005cd0a0
+    if (d6 < *best) {
+        const std::uint16_t* tris = *reinterpret_cast<std::uint16_t* const*>(reinterpret_cast<const char*>(sector) + 4);
+        const int index = *reinterpret_cast<const int*>(&collTri[6]);               // tri+0x18
+        const std::int32_t col = static_cast<std::int32_t>(CollWorld_MaterialColour(tris[index * 4 + 3]));
+        if (col != -0xffff01 && col != -0xfefeff) *best = d6;
+    }
+    return collTri;
+}
+}  // namespace
+
+// FUN_0046d400(x, y, z, world) as FUN_004704c0 uses it (decomp: local_8 = param_3 - FUN_0046d400): returns the spawn y
+// (float)(y - FUN_0046d400(...)). Line (x, y + 3, z) -> (x, y - 3, z) (_DAT_005cc31c = 3.0), best starts at 6.0;
+// no hit -> 0 - 3. False when the replica is not built.
+bool CollWorld_SpawnY(float x, float y, float z, float* out)
+{
+    if (!g_rep.ready) return false;
+    float isect[7] = { x, y + 3.0f, z, x, y - 3.0f, z, 0.0f };
+    *reinterpret_cast<std::int32_t*>(&isect[6]) = 1;
+    float best = 6.0f;
+    CollWorld_ForAllIntersections(isect, &SpawnDropCb, &best);
+    const float drop = (best != 6.0f) ? best - 3.0f : 0.0f - 3.0f;              // FUN_0046d400 return (DAT_005d757c = 0)
+    *out = y - drop;
+    return true;
 }
 
 // ---- MASHED_BSP_REPLAY (diagnostic) -------------------------------------------------------------

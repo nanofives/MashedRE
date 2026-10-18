@@ -1,0 +1,18 @@
+{
+  "funcs": [
+    {"name": "BW_538d60", "start": "0x00538d60", "size": 2961}
+  ],
+  "calls": {
+    "0x004c3b90": "BW_4c3b90"
+  },
+  "indirect_calls_ok": true,
+  "consts": {
+    "0x005cc320": "g_bw_c_5cc320",
+    "0x005d757c": "g_bw_c_5d757c",
+    "0x007dc5b4": "g_bw_collPluginOffset",
+    "0x005ce54c": "g_bw_c_5ce54c",
+    "0x005cea1c": "g_bw_c_5cea1c",
+    "0x005e4574": "g_bw_c_5e4574"
+  },
+  "patch": {}
+}

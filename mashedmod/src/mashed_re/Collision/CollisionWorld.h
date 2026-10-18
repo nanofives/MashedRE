@@ -41,6 +41,8 @@ void CollWorld_ForAllIntersections(float* isect, CollWorldCb cb, void* data);
 // [[0x0088e654]+8]+0x10 -> materials[matIdx]+4: the RGBA dword FUN_00468b80 stores at
 // entry +0x34 (0x00468baa..0x00468bbc). 0 when the replica is not ready or out of range.
 std::uint32_t CollWorld_MaterialColour(int matIdx);
+// [u9755] FUN_004704c0's spawn y = (float)(y - FUN_0046d400(x, y, z, world)) over the replica (line walk 0x00538d60).
+bool CollWorld_SpawnY(float x, float y, float z, float* out);
 
 // d2bsp knob (read once). Fix W is the only terrain query since d2close (user decision 2026-10-16):
 // the port-only triangle-soup stand-in is deleted, so there is no opt-out. MASHED_D2BSP_KEY0=1

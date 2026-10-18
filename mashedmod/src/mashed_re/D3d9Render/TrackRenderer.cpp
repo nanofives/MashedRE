@@ -6971,18 +6971,26 @@ void TrackRenderer::StartRound() {
     // which is 0.11 deg off on Training (verify/gridyaw_20261016/PREREG_gridyaw.md A1.2).
     float gdYaw = 0.f;
     bool gdOn = false;
+    int gdNode = -1;   // [u9755] the grid node, for FUN_00408b00's y under MASHED_SPAWN_Y_LINE
     {
         float A[3], L2[2], D2[2]; int nd = -1;
         if (Race::RoundGrid_Anchor(A, L2, D2, &nd)) {
             gA[0] = A[0]; gA[1] = A[1]; gA[2] = A[2];
             lat[0] = L2[0]; lat[1] = L2[1]; dir[0] = D2[0]; dir[1] = D2[1];
             if (Race::GridDir_Enabled()) gdOn = Race::GridDir_YawAt(nd, &gdYaw);
+            gdNode = nd;
         } else if (Race::GridDir_Anchor(A, L2, D2, &gdYaw, &nd)) {
             gA[0] = A[0]; gA[1] = A[1]; gA[2] = A[2];
             lat[0] = L2[0]; lat[1] = L2[1]; dir[0] = D2[0]; dir[1] = D2[1];
             gdOn = true;
+            gdNode = nd;
         }
     }
+    // [u9755] MASHED_SPAWN_Y_LINE=1 (default OFF, verify/u9755_20261018/PREREG_u9755.md): FUN_004704c0's spawn y,
+    // (float)(param_3 - FUN_0046d400(x, param_3, z, world)) with param_3 = FUN_00408b00's grid-point y, instead of
+    // GroundHeight. The caller convention carries y + car_ground_off_; the stored value is the float whose difference
+    // with car_ground_off_ is that y exactly (SeedSpawnPose / StepCar subtract it again).
+    static const bool s_spawnYLine = [] { const char* e = std::getenv("MASHED_SPAWN_Y_LINE"); return e && e[0] == '1'; }();
     // slot == spawn order: player=0, ai0=1, ai1=2, ai2=3
     static const float kLatMul[4] = { 0.48f, -1.12f, 1.12f, -0.48f };
     static const float kDirMul[4] = { 0.00f,  1.10f, 2.20f,  3.30f };
@@ -6993,6 +7001,14 @@ void TrackRenderer::StartRound() {
         const float y = GroundHeight(x, z, &ok);
         pos[0] = x; pos[2] = z;
         pos[1] = (ok ? y : gA[1]) + car_ground_off_;
+        float gpy = 0.f, sy = 0.f;
+        if (s_spawnYLine && gdNode >= 0 && Race::RoundGrid_GridPointY(gdNode, slot, &gpy) &&
+            Collision::CollWorld_SpawnY(x, gpy, z, &sy)) {
+            float p = sy + car_ground_off_;
+            for (int i = 0; i < 4 && p - car_ground_off_ != sy; ++i)
+                p = std::nextafter(p, (p - car_ground_off_ < sy) ? 1e30f : -1e30f);
+            pos[1] = p;
+        }
         *yaw = gdOn ? gdYaw : std::atan2(dir[1], dir[0]);
     };
     // [round grid Stage B] per-car formation slot (default-OFF MASHED_ROUND_GRID_ORDER): FUN_0040e590's slot value

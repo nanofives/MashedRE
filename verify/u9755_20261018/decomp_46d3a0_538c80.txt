@@ -1,0 +1,117 @@
+[decomp_pc] slot=Mashed_pool10 modes=decomp n=2
+// FUN_0046d3a0 @ 0x0046d3a0  size=86  (MASHED.exe)
+// undefined FUN_0046d3a0(void)
+
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+
+
+void FUN_0046d3a0(undefined4 param_1,int param_2,int param_3,float param_4,float *param_5)
+
+
+
+{
+
+  int iVar1;
+
+  
+
+  if (param_4 * _DAT_005cd0a0 < *param_5) {
+
+    iVar1 = *(int *)(*(int *)(*(int *)(DAT_0080332c + 0x10) +
+
+                             (uint)*(ushort *)
+
+                                    (*(int *)(param_2 + 4) + 6 + *(int *)(param_3 + 0x18) * 8) * 4)
+
+                    + 4);
+
+    if ((iVar1 != -0xffff01) && (iVar1 != -0xfefeff)) {
+
+      *param_5 = param_4 * _DAT_005cd0a0;
+
+    }
+
+  }
+
+  return;
+
+}
+
+
+
+
+
+// FUN_00538c80 @ 0x00538c80  size=202  (MASHED.exe)
+// undefined FUN_00538c80(void)
+
+
+undefined4
+
+FUN_00538c80(undefined4 param_1,undefined4 *param_2,undefined4 param_3,undefined4 param_4)
+
+
+
+{
+
+  undefined4 *puVar1;
+
+  undefined4 local_10;
+
+  undefined4 local_c;
+
+  undefined4 local_8;
+
+  undefined4 local_4;
+
+  
+
+  switch(param_2[6]) {
+
+  case 1:
+
+    FUN_00538d60(param_1,param_2,param_3,param_4);
+
+    return param_1;
+
+  default:
+
+    return param_1;
+
+  case 3:
+
+    FUN_00539ec0(param_1,param_2,param_2,param_3,param_4);
+
+    return param_1;
+
+  case 4:
+
+    FUN_00539900(param_1,param_2,param_3,param_4);
+
+    return param_1;
+
+  case 5:
+
+    puVar1 = (undefined4 *)RpAtomicGetWorldBoundingSphere(*param_2);
+
+    local_10 = *puVar1;
+
+    local_c = puVar1[1];
+
+    local_8 = puVar1[2];
+
+    local_4 = puVar1[3];
+
+    FUN_00539ec0(param_1,&local_10,param_2,param_3,param_4);
+
+    return param_1;
+
+  }
+
+}
+
+
+
+
+
