@@ -272,7 +272,7 @@ void PathProg_FrameTick() {                              // FUN_0040da50's FUN_0
                 std::uint32_t rec = 0;
                 PtrCompute881ec8(&rec, static_cast<std::uint32_t>(v));
                 const float* m = rec ? reinterpret_cast<const float*>(rec) : nullptr;
-                std::fprintf(s_gl, "%d,%d,active=%u,alive=%u,pos=(%.4f,%.4f,%.4f)\n", s_glN, v,
+                std::fprintf(s_gl, "%d,%d,active=%u,alive=%u,pos=(%.9g,%.9g,%.9g)\n", s_glN, v,
                              static_cast<unsigned>(IsCarSlotActive(v)), static_cast<unsigned>(VehicleSlotGetter(static_cast<std::uint32_t>(v))),
                              m ? m[12] : 0.f, m ? m[13] : 0.f, m ? m[14] : 0.f);
             }

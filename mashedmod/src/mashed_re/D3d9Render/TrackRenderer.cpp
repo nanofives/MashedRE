@@ -1396,6 +1396,11 @@ extern "C" void* __cdecl RwMatrixRotate(void* m, const float* axis, float deg, i
 extern "C" void  __cdecl FUN_004c51a0(float* m, float* v, int mode);                        // 0x004c51a0 RwMatrixTranslate
 
 namespace {
+// [u9755] MASHED_SPAWN_Y_LINE: each car's exact spawn y (FUN_004704c0's record y), set by StartRound's place() and handed
+// to the countdown SeedSpawnPose, so it never goes through the caller convention's + car_ground_off_ (a float near 0.6
+// cannot carry every y near 0.47 back out: o_sdrop1 car 1 0.471709967 came back as 0.471709996).
+float s_spawnY[4] = { 0.f, 0.f, 0.f, 0.f };
+bool  s_spawnYOk[4] = { false, false, false, false };
 
 // Camera-man placement, one record per track whose COURSE.LUA loads CamMan.dff and whose per-frame
 // helper places it. `n` = the helper's loop bound (`mov ebp, N`), entries 1..N; `helper` = the helper's
@@ -4960,10 +4965,11 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
                                                return !(no && no[0] && no[0] != '0'); }();
             if (s_cdSpawn && Vehicle::VehiclePhysics_Enabled()) {
                 if (g_aib.loaded && (Ai::I32(Ai::kSplineRaceCnt) > 3)) Ai::Ai_CountdownAlivePoke();
-                Vehicle::VehiclePhysics_SeedSpawnPose(0, car_pos_, car_yaw_, car_ground_off_);
+                Vehicle::VehiclePhysics_SeedSpawnPose(0, car_pos_, car_yaw_, car_ground_off_, s_spawnYOk[0] ? &s_spawnY[0] : nullptr);
                 for (int ci = 0; ci < static_cast<int>(ai_cars_.size()); ++ci)
                     Vehicle::VehiclePhysics_SeedSpawnPose(ci + 1, ai_cars_[static_cast<std::size_t>(ci)].pos,
-                                                          ai_cars_[static_cast<std::size_t>(ci)].yaw, car_ground_off_);
+                                                          ai_cars_[static_cast<std::size_t>(ci)].yaw, car_ground_off_,
+                                                        (ci < 3 && s_spawnYOk[ci + 1]) ? &s_spawnY[ci + 1] : nullptr);
             }
         }
         if (countdown_ <= 0.f) {
@@ -6971,28 +6977,44 @@ void TrackRenderer::StartRound() {
     // which is 0.11 deg off on Training (verify/gridyaw_20261016/PREREG_gridyaw.md A1.2).
     float gdYaw = 0.f;
     bool gdOn = false;
+    int gdNode = -1;   // [u9755] the grid node, for FUN_00408b00's y under MASHED_SPAWN_Y_LINE
     {
         float A[3], L2[2], D2[2]; int nd = -1;
         if (Race::RoundGrid_Anchor(A, L2, D2, &nd)) {
             gA[0] = A[0]; gA[1] = A[1]; gA[2] = A[2];
             lat[0] = L2[0]; lat[1] = L2[1]; dir[0] = D2[0]; dir[1] = D2[1];
             if (Race::GridDir_Enabled()) gdOn = Race::GridDir_YawAt(nd, &gdYaw);
+            gdNode = nd;
         } else if (Race::GridDir_Anchor(A, L2, D2, &gdYaw, &nd)) {
             gA[0] = A[0]; gA[1] = A[1]; gA[2] = A[2];
             lat[0] = L2[0]; lat[1] = L2[1]; dir[0] = D2[0]; dir[1] = D2[1];
             gdOn = true;
+            gdNode = nd;
         }
     }
+    // [u9755] MASHED_SPAWN_Y_LINE=1 (default OFF, verify/u9755_20261018/PREREG_u9755.md): FUN_004704c0's spawn y,
+    // (float)(param_3 - FUN_0046d400(x, param_3, z, world)) with param_3 = FUN_00408b00's grid-point y, instead of
+    // GroundHeight. The caller convention carries y + car_ground_off_; the stored value is the float whose difference
+    // with car_ground_off_ is that y exactly (SeedSpawnPose / StepCar subtract it again).
+    static const bool s_spawnYLine = [] { const char* e = std::getenv("MASHED_SPAWN_Y_LINE"); return e && e[0] == '1'; }();
     // slot == spawn order: player=0, ai0=1, ai1=2, ai2=3
     static const float kLatMul[4] = { 0.48f, -1.12f, 1.12f, -0.48f };
     static const float kDirMul[4] = { 0.00f,  1.10f, 2.20f,  3.30f };
-    auto place = [&](float* pos, float* yaw, int slot) {
+    for (int i = 0; i < 4; ++i) s_spawnYOk[i] = false;
+    auto place = [&](float* pos, float* yaw, int slot, int car) {
         const float x = gA[0] + lat[0] * kLatMul[slot] - dir[0] * kDirMul[slot];
         const float z = gA[2] + lat[1] * kLatMul[slot] - dir[1] * kDirMul[slot];
         bool ok = false;
         const float y = GroundHeight(x, z, &ok);
         pos[0] = x; pos[2] = z;
         pos[1] = (ok ? y : gA[1]) + car_ground_off_;
+        float gp[3] = { 0.f, 0.f, 0.f }, sy = 0.f;
+        if (s_spawnYLine && gdNode >= 0 && Race::RoundGrid_GridPoint(gdNode, slot, gp) &&
+            Collision::CollWorld_SpawnY(gp[0], gp[1], gp[2], &sy)) {
+            pos[0] = gp[0]; pos[2] = gp[2];                     // FUN_004704c0 param_2 / param_4
+            pos[1] = sy + car_ground_off_;
+            if (car >= 0 && car < 4) { s_spawnY[car] = sy; s_spawnYOk[car] = true; }
+        }
         *yaw = gdOn ? gdYaw : std::atan2(dir[1], dir[0]);
     };
     // [round grid Stage B] per-car formation slot (default-OFF MASHED_ROUND_GRID_ORDER): FUN_0040e590's slot value
@@ -7002,7 +7024,7 @@ void TrackRenderer::StartRound() {
         int sv[4];
         if (Race::RoundGrid_SlotOrder(sv)) for (int i = 0; i < 4; ++i) kSlot[i] = sv[i] & 3;
     }
-    place(car_pos_, &car_yaw_, kSlot[0]);
+    place(car_pos_, &car_yaw_, kSlot[0], 0);
     if (const float* dy = D2LatSpawnYaw()) {   // [d2lateral] diagnostic, default OFF
         car_yaw_ = *dy;
         Vehicle::VehiclePhysics_ResetOrientation(0, car_yaw_);
@@ -7023,7 +7045,7 @@ void TrackRenderer::StartRound() {
     ai_cars_.assign(static_cast<std::size_t>(nAi), AiCar{});
     for (int i = 0; i < nAi; ++i) {
         AiCar& a = ai_cars_[static_cast<std::size_t>(i)];
-        place(a.pos, &a.yaw, kSlot[(i + 1) & 3]);   // ai i -> slot i+1 (Stage B: kSlot)
+        place(a.pos, &a.yaw, kSlot[(i + 1) & 3], i + 1);   // ai i -> slot i+1 (Stage B: kSlot)
         a.target = 1;
         // staggered top speeds (all faster than the auto-driven player) +
         // distinct racing lanes so they spread out and overtake
