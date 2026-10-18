@@ -5584,6 +5584,9 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         if (Ai::Ai_ContactEventEnabled()) Ai::Ai_ContactEventDrain();
         // [u9749] MASHED_RECDUMP (diagnostic, default OFF): one record per race frame after every car's physics
         if (phys) Vehicle::VehiclePhysics_RecDumpFrame();
+        // [u9745ov] default ON since c2k93 (MASHED_NO_AI_CLOCK_LATE=1 opts out): FUN_0040fc00's DAT_007f0ff4 / DAT_007f0ff8 add, at the end of the
+        // frame (0x0040fe4f..0x0040fe64), after the AI tick, the physics and the drain above
+        if (ai_tick_ran) Ai::Ai_AdvanceClockLate(static_cast<int>(in.dt * 3000.0f + 0.5f));
         // diagnostic (env MASHED_AI_DIAG -> mashed_re.log, ~every 30 frames): pos/yaw/speed
         // so a stalled car's trajectory is visible. Read-only (does NOT call
         // Ai_ComputeTarget, which would double-update the continuity index this frame).

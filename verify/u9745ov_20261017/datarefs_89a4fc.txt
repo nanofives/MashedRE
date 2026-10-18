@@ -1,0 +1,52 @@
+// 0x0089a4fc  DATA in .data
+//   type: undefined bytes (Ghidra has no data definition here)
+//   5 reference(s) total
+//   WRITES: (none)
+//   reads: (none)
+//   other (5):
+//     0x00417395 in FUN_00417370  [DATA]  MOV dword ptr [EDX + 0x89a4fc],ECX
+//     0x004173d2 in FUN_004173b0  [DATA]  MOV dword ptr [EDX + 0x89a4fc],ECX
+//     0x004187d5 in FUN_00418560  [DATA]  MOV EAX,dword ptr [ESI + 0x89a4fc]
+//     0x004187e8 in FUN_00418560  [DATA]  MOV dword ptr [ESI + 0x89a4fc],EAX
+//     0x004187f0 in FUN_00418560  [DATA]  MOV dword ptr [ESI + 0x89a4fc],EBX
+
+// 0x0089a4ec  DATA in .data
+//   type undefined4 len 4  value 00000000h
+//   13 reference(s) total
+//   WRITES (1):
+//     0x00413ff2 in FUN_00413fe0  [WRITE]  MOV dword ptr [EAX + -0x4],ECX
+//   reads: (none)
+//   other (12):
+//     0x00416608 in FUN_00416250  [DATA]  CMP dword ptr [EDI + 0x89a4ec],0x1
+//     0x004166aa in FUN_00416250  [DATA]  MOV dword ptr [EDI + 0x89a4ec],0x1
+//     0x0041671d in FUN_00416250  [DATA]  CMP dword ptr [EDI + 0x89a4ec],0x2
+//     0x004167c5 in FUN_00416250  [DATA]  MOV dword ptr [EDI + 0x89a4ec],0x2
+//     0x00416d4e in FUN_00416a30  [DATA]  CMP dword ptr [EBX + 0x89a4ec],0x1
+//     0x00416df0 in FUN_00416a30  [DATA]  MOV dword ptr [EBX + 0x89a4ec],0x1
+//     0x00416e68 in FUN_00416a30  [DATA]  CMP dword ptr [EBX + 0x89a4ec],0x2
+//     0x00416f10 in FUN_00416a30  [DATA]  MOV dword ptr [EBX + 0x89a4ec],0x2
+//     0x00418158 in FUN_00417da0  [DATA]  CMP dword ptr [EDI + 0x89a4ec],0x1
+//     0x004181fa in FUN_00417da0  [DATA]  MOV dword ptr [EDI + 0x89a4ec],0x1
+//     0x0041826d in FUN_00417da0  [DATA]  CMP dword ptr [EDI + 0x89a4ec],0x2
+//     0x00418315 in FUN_00417da0  [DATA]  MOV dword ptr [EDI + 0x89a4ec],0x2
+
+// 0x0089a4f0  DATA in .data
+//   type undefined4 len 4  value 00000000h
+//   14 reference(s) total
+//   WRITES (1):
+//     0x00413ff5 in FUN_00413fe0  [WRITE]  MOV dword ptr [EAX],ECX
+//   reads: (none)
+//   other (13):
+//     0x00413fed in FUN_00413fe0  [DATA]  MOV EAX,0x89a4f0
+//     0x00416616 in FUN_00416250  [DATA]  SUB EAX,dword ptr [EDI + 0x89a4f0]
+//     0x004166b4 in FUN_00416250  [DATA]  MOV dword ptr [EDI + 0x89a4f0],EDX
+//     0x0041672b in FUN_00416250  [DATA]  SUB EAX,dword ptr [EDI + 0x89a4f0]
+//     0x004167cf in FUN_00416250  [DATA]  MOV dword ptr [EDI + 0x89a4f0],EDX
+//     0x00416d5c in FUN_00416a30  [DATA]  SUB EAX,dword ptr [EBX + 0x89a4f0]
+//     0x00416dfa in FUN_00416a30  [DATA]  MOV dword ptr [EBX + 0x89a4f0],EDX
+//     0x00416e76 in FUN_00416a30  [DATA]  SUB EAX,dword ptr [EBX + 0x89a4f0]
+//     0x00416f1a in FUN_00416a30  [DATA]  MOV dword ptr [EBX + 0x89a4f0],EDX
+//     0x00418166 in FUN_00417da0  [DATA]  SUB EAX,dword ptr [EDI + 0x89a4f0]
+//     0x00418204 in FUN_00417da0  [DATA]  MOV dword ptr [EDI + 0x89a4f0],EDX
+//     0x0041827b in FUN_00417da0  [DATA]  SUB EAX,dword ptr [EDI + 0x89a4f0]
+//     0x0041831f in FUN_00417da0  [DATA]  MOV dword ptr [EDI + 0x89a4f0],EDX

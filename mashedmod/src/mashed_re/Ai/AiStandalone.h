@@ -83,6 +83,11 @@ bool Ai_ComputeTarget(int v, float ownX, float ownZ, float* outTx, float* outTz)
 // DAT_007f0ff4 += units, DAT_007f0ff8 += units (original 0x0040fc63 / 0x0040fe5e).
 // The original's budget is 50 per 1/60 s frame. Call once per race frame before the tick.
 void Ai_AdvanceClock(int units);
+// [u9745ov 2026-10-17] Default ON since c2k93 2026-10-17 (MASHED_NO_AI_CLOCK_LATE=1 opts out): Ai_AdvanceClock stores DAT_007f1008 only, and this adds the
+// budget to DAT_007f0ff4 / DAT_007f0ff8 at the end of the race frame, as FUN_0040fc00 does (0x0040fe4f..0x0040fe64, after
+// FUN_00425a40 at 0x0040fc6c). No-op with the knob off.
+bool Ai_ClockLateEnabled();
+void Ai_AdvanceClockLate(int units);
 // [d3bB2 2026-10-17] Default ON since a4order 2026-10-17 (user decision; MASHED_NO_AI_COUNTDOWN_CLOCK=1
 // opts out): DAT_007f0ff4 += units on every
 // countdown stand-in frame, as FUN_0040fc00 does on the original's pre-GO ticks (0x0040fe4f..0x0040fe5e).
