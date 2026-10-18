@@ -1,0 +1,6 @@
+  [0] OIL      frames=  46 CLEAN          checked=canfire_rets:46,charge:45,code_post:46,deact_ra:46,fire_modes:46,prev3:46
+  [1] FLASH    frames=   4 CLEAN          checked=canfire_rets:4,code_post:4,deact_ra:4,fire_modes:4,prev3:4,sub:3
+  [2] GUN      frames= 164 CLEAN          checked=ammo:163,canfire_rets:164,charge:163,code_post:164,cooldown:163,deact_ra:164,fire_modes:164,prev3:164
+  [3] SHOTGUN  frames=  37 CLEAN          checked=ammo:36,canfire_rets:37,code_post:37,counter:36,deact_ra:37,fire_modes:37,prev3:37
+  [4] MISSILE  frames=  33 CLEAN          checked=ammo:32,canfire_rets:33,code_post:33,deact_ra:33,fire_modes:33,jet:32,life:32,prev3:33
+VERDICT: CLEAN
