@@ -409,6 +409,14 @@ static bool ProbeGround(float x, float z, float& gy, float* n /*[3]*/) {
 // (Arctic regression). Off-mesh wheels at the edge fall back to the averaged on-mesh
 // (slope) normal; on-mesh wheels keep their own per-wheel terrain normal — so slope
 // normals are preserved while drivability matches the old flat path.
+// [u9754 2026-10-18] MASHED_REASSERT_KEEP_NORMAL=1 (default OFF, verify/u9754_20261018/PREREG_u9754.md): keep the
+// classifier's normal. The original's wheel normal is written only by FUN_0046cc40 (0x0046cff8, the walk's face normal,
+// watched on o_seed1); this port-only re-assert replaced it with ProbeGround's soup normal at spawn (U-9754).
+static bool ReassertKeepNormal() {
+    static const bool s_on = [] { const char* e = std::getenv("MASHED_REASSERT_KEEP_NORMAL"); return e && e[0] == '1'; }();
+    return s_on;
+}
+
 static void ReassertContacts(unsigned char* r) {
     float gc = 0.f;
     for (int w = 0; w < 4; ++w) {
@@ -416,9 +424,11 @@ static void ReassertContacts(unsigned char* r) {
             if (I(r, wheelStateOff(w)) == 0) I(r, wheelStateOff(w)) = 1;   // ground (on-track gate)
             const float* nrm = g_cOnMesh[w] ? g_cNormal[w] : g_cAvgN;      // real per-wheel, or slope avg
             const std::size_t nb = wheelNormOff(w);
-            F(r, nb + 0x0) = nrm[0];              // contact normal.x  (A5 Phase 6 pf[3])
-            F(r, nb + 0x4) = nrm[1];              // contact normal.y  (A5 Phase 6 pf[4])
-            F(r, nb + 0x8) = nrm[2];              // contact normal.z  (A5 Phase 6 pf[5])
+            if (!ReassertKeepNormal()) {
+                F(r, nb + 0x0) = nrm[0];          // contact normal.x  (A5 Phase 6 pf[3])
+                F(r, nb + 0x4) = nrm[1];          // contact normal.y  (A5 Phase 6 pf[4])
+                F(r, nb + 0x8) = nrm[2];          // contact normal.z  (A5 Phase 6 pf[5])
+            }
         } else {
             I(r, wheelStateOff(w)) = 0;           // airborne (caller's GroundHeight failed)
         }
