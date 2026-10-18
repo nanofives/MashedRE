@@ -5697,6 +5697,9 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
     // [U-9685] arm R: FUN_0040da50's FUN_00408610 loop sits between the AI path (0x0040fc6c) and the producer
     // path (0x0040fc7c) in FUN_0040fc00, so it runs here, before the producer call below.
     if (Race::RacePctOrig_Enabled() && !(Race::PathProg_PublishMask() & 0x8u)) Race::PathProg_RacePctTick();
+    // [cev] MASHED_PATHPROG_LATE: the wholesale tick at the same place (after FUN_00425a40 0x0040fc6c, before the
+    // producer 0x0040fc7c); same gates_ guard as the UpdateRace site it replaces.
+    if (Race::PathProg_Late() && !gates_.empty()) Race::PathProg_FrameTick();
     if (RaceRefDistAfterAi() && !gates_.empty()) RaceComputeDistancesTick(1);
     yaww::Frame();   // U-9188 leg A/B per-frame emit; no-op unless MASHED_AI_YAWW
 
@@ -7820,7 +7823,8 @@ void TrackRenderer::UpdateRace(float dt) {
 
     // [D-11072 P2] FUN_0040da50's FUN_00408610 loop (per-car path progress 0x008a96e8 and
     // race_pct 0x008a96ec), before the AI tick like the bridge below. Default-OFF MASHED_PATHPROG.
-    Race::PathProg_FrameTick();
+    // [cev] MASHED_PATHPROG_LATE moves it after the opponents' physics (end of UpdateCar).
+    if (!Race::PathProg_Late()) Race::PathProg_FrameTick();
     // [PATHPROG split] MASHED_PP_PUBLISH bit 0x8: the shadow-row tick at the wholesale knob's placement, before the AI tick.
     if (Race::RacePctOrig_Enabled() && (Race::PathProg_PublishMask() & 0x8u)) Race::PathProg_RacePctTick();
 
