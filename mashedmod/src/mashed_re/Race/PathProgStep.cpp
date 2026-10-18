@@ -249,6 +249,15 @@ void PathProg_RaceInit() {                               // FUN_00407a60
     }
 }
 
+// [cev 2026-10-18] FUN_0040fc00 runs the physics frame FUN_00425a40 (0x0040fc6c) before FUN_0040da50 (0x0040fc75), so the
+// AI tick of frame k reads progress from the positions after frame k-1's physics. UpdateRace runs before the opponents'
+// physics, so from there the AI cars' progress lags one tick (verify/cev_20261018/progcmp2.py: the port's call k = the
+// original's call k-1, o_wobj2).
+bool PathProg_Late() {
+    static const bool s_on = [] { const char* e = std::getenv("MASHED_PATHPROG_LATE"); return e && e[0] == '1'; }();
+    return s_on;
+}
+
 void PathProg_FrameTick() {                              // FUN_0040da50's FUN_00408610 loop
     if (!PathProg_Enabled() || PathNodes_TriCount() == 0) return;
     EnsureLut();

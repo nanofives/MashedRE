@@ -90,6 +90,11 @@ STACK['TPPGC'] = STACK['TPPG'] + ['MASHED_COUNTDOWN_SPAWN']; STACK['SCS'] = STAC
 STACK['TGTE'] = STACK['TGT'] + ['MASHED_AI_CONTACT_EVENT']   # cev PREREG section 2
 STACK['TGTEL'] = STACK['TGTE'] + ['MASHED_CARCAR_LOG=@OUT@\\@NAME@.cc.txt', 'MASHED_AI_CONTACT_EVENT_TRACE=@OUT@\\@NAME@.ev.txt',
                                   'MASHED_TGT3_TRACE=@OUT@\\@NAME@.tgt3.csv']
+STACK['SPL'] = STACK['S'] + ['MASHED_PATHPROG_LATE']; STACK['SPLE'] = [k for k in STACK['SPL'] if k != 'MASHED_AI_CONTACT_EVENT']   # cev amendment 2
+STACK['SPLL'] = STACK['SPL'] + ['MASHED_CARCAR_LOG=@OUT@\\@NAME@.cc.txt', 'MASHED_AI_CONTACT_EVENT_TRACE=@OUT@\\@NAME@.ev.txt']
+STACK['TGTPL'] = STACK['TGT'] + ['MASHED_PATHPROG_LATE']
+STACK['KT'] = STACK['TGT'] + ['MASHED_AI_TICK_FIRST']; STACK['KTE'] = STACK['KT'] + ['MASHED_AI_CONTACT_EVENT']   # cev amendment 1
+STACK['KTEL'] = STACK['KTE'] + ['MASHED_CARCAR_LOG=@OUT@\\@NAME@.cc.txt', 'MASHED_AI_CONTACT_EVENT_TRACE=@OUT@\\@NAME@.ev.txt']
 STACK['ELR'] =STACK['EL'] + ['MASHED_RECDUMP=@OUT@\\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=3']   # cev: event + pair logs + car 3 records
 STACK['RGX'] = STACK['RG'] + ['MASHED_A5_RACE_TIMER']   # RGT without the diagnostic log: the (b) / G-CTRL arms
 # d2ref flip: the three opt-outs (-> the 6242c84b6 default)

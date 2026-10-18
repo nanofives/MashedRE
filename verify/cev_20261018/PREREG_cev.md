@@ -70,3 +70,24 @@ G-B), plus G-ORDER2: car 2 `ret14a70` = 0 on window calls 0..21 (o_reg_r13).
 | `KTE` | KT + `MASHED_AI_CONTACT_EVENT` |
 | `KTEL` | KTE + car-car / event / TGT3 logs |
 | `S` | d3bB2's `S` on today's default (adds `MASHED_POS_MODEL`, `MASHED_ROUND_GRID(_ORDER)`) |
+
+## Amendment 2 (2026-10-18, before any MASHED_PATHPROG_LATE arm)
+
+Amendment-1 result: KT / KTE leave car 2 braking from call 0 (A 0/3, B 0-1/3); `S` on today's default gives the
+original's player contacts (23, 59), no call-63 contact, B 1+3 at 169 (original 159), C none; (b) 0/3 x3, mostly
+`c0#` over. Under `S`, cars 2 and 3's `FUN_00414a70` returns run one call behind the original's from call 39.
+Cause measured (`progcmp2.py`, `o_wobj2` = a regime-B capture of the same recipe with the `FUN_00414a70` entry probe,
+against `B_ST_K1` = `S` + TGT3 trace, step dump identical to `B_S_K1`): the port's own progress `0x008a96e8` at window
+call k equals the original's at call k-1 for every AI car from k = 1 (k = 1: 29.72771 vs 29.72976; k = 2: 29.72976 =
+original k = 1). The port runs `PathProg_FrameTick` in `UpdateRace`, before the opponents' physics; the original runs
+`FUN_00425a40` (`0x0040fc6c`) before `FUN_0040da50` (`0x0040fc75`).
+
+New knob `MASHED_PATHPROG_LATE` (default OFF): the wholesale tick after every car's physics, where arm R's shadow tick
+already runs. Arms on the default: `SPL` = `S` + the knob; `SPLT` = + traces; `SPLE` = `SPL` without
+`MASHED_AI_CONTACT_EVENT`; `TGTPL` = TGT + the knob (no tick first).
+
+| gate | rule |
+|---|---|
+| G-NOOP2 | knob off on the new exe: `B_DEFL_K0/K1/K26` and `B_S_K1` step dumps unchanged (`e332af0c / 01ad5975 / 772f9fb7`, `5c5acdc3`) |
+| G-LAG | `SPLT` K1: port own progress at call k = the original's at call k (o_wobj2), abs diff < 1e-3, k = 1..38, all AI cars |
+| G-BRAKE, G-ORDER2, G-C63, G-SCHED, G-B | as section 3 / amendment 1, on `SPL` (scored) and `SPLT` (logs, if its dump equals `SPL`'s) |
