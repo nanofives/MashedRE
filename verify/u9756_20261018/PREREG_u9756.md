@@ -58,3 +58,9 @@ Results on `c35c47d0`: G-NOOP PASS. G-WCP PASS (car 1 / car 0 wheel-0 x -1.26823
 the solver reads that half (`+0x9ac` = 1). G-B: `F60` B dumps equal the default's; `F44` A 2/3 B 2/3 C 0/3 (the default's set).
 `H_F60` `b40b47bc / fb690fb1 / d3a20f4c`. Default candidate: `F6044` (both constants): D2 `D2_F6044_1..3`, 13 tracks with both
 knobs, G-CTRL `H_F6044`.
+
+## Amendment 2 (2026-10-18, after D2_F6044, before these)
+
+`D2_F6044_1..3`: slip 0.1960 in, slip 2000-2600 0.2549 OUT (> 0.25487), driving-median 1880.50 / 1882.46 / 1880.50 OUT
+(< 1904.70); H1 398/400. `H_F6044` `8cf76141 / 7c0a3e9e / b35f90ee` (the player trace moves). `F6044` is not a default
+candidate. Attribution only: `D2_F60_1`, `D2_F44_1`, `H_F44`.
