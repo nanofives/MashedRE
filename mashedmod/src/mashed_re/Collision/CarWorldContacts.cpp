@@ -272,7 +272,11 @@ void VehicleTerrainContactSolver(int* param_1, void* param_2)
                             Rw_TransformPoints(local_a, pfVar8 + 5, 1, local_40);
                             Vec3Normalize(local_a, local_a);
                             double fVar9 = Vec3Mag(vFP(param_1, 0x26f));
-                            fVar9 = fVar9 * (double)kTer_VelScale * (double)pfVar8[-1] * (double)kTer_VelScale2;
+                            // [u9756] _DAT_005cea44 is 0.27777779f (0x3e8e38e4); kTer_VelScale2 holds 0.277779f.
+                            // MASHED_FIX_5CEA44=1 (default OFF) uses the binary's value.
+                            static const float s_velScale2 = [] { const char* e = std::getenv("MASHED_FIX_5CEA44");
+                                                                  return (e && e[0] == '1') ? 0.27777779f : kTer_VelScale2; }();
+                            fVar9 = fVar9 * (double)kTer_VelScale * (double)pfVar8[-1] * (double)s_velScale2;
                             local_a[0] = (float)((double)local_a[0] * fVar9);
                             local_a[1] = (float)((double)local_a[1] * fVar9);
                             local_a[2] = (float)((double)local_a[2] * fVar9);

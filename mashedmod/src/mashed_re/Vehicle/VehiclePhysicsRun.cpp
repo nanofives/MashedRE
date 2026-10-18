@@ -354,7 +354,8 @@ constexpr std::size_t kWheelState0  = 0x198;    // wheel-0 state (== off::kWheel
 constexpr std::size_t kContactNorm0 = 0x200;    // wheel-0 contact normal (A5 pf[3..5])
 constexpr std::size_t kMountX0      = 0x16c;    // wheel-0 mount x (FUN_0046b540 +0x16c)
 constexpr std::size_t kMountZ0      = 0x174;    // wheel-0 mount z (FUN_0046b540 +0x174)
-constexpr float       kProbeScale   = 0.277779f;// _DAT_005cea60 (FUN_0046f6c0 reset: probe = mount*this)
+// _DAT_005cea60 (FUN_0046f6c0 reset: probe = mount*this) is 0.2778f (0x3e8e3bcd); [u9756] MASHED_FIX_5CEA60=1 uses it.
+const float           kProbeScale   = [] { const char* e = std::getenv("MASHED_FIX_5CEA60"); return (e && e[0] == '1') ? 0.2778f : 0.277779f; }();
 constexpr float       kPenetration  = 0.05f;    // seat probe this far below the surface (classifier
                                                 // depth band [_DAT_005cea5c -0.25, _DAT_005cc564 0.25))
 inline std::size_t wheelStateOff (int w) { return kWheelState0  + (std::size_t)w * kWheelStride; }
@@ -787,6 +788,37 @@ void VehiclePhysics_CarryTo(int slot, const float* m, float ground_off, float ca
 // countdown. The port wrote the record only at a car's first StepCar, so every record read (0,0,0) before GO, and the
 // countdown path progress (FUN_0040da50 under MASHED_AI_TICK_FIRST) was computed at the origin. Writes the pose only: the
 // basis seed, contacts and the rest of FUN_004704c0 stay with the first StepCar as before.
+// [u9756] MASHED_SPAWN_SOLVER_DIAG=<path> (DIAGNOSTIC ONLY, default OFF, verify/u9756_20261018/PREREG_u9756.md): once per
+// slot, at its first countdown seeding, run the original's per-countdown-frame tail on a copy of the spawned record:
+// FUN_0046baa0 (VehiclePhysicsStateReset) then the wheel solver pass with substep 0 (FUN_004704c0 0x00470638
+// FUN_0046f6c0(0)), and log the corrected position and the wheel fields; then restore the record. The original holds the
+// result through the countdown (o_sdrop1 car 1 y 0.468762636 on frames 2..845).
+static void SpawnSolverDiag(int slot, float yaw, const float physPos[3]) {
+    static std::FILE* s_f = [] { const char* p = std::getenv("MASHED_SPAWN_SOLVER_DIAG"); return p ? std::fopen(p, "w") : nullptr; }();
+    static bool s_done[16] = { false };
+    if (!s_f || slot < 0 || slot >= 16 || s_done[slot]) return;
+    s_done[slot] = true;
+    unsigned char* r = rec(slot);
+    static unsigned char s_keep[kRec];
+    std::memcpy(s_keep, r, kRec);
+    VehiclePhysicsStateReset(static_cast<std::uint32_t>(slot));
+    PlayerCarIO io{};
+    io.pos[0] = physPos[0]; io.pos[1] = physPos[1]; io.pos[2] = physPos[2];
+    io.yaw = yaw; io.grounded = 1;
+    float basis[16];
+    BodyOrient_Init(basis, yaw);
+    SolveWheelContacts(r, io, 0, basis + 4);
+    std::fprintf(s_f, "slot=%d in=(%.9g,%.9g,%.9g) out=(%.9g,%.9g,%.9g) st=(%d,%d,%d,%d) fv=(%.9g,%.9g,%.9g,%.9g) "
+                      "n0=(%.9g,%.9g,%.9g) gc=%.9g wcp0=(%.9g,%.9g,%.9g) wcp2=(%.9g,%.9g,%.9g)\n",
+                 slot, physPos[0], physPos[1], physPos[2], io.pos[0], io.pos[1], io.pos[2],
+                 I(r, 0x198), I(r, 0x25c), I(r, 0x320), I(r, 0x3e4),
+                 F(r, 0x194), F(r, 0x258), F(r, 0x31c), F(r, 0x3e0), F(r, 0x200), F(r, 0x204), F(r, 0x208), F(r, 0x9e0),
+                 Collision::g_wheelContactPos[0], Collision::g_wheelContactPos[1], Collision::g_wheelContactPos[2],
+                 Collision::g_wheelContactPos[6], Collision::g_wheelContactPos[7], Collision::g_wheelContactPos[8]);
+    std::fflush(s_f);
+    std::memcpy(r, s_keep, kRec);
+}
+
 void VehiclePhysics_SeedSpawnPose(int slot, const float callerPos[3], float yaw, float groundOff, const float* physY) {
     if (!g_inited || slot < 0 || slot >= 16) return;
     float m[16];
@@ -802,6 +834,7 @@ void VehiclePhysics_SeedSpawnPose(int slot, const float callerPos[3], float yaw,
     unsigned char* r = rec(slot);
     std::memcpy(r + 0x928, m, 0x40);
     std::memcpy(r + 0x968, m, 0x40);
+    SpawnSolverDiag(slot, yaw, m + 12);   // [u9756] diagnostic, inert unless MASHED_SPAWN_SOLVER_DIAG
 }
 
 void VehiclePhysics_StepPlayer(float dt, PlayerCarIO& io) {
