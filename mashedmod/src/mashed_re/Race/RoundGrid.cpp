@@ -19,6 +19,7 @@
 extern "C" void __cdecl SnapNodeToSafeStartLines(std::int32_t* p);                                // 0x00409290
 
 namespace mashed_re {
+namespace Vehicle { void BodyOrient_NoteExactBasis(float yaw, float atX, float atZ); }   // BodyOrientationIntegrate.cpp [lk21]
 namespace Race {
 
 namespace {
@@ -140,7 +141,12 @@ float GridDir_PortYaw(float lx, float lz) {
     const float r = deg * 0.017453292f;                                // DAT_005cd7a8 = 0x3c8efa35
     const float s = static_cast<float>(std::sin(static_cast<double>(r)));
     const float c = static_cast<float>(std::cos(static_cast<double>(r)));
-    return static_cast<float>(std::atan2(static_cast<double>(c), static_cast<double>(s)));
+    const float yaw = static_cast<float>(std::atan2(static_cast<double>(c), static_cast<double>(s)));
+    // [lk21] FUN_004c4a50's at row for axis (0,1,0): at.x = sin r, at.z = 1 - omc with omc = (float)(1 - cos r)
+    // (_DAT_005cc320 - fcos, 0x004c4d20). Used by BodyOrient_Init under MASHED_SPAWN_BASIS_RW only.
+    const float omc = static_cast<float>(1.0 - std::cos(static_cast<double>(r)));
+    Vehicle::BodyOrient_NoteExactBasis(yaw, s, 1.0f - omc);
+    return yaw;
 }
 
 namespace {

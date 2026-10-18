@@ -1,0 +1,852 @@
+0x0046f6c0: 81ec10010000             sub esp, 0x110
+0x0046f6c6: 53                       push ebx
+0x0046f6c7: 8bd8                     mov ebx, eax
+0x0046f6c9: 8b87ac090000             mov eax, dword ptr [edi + 0x9ac]
+0x0046f6cf: 55                       push ebp
+0x0046f6d0: c1e006                   shl eax, 6
+0x0046f6d3: 33ed                     xor ebp, ebp
+0x0046f6d5: 8d8c3828090000           lea ecx, [eax + edi + 0x928]
+0x0046f6dc: 892d50e68800             mov dword ptr [0x88e650], ebp
+0x0046f6e2: d987e0090000             fld dword ptr [edi + 0x9e0]
+0x0046f6e8: 56                       push esi
+0x0046f6e9: c784248400000000000000   mov dword ptr [esp + 0x84], 0
+0x0046f6f4: c784248800000000000000   mov dword ptr [esp + 0x88], 0
+0x0046f6ff: c784248c00000000000000   mov dword ptr [esp + 0x8c], 0
+0x0046f70a: 894c2418                 mov dword ptr [esp + 0x18], ecx
+0x0046f70e: 896c2410                 mov dword ptr [esp + 0x10], ebp
+0x0046f712: e831350300               call 0x4a2c48
+0x0046f717: 89442470                 mov dword ptr [esp + 0x70], eax
+0x0046f71b: b964158800               mov ecx, 0x881564
+0x0046f720: bae0e58800               mov edx, 0x88e5e0
+0x0046f725: 8d8794010000             lea eax, [edi + 0x194]
+0x0046f72b: 83ceff                   or esi, 0xffffffff
+0x0046f72e: 8bff                     mov edi, edi
+0x0046f730: c70200000000             mov dword ptr [edx], 0
+0x0046f736: d940d8                   fld dword ptr [eax - 0x28]
+0x0046f739: d80d60ea5c00             fmul dword ptr [0x5cea60]
+0x0046f73f: 897058                   mov dword ptr [eax + 0x58], esi
+0x0046f742: c70000002041             mov dword ptr [eax], 0x41200000
+0x0046f748: c70100000000             mov dword ptr [ecx], 0
+0x0046f74e: d959fc                   fstp dword ptr [ecx - 4]
+0x0046f751: 83c204                   add edx, 4
+0x0046f754: d940e0                   fld dword ptr [eax - 0x20]
+0x0046f757: 05c4000000               add eax, 0xc4
+0x0046f75c: d80d60ea5c00             fmul dword ptr [0x5cea60]
+0x0046f762: 83c10c                   add ecx, 0xc
+0x0046f765: 81faf0e58800             cmp edx, 0x88e5f0
+0x0046f76b: d959f8                   fstp dword ptr [ecx - 8]
+0x0046f76e: 7cc0                     jl 0x46f730
+0x0046f770: 8b742418                 mov esi, dword ptr [esp + 0x18]
+0x0046f774: 56                       push esi
+0x0046f775: 6a01                     push 1
+0x0046f777: 8d94248c000000           lea edx, [esp + 0x8c]
+0x0046f77e: 52                       push edx
+0x0046f77f: 6800e68800               push 0x88e600
+0x0046f784: e807460500               call 0x4c3d90
+0x0046f789: 56                       push esi
+0x0046f78a: 6a04                     push 4
+0x0046f78c: 6860158800               push 0x881560
+0x0046f791: 6820e68800               push 0x88e620
+0x0046f796: e8f5450500               call 0x4c3d90
+0x0046f79b: 8db7c8090000             lea esi, [edi + 0x9c8]
+0x0046f7a1: b944e68800               mov ecx, 0x88e644
+0x0046f7a6: ba38e68800               mov edx, 0x88e638
+0x0046f7ab: b820e68800               mov eax, 0x88e620
+0x0046f7b0: e83bceffff               call 0x46c5f0
+0x0046f7b5: 8b442438                 mov eax, dword ptr [esp + 0x38]
+0x0046f7b9: 83c030                   add eax, 0x30
+0x0046f7bc: c78424c800000003000000   mov dword ptr [esp + 0xc8], 3
+0x0046f7c7: 8b08                     mov ecx, dword ptr [eax]
+0x0046f7c9: 898c24b0000000           mov dword ptr [esp + 0xb0], ecx
+0x0046f7d0: 8b5004                   mov edx, dword ptr [eax + 4]
+0x0046f7d3: 8b8fa4040000             mov ecx, dword ptr [edi + 0x4a4]
+0x0046f7d9: 899424b4000000           mov dword ptr [esp + 0xb4], edx
+0x0046f7e0: 8b4008                   mov eax, dword ptr [eax + 8]
+0x0046f7e3: 6820838200               push 0x828320
+0x0046f7e8: 68808b4600               push 0x468b80
+0x0046f7ed: 8d9424b8000000           lea edx, [esp + 0xb8]
+0x0046f7f4: 898424c0000000           mov dword ptr [esp + 0xc0], eax
+0x0046f7fb: c7050ce6880000000000     mov dword ptr [0x88e60c], 0
+0x0046f805: 891d54e68800             mov dword ptr [0x88e654], ebx
+0x0046f80b: 8b4308                   mov eax, dword ptr [ebx + 8]
+0x0046f80e: 52                       push edx
+0x0046f80f: 50                       push eax
+0x0046f810: 898c24cc000000           mov dword ptr [esp + 0xcc], ecx
+0x0046f817: e864940c00               call 0x538c80
+0x0046f81c: 6820838200               push 0x828320
+0x0046f821: 57                       push edi
+0x0046f822: e819d4ffff               call 0x46cc40
+0x0046f827: 8b8798010000             mov eax, dword ptr [edi + 0x198]
+0x0046f82d: 83c438                   add esp, 0x38
+0x0046f830: 83f801                   cmp eax, 1
+0x0046f833: 752a                     jne 0x46f85f
+0x0046f835: d98794010000             fld dword ptr [edi + 0x194]
+0x0046f83b: d8158ce15c00             fcom dword ptr [0x5ce18c]
+0x0046f841: dfe0                     fnstsw ax
+0x0046f843: f6c401                   test ah, 1
+0x0046f846: 7505                     jne 0x46f84d
+0x0046f848: bd01000000               mov ebp, 1
+0x0046f84d: d81da0ea5c00             fcomp dword ptr [0x5ceaa0]
+0x0046f853: b901000000               mov ecx, 1
+0x0046f858: dfe0                     fnstsw ax
+0x0046f85a: f6c441                   test ah, 0x41
+0x0046f85d: 7b04                     jnp 0x46f863
+0x0046f85f: 8b4c2410                 mov ecx, dword ptr [esp + 0x10]
+0x0046f863: 8b875c020000             mov eax, dword ptr [edi + 0x25c]
+0x0046f869: ba01000000               mov edx, 1
+0x0046f86e: 3bc2                     cmp eax, edx
+0x0046f870: 7521                     jne 0x46f893
+0x0046f872: d98758020000             fld dword ptr [edi + 0x258]
+0x0046f878: d8158ce15c00             fcom dword ptr [0x5ce18c]
+0x0046f87e: dfe0                     fnstsw ax
+0x0046f880: 84e2                     test dl, ah
+0x0046f882: 7501                     jne 0x46f885
+0x0046f884: 45                       inc ebp
+0x0046f885: d81da0ea5c00             fcomp dword ptr [0x5ceaa0]
+0x0046f88b: dfe0                     fnstsw ax
+0x0046f88d: f6c441                   test ah, 0x41
+0x0046f890: 7a01                     jp 0x46f893
+0x0046f892: 41                       inc ecx
+0x0046f893: 399720030000             cmp dword ptr [edi + 0x320], edx
+0x0046f899: 7522                     jne 0x46f8bd
+0x0046f89b: d9871c030000             fld dword ptr [edi + 0x31c]
+0x0046f8a1: d8158ce15c00             fcom dword ptr [0x5ce18c]
+0x0046f8a7: dfe0                     fnstsw ax
+0x0046f8a9: f6c401                   test ah, 1
+0x0046f8ac: 7501                     jne 0x46f8af
+0x0046f8ae: 45                       inc ebp
+0x0046f8af: d81da0ea5c00             fcomp dword ptr [0x5ceaa0]
+0x0046f8b5: dfe0                     fnstsw ax
+0x0046f8b7: f6c441                   test ah, 0x41
+0x0046f8ba: 7a01                     jp 0x46f8bd
+0x0046f8bc: 41                       inc ecx
+0x0046f8bd: 3997e4030000             cmp dword ptr [edi + 0x3e4], edx
+0x0046f8c3: 7522                     jne 0x46f8e7
+0x0046f8c5: d987e0030000             fld dword ptr [edi + 0x3e0]
+0x0046f8cb: d8158ce15c00             fcom dword ptr [0x5ce18c]
+0x0046f8d1: dfe0                     fnstsw ax
+0x0046f8d3: f6c401                   test ah, 1
+0x0046f8d6: 7501                     jne 0x46f8d9
+0x0046f8d8: 45                       inc ebp
+0x0046f8d9: d81da0ea5c00             fcomp dword ptr [0x5ceaa0]
+0x0046f8df: dfe0                     fnstsw ax
+0x0046f8e1: f6c441                   test ah, 0x41
+0x0046f8e4: 7a01                     jp 0x46f8e7
+0x0046f8e6: 41                       inc ecx
+0x0046f8e7: 33db                     xor ebx, ebx
+0x0046f8e9: 85ed                     test ebp, ebp
+0x0046f8eb: 7406                     je 0x46f8f3
+0x0046f8ed: 85c9                     test ecx, ecx
+0x0046f8ef: 7502                     jne 0x46f8f3
+0x0046f8f1: 8bda                     mov ebx, edx
+0x0046f8f3: 33f6                     xor esi, esi
+0x0046f8f5: 33d2                     xor edx, edx
+0x0046f8f7: 8d8f98010000             lea ecx, [edi + 0x198]
+0x0046f8fd: 83cdff                   or ebp, 0xffffffff
+0x0046f900: 8b01                     mov eax, dword ptr [ecx]
+0x0046f902: d941fc                   fld dword ptr [ecx - 4]
+0x0046f905: 85c0                     test eax, eax
+0x0046f907: 742c                     je 0x46f935
+0x0046f909: d81d8ce15c00             fcomp dword ptr [0x5ce18c]
+0x0046f90f: dfe0                     fnstsw ax
+0x0046f911: f6c441                   test ah, 0x41
+0x0046f914: 7504                     jne 0x46f91a
+0x0046f916: 85db                     test ebx, ebx
+0x0046f918: 7505                     jne 0x46f91f
+0x0046f91a: 396954                   cmp dword ptr [ecx + 0x54], ebp
+0x0046f91d: 750b                     jne 0x46f92a
+0x0046f91f: c70100000000             mov dword ptr [ecx], 0
+0x0046f925: e9e7000000               jmp 0x46fa11
+0x0046f92a: c70101000000             mov dword ptr [ecx], 1
+0x0046f930: e98b000000               jmp 0x46f9c0
+0x0046f935: d8154cc35c00             fcom dword ptr [0x5cc34c]
+0x0046f93b: dfe0                     fnstsw ax
+0x0046f93d: f6c441                   test ah, 0x41
+0x0046f940: 0f85c9000000             jne 0x46fa0f
+0x0046f946: d81d7c755d00             fcomp dword ptr [0x5d757c]
+0x0046f94c: dfe0                     fnstsw ax
+0x0046f94e: f6c441                   test ah, 0x41
+0x0046f951: 0f8aba000000             jp 0x46fa11
+0x0046f957: c70102000000             mov dword ptr [ecx], 2
+0x0046f95d: d987d8090000             fld dword ptr [edi + 0x9d8]
+0x0046f963: d88fb4090000             fmul dword ptr [edi + 0x9b4]
+0x0046f969: d987d4090000             fld dword ptr [edi + 0x9d4]
+0x0046f96f: d88fb0090000             fmul dword ptr [edi + 0x9b0]
+0x0046f975: dec1                     faddp st(1)
+0x0046f977: d987dc090000             fld dword ptr [edi + 0x9dc]
+0x0046f97d: d88fb8090000             fmul dword ptr [edi + 0x9b8]
+0x0046f983: dec1                     faddp st(1)
+0x0046f985: d8b7e4090000             fdiv dword ptr [edi + 0x9e4]
+0x0046f98b: d8157c755d00             fcom dword ptr [0x5d757c]
+0x0046f991: dfe0                     fnstsw ax
+0x0046f993: f6c444                   test ah, 0x44
+0x0046f996: 7b26                     jnp 0x46f9be
+0x0046f998: dc1598ea5c00             fcom qword ptr [0x5cea98]
+0x0046f99e: dfe0                     fnstsw ax
+0x0046f9a0: f6c441                   test ah, 0x41
+0x0046f9a3: 7515                     jne 0x46f9ba
+0x0046f9a5: dc1d90ea5c00             fcomp qword ptr [0x5cea90]
+0x0046f9ab: dfe0                     fnstsw ax
+0x0046f9ad: f6c405                   test ah, 5
+0x0046f9b0: 7a0e                     jp 0x46f9c0
+0x0046f9b2: c70102000000             mov dword ptr [ecx], 2
+0x0046f9b8: eb06                     jmp 0x46f9c0
+0x0046f9ba: ddd8                     fstp st(0)
+0x0046f9bc: eb02                     jmp 0x46f9c0
+0x0046f9be: ddd8                     fstp st(0)
+0x0046f9c0: d94168                   fld dword ptr [ecx + 0x68]
+0x0046f9c3: d849fc                   fmul dword ptr [ecx - 4]
+0x0046f9c6: d9543460                 fst dword ptr [esp + esi + 0x60]
+0x0046f9ca: d98220e68800             fld dword ptr [edx + 0x88e620]
+0x0046f9d0: d8e1                     fsub st(1)
+0x0046f9d2: d99c14ac000000           fstp dword ptr [esp + edx + 0xac]
+0x0046f9d9: ddd8                     fstp st(0)
+0x0046f9db: d9416c                   fld dword ptr [ecx + 0x6c]
+0x0046f9de: d849fc                   fmul dword ptr [ecx - 4]
+0x0046f9e1: d954341c                 fst dword ptr [esp + esi + 0x1c]
+0x0046f9e5: d98224e68800             fld dword ptr [edx + 0x88e624]
+0x0046f9eb: d8e1                     fsub st(1)
+0x0046f9ed: d99c14b0000000           fstp dword ptr [esp + edx + 0xb0]
+0x0046f9f4: ddd8                     fstp st(0)
+0x0046f9f6: d94170                   fld dword ptr [ecx + 0x70]
+0x0046f9f9: d849fc                   fmul dword ptr [ecx - 4]
+0x0046f9fc: d9543474                 fst dword ptr [esp + esi + 0x74]
+0x0046fa00: d98228e68800             fld dword ptr [edx + 0x88e628]
+0x0046fa06: d8e1                     fsub st(1)
+0x0046fa08: d99c14b4000000           fstp dword ptr [esp + edx + 0xb4]
+0x0046fa0f: ddd8                     fstp st(0)
+0x0046fa11: 83c604                   add esi, 4
+0x0046fa14: 81c1c4000000             add ecx, 0xc4
+0x0046fa1a: 83c20c                   add edx, 0xc
+0x0046fa1d: 83fe10                   cmp esi, 0x10
+0x0046fa20: 0f8cdafeffff             jl 0x46f900
+0x0046fa26: 8b8f98010000             mov ecx, dword ptr [edi + 0x198]
+0x0046fa2c: d9057c755d00             fld dword ptr [0x5d757c]
+0x0046fa32: 33c0                     xor eax, eax
+0x0046fa34: ba01000000               mov edx, 1
+0x0046fa39: 3bca                     cmp ecx, edx
+0x0046fa3b: 89442414                 mov dword ptr [esp + 0x14], eax
+0x0046fa3f: 8944240c                 mov dword ptr [esp + 0xc], eax
+0x0046fa43: 8944242c                 mov dword ptr [esp + 0x2c], eax
+0x0046fa47: 751c                     jne 0x46fa65
+0x0046fa49: 8b4c241c                 mov ecx, dword ptr [esp + 0x1c]
+0x0046fa4d: ddd8                     fstp st(0)
+0x0046fa4f: d9442460                 fld dword ptr [esp + 0x60]
+0x0046fa53: 894c242c                 mov dword ptr [esp + 0x2c], ecx
+0x0046fa57: 8b4c2474                 mov ecx, dword ptr [esp + 0x74]
+0x0046fa5b: 8bc2                     mov eax, edx
+0x0046fa5d: 89442414                 mov dword ptr [esp + 0x14], eax
+0x0046fa61: 894c240c                 mov dword ptr [esp + 0xc], ecx
+0x0046fa65: 39975c020000             cmp dword ptr [edi + 0x25c], edx
+0x0046fa6b: 7521                     jne 0x46fa8e
+0x0046fa6d: d8442464                 fadd dword ptr [esp + 0x64]
+0x0046fa71: 40                       inc eax
+0x0046fa72: d9442420                 fld dword ptr [esp + 0x20]
+0x0046fa76: 89442414                 mov dword ptr [esp + 0x14], eax
+0x0046fa7a: d844242c                 fadd dword ptr [esp + 0x2c]
+0x0046fa7e: d95c242c                 fstp dword ptr [esp + 0x2c]
+0x0046fa82: d9442478                 fld dword ptr [esp + 0x78]
+0x0046fa86: d844240c                 fadd dword ptr [esp + 0xc]
+0x0046fa8a: d95c240c                 fstp dword ptr [esp + 0xc]
+0x0046fa8e: 399720030000             cmp dword ptr [edi + 0x320], edx
+0x0046fa94: 7521                     jne 0x46fab7
+0x0046fa96: d8442468                 fadd dword ptr [esp + 0x68]
+0x0046fa9a: 40                       inc eax
+0x0046fa9b: d9442424                 fld dword ptr [esp + 0x24]
+0x0046fa9f: 89442414                 mov dword ptr [esp + 0x14], eax
+0x0046faa3: d844242c                 fadd dword ptr [esp + 0x2c]
+0x0046faa7: d95c242c                 fstp dword ptr [esp + 0x2c]
+0x0046faab: d944247c                 fld dword ptr [esp + 0x7c]
+0x0046faaf: d844240c                 fadd dword ptr [esp + 0xc]
+0x0046fab3: d95c240c                 fstp dword ptr [esp + 0xc]
+0x0046fab7: 3997e4030000             cmp dword ptr [edi + 0x3e4], edx
+0x0046fabd: 7524                     jne 0x46fae3
+0x0046fabf: d844246c                 fadd dword ptr [esp + 0x6c]
+0x0046fac3: 40                       inc eax
+0x0046fac4: d9442428                 fld dword ptr [esp + 0x28]
+0x0046fac8: 89442414                 mov dword ptr [esp + 0x14], eax
+0x0046facc: d844242c                 fadd dword ptr [esp + 0x2c]
+0x0046fad0: d95c242c                 fstp dword ptr [esp + 0x2c]
+0x0046fad4: d9842480000000           fld dword ptr [esp + 0x80]
+0x0046fadb: d844240c                 fadd dword ptr [esp + 0xc]
+0x0046fadf: d95c240c                 fstp dword ptr [esp + 0xc]
+0x0046fae3: 83f804                   cmp eax, 4
+0x0046fae6: 0f85d3000000             jne 0x46fbbf
+0x0046faec: d98794010000             fld dword ptr [edi + 0x194]
+0x0046faf2: 33c9                     xor ecx, ecx
+0x0046faf4: d8157c755d00             fcom dword ptr [0x5d757c]
+0x0046fafa: dfe0                     fnstsw ax
+0x0046fafc: f6c405                   test ah, 5
+0x0046faff: 7a02                     jp 0x46fb03
+0x0046fb01: d9e0                     fchs 
+0x0046fb03: d98758020000             fld dword ptr [edi + 0x258]
+0x0046fb09: d8157c755d00             fcom dword ptr [0x5d757c]
+0x0046fb0f: d9542410                 fst dword ptr [esp + 0x10]
+0x0046fb13: dfe0                     fnstsw ax
+0x0046fb15: f6c405                   test ah, 5
+0x0046fb18: 7a06                     jp 0x46fb20
+0x0046fb1a: d9e0                     fchs 
+0x0046fb1c: d9542410                 fst dword ptr [esp + 0x10]
+0x0046fb20: d8d9                     fcomp st(1)
+0x0046fb22: dfe0                     fnstsw ax
+0x0046fb24: f6c441                   test ah, 0x41
+0x0046fb27: 7508                     jne 0x46fb31
+0x0046fb29: ddd8                     fstp st(0)
+0x0046fb2b: 8bca                     mov ecx, edx
+0x0046fb2d: d9442410                 fld dword ptr [esp + 0x10]
+0x0046fb31: d9871c030000             fld dword ptr [edi + 0x31c]
+0x0046fb37: d8157c755d00             fcom dword ptr [0x5d757c]
+0x0046fb3d: d9542410                 fst dword ptr [esp + 0x10]
+0x0046fb41: dfe0                     fnstsw ax
+0x0046fb43: f6c405                   test ah, 5
+0x0046fb46: 7a06                     jp 0x46fb4e
+0x0046fb48: d9e0                     fchs 
+0x0046fb4a: d9542410                 fst dword ptr [esp + 0x10]
+0x0046fb4e: d8d9                     fcomp st(1)
+0x0046fb50: dfe0                     fnstsw ax
+0x0046fb52: f6c441                   test ah, 0x41
+0x0046fb55: 750b                     jne 0x46fb62
+0x0046fb57: ddd8                     fstp st(0)
+0x0046fb59: b902000000               mov ecx, 2
+0x0046fb5e: d9442410                 fld dword ptr [esp + 0x10]
+0x0046fb62: d987e0030000             fld dword ptr [edi + 0x3e0]
+0x0046fb68: d8157c755d00             fcom dword ptr [0x5d757c]
+0x0046fb6e: dfe0                     fnstsw ax
+0x0046fb70: f6c405                   test ah, 5
+0x0046fb73: 7a02                     jp 0x46fb77
+0x0046fb75: d9e0                     fchs 
+0x0046fb77: d8d9                     fcomp st(1)
+0x0046fb79: dfe0                     fnstsw ax
+0x0046fb7b: ddd8                     fstp st(0)
+0x0046fb7d: f6c441                   test ah, 0x41
+0x0046fb80: 7505                     jne 0x46fb87
+0x0046fb82: b903000000               mov ecx, 3
+0x0046fb87: d8648c60                 fsub dword ptr [esp + ecx*4 + 0x60]
+0x0046fb8b: b803000000               mov eax, 3
+0x0046fb90: d944242c                 fld dword ptr [esp + 0x2c]
+0x0046fb94: 89442414                 mov dword ptr [esp + 0x14], eax
+0x0046fb98: d8648c1c                 fsub dword ptr [esp + ecx*4 + 0x1c]
+0x0046fb9c: d95c242c                 fstp dword ptr [esp + 0x2c]
+0x0046fba0: d944240c                 fld dword ptr [esp + 0xc]
+0x0046fba4: d8648c74                 fsub dword ptr [esp + ecx*4 + 0x74]
+0x0046fba8: 69c9c4000000             imul ecx, ecx, 0xc4
+0x0046fbae: d95c240c                 fstp dword ptr [esp + 0xc]
+0x0046fbb2: c784399801000000000000   mov dword ptr [ecx + edi + 0x198], 0
+0x0046fbbd: eb08                     jmp 0x46fbc7
+0x0046fbbf: 85c0                     test eax, eax
+0x0046fbc1: 0f8456040000             je 0x47001d
+0x0046fbc7: 83f803                   cmp eax, 3
+0x0046fbca: db442414                 fild dword ptr [esp + 0x14]
+0x0046fbce: 8b6c2418                 mov ebp, dword ptr [esp + 0x18]
+0x0046fbd2: 8d5d30                   lea ebx, [ebp + 0x30]
+0x0046fbd5: d83d20c35c00             fdivr dword ptr [0x5cc320]
+0x0046fbdb: d9542410                 fst dword ptr [esp + 0x10]
+0x0046fbdf: d8c9                     fmul st(1)
+0x0046fbe1: d82b                     fsubr dword ptr [ebx]
+0x0046fbe3: d91b                     fstp dword ptr [ebx]
+0x0046fbe5: ddd8                     fstp st(0)
+0x0046fbe7: d9442410                 fld dword ptr [esp + 0x10]
+0x0046fbeb: d84c242c                 fmul dword ptr [esp + 0x2c]
+0x0046fbef: d86d34                   fsubr dword ptr [ebp + 0x34]
+0x0046fbf2: d95d34                   fstp dword ptr [ebp + 0x34]
+0x0046fbf5: d9442410                 fld dword ptr [esp + 0x10]
+0x0046fbf9: d84c240c                 fmul dword ptr [esp + 0xc]
+0x0046fbfd: d86d38                   fsubr dword ptr [ebp + 0x38]
+0x0046fc00: d95d38                   fstp dword ptr [ebp + 0x38]
+0x0046fc03: 0f8530020000             jne 0x46fe39
+0x0046fc09: 8b8798010000             mov eax, dword ptr [edi + 0x198]
+0x0046fc0f: b901000000               mov ecx, 1
+0x0046fc14: 3bc1                     cmp eax, ecx
+0x0046fc16: 0f85d3000000             jne 0x46fcef
+0x0046fc1c: 8b875c020000             mov eax, dword ptr [edi + 0x25c]
+0x0046fc22: 33f6                     xor esi, esi
+0x0046fc24: 3bc1                     cmp eax, ecx
+0x0046fc26: 0f8587000000             jne 0x46fcb3
+0x0046fc2c: 398f20030000             cmp dword ptr [edi + 0x320], ecx
+0x0046fc32: 8d9788030000             lea edx, [edi + 0x388]
+0x0046fc38: 8d874c040000             lea eax, [edi + 0x44c]
+0x0046fc3e: 7537                     jne 0x46fc77
+0x0046fc40: 8b2a                     mov ebp, dword ptr [edx]
+0x0046fc42: 8928                     mov dword ptr [eax], ebp
+0x0046fc44: 8b6a04                   mov ebp, dword ptr [edx + 4]
+0x0046fc47: 8b5208                   mov edx, dword ptr [edx + 8]
+0x0046fc4a: 896804                   mov dword ptr [eax + 4], ebp
+0x0046fc4d: 8b6c2418                 mov ebp, dword ptr [esp + 0x18]
+0x0046fc51: 895008                   mov dword ptr [eax + 8], edx
+0x0046fc54: 8b871c030000             mov eax, dword ptr [edi + 0x31c]
+0x0046fc5a: 8b9774030000             mov edx, dword ptr [edi + 0x374]
+0x0046fc60: 898fe4030000             mov dword ptr [edi + 0x3e4], ecx
+0x0046fc66: 8987e0030000             mov dword ptr [edi + 0x3e0], eax
+0x0046fc6c: 899738040000             mov dword ptr [edi + 0x438], edx
+0x0046fc72: e9b9000000               jmp 0x46fd30
+0x0046fc77: 8b28                     mov ebp, dword ptr [eax]
+0x0046fc79: 892a                     mov dword ptr [edx], ebp
+0x0046fc7b: 8b6804                   mov ebp, dword ptr [eax + 4]
+0x0046fc7e: 8b4008                   mov eax, dword ptr [eax + 8]
+0x0046fc81: 896a04                   mov dword ptr [edx + 4], ebp
+0x0046fc84: 8b6c2418                 mov ebp, dword ptr [esp + 0x18]
+0x0046fc88: 894208                   mov dword ptr [edx + 8], eax
+0x0046fc8b: 8b8738040000             mov eax, dword ptr [edi + 0x438]
+0x0046fc91: 8b97e0030000             mov edx, dword ptr [edi + 0x3e0]
+0x0046fc97: 898774030000             mov dword ptr [edi + 0x374], eax
+0x0046fc9d: 898f20030000             mov dword ptr [edi + 0x320], ecx
+0x0046fca3: 89971c030000             mov dword ptr [edi + 0x31c], edx
+0x0046fca9: b803000000               mov eax, 3
+0x0046fcae: e982000000               jmp 0x46fd35
+0x0046fcb3: 898f5c020000             mov dword ptr [edi + 0x25c], ecx
+0x0046fcb9: 8d8f00020000             lea ecx, [edi + 0x200]
+0x0046fcbf: 8b01                     mov eax, dword ptr [ecx]
+0x0046fcc1: 8d97c4020000             lea edx, [edi + 0x2c4]
+0x0046fcc7: 8902                     mov dword ptr [edx], eax
+0x0046fcc9: 8b4104                   mov eax, dword ptr [ecx + 4]
+0x0046fccc: 8b4908                   mov ecx, dword ptr [ecx + 8]
+0x0046fccf: 894204                   mov dword ptr [edx + 4], eax
+0x0046fcd2: 8b87ec010000             mov eax, dword ptr [edi + 0x1ec]
+0x0046fcd8: 894a08                   mov dword ptr [edx + 8], ecx
+0x0046fcdb: 8b9794010000             mov edx, dword ptr [edi + 0x194]
+0x0046fce1: 899758020000             mov dword ptr [edi + 0x258], edx
+0x0046fce7: 8987b0020000             mov dword ptr [edi + 0x2b0], eax
+0x0046fced: eb3c                     jmp 0x46fd2b
+0x0046fcef: 8d97c4020000             lea edx, [edi + 0x2c4]
+0x0046fcf5: 8b32                     mov esi, dword ptr [edx]
+0x0046fcf7: 8d8700020000             lea eax, [edi + 0x200]
+0x0046fcfd: 8930                     mov dword ptr [eax], esi
+0x0046fcff: 8b7204                   mov esi, dword ptr [edx + 4]
+0x0046fd02: 8b5208                   mov edx, dword ptr [edx + 8]
+0x0046fd05: 897004                   mov dword ptr [eax + 4], esi
+0x0046fd08: 895008                   mov dword ptr [eax + 8], edx
+0x0046fd0b: 8b8758020000             mov eax, dword ptr [edi + 0x258]
+0x0046fd11: 8b97b0020000             mov edx, dword ptr [edi + 0x2b0]
+0x0046fd17: 898f98010000             mov dword ptr [edi + 0x198], ecx
+0x0046fd1d: 898794010000             mov dword ptr [edi + 0x194], eax
+0x0046fd23: 8997ec010000             mov dword ptr [edi + 0x1ec], edx
+0x0046fd29: 8bf1                     mov esi, ecx
+0x0046fd2b: b903000000               mov ecx, 3
+0x0046fd30: b802000000               mov eax, 2
+0x0046fd35: 8d1440                   lea edx, [eax + eax*2]
+0x0046fd38: 8d0c49                   lea ecx, [ecx + ecx*2]
+0x0046fd3b: 8d0476                   lea eax, [esi + esi*2]
+0x0046fd3e: 8d8c8cac000000           lea ecx, [esp + ecx*4 + 0xac]
+0x0046fd45: 8d9494ac000000           lea edx, [esp + edx*4 + 0xac]
+0x0046fd4c: 8d8484ac000000           lea eax, [esp + eax*4 + 0xac]
+0x0046fd53: 8d74243c                 lea esi, [esp + 0x3c]
+0x0046fd57: e894c8ffff               call 0x46c5f0
+0x0046fd5c: d9442444                 fld dword ptr [esp + 0x44]
+0x0046fd60: d88fcc090000             fmul dword ptr [edi + 0x9cc]
+0x0046fd66: d9442440                 fld dword ptr [esp + 0x40]
+0x0046fd6a: d88fd0090000             fmul dword ptr [edi + 0x9d0]
+0x0046fd70: dee9                     fsubp st(1)
+0x0046fd72: d95c2454                 fstp dword ptr [esp + 0x54]
+0x0046fd76: d944243c                 fld dword ptr [esp + 0x3c]
+0x0046fd7a: d88fd0090000             fmul dword ptr [edi + 0x9d0]
+0x0046fd80: d9442444                 fld dword ptr [esp + 0x44]
+0x0046fd84: d88fc8090000             fmul dword ptr [edi + 0x9c8]
+0x0046fd8a: dee9                     fsubp st(1)
+0x0046fd8c: d95c2458                 fstp dword ptr [esp + 0x58]
+0x0046fd90: d9442440                 fld dword ptr [esp + 0x40]
+0x0046fd94: d88fc8090000             fmul dword ptr [edi + 0x9c8]
+0x0046fd9a: d944243c                 fld dword ptr [esp + 0x3c]
+0x0046fd9e: d88fcc090000             fmul dword ptr [edi + 0x9cc]
+0x0046fda4: dee9                     fsubp st(1)
+0x0046fda6: d95c245c                 fstp dword ptr [esp + 0x5c]
+0x0046fdaa: d944243c                 fld dword ptr [esp + 0x3c]
+0x0046fdae: d88fc8090000             fmul dword ptr [edi + 0x9c8]
+0x0046fdb4: d9442440                 fld dword ptr [esp + 0x40]
+0x0046fdb8: d88fcc090000             fmul dword ptr [edi + 0x9cc]
+0x0046fdbe: dec1                     faddp st(1)
+0x0046fdc0: d9442444                 fld dword ptr [esp + 0x44]
+0x0046fdc4: d88fd0090000             fmul dword ptr [edi + 0x9d0]
+0x0046fdca: dec1                     faddp st(1)
+0x0046fdcc: d9442454                 fld dword ptr [esp + 0x54]
+0x0046fdd0: d81d7c755d00             fcomp dword ptr [0x5d757c]
+0x0046fdd6: dfe0                     fnstsw ax
+0x0046fdd8: f6c444                   test ah, 0x44
+0x0046fddb: 7a26                     jp 0x46fe03
+0x0046fddd: d9442458                 fld dword ptr [esp + 0x58]
+0x0046fde1: d81d7c755d00             fcomp dword ptr [0x5d757c]
+0x0046fde7: dfe0                     fnstsw ax
+0x0046fde9: f6c444                   test ah, 0x44
+0x0046fdec: 7a15                     jp 0x46fe03
+0x0046fdee: d944245c                 fld dword ptr [esp + 0x5c]
+0x0046fdf2: d81d7c755d00             fcomp dword ptr [0x5d757c]
+0x0046fdf8: dfe0                     fnstsw ax
+0x0046fdfa: f6c444                   test ah, 0x44
+0x0046fdfd: 0f8b1a020000             jnp 0x47001d
+0x0046fe03: d81588ea5c00             fcom dword ptr [0x5cea88]
+0x0046fe09: dfe0                     fnstsw ax
+0x0046fe0b: f6c405                   test ah, 5
+0x0046fe0e: 7b0b                     jnp 0x46fe1b
+0x0046fe10: 837c247003               cmp dword ptr [esp + 0x70], 3
+0x0046fe15: 0f8d02020000             jge 0x47001d
+0x0046fe1b: d8153cc35c00             fcom dword ptr [0x5cc33c]
+0x0046fe21: dfe0                     fnstsw ax
+0x0046fe23: f6c405                   test ah, 5
+0x0046fe26: 0f8a48010000             jp 0x46ff74
+0x0046fe2c: ddd8                     fstp st(0)
+0x0046fe2e: d9053cc35c00             fld dword ptr [0x5cc33c]
+0x0046fe34: e950010000               jmp 0x46ff89
+0x0046fe39: 0f8d1dffffff             jge 0x46fd5c
+0x0046fe3f: 8b8f98010000             mov ecx, dword ptr [edi + 0x198]
+0x0046fe45: 33c0                     xor eax, eax
+0x0046fe47: 85c9                     test ecx, ecx
+0x0046fe49: 89442418                 mov dword ptr [esp + 0x18], eax
+0x0046fe4d: 89442444                 mov dword ptr [esp + 0x44], eax
+0x0046fe51: 89442440                 mov dword ptr [esp + 0x40], eax
+0x0046fe55: 8944243c                 mov dword ptr [esp + 0x3c], eax
+0x0046fe59: 7427                     je 0x46fe82
+0x0046fe5b: 8b8700020000             mov eax, dword ptr [edi + 0x200]
+0x0046fe61: 8b8f04020000             mov ecx, dword ptr [edi + 0x204]
+0x0046fe67: 8b9708020000             mov edx, dword ptr [edi + 0x208]
+0x0046fe6d: 8944243c                 mov dword ptr [esp + 0x3c], eax
+0x0046fe71: b801000000               mov eax, 1
+0x0046fe76: 894c2440                 mov dword ptr [esp + 0x40], ecx
+0x0046fe7a: 89542444                 mov dword ptr [esp + 0x44], edx
+0x0046fe7e: 89442418                 mov dword ptr [esp + 0x18], eax
+0x0046fe82: 8b8f5c020000             mov ecx, dword ptr [edi + 0x25c]
+0x0046fe88: 85c9                     test ecx, ecx
+0x0046fe8a: 742f                     je 0x46febb
+0x0046fe8c: d944243c                 fld dword ptr [esp + 0x3c]
+0x0046fe90: 40                       inc eax
+0x0046fe91: d887c4020000             fadd dword ptr [edi + 0x2c4]
+0x0046fe97: 89442418                 mov dword ptr [esp + 0x18], eax
+0x0046fe9b: d95c243c                 fstp dword ptr [esp + 0x3c]
+0x0046fe9f: d9442440                 fld dword ptr [esp + 0x40]
+0x0046fea3: d887c8020000             fadd dword ptr [edi + 0x2c8]
+0x0046fea9: d95c2440                 fstp dword ptr [esp + 0x40]
+0x0046fead: d9442444                 fld dword ptr [esp + 0x44]
+0x0046feb1: d887cc020000             fadd dword ptr [edi + 0x2cc]
+0x0046feb7: d95c2444                 fstp dword ptr [esp + 0x44]
+0x0046febb: 8b8f20030000             mov ecx, dword ptr [edi + 0x320]
+0x0046fec1: 85c9                     test ecx, ecx
+0x0046fec3: 742f                     je 0x46fef4
+0x0046fec5: d944243c                 fld dword ptr [esp + 0x3c]
+0x0046fec9: 40                       inc eax
+0x0046feca: d88788030000             fadd dword ptr [edi + 0x388]
+0x0046fed0: 89442418                 mov dword ptr [esp + 0x18], eax
+0x0046fed4: d95c243c                 fstp dword ptr [esp + 0x3c]
+0x0046fed8: d9442440                 fld dword ptr [esp + 0x40]
+0x0046fedc: d8878c030000             fadd dword ptr [edi + 0x38c]
+0x0046fee2: d95c2440                 fstp dword ptr [esp + 0x40]
+0x0046fee6: d9442444                 fld dword ptr [esp + 0x44]
+0x0046feea: d88790030000             fadd dword ptr [edi + 0x390]
+0x0046fef0: d95c2444                 fstp dword ptr [esp + 0x44]
+0x0046fef4: 8b8fe4030000             mov ecx, dword ptr [edi + 0x3e4]
+0x0046fefa: 85c9                     test ecx, ecx
+0x0046fefc: 742f                     je 0x46ff2d
+0x0046fefe: d944243c                 fld dword ptr [esp + 0x3c]
+0x0046ff02: 40                       inc eax
+0x0046ff03: d8874c040000             fadd dword ptr [edi + 0x44c]
+0x0046ff09: 89442418                 mov dword ptr [esp + 0x18], eax
+0x0046ff0d: d95c243c                 fstp dword ptr [esp + 0x3c]
+0x0046ff11: d9442440                 fld dword ptr [esp + 0x40]
+0x0046ff15: d88750040000             fadd dword ptr [edi + 0x450]
+0x0046ff1b: d95c2440                 fstp dword ptr [esp + 0x40]
+0x0046ff1f: d9442444                 fld dword ptr [esp + 0x44]
+0x0046ff23: d88754040000             fadd dword ptr [edi + 0x454]
+0x0046ff29: d95c2444                 fstp dword ptr [esp + 0x44]
+0x0046ff2d: 85c0                     test eax, eax
+0x0046ff2f: 0f84ea000000             je 0x47001f
+0x0046ff35: db442418                 fild dword ptr [esp + 0x18]
+0x0046ff39: 8d44243c                 lea eax, [esp + 0x3c]
+0x0046ff3d: 50                       push eax
+0x0046ff3e: 8d4c2440                 lea ecx, [esp + 0x40]
+0x0046ff42: d83d20c35c00             fdivr dword ptr [0x5cc320]
+0x0046ff48: 51                       push ecx
+0x0046ff49: d9442444                 fld dword ptr [esp + 0x44]
+0x0046ff4d: d8c9                     fmul st(1)
+0x0046ff4f: d95c2444                 fstp dword ptr [esp + 0x44]
+0x0046ff53: d9442448                 fld dword ptr [esp + 0x48]
+0x0046ff57: d8c9                     fmul st(1)
+0x0046ff59: d95c2448                 fstp dword ptr [esp + 0x48]
+0x0046ff5d: d84c244c                 fmul dword ptr [esp + 0x4c]
+0x0046ff61: d95c244c                 fstp dword ptr [esp + 0x4c]
+0x0046ff65: e8463a0500               call 0x4c39b0
+0x0046ff6a: ddd8                     fstp st(0)
+0x0046ff6c: 83c408                   add esp, 8
+0x0046ff6f: e9ab000000               jmp 0x47001f
+0x0046ff74: d81520c35c00             fcom dword ptr [0x5cc320]
+0x0046ff7a: dfe0                     fnstsw ax
+0x0046ff7c: f6c441                   test ah, 0x41
+0x0046ff7f: 7508                     jne 0x46ff89
+0x0046ff81: ddd8                     fstp st(0)
+0x0046ff83: d90520c35c00             fld dword ptr [0x5cc320]
+0x0046ff89: 83ec08                   sub esp, 8
+0x0046ff8c: dd1c24                   fstp qword ptr [esp]
+0x0046ff8f: e8f0330300               call 0x4a3384
+0x0046ff94: 8b842428010000           mov eax, dword ptr [esp + 0x128]
+0x0046ff9b: d80d8cc95c00             fmul dword ptr [0x5cc98c]
+0x0046ffa1: 83c408                   add esp, 8
+0x0046ffa4: 85c0                     test eax, eax
+0x0046ffa6: d95c240c                 fstp dword ptr [esp + 0xc]
+0x0046ffaa: 7419                     je 0x46ffc5
+0x0046ffac: d944240c                 fld dword ptr [esp + 0xc]
+0x0046ffb0: d81d88d05c00             fcomp dword ptr [0x5cd088]
+0x0046ffb6: dfe0                     fnstsw ax
+0x0046ffb8: f6c441                   test ah, 0x41
+0x0046ffbb: 7508                     jne 0x46ffc5
+0x0046ffbd: c744240c00002040         mov dword ptr [esp + 0xc], 0x40200000
+0x0046ffc5: 8bd3                     mov edx, ebx
+0x0046ffc7: 8b02                     mov eax, dword ptr [edx]
+0x0046ffc9: 89442430                 mov dword ptr [esp + 0x30], eax
+0x0046ffcd: 8b4a04                   mov ecx, dword ptr [edx + 4]
+0x0046ffd0: 8b44240c                 mov eax, dword ptr [esp + 0xc]
+0x0046ffd4: 894c2434                 mov dword ptr [esp + 0x34], ecx
+0x0046ffd8: 8b5208                   mov edx, dword ptr [edx + 8]
+0x0046ffdb: 6a00                     push 0
+0x0046ffdd: 50                       push eax
+0x0046ffde: 8d4c245c                 lea ecx, [esp + 0x5c]
+0x0046ffe2: 89542440                 mov dword ptr [esp + 0x40], edx
+0x0046ffe6: 51                       push ecx
+0x0046ffe7: 8d9424e8000000           lea edx, [esp + 0xe8]
+0x0046ffee: 52                       push edx
+0x0046ffef: e82c4d0500               call 0x4c4d20
+0x0046fff4: 6a02                     push 2
+0x0046fff6: 8d8424f0000000           lea eax, [esp + 0xf0]
+0x0046fffd: 50                       push eax
+0x0046fffe: 55                       push ebp
+0x0046ffff: e8ec520500               call 0x4c52f0
+0x00470004: 8b4c244c                 mov ecx, dword ptr [esp + 0x4c]
+0x00470008: 890b                     mov dword ptr [ebx], ecx
+0x0047000a: 8b542450                 mov edx, dword ptr [esp + 0x50]
+0x0047000e: 895304                   mov dword ptr [ebx + 4], edx
+0x00470011: 8b442454                 mov eax, dword ptr [esp + 0x54]
+0x00470015: 83c41c                   add esp, 0x1c
+0x00470018: 894308                   mov dword ptr [ebx + 8], eax
+0x0047001b: eb02                     jmp 0x47001f
+0x0047001d: ddd8                     fstp st(0)
+0x0047001f: 8db708020000             lea esi, [edi + 0x208]
+0x00470025: bb04000000               mov ebx, 4
+0x0047002a: 33ed                     xor ebp, ebp
+0x0047002c: 8d642400                 lea esp, [esp]
+0x00470030: 8b4690                   mov eax, dword ptr [esi - 0x70]
+0x00470033: b901000000               mov ecx, 1
+0x00470038: 3bc1                     cmp eax, ecx
+0x0047003a: 0f8572010000             jne 0x4701b2
+0x00470040: 817ee8020202ff           cmp dword ptr [esi - 0x18], 0xff020202
+0x00470047: 7559                     jne 0x4700a2
+0x00470049: d946f8                   fld dword ptr [esi - 8]
+0x0047004c: 896e90                   mov dword ptr [esi - 0x70], ebp
+0x0047004f: d80dfcc95c00             fmul dword ptr [0x5cc9fc]
+0x00470055: d95c2430                 fstp dword ptr [esp + 0x30]
+0x00470059: d946fc                   fld dword ptr [esi - 4]
+0x0047005c: d80dfcc95c00             fmul dword ptr [0x5cc9fc]
+0x00470062: d95c2434                 fstp dword ptr [esp + 0x34]
+0x00470066: d906                     fld dword ptr [esi]
+0x00470068: d80dfcc95c00             fmul dword ptr [0x5cc9fc]
+0x0047006e: d95c2438                 fstp dword ptr [esp + 0x38]
+0x00470072: d9442430                 fld dword ptr [esp + 0x30]
+0x00470076: d887b0090000             fadd dword ptr [edi + 0x9b0]
+0x0047007c: d99fb0090000             fstp dword ptr [edi + 0x9b0]
+0x00470082: d9442434                 fld dword ptr [esp + 0x34]
+0x00470086: d887b4090000             fadd dword ptr [edi + 0x9b4]
+0x0047008c: d99fb4090000             fstp dword ptr [edi + 0x9b4]
+0x00470092: d9442438                 fld dword ptr [esp + 0x38]
+0x00470096: d887b8090000             fadd dword ptr [edi + 0x9b8]
+0x0047009c: d99fb8090000             fstp dword ptr [edi + 0x9b8]
+0x004700a2: d946fc                   fld dword ptr [esi - 4]
+0x004700a5: d81d40c35c00             fcomp dword ptr [0x5cc340]
+0x004700ab: dfe0                     fnstsw ax
+0x004700ad: f6c405                   test ah, 5
+0x004700b0: 0f8afc000000             jp 0x4701b2
+0x004700b6: d946f8                   fld dword ptr [esi - 8]
+0x004700b9: 896e90                   mov dword ptr [esi - 0x70], ebp
+0x004700bc: d80d5cc55c00             fmul dword ptr [0x5cc55c]
+0x004700c2: 8d87b0090000             lea eax, [edi + 0x9b0]
+0x004700c8: 50                       push eax
+0x004700c9: 8d4c2434                 lea ecx, [esp + 0x34]
+0x004700cd: d95c2434                 fstp dword ptr [esp + 0x34]
+0x004700d1: d946fc                   fld dword ptr [esi - 4]
+0x004700d4: 51                       push ecx
+0x004700d5: d80d5cc55c00             fmul dword ptr [0x5cc55c]
+0x004700db: d95c243c                 fstp dword ptr [esp + 0x3c]
+0x004700df: d906                     fld dword ptr [esi]
+0x004700e1: d80d5cc55c00             fmul dword ptr [0x5cc55c]
+0x004700e7: d95c2440                 fstp dword ptr [esp + 0x40]
+0x004700eb: d9442438                 fld dword ptr [esp + 0x38]
+0x004700ef: d800                     fadd dword ptr [eax]
+0x004700f1: d918                     fstp dword ptr [eax]
+0x004700f3: d944243c                 fld dword ptr [esp + 0x3c]
+0x004700f7: d887b4090000             fadd dword ptr [edi + 0x9b4]
+0x004700fd: d99fb4090000             fstp dword ptr [edi + 0x9b4]
+0x00470103: d9442440                 fld dword ptr [esp + 0x40]
+0x00470107: d887b8090000             fadd dword ptr [edi + 0x9b8]
+0x0047010d: d99fb8090000             fstp dword ptr [edi + 0x9b8]
+0x00470113: e898380500               call 0x4c39b0
+0x00470118: ddd8                     fstp st(0)
+0x0047011a: d9442440                 fld dword ptr [esp + 0x40]
+0x0047011e: 83c408                   add esp, 8
+0x00470121: d84efc                   fmul dword ptr [esi - 4]
+0x00470124: d9442434                 fld dword ptr [esp + 0x34]
+0x00470128: d80e                     fmul dword ptr [esi]
+0x0047012a: dee9                     fsubp st(1)
+0x0047012c: d9442430                 fld dword ptr [esp + 0x30]
+0x00470130: d80e                     fmul dword ptr [esi]
+0x00470132: d9442438                 fld dword ptr [esp + 0x38]
+0x00470136: d84ef8                   fmul dword ptr [esi - 8]
+0x00470139: dee9                     fsubp st(1)
+0x0047013b: d9442434                 fld dword ptr [esp + 0x34]
+0x0047013f: d84ef8                   fmul dword ptr [esi - 8]
+0x00470142: d9442430                 fld dword ptr [esp + 0x30]
+0x00470146: d84efc                   fmul dword ptr [esi - 4]
+0x00470149: dee9                     fsubp st(1)
+0x0047014b: d95c245c                 fstp dword ptr [esp + 0x5c]
+0x0047014f: d987e4090000             fld dword ptr [edi + 0x9e4]
+0x00470155: d80d90c95c00             fmul dword ptr [0x5cc990]
+0x0047015b: d95c240c                 fstp dword ptr [esp + 0xc]
+0x0047015f: d9c9                     fxch st(1)
+0x00470161: d84c240c                 fmul dword ptr [esp + 0xc]
+0x00470165: d95c2454                 fstp dword ptr [esp + 0x54]
+0x00470169: d84c240c                 fmul dword ptr [esp + 0xc]
+0x0047016d: d95c2458                 fstp dword ptr [esp + 0x58]
+0x00470171: d944245c                 fld dword ptr [esp + 0x5c]
+0x00470175: d84c240c                 fmul dword ptr [esp + 0xc]
+0x00470179: d95c245c                 fstp dword ptr [esp + 0x5c]
+0x0047017d: d9442454                 fld dword ptr [esp + 0x54]
+0x00470181: d88744010000             fadd dword ptr [edi + 0x144]
+0x00470187: d99f44010000             fstp dword ptr [edi + 0x144]
+0x0047018d: b901000000               mov ecx, 1
+0x00470192: d9442458                 fld dword ptr [esp + 0x58]
+0x00470196: d88748010000             fadd dword ptr [edi + 0x148]
+0x0047019c: d99f48010000             fstp dword ptr [edi + 0x148]
+0x004701a2: d944245c                 fld dword ptr [esp + 0x5c]
+0x004701a6: d8874c010000             fadd dword ptr [edi + 0x14c]
+0x004701ac: d99f4c010000             fstp dword ptr [edi + 0x14c]
+0x004701b2: 81c6c4000000             add esi, 0xc4
+0x004701b8: 4b                       dec ebx
+0x004701b9: 0f8571feffff             jne 0x470030
+0x004701bf: db442414                 fild dword ptr [esp + 0x14]
+0x004701c3: 8b87f0090000             mov eax, dword ptr [edi + 0x9f0]
+0x004701c9: 3bc5                     cmp eax, ebp
+0x004701cb: d997e0090000             fst dword ptr [edi + 0x9e0]
+0x004701d1: 0f8572020000             jne 0x470449
+0x004701d7: d8157c755d00             fcom dword ptr [0x5d757c]
+0x004701dd: dfe0                     fnstsw ax
+0x004701df: f6c444                   test ah, 0x44
+0x004701e2: 0f8b61020000             jnp 0x470449
+0x004701e8: d81d74c55c00             fcomp dword ptr [0x5cc574]
+0x004701ee: dfe0                     fnstsw ax
+0x004701f0: f6c441                   test ah, 0x41
+0x004701f3: 0f8a52020000             jp 0x47044b
+0x004701f9: 8b8798010000             mov eax, dword ptr [edi + 0x198]
+0x004701ff: d9057c755d00             fld dword ptr [0x5d757c]
+0x00470205: 3bc1                     cmp eax, ecx
+0x00470207: c744242400000000         mov dword ptr [esp + 0x24], 0
+0x0047020f: c744242000000000         mov dword ptr [esp + 0x20], 0
+0x00470217: 896c2414                 mov dword ptr [esp + 0x14], ebp
+0x0047021b: 7420                     je 0x47023d
+0x0047021d: ddd8                     fstp st(0)
+0x0047021f: 894c2414                 mov dword ptr [esp + 0x14], ecx
+0x00470223: d987f8090000             fld dword ptr [edi + 0x9f8]
+0x00470229: d987fc090000             fld dword ptr [edi + 0x9fc]
+0x0047022f: d95c2420                 fstp dword ptr [esp + 0x20]
+0x00470233: d987000a0000             fld dword ptr [edi + 0xa00]
+0x00470239: d95c2424                 fstp dword ptr [esp + 0x24]
+0x0047023d: 398f5c020000             cmp dword ptr [edi + 0x25c], ecx
+0x00470243: 742b                     je 0x470270
+0x00470245: d887040a0000             fadd dword ptr [edi + 0xa04]
+0x0047024b: 8b442414                 mov eax, dword ptr [esp + 0x14]
+0x0047024f: d987080a0000             fld dword ptr [edi + 0xa08]
+0x00470255: 40                       inc eax
+0x00470256: d8442420                 fadd dword ptr [esp + 0x20]
+0x0047025a: d95c2420                 fstp dword ptr [esp + 0x20]
+0x0047025e: d9870c0a0000             fld dword ptr [edi + 0xa0c]
+0x00470264: 89442414                 mov dword ptr [esp + 0x14], eax
+0x00470268: d8442424                 fadd dword ptr [esp + 0x24]
+0x0047026c: d95c2424                 fstp dword ptr [esp + 0x24]
+0x00470270: 398f20030000             cmp dword ptr [edi + 0x320], ecx
+0x00470276: 742b                     je 0x4702a3
+0x00470278: d887100a0000             fadd dword ptr [edi + 0xa10]
+0x0047027e: 8b442414                 mov eax, dword ptr [esp + 0x14]
+0x00470282: d987140a0000             fld dword ptr [edi + 0xa14]
+0x00470288: 40                       inc eax
+0x00470289: d8442420                 fadd dword ptr [esp + 0x20]
+0x0047028d: d95c2420                 fstp dword ptr [esp + 0x20]
+0x00470291: d987180a0000             fld dword ptr [edi + 0xa18]
+0x00470297: 89442414                 mov dword ptr [esp + 0x14], eax
+0x0047029b: d8442424                 fadd dword ptr [esp + 0x24]
+0x0047029f: d95c2424                 fstp dword ptr [esp + 0x24]
+0x004702a3: 398fe4030000             cmp dword ptr [edi + 0x3e4], ecx
+0x004702a9: 742b                     je 0x4702d6
+0x004702ab: d8871c0a0000             fadd dword ptr [edi + 0xa1c]
+0x004702b1: 8b442414                 mov eax, dword ptr [esp + 0x14]
+0x004702b5: d987200a0000             fld dword ptr [edi + 0xa20]
+0x004702bb: 40                       inc eax
+0x004702bc: d8442420                 fadd dword ptr [esp + 0x20]
+0x004702c0: d95c2420                 fstp dword ptr [esp + 0x20]
+0x004702c4: d987240a0000             fld dword ptr [edi + 0xa24]
+0x004702ca: 89442414                 mov dword ptr [esp + 0x14], eax
+0x004702ce: d8442424                 fadd dword ptr [esp + 0x24]
+0x004702d2: d95c2424                 fstp dword ptr [esp + 0x24]
+0x004702d6: db442414                 fild dword ptr [esp + 0x14]
+0x004702da: 8d54241c                 lea edx, [esp + 0x1c]
+0x004702de: 52                       push edx
+0x004702df: 8d442420                 lea eax, [esp + 0x20]
+0x004702e3: d83d20c35c00             fdivr dword ptr [0x5cc320]
+0x004702e9: 50                       push eax
+0x004702ea: d9542418                 fst dword ptr [esp + 0x18]
+0x004702ee: dec9                     fmulp st(1)
+0x004702f0: d9442418                 fld dword ptr [esp + 0x18]
+0x004702f4: d84c2428                 fmul dword ptr [esp + 0x28]
+0x004702f8: d9442418                 fld dword ptr [esp + 0x18]
+0x004702fc: d84c242c                 fmul dword ptr [esp + 0x2c]
+0x00470300: d95c242c                 fstp dword ptr [esp + 0x2c]
+0x00470304: d98758090000             fld dword ptr [edi + 0x958]
+0x0047030a: d8e2                     fsub st(2)
+0x0047030c: d95c2424                 fstp dword ptr [esp + 0x24]
+0x00470310: d9875c090000             fld dword ptr [edi + 0x95c]
+0x00470316: d8e1                     fsub st(1)
+0x00470318: d95c2428                 fstp dword ptr [esp + 0x28]
+0x0047031c: ddd8                     fstp st(0)
+0x0047031e: ddd8                     fstp st(0)
+0x00470320: d98760090000             fld dword ptr [edi + 0x960]
+0x00470326: d864242c                 fsub dword ptr [esp + 0x2c]
+0x0047032a: d95c242c                 fstp dword ptr [esp + 0x2c]
+0x0047032e: e87d360500               call 0x4c39b0
+0x00470333: ddd8                     fstp st(0)
+0x00470335: d9442424                 fld dword ptr [esp + 0x24]
+0x00470339: 8d4c2424                 lea ecx, [esp + 0x24]
+0x0047033d: d80d1cd65c00             fmul dword ptr [0x5cd61c]
+0x00470343: 51                       push ecx
+0x00470344: 8d542428                 lea edx, [esp + 0x28]
+0x00470348: 52                       push edx
+0x00470349: d95c242c                 fstp dword ptr [esp + 0x2c]
+0x0047034d: d9442434                 fld dword ptr [esp + 0x34]
+0x00470351: c744243000000000         mov dword ptr [esp + 0x30], 0
+0x00470359: d80d1cd65c00             fmul dword ptr [0x5cd61c]
+0x0047035f: d95c2434                 fstp dword ptr [esp + 0x34]
+0x00470363: d944242c                 fld dword ptr [esp + 0x2c]
+0x00470367: d887b0090000             fadd dword ptr [edi + 0x9b0]
+0x0047036d: d99fb0090000             fstp dword ptr [edi + 0x9b0]
+0x00470373: d987b4090000             fld dword ptr [edi + 0x9b4]
+0x00470379: d99fb4090000             fstp dword ptr [edi + 0x9b4]
+0x0047037f: d9442434                 fld dword ptr [esp + 0x34]
+0x00470383: d887b8090000             fadd dword ptr [edi + 0x9b8]
+0x00470389: d99fb8090000             fstp dword ptr [edi + 0x9b8]
+0x0047038f: e81c360500               call 0x4c39b0
+0x00470394: ddd8                     fstp st(0)
+0x00470396: d9442430                 fld dword ptr [esp + 0x30]
+0x0047039a: d80d04476100             fmul dword ptr [0x614704]
+0x004703a0: d9442434                 fld dword ptr [esp + 0x34]
+0x004703a4: d80d00476100             fmul dword ptr [0x614700]
+0x004703aa: dee9                     fsubp st(1)
+0x004703ac: d95c2470                 fstp dword ptr [esp + 0x70]
+0x004703b0: d9442434                 fld dword ptr [esp + 0x34]
+0x004703b4: d80dfc466100             fmul dword ptr [0x6146fc]
+0x004703ba: d944242c                 fld dword ptr [esp + 0x2c]
+0x004703be: d80d04476100             fmul dword ptr [0x614704]
+0x004703c4: dee9                     fsubp st(1)
+0x004703c6: d95c2474                 fstp dword ptr [esp + 0x74]
+0x004703ca: d944242c                 fld dword ptr [esp + 0x2c]
+0x004703ce: 8d442470                 lea eax, [esp + 0x70]
+0x004703d2: d80d00476100             fmul dword ptr [0x614700]
+0x004703d8: 50                       push eax
+0x004703d9: 8d4c2474                 lea ecx, [esp + 0x74]
+0x004703dd: 51                       push ecx
+0x004703de: d9442438                 fld dword ptr [esp + 0x38]
+0x004703e2: d80dfc466100             fmul dword ptr [0x6146fc]
+0x004703e8: dee9                     fsubp st(1)
+0x004703ea: d99c2480000000           fstp dword ptr [esp + 0x80]
+0x004703f1: e8ba350500               call 0x4c39b0
+0x004703f6: ddd8                     fstp st(0)
+0x004703f8: d9442478                 fld dword ptr [esp + 0x78]
+0x004703fc: 83c418                   add esp, 0x18
