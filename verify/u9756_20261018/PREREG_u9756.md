@@ -64,3 +64,9 @@ knobs, G-CTRL `H_F6044`.
 `D2_F6044_1..3`: slip 0.1960 in, slip 2000-2600 0.2549 OUT (> 0.25487), driving-median 1880.50 / 1882.46 / 1880.50 OUT
 (< 1904.70); H1 398/400. `H_F6044` `8cf76141 / 7c0a3e9e / b35f90ee` (the player trace moves). `F6044` is not a default
 candidate. Attribution only: `D2_F60_1`, `D2_F44_1`, `H_F44`.
+
+## Amendment 3 (2026-10-18, after the attribution arms, before these)
+
+`D2_F60_1` in band (0.1939 / 0.2545 / 1960.31, H1 398/400); `D2_F44_1` OUT (0.2549 / 1880.00); `H_F44` moves the player
+trace (`dd428bdb`). `_DAT_005cea44` is the D2 mover and stays a default-OFF knob. Default candidate: `F60` alone: `D2_F60_2..3`,
+13 tracks with `MASHED_FIX_5CEA60=1`.
