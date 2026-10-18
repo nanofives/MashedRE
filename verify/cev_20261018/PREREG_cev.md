@@ -1,0 +1,57 @@
+# PREREG cev: the contact-event freezes (U-9745 / U-9185 / U-9186) (2026-10-18)
+
+Branch `work/cev` from `race/first-frame-parity` `5740f549a` (default G-CTRL `b1f49e7a / b1be0054 / d3a20f4c`). Model
+claude-opus-5-5, account2. Worktree build `MASHED_NO_DEPLOY=1`, exe `96e7f26d`, private root `D:\MashedWT\cev_root`.
+Written before any knob arm. The arms already run (`B_DEFL_*`, `B_EL_*`) carry only knobs measured in d3bB2.
+
+## 0. Measured before this PREREG (no knob introduced)
+
+- G-NOOP: `B_DEFL_K0/K1/K26` step dumps `e332af0c / 01ad5975 / 772f9fb7` = u9747's flip default dumps (the car-car log
+  writes a side file only).
+- Original contact schedule (`ovon.py` on all 18 `verify/d3_regimes_20261013` captures, override-timer onsets, k = call
+  index in the car's (b) window). An AI<->AI contact sets two AI timers on one frame (`FUN_00422ba0` -> `FUN_00417370`).
+  - A (13/13): car 2 at 23 and 60 (player), cars 2+3 at 205.
+  - B (3/3): car 2 at 23 and 60, cars 1+3 at 159 (next ones 264+, outside the window).
+  - C (2/2): car 2 at 23 and 60. No AI<->AI contact in the window.
+  So U-9745's open question is answered: the original has one AI<->AI contact in the A and B windows and none in C.
+- Port with the event knob (`B_EL_*`): car 2 at 23 and 59, then cars 1+3 at 63 in every regime (extra), A 1+3 at 132,
+  2+3 at 215; B 1+3 at 140, 2+3 at 219; C only the extra 63. (b): EL A 3/3, B 2/3 (car 2 `c0#` 44), C 0/3.
+- Cause of the call-63 contact (`pos13.py`, `sbs.py` against o_reg_r13): car 3's position leaves the original's at call
+  42; the original's car 3 runs `FUN_00414a70` return 1 on 39..41 and 2 on 44..57 (accel 0, brake 255, speed
+  2756 -> 1734), the default never calls `FUN_00414a70` (c3k44, U-9684) and car 3 keeps full throttle (2756 -> 3089),
+  closing the 1-3 distance to 0.976 (original 1.759) at call 63.
+
+## 1. Hypothesis
+
+H1: with the countdown spawn now default (AI progress at GO = the original's, u9747 G-PROG), the ported
+`FUN_00414a70` chain (`MASHED_PATHPROG` + `MASHED_TGT3`, stack TGT) picks the original's car ahead for car 3 and
+gives the original's brake schedule, and with it the extra 1+3 contact at 63 goes away. c3k44 measured TGT before
+u9747 (car 2 ahead of car 3 until call 52, return 2 from 53).
+
+## 2. Arms (`run_arms.py`, 1200 frames, K0 / K1 / K26)
+
+| arm | knobs on the default |
+|---|---|
+| `TGTT` | `MASHED_PATHPROG`, `MASHED_TGT3` + the TGT3 / PATHPROG traces |
+| `TGTEL` | TGT + `MASHED_AI_CONTACT_EVENT` + the car-car / event logs |
+| `TGTE` | TGT + `MASHED_AI_CONTACT_EVENT` (no logs; the scored dump) |
+| `TGT` | TGT alone (no traces; the scored dump) |
+
+Logs are side files; a traced arm's step dump must equal its untraced twin's (checked, else the traced one is not used).
+
+## 3. Gates
+
+| gate | rule |
+|---|---|
+| G-BRAKE | K1 (regime B) car 3 `ret14a70` (TGT3 trace / step dump): 1 on calls 39..41, 2 on 44..57 (o_reg_r13), within +-1 call |
+| G-C63 | `TGTEL` K0 / K1 / K26: no AI<->AI contact at calls 60..70 |
+| G-SCHED | `TGTEL` contact schedule inside the window equals the original's per regime (A: 2+3 at 205, B: 1+3 at 159, C: none; player contacts 23 and 59/60), +-3 calls |
+| G-B | (b) on `ai_ctrl_window --check-regime`: no car that passes on the default (A cars 2, 3; B cars 1, 2) turns to FAIL |
+
+A default proposal needs G-B plus D2 3/3 and 13 tracks 0 RED (default-ON rule), run only if G-B passes. A partial
+result (G-BRAKE pass, G-SCHED fail) is reported with the first differing contact and its cause, no default proposal.
+
+## 4. Out of scope
+
+The 50-tick override-timer offset (1390 vs 1440, U-9745 tail) is noted, not fixed here, unless G-SCHED passes and it
+is the remaining difference. U-9185 / U-9186's over-speed metric is not re-measured unless G-B passes.
