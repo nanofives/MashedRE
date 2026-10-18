@@ -60,3 +60,8 @@ it is not a default candidate; `SBKN` (both knobs) keeps the default's pass set 
 default candidate is `SBKN`: D2 `D2_SBKN_1..3` (each alone, bounds of d2close / d2ref: slip 1500-2000 [0.18855, 0.19635],
 2000-2600 [0.24488, 0.25487], driving-median [1904.70, 1982.44], H1 >= 200/400, >= 1600 motion_diag lines) and the 13
 tracks (`run13.py`, 0 RED against `cites_rres.json`), then G-CTRL `H_SBKN`.
+
+## Amendment 3 (2026-10-18, after D2_SBKN_1..3, before these)
+
+`D2_SBKN_1..3`: slip 0.1890 / 0.2544 in band, H1 398/400, driving-median 1997.89 / 2002.84 / 1996.54 OUT (> 1982.44) on
+3/3, so `SBKN` is not a default candidate. Attribution only (no default claim): `D2_SB_1` and `D2_KN_1`, one run each.
