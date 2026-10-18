@@ -58,3 +58,10 @@ U-9755 RESOLVED (spawn y ported, premise refuted); new U-9756 (the spawn solver 
 
 `MASHED_SPAWN_Y_LINE` default ON (opt-out at the flip)? Faithful spawn pose for every car; (b), D2 and the 13 tracks hold;
 the G-CTRL trio moves to `b7534619 / fb690fb1 / d3a20f4c`.
+
+### 5. Flipped (user decision 2026-10-18)
+
+Default ON; `MASHED_NO_SPAWN_Y_LINE=1` opts out. Exe `0e773d28` (`MASHED_NO_DEPLOY=1`), `flip/RUNLOG.txt`: G-CTRL default
+`b7534619 / fb690fb1 / d3a20f4c` x2 (= `H_SY`); default B dumps K0 / K1 / K26 `c7b40cf2 / 5b9905d8 / f680a529` (= `B_SY_*`);
+opt-out `b1f49e7a / b1be0054 / d3a20f4c` and `e332af0c / 01ad5975 / 772f9fb7` (the previous default). The default now equals
+the `SY` arm, so section 1's (b), D2 (`D2_SY_1..3`, 3/3) and 13-track (869 rows, 0 RED) numbers stand for it.
