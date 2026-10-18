@@ -26,6 +26,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-18  00408610  cev  U-9745: the original's AI<->AI contact schedule per regime (A 2+3@205, B 1+3@159, C none); the port's extra 1+3@63 = car 3's missing FUN_00414a70 brake chain; MASHED_PATHPROG_LATE (default OFF) removes a one-tick progress lag under S, FUN_00414a70 exact through call 59; (b) S+knob 0/3 x3, no default change. No C-level change. verify/cev_20261018/RESULT_cev.md
 2026-10-17  00414a70  c3k44  regime-B car 3: U-9753 RESOLVED as a probe artifact; the divergence is the missing FUN_00414a70 brake chain (mode 3 at call 39, return 2 on 44..57, U-9684 note); the chain on today's default is one call late at best (S stack) and worsens (b); no code change, no C-level change. verify/c3k44_20261017/RESULT_c3k44.md
 2026-10-18  00418860  u9747 flip  MASHED_COUNTDOWN_SPAWN default ON (user decision; opt-out MASHED_NO_COUNTDOWN_SPAWN=1), no C-level change. G-CTRL default b1f49e7a/b1be0054/d3a20f4c x2, opt-out 1fbc77ae/29a08810/d3a20f4c; (b) A 2/3 B 2/3 C 0/3, D2 3/3, 869 rows 0 RED (verify/u9747_20261018/RESULT_u9747.md).
 2026-10-18  00418860  u9747  U-9747 RESOLVED: countdown slot state (FUN_00418860 alive-poke) + spawn pose (FUN_004704c0 matrices) behind MASHED_COUNTDOWN_SPAWN (default OFF); AI progress at GO = the original's; G-ORDER passes under S. Alone: (b) unchanged pass set, D2 3/3, 13 tracks 869 rows 0 RED (identical score file). No C-level change. verify/u9747_20261018/RESULT_u9747.md
