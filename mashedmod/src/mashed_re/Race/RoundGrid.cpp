@@ -109,8 +109,9 @@ bool RoundGrid_Anchor(float A[3], float lat[2], float dir[2], int* node) {
 // ---- [gridyaw 2026-10-16] MASHED_GRID_DIR: FUN_00408b00's grid frame at the node the port grids at ----
 bool GridDir_Enabled() {
     static const bool s_on = [] {
-        const char* s = std::getenv("MASHED_GRID_DIR");
-        return s && s[0] && s[0] != '0';
+        // [d2ref flip 2026-10-17] default ON (user decision); MASHED_NO_GRID_DIR=1 opts out (the gate0 -> gate1 stand-in)
+        const char* no = std::getenv("MASHED_NO_GRID_DIR");
+        return !(no && no[0] && no[0] != '0');
     }();
     return s_on;
 }

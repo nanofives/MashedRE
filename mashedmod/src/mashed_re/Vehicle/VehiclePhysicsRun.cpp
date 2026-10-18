@@ -873,6 +873,26 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     if (!g_inited) VehiclePhysics_Init(4, 0);
     if (dt <= 0.f) return;
     if (slot < 0 || slot >= 16) return;
+    // [d2ref 2026-10-17] U-9751, default ON since the d2ref flip (MASHED_NO_A5_RACE_TIMER=1 opts out): A5 FUN_0046ddb0 reads the race timer DAT_007f0ff8
+    // (FILD [0x007f0ff8] at 0x0046e0a9) for its grip ramp (60000 _DAT_005cea7c, -30000 _DAT_005cea78, -1/30000
+    // _DAT_005cea74, ForceIntegrator.cpp:141). The port's A5 reads g_raceTimer, which nothing wrote (0 for the whole race).
+    // The knob copies the exe's DAT_007f0ff8 into it before each car's step. MASHED_A5_RACE_TIMER_LOG=1 logs it every 600
+    // slot-0 steps to mashed_re.log (diagnostic).
+    {
+        // [d2ref flip 2026-10-17] default ON (user decision); MASHED_NO_A5_RACE_TIMER=1 opts out (the stub, 0 forever)
+        static const bool s_a5rt = [] { const char* no = std::getenv("MASHED_NO_A5_RACE_TIMER");
+                                        return !(no && no[0] && no[0] != '0'); }();
+        if (s_a5rt) {
+            g_raceTimer = *reinterpret_cast<const int*>(0x007f0ff8u);
+            static const bool s_log = (std::getenv("MASHED_A5_RACE_TIMER_LOG") != nullptr);
+            static int s_n = 0;
+            if (s_log && slot == 0 && (s_n++ % 600) == 0)
+                if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
+                    std::fprintf(lf, "[d2ref] A5 race timer step %d: DAT_007f0ff8 = %d\n", s_n - 1, g_raceTimer);
+                    std::fclose(lf);
+                }
+        }
+    }
     // [a4order] one chunk only: with remaining > 0x32 the original interleaves A4 and substeps per chunk
     // (0x00471143..0x00471151); the pre-phase is not used there and the car steps in the per-car order.
     if (preOnly && static_cast<int>(dt * 3000.0f) > 0x32) return;
@@ -1349,16 +1369,18 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     }();
     static const bool s_fixLFrameMs = (std::getenv("MASHED_D2CHUNK_FRAMEMS") != nullptr);
     bool a4Skip = false;
-    // [d2lateral 2026-10-16] MASHED_D2LAT_REFRESH=1 (default OFF): the refresh below on EVERY
+    // [d2lateral 2026-10-16] MASHED_D2LAT_REFRESH (default ON since d2ref 2026-10-17): the refresh below on EVERY
     // frame, with 0x004c3ac0's own arithmetic (float (x*x + y*y) + z*z, then the RW LUT sqrt,
     // Math::LutLength). Measured on the original's first Training wall impact: the fixup
     // 0x0046ef70 reads +0x9e4 in its damp (ContactFixup.cpp:133-137), and there the original
     // carries this refresh's LUT value (1832.4017, bit-exact) where the port carried A6a's
     // pre-clamp |W1| (1835.50), a damp x1.081 and a post-impact car x1.077
     // (verify/d2lateral_20261016/PREREG_d2lateral.md A2.1-A2.3).
+    // [d2ref flip 2026-10-17] default ON (user decision, with MASHED_GRID_DIR and MASHED_A5_RACE_TIMER; D2 3/3 only as the
+    // three together, verify/d2ref_20261017); MASHED_NO_D2LAT_REFRESH=1 opts out.
     static const bool s_d2latRefresh = [] {
-        const char* e = std::getenv("MASHED_D2LAT_REFRESH");
-        return e && e[0] == '1';
+        const char* no = std::getenv("MASHED_NO_D2LAT_REFRESH");
+        return !(no && no[0] && no[0] != '0');
     }();
 
     // [d2settle D0-a] slot 0's first 6 steps (settle included), DIAGNOSTIC ONLY, default-OFF.
