@@ -787,11 +787,18 @@ void VehiclePhysics_CarryTo(int slot, const float* m, float ground_off, float ca
 // countdown. The port wrote the record only at a car's first StepCar, so every record read (0,0,0) before GO, and the
 // countdown path progress (FUN_0040da50 under MASHED_AI_TICK_FIRST) was computed at the origin. Writes the pose only: the
 // basis seed, contacts and the rest of FUN_004704c0 stay with the first StepCar as before.
-void VehiclePhysics_SeedSpawnPose(int slot, const float callerPos[3], float yaw, float groundOff) {
+void VehiclePhysics_SeedSpawnPose(int slot, const float callerPos[3], float yaw, float groundOff, const float* physY) {
     if (!g_inited || slot < 0 || slot >= 16) return;
     float m[16];
     BodyOrient_Init(m, yaw);
-    m[12] = callerPos[0]; m[13] = callerPos[1] - groundOff; m[14] = callerPos[2];
+    m[12] = callerPos[0]; m[13] = physY ? *physY : callerPos[1] - groundOff; m[14] = callerPos[2];
+    // [u9755] MASHED_SPAWN_Y_LINE: the exact record y; also the physics position the first StepCar keeps when the caller
+    // hands this caller-convention position back unchanged (the d2posmodel g_physPos / g_outPos rule).
+    if (physY) {
+        g_physPos[slot][0] = callerPos[0]; g_physPos[slot][1] = *physY; g_physPos[slot][2] = callerPos[2];
+        std::memcpy(g_outPos[slot], callerPos, sizeof(g_outPos[slot]));
+        g_outPosValid[slot] = true;
+    }
     unsigned char* r = rec(slot);
     std::memcpy(r + 0x928, m, 0x40);
     std::memcpy(r + 0x968, m, 0x40);

@@ -333,6 +333,15 @@ bool CollWorld_SpawnY(float x, float y, float z, float* out)
     CollWorld_ForAllIntersections(isect, &SpawnDropCb, &best);
     const float drop = (best != 6.0f) ? best - 3.0f : 0.0f - 3.0f;              // FUN_0046d400 return (DAT_005d757c = 0)
     *out = y - drop;
+    // MASHED_SPAWN_Y_LOG=<path> (diagnostic, default OFF): the same fields the original-side --spawn-drop-probe records.
+    static std::FILE* s_log = [] { const char* p = std::getenv("MASHED_SPAWN_Y_LOG"); return p ? std::fopen(p, "w") : nullptr; }();
+    if (s_log) {
+        std::uint32_t bx, by, bz, bb, bo; std::memcpy(&bx, &x, 4); std::memcpy(&by, &y, 4); std::memcpy(&bz, &z, 4);
+        std::memcpy(&bb, &best, 4); std::memcpy(&bo, out, 4);
+        std::fprintf(s_log, "x=%.9g y=%.9g (0x%08x) z=%.9g best=%.9g (0x%08x) out=%.9g (0x%08x) xbits=0x%08x zbits=0x%08x\n",
+                     x, y, by, z, best, bb, *out, bo, bx, bz);
+        std::fflush(s_log);
+    }
     return true;
 }
 

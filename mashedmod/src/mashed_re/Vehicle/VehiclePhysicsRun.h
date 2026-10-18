@@ -132,7 +132,7 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io);
 void VehiclePhysics_SpawnSettle(int slot, float dt, PlayerCarIO& io);
 // [u9747] FUN_004704c0's two state matrices (+0x928 / +0x968) from the grid pose (caller convention: pos[1] = physics y +
 // groundOff). Used by MASHED_COUNTDOWN_SPAWN on countdown frames.
-void VehiclePhysics_SeedSpawnPose(int slot, const float callerPos[3], float yaw, float groundOff);
+void VehiclePhysics_SeedSpawnPose(int slot, const float callerPos[3], float yaw, float groundOff, const float* physY = nullptr);
 // [a4order 2026-10-17] MASHED_A4_ORDER=1 (default OFF, U-9746): FUN_00470c70's order, every car's gate + A4
 // (0x00470f80..0x00471099) and refresh (0x004710a1..0x004710da) before any substep (0x00471137). Per frame, before
 // the player's StepCar: A4PreBegin(), A4Pre(slot, dt, io) for each AI car with the io its StepCar will get, then

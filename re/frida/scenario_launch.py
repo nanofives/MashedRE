@@ -1988,6 +1988,42 @@ function wobjProbeArm(limit){
     return 'wobj-probe armed (entry-only 0x' + WO_FN.toString(16) + ')';
   } catch(e){ return 'ERR ' + e; }
 }
+// --- [u9755] spawn-drop probe (FUN_0046d400 + its callback FUN_0046d3a0), read-only, capped --------------------
+// FUN_0046d400(x, y, z, world): entry row = x / y / z float bits + caller RVA; exit row = the final `best` (the function
+// reuses its param_1 slot for it: `param_1 = 6.0` then the callback writes through &param_1). Callback row = dist bits and
+// *best before the callback. FUN_004704c0 uses it for the spawn y; other callers are recorded as they come (cap 256).
+const SPD = { armed:false, rows:[], err:null, n:0, cap:256 };
+function spawnDropArm(){
+  if (SPD.armed) return 'already armed';
+  try {
+    Interceptor.attach(ga(0x0046d400), {
+      onEnter(args){
+        try {
+          this.slot = this.context.esp.add(4);
+          if (SPD.rows.length >= SPD.cap) return;
+          SPD.rows.push(['in', SPD.n, args[0].toUInt32(), args[1].toUInt32(), args[2].toUInt32(),
+                         this.returnAddress.sub(modBase()).add(IMG).toUInt32()]);
+        } catch(e){ if (!SPD.err) SPD.err = 'in ' + e; }
+      },
+      onLeave(){
+        try {
+          if (SPD.rows.length < SPD.cap) SPD.rows.push(['out', SPD.n, this.slot.readU32(), 0, 0, 0]);
+          SPD.n++;
+        } catch(e){ if (!SPD.err) SPD.err = 'out ' + e; }
+      }
+    });
+    Interceptor.attach(ga(0x0046d3a0), { onEnter(args){
+      try {
+        if (SPD.rows.length >= SPD.cap) return;
+        SPD.rows.push(['cb', SPD.n, args[3].toUInt32(), args[4].readU32(), 0, 0]);
+      } catch(e){ if (!SPD.err) SPD.err = 'cb ' + e; }
+    }});
+    SPD.armed = true;
+    return 'spawn-drop probe armed (0x0046d400 + 0x0046d3a0)';
+  } catch(e){ return 'ERR ' + e; }
+}
+function spawnDropDrain(){ const r = SPD.rows; SPD.rows = []; return r; }
+
 function wobjProbeDrain(){ const r = {calls:WO.calls, ents:WO.ents, ins:WO.ins}; WO.calls = []; WO.ents = []; WO.ins = []; return r; }
 // --- PATH-PROGRESS probe (D-11072 P2, 2026-10-10) ---------------------------
 // ONE ENTRY HOOK on FUN_00408610(rec, world, v) (call 0x0040db2c, ~4 calls/frame).
@@ -3495,6 +3531,9 @@ rpc.exports = {
   leaderProbeArm: function(l){ return leaderProbeArm(l); },
   leaderProbeDrain: function(){ return leaderProbeDrain(); },
   wobjProbeArm: function(l){ return wobjProbeArm(l); },
+  spawnDropArm: function(){ return spawnDropArm(); },
+  spawnDropDrain: function(){ return spawnDropDrain(); },
+  spawnDropStats: function(){ return JSON.stringify({armed:SPD.armed, calls:SPD.n, err:SPD.err}); },
   pathProgProbeArm: function(l){ return pathProgProbeArm(l); },
   pathProgProbeDrain: function(){ return pathProgProbeDrain(); },
   pathProgProbeStats: function(){ return JSON.stringify({armed:PP.armed, calls:PP.n, err:PP.err}); },
@@ -4183,6 +4222,10 @@ def main():
                          "only path to the DAT_0088ff50 writer) and FUN_00414f00 (AI powerup seek), first "
                          "N rows each. Writes <out>.seekobj.csv and <out>.seek.csv. Requires --statediff-out. "
                          "Negative N: FUN_00451d80 only (use with --hooks AiPowerupSeek, whose JMP sits at 0x00414f00).")
+    ap.add_argument("--spawn-drop-probe", action="store_true",
+                    help="[u9755] entry/exit hook on FUN_0046d400 and entry hook on its callback FUN_0046d3a0 "
+                         "(the spawn-y line query of FUN_004704c0): float bits of x / y / z, caller, final best, "
+                         "per-hit dist. Read-only, 256 rows. Writes <statediff-out>.spawndrop.csv. Requires --statediff-out.")
     ap.add_argument("--wobj-probe", action="store_true",
                     help="[D3 modes 3/7 2026-10-09] ONE ENTRY HOOK on FUN_00414c30: logs each "
                          "call (frame, v, registry count 0x006e70d8) and dumps the world-object "
@@ -4360,6 +4403,8 @@ def main():
                 print("  [statediff]", E.alive_probe_arm())
             if args.leader_probe:
                 print("  [statediff]", E.leader_probe_arm(args.leader_probe_limit))
+            if args.spawn_drop_probe:
+                print("  [statediff]", E.spawn_drop_arm())
             if args.wobj_probe:
                 print("  [statediff]", E.wobj_probe_arm(300000))
             if args.pathprog_probe:
@@ -5090,6 +5135,16 @@ def main():
                             for r in _sk["seek"]: f.write(",".join(str(x) for x in r) + chr(10))
                         print(f"  [statediff] seek-probe obj {len(_sk['obj'])} rows -> {_so}; seek {len(_sk['seek'])} rows -> {_ss}")
                     except Exception as _e: print("  [statediff] seek drain failed:", _e)
+                if args.spawn_drop_probe:
+                    try:
+                        print("  [statediff] spawn-drop agent:", E.spawn_drop_stats())
+                        _sd = E.spawn_drop_drain()
+                        _sdp = outp.with_suffix(outp.suffix + ".spawndrop.csv")
+                        with open(_sdp, "w", newline="") as f:
+                            f.write("kind,n,a,b,c,d" + chr(10))
+                            for r in _sd: f.write(",".join(str(x) for x in r) + chr(10))
+                        print(f"  [statediff] spawn-drop {len(_sd)} rows -> {_sdp}")
+                    except Exception as _e: print("  [statediff] spawn-drop drain failed:", _e)
                 if args.wobj_probe:
                     try: print("  [statediff] wobj-probe agent:", E.wobj_probe_stats())
                     except Exception as _e: print("  [statediff] wobj-probe stats failed:", _e)

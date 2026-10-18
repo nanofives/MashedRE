@@ -46,3 +46,17 @@ K26): `SY` (default + knob), `SPLSBKNSY` (lk21 / u9754's `SPL` + `MASHED_SPAWN_B
 | G-DRIFT | `SPLSBKNSY` K1 car 1 x/z gap at call 21 < 1e-5 (now 1.2e-4); else report the next first-differing field |
 | G-B | (b) `SY`: no car that passes on the default turns to FAIL |
 | G-D2 / G-13 | only for a default proposal: D2 3/3, 13 tracks 0 RED |
+
+## Amendment 1 (2026-10-18, after a first SY build, before the scored arms)
+
+First build (`320b6727`): car 1's countdown y 0.471709996, 1 ulp from the original. New original-side probe
+`scenario_launch.py --spawn-drop-probe` (entry / exit of `FUN_0046d400`, entry of `FUN_0046d3a0`), capture `o_sdrop1`:
+caller `0x00470517` for all four cars, param_3 = 1.17499995 (`0x3f966666`) for every car, one hit each, best
+`0x406f3466 / 0x406d02b4 / 0x406acd3a / 0x40689b88`; car 2's x / z are `FUN_00408b00`'s (z 0.202357411, the port's place()
+0.202357292). The port's log (`MASHED_SPAWN_Y_LOG`, `B_SYL_K1`) has the same param_3 and the same four best bits, and
+CollWorld_SpawnY returns 0.471709967 for car 1: the lost ulp was the caller convention (y + car_ground_off_ cannot carry y
+back out). Changes, all under the knob: the exact y goes to `VehiclePhysics_SeedSpawnPose(..., physY)`, which also seeds
+the d2posmodel `g_physPos` / `g_outPos` pair; x / y / z of the grid point follow `FUN_00408b00`'s order
+(`RoundGrid_GridPoint`). Result on exe `388fd4b2`: `B_TPPGSY_K1` countdown pose of cars 0..3 = the original's probe
+values bit for bit (G-SPAWNY PASS). All section-3 gates are scored on this exe; the earlier `SY` / `SPLSBKNSY` arms are
+superseded.
