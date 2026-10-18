@@ -253,6 +253,24 @@ void PathProg_FrameTick() {                              // FUN_0040da50's FUN_0
     if (!PathProg_Enabled() || PathNodes_TriCount() == 0) return;
     EnsureLut();
     PcScope pc;
+    // [u9747 2026-10-18] MASHED_PATHPROG_GATE_LOG=<path> (diagnostic, default OFF): both gates and the record's position
+    // (PtrCompute881ec8 + 0x30, the +0x928 matrix row the step reads) for every car on the first 400 calls.
+    {
+        static std::FILE* s_gl = nullptr; static bool s_glInit = false; static int s_glN = 0;
+        if (!s_glInit) { s_glInit = true; if (const char* g = std::getenv("MASHED_PATHPROG_GATE_LOG")) s_gl = std::fopen(g, "w"); }
+        if (s_gl && s_glN < 400) {
+            for (int v = 0; v < 4; ++v) {
+                std::uint32_t rec = 0;
+                PtrCompute881ec8(&rec, static_cast<std::uint32_t>(v));
+                const float* m = rec ? reinterpret_cast<const float*>(rec) : nullptr;
+                std::fprintf(s_gl, "%d,%d,active=%u,alive=%u,pos=(%.4f,%.4f,%.4f)\n", s_glN, v,
+                             static_cast<unsigned>(IsCarSlotActive(v)), static_cast<unsigned>(VehicleSlotGetter(static_cast<std::uint32_t>(v))),
+                             m ? m[12] : 0.f, m ? m[13] : 0.f, m ? m[14] : 0.f);
+            }
+            ++s_glN;
+            std::fflush(s_gl);
+        }
+    }
     for (int v = 0; v < 4; ++v) {
         if (IsCarSlotActive(v) == 0) continue;               // *(PTR_005f2770 + 0x34 + v*4)
         // [UNCERTAIN U-9210] FUN_0040da50 also accepts FUN_0046c770(v) == 1; no exe binding yet.

@@ -2034,6 +2034,20 @@ static void TickTrace(const char* stage, int v)
     std::fflush(lf);
 }
 
+// [u9747 2026-10-18] FUN_00418860's alive-poke alone (0x00418860..0x004188db: the AI-round test, then FUN_0040e480(v, 2)
+// for v = 1..3 with FUN_0046c7b0(v) == 1), for the countdown frames, where the original runs its AI tick and the port's
+// stand-in does not (MASHED_COUNTDOWN_SPAWN, TrackRenderer.cpp). Same body as the block in Ai_Standalone_Tick below.
+void Ai_CountdownAlivePoke()
+{
+    if (I32(kSplineRaceCnt) <= 3) return;        // 0x00418860 cmp [0x801ca0],4 (the same test as Ai_Standalone_Tick)
+    const int r = s_host.round_type();
+    const int fd0 = s_host.game_mode_fd0();
+    const bool aiRound = (r == 3 || r == 4 || r == 5 || r == 10 || fd0 == 4 || fd0 == 9 || fd0 == 8 || fd0 == 10);
+    if (!aiRound) return;                        // 0x004188ac jne 0x4188fe
+    for (int v = 1; v <= 3; ++v)
+        if (s_host.car_alive(v) == 1) CarSlotStateSet(v, 2);   // 0x004188b0 / 0x004188c0 ...
+}
+
 void Ai_Standalone_Tick()
 {
     TickTrace("enter", -1);

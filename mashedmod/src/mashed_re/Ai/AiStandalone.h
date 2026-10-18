@@ -92,6 +92,8 @@ void Ai_AdvanceClockLate(int units);
 // opts out): DAT_007f0ff4 += units on every
 // countdown stand-in frame, as FUN_0040fc00 does on the original's pre-GO ticks (0x0040fe4f..0x0040fe5e).
 bool Ai_CountdownClockEnabled();
+// [u9747] FUN_00418860's alive-poke (slot state 2 for alive AI cars in an AI round), for countdown frames.
+void Ai_CountdownAlivePoke();
 void Ai_AdvanceCountdownClock(int units);
 // [d3bB2 2026-10-17] MASHED_AI_CONTACT_EVENT=1 (default OFF): the car<->car type-4 event. Push = the tail of
 // FUN_00469df0 (one event per contact, the pair a / b); drain = FUN_00422ba0's type-4 arm, its FUN_00417370

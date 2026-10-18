@@ -1,0 +1,22 @@
+0046b56c  call 0x430790
+0046b573  call 0x42f6a0
+0046b578  cmp eax, 0xa
+0046b57d  call 0x431d70
+0046b585  call 0x40ce80
+0046b5e7  xor eax, eax
+0046b5ed  ret 
+0046b6ce  xor eax, eax
+0046b6d0  push ebx
+0046b6d1  mov dword ptr [esi + 0x48c], ecx
+0046b6d7  mov ecx, 0x3e9a0275
+0046b6dc  push ebp
+0046b6dd  mov edx, 1
+0046b6e2  push edi
+0046b6e3  mov edi, 0x3f078ee3
+0046b6e8  mov dword ptr [esi + 0x68], ecx
+0046b6eb  mov dword ptr [esi + 0x74], ecx
+0046b6ee  mov ecx, 0xbea30553
+0046b6f3  lea ebx, [esi + 0x170]
+0046b6f9  lea ebp, [esi + 0x64]
+0046b6fc  mov dword ptr [esi + 4], edx
+0046b6ff  mov dword ptr [esi + 0x10], eax

@@ -771,6 +771,22 @@ void VehiclePhysics_CarryTo(int slot, const float* m, float ground_off, float ca
     if (yaw) *yaw = BodyOrient_Heading(basis);
 }
 
+// [u9747 2026-10-18] The spawn pose in the record (MASHED_COUNTDOWN_SPAWN, default OFF, U-9747). FUN_004704c0 writes both
+// state matrices at race start (DAT_00881ec8 = +0x928 and DAT_00881f08 = +0x968: FUN_004c51a0 translation at 0x004705fe /
+// 0x0047060a, FUN_004c4d20 Y rotation at 0x0047061c / 0x0047062e), so a car's record carries its grid pose through the
+// countdown. The port wrote the record only at a car's first StepCar, so every record read (0,0,0) before GO, and the
+// countdown path progress (FUN_0040da50 under MASHED_AI_TICK_FIRST) was computed at the origin. Writes the pose only: the
+// basis seed, contacts and the rest of FUN_004704c0 stay with the first StepCar as before.
+void VehiclePhysics_SeedSpawnPose(int slot, const float callerPos[3], float yaw, float groundOff) {
+    if (!g_inited || slot < 0 || slot >= 16) return;
+    float m[16];
+    BodyOrient_Init(m, yaw);
+    m[12] = callerPos[0]; m[13] = callerPos[1] - groundOff; m[14] = callerPos[2];
+    unsigned char* r = rec(slot);
+    std::memcpy(r + 0x928, m, 0x40);
+    std::memcpy(r + 0x968, m, 0x40);
+}
+
 void VehiclePhysics_StepPlayer(float dt, PlayerCarIO& io) {
     VehiclePhysics_StepCar(0, dt, io);
 }
