@@ -1,0 +1,229 @@
+0x0046da80: 83ec28                   sub esp, 0x28
+0x0046da83: 53                       push ebx
+0x0046da84: 56                       push esi
+0x0046da85: 57                       push edi
+0x0046da86: 8b7c2438                 mov edi, dword ptr [esp + 0x38]
+0x0046da8a: 69ff040d0000             imul edi, edi, 0xd04
+0x0046da90: 81c7a0158800             add edi, 0x8815a0
+0x0046da96: 8b87ac090000             mov eax, dword ptr [edi + 0x9ac]
+0x0046da9c: c1e006                   shl eax, 6
+0x0046da9f: 33d2                     xor edx, edx
+0x0046daa1: 8915e0e58800             mov dword ptr [0x88e5e0], edx
+0x0046daa7: 8915e4e58800             mov dword ptr [0x88e5e4], edx
+0x0046daad: 8915e8e58800             mov dword ptr [0x88e5e8], edx
+0x0046dab3: 8d9c3828090000           lea ebx, [eax + edi + 0x928]
+0x0046daba: c744240c00000000         mov dword ptr [esp + 0xc], 0
+0x0046dac2: c744241000000000         mov dword ptr [esp + 0x10], 0
+0x0046daca: c744241400000000         mov dword ptr [esp + 0x14], 0
+0x0046dad2: b864158800               mov eax, 0x881564
+0x0046dad7: 8d8f6c010000             lea ecx, [edi + 0x16c]
+0x0046dadd: 8915ece58800             mov dword ptr [0x88e5ec], edx
+0x0046dae3: eb0b                     jmp 0x46daf0
+0x0046dae5: 8da42400000000           lea esp, [esp]
+0x0046daec: 8d642400                 lea esp, [esp]
+0x0046daf0: d901                     fld dword ptr [ecx]
+0x0046daf2: c70000000000             mov dword ptr [eax], 0
+0x0046daf8: d80d60ea5c00             fmul dword ptr [0x5cea60]
+0x0046dafe: c7413000000000           mov dword ptr [ecx + 0x30], 0
+0x0046db05: 83c00c                   add eax, 0xc
+0x0046db08: 81c1c4000000             add ecx, 0xc4
+0x0046db0e: 3d94158800               cmp eax, 0x881594
+0x0046db13: d958f0                   fstp dword ptr [eax - 0x10]
+0x0046db16: d98144ffffff             fld dword ptr [ecx - 0xbc]
+0x0046db1c: d80d60ea5c00             fmul dword ptr [0x5cea60]
+0x0046db22: d958f8                   fstp dword ptr [eax - 8]
+0x0046db25: 7cc9                     jl 0x46daf0
+0x0046db27: 53                       push ebx
+0x0046db28: 6a01                     push 1
+0x0046db2a: 8d442414                 lea eax, [esp + 0x14]
+0x0046db2e: 50                       push eax
+0x0046db2f: 6800e68800               push 0x88e600
+0x0046db34: e857620500               call 0x4c3d90
+0x0046db39: 53                       push ebx
+0x0046db3a: 6a04                     push 4
+0x0046db3c: 6860158800               push 0x881560
+0x0046db41: 6820e68800               push 0x88e620
+0x0046db46: e845620500               call 0x4c3d90
+0x0046db4b: 8db7c8090000             lea esi, [edi + 0x9c8]
+0x0046db51: b944e68800               mov ecx, 0x88e644
+0x0046db56: ba38e68800               mov edx, 0x88e638
+0x0046db5b: b820e68800               mov eax, 0x88e620
+0x0046db60: e88beaffff               call 0x46c5f0
+0x0046db65: c744245003000000         mov dword ptr [esp + 0x50], 3
+0x0046db6d: 83c330                   add ebx, 0x30
+0x0046db70: 8b0b                     mov ecx, dword ptr [ebx]
+0x0046db72: 894c2438                 mov dword ptr [esp + 0x38], ecx
+0x0046db76: 8b5304                   mov edx, dword ptr [ebx + 4]
+0x0046db79: 8b8fa4040000             mov ecx, dword ptr [edi + 0x4a4]
+0x0046db7f: 8954243c                 mov dword ptr [esp + 0x3c], edx
+0x0046db83: 8b4308                   mov eax, dword ptr [ebx + 8]
+0x0046db86: 89442440                 mov dword ptr [esp + 0x40], eax
+0x0046db8a: 8b44245c                 mov eax, dword ptr [esp + 0x5c]
+0x0046db8e: 6820838200               push 0x828320
+0x0046db93: 68808b4600               push 0x468b80
+0x0046db98: 8d542440                 lea edx, [esp + 0x40]
+0x0046db9c: c7050ce6880000000000     mov dword ptr [0x88e60c], 0
+0x0046dba6: a354e68800               mov dword ptr [0x88e654], eax
+0x0046dbab: 8b4008                   mov eax, dword ptr [eax + 8]
+0x0046dbae: 52                       push edx
+0x0046dbaf: 50                       push eax
+0x0046dbb0: 894c2454                 mov dword ptr [esp + 0x54], ecx
+0x0046dbb4: e8c7b00c00               call 0x538c80
+0x0046dbb9: 6820838200               push 0x828320
+0x0046dbbe: 57                       push edi
+0x0046dbbf: e8bcfcffff               call 0x46d880
+0x0046dbc4: 8b4c2470                 mov ecx, dword ptr [esp + 0x70]
+0x0046dbc8: 6a08                     push 8
+0x0046dbca: 51                       push ecx
+0x0046dbcb: 8bf0                     mov esi, eax
+0x0046dbcd: e88e310100               call 0x480d60
+0x0046dbd2: 83c440                   add esp, 0x40
+0x0046dbd5: 5f                       pop edi
+0x0046dbd6: 8bc6                     mov eax, esi
+0x0046dbd8: 5e                       pop esi
+0x0046dbd9: 5b                       pop ebx
+0x0046dbda: 83c428                   add esp, 0x28
+0x0046dbdd: c3                       ret 
+0x0046dbde: 90                       nop 
+0x0046dbdf: 90                       nop 
+0x0046dbe0: 8b442404                 mov eax, dword ptr [esp + 4]
+0x0046dbe4: 69c0040d0000             imul eax, eax, 0xd04
+0x0046dbea: 8b80a8158800             mov eax, dword ptr [eax + 0x8815a8]
+0x0046dbf0: c3                       ret 
+0x0046dbf1: 90                       nop 
+0x0046dbf2: 90                       nop 
+0x0046dbf3: 90                       nop 
+0x0046dbf4: 90                       nop 
+0x0046dbf5: 90                       nop 
+0x0046dbf6: 90                       nop 
+0x0046dbf7: 90                       nop 
+0x0046dbf8: 90                       nop 
+0x0046dbf9: 90                       nop 
+0x0046dbfa: 90                       nop 
+0x0046dbfb: 90                       nop 
+0x0046dbfc: 90                       nop 
+0x0046dbfd: 90                       nop 
+0x0046dbfe: 90                       nop 
+0x0046dbff: 90                       nop 
+0x0046dc00: 8b442404                 mov eax, dword ptr [esp + 4]
+0x0046dc04: 8b4c2408                 mov ecx, dword ptr [esp + 8]
+0x0046dc08: 69c0040d0000             imul eax, eax, 0xd04
+0x0046dc0e: 8988a8158800             mov dword ptr [eax + 0x8815a8], ecx
+0x0046dc14: c3                       ret 
+0x0046dc15: 90                       nop 
+0x0046dc16: 90                       nop 
+0x0046dc17: 90                       nop 
+0x0046dc18: 90                       nop 
+0x0046dc19: 90                       nop 
+0x0046dc1a: 90                       nop 
+0x0046dc1b: 90                       nop 
+0x0046dc1c: 90                       nop 
+0x0046dc1d: 90                       nop 
+0x0046dc1e: 90                       nop 
+0x0046dc1f: 90                       nop 
+0x0046dc20: 83ec40                   sub esp, 0x40
+0x0046dc23: 56                       push esi
+0x0046dc24: 8b742448                 mov esi, dword ptr [esp + 0x48]
+0x0046dc28: 8bc6                     mov eax, esi
+0x0046dc2a: 69c0040d0000             imul eax, eax, 0xd04
+0x0046dc30: 8b80901f8800             mov eax, dword ptr [eax + 0x881f90]
+0x0046dc36: 85c0                     test eax, eax
+0x0046dc38: 7409                     je 0x46dc43
+0x0046dc3a: 83f801                   cmp eax, 1
+0x0046dc3d: 0f8537010000             jne 0x46dd7a
+0x0046dc43: e80807faff               call 0x40e350
+0x0046dc48: 83f801                   cmp eax, 1
+0x0046dc4b: 0f8429010000             je 0x46dd7a
+0x0046dc51: 83f802                   cmp eax, 2
+0x0046dc54: 0f8420010000             je 0x46dd7a
+0x0046dc5a: 83f803                   cmp eax, 3
+0x0046dc5d: 0f8417010000             je 0x46dd7a
+0x0046dc63: 83f804                   cmp eax, 4
+0x0046dc66: 0f840e010000             je 0x46dd7a
+0x0046dc6c: 83f805                   cmp eax, 5
+0x0046dc6f: 0f8405010000             je 0x46dd7a
+0x0046dc75: 8b0de09d7e00             mov ecx, dword ptr [0x7e9de0]
+0x0046dc7b: a130107f00               mov eax, dword ptr [0x7f1030]
+0x0046dc80: c7048de49d7e0006000000   mov dword ptr [ecx*4 + 0x7e9de4], 6
+0x0046dc8b: 8b15e09d7e00             mov edx, dword ptr [0x7e9de0]
+0x0046dc91: 890495e4a17e00           mov dword ptr [edx*4 + 0x7ea1e4], eax
+0x0046dc98: 8b0de09d7e00             mov ecx, dword ptr [0x7e9de0]
+0x0046dc9e: 81c600ff0000             add esi, 0xff00
+0x0046dca4: 89348de4a57e00           mov dword ptr [ecx*4 + 0x7ea5e4], esi
+0x0046dcab: 8b15e09d7e00             mov edx, dword ptr [0x7e9de0]
+0x0046dcb1: 8b4c2408                 mov ecx, dword ptr [esp + 8]
+0x0046dcb5: c1e205                   shl edx, 5
+0x0046dcb8: c782e4a97e00ff0000ff     mov dword ptr [edx + 0x7ea9e4], 0xff0000ff
+0x0046dcc2: a1e09d7e00               mov eax, dword ptr [0x7e9de0]
+0x0046dcc7: c1e005                   shl eax, 5
+0x0046dcca: 8988e8a97e00             mov dword ptr [eax + 0x7ea9e8], ecx
+0x0046dcd0: 8b15e09d7e00             mov edx, dword ptr [0x7e9de0]
+0x0046dcd6: 8b44240c                 mov eax, dword ptr [esp + 0xc]
+0x0046dcda: c1e205                   shl edx, 5
+0x0046dcdd: 8982eca97e00             mov dword ptr [edx + 0x7ea9ec], eax
+0x0046dce3: 8b0de09d7e00             mov ecx, dword ptr [0x7e9de0]
+0x0046dce9: 8b542410                 mov edx, dword ptr [esp + 0x10]
+0x0046dced: c1e105                   shl ecx, 5
+0x0046dcf0: 8991f0a97e00             mov dword ptr [ecx + 0x7ea9f0], edx
+0x0046dcf6: a1e09d7e00               mov eax, dword ptr [0x7e9de0]
+0x0046dcfb: 8b4c2414                 mov ecx, dword ptr [esp + 0x14]
+0x0046dcff: c1e005                   shl eax, 5
+0x0046dd02: 8988f4a97e00             mov dword ptr [eax + 0x7ea9f4], ecx
+0x0046dd08: 8b15e09d7e00             mov edx, dword ptr [0x7e9de0]
+0x0046dd0e: 8b442418                 mov eax, dword ptr [esp + 0x18]
+0x0046dd12: c1e205                   shl edx, 5
+0x0046dd15: 8982f8a97e00             mov dword ptr [edx + 0x7ea9f8], eax
+0x0046dd1b: 8b0de09d7e00             mov ecx, dword ptr [0x7e9de0]
+0x0046dd21: 8b54241c                 mov edx, dword ptr [esp + 0x1c]
+0x0046dd25: c1e105                   shl ecx, 5
+0x0046dd28: 8991fca97e00             mov dword ptr [ecx + 0x7ea9fc], edx
+0x0046dd2e: a1e09d7e00               mov eax, dword ptr [0x7e9de0]
+0x0046dd33: 8b4c2420                 mov ecx, dword ptr [esp + 0x20]
+0x0046dd37: c1e005                   shl eax, 5
+0x0046dd3a: 898800aa7e00             mov dword ptr [eax + 0x7eaa00], ecx
+0x0046dd40: 33c0                     xor eax, eax
+0x0046dd42: 8b15e09d7e00             mov edx, dword ptr [0x7e9de0]
+0x0046dd48: 8b4c8404                 mov ecx, dword ptr [esp + eax*4 + 4]
+0x0046dd4c: c1e204                   shl edx, 4
+0x0046dd4f: 03d0                     add edx, eax
+0x0046dd51: 40                       inc eax
+0x0046dd52: 83f810                   cmp eax, 0x10
+0x0046dd55: 890c95e4c97e00           mov dword ptr [edx*4 + 0x7ec9e4], ecx
+0x0046dd5c: 7ce4                     jl 0x46dd42
+0x0046dd5e: a1e09d7e00               mov eax, dword ptr [0x7e9de0]
+0x0046dd63: 40                       inc eax
+0x0046dd64: 3d00010000               cmp eax, 0x100
+0x0046dd69: a3e09d7e00               mov dword ptr [0x7e9de0], eax
+0x0046dd6e: 720a                     jb 0x46dd7a
+0x0046dd70: c705e09d7e0000000000     mov dword ptr [0x7e9de0], 0
+0x0046dd7a: 5e                       pop esi
+0x0046dd7b: 83c440                   add esp, 0x40
+0x0046dd7e: c3                       ret 
+0x0046dd7f: 90                       nop 
+0x0046dd80: d9053c316100             fld dword ptr [0x61313c]
+0x0046dd86: c3                       ret 
+0x0046dd87: 90                       nop 
+0x0046dd88: 90                       nop 
+0x0046dd89: 90                       nop 
+0x0046dd8a: 90                       nop 
+0x0046dd8b: 90                       nop 
+0x0046dd8c: 90                       nop 
+0x0046dd8d: 90                       nop 
+0x0046dd8e: 90                       nop 
+0x0046dd8f: 90                       nop 
+0x0046dd90: 8b442404                 mov eax, dword ptr [esp + 4]
+0x0046dd94: 8b4c2408                 mov ecx, dword ptr [esp + 8]
+0x0046dd98: 69c0040d0000             imul eax, eax, 0xd04
+0x0046dd9e: 8988f4168800             mov dword ptr [eax + 0x8816f4], ecx
+0x0046dda4: c3                       ret 
+0x0046dda5: 90                       nop 
+0x0046dda6: 90                       nop 
+0x0046dda7: 90                       nop 
+0x0046dda8: 90                       nop 
+0x0046dda9: 90                       nop 
+0x0046ddaa: 90                       nop 
+0x0046ddab: 90                       nop 
+0x0046ddac: 90                       nop 
+0x0046ddad: 90                       nop 
+0x0046ddae: 90                       nop 
+0x0046ddaf: 90                       nop 

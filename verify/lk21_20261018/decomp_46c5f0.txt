@@ -1,0 +1,74 @@
+[decomp_pc] slot=Mashed_pool10 modes=decomp+callers n=1
+// FUN_0046c5f0 @ 0x0046c5f0  size=210  (MASHED.exe)
+// undefined FUN_0046c5f0(void)
+// callers: FUN_0046da80@0x0046da80, FUN_0046ddb0@0x0046ddb0, FUN_0046f6c0@0x0046f6c0
+
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+/* [C1 2026-05-12] Computes the unit normal of a triangle given three vertices (EAX, param_1,
+
+   param_2). */
+
+
+
+void __fastcall FUN_0046c5f0(float *param_1,float *param_2)
+
+
+
+{
+
+  float fVar1;
+
+  float fVar2;
+
+  float fVar3;
+
+  float fVar4;
+
+  float *in_EAX;
+
+  float *unaff_ESI;
+
+  float10 fVar5;
+
+  
+
+  fVar2 = (in_EAX[2] - param_1[2]) * (in_EAX[1] - param_2[1]) -
+
+          (in_EAX[1] - param_1[1]) * (in_EAX[2] - param_2[2]);
+
+  fVar3 = (*in_EAX - *param_1) * (in_EAX[2] - param_2[2]) -
+
+          (in_EAX[2] - param_1[2]) * (*in_EAX - *param_2);
+
+  fVar1 = (in_EAX[1] - param_1[1]) * (*in_EAX - *param_2) -
+
+          (*in_EAX - *param_1) * (in_EAX[1] - param_2[1]);
+
+  fVar4 = fVar2 * fVar2 + fVar3 * fVar3 + fVar1 * fVar1;
+
+  if ((DAT_005d757c <= fVar4) &&
+
+     (fVar5 = (float10)FUN_004c3b30(fVar4), fVar5 != (float10)DAT_005d757c)) {
+
+    fVar5 = (float10)_DAT_005cc320 / fVar5;
+
+    *unaff_ESI = (float)((float10)fVar2 * fVar5);
+
+    unaff_ESI[1] = (float)((float10)fVar3 * fVar5);
+
+    unaff_ESI[2] = (float)(fVar5 * (float10)fVar1);
+
+    return;
+
+  }
+
+  return;
+
+}
+
+
+
+
+

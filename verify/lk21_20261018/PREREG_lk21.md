@@ -49,3 +49,31 @@ default), `SPLSB` (`SPL` + the knob), `SPLSBR1` (+ car-1 record dump).
 
 A G-BASIS pass with G-DRIFT failing is reported with the next differing field (the y at `+0x95c` is the named
 candidate), no default proposal.
+
+## Amendment 1 (2026-10-18, after the SB arms, before any MASHED_UP_TRINORMAL arm)
+
+Section-2 result (exe `220b8193`, `20e667495`): G-NOOP2 B dumps unchanged. G-BASIS PASS: `SPLSBR1` car 1 rows
+`+0x928..+0x950` at call 0 equal o_wobj2 (left: the pad words `+0x954` / `+0x964`, 9.4e-29 / 7e-45 in the original, and
+y `+0x95c`). G-DRIFT FAIL: car 1's step-dump x/z is unchanged by the knob through call 21 (1.195e-7 at 4, 1.2e-4 at 21).
+
+Other call-0 differences (`recdiff1.py`, all offsets outside the ring block `+0x1a8..+0x1e8`):
+- per-wheel ground normal `+0x200..+0x208` (stride 0xc4): (0, 0.999462068, -0.0312347524), length 0.99995, in the
+  original through about call 13; the port's (0, 0.999512017, -0.0312363114), unit. From about call 18 both sides carry
+  the walk's normal and agree (`nrm.py`).
+- `+0x9cc` 0.999988973 / 1. Writer in the original: `FUN_0046f6c0` `0x0046f79b..0x0046f7b0`, `FUN_0046c5f0` with ESI =
+  record + 0x9c8, EAX / ECX / EDX = the transformed suspension points `0x0088e620` / `0x0088e644` / `0x0088e638`
+  (wheel 0, 3, 2), normal = cross / `FUN_004c3b30` (LUT sqrt) (`decomp_46c5f0.txt`, `disasm_46f6c0.txt`). The port
+  seeds `+0x9c8` with the basis up row (U-9156) and marked `FUN_0046c5f0` "no state effect". A second call
+  (`0x0046fd57`, ESI = a stack local, the three-grounded-wheel branch) and one in `FUN_0046da80` (`0x0046db60`, ESI =
+  record + 0x9c8) exist; not ported in this amendment.
+- y `+0x95c` 2.09e-7: `FUN_004704c0`'s `param_3 - FUN_0046d400(...)` (a vertical RW line query); not ported here.
+
+New knob `MASHED_UP_TRINORMAL=1` (default OFF): the `0x0046f7b0` call at its site in the port's `FUN_0046f6c0`. Arms
+`SPLUT` (`SPL` + it), `SPLSBUT` (+ `MASHED_SPAWN_BASIS_RW`), `SPLSBUTR1` (+ car-1 record dump).
+
+| gate | rule |
+|---|---|
+| G-NOOP3 | both knobs off: `B_DEF_K0/K1/K26`, `B_SPL_K1` unchanged |
+| G-UP | `SPLSBUTR1` K1 car 1 `+0x9c8..+0x9d0` equal o_wobj2 bit for bit on calls 0..10 |
+| G-DRIFT2 | `SPLSBUT` K1 car 1 x/z gap at call 21 < 1e-5, or its first growth call later than 4 (report the next field otherwise) |
+| G-B | (b) on `SPLSBUT`, reported; default proposal only under section 3's rules |
