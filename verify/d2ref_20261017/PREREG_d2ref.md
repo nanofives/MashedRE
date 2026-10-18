@@ -34,3 +34,16 @@ K26, no passing car may turn to FAIL), the 13-track replay (0 RED) and G-CTRL, a
 
 Expectations: DEF passes; R pins (0/3); G not predicted; RG and RY track the first contacts (as d2lateral / gridyaw) but
 whether driving-median lands in bounds on this default is not predicted; RGB not predicted.
+
+## Amendment 1 (committed before its runs)
+
+Section 2 result: DEF 3/3 in bounds; R pins (H1 9/400); G out on three metrics; RG and RY pass four of five (slip 2000-2600
+0.2557 / 0.2551 against the upper bound 0.25487, original 0.2498); RGB out on two. Both refresh pairs sit closer to the original
+than DEF on slip 1500-2000 and driving-median and overshoot only the high-speed slip.
+
+New knob `MASHED_A5_RACE_TIMER=1` (default OFF, U-9751): A5 reads `DAT_007f0ff8` (`0x0046e0a9`) instead of the stub
+`g_raceTimer` (0 forever). The D2 runs last 90 s, past the ramp's 20 s start. Arms: `T5` (the knob alone), `RGT`, `RYT`
+(the refresh pairs + the knob), 3 runs each, each alone; `MASHED_A5_RACE_TIMER_LOG` records the timer.
+
+Expectations: if the exe's `DAT_007f0ff8` does not advance in the D2 recipe the knob is a no-op there (the log shows it);
+otherwise not predicted. Pass rule unchanged (section 3).

@@ -873,6 +873,24 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     if (!g_inited) VehiclePhysics_Init(4, 0);
     if (dt <= 0.f) return;
     if (slot < 0 || slot >= 16) return;
+    // [d2ref 2026-10-17] U-9751, MASHED_A5_RACE_TIMER=1 (default OFF): A5 FUN_0046ddb0 reads the race timer DAT_007f0ff8
+    // (FILD [0x007f0ff8] at 0x0046e0a9) for its grip ramp (60000 _DAT_005cea7c, -30000 _DAT_005cea78, -1/30000
+    // _DAT_005cea74, ForceIntegrator.cpp:141). The port's A5 reads g_raceTimer, which nothing wrote (0 for the whole race).
+    // The knob copies the exe's DAT_007f0ff8 into it before each car's step. MASHED_A5_RACE_TIMER_LOG=1 logs it every 600
+    // slot-0 steps to mashed_re.log (diagnostic).
+    {
+        static const bool s_a5rt = [] { const char* e = std::getenv("MASHED_A5_RACE_TIMER"); return e && e[0] == '1'; }();
+        if (s_a5rt) {
+            g_raceTimer = *reinterpret_cast<const int*>(0x007f0ff8u);
+            static const bool s_log = (std::getenv("MASHED_A5_RACE_TIMER_LOG") != nullptr);
+            static int s_n = 0;
+            if (s_log && slot == 0 && (s_n++ % 600) == 0)
+                if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
+                    std::fprintf(lf, "[d2ref] A5 race timer step %d: DAT_007f0ff8 = %d\n", s_n - 1, g_raceTimer);
+                    std::fclose(lf);
+                }
+        }
+    }
     // [a4order] one chunk only: with remaining > 0x32 the original interleaves A4 and substeps per chunk
     // (0x00471143..0x00471151); the pre-phase is not used there and the car steps in the per-car order.
     if (preOnly && static_cast<int>(dt * 3000.0f) > 0x32) return;

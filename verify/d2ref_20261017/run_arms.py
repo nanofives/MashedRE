@@ -77,6 +77,9 @@ STACK['CLR5'] = STACK['CLR'] + ['MASHED_AI_LUT=5']
 STACK['R'] = ['MASHED_D2LAT_REFRESH']; STACK['G'] = ['MASHED_GRID_DIR']; STACK['RG'] = STACK['R'] + STACK['G']
 STACK['RY'] = STACK['R'] + ['MASHED_D2LAT_SPAWN_YAW=-1.5707964']
 STACK['RGB'] = STACK['RG'] + ['MASHED_POS_MODEL']
+# d2ref amendment 1: U-9751 (A5 race timer) alone and on the two refresh pairs, with the timer log
+_T = ['MASHED_A5_RACE_TIMER', 'MASHED_A5_RACE_TIMER_LOG']
+STACK['T5'] = _T; STACK['RGT'] = STACK['RG'] + _T; STACK['RYT'] = STACK['RY'] + _T
 # c2k93 flip: opt-outs (both -> the previous default; LUT only -> the CL arm)
 STACK['NOCL5'] = ['MASHED_NO_AI_CLOCK_LATE', 'MASHED_NO_AI_LUT']; STACK['NOL5'] = ['MASHED_NO_AI_LUT']
 STACK['SACLR2'] =STACK['SACLR'] + ['MASHED_RECDUMP=@OUT@\\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=2']
