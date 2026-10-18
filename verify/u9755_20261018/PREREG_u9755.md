@@ -60,3 +60,13 @@ the d2posmodel `g_physPos` / `g_outPos` pair; x / y / z of the grid point follow
 (`RoundGrid_GridPoint`). Result on exe `388fd4b2`: `B_TPPGSY_K1` countdown pose of cars 0..3 = the original's probe
 values bit for bit (G-SPAWNY PASS). All section-3 gates are scored on this exe; the earlier `SY` / `SPLSBKNSY` arms are
 superseded.
+
+## Amendment 2 (2026-10-18, after the scored arms, before any D2 / 13-track / G-CTRL arm)
+
+Scored on `388fd4b2`: G-NOOP B dumps unchanged; G-SPAWNY PASS (all four cars); G-Y0 FAIL (`+0x95c` at call 0 0.468502671,
+unchanged); G-DRIFT FAIL (car 1 1.2e-4 at call 21, unchanged); G-B `SY` A 2/3 B 2/3 C 0/3 (the default's set).
+Cause of the call-0 y (`MASHED_SETTLE_DIAG`, `B_SPLSBKNSYD_K1` vs `B_SPLSBKND_K1`): the spawn settle's output for car 1 is
+0.506262839 (physics 0.468762839) with spawn y 0.471709967 and with 0.471710175 alike; the original's frame-2 y after
+`FUN_004704c0`'s `FUN_0046f6c0(0)` is 0.468762636 (o_sdrop1), then held until the first racing step. So the call-0 gap is
+made in that spawn solver pass, not by the spawn y. The default candidate is `SY`: D2 `D2_SY_1..3`, the 13 tracks
+(`run13.py` with `MASHED_SPAWN_Y_LINE=1`) and G-CTRL `H_SY`.
