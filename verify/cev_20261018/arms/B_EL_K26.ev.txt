@@ -1,0 +1,4 @@
+clk=10150 a=2 b=0 stA=0 stB=0 e470A=2 e470B=1 gate=1 setA=1 setB=0 tA=1440 tB=0
+clk=11950 a=2 b=0 stA=0 stB=0 e470A=2 e470B=1 gate=1 setA=1 setB=0 tA=1440 tB=0
+clk=11950 a=2 b=0 stA=0 stB=0 e470A=2 e470B=1 gate=1 setA=1 setB=0 tA=1440 tB=0
+clk=12150 a=3 b=1 stA=0 stB=0 e470A=2 e470B=2 gate=1 setA=1 setB=1 tA=1440 tB=1440

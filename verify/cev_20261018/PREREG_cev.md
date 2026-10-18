@@ -55,3 +55,18 @@ result (G-BRAKE pass, G-SCHED fail) is reported with the first differing contact
 
 The 50-tick override-timer offset (1390 vs 1440, U-9745 tail) is noted, not fixed here, unless G-SCHED passes and it
 is the remaining difference. U-9185 / U-9186's over-speed metric is not re-measured unless G-B passes.
+
+## Amendment 1 (2026-10-18, after the section-2 arms, before these)
+
+Section-2 result: TGT removes the extra 1+3 contact at 63 in every regime (B: 1+3 at 158, original 159), but car 2's
+`FUN_00414a70` returns 1 from window call 0 (original 0 until 22), so car 2 brakes from the start and the player
+contacts at 23 / 60 disappear; (b) TGT A 0/3 B 0/3 C 0/3, TGTE B 1/3 (car 3). u9747's G-ORDER (car 2 return 0 at call
+1) was measured under `MASHED_AI_TICK_FIRST` (`S` + countdown spawn). New arms, same gates (G-BRAKE, G-C63, G-SCHED,
+G-B), plus G-ORDER2: car 2 `ret14a70` = 0 on window calls 0..21 (o_reg_r13).
+
+| arm | knobs on the default |
+|---|---|
+| `KT` | TGT + `MASHED_AI_TICK_FIRST` |
+| `KTE` | KT + `MASHED_AI_CONTACT_EVENT` |
+| `KTEL` | KTE + car-car / event / TGT3 logs |
+| `S` | d3bB2's `S` on today's default (adds `MASHED_POS_MODEL`, `MASHED_ROUND_GRID(_ORDER)`) |
