@@ -33,6 +33,8 @@
 #include <windows.h>
 #include <cstdint>
 #include <cstddef>
+#include <cstdlib>
+#include "RwLutTables.h"
 
 namespace RwLutGuard {
 
@@ -90,14 +92,22 @@ inline const std::uint32_t* Resolve(std::uint32_t delta, Cache& cache,
     return cache.root;
 }
 
+// [u9764 2026-10-19] MASHED_RW_LUT_ALL=1 (default OFF, verify/u9764_20261019/PREREG_u9764.md amendment 2): when no engine
+// LUT is live (the standalone), hand the caller the in-process tables (Math/RwLutTables.cpp, equal to the original's)
+// instead of nullptr, so FastSqrt / FastInvSqrt / RwV3dNormalize / Vec3Magnitude / RwV2d take the LUT path the original
+// always takes. No effect in the .asi, where Resolve finds the live LUT.
+inline bool LutAll() { static const bool s = [] { const char* e = std::getenv("MASHED_RW_LUT_ALL"); return e && e[0] == '1'; }(); return s; }
+
 // convenience wrappers — one static cache per (TU, delta)
 inline const std::uint32_t* SqrtRoot() {
     static Cache c{};
-    return Resolve(0u, c, kSqrtSentinels, sizeof kSqrtSentinels / sizeof kSqrtSentinels[0]);
+    const std::uint32_t* r = Resolve(0u, c, kSqrtSentinels, sizeof kSqrtSentinels / sizeof kSqrtSentinels[0]);
+    return (!r && LutAll()) ? mashed_re::Math::RwLutSqrtTable() : r;
 }
 inline const std::uint32_t* InvSqrtRoot() {
     static Cache c{};
-    return Resolve(4u, c, kInvSqrtSentinels, sizeof kInvSqrtSentinels / sizeof kInvSqrtSentinels[0]);
+    const std::uint32_t* r = Resolve(4u, c, kInvSqrtSentinels, sizeof kInvSqrtSentinels / sizeof kInvSqrtSentinels[0]);
+    return (!r && LutAll()) ? mashed_re::Math::RwLutInvSqrtTable() : r;
 }
 
 } // namespace RwLutGuard
