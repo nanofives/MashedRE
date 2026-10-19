@@ -1,4 +1,6 @@
-"""D2 three-metric score (PREREG_d2settle.md section 4), bounds d81a8df6 unchanged.
+"""[2026-10-19 d2rebase] KEPT FOR PROVENANCE. New lanes use verify/d2rebase_20261019/score_d2_v2.py (8-run band in its band.json;
+`port` = the whole log, as here, since the 2026-10-19 decision; `port --capped` = the register's --max-lines 1080; RESULT_d2rebase.md section 3).
+D2 three-metric score (PREREG_d2settle.md section 4), bounds d81a8df6 unchanged.
 Recipe pinned in this lane: a8_slip_axis.py + a8_momentum.py --orig-steer-min 33.0 --port-steer-min 0.9, NO --max-lines,
 against verify/d2_reopen_20260929/orig_solo3.msd (reproduces attempt 20's t1 exactly: 0.1943 / 0.2524 / 1852.66 n=1367).
 usage: py -3.12 score_d2.py <motion_diag.log> [...]"""
