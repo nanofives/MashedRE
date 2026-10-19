@@ -40,3 +40,16 @@ Arms: `B_DEF_K0/K1/K26`, `H_DEF` (G-NOOP); `B_XR1_K1` / `B_XA5LR1_K1` (the u9756
 | G-DRIFT | car 1 x/z gap at call 21 < 1e-5 (now 1.202e-4); else the next first-differing field |
 | G-B | (b) on `A5L`: no car that passes on the default turns to FAIL |
 | G-D2 / G-13 | for a default proposal: D2 3/3, 13 tracks 0 RED, G-CTRL reported |
+
+## Amendment 1 (2026-10-19, branch `work/u9760b` from `b0ad0796e`, before these knob arms)
+
+Measured with the new diagnostic `MASHED_FORCE_SPLIT` (inert: `B_XFS_K1` = `XR1` step dump `25d9c921`, `B_XA5LFS_K1` =
+`69e1844c`): at call 1 the port's wheel-0 force before A6a's addend is `-13.9359436 / -11923.7607`, equal to the original's A5
+output (`o_f214`: `-13.935943603515625 / -11923.7607421875`). **A5 is exact; the gap is A6a's addend**: port `11.0494213 /
+9538.53711`, original `11.0494318 / 9538.54492` (its before/after stores). The addend is `lat * f5` with `f5 = (ld4*spd)*0.02*
+lbc` (`spd*ld4` < 50), `lbc` proportional to `le4`. The port takes A6a's lengths with exact sqrt (`Mag3` / `Vec3Mag3`); the
+original calls the LUT length `FUN_004c3ac0` nine times in order (`0x0046766e +0x9e4`, `0x00467680 +0x9e8`, `0x004680f6 le4`,
+`0x0046820a ld4`, `0x0046833e |F|`, `0x004684bb m15`, `0x004684d7 m16`, `0x004685b7 m78`, `0x004686a4 speed`), matching the
+port's nine sites. New knob `MASHED_A6A_LUT` (default OFF), exe `eadbd7fc`. Arms: `B_DEF_K0/K1/K26` (G-NOOP), `B_XA6FS_K1`
+(XR1 + knob + split log), `B_XA5A6FS_K1` (+ `MASHED_A5_SUSP_LUT`), `B_A6L_K0/K1/K26`, `H_DEF`, `H_A6L`. Gates as in section 3,
+with G-F214 now: the addend equals the original's.

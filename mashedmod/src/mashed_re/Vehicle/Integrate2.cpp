@@ -42,6 +42,31 @@
 #include <cstdio>     // [G2-A6DIAG] env-gated angular-velocity production diag
 #include <cstdlib>
 #include "D2SinkProbe.h"   // [D2 attempt 19] diagnostic, default-OFF
+#include "VehicleRecordBase.h"   // [u9760] Vehicle::g_vehicleArrayBase (MASHED_FORCE_SPLIT slot filter)
+#include "../Math/RwLutTables.h"   // [u9760] LutSqrt (MASHED_A6A_LUT)
+
+// [u9760 2026-10-19] MASHED_FORCE_SPLIT=<path> (DIAGNOSTIC ONLY, default OFF; MASHED_FORCE_SPLIT_SLOT=<n>, default 1):
+// at A6a's addend to the wheel force (the original's 0x00468320..0x00468337 fadd [edi+0x70/0x74/0x78]), one line per call
+// for wheel 0 of slot n: the force before (A5's output), the addend, and its inputs, to compare with the original's
+// per-store values (write watch o_f214, verify/u9760_20261019).
+namespace {
+void ForceSplitLog(const void* v, int wheel, const float* pre, const mashed_re::Vehicle::A6aWheelDump& D, int branch) {
+    static const char* const s_path = std::getenv("MASHED_FORCE_SPLIT");
+    static const int s_slot = [] { const char* e = std::getenv("MASHED_FORCE_SPLIT_SLOT"); return e ? std::atoi(e) : 1; }();
+    static std::FILE* s_f = nullptr;
+    static int s_n = 0;
+    if (!s_path || wheel != 0 || !mashed_re::Vehicle::g_vehicleArrayBase || s_n >= 4000) return;
+    if (reinterpret_cast<const char*>(v) != reinterpret_cast<const char*>(mashed_re::Vehicle::g_vehicleArrayBase) + s_slot * 0xd04) return;
+    if (!s_f) { s_f = std::fopen(s_path, "w"); if (!s_f) return;
+        std::fprintf(s_f, "n,branch,pre_x,pre_y,pre_z,dF_x,dF_y,dF_z,post_x,post_z,spd9e4,le4,ld4,lbc,f5,p15,p16,p1b,pm1\n"); }
+    const float spd = *reinterpret_cast<const float*>(reinterpret_cast<const char*>(v) + 0x9e4);
+    std::fprintf(s_f, "%d,%d,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%d\n",
+                 s_n++, branch, pre[0], pre[1], pre[2], D.dF[0], D.dF[1], D.dF[2],
+                 static_cast<float>(D.dF[0] + pre[0]), static_cast<float>(D.dF[2] + pre[2]),
+                 spd, D.le4, D.ld4, D.lbc, D.f5, D.p15, D.p16, D.p1b, D.pm1);
+    std::fflush(s_f);
+}
+}  // namespace
 
 namespace mashed_re {
 namespace Vehicle {
@@ -67,7 +92,19 @@ static inline int   Ri(void* b, int off) { int v; std::memcpy(&v, (char*)b + off
 static inline void  Wi(void* b, int off, int v) { std::memcpy((char*)b + off, &v, 4); }
 static inline float Rp(int* p, int k) { float v; std::memcpy(&v, p + k, 4); return v; }
 static inline void  Wp(int* p, int k, float v) { std::memcpy(p + k, &v, 4); }
-static inline float Mag3(float a, float b, float c) { float t[3] = {a,b,c}; return Vec3Mag3(t); }
+// [u9760 2026-10-19] MASHED_A6A_LUT=1 (default OFF, verify/u9760_20261019/PREREG_u9760.md amendment 1): A6a's lengths as the
+// original takes them, FUN_004c3ac0 = LutSqrt(float((x*x + y*y) + z*z)) (0x004c3ac4..0x004c3b1a), at its nine call sites
+// 0x0046766e (+0x9e4) 0x00467680 (+0x9e8) 0x004680f6 (le4) 0x0046820a (ld4) 0x0046833e (|F|) 0x004684bb (m15) 0x004684d7
+// (m16) 0x004685b7 (m78) 0x004686a4 (speed), which the port's sites below follow in the same order. Off: exact sqrt.
+static bool A6aLut() {
+    static const bool s = [] { const char* e = std::getenv("MASHED_A6A_LUT"); return e && e[0] == '1'; }();
+    return s;
+}
+static inline float A6Len(const float* t) {
+    if (A6aLut()) return mashed_re::Math::LutSqrt((t[0] * t[0] + t[1] * t[1]) + t[2] * t[2]);
+    return Vec3Mag3(t);
+}
+static inline float Mag3(float a, float b, float c) { float t[3] = {a,b,c}; return A6Len(t); }
 
 namespace a6 {
 // Constants with EXACT-representable decimal literals stay constexpr; the 16 that
@@ -126,8 +163,8 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
     void* v = self;
     int mode = Fi_GameMode();
 
-    Wf(v, 0x9e4, Vec3Mag3((const float*)((char*)v + 0x9b0)));   // linear speed -> +0x9e4
-    Wf(v, 0x9e8, Vec3Mag3((const float*)((char*)v + 0x9bc)));   // angular speed -> +0x9e8
+    Wf(v, 0x9e4, A6Len((const float*)((char*)v + 0x9b0)));      // linear speed -> +0x9e4 (0x0046766e)
+    Wf(v, 0x9e8, A6Len((const float*)((char*)v + 0x9bc)));      // angular speed -> +0x9e8 (0x00467680)
 
     // [U-9147 2026-09-29] FIVE entries, not six. The original declares `float local_54 [5]`
     // (`re/analysis/data/A6a_FUN_00467650_decomp_20260824.txt:62`) and its unrolled body
@@ -483,6 +520,7 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
                     D.f5 = f5;   // [U-9147] the APPLIED lateral scale, before f5 is reused
                     la0 = lac * f5 + la0; l9c = la8 * f5 + l9c; f5 = f5 * la4 + l98;
                     D.dF[0]=la0; D.dF[1]=l9c; D.dF[2]=f5;   // [U-9147]
+                    { const float pre[3] = { Rp(p,0x1c), Rp(p,0x1d), Rp(p,0x1e) }; ForceSplitLog(v, wheel, pre, D, (l94 == 0) ? 0 : 1); }   // [u9760]
                     Wp(p, 0x1c, la0 + Rp(p,0x1c)); Wp(p, 0x1d, l9c + Rp(p,0x1d)); Wp(p, 0x1e, f5 + Rp(p,0x1e));
                 } else {
                     float f5 = lbc * k0p85;
@@ -491,6 +529,7 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
                     D.f5 = f5;   // [U-9147]
                     la0 = lc8 * f4 + lac * f5; l9c = lc4 * f4 + la8 * f5; f5 = lc0 * f4 + f5 * la4;
                     D.dF[0]=la0; D.dF[1]=l9c; D.dF[2]=f5;   // [U-9147]
+                    { const float pre[3] = { Rp(p,0x1c), Rp(p,0x1d), Rp(p,0x1e) }; ForceSplitLog(v, wheel, pre, D, (l94 == 0) ? 0 : 1); }   // [u9760]
                     Wp(p, 0x1c, la0 + Rp(p,0x1c)); Wp(p, 0x1d, l9c + Rp(p,0x1d)); Wp(p, 0x1e, f5 + Rp(p,0x1e));
                 }
             }
@@ -640,7 +679,7 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
     Wf(v, 0x9b0, linTerm * (Rf(v,0xb14) + l_b8) + Rf(v,0x9b0));
     Wf(v, 0x9b4, linTerm * (Rf(v,0xb18) + l_b4) + Rf(v,0x9b4));
     Wf(v, 0x9b8, linTerm * lb0f + Rf(v,0x9b8));
-    float speed = Vec3Mag3((const float*)((char*)v + 0x9b0));
+    float speed = A6Len((const float*)((char*)v + 0x9b0));     // 0x004686a4
     int tId = Ri(v, 0x1f0);
     float grip = (float)(l_60 / (double)Rf(v, 0x18c));
     Wf(v, 0x9e4, speed);
