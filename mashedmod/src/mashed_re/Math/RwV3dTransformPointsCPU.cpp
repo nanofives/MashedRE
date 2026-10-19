@@ -55,7 +55,8 @@
 namespace mashed_re {
 namespace Math {
 
-// [u9759 2026-10-18] MASHED_RW_SSE_POINTS=1 (default OFF, verify/u9759_20261018/PREREG_u9759.md): the live slot +0xc is
+// [u9759 2026-10-18] MASHED_RW_SSE_POINTS (default ON since the fwdsse flip 2026-10-19, user decision;
+// MASHED_NO_RW_SSE_POINTS=1 opts out; verify/u9759_20261018/PREREG_u9759.md): the live slot +0xc is
 // NOT 0x004c3670 (the x87 default the installer 0x004c3ebf writes). Read in game (batch probe, o_bq3): the vector-module
 // slots *(*(0x007d3ff8) + *(0x007d3ffc) + 8 / 0xc / 0x10 / 0x14) hold 0x004dc4a0 / 0x004dc370 / 0x004dc530 / 0x004dc410.
 // 0x004dc370 is SSE: xmm0 = x*right + pos (0x004dc3d2 mulps, 0x004dc3de addps), xmm2 = z*at + y*up (0x004dc3d8,
@@ -64,7 +65,7 @@ namespace Math {
 // 0x004dc410 sums (x*right + y*up) + z*at (0x004dc472 / 0x004dc478), which RwV3dTransformVectorsCPU already does.
 static bool RwSsePoints()
 {
-    static const bool s = [] { const char* e = std::getenv("MASHED_RW_SSE_POINTS"); return e && e[0] == '1'; }();
+    static const bool s = [] { const char* e = std::getenv("MASHED_NO_RW_SSE_POINTS"); return !(e && e[0] == '1'); }();
     return s;
 }
 
