@@ -40,6 +40,11 @@
 //  * C-LEVEL: C2 faithful transcription; gate = installed-hook scenario trace.
 #include "ContactConstants.h"
 #include "ContactDeps.h"
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <string>
+#include <vector>
 
 namespace mashed_re {
 namespace Collision {
@@ -253,6 +258,65 @@ bool VehicleCarCarContact(int* vehA, int* vehB, int pass)
     (void)local_b0;   // consumed only by the ring payload (flag 0x007ea9ec), which no exe reader takes
 
     return pass == 0;
+}
+
+// [u9769 2026-10-19] MASHED_CC_REPLAY=<carcar.tsv> (scenario_launch.py --carcar-probe), MASHED_CC_REPLAY_OUT=<path>.
+// Diagnostic only, runs once at track load: each row's original entry records (self = ECX, other = EAX at
+// 0x00470bcd) go through VehicleCarCarContact(other, self, pass) in scratch copies, and every dword that differs
+// from the original's leave records is written out. No game state is touched.
+void CarCarContact_MaybeReplay() {
+    static bool s_done = false;
+    if (s_done) return;
+    s_done = true;
+    const char* in = std::getenv("MASHED_CC_REPLAY");
+    const char* outp = std::getenv("MASHED_CC_REPLAY_OUT");
+    if (!in || !outp) return;
+    std::FILE* f = std::fopen(in, "rb");
+    if (!f) return;
+    std::string all;
+    { char buf[1 << 16]; std::size_t n; while ((n = std::fread(buf, 1, sizeof buf, f)) > 0) all.append(buf, n); }
+    std::fclose(f);
+    std::FILE* o = std::fopen(outp, "w");
+    if (!o) return;
+    std::fprintf(o, "row\tsdframe\tself\tother\tpass\tret_o\tret_p\tndiff\tdiffs(car:+off:orig:port)\n");
+    auto unhex = [](const std::string& h, std::vector<int>& v) {
+        v.assign(0xd04 / 4, 0);
+        unsigned char* b = reinterpret_cast<unsigned char*>(v.data());
+        for (std::size_t i = 0; i + 1 < h.size() && i / 2 < 0xd04u; i += 2)
+            b[i / 2] = static_cast<unsigned char>(std::strtoul(h.substr(i, 2).c_str(), nullptr, 16));
+    };
+    std::size_t p = all.find('\n') + 1;
+    int row = 0;
+    while (p < all.size()) {
+        std::size_t e = all.find('\n', p); if (e == std::string::npos) e = all.size();
+        std::string ln = all.substr(p, e - p); if (!ln.empty() && ln.back() == '\r') ln.pop_back();
+        p = e + 1;
+        std::vector<std::string> c; std::size_t q = 0;
+        for (;;) { std::size_t t = ln.find('\t', q); c.push_back(ln.substr(q, t == std::string::npos ? std::string::npos : t - q));
+                   if (t == std::string::npos) break; q = t + 1; }
+        if (c.size() < 10) continue;
+        std::vector<int> si, oi, so, oo;
+        unhex(c[5], si); unhex(c[6], oi); unhex(c[8], so); unhex(c[9], oo);
+        const int pass = std::atoi(c[4].c_str());
+        const int retO = std::atoi(c[7].c_str());
+        const int retP = VehicleCarCarContact(oi.data(), si.data(), pass) ? 1 : 0;
+        int nd = 0; std::string d;
+        for (int k = 0; k < 0xd04 / 4; ++k) {
+            for (int w = 0; w < 2; ++w) {
+                const int a = w ? oo[k] : so[k], b = w ? oi[k] : si[k];
+                if (a == b) continue;
+                ++nd;
+                if (nd <= 40) {
+                    float fa, fb; std::memcpy(&fa, &a, 4); std::memcpy(&fb, &b, 4);
+                    char t[96]; std::snprintf(t, sizeof t, "%s%s:+0x%x:%.9g:%.9g", d.empty() ? "" : " ", w ? "other" : "self", k * 4, fa, fb);
+                    d += t;
+                }
+            }
+        }
+        std::fprintf(o, "%d\t%s\t%s\t%s\t%d\t%d\t%d\t%d\t%s\n", row, c[0].c_str(), c[2].c_str(), c[3].c_str(), pass, retO, retP, nd, d.c_str());
+        ++row;
+    }
+    std::fclose(o);
 }
 
 }  // namespace Collision

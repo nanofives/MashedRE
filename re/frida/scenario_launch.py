@@ -2721,6 +2721,42 @@ function gridProbeArm(){
 }
 function gridProbeDrain(){ const r = GRP.rows; GRP.rows = []; return r; }
 
+// --- CAR<->CAR contact probe (u9769, 2026-10-19) -------------------------------------
+// Entry + leave of VehicleCarCarContact 0x00469df0 (sole caller FUN_004709a0 at 0x00470bcd, __thiscall:
+// ECX = self record, EAX = other record, stack args = (j, pass)). Not hot: it runs only past the proximity
+// gate 0x00470b44..0x00470b70. Each row: SD.frames, tick 0x007f0ff4, self / other car index
+// ((rec - 0x008815a0) / 0xd04), pass, and both records (0xd04 B each) as hex at entry and at leave, plus the
+// return value. Capped at CCP.cap rows.
+const CCP = { armed:false, cap:64, rows:[], err:null };
+function ccProbeArm(cap){
+  if (CCP.armed) return 'already armed';
+  try {
+    CCP.cap = cap || 64;
+    const base = ga(0x008815a0), tk = ga(0x007f0ff4);
+    const hx = function(p){ const b = new Uint8Array(p.readByteArray(0xd04)); let s = '';
+      for (let i = 0; i < b.length; i++) s += (b[i] < 16 ? '0' : '') + b[i].toString(16); return s; };
+    Interceptor.attach(ga(0x00469df0), {
+      onEnter(args){
+        try {
+          if (CCP.rows.length >= CCP.cap) { this.row = null; return; }
+          this.self = this.context.ecx; this.oth = this.context.eax;
+          this.row = [SD.frames, tk.readS32(), this.self.sub(base).toInt32() / 0xd04, this.oth.sub(base).toInt32() / 0xd04,
+                      args[1].toInt32(), hx(this.self), hx(this.oth)];
+        } catch(e){ if (!CCP.err) CCP.err = 'cc ' + e; this.row = null; }
+      },
+      onLeave(rv){
+        try {
+          if (!this.row) return;
+          this.row.push(rv.toInt32() & 0xff, hx(this.self), hx(this.oth));
+          CCP.rows.push(this.row);
+        } catch(e){ if (!CCP.err) CCP.err = 'ccL ' + e; }
+      }});
+    CCP.armed = true;
+    return 'carcar-probe armed (0x469df0 entry+leave), cap ' + CCP.cap;
+  } catch(e){ return 'ERR ' + e; }
+}
+function ccProbeDrain(){ const r = CCP.rows; CCP.rows = []; return r; }
+
 // --- FIRST-HIT coverage probe (D3 bulk Phase 0, 2026-10-11) ----------------------
 // Entry-only hooks on a list of function entries. Each hook counts calls per session phase
 // (DAT_00771968: 1 menu, 2 load+spawn, 3 race), each phase count capped at FH.cap, and
@@ -3600,6 +3636,9 @@ rpc.exports = {
   fhProbeStats: function(){ return JSON.stringify({armed:FH.armed, n:FH.ent.length, err:FH.err}); },
   alProbeArm: function(k, c){ return alProbeArm(k, c); },
   gridProbeArm: function(){ return gridProbeArm(); },
+  ccProbeArm: function(c){ return ccProbeArm(c); },
+  ccProbeDrain: function(){ return ccProbeDrain(); },
+  ccProbeErr: function(){ return '' + CCP.err; },
   gridProbeDrain: function(){ return gridProbeDrain(); },
   gridProbeStats: function(){ return JSON.stringify({armed:GRP.armed, rows:GRP.rows.length, err:GRP.err}); },
   alProbeDrain: function(){ return alProbeDrain(); },
@@ -4224,6 +4263,9 @@ def main():
     ap.add_argument("--reg-probe", type=int, default=0,
                     help="[mode 7 M1] K: world-object registry dumps around FUN_00485070 every K-th "
                          "frame + grid-build inputs. Writes <out>.reg.tsv. Requires --statediff-out.")
+    ap.add_argument("--carcar-probe", type=int, default=0,
+                    help="[u9769] entry+leave hook on VehicleCarCarContact 0x00469df0: both records at entry and at leave, the "
+                         "first N calls. Writes <out>.carcar.tsv. Requires --statediff-out.")
     ap.add_argument("--firsthit-probe", default="",
                     help="[D3 bulk Phase 0] file of function-entry RVAs (one per line, # comments): entry-only "
                          "hooks counting calls per session phase, capped, self-detaching after the phase-3 cap. "
@@ -4469,6 +4511,8 @@ def main():
                 print("  [statediff]", E.rg_probe_arm(args.reg_probe))
             if args.cb_probe:
                 print("  [statediff]", E.cb_probe_arm())
+            if args.carcar_probe:
+                print("  [statediff]", E.cc_probe_arm(args.carcar_probe))
             if args.firsthit_probe:
                 _fh = []
                 for _ln in open(args.firsthit_probe, encoding="utf-8"):
@@ -5095,6 +5139,15 @@ def main():
                             for r in _rg: f.write(chr(9).join(str(x) for x in r) + chr(10))
                         print(f"  [statediff] reg-probe {len(_rg)} rows -> {_rf}")
                     except Exception as _e: print("  [statediff] reg drain failed:", _e)
+                if args.carcar_probe:
+                    try:
+                        _cr = E.cc_probe_drain()
+                        _cf = outp.with_suffix(outp.suffix + ".carcar.tsv")
+                        with open(_cf, "w", newline="") as f:
+                            f.write(chr(9).join(["sdframe","tick","self","other","pass","self_in","other_in","ret","self_out","other_out"]) + chr(10))
+                            for r in _cr: f.write(chr(9).join(str(x) for x in r) + chr(10))
+                        print(f"  [statediff] carcar-probe {len(_cr)} rows -> {_cf} (err {E.cc_probe_err()})")
+                    except Exception as _e: print("  [statediff] carcar drain failed:", _e)
                 if args.firsthit_probe:
                     try: print("  [statediff] firsthit-probe agent:", E.fh_probe_stats())
                     except Exception as _e: print("  [statediff] firsthit stats failed:", _e)
