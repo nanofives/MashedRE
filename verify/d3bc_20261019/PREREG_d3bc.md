@@ -99,3 +99,20 @@ car 2 call 11 (`+0x214`, 1 ulp), car 3 call 7 (`+0x9b8`, 1.2e-4). (b): `EXL7AFS`
 Report arm: car 1's row-100 event is FUN_00414c30 returning 2 (mode 7). `EXL7AFSM7` = `EXL7AFS` + the M4 set
 (`MASHED_REGISTRY`, `MASHED_PICKUPS_ORIG`, `MASHED_REG_CARS`, `MASHED_REG_CALLBACKS`, `MASHED_MODE7`) at K0 / K26, with
 car 1 records. Question only: does car 1 take mode 7 at row 100 and how far do its commands then match. No gate, no default.
+
+## 5. Amendment 4 (written before any arm of the new knob body)
+
+Measured after amendment 3's arm (`EXL7AFSM7`, exe `65de976f`): car 1 takes mode 7 at row 100 and its command stream equals
+the original's through row 148 in C (o_reg_r19) and A (o_reg_r1); its record equals o_aq0 (u9766's regime-A car-1 capture,
+aistep identical to o_reg_r1) through call 148 apart from a one-call `+0x39c` difference at call 117. (b) car 1 C: `c0# 19
+[20]`, `steer# 39 [40]` only. Row 149 splits on a 1-ulp stored-error difference at row 148 (`1.25598145` vs `1.25597382`).
+
+The double-acos model misses that row on the original's own inputs. FUN_004a3384's CW helper FUN_004a70a5 loads
+`(cw & 0x300) | 0x7f` (`0x004a70a9..0x004a70b7`): the precision bits are kept, so under PC_24 `1+x`, `1-x`, the product and
+FSQRT (`0x004a33a8..0x004a33b2`) round to float, FPATAN (`0x004a33b6`) is extended, and the FMUL by `0x005cc970` rounds once.
+On the original's own inputs (`emucrt.py`) that form matches the stored error on 188/188 (o_aq0 car 1), 205/205 (o_c2),
+344/344 (o_c3), 317/317 (o_wobj2) rows; the double acos misses 2 / 12 / 13 / 19.
+
+H1': FUN_00415e20's angle = this CRT form. The knob is renamed `MASHED_STEER_ACOS_CRT` (default OFF) and its body replaced; the
+`A64` tag in `run_arms.py` now sets it. Arms: G-NOOP; `EXL7AFSM7` with records of cars 1 / 2 / 3 at K26 and K0; (b) on
+`EXL7AFS`, `EXL7AFSM7`, `L7AFS` at K0 / K1 / K26. Gates and decision as section 1 (G-ERR re-scored on the new body).
