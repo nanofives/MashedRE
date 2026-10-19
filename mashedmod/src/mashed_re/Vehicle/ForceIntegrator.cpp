@@ -20,6 +20,7 @@
 #include <cstdlib>                          // [A5GDIAG] getenv
 #include <cstring>                          // memset (D2 steered-forward diagnostic)
 #include "ForceIntegrator.h"
+#include "../Math/RwLutTables.h"           // [u9760] LutSqrt = FUN_004c3b30 with the real LUT
 #include "../Collision/ContactSolvers.h"   // reuse TriangleFaceNormal (0x0046c5f0)
 #include "../Collision/ContactDeps.h"      // Collision::g_suspScratch (DAT_00881560)
 
@@ -28,6 +29,14 @@ namespace Vehicle {
 
 using namespace fi;
 using Collision::g_suspScratch;   // shared DAT_00881560 scratch
+
+// [u9760 2026-10-18] MASHED_A5_SUSP_LUT=1 (default OFF, verify/u9760_20261019/PREREG_u9760.md): Phase 6's all-grounded
+// suspension force in the original's arithmetic (LUT length FUN_004c3ac0, float steps, its summation order) instead of
+// std::sqrt and double intermediates.
+static bool A5SuspLut() {
+    static const bool s = [] { const char* e = std::getenv("MASHED_A5_SUSP_LUT"); return e && e[0] == '1'; }();
+    return s;
+}
 
 // 0x0046ddb0
 void VehicleWheelForceIntegrate(int* self, float dt, void* xform)
@@ -280,7 +289,28 @@ void VehicleWheelForceIntegrate(int* self, float dt, void* xform)
             pf[7] = pf[6] * pf[4];
             if (pf[6] * pf[4] < kZero) pf[7] = 0.0f;
             double fVar17;
-            if (self[0x278] == 0x40800000) {            // all 4 grounded
+            if (self[0x278] == 0x40800000 && A5SuspLut()) {
+                // [u9760] the original's arithmetic, 0x0046e895..0x0046e925 (x87 at PC_24, so every step rounds to float):
+                //   fc = (_DAT_0088e5f0 * load) * 0.5; F = (fc*n.x, (n.y - 1)*fc, fc*n.z)          0x0046e895..0x0046e8c0
+                //   len = FUN_004c3ac0(F) = LutSqrt(float((x*x + y*y) + z*z))                      0x0046e8c3, 0x004c3ac4..
+                //   inv = 1/len (0x0046e8de); a = inv*F (stored floats 0x0046e8e4 / 8ed / 8f4)
+                //   t = ((a.y*axis.y + a.x*axis.x) + a.z*axis.z) * len; F = t * axis                 0x0046e8f8..0x0046e925
+                float fc = g_suspScale * pf[6] * kHalf;
+                pf[8]  = fc * pf[3];
+                pf[9]  = (pf[4] - kOne) * fc;
+                pf[10] = fc * pf[5];
+                const float m2 = (pf[8] * pf[8] + pf[9] * pf[9]) + pf[10] * pf[10];
+                const float len = mashed_re::Math::LutSqrt(m2);
+                fVar17 = len;
+                if (len != kZero) {
+                    const float inv = kOne / len;
+                    const float a0 = inv * pf[8], a1 = inv * pf[9], a2 = inv * pf[10];
+                    const float t = ((a1 * pf[0xc] + a0 * pf[0xb]) + a2 * pf[0xd]) * len;
+                    pf[8]  = t * pf[0xb];
+                    pf[9]  = t * pf[0xc];
+                    pf[10] = t * pf[0xd];
+                }
+            } else if (self[0x278] == 0x40800000) {     // all 4 grounded
                 float fc = g_suspScale * pf[6] * kHalf;
                 pf[8]  = fc * pf[3];
                 pf[9]  = (pf[4] - kOne) * fc;
