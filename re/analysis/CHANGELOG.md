@@ -26,6 +26,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-19  00467650  a6flip  MASHED_A6A_LUT + MASHED_A6A_F32 + MASHED_A5_SUSP_LUT default ON by user decision (A6a LUT lengths, A6a chain at float precision, A5 original arithmetic); opt-outs MASHED_NO_*. G-CTRL 3b3690f6 / 9a657924 / a386f43b (all opt-outs 726b8fab / b048d6f0 / ecc20282); (b) A 2/3 B 3/3 C 0/3; D2 3/3 on the d2rebase gate; 13 tracks 870 rows 0 RED. verify/a6flip_20261019/RESULT_a6flip.md
 2026-10-19  -  d2rebase  DECISION (Mariano): D2 port window = the whole log; gate = score_d2_v2.py port (whole log) + the 8-run band; default, pair and triple pass D2 3/3 on it. No default changed. verify/d2rebase_20261019/RESULT_d2rebase.md section 3
 2026-10-19  -  d2rebase  D2 re-baseline: 8-run band (slip1500 0.18396..0.20586, slip2000 0.24555..0.25557, driving-median 1893.63..1997.46), score_d2_v2.py; registered --max-lines 1080 shortens the port window (all arms FAIL driving-median), whole log: default, pair and triple PASS 3/3; window choice pending; no default changed. verify/d2rebase_20261019/RESULT_d2rebase.md
 2026-10-19  -  u9763  U-9763 step 1 (measurement only): the original re-measured with the D2 band's argv (4 runs, LIVING-PC) gives slip1500 up to 0.1984, above its own band; the eight-run spread does not contain the three-knob arm on any metric; port scoring recipe differs from the d81a8df6 pre-registration. No band or default changed. verify/u9763_20261019/RESULT_u9763_step1.md

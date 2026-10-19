@@ -34,7 +34,8 @@ using Collision::g_suspScratch;   // shared DAT_00881560 scratch
 // suspension force in the original's arithmetic (LUT length FUN_004c3ac0, float steps, its summation order) instead of
 // std::sqrt and double intermediates.
 static bool A5SuspLut() {
-    static const bool s = [] { const char* e = std::getenv("MASHED_A5_SUSP_LUT"); return e && e[0] == '1'; }();
+    // [a6flip 2026-10-19] default ON (user decision); MASHED_NO_A5_SUSP_LUT=1 opts out.
+    static const bool s = [] { const char* e = std::getenv("MASHED_NO_A5_SUSP_LUT"); return !(e && e[0] == '1'); }();
     return s;
 }
 
