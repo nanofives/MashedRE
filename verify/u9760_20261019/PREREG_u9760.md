@@ -40,3 +40,33 @@ Arms: `B_DEF_K0/K1/K26`, `H_DEF` (G-NOOP); `B_XR1_K1` / `B_XA5LR1_K1` (the u9756
 | G-DRIFT | car 1 x/z gap at call 21 < 1e-5 (now 1.202e-4); else the next first-differing field |
 | G-B | (b) on `A5L`: no car that passes on the default turns to FAIL |
 | G-D2 / G-13 | for a default proposal: D2 3/3, 13 tracks 0 RED, G-CTRL reported |
+
+## Amendment 1 (2026-10-19, branch `work/u9760b` from `b0ad0796e`, before these knob arms)
+
+Measured with the new diagnostic `MASHED_FORCE_SPLIT` (inert: `B_XFS_K1` = `XR1` step dump `25d9c921`, `B_XA5LFS_K1` =
+`69e1844c`): at call 1 the port's wheel-0 force before A6a's addend is `-13.9359436 / -11923.7607`, equal to the original's A5
+output (`o_f214`: `-13.935943603515625 / -11923.7607421875`). **A5 is exact; the gap is A6a's addend**: port `11.0494213 /
+9538.53711`, original `11.0494318 / 9538.54492` (its before/after stores). The addend is `lat * f5` with `f5 = (ld4*spd)*0.02*
+lbc` (`spd*ld4` < 50), `lbc` proportional to `le4`. The port takes A6a's lengths with exact sqrt (`Mag3` / `Vec3Mag3`); the
+original calls the LUT length `FUN_004c3ac0` nine times in order (`0x0046766e +0x9e4`, `0x00467680 +0x9e8`, `0x004680f6 le4`,
+`0x0046820a ld4`, `0x0046833e |F|`, `0x004684bb m15`, `0x004684d7 m16`, `0x004685b7 m78`, `0x004686a4 speed`), matching the
+port's nine sites. New knob `MASHED_A6A_LUT` (default OFF), exe `eadbd7fc`. Arms: `B_DEF_K0/K1/K26` (G-NOOP), `B_XA6FS_K1`
+(XR1 + knob + split log), `B_XA5A6FS_K1` (+ `MASHED_A5_SUSP_LUT`), `B_A6L_K0/K1/K26`, `H_DEF`, `H_A6L`. Gates as in section 3,
+with G-F214 now: the addend equals the original's.
+
+## Amendment 2 (2026-10-19, after the amendment-1 arms, before these)
+
+Measured: G-NOOP PASS (`B_DEF_K0/K26` `c7b40cf2 / f680a529`). G-F214 PASS with `MASHED_A6A_LUT`: the addend `11.0494318 /
+9538.54492` and the call-1 force words `-2.8865118 / -2385.21582` equal the original's; the call-1 velocity `+0x9b0` too.
+G-DRIFT FAIL but smaller early (call 4 3e-9, call 12 4.05e-6, call 21 1.164e-4). Next first-differing field: omega `+0x9c0` at
+call 1. G-B PASS (`A6L`: A 2/3, B 2/3, C 0/3). Default candidate `A6L`: D2 `D2_A6L_1..3`, 13 tracks with `MASHED_A6A_LUT=1`
+(cites `verify/rres_20261016/cites_rres.json`), `H_DEF`, `H_A6L`.
+
+## Amendment 3 (2026-10-19, rebased onto `c43ebeba1`, before these)
+
+Amendment-2 gates were measured on `b0ad0796e` (exe `eadbd7fc`): `A6L` (b) A 2/3 B 2/3 C 0/3, D2 3/3 (slip 0.1904 / 0.2547,
+driving-median 1980.40-1980.65, H1 398/400), 13 tracks 867 rows 0 RED, `H_A6L` `3df00fdb / 7ed9989c / d42c9d28`; evidence in
+`D:/MashedWT/u9760_data/verify/split_b0ad0796e`. The fwdsse flip merged (`MASHED_FWD_AT` + `MASHED_RW_SSE_POINTS` default ON;
+default G-CTRL `726b8fab / b048d6f0 / ecc20282`, B dumps `85561724 / 76ef3eab / a000895f`). `work/u9760b` rebased onto
+`c43ebeba1`. All gates re-run on the rebased exe: G-NOOP (`B_DEF_*`, `H_DEF` = the values above), G-F214 (`B_XA6FS_K1`), G-B
+(`B_A6L_*`), D2 `D2_A6L_1..3` (each alone), 13 tracks with `MASHED_A6A_LUT=1`, `H_A6L`. `MASHED_A6A_LUT` stays default OFF.
