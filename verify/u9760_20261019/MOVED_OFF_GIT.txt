@@ -1,0 +1,22 @@
+# u9760 evidence moved to D:/MashedWT/u9760_data/verify (name sha8 bytes; the o_f214 .msd / aistep included); RUNLOG.txt and the watch / provenance files stay in git
+arms/B_A5L_K0.log 038ac49f 12587
+arms/B_A5L_K0.step.csv f2f4e541 1297403
+arms/B_A5L_K1.log b5d2d0e3 12588
+arms/B_A5L_K1.step.csv 647d36c3 1470982
+arms/B_A5L_K26.log 715c5214 12358
+arms/B_A5L_K26.step.csv 2059f3c7 1902736
+arms/B_DEF_K0.log 20e7a4e0 12587
+arms/B_DEF_K0.step.csv c7b40cf2 1297478
+arms/B_DEF_K1.log b5d2d0e3 12588
+arms/B_DEF_K1.step.csv 5b9905d8 1471012
+arms/B_DEF_K26.log 715c5214 12358
+arms/B_DEF_K26.step.csv f680a529 1902700
+arms/B_XA5LR1_K1.log e374d381 12532
+arms/B_XA5LR1_K1.rec.msd 65dcdca0 2795584
+arms/B_XA5LR1_K1.step.csv 69e1844c 1240429
+arms/B_XR1_K1.log e374d381 12532
+arms/B_XR1_K1.rec.msd 867f21c6 2795584
+arms/B_XR1_K1.step.csv 25d9c921 1240413
+arms/b1.txt 208a9dc9 990
+o_f214.msd 011cc40a 5004016
+o_f214.msd.aistep.csv ee7548c4 694078
