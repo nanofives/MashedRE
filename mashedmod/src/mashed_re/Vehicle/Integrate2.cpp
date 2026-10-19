@@ -45,7 +45,8 @@
 #include "VehicleRecordBase.h"   // [u9760] Vehicle::g_vehicleArrayBase (MASHED_FORCE_SPLIT slot filter)
 #include "../Math/RwLutTables.h"   // [u9760] LutSqrt (MASHED_A6A_LUT)
 
-// [u9760 2026-10-19] MASHED_FORCE_SPLIT=<path> (DIAGNOSTIC ONLY, default OFF; MASHED_FORCE_SPLIT_SLOT=<n>, default 1):
+// [u9760 2026-10-19] MASHED_FORCE_SPLIT=<path> (DIAGNOSTIC ONLY, default OFF; MASHED_FORCE_SPLIT_SLOT=<n>, default 1;
+// [u9762] MASHED_FORCE_SPLIT_WHEEL=<w>, default 0):
 // at A6a's addend to the wheel force (the original's 0x00468320..0x00468337 fadd [edi+0x70/0x74/0x78]), one line per call
 // for wheel 0 of slot n: the force before (A5's output), the addend, and its inputs, to compare with the original's
 // per-store values (write watch o_f214, verify/u9760_20261019).
@@ -53,9 +54,10 @@ namespace {
 void ForceSplitLog(const void* v, int wheel, const float* pre, const mashed_re::Vehicle::A6aWheelDump& D, int branch) {
     static const char* const s_path = std::getenv("MASHED_FORCE_SPLIT");
     static const int s_slot = [] { const char* e = std::getenv("MASHED_FORCE_SPLIT_SLOT"); return e ? std::atoi(e) : 1; }();
+    static const int s_wheel = [] { const char* e = std::getenv("MASHED_FORCE_SPLIT_WHEEL"); return e ? std::atoi(e) : 0; }();   // [u9762]
     static std::FILE* s_f = nullptr;
     static int s_n = 0;
-    if (!s_path || wheel != 0 || !mashed_re::Vehicle::g_vehicleArrayBase || s_n >= 4000) return;
+    if (!s_path || wheel != s_wheel || !mashed_re::Vehicle::g_vehicleArrayBase || s_n >= 4000) return;
     if (reinterpret_cast<const char*>(v) != reinterpret_cast<const char*>(mashed_re::Vehicle::g_vehicleArrayBase) + s_slot * 0xd04) return;
     if (!s_f) { s_f = std::fopen(s_path, "w"); if (!s_f) return;
         std::fprintf(s_f, "n,branch,pre_x,pre_y,pre_z,dF_x,dF_y,dF_z,post_x,post_z,spd9e4,le4,ld4,lbc,f5,p15,p16,p1b,pm1\n"); }
