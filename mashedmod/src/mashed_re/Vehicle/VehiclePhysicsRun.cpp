@@ -495,6 +495,43 @@ static bool RingSlot0Enabled() {
     return s_on;
 }
 
+// [u9152 2026-10-18] MASHED_RING_DBUF=1 (default OFF, verify/u9152_20261018/PREREG_u9152.md): the original's
+// double-buffer discipline for the +0x928 / +0x968 halves, decoded from the disassembly:
+//   FUN_004709a0 0x00470a6f..0x00470a8f  src = rec + [+0x9a8]*0x40 + 0x928 (EDI), dst = rec + [+0x9ac]*0x40 + 0x928 (EBX)
+//   FUN_0046e9e0 (A9)                    dst = src + velocity / omega step, then FUN_004c4680(dst, dst) at 0x0046ef5e
+//   FUN_0046f6c0 0x0046f6d8              the solver reads and corrects dst ([+0x9ac]) only
+//   FUN_004709a0 0x00470c31..0x00470c41 after a committed substep: +0x9ac = +0x9a8, +0x9a8 = (+0x9a8 - 1) & 1
+//   FUN_004709a0 0x00470ab0 / 0x00470ab3 a retry count past 1 jumps to 0x00470c47, past the swap
+//   FUN_00470c70 0x00471195..0x004711af  frame end: if +0x9a8 != 0 then +0x9ac = +0x9a8, +0x9a8 = (+0x9a8 - 1) & 1,
+//                                        and the 0x40 bytes at +0x928 are copied over +0x968 (rep movsd, ESI = +0x928)
+// So after a 2-substep frame +0x9a8 = 0 holds the newest pose and +0x968 the previous substep's, and during a substep
+// the +0x9a8 half is the PRE-substep pose (read there by the car-car proximity test 0x00470b44.. and FUN_00469df0).
+// The port keeps one pose (U-9152) and published it into both halves. Under the knob it publishes only the dst half
+// and swaps the selectors as above. MASHED_RING_DBUF_DISCARD=1 (needs MASHED_RING_DBUF) also drops the pose of a
+// substep whose retries ran out, as the skipped swap does in the original (the next substep starts from the old src).
+static bool RingDbuf() {
+    static const bool s = [] { const char* e = std::getenv("MASHED_RING_DBUF"); return e && e[0] == '1'; }();
+    return s;
+}
+static bool RingDbufDiscard() {
+    static const bool s = [] { const char* e = std::getenv("MASHED_RING_DBUF_DISCARD"); return e && e[0] == '1'; }();
+    return s && RingDbuf();
+}
+// 0x00470c31..0x00470c41: +0x9ac = +0x9a8; +0x9a8 = (+0x9a8 - 1) & 1
+static void RingSwapSelectors(unsigned char* r) {
+    const int a = I(r, 0x9a8);
+    I(r, 0x9ac) = a;
+    I(r, 0x9a8) = (a - 1) & 1;
+}
+// 0x00471195..0x004711af: the frame-end fixup (an odd number of committed substeps leaves +0x9a8 = 1)
+static void RingFrameEnd(unsigned char* r) {
+    const int a = I(r, 0x9a8);
+    if (a == 0) return;
+    I(r, 0x9ac) = a;
+    I(r, 0x9a8) = (a - 1) & 1;
+    std::memcpy(r + 0x968, r + 0x928, 0x40);
+}
+
 // [d2settle D0-a] MASHED_SETTLE_DIAG's solver channel: non-null only while StepCar's
 // diag window is open (slot 0, first 6 steps). DIAGNOSTIC ONLY.
 static const char* g_sdSolverLog = nullptr;
@@ -506,6 +543,9 @@ static void SyncContactRingMatrix(unsigned char* r, const float* basis, const fl
     for (int i = 0; i < 12; ++i) m[i] = basis[i];   // right / up / at rows
     m[12] = pos[0]; m[13] = pos[1]; m[14] = pos[2]; // translation (+0x30)
     m[15] = 0.f;
+
+    // [u9152] the original writes the dst half only (A9, 0x0046e9e0); the src half keeps the pre-substep pose.
+    if (RingDbuf()) return;
 
     // [PREREG_CARCAR leg 2] the other half, self[0x26a].
     if (!RingSlot0Enabled()) return;
@@ -1680,6 +1720,7 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         float savedBasis[16];
         std::memcpy(savedBasis, basis, sizeof(savedBasis));
         const float savedYaw = io.yaw;
+        bool committed = false;   // [u9152] the substep reached a `break` (0x00470c31's swap), not 0x00470ab3's exit
 
         for (int pass = 0; pass < 2; ++pass) {   // 0x00470ab0: `cmp ebp,2`
         if (pass != 0) {
@@ -1759,7 +1800,7 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         if (prof::g_on) { prof::f_probeMs += prof::NowMs() - tp0; ++prof::f_substeps; }
 
         // --- 0x00470ae8 / 0x00470aef / 0x00470afe: the car<->world contact pair ---
-        if (!s_worldContact) break;
+        if (!s_worldContact) { committed = true; break; }
         // Publish the integrated basis + the true world position into the +0x928 ring
         // the scan transforms the 18 body contact points by. AFTER the wheel solver,
         // because the wheel solver's broadphase reads the ring's +0x30 as its query
@@ -1897,8 +1938,22 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
             if (anyCarCar) continue;                           // 0x00470c25/0x00470c2b: re-run
         }
 
+        committed = true;
         break;
         }   // end retry
+        // [u9152] MASHED_RING_DBUF: a committed substep swaps the selectors (0x00470c31..0x00470c41). Retries that ran
+        // out leave 0x00470ab3 for 0x00470c47 with no swap, so the next substep integrates from the same src half:
+        // under MASHED_RING_DBUF_DISCARD the port drops this substep's pose to match (velocity writes stay, as there).
+        if (RingDbuf()) {
+            if (committed) {
+                RingSwapSelectors(r);
+            } else if (RingDbufDiscard()) {
+                io.pos[0] = savedPos[0]; io.pos[1] = savedPos[1]; io.pos[2] = savedPos[2];
+                posDelta[0] = savedDelta[0]; posDelta[1] = savedDelta[1]; posDelta[2] = savedDelta[2];
+                std::memcpy(basis, savedBasis, sizeof(savedBasis));
+                io.yaw = savedYaw;
+            }
+        }
         D2Sink::Mark("sub_end", r, d2sSub, 0, chunkMs, remMs);
         ++d2sSub;
         chunkI -= subI;                // 0x0047113f / 0x00471141
@@ -1936,6 +1991,7 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     }
     chunkRem -= chunkL;                                                   // 0x00471143..0x00471151
     }   // [d2bsp] fix L outer chunk loop
+    if (RingDbuf()) RingFrameEnd(r);   // [u9152] 0x00471195..0x004711af, after the last chunk
 
     // WS-A contacts telemetry: per-wheel contact NORMAL (+0x200) + LOAD (+0x20c, A5
     // Phase-5 weight-transfer slot) + STATE (+0x198), to prove they VARY with terrain
