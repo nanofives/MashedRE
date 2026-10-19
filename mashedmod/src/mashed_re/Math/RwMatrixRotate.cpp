@@ -38,6 +38,7 @@
 #include <cstdio>     // D2 diagnostic
 #include <cstdlib>    // D2 diagnostic
 #include "RwLutTables.h"
+#include <float.h>    // [u9766] _controlfp_s
 
 // Ported, bit-identical RW fast inverse-sqrt (Math/RwSqrt.cpp, 0x004c3b90).
 extern "C" float __cdecl FastInvSqrt(float x);
@@ -50,6 +51,17 @@ extern "C" float* __cdecl RwMatrixRotateInner(float* matrix, const float* axis_n
 // axis through the RW LUT inverse sqrt the original calls (0x004c4d5d `call 0x004c3b90`). In the standalone the RW LUT is
 // never built, so FastInvSqrt returns 1/sqrt(x) (Math/RwSqrt.cpp); LutInvSqrt is the same table rebuilt in-process.
 static bool RotateLut() { static const bool s = [] { const char* e = std::getenv("MASHED_ROTATE_LUT"); return e && e[0] == '1'; }(); return s; }
+
+// [u9766 2026-10-19] MASHED_ROTATE_PC24=1 (default OFF, verify/u9766_20261019/PREREG_u9766.md amendment 1): run the x87
+// section (FSIN / FCOS / 1 - cos here, and RwMatrixRotateInner's inline FPU stream) at 24-bit precision control, as the
+// original's race thread does. The inner's bit-identity was measured in the .asi, inside MASHED.exe at PC_24; the standalone
+// runs at the CRT default, so register-width intermediates round differently. Same scope as Ai/AiLeafTargets.cpp PcScope.
+static bool RotatePc24() { static const bool s = [] { const char* e = std::getenv("MASHED_ROTATE_PC24"); return e && e[0] == '1'; }(); return s; }
+struct RotatePcScope {
+    unsigned int old = 0; bool on;
+    explicit RotatePcScope(bool b) : on(b) { if (on) { _controlfp_s(&old, 0, 0); unsigned int t; _controlfp_s(&t, _PC_24, _MCW_PC); } }
+    ~RotatePcScope() { if (on) { unsigned int t; _controlfp_s(&t, old & _MCW_PC, _MCW_PC); } }
+};
 
 static constexpr std::uintptr_t kDegToRadAddr = 0x005cd7a8u;  // float π/180 = 0x3c8efa35
 static constexpr std::uintptr_t kOneAddr      = 0x005cc320u;  // float 1.0f
@@ -110,6 +122,7 @@ void* __cdecl RwMatrixRotate(void* matrix, const float* axis, float angle_deg, i
     axis_n[2] = axis[2] * invLen;
 
     // Hardware FSIN / FCOS + (1 - cos), mirroring 0x004c4d91..0x004c4da7 exactly.
+    RotatePcScope pc(RotatePc24());   // [u9766] covers the asm below and RwMatrixRotateInner
     float s             = 0.0f;
     float one_minus_cos = 0.0f;
     __asm {

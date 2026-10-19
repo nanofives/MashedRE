@@ -30,3 +30,19 @@ only for a default proposal.
 | G-REC | `firstdiff.py` / `recfirst.py` against o_wobj2: first differing call per field, now `+0x21c` / `+0x9c0` at 5 |
 | G-POS | `recpos.py`: now velocity from call 21, position from 34 |
 | G-B | (b) on `RLOLC`: report against the default (A 2/3, B 3/3, C 0/3) and `RLO` (A 2/3, B 2/3, C 0/3) |
+
+## 2. Amendment 1 (2026-10-19, after the RLOLC arms, before any MASHED_ROTATE_PC24 arm)
+
+Measured on `RLOLC` (`MASHED_ROTATE_LUT` + `MASHED_ORTHO_LUT` + `MASHED_A6A_LC0`): G-NOOP PASS; G-LC0 PASS (wheel 0 block #4 =
+o_aq0 through call 10); torque `+0x9c0` now first differs at call 28 (was 5), velocity x at 27 (was 21), position at 34;
+G-B as `RLO` (A 2/3, B 2/3 car 3 FAIL, C 0/3; `24d6ebb3 / 09823a9a / d50fbd12`).
+
+First physics field on `RLOLC`: call 27, the steered wheel axis x of wheels 0 and 1 (`+0x220`, `+0x2e4`: `-0.0246891193`
+original, `-0.0246891212` port), then the wheel forces. The body matrix is equal through call 27. The axis is A5 Phase 0's
+`RwMatrixRotate(m, up, steer, 0)` + vectors transform. `Math/RwMatrixRotateInner.cpp` is an inline x87 transcription of
+`0x004c4a60..0x004c4b95` that keeps intermediates in registers; its bit-identity was proven in the .asi, where the race
+thread runs at PC_24. The standalone runs it at the CRT's default precision, so register-width intermediates round differently.
+
+H2: running `RwMatrixRotate`'s x87 section (FSIN / FCOS / `1 - cos` and the inner build) at PC_24 makes the call-27 axis equal
+the original's. Knob `MASHED_ROTATE_PC24=1` (default OFF, `_controlfp_s` scope as `Ai/AiLeafTargets.cpp` `PcScope`). Arms:
+`B_DEF_K*` (G-NOOP), `B_XW0RLOLCP_K1`, `B_RLOLCP_K0/K1/K26`. Gates as section 1 (G-REC: first call per field, now 27).
