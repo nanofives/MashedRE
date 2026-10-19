@@ -1,0 +1,27 @@
+# u9764 evidence moved to D:/MashedWT/u9764_data (name sha8 bytes); RUNLOG.txt, watch / probe CSVs and provenance stay in git (o_w2d8.msd.aistep.csv was committed in 3c5f5b021 and is removed here)
+arms/B_DEF_K0.log 751cd6ca 12357
+arms/B_DEF_K0.step.csv 6efb49ed 1693427
+arms/B_DEF_K1.log 48476e67 12358
+arms/B_DEF_K1.step.csv 3e0724ac 1825262
+arms/B_DEF_K26.log 751cd6ca 12357
+arms/B_DEF_K26.step.csv 395fb8b7 1903904
+arms/B_LC_K0.log 751cd6ca 12357
+arms/B_LC_K0.step.csv 8f2b9c37 1694373
+arms/B_LC_K1.log 48476e67 12358
+arms/B_LC_K1.step.csv 95317a93 1824702
+arms/B_LC_K26.log 751cd6ca 12357
+arms/B_LC_K26.step.csv 2742fa2a 1903609
+arms/B_XW1LC_K1.fs.csv 625814ff 161142
+arms/B_XW1LC_K1.log 5d3fa1a3 12261
+arms/B_XW1LC_K1.rec.msd a1f9a507 3396064
+arms/B_XW1LC_K1.step.csv edfe16f7 1548102
+arms/B_XW1_K1.fs.csv 7a529c0e 208139
+arms/B_XW1_K1.log 5d3fa1a3 12261
+arms/B_XW1_K1.rec.msd 2d49e113 3396064
+arms/B_XW1_K1.step.csv 066864b0 1630944
+arms/b0.txt 6555e236 128
+arms/b1.txt 711ac650 862
+arms/b2.txt ab90d7c8 128
+o_aq1.msd 263cb1dd 5130784
+o_w2d8.msd be7815a6 5130784
+o_w2d8.msd.aistep.csv 8e27d8ef 706322

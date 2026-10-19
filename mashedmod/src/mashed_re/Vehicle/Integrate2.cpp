@@ -60,12 +60,13 @@ void ForceSplitLog(const void* v, int wheel, const float* pre, const mashed_re::
     if (!s_path || wheel != s_wheel || !mashed_re::Vehicle::g_vehicleArrayBase || s_n >= 4000) return;
     if (reinterpret_cast<const char*>(v) != reinterpret_cast<const char*>(mashed_re::Vehicle::g_vehicleArrayBase) + s_slot * 0xd04) return;
     if (!s_f) { s_f = std::fopen(s_path, "w"); if (!s_f) return;
-        std::fprintf(s_f, "n,branch,pre_x,pre_y,pre_z,dF_x,dF_y,dF_z,post_x,post_z,spd9e4,le4,ld4,lbc,f5,p15,p16,p1b,pm1\n"); }
+        std::fprintf(s_f, "n,branch,pre_x,pre_y,pre_z,dF_x,dF_y,dF_z,post_x,post_z,spd9e4,le4,ld4,lbc,f5,p15,p16,p1b,pm1,lac,la8,la4\n"); }
     const float spd = *reinterpret_cast<const float*>(reinterpret_cast<const char*>(v) + 0x9e4);
-    std::fprintf(s_f, "%d,%d,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%d\n",
+    // [u9764] + the lateral vector lac / la8 / la4 (the original's [esp+0x44/0x48/0x4c] at 0x00468320, --a6a-probe-wheel)
+    std::fprintf(s_f, "%d,%d,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%d,%.9g,%.9g,%.9g\n",
                  s_n++, branch, pre[0], pre[1], pre[2], D.dF[0], D.dF[1], D.dF[2],
                  static_cast<float>(D.dF[0] + pre[0]), static_cast<float>(D.dF[2] + pre[2]),
-                 spd, D.le4, D.ld4, D.lbc, D.f5, D.p15, D.p16, D.p1b, D.pm1);
+                 spd, D.le4, D.ld4, D.lbc, D.f5, D.p15, D.p16, D.p1b, D.pm1, D.lat[0], D.lat[1], D.lat[2]);
     std::fflush(s_f);
 }
 }  // namespace

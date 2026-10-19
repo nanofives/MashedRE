@@ -1622,6 +1622,34 @@ function batchProbeArm(recBaseHex, car, countOnly){
   } catch(e){ return 'ERR ' + e; }
 }
 function batchProbeDrain(n){ return BQ.rows.splice(0, n || 400); }
+// --- A6A addend probe (u9764, 2026-10-19) -------------------------------------
+// Entry hook at 0x00468320 (A6a block #4, after the wheel-force addend is built, before `fadd [edi+0x70]`), filtered on
+// ESI == the car record and EDI == record + 0x1a4 + wheel*0xc4. Reads stack dwords only (no x87 register):
+// [esp+0x0c] le4 (capped), [esp+0x1c] ld4, [esp+0x28/0x2c/0x30] lc8/lc4/lc0', [esp+0x34] lbc, [esp+0x44/0x48/0x4c]
+// lac/la8/la4, [esp+0x50/0x54] the addend x / y, [esp+0x58] the l94 == 0 branch's l98 * lc0'.
+const AQ = { armed:false, rows:[], n:0, nRec:0, err:null };
+let AQ_REC = null, AQ_WB = null;
+function a6aProbeArm(recBaseHex, car, wheel){
+  if (AQ.armed) return 'already armed';
+  try {
+    AQ_REC = ptr(parseInt(recBaseHex, 16) + car * 0xd04);
+    AQ_WB = AQ_REC.add(0x1a4 + wheel * 0xc4);
+    Interceptor.attach(ga(0x00468320), { onEnter(){
+      try {
+        AQ.n++;
+        const c = this.context;
+        if (!c.esi.equals(AQ_REC) || !c.edi.equals(AQ_WB)) return;
+        AQ.nRec++;
+        const sp = c.esp;
+        const offs = [0x0c, 0x1c, 0x28, 0x2c, 0x30, 0x34, 0x44, 0x48, 0x4c, 0x50, 0x54, 0x58];
+        AQ.rows.push([AQ.nRec].concat(offs.map(k => bqH(sp.add(k)))).join(','));
+      } catch(e){ if (!AQ.err) AQ.err = 'aq ' + e; }
+    }});
+    AQ.armed = true;
+    return 'a6a-probe armed @0x468320 rec=' + AQ_REC + ' wheelblock=' + AQ_WB;
+  } catch(e){ return 'ERR ' + e; }
+}
+function a6aProbeDrain(n){ return AQ.rows.splice(0, n || 400); }
 // ---------------------------------------------------------------------------
 
 // --- RwV3dLength ARGUMENT probe (U-9156, D2 section 21.7) ------------------
@@ -3503,6 +3531,9 @@ rpc.exports = {
                                                      pending:AX.rows.length, chk:AX.chk, err:AX.err}); },
   batchProbeArm: function(recBaseHex, car, countOnly){ return batchProbeArm(recBaseHex, car, countOnly); },
   batchProbeDrain: function(n){ return batchProbeDrain(n); },
+  a6aProbeArm: function(recBaseHex, car, wheel){ return a6aProbeArm(recBaseHex, car, wheel); },
+  a6aProbeDrain: function(n){ return a6aProbeDrain(n); },
+  a6aProbeStats: function(){ return JSON.stringify({armed:AQ.armed, n:AQ.n, nRec:AQ.nRec, pending:AQ.rows.length, err:AQ.err}); },
   batchProbeStats: function(){ return JSON.stringify({armed:BQ.armed, countOnly:BQ.countOnly,
                                                       nCls:BQ.nCls, nClsRec:BQ.nClsRec, nWh:BQ.nWh,
                                                       nWhRec:BQ.nWhRec, nFrm:BQ.nFrm,
@@ -4127,6 +4158,9 @@ def main():
                          "positions and the record inputs), the solver 0x0046f6c0 (per-wheel "
                          "outputs of the previous call) and A6a (frame marker), player record "
                          "only; writes <statediff-out>.batchprobe.csv. Requires --statediff-out.")
+    ap.add_argument("--a6a-probe-wheel", type=int, default=-1,
+                    help="[u9764] entry hook at 0x00468320 (A6a's wheel-force addend, before it is added) for wheel W of "
+                         "--statediff-car; writes <statediff-out>.a6aprobe.csv. Requires --statediff-out.")
     ap.add_argument("--batch-probe-count", action="store_true",
                     help="count-first safety gate for --batch-probe: arm the three hooks with "
                          "counters only")
@@ -4398,6 +4432,8 @@ def main():
                 print("  [statediff]", E.wheel_state_probe_arm(
                     "0x008815a0", args.statediff_car,
                     bool(args.wheelstate_probe_count)))
+            if args.a6a_probe_wheel >= 0:
+                print("  [statediff]", E.a6a_probe_arm("0x008815a0", args.statediff_car, args.a6a_probe_wheel))
             if args.batch_probe or args.batch_probe_count:
                 print("  [statediff]", E.batch_probe_arm(
                     "0x008815a0", args.statediff_car, bool(args.batch_probe_count)))
@@ -4916,6 +4952,21 @@ def main():
                             f.write(",".join(repr(x) if isinstance(x, float) else str(x)
                                              for x in r) + chr(10))
                     print(f"  [statediff] wheelstate-probe {len(ws_rows)} samples -> {wsp}")
+                if args.a6a_probe_wheel >= 0:
+                    try: print("  [statediff] a6a-probe agent:", E.a6a_probe_stats())
+                    except Exception as _e: print("  [statediff] a6a-probe stats failed:", _e)
+                    aqp = outp.with_suffix(outp.suffix + ".a6aprobe.csv")
+                    _na = 0
+                    with open(aqp, "w", newline="") as f:
+                        f.write("n,le4,ld4,lc8,lc4,lc0p,lbc,lac,la8,la4,dFx,dFy,l98z" + chr(10))
+                        while True:
+                            try: _chunk = E.a6a_probe_drain(400)
+                            except Exception as _e:
+                                print("  [statediff] a6a-probe drain failed:", _e); break
+                            if not _chunk: break
+                            for _r in _chunk: f.write(_r + chr(10))
+                            _na += len(_chunk)
+                    print(f"  [statediff] a6a-probe {_na} rows -> {aqp}")
                 if args.batch_probe or args.batch_probe_count:
                     # [d2bsp] stats BEFORE the rows; the CSV is written even when empty.
                     try: print("  [statediff] batch-probe agent:", E.batch_probe_stats())
