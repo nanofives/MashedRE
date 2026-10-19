@@ -69,6 +69,7 @@
 // if a non-driving regime ever has to be reproduced.
 
 #include "ForceIntegrator.h"   // [U-9147] g_handlingTorque (_DAT_00613108)
+#include "../Math/RwLutTables.h"   // [u9765] LutInvSqrt (0x004c3b90 with the real LUT)
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
@@ -161,6 +162,58 @@ void MatrixOrthoNormalize(float* m) {
     // translation row m[12..14] is preserved (never touched here).
 }
 
+// [u9765 2026-10-19] MASHED_ORTHO_LUT=1 (default OFF, verify/u9765_20261019/PREREG_u9765.md): 0x004c4680 as disassembled
+// (0x004c4680..0x004c4a41, same transcription as Track/WarzonePontoon.cpp OrthoNormalize). Each row is scaled by the LUT
+// inverse sqrt 0x004c3b90 of (y*y + x*x) + z*z, NOT 1/std::sqrt, so the rows are not exactly unit (car 1's up.y reaches
+// 1.00000024 at call 4 in o_w93c). In place: every row is read before any is written.
+bool OrthoLut() { static const bool s = [] { const char* e = std::getenv("MASHED_ORTHO_LUT"); return e && e[0] == '1'; }(); return s; }
+
+void MatrixOrthoNormalizeRw(float* m) {
+    using mashed_re::Math::LutInvSqrt;
+    const float k0 = 0.0f;                                                     // [0x005d757c]
+    float r[3] = { m[0], m[1], m[2] }, u[3] = { m[4], m[5], m[6] }, a[3] = { m[8], m[9], m[10] };
+    const float ir = LutInvSqrt((r[1] * r[1] + r[0] * r[0]) + r[2] * r[2]);    // 0x004c469d..0x004c4702
+    r[0] = ir * r[0]; r[1] = ir * r[1]; r[2] = ir * r[2];
+    const float iu = LutInvSqrt((u[1] * u[1] + u[0] * u[0]) + u[2] * u[2]);    // 0x004c472b..0x004c474a
+    u[0] = iu * u[0]; u[1] = iu * u[1]; u[2] = iu * u[2];
+    const float ia = LutInvSqrt((a[1] * a[1] + a[0] * a[0]) + a[2] * a[2]);    // 0x004c4773..0x004c4792
+    a[0] = a[0] * ia; a[1] = a[1] * ia; a[2] = a[2] * ia;
+    float *p4, *p5, *p6;                                                       // ebx, esi, edi
+    if (!(ir > k0))      { p4 = u; p5 = a; p6 = r; }                           // 0x004c47c9 -> 0x004c48ed/ef
+    else if (!(iu > k0)) { p4 = a; p5 = r; p6 = u; }                           // 0x004c47e0 -> 0x004c48dd
+    else if (!(ia > k0)) { p4 = r; p5 = u; p6 = a; }                           // 0x004c47f3 -> 0x004c48b4
+    else {
+        float dau = (a[1] * u[1] + a[0] * u[0]) + a[2] * u[2];               // 0x004c47f9..0x004c4815
+        if (dau < k0) dau = -dau;
+        float dar = (a[1] * r[1] + a[0] * r[0]) + a[2] * r[2];               // 0x004c4832..0x004c484e
+        if (dar < k0) dar = -dar;
+        float dur = (u[1] * r[1] + u[0] * r[0]) + u[2] * r[2];               // 0x004c486b..0x004c4887
+        if (dur < k0) dur = -dur;
+        if (dau < dar) {                                                       // 0x004c4898 fcomp, jp when >=
+            if (dau < dur) { p4 = u; p5 = a; p6 = r; }                         // 0x004c48b2 jnp -> 0x004c48ef
+            else           { p4 = r; p5 = u; p6 = a; }                         // 0x004c48b4
+        } else {
+            if (dar < dur) { p4 = a; p5 = r; p6 = u; }                         // 0x004c48cf
+            else           { p4 = r; p5 = u; p6 = a; }                         // 0x004c48cd jp -> 0x004c48b4
+        }
+    }
+    p6[0] = p5[2] * p4[1] - p5[1] * p4[2];                                     // 0x004c48fb..0x004c490a
+    p6[1] = p4[2] * p5[0] - p5[2] * p4[0];                                     // 0x004c490c..0x004c4918
+    p6[2] = p5[1] * p4[0] - p4[1] * p5[0];                                     // 0x004c491b..0x004c4927
+    const float i6 = LutInvSqrt((p6[0] * p6[0] + p6[1] * p6[1]) + p6[2] * p6[2]);   // 0x004c492a..0x004c4948
+    p6[0] = i6 * p6[0]; p6[1] = p6[1] * i6; p6[2] = p6[2] * i6;               // 0x004c494d..0x004c4960
+    p5[0] = p4[2] * p6[1] - p4[1] * p6[2];                                     // 0x004c4963..0x004c496f
+    p5[1] = p6[2] * p4[0] - p4[2] * p6[0];                                     // 0x004c4977..0x004c4983
+    p5[2] = p4[1] * p6[0] - p6[1] * p4[0];                                     // 0x004c4986..0x004c4992
+    const float i5 = LutInvSqrt((p5[0] * p5[0] + p5[1] * p5[1]) + p5[2] * p5[2]);   // 0x004c4995..0x004c49b3
+    p5[0] = i5 * p5[0]; p5[1] = p5[1] * i5; p5[2] = p5[2] * i5;               // 0x004c49b8..0x004c49d5
+    m[0] = r[0]; m[1] = r[1]; m[2] = r[2];                                     // 0x004c49dd..0x004c4a1c copy-out
+    m[4] = u[0]; m[5] = u[1]; m[6] = u[2];
+    m[8] = a[0]; m[9] = a[1]; m[10] = a[2];
+    std::uint32_t* flags = reinterpret_cast<std::uint32_t*>(m + 3);
+    *flags = (*flags & 0xfffdffffu) | 3u;                                      // 0x004c4a35..0x004c4a41
+}
+
 } // namespace
 
 // Seed BOTH buffers of the +0x928 block with a yaw-only basis. The original gets
@@ -244,7 +297,8 @@ void BodyOrient_IntegrateStep(float* m, const float omega[3]) {
         m[b + 1] = (wz * r0 - wx * r2) + r1;
         m[b + 2] = (wx * r1 - wy * r0) + r2;
     }
-    MatrixOrthoNormalize(m);                       // thunk_FUN_004c4680
+    if (OrthoLut()) MatrixOrthoNormalizeRw(m);     // [u9765] 0x004c4680 as disassembled
+    else MatrixOrthoNormalize(m);                  // thunk_FUN_004c4680
 }
 
 // The omega seed the ESI[4]!=0 arm uses, exposed so the caller does not have to
