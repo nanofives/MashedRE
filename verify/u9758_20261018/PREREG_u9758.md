@@ -40,3 +40,13 @@ Arms: `B_DEF_K0/K1/K26`, `H_DEF` (G-NOOP); `B_SPLSBKNF60FAR1_K1`, `B_SPLSBKNF60U
 | G-DRIFT | car 1 x/z gap at call 21 < 1e-5 (now 1.202e-4); else the next first-differing field |
 | G-B | (b) on `FA`: no car that passes on the default turns to FAIL |
 | G-D2 / G-13 | for a default proposal: D2 3/3, 13 tracks 0 RED, G-CTRL reported |
+
+## Amendment 1 (2026-10-18, after the B arms, before these)
+
+Measured: G-NOOP PASS (`c7b40cf2 / 5b9905d8 / f680a529`). G-FWD PASS (`+0x9d4..+0x9dc` at call 0 = o_wobj2). G-DRIFT FAIL
+(call 21 1.202e-4 unchanged; call-1 `+0x9b0` -0.00108456612 / -0.00108465552 unchanged). G-B PASS (`FA`: A 2/3, B 2/3, C 0/3,
+car 3 B c1_distinct 52 -> 51). At calls >= 1 the port's dumped `+0x9d4` equals the original's one call earlier: the original
+also writes it after physics, from the frame driver `0x00425a99` `FUN_004252c0` -> `0x0042536f` `FUN_0046d510` (gated at
+`0x00425360`), and before physics from the AI callers and A5, all from slot 0, so physics reads the frame-start pose's `at`
+row in both. Default candidate `FA`: D2 `D2_FA_1..3`, 13 tracks (`verify/rsky_20261016/run13.py` with `MASHED_FWD_AT=1`,
+scored with `verify/rres_20261016/cites_rres.json`), `H_FA`.
