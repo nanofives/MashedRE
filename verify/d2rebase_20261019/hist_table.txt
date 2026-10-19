@@ -1,0 +1,32 @@
+arm                                                                     runs        old(legacy red., old band)  new(1080, new band)
+D:/MashedWT/a4order_data/verify/d2/D2_A                                    1  old 0/1 (0.1915 / 0.2486 / 1871.5100)  new 0/1 (0.1938 / 0.2470 / 1849.4500)  whole-log+new 0/1
+D:/MashedWT/d2ref_data/verify/d2/D2_DEF                                    3  old 3/3 (0.1890 / 0.2480 / 1913.0600)  new 0/3 (0.1938 / 0.2470 / 1849.4500)  whole-log+new 3/3  <-- 1080 verdict changes
+D:/MashedWT/d2ref_data/verify/d2/D2_G                                      3  old 0/3 (0.2007 / 0.2634 / 1758.2500)  new 0/3 (0.2007 / 0.2634 / 1758.2500)  whole-log+new 0/3
+D:/MashedWT/d2ref_data/verify/d2/D2_RGB                                    3  old 0/3 (0.1981 / 0.2502 / 1851.8200)  new 0/3 (0.1999 / 0.2520 / 1822.6500)  whole-log+new 0/3
+D:/MashedWT/d2ref_data/verify/d2/D2_RG                                     3  old 0/3 (0.1917 / 0.2557 / 1976.0100)  new 0/3 (0.1956 / 0.2521 / 1822.2500)  whole-log+new 0/3
+D:/MashedWT/d2ref_data/verify/d2/D2_RYT                                    3  old 0/3 (0.1956 / 0.2552 / 1931.9100)  new 0/3 (0.1938 / 0.2539 / 1850.5000)  whole-log+new 3/3  <-- whole-log/new-band verdict changes
+D:/MashedWT/d2ref_data/verify/d2/D2_RY                                     3  old 0/3 (0.1952 / 0.2551 / 1944.4100)  new 0/3 (0.1938 / 0.2539 / 1850.5000)  whole-log+new 3/3  <-- whole-log/new-band verdict changes
+D:/MashedWT/d2ref_data/verify/d2/D2_R                                      3  old 0/3 (0.1955 / 0.2549 / 1812.9800)  new 0/3 (NA / NA / 1337.5700)  whole-log+new 0/3
+D:/MashedWT/d2ref_data/verify/d2/D2_T5                                     3  old 0/3 (0.1864 / 0.2470 / 1931.3400)  new 0/3 (0.1938 / 0.2470 / 1849.4500)  whole-log+new 3/3  <-- whole-log/new-band verdict changes
+D:/MashedWT/d2ref_data/verify/flip/D2_DEF                                  3  old 3/3 (0.1944 / 0.2545 / 1963.4200)  new 0/3 (0.1956 / 0.2521 / 1822.2500)  whole-log+new 3/3  <-- 1080 verdict changes
+D:/MashedWT/fwdsse_data/verify/arms/D2_DEF                                 3  old 3/3 (0.1942 / 0.2522 / 1916.5400)  new 0/3 (0.1890 / 0.2502 / 1878.6500)  whole-log+new 3/3  <-- 1080 verdict changes
+D:/MashedWT/u9749_data/verify/c2k93/d2/D2_CLR5                             3  old 0/3 (0.1955 / 0.2549 / 1812.9800)  new 0/3 (NA / NA / 1337.5700)  whole-log+new 0/3
+D:/MashedWT/u9749_data/verify/c2k93/d2/D2_CLR                              3  old 0/3 (0.1955 / 0.2549 / 1812.9800)  new 0/3 (NA / NA / 1337.5700)  whole-log+new 0/3
+D:/MashedWT/u9754_data/verify/arms/D2_KN                                   1  old 0/1 (0.1861 / 0.2541 / 1995.3400)  new 0/1 (0.1921 / 0.2549 / 1856.7200)  whole-log+new 1/1  <-- whole-log/new-band verdict changes
+D:/MashedWT/u9754_data/verify/arms/D2_SBKN                                 3  old 0/3 (0.1890 / 0.2544 / 1997.8900)  new 0/3 (0.1945 / 0.2542 / 1853.4500)  whole-log+new 1/3
+D:/MashedWT/u9754_data/verify/arms/D2_SB                                   1  old 0/1 (0.1863 / 0.2529 / 1930.8700)  new 1/1 (0.1860 / 0.2508 / 1911.1400)  whole-log+new 1/1  <-- 1080 verdict changes  <-- whole-log/new-band verdict changes
+D:/MashedWT/u9755_data/verify/arms2/D2_SY                                  3  old 3/3 (0.1941 / 0.2545 / 1962.6200)  new 0/3 (0.1956 / 0.2521 / 1822.2500)  whole-log+new 3/3  <-- 1080 verdict changes
+D:/MashedWT/u9756_data/verify/arms2/D2_F44                                 1  old 0/1 (0.1962 / 0.2549 / 1880.0000)  new 0/1 (0.1942 / 0.2542 / 1856.6900)  whole-log+new 0/1
+D:/MashedWT/u9756_data/verify/arms2/D2_F6044                               3  old 0/3 (0.1960 / 0.2549 / 1880.5000)  new 0/3 (0.1942 / 0.2542 / 1856.6900)  whole-log+new 0/3
+D:/MashedWT/u9756_data/verify/arms2/D2_F60                                 3  old 3/3 (0.1939 / 0.2545 / 1960.3100)  new 0/3 (0.1956 / 0.2521 / 1822.2500)  whole-log+new 3/3  <-- 1080 verdict changes
+D:/MashedWT/u9758_data/verify/arms/D2_FA                                   3  old 3/3 (0.1942 / 0.2522 / 1914.5700)  new 0/3 (0.1890 / 0.2502 / 1878.6500)  whole-log+new 3/3  <-- 1080 verdict changes
+D:/MashedWT/u9758_data/verify/arms_bf451/D2_FA                             3  old 3/3 (0.1942 / 0.2521 / 1912.4700)  new 0/3 (0.1890 / 0.2502 / 1878.6500)  whole-log+new 3/3  <-- 1080 verdict changes
+D:/MashedWT/u9759_data/verify/arms/D2_SSE                                  3  old 3/3 (0.1939 / 0.2545 / 1960.3100)  new 0/3 (0.1956 / 0.2521 / 1822.2500)  whole-log+new 3/3  <-- 1080 verdict changes
+D:/MashedWT/u9760_data/verify/split/D2_A6L                                 3  old 0/3 (0.1877 / 0.2547 / 1956.7000)  new 0/3 (0.1930 / 0.2543 / 1861.4600)  whole-log+new 3/3  <-- whole-log/new-band verdict changes
+D:/MashedWT/u9760_data/verify/split_b0ad0796e/D2_A6L                       3  old 3/3 (0.1904 / 0.2547 / 1980.6500)  new 0/3 (0.1974 / 0.2531 / 1850.7100)  whole-log+new 3/3  <-- 1080 verdict changes
+D:/MashedWT/u9761_data/verify/arms/D2_A6LF32                               3  old 3/3 (0.1887 / 0.2537 / 1965.9000)  new 0/3 (0.1930 / 0.2543 / 1861.4800)  whole-log+new 3/3  <-- 1080 verdict changes
+D:/MashedWT/u9761_data/verify/arms/D2_F32                                  3  old 0/3 (0.1863 / 0.2525 / 1919.3800)  new 0/3 (0.1941 / 0.2523 / 1815.4600)  whole-log+new 3/3  <-- whole-log/new-band verdict changes
+D:/MashedWT/u9762_data/verify/arms/D2_TRI                                  3  old 0/3 (0.1859 / 0.2534 / 1990.8000)  new 0/3 (0.1930 / 0.2542 / 1855.8600)  whole-log+new 3/3  <-- whole-log/new-band verdict changes
+verify/d2close_20261016/final/D2_DEF                                       3  old 3/3 (0.1890 / 0.2482 / 1913.0600)  new 0/3 (0.1938 / 0.2470 / 1849.4500)  whole-log+new 3/3  <-- 1080 verdict changes
+verify/d2close_20261016/rebased/D2_DEF                                     3  old 3/3 (0.1890 / 0.2483 / 1914.8400)  new 0/3 (0.1938 / 0.2470 / 1849.4500)  whole-log+new 3/3  <-- 1080 verdict changes
+verify/d2ref_20261017/arms/d2/D2_RGT                                       3  old 3/3 (0.1939 / 0.2545 / 1960.3100)  new 0/3 (0.1956 / 0.2521 / 1822.2500)  whole-log+new 3/3  <-- 1080 verdict changes

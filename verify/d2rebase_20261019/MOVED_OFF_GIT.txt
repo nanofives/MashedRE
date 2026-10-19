@@ -1,0 +1,20 @@
+# d2rebase port logs moved to D:/MashedWT/d2rebase_data/arms (name sha8 bytes); RUNLOG.txt stays in git
+arms/D2_DEF_1.log 29663abb 22901
+arms/D2_DEF_1.motion_diag.log 372e1d51 1191931
+arms/D2_DEF_2.log 034b0018 23046
+arms/D2_DEF_2.motion_diag.log 1a46a8fe 1194128
+arms/D2_DEF_3.log 4f4d739a 23125
+arms/D2_DEF_3.motion_diag.log 867168bf 1197806
+arms/D2_PAIR_1.log d58c695b 23130
+arms/D2_PAIR_1.motion_diag.log af8bc0cf 1198190
+arms/D2_PAIR_2.log aa91db31 23132
+arms/D2_PAIR_2.motion_diag.log 4824ff60 1198930
+arms/D2_PAIR_3.log 105bf819 23134
+arms/D2_PAIR_3.motion_diag.log 4824ff60 1198930
+arms/D2_TRI_1.log b3eccf2d 23127
+arms/D2_TRI_1.motion_diag.log 13bc4b71 1195672
+arms/D2_TRI_2.log 1a0a2f5c 23126
+arms/D2_TRI_2.motion_diag.log 13bc4b71 1195672
+arms/D2_TRI_3.log ed582cb2 23276
+arms/D2_TRI_3.motion_diag.log eb11e8d0 1197152
+arms/d2.txt 52d5fcc7 1180

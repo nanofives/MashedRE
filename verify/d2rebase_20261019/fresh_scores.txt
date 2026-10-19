@@ -1,0 +1,18 @@
+D2_DEF_1.motion_diag.log: slip1500=0.1890 in slip2000=0.2502 in drvmed=1878.6500 OUT n=('201', '349', '808') H1 398/400 median 1351.6
+D2_DEF_1.motion_diag.log: slip1500=0.1942 in slip2000=0.2522 in drvmed=1916.5400 in n=('331', '604', '1331') H1 398/400 median 1351.6  [legacy reduction]
+D2_DEF_2.motion_diag.log: slip1500=0.1890 in slip2000=0.2502 in drvmed=1878.6500 OUT n=('201', '349', '808') H1 398/400 median 1351.6
+D2_DEF_2.motion_diag.log: slip1500=0.1942 in slip2000=0.2522 in drvmed=1914.5700 in n=('331', '604', '1334') H1 398/400 median 1351.6  [legacy reduction]
+D2_DEF_3.motion_diag.log: slip1500=0.1890 in slip2000=0.2502 in drvmed=1878.6500 OUT n=('201', '349', '808') H1 398/400 median 1351.6
+D2_DEF_3.motion_diag.log: slip1500=0.1942 in slip2000=0.2522 in drvmed=1912.1000 in n=('331', '604', '1339') H1 398/400 median 1351.6  [legacy reduction]
+D2_PAIR_1.motion_diag.log: slip1500=0.1930 in slip2000=0.2543 in drvmed=1861.4800 OUT n=('195', '328', '774') H1 398/400 median 1350.8
+D2_PAIR_1.motion_diag.log: slip1500=0.1887 in slip2000=0.2537 in drvmed=1965.9000 in n=('312', '636', '1328') H1 398/400 median 1350.8  [legacy reduction]
+D2_PAIR_2.motion_diag.log: slip1500=0.1930 in slip2000=0.2543 in drvmed=1861.4800 OUT n=('195', '328', '774') H1 398/400 median 1350.8
+D2_PAIR_2.motion_diag.log: slip1500=0.1887 in slip2000=0.2537 in drvmed=1965.9000 in n=('312', '637', '1329') H1 398/400 median 1350.8  [legacy reduction]
+D2_PAIR_3.motion_diag.log: slip1500=0.1930 in slip2000=0.2543 in drvmed=1861.4800 OUT n=('195', '328', '774') H1 398/400 median 1350.8
+D2_PAIR_3.motion_diag.log: slip1500=0.1887 in slip2000=0.2537 in drvmed=1965.9000 in n=('312', '637', '1329') H1 398/400 median 1350.8  [legacy reduction]
+D2_TRI_1.motion_diag.log: slip1500=0.1930 in slip2000=0.2542 in drvmed=1855.8600 OUT n=('195', '328', '775') H1 398/400 median 1350.8
+D2_TRI_1.motion_diag.log: slip1500=0.1859 in slip2000=0.2534 in drvmed=1989.0500 in n=('295', '654', '1326') H1 398/400 median 1350.8  [legacy reduction]
+D2_TRI_2.motion_diag.log: slip1500=0.1930 in slip2000=0.2542 in drvmed=1855.8600 OUT n=('195', '328', '775') H1 398/400 median 1350.8
+D2_TRI_2.motion_diag.log: slip1500=0.1859 in slip2000=0.2534 in drvmed=1989.0500 in n=('295', '654', '1326') H1 398/400 median 1350.8  [legacy reduction]
+D2_TRI_3.motion_diag.log: slip1500=0.1930 in slip2000=0.2542 in drvmed=1855.8600 OUT n=('195', '328', '775') H1 398/400 median 1350.8
+D2_TRI_3.motion_diag.log: slip1500=0.1859 in slip2000=0.2534 in drvmed=1988.0900 in n=('295', '654', '1328') H1 398/400 median 1350.8  [legacy reduction]
