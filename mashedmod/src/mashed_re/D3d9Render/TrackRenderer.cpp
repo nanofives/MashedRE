@@ -152,6 +152,16 @@ int aib_track_index()      { return g_aib.course; }
 int aib_ai_target_enable() { return 0; }
 void aib_own_fwd_xz(int v, float* fx, float* fz) {
     if (v < 0 || v > 3) { *fx = *fz = 0.f; return; }
+    // [d3bc 2026-10-19] MASHED_AI_FWD_ATROW (default OFF). FUN_0046d510 (call 0x0046d53a) returns (0,0,1)
+    // (0x00614708) through the vectors slot with the slot-0 matrix rec + 0x928, i.e. that matrix's `at` row,
+    // record +0x948 / +0x950 (x / z). The snapshot's cos/sin(yaw) is that row through atan2 (BodyOrient_Heading),
+    // which drops at.y's share of the length and rounds twice. An all-zero row (no record) keeps the snapshot.
+    static const bool s_atRow = [] { const char* e = std::getenv("MASHED_AI_FWD_ATROW"); return e && e[0] && e[0] != '0'; }();
+    if (s_atRow) {
+        const float ax = Vehicle::VehiclePhysics_RecordF32(v, 0x948);
+        const float az = Vehicle::VehiclePhysics_RecordF32(v, 0x950);
+        if (ax != 0.f || az != 0.f) { *fx = ax; *fz = az; return; }
+    }
     *fx = g_aib.fwd[v][0]; *fz = g_aib.fwd[v][1];
 }
 // ---------------------------------------------------------------------------
