@@ -45,6 +45,7 @@
 #include <cstring>
 #include <string>
 #include <vector>
+#include "../Vehicle/VehicleRecordBase.h"
 
 namespace mashed_re {
 namespace Collision {
@@ -55,9 +56,44 @@ namespace Collision {
 // car index the original's push reads ([edi] / [esi] at 0x0046ae1b / 0x0046ae1d).
 int g_ccLastContact = 0;
 
+// [u9769 2026-10-19] MASHED_CC_TRACE=<path> (diagnostic, default OFF): one row per call in the format of
+// scenario_launch.py --carcar-probe (tick 0x007f0ff4, self = vehB, other = vehA, pass, both records at entry and at
+// return). Slot index = (rec - slot-0 record) / 0xd04. Capped at 64 rows. The dump runs in non-inlined helpers on
+// static buffers so the knob-off frame of VehicleCarCarContact stays as it was: its spin tail reads a stub-filled
+// stack local (Rw_MatrixDerive), so a change to that frame changes the default build's output.
+static std::FILE* s_ccTr = nullptr;
+static int s_ccN = 0, s_ccOn = -1;
+static std::string s_ccSi, s_ccOi;
+static __declspec(noinline) void CcHex(std::string& o, const int* r) {
+    static const char* d = "0123456789abcdef";
+    const unsigned char* b = reinterpret_cast<const unsigned char*>(r);
+    o.clear();
+    for (int i = 0; i < 0xd04; ++i) { o += d[b[i] >> 4]; o += d[b[i] & 15]; }
+}
+static __declspec(noinline) int CcTraceOn() {
+    if (s_ccOn < 0) {
+        const char* e = std::getenv("MASHED_CC_TRACE");
+        s_ccTr = e ? std::fopen(e, "w") : nullptr;
+        if (s_ccTr) std::fprintf(s_ccTr, "sdframe\ttick\tself\tother\tpass\tself_in\tother_in\tret\tself_out\tother_out\n");
+        s_ccOn = s_ccTr ? 1 : 0;
+    }
+    return (s_ccOn == 1 && s_ccN < 64) ? 1 : 0;
+}
+static __declspec(noinline) void CcTraceIn(const int* vehA, const int* vehB) { CcHex(s_ccSi, vehB); CcHex(s_ccOi, vehA); }
+static __declspec(noinline) void CcTraceOut(const int* vehA, const int* vehB, int pass, int ret) {
+    static std::string so, oo; CcHex(so, vehB); CcHex(oo, vehA);
+    const char* r0 = mashed_re::Vehicle::VehRecord(0);
+    std::fprintf(s_ccTr, "%d\t%d\t%d\t%d\t%d\t%s\t%s\t%d\t%s\t%s\n", s_ccN, *reinterpret_cast<const int*>(0x007f0ff4u),
+                 static_cast<int>((reinterpret_cast<const char*>(vehB) - r0) / 0xd04),
+                 static_cast<int>((reinterpret_cast<const char*>(vehA) - r0) / 0xd04), pass,
+                 s_ccSi.c_str(), s_ccOi.c_str(), ret, so.c_str(), oo.c_str());
+    if (++s_ccN == 64) std::fflush(s_ccTr);
+}
+
 // 0x00469df0
 bool VehicleCarCarContact(int* vehA, int* vehB, int pass)
 {
+    if (CcTraceOn()) CcTraceIn(vehA, vehB);
     g_ccLastContact = 0;
     float* slotA = vFP(vehA, vehA[0x26a] * 0x10 + 0x256);   // local_a8 (vehA active slot)
     float* pfVar2 = vFP(vehB, vehB[0x26a] * 0x10 + 0x256);  // vehB active slot
@@ -108,7 +144,7 @@ bool VehicleCarCarContact(int* vehA, int* vehB, int pass)
         }
     }
 
-    if (iVar15 == 0) return false;
+    if (iVar15 == 0) { if (s_ccOn == 1 && s_ccN < 64) CcTraceOut(vehA, vehB, pass, 0); return false; }
     g_ccLastContact = 1;
 
     float inv = (float)iVar15;
@@ -257,6 +293,7 @@ bool VehicleCarCarContact(int* vehA, int* vehB, int pass)
     // Ai/AiStandalone.cpp Ai_ContactEventPush / Ai_ContactEventDrain).
     (void)local_b0;   // consumed only by the ring payload (flag 0x007ea9ec), which no exe reader takes
 
+    if (s_ccOn == 1 && s_ccN < 64) CcTraceOut(vehA, vehB, pass, pass == 0 ? 1 : 0);
     return pass == 0;
 }
 

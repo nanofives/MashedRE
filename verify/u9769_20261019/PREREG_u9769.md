@@ -37,3 +37,19 @@ H1: with `Rw_MatrixDerive` calling `RwMatrixInvertEntry`, the replay's contact r
 `MASHED_CC_MATRIX_INVERT=1` (default OFF). Arms: `CR_MI` (G-CC: contact row's spin dwords equal; report the residual linear
 dwords), G-NOOP, then the in-run question (section 0 item 2: the player's in-run entry state at call 22) on `EXL7AFSM7` and
 `EXL7AFSM7` + the knob, and (b) report.
+
+## 3. Amendment 2 (written before the arm; existing knob only)
+
+Measured after amendment 1 (exe `24e6d3f6`, G-NOOP `6efb49ed / 3e0724ac / 395fb8b7`; an intermediate build that wrapped
+VehicleCarCarContact in a new frame gave `ddddf961` with the knob unset, which is the uninitialised-local dependence of
+section 2 showing in the default; the trace now runs in noinline helpers and keeps the frame):
+- `CR_MI`: the contact row's spin difference is gone; 6 dwords remain, the linear velocities to about 1e-5 relative.
+- In-run (`MASHED_CC_TRACE`, `EXL7AFSM7` with and without the knob): the player's entry record equals the original's; car 2's
+  entry velocity is `(-300.85376, , -2330.15259)` against the original's `(-316.573639, , -2353.27734)`. The port's value is
+  the original's `+0xae0` (the previous velocity copy): car 2 enters the contact before its own A4 / A6a of the frame.
+- FUN_00470c70 runs FUN_00470670 (A4, A6a inside) for all 16 records in one loop (call `0x00471076`, loop end
+  `0x0047108c`), then the refresh loop, then FUN_004709a0 (substeps and the pair loop, call `0x00470bcd`).
+
+Report arm: `EXL7AFSM7MIA` = `EXL7AFSM7` + `MASHED_CC_MATRIX_INVERT` + `MASHED_A4_ORDER` (U-9746's pre-phase), traced, with the
+slot-0 record, K1. Question: does car 2 enter the call-22 contact with the original's velocity, and does the player's
+record then hold past call 22. No gate, no default.

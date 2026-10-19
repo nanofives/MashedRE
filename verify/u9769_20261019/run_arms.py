@@ -191,6 +191,8 @@ STACK['EXL7AFSM7'] = STACK['EXL7AFS'] + STACK['M4SET']; STACK['EXL7AFSM7R1'] = S
 for _s in (2, 3): STACK['EXL7AFSM7R%d' % _s] = STACK['EXL7AFSR%d' % _s] + STACK['M4SET']   # d3bc amendment 4
 STACK['EXL7AFSM7R0'] = STACK['EXL7AFSM7'] + ['MASHED_RECDUMP=@OUT@\\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=0']   # u9769: the player's record
 STACK['MI'] = ['MASHED_CC_MATRIX_INVERT']; STACK['EXL7AFSM7MI'] = STACK['EXL7AFSM7'] + STACK['MI']; STACK['EXL7AFSM7MIR0'] = STACK['EXL7AFSM7R0'] + STACK['MI']   # u9769 amendment 1
+_TR = ['MASHED_CC_TRACE=@OUT@\\@NAME@.cctrace.tsv']; STACK['EXL7AFSM7TR'] = STACK['EXL7AFSM7R0'] + _TR; STACK['EXL7AFSM7MITR'] = STACK['EXL7AFSM7MIR0'] + _TR   # u9769
+STACK['EXL7AFSM7MIATR'] = STACK['EXL7AFSM7MITR'] + ['MASHED_A4_ORDER']; STACK['EXL7AFSM7MIA'] = STACK['EXL7AFSM7MI'] + ['MASHED_A4_ORDER']   # u9769 amendment 2
 for _t in list(STACK):   # <tag>T = the same stack with the FUN_00414a70 trace (MASHED_TGT3_TRACE) per arm
     # a4order: never overwrite a defined tag. In d3bB2's copy this loop replaced CCET (clock + event + tick first) with
     # CCE + traces, so every d3bB2 CCET run ran without MASHED_AI_TICK_FIRST (its RUNLOG lines carry no such knob).
