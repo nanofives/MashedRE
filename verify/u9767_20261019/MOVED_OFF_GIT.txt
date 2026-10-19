@@ -1,0 +1,23 @@
+# u9767 evidence moved to D:/MashedWT/u9767_data (name sha8 bytes); RUNLOG.txt stays in git; both frozen +0x9d4 watch runs are in bad/ (bad/ = first run, bad/run2/ = second run)
+arms/B_DEF_K0.log 85ac1a35 12357
+arms/B_DEF_K0.step.csv 6efb49ed 1693427
+arms/B_DEF_K1.log 3a3d289e 12358
+arms/B_DEF_K1.step.csv 3e0724ac 1825262
+arms/B_DEF_K26.log 6e709737 12357
+arms/B_DEF_K26.step.csv 395fb8b7 1903904
+arms/B_F_K0.log 6e709737 12357
+arms/B_F_K0.step.csv b1c5840b 1620524
+arms/B_F_K1.log 3a3d289e 12358
+arms/B_F_K1.step.csv 901059b0 1789568
+arms/B_F_K26.log 6e709737 12357
+arms/B_F_K26.step.csv 11dce6e7 1901840
+arms/B_RLOLCPF_K0.log 8c84fc80 12627
+arms/B_RLOLCPF_K0.step.csv dca1ecf9 1169879
+arms/B_RLOLCPF_K1.log cfa190e1 12587
+arms/B_RLOLCPF_K1.step.csv e96df243 1639067
+arms/B_RLOLCPF_K26.log b08c11b0 12357
+arms/B_RLOLCPF_K26.step.csv 15c558be 1902280
+arms/B_XW0RLOLCPF_K1.fs.csv a0d07875 361209
+arms/B_XW0RLOLCPF_K1.log e84fef2d 12261
+arms/B_XW0RLOLCPF_K1.rec.msd 4d88cbc8 3396064
+arms/B_XW0RLOLCPF_K1.step.csv 891a9fe2 1880663
