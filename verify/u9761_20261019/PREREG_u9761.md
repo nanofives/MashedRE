@@ -35,3 +35,11 @@ default proposal.
 | G-B | (b) on `F32` and `A6LF32`: no car that passes on the default turns to FAIL |
 | G-D2 | `F32` and `A6LF32`: slip1500 / slip2000 / driving-median in the d81a8df6 bands, H1 >= 398/400 |
 | G-13 | for a default proposal only: 0 RED, changes cited |
+
+## Amendment 1 (2026-10-19, after the B and D2 arms, before these)
+
+Measured: G-NOOP PASS (`85561724 / 76ef3eab / a000895f`). G-OMEGA PASS (`XA6F32FS`: `+0x9c0` at call 1 = o_wobj2; next physics
+field `+0x460` at call 2). G-DRIFT unchanged (call 21 1.164e-4). G-B PASS: `F32` A 2/3 B 2/3 C 0/3; `A6LF32` A 2/3 **B 3/3** C
+0/3. G-D2: `F32` alone slip1500 0.1863 OUT x3; `A6LF32` 3/3 in (slip1500 0.1887, slip2000 0.2537-0.2539, driving-median
+1959.04-1965.90, H1 398/400). Default candidate: the pair `MASHED_A6A_LUT` + `MASHED_A6A_F32`: 13 tracks with both knobs
+(cites `verify/rres_20261016/cites_rres.json`), `H_DEF`, `H_A6LF32`.
