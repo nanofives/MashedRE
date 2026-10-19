@@ -510,6 +510,23 @@ static bool RingSlot0Enabled() {
 // The port keeps one pose (U-9152) and published it into both halves. Under the knob it publishes only the dst half
 // and swaps the selectors as above. MASHED_RING_DBUF_DISCARD=1 (needs MASHED_RING_DBUF) also drops the pose of a
 // substep whose retries ran out, as the skipped swap does in the original (the next substep starts from the old src).
+// [u9758 2026-10-18] MASHED_FWD_AT=1 (default OFF, verify/u9758_20261018/PREREG_u9758.md): record +0x9d4..+0x9dc as the
+// original writes it. Write watch o_fw1 (car 1, +0x9d4 / +0x9dc): every write is FUN_004c3df0(rec + 0x9d4, &DAT_00614708,
+// 1, matrix) with DAT_00614708 = (0, 0, 1) (.data, bytes 00000000 00000000 0000803f), i.e. the matrix's `at` row:
+//   A5 FUN_0046ddb0 0x0046ddba..0x0046ddc9, matrix = its arg 2 = A4's rec + [+0x9a8]*0x40 + 0x928, once per frame
+//   FUN_0046d510 0x0046d525..0x0046d53a, matrix = rec + 0x928, from the AI callers (returns 0x00414605 / 0x00414aad / ...)
+// None of them runs inside the substep loop. The port wrote (cos yaw, 0, sin yaw) at frame entry and after every substep's
+// orientation step. Under the knob: the basis `at` row at frame entry and after the heading is taken, none in the substep.
+static bool FwdAt() {
+    static const bool s = [] { const char* e = std::getenv("MASHED_FWD_AT"); return e && e[0] == '1'; }();
+    return s;
+}
+// FUN_004c3df0 with (0, 0, 1): 0 * right + 0 * up + 1 * at, per component
+static void WriteForwardAt(unsigned char* r, const float* m) {
+    for (int c = 0; c < 3; ++c)
+        F(r, off::kForward + 4 * c) = 0.f * m[c] + 0.f * m[4 + c] + 1.f * m[8 + c];
+}
+
 static bool RingDbuf() {
     static const bool s = [] { const char* e = std::getenv("MASHED_RING_DBUF"); return e && e[0] == '1'; }();
     return s;
@@ -1207,9 +1224,13 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         F(r, off::kVelocity + 8) = io.vel[2];
         F(r, off::kSpeed)        = io.speed;
     }
-    F(r, off::kForward + 0)  = std::cos(io.yaw);
-    F(r, off::kForward + 4)  = 0.f;
-    F(r, off::kForward + 8)  = std::sin(io.yaw);
+    if (FwdAt() && g_bodyBasisOk[slot]) {
+        WriteForwardAt(r, g_bodyBasis[slot]);   // [u9758] the `at` row, as A5 / FUN_0046d510 write it
+    } else {
+        F(r, off::kForward + 0)  = std::cos(io.yaw);
+        F(r, off::kForward + 4)  = 0.f;
+        F(r, off::kForward + 8)  = std::sin(io.yaw);
+    }
     I(r, off::kActiveFlag)   = 1;
 
     std::uint8_t input[8];
@@ -1409,8 +1430,12 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     // Keep io.yaw the basis heading from here on: it feeds record +0x9d4 (above) and
     // SolveWheelContacts' wheel placement, both of which must see the BODY heading.
     io.yaw = BodyOrient_Heading(basis);
-    F(r, off::kForward + 0) = std::cos(io.yaw);
-    F(r, off::kForward + 8) = std::sin(io.yaw);
+    if (FwdAt()) {
+        WriteForwardAt(r, basis);   // [u9758] A5 0x0046ddc9: the frame-start pose's `at` row
+    } else {
+        F(r, off::kForward + 0) = std::cos(io.yaw);
+        F(r, off::kForward + 8) = std::sin(io.yaw);
+    }
 
     // A8 position accumulator: the frame's world-space position delta, summed over
     // the substeps exactly as FUN_0046e9e0 accumulates it into the matrix
@@ -1772,8 +1797,10 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
             BodyOrient_OmegaFromSteer(r, chunkMs, input, w);
             BodyOrient_IntegrateStep(basis, w);
             io.yaw = BodyOrient_Heading(basis);
-            F(r, off::kForward + 0) = std::cos(io.yaw);
-            F(r, off::kForward + 8) = std::sin(io.yaw);
+            if (!FwdAt()) {   // [u9758] the original writes no +0x9d4 inside the substep loop
+                F(r, off::kForward + 0) = std::cos(io.yaw);
+                F(r, off::kForward + 8) = std::sin(io.yaw);
+            }
         }
         D2Sink::Mark("sub_orient", r, d2sSub, pass, chunkMs, remMs);   // 0x0046e9e0
 
