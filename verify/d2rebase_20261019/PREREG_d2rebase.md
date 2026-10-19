@@ -40,3 +40,13 @@ Determinism precondition unchanged (section 3b of the register, with the new `h`
 Three port runs each, each alone, on the chosen recipe: the current default; the pair `MASHED_A6A_LUT` + `MASHED_A6A_F32`;
 the triple (pair + `MASHED_A5_SUSP_LUT`). Historic D2 logs (all from the 12 / 0 arm) rescored with both reductions where they
 are on disk: d2close, d2ref, fwdsse, u9760, u9761, u9762.
+
+## Amendment 1 (2026-10-19, the user's recipe choice, before any port run)
+
+**Option A, the register as amended** (user decision via the orchestrator: "score the port with the same recipe as the
+original"; the instruction's section-1 values were quoted by mistake): `MASHED_TRACK_SEL=12` (section 13.3, Training against
+Training), `MASHED_STEER_HOLD_AFTER=0` (section 16.7, full lock from sim step 0), `--max-lines 1080`, the same reducers. The
+port run is the existing D2 arm (`run_arms.py` `D2_*`: `a8_run_port.py`'s recipe with `MASHED_TRACK_SEL=12
+MASHED_STEER_HOLD_AFTER=0 MASHED_MEASURE_SOLO=1`, 90 s, each run alone). **The only change from the current scorer
+(`verify/d2settle_20261016/score_d2.py`) is restoring `--max-lines 1080`** on the port reduction (`score_d2_v2.py port`), plus
+the 8-run band in section 2.
