@@ -50,3 +50,11 @@ also writes it after physics, from the frame driver `0x00425a99` `FUN_004252c0` 
 `0x00425360`), and before physics from the AI callers and A5, all from slot 0, so physics reads the frame-start pose's `at`
 row in both. Default candidate `FA`: D2 `D2_FA_1..3`, 13 tracks (`verify/rsky_20261016/run13.py` with `MASHED_FWD_AT=1`,
 scored with `verify/rres_20261016/cites_rres.json`), `H_FA`.
+
+## Amendment 2 (2026-10-18, rebased onto `ffb209b32`, before these)
+
+The f60flip merged (`MASHED_FIX_5CEA60` default ON; default G-CTRL `b40b47bc / fb690fb1 / d3a20f4c`, B dumps unchanged).
+`work/u9758` rebased onto `ffb209b32`, exe `fa9b48ff`. The amendment-1 numbers were measured on `bf451f914` (evidence in
+`D:/MashedWT/u9758_data/verify/arms_bf451`). All gates re-run on the rebased exe with the same rules: G-NOOP (`B_DEF_*`
+unchanged, `H_DEF` = `b40b47bc / fb690fb1 / d3a20f4c`), G-FWD / G-DRIFT (`B_SPLSBKNF60FAR1_K1`), G-B (`B_FA_*`), D2
+(`D2_FA_1..3`), 13 tracks, `H_FA`. `MASHED_FWD_AT` stays default OFF (the flip is the user's decision).
