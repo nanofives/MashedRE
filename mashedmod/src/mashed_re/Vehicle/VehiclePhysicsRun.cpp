@@ -354,8 +354,9 @@ constexpr std::size_t kWheelState0  = 0x198;    // wheel-0 state (== off::kWheel
 constexpr std::size_t kContactNorm0 = 0x200;    // wheel-0 contact normal (A5 pf[3..5])
 constexpr std::size_t kMountX0      = 0x16c;    // wheel-0 mount x (FUN_0046b540 +0x16c)
 constexpr std::size_t kMountZ0      = 0x174;    // wheel-0 mount z (FUN_0046b540 +0x174)
-// _DAT_005cea60 (FUN_0046f6c0 reset: probe = mount*this) is 0.2778f (0x3e8e3bcd); [u9756] MASHED_FIX_5CEA60=1 uses it.
-const float           kProbeScale   = [] { const char* e = std::getenv("MASHED_FIX_5CEA60"); return (e && e[0] == '1') ? 0.2778f : 0.277779f; }();
+// _DAT_005cea60 (FUN_0046f6c0 reset: probe = mount*this) is 0.2778f (0x3e8e3bcd); [u9756] default ON since the f60flip
+// (2026-10-18, user decision), MASHED_NO_FIX_5CEA60=1 restores the old 0.277779f.
+const float           kProbeScale   = [] { const char* e = std::getenv("MASHED_NO_FIX_5CEA60"); return (e && e[0] == '1') ? 0.277779f : 0.2778f; }();
 constexpr float       kPenetration  = 0.05f;    // seat probe this far below the surface (classifier
                                                 // depth band [_DAT_005cea5c -0.25, _DAT_005cc564 0.25))
 inline std::size_t wheelStateOff (int w) { return kWheelState0  + (std::size_t)w * kWheelStride; }

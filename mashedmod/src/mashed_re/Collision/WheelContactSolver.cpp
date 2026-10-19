@@ -50,8 +50,9 @@ unsigned g_wcsVelWrites[3] = { 0u, 0u, 0u };
 // constants (raw value @ address)
 // _DAT_005cea60 is 0.2778f (0x3e8e3bcd in the anchored binary); 0.277779f (0x3e8e390d) was a transcription slip. It scales
 // the suspension mounts into the contact points (and fv's reset), so the depths drift 7e-7 on a slope (u9756, wheel-0 x
-// 1.26e-5 off against o_sp2). [u9756] MASHED_FIX_5CEA60=1 (default OFF) uses the binary's value.
-static const float kWTorque   = [] { const char* e = std::getenv("MASHED_FIX_5CEA60"); return (e && e[0] == '1') ? 0.2778f : 0.277779f; }();
+// 1.26e-5 off against o_sp2). [u9756] MASHED_FIX_5CEA60 uses the binary's value; default ON since the f60flip (2026-10-18,
+// user decision), MASHED_NO_FIX_5CEA60=1 restores the old 0.277779f.
+static const float kWTorque   = [] { const char* e = std::getenv("MASHED_NO_FIX_5CEA60"); return (e && e[0] == '1') ? 0.277779f : 0.2778f; }();
 static const float kReset10   = 10.0f;      // literal 0x41200000
 static const float kState2Lo  = 0.02f;      // _DAT_005ce18c
 static const float kStateCmp  = -0.005f;    // _DAT_005ceaa0

@@ -56,3 +56,11 @@ U-9756 RESOLVED; U-9152 note (the `+0x968` half is the next drift driver); new U
 ## 4. User decision needed
 
 `MASHED_FIX_5CEA60` default ON (opt-out at the flip)?
+
+### 5. Flipped (user decision 2026-10-18)
+
+Default ON; `MASHED_NO_FIX_5CEA60=1` opts out. Branch `work/f60flip` from `bf451f914`, exe `18b15231` (`MASHED_NO_DEPLOY=1`),
+private root `D:\MashedWT\f60flip_root`, `flip/RUNLOG.txt`: G-CTRL default `b40b47bc / fb690fb1 / d3a20f4c` x2 (= `H_F60`);
+default B dumps K0 / K1 / K26 `c7b40cf2 / 5b9905d8 / f680a529` (unchanged, = `F60`); opt-out `b7534619 / fb690fb1 / d3a20f4c`
+(the previous default). The default now equals the `F60` arm, so section 1's (b), D2 (3/3) and 13-track (869 rows, 0 RED)
+numbers stand for it.

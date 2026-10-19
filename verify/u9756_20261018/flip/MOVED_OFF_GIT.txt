@@ -1,0 +1,20 @@
+# f60flip evidence moved to D:/MashedWT/f60flip_data/verify (name sha8 bytes); RUNLOG.txt stays in git
+flip/arms/B_DEF_K0.log 2b5fca09 12587
+flip/arms/B_DEF_K0.step.csv c7b40cf2 1297478
+flip/arms/B_DEF_K1.log 336a5db9 12588
+flip/arms/B_DEF_K1.step.csv 5b9905d8 1471012
+flip/arms/B_DEF_K26.log 459e1404 12358
+flip/arms/B_DEF_K26.step.csv f680a529 1902700
+flip/arms/H_DEF-2.gates.csv fb690fb1 10959956
+flip/arms/H_DEF-2.log 130cc006 13510
+flip/arms/H_DEF-2.ptrace.log d3a20f4c 9461070
+flip/arms/H_DEF-2.step.csv b40b47bc 11015458
+flip/arms/H_DEF.gates.csv fb690fb1 10959956
+flip/arms/H_DEF.log 91f95ce2 13510
+flip/arms/H_DEF.ptrace.log d3a20f4c 9461070
+flip/arms/H_DEF.step.csv b40b47bc 11015458
+flip/arms/H_NOF60.gates.csv fb690fb1 10959956
+flip/arms/H_NOF60.log 130cc006 13510
+flip/arms/H_NOF60.ptrace.log d3a20f4c 9461070
+flip/arms/H_NOF60.step.csv b7534619 11015458
+flip/arms/batch.txt 922f8b48 1029
