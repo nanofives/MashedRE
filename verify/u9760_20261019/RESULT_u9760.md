@@ -54,3 +54,30 @@ line. U-9760 stays open.
 A diagnostic in `ForceIntegrator.cpp` / `Integrate2.cpp` that logs car 1's A5 projected force and A6a's addend per frame
 (default OFF), then compare with `o_f214`. Then the A6a addend's inputs (`+0x9e4`, the locals at `[esp+0x1c / 0x34 / 0x44 /
 0x48 / 0x4c]`).
+
+## 5. Amendments 1-3 (branch `work/u9760b`, rebased onto `c43ebeba1`, exe `b0f02b3c`): the A6a addend
+
+1. **A5 is exact; the gap was A6a's addend.** New diagnostic `MASHED_FORCE_SPLIT` (inert: `B_XA6FS_K1` step dump identical to
+   the stack without it) logs, at A6a's addend for wheel 0 of one car, the force before (A5's output), the addend and its
+   inputs. At call 1 the port's force before the addend equals the original's A5 output (`-13.9359436 / -11923.7607`); the
+   addend differed (`11.0494213 / 9538.53711` against the original's `11.0494318 / 9538.54492`).
+2. **The cause: A6a's lengths.** The original takes all nine of A6a's lengths with the LUT `FUN_004c3ac0` (`0x0046766e`
+   `+0x9e4`, `0x00467680` `+0x9e8`, `0x004680f6` le4, `0x0046820a` ld4, `0x0046833e` |F|, `0x004684bb` m15, `0x004684d7` m16,
+   `0x004685b7` m78, `0x004686a4` speed); the port used exact sqrt at the same nine sites in the same order.
+   **`MASHED_A6A_LUT` (default OFF)** makes them the LUT form: the addend, the call-1 force words (`-2.8865118 / -2385.21582`)
+   and the call-1 velocity `+0x9b0` equal the original's. Drift: call 4 3e-9 (was 2.4e-7), call 12 4.05e-6 (was 6.2e-6),
+   call 21 1.164e-4 (was 1.202e-4). Next first-differing field: omega `+0x9c0` at call 1 (-8.73517183e-06 / -8.73517274e-06);
+   the port's A6a torque chain runs in `double` (U-A6A-FLOAT10) where the original runs x87 at PC_24.
+3. **Gates on the new default (`c43ebeba1`):**
+
+| gate | measured | verdict |
+|---|---|---|
+| G-NOOP | `B_DEF_K0/K1/K26` `85561724 / 76ef3eab / a000895f`; `H_DEF` `726b8fab / b048d6f0 / ecc20282` | PASS |
+| G-F214 | `B_XA6FS_K1` addend and force words = `o_f214` | PASS |
+| G-B | `B_A6L_K0/K1/K26` `f43742fb / 089b0877 / 0ffa5a81`: A 2/3, **B 3/3** (car 3 passes for the first time), C 0/3 | PASS |
+| G-D2 | `D2_A6L_1..3`: slip1500 **0.1877 OUT** (band 0.18855-0.19635; original 0.1943), slip2000 0.2547 in, driving-median 1956.70 in, H1 398/400, 1627-1628 lines | **FAIL** |
+| G-13 | 39 frames, 868 rows, 868 cited, 0 RED, instrument gates PASS | PASS |
+| G-CTRL | `H_A6L` `6f2fb5ea / 6ba84713 / 8953e594` | reported |
+
+   On the pre-flip default (`b0ad0796e`) the same knob was in band (slip1500 0.1904). **Not a default candidate on the new
+   default**: the faithful A6a lengths move the player's slip1500 out of band, the same pattern as U-9757. New U-9761.
