@@ -1,0 +1,87 @@
+{
+ "rule": "mean +/- max(3h, 2% of mean), h = half-range of the runs (d81a8df6 / re/analysis/D2_REOPEN_2026-09-29.md 3a)",
+ "runs": {
+  "steerR (MARIANO-PC)": {
+   "slip1500": 0.1913,
+   "slip2000": 0.2498,
+   "drvmed": 1940.59
+  },
+  "elim (MARIANO-PC)": {
+   "slip1500": 0.1911,
+   "slip2000": 0.2501,
+   "drvmed": 1957.9
+  },
+  "solo3 (MARIANO-PC)": {
+   "slip1500": 0.1937,
+   "slip2000": 0.2498,
+   "drvmed": 1937.89
+  },
+  "solo4 (MARIANO-PC)": {
+   "slip1500": 0.1937,
+   "slip2000": 0.2498,
+   "drvmed": 1937.89
+  },
+  "r1 (LIVING-PC)": {
+   "slip1500": 0.1979,
+   "slip2000": 0.2515,
+   "drvmed": 1937.06
+  },
+  "r2 (LIVING-PC)": {
+   "slip1500": 0.1979,
+   "slip2000": 0.2515,
+   "drvmed": 1937.06
+  },
+  "r3 (LIVING-PC)": {
+   "slip1500": 0.1953,
+   "slip2000": 0.2503,
+   "drvmed": 1971.67
+  },
+  "r4 (LIVING-PC)": {
+   "slip1500": 0.1984,
+   "slip2000": 0.2517,
+   "drvmed": 1944.28
+  }
+ },
+ "slip1500": {
+  "mean": 0.194912,
+  "min": 0.1911,
+  "max": 0.1984,
+  "h": 0.00365,
+  "3h": 0.01095,
+  "2pct": 0.003898,
+  "tol": 0.01095,
+  "width_set_by": "3h",
+  "band": [
+   0.18396,
+   0.20586
+  ]
+ },
+ "slip2000": {
+  "mean": 0.250563,
+  "min": 0.2498,
+  "max": 0.2517,
+  "h": 0.00095,
+  "3h": 0.00285,
+  "2pct": 0.005011,
+  "tol": 0.005011,
+  "width_set_by": "2%",
+  "band": [
+   0.24555,
+   0.25557
+  ]
+ },
+ "drvmed": {
+  "mean": 1945.5425,
+  "min": 1937.06,
+  "max": 1971.67,
+  "h": 17.305,
+  "3h": 51.915,
+  "2pct": 38.91085,
+  "tol": 51.915,
+  "width_set_by": "3h",
+  "band": [
+   1893.63,
+   1997.46
+  ]
+ }
+}

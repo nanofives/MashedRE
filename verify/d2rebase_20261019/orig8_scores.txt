@@ -1,0 +1,8 @@
+verify/a8_steer_20260824/orig_steerR.msd: slip1500=0.1913 slip2000=0.2498 drvmed=1940.5900 n=('312', '541', '1153') H1 398/400 median 1333.9 (max-lines-independent)
+verify/player_reg_20260929/orig_elim/orig_a8_elim.msd: slip1500=0.1911 slip2000=0.2501 drvmed=1957.9000 n=('305', '572', '1184') H1 398/400 median 1333.9 (max-lines-independent)
+verify/d2_reopen_20260929/orig_solo3.msd: slip1500=0.1937 slip2000=0.2498 drvmed=1937.8900 n=('314', '540', '1154') H1 398/400 median 1333.9 (max-lines-independent)
+verify/d2_reopen_20260929/orig_solo4.msd: slip1500=0.1937 slip2000=0.2498 drvmed=1937.8900 n=('314', '540', '1154') H1 398/400 median 1333.9 (max-lines-independent)
+D:/MashedWT/u9763_data/orig/orig_solo_r1.msd: slip1500=0.1979 slip2000=0.2515 drvmed=1937.0600 n=('313', '550', '1180') H1 398/400 median 1333.9 (max-lines-independent)
+D:/MashedWT/u9763_data/orig/orig_solo_r2.msd: slip1500=0.1979 slip2000=0.2515 drvmed=1937.0600 n=('313', '551', '1181') H1 398/400 median 1333.9 (max-lines-independent)
+D:/MashedWT/u9763_data/orig/orig_solo_r3.msd: slip1500=0.1953 slip2000=0.2503 drvmed=1971.6700 n=('307', '581', '1185') H1 398/400 median 1333.9 (max-lines-independent)
+D:/MashedWT/u9763_data/orig/orig_solo_r4.msd: slip1500=0.1984 slip2000=0.2517 drvmed=1944.2800 n=('312', '554', '1177') H1 398/400 median 1333.9 (max-lines-independent)
