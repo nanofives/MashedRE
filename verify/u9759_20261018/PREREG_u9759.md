@@ -45,3 +45,14 @@ Arms: `B_DEF_K0/K1/K26`, `H_DEF` (G-NOOP); `B_UTBQ1SSE_K1` / `B_BQ1SSE_K1` (u975
 | G-DRIFT | car 1 x/z gap at call 21 < 1e-5 (now 1.202e-4); else the next first-differing field |
 | G-B | (b) on `SSE`: no car that passes on the default turns to FAIL |
 | G-D2 / G-13 | for a default proposal: D2 3/3, 13 tracks 0 RED, G-CTRL reported |
+
+## Amendment 1 (2026-10-18, after the B arms, before these)
+
+Measured: G-NOOP PASS. G-PTS PASS: with `MASHED_RW_SSE_POINTS` the port's car-1 spawn-pass and first-call wheel points and
+up vector equal `o_bq1` bit for bit (later rows are not comparable row by row: the original is still in countdown hold
+ticks). With `MASHED_UP_TRINORMAL` + the knob, `+0x9cc` is exact at calls 0 and 1 and the rotation rows at call 1 too.
+G-DRIFT FAIL: call 21 1.202e-4 unchanged; call-1 velocity `+0x9b0` and omega `+0x9c0` unchanged; force words `+0x214 /
++0x21c` differ at call 1. Also found: the 16-entry ring A4 writes at `rec + 0x1ac + (DAT_007f101c & 0xf)*4` (watch `o_w1d4`,
+`pc 0x00470848 / 0x0047090d`) holds the call-1 value at index 13 in the original and 10 in the port (`g_torqueRingPhase`).
+G-B PASS (`SSE`: A 2/3, B 2/3, C 0/3). Default candidate `SSE`: D2 `D2_SSE_1..3`, 13 tracks with `MASHED_RW_SSE_POINTS=1`
+(cites `verify/rres_20261016/cites_rres.json`), `H_SSE`.
