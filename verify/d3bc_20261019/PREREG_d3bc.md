@@ -88,3 +88,14 @@ H3: FUN_00416250's fresh-steer products use 0.003f. Knob `MASHED_STEER_SCALE_RDA
 Arms: `B_DEF_K0/K1/K26` (G-NOOP); `B_EXL7AFSR2_K26` / `B_EXL7AFSR3_K26` / `B_EXL7AFSR1_K1` (G-REC2: first record call where
 cars 2 / 3 split from `o_c2` / `o_c3`, car 1 from o_wobj2, against amendment 1's call 4 / 7 / 105); (b) on `EXL7AFS`,
 `L7AFS` and `SC` alone at K0 / K1 / K26 / K54. Gates and decision as section 1.
+
+## 4. Amendment 3 (written before the arm; existing knobs only, no new code)
+
+Measured after amendment 2's arms: G-NOOP PASS (exe `65de976f`). On `EXL7AFS` the first command row moves to car 1 row 100
+(was 71), car 2 row 54 (was 4), car 3 row 39; the first record split outside the fields that differ on the exact car 1 is
+car 2 call 11 (`+0x214`, 1 ulp), car 3 call 7 (`+0x9b8`, 1.2e-4). (b): `EXL7AFS` A 1/3, B 0/3, C 0/3; `L7AFS` A 2/3, B 1/3
+(cars 2 / 3 `c1# 50 [17,46]`), C 0/3; `SC` alone A 2/3, B 1/3, C 0/3. No default candidate.
+
+Report arm: car 1's row-100 event is FUN_00414c30 returning 2 (mode 7). `EXL7AFSM7` = `EXL7AFS` + the M4 set
+(`MASHED_REGISTRY`, `MASHED_PICKUPS_ORIG`, `MASHED_REG_CARS`, `MASHED_REG_CALLBACKS`, `MASHED_MODE7`) at K0 / K26, with
+car 1 records. Question only: does car 1 take mode 7 at row 100 and how far do its commands then match. No gate, no default.
