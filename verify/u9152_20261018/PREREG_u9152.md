@@ -50,3 +50,13 @@ sees car j's frame-start pose on both substeps (the original: its post-substep-1
 | G-DRIFT | `SPLSBKNF60DB` K1 car 1 x/z gap at call 21 (now 1.2e-4): report; predicted unchanged (H2) |
 | G-B | (b) on `DB` and `DBX`: no car that passes on the default turns to FAIL; B contact schedule (`ovon.py`) reported |
 | G-D2 / G-13 | only for a default proposal: D2 3/3, 13 tracks 0 RED, G-CTRL reported |
+
+## Amendment 1 (2026-10-18, after the B arms, before these)
+
+Measured: G-NOOP B PASS (`c7b40cf2 / 5b9905d8 / f680a529`). G-HALF PASS on float content (`+0x968..+0x9a0` = o_wobj2 at
+call 0; only the pad dwords `+0x954 / +0x964 / +0x984 / +0x9a4` differ). G-DRIFT: identical to `SPLSBKNF60` through call 27
+(H2 holds). G-B FAIL: `B_DB_K1` car 1 B PASS -> FAIL. `DBX` = `DB` on K0 / K1 / K26 (the discard never fires). No default
+proposal, so no D2 / 13-track arm. The car-1 record's remaining call-0 differences are `+0x9cc` (0.999988973 / 1) and
+`+0x9d4` (-8.74227766e-08 / -4.37113883e-08); `+0x9c8..+0x9d0` is the tri-normal `MASHED_UP_TRINORMAL` ports (lk21).
+Extra arms, report only: `B_SPLSBKNF60UTR1_K1` and `B_SPLSBKNF60DBUTR1_K1` (+ `MASHED_UP_TRINORMAL`, car-1 record): does
+`+0x9cc` at call 0 equal o_wobj2, and does the call-21 gap move. `H_DEF` (G-NOOP) and `H_DB` (reported).
