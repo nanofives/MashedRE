@@ -53,3 +53,11 @@ original calls the LUT length `FUN_004c3ac0` nine times in order (`0x0046766e +0
 port's nine sites. New knob `MASHED_A6A_LUT` (default OFF), exe `eadbd7fc`. Arms: `B_DEF_K0/K1/K26` (G-NOOP), `B_XA6FS_K1`
 (XR1 + knob + split log), `B_XA5A6FS_K1` (+ `MASHED_A5_SUSP_LUT`), `B_A6L_K0/K1/K26`, `H_DEF`, `H_A6L`. Gates as in section 3,
 with G-F214 now: the addend equals the original's.
+
+## Amendment 2 (2026-10-19, after the amendment-1 arms, before these)
+
+Measured: G-NOOP PASS (`B_DEF_K0/K26` `c7b40cf2 / f680a529`). G-F214 PASS with `MASHED_A6A_LUT`: the addend `11.0494318 /
+9538.54492` and the call-1 force words `-2.8865118 / -2385.21582` equal the original's; the call-1 velocity `+0x9b0` too.
+G-DRIFT FAIL but smaller early (call 4 3e-9, call 12 4.05e-6, call 21 1.164e-4). Next first-differing field: omega `+0x9c0` at
+call 1. G-B PASS (`A6L`: A 2/3, B 2/3, C 0/3). Default candidate `A6L`: D2 `D2_A6L_1..3`, 13 tracks with `MASHED_A6A_LUT=1`
+(cites `verify/rres_20261016/cites_rres.json`), `H_DEF`, `H_A6L`.
