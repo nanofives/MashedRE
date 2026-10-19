@@ -100,6 +100,14 @@ static bool A6aLut() {
     static const bool s = [] { const char* e = std::getenv("MASHED_A6A_LUT"); return e && e[0] == '1'; }();
     return s;
 }
+// [u9761 2026-10-19] MASHED_A6A_F32=1 (default OFF, verify/u9761_20261019/PREREG_u9761.md): A6a's torque / grip chain at
+// float precision. The port keeps l_60, l_d0, m15, m16, r and the blend factor in double ([U-A6A-FLOAT10]: the original holds
+// them as float10 on the x87 stack), but the race thread runs x87 at PC_24 (memory track-load-runs-at-pc24), where every
+// float10 step rounds to a 24-bit mantissa, which an SSE2 float step reproduces.
+static bool A6aF32() {
+    static const bool s = [] { const char* e = std::getenv("MASHED_A6A_F32"); return e && e[0] == '1'; }();
+    return s;
+}
 static inline float A6Len(const float* t) {
     if (A6aLut()) return mashed_re::Math::LutSqrt((t[0] * t[0] + t[1] * t[1]) + t[2] * t[2]);
     return Vec3Mag3(t);
@@ -508,6 +516,8 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
                 D.le4raw = Mag3(le0, ldc, ld8); D.le4 = le4;
                 D.lat[0]=lac; D.lat[1]=la8; D.lat[2]=la4; D.ld4=ld4;
                 D.lbc = lbc; D.spin = d_spin; D.fired = 1;
+                if (A6aF32()) l_60 = (double)(ld4 * le4 + (float)l_60);   // [u9761] float precision (x87 PC_24)
+                else
                 l_60 = (double)ld4 * (double)le4 + l_60;             // [U-A6A-FLOAT10]
                 if ((l94 & 0x100) == 0) {
                     float f5 = lbc;
@@ -549,6 +559,17 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
             l_b8 += c8; l_b4 += c4; l_b0 += c0;
             l_6c += f0; l_68 += f1; l_64 += f2;
             float wm = Rp(p,-0xb);
+            if (A6aF32()) {   // [u9761] the same steps at float precision (x87 PC_24)
+                const float m15f = Mag3(ac*wm, a8*wm, a4*wm);                   // 0x004684bb
+                l_d0 = (double)(m15f * kNormAccum + (float)l_d0);
+                const float m16f = Mag3(x84, x80, x7c);                         // 0x004684d7
+                if (kSpeedMin < m16f) {
+                    const float r = (m15f * kNormAccum) / m16f;
+                    l_78 = l_78 - x84 * r;
+                    l_74 = l_74 - x80 * r;
+                    l_70 = l_70 - x7c * r;
+                }
+            } else {
             double m15 = (double)Mag3(ac*wm, a8*wm, a4*wm);
             l_d0 = m15 * (double)kNormAccum + l_d0;                  // [U-A6A-FLOAT10]
             double m16 = (double)Mag3(x84, x80, x7c);
@@ -558,6 +579,7 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
                 l_74 = (float)((double)l_74 - (double)x80 * r);
                 l_70 = (float)((double)l_70 - (double)x7c * r);
             }
+            }   // [u9761] end of the double form
         }
     }
 
@@ -603,6 +625,18 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
     const float dg_fMag = Mag3(l_6c, l_68, l_64);
     const double dg_frac = (l_d0 != 0.0) ? ((l_d0 - m78) / l_d0) : 0.0;
     double lin_b0;
+    if (A6aF32()) {   // [u9761] the blend at float precision (x87 PC_24)
+        const float d0f = (float)l_d0, m78f = (float)m78;
+        if (d0f - m78f == 0.0f) {
+            lin_b0 = (double)l_b0;
+        } else {
+            const float f = (d0f - m78f) / d0f;
+            const float e0 = l_6c - l_b8, dc = l_68 - l_b4, d8 = l_64 - l_b0;
+            l_b8 = e0 * f + l_b8;
+            l_b4 = dc * f + l_b4;
+            lin_b0 = (double)(d8 * f + l_b0);
+        }
+    } else
     if (l_d0 - m78 == 0.0) {
         lin_b0 = (double)l_b0;
     } else {
@@ -612,7 +646,7 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
         l_b4 = (float)((double)dc * f + (double)l_b4);
         lin_b0 = (double)d8 * f + (double)l_b0;
     }
-    float lb0f = (float)((double)Rf(v,0xb1c) + lin_b0);
+    float lb0f = A6aF32() ? (Rf(v,0xb1c) + (float)lin_b0) : (float)((double)Rf(v,0xb1c) + lin_b0);   // [u9761]
     // linear-velocity integration (+0x9b0..) by mass*dt over (control force + accum)
     float linTerm = dt * Rf(v, 0x54) * kDt;
 
@@ -681,7 +715,7 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
     Wf(v, 0x9b8, linTerm * lb0f + Rf(v,0x9b8));
     float speed = A6Len((const float*)((char*)v + 0x9b0));     // 0x004686a4
     int tId = Ri(v, 0x1f0);
-    float grip = (float)(l_60 / (double)Rf(v, 0x18c));
+    float grip = A6aF32() ? ((float)l_60 / Rf(v, 0x18c)) : (float)(l_60 / (double)Rf(v, 0x18c));   // [u9761]
     Wf(v, 0x9e4, speed);
     // [D2 attempt 19] T_post's LEFT endpoint. a18_budget.py defines s_mid = +0x9e4, so
     // this is the one phase where |v| and +0x9e4 are the same number by construction
