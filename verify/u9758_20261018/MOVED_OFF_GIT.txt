@@ -1,0 +1,32 @@
+# u9758 evidence moved to D:/MashedWT/u9758_data/verify/arms (rebased run; the bf451f914 run is in arms_bf451; 13 tracks in tracks_fa2 / tracks_fa) (name sha8 bytes); RUNLOG.txt stays in git
+arms/B_DEF_K0.log 038ac49f 12587
+arms/B_DEF_K0.step.csv c7b40cf2 1297478
+arms/B_DEF_K1.log b5d2d0e3 12588
+arms/B_DEF_K1.step.csv 5b9905d8 1471012
+arms/B_DEF_K26.log 715c5214 12358
+arms/B_DEF_K26.step.csv f680a529 1902700
+arms/B_FA_K0.log 715c5214 12358
+arms/B_FA_K0.step.csv 843d31ac 1708623
+arms/B_FA_K1.log 1a7074ab 12588
+arms/B_FA_K1.step.csv 381629ba 1565975
+arms/B_FA_K26.log 715c5214 12358
+arms/B_FA_K26.step.csv b66e1546 1901053
+arms/B_SPLSBKNF60FAR1_K1.log 62e2c452 12491
+arms/B_SPLSBKNF60FAR1_K1.rec.msd 76ca3ae8 2925688
+arms/B_SPLSBKNF60FAR1_K1.step.csv ed5df7cd 1328968
+arms/D2_FA_1.log 022a5bb3 22823
+arms/D2_FA_1.motion_diag.log 1a46a8fe 1194128
+arms/D2_FA_2.log 56b276b7 22905
+arms/D2_FA_2.motion_diag.log 1a46a8fe 1194128
+arms/D2_FA_3.log d16808da 22902
+arms/D2_FA_3.motion_diag.log c17122ad 1194864
+arms/H_DEF.gates.csv fb690fb1 10959956
+arms/H_DEF.log bfbfdd04 13510
+arms/H_DEF.ptrace.log d3a20f4c 9461070
+arms/H_DEF.step.csv b40b47bc 11015458
+arms/H_FA.gates.csv fa7a6390 10979939
+arms/H_FA.log e144916f 13240
+arms/H_FA.ptrace.log 27a97e09 9764401
+arms/H_FA.step.csv ded760d5 12001294
+arms/batch.txt bbd5230f 1686
+verify/u9758_20261018/o_fw1.msd moved to D:/MashedWT/u9758_data/verify/o_fw1.msd
