@@ -61,3 +61,12 @@ Measured: G-NOOP PASS (`B_DEF_K0/K26` `c7b40cf2 / f680a529`). G-F214 PASS with `
 G-DRIFT FAIL but smaller early (call 4 3e-9, call 12 4.05e-6, call 21 1.164e-4). Next first-differing field: omega `+0x9c0` at
 call 1. G-B PASS (`A6L`: A 2/3, B 2/3, C 0/3). Default candidate `A6L`: D2 `D2_A6L_1..3`, 13 tracks with `MASHED_A6A_LUT=1`
 (cites `verify/rres_20261016/cites_rres.json`), `H_DEF`, `H_A6L`.
+
+## Amendment 3 (2026-10-19, rebased onto `c43ebeba1`, before these)
+
+Amendment-2 gates were measured on `b0ad0796e` (exe `eadbd7fc`): `A6L` (b) A 2/3 B 2/3 C 0/3, D2 3/3 (slip 0.1904 / 0.2547,
+driving-median 1980.40-1980.65, H1 398/400), 13 tracks 867 rows 0 RED, `H_A6L` `3df00fdb / 7ed9989c / d42c9d28`; evidence in
+`D:/MashedWT/u9760_data/verify/split_b0ad0796e`. The fwdsse flip merged (`MASHED_FWD_AT` + `MASHED_RW_SSE_POINTS` default ON;
+default G-CTRL `726b8fab / b048d6f0 / ecc20282`, B dumps `85561724 / 76ef3eab / a000895f`). `work/u9760b` rebased onto
+`c43ebeba1`. All gates re-run on the rebased exe: G-NOOP (`B_DEF_*`, `H_DEF` = the values above), G-F214 (`B_XA6FS_K1`), G-B
+(`B_A6L_*`), D2 `D2_A6L_1..3` (each alone), 13 tracks with `MASHED_A6A_LUT=1`, `H_A6L`. `MASHED_A6A_LUT` stays default OFF.
