@@ -27,3 +27,39 @@ G-CTRL only for a default proposal.
 | G-POS | `recpos.py`: report the first call where position / velocity differ (now 7 / 5) |
 | G-B | (b) on `LC`: no car that passes on the default fails |
 | G-D2 / G-13 | for a default proposal: D2 3/3 on the d2rebase gate, 13 tracks 0 RED, G-CTRL reported |
+
+## 2. Amendment 1 (2026-10-19, before any MASHED_ROTATE_LUT arm)
+
+Measured after the partial RESULT (`8eb8c0fe0`), which this amendment corrects:
+
+- The `0x00468320` probe perturbed the run. `Interceptor.attach` mid-function swaps `[esp]`, a live A6a local (memory
+  frida-interceptor-is-entry-only). o_aq1's car 1 tilts at call 1 (`+0x92c` `2.66e-08`) where o_wobj2 and the watch-only
+  o_w2d8 hold 0. Its `la8` result is an artifact and the "axis y" reading in RESULT section 0.2-0.3 / U-9764 is withdrawn.
+- New probe: entry hook on the LUT length `0x004c3ac0` filtered on return address `0x00468343` and argument `rec + 0x268 +
+  0x70` (wheel 1's force). Its run o_aq4 matches o_wobj2 like the watch-only control (only the history block
+  `+0x1d4..+0x1e8 / +0x298..+0x2ac` shifts). Against the port's split log (`B_XW1_K1`, step `066864b0`) every block-#4 term
+  matches through call 2. At call 3 the first differing input is `le0`: original `0.0337665901` (`3d0a4ed6`), port
+  `0.0337664969`. `ld8`, `le4`, `ldc`, the axis, and the record's `+0x9bc..+0x9c4`, `+0x9e4`, `+0x9e8`, `+0x9b0..` are equal.
+- `le0` is the spin branch: `RwMatrixRotate(m, +0x9bc, 270, 0)` (`0x0046805a` -> `0x004c4d20`), the vectors transform of the
+  wheel offset (`0x00468072`), then `dst0 * f - +0x9b0` with `f = (+0x9e8 * 0.019904457) * max(+0x9e4 * 0.008, 8) * 360`
+  (`0x00468077..0x004680ce`, constants `0x005cea18 / 0x005cea14 / 0x005cc9f4 / 0x005ccac4`, equal to the port's). The port's
+  `dst0 * f` is larger by a factor `1.000026`, and the LUT length `+0x9e8` (`5.62020905e-05`) over the exact `|av|`
+  (`5.62006207e-05`) is `1.0000262`.
+- `0x004c4d20` normalizes the axis with `call 0x004c3b90` (`0x004c4d5d`), the LUT inverse sqrt. The port's
+  `Math/RwMatrixRotate.cpp` calls `FastInvSqrt`, which in the standalone has no RW LUT and returns `1/sqrt(x)`
+  (`Math/RwSqrt.cpp`, the CPU fallback).
+
+H2: with `RwMatrixRotate` normalizing through `LutInvSqrt` (`Math/RwLutTables.h`, the original's table), car 1's call-3 `le0`,
+the addend and `+0x2d8` equal the original's. Knob `MASHED_ROTATE_LUT=1` (default OFF). It reaches every `RwMatrixRotate`
+caller (A5 Phase 0, A6a spin, A6b, camera, renderer, aero), all of which call `0x004c3b90` in the original.
+
+Arms: `B_DEF_K0/K1/K26` (G-NOOP, knob off); `B_XW1RL_K1` (split + record); `B_RL_K0/K1/K26`; then D2 / 13 tracks / G-CTRL
+only for a default proposal.
+
+| gate | rule |
+|---|---|
+| G-NOOP | knob off: B dumps `6efb49ed / 3e0724ac / 395fb8b7` |
+| G-LE0 | `XW1RL` call 3 `le0` = `0.0337665901`, addend x = `30.5746326`, `+0x2d8` = `-28.2014942` (o_aq4) |
+| G-POS | `recpos.py` against o_wobj2: report the first call where position / velocity differ (now 7 / 5) |
+| G-B | (b) on `RL`: no car that passes on the default fails |
+| G-D2 / G-13 | for a default proposal: D2 3/3 on the d2rebase gate, 13 tracks 0 RED, G-CTRL reported |

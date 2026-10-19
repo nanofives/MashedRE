@@ -1623,30 +1623,35 @@ function batchProbeArm(recBaseHex, car, countOnly){
 }
 function batchProbeDrain(n){ return BQ.rows.splice(0, n || 400); }
 // --- A6A addend probe (u9764, 2026-10-19) -------------------------------------
-// Entry hook at 0x00468320 (A6a block #4, after the wheel-force addend is built, before `fadd [edi+0x70]`), filtered on
-// ESI == the car record and EDI == record + 0x1a4 + wheel*0xc4. Reads stack dwords only (no x87 register):
-// [esp+0x0c] le4 (capped), [esp+0x1c] ld4, [esp+0x28/0x2c/0x30] lc8/lc4/lc0', [esp+0x34] lbc, [esp+0x44/0x48/0x4c]
-// lac/la8/la4, [esp+0x50/0x54] the addend x / y, [esp+0x58] the l94 == 0 branch's l98 * lc0'.
+// Entry hook on the LUT length 0x004c3ac0, filtered on the return address 0x00468343 (A6a block #4's `call` at
+// 0x0046833e, right after the addend is added to the wheel force) and on its argument == record + 0x1a4 + wheel*0xc4 +
+// 0x70 (the wheel force). Not a mid-function hook: Interceptor.attach swaps [esp], which inside A6a is a live local
+// (memory frida-interceptor-is-entry-only); the first version at 0x00468320 perturbed the run (o_aq1's car 1 tilts at
+// call 1, +0x92c 2.66e-08, where o_wobj2 / o_w2d8 hold 0). A6a's esp at 0x00468320..0x0046833a = the entry esp + 8
+// (push ebp + the return address). Reads stack dwords only: [0x0c] le4 (capped), [0x1c] ld4, [0x28/0x2c/0x30]
+// lc8/lc4/lc0', [0x34] lbc, [0x44/0x48/0x4c] lac/la8/la4, [0x50/0x54] the addend x / y, [0x58] the l94 == 0 branch's
+// l98 * lc0', [0x10/0x14/0x18] le0/ldc/ld8, [0x9c/0xa0] s0/s1 (0x00468137 / 0x00468144); then the post force [arg+0/4/8].
 const AQ = { armed:false, rows:[], n:0, nRec:0, err:null };
-let AQ_REC = null, AQ_WB = null;
+let AQ_REC = null, AQ_WB = null, AQ_F = null, AQ_RA = null;
 function a6aProbeArm(recBaseHex, car, wheel){
   if (AQ.armed) return 'already armed';
   try {
     AQ_REC = ptr(parseInt(recBaseHex, 16) + car * 0xd04);
     AQ_WB = AQ_REC.add(0x1a4 + wheel * 0xc4);
-    Interceptor.attach(ga(0x00468320), { onEnter(){
+    AQ_F = AQ_WB.add(0x70);
+    AQ_RA = ga(0x00468343);
+    Interceptor.attach(ga(0x004c3ac0), { onEnter(args){
       try {
         AQ.n++;
-        const c = this.context;
-        if (!c.esi.equals(AQ_REC) || !c.edi.equals(AQ_WB)) return;
+        if (!this.returnAddress.equals(AQ_RA) || !args[0].equals(AQ_F)) return;
         AQ.nRec++;
-        const sp = c.esp;
-        const offs = [0x0c, 0x1c, 0x28, 0x2c, 0x30, 0x34, 0x44, 0x48, 0x4c, 0x50, 0x54, 0x58];
-        AQ.rows.push([AQ.nRec].concat(offs.map(k => bqH(sp.add(k)))).join(','));
+        const sp = this.context.esp.add(8);
+        const offs = [0x0c, 0x1c, 0x28, 0x2c, 0x30, 0x34, 0x44, 0x48, 0x4c, 0x50, 0x54, 0x58, 0x10, 0x14, 0x18, 0x9c, 0xa0];
+        AQ.rows.push([AQ.nRec].concat(offs.map(k => bqH(sp.add(k))), [0, 4, 8].map(k => bqH(AQ_F.add(k)))).join(','));
       } catch(e){ if (!AQ.err) AQ.err = 'aq ' + e; }
     }});
     AQ.armed = true;
-    return 'a6a-probe armed @0x468320 rec=' + AQ_REC + ' wheelblock=' + AQ_WB;
+    return 'a6a-probe armed @0x4c3ac0 ra=0x468343 rec=' + AQ_REC + ' force=' + AQ_F;
   } catch(e){ return 'ERR ' + e; }
 }
 function a6aProbeDrain(n){ return AQ.rows.splice(0, n || 400); }
@@ -4159,7 +4164,7 @@ def main():
                          "outputs of the previous call) and A6a (frame marker), player record "
                          "only; writes <statediff-out>.batchprobe.csv. Requires --statediff-out.")
     ap.add_argument("--a6a-probe-wheel", type=int, default=-1,
-                    help="[u9764] entry hook at 0x00468320 (A6a's wheel-force addend, before it is added) for wheel W of "
+                    help="[u9764] entry hook on 0x004c3ac0 from 0x00468343 (A6a's wheel-force addend, after it is added) for wheel W of "
                          "--statediff-car; writes <statediff-out>.a6aprobe.csv. Requires --statediff-out.")
     ap.add_argument("--batch-probe-count", action="store_true",
                     help="count-first safety gate for --batch-probe: arm the three hooks with "
@@ -4958,7 +4963,7 @@ def main():
                     aqp = outp.with_suffix(outp.suffix + ".a6aprobe.csv")
                     _na = 0
                     with open(aqp, "w", newline="") as f:
-                        f.write("n,le4,ld4,lc8,lc4,lc0p,lbc,lac,la8,la4,dFx,dFy,l98z" + chr(10))
+                        f.write("n,le4,ld4,lc8,lc4,lc0p,lbc,lac,la8,la4,dFx,dFy,l98z,le0,ldc,ld8,s0,s1,Fx,Fy,Fz" + chr(10))
                         while True:
                             try: _chunk = E.a6a_probe_drain(400)
                             except Exception as _e:
