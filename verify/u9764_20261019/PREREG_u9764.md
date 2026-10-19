@@ -63,3 +63,22 @@ only for a default proposal.
 | G-POS | `recpos.py` against o_wobj2: report the first call where position / velocity differ (now 7 / 5) |
 | G-B | (b) on `RL`: no car that passes on the default fails |
 | G-D2 / G-13 | for a default proposal: D2 3/3 on the d2rebase gate, 13 tracks 0 RED, G-CTRL reported |
+
+## 3. Amendment 2 (2026-10-19, after the MASHED_ROTATE_LUT arms, before any MASHED_RW_LUT_ALL arm)
+
+Measured on `MASHED_ROTATE_LUT=1`: G-NOOP PASS (`6efb49ed / 3e0724ac / 395fb8b7`); G-LE0 PASS (block #4 equal to o_aq4 through
+call 4, `+0x2d8` = o_wobj2 at calls 3 and 4; `B_XW1RL_K1`); G-POS unchanged (velocity from call 5, position from call 7);
+G-B PASS (`B_RL_K0/K1/K26` `be7cf4de / 01cd8271 / 71510349`, A 2/3 B 3/3 C 0/3); G-D2 FAIL 0/3 (slip1500 `0.1826` < `0.18396`,
+slip2000 `0.2524` in, drvmed `1946.76` in, H1 398/400). Not a default candidate on its own.
+
+Next gap on that arm, call 4: the original's body matrix `up.y` (`+0x93c`) is `1.00000024`, the port's exactly 1, and
+`at.x / at.z` (`+0x948 / +0x950`) are 1 ulp off; `+0x9d4 / +0x9dc` are read time (the port holds the original's previous
+value). `FastSqrt` / `FastInvSqrt` (`Math/RwSqrt.cpp`), `RwV3dNormalize`, `Vec3Magnitude` and `RwV2d` all take a CPU
+fallback when `RwLutGuard` finds no engine LUT, which is always in the standalone.
+
+H3: with `RwLutGuard` handing every caller the in-process tables (`RwLutSqrtTable / RwLutInvSqrtTable`, equal to the
+original's) when the engine LUT is not live, car 1's record stays equal to o_wobj2 past call 4. Knob `MASHED_RW_LUT_ALL=1`
+(default OFF). It reaches every FastSqrt / FastInvSqrt / RwV3dNormalize / Vec3Magnitude / RwV2d caller in the standalone and
+nothing in the .asi (live LUT). Arms: `B_DEF_K*` (G-NOOP), `B_XW1LA_K1`, `B_LA_K0/K1/K26`, `D2_LA_1..3`, `H_LA`, 13 tracks.
+Gates as amendment 1 (G-LE0 replaced by G-REC: the first call where the record differs from o_wobj2 outside read-time fields,
+reported against `XW1RL`'s call 4).

@@ -47,6 +47,7 @@
 "Math\RwV3dTransformPoints.cpp"
 "Math\RwV3dTransformPointsCPU.cpp"
 "Math\RwMatrixRotate.cpp"
+"Math\RwLutTables.cpp"
 "Math\RwMatrixRotateInner.cpp"
 "Math\RwMatrixMultiplyCpu.cpp"
 "Math\RwV2d.cpp"

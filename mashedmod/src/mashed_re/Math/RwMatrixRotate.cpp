@@ -37,6 +37,7 @@
 #include <cstdint>
 #include <cstdio>     // D2 diagnostic
 #include <cstdlib>    // D2 diagnostic
+#include "RwLutTables.h"
 
 // Ported, bit-identical RW fast inverse-sqrt (Math/RwSqrt.cpp, 0x004c3b90).
 extern "C" float __cdecl FastInvSqrt(float x);
@@ -44,6 +45,11 @@ extern "C" float __cdecl FastInvSqrt(float x);
 // ported C++ symbol (not the original RVA) makes this work in the standalone exe too.
 extern "C" float* __cdecl RwMatrixRotateInner(float* matrix, const float* axis_n,
                                               float one_minus_cos, float sin_a, int mode);
+
+// [u9764 2026-10-19] MASHED_ROTATE_LUT=1 (default OFF, verify/u9764_20261019/PREREG_u9764.md amendment 1): normalize the
+// axis through the RW LUT inverse sqrt the original calls (0x004c4d5d `call 0x004c3b90`). In the standalone the RW LUT is
+// never built, so FastInvSqrt returns 1/sqrt(x) (Math/RwSqrt.cpp); LutInvSqrt is the same table rebuilt in-process.
+static bool RotateLut() { static const bool s = [] { const char* e = std::getenv("MASHED_ROTATE_LUT"); return e && e[0] == '1'; }(); return s; }
 
 static constexpr std::uintptr_t kDegToRadAddr = 0x005cd7a8u;  // float π/180 = 0x3c8efa35
 static constexpr std::uintptr_t kOneAddr      = 0x005cc320u;  // float 1.0f
@@ -96,7 +102,8 @@ void* __cdecl RwMatrixRotate(void* matrix, const float* axis, float angle_deg, i
     const float angle_rad = angle_deg * kDegToRad;
 
     // Normalize the axis (same sum-of-squares association as the original: (x²+y²)+z²).
-    const float invLen = FastInvSqrt(axis[0] * axis[0] + axis[1] * axis[1] + axis[2] * axis[2]);
+    const float len2 = axis[0] * axis[0] + axis[1] * axis[1] + axis[2] * axis[2];
+    const float invLen = RotateLut() ? mashed_re::Math::LutInvSqrt(len2) : FastInvSqrt(len2);
     float axis_n[3];
     axis_n[0] = invLen * axis[0];
     axis_n[1] = axis[1] * invLen;
