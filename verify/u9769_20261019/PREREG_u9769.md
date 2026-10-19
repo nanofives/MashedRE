@@ -53,3 +53,19 @@ section 2 showing in the default; the trace now runs in noinline helpers and kee
 Report arm: `EXL7AFSM7MIA` = `EXL7AFSM7` + `MASHED_CC_MATRIX_INVERT` + `MASHED_A4_ORDER` (U-9746's pre-phase), traced, with the
 slot-0 record, K1. Question: does car 2 enter the call-22 contact with the original's velocity, and does the player's
 record then hold past call 22. No gate, no default.
+
+## 4. Amendment 3 (written before any MASHED_CC_PC24 arm)
+
+Measured after amendment 2: `EXL7AFSM7MIATR` K1 (exe `24e6d3f6`): car 2's entry record at the call-22 contact equals the
+original's (0 differing dwords outside the exact-car-1 set); the outputs differ by the replay's residual (player `+0x9b0`
+-426.4006 vs -426.4, car 2 `+0x9b0` 45.74664 vs 45.73403); the player's record after call 22 is within about 1e-6 of
+o_c0 (was 3.7e-4 at call 22).
+
+The residual is the body's arithmetic: the port's `Vec3Normalize` / `Vec3Mag` use `sqrtf` (`ContactDeps.h:35..47`), the
+original calls the RW LUT bodies FUN_004c39b0 / FUN_004c3ac0 (ten calls in the 0x00469df0 decomp), and the float10 impulse
+terms are doubles in the port where the race loop's PC_24 rounds them to float.
+
+H2: `MASHED_CC_PC24=1` (default OFF) runs a separate noinline copy of the body with the LUT bodies, float impulse terms and
+RwMatrixInvertEntry for FUN_004c4dc0 (so it implies amendment 1's fix inside that copy). Arms: G-NOOP; `CR_PC` (G-CC: 0
+differing dwords on every replay row); `EXL7AFSM7PCATR` K1 (= `EXL7AFSM7` + the knob + `MASHED_A4_ORDER`, traced, slot-0
+record): first player record split against o_c0; (b) report on `EXL7AFSM7PCA` at K0 / K1 / K26.
