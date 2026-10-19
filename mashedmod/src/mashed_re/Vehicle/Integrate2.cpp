@@ -99,7 +99,8 @@ static inline void  Wp(int* p, int k, float v) { std::memcpy(p + k, &v, 4); }
 // 0x0046766e (+0x9e4) 0x00467680 (+0x9e8) 0x004680f6 (le4) 0x0046820a (ld4) 0x0046833e (|F|) 0x004684bb (m15) 0x004684d7
 // (m16) 0x004685b7 (m78) 0x004686a4 (speed), which the port's sites below follow in the same order. Off: exact sqrt.
 static bool A6aLut() {
-    static const bool s = [] { const char* e = std::getenv("MASHED_A6A_LUT"); return e && e[0] == '1'; }();
+    // [a6flip 2026-10-19] default ON (user decision); MASHED_NO_A6A_LUT=1 opts out.
+    static const bool s = [] { const char* e = std::getenv("MASHED_NO_A6A_LUT"); return !(e && e[0] == '1'); }();
     return s;
 }
 // [u9761 2026-10-19] MASHED_A6A_F32=1 (default OFF, verify/u9761_20261019/PREREG_u9761.md): A6a's torque / grip chain at
@@ -107,7 +108,8 @@ static bool A6aLut() {
 // them as float10 on the x87 stack), but the race thread runs x87 at PC_24 (memory track-load-runs-at-pc24), where every
 // float10 step rounds to a 24-bit mantissa, which an SSE2 float step reproduces.
 static bool A6aF32() {
-    static const bool s = [] { const char* e = std::getenv("MASHED_A6A_F32"); return e && e[0] == '1'; }();
+    // [a6flip 2026-10-19] default ON (user decision); MASHED_NO_A6A_F32=1 opts out.
+    static const bool s = [] { const char* e = std::getenv("MASHED_NO_A6A_F32"); return !(e && e[0] == '1'); }();
     return s;
 }
 static inline float A6Len(const float* t) {
