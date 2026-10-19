@@ -674,6 +674,17 @@ float SplineCurvature(std::uintptr_t spline, float ownX, float ownZ, float dist)
 const float kSteerDeadband = 1.0f;       // _DAT_005cc320  (err>1° before steering)
 const float kSteerSplit    = 180.0f;     // _DAT_005cd09c  (err<180 one way, >180 other)
 const float kSteerMagScale = 0.0030034f; // _DAT_005cd0e8  fresh: err*speed*this
+// [d3bc 2026-10-19] the .rdata dword at 0x005cd0e8 is 0x3b449ba6 = 0.003f (MASHED.exe.unpatched), not 0.0030034f.
+// With bit-equal err and speed, 0.003f gives the original's fresh-steer byte on 54/54 (car 2), 76/76 (car 3) and 48/48
+// (car 1) rows of verify/d3bc_20261019's captures; 0.0030034f misses 6. MASHED_STEER_SCALE_RDATA=1 (default OFF) uses it
+// in FUN_00416250's two products (0x00416648..0x00416656 / 0x0041675c..0x00416770); the mode-4/9/8 variants keep theirs.
+inline float SteerMagScale416250() {
+#ifdef MASHED_STANDALONE
+    static const bool s_on = [] { const char* e = std::getenv("MASHED_STEER_SCALE_RDATA"); return e && e[0] && e[0] != '0'; }();
+    if (s_on) return 0.003f;
+#endif
+    return kSteerMagScale;
+}
 const float kSteerExtra    = 0.05f;      // _DAT_005cc9a0  *this when rate1<=20
 const float kSteerMagClamp = 255.0f;     // _DAT_005cd04c  steer-byte clamp (max)
 const float kCounterScale  = 0.005f;     // _DAT_005cd0ec  counter: (200-el)*this*stored
@@ -1176,7 +1187,7 @@ void ControlStep(std::uintptr_t spline, int v, std::uint8_t* ctrl)
         if (kSteerDeadband < err) {                                   // 0x004165f1..0x00416602
             const int el = frame - I32(a74(0x0089a4f0u, v));
             if (I32(a74(0x0089a4ecu, v)) == 1 || el >= kSettleFrames) {   // 0x00416608 / CMP 0xc8
-                float m = err * speed * kSteerMagScale;                // 0x00416648..0x00416656
+                float m = err * speed * SteerMagScale416250();          // 0x00416648..0x00416656
                 if (mode == 0 && k20f < curv) m = m * (curv * kSteerExtra); // 0x0041665c..0x00416679
                 if (!(m <= kSteerMagClamp)) m = kSteerMagClamp;        // 0x0041667b..0x0041668a
                 ctrl[0] = RoundST0(m);                                 // 0x00416697
@@ -1199,7 +1210,7 @@ void ControlStep(std::uintptr_t spline, int v, std::uint8_t* ctrl)
         if (err < kSteer359) {                                        // 0x00416706 / 0x00416717
             const int el = frame - I32(a74(0x0089a4f0u, v));
             if (I32(a74(0x0089a4ecu, v)) == 2 || el >= kSettleFrames) {
-                float m = (kWrap - err) * speed * kSteerMagScale;      // 0x0041675c..0x00416770
+                float m = (kWrap - err) * speed * SteerMagScale416250(); // 0x0041675c..0x00416770
                 if (mode == 0 && k20f < curv) m = m * (curv * kSteerExtra);
                 if (!(m <= kSteerMagClamp)) m = kSteerMagClamp;
                 ctrl[1] = RoundST0(m);                                 // 0x004167b1

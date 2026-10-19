@@ -65,3 +65,26 @@ error on every row while the record is exact. Knob `MASHED_AI_FWD_ATROW=1` (defa
 
 Arms: `B_DEF_K0/K1/K26` (G-NOOP), `B_EXL7AFR1_K1` (G-ERR), (b) on `L7AF` (default + the three) and `EXL7AF` at K0 / K1 / K26 /
 K54, and the knob alone (`F2`). Gates as section 1. Decision unchanged.
+
+## 3. Amendment 2 (written before any MASHED_STEER_SCALE_RDATA arm)
+
+Measured after amendment 1's arms: G-NOOP PASS (exe `3ca4369f`). **G-ERR PASS**: `EXL7AF` B car 1's stored steer error equals
+o_wobj2 on every row 1..104 (first miss row 105, where the record already splits), and the emulator on the port's inputs
+matches the port on 102 / 102. (b) unchanged in count (`EXL7AF` A 1/3, C 0/3; `L7AF` A 2/3, B 2/3 car 2 `c1# 48 [17,46]`,
+C 0/3; `F2` alone A 2/3, B 3/3, C 0/3).
+
+New original captures `arms/o_c2` / `o_c3` (regime-A argv with `--statediff-car 2` / `3`; regime A, equal to o_reg_r19 through
+row 148). On `EXL7AF` car 2's record equals the original through call 3 apart from the fields that also differ on the exact
+car 1 (`+0x44 / +0x48 / +0x13c / +0x140 / +0xaf4..+0xb40`); at row 4 err and speed (`+0x9e4`, record call 3) are bit-equal
+and the fresh-steer byte is 46 (original) vs 47 (port), m = 47.0222 with the port's `kSteerMagScale = 0.0030034f`.
+The .rdata dword `0x005cd0e8` is `0x3b449ba6` = 0.003f. Over the fresh-steer rows (mode 0, curv <= 20, c0 xor c1 > 0) with
+the original's own err and record speed, `trunc(err * speed * 0.003f)` gives the original's byte on 54/54 (car 2), 76/76
+(car 3), 48/48 (car 1); 0.0030034f misses 6. An audit of every `_DAT_`-annotated float/double constant in
+`AiStandalone.cpp` against the binary finds only this one and `kSteerScale` (handled by `MASHED_STEER_ACOS64`).
+
+H3: FUN_00416250's fresh-steer products use 0.003f. Knob `MASHED_STEER_SCALE_RDATA=1` (default OFF), the two products
+`0x00416648..0x00416656` / `0x0041675c..0x00416770` only (the mode-4/9/8 variants are not measured here).
+
+Arms: `B_DEF_K0/K1/K26` (G-NOOP); `B_EXL7AFSR2_K26` / `B_EXL7AFSR3_K26` / `B_EXL7AFSR1_K1` (G-REC2: first record call where
+cars 2 / 3 split from `o_c2` / `o_c3`, car 1 from o_wobj2, against amendment 1's call 4 / 7 / 105); (b) on `EXL7AFS`,
+`L7AFS` and `SC` alone at K0 / K1 / K26 / K54. Gates and decision as section 1.

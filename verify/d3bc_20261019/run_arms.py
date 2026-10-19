@@ -184,6 +184,9 @@ STACK['EXL7AR1'] = STACK['EXL7A'] + ['MASHED_RECDUMP=@OUT@\\@NAME@.rec.msd', 'MA
 STACK['F2'] = ['MASHED_AI_FWD_ATROW']; STACK['L7AF'] = STACK['L7A'] + STACK['F2']; STACK['EXL7AF'] = STACK['EXL7A'] + STACK['F2']   # d3bc amendment 1
 STACK['EXL7AFR1'] = STACK['EXL7AF'] + ['MASHED_RECDUMP=@OUT@\\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=1']
 for _s in (2, 3): STACK['EXL7AFR%d' % _s] = STACK['EXL7AF'] + ['MASHED_RECDUMP=@OUT@\\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=%d' % _s]
+STACK['S'] = ['MASHED_STEER_SCALE_RDATA'] if False else STACK['S']   # (S is u9684's stack; the scale knob alone is SC)
+STACK['SC'] = ['MASHED_STEER_SCALE_RDATA']; STACK['L7AFS'] = STACK['L7AF'] + STACK['SC']; STACK['EXL7AFS'] = STACK['EXL7AF'] + STACK['SC']   # d3bc amendment 2
+for _s in (1, 2, 3): STACK['EXL7AFSR%d' % _s] = STACK['EXL7AFS'] + ['MASHED_RECDUMP=@OUT@\\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=%d' % _s]
 for _t in list(STACK):   # <tag>T = the same stack with the FUN_00414a70 trace (MASHED_TGT3_TRACE) per arm
     # a4order: never overwrite a defined tag. In d3bB2's copy this loop replaced CCET (clock + event + tick first) with
     # CCE + traces, so every d3bB2 CCET run ran without MASHED_AI_TICK_FIRST (its RUNLOG lines carry no such knob).
