@@ -112,6 +112,12 @@ static bool A6aF32() {
     static const bool s = [] { const char* e = std::getenv("MASHED_NO_A6A_F32"); return !(e && e[0] == '1'); }();
     return s;
 }
+// [u9764 2026-10-19] MASHED_A6A_LC0=1 (default OFF, verify/u9764_20261019/PREREG_u9764.md): block #4's lc0 (the velocity
+// direction's projection on the forward vector) in the original's summation order.
+static bool A6aLc0() {
+    static const bool s = [] { const char* e = std::getenv("MASHED_A6A_LC0"); return e && e[0] == '1'; }();
+    return s;
+}
 static inline float A6Len(const float* t) {
     if (A6aLut()) return mashed_re::Math::LutSqrt((t[0] * t[0] + t[1] * t[1]) + t[2] * t[2]);
     return Vec3Mag3(t);
@@ -493,7 +499,10 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
                 if (k1024 < le4) le4 = k1024;
                 float l98 = 0, l9c = 0, la0 = 0;
                 float lbc = Rp(p,0x15) * Rp(p,0x1b) * g_suspScale * le4 * k0p0009766;
-                float lc0 = Rf(v,0x9dc)*inv*ld8 + Rf(v,0x9d4)*s0 + Rf(v,0x9d8)*s1;
+                // [u9764] MASHED_A6A_LC0=1 (default OFF): the original's order, 0x0046814b s2 = inv*ld8 (kept on the stack),
+                // 0x0046819f..0x004681c3 lc0 = (+0x9d8*s1 + +0x9d4*s0) + +0x9dc*s2.
+                float lc0 = A6aLc0() ? ((Rf(v,0x9d8)*s1 + Rf(v,0x9d4)*s0) + Rf(v,0x9dc)*(inv*ld8))
+                                     : (Rf(v,0x9dc)*inv*ld8 + Rf(v,0x9d4)*s0 + Rf(v,0x9d8)*s1);
                 float lc8 = lc0 * Rp(p,0x1f), lc4 = lc0 * Rp(p,0x20); lc0 = lc0 * Rp(p,0x21);
                 float lac = s0 - lc8, la8 = s1 - lc4, la4 = inv*ld8 - lc0;
                 float ld4 = Mag3(lac, la8, la4);
