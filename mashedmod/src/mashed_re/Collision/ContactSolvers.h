@@ -25,6 +25,7 @@ void VehicleContactFixup(int* veh);                                             
 
 // --- B3: car<->car ----------------------------------------------------------
 bool VehicleCarCarContact(int* vehA, int* vehB, int pass);                                  // 0x00469df0
+void CarCarContact_MaybeReplay();   // [u9769] MASHED_CC_REPLAY (diagnostic)
 extern int g_ccLastContact;   // [d3bB2] 1 when the last VehicleCarCarContact call found a contact (type-4 push)
 
 // --- B4 producer half: the terrain-batch producer (LAB_00468b80 + broadphase) ---

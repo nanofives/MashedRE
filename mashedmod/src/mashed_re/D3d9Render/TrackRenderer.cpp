@@ -58,6 +58,7 @@ extern "C" void __cdecl SplineCubicBlend3(float t, float* out, float* p0, float*
                                     // race frame and its ctrl bytes drive the opponents.
 #include "../Vehicle/VehiclePhysicsRun.h"  // WS-A8: ported physics chain (behind MASHED_REAL_PHYSICS)
 #include "../Collision/CollisionWorld.h"   // [d2bsp] COLLI*.BSP replica for the sphere walk FUN_00538c80
+#include "../Collision/ContactSolvers.h"  // [u9769] CarCarContact_MaybeReplay
 #include "../Vehicle/ForceIntegrator.h"    // U-9174: LaunchRev_PreRaceTick / _Release
 #include "../Ai/AiState.h"          // WS-AI-BRIDGE: ctrl-block / slot-table / spline addrs
 #include "../Ai/AiData.h"           // WS-AI-BRIDGE: .AI loader (AiData_LoadInto)
@@ -3060,6 +3061,7 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                 // [D-11072 P1] the original's course block (node records, route, tables)
                 // from this same AI BSP + LAPDATA.LUA; default-OFF MASHED_PATHPROG.
                 // PREREG verify/d3_modes37_20261009/PREREG_PATHPROG.md.
+                Collision::CarCarContact_MaybeReplay();   // [u9769] MASHED_CC_REPLAY (env-gated, diagnostic)
                 if (Race::PathProg_Enabled() || Race::RacePctOrig_Enabled()) {   // [U-9685] arm R needs the course block too
                     const std::uint8_t* lb = nullptr; std::uint32_t ll = 0;
                     for (std::uint32_t j = 0; j < piz.count(); ++j)
