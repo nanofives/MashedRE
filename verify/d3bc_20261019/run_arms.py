@@ -179,7 +179,7 @@ for _s in (1, 2, 3):
     STACK['EXR%d' % _s] = STACK['EX'] + ['MASHED_RECDUMP=@OUT@\\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=%d' % _s]
 STACK['EXL7'] = STACK['EX'] + ['MASHED_AI_LUT=7']; STACK['L7'] = ['MASHED_AI_LUT=7']   # d3bc: + FUN_00415e20's LUT normalize (bit 2)
 STACK['EXL7R1'] = STACK['EXL7'] + ['MASHED_RECDUMP=@OUT@\\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=1']   # d3bc
-STACK['A64'] = ['MASHED_STEER_ACOS_CRT']   # amendment 4: was MASHED_STEER_ACOS64 (double acos) before af18102a1+1;; STACK['L7A'] = STACK['L7'] + STACK['A64']; STACK['EXL7A'] = STACK['EXL7'] + STACK['A64']   # d3bc PREREG section 1
+STACK['A64'] = ['MASHED_STEER_ACOS_CRT']; STACK['L7A'] = STACK['L7'] + STACK['A64']; STACK['EXL7A'] = STACK['EXL7'] + STACK['A64']   # d3bc PREREG section 1; amendment 4: A64 was MASHED_STEER_ACOS64 (double acos) until 555738fd9
 STACK['EXL7AR1'] = STACK['EXL7A'] + ['MASHED_RECDUMP=@OUT@\\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=1']
 STACK['F2'] = ['MASHED_AI_FWD_ATROW']; STACK['L7AF'] = STACK['L7A'] + STACK['F2']; STACK['EXL7AF'] = STACK['EXL7A'] + STACK['F2']   # d3bc amendment 1
 STACK['EXL7AFR1'] = STACK['EXL7AF'] + ['MASHED_RECDUMP=@OUT@\\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=1']
