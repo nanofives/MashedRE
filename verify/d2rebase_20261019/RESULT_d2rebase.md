@@ -45,3 +45,18 @@ any gate yet.
 Which port window the D2 gate uses with the new band: the registered `--max-lines 1080` (every arm, the default included,
 fails on driving-median) or the whole log (all three arms pass). Until then lanes report both
 (`score_d2_v2.py port` and `port --legacy`).
+
+## 3. Decision (Mariano, 2026-10-19): the whole log
+
+The D2 gate scores the port on the **whole log** with the 8-run band. `score_d2_v2.py port` now defaults to the whole log;
+`port --capped` keeps the registered `--max-lines 1080` for provenance only. The D2 gate from here:
+
+- recipe: the D2 arm (`a8_run_port.py` recipe, `MASHED_TRACK_SEL=12 MASHED_STEER_HOLD_AFTER=0 MASHED_MEASURE_SOLO=1`, 90 s,
+  each run alone), at least 3 runs agreeing within the band's `h` (slip1500 0.00365, slip2000 0.00095, driving-median 17.305);
+- reduction: `score_d2_v2.py port <motion_diag.log>` (whole log);
+- band: `band.json` (slip1500 0.18396 .. 0.20586, slip2000 0.24555 .. 0.25557, driving-median 1893.63 .. 1997.46), H1 as before.
+
+Consequences on this lane's runs (section 0.4): the current default, the pair (`MASHED_A6A_LUT` + `MASHED_A6A_F32`) and the
+triple (pair + `MASHED_A5_SUSP_LUT`) all pass D2 3/3. Earlier verdicts (section 0.5, whole-log column): every earlier PASS
+stands; the triple (U-9763), u9760 `A6L` alone, u9761 `F32` alone, d2ref `RY` / `RYT` / `T5` and u9754 `KN` / `SB` now pass.
+No default changed in this lane; flips stay user decisions.

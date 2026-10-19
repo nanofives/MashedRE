@@ -1,9 +1,11 @@
 """D2 three-metric scorer, d2rebase (2026-10-19). Supersedes verify/d2settle_20261016/score_d2.py for new lanes; that file is kept
-unchanged for provenance. Reductions = re/analysis/D2_REOPEN_2026-09-29.md section 1 ("the reducers do not change" in 13.3 / 16.7):
-  a8_slip_axis.py  --orig <orig> --port <log> --max-lines 1080            -> 'slip vs fwd', bands 1500-2000 / 2000-2600
-  a8_momentum.py   --orig <orig> --port <log> --max-lines 1080 --orig-steer-min 33.0 --port-steer-min 0.9 -> driving-only median
-The original side is the whole capture (--max-lines applies to the port log only).
-usage: py -3.12 score_d2_v2.py port [--legacy] <motion_diag.log> [...]   (--legacy: no --max-lines, = score_d2.py's reduction)
+for provenance. Reducers = re/analysis/D2_REOPEN_2026-09-29.md section 1 (unchanged by 13.3 / 16.7):
+  a8_slip_axis.py  --orig <orig> --port <log>                             -> 'slip vs fwd', bands 1500-2000 / 2000-2600
+  a8_momentum.py   --orig <orig> --port <log> --orig-steer-min 33.0 --port-steer-min 0.9 -> driving-only median
+PORT WINDOW = THE WHOLE LOG (user decision 2026-10-19, RESULT_d2rebase.md section 3): the registered --max-lines 1080 gave the port
+774-871 driving samples against the original's 1153-1185; the whole log gives 1322-1339. The original side is always the whole
+capture (its reduction does not depend on --max-lines).
+usage: py -3.12 score_d2_v2.py port [--capped] <motion_diag.log> [...]   (--capped: the registered --max-lines 1080, provenance only)
        py -3.12 score_d2_v2.py orig <capture.msd> [...]                  (the original path, same reducers)
 BOUNDS: the d2rebase band (BAND_PROVENANCE below). H1 unchanged (a8_launch.py, >= 200 of 400 post-trough frames >= 100, median >= 900)."""
 import re, subprocess, sys, os
@@ -70,12 +72,14 @@ def verdict(v):
 if __name__ == '__main__':
     load_bounds()
     mode, args = sys.argv[1], sys.argv[2:]
-    legacy = '--legacy' in args
-    args = [a for a in args if a != '--legacy']
+    capped = '--capped' in args
+    if '--legacy' in args:   # the d2rebase evidence files were produced with the old flag name; same reduction as the default now
+        print('note: --legacy is the default (whole log) since the 2026-10-19 decision')
+    args = [a for a in args if a not in ('--capped', '--legacy')]
     if mode == 'port':
         for log in args:
-            r = metrics(REF, log, None if legacy else 1080)['port']
-            print(f'{log}: {verdict(r)} n={r["n"]} H1 {h1(REF, log, "PORT")}{"  [legacy reduction]" if legacy else ""}')
+            r = metrics(REF, log, 1080 if capped else None)['port']
+            print(f'{log}: {verdict(r)} n={r["n"]} H1 {h1(REF, log, "PORT")}{"  [capped --max-lines 1080, provenance only]" if capped else ""}')
     elif mode == 'orig':
         # the port block needs a log; any motion_diag.log works, the ORIGINAL block does not depend on it
         dummy = os.environ.get('D2V2_DUMMY_PORT', os.path.join(M, r'verify\d2_reopen_20260929\solo_post1\motion_diag.log'))
