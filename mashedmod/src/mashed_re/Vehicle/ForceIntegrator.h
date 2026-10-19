@@ -141,6 +141,8 @@ struct A6aWheelDump {
     float dF[3];       // the block-#4 delta actually added to p[0x1c..0x1e]
     int   spin;        // 1 = the Integrate2.cpp:404 spin branch was taken
     int   fired;       // 1 = block #4 ran (:418 gate passed) this call
+    float lc[3];       // [u9764] lc8/lc4/lc0' (the velocity direction's projection on the axis, per component)
+    float s[2];        // [u9764] s0/s1 = le0*inv, ldc*inv
 };
 extern A6aWheelDump g_a6aDump[4];
 // frame-level A6a inputs, captured at A6a ENTRY (before its tail touches +0x9b0..)

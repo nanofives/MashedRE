@@ -149,6 +149,13 @@ std::FILE* TraceFile() {
 // FUN_0046c7d0(v, dt). Returns the applied angle (0 when nothing rotated). `own` (player form, u9749): the car's
 // input block when the exe does not keep it in the ctrl block table (slot 0's steer bytes come from the player's
 // input, not from FUN_00496530's cooked block), nullptr = the slot table's block as for the AI slots.
+// [u9767 2026-10-19] MASHED_HEADING_FWD_LIVE=1 (default OFF, verify/u9767_20261019/PREREG_u9767.md): in the original
+// +0x9d4..+0x9dc is rewritten during the AI tick by the getter FUN_0046d510 (0x0046d53a: (0,0,1) at 0x00614708 through the
+// vectors slot with the slot-0 matrix rec + 0x928, i.e. its `at` row), so this read sees the current pose. The port writes
+// +0x9d4 only at A5's frame start and read the previous frame's forward. With the knob the entry refreshes +0x9d4..+0x9dc
+// from rec + 0x948..+0x950, the getter's result. [UNCERTAIN] assumes the getter ran for this car earlier in the frame.
+bool HeadingFwdLive() { static const bool s = [] { const char* e = std::getenv("MASHED_HEADING_FWD_LIVE"); return e && e[0] == '1'; }(); return s; }
+
 float AssistCar(int v, int dtUnits, const std::uint8_t* own = nullptr) {
     using namespace mashed_re::Vehicle;
     const std::uint8_t* blk = own ? own : reinterpret_cast<const std::uint8_t*>(
@@ -162,6 +169,9 @@ float AssistCar(int v, int dtUnits, const std::uint8_t* own = nullptr) {
 
     float* basis = VehiclePhysics_BodyBasis(v);
     if (!basis) return 0.0f;                                                 // standalone: not seeded yet
+    if (HeadingFwdLive()) {                                                  // [u9767] FUN_0046d510's write
+        if (unsigned char* rec = VehiclePhysics_RecordPtr(v)) std::memcpy(rec + 0x9d4, rec + 0x948, 12);
+    }
     const float fx = VehiclePhysics_RecordF32(v, 0x9d4);                     // [edi+0x881f74]
     const float fz = VehiclePhysics_RecordF32(v, 0x9dc);                     // [edi+0x881f7c]
     if (fx == 0.0f && fz == 0.0f) return 0.0f;                               // 0x0046c86b..0x0046c893

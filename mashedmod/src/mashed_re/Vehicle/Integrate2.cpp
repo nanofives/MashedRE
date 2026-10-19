@@ -60,12 +60,14 @@ void ForceSplitLog(const void* v, int wheel, const float* pre, const mashed_re::
     if (!s_path || wheel != s_wheel || !mashed_re::Vehicle::g_vehicleArrayBase || s_n >= 4000) return;
     if (reinterpret_cast<const char*>(v) != reinterpret_cast<const char*>(mashed_re::Vehicle::g_vehicleArrayBase) + s_slot * 0xd04) return;
     if (!s_f) { s_f = std::fopen(s_path, "w"); if (!s_f) return;
-        std::fprintf(s_f, "n,branch,pre_x,pre_y,pre_z,dF_x,dF_y,dF_z,post_x,post_z,spd9e4,le4,ld4,lbc,f5,p15,p16,p1b,pm1\n"); }
+        std::fprintf(s_f, "n,branch,pre_x,pre_y,pre_z,dF_x,dF_y,dF_z,post_x,post_z,spd9e4,le4,ld4,lbc,f5,p15,p16,p1b,pm1,lac,la8,la4,le0,ldc,ld8,ax0,ax1,ax2,s0,s1,lc8,lc4,lc0p\n"); }
     const float spd = *reinterpret_cast<const float*>(reinterpret_cast<const char*>(v) + 0x9e4);
-    std::fprintf(s_f, "%d,%d,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%d\n",
+    // [u9764] + the lateral vector lac / la8 / la4 (the original's [esp+0x44/0x48/0x4c] at 0x00468320, --a6a-probe-wheel)
+    std::fprintf(s_f, "%d,%d,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%d,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g\n",
                  s_n++, branch, pre[0], pre[1], pre[2], D.dF[0], D.dF[1], D.dF[2],
                  static_cast<float>(D.dF[0] + pre[0]), static_cast<float>(D.dF[2] + pre[2]),
-                 spd, D.le4, D.ld4, D.lbc, D.f5, D.p15, D.p16, D.p1b, D.pm1);
+                 spd, D.le4, D.ld4, D.lbc, D.f5, D.p15, D.p16, D.p1b, D.pm1, D.lat[0], D.lat[1], D.lat[2],
+                 D.le[0], D.le[1], D.le[2], D.ax[0], D.ax[1], D.ax[2], D.s[0], D.s[1], D.lc[0], D.lc[1], D.lc[2]);
     std::fflush(s_f);
 }
 }  // namespace
@@ -110,6 +112,12 @@ static bool A6aLut() {
 static bool A6aF32() {
     // [a6flip 2026-10-19] default ON (user decision); MASHED_NO_A6A_F32=1 opts out.
     static const bool s = [] { const char* e = std::getenv("MASHED_NO_A6A_F32"); return !(e && e[0] == '1'); }();
+    return s;
+}
+// [u9764 2026-10-19] MASHED_A6A_LC0=1 (default OFF, verify/u9764_20261019/PREREG_u9764.md): block #4's lc0 (the velocity
+// direction's projection on the forward vector) in the original's summation order.
+static bool A6aLc0() {
+    static const bool s = [] { const char* e = std::getenv("MASHED_A6A_LC0"); return e && e[0] == '1'; }();
     return s;
 }
 static inline float A6Len(const float* t) {
@@ -493,7 +501,10 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
                 if (k1024 < le4) le4 = k1024;
                 float l98 = 0, l9c = 0, la0 = 0;
                 float lbc = Rp(p,0x15) * Rp(p,0x1b) * g_suspScale * le4 * k0p0009766;
-                float lc0 = Rf(v,0x9dc)*inv*ld8 + Rf(v,0x9d4)*s0 + Rf(v,0x9d8)*s1;
+                // [u9764] MASHED_A6A_LC0=1 (default OFF): the original's order, 0x0046814b s2 = inv*ld8 (kept on the stack),
+                // 0x0046819f..0x004681c3 lc0 = (+0x9d8*s1 + +0x9d4*s0) + +0x9dc*s2.
+                float lc0 = A6aLc0() ? ((Rf(v,0x9d8)*s1 + Rf(v,0x9d4)*s0) + Rf(v,0x9dc)*(inv*ld8))
+                                     : (Rf(v,0x9dc)*inv*ld8 + Rf(v,0x9d4)*s0 + Rf(v,0x9d8)*s1);
                 float lc8 = lc0 * Rp(p,0x1f), lc4 = lc0 * Rp(p,0x20); lc0 = lc0 * Rp(p,0x21);
                 float lac = s0 - lc8, la8 = s1 - lc4, la4 = inv*ld8 - lc0;
                 float ld4 = Mag3(lac, la8, la4);
@@ -519,6 +530,7 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
                 D.le[0]=le0; D.le[1]=ldc; D.le[2]=ld8;
                 D.le4raw = Mag3(le0, ldc, ld8); D.le4 = le4;
                 D.lat[0]=lac; D.lat[1]=la8; D.lat[2]=la4; D.ld4=ld4;
+                D.lc[0]=lc8; D.lc[1]=lc4; D.lc[2]=lc0; D.s[0]=s0; D.s[1]=s1;   // [u9764]
                 D.lbc = lbc; D.spin = d_spin; D.fired = 1;
                 if (A6aF32()) l_60 = (double)(ld4 * le4 + (float)l_60);   // [u9761] float precision (x87 PC_24)
                 else
