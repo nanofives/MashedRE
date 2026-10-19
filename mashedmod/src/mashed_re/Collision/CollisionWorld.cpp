@@ -411,11 +411,15 @@ void CollWorld_DumpBatch(const int* self, const float* qc, float r) {
     static const char* const s_path = std::getenv("MASHED_BATCH_DUMP");
     static std::FILE* s_f = nullptr;
     static int s_seq = 0;
-    if (!s_path || self != Vehicle::g_vehicleArrayBase) return;
+    // [u9759] MASHED_BATCH_DUMP_SLOT=<n> (diagnostic, default 0) dumps slot n instead, and a `vel` column carries
+    // record +0x9c8..+0x9d0 (the up vector the tri-normal FUN_0046c5f0 wrote), as the --batch-probe Q row does.
+    static const int s_slot = [] { const char* e = std::getenv("MASHED_BATCH_DUMP_SLOT"); return e ? std::atoi(e) : 0; }();
+    if (!s_path || !Vehicle::g_vehicleArrayBase ||
+        reinterpret_cast<const char*>(self) != reinterpret_cast<const char*>(Vehicle::g_vehicleArrayBase) + s_slot * 0xd04) return;
     if (!s_f) {
         s_f = std::fopen(s_path, "wb");
         if (!s_f) return;
-        std::fprintf(s_f, "seq,frame,kind,cx,cy,cz,r,count,entries,wpos\n");
+        std::fprintf(s_f, "seq,frame,kind,cx,cy,cz,r,count,entries,wpos,vel\n");
     }
     std::string o;
     char b[64];
@@ -427,6 +431,12 @@ void CollWorld_DumpBatch(const int* self, const float* qc, float r) {
     o += ',';
     for (int k = 0; k < 12; ++k) {
         std::uint32_t w; std::memcpy(&w, &g_wheelContactPos[k], 4);
+        std::snprintf(b, sizeof b, k ? ";%08x" : "%08x", w);
+        o += b;
+    }
+    o += ',';
+    for (int k = 0; k < 3; ++k) {   // [u9759] record +0x9c8..+0x9d0
+        std::uint32_t w; std::memcpy(&w, self + 0x272 + k, 4);
         std::snprintf(b, sizeof b, k ? ";%08x" : "%08x", w);
         o += b;
     }

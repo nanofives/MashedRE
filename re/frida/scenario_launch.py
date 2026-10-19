@@ -1546,6 +1546,12 @@ function bqWheels(r, withState){
 }
 function bqQ(){
   try {
+    // [u9759] once: the live RW vector-module slots *(*(0x007d3ff8) + *(0x007d3ffc) + 8/0xc/0x10/0x14) (installer 0x004c3e9a..)
+    if (!BQ.slotsDone) {
+      BQ.slotsDone = true;
+      const vb = ga(0x007d3ff8).readPointer().add(ga(0x007d3ffc).readU32());
+      BQ.chk.push({slots: [8, 0xc, 0x10, 0x14].map(o => vb.add(o).readPointer().toString())});
+    }
     const r = BQ_REC;
     const ring = r.add(0x9ac).readS32();
     const m = r.add(0x928 + ring * 0x40);
@@ -1572,7 +1578,10 @@ function bqQ(){
     }
     BQ.rows.push([BQ_SEQ++, BQ.nFrm, 'Q', bqH(m.add(0x30)), bqH(m.add(0x34)), bqH(m.add(0x38)),
                   bqH(r.add(0x4a4)), cnt, ents.join('|'), wp.join(';'), vel.join(';'),
-                  bqWheels(r, false), hist.join(';')].join(','));
+                  bqWheels(r, false), hist.join(';'),
+                  // [u9759] the dst half's rotation rows m+0x00..+0x2c: the matrix the wheel points were just transformed by
+                  // (read at the classifier entry; between the transform FUN_004c3d90 and here run FUN_0046c5f0 and FUN_00538c80)
+                  Array.from({length: 12}, (_, k) => bqH(m.add(k * 4))).join(';')].join(','));
   } catch(e){ if (!BQ.err) BQ.err = 'bqQ ' + e; }
 }
 function bqO(){
@@ -4914,7 +4923,7 @@ def main():
                     bpp = outp.with_suffix(outp.suffix + ".batchprobe.csv")
                     _nb = 0
                     with open(bpp, "w", newline="") as f:
-                        f.write("seq,frame,kind,cx,cy,cz,r,count,entries,wpos,vel,wstart,hist"
+                        f.write("seq,frame,kind,cx,cy,cz,r,count,entries,wpos,vel,wstart,hist,rows"
                                 + chr(10))
                         while True:
                             try: _chunk = E.batch_probe_drain(400)
