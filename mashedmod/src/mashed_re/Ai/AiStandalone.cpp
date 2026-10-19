@@ -188,6 +188,7 @@ const float  kSteerThrHi   =  1.0f;                 // (float)_DAT_005cd0c8 = +1
 // _DAT_005cc970 is a DOUBLE 0x404ca5dc20000000 ~= 57.29578 (rad->deg), NOT 2^-63 (that
 // was the low dword 0x20000000 read as a float). acos()[0,pi] * this -> degrees [0,180].
 const double kSteerScale   = 57.2957802;            // _DAT_005cc970 (0x404ca5dc20000000)
+const double kSteerScaleExact = 57.295780181884765625;   // _DAT_005cc970 bit-exact (0x404ca5dc20000000), MASHED_STEER_ACOS64
 const float kWrap         =  360.0f;                // _DAT_005ccac4 (0x43b40000)
 
 // ---------------------------------------------------------------------------
@@ -260,7 +261,19 @@ float SteerAngleErrorFwd(int v, float targetX, float targetZ)
         float d = nx;                                      // z*0 + y*0 + x (DAT_005d757c = 0)
         if (d < kSteerThrLo) d = kSteerClampLo;
         if (kSteerThrHi < d) d = kSteerClampHi;
-        float a = static_cast<float>(std::acos(d) * kSteerScale);   // FUN_004a3384 * 0x005cc970
+        float a;
+#ifdef MASHED_STANDALONE
+        // [d3bc 2026-10-19] MASHED_STEER_ACOS64 (default OFF). `std::acos(d)` with a float d is acosf. The original
+        // pushes d as a double (FSTP qword 0x00415eb2 / 0x00415f94) into the CRT acos FUN_004a3384 and multiplies the
+        // result by the double at 0x005cc970 (bits 0x404ca5dc20000000 = 57.295780181884765625, not 57.2957802),
+        // FMUL qword 0x00415eba / 0x00415f9c, at the race loop's PC_24. Offline (verify/d3bc_20261019/emu15e20.py)
+        // that form, with the LUT normalize, gives the original's stored error on 103/103 o_wobj2 car-1 rows.
+        static const bool s_acos64 = [] { const char* e = std::getenv("MASHED_STEER_ACOS64"); return e && e[0] && e[0] != '0'; }();
+        if (s_acos64)
+            a = static_cast<float>(std::acos(static_cast<double>(d)) * kSteerScaleExact);
+        else
+#endif
+            a = static_cast<float>(std::acos(d) * kSteerScale);   // FUN_004a3384 * 0x005cc970
         if (nz < 0.0f) a = -a;
         while (a <= 0.0f) a += kWrap;
         return a;
