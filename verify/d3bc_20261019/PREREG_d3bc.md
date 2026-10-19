@@ -50,3 +50,18 @@ default proposal.
 
 Decision: G-ERR PASS = H1 holds and the knob is the faithful form, kept default OFF unless G-DEF passes. G-ERR FAIL = report
 the residual rows, no further knob on this function in this lane.
+
+## 2. Amendment 1 (written before any MASHED_AI_FWD_ATROW arm)
+
+Measured after section 1's arms: G-NOOP PASS (`6efb49ed / 3e0724ac / 395fb8b7` on exe `3c47a766`). G-ERR FAIL: on `EXL7A` the
+emulator on the port's inputs still matches the port's stored error on 13 / 102 rows, the same misses as without the knob. The
+port's FUN_0046d510 stand-in is `aib_own_fwd_xz` (`TrackRenderer.cpp:153`), which returns the snapshot's
+`(cos(yaw), sin(yaw))` (`TrackRenderer.cpp:6001`), with `yaw = atan2(at.z, at.x)` (`BodyOrient_Heading`,
+`BodyOrientationIntegrate.cpp:454`). The original's FUN_00415e20 normalizes the raw `at` row (y zeroed, z negated). Its other
+consumer is the mode-2 dot at `AiStandalone.cpp:1243`, also FUN_0046d510 in the original.
+
+H2: with `aib_own_fwd_xz` returning record `+0x948 / +0x950`, `EXL7A` + this knob (`EXL7AF`) gives the original's stored
+error on every row while the record is exact. Knob `MASHED_AI_FWD_ATROW=1` (default OFF; an all-zero row keeps the snapshot).
+
+Arms: `B_DEF_K0/K1/K26` (G-NOOP), `B_EXL7AFR1_K1` (G-ERR), (b) on `L7AF` (default + the three) and `EXL7AF` at K0 / K1 / K26 /
+K54, and the knob alone (`F2`). Gates as section 1. Decision unchanged.
