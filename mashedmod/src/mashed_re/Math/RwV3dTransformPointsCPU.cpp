@@ -50,13 +50,40 @@
 // slot +0x14"): it is the vectors method.
 // ============================================================================
 #include <cstdint>
+#include <cstdlib>
 
 namespace mashed_re {
 namespace Math {
 
+// [u9759 2026-10-18] MASHED_RW_SSE_POINTS=1 (default OFF, verify/u9759_20261018/PREREG_u9759.md): the live slot +0xc is
+// NOT 0x004c3670 (the x87 default the installer 0x004c3ebf writes). Read in game (batch probe, o_bq3): the vector-module
+// slots *(*(0x007d3ff8) + *(0x007d3ffc) + 8 / 0xc / 0x10 / 0x14) hold 0x004dc4a0 / 0x004dc370 / 0x004dc530 / 0x004dc410.
+// 0x004dc370 is SSE: xmm0 = x*right + pos (0x004dc3d2 mulps, 0x004dc3de addps), xmm2 = z*at + y*up (0x004dc3d8,
+// 0x004dc3e1), out = xmm2 + xmm0 (0x004dc3e7), i.e. per component (z*m[8+c] + y*m[4+c]) + (x*m[c] + m[12+c]). On car 1's
+// spawn pass that order gives wheel 3 x 0xbf59093a = the original; the order below gives 0xbf590939. The vectors slot
+// 0x004dc410 sums (x*right + y*up) + z*at (0x004dc472 / 0x004dc478), which RwV3dTransformVectorsCPU already does.
+static bool RwSsePoints()
+{
+    static const bool s = [] { const char* e = std::getenv("MASHED_RW_SSE_POINTS"); return e && e[0] == '1'; }();
+    return s;
+}
+
 // points are vec3 (12-byte stride). count points, dst[i] = M * src[i].
 void RwV3dTransformPointsCPU(float* dst, const float* src, int count, const float* m)
 {
+    if (RwSsePoints()) {
+        for (int i = 0; i < count; ++i) {
+            const float* s = src + i * 3;
+            float* d = dst + i * 3;
+            const float x = s[0], y = s[1], z = s[2];
+            for (int c = 0; c < 3; ++c) {
+                const float hi = z * m[8 + c] + y * m[4 + c];   // xmm2: 0x004dc3d8 mulps, 0x004dc3e1 addps
+                const float lo = x * m[c] + m[12 + c];          // xmm0: 0x004dc3d2 mulps, 0x004dc3de addps
+                d[c] = hi + lo;                                 // 0x004dc3e7 addps xmm2, xmm0
+            }
+        }
+        return;
+    }
     for (int i = 0; i < count; ++i) {
         const float* s = src + i * 3;
         float* d = dst + i * 3;
