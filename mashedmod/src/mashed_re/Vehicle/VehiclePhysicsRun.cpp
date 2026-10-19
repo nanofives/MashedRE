@@ -510,7 +510,8 @@ static bool RingSlot0Enabled() {
 // The port keeps one pose (U-9152) and published it into both halves. Under the knob it publishes only the dst half
 // and swaps the selectors as above. MASHED_RING_DBUF_DISCARD=1 (needs MASHED_RING_DBUF) also drops the pose of a
 // substep whose retries ran out, as the skipped swap does in the original (the next substep starts from the old src).
-// [u9758 2026-10-18] MASHED_FWD_AT=1 (default OFF, verify/u9758_20261018/PREREG_u9758.md): record +0x9d4..+0x9dc as the
+// [u9758 2026-10-18] MASHED_FWD_AT (default ON since the fwdsse flip 2026-10-19, user decision; MASHED_NO_FWD_AT=1 opts
+// out; verify/u9758_20261018/PREREG_u9758.md): record +0x9d4..+0x9dc as the
 // original writes it. Write watch o_fw1 (car 1, +0x9d4 / +0x9dc): every write is FUN_004c3df0(rec + 0x9d4, &DAT_00614708,
 // 1, matrix) with DAT_00614708 = (0, 0, 1) (.data, bytes 00000000 00000000 0000803f), i.e. the matrix's `at` row:
 //   A5 FUN_0046ddb0 0x0046ddba..0x0046ddc9, matrix = its arg 2 = A4's rec + [+0x9a8]*0x40 + 0x928, once per frame
@@ -518,7 +519,7 @@ static bool RingSlot0Enabled() {
 // None of them runs inside the substep loop. The port wrote (cos yaw, 0, sin yaw) at frame entry and after every substep's
 // orientation step. Under the knob: the basis `at` row at frame entry and after the heading is taken, none in the substep.
 static bool FwdAt() {
-    static const bool s = [] { const char* e = std::getenv("MASHED_FWD_AT"); return e && e[0] == '1'; }();
+    static const bool s = [] { const char* e = std::getenv("MASHED_NO_FWD_AT"); return !(e && e[0] == '1'); }();
     return s;
 }
 // FUN_004c3df0 with (0, 0, 1): 0 * right + 0 * up + 1 * at, per component
