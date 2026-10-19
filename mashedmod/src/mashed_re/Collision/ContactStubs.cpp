@@ -18,6 +18,7 @@
 // identically-named Vehicle-namespace pair. The remaining entries stay stubbed and
 // each still cites its RVA.
 #include "ContactDeps.h"
+#include <cstdlib>
 
 // Forward-decls at GLOBAL scope (must NOT be nested inside mashed_re::Collision).
 namespace mashed_re { namespace Math {
@@ -158,7 +159,21 @@ void Rw_MatrixFromAxisAngle(void* outMtx, const float* axis, float deg, int flag
     RwMatrixRotate(outMtx, axis, deg, flag);
 }
 // FUN_004c4dc0 — derive working matrix from the vehicle contact-matrix block.
-void Rw_MatrixDerive(void* /*outMtx*/, void* /*srcMtx*/) {}
+// [u9769 2026-10-19] FUN_004c4dc0 is RwMatrixInvertEntry (identity copy / orthonormal transpose + inverse
+// translation / cofactor tail 0x004c4eb0), already ported and verified in Render/RwMatrixInvert.cpp. Its only
+// caller here is VehicleCarCarContact's spin tail (0x0046acfa / 0x0046ad14), which transforms the contact arm
+// by the inverse with FUN_004c3df0 (vectors slot +0x14) and takes the spin sign from it. With this stub the
+// 64-byte local stayed uninitialised, so the spin sign came from stack contents. MASHED_CC_MATRIX_INVERT=1
+// (default OFF) calls the port of 0x004c4dc0.
+extern "C" void __cdecl RwMatrixInvertEntry(void* out, void* in);   // Render/RwMatrixInvert.cpp, 0x004c4dc0
+void Rw_MatrixDerive(void* outMtx, void* srcMtx) {
+#ifdef MASHED_STANDALONE
+    static const bool s_on = [] { const char* e = std::getenv("MASHED_CC_MATRIX_INVERT"); return e && e[0] && e[0] != '0'; }();
+    if (s_on) RwMatrixInvertEntry(outMtx, srcMtx);
+#else
+    (void)outMtx; (void)srcMtx;
+#endif
+}
 // FUN_004c52f0 — set rotation on the wheel-ring RW matrix block.
 void Rw_SetRotation(void* /*mtxBlock*/, void* /*rot*/, int /*mode*/) {}
 // FUN_004a3384 — acos approximation.

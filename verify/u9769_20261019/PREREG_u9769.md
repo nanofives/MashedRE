@@ -21,3 +21,19 @@ Diagnostic `MASHED_CC_REPLAY` (default OFF, no game state): the port's `VehicleC
 original's entry records, every dword diffed against the original's leave records. Arm `CR_DEF`. A fix found from it goes
 behind a new default-OFF knob, written into an amendment here before its arms. Gates as d3bc (G-NOOP, the replay itself as
 G-CC: 0 differing dwords on the contact rows, (b) report, default only on Mariano's decision with D2 / 13 tracks / G-CTRL).
+
+## 2. Amendment 1 (written before any MASHED_CC_MATRIX_INVERT arm)
+
+Measured after section 1: `CR_DEF` (exe `6a85044d`; G-NOOP `B_DEF_K0` `6efb49ed`) replays 64 o_cc1 rows; 63 are exact. The
+contact row (window call 22, self 0 / other 2, pass 0) reproduces the original's linear impulse to about 1e-6 relative
+(player `+0x9b0` -426.400635 vs -426.399963), but the other car's `+0x148` reads 0.176054001 against -0.0239460096: a
+difference of 0.2 = 2 x 200 x 0.0005, the spin impulse `local_164 * _DAT_005ce268` with the opposite sign. The spin sign
+comes from the arm transformed by `FUN_004c3df0` (vectors slot `+0x14`) with the matrix from `FUN_004c4dc0` (decomp of
+`0x00469df0`, the tail after the bounce timers). The port's `Rw_MatrixDerive` (`Collision/ContactStubs.cpp:161`) is an empty
+stub, so that 64-byte local is uninitialised. FUN_004c4dc0 is `RwMatrixInvertEntry` (C3, `Render/RwMatrixInvert.cpp`, exe arm
+live since pontoon).
+
+H1: with `Rw_MatrixDerive` calling `RwMatrixInvertEntry`, the replay's contact row has no spin difference. Knob
+`MASHED_CC_MATRIX_INVERT=1` (default OFF). Arms: `CR_MI` (G-CC: contact row's spin dwords equal; report the residual linear
+dwords), G-NOOP, then the in-run question (section 0 item 2: the player's in-run entry state at call 22) on `EXL7AFSM7` and
+`EXL7AFSM7` + the knob, and (b) report.
