@@ -42,3 +42,18 @@ is `(n2 * +0x9d0 + n0 * +0x9c8) + n1 * +0x9cc`.
 
 Knob `MASHED_FIXUP_SLIDE_ORDER=1` (default OFF). H3: on `CLS` + the knob the record's +0x9b4 at 113 equals the original's. Arms
 `CLSFT` (traced), then D2 x3 on `CLSF` (= `CL` + both knobs) and on `SF` (= default + both).
+
+## Amendment 3 (before its arms): double-precision steps in the contact path
+
+Measured on `CLSFTL` (`MASHED_FIXUP_LOG`, now with a slide line): `MASHED_FIXUP_SLIDE_ORDER` is inert here (H3 refuted, +0x9b4 at 113
+unchanged). The fixup's impulse step already differs (`v1` after `v += imp`: -36.0461578 vs the original's -36.0461540; the entry
+velocity -1.89379358 is equal). The record's only differing contact-slot word before the split is slot 5's normal y (`+0x604`,
+0.00707320031 vs 0.00707320077, from call 94), later slot 9's (`+0x704`). A write watch (`o_ww604`) names its writers: `0x004690b1 /
+0x004690be` (unnormalised, in the solver called from `0x00469bdc`) and FUN_004c39b0 (`0x004c3a72 / 0x004c3a7c`, from `0x004690ea`).
+The original forms the spin term in float steps at PC_24 (`0x0046906b..0x004690a1`: `((|w| * 360) * [edi-0x18]) * _DAT_005cea44`,
+then each component times it); the port (`Collision/CarWorldContacts.cpp`) in double, rounded once. The fixup's hull-slot block does
+the same (`0x0046f1c2..0x0046f209`: the dot product stored as a float at `0x0046f1df`, then `|local_3c| * dot`, then `n * f`; the
+sign test grouped `(p9*l1 + l0*p8) + p10*l2` at `0x0046f27b..0x0046f291`); the port keeps double.
+
+Knobs (default OFF): `MASHED_TER_SPIN_F32=1` (the spin term) and `MASHED_FIXUP_F32=1` (the hull-slot block). H4: on `CLSF` + both,
+slot 5's normal at 94 and the record at 113 equal the original's. Arms `CLSF3TL` (traced), D2 x3 on the stack that holds.
