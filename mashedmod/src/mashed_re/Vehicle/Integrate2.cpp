@@ -68,15 +68,29 @@ void VzLog(const void* v, float fx, float fy, float fz, float k, float grip, int
 }
 // [u9771] MASHED_A6A_TAILLOG=<path> (diagnostic, default OFF): A6a's tail terms for slot MASHED_FORCE_SPLIT_SLOT, in the
 // field set of scenario_launch.py --a6t-probe (d8 = l_64 - l_b0, l_b8 / l_b4 after the blend, lb0f, linTerm, the accumulators).
-void TailLog(const void* v, float lb0, float l64, float l68, float l6c, float lb8, float lb4, float lb0f, float linTerm) {
+void TailLog(const void* v, float lb0, float l64, float l68, float l6c, float lb8, float lb4, float lb0f, float linTerm, float cc) {
     static const char* const s_path = std::getenv("MASHED_A6A_TAILLOG");
     static const int s_slot = [] { const char* e = std::getenv("MASHED_FORCE_SPLIT_SLOT"); return e ? std::atoi(e) : 1; }();
     static std::FILE* s_f = nullptr; static int s_n = 0;
     if (!s_path || !mashed_re::Vehicle::g_vehicleArrayBase || s_n >= 4000) return;
     if (reinterpret_cast<const char*>(v) != reinterpret_cast<const char*>(mashed_re::Vehicle::g_vehicleArrayBase) + s_slot * 0xd04) return;
-    if (!s_f) { s_f = std::fopen(s_path, "w"); if (!s_f) return; std::fprintf(s_f, "n,lb0,d8,linTerm,lb8,lb4,lb0f,l6c,l68,l64,b14,b18,b1c,v0,v1,v2\n"); }
-    std::fprintf(s_f, "%d,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g\n", s_n++, lb0, l64 - lb0, linTerm, lb8, lb4, lb0f,
-                 l6c, l68, l64, RecF(v, 0xb14), RecF(v, 0xb18), RecF(v, 0xb1c), RecF(v, 0x9b0), RecF(v, 0x9b4), RecF(v, 0x9b8));
+    if (!s_f) { s_f = std::fopen(s_path, "w"); if (!s_f) return; std::fprintf(s_f, "n,lb0,d8,linTerm,lb8,lb4,lb0f,l6c,l68,l64,cc,b14,b18,b1c,v0,v1,v2,s9e4,b0c,g490,t494\n"); }
+    std::fprintf(s_f, "%d,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%d,%d\n", s_n++, lb0, l64 - lb0, linTerm, lb8, lb4, lb0f,
+                 l6c, l68, l64, cc, RecF(v, 0xb14), RecF(v, 0xb18), RecF(v, 0xb1c), RecF(v, 0x9b0), RecF(v, 0x9b4), RecF(v, 0x9b8),
+                 RecF(v, 0x9e4), RecF(v, 0xb0c), *reinterpret_cast<const int*>(reinterpret_cast<const char*>(v) + 0x490), *reinterpret_cast<const int*>(reinterpret_cast<const char*>(v) + 0x494));
+    std::fflush(s_f);
+}
+// [u9771] MASHED_A6A_DRIVELOG=<path> (diagnostic, default OFF): A6a's drive accumulate (0x00467ca4..0x00467cd7) for slot
+// MASHED_FORCE_SPLIT_SLOT: wheel, e4 (after the 160 clamp), local_cc, e4 * cc, the wheel axis p[0x1f..0x21], +0xb14..+0xb1c after.
+void DriveLog(const void* v, int wheel, float e4, float cc, float prod, const float* ax) {
+    static const char* const s_path = std::getenv("MASHED_A6A_DRIVELOG");
+    static const int s_slot = [] { const char* e = std::getenv("MASHED_FORCE_SPLIT_SLOT"); return e ? std::atoi(e) : 1; }();
+    static std::FILE* s_f = nullptr; static int s_n = 0;
+    if (!s_path || !mashed_re::Vehicle::g_vehicleArrayBase || s_n >= 8000) return;
+    if (reinterpret_cast<const char*>(v) != reinterpret_cast<const char*>(mashed_re::Vehicle::g_vehicleArrayBase) + s_slot * 0xd04) return;
+    if (!s_f) { s_f = std::fopen(s_path, "w"); if (!s_f) return; std::fprintf(s_f, "n,wheel,e4,cc,prod,ax0,ax1,ax2,b14,b18,b1c\n"); }
+    std::fprintf(s_f, "%d,%d,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g\n", s_n++, wheel, e4, cc, prod, ax[0], ax[1], ax[2],
+                 RecF(v, 0xb14), RecF(v, 0xb18), RecF(v, 0xb1c));
     std::fflush(s_f);
 }
 void ForceSplitLog(const void* v, int wheel, const float* pre, const mashed_re::Vehicle::A6aWheelDump& D, int branch) {
@@ -149,6 +163,11 @@ static bool A6aF32() {
 // arm's normalisation of +0x9b0 on tracks -0x69e1a6 / -0xe17f4c is FUN_004c39b0, the RW LUT body.
 static bool A6aDriveNormLut() {
     static const bool s = [] { const char* e = std::getenv("MASHED_A6A_DRIVE_NORM_LUT"); return e && e[0] == '1'; }();
+    return s;
+}
+// [u9771 2026-10-19] MASHED_A6A_GEAR_ORDER=1 (default OFF, verify/u9771_20261019/PREREG_u9771.md amendment 2).
+static bool A6aGearOrder() {
+    static const bool s = [] { const char* e = std::getenv("MASHED_A6A_GEAR_ORDER"); return e && e[0] == '1'; }();
     return s;
 }
 static bool A6aLc0() {
@@ -238,8 +257,17 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
     float fVar5 = k1500 - Rf(v, 0xb0c);
     if (fVar5 < k500) fVar5 = k500;
     int iVar11 = 0;
-    float fVar4 = Rf(v, 0x498) * kHalf * fVar5 * k6p667e4;
-    fVar5 = fVar5 * k6p667e4 * Rf(v, 0x49c) * kHalf;
+    // [u9771] MASHED_A6A_GEAR_ORDER (default OFF): the original's association, 0x0046768b..0x00467739:
+    //   fVar4 = (c498 * 0.5) * (fVar5 * k), fVar5' = (fVar5 * k) * (c49c * 0.5), k = _DAT_005ce1e8.
+    float fVar4;
+    if (A6aGearOrder()) {
+        const float fk = fVar5 * k6p667e4;
+        fVar4 = (Rf(v, 0x498) * kHalf) * fk;
+        fVar5 = fk * (Rf(v, 0x49c) * kHalf);
+    } else {
+        fVar4 = Rf(v, 0x498) * kHalf * fVar5 * k6p667e4;
+        fVar5 = fVar5 * k6p667e4 * Rf(v, 0x49c) * kHalf;
+    }
     for (int j = 0; j < 5; ++j) {
         float g = Rf(v, 0x478 + j * 4);
         if (g != kZero) {
@@ -353,10 +381,12 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
             if (mode != 7 && drive != kZero) {
                 Wi(v, 0xb20, 1);
                 if (k160 < drive) drive = 160.0f;
+                const float e4log = drive;   // [u9771]
                 drive = drive * local_cc;
                 Wf(v, 0xb14, Rp(p,0x1f) * drive + Rf(v,0xb14));
                 Wf(v, 0xb18, Rp(p,0x20) * drive + Rf(v,0xb18));
                 Wf(v, 0xb1c, Rp(p,0x21) * drive + Rf(v,0xb1c));
+                { const float axl[3] = { Rp(p,0x1f), Rp(p,0x20), Rp(p,0x21) }; DriveLog(v, wheel, e4log, local_cc, drive, axl); }   // [u9771]
             }
             // BOOST TIMER +0xbf4 — real law, 2026-08-25. Same shape as the gearbox
             // timer: FILD +0xbf4 / FSUB dt / CALL _ftol2 at 0x00467cf1..0x00467cfe,
@@ -767,7 +797,7 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
     Wf(v, 0x9b4, linTerm * (Rf(v,0xb18) + l_b4) + Rf(v,0x9b4));
     Wf(v, 0x9b8, linTerm * lb0f + Rf(v,0x9b8));
     g_vzTail[0] = Rf(v,0x9b0); g_vzTail[1] = Rf(v,0x9b4); g_vzTail[2] = Rf(v,0x9b8);   // [u9771] MASHED_A6A_VZLOG
-    TailLog(v, l_b0, l_64, l_68, l_6c, l_b8, l_b4, lb0f, linTerm);   // [u9771] MASHED_A6A_TAILLOG
+    TailLog(v, l_b0, l_64, l_68, l_6c, l_b8, l_b4, lb0f, linTerm, local_cc);   // [u9771] MASHED_A6A_TAILLOG
     float speed = A6Len((const float*)((char*)v + 0x9b0));     // 0x004686a4
     int tId = Ri(v, 0x1f0);
     float grip = A6aF32() ? ((float)l_60 / Rf(v, 0x18c)) : (float)(l_60 / (double)Rf(v, 0x18c));   // [u9761]

@@ -2803,8 +2803,8 @@ function a6tProbeArm(recBaseHex, car){
         if (!this.returnAddress.equals(ra) || !args[0].equals(arg)) return;
         A6T.n++;
         const sp = this.context.esp.add(4);
-        const offs = [0x14, 0x18, 0x1c, 0x24, 0x3c, 0x40, 0x44, 0x64, 0x88, 0x8c, 0x90];
-        A6T.rows.push([A6T.n].concat(offs.map(k => h(sp.add(k))), [0xb14, 0xb18, 0xb1c, 0x9b0, 0x9b4, 0x9b8].map(k => h(rec.add(k)))).join(','));
+        const offs = [0x14, 0x18, 0x1c, 0x24, 0x3c, 0x40, 0x44, 0x64, 0x88, 0x8c, 0x90, 0x28];
+        A6T.rows.push([A6T.n].concat(offs.map(k => h(sp.add(k))), [0xb14, 0xb18, 0xb1c, 0x9b0, 0x9b4, 0x9b8, 0x9e4, 0xb0c, 0x490, 0x494].map(k => h(rec.add(k)))).join(','));
       } catch(e){ if (!A6T.err) A6T.err = 'a6t ' + e; }
     }});
     A6T.armed = true;
@@ -5234,7 +5234,7 @@ def main():
                         _tr = E.a6t_probe_drain()
                         _tf = outp.with_suffix(outp.suffix + ".a6tprobe.csv")
                         with open(_tf, "w", newline="") as f:
-                            f.write("n,e0,dc,d8,linTerm,lb8,lb4,lb0f,xterm,l6c,l68,l64,b14,b18,b1c,v0,v1,v2" + chr(10))
+                            f.write("n,e0,dc,d8,linTerm,lb8,lb4,lb0f,xterm,l6c,l68,l64,cc,b14,b18,b1c,v0,v1,v2,s9e4,b0c,g490,t494" + chr(10))
                             for r in _tr: f.write(r + chr(10))
                         print(f"  [statediff] a6t-probe {len(_tr)} rows -> {_tf} (err {E.a6t_probe_err()})")
                     except Exception as _e: print("  [statediff] a6t drain failed:", _e)

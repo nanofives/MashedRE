@@ -210,6 +210,9 @@ STACK['TL3'] = STACK['VZ3'] + ['MASHED_A6A_TAILLOG=@OUT@/@NAME@.tail.csv']   # u
 STACK['DN'] = ['MASHED_A6A_DRIVE_NORM_LUT']; STACK['TL3DN'] = STACK['TL3'] + STACK['DN']; STACK['FULLRLDN'] = STACK['FULLRL'] + STACK['DN']   # u9771 amendment 1
 STACK['FULLRLDNR3'] = [k for k in STACK['FULLRLDN'] if not k.startswith('MASHED_RECDUMP')] + ['MASHED_RECDUMP=@OUT@/@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=3']
 STACK['FULLRLDNR2'] = [k for k in STACK['FULLRLDN'] if not k.startswith('MASHED_RECDUMP')] + ['MASHED_RECDUMP=@OUT@/@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=2']
+STACK['DR3'] = STACK['TL3'] + ['MASHED_A6A_DRIVELOG=@OUT@/@NAME@.drive.csv']   # u9771 diagnostic
+STACK['GO'] = ['MASHED_A6A_GEAR_ORDER']; STACK['TL3GO'] = STACK['TL3'] + STACK['GO']; STACK['FULLRLGO'] = STACK['FULLRL'] + STACK['GO']   # u9771 amendment 2
+for _s in (2, 3): STACK['FULLRLGOR%d' % _s] = [k for k in STACK['FULLRLGO'] if not k.startswith('MASHED_RECDUMP')] + ['MASHED_RECDUMP=@OUT@/@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=%d' % _s]
 for _t in list(STACK):   # <tag>T = the same stack with the FUN_00414a70 trace (MASHED_TGT3_TRACE) per arm
     # a4order: never overwrite a defined tag. In d3bB2's copy this loop replaced CCET (clock + event + tick first) with
     # CCE + traces, so every d3bB2 CCET run ran without MASHED_AI_TICK_FIRST (its RUNLOG lines carry no such knob).

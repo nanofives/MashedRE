@@ -54,3 +54,19 @@ H2: with that normalisation on the LUT body, car 3's `+0xb14 / +0xb1c` and recor
 `MASHED_A6A_DRIVE_NORM_LUT=1` (default OFF). Arms: G-NOOP; `TL3DN` (= `TL3` + the knob) K0: tail terms at frame 7 and car 3's record
 split; (b) on `FULLRL` + the knob and the knob alone (`DN`). Gates as section 1 (G-VEL now: car 3's end-of-call-7 `+0x9b8` =
 `-1964.98584`).
+
+## 3. Amendment 2 (written before any MASHED_A6A_GEAR_ORDER arm)
+
+Amendment 1's H2 is refuted: `MASHED_A6A_DRIVE_NORM_LUT` moves no hash (`TL3DN`, `FULLRLDN*`, `DN`); that arm is a surface
+test on `+0x1f0` and does not run for car 3 here. Measured since (exes `53998466`, `c0300c93`, G-NOOP `d6d87a6c`):
+- `MASHED_A6A_DRIVELOG`: frame 7's drive accumulate has two wheels (0, 1), `e4 = 160` each; the original's `+0xb14 / +0xb1c`
+  sit about 1.5e-7 (relative) below the port's on both axes.
+- Tail probe extended with `local_cc` (`[esp+0x24]` in the wheel loop, `0x00467ca8`) and the record's `+0x9e4 / +0xb0c / +0x490
+  / +0x494`: frame 7 `local_cc` `8586.67383` (original) vs `8586.6748`; `+0x9e4`, `+0xb0c`, gear 1, timer 2650 equal.
+- Disassembly `0x0046768b..0x00467739`: `fVar4 = (c498 * 0.5) * (fVar5 * k)` and `fVar5' = (fVar5 * k) * (c49c * 0.5)` with
+  `k = _DAT_005ce1e8`. The port has `fVar4 = ((c498 * 0.5) * fVar5) * k` (`Vehicle/Integrate2.cpp`, the gear block). Offline,
+  the original's order at float precision gives `8586.67383`, the port's `8586.6748`.
+
+H3: with the original's association, car 3's `local_cc`, `+0xb14 / +0xb1c` and record equal the original's at call 7. Knob
+`MASHED_A6A_GEAR_ORDER=1` (default OFF). Arms: G-NOOP; `TL3GO` (= `TL3` + the knob) K0 against o_a6t3b; car 2 / car 3 record splits
+on `FULLRL` + the knob (`FULLRLGOR2 / R3`); (b) on `FULLRLGO` and on the knob alone (`GO`). Gates as section 1.
