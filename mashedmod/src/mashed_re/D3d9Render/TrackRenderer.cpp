@@ -165,6 +165,8 @@ void aib_own_fwd_xz(int v, float* fx, float* fz) {
     }
     *fx = g_aib.fwd[v][0]; *fz = g_aib.fwd[v][1];
 }
+// [u9770] MASHED_REG_LATE (default OFF): see the [mode 7 M1] block in UpdateRace.
+bool RegLate() { static const bool s_on = [] { const char* e = std::getenv("MASHED_REG_LATE"); return e && e[0] && e[0] != '0'; }(); return s_on; }
 // ---------------------------------------------------------------------------
 // [D3 2026-10-05] U-9188 legs A and B. DEFAULT OFF: with MASHED_AI_YAWW unset
 // every entry point here returns on its first line and nothing is written.
@@ -5718,7 +5720,12 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
     // [cev] MASHED_PATHPROG_LATE: the wholesale tick at the same place (after FUN_00425a40 0x0040fc6c, before the
     // producer 0x0040fc7c); same gates_ guard as the UpdateRace site it replaces.
     if (Race::PathProg_Late() && !gates_.empty()) Race::PathProg_FrameTick();
+    if (RegLate() && !gates_.empty()) Race::CarsReg_FrameTick();          // [u9770] FUN_0040da50 0x0040fc75
     if (RaceRefDistAfterAi() && !gates_.empty()) RaceComputeDistancesTick(1);
+    if (RegLate() && !gates_.empty()) {                                   // [u9770] FUN_0045bba0 0x0040fcd0, FUN_00485070 0x0040fd07
+        Gameplay::Pickups_FrameTick();
+        Race::Registry_FrameTick();
+    }
     yaww::Frame();   // U-9188 leg A/B per-frame emit; no-op unless MASHED_AI_YAWW
 
     // power-up pickups: collect orbs the player drives through (respawn loop).
@@ -7867,9 +7874,14 @@ void TrackRenderer::UpdateRace(float dt) {
     // AI tick is an M4 question (PREREG_MODE7.md section 3).
     // [mode 7 M2a] FUN_0045bba0's FUN_00459000 (0x0040fcd0) registers the live pickups first.
     // [mode 7 M2b] the cars register first, from FUN_0040da50 (0x0040dad0), as in FUN_0040fc00's order.
-    Race::CarsReg_FrameTick();
-    Gameplay::Pickups_FrameTick();
-    Race::Registry_FrameTick();
+    // [u9770] MASHED_REG_LATE (default OFF): FUN_0040fc00 runs all three after FUN_00425a40 (AI tick + physics, 0x0040fc6c):
+    // FUN_0040da50 at 0x0040fc75, FUN_0045bba0 at 0x0040fcd0, FUN_00485070 at 0x0040fd07. Under the knob they run after the
+    // opponents' physics (the [U-9683] site), so a pickup the car reaches on call k is held at the AI tick of row k+1.
+    if (!RegLate()) {
+        Race::CarsReg_FrameTick();
+        Gameplay::Pickups_FrameTick();
+        Race::Registry_FrameTick();
+    }
 
     // [D-11072 bridge write] Mirror the monotone arcpct into the original per-car
     // race_pct slot 0x008a96ec + v*0x30c, behind a default-OFF knob. UpdateRace runs
