@@ -1,0 +1,1 @@
+f5flip arm outputs (B step CSVs, H_DEF / H_DEF-2 / H_N5 / H_NF, D2_DEF_1..3) moved off git 2026-10-20 to D:\MashedWT\f5flip_data\arms; 13 tracks in D:\MashedWT\f5flip_data\tracks_def.
