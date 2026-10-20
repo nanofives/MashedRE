@@ -157,12 +157,25 @@ void VehicleContactFixup(int* self)
         }
         const float local_48v = pfVar7[-1] * sc;
 
+        // [u9774 2026-10-20] MASHED_FIXUP_SUM_ORDER=1 (default OFF, verify/u9774_20261020/PREREG_u9774.md amendment 4): the
+        // original's grouping, 0x0046f0d8..0x0046f1a8: local_54 = (local_3c + local_54) + p*sc (the first sum kept on the
+        // x87 stack), local_60 = (local_60 + local_3c) + p*sc.
+        static const bool s_sumOrder = [] { const char* e = std::getenv("MASHED_FIXUP_SUM_ORDER"); return e && e[0] == '1'; }();
+        if (s_sumOrder) {
+            local_54[0] = (local_3c[0] + local_54[0]) + local_48v;
+            local_54[1] = (local_3c[1] + local_54[1]) + local_44v;
+            local_54[2] = (local_3c[2] + local_54[2]) + local_40v;
+            local_60[0] = (local_60[0] + local_3c[0]) + local_48v;
+            local_60[1] = (local_60[1] + local_3c[1]) + local_44v;
+            local_60[2] = (local_60[2] + local_3c[2]) + local_40v;
+        } else {
         local_54[0] += local_48v + local_3c[0];
         local_54[1] += local_44v + local_3c[1];
         local_54[2] += local_40v + local_3c[2];
         local_60[0] += local_48v + local_3c[0];
         local_60[1] += local_44v + local_3c[1];
         local_60[2] += local_40v + local_3c[2];
+        }
 
         if (3 < i) {   // hull slots only (0x0046f1ae region)
             float local_24[3];

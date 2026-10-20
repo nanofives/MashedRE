@@ -57,3 +57,14 @@ sign test grouped `(p9*l1 + l0*p8) + p10*l2` at `0x0046f27b..0x0046f291`); the p
 
 Knobs (default OFF): `MASHED_TER_SPIN_F32=1` (the spin term) and `MASHED_FIXUP_F32=1` (the hull-slot block). H4: on `CLSF` + both,
 slot 5's normal at 94 and the record at 113 equal the original's. Arms `CLSF3TL` (traced), D2 x3 on the stack that holds.
+
+## Amendment 4 (before its arms): the fixup's per-contact sums
+
+Measured on `CLSF3TL`: with amendment 3's knobs the call-113 split is gone (contact slots equal at every call through 138) and the
+first difference is `+0x9b0` at 138 (3 ulp), made in the fixup's impulse step of that frame (`v0` after `v += imp`: original
+130.570099 (`o_ww9b0`, `0x0046f58a`), port 130.570068; entry velocity and `v2` equal). The original sums each contact into its
+accumulators as `(local_3c + local_54) + p*sc` and `(local_60 + local_3c) + p*sc` (`0x0046f0d8..0x0046f1a8`, the first sum held on
+the x87 stack); the port as `acc + (p*sc + local_3c)`. D2 on `CLSF3`: slip 0.1974 / 0.2521, driving-median 1895.91 (in), 1 run.
+
+Knob `MASHED_FIXUP_SUM_ORDER=1` (default OFF). H5: on `CLSF3` + it the record at 138 equals the original's. Arms `CLSF4TL`, then
+D2 x3 on `CLSF4` (= `CL` + all five knobs) and on `F5` (= the default + the five, without `COLL_LUT`).

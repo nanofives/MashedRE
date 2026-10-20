@@ -340,6 +340,10 @@ STACK['CLSFTL'] = STACK['CLSFT'] + ['MASHED_FIXUP_LOG=@OUT@/@NAME@.fix.txt']
 STACK['F3'] = ['MASHED_TER_SPIN_F32=1', 'MASHED_FIXUP_F32=1']   # amendment 3
 STACK['CLSF3'] = STACK['CLSF'] + STACK['F3']
 STACK['CLSF3TL'] = STACK['CLSFTL'] + STACK['F3']
+STACK['F4'] = STACK['F3'] + ['MASHED_FIXUP_SUM_ORDER=1']   # amendment 4
+STACK['CLSF4'] = STACK['CLSF'] + STACK['F4']
+STACK['CLSF4TL'] = STACK['CLSFTL'] + STACK['F4']
+STACK['F5'] = STACK['SF'] + STACK['F4']   # the five knobs without COLL_LUT
 for _w in (1, 2, 3): STACK['CLSTW%d' % _w] = STACK['CLST'] + ['MASHED_FORCE_SPLIT_WHEEL=%d' % _w]
 
 
