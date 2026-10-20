@@ -24,6 +24,12 @@
 #include "../Collision/ContactSolvers.h"   // reuse TriangleFaceNormal (0x0046c5f0)
 #include "../Collision/ContactDeps.h"      // Collision::g_suspScratch (DAT_00881560)
 static bool A5DraftLut() { static const bool s = [] { const char* e = std::getenv("MASHED_A5_DRAFT_LUT"); return e && e[0] == '1'; }(); return s; }   // [u9771]
+// [u9772] MASHED_A5_FD0_LIVE=1 (default OFF): A5 (0x0046ddb0), FUN_00442ce0 and FUN_00442c80 test the live
+// DAT_007f0fd0 word, as the original does, instead of g_playerCount (= the car count, VehiclePhysics_Init).
+static int Fd0Word() {
+    static const bool s = [] { const char* e = std::getenv("MASHED_A5_FD0_LIVE"); return e && e[0] == '1'; }();
+    return s ? *reinterpret_cast<const int*>(0x007f0fd0u) : g_playerCount;
+}
 
 namespace mashed_re {
 namespace Vehicle {
@@ -162,9 +168,10 @@ void VehicleWheelForceIntegrate(int* self, float dt, void* xform)
     }
 
     // ---- Phase 3: player-count / time-ramp / contact-count / rubber-band grip ----
-    if (g_playerCount == 4)      local_70 = 1.0f;
-    else if (g_playerCount == 9) local_70 = 1.0f;
-    else if ((g_playerCount == 8) && (self[0] != 0)) local_70 = 0.75f;
+    const int fd0 = Fd0Word();                                // DAT_007f0fd0
+    if (fd0 == 4)      local_70 = 1.0f;
+    else if (fd0 == 9) local_70 = 1.0f;
+    else if ((fd0 == 8) && (self[0] != 0)) local_70 = 0.75f;
 
     float fVar5 = kGripRampHi - (float)g_raceTimer;
     float local_6c;
@@ -368,7 +375,8 @@ void VehicleWheelForceIntegrate(int* self, float dt, void* xform)
 // ---- 0x00442ce0: catch-up / rubber-band grip multiplier (resolves U-2687) ----
 float RubberBandGrip(int car, float current, float band)
 {
-    if ((g_playerCount == 4) || (g_playerCount == 9) || (g_playerCount == 8)) return kOne;
+    const int fd0 = Fd0Word();                                // DAT_007f0fd0
+    if ((fd0 == 4) || (fd0 == 9) || (fd0 == 8)) return kOne;
     Fi_GameModeTick();   // FUN_0040e340 (observed side-effect retained)
     (void)current;
     if (g_rubberBand[car] == kZero) {
@@ -392,8 +400,9 @@ float RubberBandGrip(int car, float current, float band)
 int RubberBandGate(int car)
 {
     int mode = Fi_GameMode();
-    if ((mode == 6) && (g_playerCount != 4) && (g_playerCount != 9) &&
-        (g_playerCount != 8) && (kRubberThr < g_rubberBand[car])) {
+    const int fd0 = Fd0Word();                                // DAT_007f0fd0
+    if ((mode == 6) && (fd0 != 4) && (fd0 != 9) &&
+        (fd0 != 8) && (kRubberThr < g_rubberBand[car])) {
         return 1;
     }
     return 0;
