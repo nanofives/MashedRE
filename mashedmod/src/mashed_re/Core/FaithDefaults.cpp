@@ -38,6 +38,8 @@ const FaithKnob kFaith[] = {
     { "FIXUP_SLIDE_ORDER", "1" },
     // [trinflip 2026-10-20, Mariano's decision, after wheelcite C27b] u9773's 3-wheel alignment (verify/u9773_20261020/RESULT_u9773.md).
     { "WCS_TRINORMAL", "1" },
+    // [cpcflip 2026-10-20, Mariano's decision] u9776's PC_24 scope around the alignment's FUN_004c52f0 (verify/u9776_20261020/RESULT_u9776.md).
+    { "WCS_COMBINE_PC24", "1" },
 };
 
 bool Set(const char* var) {
