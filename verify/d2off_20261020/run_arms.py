@@ -311,6 +311,10 @@ STACK['RD'] = ['MASHED_RECDUMP=@OUT@/@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=0']  
 STACK['RDS'] = STACK['RD'] + ['MASHED_SPAWN_Y_LOG=@OUT@/@NAME@.sy.txt', 'MASHED_SETTLE_DIAG=@OUT@/@NAME@.settle.txt']
 STACK['FAITH'] = [k for k in STACK['FULLGO'] if not k.startswith(('MASHED_RECDUMP', 'MASHED_MODE7_TRACE'))] + ['MASHED_A5_FD0_LIVE=1', 'MASHED_A5_DRAFT_LUT=1', 'MASHED_FIX_5CEA44']   # d2off PREREG: the full faithful stack
 STACK['FD'] = STACK['FAITH'] + STACK['RD']
+STACK['FNPM'] = [k for k in STACK['FAITH'] if k != 'MASHED_POS_MODEL']   # FAITH without the position model
+STACK['PM'] = ['MASHED_POS_MODEL']
+STACK['FAITH2'] = STACK['FAITH'] + ['MASHED_COLL_LUT=1', 'MASHED_A5_RING_ORDER=1']   # amendment 1
+STACK['FD2'] = STACK['FAITH2'] + STACK['RD']
 
 
 for name in sys.argv[1:]:

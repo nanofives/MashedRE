@@ -41,3 +41,21 @@ original (RVA), ported behind a new default-OFF knob, added to `FAITH` by amendm
 | G-B | (b) on the final stack, vsum.py, reported per car |
 | G-13 | 13 tracks on the final stack: rows, RED count |
 | G-CTRL | `H_` hashes of the final stack, reported |
+
+## Amendment 1 (before its arms): two new knobs
+
+Measured on `D2_FD_1` (FAITH + dump): D2 in band (0.1918 / 0.2497 / 1912.47), and `FAITH` passes D2 3/3 (0.1918 x3,
+0.2499..0.2501, 1909.67..1910.76). The player's dynamic block (`+0x928..+0x9f0`, `+0xb00..+0xb2c`) is bit-equal to orig_solo3
+through k = 63; `+0x9c0` 1 ulp at k 64..68 (healed by 69); the first material split is k = 94 (`+0x9b0` 176.46936 vs 176.479889):
+two new contacts (slots 5 and 9, same ids) whose normals differ at 1e-5 (slot 5 `-0.892578` vs `-0.892568`). Before it, the only
+differences are A5's face-normal ring (`+0xb2c..`, sign-flipped in the port), its average `+0xaf4..+0xafc` (written by FUN_00470c70
+`0x004711b1..0x00471244`, watch-write pc `0x00471232` / `0x0047124a`; not ported; no displacement reader in `.text`), and the
+wheel history at `+0x1ac..+0x1e8` (same values, rotated 4 slots).
+
+- `MASHED_COLL_LUT=1`: the collision leaves `FastSqrt` / `Vec3Mag` / `Vec3Normalize` (`Collision/ContactDeps.h`, std::sqrt) run
+  the original's LUT bodies FUN_004c3b30 / FUN_004c3ac0 / FUN_004c39b0. H2: slot 5 / 9 normals at k = 94 equal the original's.
+- `MASHED_A5_RING_ORDER=1`: A5's TriangleFaceNormal call in the original's register order (`0x0046e6f3..0x0046e728`: EAX s[0],
+  ECX s[6], EDX s[3]). H3: the ring equals the original's.
+
+Arms: G-NOOP (`B_DEF`, `D2_RD` = `606789fd`), `D2_FD2` = FAITH + both + dump. If H2 holds and D2 stays in band 3/3, both join
+`FAITH` (as `FAITH2`), and (b), 13 tracks and G-CTRL are re-run on it.
