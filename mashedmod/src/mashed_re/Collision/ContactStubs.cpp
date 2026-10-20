@@ -164,11 +164,13 @@ void Rw_MatrixFromAxisAngle(void* outMtx, const float* axis, float deg, int flag
 // caller here is VehicleCarCarContact's spin tail (0x0046acfa / 0x0046ad14), which transforms the contact arm
 // by the inverse with FUN_004c3df0 (vectors slot +0x14) and takes the spin sign from it. With this stub the
 // 64-byte local stayed uninitialised, so the spin sign came from stack contents. MASHED_CC_MATRIX_INVERT=1
-// (default OFF) calls the port of 0x004c4dc0.
+// (default ON since ccinv 2026-10-19) calls the port of 0x004c4dc0.
 extern "C" void __cdecl RwMatrixInvertEntry(void* out, void* in);   // Render/RwMatrixInvert.cpp, 0x004c4dc0
 void Rw_MatrixDerive(void* outMtx, void* srcMtx) {
 #ifdef MASHED_STANDALONE
-    static const bool s_on = [] { const char* e = std::getenv("MASHED_CC_MATRIX_INVERT"); return e && e[0] && e[0] != '0'; }();
+    // [ccinv 2026-10-19] DEFAULT ON (user decision, verify/ccinv_20261019): MASHED_NO_CC_MATRIX_INVERT=1 opts out (the stub,
+    // = the pre-flip default); MASHED_CC_MATRIX_INVERT is now a no-op.
+    static const bool s_on = [] { const char* e = std::getenv("MASHED_NO_CC_MATRIX_INVERT"); return !(e && e[0] && e[0] != '0'); }();
     if (s_on) RwMatrixInvertEntry(outMtx, srcMtx);
 #else
     (void)outMtx; (void)srcMtx;
