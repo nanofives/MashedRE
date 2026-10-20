@@ -302,6 +302,9 @@ def exe_for(tag):
 STACK['FL'] = ['MASHED_A5_FD0_LIVE=1']   # u9772 PREREG: A5 / 442ce0 / 442c80 read the live DAT_007f0fd0
 STACK['FULLGOF'] = STACK['FULLGO'] + STACK['FL']
 for _s in (2, 3): STACK['TLG%dF' % _s] = STACK['TLG%d' % _s] + STACK['FL']
+STACK['FLD'] = STACK['FL'] + ['MASHED_A5_DRAFT_LUT=1']   # + u9771's float/LUT drafting test
+STACK['FULLGOFD'] = STACK['FULLGO'] + STACK['FLD']
+for _s in (2, 3): STACK['TLG%dFD' % _s] = STACK['TLG%d' % _s] + STACK['FLD']
 
 
 for name in sys.argv[1:]:
