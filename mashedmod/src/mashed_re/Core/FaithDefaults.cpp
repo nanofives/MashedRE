@@ -1,6 +1,6 @@
 // Mashed RE — the FAITH default set (faithflip 2026-10-20, Mariano's decision; verify/faithflip_20261020/PREREG_faithflip.md).
 //
-// The 38 knobs of the full faithful stack FAITH (verify/d2off_20261020/RESULT_d2off.md) are default ON in the standalone. Each one
+// The 38 knobs of the full faithful stack FAITH (verify/d2off_20261020/RESULT_d2off.md) and u9774's five (f5flip) are default ON in the standalone. Each one
 // is still read at its own site under its own MASHED_<name>; this TU seeds the process environment with the FAITH value before
 // any of those reads, so the default equals the FAITH arm's environment exactly:
 //   - MASHED_NO_FAITH=1          seeds nothing: the pre-flip default, exactly;
@@ -33,6 +33,9 @@ const FaithKnob kFaith[] = {
     { "REG_CARS", "1" },           { "REG_CALLBACKS", "1" },       { "MODE7", "1" },             { "CC_PC24", "1" },
     { "A4_ORDER", "1" },           { "REG_LATE", "1" },            { "A6A_GEAR_ORDER", "1" },    { "A5_FD0_LIVE", "1" },
     { "A5_DRAFT_LUT", "1" },       { "FIX_5CEA44", "1" },
+    // [f5flip 2026-10-20, Mariano's decision] u9774's five (verify/u9774_20261020/RESULT_u9774.md); MASHED_COLL_LUT stays OFF.
+    { "A6A_SPIN_ORDER", "1" },     { "TER_SPIN_F32", "1" },        { "FIXUP_F32", "1" },         { "FIXUP_SUM_ORDER", "1" },
+    { "FIXUP_SLIDE_ORDER", "1" },
 };
 
 bool Set(const char* var) {
