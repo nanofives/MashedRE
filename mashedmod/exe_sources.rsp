@@ -251,3 +251,4 @@
 "Render\ArcticTrackNodeSlot0.cpp"
 "Render\TrackHookSlots.cpp"
 "Vehicle\CarMaterialTables.cpp"
+"Core\FaithDefaults.cpp"
