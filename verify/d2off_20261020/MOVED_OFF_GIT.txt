@@ -1,0 +1,1 @@
+d2off arm outputs (D2 motion_diag logs, player record dumps, B step CSVs, H_FAITH, original o_wwaf4 watch capture) moved off git 2026-10-20 to D:\MashedWT\d2off_data\arms. 13 tracks on FAITH: D:\MashedWT\d2off_data\tracks_faith. Original reference: C:\Users\maria\Desktop\Proyectos\Mashed\verify\d2_reopen_20260929\orig_solo3.msd (gitignored).

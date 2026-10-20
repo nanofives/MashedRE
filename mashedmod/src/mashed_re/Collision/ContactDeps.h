@@ -18,6 +18,8 @@
 
 #include <cstdint>
 #include <cmath>
+#include <cstdlib>
+#include "../Math/RwLutTables.h"   // [d2off] MASHED_COLL_LUT
 #include <cstring>
 
 namespace mashed_re {
@@ -32,16 +34,23 @@ inline float   asF(int bits)            { float f; std::memcpy(&f, &bits, 4); re
 // NOTE (bit-identity residual): the original FastSqrt FUN_004c3b30 is an x87
 // approximation; here we use sqrtf. Equal to several ULP, not bit-identical —
 // recorded for the eventual installed-hook scenario diff (see [[project-wsa2-rwmath-bitident]]).
-inline float FastSqrt(float x) { return std::sqrt(x); }
+// [d2off 2026-10-20] MASHED_COLL_LUT=1 (default OFF, verify/d2off_20261020/PREREG_d2off.md amendment 1): the three
+// leaves run the original's LUT bodies (Math/RwLutTables: FUN_004c3b30 / FUN_004c3ac0 / FUN_004c39b0).
+inline bool CollLut() {
+    static const bool s = [] { const char* e = std::getenv("MASHED_COLL_LUT"); return e && e[0] == '1'; }();
+    return s;
+}
+inline float FastSqrt(float x) { return CollLut() ? Math::LutSqrt(x) : std::sqrt(x); }
 
 // FUN_004c3ac0 — 3-vector magnitude.
-inline float Vec3Mag(const float* p) { return FastSqrt(p[0]*p[0] + p[1]*p[1] + p[2]*p[2]); }
+inline float Vec3Mag(const float* p) { return CollLut() ? Math::LutLength(p) : FastSqrt(p[0]*p[0] + p[1]*p[1] + p[2]*p[2]); }
 
 // FUN_004c39b0 — normalize src into dst in place (guarded against zero-length,
 // matching the FUN_0046c5f0 normalize pattern; numerator _DAT_005cc320 = 1.0f).
 inline void Vec3Normalize(float* dst, const float* src) {
     float m2 = src[0]*src[0] + src[1]*src[1] + src[2]*src[2];
     if (m2 <= 0.0f) { dst[0]=src[0]; dst[1]=src[1]; dst[2]=src[2]; return; }
+    if (CollLut()) { Math::LutNormalize(dst, src); return; }
     float inv = 1.0f / FastSqrt(m2);
     dst[0] = src[0]*inv; dst[1] = src[1]*inv; dst[2] = src[2]*inv;
 }

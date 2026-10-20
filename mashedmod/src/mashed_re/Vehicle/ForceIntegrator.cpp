@@ -277,8 +277,15 @@ void VehicleWheelForceIntegrate(int* self, float dt, void* xform)
         unsigned int ring = (unsigned int)(self[0x2fb] + 1) & 0xf;
         self[0x2fb] = (int)ring;
         // steer-feedback normal of 3 suspension-force vectors -> self ring slot
-        Collision::TriangleFaceNormal(&g_suspScratch[0], &g_suspScratch[3], &g_suspScratch[6],
-                                      vFP(self, ring * 3 + 0x2cb));
+        // [d2off] MASHED_A5_RING_ORDER=1 (default OFF): the original's register order, EAX = &scratch[0], ECX (p1) =
+        // &scratch[6], EDX (p2) = &scratch[3] (0x0046e6f3..0x0046e728); the port's order gives the opposite sign.
+        static const bool s_ringOrder = [] { const char* e = std::getenv("MASHED_A5_RING_ORDER"); return e && e[0] == '1'; }();
+        if (s_ringOrder)
+            Collision::TriangleFaceNormal(&g_suspScratch[0], &g_suspScratch[6], &g_suspScratch[3],
+                                          vFP(self, ring * 3 + 0x2cb));
+        else
+            Collision::TriangleFaceNormal(&g_suspScratch[0], &g_suspScratch[3], &g_suspScratch[6],
+                                          vFP(self, ring * 3 + 0x2cb));
         int slot = ring * 3 + 0x2cd;
         if (vF(self, slot) < kZero) vF(self, slot) = vF(self, slot) * kQuarter;
     }
