@@ -1622,6 +1622,52 @@ function batchProbeArm(recBaseHex, car, countOnly){
   } catch(e){ return 'ERR ' + e; }
 }
 function batchProbeDrain(n){ return BQ.rows.splice(0, n || 400); }
+// --- TRI probe (U-9776, 2026-10-20) -------------------------------------------
+// FUN_0046f6c0's 3-wheel alignment: entry + exit of FUN_004c52f0 (RwMatrixCombine), filtered on the return address
+// 0x00470004 (the call at 0x0046ffff). Callee-entry only. At that entry, E = esp: the solver's locals sit at fixed
+// offsets (esp at 0x0046ffa6 = S = E + 0x20; 4 pushes for FUN_004c4d20 at 0x0046ffdb..ee, cdecl, then 3 pushes + ret):
+// angle [S+0xc] (fstp 0x0046ffa6), local_e0 [S+0x3c..0x44] (FUN_0046c5f0's out, 0x0046fd53), the axis [S+0x54..0x5c]
+// (fstp 0x0046fd72 / 8c / a6), local_ac [S+0x70] (0x0046fe10). args[0] = the ring matrix (ebp), args[1] = m (the
+// FUN_004c4d20 output), args[2] = 2. Exit: the ring's 16 dwords after the combine. A6a 0x00467650 (ESI == rec) = frame.
+const TQ = { armed:false, countOnly:false, rows:[], n:0, nHit:0, nFrm:0, err:null };
+let TQ_REC = null;
+function tqD(p, n){ const o = []; for (let k = 0; k < n; k++) o.push(bqH(p.add(k * 4))); return o.join(';'); }
+function triProbeArm(recBaseHex, car, countOnly){
+  if (TQ.armed) return 'already armed';
+  try {
+    TQ_REC = ptr(parseInt(recBaseHex, 16) + car * 0xd04);
+    TQ.countOnly = !!countOnly;
+    const RA = ga(0x00470004), RB = ptr(parseInt(recBaseHex, 16));
+    Interceptor.attach(ga(0x004c52f0), {
+      onEnter(args){
+        try {
+          TQ.n++;
+          if (!this.returnAddress.equals(RA)) return;
+          TQ.nHit++;
+          this.tq = true;
+          if (TQ.countOnly) return;
+          const E = this.context.esp, ring = args[0];
+          const car_ = Math.floor(ring.sub(RB).toInt32() / 0xd04);
+          this.ring = ring; this.pre = [TQ.nFrm, car_, ring.toString(), bqH(E.add(0x2c)), tqD(E.add(0x5c), 3),
+                                        tqD(E.add(0x74), 3), String(E.add(0x90).readS32()), tqD(args[1], 16), tqD(ring, 16)];
+        } catch(e){ if (!TQ.err) TQ.err = 'tqEnter ' + e; }
+      },
+      onLeave(){
+        try {
+          if (!this.tq || TQ.countOnly) return;
+          TQ.rows.push(this.pre.concat([tqD(this.ring, 16)]).join(','));
+        } catch(e){ if (!TQ.err) TQ.err = 'tqLeave ' + e; }
+      }});
+    Interceptor.attach(ga(BQ_A6A), { onEnter(){
+      try { if (!this.context.esi.equals(TQ_REC)) return; TQ.nFrm++; }
+      catch(e){ if (!TQ.err) TQ.err = 'tqA6a ' + e; }
+    }});
+    TQ.armed = true;
+    return 'tri-probe armed: 0x004c52f0 from 0x00470004, frame = A6a rec=' + TQ_REC + (TQ.countOnly ? ' COUNT-ONLY' : '');
+  } catch(e){ return 'ERR ' + e; }
+}
+function triProbeStats(){ return JSON.stringify({n:TQ.n, nHit:TQ.nHit, nFrm:TQ.nFrm, rows:TQ.rows.length, err:TQ.err}); }
+function triProbeDrain(n){ return TQ.rows.splice(0, n || 400); }
 // --- A6A addend probe (u9764, 2026-10-19) -------------------------------------
 // Entry hook on the LUT length 0x004c3ac0, filtered on the return address 0x00468343 (A6a block #4's `call` at
 // 0x0046833e, right after the addend is added to the wheel force) and on its argument == record + 0x1a4 + wheel*0xc4 +
@@ -3628,6 +3674,9 @@ rpc.exports = {
                                                      pending:AX.rows.length, chk:AX.chk, err:AX.err}); },
   batchProbeArm: function(recBaseHex, car, countOnly){ return batchProbeArm(recBaseHex, car, countOnly); },
   batchProbeDrain: function(n){ return batchProbeDrain(n); },
+  triProbeArm: function(recBaseHex, car, countOnly){ return triProbeArm(recBaseHex, car, countOnly); },
+  triProbeDrain: function(n){ return triProbeDrain(n); },
+  triProbeStats: function(){ return triProbeStats(); },
   a6aProbeArm: function(recBaseHex, car, wheel){ return a6aProbeArm(recBaseHex, car, wheel); },
   a6aProbeDrain: function(n){ return a6aProbeDrain(n); },
   a6aProbeStats: function(){ return JSON.stringify({armed:AQ.armed, n:AQ.n, nRec:AQ.nRec, pending:AQ.rows.length, err:AQ.err}); },
@@ -4267,6 +4316,11 @@ def main():
     ap.add_argument("--a6a-probe-wheel", type=int, default=-1,
                     help="[u9764] entry hook on 0x004c3ac0 from 0x00468343 (A6a's wheel-force addend, after it is added) for wheel W of "
                          "--statediff-car; writes <statediff-out>.a6aprobe.csv. Requires --statediff-out.")
+    ap.add_argument("--tri-probe", action="store_true",
+                    help="[U-9776] entry + exit of 0x004c52f0 from 0x00470004 (FUN_0046f6c0's 3-wheel alignment): angle, "
+                         "local_e0, axis, local_ac, m, the ring before / after, per car; frame = A6a of --statediff-car; "
+                         "writes <statediff-out>.triprobe.csv. Requires --statediff-out.")
+    ap.add_argument("--tri-probe-count", action="store_true", help="count-first gate for --tri-probe")
     ap.add_argument("--batch-probe-count", action="store_true",
                     help="count-first safety gate for --batch-probe: arm the three hooks with "
                          "counters only")
@@ -4549,6 +4603,8 @@ def main():
                     bool(args.wheelstate_probe_count)))
             if args.a6a_probe_wheel >= 0:
                 print("  [statediff]", E.a6a_probe_arm("0x008815a0", args.statediff_car, args.a6a_probe_wheel))
+            if args.tri_probe or args.tri_probe_count:
+                print("  [statediff]", E.tri_probe_arm("0x008815a0", args.statediff_car, bool(args.tri_probe_count)))
             if args.batch_probe or args.batch_probe_count:
                 print("  [statediff]", E.batch_probe_arm(
                     "0x008815a0", args.statediff_car, bool(args.batch_probe_count)))
@@ -5088,6 +5144,21 @@ def main():
                             for _r in _chunk: f.write(_r + chr(10))
                             _na += len(_chunk)
                     print(f"  [statediff] a6a-probe {_na} rows -> {aqp}")
+                if args.tri_probe or args.tri_probe_count:
+                    try: print("  [statediff] tri-probe agent:", E.tri_probe_stats())
+                    except Exception as _e: print("  [statediff] tri-probe stats failed:", _e)
+                    tqp = outp.with_suffix(outp.suffix + ".triprobe.csv")
+                    _nt = 0
+                    with open(tqp, "w", newline="") as f:
+                        f.write("frame,car,ring,angle,e0,axis,lac,m,ring_pre,ring_post" + chr(10))
+                        while True:
+                            try: _chunk = E.tri_probe_drain(400)
+                            except Exception as _e:
+                                print("  [statediff] tri-probe drain failed:", _e); break
+                            if not _chunk: break
+                            for _r in _chunk: f.write(_r + chr(10))
+                            _nt += len(_chunk)
+                    print(f"  [statediff] tri-probe {_nt} rows -> {tqp}")
                 if args.batch_probe or args.batch_probe_count:
                     # [d2bsp] stats BEFORE the rows; the CSV is written even when empty.
                     try: print("  [statediff] batch-probe agent:", E.batch_probe_stats())
