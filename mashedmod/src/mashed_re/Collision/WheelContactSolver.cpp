@@ -23,6 +23,7 @@
 #include "ContactDeps.h"
 #include "ContactSolvers.h"
 #include "CollisionWorld.h"           // [d2bsp] fix W
+#include <cmath>
 #include <cstdio>
 #include <cstdlib>   // getenv (MASHED_RW_WHEELPOS A/B, see the query block below)
 #include "../Vehicle/VehicleRecordBase.h"   // [u9773] slot index for MASHED_WCS_POSLOG
@@ -77,6 +78,16 @@ static const float kSentActive= asF(0x00000001);  // 1.4013e-45 (contact-active 
 // (_DAT_006146fc/00614700/00614704)
 
 // 0x0046f6c0
+// [u9773 2026-10-20] MASHED_WCS_TRINORMAL=1 (default OFF, verify/u9773_20261020/PREREG_u9773.md amendments 2-3): the 3-wheel
+// alignment as the original runs it (0x0046fd57..0x00470018): the tri-normal, local_ac = (int)+0x9e0 at entry (_ftol
+// FUN_004a2c48 at 0x0046f712, not a tick count), the dot grouping, _DAT_005cea88 = 0.999f, the CRT acos FUN_004a3384 and
+// FUN_004c52f0(ring, m, 2) (RwMatrixCombine, Collision/RwpSolverMath2.cpp) in place of the stubs.
+static bool WcsTriNormal() {
+    static const bool s = [] { const char* e = std::getenv("MASHED_WCS_TRINORMAL"); return e && e[0] == '1'; }();
+    return s;
+}
+extern "C" unsigned int* __cdecl FUN_004c52f0(unsigned int* dst, unsigned int* src, int op);   // RwMatrixCombine
+
 void WheelContactSolver(int* self, void* world, int substep)
 {
     // [D2 attempt 19 STEP 1B] this function is 84.33 % of the port's T_post sink at
@@ -111,7 +122,7 @@ void WheelContactSolver(int* self, void* world, int substep)
     int* iVar12 = self + self[0x26b] * 0x10 + 0x24a;   // wheel-ring matrix block
     g_activeContactCount = 0;                          // DAT_0088e650
     float local_98[3] = { 0.0f, 0.0f, 0.0f };          // contact-query scratch
-    int local_ac = Sys_TickCount();
+    int local_ac = WcsTriNormal() ? (int)vF(self, 0x278) : Sys_TickCount();   // 0x0046f6e2 / 0x0046f712 _ftol(+0x9e0)
 
     // --- per-wheel init: clear skip flags, reset contact result, susp positions
     int*   puVar11 = g_wheelSkipFlags;
@@ -350,7 +361,7 @@ void WheelContactSolver(int* self, void* world, int substep)
             // [esp+0xac] = local_70), ESI = &local_e0 (esp+0x3c), which the alignment below reads.
             // [u9773 2026-10-20] MASHED_WCS_TRINORMAL=1 (default OFF, verify/u9773_20261020/PREREG_u9773.md amendment 2) makes
             // the call, in FUN_0046c5f0's form (LUT sqrt FUN_004c3b30); without it local_e0 stays 0 and the alignment is skipped.
-            static const bool s_triNormal = [] { const char* e = std::getenv("MASHED_WCS_TRINORMAL"); return e && e[0] == '1'; }();
+            const bool s_triNormal = WcsTriNormal();
             if (s_triNormal) {
                 const float* a = local_70 + triA * 3; const float* b = local_70 + triB * 3; const float* c = local_70 + triC * 3;
                 const float f2 = (a[2] - b[2]) * (a[1] - c[1]) - (a[1] - b[1]) * (a[2] - c[2]);
@@ -384,19 +395,37 @@ void WheelContactSolver(int* self, void* world, int substep)
             float cx = local_e0[2] * vF(self, 0x273) - local_e0[1] * vF(self, 0x274);
             float cy = local_e0[0] * vF(self, 0x274) - local_e0[2] * vF(self, 0x272);
             float cz = local_e0[1] * vF(self, 0x272) - local_e0[0] * vF(self, 0x273);
-            float dotp = local_e0[2] * vF(self, 0x274) + local_e0[1] * vF(self, 0x273) + local_e0[0] * vF(self, 0x272);
+            float dotp = WcsTriNormal()
+                ? (local_e0[0] * vF(self, 0x272) + local_e0[1] * vF(self, 0x273)) + local_e0[2] * vF(self, 0x274)   // 0x0046fdaa..ca
+                : local_e0[2] * vF(self, 0x274) + local_e0[1] * vF(self, 0x273) + local_e0[0] * vF(self, 0x272);
+            {   // [u9773] MASHED_WCS_TRILOG=<path> (diagnostic, default OFF): the 3-wheel alignment's inputs
+                static std::FILE* s_tl = [] { const char* e = std::getenv("MASHED_WCS_TRILOG"); return e ? std::fopen(e, "w") : nullptr; }();
+                if (s_tl) {
+                    const int slot = (int)((reinterpret_cast<char*>(self) - reinterpret_cast<char*>(mashed_re::Vehicle::g_vehicleArrayBase)) / 0xd04);
+                    std::fprintf(s_tl, "slot=%d sub=%d e0=(%.9g,%.9g,%.9g) up=(%.9g,%.9g,%.9g) cross=(%.9g,%.9g,%.9g) dot=%.9g lac=%d\n",
+                                 slot, substep, local_e0[0], local_e0[1], local_e0[2], vF(self, 0x272), vF(self, 0x273), vF(self, 0x274),
+                                 cx, cy, cz, dotp, local_ac);
+                    std::fflush(s_tl);
+                }
+            }
             if (((cx != kZero) || (cy != kZero) || (cz != kZero)) &&
-                ((dotp < kHiProj) || (local_ac < 3))) {
+                ((dotp < (WcsTriNormal() ? 0.999f : kHiProj)) || (local_ac < 3))) {   // _DAT_005cea88 = 0x3f7fbe77
                 float c = kZero - 1.0f;   // _DAT_005cc33c = -1.0
                 if ((-1.0f <= dotp) && (c = dotp, kOne < dotp)) c = kOne;
                 double ang = (double)Math_Acos((double)c) * (double)kRadToDeg;
+                if (WcsTriNormal()) {   // FUN_004a3384 under PC_24 (the d3bc form), then fmul [0x005cc98c] at 0x0046ff9b
+                    const float p1 = 1.0f + c, m1 = 1.0f - c;
+                    const float sq = std::sqrt(p1 * m1);
+                    ang = std::atan2(static_cast<double>(sq), static_cast<double>(c)) * static_cast<double>(kRadToDeg);
+                }
                 float angf = (float)ang;
                 if ((substep != 0) && (kRotClamp < angf)) angf = kRotClamp;
                 float axis[3] = { cx, cy, cz };
                 float saved[3] = { vF(iVar12, 0xc), vF(iVar12, 0xd), vF(iVar12, 0xe) };
                 unsigned char m[64];
                 Rw_MatrixFromAxisAngle(m, axis, angf, 0);
-                Rw_SetRotation(iVar12, m, 2);
+                if (WcsTriNormal()) FUN_004c52f0(reinterpret_cast<unsigned int*>(iVar12), reinterpret_cast<unsigned int*>(m), 2);   // 0x0046ffff
+                else Rw_SetRotation(iVar12, m, 2);
                 vF(iVar12, 0xc) = saved[0]; vF(iVar12, 0xd) = saved[1]; vF(iVar12, 0xe) = saved[2];
             }
         }

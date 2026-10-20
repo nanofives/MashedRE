@@ -356,6 +356,7 @@ for _s in (1, 2, 3): STACK['RP%d' % _s] = STACK['R%d' % _s] + ['MASHED_WCS_POSLO
 for _s in (1, 2, 3): STACK['BD%d' % _s] = STACK['RP%d' % _s] + ['MASHED_BATCH_DUMP=@OUT@/@NAME@.batch.csv', 'MASHED_BATCH_DUMP_SLOT=%d' % _s]
 STACK['TN'] = ['MASHED_WCS_TRINORMAL=1']   # amendment 2
 for _s in (1, 2, 3): STACK['TN%d' % _s] = STACK['BD%d' % _s] + STACK['TN']
+for _s in (1, 2, 3): STACK['TNL%d' % _s] = STACK['TN%d' % _s] + ['MASHED_WCS_TRILOG=@OUT@/@NAME@.tri.txt']
 
 
 for name in sys.argv[1:]:

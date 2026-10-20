@@ -56,3 +56,14 @@ Knob `MASHED_WCS_TRINORMAL=1` (default OFF): the call in FUN_0046c5f0's form (LU
 the body basis apart from the +0x928 ring and re-publishes it, the solver's ring rotation is carried back into the basis
 (`VehiclePhysicsRun.cpp`, after the solver, with `MASHED_POS_WHEELS`). H1: car 3's record (rotation rows and position) equals the
 original's past call 149. Arms: G-NOOP, `B_TN3_K26` (record + batch dump), then (b), D2, 13 tracks if it holds.
+
+## Amendment 3 (before its arms): the alignment's stubs
+
+`B_TN3_K26` with amendment 2 changed nothing (step hash `2e937af7` = default). `MASHED_WCS_TRILOG` showed the tri-normal computed
+and `dot < 0.998901` on some calls, yet no rotation: the alignment ran through three stubs (`Collision/ContactStubs.cpp`):
+`Rw_SetRotation` (empty; the original calls FUN_004c52f0(ring, m, 2) at `0x0046ffff`, RwMatrixCombine, ported in
+`Collision/RwpSolverMath2.cpp`), `Math_Acos` (returns 0; the original pushes a double into the CRT acos FUN_004a3384 at
+`0x0046ff8f`, then `fmul [0x005cc98c]`), and `Sys_TickCount` (returns 0; FUN_004a2c48 is `_ftol`, of `+0x9e0` loaded at
+`0x0046f6e2`, compared `< 3` at `0x0046fe10`). Also: the dot is grouped `(e0*up.x + e1*up.y) + e2*up.z` (`0x0046fdaa..0x0046fdca`)
+and `_DAT_005cea88` is 0.999f (`0x3f7fbe77`), not the port's 0.998901f. `MASHED_WCS_TRINORMAL=1` now covers all of these (default
+OFF; the stubs stay for the default). H1 as in amendment 2.
