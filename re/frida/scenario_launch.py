@@ -1647,7 +1647,9 @@ function a6aProbeArm(recBaseHex, car, wheel){
         AQ.nRec++;
         const sp = this.context.esp.add(8);
         const offs = [0x0c, 0x1c, 0x28, 0x2c, 0x30, 0x34, 0x44, 0x48, 0x4c, 0x50, 0x54, 0x58, 0x10, 0x14, 0x18, 0x9c, 0xa0];
-        AQ.rows.push([AQ.nRec].concat(offs.map(k => bqH(sp.add(k))), [0, 4, 8].map(k => bqH(AQ_F.add(k)))).join(','));
+        // [u9771] + the record's +0x9b0..+0x9c4 (velocity, angular velocity), +0x9e4, +0x9e8 at this point
+        AQ.rows.push([AQ.nRec].concat(offs.map(k => bqH(sp.add(k))), [0, 4, 8].map(k => bqH(AQ_F.add(k))),
+                     [0x9b0, 0x9b4, 0x9b8, 0x9bc, 0x9c0, 0x9c4, 0x9e4, 0x9e8].map(k => bqH(AQ_REC.add(k)))).join(','));
       } catch(e){ if (!AQ.err) AQ.err = 'aq ' + e; }
     }});
     AQ.armed = true;
@@ -5007,7 +5009,7 @@ def main():
                     aqp = outp.with_suffix(outp.suffix + ".a6aprobe.csv")
                     _na = 0
                     with open(aqp, "w", newline="") as f:
-                        f.write("n,le4,ld4,lc8,lc4,lc0p,lbc,lac,la8,la4,dFx,dFy,l98z,le0,ldc,ld8,s0,s1,Fx,Fy,Fz" + chr(10))
+                        f.write("n,le4,ld4,lc8,lc4,lc0p,lbc,lac,la8,la4,dFx,dFy,l98z,le0,ldc,ld8,s0,s1,Fx,Fy,Fz,r9b0,r9b4,r9b8,r9bc,r9c0,r9c4,r9e4,r9e8" + chr(10))
                         while True:
                             try: _chunk = E.a6a_probe_drain(400)
                             except Exception as _e:

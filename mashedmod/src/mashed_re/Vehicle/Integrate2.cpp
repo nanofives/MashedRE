@@ -51,6 +51,7 @@
 // for wheel 0 of slot n: the force before (A5's output), the addend, and its inputs, to compare with the original's
 // per-store values (write watch o_f214, verify/u9760_20261019).
 namespace {
+inline double RecF(const void* v, int o) { float f; std::memcpy(&f, reinterpret_cast<const char*>(v) + o, 4); return f; }   // [u9771]
 void ForceSplitLog(const void* v, int wheel, const float* pre, const mashed_re::Vehicle::A6aWheelDump& D, int branch) {
     static const char* const s_path = std::getenv("MASHED_FORCE_SPLIT");
     static const int s_slot = [] { const char* e = std::getenv("MASHED_FORCE_SPLIT_SLOT"); return e ? std::atoi(e) : 1; }();
@@ -60,14 +61,15 @@ void ForceSplitLog(const void* v, int wheel, const float* pre, const mashed_re::
     if (!s_path || wheel != s_wheel || !mashed_re::Vehicle::g_vehicleArrayBase || s_n >= 4000) return;
     if (reinterpret_cast<const char*>(v) != reinterpret_cast<const char*>(mashed_re::Vehicle::g_vehicleArrayBase) + s_slot * 0xd04) return;
     if (!s_f) { s_f = std::fopen(s_path, "w"); if (!s_f) return;
-        std::fprintf(s_f, "n,branch,pre_x,pre_y,pre_z,dF_x,dF_y,dF_z,post_x,post_z,spd9e4,le4,ld4,lbc,f5,p15,p16,p1b,pm1,lac,la8,la4,le0,ldc,ld8,ax0,ax1,ax2,s0,s1,lc8,lc4,lc0p\n"); }
+        std::fprintf(s_f, "n,branch,pre_x,pre_y,pre_z,dF_x,dF_y,dF_z,post_x,post_z,spd9e4,le4,ld4,lbc,f5,p15,p16,p1b,pm1,lac,la8,la4,le0,ldc,ld8,ax0,ax1,ax2,s0,s1,lc8,lc4,lc0p,r9b0,r9b4,r9b8,r9bc,r9c0,r9c4,r9e4,r9e8\n"); }
     const float spd = *reinterpret_cast<const float*>(reinterpret_cast<const char*>(v) + 0x9e4);
     // [u9764] + the lateral vector lac / la8 / la4 (the original's [esp+0x44/0x48/0x4c] at 0x00468320, --a6a-probe-wheel)
-    std::fprintf(s_f, "%d,%d,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%d,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g\n",
+    std::fprintf(s_f, "%d,%d,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%d,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g\n",
                  s_n++, branch, pre[0], pre[1], pre[2], D.dF[0], D.dF[1], D.dF[2],
                  static_cast<float>(D.dF[0] + pre[0]), static_cast<float>(D.dF[2] + pre[2]),
                  spd, D.le4, D.ld4, D.lbc, D.f5, D.p15, D.p16, D.p1b, D.pm1, D.lat[0], D.lat[1], D.lat[2],
-                 D.le[0], D.le[1], D.le[2], D.ax[0], D.ax[1], D.ax[2], D.s[0], D.s[1], D.lc[0], D.lc[1], D.lc[2]);
+                 D.le[0], D.le[1], D.le[2], D.ax[0], D.ax[1], D.ax[2], D.s[0], D.s[1], D.lc[0], D.lc[1], D.lc[2],
+                 RecF(v, 0x9b0), RecF(v, 0x9b4), RecF(v, 0x9b8), RecF(v, 0x9bc), RecF(v, 0x9c0), RecF(v, 0x9c4), RecF(v, 0x9e4), RecF(v, 0x9e8));   // [u9771]
     std::fflush(s_f);
 }
 }  // namespace
