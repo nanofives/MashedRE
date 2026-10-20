@@ -23,7 +23,9 @@
 #include "ContactDeps.h"
 #include "ContactSolvers.h"
 #include "CollisionWorld.h"           // [d2bsp] fix W
+#include <cstdio>
 #include <cstdlib>   // getenv (MASHED_RW_WHEELPOS A/B, see the query block below)
+#include "../Vehicle/VehicleRecordBase.h"   // [u9773] slot index for MASHED_WCS_POSLOG
 #include "../Vehicle/D2SinkProbe.h"   // [D2 attempt 19] diagnostic, default-OFF
 #include "../Vehicle/PosModelKnobs.h" // [d2posmodel] fix B part 2 knob, default-OFF
 #include "../Math/RwLutTables.h"     // [lk21] LutSqrt (FUN_004c3b30), MASHED_UP_TRINORMAL
@@ -297,6 +299,18 @@ void WheelContactSolver(int* self, void* world, int substep)
         pos[0] -= inv * fVar2;
         vF(iVar12, 0xd) -= inv * local_f0;
         vF(iVar12, 0xe) -= inv * local_110;
+        // [u9773] MASHED_WCS_POSLOG=<path> (diagnostic, default OFF): the position correction's inputs and output, per call
+        // (0x0046fbc7..0x0046fc00 in the original): record slot, substep, grounded count, wheel states, the three sums, inv, pos.
+        {
+            static std::FILE* s_pl = [] { const char* e = std::getenv("MASHED_WCS_POSLOG"); return e ? std::fopen(e, "w") : nullptr; }();
+            if (s_pl) {
+                const int slot = (int)((reinterpret_cast<char*>(self) - reinterpret_cast<char*>(mashed_re::Vehicle::g_vehicleArrayBase)) / 0xd04);
+                std::fprintf(s_pl, "slot=%d sub=%d n=%d st=%d%d%d%d s=(%.9g,%.9g,%.9g) inv=%.9g pos=(%.9g,%.9g,%.9g)\n",
+                             slot, substep, (int)bVar16, self[0x66], self[0x97], self[0xc8], self[0xf9], fVar2, local_f0, local_110, inv,
+                             pos[0], vF(iVar12, 0xd), vF(iVar12, 0xe));
+                std::fflush(s_pl);
+            }
+        }
         if (bVar16 == 3) {
             // orientation correction: promote one inactive wheel slot (verbatim copies)
             if (self[0x66] == 1) {
