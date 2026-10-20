@@ -204,6 +204,12 @@ for _s in (2, 3):
             'MASHED_FORCE_SPLIT=@OUT@/@NAME@.fs.csv', 'MASHED_FORCE_SPLIT_SLOT=%d' % _s, 'MASHED_FORCE_SPLIT_WHEEL=%d' % _w,
             'MASHED_RECDUMP=@OUT@/@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=%d' % _s]
 STACK['DL'] = ['MASHED_A5_DRAFT_LUT']; STACK['FS30DL'] = STACK['FS30'] + STACK['DL']; STACK['FULLRLDL'] = STACK['FULLRL'] + STACK['DL']   # u9771 PREREG section 1
+STACK['FULLRLA5G'] = STACK['FULLRL'] + ['MASHED_A5GDIAG']   # u9771 diagnostic (writes a5g_diag.log in the root)
+STACK['VZ3'] = STACK['FULLRL'] + ['MASHED_FORCE_SPLIT_SLOT=3', 'MASHED_A6A_VZLOG=@OUT@/@NAME@.vz.csv']   # u9771 diagnostic
+STACK['TL3'] = STACK['VZ3'] + ['MASHED_A6A_TAILLOG=@OUT@/@NAME@.tail.csv']   # u9771 diagnostic
+STACK['DN'] = ['MASHED_A6A_DRIVE_NORM_LUT']; STACK['TL3DN'] = STACK['TL3'] + STACK['DN']; STACK['FULLRLDN'] = STACK['FULLRL'] + STACK['DN']   # u9771 amendment 1
+STACK['FULLRLDNR3'] = [k for k in STACK['FULLRLDN'] if not k.startswith('MASHED_RECDUMP')] + ['MASHED_RECDUMP=@OUT@/@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=3']
+STACK['FULLRLDNR2'] = [k for k in STACK['FULLRLDN'] if not k.startswith('MASHED_RECDUMP')] + ['MASHED_RECDUMP=@OUT@/@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=2']
 for _t in list(STACK):   # <tag>T = the same stack with the FUN_00414a70 trace (MASHED_TGT3_TRACE) per arm
     # a4order: never overwrite a defined tag. In d3bB2's copy this loop replaced CCET (clock + event + tick first) with
     # CCE + traces, so every d3bB2 CCET run ran without MASHED_AI_TICK_FIRST (its RUNLOG lines carry no such knob).
@@ -248,7 +254,7 @@ def tag_of(rest):
     return rest.split('-', 1)[0] or 'DEF'
 
 
-def run(name, env, files, limit, exe, cwd_logs=('mashed_re.log', 'player_trace.log', 'motion_diag.log'), wall=None):
+def run(name, env, files, limit, exe, cwd_logs=('mashed_re.log', 'player_trace.log', 'motion_diag.log', 'a5g_diag.log'), wall=None):
     for f in [os.path.join(ROOT, c) for c in cwd_logs] + files:
         if os.path.exists(f): os.remove(f)
     t0 = time.time()
@@ -265,7 +271,7 @@ def run(name, env, files, limit, exe, cwd_logs=('mashed_re.log', 'player_trace.l
             rc = p.wait(limit)
     except subprocess.TimeoutExpired:
         print(f'    TIMEOUT - killing pid {p.pid} ONLY', flush=True); p.kill(); rc = p.wait(); ok = False
-    for c, ext in (('mashed_re.log', '.log'), ('player_trace.log', '.ptrace.log'), ('motion_diag.log', '.motion_diag.log')):
+    for c, ext in (('mashed_re.log', '.log'), ('player_trace.log', '.ptrace.log'), ('motion_diag.log', '.motion_diag.log'), ('a5g_diag.log', '.a5g.log')):
         src = os.path.join(ROOT, c)
         if os.path.exists(src): shutil.copy2(src, os.path.join(OUT, name + ext))
     print(f'    exit={rc} self_exited={ok} secs={time.time() - t0:.0f}', flush=True)

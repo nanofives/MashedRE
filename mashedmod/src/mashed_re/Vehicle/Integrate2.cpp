@@ -52,6 +52,33 @@
 // per-store values (write watch o_f214, verify/u9760_20261019).
 namespace {
 inline double RecF(const void* v, int o) { float f; std::memcpy(&f, reinterpret_cast<const char*>(v) + o, 4); return f; }   // [u9771]
+// [u9771] MASHED_A6A_VZLOG=<path> (diagnostic, default OFF): for slot MASHED_FORCE_SPLIT_SLOT (default 1), the velocity after
+// A6a's tail write (0x004686a4 in the original) and after its lateral write (0x0046885a), with the lateral terms.
+float g_vzTail[3] = { 0.f, 0.f, 0.f };
+void VzLog(const void* v, float fx, float fy, float fz, float k, float grip, int arm) {
+    static const char* const s_path = std::getenv("MASHED_A6A_VZLOG");
+    static const int s_slot = [] { const char* e = std::getenv("MASHED_FORCE_SPLIT_SLOT"); return e ? std::atoi(e) : 1; }();
+    static std::FILE* s_f = nullptr; static int s_n = 0;
+    if (!s_path || !mashed_re::Vehicle::g_vehicleArrayBase || s_n >= 4000) return;
+    if (reinterpret_cast<const char*>(v) != reinterpret_cast<const char*>(mashed_re::Vehicle::g_vehicleArrayBase) + s_slot * 0xd04) return;
+    if (!s_f) { s_f = std::fopen(s_path, "w"); if (!s_f) return; std::fprintf(s_f, "n,tx,ty,tz,vx,vy,vz,fx,fy,fz,k,grip,arm\n"); }
+    std::fprintf(s_f, "%d,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%d\n", s_n++, g_vzTail[0], g_vzTail[1], g_vzTail[2],
+                 RecF(v, 0x9b0), RecF(v, 0x9b4), RecF(v, 0x9b8), fx, fy, fz, k, grip, arm);
+    std::fflush(s_f);
+}
+// [u9771] MASHED_A6A_TAILLOG=<path> (diagnostic, default OFF): A6a's tail terms for slot MASHED_FORCE_SPLIT_SLOT, in the
+// field set of scenario_launch.py --a6t-probe (d8 = l_64 - l_b0, l_b8 / l_b4 after the blend, lb0f, linTerm, the accumulators).
+void TailLog(const void* v, float lb0, float l64, float l68, float l6c, float lb8, float lb4, float lb0f, float linTerm) {
+    static const char* const s_path = std::getenv("MASHED_A6A_TAILLOG");
+    static const int s_slot = [] { const char* e = std::getenv("MASHED_FORCE_SPLIT_SLOT"); return e ? std::atoi(e) : 1; }();
+    static std::FILE* s_f = nullptr; static int s_n = 0;
+    if (!s_path || !mashed_re::Vehicle::g_vehicleArrayBase || s_n >= 4000) return;
+    if (reinterpret_cast<const char*>(v) != reinterpret_cast<const char*>(mashed_re::Vehicle::g_vehicleArrayBase) + s_slot * 0xd04) return;
+    if (!s_f) { s_f = std::fopen(s_path, "w"); if (!s_f) return; std::fprintf(s_f, "n,lb0,d8,linTerm,lb8,lb4,lb0f,l6c,l68,l64,b14,b18,b1c,v0,v1,v2\n"); }
+    std::fprintf(s_f, "%d,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g\n", s_n++, lb0, l64 - lb0, linTerm, lb8, lb4, lb0f,
+                 l6c, l68, l64, RecF(v, 0xb14), RecF(v, 0xb18), RecF(v, 0xb1c), RecF(v, 0x9b0), RecF(v, 0x9b4), RecF(v, 0x9b8));
+    std::fflush(s_f);
+}
 void ForceSplitLog(const void* v, int wheel, const float* pre, const mashed_re::Vehicle::A6aWheelDump& D, int branch) {
     static const char* const s_path = std::getenv("MASHED_FORCE_SPLIT");
     static const int s_slot = [] { const char* e = std::getenv("MASHED_FORCE_SPLIT_SLOT"); return e ? std::atoi(e) : 1; }();
@@ -118,6 +145,12 @@ static bool A6aF32() {
 }
 // [u9764 2026-10-19] MASHED_A6A_LC0=1 (default OFF, verify/u9764_20261019/PREREG_u9764.md): block #4's lc0 (the velocity
 // direction's projection on the forward vector) in the original's summation order.
+// [u9771 2026-10-19] MASHED_A6A_DRIVE_NORM_LUT=1 (default OFF, verify/u9771_20261019/PREREG_u9771.md amendment 1): the drive
+// arm's normalisation of +0x9b0 on tracks -0x69e1a6 / -0xe17f4c is FUN_004c39b0, the RW LUT body.
+static bool A6aDriveNormLut() {
+    static const bool s = [] { const char* e = std::getenv("MASHED_A6A_DRIVE_NORM_LUT"); return e && e[0] == '1'; }();
+    return s;
+}
 static bool A6aLc0() {
     static const bool s = [] { const char* e = std::getenv("MASHED_A6A_LC0"); return e && e[0] == '1'; }();
     return s;
@@ -307,7 +340,9 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
             if (mode == 7) drive = 0.0f;
             if (Ri(v, 0x28) != 0) drive = (float)(100 - Ri(v, 0x28)) * drive * k0p01;
             if ((trackId == -0x69e1a6 || trackId == -0xe17f4c) && kZero < Rf(v, 0x9e4)) {
-                float n[3]; { float src[3] = { Rf(v,0x9b0), Rf(v,0x9b4), Rf(v,0x9b8) }; Vec3Norm3(n, src); }
+                float n[3]; { float src[3] = { Rf(v,0x9b0), Rf(v,0x9b4), Rf(v,0x9b8) };
+                    // [u9771] MASHED_A6A_DRIVE_NORM_LUT (default OFF): the original normalises with FUN_004c39b0 (RW LUT).
+                    if (A6aDriveNormLut()) mashed_re::Math::LutNormalize(n, src); else Vec3Norm3(n, src); }
                 float fwd = Rf(v,0x9dc)*n[2] + Rf(v,0x9d4)*n[0] + Rf(v,0x9d8)*n[1];
                 fwd = fwd*fwd; fwd = fwd*fwd; fwd = fwd*fwd;
                 if (fwd < 0.0f) fwd = -fwd;
@@ -731,6 +766,8 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
     Wf(v, 0x9b0, linTerm * (Rf(v,0xb14) + l_b8) + Rf(v,0x9b0));
     Wf(v, 0x9b4, linTerm * (Rf(v,0xb18) + l_b4) + Rf(v,0x9b4));
     Wf(v, 0x9b8, linTerm * lb0f + Rf(v,0x9b8));
+    g_vzTail[0] = Rf(v,0x9b0); g_vzTail[1] = Rf(v,0x9b4); g_vzTail[2] = Rf(v,0x9b8);   // [u9771] MASHED_A6A_VZLOG
+    TailLog(v, l_b0, l_64, l_68, l_6c, l_b8, l_b4, lb0f, linTerm);   // [u9771] MASHED_A6A_TAILLOG
     float speed = A6Len((const float*)((char*)v + 0x9b0));     // 0x004686a4
     int tId = Ri(v, 0x1f0);
     float grip = A6aF32() ? ((float)l_60 / Rf(v, 0x18c)) : (float)(l_60 / (double)Rf(v, 0x18c));   // [u9761]
@@ -830,6 +867,7 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
             k = k * k0p1 + k * k0p1;                    // *0.2
             g_a6aFrame.kVel = k; g_a6aFrame.arm = 1;    // [U-9147]
             Wf(v,0x9b0, Rf(v,0x9b0) - fx*k); Wf(v,0x9b4, Rf(v,0x9b4) - fy*k); Wf(v,0x9b8, Rf(v,0x9b8) - fz*k);
+            VzLog(v, fx, fy, fz, k, grip, 1);   // [u9771]
             k = 1.0f - k;
             g_a6aFrame.kAv = k;                         // [U-9147]
             Wf(v,0x9bc, k*Rf(v,0x9bc)); Wf(v,0x9c0, k*Rf(v,0x9c0)); Wf(v,0x9c4, k*Rf(v,0x9c4));
@@ -839,6 +877,7 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
         if (k < k0p1) k = k0p1;
         g_a6aFrame.kVel = k; g_a6aFrame.arm = 0;        // [U-9147]
         Wf(v,0x9b0, Rf(v,0x9b0) - fx*k); Wf(v,0x9b4, Rf(v,0x9b4) - fy*k); Wf(v,0x9b8, Rf(v,0x9b8) - fz*k);
+        VzLog(v, fx, fy, fz, k, grip, 0);   // [u9771]
         if (k < kHalf) k = kHalf;
         k = 1.0f - k;
         g_a6aFrame.kAv = k;                             // [U-9147]

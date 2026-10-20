@@ -210,9 +210,9 @@ void VehicleWheelForceIntegrate(int* self, float dt, void* xform)
         ++s_a5gN;
         if (std::FILE* lf = std::fopen("a5g_diag.log", "a")) {
             std::fprintf(lf,
-                "i=%d sEnt=%.6f sp=%.6f g0=%.9g g1=%.9g g2=%.9g G=%.9g "
+                "i=%d car=%d sEnt=%.6f sp=%.6f g0=%.9g g1=%.9g g2=%.9g G=%.9g "
                 "m54=%.9g dt=%.6f base=%.9g l70=%.9g sigma=%.9g gnd=0x%08X\n",
-                s_a5gN, a5g_sEnt, vF(self, 0x279),
+                s_a5gN, self[0], a5g_sEnt, vF(self, 0x279),
                 vF(self, 0x54), vF(self, 0x55), vF(self, 0x56),
                 vF(self, 0x54) * vF(self, 0x55) * vF(self, 0x56),
                 vF(self, 0x15), dt, a5g_base, local_70, fVar4,

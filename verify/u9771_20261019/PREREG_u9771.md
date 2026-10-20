@@ -33,3 +33,24 @@ the knob alone.
 | G-B | (b) report; default only on Mariano's decision with D2 / 13 tracks / G-CTRL |
 
 Car 2's call 136 is written as an amendment before its arms.
+
+## 2. Amendment 1 (written before any MASHED_A6A_DRIVE_NORM_LUT arm)
+
+Section 1's H1 is refuted: `MASHED_A5_DRAFT_LUT` moves no hash (`FS30DL`, `FULLRLDL`, `DL` = their knob-off hashes); the
+drafting branch does not fire on this recipe. Measured since (exes `ca8f69c6` .. `d0d07acf`, G-NOOP `d6d87a6c` each time):
+- New `--a5-probe` (FUN_0046ddb0 entry / leave, record in EDI at `0x00470923`), o_a5p3: the A5 call that takes the end-of-call-6
+  velocity outputs `-1919.0802`, the next takes `-1964.98584` (end of call 7). So A6a probe row k is the frame of record call k,
+  and the split is made in frame 7 after A5.
+- `--watch-write 9b8` (o_w9b8, car partly frozen, sites only): per frame A5 writes at `0x0046e2dc` / `0x0046e360`, A6a at
+  `0x004686a4` (tail, `-1964.928955` in frame 7) and `0x0046885a` (lateral, `-1964.98584`).
+- New `--a6t-probe` (0x004c3ac0 from `0x004686a4`, A6a's tail stack) against the port's `MASHED_A6A_TAILLOG`, frame 7: the
+  blend, `d8`, `l_64`, `linTerm`, `l_b8` equal; `+0xb14` `-131902.188` vs `-131902.203` and `+0xb1c` `-2744782` vs
+  `-2744782.5` differ. They are the drive accumulate `w * (e4 * cc) + acc`.
+- On the tracks `+0x1f0 == -0x69e1a6 / -0xe17f4c` the drive `e4` is scaled by `fwd^8`, `fwd` = forward . the normalised velocity;
+  the original normalises with FUN_004c39b0 (LUT, decomp of 0x00467650 at the `iVar8 == -0x69e1a6` drive arm), the port with
+  `Vec3Norm3` (sqrtf, `Vehicle/Integrate2.cpp` the `trackId` arm).
+
+H2: with that normalisation on the LUT body, car 3's `+0xb14 / +0xb1c` and record equal the original's at call 7. Knob
+`MASHED_A6A_DRIVE_NORM_LUT=1` (default OFF). Arms: G-NOOP; `TL3DN` (= `TL3` + the knob) K0: tail terms at frame 7 and car 3's record
+split; (b) on `FULLRL` + the knob and the knob alone (`DN`). Gates as section 1 (G-VEL now: car 3's end-of-call-7 `+0x9b8` =
+`-1964.98584`).
