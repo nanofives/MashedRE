@@ -438,7 +438,7 @@ void WheelContactSolver(int* self, void* world, int substep)
                 unsigned int pre[16];
                 if (s_tq) std::memcpy(pre, reinterpret_cast<const void*>(iVar12), sizeof(pre));
                 if (WcsTriNormal()) {
-                    // [u9776 2026-10-20] MASHED_WCS_COMBINE_PC24=1 (default OFF, PREREG_u9776.md amendment 1): the original runs
+                    // [u9776 2026-10-20] MASHED_WCS_COMBINE_PC24=1 (default ON since cpcflip 2026-10-20 through the FAITH seed, MASHED_NO_WCS_COMBINE_PC24=1 opts out; PREREG_u9776.md amendment 1): the original runs
                     // FUN_004c52f0's device multiply 0x005cb2a0 at PC_24; the standalone's x87 is at PC_53 (+1 ulp at call 149).
                     static const bool s_cpc = [] { const char* e = std::getenv("MASHED_WCS_COMBINE_PC24"); return e && e[0] == '1'; }();
                     unsigned int cw0 = 0, cwt = 0;

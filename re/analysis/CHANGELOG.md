@@ -26,6 +26,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-20  004c52f0  cpcflip  MASHED_WCS_COMBINE_PC24 default ON (Mariano's decision): G-CTRL b9fb3f25 / 8740221b / b2e4b612 x2, opt-out 91cc1c0b / 2d77a5d7 / ab6c9329, (b) A 2/3 B 2/3 C 3/3 (A car 3 traded for A cars 1, 2 and C car 2), D2 3/3, 13 tracks 0 RED. No C-level change. verify/cpcflip_20261020/RESULT_cpcflip.md
 2026-10-20  0046f6c0  u9776  car 3's call-149 ulp = FUN_004c52f0 device multiply 0x005cb2a0 at PC_53 (port) vs PC_24; MASHED_WCS_COMBINE_PC24 / MASHED_MATMUL_PC24 / MASHED_FI_RAND added default OFF; with the combine knob (b) A 2/3 B 2/3 C 3/3, D2 3/3; new U-9777 (the player's call-128 split). No default, no C-level change. verify/u9776_20261020/RESULT_u9776.md
 2026-10-20  0046f6c0  trinflip  MASHED_WCS_TRINORMAL default ON (Mariano's decision, after wheelcite C27b): G-CTRL 91cc1c0b / 2d77a5d7 / ab6c9329 x2, opt-out df5ee50e / a90bbb16 / b3cd0e5f, (b) A 1/3 B 2/3 C 2/3 (A car 2 traded for C car 3), D2 3/3, 13 tracks 0 RED. No C-level change. verify/trinflip_20261020/RESULT_trinflip.md
 2026-10-20  0046f6c0  wheelcite  the wcsflip 13-track RED rows are front-wheel steer (wheel frames are not replayed), not car bodies; cite C27b-CAR-WHEEL-ROT (drawlist3d max_dpos / tri predicates) puts wcsflip at 0 RED and leaves the default 0 RED. Instrument change only, no default change, no C-level change. verify/wheelcite_20261020/RESULT_wheelcite.md
