@@ -13,3 +13,18 @@ the acos result does not reach the matrix on these calls.
 
 Prediction: the first differing field at call 149 names the step (local_e0 = FUN_0046c5f0 / the wheel points; axis = the cross;
 m = FUN_004c4d20; ring_post with equal m and ring_pre = FUN_004c52f0). A knob for a fix comes with its own amendment.
+
+## Amendment 1 (after step 1, before any knob arm)
+
+Step 1 result: car 3's first alignment (record call 149, `o_tq_2` frame 992 vs `B_TR3_K26` row 0): angle, local_e0, axis,
+local_ac, m and ring_pre bit-equal; ring_post +1 ulp at words 8, 9 (the at row x / y). On K26 car 3's position and velocity
+are bit-equal through call 157 (`recpos.py`); the rotation rows carry the 1-2 ulp from call 149 and wheel 0's contact flips at
+158. FUN_004c52f0 op 2 calls the device multiply [slot+8] = 0x005cb2a0 (x87, per-op rounding at the caller's precision). The
+port's `Math::RwMatrixMultiplyCPU` is a verbatim naked transcription, run at the standalone's x87 PC_53; the original runs at
+PC_24 (memory track-load-runs-at-pc24).
+
+Knobs (default OFF): `MASHED_WCS_COMBINE_PC24` (PC_24 around the alignment's FUN_004c52f0 call at 0x0046ffff only) and
+`MASHED_MATMUL_PC24` (PC_24 inside the exe's device multiply for every RwpSolverMath2 caller, 0x004c4600 / 0x004c52f0).
+Arms: `B_TC3_K26` / `B_TM3_K26` (car 3 records + log), then `B_TC` / `B_TM` K0/K1/K26 for (b), then D2 x3 for any candidate.
+Predictions: P1 with either knob, car 3's ring_post at call 149 equals the original's and car 3's record holds past 157 on
+K26; P2 the narrow knob changes nothing before the first alignment of any car (G-CTRL step rows before it equal).
