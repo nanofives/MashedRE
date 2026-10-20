@@ -197,6 +197,7 @@ STACK['PC'] = ['MASHED_CC_PC24']; STACK['EXL7AFSM7PCA'] = STACK['EXL7AFSM7'] + S
 for _s in (2, 3): STACK['EXL7AFSM7PCAR%d' % _s] = [k for k in STACK['EXL7AFSM7PCA'] if not k.startswith('MASHED_RECDUMP')] + ['MASHED_RECDUMP=@OUT@\\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=%d' % _s]   # u9769
 STACK['FULLM7T'] = STACK['EXL7AFSM7PCA'] + ['MASHED_MODE7_TRACE=@OUT@\\@NAME@.m7.tsv']   # u9770
 STACK['RL'] = ['MASHED_REG_LATE']; STACK['FULLRL'] = STACK['FULLM7T'] + STACK['RL']   # u9770 PREREG section 1
+for _s in (2, 3): STACK['FULLRLR%d' % _s] = [k for k in STACK['FULLRL'] if not k.startswith('MASHED_RECDUMP')] + ['MASHED_RECDUMP=@OUT@' + chr(92) + '@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=%d' % _s]   # u9770
 for _t in list(STACK):   # <tag>T = the same stack with the FUN_00414a70 trace (MASHED_TGT3_TRACE) per arm
     # a4order: never overwrite a defined tag. In d3bB2's copy this loop replaced CCET (clock + event + tick first) with
     # CCE + traces, so every d3bB2 CCET run ran without MASHED_AI_TICK_FIRST (its RUNLOG lines carry no such knob).
