@@ -26,6 +26,9 @@
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>   // getenv (MASHED_RW_WHEELPOS A/B, see the query block below)
+#include <cfloat>    // [u9776] _controlfp_s (MASHED_WCS_COMBINE_PC24)
+#include <cstring>   // [u9776] memcpy (MASHED_WCS_TRILOG .tq.csv)
+#include <string>
 #include "../Vehicle/VehicleRecordBase.h"   // [u9773] slot index for MASHED_WCS_POSLOG
 #include "../Vehicle/D2SinkProbe.h"   // [D2 attempt 19] diagnostic, default-OFF
 #include "../Vehicle/PosModelKnobs.h" // [d2posmodel] fix B part 2 knob, default-OFF
@@ -118,6 +121,10 @@ void WheelContactSolver(int* self, void* world, int substep)
             std::fprintf(s_el, "\n"); std::fflush(s_el);
         }
     }
+    // [u9776] per-slot count of substep-1 entries (the TQ log's frame column; diagnostic only)
+    static int s_tqCalls[8] = {};
+    const int tqSlot = (int)((reinterpret_cast<char*>(self) - reinterpret_cast<char*>(mashed_re::Vehicle::g_vehicleArrayBase)) / 0xd04);
+    if (substep == 1 && tqSlot >= 0 && tqSlot < 8) ++s_tqCalls[tqSlot];
     char cVar13 = 0;
     int* iVar12 = self + self[0x26b] * 0x10 + 0x24a;   // wheel-ring matrix block
     g_activeContactCount = 0;                          // DAT_0088e650
@@ -424,8 +431,31 @@ void WheelContactSolver(int* self, void* world, int substep)
                 float saved[3] = { vF(iVar12, 0xc), vF(iVar12, 0xd), vF(iVar12, 0xe) };
                 unsigned char m[64];
                 Rw_MatrixFromAxisAngle(m, axis, angf, 0);
-                if (WcsTriNormal()) FUN_004c52f0(reinterpret_cast<unsigned int*>(iVar12), reinterpret_cast<unsigned int*>(m), 2);   // 0x0046ffff
+                // [u9776] MASHED_WCS_TRILOG: the scenario_launch.py --tri-probe row (the FUN_004c52f0 entry + exit at 0x0046ffff),
+                // hex: TQ,slot,sub,angle,e0,axis,lac,m,ring_pre,ring_post
+                static std::FILE* s_tq = [] { const char* e = std::getenv("MASHED_WCS_TRILOG"); if (!e) return (std::FILE*)nullptr;
+                                              std::string p = std::string(e) + ".tq.csv"; return std::fopen(p.c_str(), "w"); }();
+                unsigned int pre[16];
+                if (s_tq) std::memcpy(pre, reinterpret_cast<const void*>(iVar12), sizeof(pre));
+                if (WcsTriNormal()) {
+                    // [u9776 2026-10-20] MASHED_WCS_COMBINE_PC24=1 (default OFF, PREREG_u9776.md amendment 1): the original runs
+                    // FUN_004c52f0's device multiply 0x005cb2a0 at PC_24; the standalone's x87 is at PC_53 (+1 ulp at call 149).
+                    static const bool s_cpc = [] { const char* e = std::getenv("MASHED_WCS_COMBINE_PC24"); return e && e[0] == '1'; }();
+                    unsigned int cw0 = 0, cwt = 0;
+                    if (s_cpc) { _controlfp_s(&cw0, 0, 0); _controlfp_s(&cwt, _PC_24, _MCW_PC); }
+                    FUN_004c52f0(reinterpret_cast<unsigned int*>(iVar12), reinterpret_cast<unsigned int*>(m), 2);   // 0x0046ffff
+                    if (s_cpc) _controlfp_s(&cwt, cw0 & _MCW_PC, _MCW_PC);
+                }
                 else Rw_SetRotation(iVar12, m, 2);
+                if (s_tq) {
+                    auto hx = [&](const void* p, int n) { const unsigned int* q = static_cast<const unsigned int*>(p);
+                        for (int k = 0; k < n; ++k) std::fprintf(s_tq, "%s%08x", k ? ";" : ",", q[k]); };
+                    const int slot = (int)((reinterpret_cast<char*>(self) - reinterpret_cast<char*>(mashed_re::Vehicle::g_vehicleArrayBase)) / 0xd04);
+                    std::fprintf(s_tq, "TQ,%d,%d", slot, substep * 100000 + ((slot >= 0 && slot < 8) ? s_tqCalls[slot] : -1));
+                    hx(&angf, 1); hx(local_e0, 3); hx(axis, 3); std::fprintf(s_tq, ",%d", local_ac);
+                    hx(m, 16); hx(pre, 16); hx(reinterpret_cast<const void*>(iVar12), 16);
+                    std::fprintf(s_tq, "\n"); std::fflush(s_tq);
+                }
                 vF(iVar12, 0xc) = saved[0]; vF(iVar12, 0xd) = saved[1]; vF(iVar12, 0xe) = saved[2];
             }
         }

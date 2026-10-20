@@ -26,6 +26,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-20  0046f6c0  u9776  car 3's call-149 ulp = FUN_004c52f0 device multiply 0x005cb2a0 at PC_53 (port) vs PC_24; MASHED_WCS_COMBINE_PC24 / MASHED_MATMUL_PC24 / MASHED_FI_RAND added default OFF; with the combine knob (b) A 2/3 B 2/3 C 3/3, D2 3/3; new U-9777 (the player's call-128 split). No default, no C-level change. verify/u9776_20261020/RESULT_u9776.md
 2026-10-20  0046f6c0  trinflip  MASHED_WCS_TRINORMAL default ON (Mariano's decision, after wheelcite C27b): G-CTRL 91cc1c0b / 2d77a5d7 / ab6c9329 x2, opt-out df5ee50e / a90bbb16 / b3cd0e5f, (b) A 1/3 B 2/3 C 2/3 (A car 2 traded for C car 3), D2 3/3, 13 tracks 0 RED. No C-level change. verify/trinflip_20261020/RESULT_trinflip.md
 2026-10-20  0046f6c0  wheelcite  the wcsflip 13-track RED rows are front-wheel steer (wheel frames are not replayed), not car bodies; cite C27b-CAR-WHEEL-ROT (drawlist3d max_dpos / tri predicates) puts wcsflip at 0 RED and leaves the default 0 RED. Instrument change only, no default change, no C-level change. verify/wheelcite_20261020/RESULT_wheelcite.md
 2026-10-20  0046f6c0  wcsflip  MASHED_WCS_TRINORMAL default-ON flip NOT applied: 13 tracks 3 RED (MOVED Advantage, car-body pose moved ~0.02 on Roundabout 1091 / 1131 and Training 959); D2 3/3, (b) A 1/3 B 2/3 C 2/3, G-CTRL 91cc1c0b / 2d77a5d7 / ab6c9329; the default stays df5ee50e / a90bbb16 / b3cd0e5f. No C-level change. verify/wcsflip_20261020/RESULT_wcsflip.md

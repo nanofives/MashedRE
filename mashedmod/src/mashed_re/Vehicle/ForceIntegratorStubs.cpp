@@ -14,6 +14,7 @@ namespace mashed_re { namespace Math {
     void RwV3dTransformVectorsCPU(float* dst, const float* src, int count, const float* m);
 } }
 extern "C" void* __cdecl RwMatrixRotate(void* matrix, const float* axis, float angle_deg, int mode);
+namespace Ai { float Ai_RandRange(float lo, float hi); }   // [u9776] FUN_00472650 (Ai/AiStandalone.cpp)
 
 namespace mashed_re {
 namespace Vehicle {
@@ -68,7 +69,14 @@ void Rw_MatrixFromAxisAngle(void* outMtx, const float* axis, float angle, int mo
     RwMatrixRotate(outMtx, axis, angle, mode);
 }
 // FUN_00472650 (+ PRNG FUN_00534870) — random float in [lo,hi).
-float Fi_RandRange(float lo, float /*hi*/) { return lo; }  // deterministic stand-in
+// [u9776 2026-10-20] MASHED_FI_RAND=1 (default OFF, verify/u9776_20261020/PREREG_u9776.md amendment 2): the surface-jitter
+// draws (0x0046e7ac / 0x0046e7c3, surface key 0xffff32ff) take FUN_00472650 on the shared FUN_00534870 ring
+// (Ai::Ai_RandRange = AiRand), as the original does; without it the stand-in returns lo and draws nothing from the ring.
+float Fi_RandRange(float lo, float hi) {
+    static const bool s_rand = [] { const char* e = std::getenv("MASHED_FI_RAND"); return e && e[0] == '1'; }();
+    if (s_rand) return ::Ai::Ai_RandRange(lo, hi);
+    return lo;   // deterministic stand-in
+}
 // FUN_0040e350 — game-mode discriminator. Body is one instruction:
 //   `return DAT_0063ba8c;`   (0x0040e350..0x0040e355, decomp confirmed 2026-09-29)
 //
