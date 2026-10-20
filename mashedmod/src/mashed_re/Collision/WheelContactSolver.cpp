@@ -78,7 +78,7 @@ static const float kSentActive= asF(0x00000001);  // 1.4013e-45 (contact-active 
 // (_DAT_006146fc/00614700/00614704)
 
 // 0x0046f6c0
-// [u9773 2026-10-20] MASHED_WCS_TRINORMAL=1 (default OFF, verify/u9773_20261020/PREREG_u9773.md amendments 2-3): the 3-wheel
+// [u9773 2026-10-20] MASHED_WCS_TRINORMAL=1 (default ON since trinflip 2026-10-20 through the FAITH seed, MASHED_NO_WCS_TRINORMAL=1 opts out, verify/u9773_20261020/PREREG_u9773.md amendments 2-3): the 3-wheel
 // alignment as the original runs it (0x0046fd57..0x00470018): the tri-normal, local_ac = (int)+0x9e0 at entry (_ftol
 // FUN_004a2c48 at 0x0046f712, not a tick count), the dot grouping, _DAT_005cea88 = 0.999f, the CRT acos FUN_004a3384 and
 // FUN_004c52f0(ring, m, 2) (RwMatrixCombine, Collision/RwpSolverMath2.cpp) in place of the stubs.
@@ -359,7 +359,7 @@ void WheelContactSolver(int* self, void* world, int substep)
             }
             // FUN_0046c5f0 at 0x0046fd57: EAX = &pts[a], ECX = &pts[b], EDX = &pts[c] (pts = the per-wheel contact points at
             // [esp+0xac] = local_70), ESI = &local_e0 (esp+0x3c), which the alignment below reads.
-            // [u9773 2026-10-20] MASHED_WCS_TRINORMAL=1 (default OFF, verify/u9773_20261020/PREREG_u9773.md amendment 2) makes
+            // [u9773 2026-10-20] MASHED_WCS_TRINORMAL=1 (default ON since trinflip 2026-10-20 through the FAITH seed, MASHED_NO_WCS_TRINORMAL=1 opts out, verify/u9773_20261020/PREREG_u9773.md amendment 2) makes
             // the call, in FUN_0046c5f0's form (LUT sqrt FUN_004c3b30); without it local_e0 stays 0 and the alignment is skipped.
             const bool s_triNormal = WcsTriNormal();
             if (s_triNormal) {
