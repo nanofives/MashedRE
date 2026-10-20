@@ -203,11 +203,17 @@ def diff3d(da, db, tol_bb=0.01, frustum=None):
             ua.add(x); ub.add(y); mv[A[x]["tex"]].append((x, y, d))
     for tex, lst in mv.items():
         x, y, d = lst[0]
-        rows.append({"kind": "MOVED", "tex": tex, "n": len(lst),
-                     "detail": f"{len(lst)} draws, same texture and triangle count, AABB moved by up "
-                               f"to {max(p[2] for p in lst):.3g}; first A {fmtbb(A[x]['bb'])} "
-                               f"B {fmtbb(B[y]['bb'])}",
-                     "a_idx": [p[0] for p in lst], "b_idx": [p[1] for p in lst]})
+        row = {"kind": "MOVED", "tex": tex, "n": len(lst),
+               "detail": f"{len(lst)} draws, same texture and triangle count, AABB moved by up "
+                         f"to {max(p[2] for p in lst):.3g}; first A {fmtbb(A[x]['bb'])} "
+                         f"B {fmtbb(B[y]['bb'])}",
+               "a_idx": [p[0] for p in lst], "b_idx": [p[1] for p in lst]}
+        # [wheelcite] largest world-translation difference (w[12..14]) over the paired draws: 0 when only
+        # the draws' local rotation differs (a car wheel's steer / spin under MASHED_CAR_REPLAY)
+        if all(A[p[0]]["w"] and B[p[1]]["w"] for p in lst):
+            row["dpos"] = max(abs(A[p[0]]["w"][12 + i] - B[p[1]]["w"][12 + i]) for p in lst for i in range(3))
+        row["tris"] = sorted({A[p[0]]["tri"] for p in lst})
+        rows.append(row)
     la = [x for x in la if x not in ua]
     lb = [y for y in lb if y not in ub]
     # level 3: per texture, leftover triangles
@@ -288,6 +294,12 @@ def apply_cites(rows, cites):
                 continue
             # "all_offscreen": the row's every draw lies wholly outside the view frustum
             if c.get("all_offscreen") and r.get("offscreen") != r.get("n"):
+                continue
+            # "max_dpos": every paired draw's world translation is within x of the original's
+            if "max_dpos" in c and not (r.get("dpos") is not None and r["dpos"] <= c["max_dpos"]):
+                continue
+            # "tri": every draw of the row has one of these triangle counts
+            if "tri" in c and not (r.get("tris") and all(t in c["tri"] for t in r["tris"])):
                 continue
             if "src" in c and not all(s == c["src"] for s in r.get("srcs", [])):
                 continue

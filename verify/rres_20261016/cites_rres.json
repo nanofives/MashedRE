@@ -403,6 +403,20 @@
   "note": "[rhooks] The Neustein part is resolved: the thin untextured mesh at the origin was the Trunk base clump 3, which the original never draws (its copies are slot-2 groups). Original note: Two rows with no mapped cause. Egypt row 740: one B-only 6-triangle ground patch with an unnamed #128x64:21 texture that the standalone also draws, and matches, in rows 780 and 815. Neustein: one thin untextured mesh drawn at the origin (AABB 0.07 x 2.5 x 0.09) where the original has it with AABB minimum (7.70, 2.67, 9.23). U-9718."
  },
  {
+  "id": "C27b-CAR-WHEEL-ROT",
+  "kind": [
+   "MOVED"
+  ],
+  "tex": "^Advantage$",
+  "tri": [
+   96
+  ],
+  "max_dpos": 0.001,
+  "status": "MAPPED",
+  "evidence": "verify/wheelcite_20261020/wheelred.py",
+  "note": "[wheelcite] Car wheel draws (96-triangle Advantage mesh) at the original's world position (every pair within 0.001) that differ only in their local rotation. Under MASHED_CAR_REPLAY the clump root and body take the trace's matrices, but the wheel frames have no trace columns and keep the standalone's own steer / spin (TrackRenderer.cpp, the s_car_rep block), which is the standalone's AI state about 1000 frames into the race. Measured: Training 959 front pair -18.05 deg steer, Roundabout 1091 / 1131 +15.54 / +14.09 deg (MASHED_WCS_TRINORMAL); the default's Training C27 rows are a -9.50 deg steer. U-9776."
+ },
+ {
   "id": "C27-CAR-PART-OFFSET",
   "kind": [
    "MOVED"
