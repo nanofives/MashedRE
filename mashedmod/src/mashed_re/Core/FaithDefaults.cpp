@@ -36,8 +36,6 @@ const FaithKnob kFaith[] = {
     // [f5flip 2026-10-20, Mariano's decision] u9774's five (verify/u9774_20261020/RESULT_u9774.md); MASHED_COLL_LUT stays OFF.
     { "A6A_SPIN_ORDER", "1" },     { "TER_SPIN_F32", "1" },        { "FIXUP_F32", "1" },         { "FIXUP_SUM_ORDER", "1" },
     { "FIXUP_SLIDE_ORDER", "1" },
-    // [wcsflip 2026-10-20, Mariano's decision] u9773's 3-wheel alignment (verify/u9773_20261020/RESULT_u9773.md).
-    { "WCS_TRINORMAL", "1" },
 };
 
 bool Set(const char* var) {
