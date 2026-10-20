@@ -59,3 +59,11 @@ wheel history at `+0x1ac..+0x1e8` (same values, rotated 4 slots).
 
 Arms: G-NOOP (`B_DEF`, `D2_RD` = `606789fd`), `D2_FD2` = FAITH + both + dump. If H2 holds and D2 stays in band 3/3, both join
 `FAITH` (as `FAITH2`), and (b), 13 tracks and G-CTRL are re-run on it.
+
+## Amendment 2 (before its arm): can the D2 solo recipe reach the FD0 / drafting paths?
+
+Requested by the orchestrator (2026-10-20). On the D2 recipe there is one car: `VehiclePhysics_Init` sets `g_playerCount` = 1 and
+the live `0x007f0fd0` word is 0 (the exe never writes it on this path). Neither value is 4, 8 or 9, so A5's phase-3 test
+(`0x0046ddb0`), FUN_00442ce0 and FUN_00442c80 take the same branch with or without `MASHED_A5_FD0_LIVE`. A5's drafting loop needs a
+second active car, so `MASHED_A5_DRAFT_LUT`'s test never runs. H4: `D2_FNF` (= `FAITH` without the two knobs) gives a motion_diag
+log byte-identical to `FAITH`'s on their common prefix.

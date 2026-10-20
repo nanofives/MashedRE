@@ -317,6 +317,7 @@ STACK['FAITH2'] = STACK['FAITH'] + ['MASHED_COLL_LUT=1', 'MASHED_A5_RING_ORDER=1
 STACK['FD2'] = STACK['FAITH2'] + STACK['RD']
 STACK['FRO'] = STACK['FAITH'] + ['MASHED_A5_RING_ORDER=1']
 STACK['FCL'] = STACK['FAITH'] + ['MASHED_COLL_LUT=1']
+STACK['FNF'] = [k for k in STACK['FAITH'] if not k.startswith(('MASHED_A5_FD0_LIVE', 'MASHED_A5_DRAFT_LUT'))]   # amendment 2
 
 
 for name in sys.argv[1:]:
