@@ -328,6 +328,11 @@ STACK['FLRD'] = STACK['RD']   # the new default + the player record dump
 STACK['CL'] = ['MASHED_COLL_LUT=1']   # u9774: the new default + the collision LUT leaves
 STACK['CLT'] = STACK['CL'] + STACK['RD'] + ['MASHED_A5GDIAG', 'MASHED_FORCE_SPLIT_SLOT=0', 'MASHED_A6A_TAILLOG=@OUT@/@NAME@.tail.csv',
     'MASHED_A6A_VZLOG=@OUT@/@NAME@.vz.csv', 'MASHED_FORCE_SPLIT=@OUT@/@NAME@.fs.csv']   # + player record dump and the A5 / A6a logs on slot 0
+for _w in (1, 2, 3): STACK['CLTW%d' % _w] = STACK['CLT'] + ['MASHED_FORCE_SPLIT_WHEEL=%d' % _w]
+STACK['SO'] = ['MASHED_A6A_SPIN_ORDER=1']   # amendment 1
+STACK['CLS'] = STACK['CL'] + STACK['SO']
+STACK['CLST'] = STACK['CLT'] + STACK['SO']
+for _w in (1, 2, 3): STACK['CLSTW%d' % _w] = STACK['CLST'] + ['MASHED_FORCE_SPLIT_WHEEL=%d' % _w]
 
 
 for name in sys.argv[1:]:

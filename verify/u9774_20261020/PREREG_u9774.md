@@ -17,3 +17,16 @@ compare A5's entry and exit velocity (`a5probe` vs `A5GDIAG`) and A6a's tail ter
 split. H1: the first stage whose output differs with equal inputs names the RVA of the second offsetting error. Any fix is a new
 default-OFF knob, added by amendment with its measurement, then re-scored: D2 3/3 on `CL` + fix, with (b), 13 tracks, G-CTRL
 reported. No default flip.
+
+## Amendment 1 (before its arms): A6a's spin-arm grouping
+
+Measured on `CLT` against `o_a5a6` and the per-wheel captures `o_w0..o_w3` (`--a6a-probe-wheel`, `fscmp.py`): A5's entry matches
+through call 140 within print precision; A6a's tail velocity first differs at call 113 (`v1` -28.9506435 vs -28.9506474), between
+A5's output and the tail. Per wheel, A6a's terms differ from call 63 (wheel 2: `le0` 728.663147 vs 728.663208, then `s0`, `lc8`,
+`lac`, `dFx` -4563.40674 vs -4563.41211; wheel 3 at 63 / 65 / 78), absorbed until the record splits. `le0` is the spin arm's
+`dst[0] * f - v0`. The original (`0x00468077..0x004680ae`) forms `f = ((+0x9e8 * _DAT_005cea18) * max(+0x9e4 * _DAT_005cea14,
+_DAT_005cc9f4)) * _DAT_005ccac4`; the port had `((max(..) * +0x9e8) * _DAT_005cea18) * 360`.
+
+Knob `MASHED_A6A_SPIN_ORDER=1` (default OFF). H2: on `CL` + the knob, wheel 2's and 3's terms at calls 63..89 equal the original's
+and the record's split moves past 138. Arms `CLST` (traced, wheels 0..3), then D2 x3 on `CLS` (= `CL` + knob) and on `SO`
+(= the default + knob); (b), 13 tracks and G-CTRL on the stack that passes D2.
