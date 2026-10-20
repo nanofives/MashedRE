@@ -1647,7 +1647,9 @@ function a6aProbeArm(recBaseHex, car, wheel){
         AQ.nRec++;
         const sp = this.context.esp.add(8);
         const offs = [0x0c, 0x1c, 0x28, 0x2c, 0x30, 0x34, 0x44, 0x48, 0x4c, 0x50, 0x54, 0x58, 0x10, 0x14, 0x18, 0x9c, 0xa0];
-        AQ.rows.push([AQ.nRec].concat(offs.map(k => bqH(sp.add(k))), [0, 4, 8].map(k => bqH(AQ_F.add(k)))).join(','));
+        // [u9771] + the record's +0x9b0..+0x9c4 (velocity, angular velocity), +0x9e4, +0x9e8 at this point
+        AQ.rows.push([AQ.nRec].concat(offs.map(k => bqH(sp.add(k))), [0, 4, 8].map(k => bqH(AQ_F.add(k))),
+                     [0x9b0, 0x9b4, 0x9b8, 0x9bc, 0x9c0, 0x9c4, 0x9e4, 0x9e8].map(k => bqH(AQ_REC.add(k)))).join(','));
       } catch(e){ if (!AQ.err) AQ.err = 'aq ' + e; }
     }});
     AQ.armed = true;
@@ -2757,6 +2759,60 @@ function ccProbeArm(cap){
 }
 function ccProbeDrain(){ const r = CCP.rows; CCP.rows = []; return r; }
 
+// --- A5 entry / leave probe (u9771, 2026-10-19) -------------------------------------
+// FUN_0046ddb0 (A5), called from FUN_00470670 at 0x00470923 with the record in EDI. Entry: tick 0x007f0ff4, the record's
+// +0x9b0..+0x9c4, +0x9e4, +0x9e8, +0x9e0 (dword); leave: +0x9b0..+0x9b8. Only the --statediff-car record; first N calls.
+const A5P = { armed:false, cap:400, rows:[], err:null };
+function a5ProbeArm(recBaseHex, car, cap){
+  if (A5P.armed) return 'already armed';
+  try {
+    A5P.cap = cap || 400;
+    const rec = ptr(parseInt(recBaseHex, 16) + car * 0xd04), tk = ga(0x007f0ff4);
+    const fl = function(o){ return rec.add(o).readU32().toString(16); };
+    Interceptor.attach(ga(0x0046ddb0), {
+      onEnter(){
+        try {
+          if (!this.context.edi.equals(rec) || A5P.rows.length >= A5P.cap) { this.row = null; return; }
+          this.row = [SD.frames, tk.readS32()].concat([0x9b0, 0x9b4, 0x9b8, 0x9bc, 0x9c0, 0x9c4, 0x9e4, 0x9e8, 0x9e0].map(fl));
+        } catch(e){ if (!A5P.err) A5P.err = 'a5 ' + e; this.row = null; }
+      },
+      onLeave(){
+        try { if (!this.row) return; A5P.rows.push(this.row.concat([0x9b0, 0x9b4, 0x9b8].map(fl)).join(',')); }
+        catch(e){ if (!A5P.err) A5P.err = 'a5L ' + e; }
+      }});
+    A5P.armed = true;
+    return 'a5-probe armed (0x46ddb0 entry+leave) rec=' + rec;
+  } catch(e){ return 'ERR ' + e; }
+}
+function a5ProbeDrain(){ const r = A5P.rows; A5P.rows = []; return r; }
+
+// --- A6a TAIL probe (u9771, 2026-10-19) ----------------------------------------------
+// Entry hook on 0x004c3ac0 filtered on the return address 0x004686a9 (A6a's |v| after its tail velocity write at
+// 0x00468688..0x0046869e) and on its argument == record + 0x9b0. A6a's esp after the `push edi` at 0x00468643 = the callee's
+// esp + 4. Reads (post-push offsets): [0x14/0x18/0x1c] e0 / dc / d8, [0x24] linTerm, [0x3c/0x40] l_b8 / l_b4 (blended),
+// [0x44] lb0f (+0xb1c + lin_b0), [0x64] the x term, [0x88/0x8c/0x90] l_6c / l_68 / l_64; then the record's +0xb14..+0xb1c and
+// +0x9b0..+0x9b8. One row per call for the --statediff-car record.
+const A6T = { armed:false, rows:[], n:0, err:null };
+function a6tProbeArm(recBaseHex, car){
+  if (A6T.armed) return 'already armed';
+  try {
+    const rec = ptr(parseInt(recBaseHex, 16) + car * 0xd04), arg = rec.add(0x9b0), ra = ga(0x004686a9);
+    const h = function(p){ return p.readU32().toString(16); };
+    Interceptor.attach(ga(0x004c3ac0), { onEnter(args){
+      try {
+        if (!this.returnAddress.equals(ra) || !args[0].equals(arg)) return;
+        A6T.n++;
+        const sp = this.context.esp.add(4);
+        const offs = [0x14, 0x18, 0x1c, 0x24, 0x3c, 0x40, 0x44, 0x64, 0x88, 0x8c, 0x90, 0x28];
+        A6T.rows.push([A6T.n].concat(offs.map(k => h(sp.add(k))), [0xb14, 0xb18, 0xb1c, 0x9b0, 0x9b4, 0x9b8, 0x9e4, 0xb0c, 0x490, 0x494].map(k => h(rec.add(k)))).join(','));
+      } catch(e){ if (!A6T.err) A6T.err = 'a6t ' + e; }
+    }});
+    A6T.armed = true;
+    return 'a6t-probe armed @0x4c3ac0 ra=0x4686a9 rec=' + rec;
+  } catch(e){ return 'ERR ' + e; }
+}
+function a6tProbeDrain(){ const r = A6T.rows; A6T.rows = []; return r; }
+
 // --- FIRST-HIT coverage probe (D3 bulk Phase 0, 2026-10-11) ----------------------
 // Entry-only hooks on a list of function entries. Each hook counts calls per session phase
 // (DAT_00771968: 1 menu, 2 load+spawn, 3 race), each phase count capped at FH.cap, and
@@ -3636,6 +3692,12 @@ rpc.exports = {
   fhProbeStats: function(){ return JSON.stringify({armed:FH.armed, n:FH.ent.length, err:FH.err}); },
   alProbeArm: function(k, c){ return alProbeArm(k, c); },
   gridProbeArm: function(){ return gridProbeArm(); },
+  a6tProbeArm: function(b, c){ return a6tProbeArm(b, c); },
+  a6tProbeDrain: function(){ return a6tProbeDrain(); },
+  a6tProbeErr: function(){ return '' + A6T.err; },
+  a5ProbeArm: function(b, c, n){ return a5ProbeArm(b, c, n); },
+  a5ProbeDrain: function(){ return a5ProbeDrain(); },
+  a5ProbeErr: function(){ return '' + A5P.err; },
   ccProbeArm: function(c){ return ccProbeArm(c); },
   ccProbeDrain: function(){ return ccProbeDrain(); },
   ccProbeErr: function(){ return '' + CCP.err; },
@@ -4266,6 +4328,12 @@ def main():
     ap.add_argument("--carcar-probe", type=int, default=0,
                     help="[u9769] entry+leave hook on VehicleCarCarContact 0x00469df0: both records at entry and at leave, the "
                          "first N calls. Writes <out>.carcar.tsv. Requires --statediff-out.")
+    ap.add_argument("--a5-probe", type=int, default=0,
+                    help="[u9771] FUN_0046ddb0 (A5) entry+leave on the --statediff-car record: velocity, angular velocity, +0x9e4, "
+                         "+0x9e8, +0x9e0 at entry, velocity at leave, first N calls. Writes <out>.a5probe.csv.")
+    ap.add_argument("--a6t-probe", action="store_true",
+                    help="[u9771] A6a tail terms at 0x004c3ac0 from 0x004686a4 (blend, lb0f, linTerm, accumulators) for the "
+                         "--statediff-car record. Writes <out>.a6tprobe.csv.")
     ap.add_argument("--firsthit-probe", default="",
                     help="[D3 bulk Phase 0] file of function-entry RVAs (one per line, # comments): entry-only "
                          "hooks counting calls per session phase, capped, self-detaching after the phase-3 cap. "
@@ -4513,6 +4581,10 @@ def main():
                 print("  [statediff]", E.cb_probe_arm())
             if args.carcar_probe:
                 print("  [statediff]", E.cc_probe_arm(args.carcar_probe))
+            if args.a5_probe:
+                print("  [statediff]", E.a5_probe_arm("0x008815a0", args.statediff_car, args.a5_probe))
+            if args.a6t_probe:
+                print("  [statediff]", E.a6t_probe_arm("0x008815a0", args.statediff_car))
             if args.firsthit_probe:
                 _fh = []
                 for _ln in open(args.firsthit_probe, encoding="utf-8"):
@@ -5007,7 +5079,7 @@ def main():
                     aqp = outp.with_suffix(outp.suffix + ".a6aprobe.csv")
                     _na = 0
                     with open(aqp, "w", newline="") as f:
-                        f.write("n,le4,ld4,lc8,lc4,lc0p,lbc,lac,la8,la4,dFx,dFy,l98z,le0,ldc,ld8,s0,s1,Fx,Fy,Fz" + chr(10))
+                        f.write("n,le4,ld4,lc8,lc4,lc0p,lbc,lac,la8,la4,dFx,dFy,l98z,le0,ldc,ld8,s0,s1,Fx,Fy,Fz,r9b0,r9b4,r9b8,r9bc,r9c0,r9c4,r9e4,r9e8" + chr(10))
                         while True:
                             try: _chunk = E.a6a_probe_drain(400)
                             except Exception as _e:
@@ -5148,6 +5220,24 @@ def main():
                             for r in _cr: f.write(chr(9).join(str(x) for x in r) + chr(10))
                         print(f"  [statediff] carcar-probe {len(_cr)} rows -> {_cf} (err {E.cc_probe_err()})")
                     except Exception as _e: print("  [statediff] carcar drain failed:", _e)
+                if args.a5_probe:
+                    try:
+                        _ar = E.a5_probe_drain()
+                        _af = outp.with_suffix(outp.suffix + ".a5probe.csv")
+                        with open(_af, "w", newline="") as f:
+                            f.write("sdframe,tick,v0,v1,v2,w0,w1,w2,s9e4,s9e8,g9e0,o0,o1,o2" + chr(10))
+                            for r in _ar: f.write(r + chr(10))
+                        print(f"  [statediff] a5-probe {len(_ar)} rows -> {_af} (err {E.a5_probe_err()})")
+                    except Exception as _e: print("  [statediff] a5 drain failed:", _e)
+                if args.a6t_probe:
+                    try:
+                        _tr = E.a6t_probe_drain()
+                        _tf = outp.with_suffix(outp.suffix + ".a6tprobe.csv")
+                        with open(_tf, "w", newline="") as f:
+                            f.write("n,e0,dc,d8,linTerm,lb8,lb4,lb0f,xterm,l6c,l68,l64,cc,b14,b18,b1c,v0,v1,v2,s9e4,b0c,g490,t494" + chr(10))
+                            for r in _tr: f.write(r + chr(10))
+                        print(f"  [statediff] a6t-probe {len(_tr)} rows -> {_tf} (err {E.a6t_probe_err()})")
+                    except Exception as _e: print("  [statediff] a6t drain failed:", _e)
                 if args.firsthit_probe:
                     try: print("  [statediff] firsthit-probe agent:", E.fh_probe_stats())
                     except Exception as _e: print("  [statediff] firsthit stats failed:", _e)

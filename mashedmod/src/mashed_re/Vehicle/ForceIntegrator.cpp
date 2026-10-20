@@ -23,6 +23,7 @@
 #include "../Math/RwLutTables.h"           // [u9760] LutSqrt = FUN_004c3b30 with the real LUT
 #include "../Collision/ContactSolvers.h"   // reuse TriangleFaceNormal (0x0046c5f0)
 #include "../Collision/ContactDeps.h"      // Collision::g_suspScratch (DAT_00881560)
+static bool A5DraftLut() { static const bool s = [] { const char* e = std::getenv("MASHED_A5_DRAFT_LUT"); return e && e[0] == '1'; }(); return s; }   // [u9771]
 
 namespace mashed_re {
 namespace Vehicle {
@@ -128,6 +129,23 @@ void VehicleWheelForceIntegrate(int* self, float dt, void* xform)
             delta[2] = *reinterpret_cast<float*>(gb + 0x960 + iVar9)         - vF(self, iVar3 * 0x10 + 600);
             othervel[1] = *reinterpret_cast<float*>(gb + 0x9b4 + iVar13);
             othervel[2] = *reinterpret_cast<float*>(gb + 0x9b8 + iVar13);
+            if (A5DraftLut()) {
+                // [u9771] MASHED_A5_DRAFT_LUT (default OFF): the original's drafting test (0x0046ddb0 loop): FUN_004c3ac0 and
+                // FUN_004c39b0 are the RW LUT bodies, and the race loop's PC_24 rounds r = 1 - (6 - |gap|) * 0.125 to float.
+                const float mag = mashed_re::Math::LutLength(othervel);
+                if (kSpeedMin <= mag) {
+                    mashed_re::Math::LutNormalize(othervel, othervel);
+                    mashed_re::Math::LutNormalize(deltaNorm, delta);
+                    if (kDraftDot < deltaNorm[2] * othervel[2] + deltaNorm[0] * othervel[0] + deltaNorm[1] * othervel[1]) {
+                        const float dd = mashed_re::Math::LutLength(delta);
+                        if (dd < kDraftDist) {
+                            const float r = kOne - (kDraftDist - dd) * kDraft0p125;
+                            if (r < local_70) local_70 = r;
+                        }
+                    }
+                }
+                continue;
+            }
             double mag = Vec3Mag3(othervel);
             if ((double)kSpeedMin <= mag) {
                 Vec3Norm3(othervel, othervel);
@@ -192,9 +210,9 @@ void VehicleWheelForceIntegrate(int* self, float dt, void* xform)
         ++s_a5gN;
         if (std::FILE* lf = std::fopen("a5g_diag.log", "a")) {
             std::fprintf(lf,
-                "i=%d sEnt=%.6f sp=%.6f g0=%.9g g1=%.9g g2=%.9g G=%.9g "
+                "i=%d car=%d sEnt=%.6f sp=%.6f g0=%.9g g1=%.9g g2=%.9g G=%.9g "
                 "m54=%.9g dt=%.6f base=%.9g l70=%.9g sigma=%.9g gnd=0x%08X\n",
-                s_a5gN, a5g_sEnt, vF(self, 0x279),
+                s_a5gN, self[0], a5g_sEnt, vF(self, 0x279),
                 vF(self, 0x54), vF(self, 0x55), vF(self, 0x56),
                 vF(self, 0x54) * vF(self, 0x55) * vF(self, 0x56),
                 vF(self, 0x15), dt, a5g_base, local_70, fVar4,
