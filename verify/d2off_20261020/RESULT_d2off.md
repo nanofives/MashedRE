@@ -61,3 +61,11 @@ All D2 runs alone, 90 s, 1630..1637 motion_diag lines; same-stack runs are byte-
 - `verify/d2off_20261020/`: `run_arms.py` (stacks `RD`, `RDS`, `FAITH`, `FD`, `FNPM`, `PM`, `FAITH2`, `FD2`, `FRO`, `FCL`), `d2rec.py`
   (fields per call), `d2first.py` (first differing call over an offset set), `d2new.py` (first new difference after k = 0),
   `msdpeek.py`, `recpos.py`, `vsum.py`.
+
+## 3. Amendment 2: FD0 / drafting on the solo recipe
+
+`D2_FNF_1` (`FAITH` without `MASHED_A5_FD0_LIVE` / `MASHED_A5_DRAFT_LUT`, exe `d58732f9`) is byte-identical to `D2_FAITH_2` over its
+1628 motion_diag lines (FAITH_2 has 1634; the score 0.1912 / 0.2501 / 1906.74 differs by tail length only). H4 holds: with one
+car, `g_playerCount` = 1 and the live `0x007f0fd0` = 0 take the same branch, and the drafting loop has no second car. The two
+knobs are in `FAITH` for the 4-car recipes; they do not touch D2. The branch was merged up to `race/first-frame-parity`
+`93817b1de` (u9772 merged) at `9c8965dcf`; the source is unchanged by that merge.
