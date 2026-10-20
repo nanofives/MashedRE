@@ -1,0 +1,1 @@
+u9774 arm outputs (D2 motion_diag logs, player record dumps, A5 / A6a / force-split / fixup logs, B and H arms) and the original captures o_a5a6, o_w0..o_w3, o_ww9b4, o_ww604, o_ww9b0 moved off git 2026-10-20 to D:\MashedWT\u9774_data\arms; 13 tracks on F5 in D:\MashedWT\u9774_data\tracks_f5.
