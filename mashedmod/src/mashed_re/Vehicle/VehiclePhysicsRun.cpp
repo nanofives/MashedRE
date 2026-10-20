@@ -754,7 +754,7 @@ static void SolveWheelContacts(unsigned char* r, PlayerCarIO& io, int substep,
     const float sdGcIn = F(r, 0x9e0);
     Collision::WheelContactSolver(self, world, substep);
     std::memcpy(Collision::g_suspScratch, savedScratch, sizeof(savedScratch));
-    // [u9773 2026-10-20] MASHED_WCS_TRINORMAL=1 (default OFF): the solver's 3-wheel alignment rotates the +0x928 ring
+    // [u9773 2026-10-20] MASHED_WCS_TRINORMAL=1 (default ON since trinflip 2026-10-20 through the FAITH seed, MASHED_NO_WCS_TRINORMAL=1 opts out): the solver's 3-wheel alignment rotates the +0x928 ring
     // (Rw_SetRotation at 0x0046fd..), which in the original IS the body basis. The port keeps the basis separately and
     // re-publishes it into the ring (above, and SyncContactRingMatrix), so carry the ring's rotation rows back into it.
     {
