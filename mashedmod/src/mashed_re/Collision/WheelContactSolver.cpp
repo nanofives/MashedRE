@@ -323,6 +323,11 @@ void WheelContactSolver(int* self, void* world, int substep)
             }
         }
         if (bVar16 == 3) {
+            // [u9773] the three wheels whose contact points FUN_0046c5f0 takes below (0x0046fc09..0x0046fd57: ESI / ECX / EAX)
+            int triA = 0, triB = 1, triC = 2;
+            if (self[0x66] != 1) { triA = 1; triB = 3; triC = 2; }
+            else if (self[0x97] != 1) { triA = 0; triB = 3; triC = 2; }
+            else if (self[0xc8] != 1) { triA = 0; triB = 1; triC = 3; }
             // orientation correction: promote one inactive wheel slot (verbatim copies)
             if (self[0x66] == 1) {
                 if (self[0x97] == 1) {
@@ -341,7 +346,22 @@ void WheelContactSolver(int* self, void* world, int substep)
                 self[0x80]=self[0xb1]; self[0x81]=self[0xb2]; self[0x82]=self[0xb3];
                 self[0x66]=1; self[0x65]=self[0x96]; self[0x7b]=self[0xac];
             }
-            // FUN_0046c5f0() — register-arg wheel normal (residual; no state effect).
+            // FUN_0046c5f0 at 0x0046fd57: EAX = &pts[a], ECX = &pts[b], EDX = &pts[c] (pts = the per-wheel contact points at
+            // [esp+0xac] = local_70), ESI = &local_e0 (esp+0x3c), which the alignment below reads.
+            // [u9773 2026-10-20] MASHED_WCS_TRINORMAL=1 (default OFF, verify/u9773_20261020/PREREG_u9773.md amendment 2) makes
+            // the call, in FUN_0046c5f0's form (LUT sqrt FUN_004c3b30); without it local_e0 stays 0 and the alignment is skipped.
+            static const bool s_triNormal = [] { const char* e = std::getenv("MASHED_WCS_TRINORMAL"); return e && e[0] == '1'; }();
+            if (s_triNormal) {
+                const float* a = local_70 + triA * 3; const float* b = local_70 + triB * 3; const float* c = local_70 + triC * 3;
+                const float f2 = (a[2] - b[2]) * (a[1] - c[1]) - (a[1] - b[1]) * (a[2] - c[2]);
+                const float f3 = (a[0] - b[0]) * (a[2] - c[2]) - (a[2] - b[2]) * (a[0] - c[0]);
+                const float f1 = (a[1] - b[1]) * (a[0] - c[0]) - (a[0] - b[0]) * (a[1] - c[1]);
+                const float l2 = f2 * f2 + f3 * f3 + f1 * f1;
+                if (0.0f <= l2) {
+                    const float l = mashed_re::Math::LutSqrt(l2);
+                    if (l != 0.0f) { const float inv = 1.0f / l; local_e0[0] = f2 * inv; local_e0[1] = f3 * inv; local_e0[2] = inv * f1; }
+                }
+            }
         } else if (bVar16 < 3) {
             unsigned char n = (self[0x66] != 0) ? 1 : 0;
             if (n) { local_e0[0]=vF(self,0x80); local_e0[1]=vF(self,0x81); local_e0[2]=vF(self,0x82); }

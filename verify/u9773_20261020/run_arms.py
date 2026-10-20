@@ -353,6 +353,9 @@ STACK['N5'] = ['MASHED_NO_A6A_SPIN_ORDER=1', 'MASHED_NO_TER_SPIN_F32=1', 'MASHED
 
 for _s in (1, 2, 3): STACK['R%d' % _s] = ['MASHED_RECDUMP=@OUT@/@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=%d' % _s]   # u9773: car s's record
 for _s in (1, 2, 3): STACK['RP%d' % _s] = STACK['R%d' % _s] + ['MASHED_WCS_POSLOG=@OUT@/@NAME@.pos.txt']
+for _s in (1, 2, 3): STACK['BD%d' % _s] = STACK['RP%d' % _s] + ['MASHED_BATCH_DUMP=@OUT@/@NAME@.batch.csv', 'MASHED_BATCH_DUMP_SLOT=%d' % _s]
+STACK['TN'] = ['MASHED_WCS_TRINORMAL=1']   # amendment 2
+for _s in (1, 2, 3): STACK['TN%d' % _s] = STACK['BD%d' % _s] + STACK['TN']
 
 
 for name in sys.argv[1:]:

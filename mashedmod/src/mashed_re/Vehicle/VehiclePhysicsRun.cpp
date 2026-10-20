@@ -754,6 +754,17 @@ static void SolveWheelContacts(unsigned char* r, PlayerCarIO& io, int substep,
     const float sdGcIn = F(r, 0x9e0);
     Collision::WheelContactSolver(self, world, substep);
     std::memcpy(Collision::g_suspScratch, savedScratch, sizeof(savedScratch));
+    // [u9773 2026-10-20] MASHED_WCS_TRINORMAL=1 (default OFF): the solver's 3-wheel alignment rotates the +0x928 ring
+    // (Rw_SetRotation at 0x0046fd..), which in the original IS the body basis. The port keeps the basis separately and
+    // re-publishes it into the ring (above, and SyncContactRingMatrix), so carry the ring's rotation rows back into it.
+    {
+        static const bool s_triBack = [] { const char* e = std::getenv("MASHED_WCS_TRINORMAL"); return e && e[0] == '1'; }();
+        if (s_triBack && PosModelWheels() && bodyUp) {
+            float* basisW = const_cast<float*>(bodyUp) - 4;
+            const float* m = reinterpret_cast<const float*>(r + (std::size_t)I(r, 0x9ac) * 0x40 + 0x928);
+            for (int i = 0; i < 12; ++i) basisW[i] = m[i];
+        }
+    }
     if (g_sdSolverLog) {   // [d2settle D0-a] the solver's own translation correction, diag only
         if (std::FILE* lf = std::fopen(g_sdSolverLog, "a")) {
             std::fprintf(lf, "SOLVER io.pos=(%.9g,%.9g,%.9g) centre_in=(%.9g,%.9g,%.9g) "

@@ -40,3 +40,19 @@ re-check car 3's record past 149. Then car 2 (150), then A car 1 and B car 2. Ga
   their one known reader is FUN_0046bda0 (car-part steer animation, render only). Not on this path; noted for later.
 - A hardware write watch misses alternate writes (the original integrates twice per frame, 25 ms each: the per-call x step /
   velocity = 4.63e-5 = 50 ms of `_DAT_005cea80 * kPosDtK`), so watch logs cannot count passes.
+
+## Amendment 2 (before its arms): the 3-wheel tri-normal
+
+Measured (`--batch-probe` on car 3, `o_bp3_2`, equal to `o_c3` through call 259, vs the port's `MASHED_BATCH_DUMP` slot 3, `bqcmp.py`):
+the classifier-entry rows are equal for 294 consecutive calls; at the second call of the frame of record call 149 the wheel points
+differ: original y -0.0325 / -0.0406 / -0.0530 / -0.0652 (tilted), port -0.04748622 x4 (flat), and the body up `+0x9c8` is
+(-0.000394, 0.999063, 0.043615) vs (0, 1.000043, 0). The record's rotation rows at call 149 differ the same way (`+0x92c` 0.0240 /
+0, `+0x940` 0.0436 / 0). The original's FUN_0046f6c0, with three grounded wheels after the all-four drop, calls FUN_0046c5f0 at
+`0x0046fd57` on three per-wheel contact points (`[esp+0xac]` + 3*index; ESI/ECX/EAX = (0,1,2), (0,1,3), (0,3,2) or (1,3,2) by the
+promotion path `0x0046fc09..0x0046fd35`) into `local_e0` (`esp+0x3c`), which the rotation alignment reads; the port skips that
+call (`WheelContactSolver.cpp`, "residual; no state effect"), so `local_e0` stays 0 and the alignment never rotates the ring.
+
+Knob `MASHED_WCS_TRINORMAL=1` (default OFF): the call in FUN_0046c5f0's form (LUT sqrt FUN_004c3b30), and, because the port keeps
+the body basis apart from the +0x928 ring and re-publishes it, the solver's ring rotation is carried back into the basis
+(`VehiclePhysicsRun.cpp`, after the solver, with `MASHED_POS_WHEELS`). H1: car 3's record (rotation rows and position) equals the
+original's past call 149. Arms: G-NOOP, `B_TN3_K26` (record + batch dump), then (b), D2, 13 tracks if it holds.
