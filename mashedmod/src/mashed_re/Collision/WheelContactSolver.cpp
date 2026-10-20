@@ -96,6 +96,17 @@ void WheelContactSolver(int* self, void* world, int substep)
                                          vF(pw, -1), (float)pw[0x15], 0.f);
         }
     }
+    // [u9773] MASHED_WCS_POSLOG: the per-wheel state / fv / key at ENTRY (before the reset), as --wheelstate-probe samples.
+    {
+        static std::FILE* s_el = [] { const char* e = std::getenv("MASHED_WCS_POSLOG"); if (!e) return (std::FILE*)nullptr;
+            static char p2[512]; std::snprintf(p2, sizeof(p2), "%s.ent", e); return std::fopen(p2, "w"); }();
+        if (s_el) {
+            const int slot = (int)((reinterpret_cast<char*>(self) - reinterpret_cast<char*>(mashed_re::Vehicle::g_vehicleArrayBase)) / 0xd04);
+            std::fprintf(s_el, "slot=%d sub=%d", slot, substep);
+            for (int w = 0; w < 4; ++w) { int* pw = self + 0x66 + w * 0x31; std::fprintf(s_el, " w%d=%d,%.9g,%d", w, pw[0], vF(pw, -1), pw[0x15]); }
+            std::fprintf(s_el, "\n"); std::fflush(s_el);
+        }
+    }
     char cVar13 = 0;
     int* iVar12 = self + self[0x26b] * 0x10 + 0x24a;   // wheel-ring matrix block
     g_activeContactCount = 0;                          // DAT_0088e650

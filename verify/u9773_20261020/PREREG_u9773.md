@@ -23,3 +23,20 @@ Find the first differing input of that correction for car 3 at call 149 (states,
 contact normal terms), name its producer's RVA, port the fix behind a default-OFF knob (amendment with its measurement), and
 re-check car 3's record past 149. Then car 2 (150), then A car 1 and B car 2. Gates for any default candidate: G-NOOP (default
 `df5ee50e / a90bbb16 / b3cd0e5f`, B `c165d2e5 / c01e164a / 2e937af7`), (b) all regimes reported per car, D2 3/3, 13 tracks 0 RED.
+
+## Amendment 1 (measurement, no knob yet)
+
+- `MASHED_WCS_POSLOG` now also writes `<path>.ent`: per solver call (FUN_0046f6c0), the four wheels' state / fv / key at
+  ENTRY, the channel `scenario_launch.py --wheelstate-probe` samples on the original.
+- Car 3, B recipe, original `o_wsp3_1` (`--wheelstate-probe`, equal to `o_c3` through call 399) vs port `B_RP3_K26-2`: the entry
+  samples are bit-equal for every solver call through the second call of frame 1019 (the frame that produces record call 149).
+  The next entry (= that call's output) differs on every wheel (orig w0..w3 fv -0.00449260 / -0.00449260 / -0.00959048 /
+  -0.00749469, port -0.01714067 / -0.01714067 / -0.00409550 / +0.01018281), with all states 1 on both sides and the end-of-frame
+  contact normals equal. So the split is made inside that one solver call, by the classifier's depth (FUN_0046cc40, the write at
+  `0x0046d008` from the BSP walk `0x00538cd1`): its inputs are the transformed wheel points `DAT_0088e620` (from
+  `Rw_VtableDispatch(g_wheelContactPos, g_suspScratch, 4, ring matrix)`) and the walked batch. The correction arithmetic
+  (`0x0046fbc7..0x0046fc00`) and the wheel selection match the original's.
+- The car-3 drive-torque rings `+0x1ac..+0x1e8 / +0x270..` hold only two stale entries in the port (the original fills all 16);
+  their one known reader is FUN_0046bda0 (car-part steer animation, render only). Not on this path; noted for later.
+- A hardware write watch misses alternate writes (the original integrates twice per frame, 25 ms each: the per-call x step /
+  velocity = 4.63e-5 = 50 ms of `_DAT_005cea80 * kPosDtK`), so watch logs cannot count passes.
