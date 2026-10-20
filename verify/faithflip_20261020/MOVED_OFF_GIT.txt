@@ -1,0 +1,1 @@
+faithflip arm outputs (B step CSVs, H_DEF/H_DEF-2/H_NF, D2_DEF_1..3 motion_diag logs) moved off git 2026-10-20 to D:\MashedWT\faithflip_data\arms; 13 tracks on the new default in D:\MashedWT\faithflip_data\tracks_def.
