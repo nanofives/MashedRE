@@ -353,7 +353,16 @@ STACK['N5'] = ['MASHED_NO_A6A_SPIN_ORDER=1', 'MASHED_NO_TER_SPIN_F32=1', 'MASHED
 
 STACK['NT'] = ['MASHED_NO_WCS_TRINORMAL=1']   # wcsflip: the opt-out = the f5flip default
 # u9776: car records + the alignment log (tri-probe twin) on the trinflip default
+STACK['TC'] = ['MASHED_WCS_COMBINE_PC24=1']; STACK['TM'] = ['MASHED_MATMUL_PC24=1']
+STACK['LT3'] = STACK['TC'] + ['MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=3', 'MASHED_LT_LOG=@OUT@\@NAME@.lt.csv', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+STACK['LR3'] = ['MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=3', 'MASHED_LT_LOG=@OUT@\@NAME@.lt.csv', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+STACK['TC0'] = STACK['TC'] + ['MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=0']
+STACK['TC0RO'] = STACK['TC0'] + ['MASHED_A5_RING_ORDER=1']
+STACK['BQ0'] = STACK['TC0'] + ['MASHED_BATCH_DUMP=@OUT@/@NAME@.batch.csv', 'MASHED_BATCH_DUMP_SLOT=0']
+STACK['LT1'] = STACK['TC'] + ['MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=1', 'MASHED_LT_LOG=@OUT@\@NAME@.lt.csv']
 for _c in (1, 2, 3):
+    STACK[f'TC{_c}'] = STACK['TC'] + [f'MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', f'MASHED_RECDUMP_SLOT={_c}', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+    STACK[f'TM{_c}'] = STACK['TM'] + [f'MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', f'MASHED_RECDUMP_SLOT={_c}', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
     STACK[f'TR{_c}'] = [f'MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', f'MASHED_RECDUMP_SLOT={_c}', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
 
 

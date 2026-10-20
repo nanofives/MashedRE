@@ -1666,6 +1666,40 @@ function triProbeArm(recBaseHex, car, countOnly){
     return 'tri-probe armed: 0x004c52f0 from 0x00470004, frame = A6a rec=' + TQ_REC + (TQ.countOnly ? ' COUNT-ONLY' : '');
   } catch(e){ return 'ERR ' + e; }
 }
+// --- LT probe (U-9776, 2026-10-20): FUN_004148b0 (last-place / leader timer) entry + exit, every car. Callee-entry
+// only. Entry: args[3] = v; the reference distances 0x008989b0[0..3] (FUN_00442cc0's array), the slot states
+// *(0x005f2770) + 0x34 + i*4 (FUN_0040e470), timer 0x0089a4c8 + v*0x74, rank 0x0089a4c4 + v*0x74. Exit: EAX, timer, rank.
+// Frame = TQ.nFrm (arm --tri-probe too: its A6a hook counts the statediff car's frames).
+const LQ = { armed:false, rows:[], n:0, err:null };
+function ltProbeArm(){
+  if (LQ.armed) return 'already armed';
+  try {
+    Interceptor.attach(ga(0x004148b0), {
+      onEnter(args){
+        try {
+          LQ.n++;
+          const v = args[3].toInt32(); this.v = v;
+          const st = ga(0x005f2770).readPointer();
+          const ss = []; for (let i = 0; i < 4; i++) ss.push(st.isNull() ? 'n' : String(st.add(0x34 + i * 4).readS32()));
+          this.pre = [TQ.nFrm, v, tqD(ga(0x008989b0), 4), ss.join(';'),
+                      String(ga(0x0089a4c8 + v * 0x74).readS32()), String(ga(0x0089a4c4 + v * 0x74).readS32()),
+                      String(ga(0x0089a368).readS32()), bqH(ga(0x0089a360)), String(ga(0x0089a364).readS32()),
+                      String(ga(0x0089a374).readS32())];
+        } catch(e){ if (!LQ.err) LQ.err = 'lqEnter ' + e; }
+      },
+      onLeave(rv){
+        try {
+          const v = this.v;
+          LQ.rows.push(this.pre.concat([String(rv.toInt32()), String(ga(0x0089a4c8 + v * 0x74).readS32()),
+                                         String(ga(0x0089a4c4 + v * 0x74).readS32())]).join(','));
+        } catch(e){ if (!LQ.err) LQ.err = 'lqLeave ' + e; }
+      }});
+    LQ.armed = true;
+    return 'lt-probe armed: 0x004148b0 entry + exit';
+  } catch(e){ return 'ERR ' + e; }
+}
+function ltProbeStats(){ return JSON.stringify({n:LQ.n, rows:LQ.rows.length, err:LQ.err}); }
+function ltProbeDrain(n){ return LQ.rows.splice(0, n || 400); }
 function triProbeStats(){ return JSON.stringify({n:TQ.n, nHit:TQ.nHit, nFrm:TQ.nFrm, rows:TQ.rows.length, err:TQ.err}); }
 function triProbeDrain(n){ return TQ.rows.splice(0, n || 400); }
 // --- A6A addend probe (u9764, 2026-10-19) -------------------------------------
@@ -3677,6 +3711,9 @@ rpc.exports = {
   triProbeArm: function(recBaseHex, car, countOnly){ return triProbeArm(recBaseHex, car, countOnly); },
   triProbeDrain: function(n){ return triProbeDrain(n); },
   triProbeStats: function(){ return triProbeStats(); },
+  ltProbeArm: function(){ return ltProbeArm(); },
+  ltProbeDrain: function(n){ return ltProbeDrain(n); },
+  ltProbeStats: function(){ return ltProbeStats(); },
   a6aProbeArm: function(recBaseHex, car, wheel){ return a6aProbeArm(recBaseHex, car, wheel); },
   a6aProbeDrain: function(n){ return a6aProbeDrain(n); },
   a6aProbeStats: function(){ return JSON.stringify({armed:AQ.armed, n:AQ.n, nRec:AQ.nRec, pending:AQ.rows.length, err:AQ.err}); },
@@ -4321,6 +4358,9 @@ def main():
                          "local_e0, axis, local_ac, m, the ring before / after, per car; frame = A6a of --statediff-car; "
                          "writes <statediff-out>.triprobe.csv. Requires --statediff-out.")
     ap.add_argument("--tri-probe-count", action="store_true", help="count-first gate for --tri-probe")
+    ap.add_argument("--lt-probe", action="store_true",
+                    help="[U-9776] entry + exit of FUN_004148b0 (every car): refdists 0x008989b0, slot states, timer, rank, "
+                         "return; frame column needs --tri-probe. Writes <statediff-out>.ltprobe.csv.")
     ap.add_argument("--batch-probe-count", action="store_true",
                     help="count-first safety gate for --batch-probe: arm the three hooks with "
                          "counters only")
@@ -4603,6 +4643,8 @@ def main():
                     bool(args.wheelstate_probe_count)))
             if args.a6a_probe_wheel >= 0:
                 print("  [statediff]", E.a6a_probe_arm("0x008815a0", args.statediff_car, args.a6a_probe_wheel))
+            if args.lt_probe:
+                print("  [statediff]", E.lt_probe_arm())
             if args.tri_probe or args.tri_probe_count:
                 print("  [statediff]", E.tri_probe_arm("0x008815a0", args.statediff_car, bool(args.tri_probe_count)))
             if args.batch_probe or args.batch_probe_count:
@@ -5144,6 +5186,21 @@ def main():
                             for _r in _chunk: f.write(_r + chr(10))
                             _na += len(_chunk)
                     print(f"  [statediff] a6a-probe {_na} rows -> {aqp}")
+                if args.lt_probe:
+                    try: print("  [statediff] lt-probe agent:", E.lt_probe_stats())
+                    except Exception as _e: print("  [statediff] lt-probe stats failed:", _e)
+                    lqp = outp.with_suffix(outp.suffix + ".ltprobe.csv")
+                    _nl = 0
+                    with open(lqp, "w", newline="") as f:
+                        f.write("frame,v,refdist,slotstate,timer,rank,m368,f360,i364,b374,ret,timer_post,rank_post" + chr(10))
+                        while True:
+                            try: _chunk = E.lt_probe_drain(400)
+                            except Exception as _e:
+                                print("  [statediff] lt-probe drain failed:", _e); break
+                            if not _chunk: break
+                            for _r in _chunk: f.write(_r + chr(10))
+                            _nl += len(_chunk)
+                    print(f"  [statediff] lt-probe {_nl} rows -> {lqp}")
                 if args.tri_probe or args.tri_probe_count:
                     try: print("  [statediff] tri-probe agent:", E.tri_probe_stats())
                     except Exception as _e: print("  [statediff] tri-probe stats failed:", _e)

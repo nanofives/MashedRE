@@ -41,6 +41,8 @@
 #include "../Core/HookSystem.h"
 #include "../Core/ShadowTrack.h"
 #include "../Core/ShadowAB.h"
+#include <cfloat>    // [u9776] _controlfp_s (MASHED_MATMUL_PC24)
+#include <cstdlib>   // getenv
 
 #ifdef MASHED_STANDALONE
 namespace mashed_re { namespace Math {
@@ -71,9 +73,16 @@ typedef void (__cdecl *RwpMatMulFn)(void* out, void* a, void* b);
 // [pontoon 2026-10-16] exe arm: the RW device table is not mapped in the standalone (its pad reads 0). The caps word is
 // the measured [devBase+4] = 0x00020000 and the method slot [devBase+8] is 0x005cb2a0, ported verbatim as
 // Math::RwMatrixMultiplyCPU (Math/RwMatrixMultiplyCpu.cpp). Used by Track/WarzonePontoon.cpp (0x004c52f0).
+// [u9776 2026-10-20] MASHED_MATMUL_PC24=1 (default OFF, verify/u9776_20261020/PREREG_u9776.md amendment 1): 0x005cb2a0 rounds
+// each fmul / fadd at the caller's precision, PC_24 in the original; the standalone's x87 runs at PC_53, so the verbatim body
+// gives +1 ulp (car 3's ring at call 149, FUN_004c52f0 from 0x0046ffff). The knob runs it inside _controlfp_s(_PC_24).
 static void __cdecl RwpExeMatMul(void* out, void* a, void* b) {
+    static const bool s_pc24 = [] { const char* e = std::getenv("MASHED_MATMUL_PC24"); return e && e[0] == '1'; }();
+    unsigned int old = 0, t = 0;
+    if (s_pc24) { _controlfp_s(&old, 0, 0); _controlfp_s(&t, _PC_24, _MCW_PC); }
     mashed_re::Math::RwMatrixMultiplyCPU(static_cast<float*>(out), static_cast<const float*>(a),
                                          static_cast<const float*>(b));
+    if (s_pc24) _controlfp_s(&t, old & _MCW_PC, _MCW_PC);
 }
 #define RWP_MATMUL   RwpExeMatMul
 #define RWP_IDENTW   (0x00020000u)

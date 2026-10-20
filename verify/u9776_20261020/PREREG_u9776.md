@@ -28,3 +28,25 @@ Knobs (default OFF): `MASHED_WCS_COMBINE_PC24` (PC_24 around the alignment's FUN
 Arms: `B_TC3_K26` / `B_TM3_K26` (car 3 records + log), then `B_TC` / `B_TM` K0/K1/K26 for (b), then D2 x3 for any candidate.
 Predictions: P1 with either knob, car 3's ring_post at call 149 equals the original's and car 3's record holds past 157 on
 K26; P2 the narrow knob changes nothing before the first alignment of any car (G-CTRL step rows before it equal).
+
+## Amendment 2 (after the amendment-1 arms, before any FI_RAND arm)
+
+Amendment-1 arms: `MASHED_WCS_COMBINE_PC24` and `MASHED_MATMUL_PC24` both make car 3's ring at call 149 equal the original's
+(`tqcmp.py`); the step hashes equal each other (`6c35e33b` K26, `c4c2ae26` K0). K26 rolls `flag_a368` = 2 at row 61, the
+original `o_c3`-regime captures keep 0, so the matching arm is K0. On K0 with the knob cars 1 and 3 are bit-exact through
+call 179 (car 3 split at 159 without it).
+
+Chain behind the 180 split (all measured, `--lt-probe` / `MASHED_LT_LOG`, `--batch-probe` / `MASHED_BATCH_DUMP_SLOT=0`):
+call 180's AI decisions (car 1 leaves mode 7, car 3 brakes) follow FUN_004148b0 (the leader timer) after FUN_00442a60's
+reference switches from car 1 to car 3 in the original; the port's player (slot 0) distance is 9.41 vs 9.33, so the switch
+does not happen. The player's record is bit-exact through call 127 (`recpos0.py`, both original variants `o_bq0_1` / `o_bq0_2`
+agree); at 128 its position at frame 987's first classifier call differs. FUN_0046e6xx at 0x0046e78c..0x0046e7c8: a wheel on
+surface key 0xffff32ff draws `FUN_00472650(-r, r)` twice (r = +0x9e4 * [0x5cea68] 5e-6) into +0xb00 / +0xb08; FUN_00472650 =
+`lo + ((FUN_00534870() & 0x7fffffff) * 2^-31) * (hi - lo)` (0x00472650..0x00472682). The port's `Fi_RandRange` returns `lo`
+and draws nothing from the ring (Vehicle/ForceIntegratorStubs.cpp).
+
+Knob `MASHED_FI_RAND=1` (default OFF): `Fi_RandRange` calls `Ai::Ai_RandRange` (AiRand, FUN_00472650 on the verbatim
+FUN_00534870 ring). It shifts the shared ring, so every later draw (the regime roll included) moves.
+Arms: `B_FR0_K0` (player record), `B_FR3_K0`, `B_FR1_K0`, then (b) K0/K1/K26 and D2 x3 for the stack TC + FR.
+Predictions: P3 with FR the player's record holds past 127 against `o_bq0_2`; P4 if the regime roll moves, the K that keeps
+`flag_a368` = 0 changes (report it, do not pick K by the result).

@@ -952,6 +952,7 @@ void AiFireDecision(int v, std::uint8_t* ctrl, int curvInt)
 #ifdef MASHED_STANDALONE
 extern "C" int __cdecl AiLeaderTimerProbe2(std::uintptr_t spline, int* p2,
                                            int* outXZ, int vehIdx);
+extern "C" int __cdecl AiLeaderTimerExitSite(void);   // [u9776] MASHED_LT_LOG
 // [PREREG_WIRE W-TOOK diagnosis 2026-10-08] W-TOOK failed with the full prerequisite
 // stack, so the question is WHERE the wired path stops. These count the wired call
 // site specifically -- NOT the gates probe, which is a different call site with a
@@ -1142,7 +1143,25 @@ void ControlStep(std::uintptr_t spline, int v, std::uint8_t* ctrl)
                 int candXZ[2] = {0, 0};
                 int tgtXZ[2]  = {0, 0};          // &local_24, the param the body ignores
                 if (v >= 0 && v < 4) { ++g_wireReached[v]; g_b2Ret[v] = -1; g_b2Los[v] = -1; }
+                // [u9776] MASHED_LT_LOG=<path> (diagnostic, default OFF): the --lt-probe twin (FUN_004148b0 inputs at entry,
+                // return + timer / rank after; refdists 0x008989b0, slot states *(0x005f2770) + 0x34, exit site).
+                static std::FILE* s_lt = [] { const char* e = std::getenv("MASHED_LT_LOG"); return e ? std::fopen(e, "w") : nullptr; }();
+                static int s_ltCalls[4] = {};
+                char ltPre[256] = {0};
+                if (s_lt && v >= 0 && v < 4) {
+                    const std::uintptr_t st = *reinterpret_cast<const std::uintptr_t*>(0x005f2770u);
+                    auto ss = [&](int i) { return st ? *reinterpret_cast<const int*>(st + 0x34u + 4u * i) : -99; };
+                    const unsigned int* rd = reinterpret_cast<const unsigned int*>(0x008989b0u);
+                    std::snprintf(ltPre, sizeof(ltPre), "%d,%d,%08x;%08x;%08x;%08x,%d;%d;%d;%d,%d,%d,%d,%08x,%d,%d", ++s_ltCalls[v], v,
+                                  rd[0], rd[1], rd[2], rd[3], ss(0), ss(1), ss(2), ss(3), I32(0x0089a4c8u + 0x74u * v), I32(0x0089a4c4u + 0x74u * v),
+                                  I32(0x0089a368u), *reinterpret_cast<const unsigned int*>(0x0089a360u), I32(0x0089a364u), I32(0x0089a374u));
+                }
                 const int ltr = AiLeaderTimerProbe2(spline, tgtXZ, candXZ, v);
+                if (s_lt && v >= 0 && v < 4) {
+                    std::fprintf(s_lt, "%s,%d,%d,%d,%d\n", ltPre, ltr, I32(0x0089a4c8u + 0x74u * v), I32(0x0089a4c4u + 0x74u * v),
+                                 AiLeaderTimerExitSite());
+                    std::fflush(s_lt);
+                }
                 if (v >= 0 && v < 4) g_b2Ret[v] = ltr;
                 if (ltr != 0 && v >= 0 && v < 4) ++g_wireRet[v];
                 if (ltr != 0) {
