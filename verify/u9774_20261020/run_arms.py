@@ -332,6 +332,10 @@ for _w in (1, 2, 3): STACK['CLTW%d' % _w] = STACK['CLT'] + ['MASHED_FORCE_SPLIT_
 STACK['SO'] = ['MASHED_A6A_SPIN_ORDER=1']   # amendment 1
 STACK['CLS'] = STACK['CL'] + STACK['SO']
 STACK['CLST'] = STACK['CLT'] + STACK['SO']
+STACK['FSO'] = ['MASHED_FIXUP_SLIDE_ORDER=1']   # amendment 2
+STACK['SF'] = STACK['SO'] + STACK['FSO']
+STACK['CLSF'] = STACK['CL'] + STACK['SF']
+STACK['CLSFT'] = STACK['CLST'] + STACK['FSO']
 for _w in (1, 2, 3): STACK['CLSTW%d' % _w] = STACK['CLST'] + ['MASHED_FORCE_SPLIT_WHEEL=%d' % _w]
 
 

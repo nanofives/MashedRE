@@ -325,10 +325,15 @@ void VehicleContactFixup(int* self)
             // store (0x0046f459..0x0046f479) therefore has NO reader in the original;
             // it is kept above verbatim rather than deleted.
             Vec3Normalize(local_48, vel);                       // 0x0046f62a
-            const float k = (local_48[2] * Rf(self, 0x9d0)      // 0x0046f650
-                           + local_48[0] * Rf(self, 0x9c8)      // 0x0046f644
-                           + local_48[1] * Rf(self, 0x9cc))     // 0x0046f639
-                          * kFx_Slide * sp;                     // 0x0046f658 / 0x0046f65e
+            // [u9774 2026-10-20] MASHED_FIXUP_SLIDE_ORDER=1 (default OFF, verify/u9774_20261020/PREREG_u9774.md amendment 2):
+            // the original's association, 0x0046f631..0x0046f656: (n1 * +0x9cc + n0 * +0x9c8) + n2 * +0x9d0.
+            static const bool s_slideOrder = [] { const char* e = std::getenv("MASHED_FIXUP_SLIDE_ORDER"); return e && e[0] == '1'; }();
+            const float kd = s_slideOrder
+                ? (local_48[1] * Rf(self, 0x9cc) + local_48[0] * Rf(self, 0x9c8)) + local_48[2] * Rf(self, 0x9d0)
+                : (local_48[2] * Rf(self, 0x9d0)      // 0x0046f650
+                   + local_48[0] * Rf(self, 0x9c8)    // 0x0046f644
+                   + local_48[1] * Rf(self, 0x9cc));  // 0x0046f639
+            const float k = kd * kFx_Slide * sp;       // 0x0046f658 / 0x0046f65e
             vel[0] -= k * Rf(self, 0x9c8);
             vel[1] -= k * Rf(self, 0x9cc);
             vel[2] -= k * Rf(self, 0x9d0);

@@ -30,3 +30,15 @@ _DAT_005cc9f4)) * _DAT_005ccac4`; the port had `((max(..) * +0x9e8) * _DAT_005ce
 Knob `MASHED_A6A_SPIN_ORDER=1` (default OFF). H2: on `CL` + the knob, wheel 2's and 3's terms at calls 63..89 equal the original's
 and the record's split moves past 138. Arms `CLST` (traced, wheels 0..3), then D2 x3 on `CLS` (= `CL` + knob) and on `SO`
 (= the default + knob); (b), 13 tracks and G-CTRL on the stack that passes D2.
+
+## Amendment 2 (before its arms): the contact fixup's slide term
+
+Measured on `CLST`: with `MASHED_A6A_SPIN_ORDER` the per-wheel terms equal the original's through call 112 and the record's first
+difference stays at 113 (`+0x9b4`). In that frame A6a's entry, wheel terms and tail velocity are equal; a write watch on the
+original (`o_ww9b4`, `--watch-write 9b4`) shows the jump after the tail in the contact fixup FUN_0046ef70 (from `0x00470b03`):
+`0x0046f59e` -36.046154 (impulse), `0x0046f5e9` -32.367363 (damp), `0x0046f69c` -29.130291 (slide). The slide's dot product in
+the original (`0x0046f631..0x0046f656`) is `(n1 * +0x9cc + n0 * +0x9c8) + n2 * +0x9d0`; the port's (`Collision/ContactFixup.cpp`)
+is `(n2 * +0x9d0 + n0 * +0x9c8) + n1 * +0x9cc`.
+
+Knob `MASHED_FIXUP_SLIDE_ORDER=1` (default OFF). H3: on `CLS` + the knob the record's +0x9b4 at 113 equals the original's. Arms
+`CLSFT` (traced), then D2 x3 on `CLSF` (= `CL` + both knobs) and on `SF` (= default + both).
