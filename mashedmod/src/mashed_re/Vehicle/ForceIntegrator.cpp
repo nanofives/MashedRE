@@ -24,6 +24,12 @@
 #include "../Collision/ContactSolvers.h"   // reuse TriangleFaceNormal (0x0046c5f0)
 #include "../Collision/ContactDeps.h"      // Collision::g_suspScratch (DAT_00881560)
 static bool A5DraftLut() { static const bool s = [] { const char* e = std::getenv("MASHED_A5_DRAFT_LUT"); return e && e[0] == '1'; }(); return s; }   // [u9771]
+
+namespace mashed_re {
+namespace Vehicle {
+
+using namespace fi;
+
 // [u9772] MASHED_A5_FD0_LIVE=1 (default OFF): A5 (0x0046ddb0), FUN_00442ce0 and FUN_00442c80 test the live
 // DAT_007f0fd0 word, as the original does, instead of g_playerCount (= the car count, VehiclePhysics_Init).
 static int Fd0Word() {
@@ -31,10 +37,6 @@ static int Fd0Word() {
     return s ? *reinterpret_cast<const int*>(0x007f0fd0u) : g_playerCount;
 }
 
-namespace mashed_re {
-namespace Vehicle {
-
-using namespace fi;
 using Collision::g_suspScratch;   // shared DAT_00881560 scratch
 
 // [u9760 2026-10-18] MASHED_A5_SUSP_LUT=1 (default OFF, verify/u9760_20261019/PREREG_u9760.md): Phase 6's all-grounded

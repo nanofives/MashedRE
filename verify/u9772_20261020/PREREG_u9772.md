@@ -1,7 +1,7 @@
 # PREREG u9772: U-9772, car 3's call 55 and car 2's call 136 (2026-10-20)
 
 Branch `work/u9772` from `race/first-frame-parity` `0ddf1d4d6`. Model claude-opus-5-5, account2. Exe `MASHED_NO_DEPLOY=1`,
-private root `D:\MashedWT\d3bc_root`. Written before any knob arm. Stack `FULLGO` = u9771's `FULLRL` + `MASHED_A6A_GEAR_ORDER`.
+private root `D:\MashedWT\u9756_root` (run_arms default). Written before any knob arm. Stack `FULLGO` = u9771's `FULLRL` + `MASHED_A6A_GEAR_ORDER`.
 
 ## 0. Measured before this PREREG
 
