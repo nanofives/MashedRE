@@ -157,25 +157,48 @@ void VehicleContactFixup(int* self)
         }
         const float local_48v = pfVar7[-1] * sc;
 
+        // [u9774 2026-10-20] MASHED_FIXUP_SUM_ORDER=1 (default OFF, verify/u9774_20261020/PREREG_u9774.md amendment 4): the
+        // original's grouping, 0x0046f0d8..0x0046f1a8: local_54 = (local_3c + local_54) + p*sc (the first sum kept on the
+        // x87 stack), local_60 = (local_60 + local_3c) + p*sc.
+        static const bool s_sumOrder = [] { const char* e = std::getenv("MASHED_FIXUP_SUM_ORDER"); return e && e[0] == '1'; }();
+        if (s_sumOrder) {
+            local_54[0] = (local_3c[0] + local_54[0]) + local_48v;
+            local_54[1] = (local_3c[1] + local_54[1]) + local_44v;
+            local_54[2] = (local_3c[2] + local_54[2]) + local_40v;
+            local_60[0] = (local_60[0] + local_3c[0]) + local_48v;
+            local_60[1] = (local_60[1] + local_3c[1]) + local_44v;
+            local_60[2] = (local_60[2] + local_3c[2]) + local_40v;
+        } else {
         local_54[0] += local_48v + local_3c[0];
         local_54[1] += local_44v + local_3c[1];
         local_54[2] += local_40v + local_3c[2];
         local_60[0] += local_48v + local_3c[0];
         local_60[1] += local_44v + local_3c[1];
         local_60[2] += local_40v + local_3c[2];
+        }
 
         if (3 < i) {   // hull slots only (0x0046f1ae region)
             float local_24[3];
             Vec3Normalize(local_24, pfVar7 + 8);                          // FUN_004c39b0 @0x0046f1bb
+            // [u9774 2026-10-20] MASHED_FIXUP_F32=1 (default OFF, verify/u9774_20261020/PREREG_u9774.md amendment 3): the
+            // original's float steps, 0x0046f1c2..0x0046f209: dot = (n0*p[-1] + n1*p[0]) + n2*p[1] stored as a float
+            // (0x0046f1df), f = |local_3c| * dot, local_c = n * f; and the sign test's order at 0x0046f27b..0x0046f291.
+            static const bool s_fxF32 = [] { const char* e = std::getenv("MASHED_FIXUP_F32"); return e && e[0] == '1'; }();
+            float local_c[3];
+            if (s_fxF32) {
+                const float dotf = (local_24[0] * pfVar7[-1] + local_24[1] * pfVar7[0]) + local_24[2] * pfVar7[1];
+                const float fv = Vec3Mag(local_3c) * dotf;                // FUN_004c3ac0 @0x0046f1e3
+                local_c[0] = local_24[0] * fv; local_c[1] = local_24[1] * fv; local_c[2] = local_24[2] * fv;
+            } else {
             const double dotv = (double)local_24[0] * pfVar7[-1]
                               + (double)local_24[1] * pfVar7[0]
                               + (double)local_24[2] * pfVar7[1];
             double fVar9 = (double)Vec3Mag(local_3c);                     // FUN_004c3ac0 @0x0046f1e3
             fVar9 = fVar9 * dotv;
-            float local_c[3];
             local_c[0] = (float)((double)local_24[0] * fVar9);
             local_c[1] = (float)((double)local_24[1] * fVar9);
             local_c[2] = (float)((double)local_24[2] * fVar9);
+            }
 
             float local_18[3];
             local_18[0] = local_3c[0] - local_c[0];
@@ -186,8 +209,9 @@ void VehicleContactFixup(int* self)
             local_30[0] = local_18[2] * local_c[1] - local_18[1] * local_c[2];
             local_30[1] = local_18[0] * local_c[2] - local_18[2] * local_c[0];
             local_30[2] = local_18[1] * local_c[0] - local_18[0] * local_c[1];
-            if (kFx_Zero < pfVar7[10] * local_3c[2] + local_3c[0] * pfVar7[8]
-                         + pfVar7[9] * local_3c[1]) {
+            const float sgn = s_fxF32 ? (pfVar7[9] * local_3c[1] + local_3c[0] * pfVar7[8]) + pfVar7[10] * local_3c[2]
+                                      : pfVar7[10] * local_3c[2] + local_3c[0] * pfVar7[8] + pfVar7[9] * local_3c[1];
+            if (kFx_Zero < sgn) {
                 local_30[0] = -local_30[0];
                 local_30[1] = -local_30[1];
                 local_30[2] = -local_30[2];
@@ -325,14 +349,26 @@ void VehicleContactFixup(int* self)
             // store (0x0046f459..0x0046f479) therefore has NO reader in the original;
             // it is kept above verbatim rather than deleted.
             Vec3Normalize(local_48, vel);                       // 0x0046f62a
-            const float k = (local_48[2] * Rf(self, 0x9d0)      // 0x0046f650
-                           + local_48[0] * Rf(self, 0x9c8)      // 0x0046f644
-                           + local_48[1] * Rf(self, 0x9cc))     // 0x0046f639
-                          * kFx_Slide * sp;                     // 0x0046f658 / 0x0046f65e
+            // [u9774 2026-10-20] MASHED_FIXUP_SLIDE_ORDER=1 (default OFF, verify/u9774_20261020/PREREG_u9774.md amendment 2):
+            // the original's association, 0x0046f631..0x0046f656: (n1 * +0x9cc + n0 * +0x9c8) + n2 * +0x9d0.
+            static const bool s_slideOrder = [] { const char* e = std::getenv("MASHED_FIXUP_SLIDE_ORDER"); return e && e[0] == '1'; }();
+            const float kd = s_slideOrder
+                ? (local_48[1] * Rf(self, 0x9cc) + local_48[0] * Rf(self, 0x9c8)) + local_48[2] * Rf(self, 0x9d0)
+                : (local_48[2] * Rf(self, 0x9d0)      // 0x0046f650
+                   + local_48[0] * Rf(self, 0x9c8)    // 0x0046f644
+                   + local_48[1] * Rf(self, 0x9cc));  // 0x0046f639
+            const float k = kd * kFx_Slide * sp;       // 0x0046f658 / 0x0046f65e
             vel[0] -= k * Rf(self, 0x9c8);
             vel[1] -= k * Rf(self, 0x9cc);
             vel[2] -= k * Rf(self, 0x9d0);
             (void)Vec3Mag(local_54);    // 0x0046f6ac: result discarded by the original
+            if (const char* fl = FixupLogPath()) {   // [u9774] diagnostic: the slide step's inputs and output
+                if (std::FILE* f = std::fopen(fl, "a")) {
+                    std::fprintf(f, "   slide sp=%.9g n=(%.9g,%.9g,%.9g) kd=%.9g k=%.9g out=(%.9g,%.9g,%.9g)\n",
+                                 sp, local_48[0], local_48[1], local_48[2], kd, k, vel[0], vel[1], vel[2]);
+                    std::fclose(f);
+                }
+            }
         }
     }
     D2Sink::Mark("fx_slide", self, -1, 0, 0.f, 0.f);    // 0x0046f5f3

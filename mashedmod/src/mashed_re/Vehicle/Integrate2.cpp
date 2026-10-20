@@ -170,6 +170,12 @@ static bool A6aGearOrder() {
     static const bool s = [] { const char* e = std::getenv("MASHED_A6A_GEAR_ORDER"); return e && e[0] == '1'; }();
     return s;
 }
+// [u9774 2026-10-20] MASHED_A6A_SPIN_ORDER=1 (default OFF, verify/u9774_20261020/PREREG_u9774.md amendment 1): the spin arm's
+// factor in the original's grouping, 0x00468077..0x004680ae: (+0x9e8 * _DAT_005cea18) * max(+0x9e4 * _DAT_005cea14, 8) * 360.
+static bool A6aSpinOrder() {
+    static const bool s = [] { const char* e = std::getenv("MASHED_A6A_SPIN_ORDER"); return e && e[0] == '1'; }();
+    return s;
+}
 static bool A6aLc0() {
     static const bool s = [] { const char* e = std::getenv("MASHED_A6A_LC0"); return e && e[0] == '1'; }();
     return s;
@@ -554,7 +560,8 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
                 le0 = dst[0]; ldc = dst[1]; ld8 = dst[2];
                 float f = Rf(v,0x9e4) * k0p008;
                 if (f < k8) f = k8;
-                f = f * Rf(v,0x9e8) * k0p019877 * k360;
+                f = A6aSpinOrder() ? (Rf(v,0x9e8) * k0p019877) * f * k360   // [u9774] 0x00468077..0x004680ae
+                                   : f * Rf(v,0x9e8) * k0p019877 * k360;
                 le0 = le0*f - Rf(v,0x9b0); ldc = ldc*f - Rf(v,0x9b4); ld8 = ld8*f - Rf(v,0x9b8);
                 le4 = Mag3(le0, ldc, ld8);
             } else {
