@@ -1,0 +1,6 @@
+B_DEF_K0               3/3  car1 A PASS | car2 A PASS | car3 A PASS
+B_DEF_K1               2/3  car1 B PASS | car2 B FAIL[c1_distinct=63 [17,46]; steer_distinct=100 [29,84]; c1_median=6.0 [0.0,0.0]; abs_steer_median=29.0 [0.0,16.0]] | car3 B PASS
+B_DEF_K26              3/3  car1 C PASS | car2 C PASS | car3 C PASS
+B_IL_K0                3/3  car1 A PASS | car2 A PASS | car3 A PASS
+B_IL_K1                3/3  car1 B PASS | car2 B PASS | car3 B PASS
+B_IL_K26               3/3  car1 C PASS | car2 C PASS | car3 C PASS
