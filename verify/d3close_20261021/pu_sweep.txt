@@ -1,0 +1,11 @@
+o3   decision=CLEAN | contact=(none)
+o4   decision=CLEAN | contact=(none)
+c2   decision=CLEAN | contact=CLEAN  (not-armed rows had no Frida listener when this capture was taken and are excluded)  (no --puhook-aim channel: the AIM rows are NOT tested by this capture)
+c3   decision=CLEAN | contact=CLEAN  (not-armed rows had no Frida listener when this capture was taken and are excluded)  (no --puhook-aim channel: the AIM rows are NOT tested by this capture)
+g2   decision=CLEAN | contact=CLEAN  (not-armed rows had no Frida listener when this capture was taken and are excluded)  (no --puhook-aim channel: the AIM rows are NOT tested by this capture)
+g3   decision=CLEAN | contact=DIVERGES  (not-armed rows had no Frida listener when this capture was taken and are excluded)  (no --puhook-aim channel: the AIM rows are NOT tested by this capture)
+g4   decision=CLEAN | contact=CLEAN  (no --puhook-aim channel: the AIM rows are NOT tested by this capture)
+m1r  decision=CLEAN | contact=CLEAN  (not-armed rows had no Frida listener when this capture was taken and are excluded)
+m2r  decision=CLEAN | contact=CLEAN  (not-armed rows had no Frida listener when this capture was taken and are excluded)
+s1r  decision=CLEAN | contact=CLEAN
+s2r  decision=CLEAN | contact=CLEAN
