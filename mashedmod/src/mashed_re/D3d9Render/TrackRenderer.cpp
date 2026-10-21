@@ -53,6 +53,10 @@ extern "C" std::uint32_t __cdecl VehicleSlotGetter(std::uint32_t vehicleIdx);   
 extern "C" void __cdecl SplineCubicBlend3(float t, float* out, float* p0, float* p1, float* p2,
                                           float* p3);                           // 0x00482ae0
 #include "../Vehicle/VehicleRecordBase.h"
+namespace mashed_re { namespace Frontend {   // [u9779] FUN_0040d590's one body (Frontend/MenuLeaves_af4.cpp)
+struct Rank3Callees { float (*pct)(int); void (*kill)(std::uint32_t); void (*add)(std::uint32_t, int); };
+void RaceRankThree(std::uint32_t, std::uint32_t, std::uint32_t, int, const Rank3Callees&);
+}}
                                     // (MASHED_GATE_RIBBON_AI reverts it to the ribbon scaffold).
                                     // [D3 2026-09-26] the ported TICK Ai_Standalone_Tick runs every
                                     // race frame and its ctrl bytes drive the opponents.
@@ -134,7 +138,24 @@ int aib_veh_type(int v)    { return v == 0 ? 0 : 2; }   // 0 = player(human); el
 // [D-11073 leg 1b] Under default-OFF MASHED_SUBSTATE the port keeps a real DAT_0063ba8c
 // (written by the sub-state block in Update and by SubStateEnter4 / SubStateHeldCountdown5,
 // Race/SubStateMachine.cpp); FUN_0040e350 returns the race sub-state. Knob OFF: 6, as before.
+// [u9779] MASHED_ROUND_END7 (default OFF). FUN_00411170 writes DAT_0063ba8c = 7 at 0x004111a6 when
+// FUN_00410d10 (call 0x0041118f) returns non-zero and FUN_00410510 (call 0x00411198) returns 0, i.e. on
+// a round end that is not a match end. Under the knob the rule engine's r == 0 round end raises this
+// flag (StartRound lowers it): the AI host's FUN_0040e350 then returns 7, and the frame-end clock add
+// is skipped as FUN_0040fc00 skips it in sub-state 7 (0x0040fe46 cmp [0x0063ba8c],7 / 0x0040fe4d je
+// over 0x0040fe4f..0x0040fe64). Knob OFF: the flag is never raised.
+bool RoundEnd7Enabled() {
+    static const bool s = [] { const char* e = std::getenv("MASHED_ROUND_END7"); return e && e[0] && e[0] != '0'; }();
+    return s;
+}
+bool s_roundEnd7 = false;
+// [u9779] MASHED_RACE_TAIL_LATE (default OFF), see the end of TrackRenderer::UpdateCar.
+bool RaceTailLateEnabled() {
+    static const bool s = [] { const char* e = std::getenv("MASHED_RACE_TAIL_LATE"); return e && e[0] && e[0] != '0'; }();
+    return s;
+}
 int aib_game_sub_mode() {                                // race (FUN_0040e350)
+    if (s_roundEnd7) return 7;                           // [u9779] MASHED_ROUND_END7 only
     if (SubState_Enabled()) {
         const int s = *reinterpret_cast<const int*>(0x0063ba8cu);
         if (s != 0) return s;
@@ -5151,6 +5172,20 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             // [d3b 2026-10-16] FUN_00424eb0's FUN_0046c7d0 loop: the steer-0 heading assist, after the AI
             // tick (0x00425a73) and before the physics frame (0x00425a8d), AI slots only. Default ON since
             // dflip 2026-10-17 (MASHED_NO_HEADING_ASSIST=1 opts out). Race/HeadingAssist.cpp, verify/d3b_20261016/PREREG_d3b.md.
+            // [u9779] MASHED_ROUND_END7: FUN_00424eb0's first loop, before the FUN_0046c7d0 loop: when FUN_0040e350()
+            // == 7, FUN_0046c570(v) for every active slot with FUN_0046c7b0(v) == 1, i.e. record +0x9b0..+0x9b8 *=
+            // _DAT_005ce264 (0x3f59999a = 0.85f; 0x0046c57f..0x0046c5af). Measured on the original (o_ww_2 watch):
+            // one write at pc 0x0046c591 per frame after the round end, vx 2009.3203 -> 1707.9224.
+            if (s_roundEnd7 && Vehicle::VehiclePhysics_Enabled()) {
+                const int n = 1 + static_cast<int>(ai_cars_.size());
+                for (int v = 0; v < kRaceCars && v < n; ++v) {
+                    if (!race_[v].alive) continue;
+                    unsigned char* r = Vehicle::VehiclePhysics_RecordPtr(v);
+                    if (!r) continue;
+                    float* vel = reinterpret_cast<float*>(r + 0x9b0);
+                    for (int c = 0; c < 3; ++c) vel[c] = vel[c] * 0.85f;   // fld / fmul [0x5ce264] / fstp
+                }
+            }
             Race::HeadingAssist_Frame(static_cast<int>(in.dt * 3000.0f + 0.5f));
             // [D-11073 leg 1a] FUN_0041d930's tail (0x0041da5f..0x0041da76): DAT_0063d584 += 1,
             // DAT_0063d588 += _DAT_007f100c. The original runs it once per frame from FUN_0040fc00
@@ -5501,7 +5536,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             }
         }
     }
-    UpdateRace(in.dt);
+    if (!RaceTailLateEnabled()) UpdateRace(in.dt);   // [u9779] MASHED_RACE_TAIL_LATE moves it to the end of the frame
     {
         static const bool s_ptrace2 = (std::getenv("MASHED_PLAYERTRACE") != nullptr);
         static const char* s_ptpath2 = [] { const char* e = std::getenv("MASHED_PLAYERTRACE_OUT");
@@ -5688,7 +5723,8 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         if (phys) Vehicle::VehiclePhysics_RecDumpFrame();
         // [u9745ov] default ON since c2k93 (MASHED_NO_AI_CLOCK_LATE=1 opts out): FUN_0040fc00's DAT_007f0ff4 / DAT_007f0ff8 add, at the end of the
         // frame (0x0040fe4f..0x0040fe64), after the AI tick, the physics and the drain above
-        if (ai_tick_ran) Ai::Ai_AdvanceClockLate(static_cast<int>(in.dt * 3000.0f + 0.5f));
+        // [u9779] MASHED_ROUND_END7: sub-state 7 skips the add (0x0040fe46 / 0x0040fe4d)
+        if (ai_tick_ran && !s_roundEnd7) Ai::Ai_AdvanceClockLate(static_cast<int>(in.dt * 3000.0f + 0.5f));
         // diagnostic (env MASHED_AI_DIAG -> mashed_re.log, ~every 30 frames): pos/yaw/speed
         // so a stalled car's trajectory is visible. Read-only (does NOT call
         // Ai_ComputeTarget, which would double-update the continuity index this frame).
@@ -5796,6 +5832,14 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
     TickPowerupDispatch(in.dt);
     // power-up EFFECTS: advance boost/shield timers, missiles, mines.
     UpdatePowerups(in.dt);
+    // [u9779] MASHED_RACE_TAIL_LATE (default OFF): the race tail (camera, elimination, rule engine) here, after every
+    // car's physics and the late path-progress tick, instead of between the player's physics and the opponent loop.
+    // FUN_004111c0's sub-state-6 case calls FUN_00411170 (0x004112cd: FUN_00410d10, the 0x004111a6 write of 7) BEFORE
+    // FUN_0040fc00 (0x004112d5: AI tick 0x0040fc6c, physics, the clock add 0x0040fe46..0x0040fe64), so the original
+    // decides a round end on every car's position after the previous frame's physics and the next AI tick reads it.
+    // At the old call site UpdateRace sees the player after this frame's physics and the AI cars before it (measured,
+    // verify/u9779_20261021: trace row k = the player's record-dump frame k and the AI cars' frame k-1).
+    if (RaceTailLateEnabled()) UpdateRace(in.dt);
 }
 
 // slot 0 = player, 1..3 = ai_cars_[slot-1]. Spins the car out (brief loss of
@@ -6965,6 +7009,7 @@ void TrackRenderer::StartRound() {
     round_mode_ = true;
     round_alive_ = kRaceCars;
     round_winner_ = -1;
+    s_roundEnd7 = false;   // [u9779] MASHED_ROUND_END7: a new round leaves sub-state 7
     for (int i = 0; i < kRaceCars; ++i) race_[i] = RaceCar{};
     // U-9005 RESOLVED (rules oracle 2026-07-02, log/rules_oracle_rule8.json
     // round-resets=1): the original DOES re-init the finish order on the
@@ -7480,14 +7525,109 @@ void TrackRenderer::ScoreOnEliminationTeams(int victim) {
     }
 }
 
+// [u9779] MASHED_ELIM_RESOLVE (default OFF): FUN_0040eee0's type-2 auto-resolve arms on the
+// DAT_008a94d0 == 4, FUN_0042f500() == 0 path. After the -2 / -1 award to the victim, the original
+// tests `(FUN_0042f6a0() in {3,4,5,10}) && FUN_0042f500() == 0 && DAT_007f0fd0 == 0` and walks slots
+// 0..3 whose slot probe is set, FUN_0046c7b0(i) == 1 and FUN_0040e470(i) == 2 (an AI slot):
+//   3 remaining: on the third such car FUN_0040d590(third, first, second, param_2), then return 0.
+//   2 remaining: on the second, the car behind (wrap-adjusted FUN_00408ad0 compare) is killed
+//                (FUN_00422fd0), the other gets +2 and the killed one +1 (FUN_0040b290), return 0.
+// Witnessed on the original (verify/u9779_20261021, o_ep_1): at the frame-1053 elimination the chain is
+// kill(0), FUN_0040eee0(0,1), FUN_0040b290(0,-2), FUN_0040d590(3,1,2,1), kill(1), (1,-1), kill(2),
+// (2,+1), (3,+2), then FUN_00411170 writes DAT_0063ba8c = 7 at 0x004111a6; gate inputs DAT_0067e9fc 10,
+// DAT_007f0fd0 0, DAT_008a94d0 4, DAT_0067ea64 0, slot types 1,2,2,2.
+// Inputs here: FUN_0042f6a0 is the AI host's aib_round_type() (the port's stand-in, 3; the original
+// reads 10 on this recipe, both in the set), DAT_007f0fd0 is read LIVE (0 on the B recipe, as in the
+// original; the rule engine's rule_ is a separate copy, 4 under MASHED_ROUND_RULE=4), FUN_0040e470 is
+// the live slot table, and FUN_00408ad0 is the live race_pct 0x008a96ec (0x00408ada), not RacePct().
+bool ElimResolveEnabled() {
+    static const bool s = [] { const char* e = std::getenv("MASHED_ELIM_RESOLVE"); return e && e[0] && e[0] != '0'; }();
+    return s;
+}
+namespace {
+float LivePct(int v) {                                   // FUN_00408ad0: fld [v*0x30c + 0x8a96ec]
+    return *reinterpret_cast<const float*>(0x008a96ecu + static_cast<std::uintptr_t>(v) * 0x30cu);
+}
+int LiveSlotType(int v) {                                // FUN_0040e470 (0x0040e474..0x0040e47a)
+    const std::uintptr_t p = *reinterpret_cast<const std::uintptr_t*>(0x005f2770u);
+    return p ? *reinterpret_cast<const int*>(p + 0x34u + static_cast<std::uintptr_t>(v) * 4u) : 0;
+}
+// The wrap-adjusted compare FUN_0040d590 / FUN_0040eee0 repeat: a = pct(A) (cast to float),
+// b = pct(B); bands 80.0 (_DAT_005cc730) / 20.0 (_DAT_005ccd6c), period 100.0 (_DAT_005cc568).
+// Returns the adjusted pair; the callers test `a <= b` or `b < a` as written.
+void WrapPair(int A, int B, float* a, float* b) {
+    float fa = LivePct(A), fb = LivePct(B);
+    if ((fa <= 80.f) || (20.f <= fb)) {
+        if ((80.f < fb) && (fa < 20.f)) fb = fb - 100.f;
+    } else {
+        fa = fa - 100.f;
+    }
+    *a = fa; *b = fb;
+}
+}  // namespace
+
+// [u9779] FUN_0040d590 runs through its one body, Frontend::RaceRankThree (Frontend/MenuLeaves_af4.cpp),
+// with this renderer's callees: the live race_pct read for FUN_00408ad0, KillCar for FUN_00422fd0 and
+// ScoreAward for FUN_0040b290.
+namespace {
+TrackRenderer* s_rank3Host = nullptr;
+float Rank3Pct(int v) { return LivePct(v); }
+}  // namespace
+void TrackRenderer::Rank3KillCb(std::uint32_t v) { if (s_rank3Host) s_rank3Host->KillCar(static_cast<int>(v)); }
+void TrackRenderer::Rank3AddCb(std::uint32_t v, int d) { if (s_rank3Host) s_rank3Host->ScoreAward(static_cast<int>(v), d); }
+void TrackRenderer::Resolve3_40d590(int p1, int p2, int p3, int d) {
+    s_rank3Host = this;
+    const Frontend::Rank3Callees c{Rank3Pct, &TrackRenderer::Rank3KillCb, &TrackRenderer::Rank3AddCb};
+    Frontend::RaceRankThree(static_cast<std::uint32_t>(p1), static_cast<std::uint32_t>(p2),
+                            static_cast<std::uint32_t>(p3), d, c);
+}
+
+// FUN_0040eee0's arm gate (see ElimResolveEnabled) and the two walks. Returns true when an arm ran
+// (the original then returns 0 from FUN_0040eee0).
+bool TrackRenderer::ElimResolveAI(int remaining, int d) {
+    const int m = aib_round_type();                      // FUN_0042f6a0
+    if (!(m == 3 || m == 4 || m == 5 || m == 10)) return false;
+    if (team_play_) return false;                        // FUN_0042f500() == 0
+    if (*reinterpret_cast<const int*>(0x007f0fd0u) != 0) return false;   // DAT_007f0fd0 == 0
+    const bool log = true;
+    int n = 0, first = -1, second = -1;
+    bool ran = false;
+    for (int i = 0; i < kRaceCars; ++i) {
+        if (!race_[i].alive || LiveSlotType(i) != 2) continue;   // slot probe && FUN_0046c7b0 && FUN_0040e470 == 2
+        if (remaining == 3) {
+            if (n == 0) { n = 1; first = i; }
+            else if (n == 1) { n = 2; second = i; }
+            else if (n == 2) { Resolve3_40d590(i, first, second, d); ran = true; }
+        } else {                                         // remaining == 2
+            if (n == 0) { n = 1; first = i; continue; }
+            float a, b;
+            WrapPair(i, first, &a, &b);
+            int killed;
+            if (a <= b) { KillCar(i); ScoreAward(first, 2); killed = i; }
+            else        { KillCar(first); ScoreAward(i, 2); killed = first; }
+            ScoreAward(killed, 1);                       // local_10 is not reassigned in this arm
+            ran = true;
+        }
+    }
+    if (log) if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
+        std::fprintf(lf, "ELIM-RESOLVE remaining=%d mode=%d ran=%d alive=%d,%d,%d,%d scores=%d,%d,%d,%d pct=%.6f,%.6f,%.6f,%.6f\n",
+                     remaining, m, ran ? 1 : 0, race_[0].alive, race_[1].alive, race_[2].alive, race_[3].alive,
+                     scores_[0], scores_[1], scores_[2], scores_[3], LivePct(0), LivePct(1), LivePct(2), LivePct(3));
+        std::fclose(lf);
+    }
+    return true;                                         // the gate passed: the original returns 0 here
+}
+
 void TrackRenderer::ScoreOnElimination(int victim) {
     if (elim_count_ < kRaceCars) elim_order_[elim_count_++] = victim;  // DAT_008a94c0
     if (team_play_) { ScoreOnEliminationTeams(victim); return; }
     const int remaining = round_alive_;
     if (remaining == 3) {
         ScoreAward(victim, -2);             // param_2 * -2
+        if (ElimResolveEnabled()) ElimResolveAI(3, 1);   // [u9779] FUN_0040d590 arm
     } else if (remaining == 2) {
         ScoreAward(victim, -1);             // -param_2
+        if (ElimResolveEnabled()) ElimResolveAI(2, 1);   // [u9779] pairwise arm
     } else if (remaining == 1) {
         int survivor = -1;
         for (int i = 0; i < kRaceCars; ++i)
@@ -7608,6 +7748,50 @@ void TrackRenderer::FillRaceCamCars(Race::RaceCamCar* cc) {
         c.path_prog = prog_in_lap;                       // 0x00408a50 equiv
         c.race_pct = prog_in_lap / static_cast<float>(n) * 100.f;  // 0x00408ad0
     }
+}
+
+// [u9779] MASHED_ELIM_TRACE=<path>, DIAGNOSTIC ONLY, default OFF, writes nothing the sim reads.
+// One row per UpdateRace camera update: the required zoom EliminationCheck gates on (cam[0x268],
+// the original's DAT_00898980 read by FUN_00442df0), the stand-in progress FillRaceCamCars hands the
+// camera and the victim pick, and the values the original reads in the same places:
+//   FUN_00408ad0(v) = F32(0x008a96ec + v*0x30c) (0x00408ada), FUN_00408a50(v) = F32(0x008a96e8 +
+//   v*0x30c) (0x00408a5a), FUN_0046d4a0(v) = ring slot 0x00881ec8 + v*0xd04 + sel*0x40 with sel =
+//   [0x00881f48 + v*0xd04] (0x0046d4ac..0x0046d4bb), position at +0x30 / +0x38 (FUN_0040e180).
+void TrackRenderer::ElimTraceFrame(const Race::RaceCamCar* cc) {
+    static std::FILE* s_f = [] { const char* e = std::getenv("MASHED_ELIM_TRACE");
+                                 std::FILE* f = (e && e[0]) ? std::fopen(e, "w") : nullptr;
+                                 if (f) {
+                                     std::fprintf(f, "n,countdown,round,zoom,zoom_hex,rw");
+                                     for (int i = 0; i < 4; ++i)
+                                         std::fprintf(f, ",act%d,alive%d,px%d,pz%d,pct%d,pp%d,o_pct%d,o_pp%d,rx%d,rz%d",
+                                                      i, i, i, i, i, i, i, i, i, i);
+                                     std::fprintf(f, ",fd0,e9fc,rule,teams,type0,type1,type2,type3\n");
+                                 }
+                                 return f; }();
+    if (!s_f) return;
+    static int s_n = 0;
+    const float z = race_cam_.required_zoom();
+    std::uint32_t zh; std::memcpy(&zh, &z, 4);
+    std::fprintf(s_f, "%d,%.9g,%d,%.9g,%08x,%d", s_n++, countdown_, round_no_, z, zh, round_winner_);
+    for (int i = 0; i < 4; ++i) {
+        const std::uintptr_t rec = 0x008815a0u + static_cast<std::uintptr_t>(i) * 0xd04u;
+        const int sel = *reinterpret_cast<const int*>(rec + 0x9a8u);
+        const float* slot = reinterpret_cast<const float*>(0x00881ec8u + static_cast<std::uintptr_t>(i) * 0xd04u +
+                                                           static_cast<std::uintptr_t>(sel & 1) * 0x40u);
+        std::fprintf(s_f, ",%d,%d,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g", cc[i].active ? 1 : 0, cc[i].alive ? 1 : 0,
+                     cc[i].pos[0], cc[i].pos[2], cc[i].race_pct, cc[i].path_prog,
+                     Ai::F32(0x008a96ecu + static_cast<std::uintptr_t>(i) * 0x30cu),
+                     Ai::F32(0x008a96e8u + static_cast<std::uintptr_t>(i) * 0x30cu), slot[0x30 / 4], slot[0x38 / 4]);
+    }
+    // FUN_0040eee0's gate inputs: DAT_007f0fd0, FUN_0042f6a0 = DAT_0067e9fc (0x0042f6a0), the port's
+    // rule_ / team_play_, FUN_0040e470(i) = *(*(int**)0x005f2770 + 0x34 + i*4) (0x0040e474..0x0040e47a)
+    const std::uintptr_t tab = *reinterpret_cast<const std::uintptr_t*>(0x005f2770u);
+    std::fprintf(s_f, ",%d,%d,%d,%d", *reinterpret_cast<const int*>(0x007f0fd0u),
+                 *reinterpret_cast<const int*>(0x0067e9fcu), rule_, team_play_ ? 1 : 0);
+    for (int i = 0; i < 4; ++i)
+        std::fprintf(s_f, ",%d", tab ? *reinterpret_cast<const int*>(tab + 0x34u + static_cast<std::uintptr_t>(i) * 4u) : -1);
+    std::fprintf(s_f, "\n");
+    std::fflush(s_f);
 }
 
 // [d1r2 2026-10-16] MASHED_CAM_REPLAY=<csv>, DIAGNOSTIC ONLY, default OFF: each
@@ -8013,6 +8197,7 @@ void TrackRenderer::UpdateRace(float dt) {
     FillRaceCamCars(cc);
     cam_ticks_ += static_cast<double>(dt) * 3000000.0;   // DAT_007f1030 rate
     RaceCamUpdate(cc, false);   // race_cam_.Update; DAT_007f100c 1/60, DAT_007f0fc8 0 live
+    ElimTraceFrame(cc);         // [u9779] MASHED_ELIM_TRACE, diagnostic only
 
     for (int i = 0; i < kRaceCars; ++i)        // DAT_008a9510 decay
         if (delta_timer_[i] > 0.f) delta_timer_[i] -= dt * 1000.f;
@@ -8132,6 +8317,7 @@ void TrackRenderer::UpdateRace(float dt) {
                 match_winner_ = 0;             // player failed); results text
                 match_draw_ = true;            // shows RACE OVER via match_draw
             } else {                           // r == 0: next round
+                if (RoundEnd7Enabled()) s_roundEnd7 = true;   // [u9779] 0x004111a6 DAT_0063ba8c = 7
                 for (int i = 0; i < kRaceCars; ++i)
                     if (race_[i].alive) { round_winner_ = i; break; }
                 if (round_winner_ < 0) round_winner_ = 0;  // all dead: equalized
