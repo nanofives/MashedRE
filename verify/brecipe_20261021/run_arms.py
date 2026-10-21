@@ -414,6 +414,11 @@ STACK['ML'] = ['MASHED_MODE_LIVE']; STACK['ST'] = ['MASHED_SLOT_TYPE_LIVE']
 STACK['FIL'] = STACK['F'] + STACK['IL']; STACK['FR7'] = STACK['F'] + STACK['R7']; STACK['FILR7'] = STACK['FIL'] + STACK['R7']
 for _t in ('ER', 'E7', 'TL'): STACK['FIL' + _t] = STACK['FIL'] + STACK[_t]
 
+for _s in ('F0', 'F0M', 'F0ML', 'F', 'ST', 'ML', 'FIL'):
+    STACK[_s + 'R7'] = STACK[_s] + STACK['R7']; STACK[_s + 'R7ET'] = STACK[_s + 'R7'] + STACK['ET']
+    STACK[_s + 'ET'] = STACK[_s] + STACK['ET']
+for _t in ('ER', 'E7', 'TL'): STACK['F' + _t] = STACK['F'] + STACK[_t]; STACK['F0' + _t] = STACK['F0'] + STACK[_t]
+
 for name in sys.argv[1:]:
     CUR['name'] = name
     if name.startswith('H_'):
