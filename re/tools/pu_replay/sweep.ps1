@@ -20,10 +20,13 @@ $caps = @(
     @{ n = 'g2'; p = 'verify/d3_contact_20260928/g2.msd' },
     @{ n = 'g3'; p = 'verify/d3_contact_20260928/g3.msd' },
     @{ n = 'g4'; p = 'verify/d3_contact_20260928/g4.msd' },
-    @{ n = 'm1'; p = 'verify/d3_contact_20260928b/m1.msd' },
-    @{ n = 'm2'; p = 'verify/d3_contact_20260928b/m2.msd' },
-    @{ n = 's1'; p = 'verify/d3_contact_20260928b/s1.msd' },
-    @{ n = 's2'; p = 'verify/d3_contact_20260928b/s2.msd' }
+    # m1 / m2 / s1 / s2: the 2026-09-28b .puhook.csv were lost; these are the d3close re-captures
+    # from the same argv (verify/d3close_20261021/RESULT_d3close.md). b3r forces box state 3 (--pu-box).
+    @{ n = 'm1r'; p = 'verify/d3close_20261021/pu/m1r.msd' },
+    @{ n = 'm2r'; p = 'verify/d3close_20261021/pu/m2r.msd' },
+    @{ n = 's1r'; p = 'verify/d3close_20261021/pu/s1r.msd' },
+    @{ n = 's2r'; p = 'verify/d3close_20261021/pu/s2r.msd' },
+    @{ n = 'b3r'; p = 'verify/d3close_20261021/pu/b3r.msd' }
 )
 if (-not (Test-Path $Out)) { New-Item -ItemType Directory -Force $Out | Out-Null }
 $rows = @()

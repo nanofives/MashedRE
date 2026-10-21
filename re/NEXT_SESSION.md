@@ -1,5 +1,26 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-21 d3close: **D3 is CLOSED** (user decision, Mariano). Next = D4.
+>
+> `verify/d3close_20261021/RESULT_d3close.md`; the closure block and the carried-forward list are at the top of `ROADMAP.md` §D3.
+> Every D3 criterion re-scored on the default: AI (b) 9/9 (A 3/3, B 3/3, C 3/3), (e) 3/3 equal to the reference at 0.1,
+> powerups decision CLEAN 11/11 (g3 R_FLAME contact residue named), modes oracle GREEN on all 11 rules, D2 3/3.
+>
+> **Default now:** FAITH stack + u9774 five + `WCS_TRINORMAL` + `WCS_COMBINE_PC24` + `A5_RUBBER_LIVE` + `MODE_LIVE` +
+> `SLOT_TYPE_LIVE` + `SUBSTEP_OUTER` (`Core/FaithDefaults.cpp`). **Canonical recipe F:** `MASHED_ROUND_RULE=0 MASHED_GAME_MODE=10`
+> (older lane runners still set rule 4 on purpose so they reproduce their own results). **G-CTRL `f78de789 / 43bbe0fb / 161b1a6a`**,
+> B K0/K1/K26 `9bd86ffe / 433abcd2 / 1a1ff727`, 13 tracks 877 rows 0 RED. Opt-outs and older trios: memory `default-ctrl-hashes-after-b2-flip.md`.
+>
+> The 2026-10-20..21 lanes, in order: u9777 (A5 rubber-band gate read a zero stand-in) -> rbflip; u9778 (FUN_004709a0 steps all cars per
+> substep; fiber form) -> substep (faithful `SUBSTEP_OUTER` restructure of StepCar) -> soflip (default ON, fiber deleted); u9779 (round end at
+> call 220; `ELIM_RESOLVE` / `ROUND_END7` / `RACE_TAIL_LATE` default OFF); brecipe -> fflip (recipe F, live mode / rule / slot-type words);
+> d3close. Each has `verify/<lane>_2026102x/RESULT_*.md`.
+>
+> **D4 (ROADMAP §D4):** link the Audio TUs, link the Save TUs (`gamesave.bin` the original accepts), burn the dual-copy allowlist
+> (`re/tools/dual_copy_allowlist.txt`, physics A-chain first), D1-residue R1-R2 (owed before D5). Carried D3 items (non-gating):
+> U-9779 / U-9781, U-9782, U-9780, U-9775, snapshot / restore after relocation, box-state producers, R_FLAME `FUN_0045ac40`,
+> unreached modes exits, D-11078 / D-11079.
+
 > ## START HERE 2026-10-17 dflip: three user-decided defaults are ON. `verify/dflip_20261017/RESULT_dflip.md`, branch `work/dflip`.
 >
 > Steer-0 heading assist FUN_0046c7d0 (AI slots) default ON (`MASHED_NO_HEADING_ASSIST=1`), Warzone pontoon CARRY+STATE+ANIM default ON
