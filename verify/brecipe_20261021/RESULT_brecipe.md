@@ -108,8 +108,8 @@ against both `o_cc3_1` and `o_ep_1`:
 ## 6. 13 tracks
 
 `run13.py run` with the four F settings appended (they override run13's `MASHED_ROUND_RULE=4`), exe `d33d9362`, root
-`D:\MashedWTrecipe_root`: all 13 tracks OK on the first attempt. `score` against `verify/rres_20261016/cites_rres.json`: 39
-frames, 873 rows, every row cited, 0 RED, INSTRUMENT GATES: PASS (`D:\MashedWTrecipe_data	racks_F_score.txt`). Same totals as
+`D:/MashedWT/brecipe_root`: all 13 tracks OK on the first attempt. `score` against `verify/rres_20261016/cites_rres.json`: 39
+frames, 873 rows, every row cited, 0 RED, INSTRUMENT GATES: PASS (`D:/MashedWT/brecipe_data/tracks_F_score.txt`). Same totals as
 u9779's run.
 
 ## 7. Decisions for Mariano
