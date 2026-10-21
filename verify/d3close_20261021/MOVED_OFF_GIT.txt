@@ -1,0 +1,1 @@
+Arm outputs, pu captures / replays, oracle run logs, exe copies and the private root live in D:/MashedWT/d3close_data and D:/MashedWT/d3close_root, never committed.
