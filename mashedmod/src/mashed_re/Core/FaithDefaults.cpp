@@ -45,6 +45,9 @@ const FaithKnob kFaith[] = {
     // [fflip 2026-10-21, Mariano's decision] brecipe's live mode word / fd0 and live slot table for the AI host
     // (verify/brecipe_20261021/RESULT_brecipe.md), flipped with the canonical recipe swap to rule 0 / game mode 10.
     { "MODE_LIVE", "1" },          { "SLOT_TYPE_LIVE", "1" },
+    // [soflip 2026-10-21, Mariano's decision] substep's FUN_004709a0 order, substep-outer / car-inner
+    // (verify/substep_20261021/RESULT_substep.md); steps only the cars the seeded A4_ORDER pre-phase stepped.
+    { "SUBSTEP_OUTER", "1" },
 };
 
 bool Set(const char* var) {
