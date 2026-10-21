@@ -149,6 +149,11 @@ bool RoundEnd7Enabled() {
     return s;
 }
 bool s_roundEnd7 = false;
+// [u9779] MASHED_RACE_TAIL_LATE (default OFF), see the end of TrackRenderer::UpdateCar.
+bool RaceTailLateEnabled() {
+    static const bool s = [] { const char* e = std::getenv("MASHED_RACE_TAIL_LATE"); return e && e[0] && e[0] != '0'; }();
+    return s;
+}
 int aib_game_sub_mode() {                                // race (FUN_0040e350)
     if (s_roundEnd7) return 7;                           // [u9779] MASHED_ROUND_END7 only
     if (SubState_Enabled()) {
@@ -5517,7 +5522,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             }
         }
     }
-    UpdateRace(in.dt);
+    if (!RaceTailLateEnabled()) UpdateRace(in.dt);   // [u9779] MASHED_RACE_TAIL_LATE moves it to the end of the frame
     {
         static const bool s_ptrace2 = (std::getenv("MASHED_PLAYERTRACE") != nullptr);
         static const char* s_ptpath2 = [] { const char* e = std::getenv("MASHED_PLAYERTRACE_OUT");
@@ -5813,6 +5818,14 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
     TickPowerupDispatch(in.dt);
     // power-up EFFECTS: advance boost/shield timers, missiles, mines.
     UpdatePowerups(in.dt);
+    // [u9779] MASHED_RACE_TAIL_LATE (default OFF): the race tail (camera, elimination, rule engine) here, after every
+    // car's physics and the late path-progress tick, instead of between the player's physics and the opponent loop.
+    // FUN_004111c0's sub-state-6 case calls FUN_00411170 (0x004112cd: FUN_00410d10, the 0x004111a6 write of 7) BEFORE
+    // FUN_0040fc00 (0x004112d5: AI tick 0x0040fc6c, physics, the clock add 0x0040fe46..0x0040fe64), so the original
+    // decides a round end on every car's position after the previous frame's physics and the next AI tick reads it.
+    // At the old call site UpdateRace sees the player after this frame's physics and the AI cars before it (measured,
+    // verify/u9779_20261021: trace row k = the player's record-dump frame k and the AI cars' frame k-1).
+    if (RaceTailLateEnabled()) UpdateRace(in.dt);
 }
 
 // slot 0 = player, 1..3 = ai_cars_[slot-1]. Spins the car out (brief loss of

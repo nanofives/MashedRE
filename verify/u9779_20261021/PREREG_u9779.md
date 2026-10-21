@@ -94,3 +94,27 @@ New diagnostic `MASHED_ELIM_TRACE=<path>` (default OFF, one row per UpdateRace c
 | G-MECH | `MASHED_ELIM_RESOLVE` alone and `MASHED_ROUND_END7` alone on K0 IL, to attribute |
 
 Nothing is flipped. Default changes are Mariano's decision.
+
+## Amendment 1 (after the first K0 knob arms, before any arm with the new knob)
+
+Measured with `ER` / `E7` / `R7` on exe `0b275a85` (P0 held: K0 `7ab70c5f`, IL `9bd86ffe`):
+- P1 holds: `ELIM-RESOLVE remaining=3 ... alive=0,0,0,1 scores=4,5,7,8 pct=8.164267,16.720179,18.977242,20.087664` (the
+  original's o_ep_1 pct, bit-equal) and `RULE-EVAL ... r=0` in the same UpdateRace.
+- P2 fails by one frame: car 3's row 220 still reads substate 6 / c4 255 in the port, 7 / 0 in the original; from row 221 the port
+  reads 7 / c4 0 / c5 0 and the clock stays (11000 relative, = the original).
+
+Cause, measured: in the original FUN_004111c0's sub-state-6 case calls FUN_00411170 (0x004112cd) BEFORE FUN_0040fc00
+(0x004112d5), so the round end is decided on every car's position after the previous frame's physics, and the same frame's AI
+tick reads it. The port's UpdateRace runs after the AI tick and the player's physics and before the opponent loop commits. Its
+camera input is a mixed-time snapshot. `MASHED_ELIM_TRACE` row k holds the player at its record-dump frame k (`B_ILC0_K0.rec.msd`,
+195/195 at offset 0) and cars 1 / 3 at frame k-1 (195/195 at offset -1, `B_ILC1/3_K0.rec.msd`).
+
+New knob `MASHED_RACE_TAIL_LATE` (default OFF): UpdateRace moves to the end of UpdateCar (after the opponent commit, the late
+path-progress tick and the pickup / registry ticks). Stack `TL`; `R7` is redefined as ER + E7 + TL; `R7m` = ER + E7 (the
+amendment-0 R7).
+
+- P6 (TL alone, knob-off for the other two, IL, K0): the step dump changes (the camera and the rules read one consistent
+  snapshot). The port's required zoom at the new row k equals |sep| * 0.8 of a single-time snapshot; the 0.03 deficit on player
+  pairs against `o_al_1` should vanish. Reported, not gated.
+- P7 (R7 = ER + E7 + TL, IL, K0): car 3's row 220 reads substate 7, c4 0, c5 0; cars 1 / 2 have no row 220. First car-3 difference
+  past k=220.

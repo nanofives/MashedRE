@@ -393,8 +393,10 @@ STACK['ET'] = ['MASHED_ELIM_TRACE=@OUT@/@NAME@.elim.csv']
 STACK['ILET'] = STACK['IL'] + STACK['ET']
 
 # u9779 knobs (PREREG_u9779.md): ER = FUN_0040eee0 type-2 arms, E7 = sub-state 7 after a round end, R7 = both
-STACK['ER'] = ['MASHED_ELIM_RESOLVE']; STACK['E7'] = ['MASHED_ROUND_END7']; STACK['R7'] = STACK['ER'] + STACK['E7']
-for _t in ('ER', 'E7', 'R7'):
+STACK['ER'] = ['MASHED_ELIM_RESOLVE']; STACK['E7'] = ['MASHED_ROUND_END7']; STACK['R7m'] = STACK['ER'] + STACK['E7']
+# amendment 1: TL = MASHED_RACE_TAIL_LATE; R7 = all three
+STACK['TL'] = ['MASHED_RACE_TAIL_LATE']; STACK['R7'] = STACK['R7m'] + STACK['TL']
+for _t in ('ER', 'E7', 'R7m', 'TL', 'R7'):
     STACK['IL' + _t] = STACK['IL'] + STACK[_t]
     STACK[_t + 'ET'] = STACK[_t] + STACK['ET']; STACK['IL' + _t + 'ET'] = STACK['IL' + _t] + STACK['ET']
 
