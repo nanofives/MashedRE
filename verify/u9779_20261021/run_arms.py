@@ -400,6 +400,9 @@ for _t in ('ER', 'E7', 'R7m', 'TL', 'R7'):
     STACK['IL' + _t] = STACK['IL'] + STACK[_t]
     STACK[_t + 'ET'] = STACK[_t] + STACK['ET']; STACK['IL' + _t + 'ET'] = STACK['IL' + _t] + STACK['ET']
 
+for _c in (0, 1, 2, 3):
+    STACK[f'ILR7C{_c}'] = STACK['IL'] + STACK['R7'] + STACK[f'C{_c}']; STACK[f'R7C{_c}'] = STACK['R7'] + STACK[f'C{_c}']
+
 for name in sys.argv[1:]:
     CUR['name'] = name
     if name.startswith('H_'):

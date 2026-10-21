@@ -118,3 +118,21 @@ amendment-0 R7).
   pairs against `o_al_1` should vanish. Reported, not gated.
 - P7 (R7 = ER + E7 + TL, IL, K0): car 3's row 220 reads substate 7, c4 0, c5 0; cars 1 / 2 have no row 220. First car-3 difference
   past k=220.
+
+## Amendment 2 (after the R7 = ER + E7 + TL K0 arms on exe `e417752e`, before the gate matrix)
+
+- P7 holds: car 3's row 220 reads substate 7 / c4 0 / c5 0, clock constant (= `o_cc3_1`). Step `2e52fba4` (IL), `e7b6d6af` (no IL).
+- Records (`reck.py`, k = record after frame k's physics on both sides): car 3 first differs at k=220 on all three captures,
+  unchanged by the knobs. In the original the position freezes from k=220 (6.0739, -22.0905) and the velocity decays (2009.32 ->
+  1676.83 -> 1396.51). `--watch-write 958,9b0` on the original (`o_ww_2`, watch perturbs the regime, used for writers only): per
+  frame after the round end, a new write at pc 0x0046c591 (FUN_0046c570, ret 0x00424ee9 in FUN_00424eb0) scales +0x9b0..+0x9b8
+  by `_DAT_005ce264` = 0x3f59999a (0.85f). FUN_00424eb0 opens with `if (FUN_0040e350() == 7)` -> FUN_0046c570 on every active,
+  alive slot. The position writer 0x0046ea62 keeps writing the same x, and only one substep's writers appear per frame (two while
+  racing). FUN_00470c70 also hands A4 (0x00471076 call 0x00470670) the block 0x007f19b8 instead of the slot's when FUN_0040e350()
+  is not 6 / 0xb / 0xa (0x00470fdb..0x00470ff9).
+
+`MASHED_ROUND_END7` now also runs FUN_00424eb0's first loop (the 0.85 damp) before the heading-assist loop. Exe `81661906`.
+
+- P8 (R7, IL, K0): car 3's record velocity decays from k=220 (measured: 1632.52 against 1676.83 at 220). The position freeze, the
+  single substep and the 0x007f19b8 block are NOT ported: car 3's record stays different from k=220. A new U-row carries them.
+- The gate matrix below is run on this exe.

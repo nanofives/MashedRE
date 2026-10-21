@@ -5172,6 +5172,20 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             // [d3b 2026-10-16] FUN_00424eb0's FUN_0046c7d0 loop: the steer-0 heading assist, after the AI
             // tick (0x00425a73) and before the physics frame (0x00425a8d), AI slots only. Default ON since
             // dflip 2026-10-17 (MASHED_NO_HEADING_ASSIST=1 opts out). Race/HeadingAssist.cpp, verify/d3b_20261016/PREREG_d3b.md.
+            // [u9779] MASHED_ROUND_END7: FUN_00424eb0's first loop, before the FUN_0046c7d0 loop: when FUN_0040e350()
+            // == 7, FUN_0046c570(v) for every active slot with FUN_0046c7b0(v) == 1, i.e. record +0x9b0..+0x9b8 *=
+            // _DAT_005ce264 (0x3f59999a = 0.85f; 0x0046c57f..0x0046c5af). Measured on the original (o_ww_2 watch):
+            // one write at pc 0x0046c591 per frame after the round end, vx 2009.3203 -> 1707.9224.
+            if (s_roundEnd7 && Vehicle::VehiclePhysics_Enabled()) {
+                const int n = 1 + static_cast<int>(ai_cars_.size());
+                for (int v = 0; v < kRaceCars && v < n; ++v) {
+                    if (!race_[v].alive) continue;
+                    unsigned char* r = Vehicle::VehiclePhysics_RecordPtr(v);
+                    if (!r) continue;
+                    float* vel = reinterpret_cast<float*>(r + 0x9b0);
+                    for (int c = 0; c < 3; ++c) vel[c] = vel[c] * 0.85f;   // fld / fmul [0x5ce264] / fstp
+                }
+            }
             Race::HeadingAssist_Frame(static_cast<int>(in.dt * 3000.0f + 0.5f));
             // [D-11073 leg 1a] FUN_0041d930's tail (0x0041da5f..0x0041da76): DAT_0063d584 += 1,
             // DAT_0063d588 += _DAT_007f100c. The original runs it once per frame from FUN_0040fc00
