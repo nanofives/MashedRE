@@ -37,7 +37,7 @@ def main() -> int:
     env = dict(os.environ)
     env.update({
         "MASHED_ROOT": str(ROOT), "MASHED_MUTE": "1", "MASHED_TRACK_VIEW": "Training",
-        "MASHED_CAR": "1", "MASHED_ROUND": "1", "MASHED_ROUND_RULE": "4",
+        "MASHED_CAR": "1", "MASHED_ROUND": "1", "MASHED_ROUND_RULE": "0", "MASHED_GAME_MODE": "10",   # [fflip 2026-10-21] recipe F
         "MASHED_WIN_POS": "primary-bl", "MASHED_DETERMINISTIC": "1",
         "MASHED_DET_FRAMES": str(FRAMES), "MASHED_PLAYERTRACE": "1",
         "MASHED_AI_STEPDUMP": str(step), "MASHED_U9186_GATES": str(gates),

@@ -9,7 +9,7 @@ out = Path(__file__).resolve().parent / 'fx'; out.mkdir(exist_ok=True)
 fx = Path(gr) / 'log' / 'fx_debug.txt'
 if fx.exists(): fx.unlink()
 env = dict(os.environ, MASHED_ROOT=gr, MASHED_MUTE='1', MASHED_TRACK_VIEW='Training', MASHED_CAR='1', MASHED_ROUND='1',
-           MASHED_ROUND_RULE='4', MASHED_WIN_POS='primary-bl', MASHED_DETERMINISTIC='1', MASHED_DET_FRAMES='14400',
+           MASHED_ROUND_RULE='0', MASHED_GAME_MODE='10', MASHED_WIN_POS='primary-bl', MASHED_DETERMINISTIC='1', MASHED_DET_FRAMES='14400',
            MASHED_FX_DEBUG='1', **extra)
 t0 = time.time()
 p = subprocess.Popen([exe], cwd=gr, env=env)

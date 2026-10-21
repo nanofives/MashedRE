@@ -124,7 +124,8 @@ foreach ($r in $runs) {
   $env:MASHED_TRACK_VIEW    = 'Training'
   $env:MASHED_CAR           = '1'
   $env:MASHED_ROUND         = '1'
-  $env:MASHED_ROUND_RULE    = '4'
+  $env:MASHED_ROUND_RULE    = '0'   # [fflip 2026-10-21] recipe F: rule 0, game mode 10
+  $env:MASHED_GAME_MODE     = '10'
   $env:MASHED_WIN_POS       = 'primary-bl'
   $env:MASHED_DETERMINISTIC = '1'
   $env:MASHED_DET_FRAMES    = "$FRAMES"
