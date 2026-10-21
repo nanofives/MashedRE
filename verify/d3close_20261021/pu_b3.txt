@@ -1,0 +1,2 @@
+b3r gate decision=CLEAN contact=CLEAN
+b3r nobox decision=592 mismatches contact=DIVERGES

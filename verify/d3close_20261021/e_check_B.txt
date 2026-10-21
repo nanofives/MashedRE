@@ -1,0 +1,21 @@
+D:/MashedWT/d3close_data/arms/B_DEF_K0.step.csv
+  v1 start=0 n=220 flag=[0] regime0=1 k_own=100 launch=1425.7 ft_median_m0=2551.6 (n=100) ft_median=2254.8 (n=124) wmax=3527.0
+  v2 start=0 n=220 flag=[0] regime0=1 k_own=23 launch=2052.5 ft_median_m0=2052.5 (n=23) ft_median=2648.1 (n=179) wmax=3904.0
+  v3 start=0 n=220 flag=[0] regime0=1 k_own=39 launch=2055.0 ft_median_m0=2278.1 (n=39) ft_median=2691.4 (n=154) wmax=4507.3
+      v1 (e) PASS
+      v2 (e) PASS
+      v3 (e) PASS
+D:/MashedWT/d3close_data/arms/B_DEF_K1.step.csv
+  v1 start=0 n=220 flag=[0, 1] regime0=0 k_own=105 launch=1425.7 ft_median_m0=2043.0 (n=61) ft_median=2043.0 (n=61) wmax=2960.0
+  v2 start=0 n=220 flag=[0, 1] regime0=0 k_own=23 launch=2052.5 ft_median_m0=2052.5 (n=23) ft_median=1816.4 (n=43) wmax=3441.2
+  v3 start=0 n=220 flag=[0, 1] regime0=0 k_own=39 launch=2055.0 ft_median_m0=2278.1 (n=39) ft_median=2278.1 (n=45) wmax=3595.4
+      v1 (e) FAIL: ft_median_m0=2043.0 not in [2500.6,2602.6] (ref 2551.6, -19.9%)
+      v2 (e) PASS
+      v3 (e) PASS
+D:/MashedWT/d3close_data/arms/B_DEF_K26.step.csv
+  v1 start=0 n=220 flag=[0, 2] regime0=0 k_own=100 launch=1425.7 ft_median_m0=2551.6 (n=100) ft_median=2471.7 (n=147) wmax=3527.0
+  v2 start=0 n=220 flag=[0, 2] regime0=0 k_own=23 launch=2052.5 ft_median_m0=2052.5 (n=23) ft_median=2508.2 (n=174) wmax=3821.8
+  v3 start=0 n=220 flag=[0, 2] regime0=0 k_own=39 launch=2055.0 ft_median_m0=2278.1 (n=39) ft_median=3028.4 (n=191) wmax=4507.3
+      v1 (e) PASS
+      v2 (e) PASS
+      v3 (e) PASS
