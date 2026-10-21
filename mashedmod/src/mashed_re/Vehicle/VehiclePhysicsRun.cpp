@@ -2570,5 +2570,101 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     StepCarImpl(slot, dt, io, &g_cShared);
 }
 
+// [substep 2026-10-21] MASHED_SUBSTEP_OUTER=1, default OFF (verify/substep_20261021/PREREG_substep.md).
+bool VehiclePhysics_OuterEnabled() {
+    static const bool s = [] { const char* e = std::getenv("MASHED_SUBSTEP_OUTER"); return e && e[0] == '1'; }();
+    return s;
+}
+
+namespace {
+StepCtx g_outer[16];
+// MASHED_SUBSTEP_OUTER_ORDER=fiber (diagnostic): run car c from where it stopped to its next yield point (after a
+// substep, where the u9778 fiber yields) or to its end. Returns true when it stopped at a yield. stage: 0 = not begun,
+// 1 = at the chunk test, 2 = in the substep loop, 3 = done.
+bool OuterRunToYield(StepCtx& c, int& stage, int slot, float dt, PlayerCarIO& io) {
+    if (stage == 0) {
+        c = StepCtx{};
+        if (!StepBegin(c, slot, dt, io, &g_cSlot[slot])) { stage = 3; return false; }
+        c.chunkOn = true;   // here: "the next chunk test is the first"
+        stage = 1;
+    }
+    for (;;) {
+        if (stage == 1) {
+            if (!ChunkDue(c, c.chunkOn)) { StepEnd(c); stage = 3; return false; }
+            if (!StepChunkHead(c)) { stage = 3; return false; }
+            stage = 2;
+        }
+        if (SubstepDue(c)) { StepSubstep(c); return true; }
+        StepChunkTail(c);
+        c.chunkOn = false;
+        stage = 1;
+    }
+}
+}  // namespace
+
+// FUN_00470c70's order over the given cars (ascending slots): every car's pre-part (StepBegin), then per chunk every
+// car's head (the A4 loop 0x00470f80..0x00471099 and the refresh loop 0x004710a1..0x004710fc), then substep rounds, one
+// FUN_004709a0 call each (0x00471137: cars in slot order, 0x004709e5 / 0x00470c47..0x00470c53), then every car's chunk
+// tail (0x00471143..0x00471151), then every car's frame tail (the frame-end loop 0x00471157..0x00471314). Each car solves
+// into its own contact cache (g_cSlot). Returns false (nothing stepped) on a bad slot list.
+// MASHED_SUBSTEP_OUTER_ORDER (diagnostic mechanism controls): `car` = the per-car order (one car's phases, then the
+// next), `fiber` = the u9778 fiber's yield order (each car's pre-part runs right before its own substep 1).
+bool VehiclePhysics_StepCarsOuter(int n, const int* slots, float dt, PlayerCarIO* ios) {
+    if (n <= 0 || n > 16) return false;
+    for (int k = 0; k < n; ++k)
+        if (slots[k] < 0 || slots[k] >= 16 || (k > 0 && slots[k] <= slots[k - 1])) return false;
+    static const char s_order = [] { const char* e = std::getenv("MASHED_SUBSTEP_OUTER_ORDER"); return e ? e[0] : 'o'; }();
+    if (s_order == 'c') {
+        for (int k = 0; k < n; ++k) StepCarImpl(slots[k], dt, ios[k], &g_cSlot[slots[k]]);
+        return true;
+    }
+    if (s_order == 'f') {
+        int stage[16] = { 0 };
+        for (bool any = true; any;) {
+            any = false;
+            for (int k = 0; k < n; ++k) {
+                if (stage[k] == 3) continue;
+                any = true;
+                OuterRunToYield(g_outer[k], stage[k], slots[k], dt, ios[k]);
+            }
+        }
+        return true;
+    }
+    for (int k = 0; k < n; ++k) {
+        StepCtx& c = g_outer[k];
+        c = StepCtx{};
+        c.live = StepBegin(c, slots[k], dt, ios[k], &g_cSlot[slots[k]]);
+    }
+    for (bool first = true;; first = false) {
+        bool any = false;
+        for (int k = 0; k < n; ++k) {
+            StepCtx& c = g_outer[k];
+            c.chunkOn = c.live && ChunkDue(c, first);
+            any = any || c.chunkOn;
+        }
+        if (!any) break;
+        for (int k = 0; k < n; ++k) {   // 0x00470f80..0x00471099, 0x004710a1..0x004710fc
+            StepCtx& c = g_outer[k];
+            if (!c.chunkOn) continue;
+            if (!StepChunkHead(c)) { c.live = c.chunkOn = false; continue; }
+            c.subOn = true;
+        }
+        for (bool more = true; more;) {   // 0x00471106..0x00471141: one FUN_004709a0 per round
+            more = false;
+            for (int k = 0; k < n; ++k) {   // 0x004709e5 / 0x00470c47..0x00470c53
+                StepCtx& c = g_outer[k];
+                if (!c.subOn) continue;
+                if (SubstepDue(c)) { StepSubstep(c); more = true; }
+                else c.subOn = false;
+            }
+        }
+        for (int k = 0; k < n; ++k)   // 0x00471143..0x00471151
+            if (g_outer[k].chunkOn) StepChunkTail(g_outer[k]);
+    }
+    for (int k = 0; k < n; ++k)   // 0x00471157..0x00471314
+        if (g_outer[k].live) StepEnd(g_outer[k]);
+    return true;
+}
+
 }  // namespace mashed_re::Vehicle
 }  // namespace mashed_re

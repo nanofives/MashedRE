@@ -5291,7 +5291,9 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
                     GroundHeight(a.pos[0], a.pos[2], &aok);
                     aio.grounded = aok ? 1 : 0;
                     Vehicle::VehiclePhysics_A4Pre(v, in.dt, aio);
-                    if (Vehicle::VehiclePhysics_InterleaveEnabled() && v < 16) { s_il[v].have = true; s_il[v].in = aio; }
+                    if ((Vehicle::VehiclePhysics_InterleaveEnabled() || Vehicle::VehiclePhysics_OuterEnabled()) && v < 16) {
+                        s_il[v].have = true; s_il[v].in = aio;   // [u9778] / [substep]
+                    }
                 }
             }
             Vehicle::VehiclePhysics_A4PreEnd();
@@ -5315,14 +5317,19 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         // [u9778] MASHED_SUBSTEP_INTERLEAVE=1 (default OFF): FUN_004709a0 steps every car per substep (0x00471137 ->
         // 0x00470c47..0x00470c53), so the player and the pre-phase's AI cars step here together, substep by substep
         // (Vehicle/SubstepInterleave.cpp); the opponent loop below takes each AI car's result instead of stepping it.
+        // [substep 2026-10-21] MASHED_SUBSTEP_OUTER=1 (default OFF, verify/substep_20261021/PREREG_substep.md): the same
+        // cars and the same snapshot / restore, stepped by StepCar's phase functions in FUN_00470c70's order
+        // (VehiclePhysics_StepCarsOuter) instead of fibers. Takes precedence over MASHED_SUBSTEP_INTERLEAVE.
         bool ilRan = false;
-        if (Vehicle::VehiclePhysics_InterleaveEnabled()) {
+        const bool outerOn = Vehicle::VehiclePhysics_OuterEnabled();
+        if (outerOn || Vehicle::VehiclePhysics_InterleaveEnabled()) {
             int ilSlots[16]; Vehicle::PlayerCarIO ilIo[16]; int ilN = 0;
             ilSlots[ilN] = 0; ilIo[ilN] = io; ++ilN;
             for (int v = 1; v < 16; ++v)
                 if (s_il[v].have) { ilSlots[ilN] = v; ilIo[ilN] = s_il[v].in; ++ilN; }
             for (int k = 1; k < ilN; ++k) Vehicle::VehiclePhysics_IlSnapshot(ilSlots[k]);
-            if (ilN > 1 && Vehicle::VehiclePhysics_InterleaveRun(ilN, ilSlots, in.dt, ilIo)) {
+            if (ilN > 1 && (outerOn ? Vehicle::VehiclePhysics_StepCarsOuter(ilN, ilSlots, in.dt, ilIo)
+                                    : Vehicle::VehiclePhysics_InterleaveRun(ilN, ilSlots, in.dt, ilIo))) {
                 io = ilIo[0];
                 for (int k = 1; k < ilN; ++k) s_il[ilSlots[k]].out = ilIo[k];
                 ilRan = true;
