@@ -205,7 +205,9 @@ void VehicleControlIntegrate(int* self, float dt, std::uint8_t* input, void* xfo
     // matrix. Passing the zeroed +0x928 instead zeroed forward -> no motion
     // (WS-A-VERIFY-3). Reconciling the two storage locations is [UNCERTAIN U-9152].
     g_a6bA5Matrix = static_cast<float*>(xform);   // [U-9151] diag: A5's matrix pointer
+    D2Sink::Mark("a5_in", v, -1, 0, 0.f, 0.f);    // [u9777] A5's entry (the --a5-probe entry twin). Diagnostic, default-OFF.
     VehicleWheelForceIntegrate(self, dt, xform);                  // A5 0x0046ddb0 (ported)
+    D2Sink::Mark("a5_out", v, -1, 0, 0.f, 0.f);   // [u9777] A5's leave (the --a5-probe leave twin)
     // A6a 0x00467650. param_1 is the CAR INDEX, decoded 2026-09-29 (was passed 0 with an
     // [UNCERTAIN] note): the dispatcher FUN_00470c70 calls A4 as
     // `FUN_00470670(iVar6, fVar4, puVar18, param_2)` at 0x00471071 where iVar6 is the
