@@ -364,26 +364,28 @@ inline std::size_t wheelNormOff  (int w) { return kContactNorm0 + (std::size_t)w
 inline std::size_t wheelMountXOff(int w) { return kMountX0      + (std::size_t)w * kWheelStride; }
 inline std::size_t wheelMountZOff(int w) { return kMountZ0      + (std::size_t)w * kWheelStride; }
 
-// Per-call contact cache (StepCar processes one car fully before the next, so a
-// single buffer is safe): lets the post-A4 re-assert restore the same states+normals
-// without re-running the broadphase.
-bool  g_cOnMesh[4]    = { false, false, false, false };
-float g_cNormal[4][3] = { {0,1,0}, {0,1,0}, {0,1,0}, {0,1,0} };
-float g_cAvgN[3]      = { 0.f, 1.f, 0.f };   // averaged on-mesh normal (edge fallback)
-bool  g_cGrounded     = false;
+// Per-call contact cache: SolveWheelContacts writes it, ReassertContacts applies it to the record (the post-A4
+// re-assert restores the same states + normals without re-running the broadphase).
+// [substep 2026-10-21] One struct per owner. The per-car StepCar (knob off) uses the single shared instance
+// g_cShared, as the four file-statics it replaces were: a car's pre-part re-assert there reads whichever car solved last.
+// MASHED_SUBSTEP_OUTER gives each slot its own (g_cSlot), since the cars' substeps interleave.
+struct ContactScratch {
+    bool  onMesh[4]    = { false, false, false, false };
+    float normal[4][3] = { {0,1,0}, {0,1,0}, {0,1,0}, {0,1,0} };
+    float avgN[3]      = { 0.f, 1.f, 0.f };   // averaged on-mesh normal (edge fallback)
+    bool  grounded     = false;
+};
+ContactScratch g_cShared;
+ContactScratch g_cSlot[16];
 
 // [u9778] MASHED_SUBSTEP_INTERLEAVE: StepCar yields to the next car after each substep (SubstepInterleave.cpp), so the
-// per-call state above no longer belongs to one car between a write and its read. Saved per slot across the yield.
-struct IlScratch { bool onMesh[4]; float normal[4][3]; float avgN[3]; bool grounded; };
-IlScratch g_ilScratch[16];
+// shared cache no longer belongs to one car between a write and its read. Saved per slot across the yield.
+ContactScratch g_ilScratch[16];
 void IlYield(int slot) {
     if (!VehiclePhysics_IlInFiber() || g_inSpawnSettle || slot < 0 || slot >= 16) return;   // the settle's inner steps run through
-    IlScratch& s = g_ilScratch[slot];
-    std::memcpy(s.onMesh, g_cOnMesh, sizeof(g_cOnMesh)); std::memcpy(s.normal, g_cNormal, sizeof(g_cNormal));
-    std::memcpy(s.avgN, g_cAvgN, sizeof(g_cAvgN));       s.grounded = g_cGrounded;
+    g_ilScratch[slot] = g_cShared;
     VehiclePhysics_IlSwitchToMain();
-    std::memcpy(g_cOnMesh, s.onMesh, sizeof(g_cOnMesh)); std::memcpy(g_cNormal, s.normal, sizeof(g_cNormal));
-    std::memcpy(g_cAvgN, s.avgN, sizeof(g_cAvgN));       g_cGrounded = s.grounded;
+    g_cShared = g_ilScratch[slot];
 }
 }  // namespace
 
@@ -433,12 +435,12 @@ static bool ReassertKeepNormal() {
     return s_on;
 }
 
-static void ReassertContacts(unsigned char* r) {
+static void ReassertContacts(unsigned char* r, const ContactScratch& cs) {
     float gc = 0.f;
     for (int w = 0; w < 4; ++w) {
-        if (g_cGrounded) {
+        if (cs.grounded) {
             if (I(r, wheelStateOff(w)) == 0) I(r, wheelStateOff(w)) = 1;   // ground (on-track gate)
-            const float* nrm = g_cOnMesh[w] ? g_cNormal[w] : g_cAvgN;      // real per-wheel, or slope avg
+            const float* nrm = cs.onMesh[w] ? cs.normal[w] : cs.avgN;      // real per-wheel, or slope avg
             const std::size_t nb = wheelNormOff(w);
             if (!ReassertKeepNormal()) {
                 F(r, nb + 0x0) = nrm[0];          // contact normal.x  (A5 Phase 6 pf[3])
@@ -592,20 +594,20 @@ static void SyncContactRingMatrix(unsigned char* r, const float* basis, const fl
 
 // Run the ported FUN_0046f6c0 over the track tris (replaces SetGrounded).
 static void SolveWheelContacts(unsigned char* r, PlayerCarIO& io, int substep,
-                               const float* bodyUp) {
+                               const float* bodyUp, ContactScratch& cs) {
     int* self = reinterpret_cast<int*>(r);
 
     // PERF A/B (MASHED_PHYS_NOCONTACT): skip the terrain probe + solver entirely
     // (flat-ground substitute) to isolate the probe cost — measures the doom-loop
     // floor with contacts disabled. Not a shipping path; profiling only.
     if (prof::g_noContact) {
-        g_cGrounded = (io.grounded != 0);
+        cs.grounded = (io.grounded != 0);
         for (int w = 0; w < 4; ++w) {
-            g_cOnMesh[w] = false;
-            g_cNormal[w][0] = 0.f; g_cNormal[w][1] = 1.f; g_cNormal[w][2] = 0.f;
+            cs.onMesh[w] = false;
+            cs.normal[w][0] = 0.f; cs.normal[w][1] = 1.f; cs.normal[w][2] = 0.f;
         }
-        g_cAvgN[0] = 0.f; g_cAvgN[1] = 1.f; g_cAvgN[2] = 0.f;
-        ReassertContacts(r);
+        cs.avgN[0] = 0.f; cs.avgN[1] = 1.f; cs.avgN[2] = 0.f;
+        ReassertContacts(r, cs);
         return;
     }
 
@@ -615,7 +617,7 @@ static void SolveWheelContacts(unsigned char* r, PlayerCarIO& io, int substep,
 
     // 2. per wheel: world XZ of the 0.2778-scaled suspension probe (FUN_0046f6c0's reset
     //    loop scales the mount by _DAT_005cea60), then query the real terrain.
-    g_cGrounded = (io.grounded != 0);
+    cs.grounded = (io.grounded != 0);
     float avgN[3] = { 0.f, 0.f, 0.f }; int nOn = 0; float sumGY = 0.f; int nGY = 0;
     for (int w = 0; w < 4; ++w) {
         const float mx = F(r, wheelMountXOff(w)) * kProbeScale;
@@ -624,10 +626,10 @@ static void SolveWheelContacts(unsigned char* r, PlayerCarIO& io, int substep,
         const float wz = io.pos[2] + rot[2]*mx + rot[10]*mz;   // + right.z*mx + at.z*mz
         float gyw = 0.f, nw[3];
         const bool ok = ProbeGround(wx, wz, gyw, nw);
-        g_cOnMesh[w] = ok;
-        g_cNormal[w][0] = ok ? nw[0] : 0.f;
-        g_cNormal[w][1] = ok ? nw[1] : 1.f;
-        g_cNormal[w][2] = ok ? nw[2] : 0.f;
+        cs.onMesh[w] = ok;
+        cs.normal[w][0] = ok ? nw[0] : 0.f;
+        cs.normal[w][1] = ok ? nw[1] : 1.f;
+        cs.normal[w][2] = ok ? nw[2] : 0.f;
         float* wcp = &Collision::g_wheelContactPos[w * 3];     // DAT_0088e620 (classifier reads this)
         wcp[0] = wx; wcp[2] = wz;
         if (ok) {
@@ -640,7 +642,7 @@ static void SolveWheelContacts(unsigned char* r, PlayerCarIO& io, int substep,
     }
     if (nOn > 0) { avgN[0] /= nOn; avgN[1] /= nOn; avgN[2] /= nOn; }
     else { avgN[0] = 0.f; avgN[1] = 1.f; avgN[2] = 0.f; }
-    g_cAvgN[0] = avgN[0]; g_cAvgN[1] = avgN[1]; g_cAvgN[2] = avgN[2];  // edge fallback (ReassertContacts)
+    cs.avgN[0] = avgN[0]; cs.avgN[1] = avgN[1]; cs.avgN[2] = avgN[2];  // edge fallback (ReassertContacts)
 
     // 3. solver preconditions. iVar12 = self + self[0x26b]*0x40 + 0x928 (wheel-ring
     //    matrix double-buffer, init self[0x26b]=1); the broadphase query centre is
@@ -786,7 +788,7 @@ static void SolveWheelContacts(unsigned char* r, PlayerCarIO& io, int substep,
                              "st=(%d,%d,%d,%d) fv=(%.9g,%.9g,%.9g,%.9g) gc=%g\n",
                          io.pos[0], io.pos[1], io.pos[2], sdC0[0], sdC0[1], sdC0[2],
                          centre[0] - sdC0[0], centre[1] - sdC0[1], centre[2] - sdC0[2],
-                         nGY, nGY ? sumGY / nGY : 0.f, g_cNormal[0][0], g_cNormal[0][1], g_cNormal[0][2],
+                         nGY, nGY ? sumGY / nGY : 0.f, cs.normal[0][0], cs.normal[0][1], cs.normal[0][2],
                          self[0x66], self[0x97], self[0xc8], self[0xf9],
                          F(r, 0x194), F(r, 0x258), F(r, 0x31c), F(r, 0x3e0), F(r, 0x9e0));
             std::fprintf(lf, "SOLVER_IN st=(%d,%d,%d,%d) fv=(%.9g,%.9g,%.9g,%.9g) gc=%g "
@@ -807,7 +809,7 @@ static void SolveWheelContacts(unsigned char* r, PlayerCarIO& io, int substep,
     if (PosModelTrans()) { io.pos[0] = centre[0]; io.pos[1] = centre[1]; io.pos[2] = centre[2]; }
 
     // 5. apply the cached result (states + real per-wheel normals + grounded count).
-    ReassertContacts(r);
+    ReassertContacts(r, cs);
 }
 
 // A8 (2026-08-25): (re)seed a slot's body basis. Callers that teleport or re-aim
@@ -891,7 +893,7 @@ static void SpawnSolverDiag(int slot, float yaw, const float physPos[3]) {
     io.yaw = yaw; io.grounded = 1;
     float basis[16];
     BodyOrient_Init(basis, yaw);
-    SolveWheelContacts(r, io, 0, basis + 4);
+    SolveWheelContacts(r, io, 0, basis + 4, g_cShared);
     std::fprintf(s_f, "slot=%d in=(%.9g,%.9g,%.9g) out=(%.9g,%.9g,%.9g) st=(%d,%d,%d,%d) fv=(%.9g,%.9g,%.9g,%.9g) "
                       "n0=(%.9g,%.9g,%.9g) gc=%.9g wcp0=(%.9g,%.9g,%.9g) wcp2=(%.9g,%.9g,%.9g)\n",
                  slot, physPos[0], physPos[1], physPos[2], io.pos[0], io.pos[1], io.pos[2],
@@ -1015,11 +1017,12 @@ int VehiclePhysics_RecDumpFrameIndex() { return g_recDumpFrame; }
 
 // [u9778] MASHED_SUBSTEP_INTERLEAVE: a slot's record and per-slot module state before InterleaveRun, so a car the
 // opponent loop then skips, relocates or feeds a different io can be put back and stepped the per-car way.
+// [substep] also used by MASHED_SUBSTEP_OUTER (VehiclePhysics_StepCarsOuter), with the slot's own contact cache.
 namespace {
 struct IlSnap {
     unsigned char rec[kRec]; float basis[16]; bool basisOk, basisReseed, settled, startBoosted;
     float outVel[3], outSpeed; bool outValid; float physPos[3], outPos[3]; bool outPosValid;
-    bool a4Skip, a4GateDone, a4PreDone, a4PreSkip; float a4PreIo[4]; int a4PrePhase; IlScratch scratch;
+    bool a4Skip, a4GateDone, a4PreDone, a4PreSkip; float a4PreIo[4]; int a4PrePhase; ContactScratch scratch, slotScratch;
 };
 IlSnap g_ilSnap[16];
 }  // namespace
@@ -1031,7 +1034,7 @@ void VehiclePhysics_IlSnapshot(int s) {
     std::memcpy(n.outVel, g_outVel[s], 12); n.outSpeed = g_outSpeed[s]; n.outValid = g_outValid[s];
     std::memcpy(n.physPos, g_physPos[s], 12); std::memcpy(n.outPos, g_outPos[s], 12); n.outPosValid = g_outPosValid[s];
     n.a4Skip = g_a4Skip[s]; n.a4GateDone = g_a4GateDone[s]; n.a4PreDone = g_a4PreDone[s]; n.a4PreSkip = g_a4PreSkip[s];
-    std::memcpy(n.a4PreIo, g_a4PreIo[s], 16); n.a4PrePhase = g_a4PrePhase[s]; n.scratch = g_ilScratch[s];
+    std::memcpy(n.a4PreIo, g_a4PreIo[s], 16); n.a4PrePhase = g_a4PrePhase[s]; n.scratch = g_ilScratch[s]; n.slotScratch = g_cSlot[s];
 }
 void VehiclePhysics_IlRestore(int s) {
     if (!g_inited || s < 0 || s >= 16) return;
@@ -1041,7 +1044,7 @@ void VehiclePhysics_IlRestore(int s) {
     std::memcpy(g_outVel[s], n.outVel, 12); g_outSpeed[s] = n.outSpeed; g_outValid[s] = n.outValid;
     std::memcpy(g_physPos[s], n.physPos, 12); std::memcpy(g_outPos[s], n.outPos, 12); g_outPosValid[s] = n.outPosValid;
     g_a4Skip[s] = n.a4Skip; g_a4GateDone[s] = n.a4GateDone; g_a4PreDone[s] = n.a4PreDone; g_a4PreSkip[s] = n.a4PreSkip;
-    std::memcpy(g_a4PreIo[s], n.a4PreIo, 16); g_a4PrePhase[s] = n.a4PrePhase; g_ilScratch[s] = n.scratch;
+    std::memcpy(g_a4PreIo[s], n.a4PreIo, 16); g_a4PrePhase[s] = n.a4PrePhase; g_ilScratch[s] = n.scratch; g_cSlot[s] = n.slotScratch;
 }
 
 void VehiclePhysics_A4PreEnd() {
@@ -1679,7 +1682,7 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         // reads the cache its own car's SolveWheelContacts set in the same call.
         // [a4order] port-only (it reads the solver cache of the car that stepped last), so it stays next to this
         // car's substeps: not in the pre-phase, still in the real step.
-        if (!PosModelContacts() && !preOnly) ReassertContacts(r);
+        if (!PosModelContacts() && !preOnly) ReassertContacts(r, g_cShared);
         if (preDone) {
             // [a4order] the refresh below belongs to the frame boundary (0x004710a1..0x004710da); made in the pre-phase
         } else if (s_d2latRefresh && !a4Skip && (I(r, 0x4) != 0 || I(r, 0x10) == 1)) {   // 0x004710b0..ba
@@ -1882,7 +1885,7 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         }
         // basis + 4 = the `up` row of the integrated body basis (BodyOrient_Init's
         // m[4..6]); it is what record +0x9c8/+0x9cc/+0x9d0 holds on the original.
-        SolveWheelContacts(r, io, guard, basis + 4);
+        SolveWheelContacts(r, io, guard, basis + 4, g_cShared);
         D2Sink::Mark("sub_wheel", r, d2sSub, pass, chunkMs, remMs);    // 0x0046f6c0
         if (prof::g_on) { prof::f_probeMs += prof::NowMs() - tp0; ++prof::f_substeps; }
 
@@ -2098,7 +2101,7 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
             VehicleControlIntegrate(reinterpret_cast<int*>(r), a4Dt, input, basis, slot);
         // A6a's drive block can clear wheel states in some branches; re-assert from the
         // cached contact result (no re-broadphase) so the next frame stays engaged.
-        ReassertContacts(r);
+        ReassertContacts(r, g_cShared);
     }
     chunkRem -= chunkL;                                                   // 0x00471143..0x00471151
     }   // [d2bsp] fix L outer chunk loop
