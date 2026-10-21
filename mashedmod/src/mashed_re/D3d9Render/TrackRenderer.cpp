@@ -134,7 +134,21 @@ static bool NoElim() {
     return s_p && s_p[0] && s_p[0] != '0';
 }
 int aib_alive(int v)       { return (v >= 0 && v <= 3) ? g_aib.alive[v] : 0; }
-int aib_veh_type(int v)    { return v == 0 ? 0 : 2; }   // 0 = player(human); else AI
+// [brecipe] MASHED_SLOT_TYPE_LIVE (default OFF): FUN_0040e470 reads the live slot table, as the original does
+// (0x0040e474 mov ecx,[0x5f2770] / 0x0040e47a mov eax,[ecx+eax*4+0x34]). The B captures' table is 1,2,2,2
+// (scenario_launch.py FUN_0040e480 pokes, measured in o_ep_1); the stand-in gives the player 0, which
+// LeaderInRange (FUN_00415190, AiStandalone.cpp) never matches on its `== 1` test. Knob OFF: the stand-in.
+static bool SlotTypeLiveEnabled() {
+    static const bool s = [] { const char* e = std::getenv("MASHED_SLOT_TYPE_LIVE"); return e && e[0] && e[0] != '0'; }();
+    return s;
+}
+int aib_veh_type(int v) {
+    if (SlotTypeLiveEnabled() && v >= 0 && v <= 3) {
+        const std::uintptr_t p = *reinterpret_cast<const std::uintptr_t*>(0x005f2770u);   // 0x0040e474
+        return p ? *reinterpret_cast<const int*>(p + 0x34u + static_cast<std::uintptr_t>(v) * 4u) : 0;   // 0x0040e47a
+    }
+    return v == 0 ? 0 : 2;                                // 0 = player(human); else AI
+}
 // [D-11073 leg 1b] Under default-OFF MASHED_SUBSTATE the port keeps a real DAT_0063ba8c
 // (written by the sub-state block in Update and by SubStateEnter4 / SubStateHeldCountdown5,
 // Race/SubStateMachine.cpp); FUN_0040e350 returns the race sub-state. Knob OFF: 6, as before.
@@ -163,8 +177,23 @@ int aib_game_sub_mode() {                                // race (FUN_0040e350)
     return 6;
 }
 int pkcb_sub_mode()        { return aib_game_sub_mode(); }   // [mode 7 M3] the same FUN_0040e350 host
-int aib_round_type()       { return 3; }                // AI-enabled round (FUN_0042f6a0)
-int aib_game_mode_fd0()    { return 0; }
+// [brecipe] MASHED_MODE_LIVE (default OFF): the AI host reads the two live words the original reads,
+// FUN_0042f6a0 = mov eax,[0x0067e9fc] (0x0042f6a0) and DAT_007f0fd0, and SetRaceRule writes rule_ into
+// 0x007f0fd0, so the rule engine, the AI dispatch (FUN_00418560's fd0 4/9 / 8 arms) and the live readers
+// share one value. The game mode word is written by the race launch (MenuLaunchRace) or, on the
+// MASHED_ROUND route, from MASHED_GAME_MODE (exe_main.cpp). Knob OFF: the stand-ins 3 and 0.
+static bool ModeLiveEnabled() {
+    static const bool s = [] { const char* e = std::getenv("MASHED_MODE_LIVE"); return e && e[0] && e[0] != '0'; }();
+    return s;
+}
+int aib_round_type() {                                   // FUN_0042f6a0
+    if (ModeLiveEnabled()) return *reinterpret_cast<const int*>(0x0067e9fcu);
+    return 3;                                            // AI-enabled round (stand-in)
+}
+int aib_game_mode_fd0() {                                // DAT_007f0fd0
+    if (ModeLiveEnabled()) return *reinterpret_cast<const int*>(0x007f0fd0u);
+    return 0;
+}
 int aib_track_index()      { return g_aib.course; }
 // [D3 2026-09-26] FUN_00443080 = MOV EAX,[0x00897ffc]. MEASURED 0 on every AI step of
 // the original race (verify/d3_ai_20260926/o_inputs.msd.aistep.csv, tgt_7ffc column,
@@ -7262,8 +7291,11 @@ void TrackRenderer::SeedMatchScores() {
     // setup-time only (StartMatch / SetRaceRule / SetTeamPlay), not per frame
     if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
         std::fprintf(lf, "MATCH-SEED rule=%d participants=%d teams=%d seed=%d "
-                         "engine=%d\n", rule_, participants, team_play_ ? 1 : 0,
-                     seed, rule_engine_on_ ? 1 : 0);
+                         "engine=%d mode_e9fc=%d fd0=%d host_mode=%d host_fd0=%d slot=%d,%d,%d,%d\n",
+                     rule_, participants, team_play_ ? 1 : 0, seed, rule_engine_on_ ? 1 : 0,
+                     *reinterpret_cast<const int*>(0x0067e9fcu), *reinterpret_cast<const int*>(0x007f0fd0u),
+                     aib_round_type(), aib_game_mode_fd0(), aib_veh_type(0), aib_veh_type(1), aib_veh_type(2),
+                     aib_veh_type(3));   // [brecipe] the live words and what the AI host reads
         std::fclose(lf);
     }
 }
@@ -7298,6 +7330,7 @@ void TrackRenderer::InitPickups() {
 // live, rules oracle round-resets=1 — so StartRound() now mirrors that.)
 void TrackRenderer::SetRaceRule(int rule) {
     rule_ = rule;
+    if (ModeLiveEnabled()) *reinterpret_cast<int*>(0x007f0fd0u) = rule;   // [brecipe] one source for DAT_007f0fd0
     rule_engine_on_ = RuleEngineEnabled();
     rulep_ = Race::RuleEngine::Persist{};             // FUN_00414060: slots=-1.0
     rulep_.timer = Race::RuleEngine::Rule10Seed(course_id_, 0.f, &rule10_bonus_);

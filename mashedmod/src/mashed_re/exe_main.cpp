@@ -2040,6 +2040,12 @@ static void MenuLaunchRace(int launchMode) {
         mashed_re::Race::RaceConfig cfg;
         cfg.trackId  = mashed_re::Race::Campaign_SelectedTrack();
         cfg.gameMode = launchMode;
+        // [brecipe] MASHED_MODE_LIVE (default OFF): the launch mode is also the live game mode word
+        // DAT_0067e9fc, which the AI host's FUN_0042f6a0 then reads (TrackRenderer.cpp aib_round_type).
+        {
+            const char* ml = std::getenv("MASHED_MODE_LIVE");
+            if (ml && ml[0] && ml[0] != '0') *reinterpret_cast<std::int32_t*>(0x0067e9fcu) = launchMode;
+        }
         // [#5 2026-09-07] 0x0067ea98 is the port's player-0 COLOUR cursor
         // (moved by CarSelectCycleColour -> FUN_00431b80), NOT the car
         // index — the old comment conflated the two. Drive cfg.cars[0].colour
@@ -9314,6 +9320,20 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
                     char rv[16] = {};
                     if (GetEnvironmentVariableA("MASHED_ROUND", rv, sizeof(rv)) > 0) {
                         CreateDirectoryA("verify\\r6", nullptr);
+                        // [brecipe] the game mode word DAT_0067e9fc (FUN_0042f6a0 = mov eax,[0x0067e9fc]).
+                        // This route has no frontend, so nothing writes it (0). MASHED_GAME_MODE=<2..10> writes
+                        // it, as scenario_launch.py's setup() writes --mode for the original B captures (10).
+                        // Under MASHED_MODE_LIVE an unset MASHED_GAME_MODE writes 3, the frontend route's
+                        // standalone 0 -> 3 default (MenuLaunchRace's caller) and the old AI-host stand-in.
+                        {
+                            char gm[8] = {};
+                            const char* ml = std::getenv("MASHED_MODE_LIVE");
+                            const bool modeLive = ml && ml[0] && ml[0] != '0';
+                            int g = -1;
+                            if (GetEnvironmentVariableA("MASHED_GAME_MODE", gm, sizeof(gm)) > 0) g = std::atoi(gm);
+                            if (!(g >= 2 && g <= 10)) g = modeLive ? 3 : -1;
+                            if (g >= 0) *reinterpret_cast<std::int32_t*>(0x0067e9fcu) = g;
+                        }
                         g_track.StartMatch();
                         // [D3 2026-09-26] place the power-up orbs, as the frontend
                         // race path does (RaceSession.cpp:152). Without it this dev
