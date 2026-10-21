@@ -1,6 +1,8 @@
 """u9779: port step dump vs original aistep, aligned on k (original: rows from the first substate-6 row; port: frame).
 Prints per car the first k where a compared column differs, and rows k0..k1 for one car. usage: stepcmp.py <orig.aistep.csv> <port.step.csv> [car k0 k1]"""
-import csv, sys
+import csv, sys, struct
+F32 = lambda x: struct.pack('<f', float(x))   # compare as binary32: the two sides print with different digit counts
+FLT = {'own_x', 'own_z', 'rec_9e4'}
 COLS = ['c0', 'c1', 'c3', 'c4', 'c5', 'substate', 'own_x', 'own_z', 'rec_9e4']
 def load(p, orig):
     rows = list(csv.DictReader(open(p)))
@@ -23,7 +25,7 @@ for v in (1, 2, 3):
         a, b = O.get((v, k)), P.get((v, k))
         if (a is None) != (b is None): first = (k, 'row exists orig=%s port=%s' % (a is not None, b is not None)); break
         if a is None: continue
-        d = [c for c in COLS if a[c] != b[c]] + (['clk'] if a['_clk'] != b['_clk'] else [])
+        d = [c for c in COLS if ((F32(a[c]) != F32(b[c])) if c in FLT else (a[c] != b[c]))] + (['clk'] if a['_clk'] != b['_clk'] else [])
         if d: first = (k, d); break
     print(f'car {v}: orig last k {ko}, port last k {kp}; first difference {first}')
 if len(sys.argv) > 3:
