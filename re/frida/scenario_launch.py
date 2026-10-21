@@ -1994,6 +1994,51 @@ function aliveProbeArm(){
   } catch(e){ return 'ERR ' + e; }
 }
 function aliveProbeDrain(){ const r = AL.rows; AL.rows = []; return r; }
+
+// --- ELIMINATION-CHAIN probe (u9779, 2026-10-21) ---------------------------
+// Which calls end a round on the ORIGINAL. ENTRY hooks only (memory
+// frida-interceptor-is-entry-only), all low-frequency (once per kill / score):
+//   0x00422fd0  FUN_00422fd0(car)            kill: FUN_0046c5c0 zeroes 0x008815a4 + car*0xd04
+//   0x0040eee0  FUN_0040eee0(car, score)     elimination scoring (called at 0x00410d10 tail)
+//   0x0040d590  FUN_0040d590(a, b, c, score) three-AI auto-resolve (only caller FUN_0040eee0)
+//   0x0040b290  FUN_0040b290(car, delta)     score add
+//   0x00418990  thunk -> FUN_004194f0        tail of FUN_00411170 right AFTER 0x004111a6 writes 7
+//   0x00430290  FUN_00430290                 tail of FUN_00411170 when FUN_00410510 != 0
+// Each row also reads the gate inputs FUN_0040eee0 tests: DAT_0067e9fc (FUN_0042f6a0),
+// DAT_007f0fd0, DAT_008a94d0, DAT_0067ea64 (FUN_0042f500), slot type
+// *(*(int*)0x005f2770 + 0x34 + i*4) (FUN_0040e470, 0x0040e474..0x0040e47a), alive
+// 0x008815a4 + i*0xd04, pct 0x008a96ec + i*0x30c, score 0x008a94e0 + i*4.
+const EP = { armed:false, rows:[], n:0, err:null };
+function epRow(tag, args){
+  try {
+    const tab = ptr(0x005f2770).readPointer();
+    const r = [EP.n++, tag, SD.frames, ga(0x007f0ff4).readS32(), ga(0x0063ba8c).readS32(),
+               ga(0x007f0fd0).readS32(), ga(0x0067e9fc).readS32(), ga(0x008a94d0).readS32(),
+               ga(0x0067ea64).readS32()].concat(args);
+    for (let i = 0; i < 4; i++) r.push(ptr(0x008815a4 + i*0xd04).readS32());
+    for (let i = 0; i < 4; i++) r.push(tab.add(0x34 + i*4).readS32());
+    for (let i = 0; i < 4; i++) r.push(ga(0x008a96ec).add(i*0x30c).readFloat());
+    for (let i = 0; i < 4; i++) r.push(ga(0x008a94e0).add(i*4).readS32());
+    if (EP.rows.length < 4000) EP.rows.push(r);
+  } catch(e){ if (!EP.err) EP.err = tag + ' ' + e; }
+}
+function elimProbeArm(){
+  if (EP.armed) return 'already armed';
+  try {
+    const H = [[0x00422fd0,'kill',1],[0x0040eee0,'score_elim',2],[0x0040d590,'resolve3',4],
+               [0x0040b290,'score_add',2],[0x00418990,'set7_tail',0],[0x00430290,'match_tail',0]];
+    for (const h of H) {
+      const tag = h[1], na = h[2];
+      Interceptor.attach(ga(h[0]), { onEnter(){
+        const a = [];
+        for (let i = 0; i < 4; i++) a.push(i < na ? this.context.esp.add(4 + i*4).readS32() : '');
+        epRow(tag, a); } });
+    }
+    EP.armed = true;
+    return 'elim-probe armed (0x00422fd0 0x0040eee0 0x0040d590 0x0040b290 0x00418990 0x00430290)';
+  } catch(e){ return 'ERR ' + e; }
+}
+function elimProbeDrain(){ const r = EP.rows; EP.rows = []; return r; }
 // ---------------------------------------------------------------------------
 
 // --- LEADER-TIMER input probe (D3, 2026-10-03) -----------------------------
@@ -3750,6 +3795,9 @@ rpc.exports = {
                                                       pending:BP.rows.length, limit:BP.limit,
                                                       detached:BP.detached, err:BP.err}); },
   aliveProbeArm: function(){ return aliveProbeArm(); },
+  elimProbeArm: function(){ return elimProbeArm(); },
+  elimProbeDrain: function(){ return elimProbeDrain(); },
+  elimProbeStats: function(){ return JSON.stringify({armed:EP.armed, n:EP.n, err:EP.err}); },
   aliveProbeDrain: function(){ return aliveProbeDrain(); },
   leaderProbeArm: function(l){ return leaderProbeArm(l); },
   leaderProbeDrain: function(){ return leaderProbeDrain(); },
@@ -4390,6 +4438,10 @@ def main():
     ap.add_argument("--boost-probe-limit", type=int, default=20000,
                     help="hard row limit for --boost-probe; auto-detaches at the limit "
                          "(a run that hits it is VOID, not a result).")
+    ap.add_argument("--elim-probe", action="store_true",
+                    help="[u9779] entry hooks on the ORIGINAL's elimination chain (FUN_00422fd0 kill, FUN_0040eee0 score, "
+                         "FUN_0040d590 three-AI resolve, FUN_0040b290 score add, the FUN_00411170 tails 0x00418990 (after the "
+                         "0x004111a6 write of 7) / 0x00430290) with their gate inputs; writes <out>.elim.csv")
     ap.add_argument("--alive-probe", action="store_true",
                     help="[D3 2026-10-03] per-race-update ALIVE / ELIMINATION record on the "
                          "ORIGINAL. Entry hooks on FUN_00410d10 (SegmentCheck), FUN_00418560 "
@@ -4659,6 +4711,8 @@ def main():
                                                           args.boost_probe_limit))
             if args.alive_probe:
                 print("  [statediff]", E.alive_probe_arm())
+            if args.elim_probe:
+                print("  [statediff]", E.elim_probe_arm())
             if args.leader_probe:
                 print("  [statediff]", E.leader_probe_arm(args.leader_probe_limit))
             if args.spawn_drop_probe:
@@ -5273,6 +5327,20 @@ def main():
                         print(f"  [statediff] boost-probe RELEASE tick={r[3]} car={r[4]} "
                               f"bf4 {r[5]}->{r[9]}  bf8 {r[6]}->{r[10]}  "
                               f"state {r[7]}->{r[11]}  accel {r[8]}->{r[12]}")
+                if args.elim_probe:
+                    try: print("  [statediff] elim-probe agent:", E.elim_probe_stats())
+                    except Exception as _e: print("  [statediff] elim-probe stats failed:", _e)
+                    ep_rows = []
+                    try: ep_rows = E.elim_probe_drain()
+                    except Exception as _e: print("  [statediff] elim-probe drain failed:", _e)
+                    epp = outp.with_suffix(outp.suffix + ".elim.csv")
+                    with open(epp, "w", newline="") as f:
+                        f.write("n,fn,frame,clk_0ff4,ba8c,fd0,e9fc,p94d0,ea64,a0,a1,a2,a3,"
+                                "alive0,alive1,alive2,alive3,type0,type1,type2,type3,"
+                                "pct0,pct1,pct2,pct3,score0,score1,score2,score3" + chr(10))
+                        for r in ep_rows:
+                            f.write(",".join(repr(x) if isinstance(x, float) else str(x) for x in r) + chr(10))
+                    print(f"  [statediff] elim-probe {len(ep_rows)} rows -> {epp}")
                 if args.alive_probe:
                     # Counters and KA-1 BEFORE the rows; CSV written even when empty
                     # (memory `absent-log-proves-nothing-run-a-control`).

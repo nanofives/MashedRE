@@ -250,11 +250,15 @@ RH_ScopedInstall(EntityTableSelectUpdate, 0x00401ee0);
 
 // Inlined wrap-correction block (appears 6 times in the original). Mutates the
 // pair in place exactly as the decompilation does before each comparison.
+// [u9779] The bounds are literals now: in the standalone exe the .rdata addresses
+// k_WrapLo / k_WrapHi / k_WrapOff read 0 (the RwMatrixRotate.cpp:72 class of defect).
+// 80.0 / 20.0 / 100.0 are exact in binary32, so the .asi result is unchanged.
 static inline void WrapAdjust(float& fa, float& fb)
 {
-    const float lo  = *reinterpret_cast<float*>(k_WrapLo);   // 80.0
-    const float hi  = *reinterpret_cast<float*>(k_WrapHi);   // 20.0
-    const float off = *reinterpret_cast<float*>(k_WrapOff);  // 100.0
+    const float lo  = 80.0f;    // [0x005cc730] (k_WrapLo)
+    const float hi  = 20.0f;    // [0x005ccd6c] (k_WrapHi)
+    const float off = 100.0f;   // [0x005cc568] (k_WrapOff)
+    (void)k_WrapLo; (void)k_WrapHi; (void)k_WrapOff;   // retained for provenance
     if ((fa <= lo) || (hi <= fb)) {
         if ((lo < fb) && (fa < hi)) {
             fb = fb - off;
@@ -264,68 +268,91 @@ static inline void WrapAdjust(float& fa, float& fb)
     }
 }
 
+namespace mashed_re { namespace Frontend {
+// [u9779] The one body of FUN_0040d590 for both targets. The callees are passed in:
+// the .asi export below hands it the original's FUN_00408ad0 / FUN_00422fd0 /
+// FUN_0040b290, the standalone exe's TrackRenderer::Resolve3_40d590 hands it its own
+// race_pct read / KillCar / ScoreAward (MASHED_ELIM_RESOLVE, verify/u9779_20261021).
+struct Rank3Callees {
+    float (*pct)(int);                  // FUN_00408ad0
+    void  (*kill)(std::uint32_t);       // FUN_00422fd0
+    void  (*add)(std::uint32_t, int);   // FUN_0040b290
+};
 // 0x0040d590
-extern "C" __declspec(dllexport) void __cdecl RaceRankThreePlayers(
-    std::uint32_t param_1, std::uint32_t param_2, std::uint32_t param_3, int param_4)
+void RaceRankThree(std::uint32_t param_1, std::uint32_t param_2, std::uint32_t param_3, int param_4,
+                   const Rank3Callees& c)
 {
     float fVar1, fVar2;
 
-    fVar1 = s_F00408ad0(static_cast<int>(param_1));
-    fVar2 = s_F00408ad0(static_cast<int>(param_2));
+    fVar1 = c.pct(static_cast<int>(param_1));
+    fVar2 = c.pct(static_cast<int>(param_2));
     WrapAdjust(fVar1, fVar2);
     if (fVar1 <= fVar2) {
-        fVar1 = s_F00408ad0(static_cast<int>(param_3));
-        fVar2 = s_F00408ad0(static_cast<int>(param_1));
+        fVar1 = c.pct(static_cast<int>(param_3));
+        fVar2 = c.pct(static_cast<int>(param_1));
         WrapAdjust(fVar1, fVar2);
         if (fVar2 < fVar1) {
-            s_F00422fd0(param_1);
-            s_F0040b290(param_1, -param_4);
-            fVar1 = s_F00408ad0(static_cast<int>(param_2));
-            fVar2 = s_F00408ad0(static_cast<int>(param_3));
+            c.kill(param_1);
+            c.add(param_1, -param_4);
+            fVar1 = c.pct(static_cast<int>(param_2));
+            fVar2 = c.pct(static_cast<int>(param_3));
             WrapAdjust(fVar1, fVar2);
             if (fVar2 < fVar1) {
-                s_F00422fd0(param_3);
-                s_F0040b290(param_3, param_4);
-                s_F0040b290(param_2, param_4 * 2);
+                c.kill(param_3);
+                c.add(param_3, param_4);
+                c.add(param_2, param_4 * 2);
                 return;
             }
-            s_F00422fd0(param_2);
-            s_F0040b290(param_2, param_4);
-            s_F0040b290(param_3, param_4 * 2);
+            c.kill(param_2);
+            c.add(param_2, param_4);
+            c.add(param_3, param_4 * 2);
             return;
         }
-        s_F00422fd0(param_3);
-        s_F0040b290(param_3, -param_4);
-        s_F00422fd0(param_1);
-        s_F0040b290(param_1, param_4);
-        s_F0040b290(param_2, param_4 * 2);
+        c.kill(param_3);
+        c.add(param_3, -param_4);
+        c.kill(param_1);
+        c.add(param_1, param_4);
+        c.add(param_2, param_4 * 2);
         return;
     }
-    fVar1 = s_F00408ad0(static_cast<int>(param_3));
-    fVar2 = s_F00408ad0(static_cast<int>(param_2));
+    fVar1 = c.pct(static_cast<int>(param_3));
+    fVar2 = c.pct(static_cast<int>(param_2));
     WrapAdjust(fVar1, fVar2);
     if (fVar1 <= fVar2) {
-        s_F00422fd0(param_3);
-        s_F0040b290(param_3, -param_4);
-        s_F00422fd0(param_2);
-        s_F0040b290(param_2, param_4);
-        s_F0040b290(param_1, param_4 * 2);
+        c.kill(param_3);
+        c.add(param_3, -param_4);
+        c.kill(param_2);
+        c.add(param_2, param_4);
+        c.add(param_1, param_4 * 2);
         return;
     }
-    s_F00422fd0(param_2);
-    s_F0040b290(param_2, -param_4);
-    fVar1 = s_F00408ad0(static_cast<int>(param_1));
-    fVar2 = s_F00408ad0(static_cast<int>(param_3));
+    c.kill(param_2);
+    c.add(param_2, -param_4);
+    fVar1 = c.pct(static_cast<int>(param_1));
+    fVar2 = c.pct(static_cast<int>(param_3));
     WrapAdjust(fVar1, fVar2);
     if (fVar2 < fVar1) {
-        s_F00422fd0(param_3);
-        s_F0040b290(param_3, param_4);
-        s_F0040b290(param_1, param_4 * 2);
+        c.kill(param_3);
+        c.add(param_3, param_4);
+        c.add(param_1, param_4 * 2);
         return;
     }
-    s_F00422fd0(param_1);
-    s_F0040b290(param_1, param_4);
-    s_F0040b290(param_3, param_4 * 2);
+    c.kill(param_1);
+    c.add(param_1, param_4);
+    c.add(param_3, param_4 * 2);
+}
+}}  // namespace mashed_re::Frontend
+
+static void Kill_00422fd0(std::uint32_t v) { s_F00422fd0(v); }
+static float Pct_00408ad0(int v) { return s_F00408ad0(v); }
+static void Add_0040b290(std::uint32_t v, int d) { s_F0040b290(v, d); }
+
+// .asi export of the body above with the original's own callees.
+extern "C" __declspec(dllexport) void __cdecl RaceRankThreePlayers(
+    std::uint32_t param_1, std::uint32_t param_2, std::uint32_t param_3, int param_4)
+{
+    const mashed_re::Frontend::Rank3Callees c{Pct_00408ad0, Kill_00422fd0, Add_0040b290};
+    mashed_re::Frontend::RaceRankThree(param_1, param_2, param_3, param_4, c);
 }
 
 // NOT installed yet: verification-blocked. This is a faithful bit-identical

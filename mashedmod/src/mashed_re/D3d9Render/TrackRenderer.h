@@ -423,6 +423,10 @@ public:
 
     void  ScoreAward(int car, int delta);          // FUN_0040b290 mode-0 path
     void  ScoreOnElimination(int victim);          // FUN_0040eee0 4-player path
+    bool  ElimResolveAI(int remaining, int d);     // [u9779] FUN_0040eee0 type-2 arms (MASHED_ELIM_RESOLVE)
+    void  Resolve3_40d590(int p1, int p2, int p3, int d);   // [u9779] runs Frontend::RaceRankThree
+    static void Rank3KillCb(std::uint32_t v);             // [u9779] FUN_00422fd0 callee
+    static void Rank3AddCb(std::uint32_t v, int d);       // [u9779] FUN_0040b290 callee
     // FUN_0040eee0's TEAM arms (the DAT_0067ea64 != 0 side of every
     // FUN_0042f500 test). Team ids come from the original's own per-slot field
     // DAT_007f1a18 + slot*0x10, which MenuTeamBalance (0x0042bb60) fills:
@@ -482,6 +486,7 @@ public:
     // [D-11073 leg 2] RaceCamCar adapter shared by UpdateRace and the MASHED_SUBSTATE pre-race
     // camera chain (FUN_0040d470 -> FUN_00446520: entry init, entry dispatch, camera update, copy).
     void  FillRaceCamCars(Race::RaceCamCar* cc);
+    void  ElimTraceFrame(const Race::RaceCamCar* cc);   // [u9779] MASHED_ELIM_TRACE (diagnostic)
     // [d1r2] race_cam_.Update with the host inputs, or the MASHED_CAM_REPLAY row.
     void  RaceCamUpdate(const Race::RaceCamCar* cc, bool reset);
     void  SubStateCameraChain(bool reset);
