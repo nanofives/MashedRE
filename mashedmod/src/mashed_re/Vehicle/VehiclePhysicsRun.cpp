@@ -371,6 +371,20 @@ bool  g_cOnMesh[4]    = { false, false, false, false };
 float g_cNormal[4][3] = { {0,1,0}, {0,1,0}, {0,1,0}, {0,1,0} };
 float g_cAvgN[3]      = { 0.f, 1.f, 0.f };   // averaged on-mesh normal (edge fallback)
 bool  g_cGrounded     = false;
+
+// [u9778] MASHED_SUBSTEP_INTERLEAVE: StepCar yields to the next car after each substep (SubstepInterleave.cpp), so the
+// per-call state above no longer belongs to one car between a write and its read. Saved per slot across the yield.
+struct IlScratch { bool onMesh[4]; float normal[4][3]; float avgN[3]; bool grounded; };
+IlScratch g_ilScratch[16];
+void IlYield(int slot) {
+    if (!VehiclePhysics_IlInFiber() || g_inSpawnSettle || slot < 0 || slot >= 16) return;   // the settle's inner steps run through
+    IlScratch& s = g_ilScratch[slot];
+    std::memcpy(s.onMesh, g_cOnMesh, sizeof(g_cOnMesh)); std::memcpy(s.normal, g_cNormal, sizeof(g_cNormal));
+    std::memcpy(s.avgN, g_cAvgN, sizeof(g_cAvgN));       s.grounded = g_cGrounded;
+    VehiclePhysics_IlSwitchToMain();
+    std::memcpy(g_cOnMesh, s.onMesh, sizeof(g_cOnMesh)); std::memcpy(g_cNormal, s.normal, sizeof(g_cNormal));
+    std::memcpy(g_cAvgN, s.avgN, sizeof(g_cAvgN));       g_cGrounded = s.grounded;
+}
 }  // namespace
 
 // Highest collision triangle under world XZ (x,z) from the soup VehiclePhysics_SetWorld
@@ -1949,7 +1963,30 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
                 if (mode != 6 && mode != 7 && mode != 10 && mode != 0xb) continue; // 0x00470baf..c1
                 int* const recJ = reinterpret_cast<int*>(rj);  // in_EAX (other)
                 int* const recI = reinterpret_cast<int*>(r);   // param_1 (self)
+                // [u9778] MASHED_CARCAR_RECDUMP=<path> (diagnostic, default OFF): the port twin of scenario_launch.py
+                // --carcar-probe, one TSV row per call: race frame, 0, self, other, pass, both records at entry, ret,
+                // both records at leave (hex, kRec bytes each).
+                static const char* const s_ccRec = std::getenv("MASHED_CARCAR_RECDUMP");
+                static int s_ccRecRows = 0;
+                const bool ccRecOn = s_ccRec && s_ccRecRows < 400;
+                static unsigned char s_ccIn[2][kRec];
+                if (ccRecOn) { std::memcpy(s_ccIn[0], r, kRec); std::memcpy(s_ccIn[1], rj, kRec); }
                 const bool ret = Collision::VehicleCarCarContact(recJ, recI, ccPass); // 0x00469df0
+                if (ccRecOn) {
+                    if (std::FILE* lf = std::fopen(s_ccRec, s_ccRecRows ? "a" : "w")) {
+                        auto hx = [lf](const unsigned char* p) {
+                            std::fputc('\t', lf);
+                            for (std::size_t b = 0; b < kRec; ++b) std::fprintf(lf, "%02x", p[b]);
+                        };
+                        std::fprintf(lf, "%d\t0\t%d\t%d\t%d", g_recDumpFrame, slot, j, ccPass);
+                        hx(s_ccIn[0]); hx(s_ccIn[1]);
+                        std::fprintf(lf, "\t%d", (int)ret);
+                        hx(r); hx(rj);
+                        std::fputc('\n', lf);
+                        std::fclose(lf);
+                    }
+                    ++s_ccRecRows;
+                }
                 // [d3bB2] the type-4 ring push at the tail of 0x00469df0 (default OFF, MASHED_AI_CONTACT_EVENT):
                 // every contact, unless FUN_0040e350() is 1..5 (0x0046ae97..0x0046aec3 / 0x0046b04c..0x0046b078)
                 if (Collision::g_ccLastContact && Ai::Ai_ContactEventEnabled() && !(mode >= 1 && mode <= 5))
@@ -1958,10 +1995,10 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
                     if (std::FILE* lf = std::fopen(s_ccLog, "a")) {
                         std::fprintf(lf,
                             "i=%d j=%d pass=%d ret=%d cI=(%.4f,%.4f,%.4f) "
-                            "cJ=(%.4f,%.4f,%.4f) radSum=%.4f noopp=%d\n",
+                            "cJ=(%.4f,%.4f,%.4f) radSum=%.4f noopp=%d fr=%d\n",
                             slot, j, ccPass, (int)ret,
                             cI[0], cI[1], cI[2], cJ[0], cJ[1], cJ[2], radSum,
-                            (g_participantCount <= 1) ? 1 : 0);
+                            (g_participantCount <= 1) ? 1 : 0, g_recDumpFrame);
                         std::fclose(lf);
                     }
                     ++s_ccLines;
@@ -1998,6 +2035,7 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         ++d2sSub;
         chunkI -= subI;                // 0x0047113f / 0x00471141
         remMs = (float)chunkI;
+        IlYield(slot);                 // [u9778] 0x00470c47: FUN_004709a0 moves on to the next car
     }
     D2Sink::ClearSubstep();
 

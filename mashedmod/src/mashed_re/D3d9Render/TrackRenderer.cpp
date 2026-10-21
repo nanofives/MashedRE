@@ -1501,6 +1501,17 @@ enum { kAnimFreighter = 1, kAnimBoat = 2 };
 
 namespace { void InvalidateBatchCache(); }  // WS-A s3 PERF (defined before Render)
 namespace { TrackRenderer* s_pontoonTr = nullptr; }   // [pontoon] the renderer the platform's host callbacks reach
+namespace {   // [u9778] MASHED_SUBSTEP_INTERLEAVE (default OFF): an AI car's io as the A4 pre-phase built it, and its result
+struct IlCar { bool have = false; Vehicle::PlayerCarIO in, out; };
+IlCar s_il[16];
+long  s_ilMismatch = 0;
+bool IlSameInput(const Vehicle::PlayerCarIO& a, const Vehicle::PlayerCarIO& b) {   // bitwise, every field StepCar reads
+    return !std::memcmp(a.pos, b.pos, sizeof a.pos) && !std::memcmp(a.vel, b.vel, sizeof a.vel) &&
+           !std::memcmp(&a.yaw, &b.yaw, 4) && !std::memcmp(&a.speed, &b.speed, 4) &&
+           !std::memcmp(a.input, b.input, sizeof a.input) && !std::memcmp(&a.steer, &b.steer, 4) &&
+           a.grounded == b.grounded && a.raw_steer == b.raw_steer && !std::memcmp(&a.ground_off, &b.ground_off, 4);
+}
+}  // namespace
 
 namespace {
 // [d2lateral 2026-10-16] MASHED_D2LAT_SPAWN_YAW=<rad> - DIAGNOSTIC ONLY, default OFF, never a fix.
@@ -5188,6 +5199,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         // first FUN_004709a0 (0x00471137), so a car<->car impulse from the player's substeps (0x00470bcd) reaches an AI
         // car after that car's A4. Here: the AI cars' gate + A4, with the io the opponent loop below builds for
         // them (same skips, same shock throttle), before the player's step; their StepCar then runs only the substeps.
+        for (IlCar& c : s_il) c.have = false;   // [u9778]
         if (Vehicle::VehiclePhysics_A4OrderEnabled()) {
             Vehicle::VehiclePhysics_A4PreBegin();
             static const bool s_noOppA4 = (std::getenv("MASHED_MEASURE_NOOPP") != nullptr);
@@ -5215,6 +5227,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
                     GroundHeight(a.pos[0], a.pos[2], &aok);
                     aio.grounded = aok ? 1 : 0;
                     Vehicle::VehiclePhysics_A4Pre(v, in.dt, aio);
+                    if (Vehicle::VehiclePhysics_InterleaveEnabled() && v < 16) { s_il[v].have = true; s_il[v].in = aio; }
                 }
             }
             Vehicle::VehiclePhysics_A4PreEnd();
@@ -5235,7 +5248,25 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             }
             Race::HeadingAssist_Player(static_cast<int>(in.dt * 3000.0f + 0.5f), s0, s1);
         }
-        Vehicle::VehiclePhysics_StepPlayer(in.dt, io);
+        // [u9778] MASHED_SUBSTEP_INTERLEAVE=1 (default OFF): FUN_004709a0 steps every car per substep (0x00471137 ->
+        // 0x00470c47..0x00470c53), so the player and the pre-phase's AI cars step here together, substep by substep
+        // (Vehicle/SubstepInterleave.cpp); the opponent loop below takes each AI car's result instead of stepping it.
+        bool ilRan = false;
+        if (Vehicle::VehiclePhysics_InterleaveEnabled()) {
+            int ilSlots[16]; Vehicle::PlayerCarIO ilIo[16]; int ilN = 0;
+            ilSlots[ilN] = 0; ilIo[ilN] = io; ++ilN;
+            for (int v = 1; v < 16; ++v)
+                if (s_il[v].have) { ilSlots[ilN] = v; ilIo[ilN] = s_il[v].in; ++ilN; }
+            if (ilN > 1 && Vehicle::VehiclePhysics_InterleaveRun(ilN, ilSlots, in.dt, ilIo)) {
+                io = ilIo[0];
+                for (int k = 1; k < ilN; ++k) s_il[ilSlots[k]].out = ilIo[k];
+                ilRan = true;
+            }
+        }
+        if (!ilRan) {
+            for (IlCar& c : s_il) c.have = false;
+            Vehicle::VehiclePhysics_StepPlayer(in.dt, io);
+        }
         car_vel_[0] = io.vel[0]; car_vel_[1] = io.vel[1]; car_vel_[2] = io.vel[2];
         car_speed_  = io.speed;
         // CORRECTED 2026-08-24: this said "recovered chain-grip heading (+0x9c0)",
@@ -5585,7 +5616,17 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             bool gok = false;
             GroundHeight(a.pos[0], a.pos[2], &gok);
             io.grounded = gok ? 1 : 0;
-            Vehicle::VehiclePhysics_StepCar(v, in.dt, io);
+            if (v < 16 && s_il[v].have) {   // [u9778] stepped above, interleaved with the player
+                if (!IlSameInput(io, s_il[v].in) && s_ilMismatch++ < 200)
+                    if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
+                        std::fprintf(lf, "[u9778] interleave: slot %d io differs from the pre-phase io (result kept)\n", v);
+                        std::fclose(lf);
+                    }
+                io = s_il[v].out;
+                s_il[v].have = false;
+            } else {
+                Vehicle::VehiclePhysics_StepCar(v, in.dt, io);
+            }
             a.vel[0] = io.vel[0]; a.vel[1] = io.vel[1]; a.vel[2] = io.vel[2];
             a.cur_speed = io.speed;
             a.yaw = io.yaw;
