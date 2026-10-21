@@ -142,9 +142,20 @@ bool VehiclePhysics_A4OrderEnabled();
 void VehiclePhysics_A4PreBegin();
 void VehiclePhysics_A4Pre(int slot, float dt, PlayerCarIO io);
 void VehiclePhysics_A4PreEnd();
+// [u9778 2026-10-21] MASHED_SUBSTEP_INTERLEAVE=1 (default OFF, SubstepInterleave.cpp): FUN_004709a0 (called once per
+// substep at 0x00471137) steps cars 0..15 inside (0x00470c47..0x00470c53), so the substeps interleave across cars.
+// InterleaveRun steps slots[0..n) (ascending) with ios[k], each StepCar in a fiber that yields after every substep;
+// returns false if the fibers could not be set up (nothing stepped). StepCar's yield goes through IlSwitchToMain.
+bool VehiclePhysics_InterleaveEnabled();
+bool VehiclePhysics_InterleaveRun(int n, const int* slots, float dt, PlayerCarIO* ios);
+bool VehiclePhysics_IlInFiber();
+void VehiclePhysics_IlSwitchToMain();
+void VehiclePhysics_IlSnapshot(int slot);   // record + per-slot module state, taken before InterleaveRun
+void VehiclePhysics_IlRestore(int slot);    // put it back (the car is then stepped the per-car way, or not at all)
 // [u9749] MASHED_RECDUMP=<path> (diagnostic, default OFF): one MSD1 record of slot MASHED_RECDUMP_SLOT (default 0) per
 // call; call once per race frame after every car's physics. Also advances the frame index MASHED_RECDUMP_A4 uses.
 void VehiclePhysics_RecDumpFrame();
+int  VehiclePhysics_RecDumpFrameIndex();   // [u9778] the frame index MASHED_RECDUMP writes next
 // A8 (2026-08-25): (re)seed a slot's integrated body-orientation basis from a yaw.
 // The body basis is now persistent state inside the physics module (the original
 // keeps it in the record's +0x928 double buffer; see BodyOrientationIntegrate.cpp
