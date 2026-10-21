@@ -91,6 +91,25 @@ install stays commented out. rva-lint clean.
 
 G-MECH (K0, IL, one knob at a time): ER `a369e1b1`, E7 `f6703741`, TL `8906520a`, ER + E7 `74988967`, all three `803ab845`.
 
+Per-knob attribution of the row-220 match (car 3 vs `o_cc3_1`, K0, IL; `stepcmp.py`):
+
+| stack | step sha8 | row 220 (orig: sub 7, c4 0, c5 0) | row 221 clock |
+|---|---|---|---|
+| ER | `a369e1b1` | sub 6, c4 255 (round ends in the port, AI not told) | runs (11050) |
+| E7 | `f6703741` | sub 6, c4 255 (no round end at 220) | runs |
+| TL | `8906520a` | sub 6, c4 255 | runs |
+| ER + E7 | `74988967` | sub 6, c4 255; sub 7 from row 221 (one frame late) | stops (11000) |
+| ER + TL | `5d3ac4f2` | sub 6, c4 255 | runs |
+| E7 + TL | `d11b532e` | sub 6, c4 255 | runs |
+| ER + E7 + TL | `803ab845` | **sub 7, c4 0, c5 0** (= original) | stops (11000, = original) |
+
+All three are needed. ER makes the round end at 220, E7 makes the AI see it and stops the clock, TL puts the decision before the
+AI tick.
+
+Scope note (orchestrator, 2026-10-21): the sub-state-7 hold physics is outside the (b) window. The writer hunt stopped after
+`o_ww_2`, and U-9781 records it. The one piece of sub-state-7 port work done before that note, FUN_00424eb0's FUN_0046c570 0.85
+damp, is inside `MASHED_ROUND_END7` (amendment 2). It does not change row 220 (a command row) and acts only from k=220 on records.
+
 ## 6. Decisions for Mariano
 
 1. **Recipe.** The B arms run `MASHED_ROUND_RULE=4`, and the original B captures run `DAT_007f0fd0` 0 (rule 0) with game mode

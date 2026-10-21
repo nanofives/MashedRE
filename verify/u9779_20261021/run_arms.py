@@ -403,6 +403,8 @@ for _t in ('ER', 'E7', 'R7m', 'TL', 'R7'):
 for _c in (0, 1, 2, 3):
     STACK[f'ILR7C{_c}'] = STACK['IL'] + STACK['R7'] + STACK[f'C{_c}']; STACK[f'R7C{_c}'] = STACK['R7'] + STACK[f'C{_c}']
 
+STACK['ILERTL'] = STACK['IL'] + STACK['ER'] + STACK['TL']; STACK['ILE7TL'] = STACK['IL'] + STACK['E7'] + STACK['TL']   # u9779 attribution pairs
+
 for name in sys.argv[1:]:
     CUR['name'] = name
     if name.startswith('H_'):
