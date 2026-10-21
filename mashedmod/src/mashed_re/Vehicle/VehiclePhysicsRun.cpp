@@ -1051,14 +1051,120 @@ void VehiclePhysics_A4PreEnd() {
     g_torqueRingPhase = g_a4PreBase;   // the real StepCar calls advance it as in the per-car order
 }
 
-void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
+// [substep 2026-10-21] VehiclePhysics_StepCar as phase functions (verify/substep_20261021/PREREG_substep.md). The
+// original runs one frame of every car in FUN_00470c70 (MASHED.exe.unpatched): the A4 loop over all 16 cars
+// (0x00470f80..0x00471099), the refresh loop (0x004710a1..0x004710fc), then FUN_004709a0 once per substep (0x00471137),
+// which steps cars 0..15 inside (0x004709e5, 0x00470c47..0x00470c53), then the frame-end loops (0x00471157..0x004713e9).
+// The port's phases, per car:
+//   StepBegin       the pre-part: A5 race timer, spawn settle (port-only), record adapter IN, start-boost arm (port-only),
+//                   Fi_UpdateBoostOrder at slot 0 (0x00470e1a..0x00470f16), suspension globals (0x00470f1c..0x00470f3a),
+//                   the body basis
+//   StepChunkHead   per chunk (0x00470f50..0x00470f61): the +0xaec gate (0x0047101b..0x00471048), A4 (0x00471076),
+//                   the port-only post-A4 re-assert, the +0x9e4 / +0x9e8 refresh (0x004710a1..0x004710da)
+//   StepSubstep     one substep: FUN_004709a0's body for this car (0x004709f0..0x00470c41), car-car loop and swap included
+//   StepChunkTail   the MASHED_A8_A4_FIRST=0 opt-out A4, rem -= chunk (0x00471143..0x00471151)
+//   StepEnd         the frame tail: ring frame end (0x00471195..0x004711af), safety clamp, drive_delta, adapter OUT
+// StepCtx holds every local that crosses a phase boundary. VehiclePhysics_StepCar runs the phases one car at a time
+// (the default); VehiclePhysics_StepCarsOuter (MASHED_SUBSTEP_OUTER) runs them substep-outer / car-inner.
+namespace {
+struct StepCtx {
+    int             slot = 0;
+    float           dt = 0.f;
+    PlayerCarIO*    io = nullptr;
+    unsigned char*  r = nullptr;
+    ContactScratch* cs = nullptr;            // the contact cache this step solves into and re-asserts from
+    bool            preOnly = false;         // [a4order] VehiclePhysics_A4Pre call (return after the A4 block)
+    bool            preDone = false;         // [a4order] this frame's gate + A4 ran in the pre-phase
+    bool            posTrans = false;        // [d2posmodel] fix B part 3
+    bool            sdOn = false;            // [d2settle D0-a] settle diag window (slot 0, first 6 steps)
+    bool            a4Skip = false;          // [car2pickup] this chunk's +0xaec gate verdict
+    double          t_phys0 = 0.0;           // PERF (MASHED_PHYS_PROF)
+    float           frameMs = 0.f;
+    float*          basis = nullptr;         // g_bodyBasis[slot]
+    float           posDelta[3] = { 0.f, 0.f, 0.f };
+    std::uint8_t    input[8] = {};
+    int             chunkRem = 0, chunkL = 0;   // 0x00470f50..0x00470f61 / 0x00471143..0x00471151
+    float           a4Dt = 0.f;
+    int             chunkI = 0, guard = 0, d2sSub = 0;   // the substep loop 0x00471106..0x00471141
+    float           remMs = 0.f;
+    bool            live = false, chunkOn = false, subOn = false;   // VehiclePhysics_StepCarsOuter bookkeeping
+};
+
+bool A4First() {   // [A8-ORDER] MASHED_A8_A4_FIRST, see StepBegin
+    // [A8-ORDER 2026-09-13] env MASHED_A8_A4_FIRST=1: run A4 -> A5 -> A6a BEFORE the
+    // substep loop, i.e. on the PRE-rotation basis and on last frame's contacts, which is
+    // the original's order (FUN_00470c70: step 3 = FUN_00470670 per vehicle, step 5 =
+    // the FUN_004709a0 substep loop that rotates the body). Evidence for the phase:
+    // in orig_steerR.msd every wheel axis sits +0.0446 rad from +0x9d4 while the body
+    // rotates -0.0446 rad/frame (A8 twenty-sixth follow-up), i.e. the axes A5 wrote are
+    // one frame older than the forward vector FUN_0046e9e0 wrote after them. Here the
+    // axes and +0x9d4 are written from the same post-rotation basis (0.00 rad apart).
+    // DEFAULT ON since 2026-09-13 (A8 twenty-sixth follow-up: same-build A/B on the
+    // held-lock recipe gives slip 0.192/0.263 vs the original's 0.191/0.250, av.y and
+    // the axis phase matching, no spin-out). `MASHED_A8_A4_FIRST=0` reverts to the
+    // pre-2026-09-13 order for A/B only (ROADMAP v3 default-build rule: the flag may
+    // only turn the ported behaviour OFF).
+    static const bool s_a4First = [] {
+        const char* e = std::getenv("MASHED_A8_A4_FIRST");
+        return !(e && e[0] == '0');
+    }();
+    return s_a4First;
+}
+bool FixL() {   // [d2bsp] fix L, see StepChunkHead
+    // [d2bsp] fix L (MASHED_D2CHUNK=1): the OUTER chunk loop of FUN_00470c70. The original runs
+    //     0x00470f50..0x00470f61  local_24 = min(remaining, 0x32)
+    //     per-vehicle +0xaec gate (-= local_24) and FUN_00470670(car, (float)local_24, ..) (0x0047105a fild)
+    //     0x004710a1..0x004710da  the +0x9e4 / +0x9e8 refresh loop
+    //     0x00471106..0x00471141  substeps over local_24
+    //     0x00471143..0x00471151  remaining -= local_24; if (remaining) goto 0x00470f50
+    // with remaining = param_1, which its only caller pushes as the constant 0x32 (0x0042c980 ->
+    // 0x00425a8d), so the loop makes one pass there. The port's budget is remI = (int)(dt*3000) = 50.
+    // Under fix L, A4 receives (float)local_24 = 50.0f as the original's does; without it the port
+    // keeps frameMs = 50.0000038f (one ulp above). MASHED_D2CHUNK_FRAMEMS=1 (diagnostic) runs the loop
+    // with frameMs kept for A4. Stated residual: the original interleaves all 16 cars per chunk, the
+    // port steps one car at a time; identical while remI <= 0x32. DEFAULT ON (PREREG_d2bsp.md
+    // amendment 3, RESULT_d2bsp.md), opt-out `MASHED_NO_D2CHUNK=1`; `MASHED_D2CHUNK` is still accepted
+    // and changes nothing.
+    static const bool s_fixL = [] {
+        const char* n = std::getenv("MASHED_NO_D2CHUNK");
+        return !(n && n[0] == '1');
+    }();
+    return s_fixL;
+}
+const char* SettleDiagPath() { static const char* const s = std::getenv("MASHED_SETTLE_DIAG"); return s; }
+int g_sdN = 0;   // [d2settle D0-a] slot-0 steps logged so far
+const char* SvpLogPath() { static const char* const s = std::getenv("MASHED_SUBSTEP_VELPROBE"); return s; }   // [D2 section 22.2]
+int g_svpLines = 0;
+
+void SdLine(const StepCtx& c, const char* tag) {   // [d2settle D0-a] slot 0's first 6 steps, DIAGNOSTIC ONLY
+    const bool sdOn = c.sdOn; unsigned char* const r = c.r; const bool a4Skip = c.a4Skip;
+    const char* const s_settleDiag = SettleDiagPath(); const int s_sdN = g_sdN;
+    if (!sdOn) return;
+    if (std::FILE* lf = std::fopen(s_settleDiag, "a")) {
+        std::fprintf(lf, "STEP n=%d settle=%d %s vel=(%.9g,%.9g,%.9g) v9e4=%.9g v9e8=%.9g "
+                         "loads=(%.9g,%.9g,%.9g,%.9g) gnd=%08x c9ec=%d b20=%d skip=%d\n",
+                     s_sdN, g_inSpawnSettle ? 1 : 0, tag,
+                     F(r, off::kVelocity + 0), F(r, off::kVelocity + 4), F(r, off::kVelocity + 8),
+                     F(r, off::kSpeed), F(r, 0x9e8),
+                     F(r, 0x210), F(r, 0x2d4), F(r, 0x398), F(r, 0x45c),
+                     static_cast<unsigned>(I(r, 0x9e0)), I(r, 0x9ec), I(r, 0xb20), a4Skip ? 1 : 0);
+        std::fclose(lf);
+    }
+}
+}  // namespace
+
+static void StepCarImpl(int slot, float dt, PlayerCarIO& io, ContactScratch* cs);
+
+// The pre-part, to the chunk loop. Returns false where VehiclePhysics_StepCar returned before its chunk loop.
+static bool StepBegin(StepCtx& c, int slot, float dt, PlayerCarIO& io, ContactScratch* cs) {
+    c.slot = slot; c.dt = dt; c.io = &io; c.cs = cs;
     const bool settleOnly = g_settleOnly;   // [d2engage] consumed here: the settle's inner step runs normally
     g_settleOnly = false;
-    const bool preOnly = g_a4PreOnly;       // [a4order] consumed here, as settleOnly
+    const bool preOnly = c.preOnly = g_a4PreOnly;   // [a4order] consumed here, as settleOnly
     g_a4PreOnly = false;
     if (!g_inited) VehiclePhysics_Init(4, 0);
-    if (dt <= 0.f) return;
-    if (slot < 0 || slot >= 16) return;
+    if (dt <= 0.f) return false;
+    if (slot < 0 || slot >= 16) return false;
     // [d2ref 2026-10-17] U-9751, default ON since the d2ref flip (MASHED_NO_A5_RACE_TIMER=1 opts out): A5 FUN_0046ddb0 reads the race timer DAT_007f0ff8
     // (FILD [0x007f0ff8] at 0x0046e0a9) for its grip ramp (60000 _DAT_005cea7c, -30000 _DAT_005cea78, -1/30000
     // _DAT_005cea74, ForceIntegrator.cpp:141). The port's A5 reads g_raceTimer, which nothing wrote (0 for the whole race).
@@ -1081,10 +1187,10 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     }
     // [a4order] one chunk only: with remaining > 0x32 the original interleaves A4 and substeps per chunk
     // (0x00471143..0x00471151); the pre-phase is not used there and the car steps in the per-car order.
-    if (preOnly && static_cast<int>(dt * 3000.0f) > 0x32) return;
+    if (preOnly && static_cast<int>(dt * 3000.0f) > 0x32) return false;
     // [a4order] this frame's gate + A4 already ran in the pre-phase (the spawn settle's inner step never has one)
-    const bool preDone = !preOnly && g_a4PreDone[slot] && !g_inSpawnSettle;
-    unsigned char* r = rec(slot);
+    const bool preDone = c.preDone = !preOnly && g_a4PreDone[slot] && !g_inSpawnSettle;
+    unsigned char* r = c.r = rec(slot);
 
     // =====================================================================
     // SPAWN SETTLE — U-D3-DRIVE, 2026-09-28. MEASURED, not inferred.
@@ -1129,7 +1235,7 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     // measurable against each other until that is adjudicated.
     static const bool s_noSettle = (std::getenv("MASHED_NO_SPAWN_SETTLE") != nullptr);
     // [a4order] a car's first step (the settle hands io back to the caller) runs in the per-car order
-    if (preOnly && !g_settled[slot] && !s_noSettle) return;
+    if (preOnly && !g_settled[slot] && !s_noSettle) return false;
     if (!g_settled[slot] && !s_noSettle) {
         g_settled[slot] = true;          // set BEFORE the call: the inner step must not re-enter
         PlayerCarIO s = io;
@@ -1192,7 +1298,7 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         }
         if (PosModelOrder()) g_fiGameModeHold = 5;
         g_inSpawnSettle = true;          // keep the START BOOST ARM out of this call
-        VehiclePhysics_StepCar(slot, dt, s);
+        StepCarImpl(slot, dt, s, cs);   // [substep] the settle's inner step: per-car order, this car's cache
         g_inSpawnSettle = false;
         g_fiGameModeHold = 0;
         // [d2settle D0-a] MASHED_SETTLE_DIAG=<path>: what the settle step produced before it
@@ -1235,14 +1341,14 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         // reads is unchanged. Every slot: the original's loop covers every alive car.
         if (PosModelOrder()) VehiclePhysicsStateReset(static_cast<std::uint32_t>(slot));
     }
-    if (settleOnly) return;   // [d2engage] VehiclePhysics_SpawnSettle: the settle block only
+    if (settleOnly) return false;   // [d2engage] VehiclePhysics_SpawnSettle: the settle block only
     // =====================================================================
 
     // [d2posmodel 2026-10-16] fix B part 3 adapter IN (MASHED_POS_TRANS). Inside StepCar
     // io.pos is the PHYSICS position from here to the adapter OUT. Taken from g_physPos when
     // the caller round-tripped the last OUT bit for bit, else re-seeded from the caller
     // (teleport): x, z as given, y = pos[1] - ground_off.
-    const bool posTrans = PosModelTrans();
+    const bool posTrans = c.posTrans = PosModelTrans();
     if (posTrans) {
         const bool posKept = g_outPosValid[slot] &&
             std::memcmp(io.pos, g_outPos[slot], sizeof(g_outPos[slot])) == 0;
@@ -1252,7 +1358,7 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
 
     // PERF (MASHED_PHYS_PROF): slot 0 == frame boundary (player steps first). Flush
     // the previous frame's accumulators, then time this car's whole physics body.
-    const double t_phys0 = prof::g_on ? prof::NowMs() : 0.0;
+    c.t_phys0 = prof::g_on ? prof::NowMs() : 0.0;
     if (prof::g_on) {
         if (slot == 0) { prof::Flush(); prof::g_have = true; prof::f_wallMs = dt * 1000.0f; }
         ++prof::f_cars;
@@ -1295,7 +1401,7 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     }
     I(r, off::kActiveFlag)   = 1;
 
-    std::uint8_t input[8];
+    std::uint8_t (&input)[8] = c.input;
     std::memcpy(input, io.input, sizeof(input));
     // WS-A8-STEER: map the steer command [-1,+1] onto the descriptor's mutually-
     // exclusive STEER bytes [0]/[1] — the byte channel A4 (FUN_00470670) reads (it
@@ -1452,7 +1558,7 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     // TrackRenderer (it re-aimed the car but never relocated it, so its 0.6 speed
     // damping compounded to a respawn — 0.6^10.3, measured). That is fixed
     // separately; see the long note on the off-mesh branch there.
-    const float frameMs = dt * 3000.0f;
+    const float frameMs = c.frameMs = dt * 3000.0f;
     // CORRECTED 2026-08-26. This was `frameMs * kSuspDtK` — it passed the
     // dispatcher's per-frame BUDGET (param_1 = 50) where the original passes
     // `*param_2`, a COURSE-LOAD CONSTANT. Two different parameters, conflated.
@@ -1487,7 +1593,7 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     // the whole point of the change: with a synthesized BuildYawMatrix(io.yaw) the
     // wheel axes are forced to agree with the velocity heading (because io.yaw was
     // itself a lag chasing the velocity heading), so slip was unrepresentable.
-    float* basis = g_bodyBasis[slot];
+    float* basis = c.basis = g_bodyBasis[slot];
     if (!g_bodyBasisOk[slot]) { BodyOrient_Init(basis, io.yaw); g_bodyBasisOk[slot] = true; }
     // Keep io.yaw the basis heading from here on: it feeds record +0x9d4 (above) and
     // SolveWheelContacts' wheel placement, both of which must see the BODY heading.
@@ -1502,32 +1608,40 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     // A8 position accumulator: the frame's world-space position delta, summed over
     // the substeps exactly as FUN_0046e9e0 accumulates it into the matrix
     // translation (0x0046ea5f / 0x0046ea69 / 0x0046ea73).
-    float posDelta[3] = { 0.f, 0.f, 0.f };
+    float (&posDelta)[3] = c.posDelta;
+    posDelta[0] = 0.f; posDelta[1] = 0.f; posDelta[2] = 0.f;
 
-    // Subdivide the frame ms budget into <=50ms chunks (the FUN_00470c70 chunk loop,
-    // local_24 = min(remaining,0x32)); A4's dt per chunk is that ms count.
-    // [A8-ORDER 2026-09-13] env MASHED_A8_A4_FIRST=1: run A4 -> A5 -> A6a BEFORE the
-    // substep loop, i.e. on the PRE-rotation basis and on last frame's contacts, which is
-    // the original's order (FUN_00470c70: step 3 = FUN_00470670 per vehicle, step 5 =
-    // the FUN_004709a0 substep loop that rotates the body). Evidence for the phase:
-    // in orig_steerR.msd every wheel axis sits +0.0446 rad from +0x9d4 while the body
-    // rotates -0.0446 rad/frame (A8 twenty-sixth follow-up), i.e. the axes A5 wrote are
-    // one frame older than the forward vector FUN_0046e9e0 wrote after them. Here the
-    // axes and +0x9d4 are written from the same post-rotation basis (0.00 rad apart).
-    // DEFAULT ON since 2026-09-13 (A8 twenty-sixth follow-up: same-build A/B on the
-    // held-lock recipe gives slip 0.192/0.263 vs the original's 0.191/0.250, av.y and
-    // the axis phase matching, no spin-out). `MASHED_A8_A4_FIRST=0` reverts to the
-    // pre-2026-09-13 order for A/B only (ROADMAP v3 default-build rule: the flag may
-    // only turn the ported behaviour OFF).
-    static const bool s_a4First = [] {
-        const char* e = std::getenv("MASHED_A8_A4_FIRST");
-        return !(e && e[0] == '0');
-    }();
     // [D2 attempt 19] arm the T_post split for this frame. Slot 0 only; any other slot
     // disarms the channel so ContactFixup's sites (which never see `slot`) stay slot-0.
     // Diagnostic, default-OFF (MASHED_D2SINK). verify/d2_sink_20261002/PREREG_STEP1.md.
     D2Sink::Begin(slot);
 
+    c.a4Skip = false;
+
+    // [d2settle D0-a] slot 0's first 6 steps (settle included), DIAGNOSTIC ONLY, default-OFF.
+    const char* const s_settleDiag = SettleDiagPath();
+    int& s_sdN = g_sdN;
+    const bool sdOn = c.sdOn = s_settleDiag && slot == 0 && s_sdN < 6;
+    if (sdOn) ++s_sdN;
+    g_sdSolverLog = sdOn ? s_settleDiag : nullptr;
+
+    // Subdivide the frame ms budget into <=50ms chunks (the FUN_00470c70 chunk loop,
+    // local_24 = min(remaining,0x32)); A4's dt per chunk is that ms count.
+    c.chunkRem = (int)frameMs;                                            // param_1
+    return true;
+}
+
+static bool ChunkDue(const StepCtx& c, bool first) {   // the fix-L loop condition
+    return FixL() ? (c.chunkRem != 0) : first;
+}
+
+// One chunk's head. Returns false at the end of a pre-phase call (VehiclePhysics_A4Pre).
+static bool StepChunkHead(StepCtx& c) {
+    const int slot = c.slot; unsigned char* const r = c.r; const bool preOnly = c.preOnly, preDone = c.preDone;
+    const float frameMs = c.frameMs; float* const basis = c.basis; std::uint8_t (&input)[8] = c.input;
+    const int chunkRem = c.chunkRem; bool& a4Skip = c.a4Skip;
+    const bool s_a4First = A4First(); const bool s_fixL = FixL();
+    static const bool s_fixLFrameMs = (std::getenv("MASHED_D2CHUNK_FRAMEMS") != nullptr);
     // [car2pickup 2026-10-13] the +0xaec A4 gate (A4ContactGate above). The original runs it
     // in its per-vehicle A4 loop, for EVERY car, before any car's substeps; a contact that a
     // car takes in this frame's substeps therefore cannot touch this frame's gate. The port
@@ -1543,26 +1657,6 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     // (opt-in MASHED_SPEED_REFRESH=1, it moves the D2 metrics out of bounds); by default
     // the non-skipped-frame +0x9e4 is still A6a's value. `MASHED_NO_A4_CONTACT_GATE=1` disables the gate.
     static const bool s_noA4Gate = (std::getenv("MASHED_NO_A4_CONTACT_GATE") != nullptr);
-    // [d2bsp] fix L (MASHED_D2CHUNK=1): the OUTER chunk loop of FUN_00470c70. The original runs
-    //     0x00470f50..0x00470f61  local_24 = min(remaining, 0x32)
-    //     per-vehicle +0xaec gate (-= local_24) and FUN_00470670(car, (float)local_24, ..) (0x0047105a fild)
-    //     0x004710a1..0x004710da  the +0x9e4 / +0x9e8 refresh loop
-    //     0x00471106..0x00471141  substeps over local_24
-    //     0x00471143..0x00471151  remaining -= local_24; if (remaining) goto 0x00470f50
-    // with remaining = param_1, which its only caller pushes as the constant 0x32 (0x0042c980 ->
-    // 0x00425a8d), so the loop makes one pass there. The port's budget is remI = (int)(dt*3000) = 50.
-    // Under fix L, A4 receives (float)local_24 = 50.0f as the original's does; without it the port
-    // keeps frameMs = 50.0000038f (one ulp above). MASHED_D2CHUNK_FRAMEMS=1 (diagnostic) runs the loop
-    // with frameMs kept for A4. Stated residual: the original interleaves all 16 cars per chunk, the
-    // port steps one car at a time; identical while remI <= 0x32. DEFAULT ON (PREREG_d2bsp.md
-    // amendment 3, RESULT_d2bsp.md), opt-out `MASHED_NO_D2CHUNK=1`; `MASHED_D2CHUNK` is still accepted
-    // and changes nothing.
-    static const bool s_fixL = [] {
-        const char* n = std::getenv("MASHED_NO_D2CHUNK");
-        return !(n && n[0] == '1');
-    }();
-    static const bool s_fixLFrameMs = (std::getenv("MASHED_D2CHUNK_FRAMEMS") != nullptr);
-    bool a4Skip = false;
     // [d2lateral 2026-10-16] MASHED_D2LAT_REFRESH (default ON since d2ref 2026-10-17): the refresh below on EVERY
     // frame, with 0x004c3ac0's own arithmetic (float (x*x + y*y) + z*z, then the RW LUT sqrt,
     // Math::LutLength). Measured on the original's first Training wall impact: the fixup
@@ -1576,31 +1670,8 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         const char* no = std::getenv("MASHED_NO_D2LAT_REFRESH");
         return !(no && no[0] && no[0] != '0');
     }();
-
-    // [d2settle D0-a] slot 0's first 6 steps (settle included), DIAGNOSTIC ONLY, default-OFF.
-    static const char* const s_settleDiag = std::getenv("MASHED_SETTLE_DIAG");
-    static int s_sdN = 0;
-    const bool sdOn = s_settleDiag && slot == 0 && s_sdN < 6;
-    if (sdOn) ++s_sdN;
-    g_sdSolverLog = sdOn ? s_settleDiag : nullptr;
-    auto sdLine = [&](const char* tag) {
-        if (!sdOn) return;
-        if (std::FILE* lf = std::fopen(s_settleDiag, "a")) {
-            std::fprintf(lf, "STEP n=%d settle=%d %s vel=(%.9g,%.9g,%.9g) v9e4=%.9g v9e8=%.9g "
-                             "loads=(%.9g,%.9g,%.9g,%.9g) gnd=%08x c9ec=%d b20=%d skip=%d\n",
-                         s_sdN, g_inSpawnSettle ? 1 : 0, tag,
-                         F(r, off::kVelocity + 0), F(r, off::kVelocity + 4), F(r, off::kVelocity + 8),
-                         F(r, off::kSpeed), F(r, 0x9e8),
-                         F(r, 0x210), F(r, 0x2d4), F(r, 0x398), F(r, 0x45c),
-                         static_cast<unsigned>(I(r, 0x9e0)), I(r, 0x9ec), I(r, 0xb20), a4Skip ? 1 : 0);
-            std::fclose(lf);
-        }
-    };
-
-    int chunkRem = (int)frameMs;                                          // param_1
-    for (bool chunkFirst = true; s_fixL ? (chunkRem != 0) : chunkFirst; chunkFirst = false) {
-    const int chunkL = (chunkRem < 0x32) ? chunkRem : 0x32;               // 0x00470f50..0x00470f61
-    const float a4Dt = (s_fixL && !s_fixLFrameMs) ? (float)chunkL : frameMs;   // 0x0047105a
+    const int chunkL = c.chunkL = (chunkRem < 0x32) ? chunkRem : 0x32;               // 0x00470f50..0x00470f61
+    const float a4Dt = c.a4Dt = (s_fixL && !s_fixLFrameMs) ? (float)chunkL : frameMs;   // 0x0047105a
     a4Skip = false;
     if (preDone) {
         a4Skip = g_a4PreSkip[slot];   // [a4order] the gate (and a skipped frame's refresh) ran in the pre-phase
@@ -1629,7 +1700,7 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
             F(r, 0x9e8)       = Vec3Mag3(reinterpret_cast<const float*>(r + 0x9bc));          // 0x004710d5/da
         }
     }
-    sdLine("preA4");
+    SdLine(c, "preA4");
     // [d2settle fix C 2026-10-16] the original's per-frame speed refresh, now on EVERY frame.
     // FUN_00470c70 runs it for all 16 cars after the A4 loop and before the substep loop
     // (disassembled from MASHED.exe.unpatched):
@@ -1682,7 +1753,7 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         // reads the cache its own car's SolveWheelContacts set in the same call.
         // [a4order] port-only (it reads the solver cache of the car that stepped last), so it stays next to this
         // car's substeps: not in the pre-phase, still in the real step.
-        if (!PosModelContacts() && !preOnly) ReassertContacts(r, g_cShared);
+        if (!PosModelContacts() && !preOnly) ReassertContacts(r, *c.cs);
         if (preDone) {
             // [a4order] the refresh below belongs to the frame boundary (0x004710a1..0x004710da); made in the pre-phase
         } else if (s_d2latRefresh && !a4Skip && (I(r, 0x4) != 0 || I(r, 0x10) == 1)) {   // 0x004710b0..ba
@@ -1693,11 +1764,43 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
             F(r, 0x9e8)       = Vec3Mag3(reinterpret_cast<const float*>(r + 0x9bc));          // 0x004710da
         }
     }
-    sdLine("postA4");
+    SdLine(c, "postA4");
     if (preOnly) {   // [a4order] the pre-phase ends here; this car's substeps run in its own StepCar
         if (s_a4First) { g_a4PreDone[slot] = true; g_a4PreSkip[slot] = a4Skip; }
-        return;
+        return false;
     }
+    // [D2 attempt 20 STEP 5 / U-9160] THE SUBSTEP BUDGET IS INTEGER, as the original's is.
+    // Transcribed from MASHED.exe.unpatched (attempt 19 RESULT.md section 2):
+    //   0x00470f50..0x00470f61  chunk = min(remaining, 0x32)        INTEGER
+    //   0x00471110 / 0x00471117 sub   = min(rem, 0x19)              INTEGER
+    //   0x00471126 fild [esp+0x20]     -> (float)sub, INTEGER-sourced
+    //   0x0047113f / 0x00471141 rem -= sub; while (rem != 0)
+    // so 50 -> 25, 25 is EXACTLY TWO substeps. The float form this replaces
+    // (`while (remMs > 0.0f)` over `frameMs = dt*3000.0f = 50.0000038f`) ran THREE --
+    // 25.000000, 25.000000 and a 0.0000038147 ms residue step, measured at nsub {3: 1626}
+    // on verify/d2_wheelstate_20261002/a1. The original's own count, measured this attempt
+    // with scenario_launch.py --wheelstate-probe-count: 4672 solver calls over 2321 frames
+    // = 2.012/frame, histogram {2: 2308, 3: 24}.
+    //
+    // The original's OUTER chunk loop 0x00471143..0x00471151 is fix L above (default OFF);
+    // without it this block runs once with chunkI = min(remI, 0x32).
+    const int remI   = (int)frameMs;                              // integer ms budget
+    c.chunkI = s_fixL ? chunkL : ((remI < 0x32) ? remI : 0x32);   // 0x00470f50..0x00470f61
+    c.guard = 0;
+    c.d2sSub = 0;   // [D2 attempt 19] substep ordinal for the diagnostic only
+    c.remMs = (float)c.chunkI;   // reported on the diagnostic lines only
+    return true;
+}
+
+static bool SubstepDue(StepCtx& c) { return c.chunkI > 0 && c.guard++ < 64; }   // the loop test, 0x00471141
+
+// One substep of one car: FUN_004709a0's per-car body (0x004709f0..0x00470c41).
+static void StepSubstep(StepCtx& c) {
+    const int slot = c.slot; PlayerCarIO& io = *c.io; unsigned char* const r = c.r; float* const basis = c.basis;
+    float (&posDelta)[3] = c.posDelta; std::uint8_t (&input)[8] = c.input; const bool posTrans = c.posTrans;
+    const bool sdOn = c.sdOn; const char* const s_settleDiag = SettleDiagPath(); const int s_sdN = g_sdN;
+    int& chunkI = c.chunkI; const int guard = c.guard; int& d2sSub = c.d2sSub; float& remMs = c.remMs;
+    g_sdSolverLog = sdOn ? s_settleDiag : nullptr;   // [d2settle D0-a] this car's window (StepBegin sets the same)
 
     // [U-9154 2026-09-29] The car<->WORLD contact chain. The original's substep body
     // (FUN_004709a0, 0x00470ab0..0x00470b0b, disassembled from MASHED.exe.unpatched) is
@@ -1744,13 +1847,12 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     // is 1.017098 median (n=211) where the original's is 1.000000 (n=23, 0 samples
     // deviating by more than 1e-3), so something in the port's substep moves the velocity
     // after +0x9e4 was written. This log says what, and by how much.
-    static const char* const s_svpLog = std::getenv("MASHED_SUBSTEP_VELPROBE");
-    static int s_svpLines = 0;
     // [D2 section 22.3] One emitter, called from BOTH exits of the retry loop, so the
     // contact substeps cannot be skipped the way section 22.2's version skipped them.
     // `contacted` is -1 when the world-contact block did not run at all, which keeps
     // "no contact scan" distinguishable from "scan said zero" -- memory
     // `all-zero-field-reads-prove-nothing-on-their-own`.
+    const char* const s_svpLog = SvpLogPath(); int& s_svpLines = g_svpLines;
     auto svpEmit = [&](int pass_, float dt_, const float* v, const unsigned* w0,
                        int contacted_, int fixups_) {
         if (!s_svpLog || s_svpLines >= 4000) return;
@@ -1770,309 +1872,290 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         }
         ++s_svpLines;
     };
+    const int subI = (chunkI < kMaxSubstep) ? chunkI : kMaxSubstep;  // 0x00471110/17
+    float chunkMs = (float)subI;                                     // 0x00471126 fild
+    D2Sink::Mark("sub_top", r, d2sSub, 0, chunkMs, remMs);
 
-    // [D2 attempt 20 STEP 5 / U-9160] THE SUBSTEP BUDGET IS INTEGER, as the original's is.
-    // Transcribed from MASHED.exe.unpatched (attempt 19 RESULT.md section 2):
-    //   0x00470f50..0x00470f61  chunk = min(remaining, 0x32)        INTEGER
-    //   0x00471110 / 0x00471117 sub   = min(rem, 0x19)              INTEGER
-    //   0x00471126 fild [esp+0x20]     -> (float)sub, INTEGER-sourced
-    //   0x0047113f / 0x00471141 rem -= sub; while (rem != 0)
-    // so 50 -> 25, 25 is EXACTLY TWO substeps. The float form this replaces
-    // (`while (remMs > 0.0f)` over `frameMs = dt*3000.0f = 50.0000038f`) ran THREE --
-    // 25.000000, 25.000000 and a 0.0000038147 ms residue step, measured at nsub {3: 1626}
-    // on verify/d2_wheelstate_20261002/a1. The original's own count, measured this attempt
-    // with scenario_launch.py --wheelstate-probe-count: 4672 solver calls over 2321 frames
-    // = 2.012/frame, histogram {2: 2308, 3: 24}.
+    // 0x00470ab0's retry needs the substep to be REDOABLE. The original gets that
+    // for free: A9 writes dst = src + delta into the OTHER half of the +0x928
+    // double buffer, so re-running it recomputes the step from the same source with
+    // the corrected velocity. The port's position/basis advance is cumulative in
+    // place, so snapshot what the body mutates and restore it before a retry.
+    // The record is deliberately NOT snapshotted — the fixup's velocity write is
+    // exactly what the retry is supposed to see, as in the original.
+    float savedPos[3]   = { io.pos[0], io.pos[1], io.pos[2] };
+    float savedDelta[3] = { posDelta[0], posDelta[1], posDelta[2] };
+    float savedBasis[16];
+    std::memcpy(savedBasis, basis, sizeof(savedBasis));
+    const float savedYaw = io.yaw;
+    bool committed = false;   // [u9152] the substep reached a `break` (0x00470c31's swap), not 0x00470ab3's exit
+
+    for (int pass = 0; pass < 2; ++pass) {   // 0x00470ab0: `cmp ebp,2`
+    if (pass != 0) {
+        io.pos[0] = savedPos[0]; io.pos[1] = savedPos[1]; io.pos[2] = savedPos[2];
+        posDelta[0] = savedDelta[0]; posDelta[1] = savedDelta[1]; posDelta[2] = savedDelta[2];
+        std::memcpy(basis, savedBasis, sizeof(savedBasis));
+        io.yaw = savedYaw;
+    }
+
+    // --- FUN_0046e9e0 (0x0046e9e0) runs FIRST in the original's substep
+    // (FUN_004709a0 order: FUN_0046e9e0 -> FUN_0046f6c0 -> FUN_00469aa0), so
+    // position and orientation advance on the velocity/omega state the previous
+    // substep left in the record. Keep that order.
+
+    // POSITION, from the velocity VECTOR (0x0046e9fe / 0x0046ea0a / 0x0046ea14):
+    //   inc = dtMs * _DAT_005cc948 * _DAT_005cea80 * (+0x9b0,+0x9b4,+0x9b8)
+    // DEVIATION, STATED: the original zeroes this increment unless
+    // FUN_0040e350() is 6, 0xb or 0xa (gate 0x0046ea1e..0x0046ea4c). The
+    // standalone's Fi_GameMode() is a STUB returning 0
+    // (ForceIntegratorStubs.cpp:49), so consuming that gate here would zero all
+    // motion unconditionally — it would be reading a stub, not the original's
+    // mode. The gate is therefore not applied; this code path only runs during
+    // a race, which is one of the three passing modes. Porting FUN_0040e350 is
+    // tracked separately (it also gates RubberBandGate and Integrate2's mode-7
+    // branch, so it is not a one-line change).
+    {
+        const float k = chunkMs * kPosDtK * kSuspDtK;
+        posDelta[0] += k * F(r, off::kVelocity + 0);
+        posDelta[1] += k * F(r, off::kVelocity + 4);
+        posDelta[2] += k * F(r, off::kVelocity + 8);
+        // Advance io.pos within the frame so the contact solve below sees the
+        // position this substep produced, as the original's FUN_0046f6c0 does
+        // (it reads the translation FUN_0046e9e0 just wrote). The caller
+        // re-seeds io.pos from its own car_pos_ every frame.
+        io.pos[0] += k * F(r, off::kVelocity + 0);
+        io.pos[2] += k * F(r, off::kVelocity + 8);
+        // [d2posmodel] fix B part 3: y too. The original stores all three components
+        // (0x0046ea5f / 0x0046ea69 / 0x0046ea73). Without part 3 the caller snaps y to
+        // the ground every frame.
+        if (posTrans) io.pos[1] += k * F(r, off::kVelocity + 4);
+    }
+
+    // ORIENTATION: omega from the wheel-force arm (record +0x10 == 0, which the
+    // Ghidra pass established is the arm a normal driving car takes), then the
+    // first-order dR = omega x R row integration + ortho-normalize.
+    {
+        float w[3];
+        BodyOrient_OmegaFromSteer(r, chunkMs, input, w);
+        BodyOrient_IntegrateStep(basis, w);
+        io.yaw = BodyOrient_Heading(basis);
+        if (!FwdAt()) {   // [u9758] the original writes no +0x9d4 inside the substep loop
+            F(r, off::kForward + 0) = std::cos(io.yaw);
+            F(r, off::kForward + 8) = std::sin(io.yaw);
+        }
+    }
+    D2Sink::Mark("sub_orient", r, d2sSub, pass, chunkMs, remMs);   // 0x0046e9e0
+
+    // WS-A contacts: run the REAL ported wheel-contact solver (FUN_0046f6c0) over the
+    // track tris instead of the flat SetGrounded substitute -> per-wheel slope normals
+    // (+0x200) + per-wheel grounding (-> A5's mass/grounded_count load = weight transfer).
+    const double tp0 = prof::g_on ? prof::NowMs() : 0.0;
+    // [D2 section 22.2] substep velocity probe, points 1 and 2 (substep top / just
+    // before the wheel solver). Held in locals; emitted after the fixup below.
+    float svpV[3] = { 0.f, 0.f, 0.f };
+    unsigned svpW0[3] = { 0u, 0u, 0u };
+    int svpFixups = 0;
+    bool svpEmitted = false;
+    if (s_svpLog && s_svpLines < 4000) {
+        svpV[0] = SvpVelMag(r);
+        svpV[1] = svpV[0];
+        svpW0[0] = Collision::g_wcsVelWrites[0];
+        svpW0[1] = Collision::g_wcsVelWrites[1];
+        svpW0[2] = Collision::g_wcsVelWrites[2];
+    }
+    // basis + 4 = the `up` row of the integrated body basis (BodyOrient_Init's
+    // m[4..6]); it is what record +0x9c8/+0x9cc/+0x9d0 holds on the original.
+    SolveWheelContacts(r, io, guard, basis + 4, *c.cs);
+    D2Sink::Mark("sub_wheel", r, d2sSub, pass, chunkMs, remMs);    // 0x0046f6c0
+    if (prof::g_on) { prof::f_probeMs += prof::NowMs() - tp0; ++prof::f_substeps; }
+
+    // --- 0x00470ae8 / 0x00470aef / 0x00470afe: the car<->world contact pair ---
+    if (!s_worldContact) { committed = true; break; }
+    // Publish the integrated basis + the true world position into the +0x928 ring
+    // the scan transforms the 18 body contact points by. AFTER the wheel solver,
+    // because the wheel solver's broadphase reads the ring's +0x30 as its query
+    // centre and SolveWheelContacts deliberately seats that at ground level.
+    if (s_svpLog && s_svpLines < 4000) svpV[2] = SvpVelMag(r);   // after the wheel solver
+    SyncContactRingMatrix(r, basis, io.pos);
+    int* const wcSelf = reinterpret_cast<int*>(r);
+    const int contacted = Collision::VehicleContactHistoryUpdate(wcSelf); // 0x00470ae8
+    auto sdSub = [&](const char* tag) {   // [d2settle D0-a] diagnostic only
+        if (!sdOn) return;
+        if (std::FILE* lf = std::fopen(s_settleDiag, "a")) {
+            std::fprintf(lf, "SUB n=%d %s pass=%d chunk=%g pd=(%.9g,%.9g,%.9g) vel=(%.9g,%.9g,%.9g) "
+                             "c9ec=%d ret=%d loads=(%.9g,%.9g,%.9g,%.9g)\n",
+                         s_sdN, tag, pass, chunkMs, posDelta[0], posDelta[1], posDelta[2],
+                         F(r, off::kVelocity + 0), F(r, off::kVelocity + 4), F(r, off::kVelocity + 8),
+                         I(r, 0x9ec), contacted, F(r, 0x210), F(r, 0x2d4), F(r, 0x398), F(r, 0x45c));
+            std::fclose(lf);
+        }
+    };
+    sdSub("scan");
+    if (I(r, 0x9ec) != 0) {                                              // 0x00470aef
+        const float pv[3] = { F(r, off::kVelocity + 0), F(r, off::kVelocity + 4),
+                              F(r, off::kVelocity + 8) };
+        Collision::VehicleContactFixup(wcSelf);                          // 0x00470afe
+        sdSub("fixup");
+        ++svpFixups;   // [D2 section 22.3] fixups this substep, for the cadence count
+        if (s_wcLog && s_wcLines < 4000) {
+            if (std::FILE* lf = std::fopen(s_wcLog, "a")) {
+                std::fprintf(lf,
+                    "slot=%d pass=%d n=%d ret=%d pos=(%.4f,%.4f,%.4f) "
+                    "vel=(%.4f,%.4f,%.4f)->(%.4f,%.4f,%.4f)",
+                    slot, pass, I(r, 0x9ec), contacted,
+                    io.pos[0], io.pos[1], io.pos[2],
+                    pv[0], pv[1], pv[2],
+                    F(r, off::kVelocity + 0), F(r, off::kVelocity + 4),
+                    F(r, off::kVelocity + 8));
+                // which of the 18 slots reported, and with what normal/depth.
+                // Slot base S = 0x4a8 + i*0x40: +0x00 depth, +0x04 key (-1 empty),
+                // +0x08..+0x10 normal, +0x38 magnitude.
+                for (int si = 0; si < 0x12; ++si) {
+                    const std::size_t S = 0x4a8 + (std::size_t)si * 0x40;
+                    if (I(r, S + 4) == -1) continue;
+                    // [U-9156 2026-09-30] +0x2c..+0x34 is the contact ARM and
+                    // +0x14 its per-slot scale. 0x0046ef70's torque axis is
+                    // (0, a.z, -a.y) with a = normalize(arm) when the normal is
+                    // (1,0,0) (D2_REOPEN §20.5), so arm.y/arm.z is the quantity
+                    // that has to match 3.961 at the first Training contact.
+                    const float ay = F(r, S + 0x30), az = F(r, S + 0x34);
+                    std::fprintf(lf, " | s%d d=%.4f n=(%.3f,%.3f,%.3f) m=%.1f"
+                                     " arm=(%.6f,%.6f,%.6f) sl=%.6f ayz=%.4f",
+                        si, F(r, S + 0), F(r, S + 8), F(r, S + 0xc),
+                        F(r, S + 0x10), F(r, S + 0x38),
+                        F(r, S + 0x2c), ay, az, F(r, S + 0x14),
+                        (az != 0.f) ? (ay / az) : 0.f);
+                }
+                std::fprintf(lf, "\n");
+                std::fclose(lf);
+            }
+            ++s_wcLines;
+        }
+        // [D2 section 22.3] CORRECTED emit point. It used to sit BELOW the `continue`
+        // on the next line, so every substep that CONTACTED was skipped and the log
+        // read `c9ec == 0` on 4000 of 4000 lines while `world_contact.log` from the
+        // same run held 211 fixups. Emitting here, before the retry `continue`, is
+        // what makes the contact substeps visible at all.
+        svpEmit(pass, chunkMs, svpV, svpW0, contacted, svpFixups);
+        svpEmitted = true;
+        if (contacted != 0) continue;    // 0x00470b06/0x00470b0a: re-run the substep
+    }
+    // Not-contacted path (and the `!s_worldContact` A/B revert never reaches here,
+    // it breaks out above): emit once so a non-contact substep still appears.
+    if (!svpEmitted) svpEmit(pass, chunkMs, svpV, svpW0, -1, svpFixups);
+
+    // --- [PREREG_CARCAR leg 3] the car<->car inner loop, 0x00470b0d..0x00470c2b ---
+    // FUN_004709a0's outer vehicle loop reaches its j = i+1..15 inner loop ONLY after
+    // the car<->world half settles -- its `while(true)` breaks on scan==0. In the
+    // port that is exactly this fall-through to the `break` below: the contacted
+    // `continue` above re-ran the substep, and the third original path (9ec!=0 AND
+    // scan!=0) already matches that `continue`. So the pair loop belongs here, and a
+    // car<->car contact re-runs the whole substep via the same `continue`, matching
+    // the original's `do { ... } while (!bVar4)`.
     //
-    // The original's OUTER chunk loop 0x00471143..0x00471151 is fix L above (default OFF);
-    // without it this block runs once with chunkI = min(remI, 0x32).
-    const int remI   = (int)frameMs;                              // integer ms budget
-    int       chunkI = s_fixL ? chunkL : ((remI < 0x32) ? remI : 0x32);   // 0x00470f50..0x00470f61
-    int guard = 0;
-    int d2sSub = 0;   // [D2 attempt 19] substep ordinal for the diagnostic only
-    float remMs = (float)chunkI;   // reported on the diagnostic lines only
-    while (chunkI > 0 && guard++ < 64) {
-        const int subI = (chunkI < kMaxSubstep) ? chunkI : kMaxSubstep;  // 0x00471110/17
-        float chunkMs = (float)subI;                                     // 0x00471126 fild
-        D2Sink::Mark("sub_top", r, d2sSub, 0, chunkMs, remMs);
+    // ABI, from the only call site 0x00470bcd (re/analysis/CARCAR_CALLSITE_2026-10-05.md
+    // section 2): ECX = &records[i] = SELF car = param_1 (vehB); EAX = &records[j] =
+    // OTHER car = in_EAX (vehA). So the call is VehicleCarCarContact(rec(j), r, pass)
+    // -- OTHER CAR FIRST. param_2 (the j index) is unused; param_3 is the pass, and
+    // the body returns `pass == 0`, so a contact triggers a retry only on pass 0.
+    if (s_carCarContact) {
+        const int   mode = Fi_GameMode();                  // FUN_0040e350 @0x004709a0
+        const float radI = F(r, 0x4a4);                    // recI radius (+0x4a4)
+        const int   selI = I(r, 0x9a8);                    // recI active ring slot
+        const float* cI  = reinterpret_cast<const float*>(
+                               r + (std::size_t)selI * 0x40 + 0x958);
+        bool anyCarCar = false;
+        int  ccPass    = pass;                             // iVar10; ++ per contact
+        for (int j = slot + 1; j < 16; ++j) {              // 0x00470b11/0x00470b12
+            if (j >= g_participantCount) continue;         // 0x00470b23
+            unsigned char* rj = rec(j);
+            if (!(I(rj, 0x4) != 0 || I(rj, 0x10) == 1)) continue;  // 0x00470b2d/0x00470b37
+            const float radSum = (F(rj, 0x4a4) + radI) * kCarCarProx; // 0x00470b44/50/70
+            const int   selJ = I(rj, 0x9a8);
+            const float* cJ  = reinterpret_cast<const float*>(
+                                   rj + (std::size_t)selJ * 0x40 + 0x958);
+            const float dx = cI[0] - cJ[0], dy = cI[1] - cJ[1], dz = cI[2] - cJ[2];
+            if (!(dx * dx + dy * dy + dz * dz < radSum * radSum)) continue;  // 0x00470b76..b9
+            if (mode != 6 && mode != 7 && mode != 10 && mode != 0xb) continue; // 0x00470baf..c1
+            int* const recJ = reinterpret_cast<int*>(rj);  // in_EAX (other)
+            int* const recI = reinterpret_cast<int*>(r);   // param_1 (self)
+            // [u9778] MASHED_CARCAR_RECDUMP=<path> (diagnostic, default OFF): the port twin of scenario_launch.py
+            // --carcar-probe, one TSV row per call: race frame, 0, self, other, pass, both records at entry, ret,
+            // both records at leave (hex, kRec bytes each).
+            static const char* const s_ccRec = std::getenv("MASHED_CARCAR_RECDUMP");
+            static int s_ccRecRows = 0;
+            const bool ccRecOn = s_ccRec && s_ccRecRows < 400;
+            static unsigned char s_ccIn[2][kRec];
+            if (ccRecOn) { std::memcpy(s_ccIn[0], r, kRec); std::memcpy(s_ccIn[1], rj, kRec); }
+            const bool ret = Collision::VehicleCarCarContact(recJ, recI, ccPass); // 0x00469df0
+            if (ccRecOn) {
+                if (std::FILE* lf = std::fopen(s_ccRec, s_ccRecRows ? "a" : "w")) {
+                    auto hx = [lf](const unsigned char* p) {
+                        std::fputc('\t', lf);
+                        for (std::size_t b = 0; b < kRec; ++b) std::fprintf(lf, "%02x", p[b]);
+                    };
+                    std::fprintf(lf, "%d\t0\t%d\t%d\t%d", g_recDumpFrame, slot, j, ccPass);
+                    hx(s_ccIn[0]); hx(s_ccIn[1]);
+                    std::fprintf(lf, "\t%d", (int)ret);
+                    hx(r); hx(rj);
+                    std::fputc('\n', lf);
+                    std::fclose(lf);
+                }
+                ++s_ccRecRows;
+            }
+            // [d3bB2] the type-4 ring push at the tail of 0x00469df0 (default OFF, MASHED_AI_CONTACT_EVENT):
+            // every contact, unless FUN_0040e350() is 1..5 (0x0046ae97..0x0046aec3 / 0x0046b04c..0x0046b078)
+            if (Collision::g_ccLastContact && Ai::Ai_ContactEventEnabled() && !(mode >= 1 && mode <= 5))
+                Ai::Ai_ContactEventPush(j, slot);   // pair (vehA = other j, vehB = self i)
+            if (s_ccLog && s_ccLines < 8000) {
+                if (std::FILE* lf = std::fopen(s_ccLog, "a")) {
+                    std::fprintf(lf,
+                        "i=%d j=%d pass=%d ret=%d cI=(%.4f,%.4f,%.4f) "
+                        "cJ=(%.4f,%.4f,%.4f) radSum=%.4f noopp=%d fr=%d\n",
+                        slot, j, ccPass, (int)ret,
+                        cI[0], cI[1], cI[2], cJ[0], cJ[1], cJ[2], radSum,
+                        (g_participantCount <= 1) ? 1 : 0, g_recDumpFrame);
+                    std::fclose(lf);
+                }
+                ++s_ccLines;
+            }
+            if (ret) {                                     // 0x00470bd5 test eax,eax
+                ++ccPass;                                  // 0x00470bde inc ebp
+                anyCarCar = true;                          // 0x00470be2 bVar4=false
+                // 0x00470bd9..0x00470c0f: FUN_00467300 (the 1-player collision-win
+                // event, FUN_00413c70 x4) is gated DAT_007f0fd0==1 and is OMITTED --
+                // not ported, and g_playerCount != 1 on any race recipe, so it is
+                // inert here. RVA cited.
+            }
+        }
+        if (anyCarCar) continue;                           // 0x00470c25/0x00470c2b: re-run
+    }
 
-        // 0x00470ab0's retry needs the substep to be REDOABLE. The original gets that
-        // for free: A9 writes dst = src + delta into the OTHER half of the +0x928
-        // double buffer, so re-running it recomputes the step from the same source with
-        // the corrected velocity. The port's position/basis advance is cumulative in
-        // place, so snapshot what the body mutates and restore it before a retry.
-        // The record is deliberately NOT snapshotted — the fixup's velocity write is
-        // exactly what the retry is supposed to see, as in the original.
-        float savedPos[3]   = { io.pos[0], io.pos[1], io.pos[2] };
-        float savedDelta[3] = { posDelta[0], posDelta[1], posDelta[2] };
-        float savedBasis[16];
-        std::memcpy(savedBasis, basis, sizeof(savedBasis));
-        const float savedYaw = io.yaw;
-        bool committed = false;   // [u9152] the substep reached a `break` (0x00470c31's swap), not 0x00470ab3's exit
-
-        for (int pass = 0; pass < 2; ++pass) {   // 0x00470ab0: `cmp ebp,2`
-        if (pass != 0) {
+    committed = true;
+    break;
+    }   // end retry
+    // [u9152] MASHED_RING_DBUF: a committed substep swaps the selectors (0x00470c31..0x00470c41). Retries that ran
+    // out leave 0x00470ab3 for 0x00470c47 with no swap, so the next substep integrates from the same src half:
+    // under MASHED_RING_DBUF_DISCARD the port drops this substep's pose to match (velocity writes stay, as there).
+    if (RingDbuf()) {
+        if (committed) {
+            RingSwapSelectors(r);
+        } else if (RingDbufDiscard()) {
             io.pos[0] = savedPos[0]; io.pos[1] = savedPos[1]; io.pos[2] = savedPos[2];
             posDelta[0] = savedDelta[0]; posDelta[1] = savedDelta[1]; posDelta[2] = savedDelta[2];
             std::memcpy(basis, savedBasis, sizeof(savedBasis));
             io.yaw = savedYaw;
         }
-
-        // --- FUN_0046e9e0 (0x0046e9e0) runs FIRST in the original's substep
-        // (FUN_004709a0 order: FUN_0046e9e0 -> FUN_0046f6c0 -> FUN_00469aa0), so
-        // position and orientation advance on the velocity/omega state the previous
-        // substep left in the record. Keep that order.
-
-        // POSITION, from the velocity VECTOR (0x0046e9fe / 0x0046ea0a / 0x0046ea14):
-        //   inc = dtMs * _DAT_005cc948 * _DAT_005cea80 * (+0x9b0,+0x9b4,+0x9b8)
-        // DEVIATION, STATED: the original zeroes this increment unless
-        // FUN_0040e350() is 6, 0xb or 0xa (gate 0x0046ea1e..0x0046ea4c). The
-        // standalone's Fi_GameMode() is a STUB returning 0
-        // (ForceIntegratorStubs.cpp:49), so consuming that gate here would zero all
-        // motion unconditionally — it would be reading a stub, not the original's
-        // mode. The gate is therefore not applied; this code path only runs during
-        // a race, which is one of the three passing modes. Porting FUN_0040e350 is
-        // tracked separately (it also gates RubberBandGate and Integrate2's mode-7
-        // branch, so it is not a one-line change).
-        {
-            const float k = chunkMs * kPosDtK * kSuspDtK;
-            posDelta[0] += k * F(r, off::kVelocity + 0);
-            posDelta[1] += k * F(r, off::kVelocity + 4);
-            posDelta[2] += k * F(r, off::kVelocity + 8);
-            // Advance io.pos within the frame so the contact solve below sees the
-            // position this substep produced, as the original's FUN_0046f6c0 does
-            // (it reads the translation FUN_0046e9e0 just wrote). The caller
-            // re-seeds io.pos from its own car_pos_ every frame.
-            io.pos[0] += k * F(r, off::kVelocity + 0);
-            io.pos[2] += k * F(r, off::kVelocity + 8);
-            // [d2posmodel] fix B part 3: y too. The original stores all three components
-            // (0x0046ea5f / 0x0046ea69 / 0x0046ea73). Without part 3 the caller snaps y to
-            // the ground every frame.
-            if (posTrans) io.pos[1] += k * F(r, off::kVelocity + 4);
-        }
-
-        // ORIENTATION: omega from the wheel-force arm (record +0x10 == 0, which the
-        // Ghidra pass established is the arm a normal driving car takes), then the
-        // first-order dR = omega x R row integration + ortho-normalize.
-        {
-            float w[3];
-            BodyOrient_OmegaFromSteer(r, chunkMs, input, w);
-            BodyOrient_IntegrateStep(basis, w);
-            io.yaw = BodyOrient_Heading(basis);
-            if (!FwdAt()) {   // [u9758] the original writes no +0x9d4 inside the substep loop
-                F(r, off::kForward + 0) = std::cos(io.yaw);
-                F(r, off::kForward + 8) = std::sin(io.yaw);
-            }
-        }
-        D2Sink::Mark("sub_orient", r, d2sSub, pass, chunkMs, remMs);   // 0x0046e9e0
-
-        // WS-A contacts: run the REAL ported wheel-contact solver (FUN_0046f6c0) over the
-        // track tris instead of the flat SetGrounded substitute -> per-wheel slope normals
-        // (+0x200) + per-wheel grounding (-> A5's mass/grounded_count load = weight transfer).
-        const double tp0 = prof::g_on ? prof::NowMs() : 0.0;
-        // [D2 section 22.2] substep velocity probe, points 1 and 2 (substep top / just
-        // before the wheel solver). Held in locals; emitted after the fixup below.
-        float svpV[3] = { 0.f, 0.f, 0.f };
-        unsigned svpW0[3] = { 0u, 0u, 0u };
-        int svpFixups = 0;
-        bool svpEmitted = false;
-        if (s_svpLog && s_svpLines < 4000) {
-            svpV[0] = SvpVelMag(r);
-            svpV[1] = svpV[0];
-            svpW0[0] = Collision::g_wcsVelWrites[0];
-            svpW0[1] = Collision::g_wcsVelWrites[1];
-            svpW0[2] = Collision::g_wcsVelWrites[2];
-        }
-        // basis + 4 = the `up` row of the integrated body basis (BodyOrient_Init's
-        // m[4..6]); it is what record +0x9c8/+0x9cc/+0x9d0 holds on the original.
-        SolveWheelContacts(r, io, guard, basis + 4, g_cShared);
-        D2Sink::Mark("sub_wheel", r, d2sSub, pass, chunkMs, remMs);    // 0x0046f6c0
-        if (prof::g_on) { prof::f_probeMs += prof::NowMs() - tp0; ++prof::f_substeps; }
-
-        // --- 0x00470ae8 / 0x00470aef / 0x00470afe: the car<->world contact pair ---
-        if (!s_worldContact) { committed = true; break; }
-        // Publish the integrated basis + the true world position into the +0x928 ring
-        // the scan transforms the 18 body contact points by. AFTER the wheel solver,
-        // because the wheel solver's broadphase reads the ring's +0x30 as its query
-        // centre and SolveWheelContacts deliberately seats that at ground level.
-        if (s_svpLog && s_svpLines < 4000) svpV[2] = SvpVelMag(r);   // after the wheel solver
-        SyncContactRingMatrix(r, basis, io.pos);
-        int* const wcSelf = reinterpret_cast<int*>(r);
-        const int contacted = Collision::VehicleContactHistoryUpdate(wcSelf); // 0x00470ae8
-        auto sdSub = [&](const char* tag) {   // [d2settle D0-a] diagnostic only
-            if (!sdOn) return;
-            if (std::FILE* lf = std::fopen(s_settleDiag, "a")) {
-                std::fprintf(lf, "SUB n=%d %s pass=%d chunk=%g pd=(%.9g,%.9g,%.9g) vel=(%.9g,%.9g,%.9g) "
-                                 "c9ec=%d ret=%d loads=(%.9g,%.9g,%.9g,%.9g)\n",
-                             s_sdN, tag, pass, chunkMs, posDelta[0], posDelta[1], posDelta[2],
-                             F(r, off::kVelocity + 0), F(r, off::kVelocity + 4), F(r, off::kVelocity + 8),
-                             I(r, 0x9ec), contacted, F(r, 0x210), F(r, 0x2d4), F(r, 0x398), F(r, 0x45c));
-                std::fclose(lf);
-            }
-        };
-        sdSub("scan");
-        if (I(r, 0x9ec) != 0) {                                              // 0x00470aef
-            const float pv[3] = { F(r, off::kVelocity + 0), F(r, off::kVelocity + 4),
-                                  F(r, off::kVelocity + 8) };
-            Collision::VehicleContactFixup(wcSelf);                          // 0x00470afe
-            sdSub("fixup");
-            ++svpFixups;   // [D2 section 22.3] fixups this substep, for the cadence count
-            if (s_wcLog && s_wcLines < 4000) {
-                if (std::FILE* lf = std::fopen(s_wcLog, "a")) {
-                    std::fprintf(lf,
-                        "slot=%d pass=%d n=%d ret=%d pos=(%.4f,%.4f,%.4f) "
-                        "vel=(%.4f,%.4f,%.4f)->(%.4f,%.4f,%.4f)",
-                        slot, pass, I(r, 0x9ec), contacted,
-                        io.pos[0], io.pos[1], io.pos[2],
-                        pv[0], pv[1], pv[2],
-                        F(r, off::kVelocity + 0), F(r, off::kVelocity + 4),
-                        F(r, off::kVelocity + 8));
-                    // which of the 18 slots reported, and with what normal/depth.
-                    // Slot base S = 0x4a8 + i*0x40: +0x00 depth, +0x04 key (-1 empty),
-                    // +0x08..+0x10 normal, +0x38 magnitude.
-                    for (int si = 0; si < 0x12; ++si) {
-                        const std::size_t S = 0x4a8 + (std::size_t)si * 0x40;
-                        if (I(r, S + 4) == -1) continue;
-                        // [U-9156 2026-09-30] +0x2c..+0x34 is the contact ARM and
-                        // +0x14 its per-slot scale. 0x0046ef70's torque axis is
-                        // (0, a.z, -a.y) with a = normalize(arm) when the normal is
-                        // (1,0,0) (D2_REOPEN §20.5), so arm.y/arm.z is the quantity
-                        // that has to match 3.961 at the first Training contact.
-                        const float ay = F(r, S + 0x30), az = F(r, S + 0x34);
-                        std::fprintf(lf, " | s%d d=%.4f n=(%.3f,%.3f,%.3f) m=%.1f"
-                                         " arm=(%.6f,%.6f,%.6f) sl=%.6f ayz=%.4f",
-                            si, F(r, S + 0), F(r, S + 8), F(r, S + 0xc),
-                            F(r, S + 0x10), F(r, S + 0x38),
-                            F(r, S + 0x2c), ay, az, F(r, S + 0x14),
-                            (az != 0.f) ? (ay / az) : 0.f);
-                    }
-                    std::fprintf(lf, "\n");
-                    std::fclose(lf);
-                }
-                ++s_wcLines;
-            }
-            // [D2 section 22.3] CORRECTED emit point. It used to sit BELOW the `continue`
-            // on the next line, so every substep that CONTACTED was skipped and the log
-            // read `c9ec == 0` on 4000 of 4000 lines while `world_contact.log` from the
-            // same run held 211 fixups. Emitting here, before the retry `continue`, is
-            // what makes the contact substeps visible at all.
-            svpEmit(pass, chunkMs, svpV, svpW0, contacted, svpFixups);
-            svpEmitted = true;
-            if (contacted != 0) continue;    // 0x00470b06/0x00470b0a: re-run the substep
-        }
-        // Not-contacted path (and the `!s_worldContact` A/B revert never reaches here,
-        // it breaks out above): emit once so a non-contact substep still appears.
-        if (!svpEmitted) svpEmit(pass, chunkMs, svpV, svpW0, -1, svpFixups);
-
-        // --- [PREREG_CARCAR leg 3] the car<->car inner loop, 0x00470b0d..0x00470c2b ---
-        // FUN_004709a0's outer vehicle loop reaches its j = i+1..15 inner loop ONLY after
-        // the car<->world half settles -- its `while(true)` breaks on scan==0. In the
-        // port that is exactly this fall-through to the `break` below: the contacted
-        // `continue` above re-ran the substep, and the third original path (9ec!=0 AND
-        // scan!=0) already matches that `continue`. So the pair loop belongs here, and a
-        // car<->car contact re-runs the whole substep via the same `continue`, matching
-        // the original's `do { ... } while (!bVar4)`.
-        //
-        // ABI, from the only call site 0x00470bcd (re/analysis/CARCAR_CALLSITE_2026-10-05.md
-        // section 2): ECX = &records[i] = SELF car = param_1 (vehB); EAX = &records[j] =
-        // OTHER car = in_EAX (vehA). So the call is VehicleCarCarContact(rec(j), r, pass)
-        // -- OTHER CAR FIRST. param_2 (the j index) is unused; param_3 is the pass, and
-        // the body returns `pass == 0`, so a contact triggers a retry only on pass 0.
-        if (s_carCarContact) {
-            const int   mode = Fi_GameMode();                  // FUN_0040e350 @0x004709a0
-            const float radI = F(r, 0x4a4);                    // recI radius (+0x4a4)
-            const int   selI = I(r, 0x9a8);                    // recI active ring slot
-            const float* cI  = reinterpret_cast<const float*>(
-                                   r + (std::size_t)selI * 0x40 + 0x958);
-            bool anyCarCar = false;
-            int  ccPass    = pass;                             // iVar10; ++ per contact
-            for (int j = slot + 1; j < 16; ++j) {              // 0x00470b11/0x00470b12
-                if (j >= g_participantCount) continue;         // 0x00470b23
-                unsigned char* rj = rec(j);
-                if (!(I(rj, 0x4) != 0 || I(rj, 0x10) == 1)) continue;  // 0x00470b2d/0x00470b37
-                const float radSum = (F(rj, 0x4a4) + radI) * kCarCarProx; // 0x00470b44/50/70
-                const int   selJ = I(rj, 0x9a8);
-                const float* cJ  = reinterpret_cast<const float*>(
-                                       rj + (std::size_t)selJ * 0x40 + 0x958);
-                const float dx = cI[0] - cJ[0], dy = cI[1] - cJ[1], dz = cI[2] - cJ[2];
-                if (!(dx * dx + dy * dy + dz * dz < radSum * radSum)) continue;  // 0x00470b76..b9
-                if (mode != 6 && mode != 7 && mode != 10 && mode != 0xb) continue; // 0x00470baf..c1
-                int* const recJ = reinterpret_cast<int*>(rj);  // in_EAX (other)
-                int* const recI = reinterpret_cast<int*>(r);   // param_1 (self)
-                // [u9778] MASHED_CARCAR_RECDUMP=<path> (diagnostic, default OFF): the port twin of scenario_launch.py
-                // --carcar-probe, one TSV row per call: race frame, 0, self, other, pass, both records at entry, ret,
-                // both records at leave (hex, kRec bytes each).
-                static const char* const s_ccRec = std::getenv("MASHED_CARCAR_RECDUMP");
-                static int s_ccRecRows = 0;
-                const bool ccRecOn = s_ccRec && s_ccRecRows < 400;
-                static unsigned char s_ccIn[2][kRec];
-                if (ccRecOn) { std::memcpy(s_ccIn[0], r, kRec); std::memcpy(s_ccIn[1], rj, kRec); }
-                const bool ret = Collision::VehicleCarCarContact(recJ, recI, ccPass); // 0x00469df0
-                if (ccRecOn) {
-                    if (std::FILE* lf = std::fopen(s_ccRec, s_ccRecRows ? "a" : "w")) {
-                        auto hx = [lf](const unsigned char* p) {
-                            std::fputc('\t', lf);
-                            for (std::size_t b = 0; b < kRec; ++b) std::fprintf(lf, "%02x", p[b]);
-                        };
-                        std::fprintf(lf, "%d\t0\t%d\t%d\t%d", g_recDumpFrame, slot, j, ccPass);
-                        hx(s_ccIn[0]); hx(s_ccIn[1]);
-                        std::fprintf(lf, "\t%d", (int)ret);
-                        hx(r); hx(rj);
-                        std::fputc('\n', lf);
-                        std::fclose(lf);
-                    }
-                    ++s_ccRecRows;
-                }
-                // [d3bB2] the type-4 ring push at the tail of 0x00469df0 (default OFF, MASHED_AI_CONTACT_EVENT):
-                // every contact, unless FUN_0040e350() is 1..5 (0x0046ae97..0x0046aec3 / 0x0046b04c..0x0046b078)
-                if (Collision::g_ccLastContact && Ai::Ai_ContactEventEnabled() && !(mode >= 1 && mode <= 5))
-                    Ai::Ai_ContactEventPush(j, slot);   // pair (vehA = other j, vehB = self i)
-                if (s_ccLog && s_ccLines < 8000) {
-                    if (std::FILE* lf = std::fopen(s_ccLog, "a")) {
-                        std::fprintf(lf,
-                            "i=%d j=%d pass=%d ret=%d cI=(%.4f,%.4f,%.4f) "
-                            "cJ=(%.4f,%.4f,%.4f) radSum=%.4f noopp=%d fr=%d\n",
-                            slot, j, ccPass, (int)ret,
-                            cI[0], cI[1], cI[2], cJ[0], cJ[1], cJ[2], radSum,
-                            (g_participantCount <= 1) ? 1 : 0, g_recDumpFrame);
-                        std::fclose(lf);
-                    }
-                    ++s_ccLines;
-                }
-                if (ret) {                                     // 0x00470bd5 test eax,eax
-                    ++ccPass;                                  // 0x00470bde inc ebp
-                    anyCarCar = true;                          // 0x00470be2 bVar4=false
-                    // 0x00470bd9..0x00470c0f: FUN_00467300 (the 1-player collision-win
-                    // event, FUN_00413c70 x4) is gated DAT_007f0fd0==1 and is OMITTED --
-                    // not ported, and g_playerCount != 1 on any race recipe, so it is
-                    // inert here. RVA cited.
-                }
-            }
-            if (anyCarCar) continue;                           // 0x00470c25/0x00470c2b: re-run
-        }
-
-        committed = true;
-        break;
-        }   // end retry
-        // [u9152] MASHED_RING_DBUF: a committed substep swaps the selectors (0x00470c31..0x00470c41). Retries that ran
-        // out leave 0x00470ab3 for 0x00470c47 with no swap, so the next substep integrates from the same src half:
-        // under MASHED_RING_DBUF_DISCARD the port drops this substep's pose to match (velocity writes stay, as there).
-        if (RingDbuf()) {
-            if (committed) {
-                RingSwapSelectors(r);
-            } else if (RingDbufDiscard()) {
-                io.pos[0] = savedPos[0]; io.pos[1] = savedPos[1]; io.pos[2] = savedPos[2];
-                posDelta[0] = savedDelta[0]; posDelta[1] = savedDelta[1]; posDelta[2] = savedDelta[2];
-                std::memcpy(basis, savedBasis, sizeof(savedBasis));
-                io.yaw = savedYaw;
-            }
-        }
-        D2Sink::Mark("sub_end", r, d2sSub, 0, chunkMs, remMs);
-        ++d2sSub;
-        chunkI -= subI;                // 0x0047113f / 0x00471141
-        remMs = (float)chunkI;
-        IlYield(slot);                 // [u9778] 0x00470c47: FUN_004709a0 moves on to the next car
     }
+    D2Sink::Mark("sub_end", r, d2sSub, 0, chunkMs, remMs);
+    ++d2sSub;
+    chunkI -= subI;                // 0x0047113f / 0x00471141
+    remMs = (float)chunkI;
+}
+
+static void StepChunkTail(StepCtx& c) {
+    const int slot = c.slot; unsigned char* const r = c.r; float* const basis = c.basis; std::uint8_t (&input)[8] = c.input;
+    const bool a4Skip = c.a4Skip; const float a4Dt = c.a4Dt; const int chunkL = c.chunkL; const bool s_a4First = A4First();
     D2Sink::ClearSubstep();
 
     // A4 (FUN_00470670) RUNS ONCE PER FRAME, OUTSIDE THE SUBSTEP LOOP — corrected
@@ -2101,10 +2184,15 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
             VehicleControlIntegrate(reinterpret_cast<int*>(r), a4Dt, input, basis, slot);
         // A6a's drive block can clear wheel states in some branches; re-assert from the
         // cached contact result (no re-broadphase) so the next frame stays engaged.
-        ReassertContacts(r, g_cShared);
+        ReassertContacts(r, *c.cs);
     }
-    chunkRem -= chunkL;                                                   // 0x00471143..0x00471151
-    }   // [d2bsp] fix L outer chunk loop
+    c.chunkRem -= chunkL;                                                   // 0x00471143..0x00471151
+}
+
+static void StepEnd(StepCtx& c) {
+    const int slot = c.slot; PlayerCarIO& io = *c.io; unsigned char* const r = c.r; float (&posDelta)[3] = c.posDelta;
+    std::uint8_t (&input)[8] = c.input; const bool posTrans = c.posTrans, preDone = c.preDone, sdOn = c.sdOn;
+    const char* const s_settleDiag = SettleDiagPath(); const int s_sdN = g_sdN;
     if (RingDbuf()) RingFrameEnd(r);   // [u9152] 0x00471195..0x004711af, after the last chunk
 
     // WS-A contacts telemetry: per-wheel contact NORMAL (+0x200) + LOAD (+0x20c, A5
@@ -2429,7 +2517,7 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
         }
     }
 #endif  /* TEMP diag */
-    sdLine("end");
+    SdLine(c, "end");
     if (sdOn) {
         if (std::FILE* lf = std::fopen(s_settleDiag, "a")) {
             std::fprintf(lf, "STEP n=%d dd=(%.9g,%.9g,%.9g) io.pos=(%.9g,%.9g,%.9g)\n", s_sdN,
@@ -2460,7 +2548,26 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     g_a4GateDone[slot] = false;                                    // next frame's gate is due
     if (preDone) g_a4PreDone[slot] = false;                        // [a4order] consumed
 
-    if (prof::g_on) prof::f_physMs += prof::NowMs() - t_phys0;   // PERF: whole-step cost
+    if (prof::g_on) prof::f_physMs += prof::NowMs() - c.t_phys0;   // PERF: whole-step cost
+}
+
+// The per-car order: every phase of one car (the caller then steps the next car).
+static void StepCarImpl(int slot, float dt, PlayerCarIO& io, ContactScratch* cs) {
+    StepCtx c;
+    if (!StepBegin(c, slot, dt, io, cs)) return;
+    for (bool chunkFirst = true; ChunkDue(c, chunkFirst); chunkFirst = false) {
+        if (!StepChunkHead(c)) return;
+        while (SubstepDue(c)) {
+            StepSubstep(c);
+            IlYield(slot);   // [u9778] 0x00470c47: FUN_004709a0 moves on to the next car
+        }
+        StepChunkTail(c);
+    }
+    StepEnd(c);
+}
+
+void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
+    StepCarImpl(slot, dt, io, &g_cShared);
 }
 
 }  // namespace mashed_re::Vehicle
