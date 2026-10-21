@@ -42,6 +42,9 @@ const FaithKnob kFaith[] = {
     { "WCS_COMBINE_PC24", "1" },
     // [rbflip 2026-10-21, Mariano's decision] u9777's live rubber-band leaves for A5 (verify/u9777_20261020/RESULT_u9777.md).
     { "A5_RUBBER_LIVE", "1" },
+    // [fflip 2026-10-21, Mariano's decision] brecipe's live mode word / fd0 and live slot table for the AI host
+    // (verify/brecipe_20261021/RESULT_brecipe.md), flipped with the canonical recipe swap to rule 0 / game mode 10.
+    { "MODE_LIVE", "1" },          { "SLOT_TYPE_LIVE", "1" },
 };
 
 bool Set(const char* var) {

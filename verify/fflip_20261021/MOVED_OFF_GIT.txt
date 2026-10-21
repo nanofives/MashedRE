@@ -1,0 +1,1 @@
+arms/, tracks and private roots live in D:/MashedWT/fflip_data, D:/MashedWT/fflip_root, D:/MashedWT/fflip_root13 (written there directly via A4_OUT / --out), never committed.
