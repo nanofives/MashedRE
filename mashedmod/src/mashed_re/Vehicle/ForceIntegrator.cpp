@@ -381,6 +381,20 @@ void VehicleWheelForceIntegrate(int* self, float dt, void* xform)
     } while (true);
 }
 
+// [u9777] MASHED_A5_RUBBER_LIVE=1 (default OFF, verify/u9777_20261020/PREREG_u9777.md): the two leaves read the live
+// FUN_00442a60 outputs, refdist 0x008989b0[car] (0x00442ca2, 0x00442d0f) and the reference car 0x008989c8 (0x00442d2f), as
+// the original does, instead of g_rubberBand / g_rubberRefCar (all zero, no writer). Race/SpectatorDistances.cpp fills both.
+static bool A5RubberLive() {
+    static const bool s = [] { const char* e = std::getenv("MASHED_A5_RUBBER_LIVE"); return e && e[0] == '1'; }();
+    return s;
+}
+static float RubberRefDist(int car) {
+    return A5RubberLive() ? reinterpret_cast<const float*>(0x008989b0u)[car] : g_rubberBand[car];
+}
+static int RubberRefCar() {
+    return A5RubberLive() ? *reinterpret_cast<const int*>(0x008989c8u) : g_rubberRefCar;
+}
+
 // ---- 0x00442ce0: catch-up / rubber-band grip multiplier (resolves U-2687) ----
 float RubberBandGrip(int car, float current, float band)
 {
@@ -388,9 +402,9 @@ float RubberBandGrip(int car, float current, float band)
     if ((fd0 == 4) || (fd0 == 9) || (fd0 == 8)) return kOne;
     Fi_GameModeTick();   // FUN_0040e340 (observed side-effect retained)
     (void)current;
-    if (g_rubberBand[car] == kZero) {
+    if (RubberRefDist(car) == kZero) {                        // 0x00442d0f
         int i1 = CarContactCount(car);
-        int i2 = CarContactCount(g_rubberRefCar);
+        int i2 = CarContactCount(RubberRefCar());             // 0x00442d2f
         if (i1 == 0) {
             if (i2 == 3) return k0p6 * band + kOne;          // _DAT_005cc318
             if (i2 == 2) return kHalf * band + kOne;         // _DAT_005cc32c
@@ -411,7 +425,7 @@ int RubberBandGate(int car)
     int mode = Fi_GameMode();
     const int fd0 = Fd0Word();                                // DAT_007f0fd0
     if ((mode == 6) && (fd0 != 4) && (fd0 != 9) &&
-        (fd0 != 8) && (kRubberThr < g_rubberBand[car])) {
+        (fd0 != 8) && (kRubberThr < RubberRefDist(car))) {   // 0x00442ca2..0x00442cb4
         return 1;
     }
     return 0;

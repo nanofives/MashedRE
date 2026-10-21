@@ -373,6 +373,11 @@ STACK['P0'] = STACK['RD'] + ['MASHED_BATCH_DUMP=@OUT@/@NAME@.batch.csv', 'MASHED
     'MASHED_FORCE_SPLIT_SLOT=0', 'MASHED_A6A_TAILLOG=@OUT@/@NAME@.tail.csv', 'MASHED_A6A_VZLOG=@OUT@/@NAME@.vz.csv',
     'MASHED_FORCE_SPLIT=@OUT@/@NAME@.fs.csv', 'MASHED_WCS_POSLOG=@OUT@/@NAME@.pos.txt']
 STACK['P0S'] = STACK['P0'] + ['MASHED_D2SINK=@OUT@/@NAME@.sink.txt']   # + the slot-0 velocity at every A4 / substep stage
+STACK['RL'] = ['MASHED_A5_RUBBER_LIVE=1']   # PREREG_u9777: A5's rubber-band leaves read the live refdist / reference car
+STACK['P0SR'] = STACK['P0S'] + STACK['RL']
+STACK['RLTR'] = STACK['RL'] + ['MASHED_REFDIST_TRACE=@OUT@/@NAME@.rd.tsv']
+STACK['DEFTR'] = ['MASHED_REFDIST_TRACE=@OUT@/@NAME@.rd.tsv']
+for _c in (1, 2, 3): STACK[f'RLR{_c}'] = STACK['RL'] + ['MASHED_RECDUMP=@OUT@/@NAME@.rec.msd', f'MASHED_RECDUMP_SLOT={_c}']
 
 
 for name in sys.argv[1:]:
