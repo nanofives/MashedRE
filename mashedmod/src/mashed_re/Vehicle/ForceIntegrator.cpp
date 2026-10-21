@@ -381,7 +381,7 @@ void VehicleWheelForceIntegrate(int* self, float dt, void* xform)
     } while (true);
 }
 
-// [u9777] MASHED_A5_RUBBER_LIVE=1 (default OFF, verify/u9777_20261020/PREREG_u9777.md): the two leaves read the live
+// [u9777] MASHED_A5_RUBBER_LIVE=1 (default ON since rbflip 2026-10-21 through the FAITH seed, MASHED_NO_A5_RUBBER_LIVE=1 opts out; verify/u9777_20261020/PREREG_u9777.md): the two leaves read the live
 // FUN_00442a60 outputs, refdist 0x008989b0[car] (0x00442ca2, 0x00442d0f) and the reference car 0x008989c8 (0x00442d2f), as
 // the original does, instead of g_rubberBand / g_rubberRefCar (all zero, no writer). Race/SpectatorDistances.cpp fills both.
 static bool A5RubberLive() {
