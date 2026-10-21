@@ -1,0 +1,1 @@
+Arm outputs and original captures live in D:/MashedWT/u9777_data/arms (written there directly by run_arms.py and scenario_launch.py --statediff-out), never committed.
