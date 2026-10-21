@@ -150,9 +150,12 @@ bool VehiclePhysics_InterleaveEnabled();
 bool VehiclePhysics_InterleaveRun(int n, const int* slots, float dt, PlayerCarIO* ios);
 bool VehiclePhysics_IlInFiber();
 void VehiclePhysics_IlSwitchToMain();
+void VehiclePhysics_IlSnapshot(int slot);   // record + per-slot module state, taken before InterleaveRun
+void VehiclePhysics_IlRestore(int slot);    // put it back (the car is then stepped the per-car way, or not at all)
 // [u9749] MASHED_RECDUMP=<path> (diagnostic, default OFF): one MSD1 record of slot MASHED_RECDUMP_SLOT (default 0) per
 // call; call once per race frame after every car's physics. Also advances the frame index MASHED_RECDUMP_A4 uses.
 void VehiclePhysics_RecDumpFrame();
+int  VehiclePhysics_RecDumpFrameIndex();   // [u9778] the frame index MASHED_RECDUMP writes next
 // A8 (2026-08-25): (re)seed a slot's integrated body-orientation basis from a yaw.
 // The body basis is now persistent state inside the physics module (the original
 // keeps it in the record's +0x928 double buffer; see BodyOrientationIntegrate.cpp

@@ -381,12 +381,12 @@ for _c in (1, 2, 3): STACK[f'RLR{_c}'] = STACK['RL'] + ['MASHED_RECDUMP=@OUT@/@N
 
 
 # u9778: cars 2 / 3 on the rbflip default: record dump per slot + the port's car-car pair log
-for _c in (1, 2, 3): STACK[f'C{_c}'] = ['MASHED_RECDUMP=@OUT@/@NAME@.rec.msd', f'MASHED_RECDUMP_SLOT={_c}', 'MASHED_CARCAR_LOG=@OUT@/@NAME@.cc.txt', 'MASHED_CARCAR_RECDUMP=@OUT@/@NAME@.carcar.tsv']
+for _c in (0, 1, 2, 3): STACK[f'C{_c}'] = ['MASHED_RECDUMP=@OUT@/@NAME@.rec.msd', f'MASHED_RECDUMP_SLOT={_c}', 'MASHED_CARCAR_LOG=@OUT@/@NAME@.cc.txt', 'MASHED_CARCAR_RECDUMP=@OUT@/@NAME@.carcar.tsv']
 
 
 STACK['IL'] = ['MASHED_SUBSTEP_INTERLEAVE=1']   # PREREG_u9778: FUN_004709a0's substep-outer / car-inner order
 STACK['ILM'] = STACK['IL'] + ['MASHED_SUBSTEP_INTERLEAVE_ORDER=car']   # G-MECH: the fiber path in the per-car order
-for _c in (1, 2, 3): STACK[f'ILC{_c}'] = STACK['IL'] + STACK[f'C{_c}']
+for _c in (0, 1, 2, 3): STACK[f'ILC{_c}'] = STACK['IL'] + STACK[f'C{_c}']
 
 for name in sys.argv[1:]:
     CUR['name'] = name

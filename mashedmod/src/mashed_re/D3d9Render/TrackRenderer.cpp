@@ -5257,6 +5257,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             ilSlots[ilN] = 0; ilIo[ilN] = io; ++ilN;
             for (int v = 1; v < 16; ++v)
                 if (s_il[v].have) { ilSlots[ilN] = v; ilIo[ilN] = s_il[v].in; ++ilN; }
+            for (int k = 1; k < ilN; ++k) Vehicle::VehiclePhysics_IlSnapshot(ilSlots[k]);
             if (ilN > 1 && Vehicle::VehiclePhysics_InterleaveRun(ilN, ilSlots, in.dt, ilIo)) {
                 io = ilIo[0];
                 for (int k = 1; k < ilN; ++k) s_il[ilSlots[k]].out = ilIo[k];
@@ -5559,10 +5560,14 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         for (int ci = 0; ci < aiCarN; ++ci) {
             AiCar& a = ai_cars_[static_cast<std::size_t>(ci)];
             const int v = ci + 1;
+            // [u9778] a car the interleave stepped and this loop does not step (or relocates first): put it back
+            auto ilUndo = [&]() { if (v < 16 && s_il[v].have) { Vehicle::VehiclePhysics_IlRestore(v); s_il[v].have = false; } };
             if (round_mode_ && !race_[ci + 1].alive) {
+                ilUndo();
                 a.cur_speed = 0.f; a.vel[0] = a.vel[1] = a.vel[2] = 0.f; continue;
             }
             if (a.spin > 0.f) {   // spun out by a missile/mine (scaffold leaf effect)
+                ilUndo();
                 a.spin -= in.dt; a.yaw += 12.0f * in.dt;
                 yaww::Hit(yaww::W_3283, v);
                 a.cur_speed = 0.f; a.vel[0] = a.vel[1] = a.vel[2] = 0.f;
@@ -5585,6 +5590,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
                     const float* gp = gates_[static_cast<std::size_t>(gA)].center;
                     bool rok = false; const float gy2 = GroundHeight(gp[0], gp[2], &rok);
                     if (rok) {
+                        ilUndo();
                         a.pos[0] = gp[0]; a.pos[2] = gp[2]; a.pos[1] = gy2 + car_ground_off_;
                         a.yaw = std::atan2(gates_[static_cast<std::size_t>(gB)].center[2] - gp[2],
                                            gates_[static_cast<std::size_t>(gB)].center[0] - gp[0]);
@@ -5616,12 +5622,26 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             bool gok = false;
             GroundHeight(a.pos[0], a.pos[2], &gok);
             io.grounded = gok ? 1 : 0;
-            if (v < 16 && s_il[v].have) {   // [u9778] stepped above, interleaved with the player
-                if (!IlSameInput(io, s_il[v].in) && s_ilMismatch++ < 200)
+            const bool ilSame = v < 16 && s_il[v].have && IlSameInput(io, s_il[v].in);
+            if (v < 16 && s_il[v].have && !ilSame) {   // [u9778] safety net: restore and step it the per-car way
+                if (s_ilMismatch++ < 200)
                     if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
-                        std::fprintf(lf, "[u9778] interleave: slot %d io differs from the pre-phase io (result kept)\n", v);
+                        std::fprintf(lf, "[u9778] interleave: slot %d io differs from the pre-phase io (restored, stepped per-car) frame %d: "
+                                     "pos %d vel %d yaw %d speed %d input %d grounded %d/%d | pos (%.6f,%.6f,%.6f)/(%.6f,%.6f,%.6f) "
+                                     "vel (%.4f,%.4f,%.4f)/(%.4f,%.4f,%.4f) in4 %d/%d\n", v,
+                                     Vehicle::VehiclePhysics_RecDumpFrameIndex(),
+                                     std::memcmp(io.pos, s_il[v].in.pos, 12) != 0, std::memcmp(io.vel, s_il[v].in.vel, 12) != 0,
+                                     std::memcmp(&io.yaw, &s_il[v].in.yaw, 4) != 0, std::memcmp(&io.speed, &s_il[v].in.speed, 4) != 0,
+                                     std::memcmp(io.input, s_il[v].in.input, 8) != 0, io.grounded, s_il[v].in.grounded,
+                                     io.pos[0], io.pos[1], io.pos[2], s_il[v].in.pos[0], s_il[v].in.pos[1], s_il[v].in.pos[2],
+                                     io.vel[0], io.vel[1], io.vel[2], s_il[v].in.vel[0], s_il[v].in.vel[1], s_il[v].in.vel[2],
+                                     io.input[4], s_il[v].in.input[4]);
                         std::fclose(lf);
                     }
+                Vehicle::VehiclePhysics_IlRestore(v);
+                s_il[v].have = false;
+                Vehicle::VehiclePhysics_StepCar(v, in.dt, io);
+            } else if (ilSame) {   // [u9778] stepped above, interleaved with the player
                 io = s_il[v].out;
                 s_il[v].have = false;
             } else {
