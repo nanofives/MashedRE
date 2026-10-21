@@ -40,6 +40,8 @@ const FaithKnob kFaith[] = {
     { "WCS_TRINORMAL", "1" },
     // [cpcflip 2026-10-20, Mariano's decision] u9776's PC_24 scope around the alignment's FUN_004c52f0 (verify/u9776_20261020/RESULT_u9776.md).
     { "WCS_COMBINE_PC24", "1" },
+    // [rbflip 2026-10-21, Mariano's decision] u9777's live rubber-band leaves for A5 (verify/u9777_20261020/RESULT_u9777.md).
+    { "A5_RUBBER_LIVE", "1" },
 };
 
 bool Set(const char* var) {
