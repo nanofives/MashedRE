@@ -17,7 +17,8 @@ CAPS = [('o3', 'verify/d3_pu_20260926/o3.msd'), ('o4', 'verify/d3_pu_20260926/o4
 
 
 def capture(c):
-    prov = json.load(open(os.path.join(W, 'verify', 'd3_contact_20260928b', c + '.msd.provenance.json')))
+    d = 'd3_box_20260928' if c == 'b3' else 'd3_contact_20260928b'   # amendment 1: b3 (--pu-box)
+    prov = json.load(open(os.path.join(W, 'verify', d, c + '.msd.provenance.json')))
     argv = list(prov['argv'])
     i = argv.index('--statediff-out'); argv[i + 1] = OUT + '/' + c + 'r.msd'
     argv[0] = os.path.join(W, 're', 'frida', 'scenario_launch.py')
@@ -57,3 +58,16 @@ if sys.argv[1] == 'capture':
     for c in sys.argv[2:]: capture(c)
 elif sys.argv[1] == 'sweep':
     sweep()
+elif sys.argv[1] == 'b3':   # amendment 1: replay b3r as built and with MASHED_PU_FORCE=nobox
+    exe = os.path.join(W, 're', 'tools', 'pu_replay', 'out', 'pu_replay.exe'); src = OUT + '/b3r.msd.puhook.csv'
+    for tag, force in (('gate', None), ('nobox', 'nobox')):
+        env = dict(os.environ); env['MASHED_PU_STEPDUMP'] = OUT + '/b3r.%s.port.csv' % tag
+        env['MASHED_PU_CONTACTDUMP'] = OUT + '/b3r.%s.port.pucontact.csv' % tag
+        if force: env['MASHED_PU_FORCE'] = force
+        rep = subprocess.run([exe, src, '0'], env=env, capture_output=True, text=True).stdout
+        open(OUT + '/b3r.%s.replay.txt' % tag, 'w').write(rep)
+        dif = subprocess.run(['py', '-3.12', os.path.join(W, 're', 'tools', 'pu_diff.py'), src, env['MASHED_PU_STEPDUMP'], '--slot', '0'],
+                             capture_output=True, text=True).stdout
+        open(OUT + '/b3r.%s.diff.txt' % tag, 'w').write(dif)
+        cv = re.search(r'^CONTACT VERDICT: (.*)$', rep, re.M); dv = re.search(r'^VERDICT: (.*)$', dif, re.M)
+        print('b3r %s decision=%s contact=%s' % (tag, dv.group(1) if dv else '(none)', cv.group(1) if cv else '(none)'), flush=True)

@@ -87,3 +87,14 @@ dump that is a byte-identical shorter prefix is re-run before a hash change is b
 `RESULT_d3close.md` (gate table: criterion, scorer, value, band, verdict, evidence path) and `ROADMAP_D3_BLOCK.md` (draft "D3
 closure state 2026-10-21" block). ROADMAP.md, CLAUDE.md and NEXT_SESSION.md are NOT edited: closing D3 is Mariano's decision.
 Trackers only via an apply script, and only if something is resolved or newly found.
+
+## 5. AMENDMENT 1 (2026-10-21, after the 11-capture sweep, before any b3 run)
+
+Observed: `s2r` (s2's argv) stayed at box state 1 on every slot-0 row (221 rows). The recorded `s2` sat at state 3 for 71 rows.
+The natural MORTAR -> MISSILE timing did not recur, as `b1` / `b2` on 2026-09-28 also did not. `m2r` reached state 2
+(CLEAN). So the state-3 short-circuit (`0x0045bca5`), which is the branch behind the 181-mismatch defect, is not covered by the
+re-captured set. Added: re-capture `b3` (`verify/d3_box_20260928/b3.msd.provenance.json` argv, `--pu-box 1`, which drives the
+original's own `FUN_0045ba00`) as `b3r`. Replay it twice: as built, and with `MASHED_PU_FORCE=nobox` as the non-degeneracy
+control. Its `.puhook.csv` is also lost. Recorded: `b3` CLEAN with the gate, 374 decision mismatches without
+(`verify/d3_box_20260928/b3.gate.diff.txt`, `b3.nobox.diff.txt`). Prediction: `b3r` reaches state 3, CLEAN with the gate, and
+the `nobox` control is non-zero (the count is not predicted, because the capture is new).
