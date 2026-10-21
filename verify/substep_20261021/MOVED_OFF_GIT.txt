@@ -1,0 +1,1 @@
+arms/, arms3/, chk_s1..s3/, t13_SX/, t13_IL/, exe copies and the private roots live in D:/MashedWT/substep_data, D:/MashedWT/substep_root, D:/MashedWT/substep_root2, D:/MashedWT/substep_root13 (written there directly via A4_OUT / --out), never committed.
