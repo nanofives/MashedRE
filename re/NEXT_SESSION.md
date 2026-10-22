@@ -1,5 +1,74 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-22 dcphys2 + p2flip: **physics A-chain dual copies: none left.** Next = D4 dual-copy burn-down, vehicle residue (lane `dcleaf`).
+>
+> `verify/dcphys2_20261022/RESULT_dcphys2.md` (merged `574716565`). A6b `0x00468980`, A5 `0x0046ddb0`, A4 `0x00470670` are one TU
+> each in both targets, all C4; stack `P2` default ON (Mariano's decision).
+>
+> **Default now:** FAITH stack + u9774 five + `WCS_TRINORMAL` + `WCS_COMBINE_PC24` + `A5_RUBBER_LIVE` + `MODE_LIVE` + `SLOT_TYPE_LIVE` +
+> `SUBSTEP_OUTER` + `A6A_DOT_ORDER` + `P2` (`A6B_ACOS_CRT A6B_NORM_LUT A5_RING_ORDER A5_DOT_ORDER A5_AIR_F32 A5_CONTACT_INT A5_SPIN_FILD
+> A4_DOT_ORDER`), `Core/FaithDefaults.cpp`. Recipe F: `MASHED_ROUND_RULE=0 MASHED_GAME_MODE=10`.
+> **References** (score files in `verify/dcphys2_20261022/`): G-CTRL `c3bfcef3 / 4ed4849b / 4c3548a1` (opt-out the eight `MASHED_NO_*`
+> -> `23ac657a / 7bf2f27f / 3186dd09`; NO_FAITH `997f4117 / e6288905 / a63bdcfa`); B K0/K1/K26 `4985eb3b / b6e3d073 / 6717c15e`, (b) 9/9
+> (`vsum_b_def.txt`); (e) 3/3 launch 1425.7 / 2052.5 / 2055.0, ft_median_m0 2551.6 / 2052.5 / 2278.1 (`e_check_def.txt`); D2 3/3
+> (`score_d2_def.txt`); 13 tracks 39 frames 878 rows 0 RED (`tracks_def_score.txt`).
+> Allowlist 22 entries / 23 findings, lint 0 NEW. Honest measure (`hooks.csv` C3/C4 with `exe_file != file`): 164 (31 with a .cpp `file`).
+>
+> **Paste-ready kickoff for the next session:**
+>
+> ```
+> # Kickoff: Mashed D4, dual-copy burn-down, vehicle residue (lane dcleaf)
+>
+> Base: race/first-frame-parity at 606db1dfd (merged dcphys2). Worktree .worktrees/dcphys2 is merged; remove it only with
+> py -3.12 scripts/diag.py wt-remove .worktrees/dcphys2. Children on claude2 (verify the model id with read_session).
+>
+> ## Task: the vehicle-side entries left on re/tools/dual_copy_allowlist.txt (ROADMAP §D4 item (4))
+> Easy first, then the two with inputs:
+> 1. 0x0046dbe0 DUP-IN-TARGET [exe]: Vehicle/ForceIntegratorLeaves.cpp CarContactCount vs Vehicle/VehicleState.cpp
+>    VehicleRacePositionGet (C4, audit IDENTICAL). Keep one body, call it from the other site, drop the key.
+> 2. 0x00468b40 DUP-IN-TARGET [exe]: Collision/CarWorldContacts.cpp ContactHistoryLookup vs Vehicle/VehicleState.cpp (C3,
+>    audit IDENTICAL). Same.
+> 3. 0x00442c80 CROSS-TARGET: asi Util/UtilMid.cpp ModeGatedPlayerCheck (C4, plate file) vs exe ForceIntegratorLeaves.cpp
+>    RubberBandGate; and 0x00442ce0 (C2, exe RubberBandGrip; the .asi calls the original). One shared TU each with thunks for
+>    the game-mode word (U-9784), DAT_007f0fd0 and the refdist 0x008989b0 / ref car 0x008989c8 (exe: Race/SpectatorDistances.cpp
+>    fills them, A5_RUBBER_LIVE).
+> 4. 0x0040e350 DUP-IN-TARGET [asi]: Ai/PromoLoop_round1.cpp GetRenderSubMode vs Vehicle/PhysicsChainHooks.cpp:113 (an inline
+>    live-call helper; check whether it is a false anchor). The exe's Fi_GameMode stand-in is U-9784: a producer is in scope only
+>    if the static read shows it is cheap; otherwise file it and leave the stand-in.
+> 5. 0x0046b1c0 CROSS-TARGET (U-9155, deliberate split): asi Vehicle/VehicleSlotAabbExpand.cpp (naked, C3) vs exe
+>    Vehicle/VehicleContactHull.cpp. dcphys noted it folds the same way (one TU + record-base thunk); do it last.
+>
+> Per entry, the dcphys2 recipe: worker static diff (read-only) -> check every claimed difference against
+> original/MASHED.exe.unpatched (re/tools/disasm_fn.py; association from the FADD order) -> one shared TU in both rsp files,
+> only target thunks under #ifdef MASHED_STANDALONE -> the row's own evidence path (leaves: re/frida/hooks_registry.py path1 +
+> path2; record bodies: in-process A/B with full compare + noo + MASHED_PHYS_SELFTEST_CAP=20) -> exe gates (knob-free: every
+> reference above unchanged; a behaviour change needs a knob default OFF and a PREREG first) -> delete the duplicate, drop the
+> allowlist key, re-classify, lint passes.
+>
+> Read first: verify/dcphys2_20261022/RESULT_dcphys2.md, ROADMAP §D4, re/CONFIDENCE.md "Which copy the evidence covers",
+> memories inline-asm-call-hides-xmm-clobber, rw-matrix-rotate-pads-are-stack-garbage, phys-selftest-quotas-sample-only-the-early-race,
+> exe-stub-arrays-shadow-live-globals, sim-trajectory-is-code-layout-sensitive.
+>
+> ## Caveats (from dcphys2)
+> - Private root: robocopy original/ to D:/MashedWT/dcleaf_root/original (original\ INSIDE the root; scenario_launch.py
+>   needs <root>/original/MASHED.exe). From PowerShell.
+> - Any .asi helper whose __asm block CALLs into MASHED.exe must be __declspec(noinline) (XMM clobber; dcphys2's A4 noo failure).
+> - A no-op control (noo) failing means the harness first: check snapshot coverage (record, scratch, PRNG cursor) and inlining.
+> - Bash heredocs eat backslashes in Python scripts: write scripts with the Write tool to the scratchpad.
+> - The main checkout's .git/index.lock is taken by another process now and then: retry, never delete it.
+> - Rebuild = new exe hash (link timestamp). D2 arms run alone. Kill only your own PIDs. git merge -m, never -F -.
+>
+> ## Lane protocol
+> Worktree .worktrees/dcleaf, branch work/dcleaf, MASHED_NO_DEPLOY=1, evidence D:/MashedWT/dcleaf_data (MOVED_OFF_GIT.txt),
+> runner copied from verify/dcphys2_20261022/run_arms.py (+ ab.sh, selftest_sum.py). PREREG before any knob arm; new knobs
+> default OFF; flips only on Mariano's decision. Commit the final default's score files. Commits end with
+> Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>. Do not merge: report per-entry verdicts, the gate table, decisions.
+>
+> ## Housekeeping
+> - The shared original/mashed_re_dev.asi was not redeployed after dcphys or dcphys2; deploy from the main checkout only when
+>   Mariano says. race/first-frame-parity is not pushed past 72ec8a7d0.
+> ```
+
 > ## START HERE 2026-10-21 d3close: **D3 is CLOSED** (user decision, Mariano). Next = D4.
 >
 > `verify/d3close_20261021/RESULT_d3close.md`; the closure block and the carried-forward list are at the top of `ROADMAP.md` §D3.
