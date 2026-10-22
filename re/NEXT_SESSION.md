@@ -1,5 +1,67 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-22 dcmix + r7keep + rpct: **allowlist 18 -> 11, two default flips, G-CTRL REBASED.** Next = D4 dual-copy burn-down, the render streams (lane `dcstream`).
+>
+> Three lanes merged into `race/first-frame-parity` (HEAD `b82d25315`):
+> - `verify/dcmix_20261022/RESULT_dcmix.md`: `0x0055dec0`, `0x0045baa0` (C2 -> C3), `0x0040e180` (C2 -> C4, U-9788 coverage) one
+>   body each; `0x0055e200` and `0x0042d3e0` were false findings (scanner `rva_body_scan.py` now drops declarations, test 8/8).
+> - `verify/r7keep_20261022/RESULT_r7keep.md`: rule 7 keeps the score-scan winner (`0x00410790`), **default ON**, opt-out
+>   `MASHED_NO_RULE7_KEEP`. Moved no hash (unreachable in natural play: rule 7 never moves a score).
+> - `verify/rpct_20261022/RESULT_rpct.md`: `RacePct` / `RaceCamCar::race_pct` load the slot `0x008a96ec` (`0x00408ad0`), **default
+>   ON** on P1 (Mariano), opt-out `MASHED_NO_RACEPCT_SLOT`. Round 4 of the G-CTRL race now eliminates car 1 instead of car 3
+>   (no original reference exists for that round).
+> **New default references (compare against these, not the p2flip trio):** G-CTRL `bacfc747 / 8dd1c004 / 6f9932b6`, B `f9deb9b9 /
+> d3601fcc / 9da9a26a`; (b) 9/9, (e) 3/3 launch 1425.7 / 2052.5 / 2055.0, D2 3/3, 13 tracks 878 rows 0 RED (unchanged).
+> `MASHED_NO_RACEPCT_SLOT=1` gives the old trio `c3bfcef3 / 4ed4849b / 4c3548a1`.
+>
+> **Paste-ready kickoff for the next session:**
+>
+> ```
+> # Kickoff: Mashed D4, dual-copy burn-down, the render streams (lane dcstream)
+>
+> Base: race/first-frame-parity at the commit carrying this block (dcmix + r7keep + rpct merged and pushed).
+>
+> ## State
+> Default G-CTRL bacfc747 / 8dd1c004 / 6f9932b6, B f9deb9b9 / d3601fcc / 9da9a26a (rebased by rpct). Allowlist
+> re/tools/dual_copy_allowlist.txt: 11 findings, lint 0 NEW.
+>
+> ## Task: 0x004cc050 + 0x004cbd30 CROSS-TARGET (exe D3d9Render/RwWorldStream.cpp vs asi Render/TextureLoader_q6.cpp).
+> Shape named in the dcmix kickoff: one shared memory-stream core in a TU listed in both rsp files, per-target thunks only under
+> #ifdef MASHED_STANDALONE. Static diff first (worker), every claim checked against original/MASHED.exe.unpatched
+> (re/tools/disasm_fn.py); scan .text for E8 call sites. If the faithful core changes what the exe loads or draws, it is NOT
+> knob-free: knob default OFF + PREREG first (the r7keep / rpct pattern), flip only on Mariano's decision.
+> Evidence: path1 where a registry entry exists (early_window_leaf_diff.py for arg types run_diff.py refuses), in-process A/B on
+> the original where the .asi installs it (MASHED_LEAF_SELFTEST pattern, trampoline re-running the clobbered prologue), exe
+> gates against the NEW references above, 13 tracks (render: the draw files are the sharp witness here).
+>
+> Left for decisions (report only):
+> - Math pairs with a D2 / draw-file cost: 0x004c39b0 (exe+asi), 0x004c4680, 0x00532b80, 0x004c4d20. Each one now has a proven
+>   route (knob default OFF + PREREG, as r7keep / rpct did); Mariano picks which, if any.
+> - Deliberate splits: 0x004282a0, 0x004177b0. 0x00410510: the exe body now has the original's rule-7 law; the rest of the split
+>   is input plumbing (live callees vs the host snapshot) and the end-block side effects in the race layer.
+> - 0x00408ad0 stays allowlisted only for the opt-out MASHED_NO_RACEPCT_SLOT's stand-in.
+>
+> ## Caveats (from dcmix / r7keep / rpct)
+> - Heredocs eat backslashes, and sed -i can strip CRLF: edit C++ / rsp / runner files from Python with chr(92) for backslashes,
+>   and check line endings after (a backslash-n in a format string became a real newline in r7keep; two rsp lines lost their backslash).
+> - New run_arms.py stacks: grep the name first. 'S', 'NOK' already exist; overwriting one breaks a later stack built on it.
+> - A G-CTRL run can drop the dump rows of one frame (rpct H_DEF-1, frame 5759: rows missing, sim identical, ptrace equal).
+>   Rerun before calling P0 failed.
+> - Round-level outcomes do not repeat on the original and its rounds end early in recipe F: a per-round victim cannot be scored
+>   against an original capture (memories round-level-outcomes-do-not-reproduce, o-rg4-recipe-round-ends-early).
+> - Private roots: robocopy original/ to D:/MashedWT/<lane>_root and <lane>_root13 (exit 1 = copied). run_arms.py does not
+>   create its output dir. D2 arms run alone. Kill only your own PIDs. git merge -m, never -F -.
+>
+> ## Lane protocol
+> Worktree .worktrees/dcstream, branch work/dcstream, MASHED_NO_DEPLOY=1, evidence D:/MashedWT/dcstream_data (MOVED_OFF_GIT.txt),
+> runner copied from verify/rpct_20261022/run_arms.py (+ vsum.py). Commits end with
+> Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>. Do not merge: report per-entry verdicts, the gate table, decisions.
+>
+> ## Housekeeping
+> - The shared original/mashed_re_dev.asi was not redeployed after dcphys, dcphys2, dcleaf, dcmix, r7keep or rpct; deploy only when
+>   Mariano says.
+> ```
+
 > ## START HERE 2026-10-22 dcleaf: **vehicle-side dual copies: none left.** Next = D4 dual-copy burn-down, the mixed residue (lane `dcmix`).
 >
 > `verify/dcleaf_20261022/RESULT_dcleaf.md` (merged `2c097364f`, pushed `a5e5cf885`). `0x0046dbe0`, `0x00468b40`, `0x00442c80` +
