@@ -398,6 +398,7 @@ STACK['NOSX'] = ['MASHED_NO_SUBSTEP_OUTER=1']
 STACK['NOSXNF'] = STACK['NOSX'] + STACK['NF']
 # dcphys (PREREG_dcphys.md section 4): A6a's three 3-term dots in the original's association
 STACK['DOT'] = ['MASHED_A6A_DOT_ORDER']
+STACK['NODOT'] = ['MASHED_NO_A6A_DOT_ORDER']   # PREREG amendment 1: the opt-out after the flip
 # d3close (PREREG_d3close.md): bisect opt-outs for (e) / (b) if a gate moves
 STACK['NOPC24'] = ['MASHED_NO_WCS_COMBINE_PC24=1']
 STACK['SR'] = ['MASHED_SPEED_REFRESH=1']   # report only: (e) sensitivity to the +0x9e4 refresh

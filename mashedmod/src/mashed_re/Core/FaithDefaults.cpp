@@ -48,6 +48,10 @@ const FaithKnob kFaith[] = {
     // [soflip 2026-10-21, Mariano's decision] substep's FUN_004709a0 order, substep-outer / car-inner
     // (verify/substep_20261021/RESULT_substep.md); steps only the cars the seeded A4_ORDER pre-phase stepped.
     { "SUBSTEP_OUTER", "1" },
+    // [dotflip 2026-10-22, Mariano's decision] dcphys's A6a dot association (verify/dcphys_20261021/RESULT_dcphys.md):
+    // the shared A6a body is bit-identical to the original on 6551/6551 sampled calls with it, and misses on 25..174 per
+    // race without it.
+    { "A6A_DOT_ORDER", "1" },
 };
 
 bool Set(const char* var) {

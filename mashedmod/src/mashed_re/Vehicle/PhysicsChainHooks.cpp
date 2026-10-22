@@ -54,13 +54,21 @@ int  VehicleInit(int slot, int trackType);   // A3 0x0046b540 (Vehicle/VehicleIn
 // [dcphys 2026-10-21] The .asi's DEFAULT for the shared A6a body = what its former verbatim copy computed (bit-identical
 // on every sampled call, verify/dcphys_20261021): the A6a knobs the standalone seeds through Core/FaithDefaults.cpp
 // (exe only, so the .asi never sees them) plus the drive arm's LUT normalise, which the verbatim copy called live
-// (0x004c39b0). MASHED_<name> already set is left as given. A knob only, never a second body.
+// (0x004c39b0). [dotflip 2026-10-22] plus A6A_DOT_ORDER, default ON in both targets (Mariano's decision), with which the
+// shared body is bit-identical to the original. As in Core/FaithDefaults.cpp: MASHED_<name> already set is left as given,
+// MASHED_NO_<name>=1 skips that one. A knob only, never a second body.
 namespace {
 struct A6aAsiDefaults {
     A6aAsiDefaults() {
-        const char* const ks[] = { "MASHED_A6A_LC0", "MASHED_A6A_GEAR_ORDER", "MASHED_A6A_SPIN_ORDER",
-                                   "MASHED_A6A_DRIVE_NORM_LUT" };
-        for (const char* k : ks) if (!std::getenv(k)) _putenv_s(k, "1");
+        const char* const ks[] = { "A6A_LC0", "A6A_GEAR_ORDER", "A6A_SPIN_ORDER", "A6A_DRIVE_NORM_LUT", "A6A_DOT_ORDER" };
+        char on[64], no[64];
+        for (const char* k : ks) {
+            std::strcpy(on, "MASHED_");    std::strcat(on, k);
+            std::strcpy(no, "MASHED_NO_"); std::strcat(no, k);
+            const char* n = std::getenv(no);
+            if (std::getenv(on) || (n && n[0] && n[0] != '0')) continue;
+            _putenv_s(on, "1");
+        }
     }
 };
 const A6aAsiDefaults s_a6aAsiDefaults;

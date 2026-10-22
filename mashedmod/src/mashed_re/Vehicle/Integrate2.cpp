@@ -227,7 +227,9 @@ static bool A6aLc0() {
     static const bool s = [] { const char* e = std::getenv("MASHED_A6A_LC0"); return e && e[0] == '1'; }();
     return s;
 }
-// [dcphys 2026-10-21] MASHED_A6A_DOT_ORDER=1 (default OFF, verify/dcphys_20261021/PREREG_dcphys.md): A6a's three 3-term
+// [dcphys 2026-10-21] MASHED_A6A_DOT_ORDER=1 (verify/dcphys_20261021/PREREG_dcphys.md; default ON since dotflip 2026-10-22,
+// Mariano's decision, seeded by Core/FaithDefaults.cpp in the exe and A6aAsiDefaults in the .asi; opt-out
+// MASHED_NO_A6A_DOT_ORDER=1): A6a's three 3-term
 // dot products in the original's association. This body (and the .asi's former verbatim copy, which agreed with it on
 // every call) wrote them as Ghidra prints them, c*z + a*x + b*y, which C++ groups (c*z + a*x) + b*y. The original adds
 // the first two products it loads, then the third (x87 at PC_24 rounds each step as an SSE float step does):

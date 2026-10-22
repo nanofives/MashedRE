@@ -63,7 +63,7 @@ and 0 RED. Same exe for both runs, so the knob is the cause; this replay does no
 
 ## 3. Decision needed (Mariano)
 
-1. **Flip `MASHED_A6A_DOT_ORDER` default ON?** For: the knob-ON body is bit-identical to the original on 6551/6551 sampled
+1. **Flip `MASHED_A6A_DOT_ORDER` default ON?** DECIDED 2026-10-22 (Mariano): flipped, section 5. For: the knob-ON body is bit-identical to the original on 6551/6551 sampled
    calls where the default body misses 25..174 per race; every gate passes with it ON. Cost: new references, G-CTRL
    `23ac657a / 7bf2f27f / 3186dd09`, B `0e3790c4 / 55b84dd8 / 2324715b`, and 3 moved 13-track rows (0 RED). If flipped, the
    same change belongs in the .asi default seed (`PhysicsChainHooks.cpp` `A6aAsiDefaults`), and `0x00467650` can go C2 -> C4
@@ -90,3 +90,25 @@ in the body, its one `[UNCERTAIN]` filed as U-9783 (input provenance, not the bo
   physics A-chain rows of ROADMAP §D4 are NOT on the allowlist, but `hooks.csv` still has `exe_file != file` for each, so the lint
   under-counts them as it does the AI copies: `0x00468980` A6b C4 (`AeroStabilize.cpp`), `0x0046ddb0` A5 C2
   (`ForceIntegrator.cpp`), `0x00470670` A4 C3 (`VehicleControl.cpp`), all against `PhysicsChainHooks.cpp`. Same recipe applies.
+
+## 5. Amendment 1 (2026-10-22): `MASHED_A6A_DOT_ORDER` default ON (Mariano's decision)
+
+PREREG section 5 (commit `d1cc91a48`, before the flip was measured). `Core/FaithDefaults.cpp` seeds `A6A_DOT_ORDER=1`; the
+.asi's `A6aAsiDefaults` seeds it too and now honours `MASHED_NO_<name>`. Flip build exe `3a2c122a` / asi `a2d8d6ba`
+(`D:\MashedWT\dcphys_data\flip`); arms in `D:\MashedWT\dcphys_data\arms_flip`. **Every prediction held.**
+
+| arm | prediction | measured |
+|---|---|---|
+| `H_DEF` x2 | `23ac657a / 7bf2f27f / 3186dd09` | equal, x2 |
+| `B_DEF_K0 / K1 / K26` | `0e3790c4 / 55b84dd8 / 2324715b`; (b) 9/9; (e) 3/3 same values | equal; 9/9; PASS 3/3, launch 1425.7 / 2052.5 / 2055.0 |
+| `D2_DEF_1..3` alone | PASS 3/3 | PASS 3/3: slip 0.1900 / 0.2550 x3, drvmed 1965.67 / 1963.95 / 1964.25, H1 398/400 x3 |
+| 13 tracks | the `t13_dot` table | identical to `t13_dot`: 39 frames, 875 rows, 0 RED, all cited, gates PASS (no layout effect) |
+| `H_NODOT` | `f78de789 / 43bbe0fb / 161b1a6a` | equal |
+| `H_NF` | `997f4117 / e6288905 / a63bdcfa` | equal |
+| .asi default, no env, track 0, x20 | A6a 1440/1440, noo 0 | A6a 1440/1440, noo 0 on 1440; A3 12/12 |
+| .asi `MASHED_NO_A6A_DOT_ORDER=1` | residual returns | 1266/1440 (the 174 of run1) |
+
+`0x00467650` C2 -> C4 through re-classify (`apply_trackers2.py`): hook live, canonical scenario, the default body bit-identical
+to the original on every sampled call, no stub in the body. Its exe-side game-mode input is a stand-in (constant 6 except the
+d2engage hold tick); filed as U-9784 with A4 / A5 / `BodyOrientationIntegrate.cpp`, which read the same word. The airborne
+branch is still unsampled (section 1).
