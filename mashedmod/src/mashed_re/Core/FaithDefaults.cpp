@@ -52,6 +52,10 @@ const FaithKnob kFaith[] = {
     // the shared A6a body is bit-identical to the original on 6551/6551 sampled calls with it, and misses on 25..174 per
     // race without it.
     { "A6A_DOT_ORDER", "1" },
+    // [p2flip 2026-10-22, Mariano's decision] dcphys2's P2 stack (verify/dcphys2_20261022/RESULT_dcphys2.md): with it the
+    // shared A6b / A5 / A4 bodies are bit-identical to the original on every sampled call (402 / 3214 / 5403).
+    { "A6B_ACOS_CRT", "1" },       { "A6B_NORM_LUT", "1" },        { "A5_RING_ORDER", "1" },     { "A5_DOT_ORDER", "1" },
+    { "A5_AIR_F32", "1" },         { "A5_CONTACT_INT", "1" },      { "A5_SPIN_FILD", "1" },      { "A4_DOT_ORDER", "1" },
 };
 
 bool Set(const char* var) {

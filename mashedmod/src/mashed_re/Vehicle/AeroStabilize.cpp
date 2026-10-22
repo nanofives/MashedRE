@@ -1,47 +1,61 @@
 // Mashed RE — WS-A6b: aerodynamic stabilization FUN_00468980.
 //
-// STATUS: verbatim port, PENDING diff-original C4. The matrix-apply gap [U-A6B-MTX] is
-// now RESOLVED from the asm (listing 0x00468980..0x00468b34, Ghidra pool11 2026-06-17):
-//   self = ECX (this); orient = ESI = the vehicle world-transform RwMatrix (right@0,
-//   up@0x10, at@0x20, pos@0x30); dt = first stack arg. Airborne only (grounded +0x9e0==0).
-//   motion-state +0x9f0 == 0:
-//     c1 = clamp(at.y = orient[9], -1, 1);   angle1 = -(acos(c1)*-2 - 0)*dts   (pitch)
-//        RwMatrixRotate(orient, X=(1,0,0)@0x6146f0, angle1, 1)
-//     c2 = clamp(right.y = orient[1], -1, 1); angle2 = (acos(c2)*-2 - 90)*dts   (roll)
-//        RwMatrixRotate(orient, Z=(0,0,1)@0x614708, angle2, 1)
-//   motion-state != 0: zero ang-vel, normalize linear vel -> dir,
-//        RwMatrixRotate(orient, dir, dt*0.05, 1)
-// dts = dt*0.001 (005cc558). acos = FUN_004a3384 = std::acos. Consts memory_read 2026-06-17.
+// [dcphys2 2026-10-22] ONE body, shared by mashed_re.exe and mashed_re_dev.asi (this TU is in both rsp files). The
+// .asi's naked verbatim copy (PhysicsChainHooks.cpp A6b_BodyAsm) was deleted once this body read against the
+// original in that file's in-process A/B (verify/dcphys2_20261022). Only the leaf thunks below differ by target.
 //
-// WHICH MATRIX `orient` IS — DECODED 2026-09-29 (U-9149). The old caveat here read
-// "`orient==nullptr` guards the standalone-inert case until A8 binds the vehicle transform
-// matrix". A8 landed and nothing ever bound it, so BOTH `if (orient)` legs below have been
-// dead in mashed_re.exe for the whole of D2. The object is now known: the original loads ESI
-// at 0x0047093b from A4's stack slot E+0x0c, which A4 filled at 0x004706a2 with
-// LEA [EAX+EDI+0x928] (EAX = [EDI+0x9a8]<<6) — the SAME pointer it hands A5 as A5's second
-// argument. The .asi forwarder is fixed accordingly (PhysicsChainHooks.cpp Call_A6b) and
-// verified live: 144 samples, 64 of them airborne and bit-identical.
+// Listing 0x00468980..0x00468b34 (MASHED.exe.unpatched, re/tools/disasm_fn.py 2026-10-22):
+//   self = ECX; orient = ESI; dt = the one stack arg. Airborne only: FCOMP +0x9e0 with 0.0 (0x00468989), JP out.
+//   motion state +0x9f0 == 0 (0x004689a4):
+//     dts = dt * _DAT_005cc558 (0.001f), FSTP float                                      0x004689aa..0x004689b4
+//     c1  = (at.y*Y.y + at.x*Y.x) + at.z*Y.z, Y = _DAT_006146fc (0,1,0), clamp [-1,1]   0x004689b8..0x004689fd
+//     ang1 = -(acos(c1) * _DAT_005ccae0 - _DAT_005ccad8) * dts   (double 180/pi, double 90, FCHS)  0x00468a09..0x00468a22
+//     FUN_004c4d20(orient, _DAT_006146f0 (1,0,0), ang1, 1)                              0x00468a31
+//     c2  = (right.y*Y.y + Y.x*right.x) + right.z*Y.z, clamp                            0x00468a36..0x00468a7d
+//     ang2 = (acos(c2) * _DAT_005ccae0 - _DAT_005ccad0) * dts    (float 90, no FCHS)    0x00468a89..0x00468aa0
+//     FUN_004c4d20(orient, _DAT_00614708 (0,0,1), ang2, 1)                              0x00468aaf
+//   motion state != 0: +0x9c4 / +0x9c0 / +0x9bc = 0 (0x00468abb..0x00468ac7); dir = +0x9b0..+0x9b8 copied,
+//     FUN_004c39b0(dir, dir) (LUT normalise, 0x00468af1); FUN_004c4d20(orient, dir, dt * _DAT_005cc9a0 (0.05f), 1)
+//     (0x00468b29).
+// acos = FUN_004a3384 (CRT). Under the race loop's PC_24 its result leaves rounded to double (Ai/AiLeafTargets.cpp
+// AL_Acos header), and every FMUL / FSUB of the angle chain rounds to 24 bits, once per operation, before the single
+// FSTP float. orient = A4's +0x928 matrix (record + [+0x9a8]*0x40 + 0x928, 0x00470699 / 0x0047093b, U-9149); the
+// standalone passes its own body basis there (U-9152), an input of this body, not part of it.
 //
-// THE EXE SIDE IS STILL nullptr, AND IT IS BLOCKED, NOT FORGOTTEN [UNCERTAIN U-9151].
-// Binding g_bodyBasis[slot] here crashes mashed_re.exe with 0xC0000005 (3 runs of 3,
-// 2026-09-29): both legs call RwMatrixRotate with mode 1 (rwCOMBINEPRECONCAT), and
-// Math/RwMatrixRotateInner.cpp:169-176 resolves mode 1 through the RW DEVICE table at the
-// absolute addresses 0x007d4028 / 0x007d3ff8, which are mapped in the injected .asi and not
-// in the standalone. Only mode 0 is self-contained there. Unblocker: a standalone CPU port
-// of RwMatrixMultiply 0x004c4600 (today only a function pointer into the original image,
-// HUD/FontCtx.cpp:42, C1). Full write-up: re/analysis/D2_REOPEN_2026-09-29.md §4.6.
+// [dcphys2] MASHED_A6B_ACOS_CRT (default OFF in the exe): the angle chain above as the original runs it (CRT acos,
+// one PC_24 rounding per operation). OFF keeps the exe's former form: std::acos and the chain in double, rounded to
+// float once. MASHED_A6B_NORM_LUT (default OFF in the exe): the state != 0 normalise through the RW LUT (FUN_004c39b0,
+// Math::LutNormalize) instead of the exact Vec3Norm3. The .asi seeds both ON (PhysicsChainHooks.cpp A6bAsiDefaults),
+// which is what its deleted verbatim copy computed.
 // Anchored MASHED.exe SHA-256 BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E.
 #include "ForceIntegrator.h"
+#include "../Math/RwLutTables.h"
 #include <cstdint>
 #include <cstring>
 #include <cmath>
 #include <cstdio>    // [U-9151] MASHED_A6BTEST witness
 #include <cstdlib>
+#include <float.h>   // _controlfp_s (MASHED_A6B_ACOS_CRT PC_24 scope)
+
+#ifdef MASHED_STANDALONE
+extern "C" void AL_Acos();   // Ai/AiLeafTargets.cpp: CRT acos 0x004a3384, naked, result in ST0 (exe only)
+#endif
 
 namespace mashed_re {
 namespace Vehicle {
 
 extern "C" void* __cdecl RwMatrixRotate(void* matrix, const float* axis, float angle_deg, int mode);
+
+// ── target thunks: the leaves with no both-target port ───────────────────────
+#ifdef MASHED_STANDALONE
+static inline void* A6bAcosFn() { return reinterpret_cast<void*>(&AL_Acos); }
+static inline void  A6bRotate(float* m, const float* axis, float angle) { RwMatrixRotate(m, axis, angle, 1); }
+#else
+static inline void* A6bAcosFn() { return reinterpret_cast<void*>(0x004a3384u); }                       // FUN_004a3384
+static inline void  A6bRotate(float* m, const float* axis, float angle) {                               // FUN_004c4d20
+    reinterpret_cast<void (__cdecl*)(void*, const float*, float, int)>(0x004c4d20u)(m, axis, angle, 1);
+}
+#endif
 
 static inline float Rf(void* b, int off) { float v; std::memcpy(&v, (char*)b + off, 4); return v; }
 static inline void  Wf(void* b, int off, float v) { std::memcpy((char*)b + off, &v, 4); }
@@ -53,7 +67,7 @@ static inline float  Cf(std::uint32_t bits) { float  f; std::memcpy(&f, &bits, 4
 static inline double Cd(std::uint64_t bits) { double d; std::memcpy(&d, &bits, 8); return d; }
 
 namespace a6b {
-constexpr float kDtScale = 0.001f;   // _DAT_005cc558
+constexpr float kDtScale = 0.001f;   // _DAT_005cc558 = 0x3a83126f
 constexpr float kNegOne  = -1.0f;    // _DAT_005cc33c
 constexpr float kOne     =  1.0f;    // _DAT_005cc320
 // FUN_00468980 disasm (0x00468a0e..0x00468a9c, pool6 2026-06-17): BOTH the pitch
@@ -64,9 +78,10 @@ constexpr float kOne     =  1.0f;    // _DAT_005cc320
 const     double kRad2Deg   = Cd(0x404ca5dcc0000000);  // _DAT_005ccae0 = 180/pi (57.295799)
 const     double kBias90d   = Cd(0x4056800000000000);  // _DAT_005ccad8 = 90.0 (double, pitch)
 const     float  kBias90f   = Cf(0x42b40000);          // _DAT_005ccad0 = 90.0f (float, roll)
-constexpr float kVelAng  = 0.05f;    // _DAT_005cc9a0
-// axis vectors (memory_read 0x006146f0..): X=(1,0,0), Z=(0,0,1)
+constexpr float kVelAng  = 0.05f;    // _DAT_005cc9a0 = 0x3d4ccccd
+// axis vectors (image bits 2026-10-22): X=(1,0,0) @0x006146f0, Y=(0,1,0) @0x006146fc, Z=(0,0,1) @0x00614708
 const float kAxisX[3] = { 1.0f, 0.0f, 0.0f };   // _DAT_006146f0
+const float kAxisY[3] = { 0.0f, 1.0f, 0.0f };   // _DAT_006146fc
 const float kAxisZ[3] = { 0.0f, 0.0f, 1.0f };   // _DAT_00614708
 } // namespace a6b
 
@@ -76,26 +91,69 @@ static inline float clamp11(float d) {
     return (kOne < d) ? kOne : d;
 }
 
-// 0x00468980 — Vehicle_AeroStabilize(self, orient, dt). orient = vehicle world-transform
-// RwMatrix (16 floats); nullptr -> rotation-apply skipped (standalone-inert until A8).
+static bool A6bKnob(const char* name) { const char* e = std::getenv(name); return e && e[0] && e[0] != '0'; }
+static bool A6bAcosCrt() { static const bool s = A6bKnob("MASHED_A6B_ACOS_CRT"); return s; }
+static bool A6bNormLut() { static const bool s = A6bKnob("MASHED_A6B_NORM_LUT"); return s; }
+
+// [dcphys2] the angle chain as the original runs it: acos (FUN_004a3384, result left in ST0) then FMUL qword
+// 180/pi, FSUB 90 (qword for pitch, dword for roll), FCHS (pitch only), FMUL dword dts, FSTP dword, all under PC_24
+// (0x00468a09..0x00468a22 / 0x00468a89..0x00468aa0). The .asi runs inside the race thread's PC_24 already; the
+// scope makes the standalone match it.
+__declspec(noinline) static float A6bAngleCrt(float c, float dts, bool pitch) {   // noinline: the __asm CALL is invisible to the register allocator
+    unsigned int oldcw = 0, t = 0;
+    _controlfp_s(&oldcw, 0, 0);
+    _controlfp_s(&t, _PC_24, _MCW_PC);
+    double cc = c;
+    void* fn = A6bAcosFn();
+    const double r2d = a6b::kRad2Deg, b90d = a6b::kBias90d;
+    const float  b90f = a6b::kBias90f;
+    float d = dts, res;
+    if (pitch) {
+        __asm {
+            sub   esp, 8
+            fld   qword ptr cc
+            fstp  qword ptr [esp]          // 0x00468a03..0x00468a06
+            call  dword ptr fn             // 0x00468a09
+            add   esp, 8
+            fmul  qword ptr r2d            // 0x00468a0e
+            fsub  qword ptr b90d           // 0x00468a16
+            fchs                           // 0x00468a1c
+            fmul  dword ptr d              // 0x00468a1e
+            fstp  dword ptr res            // 0x00468a22
+        }
+    } else {
+        __asm {
+            sub   esp, 8
+            fld   qword ptr cc
+            fstp  qword ptr [esp]          // 0x00468a83..0x00468a86
+            call  dword ptr fn             // 0x00468a89
+            add   esp, 8
+            fmul  qword ptr r2d            // 0x00468a8e
+            fsub  dword ptr b90f           // 0x00468a96
+            fmul  dword ptr d              // 0x00468a9c
+            fstp  dword ptr res            // 0x00468aa0
+        }
+    }
+    _controlfp_s(&t, oldcw, _MCW_PC);
+    return res;
+}
+
+// 0x00468980 — Vehicle_AeroStabilize(self, orient, dt). orient = the +0x928 RwMatrix (16 floats).
 void Vehicle_AeroStabilize(int* self, float* orient, float dt)
 {
     using namespace a6b;
     void* v = self;
-    if (Rf(v, 0x9e0) != 0.0f) return;                 // grounded -> not airborne
+    if (Rf(v, 0x9e0) != 0.0f) return;                 // grounded -> not airborne (0x00468989 / 0x00468994)
 
+#ifdef MASHED_STANDALONE
     // [U-9151 2026-09-29] exe-copy witness, DIAG ONLY, default-OFF, writes nothing when
     // unset. MASHED_A6BTEST=<path> logs one line per call that gets past the airborne
     // gate: whether `orient` is bound at all, whether it is the SAME pointer A5 was
     // handed (the original's invariant — A4 computes the matrix once at 0x00470699 and
     // gives the identical pointer to A5 at 0x00470918 and to A6b at 0x0047093b), the
     // motion state that picks the branch, and the 16 matrix floats BEFORE and AFTER so
-    // `ndiff` says the rotation actually landed. This is the exe analogue of the .asi's
-    // `xf=%08x exp=%08x xfok=%d` self-test: `exp` cannot be the original's
-    // record+[record+0x9a8]*0x40+0x928 here, because the port keeps the basis in
-    // g_bodyBasis (U-9152), so the checkable invariant is A5-pointer equality instead.
-    // That difference is the point of the CONFIDENCE.md copy clause: this is the exe
-    // copy's OWN evidence, not the .asi's.
+    // `ndiff` says the rotation actually landed. Exe only (g_a6bA5Matrix lives in the
+    // exe-only ForceIntegratorStubs.cpp); the .asi's A/B is its own witness.
     static const char* s_a6bt = std::getenv("MASHED_A6BTEST");
     float before[16];
     if (s_a6bt && orient) std::memcpy(before, orient, sizeof(before));
@@ -124,27 +182,37 @@ void Vehicle_AeroStabilize(int* self, float* orient, float dt)
             std::fclose(f);
         }
     } w{ s_a6bt, self, orient, before, s_a6bt != nullptr, Ri(v, 0x9f0) };
+#endif
 
-    if (Ri(v, 0x9f0) == 0) {                           // motion state 0: auto-level
-        const float dts = dt * kDtScale;
+    if (Ri(v, 0x9f0) == 0) {                           // motion state 0: auto-level (0x004689a4)
+        const float dts = dt * kDtScale;               // 0x004689aa..0x004689b4
         if (orient) {
-            // pitch: -(acos(c1)*180/pi - 90.0_double) * dts   (FCHS @0x00468a1c)
-            const float c1 = clamp11(orient[9]);       // at.y  (pitch)
-            const float ang1 = (float)(-((double)std::acos((double)c1) * kRad2Deg - kBias90d) * (double)dts);
-            RwMatrixRotate(orient, kAxisX, ang1, 1);
-            // roll: (acos(c2)*180/pi - 90.0_float) * dts      (no FCHS)
-            const float c2 = clamp11(orient[1]);       // right.y (roll)
-            const float ang2 = (float)(((double)std::acos((double)c2) * kRad2Deg - (double)kBias90f) * (double)dts);
-            RwMatrixRotate(orient, kAxisZ, ang2, 1);
+            if (A6bAcosCrt()) {
+                // the dots as the original adds them (0x004689b8..0x004689ca, 0x00468a36..0x00468a4a)
+                const float c1 = clamp11((orient[9] * kAxisY[1] + orient[8] * kAxisY[0]) + orient[10] * kAxisY[2]);
+                A6bRotate(orient, kAxisX, A6bAngleCrt(c1, dts, true));                 // 0x00468a31
+                const float c2 = clamp11((orient[1] * kAxisY[1] + kAxisY[0] * orient[0]) + orient[2] * kAxisY[2]);
+                A6bRotate(orient, kAxisZ, A6bAngleCrt(c2, dts, false));                // 0x00468aaf
+            } else {
+                // pitch: -(acos(c1)*180/pi - 90.0_double) * dts   (FCHS @0x00468a1c)
+                const float c1 = clamp11(orient[9]);       // at.y  (pitch)
+                const float ang1 = (float)(-((double)std::acos((double)c1) * kRad2Deg - kBias90d) * (double)dts);
+                A6bRotate(orient, kAxisX, ang1);
+                // roll: (acos(c2)*180/pi - 90.0_float) * dts      (no FCHS)
+                const float c2 = clamp11(orient[1]);       // right.y (roll)
+                const float ang2 = (float)(((double)std::acos((double)c2) * kRad2Deg - (double)kBias90f) * (double)dts);
+                A6bRotate(orient, kAxisZ, ang2);
+            }
         }
         return;
     }
 
     // motion state != 0: zero angular velocity, align orientation to velocity direction
-    Wf(v, 0x9c4, 0.0f); Wf(v, 0x9c0, 0.0f); Wf(v, 0x9bc, 0.0f);
+    Wf(v, 0x9c4, 0.0f); Wf(v, 0x9c0, 0.0f); Wf(v, 0x9bc, 0.0f);   // 0x00468abb..0x00468ac7
     float dir[3] = { Rf(v, 0x9b0), Rf(v, 0x9b4), Rf(v, 0x9b8) };
-    Vec3Norm3(dir, dir);
-    if (orient) RwMatrixRotate(orient, dir, dt * kVelAng, 1);
+    if (A6bNormLut()) mashed_re::Math::LutNormalize(dir, dir);       // FUN_004c39b0 (0x00468af1)
+    else              Vec3Norm3(dir, dir);
+    if (orient) A6bRotate(orient, dir, dt * kVelAng);               // 0x00468b29
 }
 
 } // namespace Vehicle
