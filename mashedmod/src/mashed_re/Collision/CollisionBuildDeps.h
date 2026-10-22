@@ -51,7 +51,7 @@ void  FUN_00482730(int body, void* colorRGBA);              // 0x00482730 set de
 void* FUN_004c0b30(void);                                   // 0x004c0b30 (attach payload)
 void  FUN_004e7e30(int body, void* payload);                // 0x004e7e30 attach
 void  FUN_0047d240(float i, int a, float b, float y, float x); // 0x0047d240 place body i
-void* FUN_0055dec0(void* world, int node, int minus1, int two); // 0x0055dec0 register body into world
+unsigned int __cdecl UtilDeref55dec0(const unsigned int* p);  // 0x0055dec0 return *p (Util/UtilLeaves_ab6.cpp); called with 4 args, cdecl drops 3
 void  FUN_00559c40(void* reg);                              // 0x00559c40 post-register
 int   FUN_00426c00(void);                                   // 0x00426c00 game-mode query (==0x26?)
 void  FUN_0055ae70(int owner, int node, int group);         // 0x0055ae70 set collision group

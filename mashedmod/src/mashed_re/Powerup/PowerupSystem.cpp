@@ -5,6 +5,7 @@
 #include "PowerupSystem.h"
 #include "PowerupEffects.h"
 #include "PowerupContact.h"
+#include "PowerupTypeSearch.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -89,12 +90,14 @@ void PowerupSystem::Init(IPowerupBackend* be) {
     cur_ = 0; frame_ = 0;
 }
 
-// 0x0045baa0 PowerupTypeLookup — linear search of the 9 entries for code==entry+0.
-//   for(i=0;i<DAT_005f9bd8;i++) if(ESI==*(0x005f9998+i*0x40)) return entry; return 0;
+// PowerupTypeLookup: the one body of 0x0045baa0 is Powerup/PowerupTypeSearch.cpp (pointer or NULL, as the
+// original). This host maps it back to an s_table index or -1; s_table holds 9 distinct codes, so the first
+// match is the same entry the old index loop returned.
 int PowerupSystem::Lookup(int code) {
-    for (int i = 0; i < s_count; ++i)
-        if (s_table[i].code == code) return i;
-    return -1;
+    const std::uint8_t* base = reinterpret_cast<const std::uint8_t*>(s_table);
+    const std::uint8_t* e = PowerupTypeSearch(static_cast<std::uint32_t>(code), base, s_count,
+                                              static_cast<int>(sizeof(TypeEntry)));
+    return e ? static_cast<int>((e - base) / sizeof(TypeEntry)) : -1;
 }
 
 // 0x0045c010(idx, code): slot = 0x0088fbe0 + idx*0xb4 (IMUL 0x0045c014, ADD

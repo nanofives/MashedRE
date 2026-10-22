@@ -8,6 +8,7 @@
 #include "../Core/HookSystem.h"
 #include "../Core/ShadowAB.h"
 #include "../Core/ShadowTrack.h"
+#include "../Powerup/PowerupTypeSearch.h"
 
 #include <cstdint>
 
@@ -1286,19 +1287,12 @@ extern "C" __declspec(dllexport) void __cdecl Mark4d5480(std::uint32_t i, std::u
 RH_ScopedInstall(Mark4d5480, 0x004d5480);
 
 // ===== round 128 =====
-// 0x0045baa0 — byte-verified ESI-keyed linear search:
-//   edx=[0x5f9bd8] (count); if(count<=0) return 0; eax=0x5f9998 (base);
-//   loop: if(esi==[eax]) return eax; eax+=0x40; while(++i<count); return 0.
-//   ESI = search key (register arg). Reimpl is __cdecl(key); compares the returned ptr.
+// PowerupTypeLookup (0x0045baa0): the body is Powerup/PowerupTypeSearch.cpp, shared with the exe (dcmix
+// 2026-10-22). This export feeds it the original's table: base 0x005f9998, count [0x005f9bd8], stride 0x40.
+// ESI = search key (register arg) on the original; this export is __cdecl(key) and returns the entry or 0.
 extern "C" __declspec(dllexport) std::uint32_t __cdecl Search45baa0(std::uint32_t key) {
-    int count = *reinterpret_cast<int*>(0x005f9bd8);
-    if (count <= 0) return 0;
-    std::uint8_t* p = reinterpret_cast<std::uint8_t*>(0x005f9998);
-    for (int i = 0; i < count; i++) {
-        if (*reinterpret_cast<std::uint32_t*>(p) == key) return reinterpret_cast<std::uint32_t>(p);
-        p += 0x40;
-    }
-    return 0;
+    return reinterpret_cast<std::uint32_t>(PowerupTypeSearch(
+        key, reinterpret_cast<const std::uint8_t*>(0x005f9998), *reinterpret_cast<int*>(0x005f9bd8), 0x40));
 }
 // Register-ABI shim — this, NOT Search45baa0, is installed at 0x0045baa0.
 // ABI FIX 2026-07-27 — direct sibling of the 0x0041f330 crasher. The original takes its key

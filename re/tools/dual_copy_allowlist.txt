@@ -24,15 +24,8 @@
 # produced exactly such a line.
 
 DUP-IN-TARGET:00408ad0:D3d9Render/TrackRenderer.cpp,Frontend/SmallLeaves_t1.cpp   # audit=DIFFERS-BEHAVIOUR; [exe] two bodies: D3d9Render/TrackRenderer.cpp:4007 (TrackRenderer::RacePct), Frontend/SmallLeaves_t1.cpp:42 (RaceScoreFloatGetBySlot)
-DUP-IN-TARGET:0042d3e0:Frontend/MenuInit.cpp,Frontend/MenuNavSM.cpp   # audit=DIFFERS-BEHAVIOUR; [exe] two bodies: Frontend/MenuInit.cpp:73 (MenuEntryArrayInit), Frontend/MenuNavSM.cpp:386 (RecordsZero)
 DUP-IN-TARGET:004c4d20:Math/RwMatrixRotate.cpp,Race/RaceCamera.cpp   # audit=DIFFERS-BEHAVIOUR; [exe] two bodies: Math/RwMatrixRotate.cpp:52 (), Race/RaceCamera.cpp:66 (RotateAboutAxis)
-DUP-IN-TARGET:0055dec0:Collision/RwpBuildExterns.cpp,Util/UtilLeaves_ab6.cpp   # audit=UNREVIEWED; [exe] two bodies: Collision/RwpBuildExterns.cpp:67 (FUN_0055dec0), Util/UtilLeaves_ab6.cpp:233 (UtilDeref55dec0)
-DUP-IN-TARGET:0055e200:Collision/RwpIntegrator.cpp,Collision/RwpSolverCore23.cpp   # audit=not-in-audit; [exe] two bodies: Collision/RwpIntegrator.cpp:422 (RwpSolverContextSet_impl), Collision/RwpSolverCore23.cpp:140 (RwpSolverContextSet)
-DUP-IN-TARGET:0055dec0:Collision/RwpBuildExterns.cpp,Util/UtilLeaves_ab6.cpp   # audit=UNREVIEWED; [asi] two bodies: Collision/RwpBuildExterns.cpp:67 (FUN_0055dec0), Util/UtilLeaves_ab6.cpp:233 (UtilDeref55dec0)
-DUP-IN-TARGET:0055e200:Collision/RwpIntegrator.cpp,Collision/RwpSolverCore23.cpp   # audit=not-in-audit; [asi] two bodies: Collision/RwpIntegrator.cpp:422 (RwpSolverContextSet_impl), Collision/RwpSolverCore23.cpp:140 (RwpSolverContextSet)
-CROSS-TARGET:0040e180:Race/CameraClusterHooks.cpp,Race/RaceCamera.cpp   # audit=DIFFERS-COSMETIC; exe-only Race/RaceCamera.cpp  vs  asi-only Race/CameraClusterHooks.cpp
 CROSS-TARGET:00410510:Race/RuleEngine.cpp,Race/ScoringHooks.cpp   # audit=DIFFERS-BEHAVIOUR; exe-only Race/RuleEngine.cpp  vs  asi-only Race/ScoringHooks.cpp
-CROSS-TARGET:0045baa0:Powerup/PowerupSystem.cpp,Util/PromoLoop_sessionB.cpp   # audit=DIFFERS-BEHAVIOUR; exe-only Powerup/PowerupSystem.cpp  vs  asi-only Util/PromoLoop_sessionB.cpp
 CROSS-TARGET:004cc050:D3d9Render/RwWorldStream.cpp,Render/TextureLoader_q6.cpp   # audit=DIFFERS-BEHAVIOUR; exe-only D3d9Render/RwWorldStream.cpp  vs  asi-only Render/TextureLoader_q6.cpp
 
 # --- ADDED 2026-09-30 (U-9156): exposed by the SECOND ANCHORING PASS in

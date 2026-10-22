@@ -13,10 +13,8 @@
 //     is wired (B5e) it runs faithfully. On the standalone exe they link but are UNCALLED
 //     (the load-time build chain is not yet invoked standalone — see the TU headers). This
 //     is the same reinterpret_cast-RVA idiom used across the tree (Race/ScoringHooks.cpp …).
-//   * FUN_0055dec0 is implemented DIRECTLY — it is the confirmed 3-byte leaf `return *world`
-//     (body 0x0055dec0..0x0055dec6). FUN_0047d3c0 calls it with 4 args but cdecl discards
-//     the extra 3 (they are pushed-and-ignored) — the "register body into world" label was
-//     mis-attributed. Resolves the CollisionBuildDeps.h vs Util/UtilLeaves_ab6.cpp conflict.
+//   * The 3-byte leaf at 0x0055dec0 (`return *param_1`) has one body in both targets:
+//     Util/UtilLeaves_ab6.cpp UtilDeref55dec0 (dcmix 2026-10-22).
 //   * DATA GLOBALS -> placeholder storage (the build chain is not run yet on EITHER target;
 //     when it is wired live under the .asi, B5e must rebind these to the game's real globals
 //     via absolute-address macros, exactly as RwpIntegrator.cpp binds DAT_007dc8d8). The
@@ -62,9 +60,6 @@ void  FUN_00563940(void* slab)              { reinterpret_cast<void(__cdecl*)(vo
 // clean-room ports now live in Collision/RwpSolverMath2.cpp (same extern "C" names).
 // The island root FUN_0047e9c0 thunk was RETIRED by B5e cluster K24 — the real
 // clean-room port now lives in Collision/RwpSolverCore23.cpp (same extern "C" name).
-
-// 0x0055dec0 — confirmed leaf `return *param_1` (extra cdecl args discarded).
-void* FUN_0055dec0(void* world, int /*node*/, int /*minus1*/, int /*two*/) { return *reinterpret_cast<void**>(world); }
 
 }  // extern "C"
 

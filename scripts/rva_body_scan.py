@@ -140,10 +140,14 @@ def scan_tu(rel: str) -> tuple[dict[int, tuple[str, int]], dict[int, list[tuple[
             if RE_NOT_A_DEF.match(cand) or not RE_DEF.search(cand):
                 continue
             # The signature may span lines; require an opening brace within 6 lines.
+            # A declaration (`...);`) is not a body even when a brace follows within
+            # 6 lines: RwpSolverCore23.cpp's extern for 0x0055e200 was reported as a
+            # second body that way (dcmix 2026-10-22).
             blob = "\n".join(lines[j:j + 6])
-            if "{" not in blob or ";" in cand.split(")")[-1].split("{")[0]:
-                if "{" not in blob:
-                    continue
+            if "{" not in blob:
+                continue
+            if re.sub(r"//.*", "", cand.split("{")[0]).rstrip().endswith(";"):
+                continue
             # Strip leading attribute macros (`__declspec(noinline)`, `extern
             # "C"`, `static`, `inline`, ...) before taking the function name,
             # otherwise every annotated definition is reported as `__declspec`.
