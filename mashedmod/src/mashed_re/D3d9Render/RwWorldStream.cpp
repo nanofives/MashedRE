@@ -11,19 +11,19 @@
 // the RW device table DAT_007d3ff8) and is the next session's work (see report).
 //
 // Verbatim ports (Ghidra pool6, read-only, 2026-06-16; every RVA cited):
-//   FUN_004cbd30 RwStreamRead        -> Rwl_StreamRead       (case 3 = memory)
+//   RwStreamRead / RwStreamSkip      -> Render/RwStreamCore.cpp (shared with the .asi; called through below)
 //   FUN_004cc790 (read-or-error)     -> Rwl_StreamReadReal
 //   FUN_004cc5e0 RwStreamFindChunk   -> Rwl_StreamFindChunk
 //   FUN_004cc400 RwStreamReadChunkHeader (internal: ChunkHeaderRead)
-//   FUN_004cc050 RwStreamSkip            (internal: StreamSkip, case 3)
 //   FUN_004cc4f0 type-validator: return discarded by the header reader, so the
 //     chunk type passes through unchanged — faithfully omitted.
 // STATUS: verbatim, PENDING diff-original C4. The memory-stream struct layout is
-// taken from FUN_004cbd30/004cc050 case 3 ([0]=type, [3]=pos, [4]=len, [5]=base).
+// taken from RwStreamRead / RwStreamSkip case 3 ([0]=type, [3]=pos, [4]=len, [5]=base).
 //
 // Anchor: MASHED.exe SHA-256
 //   BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E
 #include "RwWorldLoad.h"
+#include "../Render/RwStreamCore.h"
 #include <cstdint>
 #include <cstring>
 #include <cstdlib>
@@ -35,7 +35,7 @@ namespace D3d9Render {
 unsigned Rwl_ErrFmt(unsigned code, unsigned a);   // FUN_004d7ff0
 void     Rwl_ErrEmit(void* blk);                  // FUN_004d8480
 
-// ---- RW memory stream (the [0]=type=3 case of FUN_004cbd30/004cc050) ---------
+// ---- RW memory stream (the [0]=type=3 case of RwStreamRead / RwStreamSkip) -----
 // Word layout matching the original RwStream: [0]=type, [3]=pos, [4]=len, [5]=base.
 struct RwMemStream { int w[6]; };
 
@@ -48,22 +48,11 @@ void RwWorldLoad_OpenMemory(RwMemStream* s, const void* buf, int len)
     s->w[5] = reinterpret_cast<int>(buf);          // base
 }
 
-// ---- 0x004cbd30  RwStreamRead (case 3: memory) ------------------------------
-// Returns bytes read. Clamps to (len - pos); copies dword-then-byte; advances pos.
+// RwStreamRead: the shared body lives in Render/RwStreamCore.cpp (both targets, lane dcstream 2026-10-22).
 int Rwl_StreamRead(void* stream, void* dst, int size)
 {
-    int* p = static_cast<int*>(stream);
-    if (p[0] != 3) return 0;                        // only the memory path is ported
-    unsigned avail = static_cast<unsigned>(p[4] - p[3]);
-    unsigned n = static_cast<unsigned>(size);
-    if (avail < n) {                               // short read -> clamp (+ orig emits err 5)
-        unsigned eb[2] = {1, Rwl_ErrFmt(5, 0)}; Rwl_ErrEmit(eb);
-        n = avail;
-    }
-    const unsigned char* src = reinterpret_cast<const unsigned char*>(p[5] + p[3]);
-    std::memcpy(dst, src, n);
-    p[3] += static_cast<int>(n);
-    return static_cast<int>(n);
+    return static_cast<int>(Render::RwStreamCoreRead(static_cast<std::uint32_t*>(stream), dst,
+                                                     static_cast<std::uint32_t>(size)));
 }
 
 // ---- 0x004cc790  read-or-error: returns the stream on full read, else 0 ------
@@ -74,19 +63,11 @@ int Rwl_StreamReadReal(void* stream, void* dst, int size)
     return reinterpret_cast<int>(stream);          // (original returns param_1)
 }
 
-// ---- 0x004cc050  RwStreamSkip (case 3: memory) ------------------------------
+// RwStreamSkip: the shared body lives in Render/RwStreamCore.cpp.
 static int StreamSkip(void* stream, int n)
 {
-    int* p = static_cast<int*>(stream);
-    if (n == 0) return reinterpret_cast<int>(stream);
-    if (p[0] != 3) return 0;
-    if (static_cast<unsigned>(n + p[3]) <= static_cast<unsigned>(p[4])) {
-        p[3] += n;
-        return reinterpret_cast<int>(stream);
-    }
-    p[3] = p[4];                                    // clamp + err 5
-    unsigned eb[2] = {1, Rwl_ErrFmt(5, 0)}; Rwl_ErrEmit(eb);
-    return 0;
+    return reinterpret_cast<int>(Render::RwStreamCoreSkip(static_cast<std::uint32_t*>(stream),
+                                                          static_cast<std::uint32_t>(n)));
 }
 
 // ---- 0x004cc400  RwStreamReadChunkHeader (12 bytes: type, size, packedVer) ---

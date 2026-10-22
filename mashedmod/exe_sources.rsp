@@ -72,6 +72,7 @@
 "D3d9Render\RwWorldLoad.cpp"
 "D3d9Render\RwWorldLoadStubs.cpp"
 "D3d9Render\RwWorldStream.cpp"
+"Render\RwStreamCore.cpp"
 "D3d9Render\ParticleSystem.cpp"
 "D3d9Render\PickupField.cpp"
 "Powerup\PowerupSystem.cpp"

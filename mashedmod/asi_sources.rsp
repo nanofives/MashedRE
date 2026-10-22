@@ -166,6 +166,7 @@
 "Render\LowRvaMixed_q3.cpp"
 "Render\D3D9Helpers_q5.cpp"
 "Render\TextureLoader_q6.cpp"
+"Render\RwStreamCore.cpp"
 "Render\TextureLoaderCluster.cpp"
 "Boot\LaunchHandshake.cpp"
 "Render\FrameWorldPasses.cpp"
