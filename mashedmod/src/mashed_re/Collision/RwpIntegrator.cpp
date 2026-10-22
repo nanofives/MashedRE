@@ -417,11 +417,13 @@ extern "C" void* __cdecl FUN_0055c000(int shape, float* mtx, float* dir, void* o
 }
 
 // ---------------------------------------------------------------------------
-// 0x0055e200  RwpMgr — solver-context set. `*param_1 = param_2` (cited 0x0055e205).
+// 0x0055e200  RwpMgr — solver-context set. `*param_1 = param_2`: fld [esp+8] / mov eax,[esp+4] /
+// fstp [eax] (0x0055e200..0x0055e20a). The x87 copy is exact for every non-NaN single; it quiets a signalling
+// NaN, which this integer copy keeps. Callers pass 0x358637bd (0x00449e28, 0x00449e7d) or FUN_0047e9c0's arg 2.
 // ---------------------------------------------------------------------------
 static void RwpSolverContextSet_impl(unsigned* ctx, unsigned value)
 {
-    *ctx = value;                                             // 0x0055e205
+    *ctx = value;                                             // 0x0055e208 fstp
 }
 
 static int g_b5cCtxCount = 0;

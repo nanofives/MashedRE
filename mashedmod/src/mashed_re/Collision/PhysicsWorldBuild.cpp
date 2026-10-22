@@ -74,7 +74,8 @@ void VehiclePhysicsWorldCreate(void* world)
         // place body i: FUN_0047d240(i, 0, 0.5, -10.0, i*_DAT_005cd074)
         FUN_0047d240((float)i, 0, asF(0x3f000000), asF(0xc1200000), (float)i * _DAT_005cd074);
         *(unsigned*)(node + 8) &= 0xfffffff3u;             // clear flag bits
-        void* reg = FUN_0055dec0(world, node, -1, 2);      // register body into world
+        // original pushes (world, node, -1, 2); 0x0055dec0 reads only the first
+        void* reg = reinterpret_cast<void*>(UtilDeref55dec0(static_cast<const unsigned int*>(world)));
         FUN_00559c40(reg);
         int group;                                         // collision group
         if (FUN_00426c00() == 0x26) group = i + 2;         // mode 0x26 -> per-body group

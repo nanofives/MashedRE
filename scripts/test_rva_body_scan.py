@@ -101,6 +101,19 @@ static int kPad3[2] = { 0, 0 };
 void DataOnlyThing(void) { }
 """
 
+# NEGATIVE CONTROL 4 (dcmix 2026-10-22): an extern DECLARATION under an RVA comment,
+# with a brace a few lines below and a `)` in its trailing comment. The first pass
+# used to bind it as a body (RwpSolverCore23.cpp, 0x0055e200).
+NEG_DECL = """// 0x0055e200 solver-context set
+extern "C" void __cdecl CtxSet(unsigned *ctx, unsigned value);   // 0x0055e200 (DONE)
+static int kPad4[2] = { 0, 0 };
+"""
+
+# A one-line body whose statements end in `);` still anchors.
+ONELINER = """// 0x0055e200
+extern "C" void __cdecl CtxSetOne(unsigned *ctx, unsigned v) { Store(ctx, v); }
+"""
+
 
 def main() -> int:
     with tempfile.TemporaryDirectory() as td:
@@ -111,6 +124,8 @@ def main() -> int:
         (root / "Vehicle" / "NegCallsite.cpp").write_text(NEG_CALLSITE, encoding="utf-8")
         (root / "Vehicle" / "NegAmbiguous.cpp").write_text(NEG_AMBIGUOUS, encoding="utf-8")
         (root / "Vehicle" / "NegData.cpp").write_text(NEG_DATA, encoding="utf-8")
+        (root / "Vehicle" / "NegDecl.cpp").write_text(NEG_DECL, encoding="utf-8")
+        (root / "Vehicle" / "OneLiner.cpp").write_text(ONELINER, encoding="utf-8")
 
         old_src = S.SRC
         S.SRC = root
@@ -120,6 +135,8 @@ def main() -> int:
             nc = S.scan_tu("Vehicle/NegCallsite.cpp")[0]
             na = S.scan_tu("Vehicle/NegAmbiguous.cpp")[0]
             nd = S.scan_tu("Vehicle/NegData.cpp")[0]
+            ne = S.scan_tu("Vehicle/NegDecl.cpp")[0]
+            ol = S.scan_tu("Vehicle/OneLiner.cpp")[0]
         finally:
             S.SRC = old_src
 
@@ -135,12 +152,15 @@ def main() -> int:
     check("NEG 1: an RVA in call prose anchors nothing", nc, {})
     check("NEG 2: one name, two RVAs -> refuse", na, {})
     check("NEG 3: a data-range RVA stays excluded", nd, {})
+    check("NEG 4: a declaration is not a body", ne, {})
+    check("a one-line body ending in `);` still anchors",
+          {hex(k): v[0] for k, v in ol.items()}, {"0x55e200": "CtxSetOne"})
 
     print()
     if FAILED:
         print(f"FAILED: {len(FAILED)} check(s): {', '.join(FAILED)}")
         return 1
-    print("OK -- 6/6")
+    print("OK -- 8/8")
     return 0
 
 
