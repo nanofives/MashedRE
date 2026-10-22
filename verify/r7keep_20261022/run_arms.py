@@ -388,6 +388,9 @@ STACK['NOK'] = ['MASHED_NO_MODE_LIVE=1', 'MASHED_NO_SLOT_TYPE_LIVE=1']   # both 
 STACK['K'] = ['MASHED_RULE7_KEEP']
 STACK['R7'] = ['MASHED_ROUND_RULE=7', 'MASHED_RULE7_TRACE=@OUT@\\@NAME@.r7.txt']
 STACK['R7K'] = STACK['R7'] + ['MASHED_RULE7_KEEP']
+# flip (2026-10-22): the keep law is default ON; NR7 = the opt-out (= the pre-flip default)
+STACK['NR7'] = ['MASHED_NO_RULE7_KEEP']
+STACK['R7NR7'] = STACK['R7'] + ['MASHED_NO_RULE7_KEEP']
 STACK['OLD'] = ['MASHED_ROUND_RULE=4', '-MASHED_GAME_MODE']               # the old recipe (rule 4, no game mode word)
 STACK['OLDNOK'] = STACK['OLD'] + STACK['NOK']                             # old recipe + both opt-outs = the rbflip default
 STACK['OLDNF'] = STACK['OLD'] + STACK['NF']                               # old recipe + MASHED_NO_FAITH=1 = the pre-faithflip trio

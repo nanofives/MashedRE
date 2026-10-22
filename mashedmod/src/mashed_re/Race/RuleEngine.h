@@ -84,8 +84,8 @@ struct Persist {
     int   collectDone  = 0;      // DAT_0063a5d4 (increment FUN_004064c0)
     bool  teams = false;         // DAT_0067ea64 (FUN_0042f500)
     bool  timeAttack = false;    // FUN_0042f6a0() == 2 (mode-2 early-out)
-    // r7keep (2026-10-22, default OFF, MASHED_RULE7_KEEP): rule 7 keeps the score-scan winner when no car's metric is
-    // above 3.0, as 0x0041075a..0x00410798 does (esi is not written on the no-match exit 0x00410790). OFF = the old
+    // r7keep (2026-10-22; TrackRenderer sets it ON by default, MASHED_NO_RULE7_KEEP opts out): rule 7 keeps the score-scan winner when no car's metric is
+    // above 3.0, as 0x0041075a..0x00410798 does (esi is not written on the no-match exit 0x00410790). false = the old
     // `winner = 0`. verify/r7keep_20261022/PREREG_r7keep.md.
     bool  rule7KeepWinner = false;
 };

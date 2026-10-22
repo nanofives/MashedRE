@@ -163,10 +163,11 @@ bool RoundEnd7Enabled() {
     return s;
 }
 bool s_roundEnd7 = false;
-// [r7keep] MASHED_RULE7_KEEP (default OFF): rule 7 keeps the score-scan winner (0x00410790), see RuleEngine::Persist.
+// [r7keep] rule 7 keeps the score-scan winner (0x00410790), see RuleEngine::Persist. Default ON since 2026-10-22
+// (Mariano, verify/r7keep_20261022/RESULT_r7keep.md: no default hash or score moved); MASHED_NO_RULE7_KEEP=1 opts out.
 // MASHED_RULE7_TRACE=<file>: one line per rule-7 EvaluateResult call. verify/r7keep_20261022/PREREG_r7keep.md.
 bool Rule7KeepEnabled() {
-    static const bool s = [] { const char* e = std::getenv("MASHED_RULE7_KEEP"); return e && e[0] && e[0] != '0'; }();
+    static const bool s = [] { const char* e = std::getenv("MASHED_NO_RULE7_KEEP"); return !(e && e[0] && e[0] != '0'); }();
     return s;
 }
 const char* Rule7TracePath() {
