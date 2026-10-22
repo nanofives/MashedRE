@@ -1,5 +1,84 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-22 dcleaf: **vehicle-side dual copies: none left.** Next = D4 dual-copy burn-down, the mixed residue (lane `dcmix`).
+>
+> `verify/dcleaf_20261022/RESULT_dcleaf.md` (merged `2c097364f`, pushed `a5e5cf885`). `0x0046dbe0`, `0x00468b40`, `0x00442c80` +
+> `0x00442ce0`, `0x0046b1c0` are one body each in both targets; `0x0040e350` was a false anchor. `0x00442ce0` C2 -> C4 (Mariano accepted,
+> U-9787 open: tier branches seeded only), `0x0046b1c0` C3 -> C4. Exe gates knob-free, every reference unchanged.
+> **Default and references unchanged from dcphys2 / p2flip** (G-CTRL `c3bfcef3 / 4ed4849b / 4c3548a1`; B `4985eb3b / b6e3d073 / 6717c15e`,
+> (b) 9/9; (e) 3/3 launch 1425.7 / 2052.5 / 2055.0; D2 3/3; 13 tracks 39 frames 878 rows 0 RED). Score files in `verify/dcleaf_20261022/`.
+> Allowlist 18 lines / 18 findings, lint 0 NEW. Honest measure (`hooks.csv` C3/C4 with `exe_file != file`): 160 (28 with a .cpp `file`).
+>
+> **Paste-ready kickoff for the next session:**
+>
+> ```
+> # Kickoff: Mashed D4, dual-copy burn-down, the mixed residue (lane dcmix)
+>
+> Base: race/first-frame-parity at a5e5cf885 (merged + pushed dcleaf). No worktree left from dcleaf.
+> Children on claude2 (verify the model id with read_session).
+>
+> ## State
+> Default and every reference as in RESULT_dcleaf.md section 3 (unchanged since p2flip). Allowlist re/tools/dual_copy_allowlist.txt:
+> 18 lines = 18 findings, lint 0 NEW.
+>
+> ## Task: the knob-free part of what is left (ROADMAP §D4 item (4)). Easy first.
+> 1. 0x0055dec0 DUP-IN-TARGET [exe] + [asi]: Collision/RwpBuildExterns.cpp:67 FUN_0055dec0 vs Util/UtilLeaves_ab6.cpp:233
+>    UtilDeref55dec0 (audit=UNREVIEWED). Never compared body to body. 2 findings.
+> 2. 0x0055e200 DUP-IN-TARGET [exe] + [asi]: Collision/RwpIntegrator.cpp:422 RwpSolverContextSet_impl vs
+>    Collision/RwpSolverCore23.cpp:140 RwpSolverContextSet (not in the audit). 2 findings.
+> 3. 0x0040e180 CROSS-TARGET: exe Race/RaceCamera.cpp vs asi Race/CameraClusterHooks.cpp (audit=DIFFERS-COSMETIC).
+> 4. 0x0042d3e0 DUP-IN-TARGET [exe]: Frontend/MenuInit.cpp:73 MenuEntryArrayInit vs Frontend/MenuNavSM.cpp:386 RecordsZero
+>    (DIFFERS-BEHAVIOUR). Memory store-leaf-c3-needs-the-disassembly-store-list: compare against the full store list, 14 stores.
+> 5. 0x00408ad0 DUP-IN-TARGET [exe]: D3d9Render/TrackRenderer.cpp:4007 TrackRenderer::RacePct vs
+>    Frontend/SmallLeaves_t1.cpp:42 RaceScoreFloatGetBySlot (DIFFERS-BEHAVIOUR).
+> 6. 0x00410510 CROSS-TARGET: exe Race/RuleEngine.cpp vs asi Race/ScoringHooks.cpp (DIFFERS-BEHAVIOUR; the rule engine
+>    feeds the race-metric consumer, memory race-metric-consumer-is-rule-engine-not-fd0).
+> 7. 0x0045baa0 CROSS-TARGET: exe Powerup/PowerupSystem.cpp vs asi Util/PromoLoop_sessionB.cpp (DIFFERS-BEHAVIOUR).
+> Any pair whose faithful body changes what the exe computes is NOT knob-free: knob default OFF + PREREG first, flip only
+> on Mariano's decision. Report it and move on rather than forcing it into this lane.
+>
+> Out of this lane (report only, each needs a decision or its own lane):
+> - DELIBERATE splits: 0x004282a0 (MenuMenusB naked copy vs exe MeasureMenuMessage), 0x004177b0 (AiPreTick vs RuleEngine
+>   finish-order fragment; next AI pair for the AiBankSwitch recipe).
+> - Render streams: 0x004cc050, 0x004cbd30 (RwWorldStream vs TextureLoader_q6: shared memory-stream core + per-target thunks).
+> - Math pairs with a D2 / draw-file cost: 0x004c39b0 (LUT vs exact normalize, D2), 0x004c4680 (ortho, D2), 0x00532b80
+>   (KfInterpolate dot order, moves the Dump draw files), 0x004c4d20 (RwMatrixRotate vs RaceCamera RotateAboutAxis;
+>   memories rw-matrix-rotate-pads-are-stack-garbage, standalone-fastinvsqrt-is-exact-not-lut).
+>
+> Per entry (dcleaf recipe): worker static diff of the two bodies -> check every claim against original/MASHED.exe.unpatched
+> (re/tools/disasm_fn.py; association from the FADD order; scan .text for E8 call sites) -> one body in a TU listed in
+> both rsp files where both targets need it, target thunks only under #ifdef MASHED_STANDALONE -> evidence: path1
+> (hooks_registry.py) and, where the .asi installs it, an in-process A/B on the original (MASHED_LEAF_SELFTEST pattern in
+> Vehicle/ForceIntegratorLeaves.cpp: trampoline re-running the clobbered prologue, original twice + shared body, every
+> mismatch logged) -> exe gates knob-free (every reference unchanged) -> delete the duplicate, drop the key, re-classify,
+> lint 0 NEW, scripts/test_rva_body_scan.py passes.
+>
+> Read first: verify/dcleaf_20261022/RESULT_dcleaf.md, ROADMAP §D4, re/CONFIDENCE.md "Which copy the evidence covers",
+> memories inline-asm-call-hides-xmm-clobber, sim-trajectory-is-code-layout-sensitive, exe-stub-arrays-shadow-live-globals.
+>
+> ## Caveats (from dcleaf)
+> - Private roots: robocopy original/ to D:/MashedWT/dcmix_root/original and D:/MashedWT/dcmix_root13/original (13-track
+>   replay runs in parallel from its own root). From PowerShell; robocopy exit 1 = copied.
+> - run_arms.py does not create its output dir: mkdir it first (the first arm otherwise dies after the race).
+> - path2 (run_verify_hook.py) from a worktree maps the SHARED deployed .asi first; use the private-root in-process run
+>   (scenario_launch.py --hooks, MASHED_ROOT) as the install evidence instead.
+> - The scanner's second pass binds `// 0x<rva> Name` / `// FUN_<rva> Name` header comments to ANY definition of Name in
+>   the TU: a call-through helper with such a comment is a false finding (0x0040e350).
+> - Bash heredocs eat backslashes (a \r\n in a C string literal became a raw CR LF): write scripts with the Write tool.
+> - log/ is gitignored but some files in it are tracked: stage them with git add -u.
+> - The main checkout's .git/index.lock is taken by another process now and then: wait and retry, never delete it.
+> - Rebuild = new exe hash (link timestamp). D2 arms run alone. Kill only your own PIDs. git merge -m, never -F -.
+>
+> ## Lane protocol
+> Worktree .worktrees/dcmix, branch work/dcmix, MASHED_NO_DEPLOY=1, evidence D:/MashedWT/dcmix_data (MOVED_OFF_GIT.txt), runner
+> copied from verify/dcleaf_20261022/run_arms.py (+ ab_leaf.sh, vsum.py). PREREG before any knob arm; new knobs default OFF;
+> flips only on Mariano's decision. Commit the final default's score files. Commits end with
+> Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>. Do not merge: report per-entry verdicts, the gate table, decisions.
+>
+> ## Housekeeping
+> - The shared original/mashed_re_dev.asi was not redeployed after dcphys, dcphys2 or dcleaf; deploy only when Mariano says.
+> ```
+
 > ## START HERE 2026-10-22 dcphys2 + p2flip: **physics A-chain dual copies: none left.** Next = D4 dual-copy burn-down, vehicle residue (lane `dcleaf`).
 >
 > `verify/dcphys2_20261022/RESULT_dcphys2.md` (merged `574716565`). A6b `0x00468980`, A5 `0x0046ddb0`, A4 `0x00470670` are one TU
