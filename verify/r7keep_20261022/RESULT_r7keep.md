@@ -33,10 +33,25 @@ Both sides ended their rule-7 race the same way (a car crossing metric 3.0, orig
 has no natural witness on either side. Its evidence is the disassembly (PREREG section 1) plus the seeded unit test (P3). Scores did
 not move off the seed in any rule-7 run (6 with 4 cars, 4 with 2), as section 3 predicted.
 
-## Decision for Mariano
+## Decision (Mariano, 2026-10-22): flipped default ON, merged
+
+`Rule7KeepEnabled()` is now true unless `MASHED_NO_RULE7_KEEP` is set (`4fb348adc`; `MASHED_RULE7_KEEP` is no longer read).
+Gates on the flipped exe `dc230217`, every reference unchanged:
+
+| gate | flipped exe |
+|---|---|
+| G-CTRL x2 | `c3bfcef3 / 4ed4849b / 4c3548a1` x2 |
+| B K0 / K1 / K26 | `4985eb3b / b6e3d073 / 6717c15e` |
+| (b) | 9/9 (`vsum_b_flip.txt`) |
+| (e) | PASS 3/3, launch 1425.7 / 2052.5 / 2055.0 (`e_check_flip.txt`) |
+| D2, 3 runs alone | PASS 3/3, slip 0.1900 / 0.2550 x3, drvmed 1965.67 / 1963.95 / 1965.35, H1 398/400 (`score_d2_flip.txt`) |
+| 13 tracks | table identical to dcmix, gates PASS (`tracks_flip_score.txt`) |
+| rule 7, default vs opt-out (`H_R7-1` / `H_R7NR7-1`) | both `8c0f42fe / 55ef9552 / ee2b21d8`; trace `keep=1` / `keep=0`, `n_div=0` |
+
+Earlier decision text, kept for the record:
 
 1. Flip `MASHED_RULE7_KEEP` default ON (opt-out `MASHED_NO_RULE7_KEEP`)? No default hash or score moves (P0, P1), so the flip
    needs no rebase of any reference.
 2. Then `0x00410510`'s exe body matches the .asi body's rule-7 law; the remaining split between `RuleEngine.cpp` and
    `ScoringHooks.cpp` (the end-block side effects, live inputs) is input plumbing, the dual-copy finding stays allowlisted.
-3. Not merged.
+3. Merged into `race/first-frame-parity` (see the decision block above).
