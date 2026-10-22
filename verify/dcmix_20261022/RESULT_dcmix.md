@@ -60,7 +60,7 @@ comments stripped, ends in `;`. An earlier draft tested the tail after the last 
 (`f(x) { return g(x); }`) and kept the `0x0055e200` declaration because of the `)` in its trailing comment. Finding-list diff
 old -> new scanner on this tree: exactly `0x0042d3e0` [exe] and `0x0055e200` [exe] + [asi] removed, nothing else.
 
-## 5. Trackers: NOT applied, proposed (re-classify on your go)
+## 5. Trackers (re-classify, `apply_trackers.py`, applied on Mariano's go 2026-10-22)
 
 | RVA | proposal |
 |---|---|
@@ -82,8 +82,8 @@ argument 2 (`0x0047e9c9`). Not changed.
    port-only helper with no `0x00408ad0` tag and file the stand-in as a U-row, leaving values as they are.
 2. **`0x00410510` (entry 6).** Making rule 7 faithful (drop `winner = 0`, `RuleEngine.cpp:187`) changes the exe only on rule 7 at a
    segment end where no car's metric is above 3.0 but the score scan found a winner. Knob + PREREG lane, or leave for the rules lane?
-3. Apply the section-5 tracker proposals (`0x0040e180` to C4 with the coverage gap, `0x0045baa0` to C3)?
-4. Not merged. The shared `original/mashed_re_dev.asi` is not redeployed.
+3. ~~Apply the section-5 tracker proposals?~~ Done: `0x0040e180` C2 -> C4 with U-9788 (coverage), `0x0045baa0` C2 -> C3.
+4. Merged into `race/first-frame-parity` on Mariano's go. The shared `original/mashed_re_dev.asi` is not redeployed.
 
 Left out of this lane as the kickoff said: `0x004282a0`, `0x004177b0` (deliberate splits), `0x004cc050`, `0x004cbd30` (render
 streams), `0x004c39b0`, `0x004c4680`, `0x00532b80`, `0x004c4d20` (math pairs with a D2 / draw-file cost).

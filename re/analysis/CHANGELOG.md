@@ -26,6 +26,11 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-22  0040e180  MostSeparatedPair  C2->C4  shared Race/MostSepPair.cpp; in-process A/B 45000 calls 0 diff (track 0 + Warzone); coverage U-9788. dcmix: ONE body, both targets; exe gates knob-free, every reference unchanged. verify/dcmix_20261022/RESULT_dcmix.md
+2026-10-22  0045baa0  PowerupTypeLookup  C2->C3  shared Powerup/PowerupTypeSearch.cpp (entry or NULL); path1 GREEN 3/3. dcmix: ONE body, both targets; exe gates knob-free, every reference unchanged. verify/dcmix_20261022/RESULT_dcmix.md
+2026-10-22  0055dec0  FUN_0055dec0  C3 (kept)  RwpBuildExterns.cpp copy deleted; .asi code unchanged. dcmix: ONE body, both targets; exe gates knob-free, every reference unchanged. verify/dcmix_20261022/RESULT_dcmix.md
+2026-10-22  0055e200  RwpSolverContextSet  C4 (kept)  allowlist key dropped: the second 'body' was an extern declaration (scanner fixed); SNaN note. dcmix: ONE body, both targets; exe gates knob-free, every reference unchanged. verify/dcmix_20261022/RESULT_dcmix.md
+2026-10-22  0042d3e0  MenuEntryArrayInit  level kept  allowlist key dropped: the finding bound a static_assert line (scanner fixed); one body since dualcopy4. dcmix: ONE body, both targets; exe gates knob-free, every reference unchanged. verify/dcmix_20261022/RESULT_dcmix.md
 2026-10-22  0046b1c0  VehicleSlotAabbExpand  C3->C4  U-9155 split folded (VehicleContactHull.cpp both targets); in-process A/B 44/44, path1 7/7. dcleaf: ONE body, both targets; exe gates knob-free, every reference unchanged. verify/dcleaf_20261022/RESULT_dcleaf.md
 2026-10-22  00442ce0  VehicleRubberBandSpeedModifier  C2->C4  installed in the .asi (shared ForceIntegratorLeaves.cpp); in-process A/B 86000 natural calls + 1536 seeded tier cases, 0 diff; natural tier coverage U-9787. dcleaf: ONE body, both targets; exe gates knob-free, every reference unchanged. verify/dcleaf_20261022/RESULT_dcleaf.md
 2026-10-22  00442c80  ModeGatedPlayerCheck  C4 (kept)  body now the shared RubberBandGate; in-process A/B 177000 calls 0 diff; UtilMid copy deleted; plate markers resolved. dcleaf: ONE body, both targets; exe gates knob-free, every reference unchanged. verify/dcleaf_20261022/RESULT_dcleaf.md
