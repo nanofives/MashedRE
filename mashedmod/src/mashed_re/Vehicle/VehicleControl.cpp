@@ -1,5 +1,12 @@
 // Mashed RE — WS-A4: the per-vehicle control-input integrator FUN_00470670.
 //
+// [dcphys2 2026-10-22] ONE body, shared by mashed_re.exe and mashed_re_dev.asi (this TU is in both rsp files). The
+// .asi's own copy (PhysicsChainHooks.cpp A4_BodyMath / old A4_Body) was deleted once this body read against the
+// original in that file's in-process A/B (verify/dcphys2_20261022). Target-specific code is only the A4* thunks below:
+// the game-mode word, the ring phase, the three callees (the .asi calls them at their live RVAs with the original's
+// register ABI) and the matrix A5 / A6b receive (the .asi passes the original's +0x928 matrix; the exe passes its own
+// body basis, U-9152, an input of this body).
+//
 // Verbatim port of the control half of the per-frame vehicle update. Reads the
 // per-car input descriptor's STEER bytes ([0]/[1] = sign A / sign B), scales them
 // into a front-wheel steer angle, writes it to the wheel-0/wheel-1 steer slots
@@ -29,7 +36,8 @@
 #include "ForceIntegrator.h"
 #include <cstdint>
 #include <cstring>
-#include "D2SinkProbe.h"   // [D2 attempt 19] diagnostic, default-OFF
+#include <cstdlib>
+#include "D2SinkProbe.h"   // [D2 attempt 19] diagnostic, default-OFF (exe only)
 
 namespace mashed_re {
 namespace Vehicle {
@@ -60,7 +68,7 @@ constexpr float kParkedDamp = 0.9f;          // _DAT_005cc9c8 (0x3f666666) motio
 } // namespace vc
 
 // ---- runtime global the ring phase indexes ---------------------------------
-extern int g_torqueRingPhase;   // DAT_007f101c (& 0xf each frame); provided by A8 wiring
+extern int g_torqueRingPhase;   // DAT_007f101c (& 0xf each frame); provided by A8 wiring (exe only)
 
 // ---- callees (see header note) ---------------------------------------------
 // A6a 0x00467650 — velocity/angular integration step (ported: Integrate2.cpp, PENDING C4).
@@ -72,6 +80,95 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* wheelBlock, std:
 void Vehicle_AeroStabilize(int* self, float* orient, float dt);
 // FUN_004a2c48 — per-input smoother/accumulator [UNCERTAIN signature] (pending).
 int  Vc_InputFilter();
+
+// ── [dcphys2] target thunks ────────────────────────────────────────────────────
+#ifdef MASHED_STANDALONE
+static inline int      A4GameMode()  { return Fi_GameMode(); }
+static inline unsigned A4RingPhase() { return static_cast<unsigned>(g_torqueRingPhase); }
+static inline void A4CallA5(int* self, float dt, int* /*wheelBlock*/, void* xform) {
+    VehicleWheelForceIntegrate(self, dt, xform);                   // U-9152: the exe's body basis
+}
+static inline void A4CallA6a(int* self, int car, float dt, int* wheelBlock, std::uint8_t* input) {
+    Vehicle_Integrate2(self, car, dt, wheelBlock, input);
+}
+static inline void A4CallA6b(int* self, float dt, std::uint8_t* /*input*/, int* /*wheelBlock*/, void* xform) {
+    Vehicle_AeroStabilize(self, static_cast<float*>(xform), dt);   // U-9152: the same pointer A5 got
+}
+#else
+static inline int      A4GameMode()  { return reinterpret_cast<int (__cdecl*)()>(0x0040e350u)(); }   // FUN_0040e350
+static inline unsigned A4RingPhase() { return *reinterpret_cast<const unsigned*>(0x007f101cu); }   // DAT_007f101c
+// The three callees at their live RVAs, with the original's register ABI (0x00470914..0x00470943). Callee-saved
+// registers are kept around each call.
+static __declspec(naked) void A4LiveA5(int* /*rec*/, float /*dt*/, int* /*wheelBlock*/, void* /*p4*/) {
+    __asm {   // EDI = record; push param_4, wheelBlock, dt (0x00470914..0x00470922); CALL 0x0046ddb0
+        push edi
+        push ebx
+        push esi
+        push ebp
+        mov  edi, dword ptr [esp+20]
+        push dword ptr [esp+32]
+        push dword ptr [esp+32]
+        push dword ptr [esp+32]
+        mov  eax, 0x0046ddb0
+        call eax
+        add  esp, 12
+        pop  ebp
+        pop  esi
+        pop  ebx
+        pop  edi
+        ret
+    }
+}
+static __declspec(naked) void A4LiveA6a(int* /*rec*/, int /*car*/, float /*dt*/, int* /*wheelBlock*/, std::uint8_t* /*input*/) {
+    __asm {   // ESI = record; push input, wheelBlock, dt, car (0x00470928..0x00470934); CALL 0x00467650
+        push edi
+        push ebx
+        push esi
+        push ebp
+        mov  esi, dword ptr [esp+20]
+        push dword ptr [esp+36]
+        push dword ptr [esp+36]
+        push dword ptr [esp+36]
+        push dword ptr [esp+36]
+        mov  eax, 0x00467650
+        call eax
+        add  esp, 16
+        pop  ebp
+        pop  esi
+        pop  ebx
+        pop  edi
+        ret
+    }
+}
+static __declspec(naked) void A4LiveA6b(int* /*rec*/, float /*dt*/, std::uint8_t* /*input*/, int* /*wheelBlock*/) {
+    __asm {   // ESI = wheelBlock (0x0047093b), ECX = record (0x00470941); push input, dt; CALL 0x00468980
+        push edi
+        push ebx
+        push esi
+        push ebp
+        mov  ecx, dword ptr [esp+20]
+        mov  esi, dword ptr [esp+32]
+        push dword ptr [esp+28]
+        push dword ptr [esp+28]
+        mov  eax, 0x00468980
+        call eax
+        add  esp, 8
+        pop  ebp
+        pop  esi
+        pop  ebx
+        pop  edi
+        ret
+    }
+}
+static inline void A4CallA5(int* self, float dt, int* wheelBlock, void* xform)                 { A4LiveA5(self, dt, wheelBlock, xform); }
+static inline void A4CallA6a(int* self, int car, float dt, int* wheelBlock, std::uint8_t* input) { A4LiveA6a(self, car, dt, wheelBlock, input); }
+static inline void A4CallA6b(int* self, float dt, std::uint8_t* input, int* wheelBlock, void*)   { A4LiveA6b(self, dt, input, wheelBlock); }
+#endif
+
+// [dcphys2 2026-10-22] MASHED_A4_DOT_ORDER=1 (default OFF in the exe; the .asi seeds it ON): the slide dot in the
+// original's association, (+0x9d8*+0x9b4 + +0x9d4*+0x9b0) + +0x9dc*+0x9b8 (0x004706db..0x00470701). The default keeps
+// Ghidra's print order, which C++ groups (+0x9dc*+0x9b8 + +0x9d4*+0x9b0) + +0x9d8*+0x9b4.
+static bool A4DotOrder() { static const bool s = [] { const char* e = std::getenv("MASHED_A4_DOT_ORDER"); return e && e[0] == '1'; }(); return s; }
 
 // ===========================================================================
 // 0x00470670  VehicleControlIntegrate(self, dt, input[], xform)
@@ -96,7 +193,7 @@ int  Vc_InputFilter();
 void VehicleControlIntegrate(int* self, float dt, std::uint8_t* input, void* xform, int car)
 {
     void* v = self;
-    const int gameMode = Fi_GameMode();                              // FUN_0040e350
+    const int gameMode = A4GameMode();                               // FUN_0040e350 (0x0047067b)
     const bool atRest = (Fb(v, 0x9e4) == vc::kZero);                 // speed magnitude == 0
     // wheel-matrix block for this contact ring: [0x9a8]*0x40 + 0x928 + self
     int* wheelBlock = reinterpret_cast<int*>(
@@ -109,9 +206,9 @@ void VehicleControlIntegrate(int* self, float dt, std::uint8_t* input, void* xfo
         Fb(v, 0xb0c) = 0.0f;
     } else {
         // slide measure = (1 - |fwd . vel| / speed) * speed   (+0xb0c)
-        float dot = Fb(v, 0x9dc) * Fb(v, 0x9b8)
-                  + Fb(v, 0x9d4) * Fb(v, 0x9b0)
-                  + Fb(v, 0x9d8) * Fb(v, 0x9b4);
+        float dot = A4DotOrder()
+                  ? (Fb(v, 0x9d8) * Fb(v, 0x9b4) + Fb(v, 0x9d4) * Fb(v, 0x9b0)) + Fb(v, 0x9dc) * Fb(v, 0x9b8)
+                  : Fb(v, 0x9dc) * Fb(v, 0x9b8) + Fb(v, 0x9d4) * Fb(v, 0x9b0) + Fb(v, 0x9d8) * Fb(v, 0x9b4);
         if (dot < vc::kZero) dot = -dot;
         Fb(v, 0xb0c) = (vc::kOne - dot / Fb(v, 0x9e4)) * Fb(v, 0x9e4);
     }
@@ -136,7 +233,7 @@ void VehicleControlIntegrate(int* self, float dt, std::uint8_t* input, void* xfo
     Ib(v, 0xb24) = (input[0] == 0) ? 0 : (int)((float)Ib(v, 0xb24) + dt);
     Ib(v, 0xb28) = (input[1] == 0) ? 0 : (int)((float)Ib(v, 0xb28) + dt);
 
-    const unsigned phase = static_cast<unsigned>(g_torqueRingPhase) & 0xf;
+    const unsigned phase = A4RingPhase() & 0xf;                      // 0x00470776 / 0x00470785
     float force = vc::kZero;
 
     if (input[0] != 0) {                                             // steer sign A (was mislabelled "accelerate")
@@ -204,10 +301,14 @@ void VehicleControlIntegrate(int* self, float dt, std::uint8_t* input, void* xfo
     // `xform` IS g_bodyBasis[slot], the port's stand-in for the original's +0x928
     // matrix. Passing the zeroed +0x928 instead zeroed forward -> no motion
     // (WS-A-VERIFY-3). Reconciling the two storage locations is [UNCERTAIN U-9152].
+#ifdef MASHED_STANDALONE
     g_a6bA5Matrix = static_cast<float*>(xform);   // [U-9151] diag: A5's matrix pointer
     D2Sink::Mark("a5_in", v, -1, 0, 0.f, 0.f);    // [u9777] A5's entry (the --a5-probe entry twin). Diagnostic, default-OFF.
-    VehicleWheelForceIntegrate(self, dt, xform);                  // A5 0x0046ddb0 (ported)
+#endif
+    A4CallA5(self, dt, wheelBlock, xform);                        // A5 0x0046ddb0 (0x00470923)
+#ifdef MASHED_STANDALONE
     D2Sink::Mark("a5_out", v, -1, 0, 0.f, 0.f);   // [u9777] A5's leave (the --a5-probe leave twin)
+#endif
     // A6a 0x00467650. param_1 is the CAR INDEX, decoded 2026-09-29 (was passed 0 with an
     // [UNCERTAIN] note): the dispatcher FUN_00470c70 calls A4 as
     // `FUN_00470670(iVar6, fVar4, puVar18, param_2)` at 0x00471071 where iVar6 is the
@@ -215,7 +316,7 @@ void VehicleControlIntegrate(int* self, float dt, std::uint8_t* input, void* xfo
     // unchanged as A6a's first argument (0x0047094c `FUN_00467650(param_1, param_2,
     // iVar1, param_3)`). A6a's only use of it is the boost-state-1 comparison against
     // DAT_0088e668 / DAT_0088e66c (0x00467d62 / 0x00467d6a), which are car indices.
-    Vehicle_Integrate2(self, car, dt, wheelBlock, input);
+    A4CallA6a(self, car, dt, wheelBlock, input);                  // A6a 0x00467650 (0x00470936)
     // A6b 0x00468980. U-9149 FIXED 2026-09-29: this was `nullptr`, which made BOTH
     // `if (orient)` legs of AeroStabilize.cpp dead in the shipping exe — airborne
     // auto-level (pitch+roll) and the velocity-align rotation never ran.
@@ -278,9 +379,13 @@ void VehicleControlIntegrate(int* self, float dt, std::uint8_t* input, void* xfo
     // re/analysis/D2_REOPEN_2026-09-29.md §4.
     // [D2 attempt 19] grip-clamp #6's own exit phase: A6a has returned, nothing else has
     // run. m(a6a_out) - m(w1) IS clamp #6's cost. Diagnostic, default-OFF.
+#ifdef MASHED_STANDALONE
     D2Sink::Mark("a6a_out", v, -1, 0, 0.f, 0.f);
-    Vehicle_AeroStabilize(self, static_cast<float*>(xform), dt);  // A6b 0x00468980
+#endif
+    A4CallA6b(self, dt, input, wheelBlock, xform);                // A6b 0x00468980 (0x00470943)
+#ifdef MASHED_STANDALONE
     D2Sink::Mark("a6b_out", v, -1, 0, 0.f, 0.f);
+#endif
 
     if (Ib(v, 0x9f0) == 2) {                                       // parked/stopped state
         Fb(v, 0x9b0) *= vc::kParkedDamp;
@@ -289,7 +394,9 @@ void VehicleControlIntegrate(int* self, float dt, std::uint8_t* input, void* xfo
     }
     // [D2 attempt 19] A4's exit. m(a4_out) - m(a6b_out) is the parked damp 0x00470948,
     // whose gate value +0x9f0 the line itself carries. Diagnostic, default-OFF.
+#ifdef MASHED_STANDALONE
     D2Sink::Mark("a4_out", v, -1, 0, 0.f, 0.f);
+#endif
 }
 
 } // namespace Vehicle

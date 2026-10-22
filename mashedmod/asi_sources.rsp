@@ -186,6 +186,7 @@
 "Vehicle\Integrate2.cpp"
 "Vehicle\AeroStabilize.cpp"
 "Vehicle\ForceIntegrator.cpp"
+"Vehicle\VehicleControl.cpp"
 "Vehicle\VehicleInit.cpp"
 "Vehicle\PhysicsChainHooks.cpp"
 "Vehicle\LaunchRevCharge.cpp"

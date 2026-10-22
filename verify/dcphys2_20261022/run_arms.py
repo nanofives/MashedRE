@@ -402,6 +402,9 @@ STACK['NODOT'] = ['MASHED_NO_A6A_DOT_ORDER']   # PREREG amendment 1: the opt-out
 # d3close (PREREG_d3close.md): bisect opt-outs for (e) / (b) if a gate moves
 STACK['NOPC24'] = ['MASHED_NO_WCS_COMBINE_PC24=1']
 STACK['SR'] = ['MASHED_SPEED_REFRESH=1']   # report only: (e) sensitivity to the +0x9e4 refresh
+# dcphys2 (PREREG_dcphys2.md section 4): the A6b / A5 / A4 shared-body knobs (all default OFF in the exe)
+STACK['P2'] = ['MASHED_A6B_ACOS_CRT', 'MASHED_A6B_NORM_LUT', 'MASHED_A5_RING_ORDER', 'MASHED_A5_DOT_ORDER', 'MASHED_A5_AIR_F32',
+               'MASHED_A5_CONTACT_INT', 'MASHED_A5_SPIN_FILD', 'MASHED_A4_DOT_ORDER']
 
 for name in sys.argv[1:]:
     CUR['name'] = name

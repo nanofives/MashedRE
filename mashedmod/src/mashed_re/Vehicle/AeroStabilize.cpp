@@ -99,7 +99,7 @@ static bool A6bNormLut() { static const bool s = A6bKnob("MASHED_A6B_NORM_LUT");
 // 180/pi, FSUB 90 (qword for pitch, dword for roll), FCHS (pitch only), FMUL dword dts, FSTP dword, all under PC_24
 // (0x00468a09..0x00468a22 / 0x00468a89..0x00468aa0). The .asi runs inside the race thread's PC_24 already; the
 // scope makes the standalone match it.
-static float A6bAngleCrt(float c, float dts, bool pitch) {
+__declspec(noinline) static float A6bAngleCrt(float c, float dts, bool pitch) {   // noinline: the __asm CALL is invisible to the register allocator
     unsigned int oldcw = 0, t = 0;
     _controlfp_s(&oldcw, 0, 0);
     _controlfp_s(&t, _PC_24, _MCW_PC);
