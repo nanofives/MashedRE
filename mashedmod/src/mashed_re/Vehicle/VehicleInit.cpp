@@ -10,6 +10,10 @@
 // (Ghidra pool11, read_only, 2026-06-16). Decomp: FUN_0046b540. Struct map: vehicle.md §4.1.
 //
 // Anchored to MASHED.exe SHA-256 BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E.
+//
+// [dcphys 2026-10-21] ONE body for 0x0046b540 in both targets (see the A3* thunks above VehicleInit). The contact
+// hull builder 0x0046b1c0 that used to live in this TU moved to Vehicle/VehicleContactHull.cpp (exe only), because
+// that RVA stays split by target (U-9155) and this TU is now also in the .asi.
 #include "ForceIntegrator.h"
 #include "../Math/RwLutTables.h"   // [d2settle U-9181] Math::LutSqrt = 0x004c3b30
 #include <cstdint>
@@ -45,38 +49,43 @@ static inline void WF(char* r, int off, float v)            { std::memcpy(r + of
 static inline void WI(char* r, int off, std::int32_t v)     { std::memcpy(r + off, &v, 4); }
 static inline float RF(char* r, int off)                    { float v; std::memcpy(&v, r + off, 4); return v; }
 
-// Handling-override table @0x00613140 (5-int stride, -1 terminated). The original walks
-// it as (`Vehicle/PhysicsChainHooks.cpp:2938-2951`, A3 body 0x0046b540):
-//     e = 0x00613148;  tag = [0x00613140];
-//     do { if (tag == typeIdx) { _DAT_00613108 = (float)e[-1];
-//                                _DAT_00613114 = (float)e[0];
-//                                _DAT_00613130 = (float)e[1] * 0.001;
-//                                _DAT_0061313c = (float)e[2] * 0.001; }
-//          tag = e[3]; e += 5; } while (tag != -1);
+// Handling-override table @0x00613140: 5-int entries { tag, paramA, spring, k1, k2 }, ended by tag -1. The original
+// walks it with NO break, so the last matching tag wins (0x0046b58a..0x0046b5dc):
+//     tag = [0x00613140]; if (tag != -1) { e = 0x00613148;
+//       do { if (tag == type) { _DAT_00613108 = (float)e[-1];          // fild/fstp 0x0046b5a4
+//                               _DAT_00613114 = (float)e[0];           //           0x0046b5ad
+//                               _DAT_00613130 = (float)e[1] * 0.001;   // fmul _DAT_005cc558 0x0046b5b8
+//                               _DAT_0061313c = (float)e[2] * 0.001; } //           0x0046b5c7
+//            tag = e[3]; e += 5; } while (tag != -1); }
 //
-// [U-9147 2026-09-29] HARVESTED LIVE, closing the old `[UNCERTAIN U-A3-TABLE]` for the
-// first four entries. `re/frida/scenario_launch.py --peek` on a running
-// original/MASHED.exe read 0x00613148..0x00613180 as ints:
-//     0x00613148 40000  0x0061314c 1000  0x00613150 1500  0x00613154 6    0x00613158 105
-//     0x0061315c 40000  0x00613160 1000  0x00613164 1500  0x00613168 12   0x0061316c 95
-//     0x00613170 40000  0x00613174 1000  0x00613178 1500  0x0061317c 18   0x00613180 100
-// so, resolved through the walk above, tag 0 -> 100, tag 6 -> 105, tag 12 -> 95,
-// tag 18 -> 100, with spring/k1/k2 the same 40000/1000/1500 in every entry.
-// The previous row here recorded "{ 0, 100, ... }" only, which is why the port ran the
-// tag-0 value. [UNCERTAIN] tags past 18 are still unharvested.
+// [dcphys 2026-10-21] READ FROM THE IMAGE, all of it. The table is initialized .data (raw offset 0x213140 in
+// original/MASHED.exe.unpatched), 13 entries, terminator at 0x00613244, and its only references are A3's two
+// reads (0x0046b58c, 0x0046b599), so it never changes at runtime. The live --peek harvest it replaces (U-9147)
+// covered tags 0..18 and assumed spring 40000 for tag 18; the image says 42000. Only the type the selector returns
+// is consumed, and the standalone's default type is 6, so the extra rows change nothing on the default path.
 struct HandlingOverride { int key, paramA, spring, k1, k2; };
 static const HandlingOverride kHandlingTable[] = {
-    {  0, 100, 40000, 1000, 1500 },   // e[-1] = 0x00613144
-    {  6, 105, 40000, 1000, 1500 },   // e[-1] = 0x00613158   <- what the original uses
-    { 12,  95, 40000, 1000, 1500 },   // e[-1] = 0x0061316c
-    { 18, 100, 40000, 1000, 1500 },   // e[-1] = 0x00613180
-    { -1,   0,     0,    0,    0 },   // terminator
+    {  0, 100, 40000, 1000, 1500 },   // 0x00613140
+    {  6, 105, 40000, 1000, 1500 },   // 0x00613154   <- the reference scenario's type
+    { 12,  95, 40000, 1000, 1500 },   // 0x00613168
+    { 18, 100, 42000, 1000, 1500 },   // 0x0061317c
+    { 24, 100, 38000, 1000, 1500 },   // 0x00613190
+    { 30, 100, 40000, 1100, 1500 },   // 0x006131a4 (entry i at 0x00613140 + i*0x14)
+    { 36, 100, 40000,  900, 1500 },
+    { 42, 100, 40000, 1000, 1600 },
+    { 48, 100, 40000, 1000, 1400 },
+    { 54, 100, 45000, 1000, 1300 },
+    { 60, 100, 40000, 1000, 1400 },
+    { 66, 100, 45000, 1000, 1400 },
+    { 72, 100, 40000, 1000, 1500 },   // 0x00613230
+    { -1,   0,     0,    0,    0 },   // terminator 0x00613244
 };
+static_assert(sizeof(HandlingOverride) == 0x14, "the walk below steps 5 ints, as 0x0046b5d6 `add ecx,0x14`");
 
-// [U-9147 2026-09-29] The selector. The original computes it as
-// `FUN_0040ce80(FUN_00430790())` — a vehicle/DFF type index, NOT a course id — and
-// neither of those is ported (no DFF in the standalone). `TrackRenderer.cpp` passes
-// `course_id_` here, which with MASHED_TRACK_SEL=0 is 0 and selects the tag-0 entry.
+// [U-9147 2026-09-29] The selector. The original computes it as (0x0046b56c..0x0046b585)
+//     v = FUN_00430790() (= DAT_0067f17c); if (FUN_0042f6a0() (= DAT_0067e9fc) == 10) v = FUN_00431d70() (= DAT_0067ea94);
+//     type = FUN_0040ce80(v) = (*(int**)0x005f2770)[v][1]
+// and *(int**)0x005f2770 is a runtime object array the standalone does not have.
 //
 // MEASURED, not chosen: on the reference scenario (track 0, car 0, quick race) the
 // original's live `_DAT_00613108` is **105.0** — nine `--peek` samples over 30 s of a
@@ -90,144 +99,85 @@ static const HandlingOverride kHandlingTable[] = {
 // -0.04249 (port, tag 0) vs -0.04462 (original) = 0.9523.
 //
 // `MASHED_HANDLING_TYPE=0` reverts to the pre-fix selector for A/B (ROADMAP v3: a flag
-// may only turn the ported behaviour OFF). [UNCERTAIN] the producer FUN_0040ce80 is
-// still unported, so this cannot yet vary per car or per track.
-static int HandlingTypeIndex(int fallback) {
+// may only turn the ported behaviour OFF). [UNCERTAIN U-9783] FUN_0040ce80 itself is ported, but the
+// object array *(int**)0x005f2770 it indexes has no producer in the standalone, so the type cannot yet
+// vary per car or per track there; the .asi reads the live chain (A3HandlingType below).
+static int HandlingTypeIndex() {
     static const int s_t = [] {
         const char* e = std::getenv("MASHED_HANDLING_TYPE");
         return e ? std::atoi(e) : 6;
     }();
-    (void)fallback;
     return s_t;
 }
 
-constexpr float kScale001  = 0.001f;     // _DAT_005cc558 (override int->float scale, 0x3a83126f)
-constexpr float kRadiusK   = 0.277778f;  // _DAT_005cea44 (0x3e8e38e4) loop1 squared-sum factor
-constexpr float kRadiusMul = 1.05f;      // _DAT_005cea54 (0x3f866666) radius scale
-constexpr float kDistMul   = 3.6f;       // _DAT_005cc754 (0x40666666) attach-distance scale
-constexpr float kRecip1    = 1.0f;       // _DAT_005cc320 (0x3f800000)
-
-// ---------------------------------------------------------------------------
-// FUN_0046b1c0 — VehicleBuildContactHull(slot, box)
-//
-// [U-9155 2026-09-29] The 18 contact points at record +0x60..+0x137 are what the
-// car<->world contact scan (0x00469aa0 -> 0x00468d80) tests against the terrain.
-// A3 (0x0046b540) only READS points 4..17 — its loops at 0x0046b915
-// (`lea edi,[esi+0x94]`, 8 iterations) and 0x0046b98e (`lea edi,[esi+0xf4]`, 6) build
-// the per-slot radii at +0x5bc/+0x7bc from them. THIS function is their producer, and
-// it runs immediately BEFORE A3 at the call site:
-//     [0x0040ed57] call 0x0041f000   ; fill the 6-float box for this car
-//     [0x0040ed62] call 0x0046b1c0   ; -> the 14 points at +0x90..+0x137
-//     [0x0040ed68] call 0x0046b540   ; A3, which reads them
-// (2 call sites, `re/tools/callsites.py 0x0046b1c0`: 0x0040ed62 and 0x0040ff86.)
-//
-// WHERE THE BOX COMES FROM. `FUN_0041f000(car, out)` copies 6 dwords from
-// `DAT_0063dc10 + car*0x2ac`. That address is in `.data` PAST the section's raw size,
-// i.e. it is filled at load time and is NOT readable from the file. So it was
-// MEASURED on the running anchored original, the same way `_DAT_00613108` was:
-//     py -3.12 re/frida/scenario_launch.py --peek "0063dc10:f,...,0063dc24:f" \
-//         --cars 4 --car 0 --poke-ctrl-slots --hold 25
-// 7 samples over 22.6 s, all identical, and cars 0/1/2/3 (0x0063dc10, 0x0063debc,
-// 0x0063e168, 0x0063e414) carry the SAME six values; the unspawned slot 4
-// (0x0063e6c0) reads all zero.
-//
-// [UNCERTAIN U-9155] the PRODUCER of DAT_0063dc10 is not ported and not identified, so
-// the port cannot derive the box per car/model — it seeds the measured one for every
-// slot. All four cars agreed on the reference scenario, so this is exact there and
-// unverified elsewhere. NEXT COMMAND: `py -3.12 re/tools/findoffset.py --writes 0x2ac`
-// scoped to the DAT_0063dc10 base, or peek the table across several car selections.
-// DUAL COPY, DELIBERATE — read this before touching either side.
-// `Vehicle/VehicleSlotAabbExpand.cpp` already carries a C3, Frida-GREEN, naked-x87
-// transcription of this same RVA. The standalone CANNOT call it: that body writes the
-// ORIGINAL's absolute record array (`0x008815a0 + slot*0xd04`) and reads the image
-// constants at `ds:[05CC32Ch]`/`ds:[05CE034h]`, none of which is mapped in
-// `mashed_re.exe`, whose records live in `g_records`. So the split is by TARGET:
-// the naked copy stays `.asi`-only (its `RH_ScopedInstall` at :215 is its only
-// consumer) and this record-base-relative copy is the exe's. Registered in
-// `re/tools/dual_copy_allowlist.txt` as CROSS-TARGET, the same shape as the
-// 0x0046b540 pair already there. Cross-check that makes the split safe: the naked
-// port's own header states it writes "rec[+0x90 .. +0x134] (42 dwords, 0xa8 bytes)
-// derived ENTIRELY from in6[0..5] plus 0x005cc32c (=0.5f) and 0x005ce034" -- exactly
-// the field range, count and constants below.
-static const float kContactHullBox[6] = {
-    +0.21879999339580536f,   // measured @0x0063dc10
-    +0.30860000848770140f,   // measured @0x0063dc14
-    +0.45379999279975890f,   // measured @0x0063dc18
-    -0.21879999339580536f,   // measured @0x0063dc1c
-    +0.03739999979734421f,   // measured @0x0063dc20
-    -0.52329999208450320f,   // measured @0x0063dc24
-};
-static const float kHullHalf  = 0.5f;                  // _DAT_005cc32c, FMUL @0x0046b2d6
-static const float kHullThird = 0.33333298563957214f;  // _DAT_005ce034 = 0x3eaaaa9f, FMUL @0x0046b343
-
-// 0x0046b1c0  VehicleBuildContactHull
-void VehicleBuildContactHull(int slot, const float* b)
-{
-    if ((unsigned)slot >= 16) return;                       // 0x0046b1c7
-    char* rec = reinterpret_cast<char*>(g_vehicleArrayBase) + (std::ptrdiff_t)slot * 0xd04;
-
-    // Points 4..11 — the 8 box corners, each component copied straight through
-    // (0x0046b1e3 .. 0x0046b2df; every store is a `mov dword ptr [eax+off], edx`,
-    // i.e. a bit copy, not an arithmetic conversion).
-    WF(rec, 0x90, b[0]); WF(rec, 0x94, b[4]); WF(rec, 0x98, b[2]);   // p4
-    WF(rec, 0x9c, b[3]); WF(rec, 0xa0, b[4]); WF(rec, 0xa4, b[2]);   // p5
-    WF(rec, 0xa8, b[0]); WF(rec, 0xac, b[4]); WF(rec, 0xb0, b[5]);   // p6
-    WF(rec, 0xb4, b[3]); WF(rec, 0xb8, b[4]); WF(rec, 0xbc, b[5]);   // p7
-    WF(rec, 0xc0, b[0]); WF(rec, 0xc4, b[1]); WF(rec, 0xc8, b[2]);   // p8
-    WF(rec, 0xcc, b[3]); WF(rec, 0xd0, b[1]); WF(rec, 0xd4, b[2]);   // p9
-    WF(rec, 0xd8, b[0]); WF(rec, 0xdc, b[1]); WF(rec, 0xe0, b[5]);   // p10
-    WF(rec, 0xe4, b[3]); WF(rec, 0xe8, b[1]); WF(rec, 0xec, b[5]);   // p11
-
-    // Points 12..17 — six edge points derived from p4/p5/p6/p7 (the four corners of
-    // the +0x94-plane face). The x87 chains are transcribed from the loads, not from
-    // the algebra: each is either (A+B)*0.5 or (2A+B)*(1/3).
-    auto lerp2 = [&](int dst, int a, int bb, float k) {
-        WF(rec, dst + 0, (RF(rec, a + 0) + RF(rec, bb + 0)) * k);
-        WF(rec, dst + 4, (RF(rec, a + 4) + RF(rec, bb + 4)) * k);
-        WF(rec, dst + 8, (RF(rec, a + 8) + RF(rec, bb + 8)) * k);
-    };
-    auto lerp3 = [&](int dst, int a, int bb) {
-        WF(rec, dst + 0, (RF(rec, a + 0) + RF(rec, a + 0) + RF(rec, bb + 0)) * kHullThird);
-        WF(rec, dst + 4, (RF(rec, a + 4) + RF(rec, a + 4) + RF(rec, bb + 4)) * kHullThird);
-        WF(rec, dst + 8, (RF(rec, a + 8) + RF(rec, a + 8) + RF(rec, bb + 8)) * kHullThird);
-    };
-    lerp2(0xf0, 0x90, 0x9c, kHullHalf);   // p12 = (p4+p5)/2        0x0046b1f2..0x0046b301
-    lerp3(0xfc, 0x9c, 0xb4);              // p13 = (2*p5+p7)/3      0x0046b307..0x0046b363
-    lerp3(0x108, 0xb4, 0x9c);             // p14 = (2*p7+p5)/3      0x0046b369..0x0046b3c5
-    lerp2(0x114, 0xa8, 0xb4, kHullHalf);  // p15 = (p6+p7)/2        0x0046b3cb..0x0046b417
-    lerp3(0x120, 0xa8, 0x90);             // p16 = (2*p6+p4)/3      0x0046b41d..0x0046b479
-    lerp3(0x12c, 0x90, 0xa8);             // p17 = (2*p4+p6)/3      0x0046b47f..0x0046b4db
+// [dcphys 2026-10-21] ONE body for 0x0046b540 in both targets (D4 dual-copy burn-down, audit P4,
+// verify/dcphys_20261021): this TU is in exe_sources.rsp AND asi_sources.rsp, and the .asi's A3_Entry
+// (PhysicsChainHooks.cpp) calls VehicleInit. The only target-specific part is below: the record base, the
+// selector's input (the standalone has no 0x005f2770 array, so it keeps the measured type), the table (the .asi
+// walks the live one, the standalone the image copy above) and where the four handling globals go (the standalone
+// has a reader only for _DAT_00613108, g_handlingTorque; FUN_0046dd80's 0x0061313c and A3's own reads of
+// 0x00613114 / 0x00613130 have no standalone reader).
+#ifdef MASHED_STANDALONE
+static inline char* A3Record(int slot) {
+    return reinterpret_cast<char*>(g_vehicleArrayBase) + (std::ptrdiff_t)slot * 0xd04;
 }
-
-// 0x0046b540 — VehicleInit(slot, trackType). trackType replaces the original's
-// FUN_0040ce80(FUN_00430790()/...) lookup (no DFF in the standalone; pass it in).
-int VehicleInit(int slot, int trackType)
-{
-    // 0x0040ed62 runs the hull builder immediately before this function, and A3's
-    // loops 4/5 read what it wrote. Calling it here keeps the pair together in the
-    // standalone, which has no equivalent of the 0x0040ecf8 spawn loop.
-    VehicleBuildContactHull(slot, kContactHullBox);
-
-    if ((unsigned)slot >= 16) return 0;
-
-    // handling defaults (original globals _DAT_00613108 / DAT_00613114 / DAT_00613130 / 0061313c)
-    float h_param  = 100.0f, h_spring = 40000.0f, h_k1 = 1.0f, h_k2 = 1.5f;
-    const int typeIdx = HandlingTypeIndex(trackType);   // [U-9147] see the note above
-    for (const HandlingOverride* e = kHandlingTable; e->key != -1; ++e) {
-        if (e->key == typeIdx) {
-            h_param  = (float)e->paramA;
-            h_spring = (float)e->spring;
-            h_k1     = (float)e->k1 * kScale001;
-            h_k2     = (float)e->k2 * kScale001;
-        }
-    }
+static inline int        A3HandlingType() { return HandlingTypeIndex(); }
+static inline const int* A3Table()        { return &kHandlingTable[0].key; }
+static inline void A3PublishHandling(float param, float /*spring*/, float /*k1*/, float /*k2*/) {
     // [U-9147 2026-09-29] _DAT_00613108. It used to be `(void)h_param` with the comment
     // "consumed by later subsystems, not this record write" — true, and the later
     // subsystem is BodyOrient_OmegaFromSteer, which hardcoded 100.0f and so never saw
     // the override at all. Publish it instead of discarding it.
-    g_handlingTorque = h_param;
+    g_handlingTorque = param;
+}
+#else
+static inline char* A3Record(int slot) {                                                    // DAT_008815a0
+    return reinterpret_cast<char*>(0x008815a0u) + (std::ptrdiff_t)slot * 0xd04;
+}
+static inline int A3HandlingType() {
+    typedef int (__cdecl* fn_v_t)();
+    typedef int (__cdecl* fn_i_t)(int);
+    int v = reinterpret_cast<fn_v_t>(0x00430790u)();                                         // 0x0046b56c
+    if (reinterpret_cast<fn_v_t>(0x0042f6a0u)() == 10) v = reinterpret_cast<fn_v_t>(0x00431d70u)();   // 0x0046b573..7d
+    return reinterpret_cast<fn_i_t>(0x0040ce80u)(v);                                         // 0x0046b585
+}
+static inline const int* A3Table() { return reinterpret_cast<const int*>(0x00613140u); }
+static inline void A3PublishHandling(float param, float spring, float k1, float k2) {
+    *reinterpret_cast<float*>(0x00613108u) = param;  *reinterpret_cast<float*>(0x00613114u) = spring;
+    *reinterpret_cast<float*>(0x00613130u) = k1;     *reinterpret_cast<float*>(0x0061313cu) = k2;
+}
+#endif
 
-    char* rec = reinterpret_cast<char*>(g_vehicleArrayBase) + (std::ptrdiff_t)slot * 0xd04;
+static inline float Bits(std::uint32_t b) { float f; std::memcpy(&f, &b, 4); return f; }
+const     float kScale001  = Bits(0x3a83126fu);  // _DAT_005cc558 0.001 (override int->float scale)
+// [dcphys 2026-10-21] the image's bits. This was the decimal 0.277778f = 0x3e8e38eb, 7 ULP above _DAT_005cea44.
+const     float kRadiusK   = Bits(0x3e8e38e4u);  // _DAT_005cea44 1/3.6, loop1 squared-sum factor
+constexpr float kRadiusMul = 1.05f;      // _DAT_005cea54 (0x3f866666) radius scale
+constexpr float kDistMul   = 3.6f;       // _DAT_005cc754 (0x40666666) attach-distance scale
+constexpr float kRecip1    = 1.0f;       // _DAT_005cc320 (0x3f800000)
+
+
+// 0x0046b540 — VehicleInit(slot, trackType). trackType is unused (the selector is A3HandlingType above); the
+// standalone's spawn loop passes course_id_.
+int VehicleInit(int slot, int /*trackType*/)
+{
+    // In the original's order: the handling defaults and the table walk run BEFORE the slot check
+    // (0x0046b544..0x0046b5dc, then 0x0046b5e2 `cmp esi,0x10`).
+    float h_param  = 100.0f, h_spring = 40000.0f, h_k1 = 1.0f, h_k2 = 1.5f;   // 0x0046b544..0x0046b562
+    const int typeIdx = A3HandlingType();
+    for (const int* e = A3Table(); e[0] != -1; e += 5) {
+        if (e[0] == typeIdx) {
+            h_param  = (float)e[1];
+            h_spring = (float)e[2];
+            h_k1     = (float)e[3] * kScale001;
+            h_k2     = (float)e[4] * kScale001;
+        }
+    }
+    A3PublishHandling(h_param, h_spring, h_k1, h_k2);
+
+    if ((unsigned)slot >= 16) return 0;                                       // 0x0046b5e2..0x0046b5ed
+
+    char* rec = A3Record(slot);
 
     WF(rec, 0x154, h_k2);
     WB(rec, 0x174, 0x3f8a9bd0); WB(rec, 0x238, 0x3f8a9bd0);

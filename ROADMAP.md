@@ -2941,6 +2941,15 @@ Named D4 work items (added 2026-09-26, previously implicit):
   **Status 2026-10-16 (`verify/dualcopy3_20261016/RESULT_dualcopy3.md`):** allowlist **56 -> 39**; honest measure (hooks.csv C3/C4
   rows with `exe_file != file`) **174 -> 172** (38 with a .cpp `file`, 134 with a plate path). `0x00417640` and `0x004a2c48` are one
   body each and back at C3; item (4) cleared 18 call-through / prose false anchors; the remaining keys are listed there with reasons.
+  **Status 2026-10-21 (`verify/dcphys_20261021/RESULT_dcphys.md`), item (1) started:** `0x00467650` (A6a, `Vehicle/Integrate2.cpp`)
+  and `0x0046b540` (A3, `Vehicle/VehicleInit.cpp`) are one TU each in both rsp lists, the .asi verbatim copies deleted; allowlist
+  **24 -> 22**; every knob-off gate unchanged (G-CTRL, B hashes, (b) 9/9, (e), D2 3/3, 13 tracks). A3 C2 -> C4 on the shared body
+  (full-state A/B 52/52). A6a stays C2: the shared body equals the old C4 copy on every sampled call, and both miss the original on
+  the association of three 3-term dots; `MASHED_A6A_DOT_ORDER` makes it 6551/6551 bit-identical. **2026-10-22 dotflip**
+  (Mariano's decision): the knob is default ON, A6a C2 -> C4 on the default body (1440/1440); new default G-CTRL
+  `23ac657a / 7bf2f27f / 3186dd09`, B `0e3790c4 / 55b84dd8 / 2324715b`, (b) 9/9, (e) 3/3, D2 3/3, 13 tracks 875 rows 0 RED;
+  opt-out `MASHED_NO_A6A_DOT_ORDER=1` = the old trio. U-9783 / U-9784 (standalone inputs) open.
+  A6b / A5 / A4 still have `exe_file != file` in `hooks.csv` but no allowlist entry (the lint under-counts them).
   **Each consolidation re-earns the row's C-level through the normal gates** — the exe copy has no
   evidence of its own, and a copy fixed by reading is a C2-grade statement (`re/CONFIDENCE.md`,
   "Which copy the evidence covers").

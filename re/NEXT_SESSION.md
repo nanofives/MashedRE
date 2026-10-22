@@ -7,9 +7,15 @@
 > powerups decision CLEAN 11/11 (g3 R_FLAME contact residue named), modes oracle GREEN on all 11 rules, D2 3/3.
 >
 > **Default now:** FAITH stack + u9774 five + `WCS_TRINORMAL` + `WCS_COMBINE_PC24` + `A5_RUBBER_LIVE` + `MODE_LIVE` +
-> `SLOT_TYPE_LIVE` + `SUBSTEP_OUTER` (`Core/FaithDefaults.cpp`). **Canonical recipe F:** `MASHED_ROUND_RULE=0 MASHED_GAME_MODE=10`
-> (older lane runners still set rule 4 on purpose so they reproduce their own results). **G-CTRL `f78de789 / 43bbe0fb / 161b1a6a`**,
-> B K0/K1/K26 `9bd86ffe / 433abcd2 / 1a1ff727`, 13 tracks 877 rows 0 RED. Opt-outs and older trios: memory `default-ctrl-hashes-after-b2-flip.md`.
+> `SLOT_TYPE_LIVE` + `SUBSTEP_OUTER` + `A6A_DOT_ORDER` (`Core/FaithDefaults.cpp`). **Canonical recipe F:** `MASHED_ROUND_RULE=0 MASHED_GAME_MODE=10`
+> (older lane runners still set rule 4 on purpose so they reproduce their own results). **G-CTRL `23ac657a / 7bf2f27f / 3186dd09`**,
+> B K0/K1/K26 `0e3790c4 / 55b84dd8 / 2324715b`, 13 tracks 875 rows 0 RED (dotflip, `work/dcphys`, 2026-10-22; before it
+> `f78de789 / 43bbe0fb / 161b1a6a`, B `9bd86ffe / 433abcd2 / 1a1ff727`, 877 rows = `MASHED_NO_A6A_DOT_ORDER=1`).
+> Opt-outs and older trios: memory `default-ctrl-hashes-after-b2-flip.md`.
+>
+> **dcphys (D4 item (1), `verify/dcphys_20261021/RESULT_dcphys.md`, branch `work/dcphys`, not merged):** A6a `0x00467650` and
+> A3 `0x0046b540` are one TU each in both targets (allowlist 24 -> 22), both C4; `MASHED_A6A_DOT_ORDER` default ON. Next in the
+> same item: A6b `0x00468980`, A5 `0x0046ddb0`, A4 `0x00470670` (`exe_file != file`, not on the allowlist). Open: U-9783, U-9784.
 >
 > The 2026-10-20..21 lanes, in order: u9777 (A5 rubber-band gate read a zero stand-in) -> rbflip; u9778 (FUN_004709a0 steps all cars per
 > substep; fiber form) -> substep (faithful `SUBSTEP_OUTER` restructure of StepCar) -> soflip (default ON, fiber deleted); u9779 (round end at
