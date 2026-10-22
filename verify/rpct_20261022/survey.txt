@@ -1,0 +1,95 @@
+�� delegate  Accenture  [OK]  repo=Mashed  cost=$2.6812  denials=0  model=claude-opus-5-5
+
+Main correction: on the default build, neither of the two writers you named runs. `Core/FaithDefaults.cpp` sets `MASHED_PATHPROG=1` and `MASHED_PATHPROG_LATE=1` at startup, so the bridge and `PathProgStep.cpp:337` both stand down. The slot is written by the wholesale `FUN_00408610` step on the live row. `RESULT_dcmix.md:78-79` says the bridge writes it on default, and that is out of date. Your line numbers have also shifted; the current ones are used below.
+
+## 1. Call sites
+
+**`FillRaceCamCars`** (`TrackRenderer.cpp:7774`, fills `race_pct` at `:7798`):
+
+| Site | Gate | Runs on recipe F? |
+|---|---|---|
+| `:5111` countdown camera | `countdown_ > 0` and no `MASHED_NO_RACE_CAM_BASIS` (`:5107-5109`) | Yes, every countdown frame |
+| `:8246` UpdateRace race tail | `round_mode_` (`:8219`); UpdateRace is called at `:5584` (`MASHED_RACE_TAIL_LATE` is off by default, `:180`) | Yes, every racing frame |
+| `:7717` and `:7729` `SubStateCameraChain` | `MASHED_SUBSTATE` path | [UNCERTAIN] I did not check its default. `:7717` only feeds `MostSeparatedPair`, which does not read `race_pct` |
+| `:8865` Render snap copy | first Render, before the camera is primed | Yes, but it drives `snap.Update` only. Nothing in `Update` reads `race_pct`: the only reads are `RaceCamera.cpp:501-502` |
+
+So the camera output does not depend on `race_pct`. The camera reads `path_prog` instead (`RaceCamera.cpp:278-279`, the `0x00408a50` equivalent).
+
+**`RacePct`** (`:7420`) has two callers:
+- `ProgBehind` (`:7430-7431`).
+- The AI step-dump column `racepct` (`:6788`, described at `:6640`). This column is part of the dumps the G-CTRL hashes cover.
+
+**`ProgBehind`** is called only inside `ScoreOnEliminationTeams` (`:7522`, `:7525`, `:7529`, `:7553`). That function is reached only when `team_play_` is set (`:7672`). `team_play_` is `DAT_0067ea64 != 0` (`exe_main.cpp:9429-9431`), and only `MASHED_TEAM_PLAY` sets that word (`exe_main.cpp:9519-9520`). `base_env` in `run_arms.py:242-247` does not set it, so team play is off on recipe F and `ProgBehind` never runs. [UNCERTAIN] I did not check whether a save load can write `0x0067ea64`.
+
+`Race/ScoringHooks.cpp:183` has its own `ProgBehind`, but that file is in the .asi only (`hooks.csv:599`).
+
+**`EliminationCheck`** (`RaceCamera.cpp:494`):
+- It is called at `TrackRenderer.cpp:8333` when `runElim` is set by `SegmentCheck`, `countdown_ <= 0`, and `NoElim()` is false.
+- It returns -1 unless `required_zoom_ == 10.f` exactly (`:497`). That value is the clamp written at `:310-313`.
+- It then picks the pair with `MostSeparatedPair` (`:500`), reads both `race_pct` values (`:501-502`), and applies the wrap: if `pa > 80` and `pb < 20`, `pa -= 100`; otherwise if `pb > 80` and `pa < 20`, `pb -= 100` (`:504-508`).
+- The victim is the car with the lower `race_pct` of the pair (`:512-513`).
+- There is a `dead_flag` switch (`:514-517`), but the exe never sets `dead_flag` (`TrackRenderer.cpp:7793-7794`), so the victim is always the car behind.
+
+So `race_pct` decides which car is eliminated, never when. The frame comes from the zoom alone.
+
+## 2. Who writes the slot on recipe F
+
+- **Bridge** (`TrackRenderer.cpp:8187-8199`): computes `fmod(arcprog, total_len_) / total_len_ * 100` for all 4 cars. It runs only if `MASHED_NO_RACEPCT_BRIDGE` is unset **and** `!PathProg_Enabled() && !RacePctOrig_Active()` (`:8192`). The seeded `MASHED_PATHPROG` (`FaithDefaults.cpp:26`, read at `PathNodes.cpp:341-343`) makes it stand down.
+- **Arm R** (`PathProgStep.cpp:312-338`, the store at `:337`): runs the verbatim step on a shadow row and publishes `+0xcc` only. It returns early when `PathProg_Enabled()` is true (`:313`). Its call sites (`TrackRenderer.cpp:5861`, `:8164`) are on by default (`PathNodes.cpp:346-347`), but they are inert while PATHPROG is on.
+- **Live writer:** `PathProg_FrameTick` (`PathProgStep.cpp:261-290`), the verbatim `FUN_00408610` on the real row 0x008a9620 + v*0x30c. It writes 0x008a96ec as `(&DAT_008a95c8)[iVar2*10]` (`RESULT_u9685.md:24-26`). Its sites:
+  - `:5097`, on countdown frames and the GO frame. `MASHED_AI_TICK_FIRST` is seeded (`FaithDefaults.cpp:28`).
+  - `:5864`, at the end of UpdateCar. `MASHED_PATHPROG_LATE` is seeded (`FaithDefaults.cpp:28`, `PathProgStep.cpp:256-259`).
+  - `:8162` is skipped because the late flag is on.
+
+Order relative to each `FillRaceCamCars` call:
+- **Countdown frames:** the `:5097` tick runs before `:5111` in the same frame.
+- **Racing frames:** UpdateRace (`:5584`, so `:8246` and the elimination) runs before the `:5864` tick. The elimination therefore reads the previous frame's slot. The original does the same: `FUN_00411170` at `0x004112cd` runs before `FUN_0040fc00` at `0x004112d5`, which reaches `FUN_0040da50` at `0x0040fc75` (`RESULT_u9779.md:30-32`).
+- **GO frame:** both `:5097` and `:5864` run. [UNCERTAIN] I did not check whether the second step on the same frame changes the value.
+
+## 3. Evidence that the exe's slot matches the original
+
+- **`verify/u9779_20261021/RESULT_u9779.md:46-47`:** with PATHPROG on, the live `race_pct` is bit-equal to the original's at k 0..219. `:64-65`: at the kill, the port's resolve log prints the original's pct bit-equal (8.164267 / 16.720179 / 18.977242 / 20.087664). It also states the camera is fed the stand-in `race_[].progress`, not the slot.
+- **`verify/d3_u9685_20261016/RESULT_u9685.md`:** arm R's pre-start-line `race_pct` is within 0.008 of the original over calls 5-18 (G-PRELINE PASS, `:50`). The race_pct array is AI-neutral on the default stack (`:55`, `:66`). It also says PATHPROG wholesale gives regime A 0/3; that was before FAITH.
+- **`verify/d3_racepos_20261006/RESULT_BRIDGE.md:5,23-28`:** the bridge write is correct, a live reader consumes it, and it is behaviourally inert (all gates PASS). It is an approximation, not the original's value.
+- **`verify/d3_pathprog_a_20261016/RESULT_pathprog_a.md`:** exists. I did not read its verdict.
+- **`hooks.csv`:**
+  - `:602` has `0x00408ad0` at C2, demoted on 2026-09-29 for dual-copy (the exe computes fmod; its cited line `TrackRenderer.cpp:4007` is stale).
+  - `:600` has `0x00408a50` at C3.
+  - There is no `0x00408610` row (`RESULT_u9685.md:78`).
+- **UNCERTAINTIES:**
+  - U-1295 (`:1392`) and U-4200 (`:2332`) both say the meaning is unknown. `RESULT_u9685.md:24` now answers them: the value is race_pct and `FUN_00408610` is its only writer.
+  - U-9685 (`:159`) is still the mode-7 car-2 row in the tracker, although `RESULT_u9685` §6 proposes resolving it.
+  - U-9209 and U-9210 are cited in `PathProgStep.cpp:89` and `:285`.
+
+## 4. Original-side tooling and references
+
+- **`re/frida/scenario_launch.py`:**
+  - `--alive-probe` (`:4454`, JS `:1936-2005`): one row per `FUN_00410d10` call with frame, zoom `0x00898980`, alive in/out and `pct0..3` from 0x008a96ec.
+  - `--elim-probe` (`:4450`, JS `:2007-2049`): rows on kill, score-elim, resolve3, score-add and the set-7 tail, with the gate words, alive, slot types, pct and scores.
+  - The refdist probe (`:2705-2734`) also logs the slot as raw hex.
+- **`re/frida/camera_probe.py:551-558`:** logs the slot per camera row as `c{i}pct`.
+- **`re/tools/racepct_scale.py`:** mentions the slot. I did not read it.
+- **Exe side:** `MASHED_ELIM_TRACE` (`TrackRenderer.cpp:7809-7844`) already logs, per race-tail row, zoom, `cc.race_pct`, `cc.path_prog`, `o_pct` (the slot) and `o_pp`.
+- **References** (off git, all four files listed with Glob, both on track 0, mode 10, 4 cars):
+  - `D:/MashedWT/u9779_data/arms/o_al_1.msd.alive.csv`: 220 `FUN_00410d10` rows with zoom and pct (first row frame 824, pct 99.9999 / 99.10 / 98.19 / 97.29).
+  - `D:/MashedWT/u9779_data/arms/o_ep_1.msd.elim.csv`: kill at frame 1053, victim car 0 at pct 8.164, then the resolve chain. Provenance (`o_ep_1.msd.provenance.json`): `--track 0 --mode 10 --cars 4 --car 0 --hold 25 --alive-probe --elim-probe`, git `d7afd53e4`.
+  - I found no original team-play capture. [UNCERTAIN] My search was not exhaustive.
+
+## 5. Proposed measurement
+
+**What moves when the readers switch to the slot** (a knob such as `MASHED_RACEPCT_SLOT`, applied in `RacePct()` and at `:7798`):
+- (a) The `racepct` column of the AI step dump (`:6788`). G-CTRL hashes move for that column alone, so compare column by column, as u9685 did.
+- (b) The victim identity at a zoom-10 frame, when the stand-in and the slot disagree on which car of the pair is behind.
+- (c) The team-play arms, which do not run on recipe F.
+- Camera pose, the pair choice and the elimination frame cannot move: none of them reads `race_pct`.
+
+**Pre-gate, zero code:** one default run with `MASHED_ELIM_TRACE`. Count the zoom-10 rows where the pair's order or wrap result differs between `pct` and `o_pct`. That gives the predicted effect before the knob exists. At the original's frame-1053 kill the gap is 8.16 against ≥16.7, so I expect the first victim to be the same either way.
+
+**Scoring against the original:**
+- First, the slot itself: compare `o_pct` against `o_al_1.alive.csv` `pct0..3` on aligned k (0..219), using u9779's alignment.
+- Second, the victim: compare the victim and its frame against `o_ep_1.elim.csv` row 2 (car 0, frame 1053).
+- Later eliminations (port k 345 / 755 / 935) have no original counterpart unless `MASHED_ELIM_RESOLVE`, `MASHED_ROUND_END7` and `MASHED_RACE_TAIL_LATE` are on, because the original's round ends at k 220.
+- The team-play arm needs a new original capture (`--alive-probe --elim-probe` with Team Play on). Without it, `ProgBehind` can only be scored as "unchanged on recipe F".
+
+Expect the result to be a value-faithfulness change with no visible effect on recipe F, plus a column-only G-CTRL move. That favours option (a) in `RESULT_dcmix` §6.1 with a small PREREG. Correct §6.1's bridge claim in the same lane.
+(raw JSON: C:\Users\maria\AppData\Local\Temp\fleet-delegate-38db7148dd2c46e7a082067008d370d1.json)
