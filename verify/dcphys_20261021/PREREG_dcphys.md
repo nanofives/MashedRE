@@ -78,3 +78,25 @@ D2 PASS 3/3; 13 tracks 0 RED (pose replay, predicted identical).
 recommendation to Mariano is a default flip (`FaithDefaults.cpp`); the flip is his decision and is not made in this lane.
 If the A/B does not close, the knob stays OFF and the residual is filed with the A/B evidence. If a gate fails with the
 knob ON, the knob stays OFF and the failing gate is reported.
+
+## 5. Amendment 1 (2026-10-22): default flip of `MASHED_A6A_DOT_ORDER` (Mariano's decision, on this RESULT)
+
+Committed before the flip is measured. Changes: `Core/FaithDefaults.cpp` seeds `A6A_DOT_ORDER=1` (opt-out
+`MASHED_NO_A6A_DOT_ORDER=1`, master opt-out `MASHED_NO_FAITH=1`); the .asi's `A6aAsiDefaults` seeds it too and now honours
+`MASHED_NO_<name>` for every knob it seeds. Exe arms on the new default build, recipe F, private root.
+
+**Predictions (the knob-ON values measured in section 2 of the RESULT become the default):**
+
+| arm | prediction |
+|---|---|
+| `H_DEF` x2 | `23ac657a / 7bf2f27f / 3186dd09` (= `H_DOT`) |
+| `B_DEF_K0 / K1 / K26` | `0e3790c4 / 55b84dd8 / 2324715b`; (b) 9/9; (e) PASS 3/3, same values |
+| `D2_DEF_1..3` alone | PASS 3/3, slip 0.1900 / 0.2550 |
+| 13 tracks | the `t13_dot` table (3 frame rows moved vs soflip, 0 RED, all cited). If it differs from `t13_dot`, the flip build's layout is the suspect (`sim-trajectory-is-code-layout-sensitive`): the knob-ON run on the pre-flip exe is the control |
+| `H_NODOT` (`MASHED_NO_A6A_DOT_ORDER=1`) | `f78de789 / 43bbe0fb / 161b1a6a`, the pre-flip default |
+| `H_NF` (`MASHED_NO_FAITH=1`) | `997f4117 / e6288905 / a63bdcfa`, unchanged (soflip / fflip): the knob is a FAITH knob |
+| .asi default A/B (no env), track 0, x20 | A6a 1440/1440 bit-identical, `noo` 0 |
+| .asi `MASHED_NO_A6A_DOT_ORDER=1`, same | the residual returns (174/1440 on the same race as run1) |
+
+Then `0x00467650` C2 -> C4 through re-classify on the default body's evidence. If any prediction above fails, stop and report;
+no tracker change.
