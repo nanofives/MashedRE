@@ -93,3 +93,8 @@ knob + PREREG lane, not a cheap fold. Left as filed.
    C3 until a natural race drives `FUN_0046dc00`?
 2. Not merged. The shared `original/mashed_re_dev.asi` is not redeployed.
 3. U-9784 producer lane (section 5): open it next, or leave it?
+
+## 7. Decision (2026-10-22)
+
+Mariano accepted `0x00442ce0` at C4 with U-9787 open (tier branches covered by seeding only) and merged `work/dcleaf` into
+`race/first-frame-parity` (`2c097364f`). U-9784 stays filed. The shared `original/mashed_re_dev.asi` is not redeployed.
