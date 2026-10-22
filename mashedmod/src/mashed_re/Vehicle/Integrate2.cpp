@@ -14,8 +14,9 @@
 //     moot (the fn is bit-distinct by construction — it calls the std::sqrt LUT
 //     fallback, not the RW fast-sqrt LUT). For an .asi-only verbatim hook the TU must
 //     compile x87 (build.bat does — no /arch:SSE2) so the transient stays 80-bit.
-//   [U-A6A-ST0] FUN_004a2c48 (=round-of-ST0) calls take an implicit ST0 input not in the
-//     decomp; the gearbox/boost timers + brake quantizer use Vc_RoundST0() (stub=0).
+//   [U-A6A-ST0] RESOLVED 2026-08-25: FUN_004a2c48 is the CRT's _ftol2 (truncate the x87 value
+//     built just before the call); the seven sites are plain (int) casts below. The Vc_RoundST0()
+//     stub they used to call is gone (dcphys 2026-10-21 dropped its last, unused declaration).
 //   [U-A6A-GLOB] STALE AS WRITTEN — CORRECTED 2026-08-24. It said g_suspScale
 //     (_DAT_0088e5f0) "is 0 in the standalone stub ... until A8 binds the real per-frame
 //     value". A8 HAS bound it: VehiclePhysicsRun.cpp:415-416 sets g_suspDtTerm =
@@ -35,6 +36,15 @@
 //
 // Operates on the vehicle record (original unaff_ESI). Constants memory_read (Ghidra pool11).
 // Anchored MASHED.exe SHA-256 BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E.
+//
+// [dcphys 2026-10-21] ONE body for 0x00467650 in both targets (D4 dual-copy burn-down, audit P4,
+// verify/dcphys_20261021). This TU is in exe_sources.rsp AND asi_sources.rsp; the .asi's A6a_Entry
+// (PhysicsChainHooks.cpp) calls Vehicle_Integrate2, and the verbatim naked-x87 copy that used to live there
+// is deleted. The original writes nothing outside the record (no absolute store in 0x00467650..0x0046897b)
+// and makes exactly the calls this body makes: 0x0040e340 x1, 0x0040e350 x2, 0x004a2c48 (_ftol2) x7,
+// 0x004c39b0 x1, 0x004c3ac0 x9, 0x004c3df0 x1, 0x004c4d20 x1. What differs by target is only the A6*
+// thunks below: the standalone reads its own state and its own leaf ports, the .asi reads the original's
+// live globals and calls the two leaves that have no both-target port at their RVAs.
 #include "ForceIntegrator.h"
 #include <cstdint>
 #include <cstring>
@@ -51,6 +61,14 @@
 // for wheel 0 of slot n: the force before (A5's output), the addend, and its inputs, to compare with the original's
 // per-store values (write watch o_f214, verify/u9760_20261019).
 namespace {
+// [dcphys] record array base per target (the LaunchRevCharge.cpp LrcVehBase pattern); the diag logs' slot filter.
+inline const char* A6RecBase() {
+#ifdef MASHED_STANDALONE
+    return reinterpret_cast<const char*>(mashed_re::Vehicle::g_vehicleArrayBase);
+#else
+    return reinterpret_cast<const char*>(0x008815a0u);   // DAT_008815a0
+#endif
+}
 inline double RecF(const void* v, int o) { float f; std::memcpy(&f, reinterpret_cast<const char*>(v) + o, 4); return f; }   // [u9771]
 // [u9771] MASHED_A6A_VZLOG=<path> (diagnostic, default OFF): for slot MASHED_FORCE_SPLIT_SLOT (default 1), the velocity after
 // A6a's tail write (0x004686a4 in the original) and after its lateral write (0x0046885a), with the lateral terms.
@@ -59,8 +77,8 @@ void VzLog(const void* v, float fx, float fy, float fz, float k, float grip, int
     static const char* const s_path = std::getenv("MASHED_A6A_VZLOG");
     static const int s_slot = [] { const char* e = std::getenv("MASHED_FORCE_SPLIT_SLOT"); return e ? std::atoi(e) : 1; }();
     static std::FILE* s_f = nullptr; static int s_n = 0;
-    if (!s_path || !mashed_re::Vehicle::g_vehicleArrayBase || s_n >= 4000) return;
-    if (reinterpret_cast<const char*>(v) != reinterpret_cast<const char*>(mashed_re::Vehicle::g_vehicleArrayBase) + s_slot * 0xd04) return;
+    if (!s_path || !A6RecBase() || s_n >= 4000) return;
+    if (reinterpret_cast<const char*>(v) != A6RecBase() + s_slot * 0xd04) return;
     if (!s_f) { s_f = std::fopen(s_path, "w"); if (!s_f) return; std::fprintf(s_f, "n,tx,ty,tz,vx,vy,vz,fx,fy,fz,k,grip,arm\n"); }
     std::fprintf(s_f, "%d,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%d\n", s_n++, g_vzTail[0], g_vzTail[1], g_vzTail[2],
                  RecF(v, 0x9b0), RecF(v, 0x9b4), RecF(v, 0x9b8), fx, fy, fz, k, grip, arm);
@@ -72,8 +90,8 @@ void TailLog(const void* v, float lb0, float l64, float l68, float l6c, float lb
     static const char* const s_path = std::getenv("MASHED_A6A_TAILLOG");
     static const int s_slot = [] { const char* e = std::getenv("MASHED_FORCE_SPLIT_SLOT"); return e ? std::atoi(e) : 1; }();
     static std::FILE* s_f = nullptr; static int s_n = 0;
-    if (!s_path || !mashed_re::Vehicle::g_vehicleArrayBase || s_n >= 4000) return;
-    if (reinterpret_cast<const char*>(v) != reinterpret_cast<const char*>(mashed_re::Vehicle::g_vehicleArrayBase) + s_slot * 0xd04) return;
+    if (!s_path || !A6RecBase() || s_n >= 4000) return;
+    if (reinterpret_cast<const char*>(v) != A6RecBase() + s_slot * 0xd04) return;
     if (!s_f) { s_f = std::fopen(s_path, "w"); if (!s_f) return; std::fprintf(s_f, "n,lb0,d8,linTerm,lb8,lb4,lb0f,l6c,l68,l64,cc,b14,b18,b1c,v0,v1,v2,s9e4,b0c,g490,t494\n"); }
     std::fprintf(s_f, "%d,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%d,%d\n", s_n++, lb0, l64 - lb0, linTerm, lb8, lb4, lb0f,
                  l6c, l68, l64, cc, RecF(v, 0xb14), RecF(v, 0xb18), RecF(v, 0xb1c), RecF(v, 0x9b0), RecF(v, 0x9b4), RecF(v, 0x9b8),
@@ -86,8 +104,8 @@ void DriveLog(const void* v, int wheel, float e4, float cc, float prod, const fl
     static const char* const s_path = std::getenv("MASHED_A6A_DRIVELOG");
     static const int s_slot = [] { const char* e = std::getenv("MASHED_FORCE_SPLIT_SLOT"); return e ? std::atoi(e) : 1; }();
     static std::FILE* s_f = nullptr; static int s_n = 0;
-    if (!s_path || !mashed_re::Vehicle::g_vehicleArrayBase || s_n >= 8000) return;
-    if (reinterpret_cast<const char*>(v) != reinterpret_cast<const char*>(mashed_re::Vehicle::g_vehicleArrayBase) + s_slot * 0xd04) return;
+    if (!s_path || !A6RecBase() || s_n >= 8000) return;
+    if (reinterpret_cast<const char*>(v) != A6RecBase() + s_slot * 0xd04) return;
     if (!s_f) { s_f = std::fopen(s_path, "w"); if (!s_f) return; std::fprintf(s_f, "n,wheel,e4,cc,prod,ax0,ax1,ax2,b14,b18,b1c\n"); }
     std::fprintf(s_f, "%d,%d,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g\n", s_n++, wheel, e4, cc, prod, ax[0], ax[1], ax[2],
                  RecF(v, 0xb14), RecF(v, 0xb18), RecF(v, 0xb1c));
@@ -99,8 +117,8 @@ void ForceSplitLog(const void* v, int wheel, const float* pre, const mashed_re::
     static const int s_wheel = [] { const char* e = std::getenv("MASHED_FORCE_SPLIT_WHEEL"); return e ? std::atoi(e) : 0; }();   // [u9762]
     static std::FILE* s_f = nullptr;
     static int s_n = 0;
-    if (!s_path || wheel != s_wheel || !mashed_re::Vehicle::g_vehicleArrayBase || s_n >= 4000) return;
-    if (reinterpret_cast<const char*>(v) != reinterpret_cast<const char*>(mashed_re::Vehicle::g_vehicleArrayBase) + s_slot * 0xd04) return;
+    if (!s_path || wheel != s_wheel || !A6RecBase() || s_n >= 4000) return;
+    if (reinterpret_cast<const char*>(v) != A6RecBase() + s_slot * 0xd04) return;
     if (!s_f) { s_f = std::fopen(s_path, "w"); if (!s_f) return;
         std::fprintf(s_f, "n,branch,pre_x,pre_y,pre_z,dF_x,dF_y,dF_z,post_x,post_z,spd9e4,le4,ld4,lbc,f5,p15,p16,p1b,pm1,lac,la8,la4,le0,ldc,ld8,ax0,ax1,ax2,s0,s1,lc8,lc4,lc0p,r9b0,r9b4,r9b8,r9bc,r9c0,r9c4,r9e4,r9e8\n"); }
     const float spd = *reinterpret_cast<const float*>(reinterpret_cast<const char*>(v) + 0x9e4);
@@ -119,13 +137,42 @@ namespace mashed_re {
 namespace Vehicle {
 
 int  Fi_GameMode();        // FUN_0040e350
-int  Vc_RoundST0();        // FUN_004a2c48 (round ST0 -> long) — input implicit [U-A6A-ST0]
 // A6a boost-state-1 comparands (ForceIntegratorStubs.cpp): the two least-progressed
 // car indices FUN_00470c70 sorts into DAT_0088e668 / DAT_0088e66c. Maintained by
 // Fi_UpdateBoostOrder() (ForceIntegratorStubs.cpp), called once per frame.
 extern int g_modeCarA;     // DAT_0088e668
 extern int g_modeCarB;     // DAT_0088e66c
 int  Fi_ParticipantCount();  // FUN_0040e340 = DAT_008a94d0
+
+// [dcphys 2026-10-21] the only target-specific part of this body (audit P4): state outside the record and the
+// two leaves with no both-target port. Standalone = its own state and leaf ports; .asi = the original's live
+// globals and the leaves at their RVAs (ABI: PhysicsChainHooks.cpp Fn_axang_t / Fn_xform_t, __cdecl 4 args).
+#ifdef MASHED_STANDALONE
+static inline float A6SuspScale()        { return g_suspScale; }
+static inline int   A6GameMode()         { return Fi_GameMode(); }
+static inline int   A6ParticipantCount() { return Fi_ParticipantCount(); }
+static inline int   A6ModeCarA()         { return g_modeCarA; }
+static inline int   A6ModeCarB()         { return g_modeCarB; }
+static inline void  A6AxisAngle(float* m, const float* axis, float angle) { Rw_MatrixFromAxisAngle(m, axis, angle, 0); }
+static inline void  A6XformPoint(float* dst, const float* src, float* m)  { Rw_TransformPoints(dst, src, 1, m); }
+#else
+static inline float A6SuspScale()        { return *reinterpret_cast<const float*>(0x0088e5f0u); }      // _DAT_0088e5f0
+static inline int   A6GameMode()         { return reinterpret_cast<int (__cdecl*)()>(0x0040e350u)(); }  // FUN_0040e350
+static inline int   A6ParticipantCount() { return reinterpret_cast<int (__cdecl*)()>(0x0040e340u)(); }  // FUN_0040e340
+static inline int   A6ModeCarA()         { return *reinterpret_cast<const int*>(0x0088e668u); }        // DAT_0088e668
+static inline int   A6ModeCarB()         { return *reinterpret_cast<const int*>(0x0088e66cu); }        // DAT_0088e66c
+static inline void  A6AxisAngle(float* m, const float* axis, float angle) {                          // FUN_004c4d20
+    reinterpret_cast<void (__cdecl*)(void*, const float*, float, int)>(0x004c4d20u)(m, axis, angle, 0);
+}
+static inline void  A6XformPoint(float* dst, const float* src, float* m) {                           // FUN_004c3df0
+    reinterpret_cast<void (__cdecl*)(float*, const float*, int, const void*)>(0x004c3df0u)(dst, src, 1, m);
+}
+// Diagnostic sinks the standalone defines in ForceIntegratorStubs.cpp (exe-only); written, never read, here.
+A6aWheelDump g_a6aDump[4];
+A6aFrameDump g_a6aFrame;
+float g_a8WheelLe4[4];
+float g_a8WheelLd4[4];
+#endif
 
 // exact-bit float constructor — the decimal literals below mis-round vs the
 // original's .rdata (e.g. 299488.0f -> 0x48923c00 != the real 0x48927c00). Cf()
@@ -178,6 +225,17 @@ static bool A6aSpinOrder() {
 }
 static bool A6aLc0() {
     static const bool s = [] { const char* e = std::getenv("MASHED_A6A_LC0"); return e && e[0] == '1'; }();
+    return s;
+}
+// [dcphys 2026-10-21] MASHED_A6A_DOT_ORDER=1 (default OFF, verify/dcphys_20261021/PREREG_dcphys.md): A6a's three 3-term
+// dot products in the original's association. This body (and the .asi's former verbatim copy, which agreed with it on
+// every call) wrote them as Ghidra prints them, c*z + a*x + b*y, which C++ groups (c*z + a*x) + b*y. The original adds
+// the first two products it loads, then the third (x87 at PC_24 rounds each step as an SSE float step does):
+//   drive arm 0x00467be9..0x00467c0c  (+0x9d8*n1 + +0x9d4*n0) + +0x9dc*n2
+//   block #5  0x0046837d..0x00468394  (d0*f0 + d1*f1) + d2*f2
+//   clamp #6  0x00468771..0x00468793  (+0x9d8*+0x9b4 + +0x9d4*+0x9b0) + +0x9dc*+0x9b8
+static bool A6aDotOrder() {
+    static const bool s = [] { const char* e = std::getenv("MASHED_A6A_DOT_ORDER"); return e && e[0] == '1'; }();
     return s;
 }
 static inline float A6Len(const float* t) {
@@ -241,7 +299,7 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
 {
     using namespace a6;
     void* v = self;
-    int mode = Fi_GameMode();
+    int mode = A6GameMode();
 
     Wf(v, 0x9e4, A6Len((const float*)((char*)v + 0x9b0)));      // linear speed -> +0x9e4 (0x0046766e)
     Wf(v, 0x9e8, A6Len((const float*)((char*)v + 0x9bc)));      // angular speed -> +0x9e8 (0x00467680)
@@ -330,7 +388,13 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
     float gripIn = (float)(unsigned)input[4];
     if (mode != 7) { if (k160 < gripIn) gripIn = k160; } else gripIn = kZero;
     int trackId = Ri(v, 0x1f0);
-    float fVar4b = Rf(v, 0x478 + ((gear >= 0 && gear < 6) ? gear : 0) * 4);
+    // [dcphys 2026-10-21] unclamped, as the original: 0x004679a0 `mov edi,[esi+0x490]`, 0x00467a5a
+    // `fmul [esi+edi*4+0x478]`. (The `gear < 6` clamp here was the DUAL_COPY_FIX residual; it never fired:
+    // the only writers of +0x490 are 0x00467982 / 0x0046799a, bounded by iVar11 <= 4, and the reset
+    // 0x0046bc66, which stores 0 (`xor edx,edx` at 0x0046babc), so gear is always 0..4.)
+    // local_cc above keeps its bound: the original's 0x004679ac reads the stack array unclamped, which a
+    // C++ array cannot reproduce for gear >= 5, and gear >= 5 is unreachable by the same writer list.
+    float fVar4b = Rf(v, 0x478 + gear * 4);
     float fVar6 = Rf(v, 0x9e4) * k0p01 + k10;
     float fVar3sel;
     if (trackId == -0x5f7f80)      fVar3sel = k149744;
@@ -364,7 +428,7 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
     g_a6aFrame.av[0]  = Rf(v,0x9bc); g_a6aFrame.av[1]  = Rf(v,0x9c0); g_a6aFrame.av[2]  = Rf(v,0x9c4);
     g_a6aFrame.bf[0]  = Rf(v,0x9d4); g_a6aFrame.bf[1]  = Rf(v,0x9d8); g_a6aFrame.bf[2]  = Rf(v,0x9dc);
     g_a6aFrame.sp = Rf(v,0x9e4); g_a6aFrame.angSp = Rf(v,0x9e8); g_a6aFrame.gc = Rf(v,0x9e0);
-    g_a6aFrame.suspScale = g_suspScale;
+    g_a6aFrame.suspScale = A6SuspScale();
     int* p = self + (0x1a4 / 4);
     for (int wheel = 0; wheel < 4; ++wheel, p += 0x31) {
         g7_ax[wheel][0] = Rp(p,0x1f); g7_ax[wheel][1] = Rp(p,0x20); g7_ax[wheel][2] = Rp(p,0x21);  // [G7-AXDIAG]
@@ -377,7 +441,8 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
                 float n[3]; { float src[3] = { Rf(v,0x9b0), Rf(v,0x9b4), Rf(v,0x9b8) };
                     // [u9771] MASHED_A6A_DRIVE_NORM_LUT (default OFF): the original normalises with FUN_004c39b0 (RW LUT).
                     if (A6aDriveNormLut()) mashed_re::Math::LutNormalize(n, src); else Vec3Norm3(n, src); }
-                float fwd = Rf(v,0x9dc)*n[2] + Rf(v,0x9d4)*n[0] + Rf(v,0x9d8)*n[1];
+                float fwd = A6aDotOrder() ? ((Rf(v,0x9d8)*n[1] + Rf(v,0x9d4)*n[0]) + Rf(v,0x9dc)*n[2])   // [dcphys] 0x00467be9..0x00467c0c
+                                          : (Rf(v,0x9dc)*n[2] + Rf(v,0x9d4)*n[0] + Rf(v,0x9d8)*n[1]);
                 fwd = fwd*fwd; fwd = fwd*fwd; fwd = fwd*fwd;
                 if (fwd < 0.0f) fwd = -fwd;
                 if (fwd < k0p25) fwd = k0p25;
@@ -399,7 +464,7 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
             // then clamp to [0, 0xbb8=3000]. Was Vc_RoundST0() (stub -> 0).
             // (Original runtime: nonzero on only 9 of 1441 driving frames, max 1800 —
             //  so this one is near-inert in practice, unlike the gearbox timer.)
-            if (Fi_GameMode() == 6) {
+            if (A6GameMode() == 6) {
                 int r = (int)((float)Ri(v, 0xbf4) - dt);   // _ftol2 truncates toward zero
                 if (r > 3000) r = 3000; if (r < 0) r = 0; Wi(v, 0xbf4, r);
             }
@@ -481,8 +546,8 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
                     // i.e. the two back-of-grid cars take the 8e6 arm and car 1 does not,
                     // which is exactly this condition with progress all-equal at the lights.
                     float ff = k5e6;
-                    if (Fi_ParticipantCount() == 4 &&
-                        (g_modeCarA == param_1 || g_modeCarB == param_1)) ff = k8e6;
+                    if (A6ParticipantCount() == 4 &&
+                        (A6ModeCarA() == param_1 || A6ModeCarB() == param_1)) ff = k8e6;
                     Wf(v, 0xb14, Rp(p,0x1f) * ff + Rf(v,0xb14));
                     Wf(v, 0xb18, Rp(p,0x20) * ff + Rf(v,0xb18));
                     Wf(v, 0xb1c, Rp(p,0x21) * ff + Rf(v,0xb1c));
@@ -554,9 +619,9 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
             float avx = Rf(v,0x9bc), avy = Rf(v,0x9c0), avz = Rf(v,0x9c4);
             if (avx < kAngLo || kAngHi < avx || avy < kAngLo || kAngHi < avy || avz < kAngLo || kAngHi < avz) {
                 d_spin = 1;
-                float m40[16]; Rw_MatrixFromAxisAngle(m40, (const float*)((char*)v + 0x9bc), k270, 0);  // FUN_004c4d20 mode 0
+                float m40[16]; A6AxisAngle(m40, (const float*)((char*)v + 0x9bc), k270);  // FUN_004c4d20 mode 0
                 float src[3] = { Rp(p,-9), Rp(p,-8), Rp(p,-7) }, dst[3];
-                Rw_TransformPoints(dst, src, 1, m40);          // FUN_004c3df0 (CPU device-transform)
+                A6XformPoint(dst, src, m40);          // FUN_004c3df0 (CPU device-transform)
                 le0 = dst[0]; ldc = dst[1]; ld8 = dst[2];
                 float f = Rf(v,0x9e4) * k0p008;
                 if (f < k8) f = k8;
@@ -574,7 +639,7 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
                 float s0 = le0 * inv, s1 = ldc * inv;
                 if (k1024 < le4) le4 = k1024;
                 float l98 = 0, l9c = 0, la0 = 0;
-                float lbc = Rp(p,0x15) * Rp(p,0x1b) * g_suspScale * le4 * k0p0009766;
+                float lbc = Rp(p,0x15) * Rp(p,0x1b) * A6SuspScale() * le4 * k0p0009766;
                 // [u9764] MASHED_A6A_LC0=1 (default OFF): the original's order, 0x0046814b s2 = inv*ld8 (kept on the stack),
                 // 0x0046819f..0x004681c3 lc0 = (+0x9d8*s1 + +0x9d4*s0) + +0x9dc*s2.
                 float lc0 = A6aLc0() ? ((Rf(v,0x9d8)*s1 + Rf(v,0x9d4)*s0) + Rf(v,0x9dc)*(inv*ld8))
@@ -612,7 +677,7 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
                 if ((l94 & 0x100) == 0) {
                     float f5 = lbc;
                     if (l94 == 0) {
-                        l98 = Rp(p,0x16) * Rp(p,0x1b) * g_suspScale;
+                        l98 = Rp(p,0x16) * Rp(p,0x1b) * A6SuspScale();
                         la0 = lc8 * l98; l9c = lc4 * l98; l98 = l98 * lc0;
                         float f4 = ld4 * Rf(v,0x9e4);
                         if (f4 < k50) f5 = f4 * k0p02 * lbc;
@@ -624,7 +689,7 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
                     Wp(p, 0x1c, la0 + Rp(p,0x1c)); Wp(p, 0x1d, l9c + Rp(p,0x1d)); Wp(p, 0x1e, f5 + Rp(p,0x1e));
                 } else {
                     float f5 = lbc * k0p85;
-                    float f4 = Rp(p,0x1b) * k3 * g_suspScale * (float)(int)l94 * k0p0019531 * k1p1;
+                    float f4 = Rp(p,0x1b) * k3 * A6SuspScale() * (float)(int)l94 * k0p0019531 * k1p1;
                     if (bGrip) f4 = f4 * kHalf;
                     D.f5 = f5;   // [U-9147]
                     la0 = lc8 * f4 + lac * f5; l9c = lc4 * f4 + la8 * f5; f5 = lc0 * f4 + f5 * la4;
@@ -641,7 +706,8 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
             float inv = 1.0f / Rp(p,-0xb);
             float d0 = Rp(p,-9)*inv, d1 = Rp(p,-8)*inv, d2 = Rp(p,-7)*inv;
             float f0 = Rp(p,0x1c), f1 = Rp(p,0x1d), f2 = Rp(p,0x1e);
-            float dot = d2*f2 + d1*f1 + d0*f0;
+            float dot = A6aDotOrder() ? ((d0*f0 + d1*f1) + d2*f2)   // [dcphys] 0x0046837d..0x00468394
+                                      : (d2*f2 + d1*f1 + d0*f0);
             float c8 = d0*dot, c4 = d1*dot, c0 = d2*dot;
             float ac = f0 - c8, a8 = f1 - c4, a4 = f2 - c0;
             float x84 = a4*c4 - a8*c0, x80 = ac*c0 - a4*c8, x7c = a8*c8 - ac*c4;
@@ -812,7 +878,9 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
     // [D2 attempt 19] T_post's LEFT endpoint. a18_budget.py defines s_mid = +0x9e4, so
     // this is the one phase where |v| and +0x9e4 are the same number by construction
     // (gate KA1). Diagnostic, default-OFF.
-    D2Sink::Mark("w1", v, -1, 0, 0.f, 0.f);
+#ifdef MASHED_STANDALONE
+    D2Sink::Mark("w1", v, -1, 0, 0.f, 0.f);   // D2SinkProbe.cpp is exe-only
+#endif
     // track-id grip scaling
     if (tId == -0x5f7f80) {
         grip = grip * k1p5;
@@ -833,7 +901,9 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
     g_a6aFrame.grip = 0.f; g_a6aFrame.kVel = 0.f; g_a6aFrame.kAv = 1.f;
     g_a6aFrame.arm = -1; g_a6aFrame.clampRan = 0;
     if (speed != 0.0f && Ri(v, 0x9e0) == 0x40800000) {
-        float fwdDot = Rf(v,0x9dc)*Rf(v,0x9b8) + Rf(v,0x9d4)*Rf(v,0x9b0) + Rf(v,0x9d8)*Rf(v,0x9b4);
+        float fwdDot = A6aDotOrder()   // [dcphys] 0x00468771..0x00468793
+                     ? ((Rf(v,0x9d8)*Rf(v,0x9b4) + Rf(v,0x9d4)*Rf(v,0x9b0)) + Rf(v,0x9dc)*Rf(v,0x9b8))
+                     : (Rf(v,0x9dc)*Rf(v,0x9b8) + Rf(v,0x9d4)*Rf(v,0x9b0) + Rf(v,0x9d8)*Rf(v,0x9b4));
         float fx = Rf(v,0x9b0) - fwdDot*Rf(v,0x9d4);   // lateral velocity
         float fy = Rf(v,0x9b4) - fwdDot*Rf(v,0x9d8);
         float fz = Rf(v,0x9b8) - fwdDot*Rf(v,0x9dc);

@@ -20,6 +20,7 @@
 "Vehicle\BodyOrientationIntegrate.cpp"
 "Vehicle\AeroStabilize.cpp"
 "Vehicle\VehicleInit.cpp"
+"Vehicle\VehicleContactHull.cpp"
 "Vehicle\VehiclePhysicsRun.cpp"
 "Vehicle\D2SinkProbe.cpp"
 "Vehicle\LaunchRevCharge.cpp"

@@ -45,6 +45,27 @@
 #include <cstdlib>
 #include <cstring>
 
+// [dcphys 2026-10-21] A6a's ONE body (0x00467650), shared with mashed_re.exe: Vehicle/Integrate2.cpp.
+#include "ForceIntegrator.h"   // [dcphys DEV] g_a6aDump / g_a6aFrame branch flags for the three-way self-test
+namespace mashed_re { namespace Vehicle {
+void Vehicle_Integrate2(int* self, int param_1, float dt, void* wheelBlock, std::uint8_t* input);
+int  VehicleInit(int slot, int trackType);   // A3 0x0046b540 (Vehicle/VehicleInit.cpp)
+} }
+// [dcphys 2026-10-21] The .asi's DEFAULT for the shared A6a body = what its former verbatim copy computed (bit-identical
+// on every sampled call, verify/dcphys_20261021): the A6a knobs the standalone seeds through Core/FaithDefaults.cpp
+// (exe only, so the .asi never sees them) plus the drive arm's LUT normalise, which the verbatim copy called live
+// (0x004c39b0). MASHED_<name> already set is left as given. A knob only, never a second body.
+namespace {
+struct A6aAsiDefaults {
+    A6aAsiDefaults() {
+        const char* const ks[] = { "MASHED_A6A_LC0", "MASHED_A6A_GEAR_ORDER", "MASHED_A6A_SPIN_ORDER",
+                                   "MASHED_A6A_DRIVE_NORM_LUT" };
+        for (const char* k : ks) if (!std::getenv(k)) _putenv_s(k, "1");
+    }
+};
+const A6aAsiDefaults s_a6aAsiDefaults;
+}  // namespace
+
 // ── live-original forward addresses (absolute; MASHED is /FIXED base 0x400000) ─
 extern "C" {
     void* PCH_Fwd_4a2c48 = reinterpret_cast<void*>(0x004a2c48);  // round ST0 -> i64
@@ -1086,1128 +1107,14 @@ __declspec(naked) void A5_Entry() {
 // ===========================================================================
 // A6a — FUN_00467650 the velocity / angular-velocity integration step
 // (ESI=record; param_1, dt=param_2, param_3 unused, input=param_4).
-// VERBATIM transcription of 0x00467650..0x0046897b (decomp + disasm Mashed_pool12
-// RO 2026-06-17). Every callee forwarded to its LIVE original (RW fast-sqrt LUT
-// FUN_004c3ac0/39b0/3df0/4c4d20 + FUN_0040e350/0040e340), and the 7 implicit-ST0
-// FUN_004a2c48 round calls are reproduced by naked shims that load ST0 with the
-// EXACT original x87 sequence — resolving [U-A6A-ST0] (the smoother's ST0 input is
-// not in the decomp; the disasm pins each one). Built x87 (.asi TU, no /arch:SSE2)
-// so float10 transients (the `a*b+c` accumulators l_60/l_d0) round to float32 like
-// the original FSTP. EXACT .rdata bit constants (A6_*): a literal-vs-.rdata sweep
-// found 15/38 decimal literals mis-round (e.g. _DAT_005cea2c 299488 -> 0x48923c00
-// vs the real 0x48927c00) — using Cf() bit patterns avoids the A5-class ULP drift.
+// [dcphys 2026-10-21] ONE body, shared with mashed_re.exe: Vehicle/Integrate2.cpp (Vehicle_Integrate2). The
+// verbatim naked-x87 transcription that lived here (C4 72/72, with 14 float10 / _ftol2 shims) was deleted after
+// the shared body read bit-identical to it on every sampled call (nvs = 0 on 2 x 1376 calls, track 0) and, with
+// MASHED_A6A_DOT_ORDER=1, bit-identical to the original on every sampled call where the verbatim copy was not
+// (verify/dcphys_20261021). What stays here is the .asi's harness: the trampoline into the original, the A/B
+// (full 0xd04 record + a no-op control) and the entry.
 // ===========================================================================
 namespace {
-
-int Fi_PlayerCount() { return reinterpret_cast<int(__cdecl*)()>(0x0040e340)(); }  // FUN_0040e340
-
-// ── A6a EXACT-bit constants (memory_read, Mashed_pool12 2026-06-17) ──────────
-const float A6_005cc320 = Cf(0x3f800000);  // 1.0
-const float A6_005cc328 = Cf(0x3c23d70a);  // 0.01   speed-bias scale / damage scale
-const float A6_005cc32c = Cf(0x3f000000);  // 0.5
-const float A6_005cc31c = Cf(0x40400000);  // 3.0    type-C grip mul
-const float A6_005cc348 = Cf(0x3fc00000);  // 1.5    type-A grip mul
-const float A6_005cc55c = Cf(0x41200000);  // 10.0   speed bias addend
-const float A6_005cc564 = Cf(0x3e800000);  // 0.25   fwd-align floor
-const float A6_005cc56c = Cf(0x3dcccccd);  // 0.1    upgrade-stat scale / *0.2 clamp half
-const float A6_005cc750 = Cf(0x41800000);  // 16.0   low-speed full-stop thr
-const float A6_005cc990 = Cf(0x3727c5ac);  // 1e-5   ang-vel hi bound (EXACT)
-const float A6_005cc9b4 = Cf(0x3f7d70a4);  // 0.99   spin-type vel damp (EXACT)
-const float A6_005cc9c8 = Cf(0x3f666666);  // 0.9    brake scale
-const float A6_005cc9f4 = Cf(0x41000000);  // 8.0    spin floor
-const float A6_005ccabc = Cf(0x3f8ccccd);  // 1.1    high-load mul
-const float A6_005ccac4 = Cf(0x43b40000);  // 360.0  spin->deg
-const float A6_005ccd04 = Cf(0x43fa0000);  // 500.0  speed-delta floor
-const float A6_005cd03c = Cf(0x38d1b717);  // 9.99999e-5 speed-min eps (EXACT)
-const float A6_005cd0ac = Cf(0x44bb8000);  // 1500.0 speed-delta base
-const float A6_005cd120 = Cf(0x42480000);  // 50.0   low-load thr
-const float A6_005cd694 = Cf(0x3c888889);  // 0.0166667 spin damp (EXACT)
-const float A6_005ce18c = Cf(0x3ca3d70a);  // 0.02   low-load scale
-const float A6_005ce1e8 = Cf(0x3a2ec33e);  // 6.6667e-4 gear scale (EXACT)
-const float A6_005ce264 = Cf(0x3f59999a);  // 0.85   high-load susp scale
-const float A6_005ce9f0 = Cf(0x38000000);  // 3.0518e-5 low-grip slope (EXACT)
-const float A6_005ce9f4 = Cf(0x33d6bf95);  // 9.9998e-8 hi-grip slope (EXACT)
-const float A6_005ce9f8 = Cf(0x4b189680);  // 1.0e7   hi-grip ceiling
-const float A6_005ce9fc = Cf(0x47000000);  // 32768.0 grip clamp thr
-const float A6_005cea00 = Cf(0x35788da7);  // 9.2549e-7 ang-inertia scale (EXACT)
-const float A6_005cea04 = Cf(0x4248f5c3);  // 50.24   normal-load accum
-const float A6_005cea08 = Cf(0x3b000000);  // 0.0019531 high-load susp k (EXACT)
-const float A6_005cea0c = Cf(0x3a800000);  // 0.0009766 susp force k (EXACT)
-const float A6_005cea10 = Cf(0x44800000);  // 1024.0  speed clamp
-const float A6_005cea14 = Cf(0x3c03126f);  // 0.008   spin scale
-const float A6_005cea18 = Cf(0x3ca30eac);  // 0.0199045 spin scale 2 (EXACT)
-const float A6_005cea1c = Cf(0xb727c5ac);  // -1e-5   ang-vel lo bound (EXACT)
-const float A6_005cea2c = Cf(0x48927c00);  // 299488.0 type-C grip thr (EXACT)
-const float A6_005cea30 = Cf(0x48435000);  // 200000.0 type-B grip thr
-const float A6_005cea34 = Cf(0x48127c00);  // 149744.0 type-A grip thr (EXACT)
-const float A6_005cea38 = Cf(0x48aae600);  // 349872.0 default grip thr (EXACT)
-const float A6_005cea3c = Cf(0x43200000);  // 160.0   throttle/brake cap
-const float A6_005cea40 = Cf(0x437a0000);  // 250.0   gear0 speed addend
-const float A6_005cea28 = Cf(0x4af42400);  // 8e6     boost-state-1 player force
-// _DAT_005cea20 (256.0) and _DAT_005cea24 (1.74533) are read directly inside the
-// ST0 shims (RoundBrakeInput / RoundDriveProj) from the live .rdata.
-
-// live globals A6a reads:
-inline float& A6_SuspScale() { return *reinterpret_cast<float*>(0x0088e5f0); }  // _DAT_0088e5f0
-inline int&   A6_BoostP1()   { return *reinterpret_cast<int*>  (0x0088e668); }  // DAT_0088e668
-inline int&   A6_BoostP2()   { return *reinterpret_cast<int*>  (0x0088e66c); }  // DAT_0088e66c
-
-inline float& a6F(int* v, int i) { return *reinterpret_cast<float*>(v + i); }
-inline int    a6AsI(float f) { int i; std::memcpy(&i, &f, 4); return i; }
-
-// ── the 7 implicit-ST0 FUN_004a2c48 (round-ST0-to-i64) shims ────────────────
-// Each reproduces the EXACT x87 instruction stream that feeds ST0 at its call site
-// (disasm Mashed_pool12 2026-06-17), then forwards to the LIVE FUN_004a2c48 so the
-// round is bit-identical. dt is passed as the 2nd cdecl arg (the original FSUBs the
-// spilled param_2 from the stack; an FSUB of the identical float32 is bit-exact).
-//
-// #1 0x004679ca  FILD [timer]; FSUB dt; CALL           (upshift-timer decrement)
-// #2 0x004679f8  FILD [timer]; FADD dt; CALL           (downshift-timer increment)
-// #3 0x00467cfe  FILD [bf4];   FSUB dt; CALL           (boost ctr, mode==6)
-// #4 0x00467dc6  FILD [bf4];   FSUB dt; CALL           (boost-state 1)
-// #5 0x00467e25  FILD [bf4];   FSUB dt; CALL           (boost-state 2; bf4 spilled)
-// #7 0x00467f93  FILD [brake]; FADD [0x5cea20]; CALL   (wheel>1 brake quantize)
-__declspec(naked) int RoundIntSubDt(int /*v*/, float /*dt*/) {
-    __asm {
-        fild  dword ptr [esp+4]            // ST0 = (float64)(int)v
-        fsub  dword ptr [esp+8]            // ST0 -= dt
-        call  dword ptr [PCH_Fwd_4a2c48]
-        ret
-    }
-}
-__declspec(naked) int RoundIntAddDt(int /*v*/, float /*dt*/) {
-    __asm {
-        fild  dword ptr [esp+4]
-        fadd  dword ptr [esp+8]
-        call  dword ptr [PCH_Fwd_4a2c48]
-        ret
-    }
-}
-// #7: ST0 = (float)brakeByte + _DAT_005cea20 (=256.0). The original FADDs the live
-// .rdata float at 0x005cea20 — load it from there so the bit pattern is identical.
-__declspec(naked) int RoundBrakeInput(int /*brakeByte*/) {
-    __asm {
-        fild  dword ptr [esp+4]
-        mov   eax, 0x005cea20
-        fadd  dword ptr [eax]
-        call  dword ptr [PCH_Fwd_4a2c48]
-        ret
-    }
-}
-// #6 0x00467e7e: ST0 = (w[0x1f]*vel.x + w[0x20]*vel.y + w[0x21]*vel.z)
-//                      / (w[-0xa] * _DAT_005cea24).
-// Reproduce the exact FMUL/FADDP/FDIVP chain (0x467e4e..0x467e7e): EDI=wheel ptr,
-// ESI=record. wheel passed as arg1, record as arg2.
-__declspec(naked) int RoundDriveProj(float* /*wheel*/, float* /*rec*/) {
-    __asm {
-        mov   eax, dword ptr [esp+4]       // EAX = wheel (= original EDI)
-        mov   edx, dword ptr [esp+8]       // EDX = record (= original ESI)
-        fld   dword ptr [eax+0x80]         // w[0x20]
-        fmul  dword ptr [edx+0x9b4]        // * vel.y
-        fld   dword ptr [eax+0x7c]         // w[0x1f]
-        fmul  dword ptr [edx+0x9b0]        // * vel.x
-        faddp st(1), st(0)
-        fld   dword ptr [edx+0x9b8]        // vel.z
-        fmul  dword ptr [eax+0x84]         // * w[0x21]
-        faddp st(1), st(0)
-        fld   dword ptr [eax-0x28]         // w[-0xa]
-        mov   ecx, 0x005cea24
-        fmul  dword ptr [ecx]              // * 1.74533
-        fdivp st(1), st(0)
-        call  dword ptr [PCH_Fwd_4a2c48]
-        ret
-    }
-}
-
-// ── float10-preserving accumulator shims ([U-A6A-FLOAT10] resolution) ─────────
-// FUN_004c3ac0 returns the magnitude in ST0 as float10 (the decompiler's
-// `(float10)FUN_004c3ac0`); a `float`/`double` C return would round it at the ABI
-// boundary, losing the extended precision the original carries into the subsequent
-// FMUL/FADD before its single FSTP-to-float32. These shims keep ST0 in the FPU.
-
-// local_60 += mag10(acvec) * le4   (stored back to float32 each wheel; disasm
-// 0x468208..: FLD mag; FMUL le4; FADD local_60; FSTP local_60). Returns new f32.
-__declspec(naked) float Accum60(float* /*acvec*/, float /*le4*/, float /*prev60*/) {
-    __asm {
-        mov   eax, dword ptr [esp+4]   // acvec
-        push  eax
-        call  dword ptr [PCH_Fwd_4c3ac0]   // ST0 = mag10(acvec)
-        add   esp, 4
-        fmul  dword ptr [esp+8]            // * le4   (float10)
-        fadd  dword ptr [esp+12]           // + prev60
-        ret                                // ST0 -> float return (rounds to f32)
-    }
-}
-// local_d0 += mag10(evec) * 50.24  AND  *numOut = (float)(mag10(evec)*50.24).
-// disasm 0x4684bb..0x4684d3: CALL mag; FMUL [0x5cea04]; FST [num]; FADD local_d0; FSTP.
-__declspec(naked) float AccumD0Num(float* /*evec*/, float* /*numOut*/, float /*prevD0*/) {
-    __asm {
-        mov   eax, dword ptr [esp+4]   // evec
-        push  eax
-        call  dword ptr [PCH_Fwd_4c3ac0]   // ST0 = mag10(evec)
-        add   esp, 4
-        mov   ecx, 0x005cea04
-        fmul  dword ptr [ecx]              // * 50.24 (float10)
-        mov   edx, dword ptr [esp+8]       // numOut
-        fst   dword ptr [edx]              // *numOut = round_f32(mag*50.24)  (keeps ST0)
-        fadd  dword ptr [esp+12]           // + prevD0  (float10)
-        ret                                // -> float32
-    }
-}
-// the friction-torque divide + 3 accumulator updates, all in float10
-// (disasm 0x4684d7..0x468534). num=float32 numerator; xvec=&local_84(the cross
-// product {l84,l80,l7c}); acc=&local_78 {l78,l74,l70}. Returns void; updates acc[].
-//   q       = num / mag10(xvec)                       (float10)
-//   acc[0] (l78) = round( l78 - l84 * q )             (l84*q kept float10)
-//   acc[1] (l74) = round( l74 - round(l80 * q) )
-//   acc[2] (l70) = round( l70 - round(l7c * q) )
-__declspec(naked) void FrictionUpdate(float /*num*/, float* /*xvec*/, float* /*acc*/) {
-    __asm {
-        push  ebx
-        sub   esp, 4                       // scratch slot at [esp] for f32 rounding
-        // args (post push ebx + sub 4 = +8): num=[esp+12] xvec=[esp+16] acc=[esp+20]
-        mov   ebx, dword ptr [esp+16]      // xvec (&local_84)
-        push  ebx
-        call  dword ptr [PCH_Fwd_4c3ac0]   // ST0 = mag10(xvec)
-        add   esp, 4
-        fdivr dword ptr [esp+12]           // ST0 = num / mag10(xvec) = q  (float10)
-        fld   dword ptr [ebx+4]            // local_80
-        fmul  st(0), st(1)                 // local_80 * q  (float10)
-        fld   dword ptr [ebx]              // local_84
-        fmul  st(0), st(2)                 // local_84 * q  (float10, ST0)
-        fld   dword ptr [ebx+8]            // local_7c
-        fmul  st(0), st(3)                 // local_7c * q  (float10, ST0)
-        // FPU: ST0=l7c*q  ST1=l84*q  ST2=l80*q  ST3=q
-        mov   ecx, dword ptr [esp+20]      // acc (&local_78)
-        fstp  dword ptr [esp]              // [esp] = round(l7c*q)  (pops ST0)
-        fld   dword ptr [ecx+8]            // local_70
-        fsub  dword ptr [esp]              // local_70 - round(l7c*q)
-        fstp  dword ptr [ecx+8]            // store local_70 (f32)
-        // FPU: ST0=l84*q  ST1=l80*q  ST2=q
-        fxch  st(1)                        // ST0=l80*q  ST1=l84*q
-        fstp  dword ptr [esp]              // [esp] = round(l80*q) (pops)
-        fld   dword ptr [ecx+4]            // local_74
-        fsub  dword ptr [esp]              // local_74 - round(l80*q)
-        fstp  dword ptr [ecx+4]            // store local_74 (f32)
-        // FPU: ST0=l84*q  ST1=q
-        fld   dword ptr [ecx]              // local_78
-        fsub  st(0), st(1)                 // local_78 - (l84*q)  (float10)
-        fstp  dword ptr [ecx]              // store local_78 (f32)
-        fstp  st(0)                        // pop l84*q
-        fstp  st(0)                        // pop q
-        add   esp, 4
-        pop   ebx
-        ret
-    }
-}
-// drive-force accumulate (disasm 0x467ca4..0x467cd7): the drive product
-// (local_e4 * local_cc) is kept in ST0 as float10 (ST1) across all 3 axis
-// accumulates — NOT rounded to float32 between them. [U-A6A-FLOAT10].
-//   prod  = e4 * cc                            (float10)
-//   *b14  = (f32)( w[0x1f]*prod + *b14 )       (each w*prod in float10, rounded on store)
-//   *b18  = (f32)( w[0x20]*prod + *b18 )
-//   *b1c  = (f32)( w[0x21]*prod + *b1c )
-// wheel=EDI (reads +0x7c/+0x80/+0x84), rec=ESI (+0xb14/+0xb18/+0xb1c).
-__declspec(naked) void DriveForceAccum(float /*e4*/, float /*cc*/, float* /*wheel*/, float* /*rec*/) {
-    __asm {
-        mov   eax, dword ptr [esp+12]      // wheel (EDI)
-        mov   edx, dword ptr [esp+16]      // rec (ESI)
-        fld   dword ptr [esp+4]            // e4
-        fmul  dword ptr [esp+8]            // * cc  -> prod (float10, ST0)
-        fld   dword ptr [eax+0x7c]         // w[0x1f]
-        fmul  st(0), st(1)                 // w[0x1f]*prod (float10)
-        fadd  dword ptr [edx+0xb14]        // + *b14
-        fstp  dword ptr [edx+0xb14]        // store b14 (f32)
-        fld   dword ptr [eax+0x80]         // w[0x20]
-        fmul  st(0), st(1)                 // w[0x20]*prod
-        fadd  dword ptr [edx+0xb18]
-        fstp  dword ptr [edx+0xb18]        // store b18 (f32)
-        fld   dword ptr [eax+0x84]         // w[0x21]
-        fmul  st(0), st(1)                 // w[0x21]*prod
-        fadd  dword ptr [edx+0xb1c]
-        fstp  dword ptr [edx+0xb1c]        // store b1c (f32)
-        fstp  st(0)                        // pop prod
-        ret
-    }
-}
-// brake-force accumulate (disasm 0x467f40..0x467f70): bf = -(local_cc*0.9*brake)
-// kept float10 (ST0) across the 3 axes; writes wheel+0x70/0x74/0x78 (= piVar12[0x1c..0x1e]).
-//   prod = (local_cc * 0.9) * brake  (float10), negated
-//   wheel[0x1c] = (f32)( prod * w[0x1f] + wheel[0x1c] )  (and 0x20->0x1d, 0x21->0x1e)
-__declspec(naked) void BrakeForceAccum(float /*local_cc*/, float /*brake*/, float* /*wheel*/) {
-    __asm {
-        mov   eax, dword ptr [esp+12]      // wheel
-        fld   dword ptr [esp+4]            // local_cc
-        mov   ecx, 0x005cc9c8
-        fmul  dword ptr [ecx]              // local_cc * 0.9
-        fmul  dword ptr [esp+8]            // * brake  (float10)
-        fchs                               // -(...) -> bf (float10, ST0)
-        fld   st(0)                        // dup bf
-        fmul  dword ptr [eax+0x7c]         // bf * w[0x1f]
-        fadd  dword ptr [eax+0x70]         // + wheel[0x1c]
-        fstp  dword ptr [eax+0x70]         // store (f32)
-        fld   st(0)                        // dup bf
-        fmul  dword ptr [eax+0x80]         // bf * w[0x20]
-        fadd  dword ptr [eax+0x74]
-        fstp  dword ptr [eax+0x74]
-        fmul  dword ptr [eax+0x84]         // bf * w[0x21]  (consumes the last bf)
-        fadd  dword ptr [eax+0x78]
-        fstp  dword ptr [eax+0x78]
-        ret
-    }
-}
-// ── suspension force base local_bc — VERBATIM x87 ([U-A6A-FLOAT10]) ──────────
-// local_bc = ((pv[0x15]*pv[0x1b]*SuspScale) * le4) * 0.0009766, kept in x87 float10
-// across the whole product, rounded to f32 only on the return (disasm 0x46814f,
-// 0x468152, 0x468155, 0x468174, 0x468185). le4 is the CLAMPED value (clamp at
-// 0x46816c precedes the FMUL). A plain-C `a*b*c*d*e` can round an intermediate to
-// f32, drifting local_bc -> f5 -> the wheel force (call 24 w2fx 8 ULP). wheel=arg1
-// reads +0x54 (pv[0x15]) and +0x6c (pv[0x1b]); le4=arg2.  EAX/ECX scratch.
-__declspec(naked) float SuspBaseBc(float* /*wheel*/, float /*le4clamped*/) {
-    __asm {
-        mov   eax, dword ptr [esp+4]       // wheel
-        fld   dword ptr [eax+0x54]         // 0x46814f pv[0x15]
-        fmul  dword ptr [eax+0x6c]         // 0x468152 * pv[0x1b]
-        mov   ecx, 0x0088e5f0
-        fmul  dword ptr [ecx]              // 0x468155 * SuspScale (float10)
-        fmul  dword ptr [esp+8]            // 0x468174 * le4 (clamped)
-        mov   ecx, 0x005cea0c
-        fmul  dword ptr [ecx]              // 0x468185 * 0.0009766 = local_bc (float10)
-        ret                                // ST0 -> f32 return (matches FSTP 0x46819b)
-    }
-}
-// ── orientation-spin le0/ldc/ld8 — VERBATIM x87 ([U-A6A-FLOAT10] far-upstream) ──
-// Reproduces 0x00468077..0x004680f2 (the complex spin branch, after the axis-angle
-// transform). TWO float10/rounding subtleties a plain-C transcription gets wrong,
-// each a per-call ULP hazard on le0/ldc/ld8 -> s0/s2 -> the dot -> the wheel force
-// (call 24 w2fx 8 ULP via cancellation):
-//   (1) f-product ORDER: f = ((angspeed*0.0199045) * f1) * 360, where P=angspeed*
-//       0.0199045 is formed FIRST (0x468077-7d) then multiplied by the clamped
-//       f1=max(speed*0.008, 8.0) (0x4680a7) then *360 (0x4680ae) — all float10. A C
-//       `f1 * angspeed * 0.0199045 * 360` reassociates and drifts.
-//   (2) ASYMMETRIC f32 rounding: le0_t*f is kept float10 across its `- vel.x` FSUB
-//       (0x4680b8->0x4680ce), but ldc_t*f and ld8_t*f are STORED to f32 first
-//       (0x4680c0/0x4680ca) then reloaded and subtracted. A C `dst[i]*f - vel[i]`
-//       keeps all three float10 -> ldc/ld8 drift 1 ULP.
-// dst=arg1 (le0_t/ldc_t/ld8_t, the transform output, f32); record=arg2 (ESI) reads
-// speed(+0x9e4) angspeed(+0x9e8) vel.x/y/z(+0x9b0/b4/b8); out=arg3 -> {le0,ldc,ld8}
-// (out[1]/out[2] double as the f32 scratch, exactly as [ESP+0x18]/[0x1c]). Disasm
-// Mashed_pool0 RO 2026-07-01. EAX/ECX scratch; EBX/ESI/EDI saved.
-__declspec(naked) void SuspOrient(float* /*dst*/, void* /*record*/, float* /*out*/) {
-    __asm {
-        push  ebx
-        push  esi
-        push  edi
-        // args (post 3 pushes = 12 + ret): dst=[esp+16] record=[esp+20] out=[esp+24]
-        mov   edi, dword ptr [esp+16]      // dst (le0_t/ldc_t/ld8_t)
-        mov   esi, dword ptr [esp+20]      // record (ESI)
-        mov   ebx, dword ptr [esp+24]      // out
-        fld   dword ptr [esi+0x9e8]        // 0x468077 angspeed
-        mov   ecx, 0x005cea18
-        fmul  dword ptr [ecx]              // 0x46807d * 0.0199045 = P (ST, float10)
-        fld   dword ptr [esi+0x9e4]        // 0x468086 speed
-        mov   ecx, 0x005cea14
-        fmul  dword ptr [ecx]              // 0x46808c * 0.008 = f1 (ST0); ST1=P
-        mov   ecx, 0x005cc9f4
-        fcom  dword ptr [ecx]              // 0x468092 f1 : 8.0
-        fnstsw ax                          // 0x468098
-        test  ah, 0x5                      // 0x46809a
-        jp    so_noclamp                   // 0x46809d f1 >= 8.0 -> keep
-        fstp  st(0)                        // 0x46809f pop f1
-        fld   dword ptr [ecx]              // 0x4680a1 f1 = 8.0
-    so_noclamp:
-        fmulp st(1), st(0)                 // 0x4680a7 P * f1 -> ST0
-        mov   ecx, 0x005ccac4
-        fmul  dword ptr [ecx]              // 0x4680ae * 360.0 = f (ST, float10)
-        fld   dword ptr [edi+0]            // 0x4680b4 le0_t
-        fmul  st(0), st(1)                 // 0x4680b8 le0_t * f (float10, kept)
-        fld   dword ptr [edi+4]            // 0x4680ba ldc_t
-        fmul  st(0), st(2)                 // 0x4680be ldc_t * f
-        fstp  dword ptr [ebx+4]            // 0x4680c0 out[1] = round_f32(ldc_t*f); pop
-        fld   dword ptr [edi+8]            // 0x4680c4 ld8_t
-        fmul  st(0), st(2)                 // 0x4680c8 ld8_t * f
-        fstp  dword ptr [ebx+8]            // 0x4680ca out[2] = round_f32(ld8_t*f); pop
-        fsub  dword ptr [esi+0x9b0]        // 0x4680ce (le0_t*f float10) - vel.x = le0
-        fstp  dword ptr [ebx+0]            // 0x4680d4 out[0] = le0 (f32); pop
-        fstp  st(0)                        // 0x4680d8 pop f
-        fld   dword ptr [ebx+4]            // 0x4680da reload round_f32(ldc_t*f)
-        fsub  dword ptr [esi+0x9b4]        // 0x4680de - vel.y = ldc
-        fstp  dword ptr [ebx+4]            // 0x4680e4 out[1] = ldc (f32)
-        fld   dword ptr [ebx+8]            // 0x4680e8 reload round_f32(ld8_t*f)
-        fsub  dword ptr [esi+0x9b8]        // 0x4680ec - vel.z = ld8
-        fstp  dword ptr [ebx+8]            // 0x4680f2 out[2] = ld8 (f32)
-        pop   edi
-        pop   esi
-        pop   ebx
-        ret
-    }
-}
-// ── suspension dot/inverse precompute — VERBATIM x87 ([U-A6A-FLOAT10] upstream) ──
-// Reproduces 0x00468127..0x00468206. The original keeps THREE values in x87 float10
-// that a plain-C transcription rounds to f32 (each a per-call ULP hazard on the wheel
-// force; e.g. call 24 w2fx was 8 ULP after the store-block fix alone):
-//   * fInv = 1.0/le4 stays in ST across s0=le0*fInv, s1=ldc*fInv, s2=fInv*ld8 (only
-//     s0,s1 round to f32; 0x46812d..0x46814b),
-//   * s2 stays in ST (bottom of stack) through the dot AND local_a4 = s2 - local_c0
-//     (never stored to f32; 0x46814b..0x468202),
-//   * the dot stays in ST across local_c8/c4/c0 = dot*pv[0x1f/0x20/0x21] (0x4681c5..e0);
-//     the addition order is (fwd.x*s0 + fwd.y*s1) + fwd.z*s2 (0x46819f..0x4681c3).
-// le4 is the UNCLAMPED value (fInv predates the 1024 clamp at 0x46816c). out[6] =
-// {local_c8, local_c4, local_c0, local_ac, local_a8, local_a4} (f32). wheel=EDI reads
-// pv[0x1f/0x20/0x21] (+0x7c/0x80/0x84); record=ESI reads fwd.x/y/z (+0x9d4/0x9d8/0x9dc).
-// Disasm Mashed_pool0 RO 2026-07-01. EAX/ECX scratch; EBX/ESI/EDI saved.
-__declspec(naked) void SuspDotInv(float /*le0*/, float /*ldc*/, float /*ld8*/, float /*le4*/,
-                                  float* /*wheel*/, void* /*record*/, float* /*out*/) {
-    __asm {
-        push  ebx
-        push  esi
-        push  edi
-        sub   esp, 8                       // [esp]=s0f  [esp+4]=s1f  (f32 scratch)
-        // args (post 3 pushes + sub 8 = 20-byte prologue, +ret): le0=[esp+24]
-        //   ldc=[esp+28] ld8=[esp+32] le4=[esp+36] wheel=[esp+40] record=[esp+44] out=[esp+48]
-        mov   edi, dword ptr [esp+40]      // wheel  (EDI)
-        mov   esi, dword ptr [esp+44]      // record (ESI)
-        mov   ebx, dword ptr [esp+48]      // out
-        mov   ecx, 0x005cc320
-        fld   dword ptr [ecx]              // 0x468127 1.0
-        fdiv  dword ptr [esp+36]           // 0x46812d / le4 = fInv (ST, float10)
-        fld   dword ptr [esp+24]           // 0x468131 le0
-        fmul  st(0), st(1)                 // 0x468135 le0 * fInv = s0
-        fstp  dword ptr [esp]              // 0x468137 s0f (f32); ST0=fInv
-        fld   dword ptr [esp+28]           // 0x46813e ldc
-        fmul  st(0), st(1)                 // 0x468142 ldc * fInv = s1
-        fstp  dword ptr [esp+4]            // 0x468144 s1f (f32); ST0=fInv
-        fmul  dword ptr [esp+32]           // 0x46814b fInv * ld8 = s2 (ST, float10)
-        // dot = (fwd.x*s0 + fwd.y*s1) + fwd.z*s2   (s2 kept in ST bottom)
-        fld   dword ptr [esi+0x9d8]        // 0x46819f fwd.y
-        fmul  dword ptr [esp+4]            // 0x4681a5 * s1f
-        fld   dword ptr [esi+0x9d4]        // 0x4681ac fwd.x
-        fmul  dword ptr [esp]              // 0x4681b2 * s0f
-        faddp st(1), st(0)                 // 0x4681b9 fwd.x*s0 + fwd.y*s1
-        fld   dword ptr [esi+0x9dc]        // 0x4681bb fwd.z
-        fmul  st(0), st(2)                 // 0x4681c1 * s2 (ST2)
-        faddp st(1), st(0)                 // 0x4681c3 dot; ST0=dot ST1=s2
-        fld   st(0)                        // 0x4681c5 dup dot
-        fmul  dword ptr [edi+0x7c]         // 0x4681c7 dot * pv[0x1f]
-        fstp  dword ptr [ebx+0]            // 0x4681ca out[0]=local_c8 (f32)
-        fld   st(0)                        // 0x4681ce dup dot
-        fmul  dword ptr [edi+0x80]         // 0x4681d0 dot * pv[0x20]
-        fstp  dword ptr [ebx+4]            // 0x4681d6 out[1]=local_c4 (f32)
-        fmul  dword ptr [edi+0x84]         // 0x4681da dot * pv[0x21] (consumes dot)
-        fstp  dword ptr [ebx+8]            // 0x4681e0 out[2]=local_c0 (f32); ST0=s2
-        fld   dword ptr [esp]              // 0x4681e4 s0f
-        fsub  dword ptr [ebx+0]            // 0x4681eb s0 - local_c8 = local_ac
-        fstp  dword ptr [ebx+12]           // 0x4681ef out[3]=local_ac (f32)
-        fld   dword ptr [esp+4]            // 0x4681f3 s1f
-        fsub  dword ptr [ebx+4]            // 0x4681fa s1 - local_c4 = local_a8
-        fstp  dword ptr [ebx+16]           // 0x4681fe out[4]=local_a8 (f32)
-        fsub  dword ptr [ebx+8]            // 0x468202 s2(float10) - local_c0 = local_a4
-        fstp  dword ptr [ebx+20]           // 0x468206 out[5]=local_a4 (f32); ST empty
-        add   esp, 8
-        pop   edi
-        pop   esi
-        pop   ebx
-        ret
-    }
-}
-// ── suspension-force store block — VERBATIM x87 ([U-A6A-FLOAT10] final chain) ──
-// Reproduces 0x004682a7..0x00468337 (branch1, local_94&0x100==0) and the high-load
-// else 0x00468234..0x004682a5, merging at the shared tail 0x00468320. Residual
-// (RED 93/96, calls 24/82/84): the original keeps f5 — and local_98, and the else's
-// f4 and f5*local_a4 — in x87 registers as float10 across the per-axis products,
-// rounding to float32 only on the FSTP into wheel[0x1c/0x1d/0x1e] (+0x70/74/78).
-// A plain-C store rounds f5 to float32 first -> 1-8 ULP on wNfx. Disasm Mashed_pool0
-// RO 2026-07-01. sbuf mirrors the ORIGINAL post-restore stack frame ([ESP+off] ->
-// [ebx+off]); wheel=EDI, record=ESI, bVar13=EBP (the original regs, 1:1):
-//   sbuf: 0x1c=local_d4 0x28=c8 0x2c=c4 0x30=c0 0x34=local_bc
-//         0x44=local_ac 0x48=local_a8 0x4c=local_a4
-//         0x50=local_a0 0x54=local_9c 0x58=local_98 0x5c=(int)local_94
-__declspec(naked) void SuspForceStore(void* /*sbuf*/, float* /*wheel*/, void* /*record*/, int /*bVar13*/) {
-    __asm {
-        push  ebx
-        push  esi
-        push  edi
-        push  ebp
-        // args (post 4 pushes + retaddr, +20): sbuf=[esp+20] wheel=[esp+24]
-        //   record=[esp+28] bVar13=[esp+32]
-        mov   ebx, dword ptr [esp+20]      // sbuf   (original ESP-frame base)
-        mov   edi, dword ptr [esp+24]      // wheel  (original EDI)
-        mov   esi, dword ptr [esp+28]      // record (original ESI)
-        mov   ebp, dword ptr [esp+32]      // bVar13 (original EBP)
-        mov   eax, dword ptr [ebx+0x5c]    // EAX = local_94  (0x468217)
-        test  eax, 0x100                   // 0x46821d/232: (local_94 & 0x100)==0 -> branch1
-        jnz   sfs_else
-        // ===== branch1 (0x004682a7) =====
-        test  eax, eax                     // 0x4682a7
-        jnz   sfs_b1_f5def                 // 0x4682a9  local_94!=0 -> f5=local_bc
-        // ---- local_94==0 sub-path (0x004682ab) ----
-        fld   dword ptr [edi+0x58]         // 0x4682ab pv[0x16]
-        fmul  dword ptr [edi+0x6c]         // 0x4682ae * pv[0x1b]
-        mov   ecx, 0x0088e5f0
-        fmul  dword ptr [ecx]              // 0x4682b1 * SuspScale -> local_98 (ST, float10)
-        fld   dword ptr [ebx+0x28]         // 0x4682b7 local_c8
-        fmul  st(0), st(1)                 // 0x4682bb * local_98
-        fstp  dword ptr [ebx+0x50]         // 0x4682bd local_a0 (f32); ST0=local_98
-        fld   dword ptr [ebx+0x2c]         // 0x4682c1 local_c4
-        fmul  st(0), st(1)                 // 0x4682c5 * local_98
-        fstp  dword ptr [ebx+0x54]         // 0x4682c7 local_9c (f32); ST0=local_98
-        fmul  dword ptr [ebx+0x30]         // 0x4682cb local_98 * local_c0
-        fstp  dword ptr [ebx+0x58]         // 0x4682cf local_98 (f32); ST empty
-        fld   dword ptr [ebx+0x1c]         // 0x4682d3 local_d4
-        fmul  dword ptr [esi+0x9e4]        // 0x4682d7 * speed = f4 (ST, float10)
-        mov   ecx, 0x005cd120
-        fcom  dword ptr [ecx]              // 0x4682dd f4 : 50.0
-        fnstsw ax                          // 0x4682e3
-        test  ah, 0x5                      // 0x4682e5
-        jp    sfs_b1_f5pop                 // 0x4682e8  f4 >= 50.0 -> pop f4, f5=local_bc
-        mov   ecx, 0x005ce18c
-        fmul  dword ptr [ecx]              // 0x4682ea f4 * 0.02
-        fmul  dword ptr [ebx+0x34]         // 0x4682f0 * local_bc = f5 (ST, float10)
-        jmp   sfs_b1_prod                  // 0x4682f4
-    sfs_b1_f5pop:
-        fstp  st(0)                        // 0x4682f6 pop f4
-    sfs_b1_f5def:
-        fld   dword ptr [ebx+0x34]         // 0x4682f8 f5 = local_bc
-    sfs_b1_prod:
-        // ---- branch1 products (0x004682fc), f5 in ST0 (float10) ----
-        fld   dword ptr [ebx+0x44]         // 0x4682fc local_ac
-        fmul  st(0), st(1)                 // 0x468300 local_ac * f5
-        fadd  dword ptr [ebx+0x50]         // 0x468302 + local_a0
-        fstp  dword ptr [ebx+0x50]         // 0x468306 local_a0 (f32); ST0=f5
-        fld   dword ptr [ebx+0x48]         // 0x46830a local_a8
-        fmul  st(0), st(1)                 // 0x46830e local_a8 * f5
-        fadd  dword ptr [ebx+0x54]         // 0x468310 + local_9c
-        fstp  dword ptr [ebx+0x54]         // 0x468314 local_9c (f32); ST0=f5
-        fmul  dword ptr [ebx+0x4c]         // 0x468318 f5 * local_a4
-        fadd  dword ptr [ebx+0x58]         // 0x46831c + local_98 -> new f5 (ST, float10)
-        jmp   sfs_tail
-        // ===== high-load else (0x00468234) =====
-    sfs_else:
-        test  ebp, ebp                     // 0x468234 bVar13 (ZF survives the FPU ops -> JZ)
-        fld   dword ptr [ebx+0x34]         // 0x468236 local_bc
-        mov   ecx, 0x005ce264
-        fmul  dword ptr [ecx]              // 0x46823a * 0.85 = f5 (ST, float10)
-        fld   dword ptr [ebx+0x44]         // 0x468240 local_ac
-        fmul  st(0), st(1)                 // 0x468244 local_ac * f5
-        fstp  dword ptr [ebx+0x50]         // 0x468246 (f32); ST0=f5
-        fld   dword ptr [ebx+0x48]         // 0x46824a local_a8
-        fmul  st(0), st(1)                 // 0x46824e local_a8 * f5
-        fstp  dword ptr [ebx+0x54]         // 0x468250 (f32); ST0=f5
-        fmul  dword ptr [ebx+0x4c]         // 0x468254 f5 * local_a4 (ST, float10; -> ST1 below)
-        fld   dword ptr [edi+0x6c]         // 0x468258 pv[0x1b]
-        mov   ecx, 0x005cc31c
-        fmul  dword ptr [ecx]              // 0x46825b * 3.0
-        mov   ecx, 0x0088e5f0
-        fmul  dword ptr [ecx]              // 0x468261 * SuspScale
-        fimul dword ptr [ebx+0x5c]         // 0x468267 * (int)local_94
-        mov   ecx, 0x005cea08
-        fmul  dword ptr [ecx]              // 0x46826b * 0.0019531
-        mov   ecx, 0x005ccabc
-        fmul  dword ptr [ecx]              // 0x468271 * 1.1 = f4 (ST0); ST1 = f5*local_a4
-        jz    sfs_el_c8                    // 0x468277 !bVar13 -> skip *0.5
-        mov   ecx, 0x005cc32c
-        fmul  dword ptr [ecx]              // 0x468279 f4 * 0.5
-    sfs_el_c8:
-        fld   dword ptr [ebx+0x28]         // 0x46827f local_c8; ST0=c8 ST1=f4 ST2=f5*a4
-        fmul  st(0), st(1)                 // 0x468283 c8 * f4
-        fadd  dword ptr [ebx+0x50]         // 0x468285 + local_ac*f5
-        fstp  dword ptr [ebx+0x50]         // 0x468289 local_a0 (f32); ST0=f4 ST1=f5*a4
-        fld   dword ptr [ebx+0x2c]         // 0x46828d local_c4
-        fmul  st(0), st(1)                 // 0x468291 c4 * f4
-        fadd  dword ptr [ebx+0x54]         // 0x468293 + local_a8*f5
-        fstp  dword ptr [ebx+0x54]         // 0x468297 local_9c (f32); ST0=f4 ST1=f5*a4
-        fld   dword ptr [ebx+0x30]         // 0x46829b local_c0; ST0=c0 ST1=f4 ST2=f5*a4
-        fmul  st(0), st(1)                 // 0x46829f c0 * f4
-        faddp st(2), st(0)                 // 0x4682a1 ST2 = f5*a4 + c0*f4 = new f5; pop
-        fstp  st(0)                        // 0x4682a3 pop f4 -> ST0 = new f5
-        // 0x4682a5 JMP 0x468320 -> fall into shared tail
-    sfs_tail:
-        // ===== shared tail (0x00468320), ST0 = new f5 =====
-        fld   dword ptr [ebx+0x50]         // 0x468320 local_a0
-        fadd  dword ptr [edi+0x70]         // 0x468324 + wheel[0x1c]
-        fstp  dword ptr [edi+0x70]         // 0x468327 wheel[0x1c] (f32); ST0=new f5
-        fld   dword ptr [ebx+0x54]         // 0x46832a local_9c
-        fadd  dword ptr [edi+0x74]         // 0x46832e + wheel[0x1d]
-        fstp  dword ptr [edi+0x74]         // 0x468331 wheel[0x1d] (f32); ST0=new f5
-        fadd  dword ptr [edi+0x78]         // 0x468334 new f5 + wheel[0x1e]
-        fstp  dword ptr [edi+0x78]         // 0x468337 wheel[0x1e] (f32)
-        pop   ebp
-        pop   edi
-        pop   esi
-        pop   ebx
-        ret
-    }
-}
-// linear-velocity redistribution factor (disasm tail 0x46857c..0x468648).
-//   d   = (float10)local_d0 - mag10(lvec)
-//   if (d == 0)  -> *b8/*b4 unchanged, lin_b0 = (float10)local_b0
-//   else fac = d / local_d0 (float10);
-//        *b8 = (f32)(e0*fac + *b8); *b4 = (f32)(dc*fac + *b4);
-//        lin_b0 = d8*fac + local_b0 (float10)
-//   returns local_b0f = (f32)( (float10)bf1c + lin_b0 ).
-__declspec(naked) float LinVelFactor(float* /*lvec*/, float /*local_d0*/, float /*e0*/,
-                                     float /*dc*/, float /*d8*/, float* /*b8io*/, float* /*b4io*/,
-                                     float /*bf1c*/, float /*b0prev*/) {
-    __asm {
-        push  ebx
-        // args (post push ebx, +4): lvec=[esp+8] d0=[esp+12] e0=[esp+16] dc=[esp+20]
-        //   d8=[esp+24] b8io=[esp+28] b4io=[esp+32] bf1c=[esp+36] b0prev=[esp+40]
-        mov   ebx, dword ptr [esp+8]       // lvec
-        push  ebx
-        call  dword ptr [PCH_Fwd_4c3ac0]   // ST0 = mag10(lvec)
-        add   esp, 4
-        fld   dword ptr [esp+12]           // ST0=local_d0  ST1=mag10
-        fsub  st(0), st(1)                 // ST0 = local_d0 - mag10 (float10)  ST1=mag10
-        fxch  st(1)                        // ST0=mag10  ST1=(d)
-        fstp  st(0)                        // pop mag10; ST0 = d (float10)
-        ftst                               // compare d : 0.0
-        fnstsw ax
-        test  ah, 0x40                     // ZF: d == 0 ?
-        jnz   d_is_zero
-        // fac = d / local_d0  (float10), keep d? no — recompute fac in ST0
-        fdiv  dword ptr [esp+12]           // ST0 = d / local_d0 = fac (float10)
-        // *b8 = (f32)(e0*fac + *b8)
-        mov   ecx, dword ptr [esp+28]      // b8io
-        fld   dword ptr [esp+16]           // e0
-        fmul  st(0), st(1)                 // e0*fac
-        fadd  dword ptr [ecx]              // + *b8
-        fstp  dword ptr [ecx]              // *b8 = f32
-        // *b4 = (f32)(dc*fac + *b4)
-        mov   edx, dword ptr [esp+32]      // b4io
-        fld   dword ptr [esp+20]           // dc
-        fmul  st(0), st(1)                 // dc*fac
-        fadd  dword ptr [edx]              // + *b4
-        fstp  dword ptr [edx]              // *b4 = f32
-        // lin_b0 = d8*fac + local_b0  (float10, ST0)
-        fld   dword ptr [esp+24]           // d8
-        fmulp st(1), st(0)                 // d8*fac (consumes fac); ST0 = d8*fac
-        fadd  dword ptr [esp+40]           // + b0prev  (float10)
-        jmp   finish
-    d_is_zero:
-        fstp  st(0)                        // pop d
-        fld   dword ptr [esp+40]           // ST0 = (float10)b0prev (= lin_b0)
-    finish:
-        // local_b0f = (f32)( bf1c + lin_b0 )
-        fadd  dword ptr [esp+36]           // + bf1c (float10)
-        pop   ebx
-        ret                                // ST0 -> float32 return
-    }
-}
-
-// Gear/CVT speed-cap precompute + 5-candidate loop — VERBATIM x87 (disasm
-// 0x46768b..0x467820). fVar5 stays in the FPU as float10 through the whole loop
-// (the bottom-of-stack ST2 in each candidate); fVar3 (per-candidate t) stays
-// float10 in ST1; only local_54[k] and fVar4 round to f32 (FSTP). [U-A6A-FLOAT10]:
-// a plain-C transcription rounds fVar5/fVar3 to f32 and drifts 1-3 ULP in local_cc
-// -> the drive force on the significant X/Z axes (the near-zero Y always matched).
-// out54[5] = local_54; returns iVar11. Increment iff (fVar5<fVar3 && k<4).
-// EAX/ECX/EDX scratch; ESI/EDI/EBX preserved. fVar4 (f32) at [esp] scratch.
-__declspec(naked) int GearCvtCompute(int* /*self*/, float* /*out54*/) {
-    __asm {
-        push  ebx
-        push  edi
-        push  esi
-        sub   esp, 8                       // [esp]=fVar4 (f32 scratch)
-        mov   esi, dword ptr [esp+24]      // self
-        mov   edi, dword ptr [esp+28]      // out54
-        mov   ecx, 0x005cc32c              // &0.5
-        fld   dword ptr [esi+0x49c]
-        fmul  dword ptr [ecx]              // [0x49c]*0.5  (float10)
-        fld   dword ptr [esi+0x498]
-        fmul  dword ptr [ecx]              // [0x498]*0.5  ST0; ST1=[0x49c]*0.5
-        fstp  dword ptr [esp]              // fVar4tmp = round_f32([0x498]*0.5); ST0=[0x49c]*0.5
-        mov   eax, 0x005cd0ac
-        fld   dword ptr [eax]              // 1500
-        fsub  dword ptr [esi+0xb0c]        // 1500 - slide
-        mov   eax, 0x005ccd04
-        fcom  dword ptr [eax]              // (1500-slide) : 500
-        fnstsw ax
-        test  ah, 0x41
-        jp    gc_skipclamp
-        fstp  st(0)
-        fld   dword ptr [eax]              // 500.0
-    gc_skipclamp:
-        mov   eax, 0x005ce1e8
-        fmul  dword ptr [eax]              // fVar5_base*6.6667e-4  ST0; ST1=[0x49c]*0.5
-        fld   dword ptr [esp]              // [0x498]*0.5 (f32) ST0; ST1=fb; ST2=[0x49c]*0.5
-        fmul  st(0), st(1)                 // ([0x498]*0.5)*fb = fVar4 (float10)
-        fstp  dword ptr [esp]              // fVar4 = round_f32(...); ST0=fb; ST1=[0x49c]*0.5
-        fmulp st(1), st(0)                 // fb*[0x49c]*0.5 = fVar5 (float10) -> ST0 (kept)
-        xor   edx, edx                     // iVar11 = 0
-        // From here ST0 = fVar5 (float10) and stays the BOTTOM of the stack: each
-        // candidate pushes fVar3 (ST0) so fVar5 becomes ST1, then pushes fVar4 so
-        // fVar5 is ST2 for the FDIV. The candidate pops back to leave fVar5 on top.
-
-        // ---- candidate k=0 (col @0x478) ----
-        fld   dword ptr [esi+0x478]
-        mov   eax, 0x005d757c
-        fcomp dword ptr [eax]              // col : 0
-        fnstsw ax
-        test  ah, 0x44
-        jnp   gc_d0
-        fld   dword ptr [esi+0x9e4]
-        mov   eax, 0x005cea40
-        fadd  dword ptr [eax]              // speed+250
-        fmul  dword ptr [esi+0x478]        // *(0x478) -> fVar3 (k0 special)
-        fcom  st(1)                        // fVar3 : fVar5
-        fnstsw ax
-        test  ah, 0x41
-        jnz   gc_n0
-        fstp  st(0)
-        fld   st(0)                        // fVar3 = fVar5
-        inc   edx                          // k0<4 -> incr
-    gc_n0:
-        fld   dword ptr [esp]              // fVar4 (f32)
-        fdiv  dword ptr [esi+0x478]        // /col
-        fdiv  st(0), st(2)                 // /fVar5
-        fmul  st(0), st(1)                 // *fVar3
-        fadd  dword ptr [esi+0x9e4]        // +speed
-        fstp  dword ptr [edi+0]            // local_54[0]
-        fstp  st(0)                        // drop fVar3
-    gc_d0:
-        // ---- candidate k=1 (col @0x47c) ----
-        fld   dword ptr [esi+0x47c]
-        mov   eax, 0x005d757c
-        fcomp dword ptr [eax]
-        fnstsw ax
-        test  ah, 0x44
-        jnp   gc_d1
-        fld   dword ptr [esi+0x47c]
-        fmul  dword ptr [esi+0x9e4]        // col*speed -> fVar3
-        fcom  st(1)
-        fnstsw ax
-        test  ah, 0x41
-        jnz   gc_n1
-        fstp  st(0)
-        fld   st(0)
-        inc   edx
-    gc_n1:
-        fld   dword ptr [esp]
-        fdiv  dword ptr [esi+0x47c]
-        fdiv  st(0), st(2)
-        fmul  st(0), st(1)
-        fadd  dword ptr [esi+0x9e4]
-        fstp  dword ptr [edi+4]            // local_54[1]
-        fstp  st(0)
-    gc_d1:
-        // ---- candidate k=2 (col @0x480) ----
-        fld   dword ptr [esi+0x480]
-        mov   eax, 0x005d757c
-        fcomp dword ptr [eax]
-        fnstsw ax
-        test  ah, 0x44
-        jnp   gc_d2
-        fld   dword ptr [esi+0x480]
-        fmul  dword ptr [esi+0x9e4]
-        fcom  st(1)
-        fnstsw ax
-        test  ah, 0x41
-        jnz   gc_n2
-        fstp  st(0)
-        fld   st(0)
-        inc   edx
-    gc_n2:
-        fld   dword ptr [esp]
-        fdiv  dword ptr [esi+0x480]
-        fdiv  st(0), st(2)
-        fmul  st(0), st(1)
-        fadd  dword ptr [esi+0x9e4]
-        fstp  dword ptr [edi+8]            // local_54[2]
-        fstp  st(0)
-    gc_d2:
-        // ---- candidate k=3 (col @0x484) ----
-        fld   dword ptr [esi+0x484]
-        mov   eax, 0x005d757c
-        fcomp dword ptr [eax]
-        fnstsw ax
-        test  ah, 0x44
-        jnp   gc_d3
-        fld   dword ptr [esi+0x484]
-        fmul  dword ptr [esi+0x9e4]
-        fcom  st(1)
-        fnstsw ax
-        test  ah, 0x41
-        jnz   gc_n3
-        fstp  st(0)
-        fld   st(0)
-        inc   edx
-    gc_n3:
-        fld   dword ptr [esp]
-        fdiv  dword ptr [esi+0x484]
-        fdiv  st(0), st(2)
-        fmul  st(0), st(1)
-        fadd  dword ptr [esi+0x9e4]
-        fstp  dword ptr [edi+12]           // local_54[3]
-        fstp  st(0)
-    gc_d3:
-        // ---- candidate k=4 (col @0x488) — NO increment ----
-        fld   dword ptr [esi+0x488]
-        mov   eax, 0x005d757c
-        fcomp dword ptr [eax]
-        fnstsw ax
-        test  ah, 0x44
-        jnp   gc_d4
-        fld   dword ptr [esi+0x488]
-        fmul  dword ptr [esi+0x9e4]
-        fcom  st(1)
-        fnstsw ax
-        test  ah, 0x41
-        jnz   gc_n4
-        fstp  st(0)
-        fld   st(0)                        // k4: clamp but NO incr
-    gc_n4:
-        fld   dword ptr [esp]
-        fdiv  dword ptr [esi+0x488]
-        fdiv  st(0), st(2)
-        fmul  st(0), st(1)
-        fadd  dword ptr [esi+0x9e4]
-        fstp  dword ptr [edi+16]           // local_54[4]
-        fstp  st(0)
-    gc_d4:
-        fstp  st(0)                        // drop fVar5 (float10) — done
-        add   esp, 8
-        pop   esi
-        pop   edi
-        pop   ebx
-        mov   eax, edx                     // return iVar11
-        ret
-    }
-}
-
-// 0x00467650 — A6a body. self=ESI record; param_1; dt=param_2; input=param_4.
-void A6a_Body(int* self, int param_1, float dt, std::uint8_t* input) {
-    void* v = self;
-    int iVar8 = Fi_GameMode();
-    int local_5c = iVar8;
-
-    a6F(self, 0x9e4 / 4) = Live_004c3ac0(reinterpret_cast<float*>((char*)v + 0x9b0));   // 0x46766e
-    a6F(self, 0x9e8 / 4) = Live_004c3ac0(reinterpret_cast<float*>((char*)v + 0x9bc));   // 0x467680
-
-    float local_d0 = 0.0f, local_60 = 0.0f;   // [U-A6A-FLOAT10]: rounded to f32 each wheel
-    float local_70 = 0, local_74 = 0, local_78 = 0;
-    float local_64 = 0, local_68 = 0, local_6c = 0;
-    float local_b0 = 0, local_b4 = 0, local_b8 = 0;
-
-    // gear/CVT speed-cap selection — verbatim x87 (float10 fVar5/fVar3 retained).
-    float local_54[5] = {0,0,0,0,0};
-    int iVar11 = GearCvtCompute(self, local_54);
-
-    // gear state machine (+0x490 gear, +0x494 timer)
-    int gear = Ib(v, 0x490);
-    if (iVar11 != gear) {
-        if (Ib(v, 0x494) == 0 && gear < iVar11) { Ib(v, 0x494) = 3000; Ib(v, 0x490) = gear + 1; }
-        if (iVar11 < Ib(v, 0x490)) { Ib(v, 0x494) = (int)0xfffff448; Ib(v, 0x490) = iVar11; }
-    }
-    gear = Ib(v, 0x490);
-    float local_cc = local_54[(gear >= 0 && gear < 5) ? gear : 0];
-    if (Ib(v, 0x494) > 0) {                                   // 0x4679ca call#1
-        int r = RoundIntSubDt(Ib(v, 0x494), dt);
-        Ib(v, 0x494) = r; if (r < 0) Ib(v, 0x494) = 0;
-    }
-    if (Ib(v, 0x494) < 0) {                                   // 0x4679f8 call#2
-        int r = RoundIntAddDt(Ib(v, 0x494), dt);
-        Ib(v, 0x494) = r; if (r > 0) Ib(v, 0x494) = 0;
-    }
-
-    // throttle clamp + type-grip threshold selection
-    float fVar5b = DAT_005d757c;
-    float thr = (float)(int)(unsigned)input[4];
-    if (iVar8 != 7) { fVar5b = thr; if (A6_005cea3c < thr) fVar5b = A6_005cea3c; }
-    iVar8 = Ib(v, 0x1f0);
-    float fVar4b = Fb(v, 0x478 + gear * 4);
-    float fVar6 = Fb(v, 0x9e4) * A6_005cc328 + A6_005cc55c;
-    float fVar3 = A6_005cea34;
-    if (iVar8 != -0x5f7f80 && (fVar3 = A6_005cea30, iVar8 != -0x557f80)) {
-        fVar3 = A6_005cea38;
-        if ((iVar8 == -0x69e1a6 || iVar8 == -0xe17f4c) && Ib(v, 0xd00) == 0) fVar3 = A6_005cea2c;
-        if (iVar8 == -1 || iVar8 == -0x373738) {
-            float fVar7 = (A6_005cc320 - dt * A6_005cd694 * A6_005cc328) * A6_005cc9b4;
-            Fb(v, 0x9b0) = fVar7 * Fb(v, 0x9b0);
-            Fb(v, 0x9b4) = fVar7 * Fb(v, 0x9b4);
-            Fb(v, 0x9b8) = fVar7 * Fb(v, 0x9b8);
-        }
-    }
-    bool bVar13 = fVar3 < ((local_cc * fVar4b) / fVar6) * fVar5b;
-    if (bVar13) local_cc = local_cc * A6_005cc32c;
-    unsigned local_58 = (unsigned)bVar13;
-
-    // per-wheel loop (4 wheels, piVar12 = self + 0x1a4 bytes, stride 0x31 ints)
-    int iVar10 = 0;
-    int* piVar12 = self + (0x1a4 / 4);
-    do {
-        bool wheelDrive = false;   // decomp bVar13 (re-used local); start false each iter
-        if (piVar12[-0xf] == 2 && piVar12[-3] != 0) {
-            float local_e4 = (float)(int)(unsigned)input[4];
-            if (local_5c == 7) local_e4 = DAT_005d757c;
-            if (Ib(v, 0x28) != 0)
-                local_e4 = (float)(100 - Ib(v, 0x28)) * local_e4 * A6_005cc328;
-            if ((Ib(v, 0x1f0) == -0x69e1a6 || Ib(v, 0x1f0) == -0xe17f4c) && DAT_005d757c < Fb(v, 0x9e4)) {
-                float nrm[3]; Live_004c39b0(nrm, reinterpret_cast<float*>((char*)v + 0x9b0));
-                float fv = Fb(v, 0x9dc) * nrm[2] + Fb(v, 0x9d4) * nrm[0] + Fb(v, 0x9d8) * nrm[1];
-                fv = fv * fv; fv = fv * fv; fv = fv * fv;
-                if (fv < DAT_005d757c) fv = -fv;
-                if (fv < A6_005cc564) fv = A6_005cc564;
-                if (Ib(v, 0xd00) == 0 && fv < A6_005cc32c) fv = A6_005cc32c;
-                local_e4 = fv * local_e4;
-            }
-            if (local_5c != 7 && local_e4 != DAT_005d757c) {
-                wheelDrive = true;
-                Ib(v, 0xb20) = 1;
-                if (A6_005cea3c < local_e4) local_e4 = Cf(0x43200000);  // 160.0
-                // drive product (local_e4*local_cc) kept float10 across the 3 axes
-                DriveForceAccum(local_e4, local_cc,
-                                reinterpret_cast<float*>(piVar12), reinterpret_cast<float*>(self));
-            }
-            if (Fi_GameMode() == 6) {                          // 0x467cfe call#3
-                int r = RoundIntSubDt(Ib(v, 0xbf4), dt);
-                Ib(v, 0xbf4) = r;
-                if (3000 < r) Ib(v, 0xbf4) = 3000;
-                if (Ib(v, 0xbf4) < 0) Ib(v, 0xbf4) = 0;
-            }
-            if (Ib(v, 0xbf8) == 1) {
-                if (Ib(v, 0xbf4) == 0) { Ib(v, 0xbf8) = 0; }
-                else {
-                    int pc = Fi_PlayerCount();
-                    float ff;
-                    if (pc != 4 || (A6_BoostP1() != param_1 && A6_BoostP2() != param_1))
-                        ff = Cf(0x4a989680);   // 5e6
-                    else ff = A6_005cea28;     // 8e6 (player boost)
-                    // boost force keeps ff in ST0 float10 across the 3 axes (disasm
-                    // 0x467d7e..0x467db1: FLD ff; FLD w; FMUL ST1; FADD b14; FSTP).
-                    // DriveForceAccum(e4=ff, cc=1.0): prod=ff*1.0=ff(exact), w*ff float10.
-                    DriveForceAccum(ff, A6_005cc320,
-                                    reinterpret_cast<float*>(piVar12), reinterpret_cast<float*>(self));
-                    int r = RoundIntSubDt(Ib(v, 0xbf4), dt);     // 0x467dc6 call#4
-                    Ib(v, 0xbf4) = r;
-                    if (r < 1) { Ib(v, 0xbf8) = 0; Ib(v, 0xbf4) = 0; }
-                }
-            }
-            if (Ib(v, 0xbf8) == 2) {
-                if (Fb(v, 0xbf4) == DAT_005d757c) { Ib(v, 0xbf8) = 0; }
-                else {
-                    int saved = Ib(v, 0xbf4);
-                    Ib(v, 0xb1c) = 0; Ib(v, 0xb18) = 0; Ib(v, 0xb14) = 0;
-                    int r = RoundIntSubDt(saved, dt);            // 0x467e25 call#5
-                    Ib(v, 0xbf4) = r;
-                    if (r < 1) { Ib(v, 0xbf8) = 0; Ib(v, 0xbf4) = 0; }
-                }
-            }
-        }
-        // *piVar12 = round( drive-proj )                       // 0x467e7e call#6
-        piVar12[0] = RoundDriveProj(reinterpret_cast<float*>(piVar12),
-                                    reinterpret_cast<float*>(self));
-        if (local_58 == 0 || piVar12[-0xf] != 2) {
-            piVar12[-1] = 0;
-        } else {
-            int p1 = piVar12[-1] + 1;
-            piVar12[-1] = p1;
-            if (p1 < 0x200) piVar12[-1] = 0x200;
-            piVar12[0] = piVar12[0] + (piVar12[-1] - 0x200) * 0x40;
-        }
-
-        // ===== contact-frame block (wheel active) =====
-        if (piVar12[-3] != 0) {
-            if (input[5] != 0 && input[4] == 0) {
-                Ib(v, 0xb20) = 1;
-                if (piVar12[0] < 1) {
-                    if (piVar12[-0xf] == 2) {
-                        float bf = (float)(int)(unsigned)input[5];
-                        if (Ib(v, 0x28) != 0)
-                            bf = bf * (float)(100 - Ib(v, 0x28)) * A6_005cc328;
-                        if (A6_005cea3c < bf) bf = A6_005cea3c;
-                        // bf=-(local_cc*0.9*bf) kept float10 across the 3 axes
-                        // (disasm 0x467f40..0x467f70). Writes wheel+0x70/0x74/0x78.
-                        BrakeForceAccum(local_cc, bf, reinterpret_cast<float*>(piVar12));
-                    }
-                } else if (1 < iVar10) {
-                    piVar12[-1] = RoundBrakeInput((int)(unsigned)input[5]);   // 0x467f93 call#7
-                }
-            }
-            // orientation/spin check
-            float le0, ldc, ld8, le4;
-            float avx = Fb(v, 0x9bc), avy = Fb(v, 0x9c0), avz = Fb(v, 0x9c4);
-            if (avx < A6_005cea1c || A6_005cc990 < avx || avy < A6_005cea1c || A6_005cc990 < avy ||
-                avz < A6_005cea1c || A6_005cc990 < avz) {
-                unsigned char m40[64];
-                Live_004c4d20(m40, reinterpret_cast<float*>((char*)v + 0x9bc), Cf(0x43870000), 0); // 270.0
-                float src[3] = { a6F(piVar12, -9), a6F(piVar12, -8), a6F(piVar12, -7) }, dst[3];
-                Live_004c3df0(dst, src, 1, m40);
-                // [U-A6A-FLOAT10] far-upstream: the f-product order and the asymmetric
-                // f32 rounding of ldc_t*f / ld8_t*f (le0_t*f stays float10) — verbatim.
-                float orient[3];   // { le0, ldc, ld8 }
-                SuspOrient(dst, v, orient);
-                le0 = orient[0]; ldc = orient[1]; ld8 = orient[2];
-                float tmp[3] = { le0, ldc, ld8 };
-                le4 = Live_004c3ac0(tmp);
-            } else {
-                le4 = Fb(v, 0x9e4);
-                le0 = -Fb(v, 0x9b0); ldc = -Fb(v, 0x9b4); ld8 = -Fb(v, 0x9b8);
-            }
-            if (A6_005cd03c < le4 && Ib(v, 0x9e0) == 0x40800000) {
-                // [U-A6A-FLOAT10] upstream: fInv, s2 and the drive-dir dot must stay
-                // in x87 float10 across s0/s1/s2, local_c8/c4/c0 and local_a4 (a plain-C
-                // store rounds them to f32 first -> per-call ULP drift on the wheel force,
-                // e.g. call 24 w2fx). SuspDotInv reproduces 0x00468127..0x00468206
-                // verbatim. le4 here is UNCLAMPED (fInv predates the 1024 clamp).
-                float dotv[6];   // {local_c8, local_c4, local_c0, local_ac, local_a8, local_a4}
-                SuspDotInv(le0, ldc, ld8, le4, reinterpret_cast<float*>(piVar12), v, dotv);
-                float local_c8 = dotv[0], local_c4 = dotv[1], local_c0 = dotv[2];
-                float local_ac = dotv[3], local_a8 = dotv[4], local_a4 = dotv[5];
-                if (A6_005cea10 < le4) le4 = Cf(0x44800000);   // 1024.0 (clamp for local_bc/Accum60)
-                float local_98 = 0, local_9c = 0, local_a0 = 0;
-                // local_bc kept in x87 float10 across the full product [U-A6A-FLOAT10]
-                float local_bc = SuspBaseBc(reinterpret_cast<float*>(piVar12), le4);
-                float acvec[3] = { local_ac, local_a8, local_a4 };
-                float local_d4 = Live_004c3ac0(acvec);   // f32 magnitude (local_d4 uses)
-                unsigned local_94 = (unsigned)piVar12[-1];
-                // local_60 += mag10(acvec)*le4 (float10 FMA, rounded f32) [U-A6A-FLOAT10]
-                local_60 = Accum60(acvec, le4, local_60);
-                // [U-A6A-FLOAT10] final chain: the wheel-force store keeps f5 (and,
-                // in the local_94==0 sub-path, local_98; and, in the high-load else,
-                // f4 and f5*local_a4) in x87 float10 across the per-axis products,
-                // rounding to float32 only on the FSTP into wheel[0x1c/0x1d/0x1e].
-                // A plain-C store rounds f5 to f32 first -> 1-8 ULP on wNfx (calls
-                // 24/82/84 of 96). SuspForceStore reproduces 0x004682a7..0x00468337
-                // (branch1) + 0x00468234..0x004682a5 (else) verbatim. sbuf mirrors the
-                // original post-restore stack frame ([ESP+off] slots; disasm above).
-                unsigned char sbuf[0x60];
-                *reinterpret_cast<float*>(sbuf + 0x1c) = local_d4;
-                *reinterpret_cast<float*>(sbuf + 0x28) = local_c8;
-                *reinterpret_cast<float*>(sbuf + 0x2c) = local_c4;
-                *reinterpret_cast<float*>(sbuf + 0x30) = local_c0;
-                *reinterpret_cast<float*>(sbuf + 0x34) = local_bc;
-                *reinterpret_cast<float*>(sbuf + 0x44) = local_ac;
-                *reinterpret_cast<float*>(sbuf + 0x48) = local_a8;
-                *reinterpret_cast<float*>(sbuf + 0x4c) = local_a4;
-                *reinterpret_cast<float*>(sbuf + 0x50) = local_a0;   // 0 (recomputed in-shim)
-                *reinterpret_cast<float*>(sbuf + 0x54) = local_9c;   // 0
-                *reinterpret_cast<float*>(sbuf + 0x58) = local_98;   // 0
-                *reinterpret_cast<int*>  (sbuf + 0x5c) = (int)local_94;
-                SuspForceStore(sbuf, reinterpret_cast<float*>(piVar12), v, (int)bVar13);
-            }
-        }
-
-        // ===== cross-product friction block (per-wheel force -> torque accum) =====
-        float fvec[3] = { a6F(piVar12, 0x1c), a6F(piVar12, 0x1d), a6F(piVar12, 0x1e) };
-        if ((double)A6_005cd03c < (double)Live_004c3ac0(fvec)) {
-            float local_88 = A6_005cc320 / a6F(piVar12, -0xb);
-            float local_90 = a6F(piVar12, -9) * local_88;
-            float local_8c = a6F(piVar12, -8) * local_88;
-            local_88 = a6F(piVar12, -7) * local_88;
-            float pf = a6F(piVar12, 0x1c);
-            float fv5 = local_88 * a6F(piVar12, 0x1e) + local_8c * a6F(piVar12, 0x1d) + local_90 * pf;
-            float local_c8 = local_90 * fv5;
-            float local_c4 = local_8c * fv5;
-            float local_c0 = local_88 * fv5;
-            float local_ac = pf - local_c8;
-            float local_a8 = a6F(piVar12, 0x1d) - local_c4;
-            float local_a4 = a6F(piVar12, 0x1e) - local_c0;
-            float local_84 = local_a4 * local_c4 - local_a8 * local_c0;
-            float local_80 = local_ac * local_c0 - local_a4 * local_c8;
-            float local_7c = local_a8 * local_c8 - local_ac * local_c4;
-            if (DAT_005d757c < fv5) { local_84 = -local_84; local_80 = -local_80; local_7c = -local_7c; }
-            local_b8 = local_c8 + local_b8;
-            local_b4 = local_c4 + local_b4;
-            local_b0 = local_c0 + local_b0;
-            local_6c = local_6c + pf;
-            local_68 = local_68 + a6F(piVar12, 0x1d);
-            local_64 = local_64 + a6F(piVar12, 0x1e);
-            float wm = a6F(piVar12, -0xb);
-            float evec[3] = { local_ac * wm, local_a8 * wm, local_a4 * wm };
-            // local_d0 += mag10(evec)*50.24 (float10, f32-rounded); num = round(mag10*50.24)
-            float num;
-            local_d0 = AccumD0Num(evec, &num, local_d0);                // [U-A6A-FLOAT10]
-            float xvec[3] = { local_84, local_80, local_7c };
-            if (A6_005cd03c < Live_004c3ac0(xvec)) {
-                // q = num / mag10(xvec) (float10); l78 -= l84*q (float10),
-                // l74 -= round(l80*q), l70 -= round(l7c*q). acc = {l78,l74,l70}.
-                float acc[3] = { local_78, local_74, local_70 };
-                FrictionUpdate(num, xvec, acc);
-                local_78 = acc[0]; local_74 = acc[1]; local_70 = acc[2];
-            }
-        }
-
-        iVar10 = iVar10 + 1;
-        piVar12 = piVar12 + 0x31;
-    } while (iVar10 < 4);
-
-    // angular-velocity integration (+0x9bc..) when state +0x10 == 0
-    float local_d8 = dt * Fb(v, 0x5c) * A6_005cea00;
-    float local_e0a = local_78 * local_d8;
-    float local_dca = local_74 * local_d8;
-    local_d8 = local_d8 * local_70;
-    if (Ib(v, 0x10) == 0) {
-        Fb(v, 0x9bc) = local_e0a + Fb(v, 0x9bc);
-        Fb(v, 0x9c0) = local_dca + Fb(v, 0x9c0);
-        Fb(v, 0x9c4) = local_d8 + Fb(v, 0x9c4);
-    }
-    float lvec[3] = { local_78, local_74, local_70 };
-    // float10 chain: fac=(local_d0-mag10(lvec))/local_d0; local_b8/b4 = (f32)(e0*fac+b8)
-    // etc.; lin_b0 = d8*fac+local_b0 (float10) -> local_b0f = (f32)(Fb(0xb1c)+lin_b0).
-    float e0 = local_6c - local_b8, dc = local_68 - local_b4, d8 = local_64 - local_b0;
-    float local_b0f = LinVelFactor(lvec, local_d0, e0, dc, d8,
-                                   &local_b8, &local_b4, Fb(v, 0xb1c), local_b0);
-    float local_d0f = dt * Fb(v, 0x54) * Cf(0x39aec33e);    // _DAT_005cc948 (3.33e-4)
-    float local_90f = local_d0f * (Fb(v, 0xb14) + local_b8);
-    Fb(v, 0x9b0) = local_90f + Fb(v, 0x9b0);
-    Fb(v, 0x9b4) = local_d0f * (Fb(v, 0xb18) + local_b4) + Fb(v, 0x9b4);
-    Fb(v, 0x9b8) = local_d0f * local_b0f + Fb(v, 0x9b8);
-    float speed = Live_004c3ac0(reinterpret_cast<float*>((char*)v + 0x9b0));
-    int tId = Ib(v, 0x1f0);
-    float grip = (float)(local_60 / (double)Fb(v, 0x18c));
-    Fb(v, 0x9e4) = speed;
-    if (tId == -0x5f7f80) {
-        grip = grip * A6_005cc348;
-    } else {
-        bool doDouble = (tId == -0x557f80);
-        if (!doDouble) {
-            if (tId == -0x69e1a6 || tId == -0xe17f4c)
-                grip = grip * (Ib(v, 0xd00) == 0 ? A6_005cc31c : A6_005cc348);
-            if (tId == -0x37e1a6) doDouble = true;
-        }
-        if (doDouble) grip = grip + grip;
-    }
-    if (Ib(v, 0x2c) != 0) grip = ((float)Ib(v, 0x2c) * A6_005cc328 + A6_005cc320) * grip;
-    if (Ib(v, 0x34) != 0) grip = ((float)Ib(v, 0x34) * A6_005cc56c + A6_005cc320) * grip;
-
-    // ===== trailing speed-limit grip-clamp (all-grounded) =====
-    if (speed != DAT_005d757c && Ib(v, 0x9e0) == 0x40800000) {
-        float fwdDot = Fb(v, 0x9dc) * Fb(v, 0x9b8) + Fb(v, 0x9d4) * Fb(v, 0x9b0) + Fb(v, 0x9d8) * Fb(v, 0x9b4);
-        float fx = Fb(v, 0x9b0) - fwdDot * Fb(v, 0x9d4);
-        float fy = Fb(v, 0x9b4) - fwdDot * Fb(v, 0x9d8);
-        float fz = Fb(v, 0x9b8) - fwdDot * Fb(v, 0x9dc);
-        grip = grip * speed;
-        if (A6_005ce9fc < grip) {
-            float k = (A6_005ce9f8 - grip) * A6_005ce9f4;
-            if (k < DAT_005d757c) k = DAT_005d757c;
-            k = k * A6_005cc56c + k * A6_005cc56c;            // *0.2
-            Fb(v, 0x9b0) = Fb(v, 0x9b0) - fx * k;
-            Fb(v, 0x9b4) = Fb(v, 0x9b4) - fy * k;
-            Fb(v, 0x9b8) = Fb(v, 0x9b8) - fz * k;
-            k = A6_005cc320 - k;
-            Fb(v, 0x9bc) = k * Fb(v, 0x9bc);
-            Fb(v, 0x9c0) = k * Fb(v, 0x9c0);
-            Fb(v, 0x9c4) = k * Fb(v, 0x9c4);
-            return;
-        }
-        float k = (A6_005ce9fc - grip) * A6_005ce9f0;
-        if (k < A6_005cc56c) k = A6_005cc56c;
-        Fb(v, 0x9b0) = Fb(v, 0x9b0) - fx * k;
-        Fb(v, 0x9b4) = Fb(v, 0x9b4) - fy * k;
-        Fb(v, 0x9b8) = Fb(v, 0x9b8) - fz * k;
-        if (k < A6_005cc32c) k = A6_005cc32c;
-        k = A6_005cc320 - k;
-        Fb(v, 0x9bc) = k * Fb(v, 0x9bc);
-        Fb(v, 0x9c0) = k * Fb(v, 0x9c0);
-        Fb(v, 0x9c4) = k * Fb(v, 0x9c4);
-        if (Ib(v, 0xb20) == 0 && speed < A6_005cc750) {
-            Fb(v, 0x9b0) = 0; Ib(v, 0x9b8) = 0; Ib(v, 0x9b4) = 0;
-            Ib(v, 0x9c4) = 0; Ib(v, 0x9c0) = 0; Fb(v, 0x9bc) = 0;
-            return;
-        }
-    }
-    (void)param_1;
-}
 
 // ═══════════════════════════════════════════════════════════════════════════
 // A6a IN-PROCESS BIT-IDENTITY SELF-TEST (env MASHED_PHYS_C4_SELFTEST)
@@ -2297,17 +1204,26 @@ const int kA6aMaxAir   = 32;
 // leave the ground, so their records exercise both. Independent per-branch quotas
 // keep the more-numerous accel/coast calls from filling the cap first. (A6a's known
 // susp-force float10 residual is on the GROUNDED accel path and is unaffected.)
+// [dcphys 2026-10-21] MASHED_A6A_SELFTEST_CAP=<n> multiplies every per-branch quota (default 1). The default
+// quotas fill within the first ~100 calls of a race, which is how the 72/72 C4 sample missed the three-dot
+// residual a x20 sample shows (verify/dcphys_20261021).
+inline int A6a_SelfTestCap() {
+    static int c = -1;
+    if (c < 0) { const char* s = std::getenv("MASHED_A6A_SELFTEST_CAP"); c = (s && std::atoi(s) > 0) ? std::atoi(s) : 1; }
+    return c;
+}
 void A6a_SelfTest(int* record, int param_1, float dt, void* param_3, std::uint8_t* input) {
     const bool brake = (input[5] != 0) && (input[4] == 0);
     const bool accel = (input[4] != 0);
     const bool idle  = (input[4] == 0) && (input[5] == 0);
     const std::uint32_t groundedBits = *reinterpret_cast<std::uint32_t*>((char*)record + 0x9e0);
     const bool airborne = (groundedBits != 0x40800000u);
+    const int cap = A6a_SelfTestCap();
     bool admit = false;
-    if (airborne && g_a6aAir   < kA6aMaxAir  ) admit = true;
-    if (brake    && g_a6aBrake < kA6aMaxBrake) admit = true;
-    if (accel    && g_a6aAccel < kA6aMaxAccel) admit = true;
-    if (idle     && g_a6aIdle  < kA6aMaxIdle ) admit = true;
+    if (airborne && g_a6aAir   < kA6aMaxAir   * cap) admit = true;
+    if (brake    && g_a6aBrake < kA6aMaxBrake * cap) admit = true;
+    if (accel    && g_a6aAccel < kA6aMaxAccel * cap) admit = true;
+    if (idle     && g_a6aIdle  < kA6aMaxIdle  * cap) admit = true;
     if (!admit) return;
     if (airborne) ++g_a6aAir;
     if (brake)    ++g_a6aBrake;
@@ -2320,46 +1236,44 @@ void A6a_SelfTest(int* record, int param_1, float dt, void* param_3, std::uint8_
     // (1) ORIGINAL A6a on the live record (bypassing our inline-JMP).
     Call_OrigA6a(record, param_1, dt, param_3, input);
 
-    // capture original outputs
-    std::uint32_t origRec[24]; int nr = 0;
-    for (int off : kA6aRecOffs) origRec[nr++] = *reinterpret_cast<std::uint32_t*>((char*)record + off);
-    std::uint32_t origStar[4], origPrev[4], origFx[4], origFz[4];
-    for (int i = 0; i < 4; ++i) {
-        origStar[i] = *reinterpret_cast<std::uint32_t*>((char*)record + kA6aWheelStar[i]);
-        origPrev[i] = *reinterpret_cast<std::uint32_t*>((char*)record + kA6aWheelPrev[i]);
-        origFx[i]   = *reinterpret_cast<std::uint32_t*>((char*)record + kA6aWheelFx[i]);
-        origFz[i]   = *reinterpret_cast<std::uint32_t*>((char*)record + kA6aWheelFx[i] + 8);
-    }
+    // capture the original's outputs: the WHOLE record ([dcphys] the original A6a stores nothing outside
+    // it, so a 0xd04-byte compare covers every output; the kA6a* lists above were a subset)
+    static std::uint8_t origFull[0xd04];
+    std::memcpy(origFull, record, 0xd04);
 
-    // restore the record, run MY body
+    // [dcphys 2026-10-21] no-op control: the ORIGINAL again from the same snapshot (noo). noo != 0 means the
+    // original read state the snapshot does not hold, and that call's verdict is void. Then the shared body.
+    static std::uint8_t orig2Full[0xd04];
     std::memcpy(record, snapRec, 0xd04);
-    A6a_Body(record, param_1, dt, input);
+    Call_OrigA6a(record, param_1, dt, param_3, input);
+    std::memcpy(orig2Full, record, 0xd04);
+    int noo = 0;
+    for (int off = 0; off < 0xd04; off += 4)
+        if (*reinterpret_cast<const std::uint32_t*>(orig2Full + off) != *reinterpret_cast<const std::uint32_t*>(origFull + off)) noo++;
+    std::memcpy(record, snapRec, 0xd04);
+    mashed_re::Vehicle::Vehicle_Integrate2(record, param_1, dt, param_3, input);
+    char flags[96];   // which of the shared body's branches ran (its diag sinks, Vehicle/ForceIntegrator.h)
+    {   using namespace mashed_re::Vehicle;
+        wsprintfA(flags, " fired=%d%d%d%d spin=%d%d%d%d hi=%d%d%d%d arm=%d",
+                  g_a6aDump[0].fired, g_a6aDump[1].fired, g_a6aDump[2].fired, g_a6aDump[3].fired,
+                  g_a6aDump[0].spin, g_a6aDump[1].spin, g_a6aDump[2].spin, g_a6aDump[3].spin,
+                  (g_a6aDump[0].pm1 >> 8) & 1, (g_a6aDump[1].pm1 >> 8) & 1, (g_a6aDump[2].pm1 >> 8) & 1,
+                  (g_a6aDump[3].pm1 >> 8) & 1, g_a6aFrame.arm); }
 
     int mism = 0; char line[1024]; int p = 0;
-    nr = 0;
-    for (int off : kA6aRecOffs) {
-        std::uint32_t mv = *reinterpret_cast<std::uint32_t*>((char*)record + off);
-        if (mv != origRec[nr]) { mism++;
-            if (p < 900) p += wsprintfA(line+p, " +0x%x:o=%08x,m=%08x", off, origRec[nr], mv); }
-        nr++;
-    }
-    for (int i = 0; i < 4; ++i) {
-        std::uint32_t s = *reinterpret_cast<std::uint32_t*>((char*)record + kA6aWheelStar[i]);
-        std::uint32_t pv= *reinterpret_cast<std::uint32_t*>((char*)record + kA6aWheelPrev[i]);
-        std::uint32_t fx= *reinterpret_cast<std::uint32_t*>((char*)record + kA6aWheelFx[i]);
-        std::uint32_t fz= *reinterpret_cast<std::uint32_t*>((char*)record + kA6aWheelFx[i] + 8);
-        if (s  != origStar[i]) { mism++; if (p<900) p += wsprintfA(line+p, " w%d*:o=%08x,m=%08x", i, origStar[i], s); }
-        if (pv != origPrev[i]) { mism++; if (p<900) p += wsprintfA(line+p, " w%dp:o=%08x,m=%08x", i, origPrev[i], pv); }
-        if (fx != origFx[i])   { mism++; if (p<900) p += wsprintfA(line+p, " w%dfx:o=%08x,m=%08x", i, origFx[i], fx); }
-        if (fz != origFz[i])   { mism++; if (p<900) p += wsprintfA(line+p, " w%dfz:o=%08x,m=%08x", i, origFz[i], fz); }
+    for (int off = 0; off < 0xd04; off += 4) {
+        const std::uint32_t ov = *reinterpret_cast<const std::uint32_t*>(origFull + off);
+        const std::uint32_t mv = *reinterpret_cast<const std::uint32_t*>((char*)record + off);
+        if (mv != ov) { mism++;
+            if (p < 900) p += wsprintfA(line+p, " +0x%x:o=%08x,m=%08x", off, ov, mv); }
     }
 
-    char hdr[240];
+    char hdr[400];
     int grounded = *reinterpret_cast<int*>((char*)record + 0x9e0);
     int slot = (int)(((std::uintptr_t)record - 0x008815a0) / 0xd04);
-    wsprintfA(hdr, "[%d] slot=%d dt=%08x in4=%u in5=%u gm=%d grounded=%08x air=%d ndiff=%d%s\r\n",
+    wsprintfA(hdr, "[%d] slot=%d dt=%08x in4=%u in5=%u gm=%d grounded=%08x air=%d noo=%d%s ndiff=%d%s\r\n",
               g_a6aCount, slot, *reinterpret_cast<std::uint32_t*>(&dt), input[4], input[5],
-              Fi_GameMode(), grounded, airborne ? 1 : 0, mism, mism ? "" : " OK");
+              Fi_GameMode(), grounded, airborne ? 1 : 0, noo, flags, mism, mism ? "" : " OK");
     A6a_SelfTestLog(hdr);
     if (mism) { line[p] = 0; A6a_SelfTestLog("   "); A6a_SelfTestLog(line); A6a_SelfTestLog("\r\n"); }
     g_a6aCount++;
@@ -2373,7 +1287,7 @@ void A6a_Hook(int* record, int param_1, float dt, void* param_3, std::uint8_t* i
     if (A6a_SelfTestEnabled())
         A6a_SelfTest(record, param_1, dt, param_3, input);
     else
-        A6a_Body(record, param_1, dt, input);
+        mashed_re::Vehicle::Vehicle_Integrate2(record, param_1, dt, param_3, input);
 }
 
 __declspec(naked) void A6a_Entry() {
@@ -2801,299 +1715,14 @@ __declspec(naked) void A6b_Entry() {
 
 // ===========================================================================
 // A3 — FUN_0046b540 the spawn-time per-vehicle init (__cdecl(int slot)).
-// VERBATIM transcription of 0x0046b540..0x0046ba97 (decomp + disasm Mashed_pool12
-// RO 2026-06-17). Runs ONCE per car at spawn (NOT the per-frame hot path), so a
-// single-shot in-process A/B at the spawn call site suffices. ABI confirmed at the
-// caller 0x0040ed68 (PUSH EDI; CALL) and the body (SUB ESP,8; PUSH ESI; ...;
-// MOV ESI,[ESP+0x10]; CMP ESI,0x10; JC) -> plain __cdecl(int slot); returns 1 if
-// slot<16 else 0; record base = &DAT_008815a0 + slot*0xd04 (= ESI after IMUL+ADD).
-//
-// It writes 4 handling globals (0x00613108/14/30/3c), walks the handling table at
-// [0x00613140]/0x00613148 (5-int entries, stop @ entry[+0xc]==-1), copies module
-// handling globals (0x00613110/14/18..2c) into the record, runs 4 FastSqrt loops
-// (FUN_004c3b30 = RW fast-sqrt LUT -> forwarded LIVE), and a final float10
-// mass/inertia reduction. The 5 lookup fns (FUN_00430790/0042f6a0/00431d70/
-// 0040ce80) read stable vehicle-config state -> forwarded LIVE (deterministic per
-// spawn). Built x87; the sum-of-squares feeding each FastSqrt is computed float10
-// then rounded f32 on the FSTP exactly as the asm does; the final mass block keeps
-// 5 float10 values on the FPU stack -> a NAKED helper (A3_MassInertia) reproduces it.
+// [dcphys 2026-10-21] ONE body, shared with mashed_re.exe: Vehicle/VehicleInit.cpp (VehicleInit). The verbatim
+// transcription that lived here (C4 24/24) was deleted after the shared body read bit-identical to the original
+// in this file's in-process A/B (full record + the 4 handling globals + return, verify/dcphys_20261021).
+// What stays here is the .asi's harness: the trampoline into the original, the A/B, and the entry.
 // ===========================================================================
 namespace {
 
-// live forwards (absolute) — FastSqrt + the 5 type-lookup fns:
-typedef float (__cdecl* Fn_fsqrt_t)(float);     // FUN_004c3b30 RW fast-sqrt LUT (ST0 float10)
-typedef int   (__cdecl* Fn_v0_t)(void);
-typedef int   (__cdecl* Fn_v1_t)(int);
-static const Fn_v0_t  Live_00430790 = reinterpret_cast<Fn_v0_t>(0x00430790);
-static const Fn_v0_t  Live_0042f6a0 = reinterpret_cast<Fn_v0_t>(0x0042f6a0);
-static const Fn_v0_t  Live_00431d70 = reinterpret_cast<Fn_v0_t>(0x00431d70);
-static const Fn_v1_t  Live_0040ce80 = reinterpret_cast<Fn_v1_t>(0x0040ce80);
-extern "C" void* PCH_Fwd_4c3b30;
-
-// A3 EXACT-bit constants (memory_read pool12 2026-06-17)
-const float A3_005cc558 = Cf(0x3a83126f);  // 0.001  table-deg->rad scale
-const float A3_005cea44 = Cf(0x3e8e38e4);  // 0.27778 (1/3.6)
-const float A3_005cea54 = Cf(0x3f866666);  // 1.05
-const float A3_005cc754 = Cf(0x40666666);  // 3.6  (s_Afff_SandSpWheel_005cc753._1_4_)
-const float A3_005cc320 = Cf(0x3f800000);  // 1.0
-const float A3_005d757c = Cf(0x00000000);  // 0.0
-
-// FastSqrt forwarder: sum-of-squares (already f32) -> ST0 float10 -> f32 return.
-__declspec(naked) float A3_FastSqrt(float /*arg*/) {
-    __asm {
-        push dword ptr [esp+4]            // arg (f32)
-        call dword ptr [PCH_Fwd_4c3b30]   // ST0 = sqrt(arg) [live LUT]
-        add  esp, 4
-        ret                                // ST0 -> f32 return
-    }
-}
-// FastSqrt then *k, keeping ST0 float10 across the multiply (disasm
-// 0x46b8f5..0x46b8fa: CALL; FMUL [0x5cc754]; FSTP). Returns f32(sqrt(arg)*k).
-__declspec(naked) float A3_FastSqrtMul(float /*arg*/, float /*k*/) {
-    __asm {
-        push dword ptr [esp+4]            // arg
-        call dword ptr [PCH_Fwd_4c3b30]   // ST0 = sqrt(arg) float10
-        add  esp, 4
-        fmul dword ptr [esp+8]            // * k  (float10)
-        ret                                // -> f32
-    }
-}
-
-inline float& Gf(std::uintptr_t a) { return *reinterpret_cast<float*>(a); }
 inline int&   Gi(std::uintptr_t a) { return *reinterpret_cast<int*>(a); }
-
-// Final mass/inertia float10 reduction (disasm 0x46ba06..0x46ba90). ESI=record base.
-//   s   = f300 + f3c4 + f23c + f178                                  (float10 chain)
-//   inv = (f178 + f23c + f300 + f3c4) ... actually:
-//   the four ratios r_i = s / wheel_i are kept float10; m_inertia
-//   = f50 / (r178+r23c+r300+r3c4); then a weighted recombination; finally
-//   [ESI+0x58] = result (f32), [ESI+0x5c] = 1.0/result. Reproduced verbatim.
-__declspec(naked) void A3_MassInertia(int* /*recBase*/) {
-    __asm {
-        push esi
-        sub  esp, 0x14                     // scratch ([esp+0x10] holds the f32 result)
-        mov  esi, dword ptr [esp+0x1c]     // recBase
-        // s = f300 + f3c4 + f23c + f178  (matches 0x46ba06..0x46ba18)
-        fld  dword ptr [esi+0x300]
-        fadd dword ptr [esi+0x3c4]
-        fadd dword ptr [esi+0x23c]
-        fadd dword ptr [esi+0x178]
-        // r178 = s / f178 ; r23c = s / f23c ; r300 = s / f300 ; r3c4 = s / f3c4
-        fld  st(0)                          // ST0=s ST1=s
-        fdiv dword ptr [esi+0x178]          // ST0 = r178
-        fld  st(1)                          // ST0=s ST1=r178 ST2=s
-        fdiv dword ptr [esi+0x23c]          // ST0 = r23c
-        fld  st(2)                          // ST0=s ST1=r23c ST2=r178 ST3=s
-        fdiv dword ptr [esi+0x300]          // ST0 = r300
-        fxch st(3)                          // ST0=s ST3=r300
-        fdiv dword ptr [esi+0x3c4]          // ST0 = r3c4   (ST1=r23c ST2=r178 ST3=r300)
-        // m = f50 / (r3c4 + r23c + r178 + r300)
-        fld  st(3)                          // ST0=r300
-        fadd st(0), st(1)                   // r300 + r3c4
-        fadd st(0), st(2)                   // + r23c
-        fadd st(0), st(3)                   // + r178   -> denom
-        fdivr dword ptr [esi+0x50]          // ST0 = f50 / denom = m   (ST1=r3c4 ST2=r23c ST3=r178 ST4=r300)
-        fxch st(1)                          // ST0=r3c4 ST1=m
-        fmul st(0), st(1)                   // r3c4 * m
-        fmul dword ptr [esi+0x3c4]          // * f3c4
-        fxch st(4)                          // ST0=r300 ST4=(r3c4*m*f3c4)
-        fmul st(0), st(1)                   // r300 * m
-        fmul dword ptr [esi+0x300]          // * f300
-        faddp st(4), st(0)                  // accumulate into ST4
-        fxch st(1)                          // ST0=r23c ST1=m
-        fmul st(0), st(1)                   // r23c * m
-        fmul dword ptr [esi+0x23c]          // * f23c
-        faddp st(3), st(0)
-        fxch st(1)                          // ST0=r178 ST1=m
-        fmul st(0), st(1)                   // r178 * m
-        fmul dword ptr [esi+0x178]          // * f178
-        faddp st(2), st(0)
-        fxch st(1)                          // bring accumulated total to ST0
-        fstp dword ptr [esp+0x10]           // result (f32)
-        mov  edx, dword ptr [esp+0x10]
-        fstp st(0)                          // drop m
-        mov  dword ptr [esi+0x58], edx      // [+0x58] = mass
-        fld  A3_005cc320                    // 1.0
-        fdiv dword ptr [esp+0x10]           // 1.0 / result
-        fstp dword ptr [esi+0x5c]           // [+0x5c] = 1/mass
-        add  esp, 0x14
-        pop  esi
-        ret
-    }
-}
-
-// 0x0046b540 — A3 body. slot = stack arg (record base = 0x8815a0 + slot*0xd04).
-// Returns 1 if slot<16 else 0.
-int A3_Body(int slot) {
-    Gf(0x00613108) = Cf(0x42c80000);   // 100.0
-    Gi(0x00613114) = (int)0x471c4000;  // 40000.0
-    Gi(0x00613130) = (int)0x3f800000;  // 1.0
-    Gi(0x0061313c) = (int)0x3fc00000;  // 1.5
-    int v = Live_00430790();
-    int t = Live_0042f6a0();
-    if (t == 10) v = Live_00431d70();
-    int typeIdx = Live_0040ce80(v);
-
-    // handling-table walk: entries of 5 ints @ 0x613148, stop when entry[+0xc]==-1.
-    if (Gi(0x00613140) != -1) {
-        int* e = reinterpret_cast<int*>(0x00613148);
-        int tag = Gi(0x00613140);
-        do {
-            if (tag == typeIdx) {
-                Gf(0x00613108) = (float)e[-1];                 // FILD int->float
-                Gf(0x00613114) = (float)e[0];
-                Gf(0x00613130) = (float)e[1] * A3_005cc558;
-                Gf(0x0061313c) = (float)e[2] * A3_005cc558;
-            }
-            tag = e[3];                                         // next entry tag (e[+0xc])
-            e += 5;
-        } while (tag != -1);
-    }
-
-    if ((unsigned)slot >= 0x10) return 0;
-    const int o = slot * 0xd04;
-    // the decomp addresses (&DAT_008815f0+iVar5) are ABSOLUTE base+o; helpers take
-    // the ABSOLUTE DAT_ address and add the byte offset o.
-    auto AWf = [&](std::uintptr_t da, float val){ Gf(da + o) = val; };
-    auto AWi = [&](std::uintptr_t da, int val){ Gi(da + o) = val; };
-
-    AWf(0x008816f4, Gf(0x0061313c));
-    AWi(0x00881714, 0x3f8a9bd0);
-    AWi(0x008817d8, 0x3f8a9bd0);
-    AWi(0x0088189c, (int)0xbf92b7fe);
-    AWi(0x00881960, (int)0xbf92b7fe);
-    AWi(0x00881708, 2);
-    AWi(0x008817cc, 2);
-    float dat130 = Gf(0x00613130);
-    AWf(0x0088172c, dat130);
-    AWf(0x008817f0, dat130);
-    AWf(0x008818b4, dat130);
-    AWf(0x00881978, dat130);
-    AWi(0x00881730, 0x42080000);
-    AWi(0x008817f4, 0x42080000);
-    AWi(0x008818b8, 0x42080000);
-    AWi(0x0088197c, 0x42080000);
-    AWi(0x00881a3c, Gi(0x00613110));
-    AWf(0x00881a38, Gf(0x00613114));
-    AWi(0x00881a18, Gi(0x00613118));
-    AWi(0x00881a1c, Gi(0x0061311c));
-    AWi(0x00881a20, Gi(0x00613120));
-    AWi(0x00881a24, Gi(0x00613124));
-    AWi(0x00881a28, Gi(0x00613128));
-    AWi(0x00881a2c, Gi(0x0061312c));
-    AWi(0x00881608, 0x3e9a0275);
-    AWi(0x00881614, 0x3e9a0275);
-    float* pf8 = reinterpret_cast<float*>(0x00881710 + o);   // &DAT_00881710 + o
-    float* pf7 = reinterpret_cast<float*>(0x00881604 + o);   // &DAT_00881604 + o
-    Gi(0x008815a4 + slot * 0x341 * 4) = 1;                   // (&DAT_008815a4)[slot*0x341]
-    Gi(0x008815b0 + slot * 0x341 * 4) = 0;
-    AWi(0x008816f0, 0x3e19999a);
-    AWi(0x008816f8, 0x3fa51eb8);
-    AWi(0x008815f0, 0x447a0000);
-    AWi(0x008816fc, 0);
-    AWi(0x00881700, 0);
-    AWi(0x00881704, 0);
-    AWi(0x0088170c, 0x3f19e83e);
-    *pf8 = Cf(0x3ecb4fe8);                                    // 0.397094 (exact bits)
-    AWi(0x008817d0, (int)0xbf19e83e);
-    AWi(0x008817d4, 0x3ecb4fe8);
-    AWi(0x00881894, 0x3f698890);
-    AWi(0x00881898, 0x3f078ee3);
-    AWi(0x00881958, (int)0xbf698890);
-    AWi(0x0088195c, 0x3f078ee3);
-    AWi(0x00881890, 1);
-    AWi(0x00881954, 1);
-    AWi(0x00881600, 0x3e2b020c);
-    *pf7 = 0.0f;
-    AWi(0x0088160c, (int)0xbe2b020c);
-    AWi(0x00881610, 0);
-    AWi(0x00881618, 0x3e81bda5);
-    AWi(0x0088161c, 0);
-    AWi(0x00881620, (int)0xbea30553);
-    AWi(0x00881624, (int)0xbe81bda5);
-    AWi(0x00881628, 0);
-    AWi(0x0088162c, (int)0xbea30553);
-    Gi(0x00881f48 + slot * 0x341 * 4) = 0;
-    Gi(0x00881f4c + slot * 0x341 * 4) = 1;
-    AWi(0x00882070, 0);
-    AWi(0x008816ec, 0);
-    AWi(0x008816e8, 0);
-    AWi(0x008816e4, 0);
-    AWi(0x008815f4, 0x3a83126f);
-
-    // ── loop 1: per-wheel "radius" accumulate + max (4 wheels, stride 0x31 ints) ──
-    float pmax = 0.0f;
-    float* p9 = pf8;
-    for (int k = 0; k < 4; ++k) {
-        p9[3] = p9[0];
-        const float c = A3_005cea44;
-        // fVar11 = p9[0]*c*p9[0]*c + p9[1]*c*p9[1]*c + p9[-1]*c*p9[-1]*c
-        double f = (double)p9[0] * (double)c * (double)p9[0] * (double)c
-                 + (double)p9[1] * (double)c * (double)p9[1] * (double)c
-                 + (double)p9[-1] * (double)c * (double)p9[-1] * (double)c;
-        float fr = (float)f;
-        if ((double)fr != (double)A3_005d757c) fr = A3_FastSqrt(fr);
-        if (pmax < fr) pmax = fr;
-        p9 += 0x31;
-    }
-    AWf(0x00881a40, pmax * A3_005cea54);
-
-    // ── loop 2: per-wheel local-pos magnitude -> p[+2] (4 wheels) ──
-    p9 = pf8;
-    for (int k = 0; k < 4; ++k) {
-        float ss = p9[1]*p9[1] + p9[0]*p9[0] + p9[-1]*p9[-1];
-        p9[2] = A3_FastSqrt(ss);
-        p9 += 0x31;
-    }
-
-    // ── loop 3: 4 entries from &DAT_00881a5c (stride 0x10 floats), source pf7 ──
-    float* p8 = reinterpret_cast<float*>(0x00881a5c + o);
-    p9 = pf7;
-    {
-        const float c6fc = Gf(0x008816fc + o), c700 = Gf(0x00881700 + o), c704 = Gf(0x00881704 + o);
-        for (int k = 0; k < 4; ++k) {
-            float dx = p9[-1] - c6fc, dy = p9[0] - c700, dz = p9[1] - c704;
-            float ss = dx*dx + dy*dy + dz*dz;
-            *p8 = A3_FastSqrtMul(ss, A3_005cc754);
-            p9 += 3; p8 += 0x10;
-        }
-    }
-
-    // ── loop 4: 8 entries from &DAT_00881b5c, source &DAT_00881634; updates pmax ──
-    {
-        float* q7 = reinterpret_cast<float*>(0x00881b5c + o);
-        float* q8 = reinterpret_cast<float*>(0x00881634 + o);
-        const float c6fc = Gf(0x008816fc + o), c700 = Gf(0x00881700 + o), c704 = Gf(0x00881704 + o);
-        for (int k = 0; k < 8; ++k) {
-            float dx = q8[-1] - c6fc, dy = q8[0] - c700, dz = q8[1] - c704;
-            float ss = dx*dx + dy*dy + dz*dz;
-            float r = A3_FastSqrt(ss);
-            *q7 = (float)((double)r * (double)A3_005cc754);
-            if (pmax < r) pmax = r;
-            q8 += 3; q7 += 0x10;
-        }
-    }
-
-    // ── loop 5: 6 entries from &DAT_00881d5c, source &DAT_00881694 ──
-    {
-        float* r7 = reinterpret_cast<float*>(0x00881694 + o);
-        float* r8 = reinterpret_cast<float*>(0x00881d5c + o);
-        const float c6fc = Gf(0x008816fc + o), c700 = Gf(0x00881700 + o), c704 = Gf(0x00881704 + o);
-        for (int k = 0; k < 6; ++k) {
-            float dx = r7[-1] - c6fc, dy = r7[0] - c700, dz = r7[1] - c704;
-            float ss = dx*dx + dy*dy + dz*dz;
-            float r = A3_FastSqrt(ss);
-            *r8 = (float)((double)r * (double)A3_005cc754);
-            r7 += 3; r8 += 0x10;
-        }
-    }
-
-    Gf(0x00881a44 + slot * 0x341 * 4) = pmax * A3_005cea54;
-
-    // ── final mass/inertia float10 reduction (naked verbatim) ──
-    A3_MassInertia(reinterpret_cast<int*>(0x008815a0 + o));
-    return 1;
-}
 
 // ── self-test forwarder: invoke the ORIGINAL A3 bypassing our inline-JMP ─────
 // The 5-byte JMP at 0x0046b540 overwrites `SUB ESP,8`(3, 83ec08) + `PUSH ESI`(1, 56)
@@ -3160,10 +1789,27 @@ void A3_SelfTest(int slot) {
     std::uint32_t origG[4] = { (std::uint32_t)Gi(0x00613108), (std::uint32_t)Gi(0x00613114),
                                (std::uint32_t)Gi(0x00613130), (std::uint32_t)Gi(0x0061313c) };
 
-    // restore record + handling globals, run mine
-    std::memcpy(rec, snapRec, 0xd04);
-    Gi(0x00613108)=snapG[0]; Gi(0x00613114)=snapG[1]; Gi(0x00613130)=snapG[2]; Gi(0x0061313c)=snapG[3];
-    int myRet = A3_Body(slot);
+    // [dcphys 2026-10-21] no-op control: the ORIGINAL again from the same snapshot (noo). noo != 0 means the
+    // original read state the snapshot does not hold, and that call's verdict is void. Then the shared body.
+    struct A3State { std::uint8_t rec[0xd04]; std::uint32_t g[4]; int ret; };
+    static A3State st[2];   // 0 = orig (taken above), 1 = orig again
+    std::memcpy(st[0].rec, origRec, 0xd04); for (int i = 0; i < 4; ++i) st[0].g[i] = origG[i]; st[0].ret = origRet;
+    auto restore = [&]() {
+        std::memcpy(rec, snapRec, 0xd04);
+        Gi(0x00613108)=snapG[0]; Gi(0x00613114)=snapG[1]; Gi(0x00613130)=snapG[2]; Gi(0x0061313c)=snapG[3];
+    };
+    restore();
+    {   const int r = Call_OrigA3(slot);
+        std::memcpy(st[1].rec, rec, 0xd04); st[1].ret = r;
+        st[1].g[0]=(std::uint32_t)Gi(0x00613108); st[1].g[1]=(std::uint32_t)Gi(0x00613114);
+        st[1].g[2]=(std::uint32_t)Gi(0x00613130); st[1].g[3]=(std::uint32_t)Gi(0x0061313c); }
+    int noo = 0;
+    for (int i = 0; i < 0xd04; i += 4)
+        if (*reinterpret_cast<const std::uint32_t*>(st[0].rec + i) != *reinterpret_cast<const std::uint32_t*>(st[1].rec + i)) noo++;
+    for (int i = 0; i < 4; ++i) if (st[0].g[i] != st[1].g[i]) noo++;
+    if (st[0].ret != st[1].ret) noo++;
+    restore();
+    const int myRet = mashed_re::Vehicle::VehicleInit(slot, 0);
 
     // compare full record + the 4 globals + return
     int mism = 0, firstOff = -1; char line[1024]; int p = 0;
@@ -3180,9 +1826,9 @@ void A3_SelfTest(int slot) {
         if (p < 880) p += wsprintfA(line+p, " G%x:o=%08x,m=%08x", (unsigned)gAddr[i], origG[i], myG[i]); }
     if (myRet != origRet) { mism++; if (p < 880) p += wsprintfA(line+p, " ret:o=%d,m=%d", origRet, myRet); }
 
-    char hdr[160];
-    wsprintfA(hdr, "[%d] slot=%d ndiff=%d firstOff=0x%x%s\r\n",
-              g_a3Count, slot, mism, firstOff, mism ? "" : " OK");
+    char hdr[200];
+    wsprintfA(hdr, "[%d] slot=%d noo=%d ndiff=%d firstOff=0x%x%s\r\n",
+              g_a3Count, slot, noo, mism, firstOff, mism ? "" : " OK");
     A3_SelfTestLog(hdr);
     if (mism) { line[p]=0; A3_SelfTestLog("   "); A3_SelfTestLog(line); A3_SelfTestLog("\r\n"); }
     g_a3Count++;
@@ -3190,14 +1836,14 @@ void A3_SelfTest(int slot) {
 
 // ── entry trampoline installed at 0x0046b540 (__cdecl(int slot)) ─────────────
 // When the self-test runs it does the in-process A/B (original-vs-mine on the same
-// slot) and leaves the record as MINE wrote (A3_SelfTest ends with A3_Body); the
-// non-self-test path just runs A3_Body for real. Either way A3_Body's return is EAX.
+// slot) and leaves the record as MINE wrote; the non-self-test path just runs the
+// body for real. Either way the body's return is EAX.
 int A3_Hook(int slot) {
     if (A3_SelfTestEnabled()) {
         A3_SelfTest(slot);          // runs original then mine; record left as mine
-        return A3_Body(slot);       // run once more for the real spawn (deterministic)
+        return mashed_re::Vehicle::VehicleInit(slot, 0);   // once more for the real spawn (deterministic)
     }
-    return A3_Body(slot);
+    return mashed_re::Vehicle::VehicleInit(slot, 0);
 }
 
 __declspec(naked) void A3_Entry() {
@@ -3207,7 +1853,7 @@ __declspec(naked) void A3_Entry() {
         push eax
         call A3_Hook
         add  esp, 4
-        ret                            // EAX = A3_Body return (1/0)
+        ret                            // EAX = VehicleInit's return (1/0)
     }
 }
 

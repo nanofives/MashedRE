@@ -77,6 +77,7 @@ void Flush() {
 
 // Chain entry points (defined in their .cpp; declared here to avoid a header churn).
 int  VehicleInit(int slot, int trackType);                                       // A3 0x0046b540
+void VehicleSpawnHull(int slot);                                                 // 0x0040ed57 + 0x0046b1c0 (VehicleContactHull.cpp)
 void VehicleControlIntegrate(int* self, float dt, std::uint8_t* input, void* xf, int car); // A4 0x00470670
 // U-D3-DRIVE-FORCE: the A6a start-boost order/participant bindings (ForceIntegratorStubs.cpp).
 extern int g_participantCount;   // DAT_008a94d0 (FUN_0040e340)
@@ -318,7 +319,9 @@ void VehiclePhysics_Init(int carCount, int trackType) {
     if (carCount < 1)  carCount = 1;
     if (carCount > 16) carCount = 16;
     g_playerCount = carCount;
-    for (int s = 0; s < carCount; ++s) VehicleInit(s, trackType);  // A3: suspension/mass/geom
+    // [dcphys 2026-10-21] the original's spawn order, 0x0040ed62 hull then 0x0040ed68 A3 (the hull call used to
+    // sit inside the exe's A3 body, which the original's 0x0046b540 never does).
+    for (int s = 0; s < carCount; ++s) { VehicleSpawnHull(s); VehicleInit(s, trackType); }  // A3: suspension/mass/geom
     g_inited = true;
 }
 

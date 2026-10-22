@@ -183,6 +183,8 @@
 "Race\SubStateCallees.cpp"
 "Race\SubStateMachine.cpp"
 "Race\CameraEntries.cpp"
+"Vehicle\Integrate2.cpp"
+"Vehicle\VehicleInit.cpp"
 "Vehicle\PhysicsChainHooks.cpp"
 "Vehicle\LaunchRevCharge.cpp"
 "Frontend\SkeletonAndScatter_t6.cpp"
