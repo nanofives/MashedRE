@@ -2,8 +2,7 @@
 // RenderWare stream I/O + texture-dictionary creation helpers (c3-batch-q-s6).
 //
 // Covers:
-//   0x004cbd30  RwStreamRead           — 4-type stream dispatch: fread / membuf copy / callback
-//   0x004cc050  RwStreamSkip           — 4-type stream dispatch: fseek / membuf advance / callback
+//   (RwStreamRead / RwStreamSkip moved to Render/RwStreamCore.cpp, one body shared with the exe, lane dcstream)
 //   0x004c5890  RwTexDictionaryCreate  — allocate+init RwTexDictionary; link into global TXD list
 //
 // Deferred (>200B and complex body, or harness-limited):
@@ -15,8 +14,6 @@
 //   (preserved in original\MASHED.exe.unpatched; patched copy SHA differs — expected)
 //
 // Analysis refs:
-//   re/analysis/texture_loader_d3/0x004cbd30.md
-//   re/analysis/texture_loader_d3/0x004cc050.md
 //   re/analysis/texture_loader_d3/0x004c5890.md
 //
 // Verification strategy:
@@ -27,188 +24,6 @@
 
 #include "../Core/HookSystem.h"
 #include <cstdint>
-
-// ---------------------------------------------------------------------------
-// 0x004cbd30  FUN_004cbd30  RwStreamRead   (317 bytes)
-//
-// RwUInt32 RwStreamRead(RwStream *stream, void *buffer, RwUInt32 length)
-//   param_1 = stream ptr (RwStream *); type field at stream+0x00
-//   param_2 = destination buffer
-//   param_3 = byte count to read
-//   Returns bytes successfully read (== param_3 on full success, 0 on error).
-//
-// 4-case type dispatch (stream type at *param_1 i.e. stream+0x00):
-//   case 1, case 2  — file stream:
-//     file handle at stream+0x0c (param_1[3])
-//     calls FUN_00550950(buffer, 1, length, handle) — fread() wrapper
-//     if returned count != length → return bytes actually read (partial)
-//   case 3          — memory buffer stream:
-//     end pointer at stream+0x10 (param_1[4])
-//     current position at stream+0x0c (param_1[3])
-//     data base at stream+0x14 (param_1[5])
-//     bounds check: cap length to (end - pos) if length would overrun
-//     DWORD-copy loop then byte-copy tail from (base + pos)
-//     advance param_1[3] by bytes copied
-//   case 4          — callback stream:
-//     fn ptr at stream+0x10 (param_1[4])
-//     user data at stream+0x1c (param_1[7])
-//     calls (*fn)(user, buffer, length)
-//   default         — error code 0xe → return 0
-//
-// Facts cited from re/analysis/texture_loader_d3/0x004cbd30.md:
-//   Stream type dispatch:       0x004cbd3f
-//   File handle stream+0x0c:   0x004cbd77
-//   fread call FUN_00550950:    0x004cbd7b
-//   Memory end at stream+0x10: 0x004cbe12
-//   Memory pos at stream+0x0c: 0x004cbe16
-//   Memory base at stream+0x14: 0x004cbe24
-//   Callback fn at stream+0x10, user at stream+0x1c: 0x004cbe5b
-//   Error code 0xe:             implied by default case
-// ---------------------------------------------------------------------------
-
-// External callee: FUN_00550950 — fread() wrapper.
-// int __cdecl FUN_00550950(void *buf, int element_sz, int count, int file_handle)
-using FreadFn_t = std::uint32_t (__cdecl*)(void*, std::uint32_t, std::uint32_t, std::uint32_t);
-static FreadFn_t const s_FUN_00550950 = reinterpret_cast<FreadFn_t>(0x00550950u);
-
-// 0x004cbd30
-extern "C" __declspec(dllexport) std::uint32_t __cdecl
-RwStreamRead(std::uint32_t* param_1, void* param_2, std::uint32_t param_3)
-{
-    std::uint32_t stream_type = *param_1;  // stream+0x00, cited 0x004cbd3f
-
-    switch (stream_type) {
-    case 1:
-    case 2: {
-        // File stream: file handle at stream+0x0c = param_1[3], cited 0x004cbd77
-        std::uint32_t handle = param_1[3];
-        // FUN_00550950(dest, 1, size, handle) — fread wrapper, cited 0x004cbd7b
-        std::uint32_t uVar4 = s_FUN_00550950(param_2, 1u, param_3, handle);
-        // Partial read: return actual bytes (includes 0 on full failure).
-        return uVar4;
-    }
-    case 3: {
-        // Memory buffer stream.
-        // end pointer at stream+0x10, cited 0x004cbe12
-        // pos at stream+0x0c, cited 0x004cbe16
-        // data base at stream+0x14, cited 0x004cbe24
-        std::uint32_t end = param_1[4];   // stream+0x10
-        std::uint32_t pos = param_1[3];   // stream+0x0c
-        std::uint32_t len = param_3;
-
-        // Bounds check: cap to remaining bytes if overrun would occur.
-        if ((end - pos) < len) {
-            // Truncate: error condition; cap to remaining.
-            len = end - pos;
-        }
-
-        // Copy len bytes from (param_1[5] + pos) into param_2.
-        // Ghidra shows DWORD-copy loop then byte-copy tail — replicate with memcpy.
-        std::uint8_t* src = reinterpret_cast<std::uint8_t*>(param_1[5] + pos);  // base+0x14
-        std::uint8_t* dst = reinterpret_cast<std::uint8_t*>(param_2);
-        for (std::uint32_t i = 0; i < len; ++i) {
-            dst[i] = src[i];
-        }
-        // Advance position, cited 0x004cbe16 area.
-        param_1[3] = pos + len;
-        return len;
-    }
-    case 4: {
-        // Callback stream: fn ptr at stream+0x10 (param_1[4]),
-        // user data at stream+0x1c (param_1[7]), cited 0x004cbe5b
-        typedef std::uint32_t (__cdecl *CallbackFn)(std::uint32_t, void*, std::uint32_t);
-        CallbackFn fn = reinterpret_cast<CallbackFn>(param_1[4]);
-        std::uint32_t user = param_1[7];
-        std::uint32_t uVar4 = fn(user, param_2, param_3);
-        return uVar4;
-    }
-    default:
-        // Error code 0xe — return 0 (implied by default case in analysis note).
-        return 0u;
-    }
-}
-
-RH_ScopedInstall(RwStreamRead, 0x004cbd30);  // re-enabled 2026-05-24 c3-render-b
-
-// ---------------------------------------------------------------------------
-// 0x004cc050  FUN_004cc050  RwStreamSkip   (249 bytes)
-//
-// RwStream *RwStreamSkip(RwStream *stream, RwUInt32 offset)
-//   param_1 = stream ptr
-//   param_2 = byte count to skip forward
-//   Returns param_1 (stream) on success, NULL on failure.
-//
-// 4-case type dispatch (stream type at *param_1):
-//   case 1, case 2  — file stream:
-//     calls FUN_005509b0(handle, offset, 1) — fseek(SEEK_CUR) wrapper
-//     FUN_005509b0 at 0x005509b0
-//   case 3          — memory buffer stream:
-//     bounds check: if (end - pos) < offset → error (return NULL)
-//     advance param_1[3] += offset
-//   case 4          — callback stream:
-//     fn ptr at stream+0x18 (param_1[6])
-//     user data at stream+0x1c (param_1[7])
-//     calls (*fn)(user, offset)
-//   default         — error code 0xe → return NULL
-//
-// Facts cited from re/analysis/texture_loader_d3/0x004cc050.md:
-//   Stream type dispatch:         0x004cc063
-//   Memory end-of-buffer guard:   0x004cc0a5
-//   Memory advance param_1[3]:    0x004cc0b3
-//   fseek call FUN_005509b0:      0x004cc0cc
-//   Callback fn at param_1[6]:    0x004cc11f
-// ---------------------------------------------------------------------------
-
-// External callee: FUN_005509b0 — fseek(SEEK_CUR) wrapper.
-// int __cdecl FUN_005509b0(int file_handle, int offset, int whence)
-using FseekFn_t = std::int32_t (__cdecl*)(std::uint32_t, std::int32_t, std::int32_t);
-static FseekFn_t const s_FUN_005509b0 = reinterpret_cast<FseekFn_t>(0x005509b0u);
-
-// 0x004cc050
-extern "C" __declspec(dllexport) std::uint32_t* __cdecl
-RwStreamSkip(std::uint32_t* param_1, std::uint32_t param_2)
-{
-    std::uint32_t stream_type = *param_1;  // stream+0x00, cited 0x004cc063
-
-    switch (stream_type) {
-    case 1:
-    case 2: {
-        // File stream: fseek(SEEK_CUR) via FUN_005509b0, cited 0x004cc0cc
-        std::uint32_t handle = param_1[3];   // file handle at stream+0x0c
-        std::int32_t ok = s_FUN_005509b0(handle, static_cast<std::int32_t>(param_2), 1);
-        if (ok == 0) return param_1;
-        return nullptr;
-    }
-    case 3: {
-        // Memory buffer stream.
-        // end at stream+0x10 = param_1[4], pos at stream+0x0c = param_1[3]
-        // bounds check, cited 0x004cc0a5
-        std::uint32_t end = param_1[4];
-        std::uint32_t pos = param_1[3];
-        if ((end - pos) < param_2) {
-            // Overrun — error path.
-            return nullptr;
-        }
-        // Advance position, cited 0x004cc0b3
-        param_1[3] = pos + param_2;
-        return param_1;
-    }
-    case 4: {
-        // Callback stream: fn ptr at stream+0x18 (param_1[6]), cited 0x004cc11f
-        typedef std::int32_t (__cdecl *SkipFn)(std::uint32_t, std::uint32_t);
-        SkipFn fn   = reinterpret_cast<SkipFn>(param_1[6]);
-        std::uint32_t user = param_1[7];   // user data at stream+0x1c
-        std::int32_t ok = fn(user, param_2);
-        if (ok == 0) return param_1;
-        return nullptr;
-    }
-    default:
-        // Error code 0xe — return NULL (implied by default case).
-        return nullptr;
-    }
-}
-
-RH_ScopedInstall(RwStreamSkip, 0x004cc050);  // re-enabled 2026-05-24 c3-render-b
 
 // ---------------------------------------------------------------------------
 // 0x004c5890  FUN_004c5890  RwTexDictionaryCreate   (small body, ~60 bytes est.)
