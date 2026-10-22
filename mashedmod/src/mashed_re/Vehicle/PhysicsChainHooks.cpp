@@ -114,7 +114,8 @@ inline float Cf(std::uint32_t bits) { float f; std::memcpy(&f, &bits, 4); return
 // runtime global the torque ring phase indexes (live: DAT_007f101c)
 inline int& TorqueRingPhase() { return *reinterpret_cast<int*>(0x007f101c); }
 
-// FUN_0040e350  Fi_GameMode  (__cdecl int(void))
+// Call-through to the original's game-mode getter FUN_0040e350 (__cdecl int(void)); not a body. The .asi's
+// body for that RVA is Ai/PromoLoop_round1.cpp:GetRenderSubMode (dcleaf 2026-10-22: this line was a false anchor).
 inline int Fi_GameMode() { return reinterpret_cast<int(__cdecl*)()>(0x0040e350)(); }
 
 

@@ -7,12 +7,18 @@
 // in ContactDeps.h / ContactStubs.cpp are stubbed).
 #pragma once
 
+// FUN_00468b40's one body, Vehicle/VehicleState.cpp (dcleaf 2026-10-22).
+extern "C" __declspec(dllexport) int __cdecl VehicleContactHistoryLookup(int param_1, int param_2);
+
 namespace mashed_re {
 namespace Collision {
 
 // --- B2: car<->world --------------------------------------------------------
 void TriangleFaceNormal(const float* apex, const float* p1, const float* p2, float* outN); // 0x0046c5f0
-int  ContactHistoryLookup(const void* entry, int* veh);                                     // 0x00468b40
+// Forwarder (not a body) to VehicleContactHistoryLookup, FUN_00468b40.
+inline int ContactHistoryLookup(const void* entry, int* veh) {
+    return VehicleContactHistoryLookup(reinterpret_cast<int>(entry), reinterpret_cast<int>(veh));
+}
 void WheelTerrainContactClassifier(int* veh, float* batchEntry);                            // 0x0046cc40
 void VehicleTerrainContactSolver(int* veh, void* batchBase);                                // 0x00468d80
 void VehicleObjectContactSolver(int* veh);                                                  // 0x004694e0

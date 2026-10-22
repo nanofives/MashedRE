@@ -7750,9 +7750,12 @@ HOOKS = {
     #   AND DAT_008989b0[param_1*4] > _DAT_005cc9b8.
     # At main menu: FUN_0040e350 returns mode!=6 â†’ both sides return 0.
     # arg_type='int_scalar': passes int32 player_idx.
+    # dcleaf 2026-10-22: the .asi body is the shared Vehicle/ForceIntegratorLeaves.cpp:RubberBandGate, installed and
+    # exported as RubberBandGateEntry (Util/UtilMid.cpp:ModeGatedPlayerCheck deleted). In-race evidence: its in-process
+    # A/B (MASHED_LEAF_SELFTEST, verify/dcleaf_20261022/RESULT_dcleaf.md).
     'mode_gated_player_check': {
         'rva':            0x00442c80,
-        'export':         'ModeGatedPlayerCheck',
+        'export':         'RubberBandGateEntry',
         'signature':      {'ret': 'uint32', 'args': ['int32']},
         'arg_type':       'int_scalar',
         'lut_root_delta': 0,
