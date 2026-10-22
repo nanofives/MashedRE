@@ -164,9 +164,10 @@ bool RoundEnd7Enabled() {
     return s;
 }
 bool s_roundEnd7 = false;
-// [rpct] MASHED_RACEPCT_SLOT (default OFF): RacePct / RaceCamCar::race_pct load the slot 0x008a96ec as FUN_00408ad0 does.
+// [rpct] RacePct / RaceCamCar::race_pct load the slot 0x008a96ec as FUN_00408ad0 does. Default ON since 2026-10-22 (Mariano,
+// on P1 of verify/rpct_20261022/RESULT_rpct.md; G-CTRL / B references rebased there); MASHED_NO_RACEPCT_SLOT=1 opts out.
 bool RacePctSlotEnabled() {
-    static const bool s = [] { const char* e = std::getenv("MASHED_RACEPCT_SLOT"); return e && e[0] && e[0] != '0'; }();
+    static const bool s = [] { const char* e = std::getenv("MASHED_NO_RACEPCT_SLOT"); return !(e && e[0] && e[0] != '0'); }();
     return s;
 }
 // [r7keep] rule 7 keeps the score-scan winner (0x00410790), see RuleEngine::Persist. Default ON since 2026-10-22
@@ -7419,10 +7420,10 @@ void TrackRenderer::SetTeamPlay(bool on, const int team_of[4]) {
     SeedMatchScores();       // FUN_0040b180 reads FUN_0042f500() (team play)
 }
 
-// 0x00408ad0 (stand-in while MASHED_RACEPCT_SLOT is OFF, the dual-copy finding stays allowlisted until a flip)
+// 0x00408ad0 (stand-in, only under the opt-out MASHED_NO_RACEPCT_SLOT; the dual-copy finding stays allowlisted for it)
 // Race progress on a 0..100 scale, read by ProgBehind and the step dump. The original's FUN_00408ad0 is a load of the
 // slot 0x008a96ec + car*0x30c (0x00408ada), whose one body here is Frontend/SmallLeaves_t1.cpp:RaceScoreFloatGetBySlot.
-// [rpct] MASHED_RACEPCT_SLOT (default OFF, verify/rpct_20261022/PREREG_rpct.md) returns that load; OFF keeps the stand-in
+// [rpct] default ON since 2026-10-22, returns that load; the opt-out MASHED_NO_RACEPCT_SLOT keeps the stand-in
 // below (`prog_in_lap / n * 100` on the gate count), the same expression FillRaceCamCars uses.
 float TrackRenderer::RacePct(int car) const {
     if (RacePctSlotEnabled() && car >= 0 && car < kRaceCars) return RaceScoreFloatGetBySlot(car);

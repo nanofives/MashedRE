@@ -395,6 +395,8 @@ STACK['R7NR7'] = STACK['R7'] + ['MASHED_NO_RULE7_KEEP']
 STACK['ET'] = ['MASHED_ELIM_TRACE=@OUT@\\@NAME@.elim.csv']
 STACK['RS'] = ['MASHED_RACEPCT_SLOT']
 STACK['RSET'] = STACK['RS'] + STACK['ET']
+# flip (2026-10-22): the slot load is default ON; NRS = the opt-out (= the pre-flip default)
+STACK['NRS'] = ['MASHED_NO_RACEPCT_SLOT']
 STACK['OLD'] = ['MASHED_ROUND_RULE=4', '-MASHED_GAME_MODE']               # the old recipe (rule 4, no game mode word)
 STACK['OLDNOK'] = STACK['OLD'] + STACK['NOK']                             # old recipe + both opt-outs = the rbflip default
 STACK['OLDNF'] = STACK['OLD'] + STACK['NF']                               # old recipe + MASHED_NO_FAITH=1 = the pre-faithflip trio
