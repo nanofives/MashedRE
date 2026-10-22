@@ -1,0 +1,3 @@
+B_KF_K0                3/3  car1 A PASS | car2 A PASS | car3 A PASS
+B_KF_K1                3/3  car1 B PASS | car2 B PASS | car3 B PASS
+B_KF_K26               3/3  car1 C PASS | car2 C PASS | car3 C PASS
