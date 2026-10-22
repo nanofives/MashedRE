@@ -26,6 +26,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-22  00442c80 / 00442ce0  exe_file only (no level change)  the exe ports moved verbatim to Vehicle/ForceIntegratorLeaves.cpp in dcphys2; exe_file updated to match.
 2026-10-22  00470670  VehicleControlUpdate  C2->C4  default body 5403/5403 (whole function). p2flip: the P2 stack default ON (Mariano's decision, dcphys2 PREREG amendment 1). New default G-CTRL c3bfcef3 / 4ed4849b / 4c3548a1 x2, B 4985eb3b / b6e3d073 / 6717c15e, (b) 9/9, (e) 3/3, D2 3/3, 13 tracks 878 rows 0 RED; opt-out = 23ac657a / 7bf2f27f / 3186dd09. verify/dcphys2_20261022/RESULT_dcphys2.md
 2026-10-22  0046ddb0  VehicleWheelForceIntegrator  C2->C4  default body 3214/3214. p2flip: the P2 stack default ON (Mariano's decision, dcphys2 PREREG amendment 1). New default G-CTRL c3bfcef3 / 4ed4849b / 4c3548a1 x2, B 4985eb3b / b6e3d073 / 6717c15e, (b) 9/9, (e) 3/3, D2 3/3, 13 tracks 878 rows 0 RED; opt-out = 23ac657a / 7bf2f27f / 3186dd09. verify/dcphys2_20261022/RESULT_dcphys2.md
 2026-10-22  00468980  VehicleAeroStabilizer  C2->C4  default body 402/402 (pad words apart). p2flip: the P2 stack default ON (Mariano's decision, dcphys2 PREREG amendment 1). New default G-CTRL c3bfcef3 / 4ed4849b / 4c3548a1 x2, B 4985eb3b / b6e3d073 / 6717c15e, (b) 9/9, (e) 3/3, D2 3/3, 13 tracks 878 rows 0 RED; opt-out = 23ac657a / 7bf2f27f / 3186dd09. verify/dcphys2_20261022/RESULT_dcphys2.md
