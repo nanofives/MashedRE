@@ -53,8 +53,8 @@ using mashed_re::Vehicle::kOff_State;
 using mashed_re::Vehicle::kOff_Secondary;
 
 // NOT rebound in this leg, deliberately — PREREG_H1.md section 1:
-//   0x0046c770 / 0x0046dbe0 / 0x0046d700 index the SAME record (+0x10, +0x08,
-//     +0x9C8/9CC/9D0) and carry the identical defect, but each currently returns
+//   0x0046c770 / 0x0046d700 index the SAME record (+0x10, +0x9C8/9CC/9D0) and
+//     carry the identical defect, but each currently returns
 //     pad-zero to its own consumers, so each rebind is a separate potential
 //     behaviour change that deserves its own measurement.
 //   0x0046c6d0 MUST NOT be rebound: 0x008820b0 is a separate entity table
@@ -110,9 +110,15 @@ RH_ScopedInstall(VehicleEntitySlotRead, 0x0046c6d0);  // re-enabled 2026-05-24 c
 // Ghidra decomp:
 //   return (&DAT_008815a8)[param_1 * 0x341];
 // No bounds guard.  Race position: 0=1st, 1=2nd, 2=3rd, 3=4th.
+// Disassembly 0x0046dbe0..0x0046dbf0: mov eax,[esp+4]; imul eax,eax,0xd04; mov eax,[eax+0x8815a8]; ret.
+// [dcleaf 2026-10-22] The ONE body for 0x0046dbe0 in both targets. Record base through VehRecord (the
+// standalone's g_vehicleArrayBase, the .asi's absolute 0x008815a0), so the exe reads its own record
+// (+0x08) instead of image pad. Its one exe consumer is Vehicle/ForceIntegratorLeaves.cpp:RubberBandGrip
+// (0x00442d28 / 0x00442d35), whose former private copy CarContactCount read g_vehicleArrayBase + 8 +
+// car*0xd04, the same word. No null guard, as the original (a null base faults in both forms).
 // ─────────────────────────────────────────────────────────────────────────────
 extern "C" __declspec(dllexport) std::uint32_t __cdecl VehicleRacePositionGet(int param_1) {
-    return reinterpret_cast<const std::uint32_t*>(kVehicleBase_8815a8)[param_1 * kDWordStride];
+    return *reinterpret_cast<const std::uint32_t*>(VehRecord(static_cast<std::uint32_t>(param_1)) + 0x08);
 }
 RH_ScopedInstall(VehicleRacePositionGet, 0x0046dbe0);  // re-enabled 2026-05-24 c3-vehicle
 
@@ -128,6 +134,12 @@ RH_ScopedInstall(VehicleRacePositionGet, 0x0046dbe0);  // re-enabled 2026-05-24 
 // param_1 = geometry entry ptr (contact ID at byte offset +0x34)
 // param_2 = vehicle struct ptr
 // Contact table: vehicle+0xBFC, 32 int slots; active flags at +0x80 per slot.
+// Disassembly 0x00468b40..0x00468b74: flag test [eax+0x80] first (0x00468b50, je skips the key
+// compare), then key [edx+0x34] vs [eax] (0x00468b5a..0x00468b5d); ecx counts to 0x20 (0x00468b65).
+// [dcleaf 2026-10-22] The ONE body for 0x00468b40 in both targets. Pointer-relative, so no target thunk.
+// The exe's contact solvers (Collision/CarWorldContacts.cpp) reach it through
+// Collision::ContactHistoryLookup, a forwarder in Collision/ContactSolvers.h; their former private copy
+// was the same loop.
 // ─────────────────────────────────────────────────────────────────────────────
 extern "C" __declspec(dllexport) int __cdecl VehicleContactHistoryLookup(int param_1, int param_2) {
     const int* piVar1 = reinterpret_cast<const int*>(param_2 + 0xBFC);

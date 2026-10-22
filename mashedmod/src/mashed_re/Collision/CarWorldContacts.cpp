@@ -7,7 +7,8 @@
 //
 // Functions ported (B2 set per COLLISION_GATE_BRIEF / ratified Option B):
 //   0x0046c5f0  TriangleFaceNormal            (leaf; FUN_004c3b30 only)
-//   0x00468b40  ContactHistoryLookup          (32-slot key scan @veh+0xbfc)
+//   (0x00468b40 ContactHistoryLookup: the one body is Vehicle/VehicleState.cpp, dcleaf 2026-10-22;
+//    Collision::ContactHistoryLookup in ContactSolvers.h forwards to it)
 //   0x0046cc40  WheelTerrainContactClassifier (approaching-contact classify)
 //   0x00468d80  VehicleTerrainContactSolver   (deep-penetration impulse)
 //   0x004694e0  VehicleObjectContactSolver    (dynamic-object impulse)
@@ -30,6 +31,7 @@
 //    scenario trace once the WS-A consumer (FUN_0046ddb0) drives them.
 #include "ContactConstants.h"
 #include "ContactDeps.h"
+#include "ContactSolvers.h"           // [dcleaf] ContactHistoryLookup forwarder (FUN_00468b40)
 #include "../Vehicle/D2SinkProbe.h"   // [D2 attempt 20] diagnostic, default-OFF
 #include <cstdlib>                    // [d2bsp] getenv (MASHED_D2CLS)
 
@@ -64,25 +66,6 @@ void TriangleFaceNormal(const float* apex, const float* p1, const float* p2, flo
             outN[2] = fVar1 * inv;
         }
     }
-}
-
-// ---------------------------------------------------------------------------
-// 0x00468b40  ContactHistoryLookup
-//   Scan up to 32 history slots at veh+0xbfc; slot is a parallel array: key at
-//   [i], active flag at [i+0x20]. Match key == *(int*)(entry+0x34).
-//   Returns 1 if a matching active slot exists, else 0.
-// ---------------------------------------------------------------------------
-int ContactHistoryLookup(const void* entry, int* veh)
-{
-    int  key    = *reinterpret_cast<const int*>(reinterpret_cast<const char*>(entry) + 0x34);
-    int* piVar1 = reinterpret_cast<int*>(reinterpret_cast<char*>(veh) + 0xbfc);
-    int  iVar2  = 0;
-    while (piVar1[0x20] == 0 || key != *piVar1) {
-        iVar2 += 1;
-        piVar1 += 1;
-        if (0x1f < iVar2) return 0;
-    }
-    return 1;
 }
 
 // ---------------------------------------------------------------------------

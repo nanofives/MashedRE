@@ -1,0 +1,1 @@
+Evidence for lane dcleaf (worktree .worktrees/dcleaf, branch work/dcleaf). Moved off git: build outputs, logs, A/B runs. 2026-10-22

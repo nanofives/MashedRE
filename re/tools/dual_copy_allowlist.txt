@@ -25,8 +25,6 @@
 
 DUP-IN-TARGET:00408ad0:D3d9Render/TrackRenderer.cpp,Frontend/SmallLeaves_t1.cpp   # audit=DIFFERS-BEHAVIOUR; [exe] two bodies: D3d9Render/TrackRenderer.cpp:4007 (TrackRenderer::RacePct), Frontend/SmallLeaves_t1.cpp:42 (RaceScoreFloatGetBySlot)
 DUP-IN-TARGET:0042d3e0:Frontend/MenuInit.cpp,Frontend/MenuNavSM.cpp   # audit=DIFFERS-BEHAVIOUR; [exe] two bodies: Frontend/MenuInit.cpp:73 (MenuEntryArrayInit), Frontend/MenuNavSM.cpp:386 (RecordsZero)
-DUP-IN-TARGET:00468b40:Collision/CarWorldContacts.cpp,Vehicle/VehicleState.cpp   # audit=IDENTICAL; [exe] two bodies: Collision/CarWorldContacts.cpp:73 (ContactHistoryLookup), Vehicle/VehicleState.cpp:95 (VehicleContactHistoryLookup)
-DUP-IN-TARGET:0046dbe0:Vehicle/ForceIntegratorLeaves.cpp,Vehicle/VehicleState.cpp   # audit=IDENTICAL; [exe] two bodies: Vehicle/ForceIntegrator.cpp:325 (CarContactCount), Vehicle/VehicleState.cpp:77 (VehicleRacePositionGet)
 DUP-IN-TARGET:004c4d20:Math/RwMatrixRotate.cpp,Race/RaceCamera.cpp   # audit=DIFFERS-BEHAVIOUR; [exe] two bodies: Math/RwMatrixRotate.cpp:52 (), Race/RaceCamera.cpp:66 (RotateAboutAxis)
 DUP-IN-TARGET:0055dec0:Collision/RwpBuildExterns.cpp,Util/UtilLeaves_ab6.cpp   # audit=UNREVIEWED; [exe] two bodies: Collision/RwpBuildExterns.cpp:67 (FUN_0055dec0), Util/UtilLeaves_ab6.cpp:233 (UtilDeref55dec0)
 DUP-IN-TARGET:0055e200:Collision/RwpIntegrator.cpp,Collision/RwpSolverCore23.cpp   # audit=not-in-audit; [exe] two bodies: Collision/RwpIntegrator.cpp:422 (RwpSolverContextSet_impl), Collision/RwpSolverCore23.cpp:140 (RwpSolverContextSet)
@@ -36,7 +34,6 @@ CROSS-TARGET:0040e180:Race/CameraClusterHooks.cpp,Race/RaceCamera.cpp   # audit=
 CROSS-TARGET:00410510:Race/RuleEngine.cpp,Race/ScoringHooks.cpp   # audit=DIFFERS-BEHAVIOUR; exe-only Race/RuleEngine.cpp  vs  asi-only Race/ScoringHooks.cpp
 CROSS-TARGET:0045baa0:Powerup/PowerupSystem.cpp,Util/PromoLoop_sessionB.cpp   # audit=DIFFERS-BEHAVIOUR; exe-only Powerup/PowerupSystem.cpp  vs  asi-only Util/PromoLoop_sessionB.cpp
 CROSS-TARGET:004cc050:D3d9Render/RwWorldStream.cpp,Render/TextureLoader_q6.cpp   # audit=DIFFERS-BEHAVIOUR; exe-only D3d9Render/RwWorldStream.cpp  vs  asi-only Render/TextureLoader_q6.cpp
-CROSS-TARGET:0046b1c0:Vehicle/VehicleContactHull.cpp,Vehicle/VehicleSlotAabbExpand.cpp   # U-9155 2026-09-29: DELIBERATE, split by target. asi-only Vehicle/VehicleSlotAabbExpand.cpp is the C3 Frida-GREEN naked-x87 transcription and writes the ORIGINAL's absolute record array 0x008815a0+slot*0xd04 with ds:[05CC32Ch]/ds:[05CE034h] literals -- none of that is mapped in mashed_re.exe. exe-only Vehicle/VehicleContactHull.cpp:VehicleBuildContactHull (moved verbatim out of Vehicle/VehicleInit.cpp by dcphys 2026-10-21 so that A3 0x0046b540 is one TU in both targets; the split is unchanged) is the same computation over g_records. Same shape as the 0046b540 pair below. Removed VehicleSlotAabbExpand.cpp from exe_sources.rsp (dead there: its RH_ScopedInstall at :215 was its only consumer) so neither target has two bodies.
 
 # --- ADDED 2026-09-30 (U-9156): exposed by the SECOND ANCHORING PASS in
 # scripts/rva_body_scan.py, which binds a body whose `// <rva> <Name>` header
@@ -44,8 +41,6 @@ CROSS-TARGET:0046b1c0:Vehicle/VehicleContactHull.cpp,Vehicle/VehicleSlotAabbExpa
 # guard could not see before, i.e. the 0x0046b1c0 blind spot repeating. They are
 # audit=UNREVIEWED-U9156: STRUCTURAL CANDIDATES, nobody has compared them
 # body-to-body. Allowlisted so the guard stays live; burn-down is ROADMAP D4.
-DUP-IN-TARGET:0040e350:Ai/PromoLoop_round1.cpp,Vehicle/PhysicsChainHooks.cpp   # audit=UNREVIEWED-U9156; [asi] two bodies: Ai/PromoLoop_round1.cpp:153 (GetRenderSubMode), Vehicle/PhysicsChainHooks.cpp:113 (Fi_GameMode)
-CROSS-TARGET:00442c80:Util/UtilMid.cpp,Vehicle/ForceIntegratorLeaves.cpp   # audit=UNREVIEWED-U9156; exe-only Vehicle/ForceIntegrator.cpp  vs  asi-only Util/UtilMid.cpp
 
 # --- ADDED 2026-10-13 (scr19 arrow fix, work/scr19arrow)
 CROSS-TARGET:004282a0:Frontend/MenuMenusB.cpp,exe_main.cpp   # DELIBERATE, split by target. asi-only Frontend/MenuMenusB.cpp:MenuMenusBA is the C3 naked-asm copy that calls the original's FUN_00427780/FUN_004277a0/FUN_005554d0 at their absolute RVAs and reads [0x0067d838]/[0x0067d830] -- none of that exists in mashed_re.exe. exe-only exe_main.cpp:MeasureMenuMessage is the same computation over g_msg_dat/g_font with [0x0067d830] as the measured constant 0x3f7fffff; bit-equal to the original's return for ids 0x59/0x1b2/0x1b1 at 0.6/0.7/0.72 (verify/scr19_parity_20261012/arrow_fix/measure_table.txt). Same shape as 0046b1c0.
@@ -72,3 +67,9 @@ CROSS-TARGET:004cbd30:D3d9Render/RwWorldStream.cpp,Render/TextureLoader_q6.cpp  
 DUP-IN-TARGET:004c39b0:Math/RwLutTables.cpp,Math/RwV3dNormalize.cpp   # audit=DIFFERS-BEHAVIOUR; narrowed 2026-10-16 (dualcopy4): Race/RaceCamera.cpp:Vec3Norm (division by an exact sqrt) is now a call into Math::LutNormalize (d1r2 replay: pose position median 1.105e-4 -> 7.97e-5), so it is no longer a body. What remains is the pair that waits for a USER DECISION: Math/RwLutTables.cpp:LutNormalize = the REAL-LUT body (tables fitted 4096/4096 vs the live original, verify/d3_modes37_20261009/o_rwlut.*.bin; used by Race/PathNodes.cpp and now the race camera) and the global Math/RwV3dNormalize.cpp:RwV3dNormalize, which keeps its exact-sqrt fallback in the exe because it feeds D2 physics (flipping it reopens D2 numbers; memory exe-rw-sqrt-is-exact-not-lut).
 DUP-IN-TARGET:004c4680:Track/WarzonePontoon.cpp,Vehicle/BodyOrientationIntegrate.cpp   # pontoon 2026-10-16, DIFFERS-BEHAVIOUR by design: WarzonePontoon.cpp:OrthoNormalize is transcribed from the listing (verify/pontoon_20261016/disasm_ortho.txt: (y*y+x*x)+z*z sums, LUT inverse sqrt 0x004c3b90, the abs-dot pair selection); BodyOrientationIntegrate.cpp:MatrixOrthoNormalize is std::sqrt with its own selection ([UNCERTAIN] in its header) and feeds the closed D2 physics, so replacing it is a D2 user decision (RESULT_pontoon.md)
 DUP-IN-TARGET:00532b80:D3d9Render/TrackRenderer.cpp,Track/WarzonePontoon.cpp   # pontoon 2026-10-16, DIFFERS-BEHAVIOUR: WarzonePontoon.cpp:KfInterpolate follows the listing (dot ((bx*ax + ay*by) + bz*az) + aw*bw, 0x00532b8f..0x00532bab); TrackRenderer.cpp:LinearAnimMatrix (rhooks, Dump train, default ON) sums the dot in the reverse order. Unifying moves the Dump draw files, so it is a follow-up (RESULT_pontoon.md)
+
+# --- dcleaf (2026-10-22, ROADMAP D4 item 4, the vehicle residue): 5 keys gone. 0046dbe0 and 00468b40 (one body each,
+# Vehicle/VehicleState.cpp, both targets; the exe copies in ForceIntegratorLeaves.cpp / CarWorldContacts.cpp deleted), 00442c80
+# (Vehicle/ForceIntegratorLeaves.cpp is one TU in both rsp files, with 00442ce0; Util/UtilMid.cpp:ModeGatedPlayerCheck deleted),
+# 0040e350 (Vehicle/PhysicsChainHooks.cpp:118 was a false anchor on a call-through, comment reworded) and 0046b1c0 (U-9155 folded:
+# Vehicle/VehicleContactHull.cpp in both rsp files, Vehicle/VehicleSlotAabbExpand.cpp deleted). verify/dcleaf_20261022/RESULT_dcleaf.md.

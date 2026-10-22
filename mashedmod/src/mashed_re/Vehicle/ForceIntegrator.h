@@ -188,7 +188,8 @@ void VehicleWheelForceIntegrate(int* self, float dt, void* xform);
 
 float RubberBandGrip(int car, float current, float band);   // 0x00442ce0
 int   RubberBandGate(int car);                              // 0x00442c80
-int   CarContactCount(int car);                             // 0x0046dbe0
+// FUN_0046dbe0 (the former CarContactCount) is Vehicle/VehicleState.cpp:VehicleRacePositionGet in both targets (dcleaf
+// 2026-10-22). forceint_selftest.cpp (in neither rsp file) still names CarContactCount.
 
 }  // namespace Vehicle
 }  // namespace mashed_re

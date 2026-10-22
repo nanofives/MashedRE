@@ -10,7 +10,8 @@
 // gate satisfied for every entry (at least one callee at C2+).
 //
 // Hook list:
-//   0x00442c80  ModeGatedPlayerCheck       (62b, returns 0/1)
+//   (0x00442c80 ModeGatedPlayerCheck: deleted dcleaf 2026-10-22; the one body is
+//    Vehicle/ForceIntegratorLeaves.cpp:RubberBandGate, installed through RubberBandGateEntry)
 //   0x004950b0  QpcTimeScaledTo3Mhz        (80b, QPC*3e6/freq)
 //   0x004b302f  StricmpThunk               (104b, library __stricmp passthrough)
 //   0x00429aa0  GameStateSlotsFill         (134b, predicate-gated slot fill; re-ported 2026-10-12)
@@ -54,39 +55,6 @@ inline T as_fn(std::uintptr_t rva) {
 }
 
 } // namespace
-
-// ─────────────────────────────────────────────────────────────────────────────
-// 0x00442c80  ModeGatedPlayerCheck
-//
-// 62-byte mode-gated comparison. Returns 1 if all of:
-//   1. FUN_0040e350() == 6
-//   2. DAT_007f0fd0 not in {4, 8, 9}
-//   3. *(float*)(0x008989b0 + param_1*4) > *(float*)0x005cc9b8
-// Otherwise returns 0.
-//
-// Callee 0x0040e350 (game-mode getter, C1) invoked through original RVA.
-// Analysis: re/analysis/util_c0_promote/0x00442c80.md
-// ─────────────────────────────────────────────────────────────────────────────
-namespace {
-constexpr std::uintptr_t kFn_0040e350     = 0x0040e350;
-constexpr std::uintptr_t kDat_007f0fd0    = 0x007f0fd0;
-constexpr std::uintptr_t kDat_008989b0    = 0x008989b0;
-constexpr std::uintptr_t kDat_005cc9b8    = 0x005cc9b8;
-} // namespace
-
-extern "C" __declspec(dllexport) std::uint32_t __cdecl ModeGatedPlayerCheck(int param_1) {
-    const int mode = as_fn<Fn_i_v_t>(kFn_0040e350)();
-    if (mode != 6) return 0u;
-
-    const std::uint32_t submode = *reinterpret_cast<const std::uint32_t*>(kDat_007f0fd0);
-    if (submode == 4u || submode == 8u || submode == 9u) return 0u;
-
-    const float val = *reinterpret_cast<const float*>(kDat_008989b0 + static_cast<std::uintptr_t>(param_1) * 4u);
-    const float thr = *reinterpret_cast<const float*>(kDat_005cc9b8);
-    return (val > thr) ? 1u : 0u;
-}
-
-RH_ScopedInstall(ModeGatedPlayerCheck, 0x00442c80);  // re-enabled 2026-05-24 batch-util
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x004950b0  QpcTimeScaledTo3Mhz
@@ -880,7 +848,7 @@ constexpr std::uintptr_t kDat_0063ba8c   = 0x0063ba8c;
 constexpr std::uintptr_t kDat_007f1014   = 0x007f1014;
 constexpr std::uintptr_t kDat_007f1018   = 0x007f1018;
 constexpr std::uintptr_t kDat_007f0ff4   = 0x007f0ff4;
-// kDat_007f0fd0 already defined at top of file (ModeGatedPlayerCheck namespace).
+constexpr std::uintptr_t kDat_007f0fd0   = 0x007f0fd0;   // (was shared with the deleted ModeGatedPlayerCheck block, dcleaf)
 constexpr std::uintptr_t kDat_008a94d0   = 0x008a94d0;
 constexpr std::uintptr_t kDat_007f1042   = 0x007f1042;
 
