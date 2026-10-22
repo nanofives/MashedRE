@@ -84,6 +84,17 @@ struct Persist {
     int   collectDone  = 0;      // DAT_0063a5d4 (increment FUN_004064c0)
     bool  teams = false;         // DAT_0067ea64 (FUN_0042f500)
     bool  timeAttack = false;    // FUN_0042f6a0() == 2 (mode-2 early-out)
+    // r7keep (2026-10-22, default OFF, MASHED_RULE7_KEEP): rule 7 keeps the score-scan winner when no car's metric is
+    // above 3.0, as 0x0041075a..0x00410798 does (esi is not written on the no-match exit 0x00410790). OFF = the old
+    // `winner = 0`. verify/r7keep_20261022/PREREG_r7keep.md.
+    bool  rule7KeepWinner = false;
+};
+
+// r7keep trace: what EvaluateResult's rule-7 case saw (scan = winner from the two score scans, metric = first car above
+// 3.0 + 1 or 0, ret = the returned value). Filled only for rule 7 when the caller passes it.
+struct Rule7Trace {
+    bool seen = false;
+    int  scan = 0, metric = 0, ret = 0;
 };
 
 // FUN_00405890 (0x00405890): rule-5 win predicate.
@@ -128,7 +139,7 @@ int SegmentCheck(int rule, const Cars& c, const Persist& p,
 //   -1  ended with no winner   -> match/race over (draw / player failed)
 //    0  no conclusion          -> next round (DAT_0063ba8c = 7 path)
 // *p0Won mirrors DAT_007f0fcc (player-0 won).
-int EvaluateResult(int rule, const Cars& c, const Persist& p, bool* p0Won);
+int EvaluateResult(int rule, const Cars& c, const Persist& p, bool* p0Won, Rule7Trace* r7 = nullptr);
 
 }  // namespace RuleEngine
 }  // namespace Race

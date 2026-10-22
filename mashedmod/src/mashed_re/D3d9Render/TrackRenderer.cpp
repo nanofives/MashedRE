@@ -163,6 +163,17 @@ bool RoundEnd7Enabled() {
     return s;
 }
 bool s_roundEnd7 = false;
+// [r7keep] MASHED_RULE7_KEEP (default OFF): rule 7 keeps the score-scan winner (0x00410790), see RuleEngine::Persist.
+// MASHED_RULE7_TRACE=<file>: one line per rule-7 EvaluateResult call. verify/r7keep_20261022/PREREG_r7keep.md.
+bool Rule7KeepEnabled() {
+    static const bool s = [] { const char* e = std::getenv("MASHED_RULE7_KEEP"); return e && e[0] && e[0] != '0'; }();
+    return s;
+}
+const char* Rule7TracePath() {
+    static const char* s = [] { const char* e = std::getenv("MASHED_RULE7_TRACE"); return (e && e[0]) ? e : nullptr; }();
+    return s;
+}
+int s_r7Eval = 0, s_r7Div = 0;
 // [u9779] MASHED_RACE_TAIL_LATE (default OFF), see the end of TrackRenderer::UpdateCar.
 bool RaceTailLateEnabled() {
     static const bool s = [] { const char* e = std::getenv("MASHED_RACE_TAIL_LATE"); return e && e[0] && e[0] != '0'; }();
@@ -8339,7 +8350,25 @@ void TrackRenderer::UpdateRace(float dt) {
         if (seg == 1 ||
             RE::SegmentCheck(rule_, rc, rulep_, false, &runElim) == 1) {
             bool p0 = false;
-            const int r = RE::EvaluateResult(rule_, rc, rulep_, &p0);
+            rulep_.rule7KeepWinner = Rule7KeepEnabled();
+            RE::Rule7Trace r7;
+            const int r = RE::EvaluateResult(rule_, rc, rulep_, &p0, &r7);
+            if (r7.seen) {                     // [r7keep] rule-7 call: count it, and the divergent case
+                ++s_r7Eval;
+                const bool div = (r7.scan != 0 && r7.metric == 0);
+                if (div) ++s_r7Div;
+                if (const char* tp = Rule7TracePath()) {
+                    if (std::FILE* tf = std::fopen(tp, "a")) {
+                        std::fprintf(tf, "R7 round=%d participants=%d scan=%d metric=%d ret=%d keep=%d div=%d "
+                                         "scores=%d,%d,%d,%d alive=%d,%d,%d,%d n_eval=%d n_div=%d\n", round_no_,
+                                     rc.participants, r7.scan, r7.metric, r7.ret, rulep_.rule7KeepWinner ? 1 : 0,
+                                     div ? 1 : 0, rc.score[0], rc.score[1], rc.score[2], rc.score[3],
+                                     rc.alive[0] ? 1 : 0, rc.alive[1] ? 1 : 0, rc.alive[2] ? 1 : 0, rc.alive[3] ? 1 : 0,
+                                     s_r7Eval, s_r7Div);
+                        std::fclose(tf);
+                    }
+                }
+            }
             // once per segment end (round), not per frame
             if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
                 std::fprintf(lf, "RULE-EVAL rule=%d round=%d participants=%d "

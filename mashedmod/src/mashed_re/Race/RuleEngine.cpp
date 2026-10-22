@@ -142,7 +142,7 @@ int SegmentCheck(int rule, const Cars& c, const Persist& p,
 }
 
 // 0x00410510 verbatim skeleton. See header for the caller contract.
-int EvaluateResult(int rule, const Cars& c, const Persist& p, bool* p0Won) {
+int EvaluateResult(int rule, const Cars& c, const Persist& p, bool* p0Won, Rule7Trace* r7) {
     if (p0Won) *p0Won = false;
     // `if (FUN_0042f6a0() == 2) return 0;` — time-attack handled elsewhere.
     if (p.timeAttack) return 0;
@@ -182,12 +182,19 @@ int EvaluateResult(int rule, const Cars& c, const Persist& p, bool* p0Won) {
         if (!c.alive[0]) { winner = -1; concluded = true; break; }
         winner = CollectAllDone(p) ? 1 : 0;
         break;
-    case 7:
-        // first car (0..participants) with metric > 3.0 -> car+1
-        winner = 0;
+    case 7: {
+        // first car (0..participants) with metric > 3.0 -> car+1. The original's loop (0x0041075a) counts in edi
+        // only and leaves esi (the score-scan winner) as it is when no car is above 3.0 (0x00410790). The exe cleared
+        // it; MASHED_RULE7_KEEP (Persist::rule7KeepWinner, default OFF) keeps it.
+        const int scan = winner;
+        if (!p.rule7KeepWinner) winner = 0;
+        int metricWinner = 0;
         for (int i = 0; i < c.participants; ++i)
-            if (kFinishMetric < c.metric[i]) { winner = i + 1; break; }
+            if (kFinishMetric < c.metric[i]) { metricWinner = i + 1; break; }
+        if (metricWinner != 0) winner = metricWinner;
+        if (r7) { r7->seen = true; r7->scan = scan; r7->metric = metricWinner; }
         break;
+    }
     case 8:
         winner = FinishSlotInt(p, 0) + 1;
         if (winner != 1) {                            // car 0 not first
@@ -218,6 +225,7 @@ int EvaluateResult(int rule, const Cars& c, const Persist& p, bool* p0Won) {
         break;                                        // rules {0,1,2,3,6}
     }
 
+    if (r7 && r7->seen) r7->ret = (!concluded && winner == 0) ? 0 : winner;
     // `if (iVar6 == 0) return 0;` (not concluded, no winner -> next round)
     if (!concluded && winner == 0) return 0;
 
