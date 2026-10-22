@@ -184,6 +184,27 @@ int main() {
         eqb("rule 7 p0Won", p0, true);
     }
     {
+        // r7keep (PREREG P3): a segment end with no metric above 3.0 while the score scan found a winner. The original
+        // keeps the scan winner (0x00410790 leaves esi); the old exe law returns 0.
+        Cars c = mkCars(); Persist p; bool p0 = true; Rule7Trace t;
+        for (int i = 0; i < kCars; ++i) { c.active[i] = true; c.alive[i] = true; c.score[i] = 6; c.metric[i] = 0.5f; }
+        c.score[2] = 12;                       // 4 participants: score > 11
+        eqi("r7keep OFF: no metric winner -> 0", EvaluateResult(7, c, p, &p0, &t), 0);
+        eqi("r7keep OFF: trace scan 3", t.scan, 3);
+        eqi("r7keep OFF: trace metric 0", t.metric, 0);
+        p.rule7KeepWinner = true; p0 = true; t = Rule7Trace();
+        eqi("r7keep ON: scan winner kept (3)", EvaluateResult(7, c, p, &p0, &t), 3);
+        eqb("r7keep ON: p0Won false", p0, false);
+        eqi("r7keep ON: trace ret 3", t.ret, 3);
+        c.metric[1] = 3.5f;                    // a metric winner still overrides
+        eqi("r7keep ON: metric winner car1 (2)", EvaluateResult(7, c, p, &p0), 2);
+        c.metric[1] = 0.5f; c.score[2] = 6; c.score[0] = 12;
+        eqi("r7keep ON: car0 scan winner (1)", EvaluateResult(7, c, p, &p0), 1);
+        eqb("r7keep ON: car0 p0Won true", p0, true);
+        c.score[0] = 6;                        // no scan winner either -> 0 both ways
+        eqi("r7keep ON: nothing -> 0", EvaluateResult(7, c, p, &p0), 0);
+    }
+    {
         Cars c = mkCars(); Persist p; bool p0 = false;
         // rule 4: winner = finishOrder[0] + 1 (0 finishers -> -1+1 = 0 -> next
         // round via the `if (iVar6==0) return 0` tail)

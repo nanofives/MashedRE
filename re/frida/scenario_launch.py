@@ -280,7 +280,7 @@ function telStart(){ if (TEL.on) return 'already on';
 //   timeAttack     FUN_0042f6a0()==2   (game-mode getter CALLED)
 const OR = { armed:false, err:null,
   seg:{calls:0, agree:0, mis:0, ret1:0, byRule:{}},
-  ev :{calls:0, agree:0, mis:0, byRule:{}},
+  ev :{calls:0, agree:0, mis:0, byRule:{}, keepAgree:0, lawsDiffer:0},   // r7keep: keep-variant law, see predEval
   ord:{calls:0, agree:0, mis:0, appends:0, resets:0},
   misrec:[], samp:[], lastOrder:null,
   // D3 2026-09-26: per-rule ENTRY-input ranges over EVERY SegmentCheck call, so a
@@ -371,8 +371,9 @@ function predSegment(en, exActive, exAlive){
   else { if (alive === 1) return 1; if (alive === 0) return 1; }
   return 0;
 }
-// RuleEngine::EvaluateResult transcribed (all inputs ENTRY state).
-function predEval(en){
+// RuleEngine::EvaluateResult transcribed (all inputs ENTRY state). keep = r7keep's MASHED_RULE7_KEEP law: rule 7 keeps the
+// score-scan winner when no car is above 3.0 (0x00410790 leaves esi); without it, the exe's default `winner = 0`.
+function predEval(en, keep){
   if (en.mode === 2) return { ret: 0 };
   let winner = 0;
   for (let i = 1; i <= 4; i++){
@@ -396,7 +397,7 @@ function predEval(en){
   case 5: if (!en.alive[0]) { winner = -1; concluded = true; break; }
           winner = (en.collectTotal !== 0 && en.collectDone === en.collectTotal) ? 1 : 0;
           break;
-  case 7: winner = 0;
+  case 7: if (!keep) winner = 0;
           for (let i = 0; i < en.participants; i++)
             if (K.FIN < en.metric[i]) { winner = i + 1; break; }
           break;
@@ -463,10 +464,18 @@ function armOracle(){
       onLeave(ret){ try {
         if (!this.en) return;
         const got = ret.toInt32();
-        const p = predEval(this.en);
+        const p = predEval(this.en, false);
         const fccGot = ga(0x007f0fcc).readS32();
         let ok = (got === p.ret);
         if (ok && got !== 0 && p.fcc !== undefined) ok = (fccGot === p.fcc);
+        const pk = predEval(this.en, true);          // r7keep: the keep law, scored separately
+        let okk = (got === pk.ret);
+        if (okk && got !== 0 && pk.fcc !== undefined) okk = (fccGot === pk.fcc);
+        if (okk) OR.ev.keepAgree++;
+        if (pk.ret !== p.ret || pk.fcc !== p.fcc) {
+          OR.ev.lawsDiffer++;
+          orPush({fn:'ev-lawsdiffer', rule:this.en.rule, got:got, fccGot:fccGot, pred:p, predKeep:pk, en:this.en});
+        }
         const r = this.en.rule;
         OR.ev.calls++;
         OR.ev.byRule[r] = OR.ev.byRule[r] || {calls:0, agree:0, mis:0};
