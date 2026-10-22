@@ -50,6 +50,7 @@ extern "C" void __cdecl UtilZeroTable8964c0();                                //
 extern "C" void __cdecl FUN_004c51a0(float* mtx, float* vec, int combineOp);   // RwMatrixTranslate
 extern "C" std::uint32_t __cdecl IsCarSlotActive(int param_1);                 // 0x0040e370
 extern "C" std::uint32_t __cdecl VehicleSlotGetter(std::uint32_t vehicleIdx);   // 0x0046c7b0
+extern "C" float __cdecl RaceScoreFloatGetBySlot(int param_1);                 // 0x00408ad0 (Frontend/SmallLeaves_t1.cpp)
 extern "C" void __cdecl SplineCubicBlend3(float t, float* out, float* p0, float* p1, float* p2,
                                           float* p3);                           // 0x00482ae0
 #include "../Vehicle/VehicleRecordBase.h"
@@ -163,6 +164,11 @@ bool RoundEnd7Enabled() {
     return s;
 }
 bool s_roundEnd7 = false;
+// [rpct] MASHED_RACEPCT_SLOT (default OFF): RacePct / RaceCamCar::race_pct load the slot 0x008a96ec as FUN_00408ad0 does.
+bool RacePctSlotEnabled() {
+    static const bool s = [] { const char* e = std::getenv("MASHED_RACEPCT_SLOT"); return e && e[0] && e[0] != '0'; }();
+    return s;
+}
 // [r7keep] rule 7 keeps the score-scan winner (0x00410790), see RuleEngine::Persist. Default ON since 2026-10-22
 // (Mariano, verify/r7keep_20261022/RESULT_r7keep.md: no default hash or score moved); MASHED_NO_RULE7_KEEP=1 opts out.
 // MASHED_RULE7_TRACE=<file>: one line per rule-7 EvaluateResult call. verify/r7keep_20261022/PREREG_r7keep.md.
@@ -7413,11 +7419,12 @@ void TrackRenderer::SetTeamPlay(bool on, const int team_of[4]) {
     SeedMatchScores();       // FUN_0040b180 reads FUN_0042f500() (team play)
 }
 
-// 0x00408ad0 equivalent: race progress on a 0..100 scale. Same expression the
-// camera feed uses at the RaceCamCar fill (`prog_in_lap / n * 100`), factored
-// out so the tie-break below reads the identical value the elimination rule
-// does rather than a second approximation of it.
+// Race progress on a 0..100 scale, read by ProgBehind and the step dump. The original's FUN_00408ad0 is a load of the
+// slot 0x008a96ec + car*0x30c (0x00408ada), whose one body here is Frontend/SmallLeaves_t1.cpp:RaceScoreFloatGetBySlot.
+// [rpct] MASHED_RACEPCT_SLOT (default OFF, verify/rpct_20261022/PREREG_rpct.md) returns that load; OFF keeps the stand-in
+// below (`prog_in_lap / n * 100` on the gate count), the same expression FillRaceCamCars uses.
 float TrackRenderer::RacePct(int car) const {
+    if (RacePctSlotEnabled() && car >= 0 && car < kRaceCars) return RaceScoreFloatGetBySlot(car);
     if (car < 0 || car >= kRaceCars || gates_.empty()) return 0.f;
     const float n = static_cast<float>(gates_.size());
     return std::fmod(race_[car].progress, n) / n * 100.f;
@@ -7795,7 +7802,8 @@ void TrackRenderer::FillRaceCamCars(Race::RaceCamCar* cc) {
         const float prog_in_lap =
             std::fmod(race_[i].progress, static_cast<float>(n));
         c.path_prog = prog_in_lap;                       // 0x00408a50 equiv
-        c.race_pct = prog_in_lap / static_cast<float>(n) * 100.f;  // 0x00408ad0
+        c.race_pct = RacePctSlotEnabled() ? RaceScoreFloatGetBySlot(i)              // [rpct] the load 0x00408ad0 does
+                                          : prog_in_lap / static_cast<float>(n) * 100.f;  // stand-in (default)
     }
 }
 
