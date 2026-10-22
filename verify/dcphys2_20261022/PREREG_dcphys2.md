@@ -90,3 +90,23 @@ MASHED_A5_SPIN_FILD MASHED_A4_DOT_ORDER` (all =1). Arms (exe, recipe F): `H_P2` 
 **Decision rule.** If section 3 holds on the final .asi and (b), (e), D2, 13 tracks all pass with `P2` ON, the recommendation to
 Mariano is a default flip of the stack (`Core/FaithDefaults.cpp`); the flip is his decision and is not made in this lane. If a
 gate fails with `P2` ON, the stack stays OFF and the failing gate is reported (then per-knob arms to isolate it).
+
+## 5. Amendment 1 (2026-10-22): default flip of the `P2` stack (Mariano's decision, on this RESULT)
+
+Committed before the flip is measured. Changes: `Core/FaithDefaults.cpp` seeds the eight `P2` knobs (opt-out
+`MASHED_NO_<name>=1` each, master opt-out `MASHED_NO_FAITH=1`); the .asi already seeds all of them. Exe arms on the new default
+build, recipe F, private root.
+
+**Predictions (the `P2` values measured in RESULT section 3 become the default):**
+
+| arm | prediction |
+|---|---|
+| `H_DEF` x2 | `c3bfcef3 / 4ed4849b / 4c3548a1` (= `H_P2`) |
+| `B_DEF_K0 / K1 / K26` | `4985eb3b / b6e3d073 / 6717c15e`; (b) 9/9; (e) PASS 3/3, same values |
+| `D2_DEF_1..3` alone | PASS 3/3, slip 0.1900 / 0.2550 |
+| 13 tracks | the `t13_p2` table (878 rows, 0 RED, all cited). If it differs, the flip build's layout is the suspect (`sim-trajectory-is-code-layout-sensitive`); the `P2` run on the pre-flip exe is the control |
+| `H_NOP2` (all eight `MASHED_NO_*`) | `23ac657a / 7bf2f27f / 3186dd09`, the pre-flip default |
+| `H_NF` (`MASHED_NO_FAITH=1`) | `997f4117 / e6288905 / a63bdcfa`, unchanged (the eight are FAITH knobs) |
+
+Then `0x00468980`, `0x0046ddb0`, `0x00470670` C2 -> C4 through re-classify on the default body's evidence (RESULT section 2, the
+final .asi, whose default already seeds the stack). If any prediction above fails, stop and report; no tracker change.
