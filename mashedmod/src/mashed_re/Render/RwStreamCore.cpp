@@ -148,7 +148,8 @@ std::uint32_t* RwStreamCoreSkip(std::uint32_t* stream, std::uint32_t n)
 //   memory (3), unknown type, and a zero skip: no external effect, so the stream words (9) and the destination bytes
 //     are snapshotted, the original runs twice through a trampoline (noo), then the shared body (ndiff).
 //   file (1, 2): the original runs once, the file is rewound with FUN_005509b0(h, -count, 1), then the shared body runs
-//     (ndiff). A skip the original failed is not re-run (position unknown; counted `unrun`, the original's result kept).
+//     (ndiff). A short read and a failed skip are not re-run (the rewind does not restore the position after either;
+//     counted `unrun`, the original's result kept).
 //   callback (4): the original runs once with the stream's fn / user slots swapped for a recorder that calls the real
 //     callback; the shared body then runs against a replay stub returning the recorded value, and the call count and
 //     arguments are compared (ndiff).
@@ -209,7 +210,7 @@ void Account(int fn, int cls, std::uint32_t type, std::uint32_t n, std::uint32_t
     const LONG t = InterlockedIncrement(&g_total[fn]);
     const char* name = fn == 0 ? "4cbd30" : "4cc050";
     char line[300];
-    if (noo || nd || c <= 4) {
+    if (noo || nd || unrun || c <= 4) {
         wsprintfA(line, "[%ld] fn=%s type=%u n=%u r=%08x m=%08x noo=%d ndiff=%d unrun=%d\r\n", t, name, type, n, r1, rm,
                   noo, nd, unrun);
         StreamLog(line);
@@ -247,8 +248,112 @@ std::uint32_t __cdecl ReplaySkipCb(std::uint32_t rp, std::uint32_t n) {
     return r->ret;
 }
 
+// MASHED_LEAF_SELFTEST_SWEEP=1: once, at the first hooked read, synthetic streams the game does not produce naturally
+// (memory overrun / clamp / 32-bit wrap, unknown types, callback streams on deterministic stubs) through the pure A/B:
+// the original twice (noo), then the shared body (ndiff). Compared: return, the 9 stream words, 96 destination bytes,
+// the stub's recorded arguments, and the RW error slot (*DAT_007d3ff8 + DAT_007d6c5c, 2 dwords; FUN_004d8480 stores
+// only while it holds {0, 0x80000000}, 0x004d848d / 0x004d849c), which each case resets to that clear state first.
+struct SweepCb { std::uint32_t calls, user, dst, n, ret; };
+SweepCb g_scb;
+std::uint32_t __cdecl SweepReadCb(std::uint32_t user, void* dst, std::uint32_t n) {
+    ++g_scb.calls; g_scb.user = user; g_scb.dst = reinterpret_cast<std::uint32_t>(dst); g_scb.n = n;
+    unsigned char* o = static_cast<unsigned char*>(dst);
+    for (std::uint32_t i = 0; i < n && i < 8; ++i) o[i] = static_cast<unsigned char>(0x11 + i);
+    return g_scb.ret;
+}
+std::uint32_t __cdecl SweepSkipCb(std::uint32_t user, std::uint32_t n) {
+    ++g_scb.calls; g_scb.user = user; g_scb.n = n;
+    return g_scb.ret;
+}
+std::uint32_t* SweepErrSlot() {
+    const std::uint32_t g = *reinterpret_cast<std::uint32_t*>(0x007d3ff8u);
+    return g ? reinterpret_cast<std::uint32_t*>(g + *reinterpret_cast<std::uint32_t*>(0x007d6c5cu)) : nullptr;
+}
+struct SweepOut { std::uint32_t ret, w[kWords], err[2]; SweepCb cb; unsigned char dst[96]; };
+unsigned char g_sweepSrc[256];
+unsigned char g_sweepDst[96];
+
+// which: 0 = original read, 1 = original skip, 2 = shared read, 3 = shared skip
+void SweepRun(int which, const std::uint32_t* w0, std::uint32_t n, std::uint32_t cbRet, SweepOut* o) {
+    std::uint32_t s[kWords]; std::memcpy(s, w0, sizeof s);
+    std::memset(g_sweepDst, 0xa5, sizeof g_sweepDst);
+    std::memset(&g_scb, 0, sizeof g_scb); g_scb.ret = cbRet;
+    std::uint32_t* es = SweepErrSlot();
+    if (es) { es[0] = 0; es[1] = 0x80000000u; }
+    switch (which) {
+    case 0: o->ret = ReadOrig(s, g_sweepDst, n); break;
+    case 1: o->ret = reinterpret_cast<std::uint32_t>(SkipOrig(s, n)); break;
+    case 2: o->ret = RwStreamCoreRead(s, g_sweepDst, n); break;
+    default: o->ret = reinterpret_cast<std::uint32_t>(RwStreamCoreSkip(s, n)); break;
+    }
+    // A stream-pointer return is folded to 1 / 0 (each run uses its own local copy of the words).
+    if (which == 1 || which == 3) o->ret = (o->ret == reinterpret_cast<std::uint32_t>(s)) ? 1u : (o->ret ? 2u : 0u);
+    std::memcpy(o->w, s, sizeof s);
+    o->err[0] = es ? es[0] : 0; o->err[1] = es ? es[1] : 0;
+    o->cb = g_scb;
+    std::memcpy(o->dst, g_sweepDst, sizeof g_sweepDst);
+}
+int SweepDiff(const SweepOut& a, const SweepOut& b) {
+    return (a.ret != b.ret) + (std::memcmp(a.w, b.w, sizeof a.w) != 0) + (std::memcmp(a.err, b.err, sizeof a.err) != 0) +
+           (std::memcmp(&a.cb, &b.cb, sizeof a.cb) != 0) + (std::memcmp(a.dst, b.dst, sizeof a.dst) != 0);
+}
+long g_swCases = 0, g_swNoo = 0, g_swNdiff = 0, g_swErr = 0;
+void SweepCase(int skip, const std::uint32_t* w0, std::uint32_t n, std::uint32_t cbRet) {
+    SweepOut o1, o2, om;
+    SweepRun(skip ? 1 : 0, w0, n, cbRet, &o1);
+    SweepRun(skip ? 1 : 0, w0, n, cbRet, &o2);
+    SweepRun(skip ? 3 : 2, w0, n, cbRet, &om);
+    const int noo = SweepDiff(o1, o2), nd = SweepDiff(o1, om);
+    ++g_swCases; g_swNoo += (noo != 0); g_swNdiff += (nd != 0); g_swErr += (o1.err[0] != 0 || o1.err[1] != 0x80000000u);
+    if (noo || nd) {
+        char line[300];
+        wsprintfA(line, "[sw%ld] fn=%s type=%u pos=%u size=%u n=%08x cbret=%08x o=%u/%u/%08x m=%u/%u/%08x noo=%d ndiff=%d\r\n",
+                  g_swCases, skip ? "4cc050" : "4cbd30", w0[0], w0[3], w0[4], n, cbRet, o1.ret, o1.w[3], o1.err[1], om.ret,
+                  om.w[3], om.err[1], noo, nd);
+        StreamLog(line);
+    }
+}
+void StreamSweep() {
+    const char* e = std::getenv("MASHED_LEAF_SELFTEST_SWEEP");
+    if (!e || !e[0] || e[0] == '0') return;
+    std::uint32_t* es = SweepErrSlot();
+    std::uint32_t keep[2] = { es ? es[0] : 0, es ? es[1] : 0 };
+    for (int i = 0; i < 256; ++i) g_sweepSrc[i] = static_cast<unsigned char>(i * 7 + 3);
+    const std::uint32_t base = reinterpret_cast<std::uint32_t>(g_sweepSrc);
+    std::uint32_t w[kWords];
+    // Memory streams, size 64 inside a 256-byte source; pos 70 > size takes the unclamped path (bounded n only).
+    const std::uint32_t pos[] = { 0, 5, 60, 64, 70 };
+    const std::uint32_t rn[] = { 0, 1, 3, 4, 7, 59, 64, 65, 0xfffffff0u };
+    const std::uint32_t sn[] = { 0, 1, 4, 59, 60, 64, 65, 0xfffffffbu, 0x80000000u };
+    for (std::uint32_t p : pos) {
+        std::memset(w, 0, sizeof w); w[0] = 3; w[3] = p; w[4] = 64; w[5] = base;
+        for (std::uint32_t n : rn) if (p <= 64 || n <= 8) SweepCase(0, w, n, 0);
+        for (std::uint32_t n : sn) SweepCase(1, w, n, 0);
+    }
+    // Unknown types: the default case (err 0xe), and a zero skip that returns before the type is read.
+    const std::uint32_t types[] = { 0, 5, 0x80000000u, 0xffffffffu };
+    for (std::uint32_t ty : types) {
+        std::memset(w, 0, sizeof w); w[0] = ty;
+        SweepCase(0, w, 0, 0); SweepCase(0, w, 4, 0); SweepCase(1, w, 0, 0); SweepCase(1, w, 4, 0);
+    }
+    // Callback streams on deterministic stubs.
+    std::memset(w, 0, sizeof w); w[0] = 4; w[4] = reinterpret_cast<std::uint32_t>(&SweepReadCb);
+    w[6] = reinterpret_cast<std::uint32_t>(&SweepSkipCb); w[7] = 0x1234abcdu;
+    const std::uint32_t rr[] = { 0, 3, 8, 0xffffffffu };
+    for (std::uint32_t r : rr) { SweepCase(0, w, 0, r); SweepCase(0, w, 8, r); }
+    const std::uint32_t sr[] = { 0, 1, 0x80000000u };
+    for (std::uint32_t r : sr) { SweepCase(1, w, 0, r); SweepCase(1, w, 5, r); }
+    if (es) { es[0] = keep[0]; es[1] = keep[1]; }
+    char line[200];
+    wsprintfA(line, "SWEEP fn=4cbd30+4cc050 cases=%ld noo=%ld ndiff=%ld err_emitted=%ld errslot=%d\r\n", g_swCases, g_swNoo,
+              g_swNdiff, g_swErr, es ? 1 : 0);
+    StreamLog(line);
+}
+
 __declspec(noinline) std::uint32_t __cdecl ReadDispatch(std::uint32_t* s, void* dst, std::uint32_t size) {
     if (!StreamSelfTestOn() || !s) return RwStreamCoreRead(s, dst, size);
+    static LONG s_swept = 0;
+    if (InterlockedExchange(&s_swept, 1) == 0) StreamSweep();
     const std::uint32_t type = s[0];
     const int cls = ClassOf(type);
     if (size > kMaxBytes) { InterlockedIncrement(&g_big[0]); return RwStreamCoreRead(s, dst, size); }
@@ -279,7 +384,10 @@ __declspec(noinline) std::uint32_t __cdecl ReadDispatch(std::uint32_t* s, void* 
         unsigned char* o1 = r1 ? static_cast<unsigned char*>(std::malloc(r1)) : nullptr;
         if (r1 && !o1) { Account(0, cls, type, size, r1, r1, 0, 0, 1); return r1; }
         if (r1) std::memcpy(o1, dst, r1);
-        if (r1 && HostFileSeek(s[3], static_cast<std::uint32_t>(-static_cast<std::int32_t>(r1)), 1) != 0) {
+        // A short read is not re-run: after one, FUN_005509b0(h, -count, 1) does not restore the read position (t0 run,
+        // 2026-10-22: the original read 0x835a of 0x10000, the re-read after the rewind returned 0x10000).
+        if (r1 != size ||
+            (r1 && HostFileSeek(s[3], static_cast<std::uint32_t>(-static_cast<std::int32_t>(r1)), 1) != 0)) {
             std::free(o1); Account(0, cls, type, size, r1, r1, 0, 0, 1); return r1;
         }
         const std::uint32_t rm = RwStreamCoreRead(s, dst, size);

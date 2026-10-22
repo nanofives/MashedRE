@@ -1,0 +1,23 @@
+== t0
+SUM fn=4cbd30 calls=45568 pure=2883/0/0 file=42685/0/1/u0 cb=0/0/0/u0 big=0
+SUM fn=4cc050 calls=16 pure=3/0/0 file=13/0/0/u0 cb=0/0/0/u0 big=0
+[1177] fn=4cbd30 type=2 n=65536 r=0000835a m=00010000 noo=0 ndiff=1 unrun=0
+== t0b
+SUM fn=4cbd30 calls=45568 pure=2883/0/0 file=42685/0/0/u3 cb=0/0/0/u0 big=0
+SUM fn=4cc050 calls=16 pure=3/0/0 file=13/0/0/u0 cb=0/0/0/u0 big=0
+[1177] fn=4cbd30 type=2 n=65536 r=0000835a m=0000835a noo=0 ndiff=0 unrun=1
+[1416] fn=4cbd30 type=2 n=12 r=00000000 m=00000000 noo=0 ndiff=0 unrun=1
+[30767] fn=4cbd30 type=2 n=12 r=00000000 m=00000000 noo=0 ndiff=0 unrun=1
+== wz
+SUM fn=4cbd30 calls=50176 pure=2883/0/0 file=47293/0/0/u3 cb=0/0/0/u0 big=0
+SUM fn=4cc050 calls=16 pure=3/0/0 file=13/0/0/u0 cb=0/0/0/u0 big=0
+[1177] fn=4cbd30 type=2 n=65536 r=0000835a m=0000835a noo=0 ndiff=0 unrun=1
+[1416] fn=4cbd30 type=2 n=12 r=00000000 m=00000000 noo=0 ndiff=0 unrun=1
+[35294] fn=4cbd30 type=2 n=12 r=00000000 m=00000000 noo=0 ndiff=0 unrun=1
+== sweep
+SUM fn=4cbd30 calls=45568 pure=2883/0/0 file=42685/0/0/u3 cb=0/0/0/u0 big=0
+SUM fn=4cc050 calls=16 pure=3/0/0 file=13/0/0/u0 cb=0/0/0/u0 big=0
+SWEEP fn=4cbd30+4cc050 cases=116 noo=0 ndiff=0 err_emitted=57 errslot=1
+[1177] fn=4cbd30 type=2 n=65536 r=0000835a m=0000835a noo=0 ndiff=0 unrun=1
+[1416] fn=4cbd30 type=2 n=12 r=00000000 m=00000000 noo=0 ndiff=0 unrun=1
+[30767] fn=4cbd30 type=2 n=12 r=00000000 m=00000000 noo=0 ndiff=0 unrun=1

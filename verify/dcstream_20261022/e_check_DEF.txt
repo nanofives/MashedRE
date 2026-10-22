@@ -1,0 +1,7 @@
+D:/MashedWT/dcstream_data/arms/B_DEF_K0.step.csv
+  v1 start=0 n=220 flag=[0] regime0=1 k_own=100 launch=1425.7 ft_median_m0=2551.6 (n=100) ft_median=2254.8 (n=124) wmax=3527.0
+  v2 start=0 n=220 flag=[0] regime0=1 k_own=23 launch=2052.5 ft_median_m0=2052.5 (n=23) ft_median=2648.1 (n=179) wmax=3904.0
+  v3 start=0 n=220 flag=[0] regime0=1 k_own=39 launch=2055.0 ft_median_m0=2278.1 (n=39) ft_median=2691.4 (n=154) wmax=4507.3
+      v1 (e) PASS
+      v2 (e) PASS
+      v3 (e) PASS
