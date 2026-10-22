@@ -1,0 +1,1 @@
+R7 round=1 participants=4 scan=0 metric=4 ret=4 keep=1 div=0 scores=6,6,6,6 alive=1,1,1,1 n_eval=1 n_div=0
