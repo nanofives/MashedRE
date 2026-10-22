@@ -7419,6 +7419,7 @@ void TrackRenderer::SetTeamPlay(bool on, const int team_of[4]) {
     SeedMatchScores();       // FUN_0040b180 reads FUN_0042f500() (team play)
 }
 
+// 0x00408ad0 (stand-in while MASHED_RACEPCT_SLOT is OFF, the dual-copy finding stays allowlisted until a flip)
 // Race progress on a 0..100 scale, read by ProgBehind and the step dump. The original's FUN_00408ad0 is a load of the
 // slot 0x008a96ec + car*0x30c (0x00408ada), whose one body here is Frontend/SmallLeaves_t1.cpp:RaceScoreFloatGetBySlot.
 // [rpct] MASHED_RACEPCT_SLOT (default OFF, verify/rpct_20261022/PREREG_rpct.md) returns that load; OFF keeps the stand-in
