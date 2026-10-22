@@ -1,0 +1,1 @@
+Evidence for lane dcmix (worktree .worktrees/dcmix, branch work/dcmix). Moved off git: build outputs, logs, A/B runs. 2026-10-22
