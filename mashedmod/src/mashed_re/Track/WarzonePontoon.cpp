@@ -21,6 +21,7 @@
 // Anchored to MASHED.exe SHA-256 BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E.
 
 #include "WarzonePontoon.h"
+#include "KfInterpolate.h"
 #include "../Math/RwLutTables.h"
 
 #include <float.h>
@@ -159,67 +160,9 @@ struct Interp {
     IF  f[4];                                                          // +0x4c
 };
 
-// 0x00532b80 RpHAnimStdKeyFrameInterpolate(out, a, b, time, custom): disasm_slerp.txt. b's quaternion is negated IN PLACE
-// when the dot is negative (0x00532bfd..0x00532c1c).
+// RpHAnimStdKeyFrameInterpolate: the body is Track/KfInterpolate.cpp (both targets, lane kfdot); this calls it.
 void KfInterpolate(IF* out, KF* a, KF* b, float time) {
-    float dot = ((b->q[0] * a->q[0] + a->q[1] * b->q[1]) + b->q[2] * a->q[2]) + a->q[3] * b->q[3];   // 0x00532b8f..ab
-    const float u = (time - a->time) / (b->time - a->time);                                          // 0x00532bad..bbc
-    out->t[0] = (b->t[0] - a->t[0]) * u + a->t[0];                                                   // 0x00532bc0..cd
-    out->t[1] = (b->t[1] - a->t[1]) * u + a->t[1];
-    out->t[2] = (b->t[2] - a->t[2]) * u + a->t[2];
-    if (dot < k0) {                                                                                  // 0x00532bf0 jp skip
-        dot = -dot;
-        b->q[0] = -b->q[0]; b->q[1] = -b->q[1]; b->q[2] = -b->q[2]; b->q[3] = -b->q[3];
-    }
-    float wa = k1 - u;                                                                               // 0x00532c1f..c29
-    float wb = u;
-    if (dot < kDot) {                                                                                // 0x00532c2d..c3a
-        const std::uint32_t bits = BF(dot), ab = bits & 0x7fffffffu;
-        float th;
-        if (ab >= 0x3f800000u) {
-            th = (static_cast<std::int32_t>(bits) > 0) ? k0 : kPi;                                   // 0x00532c56..c6d
-        } else if (ab < 0x3f000000u) {
-            if (ab <= 0x23000000u) th = kPio2;                                                       // 0x00532c84
-            else {                                                                                   // 0x00532c91..d01
-                const float z = dot * dot;
-                const float p = ((((((kP5 * z + kP4) * z - kP3) * z + kP2) * z - kP1) * z + kS0) * z);
-                const float q = (((z * kQ4 - kQ3) * z + kQ2) * z - kQ1) * z + k1;
-                const float r = (p / q) * dot;
-                const float w = dot - (kC8 - r);
-                th = kC4 - w;
-            }
-        } else if (static_cast<std::int32_t>(bits) < 0) {                                            // 0x00532d10..dab
-            const float zz = (dot + k1) * kHalf;
-            const float s = Math::LutSqrt(zz);
-            const float p = ((((((zz * kP5 + kP4) * zz - kP3) * zz + kP2) * zz - kP1) * zz + kS0) * zz);
-            const float q = (((zz * kQ4 - kQ3) * zz + kQ2) * zz - kQ1) * zz + k1;
-            const float r = (p / q) * s;
-            const float w = s + (r - kC8);
-            th = kC0 - (w + w);
-        } else {                                                                                     // 0x00532db0..e6f
-            const float zz = (k1 - dot) * kHalf;
-            const float s = Math::LutSqrt(zz);
-            const float df = FB(BF(s) & 0xfffff000u);
-            const float p = ((((((zz * kP5 + kP4) * zz - kP3) * zz + kP2) * zz - kP1) * zz + kS0) * zz);
-            const float q = (((zz * kQ4 - kQ3) * zz + kQ2) * zz - kQ1) * zz + k1;
-            const float r = (p / q) * s;
-            const float c = (zz - df * df) / (df + s);
-            const float w = (r + c) + df;
-            th = w + w;
-        }
-        auto sinp = [](float x) {                                                                    // 0x00532e71..ea9
-            const float x2 = x * x;
-            const float poly = ((((kS5 * x2 - kS4) * x2 + kS3) * x2 - kS2) * x2 + kS1) * x2 - kS0;
-            return poly * (x2 * x) + x;
-        };
-        const float inv = k1 / sinp(th);                                                             // 0x00532eab fdivr
-        wa = sinp(th * wa) * inv;                                                                    // 0x00532eb1..ef3
-        wb = sinp(th * u) * inv;                                                                     // 0x00532ef9..f3b
-    }
-    out->q[0] = wb * b->q[0] + wa * a->q[0];                                                         // 0x00532f43..53
-    out->q[1] = wa * a->q[1] + wb * b->q[1];
-    out->q[2] = wb * b->q[2] + wa * a->q[2];
-    out->q[3] = wa * a->q[3] + wb * b->q[3];
+    KfInterpolateFields(out->q, out->t, a->q, a->t, a->time, b->q, b->t, b->time, time);
 }
 
 // 0x0052de60 RtAnimInterpolatorSetCurrentAnim (disasm_rtanim.txt): time = 0, interpolate each node at 0 between keys

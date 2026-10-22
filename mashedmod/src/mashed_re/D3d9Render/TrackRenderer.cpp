@@ -16,6 +16,7 @@
 #include "../Track/PowerupMarkers.h"  // POWERUPS_GOLD.DFF placement (FUN_00426460)
 #include "../Render/ArcticTrackNodeSlot0.h"  // the real 0x00448940 body + its sea grid
 #include "../Render/TrackHookSlots.h"        // [rhooks U-9713] per-track hook-slot draw model
+#include "../Track/KfInterpolate.h"          // [kfdot] 0x00532b80, the one body (MASHED_KF_INTERP)
 #include "../Track/WarzonePontoon.h"         // [pontoon] Warzone track object 0x00684d18 (MASHED_PONTOON_*)
 #include "../Track/LapLogic.h"      // F4 lap-line crossing sequence (shared w/ test)
 #include "../Txd/TxdDecoder.h"
@@ -2335,7 +2336,8 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                         // [rhooks U-9717] FUN_0047ad40 @ 0x0047ad40, record k at desc + 0x70 + 0xc*k:
                         // +0x70 = arg n-1 (clump), +0x71 = arg n (anim), +0x78 = 0, then arg 1 when
                         // n == 3 (each through __ftol 0x004a2c48). Dump's SetClumpAnim(LINEAR, 0, 3):
-                        // LINEAR is no global of the image, so Lua 4.0 hands nil -> 0 (lua_num).
+                        // COURSE.LUA:133 declares `local LINEAR = 1`, so type 1 (lua_locals): the LinearAnimMatrix
+                        // sampler (FUN_004b47e0). (Corrected kfdot 2026-10-22: this said LINEAR was nil -> 0.)
                         float v0 = 0.f, vc = 0.f, va = 0.f;
                         const std::size_t n = args.size();
                         lua_num(args[n - 2], &vc);
@@ -4476,6 +4478,12 @@ void CopterAnimMatrix(const Track::HAnim& an, float t, float* m) {
     m[12] = m[13] = m[14] = 0.f;
     FUN_004c51a0(m, pos, 2);
 }
+// MASHED_KF_INTERP=1 (lane kfdot, default OFF): LinearAnimMatrix takes the one body of 0x00532b80.
+bool KfInterpOn() {
+    static int v = -1;
+    if (v < 0) { const char* e = std::getenv("MASHED_KF_INTERP"); v = (e && e[0] && e[0] != '0') ? 1 : 0; }
+    return v != 0;
+}
 // [rhooks U-9717] FUN_004b47e0 @ 0x004b47e0, the SetClumpAnim type != 0 sampler: t <= 0 -> key 0,
 // t >= duration -> the last key, else the first key i with key[i+1].time >= t and FUN_00532b80 @
 // 0x00532b80 between keys i and i+1 (quaternion slerp + LINEAR translation), then FUN_00532a60.
@@ -4490,6 +4498,15 @@ void LinearAnimMatrix(Track::HAnim& an, float t, float* m) {
     while (k + 1 < n - 1 && F[k + 1].time < t) ++k;
     Track::HKeyFrame& a = F[k];
     Track::HKeyFrame& b = F[k + 1];
+    // MASHED_KF_INTERP=1 (lane kfdot, default OFF): the one body of 0x00532b80 (Track/KfInterpolate.cpp), i.e. the
+    // listing's dot order ((x + y) + z) + w (0x00532b8f..0x00532bab) and FUN_004c3b30's LUT sqrt (0x00532dc9) where
+    // the code below sums the dot reversed and takes std::sqrt (AnimAcos).
+    if (KfInterpOn()) {
+        Track::HKeyFrame o{};
+        Track::KfInterpolateFields(o.q, o.t, a.q, a.t, a.time, b.q, b.t, b.time, t);
+        AnimKeyMatrix(o, m);
+        return;
+    }
     // dot (w1 w2 + z2 z1 + y1 y2 + x2 x1), u, the translation lerp
     float dot = a.q[3] * b.q[3] + b.q[2] * a.q[2] + a.q[1] * b.q[1] + b.q[0] * a.q[0];
     const float u = (t - a.time) / (b.time - a.time);
