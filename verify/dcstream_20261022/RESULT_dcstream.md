@@ -73,13 +73,15 @@ only by the sweep.
 | D2, 3 runs alone | PASS 3/3 | PASS 3/3, slip 0.1900 / 0.2550 x3, drvmed 1964.25 / 1965.35 / 1965.35, H1 398/400 (`score_d2_DEF.txt`) |
 | 13 tracks | 39 frames, 878 rows, 0 RED | score table identical to rpct's, gates PASS (`tracks_def_score.txt`) |
 
-## 5. Trackers (NOT applied; proposal for Mariano)
+## 5. Trackers (applied 2026-10-22 on Mariano's go, `apply_trackers.py`)
 
 `0x004cbd30`, `0x004cc050`: C2 -> **C3**, `file` = `exe_file` = `mashedmod/src/mashed_re/Render/RwStreamCore.cpp`, frida_diff
 = `D:/MashedWT/dcstream_data/leaf_ab`. The 2026-09-29 demotion reason (two divergent copies) is gone. C4 is not proposed:
 the exe never executes the body (section 1; memory strict-c4-needs-the-body-to-execute), and the callback class and the short-read
 branches have only synthetic evidence. The analysis plates `re/analysis/texture_loader_d3/0x004cbd30.md` / `0x004cc050.md`
 describe the old four-case copy without the error emits; they are superseded by section 2.
+Resolved in the same transaction: U-0111 and U-0112 (the error-constant addresses, section 2) and U-1275 (FUN_004cc5e0's
+assumption that the skip advances by n: `0x004cc0d0` / `0x004cc103`).
 
 ## 6. Left for decisions (unchanged from the kickoff)
 
