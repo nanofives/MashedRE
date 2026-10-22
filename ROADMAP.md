@@ -2949,7 +2949,11 @@ Named D4 work items (added 2026-09-26, previously implicit):
   (Mariano's decision): the knob is default ON, A6a C2 -> C4 on the default body (1440/1440); new default G-CTRL
   `23ac657a / 7bf2f27f / 3186dd09`, B `0e3790c4 / 55b84dd8 / 2324715b`, (b) 9/9, (e) 3/3, D2 3/3, 13 tracks 875 rows 0 RED;
   opt-out `MASHED_NO_A6A_DOT_ORDER=1` = the old trio. U-9783 / U-9784 (standalone inputs) open.
-  A6b / A5 / A4 still have `exe_file != file` in `hooks.csv` but no allowlist entry (the lint under-counts them).
+  **2026-10-22 dcphys2** (`verify/dcphys2_20261022/RESULT_dcphys2.md`): A6b `0x00468980`, A5 `0x0046ddb0` and A4 `0x00470670` are
+  one TU each in both rsp lists (`AeroStabilize.cpp`, `ForceIntegrator.cpp`, `VehicleControl.cpp`), the .asi copies deleted; every
+  knob-off gate unchanged. The faithful forms need eight knobs (stack `P2`, default OFF; seven new); with them the .asi A/B is
+  bit-identical on every sampled call (402 / 3214 / 5403) and every gate passes. Rows at the default body: A6b C4 -> C2, A4 C3 -> C2,
+  A5 C2 (C4 on a flip, Mariano's decision pending). U-9785 / U-9786 open. Physics A-chain dual copies: none left.
   **Each consolidation re-earns the row's C-level through the normal gates** — the exe copy has no
   evidence of its own, and a copy fixed by reading is a C2-grade statement (`re/CONFIDENCE.md`,
   "Which copy the evidence covers").
