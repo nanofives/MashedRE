@@ -14,6 +14,7 @@
 "Ai\AiPostStepBrake.cpp"
 "Ai\AiTrackObjSeek.cpp"
 "Vehicle\ForceIntegrator.cpp"
+"Vehicle\ForceIntegratorLeaves.cpp"
 "Vehicle\ForceIntegratorStubs.cpp"
 "Vehicle\VehicleControl.cpp"
 "Vehicle\Integrate2.cpp"

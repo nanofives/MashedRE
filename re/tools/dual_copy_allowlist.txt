@@ -26,7 +26,7 @@
 DUP-IN-TARGET:00408ad0:D3d9Render/TrackRenderer.cpp,Frontend/SmallLeaves_t1.cpp   # audit=DIFFERS-BEHAVIOUR; [exe] two bodies: D3d9Render/TrackRenderer.cpp:4007 (TrackRenderer::RacePct), Frontend/SmallLeaves_t1.cpp:42 (RaceScoreFloatGetBySlot)
 DUP-IN-TARGET:0042d3e0:Frontend/MenuInit.cpp,Frontend/MenuNavSM.cpp   # audit=DIFFERS-BEHAVIOUR; [exe] two bodies: Frontend/MenuInit.cpp:73 (MenuEntryArrayInit), Frontend/MenuNavSM.cpp:386 (RecordsZero)
 DUP-IN-TARGET:00468b40:Collision/CarWorldContacts.cpp,Vehicle/VehicleState.cpp   # audit=IDENTICAL; [exe] two bodies: Collision/CarWorldContacts.cpp:73 (ContactHistoryLookup), Vehicle/VehicleState.cpp:95 (VehicleContactHistoryLookup)
-DUP-IN-TARGET:0046dbe0:Vehicle/ForceIntegrator.cpp,Vehicle/VehicleState.cpp   # audit=IDENTICAL; [exe] two bodies: Vehicle/ForceIntegrator.cpp:325 (CarContactCount), Vehicle/VehicleState.cpp:77 (VehicleRacePositionGet)
+DUP-IN-TARGET:0046dbe0:Vehicle/ForceIntegratorLeaves.cpp,Vehicle/VehicleState.cpp   # audit=IDENTICAL; [exe] two bodies: Vehicle/ForceIntegrator.cpp:325 (CarContactCount), Vehicle/VehicleState.cpp:77 (VehicleRacePositionGet)
 DUP-IN-TARGET:004c4d20:Math/RwMatrixRotate.cpp,Race/RaceCamera.cpp   # audit=DIFFERS-BEHAVIOUR; [exe] two bodies: Math/RwMatrixRotate.cpp:52 (), Race/RaceCamera.cpp:66 (RotateAboutAxis)
 DUP-IN-TARGET:0055dec0:Collision/RwpBuildExterns.cpp,Util/UtilLeaves_ab6.cpp   # audit=UNREVIEWED; [exe] two bodies: Collision/RwpBuildExterns.cpp:67 (FUN_0055dec0), Util/UtilLeaves_ab6.cpp:233 (UtilDeref55dec0)
 DUP-IN-TARGET:0055e200:Collision/RwpIntegrator.cpp,Collision/RwpSolverCore23.cpp   # audit=not-in-audit; [exe] two bodies: Collision/RwpIntegrator.cpp:422 (RwpSolverContextSet_impl), Collision/RwpSolverCore23.cpp:140 (RwpSolverContextSet)
@@ -45,7 +45,7 @@ CROSS-TARGET:0046b1c0:Vehicle/VehicleContactHull.cpp,Vehicle/VehicleSlotAabbExpa
 # audit=UNREVIEWED-U9156: STRUCTURAL CANDIDATES, nobody has compared them
 # body-to-body. Allowlisted so the guard stays live; burn-down is ROADMAP D4.
 DUP-IN-TARGET:0040e350:Ai/PromoLoop_round1.cpp,Vehicle/PhysicsChainHooks.cpp   # audit=UNREVIEWED-U9156; [asi] two bodies: Ai/PromoLoop_round1.cpp:153 (GetRenderSubMode), Vehicle/PhysicsChainHooks.cpp:113 (Fi_GameMode)
-CROSS-TARGET:00442c80:Util/UtilMid.cpp,Vehicle/ForceIntegrator.cpp   # audit=UNREVIEWED-U9156; exe-only Vehicle/ForceIntegrator.cpp  vs  asi-only Util/UtilMid.cpp
+CROSS-TARGET:00442c80:Util/UtilMid.cpp,Vehicle/ForceIntegratorLeaves.cpp   # audit=UNREVIEWED-U9156; exe-only Vehicle/ForceIntegrator.cpp  vs  asi-only Util/UtilMid.cpp
 
 # --- ADDED 2026-10-13 (scr19 arrow fix, work/scr19arrow)
 CROSS-TARGET:004282a0:Frontend/MenuMenusB.cpp,exe_main.cpp   # DELIBERATE, split by target. asi-only Frontend/MenuMenusB.cpp:MenuMenusBA is the C3 naked-asm copy that calls the original's FUN_00427780/FUN_004277a0/FUN_005554d0 at their absolute RVAs and reads [0x0067d838]/[0x0067d830] -- none of that exists in mashed_re.exe. exe-only exe_main.cpp:MeasureMenuMessage is the same computation over g_msg_dat/g_font with [0x0067d830] as the measured constant 0x3f7fffff; bit-equal to the original's return for ids 0x59/0x1b2/0x1b1 at 0.6/0.7/0.72 (verify/scr19_parity_20261012/arrow_fix/measure_table.txt). Same shape as 0046b1c0.

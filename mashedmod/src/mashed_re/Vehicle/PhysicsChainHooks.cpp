@@ -50,6 +50,8 @@
 namespace mashed_re { namespace Vehicle {
 void Vehicle_Integrate2(int* self, int param_1, float dt, void* wheelBlock, std::uint8_t* input);
 int  VehicleInit(int slot, int trackType);   // A3 0x0046b540 (Vehicle/VehicleInit.cpp)
+void Vehicle_AeroStabilize(int* self, float* orient, float dt);   // A6b 0x00468980 (Vehicle/AeroStabilize.cpp)
+void VehicleWheelForceIntegrate(int* self, float dt, void* xform); // A5 0x0046ddb0 (Vehicle/ForceIntegrator.cpp)
 } }
 // [dcphys 2026-10-21] The .asi's DEFAULT for the shared A6a body = what its former verbatim copy computed (bit-identical
 // on every sampled call, verify/dcphys_20261021): the A6a knobs the standalone seeds through Core/FaithDefaults.cpp
@@ -60,7 +62,12 @@ int  VehicleInit(int slot, int trackType);   // A3 0x0046b540 (Vehicle/VehicleIn
 namespace {
 struct A6aAsiDefaults {
     A6aAsiDefaults() {
-        const char* const ks[] = { "A6A_LC0", "A6A_GEAR_ORDER", "A6A_SPIN_ORDER", "A6A_DRIVE_NORM_LUT", "A6A_DOT_ORDER" };
+        const char* const ks[] = { "A6A_LC0", "A6A_GEAR_ORDER", "A6A_SPIN_ORDER", "A6A_DRIVE_NORM_LUT", "A6A_DOT_ORDER",
+                                   // [dcphys2] A6b: what the deleted verbatim copy computed (Vehicle/AeroStabilize.cpp)
+                                   "A6B_ACOS_CRT", "A6B_NORM_LUT",
+                                   // [dcphys2] A5 (Vehicle/ForceIntegrator.cpp): the drafting test in float / LUT and the
+                                   // face-normal operands in the original's registers (0x0046e6f3..0x0046e728)
+                                   "A5_DRAFT_LUT", "A5_RING_ORDER", "A5_DOT_ORDER", "A5_AIR_F32", "A5_CONTACT_INT", "A5_SPIN_FILD" };
         char on[64], no[64];
         for (const char* k : ks) {
             std::strcpy(on, "MASHED_");    std::strcat(on, k);
@@ -999,78 +1006,80 @@ const int kA5MaxAir = 48;   // reserve a dedicated quota for the airborne susp p
 // per-frame dispatcher invokes A5 for EVERY car; AI opponents (slots 1-3) leave the
 // ground on Arctic's terrain, so their records drive the airborne branch. A dedicated
 // airborne quota (independent of the grounded baseline) lets a longer race fill it.
+// [dcphys2 2026-10-22] PRNG read cursor (the word A5_PrngCursor reads), saved and put back before every run so a
+// random-surface call (key 0xffff32ff, FUN_00472650 x2 at 0x0046e7ac / 0x0046e7c3) draws the same two values in each.
+inline std::uintptr_t* A5_PrngCursorPtr() {
+    int base = *reinterpret_cast<int*>(0x007dc578);
+    int off  = *reinterpret_cast<int*>(0x007d3ff8);
+    if (base == 0) return nullptr;
+    return reinterpret_cast<std::uintptr_t*>(static_cast<char*>(0) + base + 4 + off);
+}
+inline int A5_SelfTestCap() {   // [dcphys2] MASHED_PHYS_SELFTEST_CAP, else MASHED_A6A_SELFTEST_CAP, else 1
+    static int c = -1;
+    if (c < 0) {
+        const char* s = std::getenv("MASHED_PHYS_SELFTEST_CAP");
+        if (!(s && std::atoi(s) > 0)) s = std::getenv("MASHED_A6A_SELFTEST_CAP");
+        c = (s && std::atoi(s) > 0) ? std::atoi(s) : 1;
+    }
+    return c;
+}
 void A5_SelfTest(int* record, float dt, void* xform) {
+    // [dcphys2 2026-10-22] upgraded the way dcphys upgraded A6a: per sampled call, snapshot (record, scratch
+    // 0x00881560..0x0088158f, PRNG cursor), the ORIGINAL, the ORIGINAL again from the snapshot (noo), the old .asi copy
+    // A5_Body (nov, TEMP until the shared body reads clean), then the SHARED body (Vehicle/ForceIntegrator.cpp), whose
+    // output stays live. The compare is the whole 0xd04 record plus the 12 scratch dwords. Quotas x
+    // MASHED_PHYS_SELFTEST_CAP. Past quota the shared body runs (the old `return` skipped A5 for that call).
     const std::uint32_t groundedBits = *reinterpret_cast<std::uint32_t*>((char*)record + 0x9e0);
     const bool airborne = (groundedBits != 0x40800000u);   // != 4.0f
-    if (airborne) { if (g_a5Air >= kA5MaxAir) return; }
-    else          { if (g_a5Gnd >= kA5MaxGnd) return; }
-    static std::uint8_t snapRec[0xd04];
-    static std::uint8_t snapScr[0x30];   // 0x881560..0x881590
-    char* scr = reinterpret_cast<char*>(0x00881560);
+    const int cap = A5_SelfTestCap();
+    const bool sample = airborne ? (g_a5Air < kA5MaxAir * cap) : (g_a5Gnd < kA5MaxGnd * cap);
+    if (!sample) { mashed_re::Vehicle::VehicleWheelForceIntegrate(record, dt, xform); return; }
 
-    // snapshot input state
+    static std::uint8_t snapRec[0xd04], origRec[0xd04], o2Rec[0xd04], verbRec[0xd04];
+    static std::uint8_t snapScr[0x30], origScr[0x30], o2Scr[0x30], verbScr[0x30];
+    std::uint8_t* scr = reinterpret_cast<std::uint8_t*>(0x00881560);
+    std::uintptr_t* cur = A5_PrngCursorPtr();
+    const std::uintptr_t cur0 = cur ? *cur : 0;
     std::memcpy(snapRec, record, 0xd04);
     std::memcpy(snapScr, scr, 0x30);
-    std::uintptr_t prngBefore = A5_PrngCursor();
+    auto restore = [&]() { std::memcpy(record, snapRec, 0xd04); std::memcpy(scr, snapScr, 0x30); if (cur) *cur = cur0; };
+    auto ndw = [](const std::uint8_t* x, const std::uint8_t* y, int n) {
+        int d = 0; for (int off = 0; off < n; off += 4)
+            if (*reinterpret_cast<const std::uint32_t*>(x + off) != *reinterpret_cast<const std::uint32_t*>(y + off)) d++;
+        return d; };
 
-    // (1) ORIGINAL A5 on the live record (Call_OrigA5 re-runs the original body,
-    //     bypassing our inline-JMP; forwards dt+xform, EDI=record).
-    Call_OrigA5(record, dt, xform);
-    std::uintptr_t prngAfter = A5_PrngCursor();
-    const bool rngFired = (prngBefore != prngAfter) && (prngBefore != 0);
+    Call_OrigA5(record, dt, xform);                                        // (1) original
+    const bool rngFired = cur && (*cur != cur0);
+    std::memcpy(origRec, record, 0xd04); std::memcpy(origScr, scr, 0x30);
+    restore(); Call_OrigA5(record, dt, xform);                             // (2) original again: noo
+    std::memcpy(o2Rec, record, 0xd04); std::memcpy(o2Scr, scr, 0x30);
+    restore(); A5_Body(record, dt, xform);                                 // (3) old .asi copy: nov (TEMP)
+    std::memcpy(verbRec, record, 0xd04); std::memcpy(verbScr, scr, 0x30);
+    restore(); mashed_re::Vehicle::VehicleWheelForceIntegrate(record, dt, xform);   // (4) shared, live
 
-    // capture original outputs (record + scratch)
-    std::uint32_t origRec[32]; int nr = 0;
-    for (int off : kA5RecOffs)   origRec[nr++] = *reinterpret_cast<std::uint32_t*>((char*)record + off);
-    std::uint32_t origWh[8]; int nw = 0;
-    for (int off : kA5WheelOffs) {
-        origWh[nw++] = *reinterpret_cast<std::uint32_t*>((char*)record + off);       // susp X (+0x20)
-        origWh[nw++] = *reinterpret_cast<std::uint32_t*>((char*)record + off + 8);    // susp Z (+0x28)
-    }
-    std::uint32_t origScr[12];
-    std::memcpy(origScr, scr, 0x30);
-
-    // restore input state, run MY A5_Body
-    std::memcpy(record, snapRec, 0xd04);
-    std::memcpy(scr, snapScr, 0x30);
-    A5_Body(record, dt, xform);
-
-    // compare
+    const int noo = ndw(o2Rec, origRec, 0xd04) + ndw(o2Scr, origScr, 0x30);
+    const int nov = ndw(verbRec, origRec, 0xd04) + ndw(verbScr, origScr, 0x30);
+    const int nvs = ndw(verbRec, (const std::uint8_t*)record, 0xd04) + ndw(verbScr, scr, 0x30);
     int mism = 0; char line[1024]; int p = 0;
-    nr = 0;
-    for (int off : kA5RecOffs) {
-        std::uint32_t mv = *reinterpret_cast<std::uint32_t*>((char*)record + off);
-        // exclude RNG-derived +0xb00/+0xb08 if the original consumed PRNG (not replayed)
-        const bool isRng = (off == 0xb00) || (off == 0xb08);
-        if (isRng && rngFired) { nr++; continue; }
-        if (mv != origRec[nr]) { mism++;
-            if (p < 900) p += wsprintfA(line+p, " +0x%x:o=%08x,m=%08x", off, origRec[nr], mv); }
-        nr++;
+    for (int off = 0; off < 0xd04; off += 4) {
+        const std::uint32_t ov = *reinterpret_cast<const std::uint32_t*>(origRec + off);
+        const std::uint32_t mv = *reinterpret_cast<const std::uint32_t*>((char*)record + off);
+        if (mv != ov) { mism++; if (p < 900) p += wsprintfA(line+p, " +0x%x:o=%08x,m=%08x", off, ov, mv); }
     }
-    nw = 0;
-    for (int off : kA5WheelOffs) {
-        std::uint32_t mx = *reinterpret_cast<std::uint32_t*>((char*)record + off);
-        std::uint32_t mz = *reinterpret_cast<std::uint32_t*>((char*)record + off + 8);
-        if (mx != origWh[nw]) { mism++; if (p < 900) p += wsprintfA(line+p, " w+0x%x:o=%08x,m=%08x", off, origWh[nw], mx); }
-        nw++;
-        if (mz != origWh[nw]) { mism++; if (p < 900) p += wsprintfA(line+p, " w+0x%x:o=%08x,m=%08x", off+8, origWh[nw], mz); }
-        nw++;
-    }
-    std::uint32_t mineScr[12];
-    std::memcpy(mineScr, scr, 0x30);
     for (int i = 0; i < 12; ++i) {
-        if (mineScr[i] != origScr[i]) { mism++;
-            if (p < 900) p += wsprintfA(line+p, " scr[%d]:o=%08x,m=%08x", i, origScr[i], mineScr[i]); }
+        const std::uint32_t ov = reinterpret_cast<const std::uint32_t*>(origScr)[i];
+        const std::uint32_t mv = reinterpret_cast<const std::uint32_t*>(scr)[i];
+        if (mv != ov) { mism++; if (p < 900) p += wsprintfA(line+p, " scr[%d]:o=%08x,m=%08x", i, ov, mv); }
     }
     if (rngFired) g_a5RngHits++;
     if (airborne) g_a5Air++; else g_a5Gnd++;
 
-    char hdr[220];
+    char hdr[260];
     int grounded = *reinterpret_cast<int*>((char*)record + 0x9e0);
     int slot = (int)(((std::uintptr_t)record - 0x008815a0) / 0xd04);
-    wsprintfA(hdr, "[%d] slot=%d dt=%08x grounded=%08x air=%d rng=%d ndiff=%d%s\r\n",
+    wsprintfA(hdr, "[%d] slot=%d dt=%08x grounded=%08x air=%d rng=%d noo=%d nov=%d nvs=%d ndiff=%d%s\r\n",
               g_a5Count, slot, *reinterpret_cast<std::uint32_t*>(&dt), grounded,
-              airborne ? 1 : 0, rngFired ? 1 : 0, mism, mism ? "" : " OK");
+              airborne ? 1 : 0, rngFired ? 1 : 0, noo, nov, nvs, mism, mism ? "" : " OK");
     A5_SelfTestLog(hdr);
     if (mism) { line[p] = 0; A5_SelfTestLog("   "); A5_SelfTestLog(line); A5_SelfTestLog("\r\n"); }
     g_a5Count++;
@@ -1085,7 +1094,7 @@ void A5_Hook(int* record, float dt, void* xform) {
     if (A5_SelfTestEnabled())
         A5_SelfTest(record, dt, xform);
     else
-        A5_Body(record, dt, xform);
+        mashed_re::Vehicle::VehicleWheelForceIntegrate(record, dt, xform);   // [dcphys2] the shared body
 }
 
 __declspec(naked) void A5_Entry() {
@@ -1217,7 +1226,11 @@ const int kA6aMaxAir   = 32;
 // residual a x20 sample shows (verify/dcphys_20261021).
 inline int A6a_SelfTestCap() {
     static int c = -1;
-    if (c < 0) { const char* s = std::getenv("MASHED_A6A_SELFTEST_CAP"); c = (s && std::atoi(s) > 0) ? std::atoi(s) : 1; }
+    if (c < 0) {   // [dcphys2] MASHED_PHYS_SELFTEST_CAP sets every physics self-test's cap; the A6a name still works
+        const char* s = std::getenv("MASHED_PHYS_SELFTEST_CAP");
+        if (!(s && std::atoi(s) > 0)) s = std::getenv("MASHED_A6A_SELFTEST_CAP");
+        c = (s && std::atoi(s) > 0) ? std::atoi(s) : 1;
+    }
     return c;
 }
 void A6a_SelfTest(int* record, int param_1, float dt, void* param_3, std::uint8_t* input) {
@@ -1232,7 +1245,9 @@ void A6a_SelfTest(int* record, int param_1, float dt, void* param_3, std::uint8_
     if (brake    && g_a6aBrake < kA6aMaxBrake * cap) admit = true;
     if (accel    && g_a6aAccel < kA6aMaxAccel * cap) admit = true;
     if (idle     && g_a6aIdle  < kA6aMaxIdle  * cap) admit = true;
-    if (!admit) return;
+    // [dcphys2] past quota the shared body runs (the old `return` skipped A6a for that call, so every later sample
+    // started from a record that had missed A6a on the skipped frames)
+    if (!admit) { mashed_re::Vehicle::Vehicle_Integrate2(record, param_1, dt, param_3, input); return; }
     if (airborne) ++g_a6aAir;
     if (brake)    ++g_a6aBrake;
     if (accel)    ++g_a6aAccel;
@@ -1609,71 +1624,84 @@ const int kA6bMaxGnd = 8;    // a few grounded no-op rows only
 // dedicated AIRBORNE quota (independent of the grounded-no-op quota) so a longer race
 // fills it from whichever car (player or AI) actually goes airborne.
 void A6b_SelfTest(int* record, void* xform, float dt) {
+    // [dcphys2 2026-10-22] upgraded the way dcphys upgraded A6a: per sampled call, snapshot, the ORIGINAL, the
+    // ORIGINAL again from the snapshot (noo, the no-op control), the verbatim asm copy (nov, TEMP until the shared
+    // body reads clean), then the SHARED body (Vehicle/AeroStabilize.cpp), whose output stays live. The compare is the
+    // whole 0xd04 record plus the 16 matrix floats (the matrix lies inside the record at +0x928 + ring*0x40, but the
+    // pointer is the caller's and is compared on its own). Quotas x MASHED_PHYS_SELFTEST_CAP. Past quota the shared
+    // body runs (never skip the function). The original writes nothing outside the record and the matrix
+    // (0x00468980..0x00468b34 has no absolute store; its leaves FUN_004a3384 / FUN_004c4d20 / FUN_004c39b0 write
+    // the matrix, the dir copy on the stack, and FUN_004c39b0's error path only when |v| <= 0).
     const bool airborne = (*reinterpret_cast<float*>((char*)record + 0x9e0) == 0.0f);
     const bool haveXform = (xform != nullptr);
-    // NON-PERTURBING verification (2026-06-23): the ORIGINAL always runs and is LEFT as the
-    // live game state, so the race follows faithful physics even when our body diverges (the
-    // old "leave mine" + "skip past quota" perturbed the run — a skipped aero corrupts the
-    // rest of the race and flung the car off ramps). MINE is measured on a restored copy.
-    // Past the per-branch sample quota we STILL run the original (never skip the function).
-    // A6b's only side effects are record + xform (pure aero math, no PRNG), so snapshot/
-    // restore of those two makes the two runs independent.
-    const bool sample = airborne ? (g_a6bAir < kA6bMaxAir) : (g_a6bGnd < kA6bMaxGnd);
-    if (!sample) { Call_OrigA6b(record, xform, dt); return; }   // quota full: run original only
+    const int cap = A6a_SelfTestCap();
+    const bool sample = airborne ? (g_a6bAir < kA6bMaxAir * cap) : (g_a6bGnd < kA6bMaxGnd * cap);
+    if (!sample) { mashed_re::Vehicle::Vehicle_AeroStabilize(record, static_cast<float*>(xform), dt); return; }
 
-    static std::uint8_t snapRec[0xd04];
-    static std::uint8_t snapXf[64];
+    static std::uint8_t snapRec[0xd04], origRec[0xd04], o2Rec[0xd04], verbRec[0xd04];
+    static std::uint8_t snapXf[64], origXf[64], o2Xf[64], verbXf[64];
     std::memcpy(snapRec, record, 0xd04);
     if (haveXform) std::memcpy(snapXf, xform, 64);
+    auto restore = [&]() { std::memcpy(record, snapRec, 0xd04); if (haveXform) std::memcpy(xform, snapXf, 64); };
+    auto ndw = [](const std::uint8_t* a, const std::uint8_t* b, int n) {
+        int d = 0; for (int off = 0; off < n; off += 4)
+            if (*reinterpret_cast<const std::uint32_t*>(a + off) != *reinterpret_cast<const std::uint32_t*>(b + off)) d++;
+        return d; };
 
-    // (1) MINE on the live copy — capture its outputs.
-    Call_A6bBody(record, xform, dt);
-    std::uint32_t mineRec[4]; int nr = 0;
-    for (int off : kA6bRecOffs) mineRec[nr++] = *reinterpret_cast<std::uint32_t*>((char*)record + off);
-    std::uint32_t mineXf[16];
-    if (haveXform) std::memcpy(mineXf, xform, 64);
+    Call_OrigA6b(record, xform, dt);                                       // (1) original
+    std::memcpy(origRec, record, 0xd04); if (haveXform) std::memcpy(origXf, xform, 64);
+    restore(); Call_OrigA6b(record, xform, dt);                            // (2) original again: noo
+    std::memcpy(o2Rec, record, 0xd04); if (haveXform) std::memcpy(o2Xf, xform, 64);
+    restore(); Call_A6bBody(record, xform, dt);                            // (3) verbatim asm copy: nov (TEMP)
+    std::memcpy(verbRec, record, 0xd04); if (haveXform) std::memcpy(verbXf, xform, 64);
+    restore(); mashed_re::Vehicle::Vehicle_AeroStabilize(record, static_cast<float*>(xform), dt);   // (4) shared, live
 
-    // (2) restore, run the ORIGINAL, and LEAVE its output as the faithful game state.
-    std::memcpy(record, snapRec, 0xd04);
-    if (haveXform) std::memcpy(xform, snapXf, 64);
-    Call_OrigA6b(record, xform, dt);
-    std::uint32_t origRec[4]; nr = 0;
-    for (int off : kA6bRecOffs) origRec[nr++] = *reinterpret_cast<std::uint32_t*>((char*)record + off);
-    std::uint32_t origXf[16];
-    if (haveXform) std::memcpy(origXf, xform, 64);
-
-    int mism = 0; char line[1024]; int p = 0;
-    for (int i = 0; i < nr; ++i) {
-        if (mineRec[i] != origRec[i]) { mism++;
-            if (p < 900) p += wsprintfA(line+p, " +0x%x:o=%08x,m=%08x", kA6bRecOffs[i], origRec[i], mineRec[i]); }
+    const int noo = ndw(o2Rec, origRec, 0xd04) + (haveXform ? ndw(o2Xf, origXf, 64) : 0);
+    const int nov = ndw(verbRec, origRec, 0xd04) + (haveXform ? ndw(verbXf, origXf, 64) : 0);
+    const int nvs = ndw(verbRec, (const std::uint8_t*)record, 0xd04) + (haveXform ? ndw(verbXf, (const std::uint8_t*)xform, 64) : 0);
+    // [dcphys2] the matrix's three pad words (m[7] / m[11] / m[15], RwMatrix pad1..3) are counted as npad, not ndiff.
+    // FUN_004c4d20 leaves them holding whatever its stack held (the original's values on the first boosted run:
+    // 0x001af78c, a stack address, and 0x004a7070, a return address inside the CRT acos exit path 0x004a7047..), so
+    // they follow the caller's stack depth, not a computed value. Their reader FUN_004dc410 (A5's vector transform,
+    // device slot +0x14) overwrites lane 3 of every row with lane 2 (SHUFPS 0xa4 at 0x004dc43a / 0x004dc441 /
+    // 0x004dc448) and stores three lanes, so it never uses them. noo / nov / nvs still count them.
+    const int padRel = haveXform ? (int)((char*)xform - (char*)record) : -1000;
+    auto isPadOff = [&](int off) { return off == padRel + 0x1c || off == padRel + 0x2c || off == padRel + 0x3c; };
+    int mism = 0, npad = 0; char line[1024]; int p = 0;
+    for (int off = 0; off < 0xd04; off += 4) {
+        const std::uint32_t ov = *reinterpret_cast<const std::uint32_t*>(origRec + off);
+        const std::uint32_t mv = *reinterpret_cast<const std::uint32_t*>((char*)record + off);
+        if (mv != ov) {
+            if (isPadOff(off)) { npad++; continue; }
+            mism++; if (p < 900) p += wsprintfA(line+p, " +0x%x:o=%08x,m=%08x", off, ov, mv); }
     }
     if (haveXform) {
         for (int i = 0; i < 16; ++i) {
-            if (mineXf[i] != origXf[i]) { mism++;
-                if (p < 900) p += wsprintfA(line+p, " m[%d]:o=%08x,m=%08x", i, origXf[i], mineXf[i]); }
+            const std::uint32_t ov = reinterpret_cast<const std::uint32_t*>(origXf)[i];
+            const std::uint32_t mv = reinterpret_cast<const std::uint32_t*>(xform)[i];
+            if (mv != ov) {
+                if (i == 7 || i == 11 || i == 15) { npad++; continue; }
+                mism++; if (p < 900) p += wsprintfA(line+p, " m[%d]:o=%08x,m=%08x", i, ov, mv); }
         }
     }
     if (airborne) g_a6bAir++;
     else          g_a6bGnd++;
 
-    char hdr[280];
+    char hdr[320];
     int state = *reinterpret_cast<int*>((char*)record + 0x9f0);
     // slot = (record - DAT_008815a0) / 0xd04 : 0=player, 1..3=AI opponents
     int slot = (int)(((std::uintptr_t)record - 0x008815a0) / 0xd04);
-    // U-9149 DISPATCH WITNESS (2026-09-29). The self-test compares two runs that share
-    // the SAME ESI, so it can go green on a WRONG ESI (memory: inherited-green-may-be-
-    // guard-only). Log the pointer we were actually handed against the one the original
-    // computes at 0x0047068e/0x00470696/0x00470699 and stores to A4's E+0x0c slot at
-    // 0x004706a2 — the slot 0x0047093b reloads into ESI. xfok=1 means the dispatch that
-    // reached us matches the original's. With A4 NOT hooked this witnesses the ORIGINAL's
-    // dispatch; with A4 hooked it witnesses Call_A6b.
+    // U-9149 DISPATCH WITNESS (2026-09-29). The self-test compares runs that share the SAME ESI, so it can go green
+    // on a WRONG ESI (memory: inherited-green-may-be-guard-only). Log the pointer we were handed against the one the
+    // original computes at 0x0047068e/0x00470696/0x00470699 and stores to A4's E+0x0c slot at 0x004706a2, the slot
+    // 0x0047093b reloads into ESI. With A4 NOT hooked this witnesses the ORIGINAL's dispatch; with A4 hooked, Call_A6b.
     const void* expectXf = (const void*)((char*)record
                             + *reinterpret_cast<int*>((char*)record + 0x9a8) * 0x40 + 0x928);
-    wsprintfA(hdr, "[%d] slot=%d dt=%08x air=%d state=%d xform=%d xf=%08x exp=%08x xfok=%d ndiff=%d%s\r\n",
+    wsprintfA(hdr, "[%d] slot=%d dt=%08x air=%d state=%d xform=%d xf=%08x exp=%08x xfok=%d noo=%d nov=%d nvs=%d npad=%d ndiff=%d%s\r\n",
               g_a6bCount, slot, *reinterpret_cast<std::uint32_t*>(&dt), airborne ? 1 : 0,
               state, haveXform ? 1 : 0, (unsigned)(std::uintptr_t)xform,
               (unsigned)(std::uintptr_t)expectXf, (xform == expectXf) ? 1 : 0,
-              mism, mism ? "" : " OK");
+              noo, nov, nvs, npad, mism, mism ? "" : " OK");
     A6b_SelfTestLog(hdr);
     if (mism) { line[p] = 0; A6b_SelfTestLog("   "); A6b_SelfTestLog(line); A6b_SelfTestLog("\r\n"); }
     g_a6bCount++;
@@ -1693,10 +1721,8 @@ void A6b_SelfTest(int* record, void* xform, float dt) {
 void A6b_Hook(int* record, void* xform, float dt) {
     if (A6b_SelfTestEnabled())
         A6b_SelfTest(record, xform, dt);
-    else {
-        // run the verbatim body for real (ECX=record, ESI=xform, dt on stack)
-        Call_A6bBody(record, xform, dt);
-    }
+    else
+        mashed_re::Vehicle::Vehicle_AeroStabilize(record, static_cast<float*>(xform), dt);   // [dcphys2] the shared body
 }
 
 __declspec(naked) void A6b_Entry() {
