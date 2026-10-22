@@ -405,6 +405,7 @@ STACK['SR'] = ['MASHED_SPEED_REFRESH=1']   # report only: (e) sensitivity to the
 # dcphys2 (PREREG_dcphys2.md section 4): the A6b / A5 / A4 shared-body knobs (all default OFF in the exe)
 STACK['P2'] = ['MASHED_A6B_ACOS_CRT', 'MASHED_A6B_NORM_LUT', 'MASHED_A5_RING_ORDER', 'MASHED_A5_DOT_ORDER', 'MASHED_A5_AIR_F32',
                'MASHED_A5_CONTACT_INT', 'MASHED_A5_SPIN_FILD', 'MASHED_A4_DOT_ORDER']
+STACK['NOP2'] = [k.replace('MASHED_', 'MASHED_NO_', 1) for k in STACK['P2']]   # PREREG amendment 1: the opt-out after the flip
 
 for name in sys.argv[1:]:
     CUR['name'] = name

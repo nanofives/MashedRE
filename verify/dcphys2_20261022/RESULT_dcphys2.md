@@ -123,3 +123,22 @@ natural air, A5 random surface, `A5_CONTACT_INT` unobserved).
    and 3 moved 13-track rows (13_Training, 0 RED, all cited). If flipped, the three rows go C4.
 2. `A5_CONTACT_INT` has no measured effect. Keep it in the stack (it is what `0x0046e761` does) or drop it?
 3. Not merged; the shared `original/mashed_re_dev.asi` is not redeployed.
+
+## 6. Amendment 1 (2026-10-22): the `P2` stack default ON (Mariano's decision)
+
+PREREG section 5 (commit `dc975a059`, before the flip was measured). `Core/FaithDefaults.cpp` seeds the eight knobs; the .asi
+already seeded them (unchanged). Flip build exe `cb16cd12` / asi `f441cae4` (`D:\MashedWT\dcphys2_data\flip`); arms in
+`D:\MashedWT\dcphys2_data\arms_flip`. **Every prediction held.**
+
+| arm | prediction | measured |
+|---|---|---|
+| `H_DEF` x2 | `c3bfcef3 / 4ed4849b / 4c3548a1` | equal, x2 |
+| `B_DEF_K0 / K1 / K26` | `4985eb3b / b6e3d073 / 6717c15e`; (b) 9/9; (e) 3/3 same values | equal; 9/9; PASS 3/3, launch 1425.7 / 2052.5 / 2055.0 |
+| `D2_DEF_1..3` alone | PASS 3/3 | PASS 3/3: slip 0.1900 / 0.2550 x3, drvmed 1964.25 / 1965.67 / 1964.25, H1 398/400 x3 |
+| 13 tracks | the `t13_p2` table | identical: 39 frames, 878 rows, 0 RED, all cited, gates PASS (no layout effect) |
+| `H_NOP2` (all eight `MASHED_NO_*`) | `23ac657a / 7bf2f27f / 3186dd09` | equal |
+| `H_NF` | `997f4117 / e6288905 / a63bdcfa` | equal |
+
+`0x00468980`, `0x0046ddb0`, `0x00470670` C2 -> C4 through re-classify (`apply_trackers2.py`): hook live, canonical scenario, the
+default body bit-identical to the original on every sampled call of the final .asi (402 / 3214 / 5403, `noo` 0), no stub in the
+body. Open: U-9784 / U-9785 (exe inputs), U-9786 (coverage).

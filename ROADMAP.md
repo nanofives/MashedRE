@@ -2953,7 +2953,9 @@ Named D4 work items (added 2026-09-26, previously implicit):
   one TU each in both rsp lists (`AeroStabilize.cpp`, `ForceIntegrator.cpp`, `VehicleControl.cpp`), the .asi copies deleted; every
   knob-off gate unchanged. The faithful forms need eight knobs (stack `P2`, default OFF; seven new); with them the .asi A/B is
   bit-identical on every sampled call (402 / 3214 / 5403) and every gate passes. Rows at the default body: A6b C4 -> C2, A4 C3 -> C2,
-  A5 C2 (C4 on a flip, Mariano's decision pending). U-9785 / U-9786 open. Physics A-chain dual copies: none left.
+  A5 C2. **2026-10-22 p2flip** (Mariano's decision): `P2` default ON, all three C2 -> C4 on the default body; new default G-CTRL
+  `c3bfcef3 / 4ed4849b / 4c3548a1`, B `4985eb3b / b6e3d073 / 6717c15e`, (b) 9/9, (e) 3/3, D2 3/3, 13 tracks 878 rows 0 RED; opt-out
+  = the `23ac657a` trio. U-9785 / U-9786 open. Physics A-chain dual copies: none left.
   **Each consolidation re-earns the row's C-level through the normal gates** — the exe copy has no
   evidence of its own, and a copy fixed by reading is a C2-grade statement (`re/CONFIDENCE.md`,
   "Which copy the evidence covers").

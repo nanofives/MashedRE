@@ -35,9 +35,9 @@ track            row  orig  matched  orig tri   m.tri  m.tri% | rows cited  red 
 12_City          761   512      486     42182   40964   97.1% |   18    18    0 CITED
 12_City          801   496      469     41692   40424   97.0% |   20    20    0 CITED
 12_City          836   444      416     34493   33403   96.8% |   21    21    0 CITED
-13_Training      884   242      215     18128   17478   96.4% |   20    20    0 CITED
-13_Training      924   257      211     18358   17440   95.0% |   20    20    0 CITED
-13_Training      959   233      209     18079   17423   96.4% |   20    20    0 CITED
+13_Training      884   242      213     18128   17286   95.4% |   21    21    0 CITED
+13_Training      924   257      209     18358   17248   94.0% |   21    21    0 CITED
+13_Training      959   233      207     18079   17231   95.3% |   21    21    0 CITED
 
 INSTRUMENT GATES: PASS
 
