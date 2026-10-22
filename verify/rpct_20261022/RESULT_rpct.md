@@ -44,7 +44,27 @@ victim is not scored.
 
 11 findings, 0 NEW: `0x00408ad0` stays allowlisted while the stand-in is the default (`RacePct` keeps its `// 0x00408ad0` anchor).
 
-## Decisions for Mariano
+## Decision (Mariano, 2026-10-22): flipped default ON on P1, merged. REFERENCES REBASED
+
+Mariano accepted P1 (the readers now load the original's quantity into the original's law) and the unscored round-4 victim
+change. `RacePctSlotEnabled()` is true unless `MASHED_NO_RACEPCT_SLOT` is set (`74f895883`; `MASHED_RACEPCT_SLOT` is no longer
+read). An original multi-round reference was not captured: in this recipe the original freezes after its first round end
+(memory `o-rg4-recipe-round-ends-early`) and round-level outcomes do not repeat between original runs
+(`verify/d3_consumer_20261007/RESULT_E1.md` section 5), so it could not score round 4.
+
+Gates on the flipped exe `fec9f5c4`:
+
+| gate | flipped exe | vs the pre-flip default |
+|---|---|---|
+| **G-CTRL x2 (new default)** | **`bacfc747 / 8dd1c004 / 6f9932b6`** x2 | REBASED (was `c3bfcef3 / 4ed4849b / 4c3548a1`) |
+| opt-out `H_NRS-1` | `c3bfcef3 / 4ed4849b / 4c3548a1` | = the pre-flip default |
+| **B K0 / K1 / K26 (new default)** | **`f9deb9b9 / d3601fcc / 9da9a26a`** | REBASED (`racepct` column only) |
+| (b) | 9/9 (`vsum_b_flip.txt`) | unchanged |
+| (e) | PASS 3/3, launch 1425.7 / 2052.5 / 2055.0 (`e_check_flip.txt`) | unchanged |
+| D2, 3 runs alone | PASS 3/3, slip 0.1900 / 0.2550 x3, drvmed 1964.25 x3, H1 398/400 (`score_d2_flip.txt`) | unchanged |
+| 13 tracks | table identical to dcmix, gates PASS (`tracks_flip_score.txt`) | unchanged |
+
+## Decisions for Mariano (before the flip, kept for the record)
 
 1. Leave `MASHED_RACEPCT_SLOT` default OFF and merge the knob (and the oracle-free tooling `pregate.py` / `victims.py`)?
 2. Or capture an original multi-round reference for this recipe (a longer `--alive-probe --elim-probe` hold, if the original's
