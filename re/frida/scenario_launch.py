@@ -4143,7 +4143,20 @@ rpc.exports = {
       r.rec0 = rec.readU32(); r.rec1 = rec.add(4).readU32(); r.rec2 = rec.add(8).readU32();
       r.rec5 = rec.add(0x14).readU32(); r.rec5b = rec.add(0x5b * 4).readU32(); r.rec174 = rec.add(0x174).readU32();
     }
+    if (r.bb10) {                // the loaded best (Replay::Load 0x00483d10 result)
+      const b = ptr(r.bb10);
+      r.b0 = b.readU32(); r.b1 = b.add(4).readU32(); r.b2 = b.add(8).readU32(); r.b5 = b.add(0x14).readU32();
+      r.b6 = b.add(0x18).readU32(); r.b7 = b.add(0x1c).readU32(); r.b5b = b.add(0x5b * 4).readU32(); r.b174 = b.add(0x174).readU32();
+    }
+    r.bb08 = A(0x0063bb08).readU32(); r.ed6c = A(0x0067ed6c).readU32();
+    if (r.bb08) { const q = ptr(r.bb08); r.q0 = q.readU32(); r.q1 = q.add(4).readU32(); r.q2 = q.add(8).readU32();
+                  r.q5 = q.add(0x14).readU32(); r.q5b = q.add(0x5b * 4).readU32(); r.q174 = q.add(0x174).readU32(); }
+    r.bb2c = A(0x0063bb2c).readU32();
     return r;
+  },
+  loaded: function () {        // the loaded best's frames, read through its (rebased) [5]
+    const b = ptr(A(0x0063bb10).readU32()); const n = b.add(0x5b * 4).readU32();
+    return ptr(b.add(0x14).readU32()).readByteArray(n * 0x24);
   },
   rec: function () {           // header (0x19c) + frames (rec[0x5b]*0x24) as the copy will see them
     const rec = ptr(A(0x0063bb14).readU32());
@@ -4173,7 +4186,11 @@ def ghost_capture(sess, outdir):
     g = sess.create_script(GHOST_JS); g.on("message", lambda m, d: None); g.load(); G = g.exports_sync
     pre = G.snap(); print("  [ghost] before:", pre)
     res = {"before": pre}
-    if pre.get("bb14"):
+    if os.environ.get("SAVELINK_GHOST_SNAP_ONLY"):
+        (out / "block_in_race.bin").write_bytes(bytes(G.block()))
+        if pre.get("bb10"):
+            (out / "loaded_frames.bin").write_bytes(bytes(G.loaded()))
+    elif pre.get("bb14"):
         hdr, fr = G.rec()
         (out / "rec_header.bin").write_bytes(bytes(hdr)); (out / "rec_frames.bin").write_bytes(bytes(fr))
         (out / "block_before.bin").write_bytes(bytes(G.block()))
@@ -4740,6 +4757,20 @@ def main():
                "rule": args.rule, "team": args.team,
                "difficulty": args.difficulty, "powerups": args.powerups}
         print("  [setup]", E.setup(cfg))
+        if os.environ.get("SAVELINK_PRELOAD"):
+            # savelink G4: the warp skips the frontend step that restores the save, so run the game's own pair in
+            # order before launching: SaveLoad 0x00404e50 (file -> 0x00803358), DeserializeFromBuffer 0x00404e80.
+            pl = sess.create_script("""
+            const D = (Process.findModuleByName('MASHED.exe') || Process.enumerateModules()[0]).base.toUInt32() - 0x00400000;
+            rpc.exports = { run: function () {
+              new NativeFunction(ptr(0x00404e50 + D), 'int', [], 'mscdecl')();
+              new NativeFunction(ptr(0x00404e80 + D), 'void', [], 'mscdecl')();
+              const b = ptr(ptr(0x008a94a8 + D).readU32()); let nz = 0;
+              for (let i = 0; i < 0x24a3c; i += 4) if (b.add(i).readU32() !== 0) nz++;
+              return { magic: ptr(0x00803358 + D).readU32(), block_nonzero_dwords: nz };
+            } };""")
+            pl.on("message", lambda m, d: None); pl.load()
+            print("  [preload]", pl.exports_sync.run()); pl.unload()
         if args.statediff_out:
             # Arm BEFORE the phase poke so frame 0 = the very first phase-3 tick.
             print("  [statediff]", E.sd_arm(args.statediff_car, args.statediff_aictrl))

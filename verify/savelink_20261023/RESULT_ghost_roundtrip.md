@@ -38,3 +38,26 @@ values only `[UNCERTAIN: no writer read]`.
 U-3560: "profile/career block" -> the 13-slot ghost buffer (sizes from `DAT_005f29d0`), populated only by TimeTrial ghost saves; layout of the
 record header partly read (above). The wrong `0x2443C` in `save_gamesave_d3/00404e80.md` and `structs/gamesave_layout.md:17` and the stale
 U-1567 citations are still to fix.
+
+## Amendment 1 result (2026-10-23): the stale pointer is discarded, the reloaded ghost is the time-attack record
+
+Arm G4 (PREREG amendment 1, commit before the run). Captured save in the private root, `scenario_launch.py --mode 2 --track 0 --hold 40`.
+
+- **G4a/G4b VOID (harness).** Without a preload the in-race block was all zero (`block_in_race.bin`: 0 non-zero bytes): the warp skips the
+  frontend step that restores the save, so `Replay::Load` missed and `FUN_00411d90` fell back to a fresh object (`DAT_0063bb08 +0x174` = 0,
+  `DAT_0063bb2c` = 0). Same cause as `RESULT_ACCEPT2.md`.
+- **G4c** (`SAVELINK_PRELOAD=1`: the game's own `SaveLoad 0x00404e50` then `DeserializeFromBuffer 0x00404e80`, called at the menu before the
+  launch; buffer magic `0xDEADBEEF`, 856 non-zero block dwords after the restore):
+
+| prediction | result |
+|---|---|
+| R1 the record loads | held: `DAT_0063bb10` = `DAT_0063bb08` = 0x14d2e810; `[0]` 0x10b, `[2]` 0x1e, `[0x5b]` 120, `+0x174` 114050 (the captured run's time); `DAT_0063bb2c` = 1 |
+| R2 stale pointer | **discarded**: `[5]` = 0x14da1da8 (not the stored 0x14c8ab18) and `[5] == [6]`; `[7]` is the walking cursor |
+| R3 frames | 0 bytes differ outside node `+0x1c` over 120 x 0x24; all 120 `+0x1c` links differ (rebuilt in the new buffer) |
+| R4 no crash | the race held 40 s, no exit or crash line in `ghost_g4c.log` |
+
+So the stored heap pointer is harmless: `Replay::Load` overwrites it with the fresh allocation before any read through it. The loader also reads
+`(n + 2) * 0x24` frame bytes, 2 nodes more than the writer copied (`FUN_00483ca0`: `n * 9` dwords): the extra 0x48 bytes come from whatever follows
+the record in the block (zero here) `[UNCERTAIN: what the two extra nodes are used for]`.
+
+The preload is the game's own pair called by hand, in order, at the menu; which frontend function calls them in normal play is not read.
