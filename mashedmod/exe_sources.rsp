@@ -254,6 +254,7 @@
 "Save\GameSaveBuffer.cpp"
 "Save\GameSave.cpp"
 "Save\GameSaveVFS.cpp"
+"Save\SettingsConfig.cpp"
 "Gameplay\PickupPoolSpawn.cpp"
 "Render\ArcticTrackNodeSlot0.cpp"
 "Render\TrackHookSlots.cpp"
