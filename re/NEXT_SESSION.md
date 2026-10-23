@@ -1,5 +1,69 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-23 dcstream + kfdot: **allowlist 11 -> 8, no knob-free dual-copy entry left.** Next = a decision, or the other D4 items (Save / Audio TU linking).
+>
+> Two lanes merged into `race/first-frame-parity` (HEAD `116c4f4fe`, local; origin was at `f0cf8fa6b` when this was written, so push is pending):
+> - `verify/dcstream_20261022/RESULT_dcstream.md` (merged `6ddf1e1d5`): `0x004cbd30` RwStreamRead and `0x004cc050` RwStreamSkip are one
+>   body each in `Render/RwStreamCore.cpp` (both rsp files), knob-free, C2 -> C3. In-process A/B 0/0 (track 0 + Warzone), sweep 116/0/0.
+>   The exe's only stream producer (`RwWorldLoad_FromBytes`) has no caller, so that path is dead code on the default build.
+> - `verify/kfdot_20261022/RESULT_kfdot.md` (merged `116c4f4fe`): `0x00532b80` is one body in `Track/KfInterpolate.cpp`, both targets.
+>   Mariano flipped it 2026-10-23: the Dump sampler's legacy copy and `MASHED_KF_INTERP` are deleted, C2 -> C3. P0-P3 held: every
+>   natural Dump call takes the plain-lerp branch, so no gate and none of the 13 tracks moved (draws and frames byte-identical).
+> **References unchanged since rpct** (compare against these): G-CTRL `bacfc747 / 8dd1c004 / 6f9932b6`, B `f9deb9b9 / d3601fcc /
+> 9da9a26a`; (b) 9/9, (e) 3/3 launch 1425.7 / 2052.5 / 2055.0, D2 3/3, 13 tracks 878 rows 0 RED. Final exe `d70eb347`.
+> Allowlist `re/tools/dual_copy_allowlist.txt`: 7 lines, 8 findings (`rva-lint`: CROSS-TARGET=3, DUP-IN-TARGET=5, NEW=0).
+>
+> **What is left in the allowlist is all decision-gated** (none is a mechanical merge):
+> - Math pairs that cost D2 or a draw file: `0x004c39b0` (LUT vs exact normalize), `0x004c4680` (ortho, Warzone pontoon vs body
+>   orientation), `0x004c4d20` (`RwMatrixRotate` vs `RotateAboutAxis`). Route: knob default OFF + PREREG first, flip only on Mariano's
+>   decision (the r7keep / rpct / kfdot pattern). Mariano picks which, if any.
+> - Deliberate splits: `0x004282a0`, `0x004177b0` (next AI pair for the AiBankSwitch recipe once its inputs have producers),
+>   `0x00410510` (input plumbing and end-block side effects in the race layer).
+> - `0x00408ad0`: stays only for the opt-out `MASHED_NO_RACEPCT_SLOT` stand-in.
+>
+> **Other D4 items (ROADMAP §D4), not started:** link the Save TUs (`Save/`, 16 files, 28 C4, unlinked and RVA-tunneled; the standalone
+> must read and write a `gamesave.bin` the original accepts), link the Audio TUs (585 rows hook-shaped, needs a plan before any
+> promotion), D1-residue R1-R2 (owed before D5), WS-F data formats, WS-J audio remainder, WS-H C4 verification.
+>
+> **Paste-ready kickoff for the next session (pick one; the Save lane is the recommended default):**
+>
+> ```
+> # Kickoff: Mashed D4, link the Save TUs (lane savelink)
+>
+> Base: race/first-frame-parity at the commit carrying this block (dcstream + kfdot merged). Children on claude2 (verify the model id
+> with read_session).
+>
+> ## State
+> Default and every reference as in the 2026-10-23 START HERE block above. Allowlist 8 findings, lint 0 NEW.
+>
+> ## Task: ROADMAP §D4 "Link the Save TUs". Plan first, no code until the plan is read.
+> 1. Worker survey (read-only, delegate.ps1 -Repo Mashed): inventory Save/ (files, RVAs, C-levels in hooks.csv, which are
+>    RVA-tunneled .asi-only vs linkable into mashed_re.exe), who in the exe calls save/load today, and the gamesave.bin layout notes
+>    in re/analysis/. memory save-subsystem-two-paths: GameSaveBuffer.cpp is a separate path, read it first.
+> 2. Decide the shape with Mariano: which functions the exe links, what stays hook-shaped, how the standalone proves a gamesave.bin
+>    the original accepts (round-trip: standalone writes, original loads, and the reverse).
+> 3. Evidence plan before any promotion: path1 where a registry entry exists, in-process A/B on the original where the .asi installs
+>    it, exe gates against the references above. Anything that changes what the exe computes is NOT knob-free: knob default OFF +
+>    PREREG, flip only on Mariano's decision.
+>
+> ## Caveats
+> - Heredocs eat backslashes, and sed -i can strip CRLF: edit C++ / rsp / runner files from Python with chr(92) for backslashes, and
+>   check line endings after.
+> - A G-CTRL run can drop the dump rows of one frame (rpct H_DEF-1, frame 5759). Rerun before calling P0 failed.
+> - Private roots: robocopy original/ to D:/MashedWT/<lane>_root and <lane>_root13 (exit 1 = copied). D2 arms run alone. Kill only
+>   your own PIDs. git merge -m, never -F -. Never apply unlock_* patch scripts to original/MASHED.exe.
+>
+> ## Lane protocol
+> Worktree .worktrees/savelink, branch work/savelink, MASHED_NO_DEPLOY=1, evidence D:/MashedWT/savelink_data (MOVED_OFF_GIT.txt),
+> runner copied from verify/kfdot_20261022/ (run_arms.py + vsum.py). Commits end with
+> Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>. Do not merge: report per-entry verdicts, the gate table, decisions.
+>
+> ## Housekeeping
+> - The shared original/mashed_re_dev.asi was not redeployed after dcphys, dcphys2, dcleaf, dcmix, r7keep, rpct, dcstream or kfdot;
+>   deploy only when Mariano says.
+> - Push race/first-frame-parity (origin lags by the dcstream and kfdot merges).
+> ```
+
 > ## START HERE 2026-10-22 dcmix + r7keep + rpct: **allowlist 18 -> 11, two default flips, G-CTRL REBASED.** Next = D4 dual-copy burn-down, the render streams (lane `dcstream`).
 >
 > Three lanes merged into `race/first-frame-parity` (HEAD `b82d25315`):
