@@ -1,0 +1,28 @@
+=== S0r pid=16404 exe=35a50e1f drawstream stable (killed pid 16404 ONLY) secs=8
+    [gameflow] progress loaded: 1/13 tracks unlocked (save counter 0)
+    R2-2 gamesave load: LOADED (DEADBEEF save) (original/gamesave.bin)
+    drawstream sha8=6d72ef94 bytes=324929
+    save pre=bd18788182b2343e post=bd18788182b2343e UNCHANGED; restored root save sha=bd18788182b2343e
+=== S1 pid=10712 exe=35a50e1f drawstream stable (killed pid 10712 ONLY) secs=8
+    [gameflow] progress loaded: 13/13 tracks unlocked (save counter 0)
+    R2-2 gamesave load: LOADED (DEADBEEF save) (original/gamesave.bin)
+    drawstream sha8=38921f3c bytes=324929
+    save pre=bd18788182b2343e post=bd18788182b2343e UNCHANGED; restored root save sha=bd18788182b2343e
+=== S1e pid=11576 exe=35a50e1f drawstream stable (killed pid 11576 ONLY) secs=8
+    [gameflow] progress loaded: 1/13 tracks unlocked (save counter 0)
+    R2-2 gamesave load: LOADED (DEADBEEF save) (D:\MashedWT\savelink2_data\knob\shipped_for_boot.bin)
+    drawstream sha8=795f95d4 bytes=324929
+    save pre=0d2be29582a88e28 post=0d2be29582a88e28 UNCHANGED; restored root save sha=bd18788182b2343e
+=== S0d pid=19188 exe=35a50e1f exit=0 secs=9
+    [gameflow] progress loaded: 1/13 tracks unlocked (save counter 0)
+    R2-2 gamesave load: LOADED (DEADBEEF save) (original/gamesave.bin)
+    NAV_KEYS lines=409 rows_seen=['0'] last: NAV_KEYS f=408 tap=- depth=1 screen=6 cur=-1 row=0 gm=0 sel=1 ea68=0 f1a4=0 flow=0 fph=3 o
+    drawstream sha8=525523a4 bytes=324929
+    save pre=bd18788182b2343e post=bd18788182b2343e UNCHANGED; restored root save sha=bd18788182b2343e
+=== S1d pid=18376 exe=35a50e1f exit=0 secs=9
+    [gameflow] progress loaded: 13/13 tracks unlocked (save counter 0)
+    R2-2 gamesave load: LOADED (DEADBEEF save) (original/gamesave.bin)
+    NAV_KEYS lines=409 rows_seen=['0'] last: NAV_KEYS f=408 tap=- depth=1 screen=6 cur=-1 row=0 gm=0 sel=1 ea68=0 f1a4=0 flow=0 fph=3 o
+    drawstream sha8=7abb5827 bytes=324929
+    save pre=bd18788182b2343e post=bd18788182b2343e UNCHANGED; restored root save sha=bd18788182b2343e
+DONE
