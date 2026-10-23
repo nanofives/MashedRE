@@ -1,6 +1,8 @@
 # Next session kickoff
 
-> ## START HERE 2026-10-23 audiolink slices 1-4 (UNMERGED, branch `work/audiolink`, pushed): **14 Audio files (41 functions) linked into the exe, 2 latent defects + 1 fault-order gap fixed, 1 codegen-only match made explicit.** Next = slice 5 (TimerGetters_ah5 getter split) or Mariano's merge / twin decisions.
+> ## START HERE 2026-10-23 audiolink slices 1-5 (UNMERGED, branch `work/audiolink`, pushed): **15 Audio TUs (45 functions) linked into the exe, 2 latent defects + 1 fault-order gap fixed, 1 codegen-only match made explicit. The survey's zero-closure items are done.** Next = Mariano's merge / twin decisions, or the byte-read step below.
+>
+> - Slice 5: the four field getters moved to Audio/AudioFieldGetters.cpp (both rsp); TimerGetters_ah5.cpp stays asi-only. path1 4/4, gates unchanged on exe 439495bc. `RESULT_slice5.md` (lists what is left).
 >
 > - Slice 4: AudioFmtKeyCompare 0x005adf30 split into Audio/AudioFmtKey.cpp (both rsp), RwsFmt in the exe. First run RED (desc_equal idx 2: `repe cmpsb` faults on param_2 first, the port on param_1); fixed, path1 3/3, gates unchanged on exe 4004ebb1. `RESULT_slice4.md`.
 >
@@ -14,7 +16,8 @@
 > - `music_group_volume_set` runs through `early_window_leaf_diff.py` (no diff_template.js handler for its arg_type).
 > - Decisions for Mariano: merge `work/audiolink`; the two job twins 0x004625b0 (CharacterBankPath) and 0x005aeb90
 >   (VolToDs); the two precedent files AudioQueuePop / AudioVecLength still reach MASHED addresses in the exe.
-> - Next slice per the survey: split the four TimerGetters_ah5 field getters (0x005a89a0 / b0 / c0, 0x005ab370) into a shared TU; AudioRootGet / AudioTimerRateGet / AudioLinearToLog stay asi-only (global reads, job twin).
+> - Next: one byte-read step from `original/MASHED.exe.unpatched` (GUIDs 0x005d09dc / 0x005d09bc, blob 0x005e7100, table 0x00633674 + targets, the 0x007dda80 initial value), then AudioDSound's six ready leaves and the AudioRws pool / list family with private storage.
+> - **Recipe gotchas this lane:** check registry entries for duplicate keys and degenerate vectors before trusting a path1 GREEN; diff the compiled export (`disasm_export.py`) when a port's C++ does not say what the bytes do; a split that swaps the callee from the original to the shared body can expose fault-order differences (slice 4); `music_group_volume_set` runs through `early_window_leaf_diff.py`.
 
 > ## START HERE 2026-10-23 next lane = **audiolink** (Mariano's pick after savelink2). Kickoff below; the savelink2 block follows.
 >

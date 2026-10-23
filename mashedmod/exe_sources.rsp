@@ -107,6 +107,7 @@
 "Audio\RwsStream.cpp"
 "Audio\AudioFmtKey.cpp"
 "Audio\RwsFmt.cpp"
+"Audio\AudioFieldGetters.cpp"
 "D3d9Render\QuadRenderer.cpp"
 "D3d9Render\RwIm2DBridge.cpp"
 "D3d9Render\DrawStreamDump.cpp"

@@ -233,6 +233,7 @@
 "Gameplay\Thresholds_ah4.cpp"
 "Render\PluginFields_ah4.cpp"
 "Audio\TimerGetters_ah5.cpp"
+"Audio\AudioFieldGetters.cpp"
 "Ai\PromoLoop_round1.cpp"
 "Ai\AiController.cpp"
 "Ai\AiControllerAB.cpp"
