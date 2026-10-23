@@ -20,6 +20,7 @@ def load(p):
         for va, sz, ro in secs:
             if va <= r < va+sz: return ro+(r-va)
     return d, off
+if len(sys.argv) > 1: RVAS = [int(x, 16) for x in sys.argv[1:]]   # slice 2+: RVAs on the command line
 du, offu = load(MAIN/"MASHED.exe.unpatched"); dp, offp = load(MAIN/"MASHED.exe")
 md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_32)
 starts = sorted(RVAS)
