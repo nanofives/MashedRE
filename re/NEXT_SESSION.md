@@ -1,5 +1,29 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-23 savelink, ghost leg (UNMERGED, branch `work/savelink`, pushed): **U-3560 narrowed: the "profile block" is the 13-slot TimeTrial ghost buffer, and a real ghost round-trips.** Next = Mariano's merge decision, then savelink2.
+>
+> Added after the block below was written (all on `work/savelink`, PREREGs before each arm):
+> - `re/analysis/save_ghost_block_20261023.md`: file `0x4..0x24A3F` = `*DAT_008a94a8`, 13 ghost slots sized by the table `0x005f29d0` (13 {id, float}
+>   pairs, sum 670.0 s; `13 x 0x19c + 4020 x 0x24 = 0x24a3c`). Written only by `ReplaySave 0x004117b0` (`FUN_00483ca0`), armed only by the TimeTrial tick
+>   `0x00429310 -> FUN_00411870(1)` on a finished run under the table float; autosave only if the save counter `DAT_008a95ac != 0` (shipped: 0).
+>   Shipped save: 0 non-zero bytes in the block by explicit count.
+> - `verify/savelink_20261023/RESULT_ghost_roundtrip.md`: Q0-Q3 + R1-R4 held. A real TimeTrial record (id 0x1e, 120 frames), copied by the game's own
+>   `FUN_00483ca0` outside its gate, survives `SaveWrite`, a fresh original's menu-path reload (150,076/150,076 bytes) and the standalone's knob-ON
+>   in-place write. On a TimeTrial over the reloaded save it becomes the time-attack record, and `Replay::Load 0x00483d10` discards the stored heap
+>   pointer (rebases to a fresh allocation); frames equal outside the rebuilt `+0x1c` links; no crash in 40 s.
+> - Trackers (re-classify `dec4b5641`): U-3560 NARROWED (still open: header fields beyond [0..2,5,0x5b,0x174], the loader's `(n+2) x 0x24` read, the
+>   frontend caller of the restore); U-0177 decimal corrected; `0x2443C -> 0x24A3C` in `save_gamesave_d3/00404e80.md` and `structs/gamesave_layout.md`;
+>   stale U-1567 citations -> U-3560. No C-level moved.
+> - Harness additions: `scenario_launch.py --ghost-capture <dir>`, `SAVELINK_GHOST_SNAP_ONLY=1`, `SAVELINK_PRELOAD=1` (runs `SaveLoad` +
+>   `DeserializeFromBuffer` at the menu before the warp, because the warp skips the restore: without it the in-race block is all zero);
+>   `nav_champ_probe.py --plan ghostdump` (`MASHED_GHOST_OUT`).
+>
+> **Decisions for Mariano** (unchanged from the block below, plus): merge `work/savelink` with the knob OFF? It now also carries the U-3560 tracker edits.
+>
+> **Kickoff for savelink2:** the block below's options (a) all-unlocked measurement and (c) the next Save TU group are still open; option (b) U-3560
+> is done to the limit of this harness. A natural (non-synthetic) ghost needs a TimeTrial lap under the table float (20 s for id 0x1e), which no
+> unattended harness here drives.
+
 > ## START HERE 2026-10-23 savelink (UNMERGED, branch `work/savelink`, HEAD `73799d98e`): **the original accepts the standalone's save, and the exe can write it behind a default-OFF knob.** Next = Mariano's decisions below, then the rest of the Save TUs.
 >
 > `verify/savelink_20261023/` (PREREGs committed before each run):
