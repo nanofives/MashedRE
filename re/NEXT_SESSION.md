@@ -1,6 +1,8 @@
 # Next session kickoff
 
-> ## START HERE 2026-10-23 audiolink slices 1-5 (UNMERGED, branch `work/audiolink`, pushed): **15 Audio TUs (45 functions) linked into the exe, 2 latent defects + 1 fault-order gap fixed, 1 codegen-only match made explicit. The survey's zero-closure items are done.** Next = Mariano's merge / twin decisions, or the byte-read step below.
+> ## START HERE 2026-10-23 audiolink slices 1-6 (UNMERGED, branch `work/audiolink`, pushed): **16 Audio TUs (52 functions) linked into the exe, 3 latent defects + 1 fault-order gap fixed, 1 codegen-only match made explicit; U-0360 resolved, U-0362 refuted.** Next = Mariano's merge / twin decisions, or AudioRws.
+>
+> - Slice 6: byte-read step (`read_bytes.py`; IIDs = IID_IDirectSound3DListener / IID_IKsPropertySet, 0x005e7100 = QuerySupport GUID, 0x00633674 keys dumped, the pool globals are BSS) and AudioDSound (7) in the exe with image-byte GUIDs; 0x005bbfc0 two Release defects fixed (control RED 7/10). `RESULT_slice6.md`.
 >
 > - Slice 5: the four field getters moved to Audio/AudioFieldGetters.cpp (both rsp); TimerGetters_ah5.cpp stays asi-only. path1 4/4, gates unchanged on exe 439495bc. `RESULT_slice5.md` (lists what is left).
 >
@@ -16,7 +18,7 @@
 > - `music_group_volume_set` runs through `early_window_leaf_diff.py` (no diff_template.js handler for its arg_type).
 > - Decisions for Mariano: merge `work/audiolink`; the two job twins 0x004625b0 (CharacterBankPath) and 0x005aeb90
 >   (VolToDs); the two precedent files AudioQueuePop / AudioVecLength still reach MASHED addresses in the exe.
-> - Next: one byte-read step from `original/MASHED.exe.unpatched` (GUIDs 0x005d09dc / 0x005d09bc, blob 0x005e7100, table 0x00633674 + targets, the 0x007dda80 initial value), then AudioDSound's six ready leaves and the AudioRws pool / list family with private storage.
+> - Next: AudioRws.cpp. AudioFmtGlobalScan can take the dumped 0x00633674 keys; the pool / list family needs private storage for BSS globals whose runtime constructor is not yet found (find it first, e.g. `--watch-write` on 0x007dda80); AudioContextLookup needs 0x005ac930.
 > - **Recipe gotchas this lane:** check registry entries for duplicate keys and degenerate vectors before trusting a path1 GREEN; diff the compiled export (`disasm_export.py`) when a port's C++ does not say what the bytes do; a split that swaps the callee from the original to the shared body can expose fault-order differences (slice 4); `music_group_volume_set` runs through `early_window_leaf_diff.py`.
 
 > ## START HERE 2026-10-23 next lane = **audiolink** (Mariano's pick after savelink2). Kickoff below; the savelink2 block follows.

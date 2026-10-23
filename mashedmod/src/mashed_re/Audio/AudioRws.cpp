@@ -311,6 +311,40 @@ extern "C" __declspec(dllexport) int __cdecl AudioSubStructCleanup(int param_1)
 
 RH_ScopedInstall(AudioSubStructCleanup, 0x005ae030);  // re-enabled 2026-05-24 c3-audio-b
 
+// ---------------------------------------------------------------------------
+// 0x005a9e10  FUN_005a9e10  (0x21 bytes)
+// AudioSubStructTwoCallInit — two-call dispatcher; returns param_1.
+//
+// Decompilation (0x005a9e10–0x005a9e31):
+//   FUN_005adfe0(param_1, param_3);   // sub-struct B init at +0x34 (C2)
+//   FUN_005ae010(param_1, param_2);   // sub-struct A init at +0x24 (S-0345)
+//   return param_1;
+//
+// No local state; pure pass-through wrapper.
+// [U-0351]: Exact semantic role of param_2/param_3 not confirmed from this
+//            function alone; confirmed from callee analysis notes.
+// ---------------------------------------------------------------------------
+extern "C" __declspec(dllexport) void* __cdecl AudioSubStructTwoCallInit(
+        void* param_1,
+        void* param_2,
+        void* param_3)
+{
+    // 0x005a9e13: FUN_005adfe0(param_1, param_3) — sub-struct B initializer
+    typedef void (__cdecl *SubBFn)(void*, void*);
+    auto sub_b = reinterpret_cast<SubBFn>(0x005adfe0u);
+    sub_b(param_1, param_3);
+
+    // 0x005a9e1f: FUN_005ae010(param_1, param_2) — sub-struct A initializer
+    typedef void (__cdecl *SubAFn)(void*, void*);
+    auto sub_a = reinterpret_cast<SubAFn>(0x005ae010u);
+    sub_a(param_1, param_2);
+
+    // 0x005a9e2c: return param_1 (pass-through)
+    return param_1;
+}
+
+RH_ScopedInstall(AudioSubStructTwoCallInit, 0x005a9e10);  // re-enabled 2026-05-24 c3-audio-a
+
 // 0x005adf30 AudioFmtKeyCompare moved to Audio/AudioFmtKey.cpp (audiolink slice 4, one body in both targets).
 // 0x005ae010  FUN_005ae010  AudioSubStructLinkDevice  (31 bytes)
 // Signature: undefined4* FUN_005ae010(undefined4 *param_1, undefined4 param_2)

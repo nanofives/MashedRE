@@ -1,5 +1,7 @@
 // Mashed RE — DirectSound wrapper leaf functions (audio_dsound cluster A).
-// All four functions are thin wrappers around COM objects or Win32 API calls.
+// Seven thin wrappers around COM objects or Win32 API calls. In both rsp files since audiolink slice 6 (2026-10-23):
+// one body each, no MASHED.exe address in either arm. Bytes: verify/audiolink_20261023/disasm_slice6.txt and
+// bytes_step.txt (read_bytes.py on MASHED.exe.unpatched).
 // Analysis notes: re/analysis/promote_c2_audio_dsound/ and re/analysis/audio_dsound_d3/
 //
 // STRUCT GAP: AudioBufFieldSet accesses audio buffer struct at offsets +0x74, +0x78,
@@ -8,12 +10,28 @@
 //   fully documented in audio_dsound_d4. Flagged as STRUCT GAP per caller gate.
 //
 // U-0361 (AudioDSoundRelease): vtable+0x20 semantic (GetSpeakerConfig vs other slot 8).
-// U-0360 (AudioDSoundQIChain): IID at DAT_005d09dc unidentified.
+// U-0360 (AudioDSoundQIChain): RESOLVED audiolink slice 6. The IID bytes at 0x005d09dc are
+//   84fa9a27 8149 ce11 a521 0020af0be560 = IID_IDirectSound3DListener (Windows SDK dsound.h:861); the ones at
+//   0x005d09bc are IID_IKsPropertySet (dsound.h:1212).
 // Both uncertainties are in the ## Open uncertainties section of analysis notes,
 // not inline in the function body — caller gate satisfied.
 #include "../Core/HookSystem.h"
 #include <cstdint>
 #include <windows.h>
+
+namespace {
+// The GUIDs the original passes by address, as constants with the image's bytes (identical in both arms; a COM
+// QueryInterface / QuerySupport reads the 16 bytes, not the address).
+const GUID kIID_DirectSound3DListener =                        // 0x005d09dc, dsound.h:861
+    { 0x279AFA84, 0x4981, 0x11CE, { 0xA5, 0x21, 0x00, 0x20, 0xAF, 0x0B, 0xE5, 0x60 } };
+const GUID kIID_KsPropertySet =                                // 0x005d09bc, dsound.h:1212
+    { 0x31EFAC30, 0x515C, 0x11D0, { 0xA9, 0xAA, 0x00, 0xAA, 0x00, 0x61, 0xBE, 0x93 } };
+// 0x005e7100: the property-set GUID handed to IKsPropertySet slot 5 (QuerySupport(REFGUID, ULONG, PULONG),
+// dsound.h IKsPropertySet order). Bytes e06853cd 5034 d311 8b6e 00105a9b7bbc; not in the SDK headers, so unnamed.
+// QuerySupport reads 16 bytes; the floats that follow it in .rdata are not part of the argument.
+const GUID kPropSet_005e7100 =
+    { 0xCD5368E0, 0x3450, 0x11D3, { 0x8B, 0x6E, 0x00, 0x10, 0x5A, 0x9B, 0x7B, 0xBC } };
+}  // namespace
 
 // 0x005baf60  FUN_005baf60  (~0x25 bytes, 0x005baf60–0x005baf85)
 // void __cdecl AudioBufFieldSet(int param_1, int param_2)
@@ -93,8 +111,7 @@ RH_ScopedInstall(AudioDSoundRelease, 0x005baf90);  // re-enabled 2026-05-24 c3-a
 //   0x005bc437  hr >= 0 -> return 1 (0x005bc43a)
 //   0x005bc441  esi = param_2[0] (re-read) ; 0x005bc446 call [[esi]+8] ; Release, result dropped
 //   0x005bc44a  return 0
-// [UNCERTAIN U-0360]: IID at 0x005d09dc unidentified. The old port treated param_1 as
-// IUnknown** and dereferenced it once more.
+// U-0360 resolved (header). The old port treated param_1 as IUnknown** and dereferenced it once more.
 extern "C" __declspec(dllexport) int __cdecl AudioDSoundQIChain(int* param_1, int* param_2) {
     typedef int (__stdcall *QIFn)(void*, const void*, void**);
     typedef int (__stdcall *ReleaseFn)(void*);
@@ -104,12 +121,12 @@ extern "C" __declspec(dllexport) int __cdecl AudioDSoundQIChain(int* param_1, in
     param_2[1] = 0;                                                          // 0x005bc41a
 
     int hr = (*reinterpret_cast<QIFn**>(obj))[0](
-        obj, reinterpret_cast<const void*>(0x005d09dc), reinterpret_cast<void**>(&param_2[0]));   // 0x005bc422
+        obj, &kIID_DirectSound3DListener, reinterpret_cast<void**>(&param_2[0]));   // 0x005bc40b / 0x005bc422
     if (hr < 0) return 0;                                                    // 0x005bc426
 
     void* const obj0 = reinterpret_cast<void*>(param_2[0]);                  // 0x005bc428
     hr = (*reinterpret_cast<QIFn**>(obj0))[0](
-        obj0, reinterpret_cast<const void*>(0x005d09bc), reinterpret_cast<void**>(&param_2[1]));  // 0x005bc433
+        obj0, &kIID_KsPropertySet, reinterpret_cast<void**>(&param_2[1]));          // 0x005bc42b / 0x005bc433
     if (hr >= 0) return 1;                                                   // 0x005bc437
 
     void* const objr = reinterpret_cast<void*>(param_2[0]);                  // 0x005bc441
@@ -135,10 +152,8 @@ RH_ScopedInstall(AudioDSoundQIChain, 0x005bc400);  // re-enabled 2026-05-24 c3-a
 //   005aeab2: MOV ECX,[ESP+8]           ; param_1
 //   005aeab5: MOV [ECX],EAX             ; *param_1 = handle
 //   005aeab7: TEST EAX,EAX              ; pvVar1 != 0?
-//   005aeab9: SETNZ AL                  ; AL = 1 if non-null
-//   005aeabc: NEG AL                    ; AL = -1 (0xFF) if non-null, 0 if null
-//   005aeabe: MOVZX EAX,AL             ; EAX = 0xFF or 0
-//   005aeac1: AND EAX,ECX              ; mask: param_1 & 0xFF or 0
+//   (audiolink slice 6, from the bytes: the tail is 005aeeba NEG EAX / 005aeebc SBB EAX,EAX / 005aeebe AND EAX,ECX,
+//    a full 32-bit mask, so the result is param_1 or 0. The SETNZ/AL lines that stood here were not the bytes.)
 //   Note: Ghidra renders the return as -(uint)(pvVar1 != 0) & (uint)param_1.
 extern "C" __declspec(dllexport) unsigned int __cdecl AudioSemaphoreCreate(
         void* param_1, LONG param_2, LONG param_3) {
@@ -148,104 +163,48 @@ extern "C" __declspec(dllexport) unsigned int __cdecl AudioSemaphoreCreate(
         param_3,
         static_cast<LPCSTR>(nullptr));
     *static_cast<HANDLE*>(param_1) = pvVar1;
-    // NEG AL then MOVZX: if non-null, byte = 0xFF (mask all), else 0.
-    // Cast via int to suppress C4146 (unary minus on unsigned).
+    // NEG / SBB: 0xffffffff if non-null, else 0. Cast via int to suppress C4146 (unary minus on unsigned).
     const unsigned int mask = static_cast<unsigned int>(-static_cast<int>(pvVar1 != nullptr));
     return mask & static_cast<unsigned int>(reinterpret_cast<uintptr_t>(param_1));
 }
 
 RH_ScopedInstall(AudioSemaphoreCreate, 0x005aeea0);  // re-enabled 2026-05-24 phase-a1 semaphore_create GREEN
-// 0x005bbfc0  FUN_005bbfc0  (~70 bytes)
-// AudioDSoundSecondaryInit — QueryInterface + vtable+0x14 secondary init.
+// 0x005bbfc0  FUN_005bbfc0  (0x58 bytes, 0x005bbfc0..0x005bc017)
+// int __cdecl AudioDSoundSecondaryInit(IUnknown** param_1)
 //
-// Mechanical description (0x005bbfc0):
-//   param_1  = IUnknown** (pointer to a COM object pointer slot)
-//   piVar2   = (int*)*param_1      — deref to IUnknown*
-//   iVar1    = vtable[0](piVar2, &DAT_005d09bc, &puStack_8)
-//              — QueryInterface on IID at 0x005d09bc; output ptr on stack
-//   if HRESULT < 0: goto release
-//   iVar3    = 0  (set before vtable+0x14 call; never updated [U-0362])
-//   iVar1    = vtable[5](piVar2, &DAT_005e7100, 0, &puStack_8)
-//              — vtable offset 0x14 (slot 5); arg: IID/format at 0x005e7100
-//   if (iVar1 >= 0) && (iVar3 == 3): return 1   // dead: iVar3 always 0 [U-0362]
-//   release: vtable[2](piVar2)   — Release (vtable offset 0x08, slot 2)
-//   return 0
-//
-// [U-0362]: iVar3 == 3 branch is unreachable: iVar3 is 0 before the call and
-//            the decompiler shows no update. Decompiler artifact from register
-//            reuse in MSVC codegen. Return 0 in all reachable paths.
-//
-// IID at DAT_005d09bc (0x005d09bc): shared with FUN_005bc400.
-// DAT_005e7100 (0x005e7100): constant arg to vtable+0x14 (audio format struct?).
-// ---------------------------------------------------------------------------
-// AudioDSoundSecondaryInit: calls QI (vtable slot 0), vtable+0x14 (slot 5), Release (slot 2).
-// COM vtable methods on this fake object use stdcall (IUnknown ABI). The dead branch
-// iVar3==3 is reproduced faithfully per analysis note U-0362.
-// 0x005bbfc0
+// Re-ported from the bytes, audiolink slice 6 (2026-10-23):
+//   005bbfc0 push ecx                        ; local ks = [esp]
+//   005bbfc9 [esp] = 0
+//   005bbfd2 eax = *param_1                  ; pUnk
+//   005bbfdc QI(pUnk, IID_IKsPropertySet 0x005d09bc, &ks)          (stdcall, callee pops)
+//   005bbfe0 jl 0x005bc014                   ; QI failed: return 0, NO Release
+//   005bbfe6 edx = &[esp+8]                  ; the caller's param_1 slot
+//   005bbff5 ks->vtbl[5](ks, 0x005e7100, 0, &param_1 slot)        ; IKsPropertySet::QuerySupport
+//   005bbffa jl 0x005bc00a
+//   005bbffc cmp [esp+8],3 / jne 0x005bc00a  ; support word written into the param_1 slot
+//   005bc003 return 1                        ; ks is NOT released on this path
+//   005bc00a eax = [esp] (= ks) / call [[eax]+8] ; Release(ks)
+//   005bc014 return 0
+// The previous port released pUnk (the original's vtable) on every failure path, including a failed QI. The bytes
+// release the QI output ks, and only after a successful QI.
 extern "C" __declspec(dllexport) int __cdecl AudioDSoundSecondaryInit(void** param_1)
 {
-    // 0x005bbfc0: piVar2 = (int *)*param_1
-    // param_1 = IUnknown** (pointer to COM object pointer slot)
-    // *param_1 = IUnknown* (pointer to the COM object)
-    // piVar2[0] = vtable pointer (first field of COM object)
-    //
-    // 2026-05-24 phase-a1 rewrite: previous reimpl had two bugs vs. the asm
-    // at 0x005bbfc0..0x005bc017, both confirmed by Ghidra disassembly:
-    //
-    //   1. Slot 5 routing.  Per asm 0x005bbfe2..0x005bbff5, the orig calls
-    //      vtable[5] on the QI-OUTPUT interface (puStack_8), not on the
-    //      original pUnk's vtable. Ghidra's decomp showed `*piVar2 + 0x14`
-    //      because it collapsed the indirection through local_4.
-    //
-    //   2. Slot 5 output destination.  The asm does `LEA EDX, [ESP+0x8]`
-    //      then `PUSH EDX` — the 4th arg to slot 5 is the address of the
-    //      CALLER'S param_1 SLOT (stack frame reuse). Slot 5 writes its
-    //      "secondary init status" into that slot. The orig then checks
-    //      [ESP+0x8] == 3 — i.e., reads back the value slot 5 wrote.
-    //
-    // Calling-convention also changed from __cdecl to __stdcall to match
-    // MSVC's default virtual-method ABI; vtable callees pop their own args.
-    typedef int  (__stdcall *VtblFn3)(void*, void*, void**);  // QI
-    typedef int  (__stdcall *VtblFn4)(void*, void*, int, void**);  // slot 5
-    typedef void (__stdcall *VtblFn1)(void*);  // Release
+    typedef int  (__stdcall *QIFn)(void*, const void*, void**);
+    typedef int  (__stdcall *QuerySupportFn)(void*, const void*, unsigned long, void*);
+    typedef unsigned long (__stdcall *ReleaseFn)(void*);
 
-    void*  pUnk = *param_1;                              // IUnknown*  (captured BEFORE param_1 slot is overwritten)
-    void** vtbl = *reinterpret_cast<void***>(pUnk);      // vtable ptr
+    void* ks = nullptr;                                                   // 0x005bbfc9
+    void* const pUnk = *param_1;                                          // 0x005bbfd2
+    const int hr = (*reinterpret_cast<QIFn**>(pUnk))[0](pUnk, &kIID_KsPropertySet, &ks);   // 0x005bbfdc
+    if (hr < 0) return 0;                                                 // 0x005bbfe0 -> 0x005bc014
 
-    // 0x005bbfc8: QI call — vtable slot 0
-    //   (**(code **)*piVar2)(piVar2, &DAT_005d09bc, &puStack_8)
-    void* puStack_8 = nullptr;
-    auto qi  = reinterpret_cast<VtblFn3>(vtbl[0]);
-    int iVar1 = qi(pUnk, reinterpret_cast<void*>(0x005d09bcu), &puStack_8);
-
-    if (iVar1 >= 0) {
-        // 0x005bbfdc: vtable+0x14 (slot 5) call ON THE QI-OUTPUT INTERFACE
-        // The 4th arg is &param_1 — writes into the caller's input slot.
-        // After this call, param_1 is overwritten with slot 5's output.
-        void** qi_vtbl = *reinterpret_cast<void***>(puStack_8);
-        auto slot5     = reinterpret_cast<VtblFn4>(qi_vtbl[5]);
-        iVar1 = slot5(puStack_8,
-                      reinterpret_cast<void*>(0x005e7100u),
-                      0,
-                      reinterpret_cast<void**>(&param_1));
-
-        // 0x005bbffc: CMP [ESP+0x8], 0x3  — read back what slot 5 wrote.
-        // The decomp comment U-0362 was wrong: iVar3 IS updated, by slot 5
-        // writing through the &param_1 output ptr. The check is a real
-        // post-init status comparison (status == 3 means "secondary ready"
-        // or similar — exact semantic still uncertain but the code path
-        // is reachable).
-        if ((iVar1 >= 0) && (reinterpret_cast<std::uintptr_t>(param_1) == 3u)) {
-            return 1;
-        }
+    const int hr2 = (*reinterpret_cast<QuerySupportFn**>(ks))[5](        // 0x005bbff5
+        ks, &kPropSet_005e7100, 0ul, static_cast<void*>(&param_1));
+    if (hr2 >= 0 && reinterpret_cast<std::uintptr_t>(param_1) == 3u) {   // 0x005bbffa / 0x005bbffc
+        return 1;                                                         // 0x005bc003
     }
-
-    // 0x005bc00a: Release on the ORIGINAL pUnk (vtable slot 2).
-    // pUnk was captured before the param_1 overwrite, so it still points to
-    // the input IUnknown* even after slot 5 mutated the param_1 slot.
-    auto rel = reinterpret_cast<VtblFn1>(vtbl[2]);
-    rel(pUnk);
-    return 0;
+    (*reinterpret_cast<ReleaseFn**>(ks))[2](ks);                          // 0x005bc00a..0x005bc011
+    return 0;                                                             // 0x005bc014
 }
 
 RH_ScopedInstall(AudioDSoundSecondaryInit, 0x005bbfc0);  // re-enabled 2026-05-24 phase-a1 dsound_secondary_init GREEN (post-vtable-routing-fix)
@@ -315,39 +274,8 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl AudioThreadDescInit(
 
 RH_ScopedInstall(AudioThreadDescInit, 0x005aef00);  // re-enabled 2026-05-24 c3-audio-b
 
-// ---------------------------------------------------------------------------
-// 0x005a9e10  FUN_005a9e10  (0x21 bytes)
-// AudioSubStructTwoCallInit — two-call dispatcher; returns param_1.
-//
-// Decompilation (0x005a9e10–0x005a9e31):
-//   FUN_005adfe0(param_1, param_3);   // sub-struct B init at +0x34 (C2)
-//   FUN_005ae010(param_1, param_2);   // sub-struct A init at +0x24 (S-0345)
-//   return param_1;
-//
-// No local state; pure pass-through wrapper.
-// [U-0351]: Exact semantic role of param_2/param_3 not confirmed from this
-//            function alone; confirmed from callee analysis notes.
-// ---------------------------------------------------------------------------
-extern "C" __declspec(dllexport) void* __cdecl AudioSubStructTwoCallInit(
-        void* param_1,
-        void* param_2,
-        void* param_3)
-{
-    // 0x005a9e13: FUN_005adfe0(param_1, param_3) — sub-struct B initializer
-    typedef void (__cdecl *SubBFn)(void*, void*);
-    auto sub_b = reinterpret_cast<SubBFn>(0x005adfe0u);
-    sub_b(param_1, param_3);
-
-    // 0x005a9e1f: FUN_005ae010(param_1, param_2) — sub-struct A initializer
-    typedef void (__cdecl *SubAFn)(void*, void*);
-    auto sub_a = reinterpret_cast<SubAFn>(0x005ae010u);
-    sub_a(param_1, param_2);
-
-    // 0x005a9e2c: return param_1 (pass-through)
-    return param_1;
-}
-
-RH_ScopedInstall(AudioSubStructTwoCallInit, 0x005a9e10);  // re-enabled 2026-05-24 c3-audio-a
+// 0x005a9e10 AudioSubStructTwoCallInit moved to Audio/AudioRws.cpp (audiolink slice 6): it calls that file's
+// LinkBuffer 0x005adfe0 / LinkDevice 0x005ae010, which stay asi-only until the pool family links.
 
 // 0x005ade90: the dead second copy AudioListDrain2 was removed 2026-10-12 (U-9661). The installed body is
 // AudioListDrain in Audio/AudioRws.cpp; evidence fix_diff_audio_list_drain.csv (z_fix_u9661.py).
