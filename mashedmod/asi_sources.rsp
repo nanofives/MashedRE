@@ -98,6 +98,7 @@
 "Save\VfsStream.cpp"
 "Save\FsOpen.cpp"
 "Save\SettingsConfig.cpp"
+"Save\FileWrappers.cpp"
 "Save\SettingsAndIO.cpp"
 "Save\SettingsDialog.cpp"
 "Save\CareerEvents.cpp"

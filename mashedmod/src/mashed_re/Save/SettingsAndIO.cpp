@@ -4,19 +4,15 @@
 //   SHA-256 BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E
 //   (preserved in original\MASHED.exe.unpatched)
 //
-// Hooks in this file (5):
+// Hooks in this file (3; the two file wrappers moved to Save/FileWrappers.cpp, 2026-10-23):
 //   0x00498f60  VideoDialogInit_i3              WM_INITDIALOG handler (HWND via EAX)
 //   0x00499170  SubsystemSelectionChanged_i3    WM_COMMAND/1000 handler (HWND via EAX)
 //   0x00499740  SetControlTextFromResource_i3   LoadStringA+SetWindowTextA helper, __cdecl(HWND, id)
-//   0x004b3b70  FileReadWrapper_i3              file_read(filename, buf, size) __cdecl
-//   0x004b3bb0  FileWriteWrapper_i3             file_write(filename, buf, size) __cdecl
 //
 // Analysis notes (per CLAUDE.md NO-GUESSING rule):
 //   re/analysis/promote_c2_settings_dialog/00498f60.md  (C2 plate)
 //   re/analysis/promote_c2_settings_dialog/00499170.md  (C2 plate)
 //   re/analysis/promote_c2_settings_dialog/00499740.md  (C2 plate)
-//   re/analysis/save_gamesave/004b3b70.md                (C1 plate, mech-verified)
-//   re/analysis/save_gamesave/004b3bb0.md                (C1 plate, mech-verified)
 //
 // Calling-convention notes:
 //   - 0x00498f60 / 0x00499170 take hDlg in EAX (0x00498f64 / 0x00499179 mov esi,eax); each export is
@@ -24,16 +20,7 @@
 //   - 0x00499740 is plain __cdecl (HWND, id) on the stack (0x00499778 / 0x00499752; corrected 2026-10-12,
 //     the old port took the HWND from EAX). 0x00498d60, called from both handlers above, is __cdecl with
 //     the combo HWND on the stack (the old ports called it __fastcall).
-//   - 0x004b3b70 / 0x004b3bb0 are plain __cdecl 3-arg file I/O wrappers
-//     that call into the game's stream-context layer (FUN_004cc230 +
-//     FUN_004cbd30/FUN_004cbe80 + FUN_004cc160). Reimplemented directly
-//     in C++ with calls through cited game function addresses.
-//
-// Uncertainties acknowledged in source (cataloged in UNCERTAINTIES.md):
-//   - U-0287 / U-0288 on 0x004b3bb0: PUSH ESI semantics; close() receives
-//     WRITE RESULT (not the original handle). Bit-identity at the
-//     assembly level is preserved by mechanical replication: we
-//     unconditionally pass the write-result to close, matching original.
+
 
 #include "../Core/HookSystem.h"
 
@@ -43,137 +30,8 @@
 #include <windows.h>
 
 
-// ============================================================================
-// Game function addresses (cited at exact RVA)
-// ============================================================================
-
-// 0x004cc230  FUN_004cc230  stream-context open (type, mode, filename) -> ctx
-//   Cited at: 0x004b3b7d (read) / 0x004b3bb9 (write).
-using StreamOpenFn_t = int(__cdecl*)(int, int, const char*);
-static StreamOpenFn_t const g_StreamOpen =
-    reinterpret_cast<StreamOpenFn_t>(0x004cc230u);
-
-// 0x004cbd30  FUN_004cbd30  stream read (ctx, buf, size) -> bytes_read
-//   Cited at: 0x004b3b96.
-using StreamReadFn_t = int(__cdecl*)(int, void*, std::uint32_t);
-static StreamReadFn_t const g_StreamRead =
-    reinterpret_cast<StreamReadFn_t>(0x004cbd30u);
-
-// 0x004cbe80  FUN_004cbe80  stream write (ctx, buf, size, esi_caller) -> result
-//   Cited at: 0x004b3bd1. ESI is left as whatever the caller left in ESI.
-//   We model this as a 3-arg call (ESI passthrough is preserved by the
-//   __cdecl entry: caller's ESI is preserved across our naked PUSH ESI).
-//   [UNCERTAIN U-0287] — see file header.
-using StreamWriteFn_t = int(__cdecl*)(int, void*, std::uint32_t);
-static StreamWriteFn_t const g_StreamWrite =
-    reinterpret_cast<StreamWriteFn_t>(0x004cbe80u);
-
-// 0x004cc160  FUN_004cc160  stream close (handle_or_result, 0) -> int
-//   Cited at: 0x004b3ba0 (read; receives handle) / 0x004b3bdb (write;
-//   receives write result, per U-0288 — preserved as-is for bit-identity).
-using StreamCloseFn_t = int(__cdecl*)(int, int);
-static StreamCloseFn_t const g_StreamClose =
-    reinterpret_cast<StreamCloseFn_t>(0x004cc160u);
-
-
-// ============================================================================
-// 0x004b3b70  FileReadWrapper_i3
-//
-// Original 61-byte function. __cdecl.  3 args: (filename, buf, size).
-//
-//   0x004b3b70 MOV EAX,[ESP+0x4]                ; load filename
-//   0x004b3b74 PUSH ESI
-//   0x004b3b75 PUSH EDI
-//   0x004b3b76 PUSH EAX                          ; arg3 to FUN_004cc230 = filename
-//   0x004b3b77 PUSH 0x1                          ; arg2 = 1 (read mode)
-//   0x004b3b79 PUSH 0x2                          ; arg1 = 2 (file type)
-//   0x004b3b7b XOR  EDI,EDI                      ; EDI = 0 (default ret)
-//   0x004b3b7d CALL 0x004cc230                   ; open
-//   0x004b3b82 MOV  ESI,EAX                      ; ESI = handle
-//   0x004b3b84 ADD  ESP,0xc                      ; clean 3 args
-//   0x004b3b87 TEST ESI,ESI
-//   0x004b3b89 JZ   0x004b3ba8                   ; skip if open failed
-//   0x004b3b8b MOV  ECX,[ESP+0x14]               ; size
-//   0x004b3b8f MOV  EDX,[ESP+0x10]               ; buffer
-//   0x004b3b93 PUSH ECX                          ; size
-//   0x004b3b94 PUSH EDX                          ; buffer
-//   0x004b3b95 PUSH ESI                          ; handle
-//   0x004b3b96 CALL 0x004cbd30                   ; read
-//   0x004b3b9b PUSH 0x0                          ; close arg2
-//   0x004b3b9d PUSH ESI                          ; close arg1 = handle
-//   0x004b3b9e MOV  EDI,EAX                      ; EDI = bytes_read
-//   0x004b3ba0 CALL 0x004cc160                   ; close
-//   0x004b3ba5 ADD  ESP,0x14                     ; clean 5 args
-//   0x004b3ba8 MOV  EAX,EDI                      ; ret value
-//   0x004b3baa POP  EDI
-//   0x004b3bab POP  ESI
-//   0x004b3bac RET
-// ============================================================================
-extern "C" __declspec(dllexport)
-int __cdecl FileReadWrapper_i3(const char* filename, void* buf, std::uint32_t size)
-{
-    int handle = g_StreamOpen(2, 1, filename);  // 0x004b3b79/77/76
-    if (handle == 0) {                           // 0x004b3b87..89
-        return 0;
-    }
-    int bytes_read = g_StreamRead(handle, buf, size);  // 0x004b3b96
-    g_StreamClose(handle, 0);                          // 0x004b3ba0
-    return bytes_read;                                 // 0x004b3ba8
-}
-
-RH_ScopedInstall(FileReadWrapper_i3, 0x004b3b70);  // re-enabled 2026-05-24 batch-save-e
-
-
-// ============================================================================
-// 0x004b3bb0  FileWriteWrapper_i3
-//
-// Original 55-byte function. __cdecl.  3 args: (filename, buf, size).
-//
-//   0x004b3bb0 MOV EAX,[ESP+0x4]                ; load filename
-//   0x004b3bb4 PUSH EAX                          ; arg3 = filename
-//   0x004b3bb5 PUSH 0x2                          ; arg2 = 2 (write mode)
-//   0x004b3bb7 PUSH 0x2                          ; arg1 = 2 (file type)
-//   0x004b3bb9 CALL 0x004cc230                   ; open
-//   0x004b3bbe ADD  ESP,0xc
-//   0x004b3bc1 TEST EAX,EAX
-//   0x004b3bc3 JZ   0x004b3be6                   ; skip if open failed
-//   0x004b3bc5 MOV  ECX,[ESP+0xc]                ; size
-//   0x004b3bc9 MOV  EDX,[ESP+0x8]                ; buffer
-//   0x004b3bcd PUSH ESI                          ; [U-0287] saves ESI + arg
-//   0x004b3bce PUSH ECX                          ; size
-//   0x004b3bcf PUSH EDX                          ; buffer
-//   0x004b3bd0 PUSH EAX                          ; handle
-//   0x004b3bd1 CALL 0x004cbe80                   ; write (4-arg per Ghidra)
-//   0x004b3bd6 MOV  ESI,EAX                      ; ESI = write result
-//   0x004b3bd8 PUSH 0x0                          ; close arg2
-//   0x004b3bda PUSH ESI                          ; [U-0288] arg1 = write_result
-//   0x004b3bdb CALL 0x004cc160                   ; close
-//   0x004b3be0 ADD  ESP,0x14
-//   0x004b3be3 MOV  EAX,ESI                      ; ret = write result
-//   0x004b3be5 POP  ESI
-//   0x004b3be6 RET
-//
-// For C3 bit-identity, the close() argument MUST be the write-result (ESI),
-// not the original handle. We faithfully preserve this divergence from the
-// read wrapper.  [UNCERTAIN U-0287 / U-0288] are about SEMANTICS, not BEHAVIOR.
-// ============================================================================
-extern "C" __declspec(dllexport)
-int __cdecl FileWriteWrapper_i3(const char* filename, void* buf, std::uint32_t size)
-{
-    int handle = g_StreamOpen(2, 2, filename);  // 0x004b3bb7/b5/b4
-    if (handle == 0) {                           // 0x004b3bc1..c3
-        return 0;
-    }
-    // 0x004b3bd1: 4-arg call. We pass 3 args; ESI passthrough preserved by
-    // standard cdecl entry (caller's ESI is unchanged by our prologue).
-    int write_result = g_StreamWrite(handle, buf, size);  // 0x004b3bd1
-    // 0x004b3bda: close receives WRITE_RESULT, not the original handle.
-    // This is the documented [U-0288] divergence from the read wrapper.
-    g_StreamClose(write_result, 0);  // 0x004b3bdb
-    return write_result;             // 0x004b3be3
-}
-
-RH_ScopedInstall(FileWriteWrapper_i3, 0x004b3bb0);  // re-enabled 2026-05-24 batch-save-e
+// The file wrappers 0x004b3b70 / 0x004b3bb0 moved to Save/FileWrappers.cpp (lane savelink2, 2026-10-23,
+// option C): one shared body each in both rsp files. This file keeps the video-dialog helpers, asi-only.
 
 
 // ============================================================================
