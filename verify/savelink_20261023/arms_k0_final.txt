@@ -1,0 +1,15 @@
+=== H_DEF-2 pid=4288 exe=1ed749b6
+    exit=0 self_exited=True secs=280
+    H_DEF-2.step.csv lines=19059 sha8=bacfc747
+    H_DEF-2.gates.csv lines=53993 sha8=8dd1c004
+    H_DEF-2.ptrace.log lines=26996 sha8=6f9932b6
+=== B_DEF_K0 pid=16132 exe=1ed749b6
+    exit=0 self_exited=True secs=22
+    B_DEF_K0.step.csv lines=2036 sha8=f9deb9b9
+=== B_DEF_K1 pid=8876 exe=1ed749b6
+    exit=0 self_exited=True secs=21
+    B_DEF_K1.step.csv lines=2989 sha8=d3601fcc
+=== B_DEF_K26 pid=13720 exe=1ed749b6
+    exit=0 self_exited=True secs=22
+    B_DEF_K26.step.csv lines=2336 sha8=9da9a26a
+DONE

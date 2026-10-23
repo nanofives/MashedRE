@@ -108,15 +108,52 @@ static void* const kGameSaveBuf = static_cast<void*>(g_saveBuf);
 // standalone writes mashed_re_gamesave.bin and "NEVER original/gamesave.bin" — and
 // this TU honours it. MASHED_SAVE_PATH overrides, which is what the default-OFF
 // self-test uses so it cannot clobber a real progress file.
+//
+// [savelink 2026-10-23] MASHED_SAVE_ORIGINAL=1 (default OFF) points the default at the
+// ORIGINAL's save, "original/gamesave.bin" (cwd is the repo root after exe_main's
+// self-locate), so the original loads what the standalone wrote. Verified to be
+// accepted by the original on the span cells: verify/savelink_20261023. It overwrites the
+// diffing reference, so the first write copies the existing file to
+// "original/gamesave.bin.preexe_bak" when that backup is absent (never overwritten).
+// MASHED_SAVE_PATH still wins over both.
+static bool OriginalFormatMode() {
+    static int s_on = -1;
+    if (s_on < 0) {
+        const char* v = std::getenv("MASHED_SAVE_ORIGINAL");
+        s_on = (v && v[0] && v[0] != '0') ? 1 : 0;
+    }
+    return s_on == 1;
+}
 static const char* GameSaveFilename() {
     static const char* s_path = nullptr;
     if (!s_path) {
         const char* env = std::getenv("MASHED_SAVE_PATH");
-        s_path = (env && env[0]) ? env : "mashed_re_gamesave.bin";
+        s_path = (env && env[0]) ? env
+               : OriginalFormatMode() ? "original/gamesave.bin"
+                                      : "mashed_re_gamesave.bin";
     }
     return s_path;
 }
 #define kGameSaveFilename (GameSaveFilename())
+
+// One-time safety copy before the first write to the original's own save file.
+static void BackupBeforeFirstWrite(const char* path) {
+    static bool s_done = false;
+    if (s_done) return;
+    s_done = true;
+    if (!OriginalFormatMode() || std::strcmp(path, "original/gamesave.bin") != 0) return;
+    const char* bak = "original/gamesave.bin.preexe_bak";
+    if (std::FILE* b = std::fopen(bak, "rb")) { std::fclose(b); return; }   // keep the first one
+    std::FILE* src = std::fopen(path, "rb");
+    if (!src) return;                                                       // nothing to protect
+    if (std::FILE* dst = std::fopen(bak, "wb")) {
+        unsigned char chunk[4096];
+        std::size_t n;
+        while ((n = std::fread(chunk, 1, sizeof chunk, src)) > 0) std::fwrite(chunk, 1, n, dst);
+        std::fclose(dst);
+    }
+    std::fclose(src);
+}
 
 // [D4 2026-10-05 PREREG_WIRE] How many bytes the last read actually got.
 //
@@ -142,6 +179,7 @@ static int gFileRead(const char* path, void* buf, std::uint32_t size) {
 
 // Substitute for 0x004b3bb0.
 static int gFileWrite(const char* path, void* buf, std::uint32_t size) {
+    BackupBeforeFirstWrite(path);
     std::FILE* f = std::fopen(path, "wb");
     if (!f) return 0;
     const std::size_t n = std::fwrite(buf, 1, size, f);
@@ -171,6 +209,8 @@ static int gFileExists(const char* path) {
 extern "C" unsigned char* GameSave_BufferPtr()   { return g_saveBuf; }
 extern "C" std::uint32_t  GameSave_BufferSize()  { return kGameSaveSize; }
 extern "C" std::uint32_t  GameSave_LastReadBytes() { return g_lastReadBytes; }
+extern "C" int            GameSave_OriginalFormatMode() { return OriginalFormatMode() ? 1 : 0; }
+extern "C" const char*    GameSave_FilePath() { return GameSaveFilename(); }
 #endif  // MASHED_STANDALONE
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -289,6 +329,13 @@ extern "C" __declspec(dllexport) int __cdecl GameSave_SelfTest(char* out, int ou
 
     int pass = 0;
     const char* path = GameSaveFilename();
+
+    // [savelink 2026-10-23] The steps below std::remove() and overwrite the path. With MASHED_SAVE_ORIGINAL=1
+    // and no MASHED_SAVE_PATH that path is original/gamesave.bin, the diffing reference: refuse.
+    if (std::strcmp(path, "original/gamesave.bin") == 0) {
+        say("SKIPPED: the path is original/gamesave.bin; set MASHED_SAVE_PATH to a scratch file\n");
+        return 0;
+    }
 
     // step 1 — a path that does not exist must report 0
     std::remove(path);

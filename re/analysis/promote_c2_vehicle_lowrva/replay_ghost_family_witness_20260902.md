@@ -53,7 +53,7 @@ disk, `0` = fresh alloc. Measured `0` here, i.e. the fresh-alloc branch, because
 Note that means **the disk-load branch is unexercised** and a port verified only against this run
 would have that arm untested; say so rather than claim full coverage.
 
-The path buffer `DAT_008a94a8` (U-1567, "exact format unknown") did **not** change across the call
+The ghost buffer `DAT_008a94a8` (U-3560; corrected 2026-10-23 from "path buffer, U-1567") did **not** change across the call
 in the fresh-alloc branch — consistent with the sprintf living on the disk-load path.
 
 ### `0x00411ae0` Ghost::PlaybackTick — WITNESSED under a replayed human scenario
