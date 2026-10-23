@@ -1,0 +1,11 @@
+K4 knob OFF: gamesave.bin unchanged: True | .preexe_bak absent: True
+K1(off) selftest: RESULT 3 of 3 gates passed
+G-BYTES  SaveWrite vs fwrite: 151456 of 151456 matching, sizes 151456 / 151456 (want 151456)
+G-LIVE   GameSave_LastReadBytes=151456 (want 151456) -> load WENT through SaveLoad
+G-ROUNDTRIP-LIVE  13 of 13 areas restored (unlock+trophy)
+G-MERGE  sizes 151456 / 151456, 0 bytes changed outside the owned cells (want 0), owned cells 26 of 26 as written
+RESULT 4 of 4 gates passed
+K1 RESULT line: RESULT 4 of 4 gates passed
+K2 .preexe_bak == shipped: True
+K2 merged file size 151456 magic efbeadde
+K3 original's table == merged file span on 156 cells: True diff []

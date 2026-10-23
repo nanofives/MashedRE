@@ -523,7 +523,51 @@ int GameFlowSaveSelfTest(char* out, int outSize) {
     if (match == kAreaCount) ++pass;
     sayf("G-ROUNDTRIP-LIVE  %d of %d areas restored (unlock+trophy)\n", match, kAreaCount);
 
-    sayf("RESULT %d of 3 gates passed\n", pass);
+    // ---- G-MERGE (savelink; only with MASHED_SAVE_ORIGINAL=1 and MASHED_SAVE_SELFTEST_SHIPPED=<pristine copy>) ----
+    // The three gates above overwrite the target with a pattern, so restore the pristine bytes, save through
+    // Campaign_SaveNow, and require that nothing outside {col 4 / col 5 of the tracked rows, the counter dword}
+    // changed. The merged file stays on disk for the original to load.
+    int total = 3;
+    const char* shipPath = std::getenv("MASHED_SAVE_SELFTEST_SHIPPED");
+    if (GameSave_OriginalFormatMode() && shipPath && shipPath[0]) {
+        using namespace mashed_re::Save;
+        total = 4;
+        static unsigned char shipped[kSaveSize];
+        static unsigned char after[kSaveSize];
+        std::uint32_t nShip = 0, nAfter = 0;
+        if (std::FILE* f = std::fopen(shipPath, "rb")) {
+            nShip = static_cast<std::uint32_t>(std::fread(shipped, 1, sizeof shipped, f)); std::fclose(f); }
+        if (std::FILE* f = std::fopen(pathA, "wb")) { std::fwrite(shipped, 1, nShip, f); std::fclose(f); }
+        for (int i = 0; i < kAreaCount; ++i) { g_progUnlock[i] = (i % 3 == 0) ? 1 : 0; g_progTrophy[i] = (i % 4); }
+        g_progLoaded = true;
+        Campaign_SaveNow();
+        if (std::FILE* f = std::fopen(pathA, "rb")) {
+            nAfter = static_cast<std::uint32_t>(std::fread(after, 1, sizeof after, f)); std::fclose(f); }
+        static bool owned[kSaveSize];
+        std::memset(owned, 0, sizeof owned);
+        for (int r = 0; r < kAreaCount && r < kSpanRows; ++r)
+            for (unsigned b = 0; b < 4; ++b) {
+                owned[kSpanOff + r * kRowStride + kColTrackUnlock + b] = true;
+                owned[kSpanOff + r * kRowStride + kColTrophyPriv + b] = true;
+            }
+        for (unsigned b = 0; b < 4; ++b) owned[kCounterOff + b] = true;
+        std::uint32_t outside = 0, ownedOk = 0, ownedTot = 0;
+        for (std::uint32_t i = 0; i < kSaveSize; ++i) if (!owned[i] && shipped[i] != after[i]) ++outside;
+        for (int r = 0; r < kAreaCount && r < kSpanRows; ++r) {
+            std::uint32_t u, t;
+            std::memcpy(&u, after + kSpanOff + r * kRowStride + kColTrackUnlock, 4);
+            std::memcpy(&t, after + kSpanOff + r * kRowStride + kColTrophyPriv, 4);
+            ownedTot += 2;
+            if (u == ((r % 3 == 0) ? 2u : 0u)) ++ownedOk;
+            if (t == static_cast<std::uint32_t>(r % 4)) ++ownedOk;
+        }
+        const bool mergeOk = (nShip == kSaveSize && nAfter == kSaveSize && outside == 0 && ownedOk == ownedTot);
+        if (mergeOk) ++pass;
+        sayf("G-MERGE  sizes %u / %u, %u bytes changed outside the owned cells (want 0), owned cells %u of %u as written\n",
+             nShip, nAfter, outside, ownedOk, ownedTot);
+    }
+
+    sayf("RESULT %d of %d gates passed\n", pass, total);
     #undef sayf
     return pass;
 }

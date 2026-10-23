@@ -330,6 +330,13 @@ extern "C" __declspec(dllexport) int __cdecl GameSave_SelfTest(char* out, int ou
     int pass = 0;
     const char* path = GameSaveFilename();
 
+    // [savelink 2026-10-23] The steps below std::remove() and overwrite the path. With MASHED_SAVE_ORIGINAL=1
+    // and no MASHED_SAVE_PATH that path is original/gamesave.bin, the diffing reference: refuse.
+    if (std::strcmp(path, "original/gamesave.bin") == 0) {
+        say("SKIPPED: the path is original/gamesave.bin; set MASHED_SAVE_PATH to a scratch file\n");
+        return 0;
+    }
+
     // step 1 — a path that does not exist must report 0
     std::remove(path);
     const int existsBefore = SaveFileExists();
