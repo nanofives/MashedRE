@@ -4128,6 +4128,64 @@ def _keep_display_awake():
         print(f"  [keep-awake] skipped: {e}")
 
 
+GHOST_JS = r"""
+'use strict';
+const IMG = 0x00400000;
+const m = Process.findModuleByName('MASHED.exe') || Process.enumerateModules()[0];
+const D = m.base.toUInt32() - IMG;
+const A = a => ptr(a + D);
+rpc.exports = {
+  snap: function () {
+    const r = { bb10: A(0x0063bb10).readU32(), bb14: A(0x0063bb14).readU32(), mode: A(0x0067e9fc).readU32(),
+                blk: A(0x008a94a8).readU32(), blksz: A(0x008a94ac).readU32() };
+    if (r.bb14) {
+      const rec = ptr(r.bb14);
+      r.rec0 = rec.readU32(); r.rec1 = rec.add(4).readU32(); r.rec2 = rec.add(8).readU32();
+      r.rec5 = rec.add(0x14).readU32(); r.rec5b = rec.add(0x5b * 4).readU32(); r.rec174 = rec.add(0x174).readU32();
+    }
+    return r;
+  },
+  rec: function () {           // header (0x19c) + frames (rec[0x5b]*0x24) as the copy will see them
+    const rec = ptr(A(0x0063bb14).readU32());
+    const n = rec.add(0x5b * 4).readU32();
+    const hdr = rec.readByteArray(0x19c);
+    const fr = n ? ptr(rec.add(0x14).readU32()).readByteArray(n * 0x24) : new ArrayBuffer(0);
+    return [hdr, fr];
+  },
+  copy: function () {
+    const f = new NativeFunction(A(0x00483ca0), 'int', ['pointer', 'pointer'], 'mscdecl');
+    return f(ptr(A(0x0063bb14).readU32()), A(0x008a94a8));
+  },
+  block: function () { return ptr(A(0x008a94a8).readU32()).readByteArray(A(0x008a94ac).readU32()); },
+  save: function () {
+    new NativeFunction(A(0x00404ee0), 'void', [], 'mscdecl')();
+    return new NativeFunction(A(0x00404f50), 'int', [], 'mscdecl')();
+  }
+};
+"""
+
+
+def ghost_capture(sess, outdir):
+    """savelink G1 (verify/savelink_20261023/PREREG_ghost_roundtrip.md): copy the live TimeTrial recording into the
+    ghost block with the game's own FUN_00483ca0 (outside its gate), dump everything, then SerializeToBuffer + SaveWrite."""
+    import json
+    out = Path(outdir); out.mkdir(parents=True, exist_ok=True)
+    g = sess.create_script(GHOST_JS); g.on("message", lambda m, d: None); g.load(); G = g.exports_sync
+    pre = G.snap(); print("  [ghost] before:", pre)
+    res = {"before": pre}
+    if pre.get("bb14"):
+        hdr, fr = G.rec()
+        (out / "rec_header.bin").write_bytes(bytes(hdr)); (out / "rec_frames.bin").write_bytes(bytes(fr))
+        (out / "block_before.bin").write_bytes(bytes(G.block()))
+        res["copy_ret"] = G.copy()
+        (out / "block_after.bin").write_bytes(bytes(G.block()))
+        res["save_ret"] = G.save()
+        res["after"] = G.snap()
+    (out / "ghost_capture.json").write_text(json.dumps(res, indent=1))
+    print("  [ghost] result:", res)
+    g.unload()
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--track", type=int, default=0,
@@ -4147,6 +4205,7 @@ def main():
                          "(grounded->0 => A6b airborne body runs). 0=off. Contrived state (C3-grade).")
     ap.add_argument("--fps", default="60")
     ap.add_argument("--hold", type=int, default=20, help="seconds to hold in the race after spawn")
+    ap.add_argument("--ghost-capture", default="", help="savelink: dir; copy the TimeTrial recording into the ghost block and save")
     ap.add_argument("--poke-u32", default="",
                     help="[D4 2026-10-05] CONTRIVED STATE (C3-grade). 'rva=val[,...]' "
                          "both hex, written once --poke-delay seconds into the hold. "
@@ -5014,6 +5073,9 @@ def main():
                 except Exception: pass
             time.sleep(0.25 if sched else 0.6)
         print()
+        if args.ghost_capture:
+            try: ghost_capture(sess, args.ghost_capture)
+            except Exception as ex: print("  [ghost] FAILED:", ex)
         if args.spike_telemetry:
             try:
                 import json

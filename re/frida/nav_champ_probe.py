@@ -186,7 +186,7 @@ def main():
         press(4); time.sleep(0.8); log("after-confirm")
         confirm_to(3); log("depth3-mode-select")
 
-        if args.plan in ("dumptable", "savewrite"):
+        if args.plan in ("dumptable", "savewrite", "ghostdump"):
             # Dump the 13x12 championship/unlock table DAT_007f0a40 (loaded from
             # the original's current gamesave.bin at boot). Row stride 0x30 (12
             # dwords). Per the RE survey col 4 (+0x10) = track-unlock, value 2 =
@@ -203,6 +203,18 @@ def main():
                 addrs = [0x007f0e50 + r * 0x30 + j * 4 for j in range(12)]
                 vals = E.snap(addrs)
                 print(f"  vrow{r:2d}: {vals}")
+            if args.plan == "ghostdump":
+                # savelink G2: the ghost block *DAT_008a94a8 (size DAT_008a94ac) after the menu-path load.
+                gscr = sess.create_script("""
+                const m = Process.findModuleByName('MASHED.exe') || Process.enumerateModules()[0];
+                const D = m.base.toUInt32() - 0x00400000;
+                rpc.exports = { blk: function () {
+                  const p = ptr(ptr(0x008a94a8 + D).readU32()); const n = ptr(0x008a94ac + D).readU32();
+                  return p.readByteArray(n); } };""")
+                gscr.on("message", lambda m, d: None); gscr.load()
+                outp = os.environ.get("MASHED_GHOST_OUT", "ghost_block_menu.bin")
+                Path(outp).write_bytes(bytes(gscr.exports_sync.blk()))
+                print("  GHOSTDUMP ->", outp)
             if args.plan == "savewrite":
                 # savelink leg R: the ORIGINAL's own writer. SerializeToBuffer 0x00404ee0
                 # then SaveWrite 0x00404f50 (both __cdecl, no args), cwd = the game dir.

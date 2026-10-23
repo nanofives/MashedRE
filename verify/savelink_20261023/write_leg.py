@@ -9,7 +9,7 @@ import save_roundtrip as rt
 
 ROOT = Path("D:/MashedWT/savelink_root"); DATA = Path("D:/MashedWT/savelink_data")
 GS = ROOT / "original" / "gamesave.bin"; BAK = ROOT / "original" / "gamesave.bin.preexe_bak"
-SHIP = DATA / "shipped.bin"; EXE = REPO / "mashedmod" / "build" / "mashed_re.exe"
+SHIP = Path(os.environ.get("SAVELINK_SHIP", str(DATA / "shipped.bin"))); EXE = REPO / "mashedmod" / "build" / "mashed_re.exe"
 sha = lambda p: hashlib.sha256(Path(p).read_bytes()).hexdigest()[:16]
 out = []
 def P(*a):
