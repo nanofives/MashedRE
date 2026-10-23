@@ -37,6 +37,7 @@
 "Audio\AudioMemory.cpp"
 "Audio\AudioCharacterBankPaths.cpp"
 "Audio\AudioRws.cpp"
+"Audio\AudioFmtKey.cpp"
 "Audio\AudioLeaves_ab2.cpp"
 "Audio\RwsStream.cpp"
 "Audio\RwsFmt.cpp"

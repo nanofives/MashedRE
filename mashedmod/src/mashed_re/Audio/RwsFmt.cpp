@@ -18,8 +18,15 @@
 //   re/analysis/promote_c2_audio_rws/005ac9e0.md
 //
 #include "../Core/HookSystem.h"
+#include "AudioFmtKey.h"
 #include <cstdint>
 #include <cstring>
+
+// audiolink slice 4 (2026-10-23): in both rsp files. The only address was the key compare 0x005adf30, now called by
+// name (Audio/AudioFmtKey.cpp). Bytes: verify/audiolink_20261023/disasm_slice4.txt, both bodies identical.
+static int KeyCmp(std::uint32_t a, std::uint32_t b) {
+    return AudioFmtKeyCompare(reinterpret_cast<const std::uint8_t*>(a), reinterpret_cast<const std::uint8_t*>(b));
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x005ac5f0  FUN_005ac5f0  AudioFmtDescEqual   (~80 bytes)
@@ -54,17 +61,13 @@
 extern "C" __declspec(dllexport) std::uint32_t __cdecl
 AudioFmtDescEqual(int* param_1, int* param_2)
 {
-    typedef int (__cdecl *KeyCmpFn)(int a, int b);
-    static constexpr std::uintptr_t kKeyCmp = 0x005adf30u;
-    const auto keyCmp = reinterpret_cast<KeyCmpFn>(kKeyCmp);
-
     // 5-condition short-circuit AND. Order matches the decomp body exactly:
     //   1. fmt-key compare result == 0
     //   2. word at +0x00 equal
     //   3. byte at +0x0c equal (cast s8 to match sign-extension behaviour)
     //   4. byte at +0x0d equal
     //   5. flags byte at +0x18 equal under mask 0xfd
-    const int keyEq = keyCmp(param_1[1], param_2[1]);
+    const int keyEq = KeyCmp(static_cast<std::uint32_t>(param_1[1]), static_cast<std::uint32_t>(param_2[1]));   // 0x005ac602
     if (keyEq != 0) return 0u;
 
     if (param_1[0] != param_2[0]) return 0u;
@@ -124,10 +127,6 @@ RH_ScopedInstall(AudioFmtDescEqual, 0x005ac5f0);  // re-enabled 2026-05-24 c3-au
 extern "C" __declspec(dllexport) std::uint32_t __cdecl
 AudioFmtEntryMatch(std::uint32_t* param_1, std::uint32_t* param_2)
 {
-    typedef int (__cdecl *KeyCmpFn)(int a, int b);
-    static constexpr std::uintptr_t kKeyCmp = 0x005adf30u;
-    const auto keyCmp = reinterpret_cast<KeyCmpFn>(kKeyCmp);
-
     // cnd1: channel byte equal (entry +0x05 vs candidate +0x0d, both s8).
     const std::int8_t e_05 = *reinterpret_cast<std::int8_t*>(
         reinterpret_cast<std::uintptr_t>(param_1) + 0x05u);
@@ -154,8 +153,7 @@ AudioFmtEntryMatch(std::uint32_t* param_1, std::uint32_t* param_2)
     // cnd5: 16-byte fmt-key compare.
     //   entry: *param_1 (key ptr at +0x00)
     //   cand:  param_2[1] (key ptr at +0x04)
-    const int keyEq = keyCmp(static_cast<int>(param_2[1]),
-                             static_cast<int>(param_1[0]));
+    const int keyEq = KeyCmp(param_2[1], param_1[0]);                // 0x005aca13
     if (keyEq != 0) return 0u;
 
     // cnd6: flag bit0 agreement.

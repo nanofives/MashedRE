@@ -1,6 +1,8 @@
 # Next session kickoff
 
-> ## START HERE 2026-10-23 audiolink slices 1-3 (UNMERGED, branch `work/audiolink`, pushed): **12 Audio files (38 functions) linked into the exe, 2 latent defects fixed, 1 codegen-only match made explicit.** Next = slice 4 (0x005adf30 split + RwsFmt) or Mariano's merge / twin decisions.
+> ## START HERE 2026-10-23 audiolink slices 1-4 (UNMERGED, branch `work/audiolink`, pushed): **14 Audio files (41 functions) linked into the exe, 2 latent defects + 1 fault-order gap fixed, 1 codegen-only match made explicit.** Next = slice 5 (TimerGetters_ah5 getter split) or Mariano's merge / twin decisions.
+>
+> - Slice 4: AudioFmtKeyCompare 0x005adf30 split into Audio/AudioFmtKey.cpp (both rsp), RwsFmt in the exe. First run RED (desc_equal idx 2: `repe cmpsb` faults on param_2 first, the port on param_1); fixed, path1 3/3, gates unchanged on exe 4004ebb1. `RESULT_slice4.md`.
 >
 > - Slice 3: RwsStream on the shared RwStreamCore bodies, private tree root in the exe; 0x005ab380 takes 2 args (arity settled); 0x005abf80 is a `jmp eax` tail call, the old `void fn()` port matched only via MSVC codegen. path1 4/4, gates unchanged on exe e41769c4. `RESULT_slice3.md`.
 >
@@ -12,7 +14,7 @@
 > - `music_group_volume_set` runs through `early_window_leaf_diff.py` (no diff_template.js handler for its arg_type).
 > - Decisions for Mariano: merge `work/audiolink`; the two job twins 0x004625b0 (CharacterBankPath) and 0x005aeb90
 >   (VolToDs); the two precedent files AudioQueuePop / AudioVecLength still reach MASHED addresses in the exe.
-> - Next slice per the survey: split AudioFmtKeyCompare 0x005adf30 out of AudioRws.cpp into a shared TU, then RwsFmt (0x005ac5f0, 0x005ac9e0).
+> - Next slice per the survey: split the four TimerGetters_ah5 field getters (0x005a89a0 / b0 / c0, 0x005ab370) into a shared TU; AudioRootGet / AudioTimerRateGet / AudioLinearToLog stay asi-only (global reads, job twin).
 
 > ## START HERE 2026-10-23 next lane = **audiolink** (Mariano's pick after savelink2). Kickoff below; the savelink2 block follows.
 >
