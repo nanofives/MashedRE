@@ -61,3 +61,23 @@ the original capture's side, which the exe cannot change. Files: `arm_hashes.txt
 1. Flip `MASHED_KF_INTERP` default ON and delete the legacy branch in `LinearAnimMatrix` (recommended; zero measured cost)?
 2. Apply the C2 -> C3 tracker row?
 3. Merge `work/kfdot`?
+
+## 7. Flip (Mariano 2026-10-23: flip, delete the legacy branch, C2 -> C3, merge)
+
+`LinearAnimMatrix` now always calls `Track::KfInterpolateFields`; the knob `MASHED_KF_INTERP` and the reversed-dot /
+`std::sqrt` copy are deleted (no opt-out). Allowlist line `DUP-IN-TARGET:00532b80` removed: 9 -> 8 findings, lint 0 NEW.
+Final exe `d70eb347`:
+
+| gate | result |
+|---|---|
+| G-CTRL x2 | `bacfc747 / 8dd1c004 / 6f9932b6` (`arm_hashes_flip.txt`) |
+| B K0 / K1 / K26 | `f9deb9b9 / d3601fcc / 9da9a26a` |
+| (b) / (e) | 9/9 (`vsum_b_flip.txt`) / 3/3, launch 1425.7 / 2052.5 / 2055.0 (`e_check_flip.txt`) |
+| D2, 3 runs alone | PASS 3/3, drvmed 1965.35 x3 (`score_d2_flip.txt`) |
+| 13 tracks | table identical (`tracks_flip_score.txt`), all 78 draw dumps + frames byte-identical to the OFF run |
+
+Trackers applied (`apply_trackers.py`): `0x00532b80` C2 -> C3; the `0x00532b80` half of U-9741 / D-11079 marked resolved,
+the `0x004c4680` half stays open.
+
+**Follow-up seen, not worked:** the copter sampler's acos (`AnimAcos`, `CopterAnimMatrix`, `FUN_004752f0` via `FUN_00546e70`)
+still takes `std::sqrt` where the original calls the LUT root `FUN_004c3b30` (`0x0054702b`, `0x005470cf`). Render only.

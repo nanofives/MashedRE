@@ -1,7 +1,7 @@
 // Mashed RE — Track/KfInterpolate.cpp
 // 0x00532b80 RpHAnimStdKeyFrameInterpolate, the one body (lane kfdot, 2026-10-22; moved from Track/WarzonePontoon.cpp,
 // where verify/pontoon_20261016/disasm_slerp.txt transcribed it). In both rsp files: the exe calls it from the boat and
-// (MASHED_KF_INTERP) the Dump train, the .asi installs it over 0x00532b80 with the in-process A/B below.
+// the Dump train, the .asi installs it over 0x00532b80 with the in-process A/B below.
 //
 // Anchor: MASHED.exe SHA-256 BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E (on .unpatched)
 #include "KfInterpolate.h"
