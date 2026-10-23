@@ -1,5 +1,65 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-23 savelink (UNMERGED, branch `work/savelink`, HEAD `73799d98e`): **the original accepts the standalone's save, and the exe can write it behind a default-OFF knob.** Next = Mariano's decisions below, then the rest of the Save TUs.
+>
+> `verify/savelink_20261023/` (PREREGs committed before each run):
+> - `RESULT_savelink_roundtrip.md`: P0-P4 held. Using `re/frida/nav_champ_probe.py --plan dumptable` (boots the original to the mode-select
+>   menu and dumps the live table `0x007f0a40`; the old `scenario_launch.py` route never loads the save), a save built by the standalone's
+>   `BuildImage` gives the same 156 span cells as an edited shipped save, a positive control (r2c1 0 -> 1) moved exactly that cell, and the
+>   original's own writer (`0x00404ee0` then `0x00404f50`, `--plan savewrite`) produces a file `ParseImage` accepts. Span, counter and magic only.
+>   The profile block (`U-3560`) is not covered.
+> - `RESULT_savelink_write.md`: K0-K4 held. `MASHED_SAVE_ORIGINAL=1` (default OFF, `Save/GameSave.cpp` + `Race/GameFlow.cpp`) makes the exe write
+>   `original/gamesave.bin`, patching the existing image in place (col 4 / col 5 of the tracked rows + counter; the from-zero rebuild would wipe
+>   the launch gates, savedata gate and profile). First write leaves `original/gamesave.bin.preexe_bak`. Knob OFF: G-CTRL `bacfc747 / 8dd1c004 /
+>   6f9932b6` and B `f9deb9b9 / d3601fcc / 9da9a26a` unchanged on exe `1ed749b6`, lint 8 known NEW=0 (only G-CTRL and B rerun; (b), (e), D2 and the
+>   13 tracks were not). Knob ON: self-test 4 of 4 (new G-MERGE), and the original loads the merged file on 156 cells.
+> - Tooling added: `re/tools/save_roundtrip.py`, `re/tools/savefmt/savefmt_cli.cpp`, `MASHED_ORIG_DIR` + `--plan savewrite` in `nav_champ_probe.py`.
+>
+> **Lessons that cost time (also in the RESULT files):**
+> - The tool sandbox makes the original (and any game exe) AV at boot (`0xC0000005` at `0x005baf48`, NULL audio object). Run every game launch with
+>   the sandbox disabled. It looks exactly like a compat-shim problem; `setup_mashed_compat.ps1` does not help and it drops `DWM8And16BitMitigation`
+>   from the exe's layer value.
+> - A private root needs its own AppCompat layer (`~ RUNASINVOKER WIN98RTM HIGHDPIAWARE EMULATEHEAP`) on its own `MASHED.exe` path.
+> - `GameSave_SelfTest` ends with `std::remove(path)`; under the knob that path is the reference save. It now refuses. Treat any default-OFF self-test
+>   that deletes or rewrites its target as a hazard once a knob can point it at `original/`.
+> - Bash heredoc Python with backslash-n inside strings failed to match twice; write the patch script to a file with raw strings, or use Edit.
+>
+> **Decisions for Mariano (nothing below was done):**
+> 1. Merge `work/savelink` into `race/first-frame-parity` with the knob OFF? (Merging is what carries this block and the tooling onto the race branch.)
+> 2. Flip the default? NOT proposed: every default run would overwrite the diffing reference and leave a backup next to it.
+> 3. With the knob ON and the shipped file, the shipped col 4 is `2` on every row, so the standalone's progression loads as all-unlocked
+>    (`ApplyProgressFromSpan`). Not measured in a campaign flow. Col 5 (trophy) is the standalone's private value in a cell whose original meaning is
+>    `[UNCERTAIN]`; the original loads it, but what it does with it is untested.
+>
+> **Paste-ready kickoff for the next session:**
+>
+> ```
+> # Kickoff: Mashed D4, Save TUs leg 3 (lane savelink2)
+>
+> Base: work/savelink at 73799d98e, or race/first-frame-parity if Mariano merged it. Children on claude2 (verify the model id with read_session).
+> Game launches need the sandbox disabled (see the lessons above).
+>
+> ## State
+> Round trip and write leg done (RESULT_savelink_roundtrip.md, RESULT_savelink_write.md). Allowlist 8 findings, lint 0 NEW. The 5 exe-linked Save TUs
+> (GameSave, GameSaveBuffer, FsOpen, VfsStream, ReplayTimeFormat) are in exe_sources.rsp; 11 more are .asi-only and call MASHED.exe by address.
+>
+> ## Task (pick with Mariano): 
+> a. Measure finding 3: boot the exe with MASHED_SAVE_ORIGINAL=1 and the shipped save in a private root; log "progress loaded: N/N tracks unlocked" and
+>    check the cup screens. PREREG first. This decides whether the knob can ever be a default.
+> b. U-3560: the profile block (file 0x4..0x24A3F, 150,076 bytes). Everything so far leaves it zero in standalone saves. Worker survey of the writers
+>    of *DAT_008a94a8, then a round trip that fills it (the original's own SerializeToBuffer from a live profile).
+> c. Link the next Save TU group (SettingsConfig / SettingsCfg / SettingsDialog / SettingsAndIO / GameSaveVFS / RwStream): all C3/C4 .asi-only with
+>    address tunnels; plan the closure first (GameSave.cpp's header counts a 12-TU closure for the three file wrappers).
+>
+> ## Caveats
+> Private roots: robocopy original/ to D:/MashedWT/<lane>_root, then set that path's AppCompat layer. Kill only your own PIDs. D2 arms run alone.
+> Never write original/gamesave.bin outside a private root (MASHED_SAVE_ORIGINAL points at it).
+>
+> ## Lane protocol
+> Worktree .worktrees/<lane>, MASHED_NO_DEPLOY=1, evidence D:/MashedWT/<lane>_data, runner copied from verify/savelink_20261023/ (run_arms.py, write_leg.py).
+> Commits end with Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>. Do not merge: report verdicts, the gate table, decisions.
+> ```
+
 > ## START HERE 2026-10-23 dcstream + kfdot: **allowlist 11 -> 8, no knob-free dual-copy entry left.** Next = a decision, or the other D4 items (Save / Audio TU linking).
 >
 > Two lanes merged into `race/first-frame-parity` (HEAD `116c4f4fe`, local; origin was at `f0cf8fa6b` when this was written, so push is pending):
