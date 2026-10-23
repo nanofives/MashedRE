@@ -16,6 +16,7 @@
 #include "../Track/PowerupMarkers.h"  // POWERUPS_GOLD.DFF placement (FUN_00426460)
 #include "../Render/ArcticTrackNodeSlot0.h"  // the real 0x00448940 body + its sea grid
 #include "../Render/TrackHookSlots.h"        // [rhooks U-9713] per-track hook-slot draw model
+#include "../Track/KfInterpolate.h"          // [kfdot] 0x00532b80, the one body
 #include "../Track/WarzonePontoon.h"         // [pontoon] Warzone track object 0x00684d18 (MASHED_PONTOON_*)
 #include "../Track/LapLogic.h"      // F4 lap-line crossing sequence (shared w/ test)
 #include "../Txd/TxdDecoder.h"
@@ -2335,7 +2336,8 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                         // [rhooks U-9717] FUN_0047ad40 @ 0x0047ad40, record k at desc + 0x70 + 0xc*k:
                         // +0x70 = arg n-1 (clump), +0x71 = arg n (anim), +0x78 = 0, then arg 1 when
                         // n == 3 (each through __ftol 0x004a2c48). Dump's SetClumpAnim(LINEAR, 0, 3):
-                        // LINEAR is no global of the image, so Lua 4.0 hands nil -> 0 (lua_num).
+                        // COURSE.LUA:133 declares `local LINEAR = 1`, so type 1 (lua_locals): the LinearAnimMatrix
+                        // sampler (FUN_004b47e0). (Corrected kfdot 2026-10-22: this said LINEAR was nil -> 0.)
                         float v0 = 0.f, vc = 0.f, va = 0.f;
                         const std::size_t n = args.size();
                         lua_num(args[n - 2], &vc);
@@ -4490,28 +4492,10 @@ void LinearAnimMatrix(Track::HAnim& an, float t, float* m) {
     while (k + 1 < n - 1 && F[k + 1].time < t) ++k;
     Track::HKeyFrame& a = F[k];
     Track::HKeyFrame& b = F[k + 1];
-    // dot (w1 w2 + z2 z1 + y1 y2 + x2 x1), u, the translation lerp
-    float dot = a.q[3] * b.q[3] + b.q[2] * a.q[2] + a.q[1] * b.q[1] + b.q[0] * a.q[0];
-    const float u = (t - a.time) / (b.time - a.time);
+    // FUN_00532b80: the one body (Track/KfInterpolate.cpp; lane kfdot, default since 2026-10-23, Mariano). The copy
+    // that lived here summed the dot reversed and took std::sqrt in the acos; same bytes on every gate and track.
     Track::HKeyFrame o{};
-    o.t[0] = (b.t[0] - a.t[0]) * u + a.t[0];
-    o.t[1] = (b.t[1] - a.t[1]) * u + a.t[1];
-    o.t[2] = (b.t[2] - a.t[2]) * u + a.t[2];
-    if (dot < 0.0f) {
-        dot = -dot;
-        for (int j = 0; j < 4; ++j) b.q[j] = -b.q[j];
-    }
-    float fa = 1.0f - u, fb = u;
-    if (dot < 0.999000013f) {                                        // [0x005cea88]
-        const float theta = AnimAcos(dot);
-        const float inv = 1.0f / AnimSinPoly(theta);
-        fa = AnimSinPoly(theta * fa) * inv;
-        fb = AnimSinPoly(theta * u) * inv;
-    }
-    o.q[0] = fa * a.q[0] + fb * b.q[0];
-    o.q[1] = fb * b.q[1] + fa * a.q[1];
-    o.q[2] = fa * a.q[2] + fb * b.q[2];
-    o.q[3] = fb * b.q[3] + fa * a.q[3];
+    Track::KfInterpolateFields(o.q, o.t, a.q, a.t, a.time, b.q, b.t, b.time, t);
     AnimKeyMatrix(o, m);
 }
 }  // namespace

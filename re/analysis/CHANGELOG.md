@@ -26,6 +26,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-23  00532b80  RpHAnimStdKeyFrameInterpolate  C2->C3  shared Track/KfInterpolate.cpp; in-process A/B 3332 natural calls + 48 sweep 0 diff; Dump copy deleted (dot order + LUT root). kfdot: ONE body, both targets; exe gates unchanged; U-9741 / D-11079 half resolved. verify/kfdot_20261022/RESULT_kfdot.md
 2026-10-22  004cbd30  RwStreamRead  C2->C3  shared Render/RwStreamCore.cpp (4-type dispatch + error emits from the disassembly); in-process A/B 95744 reads 0 diff (track 0 + Warzone), sweep 116/0/0; U-0111 resolved. dcstream: ONE body, both targets; exe gates knob-free, every reference unchanged. verify/dcstream_20261022/RESULT_dcstream.md
 2026-10-22  004cc050  RwStreamSkip  C2->C3  shared Render/RwStreamCore.cpp (zero early-out, pos clamp, callback non-zero = ok); 32 natural skips + sweep 0 diff; U-0112, U-1275 resolved. dcstream: ONE body, both targets; exe gates knob-free, every reference unchanged. verify/dcstream_20261022/RESULT_dcstream.md
 2026-10-22  0040e180  MostSeparatedPair  C2->C4  shared Race/MostSepPair.cpp; in-process A/B 45000 calls 0 diff (track 0 + Warzone); coverage U-9788. dcmix: ONE body, both targets; exe gates knob-free, every reference unchanged. verify/dcmix_20261022/RESULT_dcmix.md
