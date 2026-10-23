@@ -1,5 +1,56 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-23 savelink2 (MERGED: `race/first-frame-parity` at `0f8d6f31a`, pushed): **the knob's all-unlocked load is not visible, and the Save TU link is done to the dialog boundary.** Next = Mariano picks option B, the dialog, or another D4 lane.
+>
+> Every slice has a PREREG committed before its arms, gates unchanged (G-CTRL bacfc747 / 8dd1c004 / 6f9932b6, B f9deb9b9 / d3601fcc / 9da9a26a) and
+> lint 0 NEW (8 allowlisted). Evidence in `verify/savelink2_20261023/`, raw data in `D:/MashedWT/savelink2_data/`.
+> - **(a) knob side effect** (`RESULT_knob_progress.md`): with `MASHED_SAVE_ORIGINAL=1`, progress loads 13/13 from the shipped save, but screen 6 draws
+>   the same as knob OFF (S0 vs S1 GREEN; the only other divergence is the wall-clock pulse quad, draw 158, which also differs OFF vs OFF). Cause: the
+>   boot restore (`exe_main.cpp:9445`) puts the shipped col 4 = 2 into 0x007f0a40 either way, and the cup reads that table. The load side does not
+>   block a flip. The write target (the diffing reference) and the col 5 trophy cell still do.
+> - **(b) Save TU link**, one shared body per function in both rsp files (exe: dead code), each read from the disassembly. Five latent defects fixed:
+>   - RwStreamWrite `0x004cbe80` -> Render/RwStreamCore.cpp (Save/RwStream.cpp removed). The old copy's 4 error paths called `FUN_004d8480` with no block
+>     and dropped `FUN_004d7ff0`'s 2nd arg. The 2026-10-11 negctl missed it because it never read the RW error slot. C4 kept (Mariano).
+>   - GameSaveVFS: VfsFileExists `0x00550b00` (keep the ':' in the prefix, resume the scan after a miss, NULL default -> error cb(6)), AutosaveTrigger
+>     `0x004099a0` (printf on 0x005ccb34, the old copy used wprintf on a wrong address).
+>   - Video-config cluster `0x004963e0 0x00496400 0x00498910 0x00498950 0x004989b0` -> Save/SettingsConfig.cpp (SettingsCfg.cpp folded in). No
+>     functional defect. v1 PREREG failed (4 ndiff) on the boot-patch guard. v2 registered guard off 22/0/0 plus a guard-on control with ndiff 4 exactly
+>     at disable_log's RET. **Standing facts:** the C4 hook `0x00496400` is REFUSED by the guard in every default run. `0x004963e0` installs over
+>     disable_log's JE (invisible: the opener 0x00496490 is patched, handle NULL).
+>   - Option C: FileReadWrapper `0x004b3b70` / FileWriteWrapper `0x004b3bb0` -> Save/FileWrappers.cpp (out of SettingsAndIO.cpp). Sweep 12/0/0, live
+>     .dff and gamesave reads 0 diff. **From the bytes:** RwStreamClose `0x004cc160` has no NULL guard, so a write that opens and then fails crashes the
+>     original in the close (the wrapper closes the write RESULT).
+> - Harness: in-process sweeps (`MASHED_LEAF_SELFTEST(_SWEEP)`) in RwStreamCore / GameSaveVFS. Exported sweeps run through `nav_champ_probe.py --plan
+>   exportsweep --export NAME --hooks RVAS` (sets the `--hooks` env; `settingssweep` preset). `verify/savelink2_20261023/run_knob_arms.py` (cup-screen
+>   drawstream arms; creates ROOT/log first, because GameFlow's log fopen fails silently without it).
+> - Lessons:
+>   - A private root's `mashed_re_dev.asi` is NOT refreshed by `MASHED_NO_DEPLOY` builds. Copy the fresh one in, or the A/B runs old code (one void run).
+>   - A staged `git rm` rides along into the next commit (it landed in two PREREG commits). Check `git diff --cached` before committing a PREREG.
+>   - Grow / first-alloc A/Bs must compare only the written prefix (uninitialized heap past it gave noo=1).
+>
+> **Decisions for Mariano:**
+> 1. Option B: make the file wrappers the exe's save path. It needs exe bodies for RW stream open/close (0x004cc230 / 0x004cc160) and the VFS open
+>    0x005507b0 / 0x00550910, plus a call on the failed-write crash (keep it, or a declared guard).
+> 2. SettingsAndIO (3 dialog helpers) + SettingsDialog (3): leave asi-only? Dialog 0x65 is unreachable in the patched reference (skip_selector) and
+>    the exe has no resources.
+> 3. `0x00496400` stays C4 although its hook never installs by default?
+> 4. The knob default: still blocked by the write target, not by the load.
+>
+> **Paste-ready kickoff:**
+>
+> ```
+> # Kickoff: Mashed D4, next lane after savelink2
+>
+> Read first: re/NEXT_SESSION.md (START HERE 2026-10-23 savelink2), verify/savelink2_20261023/RESULT_filewrappers.md.
+> Base: race/first-frame-parity at 0f8d6f31a. Step 0: ask Mariano which of decisions 1-4 to take, or which other D4 item
+> (dual-copy allowlist 8 findings, D1-residue R1-R2, Audio TU linking).
+>
+> Rules: game launches need the tool sandbox DISABLED; private roots only (D:/MashedWT/<lane>_root with its own AppCompat
+> layer), copy the fresh .asi into the root; PREREG before each arm; rerun G-CTRL + B (verify/savelink_20261023/run_arms.py,
+> A4_OUT / A4_ROOT) on the final exe after any code change; kill only your own PIDs; trackers only via re-classify;
+> read-only surveys to the worker (delegate.ps1 -Repo Mashed); commits end with Co-Authored-By: Claude Opus 5.5.
+> ```
+
 > ## START HERE 2026-10-23 savelink, ghost leg (UNMERGED, branch `work/savelink`, pushed): **U-3560 narrowed: the "profile block" is the 13-slot TimeTrial ghost buffer, and a real ghost round-trips.** Next = Mariano's merge decision, then savelink2.
 >
 > Added after the block below was written (all on `work/savelink`, PREREGs before each arm):
