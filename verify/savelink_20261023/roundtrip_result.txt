@@ -1,0 +1,11 @@
+shipped sha256 bd18788182b2343e
+arm C: dumped  r2c1=0
+arm P: dumped  r2c1=1
+arm S: dumped  r2c1=1
+P0 control dump == shipped span: True
+P1 positive control moved exactly r2c1: True diff cells [(2, 1)]
+P2 subject == positive control on all 156 cells: True diff cells []
+P4 parse S: PARSE ok COUNTER 7
+arm R written size 151456 | parse: PARSE ok
+P3 original-written file parses and span == live table: True
+shared original/gamesave.bin sha256 bd18788182b2343e
