@@ -26,6 +26,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-23  004963e0 00496400 00498910 00498950 004989b0  video-config cluster  levels kept (C4)  one shared body each in Save/SettingsConfig.cpp, both rsp (exe dead code); SettingsCfg.cpp folded in (0x004989b0 file move). Sweep vs unpatched-byte trampolines: guard off 22/0/0, guard-on control ndiff 4 exactly where the original calls disable_log's RET at 0x00496400. 0x00496400 is refused by the boot-patch guard in default runs; 0x004963e0 installs over disable_log (invisible: opener patched). Gates unchanged exe 537dff8f. verify/savelink2_20261023/RESULT_settingsconfig_v2.md
 2026-10-23  00550b00  VfsFileExists  level kept (C4)  one shared body Save/GameSaveVFS.cpp, both rsp (exe dead code). Fixed: ':' kept in the prefix (0x00550b4b), scan resumes after a miss (0x00550b74), NULL default -> error cb(6) (0x00550b79). Sweep 154 noo 0 ndiff 0; live 256+ colon-free 0 diff; gates unchanged exe 5f8af4bb. verify/savelink2_20261023/RESULT_gamesavevfs.md
 2026-10-23  004099a0  Save::AutosaveTrigger  level kept (C4)  one shared body Save/GameSaveVFS.cpp, both rsp (exe dead code, guard bound to GameFlow_SaveCounterPtr). Fixed: printf 0x004a2cbd on 0x005ccb34 (old: wprintf on 0x005cc7dc). Sweep 4 noo 0 ndiff 0.
 2026-10-23  004cbe80  RwStreamWrite  C4 kept  Mariano decision after savelink2 slice 1 (new shared body, 0 live calls in a race).

@@ -1,0 +1,2 @@
+LIVE fn=settings err=22 dbg=154 name=0 load=1 save=0 cfg0=512
+SWEEP fn=settings cases=22 noo=0 ndiff=0 logged=9 cfg_restored=1

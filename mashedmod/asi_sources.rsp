@@ -99,7 +99,6 @@
 "Save\FsOpen.cpp"
 "Save\SettingsConfig.cpp"
 "Save\SettingsAndIO.cpp"
-"Save\SettingsCfg.cpp"
 "Save\SettingsDialog.cpp"
 "Save\CareerEvents.cpp"
 "Save\ReplayThunk.cpp"

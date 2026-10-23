@@ -95,6 +95,8 @@ def boot(env_extra=None):
     env["MASHED_RE_NO_AUTO_HOOK"] = "1"
     if env_extra:
         env.update(env_extra)
+        if env_extra.get("MASHED_HOOK_ONLY"):   # installed hooks (scenario_launch.py's --hooks env)
+            env.pop("MASHED_RE_NO_AUTO_HOOK", None)
     dev = frida.get_local_device()
     proc = sess = None
     for _ in range(5):
@@ -128,6 +130,9 @@ def main():
         try: REQ.unlink()
         except OSError: pass
         shot_env = {"MASHED_ORIG_BBDUMP_REQ": str(REQ)}
+    if args.plan == "settingssweep":
+        shot_env = {"MASHED_RE_DEV": "1", "MASHED_MUTE": "1", "MASHED_LEAF_SELFTEST": "1",
+                    "MASHED_HOOK_ONLY": "0x004963e0,0x00496400,0x00498910,0x00498950,0x004989b0"}
     dev, proc, sess = boot(shot_env)
     try:
         scr = sess.create_script(NAV)
@@ -185,6 +190,22 @@ def main():
         confirm_to(2); time.sleep(0.4); log("depth2")
         press(4); time.sleep(0.8); log("after-confirm")
         confirm_to(3); log("depth3-mode-select")
+
+        if args.plan == "settingssweep":
+            # savelink2 slice 3: the dev .asi's SettingsSweep() (Save/SettingsConfig.cpp), A/B of the five video-config
+            # functions. It writes and restores videocfg.bin in the game dir: run it against a private root only.
+            sscr = sess.create_script("""
+            rpc.exports = { run: function () {
+              const m = Process.findModuleByName('mashed_re_dev.asi');
+              if (!m) return 'no module; loaded: ' + Process.enumerateModules().filter(function (x) {
+                  return /asi$|dinput|d3d9/i.test(x.name); }).map(function (x) { return x.name; }).join(',');
+              const e = m.findExportByName('SettingsSweep');
+              if (!e) return -1001;
+              return new NativeFunction(e, 'int', [], 'mscdecl')();
+            } };""")
+            sscr.on("message", lambda m, d: None); sscr.load()
+            print("  SETTINGSSWEEP ret=%s" % sscr.exports_sync.run())
+            return 0
 
         if args.plan in ("dumptable", "savewrite", "ghostdump"):
             # Dump the 13x12 championship/unlock table DAT_007f0a40 (loaded from

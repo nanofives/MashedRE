@@ -1,0 +1,6 @@
+LIVE fn=settings err=22 dbg=0 name=0 load=1 save=0 cfg0=512
+[cs19] fn=3 env=1 ret=1/1 log=0/36 cfg=0/0 noo=0 ndiff=2
+[cs20] fn=3 env=3 ret=0/0 log=8/44 cfg=0/0 noo=0 ndiff=2
+[cs21] fn=4 env=1 ret=1/1 log=0/33 cfg=512/512 noo=0 ndiff=2
+[cs22] fn=4 env=5 ret=0/0 log=0/33 cfg=512/512 noo=0 ndiff=2
+SWEEP fn=settings cases=22 noo=0 ndiff=4 logged=6 cfg_restored=1
