@@ -143,6 +143,8 @@ void ApplyProgressFromSpan(const unsigned char span[mashed_re::Save::kSpanBytes]
 // here exactly as defined.
 extern "C" unsigned char* GameSave_BufferPtr();
 extern "C" std::uint32_t  GameSave_LastReadBytes();
+extern "C" int            GameSave_OriginalFormatMode();
+extern "C" const char*    GameSave_FilePath();
 extern "C" int __cdecl SaveWrite();
 extern "C" int __cdecl SaveLoad();
 extern "C" int __cdecl SaveFileExists();
@@ -180,8 +182,33 @@ static size_t ReadSaveImage(unsigned char* img) {
 void SaveProgress() {
     using namespace mashed_re::Save;
     unsigned char span[kSpanBytes];
-    BuildSpanFromProgress(span);
     unsigned char* img = SaveImageBuffer();
+#ifdef MASHED_STANDALONE
+    // [savelink 2026-10-23] MASHED_SAVE_ORIGINAL=1: the file is the ORIGINAL's own save, so patch
+    // it in place instead of rebuilding from zero. BuildSpanFromProgress zeroes every span cell it
+    // does not own (launch gates col 1 / col 3 / col 11, the savedata gate at +0x4ec) and
+    // BuildImage zeroes the profile block; written over the original's file that would wipe
+    // them. Only col 4 (unlock) and col 5 (trophy) of the rows we track, the counter and the
+    // magic change; every other byte is what ReadSaveImage found. No valid file -> the rebuild.
+    if (GameSave_OriginalFormatMode()) {
+        const size_t nRead = ReadSaveImage(img);
+        std::uint32_t magic = 0;
+        std::memcpy(&magic, img, 4);
+        if (nRead == kSaveSize && magic == kMagic) {
+            for (int r = 0; r < kAreaCount && r < kSpanRows; ++r) {
+                const std::uint32_t u = g_progUnlock[r] ? 2u : 0u;
+                const std::uint32_t t = static_cast<std::uint32_t>(g_progTrophy[r]);
+                std::memcpy(img + kSpanOff + r * kRowStride + kColTrackUnlock, &u, 4);
+                std::memcpy(img + kSpanOff + r * kRowStride + kColTrophyPriv,  &t, 4);
+            }
+            const std::uint32_t counter = ++g_saveCounter;
+            std::memcpy(img + kCounterOff, &counter, 4);
+            WriteSaveImage(img);
+            return;
+        }
+    }
+#endif
+    BuildSpanFromProgress(span);
     BuildImage(span, ++g_saveCounter, img);            // bump the save-state counter
     WriteSaveImage(img);
 }
@@ -438,8 +465,7 @@ int GameFlowSaveSelfTest(char* out, int outSize) {
     for (std::uint32_t i = 0; i < mashed_re::Save::kSaveSize; ++i)
         img[i] = static_cast<unsigned char>((i * 17u + 3u) & 0xffu);
     WriteSaveImage(img);                       // through Save::SaveWrite
-    const char* pathA = std::getenv("MASHED_SAVE_PATH");
-    if (!pathA || !pathA[0]) pathA = "mashed_re_gamesave.bin";
+    const char* pathA = GameSave_FilePath();           // the path SaveWrite really uses
     static unsigned char ref[mashed_re::Save::kSaveSize];
     std::memcpy(ref, img, mashed_re::Save::kSaveSize);
     char pathB[512];
