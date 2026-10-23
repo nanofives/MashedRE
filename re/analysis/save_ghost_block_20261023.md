@@ -47,3 +47,24 @@ all zero until a record is copied in.
 ## Consequence for a round trip
 A record exists only after a run in mode `DAT_0067e9fc == 2`, under the table float for that id, through `FUN_00429310`'s call with
 `param_1 != 0`. Nothing in the frontend or a warped race does that. Nothing observed so far ever wrote a non-zero byte there.
+
+## Natural arming (read 2026-10-23, `Mashed_pool10`, read-only)
+
+- `FUN_00429310` is the per-frame TimeTrial tick (one caller, `FUN_0040fc00`, which the race state machine `FUN_004111c0` calls in states 3..7,
+  10 and 0xb). It returns unless `FUN_0042f6a0()` (= `DAT_0067e9fc`) `== 2`.
+- Sector counter `DAT_008991bc` (writers `0x004293eb`, `0x00429852`, `0x004298d6`, `0x0042990e`): with `p = FUN_00408ad0()` (the race-pct slot
+  load), it steps +1 while `10*k < p < 10*k + 10`; at `k == 10` it steps to 11 only when `p < _DAT_005cc55c` (= 10.0f, bytes `00 00 20 41`).
+- At `DAT_008991bc == 0xb` and `FUN_0040e350()` (= `DAT_0063ba8c`) `== 6`: prints "time trial time is %f" / "gametimer is %f", writes the two
+  result rows (`FUN_004115c0` / `FUN_00411580` -> `FUN_00430b00`), then **`FUN_00411870(1)`** (the only arming call; `FUN_0040e560` passes 0),
+  then `FUN_0040e360(7)`.
+- `FUN_00411870(1)` arms (`DAT_005f29c8 = 0`) only when the recording time `rec+0x174` x `_DAT_005cc948` is below the size-table float for
+  `FUN_00426c00()` and not slower than the held best. `_DAT_005cc948` bytes `3e c3 ae 39` = 3.3333e-4 (1/3000 to float precision). The G1
+  capture's `rec+0x174` = 114050 -> 38.0 s against the 20.0 entry for id 0x1e, so that run would NOT have armed.
+- `ReplaySave` runs from `FUN_004111c0` state 10 (`thunk_FUN_004117b0`), reached through state 0xb -> 9 (`FUN_0040e460`) -> `FUN_0040ddb0` -> 10.
+  It copies the record, then `FUN_004099a0` starts an autosave only when `DAT_008a95ac != 0`. `DAT_008a95ac` is the save-state counter
+  that `SerializeToBuffer` writes at file `0x24EFC`; the shipped save carries 0 there.
+
+Consequence: a natural ghost needs a TimeTrial run that completes the course (sector counter to 11) while the race state is 6, in less time
+than the table float for that id (20 s for 0x1e; 30-80 s for the others), and faster than any held best. Even then it reaches the disk by
+autosave only if the save-state counter is non-zero, which the shipped save is not; otherwise it lives in memory until a manual save.
+No unattended harness here drives a lap; the arming path is therefore read, not run.
