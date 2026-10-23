@@ -16,7 +16,22 @@
 //   re/analysis/audio_rws_loader_d3/005aa0c0.md
 //
 #include "../Core/HookSystem.h"
+#include "../Render/RwStreamCore.h"
 #include <cstdint>
+
+// audiolink slice 3 (2026-10-23): one body in both targets. The stream read / skip are the shared
+// Render/RwStreamCore bodies of 0x004cbd30 / 0x004cc050 (called by name in both arms, the Save/FileWrappers.cpp
+// precedent), the header reader is called by name, and the tree root DAT_009146fc is the only per-target input:
+// .asi = the original's global, exe = a private pointer nothing sets (dead code). Bytes:
+// verify/audiolink_20261023/disasm_slice3.txt.
+namespace {
+#ifdef MASHED_STANDALONE
+std::uint32_t* s_audioTreeRoot = nullptr;                         // stands in for DAT_009146fc
+std::uint32_t* AudioTreeRoot() { return s_audioTreeRoot; }
+#else
+std::uint32_t* AudioTreeRoot() { return *reinterpret_cast<std::uint32_t**>(0x009146fcu); }   // 0x005aa0cc
+#endif
+}  // namespace
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x005ab380  FUN_005ab380  AudioRwsChunkHeaderRead   (~80 bytes)
@@ -45,15 +60,14 @@
 //   0xffff0000   (mask to detect old vs new format version word)
 //   0x3ff00, 0x30000, 0x3f, 0xe, 0x10  (version field decode)
 //
-// Callee: FUN_004cbd30 at 0x004cbd30 (RwStreamRead — C2, cross-subsystem).
+// Callee: FUN_004cbd30 at 0x004cbd30 (RwStreamRead), the shared RwStreamCoreRead.
+// Arity (audiolink slice 3, from the bytes): two arguments. Nothing reads [esp+0xc] (stream = [esp+0x14] at
+// 0x005ab388, out = [esp+0x18] at 0x005ab3a4, after sub esp,0xc / push esi); the third dword the callers push
+// (0 at 0x005ab41d / 0x005ab44d, bit 4 of the flags at 0x005abfc0 / 0x005ac07b) is ignored.
 // ─────────────────────────────────────────────────────────────────────────────
 extern "C" __declspec(dllexport) std::uint32_t __cdecl
 AudioRwsChunkHeaderRead(std::uint32_t param_1, std::uint32_t* param_2)
 {
-    typedef int (__cdecl *StreamReadFn)(std::uint32_t, void*, int);
-    static constexpr std::uintptr_t kStreamRead = 0x004cbd30u;
-    const auto streamRead = reinterpret_cast<StreamReadFn>(kStreamRead);
-
     // BUGFIX 2026-07-26 — this was an 8-byte STACK BUFFER OVERFLOW and the confirmed
     // root cause of the pc=0x44 boot AV (0xC0000005 @ ~4.6 s, reproduced with this hook
     // as the ONLY one installed; see verify/menu_crash_pc44/FINDINGS_2026-07-26.md).
@@ -72,8 +86,9 @@ AudioRwsChunkHeaderRead(std::uint32_t param_1, std::uint32_t* param_2)
     // A stack layout that the original relies on must be modelled EXPLICITLY, never
     // inferred from adjacent local declarations.
     std::uint32_t hdr[3] = { 0u, 0u, 0u };   // contiguous by construction, exactly 0xc bytes
-    const int bytes = streamRead(param_1, hdr, 0xc);
-    if (bytes != 0xc) {
+    const std::uint32_t bytes =
+        mashed_re::Render::RwStreamCoreRead(reinterpret_cast<std::uint32_t*>(param_1), hdr, 0xc);   // 0x005ab390
+    if (bytes != 0xcu) {                                                                             // 0x005ab398
         return 0u;
     }
     const std::uint32_t local_c = hdr[0];   // chunk type        (bytes 0..3)
@@ -125,21 +140,13 @@ RH_ScopedInstall(AudioRwsChunkHeaderRead, 0x005ab380);  // re-enabled 2026-05-24
 //
 // Callees:
 //   FUN_005ab380 at 0x005ab380  (header reader — c3-batch-i-s1 above)
-//   FUN_004cc050 at 0x004cc050  (RwStreamSkip — C2, cross-subsystem)
+//   FUN_004cc050 at 0x004cc050  (RwStreamSkip), the shared RwStreamCoreSkip (non-NULL = success, test eax at
+//   0x005ab445)
 // ─────────────────────────────────────────────────────────────────────────────
 extern "C" __declspec(dllexport) std::uint32_t __cdecl
 AudioRwsChunkTypeSeek(std::uint32_t param_1, int param_2,
                       std::uint32_t* param_3, std::uint32_t* param_4)
 {
-    typedef std::uint32_t (__cdecl *HdrReadFn)(std::uint32_t, std::uint32_t*);
-    typedef int           (__cdecl *StreamSkipFn)(std::uint32_t, std::uint32_t);
-
-    static constexpr std::uintptr_t kHdrRead    = 0x005ab380u;
-    static constexpr std::uintptr_t kStreamSkip = 0x004cc050u;
-
-    const auto hdrRead    = reinterpret_cast<HdrReadFn>(kHdrRead);
-    const auto streamSkip = reinterpret_cast<StreamSkipFn>(kStreamSkip);
-
     // BUGFIX 2026-07-26 — same class as the 0x005ab380 fix above, and the SECOND
     // confirmed pc=0x44 crasher (found by scripts/bisect_hook_index.ps1, index 87).
     //
@@ -154,14 +161,15 @@ AudioRwsChunkTypeSeek(std::uint32_t param_1, int param_2,
     std::uint32_t hdr[5] = { 0u, 0u, 0u, 0u, 0u };
     std::uint32_t* const hdrBuf = hdr;
 
-    std::uint32_t r = hdrRead(param_1, hdrBuf);
+    std::uint32_t r = AudioRwsChunkHeaderRead(param_1, hdrBuf);      // 0x005ab421
     if (r != 0u) {
         while (static_cast<int>(hdr[0]) != param_2) {   // hdr[0] = chunk type
             // Skip payload (seek by size).
-            const int skipOk = streamSkip(param_1, hdr[1]);   // hdr[1] = chunk size
-            if (skipOk == 0) return 0u;
+            const std::uint32_t* skipOk =                       // 0x005ab43d, hdr[1] = chunk size
+                mashed_re::Render::RwStreamCoreSkip(reinterpret_cast<std::uint32_t*>(param_1), hdr[1]);
+            if (skipOk == nullptr) return 0u;
             // Read next header.
-            r = hdrRead(param_1, hdrBuf);
+            r = AudioRwsChunkHeaderRead(param_1, hdrBuf);                // 0x005ab451
             if (r == 0u) return 0u;
         }
         // Version range gate: 0x34fff < decoded version < 0x37003.  hdr[2] = version.
@@ -201,17 +209,24 @@ RH_ScopedInstall(AudioRwsChunkTypeSeek, 0x005ab410);  // re-enabled 2026-05-24 c
 //   *(param_1 + 0x0c)        — context pointer (vtable base)
 //   *(*(param_1+0x0c) + 0x1c) — function pointer at vtable slot +0x1c
 // ─────────────────────────────────────────────────────────────────────────────
-extern "C" __declspec(dllexport) void __cdecl
+//
+// audiolink slice 3, from the bytes (0x005abf80..0x005abf8f): `test eax,eax / jne` then `jmp eax`, a TAIL CALL. The
+// slot runs on the caller's frame, so it gets param_1 as [esp+4] and its EAX is the return value; the NULL path
+// returns the slot value 0 in EAX (0x005abf8e). The caller loops on it (cmp eax,1 at 0x005ac1cb). The old port
+// was `void` calling fn() with no argument, which matched only because MSVC happened to emit that call as a jmp
+// (the 2026-10-11 negctl fixture 0x004099e0 records [esp+4] and returns it). The forward is now explicit.
+extern "C" __declspec(dllexport) std::uint32_t __cdecl
 AudioWaveVtableSlot1cDispatch(int param_1)
 {
-    typedef void (__cdecl *VtableFn)(void);
+    typedef std::uint32_t (__cdecl *VtableFn)(int);
 
-    const int  contextPtr = *reinterpret_cast<int*>(param_1 + 0x0c);
-    const auto fn         = *reinterpret_cast<VtableFn*>(contextPtr + 0x1cu);
+    const int  contextPtr = *reinterpret_cast<int*>(param_1 + 0x0c);        // 0x005abf84
+    const auto fn         = *reinterpret_cast<VtableFn*>(contextPtr + 0x1cu);  // 0x005abf87
 
-    if (fn != nullptr) {
-        fn();
+    if (fn == nullptr) {
+        return 0u;                                                          // 0x005abf8e, EAX = the NULL slot
     }
+    return fn(param_1);                                                     // 0x005abf8f
 }
 
 RH_ScopedInstall(AudioWaveVtableSlot1cDispatch, 0x005abf80);  // re-enabled 2026-05-24 c3-audio-a
@@ -251,11 +266,8 @@ AudioTreeWalkPredicateSearch(std::uint32_t* param_1, int* param_2,
 {
     typedef int (__cdecl *PredFn)(std::uint32_t*, std::uint32_t*, std::uint32_t);
 
-    // Cited in analysis note: global tree root at 0x009146fc.
-    static constexpr std::uintptr_t kTreeRootGlobal = 0x009146fcu;
-
     if (param_1 == nullptr) {
-        param_1 = *reinterpret_cast<std::uint32_t**>(kTreeRootGlobal);
+        param_1 = AudioTreeRoot();                                          // DAT_009146fc, 0x005aa0cc
     }
 
     const auto pred = reinterpret_cast<PredFn>(param_3);

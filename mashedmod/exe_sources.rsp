@@ -104,6 +104,7 @@
 "Audio\AudioLeaves_ab4.cpp"
 "Audio\AudioMusic.cpp"
 "Audio\AudioMemory.cpp"
+"Audio\RwsStream.cpp"
 "D3d9Render\QuadRenderer.cpp"
 "D3d9Render\RwIm2DBridge.cpp"
 "D3d9Render\DrawStreamDump.cpp"
