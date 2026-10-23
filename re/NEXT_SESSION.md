@@ -1,5 +1,15 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-23 audiolink slice 1 (UNMERGED, branch `work/audiolink`, pushed): **10 Audio files (29 functions) linked into the exe, 2 latent defects fixed.** Next = slice 2 (AudioMemory) or Mariano's merge / twin decisions.
+>
+> - Survey: `verify/audiolink_20261023/SURVEY.md` (link order, (a)/(b)/(c)). Result: `RESULT_slice1.md`.
+> - Fixed from the bytes: 0x005b4060 truncates (Ghidra ROUND() wrong, path1 vectors never had a fraction), 0x005baf00
+>   quiets SNaN; 4 width / order fixes. Controls RED on the old bodies, path1 29/29, gates unchanged on exe 71587212.
+> - `music_group_volume_set` runs through `early_window_leaf_diff.py` (no diff_template.js handler for its arg_type).
+> - Decisions for Mariano: merge `work/audiolink`; the two job twins 0x004625b0 (CharacterBankPath) and 0x005aeb90
+>   (VolToDs); the two precedent files AudioQueuePop / AudioVecLength still reach MASHED addresses in the exe.
+> - Next slice per the survey: AudioMemory (malloc / free host thunks, RwStreamCore.cpp:51-60 precedent).
+
 > ## START HERE 2026-10-23 next lane = **audiolink** (Mariano's pick after savelink2). Kickoff below; the savelink2 block follows.
 >
 > ```
