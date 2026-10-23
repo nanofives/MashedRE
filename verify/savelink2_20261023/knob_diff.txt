@@ -1,0 +1,40 @@
+=== S0 vs S0r
+== f203 (A: 272 draws, x1.0) vs f203 (B: 272 draws, x1.0)
+   matched 271  mismatched 1  missing 0  extra 0
+  MISMATCH(moved)
+    A[158] x= 203.18 y= 120.18 w=  55.64 h= 55.64 col=ffffffff tex=86 blend=1:5/6  @0xe9648,0x1d63c
+    B[158] x= 200.84 y= 117.84 w=  60.32 h= 60.32 col=ffffffff tex=86 blend=1:5/6  @0xe9648<HudIm2DQuad+0x188>,0x1d63c<WinMain@16+0x1c9c>
+VERDICT: RED (match=1084 mismatch=4 missing=0 extra=0)
+exit=1
+=== S0 vs S1
+   matched 272  mismatched 0  missing 0  extra 0
+== f202 (A: 272 draws, x1.0) vs f202 (B: 272 draws, x1.0)
+   matched 272  mismatched 0  missing 0  extra 0
+== f203 (A: 272 draws, x1.0) vs f203 (B: 272 draws, x1.0)
+   matched 272  mismatched 0  missing 0  extra 0
+VERDICT: GREEN (match=1088 mismatch=0 missing=0 extra=0)
+exit=0
+=== S1 vs S1e
+== f203 (A: 272 draws, x1.0) vs f203 (B: 272 draws, x1.0)
+   matched 271  mismatched 1  missing 0  extra 0
+  MISMATCH(moved)
+    A[158] x= 203.63 y= 120.63 w=  54.74 h= 54.74 col=ffffffff tex=86 blend=1:5/6  @0xe9648,0x1d63c
+    B[158] x= 206.93 y= 123.93 w=  48.14 h= 48.14 col=ffffffff tex=86 blend=1:5/6  @0xe9648<HudIm2DQuad+0x188>,0x1d63c<WinMain@16+0x1c9c>
+VERDICT: RED (match=1084 mismatch=4 missing=0 extra=0)
+exit=1
+=== S0 vs S1e
+== f203 (A: 272 draws, x1.0) vs f203 (B: 272 draws, x1.0)
+   matched 271  mismatched 1  missing 0  extra 0
+  MISMATCH(moved)
+    A[158] x= 203.18 y= 120.18 w=  55.64 h= 55.64 col=ffffffff tex=86 blend=1:5/6  @0xe9648,0x1d63c
+    B[158] x= 206.93 y= 123.93 w=  48.14 h= 48.14 col=ffffffff tex=86 blend=1:5/6  @0xe9648<HudIm2DQuad+0x188>,0x1d63c<WinMain@16+0x1c9c>
+VERDICT: RED (match=1084 mismatch=4 missing=0 extra=0)
+exit=1
+=== S0d vs S1d
+== f303 (A: 272 draws, x1.0) vs f303 (B: 272 draws, x1.0)
+   matched 271  mismatched 1  missing 0  extra 0
+  MISMATCH(moved)
+    A[158] x= 206.57 y= 123.57 w=  48.86 h= 48.86 col=ffffffff tex=86 blend=1:5/6  @0xe9648,0x1d63c
+    B[158] x= 203.84 y= 120.84 w=  54.32 h= 54.32 col=ffffffff tex=86 blend=1:5/6  @0xe9648<HudIm2DQuad+0x188>,0x1d63c<WinMain@16+0x1c9c>
+VERDICT: RED (match=1084 mismatch=2 missing=2 extra=2)
+exit=1

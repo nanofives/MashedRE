@@ -1,0 +1,6 @@
+=== S0 pid=16696 exe=35a50e1f drawstream stable (killed pid 16696 ONLY) secs=8
+    [gameflow] progress loaded: 1/13 tracks unlocked (save counter 0)
+    R2-2 gamesave load: LOADED (DEADBEEF save) (original/gamesave.bin)
+    drawstream sha8=b0e65276 bytes=324929
+    save pre=bd18788182b2343e post=bd18788182b2343e UNCHANGED; restored root save sha=bd18788182b2343e
+DONE

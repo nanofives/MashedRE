@@ -101,7 +101,6 @@
 "Save\SettingsAndIO.cpp"
 "Save\SettingsCfg.cpp"
 "Save\SettingsDialog.cpp"
-"Save\RwStream.cpp"
 "Save\CareerEvents.cpp"
 "Save\ReplayThunk.cpp"
 "Boot\CrtStartup.cpp"

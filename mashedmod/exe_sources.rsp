@@ -253,6 +253,7 @@
 "Particle\ParticleLeaves_ad5.cpp"
 "Save\GameSaveBuffer.cpp"
 "Save\GameSave.cpp"
+"Save\GameSaveVFS.cpp"
 "Gameplay\PickupPoolSpawn.cpp"
 "Render\ArcticTrackNodeSlot0.cpp"
 "Render\TrackHookSlots.cpp"

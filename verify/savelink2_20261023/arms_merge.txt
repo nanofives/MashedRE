@@ -1,0 +1,47 @@
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\savelink\verify\savelink_20261023\run_arms.py:359: SyntaxWarning: invalid escape sequence '\@'
+  STACK['LT3'] = STACK['TC'] + ['MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=3', 'MASHED_LT_LOG=@OUT@\@NAME@.lt.csv', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\savelink\verify\savelink_20261023\run_arms.py:359: SyntaxWarning: invalid escape sequence '\@'
+  STACK['LT3'] = STACK['TC'] + ['MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=3', 'MASHED_LT_LOG=@OUT@\@NAME@.lt.csv', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\savelink\verify\savelink_20261023\run_arms.py:359: SyntaxWarning: invalid escape sequence '\@'
+  STACK['LT3'] = STACK['TC'] + ['MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=3', 'MASHED_LT_LOG=@OUT@\@NAME@.lt.csv', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\savelink\verify\savelink_20261023\run_arms.py:360: SyntaxWarning: invalid escape sequence '\@'
+  STACK['LR3'] = ['MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=3', 'MASHED_LT_LOG=@OUT@\@NAME@.lt.csv', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\savelink\verify\savelink_20261023\run_arms.py:360: SyntaxWarning: invalid escape sequence '\@'
+  STACK['LR3'] = ['MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=3', 'MASHED_LT_LOG=@OUT@\@NAME@.lt.csv', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\savelink\verify\savelink_20261023\run_arms.py:360: SyntaxWarning: invalid escape sequence '\@'
+  STACK['LR3'] = ['MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=3', 'MASHED_LT_LOG=@OUT@\@NAME@.lt.csv', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\savelink\verify\savelink_20261023\run_arms.py:361: SyntaxWarning: invalid escape sequence '\@'
+  STACK['TC0'] = STACK['TC'] + ['MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=0']
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\savelink\verify\savelink_20261023\run_arms.py:365: SyntaxWarning: invalid escape sequence '\@'
+  for _c in (0, 1, 2, 3): STACK[f'FR{_c}'] = STACK['FR'] + [f'MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', f'MASHED_RECDUMP_SLOT={_c}']
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\savelink\verify\savelink_20261023\run_arms.py:366: SyntaxWarning: invalid escape sequence '\@'
+  STACK['LT1'] = STACK['TC'] + ['MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=1', 'MASHED_LT_LOG=@OUT@\@NAME@.lt.csv']
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\savelink\verify\savelink_20261023\run_arms.py:366: SyntaxWarning: invalid escape sequence '\@'
+  STACK['LT1'] = STACK['TC'] + ['MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=1', 'MASHED_LT_LOG=@OUT@\@NAME@.lt.csv']
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\savelink\verify\savelink_20261023\run_arms.py:368: SyntaxWarning: invalid escape sequence '\@'
+  STACK[f'TC{_c}'] = STACK['TC'] + [f'MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', f'MASHED_RECDUMP_SLOT={_c}', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\savelink\verify\savelink_20261023\run_arms.py:368: SyntaxWarning: invalid escape sequence '\@'
+  STACK[f'TC{_c}'] = STACK['TC'] + [f'MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', f'MASHED_RECDUMP_SLOT={_c}', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\savelink\verify\savelink_20261023\run_arms.py:369: SyntaxWarning: invalid escape sequence '\@'
+  STACK[f'TM{_c}'] = STACK['TM'] + [f'MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', f'MASHED_RECDUMP_SLOT={_c}', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\savelink\verify\savelink_20261023\run_arms.py:369: SyntaxWarning: invalid escape sequence '\@'
+  STACK[f'TM{_c}'] = STACK['TM'] + [f'MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', f'MASHED_RECDUMP_SLOT={_c}', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\savelink\verify\savelink_20261023\run_arms.py:370: SyntaxWarning: invalid escape sequence '\@'
+  STACK[f'TR{_c}'] = [f'MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', f'MASHED_RECDUMP_SLOT={_c}', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\savelink\verify\savelink_20261023\run_arms.py:370: SyntaxWarning: invalid escape sequence '\@'
+  STACK[f'TR{_c}'] = [f'MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', f'MASHED_RECDUMP_SLOT={_c}', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+=== H_DEF-1 pid=16488 exe=35a50e1f
+    exit=0 self_exited=True secs=251
+    H_DEF-1.step.csv lines=19059 sha8=bacfc747
+    H_DEF-1.gates.csv lines=53993 sha8=8dd1c004
+    H_DEF-1.ptrace.log lines=26996 sha8=6f9932b6
+=== B_DEF_K0 pid=14748 exe=35a50e1f
+    exit=0 self_exited=True secs=22
+    B_DEF_K0.step.csv lines=2036 sha8=f9deb9b9
+=== B_DEF_K1 pid=18264 exe=35a50e1f
+    exit=0 self_exited=True secs=21
+    B_DEF_K1.step.csv lines=2989 sha8=d3601fcc
+=== B_DEF_K26 pid=8796 exe=35a50e1f
+    exit=0 self_exited=True secs=22
+    B_DEF_K26.step.csv lines=2336 sha8=9da9a26a
+DONE
