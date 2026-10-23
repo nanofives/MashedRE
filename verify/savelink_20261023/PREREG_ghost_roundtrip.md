@@ -27,3 +27,15 @@ Decision (Mariano, 2026-10-23): semi-synthetic capture. Static basis: `re/analys
 ## Decision rule
 Q0 fails -> the capture recipe is wrong, stop. Q2 fails -> defect in the knob path, fix in this lane. Q1 is reported either way. Nothing here
 changes a default; no gate rerun is owed unless exe code changes. Shared `original/` hash recorded before and after.
+
+## Amendment 1 (2026-10-23, before arm G4): the stale pointer, TimeTrial on the reloaded save
+Static reading (`Mashed_pool10`): `FUN_00411d90` (TimeTrial setup, mode 2) calls `Replay::Load 0x00483d10(&DAT_008a94a8, FUN_00426c00())` when
+`DAT_0063bb08 == 0` and `DAT_0067ed6c == 0`; a hit sets `DAT_0063bb10 = DAT_0063bb08` and prints "setting time attack record too". The loader
+allocates a fresh object (`FUN_00482930`), keeps its `[5]`, reads the stored 0x19c header over it (the stale `[5]` arrives), then writes the kept
+pointer back to `[5]`, `[6]`, `[7]`, reads `(n + 2) * 0x24` frame bytes into it and rebuilds the node links at node `+0x1c`.
+Arm G4: the captured save (`ghost_g1/gamesave_captured.bin`) in the private root, `scenario_launch.py --mode 2 --track 0`, snap only.
+- R0 control: with the shipped save (G1) `DAT_0063bb10` was 0. (Already observed.)
+- R1: `DAT_0063bb10 != 0` and `== DAT_0063bb08`; its `[0]` = 0x10b, `[2]` = 0x1e, `[0x5b]` = 120, `+0x174` = 114050.
+- R2 (the question): `[5] != 0x14c8ab18` and `[5] == [6]` (rebased, the stale pointer discarded).
+- R3: the loaded frames equal the file's frames except the dword at node `+0x1c` (rebuilt links).
+- R4: the race holds 40 s without a crash.
