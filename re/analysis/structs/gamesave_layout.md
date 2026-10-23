@@ -14,7 +14,7 @@ First-write RVA = instruction that first writes each field into the buffer.
 | File offset | Size (bytes) | Value (fresh file) | First-write RVA | Notes |
 |-------------|-------------|--------------------|-----------------|-------|
 | 0x0000 | 4 | `0xDEADBEEF` | 0x00404F37 | Magic sentinel — `MOV DWORD PTR [0x803358], 0xDEADBEEF` |
-| 0x0004 | 0x2443C (150,076) | all-zero (no saves) | 0x00404F34 | Profile data block — REP MOVSD from `*DAT_008A94A8` (0x928F dwords) |
+| 0x0004 | 0x24A3C (150,076) | all-zero (no saves) | 0x00404F34 | Ghost buffer (13 TimeTrial ghost slots, re/analysis/save_ghost_block_20261023.md; was "profile data block", hex was 0x2443C, both corrected 2026-10-23) — REP MOVSD from `*DAT_008A94A8` (0x928F dwords) |
 | 0x24440 | 0x600 (1,536) | all zero | (BSS) | Pre-championship gap — no code writes this; all zero in shipped file; in-memory BSS at 0x827798–0x827D97 |
 | 0x24A40 | 0x520 (1,312) | see championship block | 0x00404F19 | Championship snapshot — REP MOVSD from `DAT_007F0A40` (0x148 dwords); see sub-layout below |
 | 0x24EFC | 4 | 0x00000000 | 0x00404F23 | Save state counter — `MOV [0x00828254], EAX` where EAX = `DAT_008A95AC`; overwrites byte within championship block |
