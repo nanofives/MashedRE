@@ -1,5 +1,56 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-23 next lane = **audiolink** (Mariano's pick after savelink2). Kickoff below; the savelink2 block follows.
+>
+> ```
+> # Kickoff: Mashed D4, Audio TU linking (lane audiolink)
+>
+> Read first: re/NEXT_SESSION.md (this block and the savelink2 block under it), ROADMAP.md §D0.7 (Audio/ is "mixed":
+> AudioDSound 8 rows + AudioRws 20 rows are genuine intent, the other ~18 files are hook-shaped drift) and §D4
+> "Link the Audio TUs", then the pattern files: Render/RwStreamCore.cpp, Save/GameSaveVFS.cpp, Save/SettingsConfig.cpp,
+> Save/FileWrappers.cpp (one body, #ifdef MASHED_STANDALONE host thunks + private storage, .asi trampolines + sweep).
+>
+> ## State (2026-10-23)
+> - race/first-frame-parity at 51fd9304e (pushed). Gates on the current tree: G-CTRL bacfc747/8dd1c004/6f9932b6,
+>   B f9deb9b9/d3601fcc/9da9a26a. Lint 0 NEW (8 allowlisted).
+> - Audio rsp membership: 21 files .asi-only (AtomicExchangeStore, AudioChainWalk, AudioCharacterBankPaths, AudioDSound,
+>   AudioLeaves_ab1..ab4, AudioListSearch_wfb0f, AudioList_ag, AudioMemory, AudioMusic, AudioPoolFreeGuards, AudioRws,
+>   AudioTableDispatch, AudioVoiceQueueSet, MixedC3Sweep, RingHeaderInit, RwsFmt, RwsStream, TimerGetters_ah5),
+>   2 in both (AudioQueuePop, AudioVecLength), 2 exe-only (AudioEngine, RwsBank = the exe's own audio implementation).
+> - ROADMAP gate: add-backs need NO MASHED ADDRESS IN ANY exe CODE PATH (the exe arm of each file).
+>
+> ## Step 0: worker survey first (delegate.ps1 -Repo Mashed, opus), no code before it
+> Per .asi-only Audio file: functions + RVAs + hooks.csv level, every address tunnel, every callee by address and
+> whether a shared/exe body exists, and OVERLAP with the exe's AudioEngine.cpp / RwsBank.cpp (same RVA or same job:
+> a link that creates a CROSS-TARGET dual copy is a stop-and-ask). Output: a link order, smallest closure first,
+> split into "dead code in the exe" vs "would replace an AudioEngine path" (the latter is a decision for Mariano).
+>
+> ## Per slice (the savelink2 recipe)
+> 1. Disassemble every function (py -3.12 re/tools/disasm_fn.py <start> <end>, from the main checkout) and compare
+>    with the port BEFORE linking: savelink2 found latent defects in 4 of 5 slices, all on paths a race never runs.
+> 2. One shared body, exe arm = own CRT / private storage / no address; .asi arm = trampolines replaying the
+>    original's first bytes (check BOTH .exe and .exe.unpatched: a boot patch on a target changes what to replay,
+>    and HookSystem's kBootPatched guard refuses overlapping hooks).
+> 3. PREREG committed alone (check git diff --cached first). Sweep via MASHED_LEAF_SELFTEST(_SWEEP) or an exported
+>    sweep run by nav_champ_probe.py --plan exportsweep --export NAME --hooks RVAS; live A/B in scenario_launch.py
+>    --hooks. Compare everything the function writes, including the RW error slot where relevant.
+> 4. Build (MASHED_NO_DEPLOY=1), COPY the fresh mashed_re_dev.asi into the private root, run, then G-CTRL + B on the
+>    final exe (verify/savelink_20261023/run_arms.py with A4_OUT / A4_ROOT), lint.
+> 5. Trackers via re-classify (file column / notes; no level moves without evidence). RESULT, commit, push. Merge only
+>    when Mariano says.
+>
+> ## Hard-won rules
+> - Every game launch needs the tool sandbox DISABLED (sandboxed, the original AVs at 0x005baf48; not a compat problem).
+> - Private root only (D:/MashedWT/<lane>_root, robocopy original/, own AppCompat layer
+>   "~ RUNASINVOKER WIN98RTM HIGHDPIAWARE EMULATEHEAP"); D:/MashedWT/savelink_root is ready to reuse.
+> - Audio-specific: launches use MASHED_MUTE=1; audio state can be timing-dependent, so expect noo != 0 on live A/B of
+>   anything that reads a clock or a voice position and classify it before calling it a defect.
+> - The main checkout's index is polled by a git diff --numstat every few seconds: retry git add/commit/merge a few
+>   times, or commit from the worktree (its own index) and push.
+> - Edit C++/Python with Edit or a patch script written to a file (raw strings); heredoc Python broke on quoting.
+> - Kill only your own PIDs. Commits end with Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>.
+> ```
+
 > ## START HERE 2026-10-23 savelink2 (MERGED: `race/first-frame-parity` at `0f8d6f31a`, pushed): **the knob's all-unlocked load is not visible, and the Save TU link is done to the dialog boundary.** Next = Mariano picks option B, the dialog, or another D4 lane.
 >
 > Every slice has a PREREG committed before its arms, gates unchanged (G-CTRL bacfc747 / 8dd1c004 / 6f9932b6, B f9deb9b9 / d3601fcc / 9da9a26a) and
