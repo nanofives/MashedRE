@@ -1,0 +1,20 @@
+== 0x005a89a0 .. 0x005a89ab  (11 bytes)
+  005a89a0: 8b442404             mov eax, dword ptr [esp + 4]
+  005a89a4: 8b806c0d0000         mov eax, dword ptr [eax + 0xd6c]
+  005a89aa: c3                   ret 
+
+== 0x005a89b0 .. 0x005a89bb  (11 bytes)
+  005a89b0: 8b442404             mov eax, dword ptr [esp + 4]
+  005a89b4: 8b80700d0000         mov eax, dword ptr [eax + 0xd70]
+  005a89ba: c3                   ret 
+
+== 0x005a89c0 .. 0x005a89cb  (11 bytes)
+  005a89c0: 8b442404             mov eax, dword ptr [esp + 4]
+  005a89c4: 8b80740d0000         mov eax, dword ptr [eax + 0xd74]
+  005a89ca: c3                   ret 
+
+== 0x005ab370 .. 0x005ab378  (8 bytes)
+  005ab370: 8b442404             mov eax, dword ptr [esp + 4]
+  005ab374: 8b4010               mov eax, dword ptr [eax + 0x10]
+  005ab377: c3                   ret 
+
