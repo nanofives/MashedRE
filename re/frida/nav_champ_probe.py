@@ -122,6 +122,10 @@ def main():
     ap.add_argument("--mode-sel", type=int, default=3)
     ap.add_argument("--track-sel", type=int, default=None)
     ap.add_argument("--d5", type=int, default=2)
+    # --plan exportsweep: call a no-arg int export of mashed_re_dev.asi at mode-select with --hooks installed
+    # (settingssweep = the slice-3 preset). Private roots only: the sweeps write and restore files in the game dir.
+    ap.add_argument("--export", default="SettingsSweep")
+    ap.add_argument("--hooks", default="0x004963e0,0x00496400,0x00498910,0x00498950,0x004989b0")
     args = ap.parse_args()
 
     shot_env = None
@@ -130,9 +134,9 @@ def main():
         try: REQ.unlink()
         except OSError: pass
         shot_env = {"MASHED_ORIG_BBDUMP_REQ": str(REQ)}
-    if args.plan == "settingssweep":
+    if args.plan in ("settingssweep", "exportsweep"):
         shot_env = {"MASHED_RE_DEV": "1", "MASHED_MUTE": "1", "MASHED_LEAF_SELFTEST": "1",
-                    "MASHED_HOOK_ONLY": "0x004963e0,0x00496400,0x00498910,0x00498950,0x004989b0"}
+                    "MASHED_HOOK_ONLY": args.hooks}
     dev, proc, sess = boot(shot_env)
     try:
         scr = sess.create_script(NAV)
@@ -191,7 +195,7 @@ def main():
         press(4); time.sleep(0.8); log("after-confirm")
         confirm_to(3); log("depth3-mode-select")
 
-        if args.plan == "settingssweep":
+        if args.plan in ("settingssweep", "exportsweep"):
             # savelink2 slice 3: the dev .asi's SettingsSweep() (Save/SettingsConfig.cpp), A/B of the five video-config
             # functions. It writes and restores videocfg.bin in the game dir: run it against a private root only.
             sscr = sess.create_script("""
@@ -199,12 +203,12 @@ def main():
               const m = Process.findModuleByName('mashed_re_dev.asi');
               if (!m) return 'no module; loaded: ' + Process.enumerateModules().filter(function (x) {
                   return /asi$|dinput|d3d9/i.test(x.name); }).map(function (x) { return x.name; }).join(',');
-              const e = m.findExportByName('SettingsSweep');
+              const e = m.findExportByName(%r);
               if (!e) return -1001;
               return new NativeFunction(e, 'int', [], 'mscdecl')();
-            } };""")
+            } };""" % args.export)
             sscr.on("message", lambda m, d: None); sscr.load()
-            print("  SETTINGSSWEEP ret=%s" % sscr.exports_sync.run())
+            print("  SETTINGSSWEEP export=%s ret=%s" % (args.export, sscr.exports_sync.run()))
             return 0
 
         if args.plan in ("dumptable", "savewrite", "ghostdump"):

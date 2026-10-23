@@ -1,0 +1,14 @@
+LIVE fn=filewrappers reads=185 noo=0 ndiff=0 writes=0
+[fw1] fn=4b3b70 path=leaf_fw_src.bin size=0 ro=0 ret=0/0 file=0/0 err=80000000/80000000 noo=0 ndiff=0
+[fw2] fn=4b3b70 path=leaf_fw_src.bin size=1 ro=0 ret=1/1 file=0/0 err=80000000/80000000 noo=0 ndiff=0
+[fw3] fn=4b3b70 path=leaf_fw_src.bin size=63 ro=0 ret=63/63 file=0/0 err=80000000/80000000 noo=0 ndiff=0
+[fw4] fn=4b3b70 path=leaf_fw_src.bin size=64 ro=0 ret=64/64 file=0/0 err=80000000/80000000 noo=0 ndiff=0
+[fw5] fn=4b3b70 path=leaf_fw_src.bin size=65 ro=0 ret=64/64 file=0/0 err=5/5 noo=0 ndiff=0
+[fw6] fn=4b3b70 path=leaf_fw_src.bin size=200 ro=0 ret=64/64 file=0/0 err=5/5 noo=0 ndiff=0
+[fw7] fn=4b3b70 path=leaf_fw_missing.bin size=16 ro=0 ret=0/0 file=0/0 err=80000002/80000002 noo=0 ndiff=0
+[fw8] fn=4b3bb0 path=leaf_fw_dst.bin size=0 ro=0 ret=1/1 file=0/0 err=80000000/80000000 noo=0 ndiff=0
+[fw9] fn=4b3bb0 path=leaf_fw_dst.bin size=1 ro=0 ret=1/1 file=1/1 err=80000000/80000000 noo=0 ndiff=0
+[fw10] fn=4b3bb0 path=leaf_fw_dst.bin size=64 ro=0 ret=1/1 file=64/64 err=80000000/80000000 noo=0 ndiff=0
+[fw11] fn=4b3bb0 path=leaf_fw_dst.bin size=200 ro=0 ret=1/1 file=200/200 err=80000000/80000000 noo=0 ndiff=0
+[fw12] fn=4b3bb0 path=leaf_fw_dst.bin size=16 ro=1 ret=0/0 file=8/8 err=80000002/80000002 noo=0 ndiff=0
+SWEEP fn=filewrappers cases=12 noo=0 ndiff=0 err_emitted=4 clean=1
