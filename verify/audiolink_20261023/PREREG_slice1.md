@@ -51,3 +51,14 @@ patch overlaps any of the 29 ranges, checked against `MASHED.exe` in the same sc
 - C fails (no RED): the vectors do not bite, report, no commit.
 - P fails: report the first failing hook, no commit.
 - G fails: stop for Mariano.
+
+## Amendment 1 (before the music_group_volume_set arm; C and 28 of 29 P arms already run)
+
+- `run_diff.py music_group_volume_set` refuses: `struct_list_float_set` has no handler in diff_template.js. Its C3
+  (hooks.csv:948) came from `early_window_leaf_diff.py`, which has the handler. That tool is used for this hook.
+- The handler now seeds node+0x1c from a bit table (t % 7: 0, 7f800001, 7fc00001, 1, ff800001, 3f800000, 7fbfffff)
+  and observes node+0x1c. path1_tests 0..6.
+- **C2 control** (old .asi `270e036f` via MASHED_EW_ASI): RED on t=1 (original 7fc00001, old port 7f800001) and t=4
+  (ffc00001 vs ff800001) and t=6 (7fffffff vs 7fbfffff); GREEN on t=0, 2, 3, 5.
+- **P29** (new .asi `dc146391`): 7/7 GREEN.
+- **Not covered** shrinks to the SNaN at struct+0x38 (the volume argument goes through a JS number).
