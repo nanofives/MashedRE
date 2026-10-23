@@ -1959,14 +1959,18 @@ rpc.exports.diff = function(cfg) {
         for (let z = 0; z < 0x40; z += 4) { N.add(z).writeU32(0); SEC.add(z).writeU32(0); }
         N.add(0).writePointer(S.add(0x0c));                         // node->next = sentinel (1 iter)
         N.add(0x14).writeU32((0xA0000 | ((t >>> 0) << 8)) >>> 0);    // flags seed (varies per t)
-        N.add(0x1c).writeU32(0);                                    // no-op FLD/FSTP source (0.0f)
+        // FLD/FSTP m32 source. audiolink 2026-10-23: seeded from a bit table so a signaling NaN (quieted by the x87
+        // copy at 0x005baf16 / 0x005baf1f) is covered; observed in snap().
+        const B1C = [0x00000000, 0x7f800001, 0x7fc00001, 0x00000001, 0xff800001, 0x3f800000, 0x7fbfffff];
+        N.add(0x1c).writeU32(B1C[(t >>> 0) % B1C.length] >>> 0);
         S.add(0x0c).writePointer(N);                               // list head
         S.add(0x11c).writePointer(SEC);                           // secondary present
       };
       const snap = function () {
         return (S.add(0x38).readU32() >>> 0).toString(16) + '|' +
                (N.add(0x14).readU32() >>> 0).toString(16) + '|' +
-               (SEC.add(0x30).readU32() >>> 0).toString(16);
+               (SEC.add(0x30).readU32() >>> 0).toString(16) + '|' +
+               (N.add(0x1c).readU32() >>> 0).toString(16);
       };
       try { seedS(); Orig(S, vol); o = snap(); } catch (e) { eo = e.message; }
       try { seedS(); Reim(S, vol); r = snap(); } catch (e) { er = e.message; }
