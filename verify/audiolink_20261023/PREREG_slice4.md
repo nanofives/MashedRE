@@ -31,3 +31,17 @@ No control arm: no body changed.
 
 P and G hold: commit. hooks.csv: file + exe_file -> Audio/AudioFmtKey.cpp for 0x005adf30, exe_file for the two RwsFmt
 rows, levels kept, via re-classify. P fails: report, no commit. G fails: stop for Mariano.
+
+## Amendment 1 (after the first P / G run, before any code change)
+
+- **P failed as predicted-against:** audio_fmt_key_compare 15/15 GREEN, audio_fmt_entry_match 10/10 GREEN,
+  **audio_fmt_desc_equal 9/10, RED idx 2** (key pointers 0xaaaaaaaa / 0xbbbbbbbb). Both sides fault, at different
+  addresses: the original at 0xbbbbbbbb, the shared body at 0xaaaaaaaa. Control: the slice-3 .asi `b7fa12f1` (RwsFmt
+  calling the original 0x005adf30 by address) is 10/10 GREEN, both faulting at 0xbbbbbbbb. G held (bacfc747 / 8dd1c004 /
+  6f9932b6, f9deb9b9 / d3601fcc / 9da9a26a on exe `a4f9ed2f`).
+- Reading: `repe cmpsb` (0x005adf4a) faults on the ES:[EDI] byte (param_2) first. 0xaaaaaaaa is unmapped too (the port
+  faults there), so this is the access order, not a mapping difference. The port's byte loop reads `*param_1` first.
+  audio_fmt_key_compare never passes an invalid pointer, so its 15/15 could not see this.
+- **Fix:** the shared body reads param_2's byte before param_1's (volatile loads, so the compiler keeps the order).
+- **Re-run:** P on all three with the fixed .asi, G on the fixed exe. Same predictions: 3 / 3 GREEN (desc_equal idx 2
+  both faulting at 0xbbbbbbbb), gates unchanged.
