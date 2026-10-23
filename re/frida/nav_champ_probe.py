@@ -27,6 +27,8 @@ def find_original(root: Path) -> Path:
 
 
 EXE = find_original(ROOT)
+if os.environ.get("MASHED_ORIG_DIR"):       # private copy of original\ (savelink)
+    EXE = Path(os.environ["MASHED_ORIG_DIR"]) / "MASHED.exe"
 ORIG = EXE.parent
 NAV = (Path(__file__).resolve().parent / "nav_agent.js").read_text(encoding="utf-8")
 NPG, DET, ABOVE = 0x00000200, 0x00000008, 0x00008000
