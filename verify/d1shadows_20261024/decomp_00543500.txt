@@ -1,0 +1,36 @@
+Ghidra 12.0.3, Mashed_pool10, read-only, 2026-10-24 (D1-SHADOWS). MASHED.exe image base 0x00400000.
+FUN_00543500 body 0x00543500..0x005436f7. Excerpt of the per-mesh effect switch (verbatim decomp text):
+
+    puVar2 = *(undefined4 **)(iVar6 + 8);
+    puVar3 = *(undefined4 **)((int)puVar2 + DAT_007dc5dc);
+    if (puVar3 == (undefined4 *)0x0) {
+      uVar7 = 0;
+    }
+    else {
+      uVar7 = puVar3[0xc];
+    }
+    switch(uVar7) {
+    case 1:
+      uVar7 = 0;
+      goto LAB_00543678;
+    case 2:
+      FUN_005412d0(iVar1,iVar6,uVar4,0,*puVar2,puVar3[1]);
+      break;
+    case 3:
+      uVar7 = puVar3[7];
+LAB_00543678:
+      FUN_00541d40(iVar1,iVar6,uVar4,*puVar2,puVar3[1],uVar7);
+      break;
+    case 4:
+      FUN_005405c0(iVar1,iVar6,uVar4,*puVar2,*puVar3);
+      break;
+    default:
+      FUN_00540340(iVar1,iVar6,uVar4,*puVar2);
+      break;
+    case 6:
+      FUN_005405c0(iVar1,iVar6,uVar4,*puVar2,puVar3[6]);
+    }
+
+Mechanical reading: the material's plugin slot at offset DAT_007dc5dc holds a pointer; the dword at +0x30
+(puVar3[0xc]) selects the draw function. 4 and 6 call FUN_005405c0. The DUAL stage program inside FUN_005405c0
+(0x005408f9..0x005409af) is cited in verify/rtex_20261016/RESULT_rtex.md:22-26.
