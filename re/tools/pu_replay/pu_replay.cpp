@@ -291,6 +291,7 @@ struct FlameIn {
     std::map<std::pair<long, int>, std::vector<std::pair<int, mashed_re::Powerup::Effect::FlameSpark> > > bornAt;
     std::map<long, std::array<float, 3> > refAt;                     // frame -> ref
     long refMoved = 0;
+    std::map<long, std::vector<std::pair<int, std::array<mashed_re::Powerup::Effect::FlameSpark, 5> > > > postByCall;
 };
 FlameIn g_fl;
 
@@ -731,6 +732,7 @@ int main(int argc, char** argv) {
                 std::array<mashed_re::Powerup::Effect::FlameSpark, 5> g;
                 for (int i = 0; i < 5; ++i) g[i] = SparkOf(c, 6 + 13 * i);
                 (k == "E" ? g_fl.pre : g_fl.post)[std::make_pair(fr, gi)] = g;
+                if (k == "L") g_fl.postByCall[cl].push_back(std::make_pair(gi, g));
             }
         }
         std::fclose(ff);
@@ -762,6 +764,7 @@ int main(int argc, char** argv) {
     std::map<int, float> mtrLast;
     std::set<int> mtrSeen;
     float mtrDrift = 0.f, mtrAgeDrift = 0.f;
+    long stGroups = 0, stSlotBad = 0, stRecs = 0, stIdMissing = 0, stLandBad = 0, stPosBad = 0;
     for (const Row& r : rows) {
         g_inj.curCall = r.call;
         sys.SetBoxState(want, r.box);       // FUN_0045ba00, the un-ported producers
@@ -769,6 +772,44 @@ int main(int argc, char** argv) {
         sys.SetInput(want, r.cur3 != 0, r.cur4 != 0);
         be.due = r.oilDue;
         sys.Tick(r.dt, be.car, r.state);
+        // R_FLAME STATE CHECK (d3rflame): the port's spark records after this call's
+        // tick against the original's tick-exit dump of the same call, slot by slot
+        // (exposes the scan ORDER), and by identity = age bits within the group
+        // (exposes WHICH spark landed, whatever the order).
+        if (g_fl.present) {
+            auto pc = g_fl.postByCall.find(r.call);
+            if (pc != g_fl.postByCall.end()) {
+                const auto* pool = mashed_re::Powerup::Effect::RFlame_Pool();
+                auto bits = [](float f) { std::uint32_t u; std::memcpy(&u, &f, 4); return u; };
+                for (auto& gg : pc->second) {
+                    const auto* pg = pool + gg.first * 5;
+                    const auto& og = gg.second;
+                    ++stGroups;
+                    bool slotOk = true;
+                    for (int i = 0; i < 5; ++i) {
+                        const auto& a2 = pg[i]; const auto& b2 = og[i];
+                        if (a2.alive != b2.alive || a2.landed != b2.landed || bits(a2.age) != bits(b2.age)) slotOk = false;
+                        for (int c = 0; c < 3; ++c)
+                            if (bits(a2.pos[c]) != bits(b2.pos[c]) || bits(a2.vel[c]) != bits(b2.vel[c])) slotOk = false;
+                    }
+                    if (!slotOk) ++stSlotBad;
+                    // by identity: every original record alive must have a port record
+                    // in the same group with the same age bits and the same landed latch
+                    for (int i = 0; i < 5; ++i) {
+                        if (og[i].alive == 0) continue;
+                        int hit = -1;
+                        for (int j = 0; j < 5; ++j)
+                            if (pg[j].alive != 0 && bits(pg[j].age) == bits(og[i].age)) { hit = j; break; }
+                        ++stRecs;
+                        if (hit < 0) { ++stIdMissing; continue; }
+                        if (pg[hit].landed != og[i].landed) ++stLandBad;
+                        bool posOk = true;
+                        for (int c = 0; c < 3; ++c) if (bits(pg[hit].pos[c]) != bits(og[i].pos[c])) posOk = false;
+                        if (!posOk) ++stPosBad;
+                    }
+                }
+            }
+        }
         // FUN_00459620 runs once per frame while MORTAR, GUN or MISSILE has a
         // projectile up. The ported ticks do not yet call it (their projectile
         // pools are not landed), so the SCHEDULE is taken from the capture and
@@ -888,6 +929,13 @@ int main(int argc, char** argv) {
                     bad, idBad, freshBad, nearBad, g_fl.refMoved,
                     (groups - trivial - noRef) == 0 ? "NOT TESTED (no group with 2+ young sparks)"
                                                     : (bad ? "DIVERGES" : "CLEAN"));
+        std::printf("\nR_FLAME STATE CHECK (port pool after each call's tick vs the original's tick-exit dump)\n"
+                    "  groups %ld   slot-exact mismatches %ld\n"
+                    "  records by identity (age bits) %ld   missing %ld   landed mismatches %ld   position mismatches %ld\n"
+                    "STATE CHECK: slot order %s, landing %s\n",
+                    stGroups, stSlotBad, stRecs, stIdMissing, stLandBad, stPosBad,
+                    stGroups == 0 ? "NOT TESTED" : (stSlotBad ? "DIVERGES" : "CLEAN"),
+                    stRecs == 0 ? "NOT TESTED" : ((stIdMissing || stLandBad || stPosBad) ? "DIVERGES" : "CLEAN"));
         std::printf("R_FLAME INJECTION: births %s used %ld missing %ld   ref used %ld missing %ld   MASHED_RFLAME_SORT=%s\n",
                     g_fl.births ? "ON" : "OFF", g_fl.bornUsed, g_fl.bornMissing,
                     g_fl.refUsed, g_fl.refMissing,

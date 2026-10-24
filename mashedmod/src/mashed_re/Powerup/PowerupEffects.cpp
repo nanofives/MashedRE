@@ -367,6 +367,7 @@ void RFlame_Step(PowerupSystem& sys, float dt);   // fwd: the emission stepper h
 // struct FlameSpark (PowerupEffects.h): pos [0..2], vel [3..5], ageN [6],
 // age [8], angle [10], landed [11], alive [12].
 static FlameSpark s_sparks[100] = {};
+const FlameSpark* RFlame_Pool() { return s_sparks; }
 
 // MASHED_RFLAME_SORT=1 (d3rflame 2026-10-24, default OFF): run the per-group
 // sorter FUN_0045ac40 ahead of each group's 5-spark scan, as the original's tick

@@ -47,6 +47,8 @@ struct FlameSpark {
 // FUN_0045ac40 on one group of 5 records (d3rflame 2026-10-24). RFlame_Tick calls
 // it under MASHED_RFLAME_SORT=1; pu_replay calls it directly for its sort check.
 void RFlame_SortFive(FlameSpark g[5], const float ref[3]);
+// The 100-record spark pool, read-only, for pu_replay's state check.
+const FlameSpark* RFlame_Pool();
 
 }  // namespace Effect
 }  // namespace Powerup
