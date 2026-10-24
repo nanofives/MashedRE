@@ -47,3 +47,17 @@ The free path of 0x005ad2e0 (bit 0 clear) and the exe arms at runtime (nothing i
 
 All hold: commit. hooks.csv exe_file for 0x005ad2e0, notes on 0x005b0f40 / 0x005aed20, levels kept (all C2), via
 re-classify. Any fails: report, no commit of that part. G fails: stop for Mariano.
+
+## Amendment 1 (after T, P1, P2, P3; before any code change)
+
+- T held (512 + 4 bytes equal at the menu). P1 10/10 and P2 12/12 GREEN.
+- **P3 failed, but on the harness, not the port.** `audio_queue_pop` ran 6 / 6 with `orig=None reimpl=None`. Every
+  vector is `0` because the `capture_args` live capture did not fill them. Both sides fault identically with an
+  "access violation accessing 0x28" (`[0 + 0x28]`). The entry has no `crash_equal_ok`, so a matching fault reports
+  RED. The row is C2 and this entry never produced evidence.
+- Shadow A/B is no substitute: `ShadowAB::Run` executes the function twice on the same live object, and 0x005ad2e0
+  decrements or unlinks it, so the second run differs by design and consumes a real queue entry.
+- **New arm P3b:** the `queue_node_consume` handler gains an optional `wrap_off`, which calls fn(OBJ) with
+  OBJ+wrap_off = q. New registry entry `audio_queue_pop_fixture` (0x005b0f40, wrap_off 0x28, the 10
+  audio_queue_consume vectors). The live-capture entry is left as it is.
+- **Predictions:** P3b 10/10 GREEN. G unchanged.
