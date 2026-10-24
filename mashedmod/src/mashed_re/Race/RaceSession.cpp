@@ -189,8 +189,9 @@ void RaceSession::Begin(const RaceConfig& cfg, D3d9Render::TrackRenderer* track,
         {
             const int colour = m_cfg.cars[0].colour;
             char vbank[200];
+            // The 0x004625b0 core path has no root, so the original/ prefix is added here.
             if (Audio::CharacterBankPath(colour, 0, vbank, sizeof(vbank)))
-                logf("player voice bank: colour=%d -> %s", colour, vbank);
+                logf("player voice bank: colour=%d -> original/%s", colour, vbank);
             else
                 logf("player voice bank: colour=%d out of range (0..5)", colour);
         }
