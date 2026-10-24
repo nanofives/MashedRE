@@ -1,0 +1,20 @@
+D:\MashedWT\D3-CF-U9782_data\arms\H_DEFL.cc.txt
+  calls=1586 ret1=33 ret1_with_pass!=0=0
+  pass0_loops=1524 pass0_loops_with>=2_calls=22 (merged-run upper bound)
+  pass0_loops_with_two_ret1=0
+  pass0_loops_with_a_call_after_the_first_ret1=0 (merged-run upper bound)
+D:\MashedWT\substep_data\arms3\B_DEFL_K0.cc.txt
+  calls=225 ret1=4 ret1_with_pass!=0=0
+  pass0_loops=199 pass0_loops_with>=2_calls=22 (merged-run upper bound)
+  pass0_loops_with_two_ret1=0
+  pass0_loops_with_a_call_after_the_first_ret1=0 (merged-run upper bound)
+D:\MashedWT\substep_data\arms3\B_DEFL_K1.cc.txt
+  calls=402 ret1=28 ret1_with_pass!=0=0
+  pass0_loops=352 pass0_loops_with>=2_calls=22 (merged-run upper bound)
+  pass0_loops_with_two_ret1=0
+  pass0_loops_with_a_call_after_the_first_ret1=0 (merged-run upper bound)
+D:\MashedWT\substep_data\arms3\B_DEFL_K26.cc.txt
+  calls=233 ret1=4 ret1_with_pass!=0=0
+  pass0_loops=207 pass0_loops_with>=2_calls=22 (merged-run upper bound)
+  pass0_loops_with_two_ret1=0
+  pass0_loops_with_a_call_after_the_first_ret1=0 (merged-run upper bound)
