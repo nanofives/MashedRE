@@ -134,6 +134,19 @@ public:
     // original gates OIL on |pos - lastDrop|^2 >= _DAT_005cc56c, trail per owner).
     // The host keeps the trail; this stub returns true at a fixed cadence.
     virtual bool OilDropDue(int owner, const float pos[3]) = 0;
+
+    // R_FLAME spark sort reference point (d3rflame 2026-10-24, read only under
+    // MASHED_RFLAME_SORT=1). The original's tick passes FUN_004671d0(0) to the
+    // sorter FUN_0045ac40 (CALL 0x004671d0 @0x0045af35, PUSH EAX @0x0045af3a), and
+    // FUN_004671d0 returns *(DAT_006905b0 + 4) + 0x40 -- a pointer to three floats
+    // read as the reference position. false = no reference: the sort is skipped.
+    virtual bool FlameSortRef(float out[3]) { (void)out; return false; }
+    // Replay-only input: the ORIGINAL's spark birth pos/vel for flat spark record
+    // `idx` (emitter FUN_0045a950), captured by scenario_launch.py --puhook-flame.
+    // false = keep the port's stand-in (no host gives the jitter's random draw).
+    virtual bool FlameSparkBirth(int idx, float pos[3], float vel[3]) {
+        (void)idx; (void)pos; (void)vel; return false;
+    }
 };
 
 // One per-player power-up slot. Mirrors the real slot struct @0x0088fbe0

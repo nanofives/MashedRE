@@ -18,6 +18,7 @@
 #include "PowerupContact.h"
 
 #include <cmath>
+#include <cstdlib>
 
 namespace mashed_re {
 namespace Powerup {
@@ -363,15 +364,68 @@ void RFlame_Step(PowerupSystem& sys, float dt);   // fwd: the emission stepper h
 // FUN_0045ae80 whose `pfVar8` is base+6, sorter FUN_0045ac40 which tests
 // `pfVar10[0xc]` and `pfVar10[6]`), and by the ten dwords the reset clears
 // (indices 0-6, 8, 11, 12):
-struct FlameSpark {
-    float pos[3];   // [0..2]
-    float vel[3];   // [3..5]  PER-FRAME, not per-second: the probe is pos -> pos+vel
-    float ageN;     // [6]     age * _DAT_005cd114, clamped to 1.0; >= 1.0 = done
-    float age;      // [8]     seconds
-    int   landed;   // [11]    latch set on a hit
-    int   alive;    // [12]
-};
+// struct FlameSpark (PowerupEffects.h): pos [0..2], vel [3..5], ageN [6],
+// age [8], angle [10], landed [11], alive [12].
 static FlameSpark s_sparks[100] = {};
+
+// MASHED_RFLAME_SORT=1 (d3rflame 2026-10-24, default OFF): run the per-group
+// sorter FUN_0045ac40 ahead of each group's 5-spark scan, as the original's tick
+// does (CALL 0x0045ac40 @0x0045af41). OFF = the fixed index order the port
+// scanned in before, unchanged.
+static bool RFlameSortOn() {
+    static int v = -1;
+    if (v < 0) {
+        const char* e = std::getenv("MASHED_RFLAME_SORT");
+        v = (e && *e && *e != '0') ? 1 : 0;
+    }
+    return v != 0;
+}
+
+// 0x0045ac40 -- one swap pass over one group of 5 spark records. Read off the
+// instructions, not the decompiler:
+//   in:  EAX = owner (MOV EAX,[ESP+0x20] @0x0045af3b = the tick's local_c8),
+//        ECX = group (MOV ECX,EDI @0x0045af3f = local_c0), ref = the one stack
+//        arg ([ESP+0x54] @0x0045ac92; the caller's ADD ESP,8 @0x0045af46 also pops
+//        FUN_004671d0's own arg).
+//   base: LEA EDX,[ECX+EAX*4] / ADD EAX,EDX / IMUL EAX,EAX,0x104
+//        (0x0045ac43..0x0045ac48) -> 0x0068bd00 + (owner*5 + group)*0x104.
+//   outer record i = 0..4 (ESI 1..5, CMP ESI,6 @0x0045ad51), skipped unless
+//        alive (TEST on the dword at +0x30 @0x0045ac73, an INTEGER test) and
+//        ageN at +0x18 below _DAT_005cc320 = 1.0 (FCOMP / TEST AH,1 @0x0045ac7e..89).
+//   key: |ref - pos_i|^2 summed (dy*dy + dx*dx) + dz*dz (0x0045ac96..0x0045acb6),
+//        stored to a float temp (FSTP [ESP+0x18] @0x0045acb8) ONCE per i. It is
+//        NOT recomputed after a swap: every later j compares against the record
+//        that used to sit at i.
+//   inner j = i+1..4 (EBP = ESI, CMP EBP,5 @0x0045ad41), same live/young test
+//        (0x0045acc8..0x0045acdd), same distance (0x0045acdf..0x0045acfd), then
+//        FCOMP [ESP+0x18] / TEST AH,0x41 / JNZ skip (0x0045acff..0x0045ad0e): swap
+//        only when d_j > key strictly. The swap is three MOVSD.REP of 0xd dwords
+//        through a stack temp (0x0045ad10..0x0045ad33), i.e. whole records.
+// The original runs at PC_24, so each x87 op rounds to a float significand and
+// float arithmetic in the same order reproduces it. A NaN ageN passes the
+// FCOMP test (C0 set when unordered), which `>= 1.0f -> skip` also gives.
+static float RFlameDist2(const float ref[3], const float p[3]) {
+    const float dx = ref[0] - p[0];      // FLD [ECX] / FSUB [EBX]
+    const float dy = ref[1] - p[1];      // FLD [EBX+4] / FSUBR [ECX+4]
+    const float dz = ref[2] - p[2];      // FLD [EBX+8] / FSUBR [ECX+8]
+    float s = dy * dy + dx * dx;         // FMUL / FMUL / FADDP
+    s = s + dz * dz;                     // FMUL / FADDP
+    return s;
+}
+void RFlame_SortFive(FlameSpark g[5], const float ref[3]) {
+    for (int i = 0; i < 5; ++i) {
+        if (g[i].alive == 0 || g[i].ageN >= 1.0f) continue;
+        const float key = RFlameDist2(ref, g[i].pos);
+        for (int j = i + 1; j < 5; ++j) {
+            if (g[j].alive == 0 || g[j].ageN >= 1.0f) continue;
+            if (RFlameDist2(ref, g[j].pos) > key) {
+                const FlameSpark t = g[j];
+                g[j] = g[i];
+                g[i] = t;
+            }
+        }
+    }
+}
 
 void RFlame_Arm(PowerupSystem&, Slot& s) {   // 0x45a7c0: +0x08=0.02 (0x3ca3d70a), FX FUN_00465e80(0x16)
     // CALL 0x0045a3a0 @0x0045a7d9 -- the reset clears the WHOLE 100-record pool,
@@ -409,7 +463,13 @@ void RFlame_Tick(PowerupSystem& sys, float dt) {  // emission stepper FUN_0045a9
     // slot holds. PowerupSystem::Tick calls this with current() = 0,1,2,3 in
     // order, so the last pass is where the scan belongs.
     if (sys.current() != PowerupSystem::kSlots - 1) return;
+    // The scan walks owner (local_c8, 4) x group (local_c0, 5) x spark (5) in flat
+    // index order (pfVar8 from 0x0068bd18, +0xd dwords per spark). Under
+    // MASHED_RFLAME_SORT the sorter runs once per group before its sparks.
+    float sortRef[3] = {0.f, 0.f, 0.f};
+    const bool sortOn = RFlameSortOn() && sys.backend()->FlameSortRef(sortRef);
     for (int i = 0; i < 100; ++i) {
+        if (sortOn && (i % 5) == 0) RFlame_SortFive(&s_sparks[i], sortRef);  // (owner*5+group)*5
         FlameSpark& k = s_sparks[i];
         // `if ((pfVar8[6] != 0.0) && (*pfVar8 < _DAT_005cc320))` -- alive, and the
         // normalised age still under 1.0.
@@ -481,6 +541,9 @@ void RFlame_Step(PowerupSystem& sys, float dt) {
             // and whether it lands at all is the injected query verdict.
             float fwd[3]; OwnerForward(c, fwd);
             for (int a = 0; a < 3; ++a) k.vel[a] = fwd[a] * tune::kFlameSparkSpeed;
+            // Replay input (pu_replay with a .puflame.csv): the original's own
+            // birth pos/vel for this record, jitter included. No live host gives it.
+            sys.backend()->FlameSparkBirth(idx, k.pos, k.vel);
             // age / ageN / landed are NOT reset here: the original's emitter does
             // not touch them either, because ARM's FUN_0045a3a0 cleared the whole
             // pool and each index is used once per burst sequence.

@@ -28,6 +28,16 @@
 // The port's own rows go to MASHED_PU_CONTACTDUMP in the capture's exact column
 // shape, so re/tools/pu_contact_report.py reads both sides identically.
 //
+// d3rflame (2026-10-24): with <orig.puhook.csv>'s sibling <orig.puflame.csv>
+// present (scenario_launch.py --puhook-flame), two more inputs are injected the
+// same way -- the ORIGINAL's R_FLAME spark birth records (pos/vel, jitter
+// included) and each tick's sorter reference FUN_004671d0(0) -- so the sparks the
+// port scans sit where the original's did. Whether the port SORTS them is the
+// exe's own knob, MASHED_RFLAME_SORT (default OFF). MASHED_PU_FLAME_NOBIRTH=1
+// drops the birth injection (control). The same file's tick-entry / tick-exit
+// group dumps feed a SORT CHECK: the ported FUN_0045ac40 run on the original's
+// pre-sort records must reproduce the original's post-sort slot order.
+//
 // Usage: pu_replay.exe <orig.puhook.csv> <slot>   (env MASHED_PU_STEPDUMP=<out.csv>,
 //        MASHED_PU_CONTACTDUMP=<out.pucontact.csv>)
 #include "Powerup/PowerupSystem.h"
@@ -35,9 +45,13 @@
 #include "Powerup/PowerupAim.h"
 #include "Powerup/PowerupMortar.h"
 #include "Powerup/PowerupMissile.h"
+#include "Powerup/PowerupEffects.h"
 
 #include <cstdio>
+#include <array>
+#include <cstdint>
 #include <cstdlib>
+#include <utility>
 #include <cstring>
 #include <cmath>
 #include <map>
@@ -247,6 +261,39 @@ float Word0(const std::string& hex) {   // first dword of a pool-record hex dump
     float f; std::memcpy(&f, b, 4); return f;
 }
 
+// ---- R_FLAME inputs (.puflame.csv) -----------------------------------------
+float HexF(const std::string& h) {
+    if (h.size() < 3) return 0.f;
+    const unsigned long u = std::strtoul(h.c_str() + 2, nullptr, 16);
+    const std::uint32_t w = static_cast<std::uint32_t>(u);
+    float f; std::memcpy(&f, &w, 4); return f;
+}
+int HexI(const std::string& h) {
+    if (h.size() < 3) return 0;
+    return static_cast<int>(static_cast<std::uint32_t>(std::strtoul(h.c_str() + 2, nullptr, 16)));
+}
+// One 0xd-dword record (d[k0..k0+12]) -> the port's FlameSpark.
+mashed_re::Powerup::Effect::FlameSpark SparkOf(const std::vector<std::string>& c, std::size_t k0) {
+    mashed_re::Powerup::Effect::FlameSpark k{};
+    auto d = [&](int i) -> std::string { return k0 + i < c.size() ? c[k0 + i] : std::string(); };
+    for (int i = 0; i < 3; ++i) { k.pos[i] = HexF(d(i)); k.vel[i] = HexF(d(3 + i)); }
+    k.ageN = HexF(d(6)); k.age = HexF(d(8)); k.angle = HexF(d(10));
+    k.landed = HexI(d(11)); k.alive = HexI(d(12));
+    return k;
+}
+struct FlameIn {
+    bool present = false, births = true;
+    std::map<long, std::array<float, 3> > ref;                       // call -> ref
+    std::map<std::pair<long, int>, mashed_re::Powerup::Effect::FlameSpark> birth;  // (call, idx)
+    long bornUsed = 0, bornMissing = 0, refUsed = 0, refMissing = 0;
+    // sort-check rows, keyed (frame, owner*5+group)
+    std::map<std::pair<long, int>, std::array<mashed_re::Powerup::Effect::FlameSpark, 5> > pre, post;
+    std::map<std::pair<long, int>, std::vector<std::pair<int, mashed_re::Powerup::Effect::FlameSpark> > > bornAt;
+    std::map<long, std::array<float, 3> > refAt;                     // frame -> ref
+    long refMoved = 0;
+};
+FlameIn g_fl;
+
 struct Backend : IPowerupBackend {
     HostCar car[4];
     bool due = false;
@@ -264,7 +311,44 @@ struct Backend : IPowerupBackend {
     void EffectEnd(int, const float*) override {}
     void SfxByName(const char*, float) override {}
     bool OilDropDue(int, const float*) override { return due; }
+    bool FlameSortRef(float out[3]) override {
+        if (!g_fl.present) return false;
+        auto it = g_fl.ref.find(g_inj.curCall);
+        if (it == g_fl.ref.end()) { ++g_fl.refMissing; return false; }
+        for (int i = 0; i < 3; ++i) out[i] = it->second[i];
+        ++g_fl.refUsed;
+        return true;
+    }
+    bool FlameSparkBirth(int idx, float pos[3], float vel[3]) override {
+        if (!g_fl.present || !g_fl.births) return false;
+        auto it = g_fl.birth.find(std::make_pair(g_inj.curCall, idx));
+        if (it == g_fl.birth.end()) { ++g_fl.bornMissing; return false; }
+        for (int i = 0; i < 3; ++i) { pos[i] = it->second.pos[i]; vel[i] = it->second.vel[i]; }
+        ++g_fl.bornUsed;
+        return true;
+    }
 };
+
+// Two CONTROL orders for the sort check, local to the replay (not port code):
+// a key recomputed after every swap, and the opposite comparison (nearest first).
+float CtlDist2(const float r[3], const float p[3]) {
+    const float dx = r[0] - p[0], dy = r[1] - p[1], dz = r[2] - p[2];
+    float s = dy * dy + dx * dx; s = s + dz * dz; return s;
+}
+void CtlSort(mashed_re::Powerup::Effect::FlameSpark g[5], const float r[3], bool freshKey, bool nearFirst) {
+    for (int i = 0; i < 5; ++i) {
+        if (g[i].alive == 0 || g[i].ageN >= 1.0f) continue;
+        float key = CtlDist2(r, g[i].pos);
+        for (int j = i + 1; j < 5; ++j) {
+            if (g[j].alive == 0 || g[j].ageN >= 1.0f) continue;
+            const float d = CtlDist2(r, g[j].pos);
+            if (nearFirst ? (d < key) : (d > key)) {
+                std::swap(g[i], g[j]);
+                if (freshKey) key = CtlDist2(r, g[i].pos);
+            }
+        }
+    }
+}
 
 }  // namespace
 
@@ -620,6 +704,38 @@ int main(int argc, char** argv) {
         mashed_re::Powerup::Contact::SetSweepInjector(SweepInject, nullptr);
     }
 
+    // ---- load <base>.puflame.csv, if present (d3rflame) ---------------------
+    const std::string flPath = base + ".puflame.csv";
+    if (std::FILE* ff = std::fopen(flPath.c_str(), "r")) {
+        g_fl.present = true;
+        if (const char* e = std::getenv("MASHED_PU_FLAME_NOBIRTH")) g_fl.births = !(*e && *e != '0');
+        std::vector<std::string> fh;
+        static char fline[16384];
+        while (std::fgets(fline, sizeof fline, ff)) {
+            auto c = Split(fline);
+            if (fh.empty()) { fh = c; continue; }
+            if (c.size() < 7) continue;
+            const long fr = std::atol(c[0].c_str()), cl = std::atol(c[1].c_str());
+            const std::string& k = c[2];
+            if (k == "R") {
+                std::array<float, 3> r = { HexF(c[6]), HexF(c[7]), HexF(c[8]) };
+                g_fl.ref[cl] = r; g_fl.refAt[fr] = r;
+                if (c.size() > 11 && (c[6] != c[9] || c[7] != c[10] || c[8] != c[11])) ++g_fl.refMoved;
+            } else if (k == "B") {
+                const int ow = std::atoi(c[3].c_str()), mj = std::atoi(c[4].c_str()), sb = std::atoi(c[5].c_str());
+                const auto sp = SparkOf(c, 6);
+                g_fl.birth[std::make_pair(cl, ow * 25 + mj * 5 + sb)] = sp;
+                g_fl.bornAt[std::make_pair(fr, ow * 5 + mj)].push_back(std::make_pair(sb, sp));
+            } else if (k == "E" || k == "L") {
+                const int gi = std::atoi(c[3].c_str()) * 5 + std::atoi(c[4].c_str());
+                std::array<mashed_re::Powerup::Effect::FlameSpark, 5> g;
+                for (int i = 0; i < 5; ++i) g[i] = SparkOf(c, 6 + 13 * i);
+                (k == "E" ? g_fl.pre : g_fl.post)[std::make_pair(fr, gi)] = g;
+            }
+        }
+        std::fclose(ff);
+    }
+
     if (!haveCx) {
         // Captures taken before --puhook-contacts existed (verify/d3_pu_20260926/*)
         // carry no query verdicts. The replay has no collision world either, so a
@@ -719,6 +835,64 @@ int main(int argc, char** argv) {
     }
     mashed_re::Powerup::Contact::CloseDump();
     std::printf("replayed %zu frames on slot %d\n", rows.size(), want);
+    if (g_fl.present) {
+        // The ported sorter against the original's own records. Pre-sort state =
+        // the group on tick entry with this tick's births overlaid at their slot
+        // (the stepper runs in the tick's first loop, the sort in its second);
+        // post-sort = the group on tick exit (the scan moves values, never slots).
+        // Identity = the emitter's random angle, dword 10, which the tick never
+        // writes. Only groups with 2+ records alive and ageN < 1.0 at sort time
+        // can move; the rest are counted as trivial.
+        using mashed_re::Powerup::Effect::FlameSpark;
+        long groups = 0, trivial = 0, noRef = 0, moved = 0, bad = 0, idBad = 0, freshBad = 0, nearBad = 0;
+        auto young = [](const FlameSpark& k) { return k.alive != 0 && !(k.ageN >= 1.0f); };
+        auto sameOrder = [&](const FlameSpark* a, const std::array<FlameSpark, 5>& b) {
+            for (int i = 0; i < 5; ++i) {
+                std::uint32_t x, y;
+                std::memcpy(&x, &a[i].angle, 4); std::memcpy(&y, &b[i].angle, 4);
+                if (x != y || a[i].alive != b[i].alive) return false;
+            }
+            return true;
+        };
+        for (auto& kv : g_fl.post) {
+            ++groups;
+            std::array<FlameSpark, 5> pre{};
+            auto pe = g_fl.pre.find(kv.first);
+            if (pe != g_fl.pre.end()) pre = pe->second;
+            auto bo = g_fl.bornAt.find(kv.first);
+            if (bo != g_fl.bornAt.end())
+                for (auto& b : bo->second) if (b.first >= 0 && b.first < 5) pre[b.first] = b.second;
+            int ny = 0;
+            for (int i = 0; i < 5; ++i) ny += young(pre[i]) ? 1 : 0;
+            if (ny < 2) { ++trivial; continue; }
+            auto rf = g_fl.refAt.find(kv.first.first);
+            if (rf == g_fl.refAt.end()) { ++noRef; continue; }
+            const float* ref = rf->second.data();
+            if (!sameOrder(pre.data(), kv.second)) ++moved;
+            FlameSpark port[5], fresh[5], nearf[5];
+            for (int i = 0; i < 5; ++i) port[i] = fresh[i] = nearf[i] = pre[i];
+            mashed_re::Powerup::Effect::RFlame_SortFive(port, ref);
+            CtlSort(fresh, ref, true, false);
+            CtlSort(nearf, ref, false, true);
+            if (!sameOrder(port, kv.second)) ++bad;
+            if (!sameOrder(pre.data(), kv.second)) ++idBad;
+            if (!sameOrder(fresh, kv.second)) ++freshBad;
+            if (!sameOrder(nearf, kv.second)) ++nearBad;
+        }
+        std::printf("\nR_FLAME SORT CHECK (ported FUN_0045ac40 on the original's records)\n"
+                    "  groups %ld   trivial(<2 young) %ld   no-ref %ld   tested %ld   moved by the original %ld\n"
+                    "  mismatches: port %ld   controls: no-sort %ld  fresh-key %ld  nearest-first %ld\n"
+                    "  reference moved within a tick on %ld ticks\n"
+                    "SORT CHECK: %s\n",
+                    groups, trivial, noRef, groups - trivial - noRef, moved,
+                    bad, idBad, freshBad, nearBad, g_fl.refMoved,
+                    (groups - trivial - noRef) == 0 ? "NOT TESTED (no group with 2+ young sparks)"
+                                                    : (bad ? "DIVERGES" : "CLEAN"));
+        std::printf("R_FLAME INJECTION: births %s used %ld missing %ld   ref used %ld missing %ld   MASHED_RFLAME_SORT=%s\n",
+                    g_fl.births ? "ON" : "OFF", g_fl.bornUsed, g_fl.bornMissing,
+                    g_fl.refUsed, g_fl.refMissing,
+                    std::getenv("MASHED_RFLAME_SORT") ? std::getenv("MASHED_RFLAME_SORT") : "(unset)");
+    }
     if (!haveCx) {
         std::printf("contact: %s absent -- pre-2026-09-28 capture; the query leaves ran\n"
                     "         under the permissive verdict (hit / allow), so the DECISION\n"

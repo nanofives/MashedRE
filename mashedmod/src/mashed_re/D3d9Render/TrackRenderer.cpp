@@ -6037,6 +6037,15 @@ public:
         }
         return false;
     }
+    // R_FLAME sorter reference (read only under MASHED_RFLAME_SORT=1). The
+    // original passes FUN_004671d0(0) = *(DAT_006905b0 + 4) + 0x40; the standalone
+    // gives the last rendered eye. [UNCERTAIN] (no capture yet compares them) whether the original's
+    // reference at tick time is this frame's camera or the previous render's.
+    bool FlameSortRef(float out[3]) override {
+        float at[3];
+        t_->camera(out, at);
+        return true;
+    }
 };
 
 // nearest AI car ahead of the player (replicates the old missile targeting).
