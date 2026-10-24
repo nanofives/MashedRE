@@ -3,3 +3,48 @@
 {"at":"2026-10-24T10:14:11Z","id":"D5-PDOD","from":"working","to":"review","owner":"cmvm8ok3o238do115y1cpg3dx","note":"text change committed"}
 {"at":"2026-10-24T10:14:41Z","id":"D5-PDOD","from":"review","to":"merge-queued","owner":"cmvm8ok3o238do115y1cpg3dx","note":"orch/D5-PDOD"}
 {"at":"2026-10-24T10:33:46Z","id":"D5-PDOD","from":"merge-queued","to":"merged","owner":"cmvm8ok3o238do115y1cpg3dx","note":"merge train 20261024_071612: G-CTRL bacfc747/8dd1c004/6f9932b6  B f9deb9b9/d3601fcc/9da9a26a"}
+{"at":"2026-10-24T12:28:34Z","id":"D1-R1","from":"decision","to":"open","owner":"","note":"P0-1 A (Mariano 2026-10-24): R1 closed on verify/d1r1_20261016/RESULT_d1r1.md. Step: edit ROADMAP.md state lines 10, 284-286, 2228-2229, 2971-2972 to cite it. Text-only."}
+{"at":"2026-10-24T12:28:34Z","id":"D1-R2","from":"decision","to":"open","owner":"","note":"P0-2 A (Mariano 2026-10-24): stays default ON (opt-out MASHED_NO_RACE_CAM_BASIS), supersedes W0-14 knob wording. Step: side-by-side in-race stills vs the original, then file a DECISIONS row for Mariano's review (closes D1-residue)."}
+{"at":"2026-10-24T12:33:30Z","id":"D3-CF-RFLAME","from":"open","to":"claimed","owner":"cmvmdqpim2fqbo1153u82awk7","note":""}
+{"at":"2026-10-24T12:33:49Z","id":"D4-AUDIO-RWS","from":"open","to":"claimed","owner":"cmvmdqp8c2fq5o1151l9wkr0n","note":""}
+{"at":"2026-10-24T12:33:49Z","id":"D4-SAVE-B","from":"open","to":"claimed","owner":"cmvmdr22i2ftho115m0vlon8r","note":""}
+{"at":"2026-10-24T12:33:50Z","id":"D4-AUDIO-BANKPATH","from":"open","to":"claimed","owner":"cmvmdr22h2ftfo115e6la961o","note":""}
+{"at":"2026-10-24T12:36:14Z","id":"D4-SAVE-B","from":"claimed","to":"working","owner":"cmvmdr22i2ftho115m0vlon8r","note":"worktree created, disassembling 4 wrappers"}
+{"at":"2026-10-24T12:36:18Z","id":"D4-AUDIO-RWS","from":"claimed","to":"working","owner":"cmvmdqp8c2fq5o1151l9wkr0n","note":"slice 2: pool+list family PREREG then link"}
+{"at":"2026-10-24T12:36:26Z","id":"D3-CF-RFLAME","from":"claimed","to":"working","owner":"cmvmdqpim2fqbo1153u82awk7","note":"decomp FUN_0045ac40, port behind default-OFF knob"}
+{"at":"2026-10-24T12:36:42Z","id":"D4-AUDIO-BANKPATH","from":"claimed","to":"working","owner":"cmvmdr22h2ftfo115e6la961o","note":"PREREG + default-OFF shared core"}
+{"at":"2026-10-24T12:41:19Z","id":"D4-SAVE-B","from":"working","to":"decision","owner":"cmvmdr22i2ftho115m0vlon8r","note":"L-1"}
+{"at":"2026-10-24T12:41:59Z","id":"D4-SAVE-B","from":"decision","to":"decision","owner":"cmvmdr22i2ftho115m0vlon8r","note":"L-1 filed; RESULT committed a85acf00f"}
+{"at":"2026-10-24T12:42:47Z","id":"D4-SAVE-B","from":"decision","to":"decision","owner":"cmvmdr22i2ftho115m0vlon8r","note":"L-2"}
+{"at":"2026-10-24T12:43:08Z","id":"D4-SAVE-NOTE496400","from":"open","to":"claimed","owner":"cmvme30q92ieto115sk3g1lhf","note":""}
+{"at":"2026-10-24T12:46:54Z","id":"D4-SAVE-NOTE496400","from":"claimed","to":"working","owner":"cmvme30q92ieto115sk3g1lhf","note":"tracker note"}
+{"at":"2026-10-24T12:46:56Z","id":"D4-SAVE-NOTE496400","from":"working","to":"review","owner":"cmvme30q92ieto115sk3g1lhf","note":""}
+{"at":"2026-10-24T12:47:32Z","id":"D4-SAVE-NOTE496400","from":"review","to":"merge-queued","owner":"cmvme30q92ieto115sk3g1lhf","note":"orch/D4-SAVE-NOTE496400"}
+{"at":"2026-10-24T12:53:03Z","id":"D4-SAVE-B","from":"decision","to":"done","owner":"cmvmdr22i2ftho115m0vlon8r","note":"L-1 = option C (Mariano): option B closes unbuilt; GameSave.cpp CRT stand-ins stay the declared exe save path, superseding W0-3. L-2 was a duplicate of L-1. Evidence: verify/savelinkb_20261024/RESULT_D4-SAVE-B.md on orch/D4-SAVE-B @ a85acf00f (branch kept)."}
+{"at":"2026-10-24T13:17:13Z","id":"D3-CF-RFLAME","from":"working","to":"review","owner":"cmvmdqpim2fqbo1153u82awk7","note":"GREEN: FUN_0045ac40 ported behind MASHED_RFLAME_SORT (OFF); sort check 0/295, state check 0/315 on g3f; g3 count not re-scorable (no geometry), g3f 511/511 both ways; gates unchanged"}
+{"at":"2026-10-24T13:17:36Z","id":"D3-CF-RFLAME","from":"review","to":"merge-queued","owner":"cmvmdqpim2fqbo1153u82awk7","note":"orch/D3-CF-RFLAME"}
+{"at":"2026-10-24T13:17:54Z","id":"D3-CF-U9779","from":"open","to":"claimed","owner":"cmvmfbqyv2om1o115eb3yb6h6","note":""}
+{"at":"2026-10-24T13:18:58Z","id":"D4-AUDIO-RWS","from":"working","to":"review","owner":"cmvmdqp8c2fq5o1151l9wkr0n","note":"slice 2 GREEN: 7 pool/list fns in Audio/AudioPool.cpp; 13 installs left in AudioRws.cpp"}
+{"at":"2026-10-24T13:19:02Z","id":"D4-AUDIO-BANKPATH","from":"working","to":"decision","owner":"cmvmdr22h2ftfo115e6la961o","note":"L-3"}
+{"at":"2026-10-24T13:19:04Z","id":"D4-AUDIO-BANKPATH","from":"decision","to":"review","owner":"cmvmdr22h2ftfo115e6la961o","note":"GREEN: shared core in both rsp, knob default OFF, gates unchanged; flip filed as decision"}
+{"at":"2026-10-24T13:19:26Z","id":"D4-AUDIO-RWS","from":"review","to":"merge-queued","owner":"cmvmdqp8c2fq5o1151l9wkr0n","note":"orch/D4-AUDIO-RWS"}
+{"at":"2026-10-24T13:19:53Z","id":"D4-AUDIO-VOLTODS","from":"open","to":"claimed","owner":"cmvmfebgj2p6vo115xszgvkj8","note":""}
+{"at":"2026-10-24T13:20:04Z","id":"D4-AUDIO-BANKPATH","from":"review","to":"merge-queued","owner":"cmvmdr22h2ftfo115e6la961o","note":"orch/D4-AUDIO-BANKPATH"}
+{"at":"2026-10-24T13:20:25Z","id":"D3-CF-U9779","from":"claimed","to":"working","owner":"cmvmfbqyv2om1o115eb3yb6h6","note":"U-9781 entry probes on 0x00470c70/0x004709a0 + 0x007f19b8 read"}
+{"at":"2026-10-24T13:22:03Z","id":"D4-AUDIO-VOLTODS","from":"claimed","to":"working","owner":"cmvmfebgj2p6vo115xszgvkj8","note":"worktree created; split + knob"}
+{"at":"2026-10-24T13:27:43Z","id":"D4-AUDIO-BANKPATH","from":"merge-queued","to":"open","owner":"","note":"L-3 = A: flip core ON, delete lowercase body + CharacterBankName + knob, re-gate"}
+{"at":"2026-10-24T13:28:27Z","id":"D4-AUDIO-BANKPATH","from":"open","to":"claimed","owner":"cmvmdr22h2ftfo115e6la961o","note":""}
+{"at":"2026-10-24T13:28:48Z","id":"D4-AUDIO-BANKPATH","from":"claimed","to":"working","owner":"cmvmdr22h2ftfo115e6la961o","note":"L-3 = A: flip, delete lowercase body + knob"}
+{"at":"2026-10-24T13:41:24Z","id":"D4-AUDIO-BANKPATH","from":"working","to":"review","owner":"cmvmdr22h2ftfo115e6la961o","note":"GREEN: flip done, one body, gates unchanged exe 63ae41b4"}
+{"at":"2026-10-24T13:42:42Z","id":"D4-AUDIO-BANKPATH","from":"review","to":"merge-queued","owner":"cmvmdr22h2ftfo115e6la961o","note":"orch/D4-AUDIO-BANKPATH"}
+{"at":"2026-10-24T14:00:59Z","id":"D3-CF-U9779","from":"working","to":"decision","owner":"cmvmfbqyv2om1o115eb3yb6h6","note":"L-4"}
+{"at":"2026-10-24T14:01:00Z","id":"D3-CF-U9779","from":"decision","to":"review","owner":"cmvmfbqyv2om1o115eb3yb6h6","note":"U-9781 cause found (0x0046ea1e gate + 0x007f19b8 block); MASHED_R7_PHYS default OFF; car 3 exact k 220..356; gates unchanged; flip = decision row"}
+{"at":"2026-10-24T14:01:23Z","id":"D3-CF-U9779","from":"review","to":"decision","owner":"cmvmfbqyv2om1o115eb3yb6h6","note":"L-5"}
+{"at":"2026-10-24T14:05:22Z","id":"D4-SAVE-NOTE496400","from":"merge-queued","to":"merged","owner":"cmvme30q92ieto115sk3g1lhf","note":"merge train 20261024_103540: G-CTRL bacfc747/8dd1c004/6f9932b6  B f9deb9b9/d3601fcc/9da9a26a"}
+{"at":"2026-10-24T14:05:25Z","id":"D3-CF-RFLAME","from":"merge-queued","to":"merged","owner":"cmvmdqpim2fqbo1153u82awk7","note":"merge train 20261024_103540: G-CTRL bacfc747/8dd1c004/6f9932b6  B f9deb9b9/d3601fcc/9da9a26a"}
+{"at":"2026-10-24T14:05:28Z","id":"D4-AUDIO-RWS","from":"merge-queued","to":"merged","owner":"cmvmdqp8c2fq5o1151l9wkr0n","note":"merge train 20261024_103540: G-CTRL bacfc747/8dd1c004/6f9932b6  B f9deb9b9/d3601fcc/9da9a26a"}
+{"at":"2026-10-24T14:21:58Z","id":"D4-AUDIO-BANKPATH","from":"merge-queued","to":"merged","owner":"cmvmdr22h2ftfo115e6la961o","note":"merge train 20261024_110559: G-CTRL bacfc747/8dd1c004/6f9932b6  B f9deb9b9/d3601fcc/9da9a26a"}
+{"at":"2026-10-24T14:34:03Z","id":"D4-AUDIO-VOLTODS","from":"working","to":"review","owner":"cmvmfebgj2p6vo115xszgvkj8","note":"GREEN: split + default-OFF knob MASHED_VOLTODS_ORIG; S1 0/2^32, P 18/18, gates unchanged; flip needs a decision row"}
+{"at":"2026-10-24T14:34:23Z","id":"D4-AUDIO-VOLTODS","from":"review","to":"merge-queued","owner":"cmvmfebgj2p6vo115xszgvkj8","note":"orch/D4-AUDIO-VOLTODS"}
+{"at":"2026-10-24T14:34:24Z","id":"D4-AUDIO-VOLTODS","from":"merge-queued","to":"decision","owner":"cmvmfebgj2p6vo115xszgvkj8","note":"L-6"}
+{"at":"2026-10-24T14:51:35Z","id":"D4-AUDIO-VOLTODS","from":"decision","to":"merged","owner":"cmvmfebgj2p6vo115xszgvkj8","note":"merge train 20261024_113525: G-CTRL bacfc747/8dd1c004/6f9932b6  B f9deb9b9/d3601fcc/9da9a26a"}

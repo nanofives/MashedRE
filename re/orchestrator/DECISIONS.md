@@ -3,7 +3,20 @@
 Decisions the roadmap loop cannot make (ROADMAP_LOOP_PLAN.md section 7). Each answered row
 re-opens the ledger rows it unblocks. Newest batch at the top.
 
-## Phase 0 (filed 2026-10-24 by the Phase 0 builder, open)
+## Phase 0 answers (2026-10-24, Mariano): all four took option A
+
+- **P0-1 A:** D1-R1 is closed on `verify/d1r1_20261016/RESULT_d1r1.md`. Step left: edit the
+  ROADMAP state lines (`ROADMAP.md:10, 284-286, 2228-2229, 2971-2972`) to cite it.
+- **P0-2 A:** D1-R2 stays default ON (opt-out `MASHED_NO_RACE_CAM_BASIS`). Supersedes W0-14's
+  "behind a default-OFF knob", which was asked from stale roadmap text. Step left: side-by-side
+  in-race stills against the original for Mariano's review, which closes D1-residue.
+- **P0-3 A:** solo windows protect loop work only until `race/first-frame-parity` next moves.
+  Loop workers wrap gate runners in `mashed_lock.py run [--solo]`.
+- **P0-4 A:** 13-track full set = `verify/rskyverify_20261016/cites_merged.json` +
+  `verify/rpct_20261022/tracks_flip_score.txt` (already in `merge_train.json`). Vehicle/Ai/Collision
+  merges are unblocked.
+
+## Phase 0 (filed 2026-10-24 by the Phase 0 builder, answered above)
 
 Source: seed verification by the account2 worker (`re/orchestrator/roadmap_verify_20261024.md`).
 
@@ -40,3 +53,14 @@ still ship as a default-OFF knob + committed PREREG; the flip comes back here.
 
 All 13 parked roadmap decisions plus two standing rules are answered. Flips produced by
 W0-1, W0-2, W0-7, W0-8, W0-9, W0-14 come back here as new rows with their evidence.
+
+## Loop decisions (filed by the roadmap loop)
+
+| id | row | question / options / evidence | filed | answer |
+|---|---|---|---|---|
+| L-1 | D4-SAVE-B | W0-3 option B needs more than the 4 bodies: exe VFS_Open has no RtFS manager or file system (FUN_00550580 dispatch, FUN_00551190 boot FS at 0x0049564e), so the wrappers would save and load nothing. A: port the RtFS chain (about 30 RW toolkit fns, shares the manager with the piz loader). B: 4 bodies + declared CRT-backed FS stand-in at the dispatch. C: close option B unbuilt, keep GameSave.cpp CRT stand-ins as the declared exe save path. Evidence verify/savelinkb_20261024/RESULT_D4-SAVE-B.md (branch orch/D4-SAVE-B). Recommend C. | 2026-10-24T12:41:19Z | **C (Mariano, 2026-10-24).** Option B closes unbuilt; GameSave.cpp CRT stand-ins stay the declared exe save path. Supersedes W0-3. |
+| L-2 | D4-SAVE-B | L-1: the 4 named bodies (0x004cc230/0x004cc160/0x005507b0/0x00550910) are not enough. Exe VFS_Open 0x005507b0 dispatches to the RtFS manager FUN_00550580 and a boot-built file system FUN_00551190 (0x0049564e) the exe lacks, so it takes the inactive branch at 0x0055084e and wrappers save/load nothing. Options: A port the RtFS chain (~30 RW toolkit fns, piz loader shares it); B the 4 bodies plus a declared CRT-backed file system stand-in at the dispatch; C close option B unbuilt and keep GameSave.cpp CRT stand-ins as the declared exe save path. Evidence: verify/savelinkb_20261024/RESULT_D4-SAVE-B.md on orch/D4-SAVE-B @ a85acf00. Recommendation: C. | 2026-10-24T12:42:47Z | **Duplicate of L-1, answered there (C).** |
+| L-3 | D4-AUDIO-BANKPATH | Flip MASHED_BANKPATH_CORE (0x004625b0 shared core) to default? A: flip ON, delete the lowercase CharacterBankPath body, CharacterBankName and the knob (only effect: the logged voice-bank string becomes original/toastaudio\pc\audio\pcdics\english\RED.rws, file resolves). B: keep OFF. Evidence verify/bankpath_20261024/RESULT_bankpath.md (path1 5/5, gates unchanged exe fda8366c). Recommendation A. | 2026-10-24T13:19:02Z | **A (Mariano, 2026-10-24).** Flip MASHED_BANKPATH_CORE ON, then delete the lowercase CharacterBankPath body, CharacterBankName and the knob; re-run the gates on the result. |
+| L-4 | D3-CF-U9779 | Flip MASHED_ELIM_RESOLVE + MASHED_ROUND_END7 + MASHED_RACE_TAIL_LATE + MASHED_R7_PHYS default ON as one set? Knob-off G-CTRL/B unchanged. With all four, car 3 on B K0 is bit-exact through k=356 (was 220). Owed first: D2 x3 + 13 tracks with U7P, and the new round-restart residue at k=357 (port starts round 2 after 137 frames, original still in sub-state 7). Options: (1) run D2+13 tracks then flip all four, (2) keep OFF until the round-restart row is resolved, (3) keep OFF. Evidence verify/u9779_20261024/RESULT_D3-CF-U9779.md. Recommendation: (1). | 2026-10-24T14:00:58Z | **open** |
+| L-5 | D3-CF-U9779 | L-4: flip ELIM_RESOLVE + ROUND_END7 + RACE_TAIL_LATE + new R7_PHYS (all default OFF) as one set? With the four on, car 3 on B K0 is bit-exact through k=356 (was k=220). Gates unchanged with all OFF (G-CTRL bacfc747/8dd1c004/6f9932b6, B f9deb9b9/d3601fcc/9da9a26a). Evidence: verify/u9779_20261024/RESULT_D3-CF-U9779.md, branch orch/D3-CF-U9779 @ 45dccb4f5. Recommendation: run D2 x3 and 13 tracks with U7P first, then flip. Owed: re-classify for FUN_0046e9e0 gate 0x0046ea1e..0x0046ea4c + ctrl block 0x007f19b8 (U-9781 cause). New residue: round restart at k=357 (port starts round 2 after 137 frames, original still in sub-state 7). | 2026-10-24T14:01:23Z | **Duplicate of L-4, answer there.** |
+| L-6 | D4-AUDIO-VOLTODS | Flip MASHED_VOLTODS_ORIG to default ON? A flip: body matches original bytes on all 2^32 inputs; differs from the port only on inputs 1e-5..1e-4 (-100..-80 dB instead of silence), by -1 on 0.016% of inputs in (1e-4,1), and on inf/NaN. B keep OFF. Evidence verify/audiovoltods_20261024/RESULT_voltods.md S2+K. Recommendation A. | 2026-10-24T14:34:24Z | **open** |

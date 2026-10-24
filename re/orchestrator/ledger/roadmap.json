@@ -1,13 +1,13 @@
 {
   "schema": 1,
   "source": "re/orchestrator/roadmap_seed_20261024.md verified by account2 worker 2026-10-24 + DECISIONS.md W0",
-  "updated": "2026-10-24T10:33:46Z",
+  "updated": "2026-10-24T14:51:35Z",
   "rows": [
     {
       "id": "D1-R1",
       "section": "D1-residue",
       "title": "Original-side capture at a matched, frame-synced pose adjudicates faithfulness",
-      "stage": "decision",
+      "stage": "open",
       "owner": "",
       "parent": "",
       "branch": "",
@@ -22,14 +22,14 @@
       "decision": "P0-1",
       "wave": 2,
       "next": "File a DECISIONS row: accept RESULT_d1r1 ('R1 closes as written, every row CITED, 0 RED') as closing R1, then update the ROADMAP state lines via a text edit",
-      "note": "The seed says open, but RESULT_d1r1.md:3 says R1 closes (24 citations, 0 RED). The code is merged (d1r1 knobs are in TrackRenderer). ROADMAP still says open at :10/:284/:2228/:2971, and nothing says why. UNCERTAIN: whether Mariano withheld acceptance.",
-      "updated": "2026-10-24T09:49:07Z"
+      "note": "P0-1 A (Mariano 2026-10-24): R1 closed on verify/d1r1_20261016/RESULT_d1r1.md. Step: edit ROADMAP.md state lines 10, 284-286, 2228-2229, 2971-2972 to cite it. Text-only.",
+      "updated": "2026-10-24T12:28:34Z"
     },
     {
       "id": "D1-R2",
       "section": "D1-residue",
       "title": "Verbatim race-camera pose from Race/RaceCamera.cpp drives the renderer",
-      "stage": "decision",
+      "stage": "open",
       "owner": "",
       "parent": "",
       "branch": "",
@@ -44,19 +44,19 @@
       "decision": "P0-2",
       "wave": 2,
       "next": "Tell Mariano W0-14's premise is stale: R2 is already wired default ON (opt-out MASHED_NO_RACE_CAM_BASIS). Get his OK to keep it, then run his in-race stills review side by side with the original",
-      "note": "Stale seed: race_cam_.pos()/.target() now have 6 call sites (opt-out :8868-8869, debug :8959-8960, :7740, :9062). The view is MatViewFromBasis(rrc) at :8999-9000, not the rig at :4097-4123. RESULT_d1r2 says R2 closes. ROADMAP:543-548 is stale.",
-      "updated": "2026-10-24T09:49:07Z"
+      "note": "P0-2 A (Mariano 2026-10-24): stays default ON (opt-out MASHED_NO_RACE_CAM_BASIS), supersedes W0-14 knob wording. Step: side-by-side in-race stills vs the original, then file a DECISIONS row for Mariano's review (closes D1-residue).",
+      "updated": "2026-10-24T12:28:34Z"
     },
     {
       "id": "D4-AUDIO-RWS",
       "section": "D4 Audio TUs",
       "title": "AudioRws.cpp remaining functions: pool/list family on private zero storage, AudioFmtGlobalScan, AudioContextLookup",
-      "stage": "open",
-      "owner": "",
-      "parent": "",
-      "branch": "",
-      "worktree": "",
-      "evidence": "mashedmod/asi_sources.rsp:39 (absent from exe_sources.rsp); AudioRws.cpp:71-1002 (20 RH_ScopedInstall); re/NEXT_SESSION.md:3-7,25; hooks.csv:776",
+      "stage": "merged",
+      "owner": "cmvmdqp8c2fq5o1151l9wkr0n",
+      "parent": "cmvmdpq2c2fcjo11515u78r1n",
+      "branch": "orch/D4-AUDIO-RWS",
+      "worktree": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\D4-AUDIO-RWS",
+      "evidence": "verify/audiorws_20261024/RESULT_D4-AUDIO-RWS.md",
       "deps": [],
       "needs": [
         "build",
@@ -67,19 +67,20 @@
       "decision": "",
       "wave": 1,
       "next": "Slice 2: disassemble and link the pool family (0x005ae650/0x005ae800/0x005ae780/0x005ae920) and list family (0x005addd0/0x005ade10/0x005ade90) into a shared TU on private zero storage, with PREREG first",
-      "note": "AudioRws.cpp is still .asi-only. I count 20 active installs, not the 19 in NEXT_SESSION:25 (UNCERTAIN which one is excluded). AudioContextLookup 0x005ac900 (hooks.csv:776 C3) needs 0x005ac930, which has no hooks.csv row.",
-      "updated": "2026-10-24T09:49:07Z"
+      "note": "merge train 20261024_103540: G-CTRL bacfc747/8dd1c004/6f9932b6  B f9deb9b9/d3601fcc/9da9a26a",
+      "updated": "2026-10-24T14:05:27Z",
+      "sha": "7e5cadf20a28e2784006991429c4fa3c06a73088"
     },
     {
       "id": "D4-AUDIO-BANKPATH",
       "section": "D4 Audio TUs",
       "title": "Job twin 0x004625b0 CharacterBankPath: shared core, thin wrapper (W0-1)",
-      "stage": "open",
-      "owner": "",
-      "parent": "",
-      "branch": "",
-      "worktree": "",
-      "evidence": "re/orchestrator/DECISIONS.md:13; AudioCharacterBankPaths.cpp:7,70-81; mashedmod/asi_sources.rsp:38; AudioEngine.cpp:306; RaceSession.cpp:192; hooks.csv:988 (C3); verify/audiolink_20261023/SURVEY.md:349-373",
+      "stage": "merged",
+      "owner": "cmvmdr22h2ftfo115e6la961o",
+      "parent": "cmvmdpq2c2fcjo11515u78r1n",
+      "branch": "orch/D4-AUDIO-BANKPATH",
+      "worktree": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\D4-AUDIO-BANKPATH",
+      "evidence": "verify/bankpath_20261024/RESULT_bankpath.md",
       "deps": [],
       "needs": [
         "build",
@@ -87,22 +88,23 @@
         "re-classify"
       ],
       "solo": false,
-      "decision": "",
+      "decision": "L-3",
       "wave": 1,
       "next": "PREREG plus a default-OFF knob: one shared core that emits uppercase with backslashes, the original/ prefix moved to the caller RaceSession.cpp:192, the .asi wrapper over the core, and AudioCharacterBankPaths.cpp listed in exe_sources.rsp",
-      "note": "Split from D4-AUDIO-TWINS per W0-1. File still .asi-only. Exe twin is AudioEngine.cpp:306. The flip comes back to DECISIONS.",
-      "updated": "2026-10-24T09:49:07Z"
+      "note": "merge train 20261024_110559: G-CTRL bacfc747/8dd1c004/6f9932b6  B f9deb9b9/d3601fcc/9da9a26a",
+      "updated": "2026-10-24T14:21:58Z",
+      "sha": "d0232b79f9aefc7b6af493fa391da4d03a7a8990"
     },
     {
       "id": "D4-AUDIO-VOLTODS",
       "section": "D4 Audio TUs",
       "title": "Job twin 0x005aeb90 VolToDs: file split, then redirect behind a knob (W0-2)",
-      "stage": "open",
-      "owner": "",
-      "parent": "",
-      "branch": "",
-      "worktree": "",
-      "evidence": "re/orchestrator/DECISIONS.md:14; TimerGetters_ah5.cpp (only src hit for 0x005aeb90); mashedmod/asi_sources.rsp:236; AudioEngine.cpp:62; hooks.csv:3509 (C3); verify/audiolink_20261023/SURVEY.md:573-618",
+      "stage": "merged",
+      "owner": "cmvmfebgj2p6vo115xszgvkj8",
+      "parent": "cmvmdpq2c2fcjo11515u78r1n",
+      "branch": "orch/D4-AUDIO-VOLTODS",
+      "worktree": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\D4-AUDIO-VOLTODS",
+      "evidence": "verify/audiovoltods_20261024/RESULT_voltods.md",
       "deps": [],
       "needs": [
         "build",
@@ -110,11 +112,12 @@
         "re-classify"
       ],
       "solo": false,
-      "decision": "",
+      "decision": "L-6",
       "wave": 1,
       "next": "Split 0x005aeb90 out of TimerGetters_ah5.cpp into its own shared TU in both rsp files, then put a default-OFF knob plus PREREG on exe VolToDs (AudioEngine.cpp:62) -> port, and measure",
-      "note": "Split from D4-AUDIO-TWINS per W0-2. W0-2 names the function AudioLinearToLog, but I found no src hit under that name (UNCERTAIN). It lives in TimerGetters_ah5.cpp, which is .asi-only.",
-      "updated": "2026-10-24T09:49:07Z"
+      "note": "merge train 20261024_113525: G-CTRL bacfc747/8dd1c004/6f9932b6  B f9deb9b9/d3601fcc/9da9a26a",
+      "updated": "2026-10-24T14:51:35Z",
+      "sha": "90f9f1e1766ffba5679b1c70a36f84a810ce0803"
     },
     {
       "id": "D4-AUDIO-REST",
@@ -143,12 +146,12 @@
       "id": "D4-SAVE-B",
       "section": "D4 Save TUs",
       "title": "Option B: file wrappers become the exe's save path, with a declared NULL guard (W0-3)",
-      "stage": "open",
-      "owner": "",
-      "parent": "",
-      "branch": "",
-      "worktree": "",
-      "evidence": "re/orchestrator/DECISIONS.md:15; re/NEXT_SESSION.md:96-98,108-109; hooks.csv:365 (004cc230 C2),366 (004cc160 C3),1587 (005507b0 C2),1348 (00550910 C2)",
+      "stage": "done",
+      "owner": "cmvmdr22i2ftho115m0vlon8r",
+      "parent": "cmvmdpvpz2feho115wszjh4q3",
+      "branch": "orch/D4-SAVE-B",
+      "worktree": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\D4-SAVE-B",
+      "evidence": "verify/savelinkb_20261024/RESULT_D4-SAVE-B.md",
       "deps": [],
       "needs": [
         "build",
@@ -156,11 +159,11 @@
         "re-classify"
       ],
       "solo": false,
-      "decision": "",
+      "decision": "L-2",
       "wave": 1,
       "next": "Disassemble 0x004cc230/0x004cc160/0x005507b0/0x00550910, write exe bodies in shared TUs, declare the RwStreamClose NULL guard as a port deviation, PREREG + default-OFF knob, then G-CTRL+B",
-      "note": "Concrete per W0-3. The original RwStreamClose 0x004cc160 has no NULL guard (NEXT_SESSION:97-98), so the guard is a declared deviation. All four bodies are below C4.",
-      "updated": "2026-10-24T09:49:07Z"
+      "note": "L-1 = option C (Mariano): option B closes unbuilt; GameSave.cpp CRT stand-ins stay the declared exe save path, superseding W0-3. L-2 was a duplicate of L-1. Evidence: verify/savelinkb_20261024/RESULT_D4-SAVE-B.md on orch/D4-SAVE-B @ a85acf00f (branch kept).",
+      "updated": "2026-10-24T12:53:03Z"
     },
     {
       "id": "D4-SAVE-DLG",
@@ -204,12 +207,12 @@
       "id": "D4-SAVE-NOTE496400",
       "section": "D4 Save TUs",
       "title": "hooks.csv note: 0x00496400 stays C4, HookSystem guard refuses its hook by default (W0-5)",
-      "stage": "open",
-      "owner": "",
-      "parent": "",
-      "branch": "",
-      "worktree": "",
-      "evidence": "re/orchestrator/DECISIONS.md:17; re/NEXT_SESSION.md:93-95,112; hooks.csv:375 (00496400 ConfigLogDebug C4)",
+      "stage": "merged",
+      "owner": "cmvme30q92ieto115sk3g1lhf",
+      "parent": "cmvmdpvpz2feho115wszjh4q3",
+      "branch": "orch/D4-SAVE-NOTE496400",
+      "worktree": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\D4-SAVE-NOTE496400",
+      "evidence": "verify/savelinknote_20261024/RESULT_D4-SAVE-NOTE496400.md",
       "deps": [],
       "needs": [
         "re-classify"
@@ -218,8 +221,9 @@
       "decision": "",
       "wave": 1,
       "next": "re-classify 0x00496400: keep C4 and add a note on the kBootPatched guard refusal, with the basis (guard-off PREREG 22/0/0, guard-on control 4 ndiff at disable_log's RET)",
-      "note": "New row per W0-5. Tracker note only, no level move.",
-      "updated": "2026-10-24T09:49:07Z"
+      "note": "merge train 20261024_103540: G-CTRL bacfc747/8dd1c004/6f9932b6  B f9deb9b9/d3601fcc/9da9a26a",
+      "updated": "2026-10-24T14:05:21Z",
+      "sha": "7e5cadf20a28e2784006991429c4fa3c06a73088"
     },
     {
       "id": "D4-SAVE-U3560",
@@ -572,23 +576,23 @@
       "id": "D3-CF-U9779",
       "section": "D3 carried",
       "title": "Round end at k=220 (sub-state 7) on B recipe; residual U-9781",
-      "stage": "open",
-      "owner": "",
-      "parent": "",
-      "branch": "",
-      "worktree": "",
-      "evidence": "UNCERTAINTIES.md:64,66; ROADMAP.md:2212-2213; verify/u9779_20261021/RESULT_u9779.md",
+      "stage": "decision",
+      "owner": "cmvmfbqyv2om1o115eb3yb6h6",
+      "parent": "cmvmdpszr2fdro115c1dy629e",
+      "branch": "orch/D3-CF-U9779",
+      "worktree": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\D3-CF-U9779",
+      "evidence": "verify/u9779_20261024/RESULT_D3-CF-U9779.md",
       "deps": [],
       "needs": [
         "frida-boot",
         "build"
       ],
       "solo": false,
-      "decision": "",
+      "decision": "L-5",
       "wave": 1,
       "next": "U-9781: entry probes on FUN_00470c70/FUN_004709a0 on sub-state-7 frames plus a read of 0x007f19b8, against the port StepCar under MASHED_ROUND_END7",
-      "note": "U-9779 is still open: cause found (store 0x004111a6), knobs ELIM_RESOLVE/ROUND_END7/RACE_TAIL_LATE default OFF, no flip. The residue is U-9781 (position freeze). A flip decision is owed after.",
-      "updated": "2026-10-24T09:49:07Z"
+      "note": "U-9781 cause found (0x0046ea1e gate + 0x007f19b8 block); MASHED_R7_PHYS default OFF; car 3 exact k 220..356; gates unchanged; flip = decision row",
+      "updated": "2026-10-24T14:01:23Z"
     },
     {
       "id": "D3-CF-U9782",
@@ -705,12 +709,12 @@
       "id": "D3-CF-RFLAME",
       "section": "D3 carried",
       "title": "R_FLAME 2-query residue (FUN_0045ac40 per-group sort unported)",
-      "stage": "open",
-      "owner": "",
-      "parent": "",
-      "branch": "",
-      "worktree": "",
-      "evidence": "ROADMAP.md:2223",
+      "stage": "merged",
+      "owner": "cmvmdqpim2fqbo1153u82awk7",
+      "parent": "cmvmdpszr2fdro115c1dy629e",
+      "branch": "orch/D3-CF-RFLAME",
+      "worktree": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\D3-CF-RFLAME",
+      "evidence": "verify/d3rflame_20261024/RESULT_D3-CF-RFLAME.md",
       "deps": [],
       "needs": [
         "ghidra-mcp",
@@ -721,8 +725,9 @@
       "decision": "",
       "wave": 1,
       "next": "Decompile and port FUN_0045ac40 into the powerup TU behind a default-OFF knob, then re-score R_FLAME g3",
-      "note": "Open. No src hit for 0045ac40.",
-      "updated": "2026-10-24T09:49:07Z"
+      "note": "merge train 20261024_103540: G-CTRL bacfc747/8dd1c004/6f9932b6  B f9deb9b9/d3601fcc/9da9a26a",
+      "updated": "2026-10-24T14:05:25Z",
+      "sha": "7e5cadf20a28e2784006991429c4fa3c06a73088"
     },
     {
       "id": "D3-CF-MODEXIT",
