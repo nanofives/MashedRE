@@ -67,3 +67,19 @@ Stacks: `U7` = `MASHED_ELIM_RESOLVE`, `MASHED_ROUND_END7`, `MASHED_RACE_TAIL_LAT
 - Out of scope, owed before any flip: D2 x3 and 13 tracks with the knob on, (b) (inert: its window ends at 220).
 
 No default changes. A flip is a decision row.
+
+## 6. Amendment 1 (2026-10-24, before its arms): the flip gates (decision L-4 = (1), Mariano)
+
+Exe `563c27c2` (HEAD `45dccb4f5`, `MASHED_NO_DEPLOY=1`). Stack `U7P` = `MASHED_ELIM_RESOLVE` + `MASHED_ROUND_END7` +
+`MASHED_RACE_TAIL_LATE` + `MASHED_R7_PHYS`.
+
+| gate | arm | pass rule |
+|---|---|---|
+| G-D2 | `D2_U7P_1/2/3`, alone (`mashed_lock.py run --solo`), `verify/d2rebase_20261019/score_d2_v2.py port` | PASS 3/3 on the 8-run band |
+| G-13 | `verify/rsky_20261016/run13.py run` with the four knobs, root `D:\MashedWT\D3-CF-U9779_root13`, scored with `verify/rres_20261016/cites_rres.json` | 0 RED, INSTRUMENT GATES PASS; row changes against rpct's `tracks_flip_score.txt` (the current default's table) cited |
+
+If both pass: the four knobs flip default ON as one set (opt-outs `MASHED_NO_ELIM_RESOLVE`, `MASHED_NO_ROUND_END7`,
+`MASHED_NO_RACE_TAIL_LATE`, `MASHED_NO_R7_PHYS`), then re-gate on the flipped exe: G-CTRL x2 and B K0 / K1 / K26 (new default
+hashes recorded), the all-opt-out arm = the pre-flip default (`bacfc747 / 8dd1c004 / 6f9932b6`, `f9deb9b9 / d3601fcc / 9da9a26a`),
+and with the flipped stack B = `B_U7P` (`c37d4c0c / 0a8f9806 / 7013671d`), G-CTRL = `H_U7P` (`ef5f2e10 / 57f7ff83 / b4f4b55a`).
+If either fails: no flip, RED with every failing row cited. The k = 357 round-restart residue (D3-CF-K357) is noted, not fixed.
