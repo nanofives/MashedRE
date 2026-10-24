@@ -325,6 +325,8 @@ def build_config(hook, asi_path=None):
         config['reimpl_calling_convention'] = hook['reimpl_calling_convention']
     if 'alloc_tag' in hook:
         config['alloc_tag'] = hook['alloc_tag']
+    if 'wrap_off' in hook:                      # queue_node_consume: fn(obj) with obj+wrap_off = node
+        config['wrap_off'] = hook['wrap_off']
     if 'alloc_rva' in hook:
         config['alloc_rva_str'] = f"0x{hook['alloc_rva']:08x}"
     if 'crash_equal_ok' in hook:

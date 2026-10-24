@@ -4027,6 +4027,47 @@ function runDiff() {
     // 4th-arg slot); call shape fn(void** ppUnk) -> int; resets outer ptr before each side;
     // observes ((ret & 0xffff) | (stub_call_count << 16)). CONFIG.tests[] is a repeat counter only
     // - no per-test input variation; layout hardcoded to this one vtable shape.
+    // ── queue_node_consume (audiolink 2026-10-23, 0x005ad2e0 AudioQueueConsume) ──────────────────────────────
+    // fn(q): count at q+0xc non-zero -> decrement, return 0; else unlink q (prev [q+0x18] <- next [q+0x14],
+    // next+4 <- prev), free q unless byte q+0x10 bit 0 is set, return 1. q / prev / next buffers are SHARED across
+    // both sides (re-seeded before each call) so the stored addresses compare equal. Every test keeps bit 0 SET:
+    // the free path would hand harness memory to the RW allocator. CONFIG.tests[i] = [count, flagByte, aliasMode]
+    // aliasMode 0: prev / next distinct; 1: prev == next (one neighbour); 2: prev = q+0x14 (the re-read matters).
+    if (CONFIG.arg_type === 'queue_node_consume') {
+        const Q = Memory.alloc(0x40), PV = Memory.alloc(0x20), NX = Memory.alloc(0x20), OBJ = Memory.alloc(0x40);
+        // CONFIG.wrap_off (optional): call fn(OBJ) with OBJ+wrap_off = Q, for a wrapper that loads q from its argument
+        // (0x005b0f40 AudioQueuePop: mov ecx,[eax+0x28] / push ecx / call 0x005ad2e0).
+        const ARG = (CONFIG.wrap_off !== undefined && CONFIG.wrap_off !== null) ? OBJ : Q;
+        const seed = function (t) {
+            for (let z = 0; z < 0x40; z += 4) Q.add(z).writeU32((0xC0DE0000 | z) >>> 0);
+            for (let z = 0; z < 0x20; z += 4) { PV.add(z).writeU32((0xBEEF0000 | z) >>> 0); NX.add(z).writeU32((0xFACE0000 | z) >>> 0); }
+            Q.add(0xc).writeU32(t[0] >>> 0);
+            Q.add(0x10).writeU32(((t[1] & 0xff) | 0x01) >>> 0);            // bit 0 forced: never free
+            const prev = (t[2] === 2) ? Q.add(0x14) : PV;
+            const next = (t[2] === 1) ? PV : NX;
+            Q.add(0x14).writeU32(next.toInt32() >>> 0);
+            Q.add(0x18).writeU32(prev.toInt32() >>> 0);
+            if (ARG === OBJ) { for (let z = 0; z < 0x40; z += 4) OBJ.add(z).writeU32(0); OBJ.add(CONFIG.wrap_off | 0).writePointer(Q); }
+        };
+        const snap = function (ret) {
+            const r = [ret >>> 0];
+            for (let z = 0; z < 0x20; z += 4) r.push(Q.add(z).readU32() >>> 0);
+            for (let z = 0; z < 0x10; z += 4) { r.push(PV.add(z).readU32() >>> 0); r.push(NX.add(z).readU32() >>> 0); }
+            return r.map(v => v.toString(16)).join(',');
+        };
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const t = CONFIG.tests[i];
+            let origV = null, reimV = null, errO = null, errR = null;
+            try { seed(t); origV = snap(Orig(ARG)); } catch (e) { errO = e.message; }
+            try { seed(t); reimV = snap(Reimpl(ARG)); } catch (e) { errR = e.message; }
+            results.push({ idx: i, input: JSON.stringify(t), original: origV, reimpl: reimV,
+                           match: origV !== null && reimV !== null && origV === reimV,
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
     if (CONFIG.arg_type === 'dsound_secondary_init') {
         // audiolink slice 6 (2026-10-23): per-test mode t % 4 (0 success, 1 QI fails, 2 slot 5 fails, 3 slot 5 writes
         // 2), separate Release counters for the outer object and the QI output, and the 16 GUID bytes each call

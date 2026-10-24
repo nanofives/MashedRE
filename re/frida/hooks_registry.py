@@ -18246,6 +18246,31 @@ HOOKS = {
     #   C4 per re/CONFIDENCE.md. Left registered so the port is not lost; it must
     #   NOT be added to a synthetic batch. See
     #   re/analysis/plans/state_lane_screens_2026-07-29.md.
+    # 0x005ad2e0  AudioQueueConsume (C2), ported audiolink 2026-10-23 so AudioQueuePop 0x005b0f40 has no address in the
+    # exe. Exported, not installed. tests = [count, flagByte, aliasMode] (handler forces flag bit 0 = never free).
+    'audio_queue_consume': {
+        'rva':            0x005ad2e0,
+        'export':         'AudioQueueConsume',
+        'signature':      {'ret': 'uint32', 'args': ['pointer']},
+        'arg_type':       'queue_node_consume',
+        'lut_root_delta': 0,
+        'path1_tests':    [[1, 1, 0], [2, 1, 0], [0xffffffff, 1, 0], [0x80000000, 1, 0], [0, 1, 0], [0, 0x41, 0],
+                           [0, 0xff, 1], [0, 1, 2], [3, 0x81, 2], [0, 0x01, 1]],
+        'path2_tests':    [[1, 1, 0]],
+    },
+    # 0x005b0f40 AudioQueuePop on a fixture (audiolink 2026-10-23): the live-capture entry below gets no captured args
+    # (all 0, both sides fault at 0x28). obj+0x28 = a seeded queue node; the same 10 vectors as audio_queue_consume.
+    'audio_queue_pop_fixture': {
+        'rva':            0x005b0f40,
+        'export':         'AudioQueuePop',
+        'signature':      {'ret': 'uint32', 'args': ['pointer']},
+        'arg_type':       'queue_node_consume',
+        'wrap_off':       0x28,
+        'lut_root_delta': 0,
+        'path1_tests':    [[1, 1, 0], [2, 1, 0], [0xffffffff, 1, 0], [0x80000000, 1, 0], [0, 1, 0], [0, 0x41, 0],
+                           [0, 0xff, 1], [0, 1, 2], [3, 0x81, 2], [0, 0x01, 1]],
+        'path2_tests':    [[1, 1, 0]],
+    },
     'audio_queue_pop': {
         'rva': 0x005b0f40, 'export': 'AudioQueuePop',
         'signature': {'ret': 'uint32', 'args': ['int32']},

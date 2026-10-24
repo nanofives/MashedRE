@@ -15,8 +15,8 @@ for i in range(struct.unpack_from('<I', d, e + 24)[0]):
     if en == name:
         ordi = struct.unpack_from('<H', d, off(oa) + 2 * i)[0]; frva = struct.unpack_from('<I', d, off(fa) + 4 * ordi)[0]
         md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_32)
-        for ins in md.disasm(d[off(frva):off(frva) + 64], base + frva):
+        for ins in md.disasm(d[off(frva):off(frva) + 192], base + frva):
             print(f'  {ins.address:08x}: {ins.mnemonic} {ins.op_str}')
-            if ins.mnemonic == 'jmp' and not ins.op_str.startswith('0x') or ins.mnemonic == 'int3': break
+            if ins.mnemonic == 'jmp' and not ins.op_str.startswith('0x') or ins.mnemonic == 'int3' or (ins.mnemonic == 'ret' and len(sys.argv) > 3): break
         break
 else: sys.exit('export not found')
