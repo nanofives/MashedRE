@@ -425,6 +425,7 @@ STACK['KF'] = ['MASHED_KF_INTERP']
 # D3-CF-U9779 (PREREG_D3-CF-U9779.md section 4): U7 = u9779's R7 stack, U7P = + MASHED_R7_PHYS; *R3 = car 3's records
 STACK['U7'] = ['MASHED_ELIM_RESOLVE', 'MASHED_ROUND_END7', 'MASHED_RACE_TAIL_LATE']
 STACK['U7P'] = STACK['U7'] + ['MASHED_R7_PHYS']
+STACK['NU7'] = ['MASHED_NO_ELIM_RESOLVE', 'MASHED_NO_ROUND_END7', 'MASHED_NO_RACE_TAIL_LATE', 'MASHED_NO_R7_PHYS']   # amendment 1: the flip's four opt-outs
 STACK['P7'] = ['MASHED_R7_PHYS']   # the knob alone: inert without MASHED_ROUND_END7 (no round-end flag)
 for _t in ('U7', 'U7P'): STACK[_t + 'R3'] = STACK[_t] + ['MASHED_RECDUMP=@OUT@/@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=3']
 for name in sys.argv[1:]:

@@ -122,7 +122,7 @@ float Fi_RandRange(float lo, float hi) {
 // hold tick (VehiclePhysicsRun.cpp spawn settle, MASHED_POS_ORDER only). DAT_0063ba8c is 5 on
 // FUN_004103a0's countdown ticks and becomes 6 at 0x004104e3, after the release (PREREG_d2engage.md 1(c)).
 int g_fiGameModeHold = 0;
-// [D3-CF-U9779] MASHED_R7_PHYS (default OFF): 7 while the MASHED_ROUND_END7 round-end flag is up, the value
+// [D3-CF-U9779] MASHED_R7_PHYS (default ON since 2026-10-24, MASHED_NO_R7_PHYS opts out): 7 while the MASHED_ROUND_END7 round-end flag is up, the value
 // FUN_00411170 stores at 0x004111a6 (witness o_r7_1, verify/u9779_20261024/PREREG_D3-CF-U9779.md).
 int Fi_GameMode() {
     if (D3d9Render::RoundEnd7PhysActive()) return 7;

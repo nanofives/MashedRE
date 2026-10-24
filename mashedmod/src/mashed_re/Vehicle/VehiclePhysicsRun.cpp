@@ -1413,7 +1413,7 @@ static bool StepBegin(StepCtx& c, int slot, float dt, PlayerCarIO& io, ContactSc
         input[0] = (st > 0.f) ? m : 0;
         input[1] = (st < 0.f) ? m : 0;
     }
-    // [D3-CF-U9779] MASHED_R7_PHYS (default OFF): FUN_004709a0 (0x00470a1b..0x00470a4f) and FUN_00470c70
+    // [D3-CF-U9779] MASHED_R7_PHYS (default ON since 2026-10-24, MASHED_NO_R7_PHYS opts out): FUN_004709a0 (0x00470a1b..0x00470a4f) and FUN_00470c70
     // (0x00470fd6..0x00470ff9) hand FUN_0046e9e0 and A4 the block 0x007f19b8 when FUN_0040e350() is not 6 / 0xb / 0xa.
     // Read in place (the exe maps the original's 0x007f1038 block region; o_r7_1 read 0x4c zero bytes there).
     if (D3d9Render::RoundEnd7PhysActive()) {
@@ -1918,7 +1918,7 @@ static void StepSubstep(StepCtx& c) {
     // branch, so it is not a one-line change).
     {
         float k = chunkMs * kPosDtK * kSuspDtK;
-        // [D3-CF-U9779] MASHED_R7_PHYS (default OFF): the 0x0046ea1e..0x0046ea4c gate, applied only while the
+        // [D3-CF-U9779] MASHED_R7_PHYS (default ON since 2026-10-24, MASHED_NO_R7_PHYS opts out): the 0x0046ea1e..0x0046ea4c gate, applied only while the
         // MASHED_ROUND_END7 flag is up (the d2engage hold tick's mode 5 stays outside it, as before).
         if (D3d9Render::RoundEnd7PhysActive()) {
             const int gm = Fi_GameMode();
