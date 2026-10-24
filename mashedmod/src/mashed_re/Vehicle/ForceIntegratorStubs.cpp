@@ -15,6 +15,7 @@ namespace mashed_re { namespace Math {
 } }
 extern "C" void* __cdecl RwMatrixRotate(void* matrix, const float* axis, float angle_deg, int mode);
 namespace Ai { float Ai_RandRange(float lo, float hi); }   // [u9776] FUN_00472650 (Ai/AiStandalone.cpp)
+namespace mashed_re { namespace D3d9Render { bool RoundEnd7PhysActive(); } }   // [D3-CF-U9779] TrackRenderer.cpp
 
 namespace mashed_re {
 namespace Vehicle {
@@ -121,7 +122,10 @@ float Fi_RandRange(float lo, float hi) {
 // hold tick (VehiclePhysicsRun.cpp spawn settle, MASHED_POS_ORDER only). DAT_0063ba8c is 5 on
 // FUN_004103a0's countdown ticks and becomes 6 at 0x004104e3, after the release (PREREG_d2engage.md 1(c)).
 int g_fiGameModeHold = 0;
+// [D3-CF-U9779] MASHED_R7_PHYS (default OFF): 7 while the MASHED_ROUND_END7 round-end flag is up, the value
+// FUN_00411170 stores at 0x004111a6 (witness o_r7_1, verify/u9779_20261024/PREREG_D3-CF-U9779.md).
 int Fi_GameMode() {
+    if (D3d9Render::RoundEnd7PhysActive()) return 7;
     static const int s_mode = [] {
         const char* e = std::getenv("MASHED_GAMEMODE_STUB");
         return (e && e[0] == '0') ? 0 : 6;

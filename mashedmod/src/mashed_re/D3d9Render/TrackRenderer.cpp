@@ -1472,6 +1472,14 @@ void QuatPosMatrix(const float q[4], const float p[3], D3DMATRIX* m) {
 
 }  // namespace
 
+// [D3-CF-U9779] MASHED_R7_PHYS (default OFF): while the MASHED_ROUND_END7 flag is up, the exe physics sees
+// FUN_0040e350 = 7 (Fi_GameMode), the 0x0046ea1e position gate and the 0x007f19b8 ctrl block. Knob OFF: false.
+// verify/u9779_20261024/PREREG_D3-CF-U9779.md.
+bool RoundEnd7PhysActive() {
+    static const bool s = [] { const char* e = std::getenv("MASHED_R7_PHYS"); return e && e[0] && e[0] != '0'; }();
+    return s && s_roundEnd7;
+}
+
 // ---- [rprops U-9695] per-track prop placement ---------------------------------------------------
 // The ported RW leaves the original's frame ops go through (Math/RwMatrixRotate.cpp,
 // Collision/RwpSolverMath2.cpp), the same externs Race/CameraEntries.cpp binds.
