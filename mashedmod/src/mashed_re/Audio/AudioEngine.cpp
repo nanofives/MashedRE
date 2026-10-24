@@ -9,7 +9,12 @@
 #include <cstdarg>
 #include <cstring>
 #include <cmath>
+#include <cstdint>
+#include <cstdlib>
 #include <vector>
+
+// The original's linear-to-log leaf, Audio/AudioLinearToLog.cpp (both targets). VolToDs calls it under MASHED_VOLTODS_ORIG=1.
+extern "C" uint32_t __cdecl AudioLinearToLog(float param_1);
 
 namespace mashed_re {
 namespace Audio {
@@ -59,8 +64,16 @@ std::vector<Voice> g_voices;
 
 // 0..1 linear -> DirectSound hundredths-of-dB (DSBVOLUME_MIN..MAX = -10000..0).
 // Scaled by g_focusGain so a focus-loss mute applies to every SetVolume.
+// [D4-AUDIO-VOLTODS 2026-10-24] MASHED_VOLTODS_ORIG=1 (default OFF) routes the gained value through the original's
+// AudioLinearToLog (Audio/AudioLinearToLog.cpp): floor -10000 below 1e-5f [0x005cc990], f32 2000*log10 truncated, positives
+// clamped to 0. verify/audiovoltods_20261024/PREREG_voltods.md.
+bool VolToDsOrig() {
+    static const bool on = [] { const char* e = std::getenv("MASHED_VOLTODS_ORIG"); return e && e[0] == '1'; }();
+    return on;
+}
 LONG VolToDs(float v) {
     v *= g_focusGain;
+    if (VolToDsOrig()) return static_cast<LONG>(static_cast<int32_t>(AudioLinearToLog(v)));
     if (v <= 0.0001f) return DSBVOLUME_MIN;
     if (v >= 1.0f)    return DSBVOLUME_MAX;     // 0
     LONG db = static_cast<LONG>(2000.0 * std::log10(static_cast<double>(v)));
