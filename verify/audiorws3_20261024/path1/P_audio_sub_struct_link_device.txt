@@ -1,0 +1,11 @@
+hook: audio_sub_struct_link_device  rva=0x005ae010  export=AudioSubStructLinkDevice
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 24836
+  [agent] LUT ready  base=0x2cd98e8  offset=0x134  root=0xcc00048  delta=0  attempts=0
+  [agent] .asi loaded  base=0x63420000  AudioSubStructLinkDevice@0x63430f90
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\D4-AUDIO-RWS3\log\diff_audio_sub_struct_link_device.csv
+  total cases: 10
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.

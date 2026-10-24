@@ -1,0 +1,12 @@
+hook: audio_sub_struct_b_free  rva=0x005ae050  export=AudioSubStructBFree
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 20680
+  [agent] LUT ready  base=0x2a29908  offset=0x134  root=0xd540048  delta=0  attempts=26
+  [agent] .asi loaded  base=0x650f0000  AudioSubStructBFree@0x65100e40
+  [agent] {'type': 'log', 'msg': 'x87 CW: thread 0x27f (arms run at it)'}
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\D4-AUDIO-RWS3\log\diff_audio_sub_struct_b_free.csv
+  total cases: 6
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.

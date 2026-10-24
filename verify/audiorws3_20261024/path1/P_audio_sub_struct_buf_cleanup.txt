@@ -1,0 +1,12 @@
+hook: audio_sub_struct_buf_cleanup  rva=0x005ac740  export=AudioSubStructBufCleanup
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 24420
+  [agent] LUT ready  base=0x2ba9908  offset=0x134  root=0xd510048  delta=0  attempts=17
+  [agent] .asi loaded  base=0x608a0000  AudioSubStructBufCleanup@0x608b0e70
+  [agent] {'type': 'log', 'msg': 'x87 CW: thread 0x27f (arms run at it)'}
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\D4-AUDIO-RWS3\log\diff_audio_sub_struct_buf_cleanup.csv
+  total cases: 5
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.

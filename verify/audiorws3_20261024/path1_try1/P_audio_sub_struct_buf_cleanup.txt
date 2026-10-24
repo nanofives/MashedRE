@@ -1,0 +1,15 @@
+hook: audio_sub_struct_buf_cleanup  rva=0x005ac740  export=AudioSubStructBufCleanup
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 8916
+  [agent] LUT ready  base=0x2c298e8  offset=0x134  root=0xd380048  delta=0  attempts=13
+  [agent] .asi loaded  base=0x63860000  AudioSubStructBufCleanup@0x63870e70
+  [agent] {'type': 'log', 'msg': 'x87 CW: thread 0x27f (arms run at it)'}
+AGENT ERROR: Error: freeze: first thread never stopped inside the safe-point modules Error: freeze: first thread never stopped inside the safe-point modules
+    at thread (/script1.js:575)
+    at runDiff (/script1.js:7675)
+    at pollLutThenRun (/script1.js:988)
+    at <anonymous> (/script1.js:1002)
+    at apply (native)
+    at <anonymous> (/frida/runtime/core.js:55)
+
+NO RESULTS — agent reported errors above.

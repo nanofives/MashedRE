@@ -1,0 +1,6 @@
+hook: audio_sub_struct_link_buffer  rva=0x005adfe0  export=AudioSubStructLinkBuffer
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 5080
+  [agent] ERROR: LUT root never populated within 30s (delta=0)
+
+NO RESULTS — agent reported errors above.

@@ -1,0 +1,11 @@
+hook: audio_sub_struct_link_buffer  rva=0x005adfe0  export=AudioSubStructLinkBuffer
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 22968
+  [agent] LUT ready  base=0x2ac9908  offset=0x134  root=0xd520048  delta=0  attempts=25
+  [agent] .asi loaded  base=0x60cb0000  AudioSubStructLinkBuffer@0x60cc0f60
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\D4-AUDIO-RWS3\log\diff_audio_sub_struct_link_buffer.csv
+  total cases: 10
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.

@@ -6,9 +6,82 @@
 //                  re/analysis/promote_c2_audio_rws/005acd10.md
 //                  re/analysis/promote_c2_audio_rws/005ac980.md
 //                  re/analysis/promote_c2_audio_rws/005acd60.md
+//
+// D4-AUDIO-RWS3 slice 3 (2026-10-24): this file now links into BOTH targets (asi_sources.rsp + exe_sources.rsp).
+// Calls to ported callees go by name (AudioFmtEntryMatch, AudioFmtKeyCompare, AudioPoolFree,
+// AudioTreeWalkPredicateSearch, and the sub-struct family inside this file).
+// Bytes: verify/audiorws3_20261024/disasm_rws3.txt. PREREG: verify/audiorws3_20261024/PREREG_rws3.md.
+//
+// Exe arm (MASHED_STANDALONE): RwFree 0x004522d0 = CRT free (Audio/AudioMemory.cpp's declared deviation); the two
+// pool headers 0x007dda28 / 0x007dd634 are private zero storage (both past .data's raw end, BSS until the audio open,
+// same as slice 2's pools); the 0x00633674 table is a private copy of its 9 pointers onto private copies of the
+// 16-byte .rdata keys (verify/audiorws3_20261024/table_633674.txt); LAB_005ac930 (U-1730) is ported from the bytes
+// for AudioContextLookup. Nothing in the exe calls these functions yet. .asi arm: the original's addresses.
 #include "../Core/HookSystem.h"
+#include "AudioFmtKey.h"
+#include "AudioRwsCallees.h"
 #include <cstdint>
+#include <cstdlib>
 #include <cstring>
+
+namespace {
+#ifdef MASHED_STANDALONE
+std::uint32_t s_audioSubPool_007dda28[9] = {};     // stands in for DAT_007dda28 (pool header, 0x24 bytes)
+std::uint32_t s_audioWavePool_007dd634[9] = {};    // stands in for DAT_007dd634 (pool header, 0x24 bytes)
+std::uint32_t* SubStructPool() { return s_audioSubPool_007dda28; }
+std::uint32_t* WaveNodePool()  { return s_audioWavePool_007dd634; }
+void RwsRawFree(void* raw)     { std::free(raw); }
+
+// The 16-byte keys at 0x005e6414.. (.rdata), and the 0x00633674 table's 9 pointers onto them, in table order.
+const std::uint8_t s_fmtKey_005e6414[16] = {0x98,0x97,0xea,0xd9,0xbc,0xbb,0x7b,0x44,0x96,0xb2,0x65,0x47,0x59,0x10,0x2e,0x16};
+const std::uint8_t s_fmtKey_005e6424[16] = {0x17,0xd2,0x1b,0xd0,0x87,0x35,0xed,0x4e,0xb9,0xd9,0xb8,0xe8,0x6e,0xa9,0xb9,0x95};
+const std::uint8_t s_fmtKey_005e6434[16] = {0x82,0x43,0x1e,0xda,0x99,0x2c,0x61,0x4c,0xad,0x99,0x7f,0x36,0x4b,0x21,0x15,0x37};
+const std::uint8_t s_fmtKey_005e6444[16] = {0xb0,0x15,0x62,0xf8,0xd5,0x31,0x29,0x4c,0xbd,0x37,0xcd,0xbf,0x9b,0xd1,0x0c,0x53};
+const std::uint8_t s_fmtKey_005e6454[16] = {0x2b,0xa2,0x2f,0x63,0xdd,0x11,0x8f,0x45,0xaa,0x27,0xa5,0xc3,0x46,0xe9,0x79,0x0e};
+const std::uint8_t s_fmtKey_005e6464[16] = {0x47,0x81,0x1d,0x3f,0xc4,0xb7,0xe6,0x41,0xa6,0x9b,0x3c,0xc0,0x02,0x5b,0x33,0xc7};
+const std::uint8_t s_fmtKey_005e6474[16] = {0x6e,0xb3,0xcf,0xba,0x9d,0x52,0x92,0x46,0xbf,0x53,0x32,0x42,0x56,0xb0,0x73,0x4f};
+const std::uint8_t s_fmtKey_005e64a4[16] = {0x90,0xb3,0x0d,0xa3,0xa9,0x58,0xc4,0x43,0xb9,0xd2,0x55,0xd8,0x4d,0x3a,0xe7,0x54};
+const std::uint8_t s_fmtKey_005e64b4[16] = {0x93,0x65,0x38,0xef,0x11,0xb6,0x2d,0x43,0x95,0x7f,0xa7,0x1a,0xde,0x44,0x22,0x7a};
+const std::uint8_t* const s_fmtTable_00633674[9] = {
+    s_fmtKey_005e6414, s_fmtKey_005e6424, s_fmtKey_005e6434, s_fmtKey_005e6444, s_fmtKey_005e6454,
+    s_fmtKey_005e64a4, s_fmtKey_005e6464, s_fmtKey_005e6474, s_fmtKey_005e64b4,
+};
+const std::uint8_t* FmtTableEntry(std::uint32_t i) { return s_fmtTable_00633674[i]; }
+
+// LAB_005ac930 (U-1730), the AudioContextLookup predicate, from the bytes (disasm_rws3.txt 0x005ac930..0x005ac976).
+// cdecl (root, node, ctx): walks the ring at node+0x20 (sentinel node+0x20, next = [link]); per link it compares the
+// key pointer at link-0x40 against ctx[0] (re-read each pass, 0x005ac946), on 0 writes ctx[1] = link-0x40
+// (0x005ac96a) and returns 1; exhausted returns 0.
+int __cdecl ContextKeyMatch_005ac930(std::uint32_t*, std::uint32_t* node, std::uint32_t ctx_addr)
+{
+    std::uint32_t* const ctx = reinterpret_cast<std::uint32_t*>(ctx_addr);
+    std::uint32_t* const sentinel = node + 8;                                     // 0x005ac93a lea ebx,[eax+0x20]
+    for (std::uint32_t* link = reinterpret_cast<std::uint32_t*>(node[8]);         // 0x005ac937
+         link != sentinel;                                                        // 0x005ac93d / 0x005ac95f
+         link = reinterpret_cast<std::uint32_t*>(*link)) {                        // 0x005ac95d
+        std::uint32_t* const entry = link - 0x10;                                 // 0x005ac94c lea edi,[esi-0x40]
+        if (AudioFmtKeyCompare(reinterpret_cast<const std::uint8_t*>(entry[0]),   // 0x005ac949 / 0x005ac951
+                               reinterpret_cast<const std::uint8_t*>(ctx[0])) == 0) {
+            ctx[1] = reinterpret_cast<std::uint32_t>(entry);                      // 0x005ac96a
+            return 1;
+        }
+    }
+    return 0;
+}
+void* ContextPredicate() { return reinterpret_cast<void*>(&ContextKeyMatch_005ac930); }
+#else
+std::uint32_t* SubStructPool() { return reinterpret_cast<std::uint32_t*>(0x007dda28u); }
+std::uint32_t* WaveNodePool()  { return reinterpret_cast<std::uint32_t*>(0x007dd634u); }
+void RwsRawFree(void* raw) {
+    typedef void (__cdecl *FreeFn)(void*);
+    reinterpret_cast<FreeFn>(0x004522d0u)(raw);
+}
+const std::uint8_t* FmtTableEntry(std::uint32_t i) {
+    return *reinterpret_cast<const std::uint8_t* const*>(0x00633674u + i * 4u);   // PTR_DAT_00633674
+}
+void* ContextPredicate() { return reinterpret_cast<void*>(0x005ac930u); }        // LAB_005ac930, the original's
+#endif
+}  // namespace
 
 // 0x005aca80 AudioFmtSizeCalc moved to Audio/AudioRwsLeaves.cpp (audiolink AudioRws slice 1, both targets).
 
@@ -50,8 +123,11 @@
 //   return_1: MOV EAX,1;   RET
 // ─────────────────────────────────────────────────────────────────────────────
 extern "C" __declspec(dllexport) int __cdecl AudioFmtTableSearch(int param_1, int param_2) {
-    typedef int (__cdecl *MatchFn)(int entry_ptr, int desc_ptr);
-    static const auto matchPredicate = reinterpret_cast<MatchFn>(0x005ac9e0u);
+    // 0x005acd33: AudioFmtEntryMatch (Audio/RwsFmt.cpp, both targets), by name.
+    const auto matchPredicate = [](int entry_ptr, int desc_ptr) -> int {
+        return static_cast<int>(AudioFmtEntryMatch(reinterpret_cast<std::uint32_t*>(entry_ptr),
+                                                   reinterpret_cast<std::uint32_t*>(desc_ptr)));
+    };
 
     const uint32_t count = *reinterpret_cast<uint32_t*>(param_1 + 0x24);
     if (count == 0u) {
@@ -101,19 +177,13 @@ RH_ScopedInstall(AudioFmtTableSearch, 0x005acd10);  // re-enabled 2026-05-24 pha
 //   005acd84: RET
 // ─────────────────────────────────────────────────────────────────────────────
 extern "C" __declspec(dllexport) void* __cdecl AudioFmtGlobalScan(uint32_t param_1) {
-    typedef int (__cdecl *CmpFn)(int entry_ptr, uint32_t key);
-    static const auto fmtKeyCmp = reinterpret_cast<CmpFn>(0x005adf30u);
-
-    static constexpr uintptr_t kFmtTableBase = 0x00633674u;  // PTR_DAT_00633674
-    static constexpr uint32_t  kEntryCount   = 9u;
+    static constexpr uint32_t kEntryCount = 9u;              // 0x005acd7e cmp esi,9
 
     for (uint32_t i = 0u; i < kEntryCount; ++i) {
-        const int entry_ptr =
-            *reinterpret_cast<int*>(kFmtTableBase + i * 4u);
-        if (fmtKeyCmp(entry_ptr, param_1) == 0) {
-            // Match: return pointer to this table entry
-            return reinterpret_cast<void*>(
-                *reinterpret_cast<uintptr_t*>(kFmtTableBase + i * 4u));
+        // 0x005acd68 / 0x005acd71: AudioFmtKeyCompare(table[i], key) (Audio/AudioFmtKey.cpp, both targets), by name.
+        if (AudioFmtKeyCompare(FmtTableEntry(i), reinterpret_cast<const std::uint8_t*>(param_1)) == 0) {
+            // Match: 0x005acd88 re-reads table[i]
+            return const_cast<std::uint8_t*>(FmtTableEntry(i));
         }
     }
     return nullptr;  // not found
@@ -146,10 +216,8 @@ extern "C" __declspec(dllexport) int* __cdecl AudioSubStructAFree(int* param_1)
 {
     // Guard: data pointer non-null AND pool-owned flag set
     if ((*param_1 != 0) && ((*(uint8_t*)(param_1 + 2) & 1u) != 0)) {
-        // FUN_005ae920(&DAT_007dda28, *param_1) — return block to pool
-        typedef void (__cdecl *PoolFreeFn)(void*, int);
-        auto poolFree = reinterpret_cast<PoolFreeFn>(0x005ae920u);
-        poolFree(reinterpret_cast<void*>(0x007dda28u), *param_1);
+        // FUN_005ae920(&DAT_007dda28, *param_1) — return block to pool (0x005ae097, AudioPoolFree by name)
+        AudioPoolFree(SubStructPool(), static_cast<std::uint32_t>(*param_1));
         // Clear bit0 of flags word at param_1[2]
         param_1[2] &= static_cast<int>(0xfffffffeu);
     }
@@ -179,10 +247,8 @@ extern "C" __declspec(dllexport) int __cdecl AudioSubStructBFree(int param_1)
     int* const base = reinterpret_cast<int*>(static_cast<uintptr_t>(param_1));
     // Guard: data pointer at +4 non-null AND heap-owned flag set
     if ((*(int*)(base + 1) != 0) && ((*(uint8_t*)(base + 2) & 2u) != 0)) {
-        // FUN_004522d0(*(int*)(param_1+4)) — heap free
-        typedef void (__cdecl *HeapFreeFn)(void*);
-        auto heapFree = reinterpret_cast<HeapFreeFn>(0x004522d0u);
-        heapFree(reinterpret_cast<void*>(static_cast<uintptr_t>(*(base + 1))));
+        // FUN_004522d0(*(int*)(param_1+4)) — heap free (0x005ae063)
+        RwsRawFree(reinterpret_cast<void*>(static_cast<uintptr_t>(*(base + 1))));
         // Clear bit1 of flags word at param_1+8
         *(uint32_t*)(base + 2) &= 0xfffffffdu;
     }
@@ -222,22 +288,25 @@ RH_ScopedInstall(AudioSubStructCleanup, 0x005ae030);  // re-enabled 2026-05-24 c
 // [U-0351]: Exact semantic role of param_2/param_3 not confirmed from this
 //            function alone; confirmed from callee analysis notes.
 // ---------------------------------------------------------------------------
+extern "C" __declspec(dllexport) std::uint32_t* __cdecl
+AudioSubStructLinkDevice(std::uint32_t* param_1, std::uint32_t param_2);
+extern "C" __declspec(dllexport) std::uint32_t* __cdecl
+AudioSubStructLinkBuffer(std::uint32_t* param_1, std::uint32_t param_2);
+
 extern "C" __declspec(dllexport) void* __cdecl AudioSubStructTwoCallInit(
         void* param_1,
         void* param_2,
         void* param_3)
 {
-    // 0x005a9e13: FUN_005adfe0(param_1, param_3) — sub-struct B initializer
-    typedef void (__cdecl *SubBFn)(void*, void*);
-    auto sub_b = reinterpret_cast<SubBFn>(0x005adfe0u);
-    sub_b(param_1, param_3);
+    // 0x005a9e1b: FUN_005adfe0(param_1, param_3) — sub-struct B initializer (by name)
+    AudioSubStructLinkBuffer(static_cast<std::uint32_t*>(param_1),
+                             static_cast<std::uint32_t>(reinterpret_cast<std::uintptr_t>(param_3)));
 
-    // 0x005a9e1f: FUN_005ae010(param_1, param_2) — sub-struct A initializer
-    typedef void (__cdecl *SubAFn)(void*, void*);
-    auto sub_a = reinterpret_cast<SubAFn>(0x005ae010u);
-    sub_a(param_1, param_2);
+    // 0x005a9e26: FUN_005ae010(param_1, param_2) — sub-struct A initializer (by name)
+    AudioSubStructLinkDevice(static_cast<std::uint32_t*>(param_1),
+                             static_cast<std::uint32_t>(reinterpret_cast<std::uintptr_t>(param_2)));
 
-    // 0x005a9e2c: return param_1 (pass-through)
+    // 0x005a9e2e: return param_1 (pass-through)
     return param_1;
 }
 
@@ -261,9 +330,8 @@ RH_ScopedInstall(AudioSubStructTwoCallInit, 0x005a9e10);  // re-enabled 2026-05-
 extern "C" __declspec(dllexport) std::uint32_t* __cdecl
 AudioSubStructLinkDevice(std::uint32_t* param_1, std::uint32_t param_2)
 {
-    // Callee: releases old device handle if owned (no-op when *param_1 == 0).
-    typedef void (__cdecl *CleanFn)(std::uint32_t*);
-    reinterpret_cast<CleanFn>(0x005ae080u)(param_1);
+    // Callee 0x005ae016: releases old device handle if owned (no-op when *param_1 == 0). By name.
+    AudioSubStructAFree(reinterpret_cast<int*>(param_1));
 
     param_1[0]  = param_2;
     param_1[2] &= 0xfffffffeu;   // 0x005ae027: clear bit 0 (not-owned)
@@ -294,9 +362,8 @@ RH_ScopedInstall(AudioSubStructLinkDevice, 0x005ae010);  // re-enabled 2026-05-2
 extern "C" __declspec(dllexport) std::uint32_t* __cdecl
 AudioSubStructLinkBuffer(std::uint32_t* param_1, std::uint32_t param_2)
 {
-    // Callee: frees old buffer if owned (no-op when *(param_1+4) == 0).
-    typedef void (__cdecl *CleanFn)(std::uint32_t*);
-    reinterpret_cast<CleanFn>(0x005ae050u)(param_1);
+    // Callee 0x005adfe6: frees old buffer if owned (no-op when *(param_1+4) == 0). By name.
+    AudioSubStructBFree(static_cast<int>(reinterpret_cast<std::uintptr_t>(param_1)));
 
     param_1[1]  = param_2;
     param_1[2] &= 0xfffffffdu;   // 0x005adffe: clear bit 1 (not-owned)
@@ -330,15 +397,12 @@ AudioSubStructDualInit(std::uint32_t param_1,
                        std::uint32_t param_2,
                        std::uint32_t param_3)
 {
-    typedef std::uint32_t* (__cdecl *LinkFn)(std::uint32_t*, std::uint32_t);
-    auto* const linkDevice = reinterpret_cast<LinkFn>(0x005ae010u);
-    auto* const linkBuffer = reinterpret_cast<LinkFn>(0x005adfe0u);
-
-    const std::uint32_t* r1 = linkDevice(
+    // 0x005ac7bb / 0x005ac7cf, by name.
+    const std::uint32_t* r1 = AudioSubStructLinkDevice(
         reinterpret_cast<std::uint32_t*>(param_1), param_2);
     if (r1 == nullptr) return 0u;
 
-    const std::uint32_t* r2 = linkBuffer(
+    const std::uint32_t* r2 = AudioSubStructLinkBuffer(
         reinterpret_cast<std::uint32_t*>(param_1), param_3);
     return (r2 != nullptr) ? param_1 : 0u;
 }
@@ -414,16 +478,7 @@ RH_ScopedInstall(AudioSubStructDualInit, 0x005ac7b0);  // re-enabled 2026-05-24 
 // ─────────────────────────────────────────────────────────────────────────────
 extern "C" __declspec(dllexport) void __cdecl AudioWaveNodeFree(int param_1)
 {
-    typedef void (__cdecl *HeapFreeFn)(void *);
-    typedef void (__cdecl *PoolReturnFn)(int, int);
-
-    static constexpr std::uintptr_t kHeapFree   = 0x004522d0u;
-    static constexpr std::uintptr_t kPoolReturn  = 0x005ae920u;
-    static constexpr std::uintptr_t kGlobalPool  = 0x007dd634u;
-
-    const auto heapFree   = reinterpret_cast<HeapFreeFn>(kHeapFree);
-    const auto poolReturn = reinterpret_cast<PoolReturnFn>(kPoolReturn);
-
+    // 0x005abcc8 / 0x005abcd6: AudioPoolFree by name. 0x005abce8: tail jmp RwFree 0x004522d0.
     const std::uint32_t flags = *reinterpret_cast<std::uint32_t *>(param_1 + 0x54);
 
     if (flags & 0x1u) {
@@ -431,9 +486,9 @@ extern "C" __declspec(dllexport) void __cdecl AudioWaveNodeFree(int param_1)
         const int contextPtr = *reinterpret_cast<int *>(param_1 + 0x0c);
         const int perCtxPool = *reinterpret_cast<int *>(contextPtr + 0x3c);
         if (perCtxPool == 0) {
-            poolReturn(static_cast<int>(kGlobalPool), param_1);
+            AudioPoolFree(WaveNodePool(), static_cast<std::uint32_t>(param_1));   // DAT_007dd634
         } else {
-            poolReturn(perCtxPool, param_1);
+            AudioPoolFree(reinterpret_cast<std::uint32_t*>(perCtxPool), static_cast<std::uint32_t>(param_1));
         }
         return;
     }
@@ -444,7 +499,7 @@ extern "C" __declspec(dllexport) void __cdecl AudioWaveNodeFree(int param_1)
     }
 
     // bit0 = 0, bit2 = 0 — heap-free
-    heapFree(reinterpret_cast<void *>(param_1));
+    RwsRawFree(reinterpret_cast<void *>(param_1));
 }
 
 RH_ScopedInstall(AudioWaveNodeFree, 0x005abcb0);  // re-enabled 2026-05-24 c3-audio-a
@@ -473,15 +528,11 @@ RH_ScopedInstall(AudioWaveNodeFree, 0x005abcb0);  // re-enabled 2026-05-24 c3-au
 // ─────────────────────────────────────────────────────────────────────────────
 extern "C" __declspec(dllexport) void __cdecl AudioSubStructBufCleanup(int param_1)
 {
-    typedef void (__cdecl *HeapFreeFn)(void *);
-    static constexpr std::uintptr_t kHeapFree = 0x004522d0u;
-    const auto heapFree = reinterpret_cast<HeapFreeFn>(kHeapFree);
-
     const std::uint8_t flags = *reinterpret_cast<std::uint8_t *>(param_1 + 0x18);
     const int bufPtr = *reinterpret_cast<int *>(param_1 + 0x10);
 
     if ((flags & 0x2u) == 0 && bufPtr != 0) {
-        heapFree(reinterpret_cast<void *>(bufPtr));
+        RwsRawFree(reinterpret_cast<void *>(bufPtr));               // 0x005ac756 RwFree 0x004522d0
     }
 
     *reinterpret_cast<std::uint32_t *>(param_1 + 0x10) = 0u;
@@ -511,17 +562,14 @@ RH_ScopedInstall(AudioSubStructBufCleanup, 0x005ac740);  // re-enabled 2026-05-2
 // ─────────────────────────────────────────────────────────────────────────────
 extern "C" __declspec(dllexport) std::uint32_t __cdecl AudioContextLookup(std::uint32_t param_1)
 {
-    typedef void (__cdecl *TreeWalkFn)(std::uint32_t, std::uint32_t, void *, void *, int);
-    static constexpr std::uintptr_t kTreeWalk = 0x005aa0c0u;
-    static constexpr std::uintptr_t kCallback = 0x005ac930u;   // LAB_005ac930
-
-    const auto treeWalk = reinterpret_cast<TreeWalkFn>(kTreeWalk);
-
     std::uint32_t ctx[2];
     ctx[0] = param_1;   // 0x005ac917
     ctx[1] = 0u;        // 0x005ac91b
 
-    treeWalk(0u, 0u, reinterpret_cast<void *>(kCallback), ctx, 1);   // 0x005ac923
+    // 0x005ac923: AudioTreeWalkPredicateSearch (Audio/RwsStream.cpp, both targets) by name. Predicate: LAB_005ac930
+    // (.asi: the original's; exe: ContextKeyMatch_005ac930 above).
+    AudioTreeWalkPredicateSearch(nullptr, nullptr, ContextPredicate(),
+                                 static_cast<std::uint32_t>(reinterpret_cast<std::uintptr_t>(ctx)), 1);
 
     return ctx[1];      // 0x005ac928
 }
@@ -560,12 +608,9 @@ AudioSubStructLinkBoth(std::uint32_t param_1,
                        std::uint32_t param_2,
                        std::uint32_t param_3)
 {
-    typedef std::uint32_t* (__cdecl *LinkFn)(std::uint32_t*, std::uint32_t);
-    auto* const linkDevice = reinterpret_cast<LinkFn>(0x005ae010u);  // AudioSubStructLinkDevice
-    auto* const linkBuffer = reinterpret_cast<LinkFn>(0x005adfe0u);  // AudioSubStructLinkBuffer
-
-    linkDevice(reinterpret_cast<std::uint32_t*>(param_1), param_2);
-    linkBuffer(reinterpret_cast<std::uint32_t*>(param_1), param_3);
+    // 0x005ad54b / 0x005ad556, by name.
+    AudioSubStructLinkDevice(reinterpret_cast<std::uint32_t*>(param_1), param_2);
+    AudioSubStructLinkBuffer(reinterpret_cast<std::uint32_t*>(param_1), param_3);
     return param_1;
 }
 

@@ -1,0 +1,4 @@
+hook: audio_sub_struct_two_call_init  rva=0x005a9e10  export=AudioSubStructTwoCallInit
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 20556
+attach failed: timeout was reached

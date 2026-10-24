@@ -1,0 +1,11 @@
+hook: audio_sub_struct_dual_init  rva=0x005ac7b0  export=AudioSubStructDualInit
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 23836
+  [agent] LUT ready  base=0x2c698e8  offset=0x134  root=0xd510048  delta=0  attempts=27
+  [agent] .asi loaded  base=0x639a0000  AudioSubStructDualInit@0x639b0ef0
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\D4-AUDIO-RWS3\log\diff_audio_sub_struct_dual_init.csv
+  total cases: 10
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.

@@ -1,0 +1,11 @@
+hook: audio_sub_struct_two_call_init  rva=0x005a9e10  export=AudioSubStructTwoCallInit
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 20148
+  [agent] LUT ready  base=0x2b19908  offset=0x134  root=0xd510048  delta=0  attempts=34
+  [agent] .asi loaded  base=0x60cb0000  AudioSubStructTwoCallInit@0x60cc0fd0
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\D4-AUDIO-RWS3\log\diff_audio_sub_struct_two_call_init.csv
+  total cases: 10
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.

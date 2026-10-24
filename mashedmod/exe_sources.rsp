@@ -111,6 +111,7 @@
 "Audio\AudioDSound.cpp"
 "Audio\AudioRwsLeaves.cpp"
 "Audio\AudioPool.cpp"
+"Audio\AudioRws.cpp"
 "Audio\AudioCharacterBankPaths.cpp"
 "Audio\AudioLinearToLog.cpp"
 "D3d9Render\QuadRenderer.cpp"
