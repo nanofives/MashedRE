@@ -4,6 +4,7 @@
 #include "RaceSession.h"
 #include "../D3d9Render/TrackRenderer.h"
 #include "../Audio/AudioEngine.h"
+#include "../Audio/AudioCharacterBankPaths.h"
 #include <cstdio>
 #include <cstdarg>
 
@@ -189,8 +190,10 @@ void RaceSession::Begin(const RaceConfig& cfg, D3d9Render::TrackRenderer* track,
         {
             const int colour = m_cfg.cars[0].colour;
             char vbank[200];
+            // MASHED_BANKPATH_CORE=1: the core path has no root, so the original/ prefix is added here.
+            const bool core = Audio::BankPathCoreOn();
             if (Audio::CharacterBankPath(colour, 0, vbank, sizeof(vbank)))
-                logf("player voice bank: colour=%d -> %s", colour, vbank);
+                logf("player voice bank: colour=%d -> %s%s", colour, core ? "original/" : "", vbank);
             else
                 logf("player voice bank: colour=%d out of range (0..5)", colour);
         }

@@ -1,4 +1,4 @@
-// Mashed RE - character voice-bank path builder (WS-J M1 slice).
+// Mashed RE - character voice-bank path builder (WS-J M1 slice). Both rsp files.
 // Builds the 6 localized "toastaudio\pc\audio\pcdics\<lang>\<NAME>.rws"
 // paths for the racer-colour voice banks, all in one call, keyed only by a
 // single language code (NOT per-character -- the original loops all 6 names
@@ -34,12 +34,17 @@
 // Only caller: FUN_004669b0 (SoundEngine init hub), passing DAT_007f0f60
 // (the live language-code global) as langCode.
 //
-// Reused by the standalone greenfield target as
-// mashed_re::Audio::CharacterBankName / CharacterBankPath (per-character,
-// on demand); this hook instead matches the original's exact
-// build-all-6-at-once, fixed-address-buffer behavior for diff-original A/B.
+// Shared core (verify/bankpath_20261024/PREREG_bankpath.md, decision W0-1):
+// CharacterBankPathCore builds one slot and is linked into both targets. The
+// .asi export below keeps the original's build-all-6-at-once, fixed-address
+// buffer shape for diff-original A/B. The exe's Audio::CharacterBankPath
+// (AudioEngine.cpp) is the thin wrapper over the core under
+// MASHED_BANKPATH_CORE=1 (default OFF).
+#include "AudioCharacterBankPaths.h"
 #include "../Core/HookSystem.h"
+#include <cstdint>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 
 namespace {
@@ -67,15 +72,30 @@ const char* LangDir(int langCode) {
 
 }  // namespace
 
+namespace mashed_re {
+namespace Audio {
+
+bool CharacterBankPathCore(int charIndex, int langCode, char* buf, int cap) {
+    if (charIndex < 0 || charIndex >= kNumBanks || !buf || cap <= 0) return false;
+    std::snprintf(buf, static_cast<std::size_t>(cap),
+                  "toastaudio\\pc\\audio\\pcdics\\%s\\%s.rws",
+                  LangDir(langCode), kBankName[charIndex]);
+    return true;
+}
+
+bool BankPathCoreOn() {
+    static const bool s = [] { const char* e = std::getenv("MASHED_BANKPATH_CORE"); return e && e[0] == '1'; }();
+    return s;
+}
+
+}  // namespace Audio
+}  // namespace mashed_re
+
 // 0x004625b0
 extern "C" __declspec(dllexport) void __cdecl AudioCharacterBankPathsBuild(int langCode) {
     char* const base = reinterpret_cast<char*>(kBankPathBuf);
-    for (int i = 0; i < kNumBanks; ++i) {
-        char* const slot = base + static_cast<ptrdiff_t>(i) * kSlotStride;
-        std::snprintf(slot, kSlotStride,
-                      "toastaudio\\pc\\audio\\pcdics\\%s\\%s.rws",
-                      LangDir(langCode), kBankName[i]);
-    }
+    for (int i = 0; i < kNumBanks; ++i)
+        mashed_re::Audio::CharacterBankPathCore(i, langCode, base + static_cast<ptrdiff_t>(i) * kSlotStride, kSlotStride);
 }
 
 RH_ScopedInstall(AudioCharacterBankPathsBuild, 0x004625b0);  // WS-J M1 slice

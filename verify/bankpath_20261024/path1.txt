@@ -1,0 +1,6 @@
+[mashed-lock] HELD 'mashed_machine' pid=23624 (D4-AUDIO-BANKPATH)
+hook: audio_char_bank_paths_4625b0  (early-window pure-leaf diff — no menu boot required)
+  b0=0x53 reim=0x62940c80 cases=5 mismatches=0
+  evidence: C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\D4-AUDIO-BANKPATH\log\diff_audio_char_bank_paths_4625b0.csv
+VERDICT: GREEN
+[mashed-lock] released 'mashed_machine' pid=23624

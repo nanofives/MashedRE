@@ -1,6 +1,7 @@
 // AudioEngine impl — DirectSound 8 secondary-buffer playback. See AudioEngine.h.
 #include "AudioEngine.h"
 #include "RwsBank.h"
+#include "AudioCharacterBankPaths.h"
 
 #include <windows.h>
 #include <dsound.h>
@@ -304,6 +305,9 @@ const char* CharacterBankName(int charIndex) {
 }
 
 bool CharacterBankPath(int charIndex, int langCode, char* buf, int cap) {
+    // MASHED_BANKPATH_CORE=1 (default OFF, verify/bankpath_20261024/PREREG_bankpath.md): the thin wrapper over
+    // the shared 0x004625b0 slot core (uppercase, backslashes, no root prefix; the caller adds original/).
+    if (BankPathCoreOn()) return CharacterBankPathCore(charIndex, langCode, buf, cap);
     const char* name = CharacterBankName(charIndex);
     if (!name || !buf || cap <= 0) return false;
     const char* lang;          // FUN_004625b0 language switch
