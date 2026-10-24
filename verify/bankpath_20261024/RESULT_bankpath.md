@@ -63,7 +63,7 @@ Private root `D:\MashedWT\D4-AUDIO-BANKPATH_root`, its own `log\` folder, explic
 |---|---|---|---|
 | P path1 0x004625b0, tests 0..4 | 5 / 5 GREEN | **GREEN, 5 cases, 0 mismatches** (`b0=0x53`) | `path1_flip.txt`, `path1_flip_cases.txt` |
 | L lint | 0 NEW | **0 NEW** (8 known, allowlisted) | `lint_flip.txt` |
-| E default race launch, no knob | uppercase core path with the `original/` prefix | `original/toastaudio\pcudio\pcdics\english\RED.rws` | `RD_FLIP.race.txt` |
+| E default race launch, no knob | uppercase core path with the `original/` prefix | `original/toastaudio\pc\audio\pcdics\english\RED.rws` | `RD_FLIP.race.txt` |
 | G-CTRL `H_DEF-f` | bacfc747 / 8dd1c004 / 6f9932b6 | **bacfc747 / 8dd1c004 / 6f9932b6** | `RUNLOG.txt` |
 | B `B_DEF_K0-f / K1-f / K26-f` | f9deb9b9 / d3601fcc / 9da9a26a | **f9deb9b9 / d3601fcc / 9da9a26a** | `RUNLOG.txt` |
 
