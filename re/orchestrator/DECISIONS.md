@@ -3,6 +3,17 @@
 Decisions the roadmap loop cannot make (ROADMAP_LOOP_PLAN.md section 7). Each answered row
 re-opens the ledger rows it unblocks. Newest batch at the top.
 
+## Phase 0 (filed 2026-10-24 by the Phase 0 builder, open)
+
+Source: seed verification by the account2 worker (`re/orchestrator/roadmap_verify_20261024.md`).
+
+| id | row | question | options | evidence | recommendation |
+|---|---|---|---|---|---|
+| P0-1 | D1-R1 | ROADMAP still lists D1-R1 open, but its RESULT says it closes (24 citations, 0 RED) and the code is merged. Is R1 closed? | A: accept `RESULT_d1r1` as closing R1, the loop edits the ROADMAP state lines. B: keep it open and name what is missing | `verify/d1r1_20261016/RESULT_d1r1.md:3-6`; `ROADMAP.md:10,284-286,2228-2229,2971-2972` | A, unless you withheld acceptance on purpose |
+| P0-2 | D1-R2 | W0-14 says "wire it behind a default-OFF knob". R2 is already wired and default ON (opt-out `MASHED_NO_RACE_CAM_BASIS`), and its RESULT says it closes | A: keep default ON, then your in-race stills review. B: take W0-14 literally and move it behind a default-OFF knob first | `verify/d1r2_20261016/RESULT_d1r2.md:3-4`; `TrackRenderer.cpp:8868-8869, 8999-9000`; `ROADMAP.md:543-548` | A (B re-opens a change that already passed) |
+| P0-3 | solo lock | Solo windows are honoured only by code on `orch/integration`. Copies of `mashed_lock.py` on `race/first-frame-parity` ignore them, and the gate runners (`run_arms.py`, `run13.py`) take no lock, so loop workers wrap them in `mashed_lock.py run [--solo]` | A: accept. Solo protects loop work, and the conductor starts a solo step only with no other worker live. B: carry the lock change to `race/first-frame-parity` now (moves that branch) | `re/orchestrator/mashed_lock.py` header; account2 survey `re/orchestrator/MERGE_TRAIN.md` section 6 | A until you next move `race/first-frame-parity` |
+| P0-4 | merge train full set | Which cites file and reference table does the 13-track gate compare against? Phase 0 picked the newest lane that ran it | A: `verify/rskyverify_20261016/cites_merged.json` + `verify/rpct_20261022/tracks_flip_score.txt` (configured now). B: name another pair | `re/orchestrator/merge_train.json` `full`; `verify/rpct_20261022/RESULT_rpct.md:65` | A, confirm before the first Vehicle/Ai/Collision merge |
+
 ## Wave 0 (asked 2026-10-24, Mariano)
 
 Briefing: account2 worker extraction 2026-10-24 (sources cited per row). Behaviour changes

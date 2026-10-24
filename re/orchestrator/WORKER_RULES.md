@@ -1,0 +1,63 @@
+# Roadmap-loop worker rules (read this, not NEXT_SESSION.md)
+
+Every L1 lead and L2 worker reads this file. Mashed `CLAUDE.md` still applies in full.
+Ledger: `pwsh -NoProfile -File <orch-wt>\re\orchestrator\roadmap.ps1 <cmd>` where
+`<orch-wt>` = `C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\orch-integration`.
+The live ledger is one file for all tiers (`log\orch\roadmap.json`), never a branch copy.
+
+## Sessions and permissions
+- Spawning a child: `spawn_child` with a holding prompt ("reply READY and stop"), then the
+  task with `send_to_session ... yolo: true`. **Every** later message to it carries
+  `yolo: true` too. Leads on `claude2` (model sonnet, effort medium), workers on `claude3`.
+- Never message your parent yourself. Your final message is delivered automatically.
+- Do not close yourself. Your parent closes you after it collects your REPORT.
+
+## Where you work
+- Happy starts you in the main checkout (`race/first-frame-parity`). **Never switch its
+  branch, never commit there.** Create your worktree from `orch/integration` and `cd` into it
+  before any write:
+  `git -C C:\Users\maria\Desktop\Proyectos\Mashed worktree add .worktrees\<step> -b orch/<step> orch/integration`
+- Remove a worktree only with `py -3.12 scripts/diag.py wt-remove <path>`. Never
+  `git worktree remove --force`. Never touch `original\`.
+- Commit only on `orch/<step>`, targeted `git add <paths>` (never `-A`),
+  `git -c merge.autoStash=false` on any merge. No push of any branch.
+- Never merge into `orch/integration`. Enqueue for the merge train instead.
+
+## Builds and game runs
+- Build from your worktree: `cmd /c "set MASHED_NO_DEPLOY=1&& mashedmod\build.bat"`.
+  Never redeploy `original\mashed_re_dev.asi` (file a decision row if one is needed).
+- Game runs: private root `D:\MashedWT\<step>_root` (robocopy of `original\` with
+  `original\` inside), `MASHED_ROOT` pointing at it, sandbox disabled, and wrap the boot in
+  the lock: `py -3.12 <orch-wt>\re\orchestrator\mashed_lock.py run --label <step> -- <cmd>`
+  (`run --solo` for a wall-clock-bound step such as D2 arms). Kill only PIDs you spawned.
+- In PowerShell call `py.exe`, not `py` (a `~/bin/py` sh shim hangs pwsh).
+- Piz-collision crashes (`MASHED.exe+0x1509b4`, `+0xe66db`, U-9677) are re-runs, not findings.
+
+## What a change may do
+- Behaviour changes ship as a **default-OFF knob + a committed PREREG** (PREREG committed alone,
+  before its arms). Never flip a default. The flip is a decision row.
+- Default gates must stay unchanged on your exe: G-CTRL `bacfc747/8dd1c004/6f9932b6`,
+  B `f9deb9b9/d3601fcc/9da9a26a` (`verify/savelink_20261023/run_arms.py H_DEF B_DEF_K0 B_DEF_K1 B_DEF_K26`).
+- Trackers only through `re-classify`. No C4 without a canonical-scenario run with the hook
+  installed. Master Ghidra only through ghidra-sweep.
+- Do not edit `ROADMAP.md` or `re/NEXT_SESSION.md` unless the step's deliverable is that text
+  (example: D5-PDOD). The merge train writes the status line.
+
+## Ledger transitions (you write your own)
+`claim <id> <session-id> -Parent <lead-id>` then `set <id> working "<note>" -Branch orch/<id> -Worktree <path>`,
+then `set <id> review` with `-Evidence verify/<lane>_<yyyymmdd>/RESULT_<step>.md`.
+A lead that accepts the RESULT runs `enqueue <id> -Branch orch/<id> -Sha <sha>`.
+A user decision: `decision <id> "<question, options, evidence path, recommendation>"`.
+Heavy context: write the handoff into the RESULT file, `set <id> handoff`, report HANDOFF.
+
+## Final message: only this block
+```
+REPORT <step-id>
+verdict: GREEN | RED | BLOCKED | DECISION | HANDOFF
+branch: orch/<step-id> @ <sha>
+evidence: verify/<lane>_<yyyymmdd>/RESULT_<step>.md
+gates: G-CTRL <h1/h2/h3>  B <h1/h2/h3>   (or "not run: <why>")
+decision: <one line, or none>
+next: <one line>
+```
+A lead's REPORT uses its section name as `<step-id>` and lists its steps on `next:`.

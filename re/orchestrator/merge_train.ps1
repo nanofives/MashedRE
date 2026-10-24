@@ -21,7 +21,6 @@ $ErrorActionPreference = 'Stop'
 
 $HERE = $PSScriptRoot
 $MAIN = 'C:\Users\maria\Desktop\Proyectos\Mashed'
-$ORCH_WT = if ($env:MASHED_ORCH_WT) { $env:MASHED_ORCH_WT } else { Join-Path $MAIN '.worktrees\orch-integration' }
 $CFG = Get-Content (Join-Path $HERE 'merge_train.json') -Raw | ConvertFrom-Json
 $RM = Join-Path $HERE 'roadmap.ps1'
 $LOCKPY = Join-Path $HERE 'mashed_lock.py'
@@ -31,7 +30,11 @@ New-Item -ItemType Directory -Force -Path $DATA | Out-Null
 $LOG = Join-Path $DATA 'merge_train.log'
 
 function Say([string]$m) { $l = "[mtrain $(Get-Date -Format HH:mm:ss)] $m"; Write-Host $l; Add-Content -LiteralPath $LOG -Value $l }
-function Git { param([Parameter(ValueFromRemainingArguments)]$a) $o = & git @a 2>&1; $script:GITRC = $LASTEXITCODE; return $o }
+function Git {
+  param([Parameter(ValueFromRemainingArguments)]$a)
+  if ($a[0] -ne '-C') { $a = @('-C', $MAIN) + $a }
+  $o = & git.exe @a 2>&1; $script:GITRC = $LASTEXITCODE; return $o
+}
 function Ledger { param([Parameter(ValueFromRemainingArguments)]$a) & pwsh -NoProfile -File $RM @a | ForEach-Object { Say "ledger: $_" } }
 function Sha8([string]$p) { if (Test-Path $p) { (Get-FileHash -Algorithm SHA256 $p).Hash.Substring(0, 8).ToLower() } else { 'MISSING' } }
 function Like-Any([string]$f, $globs) { foreach ($g in $globs) { if ($f -like $g) { return $true } } return $false }
@@ -77,7 +80,7 @@ function Merge-One([string]$wt, $item) {
   foreach ($f in $conf) {   # frida-sweep rule for these files: keep both sides
     $tmp = Join-Path $DATA ("u_" + ($f -replace '[\\/]', '_'))
     foreach ($st in 1, 2, 3) { (Git -C $wt show ":${st}:$f") | Set-Content -LiteralPath "$tmp.$st" -Encoding utf8 }
-    & git merge-file --union "$tmp.2" "$tmp.1" "$tmp.3"
+    & git.exe merge-file --union "$tmp.2" "$tmp.1" "$tmp.3"
     Copy-Item "$tmp.2" (Join-Path $wt $f) -Force
     Git -C $wt add -- $f | Out-Null
   }
@@ -244,7 +247,11 @@ if ($merged.Count) {
   Git -C $wt add -- 're/orchestrator/INTEGRATION_LOG.md' | Out-Null
   Git -C $wt commit -q -m "orch: integration log, $(($merged | ForEach-Object id) -join ', ')" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>" | Out-Null
   $sha = (Git -C $wt rev-parse HEAD) | Select-Object -First 1
-  $ff = Git -C $ORCH_WT -c merge.autoStash=false merge --ff-only -q $sha
+  # ff where the branch is checked out; atomic compare-and-swap of the ref if it is not
+  $wl = (Git -C $MAIN worktree list --porcelain) -join "`n"
+  $held = [regex]::Matches($wl, "worktree (.+)\nHEAD \w+\nbranch refs/heads/$([regex]::Escape($INT))(\n|$)")
+  if ($held.Count) { $ff = Git -C $held[0].Groups[1].Value -c merge.autoStash=false merge --ff-only -q $sha }
+  else { $ff = Git -C $MAIN update-ref "refs/heads/$INT" $sha $tip }
   if ($script:GITRC -ne 0) { Say "ff of $INT failed: $ff"; $verdict = 'RED'; $merged = @() }
   else {
     Say "fast-forwarded $INT -> $($sha.Substring(0,9))"
