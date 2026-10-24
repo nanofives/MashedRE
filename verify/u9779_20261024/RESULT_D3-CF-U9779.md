@@ -130,3 +130,9 @@ already differed from k = 220. After the flip the first difference is at k = 357
 
 - Trackers through re-classify: U-9781 resolved (section 5), the new round-restart row (D3-CF-K357).
 - `re/NEXT_SESSION.md` / memory `default-ctrl-hashes-after-b2-flip`: the new default hashes above (merge train writes the status line).
+
+### 7.6 D2 arm validity (L0 rule)
+
+Both D2 batches ran inside a solo window (`mashed_lock.py run --solo`, `SOLO HELD` / `SOLO CLOSED` in `data/run_d2.txt` and
+`data/run_flip.txt`). The 13-track runs used the plain lock. motion_diag lines: `D2_U7P_1/2/3` 1634 / 1635 / 1633, flipped
+`D2_DEF_1/2/3` 1637 / 1632 / 1633. Every arm has at least 1600 lines, so none was re-run.
