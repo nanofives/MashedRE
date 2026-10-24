@@ -1,6 +1,6 @@
 # Next session kickoff
 
-> ## START HERE 2026-10-24 audiolink slices 1-7 + AudioRws 1 (MERGED into `race/first-frame-parity`, Mariano's call): **17 Audio TUs (63 functions with the two precedents) in both targets, no MASHED address in any exe arm of them; 3 latent defects + 1 fault-order gap fixed; the audio pool constructor chain found.** Next = AudioRws pool / list family (private zero storage = the pre-open state), or the job-twin decisions.
+> ## START HERE 2026-10-24 audiolink slices 1-7 + AudioRws 1 (MERGED into `race/first-frame-parity`, Mariano's call): **17 Audio TUs newly in both targets (59 functions), plus the two precedent files now address-free in the exe (3 functions: 0x005b0f40, 0x005ad2e0, 0x005aed20); 3 latent defects + 1 fault-order gap fixed; the audio pool constructor chain found.** Next = AudioRws pool / list family (private zero storage = the pre-open state), or the job-twin decisions.
 >
 > - Slice 7: AudioQueuePop calls a port of 0x005ad2e0 (AudioQueueConsume, path1 10/10, new handler queue_node_consume); AudioVecLength's exe arm reads private copies of 0x005d757c / 0x00633b48 (equal to the runtime bytes). `RESULT_slice7.md`.
 > - Pool constructor: 0x004627f0 -> 0x005a5f00 -> 16-pair init table 0x00632ba8 -> 0x005ae650 per pool; all pool globals BSS until then. `POOL_CONSTRUCTOR.md`.
