@@ -1,0 +1,58 @@
+0x005ae5b0: no direct calls | ptr refs: .data@00632bb0
+0x005ae610: no direct calls | ptr refs: .data@00632bb4
+0x005adf90: no direct calls | ptr refs: .data@00632bc0
+0x005adfc0: no direct calls | ptr refs: .data@00632bc4
+0x005add80: no direct calls | ptr refs: .data@00632bc8
+0x005addb0: no direct calls | ptr refs: .data@00632bcc
+0x005ab9d0: no direct calls | ptr refs: .data@00632c00
+0x005aba00: no direct calls | ptr refs: .data@00632bfc
+0x005ae650: call@005a6b11, call@005a783b, call@005a9994, call@005a99b5, call@005a99d6, call@005a9ea3, call@005aa4ab, call@005ab9e2, call@005abb0f, call@005ac56c, call@005ad011, call@005adabd, call@005adb14, call@005add92, call@005adfa2, call@005ae1f1, call@005ae5db, call@005beb40, call@005c01ce | ptr refs: none
+0x005ae7e0: call@005a6b5b, call@005a7880, call@005a78e3, call@005a9a37, call@005a9a44, call@005a9a51, call@005a9a89, call@005a9a93, call@005a9a9d, call@005a9d89, call@005aa4f0, call@005aa548, call@005aba05, call@005ac5a7, call@005ac8ad, call@005ad06d, call@005adad9, call@005adb33, call@005adb49, call@005adbaa, call@005adbbb, call@005addb5, call@005adfc5, call@005ae239, call@005ae620, call@005ae63a, call@005bec64, call@005c02fb | ptr refs: none
+  00632b90: 
+  00632b94: 
+  00632b98: 
+  00632b9c: 
+  00632ba0: 
+  00632ba4: 
+  00632ba8: 
+  00632bac: 
+  00632bb0: 
+  00632bb4: 
+  00632bb8: 
+  00632bbc: dwords
+  00632bc0: 41524550
+  00632bc4: 4c4f4447
+  00632bc8: 0000004c
+  00632bcc: 00000000
+  00632bd0: 00000001
+  00632bd4: 00000000
+  00632bd8: 005a5e70
+  00632bdc: 005a5ee0
+  00632be0: 005ae5b0
+  00632be4: 005ae610
+  00632be8: 005ae1d0
+  00632bec: 005ae210
+  00632bf0: 005adf90
+  00632bf4: 005adfc0
+  00632bf8: 005add80
+  00632bfc: 005addb0
+  00632c00: 005ada90
+  00632c04: 005adb70
+  00632c08: 005a9970
+  00632c0c: 005a9a70
+  00632c10: 005aa480
+  00632c14: 005aa520
+  00632c18: 005acff0
+  00632c1c: 005ad030
+  00632c20: 005ac550
+  00632c24: 005ac590
+  00632c28: 005a7810
+  00632c2c: 005aba00
+  00632c30: 005ab9d0
+  00632c34: 005a78b0
+  00632c38: 005a6e50
+  00632c3c: 005a6e90
+  00632c40: 005ab4a0
+  00632c44: 005ab510
+  00632c48: 005a6af0
+  00632c4c: 005a6b30
