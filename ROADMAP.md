@@ -151,7 +151,7 @@ unexecuted functions explicitly dispatched; structs documented; formats round-tr
 
 **P-DoD (project)** — every subsystem S-DONE; a clean playthrough of every track,
 vehicle and mode on `mashed_re.exe` alone; trackers empty but for justified
-`wontfix`/`deferred-not-needed`; the dev `.asi` dropped from the shipping matrix.
+`wontfix`/`deferred-not-needed`; the dev `.asi` dropped from the shipping matrix. Multiplayer (WS-I) is out of v1.0 scope (DEFERRED.md D-11063).
 
 **D-Gate (new, applies to every phase below)** — the phase's demo runs on a clean
 environment. No `MASHED_*` set, no manual steps, no "then flip this flag".
@@ -2974,7 +2974,7 @@ rows. Shipping checklist (added 2026-09-26):
   or any `original/MASHED.exe` boot patch. Those are dev harness only.
 - First run works with no `videocfg.bin` / `contcfg%d.bin` present (defaults are written).
 - Runtime dependencies listed (CRT, D3D9, DirectShow for video) and checked on a clean machine.
-- Multiplayer (WS-I) is out of v1.0 scope per D-11063, and this is stated in the P-DoD.
+- Multiplayer (WS-I) is out of v1.0 scope per D-11063, and this is stated in the P-DoD. **DONE 2026-10-24** (P-DoD, line 154).
 - Every default-OFF `MASHED_*` gate on a finished port is deleted, and only dev/debug
   knobs remain.
 
