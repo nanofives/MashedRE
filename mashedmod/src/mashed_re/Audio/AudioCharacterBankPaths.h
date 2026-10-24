@@ -13,9 +13,5 @@ namespace Audio {
 // Returns false if charIndex is outside 0..5, buf is null or cap <= 0.
 bool CharacterBankPathCore(int charIndex, int langCode, char* buf, int cap);
 
-// MASHED_BANKPATH_CORE=1 (default OFF): CharacterBankPath becomes the thin
-// wrapper over the core, and its caller adds the original/ root prefix.
-bool BankPathCoreOn();
-
 }  // namespace Audio
 }  // namespace mashed_re

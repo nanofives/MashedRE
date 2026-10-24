@@ -49,3 +49,23 @@ Private root `D:\MashedWT\D4-AUDIO-BANKPATH_root`, its own `log\` folder, explic
 
 `apply_trackers.py fda8366c` (re-classify, level kept): hooks.csv 0x004625b0 `exe_file` ->
 `mashedmod/src/mashed_re/Audio/AudioCharacterBankPaths.cpp` plus one note, one CHANGELOG line.
+
+## Flip (L-3 = A, Mariano, 2026-10-24)
+
+**Verdict: GREEN.** Same branch. Build: exe `63ae41b4`, dev .asi `a6741403` (worktree build, no deploy).
+
+- `MASHED_BANKPATH_CORE` is removed. `Audio::CharacterBankPath` (`AudioEngine.cpp`) is now only
+  `return CharacterBankPathCore(...)`. The lowercase body and `CharacterBankName` are deleted (no other caller).
+- `RaceSession.cpp:192` always adds the `original/` root prefix.
+- One body is left for this job: `CharacterBankPathCore` in `Audio/AudioCharacterBankPaths.cpp`.
+
+| Arm | Prediction | Measured | Evidence |
+|---|---|---|---|
+| P path1 0x004625b0, tests 0..4 | 5 / 5 GREEN | **GREEN, 5 cases, 0 mismatches** (`b0=0x53`) | `path1_flip.txt`, `path1_flip_cases.txt` |
+| L lint | 0 NEW | **0 NEW** (8 known, allowlisted) | `lint_flip.txt` |
+| E default race launch, no knob | uppercase core path with the `original/` prefix | `original/toastaudio\pcudio\pcdics\english\RED.rws` | `RD_FLIP.race.txt` |
+| G-CTRL `H_DEF-f` | bacfc747 / 8dd1c004 / 6f9932b6 | **bacfc747 / 8dd1c004 / 6f9932b6** | `RUNLOG.txt` |
+| B `B_DEF_K0-f / K1-f / K26-f` | f9deb9b9 / d3601fcc / 9da9a26a | **f9deb9b9 / d3601fcc / 9da9a26a** | `RUNLOG.txt` |
+
+Tracker transaction: `apply_trackers_flip.py 63ae41b4` (re-classify, level kept C3): one hooks.csv note on 0x004625b0,
+one CHANGELOG line. The `Not done here` item about the flip above is closed by this section.

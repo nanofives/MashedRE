@@ -296,31 +296,10 @@ void MusicStop() {
 }
 
 // --- character voice banks (cited map; see the REmap note §2) ------------------
-const char* CharacterBankName(int charIndex) {
-    // DAT_006041f0 order (0x006041f0 stride 0x80): RED/BLUEJAY/MELON/GOLD/PINK/
-    // SHADOW. Lowercased to match the on-disk english/<name>.rws files.
-    static const char* kNames[6] = { "red", "bluejay", "melon", "gold", "pink", "shadow" };
-    if (charIndex < 0 || charIndex > 5) return nullptr;
-    return kNames[charIndex];
-}
-
+// Thin wrapper over the shared 0x004625b0 slot core (Audio/AudioCharacterBankPaths.cpp, decision W0-1 / L-3,
+// verify/bankpath_20261024/RESULT_bankpath.md): uppercase, backslashes, no root prefix (the caller adds original/).
 bool CharacterBankPath(int charIndex, int langCode, char* buf, int cap) {
-    // MASHED_BANKPATH_CORE=1 (default OFF, verify/bankpath_20261024/PREREG_bankpath.md): the thin wrapper over
-    // the shared 0x004625b0 slot core (uppercase, backslashes, no root prefix; the caller adds original/).
-    if (BankPathCoreOn()) return CharacterBankPathCore(charIndex, langCode, buf, cap);
-    const char* name = CharacterBankName(charIndex);
-    if (!name || !buf || cap <= 0) return false;
-    const char* lang;          // FUN_004625b0 language switch
-    switch (langCode) {
-        case 1:  lang = "french";  break;
-        case 2:  lang = "german";  break;
-        case 3:  lang = "spanish"; break;
-        case 4:  lang = "italian"; break;
-        default: lang = "english"; break;
-    }
-    std::snprintf(buf, static_cast<std::size_t>(cap),
-                  "original/toastaudio/pc/audio/pcdics/%s/%s.rws", lang, name);
-    return true;
+    return CharacterBankPathCore(charIndex, langCode, buf, cap);
 }
 
 // --- music state controller ---------------------------------------------------

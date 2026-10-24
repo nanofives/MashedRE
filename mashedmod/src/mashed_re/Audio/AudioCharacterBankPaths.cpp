@@ -34,17 +34,15 @@
 // Only caller: FUN_004669b0 (SoundEngine init hub), passing DAT_007f0f60
 // (the live language-code global) as langCode.
 //
-// Shared core (verify/bankpath_20261024/PREREG_bankpath.md, decision W0-1):
-// CharacterBankPathCore builds one slot and is linked into both targets. The
-// .asi export below keeps the original's build-all-6-at-once, fixed-address
-// buffer shape for diff-original A/B. The exe's Audio::CharacterBankPath
-// (AudioEngine.cpp) is the thin wrapper over the core under
-// MASHED_BANKPATH_CORE=1 (default OFF).
+// Shared core (verify/bankpath_20261024/RESULT_bankpath.md, decisions W0-1 /
+// L-3): CharacterBankPathCore builds one slot and is linked into both targets,
+// the only body for this job. The .asi export below keeps the original's
+// build-all-6-at-once, fixed-address buffer shape for diff-original A/B. The
+// exe's Audio::CharacterBankPath (AudioEngine.cpp) is the thin wrapper over it.
 #include "AudioCharacterBankPaths.h"
 #include "../Core/HookSystem.h"
 #include <cstdint>
 #include <cstdio>
-#include <cstdlib>
 #include <cstring>
 
 namespace {
@@ -81,11 +79,6 @@ bool CharacterBankPathCore(int charIndex, int langCode, char* buf, int cap) {
                   "toastaudio\\pc\\audio\\pcdics\\%s\\%s.rws",
                   LangDir(langCode), kBankName[charIndex]);
     return true;
-}
-
-bool BankPathCoreOn() {
-    static const bool s = [] { const char* e = std::getenv("MASHED_BANKPATH_CORE"); return e && e[0] == '1'; }();
-    return s;
 }
 
 }  // namespace Audio

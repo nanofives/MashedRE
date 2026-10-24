@@ -60,13 +60,13 @@ void EngineStop();
 // the bank follows the racer's Player Colour index 0..5. Cited map (DAT_006041f0
 // / FUN_004625b0; see the REmap note §2):
 //   0=RED 1=BLUEJAY 2=MELON 3=GOLD 4=PINK 5=SHADOW
-// CharacterBankName returns the base name (nullptr if out of range);
-// CharacterBankPath builds the localized file path
-//   original/toastaudio/pc/audio/pcdics/<lang>/<name>.rws
-// langCode follows FUN_004625b0 (0=english 1=french 2=german 3=spanish
-// 4=italian; default english). Returns false if charIndex is out of range.
-const char* CharacterBankName(int charIndex);
-bool        CharacterBankPath(int charIndex, int langCode, char* buf, int cap);
+// CharacterBankPath builds the localized path relative to the game root
+// (the 0x004625b0 slot core, uppercase NAME, backslash separators):
+//   toastaudio\pc\audio\pcdics\<lang>\<NAME>.rws
+// The caller adds the original/ root. langCode follows FUN_004625b0
+// (0=english 1=french 2=german 3=spanish 4=italian; default english).
+// Returns false if charIndex is out of range.
+bool CharacterBankPath(int charIndex, int langCode, char* buf, int cap);
 
 // Music — one dedicated music voice, switched on game-state edges. The state
 // setter is idempotent (re-setting the current state is a no-op; it never
