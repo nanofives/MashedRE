@@ -7,7 +7,7 @@ are carried forward below and remain the unit of work; what changes is the **gat
 > **Naming, 2026-09-26.** In this file, D0–D5 are **phases**. The four user decisions of
 > 2026-07-31 in `RE_MASTER_PLAN_2026-07.md` §5 are **DEC-2/4/6/7**. Older text that says "Gate
 > D2 (2026-07-31)" means DEC-2 (librw ships), not phase D2 (default physics).
-> **State 2026-10-21 (supersedes the 2026-10-16 line below):** D0 ✓, D1 ✓ (default flip, residue R1 closed 2026-10-24, R2 open, R3 closed 2026-10-16),
+> **State 2026-10-21 (supersedes the 2026-10-16 line below):** D0 ✓, D1 ✓ (default flip, **D1-residue CLOSED 2026-10-24**: R1 2026-10-24 (P0-1), R2 2026-10-24 (L-7), R3 2026-10-16; separate gap D1-SHADOWS open),
 > D2 ✓ CLOSED 2026-10-16, **D3 ✓ CLOSED 2026-10-21** (user decision, Mariano; `verify/d3close_20261021/RESULT_d3close.md`; see §D3),
 > **D4 active**, D5 not started.
 >
@@ -271,7 +271,7 @@ v2's R0 did this once and it paid for itself; the repo has drifted since.
 
 **Gate:** every number in this roadmap is reproducible from the repo by a stated command.
 
-### D1 — Default renderer — **CLOSED 2026-08-19 (default flip); D1-residue OPEN**
+### D1 — Default renderer — **CLOSED 2026-08-19 (default flip); D1-residue CLOSED 2026-10-24**
 
 > **Reconciled 2026-09-26.** This section and the critical-path line under the workstream
 > ledger disagreed (one said closed, one said "the gate is not closed"). Both were half right,
@@ -281,11 +281,14 @@ v2's R0 did this once and it paid for itself; the repo has drifted since.
 >   A/B revert only; A/B condition met 16/16 ≤1.01% (`verify/d1_recheck_20260818/REPORT.md`).
 >   The flip happened before the original-side adjudication the gate text below asked for.
 >   That clause moved into the residue, and it was not silently dropped.
-> - **D1-residue, OPEN (R2 only), must close before D5.** Gate: (R1) ~~an original-side capture at a
+> - **D1-residue, CLOSED 2026-10-24** (R1, R2 and R3 all closed, see each item). Gate: (R1) ~~an original-side capture at a
 >   matched, frame-synced pose adjudicates faithfulness (`drawlist_diff.py` GREEN or every row
 >   cited)~~ **R1 CLOSED 2026-10-24** (Mariano, P0-1 A; `verify/d1r1_20261016/RESULT_d1r1.md`:
->   every row CITED, 0 RED); (R2) the verbatim race-camera pose from `Race/RaceCamera.cpp` drives the renderer
->   (Camera subsection below); ~~(R3) the legacy D3D9 race renderer and the
+>   every row CITED, 0 RED); (R2) ~~the verbatim race-camera pose from `Race/RaceCamera.cpp` drives the renderer
+>   (Camera subsection below)~~ **R2 CLOSED 2026-10-24** (Mariano, decision L-7 in `log/orch/DECISIONS.md`;
+>   `verify/d1r2_stills_20261024/RESULT_d1r2_stills.md`: three TRAINING in-race side-by-sides, framing matches on all three).
+>   R2 stays default ON, opt-out `MASHED_NO_RACE_CAM_BASIS`. Separate gap, not part of R2: **D1-SHADOWS** (in `sbs_row_00924.jpg` the long pole shadows across the road are present in the original half and absent in the standalone half), its own roadmap-loop row.
+>   ~~(R3) the legacy D3D9 race renderer and the
 >   `MASHED_RENDER_LIBRW=0` revert are deleted~~ **R3 CLOSED 2026-10-16** (branch `work/d1r3`,
 >   evidence `verify/d1r3_20261016/RESULT_d1r3.md`): the D3D9 world loop, the D3D9 prop and car
 >   draws (plain and per-vertex relit), AI livery variants, wheel spin/steer state, the
@@ -439,7 +442,7 @@ renderer becomes the fallback, then goes away.
 > the DEFAULT renderer"). This section was not updated at the time, and a 2026-09-09
 > worker survey repeated "librw gated OFF" as fact from it.
 >
-> **What D1 still owes** (now the D1-residue block above, R1-R2; R3 closed 2026-10-16): (1) faithfulness adjudication against the
+> **What D1 still owes** (now the D1-residue block above, R1-R2; R3 closed 2026-10-16; all three closed by 2026-10-24): (1) faithfulness adjudication against the
 > ORIGINAL, not D3D9-vs-librw (`RE_MASTER_PLAN_2026-07.md` §7 item 1); (2) the verbatim
 > race-camera pose wired into the renderer (Camera subsection below, pose still discarded);
 > (3) the D3D9 fallback has not gone away. `FLAG_INVENTORY_2026-08-15.md` class A still
@@ -582,6 +585,11 @@ reviewer real time for no new information.
 **The gate for in-race review** is therefore: the verbatim camera pose wired into the
 renderer, AND D1's default-renderer question settled. Until both hold, an in-race
 opinion is an opinion about the scaffold, not about the port.
+
+> **2026-10-24: both halves of that gate hold.** The verbatim pose drives the renderer (R2, default ON, opt-out
+> `MASHED_NO_RACE_CAM_BASIS`) and the in-race review happened: Mariano accepted the three TRAINING side-by-sides in
+> `verify/d1r2_stills_20261024/RESULT_d1r2_stills.md` (decision L-7). The one gap that review surfaced, pole shadows
+> across the road missing in the standalone (`sbs_row_00924.jpg`), is tracked as D1-SHADOWS, not as R2.
 
 ### D2 — Default physics — **CLOSED 2026-10-16 (user decision, Mariano).** The PARKED (2026-10-02) and REOPENED (2026-09-29) blocks below are kept as history.
 
@@ -2226,7 +2234,7 @@ mode 10, live mode / rule / slot-type words), u9779 (round end at call 220, knob
   exit, the rule-7 `participants-1 <= dead` exit, the rule-9 `gap >= 0.9` arm.
 - **D-11078** (two-car original capture for the one-vehicle-TXD-per-race question, U-9730) and **D-11079** (unify the duplicate
   exe bodies of `0x004c4680` / `0x00532b80`, U-9741).
-- **D1-residue R2**, owed before D5 (R1 CLOSED 2026-10-24 on `verify/d1r1_20261016/RESULT_d1r1.md`, every row CITED, 0 RED): R2 the verbatim race-camera pose from `Race/RaceCamera.cpp` drives the renderer.
+- ~~**D1-residue R2**~~ **CLOSED 2026-10-24** (R1 on `verify/d1r1_20261016/RESULT_d1r1.md`, every row CITED, 0 RED, P0-1; R2 on `verify/d1r2_stills_20261024/RESULT_d1r2_stills.md`, Mariano, L-7, default ON, opt-out `MASHED_NO_RACE_CAM_BASIS`). D1-residue is closed. Separate open gap: **D1-SHADOWS** (pole shadows across the road missing in the standalone, `sbs_row_00924.jpg`).
 
 Evidence hygiene, done with the closure: the five re-captured power-up inputs (`.puhook` / `.pucontact` / `.puaim` /
 `.pumortar` / `.pumissile` csv + provenance, 13.3 MB, no `.msd`) are committed under `verify/d3close_20261021/pu/`, and
@@ -2895,7 +2903,7 @@ Named D4 work items (added 2026-09-26, previously implicit):
   hook-shaped. Plan the move from hook-shaped to standalone-linked before promoting any of it.
 - **Link the Save TUs.** `Save/`, 16 files, 28 C4, unlinked and RVA-tunneled (D0.7). The
   standalone must read and write a `gamesave.bin` the original accepts.
-- **D1-residue R1-R2** if they are not already closed during D3 (R3 closed 2026-10-16).
+- ~~**D1-residue R1-R2**~~ **CLOSED 2026-10-24** (R1 P0-1, R2 L-7 on `verify/d1r2_stills_20261024/RESULT_d1r2_stills.md`, R3 2026-10-16). Open separately: D1-SHADOWS.
 - **Burn the dual-copy allowlist down to zero** (added 2026-09-29). `re/tools/dual_copy_allowlist.txt`
   currently holds **110** entries — 72 `DUP-IN-TARGET`, 27 `DUP-INSTALL`, 11 `CROSS-TARGET`. Each is
   an RVA with more than one body, which is how five defects shipped in `mashed_re.exe` while
@@ -2969,7 +2977,8 @@ P-DoD met. Dev `.asi` out of the shipping matrix. `DEFERRED.md` holds only justi
 rows. Shipping checklist (added 2026-09-26):
 
 - D1-residue closed. R3 is done (no legacy D3D9 race renderer, no `MASHED_RENDER_LIBRW=0`,
-  2026-10-16); R1 is done (2026-10-24, `verify/d1r1_20261016/RESULT_d1r1.md`, every row CITED, 0 RED); R2 is still owed.
+  2026-10-16); R1 is done (2026-10-24, `verify/d1r1_20261016/RESULT_d1r1.md`, every row CITED, 0 RED); R2 is done
+  (2026-10-24, Mariano, L-7, `verify/d1r2_stills_20261024/RESULT_d1r2_stills.md`). **Closed 2026-10-24.**
 - `mashed_re.exe` runs without the dev d3d9 shim, `d3d9_real.dll`, the dinput8 ASI loader,
   or any `original/MASHED.exe` boot patch. Those are dev harness only.
 - First run works with no `videocfg.bin` / `contcfg%d.bin` present (defaults are written).
@@ -2991,7 +3000,7 @@ against the D1 split and D3 steps 1-4):
 | WS-B | Collision / RW-Physics | B5e port DONE (K1..K24, `021a9f38`); ported chain is the default since D2 closed 2026-09-14. The per-row C4-verify campaign is NOT part of the D2 gate. Its remaining scope is unrecorded here [UNCERTAIN: needs a `hooks.csv` filter of B5e rows below C4] | D2 ✓ / D4 |
 | WS-C | AI drivers | **D3 2026-09-26:** the tick drives the opponents by default (ctrl bytes -> physics chain), `MASHED_AI_TICK` deleted, `FUN_00415220` fire decision + `FUN_00443440` + `FUN_00443dc0` tail ported; (b) 2 of 3 cars inside the tolerance (`D3_AI_PORT_2026-09-26.md`). Open: targeting modes 1..10, `FUN_00442a60`, car 1 `c0`/`c1` split, brake fraction. **D3 step 2 (2026-09-14):** `Ai_Standalone_Tick` is now wired, behind the new default-OFF `MASHED_AI_TICK`. Measured RED because `FUN_00443300` + `FUN_00443dc0` are stubbed (2-3 distinct steer values vs the original's 33-96). Earlier status: Port DONE (`Ai/AiStandalone.cpp`), `Ai_Standalone_Tick` (FUN_00418860) had **zero call sites**; the default build drives opponents from the ported racing-line target + a scaffold motion model (`TrackRenderer.cpp:2831-2960`). Audit `re/analysis/D3_AUDIT_2026-09-14.md` §1 | D3 |
 | WS-D | Powerup effects | **D3 2026-09-26:** dispatcher FUN_0045bba0 ticks every frame over 4 slots (`TrackRenderer::TickPowerupDispatch`, G-D1 closed); all 9 per-type decision traces diff CLEAN against the original on replayed inputs (`D3_POWERUPS_2026-09-26.md`). G-D2 closed: slots 1..3 own and fire (`D3_AI_PORT_2026-09-26.md` §5). **2026-09-27:** the two `ContactStubs.cpp` residuals are bound to the real ports and bit-exact, but that was never the blocker — `Powerup/` has no path into `Collision/` (`D3_CONTACT_2026-09-27.md` §1). Contact outcomes now measured per type: FLASH clean, P_MINE diverges, 7 blocked on the unported chain. Leaves are standalone reimpls via `IPowerupBackend` by design | D3 |
-| WS-E | librw renderer | librw is the **default** since `f4815877` (2026-08-19; decision DEC-2 of 2026-07-31 chose it). Open: D1-residue R1-R2 (R3 closed 2026-10-16) | D1 ✓ / D1-residue |
+| WS-E | librw renderer | librw is the **default** since `f4815877` (2026-08-19; decision DEC-2 of 2026-07-31 chose it). D1-residue closed 2026-10-24 (R1 P0-1, R2 L-7, R3 2026-10-16). Open: D1-SHADOWS | D1 ✓ / D1-residue ✓ |
 | WS-F | Data formats | No work since 2026-06-16 | D4 |
 | WS-G | Modes & frontend | Ledger was stale. `Race/RaceModes` + `Race/RuleEngine` are the **default** path (`exe_main.cpp:2219/2244`, `RaceSession.cpp:129`, `TrackRenderer.cpp:3840`); every mode flag is revert-only or a post-derivation dev override. Open residues: G-G1 hardcoded `StartMatch(3)`, G-G2 `rule_engine_on_` defaults false. Audit §3 | D3 |
 | WS-H | Verification / C4 | Continuous; audit stale | D0, then continuous |
