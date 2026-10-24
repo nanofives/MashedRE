@@ -1,0 +1,18 @@
+[mashed-lock] WAITING — 'mashed_machine' held by pid=24184 (merge-train:20261024_174704); queueing...
+[mashed-lock] HELD 'mashed_machine' pid=13824 (D4-AUDIO-RWS3-gates)
+=== H_DEF pid=24792 exe=f614d0f8
+    exit=0 self_exited=True secs=570
+    H_DEF.step.csv lines=19059 sha8=bacfc747
+    H_DEF.gates.csv lines=53993 sha8=8dd1c004
+    H_DEF.ptrace.log lines=26996 sha8=6f9932b6
+=== B_DEF_K0 pid=22676 exe=f614d0f8
+    exit=0 self_exited=True secs=65
+    B_DEF_K0.step.csv lines=2036 sha8=f9deb9b9
+=== B_DEF_K1 pid=8 exe=f614d0f8
+    exit=0 self_exited=True secs=109
+    B_DEF_K1.step.csv lines=2989 sha8=d3601fcc
+=== B_DEF_K26 pid=13316 exe=f614d0f8
+    exit=0 self_exited=True secs=63
+    B_DEF_K26.step.csv lines=2336 sha8=9da9a26a
+DONE
+[mashed-lock] released 'mashed_machine' pid=13824

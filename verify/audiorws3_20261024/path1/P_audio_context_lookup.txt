@@ -1,0 +1,12 @@
+hook: audio_context_lookup  rva=0x005ac900  export=AudioContextLookup
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 19076
+  [agent] LUT ready  base=0x2ca9908  offset=0x134  root=0xd680048  delta=0  attempts=21
+  [agent] .asi loaded  base=0x60b00000  AudioContextLookup@0x60b10d50
+  [agent] {'type': 'log', 'msg': 'x87 CW: thread 0x27f (arms run at it)'}
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\D4-AUDIO-RWS3\log\diff_audio_context_lookup.csv
+  total cases: 6
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.
