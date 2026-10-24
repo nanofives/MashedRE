@@ -1,0 +1,60 @@
+[mashed-lock] WAITING — 'mashed_machine' held by pid=22840 (D4-AUDIO-BANKPATH); queueing...
+[mashed-lock] HELD 'mashed_machine' pid=18176 (D3-CF-RFLAME)
+  [keep-awake] display-sleep suppressed + wake nudge sent
+=== scenario_launch  pid=7888  track=0 mode=10 cars=4 ===
+  attaching ASAP...
+  [agent] ready
+    phase=0  (waiting for menu (phase 1))
+    phase=1  (waiting for menu (phase 1))
+  [setup] set track=0 mode=10 cars=4 car=0 rule=0 team=0
+  [statediff] statediff armed (tick 0x004c1be0, car 0, rec@0x8815a0)
+  [statediff] puhook armed (FUN_0045bba0 + 9 FIRE + 8 CANFIRE + FUN_0045bac0; plan=[19,16,18,9,17] subj slot 0 warm 60)
+  [statediff] puhook-contacts armed (missile_impact_b,missile_impact_a,surface_gate,sweep_confirm,query_4b4650,query_4b4b20,sweep_query,query_4b4cd0,query_4b4d10,query_4b5080)
+  [statediff] puhook-flame armed (0x0045a950 + 0x0045ae80, ref via 0x004671d0)
+  [statediff] cook injector armed (0x00496530)
+  [statediff] drive: full accel, steer=+0 -> 1
+  [launch] poke DAT_00771968 = 2 -> 1
+    phase=2  (waiting for race running (phase 3))
+    phase=3  (waiting for race running (phase 3))
+
+  *** RACE RUNNING (phase 3) ***
+  [ctrl-slots] ctrl slot table was [0,0,0,0] -> [0,1,2,3]
+  car spawn fired: 12   grounded=4  airflag=0
+  vel=[0, 0, 0]  fwd=[-8.742277657347586e-08, 0, -1]
+
+  VERDICT: launcher reached a running race and spawned a car. [OK]
+
+  racing 110s — pulsing control 4 (confirm/accel) to skip the start intro + continue rounds...
+
+    +  4s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]   
+    +  9s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]   
+    + 13s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]   
+    + 18s  ph=3  spawnFired=12  p0.grounded=4 airflag=1  vel=[2020.4, 12.7, -438.4]   
+    + 23s  ph=3  spawnFired=12  p0.grounded=4 airflag=1  vel=[-72.7, 51.3, 2516.5]   
+    + 28s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]   
+    + 33s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]   
+    + 37s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]   
+    + 42s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]   
+    + 47s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]   
+    + 52s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]   
+    + 57s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]   
+    + 61s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]   
+    + 66s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]   
+    + 71s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]   
+    + 76s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]   
+    + 81s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]   
+    + 86s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]   
+    + 90s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]   
+    + 95s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]   
+    +100s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]   
+    +105s  ph=3  spawnFired=12  p0.grounded=4 airflag=0  vel=[0, 0, 0]   
+  [statediff] agent: {"armed":true,"frames":6622,"car":0,"err":null,"ai":false,"aiErr":null}
+  [statediff] 6622 frames -> C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\D3-CF-RFLAME\verify\d3rflame_20261024\g3f.msd  (distinct payloads=3032, nonzero=6622)
+  [statediff] puhook agent: {"armed":true,"calls":6628,"n6":759,"st":"done","pi":5,"acts":[[60,19],[136,16],[224,18],[258,9],[452,17]],"pending":1326,"err":null}
+  [statediff] puhook 1326 rows -> C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\D3-CF-RFLAME\verify\d3rflame_20261024\g3f.msd.puhook.csv  (codes seen=[-1, 9, 12, 16, 17, 18, 19], rows with FIRE=205)
+  [statediff] puhook-contacts agent: {"armed":true,"counts":{"missile_impact_b":0,"missile_impact_a":0,"surface_gate":102,"sweep_confirm":4,"query_4b4650":223,"query_4b4b20":8,"sweep_query":1336,"query_4b4cd0":7482,"query_4b4d10":0,"query_4b5080":51},"hot":{"missile_impact_b":0,"missile_impact_a":0,"surface_gate":0,"sweep_confirm":0,"query_4b4650":0,"query_4b4b20":0,"sweep_query":0,"query_4b4cd0":0,"query_4b4d10":0,"query_4b5080":0},"pending":9206,"err":null}
+  [statediff] pucontact 9206 rows -> C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\D3-CF-RFLAME\verify\d3rflame_20261024\g3f.msd.pucontact.csv
+  [statediff] puhook-flame agent: {"armed":true,"calls":57,"ticks":6647,"births":25,"refMoved":0,"rows":760,"err":null}
+  [statediff] puflame 760 rows -> C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\D3-CF-RFLAME\verify\d3rflame_20261024\g3f.msd.puflame.csv
+  [statediff] provenance -> C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\D3-CF-RFLAME\verify\d3rflame_20261024\g3f.msd.provenance.json
+[mashed-lock] released 'mashed_machine' pid=18176
