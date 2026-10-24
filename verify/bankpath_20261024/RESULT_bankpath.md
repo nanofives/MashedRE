@@ -18,10 +18,10 @@ dev .asi `9dae1700` (worktree build, `MASHED_NO_DEPLOY=1`, shared `original\mash
 
 | Arm | Prediction | Measured | Evidence |
 |---|---|---|---|
-| P path1 0x004625b0, tests 0..4 | 5 / 5 GREEN | **GREEN, 5 cases, 0 mismatches** | `path1.txt`, `diff_audio_char_bank_paths_4625b0.csv` |
+| P path1 0x004625b0, tests 0..4 | 5 / 5 GREEN | **GREEN, 5 cases, 0 mismatches** | `path1.txt`, `path1_cases.txt` |
 | L lint | 0 NEW | **0 NEW** (8 known, all allowlisted) | `lint.txt` |
-| E knob OFF | lowercase, forward slashes, `original/` | `original/toastaudio/pc/audio/pcdics/english/red.rws` | `RD_DEF.race.log` |
-| E knob ON | uppercase, backslashes, `original/` from the caller, file exists | `original/toastaudio\pc\audio\pcdics\english\RED.rws`, file present (1,841,152 bytes) in the run root | `RD_BP.race.log` |
+| E knob OFF | lowercase, forward slashes, `original/` | `original/toastaudio/pc/audio/pcdics/english/red.rws` | `RD_DEF.race.txt` |
+| E knob ON | uppercase, backslashes, `original/` from the caller, file exists | `original/toastaudio\pc\audio\pcdics\english\RED.rws`, file present (1,841,152 bytes) in the run root | `RD_BP.race.txt` |
 | E step hash, `B_BP_K0` vs `B_DEF_K0` | equal | **f9deb9b9 = f9deb9b9** (and the `-e` repeats) | `RUNLOG.txt` |
 | G-CTRL `H_DEF` | bacfc747 / 8dd1c004 / 6f9932b6 | **bacfc747 / 8dd1c004 / 6f9932b6** | `RUNLOG.txt` |
 | B `B_DEF_K0 / K1 / K26` | f9deb9b9 / d3601fcc / 9da9a26a | **f9deb9b9 / d3601fcc / 9da9a26a** | `RUNLOG.txt` |
