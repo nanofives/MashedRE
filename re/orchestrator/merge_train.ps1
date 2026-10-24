@@ -100,7 +100,7 @@ function Run-Arms([string]$wt, [string[]]$arms, [string]$out, [switch]$Solo) {
   $env:A4_EXE = Join-Path $wt 'mashedmod\build\mashed_re.exe'
   $env:A4_ROOT = $CFG.root; $env:A4_OUT = $out
   $runner = Join-Path $wt $CFG.runner
-  $lockArgs = @('run', '--label', "merge-train:$TS", '--wait', '7200')
+  $lockArgs = @('run', '--priority', '--label', "merge-train:$TS", '--wait', '7200')
   if ($Solo) { $lockArgs += '--solo' }
   & py.exe -3.12 $LOCKPY @lockArgs -- py.exe -3.12 $runner @arms 2>&1 | ForEach-Object { Add-Content -LiteralPath $LOG -Value $_ }
   return $LASTEXITCODE
@@ -148,7 +148,7 @@ function Gate-Full([string]$wt) {
   # 13 tracks: table identical to the reference
   Ensure-Root $CFG.root13
   $o13 = Join-Path $DATA 'tracks'
-  $tok = & py.exe -3.12 $LOCKPY solo-begin --label "merge-train13:$TS" --ttl 14400 | Where-Object { $_ -match '^TOKEN ' }
+  $tok = & py.exe -3.12 $LOCKPY solo-begin --priority --label "merge-train13:$TS" --ttl 14400 | Where-Object { $_ -match '^TOKEN ' }
   $env:MASHED_LOCK_SOLO_TOKEN = ($tok -replace '^TOKEN ', '')
   try {
     & py.exe -3.12 (Join-Path $wt $f.run13) run --exe (Join-Path $wt 'mashedmod\build\mashed_re.exe') --root $CFG.root13 --out $o13 2>&1 | ForEach-Object { Add-Content -LiteralPath $LOG -Value $_ }

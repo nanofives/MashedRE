@@ -29,6 +29,20 @@
 #   py -3.12 mashed_lock.py break          # force-remove a stale lock
 #   py -3.12 mashed_lock.py run --label X -- <command...>   # hold while running
 #
+# PRIORITY REQUESTS, added 2026-10-24 (HB-LOCKPRIO). A priority acquirer (the merge
+# train) writes a pending marker <name>_prio_<pid>.lock before it waits. While any live,
+# unexpired marker of another process exists, ordinary acquires WAIT even if the lock is
+# free, so a worker that releases between arms cannot re-take it ahead of the train. A
+# worker already holding the lock is never preempted. The marker goes away when the
+# priority acquirer takes the lock (or gives up, or dies: dead PID or expiry = stale).
+# Priority acquirers do not wait for each other's markers (they queue on the lock itself),
+# and a process admitted by a solo token bypasses markers (the window already excludes
+# others, and waiting would deadlock the train against that window).
+#   MashedLock('x', priority=1)                         import form
+#   mashed_lock.py run [--solo] --priority --label X -- <cmd>     CLI form
+#   mashed_lock.py solo-begin --priority --label X                CLI form
+# Default priority 0 = every existing call site and CLI form, unchanged.
+#
 # EXCLUSIVE (SOLO) MODE, added 2026-10-24 for the roadmap loop (wall-clock-bound
 # steps such as D2 arms, memory d2-arms-are-wall-clock-bound). A solo window is a
 # second file, <name>_solo.lock, that spans MANY game boots. While it is open,
@@ -46,6 +60,7 @@
 #   py -3.12 mashed_lock.py solo-end --token <hex>
 #       session-scoped form (no live PID to bind to, so it expires at --ttl)
 
+import glob
 import json
 import os
 import socket
@@ -59,6 +74,7 @@ DEFAULT_NAME = 'mashed_machine'
 MAX_AGE_SEC = 30 * 60   # a lock older than this whose PID looks alive is still broken
 SOLO_ENV = 'MASHED_LOCK_SOLO_TOKEN'
 SOLO_TTL_SEC = 4 * 3600  # default solo window when not bound to a live PID
+PRIO_GRACE_SEC = 300     # a priority marker outlives its requester's wait by this much
 
 
 def _lock_path(name):
@@ -103,6 +119,43 @@ def _solo_path(name):
     return os.path.join(LOCK_DIR, name + '_solo.lock')
 
 
+def _prio_path(name, pid=None):
+    return os.path.join(LOCK_DIR, f"{name}_prio_{pid or os.getpid()}.lock")
+
+
+def prio_pending(name=DEFAULT_NAME, ignore_pid=None):
+    """Live priority markers for `name`, as dicts. Stale ones (dead PID or past
+    expiry) are removed. `ignore_pid` skips the caller's own marker."""
+    out = []
+    pat = os.path.join(glob.escape(LOCK_DIR), glob.escape(name) + '_prio_*.lock')
+    for path in glob.glob(pat):
+        o = _read_owner(path)
+        if (not o) or (not _pid_alive(o.get('pid'))) or (o.get('expires') or 0) < time.time():
+            try:
+                os.remove(path)
+            except OSError:
+                pass
+            continue
+        if ignore_pid is not None and o.get('pid') == ignore_pid:
+            continue
+        out.append(o)
+    return out
+
+
+def prio_mark(name, label, ttl):
+    with open(_prio_path(name), 'w', encoding='utf-8') as f:
+        f.write(json.dumps({'pid': os.getpid(), 'at': _now_iso(), 'epoch': int(time.time()),
+                            'expires': int(time.time() + ttl), 'label': label,
+                            'host': socket.gethostname()}))
+
+
+def prio_clear(name):
+    try:
+        os.remove(_prio_path(name))
+    except OSError:
+        pass
+
+
 def solo_owner(name=DEFAULT_NAME):
     """The open solo window for `name` as a dict, or None. Breaks a stale one
     (bound PID dead, or past its expiry)."""
@@ -126,9 +179,20 @@ def _solo_admits_me(owner):
 
 
 def solo_begin(label='', name=DEFAULT_NAME, ttl=SOLO_TTL_SEC, pid=None, wait=1800,
-               poll=3.0, quiet=False):
+               poll=3.0, quiet=False, priority=0):
     """Open a solo window and return its token. Waits while another window is
-    open, then drains the current <name> holder so no foreign boot overlaps."""
+    open, then drains the current <name> holder so no foreign boot overlaps.
+    priority=1 holds a pending-priority marker for the duration of that wait."""
+    if priority:
+        prio_mark(name, label, wait + PRIO_GRACE_SEC + 300)
+    try:
+        return _solo_begin(label, name, ttl, pid, wait, poll, quiet)
+    finally:
+        if priority:
+            prio_clear(name)
+
+
+def _solo_begin(label, name, ttl, pid, wait, poll, quiet):
     def log(m):
         if not quiet:
             print(f"[mashed-lock] {m}", flush=True)
@@ -189,7 +253,9 @@ def solo_end(token, name=DEFAULT_NAME, quiet=False):
 
 
 class MashedLock:
-    def __init__(self, label='', name=DEFAULT_NAME, wait=1800, poll=3.0, quiet=False):
+    def __init__(self, label='', name=DEFAULT_NAME, wait=1800, poll=3.0, quiet=False,
+                 priority=0):
+        self.priority = priority
         self.label = label
         self.name = name
         self.wait = wait
@@ -203,9 +269,19 @@ class MashedLock:
             print(f"[mashed-lock] {msg}", flush=True)
 
     def acquire(self):
+        if not self.priority:
+            return self._acquire()
+        prio_mark(self.name, self.label, self.wait + PRIO_GRACE_SEC)
+        try:
+            return self._acquire()
+        finally:
+            prio_clear(self.name)
+
+    def _acquire(self):
         start = time.time()
         waited_note = False
         solo_note = False
+        prio_note = False
         while True:
             so = solo_owner(self.name)
             if so is not None and not _solo_admits_me(so):
@@ -216,6 +292,16 @@ class MashedLock:
                 time.sleep(self.poll)
                 start = time.time()   # bounded by the solo expiry, not by self.wait
                 continue
+            if not self.priority and not _solo_admits_me(so):
+                pend = prio_pending(self.name, ignore_pid=os.getpid())
+                if pend:
+                    if not prio_note:
+                        self._log(f"WAITING — priority request pending for '{self.name}' "
+                                  f"({pend[0].get('label')}) since {pend[0].get('at')}")
+                        prio_note = True
+                    time.sleep(self.poll)
+                    start = time.time()   # bounded by the marker expiry, not by self.wait
+                    continue
             try:
                 fd = os.open(self.path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
                 os.write(fd, json.dumps({
@@ -287,6 +373,9 @@ def _cli():
                   f"since={o.get('at')}  ({path})")
         else:
             print(f"free '{name}'  ({path})")
+        for pm in prio_pending(name):
+            print(f"PRIORITY-PENDING '{name}' pid={pm.get('pid')} label={pm.get('label')} "
+                  f"since={pm.get('at')}")
         so = solo_owner(name)
         if so:
             left = int((so.get('expires') or 0) - time.time())
@@ -295,7 +384,8 @@ def _cli():
         return 0
     if cmd == 'solo-begin':
         tok = solo_begin(label=opt('--label', 'cli'), name=name,
-                         ttl=int(opt('--ttl', SOLO_TTL_SEC)), wait=int(opt('--wait', 1800)))
+                         ttl=int(opt('--ttl', SOLO_TTL_SEC)), wait=int(opt('--wait', 1800)),
+                         priority=1 if '--priority' in args else 0)
         print(f"TOKEN {tok}")
         return 0
     if cmd == 'solo-end':
@@ -316,16 +406,17 @@ def _cli():
             sys.exit("run needs: --label X [--wait N] -- <command...>")
         sub = args[args.index('--') + 1:]
         import subprocess
+        prio = 1 if '--priority' in args[:args.index('--')] else 0
         if '--solo' in args[:args.index('--')]:
             tok = solo_begin(label=label, name=name, pid=os.getpid(),
-                             ttl=int(opt('--ttl', 12 * 3600)), wait=wait)
+                             ttl=int(opt('--ttl', 12 * 3600)), wait=wait, priority=prio)
             env = dict(os.environ)
             env[SOLO_ENV] = tok
             try:
                 return subprocess.call(sub, env=env)
             finally:
                 solo_end(tok, name=name)
-        with MashedLock(label=label, name=name, wait=wait):
+        with MashedLock(label=label, name=name, wait=wait, priority=prio):
             return subprocess.call(sub)
     sys.exit(f"unknown command '{cmd}' (status|break|run|solo-begin|solo-end)")
 

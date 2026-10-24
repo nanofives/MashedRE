@@ -78,6 +78,23 @@ function Exit-SoloLock($handle) {
   Remove-Item -Path "env:$($script:SoloEnv)" -ErrorAction SilentlyContinue
 }
 
+# Priority requests (HB-LOCKPRIO), same marker files as mashed_lock.py:
+# <Name>_prio_<pid>.lock. Acquire-Lock -Priority writes one while it waits; ordinary
+# acquires wait while a live, unexpired marker of another process exists.
+function Get-PrioPending([string]$Name = 'mashed_machine', [int]$IgnorePid = 0) {
+  $now = [int][double]::Parse((Get-Date -UFormat %s))
+  $out = @()
+  foreach ($f in @(Get-ChildItem -Path $env:TEMP -Filter "${Name}_prio_*.lock" -ErrorAction SilentlyContinue)) {
+    $o = $null; try { $o = Get-Content $f.FullName -Raw | ConvertFrom-Json } catch {}
+    if (-not $o -or -not (Test-PidAlive ([int]$o.pid)) -or ([int]$o.expires -lt $now)) {
+      Remove-Item $f.FullName -Force -ErrorAction SilentlyContinue; continue
+    }
+    if ($IgnorePid -and [int]$o.pid -eq $IgnorePid) { continue }
+    $out += $o
+  }
+  return $out
+}
+
 function Test-PidAlive([int]$ProcId) {
   if ($ProcId -le 0) { return $false }
   return $null -ne (Get-Process -Id $ProcId -ErrorAction SilentlyContinue)
@@ -90,9 +107,26 @@ function Acquire-Lock {
     [int]$TimeoutSec = 1800,
     [int]$PollSec = 3,
     [switch]$Force,
-    [switch]$Quiet
+    [switch]$Quiet,
+    [switch]$Priority
   )
+  $prioPath = Join-Path $env:TEMP "${Name}_prio_$PID.lock"
+  if ($Priority) {
+    $n = [int][double]::Parse((Get-Date -UFormat %s))
+    @{ pid = $PID; at = (Get-Date).ToString('o'); epoch = $n; expires = $n + $TimeoutSec + 300;
+       label = $Label; host = $env:COMPUTERNAME } | ConvertTo-Json -Compress | Set-Content -LiteralPath $prioPath -Encoding utf8
+  }
+  try {
+    return (Acquire-LockBody -Name $Name -Label $Label -TimeoutSec $TimeoutSec -PollSec $PollSec -Force:$Force -Quiet:$Quiet -Priority:$Priority)
+  } finally {
+    if ($Priority) { Remove-Item $prioPath -Force -ErrorAction SilentlyContinue }
+  }
+}
+
+function Acquire-LockBody {
+  param([string]$Name, [string]$Label, [int]$TimeoutSec, [int]$PollSec, [switch]$Force, [switch]$Quiet, [switch]$Priority)
   $path = Get-LockPath $Name
+  $notedPrio = $false
   $start = Get-Date
   $notedWait = $false
   $notedSolo = $false
@@ -104,6 +138,16 @@ function Acquire-Lock {
         $notedSolo = $true
       }
       Start-Sleep -Seconds $PollSec; $start = Get-Date; continue   # bounded by the solo expiry
+    }
+    if (-not $Priority -and -not $so) {
+      $pend = @(Get-PrioPending $Name $PID)
+      if ($pend.Count -gt 0) {
+        if (-not $notedPrio -and -not $Quiet) {
+          Write-Host "[machine-lock] WAITING — priority request pending for '$Name' ($($pend[0].label))" -ForegroundColor Yellow
+          $notedPrio = $true
+        }
+        Start-Sleep -Seconds $PollSec; $start = Get-Date; continue   # bounded by the marker expiry
+      }
     }
     try {
       $fs = [System.IO.File]::Open($path, [System.IO.FileMode]::CreateNew, [System.IO.FileAccess]::Write)
