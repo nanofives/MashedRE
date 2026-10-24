@@ -4,10 +4,8 @@ Goal: one conductor session walks every open roadmap step in a loop. Children so
 implement the steps in parallel, and the conductor's context stays thin because it only
 ever reads the ledger and short fixed-format reports.
 
-Status: **plan only.** Nothing below exists yet except the seed table
-(`roadmap_seed_20261024.md`) and the existing hook-level orchestrator (`orch.ps1`,
-`read_fleet.ps1`, `exec_pipeline.ps1`, `mashed_lock.py`), which this plan reuses.
-Building it needs the decisions in section 10.
+Status: **Phase 0 built 2026-10-24** on `orch/integration` (section 12). The loop is ready
+for its first L0 run. Four Phase 0 decision rows (P0-1..P0-4) are open in `DECISIONS.md`.
 
 ## 1. Feasibility, verified 2026-10-24
 
@@ -234,3 +232,36 @@ All sections dry or parked on decisions; run budget spent; two event rounds with
 transition; conductor context past ~60%. On any of these: close every child
 (`list_children`), `roadmap.ps1 status`, write the kickoff. Every transition is already in the
 ledger, so a stop never loses work.
+
+## 12. Phase 0 result (2026-10-24)
+
+What exists, all on `orch/integration` (worktree `.worktrees/orch-integration`):
+
+| item | file | proof |
+|---|---|---|
+| ledger | `roadmap.ps1`, live `log/orch/roadmap.json` (49 rows) | seed verified by the account2 worker (`roadmap_verify_20261024.md`); two concurrent `claim`s: one CLAIMED, one REFUSED |
+| worker rules | `WORKER_RULES.md` (3.9 KB, over the 2 KB target) | read by the dry-run lead and worker, both followed it |
+| merge train | `merge_train.ps1` + `merge_train.json`, survey `MERGE_TRAIN.md` | scratch branch: text-only GREEN, conflict batch RED then one-at-a-time, culprit bounced to `red-merge`; dry run with `-Full`: build, lint NEW=0, G-CTRL + B equal to the references, ff |
+| solo lock | `mashed_lock.py` (`run --solo`, `solo-begin/end`), `MachineLock.ps1` (`Enter/Exit-SoloLock`) | foreign acquire blocks while a window is open, token holder and its children pass, drain waits for the current holder, Python <-> PowerShell both ways |
+| L0 playbook | `.claude/skills/roadmap-loop/SKILL.md` | used for the dry run |
+| ledger poller | `waitrow.py <id> <stages> <secs>` | how L0 blocks inside one turn without reading transcripts |
+
+Live state is outside git in `log/orch/` (gitignored): `roadmap.json`, `merge_queue.json`,
+`DECISIONS.md` (the copy children append to), `events.jsonl`. `roadmap.ps1 snapshot` copies
+them into `re/orchestrator/ledger/` + `DECISIONS.md` here and commits.
+
+Findings that changed the design:
+- PowerShell resolves `py` to a `~/bin/py` sh shim and hangs. Every script calls `py.exe`.
+- In PowerShell a function named `Git` shadows `git` (case-insensitive), so it recursed until
+  the stack overflowed. The merge train calls `git.exe`.
+- Gate runners (`run_arms.py`, `run13.py`) take no game lock. The merge train and the workers
+  wrap them in `mashed_lock.py run [--solo]`.
+- `wait_for_children` and an unlimited `read_session` echo transcripts. At L0 one wait on the
+  lead returned about 6 KB against a 0.33 KB REPORT, so the skill forbids both at L0.
+- Duplicate finish notices were confirmed: the lead got its worker's REPORT twice and
+  handled it as a hint.
+- A temp-worktree checkout costs about 2.5 min per merge attempt (26,821 files).
+
+Dry run (D5-PDOD, text-only): L0 (this session) -> claude2 lead (sonnet medium) -> claude3
+worker (sonnet-5-5 medium) -> claude3 merge train -> `orch/integration` @ `2642b7ecb`.
+claim 10 s, working 130 s, review 150 s, enqueued 180 s, merged 420 s after the train started.

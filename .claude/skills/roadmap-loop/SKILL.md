@@ -83,6 +83,13 @@ Per notice:
    - a new `decision` row -> batch it; one `PushNotification` per batch, never per row.
 4. `ScheduleWakeup` 1800 s as the heartbeat only (wedged children). Never poll faster.
 
+**Never call `wait_for_children` or `read_session` without `limit` at L0.** Both echo the child's
+transcript (and your own task text) into your context. In the Phase 0 dry run one
+`wait_for_children` on the lead returned ~6 KB, 20x its REPORT block. End your turn and let the
+automatic notice wake you. If you must block inside a turn, poll the ledger row instead
+(`roadmap.ps1 get <id>` in a loop, or a small poller that prints stage changes only), then
+`read_session` with `limit: 1` for the REPORT.
+
 ## Stop conditions (section 11)
 Stop when any holds: every section dry or parked on decisions; 8 workers spent; two event
 rounds with no ledger transition (`events.jsonl` unchanged); your context past ~60%.

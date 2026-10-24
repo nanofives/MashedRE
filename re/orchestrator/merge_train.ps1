@@ -167,7 +167,7 @@ function Try-Batch($items) {
   try {
     foreach ($it in $items) {
       $m = Merge-One $wt $it
-      if (-not $m.ok) { $r.ok = $false; $r.why = "$($it.id): $($m.why)"; $r.bad = $it; return $r }
+      if (-not $m.ok) { $r.ok = $false; $r.why = $m.why; $r.bad = $it; return $r }
       Say "  merged $($it.id) ($($it.branch))"
     }
     $changed = @((Git -C $wt diff --name-only "$base..HEAD") | Where-Object { $_ })
