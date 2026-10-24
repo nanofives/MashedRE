@@ -68,10 +68,16 @@ void __cdecl Audio3DwordZero(uint32_t* param_1) {
 // ─────────────────────────────────────────────────────────────────────────────
 extern "C" __declspec(dllexport)
 int __stdcall AudioCounterPairGet(uint32_t* param_1, uint64_t* param_2, uint64_t* param_3) {
-    const uint32_t c0 = param_1[0x15c / 4];   // *(param_1 + 0x15c)
-    const uint32_t c1 = param_1[0x160 / 4];   // *(param_1 + 0x160)
-    *param_2 = static_cast<uint64_t>(c0);             // lo=c0, hi=0
-    *param_3 = static_cast<uint64_t>(c0 - c1);        // lo=c0-c1 (u32 wrap), hi=0
+    // audiolink 2026-10-23: the bytes store out1 (lo, then hi) and only then read +0x15c / +0x160 again
+    // (0x005bfcd6 / 0x005bfcdc). Kept in that order so an out1 that aliases the counters matches too.
+    uint32_t* const o1 = reinterpret_cast<uint32_t*>(param_2);
+    uint32_t* const o2 = reinterpret_cast<uint32_t*>(param_3);
+    volatile uint32_t* const p = param_1;
+    o1[0] = p[0x15c / 4];                     // 0x005bfcc9 / 0x005bfccf
+    o1[1] = 0;                                // 0x005bfcd3
+    const uint32_t d = p[0x15c / 4] - p[0x160 / 4];   // 0x005bfcd6..0x005bfce6
+    o2[0] = d;                                // 0x005bfce9
+    o2[1] = 0;                                // 0x005bfceb
     return 0;
 }
 

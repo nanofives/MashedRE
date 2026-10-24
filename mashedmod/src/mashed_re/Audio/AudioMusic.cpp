@@ -38,11 +38,21 @@
 //           as a volatile touch which preserves value identity.
 //   U-2213: node+0x14 bit-6 semantics are unresolved; bit is set per listing.
 //   U-2214: secondary ptr at param_1+0x11c semantics unresolved; propagation modelled.
+// audiolink 2026-10-23: the two FLD m32 / FSTP m32 pairs (0x005baf04 / 0x005baf0e, 0x005baf16 / 0x005baf1f) are
+// copies through the x87 register, and FLD m32 quiets a signaling NaN (sets mantissa bit 22) with the invalid
+// exception masked. Every other float32 value (denormals included) comes back bit-identical, whatever the
+// precision control. The port copies the bits and applies that one change.
+static std::uint32_t X87CopyF32(std::uint32_t b) {
+    if ((b & 0x7f800000u) == 0x7f800000u && (b & 0x007fffffu) != 0u) b |= 0x00400000u;
+    return b;
+}
+
 extern "C" __declspec(dllexport) void __cdecl MusicGroupVolumeSet(
         int* param_1, float param_2) {
-    // Write volume to struct+0x38.
-    // param_1 is treated as int* for offset arithmetic; offset 0x38 / 4 = 14.
-    *reinterpret_cast<float*>(reinterpret_cast<char*>(param_1) + 0x38) = param_2;
+    // Write volume to struct+0x38 (FLD [esp+8] / FSTP [edx+0x38]).
+    std::uint32_t vol_bits;
+    std::memcpy(&vol_bits, &param_2, sizeof(vol_bits));
+    *reinterpret_cast<std::uint32_t*>(reinterpret_cast<char*>(param_1) + 0x38) = X87CopyF32(vol_bits);
 
     // Walk circular linked list at param_1+0xc.
     // Sentinel: pointer to param_1+0xc itself.
@@ -51,16 +61,17 @@ extern "C" __declspec(dllexport) void __cdecl MusicGroupVolumeSet(
     auto* node = reinterpret_cast<int**>(*sentinel);
 
     while (node != sentinel) {
-        // Volatile FLD+FSTP of node+0x1c (compiler artifact; value unchanged — U-2212).
-        volatile float* fp1c = reinterpret_cast<volatile float*>(
+        // FLD+FSTP of node+0x1c: the value comes back unchanged except a signaling NaN is quieted (U-2212).
+        volatile std::uint32_t* p1c = reinterpret_cast<volatile std::uint32_t*>(
                 reinterpret_cast<char*>(node) + 0x1c);
-        volatile float tmp = *fp1c;
-        *fp1c = tmp;
+        const std::uint32_t b1c = *p1c;
 
         // Set bit 6 of node+0x14 (dirty flag — U-2213).
         auto* flags_ptr = reinterpret_cast<unsigned int*>(
                 reinterpret_cast<char*>(node) + 0x14);
-        *flags_ptr |= 0x40u;
+        const std::uint32_t fl = *flags_ptr | 0x40u;   // 0x005baf19 / 0x005baf1c
+        *p1c = X87CopyF32(b1c);                         // 0x005baf1f
+        *flags_ptr = fl;                                // 0x005baf22
 
         // Advance: node = *node (first dword is next pointer).
         node = reinterpret_cast<int**>(*reinterpret_cast<void**>(node));

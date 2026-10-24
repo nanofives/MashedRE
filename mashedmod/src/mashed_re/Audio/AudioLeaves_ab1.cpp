@@ -87,8 +87,10 @@ RH_ScopedInstall(AudioListNodeCount, 0x005aded0);
 //   }
 // Arena-block "is fully free": the first free node's next pointer
 // (*(*(block+8))) equals the block-end sentinel (*(block+0xc)).
-extern "C" __declspec(dllexport) bool __cdecl AudioArenaBlockIsFree(int param_1) {
-    return **(int**)(param_1 + 8) == *(int*)(param_1 + 0xc);
+// audiolink 2026-10-23: the original returns a full dword 0 / 1 (xor ecx,ecx ... sete cl / mov eax,ecx at
+// 0x005ae5a2..0x005ae5a5), so the port returns int, not bool (MSVC defines only AL for a bool return).
+extern "C" __declspec(dllexport) int __cdecl AudioArenaBlockIsFree(int param_1) {
+    return (**(int**)(param_1 + 8) == *(int*)(param_1 + 0xc)) ? 1 : 0;
 }
 
 RH_ScopedInstall(AudioArenaBlockIsFree, 0x005ae590);

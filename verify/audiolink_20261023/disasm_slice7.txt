@@ -1,0 +1,77 @@
+== 0x005ad2e0 .. 0x005ad31a  (58 bytes)
+  005ad2e0: 8b442404             mov eax, dword ptr [esp + 4]
+  005ad2e4: 8b480c               mov ecx, dword ptr [eax + 0xc]
+  005ad2e7: 85c9                 test ecx, ecx
+  005ad2e9: 7607                 jbe 0x5ad2f2
+  005ad2eb: 49                   dec ecx
+  005ad2ec: 89480c               mov dword ptr [eax + 0xc], ecx
+  005ad2ef: 33c0                 xor eax, eax
+  005ad2f1: c3                   ret 
+  005ad2f2: 8b4818               mov ecx, dword ptr [eax + 0x18]
+  005ad2f5: 8b5014               mov edx, dword ptr [eax + 0x14]
+  005ad2f8: 8911                 mov dword ptr [ecx], edx
+  005ad2fa: 8b4814               mov ecx, dword ptr [eax + 0x14]
+  005ad2fd: 8b5018               mov edx, dword ptr [eax + 0x18]
+  005ad300: 895104               mov dword ptr [ecx + 4], edx
+  005ad303: 8a4810               mov cl, byte ptr [eax + 0x10]
+  005ad306: f6c101               test cl, 1
+  005ad309: 7509                 jne 0x5ad314
+  005ad30b: 50                   push eax
+  005ad30c: e8bf4feaff           call 0x4522d0
+  005ad311: 83c404               add esp, 4
+  005ad314: b801000000           mov eax, 1
+  005ad319: c3                   ret 
+
+== 0x005b0f40 .. 0x005b0f4f  (15 bytes)
+  005b0f40: 8b442404             mov eax, dword ptr [esp + 4]
+  005b0f44: 8b4828               mov ecx, dword ptr [eax + 0x28]
+  005b0f47: 51                   push ecx
+  005b0f48: e893c3ffff           call 0x5ad2e0
+  005b0f4d: 59                   pop ecx
+  005b0f4e: c3                   ret 
+
+== 0x005aed20 .. 0x005aed97  (119 bytes)
+  005aed20: 8b442408             mov eax, dword ptr [esp + 8]
+  005aed24: 8b542404             mov edx, dword ptr [esp + 4]
+  005aed28: d94004               fld dword ptr [eax + 4]
+  005aed2b: d900                 fld dword ptr [eax]
+  005aed2d: d94008               fld dword ptr [eax + 8]
+  005aed30: d9c1                 fld st(1)
+  005aed32: d8ca                 fmul st(2)
+  005aed34: d9c3                 fld st(3)
+  005aed36: d8cc                 fmul st(4)
+  005aed38: dec1                 faddp st(1)
+  005aed3a: d9c1                 fld st(1)
+  005aed3c: d8ca                 fmul st(2)
+  005aed3e: dec1                 faddp st(1)
+  005aed40: dddb                 fstp st(3)
+  005aed42: ddd8                 fstp st(0)
+  005aed44: ddd8                 fstp st(0)
+  005aed46: d9c0                 fld st(0)
+  005aed48: d91a                 fstp dword ptr [edx]
+  005aed4a: d81d7c755d00         fcomp dword ptr [0x5d757c]
+  005aed50: dfe0                 fnstsw ax
+  005aed52: f6c444               test ah, 0x44
+  005aed55: 7b3f                 jnp 0x5aed96
+  005aed57: 8b0a                 mov ecx, dword ptr [edx]
+  005aed59: 8bc1                 mov eax, ecx
+  005aed5b: 81e1ffff7f00         and ecx, 0x7fffff
+  005aed61: c1e817               shr eax, 0x17
+  005aed64: 83e87f               sub eax, 0x7f
+  005aed67: 890a                 mov dword ptr [edx], ecx
+  005aed69: a801                 test al, 1
+  005aed6b: 7408                 je 0x5aed75
+  005aed6d: 81c900008000         or ecx, 0x800000
+  005aed73: 890a                 mov dword ptr [edx], ecx
+  005aed75: 33c9                 xor ecx, ecx
+  005aed77: 668b4a02             mov cx, word ptr [edx + 2]
+  005aed7b: 66d1f8               sar ax, 1
+  005aed7e: 0fbf0c4d483b6300     movsx ecx, word ptr [ecx*2 + 0x633b48]
+  005aed86: 0fbfc0               movsx eax, ax
+  005aed89: 83c07f               add eax, 0x7f
+  005aed8c: c1e110               shl ecx, 0x10
+  005aed8f: c1e017               shl eax, 0x17
+  005aed92: 0bc8                 or ecx, eax
+  005aed94: 890a                 mov dword ptr [edx], ecx
+  005aed96: c3                   ret 
+

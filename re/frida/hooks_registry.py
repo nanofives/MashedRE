@@ -5998,7 +5998,10 @@ HOOKS = {
         'signature':      {'ret': 'void', 'args': ['pointer', 'float']},
         'arg_type':       'struct_list_float_set',
         'lut_root_delta': 0,
-        'path1_tests':    [0, 1, 2, 3],
+        # audiolink 2026-10-23: t picks node+0x1c from the handler's bit table (t % 7): 0, SNaN 7f800001, QNaN,
+        # denormal 1, -SNaN ff800001, 1.0, SNaN 7fbfffff. The x87 copy quiets the two SNaNs. Run through
+        # early_window_leaf_diff.py (run_diff.py has no handler for this arg_type).
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6],
         'path2_tests':    [0, 1, 2, 3],
     },
     'timer_slot_clear': {
@@ -14571,6 +14574,17 @@ HOOKS = {
             { 'a': {'f00': 44100, 'f08': 100,   'f0c': 16 | (2 << 8)}, 'b': {'f00': 44100, 'f0c': 32 | (2 << 8)} },
             # high-rate 96000->48000, 24->16 bit, stereo, size 48000
             { 'a': {'f00': 96000, 'f08': 48000, 'f0c': 24 | (2 << 8)}, 'b': {'f00': 48000, 'f0c': 16 | (2 << 8)} },
+            # audiolink 2026-10-23: non-integer products (the fistp at 0x005b40f3 TRUNCATES, or ah,0xc at 0x005b40e7).
+            # 3->2 rate, 16-bit mono, size 1636: 1090.67 -> original 1090 (a round-to-nearest port gives 1092)
+            { 'a': {'f00': 3,     'f08': 1636,  'f0c': 16 | (1 << 8)}, 'b': {'f00': 2,     'f0c': 16 | (1 << 8)} },
+            # 2->1 rate, 8-bit mono, size 3: 1.5 -> 1 (round-to-nearest gives 2)
+            { 'a': {'f00': 2,     'f08': 3,     'f0c':  8 | (1 << 8)}, 'b': {'f00': 1,     'f0c':  8 | (1 << 8)} },
+            # 44100->22050 stereo->mono 16-bit, odd size 1001: 250.25 -> 250
+            { 'a': {'f00': 44100, 'f08': 1001,  'f0c': 16 | (2 << 8)}, 'b': {'f00': 22050, 'f0c': 16 | (1 << 8)} },
+            # 22050->44100 8->16 bit, size 777, x 3 channels -> 2 (2/3): 777*2*2*2/3 = 4144 exact-ish; product order matters
+            { 'a': {'f00': 22050, 'f08': 777,   'f0c':  8 | (3 << 8)}, 'b': {'f00': 44100, 'f0c': 16 | (2 << 8)} },
+            # 48000->44100 16-bit stereo, size 12345: 11341.97 -> 11341 -> aligned 11342 (uVar1 2)
+            { 'a': {'f00': 48000, 'f08': 12345, 'f0c': 16 | (2 << 8)}, 'b': {'f00': 44100, 'f0c': 16 | (2 << 8)} },
         ],
         'path2_tests': [
             { 'a': {'f00': 44100, 'f08': 1000, 'f0c': 16 | (2 << 8)}, 'b': {'f00': 44100, 'f0c': 16 | (2 << 8)} },
@@ -18232,6 +18246,31 @@ HOOKS = {
     #   C4 per re/CONFIDENCE.md. Left registered so the port is not lost; it must
     #   NOT be added to a synthetic batch. See
     #   re/analysis/plans/state_lane_screens_2026-07-29.md.
+    # 0x005ad2e0  AudioQueueConsume (C2), ported audiolink 2026-10-23 so AudioQueuePop 0x005b0f40 has no address in the
+    # exe. Exported, not installed. tests = [count, flagByte, aliasMode] (handler forces flag bit 0 = never free).
+    'audio_queue_consume': {
+        'rva':            0x005ad2e0,
+        'export':         'AudioQueueConsume',
+        'signature':      {'ret': 'uint32', 'args': ['pointer']},
+        'arg_type':       'queue_node_consume',
+        'lut_root_delta': 0,
+        'path1_tests':    [[1, 1, 0], [2, 1, 0], [0xffffffff, 1, 0], [0x80000000, 1, 0], [0, 1, 0], [0, 0x41, 0],
+                           [0, 0xff, 1], [0, 1, 2], [3, 0x81, 2], [0, 0x01, 1]],
+        'path2_tests':    [[1, 1, 0]],
+    },
+    # 0x005b0f40 AudioQueuePop on a fixture (audiolink 2026-10-23): the live-capture entry below gets no captured args
+    # (all 0, both sides fault at 0x28). obj+0x28 = a seeded queue node; the same 10 vectors as audio_queue_consume.
+    'audio_queue_pop_fixture': {
+        'rva':            0x005b0f40,
+        'export':         'AudioQueuePop',
+        'signature':      {'ret': 'uint32', 'args': ['pointer']},
+        'arg_type':       'queue_node_consume',
+        'wrap_off':       0x28,
+        'lut_root_delta': 0,
+        'path1_tests':    [[1, 1, 0], [2, 1, 0], [0xffffffff, 1, 0], [0x80000000, 1, 0], [0, 1, 0], [0, 0x41, 0],
+                           [0, 0xff, 1], [0, 1, 2], [3, 0x81, 2], [0, 0x01, 1]],
+        'path2_tests':    [[1, 1, 0]],
+    },
     'audio_queue_pop': {
         'rva': 0x005b0f40, 'export': 'AudioQueuePop',
         'signature': {'ret': 'uint32', 'args': ['int32']},

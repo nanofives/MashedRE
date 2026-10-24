@@ -46,30 +46,33 @@
 #include "../Core/HookSystem.h"
 
 // Each table entry: [0] = target, [4] = u16 datum, [6] = padding.
+// audiolink 2026-10-23: nothing writes EAX / EDX between call [ecx] (0x005b10c0 / 0x005b1100) and ret, so the
+// target's EDX:EAX is the original's return value. The port forwards it as a u64 (was void, which left EAX to the
+// compiler).
 struct AudioDispatchEntry {
-    void(__cdecl* fn)(unsigned int a1, unsigned int aux, unsigned int a4);
+    unsigned long long(__cdecl* fn)(unsigned int a1, unsigned int aux, unsigned int a4);
     unsigned short aux;
     unsigned short pad;
 };
 
 // 0x005b10a0
-extern "C" __declspec(dllexport) void __cdecl
+extern "C" __declspec(dllexport) unsigned long long __cdecl
 AudioTableDispatchAt4(unsigned int a1, unsigned char* holder,
                       unsigned int idx, unsigned int a4)
 {
     AudioDispatchEntry* table = *(AudioDispatchEntry**)(holder + 0x4);
     AudioDispatchEntry* entry = table + idx;          // stride 8 = sizeof(entry)
-    entry->fn(a1, (unsigned int)entry->aux, a4);      // aux zero-extended
+    return entry->fn(a1, (unsigned int)entry->aux, a4);      // aux zero-extended
 }
 
 // 0x005b10e0
-extern "C" __declspec(dllexport) void __cdecl
+extern "C" __declspec(dllexport) unsigned long long __cdecl
 AudioTableDispatchAt8(unsigned int a1, unsigned char* holder,
                       unsigned int idx, unsigned int a4)
 {
     AudioDispatchEntry* table = *(AudioDispatchEntry**)(holder + 0x8);
     AudioDispatchEntry* entry = table + idx;
-    entry->fn(a1, (unsigned int)entry->aux, a4);
+    return entry->fn(a1, (unsigned int)entry->aux, a4);
 }
 
 RH_ScopedInstall(AudioTableDispatchAt4, 0x005b10a0);

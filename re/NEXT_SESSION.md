@@ -1,5 +1,30 @@
 # Next session kickoff
 
+> ## START HERE 2026-10-24 audiolink slices 1-7 + AudioRws 1 (MERGED into `race/first-frame-parity`, Mariano's call): **17 Audio TUs newly in both targets (59 functions), plus the two precedent files now address-free in the exe (3 functions: 0x005b0f40, 0x005ad2e0, 0x005aed20); 3 latent defects + 1 fault-order gap fixed; the audio pool constructor chain found.** Next = AudioRws pool / list family (private zero storage = the pre-open state), or the job-twin decisions.
+>
+> - Slice 7: AudioQueuePop calls a port of 0x005ad2e0 (AudioQueueConsume, path1 10/10, new handler queue_node_consume); AudioVecLength's exe arm reads private copies of 0x005d757c / 0x00633b48 (equal to the runtime bytes). `RESULT_slice7.md`.
+> - Pool constructor: 0x004627f0 -> 0x005a5f00 -> 16-pair init table 0x00632ba8 -> 0x005ae650 per pool; all pool globals BSS until then. `POOL_CONSTRUCTOR.md`.
+> - AudioRws slice 1: seven leaves in Audio/AudioRwsLeaves.cpp (both rsp), four EAX returns; 0x005acaa0 decoded from the bytes (U-3032 / U-1731) in `RESULT_rws1.md`.
+>
+> - Slice 6: byte-read step (`read_bytes.py`; IIDs = IID_IDirectSound3DListener / IID_IKsPropertySet, 0x005e7100 = QuerySupport GUID, 0x00633674 keys dumped, the pool globals are BSS) and AudioDSound (7) in the exe with image-byte GUIDs; 0x005bbfc0 two Release defects fixed (control RED 7/10). `RESULT_slice6.md`.
+>
+> - Slice 5: the four field getters moved to Audio/AudioFieldGetters.cpp (both rsp); TimerGetters_ah5.cpp stays asi-only. path1 4/4, gates unchanged on exe 439495bc. `RESULT_slice5.md` (lists what is left).
+>
+> - Slice 4: AudioFmtKeyCompare 0x005adf30 split into Audio/AudioFmtKey.cpp (both rsp), RwsFmt in the exe. First run RED (desc_equal idx 2: `repe cmpsb` faults on param_2 first, the port on param_1); fixed, path1 3/3, gates unchanged on exe 4004ebb1. `RESULT_slice4.md`.
+>
+> - Slice 3: RwsStream on the shared RwStreamCore bodies, private tree root in the exe; 0x005ab380 takes 2 args (arity settled); 0x005abf80 is a `jmp eax` tail call, the old `void fn()` port matched only via MSVC codegen. path1 4/4, gates unchanged on exe e41769c4. `RESULT_slice3.md`.
+>
+> - Slice 2: AudioMemory, raw alloc / free = CRT malloc / free in the exe (RwStreamCore precedent), the original trampolines in the .asi; bytes match, path1 5/5, gates unchanged on exe b2f7fba6. `RESULT_slice2.md`.
+>
+> - Survey: `verify/audiolink_20261023/SURVEY.md` (link order, (a)/(b)/(c)). Result: `RESULT_slice1.md`.
+> - Fixed from the bytes: 0x005b4060 truncates (Ghidra ROUND() wrong, path1 vectors never had a fraction), 0x005baf00
+>   quiets SNaN; 4 width / order fixes. Controls RED on the old bodies, path1 29/29, gates unchanged on exe 71587212.
+> - `music_group_volume_set` runs through `early_window_leaf_diff.py` (no diff_template.js handler for its arg_type).
+> - Decisions for Mariano: merge `work/audiolink`; the two job twins 0x004625b0 (CharacterBankPath) and 0x005aeb90
+>   (VolToDs); the two precedent files AudioQueuePop / AudioVecLength still reach MASHED addresses in the exe.
+> - Next: AudioRws.cpp's 19 remaining (pool / list family on private zero storage, AudioFmtGlobalScan on the dumped keys, AudioContextLookup needs 0x005ac930); the job twins 0x004625b0 / 0x005aeb90 wait for Mariano.
+> - **Recipe gotchas this lane:** check registry entries for duplicate keys and degenerate vectors before trusting a path1 GREEN; diff the compiled export (`disasm_export.py`) when a port's C++ does not say what the bytes do; a split that swaps the callee from the original to the shared body can expose fault-order differences (slice 4); `music_group_volume_set` runs through `early_window_leaf_diff.py`.
+
 > ## START HERE 2026-10-23 next lane = **audiolink** (Mariano's pick after savelink2). Kickoff below; the savelink2 block follows.
 >
 > ```

@@ -5,6 +5,29 @@
 // Source RVAs and asm annotations are cited per function below.
 #include "../Core/HookSystem.h"
 #include <cstdint>
+#include <cstdlib>
+
+// Raw allocator: the RwGlobals slots the original reaches through two trampolines,
+//   0x005aea00: mov edx,[0x007d3ff8] / jmp [edx+0x108]   (alloc, cdecl (size, tag))
+//   0x004522d0: mov ecx,[0x007d3ff8] / jmp [ecx+0x10c]   (free,  cdecl (ptr))
+// (verify/audiolink_20261023/disasm_slice2.txt). 0x005aea60 with a NULL argument writes 0x004ccef0 / 0x004a460d
+// into those slots (0x005aea90 / 0x005aeaa0). Exe arm (audiolink slice 2): the CRT heap, tag dropped, the same declared deviation as
+// Render/RwStreamCore.cpp's HostAlloc. .asi arm: the original's trampolines.
+namespace {
+#ifdef MASHED_STANDALONE
+void* AudioRawAlloc(int size, int)  { return std::malloc(static_cast<std::size_t>(size)); }
+void  AudioRawFree(void* raw)       { std::free(raw); }
+#else
+void* AudioRawAlloc(int size, int tag) {
+    typedef void* (__cdecl *AllocFn)(int, int);
+    return reinterpret_cast<AllocFn>(0x005aea00u)(size, tag);
+}
+void  AudioRawFree(void* raw) {
+    typedef void (__cdecl *FreeFn)(void*);
+    reinterpret_cast<FreeFn>(0x004522d0u)(raw);
+}
+#endif
+}  // namespace
 
 // 0x005aea10  FUN_005aea10  (42 bytes)
 // Allocates (size + 4) bytes via the vtable trampoline at 0x005aea00, then
@@ -15,14 +38,13 @@
 //   005aea10: MOV ECX,[ESP+4]      ; size
 //   005aea18: ADD ECX,4            ; size+4
 //   005aea1d: CALL 005aea00        ; raw = RawAlloc(size+4, tag)
+//   005aea27: TEST ECX,ECX / JBE   ; NULL -> return 0 (0x005aea38)
 //   005aea2b: LEA EAX,[ECX+4]     ; raw+4
 //   005aea2e: SHR EAX,2; SHL EAX,2 ; (raw+4) & ~3  (4-byte alignment)
 //   005aea34: MOV [EAX-4],ECX     ; *(aligned-4) = raw
 //   005aea37: RET
 extern "C" __declspec(dllexport) void* __cdecl AudioAlignedAlloc(int size, int tag) {
-    typedef void* (__cdecl *AllocFn)(int, int);
-    auto* const rawAlloc = reinterpret_cast<AllocFn>(0x005aea00u);
-    auto* const raw = static_cast<char*>(rawAlloc(size + 4, tag));
+    auto* const raw = static_cast<char*>(AudioRawAlloc(size + 4, tag));
     if (!raw) return nullptr;
     const auto r = reinterpret_cast<uintptr_t>(raw);
     const auto aligned = (r + 4u) & ~static_cast<uintptr_t>(3u);
@@ -41,11 +63,13 @@ RH_ScopedInstall(AudioAlignedAlloc, 0x005aea10);  // re-enabled 2026-05-24 c3-au
 //   005aea44: MOV ECX,[EAX-4]   ; raw = *(aligned_ptr - 4)
 //   005aea47: MOV [ESP+4],ECX   ; replace stack arg
 //   005aea4b: JMP 004522d0      ; tail-call RawFree(raw)
+// The tail call leaves the free slot's EAX and the rewritten argument slot to the caller; the port returns void and
+// passes raw as a new argument. The 7 direct call sites in .text (0x005a7dc4, 0x005a7e39, 0x005abdd8, 0x005abe1d,
+// 0x005ac1e7, 0x005b153d, 0x005b1563) all pop the slot with add esp,4 and none reads EAX before overwriting it or
+// returning another register (audiolink slice 2 scan). Indirect callers are not covered.
 extern "C" __declspec(dllexport) void __cdecl AudioAlignedFree(void* ptr) {
-    typedef void (__cdecl *FreeFn)(void*);
-    auto* const rawFree = reinterpret_cast<FreeFn>(0x004522d0u);
     void* const raw = *reinterpret_cast<void**>(static_cast<char*>(ptr) - 4);
-    rawFree(raw);
+    AudioRawFree(raw);
 }
 
 RH_ScopedInstall(AudioAlignedFree, 0x005aea40);  // re-enabled 2026-05-24 c3-audio-b

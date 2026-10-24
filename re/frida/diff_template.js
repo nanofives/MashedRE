@@ -4027,8 +4027,52 @@ function runDiff() {
     // 4th-arg slot); call shape fn(void** ppUnk) -> int; resets outer ptr before each side;
     // observes ((ret & 0xffff) | (stub_call_count << 16)). CONFIG.tests[] is a repeat counter only
     // - no per-test input variation; layout hardcoded to this one vtable shape.
+    // ── queue_node_consume (audiolink 2026-10-23, 0x005ad2e0 AudioQueueConsume) ──────────────────────────────
+    // fn(q): count at q+0xc non-zero -> decrement, return 0; else unlink q (prev [q+0x18] <- next [q+0x14],
+    // next+4 <- prev), free q unless byte q+0x10 bit 0 is set, return 1. q / prev / next buffers are SHARED across
+    // both sides (re-seeded before each call) so the stored addresses compare equal. Every test keeps bit 0 SET:
+    // the free path would hand harness memory to the RW allocator. CONFIG.tests[i] = [count, flagByte, aliasMode]
+    // aliasMode 0: prev / next distinct; 1: prev == next (one neighbour); 2: prev = q+0x14 (the re-read matters).
+    if (CONFIG.arg_type === 'queue_node_consume') {
+        const Q = Memory.alloc(0x40), PV = Memory.alloc(0x20), NX = Memory.alloc(0x20), OBJ = Memory.alloc(0x40);
+        // CONFIG.wrap_off (optional): call fn(OBJ) with OBJ+wrap_off = Q, for a wrapper that loads q from its argument
+        // (0x005b0f40 AudioQueuePop: mov ecx,[eax+0x28] / push ecx / call 0x005ad2e0).
+        const ARG = (CONFIG.wrap_off !== undefined && CONFIG.wrap_off !== null) ? OBJ : Q;
+        const seed = function (t) {
+            for (let z = 0; z < 0x40; z += 4) Q.add(z).writeU32((0xC0DE0000 | z) >>> 0);
+            for (let z = 0; z < 0x20; z += 4) { PV.add(z).writeU32((0xBEEF0000 | z) >>> 0); NX.add(z).writeU32((0xFACE0000 | z) >>> 0); }
+            Q.add(0xc).writeU32(t[0] >>> 0);
+            Q.add(0x10).writeU32(((t[1] & 0xff) | 0x01) >>> 0);            // bit 0 forced: never free
+            const prev = (t[2] === 2) ? Q.add(0x14) : PV;
+            const next = (t[2] === 1) ? PV : NX;
+            Q.add(0x14).writeU32(next.toInt32() >>> 0);
+            Q.add(0x18).writeU32(prev.toInt32() >>> 0);
+            if (ARG === OBJ) { for (let z = 0; z < 0x40; z += 4) OBJ.add(z).writeU32(0); OBJ.add(CONFIG.wrap_off | 0).writePointer(Q); }
+        };
+        const snap = function (ret) {
+            const r = [ret >>> 0];
+            for (let z = 0; z < 0x20; z += 4) r.push(Q.add(z).readU32() >>> 0);
+            for (let z = 0; z < 0x10; z += 4) { r.push(PV.add(z).readU32() >>> 0); r.push(NX.add(z).readU32() >>> 0); }
+            return r.map(v => v.toString(16)).join(',');
+        };
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const t = CONFIG.tests[i];
+            let origV = null, reimV = null, errO = null, errR = null;
+            try { seed(t); origV = snap(Orig(ARG)); } catch (e) { errO = e.message; }
+            try { seed(t); reimV = snap(Reimpl(ARG)); } catch (e) { errR = e.message; }
+            results.push({ idx: i, input: JSON.stringify(t), original: origV, reimpl: reimV,
+                           match: origV !== null && reimV !== null && origV === reimV,
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
     if (CONFIG.arg_type === 'dsound_secondary_init') {
-        let dsDsCallCount = 0;
+        // audiolink slice 6 (2026-10-23): per-test mode t % 4 (0 success, 1 QI fails, 2 slot 5 fails, 3 slot 5 writes
+        // 2), separate Release counters for the outer object and the QI output, and the 16 GUID bytes each call
+        // receives. The bytes release the QI output only after a successful QI (0x005bbfe0 / 0x005bc00a).
+        let dsDsCallCount = 0, dsMode = 0, dsOuterRel = 0, dsInnerRel = 0, dsGuids = '';
         const _dsDsStubs = [];  // GC anchors for NativeCallback objects
 
         // Two separate IUnknown-shaped fake objects:
@@ -4050,12 +4094,15 @@ function runDiff() {
         const PPUNK_DS   = Memory.alloc(4);
 
         // Outer object's Release (slot 2).
-        const dsStubRel = new NativeCallback(function() { dsDsCallCount++; return 0; }, 'int32', ['pointer'], 'stdcall');
+        const dsStubRel = new NativeCallback(function() { dsDsCallCount++; dsOuterRel++; return 0; }, 'int32', ['pointer'], 'stdcall');
+        const dsStubRelIn = new NativeCallback(function() { dsDsCallCount++; dsInnerRel++; return 0; }, 'int32', ['pointer'], 'stdcall');
         // Outer object's QI (slot 0, 3 args): writes the inner OBJ_DS_QI address
         // into the output slot so the reimpl gets a valid interface ptr to
         // route slot 5 through. Returns 0 (S_OK).
         const dsDsQiStub = new NativeCallback(function(self, iid, ppOut) {
             dsDsCallCount++;
+            try { dsGuids += 'q' + Array.from(new Uint8Array(iid.readByteArray(16))).map(b => ('0' + b.toString(16)).slice(-2)).join(''); } catch (e) { dsGuids += 'q?'; }
+            if (dsMode === 1) return 0x80004002 | 0;                 // E_NOINTERFACE, *ppOut left as is
             if (ppOut && !ppOut.isNull()) ppOut.writeU32(OBJ_DS_QI.toInt32());
             return 0;
         }, 'int32', ['pointer', 'pointer', 'pointer'], 'stdcall');
@@ -4064,13 +4111,15 @@ function runDiff() {
         // CMP [ESP+0x8], 3 evaluates true → return 1. Returns 0 (S_OK).
         const dsSlot5Stub = new NativeCallback(function(self, fmt, mode, pOut) {
             dsDsCallCount++;
-            if (pOut && !pOut.isNull()) pOut.writeU32(3);
+            try { dsGuids += 's' + Array.from(new Uint8Array(fmt.readByteArray(16))).map(b => ('0' + b.toString(16)).slice(-2)).join('') + ':' + mode; } catch (e) { dsGuids += 's?'; }
+            if (dsMode === 2) return 0x80004005 | 0;                 // E_FAIL, no write
+            if (pOut && !pOut.isNull()) pOut.writeU32(dsMode === 3 ? 2 : 3);
             return 0;
         }, 'int32', ['pointer', 'pointer', 'int32', 'pointer'], 'stdcall');
         // Generic filler stubs (slots not exercised in the success path).
         const dsStub1 = new NativeCallback(function() { dsDsCallCount++; return 0; }, 'int32', ['pointer'], 'stdcall');
         const dsStub2 = new NativeCallback(function() { dsDsCallCount++; return 0; }, 'int32', ['pointer', 'pointer'], 'stdcall');
-        _dsDsStubs.push(dsStubRel, dsDsQiStub, dsSlot5Stub, dsStub1, dsStub2);
+        _dsDsStubs.push(dsStubRel, dsStubRelIn, dsDsQiStub, dsSlot5Stub, dsStub1, dsStub2);
 
         // Outer vtable.
         VTBL_DS.add(0 * 4).writeU32(dsDsQiStub.toInt32());  // slot 0: QI
@@ -4083,7 +4132,7 @@ function runDiff() {
         // Inner vtable (the QI output). Only slot 5 matters; the rest no-op.
         VTBL_DS_QI.add(0 * 4).writeU32(dsStub1.toInt32());  // slot 0 unused
         VTBL_DS_QI.add(1 * 4).writeU32(dsStub1.toInt32());
-        VTBL_DS_QI.add(2 * 4).writeU32(dsStub1.toInt32());
+        VTBL_DS_QI.add(2 * 4).writeU32(dsStubRelIn.toInt32());  // slot 2: Release (QI output)
         VTBL_DS_QI.add(3 * 4).writeU32(dsStub2.toInt32());
         VTBL_DS_QI.add(4 * 4).writeU32(dsStub2.toInt32());
         VTBL_DS_QI.add(5 * 4).writeU32(dsSlot5Stub.toInt32());  // slot 5: secondary init
@@ -4094,26 +4143,20 @@ function runDiff() {
 
         for (let i = 0; i < CONFIG.tests.length; i++) {
             let origV = null, reimV = null, errO = null, errR = null;
-            OBJ_DS.writeU32(VTBL_DS.toInt32());
-            PPUNK_DS.writeU32(OBJ_DS.toInt32());
-            dsDsCallCount = 0;
-            try {
-                const ret = Orig(PPUNK_DS);
-                const cnt = dsDsCallCount;
-                origV = ((ret >>> 0) & 0xffff) | ((cnt & 0xff) << 16);
-            } catch(e) { errO = e.message; }
-            OBJ_DS.writeU32(VTBL_DS.toInt32());
-            PPUNK_DS.writeU32(OBJ_DS.toInt32());
-            dsDsCallCount = 0;
-            try {
-                const ret = Reimpl(PPUNK_DS);
-                const cnt = dsDsCallCount;
-                reimV = ((ret >>> 0) & 0xffff) | ((cnt & 0xff) << 16);
-            } catch(e) { errR = e.message; }
+            const run = function (fn) {
+                OBJ_DS.writeU32(VTBL_DS.toInt32());
+                PPUNK_DS.writeU32(OBJ_DS.toInt32());
+                dsDsCallCount = 0; dsOuterRel = 0; dsInnerRel = 0; dsGuids = '';
+                dsMode = (CONFIG.tests[i] >>> 0) % 4;
+                const ret = fn(PPUNK_DS);
+                return 'r' + ((ret >>> 0).toString(16)) + ' n' + dsDsCallCount + ' ro' + dsOuterRel + ' ri' + dsInnerRel + ' ' + dsGuids;
+            };
+            try { origV = run(Orig); } catch(e) { errO = e.message; }
+            try { reimV = run(Reimpl); } catch(e) { errR = e.message; }
             OBJ_DS.writeU32(VTBL_DS.toInt32());
             PPUNK_DS.writeU32(OBJ_DS.toInt32());
             const crashEqual = CONFIG.crash_equal_ok && errO !== null && errR !== null && errO === errR;
-            results.push({ idx: i, input: i,
+            results.push({ idx: i, input: CONFIG.tests[i],
                            original: origV, reimpl: reimV,
                            match: crashEqual || (origV !== null && reimV !== null && origV === reimV),
                            err_original: errO, err_reimpl: errR });

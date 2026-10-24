@@ -26,12 +26,6 @@
 
 #include "../Core/HookSystem.h"
 #include <cstdint>
-#include <xmmintrin.h>   // _mm_set_ss / _mm_cvtss_si32 — round-to-nearest-even (matches cvtss2si / x87 fistp default)
-
-// Round-to-nearest-even of a float32 → int32, identical to the CPU conversion
-// Ghidra renders as ROUND() (default rounding mode). MSVC's (int)roundf() would
-// be round-half-AWAY and is NOT bit-identical, so we use the SSE intrinsic.
-static inline int RoundNE(float x) { return _mm_cvtss_si32(_mm_set_ss(x)); }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // FUN_005b3580 (intrusive circular list header init, [[U-6906]]) was ported here first as
@@ -66,27 +60,39 @@ static inline int RoundNE(float x) { return _mm_cvtss_si32(_mm_set_ss(x)); }
 //      aligned = (uint)( (inner - 1) + uVar1 ) & ~(uVar1 - 1);   // round up to bytes/sample
 //      return ROUND((float)aligned);
 // ─────────────────────────────────────────────────────────────────────────────
+//
+// audiolink 2026-10-23, from the bytes (verify/audiolink_20261023/disasm_slice1.txt). The Ghidra ROUND() above
+// is wrong twice:
+//   - Both conversions TRUNCATE: fnstcw / or ah,0xc / fldcw around each fistp (0x005b40e7, 0x005b4125). The
+//     first one matters: in {rate 3, size 1636, 16-bit mono} -> out {rate 2, 16-bit mono} gives 1090.67, so
+//     the original returns 1090 and the old round-to-nearest port 1092.
+//   - The product order is ((chOut/chIn) * (bitsOut/bitsIn)) * (rateOut/rateIn) * sizeIn (0x005b4087..0x005b40d2),
+//     every operand an exact integer load (fild / fidiv / fimul; rateOut by fild qword, zero-extended).
+// Each step is done in double from exact integer operands and rounded to float, which matches the x87 at the
+// game's PC_24 (one rounding to 24 bits per op; 53 >= 2*24+2, so the double step adds no second rounding while
+// every operand fits 24 bits). [UNCERTAIN U-9789] a rate or size of 2^24 or more is not covered by that argument.
+// The middle fstp to m32 (0x005b40d6) is exact on a value already rounded to 24 bits.
 extern "C" __declspec(dllexport) int __cdecl AudioFmtConvertByteLength(int* param_1, unsigned int* param_2) {
-    // uVar1 = output bytes-per-sample = (out bits-per-sample) >> 3
-    const unsigned int uVar1 =
-        static_cast<unsigned int>(static_cast<unsigned char>(
-            static_cast<unsigned char>(param_2[3]) >> 3));
+    const unsigned char* in  = reinterpret_cast<const unsigned char*>(param_1);
+    const unsigned char* out = reinterpret_cast<const unsigned char*>(param_2);
+    // esi = output bytes-per-sample = (out bits-per-sample) >> 3   (0x005b406c..0x005b4076)
+    const unsigned int uVar1 = static_cast<unsigned int>(out[0xc]) >> 3;
 
-    const float product =
-        ( static_cast<float>(*param_2) / static_cast<float>(*param_1) ) *
-        ( static_cast<float>(static_cast<unsigned char>(param_2[3])) /
-          static_cast<float>(*reinterpret_cast<const unsigned char*>(param_1 + 3)) ) *
-        ( static_cast<float>(*(reinterpret_cast<const unsigned char*>(param_2) + 0xd)) /
-          static_cast<float>(*(reinterpret_cast<const unsigned char*>(param_1) + 0xd)) ) *
-        static_cast<float>(param_1[2]);
+    float st = static_cast<float>(static_cast<double>(out[0xd]) / static_cast<double>(in[0xd]));       // 0x005b4098
+    const float bits = static_cast<float>(static_cast<double>(out[0xc]) / static_cast<double>(in[0xc])); // 0x005b40b2
+    st = static_cast<float>(static_cast<double>(bits) * static_cast<double>(st));                        // 0x005b40b6
+    const float rate = static_cast<float>(static_cast<double>(*param_2) / static_cast<double>(param_1[0])); // 0x005b40c4
+    st = static_cast<float>(static_cast<double>(rate) * static_cast<double>(st));                        // 0x005b40d0
+    st = static_cast<float>(static_cast<double>(st) * static_cast<double>(param_1[2]));                  // 0x005b40d2
 
-    const int inner = RoundNE(product);
+    const int inner = static_cast<int>(st);                                                              // 0x005b40f3
 
-    // (inner - 1 + uVar1) computed in unsigned, then masked down to alignment.
+    // (inner - 1 + uVar1) & ~(uVar1 - 1)   (0x005b4103..0x005b410a)
     const unsigned int aligned =
         (static_cast<unsigned int>(inner + -1) + uVar1) & ~(uVar1 - 1u);
 
-    return RoundNE(static_cast<float>(aligned));
+    // fild qword (zero-extended) / fstp m32 at the caller's rounding / truncating fistp (0x005b4110..0x005b4131)
+    return static_cast<int>(static_cast<float>(static_cast<double>(aligned)));
 }
 
 RH_ScopedInstall(AudioFmtConvertByteLength, 0x005b4060);

@@ -176,16 +176,29 @@ AudioPcmSaturatedAdd(int param_1, int param_2, int param_3, std::uint32_t param_
     short* const srcA = reinterpret_cast<short*>(param_2);
     short* const srcB = reinterpret_cast<short*>(param_3);
 
-    for (std::uint32_t i = 0; i < nSamples; ++i) {
-        int sum = static_cast<int>(srcA[i]) + static_cast<int>(srcB[i]);
-        if (sum < 0x8000) {
-            if (sum < -0x7fff) {
-                sum = -0x7fff;
-            }
-        } else {
-            sum = 0x7fff;
-        }
-        out[i] = static_cast<short>(sum);
+    // audiolink 2026-10-23, from the bytes: the 4-sample block reads all eight inputs (0x005bb609..0x005bb62d)
+    // before its four stores (0x005bb65b, 0x005bb680, 0x005bb69e, 0x005bb6cb), the tail (0x005bb6f9..0x005bb724)
+    // reads and stores one sample at a time. Same result as a plain loop unless out overlaps a source at an
+    // offset; the order is kept so that case matches too.
+    auto sat = [](int sum) -> short {
+        if (sum > 0x7fff) return 0x7fff;          // cmp 0x7fff / jle
+        if (sum < -0x7fff) return -0x7fff;        // cmp 0xffff8001 / jge
+        return static_cast<short>(sum);
+    };
+    const std::uint32_t nBlock = nSamples & 0xfffffffcu;   // and eax,0xfffffffc (0x005bb5bc)
+    std::uint32_t i = 0;
+    for (; i < nBlock; i += 4) {                            // cmp ebx,[n4] / jb (0x005bb6d6)
+        const int s0 = static_cast<int>(srcB[i])     + static_cast<int>(srcA[i]);
+        const int s1 = static_cast<int>(srcA[i + 1]) + static_cast<int>(srcB[i + 1]);
+        const int s2 = static_cast<int>(srcB[i + 2]) + static_cast<int>(srcA[i + 2]);
+        const int s3 = static_cast<int>(srcB[i + 3]) + static_cast<int>(srcA[i + 3]);
+        out[i]     = sat(s0);
+        out[i + 1] = sat(s1);
+        out[i + 2] = sat(s2);
+        out[i + 3] = sat(s3);
+    }
+    for (; i < nSamples; ++i) {
+        out[i] = sat(static_cast<int>(srcA[i]) + static_cast<int>(srcB[i]));
     }
 }
 
