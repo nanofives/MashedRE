@@ -1,4 +1,4 @@
-# RESULT D3-CF-U9779: U-9781 is FUN_0046e9e0's sub-state gate. With `MASHED_R7_PHYS`, car 3 is bit-exact through k=356 (was 220) (2026-10-24)
+# RESULT D3-CF-U9779: U-9781 is FUN_0046e9e0's sub-state gate. With `MASHED_R7_PHYS`, car 3 is bit-exact through k=356 (was 220) (2026-10-24). Flipped default ON 2026-10-24 (section 7)
 
 Branch `orch/D3-CF-U9779` from `orch/integration` `30913130b`. Probe tool `b0b6731bb`, PREREG `1c5ec4fda` (committed alone, before
 every knob arm). Exe `563c27c2` (`MASHED_NO_DEPLOY=1`). Private root `D:\MashedWT\D3-CF-U9779_root`. Evidence
@@ -85,3 +85,48 @@ round-restart row. Recommendation: run those two gates, then flip all four as on
 
 Scripts: `run_arms.py` (copy of `verify/savelink_20261023/run_arms.py`, adds `U7`, `U7P`, `P7`, `*R3`). `reck.py` is u9779's
 (`verify/u9779_20261021/reck.py`).
+
+## 7. Flip gates and the flip (decision L-4 = (1), Mariano 2026-10-24; PREREG amendment 1 `75a2b1ddb`)
+
+Data committed under `verify/u9779_20261024/data/` (copies of `D:\MashedWT\D3-CF-U9779_data`): `arms/` (section 4 arms and the
+pre-flip D2 arms, `RUNLOG.txt`), `arms_flip/` (flipped-exe arms, `RUNLOG.txt`), `o_r7_1.*` (original witness), `run_*.txt` (batch
+logs), `score_d2_*.txt`, `t13_*/` (13-track scores, gates, per-row diffs; BMPs left out).
+
+### 7.1 Gates with the four knobs ON, pre-flip exe `563c27c2`
+
+| gate | outcome |
+|---|---|
+| G-D2 `D2_U7P_1/2/3` alone (solo lock), `score_d2_v2.py port` | **PASS 3/3**: slip1500 0.1900 x3, slip2000 0.2550 / 0.2549 / 0.2550, drvmed 1966.66 / 1966.66 / 1965.67, H1 398/400 (`data/score_d2_U7P.txt`). rpct flip default: 0.1900 / 0.2550 / 1964.25 |
+| G-13 `run13.py` + `cites_rres.json` | **39 frames, 878 rows, 0 RED, INSTRUMENT GATES PASS**. The score table is byte-identical to rpct's `tracks_flip_score.txt` (the current default's), so no row changed (`data/t13_u7p/scores_diff.txt`) |
+
+Both passed, so the set was flipped.
+
+### 7.2 The flip (`47d3c3519`, exe `5a51764d`)
+
+`ElimResolveEnabled()`, `RoundEnd7Enabled()`, `RaceTailLateEnabled()` and `RoundEnd7PhysActive()` (`TrackRenderer.cpp`) are true
+unless the opt-out is set: `MASHED_NO_ELIM_RESOLVE`, `MASHED_NO_ROUND_END7`, `MASHED_NO_RACE_TAIL_LATE`, `MASHED_NO_R7_PHYS`. The
+old ON names are no longer read. `R7_PHYS` still acts only while the `ROUND_END7` flag is up, so `MASHED_NO_ROUND_END7` alone also
+disables it. Stack `NU7` in `run_arms.py` = the four opt-outs.
+
+### 7.3 Re-gate on the flipped exe (`data/arms_flip/`)
+
+| gate | flipped exe | against |
+|---|---|---|
+| **G-CTRL x2 (new default)** `H_DEF-1`, `H_DEF-2` | **`ef5f2e10 / 57f7ff83 / b4f4b55a`** x2 | = pre-flip `H_U7P`. REBASED (was `bacfc747 / 8dd1c004 / 6f9932b6`) |
+| **B K0 / K1 / K26 (new default)** | **`c37d4c0c / 0a8f9806 / 7013671d`** | = pre-flip `B_U7P_K0/K1/K26`. REBASED (was `f9deb9b9 / d3601fcc / 9da9a26a`) |
+| opt-out `H_NU7-1` | `bacfc747 / 8dd1c004 / 6f9932b6` | = the pre-flip default |
+| opt-out `B_NU7_K0/K1/K26` | `f9deb9b9 / d3601fcc / 9da9a26a` | = the pre-flip default |
+| D2 `D2_DEF_1/2/3` alone | PASS 3/3: slip1500 0.1900 x3, slip2000 0.2548 / 0.2550 / 0.2550, drvmed 1970.58 / 1965.67 / 1965.67, H1 398/400 (`data/score_d2_flip.txt`) | in band |
+| 13 tracks, default | 39 frames, 878 rows, 0 RED, INSTRUMENT GATES PASS (`data/t13_flip/scores_diff.txt`) | table byte-identical to rpct's `tracks_flip_score.txt` |
+
+### 7.4 The k = 357 round-restart residue (D3-CF-K357, noted, not fixed)
+
+On the new default B K0 the port starts round 2 at k = 357 (`R6 round 1 OVER t=6.7s`, then StartRound), 137 frames after the
+round end, while the original's car 3 stays in sub-state 7 to the end of `o_r7_1`. It is not a new default-visible regression:
+before the flip the default port did not end round 1 at k = 220 at all (`B_DEF_K0.log`: `R6 round 1 OVER t=15.6s`), so car 3
+already differed from k = 220. After the flip the first difference is at k = 357. No decision row filed for it.
+
+### 7.5 Owed (not done here)
+
+- Trackers through re-classify: U-9781 resolved (section 5), the new round-restart row (D3-CF-K357).
+- `re/NEXT_SESSION.md` / memory `default-ctrl-hashes-after-b2-flip`: the new default hashes above (merge train writes the status line).
