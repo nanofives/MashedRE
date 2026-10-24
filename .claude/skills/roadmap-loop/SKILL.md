@@ -30,8 +30,14 @@ Rules every child reads: `$ORCH\re\orchestrator\WORKER_RULES.md`. Decisions: `lo
 1. `spawn_child` with `account`, `model`, `effort` and the holding prompt
    `"Roadmap loop <role> for <section>. Reply with the single word READY and stop. Your real
    task arrives in the next message. Do not message any other session yourself."`
-2. Then `send_to_session ... yolo: true` with the task. **Every** later message also carries
-   `yolo: true`.
+2. Then `send_to_session ... yolo: true` with the task, **only after the child's READY turn
+   has gone idle** (its READY notice arrived, or `read_session` limit 1 shows it idle).
+   **Every** later message also carries `yolo: true`.
+3. **Pickup check.** Within 5 minutes of sending the task, confirm the child picked it up:
+   its `latestSeq` climbs past the READY turn (`read_session` limit 1 or 2), or its ledger row
+   is `claimed` / `working`. If not, re-send the same task once with `yolo: true`. If it still
+   has not started, `stop_child` and respawn. (Run 1, 2026-10-24: the merge train answered
+   READY, sat idle 23 min with its task unprocessed, and the queue stalled.)
 
 | role | account | model | effort |
 |---|---|---|---|

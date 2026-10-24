@@ -9,6 +9,11 @@ The live ledger is one file for all tiers (`log\orch\roadmap.json`), never a bra
 - Spawning a child: `spawn_child` with a holding prompt ("reply READY and stop"), then the
   task with `send_to_session ... yolo: true`. **Every** later message to it carries
   `yolo: true` too. Leads on `claude2` (model sonnet, effort medium), workers on `claude3`.
+- Pickup check (every tier): send the task only after the child's READY turn has gone idle.
+  Within 5 minutes confirm pickup: its `latestSeq` climbs past the READY turn
+  (`read_session` with limit 1 or 2), or its ledger row is `claimed` / `working`. If not,
+  re-send the same task once with `yolo: true`. If it still has not started, `stop_child` and
+  respawn it with the same task.
 - Never message your parent yourself. Your final message is delivered automatically.
 - Do not close yourself. Your parent closes you after it collects your REPORT.
 
