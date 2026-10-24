@@ -1,0 +1,11 @@
+[audio] Init: DirectSound ready
+[audio] RwsBankLoad original/toastaudio/pc/audio/pcdics/permdict.rws: 43 waves
+[audio] VolToDs: MASHED_VOLTODS_ORIG=1, AudioLinearToLog path
+[audio] VolToDs v=0.600000024 bits=3f19999a port=-443 orig=-443 ret=-443
+[audio] MusicBankLoop 'musicloop1' (197050 bytes @22050) looping
+[audio] MusicSetState -> 1
+[audio] VolToDs v=0.420000017 bits=3ed70a3e port=-753 orig=-753 ret=-753
+[audio] VolToDs v=0.629999995 bits=3f2147ae port=-401 orig=-401 ret=-401
+[audio] VolToDs v=0.629999995 bits=3f2147ae port=-401 orig=-401 ret=-401
+[audio] VolToDs v=0.629999995 bits=3f2147ae port=-401 orig=-401 ret=-401
+[audio] SetOutputActive(0) -> focusGain=0
