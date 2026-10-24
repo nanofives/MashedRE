@@ -1,0 +1,27 @@
+{
+  "_doc": "merge_train.ps1 config. Gate references as of 2026-10-24 (memory default-ctrl-hashes-after-b2-flip; re/NEXT_SESSION.md:223-224). Script paths are relative to the merged tree. Sources: account2 survey 2026-10-24 (re/orchestrator/MERGE_TRAIN.md).",
+  "integration_branch": "orch/integration",
+  "batch_max": 3,
+  "root": "D:/MashedWT/mtrain_root",
+  "root13": "D:/MashedWT/mtrain_root13",
+  "data": "D:/MashedWT/mtrain_data",
+  "runner": "verify/savelink_20261023/run_arms.py",
+  "gctrl": { "arm": "H_DEF", "files": ["H_DEF.step.csv", "H_DEF.gates.csv", "H_DEF.ptrace.log"], "ref": ["bacfc747", "8dd1c004", "6f9932b6"], "retries": 1 },
+  "b": { "arms": ["B_DEF_K0", "B_DEF_K1", "B_DEF_K26"], "ref": ["f9deb9b9", "d3601fcc", "9da9a26a"] },
+  "full_set_paths": ["mashedmod/src/mashed_re/Vehicle/", "mashedmod/src/mashed_re/Ai/", "mashedmod/src/mashed_re/Collision/"],
+  "full": {
+    "vsum": "verify/savelink_20261023/vsum.py",
+    "ai_speed_env": "re/tools/ai_speed_env.py",
+    "e_launch": ["1425.7", "2052.5", "2055.0"],
+    "d2_arms": ["D2_DEF_1", "D2_DEF_2", "D2_DEF_3"],
+    "d2_score": "verify/d2rebase_20261019/score_d2_v2.py",
+    "d2_min_lines": 1600,
+    "run13": "verify/rsky_20261016/run13.py",
+    "run13_cites": "verify/rskyverify_20261016/cites_merged.json",
+    "run13_reference": "verify/rpct_20261022/tracks_flip_score.txt",
+    "_run13_uncertain": "DECISIONS P0-4: cites file and reference table picked from the newest lane that ran 13 tracks (rpct 2026-10-22), not confirmed"
+  },
+  "text_only_globs": ["*.md", "*.txt", "verify/*", "re/analysis/*"],
+  "conflict_union": ["mashedmod/build.bat", "mashedmod/exe_sources.rsp", "mashedmod/asi_sources.rsp", "re/analysis/CHANGELOG.md"],
+  "conflict_halt_note": "every other conflicted file halts the branch (frida-sweep SKILL.md:61-64,107); hooks_registry.py, hooks.csv, STUBS.md, UNCERTAINTIES.md are resolved by hand"
+}
