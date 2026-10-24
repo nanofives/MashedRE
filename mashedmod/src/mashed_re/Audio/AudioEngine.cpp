@@ -68,7 +68,12 @@ std::vector<Voice> g_voices;
 // AudioLinearToLog (Audio/AudioLinearToLog.cpp): floor -10000 below 1e-5f [0x005cc990], f32 2000*log10 truncated, positives
 // clamped to 0. verify/audiovoltods_20261024/PREREG_voltods.md.
 bool VolToDsOrig() {
-    static const bool on = [] { const char* e = std::getenv("MASHED_VOLTODS_ORIG"); return e && e[0] == '1'; }();
+    static const bool on = [] {
+        const char* e = std::getenv("MASHED_VOLTODS_ORIG");
+        const bool r = e && e[0] == '1';
+        if (r) logf("VolToDs: MASHED_VOLTODS_ORIG=1, AudioLinearToLog path");
+        return r;
+    }();
     return on;
 }
 LONG VolToDs(float v) {
