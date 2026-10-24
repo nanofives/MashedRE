@@ -764,7 +764,7 @@ int main(int argc, char** argv) {
     std::map<int, float> mtrLast;
     std::set<int> mtrSeen;
     float mtrDrift = 0.f, mtrAgeDrift = 0.f;
-    long stGroups = 0, stSlotBad = 0, stRecs = 0, stIdMissing = 0, stLandBad = 0, stPosBad = 0;
+    long stGroups = 0, stSlotBad = 0, stRecs = 0, stIdMissing = 0, stLandBad = 0, stPosBad = 0, stAmbig = 0;
     for (const Row& r : rows) {
         g_inj.curCall = r.call;
         sys.SetBoxState(want, r.box);       // FUN_0045ba00, the un-ported producers
@@ -795,8 +795,15 @@ int main(int argc, char** argv) {
                     if (!slotOk) ++stSlotBad;
                     // by identity: every original record alive must have a port record
                     // in the same group with the same age bits and the same landed latch
+                    // Age is an identity only while it is unique in the group: a spark's
+                    // age stops at ageN >= 1.0 and every spark freezes at the same
+                    // value under a constant dt, so aged-out records share it.
                     for (int i = 0; i < 5; ++i) {
                         if (og[i].alive == 0) continue;
+                        int same = 0;
+                        for (int j = 0; j < 5; ++j)
+                            if (og[j].alive != 0 && bits(og[j].age) == bits(og[i].age)) ++same;
+                        if (same != 1) { ++stAmbig; continue; }
                         int hit = -1;
                         for (int j = 0; j < 5; ++j)
                             if (pg[j].alive != 0 && bits(pg[j].age) == bits(og[i].age)) { hit = j; break; }
@@ -931,9 +938,10 @@ int main(int argc, char** argv) {
                                                     : (bad ? "DIVERGES" : "CLEAN"));
         std::printf("\nR_FLAME STATE CHECK (port pool after each call's tick vs the original's tick-exit dump)\n"
                     "  groups %ld   slot-exact mismatches %ld\n"
-                    "  records by identity (age bits) %ld   missing %ld   landed mismatches %ld   position mismatches %ld\n"
+                    "  records by identity (unique age bits) %ld   skipped (age shared in the group) %ld\n"
+                    "  missing %ld   landed mismatches %ld   position mismatches %ld\n"
                     "STATE CHECK: slot order %s, landing %s\n",
-                    stGroups, stSlotBad, stRecs, stIdMissing, stLandBad, stPosBad,
+                    stGroups, stSlotBad, stRecs, stAmbig, stIdMissing, stLandBad, stPosBad,
                     stGroups == 0 ? "NOT TESTED" : (stSlotBad ? "DIVERGES" : "CLEAN"),
                     stRecs == 0 ? "NOT TESTED" : ((stIdMissing || stLandBad || stPosBad) ? "DIVERGES" : "CLEAN"));
         std::printf("R_FLAME INJECTION: births %s used %ld missing %ld   ref used %ld missing %ld   MASHED_RFLAME_SORT=%s\n",
