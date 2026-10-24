@@ -32,6 +32,24 @@ PU_DECL(Mortar)
 
 #undef PU_DECL
 
+// R_FLAME spark record, original stride 0xd dwords (0x34 B) at &DAT_0068bd00.
+// The field map and its citations live with the pool in PowerupEffects.cpp.
+struct FlameSpark {
+    float pos[3];   // [0..2]
+    float vel[3];   // [3..5]  PER-FRAME, not per-second: the probe is pos -> pos+vel
+    float ageN;     // [6]     age * _DAT_005cd114, clamped to 1.0; >= 1.0 = done
+    float age;      // [8]     seconds
+    float angle;    // [10]    the emitter's random angle (&DAT_0068bd28); the port never
+                    //         reads it, pu_replay's sort check uses it as the record's identity
+    int   landed;   // [11]    latch set on a hit
+    int   alive;    // [12]
+};
+// FUN_0045ac40 on one group of 5 records (d3rflame 2026-10-24). RFlame_Tick calls
+// it under MASHED_RFLAME_SORT=1; pu_replay calls it directly for its sort check.
+void RFlame_SortFive(FlameSpark g[5], const float ref[3]);
+// The 100-record spark pool, read-only, for pu_replay's state check.
+const FlameSpark* RFlame_Pool();
+
 }  // namespace Effect
 }  // namespace Powerup
 }  // namespace mashed_re

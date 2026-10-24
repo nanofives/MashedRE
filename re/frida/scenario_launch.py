@@ -3574,6 +3574,112 @@ function puMtrArm(){
 }
 function puMtrDrain(){ const r = PU_MTR.rows; PU_MTR.rows = []; return r; }
 
+// --- d3rflame 2026-10-24: the R_FLAME spark pool and its sorter's reference ---
+// Opt-in (--puhook-flame). Its own channel, its own CSV (<out>.puflame.csv).
+//
+// WHY. The tick FUN_0045ae80 runs the sorter FUN_0045ac40 on each group of 5
+// sparks before scanning them (CALL 0x0045ac40 @0x0045af41), and the sort decides
+// which spark consumes which query verdict when two probe on one call. Its inputs
+// are the sparks' positions and a reference point, FUN_004671d0(0) (CALL @0x0045af35,
+// PUSH EAX @0x0045af3a). Neither is in the .pucontact.csv, and a spark's position
+// depends on the emitter's random jitter, so a replay cannot rebuild them.
+//
+// Addresses, disassembled from a read-only pool clone of the pinned anchor:
+//   stepper FUN_0045a950: one stack arg, the per-owner R_FLAME record
+//     (MOV ESI,[ESP+0x34] @0x0045a955 after SUB ESP,0x28 + 2 pushes); car = [ESI+4]
+//     (@0x0045a966), owner = [car+0xb0] (@0x0045aa04), major [ESI+0x14], sub
+//     [ESI+0x18]. It emits iff it gets past the jet gate (JZ @0x0045a9ea) and the
+//     cooldown gate (JP @0x0045a9fe), and an emission always moves sub or major
+//     (0x0045aa24..0x0045aa36), so "sub or major changed" = "emitted at the old
+//     (owner, major, sub)". Record = 0x0068bd00 + (owner*25+major*5+sub)*0x34
+//     (IMUL EAX,EAX,0x34 / ADD EAX,0x68bd00 @0x0045aa1a..1d).
+//   FUN_004671d0(int): cdecl, returns a pointer to 3 floats; called here with 0
+//     exactly as the tick does, once on tick entry and once on exit (the two must
+//     agree for the reference to be one value per tick; `refMoved` counts misses).
+// Rows (all floats raw hex dwords; d0..d12 = one 0xd-dword record):
+//   R  frame,call,R,,,,refx,refy,refz, exit refx,refy,refz
+//   B  frame,call,B,owner,major,sub, d0..d12 of the record just emitted
+//   E  frame,call,E,owner,group,, 5 x d0..d12, group state on tick ENTRY
+//   L  frame,call,L,owner,group,, 5 x d0..d12, group state on tick EXIT
+// E is written for every group holding a record with alive != 0 and ageN < 1.0
+// on entry; L for those groups plus every group that got an emission this tick.
+const PU_FL = { armed:false, rows:[], calls:0, ticks:0, births:0, refMoved:0,
+                cap:200000, err:null, emitted:null };
+function puFlArm(){
+  if (PU_FL.armed) return 'already armed';
+  try {
+    const BASE = 0x0068bd00, REC = 0x34, GRP = 0x104;
+    const hx = (p, i) => { try { return '0x' + (p.add(i*4).readU32() >>> 0).toString(16); }
+                           catch(_){ return ''; } };
+    const rec13 = (p) => { const o = []; for (let i = 0; i < 13; ++i) o.push(hx(p, i)); return o; };
+    const young = (p) => { try { return p.add(0x30).readU32() !== 0 && p.add(0x18).readFloat() < 1.0; }
+                           catch(_){ return false; } };
+    const grpRow = (k, g) => {
+      const gb = ptr(BASE + g * GRP);
+      let r = [SD.frames, PU.calls, k, Math.floor(g / 5), g % 5, ''];
+      for (let s = 0; s < 5; ++s) r = r.concat(rec13(gb.add(s * REC)));
+      return r;
+    };
+    const getRef = new NativeFunction(ga(0x004671d0), 'pointer', ['int']);
+    const ref3 = () => { try { const q = getRef(0); return [hx(q,0), hx(q,1), hx(q,2)]; }
+                         catch(_){ return ['', '', '']; } };
+    PU_FL.lisStep = Interceptor.attach(ga(0x0045a950), {
+      onEnter(){
+        PU_FL.calls++;
+        this.r = null;
+        try {
+          const r = ptr(this.context.esp.add(4).readU32());
+          const car = ptr(r.add(4).readU32());
+          this.own = car.add(0xb0).readS32();
+          this.maj = r.add(0x14).readS32(); this.sub = r.add(0x18).readS32();
+          this.r = r;
+        } catch(_){}
+      },
+      onLeave(){
+        if (!this.r) return;
+        let maj, sub;
+        try { maj = this.r.add(0x14).readS32(); sub = this.r.add(0x18).readS32(); }
+        catch(_){ return; }
+        if (maj === this.maj && sub === this.sub) return;
+        const idx = this.own * 25 + this.maj * 5 + this.sub;
+        if (idx < 0 || idx >= 100) return;
+        PU_FL.births++;
+        if (PU_FL.emitted) PU_FL.emitted[this.own * 5 + this.maj] = 1;
+        if (PU_FL.rows.length >= PU_FL.cap) return;
+        PU_FL.rows.push([SD.frames, PU.calls, 'B', this.own, this.maj, this.sub]
+                        .concat(rec13(ptr(BASE + idx * REC))));
+      }
+    });
+    PU_FL.lisTick = Interceptor.attach(ga(0x0045ae80), {
+      onEnter(){
+        PU_FL.ticks++;
+        PU_FL.emitted = {};
+        this.ref = ref3();
+        this.grp = {};
+        for (let g = 0; g < 20; ++g) {
+          const gb = ptr(BASE + g * GRP);
+          for (let s = 0; s < 5; ++s) if (young(gb.add(s * REC))) { this.grp[g] = 1; break; }
+        }
+        if (PU_FL.rows.length >= PU_FL.cap) return;
+        for (const g in this.grp) PU_FL.rows.push(grpRow('E', +g));
+      },
+      onLeave(){
+        const em = PU_FL.emitted || {}; PU_FL.emitted = null;
+        const all = Object.assign({}, this.grp, em);
+        if (Object.keys(all).length === 0) return;
+        const ref2 = ref3();
+        if (ref2.join() !== this.ref.join()) PU_FL.refMoved++;
+        if (PU_FL.rows.length >= PU_FL.cap) return;
+        PU_FL.rows.push([SD.frames, PU.calls, 'R', '', '', ''].concat(this.ref, ref2));
+        for (const g in all) PU_FL.rows.push(grpRow('L', +g));
+      }
+    });
+    PU_FL.armed = true;
+    return 'puhook-flame armed (0x0045a950 + 0x0045ae80, ref via 0x004671d0)';
+  } catch(e){ PU_FL.err = '' + e; return 'ERR ' + e; }
+}
+function puFlDrain(){ const r = PU_FL.rows; PU_FL.rows = []; return r; }
+
 // --- D3-CONTACT 2026-09-28c: the MISSILE projectile pool -------------------
 // Opt-in (--puhook-missile). Its own channel, its own CSV.
 //
@@ -3889,6 +3995,11 @@ rpc.exports = {
   puMisStats: function(){ return JSON.stringify({armed:PU_MIS.armed,
                           calls:PU_MIS.calls, rows:PU_MIS.rows.length,
                           orphans:PU_MIS.orphans, err:PU_MIS.err}); },
+  puFlArm: function(){ return puFlArm(); },
+  puFlDrain: function(){ return puFlDrain(); },
+  puFlStats: function(){ return JSON.stringify({armed:PU_FL.armed, calls:PU_FL.calls,
+                         ticks:PU_FL.ticks, births:PU_FL.births, refMoved:PU_FL.refMoved,
+                         rows:PU_FL.rows.length, err:PU_FL.err}); },
   puMtrArm: function(){ return puMtrArm(); },
   puMtrDrain: function(){ return puMtrDrain(); },
   puMtrStats: function(){ return JSON.stringify({armed:PU_MTR.armed,
@@ -4323,6 +4434,13 @@ def main():
                          "query on that counter's parity, which is why 0x455de0 shows "
                          "about half the calls of 0x455e59). Pool 0x006883b0, stride "
                          "0x6c, 5 records. Floats are raw hex dwords.")
+    ap.add_argument("--puhook-flame", action="store_true",
+                    help="[d3rflame] with --statediff-puhook, ALSO hook the R_FLAME "
+                         "emitter FUN_0045a950 and tick FUN_0045ae80 and write "
+                         "<out>.puflame.csv: every spark birth record, each tick's "
+                         "sorter reference FUN_004671d0(0), and the spark groups' "
+                         "state on tick entry and exit. Pool 0x0068bd00, stride 0x34, "
+                         "100 records. Floats are raw hex dwords.")
     ap.add_argument("--puhook-mortar", action="store_true",
                     help="[D3-CONTACT] with --statediff-puhook, ALSO hook the MORTAR "
                          "projectile update FUN_004538b0 and write <out>.pumortar.csv: "
@@ -4861,6 +4979,8 @@ def main():
                     print("  [statediff]", E.pu_aim_arm())
                 if args.puhook_mortar:
                     print("  [statediff]", E.pu_mtr_arm())
+                if args.puhook_flame:
+                    print("  [statediff]", E.pu_fl_arm())
                 if args.puhook_missile:
                     print("  [statediff]", E.pu_mis_arm())
             if args.statediff_drive and not args.statediff_drive_late:
@@ -5806,6 +5926,20 @@ def main():
                         for r in mt_rows:
                             f.write(",".join(str(x) for x in r) + chr(10))
                     print(f"  [statediff] pumortar {len(mt_rows)} rows -> {mtp}")
+                if args.statediff_puhook and args.puhook_flame:
+                    try: print("  [statediff] puhook-flame agent:", E.pu_fl_stats())
+                    except Exception as _e: print("  [statediff] puflame stats failed:", _e)
+                    fl_rows = []
+                    try: fl_rows = E.pu_fl_drain()
+                    except Exception as _e: print("  [statediff] puflame drain failed:", _e)
+                    flp = outp.with_suffix(outp.suffix + ".puflame.csv")
+                    cols = (["frame", "call", "kind", "owner", "group", "sub"]
+                            + ["d%d" % i for i in range(65)])
+                    with open(flp, "w", newline="") as f:
+                        f.write(",".join(cols) + chr(10))
+                        for r in fl_rows:
+                            f.write(",".join(str(x) for x in r) + chr(10))
+                    print(f"  [statediff] puflame {len(fl_rows)} rows -> {flp}")
                 if args.statediff_puhook and args.puhook_missile:
                     try: print("  [statediff] puhook-missile agent:", E.pu_mis_stats())
                     except Exception as _e: print("  [statediff] pumissile stats failed:", _e)
