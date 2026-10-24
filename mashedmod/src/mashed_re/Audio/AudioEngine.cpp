@@ -76,15 +76,27 @@ bool VolToDsOrig() {
     }();
     return on;
 }
-LONG VolToDs(float v) {
-    v *= g_focusGain;
-    if (VolToDsOrig()) return static_cast<LONG>(static_cast<int32_t>(AudioLinearToLog(v)));
+LONG VolToDsPort(float v) {
     if (v <= 0.0001f) return DSBVOLUME_MIN;
     if (v >= 1.0f)    return DSBVOLUME_MAX;     // 0
     LONG db = static_cast<LONG>(2000.0 * std::log10(static_cast<double>(v)));
     if (db < DSBVOLUME_MIN) db = DSBVOLUME_MIN;
     if (db > DSBVOLUME_MAX) db = DSBVOLUME_MAX;
     return db;
+}
+LONG VolToDs(float v) {
+    v *= g_focusGain;
+    const LONG r = VolToDsOrig() ? static_cast<LONG>(static_cast<int32_t>(AudioLinearToLog(v))) : VolToDsPort(v);
+    // MASHED_VOLTODS_LOG=1 (log only, the return value is unchanged): the first 400 calls with both forms.
+    static const bool s_log = [] { const char* e = std::getenv("MASHED_VOLTODS_LOG"); return e && e[0] == '1'; }();
+    static int s_logged = 0;
+    if (s_log && s_logged < 400) {
+        ++s_logged;
+        uint32_t bits; std::memcpy(&bits, &v, sizeof bits);
+        logf("VolToDs v=%.9g bits=%08x port=%ld orig=%ld ret=%ld", static_cast<double>(v), bits, VolToDsPort(v),
+             static_cast<long>(static_cast<int32_t>(AudioLinearToLog(v))), r);
+    }
+    return r;
 }
 
 int CreateAndPlay(const char* rwsPath, const char* waveName, float volume, bool loop) {
