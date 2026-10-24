@@ -7,7 +7,7 @@ are carried forward below and remain the unit of work; what changes is the **gat
 > **Naming, 2026-09-26.** In this file, D0–D5 are **phases**. The four user decisions of
 > 2026-07-31 in `RE_MASTER_PLAN_2026-07.md` §5 are **DEC-2/4/6/7**. Older text that says "Gate
 > D2 (2026-07-31)" means DEC-2 (librw ships), not phase D2 (default physics).
-> **State 2026-10-21 (supersedes the 2026-10-16 line below):** D0 ✓, D1 ✓ (default flip, residue R1-R2 open, R3 closed 2026-10-16),
+> **State 2026-10-21 (supersedes the 2026-10-16 line below):** D0 ✓, D1 ✓ (default flip, residue R1 closed 2026-10-24, R2 open, R3 closed 2026-10-16),
 > D2 ✓ CLOSED 2026-10-16, **D3 ✓ CLOSED 2026-10-21** (user decision, Mariano; `verify/d3close_20261021/RESULT_d3close.md`; see §D3),
 > **D4 active**, D5 not started.
 >
@@ -281,9 +281,10 @@ v2's R0 did this once and it paid for itself; the repo has drifted since.
 >   A/B revert only; A/B condition met 16/16 ≤1.01% (`verify/d1_recheck_20260818/REPORT.md`).
 >   The flip happened before the original-side adjudication the gate text below asked for.
 >   That clause moved into the residue, and it was not silently dropped.
-> - **D1-residue, OPEN (R1, R2), must close before D5.** Gate: (R1) an original-side capture at a
+> - **D1-residue, OPEN (R2 only), must close before D5.** Gate: (R1) ~~an original-side capture at a
 >   matched, frame-synced pose adjudicates faithfulness (`drawlist_diff.py` GREEN or every row
->   cited); (R2) the verbatim race-camera pose from `Race/RaceCamera.cpp` drives the renderer
+>   cited)~~ **R1 CLOSED 2026-10-24** (Mariano, P0-1 A; `verify/d1r1_20261016/RESULT_d1r1.md`:
+>   every row CITED, 0 RED); (R2) the verbatim race-camera pose from `Race/RaceCamera.cpp` drives the renderer
 >   (Camera subsection below); ~~(R3) the legacy D3D9 race renderer and the
 >   `MASHED_RENDER_LIBRW=0` revert are deleted~~ **R3 CLOSED 2026-10-16** (branch `work/d1r3`,
 >   evidence `verify/d1r3_20261016/RESULT_d1r3.md`): the D3D9 world loop, the D3D9 prop and car
@@ -2225,8 +2226,7 @@ mode 10, live mode / rule / slot-type words), u9779 (round end at call 220, knob
   exit, the rule-7 `participants-1 <= dead` exit, the rule-9 `gap >= 0.9` arm.
 - **D-11078** (two-car original capture for the one-vehicle-TXD-per-race question, U-9730) and **D-11079** (unify the duplicate
   exe bodies of `0x004c4680` / `0x00532b80`, U-9741).
-- **D1-residue R1-R2**, owed before D5: R1 an original-side capture at a matched, frame-synced pose (`drawlist_diff.py` GREEN or
-  every row cited); R2 the verbatim race-camera pose from `Race/RaceCamera.cpp` drives the renderer.
+- **D1-residue R2**, owed before D5 (R1 CLOSED 2026-10-24 on `verify/d1r1_20261016/RESULT_d1r1.md`, every row CITED, 0 RED): R2 the verbatim race-camera pose from `Race/RaceCamera.cpp` drives the renderer.
 
 Evidence hygiene, done with the closure: the five re-captured power-up inputs (`.puhook` / `.pucontact` / `.puaim` /
 `.pumortar` / `.pumissile` csv + provenance, 13.3 MB, no `.msd`) are committed under `verify/d3close_20261021/pu/`, and
@@ -2969,7 +2969,7 @@ P-DoD met. Dev `.asi` out of the shipping matrix. `DEFERRED.md` holds only justi
 rows. Shipping checklist (added 2026-09-26):
 
 - D1-residue closed. R3 is done (no legacy D3D9 race renderer, no `MASHED_RENDER_LIBRW=0`,
-  2026-10-16); R1 and R2 are still owed.
+  2026-10-16); R1 is done (2026-10-24, `verify/d1r1_20261016/RESULT_d1r1.md`, every row CITED, 0 RED); R2 is still owed.
 - `mashed_re.exe` runs without the dev d3d9 shim, `d3d9_real.dll`, the dinput8 ASI loader,
   or any `original/MASHED.exe` boot patch. Those are dev harness only.
 - First run works with no `videocfg.bin` / `contcfg%d.bin` present (defaults are written).
