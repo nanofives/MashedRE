@@ -112,6 +112,7 @@
 "Audio\AudioRwsLeaves.cpp"
 "Audio\AudioPool.cpp"
 "Audio\AudioCharacterBankPaths.cpp"
+"Audio\AudioLinearToLog.cpp"
 "D3d9Render\QuadRenderer.cpp"
 "D3d9Render\RwIm2DBridge.cpp"
 "D3d9Render\DrawStreamDump.cpp"

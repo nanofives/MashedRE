@@ -1,0 +1,13 @@
+[mashed-lock] HELD 'mashed_machine' pid=22700 (D4-AUDIO-VOLTODS)
+hook: audio_linear_to_log  rva=0x005aeb90  export=AudioLinearToLog
+spawning C:\Users\maria\Desktop\Proyectos\Mashed\original\MASHED.exe via subprocess (hook BYPASSED)
+  pid = 19424
+  [agent] LUT ready  base=0x2ce9908  offset=0x134  root=0xd650048  delta=0  attempts=3
+  [agent] .asi loaded  base=0x62450000  AudioLinearToLog@0x6248b420
+
+Results written to C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\D4-AUDIO-VOLTODS\log\diff_audio_linear_to_log.csv
+  total cases: 18
+  mismatches:  0
+
+GREEN: every test value produced bit-identical output.
+[mashed-lock] released 'mashed_machine' pid=22700
