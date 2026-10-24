@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-10-24 18:12 D4-AUDIO-VOLTODS-FLIP (orch/D4-AUDIO-VOLTODS-FLIP): G-CTRL bacfc747/8dd1c004/6f9932b6  B f9deb9b9/d3601fcc/9da9a26a. Run data D:\MashedWT\mtrain_data\20261024_174704
 - 2026-10-24 17:21 D1-R2 (orch/D1-R2): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261024_171810
 - 2026-10-24 17:17 D1-R1 (orch/D1-R1), D4-AUDIO-REST (orch/D4-AUDIO-REST): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261024_171533
 - 2026-10-24 11:51 D4-AUDIO-VOLTODS (orch/D4-AUDIO-VOLTODS): G-CTRL bacfc747/8dd1c004/6f9932b6  B f9deb9b9/d3601fcc/9da9a26a. Run data D:\MashedWT\mtrain_data\20261024_113525
