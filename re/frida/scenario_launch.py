@@ -2050,6 +2050,53 @@ function elimProbeArm(){
 function elimProbeDrain(){ const r = EP.rows; EP.rows = []; return r; }
 // ---------------------------------------------------------------------------
 
+// --- SUB-STATE-7 PHYSICS probe (D3-CF-U9779, 2026-10-24) -------------------
+// U-9781: why car 3's position stops advancing in sub-state 7 on the ORIGINAL.
+// ENTRY hooks only, both once per frame or per substep (<= ~3 calls / frame):
+//   0x00470c70  FUN_00470c70(ms, p)   physics dispatcher (only caller 0x00425a8d)
+//   0x004709a0  FUN_004709a0(dt)      one substep of all cars (only caller 0x00471137)
+// Each row reads DAT_0063ba8c, the clock 0x007f0ff4, the watched car's alive / +0x10 /
+// +0x14 words, its ring selectors +0x9a8 / +0x9ac, both ring translations
+// (+0x958 / +0x998), the velocity +0x9b0..+0x9b8, its slot-table ctrl index
+// (0x007f1a14 + car*0x10) and the first 8 bytes of that ctrl block (0x007f1038 + idx*0x4c).
+// The 0x4c-byte block 0x007f19b8 (FUN_00470c70 0x00470fc7 / 0x00470fd6 / 0x00470ff9,
+// FUN_004709a0 0x00470a1b..0x00470a4f) is dumped in hex on the first row and on every row
+// where its bytes differ from the last dump.
+const R7 = { armed:false, rows:[], n:0, err:null, car:3, n70:0, last19b8:'' };
+function r7Hex(p, n){ const b = new Uint8Array(p.readByteArray(n)); let s = '';
+  for (let i = 0; i < n; i++) s += (b[i] < 16 ? '0' : '') + b[i].toString(16); return s; }
+function r7Row(tag, a0, a1){
+  try {
+    const rec = ga(0x008815a0).add(R7.car * 0xd04);
+    const idx = ga(0x007f1a14).add(R7.car * 0x10).readS32();
+    const blk = ga(0x007f1038).add(idx * 0x4c);
+    const nb = r7Hex(ga(0x007f19b8), 0x4c);
+    const dump = (nb !== R7.last19b8) ? nb : '';
+    R7.last19b8 = nb;
+    const r = [R7.n++, tag, SD.frames, R7.n70, a0, a1, ga(0x0063ba8c).readS32(), ga(0x007f0ff4).readS32(),
+               rec.add(0x4).readS32(), rec.add(0x10).readS32(), rec.add(0x14).readS32(),
+               rec.add(0x9a8).readS32(), rec.add(0x9ac).readS32()];
+    for (const o of [0x958, 0x95c, 0x960, 0x998, 0x99c, 0x9a0, 0x9b0, 0x9b4, 0x9b8]) r.push(rec.add(o).readFloat());
+    r.push(idx); r.push(r7Hex(blk, 8)); r.push(dump);
+    if (R7.rows.length < 20000) R7.rows.push(r);
+  } catch(e){ if (!R7.err) R7.err = tag + ' ' + e; }
+}
+function r7PhysProbeArm(car){
+  if (R7.armed) return 'already armed';
+  try {
+    R7.car = car;
+    Interceptor.attach(ga(0x00470c70), { onEnter(){
+      R7.n70++;
+      r7Row('c70', this.context.esp.add(4).readS32(), this.context.esp.add(8).readU32()); } });
+    Interceptor.attach(ga(0x004709a0), { onEnter(){
+      r7Row('c9a0', this.context.esp.add(4).readFloat(), ''); } });
+    R7.armed = true;
+    return 'r7phys-probe armed (0x00470c70 + 0x004709a0, car ' + car + ')';
+  } catch(e){ return 'ERR ' + e; }
+}
+function r7PhysProbeDrain(){ const r = R7.rows; R7.rows = []; return r; }
+// ---------------------------------------------------------------------------
+
 // --- LEADER-TIMER input probe (D3, 2026-10-03) -----------------------------
 // verify/d3_leader_20261003/PREREG_WITNESS.md, leg W-DATA, ORIGINAL side.
 // Question: when FUN_004148b0 actually runs on the ORIGINAL, what are the values
@@ -3807,6 +3854,9 @@ rpc.exports = {
   elimProbeArm: function(){ return elimProbeArm(); },
   elimProbeDrain: function(){ return elimProbeDrain(); },
   elimProbeStats: function(){ return JSON.stringify({armed:EP.armed, n:EP.n, err:EP.err}); },
+  r7PhysProbeArm: function(c){ return r7PhysProbeArm(c); },
+  r7PhysProbeDrain: function(){ return r7PhysProbeDrain(); },
+  r7PhysProbeStats: function(){ return JSON.stringify({armed:R7.armed, n:R7.n, n70:R7.n70, err:R7.err}); },
   aliveProbeDrain: function(){ return aliveProbeDrain(); },
   leaderProbeArm: function(l){ return leaderProbeArm(l); },
   leaderProbeDrain: function(){ return leaderProbeDrain(); },
@@ -4527,6 +4577,10 @@ def main():
                     help="[u9779] entry hooks on the ORIGINAL's elimination chain (FUN_00422fd0 kill, FUN_0040eee0 score, "
                          "FUN_0040d590 three-AI resolve, FUN_0040b290 score add, the FUN_00411170 tails 0x00418990 (after the "
                          "0x004111a6 write of 7) / 0x00430290) with their gate inputs; writes <out>.elim.csv")
+    ap.add_argument("--r7phys-probe", action="store_true",
+                    help="[D3-CF-U9779] entry hooks on the ORIGINAL's FUN_00470c70 (ms, p) and FUN_004709a0 (dt) with "
+                         "DAT_0063ba8c, the --statediff-car record's ring translations / velocity / ctrl block and a hex "
+                         "dump of the 0x007f19b8 block when it changes; writes <out>.r7phys.csv")
     ap.add_argument("--alive-probe", action="store_true",
                     help="[D3 2026-10-03] per-race-update ALIVE / ELIMINATION record on the "
                          "ORIGINAL. Entry hooks on FUN_00410d10 (SegmentCheck), FUN_00418560 "
@@ -4812,6 +4866,8 @@ def main():
                 print("  [statediff]", E.alive_probe_arm())
             if args.elim_probe:
                 print("  [statediff]", E.elim_probe_arm())
+            if args.r7phys_probe:
+                print("  [statediff]", E.r7_phys_probe_arm(args.statediff_car))
             if args.leader_probe:
                 print("  [statediff]", E.leader_probe_arm(args.leader_probe_limit))
             if args.spawn_drop_probe:
@@ -5443,6 +5499,19 @@ def main():
                         for r in ep_rows:
                             f.write(",".join(repr(x) if isinstance(x, float) else str(x) for x in r) + chr(10))
                     print(f"  [statediff] elim-probe {len(ep_rows)} rows -> {epp}")
+                if args.r7phys_probe:
+                    try: print("  [statediff] r7phys-probe agent:", E.r7_phys_probe_stats())
+                    except Exception as _e: print("  [statediff] r7phys-probe stats failed:", _e)
+                    r7_rows = []
+                    try: r7_rows = E.r7_phys_probe_drain()
+                    except Exception as _e: print("  [statediff] r7phys-probe drain failed:", _e)
+                    r7p = outp.with_suffix(outp.suffix + ".r7phys.csv")
+                    with open(r7p, "w", newline="") as f:
+                        f.write("n,fn,frame,n70,a0,a1,ba8c,clk_0ff4,alive,r10,r14,sel9a8,sel9ac,"
+                                "p0x,p0y,p0z,p1x,p1y,p1z,vx,vy,vz,ctrl_idx,ctrl8,blk19b8" + chr(10))
+                        for r in r7_rows:
+                            f.write(",".join(repr(x) if isinstance(x, float) else str(x) for x in r) + chr(10))
+                    print(f"  [statediff] r7phys-probe {len(r7_rows)} rows -> {r7p}")
                 if args.alive_probe:
                     # Counters and KA-1 BEFORE the rows; CSV written even when empty
                     # (memory `absent-log-proves-nothing-run-a-control`).
