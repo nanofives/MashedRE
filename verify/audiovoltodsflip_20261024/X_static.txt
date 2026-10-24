@@ -1,0 +1,10 @@
+mashedmod/build/mashed_re.exe sha8=58ff75a6 size=2595328
+   MASHED_VOLTODS_ORIG      count=0
+   MASHED_VOLTODS_LOG       count=0
+   VolToDs v=               count=0
+   AudioLinearToLog path    count=0
+mashedmod/build/mashed_re_dev.asi sha8=88b4d380 size=1202176
+   MASHED_VOLTODS_ORIG      count=0
+   MASHED_VOLTODS_LOG       count=0
+   VolToDs v=               count=0
+   AudioLinearToLog path    count=0

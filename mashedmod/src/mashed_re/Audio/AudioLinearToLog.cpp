@@ -5,7 +5,7 @@
 // 0x005b8a1b, 0x005b8f62, 0x005b955f, 0x005b96b7. At 0x005b8f62 the result is pushed into `call [edx+0x3c]` on
 // [esi+0xdc] (0x005b8f74), vtable offset 0x3c = slot 15, which is SetVolume in IDirectSoundBuffer's layout (the object's
 // type is not read here).
-// In the exe AudioEngine's VolToDs calls it under MASHED_VOLTODS_ORIG=1 (default OFF).
+// In the exe AudioEngine's VolToDs calls it unconditionally (D4-AUDIO-VOLTODS-FLIP, L-6 = A).
 #include "../Core/HookSystem.h"
 #include <cstdint>
 

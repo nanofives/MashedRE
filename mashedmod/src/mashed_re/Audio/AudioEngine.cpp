@@ -14,7 +14,7 @@
 #include <cstdlib>
 #include <vector>
 
-// The original's linear-to-log leaf, Audio/AudioLinearToLog.cpp (both targets). VolToDs calls it under MASHED_VOLTODS_ORIG=1.
+// The original's linear-to-log leaf, Audio/AudioLinearToLog.cpp (both targets). VolToDs's only body.
 extern "C" uint32_t __cdecl AudioLinearToLog(float param_1);
 
 namespace mashed_re {
@@ -63,41 +63,14 @@ struct Voice {
 };
 std::vector<Voice> g_voices;
 
-// 0..1 linear -> DirectSound hundredths-of-dB (DSBVOLUME_MIN..MAX = -10000..0).
-// Scaled by g_focusGain so a focus-loss mute applies to every SetVolume.
-// [D4-AUDIO-VOLTODS 2026-10-24] MASHED_VOLTODS_ORIG=1 (default OFF) routes the gained value through the original's
-// AudioLinearToLog (Audio/AudioLinearToLog.cpp): floor -10000 below 1e-5f [0x005cc990], f32 2000*log10 truncated, positives
-// clamped to 0. verify/audiovoltods_20261024/PREREG_voltods.md.
-bool VolToDsOrig() {
-    static const bool on = [] {
-        const char* e = std::getenv("MASHED_VOLTODS_ORIG");
-        const bool r = e && e[0] == '1';
-        if (r) logf("VolToDs: MASHED_VOLTODS_ORIG=1, AudioLinearToLog path");
-        return r;
-    }();
-    return on;
-}
-LONG VolToDsPort(float v) {
-    if (v <= 0.0001f) return DSBVOLUME_MIN;
-    if (v >= 1.0f)    return DSBVOLUME_MAX;     // 0
-    LONG db = static_cast<LONG>(2000.0 * std::log10(static_cast<double>(v)));
-    if (db < DSBVOLUME_MIN) db = DSBVOLUME_MIN;
-    if (db > DSBVOLUME_MAX) db = DSBVOLUME_MAX;
-    return db;
-}
+// 0..1 linear -> DirectSound hundredths-of-dB through the original's AudioLinearToLog 0x005aeb90
+// (Audio/AudioLinearToLog.cpp): floor -10000 below 1e-5f [0x005cc990], f32 2000*log10 truncated, positives clamped to 0.
+// Scaled by g_focusGain (port-side) so a focus-loss mute applies to every SetVolume.
+// [D4-AUDIO-VOLTODS-FLIP 2026-10-24] L-6 = A (log/orch/DECISIONS.md): the original's law is the only body. The port's
+// log10 body, MASHED_VOLTODS_ORIG and MASHED_VOLTODS_LOG are deleted. verify/audiovoltods_20261024/RESULT_voltods.md S2.
 LONG VolToDs(float v) {
     v *= g_focusGain;
-    const LONG r = VolToDsOrig() ? static_cast<LONG>(static_cast<int32_t>(AudioLinearToLog(v))) : VolToDsPort(v);
-    // MASHED_VOLTODS_LOG=1 (log only, the return value is unchanged): the first 400 calls with both forms.
-    static const bool s_log = [] { const char* e = std::getenv("MASHED_VOLTODS_LOG"); return e && e[0] == '1'; }();
-    static int s_logged = 0;
-    if (s_log && s_logged < 400) {
-        ++s_logged;
-        uint32_t bits; std::memcpy(&bits, &v, sizeof bits);
-        logf("VolToDs v=%.9g bits=%08x port=%ld orig=%ld ret=%ld", static_cast<double>(v), bits, VolToDsPort(v),
-             static_cast<long>(static_cast<int32_t>(AudioLinearToLog(v))), r);
-    }
-    return r;
+    return static_cast<LONG>(static_cast<int32_t>(AudioLinearToLog(v)));
 }
 
 int CreateAndPlay(const char* rwsPath, const char* waveName, float volume, bool loop) {
