@@ -1,0 +1,71 @@
+## B_DEF_K0.log
+input slots: game controllers 2, types 1 1 2 0, active 3
+R6 round 1 OVER t=6.7s winner=car3 (wins now: c0=4 c1=5 c2=7 c3=8)
+R6 round 2 OVER t=15.7s winner=car1 (wins now: c0=3 c1=7 c2=8 c3=6)
+## B_DEF_K1.log
+input slots: game controllers 2, types 1 1 2 0, active 3
+R6 round 1 OVER t=9.7s winner=car2 (wins now: c0=4 c1=7 c2=8 c3=5)
+R6 round 2 OVER t=19.2s winner=car1 (wins now: c0=2 c1=9 c2=7 c3=6)
+## B_DEF_K26.log
+input slots: game controllers 2, types 1 1 2 0, active 3
+R6 round 1 OVER t=6.3s winner=car3 (wins now: c0=4 c1=7 c2=5 c3=8)
+R6 round 2 OVER t=15.6s winner=car1 (wins now: c0=2 c1=9 c2=6 c3=7)
+## B_I_K0.log
+input slots: game controllers 2, types 1 1 2 0, active 3
+R6 round 1 OVER t=6.7s winner=car3 (wins now: c0=4 c1=5 c2=7 c3=8)
+R6 round 2 OVER t=15.7s winner=car1 (wins now: c0=3 c1=7 c2=8 c3=6)
+## B_XIP150_K0.log
+input slots: game controllers 2, types 1 1 2 0, active 3
+R6 round 1 OVER t=6.7s winner=car3 (wins now: c0=4 c1=5 c2=7 c3=8)
+R7IN byte0xa slot=2 val=0xff r7frame=150 test=1 det_frame=551 type=2
+R7X EXIT det_frame=551 round 1 -> 2 match_winner=-1
+R6 round 2 OVER t=15.1s winner=car1 (wins now: c0=2 c1=7 c2=8 c3=7)
+R7IN byte0xa slot=2 val=0xff r7frame=150 test=1 det_frame=1058 type=2
+R7X EXIT det_frame=1058 round 2 -> 3 match_winner=-1
+## B_XIP50_K0.log
+input slots: game controllers 2, types 1 1 2 0, active 3
+R6 round 1 OVER t=6.7s winner=car3 (wins now: c0=4 c1=5 c2=7 c3=8)
+R7IN byte0xa slot=2 val=0xff r7frame=50 test=1 det_frame=451 type=2
+## B_XIPP150_K0.log
+input slots: game controllers 2, types 1 1 2 0, active 3
+R6 round 1 OVER t=6.7s winner=car3 (wins now: c0=4 c1=5 c2=7 c3=8)
+R7IN byte0xa slot=0 val=0xff r7frame=150 test=1 det_frame=551 type=1
+R7X EXIT det_frame=551 round 1 -> 2 match_winner=-1
+R6 round 2 OVER t=15.1s winner=car1 (wins now: c0=2 c1=7 c2=8 c3=7)
+R7IN byte0xa slot=0 val=0xff r7frame=150 test=1 det_frame=1058 type=1
+R7X EXIT det_frame=1058 round 2 -> 3 match_winner=-1
+## B_XIPP50_K0.log
+input slots: game controllers 2, types 1 1 2 0, active 3
+R6 round 1 OVER t=6.7s winner=car3 (wins now: c0=4 c1=5 c2=7 c3=8)
+R7IN byte0xa slot=0 val=0xff r7frame=50 test=1 det_frame=451 type=1
+## B_XI_K0.log
+input slots: game controllers 2, types 1 1 2 0, active 3
+R6 round 1 OVER t=6.7s winner=car3 (wins now: c0=4 c1=5 c2=7 c3=8)
+## B_XI_K1.log
+input slots: game controllers 2, types 1 1 2 0, active 3
+R6 round 1 OVER t=9.7s winner=car2 (wins now: c0=4 c1=7 c2=8 c3=5)
+## B_XI_K26.log
+input slots: game controllers 2, types 1 1 2 0, active 3
+R6 round 1 OVER t=6.3s winner=car3 (wins now: c0=4 c1=7 c2=5 c3=8)
+## B_X_K0.log
+input slots: game controllers 2, types 1 1 2 0, active 3
+R6 round 1 OVER t=6.7s winner=car3 (wins now: c0=4 c1=5 c2=7 c3=8)
+## D2_XI_1.log
+input slots: game controllers 2, types 1 1 2 0, active 3
+R7IN byte0xa slot=2 val=0xff r7frame=0 test=0 det_frame=72 type=2
+## D2_XI_2.log
+input slots: game controllers 2, types 1 1 2 0, active 3
+R7IN byte0xa slot=2 val=0xff r7frame=0 test=0 det_frame=69 type=2
+## D2_XI_3.log
+input slots: game controllers 2, types 1 1 2 0, active 3
+R7IN byte0xa slot=2 val=0xff r7frame=0 test=0 det_frame=70 type=2
+## H_DEF.log
+input slots: game controllers 2, types 1 1 2 0, active 3
+R6 round 1 OVER t=6.7s winner=car3 (wins now: c0=4 c1=5 c2=7 c3=8)
+R6 round 2 OVER t=15.7s winner=car1 (wins now: c0=3 c1=7 c2=8 c3=6)
+R6 round 3 OVER t=24.2s winner=car3 (wins now: c0=1 c1=6 c2=9 c3=8)
+R6 round 4 OVER t=33.3s winner=car3 (wins now: c0=0 c1=7 c2=8 c3=10)
+R6 round 5 OVER t=42.2s winner=car2 (wins now: c0=0 c1=6 c2=10 c3=11)
+## H_XI.log
+input slots: game controllers 2, types 1 1 2 0, active 3
+R6 round 1 OVER t=6.7s winner=car3 (wins now: c0=4 c1=5 c2=7 c3=8)
