@@ -1,0 +1,39 @@
+[mtrain 05:50:17] SELFTEST fake repo C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261025_054957
+[mtrain 05:50:29]   union-resolved: re/analysis/CHANGELOG.md
+[mtrain 05:50:29]   SELFTEST PASS: both branches merged, second one by union-resolve
+[mtrain 05:50:29]   SELFTEST PASS: committed CHANGELOG.md has 0 CR bytes (27 bytes, entries a+b: True)
+[mtrain 05:50:30]   SELFTEST PASS: Write-Lf output (INTEGRATION_LOG.md path) has 0 CR bytes
+[mtrain 05:50:30]   SELFTEST contrast: Set-Content writes 2 CR byte(s) for 2 lines on this host
+[mtrain 05:50:34] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261025_054957\.worktrees\mtrain-20261025_054957-12f3 rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261025_054957\.worktrees\mtrain-20261025_054957-12f3: removed
+[mtrain 05:50:43] wt-remove C:/Users/maria/AppData/Local/Temp/mtrain_selftest_repo_20261025_054957/.worktrees/step-clean rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261025_054957\.worktrees\step-clean: removed
+[mtrain 05:50:43]   cleanup step-clean: worktree and branch removed
+[mtrain 05:50:49] wt-remove C:/Users/maria/AppData/Local/Temp/mtrain_selftest_repo_20261025_054957/.worktrees/step-dirty rc=1 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261025_054957\.worktrees\step-dirty: refused (likely dirty): fatal: 'C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261025_054957\.worktrees\step-dirty' contains modified 
+[mtrain 05:50:49]   cleanup step-dirty: worktree removal refused (C:/Users/maria/AppData/Local/Temp/mtrain_selftest_repo_20261025_054957/.worktrees/step-dirty), worktree and branch kept
+[mtrain 05:50:50]   cleanup step-ahead: git branch --delete refused, branch kept: error: the branch 'step-ahead' is not fully merged
+[mtrain 05:50:50]   SELFTEST PASS: clean merged step: worktree and branch removed
+[mtrain 05:50:50]   SELFTEST PASS: dirty step: wt-remove refused, worktree and branch kept (no force)
+[mtrain 05:50:50]   SELFTEST PASS: unmerged step: git branch --delete refused, branch kept (no -D)
+[mtrain 05:50:51] guard: removing leftover temp worktree C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261025_054957\.worktrees\mtrain-20261025_054957-f310
+[mtrain 05:50:52] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261025_054957\.worktrees\mtrain-20261025_054957-f310 rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261025_054957\.worktrees\mtrain-20261025_054957-f310: removed
+[mtrain 05:50:52]   SELFTEST PASS: body ends without removing its temp (foreign-tip skip shape): guard removed it
+[mtrain 05:50:53] guard: removing leftover temp worktree C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261025_054957\.worktrees\mtrain-20261025_054957-ecd9
+[mtrain 05:50:54] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261025_054957\.worktrees\mtrain-20261025_054957-ecd9 rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261025_054957\.worktrees\mtrain-20261025_054957-ecd9: removed
+[mtrain 05:50:54]   SELFTEST PASS: forced throw inside the body: exception propagates AND the finally block removed the temp worktree
+[mtrain 05:50:56] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261025_054957\.worktrees\mtrain-20261025_054957-5181 rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261025_054957\.worktrees\mtrain-20261025_054957-5181: removed
+[mtrain 05:50:56]   SELFTEST PASS: body that cleans up after itself: nothing left, registry empty
+[mtrain 05:51:02] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261025_054957\.worktrees\mtrain-20261025_054957-1943 rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261025_054957\.worktrees\mtrain-20261025_054957-1943: removed
+[mtrain 05:51:02] guard: removing leftover temp worktree C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261025_054957\.worktrees\mtrain-20261025_054957-612f
+[mtrain 05:51:06] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261025_054957\.worktrees\mtrain-20261025_054957-612f rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261025_054957\.worktrees\mtrain-20261025_054957-612f: removed
+[mtrain 05:51:06]   SELFTEST PASS: two temps, one removed by the body: guard removes only the remaining one
+[mtrain 05:51:08]   cleanup step-out: worktree C:/Users/maria/AppData/Local/Temp/mtrain_selftest_repo_20261025_054957-outside-wt is not under .worktrees\, worktree and branch kept
+[mtrain 05:51:08]   SELFTEST PASS: row worktree outside .worktrees\: skipped, worktree and branch kept
+[mtrain 05:51:11] wt-remove C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261025_054957-outside-wt rc=0 wt-remove: C:\Users\maria\AppData\Local\Temp\mtrain_selftest_repo_20261025_054957-outside-wt: removed
+[mtrain 05:51:11]   D2 rerun: D2_DEF_2 motion_diag under 1600 lines, rerun 1/2
+[mtrain 05:51:12]   SELFTEST PASS: short-once: D2_DEF_2 rerun once (2 runs), others not rerun, 0 arms short
+[mtrain 05:51:12]   D2 rerun: D2_DEF_2 motion_diag under 1600 lines, rerun 1/2
+[mtrain 05:51:12]   D2 rerun: D2_DEF_2 motion_diag under 1600 lines, rerun 2/2
+[mtrain 05:51:12]   D2 short after 2 rerun(s): D2_DEF_2
+[mtrain 05:51:12]   SELFTEST PASS: short-always: reruns bounded at 2, arm still reported short (runs=3)
+[mtrain 05:51:13]   SELFTEST PASS: full-length logs: no rerun
+[mtrain 05:51:13] SELFTEST done: 0 failure(s)
+SELFTEST PASS (0 failure(s)) log C:\Users\maria\AppData\Local\Temp\mtrain_selftest\20261025_054957\merge_train.log
