@@ -23,8 +23,6 @@
 # through: the whole point is that the five 2026-09-29 defects would each have
 # produced exactly such a line.
 
-DUP-IN-TARGET:004c4d20:Math/RwMatrixRotate.cpp,Race/RaceCamera.cpp   # audit=DIFFERS-BEHAVIOUR; [exe] two bodies: Math/RwMatrixRotate.cpp:52 (), Race/RaceCamera.cpp:66 (RotateAboutAxis)
-
 # --- ADDED 2026-09-30 (U-9156): exposed by the SECOND ANCHORING PASS in
 # scripts/rva_body_scan.py, which binds a body whose `// <rva> <Name>` header
 # comment is NOT directly above the definition. Every line below is a body the
