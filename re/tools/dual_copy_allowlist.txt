@@ -34,9 +34,6 @@ CROSS-TARGET:00410510:Race/RuleEngine.cpp,Race/ScoringHooks.cpp   # audit=DIFFER
 # audit=UNREVIEWED-U9156: STRUCTURAL CANDIDATES, nobody has compared them
 # body-to-body. Allowlisted so the guard stays live; burn-down is ROADMAP D4.
 
-# --- ADDED 2026-10-13 (scr19 arrow fix, work/scr19arrow)
-CROSS-TARGET:004282a0:Frontend/MenuMenusB.cpp,exe_main.cpp   # DELIBERATE, split by target. asi-only Frontend/MenuMenusB.cpp:MenuMenusBA is the C3 naked-asm copy that calls the original's FUN_00427780/FUN_004277a0/FUN_005554d0 at their absolute RVAs and reads [0x0067d838]/[0x0067d830] -- none of that exists in mashed_re.exe. exe-only exe_main.cpp:MeasureMenuMessage is the same computation over g_msg_dat/g_font with [0x0067d830] as the measured constant 0x3f7fffff; bit-equal to the original's return for ids 0x59/0x1b2/0x1b1 at 0.6/0.7/0.72 (verify/scr19_parity_20261012/arrow_fix/measure_table.txt). Same shape as 0046b1c0.
-
 # --- ADDED 2026-10-16 (fwd494fd0, ROADMAP D4 item 2, the AI copies). The AI-area keys above went from 11 to the
 # three below: harness drivers, call-throughs and prose the scanner had bound as bodies were re-anchored, two dead
 # bodies deleted (AiVehicleVelocity3, AiPerFrameTick), CarSlotStateSet consolidated into Ai/CarSlotState.cpp.

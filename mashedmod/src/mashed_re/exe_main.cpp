@@ -174,6 +174,7 @@
 #include "Compat/StandaloneRvaThunks.h"     // B16: standalone RVA-thunk installer
 #include "Frontend/MenuNavSM.h"             // standalone menu nav state machine (FUN_0043d2a0 port)
 #include "Frontend/RowMovers.h"             // FrontendModeIndexFor: 0x004309b0 (challenge launch gate)
+#include "Frontend/MenuMeasure.h"           // MenuMenusBA: the shared 0x004282a0 body + its cells
 #include "Race/GameFlow.h"                  // top-level game state machine + race scaffold
 #include "Race/RaceModes.h"                 // [WS-G1] real game-mode -> race-rule pipeline
 #include "Audio/AudioEngine.h"              // real DirectSound playback (in-race ambience)
@@ -2987,21 +2988,35 @@ static float DeriveMenuMeasureDiv() {
     return hi - lo;                               // FUN_00553cf0: max - min
 }
 
-// 0x004282a0  FUN_004282a0(id, scale) for the standalone: the message text
-// (FUN_00427780 + FUN_004277a0 remap = GetMenuMessage) measured by
-// FUN_005554d0 (0x005554d0..0x005555aa): sum over 16-bit codes of
-// (rec+0x00 width + [ctx+0x0c] tracking) for codes with a glyph (ASCII LUT
-// ctx+0x24 below 0x80, ext table ctx+0x12c for code-[ctx+0x124] < [ctx+0x128],
-// no advance otherwise), times (scale * 0.0708 [0x005cd5fc]) (0x004282d7),
-// / [0x0067d830] (0x004282f1), * 640.0 [0x005cd618] (0x00428309). Returns the
-// value the original leaves in ST0. The original runs this at x87 PC_24 (every
-// return the probe read is float-exact), so each op rounds to float, which is
-// what SSE2 float arithmetic does here. Bit-equal to the original's return for
-// ids 0x59/0x1b2/0x1b1 at 0.6/0.7/0.72 (arrow_fix/measure_table.txt).
-float MeasureMenuMessage(int id, float scale) {
-    if (!g_font.ready()) return 0.f;
-    wchar_t buf[0x200];
-    if (GetMenuMessage(id, buf, 0x200) <= 0) return 0.f;
+// The exe's cells for the shared menu-width body (Frontend/MenuMeasure.cpp, D4-DC-82a0).
+// Each callee keeps the original's ABI, so the body is the same instructions in both targets.
+//   Lookup  (cdecl, result in EAX): the message id itself; the text is read by Remap.
+//   Remap   (EAX = id, EBX = 0x400-byte buffer): GetMenuMessage over g_msg_dat, which applies
+//           the FUN_004277a0 control-code remap; an unknown id leaves an empty string.
+//   Measure (cdecl, ST0): FUN_005554d0 (0x005554d0..0x005555aa) over g_font: sum over 16-bit codes
+//           of (rec+0x00 width + [ctx+0x0c] tracking) for codes with a glyph (ASCII LUT ctx+0x24
+//           below 0x80, ext table ctx+0x12c for code-[ctx+0x124] < [ctx+0x128], no advance
+//           otherwise), times the size argument (0x0055559f). The font argument is unused.
+//   Font cell: a zero dword. Div cell: [0x0067d830] as derived by DeriveMenuMeasureDiv.
+static void __cdecl ExeMenuMeasureText(int id, wchar_t* out) {
+    GetMenuMessage(id, out, 0x200);
+}
+extern "C" __declspec(naked) void ExeMenuMeasureLookup() {
+    __asm {
+        mov eax, dword ptr [esp + 4]
+        ret
+    }
+}
+extern "C" __declspec(naked) void ExeMenuMeasureRemap() {
+    __asm {
+        push ebx
+        push eax
+        call ExeMenuMeasureText
+        add  esp, 8
+        ret
+    }
+}
+static float __cdecl ExeMenuMeasureGlyphs(const void* /*font*/, const wchar_t* buf, float size) {
     const float trk = g_font.tracking();
     float sum = 0.f;
     for (const wchar_t* p = buf; *p; ++p) {
@@ -3011,9 +3026,30 @@ float MeasureMenuMessage(int id, float scale) {
         if (g_font.Glyph(static_cast<unsigned char>(c), uv, &wf))
             sum = sum + (wf + trk);                       // 0x00555585..0x0055558b
     }
-    static const float div = DeriveMenuMeasureDiv();
-    const float sf = scale * 0.0708f;                     // 0x004282d7
-    return ((sum * sf) / div) * 640.0f;                   // 0x0055559f, 0x004282f1, 0x00428309
+    return sum * size;                                    // 0x0055559f
+}
+static const std::uint32_t s_menuMeasureFont = 0;
+static float s_menuMeasureDiv = 0.f;
+extern "C" void*        g_menuBa_Lookup   = reinterpret_cast<void*>(&ExeMenuMeasureLookup);
+extern "C" void*        g_menuBa_Remap    = reinterpret_cast<void*>(&ExeMenuMeasureRemap);
+extern "C" void*        g_menuBa_Measure  = reinterpret_cast<void*>(&ExeMenuMeasureGlyphs);
+extern "C" const void*  g_menuBa_FontCell = &s_menuMeasureFont;
+extern "C" const float* g_menuBa_DivCell  = &s_menuMeasureDiv;
+
+// The standalone's caller of the shared body. The original runs it at x87 PC_24 (every return
+// the 2026-10-12 probe read is float-exact), so the call is scoped to PC_24 and the x87 body
+// rounds each op to float, as the original's game thread does. Bit-equal to the original's
+// return for ids 0x59/0x1b2/0x1b1 at 0.6/0.7/0.72 (arrow_fix/measure_table.txt).
+float MeasureMenuMessage(int id, float scale) {
+    if (!g_font.ready()) return 0.f;
+    static const bool s_div = (s_menuMeasureDiv = DeriveMenuMeasureDiv(), true);
+    (void)s_div;
+    unsigned int cw = 0, t = 0;
+    _controlfp_s(&cw, 0, 0);
+    _controlfp_s(&t, _PC_24, _MCW_PC);
+    const float r = MenuMenusBA(static_cast<std::uint32_t>(id), scale);
+    _controlfp_s(&t, cw & _MCW_PC, _MCW_PC);
+    return r;
 }
 
 void DrawMashedString(const wchar_t* s, float cx, float anchor_y,

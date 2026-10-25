@@ -11,6 +11,7 @@
 //   (preserved in original\MASHED.exe.unpatched)
 
 #include "../Core/HookSystem.h"
+#include "MenuMeasure.h"
 #include <cstdint>
 
 // ---------------------------------------------------------------------------
@@ -64,103 +65,15 @@ static auto* const s_FUN_00430790 =
     reinterpret_cast<int(__cdecl*)()>(0x00430790u);
 
 // ---------------------------------------------------------------------------
-// MenuMenusBA  --  0x004282a0
-//
-// Original: FUN_004282a0  (body 0x004282a0..0x00428319, stack cookie present)
-// Signature: float10 FUN_004282a0(undefined4 param_1, float param_2)
-//   param_1: font/sprite slot index (passed to FUN_00427780)
-//   param_2: scale factor (multiplied by _DAT_005cd5fc)
-//   Returns: scaled logical width
-//
-// Logic:
-//   FUN_00427780(param_1);
-//   FUN_004277a0();
-//   fVar1 = (float10)FUN_005554d0(DAT_0067d838, local_404, param_2 * _DAT_005cd5fc);
-//   return (fVar1 / (float10)_DAT_0067d830) * (float10)_DAT_005cd618;
-//
-// Globals:
-//   DAT_0067d838  draw context handle    (0x004282c4)
-//   _DAT_005cd5fc  size scale float      (0x004282c0)
-//   _DAT_0067d830  viewport width float  (0x004282cc)
-//   _DAT_005cd618  logical width scale   (0x004282d6)
-//
-// x87 float10 extended precision: use double intermediates to match original.
-// Stack buffer local_404 (0x100 bytes) filled by FUN_005554d0 internal logic.
-//
-// ref: re/analysis/frontend_promote_menus_b/004282a0.md
+// MenuMenusBA: the body is Frontend/MenuMeasure.cpp, shared with the exe (D4-DC-82a0, 2026-10-25).
+// This TU supplies the .asi's cells: the original's callees at their absolute addresses and the
+// addresses of the two globals the body reads (font context at 0x004282dd, divisor at 0x004282f1).
 // ---------------------------------------------------------------------------
-
-// Stack buffer size: local_404 is 0x400 bytes from analysis decomp layout.
-static constexpr int kMenuBa_StrBufSize = 0x400;
-
-// Global addresses (cited from 0x004282a0 body):
-static constexpr std::uintptr_t kMenuBa_FontCtx      = 0x0067d838u;  // 0x004282c4
-static constexpr std::uintptr_t kMenuBa_SizeScale     = 0x005cd5fcu;  // 0x004282c0
-static constexpr std::uintptr_t kMenuBa_ViewportW     = 0x0067d830u;  // 0x004282cc
-static constexpr std::uintptr_t kMenuBa_LogicalScale  = 0x005cd618u;  // 0x004282d6
-
-// String-table base used by FUN_00427780 (Ghidra 0x00427784/0x0042778b: [param_1*4 + 0x66d828]
-// then + 0x66d828). FUN_00427780 is a PURE function (no side effects) -> safe to inline.
-static constexpr std::uintptr_t kStrTableBase = 0x0066d828u;
-
-// FIX (2026-06-07 navigate-C4): the previous reimpl called s_FUN_00427780(param_1) then
-// s_FUN_004277a0() as plain __cdecl(void) calls. But FUN_004277a0 is a REGISTER-ARG function:
-// it reads its source from in_EAX (the pointer FUN_00427780 returns) and writes to unaff_EBX
-// (the caller's output buffer = local_404; Ghidra 0x004282c7 LEA EBX,[ESP+8]). Calling them as
-// void __cdecl left EAX clobbered between the two -> FUN_004277a0 derefs garbage -> AV at
-// 0x00427813 when installed. (The old crash_equal_ok C3 missed this: the synthetic force-call
-// never set EAX/EBX either, so orig+reimpl crashed identically = false GREEN.) FUN_00427780 and
-// FUN_004277a0 are both side-effect-free except for filling local_404, so we reimplement their
-// logic inline and keep the (correct, __cdecl-stack) FUN_005554d0 call.
-
-// RE-PORTED FROM THE BYTES 2026-10-12 (negctl re-earn). The C body stored the FUN_005554d0
-// ST0 result in a float before the fdiv/fmul, so it rounded where the original does not:
-// the original keeps the width in ST0 through fdiv [0x0067d830] @0x004282f1 and
-// fmul [0x005cd618] @0x00428309 and returns it in ST0 (Ghidra: float10). With
-// DAT_0067d830 = 800.0, (id 40, size 8.0) came back 0x4235b37c on the original and 0x4235b37d
-// on the port. Like MenuMenusBC below, the body is now the instruction sequence, so the
-// question of which precision C would round at does not arise.
-//
-// Calls go through memory cells (a naked body cannot emit the original E8 rel32):
-// FUN_00427780 returns the string pointer in EAX, FUN_004277a0 reads EAX and writes the
-// transcoded string to EBX (register ABI, see the 2026-06-07 note above), FUN_005554d0 is
-// cdecl and returns ST0. The /GS cookie (0x004282a6..0x004282b3, 0x004282f7/0x00428301,
-// jmp 0x004a2be9 @0x00428315) is not ported: the slot at [esp+0x400] is kept so every
-// displacement is the original's, and the tail jmp becomes ret.
-void* g_menuBa_Lookup  = reinterpret_cast<void*>(0x00427780u);
-void* g_menuBa_Remap   = reinterpret_cast<void*>(0x004277a0u);
-void* g_menuBa_Measure = reinterpret_cast<void*>(0x005554d0u);
-
-// 0x004282a0
-extern "C" __declspec(dllexport) __declspec(naked) float __cdecl MenuMenusBA(
-    std::uint32_t /*param_1*/, float /*param_2*/)
-{
-    __asm {
-        sub  esp, 0x404                         // 0x004282a0  0x400 buffer + cookie slot
-        push ebx                                // 0x004282b2
-        mov  eax, dword ptr [esp + 0x40c]       // 0x004282ba  param_1
-        push eax                                // 0x004282c1
-        call dword ptr [g_menuBa_Lookup]        // 0x004282c2  FUN_00427780 -> EAX
-        lea  ebx, [esp + 8]                     // 0x004282c7  EBX = buffer
-        call dword ptr [g_menuBa_Remap]         // 0x004282cb  FUN_004277a0(EAX, EBX)
-        fld  dword ptr [esp + 0x414]            // 0x004282d0  param_2
-        fmul dword ptr ds:[0x005cd5fc]          // 0x004282d7  * 0.0708
-        mov  edx, dword ptr ds:[0x0067d838]     // 0x004282dd  font
-        lea  ecx, [esp + 8]                     // 0x004282e3  buffer
-        fstp dword ptr [esp]                    // 0x004282e7  reuse the param_1 slot as arg3
-        push ecx                                // 0x004282ea  arg2
-        push edx                                // 0x004282eb  arg1
-        call dword ptr [g_menuBa_Measure]       // 0x004282ec  FUN_005554d0 -> ST0
-        fdiv dword ptr ds:[0x0067d830]          // 0x004282f1  ST0 / viewport width
-        add  esp, 0xc                           // 0x004282fe
-        pop  ebx                                // 0x00428308
-        fmul dword ptr ds:[0x005cd618]          // 0x00428309  * 640.0, left in ST0
-        add  esp, 0x404                         // 0x0042830f
-        ret                                     // 0x00428315  (jmp 0x004a2be9 cookie check)
-    }
-}
-
-RH_ScopedInstall(MenuMenusBA, 0x004282a0);  // re-enabled 2026-05-24 c3-frontend-a
+extern "C" void*        g_menuBa_Lookup   = reinterpret_cast<void*>(0x00427780u);
+extern "C" void*        g_menuBa_Remap    = reinterpret_cast<void*>(0x004277a0u);
+extern "C" void*        g_menuBa_Measure  = reinterpret_cast<void*>(0x005554d0u);
+extern "C" const void*  g_menuBa_FontCell = reinterpret_cast<const void*>(0x0067d838u);
+extern "C" const float* g_menuBa_DivCell  = reinterpret_cast<const float*>(0x0067d830u);
 
 // ---------------------------------------------------------------------------
 // MenuMenusBB (0x00427ad0): moved to Frontend/MenuMenusBB.cpp (drawstream 2026-10-12), an x87 TU. Under
