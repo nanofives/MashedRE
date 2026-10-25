@@ -15,3 +15,8 @@ scripts/dump_asm.py text eol=lf
 
 # Append-only tracker: keep LF whatever tool writes it (merge train 5f335db09 rewrote it CRLF, 2026-10-24).
 re/analysis/CHANGELOG.md text eol=lf
+
+# Ledger snapshot files (roadmap.ps1 snapshot copies live log/orch files here): LF whatever core.autocrlf says, so git add never warns (HB-TRAINCLEAN).
+re/orchestrator/ledger/** text eol=lf
+re/orchestrator/DECISIONS.md text eol=lf
+re/orchestrator/INTEGRATION_LOG.md text eol=lf

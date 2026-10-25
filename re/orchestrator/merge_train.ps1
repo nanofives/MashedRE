@@ -60,6 +60,7 @@ function New-Temp([string]$at) {
   $p = Join-Path $MAIN ".worktrees\mtrain-$TS-$([guid]::NewGuid().ToString('N').Substring(0,4))"
   Git -C $MAIN worktree add --detach $p $at | Out-Null
   if ($script:GITRC -ne 0) { throw "worktree add failed: $p" }
+  $script:Temps += $p   # HB-TRAINCLEAN: every temp worktree stays registered until Remove-Temp has removed it
   return $p
 }
 function Remove-Wt([string]$p) {
@@ -68,9 +69,16 @@ function Remove-Wt([string]$p) {
   try { $o = & py.exe -3.12 $DIAG wt-remove $p 2>&1; $rc = $LASTEXITCODE; Say "wt-remove $p rc=$rc $($o | Select-Object -First 1)" } finally { Pop-Location }
   return $rc
 }
+$script:Temps = @()
 function Remove-Temp([string]$p) {
   if ($KeepTemp -or -not $p) { return }
-  Remove-Wt $p | Out-Null
+  if ((Remove-Wt $p) -eq 0) { $script:Temps = @($script:Temps | Where-Object { $_ -ne $p }) }
+}
+# HB-TRAINCLEAN: run the body in the caller's scope (dot-sourced) and, however it ends (return, throw, early skip on a
+# foreign tip, ledger failure), remove every temp worktree it created that is still registered.
+function Invoke-Guarded([scriptblock]$Body) {
+  try { . $Body }
+  finally { foreach ($t in @($script:Temps)) { Say "guard: removing leftover temp worktree $t"; Remove-Temp $t } }
 }
 # HB-SOLOSTALE: each run records its PID and start time; a run killed mid-way leaves its mtrain worktree behind,
 # and the next run reclaims it (diag.py wt-remove only). The solo token needs no sweep: solo-begin --owner-pid
@@ -108,6 +116,9 @@ function Cleanup-Step([string]$branch, [string]$intBranch) {
   $mainNorm = [IO.Path]::GetFullPath($MAIN).TrimEnd('\','/')
   foreach ($w in @(Get-BranchWorktrees $branch)) {
     if ([IO.Path]::GetFullPath($w).TrimEnd('\','/') -ieq $mainNorm) { Say "  cleanup $branch`: checked out in the main checkout, skipped"; return }
+    # HB-TRAINCLEAN: only worktrees under .worktrees\ are the loop's to remove
+    $wtRoot = [IO.Path]::GetFullPath((Join-Path $MAIN '.worktrees')).TrimEnd('\','/') + '\'
+    if (-not [IO.Path]::GetFullPath($w).StartsWith($wtRoot, [StringComparison]::OrdinalIgnoreCase)) { Say "  cleanup $branch`: worktree $w is not under .worktrees\, worktree and branch kept"; return }
     if ((Remove-Wt $w) -ne 0) { Say "  cleanup $branch`: worktree removal refused ($w), worktree and branch kept"; return }
   }
   if (-not $intWt) { Say "  cleanup $branch`: no worktree holds $intBranch to judge merged-ness, branch kept"; return }
@@ -324,6 +335,27 @@ if ($SelfTest) {
   Check (($brs -contains 'step-dirty') -and (Test-Path (Join-Path $fake '.worktrees\step-dirty'))) 'dirty step: wt-remove refused, worktree and branch kept (no force)'
   Check ($brs -contains 'step-ahead') 'unmerged step: git branch --delete refused, branch kept (no -D)'
 
+  # --- HB-TRAINCLEAN: the temp worktree is removed on every exit path of the guarded body
+  function Temp-Dirs { @(Get-ChildItem -LiteralPath (Join-Path $fake '.worktrees') -Directory -Filter 'mtrain-*' -ErrorAction SilentlyContinue) }
+  $script:Temps = @()
+  Invoke-Guarded { $null = New-Temp 'integration'; $script:leakIn = (Temp-Dirs).Count }
+  Check ($script:leakIn -eq 1 -and (Temp-Dirs).Count -eq 0 -and $script:Temps.Count -eq 0) 'body ends without removing its temp (foreign-tip skip shape): guard removed it'
+  $caught = $false
+  try { Invoke-Guarded { $null = New-Temp 'integration'; throw 'forced failure' } } catch { $caught = $_.Exception.Message -eq 'forced failure' }
+  Check ($caught -and (Temp-Dirs).Count -eq 0 -and $script:Temps.Count -eq 0) 'forced throw inside the body: exception propagates AND the finally block removed the temp worktree'
+  Invoke-Guarded { $t = New-Temp 'integration'; Remove-Temp $t }
+  Check ((Temp-Dirs).Count -eq 0 -and $script:Temps.Count -eq 0) 'body that cleans up after itself: nothing left, registry empty'
+  Invoke-Guarded { $a = New-Temp 'integration'; $b = New-Temp 'integration'; Remove-Temp $a; $script:two = (Temp-Dirs).Count }
+  Check ($script:two -eq 1 -and (Temp-Dirs).Count -eq 0) 'two temps, one removed by the body: guard removes only the remaining one'
+  # a row worktree outside .worktrees\ is never removed by Cleanup-Step
+  Git -C $fake branch step-out integration | Out-Null
+  $outside = "$fake-outside-wt"
+  Git -C $fake worktree add -q $outside step-out | Out-Null
+  Cleanup-Step 'step-out' $INT
+  $brs = @((Git -C $fake branch --format '%(refname:short)'))
+  Check ((Test-Path $outside) -and ($brs -contains 'step-out')) 'row worktree outside .worktrees\: skipped, worktree and branch kept'
+  Remove-Wt $outside | Out-Null
+
   # --- HB-D2RERUN: fake arm runner, D2_DEF_2 comes back short (1485 lines) on the first run
   $f = $CFG.full; $out = Join-Path $DATA 'd2arms'; New-Item -ItemType Directory -Force -Path $out | Out-Null
   $script:runs = @{}
@@ -369,6 +401,7 @@ Say "batch: $(($batch | ForEach-Object { "$($_.id)=$($_.branch)" }) -join ' ')  
 if ($Plan) { exit 0 }
 
 # ---- 2. run the batch; on RED, one at a time ----------------------------------------
+Invoke-Guarded {
 $res = Try-Batch $batch
 $merged = @(); $bounced = @()
 if ($res.ok) { $merged = $batch }
@@ -424,6 +457,7 @@ if ($merged.Count) {
   }
   Remove-Temp $wt
   foreach ($br in @($merged | ForEach-Object { $_.branch } | Select-Object -Unique)) { Cleanup-Step $br $INT }
+}
 }
 
 $final = (Git rev-parse --short $INT) | Select-Object -First 1
