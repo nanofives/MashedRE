@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-10-25 15:58 D4-DC-0510 (orch/D4-DC-0510): G-CTRL ef5f2e10/57f7ff83/b4f4b55a  B c37d4c0c/0a8f9806/7013671d. Run data D:\MashedWT\mtrain_data\20261025_155107
 - 2026-10-25 14:13 HB-TRAINFIX (orch/HB-TRAINFIX): G-CTRL ef5f2e10/57f7ff83/b4f4b55a  B c37d4c0c/0a8f9806/7013671d. Run data D:\MashedWT\mtrain_data\20261025_140018
 - 2026-10-25 11:53 D3-CF-BOX-FLIP (orch/D3-CF-BOX-FLIP): G-CTRL ef5f2e10/57f7ff83/b4f4b55a  B c37d4c0c/0a8f9806/7013671d. Run data D:\MashedWT\mtrain_data\20261025_114029
 - 2026-10-25 10:25 D3-CF-K357 (orch/D3-CF-K357-M): G-CTRL ef5f2e10/57f7ff83/b4f4b55a  B c37d4c0c/0a8f9806/7013671d. Run data D:\MashedWT\mtrain_data\20261025_094957
