@@ -27,7 +27,7 @@ const FaithKnob kFaith[] = {
     { "ROUND_GRID_ORDER", "1" },   { "TGT3", "1" },                { "GRID_DIR", "1" },          { "AI_CONTACT_EVENT", "1" },
     { "AI_TICK_FIRST", "1" },      { "PATHPROG_LATE", "1" },       { "REASSERT_KEEP_NORMAL", "1" }, { "SPAWN_BASIS_RW", "1" },
     { "FIX_5CEA60", "1" },         { "UP_TRINORMAL", "1" },        { "RW_SSE_POINTS", "1" },     { "RING_DBUF", "1" },
-    { "FWD_AT", "1" },             { "ROTATE_LUT", "1" },          { "ORTHO_LUT", "1" },         { "A6A_LC0", "1" },
+    { "FWD_AT", "1" },             { "ROTATE_LUT", "1" },          { "A6A_LC0", "1" },
     { "ROTATE_PC24", "1" },        { "HEADING_FWD_LIVE", "1" },    { "AI_LUT", "7" },            { "STEER_ACOS_CRT", "1" },
     { "AI_FWD_ATROW", "1" },       { "STEER_SCALE_RDATA", "1" },   { "REGISTRY", "1" },          { "PICKUPS_ORIG", "1" },
     { "REG_CARS", "1" },           { "REG_CALLBACKS", "1" },       { "MODE7", "1" },             { "CC_PC24", "1" },

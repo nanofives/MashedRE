@@ -49,13 +49,11 @@ CROSS-TARGET:004177b0:Ai/AiPreTick.cpp,Race/RuleEngine.cpp   # DELIBERATE until 
 
 # --- dualcopy4 (2026-10-16): keys narrowed after a body was replaced by a call into the shared one
 # 004c39b0 GONE 2026-10-25 (D4-DC-MATH-39b0): Math/RwV3dNormalize.cpp is the one body in both targets. Math::LutNormalize
-# is a call into it with the rebuilt tables (the copy in Math/RwLutTables.cpp deleted). The exact-sqrt fallback stays the
-# default behind MASHED_RWV3D_LUT (default OFF); the flip is a decision row. verify/dcmath39b0_20261025/RESULT_dcmath39b0.md.
+# is a call into it with the rebuilt tables. D4-DC-39b0-L13 (Mariano L-13 = C) deleted the exact-sqrt fallback and the
+# MASHED_RWV3D_LUT knob. verify/dcmath39b0_20261025/RESULT_dcmath39b0.md.
 # 004c4680 GONE 2026-10-25 (D4-DC-MATH-4680): Math/RwMatrixOrthoNormalize.cpp is the one body (exe-only TU, SSE2). The pontoon
-# OrthoNormalize is a call into it; BodyOrientationIntegrate.cpp runs it under MASHED_ORTHO_LUT=1 (ON by the FAITH seed since
-# faithflip 2026-10-20; its second transcription MatrixOrthoNormalizeRw deleted) and keeps the std::sqrt stand-in for the
-# MASHED_NO_ORTHO_LUT opt-out, with no RVA header (port-only arithmetic, not a body of the listing). Deleting the stand-in is a
-# decision row. verify/dcmath4680_20261025/RESULT_dcmath4680.md.
+# OrthoNormalize and BodyOrientationIntegrate.cpp both call it. D4-DC-39b0-L13 (Mariano L-14 = A) deleted the std::sqrt
+# stand-in and the MASHED_ORTHO_LUT / MASHED_NO_ORTHO_LUT knobs. verify/dcmath4680_20261025/RESULT_dcmath4680.md.
 
 # --- dcleaf (2026-10-22, ROADMAP D4 item 4, the vehicle residue): 5 keys gone. 0046dbe0 and 00468b40 (one body each,
 # Vehicle/VehicleState.cpp, both targets; the exe copies in ForceIntegratorLeaves.cpp / CarWorldContacts.cpp deleted), 00442c80

@@ -423,9 +423,9 @@ STACK['NOP2'] = [k.replace('MASHED_', 'MASHED_NO_', 1) for k in STACK['P2']]   #
 # kfdot (PREREG_kfdot.md): KF = the 0x00532b80 one-body knob on the Dump train
 STACK['KF'] = ['MASHED_KF_INTERP']
 # dcmath39b0 (PREREG_dcmath39b0.md): V3 = the 0x004c39b0 one-body knob (rebuilt LUT when no live RW LUT)
-STACK['V3'] = ['MASHED_RWV3D_LUT']
+STACK['V3'] = []   # knob deleted (D4-DC-39b0-L13)
 # dcmath4680 (PREREG_dcmath4680.md): NOOL = the 0x004c4680 opt-out (std::sqrt stand-in), PR = the pontoon OP3 replay on a W_ arm
-STACK['NOOL'] = ['MASHED_NO_ORTHO_LUT']
+STACK['NOOL'] = []   # opt-out deleted (D4-DC-39b0-L13)
 # dcmath4d20 (PREREG_dcmath4d20.md): CR = the race camera's RotateAboutAxis through the shared 0x004c4d20 body + slot +0x14 vectors
 STACK['CR'] = ['MASHED_CAM_ROTATE_RW']
 STACK['PR'] = ['MASHED_PONTOON_REPLAY=' + os.path.join(W, 'verify', 'pontoon_20261016', 'OP3.msd.pontoon.csv'),
