@@ -3601,6 +3601,10 @@ bool RenderFrame() {
         if (g_track.round_mode_ && g_track.round_winner() >= 0 &&
             g_track.match_winner() < 0) {
             static float s_round_end_t = -1.f;
+            // [D3-CF-K357] MASHED_R7_EXIT (default OFF): FUN_00410860's gate instead of the 3.0 s hold, one tick per
+            // frame after the round-end frame. TrackRenderer::RoundEnd7ExitTick, verify/k357_20261025/PREREG_D3-CF-K357.md.
+            const bool r7x = g_track.RoundEnd7ExitActive();
+            const bool r7xFirst = (s_round_end_t < 0.f);
             if (s_round_end_t < 0.f) {
                 s_round_end_t = t;
                 if (std::FILE* lf = std::fopen(kLogPath, "a")) {   // [G4] round trace
@@ -3610,7 +3614,7 @@ bool RenderFrame() {
                     std::fclose(lf);
                 }
             }
-            if (t - s_round_end_t > 3.0f) {
+            if (r7x ? (!r7xFirst && g_track.RoundEnd7ExitTick()) : (t - s_round_end_t > 3.0f)) {
                 g_track.NextRoundOrEnd();
                 s_round_end_t = -1.f;
             }
