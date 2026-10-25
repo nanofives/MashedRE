@@ -216,6 +216,7 @@
 "Gameplay\PickupTick.cpp"
 "Race\CarRegistrant.cpp"
 "Math\RwLutTables.cpp"
+"Math\RwMatrixOrthoNormalize.cpp"
 "Util\CameraEntryDispatch.cpp"
 "Ai\AiLeaderTimer.cpp"
 "Vehicle\ShapeOwnerHandlePool.cpp"
