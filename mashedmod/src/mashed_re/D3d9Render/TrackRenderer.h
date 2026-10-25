@@ -461,7 +461,7 @@ public:
     // matrix became m; moves the car's position / heading state and the physics pose with it.
     void  PontoonCarried(int v, const float* m);
     void  NextRoundOrEnd();          // check match win, start next round
-    // [D3-CF-K357] MASHED_R7_EXIT (default OFF): true while the knob is set and the MASHED_ROUND_END7 flag is up;
+    // [D3-CF-K357] MASHED_R7_EXIT (default ON since 2026-10-25, L-16; MASHED_NO_R7_EXIT=1 opts out): true while the knob is set and the MASHED_ROUND_END7 flag is up;
     // RoundEnd7ExitTick() is then FUN_00410860's per-tick counter + exit gate (true = the original leaves sub-state 7).
     bool  RoundEnd7ExitActive() const;
     bool  RoundEnd7ExitTick();

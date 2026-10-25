@@ -5688,7 +5688,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             // whose gate progress stalls 2.5 s is relocated two gates ahead. Every
             // relocation resets the car's lookahead index (FUN_00414030) and its body
             // basis, so the ported AI re-acquires the line from the new position.
-            // [D3-CF-K357] MASHED_R7_EXIT (default OFF): skipped while the MASHED_ROUND_END7 flag is up. The original keeps
+            // [D3-CF-K357] MASHED_R7_EXIT (default ON since 2026-10-25, L-16): skipped while the MASHED_ROUND_END7 flag is up. The original keeps
             // the car frozen in sub-state 7 (o_r7_1: 502 frames); a frozen car's gate never changes, so the stand-in would
             // relocate it every 2.5 s. PREREG_D3-CF-K357.md amendment 1.
             if (ng >= 2 && !RoundEnd7ExitActive()) {
@@ -7758,13 +7758,15 @@ void TrackRenderer::ScoreOnElimination(int victim) {
     }
 }
 
-// [D3-CF-K357] MASHED_R7_EXIT (default OFF), verify/k357_20261025/PREREG_D3-CF-K357.md. FUN_004111c0 case 7 runs
+// [D3-CF-K357] MASHED_R7_EXIT (default ON since 2026-10-25, L-16), verify/k357_20261025/PREREG_D3-CF-K357.md. FUN_004111c0 case 7 runs
 // FUN_00410860, whose only writers of DAT_0063ba8c are 9 (0x00410a5e) and 8 (0x00410a6e), both behind one gate. It
 // replaces the exe's 3.0 s round hold (exe_main.cpp, R6 match flow), which is port-side. Acts only while the
 // MASHED_ROUND_END7 flag is up. Knob OFF: false, the 3.0 s hold runs as before.
+// Default ON since 2026-10-25 (Mariano, decision L-16, verify/r7joypad_20261025/RESULT_D3-CF-R7JOYPAD.md, flipped together with
+// MASHED_R7_INPUT); MASHED_NO_R7_EXIT=1 opts out.
 namespace {
 bool R7ExitEnabled() {
-    static const bool s = [] { const char* e = std::getenv("MASHED_R7_EXIT"); return e && e[0] && e[0] != '0'; }();
+    static const bool s = [] { const char* e = std::getenv("MASHED_NO_R7_EXIT"); return !(e && e[0] && e[0] != '0'); }();
     return s;
 }
 int s_r7ExitCount = 0;   // DAT_005f29b8 while in sub-state 7: 0x004104c0 zeroes it at the state-5 tail, state 6 never writes it

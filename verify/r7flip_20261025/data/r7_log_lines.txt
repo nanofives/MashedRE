@@ -1,0 +1,3 @@
+D:/MashedWT/D3-CF-R7FLIP_data/arms/D2_DEF_1.log:R7IN byte0xa slot=2 val=0xff r7frame=0 test=0 det_frame=37 type=2
+D:/MashedWT/D3-CF-R7FLIP_data/arms/D2_DEF_2.log:R7IN byte0xa slot=2 val=0xff r7frame=0 test=0 det_frame=38 type=2
+D:/MashedWT/D3-CF-R7FLIP_data/arms/D2_DEF_3.log:R7IN byte0xa slot=2 val=0xff r7frame=0 test=0 det_frame=38 type=2

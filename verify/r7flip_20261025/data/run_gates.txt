@@ -1,0 +1,20 @@
+[mashed-lock] HELD 'mashed_machine' pid=27160 (D3-CF-R7FLIP)
+=== H_DEF pid=25104 exe=0d5cb8ac
+    exit=0 self_exited=True secs=244
+    H_DEF.step.csv lines=14659 sha8=5943c5f1
+    H_DEF.gates.csv lines=56873 sha8=b493262b
+    H_DEF.ptrace.log lines=28436 sha8=09551e6a
+=== B_DEF_K0 pid=4216 exe=0d5cb8ac
+    exit=0 self_exited=True secs=21
+    B_DEF_K0.step.csv lines=1459 sha8=3a03670c
+=== B_DEF_K1 pid=13316 exe=0d5cb8ac
+    exit=0 self_exited=True secs=22
+    B_DEF_K1.step.csv lines=1825 sha8=2516d903
+=== B_DEF_K26 pid=1700 exe=0d5cb8ac
+    exit=0 self_exited=True secs=21
+    B_DEF_K26.step.csv lines=1411 sha8=53778664
+=== B_NOXI_K0 pid=11520 exe=0d5cb8ac
+    exit=0 self_exited=True secs=21
+    B_NOXI_K0.step.csv lines=1561 sha8=c37d4c0c
+DONE
+[mashed-lock] released 'mashed_machine' pid=27160
