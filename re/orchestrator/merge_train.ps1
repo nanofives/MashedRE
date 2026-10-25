@@ -338,6 +338,53 @@ if ($SelfTest) {
   Check (($brs -contains 'step-dirty') -and (Test-Path (Join-Path $fake '.worktrees\step-dirty'))) 'dirty step: wt-remove refused, worktree and branch kept (no force)'
   Check ($brs -contains 'step-ahead') 'unmerged step: git branch --delete refused, branch kept (no -D)'
 
+  # --- HB-TRAINCLEAN guard paths, in the HB-TRAINFIX shape: script-scope try { } finally { Clear-Temps }
+  function Temp-Dirs { @(Get-ChildItem -LiteralPath (Join-Path $fake '.worktrees') -Directory -Filter 'mtrain-*' -ErrorAction SilentlyContinue) }
+  $script:Temps = @()
+  try { $null = New-Temp 'integration'; $leakIn = (Temp-Dirs).Count } finally { Clear-Temps }
+  Check ($leakIn -eq 1 -and (Temp-Dirs).Count -eq 0 -and $script:Temps.Count -eq 0) 'guard: body ends without removing its temp (foreign-tip skip shape), finally removed it'
+  $caught = $false
+  try { try { $null = New-Temp 'integration'; throw 'forced failure' } finally { Clear-Temps } } catch { $caught = $_.Exception.Message -eq 'forced failure' }
+  Check ($caught -and (Temp-Dirs).Count -eq 0 -and $script:Temps.Count -eq 0) 'guard: forced throw in the body, exception propagates AND finally removed the temp'
+  try { $t = New-Temp 'integration'; Remove-Temp $t } finally { Clear-Temps }
+  Check ((Temp-Dirs).Count -eq 0 -and $script:Temps.Count -eq 0) 'guard: body that cleans up after itself, nothing left, registry empty'
+  try { $ta = New-Temp 'integration'; $tb = New-Temp 'integration'; Remove-Temp $ta; $two = (Temp-Dirs).Count } finally { Clear-Temps }
+  Check ($two -eq 1 -and (Temp-Dirs).Count -eq 0 -and $script:Temps.Count -eq 0) 'guard: two temps, one removed by the body, finally removed only the other'
+  # a row worktree outside .worktrees\ is never removed by Cleanup-Step
+  Git -C $fake branch step-out integration | Out-Null
+  $outside = "$fake-outside-wt"
+  Git -C $fake worktree add -q $outside step-out | Out-Null
+  Cleanup-Step 'step-out' $INT
+  $brs = @((Git -C $fake branch --format '%(refname:short)'))
+  Check ((Test-Path $outside) -and ($brs -contains 'step-out')) 'row worktree outside .worktrees\: skipped, worktree and branch kept'
+  Remove-Wt $outside | Out-Null
+
+  # --- HB-TRAINFIX regression: the body assigns $body (the INTEGRATION_LOG update did) and sets $merged/$bounced
+  function Old-Guarded([scriptblock]$Body) { try { . $Body } finally { Clear-Temps } }   # the reverted HB-TRAINCLEAN shape
+  $oldErr = ''
+  try { Old-Guarded { $body = @('# log', '', '- line') } } catch { $oldErr = $_.Exception.Message }
+  Check ($oldErr -match 'ScriptBlock') "control: the old dot-sourcing wrapper reproduces the crash ($(($oldErr -split "`n")[0]))"
+  $oldMerged = $null
+  Old-Guarded { $oldMerged = @('X') }
+  Check ($null -eq $oldMerged) 'control: the old wrapper loses the body''s $merged (function-local)'
+  $merged = @(); $bounced = @(); $body = $null
+  try { $body = @('# log', '', '- line'); $merged = @('T-A'); $bounced = @(@{ id = 'T-B' }) } finally { Clear-Temps }
+  Check ($body.Count -eq 3 -and $merged.Count -eq 1 -and $bounced.Count -eq 1 -and $bounced[0].id -eq 'T-B') 'new shape: $body assignment works and $merged/$bounced reach the code after the guard'
+  $merged = @(); $bounced = @(); $body = $null
+
+  # --- HB-TRAINFIX AST check on this script: the run body is a script-scope try whose finally calls Clear-Temps
+  $pe = $null; $ast = [System.Management.Automation.Language.Parser]::ParseFile($PSCommandPath, [ref]$null, [ref]$pe)
+  $A = [System.Management.Automation.Language.Ast]
+  $tries = @($ast.FindAll({ param($n) $n -is [System.Management.Automation.Language.TryStatementAst] -and $n.Body.Extent.Text -match '\$res = Try-Batch \$batch' }, $true))
+  $top = @($tries | Where-Object { $_.Parent -eq $ast.EndBlock })
+  $fin = $top.Count -eq 1 -and $null -ne $top[0].Finally -and $top[0].Finally.Extent.Text -match '\bClear-Temps\b'
+  $covers = $top.Count -eq 1 -and $top[0].Body.Extent.Text -match 'Cleanup-Step \$br \$INT' -and $top[0].Body.Extent.Text -match 'Ledger set \$it\.id merged'
+  Check ($pe.Count -eq 0 -and $fin -and $covers) "AST: one script-scope try holds Try-Batch through Cleanup-Step, finally calls Clear-Temps (parse errors $($pe.Count), top-level tries $($top.Count))"
+  $dots = @($ast.FindAll({ param($n) $n -is [System.Management.Automation.Language.CommandAst] -and $n.InvocationOperator -eq 'Dot' -and $n.CommandElements[0] -is [System.Management.Automation.Language.VariableExpressionAst] -and $n.Extent.Text -notmatch '^\. \$Body$' }, $true))
+  $sbParams = @($ast.FindAll({ param($n) $n -is [System.Management.Automation.Language.ParameterAst] -and $n.StaticType -eq [scriptblock] }, $true) | ForEach-Object { $_.Name.VariablePath.UserPath })
+  $wrappedBody = @($ast.FindAll({ param($n) $n -is [System.Management.Automation.Language.FunctionDefinitionAst] -and $n.Body.Extent.Text -match 'Try-Batch \$batch' }, $true))
+  Check ($dots.Count -eq 0 -and $wrappedBody.Count -eq 0 -and $sbParams.Count -eq 1 -and $sbParams[0] -eq 'Body') "AST: no function wraps the run body, no dot-sourced variable outside the selftest control (scriptblock params: $($sbParams -join ','))"
+
   # --- HB-D2RERUN: fake arm runner, D2_DEF_2 comes back short (1485 lines) on the first run
   $f = $CFG.full; $out = Join-Path $DATA 'd2arms'; New-Item -ItemType Directory -Force -Path $out | Out-Null
   $script:runs = @{}
