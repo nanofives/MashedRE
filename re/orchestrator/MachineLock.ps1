@@ -18,7 +18,10 @@
 # While a solo window is open, Acquire-Lock waits unless $env:MASHED_LOCK_SOLO_TOKEN
 # equals the window's token (Enter-SoloLock sets it for this process and children).
 
-$script:MaxAgeSec = 30 * 60
+# HB-LOCKBREAK (2026-10-25): no max-age rule. A live holder is never broken for age (the
+# old 30 min rule broke D3-CF-K357's 11-arm hold, pid 18904 alive, at age 1801 s). PID
+# reuse is caught by owner_start (holder process start, epoch s), same field as mashed_lock.py.
+$script:EmptyGraceSec = 10   # empty/unparsable lock file younger than this = writer mid-create
 $script:SoloEnv = 'MASHED_LOCK_SOLO_TOKEN'
 
 function Get-LockPath([string]$Name) { Join-Path $env:TEMP "$Name.lock" }
@@ -60,8 +63,7 @@ function Enter-SoloLock {
   $g = Get-LockPath $Name
   while (Test-Path $g) {
     $o = $null; try { $o = Get-Content $g -Raw | ConvertFrom-Json } catch {}
-    $age = if ($o.epoch) { (Get-Date -UFormat %s) - $o.epoch } else { 9999999 }
-    if (-not $o -or -not (Test-PidAlive ([int]$o.pid)) -or $age -gt $script:MaxAgeSec) {
+    if (Test-HolderStale $g $o) {
       Remove-Item $g -Force -ErrorAction SilentlyContinue; break
     }
     Start-Sleep -Seconds $PollSec
@@ -98,6 +100,30 @@ function Get-PrioPending([string]$Name = 'mashed_machine', [int]$IgnorePid = 0) 
 function Test-PidAlive([int]$ProcId) {
   if ($ProcId -le 0) { return $false }
   return $null -ne (Get-Process -Id $ProcId -ErrorAction SilentlyContinue)
+}
+
+function Get-PidStart([int]$ProcId) {
+  # Process creation time as epoch seconds (0.1 s), or $null. Matches mashed_lock._pid_start.
+  try {
+    $p = Get-Process -Id $ProcId -ErrorAction Stop
+    return [math]::Round(([DateTimeOffset]$p.StartTime).ToUnixTimeMilliseconds() / 1000.0, 1)
+  } catch { return $null }
+}
+
+function Test-HolderStale([string]$Path, $o) {
+  # Same rule as mashed_lock._holder_stale: liveness decides, never age.
+  if (-not $o) {
+    $it = Get-Item -LiteralPath $Path -ErrorAction SilentlyContinue
+    if (-not $it) { return $true }
+    return ((Get-Date) - $it.LastWriteTime).TotalSeconds -gt $script:EmptyGraceSec
+  }
+  if (-not $o.pid) { return $true }
+  if (-not (Test-PidAlive ([int]$o.pid))) { return $true }
+  if ($o.owner_start) {
+    $now = Get-PidStart ([int]$o.pid)
+    if ($null -ne $now -and [math]::Abs($now - [double]$o.owner_start) -gt 2.0) { return $true }
+  }
+  return $false
 }
 
 function Acquire-Lock {
@@ -151,7 +177,8 @@ function Acquire-LockBody {
     }
     try {
       $fs = [System.IO.File]::Open($path, [System.IO.FileMode]::CreateNew, [System.IO.FileAccess]::Write)
-      $json = @{ pid = $PID; at = (Get-Date).ToString('o'); epoch = [int][double]::Parse((Get-Date -UFormat %s)); label = $Label; host = $env:COMPUTERNAME } | ConvertTo-Json -Compress
+      $json = @{ pid = $PID; at = (Get-Date).ToString('o'); epoch = [int][double]::Parse((Get-Date -UFormat %s)); label = $Label; host = $env:COMPUTERNAME;
+                 owner_start = (Get-PidStart $PID) } | ConvertTo-Json -Compress
       $bytes = [Text.Encoding]::UTF8.GetBytes($json)
       $fs.Write($bytes, 0, $bytes.Length); $fs.Close()
       if (-not $Quiet) { Write-Host "[machine-lock] HELD '$Name' pid=$PID ($Label)" -ForegroundColor DarkGray }
@@ -159,8 +186,7 @@ function Acquire-LockBody {
     } catch [System.IO.IOException] {
       $owner = $null; try { $owner = Get-Content $path -Raw | ConvertFrom-Json } catch {}
       $opid = if ($owner) { [int]$owner.pid } else { 0 }
-      $age = if ($owner.epoch) { (Get-Date -UFormat %s) - $owner.epoch } else { 9999999 }
-      $stale = $Force -or (-not (Test-PidAlive $opid)) -or ($age -gt $script:MaxAgeSec)
+      $stale = $Force -or (Test-HolderStale $path $owner)
       if ($stale) {
         if (-not $Quiet) { Write-Host "[machine-lock] breaking STALE '$Name' (pid=$opid)" -ForegroundColor Yellow }
         Remove-Item $path -Force -ErrorAction SilentlyContinue; continue
