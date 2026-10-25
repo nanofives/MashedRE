@@ -55,7 +55,7 @@ Private root `D:\MashedWT\D4-DC-82a0_root` (WORKER_RULES), `MASHED_RE_NO_AUTO_HO
 Probe history: the first two boots in the private root AV'd during CRT init (exit `0xC0000005`, no dump), the
 heap-inversion class `scripts/setup_mashed_compat.ps1` documents. The root's exe path carried only
 `DWM8And16BitMitigation`. I set the shared install's layer string on that one path for the runs and restored
-`DWM8And16BitMitigation` after. The other `D:MashedWT*_root` paths in the HKCU Layers key carry the same short value, so
+`DWM8And16BitMitigation` after. The other `D:/MashedWT/*_root` paths in the HKCU Layers key carry the same short value, so
 original-side Frida work in a private root needs this step. Not filed as a harness row (HB) from here.
 
 ## 3. Exe side: measure table and menu parity
