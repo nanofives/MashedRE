@@ -7095,11 +7095,14 @@ void TrackRenderer::StartRound() {
     s_roundEnd7 = false;   // [u9779] MASHED_ROUND_END7: a new round leaves sub-state 7
     // [D3-CF-BOX] MASHED_BOX_PRODUCERS: "slot has a car" stands for the original's *(PTR_005f2770 + 0x34 + i*4) != 0.
     // Race init: FUN_004111c0's 4 (0x0040ff6b) / 1 (0x0040ff9c). Every round: FUN_0040e590's 1 (0x0040eeae).
-    for (int s = 0; s < Powerup::PowerupSystem::kSlots; ++s) {
-        const bool hasCar = s == 0 || static_cast<std::size_t>(s - 1) < ai_cars_.size();
-        if (s_boxRaceInit) BoxWrite(pw_, s, hasCar ? 1 : 4, "start");
-        if (hasCar) BoxWrite(pw_, s, 1, "grid");
-    }
+    // Measured on the original (verify/d3cfbox_20261025 O1): at race init FUN_0040e590 writes its block twice,
+    // at DAT_0063ba8c 2 and 3, after FUN_004111c0's block at 1. Pass 0 = FUN_004111c0, passes 1..2 = FUN_0040e590.
+    for (int pass = s_boxRaceInit ? 0 : 2; pass < 3; ++pass)
+        for (int s = 0; s < Powerup::PowerupSystem::kSlots; ++s) {
+            const bool hasCar = s == 0 || static_cast<std::size_t>(s - 1) < ai_cars_.size();
+            if (pass == 0) BoxWrite(pw_, s, hasCar ? 1 : 4, "start");
+            else if (hasCar) BoxWrite(pw_, s, 1, "grid");
+        }
     s_boxRaceInit = false;
     for (int i = 0; i < kRaceCars; ++i) race_[i] = RaceCar{};
     // U-9005 RESOLVED (rules oracle 2026-07-02, log/rules_oracle_rule8.json

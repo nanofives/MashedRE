@@ -425,6 +425,7 @@ STACK['KF'] = ['MASHED_KF_INTERP']
 # D3-CF-BOX (PREREG_D3-CF-BOX.md section 4): the box-state producers, and the same on the u9779 chain
 STACK['BOX'] = ['MASHED_BOX_PRODUCERS', 'MASHED_BOX_TRACE=@OUT@\\@NAME@.box.csv']
 STACK['BOXR'] = STACK['BOX'] + ['MASHED_ELIM_RESOLVE', 'MASHED_ROUND_END7']
+STACK['ER'] = ['MASHED_ELIM_RESOLVE', 'MASHED_ROUND_END7']   # amendment 1: BOXR's control without the box knob
 for name in sys.argv[1:]:
     CUR['name'] = name
     if name.startswith('H_'):
