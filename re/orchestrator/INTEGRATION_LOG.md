@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-10-25 01:08 HB-D2RERUN (orch/HB-TRAIN3), HB-EOL (orch/HB-TRAIN3), HB-WTCLEAN (orch/HB-TRAIN3): G-CTRL bacfc747/8dd1c004/6f9932b6  B f9deb9b9/d3601fcc/9da9a26a. Run data D:\MashedWT\mtrain_data\20261025_004520
 - 2026-10-24 22:57 D1-SHADOWS (orch/D1-SHADOWS): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261024_225534
 - 2026-10-24 18:54 D4-AUDIO-RWS3 (orch/D4-AUDIO-RWS3): G-CTRL bacfc747/8dd1c004/6f9932b6  B f9deb9b9/d3601fcc/9da9a26a. Run data D:\MashedWT\mtrain_data\20261024_183701
 - 2026-10-24 18:29 D1-R2-CLOSE (orch/D1-R2-CLOSE): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261024_182559
