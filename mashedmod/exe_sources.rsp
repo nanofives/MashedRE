@@ -128,6 +128,7 @@
 "Stubs\HookSystemNoOp.cpp"
 "Frontend\MenuInit.cpp"
 "Frontend\MenuButtonDetect.cpp"
+"Frontend\MenuMeasure.cpp"
 "Frontend\FrontendState.cpp"
 "Frontend\FrontendNav.cpp"
 "Frontend\FrontendMode.cpp"

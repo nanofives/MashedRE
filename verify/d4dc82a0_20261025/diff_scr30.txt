@@ -1,0 +1,18 @@
+== orig30_f0 (A: 99 draws, x1.0) vs f200 (B: 97 draws, x1.0)
+   matched 97  mismatched 0  missing 2  extra 0
+  MISSING  A[  3] x= 288.00 y=  64.00 w= 176.00 h=352.00 col=00ffffff/90ffffff/00ffffff/90ffffff  @0x474bd3,0x42e80c
+  MISSING  A[  4] x= 464.00 y=  64.00 w= 176.00 h=352.00 col=90ffffff  @0x474d0c,0x42e80c
+== orig30_f1 (A: 99 draws, x1.0) vs f201 (B: 97 draws, x1.0)
+   matched 97  mismatched 0  missing 2  extra 0
+  MISSING  A[  3] x= 288.00 y=  64.00 w= 176.00 h=352.00 col=00ffffff/a0ffffff/00ffffff/a0ffffff  @0x474bd3,0x42e80c
+  MISSING  A[  4] x= 464.00 y=  64.00 w= 176.00 h=352.00 col=a0ffffff  @0x474d0c,0x42e80c
+== orig30_f2 (A: 99 draws, x1.0) vs f202 (B: 97 draws, x1.0)
+   matched 97  mismatched 0  missing 2  extra 0
+  MISSING  A[  3] x= 288.00 y=  64.00 w= 176.00 h=352.00 col=00ffffff/b0ffffff/00ffffff/b0ffffff  @0x474bd3,0x42e80c
+  MISSING  A[  4] x= 464.00 y=  64.00 w= 176.00 h=352.00 col=b0ffffff  @0x474d0c,0x42e80c
+== orig30_f3 (A: 99 draws, x1.0) vs f203 (B: 97 draws, x1.0)
+   matched 97  mismatched 0  missing 2  extra 0
+  MISSING  A[  3] x= 288.00 y=  64.00 w= 176.00 h=352.00 col=00ffffff/c0ffffff/00ffffff/c0ffffff  @0x474bd3,0x42e80c
+  MISSING  A[  4] x= 464.00 y=  64.00 w= 176.00 h=352.00 col=c0ffffff  @0x474d0c,0x42e80c
+-> verify/d4dc82a0_20261025/diff_scr30.json
+VERDICT: RED (match=388 mismatch=0 missing=8 extra=0)

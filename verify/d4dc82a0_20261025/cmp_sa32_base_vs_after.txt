@@ -1,0 +1,1 @@
+frames 4/4 draws 648 non-r diffs 168 (checker vertex-only 168, other 0)

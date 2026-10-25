@@ -86,6 +86,7 @@
 "Frontend\MenuChrome.cpp"
 "Frontend\RaceResults.cpp"
 "Frontend\MenuMenusB.cpp"
+"Frontend\MenuMeasure.cpp"
 "Frontend\MenuMenusBB.cpp"
 "Frontend\IntroSplash.cpp"
 "Save\GameSaveBuffer.cpp"

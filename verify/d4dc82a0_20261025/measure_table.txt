@@ -1,0 +1,11 @@
+    id scale orig bits base exe after exe  equal
+  0x59  0.70 41ee5e5d 41ee5e5d 41ee5e5d  True
+  0x59  0.72 41f52ddd 41f52ddd 41f52ddd  True
+  0x59  0.60 41cc50e2 41cc50e2 41cc50e2  True
+ 0x1b2  0.70 4234b2e4 4234b2e4 4234b2e4  True
+ 0x1b2  0.72 4239dc94 4239dc94 4239dc94  True
+ 0x1b2  0.60 421ae27a 421ae27a 421ae27a  True
+ 0x1b1  0.70 4297dd27 4297dd27 4297dd27  True
+ 0x1b1  0.72 429c33ed 429c33ed 429c33ed  True
+ 0x1b1  0.60 42822b46 42822b46 42822b46  True
+bit-equal 9/9 (original 3 boots, baseline exe, consolidated exe)

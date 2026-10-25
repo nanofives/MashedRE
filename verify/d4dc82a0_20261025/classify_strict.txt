@@ -1,0 +1,24 @@
+verify/d4dc82a0_20261025/diff_orig1_vs_sa19_strict.json: matched=376 checker_nonmatched=168 other_nonmatched=0
+verify/scr19_parity_20261012/arrow_fix/diff_orig1_vs_sa_on_strict.json: matched=376 checker_nonmatched=168 other_nonmatched=0
+verify/d4dc82a0_20261025/diff_orig2_vs_sa19_strict.json: matched=376 checker_nonmatched=168 other_nonmatched=0
+verify/scr19_parity_20261012/arrow_fix/diff_orig2_vs_sa_on_strict.json: matched=376 checker_nonmatched=168 other_nonmatched=0
+verify/d4dc82a0_20261025/diff_scr30_strict.json: matched=220 checker_nonmatched=168 other_nonmatched=8
+    ('orig30_f0|f200', 'missing', 288.0, 64.0, ['0x474bd3', '0x42e80c'])
+    ('orig30_f0|f200', 'missing', 464.0, 64.0, ['0x474d0c', '0x42e80c'])
+    ('orig30_f1|f201', 'missing', 288.0, 64.0, ['0x474bd3', '0x42e80c'])
+    ('orig30_f1|f201', 'missing', 464.0, 64.0, ['0x474d0c', '0x42e80c'])
+    ('orig30_f2|f202', 'missing', 288.0, 64.0, ['0x474bd3', '0x42e80c'])
+    ('orig30_f2|f202', 'missing', 464.0, 64.0, ['0x474d0c', '0x42e80c'])
+    ('orig30_f3|f203', 'missing', 288.0, 64.0, ['0x474bd3', '0x42e80c'])
+    ('orig30_f3|f203', 'missing', 464.0, 64.0, ['0x474d0c', '0x42e80c'])
+verify/scr19_parity_20261012/arrow_fix/diff_scr30_on_strict.json: matched=220 checker_nonmatched=168 other_nonmatched=8
+    ('orig30_f0|f200', 'missing', 288.0, 64.0, ['0x474bd3', '0x42e80c'])
+    ('orig30_f0|f200', 'missing', 464.0, 64.0, ['0x474d0c', '0x42e80c'])
+    ('orig30_f1|f201', 'missing', 288.0, 64.0, ['0x474bd3', '0x42e80c'])
+    ('orig30_f1|f201', 'missing', 464.0, 64.0, ['0x474d0c', '0x42e80c'])
+    ('orig30_f2|f202', 'missing', 288.0, 64.0, ['0x474bd3', '0x42e80c'])
+    ('orig30_f2|f202', 'missing', 464.0, 64.0, ['0x474d0c', '0x42e80c'])
+    ('orig30_f3|f203', 'missing', 288.0, 64.0, ['0x474bd3', '0x42e80c'])
+    ('orig30_f3|f203', 'missing', 464.0, 64.0, ['0x474d0c', '0x42e80c'])
+verify/d4dc82a0_20261025/diff_scr32_strict.json: matched=196 checker_nonmatched=168 other_nonmatched=0
+verify/scr19_parity_20261012/arrow_fix/diff_scr32_on_strict.json: matched=196 checker_nonmatched=168 other_nonmatched=0
