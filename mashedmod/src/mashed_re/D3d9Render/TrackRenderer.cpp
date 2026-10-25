@@ -195,7 +195,7 @@ int aib_game_sub_mode() {                                // race (FUN_0040e350)
     return 6;
 }
 int pkcb_sub_mode()        { return aib_game_sub_mode(); }   // [mode 7 M3] the same FUN_0040e350 host
-// [D3-CF-BOX] MASHED_BOX_PRODUCERS (default OFF): the producers of the box state DAT_0068d1f0[slot] that the
+// [D3-CF-BOX] MASHED_BOX_PRODUCERS: the producers of the box state DAT_0068d1f0[slot] that the
 // dispatcher gates on (0x0045bc6b). All of them write through the setter FUN_0045ba00 (0x0045ba00):
 //   FUN_004111c0 race start: 4 at 0x0040ff6b / 1 at 0x0040ff9c, by *(*(int*)0x005f2770 + 0x34 + i*4) (0x0040ff56)
 //   FUN_0040e590 grid placement: 1 at 0x0040eeae for every slot whose same dword is non-zero
@@ -203,8 +203,10 @@ int pkcb_sub_mode()        { return aib_game_sub_mode(); }   // [mode 7 M3] the 
 // Not ported (named in verify/d3cfbox_20261025/PREREG_D3-CF-BOX.md): FUN_00424eb0's respawn 1s (0x0042512f,
 // 0x004251c8) and FUN_0040be50 case 6 (2 at 0x0040c578). Knob OFF: the old per-frame 1 / 4 write, dispatcher state 6.
 // MASHED_BOX_TRACE=<file>: one line per box write.
+// Default ON since 2026-10-25 (decision L-11, verify/d3cfboxflip_20261025/RESULT_D3-CF-BOX-FLIP.md);
+// MASHED_NO_BOX_PRODUCERS=1 opts out (the old per-frame 1 / 4 write, dispatcher state 6).
 static bool BoxProducersEnabled() {
-    static const bool s = [] { const char* e = std::getenv("MASHED_BOX_PRODUCERS"); return e && e[0] && e[0] != '0'; }();
+    static const bool s = [] { const char* e = std::getenv("MASHED_NO_BOX_PRODUCERS"); return !(e && e[0] && e[0] != '0'); }();
     return s;
 }
 static std::uint32_t s_boxFrame = 0;
