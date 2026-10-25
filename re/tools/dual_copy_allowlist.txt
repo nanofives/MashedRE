@@ -23,7 +23,6 @@
 # through: the whole point is that the five 2026-09-29 defects would each have
 # produced exactly such a line.
 
-DUP-IN-TARGET:00408ad0:D3d9Render/TrackRenderer.cpp,Frontend/SmallLeaves_t1.cpp   # audit=DIFFERS-BEHAVIOUR; [exe] two bodies: D3d9Render/TrackRenderer.cpp:4007 (TrackRenderer::RacePct), Frontend/SmallLeaves_t1.cpp:42 (RaceScoreFloatGetBySlot)
 DUP-IN-TARGET:004c4d20:Math/RwMatrixRotate.cpp,Race/RaceCamera.cpp   # audit=DIFFERS-BEHAVIOUR; [exe] two bodies: Math/RwMatrixRotate.cpp:52 (), Race/RaceCamera.cpp:66 (RotateAboutAxis)
 CROSS-TARGET:00410510:Race/RuleEngine.cpp,Race/ScoringHooks.cpp   # audit=DIFFERS-BEHAVIOUR; exe-only Race/RuleEngine.cpp  vs  asi-only Race/ScoringHooks.cpp
 
