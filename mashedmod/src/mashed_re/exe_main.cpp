@@ -1036,8 +1036,10 @@ bool PumpOnce() {
 // keyboard does) so it does not take the pad from a concurrent MASHED.exe. Record 4 would
 // start at 0x00772fa8, a separate global, so the original has room for 4.
 IDirectInputDevice8A* g_joy[4] = {};
+// Default ON since 2026-10-25 (Mariano, decision L-16, verify/r7joypad_20261025/RESULT_D3-CF-R7JOYPAD.md, flipped together with
+// MASHED_R7_EXIT); MASHED_NO_R7_INPUT=1 opts out.
 static bool R7InputOn() {
-    static const bool s_on = [] { const char* e = std::getenv("MASHED_R7_INPUT"); return e && e[0] && e[0] != '0'; }();
+    static const bool s_on = [] { const char* e = std::getenv("MASHED_NO_R7_INPUT"); return !(e && e[0] && e[0] != '0'); }();
     return s_on;
 }
 static BOOL CALLBACK CountGameCtrlCb(LPCDIDEVICEINSTANCEA inst, LPVOID ref) {
@@ -2750,7 +2752,7 @@ void WriteMashedInputGlobalsFromKeyboard() {
     }
 }
 
-// [D3-CF-R7INPUT] MASHED_R7_INPUT (default OFF), verify/r7input_20261025/PREREG_D3-CF-R7INPUT.md.
+// [D3-CF-R7INPUT] MASHED_R7_INPUT (default ON since 2026-10-25, L-16; MASHED_NO_R7_INPUT=1 opts out), verify/r7input_20261025/PREREG_D3-CF-R7INPUT.md.
 // The ctrl-block byte 0xa store of the per-frame input cook FUN_00496530, which FUN_004967e0 runs for
 // every slot i in 0..3 with FUN_00497450(i) != 0 (0x00497450: [0x007e96fc + i*0x200] != 0), EBX = i:
 //   0x004965ac push 4 / push ebx / call 0x00497310, 0x004965b7 mov [ebp + 0x7f1042], al (ebp = i*0x4c, 0x00496536)
@@ -3754,7 +3756,7 @@ bool RenderFrame() {
         if (g_track.round_mode_ && g_track.round_winner() >= 0 &&
             g_track.match_winner() < 0) {
             static float s_round_end_t = -1.f;
-            // [D3-CF-K357] MASHED_R7_EXIT (default OFF): FUN_00410860's gate instead of the 3.0 s hold, one tick per
+            // [D3-CF-K357] MASHED_R7_EXIT (default ON since 2026-10-25, L-16): FUN_00410860's gate instead of the 3.0 s hold, one tick per
             // frame after the round-end frame. TrackRenderer::RoundEnd7ExitTick, verify/k357_20261025/PREREG_D3-CF-K357.md.
             const bool r7x = g_track.RoundEnd7ExitActive();
             const bool r7xFirst = (s_round_end_t < 0.f);
@@ -9906,7 +9908,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         // Team Select screen, so changing the column mapping now changes
         // real behaviour rather than only feeding future frontend code.
         WriteMashedInputGlobalsFromKeyboard();
-        CookCtrlByteAFromKeyboard();   // [D3-CF-R7INPUT] MASHED_R7_INPUT (default OFF)
+        CookCtrlByteAFromKeyboard();   // [D3-CF-R7INPUT] MASHED_R7_INPUT (default ON since 2026-10-25)
         // Top-level game-flow scaffold: drives the Frontend->LoadingRace->InRace
         // state machine + the RaceSession subsystem stubs. In Frontend mode (the
         // default — nothing requests a race yet) this is a no-op, so the menu is
