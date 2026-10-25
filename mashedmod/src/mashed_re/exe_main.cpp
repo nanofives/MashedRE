@@ -5458,6 +5458,17 @@ bool RenderFrame() {
                                     std::fprintf(lf, "measure: id=0x%x scale=%.2f ret=%.8f bits=%08x\n",
                                                  kIds[ii], kSc[si], r, rb);
                                 }
+                            // The 9 calls of verify/scr19_parity_20261012/arrow_fix/measure_table.txt.
+                            static const int kTabIds[3] = { 0x59, 0x1b2, 0x1b1 };
+                            static const float kTabSc[3] = { 0.7f, 0.72f, 0.6f };
+                            for (int ii = 0; ii < 3; ++ii)
+                                for (int si = 0; si < 3; ++si) {
+                                    const float r = MeasureMenuMessage(kTabIds[ii], kTabSc[si]);
+                                    std::uint32_t rb;
+                                    std::memcpy(&rb, &r, 4);
+                                    std::fprintf(lf, "measure: table id=0x%x scale=%.2f ret=%.8f bits=%08x\n",
+                                                 kTabIds[ii], kTabSc[si], r, rb);
+                                }
                             std::uint32_t xb;
                             std::memcpy(&xb, &dyn_rax, 4);
                             std::fprintf(lf, "measure: toggle id=0x%x arrow_x=%.6f bits=%08x\n",
