@@ -1,0 +1,73 @@
+[mashed-lock] WAITING — 'mashed_machine' held by pid=11212 (D4-AUDIO-VOLTODS); queueing...
+[mashed-lock] HELD 'mashed_machine' pid=23520 (D3-CF-U9779)
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\D3-CF-U9779\verify\u9779_20261024\run_arms.py:359: SyntaxWarning: invalid escape sequence '\@'
+  STACK['LT3'] = STACK['TC'] + ['MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=3', 'MASHED_LT_LOG=@OUT@\@NAME@.lt.csv', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\D3-CF-U9779\verify\u9779_20261024\run_arms.py:359: SyntaxWarning: invalid escape sequence '\@'
+  STACK['LT3'] = STACK['TC'] + ['MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=3', 'MASHED_LT_LOG=@OUT@\@NAME@.lt.csv', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\D3-CF-U9779\verify\u9779_20261024\run_arms.py:359: SyntaxWarning: invalid escape sequence '\@'
+  STACK['LT3'] = STACK['TC'] + ['MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=3', 'MASHED_LT_LOG=@OUT@\@NAME@.lt.csv', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\D3-CF-U9779\verify\u9779_20261024\run_arms.py:360: SyntaxWarning: invalid escape sequence '\@'
+  STACK['LR3'] = ['MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=3', 'MASHED_LT_LOG=@OUT@\@NAME@.lt.csv', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\D3-CF-U9779\verify\u9779_20261024\run_arms.py:360: SyntaxWarning: invalid escape sequence '\@'
+  STACK['LR3'] = ['MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=3', 'MASHED_LT_LOG=@OUT@\@NAME@.lt.csv', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\D3-CF-U9779\verify\u9779_20261024\run_arms.py:360: SyntaxWarning: invalid escape sequence '\@'
+  STACK['LR3'] = ['MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=3', 'MASHED_LT_LOG=@OUT@\@NAME@.lt.csv', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\D3-CF-U9779\verify\u9779_20261024\run_arms.py:361: SyntaxWarning: invalid escape sequence '\@'
+  STACK['TC0'] = STACK['TC'] + ['MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=0']
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\D3-CF-U9779\verify\u9779_20261024\run_arms.py:365: SyntaxWarning: invalid escape sequence '\@'
+  for _c in (0, 1, 2, 3): STACK[f'FR{_c}'] = STACK['FR'] + [f'MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', f'MASHED_RECDUMP_SLOT={_c}']
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\D3-CF-U9779\verify\u9779_20261024\run_arms.py:366: SyntaxWarning: invalid escape sequence '\@'
+  STACK['LT1'] = STACK['TC'] + ['MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=1', 'MASHED_LT_LOG=@OUT@\@NAME@.lt.csv']
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\D3-CF-U9779\verify\u9779_20261024\run_arms.py:366: SyntaxWarning: invalid escape sequence '\@'
+  STACK['LT1'] = STACK['TC'] + ['MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=1', 'MASHED_LT_LOG=@OUT@\@NAME@.lt.csv']
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\D3-CF-U9779\verify\u9779_20261024\run_arms.py:368: SyntaxWarning: invalid escape sequence '\@'
+  STACK[f'TC{_c}'] = STACK['TC'] + [f'MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', f'MASHED_RECDUMP_SLOT={_c}', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\D3-CF-U9779\verify\u9779_20261024\run_arms.py:368: SyntaxWarning: invalid escape sequence '\@'
+  STACK[f'TC{_c}'] = STACK['TC'] + [f'MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', f'MASHED_RECDUMP_SLOT={_c}', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\D3-CF-U9779\verify\u9779_20261024\run_arms.py:369: SyntaxWarning: invalid escape sequence '\@'
+  STACK[f'TM{_c}'] = STACK['TM'] + [f'MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', f'MASHED_RECDUMP_SLOT={_c}', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\D3-CF-U9779\verify\u9779_20261024\run_arms.py:369: SyntaxWarning: invalid escape sequence '\@'
+  STACK[f'TM{_c}'] = STACK['TM'] + [f'MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', f'MASHED_RECDUMP_SLOT={_c}', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\D3-CF-U9779\verify\u9779_20261024\run_arms.py:370: SyntaxWarning: invalid escape sequence '\@'
+  STACK[f'TR{_c}'] = [f'MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', f'MASHED_RECDUMP_SLOT={_c}', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\D3-CF-U9779\verify\u9779_20261024\run_arms.py:370: SyntaxWarning: invalid escape sequence '\@'
+  STACK[f'TR{_c}'] = [f'MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', f'MASHED_RECDUMP_SLOT={_c}', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+=== H_DEF pid=22492 exe=563c27c2
+    exit=0 self_exited=True secs=255
+    H_DEF.step.csv lines=19059 sha8=bacfc747
+    H_DEF.gates.csv lines=53993 sha8=8dd1c004
+    H_DEF.ptrace.log lines=26996 sha8=6f9932b6
+=== B_DEF_K0 pid=23704 exe=563c27c2
+    exit=0 self_exited=True secs=23
+    B_DEF_K0.step.csv lines=2036 sha8=f9deb9b9
+=== B_DEF_K1 pid=20580 exe=563c27c2
+    exit=0 self_exited=True secs=24
+    B_DEF_K1.step.csv lines=2989 sha8=d3601fcc
+=== B_DEF_K26 pid=21484 exe=563c27c2
+    exit=0 self_exited=True secs=25
+    B_DEF_K26.step.csv lines=2336 sha8=9da9a26a
+=== B_P7_K0 pid=22652 exe=563c27c2
+    exit=0 self_exited=True secs=26
+    B_P7_K0.step.csv lines=2036 sha8=f9deb9b9
+=== B_U7R3_K0 pid=17740 exe=563c27c2
+    exit=0 self_exited=True secs=24
+    B_U7R3_K0.step.csv lines=1529 sha8=69795f64
+=== B_U7PR3_K0 pid=22276 exe=563c27c2
+    exit=0 self_exited=True secs=25
+    B_U7PR3_K0.step.csv lines=1561 sha8=c37d4c0c
+=== B_U7P_K0 pid=4896 exe=563c27c2
+    exit=0 self_exited=True secs=24
+    B_U7P_K0.step.csv lines=1561 sha8=c37d4c0c
+=== B_U7P_K1 pid=12384 exe=563c27c2
+    exit=0 self_exited=True secs=23
+    B_U7P_K1.step.csv lines=2059 sha8=0a8f9806
+=== B_U7P_K26 pid=17872 exe=563c27c2
+    exit=0 self_exited=True secs=23
+    B_U7P_K26.step.csv lines=1541 sha8=7013671d
+=== H_U7P pid=18256 exe=563c27c2
+    exit=0 self_exited=True secs=245
+    H_U7P.step.csv lines=15941 sha8=ef5f2e10
+    H_U7P.gates.csv lines=53273 sha8=57f7ff83
+    H_U7P.ptrace.log lines=26636 sha8=b4f4b55a
+DONE
+[mashed-lock] released 'mashed_machine' pid=23520
