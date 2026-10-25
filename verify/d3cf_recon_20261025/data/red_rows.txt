@@ -1,0 +1,49 @@
+== 01_Egypt/diff_00740
+train (cites_merged):
+  SPLIT    RED        -                      6 triangles, A 3 draws / B 1 draws
+VERDICT: RED (matched=158 rows=20 red=1)
+train re-scored (cites_rres):
+  SPLIT    CITED C31-SPLIT-PAIR -                      6 triangles, A 3 draws / B 1 draws
+== 01_Egypt/diff_00780
+train (cites_merged):
+  SPLIT    RED        -                      6 triangles, A 3 draws / B 1 draws
+VERDICT: RED (matched=149 rows=19 red=1)
+train re-scored (cites_rres):
+  MOVED    CITED C27b-CAR-WHEEL-ROT Advantage              2 draws, same texture and triangle count, AABB moved by up to 0.016; first A [-16.35,-0.15,19.80,-16.16,0.03,19.90] B [-16.35,-0.15,19.82,-16.17,0.03,19.89]
+  SPLIT    CITED C31-SPLIT-PAIR -                      6 triangles, A 3 draws / B 1 draws
+== 01_Egypt/diff_00815
+train (cites_merged):
+  SPLIT    RED        -                      6 triangles, A 3 draws / B 1 draws
+VERDICT: RED (matched=89 rows=22 red=1)
+train re-scored (cites_rres):
+  SPLIT    CITED C31-SPLIT-PAIR -                      6 triangles, A 3 draws / B 1 draws
+== 03_Arctic/diff_01051
+train (cites_merged):
+  MOVED    RED        Advantage              2 draws, same texture and triangle count, AABB moved by up to 0.0229; first A [-27.63,0.00,17.03,-27.51,0.18,17.22] B [-27.61,0.00,17.04,-27.54,0.18,17.21]
+VERDICT: RED (matched=155 rows=33 red=1)
+train re-scored (cites_rres):
+  MOVED    CITED C27b-CAR-WHEEL-ROT Advantage              2 draws, same texture and triangle count, AABB moved by up to 0.0229; first A [-27.63,0.00,17.03,-27.51,0.18,17.22] B [-27.61,0.00,17.04,-27.54,0.18,17.21]
+== 10_Dump/diff_00735
+train (cites_merged):
+  MOVED    RED        -                      1 draws, same texture and triangle count, AABB moved by up to 0.0571; first A [-4.08,2.95,49.27,5.72,3.11,50.06] B [-4.02,2.95,49.27,5.77,3.11,50.05]
+VERDICT: RED (matched=340 rows=19 red=1)
+train re-scored (cites_rres):
+  MOVED    CITED C30-TRAIN-ROOF-LEAD -                      1 draws, same texture and triangle count, AABB moved by up to 0.0571; first A [-4.08,2.95,49.27,5.72,3.11,50.06] B [-4.02,2.95,49.27,5.77,3.11,50.05]
+== 10_Dump/diff_00775
+train (cites_merged):
+  MOVED    RED        -                      1 draws, same texture and triangle count, AABB moved by up to 0.0571; first A [-1.80,2.93,49.23,8.00,3.10,50.03] B [-1.74,2.93,49.23,8.06,3.10,50.03]
+VERDICT: RED (matched=321 rows=17 red=1)
+train re-scored (cites_rres):
+  MOVED    CITED C30-TRAIN-ROOF-LEAD -                      1 draws, same texture and triangle count, AABB moved by up to 0.0571; first A [-1.80,2.93,49.23,8.00,3.10,50.03] B [-1.74,2.93,49.23,8.06,3.10,50.03]
+== 10_Dump/diff_00810
+train (cites_merged):
+  MOVED    RED        -                      1 draws, same texture and triangle count, AABB moved by up to 0.0571; first A [0.20,2.92,49.20,10.00,3.09,50.00] B [0.26,2.92,49.19,10.06,3.09,50.00]
+VERDICT: RED (matched=210 rows=19 red=1)
+train re-scored (cites_rres):
+  MOVED    CITED C30-TRAIN-ROOF-LEAD -                      1 draws, same texture and triangle count, AABB moved by up to 0.0571; first A [0.20,2.92,49.20,10.00,3.09,50.00] B [0.26,2.92,49.19,10.06,3.09,50.00]
+== 13_Training/diff_00924
+train (cites_merged):
+  MOVED    RED        Advantage              2 draws, same texture and triangle count, AABB moved by up to 0.0256; first A [-1.15,0.33,-5.93,-1.08,0.50,-5.75] B [-1.18,0.32,-5.94,-1.05,0.50,-5.74]
+VERDICT: RED (matched=209 rows=21 red=1)
+train re-scored (cites_rres):
+  MOVED    CITED C27b-CAR-WHEEL-ROT Advantage              2 draws, same texture and triangle count, AABB moved by up to 0.0256; first A [-1.15,0.33,-5.93,-1.08,0.50,-5.75] B [-1.18,0.32,-5.94,-1.05,0.50,-5.74]
