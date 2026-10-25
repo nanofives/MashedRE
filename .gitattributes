@@ -12,3 +12,6 @@ scripts/dump_asm.py text eol=lf
 # 7 of 9 scripts (including ghidra_pool.sh, which every headless Ghidra run depends on)
 # during a main<->branch round-trip on 2026-09-11.
 *.sh text eol=lf
+
+# Append-only tracker: keep LF whatever tool writes it (merge train 5f335db09 rewrote it CRLF, 2026-10-24).
+re/analysis/CHANGELOG.md text eol=lf
