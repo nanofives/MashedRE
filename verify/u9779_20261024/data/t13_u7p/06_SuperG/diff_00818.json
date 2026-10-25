@@ -1,0 +1,871 @@
+{
+ "a": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\D3-CF-U9779\\verify\\capfix_20261016\\06_SuperG\\orig_row_00818.draws.json",
+ "b": "D:\\MashedWT\\D3-CF-U9779_data\\t13_u7p\\06_SuperG\\stand\\d1r2\\stand_row_00818.draws.json",
+ "matched": 182,
+ "na": 224,
+ "nb": 184,
+ "tri_a": 15002,
+ "tri_b": 13718,
+ "rows": [
+  {
+   "kind": "MISSING",
+   "tex": "-",
+   "n": 4,
+   "offscreen": 2,
+   "detail": "A-only 4 draws 6 tri (2 offscreen); first k82 pt5 tri=2 tex=- tex1=- bb=[0.31,0.32,0.99,0.38,0.34,0.99] src=d3d Z=0 ZW=0 ZF=0 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=1",
+   "a_idx": [
+    210,
+    215,
+    81,
+    185
+   ],
+   "b_idx": [],
+   "cite": "C03-UNTEXTURED"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "GreenStartLight",
+   "n": 1,
+   "offscreen": 1,
+   "detail": "A-only 1 draws 6 tri (1 offscreen); first k82 pt5 tri=6 tex=GreenStartLight tex1=- bb=[-0.10,0.62,0.98,0.10,0.69,0.98] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    223
+   ],
+   "b_idx": [],
+   "cite": "C08-STARTDISP"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "machinegun",
+   "n": 1,
+   "offscreen": 1,
+   "detail": "A-only 1 draws 12 tri (1 offscreen); first k82 pt5 tri=12 tex=machinegun tex1=- bb=[5.31,0.11,62.09,5.73,0.49,62.51] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2",
+   "a_idx": [
+    198
+   ],
+   "b_idx": [],
+   "cite": "C07-WEAPONS"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "mine",
+   "n": 21,
+   "offscreen": 0,
+   "detail": "A-only 21 draws 32 tri (0 offscreen); first k82 pt5 tri=1 tex=mine tex1=- bb=[5.53,0.60,44.86,5.55,0.66,44.91] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=1",
+   "a_idx": [
+    186,
+    187,
+    188,
+    189,
+    190,
+    191,
+    192,
+    193,
+    194,
+    195,
+    199,
+    200,
+    201,
+    202,
+    203,
+    204,
+    205,
+    206,
+    207,
+    208,
+    197
+   ],
+   "b_idx": [],
+   "cite": "C07-WEAPONS"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "NFLBluejay",
+   "n": 1,
+   "offscreen": 1,
+   "detail": "A-only 1 draws 2 tri (1 offscreen); first k82 pt5 tri=2 tex=NFLBluejay tex1=- bb=[-0.51,0.29,0.98,-0.43,0.37,0.98] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    219
+   ],
+   "b_idx": [],
+   "cite": "C08-STARTDISP"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "NFLGold",
+   "n": 1,
+   "offscreen": 1,
+   "detail": "A-only 1 draws 2 tri (1 offscreen); first k82 pt5 tri=2 tex=NFLGold tex1=- bb=[-0.47,0.29,0.98,-0.38,0.37,0.98] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    220
+   ],
+   "b_idx": [],
+   "cite": "C08-STARTDISP"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "NFLMelon",
+   "n": 1,
+   "offscreen": 1,
+   "detail": "A-only 1 draws 2 tri (1 offscreen); first k82 pt5 tri=2 tex=NFLMelon tex1=- bb=[-0.56,0.29,0.98,-0.47,0.37,0.98] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    218
+   ],
+   "b_idx": [],
+   "cite": "C08-STARTDISP"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "NFLRed",
+   "n": 1,
+   "offscreen": 1,
+   "detail": "A-only 1 draws 2 tri (1 offscreen); first k82 pt5 tri=2 tex=NFLRed tex1=- bb=[0.38,0.29,0.98,0.47,0.37,0.98] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    213
+   ],
+   "b_idx": [],
+   "cite": "C08-STARTDISP"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "OrangeDisplay",
+   "n": 8,
+   "offscreen": 8,
+   "detail": "A-only 8 draws 68 tri (8 offscreen); first k82 pt5 tri=10 tex=OrangeDisplay tex1=- bb=[-0.11,0.61,1.02,0.11,0.70,1.02] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [
+    221,
+    209,
+    212,
+    214,
+    217,
+    222,
+    211,
+    216
+   ],
+   "b_idx": [],
+   "cite": "C08-STARTDISP"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "PowerUpModelsFinal",
+   "n": 1,
+   "offscreen": 0,
+   "detail": "A-only 1 draws 268 tri (0 offscreen); first k82 pt5 tri=268 tex=PowerUpModelsFinal tex1=- bb=[4.75,0.30,44.05,5.09,0.45,44.39] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2",
+   "a_idx": [
+    120
+   ],
+   "b_idx": [],
+   "cite": "C07-WEAPONS"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "PUGlow",
+   "n": 1,
+   "offscreen": 0,
+   "detail": "A-only 1 draws 14 tri (0 offscreen); first k82 pt4 tri=14 tex=PUGlow tex1=- bb=[-7.42,-0.24,-68.18,6.52,1.54,71.58] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2",
+   "a_idx": [
+    196
+   ],
+   "b_idx": [],
+   "cite": "C06-PICKUP"
+  },
+  {
+   "kind": "MISSING",
+   "tex": "smoke",
+   "n": 1,
+   "offscreen": 0,
+   "detail": "A-only 1 draws 1024 tri (0 offscreen); first k82 pt4 tri=1024 tex=smoke tex1=- bb=[-2.44,-6.95,42.47,12.25,5.49,54.57] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2",
+   "a_idx": [
+    157
+   ],
+   "b_idx": [],
+   "cite": "C05-PARTICLE"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "@gen:particle",
+   "n": 1,
+   "offscreen": 0,
+   "detail": "B-only 1 draws 140 tri (0 offscreen); first k83 pt4 tri=140 tex=@gen:particle tex1=- bb=[-29.25,13.01,14.90,35.05,36.10,78.22] src=d3d Z=1 ZW=0 ZF=4 AT=0 AREF=0 AF=0 AB=1 SRC=5 DST=6 CULL=1",
+   "a_idx": [],
+   "b_idx": [
+    0
+   ],
+   "cite": "C05-PARTICLE"
+  },
+  {
+   "kind": "EXTRA",
+   "tex": "@gen:pickup",
+   "n": 1,
+   "offscreen": 0,
+   "detail": "B-only 1 draws 14 tri (0 offscreen); first k83 pt4 tri=14 tex=@gen:pickup tex1=- bb=[-7.98,-0.29,-68.56,7.08,2.29,71.96] src=d3d Z=1 ZW=0 ZF=4 AT=0 AREF=0 AF=0 AB=1 SRC=5 DST=2 CULL=1",
+   "a_idx": [],
+   "b_idx": [
+    1
+   ],
+   "cite": "C06-PICKUP"
+  },
+  {
+   "kind": "STATE",
+   "tex": "Box",
+   "n": 3,
+   "detail": "3 matched draws differ in AT,AF,AB,SRC,DST: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2",
+   "a_idx": [
+    138,
+    125,
+    149
+   ],
+   "b_idx": [
+    138,
+    125,
+    149
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "Camstand",
+   "n": 1,
+   "detail": "1 matched draws differ in AT,AF,AB,SRC,DST: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2",
+   "a_idx": [
+    124
+   ],
+   "b_idx": [
+    124
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "Cargo",
+   "n": 3,
+   "detail": "3 matched draws differ in AT,AF,AB,SRC,DST: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2",
+   "a_idx": [
+    142,
+    150,
+    126
+   ],
+   "b_idx": [
+    142,
+    150,
+    126
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "Edge",
+   "n": 1,
+   "detail": "1 matched draws differ in AT,AF,AB,SRC,DST: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2",
+   "a_idx": [
+    136
+   ],
+   "b_idx": [
+    136
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "FishPlant",
+   "n": 1,
+   "detail": "1 matched draws differ in AT,AF,AB,SRC,DST: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2",
+   "a_idx": [
+    131
+   ],
+   "b_idx": [
+    131
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "Ice",
+   "n": 3,
+   "detail": "3 matched draws differ in AT,AF,AB,SRC,DST: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2",
+   "a_idx": [
+    146,
+    134,
+    121
+   ],
+   "b_idx": [
+    146,
+    134,
+    121
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "LandingStageEdge",
+   "n": 3,
+   "detail": "3 matched draws differ in AT,AF,AB,SRC,DST: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2",
+   "a_idx": [
+    122,
+    135,
+    147
+   ],
+   "b_idx": [
+    122,
+    135,
+    147
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "Pipe",
+   "n": 2,
+   "detail": "2 matched draws differ in AT,AF,AB,SRC,DST: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2",
+   "a_idx": [
+    151,
+    143
+   ],
+   "b_idx": [
+    151,
+    143
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "Rust",
+   "n": 3,
+   "detail": "3 matched draws differ in AT,AF,AB,SRC,DST: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2",
+   "a_idx": [
+    144,
+    152,
+    127
+   ],
+   "b_idx": [
+    144,
+    152,
+    127
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "RustySteel",
+   "n": 3,
+   "detail": "3 matched draws differ in AT,AF,AB,SRC,DST: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2",
+   "a_idx": [
+    129,
+    154,
+    141
+   ],
+   "b_idx": [
+    129,
+    154,
+    141
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "Shipside",
+   "n": 3,
+   "detail": "3 matched draws differ in AT,AF,AB,SRC,DST: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2",
+   "a_idx": [
+    155,
+    140,
+    130
+   ],
+   "b_idx": [
+    155,
+    140,
+    130
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "Snow",
+   "n": 3,
+   "detail": "3 matched draws differ in AT,AF,AB,SRC,DST: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2",
+   "a_idx": [
+    137,
+    123,
+    148
+   ],
+   "b_idx": [
+    137,
+    123,
+    148
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "Wood",
+   "n": 1,
+   "detail": "1 matched draws differ in AT,AF,AB,SRC,DST: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2",
+   "a_idx": [
+    139
+   ],
+   "b_idx": [
+    139
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "STATE",
+   "tex": "Yellow",
+   "n": 3,
+   "detail": "3 matched draws differ in AT,AF,AB,SRC,DST: A Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2",
+   "a_idx": [
+    145,
+    153,
+    128
+   ],
+   "b_idx": [
+    145,
+    153,
+    128
+   ],
+   "cite": "C19-STATE-LIBRW"
+  },
+  {
+   "kind": "TEX1",
+   "tex": "Ice",
+   "n": 6,
+   "detail": "6 matched draws, stage-1 texture A #256x256:22 | B -",
+   "a_idx": [
+    110,
+    97,
+    84,
+    146,
+    134,
+    121
+   ],
+   "b_idx": [
+    111,
+    98,
+    85,
+    146,
+    134,
+    121
+   ],
+   "cite": "C16-TEX1-WORLD"
+  },
+  {
+   "kind": "TEX1",
+   "tex": "IceRoad1",
+   "n": 4,
+   "detail": "4 matched draws, stage-1 texture A #256x256:22 | B -",
+   "a_idx": [
+    83,
+    109,
+    96,
+    133
+   ],
+   "b_idx": [
+    84,
+    110,
+    97,
+    133
+   ],
+   "cite": "C16-TEX1-WORLD"
+  },
+  {
+   "kind": "TEX1",
+   "tex": "IceRoad2",
+   "n": 3,
+   "detail": "3 matched draws, stage-1 texture A #256x256:22 | B -",
+   "a_idx": [
+    132,
+    95,
+    108
+   ],
+   "b_idx": [
+    132,
+    96,
+    109
+   ],
+   "cite": "C16-TEX1-WORLD"
+  },
+  {
+   "kind": "FOG",
+   "tex": "*",
+   "n": 181,
+   "detail": "181 matched draws, FOGENABLE A 1 | B 0, 30 textures: #256x256:21, #64x64:21, -, Ads, Advantage, AdvantageSmall, Box, Camstand",
+   "a_idx": [
+    122,
+    142,
+    116,
+    104,
+    22,
+    52,
+    7,
+    180,
+    76,
+    10,
+    53,
+    63,
+    167,
+    26,
+    83,
+    110,
+    102,
+    136,
+    85,
+    103,
+    35,
+    164,
+    9,
+    97,
+    31,
+    145,
+    100,
+    168,
+    107,
+    24,
+    54,
+    17,
+    129,
+    154,
+    65,
+    66,
+    42,
+    56,
+    21,
+    94,
+    14,
+    156,
+    15,
+    6,
+    58,
+    132,
+    87,
+    90,
+    95,
+    18,
+    177,
+    151,
+    64,
+    163,
+    173,
+    91,
+    79,
+    89,
+    135,
+    99,
+    55,
+    138,
+    80,
+    3,
+    2,
+    75,
+    28,
+    61,
+    46,
+    37,
+    78,
+    59,
+    175,
+    178,
+    181,
+    158,
+    60,
+    84,
+    20,
+    93,
+    106,
+    115,
+    105,
+    29,
+    141,
+    109,
+    77,
+    166,
+    169,
+    137,
+    113,
+    86,
+    139,
+    51,
+    150,
+    88,
+    179,
+    176,
+    182,
+    57,
+    124,
+    155,
+    144,
+    114,
+    123,
+    108,
+    174,
+    70,
+    96,
+    23,
+    5,
+    133,
+    153,
+    30,
+    13,
+    1,
+    19,
+    171,
+    92,
+    11,
+    82,
+    69,
+    8,
+    131,
+    146,
+    125,
+    68,
+    111,
+    62,
+    152,
+    101,
+    12,
+    25,
+    72,
+    183,
+    27,
+    119,
+    40,
+    49,
+    39,
+    48,
+    73,
+    126,
+    98,
+    74,
+    143,
+    33,
+    41,
+    50,
+    140,
+    47,
+    38,
+    112,
+    34,
+    159,
+    160,
+    162,
+    161,
+    32,
+    71,
+    127,
+    134,
+    170,
+    165,
+    117,
+    118,
+    45,
+    36,
+    148,
+    4,
+    0,
+    128,
+    121,
+    130,
+    16,
+    149,
+    44,
+    67,
+    43,
+    147,
+    172
+   ],
+   "b_idx": [
+    122,
+    142,
+    117,
+    105,
+    24,
+    54,
+    9,
+    179,
+    78,
+    12,
+    55,
+    65,
+    160,
+    28,
+    84,
+    111,
+    103,
+    136,
+    86,
+    104,
+    37,
+    163,
+    11,
+    98,
+    33,
+    145,
+    101,
+    159,
+    108,
+    26,
+    56,
+    19,
+    129,
+    154,
+    67,
+    68,
+    44,
+    58,
+    23,
+    95,
+    16,
+    156,
+    17,
+    8,
+    60,
+    132,
+    88,
+    91,
+    96,
+    20,
+    176,
+    151,
+    66,
+    164,
+    172,
+    92,
+    81,
+    90,
+    135,
+    100,
+    57,
+    138,
+    82,
+    5,
+    4,
+    77,
+    30,
+    63,
+    48,
+    39,
+    80,
+    61,
+    174,
+    177,
+    180,
+    157,
+    62,
+    85,
+    22,
+    94,
+    107,
+    116,
+    106,
+    31,
+    141,
+    110,
+    79,
+    161,
+    158,
+    137,
+    114,
+    87,
+    139,
+    53,
+    150,
+    89,
+    178,
+    175,
+    181,
+    59,
+    124,
+    155,
+    144,
+    115,
+    123,
+    109,
+    173,
+    72,
+    97,
+    25,
+    7,
+    133,
+    153,
+    32,
+    15,
+    3,
+    21,
+    170,
+    93,
+    13,
+    83,
+    71,
+    10,
+    131,
+    146,
+    125,
+    70,
+    112,
+    64,
+    152,
+    102,
+    14,
+    27,
+    74,
+    182,
+    29,
+    120,
+    42,
+    51,
+    41,
+    50,
+    75,
+    126,
+    99,
+    76,
+    143,
+    35,
+    43,
+    52,
+    140,
+    49,
+    40,
+    113,
+    36,
+    168,
+    167,
+    165,
+    166,
+    34,
+    73,
+    127,
+    134,
+    169,
+    162,
+    118,
+    119,
+    47,
+    38,
+    148,
+    6,
+    2,
+    128,
+    121,
+    130,
+    18,
+    149,
+    46,
+    69,
+    45,
+    147,
+    171
+   ],
+   "cite": "C18-FOG"
+  }
+ ],
+ "info": {
+  "empty_dropped": [
+   0,
+   0
+  ],
+  "no_geometry": [
+   1,
+   0
+  ]
+ }
+}

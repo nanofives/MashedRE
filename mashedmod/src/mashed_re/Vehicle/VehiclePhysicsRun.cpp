@@ -26,6 +26,7 @@
 #include <chrono>     // WS-A s3 perf profiler (steady_clock == QPC on MSVC)
 // #define MASHED_PHYS_DIAG 1   /* enable the steer-chain diag block (G2 drive debug) */
 
+namespace mashed_re { namespace D3d9Render { bool RoundEnd7PhysActive(); } }   // [D3-CF-U9779] TrackRenderer.cpp
 namespace mashed_re {
 namespace Vehicle {
 
@@ -1412,6 +1413,14 @@ static bool StepBegin(StepCtx& c, int slot, float dt, PlayerCarIO& io, ContactSc
         input[0] = (st > 0.f) ? m : 0;
         input[1] = (st < 0.f) ? m : 0;
     }
+    // [D3-CF-U9779] MASHED_R7_PHYS (default ON since 2026-10-24, MASHED_NO_R7_PHYS opts out): FUN_004709a0 (0x00470a1b..0x00470a4f) and FUN_00470c70
+    // (0x00470fd6..0x00470ff9) hand FUN_0046e9e0 and A4 the block 0x007f19b8 when FUN_0040e350() is not 6 / 0xb / 0xa.
+    // Read in place (the exe maps the original's 0x007f1038 block region; o_r7_1 read 0x4c zero bytes there).
+    if (D3d9Render::RoundEnd7PhysActive()) {
+        const int gm = Fi_GameMode();
+        if (gm != 6 && gm != 0xb && gm != 0xa)
+            std::memcpy(input, reinterpret_cast<const void*>(static_cast<std::uintptr_t>(0x007f19b8u)), sizeof(input));
+    }
 
     // =====================================================================
     // START BOOST ARM — U-D3-DRIVE-FORCE, 2026-09-29. MEASURED, not inferred.
@@ -1908,7 +1917,13 @@ static void StepSubstep(StepCtx& c) {
     // tracked separately (it also gates RubberBandGate and Integrate2's mode-7
     // branch, so it is not a one-line change).
     {
-        const float k = chunkMs * kPosDtK * kSuspDtK;
+        float k = chunkMs * kPosDtK * kSuspDtK;
+        // [D3-CF-U9779] MASHED_R7_PHYS (default ON since 2026-10-24, MASHED_NO_R7_PHYS opts out): the 0x0046ea1e..0x0046ea4c gate, applied only while the
+        // MASHED_ROUND_END7 flag is up (the d2engage hold tick's mode 5 stays outside it, as before).
+        if (D3d9Render::RoundEnd7PhysActive()) {
+            const int gm = Fi_GameMode();
+            if (gm != 6 && gm != 0xb && gm != 0xa) k = 0.f;   // 0x0046ea3c / 0x0046ea44 / 0x0046ea4c: increments = 0
+        }
         posDelta[0] += k * F(r, off::kVelocity + 0);
         posDelta[1] += k * F(r, off::kVelocity + 4);
         posDelta[2] += k * F(r, off::kVelocity + 8);

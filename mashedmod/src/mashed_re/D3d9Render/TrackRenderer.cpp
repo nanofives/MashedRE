@@ -154,14 +154,16 @@ int aib_veh_type(int v) {
 // [D-11073 leg 1b] Under default-OFF MASHED_SUBSTATE the port keeps a real DAT_0063ba8c
 // (written by the sub-state block in Update and by SubStateEnter4 / SubStateHeldCountdown5,
 // Race/SubStateMachine.cpp); FUN_0040e350 returns the race sub-state. Knob OFF: 6, as before.
-// [u9779] MASHED_ROUND_END7 (default OFF). FUN_00411170 writes DAT_0063ba8c = 7 at 0x004111a6 when
+// [u9779] MASHED_ROUND_END7. FUN_00411170 writes DAT_0063ba8c = 7 at 0x004111a6 when
 // FUN_00410d10 (call 0x0041118f) returns non-zero and FUN_00410510 (call 0x00411198) returns 0, i.e. on
 // a round end that is not a match end. Under the knob the rule engine's r == 0 round end raises this
 // flag (StartRound lowers it): the AI host's FUN_0040e350 then returns 7, and the frame-end clock add
 // is skipped as FUN_0040fc00 skips it in sub-state 7 (0x0040fe46 cmp [0x0063ba8c],7 / 0x0040fe4d je
 // over 0x0040fe4f..0x0040fe64). Knob OFF: the flag is never raised.
+// Default ON since 2026-10-24 (Mariano, decision L-4, verify/u9779_20261024/RESULT_D3-CF-U9779.md, flipped with the other three of
+// ELIM_RESOLVE / ROUND_END7 / RACE_TAIL_LATE / R7_PHYS as one set); MASHED_NO_ROUND_END7=1 opts out.
 bool RoundEnd7Enabled() {
-    static const bool s = [] { const char* e = std::getenv("MASHED_ROUND_END7"); return e && e[0] && e[0] != '0'; }();
+    static const bool s = [] { const char* e = std::getenv("MASHED_NO_ROUND_END7"); return !(e && e[0] && e[0] != '0'); }();
     return s;
 }
 bool s_roundEnd7 = false;
@@ -177,9 +179,11 @@ const char* Rule7TracePath() {
     return s;
 }
 int s_r7Eval = 0, s_r7Div = 0;
-// [u9779] MASHED_RACE_TAIL_LATE (default OFF), see the end of TrackRenderer::UpdateCar.
+// [u9779] MASHED_RACE_TAIL_LATE, see the end of TrackRenderer::UpdateCar.
+// Default ON since 2026-10-24 (Mariano, decision L-4, verify/u9779_20261024/RESULT_D3-CF-U9779.md, flipped with the other three of
+// ELIM_RESOLVE / ROUND_END7 / RACE_TAIL_LATE / R7_PHYS as one set); MASHED_NO_RACE_TAIL_LATE=1 opts out.
 bool RaceTailLateEnabled() {
-    static const bool s = [] { const char* e = std::getenv("MASHED_RACE_TAIL_LATE"); return e && e[0] && e[0] != '0'; }();
+    static const bool s = [] { const char* e = std::getenv("MASHED_NO_RACE_TAIL_LATE"); return !(e && e[0] && e[0] != '0'); }();
     return s;
 }
 int aib_game_sub_mode() {                                // race (FUN_0040e350)
@@ -1491,6 +1495,16 @@ void QuatPosMatrix(const float q[4], const float p[3], D3DMATRIX* m) {
 }
 
 }  // namespace
+
+// [D3-CF-U9779] MASHED_R7_PHYS: while the MASHED_ROUND_END7 flag is up, the exe physics sees
+// FUN_0040e350 = 7 (Fi_GameMode), the 0x0046ea1e position gate and the 0x007f19b8 ctrl block. Knob OFF: false.
+// verify/u9779_20261024/PREREG_D3-CF-U9779.md.
+// Default ON since 2026-10-24 (Mariano, decision L-4, verify/u9779_20261024/RESULT_D3-CF-U9779.md, flipped with the other three of
+// ELIM_RESOLVE / ROUND_END7 / RACE_TAIL_LATE / R7_PHYS as one set); MASHED_NO_R7_PHYS=1 opts out.
+bool RoundEnd7PhysActive() {
+    static const bool s = [] { const char* e = std::getenv("MASHED_NO_R7_PHYS"); return !(e && e[0] && e[0] != '0'); }();
+    return s && s_roundEnd7;
+}
 
 // ---- [rprops U-9695] per-track prop placement ---------------------------------------------------
 // The ported RW leaves the original's frame ops go through (Math/RwMatrixRotate.cpp,
@@ -5888,7 +5902,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
     TickPowerupDispatch(in.dt);
     // power-up EFFECTS: advance boost/shield timers, missiles, mines.
     UpdatePowerups(in.dt);
-    // [u9779] MASHED_RACE_TAIL_LATE (default OFF): the race tail (camera, elimination, rule engine) here, after every
+    // [u9779] MASHED_RACE_TAIL_LATE (default ON since 2026-10-24): the race tail (camera, elimination, rule engine) here, after every
     // car's physics and the late path-progress tick, instead of between the player's physics and the opponent loop.
     // FUN_004111c0's sub-state-6 case calls FUN_00411170 (0x004112cd: FUN_00410d10, the 0x004111a6 write of 7) BEFORE
     // FUN_0040fc00 (0x004112d5: AI tick 0x0040fc6c, physics, the clock add 0x0040fe46..0x0040fe64), so the original
@@ -7624,7 +7638,7 @@ void TrackRenderer::ScoreOnEliminationTeams(int victim) {
     }
 }
 
-// [u9779] MASHED_ELIM_RESOLVE (default OFF): FUN_0040eee0's type-2 auto-resolve arms on the
+// [u9779] MASHED_ELIM_RESOLVE: FUN_0040eee0's type-2 auto-resolve arms on the
 // DAT_008a94d0 == 4, FUN_0042f500() == 0 path. After the -2 / -1 award to the victim, the original
 // tests `(FUN_0042f6a0() in {3,4,5,10}) && FUN_0042f500() == 0 && DAT_007f0fd0 == 0` and walks slots
 // 0..3 whose slot probe is set, FUN_0046c7b0(i) == 1 and FUN_0040e470(i) == 2 (an AI slot):
@@ -7639,8 +7653,10 @@ void TrackRenderer::ScoreOnEliminationTeams(int victim) {
 // reads 10 on this recipe, both in the set), DAT_007f0fd0 is read LIVE (0 on the B recipe, as in the
 // original; the rule engine's rule_ is a separate copy, 4 under MASHED_ROUND_RULE=4), FUN_0040e470 is
 // the live slot table, and FUN_00408ad0 is the live race_pct 0x008a96ec (0x00408ada), not RacePct().
+// Default ON since 2026-10-24 (Mariano, decision L-4, verify/u9779_20261024/RESULT_D3-CF-U9779.md, flipped with the other three of
+// ELIM_RESOLVE / ROUND_END7 / RACE_TAIL_LATE / R7_PHYS as one set); MASHED_NO_ELIM_RESOLVE=1 opts out.
 bool ElimResolveEnabled() {
-    static const bool s = [] { const char* e = std::getenv("MASHED_ELIM_RESOLVE"); return e && e[0] && e[0] != '0'; }();
+    static const bool s = [] { const char* e = std::getenv("MASHED_NO_ELIM_RESOLVE"); return !(e && e[0] && e[0] != '0'); }();
     return s;
 }
 namespace {

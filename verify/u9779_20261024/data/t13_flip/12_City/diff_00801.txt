@@ -1,0 +1,24 @@
+== 3D orig row 801 (496 draws, 41692 tri) vs stand row 801 (475 draws, 41094 tri)
+   matched 469 draws (40424 tri); rows 20 (20 cited); info {'empty_dropped': (0, 0), 'no_geometry': (1, 0)}
+  MISSING  CITED C03-UNTEXTURED -                      A-only 4 draws 6 tri (2 offscreen); first k82 pt5 tri=2 tex=- tex1=- bb=[0.31,0.32,0.99,0.38,0.34,0.99] src=d3d Z=0 ZW=0 ZF=0 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=1
+  MISSING  CITED C05-PARTICLE exp_cloud2             A-only 3 draws 384 tri (0 offscreen); first k82 pt4 tri=128 tex=exp_cloud2 tex1=- bb=[57.07,0.12,-26.73,57.56,0.16,-26.48] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=2
+  MISSING  CITED C08-STARTDISP GreenStartLight        A-only 1 draws 6 tri (1 offscreen); first k82 pt5 tri=6 tex=GreenStartLight tex1=- bb=[-0.10,0.48,0.98,0.10,0.54,0.98] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+  MISSING  CITED C09-FX Headlight              A-only 1 draws 52 tri (0 offscreen); first k82 pt4 tri=52 tex=Headlight tex1=- bb=[280.92,168.19,0.98,409.53,443.53,0.99] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=1
+  MISSING  CITED C08-STARTDISP NFLBluejay             A-only 1 draws 2 tri (1 offscreen); first k82 pt5 tri=2 tex=NFLBluejay tex1=- bb=[-0.51,0.29,0.98,-0.43,0.37,0.98] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+  MISSING  CITED C08-STARTDISP NFLGold                A-only 1 draws 2 tri (1 offscreen); first k82 pt5 tri=2 tex=NFLGold tex1=- bb=[-0.47,0.29,0.98,-0.38,0.37,0.98] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+  MISSING  CITED C08-STARTDISP NFLMelon               A-only 1 draws 2 tri (1 offscreen); first k82 pt5 tri=2 tex=NFLMelon tex1=- bb=[-0.56,0.29,0.98,-0.47,0.37,0.98] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+  MISSING  CITED C08-STARTDISP NFLRed                 A-only 1 draws 2 tri (1 offscreen); first k82 pt5 tri=2 tex=NFLRed tex1=- bb=[0.38,0.29,0.98,0.47,0.37,0.98] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+  MISSING  CITED C12-CITYPLACE oaktreesprite          A-only 1 draws 216 tri (0 offscreen); first k82 pt4 tri=216 tex=oaktreesprite tex1=- bb=[45.10,0.24,-23.12,105.45,3.22,64.24] src=d3d Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+  MISSING  CITED C08-STARTDISP OrangeDisplay          A-only 8 draws 68 tri (8 offscreen); first k82 pt5 tri=42 tex=OrangeDisplay tex1=- bb=[-0.09,0.48,1.00,0.09,0.53,1.00] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+  MISSING  CITED C06-PICKUP PUGlow                 A-only 1 draws 20 tri (0 offscreen); first k82 pt4 tri=20 tex=PUGlow tex1=- bb=[-4.87,-0.41,-46.64,98.31,3.08,63.68] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+  MISSING  CITED C05-PARTICLE smoke                  A-only 1 draws 54 tri (0 offscreen); first k82 pt4 tri=54 tex=smoke tex1=- bb=[55.18,-0.21,-27.47,58.17,0.51,-24.19] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+  EXTRA    CITED C05-PARTICLE @gen:particle          B-only 1 draws 148 tri (1 offscreen); first k83 pt4 tri=148 tex=@gen:particle tex1=- bb=[26.09,11.30,-61.91,97.77,35.52,5.44] src=d3d Z=1 ZW=0 ZF=4 AT=0 AREF=0 AF=0 AB=1 SRC=5 DST=6 CULL=1
+  EXTRA    CITED C06-PICKUP @gen:pickup            B-only 1 draws 20 tri (0 offscreen); first k83 pt4 tri=20 tex=@gen:pickup tex1=- bb=[-5.31,-0.36,-47.33,98.74,4.20,64.37] src=d3d Z=1 ZW=0 ZF=4 AT=0 AREF=0 AF=0 AB=1 SRC=5 DST=2 CULL=1
+  EXTRA    CITED C09b-HEADLIGHT-BRAKE Headlight              B-only 1 draws 48 tri (0 offscreen); first k82 pt4 tri=48 tex=Headlight tex1=- bb=[282.08,168.19,0.98,409.53,443.53,0.99] src=rw Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=1
+  STATE    CITED C19-STATE-LIBRW sKYLINE                1 matched draws differ in Z,ZF: A Z=0 ZW=0 ZF=0 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2 | B Z=1 ZW=0 ZF=8 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  FOG      CITED C18-FOG *                      464 matched draws, FOGENABLE A 1 | B 0, 68 textures: -, Advantage, Apart2 NT, Apart3 NT, Apart4, Apart5, Apart5windows NT, Apart6windows
+  MOVED    CITED C14-ANIM Apache                 1 draws, same texture and triangle count, AABB moved by up to 0.145; first A [61.61,1.13,-26.57,64.98,3.34,-25.26] B [61.46,1.13,-26.57,64.84,3.35,-25.26]
+  MOVED    CITED C14-ANIM Blads                  2 draws, same texture and triangle count, AABB moved by up to 0.183; first A [64.20,2.82,-25.93,64.89,3.52,-25.88] B [64.04,2.81,-25.93,64.76,3.53,-25.87]
+  ORDER    CITED C21-ORDER railings               3 order inversions vs matched draws, mostly: RWLampostsx3
+-> D:\MashedWT\D3-CF-U9779_data\t13_flip\12_City\diff_00801.json
+VERDICT: CITED (matched=469 rows=20 red=0)

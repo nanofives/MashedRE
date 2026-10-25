@@ -1,0 +1,40 @@
+== 3D orig row 1091 (177 draws, 35197 tri) vs stand row 1091 (157 draws, 34853 tri)
+   matched 150 draws (34347 tri); rows 36 (36 cited); info {'empty_dropped': (0, 0), 'no_geometry': (1, 0)}
+  MISSING  CITED C03-UNTEXTURED -                      A-only 4 draws 6 tri (2 offscreen); first k82 pt5 tri=2 tex=- tex1=- bb=[0.31,0.32,0.99,0.38,0.34,0.99] src=d3d Z=0 ZW=0 ZF=0 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=1
+  MISSING  CITED C17-CAR-GLOSS Advantage              A-only 1 draws 4 tri (0 offscreen); first k82 pt5 tri=4 tex=Advantage tex1=- bb=[-25.64,0.15,19.92,-25.28,0.19,19.94] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=1
+  MISSING  CITED C05-PARTICLE exp_cloud2             A-only 3 draws 384 tri (0 offscreen); first k82 pt4 tri=128 tex=exp_cloud2 tex1=- bb=[-25.57,0.10,19.44,-25.38,0.12,19.77] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=2
+  MISSING  CITED C04-SHADOW flatshad               A-only 1 draws 94 tri (0 offscreen); first k82 pt4 tri=94 tex=flatshad tex1=- bb=[-28.21,-0.27,17.84,-24.32,0.95,22.73] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+  MISSING  CITED C08-STARTDISP GreenStartLight        A-only 1 draws 6 tri (1 offscreen); first k82 pt5 tri=6 tex=GreenStartLight tex1=- bb=[-0.10,0.48,0.98,0.10,0.54,0.98] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+  MISSING  CITED C09-FX Headlight              A-only 1 draws 52 tri (0 offscreen); first k82 pt4 tri=52 tex=Headlight tex1=- bb=[260.34,142.95,0.98,407.04,412.30,0.99] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=1
+  MISSING  CITED C08-STARTDISP NFLBluejay             A-only 1 draws 2 tri (1 offscreen); first k82 pt5 tri=2 tex=NFLBluejay tex1=- bb=[-0.51,0.29,0.98,-0.43,0.37,0.98] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+  MISSING  CITED C08-STARTDISP NFLGold                A-only 1 draws 2 tri (1 offscreen); first k82 pt5 tri=2 tex=NFLGold tex1=- bb=[-0.47,0.29,0.98,-0.38,0.37,0.98] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+  MISSING  CITED C08-STARTDISP NFLMelon               A-only 1 draws 2 tri (1 offscreen); first k82 pt5 tri=2 tex=NFLMelon tex1=- bb=[-0.56,0.29,0.98,-0.47,0.37,0.98] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+  MISSING  CITED C08-STARTDISP NFLRed                 A-only 1 draws 2 tri (1 offscreen); first k82 pt5 tri=2 tex=NFLRed tex1=- bb=[0.38,0.29,0.98,0.47,0.37,0.98] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+  MISSING  CITED C08-STARTDISP OrangeDisplay          A-only 8 draws 68 tri (8 offscreen); first k82 pt5 tri=2 tex=OrangeDisplay tex1=- bb=[0.22,0.31,0.99,0.39,0.35,0.99] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+  MISSING  CITED C06-PICKUP PUGlow                 A-only 1 draws 14 tri (0 offscreen); first k82 pt4 tri=14 tex=PUGlow tex1=- bb=[-36.53,-0.35,-40.95,27.81,0.89,45.04] src=d3d Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+  MISSING  CITED C15-SKY World                  A-only 1 draws 22 tri (0 offscreen); first k82 pt5 tri=22 tex=World tex1=- bb=[-31.00,0.56,34.19,-27.63,0.62,36.06] src=d3d Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  EXTRA    CITED C15-SKY -                      B-only 1 draws 22 tri (0 offscreen); first k82 pt4 tri=22 tex=- tex1=- bb=[-31.00,0.56,34.19,-27.63,0.62,36.06] src=rw Z=1 ZW=1 ZF=4 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=2
+  EXTRA    CITED C05-PARTICLE @gen:particle          B-only 1 draws 208 tri (0 offscreen); first k83 pt4 tri=208 tex=@gen:particle tex1=- bb=[-54.33,-9.27,-4.95,1.48,25.91,45.25] src=d3d Z=1 ZW=0 ZF=4 AT=0 AREF=0 AF=0 AB=1 SRC=5 DST=6 CULL=1
+  EXTRA    CITED C06-PICKUP @gen:pickup            B-only 1 draws 12 tri (0 offscreen); first k83 pt4 tri=12 tex=@gen:pickup tex1=- bb=[-36.80,-0.95,-41.10,16.71,0.74,45.18] src=d3d Z=1 ZW=0 ZF=4 AT=0 AREF=0 AF=0 AB=1 SRC=5 DST=2 CULL=1
+  EXTRA    CITED C09b-HEADLIGHT-BRAKE Headlight              B-only 1 draws 48 tri (0 offscreen); first k82 pt4 tri=48 tex=Headlight tex1=- bb=[260.33,142.95,0.98,407.04,412.30,0.99] src=rw Z=1 ZW=0 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=1
+  EXTRA    CITED C01-CULL stormFog               B-only 1 draws 24 tri (1 offscreen); first k82 pt4 tri=24 tex=stormFog tex1=- bb=[-0.20,-0.20,-0.20,0.20,0.20,0.20] src=rw Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+  STATE    CITED C20-STATE-SKY sky                    1 matched draws differ in Z,ZF,CULL: A Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1 | B Z=1 ZW=0 ZF=8 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+  STATE    CITED C20-STATE-SKY sky                    1 matched draws differ in Z,ZF: A Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=0 ZF=8 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+  STATE    CITED C15c-SKY-DEPTH World                  1 matched draws differ in Z,ZW,ZF: A Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2 | B Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+  TEX1     CITED C16-TEX1-WORLD WetRoad                4 matched draws, stage-1 texture A #128x128:22 | B -
+  FOG      CITED C18-FOG *                      142 matched draws, FOGENABLE A 1 | B 0, 16 textures: Ads, Advantage, BrickWall, Camstand, CarGloss, Dozer, Glass, Pav
+  MOVED    CITED C27b-CAR-WHEEL-ROT Advantage              2 draws, same texture and triangle count, AABB moved by up to 0.0148; first A [-26.63,0.00,21.01,-26.54,0.18,21.19] B [-26.65,0.00,21.01,-26.52,0.18,21.20]
+  ORDER    CITED C21-ORDER Ads                    1 order inversions vs matched draws, mostly: Worldx1
+  ORDER    CITED C21-ORDER BrickWall              1 order inversions vs matched draws, mostly: Worldx1
+  ORDER    CITED C21-ORDER Camstand               1 order inversions vs matched draws, mostly: Worldx1
+  ORDER    CITED C21-ORDER Dozer                  1 order inversions vs matched draws, mostly: Worldx1
+  ORDER    CITED C21-ORDER Pav                    1 order inversions vs matched draws, mostly: Worldx1
+  ORDER    CITED C21-ORDER Rock                   1 order inversions vs matched draws, mostly: Worldx1
+  ORDER    CITED C21-ORDER sky                    1 order inversions vs matched draws, mostly: Worldx1
+  ORDER    CITED C21-ORDER Snow                   1 order inversions vs matched draws, mostly: Worldx1
+  ORDER    CITED C21-ORDER Tyres                  1 order inversions vs matched draws, mostly: Worldx1
+  ORDER    CITED C21-ORDER Van                    1 order inversions vs matched draws, mostly: Worldx1
+  ORDER    CITED C21-ORDER WetRoad                4 order inversions vs matched draws, mostly: Worldx4
+  ORDER    CITED C21-ORDER World                  80 order inversions vs matched draws, mostly: seax25, BrickWallx7, Rockx7, Snowx7
+-> D:\MashedWT\D3-CF-U9779_data\t13_u7p\03_Arctic\diff_01091.json
+VERDICT: CITED (matched=150 rows=36 red=0)
