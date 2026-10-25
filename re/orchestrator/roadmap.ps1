@@ -47,6 +47,10 @@ function Now { (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ') }
 
 # HB-EOL: ledger files are copied into tracked paths by `snapshot`, so write them LF (Set-Content/Add-Content give CRLF on Windows).
 function Write-Lf([string]$path, [string]$text) { [IO.File]::WriteAllText($path, (($text -replace "`r`n", "`n").TrimEnd("`n") + "`n"), (New-Object Text.UTF8Encoding($false))) }
+# HB-TRAINFIX: snapshot copies through this, not Copy-Item. Live DECISIONS.md / events.jsonl still hold CRLF lines from
+# before HB-EOL, and a verbatim copy into the eol=lf paths made every `git add` warn. The live files are left as they are
+# (rewriting them in place could drop a concurrent append); the tracked copy is LF.
+function Copy-Lf([string]$src, [string]$dst) { Write-Lf $dst ([IO.File]::ReadAllText($src)) }
 function Append-Lf([string]$path, [string]$text) { [IO.File]::AppendAllText($path, (($text -replace "`r`n", "`n").TrimEnd("`n") + "`n"), (New-Object Text.UTF8Encoding($false))) }
 
 function With-Lock([scriptblock]$Body) {
@@ -229,8 +233,8 @@ switch ($Cmd) {
   'snapshot' {
     $dst = Join-Path $ORCH_WT 're\orchestrator\ledger'
     New-Item -ItemType Directory -Force -Path $dst | Out-Null
-    foreach ($f in @($LEDGER, $QUEUE, $EVENTS)) { if (Test-Path $f) { Copy-Item $f $dst -Force } }
-    if (Test-Path $DECIDE) { Copy-Item $DECIDE (Join-Path $ORCH_WT 're\orchestrator\DECISIONS.md') -Force }
+    foreach ($f in @($LEDGER, $QUEUE, $EVENTS)) { if (Test-Path $f) { Copy-Lf $f (Join-Path $dst (Split-Path $f -Leaf)) } }
+    if (Test-Path $DECIDE) { Copy-Lf $DECIDE (Join-Path $ORCH_WT 're\orchestrator\DECISIONS.md') }
     $msg = if ($Id) { $Id } else { "orch: ledger snapshot $(Now)" }
     git -C $ORCH_WT add -- 're/orchestrator/ledger' 're/orchestrator/DECISIONS.md'
     git -C $ORCH_WT diff --cached --quiet
