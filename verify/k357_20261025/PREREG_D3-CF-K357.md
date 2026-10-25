@@ -60,3 +60,23 @@ no-input branch only.
 | report | original `o_k357_poke`: `o_r7_1` recipe + `--poke-u32 0x007f1040=0x00010000 --poke-delay 20` | report only: whether a one-shot write of byte `0x007f1042` = 1 inside sub-state 7 makes the original leave 7 (car 3 regrid). A miss does not refute P1 / P2 (the input stage may rewrite the byte first) |
 
 P1 or P2 failing = RED, knob not offered for a flip.
+
+## Amendment 1 (2026-10-25, after the first batch, before any amended-knob arm)
+
+First batch (exe `9085dbdd`, `7f48cc4aa`): P0, P0b, P0c and P1 held. **P2 failed**: `B_U7PXR3_K0` still moves car 3 at k = 357,
+to (12.0, 0.0, -18.0), with no StartRound in its log (one `R6 ROUND END`, no `round2_go`, no round-2 `RULE-EVAL`).
+
+Diagnostic `B_U7PXY_K0` (U7PXR3 + `MASHED_AI_YAWW`, same exe, step hash `c23d5b25` = `B_U7PXR3_K0`): car 3's records move at
+k = 357, 509, 661, 813, 965 (every 152 frames) to (12.0, -18.0), (12.973, -10.0293), (12.0, -1.9988), (16.0, 6.0),
+(16.0, 13.9999), and its yaw jumps on the same frames (+1 in the yaww frame index: 358, 510, 662, 814). That is the
+port-side stall stand-in `TrackRenderer.cpp` (opponent loop, "Standalone stand-in for the original's respawn"): a car whose
+gate progress has not changed for 2.5 s is placed two gates ahead. It is not a port of an original function. While car 3 is
+frozen in sub-state 7 its gate never changes, so the stand-in fires every 2.5 s. In u9779's `B_U7PR3_K0` the 3.0 s round hold
+fired on the same k = 357, so the two were read as one event.
+
+`o_r7_1`: the original does not move car 3 in sub-state 7 (502 frames frozen).
+
+Amended knob: `MASHED_R7_EXIT` also skips the stand-in block (no stall count, no relocation) for every AI slot while
+`RoundEnd7ExitActive()` is true. Knob OFF: unchanged.
+
+Re-run on the amended exe, same predictions P0 / P0b / P0c / P1 / P2 as section 3 (P2 against `o_r7_1` to its last record).
