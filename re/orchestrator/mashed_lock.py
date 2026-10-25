@@ -17,7 +17,9 @@
 # Python spawner queue against each other.
 #
 # Stale-safe: if the holder PID is dead, the lock is broken and reclaimed. A
-# reused PID is bounded by a hard max-age break.
+# reused PID is caught by the holder's recorded process start time (owner_start).
+# A live holder is NEVER broken for age (HB-LOCKBREAK, 2026-10-25: the old 30 min
+# max-age rule broke D3-CF-K357's 11-arm hold, pid 18904 alive, at age 1801 s).
 #
 # Usage (import — the normal path):
 #   from mashed_lock import MashedLock
@@ -73,7 +75,7 @@ import uuid
 
 LOCK_DIR = tempfile.gettempdir()
 DEFAULT_NAME = 'mashed_machine'
-MAX_AGE_SEC = 30 * 60   # a lock older than this whose PID looks alive is still broken
+EMPTY_GRACE_SEC = 10     # an empty/unparsable lock file younger than this is a writer mid-create
 SOLO_ENV = 'MASHED_LOCK_SOLO_TOKEN'
 SOLO_TTL_SEC = 4 * 3600  # default solo window when not bound to a live PID
 PRIO_GRACE_SEC = 300     # a priority marker outlives its requester's wait by this much
@@ -149,6 +151,22 @@ def _owner_dead(o):
     rec = o.get('owner_start')
     now = _pid_start(pid)
     return bool(rec) and now is not None and abs(now - rec) > 2.0
+
+
+def _holder_stale(path, o):
+    """HB-LOCKBREAK: True when the game-lock record at `path` (parsed as `o`) has no live
+    holder. Liveness alone decides, never age. PID reuse is caught by `owner_start`
+    (records written before HB-LOCKBREAK lack it, so a live PID keeps them held).
+    An empty or unparsable file is a writer between its O_EXCL create and its write
+    until EMPTY_GRACE_SEC has passed."""
+    if not o:
+        try:
+            return time.time() - os.path.getmtime(path) > EMPTY_GRACE_SEC
+        except OSError:
+            return True
+    if not o.get('pid'):
+        return True
+    return _owner_dead(o)
 
 
 def _read_owner(path):
@@ -269,9 +287,7 @@ def _solo_begin(label, name, ttl, pid, wait, poll, quiet, owner_pid=None):
     log(f"SOLO OPEN '{name}' ({label}) ttl={ttl}s; draining the current holder")
     gpath = _lock_path(name)
     while os.path.exists(gpath):
-        go = _read_owner(gpath)
-        gage = time.time() - (go.get('epoch') or 0)
-        if not go or (not _pid_alive(go.get('pid'))) or gage > MAX_AGE_SEC:
+        if _holder_stale(gpath, _read_owner(gpath)):
             try:
                 os.remove(gpath)
             except FileNotFoundError:
@@ -352,6 +368,7 @@ class MashedLock:
                 os.write(fd, json.dumps({
                     'pid': os.getpid(), 'at': _now_iso(), 'epoch': int(time.time()),
                     'label': self.label, 'host': socket.gethostname(),
+                    'owner_start': _pid_start(os.getpid()),
                 }).encode('utf-8'))
                 os.close(fd)
                 self._held = True
@@ -361,8 +378,7 @@ class MashedLock:
                 owner = _read_owner(self.path)
                 opid = owner.get('pid')
                 age = time.time() - (owner.get('epoch') or 0)
-                stale = (not _pid_alive(opid)) or (age > MAX_AGE_SEC)
-                if stale:
+                if _holder_stale(self.path, owner):
                     self._log(f"breaking STALE '{self.name}' (pid={opid} alive="
                               f"{_pid_alive(opid)} age={int(age)}s)")
                     try:
