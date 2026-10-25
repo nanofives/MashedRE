@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-10-25 17:11 D4-DC-MATH-4680 (orch/D4-DC-MATH-4680): G-CTRL ef5f2e10/57f7ff83/b4f4b55a  B c37d4c0c/0a8f9806/7013671d; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261025_165401
 - 2026-10-25 16:08 D4-DC-MATH-39b0 (orch/D4-DC-MATH-39b0): G-CTRL ef5f2e10/57f7ff83/b4f4b55a  B c37d4c0c/0a8f9806/7013671d. Run data D:\MashedWT\mtrain_data\20261025_155902
 - 2026-10-25 15:58 D4-DC-0510 (orch/D4-DC-0510): G-CTRL ef5f2e10/57f7ff83/b4f4b55a  B c37d4c0c/0a8f9806/7013671d. Run data D:\MashedWT\mtrain_data\20261025_155107
 - 2026-10-25 14:13 HB-TRAINFIX (orch/HB-TRAINFIX): G-CTRL ef5f2e10/57f7ff83/b4f4b55a  B c37d4c0c/0a8f9806/7013671d. Run data D:\MashedWT\mtrain_data\20261025_140018
