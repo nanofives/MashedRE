@@ -2729,6 +2729,49 @@ void WriteMashedInputGlobalsFromKeyboard() {
     }
 }
 
+// [D3-CF-R7INPUT] MASHED_R7_INPUT (default OFF), verify/r7input_20261025/PREREG_D3-CF-R7INPUT.md.
+// The ctrl-block byte 0xa store of the per-frame input cook FUN_00496530, which FUN_004967e0 runs for
+// every slot i in 0..3 with FUN_00497450(i) != 0 (0x00497450: [0x007e96fc + i*0x200] != 0), EBX = i:
+//   0x004965ac push 4 / push ebx / call 0x00497310, 0x004965b7 mov [ebp + 0x7f1042], al (ebp = i*0x4c, 0x00496536)
+// FUN_00497310 type-2 branch (0x004973fd cmp ecx,2): code = [cfg + 0x108 + 4*4] (0x00497406, cfg =
+// 0x007e95c0 + i*0x200), result 0xff if bit `code` of the 32-byte bitmap 0x0077313c is set, else 0
+// (0x0049740d..0x00497428). FUN_004972b0 rebuilds that bitmap each cook from FUN_00496100, which sets bit k
+// when byte k of the 256-byte keyboard GetDeviceState buffer is negative (0x004961c0..0x004961d8).
+// Default binding for action 4 on a type-2 slot: 0x1c (0x00498698, FUN_00498510). No contcfg%d.bin
+// exists in original\, so the original on this install runs on that default too (FUN_004971b0 override not
+// ported). Ported here: the type-2 (keyboard) slots only, byte 0xa only. Not ported: the type-1 (joypad)
+// branch (button bitmap 0x007730d4 from FUN_004957a0, the standalone polls no joystick), the rest of the
+// cook's block (zeroing 0x00496568, shadow copy 0x00496552 to 0x007f14f8). Knob OFF: nothing written.
+// MASHED_R7_INPUT_PRESS=<n> (arm test only): adds a one-frame press of the bound key on the n-th cook
+// frame with the MASHED_ROUND_END7 / MASHED_R7_EXIT flag up; it feeds the same lookup, g_keys is not touched.
+static void StoreCtrlByteA(int i, std::uint8_t val) {   // own frame: __try needs no unwinding (C2712)
+    __try {
+        *reinterpret_cast<volatile std::uint8_t*>(0x007f1042u + static_cast<std::uintptr_t>(i) * 0x4cu) = val;
+    } __except(EXCEPTION_EXECUTE_HANDLER) {}
+}
+void CookCtrlByteAFromKeyboard() {
+    static const bool s_on = [] { const char* e = std::getenv("MASHED_R7_INPUT"); return e && e[0] && e[0] != '0'; }();
+    if (!s_on) return;
+    static const int s_press_at = [] { const char* e = std::getenv("MASHED_R7_INPUT_PRESS"); return e ? std::atoi(e) : 0; }();
+    static int s_r7_frame = 0;
+    s_r7_frame = g_track.RoundEnd7ExitActive() ? s_r7_frame + 1 : 0;
+    const bool test_press = s_press_at > 0 && s_r7_frame == s_press_at;
+    constexpr std::uint32_t kBindAction4 = 0x1cu;                  // 0x00498698 mov [esi+0x10], 0x1c
+    const bool held = (g_kbd && (g_keys[kBindAction4] & 0x80) != 0) || test_press;
+    const std::uint8_t val = held ? 0xffu : 0x00u;                 // 0x00497422..0x00497428
+    for (int i = 0; i < 4; ++i) {
+        if (g_input_slot_type[i] != 2) continue;                   // 0x00497450 active, 0x004973fd type 2
+        StoreCtrlByteA(i, val);                                    // 0x004965b7
+        if (val) {
+            if (std::FILE* lf = std::fopen(kLogPath, "a")) {
+                std::fprintf(lf, "R7IN byte0xa slot=%d val=0x%02x r7frame=%d test=%d det_frame=%u\n", i, val, s_r7_frame,
+                             test_press ? 1 : 0, static_cast<unsigned>(g_det_frame));
+                std::fclose(lf);
+            }
+        }
+    }
+}
+
 // 2026-07-14 (WS-PHYS-DRIVE-STABILIZE re-measure): on this machine's driver
 // (NVIDIA RTX 5070 Ti, 2560x1440@164, 32.0.15.9186) IDirect3D9::CreateDevice on
 // D3DDEVTYPE_HAL BLOCKS and never returns — a plain retry loop hangs the whole
@@ -3651,7 +3694,16 @@ bool RenderFrame() {
                 }
             }
             if (r7x ? (!r7xFirst && g_track.RoundEnd7ExitTick()) : (t - s_round_end_t > 3.0f)) {
+                const int r7xRound = g_track.round_no();
                 g_track.NextRoundOrEnd();
+                if (r7x) {   // [D3-CF-R7INPUT] exit-frame trace, MASHED_R7_EXIT only
+                    if (std::FILE* lf = std::fopen(kLogPath, "a")) {
+                        std::fprintf(lf, "R7X EXIT det_frame=%u round %d -> %d match_winner=%d\n",
+                                     static_cast<unsigned>(g_det_frame), r7xRound, g_track.round_no(),
+                                     g_track.match_winner());
+                        std::fclose(lf);
+                    }
+                }
                 s_round_end_t = -1.f;
             }
         }
@@ -9780,6 +9832,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         // Team Select screen, so changing the column mapping now changes
         // real behaviour rather than only feeding future frontend code.
         WriteMashedInputGlobalsFromKeyboard();
+        CookCtrlByteAFromKeyboard();   // [D3-CF-R7INPUT] MASHED_R7_INPUT (default OFF)
         // Top-level game-flow scaffold: drives the Frontend->LoadingRace->InRace
         // state machine + the RaceSession subsystem stubs. In Frontend mode (the
         // default — nothing requests a race yet) this is a no-op, so the menu is
