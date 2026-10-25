@@ -211,3 +211,4 @@
 {"at":"2026-10-25T14:38:21Z","id":"D3-CF-BOX-FLIP","from":"working","to":"review","owner":"cmvnvlb008ielo115kcibbcwb","note":"flip in; G-CTRL/B unchanged (ef5f2e10, c37d4c0c); D2 3/3; 13 tracks 0 RED"}
 {"at":"2026-10-25T14:39:29Z","id":"D3-CF-BOX-FLIP","from":"review","to":"merge-queued","owner":"cmvnvlb008ielo115kcibbcwb","note":"orch/D3-CF-BOX-FLIP"}
 {"at":"2026-10-25T14:53:32Z","id":"D3-CF-BOX-FLIP","from":"merge-queued","to":"merged","owner":"cmvnvlb008ielo115kcibbcwb","note":"merge train 20261025_114029: G-CTRL ef5f2e10/57f7ff83/b4f4b55a  B c37d4c0c/0a8f9806/7013671d"}
+{"at":"2026-10-25T15:20:33Z","id":"D3-CF-R7INPUT","from":"decision","to":"blocked","owner":"cmvnshiih8amxo1156rwe3bcx","note":"L-12 = joypad first: knobs stay OFF; continues as D3-CF-R7JOYPAD (build on orch/D3-CF-R7INPUT @ 5a466becb)"}

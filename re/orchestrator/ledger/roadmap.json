@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "source": "re/orchestrator/roadmap_seed_20261024.md verified by account2 worker 2026-10-24 + DECISIONS.md W0",
-  "updated": "2026-10-25T14:53:32Z",
+  "updated": "2026-10-25T15:20:33Z",
   "rows": [
     {
       "id": "D1-R1",
@@ -1331,7 +1331,7 @@
       "id": "D3-CF-R7INPUT",
       "section": "D3 carried",
       "title": "L-10 = (1): MASHED_R7_EXIT stays OFF. Port the input path that writes ctrl byte 0xa (exit byte 0x007f1042 has no port writer), then re-measure D2 x3 + 13 tracks (cites_rres) with the knob ON; flip comes back as a decision",
-      "stage": "decision",
+      "stage": "blocked",
       "owner": "cmvnshiih8amxo1156rwe3bcx",
       "parent": "cmvnk9f7z7kydo1151xruf2da",
       "branch": "orch/D3-CF-R7INPUT",
@@ -1343,8 +1343,8 @@
       "decision": "L-12",
       "wave": 1,
       "next": "",
-      "note": "DECISION: R7_INPUT + R7_EXIT exit on press frame; default gates unchanged; D2 PASS 3/3, 13 tracks identical with both ON; branch @ 5a466becb",
-      "updated": "2026-10-25T13:39:57Z"
+      "note": "L-12 = joypad first: knobs stay OFF; continues as D3-CF-R7JOYPAD (build on orch/D3-CF-R7INPUT @ 5a466becb)",
+      "updated": "2026-10-25T15:20:32Z"
     },
     {
       "id": "D3-CF-BOX-FLIP",
@@ -1424,6 +1424,25 @@
       "next": "",
       "note": "needs a claude3 worker (folder flag forces claude2; *.ps1 Edit prompts there). Train part of HB-TRAINCLEAN reverted at b94c480a0; re-apply guard without dot-sourcing the body (body assigns over [scriptblock] param ~:443, body vars lost)",
       "updated": "2026-10-25T11:40:48Z"
+    },
+    {
+      "id": "D3-CF-R7JOYPAD",
+      "section": "D3 carried",
+      "title": "L-12 = joypad first: port the original's joypad branch of the sub-state-7 input (keyboard Enter is 0x1c at 0x00498698; find and cite the joypad read next to it). MASHED_R7_EXIT and MASHED_R7_INPUT stay OFF. Then re-measure both knobs ON on top of integration (BOX-FLIP already landed at 23c522976), G-CTRL, B, D2 x3, 13 tracks with cites_rres; merge both ON together, alone, under the decided-flip protocol",
+      "stage": "open",
+      "owner": "",
+      "parent": "",
+      "branch": "",
+      "worktree": "",
+      "evidence": "orch/D3-CF-R7INPUT @ 5a466becb; verify/r7input_20261025/RESULT_D3-CF-R7INPUT.md; DECISIONS L-12",
+      "deps": [],
+      "needs": [],
+      "solo": false,
+      "decision": "",
+      "wave": 1,
+      "next": "",
+      "note": "",
+      "updated": "2026-10-25T15:20:31Z"
     }
   ]
 }
