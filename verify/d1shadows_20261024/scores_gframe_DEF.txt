@@ -1,0 +1,4 @@
+K=884: mean-abs(orig@K, stand@K)=12.27 (15.3% over 16)  stand@K-60=nan  stand@K+60=nan: FAIL
+K=924: mean-abs(orig@K, stand@K)=8.81 (10.8% over 16)  stand@K-60=nan  stand@K+60=nan: FAIL
+K=959: mean-abs(orig@K, stand@K)=7.34 (6.9% over 16)  stand@K-60=nan  stand@K+60=nan: FAIL
+G-FRAME: FAIL
