@@ -212,3 +212,49 @@
 {"at":"2026-10-25T14:39:29Z","id":"D3-CF-BOX-FLIP","from":"review","to":"merge-queued","owner":"cmvnvlb008ielo115kcibbcwb","note":"orch/D3-CF-BOX-FLIP"}
 {"at":"2026-10-25T14:53:32Z","id":"D3-CF-BOX-FLIP","from":"merge-queued","to":"merged","owner":"cmvnvlb008ielo115kcibbcwb","note":"merge train 20261025_114029: G-CTRL ef5f2e10/57f7ff83/b4f4b55a  B c37d4c0c/0a8f9806/7013671d"}
 {"at":"2026-10-25T15:20:33Z","id":"D3-CF-R7INPUT","from":"decision","to":"blocked","owner":"cmvnshiih8amxo1156rwe3bcx","note":"L-12 = joypad first: knobs stay OFF; continues as D3-CF-R7JOYPAD (build on orch/D3-CF-R7INPUT @ 5a466becb)"}
+{"at":"2026-10-25T16:25:54Z","id":"HB-TRAINFIX","from":"blocked","to":"open","owner":"","note":"orphaned by run 4; run 5: re-add train temp-worktree guard without dot-sourcing the body, selftest, plus snapshot EOL warnings"}
+{"at":"2026-10-25T16:28:15Z","id":"HB-TRAINFIX","from":"open","to":"claimed","owner":"cmvo1k9zn8unfo115dlbjrmuq","note":""}
+{"at":"2026-10-25T16:48:29Z","id":"HB-TRAINFIX","from":"claimed","to":"open","owner":"","note":"run 5: first worker stalled, respawned"}
+{"at":"2026-10-25T16:48:31Z","id":"HB-TRAINFIX","from":"open","to":"claimed","owner":"cmvo29p3s8xbxo115h27235b3","note":""}
+{"at":"2026-10-25T16:51:40Z","id":"HB-TRAINFIX","from":"claimed","to":"working","owner":"cmvo29p3s8xbxo115h27235b3","note":"run 5 respawn: guard rework + snapshot EOL"}
+{"at":"2026-10-25T16:58:16Z","id":"HB-TRAINFIX","from":"working","to":"review","owner":"cmvo29p3s8xbxo115h27235b3","note":"guard as script-scope try/finally + selftest 19/19; snapshot Copy-Lf, 0 EOL warnings"}
+{"at":"2026-10-25T16:58:38Z","id":"HB-TRAINFIX","from":"review","to":"merge-queued","owner":"cmvo29p3s8xbxo115h27235b3","note":"orch/HB-TRAINFIX"}
+{"at":"2026-10-25T17:13:50Z","id":"HB-TRAINFIX","from":"merge-queued","to":"merged","owner":"cmvo29p3s8xbxo115h27235b3","note":"merge train 20261025_140018: G-CTRL ef5f2e10/57f7ff83/b4f4b55a  B c37d4c0c/0a8f9806/7013671d"}
+{"at":"2026-10-25T17:18:43Z","id":"D4-DC-0510","from":"open","to":"claimed","owner":"cmvo3cqqn91vbo115ashyjsa9","note":""}
+{"at":"2026-10-25T17:21:22Z","id":"D4-DC-0510","from":"claimed","to":"working","owner":"cmvo3cqqn91vbo115ashyjsa9","note":"worktree created, reading evidence"}
+{"at":"2026-10-25T17:58:45Z","id":"D4-DC-0510","from":"working","to":"review","owner":"cmvo3cqqn91vbo115ashyjsa9","note":"GREEN: one body Race/EvalResultCore.cpp; exe gates = refs; allowlist -1; asi observation blocked by pre-existing Accum420de0 crash"}
+{"at":"2026-10-25T18:00:04Z","id":"D4-DC-0510","from":"review","to":"merge-queued","owner":"cmvo3cqqn91vbo115ashyjsa9","note":"orch/D4-DC-0510"}
+{"at":"2026-10-25T18:00:17Z","id":"D4-DC-MATH-39b0","from":"open","to":"claimed","owner":"cmvo4uugq9479o115oassryfn","note":""}
+{"at":"2026-10-25T18:02:51Z","id":"D4-DC-MATH-39b0","from":"claimed","to":"working","owner":"cmvo4uugq9479o115oassryfn","note":"worktree created; reading evidence"}
+{"at":"2026-10-25T18:10:50Z","id":"D4-DC-MATH-39b0","from":"working","to":"working","owner":"cmvo4uugq9479o115oassryfn","note":"code 58f260580 + PREREG 7be723a86; running G1/G2 gates solo"}
+{"at":"2026-10-25T18:26:37Z","id":"D4-DC-MATH-39b0","from":"working","to":"decision","owner":"cmvo4uugq9479o115oassryfn","note":"L-13"}
+{"at":"2026-10-25T18:26:38Z","id":"D4-DC-MATH-39b0","from":"decision","to":"review","owner":"cmvo4uugq9479o115oassryfn","note":"GREEN knob OFF; gates = refs OFF and ON; D2 6/6 in band; flip filed as decision"}
+{"at":"2026-10-25T18:27:00Z","id":"D4-DC-MATH-39b0","from":"review","to":"merge-queued","owner":"cmvo4uugq9479o115oassryfn","note":"orch/D4-DC-MATH-39b0"}
+{"at":"2026-10-25T18:58:07Z","id":"D4-DC-0510","from":"merge-queued","to":"merged","owner":"cmvo3cqqn91vbo115ashyjsa9","note":"merge train 20261025_155107: G-CTRL ef5f2e10/57f7ff83/b4f4b55a  B c37d4c0c/0a8f9806/7013671d"}
+{"at":"2026-10-25T19:08:54Z","id":"D4-DC-MATH-39b0","from":"merge-queued","to":"merged","owner":"cmvo4uugq9479o115oassryfn","note":"merge train 20261025_155902: G-CTRL ef5f2e10/57f7ff83/b4f4b55a  B c37d4c0c/0a8f9806/7013671d"}
+{"at":"2026-10-25T19:10:49Z","id":"D4-DC-MATH-4680","from":"open","to":"claimed","owner":"cmvo7cr6897tno115i7bi1lb5","note":""}
+{"at":"2026-10-25T19:13:56Z","id":"D4-DC-MATH-4680","from":"claimed","to":"working","owner":"cmvo7cr6897tno115i7bi1lb5","note":"consolidating 0x004c4680 into one body, knob MASHED_ORTHO_LUT default OFF"}
+{"at":"2026-10-25T19:45:26Z","id":"D4-DC-MATH-4680","from":"working","to":"decision","owner":"cmvo7cr6897tno115i7bi1lb5","note":"L-14"}
+{"at":"2026-10-25T19:45:28Z","id":"D4-DC-MATH-4680","from":"decision","to":"review","owner":"cmvo7cr6897tno115i7bi1lb5","note":"GREEN: one body, default gates = refs, pontoon replay 1073/0, D2 3/3; decision filed (delete opt-out stand-in)"}
+{"at":"2026-10-25T19:45:51Z","id":"D4-DC-MATH-4680","from":"review","to":"merge-queued","owner":"cmvo7cr6897tno115i7bi1lb5","note":"orch/D4-DC-MATH-4680"}
+{"at":"2026-10-25T20:11:25Z","id":"D4-DC-MATH-4680","from":"merge-queued","to":"merged","owner":"cmvo7cr6897tno115i7bi1lb5","note":"merge train 20261025_165401: G-CTRL ef5f2e10/57f7ff83/b4f4b55a  B c37d4c0c/0a8f9806/7013671d; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-10-25T20:13:51Z","id":"D4-DC-MATH-4d20","from":"open","to":"claimed","owner":"cmvo9l3f59dbzo115b6cxuurc","note":""}
+{"at":"2026-10-25T20:19:25Z","id":"D4-DC-MATH-4d20","from":"claimed","to":"working","owner":"cmvo9l3f59dbzo115b6cxuurc","note":"S1: ROTATE_LUT+ROTATE_PC24 already ON via FaithDefaults; camera-only consumer, witness = d1r2 cam replay"}
+{"at":"2026-10-25T20:21:57Z","id":"D4-DC-39b0-L13","from":"open","to":"open","owner":"","note":"bundled L-14 = A: also delete the std::sqrt opt-out for 0x004c4680 (MASHED_NO_ORTHO_LUT + its FAITH entry); one path each, re-gate = current refs, normal merge"}
+{"at":"2026-10-25T20:48:51Z","id":"D4-DC-MATH-4d20","from":"working","to":"decision","owner":"cmvo9l3f59dbzo115b6cxuurc","note":"L-15"}
+{"at":"2026-10-25T20:48:52Z","id":"D4-DC-MATH-4d20","from":"decision","to":"review","owner":"cmvo9l3f59dbzo115b6cxuurc","note":"GREEN knob OFF, allowlist key removed, flip filed as decision"}
+{"at":"2026-10-25T20:49:43Z","id":"D4-DC-MATH-4d20","from":"review","to":"merge-queued","owner":"cmvo9l3f59dbzo115b6cxuurc","note":"orch/D4-DC-MATH-4d20"}
+{"at":"2026-10-25T20:57:55Z","id":"D3-CF-R7JOYPAD","from":"open","to":"claimed","owner":"cmvob75fq9lj1o115zzmoad83","note":""}
+{"at":"2026-10-25T21:03:09Z","id":"D3-CF-R7JOYPAD","from":"claimed","to":"working","owner":"cmvob75fq9lj1o115zzmoad83","note":"cherry-pick R7INPUT port, find joypad read, port joypad branch default OFF"}
+{"at":"2026-10-25T21:08:47Z","id":"D4-DC-MATH-4d20","from":"merge-queued","to":"merged","owner":"cmvo9l3f59dbzo115b6cxuurc","note":"merge train 20261025_175711: G-CTRL ef5f2e10/57f7ff83/b4f4b55a  B c37d4c0c/0a8f9806/7013671d"}
+{"at":"2026-10-25T21:11:40Z","id":"D4-DC-39b0-L13","from":"open","to":"claimed","owner":"cmvobnwlv9nhjo115eumr5svx","note":""}
+{"at":"2026-10-25T21:16:02Z","id":"D4-DC-39b0-L13","from":"claimed","to":"working","owner":"cmvobnwlv9nhjo115eumr5svx","note":"deleting 39b0 fallback + 4680 opt-out"}
+{"at":"2026-10-25T21:47:11Z","id":"D4-DC-39b0-L13","from":"working","to":"review","owner":"cmvobnwlv9nhjo115eumr5svx","note":"GREEN: gates equal refs"}
+{"at":"2026-10-25T21:47:11Z","id":"D4-DC-39b0-L13","from":"review","to":"working","owner":"cmvobnwlv9nhjo115eumr5svx","note":"bundles L-13 (39b0) + L-14 (4680 opt-out) + L-15 = B (0x004c4d20: CAM_ROTATE_RW default ON, delete port-only stand-in + knob; re-gate = refs + camera G-POSE replay)"}
+{"at":"2026-10-25T21:53:45Z","id":"D3-CF-R7JOYPAD","from":"working","to":"review","owner":"cmvob75fq9lj1o115zzmoad83","note":"DECISION: joypad branch ported default OFF, gates = refs; both knobs ON measured (H 5943c5f1/b493262b/09551e6a, B 3a03670c/2516d903/53778664, D2 3/3, 13 tracks 0 RED identical); flip is a decision row"}
+{"at":"2026-10-25T21:54:34Z","id":"D3-CF-R7JOYPAD","from":"review","to":"merge-queued","owner":"cmvob75fq9lj1o115zzmoad83","note":"orch/D3-CF-R7JOYPAD"}
+{"at":"2026-10-25T21:54:36Z","id":"D3-CF-R7JOYPAD","from":"merge-queued","to":"decision","owner":"cmvob75fq9lj1o115zzmoad83","note":"L-16"}
+{"at":"2026-10-25T22:02:28Z","id":"D4-DC-39b0-L13","from":"working","to":"review","owner":"cmvobnwlv9nhjo115eumr5svx","note":"GREEN incl L-15"}
+{"at":"2026-10-25T22:02:54Z","id":"D4-DC-39b0-L13","from":"review","to":"merge-queued","owner":"cmvobnwlv9nhjo115eumr5svx","note":"orch/D4-DC-39b0-L13"}
+{"at":"2026-10-25T22:05:24Z","id":"D3-CF-R7JOYPAD","from":"decision","to":"merged","owner":"cmvob75fq9lj1o115zzmoad83","note":"merge train 20261025_185609: G-CTRL ef5f2e10/57f7ff83/b4f4b55a  B c37d4c0c/0a8f9806/7013671d"}
+{"at":"2026-10-25T22:24:20Z","id":"D4-DC-39b0-L13","from":"merge-queued","to":"merged","owner":"cmvobnwlv9nhjo115eumr5svx","note":"merge train 20261025_190627: G-CTRL ef5f2e10/57f7ff83/b4f4b55a  B c37d4c0c/0a8f9806/7013671d; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
