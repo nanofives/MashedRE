@@ -1,0 +1,1410 @@
+{
+ "pid": 26216,
+ "asi": "D:\\MashedWT\\D4-DC-82a0_data\\after\\mashed_re_dev.asi",
+ "d830_hex": "3f7fffff",
+ "rows": [
+  {
+   "id": 89,
+   "scale": 0.7,
+   "orig": 29.79607582092285,
+   "port": 29.79607582092285,
+   "where": "game",
+   "orig_bits": "000000a0cbcb3d40",
+   "port_bits": "000000a0cbcb3d40",
+   "equal": true
+  },
+  {
+   "id": 89,
+   "scale": 0.72,
+   "orig": 30.64739418029785,
+   "port": 30.64739418029785,
+   "where": "game",
+   "orig_bits": "000000a0bba53e40",
+   "port_bits": "000000a0bba53e40",
+   "equal": true
+  },
+  {
+   "id": 89,
+   "scale": 0.6,
+   "orig": 25.539493560791016,
+   "port": 25.539493560791016,
+   "where": "game",
+   "orig_bits": "000000401c8a3940",
+   "port_bits": "000000401c8a3940",
+   "equal": true
+  },
+  {
+   "id": 89,
+   "scale": 0.8,
+   "orig": 34.05265808105469,
+   "port": 34.05265808105469,
+   "where": "game",
+   "orig_bits": "00000080bd064140",
+   "port_bits": "00000080bd064140",
+   "equal": true
+  },
+  {
+   "id": 89,
+   "scale": 0.9,
+   "orig": 38.30923843383789,
+   "port": 38.30923843383789,
+   "where": "game",
+   "orig_bits": "0000002095274340",
+   "port_bits": "0000002095274340",
+   "equal": true
+  },
+  {
+   "id": 89,
+   "scale": 1,
+   "orig": 42.56582260131836,
+   "port": 42.56582260131836,
+   "where": "game",
+   "orig_bits": "000000e06c484540",
+   "port_bits": "000000e06c484540",
+   "equal": true
+  },
+  {
+   "id": 89,
+   "scale": 8,
+   "orig": 340.5265808105469,
+   "port": 340.5265808105469,
+   "where": "game",
+   "orig_bits": "000000e06c487540",
+   "port_bits": "000000e06c487540",
+   "equal": true
+  },
+  {
+   "id": 434,
+   "scale": 0.7,
+   "orig": 45.17469787597656,
+   "port": 45.17469787597656,
+   "where": "game",
+   "orig_bits": "000000805c964640",
+   "port_bits": "000000805c964640",
+   "equal": true
+  },
+  {
+   "id": 434,
+   "scale": 0.72,
+   "orig": 46.46540832519531,
+   "port": 46.46540832519531,
+   "where": "game",
+   "orig_bits": "00000080923b4740",
+   "port_bits": "00000080923b4740",
+   "equal": true
+  },
+  {
+   "id": 434,
+   "scale": 0.6,
+   "orig": 38.721168518066406,
+   "port": 38.721168518066406,
+   "where": "game",
+   "orig_bits": "000000404f5c4340",
+   "port_bits": "000000404f5c4340",
+   "equal": true
+  },
+  {
+   "id": 434,
+   "scale": 0.8,
+   "orig": 51.62822341918945,
+   "port": 51.62822341918945,
+   "where": "game",
+   "orig_bits": "000000a069d04940",
+   "port_bits": "000000a069d04940",
+   "equal": true
+  },
+  {
+   "id": 434,
+   "scale": 0.9,
+   "orig": 58.081748962402344,
+   "port": 58.081748962402344,
+   "where": "game",
+   "orig_bits": "000000c0760a4d40",
+   "port_bits": "000000c0760a4d40",
+   "equal": true
+  },
+  {
+   "id": 434,
+   "scale": 1,
+   "orig": 64.5352783203125,
+   "port": 64.5352783203125,
+   "where": "game",
+   "orig_bits": "0000000042225040",
+   "port_bits": "0000000042225040",
+   "equal": true
+  },
+  {
+   "id": 434,
+   "scale": 8,
+   "orig": 516.2822265625,
+   "port": 516.2822265625,
+   "where": "game",
+   "orig_bits": "0000000042228040",
+   "port_bits": "0000000042228040",
+   "equal": true
+  },
+  {
+   "id": 433,
+   "scale": 0.7,
+   "orig": 75.93193817138672,
+   "port": 75.93193817138672,
+   "where": "game",
+   "orig_bits": "000000e0a4fb5240",
+   "port_bits": "000000e0a4fb5240",
+   "equal": true
+  },
+  {
+   "id": 433,
+   "scale": 0.72,
+   "orig": 78.1014175415039,
+   "port": 78.1014175415039,
+   "where": "game",
+   "orig_bits": "000000a07d865340",
+   "port_bits": "000000a07d865340",
+   "equal": true
+  },
+  {
+   "id": 433,
+   "scale": 0.6,
+   "orig": 65.08451843261719,
+   "port": 65.08451843261719,
+   "where": "game",
+   "orig_bits": "000000c068455040",
+   "port_bits": "000000c068455040",
+   "equal": true
+  },
+  {
+   "id": 433,
+   "scale": 0.8,
+   "orig": 86.77935791015625,
+   "port": 86.77935791015625,
+   "where": "game",
+   "orig_bits": "00000000e1b15540",
+   "port_bits": "00000000e1b15540",
+   "equal": true
+  },
+  {
+   "id": 433,
+   "scale": 0.9,
+   "orig": 97.62677001953125,
+   "port": 97.62677001953125,
+   "where": "game",
+   "orig_bits": "000000001d685840",
+   "port_bits": "000000001d685840",
+   "equal": true
+  },
+  {
+   "id": 433,
+   "scale": 1,
+   "orig": 108.47419738769531,
+   "port": 108.47419738769531,
+   "where": "game",
+   "orig_bits": "00000040591e5b40",
+   "port_bits": "00000040591e5b40",
+   "equal": true
+  },
+  {
+   "id": 433,
+   "scale": 8,
+   "orig": 867.7935791015625,
+   "port": 867.7935791015625,
+   "where": "game",
+   "orig_bits": "00000040591e8b40",
+   "port_bits": "00000040591e8b40",
+   "equal": true
+  },
+  {
+   "id": 90,
+   "scale": 0.7,
+   "orig": 26.91258430480957,
+   "port": 26.91258430480957,
+   "where": "game",
+   "orig_bits": "000000209fe93a40",
+   "port_bits": "000000209fe93a40",
+   "equal": true
+  },
+  {
+   "id": 90,
+   "scale": 0.72,
+   "orig": 27.681514739990234,
+   "port": 27.681514739990234,
+   "where": "game",
+   "orig_bits": "000000c077ae3b40",
+   "port_bits": "000000c077ae3b40",
+   "equal": true
+  },
+  {
+   "id": 90,
+   "scale": 0.6,
+   "orig": 23.067930221557617,
+   "port": 23.067930221557617,
+   "where": "game",
+   "orig_bits": "000000e063113740",
+   "port_bits": "000000e063113740",
+   "equal": true
+  },
+  {
+   "id": 90,
+   "scale": 0.8,
+   "orig": 30.757238388061523,
+   "port": 30.757238388061523,
+   "where": "game",
+   "orig_bits": "00000060dac13e40",
+   "port_bits": "00000060dac13e40",
+   "equal": true
+  },
+  {
+   "id": 90,
+   "scale": 0.9,
+   "orig": 34.601890563964844,
+   "port": 34.601890563964844,
+   "where": "game",
+   "orig_bits": "000000c00a4d4140",
+   "port_bits": "000000c00a4d4140",
+   "equal": true
+  },
+  {
+   "id": 90,
+   "scale": 1,
+   "orig": 38.44654846191406,
+   "port": 38.44654846191406,
+   "where": "game",
+   "orig_bits": "0000008028394340",
+   "port_bits": "0000008028394340",
+   "equal": true
+  },
+  {
+   "id": 90,
+   "scale": 8,
+   "orig": 307.5723876953125,
+   "port": 307.5723876953125,
+   "where": "game",
+   "orig_bits": "0000008028397340",
+   "port_bits": "0000008028397340",
+   "equal": true
+  },
+  {
+   "id": 607,
+   "scale": 0.7,
+   "orig": 89.38822937011719,
+   "port": 89.38822937011719,
+   "where": "game",
+   "orig_bits": "000000c0d8585640",
+   "port_bits": "000000c0d8585640",
+   "equal": true
+  },
+  {
+   "id": 607,
+   "scale": 0.72,
+   "orig": 91.94218444824219,
+   "port": 91.94218444824219,
+   "where": "game",
+   "orig_bits": "000000c04cfc5640",
+   "port_bits": "000000c04cfc5640",
+   "equal": true
+  },
+  {
+   "id": 607,
+   "scale": 0.6,
+   "orig": 76.61848449707031,
+   "port": 76.61848449707031,
+   "where": "game",
+   "orig_bits": "0000004095275340",
+   "port_bits": "0000004095275340",
+   "equal": true
+  },
+  {
+   "id": 607,
+   "scale": 0.8,
+   "orig": 102.15797424316406,
+   "port": 102.15797424316406,
+   "where": "game",
+   "orig_bits": "000000401c8a5940",
+   "port_bits": "000000401c8a5940",
+   "equal": true
+  },
+  {
+   "id": 607,
+   "scale": 0.9,
+   "orig": 114.92771911621094,
+   "port": 114.92771911621094,
+   "where": "game",
+   "orig_bits": "000000c05fbb5c40",
+   "port_bits": "000000c05fbb5c40",
+   "equal": true
+  },
+  {
+   "id": 607,
+   "scale": 1,
+   "orig": 127.69746398925781,
+   "port": 127.69746398925781,
+   "where": "game",
+   "orig_bits": "00000040a3ec5f40",
+   "port_bits": "00000040a3ec5f40",
+   "equal": true
+  },
+  {
+   "id": 607,
+   "scale": 8,
+   "orig": 1021.5797119140625,
+   "port": 1021.5797119140625,
+   "where": "game",
+   "orig_bits": "00000040a3ec8f40",
+   "port_bits": "00000040a3ec8f40",
+   "equal": true
+  },
+  {
+   "id": 54,
+   "scale": 0.7,
+   "orig": 13.456292152404785,
+   "port": 13.456292152404785,
+   "where": "game",
+   "orig_bits": "000000209fe92a40",
+   "port_bits": "000000209fe92a40",
+   "equal": true
+  },
+  {
+   "id": 54,
+   "scale": 0.72,
+   "orig": 13.840757369995117,
+   "port": 13.840757369995117,
+   "where": "game",
+   "orig_bits": "000000c077ae2b40",
+   "port_bits": "000000c077ae2b40",
+   "equal": true
+  },
+  {
+   "id": 54,
+   "scale": 0.6,
+   "orig": 11.533965110778809,
+   "port": 11.533965110778809,
+   "where": "game",
+   "orig_bits": "000000e063112740",
+   "port_bits": "000000e063112740",
+   "equal": true
+  },
+  {
+   "id": 54,
+   "scale": 0.8,
+   "orig": 15.378619194030762,
+   "port": 15.378619194030762,
+   "where": "game",
+   "orig_bits": "00000060dac12e40",
+   "port_bits": "00000060dac12e40",
+   "equal": true
+  },
+  {
+   "id": 54,
+   "scale": 0.9,
+   "orig": 17.300945281982422,
+   "port": 17.300945281982422,
+   "where": "game",
+   "orig_bits": "000000c00a4d3140",
+   "port_bits": "000000c00a4d3140",
+   "equal": true
+  },
+  {
+   "id": 54,
+   "scale": 1,
+   "orig": 19.22327423095703,
+   "port": 19.22327423095703,
+   "where": "game",
+   "orig_bits": "0000008028393340",
+   "port_bits": "0000008028393340",
+   "equal": true
+  },
+  {
+   "id": 54,
+   "scale": 8,
+   "orig": 153.78619384765625,
+   "port": 153.78619384765625,
+   "where": "game",
+   "orig_bits": "0000008028396340",
+   "port_bits": "0000008028396340",
+   "equal": true
+  },
+  {
+   "id": 40,
+   "scale": 0.7,
+   "orig": 121.10662841796875,
+   "port": 121.10662841796875,
+   "where": "game",
+   "orig_bits": "00000000d3465e40",
+   "port_bits": "00000000d3465e40",
+   "equal": true
+  },
+  {
+   "id": 40,
+   "scale": 0.72,
+   "orig": 124.56681060791016,
+   "port": 124.56681060791016,
+   "where": "game",
+   "orig_bits": "000000a046245f40",
+   "port_bits": "000000a046245f40",
+   "equal": true
+  },
+  {
+   "id": 40,
+   "scale": 0.6,
+   "orig": 103.80567932128906,
+   "port": 103.80567932128906,
+   "where": "game",
+   "orig_bits": "0000004090f35940",
+   "port_bits": "0000004090f35940",
+   "equal": true
+  },
+  {
+   "id": 40,
+   "scale": 0.8,
+   "orig": 138.40756225585938,
+   "port": 138.40756225585938,
+   "where": "game",
+   "orig_bits": "000000c00a4d6140",
+   "port_bits": "000000c00a4d6140",
+   "equal": true
+  },
+  {
+   "id": 40,
+   "scale": 0.9,
+   "orig": 155.70849609375,
+   "port": 155.70849609375,
+   "where": "game",
+   "orig_bits": "00000000ac766340",
+   "port_bits": "00000000ac766340",
+   "equal": true
+  },
+  {
+   "id": 40,
+   "scale": 1,
+   "orig": 173.0094757080078,
+   "port": 173.0094757080078,
+   "where": "game",
+   "orig_bits": "000000a04da06540",
+   "port_bits": "000000a04da06540",
+   "equal": true
+  },
+  {
+   "id": 40,
+   "scale": 8,
+   "orig": 1384.0758056640625,
+   "port": 1384.0758056640625,
+   "where": "game",
+   "orig_bits": "000000a04da09540",
+   "port_bits": "000000a04da09540",
+   "equal": true
+  },
+  {
+   "id": 1,
+   "scale": 0.7,
+   "orig": 85.5435791015625,
+   "port": 85.5435791015625,
+   "where": "game",
+   "orig_bits": "00000000ca625540",
+   "port_bits": "00000000ca625540",
+   "equal": true
+  },
+  {
+   "id": 1,
+   "scale": 0.72,
+   "orig": 87.98767852783203,
+   "port": 87.98767852783203,
+   "where": "game",
+   "orig_bits": "0000002036ff5540",
+   "port_bits": "0000002036ff5540",
+   "equal": true
+  },
+  {
+   "id": 1,
+   "scale": 0.6,
+   "orig": 73.32305908203125,
+   "port": 73.32305908203125,
+   "where": "game",
+   "orig_bits": "00000000ad545240",
+   "port_bits": "00000000ad545240",
+   "equal": true
+  },
+  {
+   "id": 1,
+   "scale": 0.8,
+   "orig": 97.76408386230469,
+   "port": 97.76408386230469,
+   "where": "game",
+   "orig_bits": "000000c0e6705840",
+   "port_bits": "000000c0e6705840",
+   "equal": true
+  },
+  {
+   "id": 1,
+   "scale": 0.9,
+   "orig": 109.98458862304688,
+   "port": 109.98458862304688,
+   "where": "game",
+   "orig_bits": "00000080037f5b40",
+   "port_bits": "00000080037f5b40",
+   "equal": true
+  },
+  {
+   "id": 1,
+   "scale": 1,
+   "orig": 122.20510864257812,
+   "port": 122.20510864257812,
+   "where": "game",
+   "orig_bits": "00000080208d5e40",
+   "port_bits": "00000080208d5e40",
+   "equal": true
+  },
+  {
+   "id": 1,
+   "scale": 8,
+   "orig": 977.640869140625,
+   "port": 977.640869140625,
+   "where": "game",
+   "orig_bits": "00000080208d8e40",
+   "port_bits": "00000080208d8e40",
+   "equal": true
+  },
+  {
+   "id": 5,
+   "scale": 0.7,
+   "orig": 13.456292152404785,
+   "port": 13.456292152404785,
+   "where": "game",
+   "orig_bits": "000000209fe92a40",
+   "port_bits": "000000209fe92a40",
+   "equal": true
+  },
+  {
+   "id": 5,
+   "scale": 0.72,
+   "orig": 13.840757369995117,
+   "port": 13.840757369995117,
+   "where": "game",
+   "orig_bits": "000000c077ae2b40",
+   "port_bits": "000000c077ae2b40",
+   "equal": true
+  },
+  {
+   "id": 5,
+   "scale": 0.6,
+   "orig": 11.533965110778809,
+   "port": 11.533965110778809,
+   "where": "game",
+   "orig_bits": "000000e063112740",
+   "port_bits": "000000e063112740",
+   "equal": true
+  },
+  {
+   "id": 5,
+   "scale": 0.8,
+   "orig": 15.378619194030762,
+   "port": 15.378619194030762,
+   "where": "game",
+   "orig_bits": "00000060dac12e40",
+   "port_bits": "00000060dac12e40",
+   "equal": true
+  },
+  {
+   "id": 5,
+   "scale": 0.9,
+   "orig": 17.300945281982422,
+   "port": 17.300945281982422,
+   "where": "game",
+   "orig_bits": "000000c00a4d3140",
+   "port_bits": "000000c00a4d3140",
+   "equal": true
+  },
+  {
+   "id": 5,
+   "scale": 1,
+   "orig": 19.22327423095703,
+   "port": 19.22327423095703,
+   "where": "game",
+   "orig_bits": "0000008028393340",
+   "port_bits": "0000008028393340",
+   "equal": true
+  },
+  {
+   "id": 5,
+   "scale": 8,
+   "orig": 153.78619384765625,
+   "port": 153.78619384765625,
+   "where": "game",
+   "orig_bits": "0000008028396340",
+   "port_bits": "0000008028396340",
+   "equal": true
+  },
+  {
+   "id": 20,
+   "scale": 0.7,
+   "orig": 125.91246032714844,
+   "port": 125.91246032714844,
+   "where": "game",
+   "orig_bits": "000000c0657a5f40",
+   "port_bits": "000000c0657a5f40",
+   "equal": true
+  },
+  {
+   "id": 20,
+   "scale": 0.72,
+   "orig": 129.5099639892578,
+   "port": 129.5099639892578,
+   "where": "game",
+   "orig_bits": "000000a051306040",
+   "port_bits": "000000a051306040",
+   "equal": true
+  },
+  {
+   "id": 20,
+   "scale": 0.6,
+   "orig": 107.92496490478516,
+   "port": 107.92496490478516,
+   "where": "game",
+   "orig_bits": "000000a032fb5a40",
+   "port_bits": "000000a032fb5a40",
+   "equal": true
+  },
+  {
+   "id": 20,
+   "scale": 0.8,
+   "orig": 143.89996337890625,
+   "port": 143.89996337890625,
+   "where": "game",
+   "orig_bits": "00000080ccfc6140",
+   "port_bits": "00000080ccfc6140",
+   "equal": true
+  },
+  {
+   "id": 20,
+   "scale": 0.9,
+   "orig": 161.887451171875,
+   "port": 161.887451171875,
+   "where": "game",
+   "orig_bits": "00000000663c6440",
+   "port_bits": "00000000663c6440",
+   "equal": true
+  },
+  {
+   "id": 20,
+   "scale": 1,
+   "orig": 179.8749542236328,
+   "port": 179.8749542236328,
+   "where": "game",
+   "orig_bits": "000000a0ff7b6640",
+   "port_bits": "000000a0ff7b6640",
+   "equal": true
+  },
+  {
+   "id": 20,
+   "scale": 8,
+   "orig": 1438.9996337890625,
+   "port": 1438.9996337890625,
+   "where": "game",
+   "orig_bits": "000000a0ff7b9640",
+   "port_bits": "000000a0ff7b9640",
+   "equal": true
+  },
+  {
+   "id": 89,
+   "scale": 0.7,
+   "orig": 29.796074944744806,
+   "port": 29.796074944744806,
+   "where": "offthread",
+   "orig_bits": "0dd84c91cbcb3d40",
+   "port_bits": "0dd84c91cbcb3d40",
+   "equal": true
+  },
+  {
+   "id": 89,
+   "scale": 0.72,
+   "orig": 30.64739226761347,
+   "port": 30.64739226761347,
+   "where": "offthread",
+   "orig_bits": "4815e97fbba53e40",
+   "port_bits": "4815e97fbba53e40",
+   "equal": true
+  },
+  {
+   "id": 89,
+   "scale": 0.6,
+   "orig": 25.539492809781265,
+   "port": 25.539492809781265,
+   "where": "offthread",
+   "orig_bits": "0c7066331c8a3940",
+   "port_bits": "0c7066331c8a3940",
+   "equal": true
+  },
+  {
+   "id": 89,
+   "scale": 0.8,
+   "orig": 34.052657079708354,
+   "port": 34.052657079708354,
+   "where": "offthread",
+   "orig_bits": "08a09977bd064140",
+   "port_bits": "08a09977bd064140",
+   "equal": true
+  },
+  {
+   "id": 89,
+   "scale": 0.9,
+   "orig": 38.309236974982014,
+   "port": 38.309236974982014,
+   "where": "offthread",
+   "orig_bits": "8021c31395274340",
+   "port_bits": "8021c31395274340",
+   "equal": true
+  },
+  {
+   "id": 89,
+   "scale": 1,
+   "orig": 42.56582134963544,
+   "port": 42.56582134963544,
+   "where": "offthread",
+   "orig_bits": "0a0880d56c484540",
+   "port_bits": "0a0880d56c484540",
+   "equal": true
+  },
+  {
+   "id": 89,
+   "scale": 8,
+   "orig": 340.52657079708354,
+   "port": 340.52657079708354,
+   "where": "offthread",
+   "orig_bits": "0a0880d56c487540",
+   "port_bits": "0a0880d56c487540",
+   "equal": true
+  },
+  {
+   "id": 434,
+   "scale": 0.7,
+   "orig": 45.1746942710647,
+   "port": 45.1746942710647,
+   "where": "offthread",
+   "orig_bits": "bf82c2615c964640",
+   "port_bits": "bf82c2615c964640",
+   "equal": true
+  },
+  {
+   "id": 434,
+   "scale": 0.72,
+   "orig": 46.4654011799301,
+   "port": 46.4654011799301,
+   "where": "offthread",
+   "orig_bits": "e8a80f44923b4740",
+   "port_bits": "e8a80f44923b4740",
+   "equal": true
+  },
+  {
+   "id": 434,
+   "scale": 0.6,
+   "orig": 38.72116651805547,
+   "port": 38.72116651805547,
+   "where": "offthread",
+   "orig_bits": "5c02392f4f5c4340",
+   "port_bits": "5c02392f4f5c4340",
+   "equal": true
+  },
+  {
+   "id": 434,
+   "scale": 0.8,
+   "orig": 51.62822202407395,
+   "port": 51.62822202407395,
+   "where": "offthread",
+   "orig_bits": "24034c9469d04940",
+   "port_bits": "24034c9469d04940",
+   "equal": true
+  },
+  {
+   "id": 434,
+   "scale": 0.9,
+   "orig": 58.08174638142434,
+   "port": 58.08174638142434,
+   "where": "offthread",
+   "orig_bits": "566459aa760a4d40",
+   "port_bits": "566459aa760a4d40",
+   "equal": true
+  },
+  {
+   "id": 434,
+   "scale": 1,
+   "orig": 64.53527753009243,
+   "port": 64.53527753009243,
+   "where": "offthread",
+   "orig_bits": "f681affc41225040",
+   "port_bits": "f681affc41225040",
+   "equal": true
+  },
+  {
+   "id": 434,
+   "scale": 8,
+   "orig": 516.2822202407394,
+   "port": 516.2822202407394,
+   "where": "offthread",
+   "orig_bits": "f681affc41228040",
+   "port_bits": "f681affc41228040",
+   "equal": true
+  },
+  {
+   "id": 433,
+   "scale": 0.7,
+   "orig": 75.93193292370451,
+   "port": 75.93193292370451,
+   "where": "offthread",
+   "orig_bits": "1958fdc9a4fb5240",
+   "port_bits": "1958fdc9a4fb5240",
+   "equal": true
+  },
+  {
+   "id": 433,
+   "scale": 0.72,
+   "orig": 78.10141900456335,
+   "port": 78.10141900456335,
+   "where": "offthread",
+   "orig_bits": "b8f222a67d865340",
+   "port_bits": "b8f222a67d865340",
+   "equal": true
+  },
+  {
+   "id": 433,
+   "scale": 0.6,
+   "orig": 65.08451393460386,
+   "port": 65.08451393460386,
+   "where": "offthread",
+   "orig_bits": "834b22ad68455040",
+   "port_bits": "834b22ad68455040",
+   "equal": true
+  },
+  {
+   "id": 433,
+   "scale": 0.8,
+   "orig": 86.77935191280514,
+   "port": 86.77935191280514,
+   "where": "offthread",
+   "orig_bits": "ae64d8e6e0b15540",
+   "port_bits": "ae64d8e6e0b15540",
+   "equal": true
+  },
+  {
+   "id": 433,
+   "scale": 0.9,
+   "orig": 97.62676519430899,
+   "port": 97.62676519430899,
+   "where": "offthread",
+   "orig_bits": "01f5c2eb1c685840",
+   "port_bits": "01f5c2eb1c685840",
+   "equal": true
+  },
+  {
+   "id": 433,
+   "scale": 1,
+   "orig": 108.47418989100645,
+   "port": 108.47418989100645,
+   "where": "offthread",
+   "orig_bits": "db7d8e20591e5b40",
+   "port_bits": "db7d8e20591e5b40",
+   "equal": true
+  },
+  {
+   "id": 433,
+   "scale": 8,
+   "orig": 867.7935191280516,
+   "port": 867.7935191280516,
+   "where": "offthread",
+   "orig_bits": "db7d8e20591e8b40",
+   "port_bits": "db7d8e20591e8b40",
+   "equal": true
+  },
+  {
+   "id": 90,
+   "scale": 0.7,
+   "orig": 26.912583821059826,
+   "port": 26.912583821059826,
+   "where": "offthread",
+   "orig_bits": "884fe2179fe93a40",
+   "port_bits": "884fe2179fe93a40",
+   "equal": true
+  },
+  {
+   "id": 90,
+   "scale": 0.72,
+   "orig": 27.6815155965541,
+   "port": 27.6815155965541,
+   "where": "offthread",
+   "orig_bits": "eee95ece77ae3b40",
+   "port_bits": "eee95ece77ae3b40",
+   "equal": true
+  },
+  {
+   "id": 90,
+   "scale": 0.6,
+   "orig": 23.067928989479853,
+   "port": 23.067928989479853,
+   "where": "offthread",
+   "orig_bits": "2c4454cb63113740",
+   "port_bits": "2c4454cb63113740",
+   "equal": true
+  },
+  {
+   "id": 90,
+   "scale": 0.8,
+   "orig": 30.7572386526398,
+   "port": 30.7572386526398,
+   "where": "offthread",
+   "orig_bits": "e45a7064dac13e40",
+   "port_bits": "e45a7064dac13e40",
+   "equal": true
+  },
+  {
+   "id": 90,
+   "scale": 0.9,
+   "orig": 34.60189146127408,
+   "port": 34.60189146127408,
+   "where": "offthread",
+   "orig_bits": "f8f486c70a4d4140",
+   "port_bits": "f8f486c70a4d4140",
+   "equal": true
+  },
+  {
+   "id": 90,
+   "scale": 1,
+   "orig": 38.446548315799745,
+   "port": 38.446548315799745,
+   "where": "offthread",
+   "orig_bits": "ce38c67e28394340",
+   "port_bits": "ce38c67e28394340",
+   "equal": true
+  },
+  {
+   "id": 90,
+   "scale": 8,
+   "orig": 307.57238652639796,
+   "port": 307.57238652639796,
+   "where": "offthread",
+   "orig_bits": "ce38c67e28397340",
+   "port_bits": "ce38c67e28397340",
+   "equal": true
+  },
+  {
+   "id": 607,
+   "scale": 0.7,
+   "orig": 89.38822483423442,
+   "port": 89.38822483423442,
+   "where": "offthread",
+   "orig_bits": "0aa2f9acd8585640",
+   "port_bits": "0aa2f9acd8585640",
+   "equal": true
+  },
+  {
+   "id": 607,
+   "scale": 0.72,
+   "orig": 91.94217680284041,
+   "port": 91.94217680284041,
+   "where": "offthread",
+   "orig_bits": "f6cfee9f4cfc5640",
+   "port_bits": "f6cfee9f4cfc5640",
+   "equal": true
+  },
+  {
+   "id": 607,
+   "scale": 0.6,
+   "orig": 76.6184784293438,
+   "port": 76.6184784293438,
+   "where": "offthread",
+   "orig_bits": "09d48c2695275340",
+   "port_bits": "09d48c2695275340",
+   "equal": true
+  },
+  {
+   "id": 607,
+   "scale": 0.8,
+   "orig": 102.15797123912506,
+   "port": 102.15797123912506,
+   "where": "offthread",
+   "orig_bits": "0c7066331c8a5940",
+   "port_bits": "0c7066331c8a5940",
+   "equal": true
+  },
+  {
+   "id": 607,
+   "scale": 0.9,
+   "orig": 114.92771092494604,
+   "port": 114.92771092494604,
+   "where": "offthread",
+   "orig_bits": "40b2a49d5fbb5c40",
+   "port_bits": "40b2a49d5fbb5c40",
+   "equal": true
+  },
+  {
+   "id": 607,
+   "scale": 1,
+   "orig": 127.69746404890631,
+   "port": 127.69746404890631,
+   "where": "offthread",
+   "orig_bits": "0e0c4040a3ec5f40",
+   "port_bits": "0e0c4040a3ec5f40",
+   "equal": true
+  },
+  {
+   "id": 607,
+   "scale": 8,
+   "orig": 1021.5797123912505,
+   "port": 1021.5797123912505,
+   "where": "offthread",
+   "orig_bits": "0e0c4040a3ec8f40",
+   "port_bits": "0e0c4040a3ec8f40",
+   "equal": true
+  },
+  {
+   "id": 54,
+   "scale": 0.7,
+   "orig": 13.456291910529913,
+   "port": 13.456291910529913,
+   "where": "offthread",
+   "orig_bits": "884fe2179fe92a40",
+   "port_bits": "884fe2179fe92a40",
+   "equal": true
+  },
+  {
+   "id": 54,
+   "scale": 0.72,
+   "orig": 13.84075779827705,
+   "port": 13.84075779827705,
+   "where": "offthread",
+   "orig_bits": "eee95ece77ae2b40",
+   "port_bits": "eee95ece77ae2b40",
+   "equal": true
+  },
+  {
+   "id": 54,
+   "scale": 0.6,
+   "orig": 11.533964494739926,
+   "port": 11.533964494739926,
+   "where": "offthread",
+   "orig_bits": "2c4454cb63112740",
+   "port_bits": "2c4454cb63112740",
+   "equal": true
+  },
+  {
+   "id": 54,
+   "scale": 0.8,
+   "orig": 15.3786193263199,
+   "port": 15.3786193263199,
+   "where": "offthread",
+   "orig_bits": "e45a7064dac12e40",
+   "port_bits": "e45a7064dac12e40",
+   "equal": true
+  },
+  {
+   "id": 54,
+   "scale": 0.9,
+   "orig": 17.30094573063704,
+   "port": 17.30094573063704,
+   "where": "offthread",
+   "orig_bits": "f8f486c70a4d3140",
+   "port_bits": "f8f486c70a4d3140",
+   "equal": true
+  },
+  {
+   "id": 54,
+   "scale": 1,
+   "orig": 19.223274157899873,
+   "port": 19.223274157899873,
+   "where": "offthread",
+   "orig_bits": "ce38c67e28393340",
+   "port_bits": "ce38c67e28393340",
+   "equal": true
+  },
+  {
+   "id": 54,
+   "scale": 8,
+   "orig": 153.78619326319898,
+   "port": 153.78619326319898,
+   "where": "offthread",
+   "orig_bits": "ce38c67e28396340",
+   "port_bits": "ce38c67e28396340",
+   "equal": true
+  },
+  {
+   "id": 40,
+   "scale": 0.7,
+   "orig": 121.10662719476922,
+   "port": 121.10662719476922,
+   "where": "offthread",
+   "orig_bits": "7999defad2465e40",
+   "port_bits": "7999defad2465e40",
+   "equal": true
+  },
+  {
+   "id": 40,
+   "scale": 0.72,
+   "orig": 124.56682018449345,
+   "port": 124.56682018449345,
+   "where": "offthread",
+   "orig_bits": "2cc72ac846245f40",
+   "port_bits": "2cc72ac846245f40",
+   "equal": true
+  },
+  {
+   "id": 40,
+   "scale": 0.6,
+   "orig": 103.80568045265933,
+   "port": 103.80568045265933,
+   "where": "offthread",
+   "orig_bits": "b1ccbe4490f35940",
+   "port_bits": "b1ccbe4490f35940",
+   "equal": true
+  },
+  {
+   "id": 40,
+   "scale": 0.8,
+   "orig": 138.40757393687912,
+   "port": 138.40757393687912,
+   "where": "offthread",
+   "orig_bits": "21337fd80a4d6140",
+   "port_bits": "21337fd80a4d6140",
+   "equal": true
+  },
+  {
+   "id": 40,
+   "scale": 0.9,
+   "orig": 155.70851157573333,
+   "port": 155.70851157573333,
+   "where": "offthread",
+   "orig_bits": "96d37720ac766340",
+   "port_bits": "96d37720ac766340",
+   "equal": true
+  },
+  {
+   "id": 40,
+   "scale": 1,
+   "orig": 173.00946742109886,
+   "port": 173.00946742109886,
+   "where": "offthread",
+   "orig_bits": "e8ff9e8e4da06540",
+   "port_bits": "e8ff9e8e4da06540",
+   "equal": true
+  },
+  {
+   "id": 40,
+   "scale": 8,
+   "orig": 1384.075739368791,
+   "port": 1384.075739368791,
+   "where": "offthread",
+   "orig_bits": "e8ff9e8e4da09540",
+   "port_bits": "e8ff9e8e4da09540",
+   "equal": true
+  },
+  {
+   "id": 1,
+   "scale": 0.7,
+   "orig": 85.54357000265443,
+   "port": 85.54357000265443,
+   "where": "offthread",
+   "orig_bits": "321fd6d9c9625540",
+   "port_bits": "321fd6d9c9625540",
+   "equal": true
+  },
+  {
+   "id": 1,
+   "scale": 0.72,
+   "orig": 87.98767457476124,
+   "port": 87.98767457476124,
+   "where": "offthread",
+   "orig_bits": "2d6c6b0f36ff5540",
+   "port_bits": "2d6c6b0f36ff5540",
+   "equal": true
+  },
+  {
+   "id": 1,
+   "scale": 0.6,
+   "orig": 73.32306000227524,
+   "port": 73.32306000227524,
+   "where": "offthread",
+   "orig_bits": "be1adc03ad545240",
+   "port_bits": "be1adc03ad545240",
+   "equal": true
+  },
+  {
+   "id": 1,
+   "scale": 0.8,
+   "orig": 97.76408000303364,
+   "port": 97.76408000303364,
+   "where": "offthread",
+   "orig_bits": "a723d0afe6705840",
+   "port_bits": "a723d0afe6705840",
+   "equal": true
+  },
+  {
+   "id": 1,
+   "scale": 0.9,
+   "orig": 109.98458357333546,
+   "port": 109.98458357333546,
+   "where": "offthread",
+   "orig_bits": "e5e9d16a037f5b40",
+   "port_bits": "e5e9d16a037f5b40",
+   "equal": true
+  },
+  {
+   "id": 1,
+   "scale": 1,
+   "orig": 122.20510000379207,
+   "port": 122.20510000379207,
+   "where": "offthread",
+   "orig_bits": "922cc45b208d5e40",
+   "port_bits": "922cc45b208d5e40",
+   "equal": true
+  },
+  {
+   "id": 1,
+   "scale": 8,
+   "orig": 977.6408000303365,
+   "port": 977.6408000303365,
+   "where": "offthread",
+   "orig_bits": "922cc45b208d8e40",
+   "port_bits": "922cc45b208d8e40",
+   "equal": true
+  },
+  {
+   "id": 5,
+   "scale": 0.7,
+   "orig": 13.456291910529913,
+   "port": 13.456291910529913,
+   "where": "offthread",
+   "orig_bits": "884fe2179fe92a40",
+   "port_bits": "884fe2179fe92a40",
+   "equal": true
+  },
+  {
+   "id": 5,
+   "scale": 0.72,
+   "orig": 13.84075779827705,
+   "port": 13.84075779827705,
+   "where": "offthread",
+   "orig_bits": "eee95ece77ae2b40",
+   "port_bits": "eee95ece77ae2b40",
+   "equal": true
+  },
+  {
+   "id": 5,
+   "scale": 0.6,
+   "orig": 11.533964494739926,
+   "port": 11.533964494739926,
+   "where": "offthread",
+   "orig_bits": "2c4454cb63112740",
+   "port_bits": "2c4454cb63112740",
+   "equal": true
+  },
+  {
+   "id": 5,
+   "scale": 0.8,
+   "orig": 15.3786193263199,
+   "port": 15.3786193263199,
+   "where": "offthread",
+   "orig_bits": "e45a7064dac12e40",
+   "port_bits": "e45a7064dac12e40",
+   "equal": true
+  },
+  {
+   "id": 5,
+   "scale": 0.9,
+   "orig": 17.30094573063704,
+   "port": 17.30094573063704,
+   "where": "offthread",
+   "orig_bits": "f8f486c70a4d3140",
+   "port_bits": "f8f486c70a4d3140",
+   "equal": true
+  },
+  {
+   "id": 5,
+   "scale": 1,
+   "orig": 19.223274157899873,
+   "port": 19.223274157899873,
+   "where": "offthread",
+   "orig_bits": "ce38c67e28393340",
+   "port_bits": "ce38c67e28393340",
+   "equal": true
+  },
+  {
+   "id": 5,
+   "scale": 8,
+   "orig": 153.78619326319898,
+   "port": 153.78619326319898,
+   "where": "offthread",
+   "orig_bits": "ce38c67e28396340",
+   "port_bits": "ce38c67e28396340",
+   "equal": true
+  },
+  {
+   "id": 20,
+   "scale": 0.7,
+   "orig": 125.91244478896216,
+   "port": 125.91244478896216,
+   "where": "offthread",
+   "orig_bits": "e1ffd37e657a5f40",
+   "port_bits": "e1ffd37e657a5f40",
+   "equal": true
+  },
+  {
+   "id": 20,
+   "scale": 0.72,
+   "orig": 129.50994699730228,
+   "port": 129.50994699730228,
+   "where": "offthread",
+   "orig_bits": "6a835d7c51306040",
+   "port_bits": "6a835d7c51306040",
+   "equal": true
+  },
+  {
+   "id": 20,
+   "scale": 0.6,
+   "orig": 107.92495267625328,
+   "port": 107.92495267625328,
+   "where": "offthread",
+   "orig_bits": "c1b6b56c32fb5a40",
+   "port_bits": "c1b6b56c32fb5a40",
+   "equal": true
+  },
+  {
+   "id": 20,
+   "scale": 0.8,
+   "orig": 143.89993690167105,
+   "port": 143.89993690167105,
+   "where": "offthread",
+   "orig_bits": "81247948ccfc6140",
+   "port_bits": "81247948ccfc6140",
+   "equal": true
+  },
+  {
+   "id": 20,
+   "scale": 0.9,
+   "orig": 161.88741954988404,
+   "port": 161.88741954988404,
+   "where": "offthread",
+   "orig_bits": "a812afbd653c6440",
+   "port_bits": "a812afbd653c6440",
+   "equal": true
+  },
+  {
+   "id": 20,
+   "scale": 1,
+   "orig": 179.87492112708878,
+   "port": 179.87492112708878,
+   "where": "offthread",
+   "orig_bits": "a06d975aff7b6640",
+   "port_bits": "a06d975aff7b6640",
+   "equal": true
+  },
+  {
+   "id": 20,
+   "scale": 8,
+   "orig": 1438.9993690167103,
+   "port": 1438.9993690167103,
+   "where": "offthread",
+   "orig_bits": "a06d975aff7b9640",
+   "port_bits": "a06d975aff7b9640",
+   "equal": true
+  }
+ ],
+ "game_calls": 70,
+ "equal": 140,
+ "total": 140
+}
