@@ -1,0 +1,7 @@
+[mashed-lock] WAITING — 'mashed_machine' held by pid=23100 (merge-train:20261025_010921); queueing...
+[mashed-lock] HELD 'mashed_machine' pid=19696 (D3-CF-K357)
+=== B_U7PXY_K0 pid=364 exe=9085dbdd
+    exit=0 self_exited=True secs=100
+    B_U7PXY_K0.step.csv lines=1459 sha8=c23d5b25
+DONE
+[mashed-lock] released 'mashed_machine' pid=19696

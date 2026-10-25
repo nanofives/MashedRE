@@ -5686,7 +5686,10 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             // whose gate progress stalls 2.5 s is relocated two gates ahead. Every
             // relocation resets the car's lookahead index (FUN_00414030) and its body
             // basis, so the ported AI re-acquires the line from the new position.
-            if (ng >= 2) {
+            // [D3-CF-K357] MASHED_R7_EXIT (default OFF): skipped while the MASHED_ROUND_END7 flag is up. The original keeps
+            // the car frozen in sub-state 7 (o_r7_1: 502 frames); a frozen car's gate never changes, so the stand-in would
+            // relocate it every 2.5 s. PREREG_D3-CF-K357.md amendment 1.
+            if (ng >= 2 && !RoundEnd7ExitActive()) {
                 if (race_[v].gate != a.prog_gate) { a.prog_gate = race_[v].gate; a.stuck_t = 0.f; }
                 else { a.stuck_t += in.dt; }
                 if (a.stuck_t > 2.5f) {
@@ -7753,6 +7756,41 @@ void TrackRenderer::ScoreOnElimination(int victim) {
     }
 }
 
+// [D3-CF-K357] MASHED_R7_EXIT (default OFF), verify/k357_20261025/PREREG_D3-CF-K357.md. FUN_004111c0 case 7 runs
+// FUN_00410860, whose only writers of DAT_0063ba8c are 9 (0x00410a5e) and 8 (0x00410a6e), both behind one gate. It
+// replaces the exe's 3.0 s round hold (exe_main.cpp, R6 match flow), which is port-side. Acts only while the
+// MASHED_ROUND_END7 flag is up. Knob OFF: false, the 3.0 s hold runs as before.
+namespace {
+bool R7ExitEnabled() {
+    static const bool s = [] { const char* e = std::getenv("MASHED_R7_EXIT"); return e && e[0] && e[0] != '0'; }();
+    return s;
+}
+int s_r7ExitCount = 0;   // DAT_005f29b8 while in sub-state 7: 0x004104c0 zeroes it at the state-5 tail, state 6 never writes it
+}  // namespace
+
+bool TrackRenderer::RoundEnd7ExitActive() const {
+    return R7ExitEnabled() && s_roundEnd7;
+}
+
+// One FUN_00410860 tick. The caller skips the round-end frame itself: FUN_00411170 sets 7 (0x004111a6) and that frame's
+// FUN_0040fc00 runs without FUN_00410860.
+bool TrackRenderer::RoundEnd7ExitTick() {
+    const int nSlots = 1 + static_cast<int>(ai_cars_.size());
+    int n = 0;                                            // 0x004108c3..0x004108f2: active slots with FUN_0046c7b0 == 1
+    for (int v = 0; v < kRaceCars && v < nSlots; ++v)
+        if (race_[v].alive) ++n;
+    s_r7ExitCount = (n != 0 ? s_r7ExitCount : 400) + 2;   // 0x004108f4..0x00410910 (0x190 when n == 0)
+    const int fd0 = *reinterpret_cast<const int*>(0x007f0fd0u);
+    bool gate = false;
+    for (int v = 0; v < 4; ++v) {                         // 0x00410903..0x004109b4, four slots unrolled
+        const int idx = *reinterpret_cast<const int*>(0x007f1a14u + static_cast<std::uintptr_t>(v) * 0x10u);
+        if (idx != -1 && *reinterpret_cast<const unsigned char*>(0x007f1042u + static_cast<std::uintptr_t>(idx) * 0x4cu) != 0)
+            gate = true;                                  // byte 0xa of the ctrl block 0x007f1038 + idx * 0x4c
+        if (fd0 != 1 && n == 0) gate = true;
+    }
+    return s_r7ExitCount > 199 && gate;                   // 0x004109b9 cmp esi,0xc8 / jl, 0x004109c5 cmp ecx,1
+}
+
 void TrackRenderer::NextRoundOrEnd() {
     if (round_winner_ < 0) return;
     // Race::EvaluateResult (0x00410510): with 4 participants the match ends
@@ -8452,6 +8490,7 @@ void TrackRenderer::UpdateRace(float dt) {
                 match_draw_ = true;            // shows RACE OVER via match_draw
             } else {                           // r == 0: next round
                 if (RoundEnd7Enabled()) s_roundEnd7 = true;   // [u9779] 0x004111a6 DAT_0063ba8c = 7
+                s_r7ExitCount = 0;                            // [D3-CF-K357] 0x004104c0 (read only under MASHED_R7_EXIT)
                 for (int i = 0; i < kRaceCars; ++i)
                     if (race_[i].alive) { round_winner_ = i; break; }
                 if (round_winner_ < 0) round_winner_ = 0;  // all dead: equalized
