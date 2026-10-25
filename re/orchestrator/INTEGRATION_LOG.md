@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-10-25 10:25 D3-CF-K357 (orch/D3-CF-K357-M): G-CTRL ef5f2e10/57f7ff83/b4f4b55a  B c37d4c0c/0a8f9806/7013671d. Run data D:\MashedWT\mtrain_data\20261025_094957
 - 2026-10-25 09:11 D3-CF-U9779 (orch/D3-CF-U9779-M): G-CTRL ef5f2e10/57f7ff83/b4f4b55a  B c37d4c0c/0a8f9806/7013671d; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261025_084132
 - 2026-10-25 07:17 HB-LOCKBREAK (orch/HB-LOCKBREAK), HB-TRAINCLEAN (orch/HB-TRAINCLEAN): G-CTRL bacfc747/8dd1c004/6f9932b6  B f9deb9b9/d3601fcc/9da9a26a. Run data D:\MashedWT\mtrain_data\20261025_070323
 - 2026-10-25 05:15 D3-CF-U9779-RECON (orch/D3-CF-U9779-RECON): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261025_050755
