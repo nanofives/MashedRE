@@ -1,13 +1,13 @@
 {
-  "_doc": "merge_train.ps1 config. Gate references as of 2026-10-24 (memory default-ctrl-hashes-after-b2-flip; re/NEXT_SESSION.md:223-224). Script paths are relative to the merged tree. Sources: account2 survey 2026-10-24 (re/orchestrator/MERGE_TRAIN.md).",
+  "_doc": "merge_train.ps1 config. Gate references updated 2026-10-24 for the D3-CF-U9779 decided flip (L-4 = (1): ELIM_RESOLVE + ROUND_END7 + RACE_TAIL_LATE + R7_PHYS default ON; verify/u9779_20261024/RESULT_D3-CF-U9779.md; reproduced by merge train 20261024_203131). Previous refs G-CTRL bacfc747/8dd1c004/6f9932b6, B f9deb9b9/d3601fcc/9da9a26a (MASHED_NU7 opt-out). Script paths are relative to the merged tree. Sources: account2 survey 2026-10-24 (re/orchestrator/MERGE_TRAIN.md).",
   "integration_branch": "orch/integration",
   "batch_max": 3,
   "root": "D:/MashedWT/mtrain_root",
   "root13": "D:/MashedWT/mtrain_root13",
   "data": "D:/MashedWT/mtrain_data",
   "runner": "verify/savelink_20261023/run_arms.py",
-  "gctrl": { "arm": "H_DEF", "files": ["H_DEF.step.csv", "H_DEF.gates.csv", "H_DEF.ptrace.log"], "ref": ["bacfc747", "8dd1c004", "6f9932b6"], "retries": 1 },
-  "b": { "arms": ["B_DEF_K0", "B_DEF_K1", "B_DEF_K26"], "ref": ["f9deb9b9", "d3601fcc", "9da9a26a"] },
+  "gctrl": { "arm": "H_DEF", "files": ["H_DEF.step.csv", "H_DEF.gates.csv", "H_DEF.ptrace.log"], "ref": ["ef5f2e10", "57f7ff83", "b4f4b55a"], "retries": 1 },
+  "b": { "arms": ["B_DEF_K0", "B_DEF_K1", "B_DEF_K26"], "ref": ["c37d4c0c", "0a8f9806", "7013671d"] },
   "full_set_paths": ["mashedmod/src/mashed_re/Vehicle/", "mashedmod/src/mashed_re/Ai/", "mashedmod/src/mashed_re/Collision/"],
   "full": {
     "vsum": "verify/savelink_20261023/vsum.py",

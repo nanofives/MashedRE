@@ -72,6 +72,12 @@ You are the merge train, run <N>. Read <ORCH>\re\orchestrator\WORKER_RULES.md. R
 Repeat until it prints "branch: (nothing queued)" or a RED. Do not fix anything. Final message: the last REPORT block it printed.
 ```
 
+### Decided default flips (MERGE_TRAIN.md "Decided default flips")
+A row that flips a default on a user decision changes the gate hashes. It records its expected new
+G-CTRL/B hashes, merges alone, and L0 commits those hashes to `merge_train.json` on orch/integration
+(no train live) before spawning the train for it. GREEN = the merged tree reproduces exactly them.
+(Run 2: D3-CF-U9779 bounced RED with exactly its expected hashes because the refs were stale.)
+
 ## The event loop
 Each child notice ("Child session ... finished its turn ... Its final reply: ...") is a hint,
 not a fact. Notices lag and duplicate; ignore notices from closed or already-collected children.

@@ -39,6 +39,14 @@ Notes on the table:
 - For the 13-track check: I could not find which `cites*.json` recent lanes pass. Candidates are listed under `verify/*/cites*.json`, for example `verify/rskyverify_20261016/cites_merged.json`.
 - The 13-track check uses a separate `<lane>_root13` (NEXT_SESSION.md:264).
 - A G-CTRL run can drop one frame's rows, so rerun before calling it RED (NEXT_SESSION.md:263).
+- The live refs are `merge_train.json` `gctrl.ref` / `b.ref`, not the table above. Since the D3-CF-U9779 flip (2026-10-24) they are G-CTRL `ef5f2e10 / 57f7ff83 / b4f4b55a`, B `c37d4c0c / 0a8f9806 / 7013671d`; the table's hashes are the pre-flip defaults (`MASHED_NU7` opt-out).
+
+### Decided default flips
+A row that changes the default gates on purpose (a user-decided knob flip, e.g. L-4) would be bounced RED against the old refs. Protocol:
+1. The flip row records its expected new G-CTRL and B hashes (ledger note + its RESULT).
+2. It merges **alone**: nothing else in the queue while it runs (enqueue the other rows after it lands).
+3. Before the train starts, with no train live, commit the expected new hashes to `merge_train.json` on `orch/integration` (cite the decision and RESULT in `_doc`, keep the old refs there). GREEN means the merged tree reproduces exactly those hashes; any other value is RED.
+4. If the refs were not updated first and the train bounced the flip with exactly the expected hashes, that RED is the flip confirmed: update the refs as in 3, re-enqueue the row alone, run the train again.
 
 ## 3. Lint
 - Command: `py -3.12 scripts/lint_rva_bodies.py` (lint_rva_bodies.py:27). It also accepts `--verbose` and `--seed`.
