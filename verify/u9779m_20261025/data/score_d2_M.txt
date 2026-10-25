@@ -1,0 +1,3 @@
+D:/MashedWT/D3-CF-U9779-M_data/arms/D2_DEF_1.motion_diag.log: slip1500=0.1900 in slip2000=0.2549 in drvmed=1970.5800 in n=('319', '650', '1352') H1 398/400 median 1372.1
+D:/MashedWT/D3-CF-U9779-M_data/arms/D2_DEF_2.motion_diag.log: slip1500=0.1900 in slip2000=0.2548 in drvmed=1970.5800 in n=('319', '651', '1353') H1 398/400 median 1372.1
+D:/MashedWT/D3-CF-U9779-M_data/arms/D2_DEF_3.motion_diag.log: slip1500=0.1900 in slip2000=0.2549 in drvmed=1970.5800 in n=('319', '650', '1352') H1 398/400 median 1372.1
