@@ -1,0 +1,69 @@
+{
+  "msd": "v1.msd",
+  "captured_utc": "2026-10-25T07:31:10Z",
+  "argv": [
+    "re\\frida\\scenario_launch.py",
+    "--track",
+    "0",
+    "--mode",
+    "10",
+    "--cars",
+    "4",
+    "--car",
+    "0",
+    "--poke-ctrl-slots",
+    "--statediff-out",
+    "D:\\MashedWT\\D3-CF-BOX_data\\v1.msd",
+    "--statediff-car",
+    "0",
+    "--statediff-drive",
+    "--statediff-puhook",
+    "--pu-plan",
+    "7,11,11,11",
+    "--pu-box",
+    "1",
+    "--pu-warm",
+    "60",
+    "--elim-probe",
+    "--box-probe",
+    "--hold",
+    "60"
+  ],
+  "cwd": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\.worktrees\\D3-CF-BOX",
+  "git_head": "033891cd6a87b85e382d77435f9f72ff220e7cfa",
+  "host": "LIVING-PC",
+  "statediff": {
+    "car": 0,
+    "base_va": "0x8815a0",
+    "rec_size": "0xd04",
+    "drive": true,
+    "drive_late": false,
+    "steer": 0,
+    "aictrl": false,
+    "aistep": false,
+    "steer_schedule": "",
+    "steer_schedule_applied": null,
+    "steer_schedule_t0_offset_s": null,
+    "noop_cook": false,
+    "hooks": ""
+  },
+  "capture": {
+    "frames": 3542,
+    "distinct_payloads": 2776,
+    "nonzero_frames": 3542
+  },
+  "descriptor_writes": {
+    "block_base": "0x007f1038",
+    "accel_byte": 4,
+    "steer_bytes": [
+      0,
+      1
+    ],
+    "legacy_steer_bytes": [
+      2,
+      3,
+      14,
+      15
+    ]
+  }
+}

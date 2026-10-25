@@ -1,0 +1,69 @@
+--- original (all): 15 rows
+    start slot 0 val 1 frame 0 ba8c 1
+    start slot 1 val 1 frame 0 ba8c 1
+    start slot 2 val 1 frame 0 ba8c 1
+    start slot 3 val 1 frame 0 ba8c 1
+    grid slot 0 val 1 frame 1 ba8c 2
+    grid slot 1 val 1 frame 1 ba8c 2
+    grid slot 2 val 1 frame 1 ba8c 2
+    grid slot 3 val 1 frame 1 ba8c 2
+    grid slot 0 val 1 frame 2 ba8c 3
+    grid slot 1 val 1 frame 2 ba8c 3
+    grid slot 2 val 1 frame 2 ba8c 3
+    grid slot 3 val 1 frame 2 ba8c 3
+    kill slot 0 val 2 frame 1084 ba8c 6
+    kill slot 1 val 2 frame 1084 ba8c 6
+    kill slot 2 val 2 frame 1084 ba8c 6
+P2: unknown return addresses 0; kill rows 3, followed by a 0x0042300a write of 2 to the same slot: 3/3; slice-1 gap rows (respawn / event) 0
+P3a span = the original rows: 15
+O-repeat orig/o2.msd.elim.csv: 15 rows -> EQUAL
+--- arms2/B_BOXR_K0.box.csv: 26 rows
+    start slot 0 val 1 frame 0 
+    start slot 1 val 1 frame 0 
+    start slot 2 val 1 frame 0 
+    start slot 3 val 1 frame 0 
+    grid slot 0 val 1 frame 0 
+    grid slot 1 val 1 frame 0 
+    grid slot 2 val 1 frame 0 
+    grid slot 3 val 1 frame 0 
+    grid slot 0 val 1 frame 0 
+    grid slot 1 val 1 frame 0 
+    grid slot 2 val 1 frame 0 
+    grid slot 3 val 1 frame 0 
+    kill slot 0 val 2 frame 220 
+    kill slot 1 val 2 frame 220 
+    kill slot 2 val 2 frame 220 
+    grid slot 0 val 1 frame 402 
+    grid slot 1 val 1 frame 402 
+    grid slot 2 val 1 frame 402 
+    grid slot 3 val 1 frame 402 
+    kill slot 0 val 2 frame 570 
+    kill slot 3 val 2 frame 570 
+    kill slot 2 val 2 frame 570 
+    grid slot 0 val 1 frame 752 
+    grid slot 1 val 1 frame 752 
+    grid slot 2 val 1 frame 752 
+    grid slot 3 val 1 frame 752 
+P3a arms2/B_BOXR_K0.box.csv: original 15 / port cut 15 -> EQUAL
+
+=== V1
+--- original (all): 17 rows
+    start slot 0 val 1 frame 0 ba8c 1
+    start slot 1 val 1 frame 0 ba8c 1
+    start slot 2 val 1 frame 0 ba8c 1
+    start slot 3 val 1 frame 0 ba8c 1
+    grid slot 0 val 1 frame 1 ba8c 2
+    grid slot 1 val 1 frame 1 ba8c 2
+    grid slot 2 val 1 frame 1 ba8c 2
+    grid slot 3 val 1 frame 1 ba8c 2
+    grid slot 0 val 1 frame 2 ba8c 3
+    grid slot 1 val 1 frame 2 ba8c 3
+    grid slot 2 val 1 frame 2 ba8c 3
+    grid slot 3 val 1 frame 2 ba8c 3
+    3 slot 0 val 3 frame 1074 ba8c 6
+    kill slot 1 val 2 frame 1082 ba8c 6
+    3 slot 1 val 3 frame 1082 ba8c 6
+    kill slot 0 val 2 frame 1098 ba8c 6
+    kill slot 3 val 2 frame 1098 ba8c 6
+P2: unknown return addresses 0; kill rows 3, followed by a 0x0042300a write of 2 to the same slot: 3/3; slice-1 gap rows (respawn / event) 0
+P3a span = the original rows: 17
