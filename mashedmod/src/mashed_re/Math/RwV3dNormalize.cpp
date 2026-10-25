@@ -29,10 +29,12 @@
 //   LUT_sqrt    root = *(rw_globals + rw_offset + 0)
 //   LUT_invsqrt root = *(rw_globals + rw_offset + 4)
 #include "../Core/HookSystem.h"
+#include "RwLutTables.h"
 
 #include <cstdint>
 #include <cstring>
 #include <cmath>
+#include <cstdlib>
 
 static constexpr std::uintptr_t kRwGlobalsBase   = 0x007d3ff8u;
 static constexpr std::uintptr_t kRwSqrtTableSlot  = 0x007d3ffcu;
@@ -55,10 +57,12 @@ static inline const std::uint32_t* lut_root(std::uint32_t delta)
     return delta == 4u ? RwLutGuard::InvSqrtRoot() : RwLutGuard::SqrtRoot();
 }
 
-// 0x004c39b0
-// Normalises in[3] into out[3]; returns the original magnitude (= |in|).
-extern "C" __declspec(dllexport)
-float __cdecl RwV3dNormalize(float* out, const float* in)
+// [D4-DC-MATH-39b0 2026-10-25] ONE body for 0x004c39b0 in both targets. Math::LutNormalize (formerly a second
+// copy in Math/RwLutTables.cpp) is now a call into NormalizeBody with the rebuilt tables. The arithmetic is the
+// same SSE float form both copies had (neither TU is in x87_tus.txt): mag2 = (x*x + y*y) + z*z rounded to float,
+// both LUTs indexed by (bits + 0x800) >> 12, out = in * scale. sq/inv == nullptr selects the exact-sqrt fallback.
+static inline float NormalizeBody(float* out, const float* in,
+                                  const std::uint32_t* sqrtRoot, const std::uint32_t* invRoot)
 {
     // x87 keeps these products extended; the assignment to a float rounds to f32,
     // matching the original's FST. Association (x*x + y*y) + z*z mirrors the asm.
@@ -70,8 +74,6 @@ float __cdecl RwV3dNormalize(float* out, const float* in)
     float magnitude = 0.0f;
     float scale     = 0.0f;  // = (float)0 when mag2 == 0 (the original leaves it 0)
 
-    const std::uint32_t* sqrtRoot = lut_root(0);
-    const std::uint32_t* invRoot  = lut_root(4);
     if (!sqrtRoot || !invRoot) {
         // Standalone CPU fallback: plain normalize. Degenerate (zero-length) input
         // leaves out=0 and returns 0, like the original's zero-mag branch.
@@ -104,6 +106,39 @@ float __cdecl RwV3dNormalize(float* out, const float* in)
     out[0] = scale * in[0];
     out[1] = in[1] * scale;
     out[2] = in[2] * scale;
+    return magnitude;
+}
+
+// The real-LUT form with the in-process tables (Math/RwLutTables.cpp, fitted 4096/4096 against the live original).
+// No error report: the degenerate-length report (FUN_004d7ff0 / FUN_004d8480) changes no output.
+float mashed_re::Math::LutNormalize(float* out, const float* in)
+{
+    return NormalizeBody(out, in, RwLutSqrtTable(), RwLutInvSqrtTable());
+}
+
+// [D4-DC-MATH-39b0 2026-10-25] MASHED_RWV3D_LUT=1 (default OFF, verify/dcmath39b0_20261025/PREREG_dcmath39b0.md):
+// when the live RW LUT is absent (the standalone, no RwEngineOpen) run the rebuilt tables instead of the exact-sqrt
+// fallback. The live-LUT path (the .asi on MASHED.exe) is unchanged either way.
+static bool RwV3dLut()
+{
+    static const bool s = [] { const char* e = std::getenv("MASHED_RWV3D_LUT"); return e && e[0] == '1'; }();
+    return s;
+}
+
+// 0x004c39b0
+// Normalises in[3] into out[3]; returns the original magnitude (= |in|).
+extern "C" __declspec(dllexport)
+float __cdecl RwV3dNormalize(float* out, const float* in)
+{
+    const std::uint32_t* sqrtRoot = lut_root(0);
+    const std::uint32_t* invRoot  = lut_root(4);
+    if (!sqrtRoot || !invRoot) {
+        if (RwV3dLut())
+            return mashed_re::Math::LutNormalize(out, in);
+        return NormalizeBody(out, in, nullptr, nullptr);
+    }
+
+    const float magnitude = NormalizeBody(out, in, sqrtRoot, invRoot);
 
     const float threshold = *reinterpret_cast<const float*>(kMagThresholdAddr);
     if (magnitude <= threshold) {

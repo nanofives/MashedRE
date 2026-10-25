@@ -51,7 +51,9 @@ CROSS-TARGET:004177b0:Ai/AiPreTick.cpp,Race/RuleEngine.cpp   # DELIBERATE until 
 # PlayerSlotEdgeAdjust deleted; Frontend/MenuNav.cpp:MenuTeamSelectTick follows the original and is now the install). Evidence: verify/dualcopy4_20261016/RESULT_dualcopy4.md.
 
 # --- dualcopy4 (2026-10-16): keys narrowed after a body was replaced by a call into the shared one
-DUP-IN-TARGET:004c39b0:Math/RwLutTables.cpp,Math/RwV3dNormalize.cpp   # audit=DIFFERS-BEHAVIOUR; narrowed 2026-10-16 (dualcopy4): Race/RaceCamera.cpp:Vec3Norm (division by an exact sqrt) is now a call into Math::LutNormalize (d1r2 replay: pose position median 1.105e-4 -> 7.97e-5), so it is no longer a body. What remains is the pair that waits for a USER DECISION: Math/RwLutTables.cpp:LutNormalize = the REAL-LUT body (tables fitted 4096/4096 vs the live original, verify/d3_modes37_20261009/o_rwlut.*.bin; used by Race/PathNodes.cpp and now the race camera) and the global Math/RwV3dNormalize.cpp:RwV3dNormalize, which keeps its exact-sqrt fallback in the exe because it feeds D2 physics (flipping it reopens D2 numbers; memory exe-rw-sqrt-is-exact-not-lut).
+# 004c39b0 GONE 2026-10-25 (D4-DC-MATH-39b0): Math/RwV3dNormalize.cpp is the one body in both targets. Math::LutNormalize
+# is a call into it with the rebuilt tables (the copy in Math/RwLutTables.cpp deleted). The exact-sqrt fallback stays the
+# default behind MASHED_RWV3D_LUT (default OFF); the flip is a decision row. verify/dcmath39b0_20261025/RESULT_dcmath39b0.md.
 DUP-IN-TARGET:004c4680:Track/WarzonePontoon.cpp,Vehicle/BodyOrientationIntegrate.cpp   # pontoon 2026-10-16, DIFFERS-BEHAVIOUR by design: WarzonePontoon.cpp:OrthoNormalize is transcribed from the listing (verify/pontoon_20261016/disasm_ortho.txt: (y*y+x*x)+z*z sums, LUT inverse sqrt 0x004c3b90, the abs-dot pair selection); BodyOrientationIntegrate.cpp:MatrixOrthoNormalize is std::sqrt with its own selection ([UNCERTAIN] in its header) and feeds the closed D2 physics, so replacing it is a D2 user decision (RESULT_pontoon.md)
 
 # --- dcleaf (2026-10-22, ROADMAP D4 item 4, the vehicle residue): 5 keys gone. 0046dbe0 and 00468b40 (one body each,
