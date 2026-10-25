@@ -1,0 +1,39 @@
+=== CAM_DEF (4cb520ac)
+shift=0  joined racing rows=175  exe src counts {1: 175}
+pos: n=175 median=7.97135e-05 p95=0.000787615 max=0.00175759
+at: n=175 median=0.000397552 deg p95=0.00231678 deg max=0.00690082 deg
+right: n=175 median=2.09131e-06 deg p95=2.73208e-05 deg max=5.51064e-05 deg
+vw58: n=175 median=0 p95=0 max=0
+G-POSE: PASS
+=== CAM_CR (7467ebf4)
+shift=0  joined racing rows=175  exe src counts {1: 175}
+pos: n=175 median=7.95543e-05 p95=0.000787615 max=0.00175851
+at: n=175 median=0.000397552 deg p95=0.00231646 deg max=0.00690082 deg
+right: n=175 median=2.09131e-06 deg p95=2.73208e-05 deg max=5.51064e-05 deg
+vw58: n=175 median=0 p95=0 max=0
+G-POSE: PASS
+=== CAM_DEF2 (4cb520ac)
+shift=0  joined racing rows=175  exe src counts {1: 175}
+pos: n=175 median=7.97135e-05 p95=0.000787615 max=0.00175759
+at: n=175 median=0.000397552 deg p95=0.00231678 deg max=0.00690082 deg
+right: n=175 median=2.09131e-06 deg p95=2.73208e-05 deg max=5.51064e-05 deg
+vw58: n=175 median=0 p95=0 max=0
+G-POSE: PASS
+=== cam_dump CAM_DEF vs CAM_CR
+rows 2999 2999
+rows_with_diff 2769
+  pitch maxabs=0.00119
+  yaw maxabs=6.2e-05
+  ay maxabs=2.04e-05
+  uz maxabs=1.48e-05
+  ux maxabs=1.41e-05
+  ez maxabs=3.9e-06
+  cpz maxabs=3.9e-06
+  dz maxabs=3.82e-06
+  uy maxabs=3.52e-06
+  az maxabs=2.92e-06
+  dy maxabs=2.9e-06
+  ex maxabs=2.9e-06
+=== cam_dump CAM_DEF vs CAM_DEF2
+rows 2999 2999
+rows_with_diff 0
