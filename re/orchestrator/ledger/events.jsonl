@@ -48,3 +48,64 @@
 {"at":"2026-10-24T14:34:23Z","id":"D4-AUDIO-VOLTODS","from":"review","to":"merge-queued","owner":"cmvmfebgj2p6vo115xszgvkj8","note":"orch/D4-AUDIO-VOLTODS"}
 {"at":"2026-10-24T14:34:24Z","id":"D4-AUDIO-VOLTODS","from":"merge-queued","to":"decision","owner":"cmvmfebgj2p6vo115xszgvkj8","note":"L-6"}
 {"at":"2026-10-24T14:51:35Z","id":"D4-AUDIO-VOLTODS","from":"decision","to":"merged","owner":"cmvmfebgj2p6vo115xszgvkj8","note":"merge train 20261024_113525: G-CTRL bacfc747/8dd1c004/6f9932b6  B f9deb9b9/d3601fcc/9da9a26a"}
+{"at":"2026-10-24T15:56:49Z","id":"D3-CF-U9779","from":"decision","to":"open","owner":"","note":"L-4 = option 1 (Mariano): SOLO step. Run D2 x3 and the 13-track check with ELIM_RESOLVE + ROUND_END7 + RACE_TAIL_LATE + R7_PHYS all ON. If both pass, flip the four default ON as one set and re-gate. Commit every artefact RESULT_D3-CF-U9779.md cites under verify/ (not only D:/MashedWT). Branch orch/D3-CF-U9779 @ 45dccb4f5."}
+{"at":"2026-10-24T15:56:58Z","id":"D3-CF-U9779","from":"open","to":"open","owner":"","note":"L-4 = (1) (Mariano 2026-10-24): solo step. Run D2 x3 + 13 tracks with ELIM_RESOLVE + ROUND_END7 + RACE_TAIL_LATE + R7_PHYS ON; if both pass flip the set default ON and re-gate. Commit the cited arm data under verify/u9779_20261024 (now only in D:/MashedWT). Branch orch/D3-CF-U9779 @ 45dccb4f5. k=357 round-restart residue = new row."}
+{"at":"2026-10-24T19:41:06Z","id":"D4-SAVE-B","from":"done","to":"blocked","owner":"cmvmdr22i2ftho115m0vlon8r","note":"L-1 = C (Mariano): done unbuilt, park"}
+{"at":"2026-10-24T19:41:14Z","id":"D4-SAVE-B","from":"blocked","to":"done","owner":"cmvmdr22i2ftho115m0vlon8r","note":"L-1 = C: done unbuilt (restored, L0 run 2 mis-set)"}
+{"at":"2026-10-24T19:43:21Z","id":"HB-LOCKPRIO","from":"open","to":"claimed","owner":"cmvmt15n73zdjo115ox2w8wnk","note":""}
+{"at":"2026-10-24T19:46:36Z","id":"D3-CF-U9782","from":"open","to":"claimed","owner":"cmvmt773b40n5o115xwxxo1ni","note":""}
+{"at":"2026-10-24T19:46:39Z","id":"D1-R1","from":"open","to":"claimed","owner":"cmvmt75tm40mfo115j6wwakdz","note":""}
+{"at":"2026-10-24T19:48:33Z","id":"D4-AUDIO-VOLTODS-FLIP","from":"open","to":"claimed","owner":"cmvmt7bmz40o5o115rxe1kyuj","note":""}
+{"at":"2026-10-24T19:49:11Z","id":"D4-AUDIO-REST","from":"open","to":"claimed","owner":"cmvmt7fi940pho1159qffm3gr","note":""}
+{"at":"2026-10-24T19:52:05Z","id":"D3-CF-U9782","from":"claimed","to":"working","owner":"cmvmt773b40n5o115xwxxo1ni","note":"worktree created; static reading of StepSubstep + carcar log, build"}
+{"at":"2026-10-24T19:52:11Z","id":"D1-R1","from":"claimed","to":"working","owner":"cmvmt75tm40mfo115j6wwakdz","note":"editing ROADMAP state lines"}
+{"at":"2026-10-24T19:52:41Z","id":"D4-AUDIO-REST","from":"claimed","to":"working","owner":"cmvmt7fi940pho1159qffm3gr","note":"text-only survey"}
+{"at":"2026-10-24T19:52:45Z","id":"D4-AUDIO-REST","from":"working","to":"working","owner":"cmvmt7fi940pho1159qffm3gr","note":"text-only survey"}
+{"at":"2026-10-24T19:52:48Z","id":"D1-R1","from":"working","to":"working","owner":"cmvmt75tm40mfo115j6wwakdz","note":"editing ROADMAP state lines"}
+{"at":"2026-10-24T19:53:53Z","id":"D1-R1","from":"working","to":"review","owner":"cmvmt75tm40mfo115j6wwakdz","note":""}
+{"at":"2026-10-24T19:55:13Z","id":"D4-AUDIO-VOLTODS-FLIP","from":"claimed","to":"working","owner":"cmvmt7bmz40o5o115rxe1kyuj","note":"worktree created; locating knob"}
+{"at":"2026-10-24T19:56:38Z","id":"D1-R1","from":"review","to":"merge-queued","owner":"cmvmt75tm40mfo115j6wwakdz","note":"orch/D1-R1"}
+{"at":"2026-10-24T19:56:47Z","id":"D4-AUDIO-REST","from":"working","to":"review","owner":"cmvmt7fi940pho1159qffm3gr","note":""}
+{"at":"2026-10-24T19:57:00Z","id":"HB-LOCKPRIO","from":"claimed","to":"working","owner":"cmvmt15n73zdjo115ox2w8wnk","note":"implemented + self-test 6/6 x3; waiting for merge train to clear before commit"}
+{"at":"2026-10-24T19:57:05Z","id":"D4-AUDIO-REST","from":"review","to":"merge-queued","owner":"cmvmt7fi940pho1159qffm3gr","note":"orch/D4-AUDIO-REST"}
+{"at":"2026-10-24T19:58:03Z","id":"D4-AUDIO-RWS3","from":"open","to":"claimed","owner":"cmvmtlnpx43wro115aumi8hb4","note":""}
+{"at":"2026-10-24T20:01:24Z","id":"D4-AUDIO-RWS3","from":"claimed","to":"working","owner":"cmvmtlnpx43wro115aumi8hb4","note":"survey of the 13 AudioRws.cpp leftovers"}
+{"at":"2026-10-24T20:13:48Z","id":"HB-LOCKPRIO","from":"working","to":"done","owner":"cmvmt15n73zdjo115ox2w8wnk","note":"merge-train priority marker in mashed_lock.py + MachineLock.ps1, merge_train passes --priority; 8778fb625"}
+{"at":"2026-10-24T20:14:08Z","id":"D1-R2","from":"open","to":"claimed","owner":"cmvmt75tm40mfo115j6wwakdz","note":""}
+{"at":"2026-10-24T20:16:53Z","id":"D1-R2","from":"claimed","to":"working","owner":"cmvmt75tm40mfo115j6wwakdz","note":"stills for review"}
+{"at":"2026-10-24T20:17:33Z","id":"D1-R2","from":"working","to":"decision","owner":"cmvmt75tm40mfo115j6wwakdz","note":"L-7"}
+{"at":"2026-10-24T20:17:36Z","id":"D1-R2","from":"decision","to":"review","owner":"cmvmt75tm40mfo115j6wwakdz","note":""}
+{"at":"2026-10-24T20:17:47Z","id":"D1-R1","from":"merge-queued","to":"merged","owner":"cmvmt75tm40mfo115j6wwakdz","note":"merge train 20261024_171533: not run: text-only change (no build input touched)"}
+{"at":"2026-10-24T20:17:49Z","id":"D4-AUDIO-REST","from":"merge-queued","to":"merged","owner":"cmvmt7fi940pho1159qffm3gr","note":"merge train 20261024_171533: not run: text-only change (no build input touched)"}
+{"at":"2026-10-24T20:17:57Z","id":"D1-R2","from":"review","to":"merge-queued","owner":"cmvmt75tm40mfo115j6wwakdz","note":"orch/D1-R2"}
+{"at":"2026-10-24T20:21:33Z","id":"D1-R2","from":"merge-queued","to":"merged","owner":"cmvmt75tm40mfo115j6wwakdz","note":"merge train 20261024_171810: not run: text-only change (no build input touched)"}
+{"at":"2026-10-24T20:27:24Z","id":"D4-AUDIO-VOLTODS-FLIP","from":"working","to":"review","owner":"cmvmt7bmz40o5o115rxe1kyuj","note":"GREEN: gates unchanged, knob and port body deleted"}
+{"at":"2026-10-24T20:27:39Z","id":"D4-AUDIO-VOLTODS-FLIP","from":"review","to":"merge-queued","owner":"cmvmt7bmz40o5o115rxe1kyuj","note":"orch/D4-AUDIO-VOLTODS-FLIP"}
+{"at":"2026-10-24T20:54:23Z","id":"D3-CF-U9782","from":"working","to":"review","owner":"cmvmt773b40n5o115xwxxo1ni","note":"GREEN no divergence: 0x00469df0 returns arg2==0 with arg2=live ebp (0x00470bc3), so ebp = port pass; G-CTRL count 0/1524 pass-0 loops; no knob; gates unchanged; U-9782 close via re-classify"}
+{"at":"2026-10-24T20:54:57Z","id":"D3-CF-U9782","from":"review","to":"merge-queued","owner":"cmvmt773b40n5o115xwxxo1ni","note":"orch/D3-CF-U9782"}
+{"at":"2026-10-24T21:12:16Z","id":"D1-R2-CLOSE","from":"open","to":"claimed","owner":"cmvmw9owz4hafo1150i1ia6xc","note":""}
+{"at":"2026-10-24T21:12:19Z","id":"D1-SHADOWS","from":"open","to":"claimed","owner":"cmvmw9owz4hafo1150i1ia6xc","note":""}
+{"at":"2026-10-24T21:13:08Z","id":"D4-AUDIO-VOLTODS-FLIP","from":"merge-queued","to":"merged","owner":"cmvmt7bmz40o5o115rxe1kyuj","note":"merge train 20261024_174704: G-CTRL bacfc747/8dd1c004/6f9932b6  B f9deb9b9/d3601fcc/9da9a26a"}
+{"at":"2026-10-24T21:20:07Z","id":"D3-CF-U9782","from":"merge-queued","to":"merged","owner":"cmvmt773b40n5o115xwxxo1ni","note":"merge train 20261024_181419: not run: text-only change (no build input touched)"}
+{"at":"2026-10-24T21:22:12Z","id":"D1-R2-CLOSE","from":"claimed","to":"review","owner":"cmvmw9owz4hafo1150i1ia6xc","note":"23a2d6654"}
+{"at":"2026-10-24T21:22:42Z","id":"D1-R2-CLOSE","from":"review","to":"working","owner":"cmvmw9owz4hafo1150i1ia6xc","note":"ROADMAP D1-R2 close text"}
+{"at":"2026-10-24T21:22:46Z","id":"D1-SHADOWS","from":"claimed","to":"working","owner":"cmvmw9owz4hafo1150i1ia6xc","note":"static: locate original pole-shadow path"}
+{"at":"2026-10-24T21:23:39Z","id":"D1-R2-CLOSE","from":"working","to":"review","owner":"cmvmw9owz4hafo1150i1ia6xc","note":"23a2d6654"}
+{"at":"2026-10-24T21:24:48Z","id":"D1-R2-CLOSE","from":"review","to":"merge-queued","owner":"cmvmw9owz4hafo1150i1ia6xc","note":"orch/D1-R2-CLOSE"}
+{"at":"2026-10-24T21:29:09Z","id":"D4-AUDIO-RWS3","from":"working","to":"review","owner":"cmvmtlnpx43wro115aumi8hb4","note":"slice 3 GREEN: 13 installs linked into the exe; path1 13/13, gates unchanged on f614d0f8"}
+{"at":"2026-10-24T21:29:18Z","id":"D1-R2-CLOSE","from":"merge-queued","to":"merged","owner":"cmvmw9owz4hafo1150i1ia6xc","note":"merge train 20261024_182559: not run: text-only change (no build input touched)"}
+{"at":"2026-10-24T21:30:23Z","id":"D3-CF-U9779","from":"open","to":"claimed","owner":"cmvmwx64p4mubo115uim0xy7w","note":""}
+{"at":"2026-10-24T21:31:31Z","id":"D3-CF-U9779","from":"claimed","to":"working","owner":"cmvmwx64p4mubo115uim0xy7w","note":"L-4=(1): running D2 x3 + 13 tracks with U7P (ELIM_RESOLVE+ROUND_END7+RACE_TAIL_LATE+R7_PHYS)"}
+{"at":"2026-10-24T21:33:56Z","id":"D4-AUDIO-RWS3","from":"review","to":"merge-queued","owner":"cmvmtlnpx43wro115aumi8hb4","note":"orch/D4-AUDIO-RWS3"}
+{"at":"2026-10-24T21:54:43Z","id":"D4-AUDIO-RWS3","from":"merge-queued","to":"merged","owner":"cmvmtlnpx43wro115aumi8hb4","note":"merge train 20261024_183701: G-CTRL bacfc747/8dd1c004/6f9932b6  B f9deb9b9/d3601fcc/9da9a26a"}
+{"at":"2026-10-24T23:22:33Z","id":"D3-CF-U9779","from":"working","to":"review","owner":"cmvmwx64p4mubo115uim0xy7w","note":"Flip gates PASS (D2 3/3, 13 tracks 878 rows 0 RED); four knobs flipped default ON (47d3c3519); new G-CTRL ef5f2e10/57f7ff83/b4f4b55a, B c37d4c0c/0a8f9806/7013671d; opt-outs = pre-flip default; k357 residue noted for D3-CF-K357"}
+{"at":"2026-10-24T23:26:42Z","id":"D3-CF-U9779","from":"review","to":"merge-queued","owner":"cmvmwx64p4mubo115uim0xy7w","note":"orch/D3-CF-U9779"}
+{"at":"2026-10-24T23:38:02Z","id":"D1-SHADOWS","from":"working","to":"review","owner":"cmvmw9owz4hafo1150i1ia6xc","note":"3e42724e9 GREEN: already ported (rtex F-DUAL), stale still; no source change"}
+{"at":"2026-10-24T23:39:03Z","id":"D1-SHADOWS","from":"review","to":"merge-queued","owner":"cmvmw9owz4hafo1150i1ia6xc","note":"orch/D1-SHADOWS"}
+{"at":"2026-10-25T00:08:39Z","id":"D3-CF-U9779","from":"merge-queued","to":"red-merge","owner":"cmvmwx64p4mubo115uim0xy7w","note":"merge train 20261024_203131: default gates changed"}
+{"at":"2026-10-25T00:17:44Z","id":"D1-SHADOWS","from":"merge-queued","to":"review","owner":"cmvmw9owz4hafo1150i1ia6xc","note":"held out of the queue until the D3-CF-U9779 flip lands (decided-flip ordering), then re-enqueue @ 3e42724e9"}
+{"at":"2026-10-25T00:17:55Z","id":"D3-CF-U9779","from":"red-merge","to":"merge-queued","owner":"cmvmwx64p4mubo115uim0xy7w","note":"orch/D3-CF-U9779"}
+{"at":"2026-10-25T01:52:43Z","id":"D3-CF-U9779","from":"merge-queued","to":"red-merge","owner":"cmvmwx64p4mubo115uim0xy7w","note":"merge train 20261024_220701: full gate set"}
+{"at":"2026-10-25T01:54:34Z","id":"D3-CF-U9779","from":"red-merge","to":"decision","owner":"cmvmwx64p4mubo115uim0xy7w","note":"L-8"}
+{"at":"2026-10-25T01:54:35Z","id":"D1-SHADOWS","from":"review","to":"merge-queued","owner":"cmvmw9owz4hafo1150i1ia6xc","note":"orch/D1-SHADOWS"}
+{"at":"2026-10-25T01:58:13Z","id":"D1-SHADOWS","from":"merge-queued","to":"merged","owner":"cmvmw9owz4hafo1150i1ia6xc","note":"merge train 20261024_225534: not run: text-only change (no build input touched)"}
