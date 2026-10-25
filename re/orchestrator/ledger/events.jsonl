@@ -109,3 +109,4 @@
 {"at":"2026-10-25T01:54:34Z","id":"D3-CF-U9779","from":"red-merge","to":"decision","owner":"cmvmwx64p4mubo115uim0xy7w","note":"L-8"}
 {"at":"2026-10-25T01:54:35Z","id":"D1-SHADOWS","from":"review","to":"merge-queued","owner":"cmvmw9owz4hafo1150i1ia6xc","note":"orch/D1-SHADOWS"}
 {"at":"2026-10-25T01:58:13Z","id":"D1-SHADOWS","from":"merge-queued","to":"merged","owner":"cmvmw9owz4hafo1150i1ia6xc","note":"merge train 20261024_225534: not run: text-only change (no build input touched)"}
+{"at":"2026-10-25T02:01:52Z","id":"D3-CF-U9779","from":"decision","to":"blocked","owner":"cmvmwx64p4mubo115uim0xy7w","note":"L-8 = B (Mariano): no merge until D3-CF-U9779-RECON reconciles the 8 RED 13-track rows; merge-train refs stay pre-flip (313260e31) until the flip lands"}

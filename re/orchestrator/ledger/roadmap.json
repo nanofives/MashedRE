@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "source": "re/orchestrator/roadmap_seed_20261024.md verified by account2 worker 2026-10-24 + DECISIONS.md W0",
-  "updated": "2026-10-25T01:58:13Z",
+  "updated": "2026-10-25T02:01:51Z",
   "rows": [
     {
       "id": "D1-R1",
@@ -579,7 +579,7 @@
       "id": "D3-CF-U9779",
       "section": "D3 carried",
       "title": "Round end at k=220 (sub-state 7) on B recipe; residual U-9781",
-      "stage": "decision",
+      "stage": "blocked",
       "owner": "cmvmwx64p4mubo115uim0xy7w",
       "parent": "cmvmt2bgz3zrlo115ffmhay4i",
       "branch": "orch/D3-CF-U9779",
@@ -594,8 +594,8 @@
       "decision": "L-8",
       "wave": 1,
       "next": "U-9781: entry probes on FUN_00470c70/FUN_004709a0 on sub-state-7 frames plus a read of 0x007f19b8, against the port StepCar under MASHED_ROUND_END7",
-      "note": "merge train 20261024_220701: full gate set",
-      "updated": "2026-10-25T01:54:34Z"
+      "note": "L-8 = B (Mariano): no merge until D3-CF-U9779-RECON reconciles the 8 RED 13-track rows; merge-train refs stay pre-flip (313260e31) until the flip lands",
+      "updated": "2026-10-25T02:01:51Z"
     },
     {
       "id": "D3-CF-U9782",
@@ -1220,6 +1220,63 @@
       "note": "merge train 20261024_182559: not run: text-only change (no build input touched)",
       "updated": "2026-10-24T21:29:18Z",
       "sha": "837b9ead30cfa073ba946dfa91ab50af94269212"
+    },
+    {
+      "id": "D3-CF-U9779-RECON",
+      "section": "D3 carried",
+      "title": "L-8 = B: reconcile the 8 RED 13-track rows (01_Egypt 740/780/815, 03_Arctic 1051, 10_Dump 735/775/810, 13_Training 924) from merge train 20261024_220701 before any U9779 merge: per row flip effect vs defect, and why the worker's per-track cites gave 0 RED while cites_merged.json + tracks_flip_score.txt gave 8 (see memory sim-trajectory-is-code-layout-sensitive)",
+      "stage": "open",
+      "owner": "",
+      "parent": "",
+      "branch": "",
+      "worktree": "",
+      "evidence": "D:/MashedWT/mtrain_data/20261024_220701/{merge_train.log,tracks_score.txt}; verify/u9779_20261024/data/t13_flip; DECISIONS L-8",
+      "deps": [],
+      "needs": [],
+      "solo": false,
+      "decision": "",
+      "wave": 1,
+      "next": "",
+      "note": "",
+      "updated": "2026-10-25T02:01:39Z"
+    },
+    {
+      "id": "HB-D2RERUN",
+      "section": "Harness",
+      "title": "merge_train.ps1 applies the D2 rerun rule: re-run any D2 arm under d2_min_lines (1600) motion_diag lines instead of scoring it as a fail (train 20261024_220701: D2_DEF_2 1485 lines)",
+      "stage": "open",
+      "owner": "",
+      "parent": "",
+      "branch": "",
+      "worktree": "",
+      "evidence": "merge_train.ps1 D2 block; DECISIONS L-8",
+      "deps": [],
+      "needs": [],
+      "solo": false,
+      "decision": "",
+      "wave": 0,
+      "next": "",
+      "note": "",
+      "updated": "2026-10-25T02:01:43Z"
+    },
+    {
+      "id": "HB-SOLOSTALE",
+      "section": "Harness",
+      "title": "A merge train killed mid-run leaves its solo token (pid=None, ttl 4 h) and its mtrain worktree; expire or reclaim it (run 2: 21:53 token blocked the re-run until closed by hand)",
+      "stage": "open",
+      "owner": "",
+      "parent": "",
+      "branch": "",
+      "worktree": "",
+      "evidence": "run 2 L0 log; mashed_lock.py solo_begin/solo_end",
+      "deps": [],
+      "needs": [],
+      "solo": false,
+      "decision": "",
+      "wave": 0,
+      "next": "",
+      "note": "",
+      "updated": "2026-10-25T02:01:47Z"
     }
   ]
 }
