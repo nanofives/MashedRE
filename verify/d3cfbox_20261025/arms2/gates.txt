@@ -1,0 +1,45 @@
+[mashed-lock] HELD 'mashed_machine' pid=29016 (D3-CF-BOX)
+  STACK['LT3'] = STACK['TC'] + ['MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=3', 'MASHED_LT_LOG=@OUT@\@NAME@.lt.csv', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+  STACK['LT3'] = STACK['TC'] + ['MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=3', 'MASHED_LT_LOG=@OUT@\@NAME@.lt.csv', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+  STACK['LT3'] = STACK['TC'] + ['MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=3', 'MASHED_LT_LOG=@OUT@\@NAME@.lt.csv', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+  STACK['LR3'] = ['MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=3', 'MASHED_LT_LOG=@OUT@\@NAME@.lt.csv', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+  STACK['LR3'] = ['MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=3', 'MASHED_LT_LOG=@OUT@\@NAME@.lt.csv', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+  STACK['LR3'] = ['MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=3', 'MASHED_LT_LOG=@OUT@\@NAME@.lt.csv', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+  STACK['TC0'] = STACK['TC'] + ['MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=0']
+  for _c in (0, 1, 2, 3): STACK[f'FR{_c}'] = STACK['FR'] + [f'MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', f'MASHED_RECDUMP_SLOT={_c}']
+  STACK['LT1'] = STACK['TC'] + ['MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=1', 'MASHED_LT_LOG=@OUT@\@NAME@.lt.csv']
+  STACK['LT1'] = STACK['TC'] + ['MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=1', 'MASHED_LT_LOG=@OUT@\@NAME@.lt.csv']
+  STACK[f'TC{_c}'] = STACK['TC'] + [f'MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', f'MASHED_RECDUMP_SLOT={_c}', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+  STACK[f'TC{_c}'] = STACK['TC'] + [f'MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', f'MASHED_RECDUMP_SLOT={_c}', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+  STACK[f'TM{_c}'] = STACK['TM'] + [f'MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', f'MASHED_RECDUMP_SLOT={_c}', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+  STACK[f'TM{_c}'] = STACK['TM'] + [f'MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', f'MASHED_RECDUMP_SLOT={_c}', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+=== B_BOXR_K0 pid=18404 exe=8ff23b60
+    exit=0 self_exited=True secs=29
+    B_BOXR_K0.step.csv lines=1533 sha8=788db6af
+=== B_ER_K0 pid=17824 exe=8ff23b60
+    exit=0 self_exited=True secs=23
+    B_ER_K0.step.csv lines=1533 sha8=788db6af
+=== B_BOX_K0 pid=24168 exe=8ff23b60
+    exit=0 self_exited=True secs=25
+    B_BOX_K0.step.csv lines=2036 sha8=f9deb9b9
+=== B_DEF_K0 pid=19424 exe=8ff23b60
+    exit=0 self_exited=True secs=25
+    B_DEF_K0.step.csv lines=2036 sha8=f9deb9b9
+=== B_DEF_K1 pid=19600 exe=8ff23b60
+    exit=0 self_exited=True secs=24
+    B_DEF_K1.step.csv lines=2989 sha8=d3601fcc
+=== B_DEF_K26 pid=7532 exe=8ff23b60
+    exit=0 self_exited=True secs=24
+    B_DEF_K26.step.csv lines=2336 sha8=9da9a26a
+=== H_DEF pid=14560 exe=8ff23b60
+    exit=0 self_exited=True secs=256
+    H_DEF.step.csv lines=19059 sha8=bacfc747
+    H_DEF.gates.csv lines=53993 sha8=8dd1c004
+    H_DEF.ptrace.log lines=26996 sha8=6f9932b6
+=== H_BOX pid=28048 exe=8ff23b60
+    exit=0 self_exited=True secs=247
+    H_BOX.step.csv lines=19084 sha8=2b695761
+    H_BOX.gates.csv lines=53273 sha8=d7cda332
+    H_BOX.ptrace.log lines=26636 sha8=2ec66daf
+DONE
+[mashed-lock] released 'mashed_machine' pid=29016
