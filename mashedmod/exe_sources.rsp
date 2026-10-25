@@ -91,6 +91,7 @@
 "Race\RaceModes.cpp"
 "Race\RuleEngine.cpp"
 "Race\CollectDone.cpp"
+"Race\EvalResultCore.cpp"
 "Audio\RwsBank.cpp"
 "Audio\AudioEngine.cpp"
 "Audio\RingHeaderInit.cpp"

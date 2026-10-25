@@ -24,7 +24,6 @@
 # produced exactly such a line.
 
 DUP-IN-TARGET:004c4d20:Math/RwMatrixRotate.cpp,Race/RaceCamera.cpp   # audit=DIFFERS-BEHAVIOUR; [exe] two bodies: Math/RwMatrixRotate.cpp:52 (), Race/RaceCamera.cpp:66 (RotateAboutAxis)
-CROSS-TARGET:00410510:Race/RuleEngine.cpp,Race/ScoringHooks.cpp   # audit=DIFFERS-BEHAVIOUR; exe-only Race/RuleEngine.cpp  vs  asi-only Race/ScoringHooks.cpp
 
 # --- ADDED 2026-09-30 (U-9156): exposed by the SECOND ANCHORING PASS in
 # scripts/rva_body_scan.py, which binds a body whose `// <rva> <Name>` header

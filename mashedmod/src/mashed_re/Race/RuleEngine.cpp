@@ -2,6 +2,7 @@
 // the pool13 decomp literally; every branch cites its original address range.
 #include "RuleEngine.h"
 #include "CollectDone.h"
+#include "EvalResultCore.h"
 
 namespace mashed_re {
 namespace Race {
@@ -141,99 +142,43 @@ int SegmentCheck(int rule, const Cars& c, const Persist& p,
     return 0;
 }
 
-// 0x00410510 verbatim skeleton. See header for the caller contract.
+// FUN_00410510 over the host-side snapshot (D4-DC-0510: the control flow is the one body in EvalResultCore.cpp, shared with
+// the .asi's installed hook; this reader feeds it Cars/Persist). The end block's side effects (FUN_0045bed0/FUN_0045bf30
+// powerup teardown, FUN_00458f80, DAT_0063ba8c=0xb, FUN_00448700 result set, course-0x26 FUN_0044df80) and DAT_0063b90c
+// stay the race layer's job, so OnEnter / OnConclude are empty here and OnPlayer0Flag is folded into *p0Won.
+namespace {
+struct SnapshotInputs final : EvalResultInputs {
+    int rule; const Cars& c; const Persist& p;
+    SnapshotInputs(int r, const Cars& cars, const Persist& per) : rule(r), c(cars), p(per) {}
+    int   RaceType() override { return p.timeAttack ? 2 : 0; }
+    int   Rule() override { return rule; }
+    int   Participants() override { return c.participants; }
+    int   Teams() override { return p.teams ? 1 : 0; }
+    int   Score(int car) override { return c.score[car]; }
+    int   SlotActive(int car) override { return c.active[car] ? 1 : 0; }
+    int   Alive(int car) override { return c.alive[car] ? 1 : 0; }
+    int   FinishSlot(int slot) override { return FinishSlotInt(p, slot); }
+    int   CollectDone() override { return CollectAllDone(p) ? 1 : 0; }
+    int   Rule7Count() override { return c.participants; }
+    float Metric(int car) override { return c.metric[car]; }
+    int   Motion(int) override { return c.motion0; }      // only car 0 is read (cases 9 / 10)
+    float Timer() override { return p.timer; }
+    float TimerZero() override { return 0.f; }            // DAT_005d757c = 0
+    float FinishMetric() override { return kFinishMetric; }
+    float Rule9Gap() override { return kRule9Gap; }
+    float Rule10Metric() override { return kRule10Metric; }
+    bool  Rule7Keep() override { return p.rule7KeepWinner; }
+    void  OnEnter() override {}
+    void  OnPlayer0Flag(int) override {}
+    void  OnConclude(int) override {}
+};
+}  // namespace
+
 int EvaluateResult(int rule, const Cars& c, const Persist& p, bool* p0Won, Rule7Trace* r7) {
-    if (p0Won) *p0Won = false;
-    // `if (FUN_0042f6a0() == 2) return 0;` — time-attack handled elsewhere.
-    if (p.timeAttack) return 0;
-
-    int winner = 0;                                   // iVar6
-    // Score-target scan (0x00410510 first loop, cars 1..4 as 1-based):
-    //   participants 2/3 (or teams): score == 8 -> winner
-    //   rule == 2:                   score == 8 -> winner
-    //   participants 4:              score > 11 -> winner
-    for (int i = 1; i <= kCars; ++i) {
-        const int sc = c.score[i - 1];                // FUN_0040b6d0(i-1)
-        if ((c.participants == 2 || c.participants == 3 || p.teams) && sc == 8)
-            winner = i;
-        if (rule == 2 && sc == 8) winner = i;
-        if (c.participants == 4 && sc > 11) winner = i;
-    }
-    // Alive refinement (second loop): prefer an active+alive car that meets
-    // the same target (slot probe + FUN_0046c7b0(i)==1).
-    if (winner != 0) {
-        for (int i = 0; i < kCars; ++i) {
-            if (!c.active[i] || !c.alive[i]) continue;
-            const int sc = c.score[i];
-            if ((c.participants == 2 || c.participants == 3 || p.teams) && sc == 8)
-                winner = i + 1;
-            if (c.participants == 4 && sc > 11) winner = i + 1;
-        }
-    }
-
-    bool concluded = false;                           // goto LAB_0041062a
-    bool won0 = false;                                // DAT_007f0fcc write
-    switch (rule) {                                   // switch(DAT_007f0fd0)
-    case 4:
-        winner = FinishSlotInt(p, 0) + 1;             // first finisher + 1
-        break;
-    case 5:
-        // `if (FUN_0046c7b0(0) == 0) { -1; goto end; } iVar6 = FUN_00405890();`
-        if (!c.alive[0]) { winner = -1; concluded = true; break; }
-        winner = CollectAllDone(p) ? 1 : 0;
-        break;
-    case 7: {
-        // first car (0..participants) with metric > 3.0 -> car+1. The original's loop (0x0041075a) counts in edi
-        // only and leaves esi (the score-scan winner) as it is when no car is above 3.0 (0x00410790). The exe cleared
-        // it; MASHED_RULE7_KEEP (Persist::rule7KeepWinner, default OFF) keeps it.
-        const int scan = winner;
-        if (!p.rule7KeepWinner) winner = 0;
-        int metricWinner = 0;
-        for (int i = 0; i < c.participants; ++i)
-            if (kFinishMetric < c.metric[i]) { metricWinner = i + 1; break; }
-        if (metricWinner != 0) winner = metricWinner;
-        if (r7) { r7->seen = true; r7->scan = scan; r7->metric = metricWinner; }
-        break;
-    }
-    case 8:
-        winner = FinishSlotInt(p, 0) + 1;
-        if (winner != 1) {                            // car 0 not first
-            if (winner == 0) winner = -1;             // nobody finished
-            concluded = true;
-        }
-        break;
-    case 9:
-        // `if (FUN_00417740(0) != -1) { -1; fcc=0; goto end; }` — ANY finisher
-        // already listed ends it with no winner; then motion0 / gap checks.
-        if (FinishSlotInt(p, 0) != -1) { winner = -1; concluded = true; break; }
-        if (c.motion0 != 0)            { winner = -1; concluded = true; break; }
-        // `if (0.9 <= metric[1] - metric[0]) { -1; goto end; }` else winner=1,
-        // fcc=1 (LAB_004107e3).
-        if (kRule9Gap <= c.metric[1] - c.metric[0]) { winner = -1; concluded = true; break; }
-        winner = 1; won0 = true; concluded = true;
-        break;
-    case 10:
-        if (c.motion0 != 0) { winner = -1; concluded = true; break; }
-        if (c.metric[0] < kRule10Metric) {
-            // timer still running (`(a<0)==(a==0)` vs 0) -> return 0
-            if ((p.timer < 0.f) == (p.timer == 0.f)) return 0;
-            winner = -1; concluded = true; break;     // LAB_00410801
-        }
-        winner = 1; won0 = true; concluded = true;    // LAB_004107e3
-        break;
-    default:
-        break;                                        // rules {0,1,2,3,6}
-    }
-
-    if (r7 && r7->seen) r7->ret = (!concluded && winner == 0) ? 0 : winner;
-    // `if (iVar6 == 0) return 0;` (not concluded, no winner -> next round)
-    if (!concluded && winner == 0) return 0;
-
-    // LAB_0041062a end block. The original's side effects (FUN_0045bed0/
-    // FUN_0045bf30 powerup teardown, FUN_00458f80, DAT_0063ba8c=0xb,
-    // FUN_00448700 result set, course-0x26 FUN_0044df80) are the race layer's
-    // job. DAT_007f0fcc: winner==-1 -> 0; else (winner-1 == 0).
-    if (p0Won) *p0Won = (winner == -1) ? false : (won0 || winner - 1 == 0);
+    SnapshotInputs in(rule, c, p);
+    const int winner = EvaluateResultCore(in, r7);
+    // DAT_007f0fcc: winner == -1 -> 0, else (winner - 1 == 0); the case-9/10 LAB_004107e3 writes are winner == 1 too.
+    if (p0Won) *p0Won = (winner == 1);
     return winner;
 }
 
