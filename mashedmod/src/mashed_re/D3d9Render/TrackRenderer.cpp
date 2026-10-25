@@ -191,6 +191,32 @@ int aib_game_sub_mode() {                                // race (FUN_0040e350)
     return 6;
 }
 int pkcb_sub_mode()        { return aib_game_sub_mode(); }   // [mode 7 M3] the same FUN_0040e350 host
+// [D3-CF-BOX] MASHED_BOX_PRODUCERS (default OFF): the producers of the box state DAT_0068d1f0[slot] that the
+// dispatcher gates on (0x0045bc6b). All of them write through the setter FUN_0045ba00 (0x0045ba00):
+//   FUN_004111c0 race start: 4 at 0x0040ff6b / 1 at 0x0040ff9c, by *(*(int*)0x005f2770 + 0x34 + i*4) (0x0040ff56)
+//   FUN_0040e590 grid placement: 1 at 0x0040eeae for every slot whose same dword is non-zero
+//   FUN_00422fd0 kill: 2 at 0x00423005 (the elimination block calls it at 0x00411025)
+// Not ported (named in verify/d3cfbox_20261025/PREREG_D3-CF-BOX.md): FUN_00424eb0's respawn 1s (0x0042512f,
+// 0x004251c8) and FUN_0040be50 case 6 (2 at 0x0040c578). Knob OFF: the old per-frame 1 / 4 write, dispatcher state 6.
+// MASHED_BOX_TRACE=<file>: one line per box write.
+static bool BoxProducersEnabled() {
+    static const bool s = [] { const char* e = std::getenv("MASHED_BOX_PRODUCERS"); return e && e[0] && e[0] != '0'; }();
+    return s;
+}
+static std::uint32_t s_boxFrame = 0;
+static bool s_boxRaceInit = false;     // set by the race init right before its StartRound
+static void BoxTrace(const char* cls, int s, int v, int prev) {
+    static const char* p = [] { const char* e = std::getenv("MASHED_BOX_TRACE"); return (e && e[0]) ? e : nullptr; }();
+    if (!p) return;
+    static std::FILE* f = nullptr;
+    if (!f) { f = std::fopen(p, "w"); if (f) std::fprintf(f, "frame,class,slot,value,prev\n"); }
+    if (f) { std::fprintf(f, "%u,%s,%d,%d,%d\n", s_boxFrame, cls, s, v, prev); std::fflush(f); }
+}
+static void BoxWrite(Powerup::PowerupSystem& pw, int s, int v, const char* cls) {   // FUN_0045ba00
+    if (!BoxProducersEnabled() || s < 0 || s >= Powerup::PowerupSystem::kSlots) return;
+    BoxTrace(cls, s, v, pw.BoxState(s));
+    pw.SetBoxState(s, v);
+}
 // [brecipe] MASHED_MODE_LIVE (default OFF): the AI host reads the two live words the original reads,
 // FUN_0042f6a0 = mov eax,[0x0067e9fc] (0x0042f6a0) and DAT_007f0fd0, and SetRaceRule writes rule_ into
 // 0x007f0fd0, so the rule engine, the AI dispatch (FUN_00418560's fd0 4/9 / 8 arms) and the live readers
@@ -6889,8 +6915,16 @@ void TrackRenderer::TickPowerupDispatch(float dt) {
     // in this build -- FUN_00422fd0 / FUN_0040be50 are not ported -- so it is left
     // unwritten rather than invented. Slots without a car were already skipped by
     // the armed test, so 4 changes nothing observable today.
-    for (int s = 0; s < Powerup::PowerupSystem::kSlots; ++s)
-        pw_.SetBoxState(s, cars[s].alive ? 1 : 4);
+    // [D3-CF-BOX] MASHED_BOX_PRODUCERS: the producers write it (StartRound, the elimination sites, KillCar); only a
+    // slot with no car is held at 4 here, which no producer ever writes.
+    ++s_boxFrame;
+    if (BoxProducersEnabled()) {
+        for (int s = 1; s < Powerup::PowerupSystem::kSlots; ++s)
+            if (static_cast<std::size_t>(s - 1) >= pu_ai_.size()) pw_.SetBoxState(s, 4);
+    } else {
+        for (int s = 0; s < Powerup::PowerupSystem::kSlots; ++s)
+            pw_.SetBoxState(s, cars[s].alive ? 1 : 4);
+    }
 
     // slot 0 ownership: the HUD held orb stays until the armed type deactivates.
     if (!pw_.Armed(0)) {
@@ -6954,6 +6988,16 @@ void TrackRenderer::TickPowerupDispatch(float dt) {
     // [UNCERTAIN] the standalone has no DAT_0063ba8c state machine; "running
     // race" (past the countdown -- UpdateCar returns early while it runs) is
     // mapped to 6. Values 1..11 are written at 0x0040d3e7..0x004111a6.
+    // [D3-CF-BOX] MASHED_BOX_PRODUCERS: FUN_0040e350 itself (aib_game_sub_mode, 6 unless MASHED_ROUND_END7 /
+    // MASHED_SUBSTATE), and the trace records the dispatcher's own 2 -> 3 write (0x0045bc85).
+    if (BoxProducersEnabled()) {
+        int pre[Powerup::PowerupSystem::kSlots];
+        for (int s = 0; s < Powerup::PowerupSystem::kSlots; ++s) pre[s] = pw_.BoxState(s);
+        pw_.Tick(dt, cars, aib_game_sub_mode());
+        for (int s = 0; s < Powerup::PowerupSystem::kSlots; ++s)
+            if (pw_.BoxState(s) != pre[s]) BoxTrace("3", s, pw_.BoxState(s), pre[s]);
+        return;
+    }
     pw_.Tick(dt, cars, 6);
 }
 
@@ -7049,6 +7093,14 @@ void TrackRenderer::StartRound() {
     round_alive_ = kRaceCars;
     round_winner_ = -1;
     s_roundEnd7 = false;   // [u9779] MASHED_ROUND_END7: a new round leaves sub-state 7
+    // [D3-CF-BOX] MASHED_BOX_PRODUCERS: "slot has a car" stands for the original's *(PTR_005f2770 + 0x34 + i*4) != 0.
+    // Race init: FUN_004111c0's 4 (0x0040ff6b) / 1 (0x0040ff9c). Every round: FUN_0040e590's 1 (0x0040eeae).
+    for (int s = 0; s < Powerup::PowerupSystem::kSlots; ++s) {
+        const bool hasCar = s == 0 || static_cast<std::size_t>(s - 1) < ai_cars_.size();
+        if (s_boxRaceInit) BoxWrite(pw_, s, hasCar ? 1 : 4, "start");
+        if (hasCar) BoxWrite(pw_, s, 1, "grid");
+    }
+    s_boxRaceInit = false;
     for (int i = 0; i < kRaceCars; ++i) race_[i] = RaceCar{};
     // U-9005 RESOLVED (rules oracle 2026-07-02, log/rules_oracle_rule8.json
     // round-resets=1): the original DOES re-init the finish order on the
@@ -7272,6 +7324,7 @@ void TrackRenderer::StartMatch() {
     }
     SeedMatchScores();
     elim_count_ = 0;
+    s_boxRaceInit = true;   // [D3-CF-BOX] the race-start box writes of FUN_004111c0
     StartRound();
 }
 
@@ -7437,6 +7490,7 @@ void TrackRenderer::KillCar(int car) {
     if (car < 0 || car >= kRaceCars || !race_[car].alive) return;
     race_[car].alive = false;
     --round_alive_;
+    BoxWrite(pw_, car, 2, "kill");   // [D3-CF-BOX] FUN_00422fd0's 2 (0x00423005)
     if (car > 0 && car - 1 < static_cast<int>(ai_cars_.size()))
         ai_cars_[static_cast<std::size_t>(car - 1)].speed = 0.f;
 }
@@ -8327,6 +8381,7 @@ void TrackRenderer::UpdateRace(float dt) {
             if (victim >= 0 && race_[victim].alive) {
                 race_[victim].alive = false;
                 --round_alive_;
+                BoxWrite(pw_, victim, 2, "kill");   // [D3-CF-BOX] FUN_00410d10 0x00411025 -> FUN_00422fd0 0x00423005
                 if (victim > 0 && victim - 1 < static_cast<int>(ai_cars_.size()))
                     ai_cars_[static_cast<std::size_t>(victim - 1)].speed = 0.f;
                 ScoreOnElimination(victim);    // FUN_0040eee0(victim, 1)
@@ -8410,6 +8465,7 @@ void TrackRenderer::UpdateRace(float dt) {
         if (victim >= 0 && race_[victim].alive) {
             race_[victim].alive = false;
             --round_alive_;
+            BoxWrite(pw_, victim, 2, "kill");   // [D3-CF-BOX] FUN_00410d10 0x00411025 -> FUN_00422fd0 0x00423005
             if (victim > 0 && victim - 1 < static_cast<int>(ai_cars_.size()))
                 ai_cars_[static_cast<std::size_t>(victim - 1)].speed = 0.f;
             ScoreOnElimination(victim);        // FUN_0040eee0(victim, 1)

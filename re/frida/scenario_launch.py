@@ -2048,6 +2048,21 @@ function elimProbeArm(){
   } catch(e){ return 'ERR ' + e; }
 }
 function elimProbeDrain(){ const r = EP.rows; EP.rows = []; return r; }
+// --- BOX-STATE probe (D3-CF-BOX, 2026-10-25). Rows go to the elim-probe channel (needs --elim-probe).
+//   0x0045ba00  FUN_0045ba00(idx, val): DAT_0068d1f0[idx] = val. a0 idx, a1 val, a2 return address, a3 previous value
+//   0x0045bc85  the dispatcher's MOV [ECX*4+0x68d1f0],3: a0 ECX (slot), a1 [EDI+0x18] (hex), a2 previous value
+// Both are low frequency (race start / round regrid / kills).
+function boxProbeArm(){
+  try {
+    Interceptor.attach(ga(0x0045ba00), { onEnter(){
+      const sp = this.context.esp; const i = sp.add(4).readS32();
+      epRow('boxset', [i, sp.add(8).readS32(), '0x' + sp.readU32().toString(16), ga(0x0068d1f0).add(i*4).readS32()]); } });
+    Interceptor.attach(ga(0x0045bc85), { onEnter(){
+      const c = this.context; const i = c.ecx.toInt32();
+      epRow('box3', [i, '0x' + c.edi.add(0x18).readU32().toString(16), ga(0x0068d1f0).add(i*4).readS32(), '']); } });
+    return 'box-probe armed (0x0045ba00 + 0x0045bc85)';
+  } catch(e){ return 'ERR ' + e; }
+}
 // ---------------------------------------------------------------------------
 
 // --- LEADER-TIMER input probe (D3, 2026-10-03) -----------------------------
@@ -3912,6 +3927,7 @@ rpc.exports = {
   aliveProbeArm: function(){ return aliveProbeArm(); },
   elimProbeArm: function(){ return elimProbeArm(); },
   elimProbeDrain: function(){ return elimProbeDrain(); },
+  boxProbeArm: function(){ return boxProbeArm(); },
   elimProbeStats: function(){ return JSON.stringify({armed:EP.armed, n:EP.n, err:EP.err}); },
   aliveProbeDrain: function(){ return aliveProbeDrain(); },
   leaderProbeArm: function(l){ return leaderProbeArm(l); },
@@ -4645,6 +4661,10 @@ def main():
                     help="[u9779] entry hooks on the ORIGINAL's elimination chain (FUN_00422fd0 kill, FUN_0040eee0 score, "
                          "FUN_0040d590 three-AI resolve, FUN_0040b290 score add, the FUN_00411170 tails 0x00418990 (after the "
                          "0x004111a6 write of 7) / 0x00430290) with their gate inputs; writes <out>.elim.csv")
+    ap.add_argument("--box-probe", action="store_true",
+                    help="[D3-CF-BOX] with --elim-probe: entry hook on the box-state setter FUN_0045ba00 (idx, value, "
+                         "return address, previous value) and an instruction hook on the dispatcher's 2 -> 3 write "
+                         "0x0045bc85; rows tagged boxset / box3 in <out>.elim.csv")
     ap.add_argument("--alive-probe", action="store_true",
                     help="[D3 2026-10-03] per-race-update ALIVE / ELIMINATION record on the "
                          "ORIGINAL. Entry hooks on FUN_00410d10 (SegmentCheck), FUN_00418560 "
@@ -4930,6 +4950,8 @@ def main():
                 print("  [statediff]", E.alive_probe_arm())
             if args.elim_probe:
                 print("  [statediff]", E.elim_probe_arm())
+            if args.box_probe:
+                print("  [statediff]", E.box_probe_arm())
             if args.leader_probe:
                 print("  [statediff]", E.leader_probe_arm(args.leader_probe_limit))
             if args.spawn_drop_probe:
