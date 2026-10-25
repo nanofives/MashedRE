@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "source": "re/orchestrator/roadmap_seed_20261024.md verified by account2 worker 2026-10-24 + DECISIONS.md W0",
-  "updated": "2026-10-25T22:24:20Z",
+  "updated": "2026-10-25T22:28:11Z",
   "rows": [
     {
       "id": "D1-R1",
@@ -1488,6 +1488,63 @@
       "next": "",
       "note": "",
       "updated": "2026-10-25T22:03:28Z"
+    },
+    {
+      "id": "D3-CF-R7FLIP",
+      "section": "D3 carried",
+      "title": "L-16 = 1: turn MASHED_R7_EXIT + MASHED_R7_INPUT ON by default together. Decided flip: branch from orch/integration @ 2c58dc13e (contains the D4-DC-39b0-L13 deletions, merged ba06f6b77), confirm expected G-CTRL 5943c5f1/b493262b/09551e6a, B 3a03670c/2516d903/53778664 on that tree, then L0 commits those refs to merge_train.json and the train merges it alone; revert refs if it cannot land",
+      "stage": "open",
+      "owner": "",
+      "parent": "",
+      "branch": "",
+      "worktree": "",
+      "evidence": "log/orch/DECISIONS.md L-16; orch/D3-CF-R7JOYPAD (merged 469ee9902)",
+      "deps": [],
+      "needs": [],
+      "solo": false,
+      "decision": "",
+      "wave": 1,
+      "next": "",
+      "note": "",
+      "updated": "2026-10-25T22:28:06Z"
+    },
+    {
+      "id": "D3-CF-R7DETFRAME",
+      "section": "D3 carried",
+      "title": "Explain why D2 detects the R7 Enter tap at frames 72/69/70 vs 18/12/19 in the R7INPUT build",
+      "stage": "open",
+      "owner": "",
+      "parent": "",
+      "branch": "",
+      "worktree": "",
+      "evidence": "log/orch/DECISIONS.md L-16; verify/r7input_20261025/RESULT_D3-CF-R7INPUT.md",
+      "deps": [],
+      "needs": [],
+      "solo": false,
+      "decision": "",
+      "wave": 1,
+      "next": "",
+      "note": "",
+      "updated": "2026-10-25T22:28:09Z"
+    },
+    {
+      "id": "D3-CF-PADCOOP",
+      "section": "D3 carried",
+      "title": "Pad cooperative level is 6 in the port vs the original's 5: fix, or justify with an RVA citation",
+      "stage": "open",
+      "owner": "",
+      "parent": "",
+      "branch": "",
+      "worktree": "",
+      "evidence": "log/orch/DECISIONS.md L-16",
+      "deps": [],
+      "needs": [],
+      "solo": false,
+      "decision": "",
+      "wave": 1,
+      "next": "",
+      "note": "",
+      "updated": "2026-10-25T22:28:11Z"
     }
   ]
 }
