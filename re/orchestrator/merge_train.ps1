@@ -72,6 +72,30 @@ function Remove-Temp([string]$p) {
   if ($KeepTemp -or -not $p) { return }
   Remove-Wt $p | Out-Null
 }
+# HB-SOLOSTALE: each run records its PID and start time; a run killed mid-way leaves its mtrain worktree behind,
+# and the next run reclaims it (diag.py wt-remove only). The solo token needs no sweep: solo-begin --owner-pid
+# makes mashed_lock.py treat it as dead once this PID is gone.
+function Write-TrainPid {
+  $me = Get-Process -Id $PID
+  Write-Lf (Join-Path $DATA 'merge_train.pid') @(([ordered]@{ pid = $PID; start = [DateTimeOffset]::new($me.StartTime).ToUnixTimeSeconds() } | ConvertTo-Json -Compress))
+}
+function Test-TrainDead([string]$ts) {
+  $f = Join-Path (Split-Path $DATA -Parent) "$ts\merge_train.pid"
+  if (-not (Test-Path -LiteralPath $f)) { return $true }
+  try { $o = Get-Content -LiteralPath $f -Raw | ConvertFrom-Json } catch { return $true }
+  $pr = Get-Process -Id ([int]$o.pid) -ErrorAction SilentlyContinue
+  if (-not $pr) { return $true }
+  return ([math]::Abs([DateTimeOffset]::new($pr.StartTime).ToUnixTimeSeconds() - [long]$o.start) -gt 2)
+}
+function Reclaim-DeadTrains {
+  foreach ($d in @(Get-ChildItem -LiteralPath (Join-Path $MAIN '.worktrees') -Directory -Filter 'mtrain-*' -ErrorAction SilentlyContinue)) {
+    if ($d.Name -notmatch '^mtrain-(\d{8}_\d{6})-') { continue }
+    $ts = $Matches[1]
+    if ($ts -eq $TS -or -not (Test-TrainDead $ts)) { continue }
+    Say "reclaim: worktree $($d.Name) belongs to a dead train run ($ts)"
+    Remove-Wt $d.FullName | Out-Null
+  }
+}
 function Get-BranchWorktrees([string]$branch) {
   $wl = (Git -C $MAIN worktree list --porcelain) -join "`n"
   @([regex]::Matches($wl, "worktree (.+)\nHEAD \w+\nbranch refs/heads/$([regex]::Escape($branch))(?=\n|$)") | ForEach-Object { $_.Groups[1].Value })
@@ -191,7 +215,7 @@ function Gate-Full([string]$wt) {
   # 13 tracks: table identical to the reference
   Ensure-Root $CFG.root13
   $o13 = Join-Path $DATA 'tracks'
-  $tok = & py.exe -3.12 $LOCKPY solo-begin --priority --label "merge-train13:$TS" --ttl 14400 | Where-Object { $_ -match '^TOKEN ' }
+  $tok = & py.exe -3.12 $LOCKPY solo-begin --priority --label "merge-train13:$TS" --ttl 14400 --owner-pid $PID | Where-Object { $_ -match '^TOKEN ' }
   $env:MASHED_LOCK_SOLO_TOKEN = ($tok -replace '^TOKEN ', '')
   try {
     & py.exe -3.12 (Join-Path $wt $f.run13) run --exe (Join-Path $wt 'mashedmod\build\mashed_re.exe') --root $CFG.root13 --out $o13 2>&1 | ForEach-Object { Add-Content -LiteralPath $LOG -Value $_ }
@@ -325,6 +349,9 @@ if ($SelfTest) {
   Write-Output "SELFTEST $(if ($fails) { 'FAIL' } else { 'PASS' }) ($fails failure(s)) log $LOG"
   exit $(if ($fails) { 1 } else { 0 })
 }
+
+Write-TrainPid
+if (-not $Plan) { Reclaim-DeadTrains }
 
 # ---- 1. pick the batch -------------------------------------------------------------
 $queue = @((& pwsh -NoProfile -File $RM queue) | Out-String | ConvertFrom-Json -DateKind String)
