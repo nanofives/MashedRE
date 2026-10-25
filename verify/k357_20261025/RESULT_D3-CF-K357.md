@@ -99,7 +99,7 @@ Branch `orch/D3-CF-K357-M` from `orch/integration` `2e80adace` (the D3-CF-U9779 
 (`TrackRenderer.cpp`, `TrackRenderer.h`, `exe_main.cpp` auto-merged). `MASHED_R7_EXIT` stays default OFF (L-10 = (1)).
 Exe `e9532e6e` (`MASHED_NO_DEPLOY=1`, `original\mashed_re_dev.asi` not redeployed). Root `D:\MashedWT\D3-CF-K357_root`,
 data `D:\MashedWT\D3-CF-K357_data\arms4`. One `mashed_lock.py run --label D3-CF-K357` hold for all 8 arms, taken at once
-(no other holder, no wait line), 09:21:59 to 09:44:30 local, released by the runner (`data/run_arms4.txt`).
+(no other holder, no wait line), about 09:22:01 (first arm end 09:22:51 - 50 s) to 09:44:30 local, released by the runner (`data/run_arms4.txt`).
 
 | arm | hashes | reference | verdict |
 |---|---|---|---|
