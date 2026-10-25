@@ -424,6 +424,10 @@ STACK['NOP2'] = [k.replace('MASHED_', 'MASHED_NO_', 1) for k in STACK['P2']]   #
 STACK['KF'] = ['MASHED_KF_INTERP']
 # dcmath39b0 (PREREG_dcmath39b0.md): V3 = the 0x004c39b0 one-body knob (rebuilt LUT when no live RW LUT)
 STACK['V3'] = ['MASHED_RWV3D_LUT']
+# dcmath4680 (PREREG_dcmath4680.md): NOOL = the 0x004c4680 opt-out (std::sqrt stand-in), PR = the pontoon OP3 replay on a W_ arm
+STACK['NOOL'] = ['MASHED_NO_ORTHO_LUT']
+STACK['PR'] = ['MASHED_PONTOON_REPLAY=' + os.path.join(W, 'verify', 'pontoon_20261016', 'OP3.msd.pontoon.csv'),
+               'MASHED_PONTOON_REPLAY_OUT=@OUT@\\@NAME@.replay.csv']
 for name in sys.argv[1:]:
     CUR['name'] = name
     if name.startswith('H_'):

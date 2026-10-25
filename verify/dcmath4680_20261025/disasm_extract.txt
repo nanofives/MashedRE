@@ -1,0 +1,17 @@
+exe sha256 03c7edb9366cacf4e8d1f7be3716c7ebe03c6aed19c568268ca4870ae2e49824
+# map symbols (VA, image base 0x10000)
+0003D980 ?Pontoon_Tick@Track@mashed_re@@YAXH@Z WarzonePontoon.obj
+0003DBC0 ?RunReplay@?A0xa9fca16f@Track@mashed_re@@YAXPBD@Z WarzonePontoon.obj
+0003F850 ?TrackBody@?A0xa9fca16f@Track@mashed_re@@YAXAAUObj@123@PAM@Z WarzonePontoon.obj
+00083970 ?BodyOrient_IntegrateStep@Vehicle@mashed_re@@YAXPAMQBM@Z BodyOrientationIntegrate.obj
+00084090 ?MatrixOrthoNormalize@?A0x952cf205@Vehicle@mashed_re@@YAXPAM@Z BodyOrientationIntegrate.obj
+0008ACA0 ?StepSubstep@Vehicle@mashed_re@@YAXAAUStepCtx@?A0x21fab396@12@@Z VehiclePhysicsRun.obj
+001220F0 ?RwMatrixOrthoNormalizeLut@Math@mashed_re@@YAXPAMPBM@Z RwMatrixOrthoNormalize.obj
+# every call to the shared body / the stand-in / the integrate step (dumpbin /disasm), with the enclosing function
+  0003E0B8: E8 33 40 0E 00     call        001220F0    ; in ?RunReplay@?A0xa9fca16f@Track@mashed_re@@YAXPBD@Z -> ?RwMatrixOrthoNormalizeLut@Math@mashed_re@@YAXPAMPBM@Z
+  0003E5DA: E8 11 3B 0E 00     call        001220F0    ; in ?RunReplay@?A0xa9fca16f@Track@mashed_re@@YAXPBD@Z -> ?RwMatrixOrthoNormalizeLut@Math@mashed_re@@YAXPAMPBM@Z
+  0003E636: E8 B5 3A 0E 00     call        001220F0    ; in ?RunReplay@?A0xa9fca16f@Track@mashed_re@@YAXPBD@Z -> ?RwMatrixOrthoNormalizeLut@Math@mashed_re@@YAXPAMPBM@Z
+  0003F8C2: E8 29 28 0E 00     call        001220F0    ; in ?TrackBody@?A0xa9fca16f@Track@mashed_re@@YAXAAUObj@123@PAM@Z -> ?RwMatrixOrthoNormalizeLut@Math@mashed_re@@YAXPAMPBM@Z
+  00083B05: E8 E6 E5 09 00     call        001220F0    ; in ?BodyOrient_IntegrateStep@Vehicle@mashed_re@@YAXPAMQBM@Z -> ?RwMatrixOrthoNormalizeLut@Math@mashed_re@@YAXPAMPBM@Z
+  00083B0F: E8 7C 05 00 00     call        00084090    ; in ?BodyOrient_IntegrateStep@Vehicle@mashed_re@@YAXPAMQBM@Z -> ?MatrixOrthoNormalize@?A0x952cf205@Vehicle@mashed_re@@YAXPAM@Z
+  0008AFE8: E8 83 89 FF FF     call        00083970    ; in ?StepSubstep@Vehicle@mashed_re@@YAXAAUStepCtx@?A0x21fab396@12@@Z -> ?BodyOrient_IntegrateStep@Vehicle@mashed_re@@YAXPAMQBM@Z
