@@ -6,8 +6,8 @@
   "root13": "D:/MashedWT/mtrain_root13",
   "data": "D:/MashedWT/mtrain_data",
   "runner": "verify/savelink_20261023/run_arms.py",
-  "gctrl": { "arm": "H_DEF", "files": ["H_DEF.step.csv", "H_DEF.gates.csv", "H_DEF.ptrace.log"], "ref": ["bacfc747", "8dd1c004", "6f9932b6"], "retries": 1 },
-  "b": { "arms": ["B_DEF_K0", "B_DEF_K1", "B_DEF_K26"], "ref": ["f9deb9b9", "d3601fcc", "9da9a26a"] },
+  "gctrl": { "arm": "H_DEF", "files": ["H_DEF.step.csv", "H_DEF.gates.csv", "H_DEF.ptrace.log"], "ref": ["ef5f2e10", "57f7ff83", "b4f4b55a"], "retries": 1 },
+  "b": { "arms": ["B_DEF_K0", "B_DEF_K1", "B_DEF_K26"], "ref": ["c37d4c0c", "0a8f9806", "7013671d"] },
   "full_set_paths": ["mashedmod/src/mashed_re/Vehicle/", "mashedmod/src/mashed_re/Ai/", "mashedmod/src/mashed_re/Collision/"],
   "full": {
     "vsum": "verify/savelink_20261023/vsum.py",
@@ -18,9 +18,8 @@
     "d2_min_lines": 1600,
     "d2_max_reruns": 2,
     "run13": "verify/rsky_20261016/run13.py",
-    "run13_cites": "verify/rskyverify_20261016/cites_merged.json",
-    "run13_reference": "verify/rpct_20261022/tracks_flip_score.txt",
-    "_run13_uncertain": "DECISIONS P0-4: cites file and reference table picked from the newest lane that ran 13 tracks (rpct 2026-10-22), not confirmed"
+    "run13_cites": "verify/rres_20261016/cites_rres.json",
+    "run13_reference": "verify/rpct_20261022/tracks_flip_score.txt"
   },
   "text_only_globs": ["*.md", "*.txt", "verify/*", "re/analysis/*"],
   "conflict_union": ["mashedmod/build.bat", "mashedmod/exe_sources.rsp", "mashedmod/asi_sources.rsp", "re/analysis/CHANGELOG.md"],
