@@ -1,0 +1,84 @@
+# mashed_re.exe sha256 ff990ccf9537e254a53c3ab33ee71c3d0fdf8f1deae5a27e6b61a45cbf7c6709 (dumpbin /disasm + mashed_re.map, image base 0x10000)
+# map:
+1424: 0001:000cf680       ?RwV3dTransformVectorsCPU@Math@mashed_re@@YAXPAMPBMH1@Z 000e0680 f   RwV3dTransformPointsCPU.obj
+1428: 0001:000cf870       _RwMatrixRotate            000e0870 f   RwMatrixRotate.obj
+1523: 0001:000d7650       ?NodeDir@RaceCamera@Race@mashed_re@@ABEXHQAMPAM@Z 000e8650 f   RaceCamera.obj
+1525: 0001:000d7a90       ?Update@RaceCamera@Race@mashed_re@@QAEXQBURaceCamCar@23@HMIM_N1@Z 000e8a90 f   RaceCamera.obj
+11372: 0001:000d77f0       ?RotateAboutAxis@?A0x9a91aa0b@Race@mashed_re@@YAXQAMQBMM@Z 000e87f0 f   RaceCamera.obj
+14916: 0001:001c53d1       __ehhandler$_RwMatrixRotate 001d63d1 f   RwMatrixRotate.obj
+14933: 0001:001c5591       __ehhandler$?RotateAboutAxis@?A0x9a91aa0b@Race@mashed_re@@YAXQAMQBMM@Z 001d6591 f   RaceCamera.obj
+18635: 0002:000523f0       __ehfuncinfo$_RwMatrixRotate 0022f3f0     RwMatrixRotate.obj
+18651: 0002:00052558       __ehfuncinfo$?RotateAboutAxis@?A0x9a91aa0b@Race@mashed_re@@YAXQAMQBMM@Z 0022f558     RaceCamera.obj
+# callers (scratchpad callers.py):
+call 000E0870 at 0004D327 in ??R<lambda_95af17a683e8d391253e74d8d93f9891>@@QBE@HABU_D3DMATRIX@@PBM@Z (+0x787)
+call 000E0870 at 000513A6 in ?BuildCarPoses@?A0x117f64c6@D3d9Render@mashed_re@@YAHABUCarModel@TrackRenderer@23@ABUCarPartState@523@PAUFramePose@LibRw@3@@Z (+0x66)
+call 000E0870 at 00051468 in ?BuildCarPoses@?A0x117f64c6@D3d9Render@mashed_re@@YAHABUCarModel@TrackRenderer@23@ABUCarPartState@523@PAUFramePose@LibRw@3@@Z (+0x128)
+call 000E0870 at 00051590 in ?BuildCarPoses@?A0x117f64c6@D3d9Render@mashed_re@@YAHABUCarModel@TrackRenderer@23@ABUCarPartState@523@PAUFramePose@LibRw@3@@Z (+0x250)
+call 000E0870 at 000515BC in ?BuildCarPoses@?A0x117f64c6@D3d9Render@mashed_re@@YAHABUCarModel@TrackRenderer@23@ABUCarPartState@523@PAUFramePose@LibRw@3@@Z (+0x27c)
+call 000E0870 at 000630FD in ?PlaceMatrix@?A0x117f64c6@D3d9Render@mashed_re@@YAXQBMMPAU_D3DMATRIX@@@Z (+0x3d)
+call 000E0870 at 00069442 in ?Render@TrackRenderer@D3d9Render@mashed_re@@QAEXPAUIDirect3DDevice9@@MPBUCamInput@123@@Z (+0x38f2)
+call 000E0870 at 00069623 in ?Render@TrackRenderer@D3d9Render@mashed_re@@QAEXPAUIDirect3DDevice9@@MPBUCamInput@123@@Z (+0x3ad3)
+call 000E0870 at 0006B4B2 in ?ShipMatrix@?A0x117f64c6@D3d9Render@mashed_re@@YAXQBMM0NNPAU_D3DMATRIX@@@Z (+0x42)
+call 000E0870 at 0006B4E5 in ?ShipMatrix@?A0x117f64c6@D3d9Render@mashed_re@@YAXQBMM0NNPAU_D3DMATRIX@@@Z (+0x75)
+call 000E0870 at 0006B514 in ?ShipMatrix@?A0x117f64c6@D3d9Render@mashed_re@@YAXQBMM0NNPAU_D3DMATRIX@@@Z (+0xa4)
+call 000E0870 at 00072D18 in ?UpdatePropAnims@TrackRenderer@D3d9Render@mashed_re@@AAEXXZ (+0x1f8)
+call 000E0870 at 00072D4E in ?UpdatePropAnims@TrackRenderer@D3d9Render@mashed_re@@AAEXXZ (+0x22e)
+call 000E0870 at 00072D80 in ?UpdatePropAnims@TrackRenderer@D3d9Render@mashed_re@@AAEXXZ (+0x260)
+call 000E0870 at 0007F528 in ?Rw_MatrixFromAxisAngle@Vehicle@mashed_re@@YAXPAXPBMMH@Z (+0x18)
+call 000E0870 at 00084D9D in ?Vehicle_AeroStabilize@Vehicle@mashed_re@@YAXPAHPAMM@Z (+0x18d)
+call 000E0870 at 00084E6E in ?Vehicle_AeroStabilize@Vehicle@mashed_re@@YAXPAHPAMM@Z (+0x25e)
+call 000E0870 at 0008500D in ?Vehicle_AeroStabilize@Vehicle@mashed_re@@YAXPAHPAMM@Z (+0x3fd)
+call 000E0870 at 000E885B in ?RotateAboutAxis@?A0x9a91aa0b@Race@mashed_re@@YAXQAMQBMM@Z (+0x6b)
+call 000E0680 at 000E8868 in ?RotateAboutAxis@?A0x9a91aa0b@Race@mashed_re@@YAXQAMQBMM@Z (+0x78)
+call 000E0870 at 000E9F7F in ?ResolveRaceRenderCamera@Race@mashed_re@@YAXABVRaceCamera@12@PAURaceRenderCamera@12@@Z (+0xdf)
+call 000E0870 at 000E9F9B in ?ResolveRaceRenderCamera@Race@mashed_re@@YAXABVRaceCamera@12@PAURaceRenderCamera@12@@Z (+0xfb)
+call 000E0870 at 000E9FBB in ?ResolveRaceRenderCamera@Race@mashed_re@@YAXABVRaceCamera@12@PAURaceRenderCamera@12@@Z (+0x11b)
+call 000E0870 at 00108CB3 in _CamEntryType0Step445aa0 (+0xc03)
+call 000E0870 at 00108CC9 in _CamEntryType0Step445aa0 (+0xc19)
+call 000E0870 at 00108CDF in _CamEntryType0Step445aa0 (+0xc2f)
+call 000E0870 at 0010E105 in ?AssistCar@?A0x66f4e050@Race@mashed_re@@YAMHHPBE@Z (+0x455)
+call 000E87F0 at 000E874E in ?NodeDir@RaceCamera@Race@mashed_re@@ABEXHQAMPAM@Z (+0xfe)
+call 000E87F0 at 000E87CF in ?NodeDir@RaceCamera@Race@mashed_re@@ABEXHQAMPAM@Z (+0x17f)
+call 000E87F0 at 000E92C2 in ?Update@RaceCamera@Race@mashed_re@@QAEXQBURaceCamCar@23@HMIM_N1@Z (+0x832)
+# RotateAboutAxis body, knob branch:
+266334:  000E87F0: 55                 push        ebp
+266335-  000E87F1: 8B EC              mov         ebp,esp
+266336-  000E87F3: 6A FF              push        0FFFFFFFFh
+266337-  000E87F5: 68 91 65 1D 00     push        1D6591h
+266338-  000E87FA: 64 A1 00 00 00 00  mov         eax,dword ptr fs:[00000000h]
+266339-  000E8800: 50                 push        eax
+266340-  000E8801: 83 EC 74           sub         esp,74h
+266341-  000E8804: A1 40 31 27 00     mov         eax,dword ptr ds:[00273140h]
+266342-  000E8809: 33 C5              xor         eax,ebp
+266343-  000E880B: 89 45 F0           mov         dword ptr [ebp-10h],eax
+266344-  000E880E: 56                 push        esi
+266345-  000E880F: 57                 push        edi
+266346-  000E8810: 50                 push        eax
+266347-  000E8811: 8D 45 F4           lea         eax,[ebp-0Ch]
+266348-  000E8814: 64 A3 00 00 00 00  mov         dword ptr fs:[00000000h],eax
+266349-  000E881A: 64 A1 2C 00 00 00  mov         eax,dword ptr fs:[0000002Ch]
+266350-  000E8820: 8B 0D AC A2 F2 00  mov         ecx,dword ptr ds:[00F2A2ACh]
+266351-  000E8826: 8B 75 08           mov         esi,dword ptr [ebp+8]
+266352-  000E8829: 8B 7D 0C           mov         edi,dword ptr [ebp+0Ch]
+266353-  000E882C: 8B 0C 88           mov         ecx,dword ptr [eax+ecx*4]
+266354-  000E882F: A1 C8 2B D7 00     mov         eax,dword ptr ds:[00D72BC8h]
+266355-  000E8834: 3B 81 04 00 00 00  cmp         eax,dword ptr [ecx+00000004h]
+266356-  000E883A: 0F 8F C7 01 00 00  jg          000E8A07
+266357-  000E8840: 80 3D C4 2B D7 00  cmp         byte ptr ds:[00D72BC4h],0
+266358-            00
+266359-  000E8847: 74 2C              je          000E8875
+266360-  000E8849: F3 0F 10 45 10     movss       xmm0,dword ptr [ebp+10h]
+266361-  000E884E: 8D 45 A4           lea         eax,[ebp-5Ch]
+266362-  000E8851: 6A 00              push        0
+266363-  000E8853: 51                 push        ecx
+266364-  000E8854: F3 0F 11 04 24     movss       dword ptr [esp],xmm0
+266365-  000E8859: 57                 push        edi
+266366-  000E885A: 50                 push        eax
+266367-  000E885B: E8 10 80 FF FF     call        000E0870
+266368-  000E8860: 8D 45 A4           lea         eax,[ebp-5Ch]
+266369-  000E8863: 50                 push        eax
+266370-  000E8864: 6A 01              push        1
+266371-  000E8866: 56                 push        esi
+266372-  000E8867: 56                 push        esi
+266373-  000E8868: E8 13 7E FF FF     call        000E0680
+266374-  000E886D: 83 C4 20           add         esp,20h
