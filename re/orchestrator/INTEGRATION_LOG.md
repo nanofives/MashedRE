@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-10-25 05:15 D3-CF-U9779-RECON (orch/D3-CF-U9779-RECON): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261025_050755
 - 2026-10-25 05:03 D3-CF-BOX (orch/D3-CF-BOX): G-CTRL bacfc747/8dd1c004/6f9932b6  B f9deb9b9/d3601fcc/9da9a26a. Run data D:\MashedWT\mtrain_data\20261025_045014
 - 2026-10-25 03:37 D4-DC-82a0 (orch/D4-DC-82a0): G-CTRL bacfc747/8dd1c004/6f9932b6  B f9deb9b9/d3601fcc/9da9a26a. Run data D:\MashedWT\mtrain_data\20261025_031759
 - 2026-10-25 02:24 D4-DC-8ad0 (orch/D4-DC-8ad0): G-CTRL bacfc747/8dd1c004/6f9932b6  B f9deb9b9/d3601fcc/9da9a26a. Run data D:\MashedWT\mtrain_data\20261025_015606
