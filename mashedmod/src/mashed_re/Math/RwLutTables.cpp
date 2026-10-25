@@ -65,26 +65,8 @@ float LutInvSqrt(float x) {
     return FromBits(T().inv_[(biased >> 12) & 0xfffu] + ((~biased >> 1) & 0x3fc00000u));
 }
 
-// 0x004c39b0: mag2 = (x*x + y*y) + z*z in ST (0x004c39c4..0x004c39e2 FST dword);
-// length and 1/length from the two tables; out = in * scale. The degenerate-length error
-// report (FUN_004d7ff0 / FUN_004d8480) changes no output and is omitted.
-float LutNormalize(float* out, const float* in) {
-    // PC_24 form: the original's ST products and sum round to float when the caller runs at
-    // 24-bit precision (MEASURED for the track-load caller, D-11072 G-P1 2026-10-09), which is
-    // exactly SSE float arithmetic. A 53-bit caller would need the double form instead.
-    const float mag2 = (in[0] * in[0] + in[1] * in[1]) + in[2] * in[2];
-    float len = 0.0f, scale = 0.0f;
-    const std::uint32_t b = Bits(mag2);
-    if (b != 0u) {
-        const std::uint32_t biased = b + 0x800u;
-        len   = FromBits(T().sqrt_[(biased >> 12) & 0xfffu] + ((biased >> 1) & 0x3fc00000u));
-        scale = FromBits(T().inv_[(biased >> 12) & 0xfffu] + ((~biased >> 1) & 0x3fc00000u));
-    }
-    out[0] = scale * in[0];
-    out[1] = in[1] * scale;
-    out[2] = in[2] * scale;
-    return len;
-}
+// Math::LutNormalize (the real-LUT form of FUN_004c39b0) lives in Math/RwV3dNormalize.cpp since D4-DC-MATH-39b0
+// (2026-10-25): one body for that RVA, called with these tables.
 
 // LUT form of RwV3dLength (the body is Race/RaceCamera.cpp's Vec3Mag, which keeps the exact
 // fallback; this helper is the arithmetic the original runs at 0x004c3ac0): 0x004c3ac4..0x004c3ada

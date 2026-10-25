@@ -1,0 +1,16 @@
+  000126BC: CC                 int         3
+  000126BD: CC                 int         3
+  000126BE: CC                 int         3
+  000126BF: CC                 int         3
+  000126C0: 68 EC AC 1E 00     push        1EACECh
+  000126C5: 68 60 1D 0E 00     push        0E1D60h
+  000126CA: 68 B0 39 4C 00     push        4C39B0h
+  000126CF: E8 FC 94 01 00     call        0002BBD0
+  000126D4: 83 C4 0C           add         esp,0Ch
+---
+  0002BBD0: C2 00 00           ret         0
+  0002BBD3: CC                 int         3
+---
+        353  15C 000D1D60 RwV3dNormalize
+--- grep -ci 0E1D60h:
+1
