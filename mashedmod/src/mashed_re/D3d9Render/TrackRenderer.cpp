@@ -165,12 +165,6 @@ bool RoundEnd7Enabled() {
     return s;
 }
 bool s_roundEnd7 = false;
-// [rpct] RacePct / RaceCamCar::race_pct load the slot 0x008a96ec as FUN_00408ad0 does. Default ON since 2026-10-22 (Mariano,
-// on P1 of verify/rpct_20261022/RESULT_rpct.md; G-CTRL / B references rebased there); MASHED_NO_RACEPCT_SLOT=1 opts out.
-bool RacePctSlotEnabled() {
-    static const bool s = [] { const char* e = std::getenv("MASHED_NO_RACEPCT_SLOT"); return !(e && e[0] && e[0] != '0'); }();
-    return s;
-}
 // [r7keep] rule 7 keeps the score-scan winner (0x00410790), see RuleEngine::Persist. Default ON since 2026-10-22
 // (Mariano, verify/r7keep_20261022/RESULT_r7keep.md: no default hash or score moved); MASHED_NO_RULE7_KEEP=1 opts out.
 // MASHED_RULE7_TRACE=<file>: one line per rule-7 EvaluateResult call. verify/r7keep_20261022/PREREG_r7keep.md.
@@ -7413,16 +7407,13 @@ void TrackRenderer::SetTeamPlay(bool on, const int team_of[4]) {
     SeedMatchScores();       // FUN_0040b180 reads FUN_0042f500() (team play)
 }
 
-// 0x00408ad0 (stand-in, only under the opt-out MASHED_NO_RACEPCT_SLOT; the dual-copy finding stays allowlisted for it)
-// Race progress on a 0..100 scale, read by ProgBehind and the step dump. The original's FUN_00408ad0 is a load of the
-// slot 0x008a96ec + car*0x30c (0x00408ada), whose one body here is Frontend/SmallLeaves_t1.cpp:RaceScoreFloatGetBySlot.
-// [rpct] default ON since 2026-10-22, returns that load; the opt-out MASHED_NO_RACEPCT_SLOT keeps the stand-in
-// below (`prog_in_lap / n * 100` on the gate count), the same expression FillRaceCamCars uses.
+// RacePct: race progress on a 0..100 scale, read by ProgBehind and the step dump. It is a call-through, not a body:
+// the original's FUN_00408ad0 is a load of the slot 0x008a96ec + car*0x30c (0x00408ada), whose one body here is
+// Frontend/SmallLeaves_t1.cpp:RaceScoreFloatGetBySlot. [rpct] default since 2026-10-22, the gate-count stand-in and
+// its opt-out MASHED_NO_RACEPCT_SLOT were deleted 2026-10-25 (D4-DC-8ad0). Out-of-range cars return 0 as before.
 float TrackRenderer::RacePct(int car) const {
-    if (RacePctSlotEnabled() && car >= 0 && car < kRaceCars) return RaceScoreFloatGetBySlot(car);
-    if (car < 0 || car >= kRaceCars || gates_.empty()) return 0.f;
-    const float n = static_cast<float>(gates_.size());
-    return std::fmod(race_[car].progress, n) / n * 100.f;
+    if (car < 0 || car >= kRaceCars) return 0.f;
+    return RaceScoreFloatGetBySlot(car);
 }
 
 // The wrap-adjusted "is A behind B?" compare, 0x00410f4a..0x00410fa6 and the
@@ -7797,8 +7788,7 @@ void TrackRenderer::FillRaceCamCars(Race::RaceCamCar* cc) {
         const float prog_in_lap =
             std::fmod(race_[i].progress, static_cast<float>(n));
         c.path_prog = prog_in_lap;                       // 0x00408a50 equiv
-        c.race_pct = RacePctSlotEnabled() ? RaceScoreFloatGetBySlot(i)              // [rpct] the load 0x00408ad0 does
-                                          : prog_in_lap / static_cast<float>(n) * 100.f;  // stand-in (default)
+        c.race_pct = RaceScoreFloatGetBySlot(i);         // [rpct] the load 0x00408ad0 does
     }
 }
 

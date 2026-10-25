@@ -1,0 +1,2 @@
+[rva-lint] 7 finding(s): CROSS-TARGET=3, DUP-IN-TARGET=4  |  allowlisted=7 NEW=0
+[rva-lint] OK -- no NEW duplicate bodies (7 known, tracked in re\tools\dual_copy_allowlist.txt)
