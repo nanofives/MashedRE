@@ -5660,7 +5660,10 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             // whose gate progress stalls 2.5 s is relocated two gates ahead. Every
             // relocation resets the car's lookahead index (FUN_00414030) and its body
             // basis, so the ported AI re-acquires the line from the new position.
-            if (ng >= 2) {
+            // [D3-CF-K357] MASHED_R7_EXIT (default OFF): skipped while the MASHED_ROUND_END7 flag is up. The original keeps
+            // the car frozen in sub-state 7 (o_r7_1: 502 frames); a frozen car's gate never changes, so the stand-in would
+            // relocate it every 2.5 s. PREREG_D3-CF-K357.md amendment 1.
+            if (ng >= 2 && !RoundEnd7ExitActive()) {
                 if (race_[v].gate != a.prog_gate) { a.prog_gate = race_[v].gate; a.stuck_t = 0.f; }
                 else { a.stuck_t += in.dt; }
                 if (a.stuck_t > 2.5f) {

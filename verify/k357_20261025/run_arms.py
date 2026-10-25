@@ -431,6 +431,7 @@ for _t in ('U7', 'U7P'): STACK[_t + 'R3'] = STACK[_t] + ['MASHED_RECDUMP=@OUT@/@
 STACK['X'] = ['MASHED_R7_EXIT']
 STACK['U7PX'] = STACK['U7P'] + ['MASHED_R7_EXIT']
 STACK['U7PXR3'] = STACK['U7PR3'] + ['MASHED_R7_EXIT']
+STACK['U7PXY'] = STACK['U7PXR3'] + ['MASHED_AI_YAWW=@OUT@/@NAME@.yaww.txt']   # diagnostic: AI yaw-write site counts (TrackRenderer.cpp yaww)
 for name in sys.argv[1:]:
     CUR['name'] = name
     if name.startswith('H_'):
