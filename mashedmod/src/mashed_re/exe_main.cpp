@@ -1026,13 +1026,32 @@ bool PumpOnce() {
 // are non-fatal — the frame loop still renders the title-screen quad, just
 // without keyboard navigation.
 // FUN_00495ee0's count: one per enumerated device whose CreateDevice returns
-// >= 0 (0x00495f10..0x00495f15, inc [pvRef] at 0x00495fcb). The device is not
-// kept: the standalone does not poll joysticks.
+// >= 0 (0x00495f10..0x00495f15, inc [pvRef] at 0x00495fcb). Knob OFF: the
+// device is not kept and no joystick is polled.
+// [D3-CF-R7JOYPAD] MASHED_R7_INPUT=1 keeps device j (j < 4) in g_joy[j], as the
+// original keeps it in its record 0x00771e88 + j*0x448 (CreateDevice target, FUN_00495ee0),
+// with SetDataFormat(0x005d076c) (0x2c slot; the format there reads dwSize 0x18, dwObjSize
+// 0x10, dwFlags 1, dwDataSize 0x50, dwNumObjs 0x2c = c_dfDIJoystick's header) and
+// SetCooperativeLevel(hwnd, 5) (0x34 slot). The port uses 6 (BACKGROUND|NONEXCLUSIVE, as its
+// keyboard does) so it does not take the pad from a concurrent MASHED.exe. Record 4 would
+// start at 0x00772fa8, a separate global, so the original has room for 4.
+IDirectInputDevice8A* g_joy[4] = {};
+static bool R7InputOn() {
+    static const bool s_on = [] { const char* e = std::getenv("MASHED_R7_INPUT"); return e && e[0] && e[0] != '0'; }();
+    return s_on;
+}
 static BOOL CALLBACK CountGameCtrlCb(LPCDIDEVICEINSTANCEA inst, LPVOID ref) {
     IDirectInputDevice8A* dev = nullptr;
     if (SUCCEEDED(g_dinput->CreateDevice(inst->guidInstance, &dev, nullptr)) && dev) {
-        ++*static_cast<int*>(ref);
-        dev->Release();
+        int& j = *static_cast<int*>(ref);
+        if (R7InputOn() && j < 4) {
+            dev->SetDataFormat(&c_dfDIJoystick);
+            dev->SetCooperativeLevel(g_hwnd, DISCL_BACKGROUND | DISCL_NONEXCLUSIVE);
+            g_joy[j] = dev;
+        } else {
+            dev->Release();
+        }
+        ++j;
     }
     return DIENUM_CONTINUE;   // 0x00495fd0: always 1
 }
@@ -1102,6 +1121,8 @@ bool InitDirectInput(HINSTANCE hInstance) {
 }
 
 void ShutdownDirectInput() {
+    for (IDirectInputDevice8A*& d : g_joy)
+        if (d) { d->Unacquire(); d->Release(); d = nullptr; }
     if (g_kbd)    { g_kbd->Unacquire(); g_kbd->Release(); g_kbd = nullptr; }
     if (g_dinput) { g_dinput->Release(); g_dinput = nullptr; }
 }
@@ -2739,33 +2760,86 @@ void WriteMashedInputGlobalsFromKeyboard() {
 // when byte k of the 256-byte keyboard GetDeviceState buffer is negative (0x004961c0..0x004961d8).
 // Default binding for action 4 on a type-2 slot: 0x1c (0x00498698, FUN_00498510). No contcfg%d.bin
 // exists in original\, so the original on this install runs on that default too (FUN_004971b0 override not
-// ported). Ported here: the type-2 (keyboard) slots only, byte 0xa only. Not ported: the type-1 (joypad)
-// branch (button bitmap 0x007730d4 from FUN_004957a0, the standalone polls no joystick), the rest of the
-// cook's block (zeroing 0x00496568, shadow copy 0x00496552 to 0x007f14f8). Knob OFF: nothing written.
+// ported). Ported here: byte 0xa only, for the type-2 (keyboard) slots and, since D3-CF-R7JOYPAD, the
+// type-1 (joypad) slots. Not ported: the rest of the cook's block (zeroing 0x00496568, shadow copy
+// 0x00496552 to 0x007f14f8), the joypad axes. Knob OFF: nothing written, no joystick kept or polled.
 // MASHED_R7_INPUT_PRESS=<n> (arm test only): adds a one-frame press of the bound key on the n-th cook
 // frame with the MASHED_ROUND_END7 / MASHED_R7_EXIT flag up; it feeds the same lookup, g_keys is not touched.
+// MASHED_R7_INPUT_PAD_PRESS=<n> (arm test only): the same for button 0 of joypad 0 (bit 0 of its cooked
+// bitmap, after the poll), so the type-1 lookup runs on a press with no hand on the pad.
+//
+// [D3-CF-R7JOYPAD] The joypad branch. Each frame FUN_004967e0 calls, in order, FUN_00495fe0 (poll),
+// FUN_004972b0 (snapshot), then FUN_00496530 per active slot (the store above).
+//   FUN_00495fe0: for d in 0..[0x00772fac)-1, FUN_00495870 with ESI = 0x00771e88 + d*0x448
+//     (0x00495fed, 0x00495ffd).
+//   FUN_00495870 (device = [ESI]): Poll (vtbl +0x64, 0x00495886); if < 0, Acquire (+0x1c, 0x00495890)
+//     and again while it returns 0x8007001e (DIERR_INPUTLOST, 0x00495893..0x004958ab).
+//     GetDeviceState(0x50, buf) (+0x24, 0x004958b4..0x004958b7); if < 0, return (0x004958bc), so the
+//     button bits keep last frame's value. Else zero the 0x20-byte bitmap at ESI + 0x408
+//     (0x00495908..0x0049592f) and set bit k for each k in 0..15 with buf[0x30 + k] negative
+//     (0x00495970.., loop bound EDI < 0x11 step 8 at 0x00495af3; buf + 0x30 = DIJOYSTATE.rgbButtons).
+//   FUN_004972b0: for d < [0x00772fac], FUN_004957a0(d, 0, 0x0077311c + d*8, 0, 0x007730d4 + d*4)
+//     copies the dword at 0x00772290 + d*0x448 (= record + 0x408, 0x00495819) to 0x007730d4 + d*4.
+//   FUN_00497310 type-1 branch (0x00497323 cmp ecx,1): code = [cfg + 0x108 + 4*4] (0x00497330),
+//     device = [cfg + 0x140] (0x00497337). Action 4 is outside the 9..0xc jump table (0x00497344..
+//     0x00497359), so 0x004973da..0x004973f6: 0xff if bit (code & 7) of byte
+//     [0x007730d4 + device*4 + (code >> 3)] is set, else 0.
+//   FUN_00498510 for slot i < J: type 1 (0x0049861a), device = i ([esi + 0x38] = EDI, 0x0049861d),
+//     action-4 binding 0 (0x00498640 mov [esi+0x10], 0) = button 0.
 static void StoreCtrlByteA(int i, std::uint8_t val) {   // own frame: __try needs no unwinding (C2712)
     __try {
         *reinterpret_cast<volatile std::uint8_t*>(0x007f1042u + static_cast<std::uintptr_t>(i) * 0x4cu) = val;
     } __except(EXCEPTION_EXECUTE_HANDLER) {}
 }
+static std::uint32_t s_joy_btn[4] = {};   // 0x007730d4 + d*4 (BSS, 0 before the first poll)
+static void PollJoypadButtons() {         // FUN_00495fe0 -> FUN_00495870 (buttons only) -> FUN_004972b0
+    for (int d = 0; d < 4; ++d) {
+        IDirectInputDevice8A* dev = g_joy[d];
+        if (!dev) continue;
+        if (FAILED(dev->Poll())) {                                 // 0x00495886
+            HRESULT hr = dev->Acquire();                           // 0x00495890
+            while (hr == DIERR_INPUTLOST) hr = dev->Acquire();     // 0x00495893..0x004958ab
+        }
+        DIJOYSTATE js = {};
+        if (FAILED(dev->GetDeviceState(sizeof(js), &js))) continue;   // 0x004958b4; 0x004958bc keeps the bits
+        std::uint32_t bits = 0;                                    // 0x0049592f
+        for (int k = 0; k < 16; ++k)                               // 0x00495970..0x00495afe
+            if (js.rgbButtons[k] & 0x80) bits |= 1u << k;
+        s_joy_btn[d] = bits;                                       // 0x00495819 -> 0x007730d4 + d*4
+    }
+}
 void CookCtrlByteAFromKeyboard() {
-    static const bool s_on = [] { const char* e = std::getenv("MASHED_R7_INPUT"); return e && e[0] && e[0] != '0'; }();
-    if (!s_on) return;
+    if (!R7InputOn()) return;
     static const int s_press_at = [] { const char* e = std::getenv("MASHED_R7_INPUT_PRESS"); return e ? std::atoi(e) : 0; }();
+    static const int s_pad_press_at = [] { const char* e = std::getenv("MASHED_R7_INPUT_PAD_PRESS"); return e ? std::atoi(e) : 0; }();
     static int s_r7_frame = 0;
     s_r7_frame = g_track.RoundEnd7ExitActive() ? s_r7_frame + 1 : 0;
+    PollJoypadButtons();
     const bool test_press = s_press_at > 0 && s_r7_frame == s_press_at;
+    const bool pad_test_press = s_pad_press_at > 0 && s_r7_frame == s_pad_press_at;
     constexpr std::uint32_t kBindAction4 = 0x1cu;                  // 0x00498698 mov [esi+0x10], 0x1c
+    constexpr std::uint32_t kPadBindAction4 = 0u;                  // 0x00498640 mov [esi+0x10], 0
     const bool held = (g_kbd && (g_keys[kBindAction4] & 0x80) != 0) || test_press;
-    const std::uint8_t val = held ? 0xffu : 0x00u;                 // 0x00497422..0x00497428
     for (int i = 0; i < 4; ++i) {
-        if (g_input_slot_type[i] != 2) continue;                   // 0x00497450 active, 0x004973fd type 2
+        const int type = g_input_slot_type[i];                     // [cfg + 0x13c]; 0 = inactive (0x00497450)
+        std::uint8_t val;
+        bool test = false;
+        if (type == 2) {                                           // 0x004973fd
+            val = held ? 0xffu : 0x00u;                            // 0x00497422..0x00497428
+            test = test_press;
+        } else if (type == 1) {                                    // 0x00497323
+            std::uint32_t bits = s_joy_btn[i];                     // device = i (0x0049861d, read 0x00497337)
+            if (i == 0 && pad_test_press) { bits |= 1u; test = true; }
+            const std::uint8_t b = static_cast<std::uint8_t>(bits >> ((kPadBindAction4 >> 3) * 8));
+            val = (b & (1u << (kPadBindAction4 & 7))) ? 0xffu : 0x00u;   // 0x004973da..0x004973f6
+        } else {
+            continue;
+        }
         StoreCtrlByteA(i, val);                                    // 0x004965b7
         if (val) {
             if (std::FILE* lf = std::fopen(kLogPath, "a")) {
-                std::fprintf(lf, "R7IN byte0xa slot=%d val=0x%02x r7frame=%d test=%d det_frame=%u\n", i, val, s_r7_frame,
-                             test_press ? 1 : 0, static_cast<unsigned>(g_det_frame));
+                std::fprintf(lf, "R7IN byte0xa slot=%d val=0x%02x r7frame=%d test=%d det_frame=%u type=%d\n", i, val,
+                             s_r7_frame, test ? 1 : 0, static_cast<unsigned>(g_det_frame), type);
                 std::fclose(lf);
             }
         }
