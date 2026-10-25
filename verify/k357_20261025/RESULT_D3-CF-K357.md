@@ -54,7 +54,7 @@ Knob OFF: both port paths unchanged.
 | P1 | `B_U7PXR3_K0` log | one `R6 ROUND END`, one `RULE-EVAL` (round 1), no `round2_go` in 1200 frames. **holds** |
 | P2 | `B_U7PXR3_K0` vs `o_r7_1` | `reck.py`: first difference **None** on (+0x958, +0x960, +0x9b0, +0x9b8) over all 719 shared k (0..718 = the original's last record). +0x958 / +0x960 = 6.073916 / -22.0904903 from k = 220 to 718. **holds** (was k = 357) |
 | report | `B_U7PX_K0 / K1 / K26` | `3a03670c / 2516d903 / 53778664` (U7P: `c37d4c0c / 0a8f9806 / 7013671d`) |
-| report | `H_U7PX` | `5943c5f1 / b493262b / 09551e6a` (U7P: `ef5f2e10 / 57f7ff83 / b4f4b55a`). Log: 1 `R6 ROUND END`, no `MATCH OVER` (`H_DEF`: 4 and 1). `B_U7PX_K1` / `K26`: 1 round end each. With the knob the port never leaves round 1 when no input arrives, as the original does |
+| report | `H_U7PX` | `5943c5f1 / b493262b / 09551e6a` (U7P: `ef5f2e10 / 57f7ff83 / b4f4b55a`). Evidence replaced by the run-4 re-run under a clean hold (section 6, `data/arms4/`): the same three hashes and line counts. Log: 1 `R6 ROUND END`, no `MATCH OVER` (`H_DEF`: 4 and 1). `B_U7PX_K1` / `K26`: 1 round end each. With the knob the port never leaves round 1 when no input arrives, as the original does |
 
 Batch 1 (exe `9085dbdd`, knob part (a) only): P0 / P0b / P0c / P1 held, P2 failed at k = 357 (the stand-in, section 1).
 Amendment 1 added (b).
@@ -90,3 +90,35 @@ the standalone a round that ends with a survivor never restarts, because no inpu
 default OFF as a measurement knob until an input path writes byte 0xa (`0x007f1042 + idx*0x4c`), then flip with D2 + 13
 tracks; (2) flip now for the B / G-CTRL reference only, accepting that interactive matches stall after round 1; (3) leave it
 OFF. Recommendation: (1).
+
+## 6. Run 4: merged onto orch/integration, re-gated, `H_U7PX` re-run (2026-10-25)
+
+Branch `orch/D3-CF-K357-M` from `orch/integration` `2e80adace` (the D3-CF-U9779 flip: the four u9779 knobs default ON).
+`git merge-base --all` gave two bases (`b5c84688e`, `45dccb4f5`), neither branch an ancestor of the other, so a real merge:
+`git -c merge.autoStash=false merge --no-ff orch/D3-CF-K357` @ `a30d080b5` -> merge commit `5943a23f2`. No conflicts
+(`TrackRenderer.cpp`, `TrackRenderer.h`, `exe_main.cpp` auto-merged). `MASHED_R7_EXIT` stays default OFF (L-10 = (1)).
+Exe `e9532e6e` (`MASHED_NO_DEPLOY=1`, `original\mashed_re_dev.asi` not redeployed). Root `D:\MashedWT\D3-CF-K357_root`,
+data `D:\MashedWT\D3-CF-K357_data\arms4`. One `mashed_lock.py run --label D3-CF-K357` hold for all 8 arms, taken at once
+(no other holder, no wait line), 09:21:59 to 09:44:30 local, released by the runner (`data/run_arms4.txt`).
+
+| arm | hashes | reference | verdict |
+|---|---|---|---|
+| `H_DEF` (G-CTRL) | `ef5f2e10 / 57f7ff83 / b4f4b55a` (15941 / 53273 / 26636 lines) | integration post-flip `ef5f2e10 / 57f7ff83 / b4f4b55a` | **equal** |
+| `B_DEF_K0 / K1 / K26` | `c37d4c0c / 0a8f9806 / 7013671d` | integration post-flip `c37d4c0c / 0a8f9806 / 7013671d` | **equal** |
+| `H_U7PX` (re-run, report) | `5943c5f1 / b493262b / 09551e6a` (14659 / 56873 / 28436 lines) | batch 3 (exe `3182ad61`) `5943c5f1 / b493262b / 09551e6a` | **bit-identical** |
+| `B_U7PX_K0 / K1 / K26` (report) | `3a03670c / 2516d903 / 53778664` | batch 3 `3a03670c / 2516d903 / 53778664` | **bit-identical** |
+
+K357 does not move either default gate on the merged tree. On the merged tree the U7P knobs set by the `U7PX` stack are
+the defaults, so `U7PX` = the default + `MASHED_R7_EXIT`.
+
+**`H_U7PX` re-run (HB-LOCKBREAK `verify/lockbreak_20261025/RESULT_HB-LOCKBREAK.md` section 4).** The batch-3 run's last ~30 s
+(02:54:58 to 02:55:28) overlapped the D4 gate job's `H_DEF` after the lock break. The run-4 arm ran under a clean hold
+(exit 0, self-exited, 519 s) and reproduced all three batch-3 hashes and line counts. Its log has the same single
+`R6 ROUND END winner=car3 scores=[4,5,7,8]` and no `MATCH OVER` (`data/arms4/H_U7PX.log`), against 5 round ends and
+`MATCH OVER t=55.0s winner=car3` in `H_DEF` (`data/arms4/H_DEF.log`). The section 4 `[UNCERTAIN]` in the HB-LOCKBREAK RESULT
+(bit-identity of `H_U7PX` under the overlap) resolves: the overlap did not change it. The batch-3 row's evidence is
+replaced by `data/arms4/RUNLOG.txt` line 5. No prediction arm was re-run (none ran inside the window).
+
+Cited files: `data/arms4/RUNLOG.txt` (per-arm env + hashes), `data/run_arms4.txt` (runner stdout, Python SyntaxWarning lines
+dropped), the six B step CSVs, `H_DEF.log`, `H_U7PX.log`. The H step / gates / ptrace files stay on D:, their hashes and line
+counts are in `RUNLOG.txt`.
