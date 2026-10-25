@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-10-25 03:37 D4-DC-82a0 (orch/D4-DC-82a0): G-CTRL bacfc747/8dd1c004/6f9932b6  B f9deb9b9/d3601fcc/9da9a26a. Run data D:\MashedWT\mtrain_data\20261025_031759
 - 2026-10-25 02:24 D4-DC-8ad0 (orch/D4-DC-8ad0): G-CTRL bacfc747/8dd1c004/6f9932b6  B f9deb9b9/d3601fcc/9da9a26a. Run data D:\MashedWT\mtrain_data\20261025_015606
 - 2026-10-25 01:50 HB-SOLOSTALE (orch/HB-SOLOSTALE), D3-CF-U9780 (orch/D3-CF-U9780): G-CTRL bacfc747/8dd1c004/6f9932b6  B f9deb9b9/d3601fcc/9da9a26a. Run data D:\MashedWT\mtrain_data\20261025_010921
 - 2026-10-25 01:08 HB-D2RERUN (orch/HB-TRAIN3), HB-EOL (orch/HB-TRAIN3), HB-WTCLEAN (orch/HB-TRAIN3): G-CTRL bacfc747/8dd1c004/6f9932b6  B f9deb9b9/d3601fcc/9da9a26a. Run data D:\MashedWT\mtrain_data\20261025_004520
