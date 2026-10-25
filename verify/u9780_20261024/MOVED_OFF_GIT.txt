@@ -1,0 +1,2 @@
+Arm outputs (step dumps, rec.msd, cc logs, full reccmp texts, logs) live in D:/MashedWT/D3-CF-U9780_data/arms, private root D:/MashedWT/D3-CF-U9780_root, never committed. RUNLOG.txt and reccmp_slices.txt here are copies.
+Original captures: D:/MashedWT/u9777_data/arms/o_c2_2.msd, o_c2_3.msd (+ .aistep.csv).

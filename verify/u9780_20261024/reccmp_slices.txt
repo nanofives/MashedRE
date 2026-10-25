@@ -1,0 +1,399 @@
+### reccmp.py o_c2_2_B_C2_K0 (k 170..222 of -400..222; k<0 missing on the original side)
+170 pos = | vel = | angvel =
+171 pos = | vel = | angvel =
+172 pos = | vel = | angvel =
+173 pos = | vel = | angvel =
+174 pos = | vel = | angvel =
+175 pos = | vel = | angvel =
+176 pos = | vel = | angvel =
+177 pos = | vel = | angvel =
+178 pos = | vel = | angvel =
+179 pos = | vel = | angvel =
+180 pos = | vel = | angvel =
+181 pos = | vel = | angvel =
+182 pos = | vel = | angvel =
+183 pos = | vel = | angvel =
+184 pos = | vel = | angvel =
+185 pos = | vel = | angvel =
+186 pos = | vel = | angvel =
+187 pos = | vel = | angvel =
+188 pos = | vel = | angvel =
+189 pos = | vel = | angvel =
+190 pos = | vel = | angvel =
+191 pos = | vel = | angvel =
+192 pos = | vel = | angvel =
+193 pos = | vel = | angvel =
+194 pos = | vel = | angvel =
+195 pos = | vel = | angvel =
+196 pos = | vel = | angvel =
+197 pos = | vel = | angvel =
+198 pos = | vel = | angvel =
+199 pos = | vel = | angvel =
+200 pos = | vel = | angvel =
+201 pos = | vel = | angvel =
+202 pos = | vel = | angvel =
+203 pos = | vel = | angvel =
+204 pos = | vel = | angvel =
+205 pos = | vel = | angvel =
+206 pos = | vel = | angvel =
+207 pos = | vel = | angvel =
+208 pos = | vel = | angvel =
+209 pos = | vel = | angvel =
+210 pos = | vel = | angvel =
+211 pos = | vel = | angvel =
+212 pos = | vel = | angvel =
+213 pos = | vel = | angvel =
+214 pos = | vel = | angvel =
+215 pos = | vel = | angvel =
+216 pos = | vel = | angvel =
+217 pos = | vel = | angvel =
+218 pos = | vel = | angvel =
+219 pos = | vel = | angvel =
+220 pos +958 4098c40e/409b8ad4 (4.77393/4.8607, 181958 ulp) +95c b8f0be69/b8e0f378 (-0.000114796/-0.000107265, 1034993 ulp) +960 c1b9a2ba/c1ba4b88 (-23.2045/-23.2869, 43214 ulp) | vel +9b0 44e491b0/44ea42c0 (1828.55/1874.09, 373008 ulp) +9b4 c1894a54/c18ebbc7 (-17.1613/-17.8417, 356723 ulp) +9b8 c4d687c8/c4de8bc7 (-1716.24/-1780.37, 525311 ulp) | angvel +9bc 3b8a3861/3baccdd8 (0.00421815/0.00527356, 2266487 ulp) +9c0 3f140702/3f2ec1c2 (0.578232/0.682644, 1751744 ulp) +9c4 bb03b3d5/bb0b2817 (-0.00200962/-0.00212336, 488514 ulp)
+221 pos +958 4098c40e/409e4464 (4.77393/4.94585, 360534 ulp) +95c b8fa0253/b8dbcf90 (-0.000119214/-0.000104814, 1979075 ulp) +960 c1b9a2ba/c1bafbd0 (-23.2045/-23.373, 88342 ulp) | vel +9b0 44dbb382/44e5e86f (1757.61/1839.26, 668909 ulp) +9b4 c16a1164/c17763db (-14.6292/-15.4619, 873079 ulp) +9b8 c4d87f74/c4e866c5 (-1731.98/-1859.21, 1042257 ulp) | angvel +9bc 3b6b0856/3bad7b71 (0.00358631/0.00529426, 4354843 ulp) +9c0 3efbb576/3f2caf30 (0.491619/0.674548, 3209658 ulp) +9c4 badff31b/baf67482 (-0.0017086/-0.0018803, 1474919 ulp)
+222 pos +958 4098c40e/40a0ee54 (4.77393/5.02909, 535110 ulp) +95c b900d4f3/b8d64ba0 (-0.000122864/-0.000102184, 2787667 ulp) +960 c1b9a2ba/c1bbb390 (-23.2045/-23.4627, 135382 ulp) | vel +9b0 44d3d18b/44e0c1e3 (1694.55/1798.06, 847960 ulp) +9b4 c14fda17/c157594d (-12.9907/-13.4593, 491318 ulp) +9b8 c4d9592e/c4f23fd2 (-1738.79/-1937.99, 1631908 ulp) | angvel +9bc 3b498629/3baa61b4 (0.00307501/0.00519964, 6347659 ulp) +9c0 3ed7d2a3/3f2bede5 (0.421529/0.671599, 5512002 ulp) +9c4 bac0056f/badcbcc5 (-0.00146501/-0.00168409, 1881942 ulp)
+rows with pos/vel/angvel all equal: 220
+first difference: pos k=220, vel k=220, angvel k=220
+
+### reccmp.py o_c2_3_B_C2_K0 (k 170..222 of -400..222; k<0 missing on the original side)
+170 pos = | vel = | angvel =
+171 pos = | vel = | angvel =
+172 pos = | vel = | angvel =
+173 pos = | vel = | angvel =
+174 pos = | vel = | angvel =
+175 pos = | vel = | angvel =
+176 pos = | vel = | angvel =
+177 pos = | vel = | angvel =
+178 pos = | vel = | angvel =
+179 pos = | vel = | angvel =
+180 pos = | vel = | angvel =
+181 pos = | vel = | angvel =
+182 pos = | vel = | angvel =
+183 pos = | vel = | angvel =
+184 pos = | vel = | angvel =
+185 pos = | vel = | angvel =
+186 pos = | vel = | angvel =
+187 pos = | vel = | angvel =
+188 pos = | vel = | angvel =
+189 pos = | vel = | angvel =
+190 pos = | vel = | angvel =
+191 pos = | vel = | angvel =
+192 pos = | vel = | angvel =
+193 pos = | vel = | angvel =
+194 pos = | vel = | angvel =
+195 pos = | vel = | angvel =
+196 pos = | vel = | angvel =
+197 pos = | vel = | angvel =
+198 pos = | vel = | angvel =
+199 pos = | vel = | angvel =
+200 pos = | vel = | angvel =
+201 pos = | vel = | angvel =
+202 pos = | vel = | angvel =
+203 pos = | vel = | angvel =
+204 pos = | vel = | angvel =
+205 pos = | vel = | angvel =
+206 pos = | vel = | angvel =
+207 pos = | vel = | angvel =
+208 pos = | vel = | angvel =
+209 pos = | vel = | angvel =
+210 pos = | vel = | angvel =
+211 pos = | vel = | angvel =
+212 pos = | vel = | angvel =
+213 pos = | vel = | angvel =
+214 pos = | vel = | angvel =
+215 pos = | vel = | angvel =
+216 pos = | vel = | angvel =
+217 pos = | vel = | angvel =
+218 pos = | vel = | angvel =
+219 pos = | vel = | angvel =
+220 pos +958 4098c40e/409b8ad4 (4.77393/4.8607, 181958 ulp) +95c b8f0be69/b8e0f378 (-0.000114796/-0.000107265, 1034993 ulp) +960 c1b9a2ba/c1ba4b88 (-23.2045/-23.2869, 43214 ulp) | vel +9b0 44e491b0/44ea42c0 (1828.55/1874.09, 373008 ulp) +9b4 c1894a54/c18ebbc7 (-17.1613/-17.8417, 356723 ulp) +9b8 c4d687c8/c4de8bc7 (-1716.24/-1780.37, 525311 ulp) | angvel +9bc 3b8a3861/3baccdd8 (0.00421815/0.00527356, 2266487 ulp) +9c0 3f140702/3f2ec1c2 (0.578232/0.682644, 1751744 ulp) +9c4 bb03b3d5/bb0b2817 (-0.00200962/-0.00212336, 488514 ulp)
+221 pos +958 4098c40e/409e4464 (4.77393/4.94585, 360534 ulp) +95c b8fa0253/b8dbcf90 (-0.000119214/-0.000104814, 1979075 ulp) +960 c1b9a2ba/c1bafbd0 (-23.2045/-23.373, 88342 ulp) | vel +9b0 44dbb382/44e5e86f (1757.61/1839.26, 668909 ulp) +9b4 c16a1164/c17763db (-14.6292/-15.4619, 873079 ulp) +9b8 c4d87f74/c4e866c5 (-1731.98/-1859.21, 1042257 ulp) | angvel +9bc 3b6b0856/3bad7b71 (0.00358631/0.00529426, 4354843 ulp) +9c0 3efbb576/3f2caf30 (0.491619/0.674548, 3209658 ulp) +9c4 badff31b/baf67482 (-0.0017086/-0.0018803, 1474919 ulp)
+222 pos +958 4098c40e/40a0ee54 (4.77393/5.02909, 535110 ulp) +95c b900d4da/b8d64ba0 (-0.000122863/-0.000102184, 2787642 ulp) +960 c1b9a2ba/c1bbb390 (-23.2045/-23.4627, 135382 ulp) | vel +9b0 44d4c06c/44e0c1e3 (1702.01/1798.06, 786807 ulp) +9b4 c1542f42/c157594d (-13.2615/-13.4593, 207371 ulp) +9b8 c4d89f6f/c4f23fd2 (-1732.98/-1937.99, 1679459 ulp) | angvel +9bc 3b49d29d/3baa61b4 (0.00307957/0.00519964, 6328087 ulp) +9c0 3ed82484/3f2bede5 (0.422154/0.671599, 5491041 ulp) +9c4 bac04e48/badcbcc5 (-0.00146718/-0.00168409, 1863293 ulp)
+rows with pos/vel/angvel all equal: 220
+first difference: pos k=220, vel k=220, angvel k=220
+
+### reccmp.py o_c2_2_B_C2NOP2_K0 (k 170..222 of -400..222; k<0 missing on the original side)
+170 pos = | vel = | angvel =
+171 pos = | vel = | angvel =
+172 pos = | vel = | angvel =
+173 pos = | vel = | angvel =
+174 pos = | vel = | angvel =
+175 pos = | vel = | angvel =
+176 pos = | vel = | angvel =
+177 pos = | vel = | angvel =
+178 pos = | vel = | angvel =
+179 pos = | vel = | angvel =
+180 pos = | vel = | angvel =
+181 pos = | vel = | angvel =
+182 pos = | vel = | angvel =
+183 pos = | vel = | angvel =
+184 pos = | vel = | angvel =
+185 pos = | vel = | angvel =
+186 pos = | vel = | angvel =
+187 pos = | vel = | angvel =
+188 pos = | vel = | angvel =
+189 pos = | vel = | angvel =
+190 pos = | vel = | angvel =
+191 pos = | vel = | angvel =
+192 pos = | vel = | angvel =
+193 pos = | vel = | angvel =
+194 pos = | vel = | angvel =
+195 pos = | vel = | angvel =
+196 pos = | vel = | angvel =
+197 pos = | vel = | angvel =
+198 pos = | vel = | angvel =
+199 pos = | vel = | angvel =
+200 pos = | vel = | angvel =
+201 pos = | vel = | angvel =
+202 pos = | vel = | angvel =
+203 pos = | vel = | angvel =
+204 pos = | vel = | angvel =
+205 pos = | vel = | angvel =
+206 pos = | vel = | angvel =
+207 pos = | vel = | angvel =
+208 pos = | vel = | angvel =
+209 pos = | vel = | angvel =
+210 pos = | vel = | angvel =
+211 pos = | vel = | angvel =
+212 pos = | vel = | angvel =
+213 pos = | vel = | angvel =
+214 pos = | vel = | angvel =
+215 pos = | vel = | angvel =
+216 pos = | vel = | angvel =
+217 pos = | vel = | angvel =
+218 pos = | vel = | angvel =
+219 pos = | vel = | angvel =
+220 pos +958 4098c40e/409b8ad4 (4.77393/4.8607, 181958 ulp) +95c b8f0be69/b8e0f378 (-0.000114796/-0.000107265, 1034993 ulp) +960 c1b9a2ba/c1ba4b88 (-23.2045/-23.2869, 43214 ulp) | vel +9b0 44e491b0/44ea42c0 (1828.55/1874.09, 373008 ulp) +9b4 c1894a54/c18ebbc7 (-17.1613/-17.8417, 356723 ulp) +9b8 c4d687c8/c4de8bc7 (-1716.24/-1780.37, 525311 ulp) | angvel +9bc 3b8a3861/3baccdd8 (0.00421815/0.00527356, 2266487 ulp) +9c0 3f140702/3f2ec1c2 (0.578232/0.682644, 1751744 ulp) +9c4 bb03b3d5/bb0b2817 (-0.00200962/-0.00212336, 488514 ulp)
+221 pos +958 4098c40e/409e4464 (4.77393/4.94585, 360534 ulp) +95c b8fa0253/b8dbcf90 (-0.000119214/-0.000104814, 1979075 ulp) +960 c1b9a2ba/c1bafbd0 (-23.2045/-23.373, 88342 ulp) | vel +9b0 44dbb382/44e5e86f (1757.61/1839.26, 668909 ulp) +9b4 c16a1164/c17763db (-14.6292/-15.4619, 873079 ulp) +9b8 c4d87f74/c4e866c5 (-1731.98/-1859.21, 1042257 ulp) | angvel +9bc 3b6b0856/3bad7b71 (0.00358631/0.00529426, 4354843 ulp) +9c0 3efbb576/3f2caf30 (0.491619/0.674548, 3209658 ulp) +9c4 badff31b/baf67482 (-0.0017086/-0.0018803, 1474919 ulp)
+222 pos +958 4098c40e/40a0ee54 (4.77393/5.02909, 535110 ulp) +95c b900d4f3/b8d64ba0 (-0.000122864/-0.000102184, 2787667 ulp) +960 c1b9a2ba/c1bbb390 (-23.2045/-23.4627, 135382 ulp) | vel +9b0 44d3d18b/44e0c1e3 (1694.55/1798.06, 847960 ulp) +9b4 c14fda17/c157594d (-12.9907/-13.4593, 491318 ulp) +9b8 c4d9592e/c4f23fd2 (-1738.79/-1937.99, 1631908 ulp) | angvel +9bc 3b498629/3baa61b4 (0.00307501/0.00519964, 6347659 ulp) +9c0 3ed7d2a3/3f2bede5 (0.421529/0.671599, 5512002 ulp) +9c4 bac0056f/badcbcc5 (-0.00146501/-0.00168409, 1881942 ulp)
+rows with pos/vel/angvel all equal: 220
+first difference: pos k=220, vel k=220, angvel k=220
+
+### reccmp.py o_c2_2_B_C2_K0-sf (k 170..222 of -400..222; k<0 missing on the original side)
+170 pos = | vel = | angvel =
+171 pos = | vel = | angvel =
+172 pos = | vel = | angvel =
+173 pos = | vel = | angvel =
+174 pos = | vel = | angvel +9bc 3ba9c9a9/3ba9c9a5 (0.00518151/0.00518151, 4 ulp) +9c0 be47a2b9/be47a2b8 (-0.194957/-0.194957, 1 ulp) +9c4 bb28b6e9/bb28b6f1 (-0.00257438/-0.00257438, 8 ulp)
+175 pos = | vel = | angvel +9bc 3c10773e/3c10773c (0.00881749/0.00881749, 2 ulp)
+176 pos = | vel = | angvel +9bc 3c20e5fa/3c20e5f8 (0.00982046/0.00982045, 2 ulp)
+177 pos = | vel = | angvel +9bc 3c269d7b/3c269d7a (0.0101694/0.0101694, 1 ulp)
+178 pos = | vel = | angvel +9bc 3c32a867/3c32a865 (0.0109044/0.0109044, 2 ulp)
+179 pos = | vel +9b4 42bb0806/42bb0805 (93.5157/93.5157, 1 ulp) | angvel +9bc 3c24da6a/3c24da68 (0.0100618/0.0100618, 2 ulp)
+180 pos = | vel +9b4 42c8fa8b/42c8fa8a (100.489/100.489, 1 ulp) | angvel +9bc 3c23eec0/3c23eebd (0.0100057/0.0100057, 3 ulp)
+181 pos = | vel +9b4 42d4a5a7/42d4a5a6 (106.324/106.324, 1 ulp) | angvel +9bc 3c1d1e7d/3c1d1e7a (0.00958979/0.00958979, 3 ulp)
+182 pos +95c bbb4bd1e/bbb4bd1f (-0.00551571/-0.00551571, 1 ulp) | vel +9b4 42dc6f68/42dc6f67 (110.218/110.218, 1 ulp) | angvel +9bc 3c31f0c4/3c31f0c2 (0.0108606/0.0108606, 2 ulp) +9c0 be88c419/be88c418 (-0.267121/-0.267121, 1 ulp)
+183 pos +95c b8ebf460/b8ebf440 (-0.000112512/-0.000112512, 32 ulp) | vel +9b4 42e1a6ac/42e1a6ab (112.826/112.826, 1 ulp) | angvel +9bc 3c55573f/3c55573d (0.0130213/0.0130213, 2 ulp)
+184 pos = | vel +9b4 42c7ee9a/42c7ee99 (99.966/99.966, 1 ulp) | angvel +9bc 3c018202/3c018203 (0.00790453/0.00790453, 1 ulp)
+185 pos = | vel = | angvel +9bc 3b7dcab2/3b7dcab5 (0.00387256/0.00387256, 3 ulp)
+186 pos = | vel = | angvel +9bc 3a3130e0/3a3130eb (0.00067593/0.00067593, 11 ulp)
+187 pos = | vel = | angvel +9bc baf5b8cc/baf5b8c7 (-0.00187471/-0.00187471, 5 ulp)
+188 pos = | vel = | angvel +9bc bb808cf1/bb808cf0 (-0.00392305/-0.00392305, 1 ulp) +9c4 bc06d4cc/bc06d4cb (-0.00822945/-0.00822944, 1 ulp)
+189 pos = | vel = | angvel +9c4 bc07cb44/bc07cb43 (-0.00828821/-0.00828821, 1 ulp)
+190 pos = | vel = | angvel +9bc bb775154/bb775156 (-0.00377377/-0.00377377, 2 ulp) +9c0 402158aa/402158a9 (2.52104/2.52104, 1 ulp)
+191 pos = | vel = | angvel +9bc bb9cd806/bb9cd807 (-0.00478649/-0.00478649, 1 ulp) +9c0 40055714/40055713 (2.08344/2.08344, 1 ulp) +9c4 bbc1dc4e/bbc1dc61 (-0.00591615/-0.00591616, 19 ulp)
+192 pos = | vel = | angvel +9c0 3fdb19a4/3fdb19a3 (1.71172/1.71172, 1 ulp) +9c4 bba7a04b/bba7a058 (-0.00511554/-0.00511555, 13 ulp)
+193 pos = | vel = | angvel +9c0 3fb27198/3fb27197 (1.39409/1.39409, 1 ulp) +9c4 bb9ca737/bb9ca741 (-0.00478068/-0.00478068, 10 ulp)
+194 pos = | vel = | angvel +9c0 3f8f0fd7/3f8f0fd6 (1.11767/1.11767, 1 ulp) +9c4 bb9d47f7/bb9d4801 (-0.00479984/-0.00479984, 10 ulp)
+195 pos = | vel = | angvel +9c0 3f5f6e18/3f5f6e17 (0.872774/0.872774, 1 ulp) +9c4 bba75d33/bba75d39 (-0.00510755/-0.00510755, 6 ulp)
+196 pos = | vel = | angvel +9c4 bbbe3074/bbbe3079 (-0.00580412/-0.00580412, 5 ulp)
+197 pos = | vel = | angvel +9c0 4069bf7a/4069bf7c (3.65231/3.65231, 2 ulp) +9c4 bbc0119a/bbc0119e (-0.00586147/-0.00586148, 4 ulp)
+198 pos = | vel = | angvel +9bc bc00bde8/bc00bde7 (-0.00785778/-0.00785778, 1 ulp) +9c0 404a1b39/404a1b3b (3.15791/3.15791, 2 ulp) +9c4 bba46469/bba46473 (-0.00501685/-0.00501686, 10 ulp)
+199 pos = | vel = | angvel +9bc bc071641/bc07163f (-0.00824505/-0.00824505, 2 ulp) +9c0 402cef7d/402cef7f (2.70212/2.70212, 2 ulp) +9c4 bb96d581/bb96d58d (-0.00460309/-0.00460309, 12 ulp)
+200 pos = | vel = | angvel +9bc bc0872b3/bc0872b0 (-0.00832813/-0.00832812, 3 ulp) +9c0 401289c9/401289cb (2.28966/2.28966, 2 ulp) +9c4 bb8f8dd1/bb8f8ddd (-0.00438092/-0.00438093, 12 ulp)
+201 pos = | vel = | angvel +9bc bc054f88/bc054f84 (-0.00813664/-0.00813663, 4 ulp) +9c0 3ff59979/3ff5997c (1.91875/1.91875, 3 ulp) +9c4 bb8b3295/bb8b32a2 (-0.00424797/-0.00424798, 13 ulp)
+202 pos = | vel = | angvel +9bc bbfc99f8/bbfc99f1 (-0.00770878/-0.00770878, 7 ulp) +9c0 3fcb8ec4/3fcb8ec7 (1.59029/1.59029, 3 ulp) +9c4 bb87193f/bb871948 (-0.00412288/-0.00412289, 9 ulp)
+203 pos = | vel = | angvel +9bc bbdde5f2/bbdde5ed (-0.0067718/-0.00677179, 5 ulp) +9c0 3fab6f1f/3fab6f22 (1.33933/1.33933, 3 ulp) +9c4 bb7eb718/bb7eb725 (-0.00388665/-0.00388665, 13 ulp)
+204 pos = | vel = | angvel +9bc bbb235e1/bbb235df (-0.00543855/-0.00543855, 2 ulp) +9c0 3f8f7c6d/3f8f7c6f (1.12098/1.12098, 2 ulp) +9c4 bb56ab91/bb56ab96 (-0.00327561/-0.00327561, 5 ulp)
+205 pos = | vel = | angvel +9bc bbb235e1/bbb235df (-0.00543855/-0.00543855, 2 ulp) +9c0 3f8f7c6d/3f8f7c6f (1.12098/1.12098, 2 ulp) +9c4 bb56ab91/bb56ab96 (-0.00327561/-0.00327561, 5 ulp)
+206 pos = | vel = | angvel +9bc bbb235e1/bbb235df (-0.00543855/-0.00543855, 2 ulp) +9c0 3f8f7c6d/3f8f7c6f (1.12098/1.12098, 2 ulp) +9c4 bb56ab91/bb56ab96 (-0.00327561/-0.00327561, 5 ulp)
+207 pos = | vel = | angvel +9bc bbb235e1/bbb235df (-0.00543855/-0.00543855, 2 ulp) +9c0 3f8f7c6d/3f8f7c6f (1.12098/1.12098, 2 ulp) +9c4 bb56ab91/bb56ab96 (-0.00327561/-0.00327561, 5 ulp)
+208 pos = | vel = | angvel +9bc bbb235e1/bbb235df (-0.00543855/-0.00543855, 2 ulp) +9c0 3f8f7c6d/3f8f7c6f (1.12098/1.12098, 2 ulp) +9c4 bb56ab91/bb56ab96 (-0.00327561/-0.00327561, 5 ulp)
+209 pos = | vel = | angvel +9bc bbb235e1/bbb235df (-0.00543855/-0.00543855, 2 ulp) +9c0 3f8f7c6d/3f8f7c6f (1.12098/1.12098, 2 ulp) +9c4 bb56ab91/bb56ab96 (-0.00327561/-0.00327561, 5 ulp)
+210 pos = | vel = | angvel +9bc bbb235e1/bbb235df (-0.00543855/-0.00543855, 2 ulp) +9c0 3f8f7c6d/3f8f7c6f (1.12098/1.12098, 2 ulp) +9c4 bb56ab91/bb56ab96 (-0.00327561/-0.00327561, 5 ulp)
+211 pos = | vel = | angvel +9bc bbb235e1/bbb235df (-0.00543855/-0.00543855, 2 ulp) +9c0 3f8f7c6d/3f8f7c6f (1.12098/1.12098, 2 ulp) +9c4 bb56ab91/bb56ab96 (-0.00327561/-0.00327561, 5 ulp)
+212 pos = | vel = | angvel +9bc bbb235e1/bbb235df (-0.00543855/-0.00543855, 2 ulp) +9c0 3f8f7c6d/3f8f7c6f (1.12098/1.12098, 2 ulp) +9c4 bb56ab91/bb56ab96 (-0.00327561/-0.00327561, 5 ulp)
+213 pos = | vel = | angvel +9bc bbb235e1/bbb235df (-0.00543855/-0.00543855, 2 ulp) +9c0 3f8f7c6d/3f8f7c6f (1.12098/1.12098, 2 ulp) +9c4 bb56ab91/bb56ab96 (-0.00327561/-0.00327561, 5 ulp)
+214 pos = | vel = | angvel +9bc baf73bcb/baf73a71 (-0.00188624/-0.0018862, 346 ulp) +9c0 3f79b88f/3f79b899 (0.975472/0.975473, 10 ulp) +9c4 bba3b830/bba3b80a (-0.00499632/-0.0049963, 38 ulp)
+215 pos = | vel = | angvel +9bc 3a64197f/3a641a55 (0.000870131/0.000870143, 214 ulp) +9c0 3f60832f/3f608334 (0.877002/0.877002, 5 ulp) +9c4 bb8f945a/bb8f9442 (-0.0043817/-0.00438169, 24 ulp)
+216 pos = | vel = | angvel +9bc 3b3215ba/3b3215da (0.00271736/0.00271737, 32 ulp) +9c0 3f4e65d8/3f4e65db (0.806242/0.806242, 3 ulp) +9c4 bb77a617/bb77a5f4 (-0.00377882/-0.00377881, 35 ulp)
+217 pos = | vel = | angvel +9bc 3b808161/3b80816e (0.00392167/0.00392168, 13 ulp) +9c0 3f418566/3f418568 (0.755942/0.755942, 2 ulp) +9c4 bb54b086/bb54b06b (-0.00324538/-0.00324538, 27 ulp)
+218 pos = | vel +9b0 44f06b06/44f06b07 (1923.34/1923.34, 1 ulp) | angvel +9bc 3b98fb4a/3b98fb54 (0.00466863/0.00466863, 10 ulp) +9c0 3f389055/3f389056 (0.720952/0.720952, 1 ulp) +9c4 bb37210e/bb3720f8 (-0.00279433/-0.00279432, 22 ulp)
+219 pos = | vel +9b0 44edc8a3/44edc8a4 (1902.27/1902.27, 1 ulp) | angvel +9bc 3ba6b67f/3ba6b688 (0.00508767/0.00508768, 9 ulp) +9c0 3f328aab/3f328aad (0.697428/0.697429, 2 ulp) +9c4 bb1ed9ff/bb1ed9f1 (-0.00242388/-0.00242388, 14 ulp)
+220 pos +958 4098c40e/409b8ad4 (4.77393/4.8607, 181958 ulp) +95c b8f0be69/b8e0f378 (-0.000114796/-0.000107265, 1034993 ulp) +960 c1b9a2ba/c1ba4b88 (-23.2045/-23.2869, 43214 ulp) | vel +9b0 44e491b0/44ea42c1 (1828.55/1874.09, 373009 ulp) +9b4 c1894a54/c18ebbc7 (-17.1613/-17.8417, 356723 ulp) +9b8 c4d687c8/c4de8bc7 (-1716.24/-1780.37, 525311 ulp) | angvel +9bc 3b8a3861/3baccdde (0.00421815/0.00527356, 2266493 ulp) +9c0 3f140702/3f2ec1c3 (0.578232/0.682644, 1751745 ulp) +9c4 bb03b3d5/bb0b280d (-0.00200962/-0.00212336, 488504 ulp)
+221 pos +958 4098c40e/409e4464 (4.77393/4.94585, 360534 ulp) +95c b8fa0253/b8dbcf90 (-0.000119214/-0.000104814, 1979075 ulp) +960 c1b9a2ba/c1bafbd0 (-23.2045/-23.373, 88342 ulp) | vel +9b0 44dbb382/44e5e870 (1757.61/1839.26, 668910 ulp) +9b4 c16a1164/c17763db (-14.6292/-15.4619, 873079 ulp) +9b8 c4d87f74/c4e866c5 (-1731.98/-1859.21, 1042257 ulp) | angvel +9bc 3b6b0856/3bad7b73 (0.00358631/0.00529426, 4354845 ulp) +9c0 3efbb576/3f2caf30 (0.491619/0.674548, 3209658 ulp) +9c4 badff31b/baf67473 (-0.0017086/-0.0018803, 1474904 ulp)
+222 pos +958 4098c40e/40a0ee54 (4.77393/5.02909, 535110 ulp) +95c b900d4f3/b8d64ba0 (-0.000122864/-0.000102184, 2787667 ulp) +960 c1b9a2ba/c1bbb390 (-23.2045/-23.4627, 135382 ulp) | vel +9b0 44d3d18b/44e0c1e4 (1694.55/1798.06, 847961 ulp) +9b4 c14fda17/c157594d (-12.9907/-13.4593, 491318 ulp) +9b8 c4d9592e/c4f23fd2 (-1738.79/-1937.99, 1631908 ulp) | angvel +9bc 3b498629/3baa61b5 (0.00307501/0.00519964, 6347660 ulp) +9c0 3ed7d2a3/3f2bede5 (0.421529/0.671599, 5512002 ulp) +9c4 bac0056f/badcbcb7 (-0.00146501/-0.00168409, 1881928 ulp)
+rows with pos/vel/angvel all equal: 174
+first difference: pos k=182, vel k=179, angvel k=174
+
+### reccmp.py o_c2_3_B_C2_K0-sf (k 170..222 of -400..222; k<0 missing on the original side)
+170 pos = | vel = | angvel =
+171 pos = | vel = | angvel =
+172 pos = | vel = | angvel =
+173 pos = | vel = | angvel =
+174 pos = | vel = | angvel +9bc 3ba9c9a9/3ba9c9a5 (0.00518151/0.00518151, 4 ulp) +9c0 be47a2b9/be47a2b8 (-0.194957/-0.194957, 1 ulp) +9c4 bb28b6e9/bb28b6f1 (-0.00257438/-0.00257438, 8 ulp)
+175 pos = | vel = | angvel +9bc 3c10773e/3c10773c (0.00881749/0.00881749, 2 ulp)
+176 pos = | vel = | angvel +9bc 3c20e5fa/3c20e5f8 (0.00982046/0.00982045, 2 ulp)
+177 pos = | vel = | angvel +9bc 3c269d7b/3c269d7a (0.0101694/0.0101694, 1 ulp)
+178 pos = | vel = | angvel +9bc 3c32a867/3c32a865 (0.0109044/0.0109044, 2 ulp)
+179 pos = | vel +9b4 42bb0806/42bb0805 (93.5157/93.5157, 1 ulp) | angvel +9bc 3c24da6a/3c24da68 (0.0100618/0.0100618, 2 ulp)
+180 pos = | vel +9b4 42c8fa8b/42c8fa8a (100.489/100.489, 1 ulp) | angvel +9bc 3c23eec0/3c23eebd (0.0100057/0.0100057, 3 ulp)
+181 pos = | vel +9b4 42d4a5a7/42d4a5a6 (106.324/106.324, 1 ulp) | angvel +9bc 3c1d1e7d/3c1d1e7a (0.00958979/0.00958979, 3 ulp)
+182 pos +95c bbb4bd1e/bbb4bd1f (-0.00551571/-0.00551571, 1 ulp) | vel +9b4 42dc6f68/42dc6f67 (110.218/110.218, 1 ulp) | angvel +9bc 3c31f0c4/3c31f0c2 (0.0108606/0.0108606, 2 ulp) +9c0 be88c419/be88c418 (-0.267121/-0.267121, 1 ulp)
+183 pos +95c b8ebf460/b8ebf440 (-0.000112512/-0.000112512, 32 ulp) | vel +9b4 42e1a6ac/42e1a6ab (112.826/112.826, 1 ulp) | angvel +9bc 3c55573f/3c55573d (0.0130213/0.0130213, 2 ulp)
+184 pos = | vel +9b4 42c7ee9a/42c7ee99 (99.966/99.966, 1 ulp) | angvel +9bc 3c018202/3c018203 (0.00790453/0.00790453, 1 ulp)
+185 pos = | vel = | angvel +9bc 3b7dcab2/3b7dcab5 (0.00387256/0.00387256, 3 ulp)
+186 pos = | vel = | angvel +9bc 3a3130e0/3a3130eb (0.00067593/0.00067593, 11 ulp)
+187 pos = | vel = | angvel +9bc baf5b8cc/baf5b8c7 (-0.00187471/-0.00187471, 5 ulp)
+188 pos = | vel = | angvel +9bc bb808cf1/bb808cf0 (-0.00392305/-0.00392305, 1 ulp) +9c4 bc06d4cc/bc06d4cb (-0.00822945/-0.00822944, 1 ulp)
+189 pos = | vel = | angvel +9c4 bc07cb44/bc07cb43 (-0.00828821/-0.00828821, 1 ulp)
+190 pos = | vel = | angvel +9bc bb775154/bb775156 (-0.00377377/-0.00377377, 2 ulp) +9c0 402158aa/402158a9 (2.52104/2.52104, 1 ulp)
+191 pos = | vel = | angvel +9bc bb9cd806/bb9cd807 (-0.00478649/-0.00478649, 1 ulp) +9c0 40055714/40055713 (2.08344/2.08344, 1 ulp) +9c4 bbc1dc4e/bbc1dc61 (-0.00591615/-0.00591616, 19 ulp)
+192 pos = | vel = | angvel +9c0 3fdb19a4/3fdb19a3 (1.71172/1.71172, 1 ulp) +9c4 bba7a04b/bba7a058 (-0.00511554/-0.00511555, 13 ulp)
+193 pos = | vel = | angvel +9c0 3fb27198/3fb27197 (1.39409/1.39409, 1 ulp) +9c4 bb9ca737/bb9ca741 (-0.00478068/-0.00478068, 10 ulp)
+194 pos = | vel = | angvel +9c0 3f8f0fd7/3f8f0fd6 (1.11767/1.11767, 1 ulp) +9c4 bb9d47f7/bb9d4801 (-0.00479984/-0.00479984, 10 ulp)
+195 pos = | vel = | angvel +9c0 3f5f6e18/3f5f6e17 (0.872774/0.872774, 1 ulp) +9c4 bba75d33/bba75d39 (-0.00510755/-0.00510755, 6 ulp)
+196 pos = | vel = | angvel +9c4 bbbe3074/bbbe3079 (-0.00580412/-0.00580412, 5 ulp)
+197 pos = | vel = | angvel +9c0 4069bf7a/4069bf7c (3.65231/3.65231, 2 ulp) +9c4 bbc0119a/bbc0119e (-0.00586147/-0.00586148, 4 ulp)
+198 pos = | vel = | angvel +9bc bc00bde8/bc00bde7 (-0.00785778/-0.00785778, 1 ulp) +9c0 404a1b39/404a1b3b (3.15791/3.15791, 2 ulp) +9c4 bba46469/bba46473 (-0.00501685/-0.00501686, 10 ulp)
+199 pos = | vel = | angvel +9bc bc071641/bc07163f (-0.00824505/-0.00824505, 2 ulp) +9c0 402cef7d/402cef7f (2.70212/2.70212, 2 ulp) +9c4 bb96d581/bb96d58d (-0.00460309/-0.00460309, 12 ulp)
+200 pos = | vel = | angvel +9bc bc0872b3/bc0872b0 (-0.00832813/-0.00832812, 3 ulp) +9c0 401289c9/401289cb (2.28966/2.28966, 2 ulp) +9c4 bb8f8dd1/bb8f8ddd (-0.00438092/-0.00438093, 12 ulp)
+201 pos = | vel = | angvel +9bc bc054f88/bc054f84 (-0.00813664/-0.00813663, 4 ulp) +9c0 3ff59979/3ff5997c (1.91875/1.91875, 3 ulp) +9c4 bb8b3295/bb8b32a2 (-0.00424797/-0.00424798, 13 ulp)
+202 pos = | vel = | angvel +9bc bbfc99f8/bbfc99f1 (-0.00770878/-0.00770878, 7 ulp) +9c0 3fcb8ec4/3fcb8ec7 (1.59029/1.59029, 3 ulp) +9c4 bb87193f/bb871948 (-0.00412288/-0.00412289, 9 ulp)
+203 pos = | vel = | angvel +9bc bbdde5f2/bbdde5ed (-0.0067718/-0.00677179, 5 ulp) +9c0 3fab6f1f/3fab6f22 (1.33933/1.33933, 3 ulp) +9c4 bb7eb718/bb7eb725 (-0.00388665/-0.00388665, 13 ulp)
+204 pos = | vel = | angvel +9bc bbb235e1/bbb235df (-0.00543855/-0.00543855, 2 ulp) +9c0 3f8f7c6d/3f8f7c6f (1.12098/1.12098, 2 ulp) +9c4 bb56ab91/bb56ab96 (-0.00327561/-0.00327561, 5 ulp)
+205 pos = | vel = | angvel +9bc bbb235e1/bbb235df (-0.00543855/-0.00543855, 2 ulp) +9c0 3f8f7c6d/3f8f7c6f (1.12098/1.12098, 2 ulp) +9c4 bb56ab91/bb56ab96 (-0.00327561/-0.00327561, 5 ulp)
+206 pos = | vel = | angvel +9bc bbb235e1/bbb235df (-0.00543855/-0.00543855, 2 ulp) +9c0 3f8f7c6d/3f8f7c6f (1.12098/1.12098, 2 ulp) +9c4 bb56ab91/bb56ab96 (-0.00327561/-0.00327561, 5 ulp)
+207 pos = | vel = | angvel +9bc bbb235e1/bbb235df (-0.00543855/-0.00543855, 2 ulp) +9c0 3f8f7c6d/3f8f7c6f (1.12098/1.12098, 2 ulp) +9c4 bb56ab91/bb56ab96 (-0.00327561/-0.00327561, 5 ulp)
+208 pos = | vel = | angvel +9bc bbb235e1/bbb235df (-0.00543855/-0.00543855, 2 ulp) +9c0 3f8f7c6d/3f8f7c6f (1.12098/1.12098, 2 ulp) +9c4 bb56ab91/bb56ab96 (-0.00327561/-0.00327561, 5 ulp)
+209 pos = | vel = | angvel +9bc bbb235e1/bbb235df (-0.00543855/-0.00543855, 2 ulp) +9c0 3f8f7c6d/3f8f7c6f (1.12098/1.12098, 2 ulp) +9c4 bb56ab91/bb56ab96 (-0.00327561/-0.00327561, 5 ulp)
+210 pos = | vel = | angvel +9bc bbb235e1/bbb235df (-0.00543855/-0.00543855, 2 ulp) +9c0 3f8f7c6d/3f8f7c6f (1.12098/1.12098, 2 ulp) +9c4 bb56ab91/bb56ab96 (-0.00327561/-0.00327561, 5 ulp)
+211 pos = | vel = | angvel +9bc bbb235e1/bbb235df (-0.00543855/-0.00543855, 2 ulp) +9c0 3f8f7c6d/3f8f7c6f (1.12098/1.12098, 2 ulp) +9c4 bb56ab91/bb56ab96 (-0.00327561/-0.00327561, 5 ulp)
+212 pos = | vel = | angvel +9bc bbb235e1/bbb235df (-0.00543855/-0.00543855, 2 ulp) +9c0 3f8f7c6d/3f8f7c6f (1.12098/1.12098, 2 ulp) +9c4 bb56ab91/bb56ab96 (-0.00327561/-0.00327561, 5 ulp)
+213 pos = | vel = | angvel +9bc bbb235e1/bbb235df (-0.00543855/-0.00543855, 2 ulp) +9c0 3f8f7c6d/3f8f7c6f (1.12098/1.12098, 2 ulp) +9c4 bb56ab91/bb56ab96 (-0.00327561/-0.00327561, 5 ulp)
+214 pos = | vel = | angvel +9bc baf73bcb/baf73a71 (-0.00188624/-0.0018862, 346 ulp) +9c0 3f79b88f/3f79b899 (0.975472/0.975473, 10 ulp) +9c4 bba3b830/bba3b80a (-0.00499632/-0.0049963, 38 ulp)
+215 pos = | vel = | angvel +9bc 3a64197f/3a641a55 (0.000870131/0.000870143, 214 ulp) +9c0 3f60832f/3f608334 (0.877002/0.877002, 5 ulp) +9c4 bb8f945a/bb8f9442 (-0.0043817/-0.00438169, 24 ulp)
+216 pos = | vel = | angvel +9bc 3b3215ba/3b3215da (0.00271736/0.00271737, 32 ulp) +9c0 3f4e65d8/3f4e65db (0.806242/0.806242, 3 ulp) +9c4 bb77a617/bb77a5f4 (-0.00377882/-0.00377881, 35 ulp)
+217 pos = | vel = | angvel +9bc 3b808161/3b80816e (0.00392167/0.00392168, 13 ulp) +9c0 3f418566/3f418568 (0.755942/0.755942, 2 ulp) +9c4 bb54b086/bb54b06b (-0.00324538/-0.00324538, 27 ulp)
+218 pos = | vel +9b0 44f06b06/44f06b07 (1923.34/1923.34, 1 ulp) | angvel +9bc 3b98fb4a/3b98fb54 (0.00466863/0.00466863, 10 ulp) +9c0 3f389055/3f389056 (0.720952/0.720952, 1 ulp) +9c4 bb37210e/bb3720f8 (-0.00279433/-0.00279432, 22 ulp)
+219 pos = | vel +9b0 44edc8a3/44edc8a4 (1902.27/1902.27, 1 ulp) | angvel +9bc 3ba6b67f/3ba6b688 (0.00508767/0.00508768, 9 ulp) +9c0 3f328aab/3f328aad (0.697428/0.697429, 2 ulp) +9c4 bb1ed9ff/bb1ed9f1 (-0.00242388/-0.00242388, 14 ulp)
+220 pos +958 4098c40e/409b8ad4 (4.77393/4.8607, 181958 ulp) +95c b8f0be69/b8e0f378 (-0.000114796/-0.000107265, 1034993 ulp) +960 c1b9a2ba/c1ba4b88 (-23.2045/-23.2869, 43214 ulp) | vel +9b0 44e491b0/44ea42c1 (1828.55/1874.09, 373009 ulp) +9b4 c1894a54/c18ebbc7 (-17.1613/-17.8417, 356723 ulp) +9b8 c4d687c8/c4de8bc7 (-1716.24/-1780.37, 525311 ulp) | angvel +9bc 3b8a3861/3baccdde (0.00421815/0.00527356, 2266493 ulp) +9c0 3f140702/3f2ec1c3 (0.578232/0.682644, 1751745 ulp) +9c4 bb03b3d5/bb0b280d (-0.00200962/-0.00212336, 488504 ulp)
+221 pos +958 4098c40e/409e4464 (4.77393/4.94585, 360534 ulp) +95c b8fa0253/b8dbcf90 (-0.000119214/-0.000104814, 1979075 ulp) +960 c1b9a2ba/c1bafbd0 (-23.2045/-23.373, 88342 ulp) | vel +9b0 44dbb382/44e5e870 (1757.61/1839.26, 668910 ulp) +9b4 c16a1164/c17763db (-14.6292/-15.4619, 873079 ulp) +9b8 c4d87f74/c4e866c5 (-1731.98/-1859.21, 1042257 ulp) | angvel +9bc 3b6b0856/3bad7b73 (0.00358631/0.00529426, 4354845 ulp) +9c0 3efbb576/3f2caf30 (0.491619/0.674548, 3209658 ulp) +9c4 badff31b/baf67473 (-0.0017086/-0.0018803, 1474904 ulp)
+222 pos +958 4098c40e/40a0ee54 (4.77393/5.02909, 535110 ulp) +95c b900d4da/b8d64ba0 (-0.000122863/-0.000102184, 2787642 ulp) +960 c1b9a2ba/c1bbb390 (-23.2045/-23.4627, 135382 ulp) | vel +9b0 44d4c06c/44e0c1e4 (1702.01/1798.06, 786808 ulp) +9b4 c1542f42/c157594d (-13.2615/-13.4593, 207371 ulp) +9b8 c4d89f6f/c4f23fd2 (-1732.98/-1937.99, 1679459 ulp) | angvel +9bc 3b49d29d/3baa61b5 (0.00307957/0.00519964, 6328088 ulp) +9c0 3ed82484/3f2bede5 (0.422154/0.671599, 5491041 ulp) +9c4 bac04e48/badcbcb7 (-0.00146718/-0.00168409, 1863279 ulp)
+rows with pos/vel/angvel all equal: 174
+first difference: pos k=182, vel k=179, angvel k=174
+
+### reccmp.py o_c2_2_B_C2NODOT_K0 (k 170..222 of -400..222; k<0 missing on the original side)
+170 pos = | vel = | angvel =
+171 pos = | vel = | angvel =
+172 pos = | vel = | angvel =
+173 pos = | vel = | angvel =
+174 pos = | vel = | angvel +9bc 3ba9c9a9/3ba9c9a5 (0.00518151/0.00518151, 4 ulp) +9c0 be47a2b9/be47a2b8 (-0.194957/-0.194957, 1 ulp) +9c4 bb28b6e9/bb28b6f1 (-0.00257438/-0.00257438, 8 ulp)
+175 pos = | vel = | angvel +9bc 3c10773e/3c10773c (0.00881749/0.00881749, 2 ulp)
+176 pos = | vel = | angvel +9bc 3c20e5fa/3c20e5f8 (0.00982046/0.00982045, 2 ulp)
+177 pos = | vel = | angvel +9bc 3c269d7b/3c269d7a (0.0101694/0.0101694, 1 ulp)
+178 pos = | vel = | angvel +9bc 3c32a867/3c32a865 (0.0109044/0.0109044, 2 ulp)
+179 pos = | vel +9b4 42bb0806/42bb0805 (93.5157/93.5157, 1 ulp) | angvel +9bc 3c24da6a/3c24da68 (0.0100618/0.0100618, 2 ulp)
+180 pos = | vel +9b4 42c8fa8b/42c8fa8a (100.489/100.489, 1 ulp) | angvel +9bc 3c23eec0/3c23eebd (0.0100057/0.0100057, 3 ulp)
+181 pos = | vel +9b4 42d4a5a7/42d4a5a6 (106.324/106.324, 1 ulp) | angvel +9bc 3c1d1e7d/3c1d1e7a (0.00958979/0.00958979, 3 ulp)
+182 pos +95c bbb4bd1e/bbb4bd1f (-0.00551571/-0.00551571, 1 ulp) | vel +9b4 42dc6f68/42dc6f67 (110.218/110.218, 1 ulp) | angvel +9bc 3c31f0c4/3c31f0c2 (0.0108606/0.0108606, 2 ulp) +9c0 be88c419/be88c418 (-0.267121/-0.267121, 1 ulp)
+183 pos +95c b8ebf460/b8ebf440 (-0.000112512/-0.000112512, 32 ulp) | vel +9b4 42e1a6ac/42e1a6ab (112.826/112.826, 1 ulp) | angvel +9bc 3c55573f/3c55573d (0.0130213/0.0130213, 2 ulp)
+184 pos = | vel +9b4 42c7ee9a/42c7ee99 (99.966/99.966, 1 ulp) | angvel +9bc 3c018202/3c018203 (0.00790453/0.00790453, 1 ulp)
+185 pos = | vel = | angvel +9bc 3b7dcab2/3b7dcab5 (0.00387256/0.00387256, 3 ulp)
+186 pos = | vel = | angvel +9bc 3a3130e0/3a3130eb (0.00067593/0.00067593, 11 ulp)
+187 pos = | vel = | angvel +9bc baf5b8cc/baf5b8c7 (-0.00187471/-0.00187471, 5 ulp)
+188 pos = | vel = | angvel +9bc bb808cf1/bb808cf0 (-0.00392305/-0.00392305, 1 ulp) +9c4 bc06d4cc/bc06d4cb (-0.00822945/-0.00822944, 1 ulp)
+189 pos = | vel = | angvel +9c4 bc07cb44/bc07cb43 (-0.00828821/-0.00828821, 1 ulp)
+190 pos = | vel = | angvel +9bc bb775154/bb775156 (-0.00377377/-0.00377377, 2 ulp) +9c0 402158aa/402158a9 (2.52104/2.52104, 1 ulp)
+191 pos = | vel = | angvel +9bc bb9cd806/bb9cd807 (-0.00478649/-0.00478649, 1 ulp) +9c0 40055714/40055713 (2.08344/2.08344, 1 ulp) +9c4 bbc1dc4e/bbc1dc61 (-0.00591615/-0.00591616, 19 ulp)
+192 pos = | vel = | angvel +9c0 3fdb19a4/3fdb19a3 (1.71172/1.71172, 1 ulp) +9c4 bba7a04b/bba7a058 (-0.00511554/-0.00511555, 13 ulp)
+193 pos = | vel = | angvel +9c0 3fb27198/3fb27197 (1.39409/1.39409, 1 ulp) +9c4 bb9ca737/bb9ca741 (-0.00478068/-0.00478068, 10 ulp)
+194 pos = | vel = | angvel +9c0 3f8f0fd7/3f8f0fd6 (1.11767/1.11767, 1 ulp) +9c4 bb9d47f7/bb9d4801 (-0.00479984/-0.00479984, 10 ulp)
+195 pos = | vel = | angvel +9c0 3f5f6e18/3f5f6e17 (0.872774/0.872774, 1 ulp) +9c4 bba75d33/bba75d39 (-0.00510755/-0.00510755, 6 ulp)
+196 pos = | vel = | angvel +9c4 bbbe3074/bbbe3079 (-0.00580412/-0.00580412, 5 ulp)
+197 pos = | vel = | angvel +9c0 4069bf7a/4069bf7c (3.65231/3.65231, 2 ulp) +9c4 bbc0119a/bbc0119e (-0.00586147/-0.00586148, 4 ulp)
+198 pos = | vel = | angvel +9bc bc00bde8/bc00bde7 (-0.00785778/-0.00785778, 1 ulp) +9c0 404a1b39/404a1b3b (3.15791/3.15791, 2 ulp) +9c4 bba46469/bba46473 (-0.00501685/-0.00501686, 10 ulp)
+199 pos = | vel = | angvel +9bc bc071641/bc07163f (-0.00824505/-0.00824505, 2 ulp) +9c0 402cef7d/402cef7f (2.70212/2.70212, 2 ulp) +9c4 bb96d581/bb96d58d (-0.00460309/-0.00460309, 12 ulp)
+200 pos = | vel = | angvel +9bc bc0872b3/bc0872b0 (-0.00832813/-0.00832812, 3 ulp) +9c0 401289c9/401289cb (2.28966/2.28966, 2 ulp) +9c4 bb8f8dd1/bb8f8ddd (-0.00438092/-0.00438093, 12 ulp)
+201 pos = | vel = | angvel +9bc bc054f88/bc054f84 (-0.00813664/-0.00813663, 4 ulp) +9c0 3ff59979/3ff5997c (1.91875/1.91875, 3 ulp) +9c4 bb8b3295/bb8b32a2 (-0.00424797/-0.00424798, 13 ulp)
+202 pos = | vel = | angvel +9bc bbfc99f8/bbfc99f1 (-0.00770878/-0.00770878, 7 ulp) +9c0 3fcb8ec4/3fcb8ec7 (1.59029/1.59029, 3 ulp) +9c4 bb87193f/bb871948 (-0.00412288/-0.00412289, 9 ulp)
+203 pos = | vel = | angvel +9bc bbdde5f2/bbdde5ed (-0.0067718/-0.00677179, 5 ulp) +9c0 3fab6f1f/3fab6f22 (1.33933/1.33933, 3 ulp) +9c4 bb7eb718/bb7eb725 (-0.00388665/-0.00388665, 13 ulp)
+204 pos = | vel = | angvel +9bc bbb235e1/bbb235df (-0.00543855/-0.00543855, 2 ulp) +9c0 3f8f7c6d/3f8f7c6f (1.12098/1.12098, 2 ulp) +9c4 bb56ab91/bb56ab96 (-0.00327561/-0.00327561, 5 ulp)
+205 pos = | vel = | angvel +9bc bbb235e1/bbb235df (-0.00543855/-0.00543855, 2 ulp) +9c0 3f8f7c6d/3f8f7c6f (1.12098/1.12098, 2 ulp) +9c4 bb56ab91/bb56ab96 (-0.00327561/-0.00327561, 5 ulp)
+206 pos = | vel = | angvel +9bc bbb235e1/bbb235df (-0.00543855/-0.00543855, 2 ulp) +9c0 3f8f7c6d/3f8f7c6f (1.12098/1.12098, 2 ulp) +9c4 bb56ab91/bb56ab96 (-0.00327561/-0.00327561, 5 ulp)
+207 pos = | vel = | angvel +9bc bbb235e1/bbb235df (-0.00543855/-0.00543855, 2 ulp) +9c0 3f8f7c6d/3f8f7c6f (1.12098/1.12098, 2 ulp) +9c4 bb56ab91/bb56ab96 (-0.00327561/-0.00327561, 5 ulp)
+208 pos = | vel = | angvel +9bc bbb235e1/bbb235df (-0.00543855/-0.00543855, 2 ulp) +9c0 3f8f7c6d/3f8f7c6f (1.12098/1.12098, 2 ulp) +9c4 bb56ab91/bb56ab96 (-0.00327561/-0.00327561, 5 ulp)
+209 pos = | vel = | angvel +9bc bbb235e1/bbb235df (-0.00543855/-0.00543855, 2 ulp) +9c0 3f8f7c6d/3f8f7c6f (1.12098/1.12098, 2 ulp) +9c4 bb56ab91/bb56ab96 (-0.00327561/-0.00327561, 5 ulp)
+210 pos = | vel = | angvel +9bc bbb235e1/bbb235df (-0.00543855/-0.00543855, 2 ulp) +9c0 3f8f7c6d/3f8f7c6f (1.12098/1.12098, 2 ulp) +9c4 bb56ab91/bb56ab96 (-0.00327561/-0.00327561, 5 ulp)
+211 pos = | vel = | angvel +9bc bbb235e1/bbb235df (-0.00543855/-0.00543855, 2 ulp) +9c0 3f8f7c6d/3f8f7c6f (1.12098/1.12098, 2 ulp) +9c4 bb56ab91/bb56ab96 (-0.00327561/-0.00327561, 5 ulp)
+212 pos = | vel = | angvel +9bc bbb235e1/bbb235df (-0.00543855/-0.00543855, 2 ulp) +9c0 3f8f7c6d/3f8f7c6f (1.12098/1.12098, 2 ulp) +9c4 bb56ab91/bb56ab96 (-0.00327561/-0.00327561, 5 ulp)
+213 pos = | vel = | angvel +9bc bbb235e1/bbb235df (-0.00543855/-0.00543855, 2 ulp) +9c0 3f8f7c6d/3f8f7c6f (1.12098/1.12098, 2 ulp) +9c4 bb56ab91/bb56ab96 (-0.00327561/-0.00327561, 5 ulp)
+214 pos = | vel = | angvel +9bc baf73bcb/baf73a71 (-0.00188624/-0.0018862, 346 ulp) +9c0 3f79b88f/3f79b899 (0.975472/0.975473, 10 ulp) +9c4 bba3b830/bba3b80a (-0.00499632/-0.0049963, 38 ulp)
+215 pos = | vel = | angvel +9bc 3a64197f/3a641a55 (0.000870131/0.000870143, 214 ulp) +9c0 3f60832f/3f608334 (0.877002/0.877002, 5 ulp) +9c4 bb8f945a/bb8f9442 (-0.0043817/-0.00438169, 24 ulp)
+216 pos = | vel = | angvel +9bc 3b3215ba/3b3215da (0.00271736/0.00271737, 32 ulp) +9c0 3f4e65d8/3f4e65db (0.806242/0.806242, 3 ulp) +9c4 bb77a617/bb77a5f4 (-0.00377882/-0.00377881, 35 ulp)
+217 pos = | vel = | angvel +9bc 3b808161/3b80816e (0.00392167/0.00392168, 13 ulp) +9c0 3f418566/3f418568 (0.755942/0.755942, 2 ulp) +9c4 bb54b086/bb54b06b (-0.00324538/-0.00324538, 27 ulp)
+218 pos = | vel +9b0 44f06b06/44f06b07 (1923.34/1923.34, 1 ulp) | angvel +9bc 3b98fb4a/3b98fb54 (0.00466863/0.00466863, 10 ulp) +9c0 3f389055/3f389056 (0.720952/0.720952, 1 ulp) +9c4 bb37210e/bb3720f8 (-0.00279433/-0.00279432, 22 ulp)
+219 pos = | vel +9b0 44edc8a3/44edc8a4 (1902.27/1902.27, 1 ulp) | angvel +9bc 3ba6b67f/3ba6b688 (0.00508767/0.00508768, 9 ulp) +9c0 3f328aab/3f328aad (0.697428/0.697429, 2 ulp) +9c4 bb1ed9ff/bb1ed9f1 (-0.00242388/-0.00242388, 14 ulp)
+220 pos +958 4098c40e/409b8ad4 (4.77393/4.8607, 181958 ulp) +95c b8f0be69/b8e0f378 (-0.000114796/-0.000107265, 1034993 ulp) +960 c1b9a2ba/c1ba4b88 (-23.2045/-23.2869, 43214 ulp) | vel +9b0 44e491b0/44ea42c1 (1828.55/1874.09, 373009 ulp) +9b4 c1894a54/c18ebbc7 (-17.1613/-17.8417, 356723 ulp) +9b8 c4d687c8/c4de8bc7 (-1716.24/-1780.37, 525311 ulp) | angvel +9bc 3b8a3861/3baccdde (0.00421815/0.00527356, 2266493 ulp) +9c0 3f140702/3f2ec1c3 (0.578232/0.682644, 1751745 ulp) +9c4 bb03b3d5/bb0b280d (-0.00200962/-0.00212336, 488504 ulp)
+221 pos +958 4098c40e/409e4464 (4.77393/4.94585, 360534 ulp) +95c b8fa0253/b8dbcf90 (-0.000119214/-0.000104814, 1979075 ulp) +960 c1b9a2ba/c1bafbd0 (-23.2045/-23.373, 88342 ulp) | vel +9b0 44dbb382/44e5e870 (1757.61/1839.26, 668910 ulp) +9b4 c16a1164/c17763db (-14.6292/-15.4619, 873079 ulp) +9b8 c4d87f74/c4e866c5 (-1731.98/-1859.21, 1042257 ulp) | angvel +9bc 3b6b0856/3bad7b73 (0.00358631/0.00529426, 4354845 ulp) +9c0 3efbb576/3f2caf30 (0.491619/0.674548, 3209658 ulp) +9c4 badff31b/baf67473 (-0.0017086/-0.0018803, 1474904 ulp)
+222 pos +958 4098c40e/40a0ee54 (4.77393/5.02909, 535110 ulp) +95c b900d4f3/b8d64ba0 (-0.000122864/-0.000102184, 2787667 ulp) +960 c1b9a2ba/c1bbb390 (-23.2045/-23.4627, 135382 ulp) | vel +9b0 44d3d18b/44e0c1e4 (1694.55/1798.06, 847961 ulp) +9b4 c14fda17/c157594d (-12.9907/-13.4593, 491318 ulp) +9b8 c4d9592e/c4f23fd2 (-1738.79/-1937.99, 1631908 ulp) | angvel +9bc 3b498629/3baa61b5 (0.00307501/0.00519964, 6347660 ulp) +9c0 3ed7d2a3/3f2bede5 (0.421529/0.671599, 5512002 ulp) +9c4 bac0056f/badcbcb7 (-0.00146501/-0.00168409, 1881928 ulp)
+rows with pos/vel/angvel all equal: 174
+first difference: pos k=182, vel k=179, angvel k=174
+
+### reccmp.py o_c2_2_B_C2NOB_K0 (k 170..222 of -400..222; k<0 missing on the original side)
+170 pos = | vel = | angvel =
+171 pos = | vel = | angvel =
+172 pos = | vel = | angvel =
+173 pos = | vel = | angvel =
+174 pos = | vel = | angvel +9bc 3ba9c9a9/3ba9c9a5 (0.00518151/0.00518151, 4 ulp) +9c0 be47a2b9/be47a2b8 (-0.194957/-0.194957, 1 ulp) +9c4 bb28b6e9/bb28b6f1 (-0.00257438/-0.00257438, 8 ulp)
+175 pos = | vel = | angvel +9bc 3c10773e/3c10773c (0.00881749/0.00881749, 2 ulp)
+176 pos = | vel = | angvel +9bc 3c20e5fa/3c20e5f8 (0.00982046/0.00982045, 2 ulp)
+177 pos = | vel = | angvel +9bc 3c269d7b/3c269d7a (0.0101694/0.0101694, 1 ulp)
+178 pos = | vel = | angvel +9bc 3c32a867/3c32a865 (0.0109044/0.0109044, 2 ulp)
+179 pos = | vel +9b4 42bb0806/42bb0805 (93.5157/93.5157, 1 ulp) | angvel +9bc 3c24da6a/3c24da68 (0.0100618/0.0100618, 2 ulp)
+180 pos = | vel +9b4 42c8fa8b/42c8fa8a (100.489/100.489, 1 ulp) | angvel +9bc 3c23eec0/3c23eebd (0.0100057/0.0100057, 3 ulp)
+181 pos = | vel +9b4 42d4a5a7/42d4a5a6 (106.324/106.324, 1 ulp) | angvel +9bc 3c1d1e7d/3c1d1e7a (0.00958979/0.00958979, 3 ulp)
+182 pos +95c bbb4bd1e/bbb4bd1f (-0.00551571/-0.00551571, 1 ulp) | vel +9b4 42dc6f68/42dc6f67 (110.218/110.218, 1 ulp) | angvel +9bc 3c31f0c4/3c31f0c2 (0.0108606/0.0108606, 2 ulp) +9c0 be88c419/be88c418 (-0.267121/-0.267121, 1 ulp)
+183 pos +95c b8ebf460/b8ebf440 (-0.000112512/-0.000112512, 32 ulp) | vel +9b4 42e1a6ac/42e1a6ab (112.826/112.826, 1 ulp) | angvel +9bc 3c55573f/3c55573d (0.0130213/0.0130213, 2 ulp)
+184 pos = | vel +9b4 42c7ee9a/42c7ee99 (99.966/99.966, 1 ulp) | angvel +9bc 3c018202/3c018203 (0.00790453/0.00790453, 1 ulp)
+185 pos = | vel = | angvel +9bc 3b7dcab2/3b7dcab5 (0.00387256/0.00387256, 3 ulp)
+186 pos = | vel = | angvel +9bc 3a3130e0/3a3130eb (0.00067593/0.00067593, 11 ulp)
+187 pos = | vel = | angvel +9bc baf5b8cc/baf5b8c7 (-0.00187471/-0.00187471, 5 ulp)
+188 pos = | vel = | angvel +9bc bb808cf1/bb808cf0 (-0.00392305/-0.00392305, 1 ulp) +9c4 bc06d4cc/bc06d4cb (-0.00822945/-0.00822944, 1 ulp)
+189 pos = | vel = | angvel +9c4 bc07cb44/bc07cb43 (-0.00828821/-0.00828821, 1 ulp)
+190 pos = | vel = | angvel +9bc bb775154/bb775156 (-0.00377377/-0.00377377, 2 ulp) +9c0 402158aa/402158a9 (2.52104/2.52104, 1 ulp)
+191 pos = | vel = | angvel +9bc bb9cd806/bb9cd807 (-0.00478649/-0.00478649, 1 ulp) +9c0 40055714/40055713 (2.08344/2.08344, 1 ulp) +9c4 bbc1dc4e/bbc1dc61 (-0.00591615/-0.00591616, 19 ulp)
+192 pos = | vel = | angvel +9c0 3fdb19a4/3fdb19a3 (1.71172/1.71172, 1 ulp) +9c4 bba7a04b/bba7a058 (-0.00511554/-0.00511555, 13 ulp)
+193 pos = | vel = | angvel +9c0 3fb27198/3fb27197 (1.39409/1.39409, 1 ulp) +9c4 bb9ca737/bb9ca741 (-0.00478068/-0.00478068, 10 ulp)
+194 pos = | vel = | angvel +9c0 3f8f0fd7/3f8f0fd6 (1.11767/1.11767, 1 ulp) +9c4 bb9d47f7/bb9d4801 (-0.00479984/-0.00479984, 10 ulp)
+195 pos = | vel = | angvel +9c0 3f5f6e18/3f5f6e17 (0.872774/0.872774, 1 ulp) +9c4 bba75d33/bba75d39 (-0.00510755/-0.00510755, 6 ulp)
+196 pos = | vel = | angvel +9c4 bbbe3074/bbbe3079 (-0.00580412/-0.00580412, 5 ulp)
+197 pos = | vel = | angvel +9c0 4069bf7a/4069bf7c (3.65231/3.65231, 2 ulp) +9c4 bbc0119a/bbc0119e (-0.00586147/-0.00586148, 4 ulp)
+198 pos = | vel = | angvel +9bc bc00bde8/bc00bde7 (-0.00785778/-0.00785778, 1 ulp) +9c0 404a1b39/404a1b3b (3.15791/3.15791, 2 ulp) +9c4 bba46469/bba46473 (-0.00501685/-0.00501686, 10 ulp)
+199 pos = | vel = | angvel +9bc bc071641/bc07163f (-0.00824505/-0.00824505, 2 ulp) +9c0 402cef7d/402cef7f (2.70212/2.70212, 2 ulp) +9c4 bb96d581/bb96d58d (-0.00460309/-0.00460309, 12 ulp)
+200 pos = | vel = | angvel +9bc bc0872b3/bc0872b0 (-0.00832813/-0.00832812, 3 ulp) +9c0 401289c9/401289cb (2.28966/2.28966, 2 ulp) +9c4 bb8f8dd1/bb8f8ddd (-0.00438092/-0.00438093, 12 ulp)
+201 pos = | vel = | angvel +9bc bc054f88/bc054f84 (-0.00813664/-0.00813663, 4 ulp) +9c0 3ff59979/3ff5997c (1.91875/1.91875, 3 ulp) +9c4 bb8b3295/bb8b32a2 (-0.00424797/-0.00424798, 13 ulp)
+202 pos = | vel = | angvel +9bc bbfc99f8/bbfc99f1 (-0.00770878/-0.00770878, 7 ulp) +9c0 3fcb8ec4/3fcb8ec7 (1.59029/1.59029, 3 ulp) +9c4 bb87193f/bb871948 (-0.00412288/-0.00412289, 9 ulp)
+203 pos = | vel = | angvel +9bc bbdde5f2/bbdde5ed (-0.0067718/-0.00677179, 5 ulp) +9c0 3fab6f1f/3fab6f22 (1.33933/1.33933, 3 ulp) +9c4 bb7eb718/bb7eb725 (-0.00388665/-0.00388665, 13 ulp)
+204 pos = | vel = | angvel +9bc bbb235e1/bbb235df (-0.00543855/-0.00543855, 2 ulp) +9c0 3f8f7c6d/3f8f7c6f (1.12098/1.12098, 2 ulp) +9c4 bb56ab91/bb56ab96 (-0.00327561/-0.00327561, 5 ulp)
+205 pos = | vel = | angvel +9bc bbb235e1/bbb235df (-0.00543855/-0.00543855, 2 ulp) +9c0 3f8f7c6d/3f8f7c6f (1.12098/1.12098, 2 ulp) +9c4 bb56ab91/bb56ab96 (-0.00327561/-0.00327561, 5 ulp)
+206 pos = | vel = | angvel +9bc bbb235e1/bbb235df (-0.00543855/-0.00543855, 2 ulp) +9c0 3f8f7c6d/3f8f7c6f (1.12098/1.12098, 2 ulp) +9c4 bb56ab91/bb56ab96 (-0.00327561/-0.00327561, 5 ulp)
+207 pos = | vel = | angvel +9bc bbb235e1/bbb235df (-0.00543855/-0.00543855, 2 ulp) +9c0 3f8f7c6d/3f8f7c6f (1.12098/1.12098, 2 ulp) +9c4 bb56ab91/bb56ab96 (-0.00327561/-0.00327561, 5 ulp)
+208 pos = | vel = | angvel +9bc bbb235e1/bbb235df (-0.00543855/-0.00543855, 2 ulp) +9c0 3f8f7c6d/3f8f7c6f (1.12098/1.12098, 2 ulp) +9c4 bb56ab91/bb56ab96 (-0.00327561/-0.00327561, 5 ulp)
+209 pos = | vel = | angvel +9bc bbb235e1/bbb235df (-0.00543855/-0.00543855, 2 ulp) +9c0 3f8f7c6d/3f8f7c6f (1.12098/1.12098, 2 ulp) +9c4 bb56ab91/bb56ab96 (-0.00327561/-0.00327561, 5 ulp)
+210 pos = | vel = | angvel +9bc bbb235e1/bbb235df (-0.00543855/-0.00543855, 2 ulp) +9c0 3f8f7c6d/3f8f7c6f (1.12098/1.12098, 2 ulp) +9c4 bb56ab91/bb56ab96 (-0.00327561/-0.00327561, 5 ulp)
+211 pos = | vel = | angvel +9bc bbb235e1/bbb235df (-0.00543855/-0.00543855, 2 ulp) +9c0 3f8f7c6d/3f8f7c6f (1.12098/1.12098, 2 ulp) +9c4 bb56ab91/bb56ab96 (-0.00327561/-0.00327561, 5 ulp)
+212 pos = | vel = | angvel +9bc bbb235e1/bbb235df (-0.00543855/-0.00543855, 2 ulp) +9c0 3f8f7c6d/3f8f7c6f (1.12098/1.12098, 2 ulp) +9c4 bb56ab91/bb56ab96 (-0.00327561/-0.00327561, 5 ulp)
+213 pos = | vel = | angvel +9bc bbb235e1/bbb235df (-0.00543855/-0.00543855, 2 ulp) +9c0 3f8f7c6d/3f8f7c6f (1.12098/1.12098, 2 ulp) +9c4 bb56ab91/bb56ab96 (-0.00327561/-0.00327561, 5 ulp)
+214 pos = | vel = | angvel +9bc baf73bcb/baf73a71 (-0.00188624/-0.0018862, 346 ulp) +9c0 3f79b88f/3f79b899 (0.975472/0.975473, 10 ulp) +9c4 bba3b830/bba3b80a (-0.00499632/-0.0049963, 38 ulp)
+215 pos = | vel = | angvel +9bc 3a64197f/3a641a55 (0.000870131/0.000870143, 214 ulp) +9c0 3f60832f/3f608334 (0.877002/0.877002, 5 ulp) +9c4 bb8f945a/bb8f9442 (-0.0043817/-0.00438169, 24 ulp)
+216 pos = | vel = | angvel +9bc 3b3215ba/3b3215da (0.00271736/0.00271737, 32 ulp) +9c0 3f4e65d8/3f4e65db (0.806242/0.806242, 3 ulp) +9c4 bb77a617/bb77a5f4 (-0.00377882/-0.00377881, 35 ulp)
+217 pos = | vel = | angvel +9bc 3b808161/3b80816e (0.00392167/0.00392168, 13 ulp) +9c0 3f418566/3f418568 (0.755942/0.755942, 2 ulp) +9c4 bb54b086/bb54b06b (-0.00324538/-0.00324538, 27 ulp)
+218 pos = | vel +9b0 44f06b06/44f06b07 (1923.34/1923.34, 1 ulp) | angvel +9bc 3b98fb4a/3b98fb54 (0.00466863/0.00466863, 10 ulp) +9c0 3f389055/3f389056 (0.720952/0.720952, 1 ulp) +9c4 bb37210e/bb3720f8 (-0.00279433/-0.00279432, 22 ulp)
+219 pos = | vel +9b0 44edc8a3/44edc8a4 (1902.27/1902.27, 1 ulp) | angvel +9bc 3ba6b67f/3ba6b688 (0.00508767/0.00508768, 9 ulp) +9c0 3f328aab/3f328aad (0.697428/0.697429, 2 ulp) +9c4 bb1ed9ff/bb1ed9f1 (-0.00242388/-0.00242388, 14 ulp)
+220 pos +958 4098c40e/409b8ad4 (4.77393/4.8607, 181958 ulp) +95c b8f0be69/b8e0f378 (-0.000114796/-0.000107265, 1034993 ulp) +960 c1b9a2ba/c1ba4b88 (-23.2045/-23.2869, 43214 ulp) | vel +9b0 44e491b0/44ea42c1 (1828.55/1874.09, 373009 ulp) +9b4 c1894a54/c18ebbc7 (-17.1613/-17.8417, 356723 ulp) +9b8 c4d687c8/c4de8bc7 (-1716.24/-1780.37, 525311 ulp) | angvel +9bc 3b8a3861/3baccdde (0.00421815/0.00527356, 2266493 ulp) +9c0 3f140702/3f2ec1c3 (0.578232/0.682644, 1751745 ulp) +9c4 bb03b3d5/bb0b280d (-0.00200962/-0.00212336, 488504 ulp)
+221 pos +958 4098c40e/409e4464 (4.77393/4.94585, 360534 ulp) +95c b8fa0253/b8dbcf90 (-0.000119214/-0.000104814, 1979075 ulp) +960 c1b9a2ba/c1bafbd0 (-23.2045/-23.373, 88342 ulp) | vel +9b0 44dbb382/44e5e870 (1757.61/1839.26, 668910 ulp) +9b4 c16a1164/c17763db (-14.6292/-15.4619, 873079 ulp) +9b8 c4d87f74/c4e866c5 (-1731.98/-1859.21, 1042257 ulp) | angvel +9bc 3b6b0856/3bad7b73 (0.00358631/0.00529426, 4354845 ulp) +9c0 3efbb576/3f2caf30 (0.491619/0.674548, 3209658 ulp) +9c4 badff31b/baf67473 (-0.0017086/-0.0018803, 1474904 ulp)
+222 pos +958 4098c40e/40a0ee54 (4.77393/5.02909, 535110 ulp) +95c b900d4f3/b8d64ba0 (-0.000122864/-0.000102184, 2787667 ulp) +960 c1b9a2ba/c1bbb390 (-23.2045/-23.4627, 135382 ulp) | vel +9b0 44d3d18b/44e0c1e4 (1694.55/1798.06, 847961 ulp) +9b4 c14fda17/c157594d (-12.9907/-13.4593, 491318 ulp) +9b8 c4d9592e/c4f23fd2 (-1738.79/-1937.99, 1631908 ulp) | angvel +9bc 3b498629/3baa61b5 (0.00307501/0.00519964, 6347660 ulp) +9c0 3ed7d2a3/3f2bede5 (0.421529/0.671599, 5512002 ulp) +9c4 bac0056f/badcbcb7 (-0.00146501/-0.00168409, 1881928 ulp)
+rows with pos/vel/angvel all equal: 174
+first difference: pos k=182, vel k=179, angvel k=174
+
