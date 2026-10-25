@@ -461,6 +461,10 @@ public:
     // matrix became m; moves the car's position / heading state and the physics pose with it.
     void  PontoonCarried(int v, const float* m);
     void  NextRoundOrEnd();          // check match win, start next round
+    // [D3-CF-K357] MASHED_R7_EXIT (default OFF): true while the knob is set and the MASHED_ROUND_END7 flag is up;
+    // RoundEnd7ExitTick() is then FUN_00410860's per-tick counter + exit gate (true = the original leaves sub-state 7).
+    bool  RoundEnd7ExitActive() const;
+    bool  RoundEnd7ExitTick();
     int   match_winner() const { return match_winner_; }
     int   round_no() const { return round_no_; }
     int   score(int car) const { return (car >= 0 && car < kRaceCars) ? scores_[car] : 0; }
