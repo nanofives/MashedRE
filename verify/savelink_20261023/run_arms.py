@@ -427,7 +427,7 @@ STACK['V3'] = []   # knob deleted (D4-DC-39b0-L13)
 # dcmath4680 (PREREG_dcmath4680.md): NOOL = the 0x004c4680 opt-out (std::sqrt stand-in), PR = the pontoon OP3 replay on a W_ arm
 STACK['NOOL'] = []   # opt-out deleted (D4-DC-39b0-L13)
 # dcmath4d20 (PREREG_dcmath4d20.md): CR = the race camera's RotateAboutAxis through the shared 0x004c4d20 body + slot +0x14 vectors
-STACK['CR'] = ['MASHED_CAM_ROTATE_RW']
+STACK['CR'] = []   # knob deleted (D4-DC-39b0-L13)
 STACK['PR'] = ['MASHED_PONTOON_REPLAY=' + os.path.join(W, 'verify', 'pontoon_20261016', 'OP3.msd.pontoon.csv'),
                'MASHED_PONTOON_REPLAY_OUT=@OUT@\\@NAME@.replay.csv']
 for name in sys.argv[1:]:
