@@ -60,7 +60,8 @@ static inline const std::uint32_t* lut_root(std::uint32_t delta)
 // [D4-DC-MATH-39b0 2026-10-25] ONE body for 0x004c39b0 in both targets. Math::LutNormalize (formerly a second
 // copy in Math/RwLutTables.cpp) is now a call into NormalizeBody with the rebuilt tables. The arithmetic is the
 // same SSE float form both copies had (neither TU is in x87_tus.txt): mag2 = (x*x + y*y) + z*z rounded to float,
-// both LUTs indexed by (bits + 0x800) >> 12, out = in * scale. sq/inv == nullptr selects the exact-sqrt fallback.
+// both LUTs indexed by (bits + 0x800) >> 12, out = in * scale.
+// [D4-DC-39b0-L13 2026-10-25, Mariano L-13 = C] the exact-sqrt fallback is deleted: only the LUT body remains.
 static inline float NormalizeBody(float* out, const float* in,
                                   const std::uint32_t* sqrtRoot, const std::uint32_t* invRoot)
 {
@@ -73,19 +74,6 @@ static inline float NormalizeBody(float* out, const float* in,
 
     float magnitude = 0.0f;
     float scale     = 0.0f;  // = (float)0 when mag2 == 0 (the original leaves it 0)
-
-    if (!sqrtRoot || !invRoot) {
-        // Standalone CPU fallback: plain normalize. Degenerate (zero-length) input
-        // leaves out=0 and returns 0, like the original's zero-mag branch.
-        if (mag2 > 0.0f) {
-            magnitude = std::sqrt(mag2);
-            scale     = 1.0f / magnitude;
-        }
-        out[0] = scale * in[0];
-        out[1] = in[1] * scale;
-        out[2] = in[2] * scale;
-        return magnitude;
-    }
 
     if (mag2_bits != 0u) {
         const std::uint32_t biased = mag2_bits + 0x800u;
@@ -116,15 +104,6 @@ float mashed_re::Math::LutNormalize(float* out, const float* in)
     return NormalizeBody(out, in, RwLutSqrtTable(), RwLutInvSqrtTable());
 }
 
-// [D4-DC-MATH-39b0 2026-10-25] MASHED_RWV3D_LUT=1 (default OFF, verify/dcmath39b0_20261025/PREREG_dcmath39b0.md):
-// when the live RW LUT is absent (the standalone, no RwEngineOpen) run the rebuilt tables instead of the exact-sqrt
-// fallback. The live-LUT path (the .asi on MASHED.exe) is unchanged either way.
-static bool RwV3dLut()
-{
-    static const bool s = [] { const char* e = std::getenv("MASHED_RWV3D_LUT"); return e && e[0] == '1'; }();
-    return s;
-}
-
 // 0x004c39b0
 // Normalises in[3] into out[3]; returns the original magnitude (= |in|).
 extern "C" __declspec(dllexport)
@@ -132,11 +111,9 @@ float __cdecl RwV3dNormalize(float* out, const float* in)
 {
     const std::uint32_t* sqrtRoot = lut_root(0);
     const std::uint32_t* invRoot  = lut_root(4);
-    if (!sqrtRoot || !invRoot) {
-        if (RwV3dLut())
-            return mashed_re::Math::LutNormalize(out, in);
-        return NormalizeBody(out, in, nullptr, nullptr);
-    }
+    // No live RW LUT (the standalone, no RwEngineOpen): the rebuilt tables, same body.
+    if (!sqrtRoot || !invRoot)
+        return mashed_re::Math::LutNormalize(out, in);
 
     const float magnitude = NormalizeBody(out, in, sqrtRoot, invRoot);
 

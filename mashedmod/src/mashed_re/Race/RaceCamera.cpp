@@ -13,7 +13,7 @@
 #include "../Math/RwLutTables.h"   // Math::LutSqrt = FUN_004c3b30 with the real LUT
 #include "../Math/FPURound.h"      // FtolVerbatim = the verbatim __ftol body (0x004a2c48)
 
-// Shared bodies for MASHED_CAM_ROTATE_RW (Math/RwMatrixRotate.cpp, Math/RwV3dTransformPointsCPU.cpp).
+// Shared bodies for RotateAboutAxis (Math/RwMatrixRotate.cpp, Math/RwV3dTransformPointsCPU.cpp).
 extern "C" void* __cdecl RwMatrixRotate(void* matrix, const float* axis, float angle_deg, int mode);
 namespace mashed_re { namespace Math {
 void RwV3dTransformVectorsCPU(float* dst, const float* src, int count, const float* m);
@@ -73,38 +73,15 @@ inline void Vec3Norm(float dst[3], const float src[3]) {
     Math::LutNormalize(dst, src);
 }
 
-// [D4-DC-MATH-4d20 2026-10-25] MASHED_CAM_ROTATE_RW=1 (default OFF, verify/dcmath4d20_20261025/PREREG_dcmath4d20.md): rotate
-// through the shared RwMatrixRotate body (Math/RwMatrixRotate.cpp, under its ROTATE_LUT / ROTATE_PC24 knobs) and the slot +0x14
-// vectors stand-in, as the original does at every camera site: FUN_004c4d20(m, axis, deg, 0) then FUN_004c3df0(dst, src, 1, m)
-// (0x00441892/0x004418ab, 0x004418cc/0x004418da, 0x00441968/0x00441976, 0x00447557/0x00447570). The axis goes in unnormalized:
-// the shared body normalizes it. OFF keeps the port-only stand-in below.
-static bool CamRotateRw() {
-    static const bool s = [] { const char* e = std::getenv("MASHED_CAM_ROTATE_RW"); return e && e[0] == '1'; }();
-    return s;
-}
-
-// Port-only stand-in (no RVA body): a std::cos / std::sin Rodrigues rotation of v about the LUT-normalized axis. The original's
-// pair is the FUN_004c4d20 + FUN_004c3df0 calls above (CamRotateRw).
+// The original's pair at every camera site: FUN_004c4d20(m, axis, deg, 0) then FUN_004c3df0(dst, src, 1, m)
+// (0x00441892/0x004418ab, 0x004418cc/0x004418da, 0x00441968/0x00441976, 0x00447557/0x00447570), through the shared bodies
+// (Math/RwMatrixRotate.cpp under its ROTATE_LUT / ROTATE_PC24 knobs, and the slot +0x14 vectors stand-in). The axis goes in
+// unnormalized: the shared body normalizes it. [D4-DC-39b0-L13 2026-10-25, Mariano L-15 = B] always on; the port-only
+// std::cos / std::sin Rodrigues stand-in and MASHED_CAM_ROTATE_RW are deleted.
 inline void RotateAboutAxis(float v[3], const float axis_in[3], float deg) {
-    if (CamRotateRw()) {
-        float m[16];
-        RwMatrixRotate(m, axis_in, deg, 0);              // rwCOMBINEREPLACE: writes m[0..15], reads none of m
-        Math::RwV3dTransformVectorsCPU(v, v, 1, m);      // reads v before writing it, so in place is safe
-        return;
-    }
-    float axis[3];
-    Vec3Norm(axis, axis_in);
-    const float rad = deg * 0.01745329252f;   // pi/180 (0x005cd7a8 in orig)
-    const float c = std::cos(rad), s = std::sin(rad), t = 1.f - c;
-    const float x = axis[0], y = axis[1], z = axis[2];
-    const float m[3][3] = {
-        {t * x * x + c,     t * x * y + s * z, t * x * z - s * y},
-        {t * x * y - s * z, t * y * y + c,     t * y * z + s * x},
-        {t * x * z + s * y, t * y * z - s * x, t * z * z + c},
-    };
-    const float in[3] = {v[0], v[1], v[2]};
-    for (int i = 0; i < 3; ++i)
-        v[i] = in[0] * m[0][i] + in[1] * m[1][i] + in[2] * m[2][i];
+    float m[16];
+    RwMatrixRotate(m, axis_in, deg, 0);              // rwCOMBINEREPLACE: writes m[0..15], reads none of m
+    Math::RwV3dTransformVectorsCPU(v, v, 1, m);      // reads v before writing it, so in place is safe
 }
 
 constexpr double kRadToDeg = 57.295799255371094;  // f64 @0x005ccae0

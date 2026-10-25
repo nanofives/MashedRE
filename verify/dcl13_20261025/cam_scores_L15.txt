@@ -1,0 +1,6 @@
+shift=0  joined racing rows=175  exe src counts {1: 175}
+pos: n=175 median=7.95543e-05 p95=0.000787615 max=0.00175851
+at: n=175 median=0.000397552 deg p95=0.00231646 deg max=0.00690082 deg
+right: n=175 median=2.09131e-06 deg p95=2.73208e-05 deg max=5.51064e-05 deg
+vw58: n=175 median=0 p95=0 max=0
+G-POSE: PASS

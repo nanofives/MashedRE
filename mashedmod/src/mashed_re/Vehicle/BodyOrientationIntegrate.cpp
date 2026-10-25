@@ -69,7 +69,7 @@
 // if a non-driving regime ever has to be reproduced.
 
 #include "ForceIntegrator.h"   // [U-9147] g_handlingTorque (_DAT_00613108)
-#include "../Math/RwMatrixOrthoNormalize.h"   // [u9765] 0x004c4680 under MASHED_ORTHO_LUT (D4-DC-MATH-4680)
+#include "../Math/RwMatrixOrthoNormalize.h"   // 0x004c4680 (D4-DC-MATH-4680)
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
@@ -100,77 +100,9 @@ inline std::int32_t& Ib(void* v, std::size_t o) { return *reinterpret_cast<std::
 // spelling so no call site moves; see verify/d3_omega_20261005/RESULT_RATEFIELD.md.
 constexpr std::size_t kAngVel = 0x9bc;   // TORQUE triple (+0x9bc/+0x9c0/+0x9c4)
 
-// Opt-out stand-in for thunk_FUN_004c4680, the matrix re-orthonormalize FUN_0046e9e0 calls (port-only arithmetic: std::sqrt
-// and its own pair selection, NOT the listing). The one body of 0x004c4680 is Math/RwMatrixOrthoNormalize.cpp, which runs
-// here under MASHED_ORTHO_LUT=1: the standalone default since faithflip 2026-10-20 (Core/FaithDefaults.cpp seeds it). This
-// stand-in runs only under MASHED_NO_ORTHO_LUT=1 or MASHED_NO_FAITH=1; deleting it is a decision row (D4-DC-MATH-4680).
-//
-// FUN_0046e9e0 calls it immediately after the row integration (a first-order dR = omega x R is not
-// norm-preserving, so without this the basis drifts and scales without bound).
-//
-// Decoded 2026-08-25 (notes "Follow-up 2", Task D): normalize all three axis rows
-// via FUN_004c3b90 (reciprocal length), select the most-orthogonal axis PAIR by
-// comparing absolute pairwise dots, rebuild the remaining two axes with two
-// normalized cross products, preserve the translation row, and set the RwMatrix
-// flags to (flags & 0xfffdffff) | 3 — clearing INTERNAL-IDENTITY 0x20000 and
-// setting ORTHOGONAL|ORTHONORMAL. Behaviour matches RwMatrixOrthoNormalize (the
-// export name itself is [UNCERTAIN]; the image carries no symbol for it).
-//
-// [UNCERTAIN] the exact tie-break in the axis selection. The decode describes
-// "selects the dominant/most-orthogonal axis by abs pairwise dots"; I keep the
-// pair with the SMALLEST |dot| (the most nearly perpendicular pair) and derive
-// the third from it, which is the standard formulation. If the original instead
-// keys off the largest dot the visible difference is confined to already-degenerate
-// bases. Confirm against 0x004c4680's comparison order before promoting past C2.
-void MatrixOrthoNormalize(float* m) {
-    auto norm3 = [](float* v) {
-        const float n = std::sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
-        if (n > 1e-20f) { const float r = 1.0f / n; v[0] *= r; v[1] *= r; v[2] *= r; }
-    };
-    auto dot3 = [](const float* a, const float* b) {
-        return a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
-    };
-    auto cross3 = [](float* d, const float* a, const float* b) {
-        d[0] = a[1]*b[2] - a[2]*b[1];
-        d[1] = a[2]*b[0] - a[0]*b[2];
-        d[2] = a[0]*b[1] - a[1]*b[0];
-    };
-
-    float* right = m + 0;
-    float* up    = m + 4;
-    float* at    = m + 8;
-
-    norm3(right); norm3(up); norm3(at);                    // FUN_004c3b90 on each row
-
-    const float dRU = std::fabs(dot3(right, up));
-    const float dUA = std::fabs(dot3(up,    at));
-    const float dAR = std::fabs(dot3(at,    right));
-
-    if (dRU <= dUA && dRU <= dAR) {
-        // keep (right, up) -> at = right x up, then up = at x right
-        cross3(at, right, up);   norm3(at);
-        cross3(up, at, right);   norm3(up);
-    } else if (dUA <= dAR) {
-        // keep (up, at) -> right = up x at, then at = right x up
-        cross3(right, up, at);   norm3(right);
-        cross3(at, right, up);   norm3(at);
-    } else {
-        // keep (at, right) -> up = at x right, then right = up x at
-        cross3(up, at, right);   norm3(up);
-        cross3(right, up, at);   norm3(right);
-    }
-
-    // flags word at m[3]: clear INTERNAL-IDENTITY (0x20000), set ORTHOGONAL|ORTHONORMAL
-    std::uint32_t* flags = reinterpret_cast<std::uint32_t*>(m + 3);
-    *flags = (*flags & 0xfffdffffu) | 3u;
-    // translation row m[12..14] is preserved (never touched here).
-}
-
-// [u9765 2026-10-19] MASHED_ORTHO_LUT=1 (verify/u9765_20261019/PREREG_u9765.md; default ON in the standalone since faithflip
-// 2026-10-20 through Core/FaithDefaults.cpp, opt-out MASHED_NO_ORTHO_LUT=1): 0x004c4680 as disassembled,
-// the one body Math/RwMatrixOrthoNormalize.cpp (D4-DC-MATH-4680; it was a second transcription here). Each row is scaled
-// by the LUT inverse sqrt 0x004c3b90, so the rows are not exactly unit. In place: every row is read before any is written.
-bool OrthoLut() { static const bool s = [] { const char* e = std::getenv("MASHED_ORTHO_LUT"); return e && e[0] == '1'; }(); return s; }
+// 0x004c4680 (thunk_FUN_004c4680, the matrix re-orthonormalize FUN_0046e9e0 calls right after the row integration): the one
+// body Math/RwMatrixOrthoNormalize.cpp, always (D4-DC-39b0-L13, Mariano L-14 = A; the std::sqrt opt-out and the
+// MASHED_ORTHO_LUT / MASHED_NO_ORTHO_LUT knobs are deleted). Each row is scaled by the LUT inverse sqrt 0x004c3b90.
 
 } // namespace
 
@@ -255,8 +187,7 @@ void BodyOrient_IntegrateStep(float* m, const float omega[3]) {
         m[b + 1] = (wz * r0 - wx * r2) + r1;
         m[b + 2] = (wx * r1 - wy * r0) + r2;
     }
-    if (OrthoLut()) mashed_re::Math::RwMatrixOrthoNormalizeLut(m, m);   // [u9765] 0x004c4680 as disassembled
-    else MatrixOrthoNormalize(m);                                        // opt-out stand-in (port-only)
+    mashed_re::Math::RwMatrixOrthoNormalizeLut(m, m);   // 0x004c4680 as disassembled
 }
 
 // The omega seed the ESI[4]!=0 arm uses, exposed so the caller does not have to
