@@ -110,3 +110,61 @@
 {"at":"2026-10-25T01:54:35Z","id":"D1-SHADOWS","from":"review","to":"merge-queued","owner":"cmvmw9owz4hafo1150i1ia6xc","note":"orch/D1-SHADOWS"}
 {"at":"2026-10-25T01:58:13Z","id":"D1-SHADOWS","from":"merge-queued","to":"merged","owner":"cmvmw9owz4hafo1150i1ia6xc","note":"merge train 20261024_225534: not run: text-only change (no build input touched)"}
 {"at":"2026-10-25T02:01:52Z","id":"D3-CF-U9779","from":"decision","to":"blocked","owner":"cmvmwx64p4mubo115uim0xy7w","note":"L-8 = B (Mariano): no merge until D3-CF-U9779-RECON reconciles the 8 RED 13-track rows; merge-train refs stay pre-flip (313260e31) until the flip lands"}
+{"at":"2026-10-25T02:35:25Z","id":"HB-D2RERUN","from":"open","to":"claimed","owner":"cmvn7smvy6c71o1156x04rek5","note":""}
+{"at":"2026-10-25T02:35:37Z","id":"HB-EOL","from":"open","to":"claimed","owner":"cmvn7smvy6c71o1156x04rek5","note":""}
+{"at":"2026-10-25T02:35:40Z","id":"HB-WTCLEAN","from":"open","to":"claimed","owner":"cmvn7smvy6c71o1156x04rek5","note":""}
+{"at":"2026-10-25T02:36:37Z","id":"D3-CF-U9779-RECON","from":"open","to":"claimed","owner":"cmvn7tjbb6cazo115fhwgif17","note":""}
+{"at":"2026-10-25T02:36:40Z","id":"D3-CF-U9780","from":"open","to":"claimed","owner":"cmvn7to3d6cbjo115lkwjqx7f","note":""}
+{"at":"2026-10-25T02:40:19Z","id":"HB-D2RERUN","from":"claimed","to":"working","owner":"cmvn7smvy6c71o1156x04rek5","note":"HB-TRAIN3 worker editing merge_train.ps1"}
+{"at":"2026-10-25T02:40:23Z","id":"HB-EOL","from":"claimed","to":"working","owner":"cmvn7smvy6c71o1156x04rek5","note":"HB-TRAIN3 worker editing merge_train.ps1"}
+{"at":"2026-10-25T02:40:28Z","id":"HB-WTCLEAN","from":"claimed","to":"working","owner":"cmvn7smvy6c71o1156x04rek5","note":"HB-TRAIN3 worker editing merge_train.ps1"}
+{"at":"2026-10-25T02:41:08Z","id":"D3-CF-U9780","from":"claimed","to":"working","owner":"cmvn7to3d6cbjo115lkwjqx7f","note":"worktree created; re-checking under SUBSTEP_OUTER"}
+{"at":"2026-10-25T02:41:24Z","id":"D3-CF-U9779-RECON","from":"claimed","to":"working","owner":"cmvn7tjbb6cazo115fhwgif17","note":"reconciling 8 RED 13-track rows"}
+{"at":"2026-10-25T02:50:38Z","id":"HB-D2RERUN","from":"working","to":"review","owner":"cmvn7smvy6c71o1156x04rek5","note":"implemented, -SelfTest 9/9 PASS, f672161c4"}
+{"at":"2026-10-25T02:50:46Z","id":"HB-EOL","from":"working","to":"review","owner":"cmvn7smvy6c71o1156x04rek5","note":"implemented, -SelfTest 9/9 PASS, f672161c4"}
+{"at":"2026-10-25T02:50:51Z","id":"HB-WTCLEAN","from":"working","to":"review","owner":"cmvn7smvy6c71o1156x04rek5","note":"implemented, -SelfTest 9/9 PASS, f672161c4"}
+{"at":"2026-10-25T02:51:41Z","id":"HB-D2RERUN","from":"review","to":"merge-queued","owner":"cmvn7smvy6c71o1156x04rek5","note":"orch/HB-TRAIN3"}
+{"at":"2026-10-25T02:51:44Z","id":"HB-EOL","from":"review","to":"merge-queued","owner":"cmvn7smvy6c71o1156x04rek5","note":"orch/HB-TRAIN3"}
+{"at":"2026-10-25T02:51:47Z","id":"HB-WTCLEAN","from":"review","to":"merge-queued","owner":"cmvn7smvy6c71o1156x04rek5","note":"orch/HB-TRAIN3"}
+{"at":"2026-10-25T02:52:30Z","id":"HB-SOLOSTALE","from":"open","to":"claimed","owner":"cmvn8fguf6fgdo1159whf8q59","note":""}
+{"at":"2026-10-25T02:55:29Z","id":"HB-SOLOSTALE","from":"claimed","to":"working","owner":"cmvn8fguf6fgdo1159whf8q59","note":"solo token stale reclaim"}
+{"at":"2026-10-25T02:59:37Z","id":"HB-SOLOSTALE","from":"working","to":"review","owner":"cmvn8fguf6fgdo1159whf8q59","note":""}
+{"at":"2026-10-25T02:59:59Z","id":"HB-SOLOSTALE","from":"review","to":"merge-queued","owner":"cmvn8fguf6fgdo1159whf8q59","note":"orch/HB-SOLOSTALE"}
+{"at":"2026-10-25T03:05:31Z","id":"D4-DC-8ad0","from":"open","to":"claimed","owner":"cmvn8vgzh6hcho1159g65acno","note":""}
+{"at":"2026-10-25T03:05:34Z","id":"D4-DC-82a0","from":"open","to":"claimed","owner":"cmvn8vv7d6hddo115lk52tnyy","note":""}
+{"at":"2026-10-25T03:11:26Z","id":"D4-DC-8ad0","from":"claimed","to":"working","owner":"cmvn8vgzh6hcho1159g65acno","note":"removing RacePctSlotEnabled + stand-in branch"}
+{"at":"2026-10-25T03:23:10Z","id":"D3-CF-U9779-RECON","from":"working","to":"review","owner":"cmvn7tjbb6cazo115fhwgif17","note":"8 RED = merge-train cites file (cites_merged lacks C31/C30-TRAIN-ROOF-LEAD/C27b), not flip; train run re-scored with cites_rres = reference"}
+{"at":"2026-10-25T03:23:14Z","id":"D3-CF-U9779-RECON","from":"review","to":"decision","owner":"cmvn7tjbb6cazo115fhwgif17","note":"L-9"}
+{"at":"2026-10-25T03:25:31Z","id":"D3-CF-K357","from":"open","to":"claimed","owner":"cmvn9lscm6jxpo115xt8cport","note":""}
+{"at":"2026-10-25T03:31:56Z","id":"D3-CF-U9780","from":"working","to":"review","owner":"cmvn7to3d6cbjo115lkwjqx7f","note":"GREEN: does not reproduce on default (car 2 exact k 0..219); reproduces on soflip exe and with NO_A6A_DOT_ORDER, so dotflip removed it; U-9780 RESOLVED via apply_trackers; gates unchanged"}
+{"at":"2026-10-25T03:32:28Z","id":"D3-CF-U9780","from":"review","to":"merge-queued","owner":"cmvn7to3d6cbjo115lkwjqx7f","note":"orch/D3-CF-U9780"}
+{"at":"2026-10-25T03:34:04Z","id":"D3-CF-K357","from":"claimed","to":"working","owner":"cmvn9lscm6jxpo115xt8cport","note":"reading U9779 RESULT, locating round-2 trigger"}
+{"at":"2026-10-25T03:39:01Z","id":"D4-DC-82a0","from":"claimed","to":"working","owner":"cmvn8vv7d6hddo115lk52tnyy","note":"naked MenuMenusBA body into shared TU Frontend/MenuMeasure.cpp, per-target cells"}
+{"at":"2026-10-25T04:01:24Z","id":"D4-DC-8ad0","from":"working","to":"review","owner":"cmvn8vgzh6hcho1159g65acno","note":"GREEN: opt-out deleted, gates unchanged, lint 8->7 NEW=0"}
+{"at":"2026-10-25T04:08:21Z","id":"HB-D2RERUN","from":"merge-queued","to":"merged","owner":"cmvn7smvy6c71o1156x04rek5","note":"merge train 20261025_004520: G-CTRL bacfc747/8dd1c004/6f9932b6  B f9deb9b9/d3601fcc/9da9a26a"}
+{"at":"2026-10-25T04:08:27Z","id":"HB-EOL","from":"merge-queued","to":"merged","owner":"cmvn7smvy6c71o1156x04rek5","note":"merge train 20261025_004520: G-CTRL bacfc747/8dd1c004/6f9932b6  B f9deb9b9/d3601fcc/9da9a26a"}
+{"at":"2026-10-25T04:08:31Z","id":"HB-WTCLEAN","from":"merge-queued","to":"merged","owner":"cmvn7smvy6c71o1156x04rek5","note":"merge train 20261025_004520: G-CTRL bacfc747/8dd1c004/6f9932b6  B f9deb9b9/d3601fcc/9da9a26a"}
+{"at":"2026-10-25T04:13:24Z","id":"D4-DC-8ad0","from":"review","to":"merge-queued","owner":"cmvn8vgzh6hcho1159g65acno","note":"orch/D4-DC-8ad0"}
+{"at":"2026-10-25T04:52:03Z","id":"HB-SOLOSTALE","from":"merge-queued","to":"merged","owner":"cmvn8fguf6fgdo1159whf8q59","note":"merge train 20261025_010921: G-CTRL bacfc747/8dd1c004/6f9932b6  B f9deb9b9/d3601fcc/9da9a26a"}
+{"at":"2026-10-25T04:52:15Z","id":"D3-CF-U9780","from":"merge-queued","to":"merged","owner":"cmvn7to3d6cbjo115lkwjqx7f","note":"merge train 20261025_010921: G-CTRL bacfc747/8dd1c004/6f9932b6  B f9deb9b9/d3601fcc/9da9a26a"}
+{"at":"2026-10-25T05:25:26Z","id":"D4-DC-8ad0","from":"merge-queued","to":"merged","owner":"cmvn8vgzh6hcho1159g65acno","note":"merge train 20261025_015606: G-CTRL bacfc747/8dd1c004/6f9932b6  B f9deb9b9/d3601fcc/9da9a26a"}
+{"at":"2026-10-25T06:12:09Z","id":"D3-CF-K357","from":"working","to":"review","owner":"cmvn9lscm6jxpo115xt8cport","note":"k=357 = port 3.0 s round hold + 2.5 s stall stand-in; MASHED_R7_EXIT (default OFF) removes both in sub-state 7; car 3 = o_r7_1 on 719/719 k; gates unchanged"}
+{"at":"2026-10-25T06:12:11Z","id":"D3-CF-K357","from":"review","to":"decision","owner":"cmvn9lscm6jxpo115xt8cport","note":"L-10"}
+{"at":"2026-10-25T06:15:35Z","id":"D4-DC-82a0","from":"working","to":"review","owner":"cmvn8vv7d6hddo115lk52tnyy","note":"one body Frontend/MenuMeasure.cpp, allowlist 8->7, measure 9/9, asi 140/140 + run_diff 12/12, gates unchanged"}
+{"at":"2026-10-25T06:16:28Z","id":"D4-DC-82a0","from":"review","to":"merge-queued","owner":"cmvn8vv7d6hddo115lk52tnyy","note":"orch/D4-DC-82a0"}
+{"at":"2026-10-25T06:37:36Z","id":"D4-DC-82a0","from":"merge-queued","to":"merged","owner":"cmvn8vv7d6hddo115lk52tnyy","note":"merge train 20261025_031759: G-CTRL bacfc747/8dd1c004/6f9932b6  B f9deb9b9/d3601fcc/9da9a26a"}
+{"at":"2026-10-25T06:40:45Z","id":"D3-CF-BOX","from":"open","to":"claimed","owner":"cmvngl00b78kvo115w8sp104g","note":""}
+{"at":"2026-10-25T06:45:12Z","id":"D3-CF-BOX","from":"claimed","to":"working","owner":"cmvngl00b78kvo115w8sp104g","note":"worktree from 282ea2ec7; reading FUN_0045ba00 callers in Ghidra"}
+{"at":"2026-10-25T07:48:42Z","id":"D3-CF-BOX","from":"working","to":"review","owner":"cmvngl00b78kvo115w8sp104g","note":""}
+{"at":"2026-10-25T07:49:02Z","id":"D3-CF-BOX","from":"review","to":"merge-queued","owner":"cmvngl00b78kvo115w8sp104g","note":"orch/D3-CF-BOX"}
+{"at":"2026-10-25T07:49:04Z","id":"D3-CF-BOX","from":"merge-queued","to":"decision","owner":"cmvngl00b78kvo115w8sp104g","note":"L-11"}
+{"at":"2026-10-25T07:52:44Z","id":"D3-CF-K357","from":"decision","to":"open","owner":"","note":"L-10=(1): keep MASHED_R7_EXIT OFF; branch builds on U9779 (45dccb4f5), enqueue after U9779 lands; check HB-LOCKBREAK for arm re-run"}
+{"at":"2026-10-25T07:53:02Z","id":"D3-CF-BOX-FLIP","from":"open","to":"blocked","owner":"","note":"waits on D3-CF-U9779 merge (L-11 sequencing)"}
+{"at":"2026-10-25T07:53:07Z","id":"D3-CF-K357","from":"open","to":"blocked","owner":"","note":"L-10=(1): keep MASHED_R7_EXIT OFF; waits on D3-CF-U9779 merge (branch builds on 45dccb4f5); then enqueue; check HB-LOCKBREAK for arm re-run"}
+{"at":"2026-10-25T07:53:11Z","id":"D3-CF-R7INPUT","from":"open","to":"blocked","owner":"","note":"waits on D3-CF-U9779 merge (MASHED_R7_EXIT lives on the K357/U9779 line)"}
+{"at":"2026-10-25T08:03:30Z","id":"D3-CF-BOX","from":"decision","to":"merged","owner":"cmvngl00b78kvo115w8sp104g","note":"merge train 20261025_045014: G-CTRL bacfc747/8dd1c004/6f9932b6  B f9deb9b9/d3601fcc/9da9a26a"}
+{"at":"2026-10-25T08:06:06Z","id":"D3-CF-U9779","from":"blocked","to":"merge-queued","owner":"cmvmwx64p4mubo115uim0xy7w","note":"orch/D3-CF-U9779"}
+{"at":"2026-10-25T08:06:08Z","id":"D3-CF-U9779-RECON","from":"decision","to":"merge-queued","owner":"cmvn7tjbb6cazo115fhwgif17","note":"orch/D3-CF-U9779-RECON"}
+{"at":"2026-10-25T08:15:55Z","id":"D3-CF-U9779","from":"merge-queued","to":"red-merge","owner":"cmvmwx64p4mubo115uim0xy7w","note":"merge train 20261025_050755: conflict needs a hand merge (frida-sweep recipe): re/frida/scenario_launch.py"}
+{"at":"2026-10-25T08:16:06Z","id":"D3-CF-U9779-RECON","from":"merge-queued","to":"merged","owner":"cmvn7tjbb6cazo115fhwgif17","note":"merge train 20261025_050755: not run: text-only change (no build input touched)"}
+{"at":"2026-10-25T08:18:02Z","id":"D3-CF-U9779","from":"red-merge","to":"blocked","owner":"cmvmwx64p4mubo115uim0xy7w","note":"train 20261025_050755 RED: conflict re/frida/scenario_launch.py needs a hand merge onto orch/integration (frida-sweep recipe); then re-verify G-CTRL ef5f2e10/57f7ff83/b4f4b55a B c37d4c0c/0a8f9806/7013671d + 13 tracks (cites_rres), and L0 re-applies refs and merges it alone. Refs reverted to pre-flip on orch/integration"}
