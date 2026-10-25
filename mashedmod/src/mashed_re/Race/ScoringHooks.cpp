@@ -23,6 +23,7 @@
 // for zero bit-identity value. Their call sites are cited inline.
 
 #include "../Core/HookSystem.h"
+#include "EvalResultCore.h"
 
 #include <cstdint>
 
@@ -86,7 +87,7 @@ inline int   FUN_00431d80()       { return reinterpret_cast<F0<int>>(0x00431d80)
 inline void  FUN_0040d590(int a, int b, int c, int d) {
     reinterpret_cast<void(__cdecl*)(int, int, int, int)>(0x0040d590)(a, b, c, d);
 }
-// 0x00410510-only callees
+// callees read only by EvalResult_00410510 (FUN_00410510)
 inline int   FUN_00417740(int i)  { return reinterpret_cast<F1<int>>(0x00417740)(i); }
 inline float FUN_00417730(int i)  { return reinterpret_cast<F1<float>>(0x00417730)(i); }
 inline int   FUN_00405890()       { return reinterpret_cast<F0<int>>(0x00405890)(); }
@@ -507,111 +508,66 @@ RH_ScopedInstall(ScoreElim_0040eee0, 0x0040eee0);
 
 // ===========================================================================
 // EvalResult_00410510  --  FUN_00410510(void) -> int  (820 B)
-// Match-end evaluator. Scans players for a winning score (>11 when
-// Participants()==4), then a switch on GameMode() for the per-mode end
-// conditions; on conclusion sets DAT_0063b90c/DAT_0063ba8c=0xb and the result
-// state. Returns winner (1-based) / -1 draw / 0 pending. Verbatim from pool13.
+// Match-end evaluator. D4-DC-0510: the control flow is the one body shared with
+// the exe (EvalResultCore.cpp). This reader forwards each input to the original
+// callee / global in the original's call order, and performs the original's
+// side effects: DAT_0063b90c = 0 at entry, the DAT_007f0fcc writes inside cases
+// 9/10, and the LAB_0041062a end block (DAT_0063b90c/DAT_0063ba8c=0xb, result
+// state). Returns winner (1-based) / -1 draw / 0 pending.
 // ===========================================================================
-extern "C" __declspec(dllexport) int __cdecl EvalResult_00410510(void) {
-    bool bVar1;
-    int iVar2, iVar3, iVar4, iVar5, iVar6;
-    float fVar7;
-    int local_c;
-    float fStack_8;
-    unsigned char local_4[4];
+namespace {
+struct LiveInputs final : mashed_re::Race::EvalResultInputs {
+    int   RaceType() override { return FUN_0042f6a0(); }
+    int   Rule() override { return GameMode(); }
+    int   Participants() override { return ::Participants(); }
+    int   Teams() override { return FUN_0042f500(); }
+    int   Score(int car) override { return FUN_0040b6d0(car); }
+    int   SlotActive(int car) override { return ::SlotActive(0x34 + car * 4); }
+    int   Alive(int car) override { return FUN_0046c7b0(car); }
+    int   FinishSlot(int slot) override { return FUN_00417740(slot); }
+    int   CollectDone() override { return FUN_00405890(); }
+    int   Rule7Count() override { return FUN_0040e340(); }
+    float Metric(int car) override { return FUN_00417730(car); }
+    int   Motion(int car) override {
+        int local_c; unsigned char local_4[4];
+        FUN_0046cbb0(car, &local_c, local_4);
+        return local_c;
+    }
+    float Timer() override { return F32(0x007f0fe4); }        // DAT_007f0fe4
+    float TimerZero() override { return F32(0x005d757c); }    // DAT_005d757c
+    float FinishMetric() override { return F32(0x005cc31c); }
+    float Rule9Gap() override { return F32(0x005cc9c8); }
+    float Rule10Metric() override { return F32(0x005cc574); }
+    bool  Rule7Keep() override { return true; }               // esi untouched on the no-match exit 0x00410790
+    void  OnEnter() override { I32(0x0063b90c) = 0; }         // DAT_0063b90c = 0
+    void  OnPlayer0Flag(int v) override { I32(0x007f0fcc) = v; }
+    void  OnConclude(int iVar6) override {                    // LAB_0041062a
+        FUN_0045bed0();
+        FUN_0045bf30();
+        FUN_00458f80(0);
+        I32(0x0063ba8c) = 0xb;                                // DAT_0063ba8c = 0xb
+        I32(0x0063b90c) = 1;                                  // DAT_0063b90c = 1
+        I32(0x0063b910) = 0x442f0000;                         // _DAT_0063b910 (=700.0f)
+        I32(0x0063b918) = 0;
+        I32(0x0063b91c) = 0;
+        if (iVar6 == -1) {
+            FUN_00448700(1, 0);
+            I32(0x0063b914) = 1;
+            I32(0x007f0fcc) = 0;
+        } else {
+            const int iVar2 = iVar6 + -1;
+            FUN_00448700(1, iVar2);
+            I32(0x007f0fcc) = (iVar2 == 0) ? 1 : 0;
+            I32(0x0063b914) = iVar2;
+        }
+        if (FUN_00426c00() == 0x26) FUN_0044df80(0);
+    }
+};
+}  // namespace
 
-    iVar6 = 0;
-    I32(0x0063b90c) = 0;                                     // DAT_0063b90c = 0
-    iVar2 = FUN_0042f6a0();
-    if (iVar2 == 2) return 0;
-    iVar2 = 1;
-    do {
-        iVar3 = FUN_0040b6d0(iVar2 + -1);
-        if ((((Participants() == 2) || (Participants() == 3)) ||
-             (iVar4 = FUN_0042f500(), iVar4 != 0)) && (iVar3 == 8)) iVar6 = iVar2;
-        if ((GameMode() == 2) && (iVar3 == 8)) iVar6 = iVar2;
-        if ((Participants() == 4) && (0xb < iVar3)) iVar6 = iVar2;   // score > 11
-        bVar1 = iVar2 < 4;
-        iVar2 = iVar2 + 1;
-    } while (bVar1);
-    if (iVar6 != 0) {
-        iVar3 = 0; iVar2 = 0x34;
-        do {
-            if ((SlotActive(iVar2) != 0) && (iVar4 = FUN_0046c7b0(iVar3), iVar4 == 1)) {
-                iVar4 = FUN_0040b6d0(iVar3);
-                if (((Participants() == 2) || ((Participants() == 3 || (iVar5 = FUN_0042f500(), iVar5 != 0)))) &&
-                    (iVar4 == 8)) iVar6 = iVar3 + 1;
-                if ((Participants() == 4) && (0xb < iVar4)) iVar6 = iVar3 + 1;
-            }
-            iVar2 = iVar2 + 4; iVar3 = iVar3 + 1;
-        } while (iVar2 < 0x44);
-    }
-    switch (GameMode()) {
-    case 4:
-        iVar6 = FUN_00417740(0); iVar6 = iVar6 + 1; break;
-    case 5:
-        iVar6 = FUN_0046c7b0(0);
-        if (iVar6 == 0) { iVar6 = -1; goto LAB_0041062a; }
-        iVar6 = FUN_00405890(); break;
-    case 7:
-        iVar3 = 0; iVar2 = FUN_0040e340();
-        if (0 < iVar2) {
-            do {
-                fVar7 = FUN_00417730(iVar3);
-                if (F32(0x005cc31c) < fVar7) { iVar6 = iVar3 + 1; break; }
-                iVar3 = iVar3 + 1; iVar2 = FUN_0040e340();
-            } while (iVar3 < iVar2);
-        }
-        break;
-    case 8:
-        iVar6 = FUN_00417740(0); iVar6 = iVar6 + 1;
-        if (iVar6 != 1) { if (iVar6 == 0) iVar6 = -1; goto LAB_0041062a; }
-        break;
-    case 9:
-        iVar6 = FUN_00417740(0);
-        if (iVar6 != -1) {
-            LAB_00410801: iVar6 = -1; I32(0x007f0fcc) = 0; goto LAB_0041062a;
-        }
-        FUN_0046cbb0(0, &local_c, local_4);
-        if (local_c != 0) { iVar6 = -1; I32(0x007f0fcc) = 0; goto LAB_0041062a; }
-        fStack_8 = FUN_00417730(1);
-        fVar7 = FUN_00417730(0);
-        if (F32(0x005cc9c8) <= fStack_8 - fVar7) { iVar6 = -1; I32(0x007f0fcc) = 0; goto LAB_0041062a; }
-        goto LAB_004107e3;
-    case 10:
-        FUN_0046cbb0(0, &local_c, local_4);
-        if (local_c != 0) { iVar6 = -1; I32(0x007f0fcc) = 0; goto LAB_0041062a; }
-        fVar7 = FUN_00417730(0);
-        if (fVar7 < F32(0x005cc574)) {
-            // (a<b)==(a==b) NaN-aware compare of DAT_007f0fe4 vs DAT_005d757c (case-10 only)
-            if ((F32(0x007f0fe4) < F32(0x005d757c)) == (F32(0x007f0fe4) == F32(0x005d757c))) return 0;
-            goto LAB_00410801;
-        }
-        LAB_004107e3: iVar6 = 1; I32(0x007f0fcc) = 1; goto LAB_0041062a;
-    }
-    if (iVar6 == 0) return 0;
-LAB_0041062a:
-    FUN_0045bed0();
-    FUN_0045bf30();
-    FUN_00458f80(0);
-    I32(0x0063ba8c) = 0xb;                                   // DAT_0063ba8c = 0xb
-    I32(0x0063b90c) = 1;                                     // DAT_0063b90c = 1
-    I32(0x0063b910) = 0x442f0000;                            // _DAT_0063b910 (=700.0f)
-    I32(0x0063b918) = 0;
-    I32(0x0063b91c) = 0;
-    if (iVar6 == -1) {
-        FUN_00448700(1, 0);
-        I32(0x0063b914) = 1;
-        I32(0x007f0fcc) = 0;
-    } else {
-        iVar2 = iVar6 + -1;
-        FUN_00448700(1, iVar2);
-        I32(0x007f0fcc) = (iVar2 == 0) ? 1 : 0;
-        I32(0x0063b914) = iVar2;
-    }
-    iVar2 = FUN_00426c00();
-    if (iVar2 == 0x26) FUN_0044df80(0);
-    return iVar6;
+extern "C" __declspec(dllexport) int __cdecl EvalResult_00410510(void) {
+    LiveInputs in;
+    return mashed_re::Race::EvaluateResultCore(in, nullptr);
 }
 
 RH_ScopedInstall(EvalResult_00410510, 0x00410510);

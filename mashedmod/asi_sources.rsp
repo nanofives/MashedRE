@@ -185,6 +185,7 @@
 "Frontend\SplashGameMode_t5.cpp"
 "Race\ScoringHooks.cpp"
 "Race\CollectDone.cpp"
+"Race\EvalResultCore.cpp"
 "Race\CameraClusterHooks.cpp"
 "Race\MostSepPair.cpp"
 "Race\SubStateCallees.cpp"

@@ -25,7 +25,7 @@ if errorlevel 1 (echo   navsm: FAIL & set RC=1) else (echo   navsm: GREEN)
 pushd "%SRC%"
 
 echo ============ [2/5] ruleengine_test (race rule engine) ============
-cl /nologo /EHsc /std:c++17 /I.. Race\tests\ruleengine_test.cpp Race\RuleEngine.cpp /Fo"%OUT%\\" /Fe"%OUT%\ruleengine_test.exe" >nul
+cl /nologo /EHsc /std:c++17 /I.. Race\tests\ruleengine_test.cpp Race\RuleEngine.cpp Race\EvalResultCore.cpp /Fo"%OUT%\\" /Fe"%OUT%\ruleengine_test.exe" >nul
 if errorlevel 1 (echo   ruleengine: BUILD FAILED & set RC=1) else (
     "%OUT%\ruleengine_test.exe"
     if errorlevel 1 (echo   ruleengine: FAIL & set RC=1) else (echo   ruleengine: GREEN)
