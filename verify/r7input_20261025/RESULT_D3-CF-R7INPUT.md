@@ -52,8 +52,8 @@ are byte-equal to the knob-off default. No piz-collision crash (U-9677), no TIME
   controller the keyboard is slot 0 = the player car, and the store reaches the gate through v = 0.
 - Trackers (through re-classify, not done here): FUN_00496530's byte-0xa store (`0x004965ac..0x004965b7`) is ported default OFF
   behind `MASHED_R7_INPUT`. This resolves K357's owed item "the port never writes byte 0xa of a ctrl block".
-- Evidence: `data/arms/` (B step CSVs, per-arm logs, `RUNLOG.txt` with the H / D2 line counts and hashes), `run_gates.txt`,
-  `run_d2.txt`, `score_d2_XI.txt`, `t13.out`, `tracks_XI_score.txt`. H step / gates / ptrace, D2 motion_diag and the `t13/` dir
+- Evidence: `data/arms/` (B step CSVs, `RUNLOG.txt` with the H / D2 line counts and hashes), `run_gates.txt`,
+  `run_d2.txt`, `score_d2_XI.txt`, `t13.out`, `tracks_XI_score.txt`, `r7_log_lines.txt` (every `R7IN` / `R7X` / round line of every arm log; the full logs are gitignored and stay on D:). H step / gates / ptrace, D2 motion_diag and the `t13/` dir
   are on `D:\MashedWT\D3-CF-R7INPUT_data` (hashes in `RUNLOG.txt`).
 
 ## 5. Decision for Mariano (filed as a ledger decision row)
