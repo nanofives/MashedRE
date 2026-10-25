@@ -168,3 +168,46 @@
 {"at":"2026-10-25T08:15:55Z","id":"D3-CF-U9779","from":"merge-queued","to":"red-merge","owner":"cmvmwx64p4mubo115uim0xy7w","note":"merge train 20261025_050755: conflict needs a hand merge (frida-sweep recipe): re/frida/scenario_launch.py"}
 {"at":"2026-10-25T08:16:06Z","id":"D3-CF-U9779-RECON","from":"merge-queued","to":"merged","owner":"cmvn7tjbb6cazo115fhwgif17","note":"merge train 20261025_050755: not run: text-only change (no build input touched)"}
 {"at":"2026-10-25T08:18:02Z","id":"D3-CF-U9779","from":"red-merge","to":"blocked","owner":"cmvmwx64p4mubo115uim0xy7w","note":"train 20261025_050755 RED: conflict re/frida/scenario_launch.py needs a hand merge onto orch/integration (frida-sweep recipe); then re-verify G-CTRL ef5f2e10/57f7ff83/b4f4b55a B c37d4c0c/0a8f9806/7013671d + 13 tracks (cites_rres), and L0 re-applies refs and merges it alone. Refs reverted to pre-flip on orch/integration"}
+{"at":"2026-10-25T08:27:58Z","id":"D3-CF-U9779","from":"blocked","to":"open","owner":"","note":"re-run 4 hand-merge"}
+{"at":"2026-10-25T08:27:59Z","id":"D3-CF-U9779","from":"open","to":"claimed","owner":"cmvnkehxn7lhvo115iloxqevj","note":""}
+{"at":"2026-10-25T08:28:39Z","id":"HB-LOCKBREAK","from":"open","to":"claimed","owner":"cmvnkfm4v7lqfo115w9qw6em2","note":""}
+{"at":"2026-10-25T08:28:42Z","id":"HB-TRAINCLEAN","from":"open","to":"claimed","owner":"cmvnkfqhn7lqno11548pxdrbe","note":""}
+{"at":"2026-10-25T08:34:18Z","id":"HB-LOCKBREAK","from":"claimed","to":"working","owner":"cmvnkfm4v7lqfo115w9qw6em2","note":"reading lock code; no game runs"}
+{"at":"2026-10-25T08:35:04Z","id":"HB-TRAINCLEAN","from":"claimed","to":"working","owner":"cmvnkfqhn7lqno11548pxdrbe","note":"ledger EOL + train worktree cleanup"}
+{"at":"2026-10-25T08:47:43Z","id":"HB-LOCKBREAK","from":"working","to":"review","owner":"cmvnkfm4v7lqfo115w9qw6em2","note":"56d84d877 GREEN: max-age clause mashed_lock.py:364 broke live pid 18904; liveness-only rule in py+ps1, selftest 14/14 (pre-fix 6/14); only K357 H_U7PX (report row) overlapped last ~30 s, no re-run needed"}
+{"at":"2026-10-25T08:49:46Z","id":"HB-LOCKBREAK","from":"review","to":"merge-queued","owner":"cmvnkfm4v7lqfo115w9qw6em2","note":"orch/HB-LOCKBREAK"}
+{"at":"2026-10-25T08:51:52Z","id":"HB-TRAINCLEAN","from":"working","to":"review","owner":"cmvnkfqhn7lqno11548pxdrbe","note":"selftest 0 failures, eol proof"}
+{"at":"2026-10-25T08:52:18Z","id":"HB-TRAINCLEAN","from":"review","to":"merge-queued","owner":"cmvnkfqhn7lqno11548pxdrbe","note":"orch/HB-TRAINCLEAN"}
+{"at":"2026-10-25T09:10:40Z","id":"D3-CF-U9779","from":"claimed","to":"working","owner":"cmvnkehxn7lhvo115iloxqevj","note":"run 4 hand-merge 0f6435991, building + re-gate"}
+{"at":"2026-10-25T10:01:18Z","id":"D3-CF-U9779","from":"working","to":"review","owner":"cmvnkehxn7lhvo115iloxqevj","note":"run 4 hand-merge GREEN @ 9e1737868: G-CTRL + B = flipped refs, D2 3/3 solo, 13 tracks 0 RED"}
+{"at":"2026-10-25T10:01:45Z","id":"D3-CF-U9779","from":"review","to":"merge-queued","owner":"cmvnkehxn7lhvo115iloxqevj","note":"orch/D3-CF-U9779-M"}
+{"at":"2026-10-25T10:18:04Z","id":"HB-LOCKBREAK","from":"merge-queued","to":"merged","owner":"cmvnkfm4v7lqfo115w9qw6em2","note":"merge train 20261025_070323: G-CTRL bacfc747/8dd1c004/6f9932b6  B f9deb9b9/d3601fcc/9da9a26a"}
+{"at":"2026-10-25T10:18:06Z","id":"HB-TRAINCLEAN","from":"merge-queued","to":"merged","owner":"cmvnkfqhn7lqno11548pxdrbe","note":"merge train 20261025_070323: G-CTRL bacfc747/8dd1c004/6f9932b6  B f9deb9b9/d3601fcc/9da9a26a"}
+{"at":"2026-10-25T10:19:21Z","id":"D3-CF-U9779","from":"merge-queued","to":"merge-queued","owner":"cmvnkehxn7lhvo115iloxqevj","note":"orch/D3-CF-U9779-M"}
+{"at":"2026-10-25T10:53:11Z","id":"HB-TRAINFIX","from":"open","to":"claimed","owner":"cmvnpizlv83nto115bj5f2x46","note":""}
+{"at":"2026-10-25T10:53:12Z","id":"HB-TRAINFIX","from":"claimed","to":"working","owner":"cmvnpizlv83nto115bj5f2x46","note":"fixing Invoke-Guarded Object[] cast + selftest"}
+{"at":"2026-10-25T11:21:25Z","id":"HB-TRAINFIX","from":"working","to":"working","owner":"cmvnpizlv83nto115bj5f2x46","note":"run 4: fix Invoke-Guarded body collision + selftest"}
+{"at":"2026-10-25T11:21:41Z","id":"HB-TRAINFIX","from":"working","to":"handoff","owner":"cmvnpizlv83nto115bj5f2x46","note":"dead worker cmvnpizlv83nto115bj5f2x46, reclaim by run-4 worker"}
+{"at":"2026-10-25T11:21:42Z","id":"HB-TRAINFIX","from":"handoff","to":"claimed","owner":"cmvnqk96o86fzo1159mnj4b49","note":""}
+{"at":"2026-10-25T11:21:43Z","id":"HB-TRAINFIX","from":"claimed","to":"working","owner":"cmvnqk96o86fzo1159mnj4b49","note":"run 4: fix Invoke-Guarded body collision + selftest"}
+{"at":"2026-10-25T11:39:43Z","id":"HB-TRAINFIX","from":"working","to":"blocked","owner":"cmvnqk96o86fzo1159mnj4b49","note":"2 claude2 workers stalled before any edit (folder flag forces children to claude2, *.ps1 Edit needs approval). Diagnosis reproduced: Invoke-Guarded dot-sources body so \\=@(Get-Content \\) (merge_train.ps1 ~443) overwrites [scriptblock]\\, and body vars (verdict/merged/bounced/res) are lost to caller. No commits on orch/HB-TRAINFIX (still effa6d7e5)."}
+{"at":"2026-10-25T11:40:48Z","id":"HB-TRAINFIX","from":"blocked","to":"blocked","owner":"cmvnqk96o86fzo1159mnj4b49","note":"needs a claude3 worker (folder flag forces claude2; *.ps1 Edit prompts there). Train part of HB-TRAINCLEAN reverted at b94c480a0; re-apply guard without dot-sourcing the body (body assigns over [scriptblock] param ~:443, body vars lost)"}
+{"at":"2026-10-25T12:11:21Z","id":"D3-CF-U9779","from":"merge-queued","to":"merged","owner":"cmvnkehxn7lhvo115iloxqevj","note":"merge train 20261025_084132: G-CTRL ef5f2e10/57f7ff83/b4f4b55a  B c37d4c0c/0a8f9806/7013671d; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-10-25T12:14:00Z","id":"D3-CF-K357","from":"blocked","to":"open","owner":"","note":"run 4 rebase onto 2e80adace"}
+{"at":"2026-10-25T12:14:00Z","id":"D3-CF-K357","from":"open","to":"claimed","owner":"cmvnshf288amfo115vnyecgyt","note":""}
+{"at":"2026-10-25T12:14:01Z","id":"D3-CF-R7INPUT","from":"blocked","to":"open","owner":"","note":"run 4 port"}
+{"at":"2026-10-25T12:14:01Z","id":"D3-CF-R7INPUT","from":"open","to":"claimed","owner":"cmvnshiih8amxo1156rwe3bcx","note":""}
+{"at":"2026-10-25T12:18:04Z","id":"D3-CF-R7INPUT","from":"claimed","to":"working","owner":"cmvnshiih8amxo1156rwe3bcx","note":"run 4: K357 merged (d41cdb478), porting ctrl byte 0xa writer, MASHED gated on lead go"}
+{"at":"2026-10-25T12:18:44Z","id":"D3-CF-K357","from":"claimed","to":"working","owner":"cmvnshf288amfo115vnyecgyt","note":"run 4: K357 merged onto integration 2e80adace in orch/D3-CF-K357-M; re-gate + H_U7PX re-run"}
+{"at":"2026-10-25T12:39:02Z","id":"D3-CF-R7INPUT","from":"working","to":"working","owner":"cmvnshiih8amxo1156rwe3bcx","note":"port done (2893ffa13), PREREG alone (36edf0b72), exe d9a1c7c5; awaiting lead MASHED go"}
+{"at":"2026-10-25T12:45:44Z","id":"D3-CF-K357","from":"working","to":"review","owner":"cmvnshf288amfo115vnyecgyt","note":"run 4 GREEN: merged on integration 2e80adace, gates equal, H_U7PX re-run bit-identical"}
+{"at":"2026-10-25T12:46:21Z","id":"D3-CF-K357","from":"review","to":"merge-queued","owner":"cmvnshf288amfo115vnyecgyt","note":"orch/D3-CF-K357-M"}
+{"at":"2026-10-25T13:25:51Z","id":"D3-CF-K357","from":"merge-queued","to":"merged","owner":"cmvnshf288amfo115vnyecgyt","note":"merge train 20261025_094957: G-CTRL ef5f2e10/57f7ff83/b4f4b55a  B c37d4c0c/0a8f9806/7013671d"}
+{"at":"2026-10-25T13:39:55Z","id":"D3-CF-R7INPUT","from":"working","to":"review","owner":"cmvnshiih8amxo1156rwe3bcx","note":"DECISION: R7_INPUT + R7_EXIT exit on press frame; default gates unchanged; D2 PASS 3/3, 13 tracks identical with both ON; branch @ 5a466becb"}
+{"at":"2026-10-25T13:39:57Z","id":"D3-CF-R7INPUT","from":"review","to":"decision","owner":"cmvnshiih8amxo1156rwe3bcx","note":"L-12"}
+{"at":"2026-10-25T13:40:54Z","id":"D3-CF-BOX-FLIP","from":"blocked","to":"open","owner":"","note":"run 4 flip re-measure"}
+{"at":"2026-10-25T13:40:54Z","id":"D3-CF-BOX-FLIP","from":"open","to":"claimed","owner":"cmvnvlb008ielo115kcibbcwb","note":""}
+{"at":"2026-10-25T13:45:24Z","id":"D3-CF-BOX-FLIP","from":"claimed","to":"working","owner":"cmvnvlb008ielo115kcibbcwb","note":"flip MASHED_BOX_PRODUCERS default ON + re-measure (run 4)"}
+{"at":"2026-10-25T14:38:21Z","id":"D3-CF-BOX-FLIP","from":"working","to":"review","owner":"cmvnvlb008ielo115kcibbcwb","note":"flip in; G-CTRL/B unchanged (ef5f2e10, c37d4c0c); D2 3/3; 13 tracks 0 RED"}
+{"at":"2026-10-25T14:39:29Z","id":"D3-CF-BOX-FLIP","from":"review","to":"merge-queued","owner":"cmvnvlb008ielo115kcibbcwb","note":"orch/D3-CF-BOX-FLIP"}
+{"at":"2026-10-25T14:53:32Z","id":"D3-CF-BOX-FLIP","from":"merge-queued","to":"merged","owner":"cmvnvlb008ielo115kcibbcwb","note":"merge train 20261025_114029: G-CTRL ef5f2e10/57f7ff83/b4f4b55a  B c37d4c0c/0a8f9806/7013671d"}
