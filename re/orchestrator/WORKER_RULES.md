@@ -27,6 +27,11 @@ The live ledger is one file for all tiers (`log\orch\roadmap.json`), never a bra
 - Commit only on `orch/<step>`, targeted `git add <paths>` (never `-A`),
   `git -c merge.autoStash=false` on any merge. No push of any branch.
 - Never merge into `orch/integration`. Enqueue for the merge train instead.
+- **Evidence: commit summaries, not raw data** (Mariano, 2026-10-25). Commit the RESULT,
+  the PREREG, scored tables, hash lists and small extracts (keep each file under ~1 MB). Raw
+  per-frame arm data (`*.step.csv`, `*.gates.csv`, `*.ptrace.log`, captures, `.msd`) stays in
+  `D:/MashedWT/<step>_data`, and the RESULT lists each cited raw file's path and SHA-256.
+  Run 4 committed ~400 MB of raw arm folders. Do not repeat it.
 
 ## Builds and game runs
 - Build from your worktree: `cmd /c "set MASHED_NO_DEPLOY=1&& mashedmod\build.bat"`.
