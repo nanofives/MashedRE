@@ -16,6 +16,7 @@
     "d2_arms": ["D2_DEF_1", "D2_DEF_2", "D2_DEF_3"],
     "d2_score": "verify/d2rebase_20261019/score_d2_v2.py",
     "d2_min_lines": 1600,
+    "d2_max_reruns": 2,
     "run13": "verify/rsky_20261016/run13.py",
     "run13_cites": "verify/rskyverify_20261016/cites_merged.json",
     "run13_reference": "verify/rpct_20261022/tracks_flip_score.txt",

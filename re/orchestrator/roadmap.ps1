@@ -45,6 +45,10 @@ $FINISHED = @('merged','done')
 
 function Now { (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ') }
 
+# HB-EOL: ledger files are copied into tracked paths by `snapshot`, so write them LF (Set-Content/Add-Content give CRLF on Windows).
+function Write-Lf([string]$path, [string]$text) { [IO.File]::WriteAllText($path, (($text -replace "`r`n", "`n").TrimEnd("`n") + "`n"), (New-Object Text.UTF8Encoding($false))) }
+function Append-Lf([string]$path, [string]$text) { [IO.File]::AppendAllText($path, (($text -replace "`r`n", "`n").TrimEnd("`n") + "`n"), (New-Object Text.UTF8Encoding($false))) }
+
 function With-Lock([scriptblock]$Body) {
   $t0 = Get-Date
   while ($true) {
@@ -63,12 +67,12 @@ function Load { Get-Content -LiteralPath $LEDGER -Raw | ConvertFrom-Json -DateKi
 function Save($s) {
   $s.updated = Now
   $tmp = "$LEDGER.tmp"
-  $s | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $tmp -Encoding utf8
+  Write-Lf $tmp (($s | ConvertTo-Json -Depth 8) -join "`n")
   Move-Item -LiteralPath $tmp -Destination $LEDGER -Force
 }
 function Log-Event($row, $from, $to, $note) {
   $e = [ordered]@{ at = Now; id = $row.id; from = $from; to = $to; owner = $row.owner; note = $note }
-  Add-Content -LiteralPath $EVENTS -Value ($e | ConvertTo-Json -Compress) -Encoding utf8
+  Append-Lf $EVENTS ($e | ConvertTo-Json -Compress)
 }
 function Row($s, $id) {
   $r = $s.rows | Where-Object { $_.id -eq $id } | Select-Object -First 1
@@ -167,7 +171,7 @@ switch ($Cmd) {
       $q = if (Test-Path $QUEUE) { @((Get-Content $QUEUE -Raw | ConvertFrom-Json -DateKind String)) } else { @() }
       $q = @($q | Where-Object { $_.id -ne $Id })
       $q += [pscustomobject]@{ id = $Id; branch = $br; sha = $Sha; solo = [bool]$r.solo; at = Now }
-      ConvertTo-Json -InputObject @($q) -Depth 4 | Set-Content -LiteralPath $QUEUE -Encoding utf8
+      Write-Lf $QUEUE ((ConvertTo-Json -InputObject @($q) -Depth 4) -join "`n")
       $from = $r.stage; $r.stage = 'merge-queued'; $r.branch = $br; $r.updated = Now
       Save $s; Log-Event $r $from 'merge-queued' $br
       Write-Output "ENQUEUED $Id ($br) position $($q.Count)"
@@ -178,7 +182,7 @@ switch ($Cmd) {
     With-Lock {
       $q = if (Test-Path $QUEUE) { @((Get-Content $QUEUE -Raw | ConvertFrom-Json -DateKind String)) } else { @() }
       $q = @($q | Where-Object { $_.id -ne $Id })
-      ConvertTo-Json -InputObject @($q) -Depth 4 | Set-Content -LiteralPath $QUEUE -Encoding utf8
+      Write-Lf $QUEUE ((ConvertTo-Json -InputObject @($q) -Depth 4) -join "`n")
       Write-Output "DEQUEUED $Id ($($q.Count) left)"
     }
   }
@@ -192,9 +196,9 @@ switch ($Cmd) {
       $n = 1 + @(Select-String -LiteralPath $DECIDE -Pattern '^\| L-\d+ ' -ErrorAction SilentlyContinue).Count
       $did = 'L-{0}' -f $n
       if (-not (Select-String -LiteralPath $DECIDE -Pattern '^## Loop decisions' -Quiet)) {
-        Add-Content -LiteralPath $DECIDE -Value "`n## Loop decisions (filed by the roadmap loop)`n`n| id | row | question / options / evidence | filed | answer |`n|---|---|---|---|---|" -Encoding utf8
+        Append-Lf $DECIDE "`n## Loop decisions (filed by the roadmap loop)`n`n| id | row | question / options / evidence | filed | answer |`n|---|---|---|---|---|"
       }
-      Add-Content -LiteralPath $DECIDE -Value ("| {0} | {1} | {2} | {3} | **open** |" -f $did, $Id, ($Arg2 -replace '\|','/'), (Now)) -Encoding utf8
+      Append-Lf $DECIDE ("| {0} | {1} | {2} | {3} | **open** |" -f $did, $Id, ($Arg2 -replace '\|','/'), (Now))
       $from = $r.stage; $r.stage = 'decision'; $r.decision = $did; $r.updated = Now
       Save $s; Log-Event $r $from 'decision' $did
       Write-Output "DECISION $did filed for $Id"
