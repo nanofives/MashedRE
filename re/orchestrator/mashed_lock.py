@@ -57,6 +57,8 @@
 #       open a window for the command's lifetime (bound to this PID), export the
 #       token to the command, drain the current game holder first
 #   py -3.12 mashed_lock.py solo-begin --label X [--ttl 14400]   -> "TOKEN <hex>"
+#       --owner-pid <pid>: HB-SOLOSTALE, the token dies as soon as that process is gone
+#       (start time recorded against PID reuse); --ttl stays the fallback
 #   py -3.12 mashed_lock.py solo-end --token <hex>
 #       session-scoped form (no live PID to bind to, so it expires at --ttl)
 
@@ -105,6 +107,48 @@ def _pid_alive(pid):
         return False
     except Exception:
         return True   # can't tell -> assume alive (safer: wait, don't steal)
+
+
+def _pid_start(pid):
+    """Creation time (epoch seconds) of a live PID, or None when it cannot be read.
+    Guards PID reuse: a token whose recorded start differs from the live process's is dead."""
+    if not pid:
+        return None
+    try:
+        import psutil
+        return round(psutil.Process(int(pid)).create_time(), 1)
+    except Exception:
+        pass
+    try:
+        import ctypes
+        from ctypes import wintypes
+        h = ctypes.windll.kernel32.OpenProcess(0x1000, False, int(pid))
+        if not h:
+            return None
+        try:
+            c, e, k, u = (wintypes.FILETIME() for _ in range(4))
+            if not ctypes.windll.kernel32.GetProcessTimes(h, ctypes.byref(c), ctypes.byref(e),
+                                                          ctypes.byref(k), ctypes.byref(u)):
+                return None
+            ticks = (c.dwHighDateTime << 32) | c.dwLowDateTime
+            return round(ticks / 1e7 - 11644473600, 1)
+        finally:
+            ctypes.windll.kernel32.CloseHandle(h)
+    except Exception:
+        return None
+
+
+def _owner_dead(o):
+    """HB-SOLOSTALE: True when the token's owning process (bound `pid`, else `owner_pid`)
+    is gone, or the PID now belongs to a process that started after the token was written."""
+    pid = o.get('pid') or o.get('owner_pid')
+    if not pid:
+        return False
+    if not _pid_alive(pid):
+        return True
+    rec = o.get('owner_start')
+    now = _pid_start(pid)
+    return bool(rec) and now is not None and abs(now - rec) > 2.0
 
 
 def _read_owner(path):
@@ -163,7 +207,7 @@ def solo_owner(name=DEFAULT_NAME):
     if not os.path.exists(path):
         return None
     o = _read_owner(path)
-    dead = bool(o.get('pid')) and not _pid_alive(o.get('pid'))
+    dead = _owner_dead(o)
     expired = (o.get('expires') or 0) < time.time()
     if not o or dead or expired:
         try:
@@ -179,20 +223,20 @@ def _solo_admits_me(owner):
 
 
 def solo_begin(label='', name=DEFAULT_NAME, ttl=SOLO_TTL_SEC, pid=None, wait=1800,
-               poll=3.0, quiet=False, priority=0):
+               poll=3.0, quiet=False, priority=0, owner_pid=None):
     """Open a solo window and return its token. Waits while another window is
     open, then drains the current <name> holder so no foreign boot overlaps.
     priority=1 holds a pending-priority marker for the duration of that wait."""
     if priority:
         prio_mark(name, label, wait + PRIO_GRACE_SEC + 300)
     try:
-        return _solo_begin(label, name, ttl, pid, wait, poll, quiet)
+        return _solo_begin(label, name, ttl, pid, wait, poll, quiet, owner_pid)
     finally:
         if priority:
             prio_clear(name)
 
 
-def _solo_begin(label, name, ttl, pid, wait, poll, quiet):
+def _solo_begin(label, name, ttl, pid, wait, poll, quiet, owner_pid=None):
     def log(m):
         if not quiet:
             print(f"[mashed-lock] {m}", flush=True)
@@ -207,6 +251,7 @@ def _solo_begin(label, name, ttl, pid, wait, poll, quiet):
                 'token': token, 'pid': pid, 'at': _now_iso(), 'epoch': int(time.time()),
                 'expires': int(time.time() + ttl), 'label': label,
                 'host': socket.gethostname(),
+                'owner_pid': owner_pid, 'owner_start': _pid_start(owner_pid),
             }).encode('utf-8'))
             os.close(fd)
             break
@@ -379,13 +424,14 @@ def _cli():
         so = solo_owner(name)
         if so:
             left = int((so.get('expires') or 0) - time.time())
-            print(f"SOLO '{name}' label={so.get('label')} pid={so.get('pid')} "
+            print(f"SOLO '{name}' label={so.get('label')} pid={so.get('pid')} owner_pid={so.get('owner_pid')} "
                   f"since={so.get('at')} expires_in={left}s")
         return 0
     if cmd == 'solo-begin':
         tok = solo_begin(label=opt('--label', 'cli'), name=name,
                          ttl=int(opt('--ttl', SOLO_TTL_SEC)), wait=int(opt('--wait', 1800)),
-                         priority=1 if '--priority' in args else 0)
+                         priority=1 if '--priority' in args else 0,
+                         owner_pid=int(opt('--owner-pid')) if opt('--owner-pid') else None)
         print(f"TOKEN {tok}")
         return 0
     if cmd == 'solo-end':
