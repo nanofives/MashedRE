@@ -370,10 +370,28 @@ void MusicStartBankWaveLoop(const char* waveSub, float volume) {
 }
 }  // namespace
 
+// [D4-WSJ-MUSIC] MASHED_MUSIC_NO_RACE_CDAUDIO=1, default OFF: no cdaudio.rws stream in Race / Results.
+// The original has no reader of the `CDAUDIO` row string (0x00604170) and no path builder that can yield
+// cdaudio.rws (0x004625ec / 0x00462991 / 0x0045d470 only); its race tick (FUN_00466b50 case 3/7) starts no music
+// voice. verify/wsjmusic_20261026/RESULT_D4-WSJ-MUSIC.md.
+static bool NoRaceCdaudio() {
+    static const bool on = [] {
+        char b[8];
+        return GetEnvironmentVariableA("MASHED_MUSIC_NO_RACE_CDAUDIO", b, sizeof(b)) > 0 && b[0] == '1';
+    }();
+    return on;
+}
+
 void MusicSetState(MusicState s) {
     if (s == g_musicState) return;          // idempotent: never restart per-frame
     EvLog("music_state", "", "", static_cast<int>(s));
     const char* kCdaudio = "original/toastaudio/pc/audio/pcdics/cdaudio.rws";
+    if (NoRaceCdaudio() && (s == MusicState::Race || s == MusicState::Results)) {
+        MusicStop();
+        g_musicState = s;
+        logf("MusicSetState -> %d (no cdaudio)", static_cast<int>(s));
+        return;
+    }
     switch (s) {
         case MusicState::Silent:
             MusicStop();
