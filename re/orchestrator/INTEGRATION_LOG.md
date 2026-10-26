@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-10-25 23:02 HB-CHUNK (orch/HB-CHUNK): G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/2516d903/53778664. Run data D:\MashedWT\mtrain_data\20261025_225459
 - 2026-10-25 22:48 D3-CF-R7DETFRAME (orch/D3-CF-R7DETFRAME): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261025_224625
 - 2026-10-25 22:45 D4-DC-4d20-GRID (orch/D4-DC-4d20-GRID): G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/2516d903/53778664. Run data D:\MashedWT\mtrain_data\20261025_223813
 - 2026-10-25 22:01 D3-CF-U9775 (orch/D3-CF-U9775): G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/2516d903/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261025_214739
