@@ -1,5 +1,6 @@
 // Mashed RE — Boot/VideoCfgFirstRun.cpp (EXE-ONLY): the original's first-run videocfg.bin default write
-// (lane wsfvcfg, 2026-10-26, L-28 (2)). Knob MASHED_VIDEOCFG_WRITE=1, default OFF.
+// (lane wsfvcfg, 2026-10-26, L-28 (2)). Knob MASHED_VIDEOCFG_WRITE, default ON since L-29 (a)
+// (D4-FLIP-L29-L30), =0 opts out.
 //
 //   0x00499400  VideoSettingsDispatcher  first-run branch only (param_1 == 0, skip_selector forces it, 0x004994e3)
 //   0x00498c00  VideoModeTableInit       subsystem 0's name and mode list (the only ones the branch reads)
@@ -137,7 +138,7 @@ void Put32(unsigned char* b, int off, std::uint32_t v) { std::memcpy(b + off, &v
 // 0x00499400, first-run branch. Returns 1 when it wrote the file.
 int VideoCfgFirstRunWrite(IDirect3D9* d3d) {
     static const bool s_on = [] { const char* e = std::getenv("MASHED_VIDEOCFG_WRITE");
-                                  return e && e[0] && e[0] != '0'; }();
+                                  return !(e && e[0] == '0'); }();
     if (!s_on || !d3d) return 0;
 
     // 0x00498c00 for subsystem 0: name (case 0xe, 0x004c7ffb..0x004c802b) and modes (case 0x10 / 5 / 6).
