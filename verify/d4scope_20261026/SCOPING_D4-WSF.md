@@ -15,7 +15,7 @@ Text-only read of `re/analysis/formats/`, `re/analysis/piz_validation/`, `re/too
 | track anim data | `rw_track_data.py` | none | none | 5 `[UNCERTAIN]` fields (`track_anim_data.md:45,108,128,130,133`) |
 | AI path data | `ai_data.py`, `ai_headattrib.py` | original writer `FUN_00423540` documented (`ai_path_data.md:27`) | none | writer not ported as a round-trip |
 | `gamesave.bin` | `gamesave_parse.py`, `savefmt_cli` | `gamesave_edit.py` | `re/tools/save_roundtrip.py` (savelink 2026-10-23) covers the 13x12 table span only | ghost block `re/analysis/save_ghost_block_20261023.md` |
-| `videocfg.bin` / `contcfg%d.bin` | standalone reads | standalone must write defaults (P-DoD first-run line, ROADMAP.md:2981) | none | tied to D5-FIRSTRUN |
+| `videocfg.bin` / `contcfg%d.bin` | standalone reads | standalone must write defaults (P-DoD first-run line, ROADMAP.md:2984) | none | tied to D5-FIRSTRUN |
 | Lua 4.0 data (`COURSE.LUA`, `LAPDATA.LUA`, `powerups*.lua`, `KTCScript.lua`) | in port | n/a (read-only text) | none | `Lap_Line_End` resolved D-11058 |
 
 ## Gap in one line
