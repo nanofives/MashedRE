@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-10-26 17:08 D4-WSF-VIDEOCFG (orch/D4-WSF-VIDEOCFG), D4-WSF-SAVE-24EFC (orch/D4-WSF-SAVE-24EFC): G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/e85ea6fb/53778664. Run data D:\MashedWT\mtrain_data\20261026_165919
 - 2026-10-26 16:26 D4-WSF-SAVE-FLIP (orch/D4-WSF-SAVE-FLIP): G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/e85ea6fb/53778664. Run data D:\MashedWT\mtrain_data\20261026_161545
 - 2026-10-26 14:04 HB-6 (orch/HB-6): G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/e85ea6fb/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261026_134941
 - 2026-10-26 13:43 D4-WSJ-WIRE (orch/D4-WSJ-WIRE), D4-WSF-SAVE-RT (orch/D4-WSF-SAVE-RT): G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/e85ea6fb/53778664. Run data D:\MashedWT\mtrain_data\20261026_133634
