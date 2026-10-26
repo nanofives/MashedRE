@@ -1,0 +1,14 @@
+count DAT_005f37a0 = 13
+0	005f33f8	training	id=30	course_tbl=0x6085c0
+1	005f3440	superg	id=25	course_tbl=0x6073c0
+2	005f3488	arctic	id=0	course_tbl=0x605dd0
+3	005f34d0	rouabout	id=2	course_tbl=0x606640
+4	005f3518	sands	id=11	course_tbl=0x607e70
+5	005f3560	warzone	id=33	course_tbl=0x608c80
+6	005f35a8	forest	id=34	course_tbl=0x609580
+7	005f35f0	egypt	id=3	course_tbl=0x606eb0
+8	005f3638	storm	id=36	course_tbl=0x609d60
+9	005f3680	dump	id=37	course_tbl=0x60a420
+10	005f36c8	highway	id=38	course_tbl=0x60ae40
+11	005f3710	neustein	id=39	course_tbl=0x60b860
+12	005f3758	city	id=26	course_tbl=0x60bf20

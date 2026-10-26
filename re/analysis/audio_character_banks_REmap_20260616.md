@@ -160,6 +160,11 @@ per-state track selection from cdaudio's 0x80E is the remaining edge.
    the 0x80D continuous IMA stream) → enables real per-clip character taunts AND
    per-track cdaudio music selection. ~53 B/record, count at +0x20, bank name at
    +0x50; full layout unreversed.
+   **DECODED 2026-10-26 (D4-WSJ-80E):** `re/analysis/structs/rws_80e_stream_header.md`.
+   The sub-sound record is stride 0x20 (length +0x18, offset +0x1c), read by
+   FUN_005b8200 / FUN_005b30e0. cdaudio.rws has ONE sub-sound, so there is no
+   per-track music inside it. Voice counts are not in the bank: they are the
+   exe `.data` wave tables (0x006044f0 permdict, 0x0060c820[track] course).
 2. **Vehicle → engine class (eng1..eng4)** assignment — vehicle stat/handling
    data, not in the exe strings or the vehicle `.piz`.
 3. Collision-FX wiring (skid/impact one-shots on real contact events) — blocked
