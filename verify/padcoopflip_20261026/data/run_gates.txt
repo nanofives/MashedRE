@@ -1,0 +1,32 @@
+[mashed-lock] HELD 'mashed_machine' pid=30696 (D3-CF-PADCOOP-FLIP)
+=== H_DEF pid=7448 exe=f9c46750
+    exit=0 self_exited=True secs=146
+    H_DEF.step.csv lines=14659 sha8=5943c5f1
+    H_DEF.gates.csv lines=56873 sha8=b493262b
+    H_DEF.ptrace.log lines=53552 sha8=35d0566b
+=== B_DEF_K0 pid=2156 exe=f9c46750
+    exit=0 self_exited=True secs=13
+    B_DEF_K0.step.csv lines=1459 sha8=3a03670c
+=== B_DEF_K1 pid=18416 exe=f9c46750
+    exit=0 self_exited=True secs=12
+    B_DEF_K1.step.csv lines=1825 sha8=2516d903
+=== B_DEF_K26 pid=19824 exe=f9c46750
+    exit=0 self_exited=True secs=12
+    B_DEF_K26.step.csv lines=1411 sha8=53778664
+=== B_PP150_K0 pid=28680 exe=f9c46750
+    exit=0 self_exited=True secs=12
+    B_PP150_K0.step.csv lines=1492 sha8=dbe10a3e
+=== B_KP150_K0 pid=23972 exe=f9c46750
+    exit=0 self_exited=True secs=12
+    B_KP150_K0.step.csv lines=1492 sha8=dbe10a3e
+DONE
+[mashed-lock] released 'mashed_machine' pid=30696
+[mashed-lock] WAITING — 'mashed_machine' held by pid=17932 (D4-DC-4d20-FLIP); queueing...
+[mashed-lock] HELD 'mashed_machine' pid=2820 (D3-CF-PADCOOP-FLIP)
+=== H_DEF-2 pid=26028 exe=f9c46750
+    exit=0 self_exited=True secs=132
+    H_DEF-2.step.csv lines=14659 sha8=5943c5f1
+    H_DEF-2.gates.csv lines=56873 sha8=b493262b
+    H_DEF-2.ptrace.log lines=28436 sha8=09551e6a
+DONE
+[mashed-lock] released 'mashed_machine' pid=2820
