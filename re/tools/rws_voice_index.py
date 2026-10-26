@@ -32,6 +32,11 @@ exactly (off[i] + len[i] == off[i+1] for all i, and the last clip ends precisely
 at the data size). Lengths are multiples of 0x2800 = 10240, the block size that
 also appears verbatim at header +0x34.
 
+2026-10-26 (D4-WSJ-80E): the full layout, cited from the exe's own reader, is in
+re/analysis/structs/rws_80e_stream_header.md and re/tools/rws_80e.py. In those terms
+the "count" is BODY+0x0c, the cut table is record A +0x18 (length) / +0x1c (offset),
+and the full clip names are `1_<g>_1_<PP>_<n>`: this tool reads only the `<PP>_<n>` tail.
+
 Usage:
   py -3.12 re\tools\rws_voice_index.py <bank.rws> [--json]
   py -3.12 re\tools\rws_voice_index.py --all
