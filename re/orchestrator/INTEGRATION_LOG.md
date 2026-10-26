@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-10-25 22:01 D3-CF-U9775 (orch/D3-CF-U9775): G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/2516d903/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261025_214739
 - 2026-10-25 20:18 D3-CF-R7FLIP (orch/D3-CF-R7FLIP): G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/2516d903/53778664. Run data D:\MashedWT\mtrain_data\20261025_201131
 - 2026-10-25 19:24 D4-DC-39b0-L13 (orch/D4-DC-39b0-L13): G-CTRL ef5f2e10/57f7ff83/b4f4b55a  B c37d4c0c/0a8f9806/7013671d; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261025_190627
 - 2026-10-25 19:05 D3-CF-R7JOYPAD (orch/D3-CF-R7JOYPAD): G-CTRL ef5f2e10/57f7ff83/b4f4b55a  B c37d4c0c/0a8f9806/7013671d. Run data D:\MashedWT\mtrain_data\20261025_185609
