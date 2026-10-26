@@ -13,6 +13,10 @@
 #               compare ONLY the out-buffer bits (no return value). Added 2026-07-17
 #               to onboard the B5e solver-island pure AABB/vector leaves whose
 #               original signature is void(out, in) (e.g. FUN_00566830 perp-vector).
+#   x_out_in  — float10 (x87 80-bit) ret, (float* out, const float* in); compare the
+#               out-buffer AND all 10 bytes of ST0 at return (`fstp tbyte` + `fld tbyte`
+#               in record_race.py, `fstp tbyte` in replay_c3.py's stub). Added 2026-10-26
+#               (HB-6) for FUN_005667c0. replay_c3.py / record_race.py only.
 #
 # Flags semantics on packed vectors: bit0 = synthetic, bit1 = degenerate.
 # Degenerate vectors (|v| <= threshold margin) are SKIPPED by the offline
@@ -39,32 +43,32 @@ STATIC_READS = [
 FUNCS = {
     'vec3_magnitude': {
         'rva': 0x004C3AC0, 'export': 'Vec3Magnitude', 'kind': 'f_ptrN', 'n_in': 3,
-        'sources': ['Math/Vec3.cpp'], 'live_capture': True, 'degenerate_stubs': False,
+        'sources': ['Math/Vec3.cpp', 'Math/RwLutTables.cpp'], 'live_capture': True, 'degenerate_stubs': False,
         'record': True, 'rw_lut': True,
     },
     'fast_sqrt': {
         'rva': 0x004C3B30, 'export': 'FastSqrt', 'kind': 'f_f',
-        'sources': ['Math/RwSqrt.cpp'], 'live_capture': True, 'degenerate_stubs': False,
+        'sources': ['Math/RwSqrt.cpp', 'Math/RwLutTables.cpp'], 'live_capture': True, 'degenerate_stubs': False,
         'record': True, 'rw_lut': True,
     },
     'fast_inv_sqrt': {
         'rva': 0x004C3B90, 'export': 'FastInvSqrt', 'kind': 'f_f',
-        'sources': ['Math/RwSqrt.cpp'], 'live_capture': True, 'degenerate_stubs': False,
+        'sources': ['Math/RwSqrt.cpp', 'Math/RwLutTables.cpp'], 'live_capture': True, 'degenerate_stubs': False,
         'record': True, 'rw_lut': True,
     },
     'vec2_length': {
         'rva': 0x004C3BF0, 'export': 'Vec2Length', 'kind': 'f_ptrN', 'n_in': 2,
-        'sources': ['Math/RwV2d.cpp'], 'live_capture': True, 'degenerate_stubs': False,
+        'sources': ['Math/RwV2d.cpp', 'Math/RwLutTables.cpp'], 'live_capture': True, 'degenerate_stubs': False,
         'record': True, 'rw_lut': True,
     },
     'vec2_normalize': {
         'rva': 0x004C3C60, 'export': 'Vec2Normalize', 'kind': 'f_out_in', 'n_in': 2, 'n_out': 2,
-        'sources': ['Math/RwV2d.cpp'], 'live_capture': True, 'degenerate_stubs': True,
+        'sources': ['Math/RwV2d.cpp', 'Math/RwLutTables.cpp'], 'live_capture': True, 'degenerate_stubs': True,
         'record': True, 'rw_lut': True,
     },
     'rwv3d_normalize': {
         'rva': 0x004C39B0, 'export': 'RwV3dNormalize', 'kind': 'f_out_in', 'n_in': 3, 'n_out': 3,
-        'sources': ['Math/RwV3dNormalize.cpp'], 'live_capture': True, 'degenerate_stubs': True,
+        'sources': ['Math/RwV3dNormalize.cpp', 'Math/RwLutTables.cpp'], 'live_capture': True, 'degenerate_stubs': True,
         'record': True, 'rw_lut': True,
     },
     # --- B5e solver-island pure leaves (source copied from r7/b5e-solver-island;
@@ -106,6 +110,30 @@ FUNCS = {
         'n_a': 7, 'n_in': 22, 'n_out': 7, 'scalar': False, 'synth_domain': 'bounded',
         'sources': ['Collision/RwpSolverLeaves1.cpp'], 'live_capture': False, 'degenerate_stubs': False,
         'record': True, 'negctl': True,
+    },
+    # --- HB-6 (2026-10-26). 'replay_only' = replay_c3.py / record_race.py only (the classic
+    #     capture/unicorn/offline tools skip it: live_funcs()). 'bundle_of' = replay THAT entry's
+    #     recorded bundle (one recording, two port bodies). The *_x87 bodies are the disasm-order
+    #     re-transcriptions in Collision/RwpSolverLeaves1X87.cpp (/arch:IA32), reached in the
+    #     build only under MASHED_LEAVES1_X87=1 (default OFF). ---
+    'rwp_aabb_xform_x87': {
+        'rva': 0x00566200, 'export': 'FUN_00566200_x87', 'kind': 'v_out_2in',
+        'n_a': 7, 'n_in': 22, 'n_out': 7, 'scalar': False, 'synth_domain': 'bounded',
+        'sources': ['Collision/RwpSolverLeaves1X87.cpp'], 'live_capture': False, 'degenerate_stubs': False,
+        'record': False, 'replay_only': True, 'bundle_of': 'rwp_aabb_xform',
+    },
+    'rwp_normalize3': {
+        # 0x005667c0 — normalizes vec3 `in` into `out`, returns the magnitude in ST0 (float10).
+        # Kind x_out_in: out-buffer compare + the FULL 80-bit ST0 at return (`fstp tbyte`).
+        # Default body (SSE2, decomp order) — Collision/RwpSolverLeaves1.cpp.
+        'rva': 0x005667C0, 'export': 'FUN_005667c0', 'kind': 'x_out_in', 'n_in': 3, 'n_out': 3,
+        'sources': ['Collision/RwpSolverLeaves1.cpp', 'Collision/RwpSolverLeaves1X87.cpp'],
+        'live_capture': False, 'degenerate_stubs': False, 'record': True, 'replay_only': True,
+    },
+    'rwp_normalize3_x87': {
+        'rva': 0x005667C0, 'export': 'FUN_005667c0_x87', 'kind': 'x_out_in', 'n_in': 3, 'n_out': 3,
+        'sources': ['Collision/RwpSolverLeaves1X87.cpp'], 'live_capture': False, 'degenerate_stubs': False,
+        'record': False, 'replay_only': True, 'bundle_of': 'rwp_normalize3',
     },
     # FUN_00566200 (0x00566200, v_out_2in n_a=7 n_in=22 n_out=7) was TRIED 2026-07-24 and
     # is NOT onboarded — FINDING VECCAP-2: its port is not x87-faithful. Unicorn PASS
@@ -163,8 +191,9 @@ def mashed_root():
 
 
 def live_funcs():
-    """FUNCS minus negative controls (the classic capture/replay/unicorn tools)."""
-    return {k: v for k, v in FUNCS.items() if not v.get('negctl')}
+    """FUNCS minus negative controls and replay-only entries (the classic
+    capture/replay/unicorn tools; they implement neither x_out_in nor bundle_of)."""
+    return {k: v for k, v in FUNCS.items() if not v.get('negctl') and not v.get('replay_only')}
 
 
 # v_out_2in split accessors: n_a = buffer-1 floats, n_b = buffer-2 floats,

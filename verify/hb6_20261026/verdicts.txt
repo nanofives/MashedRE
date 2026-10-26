@@ -1,0 +1,13 @@
+005667c0_rwp_normalize3.replay.csv: VERDICT,RED,1200
+005667c0_rwp_normalize3_x87.replay.csv: VERDICT,HELD,1200
+005667c0_rwp_normalize3_x87.negctl_FUN_005667c0.replay.csv: VERDICT,RED,1200
+005667c0_rwp_normalize3.t4.replay.csv: VERDICT,RED,3000
+005667c0_rwp_normalize3_x87.t4.replay.csv: VERDICT,HELD,3000
+00566200_rwp_aabb_xform.synth_cw007f.replay.csv: VERDICT,RED,513
+00566200_rwp_aabb_xform.synth_cw027f.replay.csv: VERDICT,RED,513
+00566200_rwp_aabb_xform_x87.synth_cw007f.replay.csv: VERDICT,HELD,513
+00566200_rwp_aabb_xform_x87.synth_cw027f.replay.csv: VERDICT,HELD,513
+005667c0_rwp_normalize3.synth_cw007f.replay.csv: VERDICT,RED,513
+005667c0_rwp_normalize3.synth_cw027f.replay.csv: VERDICT,HELD,513
+005667c0_rwp_normalize3_x87.synth_cw007f.replay.csv: VERDICT,HELD,513
+005667c0_rwp_normalize3_x87.synth_cw027f.replay.csv: VERDICT,HELD,513
