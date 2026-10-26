@@ -149,6 +149,12 @@ private:
     // 2026-08-14 "2164 skids/race" figure uninterpretable (the debug line logged
     // slot 1's inputs while the counter summed all four).
     int    fx_skids_[4] = {}, fx_sparks_[4] = {};
+    // [D4-FX-GATES] MASHED_FX_ORIG_GATES counters per slot: frames seen, FUN_0040c690-equivalent calls and
+    // passing rolls, each split [non-skid, skid]; private roll generator (never the game PRNG).
+    int    fx_og_frames_[4] = {}, fx_og_calls_[4][2] = {}, fx_og_emits_[4][2] = {};
+    unsigned fx_og_rng_ = 0x2545f491u;
+    float  FxOrigRoll();
+    void   EmitCarFxOrigGates(int slot, const float pos[3], float fx, float fz, float R);
     // Emit skid smoke (cornering/lateral slip) + impact sparks (sudden decel) for
     // one car into parts_. Call once per car per frame BEFORE parts_.Update() --
     // emit is per-frame, render is per-view (the split-screen constraint in D-11063).
