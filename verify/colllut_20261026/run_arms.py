@@ -440,6 +440,7 @@ STACK['RNT'] = STACK['RT'] + STACK['RN']                      # + player record 
 STACK['CLSF4RN'] = STACK['CLSF4'] + STACK['RD'] + STACK['RN']   # the faithful stack, report only
 STACK['NORNT'] = STACK['RT'] + STACK['NORN']                  # a5flip: opt-out + player record dump + DAT_007f0ff8 log
 STACK['CLNORN'] = STACK['CL'] + STACK['NORN']   # colllut: COLL_LUT on the pre-flip (timer opt-out) default, the D2 control
+STACK['NOCL'] = ['MASHED_NO_COLL_LUT']   # colllut flip (L-26 = A): the opt-out, = the pre-flip default
 for name in sys.argv[1:]:
     CUR['name'] = name
     if name.startswith('H_'):

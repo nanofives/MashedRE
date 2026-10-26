@@ -1,0 +1,12 @@
+[mashed-lock] HELD 'mashed_machine' pid=21024 (D3-CF-COLLLUT)
+=== B_NOCL_K0 pid=22488 exe=7fb2d088
+    exit=0 self_exited=True secs=15
+    B_NOCL_K0.step.csv lines=1459 sha8=3a03670c
+=== B_NOCL_K1 pid=30020 exe=7fb2d088
+    exit=0 self_exited=True secs=15
+    B_NOCL_K1.step.csv lines=1825 sha8=2516d903
+=== B_NOCL_K26 pid=28516 exe=7fb2d088
+    exit=0 self_exited=True secs=14
+    B_NOCL_K26.step.csv lines=1411 sha8=53778664
+DONE
+[mashed-lock] released 'mashed_machine' pid=21024

@@ -86,3 +86,27 @@ solo run, cut at `D2_DEF_1`, ends where the tool lost its stdout), `d2arms_b.txt
 Raw data off git in `D:\MashedWT\D3-CF-COLLLUT_data` (`arms\` 71 MB: gate step / gates / ptrace, D2 motion_diag, logs, RUNLOG.
 `tracks\` 118 MB: replay draws and diffs). SHA-256 of every cited raw file, including the 5 moved track diffs, is in
 `raw_sha256.txt`.
+
+## 6. FLIP (decision L-26 = A, Mariano, 2026-10-26)
+
+Branch `orch/D3-CF-COLLLUT` merged `orch/integration` `c003971ad` (`git merge-base --is-ancestor` OK, merge `b05a1eb6a`).
+`MASHED_COLL_LUT` is default ON at its read site (`Collision/ContactDeps.h` `CollLut()`, the a5timer-flip pattern).
+`MASHED_NO_COLL_LUT=1` (or `MASHED_COLL_LUT=0`) restores the std::sqrt leaves, the pre-flip default. `Core/FaithDefaults.cpp`
+seeds nothing new, its comment now points at the site. Exe `7fb2d088` (`MASHED_NO_DEPLOY=1`), root `D:\MashedWT\D3-CF-COLLLUT_root`.
+G-CTRL, B and D2 ran on the merge-train runner `verify/savelink_20261023/run_arms.py`. The opt-out B arms ran on this folder's
+`run_arms.py`, which gains the `NOCL` stack (`MASHED_NO_COLL_LUT`).
+
+| gate | flipped default | `MASHED_NO_COLL_LUT=1` | expected |
+|---|---|---|---|
+| G-CTRL `H_DEF` step / gates / ptrace | `5943c5f1 / b493262b / 09551e6a` (14659 / 56873 / 28436 lines) | not run | `5943c5f1 / b493262b / 09551e6a` (unchanged) PASS |
+| B `K0 / K1 / K26` | `3a03670c / e85ea6fb / 53778664` | `3a03670c / 2516d903 / 53778664` | flipped `3a03670c / e85ea6fb / 53778664` PASS, opt-out = old B ref PASS |
+| B vsum / (e) | 3/3 on all three arms, (e) PASS v1-v3, launch 1425.7 / 2052.5 / 2055.0 | | same as the ref PASS |
+| D2 `D2_DEF_1..3` (solo) | 0.1942 / 0.2492 / 1896.74 x3, 1637 lines each, sha8 `5b9627c8` x3, H1 398/400 | | 0.1942 / 0.2492 / 1896.74 PASS 3/3 |
+| 13 tracks (`cites_rres.json`, solo) | 13/13 first attempt, 39 rows, INSTRUMENT GATES PASS | | byte-equal to `tracks_score.txt` PASS |
+
+Every D2 arm was over 1600 lines, so no rerun was owed. Refs the merge needs (L0 sets them, `merge_train.json` not edited
+here): `b.ref` `3a03670c / e85ea6fb / 53778664`, `full.run13_reference` `verify/colllut_20261026/tracks_score.txt`.
+The D2 opt-out control is now `MASHED_NO_COLL_LUT=1` (gives the pre-flip 0.1874 / 0.2488 / ~1928 D2 default).
+
+Files: `flip_gates.txt`, `flip_nocl.txt`, `flip_d2arms.txt`, `flip_score_d2.txt`, `flip_tracks_run.txt`, `flip_tracks_score.txt`,
+`flip_raw_sha256.txt` (raw files in `D:\MashedWT\D3-CF-COLLLUT_data\flip_arms`, `flip_arms_nocl`, `flip_tracks`).

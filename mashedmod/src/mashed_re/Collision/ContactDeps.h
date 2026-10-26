@@ -34,10 +34,16 @@ inline float   asF(int bits)            { float f; std::memcpy(&f, &bits, 4); re
 // NOTE (bit-identity residual): the original FastSqrt FUN_004c3b30 is an x87
 // approximation; here we use sqrtf. Equal to several ULP, not bit-identical —
 // recorded for the eventual installed-hook scenario diff (see [[project-wsa2-rwmath-bitident]]).
-// [d2off 2026-10-20] MASHED_COLL_LUT=1 (default OFF, verify/d2off_20261020/PREREG_d2off.md amendment 1): the three
+// [d2off 2026-10-20] MASHED_COLL_LUT (verify/d2off_20261020/PREREG_d2off.md amendment 1): the three
 // leaves run the original's LUT bodies (Math/RwLutTables: FUN_004c3b30 / FUN_004c3ac0 / FUN_004c39b0).
+// [colllut flip 2026-10-26] default ON (decision L-26 = A, verify/colllut_20261026/RESULT_D3-CF-COLLLUT.md: D2 3/3 at
+// 0.1942 / 0.2492 / 1896.74 on the A5 race-timer default, B K1 2516d903 -> e85ea6fb, 13 tracks +6 matched, 0 red).
+// MASHED_NO_COLL_LUT=1 (or MASHED_COLL_LUT=0) opts out: the std::sqrt leaves, the pre-flip default.
 inline bool CollLut() {
-    static const bool s = [] { const char* e = std::getenv("MASHED_COLL_LUT"); return e && e[0] == '1'; }();
+    static const bool s = [] { const char* no = std::getenv("MASHED_NO_COLL_LUT");
+                               if (no && no[0] && no[0] != '0') return false;
+                               const char* e = std::getenv("MASHED_COLL_LUT");
+                               return !(e && e[0] == '0'); }();
     return s;
 }
 inline float FastSqrt(float x) { return CollLut() ? Math::LutSqrt(x) : std::sqrt(x); }
