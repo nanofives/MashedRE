@@ -1,0 +1,50 @@
+== H_DEF
+pad coop: device 0 level 0x5 hr 0x00000000
+pad coop: device 1 level 0x5 hr 0x00000000
+input slots: game controllers 2, types 1 1 2 0, active 3
+pad state: device 0 GetDeviceState hr 0x8007000c
+pad state: device 1 GetDeviceState hr 0x8007000c
+== H_DEF-2
+pad coop: device 0 level 0x5 hr 0x00000000
+pad coop: device 1 level 0x5 hr 0x00000000
+input slots: game controllers 2, types 1 1 2 0, active 3
+pad state: device 0 GetDeviceState hr 0x8007000c
+pad state: device 1 GetDeviceState hr 0x8007000c
+== B_DEF_K0
+pad coop: device 0 level 0x5 hr 0x00000000
+pad coop: device 1 level 0x5 hr 0x00000000
+input slots: game controllers 2, types 1 1 2 0, active 3
+pad state: device 0 GetDeviceState hr 0x8007000c
+pad state: device 1 GetDeviceState hr 0x8007000c
+== B_DEF_K1
+pad coop: device 0 level 0x5 hr 0x00000000
+pad coop: device 1 level 0x5 hr 0x00000000
+input slots: game controllers 2, types 1 1 2 0, active 3
+pad state: device 0 GetDeviceState hr 0x8007000c
+pad state: device 1 GetDeviceState hr 0x8007000c
+== B_DEF_K26
+pad coop: device 0 level 0x5 hr 0x00000000
+pad coop: device 1 level 0x5 hr 0x00000000
+input slots: game controllers 2, types 1 1 2 0, active 3
+pad state: device 0 GetDeviceState hr 0x8007000c
+pad state: device 1 GetDeviceState hr 0x8007000c
+== B_PP150_K0
+pad coop: device 0 level 0x5 hr 0x00000000
+pad coop: device 1 level 0x5 hr 0x00000000
+input slots: game controllers 2, types 1 1 2 0, active 3
+pad state: device 0 GetDeviceState hr 0x8007000c
+pad state: device 1 GetDeviceState hr 0x8007000c
+R7IN byte0xa slot=0 val=0xff r7frame=150 test=1 det_frame=551 type=1
+R7X EXIT det_frame=551 round 1 -> 2 match_winner=-1
+R7IN byte0xa slot=0 val=0xff r7frame=150 test=1 det_frame=1058 type=1
+R7X EXIT det_frame=1058 round 2 -> 3 match_winner=-1
+== B_KP150_K0
+pad coop: device 0 level 0x5 hr 0x00000000
+pad coop: device 1 level 0x5 hr 0x00000000
+input slots: game controllers 2, types 1 1 2 0, active 3
+pad state: device 0 GetDeviceState hr 0x8007000c
+pad state: device 1 GetDeviceState hr 0x8007000c
+R7IN byte0xa slot=2 val=0xff r7frame=150 test=1 det_frame=551 type=2
+R7X EXIT det_frame=551 round 1 -> 2 match_winner=-1
+R7IN byte0xa slot=2 val=0xff r7frame=150 test=1 det_frame=1058 type=2
+R7X EXIT det_frame=1058 round 2 -> 3 match_winner=-1
