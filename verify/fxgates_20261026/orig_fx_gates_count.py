@@ -27,7 +27,10 @@ extern unsigned int cols[64];   /* 4 cars x 16 (colour) */
 extern int colsn[64];
 extern int ids[128];            /* 4 cars x 32 */
 extern unsigned int lo;
-static int last_car = 0, last_skid = 0, pending = 0;
+extern int st[4];               /* last_car, last_skid, pending: CModule statics are not writable */
+#define last_car st[0]
+#define last_skid st[1]
+#define pending st[2]
 void on_ca00(GumInvocationContext *ic) { frames++; }
 void on_c690(GumInvocationContext *ic) {
   unsigned int col = (unsigned int)(gsize)gum_invocation_context_get_nth_argument(ic, 3);
@@ -44,7 +47,8 @@ void on_c690(GumInvocationContext *ic) {
   }
 }
 void on_cf90(GumInvocationContext *ic) {
-  unsigned int ra = (unsigned int)(gsize)gum_invocation_context_get_return_address(ic);
+  unsigned int ra = *(unsigned int *)(gsize)ic->cpu_context->esp;   /* probe context: [esp] = return address */
+  st[3]++;
   int id = (int)(gsize)gum_invocation_context_get_nth_argument(ic, 2);
   if (pending && ra - lo < 0x36a) {
     emits[last_car * 2 + last_skid]++;
@@ -59,9 +63,10 @@ const IMG = 0x400000;
 const m = Process.findModuleByName('MASHED.exe');
 const d = m.base.toUInt32() - IMG;
 const sym = {};
-const sizes = {frames: 4, calls: 32, emits: 32, cols: 256, colsn: 256, ids: 512, lo: 4};
-for (const k in sizes) { sym[k] = Memory.alloc(sizes[k]); }
+const sizes = {frames: 4, calls: 32, emits: 32, cols: 256, colsn: 256, ids: 512, lo: 4, st: 16};
+for (const k in sizes) { sym[k] = Memory.alloc(sizes[k]); for (let i = 0; i < sizes[k]; i += 4) sym[k].add(i).writeU32(0); }
 sym.lo.writeU32(0x0040c690 + d);
+Process.setExceptionHandler(function (ex) { send({exc: ex.type, addr: ex.address.toString(), rel: '0x' + (ex.address.toUInt32() - d).toString(16), mem: ex.memory ? ex.memory.address.toString() : ''}); return false; });
 const cm = new CModule(CSRC, sym);
 Interceptor.attach(ptr(0x0040ca00 + d), cm.on_ca00);
 Interceptor.attach(ptr(0x0040c690 + d), cm.on_c690);
@@ -74,7 +79,7 @@ rpc.exports = {
       for (let i = 0; i < 16; i++) { const n = sym.colsn.add(4 * (c * 16 + i)).readS32();
         if (n) h['0x' + (sym.cols.add(4 * (c * 16 + i)).readU32() >>> 0).toString(16)] = n; }
       cols.push(h); }
-    return JSON.stringify({frames: sym.frames.readS32(), calls: arr(sym.calls, 8), emits: arr(sym.emits, 8),
+    return JSON.stringify({frames: sym.frames.readS32(), calls: arr(sym.calls, 8), emits: arr(sym.emits, 8), cf90_all: sym.st.add(12).readS32(),
       cols: cols, ids: arr(sym.ids, 128), phase: ptr(0x00771968 + d).readU8(), w636adc: ptr(0x00636adc + d).readU32(),
       course: ptr(0x00644158 + d).readS32()});
   }
@@ -96,7 +101,8 @@ t0 = time.time()
 while pid is None and time.time() - t0 < 120 and p.poll() is None: time.sleep(0.5)
 if pid is None: print('no pid'); sys.exit(2)
 print('attach pid', pid, flush=True)
-s = frida.get_local_device().attach(pid); sc = s.create_script(JS); sc.load(); E = sc.exports_sync
+s = frida.get_local_device().attach(pid); sc = s.create_script(JS)
+sc.on('message', lambda m, d: print('  [js]', m, flush=True)); sc.load(); E = sc.exports_sync
 rows = []; t1 = time.time()
 try:
     while time.time() - t1 < HOLD - 8 and p.poll() is None:

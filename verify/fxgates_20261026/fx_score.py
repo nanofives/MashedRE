@@ -26,16 +26,23 @@ orig = {c: dict(frames=o['frames'], calls=o['calls'][2 * c:2 * c + 2], emits=o['
 print('ORIGINAL frames=%d phase=%d [0x00636adc]=%d course=%d' % (o['frames'], o['phase'], o['w636adc'], o['course']))
 for c in range(4):
     r = orig[c]; ca = sum(r['calls']); em = sum(r['emits'])
-    print('  car %d calls=%s emits=%s emit/call=%.3f emits/1000fr=%.1f cols=%s ids=%s' % (
-        c, r['calls'], r['emits'], em / ca if ca else 0, 1000.0 * em / r['frames'] if r['frames'] else 0, r['cols'], r['ids']))
+    act = r['calls'][0] + r['calls'][1] / 3.0
+    print('  car %d calls=%s emits=%s emit/call=%.3f emits/1000fr=%.1f active_fr=%.0f emits/1000active=%.1f cols=%s ids=%s' % (
+        c, r['calls'], r['emits'], em / ca if ca else 0, 1000.0 * em / r['frames'] if r['frames'] else 0, act,
+        1000.0 * em / act if act else 0, r['cols'], r['ids']))
 pooled = {}
 for c in range(4):
     for k, v in orig[c]['cols'].items(): pooled[k] = pooled.get(k, 0) + v
 print('  pooled colours:', dict(sorted(pooled.items(), key=lambda kv: -kv[1])))
+# active frames: one FUN_0040c690 call per gated frame, three when skid (0x0040cbd5), so calls[0] + calls[1] / 3.
+# Knob OFF has no gate counters: it borrows F1's active frames (same simulation, the G-CTRL hashes are identical).
+ACT = {}
 arms = [('F0', sys.argv[2]), ('F1', sys.argv[3])] + ([('F2', sys.argv[4])] if len(sys.argv) > 4 else [])
 for name, path in arms:
     P = port(path)
     print(name)
+    if name == 'F1':
+        for s_, r_ in P.items(): ACT[s_] = r_['calls'][0] + r_['calls'][1] / 3.0
     for s, r in P.items():
         ca = sum(r['calls']); em = sum(r['emits'])
         rate = 1000.0 * (em if name != 'F0' else r['skids']) / r['frames']
@@ -43,3 +50,18 @@ for name, path in arms:
         print('  slot %d frames=%d skids=%d calls=%s emits=%s emit/call=%.3f per1000=%.1f orig_per1000=%.1f ratio=%s' % (
             s, r['frames'], r['skids'], r['calls'], r['emits'], em / ca if ca else 0, rate, orate,
             ('%.2f' % (rate / orate)) if orate else 'inf'))
+        oa = orig[s]['calls'][0] + orig[s]['calls'][1] / 3.0
+        pa = (r['calls'][0] + r['calls'][1] / 3.0) if name != 'F0' else None
+        if name == 'F0' or pa is None: pa = None
+        a = pa if pa else None
+        print('         per1000active=%s orig_per1000active=%.1f' % (
+            ('%.1f' % (1000.0 * (em if name != 'F0' else r['skids']) / (a if a else 1))) if a else 'see F0 below', 1000.0 * sum(orig[s]['emits']) / oa if oa else 0))
+
+if 'F1' in [a for a, _ in arms]:
+    P0 = port(sys.argv[2])
+    print('F0 per 1000 active frames (F1 denominators):')
+    for s_, r_ in P0.items():
+        a = ACT.get(s_, 0)
+        oa = orig[s_]['calls'][0] + orig[s_]['calls'][1] / 3.0
+        print('  slot %d skids=%d active=%.0f per1000active=%.1f orig=%.1f' % (s_, r_['skids'], a, 1000.0 * r_['skids'] / a if a else 0,
+              1000.0 * sum(orig[s_]['emits']) / oa if oa else 0))
