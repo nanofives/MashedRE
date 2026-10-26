@@ -87,3 +87,7 @@ Recommendation (a), via the decided-flip protocol, since L-28 (2) chose the port
 
 The first gate attempt died before any arm on a missing output folder (`gates_try1_nooutdir.log`). The re-run is the
 reported one.
+
+## L-31 answer (Mariano, 2026-10-26)
+
+(a): leave the videocfg mode list as it is. The 3-byte difference in the standalone's first-run `videocfg.bin` (default mode 640x480x32 instead of x16, 53 modes instead of 79) comes from the absent `DWM8And16BitMitigation` compat layer, which every original `MASHED.exe` path has and `mashed_re.exe` lacks. It is not a port difference. Under that layer the write is 0 of 512 bytes different.

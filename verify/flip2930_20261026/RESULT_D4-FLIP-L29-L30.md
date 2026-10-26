@@ -84,3 +84,7 @@ standalone, and (b) touches the device. Either way this flip can merge, since ga
 | `arms_logged/H_DEF.racelog` | `54057bad43814916c9a1e48e93ba9d4efc623ac1536446faebd5918d4e8a5d74` |
 | `arms_logged/B_DEF_K0.racelog` = `B_DEF_K1.racelog` | `bb840c88459996e17fa7028b2e50fb6295ad9d55388c21895496027395228fa2` |
 | `arms_logged/B_DEF_K26.racelog` | `a4d45186819f481de14cf78cc223134dfe02bc4e260f2cf1c834c47eb2ce66aa` |
+
+## L-31 answer (Mariano, 2026-10-26)
+
+(a): leave the videocfg mode list as it is. The 3-byte difference in the standalone's first-run `videocfg.bin` (default mode 640x480x32 instead of x16, 53 modes instead of 79) comes from the absent `DWM8And16BitMitigation` compat layer, which every original `MASHED.exe` path has and `mashed_re.exe` lacks. It is not a port difference. Under that layer the write is 0 of 512 bytes different.
