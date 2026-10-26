@@ -206,8 +206,9 @@ void SaveProgress() {
     // it in place instead of rebuilding from zero. BuildSpanFromProgress zeroes every span cell it
     // does not own (launch gates col 1 / col 3 / col 11, the savedata gate at +0x4ec) and
     // BuildImage zeroes the profile block; written over the original's file that would wipe
-    // them. Only col 4 (unlock) and col 5 (trophy) of the rows we track, the counter and the
-    // magic change; every other byte is what ReadSaveImage found. No valid file -> the rebuild.
+    // them. Only col 4 (unlock) and col 5 (trophy) of the rows we track and the counter dword
+    // (rewritten with the live, loaded value) are stored; every other byte is what ReadSaveImage
+    // found. No valid file -> the rebuild.
     if (GameSave_OriginalFormatMode() || KeepImageMode()) {
         const size_t nRead = ReadSaveImage(img);
         std::uint32_t magic = 0;
@@ -219,17 +220,19 @@ void SaveProgress() {
                 std::memcpy(img + kSpanOff + r * kRowStride + kColTrackUnlock, &u, 4);
                 std::memcpy(img + kSpanOff + r * kRowStride + kColTrophyPriv,  &t, 4);
             }
-            if (!KeepImageMode()) {
-                const std::uint32_t counter = ++g_saveCounter;
-                std::memcpy(img + kCounterOff, &counter, 4);
-            }
+            if (!KeepImageMode())   // 0x00404f03 / 0x00404f23: the live value, never incremented
+                std::memcpy(img + kCounterOff, &g_saveCounter, 4);
             WriteSaveImage(img);
             return;
         }
     }
 #endif
     BuildSpanFromProgress(span);
-    BuildImage(span, ++g_saveCounter, img);            // bump the save-state counter
+    // [D4-WSF-SAVE-24EFC 2026-10-26] the live DAT_008a95ac model, unchanged. Serialize copies it
+    // (MOV EAX,[0x008a95ac] 0x00404f03, MOV [0x00828254],EAX 0x00404f23) and no original writer
+    // increments it (0x00404ec1 load, 0x004098c6 / 0x004098eb / 0x00409c5e = 0, 0x00409e30 = 1,
+    // 0x0040ad34 = param). The port used to store ++g_saveCounter here and in the in-place path.
+    BuildImage(span, g_saveCounter, img);
     WriteSaveImage(img);
 }
 }  // namespace
@@ -237,7 +240,7 @@ void SaveProgress() {
 // Bind point for Save/GameSaveBuffer.cpp (standalone exe build only). Exposes the
 // live save-state counter (models DAT_008A95AC) BY NAME, so the ported
 // Serialize/DeserializeToBuffer neutralize their 0x008A95AC tunnel by binding to
-// THIS real engine state (bumped by SaveProgress at ++g_saveCounter) rather than a
+// THIS real engine state (set by Campaign_LoadProgress, stored by SaveProgress) rather than a
 // private duplicate. Anon-namespace members are visible in the enclosing namespace,
 // so this accessor (external linkage) can take the counter's address.
 std::uint32_t* GameFlow_SaveCounterPtr() { return &g_saveCounter; }
