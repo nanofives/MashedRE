@@ -258,3 +258,38 @@
 {"at":"2026-10-25T22:02:54Z","id":"D4-DC-39b0-L13","from":"review","to":"merge-queued","owner":"cmvobnwlv9nhjo115eumr5svx","note":"orch/D4-DC-39b0-L13"}
 {"at":"2026-10-25T22:05:24Z","id":"D3-CF-R7JOYPAD","from":"decision","to":"merged","owner":"cmvob75fq9lj1o115zzmoad83","note":"merge train 20261025_185609: G-CTRL ef5f2e10/57f7ff83/b4f4b55a  B c37d4c0c/0a8f9806/7013671d"}
 {"at":"2026-10-25T22:24:20Z","id":"D4-DC-39b0-L13","from":"merge-queued","to":"merged","owner":"cmvobnwlv9nhjo115eumr5svx","note":"merge train 20261025_190627: G-CTRL ef5f2e10/57f7ff83/b4f4b55a  B c37d4c0c/0a8f9806/7013671d; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-10-25T22:35:59Z","id":"D3-CF-R7FLIP","from":"open","to":"claimed","owner":"cmvoepckq9tufo115r0cj0fat","note":""}
+{"at":"2026-10-25T22:42:27Z","id":"D3-CF-R7FLIP","from":"claimed","to":"open","owner":"","note":"respawn: first worker never picked up"}
+{"at":"2026-10-25T22:42:28Z","id":"D3-CF-R7FLIP","from":"open","to":"claimed","owner":"cmvoexdee9v6vo115k273b99d","note":""}
+{"at":"2026-10-25T22:44:58Z","id":"D3-CF-R7FLIP","from":"claimed","to":"working","owner":"cmvoexdee9v6vo115k273b99d","note":"flip R7_EXIT+R7_INPUT default ON, re-gate on 3d0c006c8"}
+{"at":"2026-10-25T23:07:19Z","id":"D3-CF-R7FLIP","from":"working","to":"review","owner":"cmvoexdee9v6vo115k273b99d","note":""}
+{"at":"2026-10-25T23:09:49Z","id":"D3-CF-R7FLIP","from":"review","to":"merge-queued","owner":"cmvoexdee9v6vo115k273b99d","note":"orch/D3-CF-R7FLIP"}
+{"at":"2026-10-25T23:18:54Z","id":"D3-CF-R7FLIP","from":"merge-queued","to":"merged","owner":"cmvoexdee9v6vo115k273b99d","note":"merge train 20261025_201131: G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/2516d903/53778664"}
+{"at":"2026-10-25T23:21:32Z","id":"D3-CF-U9775","from":"open","to":"claimed","owner":"cmvogc0yxa0k1o115h4u2mzpz","note":""}
+{"at":"2026-10-25T23:26:44Z","id":"D3-CF-U9775","from":"claimed","to":"working","owner":"cmvogc0yxa0k1o115h4u2mzpz","note":"reading U-9775 evidence"}
+{"at":"2026-10-26T00:21:52Z","id":"D3-CF-U9775","from":"working","to":"review","owner":"cmvogc0yxa0k1o115h4u2mzpz","note":"U-9775 resolved: A5 race-timer onset vs first move; CLSF4+ADD bit-exact + D2 3/3; gates unchanged"}
+{"at":"2026-10-26T00:46:07Z","id":"D3-CF-U9775","from":"review","to":"merge-queued","owner":"cmvogc0yxa0k1o115h4u2mzpz","note":"orch/D3-CF-U9775"}
+{"at":"2026-10-26T00:46:42Z","id":"D3-CF-A5TIMER","from":"open","to":"decision","owner":"","note":"L-17"}
+{"at":"2026-10-26T00:46:44Z","id":"D3-CF-COLLLUT","from":"open","to":"decision","owner":"","note":"L-18"}
+{"at":"2026-10-26T01:01:25Z","id":"D3-CF-U9775","from":"merge-queued","to":"merged","owner":"cmvogc0yxa0k1o115h4u2mzpz","note":"merge train 20261025_214739: G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/2516d903/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-10-26T01:03:19Z","id":"D4-DC-4d20-GRID","from":"open","to":"claimed","owner":"cmvojyusoa59ho1150gcbqlol","note":""}
+{"at":"2026-10-26T01:05:33Z","id":"D4-DC-4d20-GRID","from":"claimed","to":"working","owner":"cmvojyusoa59ho1150gcbqlol","note":"worktree created, reading RoundGrid GridDir_PortYaw"}
+{"at":"2026-10-26T01:33:32Z","id":"HB-CHUNK","from":"open","to":"claimed","owner":"cmvol1sy7a7cxo115kg0czc8s","note":""}
+{"at":"2026-10-26T01:34:03Z","id":"D3-CF-R7DETFRAME","from":"open","to":"claimed","owner":"cmvol29hea7i7o115p2pgt4oj","note":""}
+{"at":"2026-10-26T01:34:05Z","id":"D3-CF-PADCOOP","from":"open","to":"claimed","owner":"cmvol2h7ua7kzo115e3h8meiq","note":""}
+{"at":"2026-10-26T01:35:30Z","id":"HB-CHUNK","from":"claimed","to":"working","owner":"cmvol1sy7a7cxo115kg0czc8s","note":"authoring --on-chunk PHASE 2"}
+{"at":"2026-10-26T01:36:05Z","id":"D4-DC-4d20-GRID","from":"working","to":"review","owner":"cmvojyusoa59ho1150gcbqlol","note":"GREEN: knob MASHED_GRID_ROTATE_RW default OFF; ON = default on G-CTRL, B, D2 3/3, 13 tracks; allowlist 1 (unchanged)"}
+{"at":"2026-10-26T01:36:06Z","id":"D4-DC-4d20-GRID","from":"review","to":"decision","owner":"cmvojyusoa59ho1150gcbqlol","note":"L-19"}
+{"at":"2026-10-26T01:36:08Z","id":"D3-CF-R7DETFRAME","from":"claimed","to":"working","owner":"cmvol29hea7i7o115p2pgt4oj","note":"investigating detection-frame spread"}
+{"at":"2026-10-26T01:36:18Z","id":"D3-CF-PADCOOP","from":"claimed","to":"working","owner":"cmvol2h7ua7kzo115e3h8meiq","note":"worktree created, reading R7JOYPAD evidence"}
+{"at":"2026-10-26T01:36:56Z","id":"D4-DC-4d20-GRID","from":"decision","to":"merge-queued","owner":"cmvojyusoa59ho1150gcbqlol","note":"orch/D4-DC-4d20-GRID"}
+{"at":"2026-10-26T01:42:41Z","id":"D3-CF-R7DETFRAME","from":"working","to":"review","owner":"cmvol29hea7i7o115p2pgt4oj","note":"GREEN: tap frame = 600 ms wall clock x render rate; latency 0 frames"}
+{"at":"2026-10-26T01:43:05Z","id":"D3-CF-R7DETFRAME","from":"review","to":"merge-queued","owner":"cmvol29hea7i7o115p2pgt4oj","note":"orch/D3-CF-R7DETFRAME"}
+{"at":"2026-10-26T01:45:55Z","id":"D4-DC-4d20-GRID","from":"merge-queued","to":"merged","owner":"cmvojyusoa59ho1150gcbqlol","note":"merge train 20261025_223813: G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/2516d903/53778664"}
+{"at":"2026-10-26T01:48:13Z","id":"D3-CF-R7DETFRAME","from":"merge-queued","to":"merged","owner":"cmvol29hea7i7o115p2pgt4oj","note":"merge train 20261025_224625: not run: text-only change (no build input touched)"}
+{"at":"2026-10-26T01:53:34Z","id":"HB-CHUNK","from":"working","to":"review","owner":"cmvol1sy7a7cxo115kg0czc8s","note":""}
+{"at":"2026-10-26T01:53:53Z","id":"HB-CHUNK","from":"review","to":"merge-queued","owner":"cmvol1sy7a7cxo115kg0czc8s","note":"orch/HB-CHUNK"}
+{"at":"2026-10-26T02:03:03Z","id":"HB-CHUNK","from":"merge-queued","to":"merged","owner":"cmvol1sy7a7cxo115kg0czc8s","note":"merge train 20261025_225459: G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/2516d903/53778664"}
+{"at":"2026-10-26T02:07:54Z","id":"D3-CF-PADCOOP","from":"working","to":"review","owner":"cmvol2h7ua7kzo115e3h8meiq","note":"GREEN: knob MASHED_PAD_COOP_ORIG default OFF, gates unchanged"}
+{"at":"2026-10-26T02:09:00Z","id":"D3-CF-PADCOOP","from":"review","to":"merge-queued","owner":"cmvol2h7ua7kzo115e3h8meiq","note":"orch/D3-CF-PADCOOP"}
+{"at":"2026-10-26T02:15:37Z","id":"D3-CF-PADCOOP","from":"merge-queued","to":"merged","owner":"cmvol2h7ua7kzo115e3h8meiq","note":"merge train 20261025_230942: G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/2516d903/53778664"}
