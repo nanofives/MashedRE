@@ -2982,6 +2982,64 @@ function a5ProbeArm(recBaseHex, car, cap){
 }
 function a5ProbeDrain(){ const r = A5P.rows; A5P.rows = []; return r; }
 
+// --- .data snapshot probe (u9775, 2026-10-25) ------------------------------------------
+// Native onEnter on the physics dispatcher 0x00470c70: on dispatcher calls n0 .. n0+ns-1 copies the whole .data section
+// (0x005ea000 .. 0x00914800, which holds the vehicle records at 0x008815a0) into an in-process buffer (rep movsd).
+const SNP = { armed:false, buf:null, cnt:null, stub:null, n0:0, ns:0, sz:0x32a800, err:null };
+function snapProbeArm(n0, ns){
+  if (SNP.armed) return 'already armed';
+  try {
+    SNP.n0 = n0; SNP.ns = ns;
+    SNP.buf = Memory.alloc(SNP.sz * ns); SNP.cnt = Memory.alloc(4); SNP.cnt.writeU32(0);
+    const imm = function(n){ n = n >>> 0; return [n & 0xff, (n >>> 8) & 0xff, (n >>> 16) & 0xff, (n >>> 24) & 0xff]; };
+    const pv = function(p){ return imm(parseInt(p.toString(), 16)); };
+    const code = [].concat([0xA1], pv(SNP.cnt), [0xFF, 0x05], pv(SNP.cnt), [0x2D], imm(n0), [0x3D], imm(ns), [0x73, 0x1D,
+      0x56, 0x57, 0x69, 0xC0], imm(SNP.sz), [0x8D, 0xB8], pv(SNP.buf), [0xBE], pv(ga(0x005ea000)), [0xB9], imm(SNP.sz / 4),
+      [0xFC, 0xF3, 0xA5, 0x5F, 0x5E, 0xC3]);
+    SNP.stub = Memory.alloc(Process.pageSize); SNP.stub.writeByteArray(code); Memory.protect(SNP.stub, Process.pageSize, 'rwx');
+    Interceptor.attach(ga(0x00470c70), { onEnter: SNP.stub });
+    SNP.armed = true;
+    return 'snap-probe armed (native, 0x470c70 entry, calls ' + n0 + '..' + (n0 + ns - 1) + ', ' + (SNP.sz * ns) + ' bytes)';
+  } catch(e){ SNP.err = '' + e; return 'ERR ' + e; }
+}
+function snapProbeCount(){ return SNP.armed ? SNP.cnt.readU32() : -1; }
+function snapProbeGet(i){ return SNP.buf.add(i * SNP.sz).readByteArray(SNP.sz); }
+
+// --- x87 CW / MXCSR probe (u9775, 2026-10-25) ----------------------------------------
+// Native (no JS) onEnter / onLeave on the physics dispatcher 0x00470c70 (one call per frame, only caller 0x00425a8d).
+// Each call writes a 16-byte row: +0 x87 CW at entry (fnstcw), +2 CW at leave, +4 MXCSR at entry (stmxcsr), +8 MXCSR at
+// leave, +12 DAT_007f0ff4 at entry. Rows past the cap are dropped. The stubs touch eax / ecx / edx only (cdecl scratch).
+const FCW = { armed:false, buf:null, cnt:null, enter:null, leave:null, cap:0, err:null };
+function fcwProbeArm(cap){
+  if (FCW.armed) return 'already armed';
+  try {
+    FCW.cap = cap || 6000;
+    FCW.buf = Memory.alloc(FCW.cap * 16); FCW.cnt = Memory.alloc(4); FCW.cnt.writeU32(0);
+    const u32 = function(v){ const n = parseInt(v.toString(), 16) >>> 0; return [n & 0xff, (n >>> 8) & 0xff, (n >>> 16) & 0xff, (n >>> 24) & 0xff]; };
+    const imm = function(n){ n = n >>> 0; return [n & 0xff, (n >>> 8) & 0xff, (n >>> 16) & 0xff, (n >>> 24) & 0xff]; };
+    const cnt = u32(FCW.cnt), buf = u32(FCW.buf), tick = u32(ga(0x007f0ff4));
+    const enter = [].concat([0xA1], cnt, [0x3D], imm(FCW.cap), [0x73, 0x20, 0x89, 0xC1, 0xC1, 0xE1, 0x04, 0x81, 0xC1], buf,
+      [0xD9, 0x39, 0x0F, 0xAE, 0x59, 0x04, 0x8B, 0x15], tick, [0x89, 0x51, 0x0C, 0x40, 0xA3], cnt, [0xC3]);
+    const leave = [].concat([0xA1], cnt, [0x85, 0xC0, 0x74, 0x10, 0x48, 0xC1, 0xE0, 0x04, 0x05], buf,
+      [0xD9, 0x78, 0x02, 0x0F, 0xAE, 0x58, 0x08, 0xC3]);
+    FCW.enter = Memory.alloc(Process.pageSize); FCW.leave = FCW.enter.add(128);
+    FCW.enter.writeByteArray(enter); FCW.leave.writeByteArray(leave); Memory.protect(FCW.enter, Process.pageSize, 'rwx');
+    Interceptor.attach(ga(0x00470c70), { onEnter: FCW.enter, onLeave: FCW.leave });
+    FCW.armed = true;
+    return 'fpucw-probe armed (native, 0x470c70 entry+leave, cap ' + FCW.cap + ')';
+  } catch(e){ FCW.err = '' + e; return 'ERR ' + e; }
+}
+function fcwProbeDrain(){
+  if (!FCW.armed) return [];
+  const n = Math.min(FCW.cnt.readU32(), FCW.cap), rows = [];
+  for (let i = 0; i < n; i++) {
+    const r = FCW.buf.add(i * 16);
+    rows.push([i, r.readU16().toString(16), r.add(2).readU16().toString(16), r.add(4).readU32().toString(16),
+               r.add(8).readU32().toString(16), r.add(12).readS32()].join(','));
+  }
+  return rows;
+}
+
 // --- A6a TAIL probe (u9771, 2026-10-19) ----------------------------------------------
 // Entry hook on 0x004c3ac0 filtered on the return address 0x004686a9 (A6a's |v| after its tail velocity write at
 // 0x00468688..0x0046869e) and on its argument == record + 0x9b0. A6a's esp after the `push edi` at 0x00468643 = the callee's
@@ -4007,6 +4065,11 @@ rpc.exports = {
   fhProbeStats: function(){ return JSON.stringify({armed:FH.armed, n:FH.ent.length, err:FH.err}); },
   alProbeArm: function(k, c){ return alProbeArm(k, c); },
   gridProbeArm: function(){ return gridProbeArm(); },
+  snapProbeArm: function(a, b){ return snapProbeArm(a, b); },
+  snapProbeCount: function(){ return snapProbeCount(); },
+  snapProbeGet: function(i){ return snapProbeGet(i); },
+  fcwProbeArm: function(n){ return fcwProbeArm(n); },
+  fcwProbeDrain: function(){ return fcwProbeDrain(); },
   a6tProbeArm: function(b, c){ return a6tProbeArm(b, c); },
   a6tProbeDrain: function(){ return a6tProbeDrain(); },
   a6tProbeErr: function(){ return '' + A6T.err; },
@@ -4754,6 +4817,13 @@ def main():
     ap.add_argument("--a5-probe", type=int, default=0,
                     help="[u9771] FUN_0046ddb0 (A5) entry+leave on the --statediff-car record: velocity, angular velocity, +0x9e4, "
                          "+0x9e8, +0x9e0 at entry, velocity at leave, first N calls. Writes <out>.a5probe.csv.")
+    ap.add_argument("--snap-probe", default="",
+                    help="[u9775] 'n0:ns': native onEnter on the physics dispatcher 0x00470c70 copies the whole .data section "
+                         "(0x005ea000, 0x32a800 bytes) on dispatcher calls n0..n0+ns-1. Writes <out>.snap.bin (ns images back "
+                         "to back).")
+    ap.add_argument("--fpucw-probe", type=int, default=0,
+                    help="[u9775] native onEnter/onLeave on the physics dispatcher 0x00470c70: x87 control word and MXCSR "
+                         "at entry and leave, plus DAT_007f0ff4, first N calls. Writes <out>.fpucw.csv.")
     ap.add_argument("--a6t-probe", action="store_true",
                     help="[u9771] A6a tail terms at 0x004c3ac0 from 0x004686a4 (blend, lb0f, linTerm, accumulators) for the "
                          "--statediff-car record. Writes <out>.a6tprobe.csv.")
@@ -5030,6 +5100,11 @@ def main():
                 print("  [statediff]", E.cc_probe_arm(args.carcar_probe))
             if args.a5_probe:
                 print("  [statediff]", E.a5_probe_arm("0x008815a0", args.statediff_car, args.a5_probe))
+            if args.snap_probe:
+                _n0, _ns = (int(x) for x in args.snap_probe.split(":"))
+                print("  [statediff]", E.snap_probe_arm(_n0, _ns))
+            if args.fpucw_probe:
+                print("  [statediff]", E.fcw_probe_arm(args.fpucw_probe))
             if args.a6t_probe:
                 print("  [statediff]", E.a6t_probe_arm("0x008815a0", args.statediff_car))
             if args.firsthit_probe:
@@ -5738,6 +5813,24 @@ def main():
                             for r in _ar: f.write(r + chr(10))
                         print(f"  [statediff] a5-probe {len(_ar)} rows -> {_af} (err {E.a5_probe_err()})")
                     except Exception as _e: print("  [statediff] a5 drain failed:", _e)
+                if args.snap_probe:
+                    try:
+                        _n0, _ns = (int(x) for x in args.snap_probe.split(":"))
+                        _cnt = E.snap_probe_count(); _got = max(0, min(_ns, _cnt - _n0))
+                        _sf = outp.with_suffix(outp.suffix + ".snap.bin")
+                        with open(_sf, "wb") as f:
+                            for _i in range(_got): f.write(E.snap_probe_get(_i))
+                        print(f"  [statediff] snap-probe {_got} images (dispatcher calls {_cnt}) -> {_sf}")
+                    except Exception as _e: print("  [statediff] snap drain failed:", _e)
+                if args.fpucw_probe:
+                    try:
+                        _cr = E.fcw_probe_drain()
+                        _cf = outp.with_suffix(outp.suffix + ".fpucw.csv")
+                        with open(_cf, "w", newline="") as f:
+                            f.write("n,cw_in,cw_out,mx_in,mx_out,t7f0ff4" + chr(10))
+                            for r in _cr: f.write(r + chr(10))
+                        print(f"  [statediff] fpucw-probe {len(_cr)} rows -> {_cf}")
+                    except Exception as _e: print("  [statediff] fpucw drain failed:", _e)
                 if args.a6t_probe:
                     try:
                         _tr = E.a6t_probe_drain()
