@@ -1,0 +1,16 @@
+[mashed-lock] SOLO OPEN 'mashed_machine' (D3-CF-A5TIMER-FLIP) ttl=43200s; draining the current holder
+[mashed-lock] SOLO HELD 'mashed_machine'
+=== D2_DEF_1 pid=27188 exe=3ecb144b
+    exit=0 self_exited=False secs=90
+    D2_DEF_1.motion_diag.log lines=1629 sha8=80dfb162
+=== D2_DEF_2 pid=17564 exe=3ecb144b
+    exit=0 self_exited=False secs=90
+    D2_DEF_2.motion_diag.log lines=1629 sha8=80dfb162
+=== D2_DEF_3 pid=27212 exe=3ecb144b
+    exit=0 self_exited=False secs=90
+    D2_DEF_3.motion_diag.log lines=1628 sha8=21aa4ea7
+=== D2_NORN_1 pid=23096 exe=3ecb144b
+    exit=0 self_exited=False secs=90
+    D2_NORN_1.motion_diag.log lines=1630 sha8=1c1d5b1b
+DONE
+[mashed-lock] SOLO CLOSED 'mashed_machine'

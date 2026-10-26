@@ -5146,7 +5146,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         }
         // [librwrest] the original runs FUN_0040fc00 (so FUN_00425d50's copter clock) in the
         // pre-race sub-states too; the GO frame ticks once, below
-        // [a5timer 2026-10-26] MASHED_A5_RACE_TIMER_RUN (default OFF, U-9790): FUN_0040fc00's DAT_007f0ff8 add at the end of
+        // [a5timer 2026-10-26] MASHED_A5_RACE_TIMER_RUN (default ON since L-23, U-9790): FUN_0040fc00's DAT_007f0ff8 add at the end of
         // the pre-GO tick (0x0040fe64); on the stand-in's state-5 window (the 113 / 60 s before GO, as the HUD state)
         // an AI race's FUN_00418560 zeroes it (0x00418598), so its GO frame reads 0. The GO frame takes the race-frame add.
         if (countdown_ > 0.f)
@@ -7303,7 +7303,7 @@ void TrackRenderer::StartRound() {
         a.lane = (static_cast<float>(i) - 1.0f) * 3.0f;   // -3, 0, +3
     }
     countdown_ = 3.0f;   // 3-2-1 freeze before GO
-    Ai::Ai_RaceTimerRoundStart(round_no_);   // [a5timer] MASHED_A5_RACE_TIMER_RUN (default OFF): round 1's DAT_007f0ff8 seed
+    Ai::Ai_RaceTimerRoundStart(round_no_);   // [a5timer] MASHED_A5_RACE_TIMER_RUN (default ON): round 1's DAT_007f0ff8 seed
     // [D-11073 leg 1b, PREREG_LEG1B.md addendum B] Under MASHED_SUBSTATE every round re-enters
     // the sub-state machine. The original's next round goes case 8 (FUN_00414220) -> 2 -> the
     // state-2 tail, and because FUN_004103a0 zeroed DAT_005f29b8 at 0x004104c0 it takes the

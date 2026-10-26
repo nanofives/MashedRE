@@ -1,0 +1,17 @@
+[mashed-lock] HELD 'mashed_machine' pid=25588 (D3-CF-A5TIMER-FLIP)
+=== H_DEF pid=20248 exe=3ecb144b
+    exit=0 self_exited=True secs=130
+    H_DEF.step.csv lines=14659 sha8=5943c5f1
+    H_DEF.gates.csv lines=56873 sha8=b493262b
+    H_DEF.ptrace.log lines=28436 sha8=09551e6a
+=== B_DEF_K0 pid=20052 exe=3ecb144b
+    exit=0 self_exited=True secs=12
+    B_DEF_K0.step.csv lines=1459 sha8=3a03670c
+=== B_DEF_K1 pid=19256 exe=3ecb144b
+    exit=0 self_exited=True secs=12
+    B_DEF_K1.step.csv lines=1825 sha8=2516d903
+=== B_DEF_K26 pid=27564 exe=3ecb144b
+    exit=0 self_exited=True secs=12
+    B_DEF_K26.step.csv lines=1411 sha8=53778664
+DONE
+[mashed-lock] released 'mashed_machine' pid=25588
