@@ -5681,11 +5681,14 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             const int v = ci + 1;
             // [u9778 / substep] a car the outer driver stepped and this loop does not step (or relocates first): put it back
             auto outerUndo = [&]() { if (v < 16 && s_outer[v].have) { Vehicle::VehiclePhysics_OuterRestore(v); s_outer[v].have = false; } };
-            if (round_mode_ && !race_[ci + 1].alive) {
+            // [D4-FX-INPUTS] MASHED_DEAD_COAST: FUN_00470c70 keeps stepping a car FUN_00422fd0 killed (+0x10 == 1 qualifies it,
+            // 0x00471012), on the zero block 0x007f19b8 (StepCar). It skips the scaffold spin-out and the stuck relocation.
+            const bool deadCoast = phys && round_mode_ && !race_[ci + 1].alive && Vehicle::VehiclePhysics_DeadCoastEnabled();
+            if (round_mode_ && !race_[ci + 1].alive && !deadCoast) {
                 outerUndo();
                 a.cur_speed = 0.f; a.vel[0] = a.vel[1] = a.vel[2] = 0.f; continue;
             }
-            if (a.spin > 0.f) {   // spun out by a missile/mine (scaffold leaf effect)
+            if (a.spin > 0.f && !deadCoast) {   // spun out by a missile/mine (scaffold leaf effect)
                 outerUndo();
                 a.spin -= in.dt; a.yaw += 12.0f * in.dt;
                 yaww::Hit(yaww::W_3283, v);
@@ -5703,7 +5706,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             // [D3-CF-K357] MASHED_R7_EXIT (default ON since 2026-10-25, L-16): skipped while the MASHED_ROUND_END7 flag is up. The original keeps
             // the car frozen in sub-state 7 (o_r7_1: 502 frames); a frozen car's gate never changes, so the stand-in would
             // relocate it every 2.5 s. PREREG_D3-CF-K357.md amendment 1.
-            if (ng >= 2 && !RoundEnd7ExitActive()) {
+            if (ng >= 2 && !RoundEnd7ExitActive() && !deadCoast) {
                 if (race_[v].gate != a.prog_gate) { a.prog_gate = race_[v].gate; a.stuck_t = 0.f; }
                 else { a.stuck_t += in.dt; }
                 if (a.stuck_t > 2.5f) {
@@ -7129,6 +7132,8 @@ void TrackRenderer::StartRound() {
     round_alive_ = kRaceCars;
     round_winner_ = -1;
     s_roundEnd7 = false;   // [u9779] MASHED_ROUND_END7: a new round leaves sub-state 7
+    if (Vehicle::VehiclePhysics_DeadCoastEnabled())   // [D4-FX-INPUTS] undo MarkKilled (PREREG_deadcoast.md 1.4)
+        for (int v = 0; v < kRaceCars; ++v) Vehicle::VehiclePhysics_ClearKilled(v);
     // [D3-CF-BOX] MASHED_BOX_PRODUCERS: "slot has a car" stands for the original's *(PTR_005f2770 + 0x34 + i*4) != 0.
     // Race init: FUN_004111c0's 4 (0x0040ff6b) / 1 (0x0040ff9c). Every round: FUN_0040e590's 1 (0x0040eeae).
     // Measured on the original (verify/d3cfbox_20261025 O1): at race init FUN_0040e590 writes its block twice,
@@ -7531,6 +7536,7 @@ void TrackRenderer::KillCar(int car) {
     race_[car].alive = false;
     --round_alive_;
     BoxWrite(pw_, car, 2, "kill");   // [D3-CF-BOX] FUN_00422fd0's 2 (0x00423005)
+    if (Vehicle::VehiclePhysics_DeadCoastEnabled()) Vehicle::VehiclePhysics_MarkKilled(car);   // [D4-FX-INPUTS] 0x0046c5c0 / 0x0046c790
     if (car > 0 && car - 1 < static_cast<int>(ai_cars_.size()))
         ai_cars_[static_cast<std::size_t>(car - 1)].speed = 0.f;
 }
@@ -8461,6 +8467,7 @@ void TrackRenderer::UpdateRace(float dt) {
                 race_[victim].alive = false;
                 --round_alive_;
                 BoxWrite(pw_, victim, 2, "kill");   // [D3-CF-BOX] FUN_00410d10 0x00411025 -> FUN_00422fd0 0x00423005
+                if (Vehicle::VehiclePhysics_DeadCoastEnabled()) Vehicle::VehiclePhysics_MarkKilled(victim);   // [D4-FX-INPUTS]
                 if (victim > 0 && victim - 1 < static_cast<int>(ai_cars_.size()))
                     ai_cars_[static_cast<std::size_t>(victim - 1)].speed = 0.f;
                 ScoreOnElimination(victim);    // FUN_0040eee0(victim, 1)
@@ -8546,6 +8553,7 @@ void TrackRenderer::UpdateRace(float dt) {
             race_[victim].alive = false;
             --round_alive_;
             BoxWrite(pw_, victim, 2, "kill");   // [D3-CF-BOX] FUN_00410d10 0x00411025 -> FUN_00422fd0 0x00423005
+            if (Vehicle::VehiclePhysics_DeadCoastEnabled()) Vehicle::VehiclePhysics_MarkKilled(victim);   // [D4-FX-INPUTS]
             if (victim > 0 && victim - 1 < static_cast<int>(ai_cars_.size()))
                 ai_cars_[static_cast<std::size_t>(victim - 1)].speed = 0.f;
             ScoreOnElimination(victim);        // FUN_0040eee0(victim, 1)

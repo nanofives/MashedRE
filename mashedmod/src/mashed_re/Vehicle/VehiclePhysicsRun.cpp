@@ -940,6 +940,29 @@ bool VehiclePhysics_A4OrderEnabled() {
     return s;
 }
 
+// [D4-FX-INPUTS] MASHED_DEAD_COAST=1, default OFF (verify/fxinputs_20261026/PREREG_deadcoast.md).
+bool VehiclePhysics_DeadCoastEnabled() {
+    static const bool s = [] { const char* e = std::getenv("MASHED_DEAD_COAST"); return e && e[0] == '1'; }();
+    return s;
+}
+// FUN_00422fd0 (0x00422fd0): FUN_0046c5c0 (0x0046c5c0) `(&DAT_008815a4)[v*0x341] = 0`, i.e. +0x4 = 0, then
+// FUN_0046c790(v, 1) (0x0046c790) `(&DAT_008815b0)[v*0x341] = 1`, i.e. +0x10 = 1. FUN_0046c5c0's
+// `+0xb10 = DAT_007f1030` is not ported (no port reader of +0xb10).
+void VehiclePhysics_MarkKilled(int slot) {
+    if (!g_inited || slot < 0 || slot >= 16) return;
+    unsigned char* r = rec(slot);
+    I(r, 0x4)  = 0;
+    I(r, 0x10) = 1;
+}
+// [UNCERTAIN] the original's round-restart writer of +0x4 / +0x10 is not measured (PREREG_deadcoast.md 1.4).
+void VehiclePhysics_ClearKilled(int slot) {
+    if (!g_inited || slot < 0 || slot >= 16) return;
+    unsigned char* r = rec(slot);
+    if (I(r, 0x10) != 1) return;
+    I(r, 0x4)  = 1;   // VehicleInit's value (VehicleInit.cpp, &DAT_008815a4)
+    I(r, 0x10) = 0;
+}
+
 // Frame boundary of the pre-phase. The player (slot 0) steps first and takes ring phase base + 1 in its own StepCar,
 // so the pre-phase gives the AI cars base + 2, + 3, ... in slot order: the phases the per-car order gives them.
 void VehiclePhysics_A4PreBegin() {
@@ -1396,7 +1419,9 @@ static bool StepBegin(StepCtx& c, int slot, float dt, PlayerCarIO& io, ContactSc
         F(r, off::kForward + 4)  = 0.f;
         F(r, off::kForward + 8)  = std::sin(io.yaw);
     }
-    I(r, off::kActiveFlag)   = 1;
+    // [D4-FX-INPUTS] MASHED_DEAD_COAST: a car FUN_00422fd0 killed keeps +0x4 == 0 (only +0x10 == 1 qualifies it).
+    const bool deadCoast = VehiclePhysics_DeadCoastEnabled() && I(r, 0x10) != 0;
+    if (!deadCoast) I(r, off::kActiveFlag) = 1;
 
     std::uint8_t (&input)[8] = c.input;
     std::memcpy(input, io.input, sizeof(input));
@@ -1424,6 +1449,10 @@ static bool StepBegin(StepCtx& c, int slot, float dt, PlayerCarIO& io, ContactSc
         if (gm != 6 && gm != 0xb && gm != 0xa)
             std::memcpy(input, reinterpret_cast<const void*>(static_cast<std::uintptr_t>(0x007f19b8u)), sizeof(input));
     }
+    // [D4-FX-INPUTS] MASHED_DEAD_COAST: the same two sites also hand the block 0x007f19b8 to a car with +0x10 != 0
+    // (FUN_00470c70 `piVar14[-0x278] != 0`, piVar14 = rec+0x9f0; FUN_004709a0 `DAT_008815b0[v*0x341] != 0`).
+    if (deadCoast)
+        std::memcpy(input, reinterpret_cast<const void*>(static_cast<std::uintptr_t>(0x007f19b8u)), sizeof(input));
 
     // =====================================================================
     // START BOOST ARM — U-D3-DRIVE-FORCE, 2026-09-29. MEASURED, not inferred.

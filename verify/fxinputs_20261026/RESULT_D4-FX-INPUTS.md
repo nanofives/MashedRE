@@ -1,121 +1,133 @@
-# RESULT D4-FX-INPUTS: the skid-flag inputs of FUN_0040ca00 (2026-10-26)
+# RESULT D4-FX-INPUTS: killed cars keep their physics, `MASHED_DEAD_COAST` (2026-10-26, attempt 2)
 
-**Verdict: RED.** The skid-flag inputs (`rec+0xb0c` and the ctrl brake byte) are not what separates the port from the
-original. The 0.4-0.9% skid share on port slots 1 and 2 comes from the denominator. Those two cars are eliminated at
-6.7 s in the G-CTRL race, and for the remaining ~14,000 frames their physics record stays frozen at racing speed. So
-they keep passing the outer speed gate with the brake byte at 0. Counting racing frames only (`g_aib.alive`), the port
-gives 157.4 / 59.1 / 215.5 emits per 1000 active frames on slots 1 / 2 / 3, against the original's 166.1 / 215.3 / 191.0.
-Slots 1 and 3 are within 2x, slot 2 is not (0.27x, on 220 frames). No producer was ported: I did not find the original
-writer that holds a killed car's velocity below the gate. No default behaviour changed.
+**Verdict: RED on the pre-registered rule, by one criterion.** The original has no dedicated writer that zeroes a
+killed car's `+0x9b0`. It keeps stepping the car through the ordinary physics chain on an all-zero input block, and the
+car brakes to an exact 0.0. The port skipped the killed car, so its record froze. `MASHED_DEAD_COAST` (default OFF)
+ports that. With it ON, slots 1 and 2 stop at exactly 0.0 and stay there (0 and 1 frozen frames out of 13,998, against
+13,997 with the knob OFF), and the slot 1 FX rate moves into the 2x band. M1's third criterion fails: the port's
+killed cars need 133 and 149 frames to stop, the PREREG limit was 120. The port kills those cars at |v| 2014.9 and
+2507.9, the original captures at 297.7 and 174.8. Knob OFF leaves every gate hash unchanged. Knob ON moves two G-CTRL
+hashes, listed in section 5 for a flip decision.
 
-Branch `orch/D4-FX-INPUTS` off `orch/integration` e11287674. Exe sha8 7c238cc6.
+Attempt 1 is kept in git history (b122ca5cf). PREREG: `PREREG_deadcoast.md` (80806ffe7, committed alone before the arms).
 
-## 1. What the gate reads (decomp, `re/tools/decomp_pc.py`, pool slot 10, read-only)
+## 1. The writer, original side
 
-`FUN_0040ca00`, per car v (cited in full in `verify/fxgates_20261026/PREREG_fxgates.md`):
-- outer: slot word `[0x007f1a14 + v*0x10] >= 0`, `(int)rec+0x9e0 > 1` (`FUN_0046cc10`), then for `rec+0xcfc == 0`
-  `|rec+0x9b0..+0x9b8|^2 >= [0x005ccd20]` (62500.0)
-- skid flag, leg A: `FUN_0046d6a0` (rec+0xb0c) `> [0x005cc568]` (100.0)
-- skid flag, leg B: `FUN_0046d570 != 0 && range < [0x005ccad0]` (90.0) `&& [0x007f103c + slot*0x4c + 1] > 0x40`.
-  `FUN_0046d570` (0x0046d570..0x0046d653) = `acos(clamp(norm(rec+0x9b0) . rec+0x9d4, [0x005cc33c], [0x005cc320])) *
-  [0x005ccae0]`, so `range < 90` is `dot(vel, rec+0x9d4) > 0`.
+`scenario_launch.py --track 0 --mode 10 --cars 4 --car 1 --rule 0 --hold 300 --statediff-car 2 --watch-write 4,9b0`.
+Attempt 1's 70 s watches recorded no kill. This 300 s watch recorded one (`ww3_c2_writers.txt`, `ww_kill_writers.py`):
 
-The port's `EmitCarFxOrigGates` reads the same fields at the same offsets (TrackRenderer.cpp, unchanged logic).
+- `rec+0x4` write: pc `0x0046c5e4` (`FUN_0046c5c0`), returns `0x00422fe0` (`FUN_00422fd0`), `0x0041102a`
+  (`FUN_00410d10`), `0x00411608`.
+- 19,389 writes to `+0x9b0` while `rec+0x4 == 0`. Every one comes from the physics chain: pc `0x0046e2c2` /
+  `0x0046e340` (returns `0x00470948`, `0x00470928`, `0x0047107b`, `0x00425a92`), pc `0x0046868a` / `0x004688cc` /
+  `0x0046894c` (return `0x00470948` / `0x0047093b`). 3,852 of them leave `+0x9b0 == 0.0`. Seven writes come from pc
+  `0x0046bf94` (returns `0x0047e96a`, `0x0047ea22`, `0x0046cb15`, `0x00467583`, `0x00470e1a`, `0x004187d5`, `0x0041893a`).
 
-## 2. Measurements
+The call chain that keeps the car stepping (decomp, `re/tools/decomp_pc.py`, pool slot 10, read-only):
 
-Port: `verify/fxgates_20261026/fx_arms.py F1` (G-CTRL recipe + `MASHED_FX_DEBUG`), new census `ig=` on the debug line
-(diagnostic counters only, `fx_ig_`). Original: `orig_fx_inputs.py` (this folder), the same scenario_launch recipe as
-the D4-FX-GATES capture (Training, mode 10, rule 0, 4 cars, car 1), CModule probes on `FUN_0040ca00` and the first
-`FUN_0040c690` call per car-frame. Full tables: `score_port_F1.txt`, `score_orig1.txt`, `score_orig2.txt`.
+- `FUN_00422fd0` (0x00422fd0..0x00423032) calls `FUN_0046c5c0(v)`: `(&DAT_008815a4)[v*0x341] = 0` (`rec+0x4 = 0`) and
+  `rec+0xb10 = DAT_007f1030`. Then `FUN_0046c790(v, 1)`: `(&DAT_008815b0)[v*0x341] = 1` (`rec+0x10 = 1`).
+- `FUN_00470c70` A4 loop: a car qualifies when `rec+0x14 == 0 && (rec+0x4 != 0 || rec+0x10 == 1)` (0x00470ffe,
+  0x0047100a, 0x00471012). Its input pointer is `&DAT_007f1038 + slot*0x13` dwords, replaced by `&DAT_007f19b8` when
+  `rec+0x9f0 != 0`, when `rec+0x10 != 0` (`piVar14[-0x278]`, piVar14 = `rec+0x9f0`), or when `FUN_0040e350()` is not
+  6 / 0xb / 0xa. The speed refresh loop has the same guard (0x004710b0 / 0x004710b7). The substep `FUN_004709a0` has the
+  same guard and the same substitution (`re/analysis/vehicle_dynamics/004709a0.md`).
+- `&DAT_007f19b8` = 0x4c zero bytes on the original (`o_r7_1`, the MASHED_R7_PHYS note in VehiclePhysicsRun.cpp).
 
-**Port, F1 (14,389 frames)**
+Per frame (`msd_dead_decay.py`, `decay_deadcoast.txt`):
 
-| slot | active frames | of which frozen `+0x9b0` (bit-identical to last call) | alive active | skid share, alive frames | emits / 1000 active, alive frames | all frames (D4-FX-GATES metric) |
+| capture | kill frame | |v| at kill | frames to |v| == 0.0 | zero frames | frozen non-zero | FX speed-gate passes |
 |---|---|---|---|---|---|---|
-| 0 | 407 | 20 | 198 | 0.0% | 65.7 | 59.0 |
-| 1 | 14,205 | 13,989 (98.6%) | 216 | 20.4% | 157.4 | 52.4 |
-| 2 | 14,209 | 14,017 (98.7%) | 220 | 7.7% | 59.1 | 49.1 |
-| 3 | 232 | 8 | 232 | 38.4% | 215.5 | 215.5 |
+| original ww3_c2 (watch run, about 19 fps) | 1726 | 297.6676 | 27 | 3852 / 3879 | 0 | 4 |
+| original o60_c2 (no watch, about 60 fps) | 1802 | 174.7945 | 17 | 7216 / 7233 | 0 | 0 |
 
-`mashed_re.log` of the same recipe: `ELIM-RESOLVE ... alive=0,0,0,1`, `R6 round 1 OVER t=6.7s winner=car3`. The AI
-step dump has v=1 and v=2 rows for frames 0..219 only. Slot 3, the survivor, is slow on 13,977 frames after the round
-end (`MASHED_ROUND_END7`, default ON, scales its velocity by 0.85 per frame, the original's `FUN_0046c570`).
+`rec+0x10` reads 1 on every dead frame of both captures.
 
-**Original, run 2 (12,979 frames, round 1 ends at about frame 3200)**
+## 2. The port change (default OFF)
 
-| car | counted frames | skid share | leg A `b0c>100` | leg B `rng && brk` | `brk > 0x40` | brake byte values |
-|---|---|---|---|---|---|---|
-| 0 | 2185 | 17.8% | 5.8% | 12.1% | 25.0% | 0 or 0xff only |
-| 1 | 7691 | 15.4% | 3.8% | 12.2% | 27.9% | 0 or 0xff only |
-| 2 | 2041 | 22.6% | 5.8% | 18.2% | 26.7% | 0 or 0xff only |
-| 3 | 2407 | 19.2% | 5.8% | 15.2% | 23.3% | 0 or 0xff only |
+`MASHED_DEAD_COAST=1`:
+- `VehiclePhysicsRun.cpp`: `VehiclePhysics_MarkKilled` (`+0x4 = 0`, `+0x10 = 1`), `VehiclePhysics_ClearKilled`
+  (`+0x4 = 1`, `+0x10 = 0`). In `StepCar`, a car with `+0x10 != 0` keeps `+0x4` (the per-step `kActiveFlag = 1`
+  write is skipped) and gets the block at `0x007f19b8` as input, read in place as MASHED_R7_PHYS does.
+- `TrackRenderer.cpp`: the two elimination sites and `KillCar` call MarkKilled. `StartRound` calls ClearKilled. The
+  opponent loop steps a dead AI car instead of skipping it, without the scaffold spin-out and the 2.5 s stuck
+  relocation.
+- Not ported: `rec+0xb10 = DAT_007f1030` (no port reader). [UNCERTAIN] the original writer that resets `+0x4` / `+0x10`
+  on a new round is not measured. The G-CTRL recipe plays one round on the port, so no arm reaches it.
 
-Run 1 (2797 frames, the race ended at phase 5) gives the same shape: skid share 13.5-21.7%, leg B 9.3-13.1%, leg A
-3.8-9.1%. Leg B (braking while moving forward) carries about two thirds of the original's skid frames. The port's
-slot 3 shows the same split (leg B 35.9%, leg A 6.5% of its 231 active frames).
+## 3. Measurements (G-CTRL recipe + FX debug + `MASHED_RECDUMP`, exe e7cdf357)
 
-**What a killed car presents to the gate** (original run 2, frames with `rec+0x4 == 0`, the word `FUN_0046c5c0` clears
-from the kill path `FUN_00422fd0`):
+**M1, killed-car speed** (`decay_deadcoast.txt`):
 
-| car | dead frames | `|v|^2 == 0` | pass the speed gate | slot word < 0 |
-|---|---|---|---|---|
-| 0 | 2097 | 1885 | 202 | 0 |
-| 1 | 996 | 580 | 323 | 0 |
-| 2 | 10,247 | 10,140 | 39 | 9776 |
-| 3 | 9877 | 0 (frozen non-zero) | 101 | 9776 |
+| arm | slot | |v| at kill (f 220) | frames to 0.0 | zero frames | frozen non-zero | gate passes | PREREG |
+|---|---|---|---|---|---|---|---|
+| X0 knob OFF (control) | 1 | 2046.2510 | never | 0 / 13,998 | 13,997 (100.0%) | 13,998 | control valid (> 90%) |
+| X1 knob ON | 1 | 2014.9087 | 133 | 13,865 / 13,998 | 0 | 111 (0.8%) | fails the 120-frame limit |
+| X2 knob ON | 2 | 2507.8657 | 149 | 13,849 / 13,998 | 1 | 126 (0.9%) | fails the 120-frame limit |
 
-Inside round 1 the dead episodes are bounded: 93-106 frame passing episodes and 106-397 frame zero-velocity episodes
-per 10 s window. None runs for the rest of the race. After round 1 the original sets the slot word to -1 for cars 2
-and 3 (`slots=[0,1,-1,-1]`), so they leave the gate there even with a frozen velocity.
+The frozen and gate criteria pass on both slots. The time criterion fails on both. Low-speed decel per frame: X1 loses
+10.2 to 10.4 per frame from 200 down to 25.3, then 0.0. The 60 fps original loses 5.7 per frame from 48.4 down to 25.7,
+then 0.0. [UNCERTAIN] whether the 2x low-speed decel is a port fault or a different contact or surface state. A
+matched-speed comparison would settle it: one original kill at |v| about 2000, or a port arm that kills a slow car.
 
-## 3. The input that differs, and why
+**M2, FX emits per 1000 active frames, all frames** (`score_deadcoast_X.txt`; original from attempt 1):
 
-The port's eliminations (`TrackRenderer.cpp` elimination at the `race_[victim].alive = false` site and `KillCar`) clear
-only `race_[v].alive` and the AI car speed. The ported physics then stops writing that record, so `+0x9b0..+0x9b8`
-freezes at its last racing value (98.6% / 98.7% bit-identical frames). The original's kill path `FUN_00422fd0`
-(0x00422fd0..0x00423032) runs `FUN_0046c5c0` (rec+0x4 = 0, rec+0xb10 = `DAT_007f1030`), `FUN_0046c790(v, 1)`
-(rec+0x10 = 1), `FUN_004215c0` x2 (-> `FUN_00420de0`), `FUN_0045ba00(v, 2)` (`[0x0068d1f0 + v*4] = 2`) and, when
-`FUN_0040e470(v) == 1`, `thunk_FUN_00419760(v, 1)`. None of these writes `+0x9b0`. The measured result is that a dead
-car's velocity is mostly 0 and its passing episodes last about 100 frames.
+| slot | X0 OFF (= attempt 1 F1) | X1 / X2 ON | active frames OFF -> ON | original | within 2x |
+|---|---|---|---|---|---|
+| 0 | 59.0 | 66.4 | 407 -> 256 | n/a | n/a |
+| 1 | 52.4 | 113.1 | 14,205 -> 327 | 166.1 | yes (0.68x) |
+| 2 | 49.1 | 52.0 | 14,209 -> 346 | 215.3 | no (0.24x), as pre-registered |
+| 3 | 215.5 | 215.5 | 232 -> 232 | 191.0 | yes |
 
-[UNCERTAIN] the original writer that zeroes or holds a killed car's `+0x9b0..+0x9b8`, and what ends the about 100 frame
-dead episodes. Evidence missing: a hardware write-watch on `rec+0x4` / `rec+0x9b0` across a kill. Two 75 s watches
-(`scenario_launch.py --watch-write 4,9b0`, car 2 and car 1) recorded no kill (`rec+0x4` stayed 1, no write from
-`FUN_0046c5c0`). The zero-velocity writes they did catch are `FUN_0046baa0` (pc 0x0046bc0c) from the countdown and
-race-start loops `FUN_004102f0` (ret 0x00410343) and `FUN_004103a0` (ret 0x0041043f). Both are gated on
-`FUN_0046c7b0(v) == 1`, so they are not the dead-car path.
-
-Lead for slot 2, not resolved: the AI step dump has `c5 = 0xff` on 41 of 219 fast v=2 rows (frames 0..219), while the
-FX gate sees `brake > 0x40` on 4 of 215 active alive frames. [UNCERTAIN] whether the step dump and the render-time
-read see the same frame's block. A per-frame pairing of the two reads would settle it.
+X0's `fx_debug.txt` is byte-identical to attempt 1's F1 (SHA-256 9931cd15...). X1 and X2 match each other byte for
+byte (5eda26cf...). Slot 0 moves because the player is killed at f 220 too (`ELIM-RESOLVE ... alive=0,0,0,1`) and now
+coasts on the zero block.
 
 ## 4. Gates
 
-Instrumentation only (counters on the `MASHED_FX_DEBUG` line, no sim read-back). F1 arm on exe 7c238cc6:
-G-CTRL step / gates / ptrace = 5943c5f1 / b493262b / 09551e6a, equal to `merge_train.json`. B not run: no default
-behaviour change. The second build (12:5x) overlapped the merge-train SOLO window opened 12:50:06. The build ran outside
-the lock (game runs all went through `mashed_lock.py run`, which queued behind that window). Noted as a protocol slip.
+Knob OFF, `verify/savelink_20261023/run_arms.py H_DEF B_DEF_K0 B_DEF_K1 B_DEF_K26`, exe e7cdf357:
+G-CTRL `5943c5f1 / b493262b / 09551e6a`, B `3a03670c / e85ea6fb / 53778664`. Both equal `merge_train.json`. The
+diagnostic X0 arm gives the same G-CTRL triple.
 
-## 5. Next
+Knob ON, `run_arms.py` copy in this folder, stack `DC`: G-CTRL `5943c5f1 / 364350ae / 000a8b2e`, B `3a03670c /
+e85ea6fb / 53778664`. H_X1 and H_X2 reproduce the same G-CTRL triple. `gates.csv` and `player_trace.log` first differ
+on frame 221, the frame after the kill at frame 220. `ptrace` line 441: `sp` 882.7593 OFF, 873.1369 ON. The step dump
+does not move, because it logs live cars only.
 
-1. Find the dead-car velocity writer: watch-write `rec+0x4` and `+0x9b0` on each car in turn until one records a kill,
-   or watch-write on `0x0068d1f0 + v*4` (written to 2 by the kill path) and break on the next `+0x9b0` writes.
-2. Port it behind a default-OFF knob, then re-measure the FX rates on all frames. This changes the sim, so it needs the
-   full merge-train gates and a decision.
-3. Slot 2: pair the step-dump brake byte with the FX read per frame.
+## 5. Decision for the lead
+
+A flip of `MASHED_DEAD_COAST` would change the refs to G-CTRL `5943c5f1 / 364350ae / 000a8b2e`, B unchanged. Options:
+(a) flip now. The mechanism matches the original and removes the 98.6% frozen frames. The stop takes 133 to 149 frames
+from a kill speed 7 to 14x the original's. (b) hold the flip until the matched-speed decel check in section 3 is run.
+Recommendation: (b). The failing criterion was pre-registered and the 2x low-speed decel is not explained. No default
+changed here.
+
+## 6. Next
+
+1. Matched-speed decel check (section 3). The original's kills in this recipe come at |v| 175 to 298. The port's come at
+   2000 to 2500.
+2. Slot 2 FX rate (0.24x): the brake-byte pairing of attempt 1, section 3, still open.
+3. The round-restart writer of `+0x4` / `+0x10` (section 2), once a port recipe plays a second round.
 
 ## Raw data (D:/MashedWT/D4-FX-INPUTS_data, not committed), SHA-256
 
 ```
-66803a54c9f5fa5f985b2c7646bb3e3bd953430892c7fc64d11554e65456a849 orig_inputs1.json
-714ffa039d94d196b5ac9c13eb911dcbca9bda2ac184cc1c8ceeb9ea00d0a1d4 orig_inputs2.json
-9931cd1581e517033ee430cc06a1ec04a0a5a06a0aa06320ee9af382cb88fe84 arms/F1.fx_debug.txt
-5943c5f1c3e2f3f2510139f7af666ffa87941f6dfa66201b15277430b92be415 arms/F1.step.csv
-b493262bed8ea6ecad4399f0ebaa53b902965423e74bfa07359188559fff479f arms/F1.gates.csv
-09551e6a5b1b456b3421a0e1aac768ced7851c072c99a9341a22ca966cdfe3e1 arms/F1.ptrace.log
-12d930aaa9c945b8c0df95b4dd2c8d421cd85a7bbd801ef638daf21c7426ea18 ww_c1.msd.watch.csv
-7f675cd59675933c9f1258e0222e81f44cdb2c847bce704795b668315e719383 ww_c2.msd.watch.csv
-7c238cc6958f31c36b330a11725d693e8f07cd91577ecfa77efcc22f18bbdc75 mashedmod/build/mashed_re.exe
+5c6fea64974e3a69b7f1c170c6ea3cca4a11ca0d30c7e8903eef03116ea7050c ww3_c2.msd
+dc6c9ef992680c05cc4a4d9831e0a7167aa4b13433c8bfed559a8a6bcf7902a9 ww3_c2.msd.watch.csv
+19bde9957000bbf709133d06e3d14ee0675fc47b95f6a2278928939fbe261bdd o60_c2.msd
+5943c5f1c3e2f3f2510139f7af666ffa87941f6dfa66201b15277430b92be415 arms2/H_DEF.step.csv
+b493262bed8ea6ecad4399f0ebaa53b902965423e74bfa07359188559fff479f arms2/H_DEF.gates.csv
+09551e6a5b1b456b3421a0e1aac768ced7851c072c99a9341a22ca966cdfe3e1 arms2/H_DEF.ptrace.log
+364350aea89110f291569f42fd7ae0de19704a6b3c95e6f29d7e26b4af9ce7e4 arms2/H_DC.gates.csv
+000a8b2e8cd6a4427a2e8924a917546ffce88d434e291553d0cdf6a191aef98f arms2/H_DC.ptrace.log
+5e844d18ba113d02d6411f5dc426917e26b311f598ca8a8947be45bfbae2ba68 arms2/H_X0.msd
+3601b20ab793ac1b0363a15d2bcb3a94e7d8ce9f0d29fa9a28f00486bf4f3f6a arms2/H_X1.msd
+f2668b7bfec5c396a2878f106b58ea91debab60f6d1d21c92cde7677d9519a2d arms2/H_X2.msd
+9931cd1581e517033ee430cc06a1ec04a0a5a06a0aa06320ee9af382cb88fe84 arms2/H_X0.fx_debug.txt
+5eda26cf672016ea85d46c13ee1bfa8d889b1380d8214595e985e4182629510a arms2/H_X1.fx_debug.txt
+5eda26cf672016ea85d46c13ee1bfa8d889b1380d8214595e985e4182629510a arms2/H_X2.fx_debug.txt
+e7cdf357c9e8e2739244eb5f2c74445008adc01e4692cc6bb9e3fe8abcceffc0 mashedmod/build/mashed_re.exe
 ```
-Logs: `fx_arms1.txt`, `fx_arms2.txt`, `orig_inputs1.txt`, `orig_inputs2.txt`, `ww_c1.txt`, `ww_c2.txt`, `build1.log`, `build2.log`.
+Logs: `ww3_c2.txt`, `o60_c2.txt`, `gates_off.txt`, `arms_on.txt`, `build3.log`, `arms2/RUNLOG.txt`. The build ran
+inside `mashed_lock.py run` (label D4-FX-INPUTS-build). All game runs went through the lock, and only the spawned PIDs
+were touched.
