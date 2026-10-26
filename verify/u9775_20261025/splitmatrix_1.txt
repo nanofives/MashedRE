@@ -1,0 +1,25 @@
+capture host pad954 moving_calls
+  orig_solo3 MARIANO-PC  107a3e60 1446
+  orig_solo4 MARIANO-PC  10d53e60 1446
+  o_w0       LIVING-PC   0fcb3218 1459
+  o_w1       LIVING-PC   0fd03218 1445
+  o_w2       LIVING-PC   0fd33218 1448
+  o_w3       LIVING-PC   0fcc3218 1443
+  o_a5a6     LIVING-PC   0fcf2d90 1453
+  o_ww9b4    LIVING-PC   0fce3218 1380
+  o_ww604    LIVING-PC   0fb43218 921
+  o_ww9b0    LIVING-PC   0fb63218 850
+  o_cw1      LIVING-PC   0f311d68 1461
+first split k (row vs col):
+            orig_solo3 orig_solo4       o_w0       o_w1       o_w2       o_w3     o_a5a6    o_ww9b4    o_ww604    o_ww9b0      o_cw1
+orig_solo3           -       None        316        313       None        310        316        307        314        316        316
+orig_solo4        None          -        316        313       None        310        316        307        314        316        316
+o_w0               316        316          -        313        316        310        320        307        314        318        318
+o_w1               313        313        313          -        313        310        313        307        313        313        313
+o_w2              None       None        316        313          -        310        316        307        314        316        316
+o_w3               310        310        310        310        310          -        310        307        310        310        310
+o_a5a6             316        316        320        313        316        310          -        307        314        318        318
+o_ww9b4            307        307        307        307        307        307        307          -        307        307        307
+o_ww604            314        314        314        313        314        310        314        307          -        314        314
+o_ww9b0            316        316        318        313        316        310        318        307        314          -       None
+o_cw1              316        316        318        313        316        310        318        307        314       None          -

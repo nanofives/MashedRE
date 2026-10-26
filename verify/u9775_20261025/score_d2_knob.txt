@@ -1,0 +1,8 @@
+D2_CLSF4A_1.motion_diag.log: slip1500=0.1942 in slip2000=0.2492 in drvmed=1896.7400 in n=('334', '529', '1208') H1 398/400 median 1333.9
+D2_CLSF4A_2.motion_diag.log: slip1500=0.1942 in slip2000=0.2492 in drvmed=1896.7400 in n=('334', '529', '1208') H1 398/400 median 1333.9
+D2_CLSF4A_3.motion_diag.log: slip1500=0.1942 in slip2000=0.2492 in drvmed=1896.7400 in n=('334', '529', '1208') H1 398/400 median 1333.9
+D2_DEFA_1.motion_diag.log: slip1500=0.1874 in slip2000=0.2488 in drvmed=1928.4300 in n=('360', '657', '1430') H1 398/400 median 1325.0
+D2_DEFA_2.motion_diag.log: slip1500=0.1874 in slip2000=0.2488 in drvmed=1928.4300 in n=('360', '657', '1429') H1 398/400 median 1325.0
+D2_DEFA_3.motion_diag.log: slip1500=0.1874 in slip2000=0.2488 in drvmed=1930.0400 in n=('360', '657', '1426') H1 398/400 median 1325.0
+D2_CLSF4L_1.motion_diag.log: slip1500=0.1899 in slip2000=0.2506 in drvmed=1924.7600 in n=('364', '646', '1414') H1 398/400 median 1333.9
+D2_CLSF4H_1.motion_diag.log: slip1500=0.1935 in slip2000=0.2514 in drvmed=1928.0300 in n=('366', '648', '1417') H1 398/400 median 1333.9

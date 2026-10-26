@@ -1,0 +1,190 @@
+  o_sn1.msd snap 0 -> record k 288
+  o_sn1.msd snap 1 -> record k 289
+  o_sn1.msd snap 2 -> record k 290
+  o_sn1.msd snap 3 -> record k 291
+  o_sn1.msd snap 4 -> record k 292
+  o_sn1.msd snap 5 -> record k 293
+  o_sn1.msd snap 6 -> record k 294
+  o_sn1.msd snap 7 -> record k 295
+  o_sn1.msd snap 8 -> record k 296
+  o_sn1.msd snap 9 -> record k 297
+  o_sn1.msd snap 10 -> record k 298
+  o_sn1.msd snap 11 -> record k 299
+  o_sn1.msd snap 12 -> record k 300
+  o_sn1.msd snap 13 -> record k 301
+  o_sn1.msd snap 14 -> record k 302
+  o_sn1.msd snap 15 -> record k 303
+  o_sn1.msd snap 16 -> record k 304
+  o_sn1.msd snap 17 -> record k 305
+  o_sn1.msd snap 18 -> record k 306
+  o_sn1.msd snap 19 -> record k 307
+  o_sn1.msd snap 20 -> record k 308
+  o_sn1.msd snap 21 -> record k 309
+  o_sn1.msd snap 22 -> record k 310
+  o_sn1.msd snap 23 -> record k 311
+  o_sn1.msd snap 24 -> record k 312
+  o_sn1.msd snap 25 -> record k 313
+  o_sn1.msd snap 26 -> record k 314
+  o_sn1.msd snap 27 -> record k 315
+  o_sn2.msd snap 0 -> record k 296
+  o_sn2.msd snap 1 -> record k 297
+  o_sn2.msd snap 2 -> record k 298
+  o_sn2.msd snap 3 -> record k 299
+  o_sn2.msd snap 4 -> record k 300
+  o_sn2.msd snap 5 -> record k 301
+  o_sn2.msd snap 6 -> record k 302
+  o_sn2.msd snap 7 -> record k 303
+  o_sn2.msd snap 8 -> record k 304
+  o_sn2.msd snap 9 -> record k 305
+  o_sn2.msd snap 10 -> record k 306
+  o_sn2.msd snap 11 -> record k 307
+  o_sn2.msd snap 12 -> record k 308
+  o_sn2.msd snap 13 -> record k 309
+  o_sn2.msd snap 14 -> record k 310
+  o_sn2.msd snap 15 -> record k 311
+  o_sn2.msd snap 16 -> record k 312
+  o_sn2.msd snap 17 -> record k 313
+  o_sn2.msd snap 18 -> record k 314
+  o_sn2.msd snap 19 -> record k 315
+  o_sn2.msd snap 20 -> record k 316
+  o_sn2.msd snap 21 -> record k 317
+  o_sn2.msd snap 22 -> record k 318
+  o_sn2.msd snap 23 -> record k 319
+  o_sn2.msd snap 24 -> record k 320
+  o_sn2.msd snap 25 -> record k 321
+  o_sn2.msd snap 26 -> record k 322
+  o_sn2.msd snap 27 -> record k 323
+common k: [296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315]
+k=296 (entry of the call producing record 297): 5254 dwords differ
+k=297 (entry of the call producing record 298): 5234 dwords differ
+k=298 (entry of the call producing record 299): 5260 dwords differ
+k=299 (entry of the call producing record 300): 5234 dwords differ
+k=300 (entry of the call producing record 301): 5260 dwords differ
+k=301 (entry of the call producing record 302): 5242 dwords differ
+k=302 (entry of the call producing record 303): 5272 dwords differ
+k=303 (entry of the call producing record 304): 5246 dwords differ
+k=304 (entry of the call producing record 305): 5245 dwords differ
+k=305 (entry of the call producing record 306): 5242 dwords differ
+k=306 (entry of the call producing record 307): 5245 dwords differ
+k=307 (entry of the call producing record 308): 5242 dwords differ
+k=308 (entry of the call producing record 309): 5244 dwords differ
+k=309 (entry of the call producing record 310): 5250 dwords differ
+k=310 (entry of the call producing record 311): 5405 dwords differ
+k=311 (entry of the call producing record 312): 5516 dwords differ
+k=312 (entry of the call producing record 313): 5535 dwords differ
+k=313 (entry of the call producing record 314): 5543 dwords differ
+k=314 (entry of the call producing record 315): 5549 dwords differ
+k=315 (entry of the call producing record 316): 5548 dwords differ
+differ at every common k: 5223 dwords; first-common-k diffs not in every k: 31; later onsets: 330
+-- onsets (k, va, a, b) first 80 --
+  k=297  0x0074ac54  00000000 / 3cc1aed8  (0 / 0.0236429423)
+  k=297  0x0074ac5c  00000000 / 3d2aaaaa  (0 / 0.0416666642)
+  k=297  0x0074ac60  00000000 / 3d2aaaaa  (0 / 0.0416666642)
+  k=297  0x0074ac68  00000000 / 00000001  (0 / 1.40129846e-45)
+  k=297  0x00771988  3c9374bd / 3c9ba5e4  (0.0180000011 / 0.0190000013)
+  k=297  0x007dc590  00000026 / 0000002a  (5.32493416e-44 / 5.88545355e-44)
+  k=301  0x0074ac70  00000000 / 3f85512b  (0 / 1.04153955)
+  k=301  0x0074ac74  00000000 / 3ef62871  (0 / 0.480777293)
+  k=301  0x0074ac78  00000000 / bf86fe68  (0 / -1.05463886)
+  k=301  0x0074ac7c  00000000 / ba33e8cd  (0 / -0.000686299813)
+  k=301  0x0074ac80  00000000 / 3c23d70a  (0 / 0.00999999978)
+  k=301  0x0074ac84  00000000 / b9e6cd9a  (0 / -0.000440222037)
+  k=301  0x0074ac90  00000000 / 007ecbff  (0 / 1.16444525e-38)
+  k=301  0x0074ac98  00000000 / 3f4adeb2  (0 / 0.792460561)
+  k=302  0x0074ac94  00000000 / 3d42c14e  (0 / 0.047547631)
+  k=302  0x0074ac9c  00000000 / 3d2aaaaa  (0 / 0.0416666642)
+  k=302  0x0074aca0  00000000 / 3d2aaaaa  (0 / 0.0416666642)
+  k=302  0x0074aca8  00000000 / 00000001  (0 / 1.40129846e-45)
+  k=309  0x0089a368  00000001 / 00000000  (1.40129846e-45 / 0)
+  k=309  0x0089a370  41a02222 / 00000000  (20.0166664 / 0)
+  k=309  0x0089a374  00000003 / 00000000  (4.20389539e-45 / 0)
+  k=309  0x0089a4c0  00000000 / 00000002  (0 / 2.80259693e-45)
+  k=309  0x0089a534  00000000 / 00000002  (0 / 2.80259693e-45)
+  k=309  0x0089a5a8  00000000 / 00000002  (0 / 2.80259693e-45)
+  k=309  0x0089a61c  00000000 / 00000002  (0 / 2.80259693e-45)
+  k=310  0x0063d8e0  bf7c5ca6 / bf7c5ca5  (-0.985788703 / -0.985788643)
+  k=310  0x0063d8f4  3f7ff95a / 3f7ff958  (0.999898553 / 0.999898434)
+  k=310  0x0063d908  bf7c5e2a / bf7c5e29  (-0.98581183 / -0.98581177)
+  k=310  0x0063d918  bfbaa6af / bfbaa6b1  (-1.45821178 / -1.45821202)
+  k=310  0x0063dc40  bfbaa6af / bfbaa6b1  (-1.45821178 / -1.45821202)
+  k=310  0x0063dc60  c12710fe / c12710fd  (-10.4416485 / -10.4416475)
+  k=310  0x0064040c  3fbf9e4b / 3fbf9e4a  (1.49701822 / 1.4970181)
+  k=310  0x00640410  3d39ca40 / 3d39ca80  (0.0453588963 / 0.0453591347)
+  k=310  0x00640414  bf6e296e / bf6e2972  (-0.930319667 / -0.930319905)
+  k=310  0x00640418  beafdd7a / beafdd76  (-0.343486607 / -0.343486488)
+  k=310  0x0064041c  3f71e917 / 3f71e915  (0.944962919 / 0.9449628)
+  k=310  0x00640420  3ede1a08 / 3ede1a10  (0.433792353 / 0.433792591)
+  k=310  0x00640448  bf6e296e / bf6e2972  (-0.930319667 / -0.930319905)
+  k=310  0x0064044c  beafdd7a / beafdd76  (-0.343486607 / -0.343486488)
+  k=310  0x00640450  bfbdbe76 / bfbdbe78  (-1.48237491 / -1.48237514)
+  k=310  0x00640454  3d381a30 / 3d381a50  (0.0449468493 / 0.0449469686)
+  k=310  0x00640458  3f71e917 / 3f71e915  (0.944962919 / 0.9449628)
+  k=310  0x0064045c  3ede1a08 / 3ede1a10  (0.433792353 / 0.433792591)
+  k=310  0x00640484  3f71e917 / 3f71e915  (0.944962919 / 0.9449628)
+  k=310  0x00640488  3ede1a08 / 3ede1a10  (0.433792353 / 0.433792591)
+  k=310  0x0064048c  3f9fc8f0 / 3f9fc8ee  (1.24831963 / 1.24831939)
+  k=310  0x00640490  3ef6fb9c / 3ef6fba0  (0.482388377 / 0.482388496)
+  k=310  0x00640494  3fe672af / 3fe672ae  (1.80037487 / 1.80037475)
+  k=310  0x00640498  3dc06b70 / 3dc06b80  (0.0939549208 / 0.09395504)
+  k=310  0x006404c0  3fbf9e4b / 3fbf9e4a  (1.49701822 / 1.4970181)
+  k=310  0x006404c4  3d39ca40 / 3d39ca80  (0.0453588963 / 0.0453591347)
+  k=310  0x006404c8  3f71e917 / 3f71e915  (0.944962919 / 0.9449628)
+  k=310  0x006404cc  3ede1a08 / 3ede1a10  (0.433792353 / 0.433792591)
+  k=310  0x006404d0  3fe672af / 3fe672ae  (1.80037487 / 1.80037475)
+  k=310  0x006404d4  3dc06b70 / 3dc06b80  (0.0939549208 / 0.09395504)
+  k=310  0x006404fc  bfbdbe76 / bfbdbe78  (-1.48237491 / -1.48237514)
+  k=310  0x00640500  3d381a30 / 3d381a50  (0.0449468493 / 0.0449469686)
+  k=310  0x00640504  c00233a7 / c00233a8  (-2.03440261 / -2.03440285)
+  k=310  0x00640508  3edde137 / 3edde13b  (0.433358878 / 0.433358997)
+  k=310  0x0064050c  3ec92ed0 / 3ec92ecc  (0.392935276 / 0.392935157)
+  k=310  0x00640510  3f527bfc / 3f527c00  (0.822204351 / 0.82220459)
+  k=310  0x00640538  3f71e917 / 3f71e915  (0.944962919 / 0.9449628)
+  k=310  0x0064053c  3ede1a08 / 3ede1a10  (0.433792353 / 0.433792591)
+  k=310  0x00640540  bfbdbe76 / bfbdbe78  (-1.48237491 / -1.48237514)
+  k=310  0x00640544  3d381a30 / 3d381a50  (0.0449468493 / 0.0449469686)
+  k=310  0x00640548  3ec92ed0 / 3ec92ecc  (0.392935276 / 0.392935157)
+  k=310  0x0064054c  3f527bfc / 3f527c00  (0.822204351 / 0.82220459)
+  k=310  0x00640574  3f71e917 / 3f71e915  (0.944962919 / 0.9449628)
+  k=310  0x00640578  3ede1a08 / 3ede1a10  (0.433792353 / 0.433792591)
+  k=310  0x0064057c  3ec92ed0 / 3ec92ecc  (0.392935276 / 0.392935157)
+  k=310  0x00640580  3f527bfc / 3f527c00  (0.822204351 / 0.82220459)
+  k=310  0x00640584  3f9fc8f0 / 3f9fc8ee  (1.24831963 / 1.24831939)
+  k=310  0x00640588  3ef6fb9c / 3ef6fba0  (0.482388377 / 0.482388496)
+  k=310  0x006405b0  3ec92ed0 / 3ec92ecc  (0.392935276 / 0.392935157)
+  k=310  0x006405b4  3f527bfc / 3f527c00  (0.822204351 / 0.82220459)
+  k=310  0x006405b8  3f324030 / 3f32402e  (0.696291924 / 0.696291804)
+  k=310  0x006405bc  3f5eecc6 / 3f5eecc8  (0.870800376 / 0.870800495)
+  k=310  0x006405c0  3f9fc8f0 / 3f9fc8ee  (1.24831963 / 1.24831939)
+  k=310  0x006405c4  3ef6fb9c / 3ef6fba0  (0.482388377 / 0.482388496)
+  k=310  0x006405ec  3ec92ed0 / 3ec92ecc  (0.392935276 / 0.392935157)
+-- always-differing dwords by 4 KB page (top 30) --
+  0x00716000  553
+  0x00715000  476
+  0x0063d000  460
+  0x00717000  371
+  0x007e2000  240
+  0x0071b000  240
+  0x00703000  235
+  0x0063c000  222
+  0x00636000  150
+  0x0068f000  128
+  0x00746000  125
+  0x0074a000  124
+  0x0063e000  108
+  0x006c7000  108
+  0x00720000  96
+  0x00688000  92
+  0x00722000  88
+  0x0068a000  67
+  0x0086a000  63
+  0x006cf000  59
+  0x0068b000  56
+  0x00704000  48
+  0x00868000  48
+  0x00869000  48
+  0x006c2000  45
+  0x00692000  44
+  0x00898000  44
+  0x007dc000  43
+  0x00899000  41
+  0x007d7000  38
