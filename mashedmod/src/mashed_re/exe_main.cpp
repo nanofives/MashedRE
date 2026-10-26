@@ -317,6 +317,8 @@ extern "C" void NTAPI B17_TlsReserve(PVOID, DWORD reason, PVOID) {
 extern "C" __declspec(allocate(".CRT$XLB"))
     PIMAGE_TLS_CALLBACK g_b17_tls_cb = B17_TlsReserve;
 
+int VideoCfgFirstRunWrite(IDirect3D9* d3d);   // Boot/VideoCfgFirstRun.cpp, MASHED_VIDEOCFG_WRITE (default OFF)
+
 namespace {
 
 // Local boot state. Replaces MASHED's globals at 0x007e9584 / 0x00773918 / etc.
@@ -2908,6 +2910,9 @@ int CreateDeviceWatched(IDirect3D9* d3d, D3DDEVTYPE type, HWND hwnd, DWORD flags
 bool InitD3D9() {
     g_d3d = Direct3DCreate9(D3D_SDK_VERSION);
     if (!g_d3d) return false;
+
+    // 0x00499400 first-run branch: the original writes its default videocfg.bin before the device exists.
+    VideoCfgFirstRunWrite(g_d3d);
 
     g_pp.Windowed               = TRUE;
     g_pp.SwapEffect             = D3DSWAPEFFECT_DISCARD;
