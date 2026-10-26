@@ -95,6 +95,12 @@ bool Ai_CountdownClockEnabled();
 // [u9747] FUN_00418860's alive-poke (slot state 2 for alive AI cars in an AI round), for countdown frames.
 void Ai_CountdownAlivePoke();
 void Ai_AdvanceCountdownClock(int units);
+// [a5timer 2026-10-26] MASHED_A5_RACE_TIMER_RUN=1 (default OFF, U-9790): DAT_007f0ff8 through the pre-GO ticks. RoundStart
+// seeds round 1 (0x0040e5a2 + the stand-in's missing phase 3), CountdownTick adds the budget at the end of the stand-in tick
+// (0x0040fe64) and then zeroes on the state-5 window of an AI race (0x00418598). No-ops with the knob off.
+bool Ai_RaceTimerRunEnabled();
+void Ai_RaceTimerRoundStart(int roundNo);
+void Ai_RaceTimerCountdownTick(int units, bool state5WithAi);
 // [d3bB2 2026-10-17] MASHED_AI_CONTACT_EVENT=1 (default OFF): the car<->car type-4 event. Push = the tail of
 // FUN_00469df0 (one event per contact, the pair a / b); drain = FUN_00422ba0's type-4 arm, its FUN_00417370
 // calls only (the AI override timer 0x0089a4fc + v*0x74 that FUN_00418560's tail replays). Drain once per
