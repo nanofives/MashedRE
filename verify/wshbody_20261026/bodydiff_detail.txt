@@ -1,0 +1,330 @@
+== 00492270 SubsystemInit ev=2026-10-12 evidence=['re/analysis/negctl/session_20261012b/c4front_evidence/c4_front_compare.csv']
+   [asi+exe] SubsystemInit mashedmod/src/mashed_re/Boot/SubsystemInit.cpp:207-220
+     SAME 9cde82cb2c 2026-10-12 body-changed  a2-stubat: fixture + port fixes for 4 boot/mode rows (C2, ready for path2)
+     pre  ca4136e376 2026-05-22 created       c3: batch-r s2 boot subsystem init — 2 hooks GREEN (3 deferred)
+     net since evidence: none
+== 004938c0 SoftwareTidyUpBeforeExiting ev=2026-06-09 evidence=['log/diff_engine_stop_helper.csv']
+   [asi+exe] SoftwareTidyUpBeforeExiting mashedmod/src/mashed_re/Boot/LaunchHandshake.cpp:152-158
+     POST e62783abc3 2026-08-13 body-changed  Recover 14 original developer names from log strings; fix --no-decomp
+     pre  17b8735a35 2026-05-22 created       c3: batch-r s1 launch handshake thunks — 1 hook GREEN
+     net since evidence: net-changed
+== 004c2f00 RwEngineGetCurrentMode ev=2026-06-06 evidence=['log/c4_verify_result.json']
+   [asi+exe] RwEngineGetCurrentMode mashedmod/src/mashed_re/Boot/VideoConfig.cpp:113-128
+     pre  d33f6dfd22 2026-05-16 created       c3: Boot VideoConfig ma2-frida-s6 -- 4 hooks C2->C3 (recovered from uncommitted worktree)
+     net since evidence: none
+== 00404e50 SaveLoad ev=2026-10-11 evidence=['re/analysis/negctl/reearn_20261011/evidence/diff_save_load.csv']
+   [asi+exe] SaveLoad mashedmod/src/mashed_re/Save/GameSave.cpp:242-246
+     pre  a90cfa824f 2026-05-15 created       c3: save_gamesave core batch-e-s1 -- 4 hooks
+     net since evidence: none
+     callee SaveStatusClear mashedmod/src/mashed_re/Save/GameSave.cpp:221-223 net=none post-ev body commits: none
+     callee gFileRead mashedmod/src/mashed_re/Save/GameSave.cpp:170-178 net=none post-ev body commits: none
+== 00404f50 SaveWrite ev=2026-10-11 evidence=['re/analysis/negctl/reearn_20261011/evidence/diff_save_write.csv']
+   [asi+exe] SaveWrite mashedmod/src/mashed_re/Save/GameSave.cpp:264-268
+     pre  a90cfa824f 2026-05-15 created       c3: save_gamesave core batch-e-s1 -- 4 hooks
+     net since evidence: none
+     callee SaveStatusClear mashedmod/src/mashed_re/Save/GameSave.cpp:221-223 net=none post-ev body commits: none
+     callee gFileWrite mashedmod/src/mashed_re/Save/GameSave.cpp:181-188 net=net-changed post-ev body commits: 7ecffe1188 2026-10-23 body-changed
+== 00404f80 SaveFileExists ev=2026-06-09 evidence=['log/diff_save_file_exists.csv']
+   [asi+exe] SaveFileExists mashedmod/src/mashed_re/Save/GameSave.cpp:285-289
+     pre  a90cfa824f 2026-05-15 created       c3: save_gamesave core batch-e-s1 -- 4 hooks
+     net since evidence: none
+     callee gFileExists mashedmod/src/mashed_re/Save/GameSave.cpp:193-198 net=created post-ev body commits: 5491966013 2026-10-05 created
+== 004099e0 SaveStatusClear ev=2026-06-09 evidence=['log/diff_save_status_clear.csv']
+   [asi+exe] SaveStatusClear mashedmod/src/mashed_re/Save/GameSave.cpp:221-223
+     pre  a90cfa824f 2026-05-15 created       c3: save_gamesave core batch-e-s1 -- 4 hooks
+     net since evidence: none
+== 00407a40 Table8a9640Get ev=2026-06-13 evidence=['log/diff_table_8a9640_get.csv']
+   [asi] Table8a9640Get mashedmod/src/mashed_re/Util/PromoLoop_round42.cpp:28-30
+     SAME 420142c088 2026-06-13 created       promote-round round 42: 3 large-stride imul table getters C2->C3 (123->126)
+     net since evidence: none
+== 0043c5b0 MenuDrawLoop ev=2026-06-10 evidence=['re/analysis/standalone_menu_sm/diff_menu_drawloop_navdriven.json']
+   [asi] MenuDrawLoopTwin mashedmod/src/mashed_re/Frontend/MenuDrawLoopTwin.cpp:141-288
+     POST c30c5ed5d8 2026-08-27 body-changed  MenuDrawLoopTwin: the static-row shadow is a constant, not the greyable scratch
+     POST b37f8b3120 2026-06-11 created       evidence-commit frontend-faithful(F2 promoted): FUN_0043c5b0 menu draw loop C2->C3 — BIT-IDENTICAL 20/20
+     net since evidence: net-changed
+     callee CursorAuxEax mashedmod/src/mashed_re/Frontend/MenuDrawLoopTwin.cpp:46-50 net=none post-ev body commits: none
+     callee StaticDraw mashedmod/src/mashed_re/Frontend/MenuDrawLoopTwin.cpp:122-136 net=net-changed post-ev body commits: c30c5ed5d8 2026-08-27 body-changed
+     callee vt20: 2 definitions, skipped
+== 0042e3a0 MenuChromeShellA ev=2026-10-11 evidence=['re/analysis/negctl/reearn_20261011/evidence/diff_menu_chrome_shell_a.csv']
+   [asi+exe] MenuChromeShellA mashedmod/src/mashed_re/Frontend/MenuSpriteDispatch.cpp:537-591
+     pre  84fed9efed 2026-06-01 body-changed  fix(frontend): MenuChromeShellA (0x0042e3a0) — correct screen-type stride + credits-sentin
+     pre  076eacfde5 2026-05-20 created       c3: batch-m s2 menu sprite-dispatch — 4 hooks C2->C3, 1 refused
+     net since evidence: none
+== 0042b930 MenuAlphaGet ev=2026-06-05 evidence=['log/c4_verify_result.json']
+   [asi+exe] MenuAlphaGet mashedmod/src/mashed_re/Frontend/MenuGetters.cpp:23-25
+     pre  9f40213c19 2026-05-14 created       frida-sweep: add missing MenuGetters.cpp + fix value_bits() for output-buffer types
+     net since evidence: none
+== 0042b8d0 StatePhaseIsIdle ev=2026-06-06 evidence=['log/c4_verify_result.json']
+   [asi] mashedmod/src/mashed_re/Util/StateAccessors.cpp absent at c003971ad; last touched by 
+   [exe] StatePhaseIsIdle mashedmod/src/mashed_re/Boot/FrameDispatch.cpp:22-24
+     pre  f9ec4178bc 2026-05-16 created       c3: Boot FrameDispatch ma2-frida-s5 -- 5 hooks C2->C3, FrameDispatch refused
+     net since evidence: none
+== 00493f80 IntroVideoDimGetter ev=2026-10-11 evidence=['re/analysis/negctl/reearn_20261011/evidence/diff_intro_video_dim_getter.csv']
+   [asi] IntroVideoDimGetter mashedmod/src/mashed_re/Frontend/IntroSplash.cpp:138-147
+     pre  23acabd40f 2026-05-20 created       c3: batch-m s5 intro_splash chain — 4/5 hooks C2->C3, 1 impl staged
+     net since evidence: none
+== 0042c2f0 SetDat0067ecb8 ev=2026-06-09 evidence=['log/diff_set_dat_0067ecb8.csv', 'log/observe_c4_sweep_20260517_B1.txt']
+   [asi] SetDat0067ecb8 mashedmod/src/mashed_re/Util/UtilBatch.cpp:47-49
+     pre  e5a0d65120 2026-05-17 created       c3: util small leaves+near-leaves h5 — 8/12 hooks GREEN
+     net since evidence: none
+== 0042b8c0 ScreenHeightGet ev=2026-06-19 evidence=['log/c4_autodiff_result.json']
+   [asi+exe] ScreenHeightGet mashedmod/src/mashed_re/Frontend/MenuButtonDetect.cpp:482-485
+     pre  18f35c6975 2026-05-16 created       c3: carry-overs continuation s15 -- 2 promotions + 2 refusals
+     net since evidence: none
+== 00427780 FontText_StringTableLookup ev=2026-06-09 evidence=['log/diff_font_text_string_table_lookup.csv', 'log/observe_c4_sweep_20260517_B3.txt']
+   [asi] FontText_StringTableLookup mashedmod/src/mashed_re/HUD/HudBatch.cpp:300-306
+     pre  45cd8cdc90 2026-05-17 created       c3: HUD cluster h4 — 4 hooks (C2->C3)
+     net since evidence: none
+== 0042f8d0 MenuMenusBC ev=2026-10-12 evidence=['re/analysis/negctl/session_20261012b/c4front_evidence/c4_front_compare.csv']
+   [asi] MenuMenusBC mashedmod/src/mashed_re/Frontend/MenuMenusB.cpp:157-257
+     pre  c78d4aa2bb 2026-09-06 body-changed  frontend: modal pair 0x0042bf30/0x00433f40 to C3 (modal-pair slice)
+     pre  46eca7e6fe 2026-05-20 created       c3: batch-m s3 menus_b cluster — 5 hooks
+     net since evidence: none
+== 0040b7a0 HotkeyStringBaseGet ev=2026-06-09 evidence=['log/verify_hook_install_hotkey_string_base_get.txt', 'main_menu_post_loaderfix_20260526_install_only']
+   [asi+exe] HotkeyStringBaseGet mashedmod/src/mashed_re/Frontend/MenuScoreGetters.cpp:54-56
+     pre  2876572df9 2026-05-14 created       c3: frontend batch b session 1 -- 6 leaf getters, evidence cited
+     net since evidence: none
+== 00430a10 HudSlotTypePlayer0 ev=2026-06-09 evidence=['log/verify_hook_install_hud_slot_type_player0.txt', 'main_menu_post_loaderfix_20260526_install_only']
+   [exe (file=.md)] HudSlotTypePlayer0 mashedmod/src/mashed_re/Frontend/SpriteGate.cpp:175-192
+     pre  0b4377586e 2026-05-14 created       frida-sweep: release frida-sweep-20260514-2020 — 8 hooks integrated, diff GREEN 6/6 + 2 dr
+     net since evidence: none
+== 00430a60 HudSlotTypePlayer1 ev=2026-06-09 evidence=['log/verify_hook_install_hud_slot_type_player1.txt', 'main_menu_post_loaderfix_20260526_install_only']
+   [exe (file=.md)] HudSlotTypePlayer1 mashedmod/src/mashed_re/Frontend/SpriteGate.cpp:210-227
+     pre  0b4377586e 2026-05-14 created       frida-sweep: release frida-sweep-20260514-2020 — 8 hooks integrated, diff GREEN 6/6 + 2 dr
+     net since evidence: none
+== 00430ab0 HudSlotTypePlayer2 ev=2026-06-09 evidence=['log/verify_hook_install_hud_slot_type_player2.txt', 'main_menu_post_loaderfix_20260526_install_only']
+   [exe (file=.md)] HudSlotTypePlayer2 mashedmod/src/mashed_re/Frontend/SpriteGate.cpp:245-262
+     pre  0b4377586e 2026-05-14 created       frida-sweep: release frida-sweep-20260514-2020 — 8 hooks integrated, diff GREEN 6/6 + 2 dr
+     net since evidence: none
+== 0042a920 Frontend::PostTrophyEvent ev=2026-06-09 evidence=['log/diff_post_trophy_event.csv']
+   [asi] PostTrophyEvent mashedmod/src/mashed_re/Save/CareerEvents.cpp:41-44
+     pre  7c9964256c 2026-05-22 created       c3: save-sdone-a s3 career events — 1 hook GREEN
+     net since evidence: none
+== 0046d700 VehicleVec3At9C8Get ev=2026-07-31 evidence=['log/diff_vehicle_vec3_at_9c8_get.csv']
+   [asi+exe] VehicleVec3At9C8Get mashedmod/src/mashed_re/Vehicle/VehicleState.cpp:167-173
+     pre  f36954d751 2026-05-14 created       promote: c3/batch-o-s88 +2 vehicle C3 (VehicleVec3At9C8Get, VehicleRaceAngleGet)
+     net since evidence: none
+== 0043c000 TimerSlotTickDispatcher ev=2026-10-12 evidence=['re/analysis/negctl/reearn_20261011/c4_a1_m_RESULT.md']
+   [asi] TimerSlotTickDispatcher mashedmod/src/mashed_re/Util/UtilMid.cpp:718-747
+     SAME ea7a93afb0 2026-10-12 body-changed  HUD cluster 0x00403160/0x0041db80/0x0041ded0/0x004295a0/0x00429aa0/0x0043c000: re-port fro
+     pre  4ffdafa287 2026-05-17 created       c3: util_c3_h6 batch-h-s6 -- 5/12 hooks C2->C3
+     net since evidence: none
+     callee X87TimerElapsedFtol mashedmod/src/mashed_re/Util/UtilMid.cpp:160-174 net=none post-ev body commits: none
+     callee X87TimerScaledFtol mashedmod/src/mashed_re/Util/UtilMid.cpp:176-188 net=none post-ev body commits: none
+== 004325c0 FUN_004325c0 ev=2026-06-10 evidence=['re/analysis/standalone_menu_sm/diff_menu_anim_tick_navdriven.json']
+   [asi] MenuAnimTickTwin mashedmod/src/mashed_re/Frontend/MenuAnimTickTwin.cpp:59-116
+     POST cc44e0169f 2026-06-11 created       evidence-commit frontend-faithful(promotions): nav-driven diff harness + FUN_004325c0 C2->C3 GREEN 40/40
+     net since evidence: none
+     callee Trunc48 mashedmod/src/mashed_re/Frontend/MenuAnimTickTwin.cpp:33-33 net=none post-ev body commits: none
+   [exe] Anim_Tick mashedmod/src/mashed_re/Frontend/MenuNavSM.cpp:867-922
+     POST 3836926ffb 2026-06-15 body-changed  round-1 race-flow scaffold + working-state snapshot
+     pre  e78a2435c2 2026-06-09 body-changed  standalone(r2-1): frame-rate-scaled anim — verbatim FUN_00493480 clock + FUN_004325c0 tick
+     pre  4bb90cda86 2026-06-08 created       standalone(menu-sm): faithful slide-animation tick (Piece 3, partial)
+     net since evidence: net-changed
+     callee AnimStep mashedmod/src/mashed_re/Frontend/MenuNavSM.cpp:827-827 net=none post-ev body commits: none
+     callee F8Get mashedmod/src/mashed_re/Frontend/MenuNavSM.cpp:832-834 net=none post-ev body commits: none
+     callee F8Set mashedmod/src/mashed_re/Frontend/MenuNavSM.cpp:835-835 net=none post-ev body commits: none
+     callee Q_ListBaseY mashedmod/src/mashed_re/Frontend/MenuNavSM.cpp:452-458 net=none post-ev body commits: none
+== 0042aff0 MenuButtonDetectA ev=2026-10-12 evidence=['re/analysis/negctl/reearn_20261011/c4_a1_m_RESULT.md']
+   [asi+exe] MenuButtonDetectA mashedmod/src/mashed_re/Frontend/MenuNav.cpp:401-403
+     SAME 249aa785ad 2026-10-12 created       MenuButtonDetect{A,B,C,D} 0x0042aff0/b180/b310/b540, CarSlotInit1P 0x0042b960: re-port fro
+     net since evidence: none
+     callee MenuButtonDetectHoldRepeat mashedmod/src/mashed_re/Frontend/MenuNav.cpp:354-398 net=none post-ev body commits: none
+== 0042b180 MenuButtonDetectB ev=2026-10-12 evidence=['re/analysis/negctl/reearn_20261011/c4_a1_m_RESULT.md']
+   [asi+exe] MenuButtonDetectB mashedmod/src/mashed_re/Frontend/MenuNav.cpp:408-410
+     SAME 249aa785ad 2026-10-12 body-changed  MenuButtonDetect{A,B,C,D} 0x0042aff0/b180/b310/b540, CarSlotInit1P 0x0042b960: re-port fro
+     pre  36462b75f7 2026-05-14 created       c3: frontend_menus_a medium batch-a-s3 -- 4 hooks, 1 drift-promote
+     net since evidence: none
+     callee MenuButtonDetectHoldRepeat mashedmod/src/mashed_re/Frontend/MenuNav.cpp:354-398 net=none post-ev body commits: none
+== 00409930 LoadingState3Enter ev=2026-06-09 evidence=['log/diff_loading_state3_enter.csv', 'log/observe_c4_sweep_20260517_B1.txt']
+   [asi] LoadingState3Enter mashedmod/src/mashed_re/Util/UtilBatch.cpp:89-93
+     pre  e5a0d65120 2026-05-17 created       c3: util small leaves+near-leaves h5 — 8/12 hooks GREEN
+     net since evidence: none
+== 004098b0 LoadingState1Enter ev=2026-06-09 evidence=['log/diff_loading_state1_enter.csv', 'log/observe_c4_sweep_20260517_B1.txt']
+   [asi] LoadingState1Enter mashedmod/src/mashed_re/Util/UtilBatch.cpp:67-72
+     pre  e5a0d65120 2026-05-17 created       c3: util small leaves+near-leaves h5 — 8/12 hooks GREEN
+     net since evidence: none
+== 0046cbb0 VehicleCarStateRead ev=2026-10-16 evidence=['re/analysis/phys_c4_evidence/c4_racediff_result_2026-08-15.json']
+   [asi+exe] VehicleCarStateRead mashedmod/src/mashed_re/Vehicle/VehicleState.cpp:186-194
+     pre  714a97e1c6 2026-10-07 body-changed  Pre-register and implement U-9186 leg H1a: rebind the two gate-chain readers to g_vehicleA
+     pre  f36954d751 2026-05-14 created       promote: c3/batch-o-s88 +2 vehicle C3 (VehicleVec3At9C8Get, VehicleRaceAngleGet)
+     net since evidence: none
+     callee VehRecord mashedmod/src/mashed_re/Vehicle/VehicleRecordBase.h:39-47 net=none post-ev body commits: none
+== 00552df0 FontCtx_SetTranslation ev=2026-06-09 evidence=['log/observe_cold_boot_to_menu_c4-batch-a-s16.txt', 'log/verify_hook_install_FontCtx_SetTranslation.txt']
+   [asi] FontCtx_SetTranslation mashedmod/src/mashed_re/HUD/FontCtx.cpp:156-175
+     pre  645def4129 2026-05-14 created       c3: font sys state batch-c s6 — 5 hooks C2->C3, 1 drift-promote
+     net since evidence: none
+== 004295a0 HudDualLabelRender ev=2026-10-12 evidence=['re/analysis/negctl/reearn_20261011/c4_a1_h_RESULT.md']
+   [asi] HudDualLabelRender mashedmod/src/mashed_re/Util/UtilMid.cpp:501-511
+     SAME ea7a93afb0 2026-10-12 body-changed  HUD cluster 0x00403160/0x0041db80/0x0041ded0/0x004295a0/0x00429aa0/0x0043c000: re-port fro
+     pre  4ffdafa287 2026-05-17 created       c3: util_c3_h6 batch-h-s6 -- 5/12 hooks C2->C3
+     net since evidence: none
+== 0046c7b0 VehicleSlotGetter ev=2026-08-15 evidence=['re/analysis/phys_c4_evidence/c4_racediff_result_2026-08-15.json']
+   [asi+exe] VehicleSlotGetter mashedmod/src/mashed_re/Vehicle/VehicleState.cpp:71-77
+     POST 714a97e1c6 2026-10-07 body-changed  Pre-register and implement U-9186 leg H1a: rebind the two gate-chain readers to g_vehicleA
+     pre  e5a1847a32 2026-05-14 created       scribe: session 88 c3/batch-o-s88 — 3 vehicle state C2->C3, harness extended
+     net since evidence: net-changed
+     callee VehRecord mashedmod/src/mashed_re/Vehicle/VehicleRecordBase.h:39-47 net=created post-ev body commits: 8401ec8805 2026-10-07 created
+== 0042fe80 GetRaceEndFlag ev=2026-06-09 evidence=['log/verify_hook_install_get_race_end_flag.txt', 'main_menu_post_loaderfix_20260526_install_only']
+   [asi+exe] GetRaceEndFlag mashedmod/src/mashed_re/Frontend/MenuInit.cpp:28-30
+     pre  2fadeebcad 2026-05-14 created       c3: frontend batch b session 2 -- 6 small leaves, evidence cited
+     net since evidence: none
+== 00550bc0 VfsStreamGetType ev=2026-10-11 evidence=['re/analysis/negctl/reearn_20261011/evidence/diff_vfs_stream_get_type.csv']
+   [asi+exe] VfsStreamGetType mashedmod/src/mashed_re/Save/VfsStream.cpp:109-116
+     pre  7ef37b2d3d 2026-05-15 created       c3: save_gamesave_d3 VFS stream batch-e-s3 -- 3 hooks promoted, 1 deferred
+     net since evidence: none
+== 00404ee0 Save::SerializeToBuffer ev=2026-06-09 evidence=['log/diff_serialize_to_buffer.csv']
+   [asi+exe] SerializeToBuffer mashedmod/src/mashed_re/Save/GameSaveBuffer.cpp:189-227
+     pre  6098fd23a4 2026-05-22 created       c3: save-sdone-a s1 save core — 4 hooks GREEN
+     net since evidence: none
+     callee readU32at: 2 definitions, skipped
+     callee writeU32at mashedmod/src/mashed_re/Save/GameSaveBuffer.cpp:144-146 net=none post-ev body commits: none
+== 00404e80 Save::DeserializeFromBuffer ev=2026-06-09 evidence=['log/diff_deserialize_from_buffer.csv']
+   [asi+exe] DeserializeFromBuffer mashedmod/src/mashed_re/Save/GameSaveBuffer.cpp:151-182
+     pre  6098fd23a4 2026-05-22 created       c3: save-sdone-a s1 save core — 4 hooks GREEN
+     net since evidence: none
+     callee readU32at: 2 definitions, skipped
+     callee writeU32at mashedmod/src/mashed_re/Save/GameSaveBuffer.cpp:144-146 net=none post-ev body commits: none
+== 00485360 DynObjListGetCount ev=2026-08-15 evidence=['re/analysis/phys_c4_evidence/c4_racediff_result_2026-08-15.json']
+   [asi] DynObjListGetCount mashedmod/src/mashed_re/Util/PromoLoop_round17.cpp:83-86
+     pre  f83fb9947d 2026-06-12 created       promote-round 17: 3 GREEN fresh single-global leaves; 2 deferred
+     net since evidence: none
+== 0057c210 RwpBodyTableLookup ev=2026-07-24 evidence=['log/phys_c4_b5c_ALL6_GREEN_20260724.log']
+   [asi+exe] RwpBodyTableLookup mashedmod/src/mashed_re/Collision/RwpIntegrator.cpp:123-127
+     POST 0ca7a4359d 2026-09-09 body-changed  TT-11 SHADOW_AB macro; TTD recording blocked by Defender ASR; capture false-success fixed
+     pre  cd1d5f1434 2026-07-23 created       B5c C4: extend in-process self-test to the 5 remaining A/B-able leaves (BUILT, verify pend
+     net since evidence: net-changed
+== 0055ac00 RwpShapeActiveBitSet ev=2026-07-24 evidence=['log/phys_c4_b5c_ALL6_GREEN_20260724.log']
+   [asi+exe] RwpShapeActiveBitSet mashedmod/src/mashed_re/Collision/RwpIntegrator.cpp:223-246
+     POST 2879c4d1b5 2026-09-09 body-changed  TT-11: all six B5c sites now carry the A/B-IS-REAL proof (304 samples, 0 divergent)
+     pre  cd1d5f1434 2026-07-23 created       B5c C4: extend in-process self-test to the 5 remaining A/B-able leaves (BUILT, verify pend
+     net since evidence: net-changed
+     callee RwpShapeActiveBitSet_impl mashedmod/src/mashed_re/Collision/RwpIntegrator.cpp:211-220 net=none post-ev body commits: none
+     callee b5cInRace mashedmod/src/mashed_re/Collision/RwpIntegrator.cpp:58-58 net=none post-ev body commits: none
+     callee b5cLeafLog mashedmod/src/mashed_re/Collision/RwpIntegrator.cpp:106-112 net=none post-ev body commits: none
+     callee b5cSelfTestEnabled mashedmod/src/mashed_re/Collision/RwpIntegrator.cpp:48-53 net=none post-ev body commits: none
+== 00498bc0 VideoGetRenderWidth ev=2026-10-09 evidence=['log/c4_verify_result.json']
+   [asi+exe] VideoGetRenderWidth mashedmod/src/mashed_re/Boot/VideoConfig.cpp:52-55
+     pre  d33f6dfd22 2026-05-16 created       c3: Boot VideoConfig ma2-frida-s6 -- 4 hooks C2->C3 (recovered from uncommitted worktree)
+     net since evidence: none
+== 00498bd0 VideoGetRenderHeight ev=2026-10-09 evidence=['log/c4_verify_result.json']
+   [asi+exe] VideoGetRenderHeight mashedmod/src/mashed_re/Boot/VideoConfig.cpp:68-71
+     pre  d33f6dfd22 2026-05-16 created       c3: Boot VideoConfig ma2-frida-s6 -- 4 hooks C2->C3 (recovered from uncommitted worktree)
+     net since evidence: none
+== 00492770 MainLoopInit ev=2026-10-11 evidence=['re/analysis/negctl/reearn_20261011/evidence/diff_main_loop_init.csv']
+   [asi+exe] MainLoopInit mashedmod/src/mashed_re/Boot/FrameDispatch.cpp:173-196
+     pre  2ed7599ef5 2026-05-23 created       feat: hot-path behavioral lane + author 4 hot-path reimpls
+     net since evidence: none
+== 00431ae0 FUN_00431ae0 ev=2026-06-09 evidence=[]
+   [exe (file=.md)] DefaultParam_SetField04 mashedmod/src/mashed_re/Boot/BootLowRvaCluster.cpp:316-320
+     pre  fa9ad17287 2026-05-23 created       wave1-s5: author 6 boot lowrva reimpls for c3-sweep verification
+     net since evidence: none
+== 00431af0 FUN_00431af0 ev=2026-06-09 evidence=[]
+   [exe (file=.md)] DefaultParam_SetField08 mashedmod/src/mashed_re/Boot/BootLowRvaCluster.cpp:341-345
+     pre  fa9ad17287 2026-05-23 created       wave1-s5: author 6 boot lowrva reimpls for c3-sweep verification
+     net since evidence: none
+== 00431b00 FUN_00431b00 ev=2026-06-09 evidence=[]
+   [exe (file=.md)] DefaultParam_SetField00 mashedmod/src/mashed_re/Boot/BootLowRvaCluster.cpp:366-370
+     pre  fa9ad17287 2026-05-23 created       wave1-s5: author 6 boot lowrva reimpls for c3-sweep verification
+     net since evidence: none
+== 00405430 Pred405430 ev=2026-08-15 evidence=['re/analysis/phys_c4_evidence/c4_racediff_result_2026-08-15.json']
+   [asi] Pred405430 mashedmod/src/mashed_re/Util/PromoLoop_sessionB.cpp:298-303
+     pre  b27b096b12 2026-06-13 created       promote-round 88: +2 C2->C3 + consolidate PromoLoop into sessionB (cmd 8191 limit fix); 22
+     net since evidence: none
+== 00407db0 RangeTableGroupOffset ev=2026-10-10 evidence=['log/diff_scenario_range_table_group_offset_PROVEN.csv']
+   [asi] RangeTableGroupOffset mashedmod/src/mashed_re/Gameplay/RangeTable_ah1.cpp:201-224
+     pre  3b51e83064 2026-06-08 created       c3(batch-ah-s1): 3 Gameplay range-table walkers C2->C3 GREEN (8 candidates)
+     net since evidence: none
+== 0040b890 FUN_0040b890 ev=2026-07-24 evidence=['log/c4_install_observe_19batch_20260724.log', 'log/diff_scenario_grid_count_8or12.csv']
+   [asi] GetGridCount8or12 mashedmod/src/mashed_re/Gameplay/Thresholds_ah4.cpp:39-48
+     pre  9e4dd0af61 2026-07-23 body-changed  account2 rewire: Thresholds_ah4 getters -> ported GetLiveCarCount/GetDat0067ea64 direct ca
+     pre  c466895299 2026-06-08 created       c3(batch-ah-s4): FormatEntryLookup 0x004f5020 C2->C3 GREEN (1/8)
+     net since evidence: none
+     callee GetDat0067ea64 mashedmod/src/mashed_re/GameState/StateAccessors.cpp:36-38 net=none post-ev body commits: none
+     callee GetLiveCarCount mashedmod/src/mashed_re/Util/UtilLeaves.cpp:51-55 net=none post-ev body commits: none
+   [exe] inline@4115-4128 mashedmod/src/mashed_re/exe_main.cpp:4115-4128
+     POST 69bb1be99d 2026-09-04 body-changed  race: team scoring in the standalone (FUN_0040eee0's team arms)
+     POST 6d255c1412 2026-09-04 created       standalone UI: retire invented in-race HUD, port the player-setup screens
+     POST 014685ce60 2026-09-03 comment-only  re-classify: U-9077 + U-9071 RESOLVED; file U-9078/79/80; narrow U-9076
+     POST 5acba6dac3 2026-09-03 created       race HUD: crown trigger reversed (U-9071) + row order was wrong and is fixed
+     POST d11c67bbfb 2026-09-02 body-changed  race HUD: port standings art (endpointpanel DFF+TXDs) via HudIm2DQuad
+     POST e43c7dba1d 2026-09-02 body-changed  Race HUD: in-race capture harness, and port the standings chrome + text
+     pre  ebf9242055 2026-06-12 body-changed  parity adjudication: color convention root-fix, menu logo, differ rotation/anim flags
+     pre  2fe5640b52 2026-06-10 created       r6-faithful(2): AI v2 (ribbon+lanes+corner braking) + countdown/score/first-to-N match
+     net since evidence: net-changed
+== 0040b8e0 FUN_0040b8e0 ev=2026-07-24 evidence=['log/c4_install_observe_19batch_20260724.log', 'log/diff_scenario_score_threshold_7or10.csv']
+   [asi] GetScoreThreshold7or10 mashedmod/src/mashed_re/Gameplay/Thresholds_ah4.cpp:55-64
+     pre  9e4dd0af61 2026-07-23 body-changed  account2 rewire: Thresholds_ah4 getters -> ported GetLiveCarCount/GetDat0067ea64 direct ca
+     pre  c466895299 2026-06-08 created       c3(batch-ah-s4): FormatEntryLookup 0x004f5020 C2->C3 GREEN (1/8)
+     net since evidence: none
+     callee GetDat0067ea64 mashedmod/src/mashed_re/GameState/StateAccessors.cpp:36-38 net=none post-ev body commits: none
+     callee GetLiveCarCount mashedmod/src/mashed_re/Util/UtilLeaves.cpp:51-55 net=none post-ev body commits: none
+   [exe] inline@4115-4128 mashedmod/src/mashed_re/exe_main.cpp:4115-4128
+     POST 69bb1be99d 2026-09-04 body-changed  race: team scoring in the standalone (FUN_0040eee0's team arms)
+     POST 6d255c1412 2026-09-04 created       standalone UI: retire invented in-race HUD, port the player-setup screens
+     POST 014685ce60 2026-09-03 comment-only  re-classify: U-9077 + U-9071 RESOLVED; file U-9078/79/80; narrow U-9076
+     POST 5acba6dac3 2026-09-03 created       race HUD: crown trigger reversed (U-9071) + row order was wrong and is fixed
+     POST d11c67bbfb 2026-09-02 body-changed  race HUD: port standings art (endpointpanel DFF+TXDs) via HudIm2DQuad
+     POST e43c7dba1d 2026-09-02 body-changed  Race HUD: in-race capture harness, and port the standings chrome + text
+     pre  ebf9242055 2026-06-12 body-changed  parity adjudication: color convention root-fix, menu logo, differ rotation/anim flags
+     pre  2fe5640b52 2026-06-10 created       r6-faithful(2): AI v2 (ribbon+lanes+corner braking) + countdown/score/first-to-N match
+     net since evidence: net-changed
+== 0040cd90 thunk_FUN_00425ef0 ev=2026-06-08 evidence=['log/diff_scenario_count_nonzero_pairs.csv']
+   [asi] CountNonZeroPairs mashedmod/src/mashed_re/Gameplay/ScoreMasks_ah3.cpp:71-83
+     SAME 0dc777287c 2026-06-08 created       c3(scenario): zero-arg getter mode + 4 zero-arg getters C2->C3
+     net since evidence: none
+== 0040dc70 FUN_0040dc70 ev=2026-06-08 evidence=['log/diff_get_animation_state.csv']
+   [asi] GetAnimationState mashedmod/src/mashed_re/Gameplay/ScoreMasks_ah3.cpp:13-15
+     SAME c9aca9a0a2 2026-06-08 created       c3(batch-ah-s3): 2 gameplay getters C2->C3 GREEN; 6 deferred
+     net since evidence: none
+== 0055b800 RwpBodyMatrixRefresh ev=2026-07-23 evidence=['log/phys_c4_b5c_matrixrefresh_GREEN.log']
+   [asi+exe] RwpBodyMatrixRefresh mashedmod/src/mashed_re/Collision/RwpIntegrator.cpp:273-328
+     POST 2879c4d1b5 2026-09-09 body-changed  TT-11: all six B5c sites now carry the A/B-IS-REAL proof (304 samples, 0 divergent)
+     SAME cd1d5f1434 2026-07-23 body-changed  B5c C4: extend in-process self-test to the 5 remaining A/B-able leaves (BUILT, verify pend
+     SAME 63d10c5c44 2026-07-23 created       B5d/B5c C4: in-process bit-identity self-test harness — RwpBodyMatrixRefresh GREEN 64/64
+     net since evidence: net-changed
+     callee RwpBodyMatrixRefresh_impl mashedmod/src/mashed_re/Collision/RwpIntegrator.cpp:256-266 net=none post-ev body commits: none
+     callee b5cInRace mashedmod/src/mashed_re/Collision/RwpIntegrator.cpp:58-58 net=none post-ev body commits: none
+     callee b5cLog mashedmod/src/mashed_re/Collision/RwpIntegrator.cpp:64-69 net=none post-ev body commits: none
+     callee b5cSelfTestEnabled mashedmod/src/mashed_re/Collision/RwpIntegrator.cpp:48-53 net=none post-ev body commits: none
+== 0055dff0 RwpBodyRefreshGate ev=2026-07-24 evidence=['log/phys_c4_b5c_ALL6_GREEN_20260724.log']
+   [asi+exe] RwpBodyRefreshGate mashedmod/src/mashed_re/Collision/RwpIntegrator.cpp:359-388
+     POST 2879c4d1b5 2026-09-09 body-changed  TT-11: all six B5c sites now carry the A/B-IS-REAL proof (304 samples, 0 divergent)
+     pre  cd1d5f1434 2026-07-23 created       B5c C4: extend in-process self-test to the 5 remaining A/B-able leaves (BUILT, verify pend
+     net since evidence: net-changed
+     callee RwpBodyRefreshGate_impl mashedmod/src/mashed_re/Collision/RwpIntegrator.cpp:342-353 net=none post-ev body commits: none
+     callee b5cInRace mashedmod/src/mashed_re/Collision/RwpIntegrator.cpp:58-58 net=none post-ev body commits: none
+     callee b5cLeafLog mashedmod/src/mashed_re/Collision/RwpIntegrator.cpp:106-112 net=none post-ev body commits: none
+     callee b5cSelfTestEnabled mashedmod/src/mashed_re/Collision/RwpIntegrator.cpp:48-53 net=none post-ev body commits: none
+== 0045caf0 EqPredicate7f1a18 ev=2026-06-13 evidence=['log/diff_eq_predicate_7f1a18.csv']
+   [asi] EqPredicate7f1a18 mashedmod/src/mashed_re/Util/PromoLoop_round58.cpp:55-60
+     SAME 1eac656e90 2026-06-13 created       promote-round 58: +3 C2->C3 (conditional/pointer-compute getters + equality predicate); 16
+     net since evidence: none
+== 0046bda0 FUN_0046bda0 ev=2026-06-15 evidence=['log/diff_indexed_float_accum16_46bda0.csv']
+   [asi] IndexedFloatAccum16_46bda0 mashedmod/src/mashed_re/Util/PromoLoop_sessionB.cpp:3849-3875
+     SAME 64d6c06194 2026-06-15 created       promote-round 218: +1 C2->C3 (IndexedFloatAccum16 0x46bda0) + frontier classifier; 382->38
+     net since evidence: none
+== 00473ee0 LogoOverlayDraw ev=2026-06-10 evidence=['re/analysis/standalone_menu_sm/diff_logo_overlay_navdriven.json']
+   [asi] LogoOverlayTwin mashedmod/src/mashed_re/Frontend/LogoOverlayTwin.cpp:30-38
+     POST d440cfd047 2026-06-11 created       evidence-commit frontend-faithful(F3 promoted): FUN_00473ee0 logo overlay C2->C3 — BIT-IDENTICAL 20/20
+     net since evidence: none
+     callee LogoOverlayDraw mashedmod/src/mashed_re/Frontend/DrawQuadPrimitives.cpp:638-777 net=net-equal post-ev body commits: none
+== 00432b30 MenuPromptStrip ev=2026-06-11 evidence=['log/diff_menu_prompt_navdriven.json']
+   [asi] PromptStripTwin mashedmod/src/mashed_re/Frontend/PromptStripTwin.cpp:137-147
+     SAME a15f82c025 2026-06-11 created       prompt-strip 0x00432b30 PORTED + C4: true-ABI twin, 264/264 bit-identical, installed-obser
+     net since evidence: none
+   [exe] Nav mashedmod/src/mashed_re/Frontend/MenuNavSM.cpp:965-1021
+     POST a05b9c14a9 2026-10-12 body-changed  U-9667: one 0x0042ac90 body for both builds, port the cursor -1 path
+     POST edba95beba 2026-06-12 body-changed  item 15 LANDED verbatim: arc-wash fade writers xref-confirmed and wired
+     SAME 58e6260870 2026-06-11 body-changed  F4 CLOSED: footer prompt strip live in the standalone (FUN_00432b30 verbatim port)
+     pre  495e1709ed 2026-06-08 created       standalone(menu-sm): port FUN_0043d2a0 nav state machine + harvested descriptor tables
+     net since evidence: net-changed
+     callee BuildRecords mashedmod/src/mashed_re/Frontend/MenuNavSM.cpp:600-662 net=net-equal post-ev body commits: none
+     callee CountItems mashedmod/src/mashed_re/Frontend/MenuNavSM.cpp:415-425 net=none post-ev body commits: none
+     callee KvLookup mashedmod/src/mashed_re/Frontend/MenuNavSM.cpp:386-392 net=net-changed post-ev body commits: 19e95b2f2a 2026-10-16 body-changed
+     callee LogoOverlayFadeSet mashedmod/src/mashed_re/Frontend/DrawQuadPrimitives.cpp:632-636 net=net-changed post-ev body commits: cde0ee52be 2026-06-12 body-changed
+     callee NavCountItems mashedmod/src/mashed_re/Frontend/MenuNavSM.cpp:435-442 net=created post-ev body commits: a05b9c14a9 2026-10-12 created
+     callee PlaceCursor mashedmod/src/mashed_re/Frontend/MenuNavSM.cpp:506-583 net=net-changed post-ev body commits: 76916f8b09 2026-08-28 body-changed, 4b341a0a2c 2026-06-12 body-changed
+     callee PromptRelNormalize mashedmod/src/mashed_re/Frontend/MenuNavSM.cpp:734-734 net=none post-ev body commits: none
+     callee PromptStripAppend mashedmod/src/mashed_re/Frontend/MenuNavSM.cpp:738-767 net=none post-ev body commits: none
+     callee TableForScreen mashedmod/src/mashed_re/Frontend/MenuNavSM.cpp:109-112 net=none post-ev body commits: none
