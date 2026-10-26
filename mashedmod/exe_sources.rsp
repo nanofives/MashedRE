@@ -182,6 +182,7 @@
 "Boot\BootLowRvaCluster.cpp"
 "Boot\Window.cpp"
 "Boot\VideoConfig.cpp"
+"Boot\VideoCfgFirstRun.cpp"
 "Boot\Teardown.cpp"
 "Boot\LaunchHandshake.cpp"
 "Boot\FrameDispatch.cpp"
