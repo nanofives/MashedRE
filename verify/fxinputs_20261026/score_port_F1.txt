@@ -1,0 +1,17 @@
+PORT F1 (D:/MashedWT/D4-FX-INPUTS_data/arms/F1.fx_debug.txt)
+  slot 0 frames=14389 outer: slot<0=0 9e0<=1=180 slow=13802 pass=407 cfc=0 | alive-active=198
+        skid frames=0 (  0.0%) skid&alive=0 legA b0c>100=0 (  0.0%) legB rng&brk=0 (  0.0%) brk>40=0 (  0.0%) rng=407 (100.0%) frozen=20 (  4.9%)
+        emits=24/0 active_fr=407 per1000active=59.0
+        ALIVE: active_fr=198 skid_fr=0 (  0.0%) calls=198 emits=13 per1000active=65.7
+  slot 1 frames=14389 outer: slot<0=0 9e0<=1=180 slow=1 pass=14192 cfc=16 | alive-active=203
+        skid frames=44 (  0.3%) skid&alive=31 legA b0c>100=0 (  0.0%) legB rng&brk=31 (  0.2%) brk>40=31 (  0.2%) rng=14192 (100.0%) frozen=13989 ( 98.6%)
+        emits=715/29 active_fr=14205 per1000active=52.4
+        ALIVE: active_fr=216 skid_fr=44 ( 20.4%) calls=304 emits=34 per1000active=157.4
+  slot 2 frames=14389 outer: slot<0=0 9e0<=1=180 slow=0 pass=14204 cfc=5 | alive-active=215
+        skid frames=17 (  0.1%) skid&alive=12 legA b0c>100=12 (  0.1%) legB rng&brk=4 (  0.0%) brk>40=4 (  0.0%) rng=14204 (100.0%) frozen=14017 ( 98.7%)
+        emits=693/5 active_fr=14209 per1000active=49.1
+        ALIVE: active_fr=220 skid_fr=17 (  7.7%) calls=254 emits=13 per1000active=59.1
+  slot 3 frames=14389 outer: slot<0=0 9e0<=1=180 slow=13977 pass=231 cfc=1 | alive-active=231
+        skid frames=89 ( 38.5%) skid&alive=88 legA b0c>100=15 (  6.5%) legB rng&brk=83 ( 35.9%) brk>40=83 ( 35.9%) rng=231 (100.0%) frozen=8 (  3.5%)
+        emits=6/44 active_fr=232 per1000active=215.5
+        ALIVE: active_fr=232 skid_fr=89 ( 38.4%) calls=410 emits=50 per1000active=215.5

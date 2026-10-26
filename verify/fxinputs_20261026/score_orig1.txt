@@ -1,0 +1,17 @@
+ORIGINAL frames=2797 snapshots=23 slots=[0, 1, -1, -1]
+  car 0 outer: slot<0=0 9e0<=1=33 slow=925 pass=1711 cfc=128 frozen_vel=769
+        counted=1921 skid=265 ( 13.8%) legA b0c>100=104 (  5.4%) legB rng&brk=179 (  9.3%) brk>40=506 ( 26.3%) rng=1307 ( 68.0%) cfc=92 frozen=272
+        b0c bins(25)=[1617, 117, 51, 32, 16, 13, 9, 3, 63] brake classes [0,1..40,41..fe,ff]=[1415, 0, 0, 506]
+        counted per 10 s snapshot: [464, 357, 509, 360, 231, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  car 1 outer: slot<0=0 9e0<=1=52 slow=1258 pass=1417 cfc=70 frozen_vel=1069
+        counted=1491 skid=323 ( 21.7%) legA b0c>100=135 (  9.1%) legB rng&brk=195 ( 13.1%) brk>40=381 ( 25.6%) rng=1228 ( 82.4%) cfc=47 frozen=145
+        b0c bins(25)=[1129, 149, 52, 26, 22, 16, 19, 9, 69] brake classes [0,1..40,41..fe,ff]=[1110, 0, 0, 381]
+        counted per 10 s snapshot: [504, 287, 166, 302, 232, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  car 2 outer: slot<0=0 9e0<=1=0 slow=1131 pass=1538 cfc=128 frozen_vel=621
+        counted=1657 skid=276 ( 16.7%) legA b0c>100=93 (  5.6%) legB rng&brk=185 ( 11.2%) brk>40=375 ( 22.6%) rng=1369 ( 82.6%) cfc=95 frozen=84
+        b0c bins(25)=[1395, 110, 30, 29, 5, 7, 2, 5, 74] brake classes [0,1..40,41..fe,ff]=[1282, 0, 0, 375]
+        counted per 10 s snapshot: [494, 313, 481, 281, 88, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  car 3 outer: slot<0=0 9e0<=1=5 slow=835 pass=1831 cfc=126 frozen_vel=514
+        counted=1949 skid=264 ( 13.5%) legA b0c>100=74 (  3.8%) legB rng&brk=189 (  9.7%) brk>40=429 ( 22.0%) rng=1602 ( 82.2%) cfc=82 frozen=86
+        b0c bins(25)=[1722, 99, 32, 22, 24, 8, 4, 3, 35] brake classes [0,1..40,41..fe,ff]=[1520, 0, 0, 429]
+        counted per 10 s snapshot: [468, 382, 421, 329, 349, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
