@@ -56,3 +56,15 @@ Branch `orch/D3-CF-A5TIMER` from `orch/integration` `d55d89c48`. Committed alone
 - G-ON-TIMER passes and G-ON-REC fails: a reader of `DAT_007f0ff8` other than A5 moves on the solo arm. Report the first
   differing record and its words.
 - G-ON-TIMER fails: report the logged values.
+
+## Amendment 1 (2026-10-26, after the first gate run, before any D2 arm)
+
+First knob build (`8602c36ad`, exe `cb255d94`): G-NOOP PASS (`5943c5f1 / b493262b / 09551e6a`, `3a03670c / 2516d903 /
+53778664`). Knob ON: `H_RN` `5943c5f1 / b493262b / 09551e6a`, `B_RN_K0 / K1 / K26` `3a03670c / c36c19d4 / 489f045e`. B_K1 and
+B_K26 first differ at step-dump frame 60 in `flag_a368` (`0x0089a368`): the AI race's first racing tick read 50, not 0, and
+the `FUN_004177b0` band-0 roll (`DAT_007f0ff8 * (1/3000) > 1.0`) fired one call early. u9745ov
+(`verify/u9745ov_20261017`) matched the original's roll at window call 61 with the timer at 0 on the first racing tick (the
+knob-off exe). So the state-5 zero is the last write before GO: the knob now adds, then zeroes, on the state-5 window of an AI
+race. Expected: AI races with the knob ON equal the knob-off exe through round 1 (nothing reads `DAT_007f0ff8` on the
+stand-in's countdown ticks), so `H_RN` / `B_RN_*` should equal the refs. Solo arms are unaffected (no AI car). The arms of
+section 3 are re-run on the amended build, the knob-off gates included.
