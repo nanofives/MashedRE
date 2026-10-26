@@ -149,6 +149,24 @@ runs under a flag is not S-DONE. Criteria 2–6 (every executed function at F-Do
 unexecuted functions explicitly dispatched; structs documented; formats round-trip;
 `STUBS.md` section empty) carry over unchanged. The v1 percentage gates stay retired.
 
+**Criterion 5 scope (user decision L-22 (a), 2026-10-26).** "Formats round-trip" applies only to
+formats the game itself **writes**: `gamesave.bin`, `videocfg.bin`, `contcfg%d.bin`, and the AI
+path data written by `FUN_00423540` (`re/analysis/formats/ai_path_data.md:27`). A format the
+game only **parses** is exempt from the round-trip, because no write path exists in the
+original to be faithful to and the port never emits it, so a writer would be new, unused code.
+Exempt, each with its evidence: vehicle DFF clumps (`re/analysis/formats/vehicle_dff.md`,
+parse-only via `dff_dump.py`, skin/anim EXTENSION payloads unexamined at `:46`); track world BSP
+`GRAPH*.BSP` and the collision/AI BSP streams (`re/analysis/formats/track_world_bsp.md:121`,
+"Round-trip writer: not yet needed", sector flag bits open at `:120`); track `.SPL`/`.ANM`/`.UVA`/`.MTS`
+(`re/analysis/formats/track_anim_data.md`); `.piz` archives (opened read-only by `FUN_004b6710`,
+`0x004b6738`; `pack_archive` in `piz_extract.py` is a dev tool); `.txd` texture dictionaries
+(`re/analysis/txd_on_disk_format/README.md`); `.rws` audio (`rws_inspect.py`; the voice-swap
+write in `rws_voice_replace.py` is a dev tool); and the Lua 4.0 data scripts. Loader RVAs for DFF
+and world BSP are not recorded in those notes, only the note citations above. For an exempt format
+criterion 5 is met by **parse coverage**: the port's loader accepts every instance in `original\`
+and every parsed field is documented or marked `[UNCERTAIN]`. A writer for an exempt format is
+not required and is not a WS-F deliverable.
+
 **P-DoD (project)** — every subsystem S-DONE; a clean playthrough of every track,
 vehicle and mode on `mashed_re.exe` alone; trackers empty but for justified
 `wontfix`/`deferred-not-needed`; the dev `.asi` dropped from the shipping matrix. Multiplayer (WS-I) is out of v1.0 scope (DEFERRED.md D-11063).
