@@ -88,7 +88,7 @@ def boot(env_extra=None):
     canon = (ROOT / "scripts" / "canonical" / "videocfg_windowed.bin")
     if not canon.exists():
         canon = ORIG.parent / "scripts" / "canonical" / "videocfg_windowed.bin"
-    if canon.exists():
+    if canon.exists() and not os.environ.get("NAV_KEEP_VIDEOCFG"):   # D4-WSF-SAVE-RT: first-run boots keep it absent
         shutil.copy2(str(canon), str(ORIG / "videocfg.bin"))
     env = dict(os.environ)
     env.setdefault("MASHED_WIN_POS", "primary-bl")

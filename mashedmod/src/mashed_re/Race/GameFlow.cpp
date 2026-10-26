@@ -179,6 +179,23 @@ static size_t ReadSaveImage(unsigned char* img) {
 }
 #endif
 
+#ifdef MASHED_STANDALONE
+// [D4-WSF-SAVE-RT 2026-10-26] MASHED_SAVE_KEEP_IMAGE=1 (default OFF): the in-place write below on
+// any save path, and the dword at file 0x24EFC stays what was loaded. The original writes the
+// whole loaded image back: ghost block (0x00404f2a..0x00404f34), span (0x00404f19), tail (no
+// writer), and DAT_008a95ac at 0x24EFC (0x00404f23), which no original writer increments
+// (writers 0x00404ec1 / 0x004098c6 / 0x004098eb / 0x00409c5e / 0x00409e30 / 0x0040ad34).
+// verify/wsfsave_20261026/PREREG_D4-WSF-SAVE-RT.md.
+bool KeepImageMode() {
+    static int s_on = -1;
+    if (s_on < 0) {
+        const char* v = std::getenv("MASHED_SAVE_KEEP_IMAGE");
+        s_on = (v && v[0] && v[0] != '0') ? 1 : 0;
+    }
+    return s_on == 1;
+}
+#endif
+
 void SaveProgress() {
     using namespace mashed_re::Save;
     unsigned char span[kSpanBytes];
@@ -190,7 +207,7 @@ void SaveProgress() {
     // BuildImage zeroes the profile block; written over the original's file that would wipe
     // them. Only col 4 (unlock) and col 5 (trophy) of the rows we track, the counter and the
     // magic change; every other byte is what ReadSaveImage found. No valid file -> the rebuild.
-    if (GameSave_OriginalFormatMode()) {
+    if (GameSave_OriginalFormatMode() || KeepImageMode()) {
         const size_t nRead = ReadSaveImage(img);
         std::uint32_t magic = 0;
         std::memcpy(&magic, img, 4);
@@ -201,8 +218,10 @@ void SaveProgress() {
                 std::memcpy(img + kSpanOff + r * kRowStride + kColTrackUnlock, &u, 4);
                 std::memcpy(img + kSpanOff + r * kRowStride + kColTrophyPriv,  &t, 4);
             }
-            const std::uint32_t counter = ++g_saveCounter;
-            std::memcpy(img + kCounterOff, &counter, 4);
+            if (!KeepImageMode()) {
+                const std::uint32_t counter = ++g_saveCounter;
+                std::memcpy(img + kCounterOff, &counter, 4);
+            }
             WriteSaveImage(img);
             return;
         }
@@ -572,8 +591,40 @@ int GameFlowSaveSelfTest(char* out, int outSize) {
     return pass;
 }
 
+// [D4-WSF-SAVE-RT 2026-10-26] DEFAULT-OFF whole-file round trip (MASHED_SAVE_RT_IN / _OUT).
+// Copies <in> to the save path (MASHED_SAVE_PATH, required, so original/gamesave.bin is never
+// the target), runs the live Campaign_LoadProgress + Campaign_SaveNow, copies the written file
+// to <out> and exits the process. <in> = "none" removes the save first (first-run write).
+bool CopyWholeFile(const char* from, const char* to) {
+    static unsigned char buf[mashed_re::Save::kSaveSize + 1];
+    std::size_t n = 0;
+    if (std::FILE* f = std::fopen(from, "rb")) { n = std::fread(buf, 1, sizeof buf, f); std::fclose(f); }
+    else return false;
+    std::FILE* g = std::fopen(to, "wb");
+    if (!g) return false;
+    std::fwrite(buf, 1, n, g);
+    std::fclose(g);
+    return true;
+}
+
+void SaveRoundTripHarness(const char* in) {
+    const char* out = std::getenv("MASHED_SAVE_RT_OUT");
+    const char* scratch = std::getenv("MASHED_SAVE_PATH");
+    if (!out || !out[0] || !scratch || !scratch[0]) return;
+    const char* path = GameSave_FilePath();
+    if (std::strcmp(in, "none") == 0) std::remove(path);
+    else if (!CopyWholeFile(in, path)) std::_Exit(3);
+    g_progLoaded = false;
+    Campaign_LoadProgress();
+    Campaign_SaveNow();
+    std::_Exit(CopyWholeFile(path, out) ? 0 : 4);
+}
+
 struct GameFlowSaveSelfTestRunner {
     GameFlowSaveSelfTestRunner() {
+        if (const char* rt = std::getenv("MASHED_SAVE_RT_IN")) {
+            if (rt[0]) SaveRoundTripHarness(rt);
+        }
         const char* on = std::getenv("MASHED_SAVE_SELFTEST");
         if (!on || !on[0] || on[0] == '0') return;
         char buf[1024] = {};

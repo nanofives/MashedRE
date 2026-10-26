@@ -1,0 +1,70 @@
+W0 F_P->O_P A=arm_P.bin (151456 B, sha 697b7af8175b418f) B=arm_R_written.bin (151456 B, sha 29a7dca09cc0cd68)
+  compared 151456 bytes, differing 1
+  magic     0x00000..0x00003 differ      0  nonzero A      4 B      4
+  block     0x00004..0x24a3f differ      0  nonzero A      0 B      0
+  table     0x24a40..0x24d0f differ      0  nonzero A     47 B     47
+  span_rest 0x24d10..0x24f53 differ      0  nonzero A    291 B    291
+  state     0x24efc..0x24eff differ      0  nonzero A      0 B      0
+  gather    0x24f54..0x24f5f differ      1  nonzero A      7 B      6 first 0x24f55:1->0
+  tail      0x24f60..0x24f9f differ      0  nonzero A      0 B      0
+  state dword A 0 B 0; gather A 000101010101010100000000 B 000001010101010100000000
+W1 F_G->O_G A=gamesave_captured.bin (151456 B, sha e2eabeacda9820ba) B=O_G.bin (151456 B, sha 3118745fa68034cd)
+  compared 151456 bytes, differing 1
+  magic     0x00000..0x00003 differ      0  nonzero A      4 B      4
+  block     0x00004..0x24a3f differ      0  nonzero A   2888 B   2888
+  table     0x24a40..0x24d0f differ      0  nonzero A     46 B     46
+  span_rest 0x24d10..0x24f53 differ      0  nonzero A    291 B    291
+  state     0x24efc..0x24eff differ      0  nonzero A      0 B      0
+  gather    0x24f54..0x24f5f differ      1  nonzero A      6 B      5 first 0x24f56:1->0
+  tail      0x24f60..0x24f9f differ      0  nonzero A      0 B      0
+  state dword A 0 B 0; gather A 000001010101010100000000 B 000000010101010100000000
+S1 O_P vs standalone(F_P) A=arm_R_written.bin (151456 B, sha 29a7dca09cc0cd68) B=S1_P.bin (151456 B, sha 54f3f898f8b300f1)
+  compared 151456 bytes, differing 333
+  magic     0x00000..0x00003 differ      0  nonzero A      4 B      4
+  block     0x00004..0x24a3f differ      0  nonzero A      0 B      0
+  table     0x24a40..0x24d0f differ     34  nonzero A     47 B     13 first 0x24a44:1->0,0x24a4c:2->0,0x24a6c:1->0,0x24a7c:2->0,0x24aa4:1->0,0x24aac:2->0
+  span_rest 0x24d10..0x24f53 differ    292  nonzero A    291 B      2 first 0x24d10:11->0,0x24d14:9->0,0x24d18:17->0,0x24d1c:12->0,0x24d20:7->0,0x24d24:11->0
+  state     0x24efc..0x24eff differ      1  nonzero A      0 B      1 first 0x24efc:0->1
+  gather    0x24f54..0x24f5f differ      6  nonzero A      6 B      0 first 0x24f56:1->0,0x24f57:1->0,0x24f58:1->0,0x24f59:1->0,0x24f5a:1->0,0x24f5b:1->0
+  tail      0x24f60..0x24f9f differ      0  nonzero A      0 B      0
+  state dword A 0 B 1; gather A 000001010101010100000000 B 000000000000000000000000
+S1 O_G vs standalone(F_G) A=O_G.bin (151456 B, sha 3118745fa68034cd) B=S1_G.bin (151456 B, sha 54f3f898f8b300f1)
+  compared 151456 bytes, differing 3219
+  magic     0x00000..0x00003 differ      0  nonzero A      4 B      4
+  block     0x00004..0x24a3f differ   2888  nonzero A   2888 B      0 first 0x4:11->0,0x5:1->0,0x8:124->0,0x9:18->0,0xc:30->0,0x12:160->0
+  table     0x24a40..0x24d0f differ     33  nonzero A     46 B     13 first 0x24a44:1->0,0x24a4c:2->0,0x24a6c:1->0,0x24a7c:2->0,0x24aac:2->0,0x24adc:2->0
+  span_rest 0x24d10..0x24f53 differ    292  nonzero A    291 B      2 first 0x24d10:11->0,0x24d14:9->0,0x24d18:17->0,0x24d1c:12->0,0x24d20:7->0,0x24d24:11->0
+  state     0x24efc..0x24eff differ      1  nonzero A      0 B      1 first 0x24efc:0->1
+  gather    0x24f54..0x24f5f differ      5  nonzero A      5 B      0 first 0x24f57:1->0,0x24f58:1->0,0x24f59:1->0,0x24f5a:1->0,0x24f5b:1->0
+  tail      0x24f60..0x24f9f differ      0  nonzero A      0 B      0
+  state dword A 0 B 1; gather A 000000010101010100000000 B 000000000000000000000000
+S2 O_P vs keep(F_P) A=arm_R_written.bin (151456 B, sha 29a7dca09cc0cd68) B=S2_P.bin (151456 B, sha 697b7af8175b418f)
+  compared 151456 bytes, differing 1
+  magic     0x00000..0x00003 differ      0  nonzero A      4 B      4
+  block     0x00004..0x24a3f differ      0  nonzero A      0 B      0
+  table     0x24a40..0x24d0f differ      0  nonzero A     47 B     47
+  span_rest 0x24d10..0x24f53 differ      0  nonzero A    291 B    291
+  state     0x24efc..0x24eff differ      0  nonzero A      0 B      0
+  gather    0x24f54..0x24f5f differ      1  nonzero A      6 B      7 first 0x24f55:0->1
+  tail      0x24f60..0x24f9f differ      0  nonzero A      0 B      0
+  state dword A 0 B 0; gather A 000001010101010100000000 B 000101010101010100000000
+S2 O_G vs keep(F_G) A=O_G.bin (151456 B, sha 3118745fa68034cd) B=S2_G.bin (151456 B, sha e2eabeacda9820ba)
+  compared 151456 bytes, differing 1
+  magic     0x00000..0x00003 differ      0  nonzero A      4 B      4
+  block     0x00004..0x24a3f differ      0  nonzero A   2888 B   2888
+  table     0x24a40..0x24d0f differ      0  nonzero A     46 B     46
+  span_rest 0x24d10..0x24f53 differ      0  nonzero A    291 B    291
+  state     0x24efc..0x24eff differ      0  nonzero A      0 B      0
+  gather    0x24f54..0x24f5f differ      1  nonzero A      5 B      6 first 0x24f56:0->1
+  tail      0x24f60..0x24f9f differ      0  nonzero A      0 B      0
+  state dword A 0 B 0; gather A 000000010101010100000000 B 000001010101010100000000
+S1 first-run O_0 vs standalone A=O_0.bin (151456 B, sha 95dd10e73553a689) B=S1_0.bin (151456 B, sha c33e740db03c5d95)
+  compared 151456 bytes, differing 342
+  magic     0x00000..0x00003 differ      0  nonzero A      4 B      4
+  block     0x00004..0x24a3f differ      0  nonzero A      0 B      0
+  table     0x24a40..0x24d0f differ     45  nonzero A     46 B      1 first 0x24a44:1->0,0x24a4c:2->0,0x24a6c:1->0,0x24a7c:2->0,0x24a80:2->0,0x24aac:2->0
+  span_rest 0x24d10..0x24f53 differ    292  nonzero A    292 B      2 first 0x24d10:11->0,0x24d14:9->0,0x24d18:17->0,0x24d1c:12->0,0x24d20:7->0,0x24d24:11->0
+  state     0x24efc..0x24eff differ      0  nonzero A      1 B      1
+  gather    0x24f54..0x24f5f differ      5  nonzero A      5 B      0 first 0x24f57:1->0,0x24f58:1->0,0x24f59:1->0,0x24f5a:1->0,0x24f5b:1->0
+  tail      0x24f60..0x24f9f differ      0  nonzero A      0 B      0
+  state dword A 1 B 1; gather A 000000010101010100000000 B 000000000000000000000000
