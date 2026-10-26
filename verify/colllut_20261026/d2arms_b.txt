@@ -1,0 +1,20 @@
+python.exe                   12128 Console                    1    16.552 KB
+[mashed-lock] WAITING for solo 'mashed_machine' held by (D3-CF-COLLLUT)
+[mashed-lock] SOLO OPEN 'mashed_machine' (D3-CF-COLLLUT) ttl=43200s; draining the current holder
+[mashed-lock] SOLO HELD 'mashed_machine'
+=== D2_DEF_1 pid=17896 exe=5e5198b2
+    exit=0 self_exited=False secs=90
+    D2_DEF_1.motion_diag.log lines=1633 sha8=3e11df81
+=== D2_DEF_2 pid=20464 exe=5e5198b2
+    exit=0 self_exited=False secs=90
+    D2_DEF_2.motion_diag.log lines=1632 sha8=a6723862
+=== D2_DEF_3 pid=24588 exe=5e5198b2
+    exit=0 self_exited=False secs=90
+    D2_DEF_3.motion_diag.log lines=1631 sha8=e081f469
+=== D2_NORN_1 pid=28504 exe=5e5198b2
+    exit=0 self_exited=False secs=90
+    D2_NORN_1.motion_diag.log lines=1633 sha8=b9d24cab
+DONE
+[mashed-lock] SOLO CLOSED 'mashed_machine'
+
+[exited with code 0]

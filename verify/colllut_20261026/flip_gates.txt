@@ -1,0 +1,17 @@
+[mashed-lock] HELD 'mashed_machine' pid=736 (D3-CF-COLLLUT)
+=== H_DEF pid=24708 exe=7fb2d088
+    exit=0 self_exited=True secs=155
+    H_DEF.step.csv lines=14659 sha8=5943c5f1
+    H_DEF.gates.csv lines=56873 sha8=b493262b
+    H_DEF.ptrace.log lines=28436 sha8=09551e6a
+=== B_DEF_K0 pid=25444 exe=7fb2d088
+    exit=0 self_exited=True secs=14
+    B_DEF_K0.step.csv lines=1459 sha8=3a03670c
+=== B_DEF_K1 pid=20284 exe=7fb2d088
+    exit=0 self_exited=True secs=16
+    B_DEF_K1.step.csv lines=1825 sha8=e85ea6fb
+=== B_DEF_K26 pid=16688 exe=7fb2d088
+    exit=0 self_exited=True secs=15
+    B_DEF_K26.step.csv lines=1411 sha8=53778664
+DONE
+[mashed-lock] released 'mashed_machine' pid=736

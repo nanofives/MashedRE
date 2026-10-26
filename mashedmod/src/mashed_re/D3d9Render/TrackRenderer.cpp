@@ -8678,8 +8678,9 @@ void TrackRenderer::EmitCarFx(int slot, const float pos[3], const float vel_in[3
     const float kSlip = R * 0.02f, kCorner = R * 0.12f;
     float skidI = slip / kSlip;
     if (corner / kCorner > skidI) skidI = corner / kCorner;      // whichever is stronger
-    // [D4-FX-GATES] MASHED_FX_ORIG_GATES=1 (default OFF): the original's gates replace this branch (EmitCarFxOrigGates).
-    static const bool s_origGates = (std::getenv("MASHED_FX_ORIG_GATES") != nullptr);
+    // [D4-FX-GATES] the original's gates replace this branch (EmitCarFxOrigGates). Default ON since L-25 (2026-10-26),
+    // MASHED_NO_FX_ORIG_GATES=1 opts out (verify/fxgates_flip_20261026/RESULT_D4-FX-GATES-FLIP.md).
+    static const bool s_origGates = (std::getenv("MASHED_NO_FX_ORIG_GATES") == nullptr);
     if (s_origGates) {
         EmitCarFxOrigGates(slot, pos, fx, fz, R);
     } else if (skidI > 1.f && spd > R * 0.04f) {
@@ -8744,7 +8745,7 @@ float TrackRenderer::FxOrigRoll() {
     return static_cast<float>(fx_og_rng_ >> 8) * (1.0f / 16777216.0f);
 }
 
-// [D4-FX-GATES] MASHED_FX_ORIG_GATES=1 (default OFF; verify/fxgates_20261026/PREREG_fxgates.md): the skid smoke takes
+// [D4-FX-GATES] MASHED_FX_ORIG_GATES=1 (default ON since L-25; verify/fxgates_20261026/PREREG_fxgates.md): the skid smoke takes
 // the original's per-car wheel-effect gates. The original has no skid emitter of its own: FUN_0040ca00 (per frame, from
 // FUN_0040ce00) calls the surface-keyed spawner FUN_0040c690, which spawns one record with FUN_0048cf90. Port record =
 // the 0xd04 record of the same slot (Vehicle::VehiclePhysics_Record*; FX slot v == physics slot v).
