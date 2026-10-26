@@ -2221,7 +2221,7 @@ void Ai_AdvanceCountdownClock(int units)
 //   - FUN_0040fc00 adds the tick budget at the end of every tick except race sub-state 7 (0x0040fe46 / 0x0040fe64), so it
 //     counts through phase 3 (the QPC-length intro), state 4 and the 112 state-5 ticks;
 //   - in state 5 each AI car's FUN_00418560 zeroes it (FUN_0040e350() = DAT_0063ba8c == 5 at 0x00418593, store at 0x00418598),
-//     so an AI race reaches GO at one tick's budget. A solo race has no AI car there, so its timer reaches the player's first
+//     so an AI race's first racing tick reads 0 (amendment 1, below). A solo race has no AI car there, so its timer reaches the player's first
 //     moving call at 50 * (a0 - 1) (a0 877..896 over 13 captures, verify/u9775_20261025), and A5 (FILD [0x007f0ff8] at
 //     0x0046e0a9) starts its grip ramp at record k 1203 - a0.
 // The exe's countdown stand-in is 180 ticks with no phase 3 (and the exe's knob-OFF timer did not move before GO), so the
@@ -2247,8 +2247,12 @@ void Ai_RaceTimerRoundStart(int roundNo)
 void Ai_RaceTimerCountdownTick(int units, bool state5WithAi)
 {
     if (!Ai_RaceTimerRunEnabled()) return;
-    if (state5WithAi) I32(kFrame0ff8) = 0;                   // FUN_00418560 0x00418598
     I32(kFrame0ff8) += units;                                // FUN_0040fc00 0x0040fe64
+    // FUN_00418560 0x00418598, after the add (PREREG amendment 1): an AI race's first racing tick reads 0. u9745ov matched the
+    // original's FUN_004177b0 band-0 roll (DAT_007f0ff8 * (1/3000) > 1.0) at window call 61 with 0 there; zeroing before
+    // the add left 50 and moved the roll one call early (B_RN_K1 / K26, flag_a368 at frame 60). [UNCERTAIN U-9790] which
+    // original tick carries the last state-5 zero relative to the stand-in's GO frame: only the value at GO is measured.
+    if (state5WithAi) I32(kFrame0ff8) = 0;
 }
 
 // [d3bB2 2026-10-17] The car<->car type-4 event and its AI override (MASHED_AI_CONTACT_EVENT=1, default OFF).

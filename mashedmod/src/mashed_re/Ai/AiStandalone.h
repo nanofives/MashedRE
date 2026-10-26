@@ -96,8 +96,8 @@ bool Ai_CountdownClockEnabled();
 void Ai_CountdownAlivePoke();
 void Ai_AdvanceCountdownClock(int units);
 // [a5timer 2026-10-26] MASHED_A5_RACE_TIMER_RUN=1 (default OFF, U-9790): DAT_007f0ff8 through the pre-GO ticks. RoundStart
-// seeds round 1 (0x0040e5a2 + the stand-in's missing phase 3), CountdownTick zeroes on the state-5 window of an AI race
-// (0x00418598) and adds the budget at the end of the stand-in tick (0x0040fe64). No-ops with the knob off.
+// seeds round 1 (0x0040e5a2 + the stand-in's missing phase 3), CountdownTick adds the budget at the end of the stand-in tick
+// (0x0040fe64) and then zeroes on the state-5 window of an AI race (0x00418598). No-ops with the knob off.
 bool Ai_RaceTimerRunEnabled();
 void Ai_RaceTimerRoundStart(int roundNo);
 void Ai_RaceTimerCountdownTick(int units, bool state5WithAi);

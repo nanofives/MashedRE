@@ -5148,7 +5148,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         // pre-race sub-states too; the GO frame ticks once, below
         // [a5timer 2026-10-26] MASHED_A5_RACE_TIMER_RUN (default OFF, U-9790): FUN_0040fc00's DAT_007f0ff8 add at the end of
         // the pre-GO tick (0x0040fe64); on the stand-in's state-5 window (the 113 / 60 s before GO, as the HUD state)
-        // an AI race's FUN_00418560 zeroes it first (0x00418598). The GO frame takes the race-frame add.
+        // an AI race's FUN_00418560 zeroes it (0x00418598), so its GO frame reads 0. The GO frame takes the race-frame add.
         if (countdown_ > 0.f)
             Ai::Ai_RaceTimerCountdownTick(static_cast<int>(in.dt * 3000.0f + 0.5f),
                                           !ai_cars_.empty() && countdown_ <= 113.0f / 60.0f);
