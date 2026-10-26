@@ -1,0 +1,15 @@
+kAiWriterVersion = 0x1c02000a (FUN_004cc580 pack of 0x37002, 10)
+[1/13] AI0.AI PASS ndiff=0 first=-1 last=-1 file_ver=0x1c02000a
+[2/13] AI11.AI PASS ndiff=0 first=-1 last=-1 file_ver=0x1c02000a
+[3/13] AI2.AI PASS ndiff=0 first=-1 last=-1 file_ver=0x1c02000a
+[4/13] AI25.AI PASS ndiff=0 first=-1 last=-1 file_ver=0x1c02000a
+[5/13] AI26.AI PASS ndiff=0 first=-1 last=-1 file_ver=0x1c02000a
+[6/13] AI3.AI PASS ndiff=0 first=-1 last=-1 file_ver=0x1c02000a
+[7/13] AI30.AI STAMP ndiff=4 first=8 last=11 file_ver=0x1803ffff
+[8/13] AI33.AI PASS ndiff=0 first=-1 last=-1 file_ver=0x1c02000a
+[9/13] AI34.AI PASS ndiff=0 first=-1 last=-1 file_ver=0x1c02000a
+[10/13] AI36.AI PASS ndiff=0 first=-1 last=-1 file_ver=0x1c02000a
+[11/13] AI37.AI PASS ndiff=0 first=-1 last=-1 file_ver=0x1c02000a
+[12/13] AI38.AI PASS ndiff=0 first=-1 last=-1 file_ver=0x1c02000a
+[13/13] AI39.AI PASS ndiff=0 first=-1 last=-1 file_ver=0x1c02000a
+identical 12/13, version-stamp-only 1, other 0

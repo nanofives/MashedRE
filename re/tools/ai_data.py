@@ -31,6 +31,7 @@ re/analysis/ai_controller.md / ai_path_following/SESSION_END.md.
 Usage:
   py -3.12 re/tools/ai_data.py validate [AI.piz]        # parse + check all members
   py -3.12 re/tools/ai_data.py dump <AI%d.AI>           # one extracted member
+  py -3.12 re/tools/ai_data.py roundtrip [AI.piz]       # parse -> FUN_00423540 emit identity
 """
 import sys, os, struct, subprocess, tempfile, shutil
 
@@ -133,6 +134,48 @@ def cmd_validate(piz_path):
         shutil.rmtree(tmp, ignore_errors=True)
 
 
+def pack_version(p4, p5):
+    """FUN_004cc580 body: ((p4 + 0x10000 & 0x3ff00) << 0xe) | ((p4 & 0x3f) << 0x10) | (p5 & 0xffff)."""
+    return ((((p4 + 0x10000) & 0x3ff00) << 0xe) | ((p4 & 0x3f) << 0x10) | (p5 & 0xffff)) & 0xffffffff
+
+
+# FUN_00423540 calls FUN_004cc580(h, 0x13269902, 0x11884, 0x37002, 10).
+WRITER_VERSION = pack_version(0x37002, 10)
+assert WRITER_VERSION == RW_VERSION
+
+
+def emit_member(payload):
+    """FUN_00423540 byte order: FUN_004cc580 header then FUN_004cbe80(h, &DAT_007f1a9c, 0x11884)."""
+    if len(payload) != PAYLOAD_SIZE:
+        raise ValueError(f"payload {len(payload)} != 0x{PAYLOAD_SIZE:x}")
+    return struct.pack("<III", CHUNK_TYPE, PAYLOAD_SIZE, WRITER_VERSION) + bytes(payload)
+
+
+def cmd_roundtrip(piz_path):
+    """parse -> emit per member; PASS = byte-identical, STAMP = differs only in bytes 8..11."""
+    tmp, names = _extract_all(piz_path)
+    try:
+        n = len(names); same = stamp = 0
+        for i, nm in enumerate(names, 1):
+            with open(os.path.join(tmp, nm), "rb") as f:
+                raw = f.read()
+            parse_member(raw, nm)
+            out = emit_member(raw[HEADER_LEN:])
+            diffs = [k for k in range(len(raw)) if raw[k] != out[k]]
+            if not diffs:
+                same += 1; st = "PASS"
+            elif diffs[0] >= 8 and diffs[-1] <= 11:
+                stamp += 1; st = "STAMP"
+            else:
+                st = "FAIL"
+            (ver,) = struct.unpack_from("<I", raw, 8)
+            print(f"[{i}/{n}] {nm} {st} ndiff={len(diffs)} file_ver=0x{ver:08x}")
+        print(f"identical {same}/{n}, version-stamp-only {stamp}, other {n - same - stamp}")
+        return 0 if same + stamp == n else 1
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
 def cmd_dump(path):
     with open(path, "rb") as f:
         raw = f.read()
@@ -149,10 +192,11 @@ def main(argv):
     if len(argv) < 2:
         print(__doc__); return 2
     cmd = argv[1]
-    if cmd == "validate":
+    if cmd in ("validate", "roundtrip"):
         piz = argv[2] if len(argv) > 2 else os.path.join(
             os.path.dirname(__file__), "..", "..", "original", "TOASTART", "Common", "AI.piz")
-        return cmd_validate(os.path.abspath(piz))
+        fn = cmd_validate if cmd == "validate" else cmd_roundtrip
+        return fn(os.path.abspath(piz))
     if cmd == "dump" and len(argv) > 2:
         return cmd_dump(argv[2])
     print(__doc__); return 2

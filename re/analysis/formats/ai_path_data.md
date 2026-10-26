@@ -30,6 +30,27 @@ off 0x0c  ..   payload  (0x11884 bytes)  -> loaded verbatim to DAT_007f1a9c
   `FUN_004cbd30(h, &DAT_007f1a9c, size)`. **The reader ignores `version`** — so
   AI30.AI's `0x1803ffff` stamp is harmless (verified: it parses fine).
 
+## Round-trip identity (D4-WSF-TRACKDATA-RT, 2026-10-26)
+
+`FUN_004cc580` packs its args 4/5 as
+`((p4 + 0x10000 & 0x3ff00) << 0xe) | ((p4 & 0x3f) << 0x10) | (p5 & 0xffff)` and writes
+`[type][size][version]` as one 0xc-byte `FUN_004cbe80` call (`0x004cc580` body), so the
+writer stamps `(0x37002, 10)` = **`0x1c02000a`** on every file. Emit =
+`AiData_Emit` (`mashedmod/src/mashed_re/Ai/AiData.h`, test-only) and
+`ai_data.py roundtrip`.
+
+- parse -> emit over the 13 shipped members (C++ `Ai/tests/aidata_rt_test.cpp` and
+  Python, same result): **12/13 byte-identical**. AI30.AI differs in bytes 8..11 only,
+  its shipped stamp `0x1803ffff` against the writer's `0x1c02000a`.
+- Original-side witness: `scenario_launch.py --ai-save-capture` loads a race in the
+  stock original, dumps `DAT_007f1a9c`, and calls `FUN_00423540` (returns 1, writes
+  `DAT_00644110` = `AI<n>.AI` in the game directory). Track 0 wrote `AI30.AI`, track 2
+  wrote `AI39.AI`. Both files are byte-identical to `AiData_Emit(DAT_007f1a9c)` (0 of
+  71,824 bytes differ). The loaded image equals the shipped payload, and the call
+  leaves it unchanged. The original's own `AI30.AI` carries `0x1c02000a`, so the
+  stamp difference above is the writer's behaviour, which the emit reproduces.
+  Evidence: `verify/trackdata_rt_20261026/RESULT_D4-WSF-TRACKDATA-RT.md`.
+
 ## Payload (= the `DAT_007f1a9c` monolithic image, 0x11884 B)
 
 | payload off | abs addr | region | layout |
