@@ -1,6 +1,11 @@
 # RESULT D4-WSJ-WIRE: race SFX wired by data behind MASHED_AUDIO_WIRE (default OFF)
 
-**Verdict: HANDOFF (code, PREREG, runner and scorer committed; build, gates and arms not run: solo window open).**
+**Verdict: DECISION. Predictions 1, 2, 3 and 5 hold. Prediction 4 holds except the per-car engine class for cars 1..3,
+which falls back to class 0 because the port gives no vehicle to cars 1..3 (cause and detail in §Scores). The knob stays
+default OFF. The flip is the open question.**
+Resumed 2026-10-26 (session `cmvpe71q0bb0go115rxub6230`): `orch/integration` @ `e11287674` (MASHED_COLL_LUT default ON)
+merged in as `5b361ea4d` (`merge.autoStash=false`, no conflict, `--is-ancestor` true after). Build: first compile clean,
+`MASHED_NO_DEPLOY=1`, `mashed_re.exe` SHA-256 `48916bb8c281...eeaea`.
 Branch `orch/D4-WSJ-WIRE` off `orch/integration` @ `992687ebc`, with `orch/D4-WSJ-SFXMAP` @ `05d4dd024`,
 `orch/D4-WSJ-ENGCLASS` @ `5473f09c9` and `orch/D4-WSJ-MUSIC` @ `05339c191` merged in (`git merge-base --is-ancestor`:
 none was an ancestor of `992687ebc`, so all three were merged, `merge.autoStash=false`, no conflict).
@@ -73,21 +78,80 @@ the original's draw index is a separate question, not acted on.
 
 ## Gates
 
-Not run (solo window). `VehiclePhysicsRun.cpp` is touched (two knob-gated calls), so the merge train runs its full set
-(`full_set_paths` includes `Vehicle/`).
+`VehiclePhysicsRun.cpp` is touched (two knob-gated calls), so the merge train runs its full set (`full_set_paths`
+includes `Vehicle/`). Every boot below ran under `mashed_lock.py run --label D4-WSJ-WIRE` on the private root
+`D:/MashedWT/D4-WSJ-WIRE_root`, exe `48916bb8`. Refs from `re/orchestrator/merge_train.json` on this base: G-CTRL
+`5943c5f1/b493262b/09551e6a`, B `3a03670c/e85ea6fb/53778664` (the B middle ref moved from the PREREG's `2516d903` with the
+MASHED_COLL_LUT flip in `e11287674`; the json wins).
 
-## HANDOFF (resume here)
+| run | knob | G-CTRL (H_DEF step / gates / ptrace) | B (K0 / K1 / K26) | result |
+|---|---|---|---|---|
+| G0 | OFF | `5943c5f1 / b493262b / 09551e6a` | `3a03670c / e85ea6fb / 53778664` | exact, all six |
+| G1 | `MASHED_AUDIO_WIRE=1` (`gates_knob.py`) | `5943c5f1 / b493262b / 09551e6a` | `3a03670c / e85ea6fb / 53778664` | exact, all six |
+| G1b (not preregistered) | ON + `MASHED_AUDIO_EVENT_LOG` | `5943c5f1 / b493262b / 09551e6a` | not run | exact |
 
-1. Build: `cmd /c "set MASHED_NO_DEPLOY=1&& mashedmod\build.bat"` from the worktree. Fix any compile error (nothing was
-   compiled in the solo window).
-2. Private root: `robocopy <repo>\original D:\MashedWT\D4-WSJ-WIRE_root\original /E` (the root contains `original\`).
-3. G0: `A4_ROOT=D:/MashedWT/D4-WSJ-WIRE_root A4_OUT=D:/MashedWT/D4-WSJ-WIRE_data/gates_off py -3.12 verify/savelink_20261023/run_arms.py H_DEF B_DEF_K0 B_DEF_K1 B_DEF_K26`
-   under `mashed_lock.py run --label D4-WSJ-WIRE`. Expect G-CTRL `5943c5f1/b493262b/09551e6a`, B `3a03670c/2516d903/53778664`.
-4. G1: same with `A4_OUT=.../gates_on` and `py -3.12 verify/wsjwire_20261026/gates_knob.py ...` (sets `MASHED_AUDIO_WIRE=1`). Expect the same six.
-5. Arms: `run_port.py A menu`; `ARM_KNOB=1 run_port.py B menu`; `ARM_KNOB=1 ARM_SELFTEST=1 run_port.py C menu 30`.
-6. Score: `py -3.12 -I verify/wsjwire_20261026/score_wire.py <data>/port/A.audio_events.csv <data>/port/B.audio_events.csv <data>/port/C.audio_events.csv verify/wsjmusic_20261026/A_off.audio_events.csv verify/wsjwire_20261026/score.txt`.
-7. Fill the verdict, the gate hashes, and the raw-data SHA-256 table here; `roadmap.ps1 set D4-WSJ-WIRE review -Evidence verify/wsjwire_20261026/RESULT_D4-WSJ-WIRE.md`.
+G1b exists because the gate arms write no audio event log, so G1 alone does not show that the wire ran inside the gate
+scenario. G1b's event log has 12 `vstart`, 2 `pickup`, 1 `guard_closed` rows: the wire ran on H_DEF and the three
+G-CTRL hashes did not move.
+
+## Scores (`score.txt`, `score_wire.py`)
+
+| # | prediction | result |
+|---|---|---|
+| 1 | G0 = refs | PASS (6/6) |
+| 2 | G1 = refs | PASS (6/6) |
+| 3 | A event log = MUSIC arm A (`A_off`) | PASS, 13 rows = 13, no diff |
+| 4a | no race `music_start` | PASS, 0 |
+| 4b | `threetwoone` once on v65, `go` once on v95 | PASS, n=1 each |
+| 4c | per live car: `eng<k>` on base+c, `eng<k>d` on base+4+c, k = class of that car's vehicle + 1 | **PARTIAL** (below) |
+| 4d | no `fire` / impact starts, rejections counted | PASS, 0 starts, `guard_closed_total` barrier 5, other vehicle 1 |
+| 4e | powerup / pickup waves | PASS, 0 `pu_event` (menu recipe drives none), 2 `collision with pod` on v100 |
+| 5 | self-test | PASS, 20/20 |
+
+**4c detail.** B's race has 4 participants (`guard_closed` rows carry participants 4, and the tick starts 4 cars) but
+`RaceSession` passes `m_cfg.numCars = 1` to `WireRaceBegin` (`Race/RaceSession.cpp:215`). The port sets only
+`cfg.cars[0].carIndex` (`exe_main.cpp:2111`) and loads one car DFF (`RaceSession.cpp:135`), so cars 1..3 have no vehicle.
+Rows: car 0 `engine_class ADVANTAGE -> eng2`, `eng2` v8 + `eng2d` v12 (correct by ENGCLASS). Cars 1..3: no
+`engine_class` row, `eng1` v1/v2/v3 + `eng1d` v5/v6/v7, i.e. `WireEngineClass(-1)` = class 0 (the JA unknown-case
+branch). Voice indices and the base+c / base+4+c layout hold. The class for cars 1..3 is not the original's, because the
+port has no AI vehicle selection to read. The scorer checked car 0 only, which is why it printed PASS. Not a RED by the
+verdict mapping (4 is not 1..3). Fix path: an AI vehicle choice in the port (out of this step's scope), then
+`WireRaceBegin` with the live count.
+
+## Not run
+
+No D2 arms: the PREREG registers none (G0, G1, A, B, C only), so the solo lock was not taken. Every boot used the
+shared `mashed_lock.py run` lock. The audio wire touches no sim value (G1 and G1b are bit-identical to G0).
+
+## Decision for the lead (flip question)
+
+Flip `MASHED_AUDIO_WIRE` to default ON? Options: (a) flip now, with cars 1..3 on class 0 until the port picks AI
+vehicles, (b) hold until an AI vehicle choice lands, then flip. Evidence: this RESULT, `score.txt`. Recommendation: (a).
+Default sim gates do not move with the knob ON (G1, G1b), and the 4c residue is a missing port input, not a wire error.
+Knob-OFF behaviour is unchanged (G0, prediction 3).
 
 ## Raw data (not committed), SHA-256
 
-None yet. Root `D:/MashedWT/D4-WSJ-WIRE_data/`.
+Root `D:/MashedWT/D4-WSJ-WIRE_data/`.
+
+| file | SHA-256 |
+|---|---|
+| `port/A.audio_events.csv` | `0974688e2493f3f5116f38a6dc2acd28b25965d412e579d3e9a9eb9c4cfc20c5` |
+| `port/B.audio_events.csv` | `e24a9281974ff8c8753aacd5969f9862cd8e67a686e75385c073256006b559f3` |
+| `port/C.audio_events.csv` | `9eaeeec6e3e3426959a606be4fa52cc68367688b94d3b8cfde619ca8c9195850` |
+| `port/A.log` | `26f03b7d08b3fee70300fdf4c400b2b834f2e187916d1a6037145162aed34906` |
+| `port/B.log` | `1be538c29afbe843479a4ef094394511a25b2987d8fc294825588ebaa3996f69` |
+| `port/C.log` | `53032becb620cfa186a2ff36c371dd9de86ad4e2a3f072d78d28a7a591b40600` |
+| `gates_off/H_DEF.step.csv` | `5943c5f1c3e2f3f2510139f7af666ffa87941f6dfa66201b15277430b92be415` |
+| `gates_off/H_DEF.gates.csv` | `b493262bed8ea6ecad4399f0ebaa53b902965423e74bfa07359188559fff479f` |
+| `gates_off/H_DEF.ptrace.log` | `09551e6a5b1b456b3421a0e1aac768ced7851c072c99a9341a22ca966cdfe3e1` |
+| `gates_off/B_DEF_K0.step.csv` | `3a03670c3991b702af9fd44b1d49dbdb4f91d6be00876723cb1ba7891895b83f` |
+| `gates_off/B_DEF_K1.step.csv` | `e85ea6fb266223f9eed3a90bf9aa30ea50291fd552ac3881d3bfbea843a759f8` |
+| `gates_off/B_DEF_K26.step.csv` | `5377866478b33a9827ae5c343b8861189f8f0a838785bf2b83da5f6118931e2d` |
+| `gates_on/*` | same six SHA-256 as `gates_off` (byte-identical) |
+| `gates_on_evlog/H_DEF.audio_events.csv` | `351bf364cd4ec81768998a8b363a6b9e6ae9a5ebd20cfeb98cb9e166679fadeb` |
+| `gates_on_evlog/H_DEF.step.csv` | `5943c5f1c3e2f3f2510139f7af666ffa87941f6dfa66201b15277430b92be415` |
+| `build.log` | `9cd3204dc140f74b80512c42a60175727aca10c4ed1aff8eef8852ab92d729f1` |
+| `mashedmod/build/mashed_re.exe` | `48916bb8c281672a0996c127056991b46a553bb1f91a2c378b3db95edfbeaeea` |
+
+G1b runner: a scratch copy of `gates_knob.py` that also sets `MASHED_AUDIO_EVENT_LOG` (not committed, one extra env line).

@@ -1,0 +1,8 @@
+[1/8] P3_A_equals_music_A_off PASS rows A=13 ref=13 first_diff=None
+[2/8] P4_no_cdaudio_in_race PASS music_start rows in race=0
+[3/8] P4_threetwoone_once_v65 PASS n=1 voices=['v65']
+[4/8] P4_go_once_v95 PASS n=1 voices=['v95']
+[5/8] P4_engine_main_and_d_per_car PASS car0:eng2 main=1@['v8'] d=1@['v12']
+[6/8] P4_no_fire_no_impact_starts PASS starts=0 guard_closed_total={'impact with barrier': '5.000', 'impact with other vehicle 1': '1.000'}
+[7/8] P4_powerup_pickup_waves PASS pu_events=0 wrong=[] pod_starts=2
+[8/8] P5_selftest_all_pass PASS rows=20 fail=[]
