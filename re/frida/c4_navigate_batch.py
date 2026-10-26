@@ -4,9 +4,18 @@
 #  1. OFF-run CHUNKING: Interceptor-counting N functions in one boot risks the hot-path
 #     destabilization (CLAUDE.md: >1000/s aggregate drifts MASHED in ~6s). So the exercise
 #     pass counts candidates in chunks of --chunk per boot (default 6) and merges counts.
-#  2. ON-run CRASH BISECTION: all candidates are installed together in one boot (fast); if it
-#     crashes, the group is bisected to isolate which RVA(s) crash -> those get survived=False,
-#     the rest survived=True. Avoids one bad hook poisoning the whole batch's verdict.
+#  2. ON-run CHUNKED INSTALL + CRASH BISECTION: candidates are installed in groups of --on-chunk
+#     per boot (default 16; 0 = all in one boot). If a group crashes, only THAT group is bisected
+#     to isolate which RVA(s) crash -> those get survived=False, the rest survived=True. One bad
+#     hook costs a bisect of its own group, not of the whole batch. A piz-collision crash
+#     (U-9677, MASHED.exe+0x1509b4 / +0xe66db) is re-run once, never bisected.
+#     [UNCERTAIN] the default of 16 is untuned (re/HARNESS_BACKLOG.md); ROI is reasoned, not measured.
+#
+# --force-bad 0xRVA = harness self-test only: every ON run that installs that RVA overwrites its
+#   JMP with `mov eax,[0]` once the nav completes, so the next call faults for real. Proves the
+#   chunk + bisect path end to end. A run with it is NOT evidence for any hook.
+# MASHED_ROOT = a private root containing original\ (canonical_c4_navigate.py honours it).
+# --out-tag X writes log/c4_nav_batch_resultX.{json,md} instead of the shared default name.
 #
 # Candidate sources (pick one): --rvas 0x..,0x..  |  --manifest <file> (lines: 0xRVA[,nav])
 #   |  --from-hookscsv <subsystem> [--status impl] (pulls hooks.csv rows; navigate self-filters
@@ -19,7 +28,7 @@
 #
 # Usage:
 #   py -3.12 re/frida/c4_navigate_batch.py --from-hookscsv frontend --status impl \
-#       --nav 4,4 --chunk 6 [--seconds 22] [--shot-dir verify/c4nav]
+#       --nav 4,4 --chunk 6 [--on-chunk 16] [--seconds 22] [--shot-dir verify/c4nav]
 #   py -3.12 re/frida/c4_navigate_batch.py --rvas 0x0042e3a0,0x0042d5a0 --nav 4,4
 import csv, json, os, sys, time
 from pathlib import Path
@@ -67,12 +76,31 @@ def chunked(seq, n):
         yield seq[i:i+n]
 
 
+FORCE_BAD = None              # --force-bad 0xRVA: harness self-test (fault injection), see main()
+PIZ_COLLISION = (0x005509b4, 0x004e66db)   # MASHED.exe+0x1509b4 / +0xe66db (U-9677): re-run, not a finding
+
+
+def run_on(group, nav, settle, dwell, seconds, shot=None, shotat=None):
+    """ON run of `group` installed together. A group holding FORCE_BAD gets that RVA's JMP poisoned
+    after the nav, so it faults for real. A piz-collision crash (U-9677) is re-run once."""
+    poison = FORCE_BAD if FORCE_BAD in group else None
+    for attempt in (0, 1):
+        res = H.run(",".join(group), group, None, nav, settle, dwell, seconds,
+                    shot=shot, shotat=shotat, poison=poison)
+        c = res["crash"]
+        try: eip = int(c["eip"], 16) if c else None
+        except Exception: eip = None
+        if eip not in PIZ_COLLISION or attempt: return res
+        print(f"      piz-collision crash eip={c['eip']} (U-9677) -> re-run")
+    return res
+
+
 def bisect_bad(rvas, nav, settle, dwell, seconds, depth=0):
     """Return set of RVAs that crash the ON run (installed together). Bisects on crash."""
     if not rvas: return set()
     ind = "  " * (depth + 2)
     print(f"{ind}ON-test {len(rvas)}: {','.join(rvas)}")
-    res = H.run(",".join(rvas), rvas, None, nav, settle, dwell, seconds)
+    res = run_on(rvas, nav, settle, dwell, seconds)
     if res["crash"] is None and res["alive"]:
         return set()                      # whole group survives -> none bad
     if len(rvas) == 1:
@@ -97,6 +125,14 @@ def main():
     dwell   = int(a[a.index("--dwell")+1])   if "--dwell"   in a else 1500
     seconds = int(a[a.index("--seconds")+1]) if "--seconds" in a else 22
     shotdir = a[a.index("--shot-dir")+1]     if "--shot-dir" in a else None
+    on_chunk = int(a[a.index("--on-chunk")+1]) if "--on-chunk" in a else 16   # 0 = all at once
+    outtag  = a[a.index("--out-tag")+1]      if "--out-tag" in a else ""
+    global FORCE_BAD
+    if "--force-bad" in a:
+        FORCE_BAD = a[a.index("--force-bad")+1].lower()
+        if not FORCE_BAD.startswith("0x"): FORCE_BAD = "0x" + FORCE_BAD
+        print(f"!!! --force-bad {FORCE_BAD}: HARNESS SELF-TEST, its JMP is poisoned in every ON run "
+              f"that installs it. Verdicts from this run are not evidence for any hook.")
 
     if "--rvas" in a:
         cands = [{"rva": (x if x.lower().startswith("0x") else "0x"+x).lower(), "name": x,
@@ -112,7 +148,7 @@ def main():
 
     rvas = [c["rva"] for c in cands]
     by_rva = {c["rva"]: c for c in cands}
-    print(f"=== mass navigate C4: {len(rvas)} candidates, nav={nav}, chunk={chunk}, seconds={seconds} ===")
+    print(f"=== mass navigate C4: {len(rvas)} candidates, nav={nav}, chunk={chunk}, on_chunk={on_chunk}, seconds={seconds} ===")
     for c in cands: print(f"    {c['rva']}  {c['name']}")
     LOG.mkdir(parents=True, exist_ok=True)
 
@@ -134,28 +170,35 @@ def main():
                 except Exception: counts[k.lower()] = 0
         print(f"    navTaps={off['navc']} counts={off['counts']}")
 
-    # ---- PHASE 2: install all + survive (ON), bisect on crash ----
-    print(f"\n=== PHASE 2: install + navigate + survive (ON, bisect on crash) ===")
+    # ---- PHASE 2: install in groups of --on-chunk + survive (ON), bisect within a crashing group ----
+    groups = list(chunked(rvas, on_chunk)) if on_chunk > 0 else [rvas]
+    print(f"\n=== PHASE 2: install + navigate + survive (ON, {len(groups)} group(s) of "
+          f"{on_chunk if on_chunk > 0 else len(rvas)}, bisect within a crashing group) ===")
     shot = None
     if shotdir:
         Path(ROOT / shotdir).mkdir(parents=True, exist_ok=True)
-        shot = f"{shotdir}/c4nav_ON_all.png"
-    on_all = H.run(",".join(rvas), rvas, None, nav, settle, dwell, seconds,
-                   shot=shot, shotat=(seconds*0.6))
-    bad = set()
-    if on_all["crash"] is None and on_all["alive"]:
-        print(f"  whole batch installed + survived (navTaps={on_all['navc']})")
-        jmp = on_all["jmp"]
-    else:
-        print(f"  batch crashed -> bisecting to isolate culprit(s)")
-        bad = bisect_bad(rvas, nav, settle, dwell, seconds)
-        # re-read JMP bytes from a survivor install (install the good set) for installed= flag
-        good = [r for r in rvas if r not in bad]
-        jmp = {}
+        shot = f"{shotdir}/c4nav_ON_g0.png"
+    bad = set(); jmp = {}; group_log = []
+    for gi, group in enumerate(groups):
+        print(f"  group {gi}: installing {group}")
+        res = run_on(group, nav, settle, dwell, seconds,
+                     shot=(f"{shotdir}/c4nav_ON_g{gi}.png" if shotdir else None), shotat=(seconds*0.6))
+        if res["crash"] is None and res["alive"]:
+            print(f"    group {gi} installed + survived (navTaps={res['navc']})")
+            jmp.update(res["jmp"])
+            group_log.append({"group": gi, "rvas": group, "crashed": False, "bad": []})
+            continue
+        c = res["crash"]
+        print(f"    group {gi} crashed (eip={c['eip'] if c else '?'}) -> bisecting within the group")
+        gbad = bisect_bad(group, nav, settle, dwell, seconds)
+        bad |= gbad
+        # re-read JMP bytes from a survivor install (install the group's good set) for installed= flag
+        good = [r for r in group if r not in gbad]
         if good:
-            gres = H.run(",".join(good), good, None, nav, settle, dwell, seconds)
-            jmp = gres.get("jmp", {})
-        for b in bad: jmp.setdefault(b, None)
+            jmp.update(run_on(good, nav, settle, dwell, seconds).get("jmp", {}))
+        for b in gbad: jmp.setdefault(b, None)
+        group_log.append({"group": gi, "rvas": group, "crashed": True,
+                          "eip": c["eip"] if c else None, "bad": sorted(gbad)})
 
     # ---- verdicts ----
     # window over which post-nav counts accumulated (rough), for hot-path detection
@@ -187,14 +230,15 @@ def main():
         rows_md.append(f"| {r} | {by_rva[r]['name']} | {calls} | {int(rate)}/s | {installed} | "
                        f"{survived} | {'**'+tag+'**' if ready else tag} | {','.join(why)} |")
 
-    out["_meta"] = {"nav": nav, "chunk": chunk, "n": len(rvas), "n_trio_ok": n_ready,
-                    "bad": sorted(bad), "shot": shot, "window_s": round(window_s, 1)}
-    res_path = LOG / "c4_nav_batch_result.json"
+    out["_meta"] = {"nav": nav, "chunk": chunk, "on_chunk": on_chunk, "force_bad": FORCE_BAD,
+                    "n": len(rvas), "n_trio_ok": n_ready, "bad": sorted(bad), "groups": group_log,
+                    "shot": shot, "window_s": round(window_s, 1)}
+    res_path = LOG / f"c4_nav_batch_result{outtag}.json"
     res_path.write_text(json.dumps(out, indent=2), encoding="utf-8")
     md = (f"# C4 navigate batch — nav={nav}, n={len(rvas)}, {n_ready} trio-OK\n\n"
           f"| RVA | name | calls(post-nav) | rate | installed | survived | verdict | why |\n"
           f"|---|---|---|---|---|---|---|---|\n" + "\n".join(rows_md) + "\n")
-    md_path = LOG / "c4_nav_batch_result.md"
+    md_path = LOG / f"c4_nav_batch_result{outtag}.md"
     md_path.write_text(md, encoding="utf-8")
     print(f"\n  {n_ready}/{len(rvas)} pass exercised+installed+survived+not-hot on nav={nav}")
     print(f"  HOT fns need the behavioral-survival lane (no Interceptor), not this count.")
