@@ -1,0 +1,49 @@
+# D3-CF-R7DETFRAME: cited lines of the nine D2 logs (line number: text). Raw logs stay on D:, sha256 below.
+# Columns per log: InitD3D9 adapter mode (desktop refresh), Challenge Select capture, the scripted Enter tap's R7IN line,
+# and the first SIMHZ line (first second of InRace).
+
+== D:/MashedWT/D3-CF-R7INPUT_data/arms/D2_XI_1.log  sha256 39790f2c21644c21c4ef15fc4859d51b396b53bfe13e9d0b4391316dd7f0af2b  mtime 2026-10-25 10:19:23
+58:InitD3D9: adapter mode 3840x2160 fmt=22 refresh=60
+157:NAV_DEMO phase=0 00_challengeselect ok=1 depth=1 screen=6 cur=0 nrec=3
+171:R7IN byte0xa slot=1 val=0xff r7frame=0 test=0 det_frame=18
+202:SIMHZ render_fps=17.0 sim_hz=56.0 (frames=17 steps=56 span=1.00s cfg=60)
+== D:/MashedWT/D3-CF-R7INPUT_data/arms/D2_XI_2.log  sha256 432c60b7ef12c870ea48b72f1341e3df3e832825cac9bb6ec4295560dedc648b  mtime 2026-10-25 10:21:02
+58:InitD3D9: adapter mode 3840x2160 fmt=22 refresh=60
+157:NAV_DEMO phase=0 00_challengeselect ok=1 depth=1 screen=6 cur=0 nrec=3
+171:R7IN byte0xa slot=1 val=0xff r7frame=0 test=0 det_frame=12
+202:SIMHZ render_fps=12.6 sim_hz=49.5 (frames=13 steps=51 span=1.03s cfg=60)
+== D:/MashedWT/D3-CF-R7INPUT_data/arms/D2_XI_3.log  sha256 9fb1ab99b23044e7e6b41275d41fc877491b1bed1568ab31e84139a4fe44829a  mtime 2026-10-25 10:22:22
+58:InitD3D9: adapter mode 3840x2160 fmt=22 refresh=60
+157:NAV_DEMO phase=0 00_challengeselect ok=1 depth=1 screen=6 cur=0 nrec=3
+171:R7IN byte0xa slot=1 val=0xff r7frame=0 test=0 det_frame=19
+202:SIMHZ render_fps=25.2 sim_hz=59.2 (frames=26 steps=61 span=1.03s cfg=60)
+== D:/MashedWT/D3-CF-R7JOYPAD_data/arms/D2_XI_1.log  sha256 bad417aaf13d65606b8341eff72a302c6edcae88a1f89c53e3e7c519fd3a694c  mtime 2026-10-25 18:37:55
+58:InitD3D9: adapter mode 3840x2160 fmt=22 refresh=120
+157:NAV_DEMO phase=0 00_challengeselect ok=1 depth=1 screen=6 cur=0 nrec=3
+171:R7IN byte0xa slot=2 val=0xff r7frame=0 test=0 det_frame=72 type=2
+202:SIMHZ render_fps=75.0 sim_hz=55.0 (frames=75 steps=55 span=1.00s cfg=60)
+== D:/MashedWT/D3-CF-R7JOYPAD_data/arms/D2_XI_2.log  sha256 382590798e2458d95636cf37f65d77bf30e4160faf352a172dc8f67b3aaa6f93  mtime 2026-10-25 18:39:25
+58:InitD3D9: adapter mode 3840x2160 fmt=22 refresh=120
+157:NAV_DEMO phase=0 00_challengeselect ok=1 depth=1 screen=6 cur=0 nrec=3
+171:R7IN byte0xa slot=2 val=0xff r7frame=0 test=0 det_frame=69 type=2
+202:SIMHZ render_fps=59.0 sim_hz=57.0 (frames=59 steps=57 span=1.00s cfg=60)
+== D:/MashedWT/D3-CF-R7JOYPAD_data/arms/D2_XI_3.log  sha256 7ee7cb27dc3742ebdac34839e134106341b39a3157d9eb62748b93aa62ce3c24  mtime 2026-10-25 18:40:54
+58:InitD3D9: adapter mode 3840x2160 fmt=22 refresh=120
+157:NAV_DEMO phase=0 00_challengeselect ok=1 depth=1 screen=6 cur=0 nrec=3
+171:R7IN byte0xa slot=2 val=0xff r7frame=0 test=0 det_frame=70 type=2
+202:SIMHZ render_fps=91.0 sim_hz=59.0 (frames=91 steps=59 span=1.00s cfg=60)
+== D:/MashedWT/D3-CF-R7FLIP_data/arms/D2_DEF_1.log  sha256 2cabbd181839be7efcb03dccfdf765f95ec63349e9b6aa738bd308519084154b  mtime 2026-10-25 19:56:07
+58:InitD3D9: adapter mode 3840x2160 fmt=22 refresh=60
+157:NAV_DEMO phase=0 00_challengeselect ok=1 depth=1 screen=6 cur=0 nrec=3
+171:R7IN byte0xa slot=2 val=0xff r7frame=0 test=0 det_frame=37 type=2
+202:SIMHZ render_fps=54.0 sim_hz=59.0 (frames=54 steps=59 span=1.00s cfg=60)
+== D:/MashedWT/D3-CF-R7FLIP_data/arms/D2_DEF_2.log  sha256 f1bd4945aa4ef4e01970f23fb36d7b00b561c65bc7eb0d28da8a39f48f1e8b43  mtime 2026-10-25 19:57:37
+58:InitD3D9: adapter mode 3840x2160 fmt=22 refresh=60
+157:NAV_DEMO phase=0 00_challengeselect ok=1 depth=1 screen=6 cur=0 nrec=3
+171:R7IN byte0xa slot=2 val=0xff r7frame=0 test=0 det_frame=38 type=2
+202:SIMHZ render_fps=52.0 sim_hz=59.0 (frames=52 steps=59 span=1.00s cfg=60)
+== D:/MashedWT/D3-CF-R7FLIP_data/arms/D2_DEF_3.log  sha256 32e7851cf7088688b7b7edf7a74f380145bafc98d81cddbf58377c37927b9989  mtime 2026-10-25 19:59:07
+58:InitD3D9: adapter mode 3840x2160 fmt=22 refresh=60
+157:NAV_DEMO phase=0 00_challengeselect ok=1 depth=1 screen=6 cur=0 nrec=3
+171:R7IN byte0xa slot=2 val=0xff r7frame=0 test=0 det_frame=38 type=2
+202:SIMHZ render_fps=51.0 sim_hz=60.0 (frames=51 steps=60 span=1.00s cfg=60)
