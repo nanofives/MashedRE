@@ -94,7 +94,11 @@ bool g_autosave   = true;     // [WS-G4] Autosave option gate (Sound/Options scr
 // progression -> championship span (the SerializeToBuffer source layout, 0x7f0a40).
 void BuildSpanFromProgress(unsigned char span[mashed_re::Save::kSpanBytes]) {
     using namespace mashed_re::Save;
-    std::memset(span, 0, kSpanBytes);
+    // [D4-WSF-SAVE-SPANINIT 2026-10-26] start from FUN_004924f0's span values, not zero: with
+    // KEEP_IMAGE on, this rebuild only runs when there is no valid file, i.e. the first run, where
+    // the original serializes the span its boot init left (Save/GameSaveFormat.h InitSpanDefaults).
+    // The port-private columns below (col 4 unlock, col 5 trophy, the +0x4ec gate) still overlay it.
+    InitSpanDefaults(span);
     bool any = false;
     for (int r = 0; r < kAreaCount && r < kSpanRows; ++r) {
         std::uint32_t u = g_progUnlock[r] ? 2u : 0u;   // real "track available" = 2
