@@ -28,6 +28,12 @@ constexpr unsigned char kEngineClassByVehicle[13] = {
     3, // 11 Kustom
     0, // 12 Formula (EDI > 0xb -> 0x004636d9, JA at 0x00463687)
 };
+// Vehicle names in record order (record +0x20, verify/wsjeng_20261026/engine_class_table.tsv), uppercase as the
+// port's VEHICLES/*.piz DFF bases. [D4-WSJ-WIRE] maps the port's catalogue entry to the index above.
+constexpr const char* kVehicleNames[13] = {
+    "SHURIKEN", "ADVANTAGE", "ATMOS", "STALLION", "BULLET", "SPUTTER", "COOLER",
+    "SHORTY", "CRUSADER", "CREEPER", "BAMBAM", "KUSTOM", "FORMULA",
+};
 // Per class: pitch base added to the rpm term (row +0x90 read at 0x0046372b), min rpm
 // DAT_006130c4 (written 0x0046369a/0x004636b7/0x004636cd/0x004636e3), volume bias DAT_00613020[class].
 constexpr float kEngineBasePitch[4] = {2000.0f, 0.0f, 2000.0f, 2000.0f};

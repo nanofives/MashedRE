@@ -51,7 +51,10 @@ void  SetOutputActive(bool active);
 // for now (see re/analysis/audio_character_banks_REmap_20260616.md §4). Falls
 // back to a procedural buzz only if permdict isn't loaded. Pitched by
 // EngineSetRpm.
-void EngineStart(float volume);
+// [D4-WSJ-WIRE] `vehicleIdx` = the ORIGINAL vehicle index 0..12 (Audio/EngineClassTable.h; the class assignment is
+// resolved there, D4-WSJ-ENGCLASS). Read only with MASHED_AUDIO_WIRE=1, where the per-car voices of
+// Audio/AudioWire.h replace this single voice; -1 = unknown.
+void EngineStart(float volume, int vehicleIdx = -1);
 void EngineSetRpm(float norm01);             // 0..1 -> playback pitch
 void EngineStop();
 

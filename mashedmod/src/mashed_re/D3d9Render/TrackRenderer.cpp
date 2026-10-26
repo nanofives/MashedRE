@@ -21,6 +21,7 @@
 #include "../Track/LapLogic.h"      // F4 lap-line crossing sequence (shared w/ test)
 #include "../Txd/TxdDecoder.h"
 #include "../Audio/AudioEngine.h"   // real SFX (permdict.rws) for countdown/powerups
+#include "../Audio/AudioWire.h"     // [D4-WSJ-WIRE] wave-table powerup SFX (default OFF)
 #include "../LibRw/RwRaceSubmit.h"  // E2'b step 3: in-loop librw submit (the shipping race renderer)
 #include "../LibRw/RwCarFx.h"       // rtex: car dirt / env-map set-up tables (U-9693)
 #include "../LibRw/RwRaceFx.h"      // rfx: car shadow / headlight beam / HUD on librw
@@ -6072,6 +6073,11 @@ public:
         t_->parts_.SpawnBurst(sp, n, col, spd, sz, 0.35f);
     }
     void SfxByName(const char* name, float vol) override { Audio::SfxPlay(name, vol); }
+    // [D4-WSJ-WIRE] MASHED_AUDIO_WIRE=1: the SFXMAP wave for the event; knob OFF: the legacy by-name one-shot.
+    void SfxEvent(int ev, int owner, const char* legacyName, float vol) override {
+        if (Audio::WireOn()) { Audio::WirePowerup(ev, owner); return; }
+        if (legacyName) SfxByName(legacyName, vol);
+    }
     // OIL distance gate (orig: |pos-lastDrop|^2 >= _DAT_005cc56c, trail per owner).
     bool OilDropDue(int /*owner*/, const float pos[3]) override {
         const float r = R();

@@ -2,6 +2,8 @@
 #include "AudioEngine.h"
 #include "RwsBank.h"
 #include "AudioCharacterBankPaths.h"
+#include "AudioWire.h"
+#include "AudioEngineInternal.h"
 
 #include <windows.h>
 #include <dsound.h>
@@ -153,6 +155,54 @@ int CreateAndPlay(const char* rwsPath, const char* waveName, float volume, bool 
 }
 }  // namespace
 
+// --- [D4-WSJ-WIRE] internals for Audio/AudioWire.cpp (AudioEngineInternal.h) -------------
+namespace detail {
+void EvLogRow(const char* kind, const char* arg, const char* resolved, double val) { EvLog(kind, arg, resolved, val); }
+const RwsWave* SfxBankWaveExact(const char* name) {
+    if (!name) return nullptr;
+    for (const RwsWave& w : g_sfxBank) if (_stricmp(w.name.c_str(), name) == 0) return &w;
+    return nullptr;
+}
+static DWORD ClampHz(float hz) {
+    if (hz < static_cast<float>(DSBFREQUENCY_MIN)) return DSBFREQUENCY_MIN;
+    if (hz > static_cast<float>(DSBFREQUENCY_MAX)) return DSBFREQUENCY_MAX;
+    return static_cast<DWORD>(hz);
+}
+void* VoicePlay(const RwsWave& w, float freqHz, float vol01, bool loop) {
+    if (!g_ds || !w.valid()) return nullptr;
+    WAVEFORMATEX wf = {};
+    wf.wFormatTag = WAVE_FORMAT_PCM; wf.nChannels = static_cast<WORD>(w.channels);
+    wf.nSamplesPerSec = w.rate; wf.wBitsPerSample = static_cast<WORD>(w.bits);
+    wf.nBlockAlign = static_cast<WORD>(w.channels * w.bits / 8);
+    wf.nAvgBytesPerSec = w.rate * wf.nBlockAlign;
+    DSBUFFERDESC d = {};
+    d.dwSize = sizeof(d);
+    d.dwFlags = DSBCAPS_CTRLVOLUME | DSBCAPS_CTRLFREQUENCY | DSBCAPS_GLOBALFOCUS;
+    d.dwBufferBytes = static_cast<DWORD>(w.pcm.size());
+    d.lpwfxFormat = &wf;
+    IDirectSoundBuffer* buf = nullptr;
+    if (FAILED(g_ds->CreateSoundBuffer(&d, &buf, nullptr)) || !buf) return nullptr;
+    void* p1 = nullptr; DWORD s1 = 0;
+    if (SUCCEEDED(buf->Lock(0, d.dwBufferBytes, &p1, &s1, nullptr, nullptr, 0))) {
+        std::memcpy(p1, w.pcm.data(), s1);
+        buf->Unlock(p1, s1, nullptr, 0);
+    }
+    buf->SetFrequency(ClampHz(freqHz));
+    buf->SetVolume(VolToDs(vol01 * g_masterSfx));
+    buf->Play(0, 0, loop ? DSBPLAY_LOOPING : 0);
+    return buf;
+}
+void VoiceStop(void* b) {
+    if (IDirectSoundBuffer* buf = static_cast<IDirectSoundBuffer*>(b)) { buf->Stop(); buf->Release(); }
+}
+void VoiceSet(void* b, float freqHz, float vol01) {
+    IDirectSoundBuffer* buf = static_cast<IDirectSoundBuffer*>(b);
+    if (!buf) return;
+    if (freqHz >= 0.0f) buf->SetFrequency(ClampHz(freqHz));
+    if (vol01 >= 0.0f)  buf->SetVolume(VolToDs(vol01 * g_masterSfx));
+}
+}  // namespace detail
+
 bool Init(void* hwnd) {
     if (g_ds) return true;
     // MASHED_MUTE=1 -> skip DirectSound init entirely. g_ds stays null and every
@@ -221,7 +271,14 @@ void StopAll() {
         }
 }
 
-void EngineStart(float volume) {
+void EngineStart(float volume, int vehicleIdx) {
+    // [D4-WSJ-WIRE] knob ON: the per-car engine voices of Audio/AudioWire.cpp (FUN_00463640) are the engine, with
+    // the class of `vehicleIdx` (EngineClassTable.h); the single legacy voice below is not created.
+    if (WireOn()) {
+        static const char* const kEng[4] = {"eng1", "eng2", "eng3", "eng4"};
+        EvLog("engine_start", kEng[WireEngineClass(vehicleIdx)], "wire", volume);
+        return;
+    }
     EvLog("engine_start", "eng1", "", volume);
     if (!g_ds || g_engine) return;
     DWORD rate = 22050;
@@ -386,7 +443,7 @@ void MusicSetState(MusicState s) {
     if (s == g_musicState) return;          // idempotent: never restart per-frame
     EvLog("music_state", "", "", static_cast<int>(s));
     const char* kCdaudio = "original/toastaudio/pc/audio/pcdics/cdaudio.rws";
-    if (NoRaceCdaudio() && (s == MusicState::Race || s == MusicState::Results)) {
+    if ((NoRaceCdaudio() || WireOn()) && (s == MusicState::Race || s == MusicState::Results)) {
         MusicStop();
         g_musicState = s;
         logf("MusicSetState -> %d (no cdaudio)", static_cast<int>(s));
@@ -431,6 +488,7 @@ void SetMasterMusicVolume(float v) {
 void SetMasterSfxVolume(float v) {
     g_masterSfx = Clamp01f(v);
     if (g_engine) g_engine->SetVolume(VolToDs(g_engineBaseVol * g_masterSfx));
+    WireReapplyVolumes();                            // [D4-WSJ-WIRE] no-op with the knob unset
 }
 float MasterMusicVolume() { return g_masterMusic; }
 float MasterSfxVolume()   { return g_masterSfx; }
@@ -454,12 +512,14 @@ void SetOutputActive(bool active) {
         if (v.used && v.buf) v.buf->SetVolume(VolToDs(v.vol));
     for (auto* b : g_sfxRing)
         if (b) b->SetVolume(VolToDs(g_masterSfx));   // transient; mute any still ringing
+    WireReapplyVolumes();                            // [D4-WSJ-WIRE] no-op with the knob unset
     logf("SetOutputActive(%d) -> focusGain=%.0f", (int)active, g_focusGain);
 }
 
 void SfxLoadBank(const char* rwsPath) {
     if (!g_sfxBank.empty()) return;
     RwsBankLoad(rwsPath, g_sfxBank, kLog);
+    WireSelfTest();                                  // [D4-WSJ-WIRE] MASHED_AUDIO_WIRE + _SELFTEST only
 }
 
 void SfxPlay(const char* waveNameSub, float volume) {
@@ -467,6 +527,8 @@ void SfxPlay(const char* waveNameSub, float volume) {
         const RwsWave* r = g_sfxBank.empty() ? nullptr : RwsBankFind(g_sfxBank, waveNameSub);
         EvLog("sfx", waveNameSub, r ? r->name.c_str() : "", volume);
     }
+    // [D4-WSJ-WIRE] knob ON: countdown and explosion go through the permdict voice model (Audio/AudioWire.cpp).
+    if (WireSfxByName(waveNameSub)) return;
     if (!g_ds || g_sfxBank.empty()) return;
     const RwsWave* w = RwsBankFind(g_sfxBank, waveNameSub);
     if (!w || !w->valid()) return;
