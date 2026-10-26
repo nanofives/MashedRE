@@ -7,6 +7,7 @@
 #include "../Audio/AudioWire.h"
 #include <cstdio>
 #include <cstdarg>
+#include <cstdlib>
 
 namespace mashed_re {
 namespace Race {
@@ -60,6 +61,16 @@ const int kVehicleCount = static_cast<int>(sizeof(kVehicles) / sizeof(kVehicles[
 int OrigVehicleOf(int carIndex) {
     if (carIndex < 0 || carIndex >= kVehicleCount) carIndex = 0;
     return Audio::WireVehicleIndexByName(kVehicles[carIndex].dffBase);
+}
+
+// [D3-AI-VEHICLES] MASHED_AI_VEHICLES, default ON since L-30 (a) (D4-FLIP-L29-L30), =0 opts out.
+// verify/aiveh_20261026/PREREG_D3-AI-VEHICLES.md.
+bool AiVehiclesOn() {
+    static const bool on = [] {
+        const char* e = std::getenv("MASHED_AI_VEHICLES");
+        return !(e && e[0] == '0');
+    }();
+    return on;
 }
 
 // trackId -> per-track ambience bank (toastaudio/pc/audio/pcdics/<area>.rws).
@@ -117,6 +128,16 @@ void IRaceHud::Render(RaceConfig& c)                 { (void)c; once("RaceHud: R
 void RaceSession::Begin(const RaceConfig& cfg, D3d9Render::TrackRenderer* track,
                         IDirect3DDevice9* dev) {
     m_cfg = cfg;
+    // [D3-AI-VEHICLES] FUN_0040d110's vehicle choice: one group per race, (id / 6) * 6 from the event record
+    // (0x0040d162, 0x0040d1bf..0x0040d1c2), and car i = DAT_007f1a1c[i*4] + group over exactly 4 slots
+    // (0x0040d1de..0x0040d20d, no participant gate). carIndex is the vehicle type (kVehicles), livery stays per car
+    // (ResolveCarLiveries), so cars 1..3 take car 0's type. Car 0's type source (MASHED_CAR_SEL, not the record's
+    // +4 dword) is unchanged.
+    if (AiVehiclesOn()) {
+        m_cfg.numCars = 4;
+        for (int c = 1; c < 4; ++c) m_cfg.cars[c].carIndex = m_cfg.cars[0].carIndex;
+        once("[D3-AI-VEHICLES] applied: 4 cars, cars 1..3 take car 0's vehicle type");
+    }
     m_active = true;
     m_engine = track;
     m_dev    = dev;

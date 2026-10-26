@@ -4493,6 +4493,35 @@ rpc.exports = {
 """
 
 
+AI_SAVE_JS = r"""
+'use strict';
+const IMG = 0x00400000;
+const m = Process.findModuleByName('MASHED.exe') || Process.enumerateModules()[0];
+const D = m.base.toUInt32() - IMG;
+const A = a => ptr(a + D);
+rpc.exports = {
+  image: function () { return A(0x007f1a9c).readByteArray(0x11884); },   // FUN_00423540 source
+  save: function () { return new NativeFunction(A(0x00423540), 'int', [], 'mscdecl')(); },
+  path: function () { return A(0x00644110).readCString(); }               // FUN_00423480 output
+};
+"""
+
+
+def ai_save_capture(sess, outdir):
+    """D4-WSF-TRACKDATA-RT: dump the loaded AI image DAT_007f1a9c, call the original's writer
+    FUN_00423540 (no args, returns 0/1), dump the image again, and record the path it wrote
+    (DAT_00644110). The written file lands relative to the process working directory."""
+    import json
+    out = Path(outdir); out.mkdir(parents=True, exist_ok=True)
+    g = sess.create_script(AI_SAVE_JS); g.on("message", lambda m, d: None); g.load(); G = g.exports_sync
+    (out / "mem_before.bin").write_bytes(bytes(G.image()))
+    res = {"save_ret": G.save(), "path": G.path()}
+    (out / "mem_after.bin").write_bytes(bytes(G.image()))
+    (out / "ai_save_capture.json").write_text(json.dumps(res, indent=1))
+    print("  [ai-save] result:", res)
+    g.unload()
+
+
 def ghost_capture(sess, outdir):
     """savelink G1 (verify/savelink_20261023/PREREG_ghost_roundtrip.md): copy the live TimeTrial recording into the
     ghost block with the game's own FUN_00483ca0 (outside its gate), dump everything, then SerializeToBuffer + SaveWrite."""
@@ -4538,6 +4567,7 @@ def main():
     ap.add_argument("--fps", default="60")
     ap.add_argument("--hold", type=int, default=20, help="seconds to hold in the race after spawn")
     ap.add_argument("--ghost-capture", default="", help="savelink: dir; copy the TimeTrial recording into the ghost block and save")
+    ap.add_argument("--ai-save-capture", default="", help="D4-WSF-TRACKDATA-RT: dir; dump DAT_007f1a9c and call the AI-data writer FUN_00423540")
     ap.add_argument("--poke-u32", default="",
                     help="[D4 2026-10-05] CONTRIVED STATE (C3-grade). 'rva=val[,...]' "
                          "both hex, written once --poke-delay seconds into the hold. "
@@ -5463,6 +5493,9 @@ def main():
         if args.ghost_capture:
             try: ghost_capture(sess, args.ghost_capture)
             except Exception as ex: print("  [ghost] FAILED:", ex)
+        if args.ai_save_capture:
+            try: ai_save_capture(sess, args.ai_save_capture)
+            except Exception as ex: print("  [ai-save] FAILED:", ex)
         if args.spike_telemetry:
             try:
                 import json

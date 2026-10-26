@@ -3000,6 +3000,7 @@ rows. Shipping checklist (added 2026-09-26):
 - `mashed_re.exe` runs without the dev d3d9 shim, `d3d9_real.dll`, the dinput8 ASI loader,
   or any `original/MASHED.exe` boot patch. Those are dev harness only.
 - First run works with no `videocfg.bin` / `contcfg%d.bin` present (defaults are written).
+  Note (L-31, 2026-10-26): the first-run `videocfg.bin` differs from the original's by 3 bytes (x32 default, 53 modes) only because the `DWM8And16BitMitigation` compat layer is absent, not because of the port.
 - Runtime dependencies listed (CRT, D3D9, DirectShow for video) and checked on a clean machine.
 - Multiplayer (WS-I) is out of v1.0 scope per D-11063, and this is stated in the P-DoD. **DONE 2026-10-24** (P-DoD, line 154).
 - Every default-OFF `MASHED_*` gate on a finished port is deleted, and only dev/debug
