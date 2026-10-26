@@ -1032,10 +1032,19 @@ bool PumpOnce() {
 // original keeps it in its record 0x00771e88 + j*0x448 (CreateDevice target, FUN_00495ee0),
 // with SetDataFormat(0x005d076c) (0x2c slot; the format there reads dwSize 0x18, dwObjSize
 // 0x10, dwFlags 1, dwDataSize 0x50, dwNumObjs 0x2c = c_dfDIJoystick's header) and
-// SetCooperativeLevel(hwnd, 5) (0x34 slot). The port uses 6 (BACKGROUND|NONEXCLUSIVE, as its
-// keyboard does) so it does not take the pad from a concurrent MASHED.exe. Record 4 would
+// SetCooperativeLevel(hwnd, 5) (0x34 slot; 0x00495faf push 5, hwnd [0x00772fb0] stored by
+// FUN_004960a0 at 0x004960a9). 5 = DISCL_EXCLUSIVE (1) | DISCL_FOREGROUND (4). The port's default
+// passes 0xa = DISCL_NONEXCLUSIVE (2) | DISCL_BACKGROUND (8), as its keyboard does, so it does not take
+// the pad from a concurrent MASHED.exe and still reads it with the window unfocused. Record 4 would
 // start at 0x00772fa8, a separate global, so the original has room for 4.
+// [D3-CF-PADCOOP] MASHED_PAD_COOP_ORIG=1 (default OFF) passes the original's 5. With FOREGROUND the
+// Acquire at 0x00495890 fails while the window is not foreground, GetDeviceState fails, and
+// 0x004958bc keeps last frame's bits (PollJoypadButtons does the same).
 IDirectInputDevice8A* g_joy[4] = {};
+static bool PadCoopOrigOn() {
+    static const bool s_on = [] { const char* e = std::getenv("MASHED_PAD_COOP_ORIG"); return e && e[0] && e[0] != '0'; }();
+    return s_on;
+}
 // Default ON since 2026-10-25 (Mariano, decision L-16, verify/r7joypad_20261025/RESULT_D3-CF-R7JOYPAD.md, flipped together with
 // MASHED_R7_EXIT); MASHED_NO_R7_INPUT=1 opts out.
 static bool R7InputOn() {
@@ -1048,7 +1057,14 @@ static BOOL CALLBACK CountGameCtrlCb(LPCDIDEVICEINSTANCEA inst, LPVOID ref) {
         int& j = *static_cast<int*>(ref);
         if (R7InputOn() && j < 4) {
             dev->SetDataFormat(&c_dfDIJoystick);
-            dev->SetCooperativeLevel(g_hwnd, DISCL_BACKGROUND | DISCL_NONEXCLUSIVE);
+            const DWORD level = PadCoopOrigOn() ? (DISCL_EXCLUSIVE | DISCL_FOREGROUND)   // 0x00495faf push 5
+                                                : (DISCL_BACKGROUND | DISCL_NONEXCLUSIVE);
+            const HRESULT hr = dev->SetCooperativeLevel(g_hwnd, level);
+            if (std::FILE* log = std::fopen(kLogPath, "a")) {
+                std::fprintf(log, "\npad coop: device %d level 0x%lx hr 0x%08lx\n", j,
+                             static_cast<unsigned long>(level), static_cast<unsigned long>(hr));
+                std::fclose(log);
+            }
             g_joy[j] = dev;
         } else {
             dev->Release();
@@ -2803,7 +2819,16 @@ static void PollJoypadButtons() {         // FUN_00495fe0 -> FUN_00495870 (butto
             while (hr == DIERR_INPUTLOST) hr = dev->Acquire();     // 0x00495893..0x004958ab
         }
         DIJOYSTATE js = {};
-        if (FAILED(dev->GetDeviceState(sizeof(js), &js))) continue;   // 0x004958b4; 0x004958bc keeps the bits
+        const HRESULT gs = dev->GetDeviceState(sizeof(js), &js);    // 0x004958b4
+        static HRESULT s_last_gs[4] = {1, 1, 1, 1};                 // log each change of result (D3-CF-PADCOOP)
+        if (gs != s_last_gs[d]) {
+            s_last_gs[d] = gs;
+            if (std::FILE* log = std::fopen(kLogPath, "a")) {
+                std::fprintf(log, "\npad state: device %d GetDeviceState hr 0x%08lx\n", d, static_cast<unsigned long>(gs));
+                std::fclose(log);
+            }
+        }
+        if (FAILED(gs)) continue;                                  // 0x004958bc keeps the bits
         std::uint32_t bits = 0;                                    // 0x0049592f
         for (int k = 0; k < 16; ++k)                               // 0x00495970..0x00495afe
             if (js.rgbButtons[k] & 0x80) bits |= 1u << k;
