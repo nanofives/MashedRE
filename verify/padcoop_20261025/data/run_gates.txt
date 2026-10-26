@@ -1,0 +1,50 @@
+[mashed-lock] WAITING — 'mashed_machine' held by pid=19112 (merge-train:20261025_223813); queueing...
+[mashed-lock] HELD 'mashed_machine' pid=13008 (D3-CF-PADCOOP)
+  STACK['TC0'] = STACK['TC'] + ['MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=0']
+  for _c in (0, 1, 2, 3): STACK[f'FR{_c}'] = STACK['FR'] + [f'MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', f'MASHED_RECDUMP_SLOT={_c}']
+  STACK[f'TC{_c}'] = STACK['TC'] + [f'MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', f'MASHED_RECDUMP_SLOT={_c}', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+  STACK[f'TC{_c}'] = STACK['TC'] + [f'MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', f'MASHED_RECDUMP_SLOT={_c}', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+  STACK[f'TM{_c}'] = STACK['TM'] + [f'MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', f'MASHED_RECDUMP_SLOT={_c}', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+  STACK[f'TM{_c}'] = STACK['TM'] + [f'MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', f'MASHED_RECDUMP_SLOT={_c}', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+  STACK[f'TR{_c}'] = [f'MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', f'MASHED_RECDUMP_SLOT={_c}', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+  STACK[f'TR{_c}'] = [f'MASHED_RECDUMP=@OUT@\@NAME@.rec.msd', f'MASHED_RECDUMP_SLOT={_c}', 'MASHED_WCS_TRILOG=@OUT@\@NAME@.tri.txt']
+=== H_DEF pid=17832 exe=220aa7a7
+    exit=0 self_exited=True secs=77
+    H_DEF.step.csv lines=8279 sha8=40b4fc1f
+    H_DEF.gates.csv lines=31353 sha8=80a08246
+    H_DEF.ptrace.log lines=15676 sha8=56390628
+=== B_DEF_K0 pid=21844 exe=220aa7a7
+    exit=0 self_exited=True secs=14
+    B_DEF_K0.step.csv lines=1459 sha8=3a03670c
+=== B_DEF_K1 pid=17108 exe=220aa7a7
+    exit=0 self_exited=True secs=12
+    B_DEF_K1.step.csv lines=1825 sha8=2516d903
+=== B_DEF_K26 pid=13024 exe=220aa7a7
+    exit=0 self_exited=True secs=12
+    B_DEF_K26.step.csv lines=1411 sha8=53778664
+=== B_PC_K0 pid=19588 exe=220aa7a7
+    exit=0 self_exited=True secs=12
+    B_PC_K0.step.csv lines=1459 sha8=3a03670c
+=== B_PC_K1 pid=15576 exe=220aa7a7
+    exit=0 self_exited=True secs=12
+    B_PC_K1.step.csv lines=1825 sha8=2516d903
+=== B_PC_K26 pid=20704 exe=220aa7a7
+    exit=0 self_exited=True secs=12
+    B_PC_K26.step.csv lines=1411 sha8=53778664
+=== B_PP150_K0 pid=15404 exe=220aa7a7
+    exit=0 self_exited=True secs=12
+    B_PP150_K0.step.csv lines=1492 sha8=dbe10a3e
+=== B_PCPP150_K0 pid=26500 exe=220aa7a7
+    exit=0 self_exited=True secs=12
+    B_PCPP150_K0.step.csv lines=1492 sha8=dbe10a3e
+DONE
+[mashed-lock] released 'mashed_machine' pid=13008
+[mashed-lock] WAITING — 'mashed_machine' held by pid=20784 (HB-CHUNK); queueing...
+[mashed-lock] HELD 'mashed_machine' pid=24472 (D3-CF-PADCOOP)
+=== H_DEF-2 pid=5044 exe=220aa7a7
+    exit=0 self_exited=True secs=131
+    H_DEF-2.step.csv lines=14659 sha8=5943c5f1
+    H_DEF-2.gates.csv lines=56873 sha8=b493262b
+    H_DEF-2.ptrace.log lines=28436 sha8=09551e6a
+DONE
+[mashed-lock] released 'mashed_machine' pid=24472

@@ -1,0 +1,76 @@
+B_DEF_K0.log:pad coop: device 0 level 0xa hr 0x00000000
+B_DEF_K0.log:pad coop: device 1 level 0xa hr 0x00000000
+B_DEF_K0.log:input slots: game controllers 2, types 1 1 2 0, active 3
+B_DEF_K0.log:pad state: device 0 GetDeviceState hr 0x00000000
+B_DEF_K0.log:pad state: device 1 GetDeviceState hr 0x00000000
+B_DEF_K1.log:pad coop: device 0 level 0xa hr 0x00000000
+B_DEF_K1.log:pad coop: device 1 level 0xa hr 0x00000000
+B_DEF_K1.log:input slots: game controllers 2, types 1 1 2 0, active 3
+B_DEF_K1.log:pad state: device 0 GetDeviceState hr 0x00000000
+B_DEF_K1.log:pad state: device 1 GetDeviceState hr 0x00000000
+B_DEF_K26.log:pad coop: device 0 level 0xa hr 0x00000000
+B_DEF_K26.log:pad coop: device 1 level 0xa hr 0x00000000
+B_DEF_K26.log:input slots: game controllers 2, types 1 1 2 0, active 3
+B_DEF_K26.log:pad state: device 0 GetDeviceState hr 0x00000000
+B_DEF_K26.log:pad state: device 1 GetDeviceState hr 0x00000000
+B_PCPP150_K0.log:pad coop: device 0 level 0x5 hr 0x00000000
+B_PCPP150_K0.log:pad coop: device 1 level 0x5 hr 0x00000000
+B_PCPP150_K0.log:input slots: game controllers 2, types 1 1 2 0, active 3
+B_PCPP150_K0.log:pad state: device 0 GetDeviceState hr 0x00000000
+B_PCPP150_K0.log:pad state: device 1 GetDeviceState hr 0x00000000
+B_PCPP150_K0.log:R7IN byte0xa slot=0 val=0xff r7frame=150 test=1 det_frame=551 type=1
+B_PCPP150_K0.log:R7X EXIT det_frame=551 round 1 -> 2 match_winner=-1
+B_PCPP150_K0.log:R7IN byte0xa slot=0 val=0xff r7frame=150 test=1 det_frame=1058 type=1
+B_PCPP150_K0.log:R7X EXIT det_frame=1058 round 2 -> 3 match_winner=-1
+B_PC_K0.log:pad coop: device 0 level 0x5 hr 0x00000000
+B_PC_K0.log:pad coop: device 1 level 0x5 hr 0x00000000
+B_PC_K0.log:input slots: game controllers 2, types 1 1 2 0, active 3
+B_PC_K0.log:pad state: device 0 GetDeviceState hr 0x00000000
+B_PC_K0.log:pad state: device 1 GetDeviceState hr 0x00000000
+B_PC_K1.log:pad coop: device 0 level 0x5 hr 0x00000000
+B_PC_K1.log:pad coop: device 1 level 0x5 hr 0x00000000
+B_PC_K1.log:input slots: game controllers 2, types 1 1 2 0, active 3
+B_PC_K1.log:pad state: device 0 GetDeviceState hr 0x00000000
+B_PC_K1.log:pad state: device 1 GetDeviceState hr 0x00000000
+B_PC_K26.log:pad coop: device 0 level 0x5 hr 0x00000000
+B_PC_K26.log:pad coop: device 1 level 0x5 hr 0x00000000
+B_PC_K26.log:input slots: game controllers 2, types 1 1 2 0, active 3
+B_PC_K26.log:pad state: device 0 GetDeviceState hr 0x00000000
+B_PC_K26.log:pad state: device 1 GetDeviceState hr 0x00000000
+B_PP150_K0.log:pad coop: device 0 level 0xa hr 0x00000000
+B_PP150_K0.log:pad coop: device 1 level 0xa hr 0x00000000
+B_PP150_K0.log:input slots: game controllers 2, types 1 1 2 0, active 3
+B_PP150_K0.log:pad state: device 0 GetDeviceState hr 0x00000000
+B_PP150_K0.log:pad state: device 1 GetDeviceState hr 0x00000000
+B_PP150_K0.log:R7IN byte0xa slot=0 val=0xff r7frame=150 test=1 det_frame=551 type=1
+B_PP150_K0.log:R7X EXIT det_frame=551 round 1 -> 2 match_winner=-1
+B_PP150_K0.log:R7IN byte0xa slot=0 val=0xff r7frame=150 test=1 det_frame=1058 type=1
+B_PP150_K0.log:R7X EXIT det_frame=1058 round 2 -> 3 match_winner=-1
+D2_DEF_1.log:pad coop: device 0 level 0xa hr 0x00000000
+D2_DEF_1.log:pad coop: device 1 level 0xa hr 0x00000000
+D2_DEF_1.log:input slots: game controllers 2, types 1 1 2 0, active 3
+D2_DEF_1.log:pad state: device 0 GetDeviceState hr 0x00000000
+D2_DEF_1.log:pad state: device 1 GetDeviceState hr 0x00000000
+D2_DEF_1.log:R7IN byte0xa slot=2 val=0xff r7frame=0 test=0 det_frame=71 type=2
+D2_DEF_2.log:pad coop: device 0 level 0xa hr 0x00000000
+D2_DEF_2.log:pad coop: device 1 level 0xa hr 0x00000000
+D2_DEF_2.log:input slots: game controllers 2, types 1 1 2 0, active 3
+D2_DEF_2.log:pad state: device 0 GetDeviceState hr 0x00000000
+D2_DEF_2.log:pad state: device 1 GetDeviceState hr 0x00000000
+D2_DEF_2.log:R7IN byte0xa slot=2 val=0xff r7frame=0 test=0 det_frame=72 type=2
+D2_DEF_3.log:pad coop: device 0 level 0xa hr 0x00000000
+D2_DEF_3.log:pad coop: device 1 level 0xa hr 0x00000000
+D2_DEF_3.log:input slots: game controllers 2, types 1 1 2 0, active 3
+D2_DEF_3.log:pad state: device 0 GetDeviceState hr 0x00000000
+D2_DEF_3.log:pad state: device 1 GetDeviceState hr 0x00000000
+D2_DEF_3.log:R7IN byte0xa slot=2 val=0xff r7frame=0 test=0 det_frame=73 type=2
+H_DEF-2.log:pad coop: device 0 level 0xa hr 0x00000000
+H_DEF-2.log:pad coop: device 1 level 0xa hr 0x00000000
+H_DEF-2.log:input slots: game controllers 2, types 1 1 2 0, active 3
+H_DEF-2.log:pad state: device 0 GetDeviceState hr 0x00000000
+H_DEF-2.log:pad state: device 1 GetDeviceState hr 0x00000000
+H_DEF.log:pad coop: device 0 level 0xa hr 0x00000000
+H_DEF.log:pad coop: device 1 level 0xa hr 0x00000000
+H_DEF.log:input slots: game controllers 2, types 1 1 2 0, active 3
+H_DEF.log:pad state: device 0 GetDeviceState hr 0x00000000
+H_DEF.log:pad state: device 1 GetDeviceState hr 0x00000000
