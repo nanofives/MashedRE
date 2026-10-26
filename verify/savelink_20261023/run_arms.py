@@ -428,6 +428,8 @@ STACK['V3'] = []   # knob deleted (D4-DC-39b0-L13)
 STACK['NOOL'] = []   # opt-out deleted (D4-DC-39b0-L13)
 # dcmath4d20 (PREREG_dcmath4d20.md): CR = the race camera's RotateAboutAxis through the shared 0x004c4d20 body + slot +0x14 vectors
 STACK['CR'] = []   # knob deleted (D4-DC-39b0-L13)
+STACK['GR'] = ['MASHED_GRID_ROTATE_RW']   # D4-DC-4d20-GRID: the grid spawn basis through the shared RwMatrixRotate
+STACK['GT'] = ['MASHED_GRID_ROTATE_TRACE=@OUT@\\@NAME@.gridrot.txt']; STACK['GRT'] = STACK['GR'] + STACK['GT']   # + the inline / rw at-row bits
 STACK['PR'] = ['MASHED_PONTOON_REPLAY=' + os.path.join(W, 'verify', 'pontoon_20261016', 'OP3.msd.pontoon.csv'),
                'MASHED_PONTOON_REPLAY_OUT=@OUT@\\@NAME@.replay.csv']
 for name in sys.argv[1:]:

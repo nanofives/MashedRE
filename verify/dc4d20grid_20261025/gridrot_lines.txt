@@ -1,0 +1,9 @@
+== H_GT
+gridrot deg=43340000 inline=b3bbbd2e/bf800000 rw=b3bbbd2e/bf800000 SAME on=0
+gridrot deg=43340000 inline=b3bbbd2e/bf800000 rw=b3bbbd2e/bf800000 SAME on=0
+== D2_GT_1
+gridrot deg=43340000 inline=b3bbbd2e/bf800000 rw=b3bbbd2e/bf800000 SAME on=0
+gridrot deg=43340000 inline=b3bbbd2e/bf800000 rw=b3bbbd2e/bf800000 SAME on=0
+== D2_GRT_1
+gridrot deg=43340000 inline=b3bbbd2e/bf800000 rw=b3bbbd2e/bf800000 SAME on=1
+gridrot deg=43340000 inline=b3bbbd2e/bf800000 rw=b3bbbd2e/bf800000 SAME on=1
