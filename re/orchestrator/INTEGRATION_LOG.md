@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-10-26 02:52 D4-WSJ-REF (orch/D4-WSJ-REF): G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/2516d903/53778664. Run data D:\MashedWT\mtrain_data\20261026_024149
 - 2026-10-26 02:31 D3-CF-A5TIMER (orch/D3-CF-A5TIMER): G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/2516d903/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261026_021806
 - 2026-10-26 00:35 D4-WSF-SCOPE (orch/D4-WSF-SCOPE), D4-DC-4d20-FLIP (orch/D4-DC-4d20-FLIP): G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/2516d903/53778664. Run data D:\MashedWT\mtrain_data\20261026_002855
 - 2026-10-26 00:16 D3-CF-PADCOOP-FLIP (orch/D3-CF-PADCOOP-FLIP): G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/2516d903/53778664. Run data D:\MashedWT\mtrain_data\20261026_000832
