@@ -8,12 +8,30 @@
 // stack = (screen_kind, b920_compare). The exported naked thunk marshals
 // to the cdecl body. Diff: re/frida/menu_prompt_diff.py (nav-driven table
 // compare with JMP patch-in per sample).
+//
+// D4-WSH-EXEFILE (2026-10-26): compiled into BOTH targets. The jump-table
+// dispatch (PromptStripTag + PromptStripResolve) is the one body for the
+// exe's Frontend/MenuNavSM.cpp PromptStripAppend too. Target-specific: the two
+// getter calls (the .asi calls the original's FUN_0042a9c0 / FUN_0042b920, the
+// exe the ported ModeCodeLookup / ConstantGetter22), and everything that
+// touches the live 0x00898ac0 table (the mode head, FUN_0042ad10, the stores),
+// which stays .asi-only; the exe's head lives in its Nav caller.
 #include <cstdint>
 
 #include "../Core/HookSystem.h"
+#include "PromptStrip.h"
+
+#ifdef MASHED_STANDALONE
+extern "C" std::uint32_t __cdecl ModeCodeLookup();     // FUN_0042a9c0 (Frontend/BatchAA_s4.cpp)
+extern "C" std::uint32_t __cdecl ConstantGetter22();   // FUN_0042b920 (Frontend/MenuNearLeaves_s6.cpp)
+#endif
 
 namespace {
 
+#ifdef MASHED_STANDALONE
+inline int oA9C0() { return static_cast<int>(ModeCodeLookup()); }
+inline int oB920() { return static_cast<int>(ConstantGetter22()); }
+#else
 template <typename T>
 inline T& At(std::uintptr_t a) { return *reinterpret_cast<T*>(a); }
 
@@ -49,6 +67,7 @@ static void Ad10(void* idx_ptr, std::uint32_t tag) {
 using IntFn = int(__cdecl*)();
 auto* const oB920 = reinterpret_cast<IntFn>(0x0042b920);
 auto* const oA9C0 = reinterpret_cast<IntFn>(0x0042a9c0);   // ModeCodeLookup C3
+#endif  // MASHED_STANDALONE
 
 // finisher codes
 enum Fin { kZero, kFrozen, kDefault };
@@ -87,6 +106,40 @@ static const KindRow kRows[10] = {
 
 }  // namespace
 
+// 0x00432b30 jump-table dispatch (from 0x00432b97): key -> the row's tag, or 0
+// when no row is appended (key out of 1..10: ja 0x43305b; keys 3/7/9: ja default).
+extern "C" std::uint32_t __cdecl PromptStripTag(int key) {
+    const unsigned k = static_cast<unsigned>(key) - 1u;
+    if (k > 9u) return 0;
+    return kRows[k].tag;
+}
+
+// The inner dispatch: (key, b920_cmp, rel) -> the four stores FUN_00432b30
+// makes after FUN_0042ad10. Call only when PromptStripTag(key) != 0.
+extern "C" void __cdecl PromptStripResolve(int key, int b920_cmp, int rel,
+                                           PromptStripRow* out) {
+    const KindRow& row = kRows[static_cast<unsigned>(key) - 1u];
+    if (row.sec == -2)      out->sec = oA9C0();
+    else if (row.sec == -3) { out->sec = 0x48; out->sec = 0x13; }
+    else if (row.sec == -4) {
+        out->sec = 0x42;                           // 0x432bbf
+        if (b920_cmp == oB920()) out->sec = -1;
+    } else {
+        out->sec = row.sec;
+    }
+    const unsigned r = static_cast<unsigned>(rel) - 1u;
+    const Cell cell = (r > 9u) ? DEF() : row.cells[r];
+    if (cell.a9c0)        out->prim = oA9C0();
+    else if (cell.dbl48)  { out->prim = 0x48; out->prim = 0x13; }
+    else                  out->prim = cell.prim;
+    switch (cell.fin) {
+        case kZero:    out->type = 0;       out->slide = 0x1ff; break;
+        case kFrozen:  out->type = 0x1000;  out->slide = 0x1ff; break;
+        case kDefault: out->type = 1;       out->slide = 0;     break;
+    }
+}
+
+#ifndef MASHED_STANDALONE
 // cdecl body; thunk below marshals the true ABI.
 extern "C" void __cdecl PromptStripTwinBody(int mode_eax, int* rec_index,
                                             int key, int b920_cmp) {
@@ -105,30 +158,16 @@ extern "C" void __cdecl PromptStripTwinBody(int mode_eax, int* rec_index,
         rel = Add0_FF080000();
         if (rel == -1) rel = 0;
     }
-    const unsigned k = static_cast<unsigned>(key) - 1u;
-    if (k > 9u) return;                            // ja 0x43305b
-    const KindRow& row = kRows[k];
-    if (row.tag == 0) return;                      // keys 3/7/9: ja default
-    Ad10(rec_index, row.tag);
+    const std::uint32_t tag = PromptStripTag(key);
+    if (tag == 0) return;
+    Ad10(rec_index, tag);
     const int idx = *rec_index;
-    if (row.sec == -2)      *RecSec(idx) = oA9C0();
-    else if (row.sec == -3) { *RecSec(idx) = 0x48; *RecSec(idx) = 0x13; }
-    else if (row.sec == -4) {
-        *RecSec(idx) = 0x42;                       // 0x432bbf
-        if (b920_cmp == oB920()) *RecSec(idx) = -1;
-    } else {
-        *RecSec(idx) = row.sec;
-    }
-    const unsigned r = static_cast<unsigned>(rel) - 1u;
-    const Cell cell = (r > 9u) ? DEF() : row.cells[r];
-    if (cell.a9c0)        *RecPrim(idx) = oA9C0();
-    else if (cell.dbl48)  { *RecPrim(idx) = 0x48; *RecPrim(idx) = 0x13; }
-    else                  *RecPrim(idx) = cell.prim;
-    switch (cell.fin) {
-        case kZero:    *RecType(idx) = 0;       *RecSlide(idx) = 0x1ff; break;
-        case kFrozen:  *RecType(idx) = 0x1000;  *RecSlide(idx) = 0x1ff; break;
-        case kDefault: *RecType(idx) = 1;       *RecSlide(idx) = 0;     break;
-    }
+    PromptStripRow row;
+    PromptStripResolve(key, b920_cmp, rel, &row);
+    *RecSec(idx)   = row.sec;
+    *RecPrim(idx)  = row.prim;
+    *RecType(idx)  = row.type;
+    *RecSlide(idx) = row.slide;
     ++(*rec_index);
 }
 
@@ -147,3 +186,4 @@ extern "C" __declspec(dllexport, naked) void PromptStripTwin(void) {
 }
 
 RH_ScopedInstall(PromptStripTwin, 0x00432b30);
+#endif  // !MASHED_STANDALONE

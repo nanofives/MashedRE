@@ -210,6 +210,9 @@ extern "C" void __cdecl HudIm2DQuadCorners(
 // below, so calling MenuChromeShellA() renders the actual menu chrome via the
 // B15 bridge. The three Im2D draws are also declared so we can thunk to them.
 extern "C" void __cdecl MenuChromeShellA(void);
+// FUN_0040b890 / FUN_0040b8e0 shared bodies (Gameplay/Thresholds_ah4.cpp, both targets).
+extern "C" int __cdecl GridCount8or12Core(int cars, int ea64, int fd0);
+extern "C" int __cdecl ScoreThreshold7or10Core(int cars, int ea64, int fd0);
 // R2-4 animated logo overlay (verbatim FUN_00473ee0 port; Frontend/
 // DrawQuadPrimitives.cpp). Coords 640x480-virtual; vscale folds the original's
 // in-helper ScreenW/640, ScreenH/480 multiply.
@@ -4127,14 +4130,11 @@ bool RenderFrame() {
             const int kEa64 =                                  // DAT_0067ea64
                 *reinterpret_cast<const std::int32_t*>(0x0067ea64);
             const int rule_now      = g_track.race_rule();     // DAT_007f0fd0
-            // FUN_0040b890
-            int kPointsTarget = (kParticipants == 4) ? 12 : 8;
-            if (kEa64 != 0)                      kPointsTarget = 8;
-            if (rule_now == 1 || rule_now == 2)  kPointsTarget = 8;
-            // FUN_0040b8e0
-            int kWinThreshold = (kParticipants == 4) ? 10 : 7;
-            if (kEa64 != 0)                      kWinThreshold = 7;
-            if (rule_now == 1 || rule_now == 2)  kWinThreshold = 7;
+            // FUN_0040b890 / FUN_0040b8e0: the one body each, Gameplay/Thresholds_ah4.cpp.
+            const int kPointsTarget =
+                GridCount8or12Core(kParticipants, kEa64, rule_now);
+            const int kWinThreshold =
+                ScoreThreshold7or10Core(kParticipants, kEa64, rule_now);
             for (int r = 0; r < 4; ++r) {
                 const int i = order[r];
                 const float cy = kRowCy[r];

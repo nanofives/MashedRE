@@ -25,6 +25,7 @@
 #include "../Race/RaceModes.h"  // SelectionToGameMode: the host-side name of 0x0042f6b0's table (SelectionToGameMode.h)
 #include "RowMovers.h"          // challenge-row movers 0x004322c0 / 0x004323c0
 #include "MenuEntryZero.h"      // MenuEntryZeroBody: the one body of 0x0042d3e0
+#include "PromptStrip.h"        // PromptStripTag / PromptStripResolve: the one body of 0x00432b30
 
 #include <cstddef>
 #include <cstdint>
@@ -662,9 +663,11 @@ void BuildRecords(const NavSlot& slot) {
 }
 
 // --------------------------------------------------------------------------
-// FUN_00432b30 (0x00432b30) — footer prompt-strip row builder. VERBATIM port
-// of the C4-verified hook twin (Frontend/PromptStripTwin.cpp, diff GREEN
-// 264/264, re/analysis/standalone_menu_sm/c4_promptstrip_20260611.md).
+// FUN_00432b30 (0x00432b30) footer prompt-strip row builder. Its jump-table
+// dispatch is the ONE body in Frontend/PromptStripTwin.cpp (PromptStripTag /
+// PromptStripResolve, both targets; D4-WSH-EXEFILE 2026-10-26). This TU keeps
+// the standalone's half: the mode head (in the Nav caller below) and the
+// record append into g_records.
 // Called once per nav op by FUN_0043d2a0 Phase 7 (call site 0x0043d79c) with
 // EAX=mode (0 push / 1 pop-reveal / 2 reload), key = the SHOWN screen's
 // 0xff080000 kind, cmp = pushed screen id (0 on pop). Inside, rel =
@@ -674,8 +677,6 @@ void BuildRecords(const NavSlot& slot) {
 // (0x00432b45) so reloads never append a row.
 // --------------------------------------------------------------------------
 
-// FUN_0042a9c0 ModeCodeLookup (C3, Frontend/BatchAA_s4.cpp, exe-built leaf).
-extern "C" std::uint32_t __cdecl ModeCodeLookup();
 // FUN_00472640 fade-target setter analogue (DAT_0086ecc8 = v). Xref-confirmed
 // writers (pool0, 2026-06-12): the FUN_0043d2a0 head raises it to 0xff on
 // dir>=2 (reload) ops ONLY (dispatch at 0x0043d2b1..b7 routes push/pop away
@@ -685,37 +686,6 @@ extern "C" std::uint32_t __cdecl ModeCodeLookup();
 extern "C" void __cdecl LogoOverlayFadeSet(int target, int cur);
 
 namespace {
-
-// finisher codes (cell tails in FUN_00432b30's inner jump-table bodies)
-enum PromptFin { kPZero, kPFrozen, kPDefault };
-struct PromptCell { int prim; bool a9c0; bool dbl48; PromptFin fin; };
-constexpr PromptCell PC(int p, PromptFin f) { return PromptCell{p, false, false, f}; }
-constexpr PromptCell PCA(PromptFin f)       { return PromptCell{0, true, false, f}; }
-constexpr PromptCell PCD(PromptFin f)       { return PromptCell{0, false, true, f}; }
-constexpr PromptCell PFRZ()                 { return PromptCell{-1, false, false, kPFrozen}; }
-constexpr PromptCell PDEF()                 { return PromptCell{-1, false, false, kPDefault}; }
-
-struct PromptKindRow {
-    std::uint32_t tag;
-    int sec;           // -2 = ModeCodeLookup(); -3 = 0x48-then-0x13; -4 = 0x42 w/ b920 gate
-    PromptCell cells[10];
-};
-// Jump tables transcribed literally from MASHED.exe data: outer 10 dwords at
-// 0x433060, inner 10 each at 0x433088/b0/d8/100/128/150/178; every cell body
-// walked linearly in FUN_00432b30_full.asm (ebx=-1, ebp=0). Index = rel-1;
-// out-of-range = PDEF. Keys 3/7/9 dispatch straight to the epilogue (no row).
-const PromptKindRow kPromptRows[10] = {
-    /*key1 */ {0xff100000u, -4, {PFRZ(), PC(0x43,kPZero), PDEF(), PC(0x225,kPZero), PCD(kPZero), PC(0x58,kPZero), PDEF(), PCA(kPZero), PDEF(), PC(0x133,kPZero)}},
-    /*key2 */ {0xff100000u, 0x43, {PC(0x42,kPZero), PFRZ(), PDEF(), PC(0x225,kPZero), PCD(kPZero), PC(0x58,kPZero), PDEF(), PCA(kPZero), PDEF(), PC(0x133,kPZero)}},
-    /*key3 */ {0, 0, {PDEF(),PDEF(),PDEF(),PDEF(),PDEF(),PDEF(),PDEF(),PDEF(),PDEF(),PDEF()}},
-    /*key4 */ {0xff100000u, 0x225, {PC(0x42,kPZero), PC(0x43,kPZero), PDEF(), PFRZ(), PCD(kPZero), PC(0x58,kPZero), PDEF(), PCA(kPZero), PDEF(), PC(0x133,kPZero)}},
-    /*key5 */ {0xff100000u, -3, {PC(0x42,kPZero), PC(0x43,kPZero), PDEF(), PC(0x225,kPZero), PCD(kPZero), PC(0x58,kPZero), PDEF(), PFRZ(), PDEF(), PC(0x133,kPZero)}},
-    /*key6 */ {0xff110000u, 0x58, {PC(0x42,kPZero), PC(0x43,kPZero), PDEF(), PC(0x225,kPZero), PFRZ(), PC(0x58,kPZero), PDEF(), PCA(kPZero), PDEF(), PC(0x133,kPZero)}},
-    /*key7 */ {0, 0, {PDEF(),PDEF(),PDEF(),PDEF(),PDEF(),PDEF(),PDEF(),PDEF(),PDEF(),PDEF()}},
-    /*key8 */ {0xff230000u, -2, {PC(0x42,kPZero), PC(0x43,kPZero), PDEF(), PC(0x225,kPZero), PCD(kPZero), PFRZ(), PDEF(), PCA(kPZero), PDEF(), PC(0x133,kPZero)}},
-    /*key9 */ {0, 0, {PDEF(),PDEF(),PDEF(),PDEF(),PDEF(),PDEF(),PDEF(),PDEF(),PDEF(),PDEF()}},
-    /*key10*/ {0xff100000u, 0x133, {PC(0x42,kPZero), PC(0x43,kPZero), PDEF(), PC(0x225,kPZero), PCD(kPZero), PC(0x58,kPZero), PDEF(), PCA(kPZero), PDEF(), PFRZ()}},
-};
 
 // FUN_0042ad10 (0x0042ad10, C2 note frontend_c1_to_c2_s6) — prompt row init,
 // called with (0x40, 0x1ac, 0): tag, RGBA bytes 0xff at +0x0c..0x0f, scale
@@ -736,33 +706,17 @@ inline int PromptRelNormalize(int rel) { return (rel == -1) ? 0 : rel; }
 // The strip body proper (post-head; key already resolved, mode folded into
 // the rel the caller computed). Appends at the current record cursor.
 void PromptStripAppend(int key, int cmp, int rel) {
-    const unsigned k = static_cast<unsigned>(key) - 1u;
-    if (k > 9u) return;                            // ja 0x43305b
-    const PromptKindRow& row = kPromptRows[k];
-    if (row.tag == 0) return;                      // keys 3/7/9: no row
+    const std::uint32_t tag = PromptStripTag(key);  // keys outside 1..10, 3/7/9: no row
+    if (tag == 0) return;
     if (g_record_count >= kMaxRecords) return;     // standalone bounds guard
     MenuRecord& r = g_records[g_record_count];
-    PromptRowInit(r, row.tag);
-    if (row.sec == -2)      r.sec_id = static_cast<std::int32_t>(ModeCodeLookup());
-    else if (row.sec == -3) { r.sec_id = 0x48; r.sec_id = 0x13; }
-    else if (row.sec == -4) {
-        r.sec_id = 0x42;                           // 0x432bbf
-        // FUN_0042b920 = ConstantGetter22 (C3): returns 0x16. Gate hides the
-        // back glyph when pushing the root/title screen (cmp == 22).
-        if (cmp == 0x16) r.sec_id = -1;
-    } else {
-        r.sec_id = row.sec;
-    }
-    const unsigned ri = static_cast<unsigned>(rel) - 1u;
-    const PromptCell cell = (ri > 9u) ? PDEF() : row.cells[ri];
-    if (cell.a9c0)        r.prim_id = static_cast<std::int32_t>(ModeCodeLookup());
-    else if (cell.dbl48)  { r.prim_id = 0x48; r.prim_id = 0x13; }
-    else                  r.prim_id = cell.prim;
-    switch (cell.fin) {
-        case kPZero:    r.type = 0;       r.slide = 0x1ff; break;
-        case kPFrozen:  r.type = 0x1000;  r.slide = 0x1ff; break;
-        case kPDefault: r.type = 1;       r.slide = 0;     break;
-    }
+    PromptRowInit(r, tag);
+    PromptStripRow row;
+    PromptStripResolve(key, cmp, rel, &row);
+    r.sec_id  = row.sec;
+    r.prim_id = row.prim;
+    r.type    = row.type;
+    r.slide   = row.slide;
     ++g_record_count;                              // ++(*rec_index)
 }
 
