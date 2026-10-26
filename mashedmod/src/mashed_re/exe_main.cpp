@@ -178,7 +178,7 @@
 #include "Race/GameFlow.h"                  // top-level game state machine + race scaffold
 #include "Race/RaceModes.h"                 // [WS-G1] real game-mode -> race-rule pipeline
 #include "Audio/AudioEngine.h"              // real DirectSound playback (in-race ambience)
-#include "Audio/AudioWire.h"                // [D4-WSJ-WIRE] MASHED_AUDIO_WIRE race SFX (default OFF)
+#include "Audio/AudioWire.h"                // [D4-WSJ-WIRE] MASHED_AUDIO_WIRE race SFX (default ON, L-27)
 
 // s24/s18 power-up table lives in the save-span MODEL, not at the literal
 // 0x007f0a40 (our port does not mirror the span back to the image).
