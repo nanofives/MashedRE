@@ -28,7 +28,8 @@ except ImportError:
     psutil = None
 
 ROOT = Path(__file__).resolve().parent.parent.parent
-ORIG = ROOT / "original"
+# MASHED_ROOT: boot a copied install (worktree lanes; the root CONTAINS original/).
+ORIG = Path(os.environ.get("MASHED_ROOT", ROOT)) / "original"
 EXE  = ORIG / "MASHED.exe"
 LOG  = ROOT / "log"
 
