@@ -1,0 +1,37 @@
+ms,kind,arg,resolved,val
+0.0,music_state,,,1.000
+0.1,music_bankloop,musicloop1,musicloop1,0.600
+745.1,sfx,menu selection,menu selection,0.800
+1878.7,sfx,threetwoone,threetwoone,0.900
+1878.8,vstart,threetwoone,v65,-1.000
+1879.2,engine_class,ADVANTAGE,eng2,0.000
+1879.3,engine_class,ADVANTAGE,eng2,1.000
+1879.3,engine_class,ADVANTAGE,eng2,2.000
+1879.3,engine_class,ADVANTAGE,eng2,3.000
+1879.3,wire_race,,,4.000
+1879.3,music_state,,,2.000
+1879.4,vstart,eng2,v8,0.000
+1879.5,vstart,eng2d,v12,0.000
+1879.5,vstart,eng2,v9,1.000
+1879.5,vstart,eng2d,v13,1.000
+1879.5,vstart,eng2,v10,2.000
+1879.5,vstart,eng2d,v14,2.000
+1879.5,vstart,eng2,v11,3.000
+1879.6,vstart,eng2d,v15,3.000
+4899.0,sfx,go,go,0.900
+4899.5,vstart,go,v95,-1.000
+5382.5,pickup,,,0.000
+5382.6,vstart,collision with pod,v100,-1.000
+5915.2,guard_closed,impact with other vehicle 1,first,4.000
+6749.4,guard_closed,impact with barrier,first,4.000
+7331.5,pickup,,,1.000
+7331.6,vstart,collision with pod,v100,-1.000
+32089.7,guard_closed_total,impact with barrier,,5.000
+32089.8,guard_closed_total,impact with other vehicle 1,,1.000
+32089.8,pod_count,,,2.000
+32089.8,engine_stop,,,0.000
+32089.8,stop_all,,,0.000
+32089.8,music_state,,,1.000
+32089.9,music_bankloop,musicloop1,musicloop1,0.600
+32232.8,engine_stop,,,0.000
+32232.9,stop_all,,,0.000
