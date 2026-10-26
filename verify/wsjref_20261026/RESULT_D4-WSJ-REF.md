@@ -2,7 +2,7 @@
 
 **Verdict: GREEN (measurement committed, one decision filed).** Branch `orch/D4-WSJ-REF` off `orch/integration` @ `d55d89c48`.
 Decision L-21 (Mariano, 2026-10-26) said measure first. This is the measurement, and the follow-up architecture decision
-(stand-in by data vs RWS pool / voice scheduler port, G8) is filed on the new row `D4-WSJ-ARCH`.
+(stand-in by data vs RWS pool / voice scheduler port, G8) is filed as **L-24** on the new row `D4-WSJ-ARCH`.
 
 Scoping source: `verify/d4scope_20261026/SCOPING_D4-WSJ.md` (gaps G3 G5 G6 G7, `AudioEngine.h:84-85`).
 Full per-wave tables: `verify/wsjref_20261026/ref_tables.md`.
