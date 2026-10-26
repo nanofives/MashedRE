@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-10-26 10:06 D4-WSJ-80E (orch/D4-WSJ-80E), D3-CF-A5TIMER-FLIP (orch/D3-CF-A5TIMER-FLIP): G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/2516d903/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261026_094730
 - 2026-10-26 03:04 D4-FX-GATES (orch/D4-FX-GATES): G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/2516d903/53778664. Run data D:\MashedWT\mtrain_data\20261026_025945
 - 2026-10-26 02:52 D4-WSJ-REF (orch/D4-WSJ-REF): G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/2516d903/53778664. Run data D:\MashedWT\mtrain_data\20261026_024149
 - 2026-10-26 02:31 D3-CF-A5TIMER (orch/D3-CF-A5TIMER): G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/2516d903/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261026_021806
