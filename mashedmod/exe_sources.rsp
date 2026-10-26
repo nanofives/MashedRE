@@ -94,6 +94,7 @@
 "Race\EvalResultCore.cpp"
 "Audio\RwsBank.cpp"
 "Audio\AudioEngine.cpp"
+"Audio\AudioWire.cpp"
 "Audio\RingHeaderInit.cpp"
 "Audio\AtomicExchangeStore.cpp"
 "Audio\AudioLeaves_ab2.cpp"

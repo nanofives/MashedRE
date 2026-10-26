@@ -16,6 +16,7 @@
 #include "PowerupSystem.h"
 #include "PowerupEffects.h"
 #include "PowerupContact.h"
+#include "../Audio/AudioWire.h"   // [D4-WSJ-WIRE] Audio::PowerupSfx event ids (declarations only)
 
 #include <cmath>
 #include <cstdlib>
@@ -125,7 +126,7 @@ void Gun_Fire(PowerupSystem& sys, Slot& s, int /*mode*/) {  // 0x4561c0 (ignores
     s.cooldown = tune::kGunRate;              // 0x3d75c28f at 0x0045628f
     float fwd[3]; OwnerForward(sys.owner(), fwd);
     sys.backend()->HitscanForward(sys.owner().pos, fwd);
-    sys.backend()->SfxByName("shotgun", 0.7f);
+    sys.backend()->SfxEvent(Audio::kPuSfxGunFire, sys.owner().owner, "shotgun", 0.7f);      // 0x004566b8 machineg (wire)
 }
 void Gun_Tick(PowerupSystem& sys, float dt) {  // 0x4568d0 (lock indicator; timers)
     Slot& s = sys.slot();
@@ -188,7 +189,7 @@ void Drum_Fire(PowerupSystem& sys, Slot& s, int mode) {         // 0x454740: CMP
     // the free list (state 5 -> FUN_00454170), where it was left zeroed.
     d.life = 0.f; d.spin = 0.f;
     sys.backend()->DropHazard(d.pos, /*proximity=*/false);
-    sys.backend()->SfxByName("drop mine", 0.8f);
+    sys.backend()->SfxEvent(Audio::kPuSfxDrumFire, sys.owner().owner, "drop mine", 0.8f);   // 0x0045477b rocket (wire)
     s.ammo--;   // MEASURED: +0x08 2->1->0, one per press edge (o1 call 1558 t+1/t+8)
 }
 // 0x454820 -> FUN_00454350 per record. The state machine, verbatim:
@@ -252,7 +253,7 @@ void Missile_Fire(PowerupSystem& sys, Slot& s, int mode) {  // 0x455150: only mo
                      0.f,
                      fwd[2] * tune::kMissileSpeed };
     sys.backend()->SpawnMissile(p, vel, /*target=*/-1);  // host picks nearest ahead
-    sys.backend()->SfxByName("missile exhaust", 0.8f);
+    sys.backend()->SfxEvent(Audio::kPuSfxMissileFire, sys.owner().owner, "missile exhaust", 0.8f);  // 0x0045532f/0x0045533b
 }
 void Missile_Tick(PowerupSystem& sys, float dt) {  // 0x455c90 (host flies/homes the missile)
     // Flight TIMEOUT only, as measured (o1 call 1311, o2 call 1033): +0x28 -= dt each
@@ -330,7 +331,7 @@ void PMine_Fire(PowerupSystem& sys, Slot& s, int mode) {  // 0x457ef0: mode==2
             }
         }
     }
-    sys.backend()->SfxByName("drop mine", 0.8f);   // FX 0x1b, 0x00457f1c: unconditional
+    sys.backend()->SfxEvent(Audio::kPuSfxPMineFire, sys.owner().owner, "drop mine", 0.8f);  // FX 0x1b, 0x00457f1c: unconditional
 }
 void PMine_Tick(PowerupSystem&, float) {}    // 0x4582f0
 
@@ -428,13 +429,14 @@ void RFlame_SortFive(FlameSpark g[5], const float ref[3]) {
     }
 }
 
-void RFlame_Arm(PowerupSystem&, Slot& s) {   // 0x45a7c0: +0x08=0.02 (0x3ca3d70a), FX FUN_00465e80(0x16)
+void RFlame_Arm(PowerupSystem& sys, Slot& s) {   // 0x45a7c0: +0x08=0.02 (0x3ca3d70a), FX FUN_00465e80(0x16)
     // CALL 0x0045a3a0 @0x0045a7d9 -- the reset clears the WHOLE 100-record pool,
     // every owner's, not just the arming one.
     for (int i = 0; i < 100; ++i) s_sparks[i] = FlameSpark();
     s.ammo = 0; s.subState = 0; s.jetState = 0;
     s.cooldown = tune::kFlameSparkPeriod;
     s.charge = 1.0f;
+    sys.backend()->SfxEvent(Audio::kPuSfxFlameArm, sys.owner().owner, nullptr, 0.f);   // FX FUN_00465e80(0x16) 0x0045a83c
 }
 bool RFlame_CanFire(PowerupSystem&, Slot& s) {  // 0x45a890: pool[0]==0 (depleted latch,
     return s.ammo >= tune::kFlameBursts;        //   set by fire's major>=5 arm 0x0045a875)
@@ -443,6 +445,7 @@ void RFlame_Deact(PowerupSystem& sys, Slot&) {  // 0x45a8b0: jet off + stop FX F
     float fwd[3]; OwnerForward(sys.owner(), fwd);
     sys.backend()->FlameJet(sys.owner().pos, fwd, /*on=*/false);  // continuous burner shutdown
     sys.backend()->EffectEnd(kRFlame, sys.owner().pos);           // stop-FX teardown
+    sys.backend()->SfxEvent(Audio::kPuSfxFlameDeact, sys.owner().owner, nullptr, 0.f);  // FUN_004661a0(0x16) 0x0045a8fc
 }
 void RFlame_Fire(PowerupSystem& sys, Slot& s, int mode) {  // 0x45a850
     float fwd[3]; OwnerForward(sys.owner(), fwd);
@@ -578,7 +581,7 @@ void Shotgun_Fire(PowerupSystem& sys, Slot& s, int mode) {  // 0x45b6e0: mode==2
     if (mode != kFirePrimary || s.ammo == 0) return;          //   (0x0045b6e0..0x0045b6f6)
     float fwd[3]; OwnerForward(sys.owner(), fwd);
     sys.backend()->SpreadCone(sys.owner().pos, fwd);
-    sys.backend()->SfxByName("shotgun", 0.85f);
+    sys.backend()->SfxEvent(Audio::kPuSfxShotgunFire, sys.owner().owner, "shotgun", 0.85f);   // 0x0045b3aa
     // FUN_0045b390: one pellet per press edge -- DEC at 0x0045b3b5, +0xc = 8 at
     // 0x0045b3b9. (Previously zeroed all 4 pellets on the first shot: MEASURED
     // wrong, the original fires 4 times -- o1 call 1244 t+1/t+8/t+16/t+28.)
@@ -634,7 +637,7 @@ void Flash_Deact(PowerupSystem& sys, Slot&) {  // 0x454ab0: +0xc=5,+8=0 (pool st
 void Flash_Fire(PowerupSystem& sys, Slot& s, int mode) {       // 0x454db0: mode==2 & +0xc==1
     if (mode != kFirePrimary || s.subState != 1) return;       //   (0x00454db7, 0x00454dc7)
     sys.backend()->BlindFlash(sys.owner().pos);   // orig FUN_00454c10 + FX 0x18
-    sys.backend()->SfxByName("flash", 0.8f);
+    sys.backend()->SfxEvent(Audio::kPuSfxFlashFire, sys.owner().owner, "flash", 0.8f);        // 0x00454df0
     s.subState = 2;                               // FUN_00454c10: +0xc = 2 (0x00454c10)
 }
 void Flash_Tick(PowerupSystem& sys, float) {      // 0x454e00 -> FUN_00454c60 per record
@@ -697,6 +700,7 @@ void Oil_Fire(PowerupSystem& sys, Slot& s, int /*mode*/) {     // 0x457800 (igno
     // slick spawn FUN_004577f0 -> FUN_00456eb0, then FX FUN_00465e80(0x17).
     // The host's DropOilSlick is the stand-in for that whole tail.
     sys.backend()->DropOilSlick(q);
+    sys.backend()->SfxEvent(Audio::kPuSfxOilFire, sys.owner().owner, nullptr, 0.f);   // FX FUN_00465e80(0x17) 0x00457a06
     s.charge -= tune::kOilDrop;              // orig DAT_0068a250 -= _DAT_005cc56c
 }
 void Oil_Tick(PowerupSystem&, float) {}      // 0x4577b0
@@ -728,7 +732,7 @@ void Mortar_Fire(PowerupSystem& sys, Slot& s, int mode) {  // 0x4533b0: mode==1,
                      fwd[1] * tune::kMortarFwdFactor + v[1] * tune::kMortarVelFactor,
                      fwd[2] * tune::kMortarFwdFactor + v[2] * tune::kMortarVelFactor };
     sys.backend()->SpawnMortar(sys.owner().pos, vel, /*target=*/-1);
-    sys.backend()->SfxByName("explosion1", 0.6f);
+    sys.backend()->SfxEvent(Audio::kPuSfxMortarFire, sys.owner().owner, "explosion1", 0.6f);  // 0x004535ed rocket + 0x004535f5 mortarexhaust (wire)
 }
 void Mortar_Tick(PowerupSystem& sys, float dt) {  // 0x453b80: projectiles + cooldown
     if (sys.slot().activeCode == kMortar && sys.slot().cooldown > 0.f)
