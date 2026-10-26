@@ -330,6 +330,7 @@ void WirePowerup(int ev, int owner) {
 
 void WirePickup() {
     if (!WireOn()) return;
+    detail::EvLogRow("pickup", "", "", s_podCount);
     FirstFree(kWPod);
 }
 
