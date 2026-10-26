@@ -17,6 +17,7 @@
 #include <vector>
 
 extern "C" void __cdecl SnapNodeToSafeStartLines(std::int32_t* p);                                // 0x00409290
+extern "C" void* __cdecl RwMatrixRotate(void* matrix, const float* axis, float angle_deg, int mode);  // Math/RwMatrixRotate.cpp
 
 namespace mashed_re {
 namespace Vehicle { void BodyOrient_NoteExactBasis(float yaw, float atX, float atZ); }   // BodyOrientationIntegrate.cpp [lk21]
@@ -163,16 +164,55 @@ float GridDir_LawDeg(float lx, float lz) {
 // FUN_004704c0: RwMatrixRotate(m, &DAT_006146fc = (0, 1, 0), yaw, 1) on a translation-only matrix, so the car faces
 // R_y(yaw) (0, 0, 1) = (sin r, 0, cos r), r = yaw * 0x3c8efa35 rounded to float (the race loop runs at PC_24,
 // memory track-load-runs-at-pc24). The port's basis is built from yaw with fwd = (cos, 0, sin).
+namespace {
+// [D4-DC-4d20-GRID 2026-10-25] MASHED_GRID_ROTATE_RW=1 (default OFF, verify/dc4d20grid_20261025/PREREG_D4-DC-4d20-GRID.md):
+// the spawn basis' at row comes from the one shared RwMatrixRotate body (Math/RwMatrixRotate.cpp), called as
+// FUN_004704c0 calls it at 0x0047061c / 0x0047062e: axis &DAT_006146fc = (0, 1, 0), the law's degrees, mode 1. The
+// matrix it rotates was just through FUN_004c51a0 mode 0 (0x004705fe / 0x0047060a, ebp = 0 at 0x004704fe), whose
+// replace arm (0x004c5285..) writes the identity 3x3 and ORs flags 0x20003. FUN_004c4a50's mode-1 arm on an
+// identity-flagged matrix copies R, so mode 0 on this scratch gives the same at row: m[8] / m[10].
+bool GridRotateRw() {
+    static const bool s_on = [] { const char* e = std::getenv("MASHED_GRID_ROTATE_RW"); return e && e[0] == '1'; }();
+    return s_on;
+}
+std::FILE* GridRotateTrace() {
+    static std::FILE* f = nullptr; static bool init = false;
+    if (!init) { init = true; if (const char* p = std::getenv("MASHED_GRID_ROTATE_TRACE")) f = std::fopen(p, "w"); }
+    return f;
+}
+void GridRotateAt(float deg, float* atX, float* atZ) {
+    static const float kAxisY[3] = { 0.0f, 1.0f, 0.0f };              // DAT_006146fc
+    float m[16] = {};
+    RwMatrixRotate(m, kAxisY, deg, 0);
+    *atX = m[8]; *atZ = m[10];
+}
+}  // namespace
+
 float GridDir_PortYaw(float lx, float lz) {
     const float deg = GridDir_LawDeg(lx, lz);
     const float r = deg * 0.017453292f;                                // DAT_005cd7a8 = 0x3c8efa35
     const float s = static_cast<float>(std::sin(static_cast<double>(r)));
     const float c = static_cast<float>(std::cos(static_cast<double>(r)));
     const float yaw = static_cast<float>(std::atan2(static_cast<double>(c), static_cast<double>(s)));
-    // [lk21] FUN_004c4a50's at row for axis (0,1,0): at.x = sin r, at.z = 1 - omc with omc = (float)(1 - cos r)
-    // (_DAT_005cc320 - fcos, 0x004c4d20). Used by BodyOrient_Init under MASHED_SPAWN_BASIS_RW only.
+    // [lk21] the at row for axis (0,1,0) in double: at.x = sin r, at.z = 1 - omc with omc = (float)(1 - cos r).
+    // Port-only arithmetic (the OFF path); MASHED_GRID_ROTATE_RW takes the row from the shared body instead.
+    // Used by BodyOrient_Init under MASHED_SPAWN_BASIS_RW only.
     const float omc = static_cast<float>(1.0 - std::cos(static_cast<double>(r)));
-    Vehicle::BodyOrient_NoteExactBasis(yaw, s, 1.0f - omc);
+    float atX = s, atZ = 1.0f - omc;
+    std::FILE* tf = GridRotateTrace();
+    if (GridRotateRw() || tf) {
+        float rx, rz;
+        GridRotateAt(deg, &rx, &rz);
+        if (tf) {
+            std::uint32_t b[5]; std::memcpy(&b[0], &deg, 4);
+            std::memcpy(&b[1], &atX, 4); std::memcpy(&b[2], &atZ, 4); std::memcpy(&b[3], &rx, 4); std::memcpy(&b[4], &rz, 4);
+            std::fprintf(tf, "gridrot deg=%08x inline=%08x/%08x rw=%08x/%08x %s on=%d\n", b[0], b[1], b[2], b[3], b[4],
+                         (b[1] == b[3] && b[2] == b[4]) ? "SAME" : "DIFF", GridRotateRw() ? 1 : 0);
+            std::fflush(tf);
+        }
+        if (GridRotateRw()) { atX = rx; atZ = rz; }
+    }
+    Vehicle::BodyOrient_NoteExactBasis(yaw, atX, atZ);
     return yaw;
 }
 
