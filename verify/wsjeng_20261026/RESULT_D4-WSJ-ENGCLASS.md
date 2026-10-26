@@ -41,9 +41,9 @@ Full per-vehicle table with record VAs and constants: `engine_class_table.tsv`. 
 - **Voice slot = `DAT_00604570[class*0x4a] + car`** (0x00463725 loads the row's base slot, 0x00463731 adds `car`), one of the row's **4** voices (`+0x84` = 4 on all eight eng rows, `wave_tables.tsv`). So the car index (0..3), not the vehicle, picks the voice inside the class row.
 - **Second layer, always on**: `DAT_006130bc` is set to 1 at 0x00463682 and nothing in this function clears it. The loop therefore starts and drives a second voice at slot **+4** (0x00463768 `DAT_0068f660 + slot*8`, `FUN_0045daf0(iVar5+4,car)`, `FUN_0045e0f0(iVar5+4, ...)`), which is the next row (`eng<N>d`) because each eng row has 4 voices and the rows are consecutive. [UNCERTAIN] whether `+4` slot and the `d` row base are the same voice: the bases are cumulative at load (80E RESULT), so base(row+1) = base(row)+4 follows from that, but the cumulative rule is the 80E finding and was not re-measured here.
 - **Pitch**: voice `+0x3c` = rpm * `_DAT_005ce26c` + fVar4, with fVar4 = car * `_DAT_005ce194` + `(&DAT_00604580)[class*0x4a]` (0x0046371f, 0x0046372b). `DAT_00604580` is permdict row `+0x90`: 2000.0 on eng1/eng3/eng4 and 0.0 on eng2. **This is the reader the 80E RESULT listed as not found** (row `+0x90`, rows 0..7 values in `wave_tables.tsv`). Values read from exe at class rows: 2000.0 / 0.0 / 2000.0 / 2000.0.
-- **Volume**: `rpm * _DAT_005cc990 + DAT_00613020[class]` (0x00463b3a...). `DAT_00613020` floats = 0.2, 0.2, 0.2, 0.3.
+- **Volume**: `rpm * _DAT_005cc990 + DAT_00613020[class]` (main voice 0x00463b5a FMUL [0x005cc990], 0x00463b63 FADD [EAX*4+0x613020]; d voice 0x00463b39). `DAT_00613020` floats = 0.2, 0.2, 0.2, 0.3.
 - Min rpm `DAT_006130c4` = (1500.0 or 2000.0, per class above) + `FUN_00472650(0, 250.0)` (0x004636ed..0x004636f9, `0x437a0000`), max `DAT_006130c0` = 9500.0.
-- Consts: `_DAT_005ce194` 200.0, `_DAT_005ce26c` 3.5 (first dwords as read; they are indexed tables in the exe, not re-traced here).
+- Consts: `_DAT_005ce194` 200.0 (dword 0x43480000), `_DAT_005ce26c` 3.5 (0x40600000), `_DAT_005cc990` 0x3727c5ac (about 1.0e-5) (first dwords as read; they are indexed tables in the exe, not re-traced here).
 
 ## What this does not cover
 
