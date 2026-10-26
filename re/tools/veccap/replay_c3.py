@@ -92,6 +92,7 @@ PAGE = 0x1000
 TRANSCENDENTAL = {'fsin', 'fcos', 'fsincos', 'fptan', 'fpatan', 'f2xm1', 'fyl2x', 'fyl2xp1'}
 TRANS_BYTES = {0xFE, 0xFF, 0xFB, 0xF2, 0xF3, 0xF0, 0xF1, 0xF9}   # D9 xx
 FLOAT_RET = {'f_f', 'f_ptrN', 'f_out_in'}
+X87_RET = {'x_out_in'}   # float10 return: all 10 bytes of ST0 (fstp tbyte), compared as hex
 
 
 # ----------------------------------------------------------------------------- images
@@ -354,6 +355,8 @@ def run_body(mimg, pimg, b, call, lay, entry, regions, jcc_map, imports):
     code = b'\xe8' + struct.pack('<i', entry - (STUB + 5))
     if lay.kind in FLOAT_RET:
         code += b'\xd9\x1d' + struct.pack('<I', RESULT)
+    elif lay.kind in X87_RET:
+        code += b'\xdb\x3d' + struct.pack('<I', RESULT)   # fstp tbyte [RESULT]
     stub_end = STUB + len(code)
     uc.mem_write(STUB, code + b'\xf4')
 
@@ -446,7 +449,8 @@ def run_body(mimg, pimg, b, call, lay, entry, regions, jcc_map, imports):
         err = f'stopped at 0x{eip:08x}'
     st['err'] = err
     st['pop'] = uc.reg_read(UC_X86_REG_ESP) - sp
-    st['ret'] = struct.unpack('<I', uc.mem_read(RESULT, 4))[0] if lay.kind in FLOAT_RET else None
+    st['ret'] = struct.unpack('<I', uc.mem_read(RESULT, 4))[0] if lay.kind in FLOAT_RET else \
+        (bytes(uc.mem_read(RESULT, 10)).hex() if lay.kind in X87_RET else None)
     st['out'] = list(struct.unpack(f'<{lay.out[1]}I', uc.mem_read(lay.out[0], lay.out[1] * 4))) \
         if lay.out else None
     return st
@@ -491,7 +495,8 @@ def main():
     if a.x87_extra:
         set_x87_extra([t for t in a.x87_extra.split(',') if t])
     cfg = FUNCS[a.name]
-    bpath = BUNDLES / f"{cfg['rva']:08x}_{a.name}.json"
+    # 'bundle_of': replay another entry's recording (one recording, several port bodies)
+    bpath = BUNDLES / f"{cfg['rva']:08x}_{cfg.get('bundle_of', a.name)}.json"
     b = synth_bundle(a.name, cfg, a.synth_cw) if a.synth else json.loads(bpath.read_text())
     calls = b['calls'][:a.limit]
     if a.force_cw is not None:
@@ -589,7 +594,8 @@ def main():
                                     {k for k in o['writes'] if r['writes'].get(k) != o['writes'][k]})
                     examples.append((i, o['out'], r['out'], o['ret'], r['ret'],
                                      [hex(x) for x in diff_w[:6]], o['pop'], r['pop']))
-            h = lambda v: '' if v is None else (f'0x{v:08x}' if isinstance(v, int) else ' '.join(f'{x:08x}' for x in v))
+            h = lambda v: '' if v is None else (f'0x{v:08x}' if isinstance(v, int) else
+                                                v if isinstance(v, str) else ' '.join(f'{x:08x}' for x in v))
             w.writerow([i, f"0x{c['cw']:04x}", ' '.join(f'{x:08x}' for x in c['in_bits']),
                         h(c['ret_live']), h(o['ret']), h(r['ret']),
                         h(c['out_live'] or None), h(o['out']), h(r['out']),

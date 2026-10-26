@@ -23,6 +23,7 @@
 #include "../Math/RwLutTables.h"             // [d2lateral] Math::LutLength (0x004c3ac0), knob-gated
 #include "../Race/SubStateCallees.h"         // [d2posmodel] VehiclePhysicsStateReset (0x0046baa0)
 #include "../Ai/AiStandalone.h"              // [d3bB2] Ai_ContactEventPush (MASHED_AI_CONTACT_EVENT)
+#include "../Audio/AudioWire.h"              // [D4-WSJ-WIRE] audio-side event ring (MASHED_AUDIO_WIRE)
 #include <chrono>     // WS-A s3 perf profiler (steady_clock == QPC on MSVC)
 // #define MASHED_PHYS_DIAG 1   /* enable the steer-chain diag block (G2 drive debug) */
 
@@ -1989,6 +1990,9 @@ static void StepSubstep(StepCtx& c) {
     SyncContactRingMatrix(r, basis, io.pos);
     int* const wcSelf = reinterpret_cast<int*>(r);
     const int contacted = Collision::VehicleContactHistoryUpdate(wcSelf); // 0x00470ae8
+    // [D4-WSJ-WIRE] 0x00469aa0 returns 1 exactly when its slot scan took the branch that pushes ring type 3
+    // (0x00469cc8; Collision/CarWorldContacts.cpp:484-487). Audio-only copy, no sim reader; no-op with the knob unset.
+    if (contacted) Audio::WireRingPush(3, slot, 0);
     auto sdSub = [&](const char* tag) {   // [d2settle D0-a] diagnostic only
         if (!sdOn) return;
         if (std::FILE* lf = std::fopen(s_settleDiag, "a")) {
@@ -2117,6 +2121,10 @@ static void StepSubstep(StepCtx& c) {
             // every contact, unless FUN_0040e350() is 1..5 (0x0046ae97..0x0046aec3 / 0x0046b04c..0x0046b078)
             if (Collision::g_ccLastContact && Ai::Ai_ContactEventEnabled() && !(mode >= 1 && mode <= 5))
                 Ai::Ai_ContactEventPush(j, slot);   // pair (vehA = other j, vehB = self i)
+            // [D4-WSJ-WIRE] the same type-4 push for the audio ring (FUN_004648b0 -> FUN_00464670(car, 1, other, 0)).
+            // [UNCERTAIN] which of the pair is the ring's car field 0x007ea5e4: vehA (= j) is used. No-op knob unset.
+            if (Collision::g_ccLastContact && !(mode >= 1 && mode <= 5))
+                Audio::WireRingPush(4, j, slot);
             if (s_ccLog && s_ccLines < 8000) {
                 if (std::FILE* lf = std::fopen(s_ccLog, "a")) {
                     std::fprintf(lf,

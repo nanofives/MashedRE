@@ -35,6 +35,7 @@
 #include "../Race/WorldRegistry.h"
 #include "../Race/CarRegistrant.h"
 #include "../Math/RwLutTables.h"
+#include "../Audio/AudioWire.h"     // [D4-WSJ-WIRE] PK_Sfx -> collision with pod (MASHED_AUDIO_WIRE)
 
 #include <float.h>
 #include <cmath>
@@ -143,7 +144,19 @@ void __cdecl PK_Grant(int v, int type) {                           // FUN_0045c0
 void __cdecl PK_Burst(void*) { s_wit.push_back("88c0"); if (!s_cbReplay) ++s_bursts; }   // FUN_004588c0
 void __cdecl PK_Sfx(int id, void*) {                                                      // FUN_00465ca0
     char t[24]; std::snprintf(t, sizeof t, "5ca0:%d", id); s_wit.push_back(t);
-    if (!s_cbReplay) ++s_sfx;
+    if (!s_cbReplay) {
+        ++s_sfx;
+        // [D4-WSJ-WIRE] knob ON: the 0x00458a26 start of `collision with pod` through the wire's FUN_00465ca0.
+        // This callback runs in the registry's PC_24 scope; the voice model's QPC arithmetic runs at PC_53 like
+        // PK_Grant above, then the caller's precision is restored. Nothing here is read by the sim.
+        if (mashed_re::Audio::WireOn()) {
+            unsigned int cw = 0, tmp = 0;
+            _controlfp_s(&cw, 0, 0);
+            _controlfp_s(&tmp, _PC_53, _MCW_PC);
+            mashed_re::Audio::WirePickup();
+            _controlfp_s(&tmp, cw & _MCW_PC, _MCW_PC);
+        }
+    }
 }
 void __cdecl PK_Note8570(int v) { char t[24]; std::snprintf(t, sizeof t, "8570:%d", v); s_wit.push_back(t); }
 void PK_458570();

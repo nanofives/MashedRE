@@ -129,6 +129,13 @@ public:
 
     // Owner self-effects some types apply (boost-on-fire / brief shield).
     virtual void SfxByName(const char* name, float vol) = 0;
+    // [D4-WSJ-WIRE] one FX event of the original (`ev` = Audio::PowerupSfx, Audio/AudioWire.h; `owner` = firing car).
+    // Default: the legacy by-name one-shot (nothing when `legacyName` is null). The exe backend routes it to the
+    // wave table under MASHED_AUDIO_WIRE=1.
+    virtual void SfxEvent(int ev, int owner, const char* legacyName, float vol) {
+        (void)ev; (void)owner;
+        if (legacyName) SfxByName(legacyName, vol);
+    }
 
     // WS-B stand-in: did the car move far enough since the last oil drop? (the
     // original gates OIL on |pos - lastDrop|^2 >= _DAT_005cc56c, trail per owner).

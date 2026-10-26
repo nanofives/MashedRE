@@ -178,6 +178,7 @@
 #include "Race/GameFlow.h"                  // top-level game state machine + race scaffold
 #include "Race/RaceModes.h"                 // [WS-G1] real game-mode -> race-rule pipeline
 #include "Audio/AudioEngine.h"              // real DirectSound playback (in-race ambience)
+#include "Audio/AudioWire.h"                // [D4-WSJ-WIRE] MASHED_AUDIO_WIRE race SFX (default ON, L-27)
 
 // s24/s18 power-up table lives in the save-span MODEL, not at the literal
 // 0x007f0a40 (our port does not mirror the span back to the image).
@@ -3738,6 +3739,9 @@ bool RenderFrame() {
             }
             // engine note (real permdict eng1) rises with speed
             mashed_re::Audio::EngineSetRpm(
+                g_track.car_speed() / (g_track.world_radius() * 0.25f + 1e-3f));
+            // [D4-WSJ-WIRE] knob ON only: FUN_00466b50's race case (event ring + per-car engine voices).
+            mashed_re::Audio::WireRaceTick(
                 g_track.car_speed() / (g_track.world_radius() * 0.25f + 1e-3f));
             if (s_play_demo) {   // control proof: log player yaw vs steer under input
                 static float s_yaw_log_t = -1.f;

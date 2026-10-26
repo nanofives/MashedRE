@@ -4,6 +4,7 @@
 #include "RaceSession.h"
 #include "../D3d9Render/TrackRenderer.h"
 #include "../Audio/AudioEngine.h"
+#include "../Audio/AudioWire.h"
 #include <cstdio>
 #include <cstdarg>
 
@@ -54,6 +55,12 @@ const VehicleEntry kVehicles[] = {
     { "original/TOASTART/VEHICLES/Stallion.piz", "STALLION"  },
 };
 const int kVehicleCount = static_cast<int>(sizeof(kVehicles) / sizeof(kVehicles[0]));
+// [D4-WSJ-WIRE] catalogue index -> the ORIGINAL vehicle index 0..12 (Audio/EngineClassTable.h), by DFF base name,
+// with Begin's clamp (out of range -> entry 0).
+int OrigVehicleOf(int carIndex) {
+    if (carIndex < 0 || carIndex >= kVehicleCount) carIndex = 0;
+    return Audio::WireVehicleIndexByName(kVehicles[carIndex].dffBase);
+}
 
 // trackId -> per-track ambience bank (toastaudio/pc/audio/pcdics/<area>.rws).
 // Mirrors exe_main's kRaceTrackPiz order; the .rws bank names are the lowercase
@@ -180,7 +187,7 @@ void RaceSession::Begin(const RaceConfig& cfg, D3d9Render::TrackRenderer* track,
         // Real engine: the permdict `eng1` loop, pitched by RPM (the engN engine
         // classes live in permdict, NOT the english/*.rws banks — see
         // re/analysis/audio_character_banks_REmap_20260616.md §4).
-        Audio::EngineStart(0.5f);
+        Audio::EngineStart(0.5f, OrigVehicleOf(m_cfg.cars[0].carIndex));
         // Character voice bank: follows the racer's Player Colour index 0..5
         // (0=RED 1=BLUEJAY 2=MELON 3=GOLD 4=PINK 5=SHADOW), NOT the vehicle
         // (REmap note §1-§3; cited from DAT_006041f0 / FUN_004625b0 / FUN_00462dd0).
@@ -199,6 +206,13 @@ void RaceSession::Begin(const RaceConfig& cfg, D3d9Render::TrackRenderer* track,
         // controller, switched on the Frontend/Race/Results state edges.
     } else {
         logf("ambience: audio engine unavailable");
+    }
+    // [D4-WSJ-WIRE] MASHED_AUDIO_WIRE=1 only (no-op otherwise): per-car engine classes for the wire's voice model.
+    // Outside the Available() block so a MASHED_MUTE=1 arm logs the same decisions.
+    {
+        int veh[4];
+        for (int c = 0; c < 4; ++c) veh[c] = OrigVehicleOf(m_cfg.cars[c].carIndex);
+        Audio::WireRaceBegin(m_cfg.numCars, veh);
     }
 }
 
@@ -236,6 +250,7 @@ void RaceSession::Render() {
 void RaceSession::End() {
     if (!m_active) return;
     once("RaceSession::End");
+    Audio::WireRaceEnd();      // [D4-WSJ-WIRE] no-op with the knob unset
     Audio::EngineStop();
     Audio::MusicStop();
     Audio::StopAll();          // silence the ambience when the race ends
