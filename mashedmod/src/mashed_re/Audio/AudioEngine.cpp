@@ -30,6 +30,32 @@ void logf(const char* fmt, ...) {
     }
 }
 
+// [D4-WSJ-REF] MASHED_AUDIO_EVENT_LOG=<path>, default OFF: one CSV row per audio request at the API entry,
+// written before the device check so a MASHED_MUTE=1 run still logs. Logging only, nothing played changes.
+// Columns: ms (QPC since the first row), kind, arg (wave / bank), resolved (the bank wave name the
+// request resolves to, empty when none), val. verify/wsjref_20261026/RESULT_D4-WSJ-REF.md.
+std::FILE*    s_evLog = nullptr;
+bool          s_evLogInit = false;
+LARGE_INTEGER s_evQ0 = {}, s_evQf = {};
+void EvLog(const char* kind, const char* arg, const char* resolved, double val) {
+    if (!s_evLogInit) {
+        s_evLogInit = true;
+        char p[MAX_PATH];
+        const DWORD n = GetEnvironmentVariableA("MASHED_AUDIO_EVENT_LOG", p, sizeof(p));
+        if (n > 0 && n < sizeof(p)) {
+            s_evLog = std::fopen(p, "w");
+            QueryPerformanceFrequency(&s_evQf); QueryPerformanceCounter(&s_evQ0);
+            if (s_evLog) std::fputs("ms,kind,arg,resolved,val\n", s_evLog);
+        }
+    }
+    if (!s_evLog) return;
+    LARGE_INTEGER q; QueryPerformanceCounter(&q);
+    std::fprintf(s_evLog, "%.1f,%s,%s,%s,%.3f\n",
+                 static_cast<double>(q.QuadPart - s_evQ0.QuadPart) * 1000.0 / static_cast<double>(s_evQf.QuadPart),
+                 kind, arg ? arg : "", resolved ? resolved : "", val);
+    std::fflush(s_evLog);
+}
+
 IDirectSound8* g_ds = nullptr;
 IDirectSoundBuffer* g_engine = nullptr;   // procedural engine voice
 DWORD               g_engineBaseHz = 22050;
@@ -165,9 +191,11 @@ void Shutdown() {
 bool Available() { return g_ds != nullptr; }
 
 int PlayLoop(const char* rwsPath, const char* waveName, float volume) {
+    EvLog("loop", waveName, rwsPath, volume);
     return CreateAndPlay(rwsPath, waveName, volume, true);
 }
 int PlayOnce(const char* rwsPath, const char* waveName, float volume) {
+    EvLog("once", waveName, rwsPath, volume);
     return CreateAndPlay(rwsPath, waveName, volume, false);
 }
 
@@ -186,6 +214,7 @@ void Stop(int voice) {
 }
 
 void StopAll() {
+    EvLog("stop_all", "", "", 0.0);
     for (size_t i = 0; i < g_voices.size(); ++i)
         if (g_voices[i].used && g_voices[i].buf) {
             g_voices[i].buf->Stop(); g_voices[i].buf->Release(); g_voices[i] = Voice{};
@@ -193,6 +222,7 @@ void StopAll() {
 }
 
 void EngineStart(float volume) {
+    EvLog("engine_start", "eng1", "", volume);
     if (!g_ds || g_engine) return;
     DWORD rate = 22050;
     std::vector<std::int16_t> pcm;
@@ -257,10 +287,12 @@ void EngineSetRpm(float norm01) {
 }
 
 void EngineStop() {
+    EvLog("engine_stop", "", "", 0.0);
     if (g_engine) { g_engine->Stop(); g_engine->Release(); g_engine = nullptr; }
 }
 
 void MusicStart(const char* rwsPath, float volume, int maxSeconds) {
+    EvLog("music_start", rwsPath, "", maxSeconds);
     if (!g_ds || g_music) return;
     std::uint32_t rate = 44100;
     std::vector<std::int16_t> pcm;
@@ -310,6 +342,10 @@ namespace {
 // Loop a named 16-bit-mono wave from the loaded SFX bank (permdict) on the music
 // voice — used for the menu music (`musicloop1`). No-op if already playing.
 void MusicStartBankWaveLoop(const char* waveSub, float volume) {
+    {
+        const RwsWave* r = g_sfxBank.empty() ? nullptr : RwsBankFind(g_sfxBank, waveSub);
+        EvLog("music_bankloop", waveSub, r ? r->name.c_str() : "", volume);
+    }
     if (!g_ds || g_music || g_sfxBank.empty()) return;
     const RwsWave* w = RwsBankFind(g_sfxBank, waveSub);
     if (!w || !w->valid()) { logf("MusicBankLoop: '%s' not in SFX bank", waveSub); return; }
@@ -336,6 +372,7 @@ void MusicStartBankWaveLoop(const char* waveSub, float volume) {
 
 void MusicSetState(MusicState s) {
     if (s == g_musicState) return;          // idempotent: never restart per-frame
+    EvLog("music_state", "", "", static_cast<int>(s));
     const char* kCdaudio = "original/toastaudio/pc/audio/pcdics/cdaudio.rws";
     switch (s) {
         case MusicState::Silent:
@@ -408,6 +445,10 @@ void SfxLoadBank(const char* rwsPath) {
 }
 
 void SfxPlay(const char* waveNameSub, float volume) {
+    {
+        const RwsWave* r = g_sfxBank.empty() ? nullptr : RwsBankFind(g_sfxBank, waveNameSub);
+        EvLog("sfx", waveNameSub, r ? r->name.c_str() : "", volume);
+    }
     if (!g_ds || g_sfxBank.empty()) return;
     const RwsWave* w = RwsBankFind(g_sfxBank, waveNameSub);
     if (!w || !w->valid()) return;

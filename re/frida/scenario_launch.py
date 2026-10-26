@@ -4281,6 +4281,81 @@ send({kind:'ready'});
 '''
 
 
+# --- [D4-WSJ-REF] original-side audio event log (--audio-probe <prefix>) -------------
+# A second script on the same session, so the main AGENT is untouched. One row per call into the
+# virtual-voice layer and its gameplay callers (RVAs from re/analysis/bucket_audio_00465c10_005a7b50/,
+# re/analysis/audio_sfx_dispatch/, audio_music/): FUN_005a66d0(voice, sel) (sel != 0 = start per the
+# bucket plate 005a66d0.md / 005a7560.md), FUN_00465ca0(w, pos) one-shot, FUN_00465c10(w, slot),
+# FUN_00465e80(w, pos, slot), FUN_004661a0(w, slot) stop, FUN_004656e0(player) character voice,
+# FUN_005a8960(stream, mode) stream, FUN_005b92e0(src, on) physical source request.
+# Each row: race tick DAT_007f101c, phase DAT_00771968, race state DAT_0063ba8c, the raw args, the
+# voice's index in the 200-voice array DAT_0068f640 (stride 8, -1 if absent) and the return address.
+# snap() dumps the wave descriptor tables raw (0x006044f0 stride 0x94; *0x0088e670 stride 0x90) so the
+# voice -> wave mapping is resolved offline from bytes, not from the inferred field offsets.
+AUDIO_AGENT = r'''
+'use strict';
+const IMG = 0x400000; let M = null;
+function ga(a){ if(!M) M = Process.findModuleByName('MASHED.exe'); return M.base.add(a - IMG); }
+function u32(a){ try { return ga(a).readU32(); } catch(e){ return -1; } }
+function u8(a){ try { return ga(a).readU8(); } catch(e){ return -1; } }
+const EV = []; const CAP = 400000; let dropped = 0; const CNT = {}; let vmap = null; const SNAPS = [];
+const FOPEN = []; const RH = new Map(); const RDS = {};
+function buildMap(){ vmap = new Map(); const b = ga(0x0068f640);
+  for (let i = 0; i < 200; i++) { try { const p = b.add(i*8).readPointer(); if (!p.isNull()) vmap.set(p.toString(), i); } catch(e){} } }
+function vidx(p){ if (!vmap) buildMap(); let i = vmap.get(p.toString()); if (i === undefined) { buildMap(); i = vmap.get(p.toString()); }
+  return i === undefined ? -1 : i; }
+function hexOf(p, n){ try { const a = new Uint8Array(p.readByteArray(n)); let s = '';
+  for (let i = 0; i < a.length; i++) s += (a[i] < 16 ? '0' : '') + a[i].toString(16); return s; } catch(e){ return ''; } }
+function snap(label){
+  const s = {label: label, tick: u32(0x007f101c), phase: u8(0x00771968), state: u32(0x0063ba8c),
+    g: {}, perm: '', course: '', course_ptr: 0, voices: ''};
+  [0x0068fc84, 0x0068fc88, 0x00690478, 0x0069049c, 0x006904a0, 0x0068f4c8, 0x00605db8, 0x008aa254,
+   0x0068f61c, 0x00632ba0, 0x0069047c].forEach(function(a){ s.g['0x'+a.toString(16).padStart(8,'0')] = u32(a); });
+  const nw = Math.min(Math.max(s.g['0x0068fc88'], 0), 256);
+  s.perm = hexOf(ga(0x006044f0), 0x94 * Math.max(nw, 1));
+  const cp = u32(0x0088e670); s.course_ptr = cp;
+  const nc = Math.min(Math.max(s.g['0x00690478'], 0), 256);
+  if (cp > 0x10000) s.course = hexOf(ptr(cp), 0x90 * Math.max(nc, 1));
+  s.voices = hexOf(ga(0x0068f640), 200 * 8);
+  return s; }
+function rec(kind, a0, a1, a2, vi, ra){
+  if (EV.length >= CAP) { dropped++; return; }
+  if (!SNAPS.some(function(x){ return x.label === 'first_race_event'; }) && u8(0x00771968) === 3) SNAPS.push(snap('first_race_event'));
+  EV.push([u32(0x007f101c), u8(0x00771968), u32(0x0063ba8c), kind, a0, a1, a2, vi, ra]); }
+function hook(rva, kind, fn){ CNT[kind] = 0;
+  Interceptor.attach(ga(rva), { onEnter(args){ CNT[kind]++; const sp = this.context.esp;
+    const ra = sp.readU32(); const r = fn(sp); rec(kind, r[0], r[1], r[2], r[3], ra); } }); }
+rpc.exports = {
+  arm: function(){
+    hook(0x005a66d0, 'voice', function(sp){ const v = sp.add(4).readPointer(); const sel = sp.add(8).readU32();
+      return [v.toUInt32(), sel, 0, vidx(v)]; });
+    hook(0x00465ca0, 'oneshot', function(sp){ return [sp.add(4).readS32(), sp.add(8).readU32(), 0, -1]; });
+    hook(0x00465c10, 'oneshot_slot', function(sp){ return [sp.add(4).readS32(), sp.add(8).readS32(), 0, -1]; });
+    hook(0x00465e80, 'oneshot_pos_slot', function(sp){ return [sp.add(4).readS32(), sp.add(8).readU32(), sp.add(12).readS32(), -1]; });
+    hook(0x004661a0, 'slot_stop', function(sp){ return [sp.add(4).readS32(), sp.add(8).readS32(), 0, -1]; });
+    hook(0x004656e0, 'char_voice', function(sp){ return [sp.add(4).readS32(), 0, 0, -1]; });
+    hook(0x005a8960, 'stream', function(sp){ return [sp.add(4).readU32(), sp.add(8).readS32(), 0, -1]; });
+    hook(0x005b92e0, 'src_play', function(sp){ return [sp.add(4).readU32(), sp.add(8).readS32(), 0, -1]; });
+    // .rws file opens and the reads on those handles (is a bank streamed during the race?). FOPEN keeps
+    // [tick, phase, state, path, handle]; RDS counts ReadFile calls and bytes per handle per phase.
+    ['CreateFileA', 'CreateFileW'].forEach(function(fn){
+      const p = Process.getModuleByName('kernel32.dll').findExportByName(fn); if (!p) return;
+      Interceptor.attach(p, { onEnter(args){ try { this.path = fn.endsWith('W') ? args[0].readUtf16String() : args[0].readAnsiString(); } catch(e){ this.path = null; } },
+        onLeave(ret){ if (this.path && this.path.toLowerCase().indexOf('.rws') >= 0) {
+          FOPEN.push([u32(0x007f101c), u8(0x00771968), u32(0x0063ba8c), this.path, ret.toString()]); RH.set(ret.toString(), this.path); } } }); });
+    const rf = Process.getModuleByName('kernel32.dll').findExportByName('ReadFile');
+    if (rf) Interceptor.attach(rf, { onEnter(args){ const h = args[0].toString(); if (!RH.has(h)) return;
+      const k = RH.get(h) + '|phase' + u8(0x00771968); const e = RDS[k] || (RDS[k] = [0, 0]); e[0]++; e[1] += args[2].toUInt32(); } });
+    SNAPS.push(snap('arm'));
+    return 'armed'; },
+  snap: function(label){ const s = snap(label); SNAPS.push(s); return 1; },
+  stats: function(){ return {events: EV.length, dropped: dropped, counts: CNT, rws_opens: FOPEN, rws_reads: RDS}; },
+  drain: function(off, n){ return EV.slice(off, off + n); },
+  snaps: function(){ return SNAPS; }
+};
+'''
+
+
 # --- texture/raster cluster observation spec (2026-09-02, parent booted lane) --
 #
 # The 12 rows r8 mapped as the texture/raster neighbourhood
@@ -4887,6 +4962,9 @@ def main():
     ap.add_argument("--mag-probe-limit", type=int, default=20000,
                     help="[U-9156] hard row cap; the hook DETACHES itself on reaching it, so "
                          "hot-path exposure is bounded. 0 = no cap (not recommended).")
+    ap.add_argument("--audio-probe", default="",
+                    help="[D4-WSJ-REF] path prefix: log every audio voice start/stop and its gameplay caller "
+                         "(AUDIO_AGENT) to <prefix>.audio.csv + <prefix>.audiosnap.json")
     ap.add_argument("--peek", default="",
                     help="[U-9147] comma-separated image globals to READ periodically, "
                          "'rva:type' with type f/d/i/u (default f). No Interceptor, no "
@@ -4966,6 +5044,11 @@ def main():
 
     scr = sess.create_script(AGENT); scr.on("message", on_msg); scr.load()
     E = scr.exports_sync
+    AU = None
+    if args.audio_probe:
+        _ascr = sess.create_script(AUDIO_AGENT); _ascr.on("message", on_msg); _ascr.load()
+        AU = _ascr.exports_sync
+        print("  [audio]", AU.arm())
 
     # MASHED_COUNT_RVAS=0x00409900,0x00408a70 — arm invocation counters BEFORE the
     # phase poke so the track-load path is covered. Proves a path actually executed;
@@ -5442,6 +5525,28 @@ def main():
     except SystemExit:
         pass
     finally:
+        if AU is not None:
+            # [D4-WSJ-REF] in finally so an early game exit still yields the rows captured so far.
+            try:
+                import json as _aj
+                try: AU.snap("end")
+                except Exception: pass
+                st = AU.stats(); print("  [audio]", st)
+                ap_ = Path(args.audio_probe); ap_.parent.mkdir(parents=True, exist_ok=True)
+                with open(str(ap_) + ".audio.csv", "w", encoding="utf-8") as af:
+                    af.write("tick,phase,state,kind,a0,a1,a2,voice_idx,ret\n")
+                    off = 0
+                    while off < st["events"]:
+                        rows = AU.drain(off, 20000)
+                        if not rows: break
+                        for r in rows:
+                            af.write(f"{r[0]},{r[1]},{r[2]},{r[3]},{r[4]},{r[5]},{r[6]},{r[7]},0x{r[8] & 0xffffffff:08x}\n")
+                        off += len(rows)
+                Path(str(ap_) + ".audiosnap.json").write_text(
+                    _aj.dumps({"stats": st, "snaps": AU.snaps(), "argv": sys.argv}, indent=1), encoding="utf-8")
+                print(f"  [audio] -> {ap_}.audio.csv / .audiosnap.json")
+            except Exception as ex:
+                print(f"  [audio] drain failed: {ex}")
         if args.statediff_out:
             # MSD1 writer (re/tools/statediff/FORMAT.md). In finally so an early
             # game exit still yields whatever was captured.
