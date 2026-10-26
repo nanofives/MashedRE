@@ -1,0 +1,26 @@
+16:26:07 W3: probe rc=0 ['pid=6736', 'SAVEWRITE ret=0']
+16:26:07 W3: in dca746c9d4339c13 out 6cd13410e74755bf
+16:26:07 restored private root: gamesave bd18788182b2343e videocfg f87df3c8b03bab30
+16:34:58 SB_1: exe 98913943 in dca746c9d4339c13 rc=0 out 694378907c96ebfa
+16:34:59 SF_P: exe 869e2006 in 697b7af8175b418f rc=0 out 7640efaf367fd880
+16:34:59 SF_G: exe 869e2006 in e2eabeacda9820ba rc=0 out 7640efaf367fd880
+16:34:59 SF_1: exe 869e2006 in dca746c9d4339c13 rc=0 out 54f3f898f8b300f1
+16:34:59 SF_0: exe 869e2006 in absent rc=0 out 89892bcb383b3aa8
+16:34:59 SO_1: exe 869e2006 in dca746c9d4339c13 rc=0 out dca746c9d4339c13
+16:34:59 CMP: file | in 0x24efc | out 0x24efc
+16:34:59   O_1   in 1 out 1
+16:34:59   SB_1  in 1 out 2
+16:34:59   SF_P  in 0 out 0
+16:34:59   SF_G  in 0 out 0
+16:34:59   SF_1  in 1 out 1
+16:34:59   SF_0  in none out 0
+16:34:59   SO_1  in 1 out 1
+16:34:59   SF_P.bin vs S1_P.bin: len_eq=True differ=1 in_dword=1 outside=0 first_outside=[]
+16:34:59   SF_G.bin vs S1_G.bin: len_eq=True differ=1 in_dword=1 outside=0 first_outside=[]
+16:34:59   SF_0.bin vs S1_0.bin: len_eq=True differ=1 in_dword=1 outside=0 first_outside=[]
+16:35:00   SF_1.bin vs SB_1.bin: len_eq=True differ=1 in_dword=1 outside=0 first_outside=[]
+16:35:00   SF_P.bin vs SF_1.bin: len_eq=True differ=1 in_dword=1 outside=0 first_outside=[]
+16:35:00   SO_1.bin vs F_1.bin: len_eq=True differ=0 in_dword=0 outside=0 first_outside=[]
+16:35:00   O_1.bin vs F_1.bin: len_eq=True differ=2 in_dword=0 outside=2 first_outside=['0x24f55', '0x24f56']
+16:35:00   SF_1.bin vs O_1.bin: len_eq=True differ=331 in_dword=0 outside=331 first_outside=['0x24a44', '0x24a4c', '0x24a6c', '0x24a7c', '0x24aa4', '0x24aac', '0x24adc', '0x24cb0']
+16:35:00 restored private root: gamesave bd18788182b2343e videocfg f87df3c8b03bab30

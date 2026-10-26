@@ -28,6 +28,18 @@ static constexpr std::uint32_t kAiHeaderLen    = 12u;          // type+size+vers
 static constexpr std::uint32_t kAiChunkTotal   = kAiPayloadSize + kAiHeaderLen;  // 0x11890
 // Observed versions: 0x1c02000a (12 tracks), 0x1803ffff (AI30.AI). Reader ignores it.
 
+// Writer version stamp. FUN_00423540 calls FUN_004cc580(h, 0x13269902, 0x11884,
+// 0x37002, 10) (0x00423540 body); FUN_004cc580 packs its args 4/5 as
+// ((p4 + 0x10000 & 0x3ff00) << 0xe) | ((p4 & 0x3f) << 0x10) | (p5 & 0xffff)
+// (0x004cc580 body) and writes [type][size][version] as one 0xc-byte
+// FUN_004cbe80 call.
+inline constexpr std::uint32_t AiData_PackVersion(std::uint32_t p4, std::uint32_t p5)
+{
+    return (((p4 + 0x10000u) & 0x3ff00u) << 0xe) | ((p4 & 0x3fu) << 0x10) | (p5 & 0xffffu);
+}
+static constexpr std::uint32_t kAiWriterVersion = AiData_PackVersion(0x37002u, 10u);  // 0x1c02000a
+static_assert(kAiWriterVersion == 0x1c02000au, "FUN_004cc580 pack of (0x37002, 10)");
+
 // ---- payload region offsets (= DAT_007f1a9c image; abs addrs in comments) ---
 static constexpr std::uint32_t kAiTileGridOff  = 0x00000u;  // 0x007f1a9c  128x128 int16
 static constexpr std::uint32_t kAiSubCellOff   = 0x08000u;  // 0x007f9a9c  0x200 tiles x 8x8 char
@@ -95,6 +107,21 @@ inline bool AiData_LoadInto(const std::uint8_t* raw, std::size_t len, void* dest
     const std::uint8_t* payload = AiData_Validate(raw, len);
     if (payload == nullptr || dest == nullptr) return false;
     std::memcpy(dest, payload, kAiPayloadSize);
+    return true;
+}
+
+// Emit an AI%d.AI file image from a 0x11884-byte payload (the DAT_007f1a9c
+// image), in the byte order FUN_00423540 writes it: the FUN_004cc580 header
+// [0x13269902][0x11884][kAiWriterVersion], then FUN_004cbe80(h, &DAT_007f1a9c,
+// 0x11884). `out` must hold kAiChunkTotal bytes. Test-only: no default-path caller
+// (re/analysis/formats/ai_path_data.md, Round-trip identity).
+// 0x00423540
+inline bool AiData_Emit(const void* payload, std::uint8_t* out)
+{
+    if (payload == nullptr || out == nullptr) return false;
+    const std::uint32_t hdr[3] = { kAiChunkType, kAiPayloadSize, kAiWriterVersion };
+    std::memcpy(out, hdr, kAiHeaderLen);
+    std::memcpy(out + kAiHeaderLen, payload, kAiPayloadSize);
     return true;
 }
 

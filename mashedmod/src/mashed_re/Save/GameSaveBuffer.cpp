@@ -82,7 +82,7 @@ static constexpr std::uint32_t  kDeadBeef           = 0xDEADBEEFu; // 0x00404F37
 //           (was DAT_007F0F54) is NOT a separate global — it is the tail 12 B of
 //           this span (0x7F0F54-0x7F0A40 = +0x514), so it binds inside it.
 //         · saveStateCounter (was DAT_008A95AC, live counter) → GameFlow_SaveCounterPtr()
-//           [Race/GameFlow.cpp g_saveCounter, bumped by SaveProgress].
+//           [Race/GameFlow.cpp g_saveCounter, stored unchanged by SaveProgress].
 //         · strideRecords (was DAT_007F105C) — the standalone DROPS this state
 //           (Save/GameSaveFormat.h BuildImage leaves the region zero); no live
 //           symbol exists, so bind a local zeroed buffer (pack/unpack stay
