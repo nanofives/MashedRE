@@ -10,7 +10,8 @@
 #   in_bits    input floats as the function received them (in1 | in2 | scalar)
 #   out_pre    the out buffer BEFORE the call (slots it never writes compare equal)
 #   out_live   the out buffer AFTER the call, read in onLeave = the game's result
-#   ret_live   f32 of ST0 at onLeave via `fst dword` (float-return kinds), else null
+#   ret_live   f32 of ST0 at onLeave via `fst dword` (float-return kinds); for x_out_in the
+#              10-byte hex of ST0 via `fstp tbyte` + `fld tbyte` (HB-6, 2026-10-26); else null
 #   cw, mxcsr  the calling thread's x87 control word and MXCSR at entry (the race
 #              loop runs PC_24, memory track-load-runs-at-pc24; the emulator must too)
 #   ptrs       the live out/in pointers, so aliasing (out == in) replays exactly
@@ -52,9 +53,14 @@ cwStub.writeByteArray([0x8b,0x44,0x24,0x04, 0xd9,0x38, 0x0f,0xae,0x58,0x04, 0xc3
 // mov eax,[esp+4] ; fst dword [eax] ; ret        (ST0 left in place)
 const stStub = cwStub.add(0x40);
 stStub.writeByteArray([0x8b,0x44,0x24,0x04, 0xd9,0x10, 0xc3]);
+// mov eax,[esp+4] ; fstp tbyte [eax] ; fld tbyte [eax] ; ret   (x_out_in: all 80 bits of ST0;
+// the store/reload pair is exact and leaves ST0 as it was, needing no free x87 register)
+const st80Stub = cwStub.add(0x80);
+st80Stub.writeByteArray([0x8b,0x44,0x24,0x04, 0xdb,0x38, 0xdb,0x28, 0xc3]);
 Memory.protect(cwStub, Process.pageSize, 'r-x');
 const readCw = new NativeFunction(cwStub, 'void', ['pointer']);
 const readSt = new NativeFunction(stStub, 'void', ['pointer']);
+const readSt80 = new NativeFunction(st80Stub, 'void', ['pointer']);
 const tmp = Memory.alloc(16);
 
 const L = {};   // key -> { recs, seen, listener }
@@ -108,6 +114,8 @@ rpc.exports = {
                 if (this.out) r.out_live = rd(this.out, nOut);
                 if (kind === 'f_f' || kind === 'f_ptrN' || kind === 'f_out_in') {
                     readSt(tmp); r.ret_live = tmp.readU32();
+                } else if (kind === 'x_out_in') {
+                    readSt80(tmp); r.ret_live = hex(tmp.readByteArray(10));   // replay_c3 X87_RET form
                 }
                 st.recs[this.slot] = r;
             }
@@ -122,6 +130,53 @@ rpc.exports = {
     },
 };
 """
+
+
+def attach_record(a, names):
+    """--attach-pid (HB-6, 2026-10-26): the race is driven by the tool that spawned the PID
+    (its recipe goes in --scenario); this only records. The PID is never killed here."""
+    if a.preload or a.menu_window:
+        sys.exit('--attach-pid records in race only (no --preload / --menu-window)')
+    if not a.scenario:
+        sys.exit('--attach-pid needs --scenario (the recipe that drives the race goes in the bundle)')
+    sess = frida.get_local_device().attach(a.attach_pid)
+    print(f'attached to pid={a.attach_pid} (not ours to kill); settling {a.settle}s')
+    rec = sess.create_script(REC_JS)
+    rec.load()
+    R = rec.exports_sync
+    time.sleep(a.settle)
+    for name in names:
+        cfg = FUNCS[name]
+        t0 = time.time()
+        R.start(name, f"0x{cfg['rva']:08x}", cfg['kind'], n_a(cfg), n_in(cfg), n_out(cfg),
+                has_scalar(cfg), a.every, a.max)
+        time.sleep(a.window)
+        res = R.stop(name)
+        dt = time.time() - t0
+        recs = [r for r in res['recs'] if r]
+        for r in recs:
+            r['w'] = 'race'
+        print(f"{name:<18} [race] seen={res['seen']:<7} recorded={len(recs):<5} ({res['seen'] / dt:.0f}/s)")
+        if not recs:
+            print(f'{name:<18} (no bundle written)')
+            continue
+        bundle = {
+            'name': name, 'rva': cfg['rva'], 'kind': cfg['kind'], 'export': cfg['export'],
+            'n_in': n_in(cfg), 'n_out': n_out(cfg), 'n_a': n_a(cfg), 'scalar': has_scalar(cfg),
+            'scenario': f'{a.scenario}; recorded by record_race.py --attach-pid, hooks as that recipe set them',
+            'windows': [{'when': 'race', 'seen': res['seen'], 'recorded': len(recs), 'window_s': round(dt, 2)}],
+            'recorded_at': time.strftime('%Y-%m-%d %H:%M:%S'), 'pid': a.attach_pid,
+            'calls_seen': res['seen'], 'every': a.every, 'window_s': round(dt, 2),
+            'game_phase': None, 'calls': recs,
+        }
+        if cfg.get('rw_lut'):
+            bundle['regions'] = R.snapshot()
+        out = BUNDLE_DIR / f"{cfg['rva']:08x}_{name}.json"
+        out.write_text(json.dumps(bundle))
+        print(f'{name:<18} total recorded={len(recs)} -> {out.relative_to(ROOT)}')
+    rec.unload()
+    sess.detach()
+    return 0
 
 
 def main():
@@ -140,6 +195,11 @@ def main():
                     help='also record each --funcs entry for this many seconds at the main menu, '
                          'before the race; merged into the same bundle (calls tagged w=menu|race)')
     ap.add_argument('--settle', type=float, default=12.0, help='seconds in race before recording')
+    ap.add_argument('--attach-pid', type=int, default=0,
+                    help='record inside a race ANOTHER tool of this session spawned and drives (explicit PID, '
+                         'e.g. the `scenario_launch  pid=N` line of re/frida/scenario_launch.py --hold 60). '
+                         'No spawn, no nav, no kill: attach, --settle, record each --funcs window, detach.')
+    ap.add_argument('--scenario', default='', help='with --attach-pid: the driving recipe, stored in the bundle')
     a = ap.parse_args()
     pre = [n for n in a.preload.split(',') if n]
     names = [n for n in a.funcs.split(',') if n] or         [n for n, c in FUNCS.items() if c.get('record') and n not in pre]
@@ -147,6 +207,8 @@ def main():
         if n not in FUNCS:
             sys.exit(f'unknown registry name {n}')
     BUNDLE_DIR.mkdir(parents=True, exist_ok=True)
+    if a.attach_pid:
+        return attach_record(a, names)
 
     canon = mashed_root() / 'scripts' / 'canonical' / 'videocfg_windowed.bin'
     if canon.exists():

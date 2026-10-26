@@ -32,6 +32,25 @@ B5e leaves (`0x00565ef0`, `0x00565fa0`, `0x00566830`, `0x00566200`) and the X/Z 
 branches never ran in this scenario, from the title through 20 s of race.
 
 
+### HB-6 (2026-10-26): 80-bit ST0, `bundle_of`, VECCAP-2 re-transcription
+
+- **New kind `x_out_in`** (float10 return, `(out, in)`): `record_race.py` reads all 10
+  bytes of ST0 at return (`fstp tbyte` + `fld tbyte`, ST0 left intact) and `replay_c3.py`'s
+  stub ends `fstp tbyte [RESULT]`; the return compares as a 20-hex-digit string. Before this
+  the lane had no 80-bit capture: `fst dword` here, `NativeFunction(..., 'float')` in
+  `capture_vectors.py`. HB-1's `st0_ret_*` handlers live in `re/frida/diff_template.js`
+  (path1 `run_diff.py`), drain ST0 as a 64-bit `double`, and are not used by veccap.
+- **`replay_only` / `bundle_of` registry keys.** `replay_only` keeps an entry out of the
+  classic tools (`live_funcs()`); `bundle_of` replays another entry's bundle, so one
+  recording scores two port bodies (default and knob).
+- **VECCAP-2 fixed behind a knob.** `Collision/RwpSolverLeaves1X87.cpp` (`/arch:IA32`)
+  holds disasm-order bodies `FUN_00566200_x87` and `FUN_005667c0_x87`; the build reaches
+  them only under `MASHED_LEAVES1_X87=1` (default OFF). Synthetic replay, 513 calls each,
+  CW `0x007f` and `0x027f`: both x87 bodies 0 differences; default `0x00566200` still RED
+  370 / 490 (the clause-8 control), default `0x005667c0` RED 512/513 at `0x007f`, equal at `0x027f`.
+- **Port-image link fix:** the four Math TUs now reference `Math/RwLutTables.cpp`
+  (`RwLutSqrtTable`), so the six RW-LUT entries list it in `sources`.
+
 Additions to the promotion pipeline so that C3/C4-style verification can iterate
 **without booting the game for every check**. Live Frida diffs (`diff-original`)
 remain the final promotion gate; these tools attack the iteration cost before it.
