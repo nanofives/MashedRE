@@ -1,0 +1,64 @@
+rva	name	copy	body	evidence_date	cxx_fn	lines	verdict	body_commits	comment_commits	callee_changed	same_day_commits
+00492270	SubsystemInit	asi+exe	mashedmod/src/mashed_re/Boot/SubsystemInit.cpp	2026-10-12	SubsystemInit	207-220	unchanged				9cde82cb2:body-changed
+004938c0	SoftwareTidyUpBeforeExiting	asi+exe	mashedmod/src/mashed_re/Boot/LaunchHandshake.cpp	2026-06-09	SoftwareTidyUpBeforeExiting	152-158	body-changed	e62783abc(2026-08-13,body-changed)			
+004c2f00	RwEngineGetCurrentMode	asi+exe	mashedmod/src/mashed_re/Boot/VideoConfig.cpp	2026-06-06	RwEngineGetCurrentMode	113-128	unchanged				
+00404e50	SaveLoad	asi+exe	mashedmod/src/mashed_re/Save/GameSave.cpp	2026-10-11	SaveLoad	242-246	unchanged				
+00404f50	SaveWrite	asi+exe	mashedmod/src/mashed_re/Save/GameSave.cpp	2026-10-11	SaveWrite	264-268	callee-changed			gFileWrite@7ecffe118	
+00404f80	SaveFileExists	asi+exe	mashedmod/src/mashed_re/Save/GameSave.cpp	2026-06-09	SaveFileExists	285-289	callee-changed			gFileExists@549196601	
+004099e0	SaveStatusClear	asi+exe	mashedmod/src/mashed_re/Save/GameSave.cpp	2026-06-09	SaveStatusClear	221-223	unchanged				
+00407a40	Table8a9640Get	asi	mashedmod/src/mashed_re/Util/PromoLoop_round42.cpp	2026-06-13	Table8a9640Get	28-30	unchanged				420142c08:created
+0043c5b0	MenuDrawLoop	asi	mashedmod/src/mashed_re/Frontend/MenuDrawLoopTwin.cpp	2026-06-10	MenuDrawLoopTwin	141-288	body-changed	c30c5ed5d(2026-08-27,body-changed)		StaticDraw@c30c5ed5d	
+0042e3a0	MenuChromeShellA	asi+exe	mashedmod/src/mashed_re/Frontend/MenuSpriteDispatch.cpp	2026-10-11	MenuChromeShellA	537-591	unchanged				
+0042b930	MenuAlphaGet	asi+exe	mashedmod/src/mashed_re/Frontend/MenuGetters.cpp	2026-06-05	MenuAlphaGet	23-25	unchanged				
+0042b8d0	StatePhaseIsIdle	asi	mashedmod/src/mashed_re/Util/StateAccessors.cpp	2026-06-06	StatePhaseIsIdle		FILE-MISSING				
+0042b8d0	StatePhaseIsIdle	exe	mashedmod/src/mashed_re/Boot/FrameDispatch.cpp	2026-06-06	StatePhaseIsIdle	22-24	unchanged				
+00493f80	IntroVideoDimGetter	asi	mashedmod/src/mashed_re/Frontend/IntroSplash.cpp	2026-10-11	IntroVideoDimGetter	138-147	unchanged				
+0042c2f0	SetDat0067ecb8	asi	mashedmod/src/mashed_re/Util/UtilBatch.cpp	2026-06-09	SetDat0067ecb8	47-49	unchanged				
+0042b8c0	ScreenHeightGet	asi+exe	mashedmod/src/mashed_re/Frontend/MenuButtonDetect.cpp	2026-06-19	ScreenHeightGet	482-485	unchanged				
+00427780	FontText_StringTableLookup	asi	mashedmod/src/mashed_re/HUD/HudBatch.cpp	2026-06-09	FontText_StringTableLookup	300-306	unchanged				
+0042f8d0	MenuMenusBC	asi	mashedmod/src/mashed_re/Frontend/MenuMenusB.cpp	2026-10-12	MenuMenusBC	157-257	unchanged				
+0040b7a0	HotkeyStringBaseGet	asi+exe	mashedmod/src/mashed_re/Frontend/MenuScoreGetters.cpp	2026-06-09	HotkeyStringBaseGet	54-56	unchanged				
+00430a10	HudSlotTypePlayer0	exe (file=.md)	mashedmod/src/mashed_re/Frontend/SpriteGate.cpp	2026-06-09	HudSlotTypePlayer0	175-192	unchanged				
+00430a60	HudSlotTypePlayer1	exe (file=.md)	mashedmod/src/mashed_re/Frontend/SpriteGate.cpp	2026-06-09	HudSlotTypePlayer1	210-227	unchanged				
+00430ab0	HudSlotTypePlayer2	exe (file=.md)	mashedmod/src/mashed_re/Frontend/SpriteGate.cpp	2026-06-09	HudSlotTypePlayer2	245-262	unchanged				
+0042a920	Frontend::PostTrophyEvent	asi	mashedmod/src/mashed_re/Save/CareerEvents.cpp	2026-06-09	PostTrophyEvent	41-44	unchanged				
+0046d700	VehicleVec3At9C8Get	asi+exe	mashedmod/src/mashed_re/Vehicle/VehicleState.cpp	2026-07-31	VehicleVec3At9C8Get	167-173	unchanged				
+0043c000	TimerSlotTickDispatcher	asi	mashedmod/src/mashed_re/Util/UtilMid.cpp	2026-10-12	TimerSlotTickDispatcher	718-747	unchanged				ea7a93afb:body-changed
+004325c0	FUN_004325c0	asi	mashedmod/src/mashed_re/Frontend/MenuAnimTickTwin.cpp	2026-06-10	MenuAnimTickTwin	59-116	unchanged				
+004325c0	FUN_004325c0	exe	mashedmod/src/mashed_re/Frontend/MenuNavSM.cpp	2026-06-10	Anim_Tick	867-922	body-changed	3836926ff(2026-06-15,body-changed)			
+0042aff0	MenuButtonDetectA	asi+exe	mashedmod/src/mashed_re/Frontend/MenuNav.cpp	2026-10-12	MenuButtonDetectA	401-403	unchanged				249aa785a:created
+0042b180	MenuButtonDetectB	asi+exe	mashedmod/src/mashed_re/Frontend/MenuNav.cpp	2026-10-12	MenuButtonDetectB	408-410	unchanged				249aa785a:body-changed
+00409930	LoadingState3Enter	asi	mashedmod/src/mashed_re/Util/UtilBatch.cpp	2026-06-09	LoadingState3Enter	89-93	unchanged				
+004098b0	LoadingState1Enter	asi	mashedmod/src/mashed_re/Util/UtilBatch.cpp	2026-06-09	LoadingState1Enter	67-72	unchanged				
+0046cbb0	VehicleCarStateRead	asi+exe	mashedmod/src/mashed_re/Vehicle/VehicleState.cpp	2026-10-16	VehicleCarStateRead	186-194	unchanged				
+00552df0	FontCtx_SetTranslation	asi	mashedmod/src/mashed_re/HUD/FontCtx.cpp	2026-06-09	FontCtx_SetTranslation	156-175	unchanged				
+004295a0	HudDualLabelRender	asi	mashedmod/src/mashed_re/Util/UtilMid.cpp	2026-10-12	HudDualLabelRender	501-511	unchanged				ea7a93afb:body-changed
+0046c7b0	VehicleSlotGetter	asi+exe	mashedmod/src/mashed_re/Vehicle/VehicleState.cpp	2026-08-15	VehicleSlotGetter	71-77	body-changed	714a97e1c(2026-10-07,body-changed)		VehRecord@8401ec880	
+0042fe80	GetRaceEndFlag	asi+exe	mashedmod/src/mashed_re/Frontend/MenuInit.cpp	2026-06-09	GetRaceEndFlag	28-30	unchanged				
+00550bc0	VfsStreamGetType	asi+exe	mashedmod/src/mashed_re/Save/VfsStream.cpp	2026-10-11	VfsStreamGetType	109-116	unchanged				
+00404ee0	Save::SerializeToBuffer	asi+exe	mashedmod/src/mashed_re/Save/GameSaveBuffer.cpp	2026-06-09	SerializeToBuffer	189-227	unchanged				
+00404e80	Save::DeserializeFromBuffer	asi+exe	mashedmod/src/mashed_re/Save/GameSaveBuffer.cpp	2026-06-09	DeserializeFromBuffer	151-182	unchanged				
+00485360	DynObjListGetCount	asi	mashedmod/src/mashed_re/Util/PromoLoop_round17.cpp	2026-08-15	DynObjListGetCount	83-86	unchanged				
+0057c210	RwpBodyTableLookup	asi+exe	mashedmod/src/mashed_re/Collision/RwpIntegrator.cpp	2026-07-24	RwpBodyTableLookup	123-127	body-changed	0ca7a4359(2026-09-09,body-changed)			
+0055ac00	RwpShapeActiveBitSet	asi+exe	mashedmod/src/mashed_re/Collision/RwpIntegrator.cpp	2026-07-24	RwpShapeActiveBitSet	223-246	body-changed	2879c4d1b(2026-09-09,body-changed)			
+00498bc0	VideoGetRenderWidth	asi+exe	mashedmod/src/mashed_re/Boot/VideoConfig.cpp	2026-10-09	VideoGetRenderWidth	52-55	unchanged				
+00498bd0	VideoGetRenderHeight	asi+exe	mashedmod/src/mashed_re/Boot/VideoConfig.cpp	2026-10-09	VideoGetRenderHeight	68-71	unchanged				
+00492770	MainLoopInit	asi+exe	mashedmod/src/mashed_re/Boot/FrameDispatch.cpp	2026-10-11	MainLoopInit	173-196	unchanged				
+00431ae0	FUN_00431ae0	exe (file=.md)	mashedmod/src/mashed_re/Boot/BootLowRvaCluster.cpp	2026-06-09	DefaultParam_SetField04	316-320	unchanged				
+00431af0	FUN_00431af0	exe (file=.md)	mashedmod/src/mashed_re/Boot/BootLowRvaCluster.cpp	2026-06-09	DefaultParam_SetField08	341-345	unchanged				
+00431b00	FUN_00431b00	exe (file=.md)	mashedmod/src/mashed_re/Boot/BootLowRvaCluster.cpp	2026-06-09	DefaultParam_SetField00	366-370	unchanged				
+00405430	Pred405430	asi	mashedmod/src/mashed_re/Util/PromoLoop_sessionB.cpp	2026-08-15	Pred405430	298-303	unchanged				
+00407db0	RangeTableGroupOffset	asi	mashedmod/src/mashed_re/Gameplay/RangeTable_ah1.cpp	2026-10-10	RangeTableGroupOffset	201-224	unchanged				
+0040b890	FUN_0040b890	asi	mashedmod/src/mashed_re/Gameplay/Thresholds_ah4.cpp	2026-07-24	GetGridCount8or12	39-48	unchanged				
+0040b890	FUN_0040b890	exe	mashedmod/src/mashed_re/exe_main.cpp	2026-07-24	inline@4115-4128	4115-4128	body-changed	69bb1be99(2026-09-04,body-changed) 6d255c141(2026-09-04,created) 5acba6dac(2026-09-03,created) d11c67bbf(2026-09-02,body-changed) e43c7dba1(2026-09-02,body-changed)	014685ce6(2026-09-03)		
+0040b8e0	FUN_0040b8e0	asi	mashedmod/src/mashed_re/Gameplay/Thresholds_ah4.cpp	2026-07-24	GetScoreThreshold7or10	55-64	unchanged				
+0040b8e0	FUN_0040b8e0	exe	mashedmod/src/mashed_re/exe_main.cpp	2026-07-24	inline@4115-4128	4115-4128	body-changed	69bb1be99(2026-09-04,body-changed) 6d255c141(2026-09-04,created) 5acba6dac(2026-09-03,created) d11c67bbf(2026-09-02,body-changed) e43c7dba1(2026-09-02,body-changed)	014685ce6(2026-09-03)		
+0040cd90	thunk_FUN_00425ef0	asi	mashedmod/src/mashed_re/Gameplay/ScoreMasks_ah3.cpp	2026-06-08	CountNonZeroPairs	71-83	unchanged				0dc777287:created
+0040dc70	FUN_0040dc70	asi	mashedmod/src/mashed_re/Gameplay/ScoreMasks_ah3.cpp	2026-06-08	GetAnimationState	13-15	unchanged				c9aca9a0a:created
+0055b800	RwpBodyMatrixRefresh	asi+exe	mashedmod/src/mashed_re/Collision/RwpIntegrator.cpp	2026-07-23	RwpBodyMatrixRefresh	273-328	body-changed	2879c4d1b(2026-09-09,body-changed)			cd1d5f143:body-changed 63d10c5c4:created
+0055dff0	RwpBodyRefreshGate	asi+exe	mashedmod/src/mashed_re/Collision/RwpIntegrator.cpp	2026-07-24	RwpBodyRefreshGate	359-388	body-changed	2879c4d1b(2026-09-09,body-changed)			
+0045caf0	EqPredicate7f1a18	asi	mashedmod/src/mashed_re/Util/PromoLoop_round58.cpp	2026-06-13	EqPredicate7f1a18	55-60	unchanged				1eac656e9:created
+0046bda0	FUN_0046bda0	asi	mashedmod/src/mashed_re/Util/PromoLoop_sessionB.cpp	2026-06-15	IndexedFloatAccum16_46bda0	3849-3875	unchanged				64d6c0619:created
+00473ee0	LogoOverlayDraw	asi	mashedmod/src/mashed_re/Frontend/LogoOverlayTwin.cpp	2026-06-10	LogoOverlayTwin	30-38	unchanged				
+00432b30	MenuPromptStrip	asi	mashedmod/src/mashed_re/Frontend/PromptStripTwin.cpp	2026-06-11	PromptStripTwin	137-147	unchanged				a15f82c02:created
+00432b30	MenuPromptStrip	exe	mashedmod/src/mashed_re/Frontend/MenuNavSM.cpp	2026-06-11	Nav	965-1021	body-changed	a05b9c14a(2026-10-12,body-changed) edba95beb(2026-06-12,body-changed)		KvLookup@19e95b2f2 LogoOverlayFadeSet@cde0ee52b NavCountItems@a05b9c14a PlaceCursor@76916f8b0/4b341a0a2	58e626087:body-changed
