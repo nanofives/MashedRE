@@ -1,0 +1,14 @@
+ms,kind,arg,resolved,val
+0.0,music_state,,,1.000
+0.1,music_bankloop,musicloop1,musicloop1,0.600
+1173.7,sfx,menu selection,menu selection,0.800
+2473.8,sfx,threetwoone,threetwoone,0.900
+2474.5,music_state,,,2.000
+2474.6,music_start,original/toastaudio/pc/audio/pcdics/cdaudio.rws,,120.000
+5498.4,sfx,go,go,0.900
+32665.1,engine_stop,,,0.000
+32665.2,stop_all,,,0.000
+32665.2,music_state,,,1.000
+32665.3,music_bankloop,musicloop1,musicloop1,0.600
+32807.0,engine_stop,,,0.000
+32807.2,stop_all,,,0.000
