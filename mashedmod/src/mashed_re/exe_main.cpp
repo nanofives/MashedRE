@@ -1033,18 +1033,13 @@ bool PumpOnce() {
 // with SetDataFormat(0x005d076c) (0x2c slot; the format there reads dwSize 0x18, dwObjSize
 // 0x10, dwFlags 1, dwDataSize 0x50, dwNumObjs 0x2c = c_dfDIJoystick's header) and
 // SetCooperativeLevel(hwnd, 5) (0x34 slot; 0x00495faf push 5, hwnd [0x00772fb0] stored by
-// FUN_004960a0 at 0x004960a9). 5 = DISCL_EXCLUSIVE (1) | DISCL_FOREGROUND (4). The port's default
-// passes 0xa = DISCL_NONEXCLUSIVE (2) | DISCL_BACKGROUND (8), as its keyboard does, so it does not take
-// the pad from a concurrent MASHED.exe and still reads it with the window unfocused. Record 4 would
+// FUN_004960a0 at 0x004960a9). 5 = DISCL_EXCLUSIVE (1) | DISCL_FOREGROUND (4). Record 4 would
 // start at 0x00772fa8, a separate global, so the original has room for 4.
-// [D3-CF-PADCOOP] MASHED_PAD_COOP_ORIG=1 (default OFF) passes the original's 5. With FOREGROUND the
-// Acquire at 0x00495890 fails while the window is not foreground, GetDeviceState fails, and
+// [D3-CF-PADCOOP-FLIP] The port passes the original's 5 (decision L-20, 2026-10-25). The old 0xa
+// (DISCL_NONEXCLUSIVE | DISCL_BACKGROUND) and its MASHED_PAD_COOP_ORIG knob are deleted. With FOREGROUND
+// the Acquire at 0x00495890 fails while the window is not foreground, GetDeviceState fails, and
 // 0x004958bc keeps last frame's bits (PollJoypadButtons does the same).
 IDirectInputDevice8A* g_joy[4] = {};
-static bool PadCoopOrigOn() {
-    static const bool s_on = [] { const char* e = std::getenv("MASHED_PAD_COOP_ORIG"); return e && e[0] && e[0] != '0'; }();
-    return s_on;
-}
 // Default ON since 2026-10-25 (Mariano, decision L-16, verify/r7joypad_20261025/RESULT_D3-CF-R7JOYPAD.md, flipped together with
 // MASHED_R7_EXIT); MASHED_NO_R7_INPUT=1 opts out.
 static bool R7InputOn() {
@@ -1057,8 +1052,7 @@ static BOOL CALLBACK CountGameCtrlCb(LPCDIDEVICEINSTANCEA inst, LPVOID ref) {
         int& j = *static_cast<int*>(ref);
         if (R7InputOn() && j < 4) {
             dev->SetDataFormat(&c_dfDIJoystick);
-            const DWORD level = PadCoopOrigOn() ? (DISCL_EXCLUSIVE | DISCL_FOREGROUND)   // 0x00495faf push 5
-                                                : (DISCL_BACKGROUND | DISCL_NONEXCLUSIVE);
+            const DWORD level = DISCL_EXCLUSIVE | DISCL_FOREGROUND;   // 0x00495faf push 5
             const HRESULT hr = dev->SetCooperativeLevel(g_hwnd, level);
             if (std::FILE* log = std::fopen(kLogPath, "a")) {
                 std::fprintf(log, "\npad coop: device %d level 0x%lx hr 0x%08lx\n", j,
