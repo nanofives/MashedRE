@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-10-26 00:35 D4-WSF-SCOPE (orch/D4-WSF-SCOPE), D4-DC-4d20-FLIP (orch/D4-DC-4d20-FLIP): G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/2516d903/53778664. Run data D:\MashedWT\mtrain_data\20261026_002855
 - 2026-10-26 00:16 D3-CF-PADCOOP-FLIP (orch/D3-CF-PADCOOP-FLIP): G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/2516d903/53778664. Run data D:\MashedWT\mtrain_data\20261026_000832
 - 2026-10-26 00:07 D4-WSJ (orch/D4-WSJ): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261026_000601
 - 2026-10-26 00:04 D4-WSB (orch/D4-WSB), D4-WSF (orch/D4-WSF), D4-WSH (orch/D4-WSH): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261026_000318
