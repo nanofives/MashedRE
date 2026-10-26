@@ -1,6 +1,7 @@
 // AudioWire — [D4-WSJ-WIRE] the race SFX of the original wired into the AudioEngine stand-in by data,
-// behind ONE default-OFF knob MASHED_AUDIO_WIRE=1 (PREREG verify/wsjwire_20261026/PREREG_D4-WSJ-WIRE.md).
-// With the knob unset every entry point below returns at once and no call site changes behaviour.
+// behind ONE knob MASHED_AUDIO_WIRE (PREREG verify/wsjwire_20261026/PREREG_D4-WSJ-WIRE.md), default ON since the
+// flip (L-27 (a), verify/wsjwire_20261026/RESULT_D4-WSJ-WIRE.md). With MASHED_NO_AUDIO_WIRE=1 every entry point
+// below returns at once and no call site changes behaviour.
 //
 // Sources (L-24 = (a), Mariano 2026-10-26):
 //   wave table + voice counts  verify/wsj80e_20261026/wave_tables.tsv (permdict 0x006044f0, stride 0x94, +0x84 count)
@@ -12,7 +13,7 @@
 namespace mashed_re {
 namespace Audio {
 
-bool WireOn();   // MASHED_AUDIO_WIRE=1, read once
+bool WireOn();   // default ON, MASHED_NO_AUDIO_WIRE=1 (or MASHED_AUDIO_WIRE=0) opts out, read once
 
 // Race lifecycle. vehicleByCar[c] = the ORIGINAL vehicle index 0..12 (EngineClassTable.h order), -1 = unknown.
 void WireRaceBegin(int numCars, const int* vehicleByCar);

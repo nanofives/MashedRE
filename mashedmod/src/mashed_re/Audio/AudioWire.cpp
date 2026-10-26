@@ -1,4 +1,4 @@
-// AudioWire impl — see AudioWire.h. [D4-WSJ-WIRE], knob MASHED_AUDIO_WIRE=1 (default OFF).
+// AudioWire impl — see AudioWire.h. [D4-WSJ-WIRE], knob MASHED_AUDIO_WIRE (default ON since L-27, MASHED_NO_AUDIO_WIRE=1 opts out).
 //
 // Model: the original's 139 permdict virtual voices (DAT_0068f640[v*2], cumulative bases from the +0x84 counts).
 // A voice is "busy" ((voice+0x34 & 2) != 0 in the original) while its one-shot plays (PCM length / start frequency,
@@ -235,8 +235,15 @@ bool EnvOn(const char* name) {
 }
 }  // namespace
 
+// Default ON since the flip (decision L-27 (a), 2026-10-26, evidence verify/wsjwire_20261026/RESULT_D4-WSJ-WIRE.md):
+// MASHED_NO_AUDIO_WIRE=1 opts out (the legacy by-name one-shots), an explicit MASHED_AUDIO_WIRE=0 also does.
 bool WireOn() {
-    static const bool on = EnvOn("MASHED_AUDIO_WIRE");
+    static const bool on = [] {
+        if (EnvOn("MASHED_NO_AUDIO_WIRE")) return false;                    // [dflip] opt-out
+        char b[8];
+        if (GetEnvironmentVariableA("MASHED_AUDIO_WIRE", b, sizeof(b)) > 0) return b[0] == '1';  // explicit wins
+        return true;
+    }();
     return on;
 }
 

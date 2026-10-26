@@ -155,3 +155,40 @@ Root `D:/MashedWT/D4-WSJ-WIRE_data/`.
 | `mashedmod/build/mashed_re.exe` | `48916bb8c281672a0996c127056991b46a553bb1f91a2c378b3db95edfbeaeea` |
 
 G1b runner: a scratch copy of `gates_knob.py` that also sets `MASHED_AUDIO_EVENT_LOG` (not committed, one extra env line).
+
+## FLIP (decision L-27 = (a), Mariano 2026-10-26)
+
+`MASHED_AUDIO_WIRE` is default ON (`Audio/AudioWire.cpp` `WireOn()`). Opt-out: `MASHED_NO_AUDIO_WIRE=1`, and an
+explicit `MASHED_AUDIO_WIRE=0` also turns it off. Base `orch/integration` `67b4c1170` (contains `47740e375`), exe
+`02d19199`, private root `D:/MashedWT/D4-WSJ-WIRE_root`, every boot under `mashed_lock.py run --label D4-WSJ-WIRE`.
+
+| run | env | G-CTRL (H_DEF step / gates / ptrace) | B (K0 / K1 / K26) | result |
+|---|---|---|---|---|
+| F-ON | none (`run_arms.py` strips `MASHED_*`, so this is the new default) | `5943c5f1 / b493262b / 09551e6a` | `3a03670c / e85ea6fb / 53778664` | exact, all six |
+| F-OFF | `MASHED_NO_AUDIO_WIRE=1` (`gates_optout.py`) | `5943c5f1 / b493262b / 09551e6a` | `3a03670c / e85ea6fb / 53778664` | exact, all six |
+
+Both match the `merge_train.json` refs, so the flip moves no gate reference.
+
+Wire-ran check (B_DEF_K0, `MASHED_AUDIO_EVENT_LOG` set, step hash `3a03670c` both times): default 14 `vstart` rows
+(`threetwoone` v65, `eng1`/`eng1d` v0..v7 for cars 0..3, `go` v95, two `collision with pod` v100) plus one
+`guard_closed`, opt-out 0 `vstart` rows (only the legacy `sfx` rows).
+
+PREREG prediction 4 stays partial (4c): cars 1..3 run on engine class 0 (`eng1`/`eng1d` above) because the port sets only
+`cars[0].carIndex` and passes `numCars = 1` to `WireRaceBegin`. That residue is carried by the new row
+`D3-AI-VEHICLES`, not by this step.
+
+Raw data (not committed), root `D:/MashedWT/D4-WSJ-WIRE_data/`, SHA-256:
+
+| file | SHA-256 |
+|---|---|
+| `flip_on/H_DEF.step.csv` | `5943c5f1c3e2f3f2510139f7af666ffa87941f6dfa66201b15277430b92be415` |
+| `flip_on/H_DEF.gates.csv` | `b493262bed8ea6ecad4399f0ebaa53b902965423e74bfa07359188559fff479f` |
+| `flip_on/H_DEF.ptrace.log` | `09551e6a5b1b456b3421a0e1aac768ced7851c072c99a9341a22ca966cdfe3e1` |
+| `flip_on/B_DEF_K0.step.csv` | `3a03670c3991b702af9fd44b1d49dbdb4f91d6be00876723cb1ba7891895b83f` |
+| `flip_on/B_DEF_K1.step.csv` | `e85ea6fb266223f9eed3a90bf9aa30ea50291fd552ac3881d3bfbea843a759f8` |
+| `flip_on/B_DEF_K26.step.csv` | `5377866478b33a9827ae5c343b8861189f8f0a838785bf2b83da5f6118931e2d` |
+| `flip_optout/*` | same six SHA-256 as `flip_on` (byte-identical) |
+| `flip_evlog/ev_default.csv` | `346f08f98922b498bd20be541b91f02ca1ee6c2198595becb0987274073961dc` |
+| `flip_evlog/ev_optout.csv` | `57756e322751d060e43c4d459488cfe5ce4b2bf39f3026e03a9d3f9bab312a20` |
+
+The event-log runner is a scratch copy of `gates_optout.py` with `MASHED_AUDIO_EVENT_LOG` added (not committed).
