@@ -2215,6 +2215,42 @@ void Ai_AdvanceCountdownClock(int units)
     I32(0x007f0ff4u) += units;           // 0x0040fe5e
 }
 
+// [a5timer 2026-10-26] MASHED_A5_RACE_TIMER_RUN=1 (default OFF, U-9790, decision L-17 (a)): DAT_007f0ff8 runs through the
+// pre-GO ticks, as in the original. Original chain:
+//   - round 1's phase-3 entry zeroes it (FUN_004102f0 first frame -> FUN_0040e590, store at 0x0040e5a2);
+//   - FUN_0040fc00 adds the tick budget at the end of every tick except race sub-state 7 (0x0040fe46 / 0x0040fe64), so it
+//     counts through phase 3 (the QPC-length intro), state 4 and the 112 state-5 ticks;
+//   - in state 5 each AI car's FUN_00418560 zeroes it (FUN_0040e350() = DAT_0063ba8c == 5 at 0x00418593, store at 0x00418598),
+//     so an AI race reaches GO at one tick's budget. A solo race has no AI car there, so its timer reaches the player's first
+//     moving call at 50 * (a0 - 1) (a0 877..896 over 13 captures, verify/u9775_20261025), and A5 (FILD [0x007f0ff8] at
+//     0x0046e0a9) starts its grip ramp at record k 1203 - a0.
+// The exe's countdown stand-in is 180 ticks with no phase 3 (and the exe's knob-OFF timer did not move before GO), so the
+// knob seeds round 1 with the phase-3 share kA5RtPhase3Seed, adds the budget on every stand-in tick, and zeroes on the
+// stand-in's state-5 window when AI cars exist. kA5RtPhase3Seed = 44200 - 180 x 50: 44200 is the add that put the port's
+// onset on the trunk capture (a0 887, bit-exact vs orig_solo3 / orig_solo4 / o_w2 with MASHED_A5_RACE_TIMER_ADD=44200,
+// RESULT_D3-CF-U9775.md section 1), 180 the stand-in ticks before GO.
+static constexpr int kA5RtPhase3Seed = 44200 - 180 * 50;
+
+bool Ai_RaceTimerRunEnabled()
+{
+    static const bool s = [] { const char* e = std::getenv("MASHED_A5_RACE_TIMER_RUN");
+                               return e && e[0] && e[0] != '0'; }();
+    return s;
+}
+
+void Ai_RaceTimerRoundStart(int roundNo)
+{
+    if (!Ai_RaceTimerRunEnabled() || roundNo != 1) return;   // rounds 2+ skip phase 3 (0x0041026d else arm): no zeroing
+    I32(kFrame0ff8) = kA5RtPhase3Seed;                       // 0x0040e5a2 zero + the phase-3 ticks the stand-in lacks
+}
+
+void Ai_RaceTimerCountdownTick(int units, bool state5WithAi)
+{
+    if (!Ai_RaceTimerRunEnabled()) return;
+    if (state5WithAi) I32(kFrame0ff8) = 0;                   // FUN_00418560 0x00418598
+    I32(kFrame0ff8) += units;                                // FUN_0040fc00 0x0040fe64
+}
+
 // [d3bB2 2026-10-17] The car<->car type-4 event and its AI override (MASHED_AI_CONTACT_EVENT=1, default OFF).
 //
 // Original chain, from the bytes and a hardware watchpoint on the original (verify/d3bB2_20261017/o_ov1):

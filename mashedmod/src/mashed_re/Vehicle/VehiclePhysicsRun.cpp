@@ -1170,12 +1170,8 @@ static bool StepBegin(StepCtx& c, int slot, float dt, PlayerCarIO& io, ContactSc
                                         return !(no && no[0] && no[0] != '0'); }();
         if (s_a5rt) {
             g_raceTimer = *reinterpret_cast<const int*>(0x007f0ff8u);
-            // [u9775 2026-10-25] MASHED_A5_RACE_TIMER_ADD=<n> (diagnostic, default OFF = 0): adds n to the copied timer. The
-            // original's DAT_007f0ff8 runs through the pre-move countdown, 50 per call, so it reads 50 * (a0 - 1) at the
-            // player's first moving call (a0 877..896 over 13 captures, verify/u9775_20261025); the port's reads ~0 there.
-            // n = 44200 puts the ramp onset (60000 - t < 0) at record k 316, the trunk capture orig_solo3's.
-            static const int s_rtAdd = [] { const char* a = std::getenv("MASHED_A5_RACE_TIMER_ADD"); return a ? std::atoi(a) : 0; }();
-            g_raceTimer += s_rtAdd;
+            // [a5timer 2026-10-26] u9775's diagnostic MASHED_A5_RACE_TIMER_ADD is deleted: MASHED_A5_RACE_TIMER_RUN runs
+            // DAT_007f0ff8 itself through the pre-GO ticks (Ai_RaceTimerCountdownTick, U-9790).
             static const bool s_log = (std::getenv("MASHED_A5_RACE_TIMER_LOG") != nullptr);
             static int s_n = 0;
             if (s_log && slot == 0 && (s_n++ % 600) == 0)
