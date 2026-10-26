@@ -37,7 +37,8 @@ except ImportError:
     psutil = None
 
 ROOT = Path(__file__).resolve().parent.parent.parent
-ORIG = ROOT / "original"
+# MASHED_ROOT = a private root that CONTAINS original\ (scenario_launch.py convention); unset = this tree
+ORIG = Path(os.environ.get("MASHED_ROOT", ROOT)) / "original"
 EXE  = ORIG / "MASHED.exe"
 LOG  = ROOT / "log"
 
@@ -144,6 +145,15 @@ rpc.exports = {
     catch(e){ send({kind:'err', msg:'navarm '+e}); }
     return 1; },
   navcount:function(){ return navStarted; },
+  // harness self-test only (c4_navigate_batch.py --force-bad): once the nav completes, overwrite the
+  // installed JMP at addr with `mov eax,[0]` (A1 00 00 00 00) so the next call to it faults for real
+  poison:function(addr){
+    const at = Math.max(0, COUNT_GATE - Date.now());
+    setTimeout(function(){
+      try{ Memory.protect(ptr(addr), 5, 'rwx'); ptr(addr).writeByteArray([0xA1,0,0,0,0]);
+           send({kind:'info', msg:'force-bad: poisoned '+ptr(addr)}); }
+      catch(e){ send({kind:'err', msg:'poison '+e}); } }, at);
+    return at; },
   firstbyte:function(rva){ try{ return ptr(rva).readU8(); }catch(e){ return -1; } },
   counts:function(){ return COUNT; },
   countthese:function(rvas){
@@ -156,7 +166,7 @@ send({kind:'ready'});
 '''
 
 
-def run(candidates_csv, rvas, count_rvas, nav, settle, dwell, seconds, shot=None, shotat=None):
+def run(candidates_csv, rvas, count_rvas, nav, settle, dwell, seconds, shot=None, shotat=None, poison=None):
     env = dict(os.environ)
     env["MASHED_RE_DEV"]    = "1"
     env["MASHED_HOOK_ONLY"] = candidates_csv
@@ -177,7 +187,10 @@ def run(candidates_csv, rvas, count_rvas, nav, settle, dwell, seconds, shot=None
     if count_rvas:
         scr.exports_sync.countthese(count_rvas)          # attach before resume
     scr.exports_sync.setnav(nav, settle, dwell)          # arm nav driver before resume
+    if poison:
+        scr.exports_sync.poison(int(poison, 16))         # fires after the nav (COUNT_GATE)
     dev.resume(pid)
+    print(f"    pid={pid} hook_only={candidates_csv}")
     start = time.time(); deadline = start + seconds; shot_done = False
     while time.time() < deadline:
         if st["crash"]: break
