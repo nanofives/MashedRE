@@ -180,7 +180,8 @@ static size_t ReadSaveImage(unsigned char* img) {
 #endif
 
 #ifdef MASHED_STANDALONE
-// [D4-WSF-SAVE-RT 2026-10-26] MASHED_SAVE_KEEP_IMAGE=1 (default OFF): the in-place write below on
+// [D4-WSF-SAVE-RT 2026-10-26, default flipped ON by D4-WSF-SAVE-FLIP 2026-10-26, user decision L-28 (1)]
+// MASHED_SAVE_KEEP_IMAGE (default ON, =0 opts out): the in-place write below on
 // any save path, and the dword at file 0x24EFC stays what was loaded. The original writes the
 // whole loaded image back: ghost block (0x00404f2a..0x00404f34), span (0x00404f19), tail (no
 // writer), and DAT_008a95ac at 0x24EFC (0x00404f23), which no original writer increments
@@ -190,7 +191,7 @@ bool KeepImageMode() {
     static int s_on = -1;
     if (s_on < 0) {
         const char* v = std::getenv("MASHED_SAVE_KEEP_IMAGE");
-        s_on = (v && v[0] && v[0] != '0') ? 1 : 0;
+        s_on = (v && v[0] == '0') ? 0 : 1;
     }
     return s_on == 1;
 }

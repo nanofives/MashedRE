@@ -73,8 +73,8 @@ def standalone_rt(tag, src, keep):
     env = {k: v for k, v in os.environ.items() if not k.startswith("MASHED_")}
     env.update(MASHED_SAVE_RT_IN=str(src) if src else "none", MASHED_SAVE_RT_OUT=str(out),
                MASHED_SAVE_PATH=str(scratch / "rt_gamesave.bin"))
-    if keep:
-        env["MASHED_SAVE_KEEP_IMAGE"] = "1"
+    if not keep:
+        env["MASHED_SAVE_KEEP_IMAGE"] = "0"  # default is ON since D4-WSF-SAVE-FLIP; S1 = opt-out arm
     p = subprocess.Popen([str(EXE)], cwd=str(scratch), env=env)
     try:
         rc = p.wait(timeout=60)
