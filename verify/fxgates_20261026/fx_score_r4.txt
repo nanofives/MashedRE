@@ -1,0 +1,23 @@
+F0
+  slot 0 frames=14400 skids=0 calls=[0, 0] emits=[0, 0] emit/call=0.000 per1000=0.0 orig_per1000=44.5 ratio=0.00
+         per1000active=see F0 below orig_per1000active=266.9
+  slot 1 frames=14400 skids=256 calls=[0, 0] emits=[0, 0] emit/call=0.000 per1000=17.8 orig_per1000=106.2 ratio=0.17
+         per1000active=see F0 below orig_per1000active=166.1
+  slot 2 frames=14400 skids=120 calls=[0, 0] emits=[0, 0] emit/call=0.000 per1000=8.3 orig_per1000=29.8 ratio=0.28
+         per1000active=see F0 below orig_per1000active=215.3
+  slot 3 frames=14400 skids=269 calls=[0, 0] emits=[0, 0] emit/call=0.000 per1000=18.7 orig_per1000=31.7 ratio=0.59
+         per1000active=see F0 below orig_per1000active=191.0
+F1
+  slot 0 frames=14389 skids=0 calls=[0, 0] emits=[0, 0] emit/call=0.000 per1000=0.0 orig_per1000=44.5 ratio=0.00
+         per1000active=see F0 below orig_per1000active=266.9
+  slot 1 frames=14389 skids=165 calls=[414, 1326] emits=[20, 145] emit/call=0.095 per1000=11.5 orig_per1000=106.2 ratio=0.11
+         per1000active=192.8 orig_per1000active=166.1
+  slot 2 frames=14389 skids=2855 calls=[160, 28743] emits=[4, 2851] emit/call=0.099 per1000=198.4 orig_per1000=29.8 ratio=6.66
+         per1000active=293.1 orig_per1000active=215.3
+  slot 3 frames=14389 skids=183 calls=[169, 1164] emits=[7, 176] emit/call=0.137 per1000=12.7 orig_per1000=31.7 ratio=0.40
+         per1000active=328.5 orig_per1000active=191.0
+F0 per 1000 active frames (F1 denominators):
+  slot 0 skids=0 active=0 per1000active=0.0 orig=266.9
+  slot 1 skids=256 active=856 per1000active=299.1 orig=166.1
+  slot 2 skids=120 active=9741 per1000active=12.3 orig=215.3
+  slot 3 skids=269 active=557 per1000active=482.9 orig=191.0

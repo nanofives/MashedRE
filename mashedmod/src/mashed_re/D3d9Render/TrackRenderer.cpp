@@ -8672,7 +8672,11 @@ void TrackRenderer::EmitCarFx(int slot, const float pos[3], const float vel_in[3
     const float kSlip = R * 0.02f, kCorner = R * 0.12f;
     float skidI = slip / kSlip;
     if (corner / kCorner > skidI) skidI = corner / kCorner;      // whichever is stronger
-    if (skidI > 1.f && spd > R * 0.04f) {
+    // [D4-FX-GATES] MASHED_FX_ORIG_GATES=1 (default OFF): the original's gates replace this branch (EmitCarFxOrigGates).
+    static const bool s_origGates = (std::getenv("MASHED_FX_ORIG_GATES") != nullptr);
+    if (s_origGates) {
+        EmitCarFxOrigGates(slot, pos, fx, fz, R);
+    } else if (skidI > 1.f && spd > R * 0.04f) {
         fx_skid_accum_[slot] += (skidI > 3.f ? 3.f : skidI) * 36.f * dt;
         int n = static_cast<int>(fx_skid_accum_[slot]);
         if (n > 4) n = 4;
@@ -8714,14 +8718,93 @@ void TrackRenderer::EmitCarFx(int slot, const float pos[3], const float vel_in[3
             if (std::FILE* f = std::fopen("log/fx_debug.txt", "a")) {
                 // alive/pool: the question "is the FX rate starving the shared pool?"
                 // is answerable only from occupancy, not from cumulative emit counts.
-                std::fprintf(f, "[s%d] R=%.1f spd=%.2f yawRate=%.2f corner=%.2f kCorner=%.2f decel=%.2f skidI=%.2f skids=%d sparks=%d alive=%d\n",
+                std::fprintf(f, "[s%d] R=%.1f spd=%.2f yawRate=%.2f corner=%.2f kCorner=%.2f decel=%.2f skidI=%.2f skids=%d sparks=%d alive=%d"
+                             " og_frames=%d og_calls=%d/%d og_emits=%d/%d\n",
                              slot, R, spd, yawRate, corner, kCorner, decel, skidI,
-                             fx_skids_[slot], fx_sparks_[slot], parts_.alive());
+                             fx_skids_[slot], fx_sparks_[slot], parts_.alive(),
+                             fx_og_frames_[slot], fx_og_calls_[slot][0], fx_og_calls_[slot][1],
+                             fx_og_emits_[slot][0], fx_og_emits_[slot][1]);
                 std::fclose(f);
             }
         }
     }
     fx_prev_speed_[slot] = speed;
+}
+
+// [D4-FX-GATES] private roll in [0, 1) for MASHED_FX_ORIG_GATES. The original draws its rolls from the shared PRNG
+// FUN_00472650(0, 1.0) (0x0040c6a2, 0x0040cb49); a private xorshift keeps the knob from moving any simulation value.
+float TrackRenderer::FxOrigRoll() {
+    fx_og_rng_ ^= fx_og_rng_ << 13; fx_og_rng_ ^= fx_og_rng_ >> 17; fx_og_rng_ ^= fx_og_rng_ << 5;
+    return static_cast<float>(fx_og_rng_ >> 8) * (1.0f / 16777216.0f);
+}
+
+// [D4-FX-GATES] MASHED_FX_ORIG_GATES=1 (default OFF; verify/fxgates_20261026/PREREG_fxgates.md): the skid smoke takes
+// the original's per-car wheel-effect gates. The original has no skid emitter of its own: FUN_0040ca00 (per frame, from
+// FUN_0040ce00) calls the surface-keyed spawner FUN_0040c690, which spawns one record with FUN_0048cf90. Port record =
+// the 0xd04 record of the same slot (Vehicle::VehiclePhysics_Record*; FX slot v == physics slot v).
+//   slot word [0x007f1a14 + v*0x10] >= 0                        0x0040ca31
+//   (int)+0x9e0 > 1  (FUN_0046cc10, __ftol)                     0x0040ca74
+//   +0xcfc == 0:  |+0x9b0..+0x9b8|^2 >= 62500.0f [0x005ccd20]   0x0040cae0
+//                 skid = +0xb0c > 100.0f [0x005cc568]           0x0040caf5
+//                     || (FUN_0046d570 range < 90.0f [0x005ccad0] && ctrl byte [idx*0x4c + 0x007f103d] > 0x40)
+//                                                                0x0040cb21 / 0x0040cb37 (ctrl block +5 = brake)
+//   +0xcfc != 0:  skid iff roll >= 0.3f [0x005cc99c], else no call   0x0040cb4e
+//   FUN_0040c690 for wheel 0 ([0x007f101c] even) / wheel 2 (odd), then wheels 1 and 3 when skid   0x0040cb67..0x0040cc41
+// FUN_0046d570 returns 0 only for v >= 16 or +0x9b0..+0x9b8 all 0.0 (0x0046d578..0x0046d5d4), excluded by the 62500 gate,
+// so its return test (0x0040cb19) is not modelled. Per FUN_0040c690 call, colour = +0x1f0 + w*0xc4 (FUN_0046d320):
+//   p = colour 0xff968080 on track 0x1e: skid 0.3f / 0.1f [0x005cc56c];  colour 0xffc88080: skid 0.1f / 0.05f [0x005cc9a0];
+//       any other colour: skid 0.7f [0x005cc340] / 0.4f [0x005ccac0]          0x0040c6e6..0x0040c734
+//   emit iff roll <= p (0x0040c73e, test ah,0x41 / je return); colour 0xff968080 (id 6) also needs skid or the launch
+//   counter [0x007f0a04 + v*0xc] (0x0040c8e8), taken as 0 here.
+// Not modelled: [0x00636adc] != 0 early return (0x0040c6bd) taken as 0; [0x007f101c] parity -> this slot's frame parity;
+// FUN_0048cf90's per-id 256-slot ring cap (a busy slot spawns nothing). The port's +0x1f0 is 0 (VehiclePhysicsRun.cpp:282,
+// collision material colour not retained): MASHED_FX_ORIG_SURFACE=<hex> stands in a key for a 0 record key, DIAGNOSTIC
+// only. Presentation stays the scaffold's dark smoke, one particle per passing roll.
+void TrackRenderer::EmitCarFxOrigGates(int slot, const float pos[3], float fx, float fz, float R) {
+    const int v = slot;
+    if (!Vehicle::VehiclePhysics_RecordPtr(v)) return;
+    ++fx_og_frames_[slot];
+    const int slotWord = Ai::I32(Ai::kSlotTableBase + static_cast<std::uintptr_t>(v) * Ai::kSlotTableStride);
+    if (slotWord < 0) return;                                                         // 0x0040ca31
+    if (static_cast<int>(Vehicle::VehiclePhysics_RecordF32(v, 0x9e0)) <= 1) return;   // 0x0040ca74
+    bool skid = false;
+    if (Vehicle::VehiclePhysics_RecordI32(v, 0xcfc) == 0) {                           // 0x0040cabe
+        const float vx = Vehicle::VehiclePhysics_RecordF32(v, 0x9b0);
+        const float vy = Vehicle::VehiclePhysics_RecordF32(v, 0x9b4);
+        const float vz = Vehicle::VehiclePhysics_RecordF32(v, 0x9b8);
+        if (!(vz * vz + vx * vx + vy * vy >= 62500.0f)) return;                       // 0x0040cae0 [0x005ccd20]
+        skid = Vehicle::VehiclePhysics_RecordF32(v, 0xb0c) > 100.0f;                  // 0x0040caf5 [0x005cc568]
+        if (Ai::AiLeaf_46d570(v) < 90.0f &&                                            // 0x0040cb21 [0x005ccad0]
+            Ai::U8(Ai::kCtrlBlockBase + static_cast<std::uintptr_t>(slotWord) * Ai::kCtrlBlockStride + 5u) > 0x40)
+            skid = true;                                                               // 0x0040cb37
+    } else {
+        if (FxOrigRoll() < 0.3f) return;                                               // 0x0040cb4e [0x005cc99c]
+        skid = true;
+    }
+    static const char* s_surf = std::getenv("MASHED_FX_ORIG_SURFACE");
+    static const std::uint32_t s_surfKey = s_surf ? static_cast<std::uint32_t>(std::strtoul(s_surf, nullptr, 16)) : 0u;
+    const int course = aib_track_index();
+    int wheels[3] = { (fx_og_frames_[slot] & 1) ? 2 : 0, 1, 3 };                      // 0x0040cb67..: bones 0x1d/0x1e, 0x20, 0x1f
+    const int nw = skid ? 3 : 1;                                                       // 0x0040cbd5
+    for (int k = 0; k < nw; ++k) {
+        const int w = wheels[k];
+        std::uint32_t col = static_cast<std::uint32_t>(Vehicle::VehiclePhysics_RecordI32(v, 0x1f0 + w * 0xc4));
+        if (col == 0u) col = s_surfKey;
+        float p;
+        if (col == 0xff968080u && course == 0x1e) p = skid ? 0.3f : 0.1f;            // 0x0040c70e..0x0040c720
+        else if (col == 0xffc88080u)              p = skid ? 0.1f : 0.05f;            // 0x0040c6ee..0x0040c706
+        else                                      p = skid ? 0.7f : 0.4f;             // 0x0040c728..0x0040c734
+        ++fx_og_calls_[slot][skid ? 1 : 0];
+        if (!(FxOrigRoll() <= p)) continue;                                            // 0x0040c73e
+        if (col == 0xff968080u && !skid) continue;                                     // id 6, 0x0040c8e8 (launch counter 0)
+        ++fx_og_emits_[slot][skid ? 1 : 0];
+        ++fx_skids_[slot];
+        const float side = (w & 1) ? 1.f : -1.f;
+        const float p3[3] = { pos[0] - fx * (R * 0.012f) + (-fz) * side * (R * 0.006f), pos[1] + R * 0.002f,
+                              pos[2] - fz * (R * 0.012f) + ( fx) * side * (R * 0.006f) };
+        const std::uint8_t a = static_cast<std::uint8_t>((skid ? 0.58f : 0.43f) * 255.f);
+        parts_.SpawnTrail(p3, (static_cast<std::uint32_t>(a) << 24) | 0x00303030u, R * 0.010f, 0.55f);
+    }
 }
 
 // [rprops U-9695] The Arctic per-frame tick 0x00448ef0 for the props this port draws: 0x00448cb0 poses

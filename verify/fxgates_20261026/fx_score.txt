@@ -1,0 +1,38 @@
+ORIGINAL frames=13600 phase=3 [0x00636adc]=0 course=30
+  car 0 calls=[1807, 1380] emits=[229, 376] emit/call=0.190 emits/1000fr=44.5 active_fr=2267 emits/1000active=266.9 cols={'0xffc88080': 2350, '0xffb48080': 792, '0xff008000': 14, '0xffff0080': 31} ids={9: 414, 10: 163, 11: 28}
+  car 1 calls=[7346, 4038] emits=[640, 804] emit/call=0.127 emits/1000fr=106.2 active_fr=8692 emits/1000active=166.1 cols={'0xffc88080': 10012, '0xffb48080': 1344, '0xff008000': 28} ids={9: 698, 10: 730, 11: 16}
+  car 2 calls=[1448, 1299] emits=[170, 235] emit/call=0.147 emits/1000fr=29.8 active_fr=1881 emits/1000active=215.3 cols={'0xffc88080': 2287, '0xffb48080': 375, '0xffff0080': 77, '0xff008000': 8} ids={9: 202, 10: 169, 11: 34}
+  car 3 calls=[1732, 1575] emits=[102, 329] emit/call=0.130 emits/1000fr=31.7 active_fr=2257 emits/1000active=191.0 cols={'0xffc88080': 3014, '0xffb48080': 293} ids={9: 191, 10: 240}
+  pooled colours: {'0xffc88080': 17663, '0xffb48080': 2804, '0xffff0080': 108, '0xff008000': 50}
+F0
+  slot 0 frames=14400 skids=19 calls=[0, 0] emits=[0, 0] emit/call=0.000 per1000=1.3 orig_per1000=44.5 ratio=0.03
+         per1000active=see F0 below orig_per1000active=266.9
+  slot 1 frames=14400 skids=58 calls=[0, 0] emits=[0, 0] emit/call=0.000 per1000=4.0 orig_per1000=106.2 ratio=0.04
+         per1000active=see F0 below orig_per1000active=166.1
+  slot 2 frames=14400 skids=150 calls=[0, 0] emits=[0, 0] emit/call=0.000 per1000=10.4 orig_per1000=29.8 ratio=0.35
+         per1000active=see F0 below orig_per1000active=215.3
+  slot 3 frames=14400 skids=162 calls=[0, 0] emits=[0, 0] emit/call=0.000 per1000=11.2 orig_per1000=31.7 ratio=0.35
+         per1000active=see F0 below orig_per1000active=191.0
+F1
+  slot 0 frames=14389 skids=24 calls=[407, 0] emits=[24, 0] emit/call=0.059 per1000=1.7 orig_per1000=44.5 ratio=0.04
+         per1000active=59.0 orig_per1000active=266.9
+  slot 1 frames=14389 skids=744 calls=[14161, 132] emits=[715, 29] emit/call=0.052 per1000=51.7 orig_per1000=106.2 ratio=0.49
+         per1000active=52.4 orig_per1000active=166.1
+  slot 2 frames=14389 skids=698 calls=[14192, 51] emits=[693, 5] emit/call=0.049 per1000=48.5 orig_per1000=29.8 ratio=1.63
+         per1000active=49.1 orig_per1000active=215.3
+  slot 3 frames=14389 skids=50 calls=[143, 267] emits=[6, 44] emit/call=0.122 per1000=3.5 orig_per1000=31.7 ratio=0.11
+         per1000active=215.5 orig_per1000active=191.0
+F2
+  slot 0 frames=14389 skids=24 calls=[407, 0] emits=[24, 0] emit/call=0.059 per1000=1.7 orig_per1000=44.5 ratio=0.04
+         per1000active=59.0 orig_per1000active=266.9
+  slot 1 frames=14389 skids=744 calls=[14161, 132] emits=[715, 29] emit/call=0.052 per1000=51.7 orig_per1000=106.2 ratio=0.49
+         per1000active=52.4 orig_per1000active=166.1
+  slot 2 frames=14389 skids=698 calls=[14192, 51] emits=[693, 5] emit/call=0.049 per1000=48.5 orig_per1000=29.8 ratio=1.63
+         per1000active=49.1 orig_per1000active=215.3
+  slot 3 frames=14389 skids=50 calls=[143, 267] emits=[6, 44] emit/call=0.122 per1000=3.5 orig_per1000=31.7 ratio=0.11
+         per1000active=215.5 orig_per1000active=191.0
+F0 per 1000 active frames (F1 denominators):
+  slot 0 skids=19 active=407 per1000active=46.7 orig=266.9
+  slot 1 skids=58 active=14205 per1000active=4.1 orig=166.1
+  slot 2 skids=150 active=14209 per1000active=10.6 orig=215.3
+  slot 3 skids=162 active=232 per1000active=698.3 orig=191.0
