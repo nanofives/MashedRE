@@ -74,7 +74,9 @@ from run_diff import build_config, value_bits, _find_original, agent_source
 # Reuse statenav's Nav class + the in-process press driver agent verbatim.
 import statenav
 
-MASHED_EXE = _find_original(ROOT)
+# MASHED_ROOT: boot a copied install (worktree lanes; the root CONTAINS original\).
+MASHED_EXE = (Path(os.environ['MASHED_ROOT']) / 'original' / 'MASHED.exe'
+              if os.environ.get('MASHED_ROOT') else _find_original(ROOT))
 ORIG       = MASHED_EXE.parent
 ASI_PATH   = ROOT / 'mashedmod' / 'build' / 'mashed_re_dev.asi'
 AGENT_JS   = ROOT / 're' / 'frida' / 'diff_template.js'
