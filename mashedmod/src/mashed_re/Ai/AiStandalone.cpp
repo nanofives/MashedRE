@@ -2215,8 +2215,9 @@ void Ai_AdvanceCountdownClock(int units)
     I32(0x007f0ff4u) += units;           // 0x0040fe5e
 }
 
-// [a5timer 2026-10-26] MASHED_A5_RACE_TIMER_RUN=1 (default OFF, U-9790, decision L-17 (a)): DAT_007f0ff8 runs through the
-// pre-GO ticks, as in the original. Original chain:
+// [a5timer 2026-10-26] MASHED_A5_RACE_TIMER_RUN (U-9790, decision L-17 (a)): DAT_007f0ff8 runs through the pre-GO ticks,
+// as in the original. [a5timer flip 2026-10-26] default ON (decision L-23 = B); MASHED_NO_A5_RACE_TIMER_RUN=1 opts out (the
+// D2 control: the timer stays at 0 before GO, the pre-flip default). Original chain:
 //   - round 1's phase-3 entry zeroes it (FUN_004102f0 first frame -> FUN_0040e590, store at 0x0040e5a2);
 //   - FUN_0040fc00 adds the tick budget at the end of every tick except race sub-state 7 (0x0040fe46 / 0x0040fe64), so it
 //     counts through phase 3 (the QPC-length intro), state 4 and the 112 state-5 ticks;
@@ -2233,8 +2234,8 @@ static constexpr int kA5RtPhase3Seed = 44200 - 180 * 50;
 
 bool Ai_RaceTimerRunEnabled()
 {
-    static const bool s = [] { const char* e = std::getenv("MASHED_A5_RACE_TIMER_RUN");
-                               return e && e[0] && e[0] != '0'; }();
+    static const bool s = [] { const char* no = std::getenv("MASHED_NO_A5_RACE_TIMER_RUN");
+                               return !(no && no[0] && no[0] != '0'); }();
     return s;
 }
 
