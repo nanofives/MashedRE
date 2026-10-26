@@ -2250,7 +2250,7 @@ void Ai_RaceTimerCountdownTick(int units, bool state5WithAi)
     I32(kFrame0ff8) += units;                                // FUN_0040fc00 0x0040fe64
     // FUN_00418560 0x00418598, after the add (PREREG amendment 1): an AI race's first racing tick reads 0. u9745ov matched the
     // original's FUN_004177b0 band-0 roll (DAT_007f0ff8 * (1/3000) > 1.0) at window call 61 with 0 there; zeroing before
-    // the add left 50 and moved the roll one call early (B_RN_K1 / K26, flag_a368 at frame 60). [UNCERTAIN U-9790] which
+    // the add left 50 and moved the roll one call early (B_RN_K1 / K26, flag_a368 at frame 60). [UNCERTAIN U-9791] which
     // original tick carries the last state-5 zero relative to the stand-in's GO frame: only the value at GO is measured.
     if (state5WithAi) I32(kFrame0ff8) = 0;
 }
