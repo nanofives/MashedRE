@@ -317,7 +317,7 @@ extern "C" void NTAPI B17_TlsReserve(PVOID, DWORD reason, PVOID) {
 extern "C" __declspec(allocate(".CRT$XLB"))
     PIMAGE_TLS_CALLBACK g_b17_tls_cb = B17_TlsReserve;
 
-int VideoCfgFirstRunWrite(IDirect3D9* d3d);   // Boot/VideoCfgFirstRun.cpp, MASHED_VIDEOCFG_WRITE (default OFF)
+int VideoCfgFirstRunWrite(IDirect3D9* d3d);   // Boot/VideoCfgFirstRun.cpp, MASHED_VIDEOCFG_WRITE (default ON, =0 opts out)
 
 namespace {
 

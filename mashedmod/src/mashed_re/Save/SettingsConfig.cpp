@@ -20,7 +20,7 @@
 // Per-target host thunks (#ifdef MASHED_STANDALONE):
 //   exe: the exe's own CRT; the log handle, the filename copy and the 0x200-byte settings buffer are private. The exe
 //        never reads videocfg.bin (its window is fixed, exe_main.cpp). ConfigLoad / ConfigSave run only under
-//        MASHED_VIDEOCFG_WRITE=1 (default OFF, L-28 (2)): Boot/VideoCfgFirstRun.cpp, the first-run default write.
+//        MASHED_VIDEOCFG_WRITE (default ON since L-29 (a), =0 opts out): Boot/VideoCfgFirstRun.cpp, the first-run default write.
 //   asi: the game's CRT (cross-CRT FILE* is not shareable) through push/ret thunks, the original strings and globals.
 //
 // OPTIMIZER NOTE (kept from the previous copies): MSVC /O2 + LTCG replaced every typed call of the game's fputs by
@@ -156,7 +156,7 @@ int ConfigSaveCore()
 
 #ifdef MASHED_STANDALONE
 // The exe's private 0x200-byte buffer (0x00773208 in the original), filled by Boot/VideoCfgFirstRun.cpp's port of
-// FUN_00498ea0 before ConfigSaveCore (MASHED_VIDEOCFG_WRITE, default OFF).
+// FUN_00498ea0 before ConfigSaveCore (MASHED_VIDEOCFG_WRITE, default ON, =0 opts out).
 void* ConfigSettingsBuf() { return SettingsBuf(); }
 #endif
 

@@ -63,11 +63,12 @@ int OrigVehicleOf(int carIndex) {
     return Audio::WireVehicleIndexByName(kVehicles[carIndex].dffBase);
 }
 
-// [D3-AI-VEHICLES] MASHED_AI_VEHICLES=1 (default OFF). verify/aiveh_20261026/PREREG_D3-AI-VEHICLES.md.
+// [D3-AI-VEHICLES] MASHED_AI_VEHICLES, default ON since L-30 (a) (D4-FLIP-L29-L30), =0 opts out.
+// verify/aiveh_20261026/PREREG_D3-AI-VEHICLES.md.
 bool AiVehiclesOn() {
     static const bool on = [] {
         const char* e = std::getenv("MASHED_AI_VEHICLES");
-        return e && e[0] == '1';
+        return !(e && e[0] == '0');
     }();
     return on;
 }
@@ -135,6 +136,7 @@ void RaceSession::Begin(const RaceConfig& cfg, D3d9Render::TrackRenderer* track,
     if (AiVehiclesOn()) {
         m_cfg.numCars = 4;
         for (int c = 1; c < 4; ++c) m_cfg.cars[c].carIndex = m_cfg.cars[0].carIndex;
+        once("[D3-AI-VEHICLES] applied: 4 cars, cars 1..3 take car 0's vehicle type");
     }
     m_active = true;
     m_engine = track;
