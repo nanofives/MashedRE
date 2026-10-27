@@ -158,7 +158,7 @@ static undefined4 __cdecl FUN_00575880_impl(int param_1,int param_2,int *param_3
         *(short *)(iVar12 + 0x7e) = sVar2;
         piVar11 = param_3;
         if (sVar2 != 0xe && NarrowDotOrder()) {
-          // [D4-WSB-NARROW-FIX] MASHED_NARROW_DOT_ORDER=1: the original's FADD order. Rotate dots
+          // [D4-WSB-NARROW-FIX] NARROW_DOT_ORDER (default ON, MASHED_NO_NARROW_DOT_ORDER=1 opts out): the original's FADD order. Rotate dots
           // (m8*a.z + m4*a.y) + m0*a.x, (m9*a.z + m1*a.x) + m5*a.y, (m10*a.z + m2*a.x) + m6*a.y (FSTP 0x005759fe /
           // 0x00575a1a / 0x00575a36), flip sum ((s14*s34 + s10*s30) + s18*s38) + ((t.y*n.y + t.x*n.x) + t.z*n.z)
           // (FCOMP 0x00575a9f).

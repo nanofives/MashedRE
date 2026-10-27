@@ -1,0 +1,37 @@
+[test-slot] all 2 test slots busy, waiting (0s so far). Holders:
+  slot 0: pid 19024 since 10-27 11:07 in C:\Users\maria\Desktop\Proyectos\SimGolf\port\build\I10: C:\Users\maria\AppData\Local\Programs\Python\Python312\python.exe -m pytest port/test/test_defects_gen.py -q -p no:cacheprovider
+  slot 1: pid 11140 since 10-27 11:07 in C:\Users\maria\Desktop\Proyectos\SimGolf\port\build\S3_13: C:\Users\maria\AppData\Local\Programs\Python\Python312\python.exe -m pytest port/test/test_integrator.py -q -p no:cacheprovider
+[test-slot] all 2 test slots busy, waiting (30s so far). Holders:
+  slot 0: pid 7264 since 10-27 11:07 in C:\Users\maria\Desktop\Proyectos\SimGolf\port\build\I10: C:\Users\maria\AppData\Local\Programs\Python\Python312\python.exe -m pytest port/test/test_defects_golfers.py -q -p no:cacheprovider
+  slot 1: pid 6212 since 10-27 11:07 in C:\Users\maria\Desktop\Proyectos\SimGolf\port\build\S3_13: C:\Users\maria\AppData\Local\Programs\Python\Python312\python.exe -m pytest port/test/test_labels.py -q -p no:cacheprovider
+[test-slot] all 2 test slots busy, waiting (60s so far). Holders:
+  slot 0: pid 7264 since 10-27 11:07 in C:\Users\maria\Desktop\Proyectos\SimGolf\port\build\I10: C:\Users\maria\AppData\Local\Programs\Python\Python312\python.exe -m pytest port/test/test_defects_golfers.py -q -p no:cacheprovider
+  slot 1: pid 5232 since 10-27 11:08 in C:\Users\maria\Desktop\Proyectos\SimGolf\port\build\S3_13: C:\Users\maria\AppData\Local\Programs\Python\Python312\python.exe -m pytest port/test/test_loaders.py -q -p no:cacheprovider
+[test-slot] all 2 test slots busy, waiting (90s so far). Holders:
+  slot 0: pid 7264 since 10-27 11:07 in C:\Users\maria\Desktop\Proyectos\SimGolf\port\build\I10: C:\Users\maria\AppData\Local\Programs\Python\Python312\python.exe -m pytest port/test/test_defects_golfers.py -q -p no:cacheprovider
+  slot 1: pid 19092 since 10-27 11:09 in C:\Users\maria\Desktop\Proyectos\SimGolf\port\build\S3_13: C:\Users\maria\AppData\Local\Programs\Python\Python312\python.exe -m pytest port/test/test_membership.py -q -p no:cacheprovider
+[test-slot] all 2 test slots busy, waiting (120s so far). Holders:
+  slot 0: pid 7264 since 10-27 11:07 in C:\Users\maria\Desktop\Proyectos\SimGolf\port\build\I10: C:\Users\maria\AppData\Local\Programs\Python\Python312\python.exe -m pytest port/test/test_defects_golfers.py -q -p no:cacheprovider
+  slot 1: pid 13048 since 10-27 11:09 in C:\Users\maria\Desktop\Proyectos\SimGolf\port\build\S3_13: C:\Users\maria\AppData\Local\Programs\Python\Python312\python.exe -m pytest port/test/test_menu.py -q -p no:cacheprovider
+[test-slot] all 2 test slots busy, waiting (150s so far). Holders:
+  slot 0: pid 7264 since 10-27 11:07 in C:\Users\maria\Desktop\Proyectos\SimGolf\port\build\I10: C:\Users\maria\AppData\Local\Programs\Python\Python312\python.exe -m pytest port/test/test_defects_golfers.py -q -p no:cacheprovider
+  slot 1: pid 8116 since 10-27 11:10 in C:\Users\maria\Desktop\Proyectos\SimGolf\port\build\S3_13: C:\Users\maria\AppData\Local\Programs\Python\Python312\python.exe -m pytest port/test/test_profiles.py -q -p no:cacheprovider
+[test-slot] acquired slot 2/2 after 156s
+asi a2d517522223c3d33d324960fc4646da5d7c991a517c25d02d5d3db09707f1a7  MASHED.exe.unpatched bdcae093a30fbf226bdd852b9c36798a987aee33b3ae82bf7404b0336efd3c0e
+arm DEF env []
+[1/2] DEF/P 00575c60 START
+[DEF/P] 00575c60 attempt=1 state=RACE_OK pid=12024 t=64s SUM fn=L2_C4N_00575c60 rva=00575c60 calls=7553 samples=7553 ok=7553 diff=0 noo=0 skip=0 wrote=7553 ret_diff=0 reg_diff=0 | [--] fn=L2_C4N_00575c60 PATCHBYTE installed=e9 uninstalled=83 reinstalled=e9 A/B-IS-REAL | installed=1 0x00575C60:L2_C4N_00575c60
+[1/2] DEF/P 00575c60 RACE_OK
+[2/2] DEF/P 00575fe0 START
+[DEF/P] 00575fe0 attempt=1 state=RACE_OK pid=6740 t=60s SUM fn=L2_C4N_00575fe0 rva=00575fe0 calls=2689 samples=2689 ok=2689 diff=0 noo=0 skip=0 wrote=2689 ret_diff=0 reg_diff=0 | [--] fn=L2_C4N_00575fe0 PATCHBYTE installed=e9 uninstalled=83 reinstalled=e9 A/B-IS-REAL | installed=1 0x00575FE0:L2_C4N_00575fe0
+[2/2] DEF/P 00575fe0 RACE_OK
+done
+asi a2d517522223c3d33d324960fc4646da5d7c991a517c25d02d5d3db09707f1a7  MASHED.exe.unpatched bdcae093a30fbf226bdd852b9c36798a987aee33b3ae82bf7404b0336efd3c0e
+arm NOF env ['MASHED_NO_NARROW_DOT_ORDER=1', 'MASHED_NO_NARROW_PAIR_INT=1', 'MASHED_NO_LEAVES1_X87=1']
+[1/2] NOF/P 00575c60 START
+[NOF/P] 00575c60 attempt=1 state=RACE_OK pid=17836 t=61s SUM fn=L2_C4N_00575c60 rva=00575c60 calls=5825 samples=5825 ok=4164 diff=1661 noo=0 skip=0 wrote=5825 ret_diff=0 reg_diff=1661 | [--] fn=L2_C4N_00575c60 PATCHBYTE installed=e9 uninstalled=83 reinstalled=e9 A/B-IS-REAL | installed=1 0x00575C60:L2_C4N_00575c60
+[1/2] NOF/P 00575c60 RACE_OK
+[2/2] NOF/P 00575fe0 START
+[NOF/P] 00575fe0 attempt=1 state=RACE_OK pid=5208 t=60s SUM fn=L2_C4N_00575fe0 rva=00575fe0 calls=2113 samples=2113 ok=871 diff=1242 noo=0 skip=0 wrote=2113 ret_diff=0 reg_diff=1242 | [--] fn=L2_C4N_00575fe0 PATCHBYTE installed=e9 uninstalled=83 reinstalled=e9 A/B-IS-REAL | installed=1 0x00575FE0:L2_C4N_00575fe0
+[2/2] NOF/P 00575fe0 RACE_OK
+done
