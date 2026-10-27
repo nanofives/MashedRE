@@ -1530,18 +1530,28 @@ void              Nav_GameStateReset() { g_game_state = kFreshState; }
 // 0x148 dwords; REP MOVSD at 0x00404e91 from DAT_00827d98 = save_buf+0x24A40).
 static unsigned char g_save_span[0x520];
 
+static void CopySpanAndRederive(const unsigned char* src);
+
 bool Nav_GameStateLoadSave(const unsigned char* data, unsigned len) {
     constexpr unsigned kSaveSize  = 0x24FA0;     // gamesave.bin total
     constexpr unsigned kSpanFile  = 0x24A40;     // 0x00827d98 - 0x00803358
-    constexpr unsigned kSpanBytes = 0x520;       // 0x148 dwords
     if (data == nullptr || len != kSaveSize) return false;
     // Caller-side gate: magic 0xDEADBEEF at +0 (written by 0x00404F37 on first
     // save). The shipped blank gamesave.bin has 0 here -> no savedata.
     std::uint32_t magic;
     std::memcpy(&magic, data, 4);
     if (magic != 0xDEADBEEFu) return false;
+    CopySpanAndRederive(data + kSpanFile);
+    return true;
+}
 
-    std::memcpy(g_save_span, data + kSpanFile, kSpanBytes);
+void Nav_GameStateSeedSpan(const unsigned char* span) {
+    if (span) CopySpanAndRederive(span);
+}
+
+static void CopySpanAndRederive(const unsigned char* src) {
+    constexpr unsigned kSpanBytes = 0x520;       // 0x148 dwords
+    std::memcpy(g_save_span, src, kSpanBytes);
     // AND to the LIVE span, which is what the original actually does:
     // FUN_00404e80 step 1 is a REP MOVSD at 0x00404e91 from save_buf+0x24A40
     // into 0x007f0a40 for 0x148 dwords. The port used to keep the restore in
@@ -1555,7 +1565,7 @@ bool Nav_GameStateLoadSave(const unsigned char* data, unsigned len) {
     // stays because Save/GameSaveBuffer.cpp binds to it by name.
     // Inert with the shipped blank save, which fails the magic gate above and
     // never reaches this line.
-    std::memcpy(reinterpret_cast<void*>(0x007f0a40u), data + kSpanFile, kSpanBytes);
+    std::memcpy(reinterpret_cast<void*>(0x007f0a40u), src, kSpanBytes);
 
     // Re-derive the MenuGameState fields the grey-out/routing ports read,
     // straight from the restored span (offsets relative to 0x007f0a40):
@@ -1574,7 +1584,6 @@ bool Nav_GameStateLoadSave(const unsigned char* data, unsigned len) {
     const unsigned set = static_cast<unsigned>(gs.cur_track_set) & 0xf;
     gs.unlock_track[0] = span32(0x010 + set * 0x30);
     gs.unlock_car[0]   = span32(0x018 + set * 0x30);
-    return true;
 }
 
 // Bind point for Save/GameSaveBuffer.cpp (standalone exe build only). Exposes the
