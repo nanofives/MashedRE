@@ -47,3 +47,9 @@ attributable to the hook. Plus the static C3 halves already on file: caller and 
 
 No row is claimed C4 here. The C4 band rows take the C3 rows afterwards (L-38: a C4 needs > 0 heap pages
 compared).
+
+## Addendum 1 (before any arm)
+
+Tracking mode = the heap-tracked mode of the latest write-set leg (`verify/wsbbroadws_20261027`
+round 2): `MASHED_SHADOW_AB=1 MASHED_SHADOW_PRIVATE=1 MASHED_SHADOW_STW=1`. Heap pages compared are
+recorded per row for the later C4 band rows. They do not gate C3 here.
