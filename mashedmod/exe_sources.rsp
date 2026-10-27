@@ -145,6 +145,7 @@
 "Frontend\MenuHelpers.cpp"
 "Frontend\MenuNav.cpp"
 "Frontend\MenuNavSM.cpp"
+"Frontend\MenuAnimTickTwin.cpp"
 "Frontend\PromptStripTwin.cpp"
 "Frontend\KvFind.cpp"
 "Frontend\MenuRaceEnd.cpp"

@@ -12,9 +12,10 @@ REM Outputs (navsm_test.exe / *.obj / *.out.txt) are gitignored.
 setlocal
 pushd "%~dp0"
 call "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars32.bat" >nul
-cl /nologo /EHsc /std:c++17 ^
+cl /nologo /EHsc /std:c++17 /DMASHED_STANDALONE ^
    navsm_test.cpp ^
    ..\..\..\..\mashedmod\src\mashed_re\Frontend\MenuNavSM.cpp ^
+   ..\..\..\..\mashedmod\src\mashed_re\Frontend\MenuAnimTickTwin.cpp ^
    ..\..\..\..\mashedmod\src\mashed_re\Frontend\KvFind.cpp ^
    ..\..\..\..\mashedmod\src\mashed_re\Frontend\MenuNav.cpp ^
    ..\..\..\..\mashedmod\src\mashed_re\Frontend\FrontendNav.cpp ^

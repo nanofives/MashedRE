@@ -21,6 +21,7 @@
 // existing TextRenderer/MashedFont path instead.
 
 #include "MenuNavSM.h"
+#include "MenuAnimTick.h"
 #include "MenuNav.h"            // MenuEntryWalk: the shared 0x0042ac90 body
 #include "../Race/RaceModes.h"  // SelectionToGameMode: the host-side name of 0x0042f6b0's table (SelectionToGameMode.h)
 #include "RowMovers.h"          // challenge-row movers 0x004322c0 / 0x004323c0
@@ -773,106 +774,25 @@ void FrameClockUpdate(int raw_ms) {
     g_frame_dt = static_cast<float>(g_tick_ms) * 3.3333333e-4f; // 0x0049351f
 }
 
-// FUN_004a2c48 (0x004a2c48) is the MSVC _ftol2-style float->int helper:
-// FISTP round-to-nearest, then sign-aware carry adjust (0x004a2c6b..0x004a2ca5)
-// = TRUNCATION toward zero. (The hooks.csv C2 note calling it "banker's
-// rounding" is wrong — corrected in CHANGELOG 2026-06-09.) A plain C integer
-// cast is exactly that truncation.
-inline int AnimStep(float v) { return static_cast<int>(v); }
-
-// Float view of record+0x08: the default-tag anim path (incl. the 0xff080000
-// prompt class) accumulates a FLOAT in the +0x08 cell that item rows use as
-// the int row_index (0x00432751..0x00432777 stores raw 0x43340000 = 180.0f).
-inline float F8Get(const MenuRecord& r) {
-    float f; std::memcpy(&f, &r.row_index, 4); return f;
-}
-inline void F8Set(MenuRecord& r, float f) { std::memcpy(&r.row_index, &f, 4); }
-
-// FUN_004325c0 (0x004325c0) — verbatim port from the 2026-06-09 pool0 disasm.
-// Walks the first 30 records (ESI 0x898ad0 stride 0x34 while < 0x8990e8 =
-// records 0..29). Base speed held in ST1 for the whole walk (see g_anim_phase
-// above). Per-tag steps, each "FLD DAT_007f1004; FMUL ST1(base); FMUL K;
-// CALL 0x004a2c48 (trunc)":
-//   0xff040000 item, type 0/2:  K=-2000.0f (0x005cd904, @0x00432682); settle
-//     on <= 0: type2 -> slide=0x1ff freeze; type0 -> slide=0,type=1 and Y
-//     recompute (0x004326b8): Y = Q_ListBaseY(DAT_0067ece0, 0x1e) +
-//     rec[+0x20]*0x1e; screen 24 (&DAT_005f7370): Q(0x1c)+rec[+0x20]*0x1c
-//     - 58.0f (_DAT_005cd900); screen 18 (&DAT_005f72a0): Y -= 58.0f.
-//   0xff040000 item, other type: K=+1000.0f (0x005cc9fc, @0x0043264e);
-//     >= 0x190 -> slide=0x1ff, freeze.
-//   {0xff110000,0xff000000,0xff120000,0xff130000,0xff230000,0xff100000}
-//     (LAB_0043277c class), type 0/2: K=-800.0f (0x005cd8f8, @0x0043279b);
-//     settle on <= 0 (type2 freeze / type0 -> 0, type=1; no Y recompute);
-//     other type: K=+500.0f (0x005ccd04, @0x00432788) joining the 0x190 clamp.
-//   any other tag (incl. 0 and the prompt class): float path (@0x00432751) —
-//     f8 += DAT_007f1004 * 300.0f (0x005cd8fc); >= 180.0f (0x005cd09c) ->
-//     f8 = 180.0f raw 0x43340000, freeze. (No base multiplier on this path.)
-// Returns 1 when nothing is left animating; a record counts as animating when
-// tag != 0 && type != 0x1000 && DAT_0067e914 != 0 (0x004325f5..0x0043260d).
-// Deliberate menu-feel tuning (user feedback 2026-06-13 "animations are too
-// slow"): the verbatim FUN_004325c0 step (base 1.0) settles the slide
-// 0x1ff->0 in ~0.77s. That matches the original's timing but reads as sluggish
-// for menu navigation. kMenuAnimSpeedup multiplies the per-tick step so the
-// slide settles in ~0.77/kMenuAnimSpeedup s. NOT a faithfulness change — the
-// settle endpoint (positions/colors) is identical, only the transition rate
-// differs. Set to 1.0 to restore the exact verbatim rate.
-constexpr float kMenuAnimSpeedup = 6.0f;
-
+// FUN_004325c0 (0x004325c0): ONE body for both targets since D4-FU-MENUSPEED (2026-10-27, decision L-35 = 3),
+// MenuAnimTickBody in Frontend/MenuAnimTickTwin.cpp (citations there). This host only supplies the inputs: the
+// FUN_00493480 port's dt, g_anim_phase / g_anim_gate, the nav slot's item count for DAT_0067ece0, the
+// FUN_0042ac50 port, and the slot's screen id for the original's record +0x30 pointer match (24 = 0x005f7370,
+// 18 = 0x005f72a0). Speed: MASHED_MENU_ANIM_SPEED, default 1.0 (the original's rate). The old exe-only
+// kMenuAnimSpeedup = 6.0f (user feedback 2026-06-13) is MASHED_MENU_ANIM_SPEED=6.
 bool Anim_Tick() {
-    const float base = ((g_anim_phase >= 4) ? 2.0f : 1.0f) * kMenuAnimSpeedup;  // 0x004325c8..db
     const NavSlot& slot = g_stack[g_nav_depth];
-    int all_settled = 1;                                    // [ESP+0x10]
-    for (int i = 0; i < 30 && i < kMaxRecords; ++i) {       // 0x898ad0..0x8990e8
-        MenuRecord& r = g_records[i];
-        const std::uint32_t tag = static_cast<std::uint32_t>(r.tag);
-        if (tag != 0 && r.type != 0x1000 && g_anim_gate != 0)
-            all_settled = 0;                                // 0x004325f5..0d
-        const bool slide_class =
-            (tag == 0xff110000u || tag == 0xff000000u || tag == 0xff120000u ||
-             tag == 0xff130000u || tag == 0xff230000u || tag == 0xff100000u);
-        if (tag == 0xff040000u) {
-            if (r.type == 0 || r.type == 2) {
-                r.slide += AnimStep(g_frame_dt * base * -2000.0f);
-                if (r.slide <= 0) {                         // JG 0x004327d7
-                    if (r.type == 2) { r.slide = 0x1ff; r.type = 0x1000; }
-                    else {                                  // 0x004326b8 settle
-                        const int row20 = r.pad20;          // [ESI+0x10]=+0x20
-                        r.slide = 0; r.type = 1;
-                        float y = static_cast<float>(
-                            Q_ListBaseY(slot.item_count, 0x1e) + row20 * 0x1e);
-                        if (slot.screen_id == 24) {         // &DAT_005f7370
-                            y = static_cast<float>(
-                                    Q_ListBaseY(slot.item_count, 0x1c) +
-                                    row20 * 0x1c) - 58.0f;  // _DAT_005cd900
-                        }
-                        if (slot.screen_id == 18) {         // &DAT_005f72a0
-                            y -= 58.0f;
-                        }
-                        r.y = y;                            // FSTP [ESI+0xc]
-                    }
-                }
-            } else {                                        // 0x0043264e
-                r.slide += AnimStep(g_frame_dt * base * 1000.0f);
-                if (r.slide >= 0x190) { r.slide = 0x1ff; r.type = 0x1000; }
-            }
-        } else if (slide_class) {                           // LAB_0043277c
-            if (r.type == 0 || r.type == 2) {               // 0x0043279b
-                r.slide += AnimStep(g_frame_dt * base * -800.0f);
-                if (r.slide <= 0) {
-                    if (r.type == 2) { r.slide = 0x1ff; r.type = 0x1000; }
-                    else             { r.slide = 0;     r.type = 1; }
-                }
-            } else {                                        // 0x00432788
-                r.slide += AnimStep(g_frame_dt * base * 500.0f);
-                if (r.slide >= 0x190) { r.slide = 0x1ff; r.type = 0x1000; }
-            }
-        } else {                                            // 0x00432751 float
-            const float f = g_frame_dt * 300.0f + F8Get(r);
-            F8Set(r, f);
-            if (f >= 180.0f) { F8Set(r, 180.0f); r.type = 0x1000; }
-        }
-    }
-    return all_settled != 0;
+    MenuAnimTickIn in;
+    in.dt                = g_frame_dt;
+    in.phase             = g_anim_phase;
+    in.gate              = g_anim_gate;
+    in.item_total        = slot.item_count;
+    in.list_base_y       = &Q_ListBaseY;
+    in.screen_per_record = false;
+    in.screen            = slot.screen_id;
+    in.screen_24         = 24;
+    in.screen_18         = 18;
+    return MenuAnimTickBody(g_records, in) != 0;
 }
 
 } // namespace
