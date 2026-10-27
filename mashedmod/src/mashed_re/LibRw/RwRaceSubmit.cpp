@@ -500,6 +500,14 @@ int RaceSubmit_TexAnimCreate(const Txd::Dictionary* dicts, std::size_t ndicts, c
     ClearTexAnim();
     if (!g_engine_up || !prefix) return 0;
     TextureSource ts{ dicts, (int)ndicts };
+    // [hbtexanimrefs] dev-only mask arm: MASHED_TEXANIM_MASKTEX=<name> makes the ring that one texture,
+    // so |MASK - OFF| marks the visible water pixels (verify/hbtexanimrefs_20261027/PREREG2.md). Unset = no effect.
+    const char* mt = std::getenv("MASHED_TEXANIM_MASKTEX");
+    if (mt && *mt) {
+        if (rw::Texture* t = static_cast<rw::Texture*>(ResolveTextureByName(mt, ts))) g_texanim.push_back(t);
+        RLog("[hbforest] texanim '%s': mask texture '%s' %s", prefix, mt, g_texanim.empty() ? "NOT FOUND" : "ok");
+        return (int)g_texanim.size();
+    }
     // FUN_00475090: index 0 is looked up first and its node's texture set only when found; the
     // loop then runs from 1 and stops at the first name the dictionary does not hold. (A missing
     // index 0 leaves the original a node with no texture assigned; it is skipped here.)
