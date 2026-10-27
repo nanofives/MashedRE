@@ -716,12 +716,16 @@ struct RetBox {
     template <typename F, typename... A> void call(F f, A... a) { v = f(a...); }
     int diff(const RetBox& o) const { return std::memcmp(&v, &o.v, sizeof(Ret)) != 0 ? 1 : 0; }
     Ret get() const { return v; }
+    std::uint32_t raw() const { std::uint32_t u = 0; std::memcpy(&u, &v, sizeof(Ret) < 4 ? sizeof(Ret) : 4); return u; }
+    static constexpr bool kHas = true;
 };
 template <>
 struct RetBox<void> {
     template <typename F, typename... A> void call(F f, A... a) { f(a...); }
     int diff(const RetBox&) const { return 0; }
     void get() const {}
+    std::uint32_t raw() const { return 0; }
+    static constexpr bool kHas = false;
 };
 
 } // namespace Track
@@ -758,6 +762,19 @@ auto RunTracked(Counter& c, F impl, void* stackwin, A... args) -> decltype(impl(
         Log(pb); Log("\r\n");
     }
     const int rd = ro.diff(rn);
+    // [D4-WSB-SHADOW-PRIVATE] MASHED_SHADOW_NEED_PAGES=1: a sample in which neither run wrote a
+    // tracked page (and stack + return agree) is discarded, so the budget goes to calls that
+    // write. At most 2000 discards per function (then sampling stops), the first 64 logged.
+    static const bool need_pages = EnvOn("MASHED_SHADOW_NEED_PAGES");
+    if (need_pages && !r.noise && !r.pages_orig && !r.pages_port && !rd && !r.stack_diff_bytes) {
+        if (c.empty < 64) {
+            char el[160];
+            wsprintfA(el, "[..] fn=%s EMPTY rv=%08x (sample discarded, %d)\r\n", c.name, ro.raw(), c.empty);
+            Log(el);
+        }
+        if (++c.empty >= 2000) c.n = c.max_samples;
+        return rn.get();
+    }
     const int nd = r.pages_diff + (r.stack_diff_bytes ? 1 : 0) + rd;
     if (r.noise) {
         // another thread wrote a tracked page during the window: the compare may include its
@@ -772,6 +789,7 @@ auto RunTracked(Counter& c, F impl, void* stackwin, A... args) -> decltype(impl(
     int dp = wsprintfA(det, " pages=o:%d,n:%d,diff:%d stack=%d noise=%d ovf=%d ret=%d",
                        r.pages_orig, r.pages_port, r.pages_diff, r.stack_diff_bytes, r.noise, r.overflow, rd);
     dp += wsprintfA(det + dp, " heap=o:%d,n:%d", r.heap_orig, r.heap_port);   // [D4-WSB-SHADOW-PRIVATE]
+    if (Track::RetBox<Ret>::kHas) dp += wsprintfA(det + dp, " rv=%08x", ro.raw());
     if (r.pages_diff) dp += wsprintfA(det + dp, " @%08x+%03x", static_cast<unsigned>(r.first_page), r.first_off);
     if (r.pages_diff) {                                      // [D4-WSB-BVH-FU] off:pre/orig/port per dword
         dp += wsprintfA(det + dp, " ndw=%d v=", r.ndw);

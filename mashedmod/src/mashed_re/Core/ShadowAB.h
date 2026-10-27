@@ -140,6 +140,7 @@ struct Counter {
     int            ndiff  = 0;
     bool           noted  = false;   // logged the "no hook index" case once
     bool           proved = false;   // logged the patch-byte proof once
+    int            empty  = 0;       // [D4-WSB-SHADOW-PRIVATE] samples discarded by MASHED_SHADOW_NEED_PAGES
 };
 
 #define SHADOW_AB_COUNTER(var, name_, rva_, min_phase_)                       \
