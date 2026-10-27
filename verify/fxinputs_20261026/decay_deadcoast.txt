@@ -1,0 +1,5 @@
+decay_o60.txt: == dead episode frames 1802..9034 (7233 captured) rec+0x10 at start 1 | |v| at kill 174.7945 | first |v|==0 after 17 frames | gate-pass 0 | zero 7216 | frozen-nonzero 0
+decay_X0.txt: == dead episode frames 220..14217 (13998 captured) rec+0x10 at start 0 | |v| at kill 2046.2510 | first |v|==0 after None frames | gate-pass 13998 | zero 0 | frozen-nonzero 13997
+decay_X1.txt: == dead episode frames 220..14217 (13998 captured) rec+0x10 at start 1 | |v| at kill 2014.9087 | first |v|==0 after 133 frames | gate-pass 111 | zero 13865 | frozen-nonzero 0
+decay_X2.txt: == dead episode frames 220..14217 (13998 captured) rec+0x10 at start 1 | |v| at kill 2507.8657 | first |v|==0 after 149 frames | gate-pass 126 | zero 13849 | frozen-nonzero 1
+ww3_c2 (watch run): == dead episode frames 1726..5604 (3879 captured) rec+0x10 at start 1 | |v| at kill 297.6676 | first |v|==0 after 27 frames | gate-pass 4 | zero 3852 | frozen-nonzero 0

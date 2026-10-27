@@ -153,6 +153,13 @@ private:
     // passing rolls, each split [non-skid, skid]; private roll generator (never the game PRNG).
     int    fx_og_frames_[4] = {}, fx_og_calls_[4][2] = {}, fx_og_emits_[4][2] = {};
     unsigned fx_og_rng_ = 0x2545f491u;
+    // [D4-FX-INPUTS] diagnostic-only input census of EmitCarFxOrigGates, printed on the MASHED_FX_DEBUG line (never read
+    // back): [0] slot word < 0, [1] (int)+0x9e0 <= 1, [2] |v|^2 < 62500, [3] active (+0xcfc == 0, passed), [4] active and
+    // g_aib.alive, [5] skid and alive, [6] +0xb0c > 100, [7] range < 90 && brake > 0x40, [8] brake > 0x40, [9] range < 90,
+    // [10] active with +0x9b0..+0x9b8 bit-identical to this slot's previous call, [11] +0xcfc != 0, [12] / [13] spawner
+    // calls / emits while alive, [14] +0xcfc != 0 frames that passed the 0.3 roll while alive.
+    int    fx_ig_[4][15] = {};
+    float  fx_ig_prev_[4][3] = {};
     float  FxOrigRoll();
     void   EmitCarFxOrigGates(int slot, const float pos[3], float fx, float fz, float R);
     // Emit skid smoke (cornering/lateral slip) + impact sparks (sudden decel) for

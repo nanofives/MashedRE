@@ -1,5 +1,9 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-10-26 23:34 D4-WSB-C4-NARROW (orch/D4-WSB-C4-NARROW): G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/e85ea6fb/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261026_231934
+- 2026-10-26 23:09 D4-FX-INPUTS (orch/D4-FX-INPUTS): G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/e85ea6fb/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261026_223718
+- 2026-10-26 20:51 D4-WSH-NOEVID (orch/D4-WSH-NOEVID): G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/e85ea6fb/53778664. Run data D:\MashedWT\mtrain_data\20261026_204319
+- 2026-10-26 20:42 D4-WSH-ZEROEXEC (orch/D4-WSH-ZEROEXEC): G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/e85ea6fb/53778664. Run data D:\MashedWT\mtrain_data\20261026_203343
 - 2026-10-26 19:57 D4-WSF-TRACKDATA-RT (orch/D4-WSF-TRACKDATA-RT), D4-FLIP-L29-L30 (orch/D4-FLIP-L29-L30): G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/e85ea6fb/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261026_193408
 - 2026-10-26 17:36 D4-WSF-SAVE-SPANINIT (orch/D4-WSF-SAVE-SPANINIT): G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/e85ea6fb/53778664. Run data D:\MashedWT\mtrain_data\20261026_172221
 - 2026-10-26 17:20 D3-AI-VEHICLES (orch/D3-AI-VEHICLES): G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/e85ea6fb/53778664. Run data D:\MashedWT\mtrain_data\20261026_170929

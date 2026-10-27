@@ -1,0 +1,55 @@
+ORIGINAL frames=12979 snapshots=23 slots=[0, 1, -1, -1]
+  car 0 outer: slot<0=0 9e0<=1=37 slow=10798 pass=1916 cfc=228 frozen_vel=10548
+        rec+0x4==0 frames=2097: slot<0=0 9e0<=1=0 slow=1895 pass=202 cfc=0 frozen_vel=1874 |v|=0:1885
+        counted=2185 skid=390 ( 17.8%) legA b0c>100=126 (  5.8%) legB rng&brk=265 ( 12.1%) brk>40=547 ( 25.0%) rng=1612 ( 73.8%) cfc=159 frozen=188
+        b0c bins(25)=[1884, 90, 55, 30, 17, 17, 10, 5, 77] brake classes [0,1..40,41..fe,ff]=[1638, 0, 0, 547]
+        counted per 10 s snapshot: [465, 370, 421, 452, 463, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  car 1 outer: slot<0=0 9e0<=1=51 slow=5258 pass=7563 cfc=107 frozen_vel=3408
+        rec+0x4==0 frames=996: slot<0=0 9e0<=1=29 slow=644 pass=323 cfc=0 frozen_vel=577 |v|=0:580
+        counted=7691 skid=1188 ( 15.4%) legA b0c>100=295 (  3.8%) legB rng&brk=942 ( 12.2%) brk>40=2143 ( 27.9%) rng=5855 ( 76.1%) cfc=70 frozen=124
+        b0c bins(25)=[6881, 343, 103, 69, 35, 35, 28, 17, 180] brake classes [0,1..40,41..fe,ff]=[5548, 0, 0, 2143]
+        counted per 10 s snapshot: [502, 283, 197, 514, 414, 19, 327, 334, 267, 329, 453, 289, 398, 404, 370, 354, 384, 352, 360, 139, 335, 366, 301]
+  car 2 outer: slot<0=9776 9e0<=1=75 slow=1084 pass=1834 cfc=210 frozen_vel=10747
+        rec+0x4==0 frames=10247: slot<0=9776 9e0<=1=0 slow=432 pass=39 cfc=0 frozen_vel=10138 |v|=0:10140
+        counted=2041 skid=461 ( 22.6%) legA b0c>100=118 (  5.8%) legB rng&brk=372 ( 18.2%) brk>40=544 ( 26.7%) rng=1759 ( 86.2%) cfc=150 frozen=121
+        b0c bins(25)=[1742, 120, 37, 24, 34, 8, 6, 5, 65] brake classes [0,1..40,41..fe,ff]=[1497, 0, 0, 544]
+        counted per 10 s snapshot: [491, 325, 368, 443, 409, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  car 3 outer: slot<0=9776 9e0<=1=0 slow=785 pass=2187 cfc=231 frozen_vel=10377
+        rec+0x4==0 frames=9877: slot<0=9776 9e0<=1=0 slow=0 pass=101 cfc=0 frozen_vel=9776 |v|=0:0
+        counted=2407 skid=463 ( 19.2%) legA b0c>100=139 (  5.8%) legB rng&brk=366 ( 15.2%) brk>40=560 ( 23.3%) rng=2114 ( 87.8%) cfc=165 frozen=86
+        b0c bins(25)=[2128, 76, 35, 29, 23, 14, 12, 7, 83] brake classes [0,1..40,41..fe,ff]=[1847, 0, 0, 560]
+        counted per 10 s snapshot: [476, 393, 401, 428, 494, 215, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+PORT Y1 (D:/MashedWT/D4-FX-INPUTS_data/arms5/H_Y1.fx_debug.txt)
+  slot 0 frames=14389 outer: slot<0=0 9e0<=1=180 slow=13901 pass=308 cfc=0 | alive-active=198
+        skid frames=0 (  0.0%) skid&alive=0 legA b0c>100=0 (  0.0%) legB rng&brk=0 (  0.0%) brk>40=0 (  0.0%) rng=308 (100.0%) frozen=20 (  6.5%)
+        emits=17/0 active_fr=308 per1000active=55.2
+        ALIVE: active_fr=198 skid_fr=0 (  0.0%) calls=198 emits=13 per1000active=65.7
+  slot 1 frames=14389 outer: slot<0=0 9e0<=1=180 slow=13812 pass=381 cfc=16 | alive-active=203
+        skid frames=44 ( 11.5%) skid&alive=31 legA b0c>100=0 (  0.0%) legB rng&brk=31 (  8.1%) brk>40=31 (  8.1%) rng=381 (100.0%) frozen=0 (  0.0%)
+        emits=13/29 active_fr=394 per1000active=106.6
+        ALIVE: active_fr=216 skid_fr=44 ( 20.4%) calls=304 emits=34 per1000active=157.4
+  slot 2 frames=14389 outer: slot<0=0 9e0<=1=180 slow=13793 pass=411 cfc=5 | alive-active=215
+        skid frames=17 (  4.1%) skid&alive=12 legA b0c>100=12 (  2.9%) legB rng&brk=4 (  1.0%) brk>40=4 (  1.0%) rng=411 (100.0%) frozen=29 (  7.1%)
+        emits=18/5 active_fr=416 per1000active=55.3
+        ALIVE: active_fr=220 skid_fr=17 (  7.7%) calls=254 emits=13 per1000active=59.1
+  slot 3 frames=14389 outer: slot<0=0 9e0<=1=180 slow=13977 pass=231 cfc=1 | alive-active=231
+        skid frames=89 ( 38.5%) skid&alive=88 legA b0c>100=15 (  6.5%) legB rng&brk=83 ( 35.9%) brk>40=83 ( 35.9%) rng=231 (100.0%) frozen=8 (  3.5%)
+        emits=6/44 active_fr=232 per1000active=215.5
+        ALIVE: active_fr=232 skid_fr=89 ( 38.4%) calls=410 emits=50 per1000active=215.5
+PORT Y2 (D:/MashedWT/D4-FX-INPUTS_data/arms5/H_Y2.fx_debug.txt)
+  slot 0 frames=14389 outer: slot<0=0 9e0<=1=180 slow=13901 pass=308 cfc=0 | alive-active=198
+        skid frames=0 (  0.0%) skid&alive=0 legA b0c>100=0 (  0.0%) legB rng&brk=0 (  0.0%) brk>40=0 (  0.0%) rng=308 (100.0%) frozen=20 (  6.5%)
+        emits=17/0 active_fr=308 per1000active=55.2
+        ALIVE: active_fr=198 skid_fr=0 (  0.0%) calls=198 emits=13 per1000active=65.7
+  slot 1 frames=14389 outer: slot<0=0 9e0<=1=180 slow=13812 pass=381 cfc=16 | alive-active=203
+        skid frames=44 ( 11.5%) skid&alive=31 legA b0c>100=0 (  0.0%) legB rng&brk=31 (  8.1%) brk>40=31 (  8.1%) rng=381 (100.0%) frozen=0 (  0.0%)
+        emits=13/29 active_fr=394 per1000active=106.6
+        ALIVE: active_fr=216 skid_fr=44 ( 20.4%) calls=304 emits=34 per1000active=157.4
+  slot 2 frames=14389 outer: slot<0=0 9e0<=1=180 slow=13793 pass=411 cfc=5 | alive-active=215
+        skid frames=17 (  4.1%) skid&alive=12 legA b0c>100=12 (  2.9%) legB rng&brk=4 (  1.0%) brk>40=4 (  1.0%) rng=411 (100.0%) frozen=29 (  7.1%)
+        emits=18/5 active_fr=416 per1000active=55.3
+        ALIVE: active_fr=220 skid_fr=17 (  7.7%) calls=254 emits=13 per1000active=59.1
+  slot 3 frames=14389 outer: slot<0=0 9e0<=1=180 slow=13977 pass=231 cfc=1 | alive-active=231
+        skid frames=89 ( 38.5%) skid&alive=88 legA b0c>100=15 (  6.5%) legB rng&brk=83 ( 35.9%) brk>40=83 ( 35.9%) rng=231 (100.0%) frozen=8 (  3.5%)
+        emits=6/44 active_fr=232 per1000active=215.5
+        ALIVE: active_fr=232 skid_fr=89 ( 38.4%) calls=410 emits=50 per1000active=215.5
