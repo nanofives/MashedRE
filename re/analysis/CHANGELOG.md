@@ -26,6 +26,10 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-27  0055fea0  FUN_0055fea0  C3->C4  D4-WSB-SHADOW-PRIVATE: heap-tracked write-set leg CLEAN 24/24 (1 heap pages/sample, PRIVATE+STW, hook installed alone) + existing racediff C4-CLEAN; U-9792 resolved for this row; verify/wsbshadowpriv_20261027/RESULT_D4-WSB-SHADOW-PRIVATE.md
+2026-10-27  0055ff90  FUN_0055ff90  C3->C4  D4-WSB-SHADOW-PRIVATE: heap-tracked write-set leg CLEAN 24/24 (4 heap pages/sample, PRIVATE+STW, hook installed alone) + existing racediff C4-CLEAN; U-9792 resolved for this row; verify/wsbshadowpriv_20261027/RESULT_D4-WSB-SHADOW-PRIVATE.md
+2026-10-27  00565260  FUN_00565260  C3->C4  D4-WSB-SHADOW-PRIVATE: heap-tracked write-set leg CLEAN 24/24 (2..4 heap pages/sample, PRIVATE+STW, hook installed alone) + existing racediff C4-CLEAN; U-9792 resolved for this row; verify/wsbshadowpriv_20261027/RESULT_D4-WSB-SHADOW-PRIVATE.md
+2026-10-27  00564040  FUN_00564040  C3 (no change)  D4-WSB-SHADOW-PRIVATE: heap-tracked leg compared 0 pages (sampled calls write nothing); U-9792 stays open for this row; verify/wsbshadowpriv_20261027/RESULT_D4-WSB-SHADOW-PRIVATE.md
 2026-10-27  0055fea0  FUN_0055fea0  C4->C3  D4-WSB-L38-DEMOTE (L-38 b): write-set leg compared 0 heap pages (MASHED_SHADOW_PRIVATE unset, o:0,n:0); hooks.csv note corrected; re-promote on CLEAN heap-tracked leg; verify/wsbbvhfu_20261027/RESULT_D4-WSB-BVH-FU.md s4
 2026-10-27  0055ff90  FUN_0055ff90  C4->C3  D4-WSB-L38-DEMOTE (L-38 b): write-set leg compared 0 heap pages (MASHED_SHADOW_PRIVATE unset, o:0,n:0); hooks.csv note corrected; re-promote on CLEAN heap-tracked leg; verify/wsbbvhfu_20261027/RESULT_D4-WSB-BVH-FU.md s4
 2026-10-27  00564040  FUN_00564040  C4->C3  D4-WSB-L38-DEMOTE (L-38 b): write-set leg compared 0 heap pages (MASHED_SHADOW_PRIVATE unset, o:0,n:0); hooks.csv note corrected; re-promote on CLEAN heap-tracked leg; verify/wsbbvhfu_20261027/RESULT_D4-WSB-BVH-FU.md s4
