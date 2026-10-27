@@ -1,0 +1,5 @@
+rva	verdict	why	installed	off_sigs	on_sigs	off_calls	on_calls	spawned_pids	samples_sha256	attempts	utc
+0x00563e70_census	NO-RESULT			0	0	0	0	15908/15952		2	2026-10-27T09:39:00Z
+0x00564c80	C4-CLEAN		True	4	4	6	6	6156/19228	5174ddd9634aa7bbf6642c203ee7a99f100312bdaa4cc2debaddf8ff8ccfedb7	1	2026-10-27T09:25:17Z
+0x00565200_census	NO-RESULT			0	0	0	0	15512/11000		2	2026-10-27T09:42:27Z
+0x00565260	C4-CLEAN		True	4	4	6	6	1952/13140	ce55a9085698fdda6f745e04cc9d8c988d39c13f42aaf049881c3bf14480d2c2	1	2026-10-27T09:26:09Z

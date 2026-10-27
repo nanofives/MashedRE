@@ -26,6 +26,11 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-27  0055fea0  FUN_0055fea0  C3->C4  D4-WSB-BVH-WRITESET: racediff C4-CLEAN (hook installed alone) + write-set shadow CLEAN (RunTracked, A/B-IS-REAL); verify/wsbbvh_20261027/RESULT_D4-WSB-BVH-WRITESET.md
+2026-10-27  0055ff90  FUN_0055ff90  C3->C4  D4-WSB-BVH-WRITESET: racediff C4-CLEAN (hook installed alone) + write-set shadow CLEAN (RunTracked, A/B-IS-REAL); verify/wsbbvh_20261027/RESULT_D4-WSB-BVH-WRITESET.md
+2026-10-27  00561040  FUN_00561040  C3->C4  D4-WSB-BVH-WRITESET: racediff C4-CLEAN (hook installed alone) + write-set shadow CLEAN (RunTracked, A/B-IS-REAL); verify/wsbbvh_20261027/RESULT_D4-WSB-BVH-WRITESET.md
+2026-10-27  00564040  FUN_00564040  C3->C4  D4-WSB-BVH-WRITESET: racediff C4-CLEAN (hook installed alone) + write-set shadow CLEAN (RunTracked, A/B-IS-REAL); verify/wsbbvh_20261027/RESULT_D4-WSB-BVH-WRITESET.md
+2026-10-27  00565260  FUN_00565260  C3->C4  D4-WSB-BVH-WRITESET: racediff C4-CLEAN (hook installed alone) + write-set shadow CLEAN (RunTracked, A/B-IS-REAL); verify/wsbbvh_20261027/RESULT_D4-WSB-BVH-WRITESET.md
 2026-10-26  0055fe50  FUN_0055fe50  C3->C4  D4-WSB-C4-BVH: in-race racediff C4-CLEAN (hook installed alone, args compared); no store outside its frame; verify/wsbbvh_20261026/RESULT_D4-WSB-C4-BVH.md
 2026-10-26  0055ff70  FUN_0055ff70  C3->C4  D4-WSB-C4-BVH: in-race racediff C4-CLEAN (hook installed alone, args compared); no store outside its frame; verify/wsbbvh_20261026/RESULT_D4-WSB-C4-BVH.md
 2026-10-26  005601f0  FUN_005601f0  C3->C4  D4-WSB-C4-BVH: in-race racediff C4-CLEAN (hook installed alone, args compared); write-tracked shadow CLEAN; verify/wsbbvh_20261026/RESULT_D4-WSB-C4-BVH.md
