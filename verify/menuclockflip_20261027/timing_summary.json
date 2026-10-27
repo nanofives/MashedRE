@@ -1,0 +1,42 @@
+{
+ "F0": {
+  "calls": 680,
+  "dt_nonzero": 680,
+  "item": {
+   "settle_call": 16,
+   "settle_ticks": 16,
+   "settle_ms": 230.5,
+   "freeze_call": 41,
+   "freeze_ticks": 41,
+   "freeze_ms": 646.3
+  },
+  "back": {
+   "settle_call": 40,
+   "settle_ticks": 40,
+   "settle_ms": 629.5,
+   "freeze_call": 90,
+   "freeze_ticks": 90,
+   "freeze_ms": 1463.2
+  }
+ },
+ "F1": {
+  "calls": 684,
+  "dt_nonzero": 226,
+  "item": {
+   "settle_call": 52,
+   "settle_ticks": 16,
+   "settle_ms": 821.2,
+   "freeze_call": 126,
+   "freeze_ticks": 41,
+   "freeze_ms": 2054.9
+  },
+  "back": {
+   "settle_call": 123,
+   "settle_ticks": 40,
+   "settle_ms": 2004.7,
+   "freeze_call": 273,
+   "freeze_ticks": 90,
+   "freeze_ms": 4504.5
+  }
+ }
+}
