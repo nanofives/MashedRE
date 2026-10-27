@@ -1,15 +1,23 @@
 # Parallel C2->C3 diff runner.
 #
-# Spawns one MASHED.exe + Frida session per hook, in parallel, each tied to its
-# own pool slot (scripts/frida_pool.sh). Mirrors the Ghidra pool pattern: slots
-# bound the concurrency, sessions are self-contained, and hooks.csv writes still
-# serialize through re-classify (not this script).
+# DEFAULT (2026-10-27): the warm pool, run_diff_warm.py — 4 warm MASHED instances
+# stream the batch, and every hook warm cannot reproduce (scenario, call_log,
+# dialog, cold_only, flags only run_diff.py has) is routed to the cold path below
+# automatically, as is every warm non-GREEN verdict (re-run cold, cold verdict
+# reported). Equivalence evidence (11-hook batch, cold vs warm): the commit
+# message of the change that made warm the default.
+#
+# --cold: the old path. Spawns one MASHED.exe + Frida session per hook, in
+# parallel, each tied to its own pool slot (scripts/frida_pool.sh). Mirrors the
+# Ghidra pool pattern: slots bound the concurrency, sessions are self-contained,
+# and hooks.csv writes still serialize through re-classify (not this script).
 #
 # Usage:
-#   py -3.12 re/frida/run_diff_parallel.py <hook1> [<hook2> ...]
+#   py -3.12 re/frida/run_diff_parallel.py <hook1> [<hook2> ...] [run_diff_warm.py flags]
+#   py -3.12 re/frida/run_diff_parallel.py --cold <hook1> [<hook2> ...] [run_diff.py flags]
 #
-# Each child invocation is `run_diff.py <hook>`. Results land in
-# log/diff_<hook>.csv per the existing per-hook contract. This wrapper:
+# Each cold child invocation is `run_diff.py <hook> [flags]`. Results land in
+# log/diff_<hook>.csv per the existing per-hook contract. The cold wrapper:
 #   - acquires a frida pool slot per child
 #   - spawns the child in parallel (subprocess.Popen)
 #   - collects stdout/stderr per child so the streams don't interleave
@@ -41,8 +49,9 @@ def pool(cmd, *args):
 LAUNCH_STAGGER_S = 5  # seconds between successive MASHED.exe spawns
 
 
-def run_one(hook_name, stagger_index=0):
-    """Acquire slot, run run_diff.py, release slot. Returns (hook, slot, rc, took, log_path)."""
+def run_one(hook_name, stagger_index=0, extra=()):
+    """Acquire slot, run run_diff.py, release slot. Returns (hook, slot, rc, took, log_path).
+    `extra` is passed to run_diff.py after the hook name (--allow-degenerate, --negctl X, ...)."""
     if stagger_index > 0:
         time.sleep(stagger_index * LAUNCH_STAGGER_S)
     t0 = time.time()
@@ -57,7 +66,7 @@ def run_one(hook_name, stagger_index=0):
             # tracker (informational — not load-bearing for cleanup).
             env = {**os.environ, 'FRIDA_POOL_SLOT': slot}
             proc = subprocess.Popen(
-                ['py', '-3.12', str(RUN_DIFF), hook_name],
+                ['py', '-3.12', str(RUN_DIFF), hook_name, *extra],
                 cwd=str(ROOT), env=env,
                 stdout=fh, stderr=subprocess.STDOUT,
             )
@@ -70,8 +79,17 @@ def run_one(hook_name, stagger_index=0):
 
 def main(argv):
     if len(argv) < 2:
-        sys.exit(f"usage: {argv[0]} <hook> [<hook> ...]\n  registered: {', '.join(HOOKS.keys())}")
-    hooks = argv[1:]
+        sys.exit(f"usage: {argv[0]} [--cold] <hook> [<hook> ...]\n  registered: {', '.join(HOOKS.keys())}")
+    if '--cold' not in argv[1:]:
+        import run_diff_warm  # lazy: run_diff_warm imports this module for run_one
+        return run_diff_warm.main(argv)
+    args = [a for a in argv[1:] if a != '--cold']
+    hooks, extra = [], []
+    for i, a in enumerate(args):
+        if a.startswith('--') or (i and args[i - 1] == '--negctl'):
+            extra.append(a)
+        else:
+            hooks.append(a)
     unknown = [h for h in hooks if h not in HOOKS]
     if unknown:
         sys.exit(f"unknown hooks: {unknown}\n  registered: {', '.join(HOOKS.keys())}")
@@ -82,7 +100,7 @@ def main(argv):
     t0 = time.time()
     results = []
     with ThreadPoolExecutor(max_workers=4) as ex:  # 4 = frida pool size
-        futures = {ex.submit(run_one, h, i): h for i, h in enumerate(hooks)}
+        futures = {ex.submit(run_one, h, i, extra): h for i, h in enumerate(hooks)}
         for fut in as_completed(futures):
             hook = futures[fut]
             try:

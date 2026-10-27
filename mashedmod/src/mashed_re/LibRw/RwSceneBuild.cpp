@@ -336,109 +336,23 @@ void* BuildWorld(const Track::World& world, const TextureSource& tex,
     return rww;
 }
 
-// [geomlight 2026-08-30] Per RenderWare, an atomic whose geometry lacks
-// rpGEOMETRYLIGHT (0x20) receives NO runtime lighting -- its prelit is the final
-// colour. The TRAINING ground ROAD.DFF (all 21 geos flags=0x2008b) and the water
-// props (LAKE/WATER0x.DFF flags=0x1000f) carry no rpGEOMETRYLIGHT and no normals,
-// so DffModel sets b.lit=false (DffModel.cpp:186/:346) and the original engine
-// adds them NO ambient. BuildClump already honours this for librw's OWN pipeline:
-// with b.lit false it never sets rw::Geometry::LIGHT (:468), so lightingCB_Shader
-// never runs and the g_amb light (RwRaceSubmit.cpp:555) cannot touch these
-// atomics. The over-brightness came from OUR manual [D-S3-6] fold below, which
-// injected amb_world_ straight into the prelit -- the librw analogue of the D3D9
-// LightAtomicVertex non-lit fill (TrackRenderer.cpp:252). Both were the same
-// defect. Default now SKIPS the fold so non-lit prelit renders with its authored
-// prelit alone, matching the asset flag. MASHED_LIBRW_AMBFOLD=1 restores the old
-// fold for A/B measurement.
-static bool AmbientFoldEnabled() {
-    static const bool on = [] {
-        const char* e = std::getenv("MASHED_LIBRW_AMBFOLD");
-        return e && e[0] == '1' && e[1] == '\0';
-    }();
-    return on;
-}
-
-// [geomlight class-scope 2026-08-31] The blanket fold (AMBFOLD=1) restores ambient
-// for BOTH the road (ROAD.DFF 0x2008b) and the water (LAKE/WATER0x.DFF 0x1000f).
-// Measured against the pose-matched Arctic reference (verify/arctic_ref): the
-// original keeps the road DARK (no ambient -> TRAINING 18.47->15.45 came from
-// dropping the fold there) but the SEA BRIGHT (sea luma ~28-33; fold-off crushes it
-// to ~9). So the correct behaviour is scoped: fold water, not road.
+// [geomlight] Per RenderWare, an atomic whose geometry lacks rpGEOMETRYLIGHT (0x20)
+// receives NO runtime lighting -- its prelit is the final colour. The TRAINING ground
+// ROAD.DFF (all 21 geos flags=0x2008b) and the water props (SEA/LAKE/WATER0x.DFF
+// flags=0x1000f) carry no rpGEOMETRYLIGHT and no normals, so DffModel sets b.lit=false
+// (DffModel.cpp:186/:346) and the original engine adds them NO ambient. BuildClump
+// honours this: with b.lit false it never sets rw::Geometry::LIGHT, so lightingCB_Shader
+// never runs and the g_amb light (RwRaceSubmit.cpp:555) cannot touch these atomics, and
+// their authored prelit is uploaded unmodified.
 //
-// DEFAULT OFF. It was defaulted ON earlier on 2026-08-31 on the strength of Arctic
-// alone, and REVERTED the same day once Forest and SuperG got pose-matched references
-// (verify/water_refs/RESULT.md). The fold does not generalise:
-//
-//   track       water mask   original   unfolded          folded
-//   Arctic s8      69.63%       28.0    9.1  (d18.9)      29.8 (d1.8)
-//   SuperG s14     41.78%      154.1    159.4 (d5.3)     190.8 (d36.7)
-//   SuperG s8      26.89%      148.0    151.9 (d3.9)     187.8 (d39.8)
-//   Forest s8       4.32%       21.6    44.1 (d22.5)      63.3 (d41.7)
-//
-// Arctic's water is far too DARK unfolded and the fold rescues it; SuperG's is already
-// right unfolded (within 4-5 luma) and the fold pushes it 37-40 AWAY. Same code, same
-// surface class, opposite verdicts -- so "non-lit prelit water needs ambient folded in"
-// is NOT the rule. The fold was fitted to Arctic. Off by default is correct on 2 of the
-// 3 referenced water tracks; the cost is that the ARCTIC SEA SHIPS TOO DARK (luma ~9
-// against the original's ~28), which is a known, filed defect and not an oversight.
-//
-// The real mechanism is unresolved and is NOT this: no track declares Ambient_RGB in
-// COURSE.LUA, all declare Lights_Filename("Lights.dff"), and the decompiled course
-// loader 0x00479330 loads that clump and calls RpWorldAddLight per light -- i.e. the
-// original lights these surfaces with real RenderWare lights, which this manual prelit
-// fold only imitates. How those lights reach a non-rpGEOMETRYLIGHT atomic has not been
-// read, and until it is, no fold setting is right everywhere.
-//
-// MASHED_LIBRW_AMBFOLD_SEA=1 enables the water fold (restores the Arctic sea, breaks
-// Forest/SuperG). MASHED_LIBRW_AMBFOLD=1 is the older blanket road+water fold.
-static bool AmbientFoldScopedSea() {
-    static const bool on = [] {
-        const char* e = std::getenv("MASHED_LIBRW_AMBFOLD_SEA");
-        return e && e[0] == '1' && e[1] == '\0';   // default OFF; only "1" enables
-    }();
-    return on;
-}
-
-// The geometry-flag half of the scope key: water carries no rpGEOMETRYLIGHT and
-// one texcoord set (0x1000f, bits 16-23 == 1); the road carries two (0x2008b).
-static bool BatchIsWaterClass(std::uint32_t geo_flags) {
-    return ((geo_flags >> 16) & 0xFFu) <= 1u;   // numTexCoordSets<=1
-}
-
-// [geomlight water-scope 2026-08-31] The ASSET-NAME half of the scope key, and the
-// reason this exists: the flag half alone is NOT a water discriminator. The broad
-// 13-track check (verify/geomlight_broadcheck/RESULT.md) found `numTexCoordSets<=1
-// && !lit && prelit` is also satisfied by a green awning and a lamppost on City
-// and by a skydome sliver on Dump, so the scoped fold over-brightened those props
-// (City orig 73.9 -> geomSEA 148.4; Dump orig 53.5 -> 92.5) while correctly fixing
-// the Arctic sea. Water surfaces live in single-purpose DFFs across all 13 tracks
-// (piz listings, 2026-08-31):
-//   Arctic SEA.DFF | City WATER.DFF | Forest WATER.DFF WATERFALL.DFF
-//   sands WATER.DFF | Storm WATER.DFF | SuperG SEA.DFF
-//   training LAKE.DFF WATER02.DFF WATER03.DFF | Warzone RIVER.DFF
-//   Egypt/Highway/Neustein/rouabout/dump: none
-// so the name is a sound key. MIST.DFF (Arctic, Storm) is deliberately NOT matched:
-// it is a fog billboard, not a water surface, and folding ambient into it is the
-// same additive over-bright defect. The two halves are ANDed, which makes this
-// scope strictly NARROWER than the flags-only prototype -- every track the
-// prototype was a no-op on stays a no-op.
-static bool ModelIsWaterAsset(const char* name) {
-    if (!name || !name[0]) return false;         // world path / car model
-    char up[64];
-    std::size_t n = 0;
-    for (; n + 1 < sizeof(up) && name[n]; ++n) {
-        const char c = name[n];
-        up[n] = (c >= 'a' && c <= 'z') ? static_cast<char>(c - 'a' + 'A') : c;
-    }
-    up[n] = '\0';
-    // Prefix match, not substring: the basename of a water asset always STARTS
-    // with the class word (SEA/WATER/LAKE/RIVER). A substring test would drag in
-    // anything merely containing them.
-    return std::strncmp(up, "SEA",   3) == 0 ||
-           std::strncmp(up, "WATER", 5) == 0 ||
-           std::strncmp(up, "LAKE",  4) == 0 ||
-           std::strncmp(up, "RIVER", 5) == 0;
-}
+// There is no ambient fold. Two earlier knobs (a blanket fold and a water-scoped one)
+// were fitted to Arctic and measured against the original, then removed 2026-10-27
+// (HB-ARCTIC-FOLDRM). With the Arctic sea placed, the default render is within 4.5 luma
+// of the original with no fold (verify/hbarctic_20261027/RESULT_HB-ARCTIC.md sections
+// 1-4): the original lights no atomic lacking rpGEOMETRYLIGHT (lighting callback
+// 0x004ea4e0 gate 0x004ea4e9..0x004ea4f2), and the old "Arctic sea ships too dark" figure
+// was measured over a region that was road in the original, before the 2026-09-30
+// sea-tile fix.
 
 void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
                  std::uint32_t ambient,
@@ -454,9 +368,6 @@ void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
     if (out_atomic_frame) out_atomic_frame->clear();
     if (out_atomic_dff) out_atomic_dff->clear();
     if (model.frames.empty()) hierarchy = false;
-    // [geomlight water-scope] Model-level half of the ambient-fold scope key.
-    // Evaluated once here, not per batch -- it depends only on the asset name.
-    const bool water_asset = ModelIsWaterAsset(model.source_name);
     std::vector<rw::Material*> mats;
     int named = 0, resolved = 0;
     BuildMaterials(model.materials, tex, mats, &named, &resolved);
@@ -468,12 +379,10 @@ void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
     {
         static int s_clump_no = 0;
         const int id = s_clump_no++;
-        // [geomlight water-scope] name + water_asset are logged so a capture can
-        // NAME the asset the fold fired on instead of inferring it from a mask.
-        SLog("clump[%d]: dff='%s' water_asset=%d mats=%zu named=%d resolved=%d "
+        // The asset name is logged so a capture can NAME the clump.
+        SLog("clump[%d]: dff='%s' mats=%zu named=%d resolved=%d "
              "batches=%zu",
              id, model.source_name[0] ? model.source_name : "(unnamed)",
-             (int)water_asset, model.materials.size(), named, resolved,
              model.batches.size());
         for (std::size_t i = 0; i < model.materials.size(); ++i) {
             const auto& m = model.materials[i];
@@ -610,42 +519,9 @@ void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
 
         rw::Geometry* geo = rw::Geometry::create(nv, nt, flags);
         if (!geo) continue;
-        // [D-S3-6 FIX] Fold the track ambient into prelit for non-LIGHT batches.
-        // See the header note: this is what the D3D9 bake does, and librw's
-        // lighting provably cannot supply it here (no normals => no LIGHT flag =>
-        // lightingCB_Shader takes the setAmbient(black) branch).
-        std::vector<std::uint32_t> prelit_amb;
+        // Non-LIGHT batches (ROAD 0x2008b, water 0x1000f) upload their authored prelit
+        // unmodified: the original adds them no ambient (see the note above BuildClump).
         const std::vector<std::uint32_t>* prelit_src = &b.prelit;
-        // Fold gate: blanket (AMBFOLD=1, road+water) OR water-scoped (water ASSET
-        // and water flag class), the latter being the DEFAULT. AMBFOLD_SEA=0 turns
-        // the water fold off, which is the "no fold at all" arm.
-        const bool fold_this =
-            ambient && !b.prelit.empty() && !b.lit &&
-            (AmbientFoldEnabled() ||
-             (AmbientFoldScopedSea() && water_asset &&
-              BatchIsWaterClass(b.geo_flags)));
-        if (fold_this) {
-            // CHANNEL ORDER, and it bit once. `ambient` (amb_world_) is
-            // 0x00RRGGBB, but DffModel prelit is RW-native RGBA bytes, i.e.
-            // 0xAABBGGRR -- FillVertexData below reads red from the LOW byte and
-            // blue from bits 16-23. The first version of this bake used the ARGB
-            // layout for both, so it added the ambient's RED to the blue channel
-            // and its BLUE to the red channel. With Arctic's (51,77,77) that
-            // pushed red up and blue down and turned the sea olive where the D3D9
-            // baseline is dark teal. Unpack each side in its own convention.
-            const unsigned ar = (ambient >> 16) & 0xFF;   // ambient is 0x00RRGGBB
-            const unsigned ag = (ambient >> 8)  & 0xFF;
-            const unsigned ab = (ambient)       & 0xFF;
-            prelit_amb.resize(b.prelit.size());
-            for (std::size_t i = 0; i < b.prelit.size(); ++i) {
-                const std::uint32_t c = b.prelit[i];       // prelit is 0xAABBGGRR
-                unsigned r = ((c)       & 0xFF) + ar; if (r > 255) r = 255;
-                unsigned g = ((c >> 8)  & 0xFF) + ag; if (g > 255) g = 255;
-                unsigned bl = ((c >> 16) & 0xFF) + ab; if (bl > 255) bl = 255;
-                prelit_amb[i] = (c & 0xFF000000u) | (bl << 16) | (g << 8) | r;
-            }
-            prelit_src = &prelit_amb;
-        }
         // D-S3-SEA probe: the value librw actually UPLOADS for vertex 0, to be
         // compared against the D3D9 path's `D-S3-6 bake: baked_v0` for the same
         // vertex. Both are the final per-vertex colour their renderer starts

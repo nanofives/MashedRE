@@ -362,7 +362,7 @@ front (see § "Output file naming").
 ## Pool slot semantics
 
 - **Ghidra slots are NOT needed** for C2→C3 work. The analysis is already done (the function is at C2; the note exists). No fresh decomp work means no Ghidra writeback.
-- **Frida pool slots ARE needed** for the diff step. The `run_diff_parallel.py` runner acquires them per hook via `scripts/frida_pool.sh acquire`. Sessions don't pre-allocate — they queue. With 4 pool slots and **6 sessions** each verifying ~5 hooks at the verify step, the worst case is ~30 diffs wanting slots near-simultaneously — pool queues them, each diff is ~2s, total drain is ~15s. No need to grow `MAX_SLOTS` past 4 unless you observe sessions stalling on slot acquire.
+- **Frida pool slots ARE needed** only on the cold path. `run_diff_parallel.py` defaults to the warm pool (`run_diff_warm.py`, 4 instances it spawns itself) and acquires `scripts/frida_pool.sh` slots only for hooks it routes cold (scenario / call_log / dialog / cold_only, or a warm non-GREEN being confirmed) and under `--cold`. Sessions don't pre-allocate — they queue. With 4 pool slots and **6 sessions** each verifying ~5 hooks at the verify step, the worst case is ~30 diffs wanting slots near-simultaneously — pool queues them, each diff is ~2s, total drain is ~15s. No need to grow `MAX_SLOTS` past 4 unless you observe sessions stalling on slot acquire.
 
 ## End-of-batch merge — invoke the `frida-sweep` skill
 

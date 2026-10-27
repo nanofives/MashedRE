@@ -778,8 +778,8 @@ void FrameClockUpdate(int raw_ms) {
 // MenuAnimTickBody in Frontend/MenuAnimTickTwin.cpp (citations there). This host only supplies the inputs: the
 // FUN_00493480 port's dt, g_anim_phase / g_anim_gate, the nav slot's item count for DAT_0067ece0, the
 // FUN_0042ac50 port, and the slot's screen id for the original's record +0x30 pointer match (24 = 0x005f7370,
-// 18 = 0x005f72a0). Speed: MASHED_MENU_ANIM_SPEED, default 1.0 (the original's rate). The old exe-only
-// kMenuAnimSpeedup = 6.0f (user feedback 2026-06-13) is MASHED_MENU_ANIM_SPEED=6.
+// 18 = 0x005f72a0). Speed is the original's rate (the MASHED_MENU_ANIM_SPEED switch was
+// removed in D5-MENUANIMSPEED once MASHED_MENU_CLOCK_FAITHFUL became default).
 bool Anim_Tick() {
     const NavSlot& slot = g_stack[g_nav_depth];
     MenuAnimTickIn in;

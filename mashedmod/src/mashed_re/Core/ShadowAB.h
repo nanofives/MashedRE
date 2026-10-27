@@ -140,6 +140,7 @@ struct Counter {
     int            ndiff  = 0;
     bool           noted  = false;   // logged the "no hook index" case once
     bool           proved = false;   // logged the patch-byte proof once
+    int            empty  = 0;       // [D4-WSB-SHADOW-PRIVATE] samples discarded by MASHED_SHADOW_NEED_PAGES
 };
 
 #define SHADOW_AB_COUNTER(var, name_, rva_, min_phase_)                       \
@@ -161,7 +162,7 @@ inline bool Armed(Counter& c) {
 
 inline void Record(Counter& c, int idx, int ndiff, const char* detail) {
     c.ndiff += (ndiff != 0);
-    char line[256];
+    char line[512];
     wsprintfA(line, "[%d] fn=%s rva=%08x idx=%d ndiff=%d%s%s\r\n",
               c.n++, c.name, static_cast<unsigned>(c.rva), idx, ndiff,
               ndiff ? "" : " OK", detail ? detail : "");
