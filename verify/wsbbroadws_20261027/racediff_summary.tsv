@@ -1,0 +1,9 @@
+rva	verdict	why	installed	off_sigs	on_sigs	off_calls	on_calls	spawned_pids	samples_sha256	attempts	utc
+0x0055a1f0	HOLD	BEHAVIOR-DIFF	True	1	1	6	6	17964/12760	4c6c2410975ccfd1c97f332b3ae9635267a9a90a3f40099f3b01bcd8afd5a2b9	1	2026-10-27T16:28:27Z
+0x0055ab30	HOLD	BEHAVIOR-DIFF	True	1	4	6	6	10700/11184	f021b83e2c2e8ae228239b9b21148713ccddf06603a26cde5c32e12c3a67b45e	1	2026-10-27T16:29:19Z
+0x0055bae0	HOLD	orig-not-observed,modded-not-observed	True	0	0	0	0	13832/19536	3968b8b8d5257bbb2c9c5e8ea42e559746d0513df7123f0e1d3c214ebd50c9a8	2	2026-10-27T16:32:50Z
+0x0055bae0_census	NO-RESULT			0	0	0	0	8552/20200		2	2026-10-27T16:47:09Z
+0x0055c000	HOLD	orig-not-observed,modded-not-observed	True	0	0	0	0	4852/8200	3968b8b8d5257bbb2c9c5e8ea42e559746d0513df7123f0e1d3c214ebd50c9a8	2	2026-10-27T16:27:35Z
+0x0055c000_census	HOLD	orig-not-observed,modded-not-observed,no-JMP	False	0	0	0	0	10136/4296	3968b8b8d5257bbb2c9c5e8ea42e559746d0513df7123f0e1d3c214ebd50c9a8	2	2026-10-27T16:40:38Z
+0x0055c0f0	HOLD	orig-not-observed,modded-not-observed	True	0	0	0	0	17048/15776	3968b8b8d5257bbb2c9c5e8ea42e559746d0513df7123f0e1d3c214ebd50c9a8	2	2026-10-27T16:31:02Z
+0x0055c0f0_census	NO-RESULT			0	0	0	0	13004/8728		2	2026-10-27T16:43:53Z

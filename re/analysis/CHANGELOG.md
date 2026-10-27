@@ -26,6 +26,11 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-27  0055a1f0  FUN_0055a1f0  C3->C4  D4-WSB-C4-BROAD-WS r2: heap-tracked write-set HEAP-CLEAN + canonical racediff C4-CLEAN (hook installed alone); verify/wsbbroadws_20261027/RESULT_D4-WSB-C4-BROAD-WS.md
+2026-10-27  0055ab30  FUN_0055ab30  C3->C4  D4-WSB-C4-BROAD-WS r2: heap-tracked write-set HEAP-CLEAN + canonical racediff C4-CLEAN (hook installed alone); verify/wsbbroadws_20261027/RESULT_D4-WSB-C4-BROAD-WS.md
+2026-10-27  0055c0f0  FUN_0055c0f0  C3->C4  D4-WSB-C4-BROAD-WS r2: heap-tracked write-set HEAP-CLEAN + canonical racediff C4-CLEAN (hook installed alone); verify/wsbbroadws_20261027/RESULT_D4-WSB-C4-BROAD-WS.md
+2026-10-27  0055bae0  FUN_0055bae0  C3 (no change)  D4-WSB-C4-BROAD-WS r2: heap-tracked leg compared 0 pages (writes only to the caller's stack window); verify/wsbbroadws_20261027/RESULT_D4-WSB-C4-BROAD-WS.md
+2026-10-27  0055c000  RwpGjkSupportMap  C3 (no change)  D4-WSB-C4-BROAD-WS r2: heap-tracked leg compared 0 pages (writes only to the caller's stack window); verify/wsbbroadws_20261027/RESULT_D4-WSB-C4-BROAD-WS.md
 2026-10-27  00568dd0  FUN_00568dd0  C3->C4  D4-WSB-C4-SOLV-WS: heap-tracked write-set leg HEAP-CLEAN (24/24 samples, 1 heap page per sample, 24 total) + racediff C4-CLEAN (QuickBattle 6/6 calls); verify/wsbsolvws_20261027/RESULT_D4-WSB-C4-SOLV-WS.md
 2026-10-27  00568fd0  FUN_00568fd0  C3->C4  D4-WSB-C4-SOLV-WS: heap-tracked write-set leg HEAP-CLEAN (MASHED_SHADOW_NEED_PAGES arm: 3 counted samples, 1..2 heap pages each, 4 total, 1000..1249 calls with no write discarded) + racediff C4-CLEAN (QuickBattle 6/6 calls); verify/wsbsolvws_20261027/RESULT_D4-WSB-C4-SOLV-WS.md
 2026-10-27  00564c80  FUN_00564c80  C3->C4  D4-WSB-C4-SOLV-WS: heap-tracked write-set leg HEAP-CLEAN (24/24 samples, 5..7 heap pages per sample, 129 total; the BVH-FU +1/+1 at 0x007dc8c8/0x007dc8cc does not recur with heap pages restored) + racediff C4-CLEAN (QuickBattle 6/6 calls, 4 sigs); verify/wsbsolvws_20261027/RESULT_D4-WSB-C4-SOLV-WS.md
