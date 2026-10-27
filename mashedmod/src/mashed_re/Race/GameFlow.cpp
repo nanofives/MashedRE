@@ -188,6 +188,10 @@ extern "C" unsigned char* GameSave_BufferPtr();
 extern "C" std::uint32_t  GameSave_LastReadBytes();
 extern "C" int            GameSave_OriginalFormatMode();
 extern "C" const char*    GameSave_FilePath();
+// exe_main.cpp's input slots (FUN_00498510 types, [0x007e95c0 + i*0x200 + 0x13c]), D4-FU-SPANINIT-WRITERS.
+extern "C" int  ExeInput_SlotsDerived();
+extern "C" int  ExeInput_SlotType(int i);
+extern "C" int  ExeInput_DeriveSlotsHeadless();
 extern "C" int __cdecl SaveWrite();
 extern "C" int __cdecl SaveLoad();
 extern "C" int __cdecl SaveFileExists();
@@ -238,6 +242,28 @@ bool KeepImageMode() {
     }
     return s_on == 1;
 }
+
+// [D4-FU-SPANINIT-WRITERS 2026-10-27] MASHED_SAVE_FIRSTRUN_WRITERS (default OFF, =1 on): two original
+// writers the first-run save carries, verify/spanwriters_20261027/PREREG_D4-FU-SPANINIT-WRITERS.md.
+//  (a) 0x00409e30 MOV [0x008a95ac],1, case 16 of the save state machine (switch 0x00409b00 on
+//      [0x008a9588], table 0x00409e40), reached from FUN_0043dfd0 0x0043e069 -> FUN_0040acd0 when
+//      [0x008a9584] == 1. It runs after the case-14 creation write (0x00409db8), so the 1 reaches the
+//      file on the next save. Modelled in Campaign_LoadProgress for a missing file only (the W boot of
+//      D4-FU-SETTRACKPU had none). The creation write itself is not ported.
+//  (b) FUN_004967e0 calls FUN_00496530 (0x00496820) for every slot i in 0..3 with FUN_00497450(i) != 0
+//      ([0x007e96fc + i*0x200] != 0). FUN_00496530 copies record 0x7f1038 + i*0x4c to 0x7f14f8 + i*0x4c
+//      (rep movsd 0x00496552) and zeroes it (rep stosd 0x00496568, ecx 0x13). Serialize gathers the low
+//      byte of 0x7f105c + i*0x4c (record +0x24) into span +0x514 + i (0x00404ef0 / 0x00404ef2), so an
+//      active slot's gather byte is 0 at any save after the first input frame. Applied to the rebuild
+//      path when the slot types have been derived (DeriveInputSlots, exe_main.cpp).
+bool FirstRunWritersMode() {
+    static int s_on = -1;
+    if (s_on < 0) {
+        const char* v = std::getenv("MASHED_SAVE_FIRSTRUN_WRITERS");
+        s_on = (v && v[0] && v[0] != '0') ? 1 : 0;
+    }
+    return s_on == 1;
+}
 #endif
 
 void SaveProgress() {
@@ -271,6 +297,12 @@ void SaveProgress() {
     }
 #endif
     BuildSpanFromProgress(span);
+#ifdef MASHED_STANDALONE
+    if (FirstRunWritersMode() && ExeInput_SlotsDerived()) {
+        for (int i = 0; i < 4; ++i)
+            if (ExeInput_SlotType(i) != 0) span[0x514 + i] = 0;   // 0x00496568 record clear, gathered 0x00404ef2
+    }
+#endif
     // [D4-WSF-SAVE-24EFC 2026-10-26] the live DAT_008a95ac model, unchanged. Serialize copies it
     // (MOV EAX,[0x008a95ac] 0x00404f03, MOV [0x00828254],EAX 0x00404f23) and no original writer
     // increments it (0x00404ec1 load, 0x004098c6 / 0x004098eb / 0x00409c5e = 0, 0x00409e30 = 1,
@@ -287,6 +319,16 @@ void SaveProgress() {
 // private duplicate. Anon-namespace members are visible in the enclosing namespace,
 // so this accessor (external linkage) can take the counter's address.
 std::uint32_t* GameFlow_SaveCounterPtr() { return &g_saveCounter; }
+
+#ifdef MASHED_STANDALONE
+// [D4-FU-SPANINIT-WRITERS] the span the original's boot leaves at 0x007f0a40 when no save is
+// loaded: FUN_004924f0 (0x0049239f) then the powerups_all.lua Set_Track_Powerups rows (0x0045bb7d).
+// exe_main.cpp seeds the live span with it behind MASHED_SPAN_BOOT_SEED.
+void GameFlow_BootSpan(unsigned char span[mashed_re::Save::kSpanBytes]) {
+    mashed_re::Save::InitSpanDefaults(span);
+    ApplyBootPowerupsScript(span);
+}
+#endif
 
 GameMode GameFlow_Mode() { return g_mode; }
 RaceSession& GameFlow_Session() { return g_session; }
@@ -425,6 +467,11 @@ void Campaign_LoadProgress() {
             // actually consults; only the menu-gate span restore is dropped.
             // mashed_re::Frontend::Nav_GameStateLoadSave(img, kSaveSize);
         }
+#ifdef MASHED_STANDALONE
+        // [D4-FU-SPANINIT-WRITERS] no file: the first-run creation write (0x00409db8, not ported) is
+        // followed by 0x00409e30 [0x008a95ac] = 1, which the next save serializes (0x00404f03 / 0x00404f23).
+        if (nRead == 0 && FirstRunWritersMode()) g_saveCounter = 1;
+#endif
     }
     char m[112];
     int n = 0; for (int i = 0; i < kAreaCount; ++i) n += (g_progUnlock[i] != 0);
@@ -662,6 +709,10 @@ void SaveRoundTripHarness(const char* in) {
     if (std::strcmp(in, "none") == 0) std::remove(path);
     else if (!CopyWholeFile(in, path)) std::_Exit(3);
     g_progLoaded = false;
+    // [D4-FU-SPANINIT-WRITERS] this runs before WinMain, so InitDirectInput has not derived the slot
+    // types. With the knob on, derive them here the same way (EnumDevices, no window), so the harness
+    // save stands for a save after the first input frame.
+    if (FirstRunWritersMode()) ExeInput_DeriveSlotsHeadless();
     Campaign_LoadProgress();
     Campaign_SaveNow();
     std::_Exit(CopyWholeFile(path, out) ? 0 : 4);
