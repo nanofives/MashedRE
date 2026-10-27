@@ -1,0 +1,18 @@
+== fA.msd  14367 frames
+  +0x4=1 +0x10=0 +0xcfc=0  frames 0..1509 (1510)
+  +0x4=0 +0x10=1 +0xcfc=0  frames 1510..14366 (12857)
+== fA2.msd  14406 frames
+  +0x4=1 +0x10=0 +0xcfc=0  frames 0..1047 (1048)
+  +0x4=0 +0x10=1 +0xcfc=0  frames 1048..14405 (13358)
+== fA3.msd  14432 frames
+  +0x4=1 +0x10=0 +0xcfc=0  frames 0..1079 (1080)
+  +0x4=0 +0x10=1 +0xcfc=0  frames 1080..14431 (13352)
+== r1.msd  13272 frames
+  +0x4=1 +0x10=0 +0xcfc=0  frames 0..1038 (1039)
+  +0x4=0 +0x10=1 +0xcfc=0  frames 1039..13271 (12233)
+== o1.msd  14401 frames
+  +0x4=1 +0x10=0 +0xcfc=0  frames 0..1046 (1047)
+  +0x4=0 +0x10=1 +0xcfc=0  frames 1047..14400 (13354)
+== p1.msd  14407 frames
+  +0x4=1 +0x10=0 +0xcfc=0  frames 0..1113 (1114)
+  +0x4=0 +0x10=1 +0xcfc=1  frames 1114..14406 (13293)
