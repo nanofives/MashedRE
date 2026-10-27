@@ -37,6 +37,7 @@
 //     is a proper stack array (LEA + PUSH).
 // ============================================================================
 #include "../Core/HookSystem.h"
+#include "../Core/ShadowTrack.h"
 #include "../Core/ShadowAB.h"
 
 namespace mashed_re {
@@ -235,7 +236,7 @@ RH_ScopedInstall(FUN_0057adb0, 0x0057adb0);
 // MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
 extern "C" undefined4 __cdecl FUN_005752b0(int param_1,float param_2,float *param_3) {
     SHADOW_AB_COUNTER(ab, "FUN_005752b0", 0x005752b0u, ShadowAB::kPhaseRace);
-    return ShadowAB::Run(ab, FUN_005752b0_impl, param_1, param_2, param_3);
+    return ShadowAB::RunTracked(ab, FUN_005752b0_impl, SHADOW_STACK_WINDOW(), param_1, param_2, param_3);
 }
 RH_ScopedInstall(FUN_005752b0, 0x005752b0);
 
