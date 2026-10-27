@@ -1,0 +1,39 @@
+R0 OFF vs OFF2 bit-identical: True (pixels differing 0.000%)
+HB-ARCTIC OFF vs this OFF bit-identical: True
+
+| mask | % frame | original L | OFF L | ANIM L | dOFF | dANIM | orig RGB | OFF RGB | ANIM RGB | grad orig | grad OFF | grad ANIM |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| W1 | 5.23 | 21.5 | 48.1 | 24.5 | 26.6 | 2.9 | 17.5/24.3/17.7 | 46.1/49.8/45.1 | 22.1/26.1/22.4 | 2.22 | 3.89 | 2.05 |
+| W2 | 5.17 | 21.6 | 48.4 | 24.5 | 26.9 | 2.9 | 17.6/24.3/17.8 | 46.4/50.1/45.4 | 22.1/26.1/22.4 | 2.23 | 3.91 | 2.04 |
+
+R1 |dANIM|=2.9 <= 8 and < |dOFF|=26.6: True
+R2 per-channel |ANIM-orig| = [4.6, 1.8, 4.7] all <= 8: True
+R3 gradient ratio ANIM/orig = 0.92 in [0.5, 2]: True
+R4 ANIM != OFF outside W1 (dilated 3 px) = 0.000% <= 0.5%: True
+
+imgdiff orig vs OFF:
+  size 640x480  mean abs diff R=14.57 G=7.93 B=9.91 (all 10.80)
+  pixels over threshold 16: 55435 (18.05%)
+  region grid 8x6 (mean abs diff per cell):
+       3.5    3.9   11.8   36.6   47.2    4.2    4.1    4.0
+       3.3    3.6    3.7    3.6    4.4    3.3    5.0    6.4
+       3.4    3.8    3.9    3.4    3.5    6.8   18.3    8.3
+       4.6   23.0   20.3   32.1   31.0    3.9    9.8   29.4
+       8.5   11.7    3.1    3.5   11.8   15.4    3.0    6.6
+      11.4    3.4    2.9   10.1   28.5   38.5    3.0    2.9
+imgdiff orig vs ANIM:
+  size 640x480  mean abs diff R=13.32 G=6.73 B=8.73 (all 9.59)
+  pixels over threshold 16: 40887 (13.31%)
+  region grid 8x6 (mean abs diff per cell):
+       3.5    3.9   11.8   36.6   47.2    4.2    4.1    4.0
+       3.3    3.6    3.7    3.6    4.4    3.3    5.0    6.4
+       3.4    3.8    3.9    3.4    3.5    3.5    3.8    3.2
+       4.6   23.0   20.3   32.1   31.0    3.9    3.3    4.2
+       8.5   11.7    3.1    3.5   11.8   15.4    3.0    3.2
+      11.4    3.4    2.9   10.1   28.5   38.5    3.0    2.9
+
+forest_s8_OFF log TEXANIM: none
+forest_s8_ANIM log TEXANIM: ['TEXANIM course_id=34 clump=0 textures=32 models=1 mult=1']
+sands_ANIM: shot=True ['rc=0', 'attempt=1'] log=['TEXANIM course_id=11 clump=1 textures=32 models=1 mult=2'] librw=[]
+training_ANIM: shot=True ['rc=0', 'attempt=1'] log=['TEXANIM course_id=30 clump=9 textures=32 models=1 mult=1'] librw=[]
+warzone_ANIM: shot=True ['rc=0', 'attempt=1'] log=['TEXANIM course_id=33 clump=0 textures=32 models=1 mult=2'] librw=[]
