@@ -28,9 +28,5 @@ struct MenuAnimTickIn {
 // Walks records 0..29 (0x00898ad0..0x008990e8, stride 0x34). Returns 1 when nothing is left animating.
 int MenuAnimTickBody(MenuRecord* recs, const MenuAnimTickIn& in);
 
-// MASHED_MENU_ANIM_SPEED (float > 0), default 1.0 = the original's rate. Multiplies the base speed of the
-// K-scaled steps only; the float path (0x00432751) has no base in the original and none here.
-float MenuAnimSpeed();
-
 }  // namespace Frontend
 }  // namespace mashed_re
