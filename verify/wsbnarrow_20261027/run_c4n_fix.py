@@ -35,7 +35,7 @@ KNOBS = ["MASHED_NARROW_DOT_ORDER", "MASHED_NARROW_PAIR_INT", "MASHED_LEAVES1_X8
 
 
 def sha(p):
-    return hashlib.sha256(p.read_bytes()).hexdigest()
+    return hashlib.sha256(p.read_bytes()).hexdigest() if p.exists() else "absent"
 
 
 def boot(rva, leg, stride, hold, attempt, run="", arm="", extra=()):
