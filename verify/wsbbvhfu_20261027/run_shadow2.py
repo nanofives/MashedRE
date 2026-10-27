@@ -46,10 +46,8 @@ def one(rva):
         p = subprocess.run(cmd, cwd=str(WT), env=env, capture_output=True, text=True, errors="replace", timeout=1800)
         txt = p.stdout + p.stderr
     except subprocess.TimeoutExpired as e:
-        txt = (e.stdout or "") + (e.stderr or "") + "
-[run_shadow2] TIMEOUT
-"
-        if isinstance(txt, bytes): txt = txt.decode("utf-8", "replace")
+        dec = lambda b: b.decode("utf-8", "replace") if isinstance(b, bytes) else (b or "")
+        txt = dec(e.stdout) + dec(e.stderr) + "\n[run_shadow2] TIMEOUT\n"
     (out / "shadow_transcript.txt").write_text(txt, encoding="utf-8")
     m = re.search(r"scenario_launch\s+pid=(\d+)", txt)
     pid = int(m.group(1)) if m else 0
