@@ -1,0 +1,4 @@
+| pose | old mask % | original | pre-fix folded (dir geomOFF) | pre-fix unfolded (dir geomON) | today OFF | today dOFF | frame mean |orig-today| |
+|---|---|---|---|---|---|---|---|
+| arctic_s8 | 69.63 | 28.0 | 29.8 | 9.1 | 32.1 | 4.1 | 8.0 |
+| arctic_s14 | 58.37 | 32.6 | 27.2 | 9.8 | 37.1 | 4.5 | 4.7 |

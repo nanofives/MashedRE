@@ -1,0 +1,24 @@
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\HB-ARCTIC\verify\hbarctic_20261027\measure.py:60: RuntimeWarning: Mean of empty slice
+  f"mask mean|dL|={np.abs(a - a2)[m].mean():.3f} "
+C:\Users\maria\AppData\Local\Programs\Python\Python312\Lib\site-packages\numpy\_core\_methods.py:142: RuntimeWarning: invalid value encountered in scalar divide
+  ret = ret.dtype.type(ret / rcount)
+| pose | mask % | original | OFF | SEA | dOFF | dSEA | scored |
+|---|---|---|---|---|---|---|---|
+| arctic_s8 | 0.00 | | | | | | yes |
+| arctic_s14 | 0.00 | | | | | | yes |
+| superg_s14 | 36.66 | 152.6 | 158.2 | 189.5 | 5.6 | 36.9 | yes |
+| forest_s8 | 5.23 | 21.5 | 48.1 | 67.5 | 26.6 | 45.9 | no |
+| forest_s14 | missing | | | | | | |
+
+R0 control arctic_s8 OFF vs OFF2: frame mean|dL|=0.000 mask mean|dL|=nan pixels differing=0.000%
+
+arctic_s8_OFF: P7 fogconst: start=0.100 end=70.000 range=-0.014306 disable=0.0 | P7 fogcolor: d3d9=282C30 librw_ps=(0.1569,0.1725,0.1882) MATCH
+arctic_s8_SEA: P7 fogconst: start=0.100 end=70.000 range=-0.014306 disable=0.0 | P7 fogcolor: d3d9=282C30 librw_ps=(0.1569,0.1725,0.1882) MATCH
+arctic_s14_OFF: P7 fogconst: start=0.100 end=70.000 range=-0.014306 disable=0.0 | P7 fogcolor: d3d9=282C30 librw_ps=(0.1569,0.1725,0.1882) MATCH
+arctic_s14_SEA: P7 fogconst: start=0.100 end=70.000 range=-0.014306 disable=0.0 | P7 fogcolor: d3d9=282C30 librw_ps=(0.1569,0.1725,0.1882) MATCH
+superg_s14_OFF: P7 fogconst: start=0.000 end=120.000 range=-0.008333 disable=0.0 | P7 fogcolor: d3d9=FFFFFF librw_ps=(1.0000,1.0000,1.0000) MATCH
+superg_s14_SEA: P7 fogconst: start=0.000 end=120.000 range=-0.008333 disable=0.0 | P7 fogcolor: d3d9=FFFFFF librw_ps=(1.0000,1.0000,1.0000) MATCH
+forest_s8_OFF: P7 fogconst: start=0.000 end=180.000 range=-0.005556 disable=0.0 | P7 fogcolor: d3d9=889B8D librw_ps=(0.5333,0.6078,0.5529) MATCH
+forest_s8_SEA: P7 fogconst: start=0.000 end=180.000 range=-0.005556 disable=0.0 | P7 fogcolor: d3d9=889B8D librw_ps=(0.5333,0.6078,0.5529) MATCH
+forest_s14_OFF: P7 fogconst: start=0.000 end=180.000 range=-0.005556 disable=0.0 | P7 fogcolor: d3d9=889B8D librw_ps=(0.5333,0.6078,0.5529) MATCH
+forest_s14_SEA: P7 fogconst: start=0.000 end=180.000 range=-0.005556 disable=0.0 | P7 fogcolor: d3d9=889B8D librw_ps=(0.5333,0.6078,0.5529) MATCH
