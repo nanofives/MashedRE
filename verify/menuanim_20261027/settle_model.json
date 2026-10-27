@@ -1,0 +1,110 @@
+{
+ "30fps/item_0xff040000_K-2000/orig_base1": {
+  "wall_ms": 800.0,
+  "frames": 24
+ },
+ "30fps/item_0xff040000_K-2000/orig_phase4_base2": {
+  "wall_ms": 400.0,
+  "frames": 12
+ },
+ "30fps/item_0xff040000_K-2000/exe_x6": {
+  "wall_ms": 167.0,
+  "frames": 5
+ },
+ "30fps/item_0xff040000_K-2000/exe_x6_phase4": {
+  "wall_ms": 100.0,
+  "frames": 3
+ },
+ "30fps/slide_class_K-800/orig_base1": {
+  "wall_ms": 2000.0,
+  "frames": 60
+ },
+ "30fps/slide_class_K-800/orig_phase4_base2": {
+  "wall_ms": 1000.0,
+  "frames": 30
+ },
+ "30fps/slide_class_K-800/exe_x6": {
+  "wall_ms": 367.0,
+  "frames": 11
+ },
+ "30fps/slide_class_K-800/exe_x6_phase4": {
+  "wall_ms": 200.0,
+  "frames": 6
+ },
+ "30fps/float_path_K300_to_180/no_base": {
+  "wall_ms": 1867.0,
+  "frames": 56
+ },
+ "60fps/item_0xff040000_K-2000/orig_base1": {
+  "wall_ms": 800.0,
+  "frames": 48
+ },
+ "60fps/item_0xff040000_K-2000/orig_phase4_base2": {
+  "wall_ms": 400.0,
+  "frames": 24
+ },
+ "60fps/item_0xff040000_K-2000/exe_x6": {
+  "wall_ms": 150.0,
+  "frames": 9
+ },
+ "60fps/item_0xff040000_K-2000/exe_x6_phase4": {
+  "wall_ms": 100.0,
+  "frames": 6
+ },
+ "60fps/slide_class_K-800/orig_base1": {
+  "wall_ms": 2000.0,
+  "frames": 120
+ },
+ "60fps/slide_class_K-800/orig_phase4_base2": {
+  "wall_ms": 1000.0,
+  "frames": 60
+ },
+ "60fps/slide_class_K-800/exe_x6": {
+  "wall_ms": 350.0,
+  "frames": 21
+ },
+ "60fps/slide_class_K-800/exe_x6_phase4": {
+  "wall_ms": 200.0,
+  "frames": 12
+ },
+ "60fps/float_path_K300_to_180/no_base": {
+  "wall_ms": 1850.0,
+  "frames": 111
+ },
+ "144fps/item_0xff040000_K-2000/orig_base1": {
+  "wall_ms": 778.0,
+  "frames": 112
+ },
+ "144fps/item_0xff040000_K-2000/orig_phase4_base2": {
+  "wall_ms": 389.0,
+  "frames": 56
+ },
+ "144fps/item_0xff040000_K-2000/exe_x6": {
+  "wall_ms": 146.0,
+  "frames": 21
+ },
+ "144fps/item_0xff040000_K-2000/exe_x6_phase4": {
+  "wall_ms": 97.0,
+  "frames": 14
+ },
+ "144fps/slide_class_K-800/orig_base1": {
+  "wall_ms": 1944.0,
+  "frames": 280
+ },
+ "144fps/slide_class_K-800/orig_phase4_base2": {
+  "wall_ms": 972.0,
+  "frames": 140
+ },
+ "144fps/slide_class_K-800/exe_x6": {
+  "wall_ms": 340.0,
+  "frames": 49
+ },
+ "144fps/slide_class_K-800/exe_x6_phase4": {
+  "wall_ms": 194.0,
+  "frames": 28
+ },
+ "144fps/float_path_K300_to_180/no_base": {
+  "wall_ms": 1799.0,
+  "frames": 259
+ }
+}
