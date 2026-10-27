@@ -139,7 +139,7 @@ void VehiclePhysics_SeedSpawnPose(int slot, const float callerPos[3], float yaw,
 // A4PreEnd(). The car's StepCar later runs its substeps without the gate and A4. A car's first step, a frame
 // budget over 0x32 and MASHED_A8_A4_FIRST=0 keep the per-car order.
 bool VehiclePhysics_A4OrderEnabled();
-// [D4-FX-INPUTS] MASHED_DEAD_COAST=1 (default OFF, verify/fxinputs_20261026/PREREG_deadcoast.md): a killed car keeps
+// [D4-FX-INPUTS] MASHED_DEAD_COAST (default ON since L-34, MASHED_NO_DEAD_COAST=1 opts out; PREREG_deadcoast.md): a killed car keeps
 // its physics. Kill = FUN_00422fd0's FUN_0046c5c0 (+0x4 = 0) and FUN_0046c790(v, 1) (+0x10 = 1); FUN_00470c70 /
 // FUN_004709a0 still step a car with +0x10 == 1, on the zero block 0x007f19b8. MarkKilled / ClearKilled write the two
 // record words (ClearKilled: +0x4 = 1, +0x10 = 0, the port's round restart).

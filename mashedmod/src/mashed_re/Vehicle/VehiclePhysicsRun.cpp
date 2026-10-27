@@ -940,15 +940,16 @@ bool VehiclePhysics_A4OrderEnabled() {
     return s;
 }
 
-// [D4-FX-INPUTS] MASHED_DEAD_COAST=1, default OFF (verify/fxinputs_20261026/PREREG_deadcoast.md).
+// [D4-FX-INPUTS] MASHED_DEAD_COAST, default ON since the L-34 flip (2026-10-27, verify/fxflip_20261027/RESULT_D4-FX-FLIP-DEADCOAST.md);
+// MASHED_NO_DEAD_COAST=1 opts out. verify/fxinputs_20261026/PREREG_deadcoast.md.
 bool VehiclePhysics_DeadCoastEnabled() {
-    static const bool s = [] { const char* e = std::getenv("MASHED_DEAD_COAST"); return e && e[0] == '1'; }();
+    static const bool s = [] { const char* e = std::getenv("MASHED_NO_DEAD_COAST"); return !(e && e[0] == '1'); }();
     return s;
 }
-// [D4-FX-INPUTS] MASHED_KILL_DAMAGE=1, default OFF, only inside MarkKilled / ClearKilled (so only with
-// MASHED_DEAD_COAST=1). verify/fxinputs_20261026/PREREG_killdamage.md.
+// [D4-FX-INPUTS] MASHED_KILL_DAMAGE, default ON since the L-34 flip (2026-10-27), MASHED_NO_KILL_DAMAGE=1 opts out. Only
+// inside MarkKilled / ClearKilled, so only while MASHED_DEAD_COAST is on. verify/fxinputs_20261026/PREREG_killdamage.md.
 static bool KillDamageEnabled() {
-    static const bool s = [] { const char* e = std::getenv("MASHED_KILL_DAMAGE"); return e && e[0] == '1'; }();
+    static const bool s = [] { const char* e = std::getenv("MASHED_NO_KILL_DAMAGE"); return !(e && e[0] == '1'); }();
     return s;
 }
 // FUN_00422fd0 (0x00422fd0): FUN_0046c5c0 (0x0046c5c0) `(&DAT_008815a4)[v*0x341] = 0`, i.e. +0x4 = 0, then
