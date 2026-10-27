@@ -11,7 +11,7 @@ compared, not only the return. Scenario = the census one: track 0, mode 10, 4 ca
 Needs MASHED_ROOT (private root). Raw per RVA: D:/MashedWT/D4-WSB-BVH-WRITESET_data/<rva>/shadow_*.
 Summary (committed): verify/wsbbvh_20261027/shadow_summary.tsv. Kills only the PID the launcher prints.
 """
-import ctypes, hashlib, os, re, shutil, subprocess, sys, time
+import ctypes, hashlib, os, re, shutil, subprocess, sys, threading, time
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -42,15 +42,40 @@ def one(rva):
     env = dict(os.environ); env["MASHED_SHADOW_AB"] = "1"; env.setdefault("MASHED_MUTE", "1")
     cmd = [sys.executable, str(LOCK), "run", "--label", "D4-WSB-BVH-FU", "--", sys.executable, str(LAUNCH),
            "--track", "0", "--mode", "10", "--cars", "4", "--hold", "60", "--hooks", "0x" + rva]
-    try:
-        p = subprocess.run(cmd, cwd=str(WT), env=env, capture_output=True, text=True, errors="replace", timeout=1800)
-        txt = p.stdout + p.stderr
-    except subprocess.TimeoutExpired as e:
-        dec = lambda b: b.decode("utf-8", "replace") if isinstance(b, bytes) else (b or "")
-        txt = dec(e.stdout) + dec(e.stderr) + "\n[run_shadow2] TIMEOUT\n"
+    # Guard (added before arm P): the game PID the launcher prints is killed once the target row has
+    # SAMPLES_DONE samples in the live log, or when the log has not grown for STALL_S seconds (a post-sample
+    # STW deadlock held the machine lock for 30 min in leg S). Only that PID is ever killed.
+    done_n = int(os.environ.get("SAMPLES_DONE", "24")); stall_s = int(os.environ.get("STALL_S", "300"))
+    lines, box = [], {"pid": 0}
+    p = subprocess.Popen(cmd, cwd=str(WT), env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                         text=True, errors="replace")
+    def drain():
+        for ln in p.stdout:
+            lines.append(ln)
+            mm = re.search(r"scenario_launch\s+pid=(\d+)", ln)
+            if mm and not box["pid"]: box["pid"] = int(mm.group(1))
+    th = threading.Thread(target=drain, daemon=True); th.start()
+    t0 = time.time(); last_size, last_grow, why = -1, time.time(), ""
+    srx = re.compile(r"^\[\d+\] fn=\S+ rva=" + rva + r" ", re.M)
+    while p.poll() is None:
+        time.sleep(2.0)
+        if time.time() - t0 > 1800: why = "TIMEOUT"
+        elif box["pid"] and glog.exists():
+            sz = glog.stat().st_size
+            if sz != last_size: last_size, last_grow = sz, time.time()
+            if len(srx.findall(glog.read_text(encoding="utf-8", errors="replace"))) >= done_n: why = "SAMPLES-DONE"
+            elif time.time() - last_grow > stall_s: why = "STALL"
+        if why:
+            if box["pid"] and alive(box["pid"]):
+                time.sleep(3.0 if why == "SAMPLES-DONE" else 0.0)
+                subprocess.run(["taskkill", "/PID", str(box["pid"]), "/F"], capture_output=True)
+            try: p.wait(60)
+            except subprocess.TimeoutExpired: p.kill()
+            break
+    th.join(10)
+    txt = "".join(lines) + (f"\n[run_shadow2] killed game pid {box['pid']}: {why}\n" if why else "")
     (out / "shadow_transcript.txt").write_text(txt, encoding="utf-8")
-    m = re.search(r"scenario_launch\s+pid=(\d+)", txt)
-    pid = int(m.group(1)) if m else 0
+    pid = box["pid"]
     if pid and alive(pid):
         subprocess.run(["taskkill", "/PID", str(pid), "/F"], capture_output=True); time.sleep(1.0)
     log = out / "shadow_ab.log"
