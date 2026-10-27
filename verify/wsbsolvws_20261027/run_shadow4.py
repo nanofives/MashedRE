@@ -42,7 +42,7 @@ def one(rva):
     env = dict(os.environ); env["MASHED_SHADOW_AB"] = "1"; env.setdefault("MASHED_MUTE", "1")
     env["PYTHONUNBUFFERED"] = "1"   # the launcher's pid line must arrive live through the lock wrapper (guards)
     cmd = [sys.executable, str(LOCK), "run", "--label", "D4-WSB-C4-SOLV-WS", "--", sys.executable, str(LAUNCH),
-           "--track", "0", "--mode", "10", "--cars", "4", "--hold", "60", "--hooks", "0x" + rva]
+           "--track", "0", "--mode", "10", "--cars", "4", "--hold", os.environ.get("HOLD", "60"), "--hooks", "0x" + rva]   # HOLD: addendum 1
     # Guard (added before arm P): the game PID the launcher prints is killed once the target row has
     # SAMPLES_DONE samples in the live log, or when the log has not grown for STALL_S seconds (a post-sample
     # STW deadlock held the machine lock for 30 min in leg S). Only that PID is ever killed.
