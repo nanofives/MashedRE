@@ -711,3 +711,56 @@
 {"at":"2026-10-27T17:46:02Z","id":"D4-WSB-C4-SOLV-WS","from":"open","to":"open","owner":"","note":"held, not spawned: needs BVH-FU v7 census fix (merge first) and a working heap-tracked write-set leg (ShadowTrack private mode hangs 6/6 boots, see RESULT_D4-WSB-BVH-FU)"}
 {"at":"2026-10-27T17:46:03Z","id":"D4-WSB-C4-BROAD-WS","from":"blocked","to":"decision","owner":"cmvqrss820msmnv1cll5jy0zt","note":"L-38"}
 {"at":"2026-10-27T17:59:01Z","id":"D4-WSB-BVH-FU","from":"merge-queued","to":"merged","owner":"cmvqrsr8y0ms6nv1com4vk5nc","note":"merge train 20261027_144655: G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/e85ea6fb/53778664"}
+{"at":"2026-10-27T18:12:13Z","id":"D4-WSB-C4-BROAD-WS","from":"decision","to":"blocked","owner":"cmvqrss820msmnv1cll5jy0zt","note":"L-38 answered (b) 2026-10-27: re-run after D4-WSB-SHADOW-PRIVATE delivers a heap-tracked leg"}
+{"at":"2026-10-27T18:12:13Z","id":"D4-WSB-C4-SOLV-WS","from":"open","to":"blocked","owner":"","note":"waits on D4-WSB-SHADOW-PRIVATE (heap-tracked leg), L-38 (b)"}
+{"at":"2026-10-27T18:14:54Z","id":"D4-WSB-SHADOW-PRIVATE","from":"open","to":"claimed","owner":"cmvr09bsx1288nv1cqkwt08aj","note":""}
+{"at":"2026-10-27T18:14:55Z","id":"D4-WSB-L38-DEMOTE","from":"open","to":"claimed","owner":"cmvr09dqp128mnv1cqyaf1k4a","note":""}
+{"at":"2026-10-27T18:15:05Z","id":"HB-4","from":"open","to":"blocked","owner":"","note":"needs Ghidra MCP: decomp_pc.py is read-only decomp of a pool clone, but discovery sessions write plates/bookmarks/renames and the SCRIBE drain (ghidra-sweep) writes the master project, both via MCP"}
+{"at":"2026-10-27T18:16:29Z","id":"D4-WSB-L38-DEMOTE","from":"claimed","to":"working","owner":"cmvr09dqp128mnv1cqyaf1k4a","note":"demoting 4 rvas"}
+{"at":"2026-10-27T18:16:35Z","id":"D4-WSB-SHADOW-PRIVATE","from":"claimed","to":"working","owner":"cmvr09bsx1288nv1cqkwt08aj","note":"reading BVH-FU s4, locating ShadowTrack private mode"}
+{"at":"2026-10-27T18:17:38Z","id":"D4-WSB-L38-DEMOTE","from":"working","to":"review","owner":"cmvr09dqp128mnv1cqyaf1k4a","note":""}
+{"at":"2026-10-27T18:18:21Z","id":"D4-WSB-L38-DEMOTE","from":"review","to":"merge-queued","owner":"cmvr09dqp128mnv1cqyaf1k4a","note":"orch/D4-WSB-L38-DEMOTE"}
+{"at":"2026-10-27T18:18:46Z","id":"D4-WSB-C4-BROAD-A","from":"open","to":"claimed","owner":"cmvr0ec1612p2nv1c4tzokn6v","note":""}
+{"at":"2026-10-27T18:20:30Z","id":"D4-WSB-C4-BROAD-A","from":"claimed","to":"working","owner":"cmvr0ec1612p2nv1c4tzokn6v","note":"worktree created, reading scope + bvh recipe"}
+{"at":"2026-10-27T18:48:07Z","id":"HB-ARCTIC-FOLDRM","from":"open","to":"claimed","owner":"cmvr1fnny15canv1cwc4df3fc","note":""}
+{"at":"2026-10-27T18:48:08Z","id":"HB-ARCTIC-OPENSEA","from":"open","to":"claimed","owner":"cmvr1fqit15cgnv1cohmaubk2","note":""}
+{"at":"2026-10-27T18:50:11Z","id":"HB-ARCTIC-OPENSEA","from":"claimed","to":"working","owner":"cmvr1fqit15cgnv1cohmaubk2","note":"capture original open-sea pose + score default"}
+{"at":"2026-10-27T18:56:00Z","id":"D4-WSB-L38-DEMOTE","from":"merge-queued","to":"merged","owner":"cmvr09dqp128mnv1cqyaf1k4a","note":"merge train 20261027_154708: G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/e85ea6fb/53778664"}
+{"at":"2026-10-27T19:04:31Z","id":"HB-ARCTIC-FOLDRM","from":"claimed","to":"working","owner":"cmvr1fnny15canv1cwc4df3fc","note":"deleting AMBFOLD folds, gates pending"}
+{"at":"2026-10-27T19:10:42Z","id":"HB-ARCTIC-FOLDRM","from":"working","to":"review","owner":"cmvr1fnny15canv1cwc4df3fc","note":""}
+{"at":"2026-10-27T19:11:43Z","id":"HB-ARCTIC-FOLDRM","from":"review","to":"merge-queued","owner":"cmvr1fnny15canv1cwc4df3fc","note":"orch/HB-ARCTIC-FOLDRM"}
+{"at":"2026-10-27T19:23:04Z","id":"D4-WSB-SHADOW-PRIVATE","from":"working","to":"working","owner":"cmvr09bsx1288nv1cqkwt08aj","note":"fix in (VEH holes); 4 rows run 24/24 heap-tracked: fea0 1/ff90 4/5260 2-4 heap pages, 4040 0 (no writes sampled); gates queued behind BROAD-A lock"}
+{"at":"2026-10-27T19:39:17Z","id":"D4-WSB-SHADOW-PRIVATE","from":"working","to":"review","owner":"cmvr09bsx1288nv1cqkwt08aj","note":"GREEN: freeze fixed (VEH refcount block on protected heap page -> self-deadlock; page holes). heap pages/sample fea0 1, ff90 4, 5260 2-4, 4040 0 (writes nothing). 3 rows C3->C4 after L38 merge, 4040 stays C3. gates unchanged"}
+{"at":"2026-10-27T19:39:56Z","id":"D4-WSB-SHADOW-PRIVATE","from":"review","to":"merge-queued","owner":"cmvr09bsx1288nv1cqkwt08aj","note":"orch/D4-WSB-SHADOW-PRIVATE"}
+{"at":"2026-10-27T19:40:48Z","id":"HB-ARCTIC-FOLDRM","from":"merge-queued","to":"merged","owner":"cmvr1fnny15canv1cwc4df3fc","note":"merge train 20261027_162801: G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/e85ea6fb/53778664"}
+{"at":"2026-10-27T19:52:56Z","id":"D4-WSB-SHADOW-PRIVATE","from":"merge-queued","to":"merged","owner":"cmvr09bsx1288nv1cqkwt08aj","note":"merge train 20261027_164118: G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/e85ea6fb/53778664"}
+{"at":"2026-10-27T19:57:46Z","id":"D4-WSB-C4-SOLV-WS","from":"blocked","to":"open","owner":"","note":"unblocked by SHADOW-PRIVATE merge"}
+{"at":"2026-10-27T19:57:47Z","id":"D4-WSB-C4-BROAD-WS","from":"blocked","to":"open","owner":"","note":"unblocked by SHADOW-PRIVATE merge"}
+{"at":"2026-10-27T19:57:55Z","id":"D4-WSB-C4-SOLV-WS","from":"open","to":"claimed","owner":"cmvr3xvxt19fmnv1cda22rc7c","note":""}
+{"at":"2026-10-27T19:59:27Z","id":"D4-WSB-C4-SOLV-WS","from":"claimed","to":"working","owner":"cmvr3xvxt19fmnv1cda22rc7c","note":"worktree created; reading SHADOW-PRIVATE recipe"}
+{"at":"2026-10-27T20:02:40Z","id":"D4-WSB-C4-BROAD-A","from":"working","to":"working","owner":"cmvr0ec1612p2nv1c4tzokn6v","note":"4/5 racediff C4-CLEAN (deb0 bb70 e050 abb0), gates = refs; c230 Z1/Z2 control queued on machine lock; then re-classify + RESULT"}
+{"at":"2026-10-27T20:04:30Z","id":"D4-WSB-C4-BROAD-A","from":"working","to":"review","owner":"cmvr0ec1612p2nv1c4tzokn6v","note":"GREEN: 5/5 C3->C4 (racediff + leg A), U-9026 resolved, gates = refs; c230 caveat: original varies 1/4 boots in its window"}
+{"at":"2026-10-27T20:05:59Z","id":"D4-WSB-C4-BROAD-A","from":"review","to":"merge-queued","owner":"cmvr0ec1612p2nv1c4tzokn6v","note":"orch/D4-WSB-C4-BROAD-A"}
+{"at":"2026-10-27T20:06:09Z","id":"D4-WSB-C4-BROAD-WS","from":"open","to":"claimed","owner":"cmvr48gka1a2wnv1cbxl3mlhx","note":""}
+{"at":"2026-10-27T20:07:25Z","id":"D4-WSB-C4-BROAD-WS","from":"claimed","to":"working","owner":"cmvr48gka1a2wnv1cbxl3mlhx","note":"round 2: merged integration @6368c086a (SHADOW-PRIVATE); heap-tracked write-set legs + racediff"}
+{"at":"2026-10-27T20:19:06Z","id":"HB-ARCTIC-OPENSEA","from":"working","to":"review","owner":"cmvr1fqit15cgnv1cohmaubk2","note":"GREEN: open sea d 2.0-2.8 vs bar 4.5 on 4 pinned poses; sky band +24 luma follow-up (HB-ARCTIC-SKY); gates identical"}
+{"at":"2026-10-27T20:19:28Z","id":"HB-ARCTIC-OPENSEA","from":"review","to":"merge-queued","owner":"cmvr1fqit15cgnv1cohmaubk2","note":"orch/HB-ARCTIC-OPENSEA"}
+{"at":"2026-10-27T20:21:04Z","id":"HB-FOREST-WATER","from":"open","to":"claimed","owner":"cmvr4r5d01bdcnv1cj1ey6g7n","note":""}
+{"at":"2026-10-27T20:23:01Z","id":"HB-FOREST-WATER","from":"claimed","to":"working","owner":"cmvr4r5d01bdcnv1cj1ey6g7n","note":"start: worktree created"}
+{"at":"2026-10-27T20:29:06Z","id":"D4-WSB-C4-BROAD-A","from":"merge-queued","to":"merged","owner":"cmvr0ec1612p2nv1c4tzokn6v","note":"merge train 20261027_172023: G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/e85ea6fb/53778664"}
+{"at":"2026-10-27T20:29:07Z","id":"HB-ARCTIC-OPENSEA","from":"merge-queued","to":"merged","owner":"cmvr1fqit15cgnv1cohmaubk2","note":"merge train 20261027_172023: G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/e85ea6fb/53778664"}
+{"at":"2026-10-27T20:58:49Z","id":"HB-FOREST-WATER","from":"working","to":"review","owner":"cmvr4r5d01bdcnv1cj1ey6g7n","note":"GREEN: texture-flip water ported behind MASHED_TEXANIM (default OFF); forest_s8 water 48.1->24.5 vs 21.5; gates unchanged; @ e01a28385"}
+{"at":"2026-10-27T20:59:13Z","id":"HB-FOREST-WATER","from":"review","to":"merge-queued","owner":"cmvr4r5d01bdcnv1cj1ey6g7n","note":"orch/HB-FOREST-WATER"}
+{"at":"2026-10-27T20:59:58Z","id":"HB-TEXANIM-FLIP","from":"open","to":"decision","owner":"","note":"L-39"}
+{"at":"2026-10-27T21:04:08Z","id":"HB-TEXANIM-FLIP","from":"decision","to":"done","owner":"","note":"L-39 answered (b): folded into HB-TEXANIM-REFS, keep default OFF until then"}
+{"at":"2026-10-27T21:04:08Z","id":"HB-TEXANIM-REFS","from":"open","to":"open","owner":"","note":"L-39 (b): score Sands/Training/Warzone water vs original; if all 3 move toward original, flip MASHED_TEXANIM default ON in this same step (hash-neutral, normal merge) and record per-track luma in RESULT; if any moves away, file a new L-n instead of flipping"}
+{"at":"2026-10-27T21:05:15Z","id":"D4-WSB-C4-SOLV-WS","from":"working","to":"review","owner":"cmvr3xvxt19fmnv1cda22rc7c","note":"GREEN: 5 rows C3->C4 (00568dd0 00568fd0 00564c80 00561390 00563e70) on heap-tracked leg + racediff; 00568990 0056b7a0 stay C3 (0 pages, no writes sampled); 0056ba30 stays C3 (racediff HOLD = label LAYOUT artifact); gates unchanged; no shared header changed"}
+{"at":"2026-10-27T21:05:37Z","id":"D4-WSB-C4-SOLV-WS","from":"review","to":"merge-queued","owner":"cmvr3xvxt19fmnv1cda22rc7c","note":"orch/D4-WSB-C4-SOLV-WS"}
+{"at":"2026-10-27T21:08:19Z","id":"HB-FOREST-WATER","from":"merge-queued","to":"merged","owner":"cmvr4r5d01bdcnv1cj1ey6g7n","note":"merge train 20261027_180009: G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/e85ea6fb/53778664"}
+{"at":"2026-10-27T21:28:12Z","id":"D4-WSB-C4-SOLV-WS","from":"merge-queued","to":"merged","owner":"cmvr3xvxt19fmnv1cda22rc7c","note":"merge train 20261027_180847: G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/e85ea6fb/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-10-27T21:58:49Z","id":"D4-WSB-C4-BROAD-WS","from":"working","to":"review","owner":"cmvr48gka1a2wnv1cbxl3mlhx","note":"GREEN r2: 0055a1f0/0055ab30/0055c0f0 C4; 0055bae0/0055c000 stay C3 (stack-only writes, 0 heap pages); rule question for lead in RESULT Next"}
+{"at":"2026-10-27T21:59:18Z","id":"D4-WSB-C4-BROAD-WS","from":"review","to":"merge-queued","owner":"cmvr48gka1a2wnv1cbxl3mlhx","note":"orch/D4-WSB-C4-BROAD-WS"}
+{"at":"2026-10-27T21:59:19Z","id":"D4-WSB-C4-BROAD-WS","from":"merge-queued","to":"decision","owner":"cmvr48gka1a2wnv1cbxl3mlhx","note":"L-40"}
+{"at":"2026-10-27T22:06:18Z","id":"D4-WSB-C4-BROAD-WS","from":"decision","to":"merge-queued","owner":"cmvr48gka1a2wnv1cbxl3mlhx","note":"L-40 answered (a): 0055bae0/0055c000 stay C3; branch merges as-is"}
+{"at":"2026-10-27T22:06:19Z","id":"D4-WSB-STACKONLY-C3","from":"open","to":"blocked","owner":"","note":"needs a car-contact scenario that makes these rows write heap pages (0055bae0/0055c000 return caller-stack addresses; 00568990/0056b7a0 no sampled writes)"}
+{"at":"2026-10-27T22:17:33Z","id":"D4-WSB-C4-BROAD-WS","from":"merge-queued","to":"merged","owner":"cmvr48gka1a2wnv1cbxl3mlhx","note":"merge train 20261027_190019: G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/e85ea6fb/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
