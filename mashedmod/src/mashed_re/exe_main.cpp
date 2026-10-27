@@ -5159,12 +5159,13 @@ bool RenderFrame() {
             // screen change reads as an instant pop. The original ran at a
             // steady framerate and never multi-ticked mid-nav.
             if (raw_ms > 50) raw_ms = 50;
-            // MASHED_MENU_CLOCK_FAITHFUL=1 (default OFF, D4-FU-MENUSPEED amendment 1): FUN_00493390 stores the
-            // constant 0x32 into DAT_007f1000 at 0x004933d5 on every call and FUN_00493480 reads that
-            // (0x00493485), so the original takes one 50 ms tick per frame whatever the wall time. Off: the
-            // elapsed-ms input above (one tick per ~3 frames at 60 fps).
+            // Faithful menu clock (default ON since D4-FU-MENUCLOCK-FLIP, L-36 = 1; D4-FU-MENUSPEED amendment 1):
+            // FUN_00493390 stores the constant 0x32 into DAT_007f1000 at 0x004933d5 on every call and
+            // FUN_00493480 reads that (0x00493485), so the original takes one 50 ms tick per frame whatever the
+            // wall time. MASHED_NO_MENU_CLOCK_FAITHFUL=1 opts out: the elapsed-ms input above (one tick per
+            // ~3 frames at 60 fps).
             static const bool s_clock_faithful =
-                GetEnvironmentVariableA("MASHED_MENU_CLOCK_FAITHFUL", nullptr, 0) != 0;
+                GetEnvironmentVariableA("MASHED_NO_MENU_CLOCK_FAITHFUL", nullptr, 0) == 0;
             if (s_clock_faithful) raw_ms = 0x32;
             Nav_FrameClockUpdate(raw_ms);
         }
