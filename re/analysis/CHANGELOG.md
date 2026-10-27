@@ -26,6 +26,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-27  0055c230  FUN_0055c230  C4->C3  D4-WSB-C230-RECHECK (L-40 item 2): racediff leg failed, no window 4/4 original boots reproduce (48 and 200 samples, 2 distinct [edx+0x18] target sets each over 4 control boots); heap-tracked write-set leg HEAP-CLEAN 24/24, 24 heap pages (S1 sample-0 diff = .asi TLS init-epoch harness artifact, addendum 1); re-promote on a reproducible window; verify/wsbc230_20261027/RESULT_D4-WSB-C230-RECHECK.md
 2026-10-27  0055a1f0  FUN_0055a1f0  C3->C4  D4-WSB-C4-BROAD-WS r2: heap-tracked write-set HEAP-CLEAN + canonical racediff C4-CLEAN (hook installed alone); verify/wsbbroadws_20261027/RESULT_D4-WSB-C4-BROAD-WS.md
 2026-10-27  0055ab30  FUN_0055ab30  C3->C4  D4-WSB-C4-BROAD-WS r2: heap-tracked write-set HEAP-CLEAN + canonical racediff C4-CLEAN (hook installed alone); verify/wsbbroadws_20261027/RESULT_D4-WSB-C4-BROAD-WS.md
 2026-10-27  0055c0f0  FUN_0055c0f0  C3->C4  D4-WSB-C4-BROAD-WS r2: heap-tracked write-set HEAP-CLEAN + canonical racediff C4-CLEAN (hook installed alone); verify/wsbbroadws_20261027/RESULT_D4-WSB-C4-BROAD-WS.md
