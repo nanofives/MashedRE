@@ -1,0 +1,4 @@
+rva	readout	n	ndiff	pages_o	pages_n	heap_o	heap_n	heap_pages_total	image_pages_total	stack_max	noise_max	ovf_max	ret_max	flag_lines	patchbyte
+0x00568990_needpages	NO-SAMPLES	0	0					0	0	0	0	0	0	0	installed=e9 uninstalled=83 A/B-IS-REAL
+0x00568fd0_needpages	HEAP-CLEAN	3	0	1..2	1..2	1..2	1..2	4	0	0	0	0	0	0	installed=e9 uninstalled=83 A/B-IS-REAL
+0x0056b7a0_needpages	NO-SAMPLES	0	0					0	0	0	0	0	0	0	installed=e9 uninstalled=8b A/B-IS-REAL

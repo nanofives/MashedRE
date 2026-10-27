@@ -173,6 +173,22 @@ void RaceSubmit_AddInstancePosed(int handle, const float* m44, const FramePose* 
 // bright" until MASHED_NO_UVSCROLL=1 reproduced it on the D3D9 path).
 void RaceSubmit_SetAnimTime(float t);
 
+// [hbforest] Texture-flip animation of one course clump (Forest, Sands, Training, Warzone slot 0
+// / slot 1; table in TrackRenderer.cpp kTexAnim). One ring per course, as the original keeps one
+// global per track (Forest DAT_00895948).
+//   Create  = FUN_00475090 @ 0x00475090: "%s%.2d" (0x005cead8) names prefix00, prefix01, ... looked
+//             up case-insensitively in `dicts` (FUN_004c5c00) until the first miss. Returns the
+//             ring length (0 = nothing found; Tick / Apply then do nothing).
+//   Tick    = FUN_004751d0 @ 0x004751d0: acc += units; acc >= 300 (cmp 0x12c, jl) advances one
+//             texture and zeroes acc.
+//   Apply   = FUN_00475060 @ 0x00475060: the current texture onto every material of every atomic
+//             of model `handle` (FUN_00474fb0 -> FUN_00474f90 -> RpGeometryForAllMaterials
+//             FUN_004e89a0 -> FUN_00475040 -> RpMaterialSetTexture FUN_004e8090).
+// Cleared by RaceSubmit_BeginTrackLoad.
+int  RaceSubmit_TexAnimCreate(const Txd::Dictionary* dicts, std::size_t ndicts, const char* prefix);
+void RaceSubmit_TexAnimTick(int units);
+void RaceSubmit_TexAnimApply(int handle);
+
 // Queue one placed copy for this frame. `m44` is a D3DMATRIX in memory order --
 // the SAME matrix the D3D9 path would pass to SetTransform(D3DTS_WORLD), so both
 // renderers place the object identically instead of re-deriving it. Instances are

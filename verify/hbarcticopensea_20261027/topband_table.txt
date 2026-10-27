@@ -1,0 +1,4 @@
+e1: top band (rows 0-79 minus light box) orig 46.8 default 70.9 d 24.0 | non-water rest d 4.9 meanabs 6.9 | water meanabs 4.7
+w1: top band (rows 0-79 minus light box) orig 45.0 default 69.8 d 24.8 | non-water rest d 3.1 meanabs 3.8 | water meanabs 3.8
+w2: top band (rows 0-79 minus light box) orig 31.3 default 35.4 d 4.0 | non-water rest d 3.0 meanabs 3.7 | water meanabs 4.1
+n1: top band (rows 0-79 minus light box) orig 42.9 default 68.7 d 25.8 | non-water rest d 5.1 meanabs 6.2 | water meanabs 3.5

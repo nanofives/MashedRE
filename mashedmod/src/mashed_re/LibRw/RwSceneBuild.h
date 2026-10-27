@@ -30,6 +30,10 @@ struct TextureSource {
     int                    count;
 };
 
+// [hbforest] A new rw::Texture* (as void*) for the first texture named `name` (case-insensitive)
+// in `tex`, or nullptr. The caller owns the returned reference.
+void* ResolveTextureByName(const char* name, const TextureSource& tex);
+
 // Track::World -> rw::World* (returned as void*), one rw::Atomic per sector.
 //
 // Triangle layout note: Track::Sector::tris is (mat, v0, v1, v2) per triangle
