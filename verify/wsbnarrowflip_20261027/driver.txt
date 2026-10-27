@@ -1,0 +1,166 @@
+[test-slot] all 2 test slots busy, waiting (0s so far). Holders:
+  slot 0: pid 14580 since 10-27 10:35 in C:\Users\maria\Desktop\Proyectos\SimGolf\port\build\S3_13: C:\Users\maria\AppData\Local\Programs\Python\Python312\python.exe -m pytest port/test/test_gfx_s2_10.py -q -p no:cacheprovider
+  slot 1: pid 2260 since 10-27 10:39 in C:\Users\maria\Desktop\Proyectos\Simcity_wt_lateguard: bash -c py -3.12 verify/lateguard/stock_run.py --tree C:/Users/maria/Desktop/Proyectos/Simcity_stock_lateguard --out verify/lateguard/data/u
+[test-slot] acquired slot 2/2 after 26s
+10:40:06 $ py.exe -3.12 C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\orch-integration\re\orchestrator\mashed_lock.py run --label D4-WSB-NARROW-FLIP --wait 7200 -- py.exe -3.12 C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\D4-WSB-NARROW-FLIP\verify/savelink_20261023/run_arms.py H_DEF B_DEF_K0 B_DEF_K1 B_DEF_K26
+    [mashed-lock] HELD 'mashed_machine' pid=4600 (D4-WSB-NARROW-FLIP)
+    === H_DEF pid=18772 exe=d1719409
+        exit=0 self_exited=True secs=484
+        H_DEF.step.csv lines=14659 sha8=5943c5f1
+        H_DEF.gates.csv lines=56873 sha8=364350ae
+        H_DEF.ptrace.log lines=28436 sha8=52052890
+    === B_DEF_K0 pid=4224 exe=d1719409
+        exit=0 self_exited=True secs=40
+        B_DEF_K0.step.csv lines=1459 sha8=3a03670c
+    === B_DEF_K1 pid=16644 exe=d1719409
+        exit=0 self_exited=True secs=40
+        B_DEF_K1.step.csv lines=1825 sha8=e85ea6fb
+    === B_DEF_K26 pid=8556 exe=d1719409
+        exit=0 self_exited=True secs=40
+        B_DEF_K26.step.csv lines=1411 sha8=53778664
+    DONE
+    [mashed-lock] released 'mashed_machine' pid=4600
+10:50:11 GATES G-CTRL 5943c5f1/364350ae/52052890 B 3a03670c/e85ea6fb/53778664
+10:50:11 $ py.exe -3.12 C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\D4-WSB-NARROW-FLIP\verify/savelink_20261023/vsum.py D:\MashedWT\D4-WSB-NARROW-FLIP_data\arms\B_DEF_K0.step.csv D:\MashedWT\D4-WSB-NARROW-FLIP_data\arms\B_DEF_K1.step.csv D:\MashedWT\D4-WSB-NARROW-FLIP_data\arms\B_DEF_K26.step.csv
+    B_DEF_K0               3/3  car1 A PASS | car2 A PASS | car3 A PASS
+    B_DEF_K1               3/3  car1 B PASS | car2 B PASS | car3 B PASS
+    B_DEF_K26              3/3  car1 C PASS | car2 C PASS | car3 C PASS
+10:50:12 $ py.exe -3.12 C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\D4-WSB-NARROW-FLIP\re/tools/ai_speed_env.py --check D:\MashedWT\D4-WSB-NARROW-FLIP_data\arms\B_DEF_K0.step.csv
+    D:\MashedWT\D4-WSB-NARROW-FLIP_data\arms\B_DEF_K0.step.csv
+      v1 start=0 n=220 flag=[0] regime0=1 k_own=100 launch=1425.7 ft_median_m0=2551.6 (n=100) ft_median=2254.8 (n=124) wmax=3527.0
+      v2 start=0 n=220 flag=[0] regime0=1 k_own=23 launch=2052.5 ft_median_m0=2052.5 (n=23) ft_median=2648.1 (n=179) wmax=3904.0
+      v3 start=0 n=220 flag=[0] regime0=1 k_own=39 launch=2055.0 ft_median_m0=2278.1 (n=39) ft_median=2691.4 (n=154) wmax=4507.3
+          v1 (e) PASS
+          v2 (e) PASS
+          v3 (e) PASS
+10:50:12 $ py.exe -3.12 C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\orch-integration\re\orchestrator\mashed_lock.py run --label D4-WSB-NARROW-FLIP --wait 7200 -- py.exe -3.12 C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\D4-WSB-NARROW-FLIP\verify\wsbnarrowflip_20261027\run_arms.py H_NONF B_NONF_K0 B_NONF_K1 B_NONF_K26
+    [mashed-lock] HELD 'mashed_machine' pid=16408 (D4-WSB-NARROW-FLIP)
+    === H_NONF pid=20324 exe=d1719409
+        exit=0 self_exited=True secs=383
+        H_NONF.step.csv lines=14659 sha8=5943c5f1
+        H_NONF.gates.csv lines=56873 sha8=364350ae
+        H_NONF.ptrace.log lines=28436 sha8=52052890
+    === B_NONF_K0 pid=16920 exe=d1719409
+        exit=0 self_exited=True secs=21
+        B_NONF_K0.step.csv lines=1459 sha8=3a03670c
+    === B_NONF_K1 pid=9712 exe=d1719409
+        exit=0 self_exited=True secs=21
+        B_NONF_K1.step.csv lines=1825 sha8=e85ea6fb
+    === B_NONF_K26 pid=16596 exe=d1719409
+        exit=0 self_exited=True secs=21
+        B_NONF_K26.step.csv lines=1411 sha8=53778664
+    DONE
+    [mashed-lock] released 'mashed_machine' pid=16408
+10:57:39 CTRL (opt-out) G-CTRL 5943c5f1/364350ae/52052890 B 3a03670c/e85ea6fb/53778664
+10:57:39 $ py.exe -3.12 C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\orch-integration\re\orchestrator\mashed_lock.py run --label D4-WSB-NARROW-FLIP --wait 7200 --solo -- py.exe -3.12 C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\D4-WSB-NARROW-FLIP\verify/savelink_20261023/run_arms.py D2_DEF_1 D2_DEF_2 D2_DEF_3
+    [mashed-lock] SOLO OPEN 'mashed_machine' (D4-WSB-NARROW-FLIP) ttl=43200s; draining the current holder
+    [mashed-lock] SOLO HELD 'mashed_machine'
+    === D2_DEF_1 pid=4944 exe=d1719409
+        exit=0 self_exited=False secs=90
+        D2_DEF_1.motion_diag.log lines=1628 sha8=ae9532cc
+    === D2_DEF_2 pid=216 exe=d1719409
+        exit=0 self_exited=False secs=90
+        D2_DEF_2.motion_diag.log lines=1627 sha8=4ae5c331
+    === D2_DEF_3 pid=3864 exe=d1719409
+        exit=0 self_exited=False secs=90
+        D2_DEF_3.motion_diag.log lines=1627 sha8=4ae5c331
+    DONE
+    [mashed-lock] SOLO CLOSED 'mashed_machine'
+11:02:09 D2 short after reruns: [] lines {'D2_DEF_1': 1628, 'D2_DEF_2': 1627, 'D2_DEF_3': 1627}
+11:02:09 $ py.exe -3.12 C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\D4-WSB-NARROW-FLIP\verify/d2rebase_20261019/score_d2_v2.py port D:\MashedWT\D4-WSB-NARROW-FLIP_data\arms\D2_DEF_1.motion_diag.log D:\MashedWT\D4-WSB-NARROW-FLIP_data\arms\D2_DEF_2.motion_diag.log D:\MashedWT\D4-WSB-NARROW-FLIP_data\arms\D2_DEF_3.motion_diag.log
+    D:\MashedWT\D4-WSB-NARROW-FLIP_data\arms\D2_DEF_1.motion_diag.log: slip1500=0.1942 in slip2000=0.2492 in drvmed=1896.7400 in n=('334', '529', '1208') H1 398/400 median 1333.9
+    D:\MashedWT\D4-WSB-NARROW-FLIP_data\arms\D2_DEF_2.motion_diag.log: slip1500=0.1942 in slip2000=0.2492 in drvmed=1896.7400 in n=('334', '529', '1208') H1 398/400 median 1333.9
+    D:\MashedWT\D4-WSB-NARROW-FLIP_data\arms\D2_DEF_3.motion_diag.log: slip1500=0.1942 in slip2000=0.2492 in drvmed=1896.7400 in n=('334', '529', '1208') H1 398/400 median 1333.9
+11:02:11 $ py.exe -3.12 C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\orch-integration\re\orchestrator\mashed_lock.py solo-begin --label D4-WSB-NARROW-FLIP-13 --ttl 14400 --owner-pid 19052
+    [mashed-lock] SOLO OPEN 'mashed_machine' (D4-WSB-NARROW-FLIP-13) ttl=14400s; draining the current holder
+    [mashed-lock] SOLO HELD 'mashed_machine'
+    TOKEN 8df2ada1dd6546faa1d91f9b6459485d
+11:02:11 $ py.exe -3.12 C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\D4-WSB-NARROW-FLIP\verify/rsky_20261016/run13.py run --exe C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\D4-WSB-NARROW-FLIP\mashedmod\build\mashed_re.exe --root D:\MashedWT\D4-WSB-NARROW-FLIP_root13 --out D:\MashedWT\D4-WSB-NARROW-FLIP_data\tracks
+    [01_Egypt] attempt 1 pid=12688 frames=1165 shots=[740, 780, 815]
+    [01_Egypt] exit=0
+    [01_Egypt] OK after 1 attempt(s)
+    [02_Neustein] attempt 1 pid=19140 frames=1519 shots=[1094, 1134, 1169]
+    [02_Neustein] exit=0
+    [02_Neustein] OK after 1 attempt(s)
+    [03_Arctic] attempt 1 pid=19444 frames=1450 shots=[1051, 1091, 1126]
+    [03_Arctic] exit=0
+    [03_Arctic] OK after 1 attempt(s)
+    [04_Highway] attempt 1 pid=19964 frames=1278 shots=[853, 893, 928]
+    [04_Highway] exit=0
+    [04_Highway] OK after 1 attempt(s)
+    [05_Sands] attempt 1 pid=13728 frames=1509 shots=[1084, 1124, 1159]
+    [05_Sands] exit=0
+    [05_Sands] OK after 1 attempt(s)
+    [06_SuperG] attempt 1 pid=14492 frames=1168 shots=[743, 783, 818]
+    [06_SuperG] exit=0
+    [06_SuperG] OK after 1 attempt(s)
+    [07_Roundabout] attempt 1 pid=16520 frames=1516 shots=[1091, 1131, 1166]
+    [07_Roundabout] exit=0
+    [07_Roundabout] OK after 1 attempt(s)
+    [08_Storm] attempt 1 pid=18820 frames=1353 shots=[928, 968, 1003]
+    [08_Storm] exit=0
+    [08_Storm] OK after 1 attempt(s)
+    [09_Forest] attempt 1 pid=16988 frames=1245 shots=[820, 860, 895]
+    [09_Forest] exit=0
+    [09_Forest] OK after 1 attempt(s)
+    [10_Dump] attempt 1 pid=9228 frames=1160 shots=[735, 775, 810]
+    [10_Dump] exit=0
+    [10_Dump] OK after 1 attempt(s)
+    [11_Warzone] attempt 1 pid=9824 frames=1009 shots=[584, 624, 659]
+    [11_Warzone] exit=0
+    [11_Warzone] OK after 1 attempt(s)
+    [12_City] attempt 1 pid=4340 frames=1186 shots=[761, 801, 836]
+    [12_City] exit=0
+    [12_City] OK after 1 attempt(s)
+    [13_Training] attempt 1 pid=6260 frames=1309 shots=[884, 924, 959]
+    [13_Training] exit=0
+    [13_Training] OK after 1 attempt(s)
+    private root log: D:\MashedWT\D4-WSB-NARROW-FLIP_root13\mashed_re.log exists=True
+11:07:08 $ py.exe -3.12 C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\orch-integration\re\orchestrator\mashed_lock.py solo-end --token 8df2ada1dd6546faa1d91f9b6459485d
+    [mashed-lock] SOLO CLOSED 'mashed_machine'
+11:07:09 $ py.exe -3.12 C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\D4-WSB-NARROW-FLIP\verify/rsky_20261016/run13.py score --out D:\MashedWT\D4-WSB-NARROW-FLIP_data\tracks --cite C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\D4-WSB-NARROW-FLIP\verify/rres_20261016/cites_rres.json
+    track            row  orig  matched  orig tri   m.tri  m.tri% | rows cited  red verdict
+    01_Egypt         740   186      158     21638   20243   93.6% |   20    20    0 CITED
+    01_Egypt         780   175      151     20649   20005   96.9% |   18    18    0 CITED
+    01_Egypt         815   116       89     13313   12504   93.9% |   22    22    0 CITED
+    02_Neustein     1094   258      235     20628   18201   88.2% |   19    19    0 CITED
+    02_Neustein     1134   255      231     20423   18165   88.9% |   19    19    0 CITED
+    02_Neustein     1169   210      187     14148   12140   85.8% |   20    20    0 CITED
+    03_Arctic       1051   180      155     35412   34654   97.9% |   33    33    0 CITED
+    03_Arctic       1091   177      150     35197   34347   97.6% |   36    36    0 CITED
+    03_Arctic       1126   131      107     29307   28781   98.2% |   36    36    0 CITED
+    04_Highway       853   172      133     23561   21121   89.6% |   18    18    0 CITED
+    04_Highway       893   164      126     23104   20758   89.8% |   17    17    0 CITED
+    04_Highway       928   131       80     18291   15418   84.3% |   20    20    0 CITED
+    05_Sands        1084   334      286     22923   20354   88.8% |   21    21    0 CITED
+    05_Sands        1124   337      286     23037   20352   88.3% |   23    23    0 CITED
+    05_Sands        1159   305      234     17558   14152   80.6% |   22    22    0 CITED
+    06_SuperG        743   369      339     26410   24236   91.8% |   21    21    0 CITED
+    06_SuperG        783   370      339     26417   24239   91.8% |   22    22    0 CITED
+    06_SuperG        818   224      182     15002   13564   90.4% |   32    32    0 CITED
+    07_Roundabout   1091   359      312     32100   26734   83.3% |   34    34    0 CITED
+    07_Roundabout   1131   324      293     28532   26083   91.4% |   25    25    0 CITED
+    07_Roundabout   1166   250      218     19243   17448   90.7% |   26    26    0 CITED
+    08_Storm         928   252      227     18682   17760   95.1% |   21    21    0 CITED
+    08_Storm         968   249      221     18284   17233   94.3% |   25    25    0 CITED
+    08_Storm        1003   179      154     11362   10699   94.2% |   24    24    0 CITED
+    09_Forest        820   180      157     18633   17332   93.0% |   17    17    0 CITED
+    09_Forest        860   176      153     18607   17302   93.0% |   17    17    0 CITED
+    09_Forest        895   116       92     10610    9504   89.6% |   19    19    0 CITED
+    10_Dump          735   368      340     42007   38327   91.2% |   19    19    0 CITED
+    10_Dump          775   345      321     41093   38194   92.9% |   17    17    0 CITED
+    10_Dump          810   234      210     26440   23740   89.8% |   19    19    0 CITED
+    11_Warzone       584   364      326     25239   23942   94.9% |   24    24    0 CITED
+    11_Warzone       624   353      326     24908   23936   96.1% |   21    21    0 CITED
+    11_Warzone       659   336      296     21884   20607   94.2% |   27    27    0 CITED
+    12_City          761   512      486     42182   40964   97.1% |   18    18    0 CITED
+    12_City          801   496      469     41692   40424   97.0% |   20    20    0 CITED
+    12_City          836   444      416     34493   33403   96.8% |   21    21    0 CITED
+    13_Training      884   242      215     18128   17478   96.4% |   20    20    0 CITED
+    13_Training      924   257      211     18358   17440   95.0% |   20    20    0 CITED
+    13_Training      959   233      205     18079   17039   94.2% |   21    21    0 CITED
+    
+    INSTRUMENT GATES: PASS
+    
+11:07:22 13 tracks identical gates PASS
+11:07:22 DONE all
