@@ -13,7 +13,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 WT = HERE.parent.parent
 LOCK = WT.parent / "orch-integration" / "re" / "orchestrator" / "mashed_lock.py"
-TOOL = HERE / "c4_racediff_v7.py"
+TOOL = HERE / os.environ.get("C4_TOOL", "c4_racediff_v7.py")   # addendum 2: C4_TOOL
 DATA = Path("D:/MashedWT/D4-WSB-C4-SOLV-WS_data")
 SUMMARY = HERE / "racediff_summary.tsv"
 ALL = ["0055fe50", "0055fea0", "0055ff70", "0055ff90", "005601f0", "00560260", "00561040",
@@ -29,7 +29,7 @@ def sha(p):
 
 
 def one(rva):
-    sfx = "_census" if os.environ.get("C4_SCENARIO") == "census" else ""
+    sfx = ("_census" if os.environ.get("C4_SCENARIO") == "census" else "") + os.environ.get("C4_TAG", "")   # addendum 2: C4_TAG
     out = DATA / (rva + sfx)
     out.mkdir(parents=True, exist_ok=True)
     env = dict(os.environ)

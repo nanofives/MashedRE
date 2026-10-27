@@ -10,7 +10,7 @@ import re, sys
 from pathlib import Path
 
 DATA = Path("D:/MashedWT/D4-WSB-C4-SOLV-WS_data")
-OUT = Path(__file__).resolve().parent / "heap_pages.tsv"
+OUT = Path(__file__).resolve().parent / ("heap_pages%s.tsv" % ("" if __import__("os").environ.get("SHADOW_TAG", "heap") == "heap" else "_" + __import__("os").environ["SHADOW_TAG"]))
 SMP = re.compile(r"^\[(\d+)\] fn=\S+ rva=(\w+) .*?ndiff=(\d+) (\w+)(.*)$")
 KV = re.compile(r"(\w+)=o:(\d+),n:(\d+)")
 SC = re.compile(r"\b(stack|noise|ovf|ret)=(\d+)")
@@ -67,7 +67,7 @@ def one(rva, tag):
 
 
 def main():
-    tag = "_heap"
+    tag = "_" + __import__("os").environ.get("SHADOW_TAG", "heap")
     rows = [one(a.lower().replace("0x", "").zfill(8), tag) for a in sys.argv[1:]]
     OUT.write_text("\t".join(COLS) + "\n" + "".join("\t".join(str(r[c]) for c in COLS) + "\n" for r in rows),
                    encoding="utf-8")
