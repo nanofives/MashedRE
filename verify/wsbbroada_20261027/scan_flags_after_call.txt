@@ -1,0 +1,120 @@
+target 0x0055deb0: 22 references
+  call at 0x004292d7: CLEAN all six flags rewritten
+      0x004292dc mov edi, dword ptr [esp + 0x14]
+      0x004292e0 mov ecx, eax
+      0x004292e2 shr ecx, 2
+  call at 0x0047f0c0: CLEAN all six flags rewritten
+      0x0047f0c5 add esp, 4
+  call at 0x0047f891: CLEAN all six flags rewritten
+      0x0047f896 add esp, 4
+  call at 0x0047f8bc: CLEAN all six flags rewritten
+      0x0047f8c1 add esp, 4
+  call at 0x0047f8d0: CLEAN all six flags rewritten
+      0x0047f8d5 add esp, 4
+  call at 0x004b51ac: CLEAN all six flags rewritten
+      0x004b51b1 mov edx, dword ptr [esp + 0x20]
+      0x004b51b5 push edx
+      0x004b51b6 push esi
+      0x004b51b7 call 0x543df0
+      0x00543df0 mov eax, dword ptr [esp + 4]
+      0x00543df4 mov edx, dword ptr [esp + 8]
+      0x00543df8 mov ecx, dword ptr [eax + 0xc]
+      0x00543dfb mov eax, dword ptr [ecx + edx*4]
+      0x00543dfe ret 
+      0x004b51bc add esp, 0x18
+  call at 0x0055303b: CLEAN all six flags rewritten
+      0x00553040 add esp, 4
+  call at 0x00553101: CLEAN all six flags rewritten
+      0x00553106 mov edx, dword ptr [edi + 0x18]
+      0x00553109 mov ebx, eax
+      0x0055310b push 0x30190
+      0x00553110 mov eax, dword ptr [edx]
+      0x00553112 push eax
+      0x00553113 call 0x5c4bb0
+      0x005c4bb0 sub esp, 8
+  call at 0x00553201: CLEAN all six flags rewritten
+      0x00553206 mov edx, dword ptr [edi + 0x18]
+      0x00553209 mov ebx, eax
+      0x0055320b push 0x30190
+      0x00553210 push 3
+      0x00553212 mov eax, dword ptr [edx]
+      0x00553214 push eax
+      0x00553215 call 0x5c4c60
+      0x005c4c60 sub esp, 8
+  call at 0x005533e1: CLEAN all six flags rewritten
+      0x005533e6 mov ecx, dword ptr [edi]
+      0x005533e8 mov ebp, eax
+      0x005533ea push ecx
+      0x005533eb call 0x5c4d30
+      0x005c4d30 mov eax, dword ptr [esp + 4]
+      0x005c4d34 mov ecx, dword ptr [eax + 4]
+      0x005c4d37 test ecx, ecx
+  call at 0x0055344b: CLEAN all six flags rewritten
+      0x00553450 mov dword ptr [esp + 0x18], eax
+      0x00553454 mov eax, dword ptr [ebx + 0x18]
+      0x00553457 push 0x30190
+      0x0055345c mov ecx, dword ptr [eax]
+      0x0055345e push ecx
+      0x0055345f call 0x5c4bb0
+      0x005c4bb0 sub esp, 8
+  call at 0x0055365c: CLEAN all six flags rewritten
+      0x00553661 add esp, 4
+  call at 0x00553733: CLEAN all six flags rewritten
+      0x00553738 mov dword ptr [esp + 0x2c], eax
+      0x0055373c mov eax, dword ptr [esi]
+      0x0055373e push 0x30190
+      0x00553743 push eax
+      0x00553744 call 0x5c4bb0
+      0x005c4bb0 sub esp, 8
+  call at 0x005538bc: CLEAN all six flags rewritten
+      0x005538c1 mov ecx, dword ptr [esi]
+      0x005538c3 push 0x30190
+      0x005538c8 push ecx
+      0x005538c9 mov edi, eax
+      0x005538cb call 0x5c4bb0
+      0x005c4bb0 sub esp, 8
+  call at 0x00553a49: CLEAN all six flags rewritten
+      0x00553a4e mov edx, dword ptr [edi]
+      0x00553a50 push 0x30190
+      0x00553a55 push edx
+      0x00553a56 mov ebx, eax
+      0x00553a58 call 0x5c4bb0
+      0x005c4bb0 sub esp, 8
+  call at 0x00553c78: CLEAN all six flags rewritten
+      0x00553c7d add esp, 4
+  call at 0x00553e18: CLEAN all six flags rewritten
+      0x00553e1d add esp, 8
+  call at 0x00553f9d: CLEAN all six flags rewritten
+      0x00553fa2 add esp, 4
+  call at 0x00554023: CLEAN all six flags rewritten
+      0x00554028 mov ecx, dword ptr [esi]
+      0x0055402a mov edi, eax
+      0x0055402c push ecx
+      0x0055402d call 0x5c4da0
+      0x005c4da0 push esi
+      0x005c4da1 mov esi, dword ptr [esp + 8]
+      0x005c4da5 push edi
+      0x005c4da6 xor edi, edi
+  call at 0x0055733c: CLEAN all six flags rewritten
+      0x00557341 mov ebx, eax
+      0x00557343 add esp, 4
+  call at 0x00558d73: CLEAN all six flags rewritten
+      0x00558d78 dec eax
+      0x00558d79 push eax
+      0x00558d7a mov eax, dword ptr [ebx + 0x10]
+      0x00558d7d push eax
+      0x00558d7e call 0x5c4df0
+      0x005c4df0 mov ecx, dword ptr [esp + 4]
+      0x005c4df4 mov eax, dword ptr [ecx + 0xc]
+      0x005c4df7 mov edx, dword ptr [ecx]
+      0x005c4df9 imul eax, dword ptr [esp + 8]
+  call at 0x00558fb6: CLEAN all six flags rewritten
+      0x00558fbb mov edx, dword ptr [ebx + 0x10]
+      0x00558fbe dec eax
+      0x00558fbf push eax
+      0x00558fc0 push edx
+      0x00558fc1 call 0x5c4df0
+      0x005c4df0 mov ecx, dword ptr [esp + 4]
+      0x005c4df4 mov eax, dword ptr [ecx + 0xc]
+      0x005c4df7 mov edx, dword ptr [ecx]
+      0x005c4df9 imul eax, dword ptr [esp + 8]
