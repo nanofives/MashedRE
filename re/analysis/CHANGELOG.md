@@ -26,6 +26,19 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-26  0055fe50  FUN_0055fe50  C3->C4  D4-WSB-C4-BVH: in-race racediff C4-CLEAN (hook installed alone, args compared); no store outside its frame; verify/wsbbvh_20261026/RESULT_D4-WSB-C4-BVH.md
+2026-10-26  0055ff70  FUN_0055ff70  C3->C4  D4-WSB-C4-BVH: in-race racediff C4-CLEAN (hook installed alone, args compared); no store outside its frame; verify/wsbbvh_20261026/RESULT_D4-WSB-C4-BVH.md
+2026-10-26  005601f0  FUN_005601f0  C3->C4  D4-WSB-C4-BVH: in-race racediff C4-CLEAN (hook installed alone, args compared); write-tracked shadow CLEAN; verify/wsbbvh_20261026/RESULT_D4-WSB-C4-BVH.md
+2026-10-26  00560260  FUN_00560260  C3->C4  D4-WSB-C4-BVH: in-race racediff C4-CLEAN (hook installed alone, args compared); write-tracked shadow CLEAN; verify/wsbbvh_20261026/RESULT_D4-WSB-C4-BVH.md
+2026-10-26  00561c50  FUN_00561c50  C3->C4  D4-WSB-C4-BVH: in-race racediff C4-CLEAN (hook installed alone, args compared); no store outside its frame; verify/wsbbvh_20261026/RESULT_D4-WSB-C4-BVH.md
+2026-10-26  00561e60  FUN_00561e60  C3->C4  D4-WSB-C4-BVH: in-race racediff C4-CLEAN (hook installed alone, args compared); no store outside its frame; verify/wsbbvh_20261026/RESULT_D4-WSB-C4-BVH.md
+2026-10-26  00561e80  FUN_00561e80  C3->C4  D4-WSB-C4-BVH: in-race racediff C4-CLEAN (hook installed alone, args compared); no store outside its frame; verify/wsbbvh_20261026/RESULT_D4-WSB-C4-BVH.md
+2026-10-26  00563f60  FUN_00563f60  C3->C4  D4-WSB-C4-BVH: in-race racediff C4-CLEAN (hook installed alone, args compared); write-tracked shadow CLEAN; verify/wsbbvh_20261026/RESULT_D4-WSB-C4-BVH.md
+2026-10-26  005641b0  FUN_005641b0  C3->C4  D4-WSB-C4-BVH: in-race racediff C4-CLEAN (hook installed alone, args compared); no store outside its frame; verify/wsbbvh_20261026/RESULT_D4-WSB-C4-BVH.md
+2026-10-26  005646c0  FUN_005646c0  C3->C4  D4-WSB-C4-BVH: in-race racediff C4-CLEAN (hook installed alone, args compared); write-tracked shadow CLEAN; verify/wsbbvh_20261026/RESULT_D4-WSB-C4-BVH.md
+2026-10-26  00565120  FUN_00565120  C3->C4  D4-WSB-C4-BVH: in-race racediff C4-CLEAN (hook installed alone, args compared); write-tracked shadow CLEAN; verify/wsbbvh_20261026/RESULT_D4-WSB-C4-BVH.md
+2026-10-26  005651b0  FUN_005651b0  C3->C4  D4-WSB-C4-BVH: in-race racediff C4-CLEAN (hook installed alone, args compared); write-tracked shadow CLEAN; verify/wsbbvh_20261026/RESULT_D4-WSB-C4-BVH.md
+2026-10-26  00565550  FUN_00565550  C3->C4  D4-WSB-C4-BVH: in-race racediff C4-CLEAN (hook installed alone, args compared); no store outside its frame; verify/wsbbvh_20261026/RESULT_D4-WSB-C4-BVH.md
 2026-10-26  0x00576640  FUN_00576640  C3->C4  D4-WSB-C4-NARROW: canonical scenario (track 0 mode 10, 4 slots, 45 s), hook installed alone, full-output in-process A/B with no-op control (Collision/NarrowC4Probe.cpp): 769/769 + 1793/1793 bit-identical, noo=0, PATCHBYTE A/B-IS-REAL; own hook race OK; verify/wsbnarrow_20261026/RESULT_D4-WSB-C4-NARROW.md
 2026-10-26  0x00579b50  FUN_00579b50  C3->C4  D4-WSB-C4-NARROW: same run conditions, 129/129 + 129/129 bit-identical (return only, no writes), noo=0; own hook race OK; verify/wsbnarrow_20261026/RESULT_D4-WSB-C4-NARROW.md
 2026-10-26  0x005757d0,0x00575880,0x00575c60,0x00575fe0,0x00577ec0,0x005784a0,0x00578610,0x00578e50  C3 kept, C4 REFUSED  D4-WSB-C4-NARROW: same full-output probe, every return equal but float out-param/record bytes differ by 1..few ULP on 9-53% of calls (noo=0); leaves 0x00577ec0/0x005784a0/0x00578610 carry print-order three-term dots; the return-only C3 evidence stands as stated; verify/wsbnarrow_20261026/RESULT_D4-WSB-C4-NARROW.md

@@ -1,0 +1,20 @@
+== 0x005646c0: 1 direct call sites
+  00564cf0 -> READ32@00564d1d and eax, 0x100
+== 0x005651b0: 1 direct call sites
+  005650c4 -> KILL@005650ff mov eax, dword ptr [esp + 0x18]
+== 0x005601f0: 1 direct call sites
+  00560c90 -> KILL@00560c95 mov eax, dword ptr [esp + 0x84]
+== 0x00565120: 1 direct call sites
+  0056508c -> KILL@00565091 mov eax, dword ptr [esp + 0x80]
+== 0x00563f60: 1 direct call sites
+  0056527f -> read16@0056528f mov bx, ax; READ32@00565292 and eax, 0x3f
+== 0x0055ae50: 5 direct call sites
+  0047dfaa -> read16@0047dfb2 cmp ax, 6; KILL@0047df70 mov eax, dword ptr [ebx + 0xb8]; KILL@0047e996 mov eax, dword ptr [esp + 0x24]; KILL@0047dfbc mov eax, dword ptr [esp + 0x1c]
+  0047e0a1 -> read16@0047e0a9 cmp ax, 6; KILL@0047df70 mov eax, dword ptr [ebx + 0xb8]; KILL@0047e996 mov eax, dword ptr [esp + 0x24]; KILL@0047e187 mov eax, dword ptr [ebp + 0x24]; KILL@0047e0bf call
+  0047e18c -> read16@0047e194 cmp ax, 7; KILL@0047e2ea call; KILL@0047e1b1 xor eax, eax
+  0047e2ea -> read16@0047e2f2 cmp ax, 7; KILL@0047e470 mov eax, dword ptr [esp + edi*4 + 0x9c]; KILL@0047e2fc movzx eax, word ptr [esi + 0x20]
+  0056b833 -> READ32@0056b83f and eax, 0xffff
+== 0x00565260: 3 direct call sites
+  00559fb1 -> KILL@00559fb6 mov eax, dword ptr [edi + 0x68]
+  0055ab61 -> KILL@0055ab69 mov eax, dword ptr [esp + 0x18]
+  0055aef3 -> KILL@0055af2d mov eax, esi; READ32@0055af06 push eax
