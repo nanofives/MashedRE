@@ -1,0 +1,18 @@
+frames 13744 events 5
+-- transitions (frame: ba8c phase alive +0x10 slots aic)
+  f=    0 ba8c=3 ph=3 alive=1111 m10=0000 slots=[0, 1, 2, 3] aic=[0, 1, 1, 1]
+  f=  370 ba8c=4 ph=3 alive=1111 m10=0000 slots=[0, 1, 2, 3] aic=[0, 371, 371, 371]
+  f=  371 ba8c=5 ph=3 alive=1111 m10=0000 slots=[0, 1, 2, 3] aic=[0, 371, 371, 371]
+  f=  483 ba8c=6 ph=3 alive=1111 m10=0000 slots=[0, 1, 2, 3] aic=[0, 372, 372, 372]
+  f=  703 ba8c=7 ph=3 alive=0001 m10=1110 slots=[0, 1, 2, 3] aic=[0, 591, 591, 592]
+-- events
+  f=  703 0x00422fd0 args=[0, 0, 3, 10] aic@f=[0, 591, 591, 592]
+  f=  703 0x0040eee0 args=[0, 1, 0, 0] aic@f=[0, 591, 591, 592]
+  f=  703 0x0040d590 args=[3, 1, 2, 1] aic@f=[0, 591, 591, 592]
+  f=  703 0x00422fd0 args=[1, 2, 3, 2] aic@f=[0, 591, 591, 592]
+  f=  703 0x00422fd0 args=[2, 2, 3, 2] aic@f=[0, 591, 591, 592]
+-- per car alive spans (frame range, AI calls at start/end), ctrl5>0x40 frames, ctrl0xa!=0 frames
+  car 0 spans=1 [0..702 n=703 aic 0..0 brk>40=0] ctrl0xa!=0 frames=0
+  car 1 spans=1 [0..702 n=703 aic 1..591 brk>40=47] ctrl0xa!=0 frames=0
+  car 2 spans=1 [0..702 n=703 aic 1..591 brk>40=9] ctrl0xa!=0 frames=0
+  car 3 spans=1 [0..13743 n=13744 aic 1..13632 brk>40=87] ctrl0xa!=0 frames=0

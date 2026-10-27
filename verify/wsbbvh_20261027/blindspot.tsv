@@ -1,0 +1,73 @@
+band	rva	confidence	status	wrapper	file	stores	str	blind	first_store
+BROAD	0x00558100	C3	impl	none		4	0	no	0x0055811b
+BROAD	0x00558140	C3	impl	none		3	0	no	0x0055815f
+BROAD	0x0055a1f0	C3	impl	Run	RwpSolverBroadphase3.cpp	31	1	YES	0x0055a216
+BROAD	0x0055ab30	C3	impl	Run	RwpSolverGlue5.cpp	1	0	YES	0x0055ab9d
+BROAD	0x0055abb0	C3	impl	Run	RwpSolverBroadphase3.cpp	0	0	no	
+BROAD	0x0055ac00	C4	verified	none		2	0	no	0x0055ac31
+BROAD	0x0055ae50	C3	impl	Run	RwpSolverBroadphase3.cpp	0	0	no	
+BROAD	0x0055b800	C4	verified	none		0	0	no	
+BROAD	0x0055bae0	C3	impl	Run	RwpSolverBroadphase3.cpp	3	0	YES	0x0055bb49
+BROAD	0x0055bb70	C3	impl	Run	RwpSolverGlue5.cpp	0	0	no	
+BROAD	0x0055c000	C3	ported	none		3	0	no	0x0055c0c9
+BROAD	0x0055c0f0	C3	impl	RunTracked	RwpSolverBroadphase3.cpp	8	0	no	0x0055c157
+BROAD	0x0055c230	C3	impl	Run	RwpSolverGlue5.cpp	0	0	no	
+BROAD	0x0055c4f0	C3	impl	none		1	0	no	0x0055c536
+BROAD	0x0055c810	C3	impl	none		38	0	no	0x0055c829
+BROAD	0x0055deb0	C3	impl	none		0	0	no	
+BROAD	0x0055dec0	C3	new	none		0	0	no	
+BROAD	0x0055dff0	C4	verified	none		0	0	no	
+BROAD	0x0055e050	C3	impl	Run	RwpSolverGlue5.cpp	45	0	YES	0x0055e0c7
+BROAD	0x0055e200	C4	verified	none		7	0	no	0x0055e208
+BVH	0x0055fe50	C4	verified	Run	RwpSolverCore23.cpp	0	0	no	
+BVH	0x0055fea0	C3	impl	RunTracked	RwpSolverCore23.cpp	9	0	no	0x0055fee4
+BVH	0x0055ff70	C4	verified	Run	RwpSolverCore23.cpp	0	0	no	
+BVH	0x0055ff90	C3	impl	RunTracked	RwpSolverCore23.cpp	4	0	no	0x0055ffa4
+BVH	0x005601f0	C4	verified	RunTracked	RwpSolverLeaves1.cpp	6	0	no	0x00560220
+BVH	0x00560260	C4	verified	RunTracked	RwpSolverPartition13.cpp	199	5	no	0x005602af
+BVH	0x00561040	C3	impl	RunTracked	RwpSolverCore23.cpp	2	0	no	0x00561061
+BVH	0x00561390	C3	impl	RunTracked	RwpSolverCore23.cpp	31	3	no	0x005613c9
+BVH	0x00561c50	C4	verified	Run	RwpSolverCore23.cpp	0	0	no	
+BVH	0x00561e60	C4	verified	Run	RwpSolverCore23.cpp	0	0	no	
+BVH	0x00561e80	C4	verified	Run	RwpSolverCore23.cpp	0	0	no	
+BVH	0x00563e70	C3	impl	RunTracked	RwpSolverLeaves1.cpp	14	0	no	0x00563ea1
+BVH	0x00563f60	C4	verified	RunTracked	RwpSolverLeaves1.cpp	7	0	no	0x00563fb5
+BVH	0x00564040	C3	impl	RunTracked	RwpSolverLeaves1.cpp	3	0	no	0x005640a0
+BVH	0x005641b0	C4	verified	Run	RwpSolverLeaves1.cpp	0	0	no	
+BVH	0x005646c0	C4	verified	RunTracked	RwpSolverCore4.cpp	10	2	no	0x005646e7
+BVH	0x00564c80	C3	impl	RunTracked	RwpSolverCore4.cpp	26	2	no	0x00564caf
+BVH	0x00565120	C4	verified	RunTracked	RwpSolverLeaves1.cpp	1	0	no	0x00565158
+BVH	0x005651b0	C4	verified	RunTracked	RwpSolverLeaves1.cpp	1	0	no	0x005651f2
+BVH	0x00565200	C3	impl	RunRegion	RwpSolverLeaves1.cpp	6	0	no	0x00565220
+BVH	0x00565260	C3	impl	RunTracked	RwpSolverCore4.cpp	10	0	no	0x0056535d
+BVH	0x00565550	C4	verified	Run	RwpSolverLeaves1.cpp	0	0	no	
+SOLV	0x005675d0	C3	impl	RunTracked	RwpSolverLeaves1.cpp	16	0	no	0x005675d6
+SOLV	0x00567c00	C3	impl	RunTracked	RwpSolverCore9.cpp	7	0	no	0x00567c08
+SOLV	0x00567c60	C3	impl	RunTracked	RwpSolverCore11.cpp	25	0	no	0x00567c73
+SOLV	0x00567f00	C3	impl	RunTracked	RwpSolverCore11.cpp	16	0	no	0x00567fc2
+SOLV	0x005684c0	C3	impl	RunTracked	RwpSolverLeaves1.cpp	26	0	no	0x005684ce
+SOLV	0x00568560	C3	impl	RunTracked	RwpSolverLeaves1.cpp	21	0	no	0x00568574
+SOLV	0x005685f0	C3	impl	RunTracked	RwpSolverCore11.cpp	48	1	no	0x0056860b
+SOLV	0x00568990	C3	impl	Run	RwpSolverCore21.cpp	9	0	YES	0x005689d0
+SOLV	0x00568dd0	C3	impl	Run	RwpSolverCore11.cpp	12	0	YES	0x00568deb
+SOLV	0x00568fd0	C3	impl	Run	RwpSolverCore11.cpp	30	0	YES	0x00569026
+SOLV	0x0056b7a0	C3	impl	Run	RwpSolverCore18.cpp	6	0	YES	0x0056b945
+SOLV	0x0056ba30	C3	impl	Run	RwpSolverCore21.cpp	4	0	YES	0x0056ba46
+SOLV	0x0056bb30	C3	impl	Run	RwpSolverCore21.cpp	0	0	no	
+SOLV	0x0056bce0	C3	impl	RunRegion	RwpSolverIntegrate6.cpp	4	0	no	0x0056bdc3
+SOLV	0x0056bdf0	C3	impl	RunTracked	RwpSolverIntegrate6.cpp	6	0	no	0x0056be1f
+SOLV	0x0056c0a0	C3	impl	RunTracked	RwpSolverIntegrate6.cpp	19	0	no	0x0056c238
+SOLV	0x0056c310	C3	impl	RunTracked	RwpSolverIntegrate6.cpp	19	0	no	0x0056c4a0
+SOLV	0x0056c580	C3	impl	RunTracked	RwpSolverCore7.cpp	12	1	no	0x0056c5e8
+SOLV	0x0056c8e0	C3	impl	RunTracked	RwpSolverCore7.cpp	6	0	no	0x0056c9a6
+SOLV	0x0056caa0	C3	impl	RunTracked	RwpSolverCore7.cpp	67	4	no	0x0056caf4
+SOLV	0x0056cf90	C3	impl	RunRegion	RwpSolverCore7.cpp	24	0	no	0x0056cfa9
+SOLV	0x0056d070	C3	impl	RunTracked	RwpSolverCore7.cpp	38	0	no	0x0056d086
+SOLV	0x0056dd40	C3	impl	RunTracked	RwpSolverCore8.cpp	15	0	no	0x0056e4c5
+SOLV	0x0056e680	C3	impl	RunTracked	RwpSolverCore8.cpp	32	0	no	0x0056e714
+SOLV	0x0056ed60	C3	impl	RunRegion	RwpSolverCore8.cpp	9	0	no	0x0056ee59
+SOLV	0x0056ef30	C3	impl	RunTracked	RwpSolverCore9.cpp	26	0	no	0x0056ef36
+SOLV	0x0056efc0	C3	impl	RunTracked	RwpSolverCore9.cpp	4	0	no	0x0056efd5
+SOLV	0x0056f020	C3	impl	RunTracked	RwpSolverCore9.cpp	7	0	no	0x0056f03d
+SOLV	0x0056f1f0	C3	impl	RunTracked	RwpSolverCore9.cpp	27	0	no	0x0056f23d
+SOLV	0x0056fad0	C3	impl	RunRegion	RwpSolverCore9.cpp	12	0	no	0x0056fae8
