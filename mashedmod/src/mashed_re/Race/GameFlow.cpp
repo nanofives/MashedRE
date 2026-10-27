@@ -275,6 +275,8 @@ void SaveProgress() {
     // (MOV EAX,[0x008a95ac] 0x00404f03, MOV [0x00828254],EAX 0x00404f23) and no original writer
     // increments it (0x00404ec1 load, 0x004098c6 / 0x004098eb / 0x00409c5e = 0, 0x00409e30 = 1,
     // 0x0040ad34 = param). The port used to store ++g_saveCounter here and in the in-place path.
+    // [D4-FU-24EFC-WRITER 2026-10-27] the original's first-run 1 is 0x00409e30 (save state 0x10,
+    // case 16 of the switch at 0x00409b00), after its creation write at 0x00409db8. Not ported.
     BuildImage(span, g_saveCounter, img);
     WriteSaveImage(img);
 }
