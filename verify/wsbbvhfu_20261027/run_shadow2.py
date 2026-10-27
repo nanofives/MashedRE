@@ -55,11 +55,14 @@ def one(rva):
             mm = re.search(r"scenario_launch\s+pid=(\d+)", ln)
             if mm and not box["pid"]: box["pid"] = int(mm.group(1))
     th = threading.Thread(target=drain, daemon=True); th.start()
-    t0 = time.time(); last_size, last_grow, why = -1, time.time(), ""
+    nolog_s = int(os.environ.get("NOLOG_S", "360"))   # no shadow log this long after the PID appeared
+    t0 = time.time(); last_size, last_grow, why, pid_at = -1, time.time(), "", 0.0
     srx = re.compile(r"^\[\d+\] fn=\S+ rva=" + rva + r" ", re.M)
     while p.poll() is None:
         time.sleep(2.0)
+        if box["pid"] and not pid_at: pid_at = time.time()
         if time.time() - t0 > 1800: why = "TIMEOUT"
+        elif pid_at and not glog.exists() and time.time() - pid_at > nolog_s: why = "NO-LOG"
         elif box["pid"] and glog.exists():
             sz = glog.stat().st_size
             if sz != last_size: last_size, last_grow = sz, time.time()
