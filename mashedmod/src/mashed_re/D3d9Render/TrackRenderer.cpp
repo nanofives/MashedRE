@@ -1548,6 +1548,27 @@ const CamManTrack kCamMan[] = {
     { 39,  5, 0x0044ac10u },   // neustein  array 0x00896240  clump 7  (+0x1012c)
 };
 
+// [hbforest] Texture-flip water, four records of the hook table 0x005f33f8. Slot 0 builds the ring
+// from the course TXD (`push 0x5ce2d0` "water", FUN_00475090, the ring stored to a global); slot 1
+// ticks it with the slot's units argument (times `mult`, FUN_004751d0) and puts the current texture
+// on course clump `clump` (FUN_00475060 on [course + 0x10110 + 4*clump]). Forest WATER.DFF ships
+// material texture wet_watercol00, which this replaces with water00..water31 every frame.
+// MASHED_TEXANIM=1 turns it on (default OFF, PREREG verify/hbforestwater_20261027/PREREG.md).
+struct TexAnimTrack { int course_id; int clump; int mult; std::uint32_t slot0, slot1; };
+const TexAnimTrack kTexAnim[] = {
+    { 34, 0, 1, 0x0044dea0u, 0x0044ded0u },   // forest   ring DAT_00895948 (0x0044dec5), clump +0x10110
+    { 11, 1, 2, 0x00450ca0u, 0x004507b0u },   // sands    ring DAT_0088ffd8 (0x00450cb9), clump +0x10114
+    { 30, 9, 1, 0x00451280u, 0x004513b0u },   // training ring DAT_0088ff90 (0x004512ad), clump +0x10134
+    { 33, 0, 2, 0x004527f0u, 0x00452b20u },   // warzone  ring DAT_00684c50 (0x00452a9e), clump +0x10110
+};
+bool TexAnimOn() {
+    static const bool on = [] {
+        const char* e = std::getenv("MASHED_TEXANIM");
+        return e && e[0] == '1' && e[1] == '\0';
+    }();
+    return on;
+}
+
 // Arctic ship tables (decomp 0x00448770 / 0x00448880 / 0x00448cb0 / 0x00448e20; floats read from the
 // image by verify/rprops_20261016/dump_ship_tables.py).
 const float kFreighterPos[2][3] = { { -15.0f, -4.0f, -66.0f }, { -20.5f, -4.0f, 81.0f } };  // 0x005f95d0
@@ -3010,6 +3031,21 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
             // [pontoon 2026-10-16] slot 0 0x004527f0's object part: FUN_0047ce40(1000) / (2000) are the RWP objects
             // with BaseLabel 1000 (Tower) / 2000 (Deck), their body matrices the first Mts record (flags 0, captured);
             // FUN_00451760(&obj, clump 1, General_Anim 0). Default ON since dflip (opt-outs MASHED_NO_PONTOON_ANIM / _STATE / _CARRY).
+            // [hbforest] slot 0's texture ring (kTexAnim), on every prop built from that course clump.
+            texanim_models_.clear();
+            texanim_mult_ = 1;
+            if (TexAnimOn()) {
+                for (const auto& ta : kTexAnim) {
+                    if (ta.course_id != course_id_) continue;
+                    const int n = LibRw::RaceSubmit_TexAnimCreate(dicts.data(), dicts.size(), "water");
+                    for (const Prop& q : props_)
+                        if (q.clump_idx == ta.clump && q.rw_model >= 0) texanim_models_.push_back(q.rw_model);
+                    if (n == 0) texanim_models_.clear();
+                    texanim_mult_ = ta.mult;
+                    if (log) std::fprintf(log, "  TEXANIM course_id=%d clump=%d textures=%d models=%zu mult=%d\n",
+                                          course_id_, ta.clump, n, texanim_models_.size(), ta.mult);
+                }
+            }
             Track::Pontoon_Shutdown();
             if (course_id_ == 33 && Track::Pontoon_AnimOn()) {
                 const char* boat = nullptr;
@@ -4607,7 +4643,11 @@ void TrackRenderer::CopterTick(int units) {
     // [pontoon 2026-10-16] FUN_0040fc00 -> FUN_00426ab0 (0x0040fc94) runs the course's slot 1 at 0x00426ae3 before the
     // clump anims (FUN_00426700): Warzone's 0x00452b20 -> FUN_00451d80. Inactive with MASHED_NO_PONTOON_ANIM=1.
     if (course_id_ == 33) Track::Pontoon_Tick(units);
-    ClumpAnimTick(units);                               // [rhooks] FUN_0040fc00's 0x0040fc94 first
+    if (!texanim_models_.empty()) {                     // [hbforest] slot 1: FUN_004751d0 then FUN_00475060
+        LibRw::RaceSubmit_TexAnimTick(units * texanim_mult_);
+        for (int h : texanim_models_) LibRw::RaceSubmit_TexAnimApply(h);
+    }
+    ClumpAnimTick(units);                             // [rhooks] FUN_0040fc00's 0x0040fc94 first
     std::uint32_t kb = 0x39aec33eu;                     // _DAT_005cc948 (1/3000)
     float k3000;
     std::memcpy(&k3000, &kb, sizeof k3000);

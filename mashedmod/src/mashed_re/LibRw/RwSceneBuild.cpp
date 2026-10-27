@@ -37,6 +37,10 @@ rw::Texture* ResolveTexture(const char* name, const TextureSource& src) {
 
 }  // namespace
 
+void* ResolveTextureByName(const char* name, const TextureSource& tex) {
+    return ResolveTexture(name, tex);
+}
+
 // [rtex 2026-10-16] MatFX DUAL (U-9692). The original renders a material whose MatFX
 // effect is DUAL through FUN_005405c0 @ 0x005405c0 (dispatched by the MatFX atomic
 // callback FUN_00543500 @ 0x00543500 on effect 4): stage-1 dual texture,

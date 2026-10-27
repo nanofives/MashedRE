@@ -269,6 +269,10 @@ private:
     // posed every Render from the ported RpHAnim hierarchy (Track/WarzonePontoon.cpp). -1 = not split (knob off).
     int   pontoon_parts_[3] = { -1, -1, -1 };
     void UpdatePontoonParts();
+    // [hbforest] the texture-flip clump (kTexAnim in TrackRenderer.cpp): librw handles of the props
+    // built from that course clump, and the slot-1 units multiplier. Empty = no ring this course.
+    std::vector<int> texanim_models_;
+    int   texanim_mult_ = 1;
 
     // ---- F2 .ANM animated copters (COURSE.LUA General_Anim_Filename + SetCopter;
     // KTCSCRIPT.LUA KTC_NewCopter). The flight paths are the track's .ANM

@@ -297,6 +297,8 @@ void FillWalk(WorldWalk* w, const Track::World& world, const std::vector<void*>&
          (int)world.root);
 }
 
+void ClearTexAnim();   // [hbforest] defined with the texture-flip ring below
+
 }  // namespace
 
 bool RaceSubmit_Active() { return g_engine_up && g_scene_up; }
@@ -331,6 +333,7 @@ void RaceSubmit_Shutdown() {
     if (g_cam)   { g_cam->destroy();   g_cam   = nullptr; }
     for (rw::Clump* c : g_models) if (c) c->destroy();
     g_models.clear(); g_model_rw.clear(); g_insts.clear();
+    ClearTexAnim();
     if (g_objworld) { g_objworld->destroy(); g_objworld = nullptr; }
     if (g_world) { g_world->destroy(); g_world = nullptr; }
     g_amb = g_sun = nullptr;
@@ -476,9 +479,66 @@ void ApplyUvAnim() {
         }
 }
 
+// [hbforest] RaceSubmit_TexAnimCreate's ring: one reference held per texture, so swapping a
+// material's texture (Material::setTexture adds its own) never frees one still in the ring.
+std::vector<rw::Texture*> g_texanim;
+std::size_t g_texanim_cur = 0;   // the ring's +4 node (FUN_004751d0)
+int         g_texanim_acc = 0;   // the ring's +0xc accumulator
+
+void ClearTexAnim() {
+    for (rw::Texture* t : g_texanim) if (t) t->destroy();
+    g_texanim.clear();
+    g_texanim_cur = 0;
+    g_texanim_acc = 0;
+}
+
 }  // namespace
 
 void RaceSubmit_SetAnimTime(float t) { g_anim_t = t; }
+
+int RaceSubmit_TexAnimCreate(const Txd::Dictionary* dicts, std::size_t ndicts, const char* prefix) {
+    ClearTexAnim();
+    if (!g_engine_up || !prefix) return 0;
+    TextureSource ts{ dicts, (int)ndicts };
+    // FUN_00475090: index 0 is looked up first and its node's texture set only when found; the
+    // loop then runs from 1 and stops at the first name the dictionary does not hold. (A missing
+    // index 0 leaves the original a node with no texture assigned; it is skipped here.)
+    for (int i = 0;; ++i) {
+        char name[64];
+        std::snprintf(name, sizeof name, "%s%.2d", prefix, i);   // 0x005cead8
+        rw::Texture* t = static_cast<rw::Texture*>(ResolveTextureByName(name, ts));
+        if (!t) {
+            if (i == 0) continue;
+            break;
+        }
+        g_texanim.push_back(t);
+    }
+    RLog("[hbforest] texanim '%s': %d textures", prefix, (int)g_texanim.size());
+    return (int)g_texanim.size();
+}
+
+void RaceSubmit_TexAnimTick(int units) {
+    if (g_texanim.empty()) return;
+    g_texanim_acc += units;                       // 0x004751db
+    if (g_texanim_acc >= 300) {                   // cmp ecx,0x12c / jl 0x004751df
+        g_texanim_cur = (g_texanim_cur + 1) % g_texanim.size();
+        g_texanim_acc = 0;                        // 0x004751f4
+    }
+}
+
+void RaceSubmit_TexAnimApply(int handle) {
+    if (g_texanim.empty() || handle < 0 || (std::size_t)handle >= g_models.size()) return;
+    rw::Clump* c = g_models[(std::size_t)handle];
+    rw::Texture* t = g_texanim[g_texanim_cur];
+    if (!c || !t) return;                         // FUN_00475040: NULL texture -> no change
+    FORLIST(lnk, c->atomics) {
+        rw::Geometry* g = rw::Atomic::fromClump(lnk)->geometry;
+        if (!g) continue;
+        for (int32_t m = 0; m < g->matList.numMaterials; ++m)
+            if (rw::Material* mat = g->matList.materials[m])
+                if (mat->texture != t) mat->setTexture(t);
+    }
+}
 
 void RaceSubmit_BeginTrackLoad() {
     if (!g_engine_up) return;
@@ -489,6 +549,7 @@ void RaceSubmit_BeginTrackLoad() {
     g_sky.clear();
     g_uvanim.clear();
     g_uvanim_count = 0;
+    ClearTexAnim();
     for (ModelEnv& e : g_model_env) if (e.frame) e.frame->destroy();
     g_model_env.clear();
     g_model_parts.clear();
