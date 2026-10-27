@@ -7,11 +7,11 @@
 // intermediate below lives on the x87 stack and follows the caller's precision control
 // (CW 0x007f = PC_24 in a race), exactly as the original's does.
 //
-// DEFAULT OFF. Collision/RwpSolverLeaves1.cpp keeps its SSE2 decomp-order bodies as the
-// default; its ShadowAB wrappers dispatch here only under MASHED_LEAVES1_X87=1. Flipping that
-// default is a decision row, not this file's call. Until then this TU is a knob-gated second
-// body for both RVAs. scripts/lint_rva_bodies.py does not count it (no RVA-header comment
-// anchors these definitions); the flip must delete the SSE2 bodies so one body remains.
+// DEFAULT ON since D4-WSB-NARROW-FLIP (L-37, 2026-10-27). Collision/RwpSolverLeaves1.cpp's
+// ShadowAB wrappers dispatch here unless MASHED_NO_LEAVES1_X87=1, which selects its SSE2
+// decomp-order bodies (kept as the opt-out, so this TU stays a knob-gated second body for
+// both RVAs). scripts/lint_rva_bodies.py does not count it (no RVA-header comment
+// anchors these definitions). Deleting the SSE2 bodies (one body left) waits on retiring the opt-out.
 //
 // Why the decomp order is wrong (both bodies): x87 FADD is order-sensitive, and the decomp
 // prints sums in an order the code does not execute. The listing addresses below are the
