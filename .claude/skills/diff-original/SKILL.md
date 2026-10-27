@@ -26,6 +26,22 @@ The Frida script lives in `re/frida/diff_function.js` (template). When invoked, 
 3. Runs **two** Frida sessions, one against original, one against modded build, with the same scripted inputs (lap/track/menu navigation).
 4. Diffs the resulting CSVs and reports first divergence with line numbers.
 
+## Batches (several registry hooks at once)
+
+`py -3.12 re/frida/run_diff_parallel.py <hook> [<hook> ...]` runs the **warm pool** by default
+(`run_diff_warm.py`, since 2026-10-27): 4 MASHED instances boot once and stream every hook's
+force-call diff, instead of one boot per hook. It writes the same `log/diff_<hook>.csv` and uses
+`run_diff.py`'s own verdict code (arg_type pre-flight, degenerate guard, return codes). It routes
+to the cold `run_diff.py` path by itself, per hook, for anything warm cannot reproduce:
+`scenario` hooks, `call_log` hooks (drawstream CSV), `dialog` hooks, registry `cold_only: '<why>'`
+or a `COLD_ONLY_ARG_TYPES` handler (process-wide state), and every hook when `--self-baseline`,
+`--negctl` or `--x87-cw` is passed. Every warm non-GREEN is re-run cold and the cold verdict is
+reported. `--cold` restores one fresh spawn per hook. Hold the machine game lock and a test slot
+around the batch (`test-slot bash -c 'py -3.12 re/orchestrator/mashed_lock.py run --label X -- py -3.12 re/frida/run_diff_parallel.py ...'`).
+
+A hook whose fixture leaves process-wide state behind (a later hook on the same instance would
+read it) gets `cold_only: '<reason>'` in `hooks_registry.py`; do not write a new runner for it.
+
 ## Standard scenarios
 
 Pre-canned input scripts (to be added under `re/frida/scenarios/`):

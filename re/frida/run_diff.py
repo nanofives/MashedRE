@@ -611,6 +611,68 @@ def _write_drawstream(csv_out, results):
         print(f"      reimpl: {b or '(none)'}")
 
 
+def argtype_preflight(hook, name):
+    """Pre-flight (2026-06-12): a registry arg_type with no handler in
+    diff_template.js silently falls through to a default path that can pass
+    trivially (feedback_worker_invented_arg_types; 4 such hooks found in the
+    2026-06-12 degenerate-GREEN audit). Returns None when the arg_type has a
+    handler, else the FATAL message. Shared with run_diff_warm.py."""
+    _at = hook.get('arg_type')
+    if _at and _at not in ('none', 'void') and f"'{_at}'" not in AGENT_JS.read_text(encoding='utf-8'):
+        return (f"FATAL: arg_type {_at!r} (hook {name!r}) has no handler in "
+                f"{AGENT_JS.name} — the diff would fall through to a default "
+                f"path and could pass without testing anything. Add the "
+                f"handler or fix the registry entry. Override (NOT for "
+                f"promotions): --allow-unknown-argtype.")
+    return None
+
+
+def write_results_csv(csv_out, hook, results):
+    """Write the per-hook diff CSV (the contract frida-sweep / re-classify read). Returns the mismatch count."""
+    ret_kind = hook['signature']['ret']  # 'float', 'uint32', etc.
+    mismatches = 0
+    with csv_out.open('w', newline='', encoding='utf-8') as fh:
+        w = csv.writer(fh)
+        w.writerow(['idx', 'input',
+                    'original', 'original_bits',
+                    'reimpl',   'reimpl_bits',
+                    'match', 'err_original', 'err_reimpl'])
+        for r in results:
+            ob, rb = value_bits(r['original'], ret_kind), value_bits(r['reimpl'], ret_kind)
+            ob_s = f"0x{ob:08x}" if ob is not None else ''
+            rb_s = f"0x{rb:08x}" if rb is not None else ''
+            inp = r['input']
+            inp_repr = json.dumps(inp) if isinstance(inp, (list, dict)) else inp
+            w.writerow([r['idx'], inp_repr,
+                        r['original'], ob_s,
+                        r['reimpl'],   rb_s,
+                        r['match'],
+                        r.get('err_original') or '',
+                        r.get('err_reimpl') or ''])
+            if not r['match']:
+                mismatches += 1
+    return mismatches
+
+
+def degenerate_check(hook, results, allow_degenerate=False):
+    """Non-degeneracy assertion (2026-06-12, batch_ah post-mortem): a clean
+    match over observations that are ALL trivial on BOTH sides has no
+    discriminating power — typical when live-state inputs are still zero
+    at attach time. Such a run is NOT C3 evidence and must not say GREEN.
+    Exception: SEEDED arg_types pre-fill the observed region with a
+    non-zero sentinel/input, so their all-zero result proves the target
+    actively wrote — that GREEN stands.
+    Returns (all_trivial, why_allowed): degenerate when all_trivial and why_allowed is None."""
+    all_trivial = all(is_trivial(r['original']) and is_trivial(r['reimpl']) for r in results)
+    if hook.get('arg_type') in SEEDED_ARG_TYPES:
+        why = 'seeded arg_type ' + repr(hook.get('arg_type'))
+    elif hook.get('degenerate_ok') or allow_degenerate:
+        why = 'degenerate_ok/--allow-degenerate override'
+    else:
+        why = None
+    return all_trivial, why
+
+
 def main():
     if len(sys.argv) < 2:
         sys.exit(f"usage: {sys.argv[0]} <hook_name> [--allow-degenerate]\n"
@@ -662,22 +724,14 @@ def main():
                  f"Run `mashedmod\\build_d3d9_shim.bat`, then retry. "
                  f"Refusing to spawn MASHED without the shim — it would go fullscreen.")
 
-    # Pre-flight (2026-06-12): a registry arg_type with no handler in
-    # diff_template.js silently falls through to a default path that can pass
-    # trivially (feedback_worker_invented_arg_types; 4 such hooks found in the
-    # 2026-06-12 degenerate-GREEN audit). Refuse to run an undefined arg_type.
-    _at = hook.get('arg_type')
-    if _at and _at not in ('none', 'void') and f"'{_at}'" not in AGENT_JS.read_text(encoding='utf-8'):
+    _fatal = argtype_preflight(hook, name)
+    if _fatal:
         if '--allow-unknown-argtype' in sys.argv[2:]:
-            print(f"WARNING: arg_type {_at!r} has no handler in {AGENT_JS.name} "
+            print(f"WARNING: arg_type {hook.get('arg_type')!r} has no handler in {AGENT_JS.name} "
                   f"— continuing on --allow-unknown-argtype; result is NOT "
                   f"promotion evidence.")
         else:
-            sys.exit(f"FATAL: arg_type {_at!r} (hook {name!r}) has no handler in "
-                     f"{AGENT_JS.name} — the diff would fall through to a default "
-                     f"path and could pass without testing anything. Add the "
-                     f"handler or fix the registry entry. Override (NOT for "
-                     f"promotions): --allow-unknown-argtype.")
+            sys.exit(_fatal)
 
     print(f"hook: {name}  rva={config['target_rva']}  export={config['export']}")
     print(f"spawning {MASHED_EXE} via subprocess (hook BYPASSED)")
@@ -759,28 +813,7 @@ def main():
         print("\nTIMEOUT.")
         return 3
 
-    ret_kind = hook['signature']['ret']  # 'float', 'uint32', etc.
-    mismatches = 0
-    with csv_out.open('w', newline='', encoding='utf-8') as fh:
-        w = csv.writer(fh)
-        w.writerow(['idx', 'input',
-                    'original', 'original_bits',
-                    'reimpl',   'reimpl_bits',
-                    'match', 'err_original', 'err_reimpl'])
-        for r in results_received:
-            ob, rb = value_bits(r['original'], ret_kind), value_bits(r['reimpl'], ret_kind)
-            ob_s = f"0x{ob:08x}" if ob is not None else ''
-            rb_s = f"0x{rb:08x}" if rb is not None else ''
-            inp = r['input']
-            inp_repr = json.dumps(inp) if isinstance(inp, (list, dict)) else inp
-            w.writerow([r['idx'], inp_repr,
-                        r['original'], ob_s,
-                        r['reimpl'],   rb_s,
-                        r['match'],
-                        r.get('err_original') or '',
-                        r.get('err_reimpl') or ''])
-            if not r['match']:
-                mismatches += 1
+    mismatches = write_results_csv(csv_out, hook, results_received)
 
     print(f"\nResults written to {csv_out}")
     if hook.get('call_log'):
@@ -788,19 +821,8 @@ def main():
     print(f"  total cases: {len(results_received)}")
     print(f"  mismatches:  {mismatches}")
     if mismatches == 0:
-        # Non-degeneracy assertion (2026-06-12, batch_ah post-mortem): a clean
-        # match over observations that are ALL trivial on BOTH sides has no
-        # discriminating power — typical when live-state inputs are still zero
-        # at attach time. Such a run is NOT C3 evidence and must not say GREEN.
-        # Exception: SEEDED arg_types pre-fill the observed region with a
-        # non-zero sentinel/input, so their all-zero result proves the target
-        # actively wrote — that GREEN stands.
-        all_trivial = all(is_trivial(r['original']) and is_trivial(r['reimpl'])
-                          for r in results_received)
-        allow = (hook.get('arg_type') in SEEDED_ARG_TYPES
-                 or hook.get('degenerate_ok')
-                 or '--allow-degenerate' in sys.argv[2:])
-        if all_trivial and not allow:
+        all_trivial, why = degenerate_check(hook, results_received, '--allow-degenerate' in sys.argv[2:])
+        if all_trivial and why is None:
             print("\nINCONCLUSIVE-DEGENERATE: 0 mismatches, but every observed value")
             print("on both sides is trivial (zero/empty/all-zero fingerprint). The")
             print("diff had no discriminating power. Re-run at a state where the")
@@ -810,9 +832,6 @@ def main():
             print("hooks_registry.py.")
             return 5
         if all_trivial:
-            why = ('seeded arg_type ' + repr(hook.get('arg_type'))
-                   if hook.get('arg_type') in SEEDED_ARG_TYPES
-                   else 'degenerate_ok/--allow-degenerate override')
             print(f"\nNOTE: all observations trivial; GREEN allowed by {why}.")
         print("\nGREEN: every test value produced bit-identical output.")
         return 0

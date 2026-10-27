@@ -179,6 +179,11 @@ py -3.12 re\frida\auto_count_at_menu.py
 # Frida — A/B path1 diff for one hook (driven by hooks_registry.py).
 py -3.12 re\frida\run_diff.py <hook_name>
 
+# Frida — the same diff for a batch. Warm pool by default (4 boots for the whole batch; scenario /
+# call_log / dialog / cold_only hooks and warm non-GREENs go through run_diff.py by themselves).
+# --cold = one fresh spawn per hook. Detail: diff-original skill, "Batches".
+py -3.12 re\frida\run_diff_parallel.py <hook> [<hook> ...] [--cold]
+
 # Frida — path2 installer verification for one hook.
 py -3.12 re\frida\run_verify_hook.py <hook_name>
 

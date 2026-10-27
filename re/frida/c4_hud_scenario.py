@@ -36,6 +36,7 @@
 #
 # Usage: py -3.12 re/frida/c4_hud_scenario.py --row 403160|41db80 --arm off|on|stock|late|ctl
 #        [--ctl-asi PATH] [--out DIR] [--tag NAME] [--secs N]
+#        [--sat N] [--full-window]
 import json, os, sys, time, hashlib
 from pathlib import Path
 import frida
@@ -350,7 +351,12 @@ def main():
     ctl_asi = opt("--ctl-asi", str(ORIG / "mashed_re_dev.asi") if arm == "late" else None)
     out = Path(opt("--out", str(ROOT / "log" / "c4_hud"))); out.mkdir(parents=True, exist_ok=True)
     tag = opt("--tag", f"{row}_{arm}")
-    secs = int(opt("--secs", "60"))
+    secs = int(opt("--secs", "60"))   # upper bound on the observation window
+    # Saturation early-exit: once calls have started, stop when the observed key set (nkeys only
+    # grows) has not changed for --sat seconds. --sat 0 or --full-window keeps the whole `secs`
+    # window, for rows that need a lap/round transition to show new keys (40d440 always does).
+    sat = float(opt("--sat", "10"))
+    full_window = "--full-window" in av or row == "40d440" or sat <= 0
     pulse = "--pulse" in av   # cup route: the qb in-race recipe (control 4, 200 ms, 1 Hz while 0x00771968 == 3)
 
     env = dict(os.environ)
@@ -440,7 +446,7 @@ def main():
             log(f"  launched: {X.state()}")
         # Wait for the body's first game call, then observe `secs` more seconds (race rows pulse
         # control 4 at 1 Hz only while 0x00771968 == 3, the scenario_launch in-race recipe).
-        t0 = time.time(); first = None; tp = 0; tl = 0; lastn = 0; t_last_change = time.time()
+        t0 = time.time(); first = None; tp = 0; tl = 0; lastn = 0; t_last_change = time.time(); lastk = -1; t_key_change = time.time()
         limit = 150 if route in ("attract", "cup") else 120
         quiet = 15 if row != "40d440" else 1e9   # 40d440 runs once per course load: observe `secs` regardless
         while nav.alive():
@@ -449,11 +455,14 @@ def main():
             now = time.time()
             if (route == "qb" or pulse) and s.get("sph") == 3 and now - tp > 1.0: X.press(4, 200); tp = now
             if s["calls"] != lastn: lastn = s["calls"]; t_last_change = now
+            if s.get("nkeys") != lastk: lastk = s.get("nkeys"); t_key_change = now
             if first is None and s["calls"] > 0:
                 first = now; rec["first_call_state"] = s; log(f"  >>> first game call: {s}")
             if now - tl > 5: tl = now; rec["samples"].append(s); log(f"   t+{int(now-t0)}s {s}")
             if first is None and now - t0 > limit: break
             if first is not None and now - first > secs: break
+            if first is not None and not full_window and now - max(first, t_key_change) > sat:
+                log(f"   key set saturated ({lastk} keys, unchanged {sat:g} s)"); rec["saturated_at"] = round(now - first, 1); break
             if first is not None and now - t_last_change > quiet: log(f"   no new calls for {quiet} s"); break
             time.sleep(0.25)
         if first is None:
