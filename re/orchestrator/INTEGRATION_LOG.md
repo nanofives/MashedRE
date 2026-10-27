@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-10-27 16:40 HB-ARCTIC-FOLDRM (orch/HB-ARCTIC-FOLDRM): G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/e85ea6fb/53778664. Run data D:\MashedWT\mtrain_data\20261027_162801
 - 2026-10-27 15:55 D4-WSB-L38-DEMOTE (orch/D4-WSB-L38-DEMOTE): G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/e85ea6fb/53778664. Run data D:\MashedWT\mtrain_data\20261027_154708
 - 2026-10-27 14:58 D4-WSB-BVH-FU (orch/D4-WSB-BVH-FU): G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/e85ea6fb/53778664. Run data D:\MashedWT\mtrain_data\20261027_144655
 - 2026-10-27 14:22 HB-5 (orch/HB-5): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261027_142159
