@@ -1,0 +1,180 @@
+== 0x005646c0 param_3 (slot 0xc)
+  005647e3 d=0x2ae8 mov eax, dword ptr [esp + 0x2af4]
+  005647ea d=0x2ae8 xor ecx, ecx
+  005647ec d=0x2ae8 and eax, 0xffff
+  005647f1 d=0x2ae8 mov ebp, 1
+walked 390 insns; rets [('0x564c78', '0x0')]; esp conflicts 0
+005647e3 d=0x2ae8 slot+0xc sz=4 mov eax, dword ptr [esp + 0x2af4]   next: xor ecx, ecx
+00564830 d=0x2aec slot+0xc sz=4 mov ecx, dword ptr [esp + 0x2af8]   next: mov edx, dword ptr [ebx + 0xc010]
+00564aab d=0x2ae8 slot+0xc sz=4 mov eax, dword ptr [esp + 0x2af4]   next: xor ecx, ecx
+00564af8 d=0x2aec slot+0xc sz=4 mov ecx, dword ptr [esp + 0x2af8]   next: mov edx, dword ptr [ebx + 0xc010]
+  00564830 d=0x2aec mov ecx, dword ptr [esp + 0x2af8]
+  00564837 d=0x2aec mov edx, dword ptr [ebx + 0xc010]
+  0056483d d=0x2aec and ecx, 0xffff
+  00564843 d=0x2aec push ecx
+walked 390 insns; rets [('0x564c78', '0x0')]; esp conflicts 0
+  00564aab d=0x2ae8 mov eax, dword ptr [esp + 0x2af4]
+  00564ab2 d=0x2ae8 xor ecx, ecx
+  00564ab4 d=0x2ae8 and eax, 0xffff
+  00564ab9 d=0x2ae8 mov ebp, 1
+walked 390 insns; rets [('0x564c78', '0x0')]; esp conflicts 0
+  00564af8 d=0x2aec mov ecx, dword ptr [esp + 0x2af8]
+  00564aff d=0x2aec mov edx, dword ptr [ebx + 0xc010]
+  00564b05 d=0x2aec and ecx, 0xffff
+  00564b0b d=0x2aec push ecx
+walked 390 insns; rets [('0x564c78', '0x0')]; esp conflicts 0
+== 0x00564c80 param_2 (slot 0x8)
+  00564c83 d=0x4c mov edx, dword ptr [esp + 0x54]
+  00564c87 d=0x4c mov ecx, dword ptr [esp + 0x58]
+  00564c8b d=0x4c push ebx
+  00564c8c d=0x50 mov eax, edx
+  00564c8e d=0x50 fld dword ptr [ecx + 0x10]
+  00564c91 d=0x50 push ebp
+  00564c92 d=0x54 mov ebp, dword ptr [esp + 0x58]
+  00564c96 d=0x54 and eax, 0xffff
+  00564c9b d=0x54 push esi
+  00564c9c d=0x58 fsub dword ptr [ebp + 0xc014]
+  00564ca2 d=0x58 mov dword ptr [esp + 0xc], eax
+  00564ca6 d=0x58 push edi
+  00564ca7 d=0x5c shl eax, 5
+  00564caa d=0x5c add eax, ebp
+  00564cac d=0x5c push edx
+  00564cad d=0x60 push eax
+  00564cae d=0x64 push ebp
+  00564caf d=0x68 fstp dword ptr [eax + 0x10]
+  00564cb2 d=0x68 fld dword ptr [ecx + 0x14]
+  00564cb5 d=0x68 fsub dword ptr [ebp + 0xc014]
+  00564cbb d=0x68 mov dword ptr [esp + 0x6c], eax
+  00564cbf d=0x68 fstp dword ptr [eax + 0x14]
+  00564cc2 d=0x68 fld dword ptr [ecx + 0x18]
+  00564cc5 d=0x68 fsub dword ptr [ebp + 0xc014]
+  00564ccb d=0x68 fstp dword ptr [eax + 0x18]
+  00564cce d=0x68 fld dword ptr [ebp + 0xc014]
+  00564cd4 d=0x68 fadd dword ptr [ecx]
+  00564cd6 d=0x68 fstp dword ptr [eax]
+  00564cd8 d=0x68 fld dword ptr [ecx + 4]
+  00564cdb d=0x68 fadd dword ptr [ebp + 0xc014]
+  00564ce1 d=0x68 fstp dword ptr [eax + 4]
+  00564ce4 d=0x68 fld dword ptr [ecx + 8]
+  00564ce7 d=0x68 fadd dword ptr [ebp + 0xc014]
+  00564ced d=0x68 fstp dword ptr [eax + 8]
+  00564cf0 d=0x68 call 0x5646c0
+  00564cf5 d=0x68 lea esi, [ebp + 0x7fe0]
+  00564cfb d=0x68 mov ecx, 8
+  00564d00 d=0x68 lea edi, [esp + 0x28]
+  00564d04 d=0x68 add esp, 0xc
+  00564d07 d=0x5c rep movsd dword ptr es:[edi], dword ptr [esi]
+  00564d09 d=0x5c mov ecx, dword ptr [esp + 0x60]
+  00564d0d d=0x5c xor ebx, ebx
+  00564d0f d=0x5c mov edx, 0xffff
+walked 317 insns; rets [('0x564e84', '0x0'), ('0x56511a', '0x0')]; esp conflicts 0
+00564c83 d=0x4c slot+0x8 sz=4 mov edx, dword ptr [esp + 0x54]   next: mov ecx, dword ptr [esp + 0x58]
+00564e03 d=0x5c slot+0x8 sz=4 mov esi, dword ptr [esp + 0x64]   next: and eax, 0xffff
+00564eae d=0x5c slot+0x8 sz=2 mov cx, word ptr [esp + 0x64]   next: mov word ptr [ebp + edi*4 + 0x881e], cx
+00564ed9 d=0x5c slot+0x8 sz=4 mov dword ptr [esp + 0x64], ecx   next: mov cx, word ptr [ecx]
+00564eee d=0x5c slot+0x8 sz=4 mov ecx, dword ptr [esp + 0x64]   next: mov cx, word ptr [ecx]
+00564efd d=0x5c slot+0x8 sz=4 mov eax, dword ptr [esp + 0x64]   next: mov word ptr [eax], cx
+00564f2a d=0x5c slot+0x8 sz=4 mov ecx, dword ptr [esp + 0x64]   next: or byte ptr [ebp + edi*4 + 0x881f], 0x80
+00564fad d=0x5c slot+0x8 sz=4 mov edi, dword ptr [esp + 0x64]   next: mov word ptr [edi], bx
+00564ffa d=0x5c slot+0x8 sz=4 mov dword ptr [esp + 0x64], eax   next: jmp 0x565004
+00565091 d=0x78 slot+0x8 sz=4 mov eax, dword ptr [esp + 0x80]   next: mov ecx, dword ptr [esp + 0x2c]
+005650e8 d=0x68 slot+0x8 sz=4 mov eax, dword ptr [esp + 0x70]   next: add esp, 0xc
+  00564dfc d=0x5c mov ax, word ptr [ebp + 0x981a]
+  00564e03 d=0x5c mov esi, dword ptr [esp + 0x64]
+  00564e07 d=0x5c and eax, 0xffff
+  00564e0c d=0x5c and edx, 0x3f
+  00564e0f d=0x5c pop edi
+  00564e10 d=0x58 mov cx, word ptr [ebp + eax*4 + 0x8820]
+  00564e18 d=0x58 mov word ptr [ebp + 0x981a], cx
+  00564e1f d=0x58 mov cx, word ptr [ebp + eax*4 + 0x881e]
+  00564e27 d=0x58 and ecx, 0xfc00
+  00564e2d d=0x58 or ecx, esi
+  00564e2f d=0x58 mov word ptr [ebp + eax*4 + 0x881e], cx
+  00564e37 d=0x58 mov ecx, ebx
+  00564e39 d=0x58 and ecx, 0xffff
+  00564e3f d=0x58 add ecx, 0x79b
+  00564e45 d=0x58 shl ebx, 6
+  00564e48 d=0x58 lea ecx, [ecx + ecx*4]
+  00564e4b d=0x58 mov si, word ptr [ebp + ecx*4]
+  00564e50 d=0x58 lea ecx, [ebp + ecx*4]
+  00564e54 d=0x58 and esi, 0x3ff
+  00564e5a d=0x58 mov word ptr [ebp + eax*4 + 0x8820], si
+  00564e62 d=0x58 mov esi, dword ptr [ecx]
+  00564e64 d=0x58 and esi, 0xfffffc00
+  00564e6a d=0x58 or esi, eax
+  00564e6c d=0x58 mov eax, dword ptr [esp + 0xc]
+  00564e70 d=0x58 or edx, ebx
+  00564e72 d=0x58 mov dword ptr [ecx], esi
+  00564e74 d=0x58 mov word ptr [ebp + eax*2 + 0x8020], dx
+  00564e7c d=0x58 mov eax, ebp
+  00564e7e d=0x58 pop esi
+  00564e7f d=0x54 pop ebp
+  00564e80 d=0x50 pop ebx
+  00564e81 d=0x4c add esp, 0x4c
+  00564e84 d=0x0 ret 
+  00564e85 d=0x5c mov ax, word ptr [ebp + 0x981a]
+walked 317 insns; rets [('0x564e84', '0x0'), ('0x56511a', '0x0')]; esp conflicts 0
+  00564ea7 d=0x5c mov word ptr [ebp + 0x981a], cx
+  00564eae d=0x5c mov cx, word ptr [esp + 0x64]
+  00564eb3 d=0x5c mov word ptr [ebp + edi*4 + 0x881e], cx
+  00564ebb d=0x5c mov ecx, ebx
+  00564ebd d=0x5c and ecx, 0xffff
+  00564ec3 d=0x5c mov dword ptr [esp + 0x14], ecx
+  00564ec7 d=0x5c lea ecx, [ecx + ecx*4]
+  00564eca d=0x5c shl ebx, 6
+  00564ecd d=0x5c lea ecx, [esi + ecx*2]
+  00564ed0 d=0x5c or edx, ebx
+  00564ed2 d=0x5c lea ecx, [ebp + ecx*2 + 0x9820]
+  00564ed9 d=0x5c mov dword ptr [esp + 0x64], ecx
+  00564edd d=0x5c mov cx, word ptr [ecx]
+walked 317 insns; rets [('0x564e84', '0x0'), ('0x56511a', '0x0')]; esp conflicts 0
+== 0x0055aef3 caller (EAX of 0x00565260 -> param_2 of 0x00564c80)
+0055aef3  call 0x565260
+0055aef8  add esp, 8
+0055aefb  test ebx, ebx
+0055aefd  je 0x55af2d
+0055aeff  mov ax, word ptr [edi + 0x20]
+0055af03  mov ecx, dword ptr [esi]
+0055af05  push ebx
+0055af06  push eax
+0055af07  push ecx
+0055af08  call 0x564c80
+0055af0d  mov eax, dword ptr [esi + 0x68]
+0055af10  xor ecx, ecx
+0055af12  mov cx, word ptr [edi + 0x20]
+0055af16  add esp, 0xc
+0055af19  mov edx, ecx
+0055af1b  and ecx, 0x1f
+0055af1e  shr edx, 5
+0055af21  lea eax, [eax + edx*4]
+0055af24  mov edx, 1
+0055af29  shl edx, cl
+0055af2b  or dword ptr [eax], edx
+0055af2d  mov eax, esi
+0055af2f  pop edi
+== 0x00565200 stores
+00565200  mov ecx, dword ptr [esp + 8]
+00565204  mov eax, dword ptr [esp + 4]
+00565208  and ecx, 0xffff
+0056520e  mov edx, dword ptr [esp + 0xc]
+00565212  shl ecx, 5
+00565215  add ecx, eax
+00565217  fld dword ptr [ecx + 0x10]
+0056521a  fadd dword ptr [eax + 0xc014]
+00565220  fstp dword ptr [edx + 0x10]
+00565223  fld dword ptr [ecx + 0x14]
+00565226  fadd dword ptr [eax + 0xc014]
+0056522c  fstp dword ptr [edx + 0x14]
+0056522f  fld dword ptr [ecx + 0x18]
+00565232  fadd dword ptr [eax + 0xc014]
+00565238  fstp dword ptr [edx + 0x18]
+0056523b  fld dword ptr [ecx]
+0056523d  fsub dword ptr [eax + 0xc014]
+00565243  fstp dword ptr [edx]
+00565245  fld dword ptr [ecx + 4]
+00565248  fsub dword ptr [eax + 0xc014]
+0056524e  fstp dword ptr [edx + 4]
+00565251  fld dword ptr [ecx + 8]
+00565254  fsub dword ptr [eax + 0xc014]
+0056525a  fstp dword ptr [edx + 8]
+0056525d  ret 
