@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-10-27 06:41 D4-WSB-C4-BROAD (orch/D4-WSB-C4-SCOPE), D4-FX-SLOT2 (orch/D4-FX-SLOT2): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261027_064043
 - 2026-10-27 02:43 D4-FU-SPANINIT-WRITERS (orch/D4-FU-SPANINIT-WRITERS): G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/e85ea6fb/53778664. Run data D:\MashedWT\mtrain_data\20261027_023130
 - 2026-10-27 01:59 D4-FU-24EFC-WRITER (orch/D4-FU-24EFC-WRITER), D4-FU-MENUANIM (orch/D4-FU-MENUANIM), D4-FX-BRAKEBYTE-WRITER (orch/D4-FX-BRAKEBYTE-WRITER): G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/e85ea6fb/53778664. Run data D:\MashedWT\mtrain_data\20261027_014351
 - 2026-10-27 01:17 D4-FX-FLIP-DEADCOAST (orch/D4-FX-FLIP-DEADCOAST): G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/e85ea6fb/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261027_005104
