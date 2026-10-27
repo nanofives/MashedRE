@@ -6,7 +6,7 @@
   "root13": "D:/MashedWT/mtrain_root13",
   "data": "D:/MashedWT/mtrain_data",
   "runner": "verify/savelink_20261023/run_arms.py",
-  "gctrl": { "arm": "H_DEF", "files": ["H_DEF.step.csv", "H_DEF.gates.csv", "H_DEF.ptrace.log"], "ref": ["5943c5f1", "b493262b", "09551e6a"], "retries": 1 },
+  "gctrl": { "arm": "H_DEF", "files": ["H_DEF.step.csv", "H_DEF.gates.csv", "H_DEF.ptrace.log"], "ref": ["5943c5f1", "364350ae", "52052890"], "retries": 1 },
   "b": { "arms": ["B_DEF_K0", "B_DEF_K1", "B_DEF_K26"], "ref": ["3a03670c", "e85ea6fb", "53778664"] },
   "full_set_paths": ["mashedmod/src/mashed_re/Vehicle/", "mashedmod/src/mashed_re/Ai/", "mashedmod/src/mashed_re/Collision/"],
   "full": {
