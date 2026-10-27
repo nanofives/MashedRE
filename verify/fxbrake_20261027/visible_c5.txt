@@ -1,0 +1,48 @@
+D:/MashedWT/D4-FX-INPUTS_data/arms5/H_Z0.step.csv
+  v=1 calls 220 | replay calls 0 | c5>0x40 step 47 (21.4%) visible 47 (21.4%) | onsets (call idx, frame, timer): []
+  v=2 calls 220 | replay calls 73 | c5>0x40 step 41 (18.6%) visible 9 (4.1%) | onsets (call idx, frame, timer): [(23, 23, 1390), (60, 60, 1390), (205, 205, 1390)]
+  v=3 calls 220 | replay calls 15 | c5>0x40 step 66 (30.0%) visible 72 (32.7%) | onsets (call idx, frame, timer): [(205, 205, 1390)]
+verify/d3_bscore_20261009/o_breg_r1.msd.aistep.csv
+  v=1 calls 220 | replay calls 0 | c5>0x40 step 47 (21.4%) visible 47 (21.4%) | onsets (call idx, frame, timer): []
+  v=2 calls 220 | replay calls 73 | c5>0x40 step 41 (18.6%) visible 9 (4.1%) | onsets (call idx, frame, timer): [(23, 901, 1440), (60, 938, 1440), (205, 1083, 1440)]
+  v=3 calls 220 | replay calls 15 | c5>0x40 step 66 (30.0%) visible 72 (32.7%) | onsets (call idx, frame, timer): [(205, 1083, 1440)]
+verify/d3_bscore_20261009/o_breg_r2.msd.aistep.csv
+  v=1 calls 196 | replay calls 0 | c5>0x40 step 17 (8.7%) visible 17 (8.7%) | onsets (call idx, frame, timer): []
+  v=2 calls 196 | replay calls 58 | c5>0x40 step 24 (12.2%) visible 6 (3.1%) | onsets (call idx, frame, timer): [(23, 843, 1440), (60, 880, 1440)]
+  v=3 calls 220 | replay calls 0 | c5>0x40 step 29 (13.2%) visible 29 (13.2%) | onsets (call idx, frame, timer): []
+verify/d3_bscore_20261009/o_breg_r3.msd.aistep.csv
+  v=1 calls 220 | replay calls 0 | c5>0x40 step 47 (21.4%) visible 47 (21.4%) | onsets (call idx, frame, timer): []
+  v=2 calls 220 | replay calls 73 | c5>0x40 step 41 (18.6%) visible 9 (4.1%) | onsets (call idx, frame, timer): [(23, 901, 1440), (60, 938, 1440), (205, 1083, 1440)]
+  v=3 calls 220 | replay calls 15 | c5>0x40 step 66 (30.0%) visible 72 (32.7%) | onsets (call idx, frame, timer): [(205, 1083, 1440)]
+verify/d3_bscore_20261009/o_breg_r4.msd.aistep.csv
+  v=1 calls 220 | replay calls 0 | c5>0x40 step 47 (21.4%) visible 47 (21.4%) | onsets (call idx, frame, timer): []
+  v=2 calls 220 | replay calls 73 | c5>0x40 step 41 (18.6%) visible 9 (4.1%) | onsets (call idx, frame, timer): [(23, 866, 1440), (60, 903, 1440), (205, 1048, 1440)]
+  v=3 calls 220 | replay calls 15 | c5>0x40 step 66 (30.0%) visible 72 (32.7%) | onsets (call idx, frame, timer): [(205, 1048, 1440)]
+verify/d3_bscore_20261009/o_breg_r5.msd.aistep.csv
+  v=1 calls 220 | replay calls 0 | c5>0x40 step 47 (21.4%) visible 47 (21.4%) | onsets (call idx, frame, timer): []
+  v=2 calls 220 | replay calls 73 | c5>0x40 step 41 (18.6%) visible 9 (4.1%) | onsets (call idx, frame, timer): [(23, 916, 1440), (60, 953, 1440), (205, 1098, 1440)]
+  v=3 calls 220 | replay calls 15 | c5>0x40 step 66 (30.0%) visible 72 (32.7%) | onsets (call idx, frame, timer): [(205, 1098, 1440)]
+verify/d3_bscore_20261009/o_breg_r7.msd.aistep.csv
+  v=1 calls 220 | replay calls 0 | c5>0x40 step 47 (21.4%) visible 47 (21.4%) | onsets (call idx, frame, timer): []
+  v=2 calls 220 | replay calls 73 | c5>0x40 step 41 (18.6%) visible 9 (4.1%) | onsets (call idx, frame, timer): [(23, 870, 1440), (60, 907, 1440), (205, 1052, 1440)]
+  v=3 calls 220 | replay calls 15 | c5>0x40 step 66 (30.0%) visible 72 (32.7%) | onsets (call idx, frame, timer): [(205, 1052, 1440)]
+verify/d3_bscore_20261009/o_breg_r8.msd.aistep.csv
+  v=1 calls 220 | replay calls 0 | c5>0x40 step 47 (21.4%) visible 47 (21.4%) | onsets (call idx, frame, timer): []
+  v=2 calls 220 | replay calls 73 | c5>0x40 step 41 (18.6%) visible 9 (4.1%) | onsets (call idx, frame, timer): [(23, 803, 1440), (60, 840, 1440), (205, 985, 1440)]
+  v=3 calls 220 | replay calls 15 | c5>0x40 step 66 (30.0%) visible 72 (32.7%) | onsets (call idx, frame, timer): [(205, 985, 1440)]
+verify/d3_car2pickup_20261013/o_p0a.msd.aistep.csv
+  v=1 calls 220 | replay calls 0 | c5>0x40 step 47 (21.4%) visible 47 (21.4%) | onsets (call idx, frame, timer): []
+  v=2 calls 220 | replay calls 73 | c5>0x40 step 41 (18.6%) visible 9 (4.1%) | onsets (call idx, frame, timer): [(23, 889, 1440), (60, 926, 1440), (205, 1071, 1440)]
+  v=3 calls 220 | replay calls 15 | c5>0x40 step 66 (30.0%) visible 72 (32.7%) | onsets (call idx, frame, timer): [(205, 1071, 1440)]
+verify/d3_car2pickup_20261013/o_p2a.msd.aistep.csv
+  v=1 calls 220 | replay calls 29 | c5>0x40 step 55 (25.0%) visible 32 (14.5%) | onsets (call idx, frame, timer): [(159, 992, 1440)]
+  v=2 calls 220 | replay calls 58 | c5>0x40 step 24 (10.9%) visible 6 (2.7%) | onsets (call idx, frame, timer): [(23, 856, 1440), (60, 893, 1440)]
+  v=3 calls 220 | replay calls 29 | c5>0x40 step 59 (26.8%) visible 69 (31.4%) | onsets (call idx, frame, timer): [(159, 992, 1440)]
+verify/d3_car2pickup_20261013/o_p2b.msd.aistep.csv
+  v=1 calls 220 | replay calls 0 | c5>0x40 step 47 (21.4%) visible 47 (21.4%) | onsets (call idx, frame, timer): []
+  v=2 calls 220 | replay calls 73 | c5>0x40 step 41 (18.6%) visible 9 (4.1%) | onsets (call idx, frame, timer): [(23, 852, 1440), (60, 889, 1440), (205, 1034, 1440)]
+  v=3 calls 220 | replay calls 15 | c5>0x40 step 66 (30.0%) visible 72 (32.7%) | onsets (call idx, frame, timer): [(205, 1034, 1440)]
+verify/d3_ai_20260927/o4.msd.aistep.csv
+  v=1 calls 220 | replay calls 29 | c5>0x40 step 55 (25.0%) visible 32 (14.5%) | onsets (call idx, frame, timer): [(159, 1011, 1440)]
+  v=2 calls 220 | replay calls 58 | c5>0x40 step 24 (10.9%) visible 6 (2.7%) | onsets (call idx, frame, timer): [(23, 875, 1440), (60, 912, 1440)]
+  v=3 calls 220 | replay calls 29 | c5>0x40 step 59 (26.8%) visible 69 (31.4%) | onsets (call idx, frame, timer): [(159, 1011, 1440)]
