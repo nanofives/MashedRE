@@ -307,6 +307,9 @@ void                Nav_FrameClockUpdate(int raw_ms);
 // left animating. Call once per RenderFrame.
 bool                Nav_AnimTick();
 
+// DAT_007f1004 analogue from the last Nav_FrameClockUpdate (debug log, MASHED_MENU_ANIM_LOG).
+float               Nav_FrameDt();
+
 // Slide counter (0x1ff..0) for record `rec_index` (NOT row index; includes the
 // back row at index 0). 0x1ff = fully off-screen / just-entered, 0 = settled.
 // The renderer maps this to a horizontal slide-in offset.

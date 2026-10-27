@@ -1390,6 +1390,7 @@ int               Nav_ScreenId()     { return g_stack[g_nav_depth].screen_id; }
 
 void              Nav_FrameClockUpdate(int raw_ms) { FrameClockUpdate(raw_ms); }
 bool              Nav_AnimTick() { return Anim_Tick(); }
+float             Nav_FrameDt() { return g_frame_dt; }
 
 // Test-support accessors for the internal push-map machinery (linked by the
 // logic harness re/analysis/standalone_menu_sm/harvest/navsm_test.cpp for the
