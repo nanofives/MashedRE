@@ -1,0 +1,58 @@
+== 0x00565260 param_2 (slot 0x8), scan_argwidth.py 0x565260 0x565260 0x565600 8 (anchored MASHED.exe.unpatched)
+walked 190 insns; rets [('0x56554a', '0x0')]; esp conflicts 0
+0056526b d=0x18 slot+0x8 sz=4 mov edi, dword ptr [esp + 0x20]   next: mov eax, dword ptr [esi + 0xc010]
+005652a1 d=0x18 slot+0x8 sz=4 mov dword ptr [esp + 0x20], ebx   next: je 0x5652b1
+005652c3 d=0x18 slot+0x8 sz=4 lea edx, [esp + 0x20]   next: mov dword ptr [esp + 0x1c], eax
+005652d5 d=0x18 slot+0x8 sz=4 mov dword ptr [esp + 0x20], eax   next: and ebp, 0xffff
+0056532a d=0x18 slot+0x8 sz=4 lea edi, [esp + 0x20]   next: cmp edx, edi
+00565497 d=0x18 slot+0x8 sz=4 mov ebx, dword ptr [esp + 0x20]   next: mov eax, dword ptr [esp + 0x1c]
+== linear 0x00565260-0x00565440 (edi = param_2 from 0x0056526b until its first overwrite)
+6:0056526a  push edi
+7:0056526b  mov edi, dword ptr [esp + 0x20]
+9:00565275  mov ebx, edi
+13:0056527f  call 0x563f60
+21:005652a1  mov dword ptr [esp + 0x20], ebx
+22:005652a5  je 0x5652b1
+24:005652ab  jne 0x565384
+29:005652c3  lea edx, [esp + 0x20]
+34:005652d5  mov dword ptr [esp + 0x20], eax
+38:005652ed  cmp bp, di
+39:005652f0  je 0x565327
+41:005652f6  je 0x565327
+49:00565322  cmp bp, di
+50:00565325  jne 0x5652f2
+52:0056532a  lea edi, [esp + 0x20]
+53:0056532e  cmp edx, edi
+54:00565330  jne 0x565365
+59:00565344  lea edi, [esi + edx*4 + 0x8820]
+66:00565360  jmp 0x56549f
+67:00565365  mov edi, eax
+68:00565367  and edi, 0xffff
+69:0056536d  mov bp, word ptr [esi + edi*4 + 0x8820]
+70:00565375  lea edi, [esi + edi*4 + 0x8820]
+72:0056537f  jmp 0x56549f
+88:005653c9  cmp bx, di
+89:005653cc  je 0x565403
+91:005653d2  je 0x565403
+99:005653fe  cmp bx, di
+100:00565401  jne 0x5653ce
+102:00565406  lea edi, [esp + 0x10]
+105:00565413  cmp edx, edi
+106:00565415  lea edi, [esi + eax*4 + 0x8820]
+107:0056541c  jne 0x565431
+110:00565428  or dx, word ptr [edi]
+112:0056542f  jmp 0x565437
+113:00565431  mov bx, word ptr [edi]
+== 0x00563f60 head (callee: edi saved before use)
+00563f60  sub esp, 8
+00563f63  mov eax, dword ptr [esp + 0xc]
+00563f67  push esi
+00563f68  mov esi, dword ptr [esp + 0x14]
+00563f6c  push edi
+00563f6d  mov edx, dword ptr [eax + 8]
+00563f70  mov ecx, esi
+00563f72  and ecx, 0xffff
+00563f78  shl ecx, 3
+00563f7b  mov dword ptr [esp + 0xc], ecx
+00563f7f  mov di, word ptr [edx + ecx + 2]
+00563f84  cmp di, si
