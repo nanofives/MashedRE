@@ -2,11 +2,13 @@
 the boot script's Set_Track_Powerups rows (0x0047b280 / 0x00430250, course-row table 0x005f2728), diffed
 against the original's first-run file O_0. Usage:
     py -3.12 predict.py <O_0.bin> <POWERUPS_ALL.LUA> [<out.bin>]"""
-import re, struct, sys
+import importlib.util, re, struct, sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "wsfspan_20261026"))
-import predict as span  # noqa: E402  (init_span / first_run_image of D4-WSF-SAVE-SPANINIT)
+_SPEC = importlib.util.spec_from_file_location(
+    "spaninit_predict", Path(__file__).resolve().parents[1] / "wsfspan_20261026" / "predict.py")
+span = importlib.util.module_from_spec(_SPEC)   # init_span / first_run_image of D4-WSF-SAVE-SPANINIT
+_SPEC.loader.exec_module(span)
 
 SIZE, SPAN, CNT = span.SIZE, span.SPAN, span.CNT
 ROW_COURSE = [30, 3, 39, 0, 38, 11, 25, 2, 36, 34, 37, 33, 26]   # **[0x005f2728 + r*4]
