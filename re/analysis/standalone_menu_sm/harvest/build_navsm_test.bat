@@ -22,6 +22,8 @@ cl /nologo /EHsc /std:c++17 /DMASHED_STANDALONE ^
    ..\..\..\..\mashedmod\src\mashed_re\Frontend\FrontendState.cpp ^
    ..\..\..\..\mashedmod\src\mashed_re\Frontend\MenuScoreSort.cpp ^
    ..\..\..\..\mashedmod\src\mashed_re\Race\RaceModes.cpp ^
+   ..\..\..\..\mashedmod\src\mashed_re\Frontend\PromptStripTwin.cpp ^
+   ..\..\..\..\mashedmod\src\mashed_re\Frontend\MenuNearLeaves_s6.cpp ^
    /Fe:navsm_test.exe ^
    /link /BASE:0x10000 /FIXED:NO /DYNAMICBASE:NO
 REM U-9673: the fixed low base keeps the test image's 10 MB .bss arena over
