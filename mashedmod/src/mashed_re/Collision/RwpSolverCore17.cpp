@@ -1269,6 +1269,11 @@ RH_ScopedInstall(FUN_00578b20, 0x00578b20);
 // In-process original-vs-port comparison at the real call site; arm with
 // MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
 extern "C" float10 __cdecl FUN_00578bd0(int *param_1,float *param_2,float *param_3,float *param_4) {
+#ifndef MASHED_STANDALONE
+    // [D4-WSB-C3-PORTED] .asi only: run the knob's function-local static init here, outside the
+    // tracked window; inside it the first sample showed MSVC's TLS init epoch (port-only heap dword +1).
+    (void)NarrowDotOrder();
+#endif
     SHADOW_AB_COUNTER(ab, "FUN_00578bd0", 0x00578bd0u, ShadowAB::kPhaseRace);
     return ShadowAB::RunTracked(ab, FUN_00578bd0_impl, SHADOW_STACK_WINDOW(), param_1, param_2, param_3, param_4);
 }
@@ -1277,6 +1282,11 @@ RH_ScopedInstall(FUN_00578bd0, 0x00578bd0);
 // In-process original-vs-port comparison at the real call site; arm with
 // MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
 extern "C" float10 __cdecl FUN_00578cb0(int *param_1,float *param_2,float *param_3,float *param_4) {
+#ifndef MASHED_STANDALONE
+    // [D4-WSB-C3-PORTED] .asi only: run the knob's function-local static init here, outside the
+    // tracked window; inside it the first sample showed MSVC's TLS init epoch (port-only heap dword +1).
+    (void)NarrowDotOrder();
+#endif
     SHADOW_AB_COUNTER(ab, "FUN_00578cb0", 0x00578cb0u, ShadowAB::kPhaseRace);
     return ShadowAB::RunTracked(ab, FUN_00578cb0_impl, SHADOW_STACK_WINDOW(), param_1, param_2, param_3, param_4);
 }

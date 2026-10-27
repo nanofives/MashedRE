@@ -53,3 +53,15 @@ compared).
 Tracking mode = the heap-tracked mode of the latest write-set leg (`verify/wsbbroadws_20261027`
 round 2): `MASHED_SHADOW_AB=1 MASHED_SHADOW_PRIVATE=1 MASHED_SHADOW_STW=1`. Heap pages compared are
 recorded per row for the later C4 band rows. They do not gate C3 here.
+
+## Addendum 2 (before the re-run arm of 00578bd0 / 00578cb0)
+
+Arm 1 of `0x00578bd0` read DIVERGENT 1/24, sample 0 only: one port-only heap dword
+(`@00c56000+dbc`, pre `80000009`, original `80000009`, port `8000000a`), return equal. The impl calls
+`NarrowDotOrder()` (`Collision/NarrowFixKnobs.h:16`, a function-local static with a lambda
+initializer), so its first evaluation ran inside the tracked window of the port side. That is MSVC's
+thread-safe static init, which bumps the thread's init epoch in TLS (heap). `00578cb0` calls the same knob.
+Change: both wrappers evaluate `NarrowDotOrder()` before `SHADOW_AB_COUNTER`, under
+`#ifndef MASHED_STANDALONE` (.asi only). The same shape `005667c0` already had (it reads `Leaves1X87()`
+in the wrapper) and read CLEAN 24/24. Re-run both rows. Pass criterion unchanged (CLEAN, ndiff 0).
+The arm 1 logs stay in the RESULT. The gates are re-run on the final tree.
