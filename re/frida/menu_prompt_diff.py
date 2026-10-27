@@ -22,7 +22,10 @@ from pathlib import Path
 import frida
 
 ROOT = Path(__file__).resolve().parent.parent.parent
-ORIG = ROOT / "original"; EXE = ORIG / "MASHED.exe"
+# MASHED_ROOT: boot a copied install (worktree lanes). MENU_PROMPT_OUT: result
+# path (unset = log/diff_menu_prompt_navdriven.json).
+GAME_ROOT = Path(os.environ.get("MASHED_ROOT", ROOT))
+ORIG = GAME_ROOT / "original"; EXE = ORIG / "MASHED.exe"
 ASI = ORIG / "mashed_re_dev.asi"
 
 AGENT = r'''
@@ -230,7 +233,8 @@ def main():
         print("   A:", bad["a"])
         print("   B:", bad["b"])
         print("   adA:", bad["adA"], " adB:", bad["adB"])
-    out = ROOT / "log" / "diff_menu_prompt_navdriven.json"
+    out = Path(os.environ.get("MENU_PROMPT_OUT",
+                              ROOT / "log" / "diff_menu_prompt_navdriven.json"))
     out.write_text(json.dumps({"samples": samples, "green": n_green,
                                "vectors": len(rows), "fired": fired}, indent=1))
     print("->", out)

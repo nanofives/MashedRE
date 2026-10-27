@@ -13,9 +13,11 @@
 //     without risking a crash. DEFER.
 // Ported faithfully so the exports exist; left for a runtime-state harness.
 #include "../Core/HookSystem.h"
+#include <cstdint>
+
+#ifndef MASHED_STANDALONE
 #include "../Core/ShadowAB.h"
 #include "../Core/ShadowTrack.h"
-#include <cstdint>
 
 // 0x0040e340 GetLiveCarCount and 0x0042f500 GetDat0067ea64 are our ported C4
 // exports -- call them directly instead of trampolining through the original.
@@ -32,35 +34,54 @@ static int* const DAT_007f0fd0 = reinterpret_cast<int*>(0x007f0fd0);
 // Paired global resource handles released by 0x0040cf40.
 static int* const DAT_0063ba90 = reinterpret_cast<int*>(0x0063ba90);
 static int* const DAT_0063ba94 = reinterpret_cast<int*>(0x0063ba94);
+#endif
+
+// D4-WSH-EXEFILE (2026-10-26): ONE body per RVA for both targets. The two
+// threshold getters below are the shared cores; their inputs are the three
+// values the original reads (FUN_0040e340, FUN_0042f500, DAT_007f0fd0), passed
+// in by the caller. The .asi exports read them from the live game; the exe's
+// callers (exe_main.cpp race HUD, LibRw/RwRaceFx.cpp ScoreTarget /
+// LeaderThreshold) pass the standalone's values.
 
 // 0x0040b890  FUN_0040b890  (65 bytes)  int(void)
 // Returns 8 in every case except: FUN_0040e340()==4, FUN_0042f500()==0,
 // DAT_007f0fd0 not in {1,2} -> returns 12 (0xc).
-extern "C" __declspec(dllexport) int __cdecl GetGridCount8or12(void) {
-    int iVar1 = static_cast<int>(GetLiveCarCount());
-    int iVar2 = (-(unsigned)(iVar1 != 4) & 0xfffffffc) + 0xc;   // ==4 -> 12 ; else 8
-    iVar1 = static_cast<int>(GetDat0067ea64());
-    if (iVar1 != 0) iVar2 = 8;
-    if (*DAT_007f0fd0 == 1) return 8;
-    iVar1 = 8;
-    if (*DAT_007f0fd0 != 2) iVar1 = iVar2;
+extern "C" int __cdecl GridCount8or12Core(int cars, int ea64, int fd0) {
+    int iVar2 = (-(unsigned)(cars != 4) & 0xfffffffc) + 0xc;    // ==4 -> 12 ; else 8
+    if (ea64 != 0) iVar2 = 8;
+    if (fd0 == 1) return 8;
+    int iVar1 = 8;
+    if (fd0 != 2) iVar1 = iVar2;
     return iVar1;
 }
-
-RH_ScopedInstall(GetGridCount8or12, 0x0040b890);  // C3 harness/scenario-attach 2026-06-08 (zero-arg, race: 8 != menu-12)
 
 // 0x0040b8e0  FUN_0040b8e0  (65 bytes)  int(void)
 // Same shape as 0x0040b890 but returns 7 or 10.  Returns 7 in every case except:
 // FUN_0040e340()==4, FUN_0042f500()==0, DAT_007f0fd0 not in {1,2} -> returns 10.
-extern "C" __declspec(dllexport) int __cdecl GetScoreThreshold7or10(void) {
-    int iVar1 = static_cast<int>(GetLiveCarCount());
-    int iVar2 = (-(unsigned)(iVar1 != 4) & 0xfffffffd) + 10;    // ==4 -> 10 ; else 7
-    iVar1 = static_cast<int>(GetDat0067ea64());
-    if (iVar1 != 0) iVar2 = 7;
-    if (*DAT_007f0fd0 == 1) return 7;
-    iVar1 = 7;
-    if (*DAT_007f0fd0 != 2) iVar1 = iVar2;
+extern "C" int __cdecl ScoreThreshold7or10Core(int cars, int ea64, int fd0) {
+    int iVar2 = (-(unsigned)(cars != 4) & 0xfffffffd) + 10;     // ==4 -> 10 ; else 7
+    if (ea64 != 0) iVar2 = 7;
+    if (fd0 == 1) return 7;
+    int iVar1 = 7;
+    if (fd0 != 2) iVar1 = iVar2;
     return iVar1;
+}
+
+#ifndef MASHED_STANDALONE
+// .asi entry of GridCount8or12Core: the original's three reads, in its order.
+extern "C" __declspec(dllexport) int __cdecl GetGridCount8or12(void) {
+    const int cars = static_cast<int>(GetLiveCarCount());
+    const int ea64 = static_cast<int>(GetDat0067ea64());
+    return GridCount8or12Core(cars, ea64, *DAT_007f0fd0);
+}
+
+RH_ScopedInstall(GetGridCount8or12, 0x0040b890);  // C3 harness/scenario-attach 2026-06-08 (zero-arg, race: 8 != menu-12)
+
+// .asi entry of ScoreThreshold7or10Core.
+extern "C" __declspec(dllexport) int __cdecl GetScoreThreshold7or10(void) {
+    const int cars = static_cast<int>(GetLiveCarCount());
+    const int ea64 = static_cast<int>(GetDat0067ea64());
+    return ScoreThreshold7or10Core(cars, ea64, *DAT_007f0fd0);
 }
 
 RH_ScopedInstall(GetScoreThreshold7or10, 0x0040b8e0);  // C3 harness/scenario-attach 2026-06-08 (zero-arg, race: 7 != menu-10)
@@ -85,6 +106,8 @@ extern "C" __declspec(dllexport) void __cdecl ReleaseResourcePair(void) {
     ShadowAB::RunTracked(ab, ReleaseResourcePair_impl, SHADOW_STACK_WINDOW());
 }
 RH_ScopedInstall(ReleaseResourcePair, 0x0040cf40);  // c3_batch_ah s4 (DEFER: no-op at menu)
+
+#endif  // !MASHED_STANDALONE
 
 // FUN_004077e0 (selected-Copter float getter) lives in Util/PromoLoop_round61.cpp
 // (FloatIdx639de0), the body hooks.csv's evidence cites. The duplicate that sat here

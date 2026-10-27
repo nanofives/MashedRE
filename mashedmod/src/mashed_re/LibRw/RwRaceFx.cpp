@@ -26,6 +26,10 @@
 extern void (*rw_drawrec_pre)(const char* texname, const float* ltm16);
 extern void (*rw_drawrec_post)(void);
 
+// FUN_0040b890 / FUN_0040b8e0 shared bodies (Gameplay/Thresholds_ah4.cpp, both targets).
+extern "C" int __cdecl GridCount8or12Core(int cars, int ea64, int fd0);
+extern "C" int __cdecl ScoreThreshold7or10Core(int cars, int ea64, int fd0);
+
 namespace mashed_re {
 namespace LibRw {
 namespace {
@@ -1422,18 +1426,13 @@ void LoadHud(int width, int height) {
     g_hud_ok = g_hud_cam && g_hud_cam->frameBuffer && (g_panel[0].clump || g_lights);
 }
 
-// FUN_0040b890 @ 0x0040b890 (score target) and FUN_0040b8e0 @ 0x0040b8e0 (leader threshold).
+// Score target (FUN_0040b890) and leader threshold (FUN_0040b8e0): call-throughs to the
+// one body each in Gameplay/Thresholds_ah4.cpp, fed the HUD's copies of the three inputs.
 int ScoreTarget(const HudInputs& in) {
-    int v = (in.n4d0 != 4) ? 8 : 12;
-    if (in.team_play != 0) v = 8;
-    if (in.mode_fd0 == 1) return 8;
-    return (in.mode_fd0 == 2) ? 8 : v;
+    return GridCount8or12Core(in.n4d0, in.team_play, in.mode_fd0);
 }
 int LeaderThreshold(const HudInputs& in) {
-    int v = (in.n4d0 != 4) ? 7 : 10;
-    if (in.team_play != 0) v = 7;
-    if (in.mode_fd0 == 1) return 7;
-    return (in.mode_fd0 == 2) ? 7 : v;
+    return ScoreThreshold7or10Core(in.n4d0, in.team_play, in.mode_fd0);
 }
 
 void FrameReplace(rw::Frame* f, const float pos[3], float scale) {

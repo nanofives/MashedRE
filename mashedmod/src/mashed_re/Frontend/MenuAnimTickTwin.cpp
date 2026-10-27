@@ -27,10 +27,27 @@ constexpr std::uintptr_t kScrB      = 0x005f7370;  // &DAT_005f7370 (screen 24)
 template <typename T>
 inline T& At(std::uintptr_t a) { return *reinterpret_cast<T*>(a); }
 
-// FUN_004a2c48 semantic: ROUND(st0) -> int (x87 default round-to-nearest-even;
-// verified C2/C4 notes). Called here as plain math (the original passes the
-// product in ST0).
-inline int Trunc48(float v) { return static_cast<int>(std::nearbyint(v)); }
+// FUN_004a2c48 (0x004a2c48): FISTP round-to-nearest, then the sign-aware
+// carry adjust (0x004a2c6b..0x004a2ca5) = truncation toward zero (_ftol2
+// shape; decomp D4-WSH-EXEFILE 2026-10-26). This body has always rounded
+// (std::nearbyint), which agrees with the original at one 50 ms tick and
+// disagrees at two (verify/wshexe_20261026 A2: original 485, twin 484).
+// Truncation, the original's form, is the default (decision L-32 ON, Mariano
+// 2026-10-26); MASHED_NO_ANIM_TRUNC=1 restores the old rounding. .asi-only TU: the exe's
+// Anim_Tick (Frontend/MenuNavSM.cpp AnimStep) already truncates.
+inline bool AnimTruncOn() {
+    static int v = -1;
+    if (v < 0) {
+        char buf[8];
+        const DWORD n = GetEnvironmentVariableA("MASHED_NO_ANIM_TRUNC", buf, sizeof buf);
+        v = (n > 0 && n < sizeof buf && buf[0] && buf[0] != '0') ? 0 : 1;
+    }
+    return v != 0;
+}
+inline int Trunc48(float v) {
+    if (AnimTruncOn()) return static_cast<int>(v);
+    return static_cast<int>(std::nearbyint(v));
+}
 
 // FUN_0042ac50 (Y-centering, C2 pure): call the original (cdecl, 2 ints).
 using QListBaseYFn = int(__cdecl*)(int, int);

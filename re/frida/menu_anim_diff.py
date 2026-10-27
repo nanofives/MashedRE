@@ -13,12 +13,16 @@
 #     6. GREEN iff ra==rb && S1==S2; leave S1 (world as-if-original)
 #
 # Usage: py -3.12 re/frida/menu_anim_diff.py   (expects fresh build deployed)
-import json, os, sys, time
+import json, os, struct, sys, time
 from pathlib import Path
 import frida
 
 ROOT = Path(__file__).resolve().parent.parent.parent
-ORIG = ROOT / "original"; EXE = ORIG / "MASHED.exe"
+# MASHED_ROOT: boot a copied install (worktree lanes). MENU_ANIM_DT: force
+# DAT_007f1004 to this float for every sample (unset = the game's own dt).
+# MENU_ANIM_OUT: result path (unset = log/diff_menu_anim_tick_navdriven.json).
+GAME_ROOT = Path(os.environ.get("MASHED_ROOT", ROOT))
+ORIG = GAME_ROOT / "original"; EXE = ORIG / "MASHED.exe"
 ASI = ORIG / "mashed_re_dev.asi"
 
 AGENT = r'''
@@ -27,6 +31,7 @@ const IMG=0x00400000; let DELTA=0;
 const TBL=0x00898ac0, TBL_LEN=30*0x34;
 const RVA_TICK=0x004325c0, RVA_NAV=0x0043d2a0;
 const RVA_DEPTH=0x0067e9f8, RVA_SCREEN=0x0067ed7c, RVA_PHASE=0x0067eca4;
+const RVA_DT=0x007f1004;                           // DAT_007f1004 frame dt (FUN_00493480)
 let twin=null, nav=null, results=[], want=0, origPtr=null;
 function abs(r){return ptr(r+DELTA);}
 rpc.exports={
@@ -42,7 +47,7 @@ rpc.exports={
   },
   phase:function(){ return abs(RVA_PHASE).readS32(); },
   push1:function(){ nav(1,0); return abs(RVA_DEPTH).readS32(); },
-  arm:function(n){
+  arm:function(n, dtBits){
     want=n; results=[];
     origPtr=Interceptor.replaceFast(abs(RVA_TICK), new NativeCallback(function(){
       const orig=new NativeFunction(origPtr,'int',[]);
@@ -50,16 +55,30 @@ rpc.exports={
       const depth=abs(RVA_DEPTH).readS32();
       const scr=abs(RVA_SCREEN+(depth-1)*0x40).readS32();
       nav(scr,2);                                  // reload -> mid-anim records
+      // MENU_ANIM_DT: hold DAT_007f1004 at a forced value for both sides of
+      // this sample (0 = leave the game's own dt), restored after.
+      const dt0=abs(RVA_DT).readU32();
+      if(dtBits) abs(RVA_DT).writeU32(dtBits);
+      const dt=abs(RVA_DT).readU32();
       const s0=abs(TBL).readByteArray(TBL_LEN);
       const ra=orig();
       const s1=abs(TBL).readByteArray(TBL_LEN);
       abs(TBL).writeByteArray(s0);
       const rb=twin();
       const s2=abs(TBL).readByteArray(TBL_LEN);
+      abs(RVA_DT).writeU32(dt0);
       const a=new Uint8Array(s1), b=new Uint8Array(s2);
       let diff=-1;
       for(let i=0;i<TBL_LEN;i++){ if(a[i]!==b[i]){ diff=i; break; } }
-      results.push({ra:ra, rb:rb, diff:diff, scr:scr});
+      const row={ra:ra, rb:rb, diff:diff, scr:scr, dt:dt};
+      if(diff>=0){                                 // the differing dword, both sides
+        const o=diff&~3;
+        row.rec=Math.floor(o/0x34); row.off=o%0x34;
+        row.tag=abs(TBL+row.rec*0x34).readU32();
+        row.va=new DataView(s1).getInt32(o,true); row.vb=new DataView(s2).getInt32(o,true);
+        row.v0=new DataView(s0).getInt32(o,true);
+      }
+      results.push(row);
       abs(TBL).writeByteArray(s1);                 // leave as-if-original
       return ra;
     },'int',[]));
@@ -91,8 +110,11 @@ def main():
     time.sleep(1.5)
     print("push screen 1 (coverage: push-transition records), depth ->",
           E.push1())
-    print("arming 20 nav-driven A/B samples...")
-    E.arm(20)
+    dt_bits = 0
+    if os.environ.get("MENU_ANIM_DT"):
+        dt_bits = struct.unpack("<I", struct.pack("<f", float(os.environ["MENU_ANIM_DT"])))[0]
+    print(f"pid={pid} arming 20 nav-driven A/B samples... forced dt bits=0x{dt_bits:08x}")
+    E.arm(20, dt_bits)
     end = time.time() + 20
     while time.time() < end and E.done() < 20:
         time.sleep(0.3)
@@ -101,7 +123,8 @@ def main():
     print(f"samples={len(rows)} GREEN={n_green}")
     for r in rows[:6]:
         print(" ", r)
-    out = ROOT / "log" / "diff_menu_anim_tick_navdriven.json"
+    out = Path(os.environ.get("MENU_ANIM_OUT",
+                              ROOT / "log" / "diff_menu_anim_tick_navdriven.json"))
     out.write_text(json.dumps({"samples": rows, "green": n_green}, indent=1))
     print("->", out)
     try: dev.kill(pid)
