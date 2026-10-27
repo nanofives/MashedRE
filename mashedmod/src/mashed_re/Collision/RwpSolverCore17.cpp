@@ -44,6 +44,7 @@
 #include "../Core/HookSystem.h"
 #include "../Core/ShadowTrack.h"
 #include "../Core/ShadowAB.h"
+#include "NarrowFixKnobs.h"
 #include <cmath>       // fabsf / fabsl (ABS)
 
 namespace mashed_re {
@@ -99,7 +100,31 @@ static void __cdecl FUN_00575b60_impl(int param_1,int param_2,float *param_3,byt
   int iVar2 = *(int *)(param_1 + 8);
   short sVar1 = *(short *)(iVar2 + 0x48);
   *(short *)param_4 = sVar1;
-  if (sVar1 != 0xe) {
+  if (sVar1 != 0xe && NarrowDotOrder()) {
+    // [D4-WSB-NARROW-FIX] MASHED_NARROW_DOT_ORDER=1: the original's FADD order. Rotate dots
+    // (m8*a.z + m4*a.y) + m0*a.x, (m9*a.z + m1*a.x) + m5*a.y, (m10*a.z + m2*a.x) + m6*a.y (FSTP 0x00575b9b /
+    // 0x00575bb6 / 0x00575bd2), flip sum ((s10*s30 + s14*s34) + s18*s38) + ((t.y*n.y + t.x*n.x) + t.z*n.z)
+    // (FCOMP 0x00575c35).
+    const float *m = *(float **)(param_1 + 0x10);
+    const float ax = *(float *)(iVar2 + 0x30), ay = *(float *)(iVar2 + 0x34), az = *(float *)(iVar2 + 0x38);
+    *param_3 = (m[8] * az + m[4] * ay) + m[0] * ax;
+    param_3[1] = (m[9] * az + m[1] * ax) + m[5] * ay;
+    param_3[2] = (m[10] * az + m[2] * ax) + m[6] * ay;
+    if ((*param_4 & 1) == 0) {
+      float a4, a5;                          // &param_4, &param_1 slots reused as FUN_0055c2d0 out
+      FUN_0055c2d0(*(int *)(param_2 + 8), *(float **)(param_2 + 0x10), param_3, &a4, &a5);
+      const float *t = *(float **)(param_1 + 0x10);
+      const float fVar5 =
+          ((*(float *)(iVar2 + 0x10) * ax + *(float *)(iVar2 + 0x14) * ay) + *(float *)(iVar2 + 0x18) * az) +
+          ((t[0xd] * param_3[1] + t[0xc] * *param_3) + t[0xe] * param_3[2]);
+      if (a5 - fVar5 < fVar5 - a4) {
+        *param_3 = -*param_3;
+        param_3[1] = -param_3[1];
+        param_3[2] = -param_3[2];
+      }
+    }
+  }
+  else if (sVar1 != 0xe) {
     float *pfVar3 = *(float **)(param_1 + 0x10);
     *param_3 = *pfVar3 * *(float *)(iVar2 + 0x30) +
                pfVar3[4] * *(float *)(iVar2 + 0x34) + pfVar3[8] * *(float *)(iVar2 + 0x38);
@@ -159,7 +184,11 @@ extern "C" float10 __cdecl FUN_00578bd0(int *param_1,float *param_2,float *param
 static float10 __cdecl FUN_00578bd0_impl(int *param_1,float *param_2,float *param_3,float *param_4) {
   float *pfVar5 = param_2;
   int iVar3 = *(int *)(*param_1 + 0x10);
-  float fVar4 = *(float *)(iVar3 + 0x38) * param_2[2] +
+  // [D4-WSB-NARROW-FIX] MASHED_NARROW_DOT_ORDER=1: (m.y*n.y + m.x*n.x) + m.z*n.z, 0x00578be5..0x00578bff.
+  float fVar4 = NarrowDotOrder()
+        ? (*(float *)(iVar3 + 0x34) * param_2[1] + *(float *)(iVar3 + 0x30) * *param_2) +
+          *(float *)(iVar3 + 0x38) * param_2[2]
+        : *(float *)(iVar3 + 0x38) * param_2[2] +
           *(float *)(iVar3 + 0x30) * *param_2 + *(float *)(iVar3 + 0x34) * param_2[1];
   float fVar1 = param_2[3];
   float fVar2 = param_2[4];
@@ -190,7 +219,11 @@ static float10 __cdecl FUN_00578cb0_impl(int *param_1,float *param_2,float *para
   float local_8, local_4;
   FUN_0055c2d0(*(int *)(*param_1 + 8), *(float **)(*param_1 + 0x10), param_2, &local_8, &local_4);
   int iVar1 = *(int *)(param_1[1] + 0x10);
-  float fVar2 = *(float *)(iVar1 + 0x38) * param_2[2] +
+  // [D4-WSB-NARROW-FIX] MASHED_NARROW_DOT_ORDER=1: (m.y*n.y + m.x*n.x) + m.z*n.z, FSTP 0x00578cfe.
+  float fVar2 = NarrowDotOrder()
+        ? (*(float *)(iVar1 + 0x34) * param_2[1] + *(float *)(iVar1 + 0x30) * *param_2) +
+          *(float *)(iVar1 + 0x38) * param_2[2]
+        : *(float *)(iVar1 + 0x38) * param_2[2] +
           *(float *)(iVar1 + 0x30) * *param_2 + *(float *)(iVar1 + 0x34) * param_2[1];
   float fVar3 = fVar2 + param_2[3];
   fVar2 = fVar2 + param_2[4];
@@ -222,7 +255,10 @@ static void __cdecl FUN_00578d90_impl(float *param_1,float *param_2,float *param
   float fVar1 = param_1[2];
   float fVar2 = param_2[2];
   param_4[2] = fVar1 - fVar2;
-  fVar1 = -(param_3[2] * (fVar1 - fVar2) + *param_3 * *param_4 + param_3[1] * param_4[1]);
+  // [D4-WSB-NARROW-FIX] MASHED_NARROW_DOT_ORDER=1: -((n.y*d.y + n.x*d.x) + n.z*d.z), FSTP 0x00578dd1.
+  fVar1 = NarrowDotOrder()
+        ? -((param_3[1] * param_4[1] + *param_3 * *param_4) + param_3[2] * (fVar1 - fVar2))
+        : -(param_3[2] * (fVar1 - fVar2) + *param_3 * *param_4 + param_3[1] * param_4[1]);
   *param_4 = fVar1 * *param_3 + *param_4;
   param_4[1] = param_3[1] * fVar1 + param_4[1];
   param_4[2] = param_3[2] * fVar1 + param_4[2];
@@ -663,16 +699,32 @@ LAB_005761fb:
             *(undefined2 *)((int)pfVar10 + 0x5a) = *(undefined2 *)(param_4 + 0x5a);
             if ((*(byte *)(param_1 + 0x50) & 2) != 0) {
               pfVar13 = pfVar10 + 0xc;
+              if (NarrowDotOrder()) {
+                // [D4-WSB-NARROW-FIX2] MASHED_NARROW_DOT_ORDER=1: the original's FADD order (PREREG amendment 1).
+                // FSTP 0x00576391 / 0x005763b0 / 0x005763d1.
+                *pfVar13 = ((pfVar6[6] - pfVar6[10]) * pfVar6[1] + (pfVar6[2] - pfVar6[6]) * pfVar6[9]) +
+                           (pfVar6[10] - pfVar6[2]) * pfVar6[5];
+                pfVar10[0xd] = ((pfVar6[4] - pfVar6[8]) * pfVar6[2] + (pfVar6[8] - *pfVar6) * pfVar6[6]) +
+                               (*pfVar6 - pfVar6[4]) * pfVar6[10];
+                pfVar10[0xe] = ((pfVar6[1] - pfVar6[5]) * pfVar6[8] + (pfVar6[5] - pfVar6[9]) * *pfVar6) +
+                               (pfVar6[9] - pfVar6[1]) * pfVar6[4];
+              } else {
               *pfVar13 = (pfVar6[10] - pfVar6[2]) * pfVar6[5] +
                          (pfVar6[2] - pfVar6[6]) * pfVar6[9] + (pfVar6[6] - pfVar6[10]) * pfVar6[1];
               pfVar10[0xd] = (*pfVar6 - pfVar6[4]) * pfVar6[10] +
                              (pfVar6[8] - *pfVar6) * pfVar6[6] + (pfVar6[4] - pfVar6[8]) * pfVar6[2];
               pfVar10[0xe] = (pfVar6[9] - pfVar6[1]) * pfVar6[4] +
                              (pfVar6[5] - pfVar6[9]) * *pfVar6 + (pfVar6[1] - pfVar6[5]) * pfVar6[8];
+              }
               FUN_005667c0(pfVar13,pfVar13);
             }
+            if (NarrowDotOrder()) {
+              // [D4-WSB-NARROW-FIX2] MASHED_NARROW_DOT_ORDER=1: (f.y*v.y + f.x*v.x) + f.z*v.z (FSTP 0x005763f7).
+              pfVar10[7] = (pfVar10[0xd] * pfVar6[1] + pfVar10[0xc] * *pfVar6) + pfVar10[0xe] * pfVar6[2];
+            } else {
             pfVar10[7] = pfVar10[0xe] * pfVar6[2] +
                          pfVar10[0xc] * *pfVar6 + pfVar10[0xd] * pfVar6[1];
+            }
             iVar8 = *(int *)(param_1 + 0x10);
             iVar7 = *(int *)(param_1 + 0x24);
             puVar11 = (uint *)(*(int *)(param_1 + 0xc) + iVar8 * 0x14);
@@ -682,7 +734,10 @@ LAB_005761fb:
             puVar11[2] = (uint)pfVar10;
             puVar11[4] = (uint)param_5;
             FUN_0055bd70((int)pfVar10,param_5,0,(void *)(iVar8 * 0x20 + iVar7));
-            puVar11[3] = (int)pfVar6[0x11] + param_6;
+            // [D4-WSB-NARROW-FIX] MASHED_NARROW_PAIR_INT=1: 0x00576444 MOV ECX,[EAX+0x44] / 0x0057644b ADD ECX,EDX
+            // read the word as an integer. OFF keeps the float-to-int conversion (0 for these integer words).
+            puVar11[3] = NarrowPairInt() ? *(uint *)(pfVar6 + 0x11) + (uint)param_6
+                                         : (int)pfVar6[0x11] + param_6;
             param_9 = (float *)((int)param_9 + 1);
             *(int *)(param_1 + 0x10) = *(int *)(param_1 + 0x10) + 1;
           }

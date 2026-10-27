@@ -54,6 +54,7 @@
 // ============================================================================
 #include "../Core/HookSystem.h"
 #include "../Core/ShadowAB.h"
+#include "NarrowFixKnobs.h"
 
 namespace mashed_re {
 namespace Collision {
@@ -156,7 +157,31 @@ static undefined4 __cdecl FUN_00575880_impl(int param_1,int param_2,int *param_3
         sVar2 = *(short *)(iVar5 + 0x48);
         *(short *)(iVar12 + 0x7e) = sVar2;
         piVar11 = param_3;
-        if (sVar2 != 0xe) {
+        if (sVar2 != 0xe && NarrowDotOrder()) {
+          // [D4-WSB-NARROW-FIX] MASHED_NARROW_DOT_ORDER=1: the original's FADD order. Rotate dots
+          // (m8*a.z + m4*a.y) + m0*a.x, (m9*a.z + m1*a.x) + m5*a.y, (m10*a.z + m2*a.x) + m6*a.y (FSTP 0x005759fe /
+          // 0x00575a1a / 0x00575a36), flip sum ((s14*s34 + s10*s30) + s18*s38) + ((t.y*n.y + t.x*n.x) + t.z*n.z)
+          // (FCOMP 0x00575a9f).
+          const float *m = *(float **)(iVar9 + 0x10);
+          const float ax = *(float *)(iVar5 + 0x30), ay = *(float *)(iVar5 + 0x34), az = *(float *)(iVar5 + 0x38);
+          *pfVar1 = (m[8] * az + m[4] * ay) + m[0] * ax;
+          *(float *)(iVar12 + 0x64) = (m[9] * az + m[1] * ax) + m[5] * ay;
+          *(float *)(iVar12 + 0x68) = (m[10] * az + m[2] * ax) + m[6] * ay;
+          if ((*(byte *)(iVar12 + 0x7e) & 1) == 0) {
+            FUN_0055c2d0(*(int *)(iVar4 + 8),*(float **)(iVar4 + 0x10),pfVar1,&local_p1,
+                         &param_4);
+            const float *t = *(float **)(iVar9 + 0x10);
+            fVar8 = ((*(float *)(iVar5 + 0x14) * ay + *(float *)(iVar5 + 0x10) * ax) + *(float *)(iVar5 + 0x18) * az) +
+                    ((t[0xd] * *(float *)(iVar12 + 0x64) + t[0xc] * *pfVar1) + t[0xe] * *(float *)(iVar12 + 0x68));
+            piVar11 = param_3;
+            if (param_4 - fVar8 < fVar8 - local_p1) {
+              *pfVar1 = -*pfVar1;
+              *(float *)(iVar12 + 0x64) = -*(float *)(iVar12 + 0x64);
+              *(float *)(iVar12 + 0x68) = -*(float *)(iVar12 + 0x68);
+            }
+          }
+        }
+        else if (sVar2 != 0xe) {
           pfVar6 = *(float **)(iVar9 + 0x10);
           *pfVar1 = *pfVar6 * *(float *)(iVar5 + 0x30) +
                     pfVar6[4] * *(float *)(iVar5 + 0x34) + pfVar6[8] * *(float *)(iVar5 + 0x38);
