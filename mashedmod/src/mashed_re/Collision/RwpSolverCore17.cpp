@@ -699,16 +699,32 @@ LAB_005761fb:
             *(undefined2 *)((int)pfVar10 + 0x5a) = *(undefined2 *)(param_4 + 0x5a);
             if ((*(byte *)(param_1 + 0x50) & 2) != 0) {
               pfVar13 = pfVar10 + 0xc;
+              if (NarrowDotOrder()) {
+                // [D4-WSB-NARROW-FIX2] MASHED_NARROW_DOT_ORDER=1: the original's FADD order (PREREG amendment 1).
+                // FSTP 0x00576391 / 0x005763b0 / 0x005763d1.
+                *pfVar13 = ((pfVar6[6] - pfVar6[10]) * pfVar6[1] + (pfVar6[2] - pfVar6[6]) * pfVar6[9]) +
+                           (pfVar6[10] - pfVar6[2]) * pfVar6[5];
+                pfVar10[0xd] = ((pfVar6[4] - pfVar6[8]) * pfVar6[2] + (pfVar6[8] - *pfVar6) * pfVar6[6]) +
+                               (*pfVar6 - pfVar6[4]) * pfVar6[10];
+                pfVar10[0xe] = ((pfVar6[1] - pfVar6[5]) * pfVar6[8] + (pfVar6[5] - pfVar6[9]) * *pfVar6) +
+                               (pfVar6[9] - pfVar6[1]) * pfVar6[4];
+              } else {
               *pfVar13 = (pfVar6[10] - pfVar6[2]) * pfVar6[5] +
                          (pfVar6[2] - pfVar6[6]) * pfVar6[9] + (pfVar6[6] - pfVar6[10]) * pfVar6[1];
               pfVar10[0xd] = (*pfVar6 - pfVar6[4]) * pfVar6[10] +
                              (pfVar6[8] - *pfVar6) * pfVar6[6] + (pfVar6[4] - pfVar6[8]) * pfVar6[2];
               pfVar10[0xe] = (pfVar6[9] - pfVar6[1]) * pfVar6[4] +
                              (pfVar6[5] - pfVar6[9]) * *pfVar6 + (pfVar6[1] - pfVar6[5]) * pfVar6[8];
+              }
               FUN_005667c0(pfVar13,pfVar13);
             }
+            if (NarrowDotOrder()) {
+              // [D4-WSB-NARROW-FIX2] MASHED_NARROW_DOT_ORDER=1: (f.y*v.y + f.x*v.x) + f.z*v.z (FSTP 0x005763f7).
+              pfVar10[7] = (pfVar10[0xd] * pfVar6[1] + pfVar10[0xc] * *pfVar6) + pfVar10[0xe] * pfVar6[2];
+            } else {
             pfVar10[7] = pfVar10[0xe] * pfVar6[2] +
                          pfVar10[0xc] * *pfVar6 + pfVar10[0xd] * pfVar6[1];
+            }
             iVar8 = *(int *)(param_1 + 0x10);
             iVar7 = *(int *)(param_1 + 0x24);
             puVar11 = (uint *)(*(int *)(param_1 + 0xc) + iVar8 * 0x14);
