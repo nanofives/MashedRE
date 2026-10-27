@@ -1,0 +1,2 @@
+rva	verdict	n	ndiff	proof	detail	pid	log_sha256	utc
+0x0055c230	DIVERGENT	24	1	A/B-IS-REAL installed=e9 uninstalled=83	pages=o:1,n:2,diff:1 stack=0 noise=0 ovf=0 ret=0 heap=o:1,n:2 rv=0f52ca60 @00b8f000+ae4 ndw=1 v=ae4:80000009/80000009/8000000a x1	2380	5be1e86bcd0c3572a87276a58d88356c250e5c41dc2728212533abfc68917336	2026-10-27T22:46:11Z

@@ -250,6 +250,7 @@ RH_ScopedInstall(FUN_0055bd80, 0x0055bd80);
 // +0x18 query and FUN_0055c0f0 write under this call.
 extern "C" int __cdecl FUN_0055c230(int param_1,float *param_2,undefined4 param_3,float *param_4,undefined4 param_5) {
     SHADOW_AB_COUNTER(ab, "FUN_0055c230", 0x0055c230u, ShadowAB::kPhaseRace);
+    (void)NarrowDotOrder();   // addendum 1: run its static init before the tracked window (TLS __Init_thread_epoch)
     return ShadowAB::RunTracked(ab, FUN_0055c230_impl, SHADOW_STACK_WINDOW(), param_1, param_2, param_3, param_4, param_5);
 }
 RH_ScopedInstall(FUN_0055c230, 0x0055c230);
