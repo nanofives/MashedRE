@@ -1,0 +1,4 @@
+car 0 t=20..230 frames=12521 non-skid calls=0 skid calls=0 skid frames=0 share=0.0000
+car 1 t=20..230 frames=12521 non-skid calls=0 skid calls=26325 skid frames=8775 share=0.7008
+car 2 t=20..230 frames=12521 non-skid calls=5 skid calls=15 skid frames=5 share=0.0004
+car 3 t=20..230 frames=12521 non-skid calls=124 skid calls=0 skid frames=0 share=0.0000
