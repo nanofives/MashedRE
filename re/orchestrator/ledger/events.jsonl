@@ -587,3 +587,29 @@
 {"at":"2026-10-27T03:49:46Z","id":"D4-FX-FLIP-DEADCOAST","from":"review","to":"review","owner":"cmvpvsbwpcl6wo115iu2nop8p","note":"GREEN 99eb8c0f9, flip ready"}
 {"at":"2026-10-27T03:50:21Z","id":"D4-FX-FLIP-DEADCOAST","from":"review","to":"merge-queued","owner":"cmvpvsbwpcl6wo115iu2nop8p","note":"orch/D4-FX-FLIP-DEADCOAST"}
 {"at":"2026-10-27T04:17:54Z","id":"D4-FX-FLIP-DEADCOAST","from":"merge-queued","to":"merged","owner":"cmvpvsbwpcl6wo115iu2nop8p","note":"merge train 20261027_005104: G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/e85ea6fb/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-10-27T04:23:06Z","id":"D4-FX-BRAKEBYTE-WRITER","from":"open","to":"claimed","owner":"cmvq6jn1s04lro11516vopnvg","note":""}
+{"at":"2026-10-27T04:23:12Z","id":"D4-FU-24EFC-WRITER","from":"open","to":"claimed","owner":"cmvq6jiiy04l5o115749al7ba","note":""}
+{"at":"2026-10-27T04:23:14Z","id":"D4-FU-MENUANIM","from":"open","to":"claimed","owner":"cmvq6jlj204llo115glpjhoz8","note":""}
+{"at":"2026-10-27T04:23:35Z","id":"D4-WSB-NARROW-FIX","from":"open","to":"claimed","owner":"cmvq6kak904t7o115kh7oexvz","note":""}
+{"at":"2026-10-27T04:26:16Z","id":"D4-FU-MENUANIM","from":"claimed","to":"working","owner":"cmvq6jlj204llo115glpjhoz8","note":"gathering menu anim timing evidence"}
+{"at":"2026-10-27T04:26:20Z","id":"D4-FU-24EFC-WRITER","from":"claimed","to":"working","owner":"cmvq6jiiy04l5o115749al7ba","note":"reading settrackpu RESULT, locating 0x24efc writer"}
+{"at":"2026-10-27T04:26:53Z","id":"D4-WSB-NARROW-FIX","from":"claimed","to":"working","owner":"cmvq6kak904t7o115kh7oexvz","note":"worktree created, reading prior evidence"}
+{"at":"2026-10-27T04:31:04Z","id":"D4-FU-24EFC-WRITER","from":"working","to":"review","owner":"cmvq6jiiy04l5o115749al7ba","note":""}
+{"at":"2026-10-27T04:31:27Z","id":"D4-FU-24EFC-WRITER","from":"review","to":"merge-queued","owner":"cmvq6jiiy04l5o115749al7ba","note":"orch/D4-FU-24EFC-WRITER"}
+{"at":"2026-10-27T04:31:53Z","id":"D4-FU-SPANINIT-WRITERS","from":"open","to":"claimed","owner":"cmvq6uwoe05yho11596uxot2i","note":""}
+{"at":"2026-10-27T04:32:11Z","id":"D4-FX-BRAKEBYTE-WRITER","from":"claimed","to":"working","owner":"cmvq6jn1s04lro11516vopnvg","note":"worktree created; locating ctrl+5 brake byte writer"}
+{"at":"2026-10-27T04:34:32Z","id":"D4-FU-SPANINIT-WRITERS","from":"claimed","to":"working","owner":"cmvq6uwoe05yho11596uxot2i","note":"reading SETTRACKPU result, porting span writers"}
+{"at":"2026-10-27T04:34:41Z","id":"D4-FU-MENUANIM","from":"working","to":"decision","owner":"cmvq6jlj204llo115glpjhoz8","note":"L-35"}
+{"at":"2026-10-27T04:35:01Z","id":"D4-FU-MENUANIM","from":"decision","to":"merge-queued","owner":"cmvq6jlj204llo115glpjhoz8","note":"orch/D4-FU-MENUANIM"}
+{"at":"2026-10-27T04:41:19Z","id":"D4-FX-BRAKEBYTE-WRITER","from":"working","to":"review","owner":"cmvq6jn1s04lro11516vopnvg","note":"GREEN: writer = FUN_00418560 replay tail 0x00418816; port pairs 220/220 on 8 regime-A captures; comment-only, @6ed079d96"}
+{"at":"2026-10-27T04:41:41Z","id":"D4-FX-BRAKEBYTE-WRITER","from":"review","to":"merge-queued","owner":"cmvq6jn1s04lro11516vopnvg","note":"orch/D4-FX-BRAKEBYTE-WRITER"}
+{"at":"2026-10-27T04:42:09Z","id":"D4-WSB-BVH-WRITESET","from":"open","to":"claimed","owner":"cmvq7861507zho115fmw5558g","note":""}
+{"at":"2026-10-27T04:51:04Z","id":"D4-WSB-BVH-WRITESET","from":"claimed","to":"working","owner":"cmvq7861507zho115fmw5558g","note":"write-set compare for BVH pointer-store rows"}
+{"at":"2026-10-27T04:59:42Z","id":"D4-FU-24EFC-WRITER","from":"merge-queued","to":"merged","owner":"cmvq6jiiy04l5o115749al7ba","note":"merge train 20261027_014351: G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/e85ea6fb/53778664"}
+{"at":"2026-10-27T04:59:43Z","id":"D4-FU-MENUANIM","from":"merge-queued","to":"merged","owner":"cmvq6jlj204llo115glpjhoz8","note":"merge train 20261027_014351: G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/e85ea6fb/53778664"}
+{"at":"2026-10-27T04:59:44Z","id":"D4-FX-BRAKEBYTE-WRITER","from":"merge-queued","to":"merged","owner":"cmvq6jn1s04lro11516vopnvg","note":"merge train 20261027_014351: G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/e85ea6fb/53778664"}
+{"at":"2026-10-27T05:27:25Z","id":"D4-FU-SPANINIT-WRITERS","from":"working","to":"review","owner":"cmvq6uwoe05yho11596uxot2i","note":"GREEN: 8/8 preds + gates unchanged; knobs MASHED_SAVE_FIRSTRUN_WRITERS / MASHED_SPAN_BOOT_SEED default OFF; first-run diff 17->15 on 0-controller LIVING-PC (13 predicted with 2 pads)"}
+{"at":"2026-10-27T05:27:48Z","id":"D4-FU-SPANINIT-WRITERS","from":"review","to":"merge-queued","owner":"cmvq6uwoe05yho11596uxot2i","note":"orch/D4-FU-SPANINIT-WRITERS"}
+{"at":"2026-10-27T05:43:49Z","id":"D4-FU-SPANINIT-WRITERS","from":"merge-queued","to":"merged","owner":"cmvq6uwoe05yho11596uxot2i","note":"merge train 20261027_023130: G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/e85ea6fb/53778664"}
+{"at":"2026-10-27T05:56:05Z","id":"D4-WSB-NARROW-FIX","from":"working","to":"blocked","owner":"cmvq6kak904t7o115kh7oexvz","note":"fix + PREREG committed, gates GREEN; probe arms unscored: no MASHED.exe boots on LIVING-PC since 2026-10-26 22:28 (even with no dev .asi); needs reboot or elevated HKLM Layers cleanup, then the one-line re-run in the RESULT"}
+{"at":"2026-10-27T06:09:33Z","id":"D4-WSB-BVH-WRITESET","from":"working","to":"blocked","owner":"cmvq7861507zho115fmw5558g","note":"original AVs at 0x005baf48 (NULL audio object) on every boot since ~02:15, machine-wide incl. NARROW-FIX; only audio endpoint Philips FTV status Unknown. Static legs + gates done, gates unchanged. Rerun commands in RESULT."}
