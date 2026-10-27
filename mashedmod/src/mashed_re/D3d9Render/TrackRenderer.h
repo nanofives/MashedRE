@@ -160,6 +160,10 @@ private:
     // calls / emits while alive, [14] +0xcfc != 0 frames that passed the 0.3 roll while alive.
     int    fx_ig_[4][15] = {};
     float  fx_ig_prev_[4][3] = {};
+    // [D4-FX-STATE7] diagnostic-only wheel-colour histogram of EmitCarFxOrigGates (MASHED_FX_DEBUG line "[sN col]", never
+    // read back): per slot up to 8 colour keys, each with calls [non-skid, skid] and emits [non-skid, skid].
+    unsigned fx_col_key_[4][8] = {};
+    int    fx_col_n_[4][8][4] = {};
     float  FxOrigRoll();
     void   EmitCarFxOrigGates(int slot, const float pos[3], float fx, float fz, float R);
     // Emit skid smoke (cornering/lateral slip) + impact sparks (sudden decel) for

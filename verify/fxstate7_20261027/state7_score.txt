@@ -1,0 +1,64 @@
+== o1.F.rows.bin  (13754 rows)
+  block 0x007f19b8 bytes (4,5) over all rows: {(0, 0): 13754}
+  [state 3] 328 frames
+    car 0 alive=328 e9e0=656 eaf2=656 cfc!=0=0 entry-frames=328 null-blk=328 slot-blk=0 r10={0: 328} r14={0: 328} r9f0={0: 328} blk45={(0, 0): 328}
+    car 1 alive=328 e9e0=656 eaf2=656 cfc!=0=0 entry-frames=328 null-blk=328 slot-blk=0 r10={0: 328} r14={0: 328} r9f0={0: 328} blk45={(0, 0): 328}
+    car 2 alive=328 e9e0=656 eaf2=656 cfc!=0=0 entry-frames=328 null-blk=328 slot-blk=0 r10={0: 328} r14={0: 328} r9f0={0: 328} blk45={(0, 0): 328}
+    car 3 alive=328 e9e0=656 eaf2=656 cfc!=0=0 entry-frames=328 null-blk=328 slot-blk=0 r10={0: 328} r14={0: 328} r9f0={0: 328} blk45={(0, 0): 328}
+  [state 4] 1 frames
+    car 0 alive=1 e9e0=2 eaf2=2 cfc!=0=0 entry-frames=1 null-blk=1 slot-blk=0 r10={0: 1} r14={0: 1} r9f0={0: 1} blk45={(0, 0): 1}
+    car 1 alive=1 e9e0=2 eaf2=2 cfc!=0=0 entry-frames=1 null-blk=1 slot-blk=0 r10={0: 1} r14={0: 1} r9f0={0: 1} blk45={(0, 0): 1}
+    car 2 alive=1 e9e0=2 eaf2=2 cfc!=0=0 entry-frames=1 null-blk=1 slot-blk=0 r10={0: 1} r14={0: 1} r9f0={0: 1} blk45={(0, 0): 1}
+    car 3 alive=1 e9e0=2 eaf2=2 cfc!=0=0 entry-frames=1 null-blk=1 slot-blk=0 r10={0: 1} r14={0: 1} r9f0={0: 1} blk45={(0, 0): 1}
+  [state 5] 112 frames
+    car 0 alive=112 e9e0=224 eaf2=224 cfc!=0=0 entry-frames=112 null-blk=112 slot-blk=0 r10={0: 112} r14={0: 112} r9f0={0: 112} blk45={(0, 0): 112}
+    car 1 alive=112 e9e0=224 eaf2=224 cfc!=0=0 entry-frames=112 null-blk=112 slot-blk=0 r10={0: 112} r14={0: 112} r9f0={0: 112} blk45={(0, 0): 112}
+    car 2 alive=112 e9e0=224 eaf2=224 cfc!=0=0 entry-frames=112 null-blk=112 slot-blk=0 r10={0: 112} r14={0: 112} r9f0={0: 112} blk45={(0, 0): 112}
+    car 3 alive=112 e9e0=224 eaf2=224 cfc!=0=0 entry-frames=112 null-blk=112 slot-blk=0 r10={0: 112} r14={0: 112} r9f0={0: 112} blk45={(0, 0): 112}
+  [state 6] 220 frames
+    car 0 alive=220 e9e0=442 eaf2=442 cfc!=0=0 entry-frames=220 null-blk=0 slot-blk=220 r10={0: 220} r14={0: 220} r9f0={0: 220} blk45={(0, 0): 220}
+    car 1 alive=220 e9e0=440 eaf2=440 cfc!=0=16 entry-frames=220 null-blk=0 slot-blk=220 r10={0: 220} r14={0: 220} r9f0={0: 220} blk45={(255, 0): 124, (64, 0): 49, (0, 255): 31, (255, 255): 16}
+    car 2 alive=220 e9e0=442 eaf2=442 cfc!=0=5 entry-frames=220 null-blk=0 slot-blk=220 r10={0: 220} r14={0: 220} r9f0={0: 220} blk45={(255, 0): 211, (0, 255): 4, (255, 255): 5}
+    car 3 alive=220 e9e0=440 eaf2=440 cfc!=0=1 entry-frames=220 null-blk=0 slot-blk=220 r10={0: 220} r14={0: 220} r9f0={0: 220} blk45={(255, 0): 148, (0, 255): 71, (255, 255): 1}
+  [state 7] 13093 frames
+    car 0 alive=0 e9e0=26186 eaf2=0 cfc!=0=0 entry-frames=13093 null-blk=13093 slot-blk=0 r10={1: 13093} r14={0: 13093} r9f0={0: 13093} blk45={(0, 0): 13093}
+    car 1 alive=0 e9e0=26186 eaf2=0 cfc!=0=0 entry-frames=13093 null-blk=13093 slot-blk=0 r10={1: 13093} r14={0: 13093} r9f0={0: 13093} blk45={(0, 0): 13093}
+    car 2 alive=0 e9e0=26186 eaf2=0 cfc!=0=0 entry-frames=13093 null-blk=13093 slot-blk=0 r10={1: 13093} r14={0: 13093} r9f0={0: 13093} blk45={(0, 0): 13093}
+    car 3 alive=13093 e9e0=26186 eaf2=26186 cfc!=0=0 entry-frames=13093 null-blk=13093 slot-blk=0 r10={0: 13093} r14={0: 13093} r9f0={0: 13093} blk45={(0, 0): 13093}
+  first state-7 row 661 (poked flag on it: 0)
+    car 0 cfc[last6, first 3 of 7]=[0, 0, 0, 0] first change at +None  alive@7=0 r10=1 r14=0 e9e0@7=2 eaf2@7=0
+    car 1 cfc[last6, first 3 of 7]=[0, 0, 0, 0] first change at +None  alive@7=0 r10=1 r14=0 e9e0@7=2 eaf2@7=0
+    car 2 cfc[last6, first 3 of 7]=[0, 0, 0, 0] first change at +None  alive@7=0 r10=1 r14=0 e9e0@7=2 eaf2@7=0
+    car 3 cfc[last6, first 3 of 7]=[0, 0, 0, 0] first change at +None  alive@7=1 r10=0 r14=0 e9e0@7=2 eaf2@7=2
+== p1.F.rows.bin  (13755 rows)
+  block 0x007f19b8 bytes (4,5) over all rows: {(0, 0): 13755}
+  [state 3] 421 frames
+    car 0 alive=421 e9e0=842 eaf2=842 cfc!=0=0 entry-frames=421 null-blk=421 slot-blk=0 r10={0: 421} r14={0: 421} r9f0={0: 421} blk45={(0, 0): 421}
+    car 1 alive=421 e9e0=842 eaf2=842 cfc!=0=0 entry-frames=421 null-blk=421 slot-blk=0 r10={0: 421} r14={0: 421} r9f0={0: 421} blk45={(0, 0): 421}
+    car 2 alive=421 e9e0=842 eaf2=842 cfc!=0=0 entry-frames=421 null-blk=421 slot-blk=0 r10={0: 421} r14={0: 421} r9f0={0: 421} blk45={(0, 0): 421}
+    car 3 alive=421 e9e0=842 eaf2=842 cfc!=0=0 entry-frames=421 null-blk=421 slot-blk=0 r10={0: 421} r14={0: 421} r9f0={0: 421} blk45={(0, 0): 421}
+  [state 4] 1 frames
+    car 0 alive=1 e9e0=2 eaf2=2 cfc!=0=0 entry-frames=1 null-blk=1 slot-blk=0 r10={0: 1} r14={0: 1} r9f0={0: 1} blk45={(0, 0): 1}
+    car 1 alive=1 e9e0=2 eaf2=2 cfc!=0=0 entry-frames=1 null-blk=1 slot-blk=0 r10={0: 1} r14={0: 1} r9f0={0: 1} blk45={(0, 0): 1}
+    car 2 alive=1 e9e0=2 eaf2=2 cfc!=0=0 entry-frames=1 null-blk=1 slot-blk=0 r10={0: 1} r14={0: 1} r9f0={0: 1} blk45={(0, 0): 1}
+    car 3 alive=1 e9e0=2 eaf2=2 cfc!=0=0 entry-frames=1 null-blk=1 slot-blk=0 r10={0: 1} r14={0: 1} r9f0={0: 1} blk45={(0, 0): 1}
+  [state 5] 112 frames
+    car 0 alive=112 e9e0=224 eaf2=224 cfc!=0=0 entry-frames=112 null-blk=112 slot-blk=0 r10={0: 112} r14={0: 112} r9f0={0: 112} blk45={(0, 0): 112}
+    car 1 alive=112 e9e0=224 eaf2=224 cfc!=0=0 entry-frames=112 null-blk=112 slot-blk=0 r10={0: 112} r14={0: 112} r9f0={0: 112} blk45={(0, 0): 112}
+    car 2 alive=112 e9e0=224 eaf2=224 cfc!=0=0 entry-frames=112 null-blk=112 slot-blk=0 r10={0: 112} r14={0: 112} r9f0={0: 112} blk45={(0, 0): 112}
+    car 3 alive=112 e9e0=224 eaf2=224 cfc!=0=0 entry-frames=112 null-blk=112 slot-blk=0 r10={0: 112} r14={0: 112} r9f0={0: 112} blk45={(0, 0): 112}
+  [state 6] 220 frames
+    car 0 alive=220 e9e0=442 eaf2=442 cfc!=0=0 entry-frames=220 null-blk=0 slot-blk=220 r10={0: 220} r14={0: 220} r9f0={0: 220} blk45={(0, 0): 220}
+    car 1 alive=220 e9e0=440 eaf2=440 cfc!=0=16 entry-frames=220 null-blk=0 slot-blk=220 r10={0: 220} r14={0: 220} r9f0={0: 220} blk45={(255, 0): 124, (64, 0): 49, (0, 255): 31, (255, 255): 16}
+    car 2 alive=220 e9e0=442 eaf2=442 cfc!=0=5 entry-frames=220 null-blk=0 slot-blk=220 r10={0: 220} r14={0: 220} r9f0={0: 220} blk45={(255, 0): 211, (0, 255): 4, (255, 255): 5}
+    car 3 alive=220 e9e0=440 eaf2=440 cfc!=0=1 entry-frames=220 null-blk=0 slot-blk=220 r10={0: 220} r14={0: 220} r9f0={0: 220} blk45={(255, 0): 148, (0, 255): 71, (255, 255): 1}
+  [state 7] 13001 frames
+    car 0 alive=0 e9e0=26002 eaf2=0 cfc!=0=13001 entry-frames=13001 null-blk=13001 slot-blk=0 r10={1: 13001} r14={0: 13001} r9f0={0: 13001} blk45={(0, 0): 13001}
+    car 1 alive=0 e9e0=26002 eaf2=0 cfc!=0=13001 entry-frames=13001 null-blk=13001 slot-blk=0 r10={1: 13001} r14={0: 13001} r9f0={0: 13001} blk45={(0, 0): 13001}
+    car 2 alive=0 e9e0=26002 eaf2=0 cfc!=0=13001 entry-frames=13001 null-blk=13001 slot-blk=0 r10={1: 13001} r14={0: 13001} r9f0={0: 13001} blk45={(0, 0): 13001}
+    car 3 alive=13001 e9e0=26002 eaf2=26002 cfc!=0=1 entry-frames=13001 null-blk=13001 slot-blk=0 r10={0: 13001} r14={0: 13001} r9f0={0: 13001} blk45={(0, 0): 13001}
+  first state-7 row 754 (poked flag on it: 1)
+    car 0 cfc[last6, first 3 of 7]=[0, 1, 1, 1] first change at +None  alive@7=0 r10=1 r14=0 e9e0@7=2 eaf2@7=0
+    car 1 cfc[last6, first 3 of 7]=[0, 1, 1, 1] first change at +None  alive@7=0 r10=1 r14=0 e9e0@7=2 eaf2@7=0
+    car 2 cfc[last6, first 3 of 7]=[0, 1, 1, 1] first change at +None  alive@7=0 r10=1 r14=0 e9e0@7=2 eaf2@7=0
+    car 3 cfc[last6, first 3 of 7]=[0, 1, 0, 0] first change at +1  alive@7=1 r10=0 r14=0 e9e0@7=2 eaf2@7=2

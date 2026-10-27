@@ -8755,6 +8755,12 @@ void TrackRenderer::EmitCarFx(int slot, const float pos[3], const float vel_in[3
                              fx_ig_[slot][0], fx_ig_[slot][1], fx_ig_[slot][2], fx_ig_[slot][3], fx_ig_[slot][4],
                              fx_ig_[slot][5], fx_ig_[slot][6], fx_ig_[slot][7], fx_ig_[slot][8], fx_ig_[slot][9],
                              fx_ig_[slot][10], fx_ig_[slot][11], fx_ig_[slot][12], fx_ig_[slot][13], fx_ig_[slot][14]);
+                std::fprintf(f, "[s%d col]", slot);                  // [D4-FX-STATE7] key:calls_ns/calls_sk:emits_ns/emits_sk
+                for (int k = 0; k < 8; ++k) {
+                    const int* n = fx_col_n_[slot][k];
+                    if (n[0] | n[1]) std::fprintf(f, " %08x:%d/%d:%d/%d", fx_col_key_[slot][k], n[0], n[1], n[2], n[3]);
+                }
+                std::fprintf(f, "\n");
                 std::fclose(f);
             }
         }
@@ -8849,8 +8855,13 @@ void TrackRenderer::EmitCarFxOrigGates(int slot, const float pos[3], float fx, f
         else                                      p = skid ? 0.7f : 0.4f;             // 0x0040c728..0x0040c734
         ++fx_og_calls_[slot][skid ? 1 : 0];
         if (alive) ++ig[12];
+        int ck = 0;                                                                    // [D4-FX-STATE7] census only
+        while (ck < 7 && (fx_col_n_[slot][ck][0] | fx_col_n_[slot][ck][1]) && fx_col_key_[slot][ck] != col) ++ck;
+        fx_col_key_[slot][ck] = col;
+        ++fx_col_n_[slot][ck][skid ? 1 : 0];
         if (!(FxOrigRoll() <= p)) continue;                                            // 0x0040c73e
         if (col == 0xff968080u && !skid) continue;                                     // id 6, 0x0040c8e8 (launch counter 0)
+        ++fx_col_n_[slot][ck][skid ? 3 : 2];
         ++fx_og_emits_[slot][skid ? 1 : 0];
         if (alive) ++ig[13];
         ++fx_skids_[slot];
