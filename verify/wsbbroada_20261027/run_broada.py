@@ -13,7 +13,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 WT = HERE.parent.parent
 LOCK = WT.parent / "orch-integration" / "re" / "orchestrator" / "mashed_lock.py"
-TOOL = HERE / "c4_racediff_v8.py"
+TOOL = HERE / os.environ.get("C4_TOOL", "c4_racediff_v8.py")   # addendum 1: C4_TOOL=c4_racediff_v9.py
 DATA = Path("D:/MashedWT/D4-WSB-C4-BROAD-A_data")
 SUMMARY = HERE / "racediff_summary.tsv"
 ALL = ["0055abb0", "0055bb70", "0055c230", "0055deb0", "0055e050"]
