@@ -55,30 +55,10 @@ inline void  F8Set(MenuRecord& r, float f) { std::memcpy(&r.row_index, &f, 4); }
 
 }  // namespace
 
-// MASHED_MENU_ANIM_SPEED (decision L-35 = 3): default 1.0, the original's rate. 6 gives the exe's pre-2026-10-27
-// menus (the old kMenuAnimSpeedup = 6.0f, user feedback 2026-06-13 "animations are too slow"). Unset, unparsable,
-// non-finite or <= 0 reads as 1.0.
-float MenuAnimSpeed() {
-    static float s = -1.0f;
-    if (s < 0.0f) {
-        char buf[32];
-        const DWORD n = GetEnvironmentVariableA("MASHED_MENU_ANIM_SPEED", buf, sizeof buf);
-        float v = 1.0f;
-        if (n > 0 && n < sizeof buf) {
-            char* end = nullptr;
-            const float p = std::strtof(buf, &end);
-            if (end != buf && std::isfinite(p) && p > 0.0f) v = p;
-        }
-        s = v;
-    }
-    return s;
-}
-
 // 0x004325c0
 int MenuAnimTickBody(MenuRecord* recs, const MenuAnimTickIn& in) {
     // 0x004325c8 cmp [0x0067eca4],4 / jl: 2.0f (0x005cc574) else 1.0f (0x005cc320), held in ST1 for the walk.
-    // x MenuAnimSpeed(): 1.0 at the default, where x * 1.0f is exact.
-    const float base = ((in.phase >= 4) ? 2.0f : 1.0f) * MenuAnimSpeed();
+    const float base = (in.phase >= 4) ? 2.0f : 1.0f;
     int all_settled = 1;                                              // 0x004325e5 [esp+0x10] = 1
     for (int i = 0; i < 30; ++i) {                                    // esi 0x898ad0 .. 0x8990e8 (0x004327da)
         MenuRecord& r = recs[i];
