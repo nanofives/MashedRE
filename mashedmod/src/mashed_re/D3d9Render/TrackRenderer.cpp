@@ -1608,8 +1608,11 @@ enum { kAnimFreighter = 1, kAnimBoat = 2 };
 
 namespace { void InvalidateBatchCache(); }  // WS-A s3 PERF (defined before Render)
 namespace { TrackRenderer* s_pontoonTr = nullptr; }   // [pontoon] the renderer the platform's host callbacks reach
-// [D4-FX-INPUTS] MASHED_FX_PAIRLOG=<path>, diagnostic only: AiStepDump's ctrl byte 5 per AI slot (after the AI tick) and its
-// frame, read back by EmitCarFxOrigGates to pair it with the byte the FX gate reads (0x0040cb21 / 0x0040cb37). No sim state.
+// [D4-FX-INPUTS] MASHED_FX_PAIRLOG=<path>, diagnostic only: AiStepDump's ctrl byte 5 per AI slot and its frame, read back by
+// EmitCarFxOrigGates to pair it with the byte the FX gate reads (0x0040cb21 / 0x0040cb37). No sim state.
+// [D4-FX-BRAKEBYTE-WRITER] under MASHED_AI_CONTACT_EVENT (default ON) c5_step is FUN_00416250's output (Ai_StepOutCtrl),
+// sampled BEFORE the FUN_00418560 tail. On an override-replay call the tail writes the stored byte back at 0x00418816
+// (mov [edi+5], dl from 0x0089a518 + v*0x74), so c5_step != c5_fx there by design. verify/fxbrake_20261027.
 namespace { int s_fxPairC5[4] = { -1, -1, -1, -1 }; int s_fxPairFrame[4] = { -1, -1, -1, -1 }; }
 namespace { int s_fxPairProbe[2][4] = { { -1, -1, -1, -1 }, { -1, -1, -1, -1 } };   // [D4-FX-INPUTS] ctrl byte 5 before UpdateRace / at UpdateCar's end
 void FxPairProbe(int k) { static const bool s_on = std::getenv("MASHED_FX_PAIRLOG") != nullptr; if (!s_on || !g_aib.loaded) return; for (int v = 1; v <= 3; ++v) s_fxPairProbe[k][v] = Ai::U8(Ai::kCtrlBlockBase + static_cast<std::uintptr_t>(
