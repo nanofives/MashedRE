@@ -3,6 +3,7 @@
 #include "../Audio/AudioEngine.h"
 #include "../Save/GameSaveFormat.h"        // [WS-G5] real gamesave.bin format
 #include "../Frontend/MenuNavSM.h"          // [WS-G5] feed save image to menu state
+#include "../Piz/PizReader.h"               // [D4-FU-SETTRACKPU] powerups_all.lua
 #include <cstdio>
 #include <cstdint>
 #include <cstring>
@@ -91,6 +92,43 @@ std::uint32_t g_saveCounter = 0;
 bool g_progLoaded = false;
 bool g_autosave   = true;     // [WS-G4] Autosave option gate (Sound/Options screen 32)
 
+// [D4-FU-SETTRACKPU 2026-10-26] the boot powerups script. FUN_00492370 runs FUN_004924f0 (span
+// init, 0x0049239f) and then FUN_00402750 (0x004923d0), which reaches FUN_0045bae0: at 0x0045bb7d it
+// calls FUN_0047b9b0("powerups_all.lua" 0x005ce628, &local, registrar 0x00440bc0), and that
+// registrar binds Set_Track_Powerups (0x0047b280, 0x00440f3b). The script sits in powerups.piz
+// (0x005cc3b4, FUN_00402750). So on a first run the span rows 0x7f0cb0 hold the script's last
+// call per course when Serialize copies them. Text read once; MASHED_ROOT is the fallback for a
+// cwd without original/ (the save round-trip harness runs before main's chdir).
+void ApplyBootPowerupsScript(unsigned char span[mashed_re::Save::kSpanBytes]) {
+    static char* s_text = nullptr;
+    static unsigned s_len = 0;
+    static bool s_tried = false;
+    if (!s_tried) {
+        s_tried = true;
+        const char kRel[] = "original/TOASTART/Common/POWERUPS/Powerups.piz";
+        mashed_re::Piz::Archive piz;
+        bool ok = piz.Load(kRel);
+        if (!ok) {
+            if (const char* root = std::getenv("MASHED_ROOT")) {
+                char path[512];
+                std::snprintf(path, sizeof path, "%s/%s", root, kRel);
+                ok = piz.Load(path);
+            }
+        }
+        for (std::uint32_t i = 0; ok && i < piz.count(); ++i) {
+            if (_stricmp(piz.entry(i).name, "POWERUPS_ALL.LUA") != 0) continue;
+            std::uint32_t n = 0;
+            const std::uint8_t* b = piz.blob(i, &n);
+            if (b && n) {
+                s_text = static_cast<char*>(std::malloc(n));
+                if (s_text) { std::memcpy(s_text, b, n); s_len = n; }
+            }
+            break;
+        }
+    }
+    if (s_text) mashed_re::Save::RunTrackPowerupsScript(span, s_text, s_len, nullptr);
+}
+
 // progression -> championship span (the SerializeToBuffer source layout, 0x7f0a40).
 void BuildSpanFromProgress(unsigned char span[mashed_re::Save::kSpanBytes]) {
     using namespace mashed_re::Save;
@@ -99,6 +137,7 @@ void BuildSpanFromProgress(unsigned char span[mashed_re::Save::kSpanBytes]) {
     // the original serializes the span its boot init left (Save/GameSaveFormat.h InitSpanDefaults).
     // The port-private columns below (col 4 unlock, col 5 trophy, the +0x4ec gate) still overlay it.
     InitSpanDefaults(span);
+    ApplyBootPowerupsScript(span);   // [D4-FU-SETTRACKPU] Set_Track_Powerups rows
     bool any = false;
     for (int r = 0; r < kAreaCount && r < kSpanRows; ++r) {
         std::uint32_t u = g_progUnlock[r] ? 2u : 0u;   // real "track available" = 2

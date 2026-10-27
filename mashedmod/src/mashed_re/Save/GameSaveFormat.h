@@ -19,6 +19,7 @@
 // save-state counter.
 #pragma once
 #include <cstdint>
+#include <cstdlib>
 #include <cstring>
 
 namespace mashed_re {
@@ -67,9 +68,9 @@ constexpr unsigned kSpanCounterOff = 0x4bc;  // counter within the span (= file 
 //       col 4 (0x004925f8) = 2, cols 0 / 2 / 5..10 = 0
 // The rest of FUN_004924f0 lands outside the span (zero-fill 0x7f0f60 x 0xdce9 dwords,
 // 0x7f0fec / 0x7f0fd0 / 0x7f0ff0 / 0x803344, FUN_00431d00's 0x0067ea.. globals).
-// Not modelled here: the Lua binding Set_Track_Powerups (0x0047b280, via FUN_00430250) later
-// overwrites the 0x7f0cb0 rows from Powerups.piz, and a live writer clears gather bytes 0..2
-// before the original's first-run save. verify/wsfspan_20261026/RESULT_D4-WSF-SAVE-SPANINIT.md.
+// The Lua binding Set_Track_Powerups (0x0047b280, via FUN_00430250) later overwrites the 0x7f0cb0
+// rows from Powerups.piz: SetTrackPowerups / RunTrackPowerupsScript below (D4-FU-SETTRACKPU).
+// Not modelled here: a live writer clears gather bytes 0..2 before the original's first-run save. verify/wsfspan_20261026/RESULT_D4-WSF-SAVE-SPANINIT.md.
 inline void InitSpanDefaults(unsigned char span[kSpanBytes]) {
     auto put = [&](unsigned off, std::uint32_t v) { std::memcpy(span + off, &v, 4); };
     std::memset(span, 0, kSpanBytes);
@@ -92,6 +93,115 @@ inline void InitSpanDefaults(unsigned char span[kSpanBytes]) {
         put(row + kColTrackUnlock, 2u);                  // col 4  (0x007f0a50)
         put(row + 0x2c, r == 0 ? 1u : 0u);               // col 11 (0x007f0a6c)
     }
+}
+
+// ── [D4-FU-SETTRACKPU 2026-10-26] Set_Track_Powerups (0x0047b280), buffer form ──
+// Course id of each span row, row order. FUN_00430250 walks FUN_0040d430()'s table:
+// FUN_0040d430 returns [0x005f2770] = 0x005f2728, 13 pointers to course records whose first
+// dword is the course id (.data, initialized, read from MASHED.exe.unpatched):
+//   0x005f2570 30, 0x005f25fc 3, 0x005f2660 39, 0x005f2584 0, 0x005f264c 38, 0x005f25c0 11,
+//   0x005f25ac 25, 0x005f2598 2, 0x005f2624 36, 0x005f25e8 34, 0x005f2638 37, 0x005f25d4 33,
+//   0x005f2610 26.
+constexpr int kSpanRowCourseId[kSpanRows] = {30, 3, 39, 0, 38, 11, 25, 2, 36, 34, 37, 33, 26};
+
+// 0x00430250: -1 (NULL) when param_2 == 0 or no row matches (the loop runs to 0xd), else the
+// FIRST row r with **table[r] == param_1 (&DAT_007f0cb0 + r*5).
+inline int TrackPowerupsRow(int course, int tier) {
+    if (tier == 0) return -1;
+    for (int r = 0; r < kSpanRows; ++r)
+        if (kSpanRowCourseId[r] == course) return r;
+    return -1;
+}
+
+// 0x0047b280: n = FUN_004b6fc0(L), then FUN_004b7090(L, i) + FUN_004a2c48() on stack slots
+// n-6 .. n (course, tier, five ids), FUN_00430250(course, tier), and if non-NULL five dword
+// stores at the row (span +0x270 + r*0x14, = 0x007f0cb0 - 0x007f0a40).
+inline void SetTrackPowerups(unsigned char span[kSpanBytes], const int a[7]) {
+    const int r = TrackPowerupsRow(a[0], a[1]);
+    if (r < 0) return;
+    for (int k = 0; k < 5; ++k) {
+        const std::uint32_t v = static_cast<std::uint32_t>(a[2 + k]);
+        std::memcpy(span + 0x270 + r * 0x14 + 4 * k, &v, 4);
+    }
+}
+
+// The boot script powerups_all.lua (POWERUPS_ALL.LUA in Powerups.piz) is 13 `local NAME = INT`
+// constants, `--` comments and 39 `Set_Track_Powerups(...)` calls of 7 arguments each. This runs
+// exactly that statement set: names resolve through the locals (an unknown name is nil, and
+// lua_tonumber of nil is 0), integer literals may carry a leading '-'. A call with other than 7
+// arguments, or any other statement, is skipped and counted in *skipped.
+// [UNCERTAIN] general Lua 4.0 is not interpreted: a script outside this statement set would diverge.
+inline int RunTrackPowerupsScript(unsigned char span[kSpanBytes], const char* text, unsigned len,
+                                  int* skipped) {
+    struct Local { char name[32]; int value; };
+    Local locals[64];
+    int nLocals = 0, calls = 0, skip = 0;
+    auto isId = [](char c) { return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_' ||
+                                    (c >= '0' && c <= '9'); };
+    unsigned i = 0;
+    while (i < len) {
+        unsigned e = i;
+        while (e < len && text[e] != '\n') ++e;
+        char line[512];
+        unsigned n = 0;
+        for (unsigned k = i; k < e && n + 1 < sizeof line; ++k) {
+            if (text[k] == '-' && k + 1 < e && text[k + 1] == '-') break;   // comment
+            if (text[k] != '\r') line[n++] = text[k];
+        }
+        line[n] = '\0';
+        i = e + 1;
+        // tokenise: identifiers, signed integers, punctuation
+        char tok[24][32];
+        int nt = 0;
+        bool bad = false;
+        for (unsigned k = 0; k < n && !bad;) {
+            const char c = line[k];
+            if (c == ' ' || c == '\t') { ++k; continue; }
+            if (nt == 24) { bad = true; break; }
+            unsigned t = 0;
+            if (isId(c) || (c == '-' && k + 1 < n && line[k + 1] >= '0' && line[k + 1] <= '9')) {
+                tok[nt][t++] = c; ++k;
+                while (k < n && isId(line[k]) && t + 1 < sizeof tok[0]) tok[nt][t++] = line[k++];
+            } else {
+                tok[nt][t++] = c; ++k;
+            }
+            tok[nt][t] = '\0';
+            ++nt;
+        }
+        if (nt == 0) continue;
+        auto isInt = [](const char* s) {
+            if (*s == '-') ++s;
+            if (!*s) return false;
+            for (; *s; ++s) if (*s < '0' || *s > '9') return false;
+            return true;
+        };
+        auto value = [&](const char* s) {
+            if (isInt(s)) return std::atoi(s);
+            for (int k = nLocals - 1; k >= 0; --k)
+                if (std::strcmp(locals[k].name, s) == 0) return locals[k].value;
+            return 0;
+        };
+        if (!bad && nt == 4 && std::strcmp(tok[0], "local") == 0 && std::strcmp(tok[2], "=") == 0 &&
+            isInt(tok[3]) && nLocals < 64 && std::strlen(tok[1]) < sizeof locals[0].name) {
+            std::strcpy(locals[nLocals].name, tok[1]);
+            locals[nLocals].value = std::atoi(tok[3]);
+            ++nLocals;
+            continue;
+        }
+        if (!bad && nt == 17 && std::strcmp(tok[0], "Set_Track_Powerups") == 0 &&
+            std::strcmp(tok[1], "(") == 0 && std::strcmp(tok[16], ")") == 0) {
+            int a[7];
+            bool ok = true;
+            for (int k = 0; k < 7; ++k) {
+                if (k < 6 && std::strcmp(tok[3 + 2 * k], ",") != 0) ok = false;
+                a[k] = value(tok[2 + 2 * k]);
+            }
+            if (ok) { SetTrackPowerups(span, a); ++calls; continue; }
+        }
+        ++skip;
+    }
+    if (skipped) *skipped = skip;
+    return calls;
 }
 
 // Build a full real-format image from a championship span + save counter.

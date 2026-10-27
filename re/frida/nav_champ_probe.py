@@ -116,6 +116,60 @@ def boot(env_extra=None):
     return dev, proc, sess
 
 
+# NAV_WATCH_WRITE=<va>[,<va>..] (up to 4, D4-FU-SETTRACKPU): hardware WRITE watchpoints (debug registers
+# 0..3, 4 bytes each) on absolute globals, armed on every thread right after attach and on threads created
+# later (Process.attachThreadObserver). Same mechanism as scenario_launch.py --watch-write, which only
+# watches car-record offsets. Data breakpoints trap AFTER the store, so pc is the next instruction. Each
+# hit: [seq, pc, accurate backtrace, dword at every watched address after the store]. No Interceptor.
+WATCH_JS = r"""
+'use strict';
+const IMG = 0x00400000;
+const m = Process.findModuleByName('MASHED.exe') || Process.enumerateModules()[0];
+const D = m.base.toUInt32() - IMG;
+const WW = { rows: [], n: 0, err: null, addrs: [], threads: 0 };
+function rva(x) { return '0x' + ((x >>> 0) - D >>> 0).toString(16); }
+function armThread(t) {
+  for (let k = 0; k < WW.addrs.length; k++) {
+    try { t.setHardwareWatchpoint(k, WW.addrs[k], 4, 'w'); }
+    catch (e) { if (!WW.err) WW.err = 'arm tid ' + t.id + ' ' + e.message; return; }
+  }
+  WW.threads++;
+}
+rpc.exports = {
+  arm: function (csv) {
+    WW.addrs = csv.split(',').slice(0, 4).map(function (s) { return ptr(parseInt(s, 16) + D); });
+    Process.setExceptionHandler(function (d) {
+      if (d.type !== 'single-step' && d.type !== 'breakpoint') return false;
+      try {
+        const c = d.context;
+        let bt = '';
+        try { bt = Thread.backtrace(c, Backtracer.ACCURATE).slice(0, 10).map(function (p) { return rva(p.toUInt32()); }).join('|'); }
+        catch (e) { bt = 'bt-err'; }
+        WW.n++;
+        if (WW.rows.length < 5000)
+          WW.rows.push([WW.n, rva(c.pc.toUInt32()), bt].concat(WW.addrs.map(function (a) { return a.readU32(); })));
+      } catch (e) { if (!WW.err) WW.err = 'hit ' + e; }
+      return true;
+    });
+    Process.enumerateThreads().forEach(armThread);
+    try { Process.attachThreadObserver({ onAdded: function (t) { armThread(t); } }); }
+    catch (e) { if (!WW.err) WW.err = 'observer ' + e.message; }
+    return 'armed ' + WW.threads + ' threads on ' + WW.addrs.map(String).join(',');
+  },
+  stats: function () { return { n: WW.n, threads: WW.threads, err: WW.err }; },
+  drain: function () { const r = WW.rows; WW.rows = []; return r; },
+  peek: function () { return WW.addrs.map(function (a) { return a.readU32(); }); }
+};
+"""
+
+
+def watch_dump(W, tag):
+    st = W.stats()
+    print(f"  WATCH {tag}: hits={st['n']} threads={st['threads']} err={st['err']} now={[hex(v) for v in W.peek()]}")
+    for r in W.drain():
+        print("  WATCHHIT seq=%d pc=%s vals=%s bt=%s" % (r[0], r[1], [hex(v) for v in r[3:]], r[2]))
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--plan", default="champ")
@@ -138,6 +192,12 @@ def main():
         shot_env = {"MASHED_RE_DEV": "1", "MASHED_MUTE": "1", "MASHED_LEAF_SELFTEST": "1",
                     "MASHED_HOOK_ONLY": args.hooks}
     dev, proc, sess = boot(shot_env)
+    WATCH = None
+    if os.environ.get("NAV_WATCH_WRITE"):
+        wscr0 = sess.create_script(WATCH_JS)
+        wscr0.on("message", lambda m, d: None)
+        wscr0.load(); WATCH = wscr0.exports_sync
+        print("  WATCH", WATCH.arm(os.environ["NAV_WATCH_WRITE"]))
     try:
         scr = sess.create_script(NAV)
         scr.on("message", lambda m, d: None)
@@ -240,6 +300,8 @@ def main():
                 outp = os.environ.get("MASHED_GHOST_OUT", "ghost_block_menu.bin")
                 Path(outp).write_bytes(bytes(gscr.exports_sync.blk()))
                 print("  GHOSTDUMP ->", outp)
+            if WATCH is not None:
+                watch_dump(WATCH, "before-savewrite")
             if args.plan == "savewrite":
                 # savelink leg R: the ORIGINAL's own writer. SerializeToBuffer 0x00404ee0
                 # then SaveWrite 0x00404f50 (both __cdecl, no args), cwd = the game dir.
@@ -256,6 +318,8 @@ def main():
                 wscr.load()
                 print("  SAVEWRITE ret=%s" % wscr.exports_sync.run())
                 time.sleep(0.5)
+                if WATCH is not None:
+                    watch_dump(WATCH, "after-savewrite")
             return 0
 
         if args.plan == "codescan":
