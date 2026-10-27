@@ -1,0 +1,104 @@
+== 0x0055ae50 slots [1, 2]  callee ret [0]  direct sites 5  abs refs []
+  site 0047dfaa call
+    0047dfaf FREED param_1 slot (r=+0x8)
+    0047dfaf FREED param_2 slot (r=+0x8)
+  site 0047e0a1 call
+    0047e0a6 FREED param_1 slot (r=+0x8)
+    0047e0a6 FREED param_2 slot (r=+0x8)
+  site 0047e18c call
+    0047e191 FREED param_1 slot (r=+0x8)
+    0047e191 FREED param_2 slot (r=+0x8)
+  site 0047e2ea call
+    0047e2ef FREED param_1 slot (r=+0x8)
+    0047e2ef FREED param_2 slot (r=+0x8)
+  site 0056b833 call
+    0056b838 EBPFRAME mov ecx, dword ptr [ebp + 4]
+    0056b844 FREED param_1 slot (r=+0x8)
+    0056b844 FREED param_2 slot (r=+0x8)
+== 0x0056bce0 slots [1, 2, 3]  callee ret [0]  direct sites 3  abs refs []
+  site 0056bf3c call
+    0056c086 PARAM param_1 slot is the callee's param_2: 0x4c45f0
+    0056c086 PARAM param_2 slot is the callee's param_3: 0x4c45f0
+    0056c086 PARAM param_3 slot is the callee's param_4: 0x4c45f0
+    0056c08b FREED param_1 slot (r=+0xc)
+    0056c08b FREED param_2 slot (r=+0xc)
+    0056c08b FREED param_3 slot (r=+0xc)
+  site 0056c17b call
+    0056c2e9 PARAM param_1 slot is the callee's param_2: 0x4c45f0
+    0056c2e9 PARAM param_2 slot is the callee's param_3: 0x4c45f0
+    0056c2e9 PARAM param_3 slot is the callee's param_4: 0x4c45f0
+    0056c2f5 FREED param_1 slot (r=+0xc)
+    0056c2f5 FREED param_2 slot (r=+0xc)
+    0056c2f5 FREED param_3 slot (r=+0xc)
+  site 0056c3e2 call
+    0056c552 PARAM param_1 slot is the callee's param_2: 0x4c45f0
+    0056c552 PARAM param_2 slot is the callee's param_3: 0x4c45f0
+    0056c552 PARAM param_3 slot is the callee's param_4: 0x4c45f0
+    0056c55e FREED param_1 slot (r=+0xc)
+    0056c55e FREED param_2 slot (r=+0xc)
+    0056c55e FREED param_3 slot (r=+0xc)
+== 0x0055dff0 slots [1, 2]  callee ret [0]  direct sites 11  abs refs []
+  site 00421b6c call
+    00421b72 EBPFRAME mov dword ptr [ebp + 0x10], edi
+    00421b75 PARAM param_1 slot is the callee's param_2: 0x421930
+    00421b75 PARAM param_2 slot is the callee's param_3: 0x421930
+    00421b7e FREED param_1 slot (r=+0x1c)
+    00421b7e FREED param_2 slot (r=+0x1c)
+  site 0047d1f6 call
+    0047d1fe FREED param_1 slot (r=+0x1c)
+    0047d1fe FREED param_2 slot (r=+0x1c)
+  site 0047d2f1 call
+    0047d2f9 FREED param_1 slot (r=+0x20)
+    0047d2f9 FREED param_2 slot (r=+0x20)
+  site 0047eb10 call
+    0047eb1c PARAM param_1 slot is the callee's param_4: 0x55ac00
+    0047eb1c PARAM param_2 slot is the callee's param_5: 0x55ac00
+    0047eb21 FREED param_1 slot (r=+0x28)
+    0047eb21 FREED param_2 slot (r=+0x28)
+  site 0047ef6e call
+    0047ef7a PARAM param_1 slot is the callee's param_4: 0x55ac00
+    0047ef7a PARAM param_2 slot is the callee's param_5: 0x55ac00
+    0047ef7f FREED param_1 slot (r=+0x10)
+    0047ef7f FREED param_2 slot (r=+0x10)
+  site 0047f02c call
+    0047f038 PARAM param_1 slot is the callee's param_4: 0x55ac00
+    0047f038 PARAM param_2 slot is the callee's param_5: 0x55ac00
+    0047f041 FREED param_1 slot (r=+0x20)
+    0047f041 FREED param_2 slot (r=+0x20)
+  site 0047f089 call
+    0047f094 PARAM param_1 slot is the callee's param_4: 0x55ac00
+    0047f094 PARAM param_2 slot is the callee's param_5: 0x55ac00
+    0047f099 FREED param_1 slot (r=+0x14)
+    0047f099 FREED param_2 slot (r=+0x14)
+  site 00480246 call
+    0048024e FREED param_1 slot (r=+0x10)
+    0048024e FREED param_2 slot (r=+0x10)
+  site 00480986 call
+    00480992 PARAM param_1 slot is the callee's param_4: 0x55ac00
+    00480992 PARAM param_2 slot is the callee's param_5: 0x55ac00
+    00480997 FREED param_1 slot (r=+0x20)
+    00480997 FREED param_2 slot (r=+0x20)
+  site 00480b39 call
+    00480b45 PARAM param_1 slot is the callee's param_4: 0x55ac00
+    00480b45 PARAM param_2 slot is the callee's param_5: 0x55ac00
+    00480b4a FREED param_1 slot (r=+0x2c)
+    00480b4a FREED param_2 slot (r=+0x2c)
+  site 0057c257 call
+    0057c25c FREED param_1 slot (r=+0x8)
+    0057c25c FREED param_2 slot (r=+0x8)
+== 0x0055a1f0 slots [1, 5, 6, 9]  callee ret [0]  direct sites 1  abs refs []
+  site 0055fe91 call
+    0055fe96 FREED param_1 slot (r=+0x28)
+    0055fe96 FREED param_5 slot (r=+0x28)
+    0055fe96 FREED param_6 slot (r=+0x28)
+    0055fe96 FREED param_9 slot (r=+0x28)
+== 0x00568fd0 slots [1]  callee ret [0]  direct sites 1  abs refs []
+  site 00561e73 call
+    00561e78 FREED param_1 slot (r=+0x8)
+== 0x0056b7a0 slots [4]  callee ret [0]  direct sites 2  abs refs []
+  site 0056b9f8 call
+    0056ba20 PARAM param_4 slot is the callee's param_11: 0x573670
+    0056ba25 FREED param_4 slot (r=+0x10)
+  site 0056ba7e call
+    0056bab6 PARAM param_4 slot is the callee's param_9: 0x568990
+    0056babb FREED param_4 slot (r=+0x10)

@@ -1,0 +1,51 @@
+band	rva	conf	status	subsys	wrapper	wfile	c3_evidence	insns	rets	d_ok	calls	tail	indirect	n_local	n_arg	n_global	n_ptr	n_str	stores_outside_frame
+BROAD	0x00558100	C3	impl	gameplay	none		batch-w-s5 | green-earlywindow-r151	19	2	yes	0	0	0	0	0	0	4	0	4
+BROAD	0x00558140	C3	impl	gameplay	none		batch-w-s5 | green-earlywindow-r144	17	2	yes	0	0	0	0	0	0	3	0	3
+BROAD	0x0055a1f0	C3	impl	third-party-library[RenderWa	Run	RwpSolverBroadphase3.cpp	shadow_ab:track0-mode10-cars4 | shadow_ab:log/shadow_ab/shadow_ab_2026	633	2	yes	3	0	2	27	14	2	29	1	46
+BROAD	0x0055ab30	C3	impl	third-party-library[RenderWa	Run	RwpSolverGlue5.cpp	shadow_ab:track0-mode10-cars4 | shadow_ab:log/shadow_ab/shadow_ab_2026	46	1	yes	2	0	0	0	0	0	1	0	1
+BROAD	0x0055abb0	C3	impl	third-party-library[RenderWa	Run	RwpSolverBroadphase3.cpp	shadow_ab:track0-mode10-cars4 | shadow_ab:log/shadow_ab/shadow_ab_2026	31	1	yes	1	0	0	0	0	0	0	0	0
+BROAD	0x0055ac00	C4	verified	third-party-library[RenderWa	none		b5c_c4_selftest_2026-07-24 | log/phys_c4_b5c_ALL6_GREEN_20260724.log	31	2	yes	0	0	0	0	0	0	2	0	2
+BROAD	0x0055ae50	C3	impl	third-party-library[RenderWa	Run	RwpSolverBroadphase3.cpp	shadow_ab:track0-mode10-cars4 | shadow_ab:log/shadow_ab/shadow_ab_2026	7	0	yes	0	1	0	0	2	0	0	0	2
+BROAD	0x0055b800	C4	verified	third-party-library[RenderWa	none		b5c_c4_selftest_canonical_2026-07-23 | log/phys_c4_b5c_matrixrefresh_G	38	1	yes	3	0	0	0	0	0	0	0	0
+BROAD	0x0055bae0	C3	impl	third-party-library[RenderWa	Run	RwpSolverBroadphase3.cpp	shadow_ab:track0-mode10-cars4 | shadow_ab:log/shadow_ab/shadow_ab_2026	51	1	yes	1	0	1	1	0	0	3	0	3
+BROAD	0x0055bb70	C3	impl	third-party-library[RenderWa	Run	RwpSolverGlue5.cpp	shadow_ab:track0-mode10-cars4 | shadow_ab:log/shadow_ab/shadow_ab_2026	46	3	yes	4	0	0	0	0	0	0	0	0
+BROAD	0x0055c000	C3	ported	third-party-library[RenderWa	none		batch-w-s5 | 	89	1	yes	1	0	1	4	0	0	3	0	3
+BROAD	0x0055c0f0	C3	impl	third-party-library[RenderWa	RunTracked	RwpSolverBroadphase3.cpp	shadow_tracked:track0-mode10-cars4 | shadow_ab:log/shadow_ab/shadow_ab	118	2	yes	0	0	0	4	0	0	8	0	8
+BROAD	0x0055c230	C3	impl	third-party-library[RenderWa	Run	RwpSolverGlue5.cpp	shadow_ab:track0-mode10-cars4 | shadow_ab:log/shadow_ab/shadow_ab_2026	61	1	yes	2	0	1	3	0	0	0	0	0
+BROAD	0x0055c4f0	C3	impl	vehicle	none		race | re/analysis/negctl/reearn_20261011/evidence/diff_physics_body_s	36	2	yes	1	0	0	0	0	0	1	0	1
+BROAD	0x0055c810	C3	impl	vehicle	none		race | re/analysis/negctl/reearn_20261011/evidence/diff_physics_body_s	16	1	yes	1	0	0	0	0	0	3	0	3
+BROAD	0x0055deb0	C3	impl	third-party-library[RenderWa	none		b5c_c4_selftest_2026-07-24 | 	3	1	yes	0	0	0	0	0	0	0	0	0
+BROAD	0x0055dec0	C3	new	util	none		 | 	3	1	yes	0	0	0	0	0	0	0	0	0
+BROAD	0x0055dff0	C4	verified	third-party-library[RenderWa	none		b5c_c4_selftest_2026-07-24 | log/phys_c4_b5c_ALL6_GREEN_20260724.log	29	1	yes	0	1	0	0	2	0	0	0	2
+BROAD	0x0055e050	C3	impl	third-party-library[RenderWa	Run	RwpSolverGlue5.cpp	shadow_ab:track0-mode10-cars4 | shadow_ab:log/shadow_ab/shadow_ab_2026	19	1	yes	2	0	1	0	0	0	0	0	0
+BROAD	0x0055e200	C4	verified	third-party-library[RenderWa	none		b5c_c4_selftest_2026-07-24 | log/phys_c4_b5c_ALL6_GREEN_20260724.log	4	1	yes	0	0	0	0	0	0	1	0	1
+SOLV	0x005675d0	C3	impl	third-party-library[RenderWa	RunTracked	RwpSolverLeaves1.cpp	shadow_tracked:track0-mode10-cars4 | shadow_ab:log/shadow_ab/shadow_ab	27	1	yes	0	0	0	0	0	0	16	0	16
+SOLV	0x00567c00	C3	impl	third-party-library[RenderWa	RunTracked	RwpSolverCore9.cpp	shadow_tracked:track0-mode10-cars4 | shadow_ab:log/shadow_ab/shadow_ab	16	1	yes	1	0	0	0	0	0	7	0	7
+SOLV	0x00567c60	C3	impl	third-party-library[RenderWa	RunTracked	RwpSolverCore11.cpp	shadow_tracked:track0-mode10-cars4 | shadow_ab:log/shadow_ab/shadow_ab	233	2	yes	1	0	0	6	16	0	25	0	41
+SOLV	0x00567f00	C3	impl	third-party-library[RenderWa	RunTracked	RwpSolverCore11.cpp	shadow_tracked:track0-mode10-cars4 | shadow_ab:log/shadow_ab/shadow_ab	606	1	yes	22	0	0	2	4	0	16	0	20
+SOLV	0x005684c0	C3	impl	third-party-library[RenderWa	RunTracked	RwpSolverLeaves1.cpp	shadow_tracked:track0-mode10-cars4 | shadow_ab:log/shadow_ab/shadow_ab	49	1	yes	0	0	0	0	0	0	26	0	26
+SOLV	0x00568560	C3	impl	third-party-library[RenderWa	RunTracked	RwpSolverLeaves1.cpp	shadow_tracked:track0-mode10-cars4 | shadow_ab:log/shadow_ab/shadow_ab	50	2	yes	0	0	0	0	0	0	21	0	21
+SOLV	0x005685f0	C3	impl	third-party-library[RenderWa	RunTracked	RwpSolverCore11.cpp	shadow_tracked:track0-mode10-cars4 | shadow_ab:log/shadow_ab/shadow_ab	161	3	yes	0	0	0	0	0	0	48	1	49
+SOLV	0x00568990	C3	impl	third-party-library[RenderWa	Run	RwpSolverCore21.cpp	shadow_ab:track0-mode10-cars4 | shadow_ab:log/shadow_ab/shadow_ab_2026	237	2	yes	9	0	0	9	0	0	9	0	9
+SOLV	0x00568dd0	C3	impl	third-party-library[RenderWa	Run	RwpSolverCore11.cpp	shadow_ab:track0-mode10-cars4 | shadow_ab:log/shadow_ab/shadow_ab_2026	160	1	yes	0	0	0	7	0	0	12	0	12
+SOLV	0x00568fd0	C3	impl	third-party-library[RenderWa	Run	RwpSolverCore11.cpp	shadow_ab:track0-mode10-cars4 | shadow_ab:log/shadow_ab/shadow_ab_2026	113	2	yes	0	0	0	4	2	0	2	0	4
+SOLV	0x0056b7a0	C3	impl	third-party-library[RenderWa	Run	RwpSolverCore18.cpp	shadow_ab:track0-mode10-cars4 | shadow_ab:log/shadow_ab/shadow_ab_2026	160	2	yes	3	0	0	6	1	0	6	0	7
+SOLV	0x0056ba30	C3	impl	third-party-library[RenderWa	Run	RwpSolverCore21.cpp	shadow_ab:track0-mode10-cars4 | shadow_ab:log/shadow_ab/shadow_ab_2026	80	2	yes	2	0	0	0	0	0	4	0	4
+SOLV	0x0056bb30	C3	impl	third-party-library[RenderWa	Run	RwpSolverCore21.cpp	shadow_ab:track0-mode10-cars4 | shadow_ab:log/shadow_ab/shadow_ab_2026	27	1	yes	1	0	0	0	0	0	0	0	0
+SOLV	0x0056bce0	C3	impl	third-party-library[RenderWa	RunRegion region=reinterpret_cast<void*>(param_1), 0x10	RwpSolverIntegrate6.cpp	shadow-ab-region | log/shadow_ab/shadow_ab_20260910_142315_1x_0056bce0	86	1	yes	0	0	0	2	3	0	4	0	7
+SOLV	0x0056bdf0	C3	impl	third-party-library[RenderWa	RunTracked	RwpSolverIntegrate6.cpp	shadow_tracked:track0-mode10-cars4 | shadow_ab:log/shadow_ab/shadow_ab	45	1	yes	0	0	0	0	0	0	6	0	6
+SOLV	0x0056c0a0	C3	impl	third-party-library[RenderWa	RunTracked	RwpSolverIntegrate6.cpp	shadow_tracked:track0-mode10-cars4 | shadow_ab:log/shadow_ab/shadow_ab	197	1	yes	3	0	0	19	0	0	19	0	19
+SOLV	0x0056c310	C3	impl	third-party-library[RenderWa	RunTracked	RwpSolverIntegrate6.cpp	shadow_tracked:track0-mode10-cars4 | shadow_ab:log/shadow_ab/shadow_ab	195	1	yes	3	0	0	18	1	0	19	0	20
+SOLV	0x0056c580	C3	impl	third-party-library[RenderWa	RunTracked	RwpSolverCore7.cpp	shadow_tracked:track0-mode10-cars4 | shadow_ab:log/shadow_ab/shadow_ab	230	1	yes	0	0	0	8	21	0	12	1	34
+SOLV	0x0056c8e0	C3	impl	third-party-library[RenderWa	RunTracked	RwpSolverCore7.cpp	shadow_tracked:track0-mode10-cars4 | shadow_ab:log/shadow_ab/shadow_ab	134	1	yes	0	0	0	12	0	0	6	0	6
+SOLV	0x0056caa0	C3	impl	third-party-library[RenderWa	RunTracked	RwpSolverCore7.cpp	shadow_tracked:track0-mode10-cars4 | shadow_ab:log/shadow_ab/shadow_ab	360	1	yes	4	0	0	18	0	0	67	4	71
+SOLV	0x0056cf90	C3	impl	third-party-library[RenderWa	RunRegion region=reinterpret_cast<void*>(param_1), 0x60	RwpSolverCore7.cpp	shadow_region:track0-mode10-cars4 | shadow_ab:log/shadow_ab/shadow_ab_	65	1	yes	0	0	0	0	0	0	24	0	24
+SOLV	0x0056d070	C3	impl	third-party-library[RenderWa	RunTracked	RwpSolverCore7.cpp	shadow_tracked:track0-mode10-cars4 | shadow_ab:log/shadow_ab/shadow_ab	247	1	yes	2	0	0	6	6	0	38	0	44
+SOLV	0x0056dd40	C3	impl	third-party-library[RenderWa	RunTracked	RwpSolverCore8.cpp	shadow_tracked:track0-mode10-cars4 | shadow_ab:log/shadow_ab/shadow_ab	664	1	yes	0	0	0	43	0	0	16	0	16
+SOLV	0x0056e680	C3	impl	third-party-library[RenderWa	RunTracked	RwpSolverCore8.cpp	shadow_tracked:track0-mode10-cars4 | shadow_ab:log/shadow_ab/shadow_ab	491	2	yes	2	0	0	46	12	0	32	0	44
+SOLV	0x0056ed60	C3	impl	third-party-library[RenderWa	RunRegion region=reinterpret_cast<void*>(param_1), 0x2c	RwpSolverCore8.cpp	shadow_region:track0-mode10-cars4 | shadow_ab:log/shadow_ab/shadow_ab_	164	1	yes	0	0	0	6	0	0	9	0	9
+SOLV	0x0056ef30	C3	impl	third-party-library[RenderWa	RunTracked	RwpSolverCore9.cpp	shadow_tracked:track0-mode10-cars4 | shadow_ab:log/shadow_ab/shadow_ab	29	1	yes	0	0	0	0	0	0	26	0	26
+SOLV	0x0056efc0	C3	impl	third-party-library[RenderWa	RunTracked	RwpSolverCore9.cpp	shadow_tracked:track0-mode10-cars4 | shadow_ab:log/shadow_ab/shadow_ab	17	1	yes	0	0	0	0	0	0	4	0	4
+SOLV	0x0056f020	C3	impl	third-party-library[RenderWa	RunTracked	RwpSolverCore9.cpp	shadow_tracked:track0-mode10-cars4 | shadow_ab:log/shadow_ab/shadow_ab	28	1	yes	0	0	0	0	0	0	7	0	7
+SOLV	0x0056f1f0	C3	impl	third-party-library[RenderWa	RunTracked	RwpSolverCore9.cpp	shadow_tracked:track0-mode10-cars4 | shadow_ab:log/shadow_ab/shadow_ab	114	1	yes	0	0	0	1	1	0	27	0	28
+SOLV	0x0056fad0	C3	impl	third-party-library[RenderWa	RunRegion region=reinterpret_cast<void*>(param_1), 0x3c	RwpSolverCore9.cpp	shadow_region:track0-mode10-cars4 | shadow_ab:log/shadow_ab/shadow_ab_	68	1	yes	0	0	0	0	0	0	12	0	12
