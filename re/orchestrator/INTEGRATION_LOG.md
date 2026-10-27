@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-10-27 00:06 D4-WSB-C4-BVH (orch/D4-WSB-C4-BVH), D4-WSH-EXEFILE (orch/D4-WSH-EXEFILE), D4-FU-RENAME-52DAF0 (orch/D4-FU-RENAME-52DAF0): G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/e85ea6fb/53778664. Run data D:\MashedWT\mtrain_data\20261026_235238
 - 2026-10-26 23:48 D4-FU-SETTRACKPU (orch/D4-FU-SETTRACKPU): G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/e85ea6fb/53778664. Run data D:\MashedWT\mtrain_data\20261026_234224
 - 2026-10-26 23:34 D4-WSB-C4-NARROW (orch/D4-WSB-C4-NARROW): G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/e85ea6fb/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261026_231934
 - 2026-10-26 23:09 D4-FX-INPUTS (orch/D4-FX-INPUTS): G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/e85ea6fb/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261026_223718
