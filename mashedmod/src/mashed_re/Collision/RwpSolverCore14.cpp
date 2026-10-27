@@ -153,7 +153,7 @@ static undefined4 __cdecl FUN_00577ec0_impl(float *param_1,float *param_2,float 
   float fVar10;
   float p1sel;                         // TRAP: decomp's reused `param_1` float scratch
 
-  // [D4-WSB-NARROW-FIX] MASHED_NARROW_DOT_ORDER=1: every sum below in the original's FADD order, the first two
+  // [D4-WSB-NARROW-FIX] NARROW_DOT_ORDER (default ON, MASHED_NO_NARROW_DOT_ORDER=1 opts out): every sum below in the original's FADD order, the first two
   // products it loads first: squares (x*x + y*y) + z*z (FSTP 0x00577eec / 0x00577f0e), dots (a.y*b.y + a.x*b.x) +
   // a.z*b.z (FSTP 0x00577f99, 0x0057803a, 0x005780ae, 0x005780e0, 0x005780fc).
   const bool ord = NarrowDotOrder();
@@ -323,7 +323,7 @@ static undefined4 __cdecl FUN_005784a0_impl(uint *param_1,float *param_2,float *
 
   uVar1 = *param_1;
   if (NarrowDotOrder()) {
-    // [D4-WSB-NARROW-FIX] MASHED_NARROW_DOT_ORDER=1: dots (n.y*d.y + d.x*n.x) + n.z*d.z (FSTP 0x005784ee /
+    // [D4-WSB-NARROW-FIX] NARROW_DOT_ORDER (default ON, MASHED_NO_NARROW_DOT_ORDER=1 opts out): dots (n.y*d.y + d.x*n.x) + n.z*d.z (FSTP 0x005784ee /
     // 0x0057856a), squared lengths (y*y + x*x) + z*z (FCOMP 0x00578526 / 0x005785a2), append dot
     // (p.y*n.y + p.x*n.x) + p.z*n.z (0x005785e0).
     if (uVar1 != 0) {

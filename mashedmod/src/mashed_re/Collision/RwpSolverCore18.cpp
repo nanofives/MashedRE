@@ -684,7 +684,7 @@ static undefined4 __cdecl FUN_00578610_impl(undefined4 param_1,int *param_2,floa
                  *(float *)(*(int *)(param_2[1] + 0x10) + 0x38);
     fVar13 = (float10)FUN_005667c0(param_4, param_4);
     iVar5 = *(int *)(param_2[1] + 0x10);
-    // [D4-WSB-NARROW-FIX] MASHED_NARROW_DOT_ORDER=1: (b.y*n.y + b.x*n.x) + b.z*n.z, FSTP 0x005786a8.
+    // [D4-WSB-NARROW-FIX] NARROW_DOT_ORDER (default ON, MASHED_NO_NARROW_DOT_ORDER=1 opts out): (b.y*n.y + b.x*n.x) + b.z*n.z, FSTP 0x005786a8.
     local_140 = NarrowDotOrder()
                 ? (*(float *)(iVar5 + 0x34) * param_4[1] + *(float *)(iVar5 + 0x30) * *param_4) +
                   *(float *)(iVar5 + 0x38) * param_4[2]
@@ -782,7 +782,7 @@ static undefined4 __cdecl FUN_00578610_impl(undefined4 param_1,int *param_2,floa
               crossN[0] = pfVar12[1] * pfVar10[1] - *pfVar12 * pfVar10[2];
               crossN[1] = pfVar12[-1] * pfVar10[2] - *pfVar10 * pfVar12[1];
               crossN[2] = *pfVar12 * *pfVar10 - pfVar12[-1] * pfVar10[1];
-              // [D4-WSB-NARROW-FIX] MASHED_NARROW_DOT_ORDER=1: (c1*c1 + c0*c0) + c2*c2, FCOMP 0x005789aa.
+              // [D4-WSB-NARROW-FIX] NARROW_DOT_ORDER (default ON, MASHED_NO_NARROW_DOT_ORDER=1 opts out): (c1*c1 + c0*c0) + c2*c2, FCOMP 0x005789aa.
               float fVar9 = NarrowDotOrder()
                             ? (crossN[1] * crossN[1] + crossN[0] * crossN[0]) + crossN[2] * crossN[2]
                             : crossN[2] * crossN[2] + crossN[0] * crossN[0] + crossN[1] * crossN[1];
@@ -819,7 +819,7 @@ static undefined4 __cdecl FUN_00578610_impl(undefined4 param_1,int *param_2,floa
     }
   }
   if (NarrowDotOrder()) {
-    // [D4-WSB-NARROW-FIX] MASHED_NARROW_DOT_ORDER=1: this TU builds SSE2, where float10 is double; the original
+    // [D4-WSB-NARROW-FIX] NARROW_DOT_ORDER (default ON, MASHED_NO_NARROW_DOT_ORDER=1 opts out): this TU builds SSE2, where float10 is double; the original
     // rounds each step to float (PC_24): (d - rA) - rB (FSTP 0x00578ad1), ((rB - rA) + d) * k + s (FSTP 0x00578b0a).
     const float d = (float)fVar13;
     const float rA = *(float *)(*(int *)(*param_2 + 8) + 0x4c);
