@@ -26,6 +26,12 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-27  0055deb0  RwpWorldSolverHandle_RegAbi  C3->C4  D4-WSB-C4-BROAD-A: c4_racediff:quickbattle-a4-300-1200-regs C4-CLEAN, hook installed alone, leg A no out-of-frame store; verify/wsbbroada_20261027/RESULT_D4-WSB-C4-BROAD-A.md
+2026-10-27  0055bb70  FUN_0055bb70  C3->C4  D4-WSB-C4-BROAD-A: c4_racediff:census-track0-mode10-cars4-hold400-a4-300-30000 C4-CLEAN, hook installed alone, leg A no out-of-frame store; verify/wsbbroada_20261027/RESULT_D4-WSB-C4-BROAD-A.md
+2026-10-27  0055e050  FUN_0055e050  C3->C4  D4-WSB-C4-BROAD-A: c4_racediff:quickbattle-a4-300-1200-deref C4-CLEAN, hook installed alone, leg A no out-of-frame store; verify/wsbbroada_20261027/RESULT_D4-WSB-C4-BROAD-A.md
+2026-10-27  0055abb0  FUN_0055abb0  C3->C4  D4-WSB-C4-BROAD-A: c4_racediff:census-track0-mode10-cars4-hold400-a4-300-30000-argw C4-CLEAN, hook installed alone, leg A no out-of-frame store; verify/wsbbroada_20261027/RESULT_D4-WSB-C4-BROAD-A.md
+2026-10-27  0055c230  FUN_0055c230  C3->C4  D4-WSB-C4-BROAD-A: c4_racediff:census-track0-mode10-cars4-hold400-a4-300-30000 C4-CLEAN, hook installed alone, leg A no out-of-frame store; verify/wsbbroada_20261027/RESULT_D4-WSB-C4-BROAD-A.md
+2026-10-27  0055deb0  U-9026  RESOLVED  D4-WSB-C4-BROAD-A: 22/22 direct callers rewrite all six flags before any read; verify/wsbbroada_20261027/RESULT_D4-WSB-C4-BROAD-A.md
 2026-10-27  0055fea0  FUN_0055fea0  C4->C3  D4-WSB-L38-DEMOTE (L-38 b): write-set leg compared 0 heap pages (MASHED_SHADOW_PRIVATE unset, o:0,n:0); hooks.csv note corrected; re-promote on CLEAN heap-tracked leg; verify/wsbbvhfu_20261027/RESULT_D4-WSB-BVH-FU.md s4
 2026-10-27  0055ff90  FUN_0055ff90  C4->C3  D4-WSB-L38-DEMOTE (L-38 b): write-set leg compared 0 heap pages (MASHED_SHADOW_PRIVATE unset, o:0,n:0); hooks.csv note corrected; re-promote on CLEAN heap-tracked leg; verify/wsbbvhfu_20261027/RESULT_D4-WSB-BVH-FU.md s4
 2026-10-27  00564040  FUN_00564040  C4->C3  D4-WSB-L38-DEMOTE (L-38 b): write-set leg compared 0 heap pages (MASHED_SHADOW_PRIVATE unset, o:0,n:0); hooks.csv note corrected; re-promote on CLEAN heap-tracked leg; verify/wsbbvhfu_20261027/RESULT_D4-WSB-BVH-FU.md s4
