@@ -1,0 +1,21 @@
+ORIGINAL frames=13838 snapshots=23 slots=[0, 1, 2, 3]
+  car 0 outer: slot<0=0 9e0<=1=0 slow=13531 pass=307 cfc=0 frozen_vel=13499
+        rec+0x4==0 frames=13113: slot<0=0 9e0<=1=0 slow=13004 pass=109 cfc=0 frozen_vel=12952 |v|=0:12953
+        counted=307 skid=0 (  0.0%) legA b0c>100=0 (  0.0%) legB rng&brk=0 (  0.0%) brk>40=0 (  0.0%) rng=307 (100.0%) cfc=0 frozen=20
+        b0c bins(25)=[304, 2, 1, 0, 0, 0, 0, 0, 0] brake classes [0,1..40,41..fe,ff]=[307, 0, 0, 0]
+        counted per 10 s snapshot: [112, 195, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  car 1 outer: slot<0=0 9e0<=1=0 slow=13442 pass=380 cfc=16 frozen_vel=13395
+        rec+0x4==0 frames=13113: slot<0=0 9e0<=1=0 slow=12936 pass=177 cfc=0 frozen_vel=12890 |v|=0:12891
+        counted=391 skid=42 ( 10.7%) legA b0c>100=0 (  0.0%) legB rng&brk=42 ( 10.7%) brk>40=42 ( 10.7%) rng=391 (100.0%) cfc=11 frozen=0
+        b0c bins(25)=[370, 21, 0, 0, 0, 0, 0, 0, 0] brake classes [0,1..40,41..fe,ff]=[349, 0, 0, 42]
+        counted per 10 s snapshot: [133, 258, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  car 2 outer: slot<0=0 9e0<=1=0 slow=13424 pass=409 cfc=5 frozen_vel=13407
+        rec+0x4==0 frames=13113: slot<0=0 9e0<=1=0 slow=12919 pass=194 cfc=0 frozen_vel=12874 |v|=0:12874
+        counted=413 skid=16 (  3.9%) legA b0c>100=16 (  3.9%) legB rng&brk=8 (  1.9%) brk>40=8 (  1.9%) rng=413 (100.0%) cfc=4 frozen=29
+        b0c bins(25)=[353, 32, 11, 1, 5, 3, 1, 1, 6] brake classes [0,1..40,41..fe,ff]=[405, 0, 0, 8]
+        counted per 10 s snapshot: [134, 279, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  car 3 outer: slot<0=0 9e0<=1=0 slow=13606 pass=231 cfc=1 frozen_vel=13598
+        rec+0x4==0 frames=0: slot<0=0 9e0<=1=0 slow=0 pass=0 cfc=0 frozen_vel=0 |v|=0:0
+        counted=231 skid=88 ( 38.1%) legA b0c>100=15 (  6.5%) legB rng&brk=83 ( 35.9%) brk>40=83 ( 35.9%) rng=231 (100.0%) cfc=0 frozen=8
+        b0c bins(25)=[174, 23, 14, 5, 5, 5, 1, 0, 4] brake classes [0,1..40,41..fe,ff]=[148, 0, 0, 83]
+        counted per 10 s snapshot: [133, 98, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]

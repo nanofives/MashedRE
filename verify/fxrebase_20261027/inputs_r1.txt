@@ -1,0 +1,38 @@
+ORIGINAL frames=12486 snapshots=21 slots=[0, 1, 2, 3]
+  car 0 outer: slot<0=0 9e0<=1=0 slow=12179 pass=307 cfc=0 frozen_vel=12147
+        rec+0x4==0 frames=11792: slot<0=0 9e0<=1=0 slow=11683 pass=109 cfc=0 frozen_vel=11631 |v|=0:11632
+        counted=307 skid=0 (  0.0%) legA b0c>100=0 (  0.0%) legB rng&brk=0 (  0.0%) brk>40=0 (  0.0%) rng=307 (100.0%) cfc=0 frozen=20
+        b0c bins(25)=[304, 2, 1, 0, 0, 0, 0, 0, 0] brake classes [0,1..40,41..fe,ff]=[307, 0, 0, 0]
+        counted per 10 s snapshot: [149, 158, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  car 1 outer: slot<0=0 9e0<=1=0 slow=12090 pass=380 cfc=16 frozen_vel=12043
+        rec+0x4==0 frames=11792: slot<0=0 9e0<=1=0 slow=11615 pass=177 cfc=0 frozen_vel=11569 |v|=0:11570
+        counted=391 skid=42 ( 10.7%) legA b0c>100=0 (  0.0%) legB rng&brk=42 ( 10.7%) brk>40=42 ( 10.7%) rng=391 (100.0%) cfc=11 frozen=0
+        b0c bins(25)=[370, 21, 0, 0, 0, 0, 0, 0, 0] brake classes [0,1..40,41..fe,ff]=[349, 0, 0, 42]
+        counted per 10 s snapshot: [170, 221, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  car 2 outer: slot<0=0 9e0<=1=0 slow=12072 pass=409 cfc=5 frozen_vel=12055
+        rec+0x4==0 frames=11792: slot<0=0 9e0<=1=0 slow=11598 pass=194 cfc=0 frozen_vel=11553 |v|=0:11553
+        counted=413 skid=16 (  3.9%) legA b0c>100=16 (  3.9%) legB rng&brk=8 (  1.9%) brk>40=8 (  1.9%) rng=413 (100.0%) cfc=4 frozen=29
+        b0c bins(25)=[353, 32, 11, 1, 5, 3, 1, 1, 6] brake classes [0,1..40,41..fe,ff]=[405, 0, 0, 8]
+        counted per 10 s snapshot: [171, 242, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  car 3 outer: slot<0=0 9e0<=1=0 slow=12254 pass=231 cfc=1 frozen_vel=12246
+        rec+0x4==0 frames=0: slot<0=0 9e0<=1=0 slow=0 pass=0 cfc=0 frozen_vel=0 |v|=0:0
+        counted=232 skid=89 ( 38.4%) legA b0c>100=15 (  6.5%) legB rng&brk=84 ( 36.2%) brk>40=84 ( 36.2%) rng=232 (100.0%) cfc=1 frozen=8
+        b0c bins(25)=[175, 23, 14, 5, 5, 5, 1, 0, 4] brake classes [0,1..40,41..fe,ff]=[148, 0, 0, 84]
+        counted per 10 s snapshot: [171, 61, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+PORT FXD (D:/MashedWT/D4-FX-REBASE_data/arms/H_FXD.fx_debug.txt)
+  slot 0 frames=14389 outer: slot<0=0 9e0<=1=180 slow=13901 pass=308 cfc=0 | alive-active=198
+        skid frames=0 (  0.0%) skid&alive=0 legA b0c>100=0 (  0.0%) legB rng&brk=0 (  0.0%) brk>40=0 (  0.0%) rng=308 (100.0%) frozen=20 (  6.5%)
+        emits=17/0 active_fr=308 per1000active=55.2
+        ALIVE: active_fr=198 skid_fr=0 (  0.0%) calls=198 emits=13 per1000active=65.7
+  slot 1 frames=14389 outer: slot<0=0 9e0<=1=180 slow=13812 pass=381 cfc=16 | alive-active=203
+        skid frames=44 ( 11.5%) skid&alive=31 legA b0c>100=0 (  0.0%) legB rng&brk=31 (  8.1%) brk>40=31 (  8.1%) rng=381 (100.0%) frozen=0 (  0.0%)
+        emits=13/29 active_fr=394 per1000active=106.6
+        ALIVE: active_fr=216 skid_fr=44 ( 20.4%) calls=304 emits=34 per1000active=157.4
+  slot 2 frames=14389 outer: slot<0=0 9e0<=1=180 slow=13793 pass=411 cfc=5 | alive-active=215
+        skid frames=17 (  4.1%) skid&alive=12 legA b0c>100=12 (  2.9%) legB rng&brk=4 (  1.0%) brk>40=4 (  1.0%) rng=411 (100.0%) frozen=29 (  7.1%)
+        emits=18/5 active_fr=416 per1000active=55.3
+        ALIVE: active_fr=220 skid_fr=17 (  7.7%) calls=254 emits=13 per1000active=59.1
+  slot 3 frames=14389 outer: slot<0=0 9e0<=1=180 slow=13977 pass=231 cfc=1 | alive-active=231
+        skid frames=89 ( 38.5%) skid&alive=88 legA b0c>100=15 (  6.5%) legB rng&brk=83 ( 35.9%) brk>40=83 ( 35.9%) rng=231 (100.0%) frozen=8 (  3.5%)
+        emits=6/44 active_fr=232 per1000active=215.5
+        ALIVE: active_fr=232 skid_fr=89 ( 38.4%) calls=410 emits=50 per1000active=215.5
