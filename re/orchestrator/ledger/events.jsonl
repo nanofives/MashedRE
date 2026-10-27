@@ -527,3 +527,63 @@
 {"at":"2026-10-26T22:33:44Z","id":"D4-FLIP-L29-L30","from":"decision","to":"merge-queued","owner":"cmvplu856bmeao115ixuu0bud","note":"L-31 = (a) Mariano: leave the videocfg mode list; 3-byte diff (x32 default, 53 modes) is the absent DWM8And16BitMitigation compat layer, not the port. RESULT + D5 first-run note added by L0 after the train"}
 {"at":"2026-10-26T22:58:26Z","id":"D4-WSF-TRACKDATA-RT","from":"merge-queued","to":"merged","owner":"cmvpoqk8xbu5co115p951or6p","note":"merge train 20261026_193408: G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/e85ea6fb/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
 {"at":"2026-10-26T22:58:32Z","id":"D4-FLIP-L29-L30","from":"merge-queued","to":"merged","owner":"cmvplu856bmeao115ixuu0bud","note":"merge train 20261026_193408: G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/e85ea6fb/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-10-26T23:19:46Z","id":"D4-WSH-EXEFILE","from":"blocked","to":"open","owner":"","note":"run 11: (a) fix 0x004325c0 rounding: original truncates via _ftol2 (FUN_004a2c48), port uses nearbyint. The fix changes exe output, so behind a knob default OFF with a PREREG; re-run A0-A2; the default flip returns as a DECISION with evidence (do not flip). (b) consolidate its 3 exe-only pairs into single bodies per the D4-DC recipe; check the dual-copy allowlist (1 entry, 0x004177b0) and rva-lint. Prior branch orch/D4-WSH-EXEFILE @ 004ef925 holds tracker/RESULT changes; reuse it."}
+{"at":"2026-10-26T23:19:47Z","id":"D4-FX-INPUTS","from":"blocked","to":"open","owner":"","note":"run 11 retry: matched-speed decel check on MASHED_DEAD_COAST (stop time 133/149 frames vs PREREG limit 120; port decel 10.2 vs original 5.7 per frame unexplained): compare decel at matched entry speed, find the cause, then slot 2 brake-byte pairing. Knob stays default OFF; any flip returns as a DECISION. Reuse branch orch/D4-FX-INPUTS."}
+{"at":"2026-10-26T23:21:39Z","id":"D4-WSH-EXEFILE","from":"open","to":"claimed","owner":"cmvpvra1fckwio115ugefxcfs","note":""}
+{"at":"2026-10-26T23:21:45Z","id":"D4-WSB-C4-BVH","from":"open","to":"claimed","owner":"cmvpvry7mcl26o115liu2reui","note":""}
+{"at":"2026-10-26T23:21:46Z","id":"D4-WSB-C4-NARROW","from":"open","to":"claimed","owner":"cmvpvs441cl36o115e5tl1zh2","note":""}
+{"at":"2026-10-26T23:22:39Z","id":"D4-WSH-ZEROEXEC","from":"open","to":"claimed","owner":"cmvpvscw1cl7eo1150mtklqps","note":""}
+{"at":"2026-10-26T23:22:39Z","id":"D4-FX-INPUTS","from":"open","to":"claimed","owner":"cmvpvsbwpcl6wo115iu2nop8p","note":""}
+{"at":"2026-10-26T23:22:42Z","id":"D4-FU-SETTRACKPU","from":"open","to":"claimed","owner":"cmvpvsg4ecl8yo11503ddyqet","note":""}
+{"at":"2026-10-26T23:23:18Z","id":"D4-WSH-EXEFILE","from":"claimed","to":"working","owner":"cmvpvra1fckwio115ugefxcfs","note":"run 11: ftol knob + 3 exe-only pair consolidation"}
+{"at":"2026-10-26T23:24:18Z","id":"D4-WSH-NOEVID","from":"open","to":"claimed","owner":"cmvpvtshyclnio115cm23lj0a","note":""}
+{"at":"2026-10-26T23:24:38Z","id":"D4-FX-INPUTS","from":"claimed","to":"working","owner":"cmvpvsbwpcl6wo115iu2nop8p","note":"run 11 retry: matched-speed decel check on MASHED_DEAD_COAST"}
+{"at":"2026-10-26T23:25:15Z","id":"D4-WSH-ZEROEXEC","from":"claimed","to":"working","owner":"cmvpvscw1cl7eo1150mtklqps","note":"started"}
+{"at":"2026-10-26T23:25:30Z","id":"D4-WSH-ZEROEXEC","from":"working","to":"working","owner":"cmvpvscw1cl7eo1150mtklqps","note":"started"}
+{"at":"2026-10-26T23:25:34Z","id":"D4-WSB-C4-NARROW","from":"claimed","to":"working","owner":"cmvpvs441cl36o115e5tl1zh2","note":"worktree up, surveying 0x0057xxxx C3 rows"}
+{"at":"2026-10-26T23:25:36Z","id":"D4-WSB-C4-BVH","from":"claimed","to":"working","owner":"cmvpvry7mcl26o115liu2reui","note":"run 11: census-EXEC rows 0x0055f000-0x00565fff C3->C4"}
+{"at":"2026-10-26T23:26:51Z","id":"D4-FU-SETTRACKPU","from":"claimed","to":"working","owner":"cmvpvsg4ecl8yo11503ddyqet","note":"context survey"}
+{"at":"2026-10-26T23:27:05Z","id":"D4-WSH-NOEVID","from":"claimed","to":"working","owner":"cmvpvtshyclnio115cm23lj0a","note":"worktree created"}
+{"at":"2026-10-26T23:27:34Z","id":"D4-FU-SETTRACKPU","from":"working","to":"working","owner":"cmvpvsg4ecl8yo11503ddyqet","note":"held"}
+{"at":"2026-10-26T23:27:46Z","id":"D4-FX-INPUTS","from":"working","to":"working","owner":"cmvpvsbwpcl6wo115iu2nop8p","note":"held"}
+{"at":"2026-10-26T23:30:43Z","id":"D4-WSH-ZEROEXEC","from":"working","to":"review","owner":"cmvpvscw1cl7eo1150mtklqps","note":"10 keep, 15 demoted C4->C3"}
+{"at":"2026-10-26T23:31:14Z","id":"D4-WSH-ZEROEXEC","from":"review","to":"merge-queued","owner":"cmvpvscw1cl7eo1150mtklqps","note":"orch/D4-WSH-ZEROEXEC"}
+{"at":"2026-10-26T23:39:52Z","id":"D4-WSH-NOEVID","from":"working","to":"review","owner":"cmvpvtshyclnio115cm23lj0a","note":"15 rows: 7 kept with body path, 8 demoted C4->C3"}
+{"at":"2026-10-26T23:40:20Z","id":"D4-WSH-NOEVID","from":"review","to":"merge-queued","owner":"cmvpvtshyclnio115cm23lj0a","note":"orch/D4-WSH-NOEVID"}
+{"at":"2026-10-26T23:42:30Z","id":"D4-WSH-ZEROEXEC","from":"merge-queued","to":"merged","owner":"cmvpvscw1cl7eo1150mtklqps","note":"merge train 20261026_203343: G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/e85ea6fb/53778664"}
+{"at":"2026-10-26T23:44:31Z","id":"D4-FX-INPUTS","from":"working","to":"working","owner":"cmvpvsbwpcl6wo115iu2nop8p","note":"run 11 retry resumed: matched-speed decel check"}
+{"at":"2026-10-26T23:51:50Z","id":"D4-WSH-NOEVID","from":"merge-queued","to":"merged","owner":"cmvpvtshyclnio115cm23lj0a","note":"merge train 20261026_204319: G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/e85ea6fb/53778664"}
+{"at":"2026-10-27T00:12:02Z","id":"D4-FU-SETTRACKPU","from":"working","to":"working","owner":"cmvpvsg4ecl8yo11503ddyqet","note":"resumed after GO: survey"}
+{"at":"2026-10-27T00:40:05Z","id":"D4-WSH-EXEFILE","from":"working","to":"decision","owner":"cmvpvra1fckwio115ugefxcfs","note":"L-32"}
+{"at":"2026-10-27T00:40:30Z","id":"D4-WSH-EXEFILE","from":"decision","to":"review","owner":"cmvpvra1fckwio115ugefxcfs","note":"run 11 @ fe87b875e: 3 pairs one body each, gates = refs, lint 1 entry; MASHED_ANIM_TRUNC default OFF, flip = L-32; 0x0040b890/b8e0 C4->C3"}
+{"at":"2026-10-27T00:41:09Z","id":"D4-WSH-EXEFILE","from":"review","to":"merge-queued","owner":"cmvpvra1fckwio115ugefxcfs","note":"orch/D4-WSH-EXEFILE"}
+{"at":"2026-10-27T00:41:10Z","id":"D4-WSH-EXEFILE","from":"merge-queued","to":"decision","owner":"cmvpvra1fckwio115ugefxcfs","note":"L-33"}
+{"at":"2026-10-27T00:45:05Z","id":"D4-WSH-EXEFILE","from":"decision","to":"red-merge","owner":"cmvpvra1fckwio115ugefxcfs","note":"merge train 20261026_214231: conflict needs a hand merge (frida-sweep recipe): hooks.csv"}
+{"at":"2026-10-27T00:51:50Z","id":"D4-FX-INPUTS","from":"working","to":"review","owner":"cmvpvsbwpcl6wo115iu2nop8p","note":"attempt 3 GREEN: MASHED_KILL_DAMAGE (with DEAD_COAST) matches matched-band decel 5.11/5.12 vs 5.12; gates unchanged OFF; flip of both = decision for lead; slot 2 brake byte rewritten after AI tick (writer open)"}
+{"at":"2026-10-27T00:52:49Z","id":"D4-FX-INPUTS","from":"review","to":"merge-queued","owner":"cmvpvsbwpcl6wo115iu2nop8p","note":"orch/D4-FX-INPUTS"}
+{"at":"2026-10-27T00:52:50Z","id":"D4-FX-INPUTS","from":"merge-queued","to":"decision","owner":"cmvpvsbwpcl6wo115iu2nop8p","note":"L-34"}
+{"at":"2026-10-27T00:57:39Z","id":"D4-WSH-EXEFILE","from":"red-merge","to":"claimed","owner":"cmvpz6upocym2o1156567jwjj","note":""}
+{"at":"2026-10-27T01:58:45Z","id":"D4-FX-FLIP-DEADCOAST","from":"open","to":"open","owner":"","note":"SOLO decided flip from L-34 (a). Branch orch/D4-FX-FLIP-DEADCOAST off orch/integration after D4-FX-INPUTS merges. Worker does not enqueue; lead sets review with sha, L0 commits refs, enqueues and runs the train alone."}
+{"at":"2026-10-27T01:59:18Z","id":"D4-WSB-C4-NARROW","from":"working","to":"review","owner":"cmvpvs441cl36o115e5tl1zh2","note":"2 GREEN (0x00576640, 0x00579b50 C3->C4), 8 RED stay C3: return equal, out bytes differ 5-53% of calls (print-order dots; pair +0x0c word); follow-up D4-WSB-NARROW-FIX proposed"}
+{"at":"2026-10-27T02:01:02Z","id":"D4-WSB-C4-NARROW","from":"review","to":"merge-queued","owner":"cmvpvs441cl36o115e5tl1zh2","note":"orch/D4-WSB-C4-NARROW"}
+{"at":"2026-10-27T02:09:24Z","id":"D4-FX-INPUTS","from":"decision","to":"merged","owner":"cmvpvsbwpcl6wo115iu2nop8p","note":"merge train 20261026_223718: G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/e85ea6fb/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-10-27T02:28:17Z","id":"D4-FU-SETTRACKPU","from":"working","to":"review","owner":"cmvpvsg4ecl8yo11503ddyqet","note":"GREEN: first-run diff 269->17, writers 0x00409e30 / FUN_00496530 named, gates = refs"}
+{"at":"2026-10-27T02:29:11Z","id":"D4-FU-SETTRACKPU","from":"review","to":"merge-queued","owner":"cmvpvsg4ecl8yo11503ddyqet","note":"orch/D4-FU-SETTRACKPU"}
+{"at":"2026-10-27T02:34:19Z","id":"D4-WSB-C4-NARROW","from":"merge-queued","to":"merged","owner":"cmvpvs441cl36o115e5tl1zh2","note":"merge train 20261026_231934: G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/e85ea6fb/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
+{"at":"2026-10-27T02:42:38Z","id":"D4-WSB-C4-BVH","from":"working","to":"review","owner":"cmvpvry7mcl26o115liu2reui","note":"13/22 C3->C4 (7 no-store + 6 write-tracked shadow), 9 stay C3 with reasons; branch @83ab7316e"}
+{"at":"2026-10-27T02:43:24Z","id":"D4-WSB-C4-BVH","from":"review","to":"merge-queued","owner":"cmvpvry7mcl26o115liu2reui","note":"orch/D4-WSB-C4-BVH"}
+{"at":"2026-10-27T02:46:08Z","id":"D4-WSH-EXEFILE","from":"claimed","to":"review","owner":"cmvpz6upocym2o1156567jwjj","note":"L-32 answered ON, applied"}
+{"at":"2026-10-27T02:46:09Z","id":"D4-WSH-EXEFILE","from":"review","to":"merge-queued","owner":"cmvpz6upocym2o1156567jwjj","note":"orch/D4-WSH-EXEFILE"}
+{"at":"2026-10-27T02:46:10Z","id":"D4-FU-RENAME-52DAF0","from":"open","to":"claimed","owner":"cmvpz6upocym2o1156567jwjj","note":""}
+{"at":"2026-10-27T02:48:42Z","id":"D4-FU-SETTRACKPU","from":"merge-queued","to":"merged","owner":"cmvpvsg4ecl8yo11503ddyqet","note":"merge train 20261026_234224: G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/e85ea6fb/53778664"}
+{"at":"2026-10-27T02:52:31Z","id":"D4-FU-RENAME-52DAF0","from":"claimed","to":"review","owner":"cmvpz6upocym2o1156567jwjj","note":"text-only rename, lint OK"}
+{"at":"2026-10-27T02:52:32Z","id":"D4-FU-RENAME-52DAF0","from":"review","to":"merge-queued","owner":"cmvpz6upocym2o1156567jwjj","note":"orch/D4-FU-RENAME-52DAF0"}
+{"at":"2026-10-27T03:06:26Z","id":"D4-WSB-C4-BVH","from":"merge-queued","to":"merged","owner":"cmvpvry7mcl26o115liu2reui","note":"merge train 20261026_235238: G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/e85ea6fb/53778664"}
+{"at":"2026-10-27T03:06:28Z","id":"D4-WSH-EXEFILE","from":"merge-queued","to":"merged","owner":"cmvpz6upocym2o1156567jwjj","note":"merge train 20261026_235238: G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/e85ea6fb/53778664"}
+{"at":"2026-10-27T03:06:29Z","id":"D4-FU-RENAME-52DAF0","from":"merge-queued","to":"merged","owner":"cmvpz6upocym2o1156567jwjj","note":"merge train 20261026_235238: G-CTRL 5943c5f1/b493262b/09551e6a  B 3a03670c/e85ea6fb/53778664"}
+{"at":"2026-10-27T03:08:38Z","id":"D4-FX-FLIP-DEADCOAST","from":"open","to":"claimed","owner":"cmvpvsbwpcl6wo115iu2nop8p","note":""}
+{"at":"2026-10-27T03:10:54Z","id":"D4-FX-FLIP-DEADCOAST","from":"claimed","to":"working","owner":"cmvpvsbwpcl6wo115iu2nop8p","note":"flip DEAD_COAST+KILL_DAMAGE default ON"}
+{"at":"2026-10-27T03:49:25Z","id":"D4-FX-FLIP-DEADCOAST","from":"working","to":"review","owner":"cmvpvsbwpcl6wo115iu2nop8p","note":"GREEN 99eb8c0f9, flip ready"}
+{"at":"2026-10-27T03:49:46Z","id":"D4-FX-FLIP-DEADCOAST","from":"review","to":"review","owner":"cmvpvsbwpcl6wo115iu2nop8p","note":"GREEN 99eb8c0f9, flip ready"}
+{"at":"2026-10-27T03:50:21Z","id":"D4-FX-FLIP-DEADCOAST","from":"review","to":"merge-queued","owner":"cmvpvsbwpcl6wo115iu2nop8p","note":"orch/D4-FX-FLIP-DEADCOAST"}
+{"at":"2026-10-27T04:17:54Z","id":"D4-FX-FLIP-DEADCOAST","from":"merge-queued","to":"merged","owner":"cmvpvsbwpcl6wo115iu2nop8p","note":"merge train 20261027_005104: G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/e85ea6fb/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS"}
