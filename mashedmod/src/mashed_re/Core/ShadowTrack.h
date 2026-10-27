@@ -532,7 +532,29 @@ struct Result {
     int stack_diff_bytes = 0;
     std::uintptr_t first_page = 0; int first_off = -1;
     int stack_first_off = -1;
+    // [D4-WSB-BVH-FU] values on the first differing page: how many dwords differ, and the first
+    // kDw of them as (offset, pre, original's, port's). pre = the value before either run.
+    static const int kDw = 4;
+    int ndw = 0, nlog = 0;
+    struct Dw { int off; std::uint32_t pre, o, n; } dw[kDw];
 };
+
+// Fill r's value fields for one differing page. expect = the original's post state, live = the
+// port's, pre = the state before either run (or nullptr when that equals live: B never touched it).
+inline void NoteDwords(Result& r, const unsigned char* expect, const unsigned char* live,
+                       const unsigned char* pre) {
+    for (std::size_t k = 0; k < kPage; k += 4) {
+        if (std::memcmp(expect + k, live + k, 4) == 0) continue;
+        if (r.nlog < Result::kDw) {
+            Result::Dw& d = r.dw[r.nlog++];
+            d.off = static_cast<int>(k);
+            std::memcpy(&d.o, expect + k, 4);
+            std::memcpy(&d.n, live + k, 4);
+            std::memcpy(&d.pre, (pre ? pre : live) + k, 4);
+        }
+        ++r.ndw;
+    }
+}
 
 // The full A/B: original under tracking, restore, port under tracking, compare.
 template <typename O, typename P>
@@ -598,6 +620,10 @@ inline Result Compare(const char* fn, O call_orig, P call_port, void* stackwin) 
                 r.first_page = s.pagesA[i];
                 for (std::size_t k = 0; k < kPage; k += 4)
                     if (std::memcmp(expect + k, live + k, 4) != 0) { r.first_off = static_cast<int>(k); break; }
+                const unsigned char* pre = nullptr;              // B's pre snapshot of this page, if B touched it
+                for (int j = 0; j < s.npages; ++j)
+                    if (s.pages[j] == s.pagesA[i]) { pre = s.pre + static_cast<std::size_t>(j) * kPage; break; }
+                NoteDwords(r, expect, live, pre);
             }
         }
     }
@@ -613,6 +639,7 @@ inline Result Compare(const char* fn, O call_orig, P call_port, void* stackwin) 
                 r.first_page = s.pages[i];
                 for (std::size_t k = 0; k < kPage; k += 4)
                     if (std::memcmp(expect + k, live + k, 4) != 0) { r.first_off = static_cast<int>(k); break; }
+                NoteDwords(r, expect, live, expect);             // the original never wrote it: pre == its post
             }
         }
     }
@@ -684,10 +711,16 @@ auto RunTracked(Counter& c, F impl, void* stackwin, A... args) -> decltype(impl(
         Log(nl);
         return rn.get();
     }
-    char det[200];
+    char det[400];
     int dp = wsprintfA(det, " pages=o:%d,n:%d,diff:%d stack=%d noise=%d ovf=%d ret=%d",
                        r.pages_orig, r.pages_port, r.pages_diff, r.stack_diff_bytes, r.noise, r.overflow, rd);
     if (r.pages_diff) dp += wsprintfA(det + dp, " @%08x+%03x", static_cast<unsigned>(r.first_page), r.first_off);
+    if (r.pages_diff) {                                      // [D4-WSB-BVH-FU] off:pre/orig/port per dword
+        dp += wsprintfA(det + dp, " ndw=%d v=", r.ndw);
+        for (int i = 0; i < r.nlog; ++i)
+            dp += wsprintfA(det + dp, "%s%03x:%08x/%08x/%08x", i ? "," : "", r.dw[i].off,
+                            r.dw[i].pre, r.dw[i].o, r.dw[i].n);
+    }
     if (r.stack_diff_bytes) dp += wsprintfA(det + dp, " stk+%03x", r.stack_first_off);
     Record(c, idx, nd, det);
     return rn.get();
