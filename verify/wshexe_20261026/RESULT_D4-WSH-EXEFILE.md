@@ -1,5 +1,102 @@
 # RESULT D4-WSH-EXEFILE: C4 rows where exe_file != file
 
+## Run 11 (2026-10-26): MASHED_ANIM_TRUNC knob + three pairs consolidated
+
+Verdict: **DECISION.** The three pairs (`0x00432b30`, `0x0040b890`, `0x0040b8e0`) are one body each. On the
+new exe every default gate equals the refs. With `MASHED_ANIM_TRUNC=1` the `0x004325c0` twin matches the
+original on all three dt arms. Flipping that default is a user decision (filed, not flipped).
+`0x0040b890` / `0x0040b8e0` go C4 -> C3: they run in a race and return the same values, but the strict
+racediff is not CLEAN (callee identity, see 11.3).
+
+Code `de6a16a34`, harness `201b9a9b0` + `362fa354b` (`MASHED_ROOT` on five harnesses, defaults unchanged).
+PREREG `PREREG_D4-WSH-EXEFILE_run11.md` (`7651b8a09`, alone), amendment `PREREG_D4-WSH-EXEFILE_run11_amend1.md`
+(`cd4c8daa0`, alone, committed before any arm produced output). Base `orch/integration` @ `b0174c80f`,
+merged at `6fd8bfef8`. Build `MASHED_NO_DEPLOY=1`: exe `d7944810...`, `.asi` `71456d0c...`. The `.asi`
+was copied into the private root `D:\MashedWT\D4-WSH-EXEFILE_root\original\` only. Every boot ran under
+`mashed_lock.py run --label D4-WSH-EXEFILE`, and the harnesses killed only their own PIDs.
+
+### 11.1 What changed
+
+| RVA | Before | After |
+|---|---|---|
+| `0x004325c0` | `.asi` twin `Trunc48 = nearbyint` | `MASHED_ANIM_TRUNC=1` gives `(int)v` (`FUN_004a2c48` truncation). Default OFF. `.asi`-only TU. The exe `Anim_Tick` already truncated, so the exe is not touched |
+| `0x00432b30` | `PromptStripTwin.cpp` (asi) + `MenuNavSM.cpp` tables and dispatch (exe) | dispatch `PromptStripTag` / `PromptStripResolve` in `Frontend/PromptStripTwin.cpp`, in both rsp lists. The `.asi` keeps head, `FUN_0042ad10`, stores, and calls the original's getters. The exe keeps its head in `Nav` plus the `g_records` append, and calls `ModeCodeLookup` / `ConstantGetter22` |
+| `0x0040b890` / `0x0040b8e0` | `Thresholds_ah4.cpp` (asi) + inline `exe_main.cpp` + `RwRaceFx.cpp` | `GridCount8or12Core` / `ScoreThreshold7or10Core(cars, ea64, fd0)` in `Gameplay/Thresholds_ah4.cpp`, in both rsp lists. The exports read the three inputs in the original's order. Both exe sites call the cores |
+
+`scripts/lint_rva_bodies.py`: 1 finding, `CROSS-TARGET:004177b0` (allowlisted), NEW = 0. The allowlist stays at 1 entry.
+
+### 11.2 Arms
+
+| Arm | Result | Prediction |
+|---|---|---|
+| G `run_arms.py H_DEF B_DEF_K0 B_DEF_K1 B_DEF_K26` | G-CTRL `5943c5f1 / b493262b / 09551e6a`, B `3a03670c / e85ea6fb / 53778664`, all exit 0 self-exited | refs, met |
+| A0k knob, game dt | GREEN 20/20 | met |
+| A1k knob, dt `0x3c888889` (1 tick) | GREEN 20/20 | met |
+| A2k knob, dt `0x3d088889` (2 ticks) | **GREEN 20/20** | met |
+| A2d knob unset, 2 ticks | RED 0/20, rec 0 tag `0xff000000` `+0x10`, `v0 511`, original `485`, twin `484` | met (run 10's A2, same signature) |
+| P1 `menu_prompt_diff.py` | GREEN 264/264 vectors, 6 samples, fired 168 | met |
+| T1 `run_diff_scenario grid_count_8or12 --scenario race` | GREEN, 0 mismatches, value 8 | met |
+| T2 `run_diff_scenario score_threshold_7or10 --scenario race` | GREEN, 0 mismatches, value 7 | met |
+| I1 `canonical_install_observe` (3 RVAs) | 3/3 `JMP-LIVE(0xE9)`, survived 25 s | met |
+| I2 `canonical_c4_verify` | `0x00432b30` calls=1, installed, survived: C4-READY. `0x0040b890` / `0x0040b8e0` calls=0: HOLD | met (0 calls predicted) |
+| I3 `canonical_c4_racediff --rvas 0x0040b890,0x0040b8e0`, frames 300..1200 | both HOLD BEHAVIOR-DIFF: OFF `[c42f500] eax=8` / `eax=7`, ON `[x651edc20] eax=8` / `eax=7` | predicted C4-CLEAN, **not met** |
+
+### 11.3 Reading I3
+
+Both bodies execute in the race window in OFF and in ON, and they return the same value (8 / 7). The one
+recorded difference is the callee. The original calls `FUN_0042f500` (`c42f500`). The `.asi` export calls its
+own `GetDat0067ea64` export (`x651edc20`, inside the `.asi` image). That call has been in the export since
+2026-06-08 ("call them directly instead of trampolining"). The consolidation did not add it. The amendment's
+C4 rule needs I3 C4-CLEAN, and I3 is not CLEAN, so the rows go to C3 rather than keep a C4 the tool did not give.
+To get back to C4, the export calls the original's `0x0040e340` / `0x0042f500` through fixed-RVA pointers (as
+`PromptStripTwin.cpp` does for its getters), and I3 is re-run. Not done here: that would be a code change after
+seeing the result, and it needs its own PREREG.
+
+The exe still feeds `cars = 4` (constant) and `fd0 = g_track.race_rule()`. That is now an input question
+(`DAT_008a94d0` has no exe writer checked), not a second body.
+
+### 11.4 Tracker transaction (re-classify)
+
+- `0x00432b30` C4 (no change), `exe_file := file` = `Frontend/PromptStripTwin.cpp`, `frida_diff` += P1.
+- `0x0040b890`, `0x0040b8e0` C4 -> C3 (`impl`), `exe_file := file` = `Gameplay/Thresholds_ah4.cpp`.
+- `0x004325c0` C2 (no change), notes carry the knob and A0k-A2d.
+- Three CHANGELOG lines.
+
+### 11.5 Decision filed
+
+`MASHED_ANIM_TRUNC` default ON? Options: (1) ON, `MASHED_NO_ANIM_TRUNC=1` opts out, so the `.asi` twin matches
+the original on every dt measured. After the flip, A0-A2 on the default body re-earn C3, and C4 needs a
+canonical-scenario run. (2) keep OFF, so the twin stays C2 and keeps rounding. Recommendation (1). The knob is
+`.asi`-only, so no exe hash moves either way. Separate from this question: the exe's `kMenuAnimSpeedup = 6.0f`
+(user feedback 2026-06-13) keeps `0x004325c0` as two bodies. Consolidating it needs its own knob and decision.
+
+### 11.6 Raw data (not committed), `D:/MashedWT/D4-WSH-EXEFILE_data/run11/`
+
+| File | SHA-256 |
+|---|---|
+| `gates.log` | `6054fd37ac9f341024cfa7995e3c37cfcb0de5d9babb0c7749caccb7cc20d723` |
+| `arms/H_DEF.step.csv` | `5943c5f1c3e2f3f2510139f7af666ffa87941f6dfa66201b15277430b92be415` |
+| `arms/H_DEF.gates.csv` | `b493262bed8ea6ecad4399f0ebaa53b902965423e74bfa07359188559fff479f` |
+| `arms/H_DEF.ptrace.log` | `09551e6a5b1b456b3421a0e1aac768ced7851c072c99a9341a22ca966cdfe3e1` |
+| `arms/B_DEF_K0.step.csv` | `3a03670c3991b702af9fd44b1d49dbdb4f91d6be00876723cb1ba7891895b83f` |
+| `arms/B_DEF_K1.step.csv` | `e85ea6fb266223f9eed3a90bf9aa30ea50291fd552ac3881d3bfbea843a759f8` |
+| `arms/B_DEF_K26.step.csv` | `5377866478b33a9827ae5c343b8861189f8f0a838785bf2b83da5f6118931e2d` |
+| `A0k.json` | `b39be41ea9345cf9f060a573035c13762dd3dc0d005df1e71d2921b27b3894ee` (same bytes as run 10's A0) |
+| `A1k.json` | `063505f2c329fb99b7d8f0303915d1659815644d9ce760cd29ec923610b66d6b` |
+| `A2k.json` | `ea61684c010a75cef334ac447cbff353b05219215018c081c4ec03519c52c084` |
+| `A2d.json` | `a82198505d8f23913952d404633e15e42b1125f86a51be69aad5ef968c32dfa5` |
+| `P1.json` | `6c53311721f5b747dfa84e17cae4e463322e6ba0d256ee6ed01c2f5a590684fc` |
+| `T1.log` | `94d809cbf6255d8d1deb45e640b9bcf2407295ef0b624ebf60734493b6a7c009` |
+| `T2.log` | `6157e9fd335909de2c7186a3e469452485386b781a2584f9d90f8ad95cd4cd89` |
+| `I1.log` | `420fbde907ac6da7213adba534308c0b6b322107dd56a04818adb5cafbab2ee3` |
+| `I2.json` | `a44fa872345072475885252ecc98fb99a8d237892545a28f7ef3fce3f1d84b6f` |
+| `I3.log` | `4d40e8b2b221904c22df159b91c8a37cd6c2022441d6c803a5a4dfd571494638` |
+| `I3.json` | `4fcb7b0476bbff6de8658ed559e509ca952cfce3335ff07ec2233ad4d658fbae` |
+| `mashed_re.exe` (tested exe) | `d79448102d0308aa674b316fbb0f82cbb69417e08cc32c1839f54b05a1d76346` |
+
+---
+
+## Run 10 (2026-10-26)
 Verdict: **RED for 1 row (demoted), 4 real two-body pairs with no exe-copy evidence, 13 rows that are one shared body.**
 Base `orch/integration` @ `96e7f1ad2`. PREREG `verify/wshexe_20261026/PREREG_D4-WSH-EXEFILE.md` (commit `757b9a741`, alone,
 before any arm). Harness extension `0fff2aed5`. No build input touched, so no exe was built and the default gates were not run.
