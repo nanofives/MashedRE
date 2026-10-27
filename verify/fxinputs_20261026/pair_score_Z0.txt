@@ -1,0 +1,3 @@
+v=1 alive gate rows=203 c5_step==c5_fx 203 | >0x40 step 31 fx 31 both 31 | rng 203 | step.csv match 203/203 | step top [(0, 172), (255, 31)] | fx top [(0, 172), (255, 31)]
+v=2 alive gate rows=215 c5_step==c5_fx 183 | >0x40 step 36 fx 4 both 4 | rng 215 | step.csv match 215/215 | step top [(0, 179), (255, 36)] | fx top [(0, 211), (255, 4)]
+v=3 alive gate rows=231 c5_step==c5_fx 213 | >0x40 step 65 fx 83 both 65 | rng 231 | step.csv match 231/231 | step top [(0, 166), (255, 65)] | fx top [(0, 148), (255, 83)]

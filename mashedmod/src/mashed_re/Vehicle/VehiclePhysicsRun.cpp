@@ -945,22 +945,36 @@ bool VehiclePhysics_DeadCoastEnabled() {
     static const bool s = [] { const char* e = std::getenv("MASHED_DEAD_COAST"); return e && e[0] == '1'; }();
     return s;
 }
+// [D4-FX-INPUTS] MASHED_KILL_DAMAGE=1, default OFF, only inside MarkKilled / ClearKilled (so only with
+// MASHED_DEAD_COAST=1). verify/fxinputs_20261026/PREREG_killdamage.md.
+static bool KillDamageEnabled() {
+    static const bool s = [] { const char* e = std::getenv("MASHED_KILL_DAMAGE"); return e && e[0] == '1'; }();
+    return s;
+}
 // FUN_00422fd0 (0x00422fd0): FUN_0046c5c0 (0x0046c5c0) `(&DAT_008815a4)[v*0x341] = 0`, i.e. +0x4 = 0, then
 // FUN_0046c790(v, 1) (0x0046c790) `(&DAT_008815b0)[v*0x341] = 1`, i.e. +0x10 = 1. FUN_0046c5c0's
 // `+0xb10 = DAT_007f1030` is not ported (no port reader of +0xb10).
+// MASHED_KILL_DAMAGE: FUN_00422fd0 then calls FUN_004215c0(v, 50.0f, 0) / (v, 50.0f, 1) (0x42480000), so FUN_00420de0
+// leaves t[0] = t[1] = 50.0 in the table 0x0063e4b8 + v*0x24, and FUN_00420e00 (via FUN_004215a0) copies them each
+// frame through FUN_0046be50: case 5 (0x00420e33) +0x30 = ftol(t[0]), case 4 (0x00420f40) +0x2c = ftol(t[1]). The
+// port runs neither, so this writes the result once. A5 (0x0046ddb0) scales a dead car's wheel friction by
+// +0x2c * 0.01 (_DAT_005cc328): 0.25 -> 0.125. Not ported: the smoke side of FUN_00420e00, the +0x44 / +0x48 paired words.
 void VehiclePhysics_MarkKilled(int slot) {
     if (!g_inited || slot < 0 || slot >= 16) return;
     unsigned char* r = rec(slot);
     I(r, 0x4)  = 0;
     I(r, 0x10) = 1;
+    if (KillDamageEnabled()) { I(r, 0x2c) = 50; I(r, 0x30) = 50; }
 }
-// [UNCERTAIN] the original's round-restart writer of +0x4 / +0x10 is not measured (PREREG_deadcoast.md 1.4).
+// [UNCERTAIN] the original's round-restart writer of +0x4 / +0x10 is not measured (PREREG_deadcoast.md 1.4),
+// nor its reset of +0x2c / +0x30 (FUN_00420d00 clears the table, PREREG_killdamage.md 1.2).
 void VehiclePhysics_ClearKilled(int slot) {
     if (!g_inited || slot < 0 || slot >= 16) return;
     unsigned char* r = rec(slot);
     if (I(r, 0x10) != 1) return;
     I(r, 0x4)  = 1;   // VehicleInit's value (VehicleInit.cpp, &DAT_008815a4)
     I(r, 0x10) = 0;
+    if (KillDamageEnabled()) { I(r, 0x2c) = 0; I(r, 0x30) = 0; }
 }
 
 // Frame boundary of the pre-phase. The player (slot 0) steps first and takes ring phase base + 1 in its own StepCar,

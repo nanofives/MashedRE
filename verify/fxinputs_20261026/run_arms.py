@@ -438,6 +438,10 @@ STACK['DC'] = ['MASHED_DEAD_COAST']
 STACK['X0'] = ['MASHED_FX_ORIG_GATES', 'MASHED_FX_DEBUG', 'MASHED_RECDUMP=@OUT@\@NAME@.msd', 'MASHED_RECDUMP_SLOT=1']
 STACK['X1'] = STACK['X0'] + ['MASHED_DEAD_COAST']
 STACK['X2'] = ['MASHED_FX_ORIG_GATES', 'MASHED_FX_DEBUG', 'MASHED_RECDUMP=@OUT@\@NAME@.msd', 'MASHED_RECDUMP_SLOT=2', 'MASHED_DEAD_COAST']
+STACK['DCKD'] = ['MASHED_DEAD_COAST', 'MASHED_KILL_DAMAGE']   # attempt 3, PREREG_killdamage.md
+STACK['Y1'] = STACK['X1'] + ['MASHED_KILL_DAMAGE']
+STACK['Y2'] = STACK['X2'] + ['MASHED_KILL_DAMAGE']
+STACK['Z0'] = STACK['X0'] + ['MASHED_FX_PAIRLOG=@OUT@/@NAME@.pair.csv']   # attempt 3: slot 2 brake-byte pairing (diagnostic, knobs OFF)
 for name in sys.argv[1:]:
     CUR['name'] = name
     if name.startswith('H_'):

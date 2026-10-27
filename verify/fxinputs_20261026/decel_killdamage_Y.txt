@@ -1,0 +1,4 @@
+D:/MashedWT/D4-FX-INPUTS_data/arms5/H_Y1.msd: kill frame 220 |v| 2020.1823 band 25.0..70.0 n=9 median 5.1095 min 5.1075 max 5.1130 | wheel+0x54 0.125/0.125/0.125/0.125 | +0x2c 50 +0x30 50
+== dead episode frames 220..14217 (13998 captured) rec+0x10 at start 1 | |v| at kill 2020.1823 | first |v|==0 after 223 frames | gate-pass 178 | zero 13775 | frozen-nonzero 0
+D:/MashedWT/D4-FX-INPUTS_data/arms5/H_Y2.msd: kill frame 220 |v| 2513.6493 band 25.0..70.0 n=9 median 5.1181 min 5.1084 max 5.1320 | wheel+0x54 0.125/0.125/0.125/0.125 | +0x2c 50 +0x30 50
+== dead episode frames 220..14217 (13998 captured) rec+0x10 at start 1 | |v| at kill 2513.6493 | first |v|==0 after 241 frames | gate-pass 196 | zero 13757 | frozen-nonzero 1

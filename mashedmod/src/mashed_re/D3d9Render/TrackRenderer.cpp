@@ -1608,6 +1608,12 @@ enum { kAnimFreighter = 1, kAnimBoat = 2 };
 
 namespace { void InvalidateBatchCache(); }  // WS-A s3 PERF (defined before Render)
 namespace { TrackRenderer* s_pontoonTr = nullptr; }   // [pontoon] the renderer the platform's host callbacks reach
+// [D4-FX-INPUTS] MASHED_FX_PAIRLOG=<path>, diagnostic only: AiStepDump's ctrl byte 5 per AI slot (after the AI tick) and its
+// frame, read back by EmitCarFxOrigGates to pair it with the byte the FX gate reads (0x0040cb21 / 0x0040cb37). No sim state.
+namespace { int s_fxPairC5[4] = { -1, -1, -1, -1 }; int s_fxPairFrame[4] = { -1, -1, -1, -1 }; }
+namespace { int s_fxPairProbe[2][4] = { { -1, -1, -1, -1 }, { -1, -1, -1, -1 } };   // [D4-FX-INPUTS] ctrl byte 5 before UpdateRace / at UpdateCar's end
+void FxPairProbe(int k) { static const bool s_on = std::getenv("MASHED_FX_PAIRLOG") != nullptr; if (!s_on || !g_aib.loaded) return; for (int v = 1; v <= 3; ++v) s_fxPairProbe[k][v] = Ai::U8(Ai::kCtrlBlockBase + static_cast<std::uintptr_t>(
+    Ai::I32(Ai::kSlotTableBase + static_cast<std::uintptr_t>(v) * Ai::kSlotTableStride)) * Ai::kCtrlBlockStride + 5u); } }
 namespace {   // [u9778 / substep] MASHED_SUBSTEP_OUTER: an AI car's io as the A4 pre-phase built it, and its result
 struct OuterCar { bool have = false; Vehicle::PlayerCarIO in, out; };
 OuterCar s_outer[16];
@@ -5620,6 +5626,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             }
         }
     }
+    FxPairProbe(0);   // [D4-FX-INPUTS] MASHED_FX_PAIRLOG diagnostic read, no sim state
     if (!RaceTailLateEnabled()) UpdateRace(in.dt);   // [u9779] MASHED_RACE_TAIL_LATE moves it to the end of the frame
     {
         static const bool s_ptrace2 = (std::getenv("MASHED_PLAYERTRACE") != nullptr);
@@ -5930,6 +5937,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
     // At the old call site UpdateRace sees the player after this frame's physics and the AI cars before it (measured,
     // verify/u9779_20261021: trace row k = the player's record-dump frame k and the AI cars' frame k-1).
     if (RaceTailLateEnabled()) UpdateRace(in.dt);
+    FxPairProbe(1);   // [D4-FX-INPUTS] MASHED_FX_PAIRLOG diagnostic read, no sim state
 }
 
 // slot 0 = player, 1..3 = ai_cars_[slot-1]. Spins the car out (brief loss of
@@ -6762,6 +6770,7 @@ void TrackRenderer::AiStepDump() {
         const Ai::StepLocals& sl = Ai::Ai_LastStepLocals(v);
         // [d3bB2] under MASHED_AI_CONTACT_EVENT the block holds the replayed bytes; dump FUN_00416250's output instead
         const std::uint8_t* so = Ai::Ai_ContactEventEnabled() ? Ai::Ai_StepOutCtrl(v) : nullptr;
+        s_fxPairC5[v] = so ? so[5] : Ai::U8(blk + 5); s_fxPairFrame[v] = frame;   // [D4-FX-INPUTS] MASHED_FX_PAIRLOG
         std::fprintf(lf, "%d,%ld,%d,%lu,0,%u,%u,%u,%u,%u,%d,%d,%d,%d,%d,%d,%g,%d,%d,%d,%.9g,%.9g,%u,"
                          "%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%d,%d,%d,%d,%d,"
                          "%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,"
@@ -8805,6 +8814,14 @@ void TrackRenderer::EmitCarFxOrigGates(int slot, const float pos[3], float fx, f
         if (rng) ++ig[9];
         if (vx == fx_ig_prev_[slot][0] && vy == fx_ig_prev_[slot][1] && vz == fx_ig_prev_[slot][2]) ++ig[10];
         fx_ig_prev_[slot][0] = vx; fx_ig_prev_[slot][1] = vy; fx_ig_prev_[slot][2] = vz;
+        static const char* s_pairPath = std::getenv("MASHED_FX_PAIRLOG");   // [D4-FX-INPUTS] diagnostic only
+        if (s_pairPath && s_pairPath[0] && v >= 1 && v <= 3) {
+            static std::FILE* pf = nullptr;
+            if (!pf && (pf = std::fopen(s_pairPath, "w")) != nullptr) std::fprintf(pf, "step_frame,og_frame,v,alive,c5_step,c5_fx,rng,b0c_skid,c5_pre_race,c5_car_end\n");
+            if (pf) std::fprintf(pf, "%d,%d,%d,%d,%d,%u,%d,%d,%d,%d\n", s_fxPairFrame[v], fx_og_frames_[slot], v, alive ? 1 : 0, s_fxPairC5[v],
+                                 static_cast<unsigned>(Ai::U8(Ai::kCtrlBlockBase + static_cast<std::uintptr_t>(slotWord) * Ai::kCtrlBlockStride + 5u)),
+                                 rng ? 1 : 0, skid ? 1 : 0, s_fxPairProbe[0][v], s_fxPairProbe[1][v]);
+        }
         if (rng && brk)
             skid = true;                                                               // 0x0040cb37
         if (skid && alive) ++ig[5];
