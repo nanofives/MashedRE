@@ -1,0 +1,15 @@
+PORT D:/MashedWT/D4-FX-INPUTS_data/arms5/H_Y1.fx_debug.txt
+  slot 0 all: active=308 emits=17 per1000=55.2 | alive: active=198 emits=13 per1000=65.7 | dead: active=110 emits=4 per1000=36.4
+  slot 1 all: active=394 emits=42 per1000=106.6 | alive: active=216 emits=34 per1000=157.4 | dead: active=178 emits=8 per1000=44.9
+  slot 2 all: active=416 emits=23 per1000=55.3 | alive: active=220 emits=13 per1000=59.1 | dead: active=196 emits=10 per1000=51.0
+  slot 3 all: active=232 emits=50 per1000=215.5 | alive: active=232 emits=50 per1000=215.5 | dead: active=0 emits=0 per1000=0.0
+ORIGINAL D:/MashedWT/D4-FX-SLOT2_data/fA2.json frames=13765
+  car 0 all: active=307 emits=22 per1000=71.7 | alive: active=198 emits=15 per1000=75.8 | dead: active=109 emits=7 per1000=64.2
+  car 1 all: active=391 emits=51 per1000=130.4 | alive: active=214 emits=41 per1000=191.6 | dead: active=177 emits=10 per1000=56.5
+  car 2 all: active=413 emits=17 per1000=41.2 | alive: active=219 emits=12 per1000=54.8 | dead: active=194 emits=5 per1000=25.8
+  car 3 all: active=232 emits=60 per1000=258.6 | alive: active=232 emits=60 per1000=258.6 | dead: active=0 emits=0 per1000=0.0
+ORIGINAL D:/MashedWT/D4-FX-SLOT2_data/fA3.json frames=13794
+  car 0 all: active=307 emits=16 per1000=52.1 | alive: active=198 emits=11 per1000=55.6 | dead: active=109 emits=5 per1000=45.9
+  car 1 all: active=391 emits=49 per1000=125.3 | alive: active=214 emits=43 per1000=200.9 | dead: active=177 emits=6 per1000=33.9
+  car 2 all: active=412 emits=25 per1000=60.7 | alive: active=218 emits=13 per1000=59.6 | dead: active=194 emits=12 per1000=61.9
+  car 3 all: active=232 emits=60 per1000=258.6 | alive: active=232 emits=60 per1000=258.6 | dead: active=0 emits=0 per1000=0.0

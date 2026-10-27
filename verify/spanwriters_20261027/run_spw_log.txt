@@ -1,0 +1,25 @@
+02:05:12 N_0: exe dc0f596d in absent rc=0 out 604d373fc3b60fdc 
+02:05:12 K_0: exe dc0f596d in absent rc=0 out f003d0db7bbd0760 input slots: game controllers 0, types 2 0 0 0, active 1
+02:05:12 K_P: exe dc0f596d in 697b7af8175b418f rc=0 out 697b7af8175b418f input slots: game controllers 0, types 2 0 0 0, active 1
+02:05:13 K_G: exe dc0f596d in e2eabeacda9820ba rc=0 out e2eabeacda9820ba input slots: game controllers 0, types 2 0 0 0, active 1
+02:05:13 K_1: exe dc0f596d in dca746c9d4339c13 rc=0 out dca746c9d4339c13 input slots: game controllers 0, types 2 0 0 0, active 1
+02:05:13 K_P0: exe dc0f596d in 697b7af8175b418f rc=0 out e5fd7aa5af97b7c3 input slots: game controllers 0, types 2 0 0 0, active 1
+02:05:14 S: exe dc0f596d rc=0 dump 7a917e737eca2cf4 log: ['R2-2 gamesave load: blank/absent -> fresh defaults (D:\\MashedWT\\D4-FU-SPANINIT-WRITERS_data\\S_scratch\\absent_gamesave.bin)', 'span boot seed: FUN_004924f0 + powerups_all.lua']
+02:05:14 CMP: active slots A = [0]
+02:05:14 P1 HELD: N_0 vs SETTRACKPU N_0: 0 differ, sha 604d373f
+02:05:14 P2a HELD: K_0 vs N_0 at ['0x24efc', '0x24f54'], expected ['0x24efc', '0x24f54']
+02:05:14 P2b HELD: O_0 vs K_0: 15 differ (expected 15), at/after 0x24ef0: ['0x24f2c', '0x24f55', '0x24f56']
+02:05:14 P3_P HELD: F_P vs K_P: 0 differ
+02:05:14 P3_G HELD: F_G vs K_G: 0 differ
+02:05:14 P3_1 HELD: F_1 vs K_1: 0 differ
+02:05:14 P4 HELD: SETTRACKPU N_P0 vs K_P0 at ['0x24f54'], expected ['0x24f54']
+02:05:14    F_P vs K_P0 (report only): 2 differ at ['0x24aa4', '0x24f2c']
+02:05:14 P5 HELD: S dump vs O_0 span: 4 differ at ['0x4bc', '0x514', '0x515', '0x516'], expected ['0x4bc', '0x514', '0x515', '0x516'], log line True
+02:05:14 CMP: 8 of 8 held
+02:25:48 GATES rc=0
+02:25:48 GATES H_DEF.step.csv sha8=5943c5f1
+02:25:48 GATES H_DEF.gates.csv sha8=364350ae
+02:25:48 GATES H_DEF.ptrace.log sha8=52052890
+02:25:48 GATES B_DEF_K0.step.csv sha8=3a03670c
+02:25:48 GATES B_DEF_K1.step.csv sha8=e85ea6fb
+02:25:48 GATES B_DEF_K26.step.csv sha8=53778664

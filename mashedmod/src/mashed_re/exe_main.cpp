@@ -354,6 +354,7 @@ IDirectInputDevice8A* g_kbd           = nullptr;
 // Defaults to J = 0 until InitDirectInput runs.
 int g_input_slot_type[4]   = {2, 0, 0, 0};
 int g_input_active_slots   = 1;
+bool g_input_slots_derived = false;   // DeriveInputSlots has run (D4-FU-SPANINIT-WRITERS)
 unsigned char         g_keys[256]     = {};   // raw DInput key state, set 0x80 if held
 unsigned char         g_keys_prev[256]= {};   // last frame, for edge detection
 
@@ -1087,6 +1088,7 @@ static void DeriveInputSlots() {
         if (g_input_slot_type[i] != 0) ++n;
     }
     g_input_active_slots = n;
+    g_input_slots_derived = true;
     if (std::FILE* log = std::fopen(kLogPath, "a")) {
         std::fprintf(log, "\ninput slots: game controllers %d, types %d %d %d %d, active %d\n",
                      j, g_input_slot_type[0], g_input_slot_type[1],
@@ -9082,6 +9084,23 @@ void ExecuteFrontendBootChain() {
 
 }  // namespace
 
+// [D4-FU-SPANINIT-WRITERS] bind points for Race/GameFlow.cpp's MASHED_SAVE_FIRSTRUN_WRITERS: the slot
+// types FUN_00497450 tests ([0x007e96fc + i*0x200] != 0), and a window-less derive for the save
+// round-trip harness, which runs before WinMain reaches InitDirectInput.
+extern "C" int ExeInput_SlotsDerived() { return g_input_slots_derived ? 1 : 0; }
+extern "C" int ExeInput_SlotType(int i) { return (i >= 0 && i < 4) ? g_input_slot_type[i] : 0; }
+extern "C" int ExeInput_DeriveSlotsHeadless() {
+    if (!g_dinput) {
+        const HRESULT hr = DirectInput8Create(GetModuleHandleA(nullptr), DIRECTINPUT_VERSION, IID_IDirectInput8A,
+                                              reinterpret_cast<void**>(&g_dinput), nullptr);
+        if (FAILED(hr) || !g_dinput) { g_dinput = nullptr; return 0; }
+    }
+    DeriveInputSlots();
+    return 1;
+}
+namespace mashed_re { namespace Race { void GameFlow_BootSpan(unsigned char span[0x520]); } }
+namespace mashed_re { namespace Frontend { void Nav_GameStateSeedSpan(const unsigned char* span); } }
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     ApplyResolutionEnv();   // MASHED_HIRES=1 -> 1280x960 (else 640x480); before window+device
     // Self-locating asset root. Every data path in this exe (and the log) is
@@ -9701,6 +9720,28 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
                                      : "blank/absent -> fresh defaults",
                              savepath);
                 std::fclose(log);
+            }
+            // [D4-FU-SPANINIT-WRITERS 2026-10-27] MASHED_SPAN_BOOT_SEED (default OFF, =1 on),
+            // verify/spanwriters_20261027/PREREG_D4-FU-SPANINIT-WRITERS.md. With no save restored the
+            // original's span still holds its boot values: FUN_00492370 runs FUN_004924f0 (0x0049239f),
+            // then FUN_00402750 (0x004923d0) reaches the powerups_all.lua Set_Track_Powerups rows
+            // (0x0045bb7d). Off, the port's span stays zero. MASHED_SPAN_BOOT_SEED_DUMP=<path> (arm
+            // test only) writes the seeded 0x520 bytes there and exits.
+            const char* seed = std::getenv("MASHED_SPAN_BOOT_SEED");
+            if (!save_ok && seed && seed[0] && seed[0] != '0') {
+                static unsigned char span[0x520];
+                mashed_re::Race::GameFlow_BootSpan(span);
+                mashed_re::Frontend::Nav_GameStateSeedSpan(span);
+                if (std::FILE* sl = std::fopen(kLogPath, "a")) {
+                    std::fprintf(sl, "span boot seed: FUN_004924f0 + powerups_all.lua\n");
+                    std::fclose(sl);
+                }
+                const char* dump = std::getenv("MASHED_SPAN_BOOT_SEED_DUMP");
+                if (dump && dump[0]) {
+                    std::FILE* df = std::fopen(dump, "wb");
+                    if (df) { std::fwrite(mashed_re::Frontend::Nav_SaveSpanData(), 1, sizeof span, df); std::fclose(df); }
+                    std::_Exit(df ? 0 : 5);
+                }
             }
         }
         // Standalone progression (sidecar) — overlays unlock/trophy onto the cup.

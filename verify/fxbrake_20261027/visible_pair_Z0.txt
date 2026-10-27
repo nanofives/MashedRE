@@ -1,0 +1,11 @@
+o_breg_r1.msd.aistep.csv       v=1 n=220 step 220 replay 220 visible 220 | v=2 n=220 step 220 replay 220 visible 220 | v=3 n=220 step 220 replay 220 visible 220
+o_breg_r2.msd.aistep.csv       v=1 n=196 step 166 replay 196 visible 166 | v=2 n=196 step 195 replay 196 visible 195 | v=3 n=220 step 181 replay 205 visible 175
+o_breg_r3.msd.aistep.csv       v=1 n=220 step 220 replay 220 visible 220 | v=2 n=220 step 220 replay 220 visible 220 | v=3 n=220 step 220 replay 220 visible 220
+o_breg_r4.msd.aistep.csv       v=1 n=220 step 220 replay 220 visible 220 | v=2 n=220 step 220 replay 220 visible 220 | v=3 n=220 step 220 replay 220 visible 220
+o_breg_r5.msd.aistep.csv       v=1 n=220 step 220 replay 220 visible 220 | v=2 n=220 step 220 replay 220 visible 220 | v=3 n=220 step 220 replay 220 visible 220
+o_breg_r7.msd.aistep.csv       v=1 n=220 step 220 replay 220 visible 220 | v=2 n=220 step 220 replay 220 visible 220 | v=3 n=220 step 220 replay 220 visible 220
+o_breg_r8.msd.aistep.csv       v=1 n=220 step 220 replay 220 visible 220 | v=2 n=220 step 220 replay 220 visible 220 | v=3 n=220 step 220 replay 220 visible 220
+o_p0a.msd.aistep.csv           v=1 n=220 step 220 replay 220 visible 220 | v=2 n=220 step 220 replay 220 visible 220 | v=3 n=220 step 220 replay 220 visible 220
+o_p2a.msd.aistep.csv           v=1 n=220 step 180 replay 191 visible 157 | v=2 n=220 step 193 replay 205 visible 207 | v=3 n=220 step 177 replay 176 visible 179
+o_p2b.msd.aistep.csv           v=1 n=220 step 220 replay 220 visible 220 | v=2 n=220 step 220 replay 220 visible 220 | v=3 n=220 step 220 replay 220 visible 220
+o4.msd.aistep.csv              v=1 n=220 step 180 replay 191 visible 157 | v=2 n=220 step 193 replay 205 visible 207 | v=3 n=220 step 177 replay 176 visible 179

@@ -147,6 +147,9 @@ void           Nav_GameStateReset();
 // 0xDEADBEEF, first written by 0x00404F37 — the shipped blank save has 0;
 // FUN_00404e80 itself does not validate the magic, the gate is caller-side).
 bool           Nav_GameStateLoadSave(const unsigned char* data, unsigned len);
+// [D4-FU-SPANINIT-WRITERS] the same span copy + re-derive as Nav_GameStateLoadSave, from a bare
+// 0x520-byte span (the boot span when no save loaded). No magic gate.
+void           Nav_GameStateSeedSpan(const unsigned char* span);
 
 // --- public API ------------------------------------------------------------
 
