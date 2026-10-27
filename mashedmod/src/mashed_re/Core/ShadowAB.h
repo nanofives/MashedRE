@@ -161,7 +161,7 @@ inline bool Armed(Counter& c) {
 
 inline void Record(Counter& c, int idx, int ndiff, const char* detail) {
     c.ndiff += (ndiff != 0);
-    char line[256];
+    char line[512];
     wsprintfA(line, "[%d] fn=%s rva=%08x idx=%d ndiff=%d%s%s\r\n",
               c.n++, c.name, static_cast<unsigned>(c.rva), idx, ndiff,
               ndiff ? "" : " OK", detail ? detail : "");
