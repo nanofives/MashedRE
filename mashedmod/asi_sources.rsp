@@ -369,6 +369,7 @@
 "Collision\RwpSolverCore18.cpp"
 "Collision\RwpSolverCore19.cpp"
 "Collision\RwpSolverCore20.cpp"
+"Collision\NarrowC4Probe.cpp"
 "Collision\RwpSolverCore21.cpp"
 "Collision\RwpSolverCore22.cpp"
 "Collision\RwpSolverCore23.cpp"
