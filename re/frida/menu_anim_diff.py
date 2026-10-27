@@ -23,7 +23,8 @@ ROOT = Path(__file__).resolve().parent.parent.parent
 # MENU_ANIM_OUT: result path (unset = log/diff_menu_anim_tick_navdriven.json).
 GAME_ROOT = Path(os.environ.get("MASHED_ROOT", ROOT))
 ORIG = GAME_ROOT / "original"; EXE = ORIG / "MASHED.exe"
-ASI = ORIG / "mashed_re_dev.asi"
+# MENU_ANIM_ASI: load this .asi as the twin instead (unset = the root's own; D4-FU-MENUSPEED control arm).
+ASI = Path(os.environ["MENU_ANIM_ASI"]) if os.environ.get("MENU_ANIM_ASI") else ORIG / "mashed_re_dev.asi"
 
 AGENT = r'''
 'use strict';
@@ -70,7 +71,11 @@ rpc.exports={
       const a=new Uint8Array(s1), b=new Uint8Array(s2);
       let diff=-1;
       for(let i=0;i<TBL_LEN;i++){ if(a[i]!==b[i]){ diff=i; break; } }
-      const row={ra:ra, rb:rb, diff:diff, scr:scr, dt:dt};
+      // settle: 0xff040000 records the ORIGINAL moved type 0 -> 1 this tick (the 0x004326b8 Y path ran).
+      const d0=new DataView(s0), d1=new DataView(s1); let settle=0;
+      for(let k=0;k<30;k++){ const o=k*0x34;
+        if(d0.getUint32(o,true)===0xff040000 && d0.getInt32(o+4,true)===0 && d1.getInt32(o+4,true)===1) settle++; }
+      const row={ra:ra, rb:rb, diff:diff, scr:scr, dt:dt, settle:settle};
       if(diff>=0){                                 // the differing dword, both sides
         const o=diff&~3;
         row.rec=Math.floor(o/0x34); row.off=o%0x34;

@@ -5159,9 +5159,39 @@ bool RenderFrame() {
             // screen change reads as an instant pop. The original ran at a
             // steady framerate and never multi-ticked mid-nav.
             if (raw_ms > 50) raw_ms = 50;
+            // MASHED_MENU_CLOCK_FAITHFUL=1 (default OFF, D4-FU-MENUSPEED amendment 1): FUN_00493390 stores the
+            // constant 0x32 into DAT_007f1000 at 0x004933d5 on every call and FUN_00493480 reads that
+            // (0x00493485), so the original takes one 50 ms tick per frame whatever the wall time. Off: the
+            // elapsed-ms input above (one tick per ~3 frames at 60 fps).
+            static const bool s_clock_faithful =
+                GetEnvironmentVariableA("MASHED_MENU_CLOCK_FAITHFUL", nullptr, 0) != 0;
+            if (s_clock_faithful) raw_ms = 0x32;
             Nav_FrameClockUpdate(raw_ms);
         }
         Nav_AnimTick();
+        // MASHED_MENU_ANIM_LOG=<path> (debug, default off): per anim-tick call, QPC ms since the first call after
+        // the last screen change, the tick dt, and tag/slide/type of records 0..6 (orig_anim_timing.py fields).
+        {
+            static FILE* s_alog = [] {
+                char p[MAX_PATH];
+                const DWORD n = GetEnvironmentVariableA("MASHED_MENU_ANIM_LOG", p, sizeof p);
+                return (n > 0 && n < sizeof p) ? std::fopen(p, "w") : nullptr;
+            }();
+            if (s_alog) {
+                static int s_scr = -1; static LARGE_INTEGER s_t0, s_f;
+                LARGE_INTEGER t; QueryPerformanceCounter(&t);
+                if (Nav_ScreenId() != s_scr) {
+                    s_scr = Nav_ScreenId(); s_t0 = t; QueryPerformanceFrequency(&s_f);
+                    std::fprintf(s_alog, "# screen %d\n", s_scr);
+                }
+                const double ms = 1000.0 * double(t.QuadPart - s_t0.QuadPart) / double(s_f.QuadPart);
+                std::fprintf(s_alog, "%.1f %.9g", ms, Nav_FrameDt());
+                const MenuRecord* ar = Nav_Records();
+                for (int k = 0; k < 7 && k < Nav_RecordCount(); ++k)
+                    std::fprintf(s_alog, " %08x:%d:%d", static_cast<unsigned>(ar[k].tag), ar[k].slide, ar[k].type);
+                std::fprintf(s_alog, "\n"); std::fflush(s_alog);
+            }
+        }
 
         for (int r = 0; r < nrec; ++r) {
             const MenuRecord& rec = recs[r];

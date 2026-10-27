@@ -12,15 +12,18 @@ REM Outputs (navsm_test.exe / *.obj / *.out.txt) are gitignored.
 setlocal
 pushd "%~dp0"
 call "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars32.bat" >nul
-cl /nologo /EHsc /std:c++17 ^
+cl /nologo /EHsc /std:c++17 /DMASHED_STANDALONE ^
    navsm_test.cpp ^
    ..\..\..\..\mashedmod\src\mashed_re\Frontend\MenuNavSM.cpp ^
+   ..\..\..\..\mashedmod\src\mashed_re\Frontend\MenuAnimTickTwin.cpp ^
    ..\..\..\..\mashedmod\src\mashed_re\Frontend\KvFind.cpp ^
    ..\..\..\..\mashedmod\src\mashed_re\Frontend\MenuNav.cpp ^
    ..\..\..\..\mashedmod\src\mashed_re\Frontend\FrontendNav.cpp ^
    ..\..\..\..\mashedmod\src\mashed_re\Frontend\FrontendState.cpp ^
    ..\..\..\..\mashedmod\src\mashed_re\Frontend\MenuScoreSort.cpp ^
    ..\..\..\..\mashedmod\src\mashed_re\Race\RaceModes.cpp ^
+   ..\..\..\..\mashedmod\src\mashed_re\Frontend\PromptStripTwin.cpp ^
+   ..\..\..\..\mashedmod\src\mashed_re\Frontend\MenuNearLeaves_s6.cpp ^
    /Fe:navsm_test.exe ^
    /link /BASE:0x10000 /FIXED:NO /DYNAMICBASE:NO
 REM U-9673: the fixed low base keeps the test image's 10 MB .bss arena over

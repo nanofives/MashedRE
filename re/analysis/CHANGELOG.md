@@ -26,6 +26,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-27  004325c0  FUN_004325c0  C3->C3  D4-FU-MENUSPEED one body (MenuAnimTickBody, exe + .asi), MASHED_MENU_ANIM_SPEED default 1.0; .asi settle Y +0x0c->+0x1c and FUN_0042ac50 EAX/ECX fixed; menu_anim_diff A0-A3 GREEN 20/20 (A3 settle path x100), A3c/A4 RED as predicted; verify/menuspeed_20261027/RESULT_D4-FU-MENUSPEED.md
 2026-10-27  0055fea0  FUN_0055fea0  C3->C4  D4-WSB-BVH-WRITESET: racediff C4-CLEAN (hook installed alone) + write-set shadow CLEAN (RunTracked, A/B-IS-REAL); verify/wsbbvh_20261027/RESULT_D4-WSB-BVH-WRITESET.md
 2026-10-27  0055ff90  FUN_0055ff90  C3->C4  D4-WSB-BVH-WRITESET: racediff C4-CLEAN (hook installed alone) + write-set shadow CLEAN (RunTracked, A/B-IS-REAL); verify/wsbbvh_20261027/RESULT_D4-WSB-BVH-WRITESET.md
 2026-10-27  00561040  FUN_00561040  C3->C4  D4-WSB-BVH-WRITESET: racediff C4-CLEAN (hook installed alone) + write-set shadow CLEAN (RunTracked, A/B-IS-REAL); verify/wsbbvh_20261027/RESULT_D4-WSB-BVH-WRITESET.md
