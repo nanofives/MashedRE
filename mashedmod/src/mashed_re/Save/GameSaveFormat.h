@@ -188,8 +188,9 @@ inline int RunTrackPowerupsScript(unsigned char span[kSpanBytes], const char* te
             ++nLocals;
             continue;
         }
-        if (!bad && nt == 17 && std::strcmp(tok[0], "Set_Track_Powerups") == 0 &&
-            std::strcmp(tok[1], "(") == 0 && std::strcmp(tok[16], ")") == 0) {
+        // name ( a0 , a1 , a2 , a3 , a4 , a5 , a6 ) = 16 tokens
+        if (!bad && nt == 16 && std::strcmp(tok[0], "Set_Track_Powerups") == 0 &&
+            std::strcmp(tok[1], "(") == 0 && std::strcmp(tok[15], ")") == 0) {
             int a[7];
             bool ok = true;
             for (int k = 0; k < 7; ++k) {
