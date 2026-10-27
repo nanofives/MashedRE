@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-10-27 09:17 D4-WSB-NARROW-FIX2 (orch/D4-WSB-NARROW-FIX2), D4-WSB-NARROW-FIX (orch/D4-WSB-NARROW-FIX2), D4-FX-REBASE (orch/D4-FX-REBASE): G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/e85ea6fb/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261027_085114
 - 2026-10-27 08:02 D4-FU-MENUSPEED (orch/D4-FU-MENUSPEED): G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/e85ea6fb/53778664. Run data D:\MashedWT\mtrain_data\20261027_075129
 - 2026-10-27 07:47 HB-ARCTIC (orch/HB-ARCTIC): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261027_074611
 - 2026-10-27 07:22 D4-WSB-BVH-WRITESET (orch/D4-WSB-BVH-WRITESET): G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/e85ea6fb/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261027_065033
