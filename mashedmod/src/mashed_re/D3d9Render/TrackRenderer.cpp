@@ -1608,6 +1608,12 @@ enum { kAnimFreighter = 1, kAnimBoat = 2 };
 
 namespace { void InvalidateBatchCache(); }  // WS-A s3 PERF (defined before Render)
 namespace { TrackRenderer* s_pontoonTr = nullptr; }   // [pontoon] the renderer the platform's host callbacks reach
+// [D4-FX-INPUTS] MASHED_FX_PAIRLOG=<path>, diagnostic only: AiStepDump's ctrl byte 5 per AI slot (after the AI tick) and its
+// frame, read back by EmitCarFxOrigGates to pair it with the byte the FX gate reads (0x0040cb21 / 0x0040cb37). No sim state.
+namespace { int s_fxPairC5[4] = { -1, -1, -1, -1 }; int s_fxPairFrame[4] = { -1, -1, -1, -1 }; }
+namespace { int s_fxPairProbe[2][4] = { { -1, -1, -1, -1 }, { -1, -1, -1, -1 } };   // [D4-FX-INPUTS] ctrl byte 5 before UpdateRace / at UpdateCar's end
+void FxPairProbe(int k) { static const bool s_on = std::getenv("MASHED_FX_PAIRLOG") != nullptr; if (!s_on || !g_aib.loaded) return; for (int v = 1; v <= 3; ++v) s_fxPairProbe[k][v] = Ai::U8(Ai::kCtrlBlockBase + static_cast<std::uintptr_t>(
+    Ai::I32(Ai::kSlotTableBase + static_cast<std::uintptr_t>(v) * Ai::kSlotTableStride)) * Ai::kCtrlBlockStride + 5u); } }
 namespace {   // [u9778 / substep] MASHED_SUBSTEP_OUTER: an AI car's io as the A4 pre-phase built it, and its result
 struct OuterCar { bool have = false; Vehicle::PlayerCarIO in, out; };
 OuterCar s_outer[16];
@@ -5620,6 +5626,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             }
         }
     }
+    FxPairProbe(0);   // [D4-FX-INPUTS] MASHED_FX_PAIRLOG diagnostic read, no sim state
     if (!RaceTailLateEnabled()) UpdateRace(in.dt);   // [u9779] MASHED_RACE_TAIL_LATE moves it to the end of the frame
     {
         static const bool s_ptrace2 = (std::getenv("MASHED_PLAYERTRACE") != nullptr);
@@ -5681,11 +5688,14 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             const int v = ci + 1;
             // [u9778 / substep] a car the outer driver stepped and this loop does not step (or relocates first): put it back
             auto outerUndo = [&]() { if (v < 16 && s_outer[v].have) { Vehicle::VehiclePhysics_OuterRestore(v); s_outer[v].have = false; } };
-            if (round_mode_ && !race_[ci + 1].alive) {
+            // [D4-FX-INPUTS] MASHED_DEAD_COAST: FUN_00470c70 keeps stepping a car FUN_00422fd0 killed (+0x10 == 1 qualifies it,
+            // 0x00471012), on the zero block 0x007f19b8 (StepCar). It skips the scaffold spin-out and the stuck relocation.
+            const bool deadCoast = phys && round_mode_ && !race_[ci + 1].alive && Vehicle::VehiclePhysics_DeadCoastEnabled();
+            if (round_mode_ && !race_[ci + 1].alive && !deadCoast) {
                 outerUndo();
                 a.cur_speed = 0.f; a.vel[0] = a.vel[1] = a.vel[2] = 0.f; continue;
             }
-            if (a.spin > 0.f) {   // spun out by a missile/mine (scaffold leaf effect)
+            if (a.spin > 0.f && !deadCoast) {   // spun out by a missile/mine (scaffold leaf effect)
                 outerUndo();
                 a.spin -= in.dt; a.yaw += 12.0f * in.dt;
                 yaww::Hit(yaww::W_3283, v);
@@ -5703,7 +5713,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             // [D3-CF-K357] MASHED_R7_EXIT (default ON since 2026-10-25, L-16): skipped while the MASHED_ROUND_END7 flag is up. The original keeps
             // the car frozen in sub-state 7 (o_r7_1: 502 frames); a frozen car's gate never changes, so the stand-in would
             // relocate it every 2.5 s. PREREG_D3-CF-K357.md amendment 1.
-            if (ng >= 2 && !RoundEnd7ExitActive()) {
+            if (ng >= 2 && !RoundEnd7ExitActive() && !deadCoast) {
                 if (race_[v].gate != a.prog_gate) { a.prog_gate = race_[v].gate; a.stuck_t = 0.f; }
                 else { a.stuck_t += in.dt; }
                 if (a.stuck_t > 2.5f) {
@@ -5927,6 +5937,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
     // At the old call site UpdateRace sees the player after this frame's physics and the AI cars before it (measured,
     // verify/u9779_20261021: trace row k = the player's record-dump frame k and the AI cars' frame k-1).
     if (RaceTailLateEnabled()) UpdateRace(in.dt);
+    FxPairProbe(1);   // [D4-FX-INPUTS] MASHED_FX_PAIRLOG diagnostic read, no sim state
 }
 
 // slot 0 = player, 1..3 = ai_cars_[slot-1]. Spins the car out (brief loss of
@@ -6759,6 +6770,7 @@ void TrackRenderer::AiStepDump() {
         const Ai::StepLocals& sl = Ai::Ai_LastStepLocals(v);
         // [d3bB2] under MASHED_AI_CONTACT_EVENT the block holds the replayed bytes; dump FUN_00416250's output instead
         const std::uint8_t* so = Ai::Ai_ContactEventEnabled() ? Ai::Ai_StepOutCtrl(v) : nullptr;
+        s_fxPairC5[v] = so ? so[5] : Ai::U8(blk + 5); s_fxPairFrame[v] = frame;   // [D4-FX-INPUTS] MASHED_FX_PAIRLOG
         std::fprintf(lf, "%d,%ld,%d,%lu,0,%u,%u,%u,%u,%u,%d,%d,%d,%d,%d,%d,%g,%d,%d,%d,%.9g,%.9g,%u,"
                          "%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%d,%d,%d,%d,%d,"
                          "%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,"
@@ -7129,6 +7141,8 @@ void TrackRenderer::StartRound() {
     round_alive_ = kRaceCars;
     round_winner_ = -1;
     s_roundEnd7 = false;   // [u9779] MASHED_ROUND_END7: a new round leaves sub-state 7
+    if (Vehicle::VehiclePhysics_DeadCoastEnabled())   // [D4-FX-INPUTS] undo MarkKilled (PREREG_deadcoast.md 1.4)
+        for (int v = 0; v < kRaceCars; ++v) Vehicle::VehiclePhysics_ClearKilled(v);
     // [D3-CF-BOX] MASHED_BOX_PRODUCERS: "slot has a car" stands for the original's *(PTR_005f2770 + 0x34 + i*4) != 0.
     // Race init: FUN_004111c0's 4 (0x0040ff6b) / 1 (0x0040ff9c). Every round: FUN_0040e590's 1 (0x0040eeae).
     // Measured on the original (verify/d3cfbox_20261025 O1): at race init FUN_0040e590 writes its block twice,
@@ -7531,6 +7545,7 @@ void TrackRenderer::KillCar(int car) {
     race_[car].alive = false;
     --round_alive_;
     BoxWrite(pw_, car, 2, "kill");   // [D3-CF-BOX] FUN_00422fd0's 2 (0x00423005)
+    if (Vehicle::VehiclePhysics_DeadCoastEnabled()) Vehicle::VehiclePhysics_MarkKilled(car);   // [D4-FX-INPUTS] 0x0046c5c0 / 0x0046c790
     if (car > 0 && car - 1 < static_cast<int>(ai_cars_.size()))
         ai_cars_[static_cast<std::size_t>(car - 1)].speed = 0.f;
 }
@@ -8461,6 +8476,7 @@ void TrackRenderer::UpdateRace(float dt) {
                 race_[victim].alive = false;
                 --round_alive_;
                 BoxWrite(pw_, victim, 2, "kill");   // [D3-CF-BOX] FUN_00410d10 0x00411025 -> FUN_00422fd0 0x00423005
+                if (Vehicle::VehiclePhysics_DeadCoastEnabled()) Vehicle::VehiclePhysics_MarkKilled(victim);   // [D4-FX-INPUTS]
                 if (victim > 0 && victim - 1 < static_cast<int>(ai_cars_.size()))
                     ai_cars_[static_cast<std::size_t>(victim - 1)].speed = 0.f;
                 ScoreOnElimination(victim);    // FUN_0040eee0(victim, 1)
@@ -8546,6 +8562,7 @@ void TrackRenderer::UpdateRace(float dt) {
             race_[victim].alive = false;
             --round_alive_;
             BoxWrite(pw_, victim, 2, "kill");   // [D3-CF-BOX] FUN_00410d10 0x00411025 -> FUN_00422fd0 0x00423005
+            if (Vehicle::VehiclePhysics_DeadCoastEnabled()) Vehicle::VehiclePhysics_MarkKilled(victim);   // [D4-FX-INPUTS]
             if (victim > 0 && victim - 1 < static_cast<int>(ai_cars_.size()))
                 ai_cars_[static_cast<std::size_t>(victim - 1)].speed = 0.f;
             ScoreOnElimination(victim);        // FUN_0040eee0(victim, 1)
@@ -8726,11 +8743,15 @@ void TrackRenderer::EmitCarFx(int slot, const float pos[3], const float vel_in[3
                 // alive/pool: the question "is the FX rate starving the shared pool?"
                 // is answerable only from occupancy, not from cumulative emit counts.
                 std::fprintf(f, "[s%d] R=%.1f spd=%.2f yawRate=%.2f corner=%.2f kCorner=%.2f decel=%.2f skidI=%.2f skids=%d sparks=%d alive=%d"
-                             " og_frames=%d og_calls=%d/%d og_emits=%d/%d\n",
+                             " og_frames=%d og_calls=%d/%d og_emits=%d/%d"
+                             " ig=%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d\n",   // [D4-FX-INPUTS] fx_ig_ census, appended
                              slot, R, spd, yawRate, corner, kCorner, decel, skidI,
                              fx_skids_[slot], fx_sparks_[slot], parts_.alive(),
                              fx_og_frames_[slot], fx_og_calls_[slot][0], fx_og_calls_[slot][1],
-                             fx_og_emits_[slot][0], fx_og_emits_[slot][1]);
+                             fx_og_emits_[slot][0], fx_og_emits_[slot][1],
+                             fx_ig_[slot][0], fx_ig_[slot][1], fx_ig_[slot][2], fx_ig_[slot][3], fx_ig_[slot][4],
+                             fx_ig_[slot][5], fx_ig_[slot][6], fx_ig_[slot][7], fx_ig_[slot][8], fx_ig_[slot][9],
+                             fx_ig_[slot][10], fx_ig_[slot][11], fx_ig_[slot][12], fx_ig_[slot][13], fx_ig_[slot][14]);
                 std::fclose(f);
             }
         }
@@ -8772,21 +8793,43 @@ void TrackRenderer::EmitCarFxOrigGates(int slot, const float pos[3], float fx, f
     if (!Vehicle::VehiclePhysics_RecordPtr(v)) return;
     ++fx_og_frames_[slot];
     const int slotWord = Ai::I32(Ai::kSlotTableBase + static_cast<std::uintptr_t>(v) * Ai::kSlotTableStride);
-    if (slotWord < 0) return;                                                         // 0x0040ca31
-    if (static_cast<int>(Vehicle::VehiclePhysics_RecordF32(v, 0x9e0)) <= 1) return;   // 0x0040ca74
+    int* const ig = fx_ig_[slot];
+    const bool alive = g_aib.alive[slot] != 0;   // [D4-FX-INPUTS] census only, the original's gate does not read it
+    if (slotWord < 0) { ++ig[0]; return; }                                            // 0x0040ca31
+    if (static_cast<int>(Vehicle::VehiclePhysics_RecordF32(v, 0x9e0)) <= 1) { ++ig[1]; return; }   // 0x0040ca74
     bool skid = false;
     if (Vehicle::VehiclePhysics_RecordI32(v, 0xcfc) == 0) {                           // 0x0040cabe
         const float vx = Vehicle::VehiclePhysics_RecordF32(v, 0x9b0);
         const float vy = Vehicle::VehiclePhysics_RecordF32(v, 0x9b4);
         const float vz = Vehicle::VehiclePhysics_RecordF32(v, 0x9b8);
-        if (!(vz * vz + vx * vx + vy * vy >= 62500.0f)) return;                       // 0x0040cae0 [0x005ccd20]
+        if (!(vz * vz + vx * vx + vy * vy >= 62500.0f)) { ++ig[2]; return; }          // 0x0040cae0 [0x005ccd20]
         skid = Vehicle::VehiclePhysics_RecordF32(v, 0xb0c) > 100.0f;                  // 0x0040caf5 [0x005cc568]
-        if (Ai::AiLeaf_46d570(v) < 90.0f &&                                            // 0x0040cb21 [0x005ccad0]
-            Ai::U8(Ai::kCtrlBlockBase + static_cast<std::uintptr_t>(slotWord) * Ai::kCtrlBlockStride + 5u) > 0x40)
+        const bool rng = Ai::AiLeaf_46d570(v) < 90.0f;                                 // 0x0040cb21 [0x005ccad0]
+        const bool brk = Ai::U8(Ai::kCtrlBlockBase + static_cast<std::uintptr_t>(slotWord) * Ai::kCtrlBlockStride + 5u) > 0x40;
+        // [D4-FX-INPUTS] census only, no effect on the gate
+        ++ig[3]; if (alive) ++ig[4];
+        if (skid) ++ig[6];
+        if (rng && brk) ++ig[7];
+        if (brk) ++ig[8];
+        if (rng) ++ig[9];
+        if (vx == fx_ig_prev_[slot][0] && vy == fx_ig_prev_[slot][1] && vz == fx_ig_prev_[slot][2]) ++ig[10];
+        fx_ig_prev_[slot][0] = vx; fx_ig_prev_[slot][1] = vy; fx_ig_prev_[slot][2] = vz;
+        static const char* s_pairPath = std::getenv("MASHED_FX_PAIRLOG");   // [D4-FX-INPUTS] diagnostic only
+        if (s_pairPath && s_pairPath[0] && v >= 1 && v <= 3) {
+            static std::FILE* pf = nullptr;
+            if (!pf && (pf = std::fopen(s_pairPath, "w")) != nullptr) std::fprintf(pf, "step_frame,og_frame,v,alive,c5_step,c5_fx,rng,b0c_skid,c5_pre_race,c5_car_end\n");
+            if (pf) std::fprintf(pf, "%d,%d,%d,%d,%d,%u,%d,%d,%d,%d\n", s_fxPairFrame[v], fx_og_frames_[slot], v, alive ? 1 : 0, s_fxPairC5[v],
+                                 static_cast<unsigned>(Ai::U8(Ai::kCtrlBlockBase + static_cast<std::uintptr_t>(slotWord) * Ai::kCtrlBlockStride + 5u)),
+                                 rng ? 1 : 0, skid ? 1 : 0, s_fxPairProbe[0][v], s_fxPairProbe[1][v]);
+        }
+        if (rng && brk)
             skid = true;                                                               // 0x0040cb37
+        if (skid && alive) ++ig[5];
     } else {
+        ++ig[11];
         if (FxOrigRoll() < 0.3f) return;                                               // 0x0040cb4e [0x005cc99c]
         skid = true;
+        if (alive) ++ig[14];
     }
     static const char* s_surf = std::getenv("MASHED_FX_ORIG_SURFACE");
     static const std::uint32_t s_surfKey = s_surf ? static_cast<std::uint32_t>(std::strtoul(s_surf, nullptr, 16)) : 0u;
@@ -8802,9 +8845,11 @@ void TrackRenderer::EmitCarFxOrigGates(int slot, const float pos[3], float fx, f
         else if (col == 0xffc88080u)              p = skid ? 0.1f : 0.05f;            // 0x0040c6ee..0x0040c706
         else                                      p = skid ? 0.7f : 0.4f;             // 0x0040c728..0x0040c734
         ++fx_og_calls_[slot][skid ? 1 : 0];
+        if (alive) ++ig[12];
         if (!(FxOrigRoll() <= p)) continue;                                            // 0x0040c73e
         if (col == 0xff968080u && !skid) continue;                                     // id 6, 0x0040c8e8 (launch counter 0)
         ++fx_og_emits_[slot][skid ? 1 : 0];
+        if (alive) ++ig[13];
         ++fx_skids_[slot];
         const float side = (w & 1) ? 1.f : -1.f;
         const float p3[3] = { pos[0] - fx * (R * 0.012f) + (-fz) * side * (R * 0.006f), pos[1] + R * 0.002f,
