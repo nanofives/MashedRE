@@ -1,163 +1,192 @@
-# RESULT D4-WSB-C4-BROAD-WS: write-set C4 for 5 BROAD rows
+# RESULT D4-WSB-C4-BROAD-WS: write-set C4 for 5 BROAD rows (round 2)
 
-Verdict: **RED**. No row reaches C4. Default gates are unchanged on this branch's exe, and the harness change is
-hash-neutral. The PREREG (`PREREG_D4-WSB-C4-BROAD-WS.md`, `1ac9ddef2`, committed alone before any arm) was applied
-as written. No tracker changed.
+Verdict: **GREEN.** **3 rows go C3 -> C4** (`0x0055a1f0`, `0x0055ab30`, `0x0055c0f0`), each with a heap-tracked write-set
+leg that compared more than 0 heap pages and came back CLEAN, plus a canonical-scenario racediff C4-CLEAN with the hook
+installed alone. **2 rows stay C3** (`0x0055bae0`, `0x0055c000`): their heap leg compared 0 pages, because every write
+they make lands in the caller's stack window. Default gates unchanged on this round's exe.
 
-| row | write-set shadow (leg 2, census) | racediff v6 (leg 3) | level |
+| row | heap leg: heap pages compared (total over 24, per sample) | racediff (tool v10) | level |
 |---|---|---|---|
-| `0x0055c000` | **CLEAN 24/24** | Quick Battle: not observed (2 attempts). Census: **NOT RUN** (OFF boot fault) | stays C3 |
-| `0x0055c0f0` | **CLEAN 24/24** | Quick Battle: not observed (2 attempts). Census: **NOT RUN** (OFF boot fault) | stays C3 |
-| `0x0055bae0` | **CLEAN 24/24** | Quick Battle: not observed (2 attempts). Census: **NOT RUN** (OFF boot fault) | stays C3 |
-| `0x0055ab30` | **CLEAN 24/24** | **BEHAVIOR-DIFF** (callee arg 2 high half, see below) | stays C3 |
-| `0x0055a1f0` | **DIVERGENT 1/24** at `0x00624048` | **BEHAVIOR-DIFF** (callee arg 2 high half, proven dead) | stays C3 |
+| `0x0055a1f0` | **104** (4..12), HEAP-CLEAN 24/24 | Quick Battle **C4-CLEAN** 6/6, 1 sig | **C3 -> C4** |
+| `0x0055ab30` | **150** (6..8), HEAP-CLEAN 24/24 | Quick Battle **C4-CLEAN** 6/6, 4 sigs | **C3 -> C4** |
+| `0x0055c0f0` | **24** (1), HEAP-CLEAN 24/24 | census `C4_HOLD=400` **C4-CLEAN** 6/6, 1 sig | **C3 -> C4** |
+| `0x0055bae0` | **0**, CLEAN 24/24, NEED_PAGES arm: NO-WRITES-SAMPLED | census `C4_HOLD=400` C4-CLEAN 6/6, 1 sig | stays C3 |
+| `0x0055c000` | **0**, CLEAN 24/24, NEED_PAGES arm: NO-WRITES-SAMPLED | census `C4_HOLD=400` not observed (2 attempts) | stays C3 |
 
-Branch `orch/D4-WSB-C4-BROAD-WS` off `orch/integration` @ `cb1ba12de`, then merged `orch/integration` @ `fc09a9e04`
-(the `D4-WSB-NARROW-FLIP` merge commit; `git merge-base --is-ancestor fc09a9e04 HEAD` = true) before any arm.
-Every arm below ran on that tree. Scope: `verify/wsbc4scope_20261027/RESULT_D4-WSB-C4-SCOPE.md` (group BROAD-WS).
+Round 1 (`69c14a09d`, RED) is in git history. Its raw data stays in `D:/MashedWT/D4-WSB-C4-BROAD-WS_data/` (top level).
+Round 2: branch `orch/D4-WSB-C4-BROAD-WS`, `orch/integration` @ `6368c086a` (SHADOW-PRIVATE) merged in at `430e7feee`
+before any arm. Tools `28737b7e1`. **PREREG `PREREG_R2_D4-WSB-C4-BROAD-WS.md` at `5548a2577`, committed alone before any
+round-2 arm**, applied as written, no addendum. Arm summaries `ff0821d2b`. Then `orch/integration` @ `8294a5633`
+(BROAD-A, SOLV-WS, HB-ARCTIC-OPENSEA merged) was merged in at `f1ebf8581`, before the tracker transaction (see "Build").
 
-## Harness change (`879e1ad65`)
+Harness: unchanged since round 1 (`879e1ad65`: RunTracked wrappers for `0x0055a1f0`, `0x0055ab30`, `0x0055bae0`, new
+RunTracked wrapper for `0x0055c000`). **No change to `Core/ShadowTrack.h` or `Core/ShadowAB.h` on this branch.** The
+0056xxxx solver rows (SOLV-WS) were not touched.
 
-- `0x0055a1f0`, `0x0055bae0` (`RwpSolverBroadphase3.cpp`) and `0x0055ab30` (`RwpSolverGlue5.cpp`): wrapper
-  `ShadowAB::Run` -> `ShadowAB::RunTracked`.
-- `0x0055c000` (`RwpIntegrator.cpp`): the body becomes `static FUN_0055c000_impl`, and a new `extern "C" FUN_0055c000`
-  wrapper calls `ShadowAB::RunTracked` (`kPhaseRace`). The extern name stays, so `CollisionBodyCreate.cpp`,
-  `RwpSolverCore16.cpp` and `RwpSolverCore18.cpp` link unchanged.
-- `0x0055c0f0`: already `RunTracked`.
+## Build
 
-Unarmed, every wrapper calls only `_impl`.
+Arms and gates ran on `mashed_re.exe` `ab557985946893a7069dc8d114880a4ed49e7b2d730cceaf338d97af47c19399`,
+`mashed_re_dev.asi` `589a353bc3d8f054ea794e85a1bbaef9b9745701721efbfeb7466f558bd956fc` (copied to the private root
+only, hash checked after copy), `.map` `2c4d3cb7883f6b424f7c60e7bf1915d84f84a11c1277d3c9dccf526cf9b82024`, built at
+`430e7feee` with `MASHED_NO_DEPLOY=1`. `original/mashed_re_dev.asi` not touched. Private root
+`D:/MashedWT/D4-WSB-C4-BROAD-WS_root` (its `MASHED.exe` = `original/MASHED.exe`, `b9977dab...fe87`).
 
-## Leg 1: default gates (this branch's exe `mashed_re.exe` `879c1dd6...a751`)
+The second integration merge (`f1ebf8581`) brings source from other steps only: `RwpSolverCore11/18/21.cpp` (SOLV-WS),
+`TrackRenderer.*`, `RwRaceSubmit.*`, `RwSceneBuild.*` (HB-ARCTIC-OPENSEA), each gated by its own merge train. It touches
+none of the three files that hold these rows (`RwpSolverBroadphase3.cpp`, `RwpSolverGlue5.cpp`, `RwpIntegrator.cpp`).
+The merged tree's exe was **not** rebuilt or re-gated here. The merge train's gate run covers it.
 
-`verify/savelink_20261023/run_arms.py H_DEF B_DEF_K0 B_DEF_K1 B_DEF_K26`, `A4_ROOT=D:/MashedWT/D4-WSB-C4-BROAD-WS_root`,
-under the test slot and `mashed_lock.py run --label D4-WSB-C4-BROAD-WS`. All four arms `exit=0 self_exited=True`.
+## Leg 1: default gates
+
+`verify/savelink_20261023/run_arms.py H_DEF B_DEF_K0 B_DEF_K1 B_DEF_K26`, `A4_ROOT` = the private root, under the test
+slot and `mashed_lock.py run --label D4-WSB-C4-BROAD-WS`. All four `exit=0 self_exited=True` (game PIDs 9612, 17984,
+3024, 6888).
 
 | arm | sha8 | ref (`merge_train.json`) |
 |---|---|---|
 | H_DEF step / gates / ptrace | `5943c5f1` / `364350ae` / `52052890` | `5943c5f1` / `364350ae` / `52052890` |
 | B_DEF_K0 / K1 / K26 | `3a03670c` / `e85ea6fb` / `53778664` | `3a03670c` / `e85ea6fb` / `53778664` |
 
-## Leg 2: write-set shadow (`run_shadow.py`, census track 0 / mode 10 / 4 cars / 60 s, one hook per boot)
+## Leg 2: heap-tracked write set (`run_shadow3.py`)
 
-`shadow_summary.tsv`. Every row `PATCHBYTE installed=e9`, `A/B-IS-REAL`, 24 samples.
+`MASHED_SHADOW_AB=1 MASHED_SHADOW_PRIVATE=1 MASHED_SHADOW_STW=1`, census (`--track 0 --mode 10 --cars 4 --hold 60
+--hooks 0x<rva>`), one hook per boot, 24 samples. Summary `shadow_heap_summary.tsv`. Every row: `PATCHBYTE installed=e9
+... A/B-IS-REAL`, ndiff 0, every sample `stack=0 noise=0 ovf=0 ret=0`, no NOISY / UNTRACKED / OTHER-EXC line.
 
-| row | n | divergent | page counts over the 24 samples |
-|---|---|---|---|
-| `0x0055c000` | 24 | 0 | `o:0,n:0` x24 |
-| `0x0055c0f0` | 24 | 0 | `o:0,n:0` x24 |
-| `0x0055bae0` | 24 | 0 | `o:0,n:0` x24 |
-| `0x0055ab30` | 24 | 0 | `o:1,n:1,diff:0` x24 |
-| `0x0055a1f0` | 24 | **1** | sample 0 `o:2,n:0,diff:1` at `0x00624000+0x48`, samples 1-23 `o:0,n:0` |
+| row | n | ndiff | pages o (min..max) | heap pages o / n per sample | heap pages compared (total) | rv | read-out |
+|---|---|---|---|---|---|---|---|
+| `0x0055a1f0` | 24 | 0 | 4..14 | 4..12 / 4..12 | **104** | `0x0f512d50` x24 | **HEAP-CLEAN** |
+| `0x0055ab30` | 24 | 0 | 7..9 | 6..8 / 6..8 | **150** | `0x10012d50` x24 | **HEAP-CLEAN** |
+| `0x0055c0f0` | 24 | 0 | 1..1 | 1..1 / 1..1 | **24** | void | **HEAP-CLEAN** |
+| `0x0055bae0` | 24 | 0 | 0..0 | 0 / 0 | 0 | `0x001afc2c` x24 | CLEAN-NO-HEAP |
+| `0x0055c000` | 24 | 0 | 0..0 | 0 / 0 | 0 | `0x001af6fc..0x001af810` | CLEAN-NO-HEAP |
 
-What `o:0,n:0` covers (`Core/ShadowTrack.h` header): every committed writable non-executable private or
-`MASHED.exe` `.data` page is tracked, except the current thread's stack. The caller's 4 KB stack window above the
-wrapper's return address is snapshotted and compared on its own (`stack=0` on all 24 samples). So for
-`0x0055c000` / `0x0055c0f0` / `0x0055bae0`, no write landed outside that window, and the window matched. The log
-does not record whether the scope note's pointer stores (`fstp [eax]` x3 in `0x0055bae0` and `0x0055c000`, 8 stores
-in `0x0055c0f0`) executed in those samples. Each runs only behind a NULL test (`0x0055bae0` and `0x0055c000`: getter
-result and matrix non-NULL). This is a coverage limit of the leg, not a divergence.
+`0x0055a1f0` and `0x0055ab30` also compared 1-2 `MASHED.exe` `.data` pages per sample (pages minus heap), CLEAN.
+**Round 1's `0x0055a1f0` divergence at `0x00624048` (sample 0 only, image-only mode) did not recur** in these 24 STW samples,
+including sample 0. Per the PREREG the row passes this leg (heap pages compared > 0). [UNCERTAIN] what wrote
+`0x00624048` in round 1's first call. Round 1 ran without STW, so another thread is possible, and this round cannot
+recover it. The PREREG does not make it block (no U-n filed: the divergence did not reproduce, so there is no hole to
+resolve on this row).
 
-`0x0055bae0` executed in the census scenario (24 samples with the JMP live), though `wsb_census.tsv` lists it
-NOT-EXEC. Its direct callers in the original (`callers.txt`): `0x0055bba8`/`0x0055bbbe`/`0x0055bbd6` (inside
-`0x0055bb70`) and `0x00572a84`/`0x00572ba0` (inside `0x005729a0`). `0x0055bb70` is called from `0x00459f0c`,
-`0x0048185f`, `0x005612b8` (`0x00561280`) and `0x00561480` (`0x00561390`).
+**NEED_PAGES arms (`MASHED_SHADOW_NEED_PAGES=1`, `SHADOW_TAG=need`), the two CLEAN-NO-HEAP rows.**
 
-**`0x0055a1f0` at `0x00624048`.** In sample 0 only, the original wrote 2 pages and the port wrote none. One of
-them differs, first at `0x00624048`. The byte-anchored reference scan (`scan_refs.py 0x00623f00 0x00624060`) finds
-no instruction with `0x00624048` as a displacement or immediate. The nearest are `mov dword ptr [esi], 0x62403c` at
-`0x0057c31a` (`FUN_0057c300` stores `&DAT_0062403c` as the first dword of a 0x34-byte allocation) and
-`mov [0x624044], ecx` at `0x0057c4ef` (`FUN_0057c4b0`). `0x00624048` = `0x0062403c + 0xc`.
-[UNCERTAIN] what writes `0x00624048` on the original's first call, and whether it is this body or another thread.
-Missing: the dword values (`ShadowTrack` logs only the offset; D4-WSB-BVH-FU's `823aadb1e` adds the value log) and an
-STW re-run. The STW diagnostic boot here did not run: its driver's 900 s timeout expired while waiting for the
-machine lock (held by D4-WSB-BVH-FU's run). No game was spawned for it.
-
-## Leg 3: racediff, tool v6 unmodified (`run_bvh2.py` -> `verify/wsbbvh_20261027/c4_racediff_v6.py`)
-
-`racediff_summary.tsv`. `installed=True` on every ON boot.
-
-**Quick Battle window (frames 300-1200).**
-
-| row | verdict | calls off/on | sigs off/on | PIDs (off/on, last attempt) |
+| row | counted samples | discards | every logged rv | read-out |
 |---|---|---|---|---|
-| `0x0055c000` | not observed, 2 attempts | 0 / 0 | 0 / 0 | 4852 / 8200 |
-| `0x0055c0f0` | not observed, 2 attempts | 0 / 0 | 0 / 0 | 17048 / 15776 |
-| `0x0055bae0` | not observed, 2 attempts | 0 / 0 | 0 / 0 | 13832 / 19536 |
-| `0x0055ab30` | **BEHAVIOR-DIFF** | 6 / 6 | 1 / 4 | 10700 / 11184 |
-| `0x0055a1f0` | **BEHAVIOR-DIFF** | 6 / 6 | 1 / 1 | 17964 / 12760 |
+| `0x0055c000` | 0 | 256 logged (256..499 total) | caller-stack addresses `0x001af78c..0x001af7f8` | NO-WRITES-SAMPLED |
+| `0x0055bae0` | 0 | 256 logged (256..499 total) | `0x001afc2c` (caller stack) x256 | NO-WRITES-SAMPLED |
 
-Both diffs are in one callee argument, and only in its high half:
+The `0x0055bae0` NEED arm's first attempt failed to attach (`error: could not attach`, PID 18332, no game ran). It was re-run
+once per the PREREG (PID 18864), and that run is the one in the table.
 
-- `0x0055a1f0` -> `0x00564040` (4 calls per call). OFF first call `(h0, h1, h2, h3, 0)`, ON `(h0, 0x18, h1, h2, 0)`.
-  Calls 2-4: `0x19`/`0x1a`/`0x1b` on both sides. So arg 2 of the first call is a pointer-range dword on OFF and
-  `0x18` on ON, and the heap tokens after it shift by one.
-  **Static: `0x00564040` reads only the low 16 bits of `param_2`** (`argwidth_00564040.txt`, 67 instructions, one
-  `ret` at `0x005640fa`, delta 0, no conflict): one load `mov ebp, [esp+0x14]` at `0x00564047`. `ebp` is then read
-  only by `mov ecx, ebp` / `and ecx, 0xffff` (`0x0056404e`/`0x00564050`) and the 16-bit `cmp cx, bp`
-  (`0x00564063`, `0x005640b5`) before `pop ebp` (`0x005640f7`). Ghidra types it `ushort param_2`. So the diff is
-  unobservable, but the PREREG did not mask it, and the row stays C3 (it also fails leg 2).
-- `0x0055ab30` -> `0x00565260` and `0x00564c80`. OFF arg 2 = `Sloc` (a stack-range dword) on both callees in all 6
-  calls; ON arg 2 = `0x18`/`0x19`/`0x1a`/`0x1b` (2/2/1/1). Arg 1 and arg 3 match. For `0x00564c80`, D4-WSB-BVH-WRITESET
-  proved that only the low 16 bits of `param_2` are read (`verify/wsbbvh_20261027/argwidth.txt` item 2). For
-  `0x00565260` `param_2` there is no proof yet. The walk (`scan_argwidth.py 0x00565260 ... 8`) shows the slot loaded
-  into `edi` at `0x0056526b`, rewritten at `0x005652a1`/`0x005652d5`, address-taken at `0x005652c3`/`0x0056532a`, and
-  reloaded into `ebx` at `0x00565497`. The `edi` flow from `0x0056526b` was not followed.
-  [UNCERTAIN] whether `0x00565260` reads the high half of its incoming `param_2`. Missing: that `edi` flow.
+Every return of both functions is an address in the main thread's stack (`0x0055c000` returns a pointer, its last
+parameter is `void* out`, `RwpIntegrator.cpp:399`; `0x0055bae0`'s return equals the stack pointer it passes to
+`0x00563000`, `S+c4` in its racediff signature). ShadowTrack does not page-track the current thread's stack. It compares the 4 KB
+above the wrapper's return address (`stack=0`, CLEAN in all 48 leg-2 samples of the two rows). So the whole write set of
+these two rows in this scenario is in that window, and no scenario will give them heap pages unless a caller passes a
+heap buffer. Under the rule ("more than 0 pages compared") they stay C3. Whether the stack-window compare can serve as
+the write-set leg for a row whose output is on the caller's stack is a rule question for the lead (see "Next").
 
-**Census window (frames 1-3000, `C4_SCENARIO=census`), the 3 rows Quick Battle did not observe.** 2 attempts per
-row. No OFF boot completed. `0x0055c000` attempt 1: `attach failed` on both the ON and the OFF boot. The other 5
-attempts: the ON boot reached `armed: asi=True jmp=[233]` and frame 3001-3012, then the OFF boot failed the same way
-as in D4-WSB-BVH-WRITESET, `frida.InvalidOperationError: script has been destroyed` (5/5).
-Summary rows: `0x0055c000_census` HOLD (from attempt 1's result file: not observed, no-JMP), `0x0055c0f0_census` and
-`0x0055bae0_census` NO-RESULT.
-Per the PREREG the census racediff is NOT RUN for all three. D4-WSB-BVH-FU's v7 tool (`823aadb1e`: "census OFF loads
-the asi (--hooks __none__)") targets this fault. It is not merged and not used here.
+## Leg 3: canonical-scenario racediff (`c4_racediff_v10.py`, `run_bvh3.py`, `leg3_r2.sh`)
+
+Tool copied unchanged from `orch/D4-WSB-C4-BROAD-A` @ `020d70c14` (v7 + opt-in v8/v9/v10 options). `C4_DEREF=1` on every arm
+(field-source tokens, BROAD-A's X1 lesson: `A<k>+<d>` heap distances differ between two boots of the original). Summary
+`racediff_r2_summary.tsv`. `installed=True` (ON byte `0xE9`) on every ON boot. No arm needed the control/repeat step.
+
+| row | scenario | `C4_ARGW` | verdict | calls off/on | sigs | PIDs off/on |
+|---|---|---|---|---|---|---|
+| `0x0055a1f0` | Quick Battle, A4 300-1200 | `564040:1:ffff` | **C4-CLEAN** | 6/6 | 1/1 | 18716 / 19116 |
+| `0x0055ab30` | Quick Battle, A4 300-1200 | `565260:1:ffff;564c80:1:ffff` | **C4-CLEAN** | 6/6 | 4/4 | 18856 / 20408 |
+| `0x0055bae0` | census, `C4_HOLD=400`, A4 300-30000 | none | **C4-CLEAN** | 6/6 | 1/1 | 19888 / 9344 |
+| `0x0055c000` | census, `C4_HOLD=400`, A4 300-30000 | none | not observed, 2 attempts | 0/0 | 0/0 | 19912, 18736 / 19740, 7184 |
+| `0x0055c0f0` | census, `C4_HOLD=400`, A4 300-30000 | none | **C4-CLEAN** | 6/6 | 1/1 | 6736 / 16668 |
+
+Signatures (identical on both sides):
+
+- `0x0055a1f0` x6: `[c564040,A0@54,18,h0,A0@70,0] [c564040,A0@54,19,h0,A0@70,0] [c564040,A0@54,1a,h0,A0@70,0]
+  [c564040,A0@54,1b,h0,A0@70,0] eax=A0+0`. Round 1's diff (arg 1 of the first call, a pointer-range dword on OFF and
+  `0x18` on ON) is gone under the declared 16-bit mask: both sides read `18`.
+- `0x0055ab30`: `[c565260,A0@0,<k>] [c564c80,A0@0,<k>,S+1c] eax=A1@24` for `<k>` = `18` x2, `19` x2, `1a` x1, `1b` x1.
+  Round 1's diff (arg 1 = `Sloc` on OFF) is gone under the two masks.
+- `0x0055bae0` x6: `[c563000,A0+0,S+c4] eax=S+c4`.
+- `0x0055c0f0` x6: `eax=-`. The body makes no call-out and returns void, so this racediff shows only that the hooked body
+  ran 6 times in the window with no call-out on either side. Its output (the transformed point set, 1 heap page per
+  sample) is compared by leg 2.
+
+**`0x00565260` `param_2` width (the open item from round 1), `argwidth_00565260.txt`.** On the anchored original the slot is
+read once, `mov edi,[esp+0x20]` at `0x0056526b`, and rewritten at `0x005652a1` before any other read of the slot. `edi`
+is then read only as `mov ebx,edi` / `and ebx,0xffff` (`0x00565275`/`0x00565277`) and by the 16-bit `cmp bp,di` /
+`cmp bx,di` at `0x005652ed`, `0x00565322`, `0x005653c9`, `0x005653fe`, until it is overwritten on both paths (`lea edi`
+at `0x0056532a` and `0x00565406`). The callee between them, `0x00563f60`, pushes `edi` (`0x00563f6c`) before it writes `di`
+(`0x00563f7f`). So only bits 0-15 of the incoming `param_2` are read. This is the proof the PREREG names for the mask.
+
+`0x0055c000` not observed: the 60 s census shadow leg sampled it 24 times (sample lines `idx=1068`), and the racediff saw 0
+calls on both sides in A4 calls 300-30000 in 2 attempts. [UNCERTAIN] in which part of the race the sampled calls run.
+The racediff gate starts at A4 call 300. Missing: the A4 call number of the shadow samples. The row stays C3 on leg 2
+anyway.
+
+## Tracker transaction (re-classify)
+
+`apply_reclass.py` (run once from the worktree root after `f1ebf8581`): `hooks.csv` 5 rows (csv round-trip of each line,
+every other line byte-identical), 5 CHANGELOG lines under `<!-- ENTRIES -->`. No `UNCERTAINTIES.md` / `STUBS.md` change.
+
+| row | before | after | scenario column | frida_diff |
+|---|---|---|---|---|
+| `0x0055a1f0` | C3 impl | **C4 verified** | `shadow_tracked_heap:track0-mode10-cars4+c4_racediff:quickbattle-a4-300-1200-argw` | `racediff_r2_summary.tsv` |
+| `0x0055ab30` | C3 impl | **C4 verified** | same as above | `racediff_r2_summary.tsv` |
+| `0x0055c0f0` | C3 impl | **C4 verified** | `shadow_tracked_heap:track0-mode10-cars4+c4_racediff:census-track0-mode10-cars4-hold400-a4-300-30000` | `racediff_r2_summary.tsv` |
+| `0x0055bae0` | C3 impl | C3 impl (dated note) | unchanged | unchanged |
+| `0x0055c000` | C3 ported | C3 ported (dated note) | unchanged | unchanged |
+
+C4 gate checks: no `STUB` comment in `RwpSolverBroadphase3.cpp` or `RwpSolverGlue5.cpp`. S-3735 names `0x0055ab30` as a
+passthrough **callee** of `0x0047d240`, not a stub in its body. The notes' markers are already filed: `0x0055a1f0`
+U-9098 / U-9099, `0x0055ab30` U-9100, `0x0055c0f0` U-9116. No unfiled `[UNCERTAIN]`. `scripts/lint_rva_bodies.py`: OK,
+0 new.
 
 ## Next
 
-- `0x0055c000`, `0x0055c0f0`, `0x0055bae0`: the write-set leg is CLEAN on this build. Each needs only a census
-  racediff once the OFF boot works (BVH-FU's v7 after it merges), under a PREREG addendum naming the tool.
-- `0x0055ab30`: write-set CLEAN. Prove the width of `0x00565260` `param_2` (follow `edi` from `0x0056526b`). Then a
-  PREREG addendum with declared-width masks for `0x00565260` arg 2 (if proven) and `0x00564c80` arg 2 (proven), and
-  a racediff re-run.
-- `0x0055a1f0`: log the `0x00624048` values (BVH-FU's ShadowTrack value log) and run an STW boot. Mask `0x00564040`
-  arg 2 (proven 16-bit here) in the same addendum.
-- The harness commit `879e1ad65` is hash-neutral (gates above) and is what every follow-up above needs.
+- **Rule question for the lead** (`0x0055bae0`, `0x0055c000`): their write set is the caller's stack only (every return is
+  a stack address), so the "more than 0 heap pages" rule cannot be met in any scenario where the caller's buffer is a
+  local. Options: (a) keep both C3 (the current state), (b) accept the ShadowTrack 4 KB stack-window compare (CLEAN, 48
+  samples) as the write-set leg when every return points into that window, (c) a harness leg that page-tracks the
+  caller's stack frame. Recommendation (b) for `0x0055bae0`, whose census racediff is already C4-CLEAN. `0x0055c000` also
+  needs a racediff window that contains its calls.
+- `0x0055c000`: find the A4 call range of its calls (log the A4 counter in its shadow samples), then a racediff with that
+  window.
 
 ## Files
 
-Committed (`verify/wsbbroadws_20261027/`): `PREREG_D4-WSB-C4-BROAD-WS.md`, `run_shadow.py` and `run_bvh2.py` (copies of
-the BVH-WRITESET drivers with label and paths changed, plus `BROADWS_DATA` / `BROADWS_SUMMARY` env overrides),
-`scan_callers.py`, `callers.txt`, `argwidth_00564040.txt`, `shadow_summary.tsv`, `racediff_summary.tsv`, this file.
+Committed (`verify/wsbbroadws_20261027/`): `PREREG_R2_D4-WSB-C4-BROAD-WS.md`, `argwidth_00565260.txt`, `c4_racediff_v10.py`
+(copy), `run_bvh3.py` and `run_shadow3.py` (copies, label / paths / summary changed), `leg3_r2.sh`,
+`shadow_heap_summary.tsv`, `racediff_r2_summary.tsv`, `apply_reclass.py`, this file. Round-1 files unchanged. Trackers:
+`hooks.csv` (5 rows), `re/analysis/CHANGELOG.md` (5 lines).
 
-Raw (not committed), `D:/MashedWT/D4-WSB-C4-BROAD-WS_data/`:
+Raw (not committed), `D:/MashedWT/D4-WSB-C4-BROAD-WS_data/r2/`:
 
 | file | SHA-256 |
 |---|---|
+| `0055a1f0/shadow_ab.log` | `09d01bce4bc3c5d07f9d849279c27e6e5abc6ffc8ef25150cbdc7b3d6ffbad32` |
+| `0055ab30/shadow_ab.log` | `d2f73a203f286d4edc8aefc43c6e78776335a1106cf5e82e4209e4f14bb05c52` |
+| `0055c0f0/shadow_ab.log` | `dbe56677dce0242f624afb65591500bc2f07c5eac005f610a45903581e0d8e37` |
+| `0055bae0/shadow_ab.log` | `3e54dfd1700813228b8be79f9851b19bbf7427f7d8ce5482ee701ab4318b1cb5` |
+| `0055c000/shadow_ab.log` | `1852557377720808883c140f7041ffad39cd669bf4c414b114fbb0891bd62fc5` |
+| `0055c000_need/shadow_ab.log` | `6ac4367d016d4026f25ce965acd767d64d763ec214ca36bfde601f865ec24eaa` |
+| `0055bae0_need/shadow_ab.log` (re-run) | `e89235f1f21ccece7c8c6d02d79c9ca29b48afb753d34b584a7f2d7a77b023bd` |
+| `0055a1f0/c4_racediff_samples.json` | `feede1fc3a3b1c3870fc24040e36d0b19774fc018cc0a26c65514612fa71f4ba` |
+| `0055ab30/c4_racediff_samples.json` | `8f1b9fcde86ad52a846c99813bf6bfd1980ab3c625f58729137263079429472a` |
+| `0055bae0_census/c4_racediff_samples.json` | `53412cbbe8a5a3a211a5429933f7ab00996b6c3262e89d9f08df59fd74c82a36` |
+| `0055c000_census/c4_racediff_samples.json` (empty) | `3968b8b8d5257bbb2c9c5e8ea42e559746d0513df7123f0e1d3c214ebd50c9a8` |
+| `0055c0f0_census/c4_racediff_samples.json` | `2b3641c5412fd675c0cdd2054b067b956273803ae237f11d29d77525f4f76c84` |
+| `shadow_leg2.log` / `shadow_need.log` / `shadow_need_rerun.log` | `90e3d57a...9d94` / `58143556...270` / `7493e4f6...760` |
+| `racediff_leg3.log` | `0803e99147bf270f989f9732e5639d16c818182d3b3b1ff737bc1e92b00cb2b9` |
 | `gates/H_DEF.step.csv` | `5943c5f1c3e2f3f2510139f7af666ffa87941f6dfa66201b15277430b92be415` |
 | `gates/H_DEF.gates.csv` | `364350aea89110f291569f42fd7ae0de19704a6b3c95e6f29d7e26b4af9ce7e4` |
 | `gates/H_DEF.ptrace.log` | `520528908f8dc61f538902ad09a8ccb5ca46fe23d112859a436da6ace7eab757` |
 | `gates/B_DEF_K0.step.csv` | `3a03670c3991b702af9fd44b1d49dbdb4f91d6be00876723cb1ba7891895b83f` |
 | `gates/B_DEF_K1.step.csv` | `e85ea6fb266223f9eed3a90bf9aa30ea50291fd552ac3881d3bfbea843a759f8` |
 | `gates/B_DEF_K26.step.csv` | `5377866478b33a9827ae5c343b8861189f8f0a838785bf2b83da5f6118931e2d` |
-| `gates/gates_run.log` | `487b121fbdab55b0c4c0ed6ad20a1aaafb38bc9d009d977b6f31f7b31db80443` |
-| `0055a1f0/shadow_ab.log` | `6ce88a6f3c89d005cbe53a335e75284fef684fd57169216ff42b405fe1270073` |
-| `0055ab30/shadow_ab.log` | `031669708a0b76433985859be60d71cdd4f3883ec9406da4ddfc516a2e53c3eb` |
-| `0055bae0/shadow_ab.log` | `36a0c9ce63b05efd6f73b23322ce0007a85ef220d93b1ccb899423fe7b1a22ba` |
-| `0055c000/shadow_ab.log` | `1db453524e75fffd82aa990dd95c54f75e42b6fced26357e473bbd9eb03c2aa8` |
-| `0055c0f0/shadow_ab.log` | `979f6e10fd62e507bfeef24095f6e138b26a4a38821a886e43210122d7cebfa2` |
-| `shadow_batch1.log` | `d5f1aace25a932169fa016a4ea1cd3f2b797786a7a6740a6b08892b41904672f` |
-| `0055a1f0/c4_racediff_samples.json` | `4c6c2410975ccfd1c97f332b3ae9635267a9a90a3f40099f3b01bcd8afd5a2b9` |
-| `0055ab30/c4_racediff_samples.json` | `f021b83e2c2e8ae228239b9b21148713ccddf06603a26cde5c32e12c3a67b45e` |
-| `0055c000` / `0055c0f0` / `0055bae0` `c4_racediff_samples.json` (empty, identical) | `3968b8b8d5257bbb2c9c5e8ea42e559746d0513df7123f0e1d3c214ebd50c9a8` |
-| `racediff_leg3.log` | `d3401edc91ee19480936c59d8eaa06607046421e02bc92da5638836a05b45910` |
-| `racediff_leg3b.log` (census + the STW attempt) | `a2d571ea7166f8baa5f37ecdb602ad0851b93687ce779e3738c42be87589782e` |
-| `0055c000_census/transcript.txt` | `73cc9ba0c8e148c2b92d25446514a438ddc68e9ef6ebe8e5975efa1905e80b00` |
-| `0055c0f0_census/transcript.txt` | `1c6b8783d46039888937caa94793724b06424b16b0f6fd2f221d8b73f5efff52` |
-| `0055bae0_census/transcript.txt` | `06b170a918c8940fe56d306e1d45eb8e419ac43c76b27e9b6148fb5f0b3910c8` |
+| `gates/gates_run.log` | `5e0de31189130ef67828692c82ec84d30c8c93d2acf4785f878107209fc087b2` |
+| `../build_r2.log` | `71f78619f28be14d5f0a764c4b053784ebdef0d9daf109bb7da5c6c1b32326e7` |
 
-Build: `mashed_re.exe` `879c1dd6c5806e763e89b13fdc62ead3075fdc1eca5f25e678c804af0bb1a751`, `mashed_re_dev.asi`
-`19768c2e271d26d9e29af54713c9f9edb811a8e874ea6f9b87c76f19bba69502` (private root only, hash checked after copy),
-`mashed_re_dev.map` `125c7e3227f37c226a2c5066b6f1dac09cadcfdab9095eef6aa66a4fd2ffb00c`. `original/mashed_re_dev.asi` not
-touched. Every game PID was spawned and killed by the drivers. No process of this step is left running. No watcher
-was started (Monitor tasks ended with their streams).
+Game PIDs, all spawned by this round: shadow 8124, 20260, 16160, 15296, 7972, 13396, 18864 (18332 never attached);
+racediff 18716, 19116, 18856, 20408, 19888, 9344, 19912, 18736, 19740, 7184, 6736, 16668; gates 9612, 17984, 3024,
+6888. Every game was ended by its driver by PID or self-exited. No MASHED process is running. No watcher of this step is left.

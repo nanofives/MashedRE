@@ -33,7 +33,7 @@ STAY = {
                  "C4_HOLD=400, A4 300-30000) C4-CLEAN 6/6, 1 sig. Promotion needs a ruling on whether the stack-window "
                  "compare counts as the write-set leg"),
     "0055c000": ("stays C3. Heap-tracked write-set leg CLEAN 24/24 but 0 heap pages compared; the NEED_PAGES arm "
-                 "discarded 256 calls, every return a caller-stack address (0x001af6fc..0x001af7f8): its only writes "
+                 "discarded 256 calls, every return a caller-stack address (0x001af78c..0x001af7f8 there, 0x001af6fc..0x001af810 in the 24 leg-2 samples): its only writes "
                  "land in the caller's 4 KB stack window (compared, stack=0). Census racediff (v10, C4_HOLD=400, A4 "
                  "300-30000) not observed on either side in 2 attempts, though the 60 s census shadow leg sampled it "
                  "24 times. No scenario"),
