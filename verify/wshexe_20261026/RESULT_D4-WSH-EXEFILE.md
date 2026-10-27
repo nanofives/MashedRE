@@ -209,3 +209,19 @@ not bit-identical on a reachable input.
 | `D:/MashedWT/D4-WSH-EXEFILE_data/A2.json` | `049d72091c93d62862eafa775a1ab05d2b7ba6756cf78e09d8771ec054b46902` |
 | `D:/MashedWT/D4-WSH-EXEFILE_data/A2.log` | `bf167c355a7b3019c447d5219ac778036c1f0f923b83a1b9229ce0cfd39aedbe` |
 | `D:/MashedWT/D4-WSH-EXEFILE_data/decomp_getters.txt` | `1cfdb6e0f4b19e116f4c63301568820343ef34838ce88231b1acf8f320d0fa3d` |
+
+## Run 12 (2026-10-26): hand merge + L-32 flip (MASHED_ANIM_TRUNC default ON)
+
+- Merged `orch/integration` @ `54bf2d016` (carries D4-WSH-ZEROEXEC, D4-WSH-NOEVID). `hooks.csv` resolved row by row:
+  `0x00430a10` ours (C4, file := SpriteGate.cpp), `0x00430a60` / `0x00430ab0` theirs (C3, ZEROEXEC demotion),
+  `0x0040b890` / `0x0040b8e0` ours (one body, C3) with the ZEROEXEC citation appended. CHANGELOG union.
+  `git merge-base --is-ancestor orch/integration HEAD` true.
+- `lint_rva_bodies.py`: `1 finding(s): CROSS-TARGET=1 | allowlisted=1 NEW=0`, OK. Allowlist stays at one entry, `0x004177b0`.
+- Flip (decision L-32 answered ON by Mariano): `Frontend/MenuAnimTickTwin.cpp` `AnimTruncOn()` now defaults to
+  truncation, `MASHED_NO_ANIM_TRUNC=1` opts out. `.asi`-only TU, so the exe is untouched.
+- `menu_anim_diff.py` on the rebuilt `.asi` (SHA-256 `52fe31d8...1c59`, copied into the private root only), no env knob,
+  under `mashed_lock.py`: A0 game dt GREEN 20/20, A1 forced 1 tick GREEN 20/20, A2 forced 2 ticks GREEN 20/20
+  (run 11 knob-off A2: RED 0/20). Raw in `D:/MashedWT/D4-WSH-EXEFILE_data/run12/`:
+  `A0.json` / `A1.json` SHA-256 `b39be41e...94ee`, `A2.json` `7116bf9f...54e7`.
+- `0x004325c0` C2 -> C3 through re-classify. C4 still owes a canonical-scenario run. U-4251 (structural, Blocks none) unchanged.
+- Default gates after the flip (exe `3177698a`, unchanged by it, run_arms.py H_DEF B_DEF_K0 B_DEF_K1 B_DEF_K26, all exit 0 self-exited): G-CTRL `5943c5f1 / b493262b / 09551e6a`, B `3a03670c / e85ea6fb / 53778664`, equal to the refs. Raw in `D:/MashedWT/D4-WSH-EXEFILE_data/arms12/`.

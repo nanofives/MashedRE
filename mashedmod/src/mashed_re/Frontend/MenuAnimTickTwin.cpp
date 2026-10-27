@@ -32,15 +32,15 @@ inline T& At(std::uintptr_t a) { return *reinterpret_cast<T*>(a); }
 // shape; decomp D4-WSH-EXEFILE 2026-10-26). This body has always rounded
 // (std::nearbyint), which agrees with the original at one 50 ms tick and
 // disagrees at two (verify/wshexe_20261026 A2: original 485, twin 484).
-// MASHED_ANIM_TRUNC=1 selects truncation, the original's form. Default OFF
-// until the flip decision (D4-WSH-EXEFILE run 11). .asi-only TU: the exe's
+// Truncation, the original's form, is the default (decision L-32 ON, Mariano
+// 2026-10-26); MASHED_NO_ANIM_TRUNC=1 restores the old rounding. .asi-only TU: the exe's
 // Anim_Tick (Frontend/MenuNavSM.cpp AnimStep) already truncates.
 inline bool AnimTruncOn() {
     static int v = -1;
     if (v < 0) {
         char buf[8];
-        const DWORD n = GetEnvironmentVariableA("MASHED_ANIM_TRUNC", buf, sizeof buf);
-        v = (n > 0 && n < sizeof buf && buf[0] && buf[0] != '0') ? 1 : 0;
+        const DWORD n = GetEnvironmentVariableA("MASHED_NO_ANIM_TRUNC", buf, sizeof buf);
+        v = (n > 0 && n < sizeof buf && buf[0] && buf[0] != '0') ? 0 : 1;
     }
     return v != 0;
 }

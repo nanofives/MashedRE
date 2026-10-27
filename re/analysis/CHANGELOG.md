@@ -26,6 +26,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-26  004325c0  FUN_004325c0  C2->C3  D4-WSH-EXEFILE run 12 (decision L-32 ON): MASHED_ANIM_TRUNC default ON, MASHED_NO_ANIM_TRUNC=1 opts out; menu_anim_diff.py at default A0/A1/A2 GREEN 20/20 each (A2 was RED 0/20 rounding); C3 only, C4 owes a canonical run; exe and default hashes unchanged. verify/wshexe_20261026/RESULT_D4-WSH-EXEFILE.md
 2026-10-26  0040b890 0040b8e0  GetGridCount8or12 / GetScoreThreshold7or10  C4->C3 (DEMOTED)  D4-WSH-EXEFILE run 11: consolidated into one body each (Gameplay/Thresholds_ah4.cpp, both rsp; exe_file := file). Scenario-attach race GREEN (8 / 7), JMP live, 0 menu calls, canonical_c4_racediff HOLD on callee identity only (orig 0x0042f500 vs .asi GetDat0067ea64 export, same eax). verify/wshexe_20261026/RESULT_D4-WSH-EXEFILE.md
 2026-10-26  00432b30  MenuPromptStrip  C4 (no change, now one body)  D4-WSH-EXEFILE run 11: dispatch in Frontend/PromptStripTwin.cpp in both rsp (exe_file := file); menu_prompt_diff 264/264 GREEN, canonical_c4_verify C4-READY (calls=1). verify/wshexe_20261026/RESULT_D4-WSH-EXEFILE.md
 2026-10-26  004325c0  FUN_004325c0  C2 (no change)  D4-WSH-EXEFILE run 11: MASHED_ANIM_TRUNC knob (default OFF) GREEN 20/20 on A0/A1/A2, knob off A2 RED as run 10; default flip filed as a decision. verify/wshexe_20261026/RESULT_D4-WSH-EXEFILE.md
