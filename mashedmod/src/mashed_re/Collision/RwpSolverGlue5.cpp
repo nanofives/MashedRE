@@ -54,6 +54,7 @@
 #include "../Core/HookSystem.h"
 #include "../Core/ShadowTrack.h"
 #include "../Core/ShadowAB.h"
+#include "NarrowFixKnobs.h"
 
 namespace mashed_re {
 namespace Collision {
@@ -175,7 +176,15 @@ static int __cdecl FUN_0055c230_impl(int param_1,float *param_2,undefined4 param
   int iVar1;
   float loc [3];                     // local_c/local_8/local_4 — contiguous (note 6)
 
-  if (param_2 != (float *)0x0) {
+  if (param_2 != (float *)0x0 && NarrowDotOrder()) {
+    // [D4-WSB-NARROW-FIX] MASHED_NARROW_DOT_ORDER=1: same association, but in float. This TU builds SSE2, where
+    // float10 is double; the original rounds each step to float (PC_24) before FSTP 0x0055c259 / 272 / 28b.
+    loc[0] = (param_2[1] * param_4[1] + *param_2 * *param_4) + param_2[2] * param_4[2];
+    loc[1] = (param_2[5] * param_4[1] + param_2[4] * *param_4) + param_2[6] * param_4[2];
+    loc[2] = (param_2[9] * param_4[1] + param_2[8] * *param_4) + param_2[10] * param_4[2];
+    param_4 = loc;
+  }
+  else if (param_2 != (float *)0x0) {
     loc[0] = (float)(((float10)param_2[1] * param_4[1] + (float10)*param_2 * *param_4) +
              (float10)param_2[2] * param_4[2]);                              // FSTP 0x0055c259
     loc[1] = (float)(((float10)param_2[5] * param_4[1] + (float10)param_2[4] * *param_4) +

@@ -20,6 +20,7 @@
 // ============================================================================
 #include "../Core/HookSystem.h"
 #include "../Core/ShadowAB.h"
+#include "NarrowFixKnobs.h"
 
 namespace mashed_re {
 namespace Collision {
@@ -152,8 +153,18 @@ static undefined4 __cdecl FUN_00577ec0_impl(float *param_1,float *param_2,float 
   float fVar10;
   float p1sel;                         // TRAP: decomp's reused `param_1` float scratch
 
-  fVar2 = param_2[2] * param_2[2] + param_2[1] * param_2[1] + *param_2 * *param_2;
-  fVar3 = param_6[2] * param_6[2] + param_6[1] * param_6[1] + *param_6 * *param_6;
+  // [D4-WSB-NARROW-FIX] MASHED_NARROW_DOT_ORDER=1: every sum below in the original's FADD order, the first two
+  // products it loads first: squares (x*x + y*y) + z*z (FSTP 0x00577eec / 0x00577f0e), dots (a.y*b.y + a.x*b.x) +
+  // a.z*b.z (FSTP 0x00577f99, 0x0057803a, 0x005780ae, 0x005780e0, 0x005780fc).
+  const bool ord = NarrowDotOrder();
+  if (ord) {
+    fVar2 = (*param_2 * *param_2 + param_2[1] * param_2[1]) + param_2[2] * param_2[2];
+    fVar3 = (*param_6 * *param_6 + param_6[1] * param_6[1]) + param_6[2] * param_6[2];
+  }
+  else {
+    fVar2 = param_2[2] * param_2[2] + param_2[1] * param_2[1] + *param_2 * *param_2;
+    fVar3 = param_6[2] * param_6[2] + param_6[1] * param_6[1] + *param_6 * *param_6;
+  }
   fVar4 = *param_5 - *param_1;
   fVar5 = param_5[1] - param_1[1];
   fVar6 = param_5[2] - param_1[2];
@@ -165,7 +176,8 @@ static undefined4 __cdecl FUN_00577ec0_impl(float *param_1,float *param_2,float 
       *param_10 = param_7;
       return 0;
     }
-    fVar2 = -(param_6[2] * fVar6 + fVar4 * *param_6 + param_6[1] * fVar5);
+    fVar2 = ord ? -((param_6[1] * fVar5 + fVar4 * *param_6) + param_6[2] * fVar6)
+                : -(param_6[2] * fVar6 + fVar4 * *param_6 + param_6[1] * fVar5);
     if (fVar3 * param_7 < fVar2) {
       if (fVar3 * param_8 < fVar2 == (fVar3 * param_8 == fVar2)) {
         *param_10 = fVar2 / fVar3;
@@ -178,11 +190,22 @@ static undefined4 __cdecl FUN_00577ec0_impl(float *param_1,float *param_2,float 
     return 0;
   }
   if (fVar3 != DAT_005d757c) {
-    fVar7 = param_2[2] * param_6[2] + *param_6 * *param_2 + param_6[1] * param_2[1];
+    if (ord) {
+      fVar7 = (param_6[1] * param_2[1] + *param_6 * *param_2) + param_2[2] * param_6[2];
+    }
+    else {
+      fVar7 = param_2[2] * param_6[2] + *param_6 * *param_2 + param_6[1] * param_2[1];
+    }
     fVar9 = fVar3 * fVar2;
     fVar10 = fVar9 - fVar7 * fVar7;
-    fVar8 = param_2[2] * fVar6 + fVar4 * *param_2 + param_2[1] * fVar5;
-    fVar4 = param_6[2] * fVar6 + fVar4 * *param_6 + param_6[1] * fVar5;
+    if (ord) {
+      fVar8 = (param_2[1] * fVar5 + fVar4 * *param_2) + param_2[2] * fVar6;
+      fVar4 = (param_6[1] * fVar5 + fVar4 * *param_6) + param_6[2] * fVar6;
+    }
+    else {
+      fVar8 = param_2[2] * fVar6 + fVar4 * *param_2 + param_2[1] * fVar5;
+      fVar4 = param_6[2] * fVar6 + fVar4 * *param_6 + param_6[1] * fVar5;
+    }
     if (fVar10 <= _DAT_005cd03c * fVar9) {
       fVar9 = _DAT_005cc320 / fVar9;
       fVar3 = fVar9 * fVar3;
@@ -273,7 +296,8 @@ static undefined4 __cdecl FUN_00577ec0_impl(float *param_1,float *param_2,float 
   }
   *param_10 = param_7;
   *param_11 = 0.0f;
-  fVar3 = param_2[2] * fVar6 + fVar4 * *param_2 + param_2[1] * fVar5;
+  fVar3 = ord ? (param_2[1] * fVar5 + fVar4 * *param_2) + param_2[2] * fVar6
+              : param_2[2] * fVar6 + fVar4 * *param_2 + param_2[1] * fVar5;
   if (fVar3 <= fVar2 * param_3) {
     *param_9 = param_3;
     return 0;
@@ -298,6 +322,41 @@ static undefined4 __cdecl FUN_005784a0_impl(uint *param_1,float *param_2,float *
   float fVar4;
 
   uVar1 = *param_1;
+  if (NarrowDotOrder()) {
+    // [D4-WSB-NARROW-FIX] MASHED_NARROW_DOT_ORDER=1: dots (n.y*d.y + d.x*n.x) + n.z*d.z (FSTP 0x005784ee /
+    // 0x0057856a), squared lengths (y*y + x*x) + z*z (FCOMP 0x00578526 / 0x005785a2), append dot
+    // (p.y*n.y + p.x*n.x) + p.z*n.z (0x005785e0).
+    if (uVar1 != 0) {
+      const float dx = *param_3 - param_2[uVar1 * 4 + -4];
+      const float dy = param_3[1] - param_2[uVar1 * 4 + -3];
+      const float dz = param_3[2] - param_2[uVar1 * 4 + -2];
+      fVar3 = -((param_4[1] * dy + dx * *param_4) + param_4[2] * dz);
+      fVar2 = fVar3 * *param_4 + dx;
+      fVar4 = fVar3 * param_4[1] + dy;
+      fVar3 = fVar3 * param_4[2] + dz;
+      if ((fVar4 * fVar4 + fVar2 * fVar2) + fVar3 * fVar3 < _DAT_005ce54c) {
+        return 0;
+      }
+    }
+    if (1 < uVar1) {
+      const float dx = *param_3 - *param_2;
+      const float dy = param_3[1] - param_2[1];
+      const float dz = param_3[2] - param_2[2];
+      fVar3 = -((param_4[1] * dy + dx * *param_4) + param_4[2] * dz);
+      fVar2 = fVar3 * *param_4 + dx;
+      fVar4 = fVar3 * param_4[1] + dy;
+      fVar3 = fVar3 * param_4[2] + dz;
+      if ((fVar4 * fVar4 + fVar2 * fVar2) + fVar3 * fVar3 < _DAT_005ce54c) {
+        return 1;
+      }
+    }
+    param_5 = param_5 - ((param_3[1] * param_4[1] + *param_3 * *param_4) + param_3[2] * param_4[2]);
+    param_2[uVar1 * 4] = param_5 * *param_4 + *param_3;
+    param_2[*param_1 * 4 + 1] = param_5 * param_4[1] + param_3[1];
+    param_2[*param_1 * 4 + 2] = param_5 * param_4[2] + param_3[2];
+    *param_1 = *param_1 + 1;
+    return 0;
+  }
   if (uVar1 != 0) {
     fVar3 = -(param_4[2] * (param_3[2] - param_2[uVar1 * 4 + -2]) +
              (*param_3 - param_2[uVar1 * 4 + -4]) * *param_4 +

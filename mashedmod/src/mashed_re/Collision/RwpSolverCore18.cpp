@@ -49,6 +49,7 @@
 // ============================================================================
 #include "../Core/HookSystem.h"
 #include "../Core/ShadowAB.h"
+#include "NarrowFixKnobs.h"
 #include <cmath>       // fabsf (ABS)
 
 namespace mashed_re {
@@ -683,8 +684,12 @@ static undefined4 __cdecl FUN_00578610_impl(undefined4 param_1,int *param_2,floa
                  *(float *)(*(int *)(param_2[1] + 0x10) + 0x38);
     fVar13 = (float10)FUN_005667c0(param_4, param_4);
     iVar5 = *(int *)(param_2[1] + 0x10);
-    local_140 = *(float *)(iVar5 + 0x38) * param_4[2] +
-                *(float *)(iVar5 + 0x30) * *param_4 + *(float *)(iVar5 + 0x34) * param_4[1];
+    // [D4-WSB-NARROW-FIX] MASHED_NARROW_DOT_ORDER=1: (b.y*n.y + b.x*n.x) + b.z*n.z, FSTP 0x005786a8.
+    local_140 = NarrowDotOrder()
+                ? (*(float *)(iVar5 + 0x34) * param_4[1] + *(float *)(iVar5 + 0x30) * *param_4) +
+                  *(float *)(iVar5 + 0x38) * param_4[2]
+                : *(float *)(iVar5 + 0x38) * param_4[2] +
+                  *(float *)(iVar5 + 0x30) * *param_4 + *(float *)(iVar5 + 0x34) * param_4[1];
   }
   else if (*(char *)(iVar7 + 0x38) == '\x02') {
     iVar5 = *(int *)(iVar5 + 0x10);
@@ -777,7 +782,10 @@ static undefined4 __cdecl FUN_00578610_impl(undefined4 param_1,int *param_2,floa
               crossN[0] = pfVar12[1] * pfVar10[1] - *pfVar12 * pfVar10[2];
               crossN[1] = pfVar12[-1] * pfVar10[2] - *pfVar10 * pfVar12[1];
               crossN[2] = *pfVar12 * *pfVar10 - pfVar12[-1] * pfVar10[1];
-              float fVar9 = crossN[2] * crossN[2] + crossN[0] * crossN[0] + crossN[1] * crossN[1];
+              // [D4-WSB-NARROW-FIX] MASHED_NARROW_DOT_ORDER=1: (c1*c1 + c0*c0) + c2*c2, FCOMP 0x005789aa.
+              float fVar9 = NarrowDotOrder()
+                            ? (crossN[1] * crossN[1] + crossN[0] * crossN[0]) + crossN[2] * crossN[2]
+                            : crossN[2] * crossN[2] + crossN[0] * crossN[0] + crossN[1] * crossN[1];
               if (_DAT_005ce54c < fVar9) {
                 fVar9 = _DAT_005cc320 / sqrtf(fVar9);
                 crossN[0] = crossN[0] * fVar9;
@@ -809,6 +817,19 @@ static undefined4 __cdecl FUN_00578610_impl(undefined4 param_1,int *param_2,floa
         fVar13 = (float10)fStack_13c;
       }
     }
+  }
+  if (NarrowDotOrder()) {
+    // [D4-WSB-NARROW-FIX] MASHED_NARROW_DOT_ORDER=1: this TU builds SSE2, where float10 is double; the original
+    // rounds each step to float (PC_24): (d - rA) - rB (FSTP 0x00578ad1), ((rB - rA) + d) * k + s (FSTP 0x00578b0a).
+    const float d = (float)fVar13;
+    const float rA = *(float *)(*(int *)(*param_2 + 8) + 0x4c);
+    const float rB = *(float *)(*(int *)(param_2[1] + 8) + 0x4c);
+    const float sep = (d - rA) - rB;
+    *param_6 = sep;
+    if (sep <= param_3) {
+      *param_5 = ((rB - rA) + d) * _DAT_005cc32c + local_140;
+    }
+    return 1;
   }
   float10 fVar14 = (float10)*(float *)(*(int *)(*param_2 + 8) + 0x4c);
   float10 fVar15 = (float10)*(float *)(*(int *)(param_2[1] + 8) + 0x4c);
