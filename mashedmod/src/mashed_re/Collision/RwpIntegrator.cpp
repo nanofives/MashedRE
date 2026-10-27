@@ -25,6 +25,7 @@
 // (FUN_004c52f0/004c51a0/00546b10), which are extern (bit-identity A/B under the .asi calls
 // the real game math at RVA — RwpBuildExterns.cpp forwards them). No transcendentals here.
 #include "../Core/HookSystem.h"
+#include "../Core/ShadowTrack.h"
 #include "../Core/ShadowAB.h"
 #include <cstdlib>   // getenv
 #include <cstring>   // memcpy
@@ -395,7 +396,7 @@ extern "C" void __cdecl RwpBodyRefreshGate(int body, int idx)
 // Keeps the extern-"C" FUN_0055c000 name — CollisionBodyCreate.cpp calls it by name.
 // Returns the world-space support point (float[3], in place) or NULL on miss.
 // ---------------------------------------------------------------------------
-extern "C" void* __cdecl FUN_0055c000(int shape, float* mtx, float* dir, void* out)
+static void* FUN_0055c000_impl(int shape, float* mtx, float* dir, void* out)
 {
     float local[3];
     if (mtx != 0) {                                            // rotate dir into shape-local by 3x3
@@ -414,6 +415,19 @@ extern "C" void* __cdecl FUN_0055c000(int shape, float* mtx, float* dir, void* o
         pt[2] = mtx[0xe] + mtx[2] * p0 + mtx[6] * p1 + mtx[10] * p2;
     }
     return pt;
+}
+
+// --- 0x0055c000 shadow A/B -- same shape as re/tools/shadow_gen.py's lane-3 wrappers -----
+// In-process original-vs-port comparison at the real call site; arm with
+// MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
+// LANE 3: page-level write tracking (Core/ShadowTrack.h) -- no region spec; every page
+// the call writes plus the caller's 4 KB stack window is compared, pre-state restored
+// between the two runs. Verifies EFFECTS; read the pages= detail on a DIVERGENT row.
+// Unarmed it calls only _impl. Added D4-WSB-C4-BROAD-WS (the row had no shadow wrapper).
+extern "C" void* __cdecl FUN_0055c000(int shape, float* mtx, float* dir, void* out)
+{
+    SHADOW_AB_COUNTER(ab, "FUN_0055c000", 0x0055c000u, ShadowAB::kPhaseRace);
+    return ShadowAB::RunTracked(ab, FUN_0055c000_impl, SHADOW_STACK_WINDOW(), shape, mtx, dir, out);
 }
 
 // ---------------------------------------------------------------------------
