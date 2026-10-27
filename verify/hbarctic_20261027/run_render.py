@@ -8,6 +8,11 @@
 import os, shutil, subprocess, sys, time
 from pathlib import Path
 
+# RETIRED 2026-10-27 (HB-ARCTIC-FOLDRM): MASHED_LIBRW_AMBFOLD_SEA was deleted from
+# RwSceneBuild.cpp, so the SEA arm now renders the same frame as OFF. Kept as the record of
+# the HB-ARCTIC run.
+sys.exit("RETIRED: needs MASHED_LIBRW_AMBFOLD_SEA, removed by HB-ARCTIC-FOLDRM (2026-10-27)")
+
 W = Path(__file__).resolve().parents[2]
 CASES = {
     "arctic_s8":  (0, W / "verify/arctic_ref/sea_search/s8/orig_cambasis.txt"),

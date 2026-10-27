@@ -9,6 +9,12 @@
 # This cannot give a verdict. It answers: does the fold now fire there, and how much does
 # it move the frame? Arms differ only in MASHED_LIBRW_AMBFOLD_SEA.
 # Also re-confirms the default actually flipped, on the two tracks with references.
+#
+# RETIRED 2026-10-27 (HB-ARCTIC-FOLDRM): MASHED_LIBRW_AMBFOLD_SEA and BuildClump's
+# `water_asset=` log field were deleted from RwSceneBuild.cpp, so foldON and foldOFF now
+# render the same frame and the water_asset count is always 0. Kept as the record of the run.
+Write-Host "RETIRED: needs MASHED_LIBRW_AMBFOLD_SEA, removed by HB-ARCTIC-FOLDRM (2026-10-27)"
+exit 1
 $ErrorActionPreference = "Stop"
 $root = $PSScriptRoot | Split-Path -Parent | Split-Path -Parent
 $tracks = [ordered]@{ forest=3; sands=10; storm=6; superg=7; warzone=8; rouabout=9; city=2; training=12 }

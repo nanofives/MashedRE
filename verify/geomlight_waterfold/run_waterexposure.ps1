@@ -11,6 +11,11 @@
 #
 # Stage-1 method of that broadcheck: standalone-only, natural camera (no basis to
 # transplant since there is no original), both arms otherwise identical.
+#
+# RETIRED 2026-10-27 (HB-ARCTIC-FOLDRM): MASHED_LIBRW_AMBFOLD_SEA was deleted from
+# RwSceneBuild.cpp, so foldON and foldOFF now render the same frame. Kept as the record of the run.
+Write-Host "RETIRED: needs MASHED_LIBRW_AMBFOLD_SEA, removed by HB-ARCTIC-FOLDRM (2026-10-27)"
+exit 1
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 

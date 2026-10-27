@@ -6,6 +6,12 @@
 # Only (a) licenses "the default flip is inert here". (b) means untested, not safe.
 # BuildClump's per-clump `dff= water_asset=` log settles it directly, so this run keeps
 # a PER-TRACK copy of log/librw_scene.txt instead of letting the next run overwrite it.
+#
+# RETIRED 2026-10-27 (HB-ARCTIC-FOLDRM): MASHED_LIBRW_AMBFOLD_SEA and BuildClump's
+# `water_asset=` log field were deleted from RwSceneBuild.cpp, so the water_asset count
+# below is always 0. Kept as the record of the run.
+Write-Host "RETIRED: needs MASHED_LIBRW_AMBFOLD_SEA, removed by HB-ARCTIC-FOLDRM (2026-10-27)"
+exit 1
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $tracks = [ordered]@{ forest = 3; sands = 10; storm = 6; superg = 7; warzone = 8; rouabout = 9 }

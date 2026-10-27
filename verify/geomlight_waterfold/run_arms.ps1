@@ -5,6 +5,11 @@
 # transplanted via MASHED_CAM_POSE so both arms and the original reference share a vantage.
 # Shot measured downstream: <arm>/race1/01_grid.bmp (validated: reproduces the published
 # City numbers 1.9% / 74.0 / 115.0 / 148.3 to within 0.1 luma).
+#
+# RETIRED 2026-10-27 (HB-ARCTIC-FOLDRM): MASHED_LIBRW_AMBFOLD_SEA was deleted from
+# RwSceneBuild.cpp, so geomON and geomWATER now render the same frame. Kept as the record of the run.
+Write-Host "RETIRED: needs MASHED_LIBRW_AMBFOLD_SEA, removed by HB-ARCTIC-FOLDRM (2026-10-27)"
+exit 1
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $base = $PSScriptRoot

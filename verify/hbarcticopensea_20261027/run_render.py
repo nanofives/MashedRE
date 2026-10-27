@@ -8,6 +8,11 @@
 import os, shutil, subprocess, sys, time
 from pathlib import Path
 
+# RETIRED 2026-10-27 (HB-ARCTIC-FOLDRM): MASHED_LIBRW_AMBFOLD_SEA was deleted from
+# RwSceneBuild.cpp, so the SEA arm now renders the same frame as OFF and the water mask is
+# empty. Kept as the record of the HB-ARCTIC-OPENSEA run.
+sys.exit("RETIRED: needs MASHED_LIBRW_AMBFOLD_SEA, removed by HB-ARCTIC-FOLDRM (2026-10-27)")
+
 ARMS = {"OFF": {}, "OFF2": {}, "SEA": {"MASHED_LIBRW_AMBFOLD_SEA": "1"}}
 TIMEOUT = 220.0
 

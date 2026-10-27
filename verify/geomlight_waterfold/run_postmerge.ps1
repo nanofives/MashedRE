@@ -2,6 +2,11 @@
 # race/first-frame-parity carries 13 commits race/geomlight never saw (camera basis, mip
 # chain, spawn grid), any of which could interact with the fold, so the pre-merge numbers
 # do not transfer for free. Gates: Arctic sea matches the original, TRAINING stays 15.45.
+#
+# RETIRED 2026-10-27 (HB-ARCTIC-FOLDRM): MASHED_LIBRW_AMBFOLD_SEA was deleted from
+# RwSceneBuild.cpp, so foldON and foldOFF now render the same frame. Kept as the record of the run.
+Write-Host "RETIRED: needs MASHED_LIBRW_AMBFOLD_SEA, removed by HB-ARCTIC-FOLDRM (2026-10-27)"
+exit 1
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $cases = @(
