@@ -90,6 +90,7 @@ struct State {
     std::uintptr_t  buf_lo = 0, buf_hi = 0;          // the pools themselves (excluded)
     std::uintptr_t  asi_lo = 0, asi_hi = 0;          // this module's image (excluded)
     std::uintptr_t  exe_base = 0;                    // MASHED.exe image base (tracked)
+    std::uintptr_t  exe_hi   = 0;                    // MASHED.exe image end
     PVOID           veh      = nullptr;
     bool            ready    = false;
     volatile DWORD  active_since = 0;               // GetTickCount at s.active=true (watchdog)
@@ -166,6 +167,11 @@ inline bool Init() {
         s.asi_hi = s.asi_lo + nt->OptionalHeader.SizeOfImage;
     }
     s.exe_base = reinterpret_cast<std::uintptr_t>(GetModuleHandleA(nullptr));
+    {
+        const IMAGE_DOS_HEADER* dos = reinterpret_cast<const IMAGE_DOS_HEADER*>(s.exe_base);
+        const IMAGE_NT_HEADERS* nt  = reinterpret_cast<const IMAGE_NT_HEADERS*>(s.exe_base + dos->e_lfanew);
+        s.exe_hi = s.exe_base + nt->OptionalHeader.SizeOfImage;
+    }
     s.ready = true;
     if (EnvOn("MASHED_SHADOW_TRACE")) {
         DWORD wtid = 0;
@@ -344,6 +350,43 @@ inline int CollectThreadExclusions(Excl* out) {
     return n;
 }
 
+// [D4-WSB-SHADOW-PRIVATE] VEH HOLES. RtlpCallVectoredHandlers holds the VEH list's SRW lock
+// while it bumps the entry's refcount, and on Win10+ that refcount is a SEPARATE heap block
+// (entry+8 on x86), not part of the node. With heap pages protected, the bump faulted, the nested
+// dispatch asked for the same SRW lock, and the thread waited on itself: 0 faults reached Handler,
+// EIP in the NtWaitForAlertByThreadId stub (verify/wsbshadowpriv_20261027, diag1, 2026-10-27).
+// Walk the list from our node (Flink until the image-resident list head) and keep writable, as
+// page holes, every entry and every block a dword of it points into. Layout-free: a dword is
+// taken only if it points into committed private memory (the encoded handler rarely does, and a
+// spare hole only costs coverage of one page).
+constexpr int kMaxHoles = 64;
+inline bool IsPrivateCommitted(std::uintptr_t a) {
+    MEMORY_BASIC_INFORMATION m;
+    return a >= 0x10000 && VirtualQuery(reinterpret_cast<void*>(a), &m, sizeof m) == sizeof m
+        && m.State == MEM_COMMIT && m.Type == MEM_PRIVATE && !(m.Protect & (PAGE_GUARD | PAGE_NOACCESS));
+}
+inline void AddHole(std::uintptr_t* holes, int& n, std::uintptr_t lo, std::size_t len) {
+    for (std::uintptr_t p = lo & ~(kPage - 1); p < lo + len && n < kMaxHoles; p += kPage) {
+        bool dup = false;
+        for (int k = 0; k < n; ++k) if (holes[k] == p) { dup = true; break; }
+        if (!dup) holes[n++] = p;
+    }
+}
+inline int CollectVehHoles(std::uintptr_t node, std::uintptr_t* holes) {
+    int n = 0;
+    std::uintptr_t e = node;
+    for (int hop = 0; hop < 16 && e && IsPrivateCommitted(e) && IsPrivateCommitted(e + 0x1f); ++hop) {
+        const std::uintptr_t* d = reinterpret_cast<const std::uintptr_t*>(e);
+        AddHole(holes, n, e, 0x20);
+        for (int k = 0; k < 8; ++k)
+            if (IsPrivateCommitted(d[k])) AddHole(holes, n, d[k], 4);
+        if (hop == 0) HexCrumb("veh-node", static_cast<unsigned>(d[0]), static_cast<unsigned>(d[1]), static_cast<unsigned>(d[2]));
+        e = d[0];                                    // Flink; the list head is in ntdll's image -> stop
+        if (e == node) break;
+    }
+    return n;
+}
+
 // Enumerate + protect. Returns the number of regions protected.
 inline int Protect() {
     State& s = S();
@@ -394,6 +437,10 @@ inline int Protect() {
         }
     }
     HexCrumb("threads", static_cast<unsigned>(nexcl / 2), static_cast<unsigned>(nguard), static_cast<unsigned>(nheap));
+    static std::uintptr_t holes[kMaxHoles];
+    const int nholes = CollectVehHoles(reinterpret_cast<std::uintptr_t>(s.veh), holes);
+    HexCrumb("veh-holes", static_cast<unsigned>(nholes), nholes ? static_cast<unsigned>(holes[0]) : 0u,
+             nholes > 1 ? static_cast<unsigned>(holes[1]) : 0u);
     MEMORY_BASIC_INFORMATION mbi;
     std::uintptr_t a = 0x10000;
     while (a < 0x7fff0000u && VirtualQuery(reinterpret_cast<void*>(a), &mbi, sizeof mbi) == sizeof mbi) {
@@ -415,16 +462,14 @@ inline int Protect() {
             && (is_priv
                 || (mbi.Type == MEM_IMAGE
                     && reinterpret_cast<std::uintptr_t>(mbi.AllocationBase) == s.exe_base));
-        // The vectored-handler NODE lives in ntdll's private heap: RtlpCallVectoredHandlers
-        // increments its refcount BEFORE calling us, so a write fault there can never reach
-        // the handler -> nested fault inside exception dispatch -> instant death, no dump.
-        // Measured 2026-09-10: the first protected region (0x000a3000, private RW) was that
-        // heap, and the process died before the next crumb. Never protect that region.
-        const std::uintptr_t veh_node = reinterpret_cast<std::uintptr_t>(s.veh);
+        // The vectored-handler NODE and its refcount block live in the process heap:
+        // RtlpCallVectoredHandlers writes them BEFORE calling us, so a write fault there can
+        // never reach the handler. Measured 2026-09-10: the first protected region (0x000a3000,
+        // private RW) was that heap, and the process died before the next crumb. Those pages
+        // are holes (CollectVehHoles); the rest of their region is protected around them.
         if (wanted
             && !Overlaps(base, end, s.buf_lo, s.buf_hi)
             && !Overlaps(base, end, s.asi_lo, s.asi_hi)
-            && !Overlaps(base, end, veh_node, veh_node + 1)
             // EXPERIMENT 2026-09-10: everything below the exe image is loader/WoW64/process
             // bookkeeping (the 0x000a3000 region killed the process the instant it went
             // read-only, before any 32-bit fault could reach the handler). Skip it.
@@ -436,10 +481,19 @@ inline int Protect() {
             && !Overlaps(base, end, stack_lo - 0x10000, stack_hi)    // stack + its guard/reserve
             && !Overlaps(base, end, teb, teb + kPage)
             && s.nregions < kMaxRegions) {
-            DWORD old = 0;
             HexCrumb("prot", static_cast<unsigned>(base), static_cast<unsigned>(mbi.RegionSize), mbi.Protect | (mbi.Type << 8));
-            if (VirtualProtect(mbi.BaseAddress, mbi.RegionSize, PAGE_READONLY, &old)) {
-                s.regions[s.nregions++] = Region{ base, static_cast<std::size_t>(mbi.RegionSize), old };
+            // protect [base, end) in runs that skip the hole pages
+            std::uintptr_t run = base;
+            for (std::uintptr_t p = base; p <= end && s.nregions < kMaxRegions; p += kPage) {
+                bool hole = false;
+                if (p < end) for (int k = 0; k < nholes; ++k) if (holes[k] == p) { hole = true; break; }
+                if (p < end && !hole) continue;
+                if (p > run) {
+                    DWORD old = 0;
+                    if (VirtualProtect(reinterpret_cast<void*>(run), p - run, PAGE_READONLY, &old))
+                        s.regions[s.nregions++] = Region{ run, static_cast<std::size_t>(p - run), old };
+                }
+                run = p + kPage;
             }
         }
         a = end;
@@ -529,6 +583,7 @@ inline void Execute(Fn call) {
 
 struct Result {
     int pages_orig = 0, pages_port = 0, pages_diff = 0, noise = 0, overflow = 0;
+    int heap_orig = 0, heap_port = 0;                    // [D4-WSB-SHADOW-PRIVATE] pages outside MASHED.exe's image
     int stack_diff_bytes = 0;
     std::uintptr_t first_page = 0; int first_off = -1;
     int stack_first_off = -1;
@@ -592,6 +647,7 @@ inline Result Compare(const char* fn, O call_orig, P call_port, void* stackwin) 
     // -- A: original ------------------------------------------------------------
     Execute(call_orig);
     r.pages_orig = s.npages; r.noise = s.nnoise; r.overflow = s.overflow;
+    for (int i = 0; i < s.npages; ++i) if (s.pages[i] < s.exe_base || s.pages[i] >= s.exe_hi) ++r.heap_orig;
     Crumb(fn, "A-done", s.npages, s.nregions);
     std::memcpy(stack_post, stackwin, win);
     for (int i = 0; i < s.npages; ++i) {
@@ -608,6 +664,7 @@ inline Result Compare(const char* fn, O call_orig, P call_port, void* stackwin) 
     // -- B: port ----------------------------------------------------------------
     Execute(call_port);
     r.pages_port = s.npages; r.noise += s.nnoise; r.overflow += s.overflow;
+    for (int i = 0; i < s.npages; ++i) if (s.pages[i] < s.exe_base || s.pages[i] >= s.exe_hi) ++r.heap_port;
     Crumb(fn, "B-done", s.npages);
 
     // -- compare ----------------------------------------------------------------
@@ -714,6 +771,7 @@ auto RunTracked(Counter& c, F impl, void* stackwin, A... args) -> decltype(impl(
     char det[400];
     int dp = wsprintfA(det, " pages=o:%d,n:%d,diff:%d stack=%d noise=%d ovf=%d ret=%d",
                        r.pages_orig, r.pages_port, r.pages_diff, r.stack_diff_bytes, r.noise, r.overflow, rd);
+    dp += wsprintfA(det + dp, " heap=o:%d,n:%d", r.heap_orig, r.heap_port);   // [D4-WSB-SHADOW-PRIVATE]
     if (r.pages_diff) dp += wsprintfA(det + dp, " @%08x+%03x", static_cast<unsigned>(r.first_page), r.first_off);
     if (r.pages_diff) {                                      // [D4-WSB-BVH-FU] off:pre/orig/port per dword
         dp += wsprintfA(det + dp, " ndw=%d v=", r.ndw);
