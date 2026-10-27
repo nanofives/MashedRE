@@ -767,7 +767,10 @@ auto RunTracked(Counter& c, F impl, void* stackwin, A... args) -> decltype(impl(
     // write. At most 2000 discards per function (then sampling stops), the first 64 logged.
     static const bool need_pages = EnvOn("MASHED_SHADOW_NEED_PAGES");
     if (need_pages && !r.noise && !r.pages_orig && !r.pages_port && !rd && !r.stack_diff_bytes) {
-        if (c.empty < 64) {
+        static int nz = 0;                                // [addendum 2] rv != 0 discards, all logged up to 256
+        const bool nonzero = ro.raw() != 0 && nz < 256;
+        if (nonzero) ++nz;
+        if (c.empty < 64 || nonzero || (c.empty % 250) == 0) {
             char el[160];
             wsprintfA(el, "[..] fn=%s EMPTY rv=%08x (sample discarded, %d)\r\n", c.name, ro.raw(), c.empty);
             Log(el);
