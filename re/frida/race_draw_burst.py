@@ -95,6 +95,67 @@ try {
 } catch (ex) { err = String(ex); }
 """
 
+# --hold driver: return-override of the per-control resolver FUN_00497310(player, control)
+# (same mechanism as nav_agent.js, which only overrides player 0) for EVERY player index,
+# and a census of the (player, control) pairs the race polls, so a hold that does not move
+# the car can be told apart from a control index the race never asks for.
+HOLD_JS = r"""
+'use strict';
+let held = -1; const seen = {};
+rpc.exports = {
+  init: function () {
+    const m = Process.findModuleByName('MASHED.exe') || Process.enumerateModules()[0];
+    Interceptor.attach(m.base.add(0x00497310 - 0x00400000), {
+      onEnter(a) { const sp = this.context.esp; this.p = sp.add(4).readS32(); this.c = sp.add(8).readS32(); },
+      onLeave(ret) {
+        if (held < 0) return;
+        const k = this.p + ':' + this.c; seen[k] = (seen[k] || 0) + 1;
+        if (this.c === held) ret.replace(ptr(0xff));
+      }
+    });
+    return 1;
+  },
+  hold: function (c) { held = c; return 1; },
+  seen: function () { return seen; }
+};
+"""
+
+# --pose driver: pin the ORIGINAL's race camera to a given 12-float basis (same order as the
+# standalone's MASHED_CAM_POSE: pos, right, up, at). The racing frame is NOT built by
+# Camera::Apply (0x00441760): Camera::InitWithMatrix (0x00442a20) and Spectator::SelectCamera
+# (0x004427c0) copy the record matrix over the RW camera frame after it
+# (re/analysis/race_camera/U9058_frame_ltm_writer_20260830.md). So on leaving each of the three,
+# overwrite the frame's modelling (+0x10) and LTM (+0x50) rows with the pinned basis. Writes the
+# 12 row floats only (the RwMatrix flags / pad dwords are left alone). Render-side
+# override for parity captures: the car, AI and race logic run as usual.
+POSE_JS = r"""
+'use strict';
+let pose = null, hits = 0;
+function put() {
+  if (!pose) return;
+  try {
+    const m = Process.findModuleByName('MASHED.exe') || Process.enumerateModules()[0];
+    const cam = m.base.add(0x00897fe0 - 0x00400000);
+    const fr = cam.add(0x84).readPointer().add(0x04).readPointer();
+    const rows = [[3, 0x00], [6, 0x10], [9, 0x20], [0, 0x30]];
+    for (const base of [0x10, 0x50])
+      for (const [i, o] of rows)
+        for (let k = 0; k < 3; ++k) fr.add(base + o + 4 * k).writeFloat(pose[i + k]);
+    hits++;
+  } catch (e) {}
+}
+rpc.exports = {
+  init: function (p) {
+    pose = p;
+    const m = Process.findModuleByName('MASHED.exe') || Process.enumerateModules()[0];
+    for (const rva of [0x00441760, 0x00442a20, 0x004427c0])
+      Interceptor.attach(m.base.add(rva - 0x00400000), { onLeave() { put(); } });
+    return 1;
+  },
+  hits: function () { return hits; }
+};
+"""
+
 CAM_JS = r"""
 'use strict';
 rpc.exports = { campose: function () {
@@ -237,6 +298,17 @@ def main():
                          "2026-08-31). Bronze Cup 1 map: 0=TRAINING, 1=EGYPT, "
                          "2=NEUSTEIN, 3=ARCTIC. Requires cup row N unlocked in the "
                          "swapped gamesave (run under run_with_unlocked_save.py).")
+    ap.add_argument("--hold", default="", metavar="C:S[,C:S...]",
+                    help="before --settle, hold player-0 control C for S seconds, "
+                         "segment by segment (FUN_00497310 return override for every "
+                         "player index, one control at a time; prints the polled pairs). 4 = accelerate in a race "
+                         "(phys_c4_telemetry.py). Moves the player car, and so the "
+                         "race camera, off the grid. Default: no input.")
+    ap.add_argument("--pose", default="", metavar="12 FLOATS",
+                    help="pin the race camera frame to this basis (pos,right,up,at, the "
+                         "MASHED_CAM_POSE order) from race entry to the capture. Lets the "
+                         "original render a vantage the race camera never takes on its own "
+                         "(the parked player car keeps it on the grid). Default: off.")
     args = ap.parse_args()
 
     out_bmp = Path(args.out).resolve()
@@ -348,8 +420,30 @@ def main():
             press(4); time.sleep(1.5)
         if E.phase() == 3:
             sys.exit(f"NOT in race (phase={E.phase()}) — aborting")
+        if args.hold:
+            hs = sess.create_script(HOLD_JS)
+            hs.on("message", lambda m, d: None)
+            hs.load(); H = hs.exports_sync; H.init()
+            for seg in filter(None, args.hold.split(",")):
+                c, s = seg.split(":")
+                print(f"  holding control {c} for {s}s (every player index)")
+                H.hold(int(c)); time.sleep(float(s)); H.hold(-1)
+            seen = H.seen()
+            print(f"  resolver polls during hold (player:control=count): "
+                  + " ".join(f"{k}={v}" for k, v in sorted(seen.items())))
+        ps = None
+        if args.pose:
+            pv = [float(x) for x in args.pose.split(",")]
+            if len(pv) != 12:
+                sys.exit("--pose needs 12 floats")
+            ps = sess.create_script(POSE_JS)
+            ps.on("message", lambda m, d: None)
+            ps.load(); ps.exports_sync.init(pv)
+            print(f"  pose pinned: {args.pose}")
         print(f"  in race (phase={E.phase()}); settling {args.settle}s")
         time.sleep(args.settle)
+        if ps is not None:
+            print(f"  pose writes so far: {ps.exports_sync.hits()}")
         # Which track did the ORIGINAL actually load? Ground truth for same-track
         # capture; write it beside the pose so a later comparison can verify the
         # two sides matched instead of assuming it.
