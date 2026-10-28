@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-10-28 10:28 HB-FULLCHECK-R17 (orch/HB-FULLCHECK-R17), D5-FIRSTRUN (orch/D5-FIRSTRUN), HB-WARZONE-RIVER (orch/HB-WARZONE-RIVER): G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/9fcdbd3a/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261028_100008
 - 2026-10-28 03:01 D5-DEFER (orch/D5-DEFER): G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/9fcdbd3a/53778664. Run data D:\MashedWT\mtrain_data\20261028_024912
 - 2026-10-28 02:37 D3-CF-SNAP-FLIP (orch/D3-CF-SNAP-FLIP): G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/9fcdbd3a/53778664. Run data D:\MashedWT\mtrain_data\20261028_022507
 - 2026-10-28 01:40 HB-U9064-RECLASS (orch/HB-U9064-RECLASS): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261028_013839
