@@ -116,8 +116,9 @@ particle 10.0%, boot 12.5%.
   but only 512 of those carry a non-empty `Blocks` cell. **The Type column and the
   `Blocks` column disagree about what is actually blocking.** Reconciling them is D0 work.
 - **STUBS**: 1,072 live, against a census header in the file itself claiming 1,109.
-- **DEFERRED**: 43 live rows (128 struck). Four are milestone deferrals
-  (D-11060/61/62/63); the rest are mechanical. **No open architectural deferral.**
+- **DEFERRED**: 10 live rows (170 struck, audited 2026-10-28, `verify/d5defer_20261028/RESULT_D5-DEFER.md`).
+  Four are milestone deferrals (D-11060/61/62/63), D-11073 and D-11076/77 are scheduled steps, D-11075/78/79 are
+  held or kept. **No open architectural deferral.**
 
 ### Phase ledger — corrected
 

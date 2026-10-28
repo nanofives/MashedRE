@@ -51,6 +51,27 @@ When the skill promotes a function, it must **all in one transaction**:
    should have inserted. If a past entry was wrong, add a correcting entry — do not edit history.
 5. **Demotion** is the same flow in reverse: lower the row, prepend to the changelog with an `oldC<-newC` arrow.
 
+## Close or rewrite a DEFERRED row (no function C-level moves)
+
+Use when a `DEFERRED.md` Active row's re-pickup condition is met, the work is done or judged
+not applicable, or the row text is stale. Run the helper, never hand-edit the row:
+
+```
+py -3.12 re\tools\deferred_close.py close --reason "<why>" --evidence "<RESULT path>" D-NNNN [D-NNNN ...]
+py -3.12 re\tools\deferred_close.py rewrite --id D-NNNN --why "<cell>" --when "<cell>" --tag "<cell>" --reason "<why>"
+```
+
+- **close** strikes the ID and title cells (`~~D-NNNN~~`), sets "Why deferred" to
+  `RESOLVED <date>: <reason> (evidence: <path>)`, sets "Re-pickup when" to `—`, and prepends one
+  line per row to `re/analysis/CHANGELOG.md` below `<!-- ENTRIES -->`
+  (`date  D-NNNN  DEFERRED  Active->struck  reason`). Struck rows stay in the Active table, as before.
+- **rewrite** replaces only the cells you pass on a row that stays Active, and logs it the same way.
+- Gate: a `--reason` is mandatory, and a close needs evidence (a RESULT path or hooks.csv fact)
+  unless the reason says the row is not applicable. The helper refuses a missing or already struck ID.
+- Only the `## Active` section is touched. The `## Cleared` table is not edited by this operation.
+- After a batch, recount Active rows (`grep -c "^| D-" DEFERRED.md` inside the Active section) and fix
+  any count quoted in `ROADMAP.md`.
+
 ## CSV row format reminder
 
 ```
