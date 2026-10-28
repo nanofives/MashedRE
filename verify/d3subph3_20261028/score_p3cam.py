@@ -61,3 +61,24 @@ def main():
 
 if __name__ == '__main__':
     sys.exit(main())
+
+
+def score(orig_path, port_path):
+    """PREREG amendment 1 section A1.3, P1..P5 for one port arm."""
+    import math
+    orig = [r for r in csv.DictReader(open(orig_path)) if hi(r['ba8c']) == 3]
+    port = list(csv.DictReader(open(port_path)))
+    p3 = [r for r in port if r['ba8c'] == '3']
+    d = []
+    for k in range(min(len(p3), len(orig))):
+        pp = [float(p3[k][c]) for c in ('tx', 'ty', 'tz')]
+        op = [hf(orig[k]['o%02x' % x]) for x in (4, 8, 0xc)]
+        d.append([pp[i] - op[i] for i in range(3)])
+    ref = d[120]
+    tr = max(math.dist(d[k], ref) for k in range(1, 61))
+    spring1 = [float(p3[1][c]) for c in ('s970', 's974', 's978', 's988', 's98c', 's990')]
+    return {'P1_d0': tuple(round(x, 5) for x in d[0]), 'P2_spring_row1': spring1, 'P3_max_k1_60': round(tr, 5),
+            'd120': tuple(round(x, 5) for x in ref), 'P4_rows_substate3': len(p3), 'orig_calls_substate3': len(orig),
+            'P5_e0z_row1': float(p3[1]['e0z']), 'orig_e0z_call1': hf(orig[1]['e0z']),
+            'max_xz_k0_808': round(max(max(abs(v[0]), abs(v[2])) for v in d), 6),
+            'y_range_k1_808': (round(min(v[1] for v in d[1:]), 5), round(max(v[1] for v in d[1:]), 5))}
