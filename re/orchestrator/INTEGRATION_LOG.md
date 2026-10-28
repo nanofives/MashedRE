@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-10-28 17:42 D5-INTROMOVIES (orch/D5-INTROMOVIES), D5-RFX-EMITTERS (orch/D5-RFX-EMITTERS), D5-PARTMORPH-PRODUCER (orch/D5-PARTMORPH-PRODUCER): G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/9fcdbd3a/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261028_171345
 - 2026-10-28 17:12 HB-WARZONE-RIVER-CAP (orch/HB-WARZONE-RIVER-CAP), D3-SUBSTATE-PH3 (orch/D3-SUBSTATE-PH3): G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/9fcdbd3a/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261028_162402
 - 2026-10-28 15:16 D3-CF-SNAP-RETIRE (orch/D3-CF-SNAP-RETIRE): G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/9fcdbd3a/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261028_145032
 - 2026-10-28 14:31 D4-WSB-RAND-FLIP (orch/D4-WSB-RAND-FLIP): G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/9fcdbd3a/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261028_132826
