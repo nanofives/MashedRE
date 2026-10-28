@@ -148,3 +148,65 @@ f3e9b7ddd66bbd9df9a854c64a5992555bc76f1e408de6bfe8a00f0a13ca1b88 *render2/warzon
 acfa80318ab2641addca0576ba5f65728e4507846207e22befc2e29c8ec8e458 *exe_prereg/mashed_re.exe
 9f2afe9246c59abb92b43118e30797cb2443d8600a8df2d5d84b7cb3043d919d *exe_mask/mashed_re.exe
 ```
+
+---
+
+# L-42 flip (2026-10-27): default ON, gates hold, 13-track rows move on the 4 ring tracks
+
+**Verdict: DECISION.** Mariano decided L-42 = flip. `MASHED_TEXANIM` is now default ON, with
+`MASHED_NO_TEXANIM=1` as the opt-out (`TexAnimOn`, `D3d9Render/TrackRenderer.cpp`). The branch first
+merged `orch/integration` `2232ac2e5` (Arctic sky flip) as `f2a4db0ec`. Flipped exe `1a4c2e82bb3bf9b2...`.
+G-CTRL and B are identical to the refs. The 13-track score moves on 8 rows, all on the four ring tracks
+(Sands, Forest, Warzone, Training), all toward the original (more matched draws, fewer cited rows,
+0 RED). The step said to stop on any 13-track move, so this is not GREEN. If accepted, the new
+`run13_reference` is `verify/hbtexanimrefs_20261027/tracks_score.txt`.
+
+## F1. Water on the flipped default build (no env var vs `MASHED_NO_TEXANIM=1`)
+
+[`measure_flip.py`](measure_flip.py) -> [`measure_flip.txt`](measure_flip.txt). Same poses and
+original references as sections 2-3. Mask: pose cases `|MASK - NO| > 6`, forest_s8 `|DEF - NO| > 6`
+(HB-FOREST-WATER W2).
+
+| track | case | % frame | original L | OFF (`MASHED_NO_TEXANIM=1`) | ON (default) | gap OFF | gap ON |
+|---|---|---|---|---|---|---|---|
+| Forest | forest_s8 | 5.17 | 21.6 | 48.4 | 24.5 | 26.9 | **2.9** |
+| Training | training_p3 | 52.99 | 38.8 | 52.8 | 42.1 | 14.0 | **3.3** |
+| Training | training_p4 | 51.09 | 38.8 | 54.1 | 42.3 | 15.3 | **3.6** |
+| Sands | sands_p11 | 61.87 | 72.9 | 172.0 | 76.8 | 99.1 | **3.9** |
+| Sands | sands_p8 | 61.07 | 72.8 | 171.9 | 76.8 | 99.1 | **3.9** |
+| Warzone | warzone_p3 | 44.38 | 54.9 | 71.4 | 71.6 | 16.5 | 16.7 |
+| Warzone | warzone_p2 | 43.51 | 62.4 | 72.5 | 72.7 | 10.1 | 10.3 |
+
+The default build's frames are bit-identical to round 2's pre-flip `MASHED_TEXANIM=1` frames on all six
+pose cases (0.000% pixels differ), so the merged integration code does not touch these frames.
+
+## F2. Gates (flipped exe `1a4c2e82`, private root, test-slot + `mashed_lock.py`, merge queue empty)
+
+| gate | this exe | `merge_train.json` ref (orch/integration `8f4e96366`) | |
+|---|---|---|---|
+| G-CTRL (step / gates / ptrace) | `5943c5f1 / 364350ae / 52052890` | `5943c5f1 / 364350ae / 52052890` | identical |
+| B (K0 / K1 / K26) | `3a03670c / e85ea6fb / 53778664` | `3a03670c / e85ea6fb / 53778664` | identical |
+
+## F3. 13-track (`run13.py run` + `score --cite verify/rres_20261016/cites_rres.json`)
+
+New table: [`tracks_score.txt`](tracks_score.txt), `INSTRUMENT GATES: PASS`, 0 RED on every row. 31 of 39
+rows are identical to `verify/hbarcticskyflip_20261027/tracks_score.txt`. The 8 that move:
+
+| row | old matched / m.tri / m.tri% / rows cited | new matched / m.tri / m.tri% / rows cited | red |
+|---|---|---|---|
+| 05_Sands 1084 | 286 / 20354 / 88.8% / 21 | 303 / 20494 / 89.4% / 19 | 0 -> 0 |
+| 05_Sands 1159 | 234 / 14152 / 80.6% / 22 | 251 / 14292 / 81.4% / 20 | 0 -> 0 |
+| 09_Forest 820 | 157 / 17332 / 93.0% / 17 | 158 / 17916 / 96.2% / 15 | 0 -> 0 |
+| 09_Forest 860 | 153 / 17302 / 93.0% / 17 | 154 / 17886 / 96.1% / 15 | 0 -> 0 |
+| 09_Forest 895 | 92 / 9504 / 89.6% / 19 | 93 / 10088 / 95.1% / 17 | 0 -> 0 |
+| 11_Warzone 624 | 326 / 23936 / 96.1% / 21 | 328 / 24036 / 96.5% / 19 | 0 -> 0 |
+| 13_Training 884 | 215 / 17478 / 96.4% / 20 | 216 / 17598 / 97.1% / 18 | 0 -> 0 |
+| 13_Training 924 | 211 / 17440 / 95.0% / 20 | 212 / 17560 / 95.7% / 18 | 0 -> 0 |
+
+Unchanged on those tracks: Sands 1124, Warzone 584 / 659, Training 959. The draw-list diff keys on the
+bound texture. With the ring on, the water draw binds a `waterNN` texture, and on a row it matches only
+when the port's ring frame equals the original's at that frame (the ring phase is not pinned). That is
+consistent with some rows moving and others not. This explanation is not separately measured.
+
+Raw data: `D:/MashedWT/HB-TEXANIM-REFS_data/{render3,arms_flip,tracks_flip}`, hashes in
+`D:/MashedWT/HB-TEXANIM-REFS_data/SHA256SUMS_flip.txt`.

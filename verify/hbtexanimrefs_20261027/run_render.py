@@ -22,8 +22,10 @@ if POSES:
     for k, (sel_, basis_) in json.loads(Path(POSES).read_text()).items():
         bf = REFS2 / k / "orig_cambasis.txt"
         CASES[k] = (sel_, bf if bf.exists() else basis_)
+CASES["forest_s8"] = (3, W / "verify/water_refs/forest_s8/orig_cambasis.txt")   # L-42 flip re-score
 MASKTEX = {"training": "Brick", "sands": "BarrelRed", "warzone": "BarrelRed"}
-ARMS = {"OFF": {}, "OFF2": {}, "ANIM": {"MASHED_TEXANIM": "1"}, "DEF": {}, "MASK": {"MASHED_TEXANIM": "1"}}
+ARMS = {"OFF": {}, "OFF2": {}, "ANIM": {"MASHED_TEXANIM": "1"}, "DEF": {}, "MASK": {"MASHED_TEXANIM": "1"},
+        "NO": {"MASHED_NO_TEXANIM": "1"}}   # L-42: on the flipped exe DEF = knob ON, NO = opt-out
 DEFAULT = [f"{c}_{a}" for c in CASES for a in ("OFF", "ANIM")] + [f"{t}_s8_OFF2" for t in SEL]
 TIMEOUT = 220.0
 
