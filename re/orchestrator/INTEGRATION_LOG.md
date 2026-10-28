@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-10-28 14:31 D4-WSB-RAND-FLIP (orch/D4-WSB-RAND-FLIP): G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/9fcdbd3a/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261028_132826
 - 2026-10-28 13:27 D5-PARTMORPH (orch/D5-PARTMORPH), D4-WSB-DEFER-GROUPS (orch/D4-WSB-DEFER-GROUPS): G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/9fcdbd3a/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261028_123923
 - 2026-10-28 12:38 D4-WSB-RAND-D11064 (orch/D4-WSB-RAND-D11064): G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/9fcdbd3a/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261028_114545
 - 2026-10-28 11:05 D4-WSB-MAPPED-DISP (orch/D4-WSB-MAPPED-DISP): G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/9fcdbd3a/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261028_102917
