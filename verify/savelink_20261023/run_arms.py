@@ -309,6 +309,7 @@ STACK['FULLGOFD'] = STACK['FULLGO'] + STACK['FLD']
 for _s in (2, 3): STACK['TLG%dFD' % _s] = STACK['TLG%d' % _s] + STACK['FLD']
 
 
+STACK['ORAND'] = ['MASHED_OWN_RAND_564310=1', 'MASHED_OWN_RAND_LOG=@OUT@/@NAME@.rand.txt']   # D4-WSB-RAND-D11064 PREREG P2
 STACK['RD'] = ['MASHED_RECDUMP=@OUT@/@NAME@.rec.msd', 'MASHED_RECDUMP_SLOT=0']   # d2off: the player's record per race frame
 STACK['RDS'] = STACK['RD'] + ['MASHED_SPAWN_Y_LOG=@OUT@/@NAME@.sy.txt', 'MASHED_SETTLE_DIAG=@OUT@/@NAME@.settle.txt']
 STACK['FAITH'] = [k for k in STACK['FULLGO'] if not k.startswith(('MASHED_RECDUMP', 'MASHED_MODE7_TRACE'))] + ['MASHED_A5_FD0_LIVE=1', 'MASHED_A5_DRAFT_LUT=1', 'MASHED_FIX_5CEA44']   # d2off PREREG: the full faithful stack
