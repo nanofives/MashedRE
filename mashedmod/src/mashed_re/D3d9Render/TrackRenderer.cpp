@@ -1650,17 +1650,14 @@ bool OuterSameInput(const Vehicle::PlayerCarIO& a, const Vehicle::PlayerCarIO& b
            a.grounded == b.grounded && a.raw_steer == b.raw_steer && !std::memcmp(&a.ground_off, &b.ground_off, 4);
 }
 // [D3-CF-SNAP 2026-10-27] verify/snap_20261027/PREREG_D3-CF-SNAP.md.
-// MASHED_SNAP_LOG=1 (diagnostic, default OFF): one "[snap]" line per OuterRestore in mashed_re.log, cap 2000. Changes no computed value.
-// MASHED_SNAP_POST: the opponent loop's skip / relocation decisions are the ones made before the physics step. A car the
-// outer driver stepped keeps that result (a dead / spin state that appeared after the pre-phase applies from the next
-// frame, whose pre-phase excludes the car), and the stuck relocation runs after the car's commit, so no restore is needed.
-// [D3-CF-SNAP-FLIP 2026-10-28] default ON (decision L-43, verify/snapflip_20261028/RESULT_D3-CF-SNAP-FLIP.md);
-// MASHED_NO_SNAP_POST=1 (or MASHED_SNAP_POST=0) opts out: the restore + pre-commit relocation, the pre-flip default.
-bool SnapPost() {
-    static const bool s = [] { const char* no = std::getenv("MASHED_NO_SNAP_POST"); const char* e = std::getenv("MASHED_SNAP_POST");
-                               return !(no && no[0] && no[0] != '0') && !(e && e[0] == '0'); }();
-    return s;
-}
+// MASHED_SNAP_LOG=1 (diagnostic, default OFF): one "[snap]" line per stuck relocation ("reloc-post") and per outer mismatch
+// ("mismatch") in mashed_re.log, cap 2000. Changes no computed value.
+// The opponent loop's skip / relocation decisions are the ones made before the physics step. A car the outer driver
+// stepped keeps that result (a dead / spin state that appeared after the pre-phase applies from the next frame, whose
+// pre-phase excludes the car), and the stuck relocation runs after the car's commit.
+// [D3-CF-SNAP-FLIP 2026-10-28] that was MASHED_SNAP_POST, default ON (L-43). [D3-CF-SNAP-RETIRE 2026-10-28] the knob,
+// its opt-out (MASHED_NO_SNAP_POST) and OuterSnapshot / OuterRestore are deleted (L-43 step 3,
+// verify/snapretire_20261028/RESULT_D3-CF-SNAP-RETIRE.md): the post-commit form is the only one.
 void SnapLog(const char* what, int v) {
     static const bool s_on = [] { const char* e = std::getenv("MASHED_SNAP_LOG"); return e && e[0] == '1'; }();
     static long s_n = 0;
@@ -5448,7 +5445,6 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             outerSlots[outerN] = 0; outerIo[outerN] = io; ++outerN;
             for (int v = 1; v < 16; ++v)
                 if (s_outer[v].have) { outerSlots[outerN] = v; outerIo[outerN] = s_outer[v].in; ++outerN; }
-            for (int k = 1; k < outerN; ++k) Vehicle::VehiclePhysics_OuterSnapshot(outerSlots[k]);
             if (outerN > 1 && Vehicle::VehiclePhysics_StepCarsOuter(outerN, outerSlots, in.dt, outerIo)) {
                 io = outerIo[0];
                 for (int k = 1; k < outerN; ++k) s_outer[outerSlots[k]].out = outerIo[k];
@@ -5752,20 +5748,15 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         for (int ci = 0; ci < aiCarN; ++ci) {
             AiCar& a = ai_cars_[static_cast<std::size_t>(ci)];
             const int v = ci + 1;
-            // [u9778 / substep] a car the outer driver stepped and this loop does not step (or relocates first): put it back
-            auto outerUndo = [&](const char* site) { if (v < 16 && s_outer[v].have) { SnapLog(site, v); Vehicle::VehiclePhysics_OuterRestore(v); s_outer[v].have = false; } };
-            // [D3-CF-SNAP] MASHED_SNAP_POST: a car the outer driver stepped keeps the result this frame (no skip, no restore)
-            const bool snapPost = phys && SnapPost();
-            const bool snapKeep = snapPost && v < 16 && s_outer[v].have;
+            // [D3-CF-SNAP] a car the outer driver stepped keeps the result this frame (no dead / spin skip)
+            const bool snapKeep = phys && v < 16 && s_outer[v].have;
             // [D4-FX-INPUTS] MASHED_DEAD_COAST: FUN_00470c70 keeps stepping a car FUN_00422fd0 killed (+0x10 == 1 qualifies it,
             // 0x00471012), on the zero block 0x007f19b8 (StepCar). It skips the scaffold spin-out and the stuck relocation.
             const bool deadCoast = phys && round_mode_ && !race_[ci + 1].alive && Vehicle::VehiclePhysics_DeadCoastEnabled();
             if (round_mode_ && !race_[ci + 1].alive && !deadCoast && !snapKeep) {
-                outerUndo("dead");
                 a.cur_speed = 0.f; a.vel[0] = a.vel[1] = a.vel[2] = 0.f; continue;
             }
             if (a.spin > 0.f && !deadCoast && !snapKeep) {   // spun out by a missile/mine (scaffold leaf effect)
-                outerUndo("spin");
                 a.spin -= in.dt; a.yaw += 12.0f * in.dt;
                 yaww::Hit(yaww::W_3283, v);
                 a.cur_speed = 0.f; a.vel[0] = a.vel[1] = a.vel[2] = 0.f;
@@ -5782,7 +5773,8 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             // [D3-CF-K357] MASHED_R7_EXIT (default ON since 2026-10-25, L-16): skipped while the MASHED_ROUND_END7 flag is up. The original keeps
             // the car frozen in sub-state 7 (o_r7_1: 502 frames); a frozen car's gate never changes, so the stand-in would
             // relocate it every 2.5 s. PREREG_D3-CF-K357.md amendment 1.
-            // [D3-CF-SNAP] under MASHED_SNAP_POST this block runs after the commit, at the end of the loop body.
+            // [D3-CF-SNAP] with the physics this block runs after the commit, at the end of the loop body (the scaffold
+            // path, !phys, keeps it here, as MASHED_SNAP_POST did).
             auto stuckReloc = [&]() {
             if (ng >= 2 && !RoundEnd7ExitActive() && !deadCoast) {
                 if (race_[v].gate != a.prog_gate) { a.prog_gate = race_[v].gate; a.stuck_t = 0.f; }
@@ -5793,8 +5785,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
                     const float* gp = gates_[static_cast<std::size_t>(gA)].center;
                     bool rok = false; const float gy2 = GroundHeight(gp[0], gp[2], &rok);
                     if (rok) {
-                        outerUndo("reloc");
-                        SnapLog(snapPost ? "reloc-post" : "reloc-any", v);
+                        SnapLog(phys ? "reloc-post" : "reloc-any", v);
                         a.pos[0] = gp[0]; a.pos[2] = gp[2]; a.pos[1] = gy2 + car_ground_off_;
                         a.yaw = std::atan2(gates_[static_cast<std::size_t>(gB)].center[2] - gp[2],
                                            gates_[static_cast<std::size_t>(gB)].center[0] - gp[0]);
@@ -5808,8 +5799,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
                 }
             }
             };
-            if (!snapPost) stuckReloc();
-            if (!phys) { AiOptionBStep(a, v, in.dt, ng); continue; }
+            if (!phys) { stuckReloc(); AiOptionBStep(a, v, in.dt, ng); continue; }
 
             const std::uint8_t* blk = reinterpret_cast<const std::uint8_t*>(
                 Ai::kCtrlBlockBase + static_cast<std::uintptr_t>(
@@ -5829,10 +5819,13 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             GroundHeight(a.pos[0], a.pos[2], &gok);
             io.grounded = gok ? 1 : 0;
             const bool outerSame = v < 16 && s_outer[v].have && OuterSameInput(io, s_outer[v].in);
-            if (v < 16 && s_outer[v].have && !outerSame) {   // [u9778 / substep] safety net: restore and step it the per-car way
+            // [u9778 / substep] mismatch: the io differs from the one the outer driver stepped. [D3-CF-SNAP-RETIRE] no restore
+            // exists any more, so the car keeps the outer result (stepping it again would step it twice); the line stays as
+            // the witness. 0 lines on every arm of verify/snapretire_20261028 (G-CTRL, B K0 / K1 / K26, 13 tracks).
+            if (v < 16 && s_outer[v].have && !outerSame) {
                 if (s_outerMismatch++ < 200)
                     if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
-                        std::fprintf(lf, "[substep] outer: slot %d io differs from the pre-phase io (restored, stepped per-car) frame %d: "
+                        std::fprintf(lf, "[substep] outer: slot %d io differs from the pre-phase io (kept the outer result) frame %d: "
                                      "pos %d vel %d yaw %d speed %d input %d grounded %d/%d | pos (%.6f,%.6f,%.6f)/(%.6f,%.6f,%.6f) "
                                      "vel (%.4f,%.4f,%.4f)/(%.4f,%.4f,%.4f) in4 %d/%d\n", v,
                                      Vehicle::VehiclePhysics_RecDumpFrameIndex(),
@@ -5845,9 +5838,8 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
                         std::fclose(lf);
                     }
                 SnapLog("mismatch", v);
-                Vehicle::VehiclePhysics_OuterRestore(v);
+                io = s_outer[v].out;
                 s_outer[v].have = false;
-                Vehicle::VehiclePhysics_StepCar(v, in.dt, io);
             } else if (outerSame) {   // [u9778 / substep] stepped above, interleaved with the player
                 io = s_outer[v].out;
                 s_outer[v].have = false;
@@ -5887,8 +5879,8 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
                     a.vel[0] = a.vel[1] = a.vel[2] = 0.f; a.cur_speed = 0.f;
                 }
             }
-            // [D3-CF-SNAP] MASHED_SNAP_POST: the stuck relocation on the committed state, with the skips the loop head applies
-            if (snapPost && !(round_mode_ && !race_[v].alive && !deadCoast) && !(a.spin > 0.f && !deadCoast)) stuckReloc();
+            // [D3-CF-SNAP] the stuck relocation on the committed state, with the skips the loop head applies
+            if (!(round_mode_ && !race_[v].alive && !deadCoast) && !(a.spin > 0.f && !deadCoast)) stuckReloc();
         }
         // [d3bB2 2026-10-17] FUN_00425a40 runs FUN_00422ba0 (the event drain) after FUN_00470c70, the physics of
         // every car: here, after the player's step (above) and the opponents'. Default OFF (MASHED_AI_CONTACT_EVENT).
