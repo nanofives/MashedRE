@@ -277,6 +277,9 @@ void PreGoRegistryTick() {
 }
 // [D5-ICONCUBE-SPIN] MASHED_CAM_REPLAY_GO (DIAGNOSTIC, default OFF): the first replay row whose ba8c is 6, or -1.
 int CamReplayGoRow();
+// [D5-ICONCUBE-SPIN amendment A] false when MASHED_CAM_REPLAY_GO is set and the consumed row's ff4 equals the
+// previous row's (no FUN_0040fc00 add on that original frame); true otherwise.
+bool CamReplayRowRunsFc00(int row);
 // ---------------------------------------------------------------------------
 // [D3 2026-10-05] U-9188 legs A and B. DEFAULT OFF: with MASHED_AI_YAWW unset
 // every entry point here returns on its first line and nothing is written.
@@ -5381,7 +5384,8 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
                                           !ai_cars_.empty() && countdown_ <= 113.0f / 60.0f);
         if (countdown_ > 0.f) {
             CopterTick(static_cast<int>(in.dt * 3000.0f + 0.5f));
-            if (PickupsPreGo()) PreGoRegistryTick();   // [D5-ICONCUBE-SPIN] FUN_0040fc00's pre-GO registry chain
+            if (PickupsPreGo() && CamReplayRowRunsFc00(cam_replay_row_))
+                PreGoRegistryTick();   // [D5-ICONCUBE-SPIN] FUN_0040fc00's pre-GO registry chain
             return;
         }
     }
@@ -8255,6 +8259,7 @@ struct CamReplay {
     bool has_q = false;
     int c_ba8c = -1;            // [rfx] the HUD replay reads the trace's ba8c / dtb columns
     int c_f101c = -1;           // [rfx2] the object shadows' frame parity (DAT_007f101c)
+    int c_ff4 = -1;             // [D5-ICONCUBE-SPIN] DAT_007f0ff4 (FUN_0040fc00 adds units per call)
 };
 // [d1r1] the consumed row's transplant values, read by Render under MASHED_CAM_REPLAY_BASIS /
 // MASHED_CAR_REPLAY (diagnostic knobs, default OFF)
@@ -8320,6 +8325,7 @@ CamReplay& CamReplayState() {
             if (r.c_vwy < 0) r.has_m = false;
             r.c_ba8c = col("ba8c");
             r.c_f101c = col("f101c");
+            r.c_ff4 = col("ff4");
         }
         while (ok && std::fgets(line, sizeof(line), f)) {
             split(line, f2);
@@ -8339,6 +8345,15 @@ CamReplay& CamReplayState() {
         return r;
     }();
     return R;
+}
+bool CamReplayRowRunsFc00(int row) {
+    static const bool s_repGo = (std::getenv("MASHED_CAM_REPLAY_GO") != nullptr);
+    if (!s_repGo) return true;
+    const CamReplay& R = CamReplayState();
+    if (!R.on || R.c_ff4 < 0 || row < 0 || static_cast<std::size_t>(row) >= R.rows.size()) return true;
+    const double cur = R.rows[static_cast<std::size_t>(row)][static_cast<std::size_t>(R.c_ff4)];
+    const double prev = row > 0 ? R.rows[static_cast<std::size_t>(row - 1)][static_cast<std::size_t>(R.c_ff4)] : 0.0;
+    return cur != prev;
 }
 int CamReplayGoRow() {
     const CamReplay& R = CamReplayState();
