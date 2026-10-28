@@ -77,7 +77,8 @@ A row that flips a default on a user decision changes the gate hashes. It record
 G-CTRL/B hashes, merges alone, and L0 commits those hashes to `merge_train.json` on orch/integration
 (no train live) and spawns the train for it right away: refs change + flip merge are one step, nothing
 merges in between (dequeue every other row first, re-enqueue after the flip lands). GREEN = the merged
-tree reproduces exactly the new hashes.
+tree reproduces exactly the new hashes. The flip's train pass always runs with `-Full`, so D2 x3 and the
+13 tracks run even when the default lives outside `full_set_paths`.
 (Run 2: D3-CF-U9779 bounced RED with exactly its expected hashes because the refs were stale.)
 
 ## The event loop

@@ -46,7 +46,8 @@ A row that changes the default gates on purpose (a user-decided knob flip, e.g. 
 1. The flip row records its expected new G-CTRL and B hashes (ledger note + its RESULT).
 2. It merges **alone**: nothing else in the queue while it runs (enqueue the other rows after it lands).
 3. The refs change and the flip merge are **one step, nothing merges in between**. With no train live and only the flip row queued, commit the expected new hashes to `merge_train.json` on `orch/integration` (cite the decision and RESULT in `_doc`, keep the old refs there), then run the train for the flip at once. Pull every other row out of the queue first (`roadmap.ps1 dequeue`) and re-enqueue it only after the flip is on `orch/integration`: a row merged against the new refs on a tree without the flip reproduces the old hashes and bounces as a false RED. GREEN means the merged tree reproduces exactly the new hashes; any other value is RED.
-4. If the refs were not updated first and the train bounced the flip with exactly the expected hashes, that RED is the flip confirmed: update the refs as in 3, re-enqueue the row alone, run the train again.
+4. Run the flip's pass with `merge_train.ps1 -Full`. `-Full` forces the full set (D2 x3 solo, 13 tracks) as well as the build and default gates, because a default can live outside `full_set_paths` (D3-CF-SNAP-FLIP's lives in `D3d9Render/TrackRenderer.cpp`).
+5. If the refs were not updated first and the train bounced the flip with exactly the expected hashes, that RED is the flip confirmed: update the refs as in 3, re-enqueue the row alone, run the train again.
 
 ## 3. Lint
 - Command: `py -3.12 scripts/lint_rva_bodies.py` (lint_rva_bodies.py:27). It also accepts `--verbose` and `--seed`.

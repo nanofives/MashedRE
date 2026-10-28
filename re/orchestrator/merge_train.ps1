@@ -12,7 +12,7 @@
 
 .EXAMPLE
   pwsh -NoProfile -File re/orchestrator/merge_train.ps1            # one batch
-  pwsh -NoProfile -File re/orchestrator/merge_train.ps1 -Full      # force build+gates on text-only
+  pwsh -NoProfile -File re/orchestrator/merge_train.ps1 -Full      # force build+gates+full set (D2 x3, 13 tracks)
   pwsh -NoProfile -File re/orchestrator/merge_train.ps1 -Plan      # print what it would merge, change nothing
 #>
 [CmdletBinding()]
@@ -253,7 +253,9 @@ function Try-Batch($items) {
     }
     $changed = @((Git -C $wt diff --name-only "$base..HEAD") | Where-Object { $_ })
     $textOnly = -not $Full -and (@($changed | Where-Object { -not (Like-Any $_ $CFG.text_only_globs) }).Count -eq 0)
-    $needFull = @($changed | Where-Object { $f = $_; @($CFG.full_set_paths | Where-Object { $f.StartsWith($_) }).Count -gt 0 }).Count -gt 0
+    # -Full forces the full set too: a decided flip can change a default outside full_set_paths
+    # (D3-CF-SNAP-FLIP's default lives in D3d9Render/TrackRenderer.cpp and merged without D2 / 13 tracks).
+    $needFull = $Full -or (@($changed | Where-Object { $f = $_; @($CFG.full_set_paths | Where-Object { $f.StartsWith($_) }).Count -gt 0 }).Count -gt 0)
     Say "  changed $($changed.Count) file(s); text-only=$textOnly full-set=$needFull"
     if ($textOnly) { $r.gates = 'not run: text-only change (no build input touched)'; return $r }
     # build both targets, never deploy
