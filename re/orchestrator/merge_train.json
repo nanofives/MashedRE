@@ -19,7 +19,7 @@
     "d2_max_reruns": 2,
     "run13": "verify/rsky_20261016/run13.py",
     "run13_cites": "verify/rres_20261016/cites_rres.json",
-    "run13_reference": "verify/colllut_20261026/tracks_score.txt"
+    "run13_reference": "verify/hbarcticskyflip_20261027/tracks_score.txt"
   },
   "text_only_globs": ["*.md", "*.txt", "verify/*", "re/analysis/*"],
   "conflict_union": ["mashedmod/build.bat", "mashedmod/exe_sources.rsp", "mashedmod/asi_sources.rsp", "re/analysis/CHANGELOG.md"],
