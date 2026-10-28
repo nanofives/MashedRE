@@ -26,6 +26,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-27  0046b540  VehicleSpawnInit  C4->C4  U-9783 narrowed (no C-level change), D4-UNC-PHYS: [0x005f2770] = 0x005f2728 is static .data (0 writers; 13 static records, +4 words 0 writers; 1 derived store, 0x0040e48e slot state); type per v 6,30,48,18,24,0,36,42,54,60,12,66,72; mode-10 v = [0x0067ea94] track-menu index; live legs blocked (no audio endpoint, AV 0x005baf48); verify/d4uncphys_20261027/RESULT_D4-UNC-PHYS.md
 2026-10-27  0055b750  FUN_0055b750  C2->C3  D4-WSB-C3-PORTED: RunTracked shadow A/B CLEAN 24/24 (census scenario, hook installed alone, A/B-IS-REAL), 0 heap pages (stack-window stores); U-9793; verify/wsbc3ported_20261027/RESULT_D4-WSB-C3-PORTED.md
 2026-10-27  0055c2d0  FUN_0055c2d0  C2->C3  D4-WSB-C3-PORTED: RunTracked shadow A/B CLEAN 24/24 (census scenario, hook installed alone, A/B-IS-REAL), 0 heap pages (stack-window stores); U-9794; verify/wsbc3ported_20261027/RESULT_D4-WSB-C3-PORTED.md
 2026-10-27  00564310  FUN_00564310  C2->C3  D4-WSB-C3-PORTED: RunTracked shadow A/B CLEAN 24/24 (census scenario, hook installed alone, A/B-IS-REAL), 24 heap pages, rand() caller compared with pre-state restored; verify/wsbc3ported_20261027/RESULT_D4-WSB-C3-PORTED.md
