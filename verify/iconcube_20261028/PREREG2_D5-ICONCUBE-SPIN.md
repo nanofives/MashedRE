@@ -82,3 +82,16 @@ Each arm also runs with `MASHED_PKCB_TRACE` so the first pickup tick and every c
 
 No C-level change (no Frida diff possible). No default flip: turning `MASHED_PICKUPS_PREGO` or `MASHED_ICONCUBE`
 ON is a decision row.
+
+## 7. Amendment A (after R1..R4, before R5)
+
+R3 gave set and order equal on rows 884 / 924 / 959 and a constant c = +2 deg on every cube. The trace column
+`ff4` (DAT_007f0ff4, which FUN_0040fc00 adds `units` to on every call while `DAT_0063ba8c != 7`) reads 0 on rows 0
+and 1 and then advances by 50 on every row (883 adds by row 884). So the original's frames 0 and 1 make no
+FUN_0040fc00 add, and the standalone (R3) ticks on every frame from row 0.
+
+- Change (diagnostic only, under `MASHED_CAM_REPLAY_GO`): on a countdown frame, `MASHED_PICKUPS_PREGO`'s chain
+  runs only when the consumed row's `ff4` differs from the previous row's (row 0 compares with 0).
+- Arm R5 = R3's knobs on the rebuilt exe.
+- Prediction P-R5: c = 0 deg on every cube of rows 884 / 924 / 959, set and order equal (GREEN at |c| < 0.01).
+  A non-zero c refutes the `ff4` attribution.
