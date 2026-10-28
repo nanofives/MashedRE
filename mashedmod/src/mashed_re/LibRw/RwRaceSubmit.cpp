@@ -1561,6 +1561,11 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
             rw::SetRenderState(rw::ZTESTENABLE, 0);
             rw::SetRenderState(rw::ZWRITEENABLE, 0);
             rw::SetRenderState(rw::FOGENABLE, 0);
+            // [HB-ARCTIC-SKY] SkySecondaryDispatch (0x00489240) runs inside FUN_004492b0's update of
+            // camera FUN_004840d0(0), a 128x128 camera texture (FUN_00483ed0), not the race camera.
+            // Default ON since L-41 (2026-10-27): the big batch stays out of the race frame.
+            // MASHED_NO_ARCTIC_SKY_RTT=1 draws it after the first sky copy again (the pre-flip default).
+            static const bool s_sky_rtt_lens = std::getenv("MASHED_NO_ARCTIC_SKY_RTT") == nullptr;
             for (const Inst& in : g_sky) {
                 if (in.model < 0 || (std::size_t)in.model >= g_models.size()) continue;
                 rw::Clump* c = g_models[(std::size_t)in.model];
@@ -1568,7 +1573,7 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
                 SetClumpTransform(c, in.m);
                 c->render();
                 // [rfx2] Arctic's FUN_004492b0 @ 0x004492b0: SkySecondaryDispatch after its sky copy
-                if (&in == &g_sky.front() && RaceFx_LensAfterSky()) {
+                if (&in == &g_sky.front() && RaceFx_LensAfterSky() && !s_sky_rtt_lens) {
                     RaceFx_DrawLensBig(g_cam, 0);
                     rw::SetRenderState(rw::ZTESTENABLE, 0);
                     rw::SetRenderState(rw::ZWRITEENABLE, 0);

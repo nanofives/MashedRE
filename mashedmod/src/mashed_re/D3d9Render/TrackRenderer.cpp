@@ -9483,9 +9483,17 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         // Arctic's recorded frame shows both (86-triangle `sky`, 0.265 apart in y); TRAINING and City
         // show one. MASHED_NO_SKYFIX=1 keeps the single translate-only copy with the baked root offset.
         static const bool s_no_skyfix = std::getenv("MASHED_NO_SKYFIX") != nullptr;
+        // [HB-ARCTIC-SKY] Copy A is not a race-frame draw in the original: FUN_004492b0 renders it
+        // between FUN_004c1a00 / FUN_004c19f0 of camera FUN_004840d0(0) = DAT_006ce81c[0], which
+        // FUN_00483ed0 builds on a 128x128 camera-texture raster (FUN_00484000(0,0x80,0x80,0x600) @
+        // 0x00448979). The port has no such camera, so it lands in the race frame and covers the band
+        // below the eye (+24 luma on HB-ARCTIC-OPENSEA's poses). Default ON since L-41 (2026-10-27,
+        // verify/hbarcticskyflip_20261027): copy A stays out of the race frame. MASHED_NO_ARCTIC_SKY_RTT=1
+        // draws it there again (the pre-flip default).
+        static const bool s_sky_rtt_a = std::getenv("MASHED_NO_ARCTIC_SKY_RTT") == nullptr;
         D3DMATRIX skym[2];
         int nsky = 0;
-        if (!s_no_skyfix && course_id_ == 0) {          // A: Arctic only (slot 4 of record "arctic")
+        if (!s_no_skyfix && course_id_ == 0 && !s_sky_rtt_a) {   // A: Arctic only (slot 4 of record "arctic")
             MatIdentity(&skym[nsky]);
             skym[nsky]._11 = -1.f; skym[nsky]._22 = -1.f;
             skym[nsky]._41 = eye[0]; skym[nsky]._42 = eye[1]; skym[nsky]._43 = eye[2];
