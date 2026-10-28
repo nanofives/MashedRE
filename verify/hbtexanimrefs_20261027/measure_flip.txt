@@ -1,0 +1,17 @@
+| case | % frame W | original L | OFF (NO_TEXANIM) L | ON (default) L | gap OFF | gap ON | toward |
+|---|---|---|---|---|---|---|---|
+| forest_s8 | 5.17 | 21.6 | 48.4 | 24.5 | 26.9 | 2.9 | yes |
+| sands_p11 | 61.87 | 72.9 | 172.0 | 76.8 | 99.1 | 3.9 | yes |
+| sands_p8 | 61.07 | 72.8 | 171.9 | 76.8 | 99.1 | 3.9 | yes |
+| training_p3 | 52.99 | 38.8 | 52.8 | 42.1 | 14.0 | 3.3 | yes |
+| training_p4 | 51.09 | 38.8 | 54.1 | 42.3 | 15.3 | 3.6 | yes |
+| warzone_p3 | 44.38 | 54.9 | 71.4 | 71.6 | 16.5 | 16.7 | NO |
+| warzone_p2 | 43.51 | 62.4 | 72.5 | 72.7 | 10.1 | 10.3 | NO |
+
+DEF (flipped build) vs round-2 ANIM (pre-flip, pre-merge exe 9f2afe92), bit-identical:
+  sands_p11: True (pixels differing 0.000%)
+  sands_p8: True (pixels differing 0.000%)
+  training_p3: True (pixels differing 0.000%)
+  training_p4: True (pixels differing 0.000%)
+  warzone_p3: True (pixels differing 0.000%)
+  warzone_p2: True (pixels differing 0.000%)

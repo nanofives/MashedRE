@@ -1,0 +1,3 @@
+TRAINING
+#all_piz_opens_in_order:
+#  TOASTART\TRACKS\TRAINING.PIZ
