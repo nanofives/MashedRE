@@ -164,7 +164,8 @@ void RaceSubmit_AddInstancePosed(int handle, const float* m44, const FramePose* 
                                  std::size_t npose, float sun_scale, float env_coef = 0.f,
                                  const float* env_m44 = nullptr, int kind = kInstCar,
                                  const CarVis* vis = nullptr,    // [rstates] kind, [carlod] vis
-                                 int car_slot = -1);             // [rres] the car's slot (0..3): its shadow RT pass
+                                 int car_slot = -1,              // [rres] the car's slot (0..3): its shadow RT pass
+                                 float morph = -1.f);            // [partmorph] part 0x12 morph position (< 0 = target 0)
 
 // Set the UV-animation clock for this frame. MUST be the same `t` the D3D9 path
 // passes to TrackRenderer::Render, or the two renderers scroll to different

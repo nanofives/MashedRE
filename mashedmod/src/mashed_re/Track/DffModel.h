@@ -73,6 +73,12 @@ struct DffBatch {
     // xyz in the geometry's own space, radius), what RpAtomicGetWorldBoundingSphere
     // (0x004e6100) transforms by the atomic's LTM.
     float sphere[4] = {0.f, 0.f, 0.f, 0.f};
+    // [partmorph] morph target 1's positions / normals, baked and de-indexed exactly like verts /
+    // normals (parallel to them). Empty unless the geometry streams two or more morph targets
+    // (vehicle part 0x12: FUN_00420420 @ 0x00420420 sets its interpolator 0 -> 1, FUN_0041f770 @
+    // 0x0041f770 drives the position; RW lerps them at instance time, FUN_004f6870 @ 0x004f6870).
+    std::vector<float> morph1_verts;
+    std::vector<float> morph1_normals;
 };
 
 // [librwrest] one FRAMELIST entry (rwID_FRAMELIST struct, 0x38 bytes): RW frame matrix

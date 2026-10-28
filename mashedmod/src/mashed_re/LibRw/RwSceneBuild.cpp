@@ -365,8 +365,10 @@ void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
                  bool hierarchy,
                  std::vector<void*>* out_frames,
                  std::vector<std::int32_t>* out_atomic_frame,
-                 std::vector<std::int32_t>* out_atomic_dff) {
+                 std::vector<std::int32_t>* out_atomic_dff,
+                 std::vector<AtomicMorph>* out_atomic_morph) {
     if (out_atomic_mat) out_atomic_mat->clear();
+    if (out_atomic_morph) out_atomic_morph->clear();
     if (out_atomic_part) out_atomic_part->clear();
     if (out_frames) out_frames->clear();
     if (out_atomic_frame) out_atomic_frame->clear();
@@ -500,6 +502,23 @@ void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
                     local.normals[i + r] = static_cast<float>(
                         Ai[r * 3 + 0] * b0.normals[i] + Ai[r * 3 + 1] * b0.normals[i + 1] +
                         Ai[r * 3 + 2] * b0.normals[i + 2]);
+            // [partmorph] morph target 1 out of the same bake
+            if (out_atomic_morph && b0.morph1_verts.size() == b0.verts.size()) {
+                local.morph1_verts.resize(b0.morph1_verts.size());
+                for (std::int32_t i = 0; i < nv; ++i) {
+                    const double d[3] = { b0.morph1_verts[i * 3 + 0] - t[0], b0.morph1_verts[i * 3 + 1] - t[1],
+                                          b0.morph1_verts[i * 3 + 2] - t[2] };
+                    for (int r = 0; r < 3; ++r)
+                        local.morph1_verts[i * 3 + r] = static_cast<float>(
+                            Ai[r * 3 + 0] * d[0] + Ai[r * 3 + 1] * d[1] + Ai[r * 3 + 2] * d[2]);
+                }
+                local.morph1_normals.resize(b0.morph1_normals.size());
+                for (std::size_t i = 0; i + 2 < b0.morph1_normals.size(); i += 3)
+                    for (int r = 0; r < 3; ++r)
+                        local.morph1_normals[i + r] = static_cast<float>(
+                            Ai[r * 3 + 0] * b0.morph1_normals[i] + Ai[r * 3 + 1] * b0.morph1_normals[i + 1] +
+                            Ai[r * 3 + 2] * b0.morph1_normals[i + 2]);
+            }
         }
         struct BatchView {
             const Track::DffBatch& src; const std::vector<float>& verts;
@@ -579,6 +598,16 @@ void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
             if (out_atomic_part) out_atomic_part->push_back(b.part_id);   // [rtex]
             if (out_atomic_frame) out_atomic_frame->push_back(own_frame ? b.frame : -1);
             if (out_atomic_dff) out_atomic_dff->push_back(b.atomic);      // [rstates]
+            if (out_atomic_morph) {                                         // [partmorph]
+                AtomicMorph am;
+                const std::vector<float>& v1 = own_frame ? local.morph1_verts : b.morph1_verts;
+                const std::vector<float>& n1 = own_frame ? local.morph1_normals : b.morph1_normals;
+                if (v1.size() == static_cast<std::size_t>(nv) * 3) {
+                    am.v1 = v1;
+                    if (n1.size() == bv.normals.size() && !n1.empty()) am.n1 = n1;
+                }
+                out_atomic_morph->push_back(std::move(am));
+            }
         }
     }
     return clump;
