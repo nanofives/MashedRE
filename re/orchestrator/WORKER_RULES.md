@@ -52,6 +52,8 @@ The live ledger is one file for all tiers (`log\orch\roadmap.json`), never a bra
   (`verify/savelink_20261023/run_arms.py H_DEF B_DEF_K0 B_DEF_K1 B_DEF_K26`).
 - Trackers only through `re-classify`. No C4 without a canonical-scenario run with the hook
   installed. Master Ghidra only through ghidra-sweep.
+- Tracker edits go through the re-classify skill. A script is allowed only when it is the skill's
+  own documented operation (e.g. re/tools/deferred_close.py). Ad-hoc scripts are not.
 - Do not edit `ROADMAP.md` or `re/NEXT_SESSION.md` unless the step's deliverable is that text
   (example: D5-PDOD). The merge train writes the status line.
 
