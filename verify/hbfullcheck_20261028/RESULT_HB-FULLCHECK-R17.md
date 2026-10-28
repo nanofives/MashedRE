@@ -6,7 +6,7 @@ built with MASHED_NO_DEPLOY=1 mashedmod\build.bat (rc 0, exe sha8 81cbc495). No 
 merge_train.ps1 Gate-Default and Gate-Full (lines 171-244) with merge_train.json refs, every runner wrapped in test-slot.
 No merge_train.ps1 process was running before any D2 arm or the 13-track run.
 
-**Verdict: RED. One gate differs: the 13-track table moved 8 rows. Everything else is GREEN.**
+**Verdict: RED. One gate differs: the 13-track table moved 7 rows. Everything else is GREEN.**
 
 | Gate | Result | Ref |
 |---|---|---|
@@ -15,7 +15,7 @@ No merge_train.ps1 process was running before any D2 arm or the 13-track run.
 | (b) vsum | 3/3 on all 3 arms | 3 |
 | (e) ai_speed_env --check (K0) | 3/3 PASS, launch 1425.7 / 2052.5 / 2055.0 | same |
 | D2 x3 (solo, 0 reruns, 1628/1633/1630 lines) | 0.1942 / 0.2492 / 1896.74 on all three, all "in" | band ref |
-| 13 tracks | DIFFER (8 rows), INSTRUMENT GATES: PASS | verify/hbtexanimrefs_20261027/tracks_score.txt |
+| 13 tracks | DIFFER (7 rows), INSTRUMENT GATES: PASS | verify/hbtexanimrefs_20261027/tracks_score.txt |
 
 Note: K1 v1 fails a standalone (e) check (ft_median_m0 2043.0, ref 2551.6). The gate checks K0 only, so it is not part of the verdict.
 
@@ -33,8 +33,7 @@ Old = reference (hbtexanimrefs_20261027), New = this run. Full diff: tracks_diff
 | 07_Roundabout 1091 | 312  26734  83.3% \| 34 34 0 | 314  26926  83.9% \| 34 34 0 |
 | 08_Storm 968 | 221  17233  94.3% \| 25 25 0 | 223  17425  95.3% \| 24 24 0 |
 
-(The diff reports 8 changed lines: the 03_Arctic pair, 04_Highway, the 06_SuperG pair, 07_Roundabout, 08_Storm = 7 rows listed above plus the second 03_Arctic frame counted as in the table. Exact count of changed table lines in tracks_diff.txt is 8 line pairs across hunks 7-8, 10, 16-17, 19, 23, i.e. 7 rows.)
-Every moved row gains 2 covered cells (192 px in the last count column) and loses 1 from the uncovered cell count. The other
+Every moved row gains 2 in the third numeric column and 192 in the fifth, and the sixth percentage rises; the cell count after the bar drops by 1 (03_Arctic, 04_Highway, 06_SuperG, 08_Storm) or stays (07_Roundabout). The other
 rows (01, 02, 05, 09-13) are identical. All rows CITED.
 
 Likely related to SNAP_POST / TEXANIM defaults versus a reference taken before the SNAP flip. This run does not establish the cause.
