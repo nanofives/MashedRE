@@ -26,6 +26,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-27  0055ae50  FUN_0055ae50  C3 (no change)  D4-WSB-C4-BROAD-TAIL: racediff v11 (tail jmp as call-out) C4-CLEAN, heap-tracked leg compared 0 pages (writes only 2 caller-frame slots), L-38/L-40 keep C3; verify/wsbbroadtail_20261027/RESULT_D4-WSB-C4-BROAD-TAIL.md
 2026-10-27  0055a1f0  FUN_0055a1f0  C3->C4  D4-WSB-C4-BROAD-WS r2: heap-tracked write-set HEAP-CLEAN + canonical racediff C4-CLEAN (hook installed alone); verify/wsbbroadws_20261027/RESULT_D4-WSB-C4-BROAD-WS.md
 2026-10-27  0055ab30  FUN_0055ab30  C3->C4  D4-WSB-C4-BROAD-WS r2: heap-tracked write-set HEAP-CLEAN + canonical racediff C4-CLEAN (hook installed alone); verify/wsbbroadws_20261027/RESULT_D4-WSB-C4-BROAD-WS.md
 2026-10-27  0055c0f0  FUN_0055c0f0  C3->C4  D4-WSB-C4-BROAD-WS r2: heap-tracked write-set HEAP-CLEAN + canonical racediff C4-CLEAN (hook installed alone); verify/wsbbroadws_20261027/RESULT_D4-WSB-C4-BROAD-WS.md
