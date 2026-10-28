@@ -1,0 +1,3 @@
+D:/MashedWT/HB-FULLCHECK-R17_data/arms/D2_DEF_1.motion_diag.log: slip1500=0.1942 in slip2000=0.2492 in drvmed=1896.7400 in n=('334', '529', '1208') H1 398/400 median 1333.9
+D:/MashedWT/HB-FULLCHECK-R17_data/arms/D2_DEF_2.motion_diag.log: slip1500=0.1942 in slip2000=0.2492 in drvmed=1896.7400 in n=('334', '529', '1208') H1 398/400 median 1333.9
+D:/MashedWT/HB-FULLCHECK-R17_data/arms/D2_DEF_3.motion_diag.log: slip1500=0.1942 in slip2000=0.2492 in drvmed=1896.7400 in n=('334', '529', '1208') H1 398/400 median 1333.9
