@@ -26,6 +26,15 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-27  0055b750  FUN_0055b750  C2->C3  D4-WSB-C3-PORTED: RunTracked shadow A/B CLEAN 24/24 (census scenario, hook installed alone, A/B-IS-REAL), 0 heap pages (stack-window stores); U-9793; verify/wsbc3ported_20261027/RESULT_D4-WSB-C3-PORTED.md
+2026-10-27  0055c2d0  FUN_0055c2d0  C2->C3  D4-WSB-C3-PORTED: RunTracked shadow A/B CLEAN 24/24 (census scenario, hook installed alone, A/B-IS-REAL), 0 heap pages (stack-window stores); U-9794; verify/wsbc3ported_20261027/RESULT_D4-WSB-C3-PORTED.md
+2026-10-27  00564310  FUN_00564310  C2->C3  D4-WSB-C3-PORTED: RunTracked shadow A/B CLEAN 24/24 (census scenario, hook installed alone, A/B-IS-REAL), 24 heap pages, rand() caller compared with pre-state restored; verify/wsbc3ported_20261027/RESULT_D4-WSB-C3-PORTED.md
+2026-10-27  005667c0  FUN_005667c0  C2->C3  D4-WSB-C3-PORTED: RunTracked shadow A/B CLEAN 24/24 (census scenario, hook installed alone, A/B-IS-REAL), default x87 body, 2 heap pages; verify/wsbc3ported_20261027/RESULT_D4-WSB-C3-PORTED.md
+2026-10-27  0056f0a0  FUN_0056f0a0  C2->C3  D4-WSB-C3-PORTED: RunTracked shadow A/B CLEAN 24/24 (census scenario, hook installed alone, A/B-IS-REAL), 160 heap pages; verify/wsbc3ported_20261027/RESULT_D4-WSB-C3-PORTED.md
+2026-10-27  00575120  FUN_00575120  C2->C3  D4-WSB-C3-PORTED: RunTracked shadow A/B CLEAN 24/24 (census scenario, hook installed alone, A/B-IS-REAL), 24 heap pages; U-9795; verify/wsbc3ported_20261027/RESULT_D4-WSB-C3-PORTED.md
+2026-10-27  00578b20  FUN_00578b20  C2->C3  D4-WSB-C3-PORTED: RunTracked shadow A/B CLEAN 24/24 (census scenario, hook installed alone, A/B-IS-REAL), float10 return bitwise, 0 heap pages; verify/wsbc3ported_20261027/RESULT_D4-WSB-C3-PORTED.md
+2026-10-27  00578bd0  FUN_00578bd0  C2->C3  D4-WSB-C3-PORTED: RunTracked shadow A/B CLEAN 24/24 on arm 2 after the .asi-only knob warm-up (arm 1 1/24 = TLS init-epoch artifact, PREREG addendum 2), 0 heap pages; U-9796; verify/wsbc3ported_20261027/RESULT_D4-WSB-C3-PORTED.md
+2026-10-27  00578cb0  FUN_00578cb0  C2->C3  D4-WSB-C3-PORTED: RunTracked shadow A/B CLEAN 24/24 on arm 2 after the .asi-only knob warm-up (arm 1 1/24 = TLS init-epoch artifact, PREREG addendum 2), 0 heap pages; verify/wsbc3ported_20261027/RESULT_D4-WSB-C3-PORTED.md
 2026-10-27  0055a1f0  FUN_0055a1f0  C3->C4  D4-WSB-C4-BROAD-WS r2: heap-tracked write-set HEAP-CLEAN + canonical racediff C4-CLEAN (hook installed alone); verify/wsbbroadws_20261027/RESULT_D4-WSB-C4-BROAD-WS.md
 2026-10-27  0055ab30  FUN_0055ab30  C3->C4  D4-WSB-C4-BROAD-WS r2: heap-tracked write-set HEAP-CLEAN + canonical racediff C4-CLEAN (hook installed alone); verify/wsbbroadws_20261027/RESULT_D4-WSB-C4-BROAD-WS.md
 2026-10-27  0055c0f0  FUN_0055c0f0  C3->C4  D4-WSB-C4-BROAD-WS r2: heap-tracked write-set HEAP-CLEAN + canonical racediff C4-CLEAN (hook installed alone); verify/wsbbroadws_20261027/RESULT_D4-WSB-C4-BROAD-WS.md
