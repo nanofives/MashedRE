@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-10-27 22:25 D4-WSB-C3-PORTED (orch/D4-WSB-C3-PORTED): G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/e85ea6fb/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261027_215356
 - 2026-10-27 21:53 D4-WSB-C4-BROAD-TAIL (orch/D4-WSB-C4-BROAD-TAIL): G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/e85ea6fb/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261027_214012
 - 2026-10-27 21:19 D4-WSB-C230-RECHECK (orch/D4-WSB-C230-RECHECK): G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/e85ea6fb/53778664; (b) 3/3 arms 3/3; (e) 3/3 launch same; D2 3/3; 13 tracks identical gates PASS. Run data D:\MashedWT\mtrain_data\20261027_205748
 - 2026-10-27 20:40 HB-ARCTIC-SKY (orch/HB-ARCTIC-SKY): G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/e85ea6fb/53778664. Run data D:\MashedWT\mtrain_data\20261027_202713
