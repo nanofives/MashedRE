@@ -45,7 +45,7 @@ def main():
             v = line.strip().split(',')
             if len(v) != len(hdr):
                 continue
-            rows.append({k: (int(x) if k in ('slot', 'state', 'part14') else float(x)) for k, x in zip(hdr, v)})
+            rows.append({k: (int(x) if k in ('slot', 'state', 'part14') else f32(float(x))) for k, x in zip(hdr, v)})
     n0 = sum(1 for r in rows if r['state'] == 0)
     print(f'rows={len(rows)} state0_rows={n0} slots={sorted(set(r["slot"] for r in rows))}')
     if a.dormant:
@@ -99,7 +99,7 @@ def check_vtx(a):
     lines = [l.strip().split(',') for l in open(a.vtx) if l.strip()]
     nbad = 0
     for v in lines:
-        s, v0, v1, out = float(v[2]), [float(x) for x in v[3:6]], [float(x) for x in v[6:9]], [float(x) for x in v[9:12]]
+        s, v0, v1, out = f32(float(v[2])), [f32(float(x)) for x in v[3:6]], [f32(float(x)) for x in v[6:9]], [f32(float(x)) for x in v[9:12]]
         exp = [f32(f32(f32(v1[k] - v0[k]) * s) + v0[k]) for k in range(3)]
         nbad += exp != out
     print(f'vtx lines={len(lines)} lerp_mismatch={nbad}')

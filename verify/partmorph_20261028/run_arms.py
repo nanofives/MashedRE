@@ -436,6 +436,11 @@ STACK['PR'] = ['MASHED_PONTOON_REPLAY=' + os.path.join(W, 'verify', 'pontoon_202
 # state forced to 0 (diagnostic) and the FUN_00422470 self-test grid
 STACK['PMO'] = ['MASHED_PARTMORPH', 'MASHED_DBG_PARTMORPH=@OUT@/@NAME@.pm.csv']
 STACK['PMOF'] = STACK['PMO'] + ['MASHED_DBG_PARTSTATE0=0', 'MASHED_PARTMORPH_SELFTEST=@OUT@/@NAME@.selftest.csv']
+# added after G4 (not in the PREREG): slot 1 forced instead, an AI car whose steer mean varies
+STACK['PMOF1'] = STACK['PMO'] + ['MASHED_DBG_PARTSTATE0=1']
+# the illustration pair (not acceptance): the same forced slot 0, one backbuffer at frame 900, knob ON / OFF
+STACK['SHON'] = STACK['PMOF'] + ['MASHED_DBG_BBDUMP=900', 'MASHED_DBG_BBDUMP_OUT=@OUT@/@NAME@.bmp']
+STACK['SHOFF'] = ['MASHED_DBG_PARTSTATE0=0', 'MASHED_DBG_BBDUMP=900', 'MASHED_DBG_BBDUMP_OUT=@OUT@/@NAME@.bmp']
 for name in sys.argv[1:]:
     CUR['name'] = name
     if name.startswith('H_'):
