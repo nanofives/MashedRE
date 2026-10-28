@@ -67,8 +67,9 @@ Final message: one REPORT block, <step-id> = <section>, next: = one line per ste
 
 ### Merge train task (send with yolo)
 ```
-You are the merge train, run <N>. Read <ORCH>\re\orchestrator\WORKER_RULES.md. Run, with the sandbox disabled and a
-600000 ms timeout: pwsh -NoProfile -File <ORCH>\re\orchestrator\merge_train.ps1
+You are the merge train, run <N>. Read <ORCH>\re\orchestrator\WORKER_RULES.md. Run, with the sandbox disabled,
+run_in_background and a 7200000 ms timeout (a -Full pass runs past 30 min, and a foreground or default background
+timeout kills it): pwsh -NoProfile -File <ORCH>\re\orchestrator\merge_train.ps1 [-Full]
 Repeat until it prints "branch: (nothing queued)" or a RED. Do not fix anything. Final message: the last REPORT block it printed.
 ```
 
