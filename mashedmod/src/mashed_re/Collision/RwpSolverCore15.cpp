@@ -30,6 +30,7 @@
 //   * `(a<b)==(a==b)` = Ghidra's `a>=b` idiom; kept verbatim (C evaluates identically).
 // ============================================================================
 #include "../Core/HookSystem.h"
+#include "../Core/ShadowTrack.h"
 #include "../Core/ShadowAB.h"
 #include <cmath>       // sqrtf (FSQRT), fabsf (ABS)
 
@@ -579,7 +580,7 @@ LAB_00577ad6:
 // MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
 extern "C" uint __cdecl FUN_00576880(float *param_1,uint param_2,float *param_3,uint param_4,float param_5, float param_6,float *param_7,float *param_8,uint *param_9,uint *param_10, float *param_11,float *param_12) {
     SHADOW_AB_COUNTER(ab, "FUN_00576880", 0x00576880u, ShadowAB::kPhaseRace);
-    return ShadowAB::Run(ab, FUN_00576880_impl, param_1, param_2, param_3, param_4, param_5, param_6, param_7, param_8, param_9, param_10, param_11, param_12);
+    return ShadowAB::RunTracked(ab, FUN_00576880_impl, SHADOW_STACK_WINDOW(), param_1, param_2, param_3, param_4, param_5, param_6, param_7, param_8, param_9, param_10, param_11, param_12);
 }
 RH_ScopedInstall(FUN_00576880, 0x00576880);
 

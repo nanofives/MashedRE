@@ -53,6 +53,7 @@
 //     C source is a plain `<`, as in prior K-clusters.
 // ============================================================================
 #include "../Core/HookSystem.h"
+#include "../Core/ShadowTrack.h"
 #include "../Core/ShadowAB.h"
 #include "NarrowFixKnobs.h"
 
@@ -377,7 +378,7 @@ RH_ScopedInstall(FUN_00575880, 0x00575880);
 // MASHED_SHADOW_AB=1 (or --hooks in scenario_launch.py). Results: shadow_ab.log.
 extern "C" int __cdecl FUN_00575560(int param_1,uint param_2,uint param_3,int param_4,int param_5) {
     SHADOW_AB_COUNTER(ab, "FUN_00575560", 0x00575560u, ShadowAB::kPhaseRace);
-    return ShadowAB::Run(ab, FUN_00575560_impl, param_1, param_2, param_3, param_4, param_5);
+    return ShadowAB::RunTracked(ab, FUN_00575560_impl, SHADOW_STACK_WINDOW(), param_1, param_2, param_3, param_4, param_5);
 }
 RH_ScopedInstall(FUN_00575560, 0x00575560);
 
