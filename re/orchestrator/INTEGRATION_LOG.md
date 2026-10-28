@@ -1,5 +1,6 @@
 # orch/integration log (merge train, newest first)
 
+- 2026-10-28 03:01 D5-DEFER (orch/D5-DEFER): G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/9fcdbd3a/53778664. Run data D:\MashedWT\mtrain_data\20261028_024912
 - 2026-10-28 02:37 D3-CF-SNAP-FLIP (orch/D3-CF-SNAP-FLIP): G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/9fcdbd3a/53778664. Run data D:\MashedWT\mtrain_data\20261028_022507
 - 2026-10-28 01:40 HB-U9064-RECLASS (orch/HB-U9064-RECLASS): not run: text-only change (no build input touched). Run data D:\MashedWT\mtrain_data\20261028_013839
 - 2026-10-28 01:36 HB-TEXANIM-REFS (orch/HB-TEXANIM-REFS): G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/e85ea6fb/53778664. Run data D:\MashedWT\mtrain_data\20261028_012311
