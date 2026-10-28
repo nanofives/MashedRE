@@ -130,7 +130,14 @@ need a canonical racediff.
 
 ## Gates
 
-GATES_PLACEHOLDER
+`verify/savelink_20261023/run_arms.py H_DEF B_DEF_K0 B_DEF_K1 B_DEF_K26`, run twice, through test-slot + `mashed_lock.py`.
+
+- Tree `638c026c9`, exe `fdec5354...`: G-CTRL `5943c5f1/364350ae/52052890`, B `3a03670c/e85ea6fb/53778664`.
+- Final tree `a330e3117` (same exe sources: the warm-up is `#ifndef MASHED_STANDALONE`), exe `039bb9d39cce1b56...`:
+  G-CTRL `5943c5f1/364350ae/52052890`, B `3a03670c/e85ea6fb/53778664`.
+
+Both equal the `merge_train.json` refs. The exe hash differs between the two builds only through the PE link timestamp,
+and the gate outputs are identical. Raw: `D:/MashedWT/D4-WSB-C3-PORTED_data/arms/`, `arms2/`.
 
 ## Files
 
