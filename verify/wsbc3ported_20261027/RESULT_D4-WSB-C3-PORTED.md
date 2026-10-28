@@ -139,6 +139,8 @@ need a canonical racediff.
 Both equal the `merge_train.json` refs. The exe hash differs between the two builds only through the PE link timestamp,
 and the gate outputs are identical. Raw: `D:/MashedWT/D4-WSB-C3-PORTED_data/arms/`, `arms2/`.
 
+Merge: `orch/integration` @ `96c032d0b` was merged into this branch (D4-WSB-C230-RECHECK and HB-ARCTIC-SKY landed after the fork). hooks.csv and CHANGELOG conflicts were resolved by hand, keeping both sides: `0055c230` takes integration's row, and 19 rows differ from integration, exactly this step's. The gates above ran on the pre-merge tree. The merged tree also carries C230-RECHECK's `RwpSolverGlue5.cpp` wrapper change, so the merge train's own gates measure it.
+
 ## Files
 
 Committed: `PREREG_D4-WSB-C3-PORTED.md`, `scan_stores.py/.txt`, `antiisland.py/.txt`, `run_shadow.py`,
