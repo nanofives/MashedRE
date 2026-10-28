@@ -63,3 +63,18 @@ shipping. Nothing to change in DEFERRED.md for that clause.
 ## Proposed edit (not applied)
 Move A (39 rows) and D-11072/D-11074 (41 total) to `## Cleared` with date 2026-10-28 and "condition met, evidence: this RESULT". Rewrite
 D-11073 and D-11076. Active drops from 51 to 10 rows (D-11060..63, D-11073, D-11075..79: 4+1+5).
+
+## Applied (2026-10-28, L-45 option 1, branch orch/D5-DEFER)
+Tool: new operation "Close or rewrite a DEFERRED row" in `.claude/skills/re-classify/SKILL.md`, backed by
+`re/tools/deferred_close.py` (Python, no .ps1 edit). It strikes the row, writes a reason and evidence pointer, and prepends a
+CHANGELOG line per row.
+- Struck 41 rows: D-0245..D-0263 (19), D-0281, D-6160..6168, D-6170, D-6172, D-6173, D-7000..7003, D-9280, D-0001, D-8140,
+  D-11072, D-11074. Reasons are in each row and in the CHANGELOG head (41 lines dated 2026-10-28).
+- Rewritten, stay Active (4 CHANGELOG lines): D-11073 (phase 3 port first: D3-SUBSTATE-PH3, then flip: D3-SUBSTATE-FLIP),
+  D-11076 (before ship: D5-ICONCUBE-SPIN, D5-ICONCUBE-GLOW), D-11077 (before ship: D5-PARTMORPH), D-11062 (before ship:
+  D5-INTROMOVIES).
+- Untouched: D-11060, D-11061 (Mariano's hand session, doubles as the D5 demo), D-11063 (documented wontfix), D-11075 (kept),
+  D-11078 (held on the audio endpoint), D-11079 (tied to the D4 allowlist).
+- Active rows: 51 before, 10 after (D-11060..63, D-11073, D-11075..79). ROADMAP.md:119 corrected from "43 live (128 struck)"
+  to "10 live (170 struck)".
+- No game, Frida or Ghidra run. Gates not run (text-only).

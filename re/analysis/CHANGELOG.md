@@ -26,6 +26,51 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-28  D-11062  DEFERRED  rewritten, stays Active  scheduled before ship per L-45 option 1
+2026-10-28  D-11077  DEFERRED  rewritten, stays Active  scheduled before ship per L-45 option 1
+2026-10-28  D-11076  DEFERRED  rewritten, stays Active  condition met (PICKUPS_ORIG default ON); scheduled before ship per L-45 option 1
+2026-10-28  D-11073  DEFERRED  rewritten, stays Active  stale 'hardcodes return 6' text; phase 3 order fixed per L-45 option 1 (RESULT_D5-DEFER.md)
+2026-10-28  D-11074  DEFERRED  Active->struck  M1..M4 done and default ON (REGISTRY, PICKUPS_ORIG, REG_CARS, REG_CALLBACKS, MODE7), default-flip decision satisfied by D3 close; open U-9215/9217/9218/9219 stay in UNCERTAINTIES (evidence: verify/d5defer_20261028/RESULT_D5-DEFER.md)
+2026-10-28  D-11072  DEFERRED  Active->struck  P1/P2/P3 and registry legs default ON (Core/FaithDefaults.cpp:26-33), user fidelity decision answered 2026-10-06/09, D3 closed 2026-10-21; open U-9208/9209/9212/9214 stay in UNCERTAINTIES (evidence: verify/d5defer_20261028/RESULT_D5-DEFER.md)
+2026-10-28  D-8140  DEFERRED  Active->struck  not applicable: debug_overlay bucket is a hard negative (retail has no overlay code) and the fanout pipeline is opportunistic only (evidence: verify/d5defer_20261028/RESULT_D5-DEFER.md)
+2026-10-28  D-0001  DEFERRED  Active->struck  boot sweep session has nothing left to sweep: boot rows at C0/C1 in hooks.csv number 0 (evidence: verify/d5defer_20261028/RESULT_D5-DEFER.md)
+2026-10-28  D-0245  DEFERRED  Active->struck  re-pickup condition met: every RVA in the row is at C2 or higher in hooks.csv (sweep deferral done) (evidence: verify/d5defer_20261028/RESULT_D5-DEFER.md)
+2026-10-28  D-0246  DEFERRED  Active->struck  re-pickup condition met: every RVA in the row is at C2 or higher in hooks.csv (sweep deferral done) (evidence: verify/d5defer_20261028/RESULT_D5-DEFER.md)
+2026-10-28  D-0247  DEFERRED  Active->struck  re-pickup condition met: every RVA in the row is at C2 or higher in hooks.csv (sweep deferral done) (evidence: verify/d5defer_20261028/RESULT_D5-DEFER.md)
+2026-10-28  D-0248  DEFERRED  Active->struck  re-pickup condition met: every RVA in the row is at C2 or higher in hooks.csv (sweep deferral done) (evidence: verify/d5defer_20261028/RESULT_D5-DEFER.md)
+2026-10-28  D-0249  DEFERRED  Active->struck  re-pickup condition met: every RVA in the row is at C2 or higher in hooks.csv (sweep deferral done) (evidence: verify/d5defer_20261028/RESULT_D5-DEFER.md)
+2026-10-28  D-0250  DEFERRED  Active->struck  re-pickup condition met: every RVA in the row is at C2 or higher in hooks.csv (sweep deferral done) (evidence: verify/d5defer_20261028/RESULT_D5-DEFER.md)
+2026-10-28  D-0251  DEFERRED  Active->struck  re-pickup condition met: every RVA in the row is at C2 or higher in hooks.csv (sweep deferral done) (evidence: verify/d5defer_20261028/RESULT_D5-DEFER.md)
+2026-10-28  D-0252  DEFERRED  Active->struck  re-pickup condition met: every RVA in the row is at C2 or higher in hooks.csv (sweep deferral done) (evidence: verify/d5defer_20261028/RESULT_D5-DEFER.md)
+2026-10-28  D-0253  DEFERRED  Active->struck  re-pickup condition met: every RVA in the row is at C2 or higher in hooks.csv (sweep deferral done) (evidence: verify/d5defer_20261028/RESULT_D5-DEFER.md)
+2026-10-28  D-0254  DEFERRED  Active->struck  re-pickup condition met: every RVA in the row is at C2 or higher in hooks.csv (sweep deferral done) (evidence: verify/d5defer_20261028/RESULT_D5-DEFER.md)
+2026-10-28  D-0255  DEFERRED  Active->struck  re-pickup condition met: every RVA in the row is at C2 or higher in hooks.csv (sweep deferral done) (evidence: verify/d5defer_20261028/RESULT_D5-DEFER.md)
+2026-10-28  D-0256  DEFERRED  Active->struck  re-pickup condition met: every RVA in the row is at C2 or higher in hooks.csv (sweep deferral done) (evidence: verify/d5defer_20261028/RESULT_D5-DEFER.md)
+2026-10-28  D-0257  DEFERRED  Active->struck  re-pickup condition met: every RVA in the row is at C2 or higher in hooks.csv (sweep deferral done) (evidence: verify/d5defer_20261028/RESULT_D5-DEFER.md)
+2026-10-28  D-0258  DEFERRED  Active->struck  re-pickup condition met: every RVA in the row is at C2 or higher in hooks.csv (sweep deferral done) (evidence: verify/d5defer_20261028/RESULT_D5-DEFER.md)
+2026-10-28  D-0259  DEFERRED  Active->struck  re-pickup condition met: every RVA in the row is at C2 or higher in hooks.csv (sweep deferral done) (evidence: verify/d5defer_20261028/RESULT_D5-DEFER.md)
+2026-10-28  D-0260  DEFERRED  Active->struck  re-pickup condition met: every RVA in the row is at C2 or higher in hooks.csv (sweep deferral done) (evidence: verify/d5defer_20261028/RESULT_D5-DEFER.md)
+2026-10-28  D-0261  DEFERRED  Active->struck  re-pickup condition met: every RVA in the row is at C2 or higher in hooks.csv (sweep deferral done) (evidence: verify/d5defer_20261028/RESULT_D5-DEFER.md)
+2026-10-28  D-0262  DEFERRED  Active->struck  re-pickup condition met: every RVA in the row is at C2 or higher in hooks.csv (sweep deferral done) (evidence: verify/d5defer_20261028/RESULT_D5-DEFER.md)
+2026-10-28  D-0263  DEFERRED  Active->struck  re-pickup condition met: every RVA in the row is at C2 or higher in hooks.csv (sweep deferral done) (evidence: verify/d5defer_20261028/RESULT_D5-DEFER.md)
+2026-10-28  D-0281  DEFERRED  Active->struck  re-pickup condition met: every RVA in the row is at C2 or higher in hooks.csv (sweep deferral done) (evidence: verify/d5defer_20261028/RESULT_D5-DEFER.md)
+2026-10-28  D-6160  DEFERRED  Active->struck  re-pickup condition met: every RVA in the row is at C2 or higher in hooks.csv (sweep deferral done) (evidence: verify/d5defer_20261028/RESULT_D5-DEFER.md)
+2026-10-28  D-6161  DEFERRED  Active->struck  re-pickup condition met: every RVA in the row is at C2 or higher in hooks.csv (sweep deferral done) (evidence: verify/d5defer_20261028/RESULT_D5-DEFER.md)
+2026-10-28  D-6162  DEFERRED  Active->struck  re-pickup condition met: every RVA in the row is at C2 or higher in hooks.csv (sweep deferral done) (evidence: verify/d5defer_20261028/RESULT_D5-DEFER.md)
+2026-10-28  D-6163  DEFERRED  Active->struck  re-pickup condition met: every RVA in the row is at C2 or higher in hooks.csv (sweep deferral done) (evidence: verify/d5defer_20261028/RESULT_D5-DEFER.md)
+2026-10-28  D-6164  DEFERRED  Active->struck  re-pickup condition met: every RVA in the row is at C2 or higher in hooks.csv (sweep deferral done) (evidence: verify/d5defer_20261028/RESULT_D5-DEFER.md)
+2026-10-28  D-6165  DEFERRED  Active->struck  re-pickup condition met: every RVA in the row is at C2 or higher in hooks.csv (sweep deferral done) (evidence: verify/d5defer_20261028/RESULT_D5-DEFER.md)
+2026-10-28  D-6166  DEFERRED  Active->struck  re-pickup condition met: every RVA in the row is at C2 or higher in hooks.csv (sweep deferral done) (evidence: verify/d5defer_20261028/RESULT_D5-DEFER.md)
+2026-10-28  D-6167  DEFERRED  Active->struck  re-pickup condition met: every RVA in the row is at C2 or higher in hooks.csv (sweep deferral done) (evidence: verify/d5defer_20261028/RESULT_D5-DEFER.md)
+2026-10-28  D-6168  DEFERRED  Active->struck  re-pickup condition met: every RVA in the row is at C2 or higher in hooks.csv (sweep deferral done) (evidence: verify/d5defer_20261028/RESULT_D5-DEFER.md)
+2026-10-28  D-6170  DEFERRED  Active->struck  re-pickup condition met: every RVA in the row is at C2 or higher in hooks.csv (sweep deferral done) (evidence: verify/d5defer_20261028/RESULT_D5-DEFER.md)
+2026-10-28  D-6172  DEFERRED  Active->struck  re-pickup condition met: every RVA in the row is at C2 or higher in hooks.csv (sweep deferral done) (evidence: verify/d5defer_20261028/RESULT_D5-DEFER.md)
+2026-10-28  D-6173  DEFERRED  Active->struck  re-pickup condition met: every RVA in the row is at C2 or higher in hooks.csv (sweep deferral done) (evidence: verify/d5defer_20261028/RESULT_D5-DEFER.md)
+2026-10-28  D-7000  DEFERRED  Active->struck  re-pickup condition met: every RVA in the row is at C2 or higher in hooks.csv (sweep deferral done) (evidence: verify/d5defer_20261028/RESULT_D5-DEFER.md)
+2026-10-28  D-7001  DEFERRED  Active->struck  re-pickup condition met: every RVA in the row is at C2 or higher in hooks.csv (sweep deferral done) (evidence: verify/d5defer_20261028/RESULT_D5-DEFER.md)
+2026-10-28  D-7002  DEFERRED  Active->struck  re-pickup condition met: every RVA in the row is at C2 or higher in hooks.csv (sweep deferral done) (evidence: verify/d5defer_20261028/RESULT_D5-DEFER.md)
+2026-10-28  D-7003  DEFERRED  Active->struck  re-pickup condition met: every RVA in the row is at C2 or higher in hooks.csv (sweep deferral done) (evidence: verify/d5defer_20261028/RESULT_D5-DEFER.md)
+2026-10-28  D-9280  DEFERRED  Active->struck  re-pickup condition met: every RVA in the row is at C2 or higher in hooks.csv (sweep deferral done) (evidence: verify/d5defer_20261028/RESULT_D5-DEFER.md)
 2026-10-27  0055b750  FUN_0055b750  C2->C3  D4-WSB-C3-PORTED: RunTracked shadow A/B CLEAN 24/24 (census scenario, hook installed alone, A/B-IS-REAL), 0 heap pages (stack-window stores); U-9793; verify/wsbc3ported_20261027/RESULT_D4-WSB-C3-PORTED.md
 2026-10-27  0055c2d0  FUN_0055c2d0  C2->C3  D4-WSB-C3-PORTED: RunTracked shadow A/B CLEAN 24/24 (census scenario, hook installed alone, A/B-IS-REAL), 0 heap pages (stack-window stores); U-9794; verify/wsbc3ported_20261027/RESULT_D4-WSB-C3-PORTED.md
 2026-10-27  00564310  FUN_00564310  C2->C3  D4-WSB-C3-PORTED: RunTracked shadow A/B CLEAN 24/24 (census scenario, hook installed alone, A/B-IS-REAL), 24 heap pages, rand() caller compared with pre-state restored; verify/wsbc3ported_20261027/RESULT_D4-WSB-C3-PORTED.md
