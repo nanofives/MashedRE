@@ -247,12 +247,23 @@ void RaceCamera::Update(const RaceCamCar cars[4], int track_type,
     // pair-switch hysteresis (cam[0x265..0x267]; 0x00446cd0..0x00446ec0)
     const bool same_pair = (A == pair_a_ && B == pair_b_) ||
                            (A == pair_b_ && B == pair_a_);
-    if (!same_pair && !force_reset) {
+    // [D3-SUBSTATE-PH3] MASHED_P3_RESET_PAIR (default OFF): the original's reset does NOT skip this block.
+    // `if (param_2 != 0) local_d4 = 0;` forces the pair-switch branch (decomp of 0x00446520, local_d4 = 0
+    // then the [0x267] += 2 x _DAT_007f100c add), so a reset blends toward the STORED pair [0x265]/[0x266].
+    // Those are BSS 0 at load (cam 0x00897fe0 sits in .data's uninitialised tail), read here as (0, 0) when
+    // never written (-1). Measured: the original's first reset call (phase 3, call 0) leaves mid = car 0
+    // and the pair zoom 0 (verify/d3subph3_20261028/RESULT_d3subph3.md). Knob OFF: the old skip, unchanged.
+    static const bool s_reset_pair = [] { const char* e = std::getenv("MASHED_P3_RESET_PAIR");
+                                          return e && e[0] && e[0] != '0'; }();
+    const bool take_switch = s_reset_pair ? (!same_pair || force_reset) : (!same_pair && !force_reset);
+    const int old_a = pair_a_ < 0 ? (s_reset_pair ? 0 : A) : pair_a_;
+    const int old_b = pair_b_ < 0 ? (s_reset_pair ? 0 : B) : pair_b_;
+    if (take_switch) {
         pair_blend_ += dt_blend + dt_blend;           // += 2×DAT_007f100c
         if (pair_blend_ < 1.f /*0x005cc320*/) {
             // old-pair midpoint/zoom (no velocity lead in this block)
-            const RaceCamCar& oa = cars[pair_a_ < 0 ? A : pair_a_];
-            const RaceCamCar& ob = cars[pair_b_ < 0 ? B : pair_b_];
+            const RaceCamCar& oa = cars[old_a];
+            const RaceCamCar& ob = cars[old_b];
             float osep[3] = {oa.pos[0] - ob.pos[0], 0.f,
                              oa.pos[2] - ob.pos[2]};
             const float ody = oa.pos[1] - ob.pos[1];

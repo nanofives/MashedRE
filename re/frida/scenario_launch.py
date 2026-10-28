@@ -2982,6 +2982,48 @@ function a5ProbeArm(recBaseHex, car, cap){
 }
 function a5ProbeDrain(){ const r = A5P.rows; A5P.rows = []; return r; }
 
+// --- phase-3 camera-call probe (D3-SUBSTATE-PH3, U-9203, 2026-10-28) -----------------------------
+// FUN_00446520(cam, force_reset) entry + leave, the first N calls after arming: caller, reset arg, the sub-state and
+// timer globals, cam dwords +0x00..+0x5c at entry and leave, the spring block +0x964..+0x9a0 at leave, entry 0's
+// +0x3c..+0x44 at leave, and the four car positions (record +0x958/+0x95c/+0x960) at entry. Hex dwords, bit-exact.
+const P3C = { armed:false, cap:200, n:0, rows:[], err:null };
+function p3camProbeArm(cap){
+  if (P3C.armed) return 'already armed';
+  try {
+    P3C.cap = cap || 200;
+    const h = function(p, o){ return p.add(o).readU32().toString(16); };
+    const cam = ga(0x00897fe0), e0 = ga(0x008964c0), rec = ga(0x008815a0);
+    const gl = [0x0063ba8c, 0x005f29b8, 0x007f1030, 0x007f1000, 0x007f1008, 0x007f100c].map(ga);
+    const camOff = []; for (let o = 0; o < 0x60; o += 4) camOff.push(o);
+    const sprOff = []; for (let o = 0x964; o < 0x9a4; o += 4) sprOff.push(o);
+    Interceptor.attach(ga(0x00446520), {
+      onEnter(args){
+        try {
+          if (P3C.n >= P3C.cap) { this.row = null; return; }
+          P3C.n++;
+          const r = [P3C.n - 1, SD.frames, this.returnAddress.toString(16), args[0].toString(16), args[1].toInt32()];
+          for (const g of gl) r.push(g.readU32().toString(16));
+          for (const o of camOff) r.push(h(cam, o));
+          for (let v = 0; v < 4; ++v) for (const o of [0x958, 0x95c, 0x960]) r.push(h(rec, v * 0xd04 + o));
+          this.row = r;
+        } catch(e){ if (!P3C.err) P3C.err = 'p3c ' + e; this.row = null; }
+      },
+      onLeave(){
+        try {
+          if (!this.row) return;
+          const r = this.row;
+          for (const o of camOff) r.push(h(cam, o));
+          for (const o of sprOff) r.push(h(cam, o));
+          for (const o of [0x3c, 0x40, 0x44]) r.push(h(e0, o));
+          P3C.rows.push(r.join(','));
+        } catch(e){ if (!P3C.err) P3C.err = 'p3cL ' + e; }
+      }});
+    P3C.armed = true;
+    return 'p3cam-probe armed (0x446520 entry+leave, first ' + P3C.cap + ' calls)';
+  } catch(e){ return 'ERR ' + e; }
+}
+function p3camProbeDrain(){ const r = P3C.rows; P3C.rows = []; return r; }
+
 // --- .data snapshot probe (u9775, 2026-10-25) ------------------------------------------
 // Native onEnter on the physics dispatcher 0x00470c70: on dispatcher calls n0 .. n0+ns-1 copies the whole .data section
 // (0x005ea000 .. 0x00914800, which holds the vehicle records at 0x008815a0) into an in-process buffer (rep movsd).
@@ -4073,6 +4115,9 @@ rpc.exports = {
   a6tProbeArm: function(b, c){ return a6tProbeArm(b, c); },
   a6tProbeDrain: function(){ return a6tProbeDrain(); },
   a6tProbeErr: function(){ return '' + A6T.err; },
+  p3camProbeArm: function(n){ return p3camProbeArm(n); },
+  p3camProbeDrain: function(){ return p3camProbeDrain(); },
+  p3camProbeErr: function(){ return '' + P3C.err; },
   a5ProbeArm: function(b, c, n){ return a5ProbeArm(b, c, n); },
   a5ProbeDrain: function(){ return a5ProbeDrain(); },
   a5ProbeErr: function(){ return '' + A5P.err; },
@@ -4922,6 +4967,10 @@ def main():
     ap.add_argument("--a5-probe", type=int, default=0,
                     help="[u9771] FUN_0046ddb0 (A5) entry+leave on the --statediff-car record: velocity, angular velocity, +0x9e4, "
                          "+0x9e8, +0x9e0 at entry, velocity at leave, first N calls. Writes <out>.a5probe.csv.")
+    ap.add_argument("--p3cam-probe", type=int, default=0,
+                    help="[D3-SUBSTATE-PH3, U-9203] N: entry+leave hook on FUN_00446520 (race camera), first N calls: "
+                         "caller, reset arg, sub-state/timer globals, cam +0x00..+0x5c in and out, +0x964..+0x9a0 out, entry 0 "
+                         "+0x3c..+0x44 out, car positions in. Writes <out>.p3cam.csv. Requires --statediff-out.")
     ap.add_argument("--snap-probe", default="",
                     help="[u9775] 'n0:ns': native onEnter on the physics dispatcher 0x00470c70 copies the whole .data section "
                          "(0x005ea000, 0x32a800 bytes) on dispatcher calls n0..n0+ns-1. Writes <out>.snap.bin (ns images back "
@@ -5211,6 +5260,8 @@ def main():
                 print("  [statediff]", E.cb_probe_arm())
             if args.carcar_probe:
                 print("  [statediff]", E.cc_probe_arm(args.carcar_probe))
+            if args.p3cam_probe:
+                print("  [statediff]", E.p3cam_probe_arm(args.p3cam_probe))
             if args.a5_probe:
                 print("  [statediff]", E.a5_probe_arm("0x008815a0", args.statediff_car, args.a5_probe))
             if args.snap_probe:
@@ -5942,6 +5993,15 @@ def main():
                             for r in _cr: f.write(chr(9).join(str(x) for x in r) + chr(10))
                         print(f"  [statediff] carcar-probe {len(_cr)} rows -> {_cf} (err {E.cc_probe_err()})")
                     except Exception as _e: print("  [statediff] carcar drain failed:", _e)
+                if args.p3cam_probe:
+                    try:
+                        _pr = E.p3cam_probe_drain()
+                        _pf = outp.with_suffix(outp.suffix + ".p3cam.csv")
+                        with open(_pf, "w", newline="") as f:
+                            f.write(",".join(["call","sdframe","ret","cam","reset","ba8c","s29b8","t1030","t1000","t1008","t100c"] + ["i%02x" % o for o in range(0, 0x60, 4)] + ["p%d%s" % (v, c) for v in range(4) for c in "xyz"] + ["o%02x" % o for o in range(0, 0x60, 4)] + ["s%03x" % o for o in range(0x964, 0x9a4, 4)] + ["e0x", "e0y", "e0z"]) + chr(10))
+                            for r in _pr: f.write(r + chr(10))
+                        print(f"  [statediff] p3cam-probe {len(_pr)} rows -> {_pf} (err {E.p3cam_probe_err()})")
+                    except Exception as _e: print("  [statediff] p3cam drain failed:", _e)
                 if args.a5_probe:
                     try:
                         _ar = E.a5_probe_drain()
