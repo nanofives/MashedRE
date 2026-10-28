@@ -108,7 +108,9 @@ int RaceSubmit_RegisterModel(const Track::DffModel& model,
 //   kInstCar         the car bodies: after the world, after the rain line pass (F4);
 //   kInstPreWorld    [rres] drawn first in the frame, before the world walk (SuperG's Reflections.dff, which the
 //                    original draws into its reflection render-target camera ahead of FUN_004270f0's world pass).
-enum : int { kInstAfterWorld = 0, kInstInWorld = 1, kInstCar = 2, kInstPreWorld = 3 };
+//   kInstAfterFx     [iconcube] after the world FX pass (RaceFx_DrawWorldFx), in queue order: the pickup
+//                    IconCubes (FUN_00458b10 @ 0x00458b10, after the object shadows and particles).
+enum : int { kInstAfterWorld = 0, kInstInWorld = 1, kInstCar = 2, kInstPreWorld = 3, kInstAfterFx = 4 };
 
 // [rsky U-9715] The object world (COURSE.LUA Object_Bsp_Filename, handler 0x0047a610; CreateFromDescription
 // loads it with the world-BSP loader 0x0042a640 into course + 0x10040). Forest's slot 2 (0x0044df00) renders

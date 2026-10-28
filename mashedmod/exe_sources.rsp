@@ -77,6 +77,7 @@
 "Render\RwStreamCore.cpp"
 "D3d9Render\ParticleSystem.cpp"
 "D3d9Render\PickupField.cpp"
+"D3d9Render\PickupIconCube.cpp"
 "Powerup\PowerupSystem.cpp"
 "Powerup\PowerupTypeSearch.cpp"
 "Powerup\PowerupEffects.cpp"

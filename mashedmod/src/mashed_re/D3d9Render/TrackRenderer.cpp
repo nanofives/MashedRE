@@ -41,6 +41,7 @@ extern "C" void* __cdecl RwMatrixRotate(void* matrix, const float* axis, float a
 #include "../Vehicle/PosModelKnobs.h" // [d2posmodel] fix B knobs (default OFF)
 #include "../Race/WorldRegistry.h"  // mode 7 M1: world-object registry (MASHED_REGISTRY)
 #include "../Gameplay/PickupTick.h"  // mode 7 M2a: pickup tick FUN_00459000 (MASHED_PICKUPS_ORIG)
+#include "PickupIconCube.h"          // [iconcube] D5-ICONCUBE-SPIN (MASHED_ICONCUBE)
 #include "../Race/CarRegistrant.h"  // mode 7 M2b: car registrant FUN_0041f710 (MASHED_REG_CARS)
 #include "../Race/SubStateMachine.h"  // D-11073 leg 1b: FUN_0040dbd0 / FUN_004103a0 (MASHED_SUBSTATE)
 #include "../Race/CameraEntries.h"    // D-11073 leg 2: phase-3 camera entries (MASHED_SUBSTATE)
@@ -3222,6 +3223,8 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
     // General_Anim_Filename .ANM flight path (track piz); flown under the
     // per-frame HAnim transform (see LoadCopters + the Render copter pass).
     LoadCopters(dev, piz, piz_path, log);
+    // [iconcube] FUN_004587a0 @ 0x004587a0's IconCube models + pool writes (MASHED_ICONCUBE, default OFF)
+    IconCube_OnTrackLoad(amb_world_, log);
 
     // [camribbon] The camera-path ribbon (FUN_00426d00's node corners) comes from the original's
     // node-record build by default (Race::PathNodes_CameraNodes = FUN_00478660 BuildNode, the
@@ -10224,6 +10227,10 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
             LibRw::RaceSubmit_AddInstanceStates(p.rw_model, (const float*)&inst, LibRw::kInstAfterWorld,
                                                 p.hook_cull, p.hook_zwrite);
     }
+
+    // [iconcube] FUN_00458b10 @ 0x00458b10's cube loop (FUN_0045b990), drawn after the world FX
+    // (LibRw::kInstAfterFx). MASHED_ICONCUBE, default OFF.
+    IconCube_Submit(eye, at);
 
     dev->SetTexture(0, nullptr);
     MARK(d_car);     // player + AI cars (librw instances)
