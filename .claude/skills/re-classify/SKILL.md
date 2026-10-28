@@ -72,6 +72,27 @@ py -3.12 re\tools\deferred_close.py rewrite --id D-NNNN --why "<cell>" --when "<
 - After a batch, recount Active rows (`grep -c "^| D-" DEFERRED.md` inside the Active section) and fix
   any count quoted in `ROADMAP.md`.
 
+## Add a DEFERRED row (no function C-level moves)
+
+Use when work is deliberately parked and has no Active row yet (L-48, 2026-10-28). Run the helper,
+never hand-edit `DEFERRED.md`:
+
+```
+py -3.12 re\tools\deferred_add.py add --title "<title>" --why "<why deferred>" --when "<observable re-pickup condition>" --tag "<phase tag>" --reason "<changelog reason>"
+py -3.12 re\tools\deferred_add.py add ... --rvas-tsv <tsv> --rvas-id <id>   # census group: appends the TSV rows' RVAs to the title
+```
+
+- **add** takes the next monotonic ID (highest `D-NNNN` anywhere in the file, struck and Cleared rows
+  included, plus one), appends the row after the last row of the `## Active` table, and prepends
+  `date  D-NNNN  DEFERRED  added to Active  reason` to `re/analysis/CHANGELOG.md` below `<!-- ENTRIES -->`.
+- `--rvas-tsv/--rvas-id` (columns `id` and `rva` by default, `--rvas-id-col/--rvas-col` to change) appends
+  `(N rows): 0x<rva>, ...` in address order, so one census group is one row.
+- Gate: title, why, when, tag and reason are all mandatory. The helper refuses a vague re-pickup
+  condition (`later`, `someday`, `tbd`), a title already present in Active, a cell with ` | ` or a newline,
+  and an `--rvas-id` that matches no TSV row. `--dry-run` prints the ID without writing.
+- Line endings of both files are preserved. Only the `## Active` section grows.
+- After a batch, recount Active rows and fix any count quoted in `ROADMAP.md`.
+
 ## CSV row format reminder
 
 ```
