@@ -1,0 +1,376 @@
+[decomp_pc] slot=Mashed_pool0 modes=decomp n=6
+// FUN_00498510 @ 0x00498510  size=653  (MASHED.exe)
+// undefined FUN_00498510(void)
+
+/* WARNING: Function: __security_check_cookie replaced with injection: security_check_cookie */
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* [C1 2026-05-23] Writes stack cookie `local_c = DAT_00616038 ^ unaff_retaddr` at entry. */
+
+void FUN_00498510(int param_1,int param_2)
+
+{
+  char cVar1;
+  byte bVar2;
+  HINSTANCE pHVar3;
+  char *pcVar4;
+  byte *pbVar5;
+  HWND hWndParent;
+  UINT UVar6;
+  int *piVar7;
+  undefined4 *puVar8;
+  byte *pbVar9;
+  int *piVar10;
+  int iVar11;
+  int *piVar12;
+  bool bVar13;
+  uint unaff_retaddr;
+  LPCSTR lpTemplateName;
+  LPSTR pCVar14;
+  code *lpDialogFunc;
+  int iVar15;
+  LPARAM dwInitParam;
+  int local_210;
+  byte local_20c [512];
+  uint local_c;
+  
+  local_c = DAT_00616038 ^ unaff_retaddr;
+  iVar15 = 0x20;
+  _DAT_00773098 = &DAT_006147e8;
+  _DAT_0077309c = &DAT_00614be8;
+  _DAT_007730a0 = &DAT_00614fe8;
+  _DAT_007730a4 = &DAT_006153e8;
+  _DAT_007730a8 = &DAT_006157e8;
+  _DAT_007730ac = &DAT_00615be8;
+  DAT_00773118 = *(undefined4 *)(&DAT_00773098 + param_2 * 4);
+  UVar6 = DAT_007719e8 + 0x82a;
+  pCVar14 = &DAT_007730b4;
+  pHVar3 = (HINSTANCE)FUN_00499720();
+  LoadStringA(pHVar3,UVar6,pCVar14,iVar15);
+  iVar15 = 0x20;
+  UVar6 = DAT_007719e8 + 0x834;
+  pCVar14 = &DAT_007730f8;
+  pHVar3 = (HINSTANCE)FUN_00499720();
+  LoadStringA(pHVar3,UVar6,pCVar14,iVar15);
+  iVar15 = FUN_00495790();
+  FUN_004b6520(&DAT_007e95c0,0x800);
+  iVar11 = 0;
+  puVar8 = &DAT_007e96c8;
+  do {
+    puVar8[-0x42] = 6;
+    if (iVar11 < iVar15) {
+      puVar8[0xd] = 1;
+      puVar8[0xe] = iVar11;
+      FUN_00495830(iVar11,puVar8 + -0x41);
+      *puVar8 = 0;
+      puVar8[1] = 1;
+      puVar8[2] = 2;
+      puVar8[3] = 3;
+      puVar8[4] = 0;
+      puVar8[5] = 1;
+      puVar8[6] = 4;
+      puVar8[7] = 2;
+      puVar8[8] = 5;
+    }
+    else if (iVar11 == iVar15) {
+      puVar8[0xd] = 2;
+      pcVar4 = &DAT_007730b4;
+      do {
+        cVar1 = *pcVar4;
+        *(char *)((int)(puVar8 + -0x1dcc6e) + (int)pcVar4) = cVar1;
+        pcVar4 = pcVar4 + 1;
+      } while (cVar1 != '\0');
+      *puVar8 = 0x1f;
+      puVar8[1] = 0x2d;
+      puVar8[2] = 0x1e;
+      puVar8[3] = 0x20;
+      puVar8[4] = 0x1c;
+      puVar8[5] = 1;
+      puVar8[6] = 1;
+      puVar8[7] = 0x1e;
+      puVar8[8] = 0x2e;
+      puVar8[9] = 0xcb;
+      puVar8[10] = 0xcd;
+      puVar8[0xb] = 200;
+      puVar8[0xc] = 0xd0;
+    }
+    else {
+      puVar8[0xd] = 0;
+    }
+    puVar8 = puVar8 + 0x80;
+    iVar11 = iVar11 + 1;
+  } while ((int)puVar8 < 0x7e9ec8);
+  piVar7 = &DAT_007e95c0;
+  do {
+    piVar10 = piVar7;
+    piVar12 = &local_210;
+    for (iVar15 = 0x80; iVar15 != 0; iVar15 = iVar15 + -1) {
+      *piVar12 = *piVar10;
+      piVar10 = piVar10 + 1;
+      piVar12 = piVar12 + 1;
+    }
+    iVar15 = FUN_004971b0();
+    if (iVar15 != 0) {
+      if (*piVar7 == local_210) {
+        pbVar9 = local_20c;
+        pbVar5 = (byte *)(piVar7 + 1);
+        do {
+          bVar2 = *pbVar5;
+          bVar13 = bVar2 < *pbVar9;
+          if (bVar2 != *pbVar9) {
+LAB_00498744:
+            iVar15 = (1 - (uint)bVar13) - (uint)(bVar13 != 0);
+            goto LAB_00498749;
+          }
+          if (bVar2 == 0) break;
+          bVar2 = pbVar5[1];
+          bVar13 = bVar2 < pbVar9[1];
+          if (bVar2 != pbVar9[1]) goto LAB_00498744;
+          pbVar5 = pbVar5 + 2;
+          pbVar9 = pbVar9 + 2;
+        } while (bVar2 != 0);
+        iVar15 = 0;
+LAB_00498749:
+        if (iVar15 == 0) goto LAB_0049875a;
+      }
+      piVar10 = &local_210;
+      piVar12 = piVar7;
+      for (iVar15 = 0x80; iVar15 != 0; iVar15 = iVar15 + -1) {
+        *piVar12 = *piVar10;
+        piVar10 = piVar10 + 1;
+        piVar12 = piVar12 + 1;
+      }
+    }
+LAB_0049875a:
+    piVar7 = piVar7 + 0x80;
+    if (0x7e9dbf < (int)piVar7) {
+      if (param_1 != 0) {
+        dwInitParam = 0;
+        lpDialogFunc = FUN_00498360;
+        hWndParent = (HWND)FUN_00499710();
+        lpTemplateName = (LPCSTR)0x67;
+        pHVar3 = (HINSTANCE)FUN_00499720();
+        DialogBoxParamA(pHVar3,lpTemplateName,hWndParent,lpDialogFunc,dwInitParam);
+      }
+      return;
+    }
+  } while( true );
+}
+
+
+
+// FUN_004982a0 @ 0x004982a0  size=191  (MASHED.exe)
+// undefined FUN_004982a0(void)
+
+/* WARNING: Function: __security_check_cookie replaced with injection: security_check_cookie */
+/* [C2 2026-05-16] Reads `(&DAT_007e96fc)[param_1 * 0x80]`; if zero, returns 1 immediately (no
+   device for slot… */
+
+INT_PTR FUN_004982a0(int param_1)
+
+{
+  HWND hWndParent;
+  HINSTANCE hInstance;
+  INT_PTR IVar1;
+  int iVar2;
+  undefined4 *puVar3;
+  undefined4 *puVar4;
+  uint unaff_retaddr;
+  LPCSTR lpTemplateName;
+  code *lpDialogFunc;
+  LPARAM dwInitParam;
+  undefined4 local_210 [129];
+  uint local_c;
+  
+  local_c = DAT_00616038 ^ unaff_retaddr;
+  if ((&DAT_007e96fc)[param_1 * 0x80] == 0) {
+    return 1;
+  }
+  DAT_007730b0 = param_1;
+  dwInitParam = 0;
+  lpDialogFunc = FUN_00497fd0;
+  puVar3 = &DAT_007e95c0 + param_1 * 0x80;
+  puVar4 = local_210;
+  for (iVar2 = 0x80; iVar2 != 0; iVar2 = iVar2 + -1) {
+    *puVar4 = *puVar3;
+    puVar3 = puVar3 + 1;
+    puVar4 = puVar4 + 1;
+  }
+  hWndParent = (HWND)FUN_00499710();
+  lpTemplateName = (LPCSTR)0x68;
+  hInstance = (HINSTANCE)FUN_00499720();
+  IVar1 = DialogBoxParamA(hInstance,lpTemplateName,hWndParent,lpDialogFunc,dwInitParam);
+  if (IVar1 == 1) {
+    FUN_00497230();
+  }
+  else if (IVar1 == 0) {
+    puVar3 = local_210;
+    puVar4 = &DAT_007e95c0 + param_1 * 0x80;
+    for (iVar2 = 0x80; iVar2 != 0; iVar2 = iVar2 + -1) {
+      *puVar4 = *puVar3;
+      puVar3 = puVar3 + 1;
+      puVar4 = puVar4 + 1;
+    }
+  }
+  return IVar1;
+}
+
+
+
+// FUN_00498360 @ 0x00498360  size=406  (MASHED.exe)
+// undefined FUN_00498360(void)
+
+undefined4 FUN_00498360(HWND param_1,int param_2,uint param_3,undefined4 param_4)
+
+{
+  uint uVar1;
+  
+  if (param_2 == 0x110) {
+    DAT_007730f4 = param_1;
+    FUN_004974b0(0x110,param_3,param_4);
+  }
+  else {
+    if (param_2 != 0x111) {
+switchD_00498468_default:
+      return 0;
+    }
+    uVar1 = param_3 & 0xffff;
+    if (uVar1 < 0x3f1) {
+      if (uVar1 == 0x3f0) {
+        FUN_004982a0(1);
+        return 1;
+      }
+      if (uVar1 < 0x3eb) {
+        if (uVar1 == 0x3ea) {
+          if (param_3 >> 0x10 == 1) {
+            FUN_00497470();
+            return 1;
+          }
+        }
+        else if (uVar1 == 1) {
+          if (param_3 >> 0x10 == 0) {
+            EndDialog(param_1,1);
+            return 1;
+          }
+        }
+        else {
+          if (uVar1 != 2) {
+            return 0;
+          }
+          if (param_3 >> 0x10 == 0) {
+            EndDialog(param_1,0);
+            return 1;
+          }
+        }
+      }
+      else {
+        if (uVar1 != 0x3eb) {
+          if (uVar1 != 0x3ef) {
+            return 0;
+          }
+          FUN_004982a0(0);
+          return 1;
+        }
+        if (param_3 >> 0x10 == 1) {
+          FUN_00497470();
+          return 1;
+        }
+      }
+    }
+    else {
+      switch(uVar1) {
+      case 0x3f1:
+        FUN_004982a0(2);
+        return 1;
+      case 0x3f2:
+        FUN_004982a0(3);
+        return 1;
+      case 0x3f3:
+        if (param_3 >> 0x10 == 1) {
+          FUN_00497470();
+          return 1;
+        }
+        break;
+      case 0x3f4:
+        if (param_3 >> 0x10 == 1) {
+          FUN_00497470();
+          return 1;
+        }
+        break;
+      default:
+        goto switchD_00498468_default;
+      }
+    }
+  }
+  return 1;
+}
+
+
+
+// FUN_00495150 @ 0x00495150  size=118  (MASHED.exe)
+// undefined FUN_00495150(void)
+
+/* [C2 2026-05-16] [UNCERTAIN U-2293] `DAT_006147c0` (0x006147c0): first arg to `FUN_00498510`; type
+   not… */
+
+bool FUN_00495150(void)
+
+{
+  undefined4 uVar1;
+  
+  FUN_00495120();
+  FUN_004955b0();
+  uVar1 = FUN_00499710();
+  FUN_004960a0(uVar1);
+  uVar1 = FUN_00499710();
+  FUN_004963b0(uVar1);
+  switch(DAT_007719e8) {
+  default:
+    uVar1 = 0;
+    break;
+  case 1:
+    uVar1 = 2;
+    break;
+  case 2:
+    uVar1 = 3;
+    break;
+  case 3:
+    uVar1 = 4;
+    break;
+  case 4:
+    uVar1 = 5;
+    break;
+  case 5:
+    uVar1 = 1;
+  }
+  FUN_00498510(DAT_006147c0,uVar1);
+  return DAT_007719e4 == 0;
+}
+
+
+
+// FUN_00499710 @ 0x00499710  size=6  (MASHED.exe)
+// undefined FUN_00499710(void)
+
+/* [C2 2026-05-16] Loads and returns the 4-byte value at `DAT_007e9584` (0x007e9584). */
+
+undefined4 FUN_00499710(void)
+
+{
+  return DAT_007e9584;
+}
+
+
+
+// FUN_00499720 @ 0x00499720  size=6  (MASHED.exe)
+// undefined FUN_00499720(void)
+
+/* [C1 2026-05-16] HINSTANCE getter (leaf). Returns the application HINSTANCE. */
+
+undefined4 FUN_00499720(void)
+
+{
+  return DAT_007e9580;
+}
+
+
+
