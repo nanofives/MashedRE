@@ -1553,7 +1553,8 @@ const CamManTrack kCamMan[] = {
 // ticks it with the slot's units argument (times `mult`, FUN_004751d0) and puts the current texture
 // on course clump `clump` (FUN_00475060 on [course + 0x10110 + 4*clump]). Forest WATER.DFF ships
 // material texture wet_watercol00, which this replaces with water00..water31 every frame.
-// MASHED_TEXANIM=1 turns it on (default OFF, PREREG verify/hbforestwater_20261027/PREREG.md).
+// Default ON since L-42 (2026-10-27, verify/hbtexanimrefs_20261027/RESULT_HB-TEXANIM-REFS.md); MASHED_NO_TEXANIM=1
+// opts out. (Was MASHED_TEXANIM=1, default OFF, PREREG verify/hbforestwater_20261027/PREREG.md.)
 struct TexAnimTrack { int course_id; int clump; int mult; std::uint32_t slot0, slot1; };
 const TexAnimTrack kTexAnim[] = {
     { 34, 0, 1, 0x0044dea0u, 0x0044ded0u },   // forest   ring DAT_00895948 (0x0044dec5), clump +0x10110
@@ -1563,8 +1564,8 @@ const TexAnimTrack kTexAnim[] = {
 };
 bool TexAnimOn() {
     static const bool on = [] {
-        const char* e = std::getenv("MASHED_TEXANIM");
-        return e && e[0] == '1' && e[1] == '\0';
+        const char* e = std::getenv("MASHED_NO_TEXANIM");
+        return !(e && e[0] == '1' && e[1] == '\0');
     }();
     return on;
 }

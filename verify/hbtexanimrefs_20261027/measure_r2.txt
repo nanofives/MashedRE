@@ -1,0 +1,27 @@
+| pose | % frame W | original L | OFF L | ANIM L | dOFF | dANIM | toward | orig RGB | OFF RGB | ANIM RGB | MAE OFF | MAE ANIM | R2 outside % |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| sands_p11 | 61.87 | 72.9 | 172.0 | 76.8 | 99.1 | 3.9 | yes | 60.3/78.5/77.1 | 155.6/177.5/186.9 | 67.1/80.7/81.9 | 99.1 | 5.6 | 0.000 |
+| sands_p8 | 61.07 | 72.8 | 171.9 | 76.8 | 99.1 | 3.9 | yes | 60.1/78.5/77.2 | 155.2/177.5/187.0 | 67.0/80.7/82.0 | 99.1 | 5.6 | 0.000 |
+| training_p3 | 52.99 | 38.8 | 52.8 | 42.1 | 14.0 | 3.3 | yes | 32.5/41.7/40.4 | 46.5/54.6/59.8 | 37.6/43.7/45.6 | 14.9 | 5.8 | 0.000 |
+| training_p4 | 51.09 | 38.8 | 54.1 | 42.3 | 15.3 | 3.6 | yes | 32.1/41.8/40.4 | 47.4/56.1/61.3 | 37.6/44.1/45.8 | 15.5 | 5.2 | 0.000 |
+| warzone_p3 | 44.38 | 54.9 | 71.4 | 71.6 | 16.5 | 16.7 | NO | 53.4/55.9/53.7 | 70.3/72.1/71.0 | 70.5/72.3/71.2 | 26.4 | 26.6 | 0.052 |
+| warzone_p2 | 43.51 | 62.4 | 72.5 | 72.7 | 10.1 | 10.3 | NO | 60.8/63.4/61.3 | 71.3/73.1/72.1 | 71.5/73.3/72.2 | 26.6 | 26.7 | 0.105 |
+
+R0 OFF vs OFF2 (first pose per track):
+  training_p3: bit-identical=True
+  sands_p11: bit-identical=True
+  warzone_p3: bit-identical=True
+
+R1 per track:
+  training: TOWARD ['T', 'T']
+  sands: TOWARD ['T', 'T']
+  warzone: AWAY ['A', 'A']
+R2 all poses <= 0.5% outside: True
+FLIP allowed (R0 and R2 and all TOWARD): False
+
+sands_p11_ANIM log TEXANIM: ['TEXANIM course_id=11 clump=1 textures=32 models=1 mult=2']
+sands_p8_ANIM log TEXANIM: ['TEXANIM course_id=11 clump=1 textures=32 models=1 mult=2']
+training_p3_ANIM log TEXANIM: ['TEXANIM course_id=30 clump=9 textures=32 models=1 mult=1']
+training_p4_ANIM log TEXANIM: ['TEXANIM course_id=30 clump=9 textures=32 models=1 mult=1']
+warzone_p3_ANIM log TEXANIM: ['TEXANIM course_id=33 clump=0 textures=32 models=1 mult=2']
+warzone_p2_ANIM log TEXANIM: ['TEXANIM course_id=33 clump=0 textures=32 models=1 mult=2']

@@ -1,0 +1,31 @@
+| vantage | track | % frame W | original L | OFF L | ANIM L | dOFF | dANIM | scored | toward | orig RGB | OFF RGB | ANIM RGB | R2 outside % |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| training_s8 | training | 0.11 | | | | | | no | | | | | |
+| training_s14 | training | 0.30 | | | | | | no | | | | | |
+| training_s20 | training | 0.57 | 36.2 | 53.6 | 39.1 | 17.4 | 2.9 | yes | yes | 32.0/39.1/32.7 | 49.1/55.3/56.6 | 37.0/40.5/38.0 | 0.001 |
+| sands_s8 | sands | 0.00 | | | | | | no | | | | | |
+| sands_s14 | sands | 0.00 | | | | | | no | | | | | |
+| sands_s20 | sands | 0.00 | | | | | | no | | | | | |
+| warzone_s8 | warzone | 0.00 | | | | | | no | | | | | |
+| warzone_s14 | warzone | 0.00 | | | | | | no | | | | | |
+| warzone_s20 | warzone | 0.00 | | | | | | no | | | | | |
+
+R0 OFF vs OFF2 (s8):
+  training: bit-identical=True
+  sands: bit-identical=True
+  warzone: bit-identical=True
+
+R1 per track:
+  training: TIE (not TOWARD) (1 scored vantage(s))
+  sands: NOT SCORED (0 scored vantage(s))
+  warzone: NOT SCORED (0 scored vantage(s))
+R2 all scored vantages <= 0.5% outside: True
+FLIP allowed (R0 and R2 and all TOWARD): False
+
+imgdiff global (reported, not gating):
+  training_s20 orig vs OFF : size 640x480  mean abs diff R=9.77 G=7.07 B=7.74 (all 8.19)
+  training_s20 orig vs ANIM: size 640x480  mean abs diff R=9.70 G=6.99 B=7.62 (all 8.10)
+
+training_s8_ANIM log TEXANIM: ['TEXANIM course_id=30 clump=9 textures=32 models=1 mult=1']
+sands_s8_ANIM log TEXANIM: ['TEXANIM course_id=11 clump=1 textures=32 models=1 mult=2']
+warzone_s8_ANIM log TEXANIM: ['TEXANIM course_id=33 clump=0 textures=32 models=1 mult=2']
