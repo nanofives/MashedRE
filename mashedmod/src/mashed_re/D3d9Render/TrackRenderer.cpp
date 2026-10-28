@@ -1649,12 +1649,18 @@ bool OuterSameInput(const Vehicle::PlayerCarIO& a, const Vehicle::PlayerCarIO& b
            !std::memcmp(a.input, b.input, sizeof a.input) && !std::memcmp(&a.steer, &b.steer, 4) &&
            a.grounded == b.grounded && a.raw_steer == b.raw_steer && !std::memcmp(&a.ground_off, &b.ground_off, 4);
 }
-// [D3-CF-SNAP 2026-10-27] verify/snap_20261027/PREREG_D3-CF-SNAP.md, both default OFF.
-// MASHED_SNAP_LOG=1 (diagnostic): one "[snap]" line per OuterRestore in mashed_re.log, cap 2000. Changes no computed value.
-// MASHED_SNAP_POST=1: the opponent loop's skip / relocation decisions are the ones made before the physics step. A car the
+// [D3-CF-SNAP 2026-10-27] verify/snap_20261027/PREREG_D3-CF-SNAP.md.
+// MASHED_SNAP_LOG=1 (diagnostic, default OFF): one "[snap]" line per OuterRestore in mashed_re.log, cap 2000. Changes no computed value.
+// MASHED_SNAP_POST: the opponent loop's skip / relocation decisions are the ones made before the physics step. A car the
 // outer driver stepped keeps that result (a dead / spin state that appeared after the pre-phase applies from the next
 // frame, whose pre-phase excludes the car), and the stuck relocation runs after the car's commit, so no restore is needed.
-bool SnapPost() { static const bool s = [] { const char* e = std::getenv("MASHED_SNAP_POST"); return e && e[0] == '1'; }(); return s; }
+// [D3-CF-SNAP-FLIP 2026-10-28] default ON (decision L-43, verify/snapflip_20261028/RESULT_D3-CF-SNAP-FLIP.md);
+// MASHED_NO_SNAP_POST=1 (or MASHED_SNAP_POST=0) opts out: the restore + pre-commit relocation, the pre-flip default.
+bool SnapPost() {
+    static const bool s = [] { const char* no = std::getenv("MASHED_NO_SNAP_POST"); const char* e = std::getenv("MASHED_SNAP_POST");
+                               return !(no && no[0] && no[0] != '0') && !(e && e[0] == '0'); }();
+    return s;
+}
 void SnapLog(const char* what, int v) {
     static const bool s_on = [] { const char* e = std::getenv("MASHED_SNAP_LOG"); return e && e[0] == '1'; }();
     static long s_n = 0;
