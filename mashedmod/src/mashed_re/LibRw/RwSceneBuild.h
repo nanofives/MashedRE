@@ -89,6 +89,10 @@ bool DualEnabled();
 // [rstates] `out_atomic_dff`, when non-null, receives, parallel to out_atomic_mat, the owning
 // DFF atomic of each created rw::Atomic (DffBatch::atomic). RenderWare ties, culls and
 // orders per DFF atomic, while one rw::Atomic is built per batch.
+// [partmorph] `out_atomic_morph`, when non-null, receives, parallel to out_atomic_mat, each created
+// atomic's morph target 1 (DffBatch::morph1_verts / morph1_normals) in the same space as the
+// geometry's morph target 0 (un-baked in hierarchy mode). Empty vectors for an atomic without one.
+struct AtomicMorph { std::vector<float> v1, n1; };
 void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
                  std::uint32_t ambient = 0,
                  std::vector<std::uint32_t>* out_atomic_mat = nullptr,
@@ -96,7 +100,8 @@ void* BuildClump(const Track::DffModel& model, const TextureSource& tex,
                  bool hierarchy = false,
                  std::vector<void*>* out_frames = nullptr,
                  std::vector<std::int32_t>* out_atomic_frame = nullptr,
-                 std::vector<std::int32_t>* out_atomic_dff = nullptr);
+                 std::vector<std::int32_t>* out_atomic_dff = nullptr,
+                 std::vector<AtomicMorph>* out_atomic_morph = nullptr);
 
 // E2'b step 2: build the Arctic world, render it once through librw from a
 // DETERMINISTIC overview camera derived from the world bbox, and dump the

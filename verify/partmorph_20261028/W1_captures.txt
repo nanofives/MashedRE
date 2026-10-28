@@ -1,0 +1,9 @@
+orig_A0: rows=119 car_rows=476 rec+0x298={1: 353, 2: 123} part0x14_non_identity=0 part0x12_non_identity=0
+orig_A1: rows=146 car_rows=584 rec+0x298={1: 367, 2: 217} part0x14_non_identity=0 part0x12_non_identity=0
+orig_C0: rows=161 car_rows=644 rec+0x298={1: 332, 2: 312} part0x14_non_identity=0 part0x12_non_identity=0
+orig_C1: rows=179 car_rows=716 rec+0x298={1: 345, 2: 371} part0x14_non_identity=0 part0x12_non_identity=0
+orig_T0: rows=175 car_rows=700 rec+0x298={1: 506, 2: 194} part0x14_non_identity=0 part0x12_non_identity=0
+orig_T0a: rows=122 car_rows=488 rec+0x298={1: 304, 2: 184} part0x14_non_identity=0 part0x12_non_identity=0
+orig_T1: rows=175 car_rows=700 rec+0x298={1: 505, 2: 195} part0x14_non_identity=0 part0x12_non_identity=0
+orig_T2: rows=175 car_rows=700 rec+0x298={1: 508, 2: 192} part0x14_non_identity=0 part0x12_non_identity=0
+TOTAL {'rows': 1252, 'carrows': 5008, 'state0': 0, 'p20_nonident': 0, 'p18_nonident': 0}

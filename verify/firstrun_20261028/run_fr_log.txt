@@ -1,0 +1,37 @@
+03:58:37 FR1: removing scratch D:\MashedWT\D5-FIRSTRUN_root\videocfg.bin (cdba8772)
+03:58:37 FR1: removing scratch D:\MashedWT\D5-FIRSTRUN_root\original\videocfg.bin (f87df3c8)
+03:58:37 FR1: before: videocfg.bin absent, original/videocfg.bin absent, contcfg []
+03:58:37 FR1: standalone pid=4476 exe edab968a (default env, no MASHED_* set)
+03:58:57 FR1: alive at 20 s True (exit None)
+03:58:57 FR1: after: videocfg.bin 7f1301713a118a86372d06b89d503334ddeb6619b7f23088e09ed453d12bab88, contcfg [], log ["[videocfg] first-run write ret=1 modes=49 pick=1 'NVIDIA GeForce RTX 3070' '640 x 480 x 32 [Fullscreen]'"]
+03:58:57 FR1: written 512 bytes: +0x0 5 name 'NVIDIA GeForce RTX 3070' label '640 x 480 x 32 [Fullscreen]' +0x184..+0x198 0/1/640/480/32/1
+03:58:57 FR1: vs wsfvcfg O_V.bin (cdba8772): 3 bytes differ at ['0x110', '0x111', '0x194']; O_V fields: +0x0 5 name 'NVIDIA GeForce RTX 3070' label '640 x 480 x 16 [Fullscreen]' +0x184..+0x198 0/1/640/480/16/1
+03:58:57 FR1: verdict alive=True videocfg_written=True contcfg_written=False
+03:58:57 FR2: standalone pid=1792 exe edab968a (default env, no MASHED_* set)
+03:59:17 FR2: alive at 20 s True (exit None)
+03:59:17 FR2: videocfg.bin 7f130171 -> 7f130171, mtime same True, contcfg [], log ['[videocfg] videocfg.bin present, no write']
+03:59:17 FR2: verdict alive=True unchanged=True contcfg_written=False
+04:00:20 FR1b: removing scratch D:\MashedWT\D5-FIRSTRUN_root\videocfg.bin (7f130171)
+04:00:20 FR1b: before: videocfg.bin absent, original/videocfg.bin absent, contcfg []
+04:00:20 FR1b: standalone pid=19012 exe edab968a env default, no MASHED_* set __COMPAT_LAYER=unset
+04:00:40 FR1b: alive at 20 s True (exit None)
+04:00:40 FR1b: after: videocfg.bin 7f1301713a118a86372d06b89d503334ddeb6619b7f23088e09ed453d12bab88, contcfg [], log ["[videocfg] first-run write ret=1 modes=49 pick=1 'NVIDIA GeForce RTX 3070' '640 x 480 x 32 [Fullscreen]'"]
+04:00:40 FR1b: written 512 bytes: +0x0 5 name 'NVIDIA GeForce RTX 3070' label '640 x 480 x 32 [Fullscreen]' +0x184..+0x198 0/1/640/480/32/1
+04:00:40 FR1b: vs wsfvcfg O_V.bin (cdba8772): 3 bytes differ at ['0x110', '0x111', '0x194']; O_V fields: +0x0 5 name 'NVIDIA GeForce RTX 3070' label '640 x 480 x 16 [Fullscreen]' +0x184..+0x198 0/1/640/480/16/1
+04:00:40 FR1b: verdict alive=True videocfg_written=True contcfg_written=False
+04:00:40 FR1G: removing scratch D:\MashedWT\D5-FIRSTRUN_root\videocfg.bin (7f130171)
+04:00:40 FR1G: before: videocfg.bin absent, original/videocfg.bin absent, contcfg []
+04:00:40 FR1G: standalone pid=16668 exe edab968a env ['MASHED_CAR', 'MASHED_DETERMINISTIC', 'MASHED_DET_FRAMES', 'MASHED_GAME_MODE', 'MASHED_MUTE', 'MASHED_ROUND', 'MASHED_ROUND_RULE', 'MASHED_TRACK_VIEW', 'MASHED_WIN_POS'] __COMPAT_LAYER=unset
+04:01:00 FR1G: alive at 20 s True (exit None)
+04:01:00 FR1G: after: videocfg.bin 7f1301713a118a86372d06b89d503334ddeb6619b7f23088e09ed453d12bab88, contcfg [], log ["[videocfg] first-run write ret=1 modes=49 pick=1 'NVIDIA GeForce RTX 3070' '640 x 480 x 32 [Fullscreen]'"]
+04:01:00 FR1G: written 512 bytes: +0x0 5 name 'NVIDIA GeForce RTX 3070' label '640 x 480 x 32 [Fullscreen]' +0x184..+0x198 0/1/640/480/32/1
+04:01:00 FR1G: vs wsfvcfg O_V.bin (cdba8772): 3 bytes differ at ['0x110', '0x111', '0x194']; O_V fields: +0x0 5 name 'NVIDIA GeForce RTX 3070' label '640 x 480 x 16 [Fullscreen]' +0x184..+0x198 0/1/640/480/16/1
+04:01:00 FR1G: verdict alive=True videocfg_written=True contcfg_written=False
+04:01:00 FR1Gb: removing scratch D:\MashedWT\D5-FIRSTRUN_root\videocfg.bin (7f130171)
+04:01:00 FR1Gb: before: videocfg.bin absent, original/videocfg.bin absent, contcfg []
+04:01:00 FR1Gb: standalone pid=20232 exe edab968a env ['MASHED_CAR', 'MASHED_DETERMINISTIC', 'MASHED_DET_FRAMES', 'MASHED_GAME_MODE', 'MASHED_MUTE', 'MASHED_ROUND', 'MASHED_ROUND_RULE', 'MASHED_TRACK_VIEW', 'MASHED_WIN_POS'] __COMPAT_LAYER=unset
+04:01:20 FR1Gb: alive at 20 s True (exit None)
+04:01:20 FR1Gb: after: videocfg.bin 7f1301713a118a86372d06b89d503334ddeb6619b7f23088e09ed453d12bab88, contcfg [], log ["[videocfg] first-run write ret=1 modes=49 pick=1 'NVIDIA GeForce RTX 3070' '640 x 480 x 32 [Fullscreen]'"]
+04:01:20 FR1Gb: written 512 bytes: +0x0 5 name 'NVIDIA GeForce RTX 3070' label '640 x 480 x 32 [Fullscreen]' +0x184..+0x198 0/1/640/480/32/1
+04:01:20 FR1Gb: vs wsfvcfg O_V.bin (cdba8772): 3 bytes differ at ['0x110', '0x111', '0x194']; O_V fields: +0x0 5 name 'NVIDIA GeForce RTX 3070' label '640 x 480 x 16 [Fullscreen]' +0x184..+0x198 0/1/640/480/16/1
+04:01:20 FR1Gb: verdict alive=True videocfg_written=True contcfg_written=False

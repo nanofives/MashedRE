@@ -1651,17 +1651,14 @@ bool OuterSameInput(const Vehicle::PlayerCarIO& a, const Vehicle::PlayerCarIO& b
            a.grounded == b.grounded && a.raw_steer == b.raw_steer && !std::memcmp(&a.ground_off, &b.ground_off, 4);
 }
 // [D3-CF-SNAP 2026-10-27] verify/snap_20261027/PREREG_D3-CF-SNAP.md.
-// MASHED_SNAP_LOG=1 (diagnostic, default OFF): one "[snap]" line per OuterRestore in mashed_re.log, cap 2000. Changes no computed value.
-// MASHED_SNAP_POST: the opponent loop's skip / relocation decisions are the ones made before the physics step. A car the
-// outer driver stepped keeps that result (a dead / spin state that appeared after the pre-phase applies from the next
-// frame, whose pre-phase excludes the car), and the stuck relocation runs after the car's commit, so no restore is needed.
-// [D3-CF-SNAP-FLIP 2026-10-28] default ON (decision L-43, verify/snapflip_20261028/RESULT_D3-CF-SNAP-FLIP.md);
-// MASHED_NO_SNAP_POST=1 (or MASHED_SNAP_POST=0) opts out: the restore + pre-commit relocation, the pre-flip default.
-bool SnapPost() {
-    static const bool s = [] { const char* no = std::getenv("MASHED_NO_SNAP_POST"); const char* e = std::getenv("MASHED_SNAP_POST");
-                               return !(no && no[0] && no[0] != '0') && !(e && e[0] == '0'); }();
-    return s;
-}
+// MASHED_SNAP_LOG=1 (diagnostic, default OFF): one "[snap]" line per stuck relocation ("reloc-post") and per outer mismatch
+// ("mismatch") in mashed_re.log, cap 2000. Changes no computed value.
+// The opponent loop's skip / relocation decisions are the ones made before the physics step. A car the outer driver
+// stepped keeps that result (a dead / spin state that appeared after the pre-phase applies from the next frame, whose
+// pre-phase excludes the car), and the stuck relocation runs after the car's commit.
+// [D3-CF-SNAP-FLIP 2026-10-28] that was MASHED_SNAP_POST, default ON (L-43). [D3-CF-SNAP-RETIRE 2026-10-28] the knob,
+// its opt-out (MASHED_NO_SNAP_POST) and OuterSnapshot / OuterRestore are deleted (L-43 step 3,
+// verify/snapretire_20261028/RESULT_D3-CF-SNAP-RETIRE.md): the post-commit form is the only one.
 void SnapLog(const char* what, int v) {
     static const bool s_on = [] { const char* e = std::getenv("MASHED_SNAP_LOG"); return e && e[0] == '1'; }();
     static long s_n = 0;
@@ -4140,6 +4137,7 @@ int TrackRenderer::RegisterCarModel(IDirect3DDevice9* dev, const char* dff_entry
                             sizeof(cm.hub_pos[k]));
             }
         }
+        if (b.part_id == 0x14 && cm.part14_frame < 0) cm.part14_frame = b.frame;   // [partmorph] rec+0x50
         if (b.part_id == 0x13 && cm.body_frame < 0) {
             cm.body_frame = b.frame;
             std::memcpy(cm.part19, b.frame_pos, sizeof(cm.part19));   // [carlod2]
@@ -4378,6 +4376,146 @@ int BuildCarPoses(const TrackRenderer::CarModel& cm, const TrackRenderer::CarPar
         PoseFromRwMatrix(m, cm.body_frame, &out[n++]);
     }
     return n;
+}
+
+// [partmorph] D-11077. MASHED_PARTMORPH=1 (default OFF) ports FUN_0041f770 @ 0x0041f770, which
+// FUN_00420870 @ 0x00420870 calls once per car per frame (after FUN_0041f710): the part 0x12 morph
+// position and part 0x14's frame wobble. Decode: verify/partmorph_20261028/PREREG_D5-PARTMORPH.md.
+bool PartMorphEnabled() {
+    static const bool on = [] {
+        const char* e = std::getenv("MASHED_PARTMORPH");
+        return e && e[0] == '1' && e[1] == '\0';
+    }();
+    return on;
+}
+
+// MASHED_DBG_PARTSTATE0=<slot>, DIAGNOSTIC ONLY (default unset = -1): the slot whose record state is
+// forced to 0 (carvis), so FUN_0041f770's gate opens on the standalone.
+int PartMorphForcedSlot() {
+    static const int slot = [] {
+        const char* e = std::getenv("MASHED_DBG_PARTSTATE0");
+        return (e && e[0] >= '0' && e[0] <= '3' && e[1] == '\0') ? e[0] - '0' : -1;
+    }();
+    return slot;
+}
+
+// FUN_004223f0 @ 0x004223f0 (ecx = n, eax = mask): integer hash to [0, 1). uint32 wraparound as the
+// imuls; fild of a non-negative int then fmul [0x005cd314] (2^-31) rounds once at PC_24.
+float PartMorphHash(std::uint32_t n, std::uint32_t mask) {
+    if (mask != 0) n &= mask;                                   // 0x004223f1..0x004223f5
+    const std::uint32_t e = (n << 13) ^ n;                      // 0x004223f7..0x004223fc
+    std::uint32_t c = e * e;                                    // 0x00422400
+    c = c * 0x3d73u + 0xc0ae5u;                                 // 0x00422403 / 0x00422409
+    c = c * e - 0x2df722f3u;                                    // 0x0042240f / 0x00422412
+    c &= 0x7fffffffu;                                           // 0x00422418
+    return static_cast<float>(static_cast<std::int32_t>(c)) * 4.656612873077393e-10f;   // 2^-31
+}
+
+// FUN_00422470 @ 0x00422470 (x, mask): i = __ftol(floor((double)x)) (FUN_004a3090, FUN_004a2c48);
+// t = x - (float)i (fild, + [0x005cc94c] 2^32 for i < 0, fsubr: one PC_24 rounding);
+// FUN_00422440(hash(i), hash(i + 1), t). FUN_00422440 @ 0x00422440: w = (1 - fcos(pi * t)) * 0.5,
+// (1 - w) * a + w * b, each step at PC_24 (float). fcos is not rounded by the precision control,
+// so the cosine is taken in double and rounded once in 1 - cos.
+float PartMorphNoise(float x, std::uint32_t mask) {
+    const std::int32_t i = static_cast<std::int32_t>(std::floor(static_cast<double>(x)));
+    double fi = static_cast<double>(i);
+    if (i < 0) fi += 4294967296.0;                              // 0x00422492..0x00422494
+    const float t = static_cast<float>(static_cast<double>(x) - fi);
+    const float r1 = PartMorphHash(static_cast<std::uint32_t>(i) + 1u, mask);   // ecx = edx + 1 (0x004224a5)
+    const float r0 = PartMorphHash(static_cast<std::uint32_t>(i), mask);        // ecx = edx (0x004224b8)
+    const float pt = 3.14159274f * t;                           // [0x005cd310] * t
+    float w = static_cast<float>(1.0 - std::cos(static_cast<double>(pt)));
+    w = w * 0.5f;                                               // [0x005cc32c]
+    const float wa = (1.0f - w) * r0;
+    const float wb = w * r1;
+    return wa + wb;
+}
+
+// FUN_0041f770's state outside the record: DAT_0063e4a4 (the noise phase, only writer 0x0041f859,
+// never reset) and the car matrix rows 12..14 FUN_00420870 keeps at 0x0063d8e0 + v*0x40 (its
+// 16-dword copy at the end of every call). Both zero at boot, as the .data.
+float s_pm_phase_0063e4a4 = 0.f;
+float s_pm_prev_0063d8e0[4][3] = {};
+
+// One car's FUN_00420870 -> FUN_0041f770 step. Returns the part 0x12 morph position this copy draws
+// with (-1 = none yet, morph target 0), and appends part 0x14's pose to `out` when the gate opens.
+float PartMorphStep(const TrackRenderer::CarPartState& cp, const TrackRenderer::CarModel& cm, int slot,
+                    const D3DMATRIX& m, int state, LibRw::FramePose* out, int* np) {
+    static float s_last[4] = { -1.f, -1.f, -1.f, -1.f };
+    if (slot < 0 || slot > 3) return -1.f;
+    {   // MASHED_PARTMORPH_SELFTEST=<path>, DIAGNOSTIC ONLY: FUN_00422470 on a grid, once
+        static bool s_done = false;
+        const char* e = std::getenv("MASHED_PARTMORPH_SELFTEST");
+        if (!s_done && e && e[0]) {
+            s_done = true;
+            if (std::FILE* f = std::fopen(e, "w")) {
+                for (int k = -40; k <= 6000; ++k) {
+                    const float x = static_cast<float>(k) * 0.0517f;
+                    std::uint32_t xb, rb;
+                    const float r = PartMorphNoise(x, 0xffu);
+                    std::memcpy(&xb, &x, 4);
+                    std::memcpy(&rb, &r, 4);
+                    std::fprintf(f, "%08x,%08x\n", xb, rb);
+                }
+                std::fclose(f);
+            }
+        }
+    }
+    // FUN_00420870 0x00420950..0x004209d3: d = ((dy*dy + dx*dx) + dz*dz) * [0x005cc9e0] (25), the car
+    // matrix rows 12..14 against the previous call's; 1 when d >= 1, 0 when d < 0 or unordered
+    float* pv = s_pm_prev_0063d8e0[slot];
+    const float dx = m._41 - pv[0], dy = m._42 - pv[1], dz = m._43 - pv[2];
+    float moved = (dy * dy + dx * dx) + dz * dz;
+    moved = moved * 25.0f;
+    if (moved >= 1.0f) moved = 1.0f;
+    else if (!(moved >= 0.0f)) moved = 0.0f;
+    float morph = s_last[slot];
+    float a = 0.f;
+    const float phase0 = s_pm_phase_0063e4a4;
+    const bool run = state == 0;                                // 0x0041f776..0x0041f77e
+    if (run) {
+        // 0x0041f797..0x0041f7e0: clamp(steer mean (FUN_0046bda0(v, 0)) * [0x005cc9a0] (0.05), -1, 1)
+        // * 0.5 + 0.5, the position FUN_00544bf0 @ 0x00544bf0 gives the part 0x12 atomic
+        float v = cp.steer[0] * 0.05f;
+        if (v < 1.0f) { if (v < -1.0f) v = -1.0f; }
+        else if (v >= 1.0f) v = 1.0f;
+        morph = v * 0.5f + 0.5f;
+        // 0x0041f7e9..0x0041f853: a = FUN_00422470(DAT_0063e4a4, 0xff) - 0.5; part 0x14's frame:
+        // RwFrameRotate(Y (DAT_006146fc), a * 30, REPLACE), RwFrameRotate(X (DAT_006146f0), a * 15,
+        // PRECONCAT) (FUN_004c1520). REPLACE leaves the frame position at 0.
+        a = PartMorphNoise(s_pm_phase_0063e4a4, 0xffu) - 0.5f;
+        if (cm.part14_frame >= 0) {
+            static const float kX[3] = { 1.f, 0.f, 0.f };   // DAT_006146f0
+            static const float kY[3] = { 0.f, 1.f, 0.f };   // DAT_006146fc
+            float r[16];
+            RwMatrixRotate(r, kY, a * 30.0f, 0);
+            RwMatrixRotate(r, kX, a * 15.0f, 1);
+            PoseFromRwMatrix(r, cm.part14_frame, out);
+            ++*np;
+        }
+        // 0x0041f853 / 0x0041f859: DAT_0063e4a4 = moved * [0x005cd058] (0.0625) + DAT_0063e4a4
+        s_pm_phase_0063e4a4 = moved * 0.0625f + s_pm_phase_0063e4a4;
+        s_last[slot] = morph;
+    }
+    {   // MASHED_DBG_PARTMORPH=<csv>, DIAGNOSTIC ONLY: one line per car per frame
+        static std::FILE* s_log = [] {
+            const char* e = std::getenv("MASHED_DBG_PARTMORPH");
+            std::FILE* f = (e && e[0]) ? std::fopen(e, "w") : nullptr;
+            if (f) std::fprintf(f, "slot,state,px,py,pz,prevx,prevy,prevz,moved,steer0,morph,phase0,a,phase1,part14\n");
+            return f;
+        }();
+        if (s_log) {
+            std::fprintf(s_log, "%d,%d,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%d\n", slot, state,
+                         m._41, m._42, m._43, pv[0], pv[1], pv[2], moved, cp.steer[0], run ? morph : -1.f,
+                         phase0, a, s_pm_phase_0063e4a4, cm.part14_frame);
+            std::fflush(s_log);
+        }
+    }
+    // the 16-dword copy at FUN_00420870's end (0x00420b2x), whatever rec+0x298 is
+    pv[0] = m._41;
+    pv[1] = m._42;
+    pv[2] = m._43;
+    return morph;
 }
 }  // namespace
 
@@ -5451,7 +5589,6 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             outerSlots[outerN] = 0; outerIo[outerN] = io; ++outerN;
             for (int v = 1; v < 16; ++v)
                 if (s_outer[v].have) { outerSlots[outerN] = v; outerIo[outerN] = s_outer[v].in; ++outerN; }
-            for (int k = 1; k < outerN; ++k) Vehicle::VehiclePhysics_OuterSnapshot(outerSlots[k]);
             if (outerN > 1 && Vehicle::VehiclePhysics_StepCarsOuter(outerN, outerSlots, in.dt, outerIo)) {
                 io = outerIo[0];
                 for (int k = 1; k < outerN; ++k) s_outer[outerSlots[k]].out = outerIo[k];
@@ -5755,20 +5892,15 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         for (int ci = 0; ci < aiCarN; ++ci) {
             AiCar& a = ai_cars_[static_cast<std::size_t>(ci)];
             const int v = ci + 1;
-            // [u9778 / substep] a car the outer driver stepped and this loop does not step (or relocates first): put it back
-            auto outerUndo = [&](const char* site) { if (v < 16 && s_outer[v].have) { SnapLog(site, v); Vehicle::VehiclePhysics_OuterRestore(v); s_outer[v].have = false; } };
-            // [D3-CF-SNAP] MASHED_SNAP_POST: a car the outer driver stepped keeps the result this frame (no skip, no restore)
-            const bool snapPost = phys && SnapPost();
-            const bool snapKeep = snapPost && v < 16 && s_outer[v].have;
+            // [D3-CF-SNAP] a car the outer driver stepped keeps the result this frame (no dead / spin skip)
+            const bool snapKeep = phys && v < 16 && s_outer[v].have;
             // [D4-FX-INPUTS] MASHED_DEAD_COAST: FUN_00470c70 keeps stepping a car FUN_00422fd0 killed (+0x10 == 1 qualifies it,
             // 0x00471012), on the zero block 0x007f19b8 (StepCar). It skips the scaffold spin-out and the stuck relocation.
             const bool deadCoast = phys && round_mode_ && !race_[ci + 1].alive && Vehicle::VehiclePhysics_DeadCoastEnabled();
             if (round_mode_ && !race_[ci + 1].alive && !deadCoast && !snapKeep) {
-                outerUndo("dead");
                 a.cur_speed = 0.f; a.vel[0] = a.vel[1] = a.vel[2] = 0.f; continue;
             }
             if (a.spin > 0.f && !deadCoast && !snapKeep) {   // spun out by a missile/mine (scaffold leaf effect)
-                outerUndo("spin");
                 a.spin -= in.dt; a.yaw += 12.0f * in.dt;
                 yaww::Hit(yaww::W_3283, v);
                 a.cur_speed = 0.f; a.vel[0] = a.vel[1] = a.vel[2] = 0.f;
@@ -5785,7 +5917,8 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             // [D3-CF-K357] MASHED_R7_EXIT (default ON since 2026-10-25, L-16): skipped while the MASHED_ROUND_END7 flag is up. The original keeps
             // the car frozen in sub-state 7 (o_r7_1: 502 frames); a frozen car's gate never changes, so the stand-in would
             // relocate it every 2.5 s. PREREG_D3-CF-K357.md amendment 1.
-            // [D3-CF-SNAP] under MASHED_SNAP_POST this block runs after the commit, at the end of the loop body.
+            // [D3-CF-SNAP] with the physics this block runs after the commit, at the end of the loop body (the scaffold
+            // path, !phys, keeps it here, as MASHED_SNAP_POST did).
             auto stuckReloc = [&]() {
             if (ng >= 2 && !RoundEnd7ExitActive() && !deadCoast) {
                 if (race_[v].gate != a.prog_gate) { a.prog_gate = race_[v].gate; a.stuck_t = 0.f; }
@@ -5796,8 +5929,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
                     const float* gp = gates_[static_cast<std::size_t>(gA)].center;
                     bool rok = false; const float gy2 = GroundHeight(gp[0], gp[2], &rok);
                     if (rok) {
-                        outerUndo("reloc");
-                        SnapLog(snapPost ? "reloc-post" : "reloc-any", v);
+                        SnapLog(phys ? "reloc-post" : "reloc-any", v);
                         a.pos[0] = gp[0]; a.pos[2] = gp[2]; a.pos[1] = gy2 + car_ground_off_;
                         a.yaw = std::atan2(gates_[static_cast<std::size_t>(gB)].center[2] - gp[2],
                                            gates_[static_cast<std::size_t>(gB)].center[0] - gp[0]);
@@ -5811,8 +5943,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
                 }
             }
             };
-            if (!snapPost) stuckReloc();
-            if (!phys) { AiOptionBStep(a, v, in.dt, ng); continue; }
+            if (!phys) { stuckReloc(); AiOptionBStep(a, v, in.dt, ng); continue; }
 
             const std::uint8_t* blk = reinterpret_cast<const std::uint8_t*>(
                 Ai::kCtrlBlockBase + static_cast<std::uintptr_t>(
@@ -5832,10 +5963,13 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             GroundHeight(a.pos[0], a.pos[2], &gok);
             io.grounded = gok ? 1 : 0;
             const bool outerSame = v < 16 && s_outer[v].have && OuterSameInput(io, s_outer[v].in);
-            if (v < 16 && s_outer[v].have && !outerSame) {   // [u9778 / substep] safety net: restore and step it the per-car way
+            // [u9778 / substep] mismatch: the io differs from the one the outer driver stepped. [D3-CF-SNAP-RETIRE] no restore
+            // exists any more, so the car keeps the outer result (stepping it again would step it twice); the line stays as
+            // the witness. 0 lines on every arm of verify/snapretire_20261028 (G-CTRL, B K0 / K1 / K26, 13 tracks).
+            if (v < 16 && s_outer[v].have && !outerSame) {
                 if (s_outerMismatch++ < 200)
                     if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
-                        std::fprintf(lf, "[substep] outer: slot %d io differs from the pre-phase io (restored, stepped per-car) frame %d: "
+                        std::fprintf(lf, "[substep] outer: slot %d io differs from the pre-phase io (kept the outer result) frame %d: "
                                      "pos %d vel %d yaw %d speed %d input %d grounded %d/%d | pos (%.6f,%.6f,%.6f)/(%.6f,%.6f,%.6f) "
                                      "vel (%.4f,%.4f,%.4f)/(%.4f,%.4f,%.4f) in4 %d/%d\n", v,
                                      Vehicle::VehiclePhysics_RecDumpFrameIndex(),
@@ -5848,9 +5982,8 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
                         std::fclose(lf);
                     }
                 SnapLog("mismatch", v);
-                Vehicle::VehiclePhysics_OuterRestore(v);
+                io = s_outer[v].out;
                 s_outer[v].have = false;
-                Vehicle::VehiclePhysics_StepCar(v, in.dt, io);
             } else if (outerSame) {   // [u9778 / substep] stepped above, interleaved with the player
                 io = s_outer[v].out;
                 s_outer[v].have = false;
@@ -5890,8 +6023,8 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
                     a.vel[0] = a.vel[1] = a.vel[2] = 0.f; a.cur_speed = 0.f;
                 }
             }
-            // [D3-CF-SNAP] MASHED_SNAP_POST: the stuck relocation on the committed state, with the skips the loop head applies
-            if (snapPost && !(round_mode_ && !race_[v].alive && !deadCoast) && !(a.spin > 0.f && !deadCoast)) stuckReloc();
+            // [D3-CF-SNAP] the stuck relocation on the committed state, with the skips the loop head applies
+            if (!(round_mode_ && !race_[v].alive && !deadCoast) && !(a.spin > 0.f && !deadCoast)) stuckReloc();
         }
         // [d3bB2 2026-10-17] FUN_00425a40 runs FUN_00422ba0 (the event drain) after FUN_00470c70, the physics of
         // every car: here, after the player's step (above) and the opponents'. Default OFF (MASHED_AI_CONTACT_EVENT).
@@ -9923,6 +10056,10 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
             static const bool s_lod_prev = [] { const char* e = std::getenv("MASHED_CAR_LOD_EYE");
                                                 return !(e && e[0] == 'l'); }();
             out->state = LibRw::CarLodState(part19_d2(slot, m, s_lod_prev ? eye_prev_ : last_eye_));
+            // [partmorph] MASHED_DBG_PARTSTATE0=<slot>, DIAGNOSTIC ONLY, default unset: that slot's record
+            // state is 0, which only FUN_00448220 / FUN_00446520's car-0 branch produce in the original
+            // (the result cameras) and the standalone does not port; it makes FUN_0041f770 run.
+            if (slot == PartMorphForcedSlot()) out->state = 0;
             out->flags = LibRw::CarVisFlags(course_id_, brake);
             if (s_blog)
                 std::fprintf(s_blog, "%d,%d,%u,%d,%d,0x%x\n", cam_replay_row_, slot, static_cast<unsigned>(cur),
@@ -10103,6 +10240,11 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
             // [carlod] FUN_00420870's record state / flags for this copy (null with MASHED_CAR_VIS=0)
             LibRw::CarVis cv;
             const LibRw::CarVis* pv = carvis(slot, m, &cv);
+            // [partmorph] FUN_00420870 -> FUN_0041f770 @ 0x0041f770 (MASHED_PARTMORPH=1): the part 0x12 morph
+            // position for this copy and part 0x14's frame pose (PartMorphStep)
+            float morph = -1.f;
+            if (PartMorphEnabled() && car_parts_[slot].ok && np < 20)
+                morph = PartMorphStep(car_parts_[slot], cm, slot, m, pv ? pv->state : 0, &poses[np], &np);
             if (car_env_ok_ && cm.env_ok) {
                 // 0x00420870 decomp: rec+0x280 -= (v.z + v.x) * [0x005cd2ac] (0.0003), v from
                 // FUN_0046cb30 (the body record's +0x9b0 velocity); then RwFrameRotate(env frame,
@@ -10133,11 +10275,11 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
                 RwMatrixRotate(env, axis, g.angle, 0);
                 LibRw::RaceSubmit_AddInstancePosed(cm.handle, (const float*)&m, poses,
                                                    static_cast<std::size_t>(np), sun, coef, env,
-                                                   LibRw::kInstCar, pv, slot);
+                                                   LibRw::kInstCar, pv, slot, morph);
             } else {
                 LibRw::RaceSubmit_AddInstancePosed(cm.handle, (const float*)&m, poses,
                                                    static_cast<std::size_t>(np), sun, 0.f, nullptr,
-                                                   LibRw::kInstCar, pv, slot);
+                                                   LibRw::kInstCar, pv, slot, morph);
             }
         };
         rep_car(0, &carm);

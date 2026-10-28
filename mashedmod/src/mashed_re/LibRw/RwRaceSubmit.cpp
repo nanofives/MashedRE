@@ -84,8 +84,60 @@ struct Inst { int model; float m[16]; bool fx = false; float env_coef = 0.f; flo
               int kind = kInstAfterWorld;
               bool vis = false; int vis_state = 0; std::uint32_t vis_flags = 0;
               int cull = 0; int zwrite = -1;      // [rhooks] RaceSubmit_AddInstanceStates
-              int car_slot = -1; };               // [rres] RaceSubmit_AddInstancePosed's car slot
+              int car_slot = -1;                  // [rres] RaceSubmit_AddInstancePosed's car slot
+              float morph = -1.f; };              // [partmorph] RpInterpolator position, < 0 = target 0
 std::vector<Inst>       g_insts;
+// [partmorph] per model, parallel to g_models: the atomics whose geometry streams a second morph
+// target (vehicle part 0x12), with both targets' positions / normals in geometry space and the
+// position currently uploaded (0 = morph target 0, as BuildClump left it).
+struct MorphAtomic { rw::Atomic* a = nullptr; std::vector<rw::V3d> v0, v1, n0, n1; float cur = 0.f; };
+std::vector<std::vector<MorphAtomic>> g_model_morph;
+// [partmorph] Upload one copy's morph position before it draws: the RW D3D9 instance path
+// (0x004eaef4..0x004eb05c) takes scale = interpolator position (atomic+0x5c) * recipTime (+0x58, 1.0
+// for part 0x12, FUN_00544a70 at load) and, for start != end and scale != 0, writes every vertex as
+// FUN_004f6870 @ 0x004f6870 case 2 does: (end - start) * scale + start per component, normals the same
+// (not renormalised). A copy without a position (< 0) draws morph target 0. Only atomics whose
+// uploaded position differs are rewritten (librw re-instances them on their next render).
+void ApplyMorph(int model, float pos) {
+    if (model < 0 || (std::size_t)model >= g_model_morph.size()) return;
+    const float want = pos < 0.f ? 0.f : pos;
+    static char s_log[MAX_PATH] = {};
+    static const bool s_dbg = GetEnvironmentVariableA("MASHED_DBG_PARTMORPH", s_log, MAX_PATH) != 0;
+    for (MorphAtomic& m : g_model_morph[(std::size_t)model]) {
+        if (m.cur == want || !m.a || !m.a->geometry) continue;
+        rw::Geometry* g = m.a->geometry;
+        rw::V3d* dv = g->morphTargets[0].vertices;
+        const std::size_t n = m.v0.size();
+        for (std::size_t i = 0; i < n; ++i) {
+            dv[i].x = (m.v1[i].x - m.v0[i].x) * want + m.v0[i].x;
+            dv[i].y = (m.v1[i].y - m.v0[i].y) * want + m.v0[i].y;
+            dv[i].z = (m.v1[i].z - m.v0[i].z) * want + m.v0[i].z;
+        }
+        rw::int32 lk = rw::Geometry::LOCKVERTICES;
+        if (!m.n0.empty() && g->morphTargets[0].normals) {
+            rw::V3d* dn = g->morphTargets[0].normals;
+            for (std::size_t i = 0; i < n; ++i) {
+                dn[i].x = (m.n1[i].x - m.n0[i].x) * want + m.n0[i].x;
+                dn[i].y = (m.n1[i].y - m.n0[i].y) * want + m.n0[i].y;
+                dn[i].z = (m.n1[i].z - m.n0[i].z) * want + m.n0[i].z;
+            }
+            lk |= rw::Geometry::LOCKNORMALS;
+        }
+        g->lock(lk);
+        m.cur = want;
+        // MASHED_DBG_PARTMORPH=<csv>, DIAGNOSTIC ONLY: vertex 0 of each rewritten atomic to <csv>.vtx
+        if (s_dbg && n > 0) {
+            char vp[MAX_PATH + 8];
+            std::snprintf(vp, sizeof(vp), "%s.vtx", s_log);
+            if (std::FILE* f = std::fopen(vp, "a")) {
+                std::fprintf(f, "%d,%p,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g\n", model, (void*)m.a,
+                             want, m.v0[0].x, m.v0[0].y, m.v0[0].z, m.v1[0].x, m.v1[0].y, m.v1[0].z,
+                             dv[0].x, dv[0].y, dv[0].z);
+                std::fclose(f);
+            }
+        }
+    }
+}
 // [librwrest] per model, parallel to g_models: the FRAMELIST frames of a hierarchy model and
 // their streamed matrices (restored after each posed copy draws). Empty otherwise.
 std::vector<std::vector<rw::Frame*>>  g_model_frames;
@@ -333,6 +385,7 @@ void RaceSubmit_Shutdown() {
     if (g_cam)   { g_cam->destroy();   g_cam   = nullptr; }
     for (rw::Clump* c : g_models) if (c) c->destroy();
     g_models.clear(); g_model_rw.clear(); g_insts.clear();
+    g_model_morph.clear();   // [partmorph]
     ClearTexAnim();
     if (g_objworld) { g_objworld->destroy(); g_objworld = nullptr; }
     if (g_world) { g_world->destroy(); g_world = nullptr; }
@@ -569,6 +622,7 @@ void RaceSubmit_BeginTrackLoad() {
     g_model_rwstates.clear();
     g_model_render0.clear();
     g_model_vis_used.clear();
+    g_model_morph.clear();   // [partmorph]
 }
 
 void RaceSubmit_SetCourseFacts(const RaceCourseFacts& facts) {
@@ -589,9 +643,10 @@ int RaceSubmit_RegisterModel(const Track::DffModel& model,
     std::vector<void*>         frames;        // [librwrest]
     std::vector<std::int32_t>  atomic_frame;  // [librwrest]
     std::vector<std::int32_t>  atomic_dff;    // [rstates]
+    std::vector<AtomicMorph>   atomic_morph;  // [partmorph]
     rw::Clump* c = static_cast<rw::Clump*>(
         BuildClump(model, ts, ambient, &atomic_mat, &atomic_part, hierarchy, &frames,
-                   &atomic_frame, &atomic_dff));
+                   &atomic_frame, &atomic_dff, &atomic_morph));
     if (!c) { RLog("WARN: BuildClump failed -- model is NOT drawn (no D3D9 fallback)"); return -1; }
     RegisterUvAnim(c, atomic_mat, uv_rates, nmats);
     {
@@ -616,6 +671,36 @@ int RaceSubmit_RegisterModel(const Track::DffModel& model,
     // regardless of how many copies are actually placed this frame. Instanced
     // models are drawn explicitly below instead.
     g_models.push_back(c);
+    {   // [partmorph]
+        std::vector<MorphAtomic> ms;
+        std::size_t ai = 0;
+        FORLIST(lnk, c->atomics) {
+            rw::Atomic* a = rw::Atomic::fromClump(lnk);
+            rw::Geometry* g = a ? a->geometry : nullptr;
+            if (ai < atomic_morph.size() && g && g->numMorphTargets > 0 && g->morphTargets[0].vertices &&
+                atomic_morph[ai].v1.size() == static_cast<std::size_t>(g->numVertices) * 3) {
+                const AtomicMorph& am = atomic_morph[ai];
+                MorphAtomic m;
+                m.a = a;
+                const rw::int32 n = g->numVertices;
+                m.v0.assign(g->morphTargets[0].vertices, g->morphTargets[0].vertices + n);
+                m.v1.resize(static_cast<std::size_t>(n));
+                for (rw::int32 i = 0; i < n; ++i)
+                    m.v1[i] = { am.v1[i * 3 + 0], am.v1[i * 3 + 1], am.v1[i * 3 + 2] };
+                if (g->morphTargets[0].normals && am.n1.size() == static_cast<std::size_t>(n) * 3) {
+                    m.n0.assign(g->morphTargets[0].normals, g->morphTargets[0].normals + n);
+                    m.n1.resize(static_cast<std::size_t>(n));
+                    for (rw::int32 i = 0; i < n; ++i)
+                        m.n1[i] = { am.n1[i * 3 + 0], am.n1[i * 3 + 1], am.n1[i * 3 + 2] };
+                }
+                ms.push_back(std::move(m));
+            }
+            ++ai;
+        }
+        if (!ms.empty())
+            RLog("[partmorph] model[%d]: %d morph atomic(s)", (int)g_models.size() - 1, (int)ms.size());
+        g_model_morph.push_back(std::move(ms));
+    }
     g_model_parts.push_back(std::move(atomic_part));
     g_model_amat.push_back(atomic_mat);
     {
@@ -708,10 +793,12 @@ void RaceSubmit_SetModelRwStates(int handle) {
 
 void RaceSubmit_AddInstancePosed(int handle, const float* m44, const FramePose* poses,
                                  std::size_t npose, float sun_scale, float env_coef,
-                                 const float* env_m44, int kind, const CarVis* vis, int car_slot) {
+                                 const float* env_m44, int kind, const CarVis* vis, int car_slot,
+                                 float morph) {
     if (handle < 0 || !m44 || (std::size_t)handle >= g_models.size()) return;
     Inst i; i.model = handle; i.kind = kind;
     i.car_slot = car_slot;
+    i.morph = morph;
     for (int k = 0; k < 16; ++k) i.m[k] = m44[k];
     if (vis) { i.vis = true; i.vis_state = vis->state; i.vis_flags = vis->flags; }   // [carlod]
     if (env_m44 && (std::size_t)handle < g_model_env.size() &&
@@ -1842,6 +1929,7 @@ void RaceSubmit_Render(const Race::RaceSceneState& st) {
                 d->update();
                 f->updateObjects();
             }
+            ApplyMorph(in.model, in.morph);   // [partmorph]
             // [rres] FUN_00420050 @ 0x00420050 ends the race camera's update, runs FUN_0041f8f0 (the car shadow
             // render-to-texture) and begins it again, before the light scale and the car's own draw
             if (in.kind == kInstCar && in.car_slot >= 0 && RaceFx_ShadowActive(in.car_slot))

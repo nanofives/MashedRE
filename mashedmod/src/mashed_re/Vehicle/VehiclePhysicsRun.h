@@ -157,8 +157,7 @@ void VehiclePhysics_A4PreEnd();
 // in soflip: StepCarsOuter's MASHED_SUBSTEP_OUTER_ORDER=fiber control reproduces its order.)
 bool VehiclePhysics_OuterEnabled();
 bool VehiclePhysics_StepCarsOuter(int n, const int* slots, float dt, PlayerCarIO* ios);
-void VehiclePhysics_OuterSnapshot(int slot);   // record + per-slot module state, taken before StepCarsOuter
-void VehiclePhysics_OuterRestore(int slot);    // put it back (the car is then stepped the per-car way, or not at all)
+// [D3-CF-SNAP-RETIRE 2026-10-28] OuterSnapshot / OuterRestore deleted (L-43): a car StepCarsOuter stepped keeps the result.
 // [u9749] MASHED_RECDUMP=<path> (diagnostic, default OFF): one MSD1 record of slot MASHED_RECDUMP_SLOT (default 0) per
 // call; call once per race frame after every car's physics. Also advances the frame index MASHED_RECDUMP_A4 uses.
 void VehiclePhysics_RecDumpFrame();

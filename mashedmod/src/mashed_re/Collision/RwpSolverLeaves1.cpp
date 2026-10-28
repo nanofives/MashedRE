@@ -16,6 +16,7 @@
 #include "../Core/ShadowTrack.h"
 #include "../Core/ShadowAB.h"
 #include <cmath>
+#include <cstdio>
 #include <cstdlib>
 
 namespace mashed_re {
@@ -44,9 +45,65 @@ static inline float10 SQRT(float10 v)  { return std::sqrtl(v); }            // [
 // --- CRT rand thunk (FUN_00564310) --------------------------------------------------------
 // FUN_00564310 calls the static-linked CRT rand at 0x005c229b. Route the call through this
 // file-local thunk that jumps to the ORIGINAL CRT rand so the RNG state stays shared with the
-// running game — required for bit-identity under the diff-original .asi A/B. A standalone
-// rebind (own rand state) is a later lane item.
+// running game — required for bit-identity under the diff-original .asi A/B.
 static int (__cdecl* const s_rand_orig)(void) = (int(__cdecl*)(void))0x005c229bu;
+
+#ifdef MASHED_STANDALONE
+// [D4-WSB-RAND-D11064, D-11064] Standalone rebind, DEFAULT ON since D4-WSB-RAND-FLIP 2026-10-28
+// (user decision L-47 (a)); MASHED_NO_OWN_RAND_564310=1 opts out, MASHED_OWN_RAND_564310 is now a
+// no-op. Routes the call to a port-owned copy of the original CRT rand instead of 0x005c229b (which on the exe
+// is zero .bss inside g_b17_low_arena_pad). Same LCG: state = state * 0x343fd (0x005c22a3)
+// + 0x269ec3 (0x005c22a9), return (state >> 16) & 0x7fff (0x005c22b4/0x005c22b7). Initial state 1
+// (_getptd stores 1 to ptd+0x14 at 0x004a8870). Deliberately NOT UCRT std::rand(): the original's
+// only other user of this state is the Lua library (rand caller 0x004c03b4, srand caller
+// 0x004c0502), while the exe's std::rand() is shared with Ai/AiStandalone.cpp. A Lua
+// math.random/randomseed port must bind s_own_rand_state too. The original keeps the state per
+// thread, this keeps one process-wide state. [UNCERTAIN U-9797] (threads, Lua random use)
+// MASHED_OWN_RAND_LOG=<path> (knob on only): a selftest line, then the first 64 calls.
+// verify/d4wsb_rand_20261028/PREREG_D4-WSB-RAND-D11064.md, verify/d4wsb_randflip_20261028/
+static unsigned s_own_rand_state = 1u;
+static int OwnRandStep(unsigned& state) {
+  state = state * 0x343fdu + 0x269ec3u;
+  return (int)((state >> 16) & 0x7fffu);
+}
+static std::FILE* OwnRandLog() {
+  static std::FILE* const s_f = [] {
+    const char* p = std::getenv("MASHED_OWN_RAND_LOG");
+    return (p && p[0]) ? std::fopen(p, "w") : nullptr;
+  }();
+  return s_f;
+}
+static bool OwnRand564310() {
+  static const bool s = [] {
+    const char* no = std::getenv("MASHED_NO_OWN_RAND_564310");
+    const bool on = !(no && no[0] && no[0] != '0');
+    if (on) {
+      if (std::FILE* f = OwnRandLog()) {
+        unsigned scratch = 1u;
+        std::fprintf(f, "selftest");
+        for (int i = 0; i < 8; ++i) std::fprintf(f, " %d", OwnRandStep(scratch));
+        std::fprintf(f, "\n");
+        std::fflush(f);
+      }
+    }
+    return on;
+  }();
+  return s;
+}
+static const bool s_own_rand_init = OwnRand564310();   // selftest line at startup, not first call
+static int __cdecl OwnRand() {
+  static unsigned s_calls = 0;
+  const int r = OwnRandStep(s_own_rand_state);
+  if (s_calls < 64u) {
+    if (std::FILE* f = OwnRandLog()) {
+      std::fprintf(f, "call %u %d\n", s_calls, r);
+      std::fflush(f);
+    }
+  }
+  ++s_calls;
+  return r;
+}
+#endif
 
 // --- Game globals referenced by the bodies. Bound to their absolute addresses via macros
 //     named exactly as the decomp prints them, so each body reads verbatim (RwpIntegrator.cpp
@@ -258,7 +315,11 @@ static uint __cdecl FUN_00564310_impl(float *param_1,float *param_2,float *param
   uint uVar9;
   uint uVar10;
 
+#ifdef MASHED_STANDALONE
+  uVar7 = OwnRand564310() ? OwnRand() : s_rand_orig();   // D-11064 knob, default own LCG (L-47)
+#else
   uVar7 = s_rand_orig();   // decomp: uVar7 = _rand();  (0x005c229b static-linked CRT rand)
+#endif
   fVar1 = *param_3 * _DAT_005e5418 + param_3[4] * _DAT_005cc318;
   fVar2 = param_3[1] * _DAT_005e5418 + param_3[5] * _DAT_005cc318;
   fVar3 = param_3[2] * _DAT_005e5418 + param_3[6] * _DAT_005cc318;
