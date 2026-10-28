@@ -2875,6 +2875,154 @@ void CookCtrlByteAFromKeyboard() {
     }
 }
 
+// [D5-INTROMOVIES] MASHED_INTRO_MOVIES=1 (default OFF; D-11062, L-45),
+// verify/intromovies_20261028/PREREG_D5-INTROMOVIES.md. The boot movies of FUN_00402750:
+// 0x00402838 call FUN_00495350 (four logo movies), then 0x0040283f call FUN_00494c80 (small.mpg).
+// FUN_00495350: local_18 = {1,2,3,4}; FUN_00494a80(0, idx, 0) -> FUN_004944c0(idx) opens the path
+//   [0x006147c4 + idx*4]: 0 frontend, 1 empire, 2 supersonic, 3 renderware, 4 intro. Each frame:
+//   FUN_00492d20 -> FUN_004967e0 (input cook); FUN_00494480 -> FUN_004942b0 (event poll, EC_COMPLETE
+//   clears the running flag DAT_00771a04); skip scan over 4 slots: held byte 0x007f1042 + k*0x4c != 0
+//   and previous-frame byte 0x007f1502 + k*0x4c == 0 (bound 0x007f1632); FUN_004c1bb0 clears the
+//   camera image to RwRGBA {0x00,0x80,0x80,0xff}; FUN_004c1a00 begin; FUN_00493fd0 draws one Im2D quad
+//   over the whole camera raster, colour default white, u in [0, DAT_007719ec/DAT_007719f4] and v in
+//   [0, DAT_007719f0/DAT_007719f8] (video size over texture size: the two ratio floats pushed for
+//   FUN_00493fc0 at 0x0049545a/0x0049545b are never popped and become FUN_00493fd0's param_6/param_7,
+//   call 0x0049546f); FUN_004c19f0 end; FUN_004c1be0 show raster; Sleep(5); then when the flag is 0 or
+//   the scan hit, FUN_00494460 closes the movie and the next index opens; return after the 4th.
+//   Texture rows: the original keeps the DIB bottom-up and puts v = max at the top vertex; MpegVideoTexture
+//   flips rows on upload, so here v = 0 is the top vertex. Same image either way.
+//   Port choices: the quad uses the standalone's -0.5 pixel-centre convention and linear filtering, as the
+//   frontend backdrop does (the RW texture-filter state at 0x00495350 entry is not read). A movie whose
+//   graph fails to open is logged and skipped (the original shows a FUN_00493f00 message box and its
+//   running flag never clears, so it waits for the skip press).
+// FUN_00494c80: builds a graph for toastart/pc/movies/small.mpg (PTR 0x006147e0) and never runs it. The
+//   only other code references to its IMediaControl DAT_00771a48 are teardown FUN_00494bc0 and the static
+//   init/exit thunks 0x005ca780 / 0x005ca890. Ported as build-only, released at exit.
+// Arm-test knobs: MASHED_INTRO_PRESS=<n> adds a one-frame press of the bound key (slot 0 type 2, 0x1c)
+// on frame n of every movie; MASHED_INTRO_SHOT=<n> writes intro_shot_<idx>.bmp on frame n of every movie.
+mashed_re::D3d9Render::MpegVideoTexture g_small_mpg;   // FUN_00494c80's graph, held to exit
+static int IntroEnvInt(const char* name) {
+    char b[16] = {};
+    return GetEnvironmentVariableA(name, b, sizeof(b)) > 0 ? std::atoi(b) : 0;
+}
+void RunBootIntroMovies() {
+    if (IntroEnvInt("MASHED_INTRO_MOVIES") != 1 || !g_device) return;
+    static const char* const kMoviePath[5] = {      // 0x006147c4 table
+        "original/toastart/pc/movies/frontend.mpg",
+        "original/toastart/pc/movies/empire.mpg",
+        "original/toastart/pc/movies/supersonic.mpg",
+        "original/toastart/pc/movies/renderware.mpg",
+        "original/toastart/pc/movies/intro.mpg",
+    };
+    static const int kSeq[4] = {1, 2, 3, 4};        // FUN_00495350 local_18
+    const int press_at = IntroEnvInt("MASHED_INTRO_PRESS");
+    const int shot_at = IntroEnvInt("MASHED_INTRO_SHOT");
+    D3DCAPS9 caps{};
+    g_device->GetDeviceCaps(&caps);
+    mashed_re::D3d9Render::MpegOpenOptions o;
+    o.loop = false;
+    o.audio = true;
+    o.pow2 = (caps.TextureCaps & D3DPTEXTURECAPS_POW2) != 0;   // 0x00494898
+    std::uint8_t prev[4] = {};                      // 0x007f1502 + k*0x4c, BSS 0 before the first cook
+    constexpr std::uint32_t kBindAction4 = 0x1cu;   // 0x00498698 (type 2), pad button 0 (0x00498640)
+    for (int m = 0; m < 4 && !g_quit; ++m) {
+        const char* path = kMoviePath[kSeq[m]];
+        mashed_re::D3d9Render::MpegVideoTexture v;
+        char err[128] = {};
+        const DWORD t0 = GetTickCount();
+        const bool ok = v.Open(g_device, path, err, sizeof(err), o);
+        unsigned frames = 0;
+        const char* why = ok ? "?" : "open-failed";
+        while (ok) {
+            MSG msg;
+            while (PeekMessageA(&msg, nullptr, 0, 0, PM_REMOVE)) {
+                if (msg.message == WM_QUIT) g_quit = true;
+                TranslateMessage(&msg);
+                DispatchMessageA(&msg);
+            }
+            if (g_quit) { why = "quit"; break; }
+            // FUN_00492d20 -> FUN_004967e0: cook the action-4 byte of each active slot.
+            PollKeyboard();
+            PollJoypadButtons();
+            const bool test = press_at > 0 && static_cast<int>(frames) + 1 == press_at;
+            bool skip = false;
+            for (int k = 0; k < 4; ++k) {
+                const int type = g_input_slot_type[k];
+                std::uint8_t held = 0;
+                if (type == 2)
+                    held = ((g_kbd && (g_keys[kBindAction4] & 0x80) != 0) || (test && k == 0)) ? 0xffu : 0u;
+                else if (type == 1)
+                    held = (s_joy_btn[k] & 1u) ? 0xffu : 0u;
+                else
+                    continue;                       // slot not cooked (0x00497450)
+                if (held != 0 && prev[k] == 0) skip = true;
+                prev[k] = held;
+            }
+            // FUN_00494480 -> FUN_004942b0: event poll; latest frame into the texture.
+            const bool done = v.Ended();
+            v.Update();
+            g_device->Clear(0, nullptr, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0x00, 0x80, 0x80), 1.0f, 0);
+            if (SUCCEEDED(g_device->BeginScene())) {
+                if (v.texture()) {
+                    struct VRHW { float x, y, z, rhw; float u, v; };
+                    const float W = static_cast<float>(kWidth), H = static_cast<float>(kHeight);
+                    const float um = static_cast<float>(v.width()) / static_cast<float>(v.tex_width());
+                    const float vm = static_cast<float>(v.height()) / static_cast<float>(v.tex_height());
+                    const VRHW q[4] = {
+                        {-0.5f,     -0.5f,     0.f, 1.f, 0.f, 0.f},
+                        {W - 0.5f,  -0.5f,     0.f, 1.f, um,  0.f},
+                        {-0.5f,     H - 0.5f,  0.f, 1.f, 0.f, vm},
+                        {W - 0.5f,  H - 0.5f,  0.f, 1.f, um,  vm},
+                    };
+                    g_device->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
+                    g_device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+                    g_device->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
+                    g_device->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+                    g_device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+                    g_device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+                    g_device->SetTexture(0, v.texture());
+                    g_device->SetFVF(D3DFVF_XYZRHW | D3DFVF_TEX1);
+                    g_device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, q, sizeof(VRHW));
+                    g_device->SetTexture(0, nullptr);
+                    g_device->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+                }
+                g_device->EndScene();
+            }
+            if (shot_at > 0 && static_cast<int>(frames) + 1 == shot_at) {
+                char shot[64];
+                std::snprintf(shot, sizeof(shot), "intro_shot_%d.bmp", kSeq[m]);
+                DumpBackbufferBMP(shot);
+            }
+            g_device->Present(nullptr, nullptr, nullptr, nullptr);   // FUN_004c1be0
+            Sleep(5);
+            ++frames;
+            if (done || skip) { why = skip ? (test ? "skip-test" : "skip") : "complete"; break; }
+        }
+        if (std::FILE* lf = std::fopen(kLogPath, "a")) {
+            std::fprintf(lf, "INTRO movie idx=%d %s: %s%s frames=%u ms=%lu video=%ux%u tex=%ux%u pow2=%d audio_hr=0x%08lx\n",
+                         kSeq[m], path, why, ok ? "" : err, frames,
+                         static_cast<unsigned long>(GetTickCount() - t0), v.width(), v.height(),
+                         v.tex_width(), v.tex_height(), o.pow2 ? 1 : 0,
+                         static_cast<unsigned long>(v.audio_hr()));
+            std::fclose(lf);
+        }
+        v.Close();                                  // FUN_00494460
+    }
+    // FUN_00494c80: small.mpg graph, built and never run.
+    mashed_re::D3d9Render::MpegOpenOptions so;
+    so.loop = false;
+    so.audio = true;
+    so.run = false;
+    char serr[128] = {};
+    const bool sok = g_small_mpg.Open(g_device, "original/toastart/pc/movies/small.mpg",
+                                      serr, sizeof(serr), so);
+    if (std::FILE* lf = std::fopen(kLogPath, "a")) {
+        std::fprintf(lf, "INTRO small.mpg: %s%s (graph built, not run) video=%ux%u\n",
+                     sok ? "BUILT" : "FAILED ", sok ? "" : serr, g_small_mpg.width(), g_small_mpg.height());
+        std::fclose(lf);
+    }
+}
+
 // 2026-07-14 (WS-PHYS-DRIVE-STABILIZE re-measure): on this machine's driver
 // (NVIDIA RTX 5070 Ti, 2560x1440@164, 32.0.15.9186) IDirect3D9::CreateDevice on
 // D3DDEVTYPE_HAL BLOCKS and never returns — a plain retry loop hangs the whole
@@ -9357,6 +9505,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     // works; the window title just won't reflect key state.
     (void)InitDirectInput(hInstance);
 
+    // [D5-INTROMOVIES] boot movies (FUN_00402750 0x00402838 / 0x0040283f), before
+    // the menu music starts. MASHED_INTRO_MOVIES=1 only (default OFF).
+    RunBootIntroMovies();
+
     // Real audio backend (DirectSound). Non-fatal: if no audio device is
     // present, RaceSession's ambience becomes a logged no-op.
     (void)mashed_re::Audio::Init(g_hwnd);
@@ -10023,6 +10175,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     // Teardown.
     mashed_re::Audio::Shutdown();
     ShutdownDirectInput();
+    g_small_mpg.Close();   // [D5-INTROMOVIES] FUN_00494bc0 releases the small.mpg graph
     ShutdownD3D9();
     if (g_hwnd) {
         DestroyWindow(g_hwnd);
