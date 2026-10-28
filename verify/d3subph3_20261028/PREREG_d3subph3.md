@@ -78,3 +78,41 @@ changes and the RESULT says so.
 ## 5. Report-only
 
 U-9202's car offset on the new capture; phase-3 length of the new original run.
+
+## Amendment 1 (after the original capture, before any knob arm)
+
+### A1.1 Capture result (o_p3c_r1, original, 2456 frames, 1142 camera calls)
+
+- Census: 809 calls in sub-state 3 (all from `0x004483c7`, i.e. `FUN_00448220`'s `LAB_004483a3` call), 1 in 4, 112 in 5,
+  then 6. Phase 3 lasted 808 frames (sdframe 2..809) on this run.
+- **H-A refuted.** No call precedes the reset call: call 0 is reset = 1 with sub-state 3 on the first phase-3 frame.
+- **H-B holds.** Frame 0 has two calls, as in the port. Call 0 (reset) reads `DAT_007f1008` = 0 and `_DAT_007f100c` = 0.
+  Call 1 (reset 0, same frame) reads 50 and 0.0166667 (`FUN_0040fc00` stores both at its top, before
+  `FUN_0040d470(0)`). The port's second call reads 0 (its stores sit in `Ai_AdvanceClock`, after the chain).
+- **H-C refuted, cause found in the bytes.** Call 0's output is (0.50889, 1.12211, -0.61099), far from the grid shot,
+  with the smoothed target on car 0's own position. The decomp of `0x00446520` gives the reason:
+  `if (param_2 != 0) local_d4 = 0;` forces the pair-switch branch on a reset: `[0x267] += 2 x _DAT_007f100c` (= 0),
+  and with `[0x267] < 1` the midpoint and pair zoom blend toward the STORED pair `[0x265]/[0x266]`, which are 0/0 at
+  load (BSS), i.e. car 0 with itself (weight max(2b-1, 0) = 0, keep 1). `RaceCamera::Update` does the opposite: it
+  skips that branch when `force_reset`. Call 1 then snaps (|cam - smooth| = 5.8 > 5, `local_d4 = 1` at the second test),
+  which is a second reset with the real pair (spring block zero on call 1's leave).
+
+### A1.2 Change (default OFF)
+
+`MASHED_P3_RESET_PAIR` (read once; default OFF; meant with `MASHED_SUBSTATE`):
+1. `RaceCamera::Update`: a reset takes the pair-switch branch, and never-written stored pair ids (-1) read as 0.
+2. `TrackRenderer` sub-state 3..5 frames: `DAT_007f1008` = units and `_DAT_007f100c` stored before the chain call.
+
+### A1.3 Predictions (scored by `score_p3cam.py` on arm `B_P3RK_K0` vs `o_p3c_r1`, ticks replayed from the capture)
+
+Index k = port trace row k vs original sub-state-3 call k. d(k) = port - orig, cam `+4..+0xc` after the call.
+- P1 (call 0): with the knob, d(0) = (0 +-0.01, +0.040 +-0.01, 0 +-0.01) (car 0 alone, U-9202 car-0 offset
+  (0, +0.040, 0)). Knob off (arm `B_P3R_K0`): |d(0)| > 4 (the port's call 0 is the grid shot).
+- P2 (call 1): with the knob the port's spring block (`s970..s978`, `s988..s990`) is 0 after row 1 (the snap).
+- P3 (transient, U-9203): with the knob, max over k = 1..60 of |d(k) - d(120)| < 0.01. Knob off: > 0.05 (the leg-2 /
+  U-9201 transient, 0.09 at frame 0).
+- P4 (length): rows with sub-state 3 = 809 +-3 with the knob. Knob off: report only.
+- P5 (entry 0 first step): with the knob, entry 0 z after row 1 = 34.4984 +-0.0005 (original call 1: 34.49836).
+
+Gates of section 4 stand. G-KNOB-OFF: arm `B_P3R_K0` on the pre-change exe (`mashed_re_base.exe`, sha256 9e72832a...)
+and on this step's exe give byte-identical trace and step files.
