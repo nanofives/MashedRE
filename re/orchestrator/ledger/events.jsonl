@@ -811,3 +811,42 @@
 {"at":"2026-10-28T02:37:54Z","id":"D4-UNC-PHYS","from":"claimed","to":"working","owner":"cmvri5m0m21oknv1c5gdkgkcd","note":"U-9783 watch-write first"}
 {"at":"2026-10-28T02:53:07Z","id":"D4-UNC-PHYS","from":"working","to":"review","owner":"cmvri5m0m21oknv1c5gdkgkcd","note":"BLOCKED live legs: no audio endpoint, original AVs at 0x005baf48. U-9783 narrowed statically (static .data table, mode-10 v = 0x0067ea94). U-9784..86 unchanged."}
 {"at":"2026-10-28T02:53:32Z","id":"D4-UNC-PHYS","from":"review","to":"blocked","owner":"cmvri5m0m21oknv1c5gdkgkcd","note":"U-9783 narrowed statically (branch orch/D4-UNC-PHYS ddd33c03b, RESULT verify/d4uncphys_20261027). Live peeks and U-9784..U-9786 blocked: original MASHED.exe does not boot, no active audio endpoint (AV 0x005baf48 AudioRendererField3cSet NULL renderer). Resume when an audio endpoint is up, RESULT section 4."}
+{"at":"2026-10-28T04:19:30Z","id":"HB-TEXANIM-REFS","from":"decision","to":"open","owner":"","note":"L-44 accepted 2026-10-28: commit run13_reference = verify/hbtexanimrefs_20261027/tracks_score.txt, enqueue da0572742 alone, own train pass; first item of run 17"}
+{"at":"2026-10-28T04:22:12Z","id":"HB-TEXANIM-REFS","from":"open","to":"merge-queued","owner":"","note":"orch/HB-TEXANIM-REFS"}
+{"at":"2026-10-28T04:23:21Z","id":"HB-U9064-RECLASS","from":"open","to":"claimed","owner":"cmvrlzuv9251onv1c26l8umuu","note":""}
+{"at":"2026-10-28T04:23:35Z","id":"D5-DEFER","from":"open","to":"claimed","owner":"cmvrm05uf2554nv1c0jd4ebmj","note":""}
+{"at":"2026-10-28T04:25:10Z","id":"D5-DEFER","from":"claimed","to":"working","owner":"cmvrm05uf2554nv1c0jd4ebmj","note":"auditing DEFERRED.md"}
+{"at":"2026-10-28T04:26:14Z","id":"HB-U9064-RECLASS","from":"claimed","to":"working","owner":"cmvrlzuv9251onv1c26l8umuu","note":"re-classify U-9064 edits done, committing"}
+{"at":"2026-10-28T04:26:22Z","id":"HB-U9064-RECLASS","from":"working","to":"review","owner":"cmvrlzuv9251onv1c26l8umuu","note":""}
+{"at":"2026-10-28T04:26:41Z","id":"HB-U9064-RECLASS","from":"review","to":"merge-queued","owner":"cmvrlzuv9251onv1c26l8umuu","note":"orch/HB-U9064-RECLASS"}
+{"at":"2026-10-28T04:28:08Z","id":"D5-DEFER","from":"working","to":"review","owner":"cmvrm05uf2554nv1c0jd4ebmj","note":""}
+{"at":"2026-10-28T04:28:40Z","id":"D5-DEFER","from":"review","to":"decision","owner":"cmvrm05uf2554nv1c0jd4ebmj","note":"L-45"}
+{"at":"2026-10-28T04:36:11Z","id":"HB-TEXANIM-REFS","from":"merge-queued","to":"merged","owner":"","note":"merge train 20261028_012311: G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/e85ea6fb/53778664"}
+{"at":"2026-10-28T04:36:44Z","id":"D5-DEFER","from":"decision","to":"open","owner":"","note":"L-45 = option 1 (Mariano 2026-10-28): add a 'close DEFERRED row' op to re-classify (strike + reason + CHANGELOG line), apply the 41 clears + D-11073/D-11076 rewrites through it, merge with orch/D5-DEFER RESULT 9a8e8d3a3, fix stale 43 at ROADMAP.md:119. .ps1 edit needed -> stop and tell Mariano. Keep D-11060/61 (hand session = D5 demo), D-11063 wontfix, D-11075 kept, D-11078 held audio endpoint, D-11079 tied to D4 allowlist. Text-only sonnet worker, own train pass, not with a flip."}
+{"at":"2026-10-28T04:36:46Z","id":"D3-SUBSTATE-PH3","from":"open","to":"blocked","owner":"","note":"audio endpoint: phase 3 needs original captures (L-45, Mariano 2026-10-28)"}
+{"at":"2026-10-28T04:36:48Z","id":"D3-SUBSTATE-FLIP","from":"open","to":"blocked","owner":"","note":"depends on D3-SUBSTATE-PH3 (L-45)"}
+{"at":"2026-10-28T04:36:53Z","id":"D5-INTROMOVIES","from":"open","to":"open","owner":"","note":"skip_intro replaced the five .mpg in original\\ with 167,414-byte stubs; real-movie testing needs the originals (patch_mashed_skip_intro.py --restore). Never restore them in the shared original\\ without asking Mariano first."}
+{"at":"2026-10-28T04:37:22Z","id":"HB-U9064-RECLASS","from":"merge-queued","to":"merge-queued","owner":"cmvrlzuv9251onv1c26l8umuu","note":"orch/HB-U9064-RECLASS"}
+{"at":"2026-10-28T04:38:33Z","id":"D3-CF-SNAP-FLIP","from":"open","to":"claimed","owner":"cmvrmjgjk27cwnv1c3cqsiq94","note":""}
+{"at":"2026-10-28T04:38:53Z","id":"D5-DEFER","from":"open","to":"claimed","owner":"cmvrmju0u27hynv1ccripgsql","note":""}
+{"at":"2026-10-28T04:40:30Z","id":"HB-U9064-RECLASS","from":"merge-queued","to":"merged","owner":"cmvrlzuv9251onv1c26l8umuu","note":"merge train 20261028_013839: not run: text-only change (no build input touched)"}
+{"at":"2026-10-28T04:41:03Z","id":"D3-CF-SNAP-FLIP","from":"claimed","to":"working","owner":"cmvrmjgjk27cwnv1c3cqsiq94","note":"D2 x3 with MASHED_SNAP_POST=1, then flip if in band"}
+{"at":"2026-10-28T04:41:59Z","id":"D5-DEFER","from":"claimed","to":"merge-queued","owner":"cmvrmju0u27hynv1ccripgsql","note":"orch/D5-DEFER"}
+{"at":"2026-10-28T05:23:44Z","id":"D3-CF-SNAP-FLIP","from":"working","to":"review","owner":"cmvrmjgjk27cwnv1c3cqsiq94","note":"GREEN: D2 3/3 in band (=default); flip expected refs G-CTRL 5943c5f1/364350ae/52052890 B 3a03670c/9fcdbd3a/53778664 (only K1 moves); merge alone, b.ref first. sha ad8e98147396b4072003a1926ccee0ecc5a9e019"}
+{"at":"2026-10-28T05:24:08Z","id":"D3-CF-SNAP-FLIP","from":"review","to":"review","owner":"cmvrmjgjk27cwnv1c3cqsiq94","note":"GREEN. orch/D3-CF-SNAP-FLIP @ ad8e98147396b4072003a1926ccee0ecc5a9e019. D2 3/3 in band (0.1942/0.2492/1896.74). Expected G-CTRL 5943c5f1/364350ae/52052890 (unchanged), B 3a03670c/9fcdbd3a/53778664 (only K1 e85ea6fb->9fcdbd3a). OuterRestore/outer mismatch count 0 on 12 arms. Decided flip: L0 commits refs, merges alone. Not enqueued."}
+{"at":"2026-10-28T05:24:36Z","id":"D3-CF-SNAP-FLIP","from":"review","to":"merge-queued","owner":"cmvrmjgjk27cwnv1c3cqsiq94","note":"orch/D3-CF-SNAP-FLIP"}
+{"at":"2026-10-28T05:37:04Z","id":"D3-CF-SNAP-FLIP","from":"merge-queued","to":"merged","owner":"cmvrmjgjk27cwnv1c3cqsiq94","note":"merge train 20261028_022507: G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/9fcdbd3a/53778664"}
+{"at":"2026-10-28T05:37:58Z","id":"D5-DEFER","from":"merge-queued","to":"merge-queued","owner":"cmvrmju0u27hynv1ccripgsql","note":"orch/D5-DEFER"}
+{"at":"2026-10-28T06:01:13Z","id":"D5-DEFER","from":"merge-queued","to":"merged","owner":"cmvrmju0u27hynv1ccripgsql","note":"merge train 20261028_024912: G-CTRL 5943c5f1/364350ae/52052890  B 3a03670c/9fcdbd3a/53778664"}
+{"at":"2026-10-28T06:02:24Z","id":"HB-FULLCHECK-R17","from":"open","to":"claimed","owner":"cmvrpj94z2be0nv1csz2gp20h","note":""}
+{"at":"2026-10-28T06:30:15Z","id":"HB-FULLCHECK-R17","from":"claimed","to":"review","owner":"cmvrpj94z2be0nv1csz2gp20h","note":"RED: G-CTRL/B/(b)/(e)/D2 x3 match, 13-track table moved 7 rows (03,04,06,07,08), gates PASS"}
+{"at":"2026-10-28T06:41:12Z","id":"HB-FULLCHECK-R17","from":"review","to":"decision","owner":"cmvrpj94z2be0nv1csz2gp20h","note":"L-46"}
+{"at":"2026-10-28T06:41:44Z","id":"HB-WARZONE-RIVER","from":"open","to":"claimed","owner":"cmvrqxu1l2c52nv1c4jx1yym7","note":""}
+{"at":"2026-10-28T06:41:57Z","id":"D5-FIRSTRUN","from":"open","to":"claimed","owner":"cmvrqy4kh2c7env1ctkub953l","note":""}
+{"at":"2026-10-28T06:43:11Z","id":"HB-WARZONE-RIVER","from":"claimed","to":"working","owner":"cmvrqxu1l2c52nv1c4jx1yym7","note":"worker started: reading HB-FOREST-WATER + TEXANIM-REFS results"}
+{"at":"2026-10-28T06:43:22Z","id":"D5-FIRSTRUN","from":"claimed","to":"working","owner":"cmvrqy4kh2c7env1ctkub953l","note":"survey videocfg/contcfg readers"}
+{"at":"2026-10-28T07:04:14Z","id":"D5-FIRSTRUN","from":"working","to":"review","owner":"cmvrqy4kh2c7env1ctkub953l","note":"GREEN, no code change: original writes no contcfg on first run (only FUN_00497230 after dialog 0x68 OK), standalone matches; videocfg write already ships (L-29). Gates unchanged."}
+{"at":"2026-10-28T07:04:37Z","id":"D5-FIRSTRUN","from":"review","to":"merge-queued","owner":"cmvrqy4kh2c7env1ctkub953l","note":"orch/D5-FIRSTRUN"}
+{"at":"2026-10-28T07:11:41Z","id":"HB-WARZONE-RIVER","from":"working","to":"review","owner":"cmvrqxu1l2c52nv1c4jx1yym7","note":"GREEN no code change: Warzone gap = original letterbox (20-26% of mask on black rows); outside it +2.3/-2.1"}
+{"at":"2026-10-28T07:12:00Z","id":"HB-WARZONE-RIVER","from":"review","to":"merge-queued","owner":"cmvrqxu1l2c52nv1c4jx1yym7","note":"orch/HB-WARZONE-RIVER"}
+{"at":"2026-10-28T07:12:15Z","id":"HB-WARZONE-RIVER-CAP","from":"open","to":"blocked","owner":"","note":"audio endpoint: needs a new original capture"}
