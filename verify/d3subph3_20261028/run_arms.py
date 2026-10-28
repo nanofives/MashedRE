@@ -439,6 +439,9 @@ STACK['PR'] = ['MASHED_PONTOON_REPLAY=' + os.path.join(W, 'verify', 'pontoon_202
 # P3 = leg 2's L2 recipe; P3R = the same with the original run's DAT_007f1030 per phase-3 frame replayed (A4_P3_REPLAY).
 STACK['P3'] = ['MASHED_SUBSTATE', 'MASHED_MODE5_RESET', 'MASHED_LEG2_TRACE=@OUT@\@NAME@.trace.csv']
 STACK['P3R'] = STACK['P3'] + ['MASHED_CAM_TICKS_REPLAY=' + os.environ.get('A4_P3_REPLAY', '')]
+STACK['P3RK'] = STACK['P3R'] + ['MASHED_P3_RESET_PAIR=1']   # + the reset-branch knob (PREREG amendment 1)
+STACK['P3K'] = STACK['P3'] + ['MASHED_P3_RESET_PAIR=1']
+STACK['K3'] = ['MASHED_P3_RESET_PAIR=1']   # the knob alone, MASHED_SUBSTATE off (report: must equal DEF)
 for name in sys.argv[1:]:
     CUR['name'] = name
     if name.startswith('H_'):

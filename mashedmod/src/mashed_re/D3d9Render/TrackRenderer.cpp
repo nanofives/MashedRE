@@ -5216,6 +5216,16 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         } else if (ba8c == 5) {
             SubStateHeldCountdown5_C(units);               // 0x004112bb (units in EAX)
         }
+        // [D3-SUBSTATE-PH3] MASHED_P3_RESET_PAIR (default OFF): FUN_0040fc00 stores DAT_007f1008 = units and
+        // _DAT_007f100c (0x0040fc57) at its top, BEFORE FUN_0040d470(0), so the original's second call on phase 3's
+        // first frame reads 50 (measured, RESULT_d3subph3.md). Here the stores come from Ai_AdvanceClock below the chain,
+        // which left that one call at 0. Same values, written again below. Knob OFF: no store here.
+        static const bool s_p3ResetPair = [] { const char* e = std::getenv("MASHED_P3_RESET_PAIR");
+                                               return e && e[0] && e[0] != '0'; }();
+        if (s_p3ResetPair && ba8c >= 3 && ba8c <= 5) {
+            *reinterpret_cast<int*>(0x007f1008u) = units;  // FUN_0040fc00: DAT_007f1008 = units
+            SubState_StoreStep(units);                     // 0x0040fc57 _DAT_007f100c
+        }
         if (ba8c >= 3 && ba8c <= 5) SubStateCameraChain(false);   // FUN_0040fc00 -> FUN_0040d470(0) (L81-85)
         const bool subClock = g_aib.loaded && (Ai::I32(Ai::kSplineRaceCnt) > 3);
         if (subClock)
