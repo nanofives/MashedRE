@@ -353,7 +353,7 @@ void RdRow(char kind, int site) {
     std::FILE* const f = RdTrace();
     if (!f) return;
     const std::uint32_t* const rd = reinterpret_cast<const std::uint32_t*>(0x008989b0u);
-    std::fprintf(f, "%c\t%ld\t%c\t%d\t%d\t%x;%x;%x;%x\t%d\t%d\n", kind, s_rdFrame, kind == 'T' ? '-' : (site ? 'A' : 'U'),
+    std::fprintf(f, "%c\t%ld\t%c\t%d\t%d\t%x;%x;%x;%x\t%d\t%d\n", kind, s_rdFrame, kind == 'T' ? '-' : (site == 2 ? 'G' : site ? 'A' : 'U'),
                  *reinterpret_cast<const std::int32_t*>(0x0063ba8cu), *reinterpret_cast<const std::int32_t*>(0x007f0ff4u),
                  rd[0], rd[1], rd[2], rd[3], *reinterpret_cast<const std::int32_t*>(0x008989a8u),
                  *reinterpret_cast<const std::int32_t*>(0x008989c8u));

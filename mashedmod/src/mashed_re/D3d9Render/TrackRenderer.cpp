@@ -269,9 +269,16 @@ bool RegLate() { static const bool s_on = [] { const char* e = std::getenv("MASH
 // FUN_0040da50 (0x0040fc75, cars register at 0x0040dad0), FUN_0045bba0 (0x0040fcd0, FUN_00459000 inside) and
 // FUN_00485070 (0x0040fd07) with no guard. Under the knob the countdown frames run the same three.
 // PREREG verify/iconcube_20261028/PREREG2_D5-ICONCUBE-SPIN.md.
+// [D5-ICONCUBE-SPIN run 20] FUN_0040d470 (0x0040fc7c) sits between the first two with no branch, and reaches the
+// refdist producer FUN_00442a60 (0x0040d4f3 -> 0x004483c2 -> 0x004469b6). Without it the first racing AI tick reads
+// 0x008989b0[v] == 0.0, which opens FUN_00414c30's type-7 gate (0x00414e2f / 0x00414e42) on a pre-GO pickup.
+// MASHED_PICKUPS_PREGO_NO_REFDIST (diagnostic) drops the call. PREREG verify/iconcube_20261028/PREREG3_D5-ICONCUBE-SPIN.md.
+extern "C" void __cdecl RaceComputeDistancesTick(int site);   // Race/SpectatorDistances.cpp
 bool PickupsPreGo() { static const bool s_on = [] { const char* e = std::getenv("MASHED_PICKUPS_PREGO"); return e && e[0] && e[0] != '0'; }(); return s_on; }
 void PreGoRegistryTick() {
+    static const bool s_noRd = [] { const char* e = std::getenv("MASHED_PICKUPS_PREGO_NO_REFDIST"); return e && e[0] && e[0] != '0'; }();
     Race::CarsReg_FrameTick();        // FUN_0040da50 0x0040fc75
+    if (!s_noRd) RaceComputeDistancesTick(2);   // FUN_0040d470 0x0040fc7c (site 2 labels MASHED_REFDIST_TRACE rows)
     Gameplay::Pickups_FrameTick();    // FUN_0045bba0 0x0040fcd0
     Race::Registry_FrameTick();       // FUN_00485070 0x0040fd07
 }
