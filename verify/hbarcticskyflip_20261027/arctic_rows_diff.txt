@@ -1,0 +1,75 @@
+### row 01051: reference (D:/MashedWT/D3-CF-COLLLUT_data/flip_tracks/03_Arctic) vs flip
+1,3c1,3
+< == 3D orig row 1051 (180 draws, 35412 tri) vs stand row 1051 (161 draws, 35102 tri)
+<    matched 155 draws (34654 tri); rows 33 (33 cited); info {'empty_dropped': (0, 0), 'no_geometry': (1, 0)}
+<   MISSING  CITED C03-UNTEXTURED -                      A-only 4 draws 6 tri (2 offscreen); first k82 pt5 tri=2 tex=- tex1=- bb=[0.31,0.32,0.99,0.38,0.34,0.99] src=d3d Z=0 ZW=0 ZF=0 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=1
+---
+> == 3D orig row 1051 (180 draws, 35412 tri) vs stand row 1051 (159 draws, 33448 tri)
+>    matched 153 draws (33000 tri); rows 34 (34 cited); info {'empty_dropped': (0, 0), 'no_geometry': (1, 0)}
+>   MISSING  CITED C03-UNTEXTURED -                      A-only 4 draws 6 tri (2 offscreen); first k83 pt2 tri=None tex=- tex1=- bb=- src=d3d Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+6a7
+>   MISSING  CITED C09-FX lensflare-fs8          A-only 1 draws 1568 tri (0 offscreen); first k82 pt4 tri=1568 tex=lensflare-fs8 tex1=- bb=[-34.13,-12.98,-42.13,25.44,0.09,42.13] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=1
+11c12
+<   MISSING  CITED C08-STARTDISP OrangeDisplay          A-only 8 draws 68 tri (8 offscreen); first k82 pt5 tri=10 tex=OrangeDisplay tex1=- bb=[-0.11,0.31,1.02,0.11,0.39,1.02] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+---
+>   MISSING  CITED C08-STARTDISP OrangeDisplay          A-only 8 draws 68 tri (8 offscreen); first k82 pt5 tri=42 tex=OrangeDisplay tex1=- bb=[-0.09,0.32,1.00,0.09,0.38,1.00] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+12a14
+>   MISSING  CITED C15-SKY sky                    A-only 1 draws 86 tri (0 offscreen); first k82 pt5 tri=86 tex=sky tex1=- bb=[-27.96,0.98,12.03,-24.37,1.43,15.62] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+18d19
+<   STATE    CITED C20-STATE-SKY sky                    1 matched draws differ in Z,ZF,CULL: A Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1 | B Z=1 ZW=0 ZF=8 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+36,37c37,38
+< -> D:\MashedWT\D3-CF-COLLLUT_data\flip_tracks\03_Arctic\diff_01051.json
+< VERDICT: CITED (matched=155 rows=33 red=0)
+---
+> -> D:\MashedWT\HB-ARCTIC-SKY-FLIP_data\run13\03_Arctic\diff_01051.json
+> VERDICT: CITED (matched=153 rows=34 red=0)
+### row 01091: reference (D:/MashedWT/D3-CF-COLLLUT_data/flip_tracks/03_Arctic) vs flip
+1,3c1,3
+< == 3D orig row 1091 (177 draws, 35197 tri) vs stand row 1091 (157 draws, 34849 tri)
+<    matched 150 draws (34347 tri); rows 36 (36 cited); info {'empty_dropped': (0, 0), 'no_geometry': (1, 0)}
+<   MISSING  CITED C03-UNTEXTURED -                      A-only 4 draws 6 tri (2 offscreen); first k81 pt5 tri=2 tex=- tex1=- bb=[0.00,0.00,0.00,640.00,480.00,0.00] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=1
+---
+> == 3D orig row 1091 (177 draws, 35197 tri) vs stand row 1091 (155 draws, 33195 tri)
+>    matched 148 draws (32693 tri); rows 37 (37 cited); info {'empty_dropped': (0, 0), 'no_geometry': (1, 0)}
+>   MISSING  CITED C03-UNTEXTURED -                      A-only 4 draws 6 tri (2 offscreen); first k83 pt2 tri=None tex=- tex1=- bb=- src=d3d Z=1 ZW=1 ZF=4 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+8a9
+>   MISSING  CITED C09-FX lensflare-fs8          A-only 1 draws 1568 tri (0 offscreen); first k82 pt4 tri=1568 tex=lensflare-fs8 tex1=- bb=[-34.13,-12.92,-42.17,25.44,0.03,42.27] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=1
+13c14
+<   MISSING  CITED C08-STARTDISP OrangeDisplay          A-only 8 draws 68 tri (8 offscreen); first k82 pt5 tri=42 tex=OrangeDisplay tex1=- bb=[-0.09,0.48,1.00,0.09,0.53,1.00] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+---
+>   MISSING  CITED C08-STARTDISP OrangeDisplay          A-only 8 draws 68 tri (8 offscreen); first k82 pt5 tri=4 tex=OrangeDisplay tex1=- bb=[0.39,0.31,0.98,0.65,0.35,0.98] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+14a16
+>   MISSING  CITED C15-SKY sky                    A-only 1 draws 86 tri (0 offscreen); first k82 pt5 tri=86 tex=sky tex1=- bb=[-27.79,4.04,11.10,-24.21,4.49,14.69] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+21d22
+<   STATE    CITED C20-STATE-SKY sky                    1 matched draws differ in Z,ZF,CULL: A Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1 | B Z=1 ZW=0 ZF=8 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+39,40c40,41
+< -> D:\MashedWT\D3-CF-COLLLUT_data\flip_tracks\03_Arctic\diff_01091.json
+< VERDICT: CITED (matched=150 rows=36 red=0)
+---
+> -> D:\MashedWT\HB-ARCTIC-SKY-FLIP_data\run13\03_Arctic\diff_01091.json
+> VERDICT: CITED (matched=148 rows=37 red=0)
+### row 01126: reference (D:/MashedWT/D3-CF-COLLLUT_data/flip_tracks/03_Arctic) vs flip
+1,3c1,3
+< == 3D orig row 1126 (131 draws, 29307 tri) vs stand row 1126 (112 draws, 29097 tri)
+<    matched 107 draws (28781 tri); rows 36 (36 cited); info {'empty_dropped': (0, 0), 'no_geometry': (1, 0)}
+<   MISSING  CITED C03-UNTEXTURED -                      A-only 4 draws 6 tri (2 offscreen); first k82 pt5 tri=2 tex=- tex1=- bb=[0.31,0.32,0.99,0.38,0.34,0.99] src=d3d Z=0 ZW=0 ZF=0 AT=0 AREF=0 AF=0 AB=0 SRC=0 DST=0 CULL=1
+---
+> == 3D orig row 1126 (131 draws, 29307 tri) vs stand row 1126 (110 draws, 27443 tri)
+>    matched 105 draws (27127 tri); rows 37 (37 cited); info {'empty_dropped': (0, 0), 'no_geometry': (1, 0)}
+>   MISSING  CITED C03-UNTEXTURED -                      A-only 4 draws 6 tri (2 offscreen); first k81 pt5 tri=2 tex=- tex1=- bb=[0.00,0.00,0.00,640.00,480.00,0.00] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=1
+8a9
+>   MISSING  CITED C09-FX lensflare-fs8          A-only 1 draws 1568 tri (0 offscreen); first k82 pt4 tri=1568 tex=lensflare-fs8 tex1=- bb=[-34.14,-12.81,-42.20,25.45,-0.08,42.40] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=2 CULL=1
+13c14
+<   MISSING  CITED C08-STARTDISP OrangeDisplay          A-only 8 draws 68 tri (8 offscreen); first k82 pt5 tri=10 tex=OrangeDisplay tex1=- bb=[-0.11,0.61,1.02,0.11,0.70,1.02] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+---
+>   MISSING  CITED C08-STARTDISP OrangeDisplay          A-only 8 draws 68 tri (8 offscreen); first k82 pt5 tri=42 tex=OrangeDisplay tex1=- bb=[-0.09,0.63,1.00,0.09,0.68,1.00] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+14a16
+>   MISSING  CITED C15-SKY sky                    A-only 1 draws 86 tri (0 offscreen); first k82 pt5 tri=86 tex=sky tex1=- bb=[-27.68,9.30,10.78,-24.09,9.76,14.36] src=d3d Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1
+22d23
+<   STATE    CITED C20-STATE-SKY sky                    1 matched draws differ in Z,ZF,CULL: A Z=0 ZW=0 ZF=0 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=1 | B Z=1 ZW=0 ZF=8 AT=1 AREF=0 AF=5 AB=1 SRC=5 DST=6 CULL=2
+39,40c40,41
+< -> D:\MashedWT\D3-CF-COLLLUT_data\flip_tracks\03_Arctic\diff_01126.json
+< VERDICT: CITED (matched=107 rows=36 red=0)
+---
+> -> D:\MashedWT\HB-ARCTIC-SKY-FLIP_data\run13\03_Arctic\diff_01126.json
+> VERDICT: CITED (matched=105 rows=37 red=0)

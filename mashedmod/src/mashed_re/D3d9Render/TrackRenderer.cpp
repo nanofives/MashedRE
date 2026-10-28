@@ -9487,12 +9487,10 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         // between FUN_004c1a00 / FUN_004c19f0 of camera FUN_004840d0(0) = DAT_006ce81c[0], which
         // FUN_00483ed0 builds on a 128x128 camera-texture raster (FUN_00484000(0,0x80,0x80,0x600) @
         // 0x00448979). The port has no such camera, so it lands in the race frame and covers the band
-        // below the eye (+24 luma on HB-ARCTIC-OPENSEA's poses). MASHED_ARCTIC_SKY_RTT=1 or =a keeps it
-        // out of the race frame (default OFF, PREREG verify/hbarcticsky_20261027).
-        static const bool s_sky_rtt_a = [] {
-            const char* v = std::getenv("MASHED_ARCTIC_SKY_RTT");
-            return v && (std::strcmp(v, "1") == 0 || std::strcmp(v, "a") == 0);
-        }();
+        // below the eye (+24 luma on HB-ARCTIC-OPENSEA's poses). Default ON since L-41 (2026-10-27,
+        // verify/hbarcticskyflip_20261027): copy A stays out of the race frame. MASHED_NO_ARCTIC_SKY_RTT=1
+        // draws it there again (the pre-flip default).
+        static const bool s_sky_rtt_a = std::getenv("MASHED_NO_ARCTIC_SKY_RTT") == nullptr;
         D3DMATRIX skym[2];
         int nsky = 0;
         if (!s_no_skyfix && course_id_ == 0 && !s_sky_rtt_a) {   // A: Arctic only (slot 4 of record "arctic")
