@@ -1,0 +1,14 @@
+H_SL        dead=0 spin=0 reloc=0 reloc-any=0 reloc-post=0 mismatch=0 substep_outer_mismatch=0
+B_SL_K0     dead=0 spin=0 reloc=0 reloc-any=0 reloc-post=0 mismatch=0 substep_outer_mismatch=0
+B_SL_K1     dead=0 spin=0 reloc=0 reloc-any=0 reloc-post=2 mismatch=0 substep_outer_mismatch=0
+B_SL_K26    dead=0 spin=0 reloc=0 reloc-any=0 reloc-post=0 mismatch=0 substep_outer_mismatch=0
+H_DEF       dead=0 spin=0 reloc=0 reloc-any=0 reloc-post=0 mismatch=0 substep_outer_mismatch=0
+B_DEF_K0    dead=0 spin=0 reloc=0 reloc-any=0 reloc-post=0 mismatch=0 substep_outer_mismatch=0
+B_DEF_K1    dead=0 spin=0 reloc=0 reloc-any=0 reloc-post=0 mismatch=0 substep_outer_mismatch=0
+B_DEF_K26   dead=0 spin=0 reloc=0 reloc-any=0 reloc-post=0 mismatch=0 substep_outer_mismatch=0
+H_NOSP      dead=0 spin=0 reloc=0 reloc-any=0 reloc-post=0 mismatch=0 substep_outer_mismatch=0
+B_NOSP_K0   dead=0 spin=0 reloc=0 reloc-any=0 reloc-post=0 mismatch=0 substep_outer_mismatch=0
+B_NOSP_K1   dead=0 spin=0 reloc=0 reloc-any=0 reloc-post=0 mismatch=0 substep_outer_mismatch=0
+B_NOSP_K26  dead=0 spin=0 reloc=0 reloc-any=0 reloc-post=0 mismatch=0 substep_outer_mismatch=0
+B_SL_K1.log:[snap] reloc-post frame 331 slot 1
+B_SL_K1.log:[snap] reloc-post frame 395 slot 2
