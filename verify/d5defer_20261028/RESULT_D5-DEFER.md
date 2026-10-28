@@ -7,7 +7,7 @@ Text-only: no MASHED.exe, no mashed_re.exe, no Frida, no original-side step. Evi
 CHANGELOG); it has no DEFERRED clear operation, and this step moves no C-level. Edits are listed below for the user to
 route. Note: ROADMAP.md:119 says "43 live rows"; the file holds 51 unstruck Active rows.
 
-## A. Condition met, clear (45 rows, mechanical, no judgment)
+## A. Condition met, clear (39 rows, mechanical, no judgment)
 All are "decompile / classify / sweep-session" deferrals. Every RVA now has a hooks.csv row at C2 or higher, so the work
 each row deferred is done. None needs the original.
 
@@ -21,8 +21,7 @@ each row deferred is done. None needs the original.
 | D-0001 | boot rows at C0/C1 in hooks.csv: 0. Condition ("boot sweep session") has nothing left to sweep |
 | D-8140 | debug_overlay bucket: hard negative (retail has no overlay code). Condition is batch-slot planning, and the fanout pipeline is opportunistic only. Unjustified, clear as not-applicable |
 
-Count: 19+1+12+4+1+1+1 = 39 function-level rows, plus D-8140 is included above. Remaining Active rows after clearing: 12
-(D-11060..63, D-11072..79 minus none, D-11074, D-11075). See B and C.
+Count: 19+1+12+4+1+1+1 = 39 rows (D-8140 included). With D-11072 and D-11074 from B, 41 rows clear and 10 stay Active.
 
 ## B. Condition met or description stale, row text needs a rewrite (4 rows)
 - **D-11072** (race-position recon): P1, P2, P3 and the registry legs are default ON (`FaithDefaults.cpp:26-33`: PATHPROG,
@@ -62,5 +61,5 @@ Not a DEFERRED row. Grep: D-11062 cites the .asi hook harness only as evidence. 
 shipping. Nothing to change in DEFERRED.md for that clause.
 
 ## Proposed edit (not applied)
-Move A (39 rows) and D-11072/D-11074 to `## Cleared` with date 2026-10-28 and "condition met, evidence: this RESULT". Rewrite
-D-11073 and D-11076. Active drops from 51 to 10 rows (D-11060..63, D-11073, D-11075..79).
+Move A (39 rows) and D-11072/D-11074 (41 total) to `## Cleared` with date 2026-10-28 and "condition met, evidence: this RESULT". Rewrite
+D-11073 and D-11076. Active drops from 51 to 10 rows (D-11060..63, D-11073, D-11075..79: 4+1+5).
