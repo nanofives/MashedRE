@@ -1,0 +1,15 @@
+BDCAE093A30FBF22
+0x55ae50 8b442408 mov eax, dword ptr [esp + 8]
+0x55ae54 8b542404 mov edx, dword ptr [esp + 4]
+0x55ae58 668b4820 mov cx, word ptr [eax + 0x20]
+0x55ae5c 8b02 mov eax, dword ptr [edx]
+0x55ae5e 894c2408 mov dword ptr [esp + 8], ecx
+0x55ae62 89442404 mov dword ptr [esp + 4], eax
+0x55ae66 e9e5a60000 jmp 0x565550
+
+0x565550 8b442408 mov eax, dword ptr [esp + 8]
+0x565554 8b4c2404 mov ecx, dword ptr [esp + 4]
+0x565558 25ffff0000 and eax, 0xffff
+0x56555d 668b844110b80000 mov ax, word ptr [ecx + eax*2 + 0xb810]
+0x565565 c3 ret 
+
