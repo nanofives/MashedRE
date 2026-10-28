@@ -183,6 +183,7 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len, bool bake_frames
         std::int32_t part_id = -1;           // [rtex] user data array 0 element 0
         float sphere[4] = {0.f, 0.f, 0.f, 0.f};  // [librwrest] morph target 0's streamed sphere
         std::vector<std::uint32_t> mesh_order;    // [rstates F7] BinMesh PLG matIndex order
+        std::vector<float> verts1, normals1;      // [partmorph] morph target 1 (empty if none)
     };
     std::vector<Geo> geos;
     std::size_t q = gst.payload + gst.size;
@@ -246,6 +247,10 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len, bool bake_frames
                         geo.verts.resize(static_cast<std::size_t>(nverts) * 3);
                         std::memcpy(geo.verts.data(), data + p,
                                     static_cast<std::size_t>(nverts) * 12);
+                    } else if (mt == 1) {   // [partmorph]
+                        geo.verts1.resize(static_cast<std::size_t>(nverts) * 3);
+                        std::memcpy(geo.verts1.data(), data + p,
+                                    static_cast<std::size_t>(nverts) * 12);
                     }
                     p += static_cast<std::size_t>(nverts) * 12;
                 }
@@ -256,6 +261,10 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len, bool bake_frames
                     if (mt == 0) {
                         geo.normals.resize(static_cast<std::size_t>(nverts) * 3);
                         std::memcpy(geo.normals.data(), data + p,
+                                    static_cast<std::size_t>(nverts) * 12);
+                    } else if (mt == 1) {   // [partmorph]
+                        geo.normals1.resize(static_cast<std::size_t>(nverts) * 3);
+                        std::memcpy(geo.normals1.data(), data + p,
                                     static_cast<std::size_t>(nverts) * 12);
                     }
                     p += static_cast<std::size_t>(nverts) * 12;
@@ -399,6 +408,23 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len, bool bake_frames
                     wn[v * 3 + 0] = no[0]; wn[v * 3 + 1] = no[1]; wn[v * 3 + 2] = no[2];
                 }
             }
+            // [partmorph] morph target 1, through the same bake (it does not enter the bboxes:
+            // they stay morph target 0's, as before)
+            const bool have_v1 = geo.verts1.size() == nverts * 3;
+            const bool have_n1 = have_v1 && have_n && geo.normals1.size() == nverts * 3;
+            std::vector<float> w1(have_v1 ? nverts * 3 : 0), wn1(have_n1 ? nverts * 3 : 0);
+            for (std::size_t v = 0; have_v1 && v < nverts; ++v) {
+                float out[3];
+                if (bake_frames) FrameXform(frames, fi, &geo.verts1[v * 3], out);
+                else { out[0] = geo.verts1[v * 3 + 0]; out[1] = geo.verts1[v * 3 + 1]; out[2] = geo.verts1[v * 3 + 2]; }
+                w1[v * 3 + 0] = out[0]; w1[v * 3 + 1] = out[1]; w1[v * 3 + 2] = out[2];
+                if (have_n1) {
+                    float no[3];
+                    if (bake_frames) FrameXformNormal(frames, fi, &geo.normals1[v * 3], no);
+                    else { no[0] = geo.normals1[v * 3 + 0]; no[1] = geo.normals1[v * 3 + 1]; no[2] = geo.normals1[v * 3 + 2]; }
+                    wn1[v * 3 + 0] = no[0]; wn1[v * 3 + 1] = no[1]; wn1[v * 3 + 2] = no[2];
+                }
+            }
             total_verts += static_cast<std::uint32_t>(nverts);
             total_tris  += static_cast<std::uint32_t>(geo.tris.size() / 4);
             // split into per-material batches, in the geometry's BinMesh order when it is a
@@ -457,6 +483,16 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len, bool bake_frames
                             b.normals.push_back(wn[vi * 3 + 0]);
                             b.normals.push_back(wn[vi * 3 + 1]);
                             b.normals.push_back(wn[vi * 3 + 2]);
+                        }
+                        if (have_v1) {   // [partmorph]
+                            b.morph1_verts.push_back(w1[vi * 3 + 0]);
+                            b.morph1_verts.push_back(w1[vi * 3 + 1]);
+                            b.morph1_verts.push_back(w1[vi * 3 + 2]);
+                        }
+                        if (have_n1) {
+                            b.morph1_normals.push_back(wn1[vi * 3 + 0]);
+                            b.morph1_normals.push_back(wn1[vi * 3 + 1]);
+                            b.morph1_normals.push_back(wn1[vi * 3 + 2]);
                         }
                     }
                 }

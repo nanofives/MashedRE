@@ -347,6 +347,7 @@ public:
         int   hub_frame[8];       // their parent frames
         float hub_pos[8][3];      // the parents' streamed positions (FUN_0041f3d0 keeps them)
         int   body_frame = -1;    // part 0x13's atomic frame (FUN_0041f4f0)
+        int   part14_frame = -1;  // [partmorph] part 0x14's atomic frame (FUN_0041f770, rec+0x50 -> +4)
         float body_pos[3] = {};
         bool  env_ok = false;
         // [carlod2] this livery's own part-0x13 frame origin (FUN_0041f120's operand); the

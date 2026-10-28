@@ -1,0 +1,43 @@
+# D5-PARTMORPH checker outputs (exe 4329f07c, branch commit 3e35b8a7f code)
+## arm hashes (run_arms.py sha8)
+=== H_DEF pid=4404 exe=4329f07c
+    H_DEF.step.csv lines=14659 sha8=5943c5f1
+    H_DEF.gates.csv lines=56873 sha8=364350ae
+    H_DEF.ptrace.log lines=28436 sha8=52052890
+=== B_DEF_K0 pid=1844 exe=4329f07c
+    B_DEF_K0.step.csv lines=1459 sha8=3a03670c
+=== B_DEF_K1 pid=14980 exe=4329f07c
+    B_DEF_K1.step.csv lines=1825 sha8=9fcdbd3a
+=== B_DEF_K26 pid=16652 exe=4329f07c
+    B_DEF_K26.step.csv lines=1411 sha8=53778664
+=== B_PMO_K0 pid=6432 exe=4329f07c
+    B_PMO_K0.step.csv lines=1459 sha8=3a03670c
+=== B_PMOF_K0 pid=18228 exe=4329f07c
+    B_PMOF_K0.step.csv lines=1459 sha8=3a03670c
+=== B_PMOF1_K0 pid=18556 exe=4329f07c
+    B_PMOF1_K0.step.csv lines=1459 sha8=3a03670c
+=== B_SHON_K0 pid=4352 exe=4329f07c
+    B_SHON_K0.step.csv lines=1459 sha8=3a03670c
+=== B_SHOFF_K0 pid=17124 exe=4329f07c
+    B_SHOFF_K0.step.csv lines=1459 sha8=3a03670c
+(B_SHON_K0 / B_SHOFF_K0: MASHED_DBG_BBDUMP=900 wrote no .bmp in this recipe, so there is no illustration frame)
+## G3
+points=6041 max_ulp=0 over_1ulp=0
+## G4 B_PMOF_K0 (slot 0 forced)
+rows=4072 state0_rows=1018 slots=[0, 1, 2, 3]
+vtx lines=2036 lerp_mismatch=0
+vtx[0] (v0, v1) nearest DFF part 0x12 pair: max abs diff 3.31e-10 over 504 pairs
+G4 PASS
+## G4 B_PMOF1_K0 (slot 1 forced, added after G4)
+rows=4072 state0_rows=1018 slots=[0, 1, 2, 3]
+vtx lines=2036 lerp_mismatch=0
+vtx[0] (v0, v1) nearest DFF part 0x12 pair: max abs diff 3.31e-10 over 504 pairs
+G4 PASS
+## G4 B_SHON_K0 (slot 0 forced, same stack + BBDUMP)
+rows=4072 state0_rows=1018 slots=[0, 1, 2, 3]
+vtx lines=2036 lerp_mismatch=0
+vtx[0] (v0, v1) nearest DFF part 0x12 pair: max abs diff 3.31e-10 over 504 pairs
+G4 PASS
+## G5 B_PMO_K0 (knob only)
+rows=4072 state0_rows=0 slots=[0, 1, 2, 3]
+G5 PASS
