@@ -35,7 +35,11 @@ namespace mashed_re {
 namespace D3d9Render {
 
 bool MpegVideoTexture::Open(IDirect3DDevice9* dev, const char* mpg_path,
-                            char* err, unsigned err_len) {
+                            char* err, unsigned err_len,
+                            const MpegOpenOptions& opt) {
+    loop_ = opt.loop;
+    ended_ = false;
+    audio_hr_ = 0;
     auto fail = [&](const char* what, HRESULT hr) {
         if (err) std::snprintf(err, err_len, "%s hr=0x%08lx", what, hr);
         Close();
@@ -147,7 +151,57 @@ bool MpegVideoTexture::Open(IDirect3DDevice9* dev, const char* mpg_path,
                                    : vih->bmiHeader.biHeight);
     if (got.pbFormat) CoTaskMemFree(got.pbFormat);
 
-    if (FAILED(dev->CreateTexture(w_, h_, 1, D3DUSAGE_DYNAMIC, D3DFMT_X8R8G8B8,
+    // [D5-INTROMOVIES] The original renders the source pin with
+    // IGraphBuilder::Render (vtbl +0x30 at 0x00494e2c / FUN_004944c0), which also
+    // builds the sound branch. Here the video branch is wired by hand above, so
+    // render whatever output pin is still unconnected (the splitter's audio).
+    if (opt.audio) {
+        IEnumFilters* ef = nullptr;
+        graph_->EnumFilters(&ef);
+        IBaseFilter* f = nullptr;
+        IPin* todo[8] = {};
+        int ntodo = 0;
+        while (ef && ef->Next(1, &f, nullptr) == S_OK) {
+            IEnumPins* ep = nullptr;
+            f->EnumPins(&ep);
+            IPin* p = nullptr;
+            while (ep && ep->Next(1, &p, nullptr) == S_OK) {
+                PIN_DIRECTION d;
+                p->QueryDirection(&d);
+                IPin* peer = nullptr;
+                if (d == PINDIR_OUTPUT && FAILED(p->ConnectedTo(&peer)) && ntodo < 8) {
+                    todo[ntodo++] = p;
+                    continue;
+                }
+                if (peer) peer->Release();
+                p->Release();
+            }
+            if (ep) ep->Release();
+            f->Release();
+        }
+        if (ef) ef->Release();
+        // Render after the enumeration: Render() adds filters, which resets it.
+        audio_hr_ = ntodo ? S_OK : S_FALSE;
+        for (int i = 0; i < ntodo; ++i) {
+            const HRESULT rh = graph_->Render(todo[i]);
+            if (rh != S_OK) audio_hr_ = rh;
+            todo[i]->Release();
+        }
+    }
+
+    // 0x00494820 (renderer SetMediaType): the texture is the video size, or the
+    // next powers of two (>= 2) when D3DCAPS9.TextureCaps has D3DPTEXTURECAPS_POW2
+    // (test [esp+0x74],2 at 0x00494898; doubling loops 0x004948b0 / 0x004948c3).
+    tw_ = w_;
+    th_ = h_;
+    if (opt.pow2) {
+        unsigned a = 2, b = 2;
+        while (a < w_) a <<= 1;
+        while (b < h_) b <<= 1;
+        tw_ = a;
+        th_ = b;
+    }
+    if (FAILED(dev->CreateTexture(tw_, th_, 1, D3DUSAGE_DYNAMIC, D3DFMT_X8R8G8B8,
                                   D3DPOOL_DEFAULT, &tex_, nullptr)))
         return fail("CreateTexture", E_FAIL);
     buf_len_ = static_cast<long>(w_ * h_ * 4);
@@ -155,8 +209,10 @@ bool MpegVideoTexture::Open(IDirect3DDevice9* dev, const char* mpg_path,
 
     graph_->QueryInterface(IID_IMediaControl, reinterpret_cast<void**>(&ctrl_));
     graph_->QueryInterface(IID_IMediaSeeking, reinterpret_cast<void**>(&seek_));
+    if (!opt.loop)   // only the non-looping streams read their events (Ended())
+        graph_->QueryInterface(IID_IMediaEventEx, reinterpret_cast<void**>(&event_));
     if (!ctrl_) return fail("IMediaControl", E_NOINTERFACE);
-    ctrl_->Run();
+    if (opt.run) ctrl_->Run();
     ready_ = true;
     return true;
 }
@@ -187,7 +243,7 @@ void MpegVideoTexture::Update() {
     if (FAILED(grab_->GetCurrentBuffer(&sz, reinterpret_cast<long*>(buf_))) || sz <= 0)
         return;
     // loop: rewind when the stream reaches its end
-    if (seek_) {
+    if (loop_ && seek_) {
         LONGLONG cur = 0, dur = 0;
         if (SUCCEEDED(seek_->GetCurrentPosition(&cur)) &&
             SUCCEEDED(seek_->GetDuration(&dur)) && dur > 0 && cur >= dur) {
@@ -209,8 +265,26 @@ void MpegVideoTexture::Update() {
     }
 }
 
+// FUN_004942b0: GetEvent (vtbl +0x20, timeout 0) on the IMediaEvent at
+// DAT_00771a28; when the code is 1 (EC_COMPLETE) it calls +0x20 on DAT_00771a2c
+// with (0, 0) and, with DAT_00771a08 == 0 (always, from FUN_00495350), clears the
+// running flag DAT_00771a04; FreeEventParams (+0x30) either way. The original
+// reads one event per frame. This drains the queue, so EC_COMPLETE is seen on the
+// frame it is queued even behind other events.
+bool MpegVideoTexture::Ended() {
+    if (!event_) return ended_;
+    long code = 0;
+    LONG_PTR p1 = 0, p2 = 0;
+    while (event_->GetEvent(&code, &p1, &p2, 0) == S_OK) {
+        if (code == EC_COMPLETE) ended_ = true;
+        event_->FreeEventParams(code, p1, p2);
+    }
+    return ended_;
+}
+
 void MpegVideoTexture::Close() {
     if (ctrl_) { ctrl_->Stop(); ctrl_->Release(); ctrl_ = nullptr; }
+    if (event_) { event_->Release(); event_ = nullptr; }
     if (seek_) { seek_->Release(); seek_ = nullptr; }
     if (grab_) { grab_->Release(); grab_ = nullptr; }
     if (graph_) { graph_->Release(); graph_ = nullptr; }
