@@ -26,6 +26,8 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-28  D-11073  DEFERRED  rewritten, stays Active  re-pickup rewritten: phase 3 merged (D3-SUBSTATE-PH3, verify/d3subph3_20261028/RESULT_d3subph3.md), only the decided D3-SUBSTATE-FLIP remains
+2026-10-28  U-9203  UNCERTAINTIES  Active->struck  the frame-0 camera transient was one skipped reset branch in RaceCamera (a reset must take the pair-switch branch) plus DAT_007f1008/_DAT_007f100c stored after the chain instead of before; fixed behind default-OFF MASHED_P3_RESET_PAIR, port vs original over 809 phase-3 camera calls x/z within 2.1e-5, length 809 = 809, all five PREREG predictions PASS. Default stays OFF until the D3-SUBSTATE-FLIP decision (evidence: verify/d3subph3_20261028/RESULT_d3subph3.md)
 2026-10-28  004769a0  ParticleEmitter_SetPosition  C3->C3  exe_file=mashedmod/src/mashed_re/Render/RfxEmitter.cpp (D5-RFX-RECLASS, verify/rfx_emitters_20261028/RESULT_D5-RFX-EMITTERS.md)
 2026-10-28  004769d0  ParticleEmitter_SetVelocity  C3->C3  exe_file=mashedmod/src/mashed_re/Render/RfxEmitter.cpp (D5-RFX-RECLASS, verify/rfx_emitters_20261028/RESULT_D5-RFX-EMITTERS.md)
 2026-10-28  004769f0  ParticleEmitter_SetColour  C3->C3  exe_file=mashedmod/src/mashed_re/Render/RfxEmitter.cpp (D5-RFX-RECLASS, verify/rfx_emitters_20261028/RESULT_D5-RFX-EMITTERS.md)

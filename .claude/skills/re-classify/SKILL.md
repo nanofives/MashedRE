@@ -93,6 +93,28 @@ py -3.12 re\tools\deferred_add.py add ... --rvas-tsv <tsv> --rvas-id <id>   # ce
 - Line endings of both files are preserved. Only the `## Active` section grows.
 - After a batch, recount Active rows and fix any count quoted in `ROADMAP.md`.
 
+## Resolve an UNCERTAINTIES row (no function C-level moves)
+
+Use when a cause is found and fixed (or the question is answered) for an `UNCERTAINTIES.md` Active
+row (HB-RECLASS-UROW, 2026-10-28). Run the helper, never hand-edit the row:
+
+```
+py -3.12 re\tools\uncertainty_resolve.py resolve --reason "<why>" --evidence "<repo-relative RESULT path>" [--partial] U-NNNN [U-NNNN ...]
+```
+
+- **resolve** strikes the Type cell (`~~type~~`, the U-9201 / U-9205 convention), prefixes the Statement
+  cell with `**RESOLVED <date>** (<evidence>): <reason>. Prior statement: <old text>`, sets "Evidence missing"
+  and "Path to resolution" to `n/a`, "Blocks" to `nothing`, and prepends
+  `date  U-NNNN  UNCERTAINTIES  Active->struck  <reason> (evidence: <path>)` to
+  `re/analysis/CHANGELOG.md` below `<!-- ENTRIES -->`. The row stays in the Active table and keeps 7 cells.
+- `--partial` writes `RESOLVED (PARTIAL)` and leaves "Blocks" alone, for a residual that was split into a new row
+  (file the new row first).
+- Gate: `--reason` and `--evidence` are mandatory and the evidence file must exist in the repo. The helper refuses
+  an unknown ID, an already struck ID (so a second run is a no-op that writes nothing), a row without 7 cells,
+  and a cell containing ` | ` or a newline. Nothing is written unless every ID passes.
+- Only `## Active uncertainties` is touched. Line endings are preserved per line (the file mixes LF and CRLF).
+- Self-test: `py -3.12 -m pytest re/tools/tests/test_uncertainty_resolve.py` (fake repo root, real trackers untouched).
+
 ## CSV row format reminder
 
 ```
