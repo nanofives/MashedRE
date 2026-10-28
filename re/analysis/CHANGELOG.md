@@ -26,6 +26,7 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-28  U-9064  librw race render water ambient  OPEN->RESOLVED (tracker row, no RVA moved)  HB-U9064-RECLASS: Arctic half closed by deleting the dead folds (954d3477e, original lights no atomic lacking rpGEOMETRYLIGHT, callback 0x004ea4e0 gate 0x004ea4e9..0x004ea4f2; verify/hbarcticfoldrm_20261027/RESULT_HB-ARCTIC-FOLDRM.md). Forest half closed as a texture flip, hook table 0x005f33f8 Course_Id 34 slots 0x0044dea0/0x0044ded0 ring water00..31, forest_s8 water 48.1 -> 24.5 vs original 21.5 behind MASHED_TEXANIM (71d4d4dcc; verify/hbforestwater_20261027/RESULT_HB-FOREST-WATER.md). Per L-44 the default flips ON via HB-TEXANIM-REFS da0572742, queued for run 17 and not yet merged here
 2026-10-27  0055b750  FUN_0055b750  C2->C3  D4-WSB-C3-PORTED: RunTracked shadow A/B CLEAN 24/24 (census scenario, hook installed alone, A/B-IS-REAL), 0 heap pages (stack-window stores); U-9793; verify/wsbc3ported_20261027/RESULT_D4-WSB-C3-PORTED.md
 2026-10-27  0055c2d0  FUN_0055c2d0  C2->C3  D4-WSB-C3-PORTED: RunTracked shadow A/B CLEAN 24/24 (census scenario, hook installed alone, A/B-IS-REAL), 0 heap pages (stack-window stores); U-9794; verify/wsbc3ported_20261027/RESULT_D4-WSB-C3-PORTED.md
 2026-10-27  00564310  FUN_00564310  C2->C3  D4-WSB-C3-PORTED: RunTracked shadow A/B CLEAN 24/24 (census scenario, hook installed alone, A/B-IS-REAL), 24 heap pages, rand() caller compared with pre-state restored; verify/wsbc3ported_20261027/RESULT_D4-WSB-C3-PORTED.md
