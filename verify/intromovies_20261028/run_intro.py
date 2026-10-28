@@ -90,6 +90,71 @@ def score(arm, log, shots):
     return ok, rows, small, why
 
 
+GAMES = {'mashed.exe', 'mashed_re.exe'}
+
+
+def sample_load(p, t0, wall, logp, csvp):
+    """Machine load at 1 Hz while the arm runs (added for I1b/I1c). phase = movie playing, from the
+    count of 'INTRO movie' lines already in the log (1..4, then 'post'). cpu values: sys/permax in %
+    of the machine / busiest core, ours/others in cores (100 = one core). Raw rows go to csvp."""
+    import psutil
+    ncpu = psutil.cpu_count()
+    me = psutil.Process(p.pid)
+    prio = None
+    try:
+        prio = str(me.nice())
+    except Exception:
+        pass
+    psutil.cpu_percent(None); psutil.cpu_percent(None, percpu=True); me.cpu_percent(None)
+    procs = {}
+    for q in psutil.process_iter(['name']):
+        try: q.cpu_percent(None); procs[q.pid] = q
+        except Exception: pass
+    rows, cum = [], {}
+    while time.time() - t0 < wall and p.poll() is None:
+        time.sleep(1.0)
+        try:
+            n = open(logp, encoding='latin1').read().count('INTRO movie') if os.path.exists(logp) else 0
+        except OSError:
+            n = -1
+        sysc = psutil.cpu_percent(None); per = psutil.cpu_percent(None, percpu=True)
+        try: ours = me.cpu_percent(None)
+        except Exception: ours = 0.0
+        games, top = 0, []
+        for q in psutil.process_iter(['name']):
+            if q.pid not in procs: procs[q.pid] = q
+            nm = (q.info['name'] or '?').lower()
+            if q.pid != p.pid and nm in GAMES: games += 1
+            try:
+                c = procs[q.pid].cpu_percent(None)
+            except Exception:
+                continue
+            if q.pid not in (p.pid, 0) and nm != 'system idle process':
+                top.append((c, nm)); cum[nm] = cum.get(nm, 0.0) + c
+        top.sort(reverse=True)
+        others = max(0.0, sysc * ncpu - ours)
+        phase = 'post' if n >= 4 else str(n + 1)
+        rows.append(dict(t=round(time.time() - t0, 1), phase=phase, sys=sysc, permax=max(per), ours=ours,
+                         others=round(others, 1), other_games=games,
+                         top=';'.join('%s:%.0f' % (nm, c) for c, nm in top[:3])))
+    with open(csvp, 'w') as f:
+        f.write('t,phase,sys,permax,ours,others,other_games,top\n')
+        for r in rows:
+            f.write('{t},{phase},{sys},{permax},{ours},{others},{other_games},{top}\n'.format(**r))
+    summ = dict(ncpu=ncpu, nice=prio, samples=len(rows), csv_sha16=sha(csvp)[:16], phase={})
+    for ph in ['1', '2', '3', '4', 'post']:
+        rs = [r for r in rows if r['phase'] == ph]
+        if not rs: continue
+        s = sorted(r['sys'] for r in rs)
+        summ['phase'][ph] = dict(n=len(rs), sys_mean=round(sum(s) / len(s), 1), sys_p95=s[int(0.95 * (len(s) - 1))],
+                                 permax_mean=round(sum(r['permax'] for r in rs) / len(rs), 1),
+                                 ours_mean=round(sum(r['ours'] for r in rs) / len(rs), 1),
+                                 others_mean=round(sum(r['others'] for r in rs) / len(rs), 1),
+                                 other_games_max=max(r['other_games'] for r in rs))
+    summ['top_others'] = [(nm, round(c / max(1, len(rows)), 1)) for nm, c in sorted(cum.items(), key=lambda x: -x[1])[:6]]
+    return summ
+
+
 def main():
     arms = sys.argv[1:]
     os.makedirs(OUT, exist_ok=True)
@@ -104,7 +169,7 @@ def main():
         t0 = time.time()
         p = subprocess.Popen([EXE], cwd=ROOT, env=env)
         print(f'=== {arm} pid={p.pid} exe={sha(EXE)[:16]} wall={wall}s', flush=True)
-        time.sleep(wall)
+        load = sample_load(p, t0, wall, os.path.join(ROOT, 'mashed_re.log'), os.path.join(OUT, arm + '_load.csv'))
         alive = p.poll() is None
         if alive:
             p.kill()   # only the PID this script spawned
@@ -120,7 +185,7 @@ def main():
         ok, rows, small, why = score(arm, log, shots)
         rec = dict(arm=arm, pass_=ok, pid=p.pid, alive_at_wall=alive, exit=rc, secs=round(time.time() - t0),
                    env=env_k, movies=placed, intro=rows, small=small, shots=shots, why=why,
-                   log_sha16=sha(os.path.join(OUT, arm + '.log'))[:16] if log else None)
+                   log_sha16=sha(os.path.join(OUT, arm + '.log'))[:16] if log else None, load=load)
         with open(os.path.join(OUT, 'intro_score.txt'), 'a') as f:
             f.write(json.dumps(rec) + '\n')
         print(json.dumps(rec, indent=1), flush=True)

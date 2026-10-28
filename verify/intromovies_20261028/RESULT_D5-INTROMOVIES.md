@@ -11,7 +11,84 @@ the arms). Exe `mashed_re.exe` sha256 `265732d019c9cbc9...`, built from the work
 code (I0). The skip path (I2), the near-empty skip files (I3), the sequence, small.mpg and the
 handoff to the frontend all pass. I1 missed its time band on movie 1 only: empire took 34.7 s for
 a 7.78 s file, while movies 2-4 in the same run were inside their bands. The cause is not
-measured. The two re-runs never reached the game (see I1 below), so the row stays open.
+measured. The two re-runs never reached the game in run 18 (see I1 below). **Run 19** ran
+them with machine load sampled: I1b PASS at 35% CPU, I1c FAIL on movie 1 at 97-100% CPU (see
+"Run 19 re-runs" below).
+
+## Run 19 re-runs with machine load measured (2026-10-28, appended)
+
+**Verdict stays RED on PREREG row I1** (the PREREG says report, do not re-score). The two re-runs
+split: I1b passes every I1 check, I1c misses movie 1 again. The load sampler shows the machine
+at 35% CPU through I1b's movie 1 and at 97-100% through I1c's movie 1. Movies 2-4 are in band in
+all three I1 runs.
+
+Setup: same exe (`265732d019c9cbc9`), private root, shared `original\` only read. The job ran in
+the machine lock (`mashed_lock.py run --label D5-INTROMOVIES`, queued behind
+HB-WARZONE-RIVER-CAP, held from 15:29:16 local) inside a test slot (`proyectos_test_slot.py`).
+5 of 6 slots were free at start, and no other MASHED.exe or mashed_re.exe ran during either arm
+(`other_games_max` 0 in every phase). Log: `D:/MashedWT/D5-INTROMOVIES_data/run_i1_r19.txt`.
+
+`run_intro.py` gained `sample_load()`, which replaces the plain `sleep(wall)`. About every 1.4 s
+(the 1 s sleep plus the process walk) it records system CPU %, the busiest core, the game's own
+CPU, everyone else's CPU (in cores x100, so 1200 = all 12 cores), the count of other game
+processes and the top 3 other processes. It also tags each sample with the movie playing, taken
+from the count of `INTRO movie` lines already in the log. The game's priority class reads
+`16384` = `BELOW_NORMAL_PRIORITY_CLASS`, which it inherits from the test slot.
+
+| arm | movie 1 ms (band 6613..10503) | loop frames | ms/frame | movie 1 load: sys mean / p95 | others (cores x100) | samples in movie 1 | row |
+|---|---|---|---|---|---|---|---|
+| I1 (run 18) | 34672 | 223 | 155 | not measured | not measured | - | FAIL |
+| I1b | 7984 | 206 | 38.8 | 34.6% / 47.5% | 400.6 | 5 | **PASS (all I1 checks)** |
+| I1c | 33547 | 167 | 200.9 | 98.3% / 96.9-99.8% | 1175.7 | 2 | FAIL (idx1 only) |
+
+Movies 2-4: I1b 9625 / 8125 / 63875 ms, I1c 9703 / 8141 / 63937 ms, all in band. Both arms:
+small.mpg BUILT not run, `F1 frontend.mpg: RUNNING` after the INTRO lines, 4 shots with teal
+fraction 0.0. During movies 2-4 the machine sat at 24.7-43.4% mean system CPU.
+
+**What the I1c load data shows.** The sampler's first row is at t=31.1 s, so the sampler (a
+BelowNormal Python process in the same slot) got no CPU for the first 31 s of the arm. Over that
+window the machine averaged 96.9% CPU, and the next window (to t=34.2 s) 99.8%, with the busiest
+core at 99.4-100%. The game itself used 0.02-0.07 of a core. The heaviest long-lived other process was
+`msmpeng.exe` (Defender) at 43% then 99%. The top 3 named processes add up to 0.7-1.7 cores,
+which leaves about 10 cores' worth of load in processes not in the top 3 or not alive across two
+samples (short-lived processes such as a parallel build fit that, but nothing identified them).
+The load fell to 27% by t=38.8 s, during movie 2. I1b's movie 1 window averaged 34.6% with no
+core above 74%.
+
+So movie 1 is in band when the machine is at about 35% and takes 4.3x the file length when the
+machine is saturated and the game runs at BelowNormal. The run-18 I1 miss has no load record, so that one
+link is still not measured. Its loop rate (155 ms/frame) sits with I1c (201) and not with I1b
+(38.8). Why the saturation landed on movie 1 in 2 of 3 runs (the first ~35 s after launch) is not
+measured. The game's own CPU in that window is too small to cause it.
+
+Movie 1 is the only one whose loop starts while the process is still loading. No per-iteration
+split (Update / Present / input poll) was taken, because I1b shows the loop at 38.8 ms/frame on a
+35%-loaded machine, the same rate as movies 2-4.
+
+Raw data (not committed), `D:/MashedWT/D5-INTROMOVIES_data/`:
+
+| file | sha256 |
+|---|---|
+| run_i1_r19.txt | 8f6581fc9f26c161f5fa6af436bcfddd1906e74e2cd65bcd8e0fad998ea35790 |
+| arms/I1b.log | 93a22eb55aa7259950f45ffa27204d35727ddf459a55753fa6c9d9a51f4859cf |
+| arms/I1c.log | 5145ba19f35c85e43b3dcf4651901e1d13434fc2121ca69ac4c2b40e472519e6 |
+| arms/I1b_load.csv | e71b9651ef52e8fd3b5820fdeb5ecb9d53b409ff8907dc9b82fb3da359896817 |
+| arms/I1c_load.csv | 01ba01cf0b7e28099a18325fb5f8c9f74f82819cd6b9a1474f8aafd3a7eff9f4 |
+| arms/I1b_shot_1..4.bmp | 3e4ab829.. / 10ff2e75.. / cce38c28.. / d78abee8.. |
+| arms/I1c_shot_1..4.bmp | 962ccea3.. / 3d7c03d4.. / ab98a289.. / d78abee8.. |
+| arms/intro_score.txt (6 rows) | 7b814e0f76a391a58a4b5c31380644ef718a5113c01367b9c130ec1bd0a545c2 |
+
+The I1b and I1c rows are appended to the committed `intro_score.txt` (each carries a `load`
+summary per movie phase). The shared `original\toastart\pc\movies\*.mpg` were re-hashed at
+2026-10-28T18:35:18Z: the five skip files are still `a0e085d46d222763` (167,414 B) and frontend
+is still `6d12b398284bd3d6`. `--restore` was not run, so no announcement was needed.
+
+**For the lead (decision):** (a) accept I1 on I1b plus the load record, treating the movie-1 miss
+as CPU starvation of a BelowNormal process on a saturated machine, or (b) PREREG one more I1 arm
+that only counts when the movie-1 load window stays under a stated CPU ceiling. Recommendation:
+(a). I1b is a clean pass on the same exe, and the one failing arm with a load record had every
+core saturated. Either way the knob stays default OFF. Turning it ON and striking D-11062 remain
+a decision row.
 
 ## What was ported (knob `MASHED_INTRO_MOVIES=1`, default OFF)
 
