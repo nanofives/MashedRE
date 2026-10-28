@@ -1048,37 +1048,10 @@ void VehiclePhysics_RecDumpFrame() {
 
 int VehiclePhysics_RecDumpFrameIndex() { return g_recDumpFrame; }
 
-// [u9778 / substep] MASHED_SUBSTEP_OUTER: a slot's record and per-slot module state (its own contact cache included)
-// before VehiclePhysics_StepCarsOuter, so a car the opponent loop then skips, relocates or feeds a different io can be
-// put back and stepped the per-car way.
-namespace {
-struct OuterSnap {
-    unsigned char rec[kRec]; float basis[16]; bool basisOk, basisReseed, settled, startBoosted;
-    float outVel[3], outSpeed; bool outValid; float physPos[3], outPos[3]; bool outPosValid;
-    bool a4Skip, a4GateDone, a4PreDone, a4PreSkip; float a4PreIo[4]; int a4PrePhase; ContactScratch slotScratch;
-};
-OuterSnap g_outerSnap[16];
-}  // namespace
-void VehiclePhysics_OuterSnapshot(int s) {
-    if (!g_inited || s < 0 || s >= 16) return;
-    OuterSnap& n = g_outerSnap[s];
-    std::memcpy(n.rec, rec(s), kRec); std::memcpy(n.basis, g_bodyBasis[s], sizeof(n.basis));
-    n.basisOk = g_bodyBasisOk[s]; n.basisReseed = g_bodyBasisReseed[s]; n.settled = g_settled[s]; n.startBoosted = g_startBoosted[s];
-    std::memcpy(n.outVel, g_outVel[s], 12); n.outSpeed = g_outSpeed[s]; n.outValid = g_outValid[s];
-    std::memcpy(n.physPos, g_physPos[s], 12); std::memcpy(n.outPos, g_outPos[s], 12); n.outPosValid = g_outPosValid[s];
-    n.a4Skip = g_a4Skip[s]; n.a4GateDone = g_a4GateDone[s]; n.a4PreDone = g_a4PreDone[s]; n.a4PreSkip = g_a4PreSkip[s];
-    std::memcpy(n.a4PreIo, g_a4PreIo[s], 16); n.a4PrePhase = g_a4PrePhase[s]; n.slotScratch = g_cSlot[s];
-}
-void VehiclePhysics_OuterRestore(int s) {
-    if (!g_inited || s < 0 || s >= 16) return;
-    const OuterSnap& n = g_outerSnap[s];
-    std::memcpy(rec(s), n.rec, kRec); std::memcpy(g_bodyBasis[s], n.basis, sizeof(n.basis));
-    g_bodyBasisOk[s] = n.basisOk; g_bodyBasisReseed[s] = n.basisReseed; g_settled[s] = n.settled; g_startBoosted[s] = n.startBoosted;
-    std::memcpy(g_outVel[s], n.outVel, 12); g_outSpeed[s] = n.outSpeed; g_outValid[s] = n.outValid;
-    std::memcpy(g_physPos[s], n.physPos, 12); std::memcpy(g_outPos[s], n.outPos, 12); g_outPosValid[s] = n.outPosValid;
-    g_a4Skip[s] = n.a4Skip; g_a4GateDone[s] = n.a4GateDone; g_a4PreDone[s] = n.a4PreDone; g_a4PreSkip[s] = n.a4PreSkip;
-    std::memcpy(g_a4PreIo[s], n.a4PreIo, 16); g_a4PrePhase[s] = n.a4PrePhase; g_cSlot[s] = n.slotScratch;
-}
+// [D3-CF-SNAP-RETIRE 2026-10-28] VehiclePhysics_OuterSnapshot / OuterRestore (u9778 / substep: a slot's record and
+// per-slot module state before StepCarsOuter, put back when the opponent loop skipped, relocated or fed a different io)
+// deleted per L-43 once MASHED_SNAP_POST (default ON since D3-CF-SNAP-FLIP) left the mismatch count at 0
+// (verify/snapretire_20261028/RESULT_D3-CF-SNAP-RETIRE.md).
 
 void VehiclePhysics_A4PreEnd() {
     g_torqueRingPhase = g_a4PreBase;   // the real StepCar calls advance it as in the per-car order
