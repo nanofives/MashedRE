@@ -20,6 +20,7 @@
 #include "../D3d9Render/DrawRec.h"
 #include "../Math/RwLutTables.h"
 #include "../Piz/PizReader.h"
+#include "../Render/RfxEmitter.h"
 #include "../Txd/TxdDecoder.h"
 
 // d1r1 per-draw recorder hooks (deps/librw/src/d3d/d3d9render.cpp); null unless armed.
@@ -2241,6 +2242,85 @@ void RaceFx_ShadowQuads(int slot) {
     rw::im3d::End();
     rw::SetRenderState(rw::VERTEXALPHA, 0);
     rw::SetRenderState(rw::ZWRITEENABLE, 1);
+}
+
+// =============================================================================================
+// [D5-RFX-EMITTERS 2026-10-28] FUN_004770a0 @ 0x004770a0: the PTank atomic render of one batch
+// =============================================================================================
+bool RaceFx_EmittersEnabled() {
+    static const bool on = [] { const char* e = std::getenv("MASHED_RFX_EMITTERS"); return e && e[0] == '1'; }();
+    return on;
+}
+
+// FUN_004770a0 draws only when plugin +4 != 0 (0x004770ae), through the atomic's render callback
+// (+0x48 = 0x00535690, FUN_00534d00 0x00534d49) -> FUN_00537fb0 (camera vectors) and the instance callbacks
+// Rfx::Instance ports. The atomic's frame is a fresh one (FUN_004c0b30 / FUN_004e7e30), so the world
+// matrix is identity. Indices (0,1,2)(0,2,3) per particle (FUN_00536170, table 0x00623c7c). Blend from plugin
+// +0xa4 / +0xa8, vertex alpha +0xac (RS 0xc). The colour dword FUN_00537b20 writes is drawn as a D3DCOLOR
+// (R = byte 0, B = byte 2): the pickup type-19 glow, dword 0xffff0000, is blue on the original's capture
+// (re/analysis/PICKUPS_LOOK_PLACEMENT_2026-09-29.md, section 1.1).
+bool RaceFx_DrawEmitter(const void* tank_v, void* rw_camera) {
+    if (!RaceFx_EmittersEnabled() || !tank_v) return false;
+    const Rfx::PTank& tank = *static_cast<const Rfx::PTank*>(tank_v);
+    if (tank.count == 0) return false;
+    rw::Camera* cam = static_cast<rw::Camera*>(rw_camera);
+    rw::Texture* tex = static_cast<rw::Texture*>(const_cast<void*>(tank.texture));
+    if (!cam || !cam->getFrame() || !tex) return false;
+    const rw::Matrix* L = cam->getFrame()->getLTM();
+    const float r[3] = {-L->right.x, -L->right.y, -L->right.z};   // 0x005381c0..0x005381d0
+    const float u[3] = {L->up.x, L->up.y, L->up.z};               // 0x005381d3..0x005381e2
+    Rfx::Streams st;
+    if (!Rfx::Instance(tank, r, u, st)) {
+        static bool s_logged = false;
+        if (!s_logged) {
+            s_logged = true;
+            std::fprintf(stderr, "[rfx] emitter batch flags 0x%08x: instance callback not ported, not drawn\n",
+                         tank.data_flags);
+        }
+        return false;
+    }
+    const std::size_t nv = st.xyz.size() / 3;
+    std::vector<rw::RWDEVICE::Im3DVertex> v(nv);
+    std::vector<rw::uint16> idx;
+    idx.reserve(nv / 4 * 6);
+    for (std::size_t i = 0; i < nv; ++i) {
+        rw::RWDEVICE::Im3DVertex& o = v[i];
+        o.setX(st.xyz[i * 3]); o.setY(st.xyz[i * 3 + 1]); o.setZ(st.xyz[i * 3 + 2]);
+        o.setNormalX(0.f); o.setNormalY(0.f); o.setNormalZ(0.f);
+        const std::uint32_t c = st.argb[i];
+        o.setColor(static_cast<rw::uint8>(c >> 16), static_cast<rw::uint8>(c >> 8), static_cast<rw::uint8>(c),
+                   static_cast<rw::uint8>(c >> 24));
+        if (!st.uv.empty()) { o.setU(st.uv[i * 2]); o.setV(st.uv[i * 2 + 1]); }
+        else { o.setU(0.f); o.setV(0.f); }
+    }
+    for (std::size_t q = 0; q < nv / 4; ++q) {
+        const rw::uint16 s = static_cast<rw::uint16>(q * 4);
+        const rw::uint16 tri[6] = {s, static_cast<rw::uint16>(s + 1), static_cast<rw::uint16>(s + 2),
+                                   s, static_cast<rw::uint16>(s + 2), static_cast<rw::uint16>(s + 3)};
+        for (int k = 0; k < 6; ++k) idx.push_back(tri[k]);
+    }
+    rw::int32 sv_sb = rw::GetRenderState(rw::SRCBLEND), sv_db = rw::GetRenderState(rw::DESTBLEND);
+    rw::int32 sv_va = rw::GetRenderState(rw::VERTEXALPHA);
+    rw::SetRenderStatePtr(rw::TEXTURERASTER, tex->raster);
+    rw::SetRenderState(rw::TEXTUREFILTER, tex->getFilter());
+    rw::SetRenderState(rw::TEXTUREADDRESSU, tex->getAddressU());
+    rw::SetRenderState(rw::TEXTUREADDRESSV, tex->getAddressV());
+    rw::SetRenderState(rw::VERTEXALPHA, tank.vtx_alpha);
+    rw::SetRenderState(rw::SRCBLEND, tank.src_blend);
+    rw::SetRenderState(rw::DESTBLEND, tank.dst_blend);
+    rw::im3d::Transform(v.data(), static_cast<rw::int32>(v.size()), nullptr, rw::im3d::VERTEXUV);
+    static const float kIdent[16] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
+    if (rw_drawrec_pre) {
+        DrawRec::SetNextGeometry(v.data(), sizeof(v[0]), idx.data(), static_cast<unsigned>(idx.size()));
+        rw_drawrec_pre(tex->name, kIdent);
+    }
+    rw::im3d::RenderIndexedPrimitive(rw::PRIMTYPETRILIST, idx.data(), static_cast<rw::int32>(idx.size()));
+    if (rw_drawrec_post) rw_drawrec_post();
+    rw::im3d::End();
+    rw::SetRenderState(rw::SRCBLEND, sv_sb);
+    rw::SetRenderState(rw::DESTBLEND, sv_db);
+    rw::SetRenderState(rw::VERTEXALPHA, sv_va);
+    return true;
 }
 
 }  // namespace LibRw
