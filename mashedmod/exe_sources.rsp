@@ -75,6 +75,7 @@
 "D3d9Render\RwWorldLoadStubs.cpp"
 "D3d9Render\RwWorldStream.cpp"
 "Render\RwStreamCore.cpp"
+"Render\RfxEmitter.cpp"
 "D3d9Render\ParticleSystem.cpp"
 "D3d9Render\PickupField.cpp"
 "D3d9Render\PickupIconCube.cpp"

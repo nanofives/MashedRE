@@ -183,5 +183,14 @@ void RaceFx_SetDbgRow(int row);
 // original's trace starts, not at the standalone's pre-replay grid positions.
 void RaceFx_ShadowResetCache();
 
+// ---- [D5-RFX-EMITTERS 2026-10-28] the RpPTank particle batches (Render/RfxEmitter.h) ----------------
+// MASHED_RFX_EMITTERS=1 enables (default OFF, not in FaithDefaults). No caller in this step: the first
+// consumer is the pickup glow (D5-ICONCUBE-GLOW, FUN_00459000 / FUN_00458b10).
+bool RaceFx_EmittersEnabled();
+// FUN_004770a0 @ 0x004770a0 on a flushed batch (`tank` = Rfx::PTank, its texture an rw::Texture*): nothing
+// when the knob is off, tank.count == 0, or Rfx::Instance rejects the batch's callbacks. Draws with the
+// render state the caller has set (Z, cull, fog) plus the batch's texture, blend and vertex alpha.
+bool RaceFx_DrawEmitter(const void* tank, void* rw_camera);
+
 }  // namespace LibRw
 }  // namespace mashed_re

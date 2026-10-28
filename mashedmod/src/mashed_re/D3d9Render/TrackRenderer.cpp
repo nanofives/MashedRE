@@ -4532,7 +4532,74 @@ float PartMorphStep(const TrackRenderer::CarPartState& cp, const TrackRenderer::
     pv[2] = m._43;
     return morph;
 }
+
+// [D5-PARTMORPH-PRODUCER] MASHED_CAR_STATE0=1 (default OFF): the producer of record state 0 (rec+0x298, setter
+// FUN_0041ef60 @ 0x0041ef60). Decode: verify/partmorph_20261028/PREREG_D5-PARTMORPH-PRODUCER.md section 1.
+// FUN_0040d470 always reaches FUN_00448220 here (DAT_00639d78, DAT_007f10a1 / DAT_007f1561 / DAT_0063ba88 and
+// DAT_007f1a50 are 0 in the standalone). FUN_00448220's tail (0x004486d7..0x004486e5, push ebx = 0) sets all four
+// cars to 0 on sub-state 7 / -1 or on sub-state 6 with no counted car; FUN_00446520 sets all four to 0 at
+// 0x00446541, keeps them when DAT_007f0fd0 == 5 && FUN_00405890(), else runs the 1/2 loop (0x00446965 /
+// 0x00446975, the port's CarLodState) and sets car 0 to 0 (0x004469aa) when FUN_0042f6a0() == 2 or DAT_007f0fd0
+// is 5, 10 or 9 (0x00446985..0x004469a8). cam[7] is 0 in the port, so FUN_00446520's last branch is unreachable.
+bool CarState0Enabled() {
+    static const bool on = [] {
+        const char* e = std::getenv("MASHED_CAR_STATE0");
+        return e && e[0] == '1' && e[1] == '\0';
+    }();
+    return on;
+}
+struct CarState0Decision { int id = -1; bool all0 = false; bool car0 = false; };
+CarState0Decision s_s0_cur, s_s0_prev;   // this tick's decision / the one the draw reads (tick N-1)
+int s_s0_ticks = 0;
+// MASHED_DBG_CAR_STATE0=<csv>, DIAGNOSTIC ONLY: L rows per tick, D rows per car draw
+std::FILE* CarState0Log() {
+    static std::FILE* f = [] {
+        const char* e = std::getenv("MASHED_DBG_CAR_STATE0");
+        std::FILE* g = (e && e[0]) ? std::fopen(e, "w") : nullptr;
+        if (g) std::fprintf(g, "kind,id,a,b,c,d,e,f,g,h\n");   // L,id,sub,pre,n,rule,mode,cdone,all0,car0 / D,id,slot,lod,state
+        return g;
+    }();
+    return f;
+}
+// The record state a car draws with: FUN_00420870 (0x0040dad0, inside FUN_0040da50 at 0x0040fc75) reads what the
+// previous tick's director wrote (0x0040fc7c). Before the first decision: the distance state.
+int CarState0Apply(int slot, int lod) {
+    int st = lod;
+    if (s_s0_prev.id >= 0 && (s_s0_prev.all0 || (s_s0_prev.car0 && slot == 0))) st = 0;
+    if (std::FILE* f = CarState0Log()) std::fprintf(f, "D,%d,%d,%d,%d\n", s_s0_prev.id, slot, lod, st);
+    return st;
+}
 }  // namespace
+
+void TrackRenderer::CarState0Latch() {
+    if (!CarState0Enabled()) return;
+    s_s0_prev = s_s0_cur;
+    CarState0Decision d;
+    d.id = s_s0_ticks++;
+    const int s = aib_game_sub_mode();                  // FUN_0040e350 (DAT_0063ba8c)
+    const bool pre = countdown_ > 0.f;                  // pre-GO: the original's 3/4/5, no count test there
+    int n = -1;
+    bool tail = (s == 7 || s == -1);                    // FUN_00448220: s == 7 / -1 -> the tail
+    if (s == 6 && !pre) {                               // s == 6: count the cars FUN_00446520 is called for
+        n = 0;
+        const std::uintptr_t p = *reinterpret_cast<const std::uintptr_t*>(0x005f2770u);
+        for (int v = 0; v < 4; ++v) {
+            const bool present = p && *reinterpret_cast<const int*>(p + 0x34u + static_cast<std::uintptr_t>(v) * 4u) != 0;   // FUN_0040e370
+            if (present && Vehicle::VehiclePhysics_RecordI32(v, 0x004) == 1      // FUN_0046c7b0 (record +0x004)
+                && Vehicle::VehiclePhysics_RecordI32(v, 0x9f0) == 0) ++n;        // FUN_0046cbb0 first out (record +0x9f0)
+        }
+        tail = (n == 0);
+    }
+    const int rule = *reinterpret_cast<const int*>(0x007f0fd0u);   // DAT_007f0fd0
+    const int mode = *reinterpret_cast<const int*>(0x0067e9fcu);   // FUN_0042f6a0 (DAT_0067e9fc)
+    const bool cdone = Race::RuleEngine::CollectAllDone(rulep_);  // FUN_00405890 (the exe's collect feed)
+    if (tail || (rule == 5 && cdone)) d.all0 = true;
+    else d.car0 = (mode == 2 || rule == 5 || rule == 10 || rule == 9);
+    if (std::FILE* f = CarState0Log())
+        std::fprintf(f, "L,%d,%d,%d,%d,%d,%d,%d,%d,%d\n", d.id, s, pre ? 1 : 0, n, rule, mode, cdone ? 1 : 0,
+                     d.all0 ? 1 : 0, d.car0 ? 1 : 0);
+    s_s0_cur = d;
+}
 
 // [librwrest_checks] W1 law replay. Input, one record per line (whitespace separated):
 //   row car units a0 a1 a2 a3 spin0..3 steer0..3 va0 va1 va2 vb0 vb1 vb2
@@ -5085,6 +5152,9 @@ extern "C" void __cdecl RaceRefDistTraceAiEntry();
 
 void TrackRenderer::UpdateCar(const DriveInput& in) {
     if (!car_ready_ || in.dt <= 0.f) return;
+    // [D5-PARTMORPH-PRODUCER] FUN_0040fc00 runs the director FUN_0040d470(0) at 0x0040fc7c on every tick, after
+    // FUN_0040da50 (0x0040fc75); the latch runs on every exit of this tick (the countdown frames return early).
+    struct CarState0Guard { TrackRenderer* t; ~CarState0Guard() { t->CarState0Latch(); } } s0guard{this};
     // R6 handling v2 — velocity-vector model whose STRUCT SHAPE follows
     // VehicleControlUpdate (0x00470670): velocity vec (+0x9b0), forward vec
     // (+0x9d4), throttle as a force along forward (+0x1a8 pipeline, negated
@@ -5233,6 +5303,16 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             SubStateEnter4();                              // 0x004112a5
         } else if (ba8c == 5) {
             SubStateHeldCountdown5_C(units);               // 0x004112bb (units in EAX)
+        }
+        // [D3-SUBSTATE-PH3] MASHED_P3_RESET_PAIR (default OFF): FUN_0040fc00 stores DAT_007f1008 = units and
+        // _DAT_007f100c (0x0040fc57) at its top, BEFORE FUN_0040d470(0), so the original's second call on phase 3's
+        // first frame reads 50 (measured, RESULT_d3subph3.md). Here the stores come from Ai_AdvanceClock below the chain,
+        // which left that one call at 0. Same values, written again below. Knob OFF: no store here.
+        static const bool s_p3ResetPair = [] { const char* e = std::getenv("MASHED_P3_RESET_PAIR");
+                                               return e && e[0] && e[0] != '0'; }();
+        if (s_p3ResetPair && ba8c >= 3 && ba8c <= 5) {
+            *reinterpret_cast<int*>(0x007f1008u) = units;  // FUN_0040fc00: DAT_007f1008 = units
+            SubState_StoreStep(units);                     // 0x0040fc57 _DAT_007f100c
         }
         if (ba8c >= 3 && ba8c <= 5) SubStateCameraChain(false);   // FUN_0040fc00 -> FUN_0040d470(0) (L81-85)
         const bool subClock = g_aib.loaded && (Ai::I32(Ai::kSplineRaceCnt) > 3);
@@ -10110,6 +10190,8 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
             static const bool s_lod_prev = [] { const char* e = std::getenv("MASHED_CAR_LOD_EYE");
                                                 return !(e && e[0] == 'l'); }();
             out->state = LibRw::CarLodState(part19_d2(slot, m, s_lod_prev ? eye_prev_ : last_eye_));
+            // [D5-PARTMORPH-PRODUCER] MASHED_CAR_STATE0=1 (default OFF): the director's state 0 (CarState0Apply)
+            if (CarState0Enabled()) out->state = CarState0Apply(slot, out->state);
             // [partmorph] MASHED_DBG_PARTSTATE0=<slot>, DIAGNOSTIC ONLY, default unset: that slot's record
             // state is 0, which only FUN_00448220 / FUN_00446520's car-0 branch produce in the original
             // (the result cameras) and the standalone does not port; it makes FUN_0041f770 run.

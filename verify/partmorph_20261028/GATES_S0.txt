@@ -1,0 +1,72 @@
+# D5-PARTMORPH-PRODUCER checker outputs (exe ee598fe4, code 7b911e62c, PREREG 087f35a96)
+## arm hashes (run_arms_s0.py sha8)
+=== H_DEF pid=6212 exe=ee598fe4
+    H_DEF.step.csv lines=14659 sha8=5943c5f1
+    H_DEF.gates.csv lines=56873 sha8=364350ae
+    H_DEF.ptrace.log lines=28436 sha8=52052890
+=== B_DEF_K0 pid=6500 exe=ee598fe4
+    B_DEF_K0.step.csv lines=1459 sha8=3a03670c
+=== B_DEF_K1 pid=7852 exe=ee598fe4
+    B_DEF_K1.step.csv lines=1825 sha8=9fcdbd3a
+=== B_DEF_K26 pid=6432 exe=ee598fe4
+    B_DEF_K26.step.csv lines=1411 sha8=53778664
+=== H_S0 pid=19200 exe=ee598fe4
+    H_S0.step.csv lines=14659 sha8=5943c5f1
+    H_S0.gates.csv lines=56873 sha8=364350ae
+    H_S0.ptrace.log lines=28436 sha8=52052890
+=== B_S0_K0 pid=7112 exe=ee598fe4
+    B_S0_K0.step.csv lines=1459 sha8=3a03670c
+=== B_M2_K0 pid=9232 exe=ee598fe4
+    B_M2_K0.step.csv lines=2705 sha8=5868f742
+=== B_M2S0_K0 pid=9564 exe=ee598fe4
+    B_M2S0_K0.step.csv lines=2705 sha8=5868f742
+## s0_check H_S0
+L rows=14398 D rows=57596
+L rows by (sub, pre): {(6, 0): 219, (6, 1): 180, (7, 0): 13999}
+L model mismatches=0  n-consistency mismatches=0
+D state mismatches=0  D decision-id mismatches=0
+D rows with state 0 by slot: {0: 13998, 1: 13998, 2: 13998, 3: 13998}
+all0 windows=1 [(399, 14397, 7)]
+slots drawn with state 0 on all0 decisions: [0, 1, 2, 3]
+PASS
+## law_check H_S0
+rows=56872 state0_rows=55992 slots=[0, 1, 2, 3]
+vtx lines=41995 lerp_mismatch=0
+vtx[0] (v0, v1) nearest DFF part 0x12 pair: max abs diff 3.31e-10 over 504 pairs
+G4 PASS
+## s0_check B_S0_K0
+L rows=1198 D rows=4796
+L rows by (sub, pre): {(6, 0): 219, (6, 1): 180, (7, 0): 799}
+L model mismatches=0  n-consistency mismatches=0
+D state mismatches=0  D decision-id mismatches=0
+D rows with state 0 by slot: {0: 798, 1: 798, 2: 798, 3: 798}
+all0 windows=1 [(399, 1197, 7)]
+slots drawn with state 0 on all0 decisions: [0, 1, 2, 3]
+PASS
+## law_check B_S0_K0
+rows=4072 state0_rows=3192 slots=[0, 1, 2, 3]
+vtx lines=2395 lerp_mismatch=0
+vtx[0] (v0, v1) nearest DFF part 0x12 pair: max abs diff 3.31e-10 over 504 pairs
+G4 PASS
+## s0_check B_M2S0_K0 --car0
+L rows=1198 D rows=4796
+L rows by (sub, pre): {(6, 0): 1018, (6, 1): 180}
+L model mismatches=0  n-consistency mismatches=0
+D state mismatches=0  D decision-id mismatches=0
+D rows with state 0 by slot: {0: 1197, 1: 714, 2: 714, 3: 714}
+all0 windows=1 [(483, 1197, 6)]
+slots drawn with state 0 on all0 decisions: [0, 1, 2, 3]
+P5: L rows without all0 and without car0=0  slot-0 state-0 D rows on car0=483  slots 1..3 state 0 on car0=0
+PASS
+## law_check B_M2S0_K0
+rows=1018 state0_rows=1018 slots=[0]
+vtx lines=2036 lerp_mismatch=0
+vtx[0] (v0, v1) nearest DFF part 0x12 pair: max abs diff 3.31e-10 over 504 pairs
+G4 PASS
+## B_M2S0_K0 L rows 480..485 (kind,id,sub,pre,n,rule,mode,cdone,all0,car0)
+L,480,6,0,1,0,2,0,0,1
+L,481,6,0,1,0,2,0,0,1
+L,482,6,0,1,0,2,0,0,1
+L,483,6,0,0,0,2,0,1,0
+L,484,6,0,0,0,2,0,1,0
+L,485,6,0,0,0,2,0,1,0

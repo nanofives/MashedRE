@@ -1,0 +1,7 @@
+cases {'C': 262, 'S': 240, 'L': 146, 'I': 74} particles 2459 dwords compared 93472
+mismatch {'C': 0, 'S': 0, 'L': 0, 'I': 26}
+   case 649 (I) word 316: orig 43213476 port 43213477 (len 674/674) | I 10080027 1c 3e947477 bf265900 bf1148c0 bf0120b7 3f124b49 bf784d20 3eb340e1 3f4
+   case 652 (I) word 126: orig c36ed952 port c36ed953 (len 866/866) | I 10080027 24 3f7c4f8e bf6d13ca 3f357833 3b13c741 3f0442dd 3f7d594f 3e4b7231 3f7
+   case 653 (I) word 326: orig 4102ab17 port 4102ab16 (len 842/842) | I 10080027 23 bf5cefcc 3e56a898 bf6086fd 3ef8425a be9982c5 bf7571ca 3f7561b8 3e9
+   case 658 (I) word 54: orig 420f0ae0 port 420f0ae1 (len 650/650) | I 10080027 1b bf3ff0af 3f2620f7 bb9114d3 becc25b3 bf54ad48 3f619b60 3d1a68a0 3f6
+   case 659 (I) word 199: orig 4136221e port 4136221d (len 1034/1034) | I 10080027 2b 3f0e59fd bf43ea7d 3f05cbd9 beaf3911 bf5b8739 bf3ef490 3ec4e39a 3d9

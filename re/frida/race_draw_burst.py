@@ -309,6 +309,9 @@ def main():
                          "MASHED_CAM_POSE order) from race entry to the capture. Lets the "
                          "original render a vantage the race camera never takes on its own "
                          "(the parked player car keeps it on the grid). Default: off.")
+    ap.add_argument("--settle-from-pose", action="store_true",
+                    help="with --pose, start the --settle clock at the first pinned-camera "
+                         "write instead of race entry (the load sits between the two).")
     args = ap.parse_args()
 
     out_bmp = Path(args.out).resolve()
@@ -407,8 +410,15 @@ def main():
             time.sleep(0.5)
             for _ in range(args.challenge):
                 E.press(12, 180); time.sleep(0.5)
+            # Presses sent before the screen takes input are dropped, so top up
+            # until the index reaches N (never past it), then refuse a wrong track.
+            for _ in range(3 * args.challenge + 6):
+                if E.snap([0x0067f17c])[0] >= args.challenge: break
+                E.press(12, 180); time.sleep(0.6)
             sel = E.snap([0x0067f17c])[0]
-            print(f"  challenge index 0x67f17c={sel} (wanted {args.challenge})")
+            print(f"  challenge index 0x67f17c={sel} (wanted {args.challenge}) depth={E.depth()}")
+            if sel != args.challenge:
+                sys.exit(f"challenge index {sel} != {args.challenge} -- aborting")
         # Track select. setsel() writes the cursor at the CURRENT depth, so this
         # must happen after confirm_to(5) and before the confirm that loads.
         elif args.track_sel is not None:
@@ -440,8 +450,24 @@ def main():
             ps.on("message", lambda m, d: None)
             ps.load(); ps.exports_sync.init(pv)
             print(f"  pose pinned: {args.pose}")
+        if args.settle_from_pose and ps is not None:
+            # The phase flips at load start, so a short --settle can land in the
+            # load. Start the clock at the first pinned-camera write instead.
+            t0 = time.time()
+            wait(lambda: ps.exports_sync.hits() > 0, 60)
+            print(f"  first pose write after {time.time() - t0:.1f}s")
         print(f"  in race (phase={E.phase()}); settling {args.settle}s")
-        time.sleep(args.settle)
+        # DAT_0063ba8c: 3 = driving, 5/6/7 = standings overlay (letterbox).
+        # A mode variable, so sample it across the settle, not per frame.
+        states = []
+        end = time.time() + args.settle
+        while True:
+            states.append(E.snap([0x0063ba8c])[0])
+            left = end - time.time()
+            if left <= 0: break
+            time.sleep(min(0.5, left))
+        print("  race state 0x63ba8c during settle (0.5 s steps): "
+              + " ".join(str(s) for s in states))
         if ps is not None:
             print(f"  pose writes so far: {ps.exports_sync.hits()}")
         # Which track did the ORIGINAL actually load? Ground truth for same-track
