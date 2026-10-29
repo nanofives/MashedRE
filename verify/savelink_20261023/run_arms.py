@@ -437,6 +437,7 @@ STACK['GT'] = ['MASHED_GRID_ROTATE_TRACE=@OUT@\\@NAME@.gridrot.txt']; STACK['GRT
 STACK['SUB'] = ['MASHED_SUBSTATE=1', 'MASHED_P3_RESET_PAIR=1']
 STACK['SUBNS'] = STACK['SUB'] + ['MASHED_NO_SUBSTATE_SETTLE_FIRST=1']   # D3-SUBSTATE-SETTLE-ORDER: same-exe control (settle in the first race StepCar)
 STACK['SUBH'] = STACK['SUB'] + ['MASHED_DRIVE_HOLD_MS=42000']   # amendment 1: the 30 s demo hold + ~776 phase-3 frames
+STACK['DEFH'] = ['MASHED_DRIVE_HOLD_MS=42000']   # D2-BAND-42S (verify/d2band42_20261029): the default under the 42 s hold
 # D3-SUBSTATE-ROW315 (verify/d3subrow315_20261029): RTR = the A5 race-timer log + the slot-0 record dump, NRTR = the A5 timer
 # opt-out (A5 reads 0) + the record dump. Both write files only.
 _REC = ['MASHED_RECDUMP=@OUT@/@NAME@.rec.msd']
