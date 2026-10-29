@@ -5247,8 +5247,10 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         for (auto& a : ai_cars_) a.cur_speed = 0.f;
         static TrackRenderer* s_subTr = nullptr;
         static float          s_subAccel = 0.f;
+        static float          s_subDt = 0.f;
         s_subTr = this;
         s_subAccel = in.accel;
+        s_subDt = in.dt;
         static bool s_hostSet = false;
         if (!s_hostSet) {
             SubStateHost h{};
@@ -5262,6 +5264,28 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             h.player_accel_byte = [] {
                 const float a = s_subAccel > 0.f ? s_subAccel : 0.f;   // LaunchRev_PreRaceTick's cook
                 return static_cast<unsigned char>(a * 255.f);
+            };
+            // [D3-SUBSTATE-SETTLE-ORDER] the stand-in GO frame's pre-release settle (d2engage fix B part 4, below), called by
+            // FUN_004103a0's exit call between its hold loop and its release loop (0x00410470). Same io, same gate.
+            // MASHED_NO_SUBSTATE_SETTLE_FIRST=1 leaves the settle to the first race StepCar, as before.
+            static const bool s_noSettleFirst = [] { const char* e = std::getenv("MASHED_NO_SUBSTATE_SETTLE_FIRST");
+                                                     return e && e[0] && e[0] != '0'; }();
+            if (!s_noSettleFirst) h.player_settle = [] {
+                TrackRenderer* t = s_subTr;
+                if (!t || !(Vehicle::PosModelOrder() && Vehicle::VehiclePhysics_Enabled())) return;
+                Vehicle::PlayerCarIO sio;
+                sio.pos[0] = t->car_pos_[0]; sio.pos[1] = t->car_pos_[1]; sio.pos[2] = t->car_pos_[2];
+                sio.vel[0] = t->car_vel_[0]; sio.vel[1] = t->car_vel_[1]; sio.vel[2] = t->car_vel_[2];
+                sio.yaw = t->car_yaw_; sio.speed = t->car_speed_;
+                for (int k = 0; k < 8; ++k) sio.input[k] = 0;
+                sio.steer = 0.f;
+                sio.ground_off = t->car_ground_off_;
+                bool sgok = false;
+                t->GroundHeight(t->car_pos_[0], t->car_pos_[2], &sgok);
+                sio.grounded = sgok ? 1 : 0;
+                for (int k = 0; k < 3; ++k) sio.drive_delta[k] = 0.f;
+                Vehicle::VehiclePhysics_SpawnSettle(0, s_subDt, sio);
+                if (Vehicle::PosModelTrans()) { t->car_pos_[0] = sio.pos[0]; t->car_pos_[1] = sio.pos[1]; t->car_pos_[2] = sio.pos[2]; }
             };
             SubState_SetHost(h);
             s_hostSet = true;

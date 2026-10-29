@@ -1779,7 +1779,12 @@ bool RunRaceDemoStep(int /*phase*/) {
                     }
                     // s_drive_hold: stay InRace, keep driving + logging (G2 calibration)
                 }
-                if (s_drive_hold && s_cap[2] && el >= 30000) {
+                // [D3-SUBSTATE-SETTLE-ORDER] MASHED_DRIVE_HOLD_MS (harness only, default 30000 = unchanged): under
+                // MASHED_SUBSTATE phase 3 holds ~776 frames before GO inside this window, so a D2 arm logs ~920 rows, not ~1630.
+                static const int s_driveHoldMs = [] { const char* e = std::getenv("MASHED_DRIVE_HOLD_MS");
+                                                      const int v = (e && e[0]) ? std::atoi(e) : 0;
+                                                      return v > 0 ? v : 30000; }();
+                if (s_drive_hold && s_cap[2] && el >= s_driveHoldMs) {
                     NavDemoTap(DIK_ESCAPE);   // held ~30s for calibration -> exit cleanly
                     step = 2; cool = 10;
                 }

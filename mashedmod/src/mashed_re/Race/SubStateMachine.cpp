@@ -248,6 +248,13 @@ extern "C" void __cdecl SubStateHeldCountdown5_C(int units)
     std::memcpy(&k, &kbits, sizeof k);
     // fcomp + `test ah,1` + jne skip: skipped when C0 is set, i.e. t < k OR unordered (NaN).
     if (t >= k) {                                               // 0x0041045c..0x0041046e
+#ifdef MASHED_STANDALONE
+        // [D3-SUBSTATE-SETTLE-ORDER] The port's spawn-settle stands in for the pre-release hold ticks (d2engage). On the
+        // original every hold tick (loop 1, 0x0041043a / 0x00410441) precedes the release (0x0041049b) on this call, and
+        // the first race step comes on a later tick (FUN_004111c0 case 6, 0x004112cd). So it runs here, between the two
+        // loops, as the stand-in runs it before LaunchRev_Release(). MASHED_NO_SUBSTATE_SETTLE_FIRST=1 removes it.
+        if (s_ssHost.player_settle) s_ssHost.player_settle();
+#endif
         // 0x00410470..0x004104be: per alive car, release + copy into 0x007f0a04 + v*12.
         std::uintptr_t out = 0x007f0a08u;                       // 0x00410472
         for (int v = 0, off = 0x34; off < 0x44; off += 4, ++v, out += 12u) {
