@@ -26,6 +26,10 @@ length of this header.
 Entries before 2026-06-15 live in `archive/CHANGELOG_pre20260615.md`.
 
 <!-- ENTRIES -->
+2026-10-29  0056adb0  FUN_0056adb0  C2->C2  mapped->impl, port mashedmod/src/mashed_re/Collision/RwpVtableKV12.cpp from disassembly; Unicorn Arm U port 1500/1500 equal, M4 not detected (INVALID); no Frida diff, no promotion (D4-WSB-PORT-SOLV-KV, verify/d4wsbsolvkv_20261029/RESULT_D4-WSB-PORT-SOLV-KV.md)
+2026-10-29  0056ac40  FUN_0056ac40  C2->C2  mapped->impl, port mashedmod/src/mashed_re/Collision/RwpVtableKV12.cpp from disassembly; Unicorn Arm U port 1500/1500 equal, M4 not detected (INVALID); no Frida diff, no promotion (D4-WSB-PORT-SOLV-KV, verify/d4wsbsolvkv_20261029/RESULT_D4-WSB-PORT-SOLV-KV.md)
+2026-10-29  0056aae0  FUN_0056aae0  C2->C2  mapped->impl, port mashedmod/src/mashed_re/Collision/RwpVtableKV12.cpp from disassembly; Unicorn Arm U port 1500/1500 equal, M4 not detected (INVALID); no Frida diff, no promotion (D4-WSB-PORT-SOLV-KV, verify/d4wsbsolvkv_20261029/RESULT_D4-WSB-PORT-SOLV-KV.md)
+2026-10-29  0056a7a0  FUN_0056a7a0  C2->C2  mapped->impl, port mashedmod/src/mashed_re/Collision/RwpVtableKV12.cpp from disassembly; Unicorn Arm U port 1500/1500 equal, M4 not detected (INVALID); no Frida diff, no promotion (D4-WSB-PORT-SOLV-KV, verify/d4wsbsolvkv_20261029/RESULT_D4-WSB-PORT-SOLV-KV.md)
 2026-10-29  0056a450  FUN_0056a450  C2->C3  shadow A/B CLEAN n=24 ndiff=0 A/B-IS-REAL (D4-WSB-PORT-SOLV, verify/d4wsbportsolv_20261029/RESULT_D4-WSB-PORT-SOLV.md)
 2026-10-29  00568d20  FUN_00568d20  C2->C3  shadow A/B CLEAN n=1 ndiff=0 A/B-IS-REAL (D4-WSB-PORT-SOLV, verify/d4wsbportsolv_20261029/RESULT_D4-WSB-PORT-SOLV.md)
 2026-10-29  00568cf0  FUN_00568cf0  C2->C3  shadow A/B CLEAN n=1 ndiff=0 A/B-IS-REAL (D4-WSB-PORT-SOLV, verify/d4wsbportsolv_20261029/RESULT_D4-WSB-PORT-SOLV.md)

@@ -375,6 +375,7 @@
 "Collision\RwpSolverCore23.cpp"
 "Collision\RwpVtableKV2.cpp"
 "Collision\RwpVtableKV1.cpp"
+"Collision\RwpVtableKV12.cpp"
 "Collision\RwpBuildExterns.cpp"
 "Collision\CollisionBodyCreate.cpp"
 "Collision\PhysicsWorldBuild.cpp"
