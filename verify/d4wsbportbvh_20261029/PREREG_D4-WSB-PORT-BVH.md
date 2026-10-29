@@ -81,3 +81,21 @@ an Event-1000 fault at `0x005baf48` appears: stop, BLOCKED "audio endpoint", no 
 
 `verify/savelink_20261023/run_arms.py H_DEF B_DEF_K0 B_DEF_K1 B_DEF_K26` on this build's `mashed_re.exe`, test slot +
 machine lock, must equal `re/orchestrator/merge_train.json` `gctrl.ref` / `b.ref`. A mismatch is a RED for the step.
+
+## Amendment 1 (2026-10-29, after arm S rows 1-5, before any re-run)
+
+Arm S row 5 on build `.asi 427c8545`: `0x0055f800` DIVERGENT n=1, one dword at `param_1+0xc` (page `0x0f3eb000+0xa9c`),
+original `3dcccccd`, port `4e773333`. Cause, read from source: decomp2port types the `.rdata` constant `_DAT_005cc56c`
+as `undefined4` -> `(*(const unsigned int*)0x005cc56cu)`, so `param_4 * _DAT_005cc56c` multiplied by 1036831949 (the
+bits of 0.1f) instead of 0.1f. `4e773333` is 1.0f times that integer. Scan of all `Lane2/L2_*.cpp` for an `unsigned int`
+`.rdata` define in float arithmetic: 4 TUs, all in this step: `0x0055f800` (`0x005cc56c` = 0.1f), `0x00563940`
+(`0x005cc320` = 1.0f, `0x005cc32c` = 0.5f), `0x005655a0` (`0x005cc320`), `0x00565c20` (`0x005cc32c`). Values read from
+`MASHED.exe.unpatched`.
+
+Change (commit `1f09a4b77`): those 5 defines read `const float`. Nothing else. New build `MASHED_NO_DEPLOY=1`:
+`mashed_re.exe` `558ca866...6f6d`, `mashed_re_dev.asi` `9ae3c140...0de8`.
+
+Arm S continues to its end on `.asi 427c8545` (rows 6-24). Then the new `.asi` goes into the private root, and arm S is
+re-run as written above for `0055f800 00563940 005655a0 00565c20`. Their first-pass verdicts are kept in the RESULT as
+superseded and are not used. The other 20 rows keep their first-pass result (their TUs are unchanged by `1f09a4b77`).
+Read-out unchanged. Default gates run on the final build.
