@@ -1,0 +1,15 @@
+# D2-BAND-42S port scores (exe 7eee09a2 for DEFH; exe 58c21e05 for SUBH/DEF, D3-SUBSTATE-SETTLE-ORDER final/)
+## against verify/d2band42_20261029/band.json (O42)
+D:/MashedWT/D3-SUBSTATE-SETTLE-ORDER_data/final/D2_SUBH_1.motion_diag.log: slip1500=0.1934 in slip2000=0.2515 in drvmed=1919.6200 in n=('380', '647', '1429') H1 398/400 median 1333.9
+D:/MashedWT/D3-SUBSTATE-SETTLE-ORDER_data/final/D2_SUBH_2.motion_diag.log: slip1500=0.1934 in slip2000=0.2515 in drvmed=1919.6200 in n=('380', '647', '1429') H1 398/400 median 1333.9
+D:/MashedWT/D3-SUBSTATE-SETTLE-ORDER_data/final/D2_SUBH_3.motion_diag.log: slip1500=0.1933 in slip2000=0.2515 in drvmed=1917.1000 in n=('382', '647', '1431') H1 398/400 median 1333.9
+D:/MashedWT/D3-SUBSTATE-SETTLE-ORDER_data/final/D2_DEF_1.motion_diag.log: slip1500=0.1942 in slip2000=0.2492 in drvmed=1896.7400 in n=('334', '529', '1208') H1 398/400 median 1333.9
+D:/MashedWT/D3-SUBSTATE-SETTLE-ORDER_data/final/D2_DEF_2.motion_diag.log: slip1500=0.1942 in slip2000=0.2492 in drvmed=1896.7400 in n=('334', '529', '1208') H1 398/400 median 1333.9
+D:/MashedWT/D3-SUBSTATE-SETTLE-ORDER_data/final/D2_DEF_3.motion_diag.log: slip1500=0.1942 in slip2000=0.2492 in drvmed=1896.7400 in n=('334', '529', '1208') H1 398/400 median 1333.9
+D:/MashedWT/D2-BAND-42S_data/arms/D2_DEFH_1.motion_diag.log: slip1500=0.1942 in slip2000=0.2492 in drvmed=1896.7400 in n=('334', '529', '1208') H1 398/400 median 1333.9
+D:/MashedWT/D2-BAND-42S_data/arms/D2_DEFH_2.motion_diag.log: slip1500=0.1942 in slip2000=0.2492 in drvmed=1896.7400 in n=('334', '529', '1208') H1 398/400 median 1333.9
+D:/MashedWT/D2-BAND-42S_data/arms/D2_DEFH_3.motion_diag.log: slip1500=0.1942 in slip2000=0.2492 in drvmed=1896.7400 in n=('334', '529', '1208') H1 398/400 median 1333.9
+## DEFH against verify/d2rebase_20261019/band.json (30 s)
+D:/MashedWT/D2-BAND-42S_data/arms/D2_DEFH_1.motion_diag.log: slip1500=0.1942 in slip2000=0.2492 in drvmed=1896.7400 in n=('334', '529', '1208') H1 398/400 median 1333.9
+D:/MashedWT/D2-BAND-42S_data/arms/D2_DEFH_2.motion_diag.log: slip1500=0.1942 in slip2000=0.2492 in drvmed=1896.7400 in n=('334', '529', '1208') H1 398/400 median 1333.9
+D:/MashedWT/D2-BAND-42S_data/arms/D2_DEFH_3.motion_diag.log: slip1500=0.1942 in slip2000=0.2492 in drvmed=1896.7400 in n=('334', '529', '1208') H1 398/400 median 1333.9

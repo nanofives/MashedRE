@@ -1,0 +1,88 @@
+{
+ "rule": "mean +/- max(3h, 2% of mean), h = half-range of the runs (d81a8df6 / re/analysis/D2_REOPEN_2026-09-29.md 3a)",
+ "label": "O42: scenario_launch.py --hold 42 (band recipe argv otherwise unchanged), LIVING-PC 2026-10-29, r3 replaced by r3b (amendment 1)",
+ "runs": {
+  "o42_r1": {
+   "slip1500": 0.1903,
+   "slip2000": 0.2505,
+   "drvmed": 1981.75
+  },
+  "o42_r2": {
+   "slip1500": 0.1937,
+   "slip2000": 0.2498,
+   "drvmed": 1937.89
+  },
+  "o42_r3b": {
+   "slip1500": 0.1903,
+   "slip2000": 0.2505,
+   "drvmed": 1990.12
+  },
+  "o42_r4": {
+   "slip1500": 0.1917,
+   "slip2000": 0.2511,
+   "drvmed": 1969.4
+  },
+  "o42_r5": {
+   "slip1500": 0.1964,
+   "slip2000": 0.2531,
+   "drvmed": 1984.45
+  },
+  "o42_r6": {
+   "slip1500": 0.1881,
+   "slip2000": 0.2496,
+   "drvmed": 1957.58
+  },
+  "o42_r7": {
+   "slip1500": 0.1866,
+   "slip2000": 0.2494,
+   "drvmed": 1956.22
+  },
+  "o42_r8": {
+   "slip1500": 0.1937,
+   "slip2000": 0.2498,
+   "drvmed": 1937.89
+  }
+ },
+ "slip1500": {
+  "mean": 0.19135,
+  "min": 0.1866,
+  "max": 0.1964,
+  "h": 0.0049,
+  "3h": 0.0147,
+  "2pct": 0.003827,
+  "tol": 0.0147,
+  "width_set_by": "3h",
+  "band": [
+   0.17665,
+   0.20605
+  ]
+ },
+ "slip2000": {
+  "mean": 0.250475,
+  "min": 0.2494,
+  "max": 0.2531,
+  "h": 0.00185,
+  "3h": 0.00555,
+  "2pct": 0.00501,
+  "tol": 0.00555,
+  "width_set_by": "3h",
+  "band": [
+   0.24493,
+   0.25602
+  ]
+ },
+ "drvmed": {
+  "mean": 1964.4125,
+  "min": 1937.89,
+  "max": 1990.12,
+  "h": 26.115,
+  "3h": 78.345,
+  "2pct": 39.28825,
+  "tol": 78.345,
+  "width_set_by": "3h",
+  "band": [
+   1886.07,
+   2042.76
+  ]
+ }
+}
