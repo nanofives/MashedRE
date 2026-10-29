@@ -1,0 +1,13 @@
+rva	readout	n	ndiff	pages_o	pages_n	heap_o	heap_n	heap_pages_total	image_pages_total	stack_max	noise_max	ovf_max	ret_max	flag_lines	patchbyte
+0x0056c0a0_heap	HEAP-CLEAN	24	0	2..2	2..2	2..2	2..2	48	0	0	0	0	0	0	installed=e9 uninstalled=8b A/B-IS-REAL
+0x0056c310_heap	HEAP-CLEAN	24	0	2..2	2..2	2..2	2..2	48	0	0	0	0	0	0	installed=e9 uninstalled=8b A/B-IS-REAL
+0x0056c580_heap	HEAP-CLEAN	24	0	2..2	2..2	2..2	2..2	48	0	0	0	0	0	0	installed=e9 uninstalled=83 A/B-IS-REAL
+0x0056c8e0_heap	DIVERGENT	24	2	0..1	0..1	1..1	1..1	24	-2	0	0	0	0	1	installed=e9 uninstalled=83 A/B-IS-REAL
+0x0056caa0_heap	HEAP-CLEAN	24	0	3..3	3..3	3..3	3..3	72	0	0	0	0	0	0	installed=e9 uninstalled=81 A/B-IS-REAL
+0x0056d070_heap	HEAP-CLEAN	24	0	2..2	2..2	2..2	2..2	48	0	0	0	0	0	0	installed=e9 uninstalled=83 A/B-IS-REAL
+0x0056dd40_heap	CLEAN-NO-PAGES	24	0	0..0	0..0	0..0	0..0	0	0	0	0	0	0	0	installed=e9 uninstalled=55 A/B-IS-REAL
+0x0056e680_heap	HEAP-CLEAN	24	0	3..3	3..3	3..3	3..3	72	0	0	0	0	0	0	installed=e9 uninstalled=83 A/B-IS-REAL
+0x0056ef30_heap	HEAP-CLEAN	24	0	1..1	1..1	1..1	1..1	24	0	0	0	0	0	0	installed=e9 uninstalled=8b A/B-IS-REAL
+0x0056efc0_heap	HEAP-CLEAN	24	0	1..1	1..1	1..1	1..1	24	0	0	0	0	0	0	installed=e9 uninstalled=8b A/B-IS-REAL
+0x0056f020_heap	HEAP-CLEAN	24	0	1..1	1..1	1..1	1..1	24	0	0	0	0	0	0	installed=e9 uninstalled=8b A/B-IS-REAL
+0x0056f1f0_heap	HEAP-CLEAN	24	0	12..12	12..12	12..12	12..12	288	0	0	0	0	0	0	installed=e9 uninstalled=51 A/B-IS-REAL
