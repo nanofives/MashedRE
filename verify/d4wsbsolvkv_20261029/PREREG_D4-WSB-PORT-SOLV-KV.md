@@ -71,3 +71,18 @@ No promotion. The 4 rows stay C2. Through re-classify: `file` -> the port, statu
 the Arm U verdict, and U-9589 / U-9590 (the `0x0056a7a0` frame-depth question) closed with the disassembly cites if Arm U
 is GREEN. The original-side shadow A/B (census scenario, one hook alone per boot, as in `D4-WSB-PORT-SOLV`) is queued
 as `next:`.
+
+## Amendment 1 (committed alone, after pass 1 of Arm U, before pass 2)
+
+Pass 1 (the arm above, 1200 cases): unmutated port 1200/1200 bitwise equal, M1 / M2 / M3 detected, **M4 not detected**
+(0 differing cases). Read-out as preregistered: Arm U **INVALID** for the M4 site. A Unicorn code hook on the original
+over the same 300 `0x0056adb0` cases shows why: the new-limit store at `0x0056b254` runs in 5 cases only, and in
+none of them does the changed limit move a later stop check before the pass limit W68 ends the run.
+
+Pass 2 adds a targeted set and leaves the 1200 pass-1 cases unchanged (same seed, same order):
+
+- `0056adb0A`: 300 more `0x0056adb0` cases from a separate RNG (seed `20261030`), W69 = 1, W68 in 60..160,
+  threshold W66 = 0.0, everything else drawn as in pass 1.
+- Same 5 variants. Read-out unchanged, with M4 now required to differ on at least 1 `0056adb0` or `0056adb0A` case.
+  An unmutated mismatch on any of the 1500 cases is RED. M4 at 0 again: INVALID for that site, reported, no
+  further amendment in this step.
