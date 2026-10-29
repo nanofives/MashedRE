@@ -5245,7 +5245,6 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         static bool s_hostSet = false;
         if (!s_hostSet) {
             SubStateHost h{};
-            h.car_alive = [](int v) { return aib_alive(v); };
             h.ai_tick = [] {
                 TrackRenderer* t = s_subTr;
                 if (!t || !(g_aib.loaded && (Ai::I32(Ai::kSplineRaceCnt) > 3))) return;
@@ -5285,10 +5284,13 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
                 SubStateCameraChain(true);                 // FUN_0040d470(1) -> FUN_00446520(cam, 1)
             }
             {                                              // 0x00410320..0x00410343 hold alive cars
+                // 0x00410330 FUN_0046c7b0(v) == 1: the record's +0x4 (VehicleSlotGetter), not aib_alive, which is 0 before
+                // the first AI tick (D3-SUBSTATE-PREGO-ALIVE, L-53 (a)).
                 const std::uintptr_t tbl = static_cast<std::uintptr_t>(*reinterpret_cast<int*>(0x005f2770u));
                 for (int v = 0, off = 0x34; off < 0x44; off += 4, ++v)
-                    if (tbl && *reinterpret_cast<int*>(tbl + static_cast<std::uintptr_t>(off)) != 0 && aib_alive(v) == 1)
-                        VehiclePhysicsStateReset(v);       // FUN_0046baa0
+                    if (tbl && *reinterpret_cast<int*>(tbl + static_cast<std::uintptr_t>(off)) != 0 &&
+                        VehicleSlotGetter(static_cast<std::uint32_t>(v)) == 1u)
+                        VehiclePhysicsStateReset(v);       // 0x0041033e FUN_0046baa0
             }
             s29b8 = s29b8 - static_cast<int>(static_cast<unsigned>(units * 0x44c) / 0x3cu);   // 0x00410345..
             ++sub_p3_frames_;

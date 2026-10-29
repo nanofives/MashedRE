@@ -17,10 +17,12 @@
 //   FUN_0041d910 / 0041da90 / 0041b520 / 0046baa0 / 0046c750 / 0046c730 -> the moved
 //       bodies in Race/SubStateCallees.cpp (record-routed, PREREG_LEG1B.md section 1)
 //   FUN_0046d7f0 / 0046d780 -> Vehicle/LaunchRevCharge.cpp (both targets already)
-//   FUN_00418860 (AI tick) and FUN_0046c7b0 (car alive) -> the SubStateHost hooks the
-//       TrackRenderer installs. car_alive is the port's Ai s_host.car_alive vector, a NAMED
-//       DEVIATION (BLOCKER 3): FUN_0046c7b0 reads record +0x4, which the port does not keep
-//       in step with g_aib.alive (RESULT_LEG0.md section 3).
+//   FUN_00418860 (AI tick) -> the SubStateHost hook the TrackRenderer installs.
+//   FUN_0046c7b0 (car alive) -> the port's VehicleSlotGetter (Vehicle/VehicleState.cpp, record
+//       +0x4), called directly. [D3-SUBSTATE-PREGO-ALIVE, L-53 (a)] It was the host's car_alive =
+//       aib_alive = g_aib.alive[v], which AiBridgeSnapshot fills inside an AI tick only, so it read
+//       0 on every pre-GO frame of a solo race and state 5 skipped the player's 0x0041043a /
+//       0x00410441 / 0x0041049b (verify/d3subprego_20261029/PREREG_D3-SUBSTATE-PREGO-ALIVE.md).
 //   FUN_0042f6a0 / 0042f500 -> their one-load bodies at the absolutes DAT_0067e9fc /
 //       DAT_0067ea64 (both 0 in the exe, L1B_INPUTS_SCORE.txt).
 //   FUN_00426c90 -> NOT CALLED. Named PARTIAL: it calls through [DAT_0063d7e4]+0x40, and
@@ -54,6 +56,9 @@ extern unsigned char g_launchAccelByte[16];
 
 extern "C" int __cdecl BoundedTableSignClamp46d7f0(unsigned idx, int val);   // 0x0046d7f0
 extern "C" int __cdecl LaunchRevRelease46d780(int car);                       // 0x0046d780
+#ifdef MASHED_STANDALONE
+extern "C" std::uint32_t __cdecl VehicleSlotGetter(std::uint32_t vehicleIdx); // 0x0046c7b0
+#endif
 
 namespace {
 
@@ -88,7 +93,7 @@ inline int TeamPlay() {
 }
 inline int CarAlive(int v) {                                   // FUN_0046c7b0
 #ifdef MASHED_STANDALONE
-    return s_ssHost.car_alive ? s_ssHost.car_alive(v) : 0;
+    return static_cast<int>(::VehicleSlotGetter(static_cast<std::uint32_t>(v)));   // record +0x4
 #else
     return reinterpret_cast<int(__cdecl*)(int)>(0x0046c7b0u)(v);
 #endif
@@ -195,6 +200,18 @@ extern "C" void __cdecl SubStateHeldCountdown5_C(int units)
     reinterpret_cast<void(__cdecl*)()>(0x00418860u)();          // 0x0041040e
 #endif
 
+#ifdef MASHED_STANDALONE
+    {   // [D3-SUBSTATE-PREGO-ALIVE] log only: the four FUN_0046c7b0 values on the first state-5 call
+        static bool s_logged = false;
+        if (!s_logged) {
+            s_logged = true;
+            if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
+                std::fprintf(lf, "[substate] state5 alive=%d,%d,%d,%d\n", CarAlive(0), CarAlive(1), CarAlive(2), CarAlive(3));
+                std::fclose(lf);
+            }
+        }
+    }
+#endif
     // 0x00410413..0x00410450: per car with a non-zero slot-table entry and alive == 1.
     for (int v = 0, off = 0x34; off < 0x44; off += 4, ++v) {
         const std::uintptr_t tbl = static_cast<std::uintptr_t>(G32(0x005f2770u));   // 0x00410420
