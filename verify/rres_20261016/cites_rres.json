@@ -463,5 +463,22 @@
   "status": "MAPPED",
   "evidence": "verify/rres_20261016/evidence/egypt_split_pairing.txt",
   "note": "[rres] Instrument pairing artifact, default arm only (no HUD replay). Once the four 44-triangle hull draws match (C10/C03), the original-side untextured residual of Egypt is three 2-triangle draws (a 512x512 screen quad and two z 0.99 pieces at |x| 0.31..0.38, the start-display draws of C08) and the standalone-side residual is one 6-triangle ground patch (C29, src rw, AABB 10.79..11.99 x 1.68..3.00). Both sum to 6 triangles with the same texture name '-', so drawlist3d reports them as one SPLIT row instead of a MISSING (C03/C08) plus an EXTRA (C29). The HUD-replay arm removes the A side (C08) and the row disappears. Not a new defect."
+ },
+ {
+  "id": "C32-ICONCUBE-NONGO",
+  "kind": [
+   "MOVED",
+   "EXTRA"
+  ],
+  "tex": "^(mine|oil)$",
+  "tracks": [
+   "Sands",
+   "SuperG",
+   "Warzone",
+   "Training"
+  ],
+  "status": "MAPPED",
+  "evidence": "verify/pregocubeflip_20261029/RESULT_D5-PREGO-CUBE-FLIP.md, red_rows_flip.txt, tracks_score_go.txt",
+  "note": "[L-56 a] IconCube pickup cubes (mine, oil) with MASHED_PICKUPS_PREGO + MASHED_ICONCUBE default ON. The 13-track recipe replays the original's camera without GO alignment, so the cube's spin and collection offset are sampled at a different race time on each side: 7 rows MOVED by 0.033..0.064 with the same texture and triangle count, 2 rows EXTRA (one 12-triangle cube the original had already collected). Under MASHED_CAM_REPLAY_GO all 12 rows are CITED with 0 RED (tracks_score_go.txt), and MASHED_NO_ICONCUBE restores the a3c14c41 table byte for byte. Instrument timing, not a cube defect."
  }
 ]
