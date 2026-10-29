@@ -6,6 +6,8 @@
 //
 // SCOPE — this TU ports ONE of the four Batch-B candidates. Read the deferral note below
 // before adding the other three; they are NOT safe to transcribe from decomp as-is.
+// D4-WSB-PORT-SOLV-KV (2026-10-29): the other three plus 0x0056a7a0 are now ported from
+// disassembly in RwpVtableKV12.cpp (frames recovered from the call-site pushes).
 //
 // ---------------------------------------------------------------------------------------
 // WHY ONLY 0x0056a450 (deferral rationale — do not "finish" this TU without disasm work)

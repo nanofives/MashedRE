@@ -1,0 +1,169 @@
+{
+ "anchor": "bdcae093a30fbf226bdd852b9c36798a987aee33b3ae82bf7404b0336efd3c0e",
+ "seed": 20261029,
+ "cases_per_fn": 300,
+ "unicorn_errors": 0,
+ "variants": {
+  "port": {
+   "0056a7a0": {
+    "cases": 300,
+    "match": 300,
+    "diff": 0,
+    "first": ""
+   },
+   "0056aae0": {
+    "cases": 300,
+    "match": 300,
+    "diff": 0,
+    "first": ""
+   },
+   "0056ac40": {
+    "cases": 300,
+    "match": 300,
+    "diff": 0,
+    "first": ""
+   },
+   "0056adb0": {
+    "cases": 300,
+    "match": 300,
+    "diff": 0,
+    "first": ""
+   },
+   "0056adb0A": {
+    "cases": 300,
+    "match": 300,
+    "diff": 0,
+    "first": ""
+   }
+  },
+  "M1": {
+   "0056a7a0": {
+    "cases": 300,
+    "match": 156,
+    "diff": 144,
+    "first": "case 1 arena+0x4"
+   },
+   "0056aae0": {
+    "cases": 300,
+    "match": 211,
+    "diff": 89,
+    "first": "case 301 arena+0x4c"
+   },
+   "0056ac40": {
+    "cases": 300,
+    "match": 300,
+    "diff": 0,
+    "first": ""
+   },
+   "0056adb0": {
+    "cases": 300,
+    "match": 68,
+    "diff": 232,
+    "first": "case 900 arena+0x50"
+   },
+   "0056adb0A": {
+    "cases": 300,
+    "match": 70,
+    "diff": 230,
+    "first": "case 1200 arena+0x84"
+   }
+  },
+  "M2": {
+   "0056a7a0": {
+    "cases": 300,
+    "match": 300,
+    "diff": 0,
+    "first": ""
+   },
+   "0056aae0": {
+    "cases": 300,
+    "match": 300,
+    "diff": 0,
+    "first": ""
+   },
+   "0056ac40": {
+    "cases": 300,
+    "match": 216,
+    "diff": 84,
+    "first": "case 601 ret o=41d8ee83 n=41d8ee84"
+   },
+   "0056adb0": {
+    "cases": 300,
+    "match": 300,
+    "diff": 0,
+    "first": ""
+   },
+   "0056adb0A": {
+    "cases": 300,
+    "match": 299,
+    "diff": 1,
+    "first": "case 1245 arena+0x18"
+   }
+  },
+  "M3": {
+   "0056a7a0": {
+    "cases": 300,
+    "match": 300,
+    "diff": 0,
+    "first": ""
+   },
+   "0056aae0": {
+    "cases": 300,
+    "match": 259,
+    "diff": 41,
+    "first": "case 303 arena+0x24"
+   },
+   "0056ac40": {
+    "cases": 300,
+    "match": 300,
+    "diff": 0,
+    "first": ""
+   },
+   "0056adb0": {
+    "cases": 300,
+    "match": 120,
+    "diff": 180,
+    "first": "case 900 arena+0x84"
+   },
+   "0056adb0A": {
+    "cases": 300,
+    "match": 134,
+    "diff": 166,
+    "first": "case 1200 arena+0x80"
+   }
+  },
+  "M4": {
+   "0056a7a0": {
+    "cases": 300,
+    "match": 300,
+    "diff": 0,
+    "first": ""
+   },
+   "0056aae0": {
+    "cases": 300,
+    "match": 300,
+    "diff": 0,
+    "first": ""
+   },
+   "0056ac40": {
+    "cases": 300,
+    "match": 300,
+    "diff": 0,
+    "first": ""
+   },
+   "0056adb0": {
+    "cases": 300,
+    "match": 300,
+    "diff": 0,
+    "first": ""
+   },
+   "0056adb0A": {
+    "cases": 300,
+    "match": 300,
+    "diff": 0,
+    "first": ""
+   }
+  }
+ },
+ "verdict": "INVALID"
+}
