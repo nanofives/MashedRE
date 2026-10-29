@@ -15,6 +15,7 @@
 
 namespace {
 inline float f32bits(unsigned int u) { float f; std::memcpy(&f, &u, 4); return f; }
+inline unsigned int u32bits(float f) { unsigned int u; std::memcpy(&u, &f, 4); return u; }
 }
 typedef unsigned char  undefined;
 typedef unsigned char  undefined1;
@@ -31,8 +32,9 @@ typedef void           code;
 // decompilation (verbatim; no semantic edits). Size 1396 B. Plate:
 // hooks.csv row 0x005595d0. C-level unchanged by generation; see file header.
 // ---------------------------------------------------------------------------
-#define _DAT_005cc328 (*(const unsigned int*)0x005cc328u)   // .rdata, undefined4
-static inline void L2T_FUN_00563df0(int a0, unsigned int a1, unsigned int a2) { reinterpret_cast<void(__cdecl*)(int, unsigned int, unsigned int)>(0x00563df0u)(a0, a1, a2); }   // 0x00563df0 (original, not ported)
+#define _DAT_005cc328 (*(const float*)0x005cc328u)   // .rdata, float 3c23d70a (read as float: fmul dword ptr at 0x005597b5)
+// returns EAX: the result is stored at `mov [edi+0x54], eax` (0x005597bb) and pushed to 0x005645b0
+static inline unsigned int L2T_FUN_00563df0(int a0, unsigned int a1, unsigned int a2) { return reinterpret_cast<unsigned int(__cdecl*)(int, unsigned int, unsigned int)>(0x00563df0u)(a0, a1, a2); }   // 0x00563df0 (original, not ported)
 static inline void L2T_FUN_00564100(unsigned int * a0, unsigned char a1, unsigned int a2) { reinterpret_cast<void(__cdecl*)(unsigned int *, unsigned char, unsigned int)>(0x00564100u)(a0, a1, a2); }   // 0x00564100 (original, not ported)
 static inline int L2T_FUN_005645b0(int a0, unsigned int a1, unsigned int a2, unsigned int * a3, unsigned int a4) { return reinterpret_cast<int(__cdecl*)(int, unsigned int, unsigned int, unsigned int *, unsigned int)>(0x005645b0u)(a0, a1, a2, a3, a4); }   // 0x005645b0 (original, not ported)
 extern "C" unsigned int * __cdecl L2_FUN_005595d0(int param_1, int param_2, unsigned int param_3, float param_4, unsigned int param_5);
@@ -48,7 +50,7 @@ static unsigned int * __cdecl L2_FUN_005595d0_impl(int param_1, int param_2, uns
   
   puVar7 = (undefined4 *)(*(int *)(param_1 + 8) + 0xfU & 0xfffffff0);
   *(undefined4 **)(param_1 + 8) = puVar7 + 0x24;
-  puVar7[3] = param_4;
+  puVar7[3] = u32bits(param_4);   // raw dword: mov ecx,[esp+0x20] / mov [edi+0xc],ecx at 0x005595d8/0x005595f8
   iVar6 = *(int *)(param_2 + 8);
   puVar7[2] = param_5;
   puVar7[1] = iVar6 + 0x1fU >> 5;
@@ -111,11 +113,11 @@ static unsigned int * __cdecl L2_FUN_005595d0_impl(int param_1, int param_2, uns
   *(uint *)(param_1 + 8) = *(int *)(param_1 + 8) + uVar4 * 4;
   puVar2[0x17] = 0;
   puVar2[0x18] = uVar4;
-  puVar7[4] = puVar2;
+  puVar7[4] = (undefined4)puVar2;
   uVar3 = L2T_FUN_00563df0((int)(param_1), (unsigned int)(*(undefined4 *)(param_2 + 8)), (unsigned int)(*(undefined4 *)(param_2 + 0x1c)));
   param_4 = param_4 * _DAT_005cc328;
   puVar7[0x15] = uVar3;
-  uVar3 = L2T_FUN_005645b0((int)(param_1), (unsigned int)(uVar3), (unsigned int)(*(undefined4 *)(param_2 + 8)), (unsigned int *)(param_3), (unsigned int)(param_4));
+  uVar3 = L2T_FUN_005645b0((int)(param_1), (unsigned int)(uVar3), (unsigned int)(*(undefined4 *)(param_2 + 8)), (unsigned int *)(param_3), u32bits(param_4));   // arg 5 = raw float bits: fstp dword ptr [esp] at 0x005597c8
   *puVar7 = uVar3;
   puVar7[0x16] = *(undefined4 *)(param_1 + 8);
   L2T_FUN_00564100((unsigned int *)(*(undefined4 *)(param_1 + 8)), (unsigned char)(0), (unsigned int)(puVar7[1] << 2));
@@ -253,7 +255,7 @@ static unsigned int * __cdecl L2_FUN_005595d0_impl(int param_1, int param_2, uns
   return puVar7;
 }
 extern "C" unsigned int * __cdecl L2_FUN_005595d0(int param_1, int param_2, unsigned int param_3, float param_4, unsigned int param_5) {
-    SHADOW_AB_COUNTER(ab, "L2_FUN_005595d0", 0x005595d0u, ShadowAB::kPhaseRace);
+    SHADOW_AB_COUNTER(ab, "L2_FUN_005595d0", 0x005595d0u, ShadowAB::kPhaseAny);   // census phase race_load: kPhaseRace skips phase < 3 (Core/ShadowAB.h:159)
     return ShadowAB::RunTracked(ab, L2_FUN_005595d0_impl, SHADOW_STACK_WINDOW(), param_1, param_2, param_3, param_4, param_5);
 }
 RH_ScopedInstall(L2_FUN_005595d0, 0x005595d0);

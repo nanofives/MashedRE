@@ -32,23 +32,27 @@ typedef void           code;
 // hooks.csv row 0x00559b50. C-level unchanged by generation; see file header.
 // ---------------------------------------------------------------------------
 static inline int L2T_FUN_00559560(int a0) { return reinterpret_cast<int(__cdecl*)(int)>(0x00559560u)(a0); }   // 0x00559560 (original, not ported)
-static inline unsigned int * L2T_FUN_005595d0(int a0, int a1, unsigned int a2, float a3, unsigned int a4) { return reinterpret_cast<unsigned int *(__cdecl*)(int, int, unsigned int, float, unsigned int)>(0x005595d0u)(a0, a1, a2, a3, a4); }   // 0x005595d0 (original, not ported)
-static inline void L2T_FUN_00564130(int a0, unsigned int a1, unsigned int a2) { reinterpret_cast<void(__cdecl*)(int, unsigned int, unsigned int)>(0x00564130u)(a0, a1, a2); }   // 0x00564130 (original, not ported)
-extern "C" void __cdecl L2_FUN_00559b50(unsigned int param_1, unsigned int param_2, unsigned int param_3, unsigned int param_4);
-static void __cdecl L2_FUN_00559b50_impl(unsigned int param_1, unsigned int param_2, unsigned int param_3, unsigned int param_4)
+// arg 4 passed as the raw dword: 0x00559b50 pushes param_3 unchanged (mov ecx,[esp+0x2c] / push ecx at 0x00559b6f/0x00559b84)
+static inline unsigned int * L2T_FUN_005595d0(int a0, int a1, unsigned int a2, unsigned int a3, unsigned int a4) { return reinterpret_cast<unsigned int *(__cdecl*)(int, int, unsigned int, unsigned int, unsigned int)>(0x005595d0u)(a0, a1, a2, a3, a4); }   // 0x005595d0 (original, not ported)
+// returns EAX: stored at mov [esp+0x14],eax / mov [esp+0x1c],eax (0x00559b77/0x00559b7b); D4-WSB-PORT-BVH reads the same EAX return
+static inline unsigned int L2T_FUN_00564130(int a0, unsigned int a1, unsigned int a2) { return reinterpret_cast<unsigned int(__cdecl*)(int, unsigned int, unsigned int)>(0x00564130u)(a0, a1, a2); }   // 0x00564130 (original, not ported)
+// Returns EAX: Ghidra types this void, but the only caller stores it (mov [esi],eax at 0x0055dcc0,
+// scan_eax_use.txt) and nothing after the call to 0x005595d0 (0x00559b8c) writes EAX.
+extern "C" unsigned int * __cdecl L2_FUN_00559b50(unsigned int param_1, unsigned int param_2, unsigned int param_3, unsigned int param_4);
+static unsigned int * __cdecl L2_FUN_00559b50_impl(unsigned int param_1, unsigned int param_2, unsigned int param_3, unsigned int param_4)
 {
-  undefined4 local_c;
-  undefined4 local_8;
-  undefined4 local_4;
+  // local_c / local_8 / local_4 are one 12-byte block at [esp+4..0xc] of the original frame, passed by
+  // address (lea eax,[esp+0x20] at 0x00559b86); 0x005595d0 reads and advances its +8 dword. So they
+  // are an array here: local[0] = local_c, local[1] = local_8, local[2] = local_4.
+  undefined4 local[3];
   
-  local_8 = L2T_FUN_00559560((int)(param_1));
-  local_c = L2T_FUN_00564130((int)(local_8), (unsigned int)(0x10), (unsigned int)(0x30900));
-  local_4 = local_c;
-  L2T_FUN_005595d0((int)(&local_c), (int)(param_1), (unsigned int)(param_2), (float)(param_3), (unsigned int)(param_4));
-  return;
+  local[1] = L2T_FUN_00559560((int)(param_1));
+  local[0] = L2T_FUN_00564130((int)(local[1]), (unsigned int)(0x10), (unsigned int)(0x30900));
+  local[2] = local[0];
+  return L2T_FUN_005595d0((int)(local), (int)(param_1), (unsigned int)(param_2), (unsigned int)(param_3), (unsigned int)(param_4));
 }
-extern "C" void __cdecl L2_FUN_00559b50(unsigned int param_1, unsigned int param_2, unsigned int param_3, unsigned int param_4) {
-    SHADOW_AB_COUNTER(ab, "L2_FUN_00559b50", 0x00559b50u, ShadowAB::kPhaseRace);
-    ShadowAB::RunTracked(ab, L2_FUN_00559b50_impl, SHADOW_STACK_WINDOW(), param_1, param_2, param_3, param_4);
+extern "C" unsigned int * __cdecl L2_FUN_00559b50(unsigned int param_1, unsigned int param_2, unsigned int param_3, unsigned int param_4) {
+    SHADOW_AB_COUNTER(ab, "L2_FUN_00559b50", 0x00559b50u, ShadowAB::kPhaseAny);   // census phase race_load: kPhaseRace skips phase < 3 (Core/ShadowAB.h:159)
+    return ShadowAB::RunTracked(ab, L2_FUN_00559b50_impl, SHADOW_STACK_WINDOW(), param_1, param_2, param_3, param_4);
 }
 RH_ScopedInstall(L2_FUN_00559b50, 0x00559b50);

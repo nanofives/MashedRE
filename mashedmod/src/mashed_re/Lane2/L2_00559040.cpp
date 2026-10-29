@@ -12,6 +12,7 @@
 #include "../Core/ShadowTrack.h"
 #include <cstdint>
 #include <cstring>
+#include <cmath>
 
 namespace {
 inline float f32bits(unsigned int u) { float f; std::memcpy(&f, &u, 4); return f; }
@@ -32,9 +33,9 @@ typedef void           code;
 // hooks.csv row 0x00559040. C-level unchanged by generation; see file header.
 // ---------------------------------------------------------------------------
 #define DAT_005d757c (*(const float*)0x005d757cu)   // .rdata, float
-#define _DAT_005cc320 (*(const unsigned int*)0x005cc320u)   // .rdata, undefined4
-#define _DAT_005ccac8 (*(const unsigned int*)0x005ccac8u)   // .rdata, undefined4
-#define _DAT_005e4e28 (*(const unsigned int*)0x005e4e28u)   // .rdata, undefined4
+#define _DAT_005cc320 (*(const float*)0x005cc320u)   // .rdata, float 3f800000 = 1.0f (read as float: fdivr/fsubr dword ptr at 0x00559101/0x005592b3)
+#define _DAT_005ccac8 (*(const float*)0x005ccac8u)   // .rdata, float 3eaaaaab (read as float: fmul dword ptr at 0x0055920e/1c/2a)
+#define _DAT_005e4e28 (*(const float*)0x005e4e28u)   // .rdata, float 39800000 (read as float: fld dword ptr at 0x005590e3)
 extern "C" bool __cdecl L2_FUN_00559040(float * param_1, float * param_2, float * param_3, float * param_4, float * param_5);
 static bool __cdecl L2_FUN_00559040_impl(float * param_1, float * param_2, float * param_3, float * param_4, float * param_5)
 {
@@ -69,13 +70,17 @@ static bool __cdecl L2_FUN_00559040_impl(float * param_1, float * param_2, float
   fVar12 = fVar4 * fVar3 - fVar6 * fVar1;
   fVar13 = fVar5 * fVar1 - fVar4 * fVar2;
   fVar7 = fVar13 * fVar13 + fVar11 * fVar11 + fVar12 * fVar12;
-  bVar10 = fVar7 <= _DAT_005e4e28;
+  // fcomp + test ah,5 + jp at 0x005590e9..0x005590f0: the sqrt path runs only when fVar7 > C and
+  // the compare is ordered; NaN takes the zero path (Ghidra's `<=` would send NaN to sqrt).
+  bVar10 = !(fVar7 > _DAT_005e4e28);
   if (bVar10) {
     *param_2 = 0.0;
   }
   else {
-    *param_2 = SQRT(fVar7);
-    fVar14 = _DAT_005cc320 / SQRT(fVar7);
+    // one fsqrt at 0x005590f2, kept in st(0) (fld st(0) / fstp [edi] / fdivr at 0x005590fd..0x00559101)
+    const float fSqrt = sqrtf(fVar7);
+    *param_2 = fSqrt;
+    fVar14 = _DAT_005cc320 / fSqrt;
   }
   fVar11 = fVar11 * fVar14;
   fVar12 = fVar14 * fVar12;

@@ -38,7 +38,7 @@ static void __cdecl L2_FUN_0055ad20_impl(int param_1, unsigned int param_2)
   return;
 }
 extern "C" void __cdecl L2_FUN_0055ad20(int param_1, unsigned int param_2) {
-    SHADOW_AB_COUNTER(ab, "L2_FUN_0055ad20", 0x0055ad20u, ShadowAB::kPhaseRace);
+    SHADOW_AB_COUNTER(ab, "L2_FUN_0055ad20", 0x0055ad20u, ShadowAB::kPhaseAny);   // census phase race_load: kPhaseRace skips phase < 3 (Core/ShadowAB.h:159)
     ShadowAB::RunTracked(ab, L2_FUN_0055ad20_impl, SHADOW_STACK_WINDOW(), param_1, param_2);
 }
 RH_ScopedInstall(L2_FUN_0055ad20, 0x0055ad20);
