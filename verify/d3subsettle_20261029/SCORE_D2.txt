@@ -1,0 +1,20 @@
+final exe 58c21e05 (440c1eac9); band verify/d2rebase_20261019/band.json; scorer verify/d2rebase_20261019/score_d2_v2.py port
+D:/MashedWT/D3-SUBSTATE-SETTLE-ORDER_data/final/D2_SUB_1.motion_diag.log: slip1500=0.2032 in slip2000=0.2479 in drvmed=1828.4100 OUT n=('229', '271', '722') H1 398/400 median 1333.9
+D:/MashedWT/D3-SUBSTATE-SETTLE-ORDER_data/final/D2_SUB_2.motion_diag.log: slip1500=0.2032 in slip2000=0.2480 in drvmed=1829.8600 OUT n=('229', '273', '724') H1 398/400 median 1333.9
+D:/MashedWT/D3-SUBSTATE-SETTLE-ORDER_data/final/D2_SUB_3.motion_diag.log: slip1500=0.2032 in slip2000=0.2480 in drvmed=1829.8600 OUT n=('229', '273', '724') H1 398/400 median 1333.9
+D:/MashedWT/D3-SUBSTATE-SETTLE-ORDER_data/final/D2_SUBNS_1.motion_diag.log: slip1500=0.2016 in slip2000=0.2591 OUT drvmed=1791.8500 OUT n=('125', '175', '448') H1 398/400 median 1453.1
+D:/MashedWT/D3-SUBSTATE-SETTLE-ORDER_data/final/D2_DEF_1.motion_diag.log: slip1500=0.1942 in slip2000=0.2492 in drvmed=1896.7400 in n=('334', '529', '1208') H1 398/400 median 1333.9
+D:/MashedWT/D3-SUBSTATE-SETTLE-ORDER_data/final/D2_DEF_2.motion_diag.log: slip1500=0.1942 in slip2000=0.2492 in drvmed=1896.7400 in n=('334', '529', '1208') H1 398/400 median 1333.9
+D:/MashedWT/D3-SUBSTATE-SETTLE-ORDER_data/final/D2_DEF_3.motion_diag.log: slip1500=0.1942 in slip2000=0.2492 in drvmed=1896.7400 in n=('334', '529', '1208') H1 398/400 median 1333.9
+D:/MashedWT/D3-SUBSTATE-SETTLE-ORDER_data/final/D2_SUBH_1.motion_diag.log: slip1500=0.1934 in slip2000=0.2515 in drvmed=1919.6200 in n=('380', '647', '1429') H1 398/400 median 1333.9
+D:/MashedWT/D3-SUBSTATE-SETTLE-ORDER_data/final/D2_SUBH_2.motion_diag.log: slip1500=0.1934 in slip2000=0.2515 in drvmed=1919.6200 in n=('380', '647', '1429') H1 398/400 median 1333.9
+D:/MashedWT/D3-SUBSTATE-SETTLE-ORDER_data/final/D2_SUBH_3.motion_diag.log: slip1500=0.1933 in slip2000=0.2515 in drvmed=1917.1000 in n=('382', '647', '1431') H1 398/400 median 1333.9
+first-batch exe 298e7e4f (bba24d7bf):
+D:/MashedWT/D3-SUBSTATE-SETTLE-ORDER_data/arms/D2_SUB_1.motion_diag.log: slip1500=0.2032 in slip2000=0.2488 in drvmed=1833.0600 OUT n=('229', '278', '729') H1 398/400 median 1333.9
+D:/MashedWT/D3-SUBSTATE-SETTLE-ORDER_data/arms/D2_SUB_2.motion_diag.log: slip1500=0.2032 in slip2000=0.2472 in drvmed=1827.2100 OUT n=('229', '269', '720') H1 398/400 median 1333.9
+D:/MashedWT/D3-SUBSTATE-SETTLE-ORDER_data/arms/D2_SUB_3.motion_diag.log: slip1500=0.2032 in slip2000=0.2479 in drvmed=1828.4100 OUT n=('229', '271', '722') H1 398/400 median 1333.9
+D:/MashedWT/D3-SUBSTATE-SETTLE-ORDER_data/arms/D2_DEF_1.motion_diag.log: slip1500=0.1942 in slip2000=0.2492 in drvmed=1896.7400 in n=('334', '529', '1208') H1 398/400 median 1333.9
+D:/MashedWT/D3-SUBSTATE-SETTLE-ORDER_data/arms/D2_DEF_2.motion_diag.log: slip1500=0.1942 in slip2000=0.2492 in drvmed=1896.7400 in n=('334', '529', '1208') H1 398/400 median 1333.9
+D:/MashedWT/D3-SUBSTATE-SETTLE-ORDER_data/arms/D2_DEF_3.motion_diag.log: slip1500=0.1942 in slip2000=0.2492 in drvmed=1896.7400 in n=('334', '529', '1208') H1 398/400 median 1333.9
+control cut: opt-out PREGO post D2_DEF_1 minus 'launchrev release' lines, first 924 lines:
+D:/MashedWT/D3-SUBSTATE-SETTLE-ORDER_data/D2_DEF_1_norel_first924.log: slip1500=0.2033 in slip2000=0.2489 in drvmed=1832.6300 OUT n=('227', '278', '729') H1 398/400 median 1333.9
