@@ -66,17 +66,17 @@ extern "C" __declspec(naked) void PK_459000() {
         fmul st, st(1)                                   // 004590b2
         fstp dword ptr [esp + 0x28]                      // 004590b4
         fstp st                                          // 004590b8
-        call PK_Nop                                      // 004590ba
+        call PK_GlowColour                               // 004590ba
         lea ecx, [esi + 0x1c]                            // 004590bf
         push ecx                                         // 004590c2
-        call PK_Nop                                      // 004590c3
+        call PK_GlowPos                                  // 004590c3
         lea edx, [esp + 0x28]                            // 004590c8
         push edx                                         // 004590cc
-        call PK_Nop                                      // 004590cd
+        call PK_GlowSize                                 // 004590cd
         push ebp                                         // 004590d2
-        call PK_Nop                                      // 004590d3
+        call PK_GlowRotate                               // 004590d3
         push 0x68b968                                    // 004590d8
-        call PK_Nop                                      // 004590dd
+        call PK_GlowSubmit                               // 004590dd
         add esp, 0x14                                    // 004590e2
         jmp L_459270                                     // 004590e5
     L_4590ea:
@@ -170,19 +170,19 @@ extern "C" __declspec(naked) void PK_459000() {
         mov edx, dword ptr [esi + 8]                     // 004591ed
         lea eax, [edx*4 + 0x5f9838]                      // 004591f0
         push eax                                         // 004591f7
-        call PK_Nop                                      // 004591f8
+        call PK_GlowColour                               // 004591f8
         push ebx                                         // 004591fd
-        call PK_Nop                                      // 004591fe
+        call PK_GlowPos                                  // 004591fe
         lea ecx, [esp + 0x20]                            // 00459203
         push ecx                                         // 00459207
-        call PK_Nop                                      // 00459208
+        call PK_GlowSize                                 // 00459208
         fld dword ptr [esi - 0x18]                       // 0045920d
         fmul dword ptr [g_pk_c_5cd7a8]                   // 00459210
         add esp, 8                                       // 00459216
         fstp dword ptr [esp]                             // 00459219
-        call PK_Nop                                      // 0045921c
+        call PK_GlowRotate                               // 0045921c
         push 0x68b968                                    // 00459221
-        call PK_Nop                                      // 00459226
+        call PK_GlowSubmit                               // 00459226
         mov edx, dword ptr [ebx]                         // 0045922b
         mov dword ptr [esp + 0x30], edx                  // 0045922d
         mov eax, dword ptr [ebx + 4]                     // 00459231
@@ -206,7 +206,7 @@ extern "C" __declspec(naked) void PK_459000() {
         jne L_459030                                     // 00459274
     L_45927a:
         push 0x68b968                                    // 0045927a
-        call PK_Nop                                      // 0045927f
+        call PK_GlowFlush                                // 0045927f
         add esp, 4                                       // 00459284
         pop edi                                          // 00459287
         pop esi                                          // 00459288

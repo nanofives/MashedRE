@@ -14,8 +14,9 @@
 //   PK_TypeReroll      FUN_00458d00 (random type, FUN_00472690 RNG): reachable only with +0x28 != 0,
 //                      which the exe's rank-0/1 spawn never sets. Counted; returns the entry's type
 //                      unchanged [a call is a gate failure, not a value].
-//   PK_Nop             FUN_00458dd0 (re-skin) and the sprite queue FUN_004769a0/d0/f0, FUN_00476a30/
-//                      d00/df0 (render: PickupField draws in the exe).
+//   PK_Nop             FUN_00458dd0 (re-skin).
+//   PK_Glow*           the sprite queue FUN_004769a0/d0/f0, FUN_00476a30/d00/df0 (D5-ICONCUBE-GLOW,
+//                      Gameplay/PickupGlow.cpp): the glow batch, a no-op unless MASHED_RFX_EMITTERS=1.
 // RG_484cf0 is mode-7 M1's verbatim registrar (Race/WorldRegistry.cpp).
 // [0x007f100c] (the timer step) reads g_pk_dt = (float)DAT_007f1008 * _DAT_005cc948 (0x0040fc57).
 //
@@ -31,6 +32,7 @@
 //   PK_Sfx           FUN_00465ca0 (audio; its inc [0x008aa2d0] has no other reference): no-op
 //   PK_458570_w      witness (EAX = car) in front of PK_458570, for the replay's call list
 #include "PickupTick.h"
+#include "PickupGlow.h"
 #include "PickupPoolSpawn.h"
 #include "../Race/WorldRegistry.h"
 #include "../Race/CarRegistrant.h"
@@ -48,6 +50,14 @@
 #include <vector>
 
 extern "C" void RG_484cf0();   // Race/WorldRegistry_naked.inc
+extern "C" {                   // Gameplay/PickupGlow.cpp
+void __cdecl PK_GlowColour(const std::uint32_t*);
+void __cdecl PK_GlowPos(const float*);
+void __cdecl PK_GlowSize(const float*);
+void __cdecl PK_GlowRotate(std::uint32_t);
+void __cdecl PK_GlowSubmit(void*);
+void __cdecl PK_GlowFlush(void*);
+}
 
 extern "C" {
 const std::uint32_t g_pk_c_5cc990 = 0x3727c5acu;   // 1e-5
@@ -465,10 +475,12 @@ void Pickups_FrameTick() {
     const float dt = static_cast<float>(static_cast<double>(*reinterpret_cast<const std::int32_t*>(0x007f1008u)) *
                                         static_cast<double>(0.00033333332976326346f));   // 0x0040fc57
     std::memcpy(&g_pk_dt, &dt, 4);
+    PickupGlow_DbgPre();
     {
         PcScope pc;
         reinterpret_cast<void_fn>(&PK_459000)();
     }
+    PickupGlow_DbgPost();
     CbTraceTick(dt);
 }
 
