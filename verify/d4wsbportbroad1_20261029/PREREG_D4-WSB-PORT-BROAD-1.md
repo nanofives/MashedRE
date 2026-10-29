@@ -113,3 +113,32 @@ an Event-1000 fault at `0x005baf48` appears: stop, BLOCKED "audio endpoint", no 
 `verify/savelink_20261023/run_arms.py H_DEF B_DEF_K0 B_DEF_K1 B_DEF_K26` on this build's `mashed_re.exe`, test slot +
 machine lock, must equal `re/orchestrator/merge_train.json` `gctrl.ref` / `b.ref` (G-CTRL `5943c5f1/306186d4/52052890`,
 B `3a03670c/9fcdbd3a/53778664` at `f6033d936`). A mismatch is a RED for the step.
+
+## Amendment 1 (2026-10-29, during arm S row 14, before any re-run)
+
+Arm S row 4 on build `.asi 6965a567`: `0x00559040` DIVERGENT 12/24, `ret=0` (return equal), 0 heap/exe pages differ,
+1-2 bytes differ in the caller's stack window at `stk+064` (6 samples) or `stk+068` (6 samples), alternating. That is
+a low-order float difference in an out-parameter, not a wrong value. Cause, read from the disassembly
+(`MASHED.exe.unpatched`, `disasm_lin.py 0x00559040 0x005592e3`): Ghidra's text sums three-term expressions in an order
+the x87 code does not use, and float addition does not associate. Five sites:
+
+| port expression | x87 order | cite |
+|---|---|---|
+| `fVar7` (squared length) | `(f12*f12 + f11*f11) + f13*f13` | `0x005590c7..0x005590e1` |
+| centroid y, z | `p5[i] + (p3[i] + p4[i])` (x is already `(p3+p4)+p5`) | `0x005591c9..0x005591f5` |
+| `param_1[0xc]` | `-((p5[1]*f19 + f18*p5[0]) + p5[2]*f15)` | `0x00559275..0x00559287` |
+| `param_1[0xd]` | `-((p3[1]*f17 + f16*p3[0]) + p3[2]*f14)` | `0x00559292..0x005592a9` |
+| `param_1[0xf]` | `-((s1*f12 + s0*f11) + s2*f13)` | `0x005592bc..0x005592d0` |
+
+Every other float expression in the TU was checked against the same listing and already matches it (products and
+two-term sums commute exactly). Build flags carry no `/fp:fast` (`mashedmod/build.bat`), so `/fp:precise` keeps the
+written order.
+
+Change (commit below, `L2_00559040.cpp` only, the 5 expressions above): parenthesized to the x87 order. Nothing else.
+New build `MASHED_NO_DEPLOY=1`: `mashed_re.exe` `3d27a4a2...cc79`, `mashed_re_dev.asi` `a5b857aa...a52f` (0 compile
+errors, rva-lint 0 NEW).
+
+Arm S continues to its end on `.asi 6965a567` (rows 14-17). Then the new `.asi` goes into the private root, and arm S is
+re-run as written above for `00559040` alone. Its first-pass verdict stays in the RESULT as superseded and is not used.
+The other 16 rows keep their first-pass result (their TUs are unchanged by this commit). Read-out unchanged: CLEAN
+promotes, anything else leaves the row at C2 with no further fix in this step. Default gates run on the final build.

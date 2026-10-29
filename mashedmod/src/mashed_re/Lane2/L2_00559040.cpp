@@ -69,7 +69,8 @@ static bool __cdecl L2_FUN_00559040_impl(float * param_1, float * param_2, float
   fVar11 = fVar6 * fVar2 - fVar5 * fVar3;
   fVar12 = fVar4 * fVar3 - fVar6 * fVar1;
   fVar13 = fVar5 * fVar1 - fVar4 * fVar2;
-  fVar7 = fVar13 * fVar13 + fVar11 * fVar11 + fVar12 * fVar12;
+  // x87 order (0x005590c7..0x005590e1): (f12*f12 + f11*f11) + f13*f13
+  fVar7 = (fVar12 * fVar12 + fVar11 * fVar11) + fVar13 * fVar13;
   // fcomp + test ah,5 + jp at 0x005590e9..0x005590f0: the sqrt path runs only when fVar7 > C and
   // the compare is ordered; NaN takes the zero path (Ghidra's `<=` would send NaN to sqrt).
   bVar10 = !(fVar7 > _DAT_005e4e28);
@@ -104,8 +105,9 @@ static bool __cdecl L2_FUN_00559040_impl(float * param_1, float * param_2, float
   param_1[5] = fVar17;
   param_1[9] = fVar14;
   fVar1 = (fVar1 + fVar2 + fVar7) * _DAT_005ccac8;
-  fVar2 = (fVar8 + fVar3 + fVar4) * _DAT_005ccac8;
-  fVar3 = (fVar9 + fVar5 + fVar6) * _DAT_005ccac8;
+  // x87 order (0x005591c9..0x005591f5): p5[i] + (p3[i] + p4[i]) for i = 1, 2
+  fVar2 = (fVar8 + (fVar3 + fVar4)) * _DAT_005ccac8;
+  fVar3 = (fVar9 + (fVar5 + fVar6)) * _DAT_005ccac8;
   *param_1 = fVar18;
   param_1[2] = -(fVar16 + fVar18);
   param_1[3] = fVar11;
@@ -115,11 +117,14 @@ static bool __cdecl L2_FUN_00559040_impl(float * param_1, float * param_2, float
   param_1[8] = fVar15;
   param_1[10] = -(fVar14 + fVar15);
   param_1[0xb] = fVar13;
-  param_1[0xc] = -(param_5[2] * fVar15 + fVar18 * *param_5 + param_5[1] * fVar19);
-  fVar4 = -(param_3[2] * fVar14 + fVar16 * *param_3 + param_3[1] * fVar17);
+  // x87 order (0x00559275..0x00559287): (p5[1]*f19 + f18*p5[0]) + p5[2]*f15
+  param_1[0xc] = -((param_5[1] * fVar19 + fVar18 * *param_5) + param_5[2] * fVar15);
+  // x87 order (0x00559292..0x005592a9): (p3[1]*f17 + f16*p3[0]) + p3[2]*f14
+  fVar4 = -((param_3[1] * fVar17 + fVar16 * *param_3) + param_3[2] * fVar14);
   param_1[0xd] = fVar4;
   param_1[0xe] = _DAT_005cc320 - (fVar4 + param_1[0xc]);
-  param_1[0xf] = -(fVar3 * fVar13 + fVar1 * fVar11 + fVar2 * fVar12);
+  // x87 order (0x005592bc..0x005592d0): (s1*f12 + s0*f11) + s2*f13
+  param_1[0xf] = -((fVar2 * fVar12 + fVar1 * fVar11) + fVar3 * fVar13);
   return !bVar10;
 }
 extern "C" bool __cdecl L2_FUN_00559040(float * param_1, float * param_2, float * param_3, float * param_4, float * param_5) {
