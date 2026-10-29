@@ -66,8 +66,11 @@ Write-Host "Mashed RE updater" -ForegroundColor Cyan
 Write-Host ("  servers: {0}" -f ($BaseUrl -join ', '))
 Write-Host "  target : $InstallRoot"
 
-if (Get-Process -Name 'mashed_re' -ErrorAction SilentlyContinue) {
-    Write-Host "ERROR: Mashed (mashed_re.exe) is running. Close it and run the update again." -ForegroundColor Red
+# Only THIS folder's exe locks files here; another copy (a second install, a dev build) does not block the update.
+$running = @(Get-Process -Name 'mashed_re' -ErrorAction SilentlyContinue | Where-Object {
+    -not $_.Path -or $_.Path.StartsWith($InstallRoot + '\', [System.StringComparison]::OrdinalIgnoreCase) })
+if ($running.Count -gt 0) {
+    Write-Host "ERROR: Mashed (mashed_re.exe) is running from this folder. Close it and run the update again." -ForegroundColor Red
     exit 1
 }
 
